@@ -147,12 +147,15 @@ var
 
   procedure SendSerialNr;
   const ACK= #6; NACK= #21;
-  var zsum,i: integer; Timer: TTimer; Pass: boolean;
+  var zsum,i: integer; Timer: TTimer; Pass: boolean; zerbidchk: string;
   begin
-    Debug.DebugLog('xpnczconnect', Format('Sending serial number: %s', [BoxPar^.zerbid]),DLInform);
+    zerbidchk:=BoxPar^.zerbid;
+    SetLength(zerbidchk,5);
     zsum:=0;
-    for i:=1 to 4 do Inc(zsum,ord(BoxPar^.zerbid[i]));
-    GenericMailer.CommObj.SendString(BoxPar^.zerbid+chr(zsum and 255),False);
+    for i:=1 to 4 do Inc(zsum,ord(zerbidchk[i]));
+    zerbidchk[5]:=chr(zsum and 255);
+    Debug.DebugLog('xpnczconnect', Format('Sending serial number+chksum: "%s"', [zerbidchk]),DLInform);
+    GenericMailer.CommObj.SendString(zerbidchk,False);
     Timer.Init;
     Timer.SetTimeout(30);
     Pass:=False;
@@ -258,6 +261,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2003/05/10 21:28:40  ma
+  - perhaps this fixes serial number problems
+
   Revision 1.17  2003/05/04 16:41:12  mk
   - added serial number to debug log
 
