@@ -40,9 +40,6 @@ function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
 {$endif} { Linux }
 
 function  dospath(d:byte):pathstr;
-{$ifndef hasXCurrentDir}
-function  SetCurrentDir(const path: string): boolean;
-{$endif}
 
 function  OutputRedirected:boolean;
 function  IsDevice(fn:pathstr):boolean;
@@ -86,20 +83,6 @@ procedure SetDrive(drive:char);
 begin
   SetCurrentDir(Drive + ':');
 end;
-
-{$ifndef hasXCurrentDir}
-function  SetCurrentDir(const path: string): boolean;
-begin
-  SetCurrentDir:= false;
-  if ioresult=0 then ;
-  if path='' then exit;
-  SetDrive(path[1]);
-  if (length(path)>3) and (path[length(path)]=DirSepa) then
-    Delete(path, Length(path), 1); { dec(byte(path[0])); }
-  chdir(path);
-  SetCurrentDir:= (ioresult=0);
-end;
-{$endif}
 
 function OutputRedirected:boolean;
 begin
@@ -199,6 +182,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/03 16:26:28  mk
+  - unnoetige Compilerdirectiven entfernt bzw. vereinfacht
+
   Revision 1.21  2000/07/03 15:23:26  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt
