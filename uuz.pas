@@ -2084,6 +2084,7 @@ begin
   while bufpos < bufanz do
   begin
     ClearHeader;
+    Mail.Clear;
     repeat                                { Envelope einlesen }
       p := 0;
       ReadString;
@@ -2167,7 +2168,6 @@ begin
       end;
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-      Mail.Clear;
       while (bufpos < bufanz) and (hd.Lines > 0) do
       begin
         ReadString; Dec(hd.Lines);
@@ -3451,6 +3451,9 @@ end.
 
 {
   $Log$
+  Revision 1.54  2000/08/08 09:17:25  mk
+  - Bug bei schreiben von ZConnect-Mails behoben
+
   Revision 1.53  2000/08/03 15:25:42  mk
   - Schalter -X hinzugefuegt
 
