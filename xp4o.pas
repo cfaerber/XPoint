@@ -68,7 +68,7 @@ procedure ShowHeader;        { Original-Header anzeigen        }
 function  Suche(anztxt,suchfeld,autosuche:string):boolean;
 procedure betreffsuche;
 procedure SucheWiedervorlage;
-procedure BU_reorg(user,adrbuch:boolean);
+procedure BU_reorg(user,adrbuch,auto:boolean);
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
 procedure MsgReorg;
 procedure ImportBrettliste;
@@ -92,6 +92,8 @@ function  a_getfilename(nr,nn:byte):string;
 procedure ArcSpecial(LSelf: TLister; var t:taste);
 
 procedure DupeKill(autodupekill:boolean);
+procedure CompleteMaintenance;
+
 procedure print_msg(initpr:boolean);
 function  UserMarkSuche(allmode:boolean):boolean;
 procedure BrettInfo;
@@ -111,8 +113,8 @@ Procedure Brettmarksuche;
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,debug,viewer,
+uses xpkeys,xpnt,xp1o,xp4,xp4o2,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
+     xp_pgp,debug,viewer, rfc2822,
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
@@ -1832,6 +1834,7 @@ var _brett   : string;
     ntyp     : longint;
     zconnect : boolean;
     crashs   : boolean;
+    i        : integer;
 
 begin
   if uvs_active then exit;
@@ -1869,24 +1872,42 @@ begin
       makeheader(zconnect,f,1,hds,hdp,ok,false, true);
       if not ok then
         rfehler1(427,box)   { 'fehlerhaftes Pollpaket:  %s' }
-      else with hdp do begin
+      else with hdp do 
+      begin
         _brett:='';
-        if (cpos('@',Firstempfaenger)=0) and
-           ((netztyp<>nt_Netcall) or (FirstChar(FirstEmpfaenger)='/'))
-        then begin
-          dbSeek(bbase,biBrett,'A'+UpperCase(Firstempfaenger));
-          if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
-          else _brett:='A'+dbLongStr(dbReadInt(bbase,'int_nr'));
-          end
-        else begin
-          dbSeek(ubase,uiName,UpperCase(Firstempfaenger+
-                 iifs(cPos('@',Firstempfaenger)>0,'','@'+box+'.ZER')));
-          if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
-          else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
+
+        for i := 0 to hdp.Empfaenger.Count-1 do
+        begin
+          _mbrett := Addr2DB(hdp.Empfaenger[i]);
+        
+          if (cpos('@',_mbrett)=0) and
+             ((netztyp<>nt_Netcall) or (FirstChar(_mbrett)='/'))
+          then begin
+            dbSeek(bbase,biBrett,'A'+UpperCase(_mbrett));
+            if not dbFound then continue
+            else _brett:='A'+dbLongStr(dbReadInt(bbase,'int_nr'));
+            break;
+            end
+          else begin
+            dbSeek(ubase,uiName,UpperCase(_mbrett+
+                   iifs(cPos('@',_mbrett)>0,'','@'+box+'.ZER')));
+            if not dbFound then continue
+            else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
+            break;
           end;
-        if _brett<>'' then begin
+        end;
+
+        if _brett='' then
+        begin
+          dbSeek(bbase,biBrett,'$/'#$AF'NIX');
+          if dbFound then _brett:='$'+dbLongStr(dbReadInt(bbase,'int_nr'));
+        end;        
+
+        uvf:=false;
+
+        if _brett<>'' then 
+        begin
           dbSeek(mbase,miBrett,_brett+#255);
-          uvf:=false;
           if dbEOF(mbase) then dbGoEnd(mbase)
           else dbSkip(mbase,-1);
           if not dbEOF(mbase) and not dbBOF(mbase) then
@@ -1908,12 +1929,13 @@ begin
                 end;
               dbSkip(mbase,-1);
             until uvf or dbBOF(mbase) or (_brett<>_mbrett);
-          if not uvf then
-            rfehler(426);   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
-          end;
-        inc(adr,groesse+hds);
         end;
-      end;
+        if not uvf then
+          rfehler(426);   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
+        inc(adr,groesse+hds);
+      end; // with hdp
+    end; // while ok and (adr<fsize)
+    
     close(f);
     rc:= findnext(sr);
     if (rc<>0) and not crashs then
@@ -2036,16 +2058,18 @@ var hdp   : Theader;
     end;
 
     function brett(s:string):string;
+    var i: integer;
     begin
       case s[1] of
         '$': result:=GetRes2(459,64);
         '1': result:=GetRes2(459,65);
         'A': result:=GetRes2(459,66);
         'U': result:=GetRes2(459,66);
-        else result:=hex(Ord(s[1]),2);
+        else result:=' ('+hex(Ord(s[1]),2)+')';
       end;
-      result:= StrS((Ord(s[2]) shl 0) or (Ord(s[3]) shl 8) or
-        (Ord(s[4]) shl 16) or (Ord(s[5]) shl 24)) + result;
+
+      for i:= 5 downto 2 do
+        result := Hex(Ord(s[i]),2)+result;
     end;
 
   begin
@@ -2570,6 +2594,33 @@ begin
   aufbau:=true; xaufbau:=true;
 end;
 
+procedure CompleteMaintenance;
+var brk: boolean;
+begin
+  if true and(not brk) then
+    DupeKill(true);
+
+  if true and(not brk) then
+  begin
+    MsgReorgScan(true,false,brk);
+    if not brk then
+      MsgReorg;
+  end;
+
+  if true and(not brk) then
+    PackAll(false);
+
+  if true and(not brk) then
+    BU_reorg(false,false,true);
+
+  if true and(not brk) then
+    BU_reorg(true,true,true);
+
+  if true and(not brk) then
+    BU_reorg(true,false,true);
+    
+  aufbau := true;
+end;
 
 procedure print_msg(initpr:boolean);
 var t  : text;
@@ -2979,6 +3030,10 @@ end;
 
 {
   $Log$
+  Revision 1.139  2002/04/14 22:25:36  cl
+  - added Wartung/Komplett
+  - changes for new address handling
+
   Revision 1.138  2002/04/13 22:22:59  mk
   - fixed Bug #497283, MsgID-Suche kaputt
 
