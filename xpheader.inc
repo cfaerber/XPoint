@@ -11,11 +11,29 @@
 
 { Headerdefinitionen, die auch von den Tools genutzt werden }
 
+const
+  maxrefs = 100;                        { max. gespeicherte References }
+  maxemp = 1000;
+  maxulines = 300;                      { max. zus„tzliche U-Zeilen }
+  maxfollow = 100;                      { max. Followup-To-Zeilen }
+
 type
+  empflistt = array[1..maxemp] of string;
+
   empfnodep = ^empfnode;
   empfnode = record
     next: empfnodep;
     empf: string;
+  end;
+
+  mimedata = record
+    mversion: string;                   { MIME-Version              }
+    encoding: byte;                     { Content-Transfer-Encoding }
+    ctype: byte;                        { Content-Type              }
+    subtype: string;                    { Content-Subtype           }
+    charset: string;                    { text/*; charset=...       }
+    filetype: string;                   { application/o-s; type=... }
+    boundary: string;                   { multipart: boundary=...   }
   end;
 
   header = record
@@ -86,12 +104,30 @@ type
     xnoarchive: boolean;
     Cust1, Cust2: string;
     control: string;
+
+    // UUZ
+    addrefs: integer;
+    addref: array[1..maxrefs] of string;
+    mimereltyp: string;
+    ulines: byte;                       { Anzahl "U-"-Zeilen in UUZ }
+    xempf: empflistt;
+    oemanz: integer;
+    xoem: empflistt;
+    followups: integer;                 { Anzahl Followup's }
+    followup: array[1..maxfollow] of string;
+    MIME: mimedata;
+    gateway: string;
+    sender: string;
+    lines: longint;                     { "Lines:" }
   end;
   headerp = ^header;
 
-  {
-    $Log$
-    Revision 1.1  2000/07/09 09:09:56  mk
-    - Newexit in Initialization/Finalization umgewandelt
+{
+  $Log$
+  Revision 1.2  2000/07/09 13:21:56  mk
+  - UUZ nutzt jetzt xpheader.inc
 
-  }
+  Revision 1.1  2000/07/09 09:09:56  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
+}

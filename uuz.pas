@@ -33,10 +33,6 @@ uses xpglobal,
   sysutils, dos, typeform, fileio, xpdatum, montage;
 
 const
-  maxemp = 1000;
-  maxulines = 300;                      { max. zus„tzliche U-Zeilen }
-  maxrefs = 100;                         { max. gespeicherte References }
-  maxfollow = 100;                       { max. Followup-To-Zeilen }
   bufsize = 65536;
   readempflist = true;
   maxaddhds = 50;
@@ -112,106 +108,10 @@ const
   encBinary = 5;
 
 type
-  mimedata = record
-    mversion: string;               { MIME-Version              }
-    encoding: byte;                     { Content-Transfer-Encoding }
-    ctype: byte;                        { Content-Type              }
-    subtype: string;                { Content-Subtype           }
-    charset: string;                { text/*; charset=...       }
-    filetype: string;               { application/o-s; type=... }
-    boundary: string;              { multipart: boundary=...   }
-  end;
   mimeproc = procedure(var s: string);
-  empflistt = array[1..maxemp] of string;
 
-  empfnodep = ^empfnode;
-  empfnode = record
-    next: empfnodep;
-    empf: string;
-  end;
+{$I XPHEADER.INC }
 
-  header = record
-    netztyp: byte;
-    ulines: byte;                       { Anzahl "U-"-Zeilen }
-    lines: longint;                     { "Lines:" }
-    archive: boolean;                   { archivierte PM }
-    empfaenger: string;
-    kopien: empfnodep;
-    xempf: empflistt;
-    empfanz: integer;                   { Anzahl EMP-Zeilen }
-    betreff: string;                    { verl„ngert wegen MIME-Codierung }
-    absender: string;
-    datum: string;                      { Netcall-Format }
-    zdatum: string;                     { ZConnect-Format }
-    pfad: string;                       { Netcall-Format }
-    msgid, ref: string;                 { ohne <> }
-    ersetzt: string;                    { ohne <> }
-    addrefs: integer;
-    addref: array[1..maxrefs] of string;
-    typ: string;                        { T / B }
-    crypttyp: string;
-    groesse: longint;
-    komlen: longint;                    { Kommentar-L„nge }
-    ckomlen: longint;
-    realname: string;
-
-    programm: string;                   { Mailer-Name }
-    datei: string;                      { Dateiname }
-    ddatum: string;                     { Dateidatum, jjjjmmtthhmmss }
-    prio: byte;                         { 10=direkt, 20=Eilmail }
-    real_box: string;                   { falls Adresse = User@Point }
-    hd_point: string;                   { eigener Pointname }
-    pm_bstat: string;                   { Bearbeitungs-Status }
-    attrib: word;                       { Attribut-Bits }
-    filterattr: word;
-    fido_to: string;
-    organisation: string;
-    postanschrift: string;
-    telefon: string;
-    homepage: string;
-    PmReplyTo: string;                  { Antwort-An }
-    AmReplyTo: string;                  { Diskussiom-In, nicht benutzt! }
-    amrepanz: integer;
-    followups: integer;                 { Anzahl Followup's }
-    followup: array[1..maxfollow] of string;
-    error: string;                      { ERR-Header }
-    ReplyPath: string;
-    ReplyGroup: string;
-    wab: string;                        { Envelope-Absender }
-    oem, oab: string;
-    xoem: empflistt;
-    oemanz: integer;
-    oar, war: string;                   { Realnames }
-
-    gateway: string;
-    empfbestto: string;
-    x_charset: string;
-    keywords: string;
-    summary: string;
-    priority: byte;                     { Priority by MH }
-    distribution: string;
-    pm_reply: boolean;
-    sender: string;
-    MIME: mimedata;
-    QuoteString: string;
-    charset: string;
-    ccharset: string;
-    org_msgid: string;
-    org_xref: string;
-    pgpflags: word;
-    pgp_uid: string;
-    vertreter: string;
-    XPointCtl: longint;
-    nokop: boolean;
-    boundary: string;
-    mimetyp: string;
-    mimereltyp: string;
-
-    { X-No-Archive Konvertierung }
-    xnoarchive: boolean;
-    Cust1, Cust2: string;
-    control: string;
-  end;
   charr = array[0..65530] of char;
   charrp = ^charr;
   ulinea = array[1..maxulines] of string;
@@ -3497,6 +3397,9 @@ end.
 
 {
   $Log$
+  Revision 1.42  2000/07/09 13:21:56  mk
+  - UUZ nutzt jetzt xpheader.inc
+
   Revision 1.41  2000/07/07 09:51:53  mk
   - Komplette Ansistring-Umstellung und vereinfachung der Strukturen
 
