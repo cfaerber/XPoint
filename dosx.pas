@@ -119,10 +119,37 @@ function DriveType(drive:char):byte;
     else laufwerke:=(regs.ax shr 6) and 3 + 1;
   end;
 
+  Function CDDrives:String;assembler;
+  asm
+      les di,@result
+      mov si,di
+      mov ax,$BFBF      { String loeschen. $BF + 'A' =0 !!!}
+      mov cx,16
+      rep stosw
+      xor bx,bx
+      mov ax,$150C      { Version-Check }
+      int 2fh
+      cmp bx,0          {>0 Installiert und 150D erlaubt }
+      je @e
+      mov ax,$150D      { Liste der CD-Laufwerke nach ES:BX }
+      lea bx,[si+1]
+      int 2fh
+      mov bx,si
+  @1: inc bx
+      mov al,[es:bx]
+      add al,'A'        { Und Umrechnen von C:=2 zu C:='C' }
+      mov [es:bx],al
+      jne @1
+      dec bx
+      sub bx,si
+  @e: mov es:[si],bl
+  end;
+
 var regs : registers;
 begin
   if (drive='B') and (laufwerke=1) then
     drivetype:=0
+  else if pos(drive,CDDrives)>0 then drivetype:=6
   else
     with regs do begin
       ax:=$4409;
@@ -302,6 +329,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.3  2002/04/28 16:01:58  my
+  JG:- Erkennung von CD-ROM-Laufwerken im Datei-Auswahlfenster
+       implementiert (bisher wurden CD-ROM-Laufwerke als "Netz-Laufwerke"
+       angezeigt).
+
   Revision 1.17.2.2  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 
