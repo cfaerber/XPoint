@@ -862,7 +862,7 @@ end;
 function testnoverteiler(var s:string):boolean;
 begin
   testnoverteiler:=true;
-  if (s[1]='[') and (s[length(s)]=']') then
+  if (Length(s) > 1) and (s[1]='[') and (s[length(s)]=']') then
   begin
     rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
     testnoverteiler:=false;
@@ -2405,6 +2405,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.3  2000/07/22 08:22:22  mk
+  - Zugriff auf nicht initialisierte Variable beseitigt
+
   Revision 1.25.2.2  2000/07/21 18:48:11  mk
   - Zugriff auf nicht initialisierten String beseitigt
 
