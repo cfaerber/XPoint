@@ -27,7 +27,13 @@ unit osdepend;
 interface
 
 uses
-  xpglobal; //not really
+{$ifdef Win32}
+  Windows,
+{$endif}
+{$IFDEF DOS32 }
+  Crt,
+{$ENDIF }
+  Classes, SysUtils;
 
 { Consts }
 
@@ -37,6 +43,7 @@ uses
 
 procedure SysDelay(MS: Longint);
 procedure SysBeep(Freq, Dur: Integer);
+function GetTimeZone: String;
 
 implementation
 
@@ -50,6 +57,9 @@ implementation
 
 {
         $Log$
+        Revision 1.10  2003/08/26 04:58:14  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.9  2003/01/01 16:19:44  mk
         - changes to made FreeBSD-Version compilable
 

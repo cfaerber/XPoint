@@ -42,8 +42,16 @@ begin
   //todo
 end;
 
+function GetTimeZone: String;
+begin
+  Result := '';
+end;
+
 {
         $Log$
+        Revision 1.3  2003/08/26 04:58:14  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.2  2002/12/04 16:57:00  dodi
         - updated uses, comments and todos
 

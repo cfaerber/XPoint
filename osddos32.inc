@@ -46,8 +46,16 @@ begin
   NoSound;
 end;
 
+function GetTimeZone: String;
+begin
+  Result := '';
+end;
+
 {
         $Log$
+        Revision 1.6  2003/08/26 04:58:14  mk
+        - added automatic TimeZone dectection for Win32
+
         Revision 1.5  2003/08/23 19:15:27  mk
         - compile fixes for dos32
 
