@@ -461,19 +461,19 @@ K (c) '93-96 Peter Mandrella
 7    PMs
 10   Ask before Quit
 11   Swap to EMS
-12   Archive grps.~
+12   Archive prefix~
 13   Delete archived messages
 14   Append new newsgroups at end
 15   Server name in PM-newsgroups
-16   Minimal disk space on drive %s~
+16   Minimum disk space on drive %s~
 17   MBytes
 18   Use XMS
-19   Use comments from newsgroup list
-20   Enables special characters for new users
-21   Use of : and | is equal to quote char.
-22   Sort userwindow by servername
+19   Use descriptions from newsgroup list
+20   Enables umlauts for new Users
+21   Treat : and | as quote characters
+22   Sort User-window by Server name
 23   Default Usergroup
-24   Create an archive-tag
+24   Create an archive-note
 + 251
 # Extract as
 0    Text w/o head
@@ -576,17 +576,18 @@ K (c) '93-96 Peter Mandrella
 + 255
 # window width
 0    46
-1    Internal lister options
-4    Internal lister - full screen
+1    Internal message reader options
+4    Internal message reader - full screen
 5    Line break in column 80
 6    Show reference arrows
 7    Fixed message header display
 8    Convert German ISO Umlauts
-9    *Highlight* words by color
+9    *Highlight* words by colour
 10   Mouse scroll bar
 11   AutoScrolling
-12   Multi color quotes
-13   Leave lister with <Return>
+12   Multi-coloured quotes
+13   Exit message reader with <Return>
+14   Display clock in message reader
 #
 20   51
 21   External lister options
@@ -651,15 +652,17 @@ K (c) '93-96 Peter Mandrella
 3    Ask start password
 4    Show user name
 5    Cursor in menus and lists
-6    blank screen
+6    Screen-blanker
 7    optical sound signal
-8    blank window background
+8    Blank window background
 9    Power saver
 10   Terminal BIOS output
 11   Accessibility options
 12   additional sound signals
 13   headline 1
 14   headline 2
+15   Message-list column order
+16   User-list column order  ~
 + 261
 # Window width
 0    50
@@ -678,7 +681,7 @@ K (c) '93-96 Peter Mandrella
 13   Use FOSSIL driver
 14   No FOSSIL driver installed.
 15   Dial comm.~
-16   German Telekom commemorative minute
+16   Pause between dialing
 17   Use RTS
 18   ...trigger level
 + 262
