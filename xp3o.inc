@@ -1008,6 +1008,10 @@ begin
             else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    } 
             else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
             else if hdp^.Priority=1 then mbflags:=8      { hoechste   }    
+
+            else if zconnect and (hdp^.Prio>0) then      { und fuer Zconnect ....  }
+              if hdp^.Prio<=10 then mbflags:=16          { hoch     }      
+              else mbflags:=8                            { hoechste }  
             else mbflags:=0;
 
             mbflags:=mbflags or iif(boundary<>'',4,0);
@@ -1176,6 +1180,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/04/28 22:30:10  jg
+  - Diverse Verbesserungen beim Versenden mit Priority
+  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
+
   Revision 1.12  2000/04/28 14:52:52  jg
   - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
     Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !

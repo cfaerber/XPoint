@@ -1098,9 +1098,9 @@ var
   Prio: string[10];
 begin                                                  { 'Sende-Priorit„t' }
   Dialog(ival(getres2(272, 0)), 3, getres2(272, 7), x, y);
-  Prio:=GetRes2(272, 6); RFCPrio:=0;                             { 'Keine' }
+  Prio:=GetRes2(272, iif(rfcprio=0,6,rfcprio));
   MaddString(3, 2, GetRes2(272,8), Prio, 10, 10, '');       { 'Priorit„t ' }
-  MappSel(true, GetRes2(272, 9));
+  MappSel(false, GetRes2(272, 9));
   ReadMask(brk);          { 'H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine' }
 
   if not brk and mmodified then
@@ -1124,6 +1124,10 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.14  2000/04/28 22:30:10  jg
+  - Diverse Verbesserungen beim Versenden mit Priority
+  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
+
   Revision 1.13  2000/04/17 17:24:09  jg
   - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
   - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.

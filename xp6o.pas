@@ -330,6 +330,7 @@ begin
     { xp6.NoCrash:=true; }
     xp6.FileAttach:=(hdp0^.attrib and attrFile<>0);
     xp6.msgprio:=hdp0^.prio;
+    xp6.rfcprio:=hdp0^.priority; 
     xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
     sendfilename:=hdp0^.datei;
     sendfiledate:=hdp0^.ddatum;
@@ -1235,6 +1236,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/28 22:30:10  jg
+  - Diverse Verbesserungen beim Versenden mit Priority
+  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
+
   Revision 1.10  2000/04/28 18:23:11  jg
   - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
   - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett

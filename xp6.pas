@@ -542,6 +542,7 @@ var f,f2     : ^file;
     m1msgsize: longint;     { Gesamtgrî·e der ersten Kopie   }
     showempfs: shortint;    { fÅr Betreffbox }
     fo       : ^string;
+    flags    : longint;  
 
 label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
@@ -1337,7 +1338,8 @@ fromstart:
           case p of
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
-                   if netztyp=nt_ZConnect then n:=19;
+                   if netztyp=nt_ZConnect then n:=19 else
+                   if netztyp=nt_uucp then n:=22;  
             7    : if netztyp=nt_Maus then n:=17;
             8    : if netztyp=nt_Maus then n:=18;
             9    : if netztyp in [nt_ZConnect,nt_UUCP] then n:=20;
@@ -1863,6 +1865,22 @@ fromstart:
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWrite(mbase,'unversandt',b);
 
+      dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
+
+      flags:=flags and not 56;                
+      if netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
+        if msgprio=10 then flags:=flags or 16        { Direkt = Hoch }
+        else if msgprio=20 then flags:=flags or 8;   { Eilmail = Hoechste }   
+
+      case rfcprio of                                { RFC - Prioritaet }
+        1 : flags:=flags or 8;                       { hoechste } 
+        2 : flags:=flags or 16;                      { hoch }
+        4 : flags:=flags or 24;                      { niedrig }
+        5 : flags:=flags or 32;                      { niedrigste }
+        end; 
+
+      dbwriteN(mbase,mb_flags,flags); 
+
       if msgCPpos=0 then begin
         if OldMsgsize<>0 then begin
           dbWriteN(mbase,mb_msgsize,oldmsgsize);
@@ -2178,6 +2196,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/04/28 22:30:10  jg
+  - Diverse Verbesserungen beim Versenden mit Priority
+  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
+
   Revision 1.21  2000/04/27 09:45:40  jg
   - C/O/N "Eigene Nachrichten Halten" gilt nicht mehr fuer PMs
 
