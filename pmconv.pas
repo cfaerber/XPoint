@@ -22,11 +22,17 @@
 
 {$I xpdefine.inc }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
+unit PMConv;
 
-uses  xpglobal, dos,typeform,xpdatum,sysutils,classes,xpnt;
+interface
+
+procedure StartCommandLinePMConv;
+
+implementation
+
+uses
+  xpglobal, dos,typeform,xpdatum,sysutils,classes,xpnt, xpheader,
+  xpmakeheader, Fileio;
 
 const
       TO_ID     : string[10] = '/'#0#0#8#8'TO:';
@@ -46,15 +52,13 @@ type
       charr   = array[0..65530] of char;
       charrp  = ^charr;
 
-{$I xpheader.inc }
-
 var   f,f2  : file;
       nn    : longint;
       uname : string;
       zconn : boolean;
       
       empflist,uline,xline,mail : tstringlist;
-      hd : header;
+      hd : Theader;
 
 
 procedure helppage;
@@ -66,59 +70,18 @@ begin
 end;
 
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln;
   writeln(txt);
   halt(1);
 end;
 
-
-function compmimetyp(typ:string):string;
-begin
-  if LeftStr(typ,12)='application/' then
-    compmimetyp:=LowerCase(mid(typ,12))
-  else
-    compmimetyp:=LowerCase(typ);
-end;
-
-
-// Frischen Header erzeugen
-procedure ClearHeader;
-begin
-  with hd do
-  if Assigned(AddRef) then
-  begin
-    AddRef.Free;
-    XEmpf.Free;
-    XOEM.Free;
-    Followup.Free;
-  end;
-
-  ULine.Clear; XLine.Clear; Mail.Clear;
-  Fillchar(hd, sizeof(hd), 0);
-
-  with hd do
-  begin
-    Netztyp := nt_UUCP;
-    AddRef := TStringList.Create;
-    XEmpf := TStringList.Create;
-    XOEM := TStringList.Create;
-    Followup := TStringList.Create;
-  end;
-end;
-
-
-{$DEFINE uuzmime }
-
-{$I xpmakehd.inc}
-
-
 procedure checkit;
 var p      : charrp;
     ps     : word;
     fs,adr : longint;
-    hd     : header;
+    hd     : Theader;
     hds    : longint;
     ok     : boolean;
     n      : longint;
@@ -127,9 +90,9 @@ var p      : charrp;
   var rr   : word;
       size : longint;
   begin
-    if (LeftStr(hd.empfaenger,1)<>'/') and
-       (LeftStr(hd.empfaenger,length(TO_ID))<>TO_ID) and not hd.archive and
-       ((uname='') or (UpperCase(LeftStr(hd.empfaenger,length(uname)))<>UpperCase(uname)))
+    if (LeftStr(hd.Firstempfaenger,1)<>'/') and
+       (LeftStr(hd.Firstempfaenger,length(TO_ID))<>TO_ID) and not hd.archive and
+       ((uname='') or (UpperCase(LeftStr(hd.Firstempfaenger,length(uname)))<>UpperCase(uname)))
     then begin
       if zconn then
         blockwrite(f2,xparc[1],length(xparc))
@@ -155,9 +118,10 @@ begin
   if fs<=8 then error('Puffer ist leer.');
   adr:=0; n:=0; nn:=0;
   rewrite(f2,1);
+  hd := THeader.Create;
   while (adr<fs) do begin
     seek(f,adr);
-    makeheader(zconn,f,1,0,hds,hd,ok,false);
+    makeheader(zconn,f,1,hds,hd,ok,false,false);
     if not ok then
       error('Fehlerhafter Puffer!'#7);
     inc(n);
@@ -173,16 +137,16 @@ begin
     writeln('Bitte mit XPCHECK reparieren.');
     halt(1);
     end;
+  hd.free;
 end;
 
 
-function ZC_puffer(fn:pathstr):boolean;
+function ZC_puffer(fn: String):boolean;
 var t : text;
     s : string;
     abs,emp,eda : boolean;
 begin
   assign(t,fn);
-  {$I-}
   reset(t);
   if ioresult<>0 then
     ZC_puffer:=false
@@ -201,25 +165,30 @@ begin
     end;
 end;
 
-
+procedure StartCommandLinePMConv;
 begin
   writeln;
-  if paramcount=0 then helppage;
-  uname:=paramstr(2);
-  assign(f,paramstr(1));
+  if paramcount=1 then helppage;
+  uname:=paramstr(3);
+  assign(f,paramstr(2));
   assign(f2,'pmconv.$$$');
-  zconn:=ZC_puffer(paramstr(1));
+  zconn:=ZC_puffer(paramstr(2));
   writeln('Puffer-Format: ',iifs(zconn,'ZCONNECT','Z-Netcall'));
   write('Puffer wird konvertiert...     ');
   checkit;
-  makebak(paramstr(1),'bak');
-  rename(f2,paramstr(1));
+  makebak(paramstr(2),'bak');
+  rename(f2,paramstr(2));
   writeln(' ok.');
   writeln;
   writeln(nn,' Nachrichten wurden konvertiert.');
+end;
+
 end.
 {
   $Log$
+  Revision 1.10.2.2  2003/04/23 21:55:47  mk
+  - made PMConv internal
+
   Revision 1.10.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 

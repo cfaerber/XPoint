@@ -66,6 +66,7 @@ uses
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
      replytoall,
+     pmconv,
      zftools,
 {$IFDEF Win32}
      windows,
@@ -89,6 +90,9 @@ begin
   else
   if Prog = 'ZFIDO' then
     StartCommandLineZFIDO
+  else
+  if Prog = 'PMCONV' then
+    StartCommandLinePMConv
   else
     Result := false;
 end;
@@ -237,6 +241,9 @@ end;
 
 {
   $Log$
+  Revision 1.16.2.3  2003/04/23 21:55:47  mk
+  - made PMConv internal
+
   Revision 1.16.2.2  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 
