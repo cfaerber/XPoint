@@ -1714,13 +1714,14 @@ Function Ltrim(const s:string):string;
 var i : byte;
 begin
   i:=1;
-  while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
+  if s <> '' then
+    while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
   ltrim:=copy(s,i,255);
 end;
 
 Function Rtrim(s:string):string;
 begin
-  while (s[length(s)]=' ') or (s[length(s)]=#9) do
+  while (Length(s) <> 0) and (s[length(s)]=' ') or (s[length(s)]=#9) do
     dec(byte(s[0]));
   Rtrim:=s;
 end;
@@ -2199,6 +2200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.3  2000/08/07 23:56:20  mk
+  - Bugfixes fuer LTrim und RTim bei leeren Strings
+
   Revision 1.37.2.2  2000/07/01 11:17:27  mk
   - 32 Bit Teile entfernt
 
