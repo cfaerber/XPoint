@@ -358,7 +358,6 @@ begin
             delete(line,1,i);
             line:= TrimRight(line);
 
-            { Auskommentiert, damit die CustomHeaders mit U-* tun }
             if LeftStr(id,2)='U-' then                      { RFC }
             begin
             if id = 'U-KEYWORDS'     then Keywords := Line else
@@ -509,12 +508,7 @@ begin
 
             if id = 'ABR' then LRead(realname) else { ZConnect 1.9 }
             if id = 'BIN' then typ:='B' else
-            if id = 'MAL' then LRead(programm) else
-
-            { Customizable Headerlines }
-            if id = UpperCase(mheadercustom[1]) then Cust1 := line
-            else
-            if id = UpperCase(mheadercustom[2]) then Cust2 := line
+            if id = 'MAL' then LRead(programm) 
 
             else
               // unbearbeitete X-Lines fuer UUZ merken
@@ -522,9 +516,14 @@ begin
                 XLine.Add(mid(id0,3)+': '+line) else
               zline.add(id+': '+line);
 
+            { Customizable Headerlines }
+            if id = UpperCase(mheadercustom[1]) then Cust1 := line
+            else
+              if id = UpperCase(mheadercustom[2]) then Cust2 := line;
+
             line:='*';
-            end;
-          end
+          end;
+        end
         else    { line='' }
           if not ok and eof(f) then
             ok:=(groesse=0);          { letzte Msg hat Laenge 0 }
@@ -561,6 +560,9 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.4  2003/08/25 22:43:56  mk
+  - fixed #589632: 3.8: Anzeige selbstdefinierte Kopfzeilen
+
   Revision 1.24.2.3  2003/04/25 20:52:26  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
