@@ -458,7 +458,7 @@ var f,f2     : file;
       pa.ContentType.AsString := 'text/plain';
     end;
 
-    SendAttach_Analyze(pa,not is_orig,iifs(flOhneSig,'',sigfile),docode,flPGPSig);
+    SendAttach_Analyze(pa,not is_orig,iifs(flOhneSig,'',sigfile),netztyp,docode,flPGPSig);
 
     parts.Insert(0,pa);
   end;
@@ -472,7 +472,7 @@ var f,f2     : file;
     pa.IsTemp	   := temp;
     pa.IsFile      := true;
 
-    SendAttach_Analyze(pa,true,'',docode,flPGPSig);
+    SendAttach_Analyze(pa,true,'',netztyp,docode,flPGPSig);
 
     parts.Insert(0,pa);
   end;
@@ -507,7 +507,7 @@ var f,f2     : file;
     if (parts.count<=0) or not TSendAttach_Part(parts[0]).IsMessage then
       addMessagePart(TempS($FFFF),true,false);
 
-    SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,iifs(flOhneSig,'',SigFile),docode,flPGPSig);
+    SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,iifs(flOhneSig,'',SigFile),netztyp,docode,flPGPSig);
 
     if exteditor<3 then betreff:=EditGetbetreff;
     if edpush then begin
@@ -2315,6 +2315,9 @@ finalization
 
 {
   $Log$
+  Revision 1.20  2001/09/25 21:07:45  cl
+  - added UI for non-RFC network charset selection
+
   Revision 1.19  2001/09/24 22:04:51  mk
   - fixed last commit
 

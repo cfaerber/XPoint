@@ -1526,6 +1526,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # PGP2:
 62 ISO-8859-1ùKOI8-R
 
+# ZConnect
+22 IBM437ùISO1
+# ZConenct/PGP
+63 ISO1
+
 35 ISO-8859-1ùUTF-8ùWindows-1252ùIBM437
 36 ISO-8859-1ùUTF-8
 38 US-ASCII
@@ -3884,6 +3889,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.41  2001/09/25 21:07:45  cl
+# - added UI for non-RFC network charset selection
+#
 # Revision 1.40  2001/09/19 18:05:08  cl
 # - implemented option "PGP/MIME" in "Config/Extern/PGP"
 #

@@ -101,11 +101,11 @@ function ntPMTeleData(nt:byte):boolean;       { PMs: Telefon + Postanschrift }
 function ntAMTeleData(nt:byte):boolean;       { AMs: Telefon + Postanschrift }
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
+function ntIBM(nt:byte):boolean;              { IBM-Zeichensatz verwenden }
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Headaer }
 function ntBrettebene(nt:byte):boolean;       { Netztyp mit Brettebene }
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 function ntFilename(nt:byte):boolean;         { Dateiname im Header }
-
 function ntBoxNetztyp(box:string):byte;       { Netztyp der Box       }
 function ntRelogin(nt:byte):byte;             { Relogin-Netcall m”glich }
 function ntOnline(nt:byte):boolean;           { Online-Anruf m”glich  }
@@ -128,6 +128,9 @@ function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
 
 function formmsgid(msgid:string):string;
 function grosschar(b:boolean):string;
+
+function ntValidAddress(nt:byte;const addr:string):boolean;
+function ntNormalizeAddress(nt:byte;var addr:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
@@ -654,9 +657,27 @@ begin
   ntZonly:=(i=0);
 end;
 
+// Network types where the IBM charset is default but can be changed
+// to ISO-8859-*
 function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
 begin
   ntOptIso:=(nt=nt_ZConnect);
+end;
+
+// Network types where the IBM charset is default, otherwise we use
+// ISO-8859-1 or UTF-8
+function ntIBM(nt:byte):boolean;      
+begin
+  Result:=nt in [
+    nt_Netcall,
+    nt_ZConnect,
+    nt_Magic,
+    nt_Pronet,
+    nt_Quick,
+    nt_GS,
+    nt_Maus,
+    nt_Fido,
+    nt_QWK ];
 end;
 
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Header }
@@ -703,11 +724,24 @@ begin
   ntReplyToAll := (nt in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
 end;
 
+function ntValidAddress(nt:byte;const addr:string):boolean;
+begin
+//  if nt in netsRFC then result:=RFC2822ValidAdress(addr) else
+  result:=false;
+end;
+
+function ntNormalizeAddress(nt:byte;var addr:string):boolean;
+begin
+
+end;
 
 begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.35  2001/09/25 21:07:45  cl
+  - added UI for non-RFC network charset selection
+
   Revision 1.34  2001/09/17 16:17:07  cl
   - Fixed ntAddressCompatible
 
