@@ -26,8 +26,9 @@ const bm_changesys = 1;
       bm_AutoSys   = 4;
       bm_postmaster= 5;
 
-const uucp_mode_modem = 1;
-      uucp_mode_tcpip = 2;
+const conn_mode_modem = 1;
+      conn_mode_tcpip = 2;
+      conn_mode_telnet= 3;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
@@ -147,7 +148,7 @@ begin
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
-    UUprotos:='Ggz';
+    UUprotos:='tGgz';
     ReplaceOwn := false;
     efilter:='';
     afilter:='';
@@ -161,9 +162,9 @@ begin
     BMdomain:=false;
     maxfsize:=0;
 
-    uucp_mode:=uucp_mode_modem;         { UUCP: Modus, _modem oder _tcpip }
-    uucp_ip:='uucp';                    { UUCP: IP oder Domain }
-    uucp_port:=540;                     { UUCP: Port }
+    conn_mode:=conn_mode_modem;       { UUCP: Modus, _modem oder _tcpip }
+    conn_ip:='';                      { UUCP: IP oder Domain }
+    conn_port:=0;                     { UUCP: Port }
 
     nntp_ip:='news';             { Default IP }
     nntp_port:= 119;             { Port }
@@ -316,9 +317,12 @@ begin
             getb(su,  'brettmanagertyp',BMtyp) or
             getx(su,  'brettmanagerdomain',BMdomain) or
             getw(su,  'maxfilesize',maxfsize) or
-            getb(su,  'UU-Mode',uucp_mode) or
-            gets(s,su,'UU-Host',uucp_ip,255) or
-            geti(su,  'UU-Port',uucp_port) or
+            getb(su,  'Netcall-Mode',conn_mode) or
+            gets(s,su,'IP-Host',conn_ip,255) or
+            geti(su,  'IP-Port',conn_port) or
+         (* !! Shouldn't that be cleaned up? *)
+         (* !! XXXX-ID/XXXX-Password is already present as loginname/password *)
+	 (* !! XXX-Host/XXXX-Port can always be written as IP-Host/IP-Port    *)
             gets(s,su,'NNTP-Host',nntp_ip,255) or
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
@@ -462,9 +466,9 @@ begin
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
 
-    writeln(t,'UU-Mode=',uucp_mode);
-    if uucp_ip<>''   then writeln(t,'UU-Host=',uucp_ip);
-    if uucp_port<>-1 then writeln(t,'UU-Port=',uucp_port);
+    writeln(t,'Netcall-Mode=',conn_mode);
+    if conn_ip<>''   then writeln(t,'IP-Host=',conn_ip);
+    if conn_port>=-1 then writeln(t,'IP-Port=',conn_port);
 
     if nntp_ip<>''   then writeln(t,'NNTP-Host=',nntp_ip);
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
@@ -595,6 +599,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/03/04 23:14:34  cl
+  - added config for UUCP-t protocol
+  - updated helptexts for UUCP configuration dialogue
+  - rearranged code for box configuration
+  - disable some UUCP config options when unneeded
+
   Revision 1.29  2001/01/22 16:15:16  mk
   - added ReplaceOwn-Feature (merge from 3.40 branch)
 

@@ -51,7 +51,10 @@ function  notempty2(var s:string):boolean;
 function  testreplyto(var s:string):boolean;
 procedure uucp_getloginname(var s:string);
 function  uucp_setmode(var s:string):boolean;
-function  testuucp(var s:string):boolean;
+function  uucp_setprot(var s:string):boolean;
+function  uucp_setsznego(var s:string):boolean;
+function  testuucp(brk,modif:boolean):boolean;
+//function  testuucp(var s:string):boolean;
 procedure SetDomain(var s:string);
 procedure testArcExt(var s:string);
 function  testscript(var s:string):boolean;
@@ -85,12 +88,26 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       DownArcNr : integer;
       userfield : integer;    { Masken-Nr., s. get_first_box }
       gf_fido   : boolean;
-      loginfld  : integer;    { UUCP-Loginname }
-      uup1,uupl : integer;
+      loginfld  : integer;    { UUCP: login                     }
 
-      uucp_telfld:integer;
-      uucp_ipfld: integer;
-      uucp_portfld:integer;
+      UUCP_ModeFld:integer;   { UUCP: field of mode selector    }
+
+      UUCP_TelFld:integer;    { UUCP: field for phone numbers   }
+      UUCP_IPFld: integer;    { UUCP: field for ip no./hostname }
+      UUCP_PortFld:integer;   { UUCP: field for ip port         }
+
+      UUp1,UUpl : integer;    { UUCP: first and last protocol   }
+      
+      UUCP_peFld: integer;    { UUCP: field of UUCP-e protocol  }
+      UUCP_ptFld: integer;    { UUCP: field of UUCP-t protocol  }
+      UUCP_p_GFld:integer;    { UUCP: field of UUCP-G protocol  }
+      UUCP_pgFld: integer;    { UUCP: field of UUCP-g protocol  }
+
+      UUCP_gWinFld:integer;   { UUCP: field of window size      }
+      UUCP_gPktFld:integer;   { UUCP: field of packet size      }
+      UUCP_gVarFld:integer;   { UUCP: field of window size      }
+      UUCP_gForFld:integer;   { UUCP: field of packet size      }
+      UUCP_MaxSizeFld:integer;{ UUCP: field of max. file size   }
 
       DomainNt  : shortint;   { Netztyp f. setdomain() und testvertreterbox() }
       bDomainNt : byte;                                                { u.a. }
@@ -315,7 +332,27 @@ begin
   setfieldnodisp(uucp_telfld, not modem);
   setfieldnodisp(uucp_ipfld,      modem);
   setfieldnodisp(uucp_portfld,    modem);
+
+  setfieldenable(uucp_pefld,  not modem);
+  setfieldenable(uucp_ptfld,  not modem);
   uucp_setmode:=true;
+end;
+
+function uucp_setprot(var s:string):boolean;
+var has_g: boolean;
+begin
+  has_g := (s=_jn_[1]) or (getfield(iif(uucp_p_gfld=fieldpos,uucp_pgfld,uucp_p_gfld))=_jn_[1]);
+  setfieldenable(uucp_gwinfld, has_g);
+  setfieldenable(uucp_gpktfld, has_g);
+  setfieldenable(uucp_gvarfld, has_g);
+  setfieldenable(uucp_gforfld, has_g);
+  result:=true;
+end; 
+
+function uucp_setsznego(var s:string):boolean;
+begin
+  setfieldenable(uucp_MaxSizeFld,s=_jn_[1]);
+  result:=true;
 end;
 
 function DefaultMaps(nt:byte):string;
@@ -334,20 +371,28 @@ begin
   end;
 end;
 
-function testuucp(var s:string):boolean;
-var ok : boolean;
-    i  : integer;
+function testuucp(brk,modif:boolean):boolean;
+var i  : integer;
+  modem: boolean;
 begin
-  ok:=false;
+  if brk or (not modif) then 
+  begin
+    result:=true;
+    exit;
+  end;
+
+  modem:=(getfield(uucp_modefld)=getres2(920,71));
+
   for i:=uup1 to uupl do
-    if i=fieldpos then
-      if s=_jn_[1] then ok:=true   { 'J' }
-      else
-    else
-      if getfield(i)=_jn_[1] then ok:=true;
-  testuucp:=ok;
-  if not ok then
-    rfehler(909);    { 'Mindestens ein Protokoll mu· eingeschaltet sein!' }
+    if not (modem and (i in[uucp_pefld,uucp_ptfld])) then
+      if getfield(i)=_jn_[1] then 
+      begin
+        result:=true;
+        exit;
+      end;
+
+  rfehler(909);    { 'Mindestens ein Protokoll mu· eingeschaltet sein!' }
+  result:=false;
 end;
 
 
@@ -402,7 +447,7 @@ end;
 
 procedure scripterrors(var s:string);
 begin
-  if (s<>'') and Fileexists(s) and (RunScript(true,s,false,false,nil)<>0) then begin
+  if (s<>'') and Fileexists(s) and (RunScript(nil,nil,nil,true,s,false,false)<>0) then begin
     rfehler(925);    { 'Syntaxfehler in Script' }
     if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
     end;
@@ -1746,6 +1791,12 @@ end.
 
 {
   $Log$
+  Revision 1.57  2001/03/04 23:14:34  cl
+  - added config for UUCP-t protocol
+  - updated helptexts for UUCP configuration dialogue
+  - rearranged code for box configuration
+  - disable some UUCP config options when unneeded
+
   Revision 1.56  2001/01/21 16:54:01  mk
   - in unix do not use higher ascii chars (unisel)
 
