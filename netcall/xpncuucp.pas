@@ -89,9 +89,14 @@ var
 
     procedure CleanSpool;
     begin
+      CreateDir(IncludeTrailingPathDelimiter(DestDir));
+      
       erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.OUT'); (* delete old output files *)
       erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.BAK'); (* delete old input files  *)
-      CreateDir(IncludeTrailingPathDelimiter(DestDir));
+     {$IFDEF UnixFS}
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.out'); (* delete old output files *)
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.bak'); (* delete old input files  *)
+     {$ENDIF}
     end;
 
     function RunoutFilter:boolean;
@@ -503,6 +508,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.19  2002/05/20 15:21:34  cl
+  - Delete both *.BAK/OUT and *.bak/out under UnixFS
+
   Revision 1.18  2002/05/03 20:43:53  mk
   - code cleanup and added comment
 
