@@ -150,7 +150,6 @@ var x,y   : byte;
     hdp   : headerp;
     hds   : longint;
     bretter : string[8];
-    Check4Date: Boolean;
     suchstring      : string[SuchLen];
     typc          : char;
     statb           : byte;
@@ -393,8 +392,6 @@ label ende;
       such  : string[81];
           j : byte;
       found_not : boolean;
-      d: Longint;
-      b: Byte;
 
 {   Volltextcheck:
 
@@ -475,21 +472,7 @@ label ende;
 
 
 {--Normale Suche--}
-    else if check4date and (readmode >0) then  {Suchen im akt. Lesemodus }
-    begin
-      if readmode=1 then
-      begin
-        dbReadN(mbase,mb_gelesen,b);
-        if b>0 then exit;
-      end
-      else if aktdispmode <> 10 then
-      begin
-        dbReadN(mbase,mb_empfdatum,d);
-        if smdl(d,readdate) then exit;
-      end;
-    end else                                   {Headereintragsuche}
-
-    if suchfeld<>'' then begin
+    else if suchfeld<>'' then begin
       dbRead(mbase,suchfeld,such);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
         ReadHeader(hdp^,hds,false);
@@ -553,9 +536,7 @@ label ende;
 
   procedure TestBrett(_brett:string);
   begin
-    if check4date and (aktdispmode=10) and (readmode>1)
-      then dbSeek(mbase,miBrett,_brett+dbLongStr(readdate))
-      else dbSeek(mbase,miBrett,_brett);
+    dbSeek(mbase,miBrett,_brett);
     while not dbEof(mbase) and (dbReadStr(mbase,'brett')=_brett) and not brk do
     begin
       TestMsg;
@@ -735,7 +716,6 @@ begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
     umlaut:=multipos('„”',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
-    check4date:=cpos('l',lstr(suchopt))>0;  {Suchen ab aktuellem Lesedatum}
     bereich:=0;
     for i:=1 to 4 do
       if ustr(bretter)=ustr(bera[i]) then bereich:=i;
@@ -2447,6 +2427,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.15  2000/12/12 14:46:05  mk
+  - Sucheoption 'l' von JG wieder entfernt
+
   Revision 1.47.2.14  2000/12/12 11:30:28  mk
   - FindClose hinzugefuegt
 
