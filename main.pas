@@ -67,6 +67,7 @@ uses
      ndiff,    { nodelist diff      }
      replytoall,
      pmconv,
+     maggi,
      zftools,
 {$IFDEF Win32}
      windows,
@@ -93,6 +94,9 @@ begin
   else
   if Prog = 'PMCONV' then
     StartCommandLinePMConv
+  else
+  if Prog = 'MAGGI' then
+    StartCommandLineMaggi
   else
     Result := false;
 end;
@@ -241,6 +245,10 @@ end;
 
 {
   $Log$
+  Revision 1.16.2.4  2003/10/21 14:03:15  mk
+  - ported maggi to 32 bit, tested only with one puffer
+  - start maggi with "openxp maggi <parameters>
+
   Revision 1.16.2.3  2003/04/23 21:55:47  mk
   - made PMConv internal
 

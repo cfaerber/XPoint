@@ -40,6 +40,8 @@ unit maggi;
 
 interface
 
+procedure StartCommandlineMaggi;
+
 implementation
 
 uses sysutils, classes, xpheader, xpmakeheader,
@@ -92,24 +94,9 @@ var   f1,f2     : file;
       bretter   : integer;
       brettp    : array[1..maxbrett] of ^brett;
 
-      empflist,uline,xline,mail : tstringlist;
-      hd : THeader;
-
-
-
-
 const
   { wird zum Einlesen der Customizable Headerlines benoetigt }
       mheadercustom : array[1..2] of string = ('','');
-
-procedure logo;
-begin
-  writeln;
-  writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
-  writeln;
-end;
 
 procedure helppage;
 begin
@@ -136,7 +123,7 @@ begin
   helppage;
 end;
 
-procedure error(txt:atext);
+procedure error(const txt:atext);
 begin
   writeln('Fehler: ',txt);
   halt(1);
@@ -145,20 +132,20 @@ end;
 
 procedure getpar;
 var i : integer;
-    s : string[127];
+    s : string;
 
-  function _is(t:string):boolean;
+  function _is(const t:string):boolean;
   begin
     _is:=(s='-'+t) or (s='/'+t);
   end;
 
-  function isl(t:string):boolean;
+  function isl(const t:string):boolean;
   begin
     isl:=(LeftStr(s,length(t)+1)='-'+t) or (LeftStr(s,length(t)+1)='/'+t);
   end;
 
 begin
-  for i:=1 to paramcount do begin
+  for i:=2 to paramcount do begin
     s:=LowerCase(paramstr(i));
     if _is('mz') then direction:=1
     else if _is('zm') then direction:=2
@@ -200,11 +187,13 @@ end;
 { s. auch XP8.readbrettliste! }
 
 procedure loadbretter(pronet:boolean);
-const s : string = '';
-      p : byte = 0;
-var t   : text;
+const
+  p : byte = 0;
+var
+  t: text;
+  s: String;
 
-  procedure berror(txt:atext);
+  procedure berror(const txt:atext);
   begin
     writeln; writeln;
     close(t);
@@ -213,7 +202,7 @@ var t   : text;
 
   procedure qsort(l,r:integer);
   var i,j : integer;
-      x   : string[80];
+      x   : string[40];
       w   : pointer;
   begin
     i:=l; j:=r;
@@ -236,42 +225,48 @@ begin
   reset(t);
   if ioresult<>0 then
     error('Bretterdatei fehlt')
-  else begin
+  else
+  begin
     bretter:=0;
-    while not eof(t) do begin
-      readln(t,s);
-      s:=trim(s);
+    while not eof(t) do
+    begin
+      readln(t, s);
+      s := trim(s);
       if (s<>'') and (s[1]<>'#') and
          (not pronet or ((s[1]<>';') and (s[1]<>'-') and (LeftStr(s,4)<>'CODE')))
-      then begin
+      then
+      begin
         if cpos(' ',s)=0 then
           berror('Fehler in Brettdatei');
         inc(bretter);
         if bretter>maxbrett then
           berror('zu viele Eintr„ge in Brettdatei!');
         new(brettp[bretter]);
-        if pronet then begin
+        if pronet then
+        begin
           brettp[bretter]^.code:=LeftStr(s,4);
           brettp[bretter]^.name:=trim(mid(s,32));
-          end
-        else begin
-          if s[41]<>' ' then
+        end else
+        begin
+          if (Length(s) >= 41) and (s[41]<>' ') then
             brettp[bretter]^.code:=copy(s,41,4)
           else
             brettp[bretter]^.code:=trim(copy(s,41,6));
           p:=40;
-          while (p>0) and (s[p]=' ') do dec(p);
+          while (p>0) and (s[p]=' ') do
+            dec(p);
           SetLength(s, p);
-          { UpString(s); }
-          if LeftStr(s,1)<>'/' then s:=LeftStr('/'+s,40);
+
+          if FirstChar(s) <> '/' then
+            s:=LeftStr('/'+s,40);
           while cpos(' ',s)>0 do
             s[cpos(' ',s)]:='_';
           brettp[bretter]^.name:=s;
-          end;
         end;
       end;
-    close(t);
     end;
+    close(t);
+  end;
   qsort(1,bretter);
   writeln(' ok.');
   writeln;
@@ -289,7 +284,7 @@ end;
 procedure wrs(s:string);
 begin
   s:=s+#13#10;
-  blockwrite(f2,s[1],length(s));
+  blockwrite(f2, s[1], length(s));
 end;
 
 procedure fmove(size:longint);
@@ -584,18 +579,7 @@ begin
     end;
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF FPC }
-procedure addtoempflist(s:string);
-begin
-end;
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF FPC }
-
-
-function compmimetyp(typ:string):string;
+function compmimetyp(const typ:string):string;
 begin
   if LeftStr(typ,12)='application/' then
     compmimetyp:=LowerCase(mid(typ,12))
@@ -603,16 +587,12 @@ begin
     compmimetyp:=LowerCase(typ);
 end;
 
-
-{$DEFINE uuzmime }
-
 procedure cerror;
 begin
   writeln;
   writeln('Fehler - Konvertierung abgebrochen');
   halt(2);
 end;
-
 
 procedure ZM(pronet:boolean);
 var hd    : THeader;
@@ -689,9 +669,11 @@ begin
           else Firstempfaenger:=brettp[i]^.code+fido_to;
           end
         else begin
-          i:=cpos('@', Firstempfaenger);
-          while cPos('#',LeftStr(Firstempfaenger,i))>0 do
-            Firstempfaenger[cpos('#', Firstempfaenger)]:='@';    { # -> @ }
+          s := FirstEmpfaenger;
+          i:=cpos('@', s);
+          while cPos('#',LeftStr(s,i))>0 do
+            s[cpos('#', s)]:='@';    { # -> @ }
+          FirstEmpfaenger := s;
           node:=mid(Firstempfaenger,i+1);
           if cpos('.',node)>0 then
             node:=LeftStr(node,cpos('.',node)-1);
@@ -776,6 +758,7 @@ var hd    : Theader;
     fs    : longint;
     nn    : longint;
     p1,p2 : byte;
+    s: String;
 begin
   reset(f1,1);
   rewrite(f2,1);
@@ -798,14 +781,21 @@ begin
           if p2>0 then Firstempfaenger:=LeftStr(Firstempfaenger,p1+p2-1);
           end
         else
-      else begin
+      else
+      begin
         if zq and (LeftStr(Firstempfaenger,1)='/') then
           Firstempfaenger:=mid(Firstempfaenger,2);
         if not g_und_s then
-          for i:=1 to length(empfaenger) do
-            if Firstempfaenger[i]='/' then Firstempfaenger[i]:='\'
-            else if Firstempfaenger[i]='\' then Firstempfaenger[i]:='/';
-        if not zq and (LeftStr(empfaenger,1)<>'/') then
+        begin
+          s := FirstEmpfaenger;
+          for i:=1 to length(s) do
+            if s[i]='/' then
+              s[i]:='\'
+            else
+              if s[i]='\' then s[i]:='/';
+          FirstEmpfaenger := s;
+        end;
+        if not zq and (LeftStr(FirstEmpfaenger,1)<>'/') then
           Firstempfaenger:='/'+Firstempfaenger;
         end;
       if zq then begin
@@ -825,7 +815,7 @@ begin
         wrs(strs(groesse));
         end
       else begin
-        wrs('EMP: '+empfaenger);
+        wrs('EMP: '+ FirstEmpfaenger);
         wrs('ABS: '+absender);
         wrs('BET: '+betreff);
         pfad:=trim(pfad);
@@ -858,9 +848,9 @@ end;
 
 
 procedure ZMaus;
-type  barr  = array[0..20000] of byte;
+type  barr  = array[0..32767] of byte;
       barrp = ^barr;
-var hd     : header;
+var hd     : THeader;
     hds    : longint;
     ok     : boolean;
     adr    : longint;
@@ -882,16 +872,19 @@ var hd     : header;
   function getchar:char;
   begin
     if bufpos>=rr then
-      if size=0 then rr:=0
-      else begin
+      if size=0 then
+        rr:=0
+      else
+      begin
         blockread(f1,buf^,min(sizeof(buf^),size),rr);
         dec(size,rr);
         bufpos:=0;
-        end;
-    if bufpos<rr then begin
+      end;
+    if bufpos<rr then
+    begin
       getchar:=char(buf^[bufpos]);
       inc(bufpos);
-      end;
+    end;
   end;
 
   procedure getline;
@@ -1135,10 +1128,11 @@ begin
 { writeln(t,':REN'); }
   if mausinfos then
     get_infofiles;
+  hd := THeader.Create;
   if fs>=8 then
     repeat
       seek(f1,adr);
-      makeheader(true,f1,0,0,hds,hd,ok,false);
+      makeheader(true,f1,0,hds,hd,ok,false, false);
       if ok then with hd do begin
         if not mkoutfile then begin
           p1:=cpos('@',msgid);
@@ -1156,7 +1150,7 @@ begin
           komzu:=(attrib and attrQuoteTo<>0) or
                  (not mkoutfile and (p1>0) and (replypath<>boxname));
             { !!: "Kommentar zu" bei PM-Kommentar an andere Pollbox }
-          tomaus:=(ref='') and (UpperCase(LeftStr(Firstempfaenger,5))='MAUS@');
+          tomaus:=(GetLastReference='') and (UpperCase(LeftStr(Firstempfaenger,5))='MAUS@');
           if tomaus and (betreff='<Maus-Command>') then
             writeln(t,'#CMD')
           else if tomaus and (betreff='<Maus-Direct-Command>') then
@@ -1166,11 +1160,11 @@ begin
             if org_msgid<>'' then
               writeln(t,'I',org_msgid);
             if p1>0 then                  { PM }
-              if (ref='') or (attrib and attrPmReply<>0) or komzu or mkoutfile
+              if (GetLastReference='') or (attrib and attrPmReply<>0) or komzu or mkoutfile
               then begin
                 writeln(t,'A',trim(LeftStr(Firstempfaenger,p1-1)),' @ ',
                           trim(mid(Firstempfaenger,p1+1)));
-                komzu:=(ref<>'');
+                komzu:=(GetLastReference<>'');
                 end
               else
             else
@@ -1195,20 +1189,20 @@ begin
                 writeln(t,'DL')
               else
                 writeln(t,'DN');
-            if ref<>'' then begin
+            if GetLastReference<>'' then begin
               if org_xref<>'' then
                 writeln(t,'R',org_xref);
               if komzu then begin
-                if org_xref='' then writeln(t,'R',ref);
+                if org_xref='' then writeln(t,'R',GetLastReference);
                 { fb: Wildwestverkettung nur bei G?K und PM. Ist nach
                 Maus-Specs. nicht noetig, aber der Kompatiblitaet wegen }
                 if LeftStr(UpperCase(ReplyGroup),length(bretth))=bretth then
                 {/fb}
-                  writeln(t,':Kommentar zu ',ref,' in der Gruppe ',
+                  writeln(t,':Kommentar zu ',GetLastReference,' in der Gruppe ',
                             UpperCase(mid(ReplyGroup,length(bretth)+1)));
                 end
               else
-                writeln(t,'-',ref);
+                writeln(t,'-',GetLastReference);
               end;
             { suboptimal }
             if followup.count>0 then
@@ -1266,18 +1260,15 @@ const maxilines = 5000;
       pmlogfile = 'MAUSPM.LOG';
       stlogfile = 'MAUSSTAT.LOG';
       bufsize   = 8192;
-type  tb        = array[0..bufsize-1] of byte;
-      tbufa     = array[1..maxilines] of record
-                                           s  : string;
-                                           lf : boolean;
-                                         end;
+type
+  tb        = array[0..bufsize-1] of byte;
 var t1,log     : text;
     f2         : file;
     pmlog,stlog: text;
-    hd         : header;
+    hd         : THeader;
     s          : string;
-    tbuf       : tbufa;
-    lines,i,nn : longint;
+    tbuf       : TStringList;
+    i,nn : longint;
     c          : char;
     pm         : byte;
     b1         : tb;
@@ -1291,7 +1282,7 @@ var t1,log     : text;
     xline      : array[1..maxxlines] of string;
     xlines     : integer;
 
-  function mausform(s:string):string;
+  function mausform(const s:string):string;
   var p : byte;
   begin
     p:=cpos('@',s);
@@ -1301,16 +1292,13 @@ var t1,log     : text;
       mausform:=LeftStr(trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1)),79);
   end;
 
-  procedure appline(s:string; crlf:boolean);
+  procedure appline(const s:string);
   begin
-    if hd.mimever<>'' then
-      s := ISOToIBM(s);
-    begin
-      inc(lines);
-      tbuf[lines].s:=s;
-      tbuf[lines].lf:=crlf;
-      inc(hd.groesse,length(s)+iif(crlf,2,0));
-    end
+    if hd.MIME.mversion<>'' then
+      TBuf.Add(ISOToIBM(s))
+    else
+      TBuf.Add(s);
+    inc(hd.groesse,length(s)+2);
   end;
 
   function infofile(s:string):string;
@@ -1332,13 +1320,16 @@ var t1,log     : text;
   end;
 
   procedure TestUUbinary;
-  var i : integer;
+  var
+    i : integer;
   begin
-    i:=1;
-    while (i<=lines) and (pos('begin ',tbuf[i].s)<>1) do inc(i);
-    while (i<=lines) and (pos('end',tbuf[i].s)<>1) do inc(i);
-    while (i<=lines) and (pos('size ',tbuf[i].s)<>1) do inc(i);
-    if i>lines then hd.typ:='T';
+    i:=0;
+    while (i<TBuf.Count) and (pos('begin ',tbuf[i])<>1) do inc(i);
+    while (i<TBuf.Count) and (pos('end',tbuf[i])<>1) do inc(i);
+    while (i<TBuf.Count) and (pos('size ',tbuf[i])<>1) do inc(i);
+    // !! test it
+    if i >= TBuf.Count then
+      hd.typ:='T';
   end;
 
   procedure UUdecode;
@@ -1354,9 +1345,9 @@ var t1,log     : text;
     bufs:=65536;
     getmem(buf,bufs);
     bufp:=0;
-    i:=1;
-    while (i<=lines) and (pos('begin ',tbuf[i].s)<>1) do inc(i);
-    s:=tbuf[i].s;
+    i:=0;
+    while (i< TBuf.Count) and (pos('begin ',tbuf[i])<>1) do inc(i);
+    s:=tbuf[i];
     delete(s,1,6);
     s:=trim(mid(s,blankpos(s)));   { Unix-Filemode wegschneiden }
     if blankpos(s)>0 then truncstr(s,blankpos(s)-1);
@@ -1364,8 +1355,8 @@ var t1,log     : text;
     if hd.ddatum<>'' then wrs('DDA: '+hd.ddatum+'W+0');
     inc(i);
     { R-}
-    while pos('end',tbuf[i].s)=0 do begin
-      s:=tbuf[i].s;
+    while pos('end',tbuf[i])=0 do begin
+      s:=tbuf[i];
       n:=(((ord(s[1])-32) and $3f + 2)div 3)*4;   { anzahl Original-Bytes }
       p:=2;
       while p<n do begin
@@ -1380,28 +1371,12 @@ var t1,log     : text;
       inc(i);
       end;
     { R+}
-    while (pos('size ',tbuf[i].s)<>1) do inc(i);
-    s:=trim(mid(tbuf[i].s,5));
+    while (pos('size ',tbuf[i])<>1) and (i< TBuf.Count) do inc(i);
+    s:=trim(mid(tbuf[i],5));
     bufp:=min(bufp,ival(s));   { echte Groesse }
     wrs('LEN: '+strs(bufp));
     wrs('');
     blockwrite(f2,buf^,bufp);
-  end;
-
-  procedure WriteInfofile(fn:string);
-  var t : text;
-      i : longint;
-  begin
-    assign(t,fn);
-    rewrite(t);
-    if ioresult=0 then begin
-      for i:=1 to lines do             { Nachrichtentext schreiben }
-        if tbuf[i].lf then
-          writeln(t,tbuf[i].s)
-        else
-          write(t,tbuf[i].s);
-      close(t);
-      end;
   end;
 
   procedure add_xline(s:string);
@@ -1415,7 +1390,6 @@ var t1,log     : text;
 begin
   new(info);
   MausReadITI(boxname,info,infos);
-  // !! fsize:=_filesize(infile);
   assign(t1,infile); settextbuf(t1,b1); reset(t1);
   assign(f2,outfile); rewrite(f2,1);
   assign(log,logfile); rewrite(log);
@@ -1423,12 +1397,15 @@ begin
   assign(stlog,stlogfile); rewrite(stlog);
   if not eof(t1) then readln(t1,s);
   nn:=0;
-  while not eof(t1) do with hd do
+  tbuf := TStringList.Create;
+  hd := THeader.Create;
+  while not eof(t1) do
+  with hd do
   begin
-    fillchar(hd,sizeof(hd),0);
+    hd.clear;
     xlines:=0;
     typ:='T';
-    lines:=0;
+    tbuf.Clear;
     keinbetreff:=true;
     while (LeftStr(s,1)<>'#') and not eof(t1) do
       readln(t1,s);
@@ -1442,43 +1419,41 @@ begin
       UseMIME:=false;
       repeat
         read(t1,s);
-        if (s<>'') and (s[1]<>'#') then begin
+        if (s<>'') and (s[1]<>'#') then
+        begin
           c:=s[1];
-          delete(s,1,1);
+          DeleteFirstChar(s);
           case c of
             ':' : if UseMIME then
                     if (s='-') or (cpos(':',s)=0) then
                       UseMIME:=false
                     else
                       add_xline(s)
-                  else begin
-                    appline(s,eoln(t1));
+                  else
+                  begin
+                    appline(s);
                     if firstline then begin
                       if LeftStr(LowerCase(s),13)='kommentar zu ' then begin
-                        ref:=trim(mid(s,14));
-                        if cpos(' ',ref)>0 then
-                          ref:=LeftStr(ref,cpos(' ',ref)-1);
+                        References.Add(trim(mid(s,14)));
+                        if cpos(' ',GetLastReference)>0 then
+                          References.Add(LeftStr(GetLastReference,cpos(' ',GetLastReference)-1));
                         end
-                      else if (LeftStr(s,1)='-') and (cpos('@',s)>0) and (ref='')
+                      else if (LeftStr(s,1)='-') and (cpos('@',s)>0) and (GetLastReference='')
                       then begin
-                        ref:=trim(mid(s,2));
-                        if cpos(' ',ref)>0 then
-                          ref:=LeftStr(ref,cpos(' ',ref)-1);
+                        References.Add(trim(mid(s,2)));
+                        if cpos(' ', GetLastReference)>0 then
+                          References.Add(LeftStr(GetLastReference,cpos(' ', GetLastReference)-1));
                         end
                       else if LeftStr(LowerCase(s),13)='followup-to: ' then
                         followup.add(bretth+trim(mid(s,14)))
                       else if LeftStr(LowerCase(s),10)='reply-to: ' then
-                        replyto.add(trim(mid(s,11)))
+                        Replyto := trim(mid(s,11))
                       else if LowerCase(s)='content-type: uu1' then
                         typ:='B'
                       else if LowerCase(LeftStr(s,11))='file-date: ' then
                         ddatum:=trim(mid(s,12))
                       else
                         firstline:=false;
-                      end;
-                    while not eoln(t1) do begin
-                      read(t1,s);
-                      appline(s,eoln(t1));
                       end;
                   end;
             'A' : if Firstempfaenger='' then Firstempfaenger:=mausform(s);
@@ -1498,35 +1473,37 @@ begin
                     'L' : distribution:='lokal';
                   end;
             'M' : begin
-                    mimever:=GetToken(s,';');
+                    mime.mversion :=GetToken(s,';');
                     UseMIME:=true;
                     if LowerCase(GetToken(s,':'))='content-type' then
-                      mimect:=s;
+                      mime.ctype := s;
                   end;
             { redundante Kommentar-Zeilen aus Outfile tilgen }
             '>' : if (LeftStr(s,9)<>'boundary=') and (not mausKF) then begin
                     parname:=LowerCase(trim(LeftStr(s,cposx(':',s)-1)));
                     if (parname<>'mid') and (parname<>'rid') and
                        (parname<>'mime')
-                       then appline(s,true);
+                       then appline(s);
                     if parname='gate' then begin
                        if GetToken(s,':')='' then;
                        gate:=s;
                        end;
                   end;
             {/fb}
-             '-' : ref:=LeftStr(s,120);
+             '-' : References.Add(LeftStr(s,120));
           end;
           s:=c+s;
         end;
         readln(t1);
       until (LeftStr(s,1)='#') or eof(t1);
       if pm=2 then writeln(pmlog,msgid);
-      if zdatum='' then begin
-        datum:=zdate; setzdate(hd); end;
+      if zdatum='' then
+      begin
+        datum:=zdate; setzdate(hd);
+      end;
       if msgid='#LOG' then
-        for i:=1 to lines do
-          writeln(log,tbuf[i].s)
+        for i:=0 to TBuf.Count - 1 do
+          writeln(log,tbuf[i])
       else begin
         inc(nn);
         write(#13,'Nachrichten: ',nn);
@@ -1539,7 +1516,7 @@ begin
           else
             if MausIT_files and (LeftStr(msgid,2)='IT') and (length(MsgID)=3)
             then begin
-              WriteInfofile(boxname+'.'+msgid);    { ITI/ITG/ITB in Datei }
+              TBuf.SaveToFile(boxname+'.'+msgid);    { ITI/ITG/ITB in Datei }
               killmsg:=true;                       { schreiben            }
               end
             else
@@ -1566,16 +1543,15 @@ begin
           wrs('ROT: '+reverse(pfad));
           wrs('MID: '+msgid);
           if organisation<>'' then wrs('ORG: '+organisation);
-          if ref<>'' then wrs('BEZ: '+ref);
-          for i:=0 to replyto.count-1 do
-            wrs('ANTWORT-AN: '+replyto[i]);
+          if GetLastReference<>'' then wrs('BEZ: '+ GetLastReference);
+          if replyto <> '' then wrs('ANTWORT-AN: '+replyto);
           for i:=0 to followup.count-1 do
             wrs('DISKUSSION-IN: '+followup[i]);
           if programm<>''  then wrs('Mailer: '+programm);
           if gate<>''      then wrs('Gate: '+gate);
           if distribution<>'' then wrs('U-Distribution: '+distribution);
-          if mimever<>'' then wrs('U-MIME-Version: '+mimever);
-          if mimect<>'' then wrs('U-Content-Type: '+mimect);
+          if MIME.mversion<>'' then wrs('U-MIME-Version: '+MIME.mversion);
+          if MIME.ctype<>'' then wrs('U-Content-Type: '+MIME.ctype);
           for i:=1 to xlines do
             wrs('U-'+xline[i]);
           wrs('X_C:');
@@ -1587,20 +1563,18 @@ begin
           if typ='B' then begin
             wrs('TYP: BIN');
             UUdecode;    { schreibt LEN, crlf + Inhalt }
-            end
-          else begin
+          end else
+          begin
             wrs('LEN: '+strs(groesse));
             wrs('');
-            for i:=1 to lines do             { Nachrichtentext schreiben }
-              if tbuf[i].lf then
-                wrs(tbuf[i].s)
-              else
-                blockwrite(f2,tbuf[i].s[1],length(tbuf[i].s));
-            end;
+            for i:=0 to TBuf.Count -1 do             { Nachrichtentext schreiben }
+              wrs(tbuf[i])
           end;
         end;
       end;
     end;
+  end;
+  tbuf.free;
   dispose(info);
   close(t1);
   close(f2);
@@ -1610,9 +1584,14 @@ begin
 end;
 
 
+procedure StartCommandlineMaggi;
 begin
-  test8086:=0;
-  logo;
+  writeln;
+  writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
+  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
+  writeln;
+
   getpar;
   if direction in [1,2,3,8,9] then loadbretter(direction in [8,9]);
   testfiles;
@@ -1629,12 +1608,17 @@ begin
     9   : ZM(true);        { ZC -> ProNET }
   end;
   if halferror then halt(2);
-end.
+end;
+
 {
   $Log$
+  Revision 1.35.2.2  2003/10/21 14:03:15  mk
+  - ported maggi to 32 bit, tested only with one puffer
+  - start maggi with "openxp maggi <parameters>
+
   Revision 1.35.2.1  2002/07/21 20:14:32  ma
   - changed copyright from 2001 to 2002
-
+                                        
   Revision 1.35  2002/02/21 01:39:04  mk
   - made a litte bit more compilable :)
 
@@ -1747,3 +1731,4 @@ end.
   RB: [40] in [realnlen] geaendert
 
 }
+end.
