@@ -720,25 +720,31 @@ end;
 procedure ParkMsg;
 var f : file;
     i : integer;
+
   procedure wrs(s:string);
   begin
-    s:=LeftStr(s,253)+#13#10;
+    s:= s + #13#10;
     blockwrite(f,s[1],length(s));
   end;
+  
+var
+  Filename: String;
 begin
-  if FileExists(datei) then begin
+  Filename := TSendAttach_Part(parts[0]).filename;
+  if FileExists(Filename) then
+  begin
     assign(f,TempS(_filesize(fn)+200));
     rewrite(f,1);
     wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
     for i:=1 to cc_anz do
       wrs(getres(600)+' '+cc^[i]);
     wrs('');
-    assign(f2,datei);
+    assign(f2, Filename);
     reset(f2,1);
     fmove(f2,f);
     close(f2); close(f);
     erase(f2);
-    rename(f,datei);
+    rename(f, Filename);
     if ioresult<>0 then begin
       rewrite(f2,1); reset(f,1);
       fmove(f,f2);
@@ -1147,6 +1153,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.11  2003/05/01 19:05:22  mk
+  - fixed #643453: parken funktioniert nicht
+
   Revision 1.17.2.10  2002/07/31 18:40:41  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now
