@@ -32,7 +32,7 @@ function testmausempf(var s:string):boolean;
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
-     xp6,xp6l;
+     xp6,xp6l,editor,xpcc;
 
 
 const mauswlbox : string[BoxNameLen] = '';
@@ -1104,20 +1104,19 @@ again:
          6 : begin
                dbSeek(ubase,uiName,ustr(name));
                if not dbFound then begin   { User noch nicht vorhanden }
-                 dbAppend(ubase);
-                 dbWriteN(ubase,ub_username,name);
-                 pollbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
-                 if not IsBox(pollbox) then begin
+                  pollbox:=defaultbox;
+                 defaultbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
+                 if not IsBox(defaultbox) then begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
-                   dbReadN(bbase,bb_pollbox,pollbox);
-                   end
-                 else
-                   ReplaceVertreterbox(pollbox,true);
-                 dbWriteN(ubase,ub_pollbox,pollbox);
-                 dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-                 b:=1 + iif(newuseribm,0,8);
-                 dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
-                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adreábuch }
+                   dbReadN(bbase,bb_pollbox,defaultbox);
+                   end;
+                 ReplaceVertreterbox(defaultbox,true);
+                 if not cc_testempf(hdp^.absender)
+                 then begin
+                   defaultbox:=pollbox;
+                   goto ende;
+                   end;
+                 defaultbox:=pollbox;
                  end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
@@ -1210,13 +1209,18 @@ begin
   extract_msg(0,'',fn,true,1);
   if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
 
-  dbSeek(ubase,uiName,ustr(hdp^.absender));
-  if not dbFound then begin                        { Userbrett neu anlegen }
-    dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
-    if dbFound then dbReadN(bbase,bb_pollbox,box)
-    else box:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
-    makeuser(hdp^.absender,box);
+  box:=defaultbox;
+  dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
+  if dbFound then dbReadN(bbase,bb_pollbox,defaultbox)
+    else defaultbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
+  ReplaceVertreterbox(defaultbox,true);
+  if not cc_testempf(hdp^.absender)
+  then begin
+    defaultbox:=box;
+    _era(fn);
+    exit;
     end;
+  defaultbox:=box;
   tmp:=TempS(_filesize(fn)+2000);
   assign(tf,tmp);
   rewrite(tf,1);
@@ -1340,6 +1344,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.16  2001/08/02 12:52:40  my
+  JG:- When archiving a PM/AM with <Alt-P> and user doesn't exist already,
+       XP brings up a 'create user' dialogue and defaults to the server of
+       the message folder where the message is currently stored. Reply
+       servers are considered (if any).
+
   Revision 1.20.2.15  2001/07/14 16:38:57  my
   - Reversed wrong 'fix' (2000/09/18) of fe. This fix was meant to meet
     ZC specs but did everything else than that. N/W/K is "active"
