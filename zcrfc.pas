@@ -1812,13 +1812,12 @@ begin
       if p > 1 then
       begin
         s1 := s0;
-        zz := LeftStr(s0, p - 1);        { Identifier }
+        zz := TrimRight(LowerCase((LeftStr(s0, p - 1))));        { Identifier }
         inc(p);
         while (p < length(s0)) and (s0[p] <= ' ') do
           inc(p);
         delete(s0, 1, p - 1);
 
-        zz := TrimRight(LowerCase(zz));
         case zz[1] of
           'c':
             if zz = 'cc' then
@@ -1974,7 +1973,7 @@ begin
             envemp:=s0
           else
             if zz = 'lines' then
-            Lines := IVal(s0)
+            Lines := IVal(Trim(s0))
           else
             { grandson-of-1036 standard for former X-No-Archive }
             if zz = 'archive' then
@@ -3650,6 +3649,9 @@ end;
 
 {
   $Log$
+  Revision 1.94  2002/03/24 11:51:25  mk
+  - fixed bug: hd.lines is parsed 0 if lines header line contains white spaces
+
   Revision 1.93  2002/03/06 16:51:25  cl
   - BUGFIX *** FIXES POSSIBLE MAIL LOSS WITH BSMTP ***
     HELO was missing on all BSMTP packages not converted during first use
