@@ -1,0 +1,123 @@
+Versions-FAQ fr CrossPoint, OpenXP und XP2.
+
+Versionen, die komplett in Klammern stehen, waren nur intern verfuegbar;
+es werden nur die ver”ffentlichten Versionen genannt, Snapshots und
+interne Betas bleiben unerw„hnt.
+
+                              XP 3.20 (PM)
+                                  |
+                            OpenXP 3.20.001
+                                  |
+                                [...]
+                                  |
+                            OpenXP 3.20.021    ----->   OpenXP 3.20.RC1
+                                  |                           |
+(XP2 3.30.001)   <-----     OpenXP 3.21.022                 [...]
+      |                           |                           |
+    [...]                   OpenXP 3.21.023             OpenXP 3.20 Release
+      |                           |
+ XP2 3.30.007               OpenXP 3.21.024
+                                /   \
+    (16 Bit only)  OpenXP 3.30.1     OpenXP 3.70.1 (32 Bit only)
+                         |                 |
+                   OpenXP 3.30.3     OpenXP 3.70.2 (noch nicht freigegeben)
+
+3.12d Original von Peter Mandrelle
+     Letzte vom Autor selbst freigegebene Version
+
+3.20 nur als Sourcecode
+     Vom Autor weiterentwickelte Version, die nie ver”ffentlicht wurde,
+     Ausgangspunkt fr alle weiteren Entwicklungen
+
+Es gibt momentan also 4 Entwicklungslinien:
+
+3.20 DOS 16-Bit, OpenXP-Team, www.openxp.de
+     Stabilit„t ist alles, seit M„rz 2000 nur noch Bugfixes.
+     Die Release wurde am 06.08.2000 freigegeben und ist die wohl stabilste
+     verfgbare CrossPoint-Version berhaupt.
+
+3.30.x, DOS 16 Bit, OpenXP-Team, www.openxp.de
+     Relativ stabile DOS 16-Bit BETA Version mit vielen neuen Features,
+     aktuellste Weiterentwicklung der DOS Version vom OpenXP-Team.
+     Featureliste siehe unten
+
+3.30.x, DOS 16 Bit, XP2 Team, www.xp2.de
+     DOS 16-Bit Version BETA-Version, beinhaltet gegenber OpenXP 3.20
+     als wichtigste Neuerung die RFC/PPP Box, Featureliste siehe unten
+
+3.70.x, 32 Bit Version fr DOS, Windows, Linux und OS/2
+     Portierte Version von OpenXP 3.30.x, enth„lt soweit m”glich alle
+     Features von OpenXP 3.30.x. Momentan noch im Betatest mit eingeschr„nkter
+     Stabilit„t
+ÿ
+Liste der Features, welche die einzelnen CrossPoint-Versionen unterscheiden (nur
+die wichtigsten Punkte, alle Details sind in den Logfiles auf den Homepages der
+Entwickler nachzulesen). Alle Versionen enthalten hunderte von Bugfixes gegenber
+3.12d. OpenXP enth„lt alle Bugfixes von XP2, nicht jedoch umgekehrt.
+
+Original 3.12d -> OpenXP 3.20
+
+- MIME Nachrichten lesen und extrahieren
+
+OpenXP 3.20 -> XP2 3.30.x
+
+- Erweiterung von UUZ mit neuen Parameter "-ppp" und kleineren Updates
+- Neuer Boxentyp RFC/PPP fr die Zusammenarbeit mit UKAW und XP3P (und kompatiblen)
+  Erm”glicht die Einbindung der Programme ohne weitere Batch-Dateien und das
+  An- und Abbestellen von Newsgroups direkt aus XP heraus. Erweitertes Unverandt-
+  handling UKAW und kompatible
+- Gloassary-Funktion im Editor (Alt-G)
+- Parameter "-mailto:" von der Kommandozeile
+
+OpenXP 3.20 -> OpenXP 3.30.x
+
+- kleinere Erweiterungen fr das Mailhandling in XP und UUZ
+- deutlich erweiterte Untersttzung von externen Viewern
+- nderung in der Zeitschleifenfreigabe, Uhr wird jetzt immer angezeigt
+- FQDN jetzt auch fr UUCP-Boxentyp
+- Suchfunktion untersttzt und/oder-Suche
+- Bessere Erkennung von Magics bei File-Requests
+- Lesenmodus „ndern auch im Nachrichtenfenster m”glich
+- Adressbuchgruppen, siehe Config/Optionen/Allgemeines: Standard-Adressgruppe
+- Config/Optionen/Editor zeigt das gleiche Men wie <F10> im Editor
+- Verbesserte Default-Einstellungen im gesamten XP
+- Q im Lister schaltet Quotechars um
+- Felder in der Userliste sind sortierbar, siehe Config/Anzeige/Hilfen
+- Config/Anzeige/Hilfe/Feldtausch
+- Nachricht/Direkt + Weiterleiten: Bretter mit / oder F2 direkt ausw„hlbar
+- Schutzmaánahmen fr externe Viewer, siehe Config/Optionen/Viewer
+- Verteilerlisten in vielen Dialogen erlaubt
+- Unz„hlige Limits (z.B. fr Subjekt, Mailerstring) in XP und UUZ beseitigt
+- Eine gr”áere Anzahl ungelesen-Bugs beseitigt
+- Config/Anzeige/Farben...Nachrichten: Priorit„tsfarbe kann konfiguriert werden
+- <H> im Lister kann jetzt das Halteflag auch ausschalten,
+- <V> im Lister schaltet das Wiedervorlageflag ein/aus
+- Anzeige der Nachrichtenflags (Halten, Wiedervorlage etc.) im Lister
+- Cancel auch bei ZConnect m”glich
+- Nachrichtenfenster: <U> zeigt ungelesene Nachrichten
+- Weitersuchen bei markierten Nachrichten: bei fehlgeschlagener Suche
+  bleibt alte Markierung erhalten
+- Volltextsuche untersttz '?' und '*'
+- MIME-Auswahldialog erscheint nur noch wenn n”tig, <Shift>+<Enter> erzwingt ihn
+- 80 kb mehr Speicher im Editor frei
+- <Strg>+<G> markiert gesamte Adressbuchgruppe
+- Crosspostings mit Shift+B: Beschraenkungen bei Verteilern, verschiedenen
+  Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben.
+- Editor: Glossary-Funktion, <Alt>+<G>, siehe Hilfe
+- UUE-Dekodierung direkt aus Lister mit <U>
+- User-Men: Einstellbare Priorit„tsfarbe fr jeden User
+- Zus„tzliche Tags $RNAME2, $(RNAME2)
+
+
+OpenXP 3.30.x -> OpenXP 3.70.x
+
+- Komplette Umstellung auf 32 Bit, dabei Umstellung auf AnsiStrings
+- Header und Mailzeilen drfen statt 255 Zeichen jetzt 2 GB lang sein und werden
+  nicht mehr abgeschnitten wie in der 16 Bit Version
+- Fast alle weiteren internen Limits wie Anzahl der CC-Empf„nger usw. aufgehoben
+- Die Spaltenzahl kann jetzt gr”áer als 80 Zeichen sein und wird entsprechend fr die
+  Anzeige von mehr Informationen in den Listen genutzt (nicht unter DOS)
+- UUZ komplett umgeschrieben, jetzt ebenfalls nahezu keine Limits mehr
+- Erste Arbeiten an den neuen Boxentypen RFC/NNTP und RFC/POP3
+- UUZ kann mehere Mails in einem Puffer konvertieren (z.B. IMAP-Folder)
+- UUZ: Option -X, wenn angegeben, werden alle X-Header bernommen
