@@ -231,7 +231,7 @@ var x,y,wdt: Integer;
         defekt:=(groesse<0) or (msize<0) or (groesse+14>msize) or (ablage>=ablagen) or
                 (msize-groesse>iif(ntZCablage(ablage),1000000,8000)) or
                 (dbReadInt(mbase,'adresse')+msize>ablsize[ablage]) or
-                ((typ<>'T') and (typ<>'B')) or (hflags>2) or
+                ((typ<>'T') and (typ<>'B') and (typ<>'M')) or (hflags>2) or
                 (dbReadInt(mbase,'adresse')<0) or
                 (dbReadInt(mbase,'netztyp')<0);    { empfanz > 127 ? }
         if repair and not defekt then begin
@@ -705,6 +705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2001/09/12 20:31:57  cl
+  - fixed last commit
+
   Revision 1.42  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 
