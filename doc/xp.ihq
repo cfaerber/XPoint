@@ -3458,6 +3458,10 @@ bart wurde, ist dieser Name identisch mit Ihrem
 Systemnamen (Pointnamen).
 @
 8017
+Hier definieren Sie, ob und mit welchem SMTP-Modus
+(SMTP = Simple Mail Transfer Protocol) Sie Ihre
+Nachrichten erstellen und versenden.
+
 <<aus>>          Die Erstellung und der Versand von Mail
              erfolgt als UUCP-Mail (N„heres siehe
              UUCP.TXT).
@@ -3494,8 +3498,12 @@ Zweifelsfall fragen Sie bitte den Systembetreiber.
     <<Hinweis>>: Generell sollten Sie externe Clients
              jedoch ber den [Client-Modus] einbinden,@8026
              der hierfr eine wesentlich einfachere,
-             flexiblere und sicherere M”glichkeit
-             bietet.
+             flexiblere und leistungsf„higere
+             M”glichkeit bietet. Der Sysop-Modus ist
+             hierfr eigentlich nicht vorgesehen und
+             nur mit diversen Tricks (oder 'Hacks')
+             dazu zu bewegen, externe Clients korrekt
+             einzubinden und auszufhren.
 
 
 Die Unterschiede zwischen den einzelnen SMTP-Modi
@@ -3541,7 +3549,7 @@ folgende Wirkung:
 ş Der Modus <<SMTP/Client>> erzeugt aber nicht nur bei
   Mails (PMs), sondern auch bei News (AMs) fr jede
   Nachricht eine eigene Datei - das unterscheidet ihn
-  sowohl vom Nicht-SMTP-Betrieb ("aus") als auch vom
+  sowohl vom Nicht-SMTP-Modus ("aus") als auch vom
   UUCP-Batched-SMTP-Modus ("SMTP/UUCP").
 
 ş Die ausgehenden Nachrichtendateien werden nach dem
@@ -3559,7 +3567,7 @@ Betrieb eines externen Clients im Sysop-Mode:
 ş Das Senden von 'Dupes' im Falle von Verbindungs-
   und/oder šbertragungsproblemen wird verhindert
   (dies ist ein Vorteil gegenber dem Batched-SMTP-
-  Modus, Auswahl "SMTP/UUCP").
+  Modus "SMTP/UUCP").
 
 ş Nachrichten, die Kopienempf„nger enthalten, werden
   physikalisch nur einmal erstellt und gesendet, und
@@ -3567,15 +3575,15 @@ Betrieb eines externen Clients im Sysop-Mode:
   nen (Envelope-Adressen) korrekt erkennen, wer ei-
   gentlicher Empf„nger und wer Kopienempf„nger ist
   (dies ist ein Vorteil gegenber dem Nicht-SMTP-
-  Modus, Auswahl "aus").
+  Modus, Option "aus").
 
-ş Dadurch, daá die von XP erzeugten Nachrichtendatei-
-  en unmittelbar mit einem Dateinamen erstellt wer-
-  den, der von externen Clients wie UKA_PPP erwartet
-  wird (s.o.), kann das bisher notwendige "Umspoolen"
-  (Umbenennen und Verschieben der Dateien vom XP-
-  Spool-Verzeichnis ins Spool-Verzeichnis des Clients)
-  entfallen.
+ş Dadurch, daá die von XP erzeugten Nachrichten-
+  dateien unmittelbar mit einem Dateinamen erstellt
+  werden, der von externen Clients wie UKA_PPP
+  erwartet wird (s.o.), kann das bisher notwendige
+  "Umspoolen" (Umbenennen und Verschieben der Dateien
+  vom XP-Spool-Verzeichnis ins Spool-Verzeichnis
+  des Clients) entfallen.
 
   Sie k”nnen also die entsprechenden Befehle (i.d.R.
   X_SPOOL.EXE oder E-SPOOL.EXE) aus Ihren Script-
@@ -4039,11 +4047,11 @@ fende vierstellige Zahl.
    den UUZ bei einem Netcall im Client-Modus aus den
    eingegangenen RFC-Nachrichten erstellt.
 
-<<<Box>.BL> >> Die Gesamtliste aller vorhandenen Bretter
+<<<Box>.BL>>  Die Gesamtliste aller vorhandenen Bretter
    (Newsgroups) einer Serverbox - liegt immer im
    Client-Verzeichnis.
 
-<<<Box>.RC> >> Die Liste aller bestellten Bretter
+<<<Box>.RC>>  Die Liste aller bestellten Bretter
    (Newsgroups) einer Serverbox - liegt immer im
    Client-Verzeichnis.
 
