@@ -2583,6 +2583,39 @@ MY:
   XP2B.PAS
 
 
++--------------+
+|  08.04.2003  |
++--------------+
+
+MY:
+- Unversandt-Routine ('ClearUnversandt') optimiert:
+  1. Beim Netztyp RFC/Client findet im Falle von Crosspostings und Mails
+     mit Kopienempf„ngern die Prfung darauf, ob beim aktuellen
+     Durchlauf der Routine eine unversandte Mail aus der Messagebase
+     in den neuen Pollpuffer extrahiert werden muá, nicht mehr mittels
+     Schreiben/Lesen von Message-IDs in/aus der Textdatei "UNSENT.ID2"
+     statt, sondern wird anhand einer als Parameter bergebenen
+     Variablen vorgenommen. Das bisherige Vorgehen w„re ausschlieálich
+     bei Mails mit Kopienempf„ngern sinnvoll gewesen, die vom UUZ nicht
+     als SMTP-Mails (= eine physikalische Mail fr alle Empf„nger)
+     erzeugt wurden, sondern bei denen fr jeden Empf„nger eine eigene
+     physikalische Mail mit jeweils identischer Message-ID generiert
+     wird. Solche Mails k”nnen beim Netztyp RFC/Client aber gar nicht
+     entstehen, da der UUZ dort *immer* mit dem Parameter "-SMTP"
+     aufgerufen wird.
+  2. Die Fehlermeldung "Interner Fehler: Brett mit unvers. Nachr. nicht
+     mehr vorhanden" wrde jetzt beim ersten Brett eines Crosspostings
+     ausgegeben werden, wenn es nicht existiert (das erste Brett *muá*
+     immer existieren, Crossposting-Bretter jedoch nicht unbedingt).
+     Bisher wurde die Meldung bei Crosspostings generell unterdrckt.
+  Es handelt sich speziell bei der ersten nderung *nicht* um einen
+  Bugfix - die Routine arbeitet jetzt lediglich in solchen F„llen
+  erheblich sinnvoller und performanter. Nur im Falle von Dateizugriffs-
+  problemen auf dem System des Users w„re ein Sicherheitsgewinn durch
+  die ge„nderte Routine hypothetisch m”glich.
+  XP7O.PAS
+
+
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
 
