@@ -584,9 +584,11 @@ const maxstars = 40;
 var c       : char;
 {$IFDEF BP }
     kstat   : word;
+    p       : pointer;
+{$ELSE }
+    p       : scrptr;
 {$ENDIF }
     mattr   : byte;
-    p       : pointer;
     star    : array[1..maxstars] of record
                   x,y,state,xs : byte;
                 end;
@@ -640,14 +642,13 @@ var c       : char;
     end;
   end;
 
+{$IFDEF BP }
   procedure scrollout;
   var i : integer;
   begin
     if softsaver then
       for i:=1 to vlines do begin
-{$IFDEF BP }
         Move(mem[base:0],mem[base:160],(vlines-1)*160);
-{$ENDIF}
         if i=1 then wrt(1,1,sp(80));
           delay(10);
         end
@@ -660,16 +661,13 @@ var c       : char;
   begin
     if SoftSaver then
       for i:=vlines-1 downto 0 do begin
-{$IFDEF BP }
         Move(p^,mem[base:i*160],(vlines-i)*160);
-{$ENDIF}
           delay(5);
         end
     else
-{$IFDEF BP }
       Move(p^,mem[base:0],vlines*160);
-{$ENDIF}
   end;
+{$ENDIF }
 
   procedure showstars;
   const xx : boolean = true;
@@ -745,16 +743,19 @@ begin
   repeat
     tempclose;
     savecursor;
-    getmem(p,vrows2*vlines);
     moff;
-{$IFDEF BP }
-    Move(mem[base:0],p^,vrows2*vlines);
-    mattr:=textattr;
+    cursor(curoff);
     textbackground(black);
     textcolor(lightgray);
-    cursor(curoff);
-{$ENDIF}
+{$IFDEF BP }
+    getmem(p,vrows2*vlines);
+    Move(mem[base:0],p^,vrows2*vlines);
+    mattr:=textattr;
     scrollout;
+{$ELSE }
+    Sichern(p);
+    ClrScr;
+{$ENDIF}
 
     fillchar(star,sizeof(star),0);
     endflag:=false;
@@ -772,20 +773,22 @@ begin
       if c=#0 then c:=readkey;
       end;
     initscs;
+{$IFDEF BP }
     scrollin;
-    mon;
     freemem(p,vrows2*vlines);
+    mon;
+{$ELSE }
+    Holen(p);
+{$ENDIF }
     textattr:=mattr;
     restcursor;
   until topen;
   col.colborder:=mborder;
 {$IFDEF BP }
   SetXPborder;
-{$ENDIF }
-  scactive:=false;
-{$IFDEF BP }
   if vesa_dpms and SetVesaDpms(DPMS_On) then;
 {$ENDIF }
+  scactive:=false;
 end;
 
 
@@ -1097,6 +1100,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/04/21 16:36:30  mk
+  - Screensaver funktioniert jetzt auch in den 32 Versionen
+
   Revision 1.21  2000/04/18 11:23:50  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
