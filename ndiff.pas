@@ -30,7 +30,7 @@ procedure processlist(const nl, nd: String);
 implementation
 
 uses
-  dos, sysutils, typeform, fileio, xpglobal;
+  sysutils, typeform, fileio, xpglobal;
 
 const
   shrink: boolean = false;
@@ -337,6 +337,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.3  2003/09/22 21:26:02  mk
+  - removed dos unit
+
   Revision 1.17.2.2  2003/09/21 16:28:30  mk
   - fixed part of Bug #730125: Fido-Nodelistenupdate
     write #1310 on linux

@@ -31,7 +31,7 @@ procedure StartCommandLinePMConv;
 implementation
 
 uses
-  xpglobal, dos,typeform,xpdatum,sysutils,classes,xpnt, xpheader,
+  xpglobal, typeform,xpdatum,sysutils,classes,xpnt, xpheader,
   xpmakeheader, Fileio;
 
 const
@@ -186,6 +186,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2003/09/22 21:26:02  mk
+  - removed dos unit
+
   Revision 1.10.2.3  2003/04/24 06:45:42  mk
   - write unitname lowercase
 

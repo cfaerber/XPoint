@@ -15,7 +15,6 @@ unit zmodem;
 interface
 
 uses
- {$IFDEF Delphi} dos, {$ENDIF }
  xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes, OSDepend;
 
 const
@@ -1859,7 +1858,7 @@ function TZModemObj.RZ_ReceiveBatch(Filelist: TStringList): integer16;
 var
   c: integer16;
   done: BOOLEAN;
-  pfrec: ^filerec;
+  pfrec: ^Tfilerec;
   fh: longint;
 begin
   done := FALSE;
@@ -2726,6 +2725,9 @@ begin
 
 {
   $Log$
+  Revision 1.28.2.3  2003/09/22 21:26:02  mk
+  - removed dos unit
+
   Revision 1.28.2.2  2003/08/25 06:43:53  mk
   - added OS/2 support
 

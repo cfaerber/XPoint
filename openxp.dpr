@@ -166,7 +166,6 @@ uses
   xpnczconnect in 'netcall\xpnczconnect.pas',
   xpnetcall in 'netcall\xpnetcall.pas',
   ncfido in 'netcall\ncfido.pas',
-  dos in 'delphi\dos.pas',
   objcom in 'ObjCOM\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
 {$ELSE}
@@ -187,7 +186,6 @@ uses
   xpnczconnect in 'netcall/xpnczconnect.pas',
   xpnetcall in 'netcall/xpnetcall.pas',
   ncfido in 'netcall/ncfido.pas',
-  dos in 'delphi/dos.pas',
   objcom in 'ObjCOM/objcom.pas',
   Ringbuff in 'ObjCOM/ringbuff.pas',
   ncursix in 'ncursix.pas',
