@@ -80,7 +80,8 @@ function tBinkpFrame.SCommandPar: string;
 begin
   if FDataSize>=$8000 then begin
     SetLength(result,(FDataSize and $7fff)-1);
-    move(Data[2],result[1],length(result));
+    if length(result)>0 then
+      move(Data[2],result[1],length(result));
     end else result:='';
 end;
 
@@ -130,7 +131,9 @@ end;
 procedure tBinkpFrame.SendCommandFrame(aCommand: tFrameType; Par: string);
 begin
   IsOutgoing:=true;
-  Data[1]:=ord(aCommand); move(Par[1],Data[2],length(Par));
+  Data[1]:=ord(aCommand);
+  if length(Par)>0 then
+    move(Par[1],Data[2],length(Par));
   FDataSize:=length(Par)+1+$8000; Send;
 end;
 
@@ -334,7 +337,7 @@ var
         end;
       RxAccF: begin
         Output(mcVerbose,'Receiving %s',[RxFilename]);
-        if FileExists(IncomingDir+RxFilename)then begin // file exists
+        if {FileExists(IncomingDir+RxFilename)}false then begin // file exists
           RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=FileSeek(RxFileHandle,0,fsFromEnd);
@@ -502,6 +505,7 @@ var
   function BreakTransfer: integer;
   begin
     State:=Done;
+    FileClose(RxFileHandle); FileClose(TxFileHandle);
     DebugLog('ncfido','BreakTransfer: '+IntToStr(OutgoingFiles.Count)+'!'+IntToStr(Pendingfiles.Count),DLDebug);
     if(OutgoingFiles.Count<=0)and(PendingFiles.Count<=0)then
       result:=1
@@ -580,6 +584,11 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/10/21 10:35:13  ma
+  - fixed some range check errors
+  - disabled file download resuming (specification seems incorrect)
+  - files are closed on abort now
+
   Revision 1.10  2001/10/01 19:32:51  ma
   - abort only on ESC, not other keys
 
