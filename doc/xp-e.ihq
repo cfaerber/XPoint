@@ -134,112 +134,171 @@ the Newsgroup moved to. Confirm the selection with
 <Enter> or abort with <Esc>.
 @
 20
-<<Newsgroup (NG) Overview
+               <<Message Areas Overview
+               <<======================
 
-<<See also>> [ Newsgroup display ] (Press <Enter>)@4016
+The [Message Areas] window is one of the main windows@4001
+in CrossPoint. From here, you can access all messages
+and by means of the "Special" command, you may edit
+and/or configure the Message Area settings.
 
-The [Newsgroup] NG, or Area window is one of the main@4001
-windows in CrossPoint. From here, you can access all
-Messages and adjust the Message Area settings.
+Message areas fall into four main categories:
 
-<Enter>  Lists the Messages as defined by [View].@50
+1. Netmail ----- Private areas (FidoNet)
+2. Email ------- Private areas (RFC/UUCP(internet))
+3. Echomail ---- Public areas (FidoNet)
+4. Newsgroups -- Public areas (RFC/UUCP(internet))
 
-<Ctrl-Enter>  Lists <<ALL>> messages.
+In addition, internet mailing lists (although public
+in nature) fall into category "2" where CrossPoint
+is concerned.
 
-   <<S>>    Switches between Message Read/Write mode and
-        Newsgroup settings mode.
+If a message area has a <<>> (ASCII-16) character to
+the left of it, this denotes there are new messages
+in that area. If there is no symbol to the left of a
+message area, this denotes that either there are no
+new messages in the area or that there are no
+messages in that area at all.
 
-<<<Tab> >>  Switches between Newsgroup and User display.
+What is meant by "new" depends upon which "view-mode"
+is active. The "view-mode" may be changed by use of
+the "Show" command, which may be found on the
+"command-bar" just below the menu bar. For a full
+explanation of this feature, see [View-Mode]@50
 
-  <<Q>>     Quits CrossPoint.
-        You can define a "Quit? Yes/No" question in
-        /Config/Options/Miscellaneous.
+For further details of the Message Areas Display, see
+[Message Areas Display] .....@4016
 
- <<<Sp> >>  Marks the Newsgroup under the cursor.
-        Up to 1000 Newsgroups can be marked at once.
+               <<----------------------
 
-<<Ctrl-E>>  Unmarks all marked Newsgroups.
-
-<<Ctrl-G>>  Marks all Newsgroups belonging to the same
-        [Group] as the selected Area.@200
-
-   <</>>    Fast Find
-
-<<<F4> >>   Repeats the last menu command.
-
-<<<F6> >>   Select Key Macro
-
-<<<F8> >>   Jumps to the first Personal Mail Area.
-
-
-<<Functions in Read/Write mode
-
-   <<W>>    Write a message in the Newsgroup at the
-        cursor. The editor in /Config/External/Editor
-        will be used.
-
-<<Shift-W>> Write a message in all currently marked
-        Newsgroups (max. 15).
-
-   <<E>>    Send text file from disk into the Newsgroup
-        currently at the cursor.
-
-   <<I>>    Send a binary file into this Newsgroup.
-
-   <<H>>    Selects a View-mode.
-
-        A "" character to the left of a Newsgroup
-        indicates there are unread messages in that
-        Newsgroup.
-
-   <<A>>    Switches between displaying <<ALL>> messages in
-        the Newsgroup or only those that match the
-        current View-mode.
-
-   <<+>>    Jumps to the next appropriate Newsgroup
-
-   <<->>    Jumps to the previous appropriate Newsgroup
-
-<<Ctrl-W>>  Toggles automatic jumping to the next
-        appropriate Newsgroup on or off
+There are two modes of operation for the Message
+Areas window, "Read/Write" mode and "Special" mode.
+For everyday use it is normal to use "Read/Write"
+mode and it is only necessary to use "Special" mode
+when a message area(s) needs to be configured or
+edited.
 
 
-<<Functions in Settings modes ("Special-Mode")
+Keys in <<both>> "Read/Write" <<and>> "Special" mode:
+<<---------------------------------------------
 
-   <<W>>    Add a new Newsgroup (by hand).
+<<<Enter> >>     Brings up the message list for the area
+             under the cursor.
 
-<<Ctrl-W>>  Allows calling up the [Newsgroup List] to@11907
-        select several Newsgroups to add at once.
+             Note: which messages are actually
+             listed in <<"Read/Write">> mode depends
+             upon which [View-Mode] is active, whilst@50
+             in "Special" mode, <<ALL>> messages are
+             displayed by default.
 
-   <<L>>    Delete a Newsgroup. Only possible if empty
-        (shown also by a "-" sign to the left of the
-        Newsgroup. (Note: does not cancel at Server).
+<<<Ctrl-Enter> >>Lists <<ALL>> messages in the area under
+             the cursor.
 
-   <<E>>    Edit Newsgroup settings.
+  <<S>>          Switches between "Read/Write" and
+             "Special" mode.
 
-   <<A>>    Change Forward Address/Write Access status.
+<<<Tab> >>       Switches between message area and
+             User display.
 
-   <<J>>    Links the Newsgroup with another. All
-        messages for this Newsgroup will go to the
-        other Newsgroup
+  <<Q>>          Quits CrossPoint.
 
-   <<O>>    Move a Newsgroup to another position in the
-        window display.
+             Note: you can enable a "Quit? Yes/No"
+             prompt in /Config/Options/Miscellaneous,
+             if desired.
 
-<<Crtl-S>> Inserts a dividing line at the cursor position
+<<<Space> >>     Marks the message area under the cursor.
+             Up to 1000 areas may be marked at
+             once!
 
-   <<+>>   Increases the hold time by one day.
+<<Ctrl-G>>       Marks all message areas belonging to the
+             same [Group] as the selected area.@200
 
-   <<->>   Decreases the hold time by one day.
+<<Ctrl-E>>       Un-marks all marked message areas.
 
-The functions L, E and O apply to all marked News-
-groups.
+  <</>>          Fast find.
 
-<<see also   [Newsgroup display  ](<Enter> here)@4016
+<<<F4> >>        Repeats the last MENU command.
 
-Newsgroup names may be displayed in either upper or
-lower case. This can be configured in:
-                        /Config/Display/Newsgroups.
+<<<F6> >>        Select key macro.
+
+<<<F8> >>        Jumps to the first personal mail area.
+
+
+<<Keys in "Read/Write" mode:
+<<--------------------------
+
+  <<A>>          Switches between listing <<ALL>> message
+             areas or only those that match the
+             current View-mode.
+
+  <<W>>          Write a message in the message area
+             under the cursor. If installed, the
+             editor as defined in /Config/External
+             /Editor will be used, otherwise, the
+             internal message editor will be used.
+
+<<Shift-W>>      Write a message in all currently
+             marked message areas (max. 15).
+
+  <<E>>          Import a text file into the message
+             area under the cursor.
+
+  <<I>>          Import a binary file into the
+             message area under the cursor. Please
+             note: some mail networks do NOT allow
+             this!
+
+  <<H>>          Selects a View-mode.
+
+  <<+>>          Jumps to the next message area
+             containing unread messages.
+
+  <<->>          Jumps to the previous message area
+             containing unread messages.
+
+<<Ctrl-W>>       Toggles automatic jumping to the
+             next message area containing unread
+             messages, on or off.
+
+
+<<Keys in "Special" Mode:
+<<-----------------------
+
+  <<W>>          Manually add a new message area.
+
+<<Ctrl-W>>       Calls up the [Newsgroup List] to select@11907
+             several Newsgroups to add at once.
+
+  <<L>>          Delete a message area. This is only
+             possible if the area is empty (denoted
+             by a "-" sign to the left of the area).
+
+  <<E>>          Edit message area settings.
+
+  <<A>>          Change the re-direction address
+             and/or the write access status.
+
+  <<J>>          Moves all messages from one message
+             area to another.
+
+  <<O>>          Move a message area to a different
+             position in the area list.
+
+<<Crtl-S>>       Inserts a dividing line at the cursor
+             position.
+
+  <<+>>          Increases the hold time by one day.
+
+  <<->>          Decreases the hold time by one day.
+
+Please note: The L, E and O functions will take
+effect on any message areas that you may have marked,
+so be very careful what you are doing!
+
+Message areas may be displayed in either upper, lower
+or mixed case. This can be configured in /Config
+/Display/Newsgroups.
+
 @
 21
 <<User-Overview
@@ -463,7 +522,9 @@ Bar and the Menu under "Other")
         (ZCONNECT, RFC & MagicNET only)
 
    <<V>>    Marks/Unmarks a message(s) that you would
-        like to reply to later.
+        like to reply to later. Messages marked in
+        this manner may be retrieved later by use of
+        the /Message/Search/Marked(for reply) option.
 
 <<Ctrl-T>>  Prints the current selected message.
         see also [/Config/Printer].@10606
@@ -681,7 +742,8 @@ dually as files on the disk.
 
 @
 50
-<<View Mode>>
+<<View Mode
+<<---------
 
 Generally, you will not want to see all messages in
 the message base. There may be too many, some you
@@ -689,8 +751,8 @@ may have already read, others may be old, etc.
 For this reason, CrossPoint allows you to select
 which messages to display.
 
-The following selection criteria are available:
 
+The following selection criteria are available:
 
 <<All>>    All messages are displayed.
 
@@ -707,13 +769,14 @@ The following selection criteria are available:
 <<Date>>   Displays messages that came in after a certain
        date, which you may specify.
 
-<<Time>>   You can fine tune the date above to specify a
-       a time of day, to filter more precisely.
+<<Time>>   You can fine tune the date above to specify
+       a time of day. This allows more precise
+       filtering.
 
-<<Save>>   Saves a set time as a dummy time of the last
+<<Save>>   Saves a set time as a dummy time for the last
        Netcall. Thus, you can save the time at which
        a Netcall was made with this setting, make
-       subsequent netcalls but still use "New" to
+       subsequent Netcalls but still use "New" to
        display all messages since the saved time.
 
 When setting dates or times, the "+" & "-" keys can
@@ -7462,13 +7525,17 @@ This menu contains various options for sending a
 message, already in the message base, either to
 another person or to another newsgroup. See the
 online help for the individual menu items.
+
 @
 10308
 <<Message / News/Echo Manager
+<<---------------------------
+
 The News/Echo manager is used for maintaining your
-Newsgroups/Echomail-areas on your Server/BossNode.
+Newsgroups/Echomail areas on your Server/BossNode.
 You can subscribe/link-in, unsubscribe/link-out and
-retrieve a list of newsgroups/echo-areas.
+retrieve a list of newsgroups/echo areas.
+
 @
 10309
 <<Message / Fileserver  (Z-Netz only)
@@ -8559,12 +8626,12 @@ often have to enter these names, as when sending
 messages direct or forwarding them.
 @
 11606
-<<Edit / Auto Send
+<<Edit / AutoSend
+<<---------------
 
-Under this menu entry you can administer <<files>>, which
-will be automatically sent as <<messages>> at programmed
-intervals, or once at a set time. You can have as
-many as you wish.
+This menu item allows you to set up messages that
+will be automatically sent at pre-set times. The
+message text must be contained in a file.
 @
 11607
 <<Edit / Text
@@ -8586,7 +8653,7 @@ The following macros can be used in templates
 (except signatures), and will be replaced at the time
 of writing by the valid text.
 
-<<*>> Denotes NEW macros in OpenXP v3.20
+<<*>> Denotes NEW macros introduced in OpenXP v3.20
 
   $DATUM     -  the current date
   $DATE      -  the current date in American format
@@ -8613,9 +8680,8 @@ messages for <<newsgroups>>.
                 used (can be used for putting their
                 real name in!). Otherwise it will be
                 evaluated the same as $TUSER
-  $VPSEUDO   -  the same as $PSEUDO, but $VORNAME
-                (first name) will be used instead of
-                $TUSER.
+  $VPSEUDO   -  the same as $PSEUDO but $FIRSTNAME
+                will be used instead of $TUSER.
 <<*>> $FIRSTNAME -  the first name of the user - works
                 only in nets that use real names and
                 not pseudos.
@@ -10915,23 +10981,23 @@ Name, and you will see messages, if present.
 
 @
 4001
-<<  Newsgroup (NG)
+<<Message Areas
+<<-------------
 
-A Newsgroup is simply one of a large collection of
+A Message Area is simply a large collection of
 "places" where messages are written publicly, for
 anyone to read, on a specific subject specified
-by the title of the Newsgroup.
+by the title of the Message Area. In FidoNet,
+Message Areas are referred to as Echomail Areas. In
+UseNet, they are referred to as Newsgroups.
 
-In FidoNet, Newsgroups are known as Echomail Areas.
+The Message Areas are listed in the Message Areas
+overview window in CrossPoint and their titles are a
+good indicator as to what subject they cover.
 
-The NGs are listed in the Newsgroup overview
-window in CrossPoint, showing their titles, which
-is a good indicator as to what subject they cover.
-
-To get Newsgroups, you have to [subscribe]@10308
-(menu /message/Newsmanager) to them, that is, order
-them from whatever source you intend to get your
-NGs from.
+To actually have some message areas, you need to
+["subscribe"] to them. This may be done by using the@10308
+News/Echo Manager (/Message / News/Echo Manager).
 
 @
 4002
@@ -11450,7 +11516,8 @@ For [details] of how to do things, press <Enter>.@30
 
 @
 4016
-<<Newsgroup Display in Read Mode
+<<Message Areas Display in "Normal" Mode
+<<--------------------------------------
 
    /PBNET/PB-ANNOUNCE
    /FIDO/XPOINT
@@ -11458,31 +11525,31 @@ For [details] of how to do things, press <Enter>.@30
   /Alt/Tasteless/Jokes
   /Soc/Culture/British
  ³
- ÀÄÄÄÄÄÄ Newsgroups with messages to read
-         as defined by "View" mode
-    "¯"  means an internal admin newsgroup.
+ ÀÄÄÄÄÄÄ Message areas containing new messages,
+         dependant upon which "View" mode is active.
 
-<<Newsgroup Display in Edit Mode
+    "¯"  Denotes an internal message area.
+
+<<Message Area Display in "Special" Mode
+<<--------------------------------------
 
         ì  HIT         3 /FIDO/POINTS
  -     30  HIT         3 /FIDO/FDECHO
     N  30  HIT         3 /FIDO/XPOINT
   X*   14  HIT         3 /FIDO/T-MAIL.SUPPORT
  ³³³³  ³   ³           ³  ³
- ³³³³  ³   ³           ³  ÀÄÄ Newsgroup name
- ³³³³  ³   ³           ÀÄÄÄÄÄ Group number
- ³³³³  ³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ Which Server it comes from
- ³³³³  ÀÄÄÄÄÄÄ How long Messages are held (Hold time)
- ³³³ÀÄÄÄÄÄÄÄ N = Hold Message Quantity, not time
- ³³ÀÄÄÄÄÄÄÄÄ * = Forwarding address set
- ³³          O = Fido-Origin set
- ³ÀÄÄÄÄÄÄÄÄÄ X = No Write Access
- ÀÄÄÄÄÄÄÄÄÄÄ - = Newsgroup is empty
+ ³³³³  ³   ³           ³  ÀÄÄ Message area name
+ ³³³³  ³   ³           ÀÄÄÄÄÄ Message area Group
+ ³³³³  ³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ Originating Server
+ ³³³³  ÀÄÄÄÄÄÄ How long messages are held
+ ³³³ÀÄÄÄÄÄÄÄ N = How many messages are held
+ ³³ÀÄÄÄÄÄÄÄÄ * = Alternate "Reply-To" address enabled
+ ³³          O = Origin line enabled (Fido)
+ ³ÀÄÄÄÄÄÄÄÄÄ X = No write-access
+ ÀÄÄÄÄÄÄÄÄÄÄ - = Message area is empty
 
-Newsgroup names may be set in either upper or lower
-case in /Config/Display/Newsgroups.
-
-For [details] on editing press <Enter>.@20
+Message area names may be defined in either upper or
+lower case in /Config/Display/Newsgroups.
 
 @
 4017
