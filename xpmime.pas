@@ -743,21 +743,29 @@ end;
 
 { TMIMEPart }
 
+constructor TMimePart.create;
+begin
+  inherited create;
+  Clear;
+end;
+
 procedure TMIMEPart.Assign(Source: TMIMEPart);
 begin
-  if not Assigned(Source) then exit;
-  StartLine := Source.startline;
-  lines := Source.Lines;
-  code := Source.Code;
-  typ := Source.typ;
-  subtyp := Source.subtyp;
-  level := Source.level;
-  fname := Source.fname;
-  ddatum := Source.ddatum;
-  part := Source.Part;
-  parts := Source.Parts;
-  alternative := Source.alternative;
-  Charset := Source.Charset;
+  if Assigned(Source) then
+  begin
+    StartLine := Source.startline;
+    lines := Source.Lines;
+    code := Source.Code;
+    typ := Source.typ;
+    subtyp := Source.subtyp;
+    level := Source.level;
+    fname := Source.fname;
+    ddatum := Source.ddatum;
+    part := Source.Part;
+    parts := Source.Parts;
+    alternative := Source.alternative;
+    Charset := Source.Charset;
+  end;
 end;
 
 procedure TMIMEPart.Clear;
@@ -775,23 +783,6 @@ begin
   Charset := csUnknown;
 end;
 
-constructor TMimePart.create;
-begin
-  inherited create;
-  startline  := 0;
-  lines      := 0;
-  code       := MimeEncoding7Bit;
-  typ        := '';
-  subtyp     := '';
-  level      := 1;
-  fname      := '';
-  ddatum     := '';
-  part       := 1;
-  parts      := 1;
-  alternative:= false;
-  Charset    := csUTF8;
-end;
-
 initialization
   PartsList := TList.Create;
 finalization
@@ -800,6 +791,9 @@ finalization
 
 {
   $Log$
+  Revision 1.54  2001/12/09 16:28:00  mk
+  - fixed last commit
+
   Revision 1.53  2001/12/09 16:13:39  ml
   - mime-Assign with nil-bugfix, clean create constructor
 
