@@ -51,7 +51,7 @@ begin
   repeat
     p:=pos(s1,ustr(s));
     if p>0 then
-      s:=copy(s,1,p-1)+s2+copy(s,p+length(s1),255);
+      s:=copy(s,1,p-1)+Trim(s2)+copy(s,p+length(s1),255);
   until p=0;
 end;
 
@@ -1033,6 +1033,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.4  2000/07/07 18:32:21  mk
+  - Trim fuer Textmakros eingefuegt
+
   Revision 1.10.2.3  2000/05/18 22:32:18  mk
   JG: Quoten-Bugfix (1.17)
 
