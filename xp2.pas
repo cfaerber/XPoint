@@ -655,7 +655,7 @@ begin
 end;
 
 
-{ Testen, ob die 3 Default-Brettruppen vorhanden sind }
+{ Testen, ob die 3 Default-Brettgruppen vorhanden sind }
 
 procedure test_defaultgruppen;
 var d     : DB;
@@ -1103,6 +1103,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/04/22 13:54:08  mw
+
+  - TermInit Default angepasst
+  - TermInit hat jetzt ausw„hlbare Vorgaben
+  - Rechtschreibfehler in xp2.pas gefunden
+
   Revision 1.28  2000/04/18 11:23:49  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

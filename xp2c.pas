@@ -1315,6 +1315,9 @@ begin
   mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
   maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
   maddstring(3,5,getres2(270,5),TermInit,16,40,'');     { 'Modem-Init       ' }
+  {MW 04/2000}
+  mappsel(false,'ATZùATùATZ\\ATX3');
+  {Auswahlmöglichkeiten Bereitstellen}
   maddbool(3,7,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
   maddbool(3,8,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
   maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
@@ -1389,6 +1392,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/04/22 13:54:08  mw
+
+  - TermInit Default angepasst
+  - TermInit hat jetzt ausw„hlbare Vorgaben
+  - Rechtschreibfehler in xp2.pas gefunden
+
   Revision 1.22  2000/04/21 12:34:47  jg
   - MIME-Flag wird jetzt beim Archivieren mit uebernommen
   - Archivier-Vermerk ist jetzt abschaltbar

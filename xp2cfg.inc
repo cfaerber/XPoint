@@ -684,7 +684,8 @@ begin
   TermCOM:=0;
   TermBaud:=0;
   TermStatus:=true;
-  TermInit:='AT';
+  {Modeminit angepasst MW 04/2000}
+  TermInit:='ATZ';
   msgbeep:=false;
   Netcallunmark:=true;
   defaultnokop:=false;
@@ -1655,6 +1656,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/04/22 13:54:09  mw
+
+  - TermInit Default angepasst
+  - TermInit hat jetzt ausw„hlbare Vorgaben
+  - Rechtschreibfehler in xp2.pas gefunden
+
   Revision 1.33  2000/04/21 12:34:47  jg
   - MIME-Flag wird jetzt beim Archivieren mit uebernommen
   - Archivier-Vermerk ist jetzt abschaltbar
