@@ -371,28 +371,27 @@ begin
   begin
     assign(f,fn);
     rewrite(f,1);
-    if ioresult=0 then
-    begin
-      if ClipOpen then
-      begin
+    if ioresult=0 then begin
+      if ClipAvailable and ClipOpen then begin
         bs:=ClipGetDatasize(cf_OemText);
         if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }
           s:='Clipboard-Inhalt ist zu umfangreich'#13#10;   { groesser als Clipfile oder  }
           blockwrite(f,s[1],length(s));                     { freier Speicher ist         }
-          if clipclose then;                                { Clipboard trotzdem Schliessen }
-          end
-        else
-          if bs>0 then begin
-            getmem(p,bs);
-            if ClipRead(cf_Oemtext,p^) then begin
-              bp:=bs;
-              while (bp>0) and (p^[bp-1]=#0) do dec(bp);
-              blockwrite(f,p^,bp);
-              end;
-            if ClipClose then;
-            freemem(p,bs);
-            end;
+        end
+        else if bs>0 then begin
+          getmem(p,bs);
+          if ClipRead(cf_Oemtext,p^) then
+          begin
+            bp:=0;
+            while (bp<bs) and (p^[bp]<>#0) do inc(bp);
+            if (bp=bs) and (p^[bp]<>#0) then bp:=0;
+
+            blockwrite(f,p^,bp);
+          end;
+          freemem(p,bs);
         end;
+        if ClipClose then;
+      end;
       close(f);
     end;
   end else
@@ -485,6 +484,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.6  2000/12/07 13:52:14  mk
+  RB:- Fix for ClipToFile
+
   Revision 1.19.2.5  2000/10/07 02:52:55  mk
   - Fixes fuer Clipboard
 
