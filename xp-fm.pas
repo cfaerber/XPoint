@@ -11,6 +11,7 @@
 
 { Fido-Mailer fÅr CrossPoint }
 { (c) 06/92 by PM            }
+{ (c) 2000 OpenXP-Team       }
 
 {Debugfaehig: Environmentvariablen
  DEBUG=C:\LOGFILE.TXT
@@ -26,56 +27,52 @@
 program xp_fm;
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  sysutils, dos,typeform,ObjCOM,resource,fileio,xpdiff,crc,
-  xpglobal,montage,inout,winxp,ZModem,Timer,Debug;
+  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+  sysutils,dos,typeform,resource,fileio,xpdiff,xpglobal,
+  montage,inout,winxp,crc,ObjCOM,Modem,ZModem,Timer,Debug;
 
 const aresult    : byte = 0;
-      brk_result: byte = EL_Break;
+      brk_result : byte = EL_Break;
 
-      maxfiles  = 500;
+      maxfiles  = 200;
       ErrChar   = '#';
       gl        = 10;
       width     = 46;
 
-      Language  : string[3]  = 'D';
+      Language  : string  = 'D';
       FilePath  : pathstr    = '';      { eingehende Dateien        }
       MailPath  : pathstr    = '';      { Arcmail- und PKT-Dateien  }
       zmtempfile: pathstr    = 'zmtemp';  { ZM-Parameter/-file }
-      UserName  : string[60] = '';      { eigener Name              }
-      OwnAddr   : string[20] = '';      { zone:net/node.point       }
-      OwnDomain : string[30] = '';
-      DestAddr  : string[20] = '';      { zone:net/node.point       }
-      Password  : string[20] = '';
-      txt       : string[40] = 'NetCalling ...';
-      addtxt    : string[40] = '';
+      UserName  : string = '';      { eigener Name              }
+      OwnAddr   : string = '';      { zone:net/node.point       }
+      OwnDomain : string = '';
+      DestAddr  : string = '';      { zone:net/node.point       }
+      Password  : string = '';
+      txt       : string = 'NetCalling ...';
+      addtxt    : string = '';
       SendEmpty : boolean = false;      { moeglichst leerer Upload-Batch }
       DebugMode : boolean = false;
       Logfile   : pathstr = 'xp-fm.log';
       Lognew    : boolean = false;
       UseEMSI   : boolean = true;
       AKAs      : string  = '';
-      SysName   : string[80] = '';
-      SerNr     : string[15] = '';
+      SysName   : string = '';
+      SerNr     : string = '';
       SetTime   : boolean = false;
       SendTrx   : boolean = false;
       ExtfNames : boolean = true;
-      zmprog    : string[80] = 'zm.exe';
-      Tarifzone : string[40] = '';
+      zmprog    : string = 'zm.exe';
+      Tarifzone : string = '';
 
       ModemLine : byte       = 1;       { COMn }
       ModemPort : word       = 0;
       IRQ       : byte       = 0;
       tlevel    : byte       = 8;       { FIFO-Triggerlevel }
       Baud      : longint    = 2400;
-      ModemInit : string[80] = '';
+      ModemInit : string = '';
       CommInitString: string = '';      { EleCOM comm object init string}
-      CommandModemDial  : string[20] = '';      { ATDx }
-      Phone     : string[80] = '';      { eine oder mehrere Nummern }
+      CommandModemDial  : string = '';      { ATDx }
+      Phone     : string = '';      { eine oder mehrere Nummern }
       IgCTS     : boolean    = false;
       IgCD      : boolean    = false;
       UseRTS    : boolean    = false;
@@ -87,43 +84,36 @@ const aresult    : byte = 0;
       Fossil    : boolean    = false;
       OS2time   : shortint   = -1;      { Rechenzeitfreigabe }
       MinCps    : integer    = 100;     { minimale cps-Rate (PD-Zmodem) }
-      ZMoptions : string[60] = '';
+      ZMoptions : string = '';
 
       mailing   : boolean   = false;    { Transfer gestartet }
       timediff  : longint   = 0;
       resopen   : boolean   = false;
 
-      TimeoutModemAnswer = 3;
-      TimeoutModemInit = 60;
-
 type  FidoAdr   = record
                     zone,net   : word;
                     node,point : word;
                   end;
-      pathptr   = ^pathstr;
 
-var   sendfile  : array[1..maxfiles] of pathptr;
-      SendFiles : integer;
+var   FilesToSend  : String;
       FA        : FidoAdr;
       bauddetect: longint;
       logf      : text;
-      nocarrier : string[30];   { Carrier futsch }
+      nocarrier : string;   { Carrier futsch }
 
       ColText   : byte;     { Bildschirm }
       ColStatus : byte;
       ColXfer   : byte;
-      starty    : byte;
       scx,scy   : Byte;     { linke obere Fensterecke }
       scrsave   : pointer;
       mx,my     : byte;
-      displine  : array[1..gl] of string[width];
+      lastdispline  : string;
       disppos   : byte;
-      dials     : integer;
       Connects  : integer;
 
       CommObj   : tpCommObj;
       TimerObj  : tTimer;
-
+      Oldexit   : Pointer;
 
 { --- Allgemeine Routinen ------------------------------------------- }
 
@@ -136,7 +126,6 @@ begin
   writeln(t,'(c) 2000 OpenXP Team');
   writeln(t);
   close(t);
-  starty:=wherey;
 end;
 
 procedure helppage;
@@ -177,7 +166,7 @@ procedure ReadConfig;
 var t    : text;
     s0,s : string;
     p    : byte;
-    id   : string[20];
+    id   : string;
 
   procedure GetColors;
   var p : byte;
@@ -196,19 +185,18 @@ var t    : text;
 
 begin
   if paramcount<>1 then Helppage;
-  sendfiles:=0;
   assign(t,paramstr(1));
   reset(t);
-  if ioresult<>0 then error('CommandFile missing: '+UpperCase(paramstr(1)));
+  FilesToSend:='';
+  if ioresult<>0 then error('CommandFile missing: '+FileUpperCase(paramstr(1)));
   while not eof(t) do begin
     readln(t,s0);
     s:=trim(s0);
-    p:=cpos('=',s);
+    p:=pos('=',s);
     if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then
-      if p=0 then error('Unknown Command:  '+s)
+      if p=0 then error('Unknown Command: '+s)
     else begin
-      id:=LowerCase(trim(left(s,p-1)));
-      s:=trim(mid(s,p+1));
+      id:=LowerCase(trim(left(s,p-1))); s:=trim(mid(s,p+1));
       if id='language'   then language:=s else
       if id='logfile'    then logfile:=s else
       if id='lognew'     then begin logfile:=s; lognew:=true; end else
@@ -254,14 +242,12 @@ begin
       if id='zmoptions'  then ZMoptions:=s else
       if id='phonezone'  then tarifzone:=s else
       if id='comminit'     then CommInitString:=s else
-      if id='send' then begin
-        if sendfiles<maxfiles then begin
-          inc(sendfiles);
-          getmem(sendfile[sendfiles],length(s)+1);
-          sendfile[sendfiles]^:=UpperCase(s);
-        end
+      if id='send' then if FilesToSend='' then
+                          FilesToSend:=FileUppercase(s)
+                        else
+                          FilesToSend:=FilesToSend+#9+FileUppercase(s)
       { keine bekannte Option angegeben: }
-      end else begin DebugLog('XPFM','Unknown option: '+s0,1); writeln('Warning - unknown Option:  '+s0)end;
+      else begin DebugLog('XPFM','Unknown option: '+id+'='+s,1); writeln('Warning - unknown Option: '+s0)end;
     end;
   end;
   close(t);
@@ -313,7 +299,7 @@ end;
 
 procedure TestConfig;
 var i    : integer;
-    perr : string[40];
+    perr : string;
 
   procedure rerror(nr:word);
   begin
@@ -339,9 +325,9 @@ begin
     rerror(114);                      { 'Illegal temporary file name' }
   if not validfilename(logfile) then
     rerror1(104,UpperCase(logfile));     { 'Illegal logfile name: %s' }
-  for i:=1 to sendfiles do
-    if not exist(sendfile[i]^) then
-      rerror1(105,sendfile[i]^);    { 'File missing:  %s' }
+{  for i:=1 to sendfiles do
+    if not exist(sendfile[i]) then
+      rerror1(105,sendfile[i]);}    {* 'File missing:  %s' }
   if username='' then rerror(106);  { 'Name missing' }
   if OwnAddr='' then rerror(107);   { 'Address missing' }
   SplitFido(OwnAddr,FA);
@@ -365,7 +351,7 @@ end;
 function CountPhoneNumbers:integer;
 {Anzahl angegebene Telefonnummern z‰hlen}
 var n : integer;
-    s : string[80];
+    s : string;
 begin
   s:=trim(phone);
   n:=1;
@@ -397,8 +383,7 @@ begin
     redialmax:=2;
     redialwait:=redwait2;
   end;
-  fillchar(displine,sizeof(displine),0);
-  disppos:=1;
+  lastdispline:=''; disppos:=1;
   bauddetect:=14400;   { fÅr IgCD/Nullmodem }
 end;
 
@@ -443,11 +428,7 @@ begin
 end;
 
 procedure PopWindow;
-begin
-  freemem(scrsave,scsize);
-  gotoxy(mx,my);
-  Cursor(curnorm);
-end;
+begin freemem(scrsave,scsize); gotoxy(mx,my); Cursor(curnorm)end;
 
 procedure DisplayTime(l: longint);
 begin
@@ -456,258 +437,55 @@ begin
 end;
 
 procedure DisplayStatus(s:string; UseNewLine: Boolean);
-var i : integer;
+var i: integer;
 begin
   DebugLog('XPFM','Display: '+S,2);
-  if(s<>'')and UseNewLine then begin
-    if disppos=gl then begin {alte Zeilen nach oben schieben, ggf. oben ... anzeigen}
-      if displine[1]='' then
-        Move(displine[2],displine[1],(gl-1)*sizeof(displine[1]))
-      else begin
-        displine[2]:='          ...';
-        Move(displine[4],displine[3],(gl-3)*sizeof(displine[1]));
-      end
-    end else
-      inc(disppos);
+{  if s<>'' then begin
+    if UseNewLine and(lastdispline<>'')then begin
+      Col(ColText); wrt(scx+2,scy+2+disppos,forms(lastdispline,width));
+      disppos:=(disppos mod gl)+1;
+    end;
+    lastdispline:=time+'  '+s;
+    Col(ColXFer); wrt(scx+2,scy+2+disppos,forms(lastdispline,width)); Col(ColText);
   end;
-  if s<>'' then displine[disppos]:=time+'  '+s;
-  for i:=1 to gl do begin {Aktuelle Zeile highlighted darstellen}
-    if i=disppos then
-      Col(ColXFer)
-    else
-      Col(ColText);
-    wrt(scx+2,scy+2+i,forms(displine[i],width));
-  end;
-  Col(ColText);
+  DebugLog('XPFM','DisplayFin',2);}
 end;
 
 procedure DisplayAndLog(c:char; s:string);
 begin DisplayStatus(s,True); log(c,s)end;
 
-{ --- Interface-Routinen / Anwahl ----------------------------------- }
-
-var ReceivedUpToNow      : string;
-    WaitForAnswer  : boolean;
-    ModemAnswer   : string[80];
-    GotUserBreak     : boolean;
-
-function GetCTS:boolean;
+{ --- Display-Routine fuer Modem.DialUp --- }
+var LastState: tStateDialup;
+procedure DialUpDisplay;
 begin
-  {$IFDEF Final}Kann gerne etwas saubrer sein{$ENDIF}
-  GetCTS:=CommObj^.ReadyToSend(1);
-end;
-
-procedure ProcessIncoming(idle:boolean);
-{Zeichen abholen, in ReceivedUpToNow aufbewahren, ggf. Zeile ausgeben, in
- ModemAnswer ablegen und WaitForAnswer auf False setzen}
-var c : char;
-begin
-  if CommObj^.CharAvail then begin
-    c:=CommObj^.GetChar;
-    if (c=#13) or (c=#10) then begin
-      if WaitForAnswer and(ReceivedUpToNow<>'') then begin
-        DebugLog('XPFM','Received modem answer: '+ReceivedUpToNow,3);
-        ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
-        WaitForAnswer:=false;
-      end;
-    end else
-    if length(ReceivedUpToNow)<255 then begin
-      inc(byte(ReceivedUpToNow[0]));
-      ReceivedUpToNow[length(ReceivedUpToNow)]:=c;
-    end;
-  end else if idle then SleepTime(10);
-end;
-
-procedure ProcessKeypresses(AcceptSpace:boolean);
-var c : char;
-begin
-  if keypressed then begin
-    c:=readkey;
-    case c of
-      #27 : begin
-              TimerObj.SetTimeout(0);
-              WaitForAnswer:=False; ReceivedUpToNow:='';
-              ModemAnswer:=getres(160);    { 'abgebrochen' }
-              GotUserBreak:=true;
-            end;
-      '+' : TimerObj.SetTimeout(TimerObj.SecsToTimeout+1);
-      '-' : if TimerObj.SecsToTimeout>1 then TimerObj.SetTimeout(TimerObj.SecsToTimeout-1);
-      ' ' : if AcceptSpace then TimerObj.SetTimeout(0);
-    end;
-  end;
-end;
-
-function SendCommand(s:string): String;
-{Sendet Befehl an Modem; wartet maximal TimeoutModemAnswer Sekunden auf Antwort;
- Antwort wird als Ergebnis zurueckgegeben, falls innerhalb dieser Zeit erfolgt;
- ansonsten mit ProcessIncoming warten, bis WaitForAnswer False wird, Antwort steht
- dann in ModemAnswer.}
-var p : byte; EchoTimer: tTimer;
-begin
-  DebugLog('XPFM','Sending modem command: '+s,3);
-  CommObj^.PurgeInBuffer; s:=trim(s);
-  if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
-    repeat
-      p:=cpos('~',s);
-      if p>0 then begin
-        if not CommObj^.SendString(left(s,p-1),True)then DebugLog('XPFM','Sending failed '+left(s,p-1),3);
-        delete(s,1,p); SleepTime(1000);
-      end;
-    until p=0;
-    if not CommObj^.SendString(s+#13,True)then DebugLog('XPFM','Sending failed '+CommObj^.ErrorStr,3);
-    EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
-    repeat
-      ProcessIncoming(true); ProcessKeypresses(false);
-    until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
-    if EchoTimer.Timeout then ModemAnswer:='';
-    SleepTime(200); EchoTimer.Done;
-    SendCommand:=ModemAnswer;
-  end;
-end;
-
-function SendMultCommand(s:string): String;
-{Sendet durch \\ voneinander getrennte Befehle an Modem, zurueckgegeben wird letzte
- Antwort des Modems, weiteres siehe SendCommand.}
-var p : byte; cmd: String;
-begin
-  while (length(trim(s))>1) and not TimerObj.Timeout do begin
-    p:=pos('\\',s);
-    if p=0 then p:=length(s)+1;
-    cmd:=trim(left(s,p-1));
-    SendMultCommand:=SendCommand(cmd);
-    s:=trim(mid(s,p+2));
-    ProcessKeypresses(false);
-  end;
-end;
-
-function DialUp:boolean;
-
-  function GetTelefon:string;
-  var p : byte;
-  begin
-    p:=cpos(' ',phone);
-    if p=0 then
-      GetTelefon:=phone
-    else begin                         { Nummern rotieren }
-      GetTelefon:=left(phone,p-1);
-      phone:=trim(mid(phone,p))+' '+left(phone,p-1);
-    end;
-  end;
-
-  procedure SetBauddetect;
-  var p : byte;
-  begin
-    p:=1;
-    while (p<=length(ModemAnswer)) and ((ModemAnswer[p]<'0') or (ModemAnswer[p]>'9')) do
-      inc(p);
-    delete(ModemAnswer,1,p-1);
-    p:=1;
-    while (p<=length(ModemAnswer)) and (ModemAnswer[p]>='0') and (ModemAnswer[p]<='9') do
-      inc(p);
-    bauddetect:=ival(left(ModemAnswer,p-1));
-    if (bauddetect<300) or (115200 mod bauddetect<>0) then
-      bauddetect:=baud;
-  end;
-
-  function ohnestrich(nummer:string):string;
-  begin
-    while cpos('-',nummer)>0 do
-      delete(nummer,cpos('-',nummer),1);
-    ohnestrich:=nummer;
-  end;
-
-type tStateDialup= (SDInitialize,SDDial,SDWaitForNextCall,SDDone);
-
-var nummer   : string[40];
-    s        : string;
-    StateDialup: tStateDialup;
-
-begin
-  StateDialup:=SDInitialize; Dials:=0; DialUp:=False;
-
-  while StateDialup<>SDDone do begin
-    case StateDialup of
-      SDInitialize: begin
-                      DisplayStatus(getres(161),True);     { 'Modem initialisieren' }
-                      TimerObj.SetTimeout(TimeoutModemInit);
-                      if CommandModemDial<>'' then begin
-                        CommObj^.SendString(#13,False); SleepTime(150);
-                        CommObj^.SendString(#13,False); SleepTime(300);
-                        CommObj^.PurgeInBuffer; SendCommand('AT'); ProcessKeypresses(false);
-                      end;
-                      if not TimerObj.Timeout then begin
-                        SendMultCommand(ModemInit); StateDialup:=SDDial;
-                      end;
-                    end;
-      SDDial: begin
-                nummer:=GetTelefon; inc(dials);
-                DisplayStatus(reps(getreps(162,nummer),strs(dials)),True);   { 'Waehle %s (Versuch %s) ...' }
-                log('+','Calling '+txt+', '+nummer);
-
-                TimerObj.SetTimeout(TimeoutConnectionEstablish);
-                SendMultCommand(CommandModemDial+nummer); {Gegenstelle anwaehlen}
-                {Evtl. Antwort schon hier in ModemAnswer}
-                repeat
-                  ProcessIncoming(true); ProcessKeypresses(false);
-                  DisplayTime(System.Round(TimerObj.SecsToTimeout));
-                  if (ModemAnswer='RINGING')or(ModemAnswer='RRING') then begin
-                    if not DebugMode then DisplayStatus(ModemAnswer,True);
-                    dec(disppos); ModemAnswer:=''; WaitForAnswer:=true;
-                  end;
-                until TimerObj.Timeout or(not WaitForAnswer);
-                if not TimerObj.Timeout then begin {Kein Timeout: Connect oder Busy - und vor allem kein Userbreak.}
-                  DebugLog('XPFM','Connect string: '+ModemAnswer,2);
-                  if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
-                  log('=',ModemAnswer); SleepTime(500);
-                  if not DebugMode then DisplayStatus(ModemAnswer,True);
-                  if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(left(UpperCase(ModemAnswer),7)='CARRIER'))or
-                      (CommObj^.Carrier and(not igcd))then begin {Connect!}
-                    StateDialup:=SDDone; DialUp:=True; SetBaudDetect; TimerObj.Start; {Online-Timer starten}
-                    if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-                    if not CommObj^.Carrier then SleepTime(1000);
-                    inc(connects)
-                  end
-                end else begin {Timeout oder Userbreak}
-                  if not GotUserBreak then DisplayStatus(getres(163),True);   { 'keine Verbindung' }
-                  CommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
-                  StateDialup:=SDWaitForNextCall;
+  case DUDState of
+    SDInitialize: DisplayStatus(getres(161),True);     { 'Modem initialisieren' }
+    SDSendDial: begin
+                  DisplayStatus(reps(getreps(162,DUDNumber),Strs(DUDTry)),True);   { 'W‰hle %s (Versuch %s) ...' }
+                  log('+','Calling '+txt+', '+DUDNumber);
                 end;
-              end;
-      SDWaitForNextCall: if dials<RedialMax then begin
-                           DisplayStatus(getres(165),True);   { 'warte auf naechsten Anruf ...' }
-                           TimerObj.SetTimeout(RedialWait);
-                           repeat
-                             DisplayTime(System.Round(TimerObj.SecsToTimeout));
-                             ProcessIncoming(true); ProcessKeypresses(true);
-                           until TimerObj.Timeout;
-                           StateDialup:=SDInitialize;
-                         end else StateDialup:=SDDone;
-    end;
-    ProcessKeypresses(false);
-    if GotUserBreak then begin DisplayStatus(getres(160),True); { 'abgebrochen' } aresult:=EL_break; exit end;
+    SDWaitForConnect: DisplayTime(System.Round(DUDTimer));
+    SDModemAnswer: DisplayStatus(ModemAnswer,True);
+    SDConnect,SDNoConnect: begin TimerObj.Start; Log('=',ModemAnswer)end;
+    SDWaitForNextCall: if LastState=SDWaitForNextCall then
+                         DisplayTime(System.Round(DUDTimer))
+                       else
+                         DisplayStatus(getres(165),True);   { 'warte auf n‰chsten Anruf ...' }
+    SDUserBreak: DisplayStatus(getres(160),True); { 'abgebrochen' }
   end;
-end;
-
-
-function Hangup: Boolean;
-var i : integer;
-begin
-  if(not igcd)and CommObj^.Carrier then DisplayStatus(getres(164),True); { 'Modem auflegen' }
-  CommObj^.PurgeInBuffer;
-  CommObj^.SetDTR(False);
-  SleepTime(500); for i:=1 to 6 do if(not igcd)and CommObj^.Carrier then SleepTime(500);
-  CommObj^.SetDTR(True);
-  SleepTime(500);
-  if GetCTS then begin
-    CommObj^.SendString('+++',False);
-    for i:=1 to 4 do if((not igcd)and CommObj^.Carrier)then SleepTime(500);
-    SleepTime(100);
-  end;
-  if GetCTS then begin CommObj^.SendString('AT H0'#13,True); SleepTime(1000)end;
-  Hangup:=CommObj^.SendString('AT'+#13,True);
+  LastState:=DUDState;
 end;
 
 {$I XP-FM.INC}          { YooHoo - Mailer }
+
+procedure newexit;
+begin
+  if ioresult<>0 then;
+  close(logf);
+  if ioresult<>0 then;
+  Cursor(curnorm);
+  exitproc:=oldexit;
+end;
 
 begin
   test8086:=0;
@@ -718,28 +496,30 @@ begin
   InitVar;
   OpenLog;
   TimerObj.Init;
+  oldexit:=exitproc;
+  exitproc:=@newexit;
 
   if not CommInit(CommInitString,CommObj)then
-    error(getres(100)+' "'+CommInitString+'"'); { 'Parameter-Fehler: ' }
+    error(getres(117)+' "'+CommInitString+'"'); { 'Fehler bei Portinitialisierung' }
+  Modem.CommObj:=CommObj;
 
   PushWindow;
   DisplayStatus(getreps(166,DestAddr),True);   { 'Anruf bei %s' }
   if addtxt<>'' then DisplayStatus(addtxt,True);
 
-  dials:=0; connects:=0;
+  connects:=0;
   repeat
-    aresult:=EL_ok;
-    if DialUp then begin
+    aresult:=EL_ok; mailing:=false; Modem.DisplayProc:=DialUpDisplay; LastState:=SDConnect;
+    if DialUp(Phone,ModemInit,CommandModemDial,RedialMax,TimeoutConnectionEstablish,RedialWait)then begin
+      inc(Connects);
       YooHooMailer; {Im Mailer wird Mailing True gesetzt}
       if aresult<>0 then brk_result:=aresult;
-    end;
-    if not HangUp then DisplayStatus('Modem konnte nicht aufgelegt werden!',True); {* In Resourcedatei uebernehmen}
+    end else if DUDState=SDUserBreak then aresult:=EL_break;
+    if not HangUp then DisplayStatus(getres(167),True); { 'Modem evtl. nicht aufgelegt?!' }
     if mailing then log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
-    mailing:=false;
-  until (aresult=EL_ok) or (aresult=EL_break) or
-        (connects=MaxConn) or (dials=RedialMax);
+  until(aresult=EL_ok)or(aresult=EL_break)or(connects=MaxConn);
 
-  if (dials=redialmax) and (connects=0) then aresult:=EL_noconn;
+  if(connects=0)then aresult:=EL_noconn;
   if aresult=EL_break then aresult:=brk_result;
 
   log('-','exiting');
@@ -748,15 +528,17 @@ begin
   PopWindow;
   CloseResource;
   halt(aresult);
-finalization
-  if ioresult<>0 then;
-  close(logf);
-  if ioresult<>0 then;
-  Cursor(curnorm);
 end.
 
 {
   $Log$
+  Revision 1.22  2000/07/12 16:52:10  ma
+  - Modemroutinen in Unit Modem ausgelagert
+  - kleinere Aenderungen fuer Ansistrings
+  - Ausgaberoutinen veraendert (Anzeige scrollt jetzt
+    nicht mehr)
+  - Finalization wieder weggemacht (gibt's leider nur bei Units)
+
   Revision 1.21  2000/07/09 09:09:55  mk
   - Newexit in Initialization/Finalization umgewandelt
 
