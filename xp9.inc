@@ -534,7 +534,7 @@
             if zc then begin
               maddbool(3,10+add,getres2(920,44),JanusPlus);    { 'Janus+' }
               mset1func(JanusSwitch);
-              mhnr(8018);
+              mhnr(8019);
               maddstring(33,10+add,getres2(920,43),uparcext,3,3,'>');
               end                                   { 'Packer-Extension    ' }
             else
@@ -1340,6 +1340,9 @@
 
 {
   $Log$
+  Revision 1.10.2.7  2000/12/21 21:55:46  mk
+  - Janus+ jetzt Hilfe-Nr. 8019
+
   Revision 1.10.2.6  2000/12/20 18:09:22  mk
   - Schalter fuer PPP-Option von UUZ
 
