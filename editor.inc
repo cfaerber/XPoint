@@ -1923,6 +1923,7 @@ begin
       and (ap<>block[2].pos.absatz)
       then begin  { Abs„tze ggf. zusammenfgen }
         addspaces:=1;
+        TruncAbs(ap^.next); { Leerzeichen am Absatzende entfernen }
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
@@ -2290,6 +2291,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.5  2000/08/17 21:44:27  mk
+  JG:- Quotereflow-Fix
+
   Revision 1.10.2.4  2000/05/08 14:23:03  mk
   - Write statt Wrt2 genutzt
 
