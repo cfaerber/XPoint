@@ -1,4 +1,5 @@
 @ECHO OFF
+REM $Id$
 REM OpenXP "make" Batchdatei: Kompiliert alle fuer XP relevanten
 REM Programme und Resourcen
 REM Compiler ggf. als Kommandozeilenparameter uebergeben.
@@ -86,9 +87,31 @@ MOVE *.hlp ..\Build\XPDIR\
 @MOVE X*.RES Build\XPDIR\
 @COPY *.RES Build\XPDIR\
 @COPY DOC\*.DOC Build\XPDIR\DOC\
+
+@REM DOCUMENTATION KOPIEREN
+@COPY DOC\COPYING Build\XPDIR\DOC\
+@COPY DOC\FIDO.TXT Build\XPDIR\DOC\
+@COPY DOC\OXPGUIDE.TXT Build\XPDIR\DOC\
+@COPy DOC\README.TXT Build\XPDIR\DOC\
+@COPY DOC\SLIZENZ.TXT Build\XPDIR\DOC\
+@COPY DOC\UPDATE.TXT Build\XPDIR\DOC\
+@COPY DOC\UUCP.TXT Build\XPDIR\DOC\
+@COPY DOC\VERSION.TXT Build\XPDIR\DOC\
+@COPY DOC\XPOINT.TXT Build\XPDIR\DOC\
+@COPY DOC\ZM.TXT Build\XPDIR\DOC\
+
+@REM BEISPIELE KOPIEREN
 @COPY Beispiel\*.* Build\XPDIR\Beispiel\
 @COPY Samples\*.* Build\XPDIR\Samples\
 @COPY Beispiel\*.scr Build\XPDIR\Samples\
 @COPY *.DLL Build\XPDIR\
 :FEHLER
 @ECHO OFF
+GOTO ENDE
+{
+  $Log$
+  Revision 1.1.2.2  2003/04/08 21:56:58  mw
+  MW: - Neue Dateien in DOC
+
+}
+:ENDE
