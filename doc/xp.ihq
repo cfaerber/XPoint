@@ -6861,6 +6861,12 @@ und die Erkennung von Dateiformaten anhand des
 Dateinamens daher im Z-Netz nicht in allen F„llen
 funktioniert.
 
+Hinweis:
+Wenn Sie einen HTML-Viewer eintragen (MIME-Typ
+<<text/html>>), dann sollten Sie <<htm>> als Dateinamen-
+erweiterung angeben, da sonst der externe Viewer u.
+U. die tempor„re Datei nicht als HTML-Datei erkennt.
+
 @
 823
 Geben Sie hier an, welches Programm CrossPoint zum

@@ -6133,6 +6133,12 @@ Note that in Z-Netz the message subject does not
 always contain the correct file name, which makes
 recognising file types by name difficult.
 
+Hint:
+If you enter a HTML viewer (MIME-Type <<text/html>>)
+you should enter <<htm>> as file extension, otherwise
+the external HTML viewer might fail in recognizing
+the temp file as a HTML file.
+
 @
 823
 Enter which Programm CrossPoint should call to
