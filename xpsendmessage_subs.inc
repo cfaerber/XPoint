@@ -836,7 +836,8 @@ begin
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
   FQDN := iifs(sData.FQDN='',dbReadStr(d,'fqdn'),sData.FQDN);
-  sData.replyto := iifs(sData.replyto='',dbReadStr(d,'ReplyTo'),sData.replyto);
+  if sData.replyto <> '' then
+    sdata.replyto := dbReadStr(d,'ReplyTo');
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp in netsRFC) and (umlaute=2) then
     umlaute:=0;
@@ -1120,6 +1121,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.3  2002/05/06 19:14:00  mk
+  - removed last fix
+
   Revision 1.17.2.2  2002/05/05 15:18:14  ma
   - fixed: ReplyTo not correctly set with role feature
 
