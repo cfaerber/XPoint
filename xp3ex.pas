@@ -487,9 +487,7 @@ var size   : longint;
       blanklines : longint;
       i          : longint;
       endspace   : boolean;
-      { 03.02.2000 robo } { unbedenklich }
       qc         : char;
-      { /robo }
       QuoteOffset: byte;
 
     procedure FlushStmp;
@@ -590,19 +588,19 @@ var size   : longint;
           end;
           insert(qspaces,s,1); inc(p,length(qspaces));
         end;
-{TAINTED}
         q:=1;
         while (s[q] in [' ','A'..'Z','a'..'z','0'..'9','Ñ','î','Å','·','é','ô','ö'])
           and (q<p) do inc(q);
         qc:=s[q];
-        while q<p do begin
-          if (s[q]=' ') and (s[q+1] in [' ',qc]) then begin
+        while q<p do
+        begin
+          if (s[q]=' ') and (s[q+1] in [' ',qc]) then
+          begin
             delete(s,q,1);
             dec(p);
-          end
-          else inc(q);
+          end else
+            inc(q);
         end;
-{/TAINTED}
         p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if LeftStr(s,length(lastqc))=lastqc then
@@ -954,39 +952,22 @@ begin
                     wrs(gr(33)+strs(mpdata.part)+           { 'Teil       : ' }
                         gr(34)+strs(mpdata.parts));         { ' von ' }
 
-    { 01/2000 oh}
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
                     wrs(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
                     wrs(ohfill(mheadercustom[2],11)+': '+hdp.Cust2);
                   end;
-    { /oh }
 
-{TAINTED}
   { Prioritaet im Listenkopf anzeigen:                                    }
   { Rueckgabewert hinter dem PriorityFlag extrahieren und zuordnen        }
 
-  hdf_Priority: if hdp.Priority <> 0 then
-       case hdp.Priority of
-
-     { an manchen ist die Erfindung der Addition und des +-Operators scheinbar
-     spurlos vor¸bergegangen ;-) }
-
-         { Wert aus Header uebernehmen                                     }
-         1: wrs(gr(35) + GetRes2(272, 1));     { 'Prioritaet  : Hoechste'  }
-         2: wrs(gr(35) + GetRes2(272, 2));     { 'Prioritaet  : Hoch'      }
-         3: wrs(gr(35) + GetRes2(272, 3));     { 'Prioritaet  : Normal'    }
-         4: wrs(gr(35) + GetRes2(272, 4));     { 'Prioritaet  : Niedrig'   }
-         5: wrs(gr(35) + GetRes2(272, 5));     { 'Prioritaet  : Niedrigste'}
-       end
-       else if hdp.Prio>0 then                                 { und fuer Zconnect ....  }
+  hdf_Priority:
+      if hdp.Priority in [1..5] then
+        wrs(gr(35) + GetRes2(272, Hdp.Priority))
+      else if hdp.Prio>0 then                                 { und fuer Zconnect ....  }
          if hdp.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
-
-  { /Prioritaet im Listenkopf anzeigen                                     }
-{/TAINTED}
-
   end;
 
       TestSoftware;
@@ -1091,6 +1072,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2001/03/02 10:22:49  mk
+  - removed/modified non GPL code
+
   Revision 1.64  2001/02/28 14:25:45  mk
   - removed some tainted comments
 

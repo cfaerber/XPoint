@@ -231,46 +231,10 @@ begin
   UTFDecoder.Free;
 end;
 
-{TAINTED}
-procedure UTF7ToIBM(var s: String); { by robo; nach RFC 2152 }
-const b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-var i,j:integer;
-    s1:string;
-    ucs:smallword;
+procedure UTF7ToIBM(var s: String); { nach RFC 2152 }
 begin
-  i:=1;
-  j:=posn('+',s,i);
-  while j<>0 do begin
-    i:=j;
-    inc(j);
-    while (j<=length(s)) and (pos(s[j],b64alphabet)<>0) do inc(j);
-    if (j<=length(s)) and (s[j]='-') then inc(j);
-    s1:=copy(s,i,j-i);
-    delete(s,i,j-i);
-    if s1='+-' then s1:='+'
-    else begin
-      if firstchar(s1)='+' then delfirst(s1);
-      if lastchar(s1)='-' then dellast(s1);
-      while (length(s1) mod 4<>0) do s1:=s1+'=';
-      DecodeBase64(s1);
-      if odd(length(s1)) then dellast(s1);
-      j:=1;
-      while length(s1)>j do begin
-        ucs:=word(s1[j]) shl 8+word(s1[j+1]);
-        if (ucs<$00000080)
-          then s1[j]:=char(ucs)
-          else if (ucs>$000000ff) { nur Latin-1 }
-            then s1[j]:='?'
-            else s1[j]:=char(iso2ibmtab[byte(ucs)]);
-        inc(j);
-        delete(s1,j,1);
-      end;
-    end;
-    insert(s1,s,i);
-    j:=posn('+',s,i+length(s1));
-  end;
+  // !! Routine von RB entfernt, wegen GPL Kompatibilit„t
 end;
-{/TAINTED}
 
 function RecodeString(s: String; TransTable: T8BitTable): String;
 var
@@ -3697,6 +3661,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/03/02 10:22:49  mk
+  - removed/modified non GPL code
+
   Revision 1.32  2001/02/28 23:56:21  ma
   fix ;-)
 

@@ -868,7 +868,6 @@ again:
                    else begin
                      Am_ReplyTo:='';
                      dbGo(bbase,selpos);
-{TAINTED}
 
 { Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
                      zg_flags:=dbReadInt(bbase,'flags');
@@ -881,14 +880,14 @@ again:
 { true=Userbrett  }    pm:=pos('@',empf)>0;
 { Brettvertreter  }    if not pm then begin
                          pollbox := dbReadNStr(bbase,bb_pollbox);
-                         if (ntBoxNetztyp(pollbox) in [nt_POP3,nt_NNTP,nt_IMAP,nt_UUCP,nt_ZConnect]) then begin
+                         if (ntBoxNetztyp(pollbox) in [nt_POP3,nt_NNTP,nt_IMAP,nt_UUCP,nt_ZConnect]) then
+                         begin
                            Am_ReplyTo:=empf;
                            Empf := dbReadNStr(bbase,bb_brettname);
                          end else empf:='A'+empf;
                        end;
                      end else
-{/TAINTED}
-                        Empf := dbReadNStr(bbase,bb_brettname);
+                       Empf := dbReadNStr(bbase,bb_brettname);
 
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
@@ -1283,6 +1282,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/03/02 10:22:49  mk
+  - removed/modified non GPL code
+
   Revision 1.57  2001/02/28 14:25:46  mk
   - removed some tainted comments
 
