@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { CrossPoint - Hauptmodul }
@@ -1191,6 +1192,7 @@ var t,lastt: taste;
         { Nur ausfuehren, wenn wirklich eine der benoetigten Tasten }
     if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
     GoP;
+    NodelistBrowserButtonsDisabled:=true;
     dbreadN(mbase,mb_brett,mbrett);
     if (mbrett[1]='1') or (mbrett[1]='U')
     then begin                       { Bei PM ohne Replyto }
@@ -1215,14 +1217,17 @@ var t,lastt: taste;
       IndirectQuote:=true;
       brief_senden(true,false,false,1);
       IndirectQuote:=false;
-      end;
+    end;
+    NodelistBrowserButtonsDisabled:=false;
   end;
 
   procedure datei_senden(pm,binary:boolean);
   begin
+    NodelistBrowserButtonsDisabled:=true;
     GoP;
     xp6.send_file(pm,binary);
     setall;
+    NodelistBrowserButtonsDisabled:=false;
   end;
 
   procedure Bezugsbaum;
@@ -1918,8 +1923,16 @@ begin      { --- select --- }
                    if c=k2_cU then user_aendern(true) else          { ^U' }
                    if c=k2_cT then edit_password(true) else         { ^T' }
                    if c=k2_V then wiedervorlage;                    { 'V' }
-                   if t=keyaltr then begin GoP; weiterleit(4,true); setall; end;
-                   if t=keyaltp then begin GoP; pm_archiv(false); end;  { @P }
+                   if t=keyaltr then begin                          { @R }
+                     NodelistBrowserButtonsDisabled:=true;
+                     GoP; weiterleit(4,true); setall;
+                     NodelistBrowserButtonsDisabled:=false;
+                     end;
+                   if t=keyaltp then begin                          { @P }
+                     NodelistBrowserButtonsDisabled:=true;
+                     GoP; pm_archiv(false);
+                     NodelistBrowserButtonsDisabled:=false;
+                     end;
                    if c=k2_cF then datei_senden(true,false);        { ^F }
                    if c=k2_cI then datei_senden(true,true);         { ^I }
                    if c=k2_U then to_window;                        { 'U' }
@@ -1967,10 +1980,12 @@ begin      { --- select --- }
                    if c=k2_cW  then switch_weiterschalt;            { ^W }
                    if t=k2_cD then SwitchDatum;                     { ^S }
                    if t=keyalta then begin
+                     NodelistBrowserButtonsDisabled:=true;
                      GoP;
                      weiterleit(5,false);  { archivieren }          { @A }
                      setall;
-                     end;
+                     NodelistBrowserButtonsDisabled:=false;
+                   end;
                    if (c=k2_R) or (deutsch and (c='R')) then begin 
                    GoP; print_msg(true); end;                       { ^D / 'R' }
                    if (c=k2_cN) then begin                          { ^N }
@@ -2185,6 +2200,9 @@ end;    { select }
 procedure TClose; {$IFNDEF Ver32 } far; {$ENDIF }
 var f : file;
 begin
+  if altproc[5].aktiv or                 { my: Bei <Alt-N> oder <AltGr-N>   }
+     altproc[maxalt+1].aktiv then        {     Datenbanken nicht schlie·en! }
+    exit;
   if closeflag then begin
     TempClose;
     if aktdispmode=20 then dbFlushClose(auto);
@@ -2243,6 +2261,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.62  2003/03/17 22:58:02  my
+  MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
+       _brief_senden, datei_senden, <Alt-P>, <Alt-R> und <Alt-A> deaktiviert.
+
+  MY:- Datenbanken werden in 'TClose' nicht geschlossen, wenn
+       Nodelist-Browser aktiv ist (erzeugt sonst Datenbankfehler
+       beim Scrollen, wenn Browser mit Hotkey augerufen wurde).
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.26.2.61  2002/04/07 22:33:26  my
   MY:- Anzeige des manuell mit <Ctrl-W> gesetzten Nachrichten-Weiter-
        schalters in oberer MenÅleiste wieder eingebaut.

@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { Overlay-Unit mit Editierroutinen u.a. }
@@ -169,7 +170,7 @@ begin
     end
   else begin
     fa.username:=s;
-    getNodeUserInfo(fa,ni);
+    getNodeUserInfo(fa,ni,false);
     end;
   if ni.found then
     s:=ni.sysop+'@'+MakeFidoAdr(fa,true);
@@ -1681,9 +1682,14 @@ var brk  : boolean;
     d    : DB;
     grnr : longint;
 begin
+  NodelistBrowserButtonsDisabled:=true;
   empf:=''; betr:='';
   ReadDirect(getres(2719),empf,betr,box,false,brk);   { 'private Nachricht' }
-  if brk then exit;
+  if brk then
+  begin
+    NodelistBrowserButtonsDisabled:=false;
+    exit;
+  end;
   fn:=TempS(2000);
   dbGo(mbase,0);    { -> Kennung fÅr dosend(), da· kein Brett-Reply }
   real:='';
@@ -1716,6 +1722,7 @@ begin
   dispose(sdata);
   pgdown:=false;
   if exist(fn) then era(fn);
+  NodelistBrowserButtonsDisabled:=false;  { zur Sicherheit }
 end;
 
 
@@ -2513,6 +2520,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.29  2003/03/17 22:58:52  my
+  MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
+       _brief_senden, datei_senden, <Alt-P>, <Alt-R> und <Alt-A> deaktiviert.
+
+  MY:- Datenbanken werden in 'TClose' nicht geschlossen, wenn
+       Nodelist-Browser aktiv ist (erzeugt sonst Datenbankfehler
+       beim Scrollen, wenn Browser mit Hotkey augerufen wurde).
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.25.2.28  2002/10/09 11:49:33  my
   JG:- Bei erstmaliger Benutzung des User-Anlegedialogs nach Programmstart
        stÅrzte XP mit einem RTE ab, wenn sich der Cursor noch im Feld
