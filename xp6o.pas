@@ -342,14 +342,12 @@ begin
     sendfilename:=hdp0^.datei;
     sendfiledate:=hdp0^.ddatum;
     sendflags:=0;
-    new(sData);
-    fillchar(sdata^,sizeof(sdata^),0);
+    sdata:=allocsenduudatamem;
     with sData^ do begin
-      { suboptimal }
-      if hdp^.followup.count>0 then AmReplyto:=hdp^.followup[0];
-      if hdp^.replyto.count>0 then PmReplyto:=hdp^.replyto[0];
-{      AmReplyto:=hdp^.AmReplyTo;
-      PmReplyTo:=hdp^.PmReplyTo; }
+      if hdp^.followup.count>0 then
+        followup.assign(hdp^.followup);
+      if hdp^.replyto.count>0 then
+        replyto.assign(hdp^.replyto);
       Keywords:=hdp^.Keywords;
       Summary:=hdp^.Summary;
       Distribute:=hdp^.Distribution;
@@ -405,7 +403,7 @@ begin
         until not found;
       dbGo(mbase,rec2);
       end;
-    dispose(sData);
+    freesenduudatamem(sdata);
     _era(tmp);
     end;
   xaufbau:=true;
@@ -931,8 +929,7 @@ again:
                  if (typ=3) and (sigfile='') then
                    if pm then sigfile:=PrivSignat
                    else sigfile:=SignatFile;
-                 new(sData);
-                 fillchar(sData^,sizeof(sData^),0);
+                 sdata:=allocsenduudatamem;
                  if typ=3 then begin
                    binaermail:=false;
                    if (hdp^.netztyp=nt_Maus) and (_brett[1]='A') then
@@ -957,7 +954,9 @@ again:
                    sendfilename:=hdp^.datei;
                    sendfiledate:=hdp^.ddatum;
                    end;
-                 if ((typ in [1..3,7]) and (not pm)) then sData^.amreplyto:=am_replyto;
+		 { suboptimal }
+                 if ((typ in [1..3,7]) and (not pm)) then
+                   sData^.followup.add (am_replyto);
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
                  if typ=7 then begin
                    sData^.oab:=hdp^.absender;
@@ -974,7 +973,7 @@ again:
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
                  if nextwl>=0 then uvs_active:=ua;
-                 dispose(sData);
+		 freesenduudatamem(sdata);
                  end;
               end;
          4 : begin
@@ -1027,14 +1026,12 @@ again:
                xp6._replyPath:=hdp^.replypath;
                xp6._pmReply:=(hdp^.attrib and attrPmReply<>0);
                xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
-               new(sData);
-               fillchar(sdata^,sizeof(sdata^),0);
+               sdata:=allocsenduudatamem;
                with sData^ do begin
-                 { suboptimal }
-                 if hdp^.followup.count>0 then AmReplyto:=hdp^.followup[0];
-                 if hdp^.replyto.count>0 then PmReplyto:=hdp^.replyto[0];
-               {  AmReplyto:=hdp^.AmReplyTo;
-                 PmReplyTo:=hdp^.PmReplyTo; }
+                 if hdp^.followup.count>0 then
+		   followup.assign(hdp^.followup);
+                 if hdp^.replyto.count>0 then
+		   replyto.assign(hdp^.replyto);
                  Keywords:=hdp^.Keywords;
                  Summary:=hdp^.Summary;
                  Distribute:=hdp^.Distribution;
@@ -1051,7 +1048,7 @@ again:
                  inc(SendFlags,SendPGPsig);
                if DoSend(pm,fn,empf,betr,false,hdp^.typ='B',sendbox,
                          false,false,sData,leer,leer,sendflags) and unpark then SetDel;
-               dispose(sData);
+               freesenduudatamem(sdata);
              end;
          6 : begin
                dbSeek(ubase,uiName,UpperCase(name));
@@ -1290,6 +1287,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.45  2000/11/18 12:37:36  hd
   - Ungueltiges Zeichen entfernt
 

@@ -75,25 +75,6 @@ const sendIntern = 1;     { force Intern              }
 var
   SendEmpfList: TStringList;
 
-type  SendUUdata = record
-                     AmReplyTo  : string;
-                     PmReplyTo  : string;
-                     keywords   : string;
-                     summary    : string;
-                     distribute : string;
-                     ReplyGroup : string;     { Maus-QuoteTo }
-                     oab,oem,wab: string;
-                     oar,war    : string;
-                     onetztyp   : byte;
-                     orghdp     : headerp;
-                     quotestr   : string;
-                     UV_edit    : boolean;        { <Esc> -> "J" }
-                     empfrealname : string;
-                     msgid,
-                     ersetzt    : string;
-                   end;
-      SendUUptr   = ^SendUUdata;
-
 var
       InternBox : string;  { Boxname bei /Netzanruf }
       msgMarkEmpf: byte;   { fuer sendMark }
@@ -851,11 +832,7 @@ begin      {-------- of DoSend ---------}
   assign(f,datei);
 
   sdNope:=(sdata=nil);
-  if sdNope then
-  begin
-    new(sData);
-    fillchar(sData^,sizeof(sdata^),0);
-  end;
+  if sdNope then sdata:=allocsenduudatamem;
 
   if sendFlags and sendQuote<>0 then
   begin
@@ -1320,7 +1297,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
-                      sData^.pmreplyto:='';
+                      sData^.replyto.clear;
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -1624,10 +1601,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if netztyp=nt_Magic then
       hdp^.hd_point:=pointname;
-    if sData^.PmReplyTo<>'' then
-      hdp^.replyto.add(sData^.PmReplyTo);
-    if (not pm) and (sData^.AmReplyTo<>'') then
-      hdp^.followup.add(sData^.AmReplyTo);
+    if sData^.replyto.count>0 then
+      hdp^.replyto.assign(sData^.replyto);
+    if (not pm) and (sData^.followup.count>0) then
+      hdp^.followup.assign(sData^.followup);
     hdp^.Keywords:=sData^.keywords;
     hdp^.Summary:=sData^.summary;
     if  ntAdrCompatible(sData^.onetztyp,netztyp)
@@ -1736,8 +1713,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       with sData^.orghdp^ do begin
         { hdp^.zdatum:=zdatum; hdp^.orgdate:=true;  !! Unversandt/* !! }
         hdp^.organisation:=organisation;
-        { suboptimal }
-        hdp^.replyto.add(replyto[0]);
+	for i:=0 to replyto.count-1 do
+          hdp^.replyto.add(replyto[i]);
         hdp^.datei:=datei; hdp^.ddatum:=ddatum;
         end;
     if _sendmaps then
@@ -2012,7 +1989,7 @@ xexit:
   FreeHeaderMem(hdp);
   if sigtemp then _era(sigfile);
 xexit1:
-  if sdNope then dispose(sdata);
+  if sdNope then freesenduudatamem(sdata);
 xexit2:
   forcebox:=''; forceabs:='';
   sendfilename:=''; sendfiledate:='';
@@ -2084,8 +2061,7 @@ begin
         {fsplit(fn,dir,name,ext);}
         if betr='' then betr:=ExtractFileName(fn)
         else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
-        new(sData);
-        fillchar(sData^,sizeof(sData^),0);
+	sdata:=allocsenduudatamem;
         if aktdispmode in [10..19] then begin
           get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
           if repto<>'' then empf:=repto;
@@ -2094,7 +2070,7 @@ begin
         sendfilename:=UpperCase(ExtractFilename(fn));
         sendfiledate:=zcfiletime(fn);
         if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
-        dispose(sData);
+        freesenduudatamem(sData);
         end;
       if useclip then _era(fn);
       end;
@@ -2134,6 +2110,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.79  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.78  2000/11/24 09:40:11  mk
   - fixed Franks suboptimal changes :(
 

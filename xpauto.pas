@@ -242,8 +242,7 @@ begin
       if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
-      new(sData);
-      fillchar(sData^,sizeof(sData^),0);
+      sdata:=allocsenduudatamem;
       if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
       if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,leer,sendShow) then begin
@@ -275,6 +274,7 @@ begin
       SaveUVS:=muvs;
       if tmp and FileExists(datei) then
         _era(datei);
+      freesenduudatamem(sdata)
       end;
     end;
 end;
@@ -671,6 +671,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.28  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

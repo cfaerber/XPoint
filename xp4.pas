@@ -964,8 +964,7 @@ var t,lastt: taste;
 
     if pm then sigf:=PrivSignat
     else sigf:=SignatFile;
-    getmem(sData, sizeof(SendUUdata)); {new(sData);}
-    fillchar(sdata^,sizeof(sdata^),0);
+    sdata:=allocsenduudatamem;
     if quote=2 then sdata^.quotestr:=qchar;
 
     if not usermsg then begin
@@ -1063,7 +1062,7 @@ var t,lastt: taste;
     headf:='';
     if (quote=0) and autocpgd then pgdown:=true;
     if not pm and (rt0<>'') and not gesperrt then
-      sData^.amReplyTo:=mid(rt0,2);
+      sData^.followup.add(mid(rt0,2));
     flqto:=flqto or qtflag;
     _pmReply:=_pmReply or pmrflag;
     if (netztyp=nt_QWK) and _pmReply and (dispmode in [10..19]) then begin
@@ -1120,7 +1119,7 @@ var t,lastt: taste;
     force_quotemsk:='';
     if FileExists(fn) then _era(fn);
     setall;
-    freemem(sData, sizeof(SendUUdata)); {dispose(sData);}
+    freesenduudatamem(sdata);
     qmpdata := nil;
   end;
 
@@ -2133,6 +2132,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.66  2000/11/24 09:40:11  mk
   - fixed Franks suboptimal changes :(
 

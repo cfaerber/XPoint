@@ -97,6 +97,24 @@ Type TStartData = record
                     ObjectBuffLen: LongInt; { reserved, must be 00000000 }
   End;
 
+type  SendUUdata = record
+                     followup   : tstringlist;
+                     replyto    : Tstringlist;
+                     keywords   : string;
+                     summary    : string;
+                     distribute : string;
+                     ReplyGroup : string;     { Maus-QuoteTo }
+                     oab,oem,wab: string;
+                     oar,war    : string;
+                     onetztyp   : byte;
+                     orghdp     : headerp;
+                     quotestr   : string;
+                     UV_edit    : boolean;        { <Esc> -> "J" }
+                     empfrealname : string;
+                     msgid,
+                     ersetzt    : string;
+                   end;
+      SendUUptr   = ^SendUUdata;
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -132,6 +150,10 @@ procedure freehelp;
 function  AllocHeaderMem: headerp;
 procedure ClearHeader(hdp: headerp);
 procedure FreeHeaderMem(var hdp: headerp);
+
+function  allocsenduudatamem: senduuptr;
+procedure clearsenduudata(sdata: senduuptr);
+procedure freesenduudatamem(var sdata: senduuptr);
 
 procedure setenable(mnu,nr:byte; flag:boolean);
 procedure setmenup(mnu:string; nr:byte; anew:string);
@@ -2025,7 +2047,7 @@ const
 begin
   getmem(hdp, sizeof(header));
   if hdp=nil then
-    trfehler(6,30);
+    trfehler(6,30);  { 'zu wenig freier Speicher' }
   ClearHeader(hdp);
   AllocHeaderMem:= hdp;
 end;
@@ -2064,6 +2086,37 @@ begin
   hdp:= nil;
 end;
 
+function allocsenduudatamem: senduuptr;
+const
+  sdata: senduuptr = nil;
+begin
+  getmem(sdata, sizeof(senduudata));
+  if sdata=nil then
+    trfehler(6,30);  { 'zu wenig freier Speicher' }
+  clearsenduudata(sdata);
+  allocsenduudatamem:=sdata
+end;
+
+procedure clearsenduudata(sdata: senduuptr);
+begin
+  fillchar(sdata^, sizeof(senduudata), 0);
+  with sdata^ do begin
+    followup:=tstringlist.create;
+    replyto:=tstringlist.create
+  end
+end;
+
+procedure freesenduudatamem(var sdata: senduuptr);
+begin
+  if sdata<>nil then
+  with sdata^ do begin
+    followup.free;
+    replyto.free
+  end;
+  freemem(sdata);
+  sdata:= nil
+end;
+
 var
   SavedExitProc: pointer;
 
@@ -2085,6 +2138,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.93  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.92  2000/11/19 18:22:53  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

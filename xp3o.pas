@@ -1260,8 +1260,7 @@ begin
   _bezug:=hdp^.ref;
   _beznet:=hdp^.netztyp;
   _betreff:=hdp^.betreff;
-  new(sData);
-  fillchar(sData^,sizeof(sData^),0);
+  sdata:=allocsenduudatamem;
   sData^.ersetzt:=hdp^.msgid;
   empf:=hdp^.empfaenger;
   SendEmpfList.Assign(EmpfList);
@@ -1270,7 +1269,7 @@ begin
             true,false,true,false,true,sData,leer,leer,
             0) then;
   FreeHeaderMem(hdp);
-  dispose(sData);
+  freesenduudatamem(sData)
 end;
 
 
@@ -1498,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.43  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

@@ -1623,12 +1623,11 @@ begin
     end;
   if autocpgd then pgdown:=true;
   forcebox:=box;
-  getmem(sdata,sizeof(SendUUdata)); {new(sdata);}
-  fillchar(sdata^,sizeof(sdata^),0);
+  sdata:=allocsenduudatamem;
   sdata^.empfrealname:=real;
   if DoSend(pm,fn,empf,betr,true,false,true,false,true,sdata,headf,sigf,0)
   then;
-  freemem(sdata,sizeof(SendUUdata)); {dispose(sdata);}
+  freesenduudatamem(sdata);
   pgdown:=false;
   if FileExists(fn) then DeleteFile(fn);
 end;
@@ -2424,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.51  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 

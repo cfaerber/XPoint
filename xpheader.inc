@@ -113,8 +113,30 @@ type
   end;
   headerp = ^header;
 
+  SendUUdata = record
+    AmReplyTo  : string;
+    PmReplyTo  : string;
+    keywords   : string;
+    summary    : string;
+    distribute : string;
+    ReplyGroup : string;     { Maus-QuoteTo }
+    oab,oem,wab: string;
+    oar,war    : string;
+    onetztyp   : byte;
+    orghdp     : headerp;
+    quotestr   : string;
+    UV_edit    : boolean;        { <Esc> -> "J" }
+    empfrealname : string;
+    msgid,
+    ersetzt    : string;
+  end;
+  SendUUptr   = ^SendUUdata;
+
 {
   $Log$
+  Revision 1.8  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.7  2000/11/17 19:35:45  fe
   Followup-To support updated to ZC 3.1.
   Mail-Copies-To support added.

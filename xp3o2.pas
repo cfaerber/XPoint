@@ -16,8 +16,8 @@ unit xp3o2;
 
 interface
 
-uses sysutils, typeform,datadef,database,resource,xp0,xp6, xpglobal;
-
+uses sysutils,classes, typeform,datadef,database,resource,xp0,xp6,
+  xpglobal,xp1;
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
 procedure SetBrettindex;
@@ -33,7 +33,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xpnt,xpdatum,xp_pgp, xp1;
+uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -451,6 +451,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.28  2000/11/24 09:40:11  mk
   - fixed Franks suboptimal changes :(
 

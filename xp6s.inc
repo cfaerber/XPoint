@@ -837,8 +837,8 @@ begin
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
   FQDN := dbReadStr(d,'fqdn');
-  if sData^.pmreplyto='' then
-    sdata^.pmreplyto:= dbReadStr(d,'ReplyTo');
+  if sData^.replyto.count=0 then
+    sdata^.replyto.add(dbReadStr(d,'ReplyTo'));
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp=nt_UUCP) and (umlaute=2) then
     umlaute:=0;
@@ -999,6 +999,7 @@ var x,y : byte;
     brk : boolean;
     asc : string[120];
     sml : string[1];
+    s   : string;
 begin
   case netztyp of
     nt_ZConnect : y:=iif(pm,5,9);
@@ -1012,12 +1013,26 @@ begin
       if ntGrossBrett(netztyp) then sml:='>'
       else if ntKleinBrett(netztyp) then sml:='<'
       else sml:='';
-      maddstring(3,y,getres2(616,1),AmReplyTo,40,eAdrLen,sml+asc); mhnr(850);
+      { suboptimal }
+      if followup.count>0 then
+        s:=followup[0];
+      maddstring(3,y,getres2(616,1),s,40,eAdrLen,sml+asc); mhnr(850);
+      if s<>'' then begin
+        followup.clear;
+	followup.add(s)
+      end;
       mappcustomsel(selbrett,false);        { 'Brettantworten in' }
       mset3proc(firstslash);
       inc(y,2);
       end;
-    maddstring(3,y,getres2(616,5),PmReplyTo,40,eAdrLen,asc); mhnr(851);
+    { suboptimal }
+    if replyto.count>0 then
+      s:=replyto[0];
+    maddstring(3,y,getres2(616,5),s,40,eAdrLen,asc); mhnr(851);
+    if s<>'' then begin
+      replyto.clear;
+      replyto.add(s)
+    end;
     mappcustomsel(seluser,false);           { 'PM-Antworten an  ' }
     msetvfunc(testReplyTo);
     inc(y,2);
@@ -1140,6 +1155,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.38  2000/11/24 19:01:27  fe
+  Made a bit less suboptimal.
+
   Revision 1.37  2000/11/17 00:15:48  mk
   - Virtual Pascal compatibility updates
 
