@@ -1,0 +1,29 @@
+Grobentwurf für eine korrekte Adressverarbeitung
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+EMP und ABS enthalten in Zukunft die Envelope-Adressen (sowie
+Newsgroups im Fall von EMP); anhand dieser wird auch die
+Sortierung in Bretter vorgenommen.
+
+To und CC werden als U-To und U-CC  übernommen. Dadurch ergibt
+sich die gleiche Dopplung wie bei RFC. Das Sendefenster wird
+dahingehend geändert, dass man mehrere "Empfänger" (To, bisher
+verteilt als "Empfänger" und "Kopien") und in RFC-Netzen
+"Kopienempfänger" (CC) sowie "Blindkopienempfänger" (BCC) eingeben
+kann. BCC wird nicht als eigener Header erzeugt, sondern
+grundsätzlich nur in den Envelope geschrieben.
+
+Sender und MAIL FROM sind immer die eingetragene E-Mail-Adresse,
+man kann allerdings einen oder mehrere(!) "Absender" (besser wäre
+die Bezeichnung "Autoren") eingeben, die als From übernommen
+werden.
+
+EMP wird gegebenenfalls aus To und CC erzeugt (wenn EMP keine
+E-Mail-Adressen enthält), umgekehrt werden To und CC aus EMP und
+KOP erraten, falls nötig. Ähnlich für From/Sender/MAIL FROM und
+ABS/WAB/U-Sender/U-From.
+
+OEM und WAB werden bei RFC überhaupt nicht mehr verwendet; beim
+Weiterleiten werden die korrekten "[U-]Resent-*"-Header erzeugt.
+
+$Id$
+vim:tw=66:enc=utf8
