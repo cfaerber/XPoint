@@ -149,11 +149,13 @@ var
   const ACK= #6; NACK= #21;
   var zsum,i: integer; Timer: TTimer; Pass: boolean;
   begin
-    Debug.DebugLog('xpnczconnect','Sending serial number',DLInform);
+    Debug.DebugLog('xpnczconnect', Format('Sending serial number: %s', [BoxPar^.zerbid]),DLInform);
     zsum:=0;
     for i:=1 to 4 do Inc(zsum,ord(BoxPar^.zerbid[i]));
     GenericMailer.CommObj.SendString(BoxPar^.zerbid+chr(zsum and 255),False);
-    Timer.Init; Timer.SetTimeout(30); Pass:=False;
+    Timer.Init;
+    Timer.SetTimeout(30);
+    Pass:=False;
     repeat
       if GenericMailer.CommObj.CharAvail then
         case GenericMailer.CommObj.GetChar of
@@ -256,6 +258,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2003/05/04 16:41:12  mk
+  - added serial number to debug log
+
   Revision 1.16  2003/04/24 22:53:02  ma
   - fix: ZC CALLER file was put into sysop poll dir even if no sysop mode
     configured
