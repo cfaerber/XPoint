@@ -1356,13 +1356,13 @@ JG:
 |  13./14.03.2002  |
 +------------------+
 
-SV[+MY]:
+SV [+MY]:
 - Bei Nachrichten mit KOM-Header wird ein ndern des Textes via N//T
   jetzt verhindert.
   XP4O.PAS, XP-D.RQ, XP-E.RQ
 
 
-RB[+MY]:
+RB [+MY]:
 - Gesamte Zeichensatzdecodierung und -konvertierung entrmpelt, von
   Redundanzen befreit, korrigiert und erweitert:
   - Alle Decodier- und Konvertierroutinen in neue Unit MIMEDEC.PAS
@@ -1517,7 +1517,7 @@ MY:
   von der Einstellung C/O/L/Rollbalken_bei_Mausbedienung).
   LISTER.PAS
 
-RB[+MY]:
+RB [+MY]:
 - Fehlertolerantere Fassung fr die Decodierung von nach RFC 1522
   codierten Headerzeilen: Bei Leerzeichen im codierten String wird nicht
   mehr abgebrochen (relevant z.B. bei VSOUP).
@@ -1638,7 +1638,7 @@ JG:
   jetzt auch Bretter gesucht werden, die Leerzeichen im Namen haben.
   XP4.PAS
 
-JG[+MY]:
+JG [+MY]:
 - Durch den Ausbau von 'Do_XPHilite' berflssig gewordene Variablen
   und Anweisungen eliminiert.
   XP0.PAS, XP4.PAS, XP4.INC
@@ -1724,7 +1724,7 @@ SV:
   einem RTE 203 abstrzen (Bug existent seit dem 26.11.2000).
   WIN2.PAS
 
-JG[+MY]:
+JG [+MY]:
 - Sicherheits-Fix: Bei der Reservierung des Speichers fr den Dateinamen
   im Dateiauswahl-Fenster wird jetzt sicherheitshalber vorher geprft,
   ob der angeforderte Speicher berhaupt verfgbar ist und ggf.
@@ -1762,7 +1762,7 @@ JG:
   Stelle abzuschneiden.
   CLIP.PAS
 
-MY[+JG]:
+MY [+JG]:
 - Der From:-Header durchl„uft jetzt die MIME-Decodierung nach RFC 1522,
   *bevor* er in 'GetAdr' in Adresse und Realname zerlegt wird (vorher
   wurde ein Header wie 'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?=
@@ -1821,7 +1821,7 @@ CL:
 |  13.04.2002  |
 +--------------+
 
-RB[+JG+MY]:
+RB [+JG+MY]:
 - MIME-Decodierung nach RFC 1522 an RFC 2822/2047 (whitespace zwischen
   "multiple 'encoded word's", auch bei Folding) angepaát und Erkennung
   von 'encoded word's verbessert. Korrekt decodiert werden jetzt z.B.:
@@ -1858,7 +1858,7 @@ SV:
   aber nicht negativ aus).
   UUZ.PAS
 
-MY[+SV]:
+MY [+SV]:
 - Sortierung in der Dateiauswahl-Box ge„ndert: Erst Verzeichnisse, dann
   Dateien, dann Laufwerke.
   WIN2.PAS
@@ -1889,7 +1889,7 @@ JG+RB+MY:
 |  19.-21.04.2002  |
 +------------------+
 
-JG[+MY]:
+JG [+MY]:
 - MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
   OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrichten
   erzeugen und versenden. Es k”nnen sowohl im Sendefenster als auch
@@ -2293,11 +2293,70 @@ JG:
   CLIP.PAS
 
 
++-------------------------+
+|  12.08.2002-17.03.2003  |
++-------------------------+
+
+TS [+MY]:
+- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
+        ge„ndert/korrigiert/erweitert
+  ----------------------------------------------------------------------
+  - Userindex NODEUSER.IDX "entschlackt", Code kleiner und bersicht-
+    licher, dadurch Laufzeit auf langsamen Rechnern schneller. Bisherige
+    Komprimierung des Index aufgehoben, dadurch diverse Probleme behoben
+    und die M”glichkeit zus„tzlicher Erweiterungen geschaffen (s.u.).
+  - Fix: Es kam vor, daá manche Listen (z.B. die Zone21-Pointliste) zwar
+    eingebunden und indiziert wurden, bei einer Nodelist-Abfrage mit
+    <Alt-N> auf die in der Auswahlliste angezeigten Eintr„ge aber
+    trotzdem nicht zugegriffen werden konnte (nach Auswahl mit <Enter>
+    war die Anzeige leer). Dies ist durch den Wegfall der Komprimierung
+    jetzt behoben.
+  - Fix: Beim Durchsuchen der Node-/Pointlisten mit F/N/D ist jetzt
+    sichergestellt, daá a) weder fehlende noch b) unzutreffende noch
+    c) doppelte Eintr„ge in der Suchergebnisliste auftreten k”nnen. Z.B.
+    wurden u.U. Eintr„ge gefunden, die gar nicht den Suchkriterien
+    entsprachen, und im Suchergebnis dann mit falschem Sysop-Namen
+    angezeigt; kam eine AKA in mehreren Listen vor (z.B. POINTS24 und
+    R24PNT), wurde nach dem Zufallsprinzip nur der Eintrag aus einer der
+    Listen (der aber dafr mehrfach) angezeigt.
+  - In allen Suchergebnis-/Auswahllisten steht jetzt hinter dem sicht-
+    baren Eintrag der Dateiname sowie die interne Nummer der Liste, aus
+    der der jeweilige Eintrag stammt (sichtbar zu machen durch Scrollen
+    mit <Cursor-rechts>). Damit ist bei mehreren Eintr„gen mit
+    identischer AKA, die aus unterschiedlichen Listen stammen, die
+    Herkunft des Eintrags erkennbar. Auáerdem werden diese Daten fr die
+    weitere interne Verarbeitung ben”tigt:
+  - Fix: Bei der Auswahl eines Eintrags aus der jeweiligen Auswahlliste
+    mit <Enter> ist jetzt bei mehreren Eintr„gen mit identischer AKA
+    sichergestellt, daá auch wirklich auf die Daten des ausgew„hlten
+    Eintrags in der zugeh”rigen Node-/Pointliste zugegriffen wird.
+    Bisher wurden die Daten unabh„ngig vom ausgew„hlten Eintrag immer
+    derselben (zuf„lligen) Liste entnommen, und an die Daten der
+    Eintr„ge aus den brigen Listen kam man gar nicht heran. Speziell
+    bei Eintr„gen aus Listen FTN-kompatibler Netze wurde stellenweise
+    auf die Daten eines beliebigen Eintrags in der Fido-Nodeliste
+    zugegriffen.
+  - Einige (vorl„ufige) nderungen in der Detailanzeige unterhalb der
+    Auswahlliste beim Durchsuchen mit F/N/D.
+  - Fix: Bei Listen im Points24-Format werden "Region"-Eintr„ge (i.d.R.
+    sind das PLK-Eintr„ge) beim Durchsuchen mit F/N/D ignoriert (Verhal-
+    ten damit jetzt identisch mit der Nodelisten-Abfrage bei <Alt-N>
+    bzw. F/N/A).
+  - Listen in einem Points24-kompatiblen Format werden jetzt nicht mehr
+    nur am Dateinamen "POINTS24.###", sondern auch am Format selbst
+    erkannt. Dadurch wird beim Einbinden solcher Listen (z.B. Zone21-
+    Liste) das korrekte Listenformat "Points24" (bisher: "Nodeliste")
+    vorgeschlagen.
+  - Interne nderung: Neuer Schalter "FIDOTST" in XPDEFINE.INC, mit dem
+    der Nodelisten-Index in Textform ausgegeben werden kann.
+  XPDEFINE.INC, XPFIDO.PAS, XPF1.INC, XPFIDONL.PAS, XPNODES.PAS
+
+
 +--------------+
 |  08.09.2002  |
 +--------------+
 
-AB[+MY]:
+AB [+MY]:
 - Spezial-Suche kann jetzt auch nach dem Empfangsdatum von Nachrichten
   suchen.
   XP4O.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
@@ -2347,6 +2406,165 @@ MW:
      Balkendiagramm jetzt auch die verwendete W„hrung an.
   XP0.PAS, XP2C.PAS, XP2CFG.INC, XP7O.PAS, XP9BP.PAS, XP10.PAS, XP10P.INC,
   XPSTAT.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+
++---------------------+
+|  28.02.-17.03.2003  |
++---------------------+
+
+MY:
+- Fido: Grundlegendes Redesign der Nodelist-Abfrage mit <Alt-N> bzw.
+        F/N/A und des Durchsuchens mit F/N/D ("Nodelist-Browser")
+  ----------------------------------------------------------------------
+  - Die Nodelist-Abfrage mit <Alt-N> bzw. F/N/A verwendet zur Ausgabe
+    jetzt den "Nodelist-Browser", der bisher nur von der Durchsuchen-
+    Funktion bei F/N/D verwendet wurde. Dadurch werden bei mehreren
+    gefundenen Eintr„gen alle zugeh”rigen Detailinformationen jetzt
+    direkt beim Scrollen unterhalb der Auswahlliste angezeigt, ohne fr
+    jeden der Eintr„ge eine erneute Suche starten zu mssen. Des
+    weiteren stehen damit jetzt auch bei der Nodelist-Abfrage die
+    Zusatzfunktionen "Nachricht" und "Request" sowie die brigen Tasten
+    fr Markiersuche ("s"), Schreiben in Datei oder Clipboard ("w") und
+    Drucken (<Ctrl-D>) zur Verfgung.
+    Die bisherige gesonderte Ausgabe fr die Nodelist-Abfrage machte
+    noch nie wirklich Sinn, da sie weniger funktional war, aber auch
+    nicht mehr Information enthielt.
+  - Als unmittelbare Folge davon entf„llt der jetzt berflssige Button
+    "Info", wenn ein User im Nodelist-Browser mit <Enter> ausgew„hlt
+    wird.
+  - Die bisherige Form der Ausgabe des Suchergebnisses einer Nodelist-
+    Abfrage bei mehreren gefundenen Eintr„gen (Liste, aus der ein
+    Eintrag mit <Enter> ausgew„hlt werden muá) wird jedoch weiterhin
+    verwendet bei Fido/Request, Nachricht/Direkt und beim Anlegen eines
+    Users. Unterhalb der Auswahlliste werden jetzt auch hier der Status
+    des Users und der Name der Node-/Pointliste angezeigt, aus der der
+    aktive Eintrag stammt.
+  - Aus dem Nodelist-Browser heraus kann jetzt direkt per Hotkey "A"
+    oder "D" unmittelbar eine neue Abfrage bzw. ein neues Durchsuchen
+    der Node-/Pointlisten gestartet werden - unabh„ngig davon, welche
+    Art der Suche vorher durchgefhrt wurde (daher kein Abbruch und
+    Neustart der Routine fr neue Suche mehr notwendig, sondern direkter
+    Wechsel zwischen den verschiedenen Arten der Suche m”glich). Wird
+    der auf den Hotkey folgende Dialog mit <Esc> abgebrochen, bleibt das
+    vorherige Suchergebnis in der Anzeige erhalten.
+    Der Nodelist-Browser fungiert somit als "Shell" fr alle Formen der
+    Suche in Node- und Pointlisten, sobald und solange er auf dem
+    Bildschirm ist.
+  - Das Durchsuchen der Node-/Pointlisten mit F/N/D ist jetzt (fast)
+    berall in XP auch mit dem Hotkey <AltGr-N> erreichbar (z.B. aus dem
+    Lister oder Editor heraus).
+  - Im Eingabedialog fr das Durchsuchen von Node-/Pointlisten wird
+    jetzt - wie auch seit jeher bei der Nodelist-Abfrage - rechts oben
+    die Day-Number der Haupt-Nodeliste angezeigt.
+  - Wird aus dem Nodelist-Browser heraus eine Nachricht oder ein File-
+    Request erzeugt, wird bis zur Beendigung der Aktion der rekursive
+    Aufruf des Nodelist-Browsers (z.B. aus dem Editor) mit <Alt-N> oder
+    <AltGr-N> verhindert.
+  - Eine erfolglose Suche fhrt nicht zu einer Fehlermeldung mit
+    anschlieáendem Abbruch der Routine, sondern es wird der Nodelist-
+    Browser mit einem entsprechenden Hinweis angezeigt. Dort kann dann
+    unmittelbar mit "A" eine neue Nodelist-Abfrage oder mit "D" ein
+    neues Durchsuchen ausgel”st (oder die gesamte Routine mit <Esc>
+    abgebrochen) werden.
+  - Box- bzw. Pointname sowie der Standort werden jetzt unterhalb der
+    Auswahlliste nochmals in voller L„nge angezeigt (im Suchergebnis
+    werden sie auf zusammen 35 Zeichen gekrzt dargestellt).
+  - Die Flags werden jetzt vollst„ndig (in 3 Zeilen   63 Zeichen)
+    angezeigt.
+  - Eine eMail-Adresse wird nicht mehr aus den Flags herausoperiert und
+    gesondert angezeigt, weil a) die Flags auch mehrere eMail-Adressen
+    enthalten k”nnen (und es deshalb willkrlich ist, wie bisher einfach
+    die erste zu nehmen), b) es sich nicht um "anschreibbare" Adressen
+    handelt, und c) aufgrund der vollst„ndigen Anzeige der Flags (s.o.)
+    jetzt ohnehin *alle* Adressen angezeigt werden.
+  - Wenn ein Durchsuchen der Node-/Pointlisten gestartet und mitten im
+    Suchlauf durch <Esc> abgebrochen wird, ohne daá bereits ein Eintrag
+    gefunden werden konnte, bricht XP die Routine nicht mehr komplett
+    ab, sondern baut den Eingabedialog mit den aktuell eingegebenen
+    Daten neu auf. Wird dann auch der Eingabedialog abgebrochen und
+    handelt es sich nicht um den ersten Suchlauf, werden die beim
+    vorherigen Suchlauf benutzten Daten restauriert (weil sich diese
+    noch in der Anzeige des Nodelist-Browsers befinden), und XP kehrt in
+    den Nodelist-Browser zurck.
+    Waren zum Zeitpunkt des Suchlauf-Abbruchs mit <Esc> jedoch bereits
+    Eintr„ge gefunden worden, dann wird der Nodelist-Browser mit den
+    gefundenen Eintr„gen neu aufgebaut.
+  - Der zuletzt benutzte Suchbegriff der Nodelist-Abfrage mit <Alt-N>
+    bzw. F/N/A bleibt fr die Dauer der XP-Session jetzt erhalten und
+    wird bei der n„chsten Abfrage wieder vorgeschlagen.
+  - Fix: Wenn aus dem Nodelist-Browser heraus eine neue Suche gestartet
+    oder ein Eintrag mit <Enter> ausgew„hlt, der nachfolgende Dialog
+    aber mit <Esc> abgebrochen wird, dann ist danach jetzt weiterhin der
+    Eintrag in der Auswahlliste aktiv, der auch vor dem Ausfhren der
+    Aktion aktiv war. Bisher wurde der Cursorbalken immer auf den ersten
+    Eintrag zurckgesetzt (unn”tiger Neustart des Listers beseitigt).
+  - Da die Funktion, einen User im Nodelist-Browser mit <Enter> ausw„h-
+    len und an diesen eine Mail oder einen Request erzeugen zu k”nnen,
+    jetzt auch in Situationen erreichbar ist, in denen sie bisher nicht
+    erreichbar war (weil sie nur ber das Men F/N/D aufgerufen werden
+    konnte), ist sie in bestimmten Situationen, in denen sie Probleme
+    verursachen k”nnte, aus Sicherheitsgrnden deaktiviert (z.B. beim
+    Editieren oder Weiterleiten einer Nachricht, beim Netcall u.„.).
+  - Fix: Eine Nodelist-Abfrage mit <Alt-N> bzw. F/N/A nach Fido-AKA gibt
+    als Suchergebnis jetzt *alle* gefundenen Eintr„ge in *allen* Listen
+    zurck (z.B. bei mehreren Pointlisten wie POINTS24 und R24PNT, die
+    berwiegend identische AKAs enthalten). Bisher wurde nur der Eintrag
+    angezeigt, der zuf„llig als erster im Index vorkam.
+  - Fix: Wenn auf einer Fido-Nachricht eines Points mit <Alt-N> eine
+    Nodelist-Abfrage ausgel”st wurde, dann wurde nicht der Eintrag bzw.
+    die Eintr„ge des Points aus der oder den Pointliste(n), sondern nur
+    der des Bossnodes aus der Nodeliste angezeigt (es ist nicht ganz
+    klar, ob das ein Bug oder Absicht war). Es werden jetzt *alle* zur
+    jeweiligen AKA geh”renden Eintr„ge des Bossnodes *und* des Points
+    aus *allen* eingebundenen Listen angezeigt.
+  - Fix: Beim Durchsuchen der Nodelisten mit F/N/D bzw. <AltGr-N> wird
+    bei "Zone"-Eintr„gen jetzt die richtige Nodenummer "0" verwendet
+    (bisher wurde als Nodenummer die Zonennummer eingesetzt, so daá z.B.
+    fr den ZC2 die falsche Nodenummer "2:2/2" statt "2:2/0" angezeigt
+    wurde und daher weder die Detailanzeige noch nachfolgende Aktionen
+    mit diesem Eintrag funktionieren konnten).
+  - Fix: "Zone"-Eintr„ge in Points24-kompatiblen Listen werden beim
+    Durchsuchen mit F/N/D bzw. <AltGr-N> ignoriert (Verhalten damit
+    jetzt identisch mit der Nodelisten-Abfrage bei <Alt-N> bzw. F/N/A).
+  - Anzeige-Fix: Der Pfeil nach unten, der anzeigt, daá in der Liste
+    noch weitere Eintr„ge folgen, wurde eine Zeile zu tief ausgegeben.
+  - Fix: Tasten und Tastenkombinationen, die durch zwischenzeitliche
+    Erweiterungen Im Nachrichten-Lister pl”tzlich auch im Nodelist-
+    Browser eine (unerwnschte) Wirkung hatten, sind jetzt deaktiviert
+    (z.B. brach <Ctrl-W> den Nodelist-Browser ab). Es haben nur noch die
+    Tasten eine Wirkung, die auch in der Hilfe zum Nodelist-Browser
+    dokumentiert sind.
+  - Anzeige-Fix: Farbe fr Fundstellen bei der Markiersuche mit "s"
+    sinnvoll initialisiert (invertierte Farben des Cursorbalkens,
+    bisher: schwarze Schrift auf schwarzem Grund, grmpf).
+  - Fix: Wenn sich eine Fundstelle nach einer Markiersuche im letzten
+    Eintrag des Nodelist-Browsers befand, dann war diese zwar farblich
+    gekennzeichnet, konnte aber nicht mit <Tab> angesprungen werden (XP
+    hatte nicht bercksichtigt, daá der Lister bei dieser Form der
+    Darstellung keine Statuszeile hat). Dieser Fix wirkt sich auf alle
+    Stellen aus, bei denen der Lister zur Darstellung einer Auswahlliste
+    verwendet wird und eine Markiersuche m”glich ist (danke auch an JG).
+  - Default-AKA auf 2:2433/460 (statt 2:248/2004) ge„ndert.
+  XP0.PAS, XP1.PAS, XP2CFG.INC, XP4.INC, XP4.PAS, XP4E.PAS, XP6.PAS,
+  XPFIDO.PAS, XPF1.INC, INOUT.PAS, LISTER.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
+MY:
+- Untersttzung der R24PNT-Liste verbessert: Beim Einbinden werden alle
+  Daten (Listenformat, Update-Datei, Update-Archiv) jetzt automatisch
+  korrekt eingetragen.
+  XPFIDONL.PAS
+
+MY:
+- Fix: Wenn insgesamt 20 x innerhalb einer XP-Session erfolgreich nach
+  einer Message-ID gesucht wurde, fhrte dies zu einem "WPUSH error" und
+  damit einer fehlerhaften Darstellung von Mens und Fenstern
+  ('closebox' fehlte). Dafr wurde bei anderen Suchen, die gar kein
+  Suchergebnis lieferten, unn”tig oft versucht, eine (nicht mehr
+  existierende) Dialogbox zu schlieáen. Es wird jetzt bei allen Suchen
+  nur noch genau einmal die Dialogbox ganz am Ende der Routine
+  geschlossen.
+  XP4O.PAS
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
