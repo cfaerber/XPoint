@@ -1298,12 +1298,14 @@ var
   buf     : array[1..8192] of byte;
   mheader : string;
   Lines, Cols: Integer;
+  FreeXP  : boolean;
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration einlesen');
 {$ENDIF }
   SetDefault;
   aaa:=''; mheader:='';
+  FreeXP := false;
   assign(t,ownpath+CfgFile);
   if FileExists(OwnPath+CfgFile) then
   begin
@@ -1550,7 +1552,7 @@ begin
                     getx(su,  'zc-iso',zc_iso) or
                     getx(su,  'zc-mime',zc_mime) then EntryFound := true;
           end;
-        end;
+	end;	
         if not EntryFound then
         begin
           // Zeile wurde nicht erkannt und wird fr das sp„tere
@@ -1560,8 +1562,10 @@ begin
             BadConfigLinesList.Add(s)
           else
             debug.debuglog('xp2cfg','Invalid config line: '+s,DLWarning);
-        end;
-      end;
+        end;      
+      end else
+      if Pos('[FreeXP]', s) > 0 then
+        FreeXP := true;
     end;
     close(t);
 
@@ -1695,6 +1699,13 @@ begin
     CloseCfg;
   end;
 
+  if FreeXP then
+  begin
+    SafeDeleteFile(NodeindexF);
+    SafeDeleteFile(UserindexF);
+    SaveConfig;
+  end;
+
   readmenudat;
   setmenus;
   checker[11]:=(pos(strs(screenlines),menu[11])-5) div 6;
@@ -1705,6 +1716,10 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.14  2003/09/06 13:50:19  cl
+  - workaround for deliberately changed format of nodelist indexes in
+    "FreeXP 3.40 RC3" [2003-08-31].
+
   Revision 1.144.2.13  2003/08/31 15:51:30  mk
   - renamed Timezone to XpTimezone, avoids problems with linux
     function with the same name (kylix)
