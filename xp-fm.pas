@@ -23,11 +23,11 @@
 
 program xp_fm;
 
-uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc, xpglobal, montage, inout;
+uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc,
+  xpglobal, montage, inout, winxp;
 
 const aresult    : byte = 0;
       brk_result: byte = EL_break;
-      backintens: boolean = false;
 
       maxfiles  = 500;
       TickFreq  = 18.206512451;
@@ -110,7 +110,6 @@ var   sendfile  : array[1..maxfiles] of pathptr;
 {$IFDEF BP }
       scrbase   : word;
 {$ENDIF }
-      ca,ce     : byte;
       mx,my     : byte;
       displine  : array[1..gl] of string[width];
       disppos   : byte;
@@ -119,12 +118,6 @@ var   sendfile  : array[1..maxfiles] of pathptr;
 
 
 { --- Allgemeine Routinen ------------------------------------------- }
-
-{$ifndef dpmi}
-  const Seg0040 = $0040;
-        SegB000 = $b000;
-        SegB800 = $b800;
-{$endif}
 
 procedure mdelay(msec:word);   { genaues Delay }
 var t      : longint;
@@ -433,7 +426,6 @@ begin
 end;
 
 procedure InitVar;
-var regs : registers;
 begin
   if not exist(zmprog) then
     zmprog:=fsearch(zmprog,getenv('PATH'));
@@ -451,11 +443,6 @@ begin
     end;
   scx:=15;
   scy:=GetScreenlines div 2 - 6;
-  with regs do begin
-    ah:=3; bh:=0;
-    intr($10,regs);
-    ca:=ch and $7f; ce:=cl and $7f;
-    end;
   if SysName='' then SysName:=UserName;
   if (redialmax=1) and (telecount>1) then begin
     redialmax:=2;
@@ -505,73 +492,17 @@ begin
   textbackground((b and $7f) shr 4);
 end;
 
-procedure wrt(x,y:byte; txt:string);
-begin
-  gotoxy(x,y);
-  write(txt);
-end;
-
-procedure Cur1;
-var regs : registers;
-begin
-  with regs do begin
-    ah:=1; ch:=ca; cl:=ce;
-    intr($10,regs);
-    end;
-end;
-
-procedure Cur0;
-var regs : registers;
-begin
-  with regs do begin
-    ah:=1; ch:=ca+$20; cl:=ce;
-    intr($10,regs);
-    end;
-end;
-
-function GetBackIntensity:boolean;        { true = hell, false = blink }
-{$IFDEF BP }
-var
-  regs : registers;
-  buf  : array[0..127] of byte;
-{$ENDIF }
-begin
-  GetBackIntensity:=false;
-{$IFDEF BP }
-  with regs do begin
-    ah:=$1b; bx:=0;
-    es:=seg(buf); di:=ofs(buf);
-    intr($10,regs);
-    if al=$1b then
-      GetBackIntensity:=(buf[$2d] and $20=0);
-    end;
-{$ENDIF }
-end;
-
-procedure SetBackIntensity(hell:boolean);
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$1003;
-    if hell then bl:=0
-    else bl:=1;
-    intr($10,regs);
-    end;
-end;
-
 procedure PushWindow;
 {$IFDEF BP }
 var i : integer;
 {$ENDIF }
 begin
-  Cur0;
+  Cursor(curoff);
   mx:=wherex; my:=wherey;
   getmem(scrsave,scsize);
 {$IFDEF BP }
   FastMove(mem[scrbase:pred(scy)*160],scrsave^,scsize);
 {$ENDIF }
-  backintens:=getbackintensity;
-  setbackintensity(true);
   col(ColText);
   window(scx,scy,scx+wdt-1,scy+hgh-1);
   clrscr;
@@ -597,10 +528,9 @@ begin
 {$IFDEF BP }
   FastMove(scrsave^,mem[scrbase:pred(scy)*160],scsize);
 {$ENDIF }
-  setbackintensity(backintens);
   freemem(scrsave,scsize);
   gotoxy(mx,my);
-  Cur1;
+  Cursor(curnorm);
 end;
 
 function timeform(l:longint):string;
@@ -1027,7 +957,7 @@ begin
   if ioresult<>0 then;
   close(logf);
   if ioresult<>0 then;
-  Cur1;
+  Cursor(curnorm);
   exitproc:=oldexit;
 end;
 {$IFDEF BP }
@@ -1079,6 +1009,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/04 19:33:37  mk
+  - Video.pas und inout.pas komplett aufgeraeumt
+
   Revision 1.8  2000/02/28 08:57:05  mk
   - Version auf 3.20 RC1 geandert
 

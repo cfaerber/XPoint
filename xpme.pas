@@ -55,7 +55,6 @@ var   menu      : array[0..menus] of ^string;
       hidden    : array[1..maxhidden] of integer;
       anzhidden : integer;
       specials  : string;
-      mback     : boolean;
 
 
 procedure wrlogo;
@@ -143,7 +142,6 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
-  mback:=getbackintensity;
   setbackintensity(true);
   attrtxt(col.colmenu[0]);
   write(sp(80));
@@ -691,12 +689,14 @@ begin
   until not modi or AskQuit;
   attrtxt(7);
   clrscr;
-  setbackintensity(mback);
   wrlogo;
   if saved then writeln('Žnderungen wurden gesichert.'#10);
 end.
 {
   $Log$
+  Revision 1.7  2000/03/04 19:33:37  mk
+  - Video.pas und inout.pas komplett aufgeraeumt
+
   Revision 1.6  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

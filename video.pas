@@ -43,37 +43,21 @@ var  vbase  : word;                        { Screen-Base-Adresse }
 
 
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
-function  GetVideoPage:byte;               { aktuelle Video-Seite abfragen }
-
 function  GetVideoMode:byte;
 procedure SetVideoMode(mode:byte);
-procedure SetVideoPage(page:byte);         { angezeigte Seite setzen }
 {$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
 {$ENDIF }
-
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
-
-procedure setcur(x,y:byte);                { Cursor positionieren }
-procedure cur1;                            { Cursor an }
-procedure cur0;                            { Cursor aus }
-
 procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
-function  GetBackIntensity:boolean;        { true = hell, false = blink }
+
 {$IFDEF BP }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 {$ENDIF }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
-function  GetScreenColoumns:byte;
-
-procedure vsetclchar(c:char);              { L”sch-Zeichen festlegen }
-procedure vclwin(l,r,o,u,attr:word);       { Fenster l”schen         }
-procedure vclrscr(attr:byte);              { Bildschirm l”schen      }
-procedure vrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean; head:string);
-procedure vwrt(x,y:word; txt:String; attr:byte);
 
 
 { ================= Implementation-Teil ==================  }
@@ -86,59 +70,108 @@ IMPLEMENTATION
   {$ENDIF}
 {$ENDIF }
 
-const clchar : char = ' ';
-      rchar  : array[1..4,1..6] of char =
-               ('ÚÄ¿³ÀÙ','ÉÍ»ºÈ¼','ÕÍ¸³Ô¾','±±±±±±');
+uses inout;
 
+var
+  vtype   : byte;
+
+{$IFDEF BP }
 type ba  = array[0..65000] of byte;
      bp  = ^ba;
-
-var vtype   : byte;
-    sclines : word;                  { tats„chliche Bildzeilen }
-    ca,ce   : byte;                  { Cursor-Werte }
-    oldexit : pointer;
+var
     p1,p2   : bp;                    { Zeiger fr Font-Generator }
-
-
+{$ENDIF }
 
 
 {- BIOS-Routinen ----------------------------------------------}
 
+{ Grafikkarte ermitteln: 0=Herc, 1=CGA, 2=EGA, 3=VGA
+  und in vtype speichern }
+function  GetVideotype:byte; assembler;
+asm
+{$IFDEF BP }
+         push  bp
+         mov    ax,40h
+         mov    es,ax
+         cmp    byte ptr es:[49h],7    { Hercules? }
+         jnz    @noherc
+         mov    vtype,0
+         mov    vbase,0b000h
+         jmp    @ok
 
-{$IFDEF ver32}
-function  videotype:byte; begin end;
-procedure setvideomode; begin end;         { BIOS-Mode-Nr. setzen }
-function  GetVideoPage:byte; begin end;     { aktuelle Video-Seite abfragen }
-procedure setvideopage(page:byte); begin end;
-procedure SetBackIntensity(hell:boolean); begin end; { hellen Hintergr. akt. }
+@noherc: mov    vbase,0b800h
+         mov    ax,$1130
+         mov    bh,2                   { 8x14-Font-Zeiger holen }
+         xor    cx,cx
+         int    $10
+         jcxz   @iscga
 
-procedure setcur(x,y:byte); begin end;     { Cursor positionieren }
-procedure cur1; begin end;                 { Cursor an }
-procedure cur0; begin end;                 { Cursor aus }
+         mov    ax,1a00h               { Display Combination - nur VGA }
+         int    $10
+         mov    vtype,3
+         cmp    al,1ah
+         jz     @ok
+         mov    vtype,2
+         jmp    @ok
 
-{$ELSE}
-{$L video.obj}
-function  videotype:byte; external;
-procedure setvideomode; external;          { BIOS-Mode-Nr. setzen }
+@isCGA:  mov    vtype,1
+@ok:     pop bp
+{$ELSE }
+        mov vtype, 3                    { immer VGA in 32 Bit Systemen }
+{$ENDIF }
+end;
 
-function  GetVideoPage:byte; external;     { aktuelle Video-Seite abfragen }
-procedure setvideopage(page:byte); external;
-procedure SetBorder64(color:byte); external; { EGA-Rahmenfarbe einstellen }
-procedure SetBorder16(color:byte); external; { CGA-Rahmenfarbe einstellen }
-procedure SetBackIntensity(hell:boolean); external; { hellen Hintergr. akt. }
+function  VideoType:byte;
+begin
+  VideoType := vtype;
+end;
 
-procedure setcur(x,y:byte); external;     { Cursor positionieren }
-procedure cur1; external;                 { Cursor an }
-procedure cur0; external;                 { Cursor aus }
+{ BIOS-Mode-Nr. setzen }
+procedure SetVideoMode(mode:byte); assembler;
+asm
+{$IFDEF BP }
+         push bp
+         mov    al,mode
+         mov    bx,40
+         cmp    al,2
+         jb     @mode40
+         shl    bx,1
+@mode40: mov    vrows,bx
+         shl    bx,1
+         mov    vrows2,bx
+         mov    ah,0
+         int    $10
+         pop bp
+{$ENDIF }
+end;
 
-procedure make15; near; external;
-procedure make13; near; external;
-procedure make12; near; external;
-procedure make11; near; external;
-procedure make10; near; external;
-procedure make9; near; external;
-{$ENDIF}
+{$IFDEF BP }
+{ EGA-Rahmenfarbe einstellen }
+procedure SetBorder64(color:byte); assembler;
+asm
+         mov    ax,1001h
+         mov    bh,color
+         int    $10
+end;
 
+{ CGA-Rahmenfarbe einstellen }
+procedure SetBorder16(color:byte); assembler;
+asm
+         mov    ah,0bh
+         mov    bh,0
+         mov    bl,color
+         int    $10
+end;
+{$ENDIF }
+
+{ hellen Hintergr. akt. }
+procedure SetBackIntensity(hell:boolean); assembler;
+asm
+         mov    ax,1003h
+         mov    bl,hell
+         xor    bl,1
+         int    $10
+end;
 
 {$IFDEF BP }
 procedure LoadFont(height:byte; var data);
@@ -190,13 +223,132 @@ begin
       blockread(f,p^,256*h);
       close(f);
       LoadFont(h,p^);
-      sclines:=400 div h;
       freemem(p,256*h);
       end;
     end;
 end;
 {$ENDIF }
 
+{$IFDEF BP }
+procedure make15; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x14-Font }
+         lds   si,p1                   { 8x15-Font generieren }
+         mov   dx,256                  { 1. Zeile wird weggelassen }
+@c15lp:  mov   cx,15
+         rep   movsb
+         inc   si
+         dec   dx
+         jnz   @c15lp
+         pop ds
+end;
+
+procedure make13; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x14-Font         }
+         lds   si,p1                   { 8x13-Font generieren      }
+         mov   dx,256                  { 1. Zeile wird weggelassen }
+@c13lp:   inc   si
+         mov   cx,13
+         rep   movsb
+         dec   dx
+         jnz   @c13lp
+         pop ds
+end;
+
+procedure make12; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x14-Font }
+         lds   si,p1                   { 8x12-Font generieren   }
+         mov   dx,256                  { 1. und letzte Zeile wird weggelassen }
+@c12lp:  inc   si
+         mov   cx,12
+         rep   movsb
+         inc   si
+         dec   dx
+         jnz   @c12lp
+end;
+
+procedure make11; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x14-Font }
+         lds   si,p1                   { 8x11-Font generieren }
+         mov   dx,256                  { 1., 2. und letzte Zeile werden }
+@c11lp:   inc   si                     { weggelassen }
+         inc   si
+         mov   cx,11
+         rep   movsb
+         inc   si
+         dec   dx
+         jnz   @c11lp
+         pop ds
+end;
+
+procedure make10; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x8-Font              }
+         lds   si,p1                   { 8x10-Font generieren          }
+         mov   dx,256                  { 2. und vorletzte Zeile werden }
+         mov   bl,0                    { bei Blockzeichen verdoppelt }
+@c10lp:  cmp   dl,80
+         jnz   @m10j1
+         inc   bl
+@m10j1:  cmp   dl,32
+         jnz   @m10j2
+         dec   bl
+@m10j2:  mov   al,0
+         or    bl,bl
+         jz    @zero1
+         mov   al,[si+1]
+@zero1:  stosb
+         mov   cx,8
+         rep   movsb
+         mov   al,0
+         or    bl,bl
+         jz    @zero2
+         mov   al,[si-2]
+@zero2:  stosb
+         dec   dx
+         jnz   @c10lp
+         pop ds
+end;
+
+procedure make9; assembler;
+asm
+         push ds
+         cld
+         les   di,p2                   { Quelle: 8x8-Font }
+         lds   si,p1                   { 8x9-Font generieren }
+         mov   dx,256                  { 2. Zeile wird bei Blockzeichen }
+         mov   bl,0                    { verdoppelt }
+@c9lp:   cmp   dl,80
+         jnz   @m9j1
+         inc   bl
+@m9j1:   cmp   dl,32
+         jnz   @m9j2
+         dec   bl
+@m9j2:   mov   al,0
+         or    bl,bl
+         jz    @zero91
+         mov   al,[si+1]
+@zero91: stosb
+         mov   cx,8
+         rep   movsb
+         dec   dx
+         jnz   @c9lp
+         pop ds
+end;
+{$ENDIF }
 
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
 { untersttzte Werte:                                   }
@@ -280,11 +432,6 @@ procedure SetScreenLines(lines:byte);
          7 : make7;
       end;
       LoadFont(height,p2^);
-{      ax:=$1110;
-      bx:=height shl 8;
-      cx:=256; dx:=0;
-      es:=seg(p2^); bp:=ofs(p2^);
-      intr($10,regs); }
       {$IFDEF DPMIa}
       if FreeSelector(sel)=0 then;
       {$ENDIF}
@@ -294,7 +441,6 @@ procedure SetScreenLines(lines:byte);
 
 {$ENDIF}
 begin
-  sclines:=25;
 {$IFDEF BP }
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
@@ -310,7 +456,6 @@ begin
             39..43 : loadcharset(8);
             44..50 : setuserchar(7);
           end;
-          sclines:=350 div lines;
         end;
     3 : begin
           case lines of
@@ -325,50 +470,20 @@ begin
             45..50 : loadcharset(8);
             51..57 : setuserchar(7);
           end;
-          sclines:=400 div lines;
         end;
   end;
+{$ENDIF }
   vlines:=lines;
-{$ENDIF } { !! Evtl. vlines richtig setzen }
 end;
-
-
-{- Assembler-Routinen -----------------------------------------}
-
-
-procedure vsetclchar(c:char);              { L”sch-Zeichen festlegen }
-begin
-  clchar:=c;
-end;
-
-{$IFDEF ver32}
-procedure vclwin(l,r,o,u,attr:word); begin end;
-procedure vclrscr(attr:byte);        begin end;
-procedure vrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean; head:string); begin end;
-procedure vwrt(x,y:word; txt:String; attr:byte); begin end;
-procedure getvideotype; begin end;
-procedure getcursor; begin end;
-
-{$ELSE}
-procedure vclwin(l,r,o,u,attr:word); external;
-procedure vclrscr(attr:byte);        external;
-procedure vrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean; head:string); external;
-procedure vwrt(x,y:word; txt:String; attr:byte); external;
-procedure getvideotype; near; external;
-procedure getcursor; near; external;
-{$ENDIF}
 
 function getvideomode:byte;
 begin
-  {$IFDEF DPMI}
-    getvideomode:=mem[Seg0040:$49]
-  {$ELSE}
-{$IFNDEF ver32}
-    getvideomode:=mem[$40:$49];
+{$IFDEF BP }
+   getvideomode:=mem[Seg0040:$49];
+{$ELSE }
+   getVideoMode := 3; { VGA }
 {$ENDIF}
-  {$ENDIF}
 end;
-
 
 function getscreenlines:byte;
 var regs : registers;
@@ -384,36 +499,6 @@ begin
   getscreenlines:=vlines;
 end;
 
-function GetScreenColoumns:byte;
-var regs : registers;
-begin
-  with regs do begin
-    ah:=$f;
-    intr($10,regs);
-    vrows:=ah;
-    end;
-  vrows2:=2*vrows;
-  GetScreenColoumns:=vrows;
-end;
-
-
-function GetBackIntensity:boolean;        { true = hell, false = blink }
-var regs : registers;
-    buf  : array[0..127] of byte;
-begin
-  GetBackIntensity:=false;
-  if vtype>=2 then with regs do begin
-    ah:=$1b; bx:=0;
-{$IFNDEF ver32}
-    es:=seg(buf); di:=ofs(buf);
-    intr($10,regs);
-{$ENDIF}
-    if al=$1b then
-      GetBackIntensity:=(buf[$2d] and $20=0);
-    end;
-end;
-
-
 function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 var regs : registers;
 begin
@@ -426,23 +511,14 @@ begin
     end;
 end;
 
-
-{$S-}
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
-begin
-  exitproc:=oldexit;
-  cur1;
-end;
-
-
 begin
   getvideotype;
-  getcursor;
-  oldexit:=exitproc;
-  exitproc:=@newexit;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/04 19:33:37  mk
+  - Video.pas und inout.pas komplett aufgeraeumt
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
