@@ -6762,6 +6762,61 @@ RFC-Nets (UseNet / "UUCP"):
             Confirm Receipt etc.
 
 All other lines should be pretty self explanatory.
+@
+930
+In this window, you can configure all aspects of
+Node and Pointlists.
+
+NODELIST.\###  322  NODEDIFF.### [..] Diff  Nodelist
+POINTS24.\###  322  PR24DIFF.### [..] Diff  Points24-
+97POINT.PVT        97POINT.PVT             PVT-Point
+BORLANDN.\###  049                          Nodelist
+³             ³    ³            ³    ³     ³
+³             ³    ³            ³    ³     À Format
+³             ³    ³            ³    À Diff update
+³             ³    ³            ³
+³             ³    ³            ÀÄ Archive Filename
+³             ³    ÀÄ Update-Filename
+³             ÀÄÄÄÄÄÄ Day-Number
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Node/Pointlist filename
+
+"\###" is a wildcard for the current day number.
+Node and Pointlists are normally updated weekly.
+If this weeks list number is 322, then next weeks
+will be 329 and so on and so forth.
+
+
+<<New>>      Configure either a new Node or Pointlist
+         It is possible to have a maximum of 100
+         lists. Packed Lists will be automatically
+         unpacked, providing the correct archiver has
+         been installed.
+
+<<Edit>>     Edit the configuration of the selected
+         list.
+
+<<TextEdit>> Load the Node/Pointlist into the Editor.
+
+         <<WARNING!>> Be very careful when manually
+         editing either a Node or Pointlist.
+         Careless editing may result in next weeks
+         Diff file being unable to be applied. You
+         have been warned!!
+
+<<Delete>>   Delete the list and all associated index
+         files.
+
+<<Info>>     Display information about the selected
+         list.
+
+<<Ok>>       Exit the nodelists configuration.
+         (Alternatively, press <ESC>).
+
+
+All new incoming diff files are placed in the
+FIDO sub-directory and all compiled Node/Pointlists,
+along with their associated index files, are placed
+in the FIDO sub-directory too.
 
 @
 1500
@@ -9050,7 +9105,7 @@ function for, if at all; you may just want to make a
 new start.
 @
 13001
-<<Fido / Nodelist / Activate
+<<Fido / Nodelists / Config
 
 Activates a chosen [Nodelist]. CrossPoint will offer@4024
 you the choice from any nodelists in the form
@@ -9064,7 +9119,7 @@ the [NODEDIFF] system (see FIDO.DOC, "NodeList")@4024
 should keep your list up to date.
 @
 13002
-<<Fido / Nodelist / Read Diff
+<<Fido / Nodelists / Update
 
 Will read a [Nodediff] (which you can select) and@4024
 update your [nodelist], as long as the nodediff is@4024
@@ -9077,7 +9132,7 @@ this.
 See also FIDO.DOC, "NodeList".
 @
 13003
-<<Fido / Nodelist / Shrink
+<<Fido / Nodelists / Shrink
 
 The [NodeList] is very large. If you will not need to@4024
 communicate with some of the FIDO world areas, you
@@ -9117,7 +9172,7 @@ then reading the whole list in again.
 ([/Fido/Nodelist/Activate]).@13001
 @
 13004
-<<Fido / Nodelist / Index
+<<Fido / Nodelists / Rebuild Index
 
 CrossPoint normally indexes the NodeList
 automatically. This function is just in case
@@ -9128,7 +9183,7 @@ something should happen; you can force a re-index.
 Some statistics from your node list.
 @
 13008
-<<Fido / Nodelist / Find
+<<Fido / Nodelists / Find
 
 You can browse the data for Fido nodes. Enter the
 node address in the usual form <Zone>:<Net>/<Node>.
@@ -9213,9 +9268,9 @@ a [timer list].@4022
 
 @
 13105
-<<Fido / Nodelist
+<<Fido / Nodelists
 
-Functions for handling and analysing [node lists].@4024
+Functions for handling and analysing [Nodelists].@4024
 @
 13106
 <<Fido / Options
