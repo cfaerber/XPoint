@@ -145,18 +145,6 @@ Auch in der anderen Konvertierrichtung macht Ascii-0 Probleme, u.U. kann
 die Konvertierung des ganzen Paketes abgebrochen werden.
 
 
-############################################################################
-
-From listen@jpberlin.de Wed Feb 16 19:45:00 2000
-
-- In Feldern, in denen eMailadressen eingeben werden können  
-(Nachricht-Direkt oder im Absendefenster, wenn der Absender  
-geändert wird) besteht die Möglichkeit Zeichen zu verwenden, die  
-nicht in eMailadressen bzw. in Brettern erlaubt sind. Soweit ich  
-weiß sind doch die in eMailadressen und Brettern erlaubten  
-Zeichen klar definiert, so daß es doch möglich sein müßte eine  
-Plausibilitätsprüfung durchzuführen.
-
 #####################################################################
 From: wellschlumpf@MYOKAY.net (Ulf Wenthe)
 
@@ -172,34 +160,6 @@ From L.WILLMS@LINK-F.frankfurt.org Fri Feb 25 09:07:00 2000
 Baumdarstellung durch # oder durch "G" sich diese ansehen kann.
 
 ##########################################################################
-
-From lars@tecs.de Thu Mar 23 01:00:00 2000
-Path: uni-berlin.de!craze02.tecs.DE!not-for-mail
-From: Lars Becker <lars@tecs.de>
-Newsgroups: de.comm.software.crosspoint
-Subject: 2 Featurerequests: Prioritaet, Umlaute im Betreff
-Date: 23 Mar 2000 00:00:00 +0000
-Lines: 17
-Message-ID: <7aQayOGPmoB@terra-incognita.tecs.de>
-NNTP-Posting-Host: craze02.tecs.de (195.158.169.2)
-X-Trace: fu-berlin.de 953820829 5162417 195.158.169.2 (16 [24970])
-X-NO-ARCHIVE: Yes
-User-Agent: VSoup v1.2.9.48Beta [OS/2]
-Xref: uni-berlin.de de.comm.software.crosspoint:40377
---------
-Hallo OpenXP-Team,
-
-zwei *kleinere* Featurerequests:
-
-    1.)  Ich habe eben mal mit den Prioritaeten rumgespielt und
-    gesehen das die eigenen Prioritaetseinstellungen bei ZConnect
-    nicht angezeigt werden, obwohl die Anzeige der Prioritaet bei
-    C/Anzeige/Kopf eingestellt ist.  Dort wird wohl nur X-Priority
-    ausgewertet.  Ich denke die Anzeige der ZConnect-Prio waere fuer
-    ZC-Nutzer sicherlich interessant.
-
-Gruss,
-- Lars.
 
 From rom@readonly.de Sat Mar 25 00:01:13 2000
 Return-path: <sentto-398616-4148-mk=happyarts.de@returns.onelist.com>
@@ -254,41 +214,6 @@ Get a NextCard Visa, in 30 seconds!  Get rates as low as
 Apply NOW!
 http://click.egroups.com/1/2120/3/_/682185/_/953938865/
 ------------------------------------------------------------------------
-
-
-
-From Rolf_Jentsch@T-ONLINE.de Tue Mar 28 11:31:00 2000
-Path: uni-berlin.de!fu-berlin.de!newsfeed01.sul.t-online.de!newsmm00.btx.dtag.de!t-online.de!news.btx.dtag.de!not-for-mail
-From: Rolf_Jentsch@T-ONLINE.de (Rolf Jentsch)
-Newsgroups: de.comm.software.crosspoint
-Subject: Re: Bug in XP 3.21 beta 22
-Date: 28 Mar 2000 11:31:00 +0200
-Organization: T-Online
-Lines: 14
-Message-ID: <7ajJ1K2$hZB@rolf.t-online.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Trace: news03.btx.dtag.de 954274309 22015 340058917921-0001 000328 20:11:49
-X-Complaints-To: abuse@t-online.de
-X-Sender: 340058917921-0001@t-dialin.net
-X-Newsreader: CrossPoint v3.21.022beta DOS/16 R/A12069
-Xref: uni-berlin.de de.comm.software.crosspoint:40545
-
-Hallo Leute,
-
-folgendes kleiner Bug. Die Anzeige steht auf Lesen/ungelesene Nachrichten.
-Ich bekomme eine mehrteilige Mime Nachricht mit FA, die ich via ALT-P  
-ungelesen archiviere - mich interessiert da nur der FA. Obwohl das Brett  
-jetzt leer ist, wird in der Uebersicht immer noch der Status ungelesen  
-angezeigt.
-
-
-- *wbr* Rolf -
-
-
-
-
 
 From AvataR@AvataR-DC.de Tue Mar 28 23:32:00 2000
 Path: uni-berlin.de!fu-berlin.de!blackbush.xlink.net!newscore.gigabell.net!news.ndh.net!not-for-mail
