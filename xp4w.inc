@@ -425,6 +425,7 @@ begin
       disprec[1]:=dbRecno(mbase);
       SetKomOfs1;
       p:=2;
+      if rdmode = 1 then dec(p);
       aufbau:=true;
       end;
 end;
@@ -1600,6 +1601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.69  2001/02/11 20:59:45  mk
+  JG:- weiterer Ueberspringen-Bugfix
+
   Revision 1.68  2001/02/02 09:13:25  mk
   JG:- Schnellsuche im Userfenster, wenn einziger Eintrag nicht im Adressbuch, aber zugleich letzer DB Eintrag ist.
 
