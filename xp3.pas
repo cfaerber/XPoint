@@ -200,6 +200,8 @@ asm
          cld
          lds   si,adr
          mov   cx,size
+         cmp   cx, 0
+         jz    @nfound
          mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
@@ -1274,6 +1276,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.9  2001/01/16 15:22:14  mk
+  - kleiner Bug in txtseek() beseitigt
+
   Revision 1.25.2.8  2001/01/10 17:39:04  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
