@@ -915,17 +915,28 @@ begin   { readmask }
           if (t=^X) and not (autoup or autodown) then begin
             cont^:=TopAllStr(ustr(cont^)); replace:=false; end
             else
-{JG:02.02.00}  {Clipboard fuer Menues}
-          if (t=^V) or ((t=keyins) and kb_shift) then begin
-            s^:=clip2string(maxlen,1);                     {JG:06.02.00 Clipstring=String...}
-            if xtest1(s^) then cont^:=s^;
+
+          if (t=^V) or ((t=keyins) and kb_shift) then begin   {JG: Clipboard fuer Menues}
+            if replace then
+            begin                                             { Ersetzen }
+              s^:=clip2string(maxlen,1);
+	      i:=length(s^);
+	      p:=1; ax:=0; replace:=false;
+              end
+            else begin                                        { Einfuegen }     
+              s^:=clip2string(maxlen-length(cont^),1);
+	      i:=length(s^);
+	      s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
+              end;
+            p:=p+i;					      {Cursorposition aktualisieren} 		 
+	    if p>=len then
+            begin
+              ax:=ax+p-len;
+              p:=len;
+              end;		
+	    if xtest1(s^) then cont^:=s^;
 	    end;
 
-          if (t=^A) then begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
-             s^:=mailstring(clip2string(maxlen,1),false);        {JG:06.02.00}
-             if xtest1(s^) then cont^:=s^;
-             end;
-{/JG}
         if (t=keypgup) then
           if yp>1 then begin
             i:=yp; x:=fld[yp]^.yy;
@@ -1057,6 +1068,10 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.8  2000/02/25 18:30:20  jg
+  - Clip2string sauberer gemacht
+  - Menues: STRG+A entfernt, STRG+V kann jetzt auch einfuegen
+
   Revision 1.7  2000/02/24 20:27:53  jg
   -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen
    Eintraege am Anfang der Liste werden sofort angezeigt

@@ -204,8 +204,6 @@ asm
 end;
 
 
-
-
 function Clip2String(maxlen,oneline:byte):String; assembler;  {JG:06.02.00 Jetzt String!}
 { JG: 3.2.00   Text aus Clipboard direkt als Pascal String uebergeben                    }
 {              Maximallaenge, Einzeilig ( <>0: CR/LF wird in Space umgewandelt)  }
@@ -215,17 +213,19 @@ asm           les bx,@result
  
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
-              cmp ax,1700h
+              cmp ax,1700h              
+              mov di,0                            { Clipb. nicht schliessen, wenn nicht da.}  
               je @nope
 
               mov ax,1701h                        { Clipboard ”ffnen }
               int multiplex
-              mov di,ax                           { Aktuellen Clipboardstatus merken }
+              push ax                             { Aktuellen Clipboardstatus merken }
 
               mov ax,1704h                        { Datengroesse Ermitteln }
               mov dx,cf_Oemtext
               int multiplex                       { DX:AX }
-
+              pop di                              { Clipboardstatus }                                     
+  
               cmp al,0                            { Abbruch bei }
               je @nope                            { leerem Testclipboard }
               or dl,ah
@@ -234,13 +234,15 @@ asm           les bx,@result
  
               les bx,@result
               inc bx                              
-              push ax                             { Textlaenge und start sichern }
-              push bx
+              push ax                             { Textlaenge, Start und   }
+              push bx                             { Clipboardstatus sichern }
+              push di                             
 
               mov ax,1705h                        { Text aus Clipboard anhaengen }
               mov dx,cf_Oemtext
               int multiplex
 
+              pop di                      
               pop si                              { SI= Textstart }
               pop bx
               mov bh,0                            { BX=Textlaenge laut Windows }      
@@ -274,6 +276,7 @@ asm           les bx,@result
               int multiplex
 @jup:      
 end;
+
 
 
 {JG:10.02.00 String ins Clipboard kopieren}
@@ -537,6 +540,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/02/25 18:30:20  jg
+  - Clip2string sauberer gemacht
+  - Menues: STRG+A entfernt, STRG+V kann jetzt auch einfuegen
+
   Revision 1.10  2000/02/25 16:34:45  jg
   -Bugfix: Abbruch wenn Inhalt >64K, Clipboard schliessen
 
