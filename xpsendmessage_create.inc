@@ -534,9 +534,7 @@ var FidoOriginSav: string;
       hdp.replypath:=orghdp.replypath;
     
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:=Trim(pformstr);
-    DeleteFirstChar(hdp.programm); DeleteLastChar(hdp.programm);
-    hdp.programm:=xp_xp+'/'+verstr+{$IFDEF Snapshot}  '-' + compiletime+{$ENDIF}'-'+hdp.programm;
+    hdp.programm:=xp_xp+'/'+verstr + {$IFDEF Snapshot} '-' + compiletime + {$ENDIF} pformstr;
     hdp.organisation:=orga;
     if ersetzt<>''then hdp.ersetzt:=ersetzt;
     if (pm and ntPMTeleData(Server.netztyp)) or (not pm and ntAMTeleData(Server.netztyp))
@@ -1034,6 +1032,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.16  2003/08/22 19:08:14  mk
+// - second fix for #733047: Bad User-Agent header syntax
+//
 // Revision 1.15  2003/08/15 21:36:19  mk
 // - fixed #733047: Bad User-Agent header syntax
 //
