@@ -477,7 +477,7 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-        q:=p;         
+        q:=p;
         while (q<length(s)) and (s[q+1]=' ') do inc(q);  { Textanfang suchen }
         QuoteOffset:=q-p;                  { Leerzeichen zwischen letztem ">" und Textanfang }
         end;
@@ -507,6 +507,7 @@ var size   : longint;
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=left(reads,p);
+      if (left(s,11)=' * Origin: ') or (left(s,4)='--- ') or (s='---') then s[2]:='+';
       if not iso1 and ConvIso and (s<>'') then
         ISO_conv(s[1],length(s));            { ISO-Konvertierung }
       if s=#3 then begin
@@ -940,9 +941,9 @@ begin
          5: wrs(gr(35) + GetRes2(272, 5));     { 'Priorit„t  : Niedrigste'}
        end
        else if hdp^.Prio>0 then                                 { und fuer Zconnect ....  }
-         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }      
-                          else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }  
-    
+         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
+                          else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
+
   { /Priorit„t im Listenkopf anzeigen                                     }
 
   end;
@@ -1046,6 +1047,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.9  2000/10/26 13:24:45  mk
+  RB:- Tearline und Origin beim Quoten von Echomail verfremden
+
   Revision 1.17.2.8  2000/10/01 22:08:36  my
   MA:- schneller Leerzeilen-Quote-Hack. Bitte bei Interesse sauber
        konfigurierbar machen.
