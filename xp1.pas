@@ -222,7 +222,7 @@ procedure write_lastcall(const dat:String);
 
 procedure InitPrinter;
 procedure PrintPage;
-procedure PrintLine(const s:string);
+procedure PrintLine(s:string);
 procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
@@ -1592,7 +1592,7 @@ begin
   printlines:=0;
 end;
 
-procedure PrintLine(const s:string);
+procedure PrintLine(s:string);
 begin
   {$IFDEF Unix }
     s := IBMToISO(s);
@@ -3297,6 +3297,9 @@ end;
 
 {
   $Log$
+  Revision 1.186  2003/09/05 18:38:25  mk
+  - fixed compile problem on linux (removed const Parameter in PrintLine)
+
   Revision 1.185  2003/09/05 18:22:49  mk
   - fixed for printing support under linux
 
