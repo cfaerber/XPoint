@@ -52,27 +52,27 @@ const kss : byte = 2;
 
   procedure ks(s:string);
   var p : byte;
-    x, y: Byte;
   begin
-    x := WhereX; y := WhereY;
     p:=cpos('^',s);
     delete(s,p,1);
     inc(shortkeys);
     if shortkeys>maxskeys then
       interr('Shortkey Overflow');
     with shortkey[shortkeys] do begin
-      keypos:=x;
+      keypos:=wherex;
       keylen:=length(s);
       keyspot:=p;
       key:=LoCase(s[p]);
       end;
     attrtxt(col.colkeys);
-    if kss = 2 then
-      Wrt(x, y, s + '  ')
-    else
-      Wrt(x, y, s + ' ');
+    Wrt2(left(s,p-1));
     attrtxt(col.colkeyshigh);
-    FWrt(x+p-1, y, s[p]);
+    Wrt2(s[p]);
+    attrtxt(col.colkeys);
+    if kss = 2 then
+      Wrt2(copy(s,p+1,30) + '  ')
+    else
+      Wrt2(copy(s,p+1,30) + ' ')
   end;
 
   procedure AddSK(pos,len,spot:shortint; _key:taste);
@@ -410,6 +410,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.8  2002/03/31 15:48:13  my
+  MY:- Die farbliche Unterlegung der Funktionstasten in der oberen
+       Funktionstastenleiste geriet hin und wieder durcheinander (nach
+       N/S/S z.B.). UrsprÅngliche (nicht optimierte) Display-Routine
+       'showkeys.ks' wieder eingebaut.
+
   Revision 1.7.2.7  2002/03/08 23:40:10  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
