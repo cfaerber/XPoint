@@ -330,6 +330,20 @@ var s      : string;
     size   : integer;
     hdp    : headerp;
     hds    : longint;
+
+  procedure makeuser;
+  var
+    pollbox  : string;
+  begin
+    dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+    if dbFound then       { mÅ·te IMMER true sein }
+      pollbox := dbReadNStr(bbase,bb_pollbox)
+    else
+      pollbox:=DefaultBox;
+    ReplaceVertreterbox(pollbox,true);
+    xp3.makeuser(s,pollbox);
+  end;
+
 begin
   d1:=disprec[1];             { Mu· gesichert werden, da Zielfenster }
   GoP;
@@ -342,7 +356,7 @@ begin
     if hdp^.PmReplyTo<>'' then begin
       dbSeek(ubase,uiName,UpperCase(hdp^.PmReplyTo));
       if dbFound then s:=hdp^.PmReplyTo;
-      end;
+    end;
     if s='' then
       s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
     FreeHeaderMem(hdp);
@@ -355,8 +369,14 @@ begin
         s:= dbReadXStr(ubase,'adresse',size);
         dbSeek(ubase,uiName,UpperCase(s));
         if not dbFound then
-          s:= dbReadNStr(mbase,mb_absender);
-        end;
+          if ReadJN(getres(2739),true) then   { 'Vertreter nicht in der Datenbank - neu anlegen' }
+            makeuser else
+          begin
+            s:= dbReadNStr(mbase,mb_absender);
+            dbSeek(ubase,uiName,UpperCase(s));
+          end;
+      end;
+      dbGo(ubase,dbRecno(ubase));
       oldds:=dispspec;
       _oldds:=_dispspec;
       dispspec:='U'+LeftStr(s,40);
@@ -373,7 +393,6 @@ begin
       end;
     end;
 end;
-
 
 procedure SetKomOfs1;
 begin
@@ -1600,6 +1619,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.50  2000/11/11 10:18:41  mk
+  - DBEOF Crash behoben
+
   Revision 1.49  2000/11/01 10:52:14  mk
   - misc MIME-Viewer fixes
 
