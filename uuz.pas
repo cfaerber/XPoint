@@ -2690,7 +2690,10 @@ begin
   if exist(dest) then
   begin
     FSplit(dest, dir, name, ext);
-    new := dir + name + '.bak';
+    if UStr(ext) = '.BAK' then
+      new := dir + name + '.BA1'
+    else
+      new := dir + name + '.BAK';
     era(new); if ioresult = 0 then ;
     _rename(dest, new);
   end;
@@ -3464,6 +3467,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.28  2001/01/01 21:01:15  mk
+  - auf dest.bak pruefen
+
   Revision 1.35.2.27  2001/01/01 12:12:11  mk
   - verbesserte LFN-UnterstÅtzung
 
