@@ -779,7 +779,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    Very Low
 6    None
 7    Send-Priority
-8    Priority ~
+8    Priority~
 9    Very HighùHighùNormalùLowùVery LowùNone
 + 273
 # 09.05.00 JG: Neue Viewer-Optionen
@@ -3697,6 +3697,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.13  2001/05/13 06:08:33  mf
+# Minor cosmetic change to "Add new user"
+#
 # Revision 1.12  2001/05/12 04:18:01  mf
 # A few minor changes here 'n there.
 #
