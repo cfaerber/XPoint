@@ -96,28 +96,28 @@ begin
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
-    mappsel(false,'Windows-Clipboard');
-    mappsel(false,'Win-Clipboard (URL)');
-    mappsel(false,'Win-Clipboard (MAIL)');
+    mappsel(false,'Clipboard');
+    mappsel(false,'Clipboard (URL)');
+    mappsel(false,'Clipboard (MAIL)');
     end;
   readmask(brk);
   enddialog;
   if not brk then begin
     s2:= s; { Original-Schreibweise merken }
     UpString(s);
-    if useclip and (s='WINDOWS-CLIPBOARD') then begin
+    if useclip and (s='CLIPBOARD') then begin
       s:=TempS(65535);
       ClipToFile(s);
       end
     else
-    if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
+    if useclip and (s='CLIPBOARD (MAIL)') then begin         { Markierten Text als Mailadresse}
       s:=mailstring(getline,false);
       string2clip(s);                                        { ins Clipboard }
       ReadFilename:=false;
       exit;
       end
     else
-    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
+    if useclip and (s='CLIPBOARD (URL)') then begin               { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
       if y=0 then y:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
@@ -983,6 +983,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/09/25 20:07:53  my
+  - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
+  - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
+  - xp1o.pas: Strings "Windows-Clipboard" und "Win-Clipboard"
+    durch "Clipboard" ersetzt (wegen Unterstützung internes
+    Clipboard / JG - muß aber noch implementiert werden!).
+
   Revision 1.56  2000/09/10 20:51:13  mo
    Unberechtigte WPOP-Error Anzeige
 

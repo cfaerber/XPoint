@@ -1215,7 +1215,7 @@ begin
     add:=5;
   end else
     add:=0;
-  maddtext(3,5+add,'UUCP/RFC',col.coldiahigh);
+  maddtext(3,5+add,'RFC/UUCP',col.coldiahigh);
   maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
@@ -1250,7 +1250,7 @@ var x,y   : byte;
     case nr of
       1 : sname:='Z-Netz';
       2 : sname:='Fido';
-      3 : sname:='UUCP/RFC';
+      3 : sname:='RFC/UUCP';
       4 : sname:='MausTausch';
       5 : sname:='MagicNET';
       6 : sname:='QM/GS';
@@ -1493,11 +1493,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/09/25 20:07:53  my
+  - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
+  - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
+  - xp1o.pas: Strings "Windows-Clipboard" und "Win-Clipboard"
+    durch "Clipboard" ersetzt (wegen Unterstützung internes
+    Clipboard / JG - muß aber noch implementiert werden!).
+
   Revision 1.55  2000/09/10 01:11:29  my
-  MY: Tausendundeins Korrekturen, Änderungen und Ergänzungen, speziell in XP.IHQ
-      (u.a. für C/O/V, neue Topics für Kommandozeilen-Parameter, Standard-Mailer
-      unter Windows und Mailinglisten)
-  MY: in xp2c.pas nur kleine Layoutkorrektur (übernommen von JG in 3.30)
+  - kleine Layoutkorrektur (uebernommen von JG in 3.30)
 
   Revision 1.54  2000/08/26 08:47:42  mk
   JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
