@@ -603,7 +603,8 @@ begin
   NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true;
-  NoArchive:=false; {!MH:} { auf 'false' gesetzt, SV }{ unbedenklich }
+  NoArchive:=false;
+  RFCConcatOldSubject:=false;
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -936,7 +937,8 @@ begin
   writeln(t,'NewsMIME=',jnf(NewsMIME));
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
-  writeln(t,'NoArchive=',jnf(NoArchive)); {!MH:} { unbedenklich }
+  writeln(t,'NoArchive=',jnf(NoArchive));
+  writeln(t,'RFCConcatOldSubject=',jnf(RFCConcatOldSubject));
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
@@ -1462,7 +1464,8 @@ begin
           getx(su,  'NewsMIME',NewsMIME) or
           getx(su,  'MIMEqp',MIMEqp) or
           getx(su,  'RFC1522',RFC1522) or
-          getx(su,  'NoArchive',NoArchive) or {!MH:}{ unbedenklich }
+          getx(su,  'NoArchive',NoArchive) or
+          getx(su,  'RFCConcatOldSubject',RFCConcatOldSubject) or
           getx(su,  'FidoDelEmpty',FidoDelEmpty) or
           getx(su,  'KeepVia',keepvia) or
           getx(su,  'ZCrossPostings',dummyb) or
@@ -1715,6 +1718,10 @@ begin
 
 {
   $Log$
+  Revision 1.134  2002/01/06 16:33:25  ma
+  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+    (config name has been changed, setting will not be kept from OpenXP/16)
+
   Revision 1.133  2002/01/06 15:44:00  ma
   - ported "new messages first" feature from OpenXP/16 (JG+MY)
 

@@ -7623,6 +7623,18 @@ See also [/Message/Forward/Delete].@12107
      This saves several hundred Bytes per mail!
      The saving on public messages is however small.
 @
+7991
+<<[ ]>> ->  If you change the subject line upon quoting
+        a message and keep the reference to this
+        message, then the old subject will be appen-
+        ded to the new one in the style "<<was: old>>
+        <<subject>>".
+        
+<<Note:>> Many mail and news readers remove such an
+appended subject automatically upon replying - but
+not all. Please observe the customs of the newsgroups
+you are posting messages to.
+@
 8100
 [Reference links] are still pretty scarce in nets based@4014
 on MagicNET technology. But if you want to try your

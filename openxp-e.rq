@@ -566,7 +566,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   Use MIME for header contents
 13   remove unnessecary header lines
 14   use references
-15   binary messages as "attachments"
+15   no single-part messages
+16   concatenate old subject
 17   Magics in <F3> file request
 18   OpenXP version in tear line
 20   Enable MIME
@@ -3889,6 +3890,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.42  2002/01/06 16:33:24  ma
+# - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+#   (config name has been changed, setting will not be kept from OpenXP/16)
+#
 # Revision 1.41  2002/01/06 15:43:59  ma
 # - ported "new messages first" feature from OpenXP/16 (JG+MY)
 #

@@ -579,6 +579,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 12   MIME: Sonderzeichen in Headerzeilen
 14   Kommentarverkettung
 15   Keine einteiligen Bin„rnachrichten
+16   Alten Betreff anh„ngen
 17   Magics im <F3>-Request
 18   OpenXP-Version in Tearline schreiben
 20   MIME verwenden
@@ -3895,6 +3896,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.48  2002/01/06 16:33:24  ma
+# - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+#   (config name has been changed, setting will not be kept from OpenXP/16)
+#
 # Revision 1.47  2002/01/06 15:43:59  ma
 # - ported "new messages first" feature from OpenXP/16 (JG+MY)
 #

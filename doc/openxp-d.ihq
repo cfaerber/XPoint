@@ -10403,6 +10403,20 @@ Nachrichten. Fr bereits versandte Nachrichten
 verwenden Sie bitte Nachricht/Unversandt/ndern und
 l”schen Sie ggf. unter Anhang bereits erzeugte Teile.       
 @
+7991
+<<[x]>> -> Wenn Sie beim Zitieren ('Quoten') einer
+       Nachricht die Betreffzeile ver„ndern und
+       die Bezugsverkettung beibehalten, dann
+       wird der alte Betreff automatisch in der
+       Form "<<(war: <alter Betreff>)>>" an den neuen
+       Betreff angeh„ngt.
+
+<<Hinweis:>> Viele Mail- und Newsreader (auch XP) entfer-
+nen beim Beantworten einer Nachricht einen auf diese
+Weise angeh„ngten alten Betreff automatisch - aber
+leider nicht alle. Achten Sie bitte auf die Gepflo-
+genheiten der Newsgroups, in denen Sie schreiben.
+@
 8100
 Wie in Kapitel "Kommentarverkettung" des Handbuchs
 beschrieben, ist die Nachrichten-Verkettung in Netzen

@@ -1222,7 +1222,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         _orgref:='';
         sData.References.Clear;
       end else
-        { betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
+      if RFCConcatOldSubject and (netztyp in netsRFC) then begin
+        ReCount(Oldbetr);
+        betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')';
+        end;
       pophp;
       if brk then goto xexit;
     end;
@@ -2318,6 +2321,10 @@ finalization
 
 {
   $Log$
+  Revision 1.34  2002/01/06 16:33:25  ma
+  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+    (config name has been changed, setting will not be kept from OpenXP/16)
+
   Revision 1.33  2002/01/05 16:01:10  mk
   - changed TSendUUData from record to class
 

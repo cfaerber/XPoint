@@ -1050,6 +1050,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Usersortbox  : boolean;       {im Userfenster nach Boxname Sortieren}
        _Usersortbox : boolean;       {Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-Binaernachrichten als Multipart }
+       RFCConcatOldSubject: boolean; { RFC: Concatenate old subject if changed }
        mausmpbin    : boolean;       { dto. fuer MausTausch }
        askreplyto   : boolean;       { fragen bei ANTWORT-AN }
 
@@ -1204,6 +1205,10 @@ implementation
 
 {
   $Log$
+  Revision 1.150  2002/01/06 16:33:24  ma
+  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+    (config name has been changed, setting will not be kept from OpenXP/16)
+
   Revision 1.149  2002/01/06 15:43:59  ma
   - ported "new messages first" feature from OpenXP/16 (JG+MY)
 

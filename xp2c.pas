@@ -1205,7 +1205,7 @@ var x,y   : Integer;
   function yi:integer; begin result:=y; inc(y); end;
 
 begin
-  dialog(57,iif(deutsch,21,14),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,22,15),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   y:=2;
 
   maddtext(3,y,GetRes2(253,25),col.coldiahigh);
@@ -1213,7 +1213,8 @@ begin
   maddbool(14,yi,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
   maddbool(14,yi,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,yi,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
-  maddbool(14,yi,getres2(253,15),multipartbin);  { 'Bin„rnachrichten als "Attachments"' }
+  maddbool(14,yi,getres2(253,15),multipartbin);  { 'Keine einteiligen Binaernachrichten' }
+  maddbool(14,yi,getres2(253,16),RFCConcatOldSubject); mhnr(7991);  { 'Alten Betreff anhaengen' }
   inc(y);
   
   maddtext(3,y,'Fido (FTN)',col.coldiahigh);
@@ -1535,6 +1536,10 @@ end;
 
 {
   $Log$
+  Revision 1.116  2002/01/06 16:33:24  ma
+  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
+    (config name has been changed, setting will not be kept from OpenXP/16)
+
   Revision 1.115  2002/01/06 15:43:59  ma
   - ported "new messages first" feature from OpenXP/16 (JG+MY)
 
