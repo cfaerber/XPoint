@@ -144,7 +144,7 @@ begin
   if (isNegative) then
     s:= s + '-'
   else
-    s:= s + '-';
+    s:= s + '+';
   s:= s + IntToStr(tzHours);
   { Minuten? }
   if (tzMinutes <> 0) then begin
@@ -160,6 +160,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/03 20:34:35  hd
+  Noch ein Fluechtigkeitsfehler
+
   Revision 1.6  2000/05/03 19:41:27  hd
   - Noch eine Nachlaessigkeit in TimeZone
 
