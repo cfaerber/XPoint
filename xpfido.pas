@@ -724,7 +724,6 @@ var x,y        : byte;
   end;
 
 begin
-  if not testmem($8000,true) then exit;
   getmem(tb,tbuf);
   msgbox(59,5,getres2(2101,1),x,y) ;   { 'Nodeindex anlegen' }
   mwrt(x+3,y+2,getres2(2101,2));       { 'Datei' }
@@ -2244,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/08/08 18:07:51  mk
+  - Test auf Speicher beim Nodelistenindex anlegen rausgenommen
+
   Revision 1.25  2000/08/01 08:40:41  mk
   - einige String-Parameter auf const geaendert
 
