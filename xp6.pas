@@ -115,8 +115,8 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
-     xp_pgp,xp6o,xp6l;
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+     xp_pgp,xp6l;
 
 {$IFDEF Ver32 }
 
@@ -2224,6 +2224,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.33  2000/05/21 07:21:17  jg
   - Empfaenger aendern: [F2] wird jetzt reingemalt
 

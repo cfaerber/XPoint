@@ -50,7 +50,7 @@ function  BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp2,xp3,xp3o,xp3ex,xp10;
+uses xp1o,xp3,xp3o,xp3ex;
 
 const  emax = 30;   { maximale Tiefe }
 
@@ -891,6 +891,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.9  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

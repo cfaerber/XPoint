@@ -91,10 +91,11 @@ uses
   vpsyslow;
 {$ENDIF }
 
-const mausint = $33;
+const
       intset  : boolean = false;
 {$IFDEF BP }
       stsize  : word    = 0;      { Gr”áe des Stacks }
+      mausint = $33;
 {$ENDIF }
 
 var   oldexit : pointer;
@@ -103,7 +104,6 @@ var   oldexit : pointer;
       int_call: mausintp;       { Adresse des Handlers  }
       ssave1, ssave2: SmallWord;
 {$ENDIF }
-      savem   : boolean;
 
 
 {$IFNDEF ver32}
@@ -471,8 +471,10 @@ end;
 procedure mausunit_init;
 const
   minit : boolean = false;
+{$IFDEF VP }
 var
   x, y: Integer;
+{$ENDIF }
 begin
   if not minit then
   begin
@@ -552,6 +554,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/06/01 16:03:04  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.12  2000/05/17 15:22:11  ml
   MausInterupt-Emulation funktioniert jetzt in W32
 

@@ -16,7 +16,7 @@ unit XpEasy;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -61,8 +61,6 @@ function NeuBenutzergruss:boolean;
   procedure EasyMainDialog;
   var x,y,i : byte;
       msglines    : byte;
-      z     : taste;
-      s:String;
       brk : boolean;
   begin
     {Adressconfig fuer Easy}
@@ -88,6 +86,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.6  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.5  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 

@@ -80,7 +80,7 @@ procedure seek_cutspace(var s:string);
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xp6,xpfido,xpmaus,xpview,
+uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
      xp_pgp;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
@@ -2407,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.43  2000/05/22 15:52:55  jg
   - File-Kleinschreibungs-Bugfix: Suchoptionen
 

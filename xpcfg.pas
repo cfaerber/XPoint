@@ -20,25 +20,25 @@ uses
 { Sektionen. Im Implementationsteil wird MySection definiert. Dieses muss
   fuer die einzelnen Betriebssysteme angepasst werden }
 type
-  TCfgSection = (		{ Sektionen }
-    csGlobal,			{ Allgemein }
-    csColor,			{ Farben }
-    csUser,			{ Benutzereinstellungen }
-    csFKeys,			{ Funktionstasten }
-    csZC,			{ Z-Netz }
-    csRFC,			{ Rfc }
-    csMaus,			{ Maus Tausch }
-    csFido,			{ Fido }
-    csDOS,			{ DOS }
-    csLinux,			{ Linux }
-    csOS2,			{ OS2 }
-    csWin,			{ Windows }
-    csUnknown,			{ Unbekannte Sektion }
-    csNone			{ Undefiniert }
+  TCfgSection = (               { Sektionen }
+    csGlobal,                   { Allgemein }
+    csColor,                    { Farben }
+    csUser,                     { Benutzereinstellungen }
+    csFKeys,                    { Funktionstasten }
+    csZC,                       { Z-Netz }
+    csRFC,                      { Rfc }
+    csMaus,                     { Maus Tausch }
+    csFido,                     { Fido }
+    csDOS,                      { DOS }
+    csLinux,                    { Linux }
+    csOS2,                      { OS2 }
+    csWin,                      { Windows }
+    csUnknown,                  { Unbekannte Sektion }
+    csNone                      { Undefiniert }
   );
 
 var
-  MySection: TCfgSection;		{ Fuer die OS-abhaengigen. Wird in
+  MySection: TCfgSection;               { Fuer die OS-abhaengigen. Wird in
                                           initvar (xp2cfg.inc) gesetzt }
 
 { Anmelden und Einlesen der cfg. Liefert true, wenn erfolgreich, false
@@ -65,21 +65,20 @@ implementation
 
 uses
   fileio,
-  typeform,
   resource,
 {$IFDEF Linux}
   xplinux,
 {$ENDIF}
-  xp0;
+  typeform;
 
 type
   PCfgEntry = ^TCfgEntry;
   TCfgEntry = record
-                key    : string;		{ Schluesselwort }
-		value  : string;		{ Wert }
-		sect   : TCfgSection;		{ In welcher Sektion }
-		fn     : string;		{ Dateiname (fuer Include spater) }
-		next   : PCfgEntry;		{ Nachster Eintrag }
+                key    : string;                { Schluesselwort }
+                value  : string;                { Wert }
+                sect   : TCfgSection;           { In welcher Sektion }
+                fn     : string;                { Dateiname (fuer Include spater) }
+                next   : PCfgEntry;             { Nachster Eintrag }
               end;
 
 const
@@ -87,7 +86,7 @@ const
   modified: boolean = false;
   SavedExit: pointer = nil;
 
-  ResMain	= 31000;			{ Resourcen-Offsets }
+  ResMain       = 31000;                        { Resourcen-Offsets }
 
 
 var
@@ -124,17 +123,17 @@ begin
   r:= e;
   s1:= Section2Str(cs);
   while (r^.next<>nil) do begin
-    r:= r^.next;				{ Im ersten Rec steht nichts }
+    r:= r^.next;                                { Im ersten Rec steht nichts }
     if (Length(r^.key)>0) and (r^.key[1]='[') then begin
       s2:= Copy(r^.key,2,Length(r^.key)-2);
       UpString(s2);
-      if (s1=s2) then begin			{ Gefunden }
+      if (s1=s2) then begin                     { Gefunden }
         JumpSection:= r;
-	exit;
+        exit;
       end;
     end;
   end; { while }
-  JumpSection:=nil;				{ Nicht vorhanden }
+  JumpSection:=nil;                             { Nicht vorhanden }
 end;
 
 function JumpKey(start: PCfgEntry; k: string): PCfgEntry;
@@ -142,32 +141,32 @@ var
   s: string;
 begin
   UpString(k);
-  start:= start^.next;				{ Da nach JumpSektion angesprungen... }
+  start:= start^.next;                          { Da nach JumpSektion angesprungen... }
   while (start<>nil) and (start^.key[1]<>'[') do begin
     s:= start^.key;
     UpString(s);
-    if (s=k) then begin				{ Gefunden }
+    if (s=k) then begin                         { Gefunden }
       JumpKey:= start;
       exit;
     end;
     start:=start^.next;
   end;
-  JumpKey:= nil;				{ Nichts vorhanden }
+  JumpKey:= nil;                                { Nichts vorhanden }
 end;
 
 function GetCfg(k: string; cs: TCfgSection): string;
 var
   r: PCfgEntry;
 begin
-  r:= JumpSection(cs);				{ Sektion anspringen }
-  if (r=nil) then				{ keine Sektion, kein Schluessel }
+  r:= JumpSection(cs);                          { Sektion anspringen }
+  if (r=nil) then                               { keine Sektion, kein Schluessel }
     GetCfg:= ''
   else begin
-    r:= JumpKey(r, k);				{ Key anspringen }
+    r:= JumpKey(r, k);                          { Key anspringen }
     if (r=nil) then
-      GetCfg:= ''				{ Nichts da }
+      GetCfg:= ''                               { Nichts da }
     else
-      GetCfg:= r^.value;			{ Kopieren }
+      GetCfg:= r^.value;                        { Kopieren }
   end;
 end;
 
@@ -189,38 +188,37 @@ end;
 procedure CloseCfg;
 var
   r: PCfgEntry;
-  ior: integer;
 begin
-  if (SavedExit <> nil) then begin		{ Exit-Verkettung }
+  if (SavedExit <> nil) then begin              { Exit-Verkettung }
     ExitProc:= SavedExit;
     SavedExit:= nil;
   end;
-  if (modified) then begin			{ Aenderungen sichern }
+  if (modified) then begin                      { Aenderungen sichern }
     assign(f, filename);
     rewrite(f);
-    ior:= ioresult;
+    if ioresult = 0 then ;
     r:= e;
     while (r^.next<>nil) do begin
       r:= r^.next;
       if (r^.key<>'') then begin
         if (r^.value<>'') then
-	  writeln(f,r^.key,'=',r^.value)
-	else
-	  writeln(f,r^.key);
+          writeln(f,r^.key,'=',r^.value)
+        else
+          writeln(f,r^.key);
       end else if (r^.value<>'') then
         writeln(f,r^.value)
       else
         writeln(f);
-      ior:= ioresult;
+    if ioresult = 0 then ;
     end;
     close(f);
-    ior:= ioresult;
+    if ioresult = 0 then ;
 {$IFDEF UnixFS}
     SetAccess(filename, taUserRW);
 {$ENDIF}
     modified:= false;
   end;
-  if (isOpen) then begin			{ Schliessen }
+  if (isOpen) then begin                        { Schliessen }
     DisposeConfig;
     isOpen:= false;
   end;
@@ -253,16 +251,16 @@ procedure ParseValue(s: string; var k, v: string);
 var
   p: integer;
 begin
-  k:= '';					{ Init }
-  v:= LTrim(s);					{ Init, aber keine fuehrende Space }
-  if (Length(v)=0) or (v[1]='#') then		{ Kommentar? }
-    exit;					{ -> und wech }
-  p:=cpos('=',v);				{ Trenner merken }
-  if (p>0) then begin				{ -> Zerlegen }
+  k:= '';                                       { Init }
+  v:= LTrim(s);                                 { Init, aber keine fuehrende Space }
+  if (Length(v)=0) or (v[1]='#') then           { Kommentar? }
+    exit;                                       { -> und wech }
+  p:=cpos('=',v);                               { Trenner merken }
+  if (p>0) then begin                           { -> Zerlegen }
     k:=copy(v,1,p-1);
     delete(v,1,p);
     trim(v); trim(k);
-  end else begin				{ -> Alles Key (gibt es das schon? }
+  end else begin                                { -> Alles Key (gibt es das schon? }
     k:=v;
     trim(k);
     v:='';
@@ -275,7 +273,7 @@ begin
   UpString(s);
   if (s='GLOBAL') then Str2Section:= csGlobal
   else if (s='COLOR') then Str2Section:= csColor
-  
+
   else if (s='Z-NETZ') then Str2Section:= csColor
   else if (s='RFC') then Str2Section:= csColor
   else if (s='MAUS') then Str2Section:= csColor
@@ -288,7 +286,7 @@ begin
   else if (s='LINUX') then Str2Section:= csLinux
   else if (s='OS2') then Str2Section:= csOs2
   else if (s='WIN') then Str2Section:= csWin
-  else Str2Section:= csUnknown;			{ Unbekannt }
+  else Str2Section:= csUnknown;                 { Unbekannt }
 end;
 
 { Wertet '[Sektion]' aus }
@@ -302,7 +300,7 @@ begin
   p2:= cpos(']',s);
   if (p2=0) then exit;
   inc(p1);
-  if (p1=p2) then exit;				{ [] kenne ich nicht }
+  if (p1=p2) then exit;                         { [] kenne ich nicht }
   cs:= Str2Section(Copy(s,p1,p2-p1));
 end;
 
@@ -312,18 +310,18 @@ var
   r: PCfgEntry;
 begin
   r:= e;
-  j:= ival(getres2(ResMain,0));			{ Anzahl Zeilen lesen }
+  j:= ival(getres2(ResMain,0));                 { Anzahl Zeilen lesen }
   for i:= 1 to j do begin
     r^.next:= Alloc;
     r:= r^.next;
     r^.value:= getres2(ResMain,i);
-    if (Length(r^.value)<>0) then		{ Leerzeilen ohne '#' }
+    if (Length(r^.value)<>0) then               { Leerzeilen ohne '#' }
       r^.value:= '# '+r^.value;
     r^.sect:=csNone;
     r^.fn:= filename;
   end;
   freeres;
-  modified:= true;				{ Flag setzen }
+  modified:= true;                              { Flag setzen }
 end;
 
 function MakeSection(cs: TCfgSection): PCfgEntry;
@@ -333,7 +331,7 @@ var
   ro: word;
 begin
   r:= e;
-  while (r^.next<>nil) do			{ Ganz ans Ende }
+  while (r^.next<>nil) do                       { Ganz ans Ende }
     r:= r^.next;
   r^.next:= Alloc;
   r:= r^.next;
@@ -354,7 +352,7 @@ begin
     csFKeys:  begin r^.key:='[F-Keys]'; ro:= ResMain+12; end;
   end;
   j:= ival(getres2(ro,0));
-  for i:= 1 to j do begin		{ Defaultbeschreibung aus der Res holen }
+  for i:= 1 to j do begin               { Defaultbeschreibung aus der Res holen }
     r^.next:= Alloc;
     r:= r^.next;
     r^.value:=getres2(ro,i);
@@ -374,12 +372,12 @@ begin
     last:= start;
     start:= start^.next;
   end;
-  if (start^.next=nil) then begin		{ Kettenende }
+  if (start^.next=nil) then begin               { Kettenende }
     start^.next:= Alloc;
     start:= start^.next
-  end else begin				{ Irgendwo mitten drin }
-    start:= Alloc;				{ Neues Element }
-    start^.next:= last^.next;			{ Kette verknueppen }
+  end else begin                                { Irgendwo mitten drin }
+    start:= Alloc;                              { Neues Element }
+    start^.next:= last^.next;                   { Kette verknueppen }
     last^.next:= start;
   end;
   AddKeyInSection:= start;
@@ -391,19 +389,19 @@ var
   i,j: integer;
   r1, r2: PCfgEntry;
 begin
-  if (resid=0) then				{ Res angegeben? }
+  if (resid=0) then                             { Res angegeben? }
     InsertResource:= start
   else begin
-    r1:= start; r2:= r1^.next;			{ r2 merkt sich die Kette }
+    r1:= start; r2:= r1^.next;                  { r2 merkt sich die Kette }
     j:= ival(getres2(resid,0));
-    for i:= 1 to j do begin			{ Alle Zeilen lesen }
+    for i:= 1 to j do begin                     { Alle Zeilen lesen }
       r1^.sect:= cs; r1^.fn:= filename;
       r1^.value:= getres2(resid,i);
       if (Length(r1^.value)<>0) then
         r1^.value:= '# '+r1^.value;
       r1^.next:= Alloc; r1:= r1^.next;
     end;
-    r1^.next:=r2;				{ Kette verknuepfen }
+    r1^.next:=r2;                               { Kette verknuepfen }
     InsertResource:= r1;
     freeres;
   end;
@@ -418,17 +416,17 @@ var
   r, r2: PCfgEntry;
 begin
   r:= JumpSection(cs);
-  if (r=nil) then begin				{ Sektion existiert nicht }
+  if (r=nil) then begin                         { Sektion existiert nicht }
     r:= MakeSection(cs);
     r^.next:= Alloc;
     r:= r^.next;
-    r:= InsertResource(cs, resid, r);		{ Resource einfuegen }
+    r:= InsertResource(cs, resid, r);           { Resource einfuegen }
     r^.fn:= filename; r^.sect:= cs;
     r^.key:= k; r^.value:= v;
   end else begin
-    r2:=JumpKey(r, k);				{ Zum Schluessle springen }
-    if (r2=nil) then begin				{ Noch nicht vorhanden }
-      r2:= AddKeyInSection(r);			{ Key in akt. Sektion anfuegen }
+    r2:=JumpKey(r, k);                          { Zum Schluessle springen }
+    if (r2=nil) then begin                              { Noch nicht vorhanden }
+      r2:= AddKeyInSection(r);                  { Key in akt. Sektion anfuegen }
       r2:= InsertResource(cs, resid, r2);
     end;
     r2^.key:=k;
@@ -447,23 +445,23 @@ var
   k,v: string;
 begin
   OpenCfg:=false;
-  if (isOpen) then Exit;			{ Das weiss einer nicht, was er tut }
+  if (isOpen) then Exit;                        { Das weiss einer nicht, was er tut }
   InitData(fn);
   ee:= e;
-  if not (exist(fn)) then begin			{ Nur anlegen }
+  if not (exist(fn)) then begin                 { Nur anlegen }
     isOpen:=true;
     SavedExit:= ExitProc;
     ExitProc:= @CloseCfg;
-						{ Defaults erzeugen }
-    MakeMainHEader;				{ Dateikopf erzeugen }
-  end else begin				{ -> Einlesen }
+                                                { Defaults erzeugen }
+    MakeMainHEader;                             { Dateikopf erzeugen }
+  end else begin                                { -> Einlesen }
     assign(f,fn);
     reset(f);
-    if (ioresult<>0) then exit;			{ Zugriffsfehler }
+    if (ioresult<>0) then exit;                 { Zugriffsfehler }
     while not eof(f) do begin
       readln(f,s);
-      SetSection(s, cs);			{ Testen auf Sektionswechsel }
-      ParseValue(s, k, v);			{ Aufsplitten }
+      SetSection(s, cs);                        { Testen auf Sektionswechsel }
+      ParseValue(s, k, v);                      { Aufsplitten }
       ee^.next:= Alloc;
       ee:= ee^.next;
       ee^.key:= k;
@@ -482,6 +480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.1  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 

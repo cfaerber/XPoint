@@ -174,7 +174,7 @@ var    chml : Array[1..5] of string[230];
 
 procedure Disp_DT;                              { Datum/Uhrzeit anzeigen  }
 procedure SetSeconds(sec,flash:boolean);        { Sekundenanzeige ein/aus }
-Procedure multi2(cur:curtype);                  { vorgeg. Backgr.-Prozess }
+Procedure multi2;                               { vorgeg. Backgr.-Prozess }
 Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
@@ -283,7 +283,6 @@ uses
 const  maxsave     = 50;  { max. fr savecursor }
 
       __st : string[8] = '  :  :  ';    { fr M2T }
-      __sd : string[8] = '  .  .  ';    { fr M2D }
       timeflash : boolean = false;
       getactive : boolean = false;
 
@@ -662,7 +661,7 @@ begin
               (maus and iomaus and ((mox-mx>=8*mausfx) or (mox<mx) or (moy-my>=8*mausfy) or (moy<my)))
               and not (kbstat<>st1) do begin
           getactive:=true;
-          multi2(cur);
+          multi2;
           getactive:=false;
           if maus and iomaus and ((mox<=8*mausfx-1) or (mox>=640-8*mausfx) or
                        (moy<=8*mausfy-1) or (moy>=200-8*mausfx)) then begin
@@ -1792,7 +1791,7 @@ begin
     else begin
       t:=ticker;
       for i:=1 to n do begin
-        multi2(curoff);
+        multi2;
         while t=ticker do
           idle;
         if t<ticker then inc(t)
@@ -1853,6 +1852,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/06/01 16:03:04  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.37  2000/05/10 10:30:22  hd
   - AttrTxt setzte die Farbe zweimal
 

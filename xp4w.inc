@@ -61,11 +61,11 @@ begin
     else begin
       while wrongline do                     { Ausgehend von oberster Bildschirmzeile }
       begin                                  { ersten Passenden Ubase Eintrag suchen }
-        dbnext(ubase);                            
+        dbnext(ubase);
         if dbeof(ubase) then dbgotop(ubase);
         end;
-      disprec[1]:=dbrecno(ubase);    
-      end;      
+      disprec[1]:=dbrecno(ubase);
+      end;
     end;
     setall;
     aufbau:=true;
@@ -209,13 +209,13 @@ end;
 Procedure TrennzeilenSuche;
 var   uname  : string[AdrLen];
       rec     : longint;
-begin  
+begin
   dbgo(dispdat,disprec[1]);
   dbnext(dispdat);
   repeat
     if dispmode<=0 then dbreadn(bbase,bb_brettname,uname)
       else dbReadN(ubase,ub_username,uname);
-    dbnext(dispdat); 
+    dbnext(dispdat);
   Until dbEOF(dispdat) or (pos('$/T',ustr(uname))>0);
   if not dbEOF(dispdat) then dbskip(dispdat,-1);
   rec:=dbRecno(dispdat);
@@ -450,7 +450,6 @@ var fn     : pathstr;
     typ    : char;
     arc    : shortint;
     _down  : boolean;
-    old_nw : boolean; 
     lres   : shortint;
     ende   : boolean;
     pushed : boolean;
@@ -479,14 +478,14 @@ var fn     : pathstr;
     mimetyp  : string[30];
     viewer   : ViewInfo;
                                            { Mailviren-Schutz }
-  Procedure TestViralExtension;            
-  var x,y   : byte;                       
-      t     : taste;                      
-      s     : string[10];                  
-  begin                                    
+  Procedure TestViralExtension;
+  var x,y   : byte;
+      t     : taste;
+      s     : string[10];
+  begin
     if (viewer.ext='') and (viewer.prog<>'') then
-    begin     
-      s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.'; 
+    begin
+      s:=ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.';
       if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
         if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
         else begin
@@ -500,7 +499,7 @@ var fn     : pathstr;
           closebox;
           end;
       end;
-  end; 
+  end;
 
   procedure CopyMsg;
   var f1,f2 : file;
@@ -746,7 +745,7 @@ begin
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
-      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }  
+      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
       GetMimeViewer(mimetyp,viewer);
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
       Testviralextension;
@@ -774,7 +773,7 @@ begin
           GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
           if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
             GetMimeViewer(mimetyp,viewer);
-          Testviralextension;                    { Schutz vor Mail-Viren } 
+          Testviralextension;                    { Schutz vor Mail-Viren }
 
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
@@ -908,10 +907,10 @@ begin
       end
 
     else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
-    begin 
+    begin
       wiedervorlage;
-      ende:=false; 
-      end  
+      ende:=false;
+      end
 
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
@@ -925,12 +924,12 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack; 
+                 SetKK; GoMsgBack;
                  GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth; 
+                 SetKK; GoMsgForth;
                  GoP; dpp:=dbRecno(mbase);
                  ende:=false;
                end;
@@ -1184,23 +1183,23 @@ begin
    dbSeek(ubase,uiName,ustr(newsuch));
     if not dbEOF(ubase) then begin
 
-      if (dispmode=1) or (dispmode=3) then     { Adressbuch: } 
-      begin  
+      if (dispmode=1) or (dispmode=3) then     { Adressbuch: }
+      begin
         indx:=dbgetindex(ubase);
         dbsetindex(ubase,uiname);              { Nach Namen sortieren }
         repeat
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
           if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
-          if dbEOF(ubase) then Exit;        
-          dbReadN(ubase,ub_username,s);      
-        until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));  
+          if dbEOF(ubase) then Exit;
+          dbReadN(ubase,ub_username,s);
+        until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
-        end      
+        end
       else dbReadN(ubase,ub_username,s);
 
       if left(ustr(s),length(newsuch))<>ustr(newsuch) then
         errsound
-      else         
+      else
         suchok;
       end;
     end;

@@ -334,7 +334,7 @@ var   fb     : pathstr;
         else
           Wrt2(sp(59));
         end
-      else 
+      else
 {$ENDIF }
       if right(s,1)=DirSepa then
 {$IFDEF BP }
@@ -834,7 +834,7 @@ var   i,j     : integer;
     { n1:=pn; }
     while de=0 do begin
       sn:=sr.name;
-      multi2(curoff);
+      multi2;
       dstat;
       with sr do
         repeat
@@ -1113,6 +1113,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.15  2000/05/09 13:11:36  hd
   - UnixFS: fsbox angepasst
   - UnixFS: DriveType rausgenommen

@@ -66,8 +66,8 @@ var Netcall_connect : boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp2,xp3,xp3o,xp3o2,xp4o,xp5,xp4o2,xp6,xp8,xp9bp,xp9,xp10,
-     xpfido,xpfidonl,xpf2,xpmaus,xp7l,xp7o,xp7f;
+uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
+     xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgr”áe von ppfile }
 
@@ -767,7 +767,7 @@ begin                  { of Netcall }
       ReleaseC;
       cursor(curoff);
       inc(wahlcnt);
-      case FidoNetcall(box,bfile,ppfile,eppfile,caller,upuffer,downarcer,
+      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
                        uparcer<>'',crash,alias,addpkts,domain) of
         EL_ok     : begin
                       Netcall_connect:=true;
@@ -1284,7 +1284,7 @@ begin                  { of Netcall }
         time(iif((numpos=1) or postsperre,redialwait,4));
         rz:='';
         repeat
-          multi2(curon);
+          multi2;
           if rz<>restzeit then begin
             moff;
             write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf n„chsten (Netz)anruf... ' }
@@ -1421,7 +1421,7 @@ begin
       mwrt(xx,y+4,timediff);
       td:=timediff;
       end;
-    multi2(curoff);
+    multi2;
     if keypressed then begin
       spush(hotkeys,sizeof(hotkeys));
       hotkeys:=false;
@@ -1561,6 +1561,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.13  2000/05/20 02:07:40  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 

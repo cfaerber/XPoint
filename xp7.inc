@@ -167,7 +167,7 @@ end;
 procedure tb;
 begin
   testbyte;
-  multi2(curon);
+  multi2;
 end;
 
 procedure tkey;
@@ -335,7 +335,7 @@ begin
         if (IgnCD or carrier(comnr)) and GetCTS(comnr) then begin
           SendStr('+++');
           mdelay(500);
-          multi2(curoff);
+          multi2;
           mdelay(700);
           if (IgnCD or carrier(comnr)) and GetCTS(comnr) then begin
             SendStr('AT H'#13);
@@ -833,7 +833,6 @@ var f1,f2 : file;
     fn    : pathstr;
     dummy : longint;
     ft    : longint;
-    TempPPFileName: String;
 
   procedure RemoveMausmark;   { Schluázeile mit '#' entfernen }
   var s  : string[10];
@@ -1288,7 +1287,7 @@ begin
   _ende:=false;
   zaehler[2]:=300;
   repeat
-    multi2(curoff);
+    multi2;
     write(#13,restzeit);
     if keypressed then begin
       c:=readkey;
@@ -1442,6 +1441,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.22  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

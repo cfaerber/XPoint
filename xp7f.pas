@@ -31,9 +31,9 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
 
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
-function FidoNetcall(box:string; var bfile,ppfile,eppfile,sendfile,upuffer,
-                      downarcer:pathstr; packmail,crash,alias:boolean;
-                      addpkts:addpktpnt; var domain:string):shortint;
+function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
+                     packmail,crash,alias:boolean;
+                     addpkts:addpktpnt; var domain:string):shortint;
 function GetCrashbox:string;
 function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
 
@@ -302,8 +302,8 @@ end;
 { der angerufene Node                                                  }
 { Ergebnis: s. xpdiff                                                  }
 
-function FidoNetcall(box:string; var bfile,ppfile,eppfile,sendfile,upuffer,
-                     downarcer:pathstr; packmail,crash,alias:boolean;
+function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
+                     packmail,crash,alias:boolean;
                      addpkts:addpktpnt; var domain:string):shortint;
 
 type rfnodep     = ^reqfilenode;
@@ -942,6 +942,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.12  2000/05/29 20:21:42  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

@@ -20,7 +20,7 @@ unit xpterm;
 interface
 
 
-uses  
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -450,7 +450,7 @@ end;
 procedure tb;
 begin
   testbyte;
-  multi2(curon);
+  multi2;
 end;
 
 procedure sendstr(s:string);
@@ -531,7 +531,7 @@ begin
       if carrier then begin
         SendStr('+++');
         mdelay(500,true);
-        multi2(curoff);
+        multi2;
         mdelay(500,true);
         end;
       flushin;
@@ -861,7 +861,7 @@ begin
         connected:=false;
         end
       else begin
-        multi2(curon);
+        multi2;
 
         testbyte;
         if AutoDownload and (pos('*'^X'B00',recs)>0) then
@@ -1476,7 +1476,7 @@ var ip   : integer;
                 end;
             end;
         2 : begin
-              multi2(curon);
+              multi2;
               doit:=(zaehler[3]=0);
             end;
         3 : doit:=online;
@@ -1617,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.9  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

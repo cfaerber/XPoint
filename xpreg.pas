@@ -20,7 +20,7 @@ unit xpreg;
 
 interface
 
-uses  
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -1102,6 +1102,7 @@ var brk,modi : boolean;
       closebox;
       _era(tmp);
       end;
+    PrintFormular := true;
   end;
 
 
@@ -1329,7 +1330,7 @@ begin
         else zaehler[2]:=(diff-1)*10;
         repeat
           mwrt(x,y+2,strs(zaehler[2])+' ');
-          multi2(curoff);
+          multi2;
         until zaehler[2]=0;
         clearkeybuf;
         mwrt(x,y,sp(66));
@@ -1576,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.9  2000/05/07 18:16:04  hd
   Kleine Linux-Anpassungen
 

@@ -47,14 +47,13 @@ function __dateok(var s:string):boolean;
 function __timeok(var s:string):boolean;
 function testaction(var s:string):boolean;
 
-function msettyp(var s:string):boolean;
 procedure MakSelKeys(var t:taste);
 function checkday(var s:string):boolean;
 
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9bp,xp9,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9bp,xpauto,xpfido,xpfidonl;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -506,19 +505,6 @@ begin
       end;
 end;
 
-
-function msettyp(var s:string):boolean;
-var i : byte;
-begin
-  for i:=1 to mtypes do
-    if ustr(left(s,1))=left(mtyp(i),1) then begin
-      s:=mtyp(i);
-      keyboard(keyend);
-      end;
-  freeres;
-end;
-
-
 function CheckDay(var s:string):boolean;
 begin
   if (s=_jn_[1]) and dayused[fieldpos] then begin
@@ -858,7 +844,6 @@ var brk      : boolean;
     for i:=1 to mtypes do
       mappsel(true,mtyp(i));
     freeres;
-  { mset1func(msettyp);   - geht nicht mehr, wegen dopeltem "A"! }
     komm:=copy(s,226,24);
     maddstring(3,4,getres2(1006,3),komm,24,24,''); mhnr(549);  { s. EditMacro! } { 'Kommentar ' }
     maddtext(3,6,getres2(1006,4),0);   { 'Taste' }
@@ -2042,6 +2027,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.9  2000/05/06 17:29:21  mk
   - DOS DPMI32 Portierung
 

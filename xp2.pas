@@ -78,7 +78,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 implementation  {-----------------------------------------------------}
 
- uses xp1o,xpe,xp2c,xp3,xp3o,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg,xpcrc32;
+ uses xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
 
 var   zaehlx,zaehly : byte;
 
@@ -1138,6 +1138,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.42  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

@@ -62,7 +62,7 @@ const
 {$ENDIF }
   maxll    = 64;
 
-var x,y,fm   : byte;
+var x,y      : byte;
     f,pfile  : file;
     llbuf    : array[1..maxll] of longint;
     llanz    : integer;
@@ -754,10 +754,7 @@ begin
                   pm:=true;
                   end;
 
-          if empfaenger[1]='U' then fm:=24
-          else fm:=27;
-
-          multi2(curoff); initscs;
+          multi2; initscs;
 
           dbSeek(ubase,uiName,ustr(absender));
           if not dbFound then begin          { neuen User anlegen }
@@ -1093,6 +1090,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.18  2000/05/15 20:02:38  mk
   - Optische Korrekturen fuer Puffer importieren
 

@@ -73,7 +73,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -144,9 +144,8 @@ begin
 end;
 
 procedure scr_auto_empfsel(var cr:CustomRec);       { Brett/User fuer Vollbildroutinen }
-var x,y   : byte;                                   { Sichert Screen und zeigt Hauptmenue an }
+var
     mt,kd : boolean;
-const s : string[1]='';
 begin
   mt:=m2t; m2t:=false;            { Uhr aus }
   kd:=keydisp; keydisp:=true;     { Funktionskeys ein }
@@ -1377,6 +1376,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.17  2000/05/06 17:48:02  mk
   - Fix fuer msgall, wenn keine Nachricht im Brett ist
 

@@ -345,13 +345,13 @@ asm
               mov ax,1703h
               mov dx,format
               mov si,word ptr lsize+2             { lsize ist zwar longint }
-              mov cx,word ptr lsize               { aber es werden maximal 64K genutzt } 
+              mov cx,word ptr lsize               { aber es werden maximal 64K genutzt }
               les bx,ldata
 
-              cmp cx,0ffffh                                                                        
-              je @1                               {Text MUSS mit #0 enden !!!!} 
+              cmp cx,0ffffh
+              je @1                               {Text MUSS mit #0 enden !!!!}
               mov di,cx
-              mov byte ptr es:[bx+di],0 
+              mov byte ptr es:[bx+di],0
               inc cx
 @1:
               int multiplex
@@ -477,13 +477,13 @@ asm
               les bx,str
               mov si,0
               mov cx,si
-              mov cl,es:[bx]                      {Stringlaenge -> si:cx}          
+              mov cl,es:[bx]                      {Stringlaenge -> si:cx}
               inc bx                              {Textstart    -> es:bx}
 
-              cmp cl,255                                                                        
-              je @1                               {Text MUSS mit #0 enden !!!!} 
+              cmp cl,255
+              je @1                               {Text MUSS mit #0 enden !!!!}
               mov di,cx
-              mov byte ptr es:[bx+di],0 
+              mov byte ptr es:[bx+di],0
               inc cx
 @1:
               mov ax,1703h                        {String Ins Clipboard schreiben...}
@@ -656,6 +656,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/01 16:03:04  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.18  2000/05/08 15:04:16  jg
   - Bugfix: 32*n Byte ins Clipboard kopieren (#0 fehlte)
 

@@ -54,7 +54,7 @@ begin
   waitkey:='';
 again:
   while (ticker<t0) and (ticker>=t) and not keypressed do begin
-    multi2(curoff);
+    multi2;
     { XPIdle; }
     rest:=system.round((t0-ticker)/18.2);
     if count and (rest mod 60<>last) then begin
@@ -190,7 +190,7 @@ begin
                        moff;
                        write(icr.percent:3);
                        mon;
-                       multi2(curoff);
+                       multi2;
                        end;
 
       icCloseWindow: begin
@@ -220,6 +220,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/01 16:03:05  mk
+  - Verschiedene Aufraeumarbeiten
+
   Revision 1.10  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
