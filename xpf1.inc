@@ -271,7 +271,7 @@ label ende;
         if flags and 8=0 then inc(adr[3],256*getbyte);
         end;
       if not0 then fnr:=getbyte    { Datei-Nummer }
-      else fnr:=0;
+      else fnr:=1; { kleinste NL-Nummer ist 1 }
       b:=iif(adr3,3,4);            { Datei-Offset }
       fadr:=0;
       FastMove(buf^[bufp],fadr,b);
@@ -884,6 +884,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.7.2.2  2000/08/20 10:41:23  mk
+  MO:- erster Nodelistenindex ist jetzt kleiner
+
   Revision 1.7.2.1  2000/08/10 08:31:30  jg
   - Fix: Fido...Nodelisten abfragen
     Direkte Nachricht an Suchergebnis schicken funktioniert wieder.

@@ -648,7 +648,7 @@ var x,y        : byte;
               end;
             end;
           cuser[1]:=adrf;                           { Adreá-Flag }
-          if fnr=0 then
+          if fnr=1 then
             inc(cuser[2],$40)
           else begin
             cuser[cuserp]:=fnr;
@@ -2259,6 +2259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.1  2000/08/20 10:41:23  mk
+  MO:- erster Nodelistenindex ist jetzt kleiner
+
   Revision 1.15  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
