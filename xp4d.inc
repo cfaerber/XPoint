@@ -76,12 +76,12 @@ var
     if size<10000 then siz:=strsn(size,5)
     else
       if size<1024*1024 then
-        siz:=strsn(size div 1024,4)+'k'
+        siz:=strsn(size div 1024,4)+'K'
       else
         if size<1024*1024*1024 then
-          siz:=strsn(size div (1024*1024),3)+'mb'
+          siz:=strsn(size div (1024*1024),3)+'MB'
         else
-          siz:=strsn(size div (1024*1024*1024),3)+'gb';
+          siz:=strsn(size div (1024*1024*1024),3)+'GB';
   end;
 
   function hz(i:integer):string;
