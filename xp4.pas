@@ -789,17 +789,14 @@ var t,lastt: taste;
         i : integer;
     begin
       hdp := AllocHeaderMem;
-{      for i:=2 to rtanz do with hdp^ do begin
-        ReadHeadDisk:=i;
-        ReadHeader(hdp^,hds,false);}
-        { suboptimal }
+      readheader(hdp^,hds,false);
       with hdp^ do
         for i:=0 to followup.count-1 do begin
           dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
           EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
         end;
-{      end;}
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
+      freeheadermem(hdp)
     end;
 
     { empf-Brett ist nicht vorhanden -> in SendEmpfList nachsehen, ob }
@@ -2132,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.67  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

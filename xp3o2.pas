@@ -401,7 +401,11 @@ begin
     if pm then
     begin
       { suboptimal }
-      if replyto.count>0 then repto:=replyto[0];
+      if replyto.count>0
+        then
+	  repto:=replyto[0]
+	else
+	  repto:='';
       reptoanz:=0;
     end
     { suboptimal }
@@ -411,7 +415,7 @@ begin
          else
          begin
            if Followup.count > 0 then repto:='A'+followup[0]
-             else repto := 'A';
+             else repto := '';
            reptoanz:=followup.count;
          end;
     if not pm then begin
@@ -451,6 +455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.29  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

@@ -1023,6 +1023,7 @@ begin
       mset3proc(firstslash);
       inc(y,2);
       end;
+    { suboptimal }
     if replyto.count>0 then
       tmpReplyTo :=replyto[0]
     else
@@ -1156,6 +1157,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.40  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.39  2000/11/25 10:31:48  mk
   - some fixes for new SendUUData
 

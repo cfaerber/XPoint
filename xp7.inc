@@ -1001,7 +1001,7 @@ var dummy : longint;
       ok  : boolean;
   begin
     if _filesize(ppfile)>0 then begin
-      new(hd);
+      hd:=allocheadermem;
       assign(f,ppfile);
       reset(f,1);
       adr:=0; ok:=true;
@@ -1017,7 +1017,7 @@ var dummy : longint;
         inc(adr,hds+hd^.groesse);
         end;
       close(f);
-      dispose(hd);
+      freeheadermem(hd);
       end;
   end;
 
@@ -1385,6 +1385,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.46  2000/11/24 21:34:42  mk
   - Telefonnummer wird im Sysopmodus nicht mehr gecheckt
 

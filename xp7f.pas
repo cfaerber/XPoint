@@ -338,7 +338,7 @@ label fn_ende,fn_ende0;
         ok  : boolean;
     begin
       if _filesize(puffer)>0 then begin
-        new(hd);
+        hd:=allocheadermem;
         assign(f,puffer);
         reset(f,1);
         adr:=0; ok:=true;
@@ -358,7 +358,7 @@ label fn_ende,fn_ende0;
           inc(adr,hds+hd^.groesse);
           end;
         close(f);
-        dispose(hd);
+        freeheadermem(hd);
         end;
     end;
 
@@ -952,6 +952,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.37  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

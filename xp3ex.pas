@@ -838,27 +838,8 @@ begin
                   Wrs(s);
                 end;
 
-                 { suboptimal }
-    hdf_DISK  :  if hdp^.followup.count>0 then
-                   if hdp^.followup.count=1 then
-                     wrs(gr(3)+hdp^.followup[0])           { 'Antwort in : ' }
-                   else begin
-                     s:=gr(3)+hdp^.followup[0];
-                     for i:=2 to hdp^.followup.count do begin
-                       ReadHeadDisk:=i;
-                       TempKopien.Assign(Hdp^.Kopien);
-                       ReadHeader(hdp^,hds,false);
-                       Hdp^.Kopien.Assign(TempKopien);
-                       if length(s)+length(hdp^.followup[0])>iif(listscroller,76,77)
-                       then begin
-                         wrs(s); s:=gr(3{15});
-                         end
-                       else
-                         s:=s+', ';
-                       s:=s+hdp^.followup[0];
-                       end;
-                     wrs(s);
-                     end;
+    hdf_DISK  :  for i:=0 to hdp^.followup.count-1 do
+                   wrs(gr(3)+hdp^.followup[i]);           { 'Antwort in : ' }
 
     hdf_ABS   :  begin
                    if ((hdp^.netztyp=nt_fido) or (hdp^.netztyp=nt_QWK)) and
@@ -885,10 +866,8 @@ begin
                    wrs(gr(18)+hdp^.oab+iifs(hdp^.oar<>'','  ('+hdp^.oar+')',''));
     hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
                    wrs(gr(17)+hdp^.wab+iifs(hdp^.war<>'','  ('+hdp^.war+')',''));
-                 { suboptimal}
-    hdf_ANTW   : if (hdp^.replyto.count>0) and
-                    ((UpperCase(hdp^.replyto[0])<>UpperCase(hdp^.absender))) then   { 'Antwort an : ' }
-                   wrs(gr(27)+hdp^.replyto[0]);
+    hdf_ANTW  :  for i:=0 to hdp^.replyto.count-1 do
+                   wrs(gr(27)+hdp^.replyto[i]);           { 'Antwort an : ' }
 
     hdf_BET    : wrs(gr(5)+LeftStr(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
     hdf_ZUSF   : if hdp^.summary<>'' then        { 'Zus.fassung: ' }
@@ -1098,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/11/25 18:28:31  fe
+  Fixed some bugs.
+
   Revision 1.53  2000/11/24 21:02:25  mk
   - modified p and q from byte to integer
 
