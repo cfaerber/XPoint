@@ -1,6 +1,6 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team & Claus Färber, http://www.openxp.de       }
+{ (c) 2000 OpenXP Team & Claus F„rber, http://www.openxp.de       }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 { --------------------------------------------------------------- }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -253,6 +253,9 @@ end.
 
 { 
   $Log$
+  Revision 1.1.2.3  2001/07/04 01:33:12  my
+  - changed ANSI-Umlaut to ASCII-Umlaut (please no ANSI, guys :-))
+
   Revision 1.1.2.2  2001/07/02 21:11:09  mk
   - removed unused units
 
