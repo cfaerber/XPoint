@@ -498,15 +498,13 @@ const
   StrOffset = SizeOf(LStrRec);
 
 function CountChar(const c: char; const s: string): integer;
-const
-  j: integer = 0;
 var
   i: integer;
 begin
+  Result := 0;
   for i:= 1 to length(s) do
     if s[i]=c then
-      inc(j);
-  CountChar:= j;
+      inc(Result);
 end;
 
 (*
@@ -1861,6 +1859,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2002/11/10 10:55:03  mk
+  - fixed bug in CountChar
+
   Revision 1.118  2002/09/26 22:51:46  cl
   - further improved BufferScan, and added comments
 
