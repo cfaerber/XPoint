@@ -200,7 +200,7 @@ begin
   dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
   while not dbEof (d) do
   begin
-    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/UUCP }
+    if ntReplyToAll (dbReadInt (d, 'netztyp') and $FF) then { nur ZConnect und RFC/UUCP }
     begin                                           { Boxen berÅcksichtigen     }
       Username := dbReadStr (d, 'username');
       PointName := dbReadStr (d, 'pointname');
@@ -338,7 +338,8 @@ end; *)
   vorhanden. }
 
 function getVertreter (var adr :String) :boolean;
-var size :word;
+var 
+  size: Integer;
 begin
   dbSeek (ubase, uiName, UpperCase(adr));
   if dbFound then
@@ -967,6 +968,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2001/10/17 20:11:05  mk
+  - fixed range check error in ntReplyToAll
+
   Revision 1.20  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
