@@ -37,7 +37,7 @@ procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient: integer;
 implementation
 
 uses
-  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug;
+  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug, rfc2822;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
@@ -87,7 +87,7 @@ var i,res : integer;
   var
     l: Integer;
   begin
-    l := o + BufferScan(Buf^[o], BufAnz, #13);
+    l := o + BufferScan(Buf^[o], BufAnz-o, #13);
 {   l := o;
     while (Buf^[l] <> #13) and (l < BufAnz) do
       inc(l); } 
@@ -109,6 +109,7 @@ var i,res : integer;
       o := l-1;
       IncO; IncO;
     end;
+    while (o<0) or (o>bufanz-1) do begin end;
     if ok and (buf^[o]=#10) then IncO;
   end;
 
@@ -371,6 +372,14 @@ begin
             if id = 'U-CONTENT-DISPOSITION' then ParseDisposition(hd) else
             if id = 'U-CONTENT-ID'   then Mime.CID := line else
 
+            if id = 'U-LIST-ID' then ListID := RFCRemoveComments(line); 
+            if id = 'U-LIST-POST' then ListPost := RFCRemoveComments(line); 
+            if id = 'U-LIST-SUBSCRIBE' then ListSubscribe := RFCRemoveComments(line); 
+            if id = 'U-LIST-UNSUBSCRIBE' then ListUnSubscribe := RFCRemoveComments(line); 
+            if id = 'U-LIST-HELP' then ListHelp := RFCRemoveComments(line); 
+            if id = 'U-LIST-OWNER' then ListOwner := RFCRemoveComments(line); 
+            if id = 'U-LIST-ARCHIVE' then ListArchive := RFCRemoveComments(line); 
+
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
               if LowerCase(line)='yes' then xnoarchive:=true;
@@ -558,6 +567,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2002/09/13 11:56:11  cl
+  - fixed range check error
+
   Revision 1.28  2002/09/09 08:42:34  mk
   - misc performance improvements
 
