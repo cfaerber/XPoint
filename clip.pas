@@ -42,7 +42,7 @@ const
   Multiplex = $2f;
   cf_Oemtext   = 7;
   maxfile   = 65520;
-  ClipFileName = 'CLIPBOARD.TMP';
+  ClipFileName = 'CLIPBRD.TMP';
 
 type
   ca  = array[0..65530] of char;
@@ -470,6 +470,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.4  2000/10/03 15:55:12  mk
+  - CLIPBOARD.TMP in CLIPBRD.TMP umbenannt
+
   Revision 1.19.2.3  2000/10/03 03:22:49  mk
   - Interne Zwischenablage komplett implementiert
 
