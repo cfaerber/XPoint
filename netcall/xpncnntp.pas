@@ -67,7 +67,7 @@ uses
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
   res_userbreak         = 'Abbruch durch User';
 
-function GetAllGroups(BoxName: string; bp: BoxPtr): boolean;
+function GetGroupList(const BoxName: string; bp: BoxPtr; OnlyNew: Boolean): boolean;
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
@@ -76,7 +76,7 @@ var
   i             : integer;              { -----"------- }
   bfile         : string;               { Server file name (without extension) }
 begin
-  if not ReadJN(getres2(30010,2),false) then begin { ' Kann dauern, wirklich? '}
+  if not OnlyNew and not ReadJN(getres2(30010,2),false) then begin { ' Kann dauern, wirklich? '}
     result:= true;
     exit;
   end;
@@ -101,15 +101,18 @@ begin
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
     bfile := GetServerFilename(BoxName, extBl);
-    if (bFile <> '') and NNTP.List(List,false) then 
+    if (bFile <> '') and NNTP.List(List,false, OnlyNew) then
     begin
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
-      assign(f, bfile);
-      rewrite(f);
+      Assign(f, bfile);
+      if FileExists(bfile) and OnlyNew then
+        Append(f)
+      else
+        ReWrite(f);
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
-      close(f);
+      Close(f);
       result:= true;
     end else
       result:= false;
@@ -128,19 +131,14 @@ begin
   List.Free;
 end;
 
-function GetNewGroups(BoxName: string; bp: BoxPtr): boolean;
-begin
-  result:= false;
-end;
-
 function GetNNTPList(BoxName: string; bp: BoxPtr): boolean;
 var
   n             : integer;
 begin
   n:= minisel(0,0,BoxName,getres2(30010,1),1); { '^Alle Gruppen, ^Neue Gruppen' }
   case n of
-    1: result:= GetAllGroups(BoxName, bp);
-    2: result:= GetNewGroups(BoxName, bp);
+    1: result:= GetGroupList(BoxName, bp, false);
+    2: result:= GetGroupList(BoxName, bp, true);
     else result:= true;
   end; { case }
   freeres;
@@ -369,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.35  2002/02/10 14:52:51  mk
+        - added fetching new newsgroups (untested)
+
         Revision 1.34  2001/12/30 19:56:49  cl
         - Kylix 2 compile fixes
 

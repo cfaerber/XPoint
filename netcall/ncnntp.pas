@@ -88,7 +88,7 @@ type
     { -------- NNTP-Zugriffe }
 
     { Liste holen (withDescr = Description, wenn moeglich }
-    function List(aList: TStringList; withDescr: boolean): boolean;
+    function List(aList: TStringList; withDescr: boolean; onlyNew: Boolean): boolean;
 
     { Holen einer Gruppenbeschreibung }
     function GroupDescription(group: string): string;
@@ -292,7 +292,7 @@ begin
 end;
 
 
-function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
+function TNNTP.List(aList: TStringList; withDescr: boolean; onlyNew: Boolean): boolean;
 var
   counter       : integer;              { Fuer die Anzeige }
   s             : string;               { group }
@@ -312,7 +312,10 @@ begin
       exit;
     end;
 
-    SWriteln('LIST');                                   { Liste anfordern }
+    if OnlyNew then                                     { Liste anfordern }
+      SWriteln('NEWGROUPS')
+    else
+      SWriteln('LIST');                                 { Liste anfordern }
     SReadln(s);
     code:= ParseResult(s);
     if (code<200) or (code>299) then begin
@@ -539,6 +542,9 @@ end.
 
 {
   $Log$
+  Revision 1.34  2002/02/10 14:52:51  mk
+  - added fetching new newsgroups (untested)
+
   Revision 1.33  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 
