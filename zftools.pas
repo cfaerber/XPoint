@@ -576,6 +576,7 @@ begin
             if id='X-XP-ORGMID' then org_msgid:=LeftStr(line,midlen) else
             if id='X-XP-ORGREF' then org_xref:=LeftStr(line,midlen) else
             if id='X-CHARSET' then x_charset:=LeftStr(line,25) else
+            if id='X-XP-CHARSET' then x_charset:=LeftStr(line,25) else
             if id='X-XP-CTL' then XPointCtl:=ival(line);
           line:='*';
           end;
@@ -645,7 +646,7 @@ begin
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
     if fido_to<>''  then wrs('F-TO: '+fido_to);
     if fido_flags<>'' then wrs('X-Fido-Flags: '+fido_flags);
-    if x_charset<>''  then wrs('X-Charset: '+x_charset);
+    if x_charset<>''  then wrs('X-XP-Charset: '+x_charset);
     if org_msgid<>''  then wrs('X-XP-ORGMID: '+org_msgid);
     if org_xref<>''   then wrs('X-XP-ORGREF: '+org_xref);
     if XPointCtl<>0   then wrs('X-XP-CTL: '+strs(XPointCtl));
@@ -1803,6 +1804,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.25  2001/09/08 20:59:50  cl
+        - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
+          is still recognized for backwards compatibility).
+
         Revision 1.24  2001/09/08 16:29:42  mk
         - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
         - some AnsiString fixes

@@ -466,7 +466,7 @@ procedure THeader.WriteZConnect(stream:TStream);
       if ntConv(netztyp) then begin
         writeln_s(stream,'X_C:');
         writeln_s(stream,'X-XP-NTP: '+strs(netztyp));
-        if x_charset<>'' then writeln_s(stream,'X-Charset: '+x_charset);
+        if x_charset<>'' then writeln_s(stream,'X-XP-Charset: '+x_charset);
         if real_box<>''  then writeln_s(stream,'X-XP-BOX: '+real_box);
         if hd_point<>''  then writeln_s(stream,'X-XP-PNT: '+hd_point);
         if pm_bstat<>''  then writeln_s(stream,'X-XP-BST: '+pm_bstat);
@@ -579,6 +579,10 @@ end;
 
 {
   $Log$
+  Revision 1.15  2001/09/08 20:59:50  cl
+  - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
+    is still recognized for backwards compatibility).
+
   Revision 1.14  2001/09/08 16:29:39  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

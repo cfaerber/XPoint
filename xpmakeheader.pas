@@ -488,6 +488,7 @@ begin
 
             if FirstChar(id)='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset) else
+              if id = 'X-XP-CHARSET' then LRead(x_charset) else
               if id = 'X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else {XP}
               if id = 'X-XP-BOX' then LRead(real_box) else
               if id = 'X-XP-PNT' then LRead(hd_point) else
@@ -584,6 +585,10 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/09/08 20:59:50  cl
+  - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
+    is still recognized for backwards compatibility).
+
   Revision 1.15  2001/09/08 18:46:43  cl
   - small bug/compiler warning fixes
 
