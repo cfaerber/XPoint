@@ -850,8 +850,8 @@ var s  : string;
   var i : integer;
   begin
     message(getres(5));
-    ParLanguage:=nl;
-    deutsch:=(ParLanguage='D');
+    ParLanguage:=LowerCase(nl);
+    deutsch:=(ParLanguage='d');
     CloseResource;           { alte Ressourcendatei schlieáen }
     freehelp;                { Online-Hilfe schlieáen         }
     OpenResource(sa[nr],ResMinmem);
@@ -865,9 +865,9 @@ var s  : string;
     showscreen(false);
     aufbau:=true;
     if getres(6)=LangVersion then begin
-      assign(t,'XP.RES');
+      assign(t,FileUpperCase('openxp.res'));
       rewrite(t);
-      writeln(t,sa[nr]);
+      writeln(t,FileUpperCase(ExpandFileName(sa[nr])));
       close(t);
       _SetLanguage:=true;
       end
@@ -877,7 +877,7 @@ var s  : string;
 
 begin
   s:='';
-  Result := FindFirst('OPENXP-*.RES', faAnyFile,sr);
+  Result := FindFirst('openxp-*.res', faAnyFile,sr);
   sn:=0;
   while Result = 0 do
   begin
@@ -896,7 +896,7 @@ begin
     fm_rw;
     if s0<>'' then begin
       inc(sn);
-      sa[sn]:=sr.name;
+      sa[sn]:=FileUpperCase(sr.name);
       p:=1;
       while (p<=length(s0)) and (pos('^'+UpCase(s0[p]),UpperCase(s))>0) do
         inc(p);
@@ -913,14 +913,15 @@ begin
     fehler('No language files found !?')
   else begin
     p:=sn;
-    while (sa[p]<>'OPENXP-'+ParLanguage+'.RES') and (p>1) do dec(p);
+    while not stricmp(sa[p],'openxp-'+ParLanguage+'.res') and (p>1) do dec(p);
     nr:=MiniSel(30,(screenlines-sn) div 2,'',s,p);
     if nr>0 then begin
-      nl:=copy(sa[nr],4,cpos('.',sa[nr])-4);
+      nl:=Mid(sa[nr],cpos('-',sa[nr])+1);
+      nl:=LeftStr(nl,cpos('.',nl)-1);  // nl = openxp-XXX.res
       if (nl<>ParLanguage) then begin
         old:=ParLanguage;
         if not _SetLanguage(nl) then begin
-          fehler('wrong version of OPENXP-'+nl+'.RES');
+          fehler('wrong version of '+sa[nr]+'!');
           nr:=p;
           if _SetLanguage(old) then;
           end;
@@ -934,6 +935,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/06/05 16:45:54  ma
+  - fixed: language switching did not work
+
   Revision 1.36  2001/04/15 19:33:34  ma
   - adjusted resource file names
 

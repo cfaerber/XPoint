@@ -634,7 +634,7 @@ var lf : string;
   procedure WrLf;
   begin
     rewrite(t);
-    writeln(t,lf);
+    writeln(t,FileUpperCase(lf));
     close(t);
   end;
 
@@ -642,7 +642,7 @@ var lf : string;
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   rc:= findfirst(LibDir + 'openxp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
-  assign(t,OwnPath + 'openxp.res');
+  assign(t,FileUpperCase(OwnPath + 'openxp.res'));
   reset(t);
   if ioresult<>0 then
   begin                                     { Wenn openxp.RES nicht existiert }
@@ -668,8 +668,8 @@ var lf : string;
     close(t);
     if (ParLanguage<>'') then begin
       lf2:=LibDir + 'openxp-'+ParLanguage+'.res';
-      if not FileExists(lf2) then writeln('language file '+ParLanguage+' not found')
-      else if (UpperCase(lf)<>lf2) then begin
+      if not FileExists(lf2) then writeln('language file '+lf2+' not found')
+      else if lf<>lf2 then begin
         lf:=lf2;
         WrLf;
         end;
@@ -685,7 +685,11 @@ var lf : string;
   FindClose(sr);
   if not FileExists(lf) then
     interr(lf+' not found');
-  ParLanguage:=copy(lf,4,cpos('.',lf)-4);
+
+  // openxp-XXX.res
+  ParLanguage:=Mid(lf,cpos('-',lf)+1);
+  ParLanguage:=LeftStr(ParLanguage,cpos('.',ParLanguage)-1);
+
   assign(t,lf);
   reset(t);
   readln(t, s);
@@ -1088,6 +1092,9 @@ end.
 
 {
   $Log$
+  Revision 1.111  2001/06/05 16:45:54  ma
+  - fixed: language switching did not work
+
   Revision 1.110  2001/06/04 17:36:49  ma
   - renamed old xp9 source files
 
