@@ -251,10 +251,10 @@ var   fb     : pathstr;
         x,w : fnst;
     begin
       i:=l; j:=r;
-      x := UStrHuge(f^[(l+r) div 2]);
+      x := UStr(f^[(l+r) div 2]);
       repeat
-        while UStrHuge(f^[i]) < x do inc(i);
-        while UStrHuge(f^[j]) > x do dec(j);
+        while UStr(f^[i]) < x do inc(i);
+        while UStr(f^[j]) > x do dec(j);
         if i<=j then
         begin
           w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
@@ -1113,6 +1113,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.2  2000/08/22 09:29:32  mk
+  - UStrHuge entfernt
+
   Revision 1.16.2.1  2000/06/24 14:16:32  mk
   - 32 Bit Teile entfernt, Fixes
 
