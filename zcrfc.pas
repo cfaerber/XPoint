@@ -2840,7 +2840,7 @@ begin
       p := cpos('@', s);
       if SMTP then
       begin
-        if smtpfirst then
+        if smtpfirst or Client then
         begin
           wrs(f, 'HELO ' + mid(s, p + 1));
           smtpfirst := false;
@@ -3318,7 +3318,7 @@ begin
   adr := 0; n := 0;
   smtpfirst := true;
 
-  if not ppp  then
+  if not ppp then
   begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + ExtOut);
     assign(fc, CommandFile); { "C."-File }
@@ -3400,7 +3400,7 @@ begin
   end;
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
-  if SMTP then CreateNewfile;
+  if SMTP and not client then CreateNewfile;
   repeat
     copycount := 0;
     repeat
@@ -3409,11 +3409,12 @@ begin
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
       if cpos('@', hd.Empfaenger[copycount]) > 0 then
         if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then
-          WrFileserver
-        else
-        begin   
+        begin
+          if not Client then WrFileserver
+        end else
+        begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
-          if not SMTP then
+          if not SMTP or Client then
             CreateNewfile;
           SetMimeData;
 
@@ -3432,10 +3433,16 @@ begin
           f.Free;
 
           if SMTP then
+          begin
+            if Client then begin
+              Wrs(f2, 'QUIT');
+              f2.Free;
+            end;
             f3.Free
+          end
           else begin
             f2.Free;
-            QueueCompressfile(rmail);
+            if not client then QueueCompressfile(rmail);
           end;
         end;
       if not SMTP then
@@ -3449,7 +3456,7 @@ begin
    if files > 0 then
      writeln('Files: ', files);
   end;
-  if SMTP then
+  if SMTP and not client then
   begin
     if n <> 0 then
       wr(f2, 'QUIT'#10);
@@ -3638,6 +3645,10 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.10  2002/07/27 09:12:11  mk
+  - fixed bug #575458 SMTP: Kopienempfõnger gehen nicht
+    more than one RCPT TO: was not correctly handled
+
   Revision 1.97.2.9  2002/07/21 20:14:42  ma
   - changed copyright from 2001 to 2002
 
