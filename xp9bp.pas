@@ -299,8 +299,8 @@ begin
     close(t);
     if (UpperCase(bp^.boxname)=UpperCase(DefaultBox)) and (bp^.owaehlbef<>'') then begin
       for i:=1 to 4 do begin       { 2.93 beta: Waehlbefehl -> Config/Modem }
-        freemem(comn[i].MDial,length(comn[i].MDial)+1);
-        getmem(comn[i].MDial,length(boxpar^.owaehlbef)+1);
+        {freemem(comn[i].MDial,length(comn[i].MDial)+1);
+        getmem(comn[i].MDial,length(boxpar^.owaehlbef)+1);}
         comn[i].MDial:=boxpar^.owaehlbef;
         end;
       SaveConfig;
@@ -528,6 +528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/12 15:27:01  hd
+  - Ansistring
+
   Revision 1.14  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

@@ -250,7 +250,7 @@ end;
 
 
 procedure initvar;
-var i    : integer;
+var {i    : integer;}
     rp   : ^boolean;
 begin
   checkbreak:=false;
@@ -264,7 +264,7 @@ begin
   {$IFDEF OS2 }
     OSType := os_2;
   {$ENDIF }
-  {$IFDEF OS2 }
+  {$IFDEF Windows }
     OSType := os_windows;
   {$ENDIF }
 
@@ -290,11 +290,8 @@ begin
   maskcheckbuttons;
 
   randomize;
-{$IFDEF NCRT }
   ScreenWidth:= GetScreenCols;
-{$ELSE }
-  screenwidth:=80;
-{$ENDIF }
+  { screenwidth:=80; }
   iomaus:=ParMaus;
   mausfx:=8;
   UseMulti2:=ParWintime<2;
@@ -1690,6 +1687,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.75  2000/07/12 15:27:01  hd
+  - Ansistring
+
   Revision 1.74  2000/07/12 14:43:45  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

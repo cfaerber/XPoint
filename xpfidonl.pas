@@ -142,7 +142,7 @@ begin
     if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
     if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
     if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
-    if processor<>nil then writeln(t,'process-by=',processor);
+    if processor<>'' then writeln(t,'process-by=',processor);
     writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
     writeln(t,'Format=',format);
     case format of
@@ -664,11 +664,11 @@ begin
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
         if not unarcflag then
           log(getres2(2130,2));              { 'Fehler beim Entpacken' }
-        diffnames:='*.*';
+        diffnames:=WildCard;
         end;
       ExpandFilePath(ufile);
       if exist(ufile) and passend(ufile) then begin
-        if assigned(processor) then ExecProcessor(processor);
+        if processor<>'' then ExecProcessor(processor);
         if DoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
           SaveNodeCFG;
@@ -729,6 +729,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/12 15:27:01  hd
+  - Ansistring
+
   Revision 1.14  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

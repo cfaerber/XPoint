@@ -324,7 +324,7 @@ begin
         m:=getmacro(copy(s,26,200),ta);
         if m<>'' then begin
           inc(keymacros);
-          getmem(macrodef[keymacros],length(m)+1);
+          {getmem(macrodef[keymacros],length(m)+1);}
           macrodef[keymacros]:=m;
           macrokey[keymacros]:=tt;
           macroflags[keymacros]:=getflags(copy(s,16,8));
@@ -1767,8 +1767,8 @@ begin
         end;
     2 : begin
           releaseliste;
-          for ii:=keymacros downto 1 do
-            freemem(macrodef[ii],length(macrodef[ii])+1);
+          {for ii:=keymacros downto 1 do
+            freemem(macrodef[ii],length(macrodef[ii])+1);}
           readkeydefs;
         end;
     3 : FreePhoneZones;
@@ -2033,6 +2033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/12 15:27:01  hd
+  - Ansistring
+
   Revision 1.17  2000/07/12 14:43:44  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

@@ -556,7 +556,7 @@ var   res  : integer;
   end;
 
 begin
-  EditLogpath:=nil;
+  EditLogpath:='';
   TestDir2(logpath);
   TestDir2(temppath);
   TestDir2(extractpath);
@@ -567,14 +567,14 @@ begin
       trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
        EditLogPath := logpath;
       end;
-  EditTemppath:=nil;
+  EditTemppath:='';
   if temppath='' then temppath:=ownpath
   else
     if not IsPath(temppath) then begin
       trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
       EditTemppath := temppath;
       end;
-  EditExtpath:=nil;
+  EditExtpath:='';
   if extractpath='' then extractpath:=OwnPath
   else
     if not IsPath(extractpath) then
@@ -582,7 +582,7 @@ begin
       trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
       EditExtpath := extractpath;
     end;
-  EditSendpath:=nil;
+  EditSendpath:='';
   if sendpath='' then sendpath:=ownpath
   else
     if not IsPath(sendpath) then begin
@@ -1071,6 +1071,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/07/12 15:27:01  hd
+  - Ansistring
+
   Revision 1.58  2000/07/12 14:43:45  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank
