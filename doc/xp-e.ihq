@@ -3475,9 +3475,12 @@ an envelope header before enabling this option.
 
 <<Note:>> Unlike most of the other client configuration
 settings, this option needs not to be interpreted by
-the client.  Even more, it shouldn't be interpreted
-by the client in order to avoid problems and possible
-incompabilities with respect to message conversion.
+the client because XP does interpret it itself
+already. Please consult the documentation of your
+client or client kit if and how this setting is
+additionally interpreted by the client. The setting
+is written to the keyname "<<Client-MailInEnvTo=>>" in
+your server configuration file <server>.BFG.
 
 @
 30137

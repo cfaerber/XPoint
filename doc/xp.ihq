@@ -5432,10 +5432,13 @@ Option aktivieren.
 
 <<Hinweis:>> Im Unterschied zu den meisten anderen
 Einstellungen in der Client-Konfiguration von XP muá
-der Client diese Option nicht auswerten. Besser
-gesagt sollte er sie auch gar nicht auswerten, um
-m”gliche Probleme und Inkompatibilit„ten bei der
-Nachrichtenkonvertierung auszuschlieáen.
+der Client diese Option nicht auswerten, da sie von
+XP bereits selbst ausgewertet wird. Ob und wie der
+externe Client diese Angabe zus„tzlich auswertet,
+entnehmen Sie bitte der Dokumentation Ihres Clients
+oder Client-Kits. Der Wert, den Sie hier eintragen,
+wird in der Konfigurationsdatei <Box>.BFG unter dem
+Bezeichner "<<Client-MailInEnvTo=>>" gespeichert.
 
 @
 30137
