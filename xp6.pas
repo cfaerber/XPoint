@@ -1626,11 +1626,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
     begin
-      hdp.ref:=_bezug;                          //bitte diesen Abschnit ÅberprÅfen :MO
+      hdp.ref:=_bezug;
       sData^.References.Add(_bezug);
-      if ntOrigID(netztyp) then
-        hdp.org_xref:=_orgref;
     end;
+
+    if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
+      hdp^.org_xref:=_orgref;
 
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
@@ -2101,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.89  2001/01/03 17:38:53  mk
+  - letzten Checkin an die 3.30er Version angeglichen
+
   Revision 1.88  2001/01/03 16:44:31  mo
   -Bezugsverkettung auf
   -neue selbstgeschriebene mail repariert
