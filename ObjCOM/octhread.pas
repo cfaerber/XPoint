@@ -14,7 +14,7 @@ unit OCThread;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {$IFDEF OS2}
- uses OCOS2;
+ uses OS2Base;
 {$ENDIF}
 
 {$IFDEF WIN32}
@@ -390,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2000/10/15 14:56:59  ma
+  - OS/2 port compiles again (VP)
+
   Revision 1.3  2000/10/02 03:16:41  mk
   - made ObjCOM Virtual Pascal compatible
 

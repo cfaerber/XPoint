@@ -122,7 +122,7 @@ procedure ComWriteProc(var TempPtr: Pointer);
 var BlockLen    : Longint;
     Written     : Longint;
     ReturnCode  : Longint;
-    TempBuf     : ^CharBufType;
+    TempBuf     : ^tCharArray;
 begin
   New(TempBuf);
 
@@ -266,7 +266,7 @@ begin
   if InBuffer <> nil then Dispose(InBuffer, Done);
   if OutBuffer <> nil then Dispose(OutBuffer, Done);
 
-  InitVars;
+  InitSerial;
 end; { proc. StopThread }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -404,7 +404,7 @@ begin
 
   if ClientHandle <> -1 then
     begin
-      StopThread;
+      StopSerial;
       DosClose(ClientHandle);
 
       ClientHandle := -1;
@@ -621,7 +621,7 @@ end; { func. ReadyToSend }
 procedure tSerialObj.PauseCom(CloseCom: Boolean);
 begin
   if CloseCom then Close
-    else StopThread;
+    else StopSerial;
 end; { proc. PauseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -678,6 +678,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.2  2000/10/15 14:56:59  ma
+  - OS/2 port compiles again (VP)
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English
