@@ -99,6 +99,22 @@ begin
   _getfilename:=fn;
 end;
 
+procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+var b     : byte;                              { wenn keine ungelesenen Nachrichten }
+begin                                          { mehr vorhanden sind. }
+  dbSeek(mbase,miGelesen,brett+#0);
+    if not dbEOF(mbase) and
+        ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
+          then begin
+              dbSeek(bbase,biIntnr,mid(brett,2));
+                  if dbFound then begin
+                        dbReadN(bbase,bb_flags,b);
+                              b:=b and (not 2);   { keine ungelesenen Nachrichten mehr }
+                                    dbWriteN(bbase,bb_flags,b);
+                                          end;
+                                              end;
+                                              end;
+
 
 procedure fido_msgrequest;
 var node : string[20];
