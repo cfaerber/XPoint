@@ -41,7 +41,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xp10,xpnt,xpfidonl, winxp;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xpnt,xpfidonl, winxp;
 
 var  statbrett : boolean;
 
@@ -1262,6 +1262,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/04 10:43:00  mk
+  - Unbenutze Units aus uses entnommen
+
   Revision 1.10  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

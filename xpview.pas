@@ -40,7 +40,7 @@ procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3;
+uses xp1o;
 
 
 { anhand der Dateierweiterung passenden Viewer aus MIMETYP.DB1 suchen }
@@ -247,6 +247,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/04 10:43:01  mk
+  - Unbenutze Units aus uses entnommen
+
   Revision 1.15  2000/03/28 05:13:23  jg
   - Externe/Viewer bei fehlender Dateiendung im Viewer Eintrag
     wird jetzt die des Original-Filenamen verwendet.

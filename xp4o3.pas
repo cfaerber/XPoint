@@ -30,7 +30,7 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xp3,xp3o2,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
+uses xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -315,6 +315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/05/04 10:42:59  mk
+  - Unbenutze Units aus uses entnommen
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
