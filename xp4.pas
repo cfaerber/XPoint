@@ -1985,6 +1985,8 @@ begin      { --- select --- }
              end;
   end;
 
+  if dispmode=10 then setbrettgelesen(_dispspec);
+
 selende:
   wlpos:=0; wltrenn:=false;
   disprec[1]:=oldrec;
@@ -2059,6 +2061,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.3  2000/08/01 10:24:36  jg
+  - Ungelesen-Workarround "Setbrettgelesen"
+    jetzt auch beim Verlassen der Nachrichtenliste.
+
   Revision 1.26.2.2  2000/07/26 19:09:45  jg
   - Userfenster: Strg+G markiert gesamte Adressbuchgruppe
 
