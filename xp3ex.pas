@@ -498,41 +498,27 @@ var size   : longint;
       if s=#3 then begin
         FlushStmp;                           { #3 -> Leerzeile einfÅgen }
         wrslong('');
-        end else
+      end else
       if s='' then begin
         FlushStmp;
         if lastquote then                    { Leerzeile quoten }
           wrslong('')
         else
           inc(blanklines)
-        end
+      end
       else begin
         p:=GetQCpos;
         if blanklines>0 then
-          if (p=0) or not IniQuote then  { nÑchste Zeile war nicht gequotet }
+          if (p=0) { or not IniQuote } then  { nÑchste Zeile war nicht gequotet }
             for i:=1 to blanklines do    { -> Leerzeilen mitquoten          }
               wrslong(qchar)
           else
             wrslong('');                 { sonst Leerzeilen nicht quoten }
         blanklines:=0;
-        if (p=0) or not IniQuote then begin
+        if (p=0) { or not IniQuote } then begin
           insert(qchar,s,1); inc(p,length(qchar));
-          { 03.02.2000 robo }
-          if not IniQuote then begin
-            q:=1;
-            while (s[q]=' ') and (q<p) do inc(q);
-            qc:=s[q];
-            while q<p do begin
-              if (s[q]=' ') and (s[q+1] in [' ',qc]) then begin
-                delete(s,q,1);
-                dec(p);
-              end  
-              else inc(q);
-            end;
-          end;
-          { /robo }
           lastquote:=false;
-          end
+        end
         else begin                           { neues Quote-Zeichen einfg. }
           lastquote:=true;
           q:=0;
@@ -545,17 +531,28 @@ var size   : longint;
             while (q<=length(s)) and (s[q]='>') do inc(q);
             if (q<=length(s)) and (s[q]<>' ') then begin
               insert(' ',s,q); inc(p);
-              end;
             end;
-          insert(qspaces,s,1); inc(p,length(qspaces));
           end;
+          insert(qspaces,s,1); inc(p,length(qspaces));
+        end;
+        q:=1;
+        while (s[q] in [' ','A'..'Z','a'..'z','0'..'9','Ñ','î','Å','·','é','ô','ö'])
+          and (q<p) do inc(q);
+        qc:=s[q];
+        while q<p do begin
+          if (s[q]=' ') and (s[q+1] in [' ',qc]) then begin
+            delete(s,q,1);
+            dec(p);
+          end
+          else inc(q);
+        end;
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if left(s,length(lastqc))=lastqc then
             insert(stmp,s,p+1)               { einfÅgen }
           else
             FlushStmp;
           stmp:='';
-          end;
+        end;
         LastQC:=left(s,p);
         if (length(s)>=QuoteBreak) and
            ((lastchar(s)<#176) or (lastchar(s)>#223))  { Balkengrafik }
@@ -573,18 +570,18 @@ var size   : longint;
               if not iso1 and ConvIso and (reads<>'') then
                 ISO_conv(reads[1],length(reads));    { ISO-Konvertierung }
               stmp:=stmp+rtrim(reads)+iifs(endspace,' ','');
-              end;
+            end;
             if length(stmp)+length(LastQC)>=QuoteBreak then begin
               wrslong(s);
               s:=LastQC+rtrim(stmp);
               stmp:='';
-              end;
             end;
+          end;
         while (s[length(s)]=' ') do dec(byte(s[0]));   { rtrim }
         wrslong(s);
-        end;
-      readln(t);
       end;
+      readln(t);
+    end;
     FlushStmp;
     wrs('');
   end;
@@ -1029,6 +1026,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.9  2000/02/28 23:38:12  rb
+  Quoten von Leerzeilen verbessert
+
   Revision 1.8  2000/02/23 23:49:47  rb
   'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
 
