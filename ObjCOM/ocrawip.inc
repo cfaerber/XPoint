@@ -387,7 +387,8 @@ begin
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
   {$ENDIF}
-  DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlDebug+2);
+  if CharCount > 0 then
+    DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlTrace);
 end; { func. TTelnetObj.CharAvail }
 
 function TRawIPStream.CharCount: Integer;
@@ -626,6 +627,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.4  2003/12/01 10:28:55  mk
+  - prevent numerous CharCount: 0 messages
+
   Revision 1.15.2.3  2003/08/25 06:42:18  mk
   - added RAW IP Support for OS/2
 

@@ -278,7 +278,8 @@ end; { func. TSerialStream.CharAvail }
 function TSerialStream.CharCount: Integer;
 begin
   ProcIncoming; Result:=InBuffer.BufUsed;
-  DebugLog('ObjCOM','CharCount '+IntToStr(InBuffer.BufUsed),DLDebug);
+  if Result > 0 then
+    DebugLog('ObjCOM','CharCount '+IntToStr(Result),DLTrace);
 end; { func. TSerialStream.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -412,6 +413,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.8.2.2  2003/12/01 10:28:55  mk
+  - prevent numerous CharCount: 0 messages
+
   Revision 1.8.2.1  2003/05/10 15:45:06  mk
   - improved debuglog
 
