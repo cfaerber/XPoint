@@ -67,6 +67,18 @@ uses
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
   res_userbreak         = 'Abbruch durch User';
 
+procedure SetNNTPfromBoxPar(bp: BoxPtr; NNTP: TNNTP);
+begin
+  { ... Port uebernehmen }
+  if bp^.nntp_port>0 then
+    NNTP.Port:= bp^.nntp_port;
+  { ggf. Zugangsdaten uebernehmen }
+  if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
+    NNTP.User:= bp^.NNTP_id;
+    NNTP.Password:= bp^.NNTP_pwd;
+  end;
+end;
+
 function GetGroupList(const BoxName: string; bp: BoxPtr; OnlyNew: Boolean): boolean;
 var
   NNTP          : TNNTP;                { Socket }
@@ -84,16 +96,9 @@ begin
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getgrouplistinit,[BoxName]),True);
   { Host und ... }
   NNTP:= TNNTP.CreateWithHost(bp^.nntp_ip);
-  { ... Port uebernehmen }
-  if bp^.nntp_port>0 then
-    NNTP.Port:= bp^.nntp_port;
+  SetNNTPfromBoxPar(bp, NNTP);
   { ProgressOutput erstellen }
   NNTP.ProgressOutput:= POWindow;
-  { ggf. Zugangsdaten uebernehmen }
-  if (bp^.nntp_id<>'') and (bp^.nntp_pwd<>'') then begin
-    NNTP.User:= bp^.nntp_id;
-    NNTP.Password:= bp^.nntp_pwd;
-  end;
   { Verbinden }
   try
     { Nun die Liste holen }
@@ -194,13 +199,9 @@ begin
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_postnewsinit,[BoxName]),True);
   { Host und ... }
   NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
+  SetNNTPfromBoxPar(bp, NNTP);
   { IPC erstellen }
   NNTP.ProgressOutput:= POWindow;
-  { ggf. Zugangsdaten uebernehmen }
-  if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
-    NNTP.User:= bp^.NNTP_id;
-    NNTP.Password:= bp^.NNTP_pwd;
-  end;
 
   { Verbinden }
   List := TStringList.Create;
@@ -291,11 +292,7 @@ begin
   NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
   { ProgressOutput erstellen }
   NNTP.ProgressOutput:= POWindow;
-  { ggf. Zugangsdaten uebernehmen }
-  if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
-    NNTP.User:= bp^.NNTP_id;
-    NNTP.Password:= bp^.NNTP_pwd;
-  end;
+  SetNNTPfromBoxPar(bp, NNTP);
 
   RCFilename:=GetServerFilename(BoxName, extRc);
   MIDFilename := ChangeFileExt(RCFilename, extMid);
@@ -426,6 +423,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.15  2003/10/21 13:55:01  mk
+        - get custom port number for nntp from BoxPar
+
         Revision 1.39.2.14  2003/10/05 12:36:54  mk
         - removed RawFormat and NNTPSpoolFormat from ZCRFC
         - internal NNTP uses rnews format now
