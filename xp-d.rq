@@ -4,7 +4,7 @@ K (c) '93-98 Peter Mandrella
 K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
-1 xp.hlp
+1 XP.HLP
 2 KEYDEF.CFG
 5 Lade Sprachmodul ...
 
@@ -506,7 +506,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Nachr.-Weiterschalter
 17   Brett-Weiterschalter
 18   User-Weiterschalter
-19   Lesemodus ~
+19   Lesemodus  ~
 20   Extrakt als~
 21   Mausbedienung
 22   Tasten vertauschen
@@ -793,7 +793,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1    Viewer-Einstellungen
 2    Sicherheit bei Multiformat-MIME-Viewern
 3    Sichere Dateierweiterungen fÅr externen Viewer:
-4    FÅr diese Dateierweiterungen internen Lister benutzen:
+4    FÅr diese Dateierweiterungen Intern-Lister benutzen:
 5    Viewer-Programm fÅr verdÑchtige Dateierweiterungen:
 6    Allgemeines
 7    Keine Warte-Batch bei Windows-Viewern
@@ -2385,7 +2385,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 95   Keine Nachrichten im QWK-File! (-QZ)
 96   Unbekanntes Packerformat (-QZ)
 97   Befehlsinterpreter (COMMAND.COM) nicht gefunden
-98   Unbekannter Dos-Fehler
+98   Unbekannter DOS-Fehler
 99   QWK-File-Name fehlt (-QZ)
 101  Laufwerk nicht bereit
 102  PlattenkapazitÑt nicht ausreichend
@@ -2544,7 +2544,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 2612
 1    Nodelist     | Zone                     | Reg. | Netze | Nodes | Nodes/Netz
 2    gesamt                                  |
-3    Die %s grîssten Netze:
+3    Die %s grî·ten Netze:
 4    Netz    | Name                           | Nodes
 5    Flags:
 10   Points  ~
@@ -3190,7 +3190,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7   PGP meldet ungÅltige Signatur!
 -
 
-# --- Xp-Easy Modus ---------------------------------------------------
+# --- XP-Easy Modus ---------------------------------------------------
 +   14000
 #   Zeilenanzahl
 0   10
@@ -3292,9 +3292,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 + 31003
-# Dos
+# DOS
 0 1
-1 Dos-Einstellungen
+1 DOS-Einstellungen
 -
 
 + 31004
@@ -3388,7 +3388,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1
 2
 3 SendfileDir bestimmt das Verzeichnis, in welchem sich die Dateien
-4 befinden, die versandt werden sollen (z.B. Autoversandt), wenn Sie
+4 befinden, die versandt werden sollen (z.B. AutoVersand), wenn Sie
 5 keinen vollstÑndigen Pfad angegeben haben.
 6
 -
