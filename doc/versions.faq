@@ -13,13 +13,17 @@ interne Betas bleiben unerw„hnt.
                                  |                         |
 (XP2 3.30.001)   <-----    OpenXP 3.21.022               [...]
       |                          |                         |
-    [...]                  OpenXP 3.21.023         OpenXP 3.20 Release
-      |                          |                 Version 3.20a folgt
+    [...]                  OpenXP 3.21.023        _OpenXP 3.20d Release_
+      |                          |                 
  XP2 3.30.0xx              OpenXP 3.21.024
                                /   \
    (16 Bit only)  OpenXP 3.30.1     OpenXP 3.70.1 (32 Bit only)
                         |                 |
-                  OpenXP 3.30.6     OpenXP 3.70.3 (folgt im Nov.)
+                 _OpenXP 3.40 RC3_     OpenXP 3.70.3
+                                          /  \
+                              _OpenXP 3.8.x_  _OpenXP 3.9.x_
+                                  (Beta)          (Alpha)
+
 
 3.12d Original von Peter Mandrella
      Letzte vom Autor selbst freigegebene Version vom Dezember 1999
@@ -28,29 +32,27 @@ interne Betas bleiben unerw„hnt.
      Vom Autor weiterentwickelte Version, die nie ver”ffentlicht
      wurde, Ausgangspunkt fr alle weiteren Entwicklungen
 
-Es gibt momentan 4 Entwicklungslinien:
+Es gibt momentan mindestens 5 Entwicklungslinien:
 
-3.20 DOS 16-Bit, OpenXP-Team, www.openxp.de
-     Stabilit„t ist alles, seit M„rz 2000 nur noch Bugfixes. Die
-     Release wurde am 06.08.2000 freigegeben und ist die stabilste
-     verfgbare CrossPoint-Version berhaupt. Im 4. Quartal 2000 folgt
-     eine Version 3.20a mit deutlich verbesserter Hilfe und minimalen
-     Bugfixes.
+3.20 DOS 16-Bit, OpenXP/16, http://www.openxp16.de
+     Stabile DOS-Version, seit März 2000 nur noch Bugfixes.
 
-3.30.x, DOS 16 Bit, OpenXP-Team, www.openxp.de
-     Relativ stabile DOS 16-Bit BETA Version mit vielen neuen
-     Features, aktuellste Weiterentwicklung der DOS Version vom
-     OpenXP-Team. Featureliste siehe unten
+3.40 RC3, DOS 16 Bit, OpenXP/16, http://www.openxp16.de
+     Stabile DOS 16-Bit Version, aktuellste Weiterentwicklung
+     der DOS Version von OpenXP/16. Featureliste siehe unten
 
 3.30.x, DOS 16 Bit, XP2 Team, www.xp2.de
      DOS 16-Bit Version BETA-Version, siehe Homepage
 
-3.70.x, 32 Bit Version fr DOS, Windows, Linux, FreeBSD und OS/2
-     Portierte Version von OpenXP 3.30.x, enth„lt soweit m”glich alle
-     Features von OpenXP 3.30.x. Momentan noch im Betatest mit
-     eingeschr„nkter Stabilit„t. Aktuellste Entwicklung als Snapshot
-     unter ftp.openxp.de/openxp/snapshot verfgbar.
+3.8.x und 3.9.x : 32 Bit Version fr DOS, Windows, Linux, FreeBSD und OS/2
+     Portierte Version von OpenXP 3.30.x, enthält soweit möglich alle
+     Features von OpenXP 3.40 RC3. Wird in zwei Versionsbäumen entwickelt:
 
+     3.8.x Stabile Beta-Version, es werden ausschließlich Bugfixes oder lange
+           geteste Features eingebaut.
+     3.9.x Alpha-Version nur für den internen Gebrauch zum Testen
+           Hier werden alle neuen Features (z.B. komplett neues Adresshandling)
+           eingebaut und getestet. NUR ZUM INTERNEN GEBRAUCH
 
 Es folgt eine Liste der wichtigsten Features, welche die einzelnen
 CrossPoint-Versionen voneinander unterscheided (genaue Details sind in den
@@ -105,7 +107,7 @@ Original 3.12d -> OpenXP 3.20 (ausgehend von Peter Mandrella's 3.20 Source
   Erweiterungen
 - Englische OpenXP Version mit englischer Hilfe und Installationsanl.
 
-OpenXP 3.20 Release -> OpenXP 3.30.x Beta
+OpenXP 3.20 Release -> OpenXP 3.40 RC3
 
 - kleinere Erweiterungen fr das Mailhandling in XP und UUZ
 - deutlich erweiterte Untersttzung von externen Viewern
@@ -168,23 +170,46 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 - Limits im Kommentarbaum deutlich verringert,
   mit Ctrl-Cursor links/rechts wird der Baum verschoben
 - Beim Archivieren werden weniger Headerzeilen gel”scht
+...
+
+OpenXP 3.40 RC3 -> OpenXP 3.8.x
+
+Allgemein
+---------
+- Komplette Umstellung auf 32 Bit (compiliert mit FreePascal, Delphi und Kylix)
+- Native-Versionen für Windows, DOS 32 Bit, Linux sowie
+  vorbereitet für FreeBSD und OS/2
+- Die meisten Limits sind jetzt fast nur noch vom Hauptspeicher abhängig.
+  Die editierbaren Nachrichten können beliebig groß sein, Nachrichtenteile,
+  Headerzeilen werden nicht mehr nach 255 Zeichen abgeschnitten, Anzahl der
+  markierten Nachrihcten ist unbegrenzt, unbegrenzte CC-Empfänger usw.
+- Die Tools wie UUZ sind im Programm integriert und besitzen nahezu keine
+  Limits mehr
+- Roles: eigene E-Mail-Adresse über Brettgruppen anpassbar
 
 
-OpenXP 3.30.x Beta -> OpenXP 3.70.x Beta
-
-- Komplette Umstellung auf 32 Bit, dabei Umstellung auf AnsiStrings
-- Header und Mailzeilen drfen statt 255 Zeichen jetzt 2 GB lang sein und werden
-  nicht mehr abgeschnitten wie in der 16 Bit Version
-- Fast alle weiteren internen Limits wie Anzahl der CC-Empf„nger usw. aufgehoben
-- Die Spaltenzahl kann jetzt gr”áer als 80 Zeichen sein und wird entsprechend
-  fr die Anzeige von mehr Informationen in den Listen genutzt (nicht unter DOS)
-- UUZ im Programm integriert und komplett umgeschrieben,
-  jetzt ebenfalls nahezu keine Limits mehr
-- Erste Arbeiten an den neuen Boxentypen RFC/NNTP und RFC/POP3
-- UUZ kann mehere Mails in einem Puffer konvertieren (z.B. IMAP-Folder)
-- UUZ: Option -X, wenn angegeben, werden alle X-Header bernommen
-- Untersttzung von UTF-8, ISO-8859-1 bis 15, Microsoft
-  Codepages 866, 1251, 1252 und 1255 Zeichens„tzen
+Anzeige
+-------
+- die Anzahl der Zeilen und _Spalten_ ist nur noch vom Betriebssystem abhängig
+  Eine größere Anzahl von Spalten wird automatisch zur Anzeige von mehr
+  Informationen in Listen genutzt
+- Unterstützung von UTF-8, ISO-8859-1 bis 15, Microsoft
+  Codepages 866, 1251, 1252 und 1255 Zeichensätzen
 - Limits im Kommentarbaum fast komplett entfernt (bis 512 Ebenen statt 30)
-- LDA/Expires-Header werden untersttzt
+- Unicode-Unterstützung unter Win32: beliebige Zeichen(sätze) können
+  komplett angezeigt werden
+  
+
+Networking
+----------
+- Interner Client für POP3, SMTP und NNTP mit allen gängigen benötigten
+  Funktionen - kein externes Programm für Internet mehr nötig (Win32+Linux)
+- FIDO-over-IP sowohl mit Telnet-Protokoll, als auch BinkP (Win32+Linux)
+- Integriertes ZFido, UUCICO inkl. UUCP-t und UUCP-over-IP
+- Telnet in OpenXP implementiert (Win32+Linux)
+- internes, komplett neues ZModem-Protokoll
+- PGP/MIME-Support
+- UUZ kann mehere Mails in einem Puffer konvertieren (z.B. IMAP-Folder)
+- UUZ: Option -X, wenn angegeben, werden alle X-Header übernommen
+- LDA/Expires-Header werden unterstützt
 
