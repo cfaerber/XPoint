@@ -266,26 +266,26 @@ begin
           p:=cpos('=',s);
           if (p=0) or not (
             get_exclude or
-            gets(s,su,'Boxname',boxname,BoxNameLen) or
-            gets(s,su,'Pointname',pointname,25) or
-            gets(s,su,'Username',username,30) or
-            gets(s,su,'Domain',_domain,1) or
-            gets(s,su,'FQDN',_fqdn,1) or  {16.01.00 HS}
-            gets(s,su,'Passwort',passwort,25) or
-            gets(s,su,'Telefon',telefon,60) or
-            gets(s,su,'ZerbID',zerbid,4) or
+            gets(s,su,'Boxname',boxname) or
+            gets(s,su,'Pointname',pointname) or
+            gets(s,su,'Username',username) or
+            gets(s,su,'Domain',_domain) or
+            gets(s,su,'FQDN',_fqdn) or  
+            gets(s,su,'Passwort',passwort) or
+            gets(s,su,'Telefon',telefon) or
+            gets(s,su,'ZerbID',zerbid) or
             getb(su,  'Netztyp',dummyb) or
-            gets(s,su,'Upload',uploader,100) or
-            gets(s,su,'Download',downloader,100) or
-            gets(s,su,'ProtokollTyp',prototyp,1) or
-            gets(s,su,'ZMOptions',ZMOptions,60) or
-            gets(s,su,'UpArc',uparcer,60) or
-            gets(s,su,'DownArc',downarcer,60) or
-            gets(s,su,'UnFreeze',unfreezer,40) or
-            gets(s,su,'UnGZIP',ungzipper,40) or
-            gets(s,su,'UnBzip2',unbzipper,40) or
-            gets(s,su,'UpArcExt',uparcext,3) or
-            gets(s,su,'DownArcExt',downarcext,3) or
+            gets(s,su,'Upload',uploader) or
+            gets(s,su,'Download',downloader) or
+            gets(s,su,'ProtokollTyp',prototyp) or
+            gets(s,su,'ZMOptions',ZMOptions) or
+            gets(s,su,'UpArc',uparcer) or
+            gets(s,su,'DownArc',downarcer) or
+            gets(s,su,'UnFreeze',unfreezer) or
+            gets(s,su,'UnGZIP',ungzipper) or
+            gets(s,su,'UnBzip2',unbzipper) or
+            gets(s,su,'UpArcExt',uparcext) or
+            gets(s,su,'DownArcExt',downarcext) or
             geti(su,  'ConnWait',connwait) or
             geti(su,  'LoginWait',loginwait) or
             geti(su,  'RedialWait',redialwait) or
@@ -294,45 +294,45 @@ begin
             geti(su,  'PackWait',packwait) or
             geti(su,  'RetryLogin',retrylogin) or
             geti(su,  'ConnectTime',conn_time) or
-            gets(s,su,'Waehlbef',owaehlbef,10) or
-            gets(s,su,'ModemInit',modeminit,60) or
+            gets(s,su,'Waehlbef',owaehlbef) or
+            gets(s,su,'ModemInit',modeminit) or
             geti(su,  'cpsmin',mincps) or
             getb(su,  'Port',bport) or
-            gets(s,su,'Params',params,3) or
+            gets(s,su,'Params',params) or
             getl(su,  'Baud',baud) or
             getr(su,  'GebuehrNormal',dummyr) or
             getr(su,  'GebuehrBillig',dummyr) or
             getw(su,  'GebuehrProEinheit',dummyw) or
-            gets(s,su,'Waehrung',dummys,5) or
-            gets(s,su,'Tarifzone',gebzone,20) or
-            gets(s,su,'SysopInFile',sysopinp,60) or
-            gets(s,su,'SysopOutfile',sysopout,60) or
-            gets(s,su,'SysopStartprg',sysopstart,60) or
-            gets(s,su,'SysopEndprg',sysopend,60) or
-            gets(s,su,'OnlinePasswort',o_passwort,25) or
-            gets(s,su,'LogFile',o_logfile,60) or
-            gets(s,su,'MagicNET',magicnet,8) or
-            gets(s,su,'MagicBrett',magicbrett,25) or
+            gets(s,su,'Waehrung',dummys) or
+            gets(s,su,'Tarifzone',gebzone) or
+            gets(s,su,'SysopInFile',sysopinp) or
+            gets(s,su,'SysopOutfile',sysopout) or
+            gets(s,su,'SysopStartprg',sysopstart) or
+            gets(s,su,'SysopEndprg',sysopend) or
+            gets(s,su,'OnlinePasswort',o_passwort) or
+            gets(s,su,'LogFile',o_logfile) or
+            gets(s,su,'MagicNET',magicnet) or
+            gets(s,su,'MagicBrett',magicbrett) or
             getw(su,  'FidoFakenet',fPointNet) or
             getx(su,  'Fido4Dadr',f4D) or
             getx(su,  'TosScan',fTosScan) or
             getx(su,  'LocalINTL',localintl) or
             getx(su,  'FidoArea+',areaplus) or
             getx(su,  'AreaBetreff',areabetreff) or
-            gets(s,su,'AreaPasswort',areaPW,12) or
-            gets(s,su,'AreaListe',dummys,10) or
-            gets(s,su,'FileScanner',filescanner,15) or
-            gets(s,su,'FilescanPW',filescanpw,12) or
+            gets(s,su,'AreaPasswort',areaPW) or
+            gets(s,su,'AreaListe',dummys) or
+            gets(s,su,'FileScanner',filescanner) or
+            gets(s,su,'FilescanPW',filescanpw) or
             getx(su,  'EMSI',EMSIenable) or
-            gets(s,su,'AdditionalServers',AdditionalServers,AKAlen) or
+            gets(s,su,'AdditionalServers',AdditionalServers) or
             getx(su,  'GetTime',gettime) or
             getx(su,  'SendTrx',sendtrx) or
             getx(su,  'PacketPW',packetpw) or
             getx(su,  'ExtFidoFNames',ExtPFiles) or
             getx(su,  'LightLogin',lightlogin) or
             getx(su,  'NotSEmpty',notsempty) or
-            gets(s,su,'LoginName',loginname,20) or
-            gets(s,su,'UUCPname',UUCPname,8) or
+            gets(s,su,'LoginName',loginname) or
+            gets(s,su,'UUCPname',UUCPname) or
             getb(su,  'UU-MaxWinSize',maxwinsize) or
             getw(su,  'UU-MaxPacketSize',maxpacketsize) or
             getx(su,  'UU-VarPacketSize',varpacketsize) or
@@ -340,16 +340,16 @@ begin
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
             getx(su,  'ReplaceOwn', ReplaceOwn) or
-            gets(s,su,'UU-Protocols',uuprotos,10) or
-            gets(s,su,'Eingangsfilter',eFilter,60) or
-            gets(s,su,'Ausgangsfilter',aFilter,60) or
+            gets(s,su,'UU-Protocols',uuprotos) or
+            gets(s,su,'Eingangsfilter',eFilter) or
+            gets(s,su,'Ausgangsfilter',aFilter) or
             getx(su,  'SysopNetcall',sysopnetcall) or
             getx(su,  'SysopPacken',sysoppack) or
-            gets(s,su,'NetcallScript',script,50) or
-            gets(s,su,'OnlineScript',o_script,50) or
+            gets(s,su,'NetcallScript',script) or
+            gets(s,su,'OnlineScript',o_script) or
             getx(su,  'Brettmails',brettmails) or
             getx(su,  'SendSerial',dummyl) or
-            gets(s,su,'Sysfile',chsysbetr,50) or
+            gets(s,su,'Sysfile',chsysbetr) or
             getx(su,  '7e1Login',uucp7e1) or
             getx(su,  'janusplus',JanusPlus) or
             getx(su,  'delqwk',DelQWK) or
@@ -357,54 +357,54 @@ begin
             getx(su,  'brettmanagerdomain',BMdomain) or
             getw(su,  'maxfilesize',maxfsize) or
             getb(su,  'Netcall-Mode',conn_mode) or
-            gets(s,su,'IP-Host',conn_ip,255) or
+            gets(s,su,'IP-Host',conn_ip) or
             geti(su,  'IP-Port',conn_port) or
          (* !! Shouldn't that be cleaned up? *)
          (* !! XXXX-ID/XXXX-Password is already present as loginname/password *)
          (* !! XXX-Host/XXXX-Port can always be written as IP-Host/IP-Port    *)
-            gets(s,su,'NNTP-Host',nntp_ip,255) or
+            gets(s,su,'NNTP-Host',nntp_ip) or
             geti(su,  'NNTP-Port',nntp_port) or
-            gets(s,su,'NNTP-ID',nntp_id,255) or
-            gets(s,su,'NNTP-Password',nntp_pwd,255) or
+            gets(s,su,'NNTP-ID',nntp_id) or
+            gets(s,su,'NNTP-Password',nntp_pwd) or
             geti(su,  'NNTP-MaxNews',nntp_maxnews) or
-            gets(s,su,'POP3-IP', pop3_ip,255) or
-            gets(s,su,'POP3-ID', pop3_id,255) or
-            gets(s,su,'POP3-Password', pop3_pwd, 255) or
+            gets(s,su,'POP3-IP', pop3_ip) or
+            gets(s,su,'POP3-ID', pop3_id) or
+            gets(s,su,'POP3-Password', pop3_pwd) or
             getx(su,  'POP3Clear', pop3_clear) or
             getx(su,  'POP3APOP', pop3_APOP) or
             getx(su,  'POP3OnlyNew', pop3_OnlyNew) or
             getx(su,  'POP3ForceOneArea', pop3_ForceOneArea) or
-            gets(s,su,'SMTP-IP', smtp_ip, 255) or
-            gets(s,su,'SMTP-ID', smtp_id, 255) or
-            gets(s,su,'SMTP-Password', smtp_pwd, 255) or
+            gets(s,su,'SMTP-IP', smtp_ip) or
+            gets(s,su,'SMTP-ID', smtp_id) or
+            gets(s,su,'SMTP-Password', smtp_pwd) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',double(LastCall)) or
 
             // Client Mode
             getx(su,  'Client-Mode', ClientMode) or
-            gets(s,su,'Client-Path', ClientPath, 60) or
-            gets(s,su,'Client-Exec', ClientExec, 60) or
-            gets(s,su,'Client-AddServers', ClientAddServers, 60) or
-            gets(s,su,'Client-DialUp',ClientDialup,60) or
-            gets(s,su,'Client-Phone',ClientPhone,60) or
-            gets(s,su,'Client-Login',ClientLogin,60) or
-            gets(s,su,'Client-Password',ClientPass,20) or
-            gets(s,su,'Client-Spool', ClientSpool, 60) or
-            gets(s,su,'Client-ExternalConfig', ClientExternalConfig, 60) or
-            gets(s,su,'Client-MailInServer', ClientMailInServer, 160) or
-            gets(s,su,'Client-MailInEnvelope', ClientMailInEnv, 160) or
-            gets(s,su,'Client-MailInUser', ClientMailInUser, 160) or
-            gets(s,su,'Client-MailInPassword', ClientMailInPass, 75) or
-            gets(s,su,'Client-MailInPort', ClientMailInPort, 50) or
-            gets(s,su,'Client-MailOutServer', ClientMailOutServer, 160) or
-            gets(s,su,'Client-MailOutEnvelope', ClientMailOutEnv, 160) or
-            gets(s,su,'Client-MailOutUser', ClientMailOutUser, 160) or
-            gets(s,su,'Client-MailOutPassword', ClientMailOutPass, 75) or
-            gets(s,su,'Client-MailOutPort', ClientMailOutPort, 50) or
-            gets(s,su,'Client-NewsServer', ClientNewsServer, 160) or
-            gets(s,su,'Client-NewsUser', ClientNewsUser, 160) or
-            gets(s,su,'Client-NewsPassword', ClientNewsPass, 75) or
-            gets(s,su,'Client-NewsPort', ClientNewsPort, 50)
+            gets(s,su,'Client-Path', ClientPath) or
+            gets(s,su,'Client-Exec', ClientExec) or
+            gets(s,su,'Client-AddServers', ClientAddServers) or
+            gets(s,su,'Client-DialUp',ClientDialup) or
+            gets(s,su,'Client-Phone',ClientPhone) or
+            gets(s,su,'Client-Login',ClientLogin) or
+            gets(s,su,'Client-Password',ClientPass) or
+            gets(s,su,'Client-Spool', ClientSpool) or
+            gets(s,su,'Client-ExternalConfig', ClientExternalConfig) or
+            gets(s,su,'Client-MailInServer', ClientMailInServer) or
+            gets(s,su,'Client-MailInEnvelope', ClientMailInEnv) or
+            gets(s,su,'Client-MailInUser', ClientMailInUser) or
+            gets(s,su,'Client-MailInPassword', ClientMailInPass) or
+            gets(s,su,'Client-MailInPort', ClientMailInPort) or
+            gets(s,su,'Client-MailOutServer', ClientMailOutServer) or
+            gets(s,su,'Client-MailOutEnvelope', ClientMailOutEnv) or
+            gets(s,su,'Client-MailOutUser', ClientMailOutUser) or
+            gets(s,su,'Client-MailOutPassword', ClientMailOutPass) or
+            gets(s,su,'Client-MailOutPort', ClientMailOutPort) or
+            gets(s,su,'Client-NewsServer', ClientNewsServer) or
+            gets(s,su,'Client-NewsUser', ClientNewsUser) or
+            gets(s,su,'Client-NewsPassword', ClientNewsPass) or
+            gets(s,su,'Client-NewsPort', ClientNewsPort)
 
           ) then
             debug.debuglog('xp9bp','Invalid server config line: '+s,DLWarning);
@@ -698,6 +698,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/08/28 08:04:02  mk
+  - removed GetX-Workaround in Val for FPC
+  - added const-parameters to scomp and GetX
+  - some little optimizations in GetX-functions
+  - GetS does not need MaxLength anymore
+
   Revision 1.46  2001/08/11 23:06:36  mk
   - changed Pos() to cPos() when possible
 

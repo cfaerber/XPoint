@@ -1123,12 +1123,12 @@ var t       : text;
       dec(p,5);
       ports:='';
       getcommpar := getx(su,'fossil',fossil) or
-                    gets(s,su,'Port',ports,4) or
+                    gets(s,su,'Port',ports) or
                     getb(su,'IRQ',Cirq) or
-                    gets(s,su,'Init',MInit,200) or
-                    gets(s,su,'Exit',MExit,200) or
-                    gets(s,su,'Dial',MDial,100) or
-                    gets(s,su,'CommInit',MCommInit,100) or
+                    gets(s,su,'Init',MInit) or
+                    gets(s,su,'Exit',MExit) or
+                    gets(s,su,'Dial',MDial) or
+                    gets(s,su,'CommInit',MCommInit) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
                     getx(su,'IgnoreCTS',igcts) or
@@ -1280,10 +1280,10 @@ var t       : text;
 
   function getRTAAdressen :boolean;
   begin
-    if gets (s, su, 'RTA-OwnAddresses', RTAOwnAddresses, 0) then
+    if gets (s, su, 'RTA-OwnAddresses', RTAOwnAddresses) then
       getRTAAdressen := true
     else
-    if gets (s, su, 'RTA-NoOwnAddresses', RTANoOwnAddresses, 0) then
+    if gets (s, su, 'RTA-NoOwnAddresses', RTANoOwnAddresses) then
       getRTAAdressen := true
     else
       getRTAAdressen := false;
@@ -1320,39 +1320,39 @@ begin
           getb(su,  'Brettanzeige',brettanzeige) or
           getx(su,  'ShowUngelesen',showungelesen) or
           getx(su,  'ShowMsgdatum',showmsgdatum) or
-          gets(s,su,'lister',varlister,40) or
+          gets(s,su,'lister',varlister) or
           getw(su,  'listerkb',dummyi) or
           getx(su,  'listwrap',listwrap) or
-          gets(s,su,'ViewerSave',viewer_save,255) or
-          gets(s,su,'ViewerLister',viewer_lister,255) or
-          gets(s,su,'ViewerVirscan',viewer_scanner,viewproglen) or
-          gets(s,su,'editor',vareditor,40) or
+          gets(s,su,'ViewerSave',viewer_save) or
+          gets(s,su,'ViewerLister',viewer_lister) or
+          gets(s,su,'ViewerVirscan',viewer_scanner) or
+          gets(s,su,'editor',vareditor) or
           getw(su,  'editorkb', dummyi) or
           getx(su,  'autocpgdn',autocpgd) or
-          gets(s,su,'gifviewer',viewers^[1].prog,40) or
-          gets(s,su,'lbmviewer',viewers^[2].prog,40) or
-          gets(s,su,'pcxviewer',viewers^[3].prog,40) or
+          gets(s,su,'gifviewer',viewers^[1].prog) or
+          gets(s,su,'lbmviewer',viewers^[2].prog) or
+          gets(s,su,'pcxviewer',viewers^[3].prog) or
           geti16(su,  'stdhaltezeit',stdhaltezeit) or
           geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
-          gets(s,su,'quote',quotechar,QuoteLen) or
+          gets(s,su,'quote',quotechar) or
           getx(su,  'otherquotechars',otherquotechars) or
           getb(su,  'screenlines',ConfigScreenlines) or
           getb(su,  'screencols', ConfigScreenWidth) or
-          gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
-          gets(s,su,'extractdir',extractpath,79) or
-          gets(s,su,'sendfiledir',sendpath,79) or
-          gets(s,su,'logdir',logpath,79) or
-          gets(s,su,'filedir',filepath,79) or
-          gets(s,su,'defaultbox',defaultbox,20) or   { -> Config2 }
+          gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }
+          gets(s,su,'extractdir',extractpath) or
+          gets(s,su,'sendfiledir',sendpath) or
+          gets(s,su,'logdir',logpath) or
+          gets(s,su,'filedir',filepath) or
+          gets(s,su,'defaultbox',defaultbox) or   { -> Config2 }
           getx(su,  'MessageIDs',dummyb) or
           getw(su,  'ScreenSaver',scrsaver) or
           getx(su,  'SoftSaver',softsaver) or
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
-          gets(s,su,'UserAufnahme',userauf,10) or
+          gets(s,su,'UserAufnahme',userauf) or
           geti16(su,  'NeuUsergruppe', Neuusergruppe) or
-          gets(s,su,'Name_O''Maps',dummys,20) or
+          gets(s,su,'Name_O''Maps',dummys) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
           getpmlimits('MAXNETPM=',1) or
@@ -1361,7 +1361,7 @@ begin
           getx(su,  'LongNames',longnames) or
           getx(su,  'ShowLogin',showlogin) or
           getx(su,  'InterruptLogin',BreakLogin) or
-          gets(s,su,'ArchivBretter',archivbretter,BrettLen-1) or
+          gets(s,su,'ArchivBretter',archivbretter) or
           getx(su,  'ArchivLoeschen',archivloesch) or
           getx(su,  'ArchivVermerk',archivtext) or
           getx(su,  'Shell25',shell25) or
@@ -1371,37 +1371,37 @@ begin
           getx(su,  'ListVollbild',listvollbild) or
           getx(su,  'ListUhr',listuhr) or
           getx(su,  'ListEndCR',listendcr) or
-          gets(s,su,'UnARC',unpacker^.unarc,50) or
-          gets(s,su,'UnLZH',unpacker^.unlzh,50) or
-          gets(s,su,'UnZOO',unpacker^.unzoo,50) or
-          gets(s,su,'UnZIP',unpacker^.unzip,50) or
-          gets(s,su,'UnARJ',unpacker^.unarj,50) or
-          gets(s,su,'UnPAK',unpacker^.unpak,50) or
-          gets(s,su,'UnDWC',unpacker^.undwc,50) or
-          gets(s,su,'UnHYP',unpacker^.unhyp,50) or
-          gets(s,su,'UnSQZ',unpacker^.unsqz,50) or
-          gets(s,su,'UnRAR',unpacker^.unrar,50) or
+          gets(s,su,'UnARC',unpacker^.unarc) or
+          gets(s,su,'UnLZH',unpacker^.unlzh) or
+          gets(s,su,'UnZOO',unpacker^.unzoo) or
+          gets(s,su,'UnZIP',unpacker^.unzip) or
+          gets(s,su,'UnARJ',unpacker^.unarj) or
+          gets(s,su,'UnPAK',unpacker^.unpak) or
+          gets(s,su,'UnDWC',unpacker^.undwc) or
+          gets(s,su,'UnHYP',unpacker^.unhyp) or
+          gets(s,su,'UnSQZ',unpacker^.unsqz) or
+          gets(s,su,'UnRAR',unpacker^.unrar) or
           getx(su,  'EditVollbild',editvollbild) or
           getb(su,  'ExtEditor',exteditor) or
           getx(su,  'ShowMsgPath',showmsgpath) or
           getx(su,  'ShowMsgID',showmsgid) or
           getx(su,  'ShowMsgSize',showmsgsize) or
           getw(su,  'LPT',DruckLPT) or
-          gets(s,su,'DruckerInit',druckinit,60) or
-          gets(s,su,'DruckerExit',druckexit,60) or
+          gets(s,su,'DruckerInit',druckinit) or
+          gets(s,su,'DruckerExit',druckexit) or
           getb(su,  'Seitenlaenge',druckformlen) or
-          gets(s,su,'FormFeed',druckff,80) or
+          gets(s,su,'FormFeed',druckff) or
           getb(su,  'DruckRand',drucklira) or
           getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
-          gets(s,su,'EditBackup',BAKext,3) or
+          gets(s,su,'EditBackup',BAKext) or
           getx(su,  'KeepEDName',keepedname) or
           getb(su,  'EinhProZeile',dummybb) or         { -> Config2 }
           getb(su,  'AbsenderAnzeige',sabsender) or
           getw(su,  'Environment',envspace) or
           getx(su,  'RenameCALLED',dummyb) or
           geti(su,  'ReadMode',defreadmode) or
-          gets(s,su,'AutoAdvance',aaa,3) or
+          gets(s,su,'AutoAdvance',aaa) or
           getx(su,  'ScrollLock',scrolllock) or
           getx(su,  'HayesBefehle',hayescomm) or
           getx(su,  'GrossWandeln',grosswandeln) or
@@ -1410,15 +1410,15 @@ begin
           getx(su,  'ShowUsername',dispusername) or
           getx(su,  'SaveUnversandt',SaveUVS) or
           getx(su,  'EmpfangsBestaetigung',EmpfBest) or
-          gets(s,su,'EmpfBestKennung',empfbkennung,10) or   { -> Config2 }
-          gets(su,su,'UnEscape',unescape,100) or
+          gets(s,su,'EmpfBestKennung',empfbkennung) or   { -> Config2 }
+          gets(su,su,'UnEscape',unescape) or
           getx(su,  '12:00',replaceetime) or
-          gets(s,su,'Trennzeichen',trennchar,1) or
+          gets(s,su,'Trennzeichen',trennchar) or
           getx(su,  'AutoArchiv',autoarchiv) or
           getx(su,  'NeueBrEnde',newbrettende) or
-          gets(s,su,'Vorwahl',vorwahl,15) or
-          gets(s,su,'IntVorwahl',intvorwahl,15) or
-          gets(s,su,'NatVorwahl',natvorwahl,10) or
+          gets(s,su,'Vorwahl',vorwahl) or
+          gets(s,su,'IntVorwahl',intvorwahl) or
+          gets(s,su,'NatVorwahl',natvorwahl) or
           getx(su,  'TrennzeilenAlle',trennall) or
           getx(su,  'BezugsBaumAdr',BaumAdresse) or
           getx(su,  'Maus',_maus) or
@@ -1429,17 +1429,17 @@ begin
           getx(su,  'KommPfeile',KomArrows) or
           getx(su,  'ListScroller',listscroller) or
           getx(su,  'ListAutoScroll',listautoscroll) or
-          gets(s,su,'Pointliste',pointlistn,8) or
-          gets(s,su,'Pointdiff',pointdiffn,8) or
+          gets(s,su,'Pointliste',pointlistn) or
+          gets(s,su,'Pointdiff',pointdiffn) or
           getx(su,  'AutoDiff',AutoDiff) or
           getx(su,  'UserbrettBox',UserBoxname) or
-          gets(s,su,'AKAs',dummys,AKAlen) or
-          gets(s,su,'Organisation',orga,OrgLen) or
-          gets(s,su,'Post',postadresse,postadrlen) or
-          gets(s,su,'Telefon',telefonnr,telelen) or
-          gets(s,su,'Homepage',wwwHomepage,homepagelen) or
+          gets(s,su,'AKAs',dummys) or
+          gets(s,su,'Organisation',orga) or
+          gets(s,su,'Post',postadresse) or
+          gets(s,su,'Telefon',telefonnr) or
+          gets(s,su,'Homepage',wwwHomepage) or
           getx(su,  'PufferLoeschen',nDelPuffer) or
-          gets(s,su,'BrettEmpfaenger',brettalle,20) or
+          gets(s,su,'BrettEmpfaenger',brettalle) or
           getx(su,  'MausLimit',maxmaus) or
           getx(su,  'Auswahlcursor',auswahlcursor) or
           getx(su,  'SoundFlash',soundflash) or
@@ -1465,26 +1465,26 @@ begin
           getx(su,  'ListHighlight',listhighlight) or
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
-          gets(su,su,'Header',mheader,255) or
-          gets(s,su,'HeaderCustom1',mheadercustom[1],255) or
-          gets(s,su,'HeaderCustom2',mheadercustom[2],255) or
+          gets(su,su,'Header',mheader) or
+          gets(s,su,'HeaderCustom1',mheadercustom[1]) or
+          gets(s,su,'HeaderCustom2',mheadercustom[2]) or
 {$IFDEF unix}
-          gets(su,su,'timezone',dummytz,7) or
+          gets(su,su,'timezone',dummytz) or
 {$ELSE }
-          gets(su,su,'timezone',TimeZone,7) or
+          gets(su,su,'timezone',TimeZone) or
 {$ENDIF }
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
-          gets(s,su,'ISDN1-MSN-Incoming', ISDN_incoming, 10) or
-          gets(s,su,'ISDN1-MSN-Outgoing', ISDN_outgoing, 10) or
+          gets(s,su,'ISDN1-MSN-Incoming', ISDN_incoming) or
+          gets(s,su,'ISDN1-MSN-Outgoing', ISDN_outgoing) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
           getx(su,  'maildelxpost',maildelxpost) or
           getx(su,  'keeprequests',keeprequests) or
           getx(su,  'zc-iso',zc_iso) or
-          gets(s,su,'waehrung',waehrung,5) or
+          gets(s,su,'waehrung',waehrung) or
           getl(su,  'gebnoconn',GebNoconn) or
           getx(su,  'gebcfos',GebCfos) or
           getx(su,  'feiertage',autofeier) or
@@ -1493,21 +1493,21 @@ begin
           getb(su,  'termport',TermCOM) or
           getl(su,  'termbaud',TermBaud) or
           getx(su,  'termstatus',TermStatus) or
-          gets(s,su,'terminit',TermInit,40) or
+          gets(s,su,'terminit',TermInit) or
           getx(su,  'shell-showpar',ShellShowpar) or
           getx(su,  'shell-waitkey',ShellWaitkey) or
           getx(su,  'usepgp',UsePGP) or
           getx(su,  'pgp-batchmode',PGPbatchmode) or
           getx(su,  'uucp-pgp',PGP_UUCP) or
           getx(su,  'fido-pgp',PGP_Fido) or
-          gets(s,su,'pgp-userid',PGP_UserID,80) or
+          gets(s,su,'pgp-userid',PGP_UserID) or
           getx(su,  'pgp-autoam',PGP_AutoAM) or
           getx(su,  'pgp-autopm',PGP_AutoPM) or
           getx(su,  'pgp-waitkey',PGP_WaitKey) or
           getx(su,  'pgp-logfile',PGP_log) or
           getx(su,  'pgp-signall',PGP_signall) or
-          gets(s,su,'pgp-version',PGPVersion,5) or
-          gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions,120) or
+          gets(s,su,'pgp-version',PGPVersion) or
+          gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions) or
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
           getx(su,  'defaultnokop',defaultnokop) or
@@ -1517,8 +1517,8 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
-          gets(s,su,'msgfeldtausch',MsgFeldTausch,MsgFelderMax) or
-          gets(s,su,'usrfeldtausch',UsrFeldTausch,UsrFelderMax) or
+          gets(s,su,'msgfeldtausch',MsgFeldTausch) or
+          gets(s,su,'usrfeldtausch',UsrFeldTausch) or
           getx(su,  'magics',magics) or
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
@@ -1638,16 +1638,16 @@ begin
       begin
         p:=cPos('=',s);
         if (p=0) or not (
-          gets(s,su,'defaultbox',defaultbox,20) or
-          gets(s,su,'defaultfidobox',deffidobox,20) or
+          gets(s,su,'defaultbox',defaultbox) or
+          gets(s,su,'defaultfidobox',deffidobox) or
           getb(su,  'EinhProZeile',dummybb) or
           getl(su,  'betragprozeile',wpz) or
-          gets(s,su,'EmpfBestKennung',empfbkennung,10) or
-          gets(s,su,'ShrinkNodelist',ShrinkNodes,100) or
+          gets(s,su,'EmpfBestKennung',empfbkennung) or
+          gets(s,su,'ShrinkNodelist',ShrinkNodes) or
           geti(su,  'Nstat-MinFlags',NS_minflags) or
           geti(su,  'Nstat-AnzahlNetze',LargestNets) or
           getx(su,  'CountDown',countdown) or
-          gets(s,su,'FileSuche',fidolastseek,40) or
+          gets(s,su,'FileSuche',fidolastseek) or
           getx(su,  'tl-netcallalle',XSA_NetAlle)
         )
         then
@@ -1693,6 +1693,12 @@ end;
 
 {
   $Log$
+  Revision 1.121  2001/08/28 08:04:02  mk
+  - removed GetX-Workaround in Val for FPC
+  - added const-parameters to scomp and GetX
+  - some little optimizations in GetX-functions
+  - GetS does not need MaxLength anymore
+
   Revision 1.120  2001/08/23 11:15:01  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of

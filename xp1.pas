@@ -202,22 +202,22 @@ function  fdat(dat:string):string;             { Z-Datum -> Datum   }
 function  zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
 function  ftime(dat:string):string;            { Z-Datum -> Uhrzeit }
 function  Zdate:string;               { akt. Datum/Zeit im Z-Format }
-function  fuser(s:string):string;              { Spaces vor/hinter '@' }
+function  fuser(const s:string):string;              { Spaces vor/hinter '@' }
 function  aufnahme_string:string;
 
 function  MsgidIndex(mid:string):longint;      { case-insensitive CRC32 }
 
-function getb(var su:string; v:string; var b:byte):boolean;   { PARSER }
-function getc(var su:string; v:string; var c:char):boolean;
-function geti(var su:string; v:string; var i:integer):boolean;
-{ wie geti, allerdings mit 16 Bit Integer }
-function geti16(var su:string; v:string; var i:integer16):boolean;
-function getw(var su:string; v:string; var w:smallword):boolean;
-function getl(var su:string; v:string; var l:longint):boolean;
-function getx(var su:string; v:string; var b:boolean):boolean;
-function gets(var s,su:string; v:string; var ss:string; maxlen: Integer):boolean;
-function getr(var su:string; v:string; var r:double):boolean;
-procedure exchange(var s:string; repl,by:string);
+function getb(const su, v:string; var b:byte):boolean;   { PARSER }
+function getc(const su, v:string; var c:char):boolean;
+function geti(const su, v:string; var i:integer):boolean;
+function geti16(const su, v:string; var i:integer16):boolean; { wie geti, allerdings mit 16 Bit Integer }
+function getw(const su, v:string; var w:smallword):boolean;
+function getl(const su, v:string; var l:longint):boolean;
+function getx(const su, v:string; var b:boolean):boolean;
+function gets(const s,su, v:string; var ss:string):boolean;
+function getr(const su, v:string; var r:double):boolean;
+
+procedure exchange(var s:string; const repl,by:string);
 
 function notempty(var s:string):boolean;
 
@@ -1515,8 +1515,8 @@ end;
 { === Parser-Routinen ============================ }
 
 { p ist immer<>0! }
-function scomp(var s1,s2 : string; p:byte):boolean;
-var p0,n : byte;
+function scomp(const s1,s2 : string; p:byte):boolean;
+var p0,n : Integer;
 begin
   repeat dec(p) until (s1[p]<>' ') or (p=0);   { rtrim }
   p0:=1;
@@ -1533,9 +1533,9 @@ begin
 end;
 
 
-function getb(var su:string; v:string; var b:byte):boolean;
-const res : integer = 0;
-var   p   : byte;
+function getb(const su:string; const v:string; var b:byte):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1545,8 +1545,9 @@ begin
   else getb:=false;
 end;
 
-function getc(var su:string; v:string; var c:char):boolean;
-var p : byte;
+function getc(const su, v:string; var c:char):boolean;
+var 
+  p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) and (p + 1 <= Length(su)) then
@@ -1557,9 +1558,9 @@ begin
     Getc := false;
 end;
 
-function geti(var su:string; v:string; var i:integer):boolean;
-const res : integer = 0;
-var   p   : byte;
+function geti(const su, v:string; var i:integer):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1569,9 +1570,9 @@ begin
   else geti:=false;
 end;
 
-function geti16(var su:string; v:string; var i:integer16):boolean;
-const res : integer = 0;
-var   p   : byte;
+function geti16(const su, v:string; var i:integer16):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1581,9 +1582,9 @@ begin
   else geti16:=false;
 end;
 
-function getw(var su:string; v:string; var w:smallword):boolean;
-const res : integer = 0;
-var   p   : byte;
+function getw(const su, v:string; var w:smallword):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1593,9 +1594,9 @@ begin
   else getw:=false;
 end;
 
-function getl(var su:string; v:string; var l:longint):boolean;
-const res : integer = 0;
-var   p   : byte;
+function getl(const su, v:string; var l:longint):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1605,9 +1606,9 @@ begin
   else getl:=false;
 end;
 
-function getr(var su:string; v:string; var r:double):boolean;
-const res : integer = 0;
-var   p   : byte;
+function getr(const su, v:string; var r:double):boolean;
+var   
+  res, p: Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1617,9 +1618,9 @@ begin
   else getr:=false;
 end;
 
-function getx(var su:string; v:string; var b:boolean):boolean;
+function getx(const su, v:string; var b:boolean):boolean;
 var ss : string;
-    p  : byte;
+    p  : Integer;
 begin
   p:=cpos('=',su);
   if scomp(su,v,p) then begin
@@ -1636,22 +1637,23 @@ begin
   else getx:=false;
 end;
 
-function gets(var s,su:string; v:string; var ss:string; maxlen: Integer):boolean;
-var p : cardinal;
+function gets(const s,su, v:string; var ss:string):boolean;
+var 
+  p: Integer;
 begin
-  p:=cpos('=',su);
+  p:=cpos('=',su); 
   if scomp(su,v,p) then
   begin
-    if MaxLen = 0 then MaxLen := MaxInt;
-    ss:=copy(s,p+1,maxlen);
+    ss := Mid(s, p+1);
     gets:=true;
   end else
     gets:=false;
 end;
 
 
-function fuser(s:string):string;              { Spacec vor/hinter '@' }
-var p : byte;
+function fuser(const s:string):string;              { Spacec vor/hinter '@' }
+var 
+  p : Integer;
 begin
   p:=cpos('@',s);
   if p=0 then fuser:=s
@@ -1708,8 +1710,8 @@ end;
 
 function notempty(var s:string):boolean;
 begin
-  if trim(s)='' then errsound;
-  notempty:=(trim(s)<>'');
+  result := trim(s) <> '';
+  if not result then errsound;
 end;
 
 
@@ -1869,7 +1871,7 @@ begin
 end;
 
 
-procedure exchange(var s:string; repl,by:string);
+procedure exchange(var s:string; const repl,by:string);
 var p : Integer;
 begin
   p:=pos(UpperCase(repl),UpperCase(s));
@@ -2046,6 +2048,12 @@ end.
 
 {
   $Log$
+  Revision 1.116  2001/08/28 08:04:02  mk
+  - removed GetX-Workaround in Val for FPC
+  - added const-parameters to scomp and GetX
+  - some little optimizations in GetX-functions
+  - GetS does not need MaxLength anymore
+
   Revision 1.115  2001/08/12 20:01:39  cl
   - rename xp6*.* => xpsendmessage*.*
 
