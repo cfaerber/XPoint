@@ -214,6 +214,20 @@ label ende,nextpp;
     dbDelete(mbase);
   end;
 
+    procedure EmpfCorrect;
+    var i:integer;
+        p:string[1];
+    begin
+      p:=iifs(pm,'','A');
+    
+      for i:=0 to SendEmpfList.Count-1 do
+        if p+SendEmpfList[i]=Empf then
+          begin
+            SendEmpfList.Delete(i);
+            exit;
+          end;
+    end;
+
 begin
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1=0 then begin
@@ -376,6 +390,7 @@ begin
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
     empf:=hdp.FirstEmpfaenger;
+
     if empfnr>0 then begin
       ReadHeadEmpf:=empfnr; 
       ReadHeader(hdp,hds,true);
@@ -383,6 +398,9 @@ begin
       Hdp.Empfaenger.Clear;
       CrosspostBox:=box;
     end;
+
+    EmpfCorrect;
+
     if hdp.pgpflags and fPGP_haskey<>0 then
       inc(SendFlags,SendPGPkey);
     if hdp.pgpflags and fPGP_request<>0 then
@@ -1342,6 +1360,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.2  2002/04/21 13:31:10  cl
+  - fixed first recipient duplication bug II
+
   Revision 1.21.2.1  2002/04/20 15:15:10  mk
   JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
       (Priorität, PGP-signiert, MIME-Multipart usw.) jetzt auch dann
