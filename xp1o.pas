@@ -122,6 +122,7 @@ begin
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
+      if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
@@ -988,6 +989,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/16 22:49:23  mk
+  - https bei URL-Erkennung hinzugefuegt
+
   Revision 1.50  2000/07/16 16:45:39  mk
   JG: UUE-Decoding direkt aus Lister mit U
 
