@@ -81,11 +81,11 @@ begin
                    downloader:='gsz.exe portx $ADDRESS,$IRQ rz';
                  end;
       nt_NNTP:   begin
-		   nntp_ip:='127.0.0.1';	{ Default IP }
-		   nntp_port:= 119;		{ Port }
-		   nntp_id:= '';		{ User-ID }
-		   nntp_pwd:= '';		{ PAssword }
-		 end;
+                   nntp_ip:='127.0.0.1';        { Default IP }
+                   nntp_port:= 119;             { Port }
+                   nntp_id:= '';                { User-ID }
+                   nntp_pwd:= '';               { PAssword }
+                 end;
       nt_POP3:   begin
                  end;
     end;
@@ -177,7 +177,7 @@ var t      : text;
     dummys : string;
     dummyl : boolean;
     dummyw : smallword;
-    dummyr : real;
+    dummyr : double;
     i      : integer;
 
   function get_exclude:boolean;
@@ -296,11 +296,11 @@ begin
             getb(su,  'brettmanagertyp',BMtyp) or
             getx(su,  'brettmanagerdomain',BMdomain) or
             getw(su,  'maxfilesize',maxfsize) or
-	    gets(s,su,'NNTP-Host',nntp_ip,255) or
-	    geti(su,  'NNTP-Port',nntp_port) or
-	    gets(s,su,'NNTP-ID',nntp_id,255) or
-	    gets(s,su,'NNTP-Password',nntp_pwd,255) or
-	    getr(su,  'Letzte Verbindung',LastCall)
+            gets(s,su,'NNTP-Host',nntp_ip,255) or
+            geti(su,  'NNTP-Port',nntp_port) or
+            gets(s,su,'NNTP-ID',nntp_id,255) or
+            gets(s,su,'NNTP-Password',nntp_pwd,255) or
+            getr(su,  'Letzte Verbindung',LastCall)
           ) then
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
           end;
@@ -429,7 +429,8 @@ begin
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
     if nntp_id<>'' then writeln(t,'NNTP-ID=',nntp_id);
     if nntp_pwd<>'' then writeln(t,'NNTP-Password=',nntp_pwd);
-    if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
+    if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall
+    );
     end;
   close(t);
 end;
@@ -542,6 +543,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/26 08:20:13  mk
+  - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
+
   Revision 1.19  2000/07/25 18:02:19  hd
   - NNTP-Unterstuetzung (Anfang)
 

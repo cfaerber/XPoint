@@ -1,3 +1,4 @@
+
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
@@ -57,7 +58,11 @@ function fileechocolfunc(var s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xpnntp,xp9bp,xp9,xpnt;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
+{$IFDEF FPC }
+  xpnntp,
+{$ENDIF }
+  xp9bp,xp9,xpnt;
 
 const mapsbox : string = '';
 
@@ -1309,11 +1314,13 @@ begin
           exit;
           end;
   end;
+{$IFDEF FPC }
   if nntp then begin
     if not GetNNTPList(box,boxpar) then
       rfehler(830); { 'Gruppenliste konnte nicht uebertragen werden' }
     exit;
   end;
+{$ENDIF }
   area:=(mapsname='AREAFIX');
   request:=(mapsname='REQUEST');
   if maf then lines:=4
@@ -1596,6 +1603,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/26 08:20:13  mk
+  - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
+
   Revision 1.20  2000/07/25 18:02:18  hd
   - NNTP-Unterstuetzung (Anfang)
 

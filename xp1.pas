@@ -227,7 +227,7 @@ function getw(var su:string; v:string; var w:smallword):boolean;
 function getl(var su:string; v:string; var l:longint):boolean;
 function getx(var su:string; v:string; var b:boolean):boolean;
 function gets(var s,su:string; v:string; var ss:string; maxlen: cardinal):boolean;
-function getr(var su:string; v:string; var r:real):boolean;
+function getr(var su:string; v:string; var r:double):boolean;
 procedure exchange(var s:string; repl,by:string);
 
 function notempty(var s:string):boolean;
@@ -1677,7 +1677,7 @@ begin
   else getl:=false;
 end;
 
-function getr(var su:string; v:string; var r:real):boolean;
+function getr(var su:string; v:string; var r:double):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
@@ -2043,6 +2043,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.70  2000/07/26 08:20:13  mk
+  - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
+
   Revision 1.69  2000/07/21 17:39:51  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 
