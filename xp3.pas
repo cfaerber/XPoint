@@ -95,7 +95,7 @@ procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
 function  vert_name(s:string):string;
 function  vert_long(s:string):string;
 function  systemname(adr:string):string;
-function  pfadbox(zconnect:boolean; var pfad:Hugestring):string;
+function  pfadbox(zconnect:boolean; var pfad:String):string;
 function  file_box(d:DB; dname:string):string;
 function  box_file(box:string):string;
 function  brettok(trenn:boolean):boolean;
@@ -1054,7 +1054,7 @@ begin
 end;
 
 
-function pfadbox(zconnect:boolean; var pfad:Hugestring):string;
+function pfadbox(zconnect:boolean; var pfad:String):string;
 var p : byte;
 begin
   if zconnect then begin
@@ -1237,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/07/20 17:03:21  mk
+  - HugeString -> String
+
   Revision 1.35  2000/07/20 16:49:58  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
