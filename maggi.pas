@@ -1256,17 +1256,17 @@ var t1,log     : text;
     pmlog,stlog: text;
     hd         : header;
     s          : string;
-    tbuf       : ^tbufa;
+    tbuf       : tbufa;
     lines,i,nn : longint;
     c          : char;
     pm         : byte;
-    b1         : ^tb;
+    b1         : tb;
     firstline  : boolean;
     keinbetreff: boolean;
     killmsg    : boolean;
     info       : MausInfAP;
     infos      : integer;
-    mime       : boolean;
+    UseMIME       : boolean;
     parname    : string[20];
     xline      : array[1..maxxlines] of string;
     xlines     : integer;
@@ -1287,8 +1287,8 @@ var t1,log     : text;
       s := ISOToIBM(s);
     begin
       inc(lines);
-      tbuf^[lines].s:=s;
-      tbuf^[lines].lf:=crlf;
+      tbuf[lines].s:=s;
+      tbuf[lines].lf:=crlf;
       inc(hd.groesse,length(s)+iif(crlf,2,0));
     end
   end;
@@ -1315,9 +1315,9 @@ var t1,log     : text;
   var i : integer;
   begin
     i:=1;
-    while (i<=lines) and (pos('begin ',tbuf^[i].s)<>1) do inc(i);
-    while (i<=lines) and (pos('end',tbuf^[i].s)<>1) do inc(i);
-    while (i<=lines) and (pos('size ',tbuf^[i].s)<>1) do inc(i);
+    while (i<=lines) and (pos('begin ',tbuf[i].s)<>1) do inc(i);
+    while (i<=lines) and (pos('end',tbuf[i].s)<>1) do inc(i);
+    while (i<=lines) and (pos('size ',tbuf[i].s)<>1) do inc(i);
     if i>lines then hd.typ:='T';
   end;
 
@@ -1335,8 +1335,8 @@ var t1,log     : text;
     getmem(buf,bufs);
     bufp:=0;
     i:=1;
-    while (i<=lines) and (pos('begin ',tbuf^[i].s)<>1) do inc(i);
-    s:=tbuf^[i].s;
+    while (i<=lines) and (pos('begin ',tbuf[i].s)<>1) do inc(i);
+    s:=tbuf[i].s;
     delete(s,1,6);
     s:=trim(mid(s,blankpos(s)));   { Unix-Filemode wegschneiden }
     if blankpos(s)>0 then truncstr(s,blankpos(s)-1);
@@ -1344,8 +1344,8 @@ var t1,log     : text;
     if hd.ddatum<>'' then wrs('DDA: '+hd.ddatum+'W+0');
     inc(i);
     { R-}
-    while pos('end',tbuf^[i].s)=0 do begin
-      s:=tbuf^[i].s;
+    while pos('end',tbuf[i].s)=0 do begin
+      s:=tbuf[i].s;
       n:=(((ord(s[1])-32) and $3f + 2)div 3)*4;   { anzahl Original-Bytes }
       p:=2;
       while p<n do begin
@@ -1360,8 +1360,8 @@ var t1,log     : text;
       inc(i);
       end;
     { R+}
-    while (pos('size ',tbuf^[i].s)<>1) do inc(i);
-    s:=trim(mid(tbuf^[i].s,5));
+    while (pos('size ',tbuf[i].s)<>1) do inc(i);
+    s:=trim(mid(tbuf[i].s,5));
     bufp:=min(bufp,ival(s));   { echte Gr”áe }
     wrs('LEN: '+strs(bufp));
     wrs('');
@@ -1376,10 +1376,10 @@ var t1,log     : text;
     rewrite(t);
     if ioresult=0 then begin
       for i:=1 to lines do             { Nachrichtentext schreiben }
-        if tbuf^[i].lf then
-          writeln(t,tbuf^[i].s)
+        if tbuf[i].lf then
+          writeln(t,tbuf[i].s)
         else
-          write(t,tbuf^[i].s);
+          write(t,tbuf[i].s);
       close(t);
       end;
   end;
@@ -1393,14 +1393,10 @@ var t1,log     : text;
   end;
 
 begin
-  new(b1);
-  new(tbuf);
   new(info);
-  for i:=1 to maxxlines do
-    new(xline[i]);
   MausReadITI(boxname,info,infos);
   // !! fsize:=_filesize(infile);
-  assign(t1,infile); settextbuf(t1,b1^); reset(t1);
+  assign(t1,infile); settextbuf(t1,b1); reset(t1);
   assign(f2,outfile); rewrite(f2,1);
   assign(log,logfile); rewrite(log);
   assign(pmlog,pmlogfile); rewrite(pmlog);
@@ -1423,16 +1419,16 @@ begin
       else
         msgid:=copy(s,2,120);
       firstline:=true;
-      mime:=false;
+      UseMIME:=false;
       repeat
         read(t1,s);
         if (s<>'') and (s[1]<>'#') then begin
           c:=s[1];
           delete(s,1,1);
           case c of
-            ':' : if mime then
+            ':' : if UseMIME then
                     if (s='-') or (cpos(':',s)=0) then
-                      mime:=false
+                      UseMIME:=false
                     else
                       add_xline(s)
                   else begin
@@ -1483,7 +1479,7 @@ begin
                   end;
             'M' : begin
                     mimever:=GetToken(s,';');
-                    mime:=true;
+                    UseMIME:=true;
                     if LowerCase(GetToken(s,':'))='content-type' then
                       mimect:=s;
                   end;
@@ -1510,7 +1506,7 @@ begin
         datum:=zdate; setzdate(hd); end;
       if msgid='#LOG' then
         for i:=1 to lines do
-          writeln(log,tbuf^[i].s^)
+          writeln(log,tbuf[i].s)
       else begin
         inc(nn);
         write(#13,'Nachrichten: ',nn);
@@ -1549,9 +1545,7 @@ begin
           wrs('EDA: '+zdatum);
           wrs('ROT: '+reverse(pfad));
           wrs('MID: '+msgid);
-          { fb: Organisation aus O-Zeile ?bertragen }
           if organisation<>'' then wrs('ORG: '+organisation);
-          { /fb }
           if ref<>'' then wrs('BEZ: '+ref);
           if AmReplyTo<>'' then wrs('Diskussion-in: '+AmReplyTo);
           if PmReplyTo<>'' then wrs('Antwort-an: '+PmReplyTo);
@@ -1561,7 +1555,7 @@ begin
           if mimever<>'' then wrs('U-MIME-Version: '+mimever);
           if mimect<>'' then wrs('U-Content-Type: '+mimect);
           for i:=1 to xlines do
-            wrs('U-'+xline[i]^);
+            wrs('U-'+xline[i]);
           wrs('X_C:');
           wrs('X-XP-NTP: 20');
           if pm_bstat<>''  then wrs('X-XP-BST: '+pm_bstat);
@@ -1576,22 +1570,17 @@ begin
             wrs('LEN: '+strs(groesse));
             wrs('');
             for i:=1 to lines do             { Nachrichtentext schreiben }
-              if tbuf^[i].lf then
-                wrs(tbuf^[i].s^)
+              if tbuf[i].lf then
+                wrs(tbuf[i].s)
               else
-                blockwrite(f2,tbuf^[i].s^[1],length(tbuf^[i].s^));
+                blockwrite(f2,tbuf[i].s[1],length(tbuf[i].s));
             end;
           end;
         end;
-      for i:=lines downto 1 do
-        freemem(tbuf^[i].s,length(tbuf^[i].s^)+1);
       end;
     end;
-  for i:=1 to xlines do
-    dispose(xline[i]);
   dispose(info);
-  dispose(tbuf);
-  close(t1); dispose(b1);
+  close(t1);
   close(f2);
   close(log);
   close(pmlog);
@@ -1621,6 +1610,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/07/14 12:39:07  ma
+  - jetzt wieder kompilierbar (Ansistrings)
+
   Revision 1.20  2000/07/13 10:23:44  mk
   - Zeiger auf Strings entfernt
 
