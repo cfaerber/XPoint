@@ -655,6 +655,10 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/03/22 00:03:24  cl
+  - resolved some conflicts
+
+  
   Revision 1.5  2001/03/21 19:17:10  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
