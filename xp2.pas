@@ -26,7 +26,7 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
   crt,
 {$ENDIF }
 {$IFDEF Linux}
-  xplinux,
+  xplinux, sysutils,
 {$ENDIF}
   xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
@@ -486,6 +486,9 @@ var lf : string[12];
     t  : text;
     s  : string[40];
     ca : char;
+{$IFDEF UnixFS }
+    CurDirBackup: String;
+{$ENDIF UnixFS }   
 
   procedure WrLf;
   begin
@@ -495,6 +498,10 @@ var lf : string[12];
   end;
 
 begin { loadresource }
+{$IFDEF UnixFS }                            { Ressourcen im Programmverzeichnis suchen }
+  CurDirBackup := GetCurrentDir;
+  SetCurrentDir(ExtractFilePath(Paramstr(0)));
+{$ENDIF UnixFS }   
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
@@ -554,6 +561,9 @@ begin { loadresource }
     end;
   GetResdata;
   if ParHelp then HelpScreen;
+{$IFDEF UnixFS }
+  SetCurrentDir(CurDirBackup);
+{$ENDIF UnixFS }   
 end;
 
 
@@ -1138,6 +1148,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/06/02 16:28:36  ml
+  Linux: Die Ressourcen werden nun im Programmverzeichnis gesucht, nicht im ~/openxp-Verzeichnis
+
   Revision 1.43  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 
