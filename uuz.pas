@@ -2680,14 +2680,18 @@ var sr    : searchrec;
       FileType:=0;
   end;
 
+var
+  dir,name,ext, new: String;
 begin
-  assign(f2,dest);
   if exist(dest) then
   begin
-    reset(f2,1);
-    seek(f2,filesize(f2));
-  end else
-    rewrite(f2,1);
+    FSplit(dest, dir, name, ext);
+    new := dir + name + '.bak';
+    era(dest); if ioresult = 0 then ;
+    _rename(dest, new);
+  end;
+  assign(f2,dest);
+  rewrite(f2,1);
   outbufpos:=0;
   spath:=GetFileDir(source);
   n:=0;
@@ -3456,6 +3460,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.25  2000/12/31 15:02:05  mk
+  - Backup von Zieldatei statt anhaengen
+
   Revision 1.35.2.24  2000/12/31 11:34:58  mk
   - nicht auf Zieldatei testen, sondern anhaengen
 
