@@ -372,7 +372,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
-      if eof(t) then inc(n);
+      { if eof(t) then inc(n); } 
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -634,7 +634,7 @@ begin
       assign(t,fn);
       if append then system.append(t)
       else rewrite(t);
-      for i:=1 to lines-1 do begin
+      for i:=1 to lines do begin
         readln(input,s);
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
@@ -666,7 +666,7 @@ begin
       if lines>500 then { MK 01.02.2000 Auf 500 Zeilen angepasst }
         rmessage(2442);    { 'decodiere Bin„rdatei ...' }
 
-      for i:=1 to lines-1 do
+      for i:=1 to lines do
       begin
         readln(input,s);
         DecodeBase64;
@@ -701,6 +701,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/24 17:37:05  jg
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
+
   Revision 1.9  2000/03/09 22:29:56  rb
   text/html wird jetzt mit ISO-Zeichensatz exportiert
 
