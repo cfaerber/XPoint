@@ -529,7 +529,15 @@
 
               <entry><filename>xp.hlp</filename></entry>
 
-              <entry>die Online-Hilfe</entry>
+              <entry>die deutsche Online-Hilfe</entry>
+
+            </row>
+
+            <row>
+
+              <entry><filename>xp-e.hlp</filename></entry>
+
+              <entry>die englische Online-Hilfe</entry>
 
             </row>
 
@@ -538,6 +546,15 @@
               <entry><filename>xp-d.res</filename></entry>
 
               <entry>deutsche Sprachdatei f&uuml;r das
+                Hauptprogramm</entry>
+
+            </row>
+
+            <row>
+
+              <entry><filename>xp-e.res</filename></entry>
+
+              <entry>englische Sprachdatei f&uuml;r das
                 Hauptprogramm</entry>
 
             </row>
@@ -553,6 +570,15 @@
 
             <row>
 
+              <entry><filename>xpuu-e.res</filename></entry>
+
+              <entry>englische Sprachdatei f&uuml;r
+                <command>uucico</command></entry>
+
+            </row>
+
+            <row>
+
               <entry><filename>xpfm-d.res</filename></entry>
 
               <entry>deutsche Sprachdatei f&uuml;r den
@@ -562,9 +588,10 @@
 
             <row>
 
-              <entry><filename>neues.txt</filename></entry>
+              <entry><filename>xpfm-e.res</filename></entry>
 
-              <entry>Beschreibung neuer Features</entry>
+              <entry>englische Sprachdatei f&uuml;r den
+                Fido-Mailer</entry>
 
             </row>
 
@@ -622,27 +649,10 @@
 
             <row>
 
-              <entry><filename>xpicons.dll</filename></entry>
+              <entry><filename>icons.res</filename></entry>
 
               <entry>Icons f&uuml;r
                 <application>MS-Windows</application></entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>zm.exe</filename></entry>
-
-              <entry>Zmodem-&Uuml;bertragungsprotokoll</entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>zconfig.exe</filename></entry>
-
-              <entry>Konfigurationsprogramm f&uuml;r
-                <command>zm</command></entry>
 
             </row>
 
@@ -714,6 +724,14 @@
 
             <row>
 
+              <entry><filename>bzip2.exe</filename></entry>
+
+              <entry>Packer f&uuml;r RFC/UUCP</entry>
+
+            </row>
+
+            <row>
+
               <entry><filename>freeze.exe</filename></entry>
 
               <entry>Packer f&uuml;r RFC/UUCP (veraltet)</entry>
@@ -773,9 +791,9 @@
 
             <row>
 
-              <entry><filename>doc\geschich.txt</filename></entry>
+              <entry><filename>doc\versions.txt</filename></entry>
 
-              <entry>Versionsgeschichte</entry>
+              <entry>Versions-FAQ</entry>
 
             </row>
 
@@ -799,37 +817,19 @@
 
             <row>
 
-              <entry><filename>doc\copying</filename></entry>
+              <entry><filename>doc\gpl.txt</filename></entry>
 
-              <entry>Lizenzhinweise zu <command>gzip</command></entry>
+              <entry>GNU General Public License (f&uuml;r
+                <command>gzip</command> und <command>bzip2</command></entry>
 
             </row>
 
             <row>
 
-              <entry><filename>doc\bestell.doc</filename></entry>
+              <entry><filename>doc\bestell.txt</filename></entry>
 
               <entry>Bestellinformationen f&uuml;r
                 Zusatzprodukte</entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>doc\beispiel.zip</filename></entry>
-
-              <entry>einige Beispiel-Briefschablonen
-                (<command>zip</command>-Archiv)</entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>doc\scripts.zip</filename></entry>
-
-              <entry>Beispiel-Scriptdateien
-                (<command>zip</command>-Archiv, s. <link
-                linkend="ka080300">Kap. 8.3</link>)</entry>
 
             </row>
 
@@ -839,6 +839,15 @@
 
               <entry><command>pgp</command>-Schl&uuml;ssel des
                 OpenXP-Teams</entry>
+
+            </row>
+
+            <row>
+
+              <entry><filename>beispiel\</filename></entry>
+
+              <entry>diverse Beispiel-Dateien
+                (<command>zip</command>-Archiv)</entry>
 
             </row>
 
@@ -859,10 +868,8 @@
         enthalten). Genaueres hierzu finden Sie in <link
         linkend="ka030103">Kapitel 3.1.3</link>.</para>
 
-      <para>Entpacken Sie das Archiv
-        <filename>doc/scripts.zip</filename> und legen Sie die darin
-        enthaltenen Dateien in das
-        <application>XP</application>-Verzeichnis.</para>
+      <para>Kopieren Sie die Dateien aus dem beispiel-Verzeichnis in
+        das <application>XP</application>-Verzeichnis.</para>
 
       <para>Beim ersten Starten fragt <application>XP</application>
         folgende drei Eingaben ab:</para>
@@ -12505,10 +12512,12 @@ Wochentage:   Sa
           gepackt, so wird der gepackten Datei eine weitere Zeile
           vorangestellt, aus der der verwendete Packet zu erkennen ist
           (<computeroutput>#! cunbatch</computeroutput> f&uuml;r
-          <command>compress</command> und <computeroutput>#!
-          gunbatch</computeroutput> f&uuml;r <command>gzip</command>).
-          Eine genauere (wenn auch stellenweise fehlerhafte)
-          Beschreibung des News-Formates finden Sie in <ulink
+          <command>compress</command>, <computeroutput>#!
+          gunbatch</computeroutput> f&uuml;r <command>gzip</command>)
+          und <computeroutput>#! bunbatch</computeroutput> f&uuml;r
+          <command>bzip2</command>). Eine genauere (wenn auch
+          stellenweise fehlerhafte) Beschreibung des News-Formates
+          finden Sie in <ulink
           url="ftp://ftp.isi.edu/in-notes/rfc1036.txt"><acronym>RFC</acronym>
           1036</ulink> und dem <ulink
           url="ftp://ftp.openxp.de/openxp/devdoc/so1036.txt">son-of-1036</ulink>-Dokument.</para>
@@ -21832,6 +21841,15 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
+            <entry><filename>xpuu-e.res</filename></entry>
+
+            <entry>englische Sprachdatei f&uuml;r
+              <command>uucico</command></entry>
+
+          </row>
+
+          <row>
+
             <entry><filename>uuz.exe</filename></entry>
 
             <entry>ZConnect &lt;-&gt; RFC/UUCP - Konvertierer</entry>
@@ -21849,6 +21867,14 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
           <row>
 
             <entry><filename>gzip.exe</filename></entry>
+
+            <entry>Packer / Entpacker</entry>
+
+          </row>
+
+          <row>
+
+            <entry><filename>bzip2.exe</filename></entry>
 
             <entry>Packer / Entpacker</entry>
 
@@ -21880,16 +21906,16 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry><filename>doc\copying</filename></entry>
+            <entry><filename>doc\gpl.txt</filename></entry>
 
-            <entry>Lizenzinformationen zu
-              <command>gzip</command></entry>
+            <entry>GNU General Public License (f&uuml;r
+              <command>gzip</command> und <command>bzip2</command></entry>
 
           </row>
 
           <row>
 
-            <entry><filename>uucp.scr</filename></entry>
+            <entry><filename>beispiel\uucp.scr</filename></entry>
 
             <entry>Standard-Loginscript f&uuml;r UUCP-Systeme</entry>
 
@@ -22079,8 +22105,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry><filename>*.txt</filename> /
-              <filename>*.doc</filename></entry>
+            <entry><filename>*.txt</filename></entry>
 
             <entry>Dokumentationen aller Art</entry>
 
@@ -22092,25 +22117,6 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
             <entry><command>pgp</command>-Schl&uuml;ssel des
               OpenXP-Teams</entry>
-
-          </row>
-
-          <row>
-
-            <entry><filename>doc\beispiel.zip</filename></entry>
-
-            <entry>einige Beispiel-Briefschablonen
-              (<command>zip</command>-Archiv)</entry>
-
-          </row>
-
-          <row>
-
-            <entry><filename>doc\scripts.zip</filename></entry>
-
-            <entry>Beispiel-Scriptdateien
-              (<command>zip</command>-Archiv, s. <link
-              linkend="ka080300">Kap. 8.3</link>)</entry>
 
           </row>
 
