@@ -1574,7 +1574,7 @@ var t      : longint;
   procedure idle;
   begin
   {$IFDEF Win32 }
-    Sleep(1);
+    Sleep(0);
   {$ENDIF }
   {$IFDEF OS2 }
     DosSleep(1);
@@ -1656,6 +1656,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.55  2000/08/26 12:47:11  mk
+  - Sleep(1) in Sleep(0) geaendert, das reicht zur Rechenzeitfreigabe
+
   Revision 1.54  2000/08/17 12:11:13  mk
   MO: Anzeige der Uhr fuer Screen > 80 Zeichen angepasst
 
