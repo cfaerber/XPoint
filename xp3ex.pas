@@ -455,7 +455,7 @@ var size   : longint;
     procedure FlushStmp;
     begin
       if stmp<>'' then begin
-        wrslong(lastqc+stmp);
+        wrslong(rtrim(lastqc+stmp)); { Auch hier Leerzeichen entfernen }
         stmp:='';
         end;
     end;
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.7  2000/08/12 11:21:17  mk
+  JG:- Quotereflow Fix
+
   Revision 1.17.2.6  2000/07/30 07:59:25  mk
   - Trim aus RPS() entfernt
 
