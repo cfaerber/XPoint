@@ -124,7 +124,10 @@ begin
 
     FirstMail := 1; LastMail := IMAP.MailCount;
     if IMAP.OnlyNew then
+    begin
       FirstMail := IMAP.LastRead;
+      LastMail := Min(FirstMail, LastMail);
+    end;
 
     for i := FirstMail to LastMail do
     begin
@@ -177,6 +180,9 @@ end;
                       
 {
   $Log$
+  Revision 1.3  2003/08/11 21:28:06  mk
+  - fixed IMAP if OnlyNew is switched on and no new mail is waiting
+
   Revision 1.2  2003/05/02 07:29:41  mk
   - lowercase ncimap (for linux)
 
