@@ -57,8 +57,8 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  {$IFNDEF Linux}
-  window(1,4,80,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
+  {$IFNDEF NCRT}
+  window(1,4,screenwidth,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
   {$ENDIF}
 end;
 
@@ -67,7 +67,7 @@ begin
   attrtxt(7);
   ttwin;
   moff;
-  {$IFDEF Linux}
+  {$IFDEF NCRT}
   clwin(1,screenwidth,4,screenlines-2);
   {$ELSE}
   clrscr;
@@ -696,7 +696,7 @@ begin
         end;
       Dos.findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     close(f1);
@@ -714,12 +714,12 @@ var sr : searchrec;
 begin
   { ToDo }
   packetsize:=0;
-  Dos.findfirst(XferDir+'*.*',ffAnyFile,sr);
+  Dos.findfirst(XferDir+Wildcard,ffAnyFile,sr);
   while doserror=0 do begin
     inc(packetsize,sr.size);
     Dos.findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -733,13 +733,13 @@ var sr   : searchrec;
     last : string[12];
     arc  : shortint;
 begin
-  dos.findfirst(XferDir+'*.*',ffAnyFile,sr);
+  dos.findfirst(XferDir+WildCard,ffAnyFile,sr);
   if doserror=0 then begin
     while doserror=0 do begin
       last:=sr.name;
       Dos.findnext(sr);
     end;
-    {$IFDEF virtualpascal}
+    {$IFDEF Ver32}
     FindClose(sr);
     {$ENDIF}
     arc:=ArcType(XferDir+last);
@@ -787,6 +787,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/26 13:59:12  hd
+  - Fix: Ganzes Fenster loeschen
+  - Fix: findclose bei allen 32-Bit-Versionen
+
   Revision 1.12  2000/05/21 17:00:25  sv
   - Netcall-Bildschirm fuer DOS gefixt
 
