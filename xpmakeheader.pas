@@ -437,7 +437,7 @@ begin
                                       References.Add(Line)end else
             if id = 'MAILER' then programm := line else
             if id = 'ORG'    then organisation := line else
-            if id = 'OEM'    then GetName(oem,dummy) else
+            if id = 'OEM'    then hd.Oem.Add(Line) else
             if id = 'OAB'    then GetName(oab,oar) else
             if id = 'WAB'    then GetName(wab,war) else
             if id = 'FILE'   then datei := line else
@@ -573,6 +573,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/08/11 21:20:52  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.10  2001/07/31 16:18:42  mk
   - removed some unused variables
   - changed some LongInt to DWord

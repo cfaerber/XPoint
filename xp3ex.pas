@@ -856,9 +856,9 @@ begin
                        iifs(hdp.realname<>'','  ('+hdp.realname+')',''));
                  end;
 
-    hdf_OEM    : if (hdp.oem<>'') and (LeftStr(hdp.oem,length(hdp.empfaenger))
+    hdf_OEM    : if (hdp.oem.Count > 0) and (LeftStr(hdp.oem[0],length(hdp.empfaenger))
                      <>hdp.empfaenger) then
-                   wrs(gr(16)+hdp.oem);         { 'Org.-Empf. : ' }
+                   wrs(gr(16)+hdp.oem[0]);         { 'Org.-Empf. : ' }
     hdf_OAB    : if hdp.oab<>'' then            { 'Org.-Abs.  : ' }
                    wrs(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
     hdf_WAB    : if hdp.wab<>'' then            { 'Weiterleit.: ' }
@@ -1102,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2001/08/11 21:20:50  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.73  2001/08/08 20:13:08  mk
   Some fixes and improvements from JG:
   - Fix: Summary header is wrapped correctly now

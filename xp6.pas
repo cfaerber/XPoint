@@ -1746,7 +1746,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if hdp.GetLastReference <> '' then inc(l,$100); // rÅckwÑrts-verkettet
       if FileAttach then inc(l,$200);
       if hdp.pm_reply then inc(l,$400);
-      if (hdp.wab<>'') or (hdp.oem<>'') then inc(l,$800);
+      if (hdp.wab<>'') or (hdp.oem.Count > 0) then inc(l,$800);
       if iso then inc(l,$2000);
       if flPGPsig then inc(l,$4000);
       if msgCPanz>0 then begin
@@ -2101,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.123  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.122  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

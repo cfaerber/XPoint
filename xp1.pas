@@ -2008,6 +2008,7 @@ begin
   with sdata^ do begin
     followup:=tstringlist.create;
     References := TStringlist.Create;
+    OEM := TStringList.Create;
   end
 end;
 
@@ -2017,6 +2018,7 @@ begin
   with sdata^ do begin
     followup.free;
     References.Free;
+    OEM.Free;
   end;
   freemem(sdata);
   sdata:= nil
@@ -2044,6 +2046,9 @@ end.
 
 {
   $Log$
+  Revision 1.113  2001/08/11 21:20:50  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.112  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

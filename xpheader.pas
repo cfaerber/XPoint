@@ -79,7 +79,8 @@ type
     ddatum: string;                     { Dateidatum, jjjjmmtthhmmss }
     prio: byte;                         { 10=direkt, 20=Eilmail      }
     error: string;                      { ERR-Header              }
-    oem, oab, wab: string;
+    oem: TStringList;
+    oab, wab: string;
     oar, war: string;                   { Realnames }
     real_box: string; { --- Maggi --- falls Adresse = User@Point }
     hd_point: string;                   { eigener Pointname }
@@ -140,7 +141,8 @@ type
                      summary    : string;
                      distribute : string;
                      ReplyGroup : string;     { Maus-QuoteTo }
-                     oab,oem,wab: string;
+                     oab, wab: string;
+                     OEM: TStringList;
                      oar,war    : string;
                      onetztyp   : byte;
                      orghdp     : THeader;
@@ -172,6 +174,7 @@ begin
   References := TStringList.Create;
   References.Duplicates := dupIgnore;
   XEmpf := TStringList.Create;
+  OEM := TStringList.Create;
   XOEM := TStringList.Create;
   Clear;
 end;
@@ -212,7 +215,7 @@ begin
   ddatum:= '';                     { Dateidatum, jjjjmmtthhmmss }
   prio := 0;
   error:= '';                      { ERR-Header              }
-  oem := '';
+  oem.Clear;
   oab:= '';
   wab:= '';
   oar:= '';
@@ -248,10 +251,10 @@ begin
   Cust1 := '';
   Cust2:= '';
   control:= '';
-  uline.clear;;
-  xline.clear;;                    // X-Zeilen, die 'uebrig' sind
-  zline.clear;;
-  fline.clear;;
+  uline.clear;
+  xline.clear;                    // X-Zeilen, die 'uebrig' sind
+  zline.clear;
+  fline.clear;
   References.Clear;
   mimereltyp:= '';
   xempf.clear;
@@ -282,6 +285,10 @@ begin
   zLine.Free;
   Followup.Free;
   Mailcopies.free;
+  References.Free;
+  XEmpf.Free;
+  OEM.Free;
+  XOEM.Free;
   inherited destroy;
 end;
 
@@ -298,6 +305,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/08/11 21:20:52  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.10  2001/07/27 18:10:15  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

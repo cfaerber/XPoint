@@ -110,7 +110,8 @@ procedure WriteHeader(var hd:theader; var f:file);
         UpString(AmReplyTo);}
       for i:=0 to followup.count-1 do
         wrs('DISKUSSION-IN: '+followup[i]);
-      if oem<>'' then wrs('OEM: '+oem);
+      for i := 0 to OEM.Count - 1 do
+        wrs('OEM: '+ OEM[i]);
       wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
       if wab<>'' then wrs('WAB: '+wab+iifs(war='','',' ('+war+')'));
@@ -446,6 +447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.43  2001/07/29 12:58:16  ma
   - fixed setting of NNTP area db flags
 

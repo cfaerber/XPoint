@@ -191,9 +191,9 @@ begin
     abs:=hdp.replyto
   else begin
     wabok:=(pos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
-    if (hds=1) or ((hdp.wab='') and (hdp.oem='') and (hdp.replyto <> '')) or
-                  ((hdp.wab='') and (hdp.oem=hdp.vertreter) and (hdp.replyto <> '')) or
-                  (not wabok and (hdp.oem='') and (hdp.replyto = ''))
+    if (hds=1) or ((hdp.wab='') and (hdp.oem.Count > 0) and (hdp.replyto <> '')) or
+                  ((hdp.wab='') and (hdp.oem[0]=hdp.vertreter) and (hdp.replyto <> '')) or
+                  (not wabok and (hdp.oem.count = 0) and (hdp.replyto = ''))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp.realname;
@@ -206,8 +206,8 @@ begin
       else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
         appadr(hdp.wab,2);                          { 'Weiterleit-Absender:' }
-      if hdp.oem<>'' then
-        appadr(hdp.oem,3);                          { 'Original-Empfaenger :' }
+      if hdp.oem.Count > 0 then
+        appadr(hdp.oem[0],3);                          { 'Original-Empfaenger :' }
     (*
       dbSeek(ubase,uiName,UpperCase(hdp.absender));
       if dbFound and (dbXsize(ubase,'adresse')>0) then begin
@@ -315,6 +315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.25  2001/07/27 18:10:13  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

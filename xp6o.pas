@@ -365,7 +365,7 @@ begin
       else begin
         oab:=hdp.oab; oar:=hdp.oar;
         end;
-      oem:=hdp.oem;
+      oem.Assign(hdp.oem);
       SenderMail:=hdp.absender;
       SenderRealname:=hdp.realname;
       FQDN:=Mid(hdp.msgid,Pos('@',hdp.msgid)+1);
@@ -580,7 +580,7 @@ label ende,again;
     fmove(f,tf);
     dbAppend(mbase);
     mnt:=hdp.netztyp;
-    if (hdp.wab<>'') or (hdp.oem<>'') then inc(mnt,$800);
+    if (hdp.wab<>'') or (hdp.oem.count > 0) then inc(mnt,$800);
     dbWriteN(mbase,mb_netztyp,mnt);
     dbWriteNStr(mbase,mb_brett,ebrett);
     dbWriteNStr(mbase,mb_betreff,betr);
@@ -963,8 +963,8 @@ again:
                      sData^.oab:=hdp.oab; sData^.oar:=hdp.oar; end
                    else begin
                      sData^.oab:=hdp.absender; sData^.oar:=hdp.realname; end;
-                   if hdp.oem<>'' then sData^.oem:=hdp.oem
-                   else sData^.oem:=hdp.empfaenger;
+                   if hdp.oem.Count > 0 then sData^.oem.Assign(hdp.oem)
+                   else sData^.oem.add(hdp.empfaenger);
                    sData^.onetztyp:=hdp.netztyp;
                    sendfilename:=hdp.datei;
                    sendfiledate:=hdp.ddatum;
@@ -1204,7 +1204,7 @@ begin
   dbAppend(mbase);
   mnt:=hdp.netztyp;
   if hdp.References.Count > 0 then inc(mnt,$100);
-  if (hdp.wab<>'') or (hdp.oem<>'') then inc(mnt,$800);
+  if (hdp.wab<>'') or (hdp.oem.count > 0) then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
   ebrett:=mbrettd('U',ubase);
   dbWriteNStr(mbase,mb_brett,ebrett);
@@ -1312,6 +1312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.65  2001/08/02 22:43:00  mk
   JG:- When archiving a PM/AM with <Alt-P> and user doesn't exist already,
          XP brings up a 'create user' dialogue and defaults to the server of

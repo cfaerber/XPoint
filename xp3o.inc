@@ -993,7 +993,7 @@ begin
             if References.Count > 0 then inc(mnt,$100); // rÅckwÑrtsverkettet
             if attrib and attrFile<>0 then inc(mnt,$200);
             if pm_reply then inc(mnt,$400);
-            if (wab<>'') or (oem<>'') then inc(mnt,$800);
+            if (wab<>'') or (oem.Count > 0) then inc(mnt,$800);
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(GetLastReference)) or
@@ -1237,6 +1237,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.58  2001/07/29 12:57:27  ma
   - removed Developer and ntAllowed variables
   - fixed setting of NNTP area db flags

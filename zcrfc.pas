@@ -3119,7 +3119,7 @@ begin
       else
         wrs(f, 'From ' + LeftStr(s, p - 1) + ' ' + dat + ' remote from ' + mid(s, p
           + 1));
-      if (wab <> '') and (cpos('@', oem) > 0) and not smtp { (*1) - s.u. } then
+      if (wab <> '') and (oem.Count > 0) and (cpos('@', oem[0]) > 0) and not smtp { (*1) - s.u. } then
         rfor := empfaenger
       else
         rfor := '';
@@ -3145,8 +3145,8 @@ begin
 
     if mail then
     begin
-      if (wab <> '') and (cpos('@', oem) > 0) { s. (*1) } then
-        wrs(f, 'To: ' + oem)
+      if (wab <> '') and (oem.count > 0) and (cpos('@', oem[0]) > 0) { s. (*1) } then
+        wrs(f, 'To: ' + oem[0])
       else
         wrs(f, 'To: ' + empfaenger);
 
@@ -3804,6 +3804,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2001/08/11 21:20:52  mk
+  - THeader.OEM is now TStringList (before: String)
+
   Revision 1.66  2001/08/10 20:58:01  mk
   - removed some hints and warnings
   - fixed some minior bugs
