@@ -280,7 +280,8 @@ label laden;
    begin
      for i:=1 to qvws do
        with qvw^[i] do
-         if (x>=x1) and (y=y1) then inc(xout,add);
+         if (x>=x1) and (y=y1) then
+           xout := xout + add;
    end;
 
 begin
@@ -760,6 +761,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/07 20:55:17  mk
+  - workaround for FPC Bug in $Q+ Mode
+
   Revision 1.26  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
