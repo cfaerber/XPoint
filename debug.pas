@@ -1,4 +1,23 @@
-{ $Id$ }
+{ $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the Lesser GNU General Public License (LGPL) as
+   published by the Free Software Foundation; either version 2,
+   or (at your option) any later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See LGPL
+   for more details.
+
+   You should have received a copy of the LGPL along with this
+   software; see the file lgpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created 2000 by M.Kiesel <m.kiesel@iname.com>
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
 
 {$I XPDEFINE.INC }
 
@@ -10,23 +29,40 @@ INTERFACE
 
 uses xpglobal;
 
+const {Loglevels proposed are}
+  DLNone        = 0;
+  DLError       = 1;
+  DLWarning     = 2;
+  DLInform      = 3;
+  DLDebug       = 4;
+
+  DLDefaultIfInDebugMode: Integer= DLInform;
+
 {Messages will be logged only if environment variable DEBUG exists
  pointing to a file. If file starts with *, the logfile will be
  overwritten each time.}
+
+{If compiler directive DEBUG is set, logging will be set to on by
+ default, using file "debuglog.txt" and level 3 if not overridden
+ by explicit setting.}
 
 PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
 {Write a debug message to logfile if level is less or equal badge level.
  Badge is an identifier for the program portion that creates the message.
  For example DebugLog('Coreroutine','Finished section 1',1) }
 
-PROCEDURE SetLogLevel(Badge: String; Level: Integer);
+PROCEDURE SetLoglevel(Badge: String; Level: Integer);
 {Sets badge level. Messages for badge are logged only if level is
  high enough. The example above will only be logged if preceded by
- SetLogLevel('Coreroutine',1-or greater-). Default level for badges
- can also be set by environment variables: BADGE=LEVEL}
+ SetLogLevel('Coreroutine',1[or greater]). Default level for badges
+ can also be set by environment variables: BADGE=level}
 
 PROCEDURE TempCloseLog(Reactivate: Boolean);
 {Temporarily closes or reopens logfile.}
+
+PROCEDURE OpenLogfile(App: Boolean; Filename: String);
+{Appends if app true, logfile is automatically openened if
+ environment variable DEBUG=filename is set}
 
 IMPLEMENTATION
 
@@ -39,23 +75,26 @@ uses
   SysUtils;
 
 CONST
- qLogfiles= 20;
+ qLogbadges= 20;
  Logging: Boolean= False;
 
 VAR
- Logfiles: ARRAY[1..qLogfiles]OF RECORD Badge: String; Level: Integer END;
- Logfile: Text;
+ Logbadges: ARRAY[1..qLogbadges]OF RECORD Badge: String; Level: Integer END;
+ Logfile: Text; Logfilename: String;
 
 FUNCTION FindBadge(Badge: String): Integer;
 VAR
   I: Integer;
   Temp: LongInt;
+  S: String;
 BEGIN
-  I:=0; REPEAT Inc(I)UNTIL(Logfiles[I].Badge='')OR((Logfiles[I].Badge=Badge)OR(I=qLogfiles));
-  IF(Logfiles[I].Badge='')AND(I<=qLogfiles)THEN {Open new entry}
-    BEGIN Logfiles[I].Badge:=Badge; Val(GetEnv(Badge),Logfiles[I].Level,Temp); FindBadge:=I END
+  I:=0; REPEAT Inc(I)UNTIL(Logbadges[I].Badge='')OR((Logbadges[I].Badge=Badge)OR(I=qLogbadges));
+  IF(Logbadges[I].Badge='')AND(I<=qLogbadges)THEN {Open new entry}
+    BEGIN Logbadges[I].Badge:=Badge; S:=GetEnv(Badge);
+          {$IFDEF Debug}if S='' then Str(DLDefaultIfInDebugMode,S);{$ENDIF}
+          Val(S,Logbadges[I].Level,Temp); FindBadge:=I END
   ELSE
-    IF Logfiles[I].Badge=Badge THEN FindBadge:=I
+    IF Logbadges[I].Badge=Badge THEN FindBadge:=I
     ELSE FindBadge:=0;
 END;
 
@@ -65,7 +104,7 @@ VAR
 BEGIN
   IF NOT Logging THEN Exit;
   C:=FindBadge(Badge);
-  IF(C<>0)AND(Logfiles[C].Level>=Level)THEN
+  IF(C<>0)AND(Logbadges[C].Level>=Level)THEN
     BEGIN
       GetTime(H,M,S,S100);
       WriteLn(Logfile,H:2,':',M:2,':',S:2,'.',S100:2,' ',Badge,': ',Message);
@@ -73,36 +112,35 @@ BEGIN
     END;
 END;
 
-PROCEDURE SetLogLevel(Badge: String; Level: Integer);
+PROCEDURE SetLoglevel(Badge: String; Level: Integer);
 VAR C: Integer;
 BEGIN
-  C:=FindBadge(Badge); IF C<>0 THEN Logfiles[C].Level:=Level;
+  C:=FindBadge(Badge); IF C<>0 THEN Logbadges[C].Level:=Level;
 END;
 
-PROCEDURE OpenLogfile(App: Boolean); {Appends if App True}
+PROCEDURE OpenLogfile(App: Boolean; Filename: String); {Appends if App True}
 VAR
   SR    : TSearchRec;
-  S     : String;
   Rew   : Boolean;
   err   : integer;
 BEGIN
-  IF Logging THEN
-    Exit;
-  S:= GetEnv('DEBUG');
+  IF Logging THEN Exit;
+  {$IFDEF Debug}if Filename='' then Filename:='debuglog.txt';{$ENDIF}
+  Logfilename:=Filename;
   Logging:= True;
   Rew:= False;
-  IF S<>'' THEN BEGIN
-    IF S[1]='*' THEN BEGIN
-      Delete(S,1,1);
+  IF Filename<>'' THEN BEGIN
+    IF Filename[1]='*' THEN BEGIN
+      Delete(Filename,1,1);
       Rew:=True;
     END;
     {$I-}
     IF Rew AND(NOT App)THEN BEGIN
-      Assign(Logfile,S);
+      Assign(Logfile,Filename);
       ReWrite(Logfile);
     END ELSE BEGIN
-      Assign(Logfile,S);
-      err:= FindFirst(S,faArchive,SR);
+      Assign(Logfile,Filename);
+      err:= FindFirst(Filename,faArchive,SR);
       IF err = 0 THEN
         Append(Logfile)
       ELSE
@@ -119,10 +157,10 @@ PROCEDURE CloseLogfile;
 BEGIN IF Logging THEN Close(Logfile); Logging:=False END;
 
 PROCEDURE TempCloseLog(Reactivate: Boolean);
-BEGIN IF NOT Reactivate THEN CloseLogfile ELSE OpenLogfile(True)END;
+BEGIN IF NOT Reactivate THEN CloseLogfile ELSE OpenLogfile(True,Logfilename)END;
 
 INITIALIZATION
-  OpenLogfile(False);
+  OpenLogfile(False,GetEnv('DEBUG'));
 
 FINALIZATION
   CloseLogfile;
@@ -131,6 +169,10 @@ END.
 
 {
   $Log$
+  Revision 1.6  2000/11/19 12:50:45  ma
+  - now aware of general DEBUG mode (IFDEF DEBUG...)
+  - debug files other than set by environment may be used
+
   Revision 1.5  2000/11/08 17:38:45  hd
   - Fix: fehlendes FindClose
 
