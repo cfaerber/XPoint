@@ -203,7 +203,8 @@ end;
 procedure ViewFile(fn:string; var viewer:viewinfo);
 var p         : byte;
     prog      : string[ViewprogLen];
-    orgfn,fn1 : pathstr;
+    orgfn,fn1,
+    parfn     : pathstr;
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
@@ -211,21 +212,20 @@ begin
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
   if not stricmp(fn,orgfn) and ValidFileName(orgfn) then
-    if _rename(fn,orgfn) then
+    if copyfile(fn,orgfn) then
       fn1:=orgfn;
 
   prog:=viewer.prog;
+  parfn:=iifs(fn1<>'',fn1,fn);
   p:=pos('$FILE',ustr(prog));
-  if p=0 then prog:=prog+' '+iifs(fn1<>'',fn1,fn)
-  else prog:=left(prog,p-1)+iifs(fn1<>'',fn1,fn)+mid(prog,p+5);
+  if p=0 then prog:=prog+' '+parfn
+  else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
 {$IFNDEF Delphi5}
-  XPWinShell(prog,600,1);
+  if not XPWinShell(prog,parfn,600,1) then
 {$ENDIF }
-
-  if fn1<>'' then
-    if _rename(fn1,fn) then;
+  if fn1<>'' then era(fn1);
 end;
 
 

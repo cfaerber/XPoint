@@ -44,10 +44,12 @@ Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
 Function  ValidFileName(name:PathStr):boolean;  { gÅltiger Dateiname ?    }
 Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
 function  TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen      }
+function  TempExtFile(path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
 function  _filesize(fn:pathstr):longint;        { Dateigrî·e in Bytes     }
 function  filetime(fn:pathstr):longint;         { Datei-Timestamp         }
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen  }
 procedure setfileattr(fn:pathstr; attr:word);   { Dateiattribute setzen   }
+function  copyfile(srcfn, destfn:pathstr):boolean; { Datei kopieren }
 Procedure era(s:string);                        { Datei lîschen           }
 procedure erase_mask(s:string);                 { Datei(en) lîschen       }
 Procedure erase_all(path:pathstr);              { Lîschen mit Subdirs     }
@@ -169,6 +171,29 @@ begin
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
       end;
     end;
+end;
+
+function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
+{ keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
+var bufs,rr:word;
+    buf:pointer;
+    f1,f2:file;
+begin    
+  bufs:=min(maxavail,65520);
+  getmem(buf,bufs);
+  assign(f1,srcfn);
+  assign(f2,destfn);
+  reset(f1,1);
+  rewrite(f2,1);
+  while not eof(f1) and (inoutres=0) do begin
+    blockread(f1,buf^,bufs,rr);
+    blockwrite(f2,buf^,rr);
+  end;
+  close(f2);
+  close(f1);
+  copyfile:=(inoutres=0);
+  if ioresult<>0 then ;
+  freemem(buf,bufs);
 end;
 
 Procedure era(s:string);
@@ -326,6 +351,16 @@ begin
     n:=formi(random(10000),4)+'.tmp'
   until not exist(path+n);
   TempFile:=path+n;
+end;
+
+function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
+{ ld max. 4 Zeichen, ext mit Punkt '.bat' }
+var n : string[12];
+begin
+  repeat
+    n:=ld+formi(random(10000),4)+ext
+  until not exist(path+n);
+  TempExtFile:=path+n;
 end;
 
 
@@ -674,6 +709,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/03 20:26:40  rb
+  Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
+
   Revision 1.6  2000/02/23 23:49:47  rb
   'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
 

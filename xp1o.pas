@@ -59,7 +59,8 @@ function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
 {$IFNDEF Delphi5}
-procedure XPWinShell(prog:string; space:word; cls:shortint);
+function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+{ true, wenn kein DOS-Programm aufgerufen wurde }
 {$ENDIF}
 
 implementation
@@ -874,7 +875,8 @@ end;
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
 {$IFNDEF Delphi5}
-procedure XPWinShell(prog:string; space:word; cls:shortint);
+function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+{ true, wenn kein DOS-Programm aufgerufen wurde }
 var w1,w2: word;
 
   function PrepareExe:integer;    { Stack sparen }
@@ -885,9 +887,11 @@ var w1,w2: word;
                  2 OS/2-Programm
   }                 
   var ext     : string[3];
-      exepath : pathstr;
+      exepath,
+      batfile : pathstr;
       et      : TExeType;
-      win,os2 : boolean;
+      win,os2,
+      winnt   : boolean;
       t       : text;
   begin
     PrepareExe:=0;
@@ -902,95 +906,55 @@ var w1,w2: word;
 
     win := (et=ET_Win16) or (et=ET_Win32);
     os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
+    winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
     if win then begin
-{      
-      if not exist('winrun.bat') then begin
-        assign(t,'winrun.bat');
-        rewrite(t);
-        writeln(t,'@echo off');
-        writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
-        writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
-        writeln(t);
-        writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
-        writeln(t,'echo.');
-        writeln(t,'cmd /c "start /wait %1 %2 %3 %4 %5 %6"');
-        writeln(t,'echo.');
-        close(t);
-      end;
-      prog:='winrun.bat '+prog;
-}
-      prog:='start /wait '+prog;
+      batfile:=TempExtFile('','wrun','.bat');
+      assign(t,batfile);
+      rewrite(t);
+      writeln(t,'@echo off');
+      writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
+      writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
+      writeln(t);
+      writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
+      writeln(t,'echo.');
+      writeln(t,'start /wait '+prog);
+      writeln(t,'del '+parfn);
+      writeln(t,'del '+batfile);
+      close(t);
+      if winnt then
+        prog:='cmd /c start cmd /c '+batfile
+        else prog:='start command /c '+batfile;
       PrepareExe:=1;
     end
     else if os2 then begin
-      PrepareExe:=-1;
-      if not exist('postsem.exe') then write(#7)
-      else if exetype('postsem.exe')<>ET_OS2_32 then write(#7)
-      else begin
-        assign(t,'os2run.cmd');
-        rewrite(t);
-        writeln(t,'@echo off');
-        writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von OS/2-Viewern');
-        writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
-        writeln(t);
-        writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
-        writeln(t,'echo.');
-        writeln(t,prog);
-        writeln(t,ownpath,'postsem.exe XPOS2SEM32');
-        writeln(t,'echo.');
-        close(t);
-        PrepareExe:=2;
-      end;
+      batfile:=TempExtFile('','os2r','.cmd');
+      assign(t,batfile);
+      rewrite(t);
+      writeln(t,'@echo off');
+      writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von OS/2-Viewern');
+      writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
+      writeln(t);
+      writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
+      writeln(t,'echo.');
+      writeln(t,prog);
+      writeln(t,'del '+parfn);
+      writeln(t,'del '+ownpath+batfile);
+      close(t);
+      prog:=batfile;
+      PrepareExe:=2;
     end;  
   end;
 
-  procedure ShowWait;
-  begin
-    savecursor;
-    cursor(curoff);
-    w1:=windmin; w2:=windmax;
-    window(1,1,80,25);
-    message(getres(135));
-    windmin:=w1; windmax:=w2;
-  end;
-
-  procedure doneShowWait;
-  begin
-    closebox;
-    restcursor;
-  end;
-
-  procedure ShowOS2Err;
-  begin
-    savecursor;
-    cursor(curoff);
-    w1:=windmin; w2:=windmax;
-    window(1,1,80,25);
-    message(getres(136));
-    wkey(15,false);
-    windmin:=w1; windmax:=w2;
-    closebox;
-    restcursor;
-  end;
-
 begin
+  XPWinShell:=true;
   case PrepareExe of
-    -1 : ShowOS2Err;
-     0 : shell(prog,space,cls);     { DOS-Programm aufrufen }
-     1 : begin                      { Windows-Programm aufrufen }
-           ShowWait;
-           shell(prog,space,0);
-           doneShowWait;
-           clearkeybuf;
-         end;
-     2 : begin                      { OS/2-Programm aufrufen }
-           ShowWait;
-           Start_OS2(ownpath+'os2run.cmd','','XP-View OS/2');
-           OS2_WaitForEnd('\SEM32\XPOS2SEM32');
-           doneShowWait;
-           clearkeybuf;
-         end;
+     0 : begin                      { DOS-Programm aufrufen }
+           shell(prog,space,cls);
+           XPWinShell:=false;
+         end;  
+     1 : shell(prog,space,0);       { Windows-Programm aufrufen }
+     2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
   end;  
 end;
 {$ENDIF}
@@ -998,6 +962,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/03/03 20:26:40  rb
+  Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
+
   Revision 1.18  2000/03/02 21:39:01  rb
   Starten externer Windows-Viewer verbessert
 
