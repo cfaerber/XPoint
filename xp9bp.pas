@@ -205,6 +205,7 @@ begin
     ClientLogin:= '';
     ClientPass:= '';
     ClientSpool:= '';
+    ClientExternalConfig := '';
     ClientMailInServer:= 'pop.t-online.de';
     ClientMailInEnv:= '';
     ClientMailInUser:= '';
@@ -389,6 +390,7 @@ begin
             gets(s,su,'Client-Login',ClientLogin,60) or
             gets(s,su,'Client-Password',ClientPass,20) or
             gets(s,su,'Client-Spool', ClientSpool, 60) or
+            gets(s,su,'Client-ExternalConfig', ClientExternalConfig, 60) or
             gets(s,su,'Client-MailInServer', ClientMailInServer, 160) or
             gets(s,su,'Client-MailInEnvelope', ClientMailInEnv, 160) or
             gets(s,su,'Client-MailInUser', ClientMailInUser, 160) or
@@ -569,6 +571,7 @@ begin
     writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
     if ClientMode then
       CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
+    writeln(t,'Client-ExternalConfig=', ClientExternalConfig);
     writeln(t,'Client-MailInServer=', ClientMailInServer);
     writeln(t,'Client-MailInEnvelope=', ClientMailInEnv);
     writeln(t,'Client-MailInUser=', ClientMailInUser);
@@ -695,6 +698,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/07/31 16:59:33  mk
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.44  2001/07/31 13:10:34  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

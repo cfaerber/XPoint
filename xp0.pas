@@ -623,6 +623,7 @@ type   textp  = ^text;
                   ClientLogin  : string;            { Client Login                  }
                   ClientPass   : string;            { Client Passwort               }
                   ClientSpool  : string;            { Client Spool-Verzeichnis      }
+                  ClientExternalConfig: string;     { Client externe Konfiguration  }
                   ClientMailInServer : string;      { Client Mail-Server   incoming }
                   ClientMailInEnv    : string;      { Client Mail-Envelope incoming }
                   ClientMailInUser   : string;      { Client Mail-User     incoming }
@@ -1182,6 +1183,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.133  2001/07/31 16:59:33  mk
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.132  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 
