@@ -1187,7 +1187,7 @@ var d         : DB;
       dbReadN(d,mimeb_extension,ext);
       dbReadN(d,mimeb_programm,prog);
     end;
-    readmimetyp(false,typ,ext,prog,brk);
+    readmimetyp(not IsNew,typ,ext,prog,brk);
     if not brk and (typ<>'*/*') then
     begin
       {  check for duplicate entries }
@@ -1195,30 +1195,36 @@ var d         : DB;
       if typ <> '' then
       begin
         dbSeek(mimebase,mtiTyp,UStr(typ));
-        isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(typ,dbReadStr(mimebase,'typ')));
       end;
       if Ext <> '' then
       begin
         dbSeek(mimebase,mtiExt,UStr(Ext));
-        isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(ext,dbReadStr(mimebase,'extension')));
       end;
 
       if isValid then
       begin
         if isNew then
-          dbAppend(d);
+          dbAppend(d)
+        else
+          dbGo(d,drec[p]);
         dbWriteN(d,mimeb_typ,typ);
         dbWriteN(d,mimeb_extension,ext);
         dbWriteN(d,mimeb_programm,prog);
-        dbFlushClose(d);
-        dbGo(d,drec[1]);
-        if isNew then
-          dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-        aufbau:=true;
       end else
         RFehler(934); { Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt! }
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+      aufbau:=true;
     end;
   end;
 
@@ -1763,6 +1769,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.5  2000/10/22 18:59:25  mk
+  - doppte MIME-Viewer werden jetzt abgefangen
+
   Revision 1.19.2.4  2000/10/18 23:55:44  mk
   - Test auf doppelte MIME-Typen (merged aus 3.30)
 
