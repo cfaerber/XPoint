@@ -235,7 +235,7 @@ end;
 
 function getflags(s:string):byte;
 var fl,i : byte;
-    f    : w/rd;
+    f    : word;
 begin
   f:=1; fl:=0;
   for i:=1 to 8 do begin
@@ -2033,6 +2033,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2000/12/14 20:08:38  mw
+
+
+  Fehlerhaftes Zeichen korregiert, und damit Compilierbarkeit wiederhergestellt.
+
   Revision 1.10.2.3  2000/11/18 22:11:27  mk
   - einige Dirname, extname, pathname in string geaendert
 
