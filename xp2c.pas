@@ -1214,7 +1214,7 @@ begin
   maddbool(14,yi,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,yi,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,yi,getres2(253,15),multipartbin);  { 'Keine einteiligen Binaernachrichten' }
-  maddbool(14,yi,getres2(253,16),RFCConcatOldSubject); mhnr(7991);  { 'Alten Betreff anhaengen' }
+  maddbool(14,yi,getres2(253,16),RFCAppendOldSubject); mhnr(7991);  { 'Alten Betreff anhaengen' }
   inc(y);
   
   maddtext(3,y,'Fido (FTN)',col.coldiahigh);
@@ -1536,6 +1536,10 @@ end;
 
 {
   $Log$
+  Revision 1.117  2002/01/06 19:31:43  ma
+  - getX now supports searching for multiple keys
+    (provides backwards compatibility in case of changed key names)
+
   Revision 1.116  2002/01/06 16:33:24  ma
   - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
     (config name has been changed, setting will not be kept from OpenXP/16)

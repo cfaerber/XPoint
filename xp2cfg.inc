@@ -604,7 +604,7 @@ begin
   MIMEqp:=false;
   RFC1522:=true;
   NoArchive:=false;
-  RFCConcatOldSubject:=false;
+  RFCAppendOldSubject:=false;
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -938,7 +938,7 @@ begin
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
   writeln(t,'NoArchive=',jnf(NoArchive));
-  writeln(t,'RFCConcatOldSubject=',jnf(RFCConcatOldSubject));
+  writeln(t,'RFCAppendOldSubject=',jnf(RFCAppendOldSubject));
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
@@ -1465,7 +1465,7 @@ begin
           getx(su,  'MIMEqp',MIMEqp) or
           getx(su,  'RFC1522',RFC1522) or
           getx(su,  'NoArchive',NoArchive) or
-          getx(su,  'RFCConcatOldSubject',RFCConcatOldSubject) or
+          getx(su,  'RFCAppendOldSubject|RFC_AddOldBetreff',RFCAppendOldSubject) or
           getx(su,  'FidoDelEmpty',FidoDelEmpty) or
           getx(su,  'KeepVia',keepvia) or
           getx(su,  'ZCrossPostings',dummyb) or
@@ -1718,9 +1718,12 @@ begin
 
 {
   $Log$
+  Revision 1.135  2002/01/06 19:31:44  ma
+  - getX now supports searching for multiple keys
+    (provides backwards compatibility in case of changed key names)
+
   Revision 1.134  2002/01/06 16:33:25  ma
-  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
-    (config name has been changed, setting will not be kept from OpenXP/16)
+  - ported "append old subject" feature from OpenXP/16 (JG+MY)
 
   Revision 1.133  2002/01/06 15:44:00  ma
   - ported "new messages first" feature from OpenXP/16 (JG+MY)
@@ -1741,111 +1744,6 @@ begin
   Revision 1.128  2001/09/27 23:04:03  mk
   - moved variable initialization to initialization-part to avoid crashes
     in finalization parts with rc and ihs
-
-  Revision 1.127  2001/09/27 21:22:26  ml
-  - Kylix compatibility stage IV
-
-  Revision 1.126  2001/09/20 18:26:27  cl
-  - configuration option for mouswheel stepwidth (no UI yet)
-
-  Revision 1.125  2001/09/08 16:29:32  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.124  2001/09/08 14:26:11  cl
-  - added PGP_MIME configuration option
-  - added ZC_MIME configuration option
-
-  Revision 1.123  2001/09/07 23:24:54  ml
-  - Kylix compatibility stage II
-
-  Revision 1.122  2001/09/07 13:54:19  mk
-  - added SafeDeleteFile
-  - moved most file extensios to constant values in XP0
-  - added/changed some FileUpperCase
-
-  Revision 1.121  2001/08/28 08:04:02  mk
-  - removed GetX-Workaround in Val for FPC
-  - added const-parameters to scomp and GetX
-  - some little optimizations in GetX-functions
-  - GetS does not need MaxLength anymore
-
-  Revision 1.120  2001/08/23 11:15:01  mk
-  - RTA: fixed some bugs (only 32 bit releated) and converted all records
-    to classes and use TList/TStringList for storage management instead of
-    linked pointer lists
-
-  Revision 1.119  2001/08/11 23:06:30  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.118  2001/08/04 19:40:49  mk
-  - Autodatumsbezuege removed
-
-  Revision 1.117  2001/07/29 12:54:55  ma
-  - removed Developer and ntAllowed variables
-
-  Revision 1.116  2001/07/27 22:51:29  mk
-  - fixed some Freepascal compile problems
-
-  Revision 1.115  2001/07/27 18:10:11  mk
-  - ported Reply-To-All from 3.40, first part, untested
-  - replyto is now string instead of TStringList again
-
-  Revision 1.114  2001/06/11 22:26:04  ma
-  - "show realnames" is standard now
-  - added GnuPG support
-
-  Revision 1.113  2001/05/19 16:12:53  ma
-  - removed XP_ID (shareware notice)
-
-  Revision 1.112  2001/04/15 19:32:24  ma
-  - TCP/IP netcalls disabled in DOS32
-
-  Revision 1.111  2001/04/03 13:25:40  ma
-  - cleaned up fido aka handling
-
-  Revision 1.110  2001/03/14 20:46:03  mk
-  - removed registration routines
-
-  Revision 1.109  2001/03/13 19:24:56  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.108  2001/02/25 15:40:21  ma
-  - added GPL headers
-  - shortened CVS logs
-  - cosmetics
-
-  Revision 1.107  2001/02/19 15:27:18  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.106  2001/02/13 10:36:14  mk
-  - fixed ISDN1-MSN-Incoming/Outgoing
-
-  Revision 1.105  2001/02/11 20:59:22  mk
-  - added isdn1-msn-incoming/outing to cfg
-
-  Revision 1.104  2001/02/11 18:30:42  ma
-  - disabled menu entries "netcall/relogin" and "online"
-  - disabled unsupported netcall types
-
-  Revision 1.103  2001/01/15 23:27:35  mk
-  - removed Editorkb, Listerkb
-
-  Revision 1.102  2001/01/14 10:31:08  mk
-  - changed existf to FileExists
-
-  Revision 1.101  2000/12/31 14:49:04  mk
-  - Tearlineschalter in Config/Optionen/Netze
-
-  Revision 1.100  2000/12/29 02:46:19  mk
-  - fixed another bug with temppath and logpath
-
-  Revision 1.99  2000/12/27 22:36:36  mo
-  -new class TfidoNodeList
-
-  Revision 1.98  2000/12/25 14:02:41  mk
-  - converted Lister to class TLister
 }
 end;
 

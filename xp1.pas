@@ -1509,22 +1509,26 @@ end;
 
 { === Parser-Routinen ============================ }
 
-{ p ist immer<>0! }
-function scomp(const s1,s2 : string; p:byte):boolean;
-var p0,n : Integer;
+{ parse a configuration line.
+  search for conf key in s, return true if found, pos of '=' in p.
+  multiple keys may be separated by '|'.
+  example: scomp('test2=dummy','test1|test2',p) => true, p=6 }
+function scomp(const s: string; keys: string; var p: integer):boolean;
+var p0: Integer; aKey, ConfKey: String;
 begin
-  repeat dec(p) until (s1[p]<>' ') or (p=0);   { rtrim }
-  p0:=1;
-  while (s1[p0]=' ') and (p0<p) do inc(p0);    { ltrim }
-  if p-p0+1<>length(s2) then
-    scomp:=false
-  else begin
-    n:=1;
-    while (p0<=p) and (s1[p0]=UpCase(s2[n])) do begin
-      inc(n); inc(p0);
+  p:=cpos('=',s);
+  ConfKey:=UpperCase(Trim(LeftStr(s,p-1)));
+  repeat
+    p0:=cpos('|',keys);
+    if p0<>0 then begin
+      aKey:=LeftStr(keys,p0-1);
+      Delete(keys,1,p0);
+      end else begin
+      aKey:=keys;
+      keys:='';
       end;
-    scomp:=p0>p;
-    end;
+    result:=UpperCase(Trim(aKey))=ConfKey;
+  until result or (keys='');
 end;
 
 
@@ -1532,7 +1536,6 @@ function getb(const su:string; const v:string; var b:byte):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),b,res);
     getb:=(res=0);
@@ -1544,7 +1547,6 @@ function getc(const su, v:string; var c:char):boolean;
 var 
   p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) and (p + 1 <= Length(su)) then
   begin
     c:=su[p+1];
@@ -1557,7 +1559,6 @@ function geti(const su, v:string; var i:integer):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),i,res);
     geti:=(res=0);
@@ -1569,7 +1570,6 @@ function geti16(const su, v:string; var i:integer16):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),i,res);
     geti16:=(res=0);
@@ -1581,7 +1581,6 @@ function getw(const su, v:string; var w:smallword):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),w,res);
     getw:=(res=0);
@@ -1593,7 +1592,6 @@ function getl(const su, v:string; var l:longint):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),l,res);
     getl:=(res=0);
@@ -1605,7 +1603,6 @@ function getr(const su, v:string; var r:double):boolean;
 var   
   res, p: Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),r,res);
     getr:=(res=0);
@@ -1617,7 +1614,6 @@ function getx(const su, v:string; var b:boolean):boolean;
 var ss : string;
     p  : Integer;
 begin
-  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     ss:=trim(copy(su,p+1,1));
     if ss='J' then begin
@@ -1636,7 +1632,6 @@ function gets(const s,su, v:string; var ss:string):boolean;
 var 
   p: Integer;
 begin
-  p:=cpos('=',su); 
   if scomp(su,v,p) then
   begin
     ss := Mid(s, p+1);
@@ -2029,6 +2024,10 @@ end;
 
 {
   $Log$
+  Revision 1.136  2002/01/06 19:31:43  ma
+  - getX now supports searching for multiple keys
+    (provides backwards compatibility in case of changed key names)
+
   Revision 1.135  2002/01/05 16:01:08  mk
   - changed TSendUUData from record to class
 
