@@ -963,7 +963,7 @@ begin
     b64 := ismime and (encoding = encBase64);
     binary := ismime and (not (ctype in [tText, tMultipart, tMessage]) or
       ((encoding = encBinary) and (ctype <> tText)));
-    hd.typ := iifc(binary or b64 {!}, 'B', 'T');
+    hd.typ := iifc(binary, 'B', 'T');
     if (ctype = tText) and (charset <> '') and (charset <> 'us-ascii') and
       (charset <> 'iso-8859-1') then
       hd.error := 'Unsupported character set: ' + charset;
@@ -3420,6 +3420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/09/25 17:52:30  mk
+  - Typ wird nicht mehr auf Binaer gesetzt, wenn Msg B64 codiert ist
+
   Revision 1.63  2000/09/22 16:49:53  mk
   - fehlendes Findclose hinzugefuegt
 
