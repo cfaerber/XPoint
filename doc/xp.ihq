@@ -153,6 +153,9 @@ Raabe's Klystron BBS:
 19
 Bitte w„hlen Sie das gewnschte Brett. Mit <Enter>
 wird die Auswahl best„tigt, mit <Esc> abgebrochen.
+
+CTRL+Y springt zur naechsten Trennzeile
+
 @
 20
 <<Brett-šbersicht
@@ -181,6 +184,8 @@ richten und Bretteinstellungen.
 
   ^G   markiert alle Bretter, die zur gleichen Gruppe
        geh”ren wie das gew„hlte Brett.
+
+  ^Y   Die n„chste Trennzeile wird angesprungen.
 
    /   Schnellsuche
 
@@ -317,6 +322,8 @@ angezeigt.
 
    /   Schnellsuche
 
+  ^Y   Die n„chste Trennzeile wird angesprungen.
+
   ^W   schaltet die automatische Weiterschaltung ein
        bzw. aus.
 
@@ -411,7 +418,9 @@ tergeleitet werden soll. Mit <Enter> wird die Auswahl
 best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
-um.
+um, "O" schaltet die Sortierung nach Boxen um.
+Mit CTRL+Y wird zur n„chsten Trennzeile gesprungen. 
+
 @
 24
 ^^23

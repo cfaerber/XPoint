@@ -1528,12 +1528,14 @@ begin      { --- select --- }
 
     else begin
       case dispmode of
-       -1    : if not empty then begin
+       -1    : if not empty then begin               { Weiterleiten an Brett }
                  if t=keyf8 then gopm;
+                 if c=^Y then Trennzeilensuche;
                  testsuche(t);
                  end;
         0    : begin         { Brettliste }
                  if t=keyf6 then Makroliste(1);
+                 if c=^Y then Trennzeilensuche;
                  if (t=keytab) or (t=keystab) then begin
                    _unmark_;
                    selcall(UserDispmode,gl);
@@ -1596,7 +1598,7 @@ begin      { --- select --- }
                end;
         1,2  : begin                        { Userliste }
                  if t=keyf6 then Makroliste(2);
-
+                 if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin              {'O'}
                    usersortbox:=not usersortbox; 
                    setall; aufbau:=true;
@@ -1660,7 +1662,7 @@ begin      { --- select --- }
                end;
          3,4 : begin                              { Weiterleiten an User }
                  if c=k1_A then UserSwitch;       {'A'}
-
+                 if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin
                    usersortbox:=not usersortbox;  {'O'}
                    setall; aufbau:=true;
@@ -2000,6 +2002,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/16 08:39:59  jg
+  - Usertrennzeilen nicht mehr Wegreorganisierbar
+  - CTRL+Y springt in Brett- und User- und Weiterleit-/Auswahl-Fenstern
+    zur naechsten Trennzeile.
+  - Ein par Sourcefiles in Files.txt beschrieben.
+
   Revision 1.11  2000/04/15 21:22:46  jg
   - Trennzeilen fuer Userfenster eingebaut (STRG+T im Spezialmenue)
   - STRG+P im UserSpezialmenue (Position) verschiebt wie P im Brett-SpezialMenue

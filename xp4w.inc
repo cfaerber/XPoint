@@ -198,6 +198,23 @@ begin
   disprec[1]:=rec;
 end;
 
+Procedure TrennzeilenSuche;
+var   uname  : string[AdrLen];
+      rec     : longint;
+begin  
+  dbgo(dispdat,disprec[1]);
+  dbnext(dispdat);
+  repeat
+    if dispmode<=0 then dbreadn(bbase,bb_brettname,uname)
+      else dbReadN(ubase,ub_username,uname);
+    dbnext(dispdat); 
+  Until dbEOF(dispdat) or (pos('$/T',ustr(uname))>0);
+  if not dbEOF(dispdat) then dbskip(dispdat,-1);
+  rec:=dbRecno(dispdat);
+  disprec[1]:=rec;
+  aufbau:=true;
+end;
+
 procedure neuer_verteiler;
 begin
   if newverteiler then

@@ -74,7 +74,8 @@ begin
       if not user then begin
         dbReadN(bbase,bb_brettname,brett);
         brettc:=brett[1];
-        end;
+        end
+      else dbReadN(ubase,ub_username,brett);        
       _brett:=mbrettd(brettc,d);
       dbSeek(mbase,miBrett,_brett);
       leer:=dbEOF(mbase);
@@ -82,7 +83,7 @@ begin
         dbReadN(mbase,mb_brett,_mbrett);
         leer:=_mbrett<>_brett;
         end;
-      if leer and (user or (left(brett,3)<>'$/T')) then begin
+      if leer and (left(brett,3)<>'$/T') then begin
         dbReadN(d,nfeld,loesch);
         if not user then loesch:=copy(loesch,2,80);
         if adrbuch then
@@ -706,6 +707,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/04/16 08:39:59  jg
+  - Usertrennzeilen nicht mehr Wegreorganisierbar
+  - CTRL+Y springt in Brett- und User- und Weiterleit-/Auswahl-Fenstern
+    zur naechsten Trennzeile.
+  - Ein par Sourcefiles in Files.txt beschrieben.
+
   Revision 1.8  2000/04/15 21:44:47  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

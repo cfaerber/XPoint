@@ -64,17 +64,28 @@ XP1HELP.*       Online-Hilfe aufrufen
 XP1INPUT.PAS    diverse Eingaberoutinen
 XP1MENU.INC     MenÅfunktionen
 XP1O*.PAS       Diverses
+ - xp1o.pas      Lister-Tastenabfrage     
+   xp1s.inc      Lister-Hauptschleife
+   ...    
 XP1S.INC        externe Programme aufrufen
 XP2.PAS, XP2CFG.INC,
 XP2DB.PAS       Initialisierungen bei Programmstart
-XP2C.PAS        /XPoint/Config
+XP2C.PAS        Konfiguration aendern /XPoint/Config
+XP2CFG.INC      Konfiguration laden
 XP2F.*          Fressen, Ficken, Fernsehen
 XP3*.*          diverse Nachrichten-(Verarbeitungs/Datenbank)-Funktionen
 XP3EX.PAS       Nachrichten extrahieren
-XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation,
-                Suchfunktionen u.a.
+XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunktionen u.a.        
+ - xp4.pas       Tastaturabfragen,N/B/U-Fenster
+ - xp4.inc       Hauptmenueabfrage
+ - xp4d.inc      Zeilenanzeigeroutine fuer N/B/U-Fenster
+ - xp4e.pas      Editierfunktionen fuer N/B/U-Fenster  
+ - xp4p.pas      Suchfunktionen
+ ...
 XP5.PAS         Kalender, Screen Saver, Pa·wort u.a.
 XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
+ - xp6.pas       Hauptroutine Nachrichten verschicken
+  ... 
 XP7*.*          Netcall-Funktionen
 XP8.*           Brettmanager-Funktionen
 XP8FS.INC       Fileserver-Funktionen
