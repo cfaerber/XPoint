@@ -13,7 +13,7 @@
 { fn:         Unix-Dateiname, evtl. incl. Pfad                   }
 { destdir<>'' -> Namenskollision in diesem Verzeichnis vermeiden }
 
-function Unix2DOSfile(fn,destdir:pathstr):pathstr;
+function Unix2DOSfile(fn,destdir: String): String;
 var p,i     : byte;
     allowed : set of char;
     name    : namestr;
