@@ -106,19 +106,20 @@ type archd = packed record
                path     : shortstring;
              end;
 
-     ziphd = packed record
-               id       : longint;   { $04034b50 }
-               extver   : smallword;
-               flags    : smallword;
-               method   : smallword;
-               dostime  : smallword;
-               dosdate  : smallword;
-               crc32    : longint;
-               compsize : longint;
-               orgsize  : longint;
-               namelen  : smallword;
-               eflen    : smallword;
-               path     : shortstring;
+     ziphd = packed record             // Local file header
+               id       : longint;     // local file header signature     4 bytes  (0x04034b50)
+               extver   : smallword;   // version needed to extract       2 bytes
+               flags    : smallword;   // general purpose bit flag        2 bytes
+               method   : smallword;   // compression method              2 bytes
+               dostime  : smallword;   // last mod file time              2 bytes 
+               dosdate  : smallword;   // last mod file date              2 bytes
+               crc32    : longint;     // crc-32                          4 bytes
+               compsize : longint;     // compressed size                 4 bytes
+               orgsize  : longint;     // uncompressed size               4 bytes
+               namelen  : smallword;   // file name length                2 bytes 
+               eflen    : smallword;   // extra field length              2 bytes
+               path     : array[0..255] of Char; // file name (variable size)
+                                       // extra field (variable size)
              end;
 
      zoorec  = packed record
@@ -609,7 +610,7 @@ var buffer : array[0..511] of byte;
 label again;
 
   procedure zname(var fname);
-  type ba  = shortstring;
+  type ba  = array[0..255] of char;
   var  b,p : byte;
        s   : string;
   begin
@@ -633,7 +634,7 @@ label again;
         b:=length(s);
         while (s[b]<>'/') and (s[b]<>'\') do dec(b);
         name:=mid(s, b+1);
-        path:=copy(s,1,b);
+        path:= LeftStr(s,b);
         for b:=1 to length(path) do
           if path[b]='/' then path[b]:='\';
         end;
@@ -705,12 +706,25 @@ begin
                    inc(adr,ZIP.compsize+30+ZIP.namelen+ZIP.eflen);
                    ZIP.path[min(ZIP.namelen,255)]:=#0;
                    Zname(ZIP.path);
+                   { Bit 3: If this bit is set, the fields crc-32, compressed
+                     size and uncompressed size are set to zero in the
+                     local header.  The correct values are put in the
+                     data descriptor immediately following the compressed
+                     data.  (Note: PKZIP version 2.04g for DOS only
+                     recognizes this bit for method 8 compression, newer
+                     versions of PKZIP recognize this bit for any
+                     compression method.) }
+                   // skip 12 Bytes Data Descriptor
+                   if (zip.flags and 8) <> 0 then //
+                     inc(adr, 12);
                    case ZIP.method of
                      0    : method:='stored';
                      1    : method:='shrunk';
-                     2..5 : method:='reduced';
+                     2..5 : method:='reduced' + IntToStr(Zip.Method);
                      6    : method:='imploded';
                      8    : method:='deflated';
+                     9    : method:='deflate64';
+                     12   : method:='bzip2';
                    else
                      method:='unknown';
                    end;
@@ -941,6 +955,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2003/09/17 15:28:55  mk
+  - fixed misc problems with newer ZIP files
+
   Revision 1.37  2003/08/28 00:16:59  mk
   - SchaltJ() -> IsLeapYear()
 
