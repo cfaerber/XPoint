@@ -995,7 +995,8 @@ var t,lastt: taste;
     if quote=2 then sdata^.quotestr:=qchar;
 
     // process group settings and stuff
-    if not usermsg then begin
+    if not usermsg then 
+    begin
       dbOpen(d,GruppenFile,1);
       dbSeek(d,giIntnr,dbLongStr(grnr));
       gfound:=dbFound;
@@ -1020,9 +1021,9 @@ var t,lastt: taste;
           sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
           sdata^.replyto := dbReadStr(d,iifs(pm,'pmreplyto','amreplyto'));
           sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
-          end;
         end;
       end;
+    end;
     if pm then begin
       if quote=0 then
         BriefSchablone(pm,HeaderPriv,fn,empf,realname);
@@ -1187,7 +1188,8 @@ var t,lastt: taste;
 
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
-    then begin
+    then 
+    begin
       if AutoArchiv and reply then 
       begin
 {*}     dispRec := saveDispRec^;
@@ -2242,6 +2244,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.103  2001/09/06 18:52:02  mk
+  - formatted source
+
   Revision 1.102  2001/08/27 09:13:42  ma
   - changes in net type handling (1)
 

@@ -79,13 +79,14 @@ begin
       end;
     if user then brettc:='U';
     null:=0;
-    while not (dbEOF(d) or brk) do begin
+    while not (dbEOF(d) or brk) do 
+    begin
       inc(n);
-      if not user then begin
+      if not user then 
+      begin
         brett := dbReadNStr(bbase,bb_brettname);
         brettc:=brett[1];
-        end
-      else
+      end else
         brett := dbReadNStr(ubase,ub_username);
       _brett:=mbrettd(brettc,d);
       dbSeek(mbase,miBrett,_brett);
@@ -704,6 +705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2001/09/06 18:55:13  mk
+  - formatted source
+
   Revision 1.40  2001/08/12 11:50:39  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 
