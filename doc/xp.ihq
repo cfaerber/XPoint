@@ -104,6 +104,7 @@ CrossPoint verwenden:
    <<<Alt-1> >>   Bildschirmschoner aktivieren
 
    <<<Alt-N> >>   Fido-Nodeliste abfragen
+   <<<AltGr-N> >> Fido-Nodeliste durchsuchen
 
 
 Siehe auch: [Tastenfunktionen in Texteingabe-Feldern]@8076
@@ -13380,7 +13381,7 @@ z.B. Liste Nr. 329.
 
 
 <<Neu>>      Bindet eine neue Node- oder Pointliste ein.
-         Es k”nnen maximal 100 Listen gleichzeitig
+         Es k”nnen maximal 99 Listen gleichzeitig
          verwaltet werden. Gepackte Listen werden
          automatisch entpackt, sofern der passende
          Entpacker vorhanden ist.
@@ -13608,15 +13609,32 @@ Beispiele:
 958
 Drcken Sie ...
 
-<<<Enter> >>  um eine Nachricht an die gew„hlte Adresse zu
-          schreiben, oder um eine Datei bei der ge-
-          w„hlten Mailbox anzufordern.
+   <<A>>      fr eine erneute Nodelisten-Abfrage.
 
-   <<W>>      um die Liste in eine Datei zu schreiben.
+   <<D>>      fr ein erneutes Durchsuchen der
+          Nodeliste(n).
+
+<<<Enter> >>  um eine Nachricht an die gew„hlte Adresse
+          zu schreiben, oder um eine Datei bei der
+          gew„hlten Mailbox anzufordern. Diese
+          Funktion ist aus Sicherheitsgrnden unter
+          bestimmten Umst„nden deaktiviert.
+
+   <<S>>      um eine Text-Markiersuche zu starten.
+
+ <<<Tab> >>   um zum n„chsten markierten Suchbegriff zu
+          springen.
+
+   <<E>>      um die Markierung aller gefundenen Such-
+          begriffe ein-/auszuschalten.
+
+   <<W>>      um die Liste in eine Datei (oder in die
+          Zwischenablage) zu schreiben.
 
 <<<Ctrl-D> >> um die Liste auszudrucken.
 
-<<<Esc> >>    zum Beenden.
+ <<<Esc> >>   zum Beenden.
+
 @
 959
 <<Nachricht>>   Hiermit k”nnen Sie eine Nachricht an den
@@ -13626,9 +13644,6 @@ Drcken Sie ...
 <<Request>>     Hiermit k”nnen Sie Dateien bei der ge-
             w„hlten Mailbox anfordern (entspricht
             /Fido/Request).
-
-<<Info>>        Zur Nodelisten-Info - <<<Alt-N> >>- wechseln,
-            um weitere Informationen zu erhalten.
 
 <<Zurck>>      Kehrt zur Liste der gefundenen Adressen
             zurck.
@@ -17578,16 +17593,17 @@ Nodelisten nach verschiedenen Kriterien durchsuchen.
 13008
 <<Fido / Nodelisten / Abfragen
 
-Hier k”nnen Sie die Daten beliebiger Fido-Nodes ab-
-fragen. Geben Sie dazu einfach die betreffende Node-
-Adresse in der Form Zone:Net/Node an. Wenn Sie Zone
-und evtl. Net weglassen, setzt XP statt dessen Zone
-und Net Ihrer Fido-Stammbox (Ihres Bossnodes) ein.
+Hier k”nnen Sie die Daten beliebiger Fido-Nodes und
+-Points in allen eingebundenen Listen abfragen. Geben
+Sie dazu einfach die betreffende Node-/Point-AKA in
+der Form <<Zone:Net/Node[.Point]>> an. Wenn Sie Zone und
+evtl. Net weglassen, setzt XP statt dessen Zone und
+Net Ihrer Fido-Stammbox (Ihres Bossnodes) ein.
 
-Statt der Adresse k”nnen Sie auch nach dem Namen
+Statt nach der Adresse k”nnen Sie auch nach dem Namen
 eines Sysops oder Points suchen; geben Sie dazu den
-Nachnamen, den Beginn des Nachnamens oder den
-vollst„ndigen Namen an.
+Nachnamen, den Beginn des Nachnamens oder den voll-
+st„ndigen Namen an.
 @
 13101
 <<Fido / Request
@@ -17689,18 +17705,19 @@ Hier k”nnen Sie alle vorhandenen Filelisten nach
 bestimmten Begriffen oder Dateinamen durchsuchen
 und anschlieáend die Dateien "requesten".
 
-Um nach mehreren Begriffen zu suchen, trennen Sie
-die Begriffe mit <</&>>. Beispiel:
+Um nach mehreren Begriffen gleichzeitig zu suchen,
+trennen Sie die Begriffe mit <</&>>. Beispiel:
 
-<<            Haus/&Tuer
+                     <<Haus/&Tuer
 
 findet alle Dateieintr„ge in einer Fileliste, in
 denen die Begriffe "<<Haus>>" UND "<<Tuer>>" enthalten sind.
 
 <<Hinweis:>> Bei Dateieintr„gen, deren Beschreibungstext
-l„nger als 21 Zeilen (inkl. der Zeile, in der der
-Dateiname selbst steht) ist, werden nur Suchbegriffe
-gefunden, die sich in diesen ersten 21 Zeilen befinden.
+l„nger als 21 Zeilen ist (inkl. der Zeile, in der
+der Dateiname selbst steht), werden nur Suchbegriffe
+gefunden, die sich in diesen ersten 21 Zeilen
+befinden.
 @
 13301
 <<Wartung / Sonstiges / Neuaufbau Verkettung

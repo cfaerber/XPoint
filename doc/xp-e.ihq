@@ -61,18 +61,19 @@ see what happens.
 You can use the following Keys (almost) everywhere
 in CrossPoint:
 
-   <<F1>>       Help
-   <<Alt-F1>>   Previous help
-   <<F9>>       DOS-Shell
-   <<Alt-F4>>   End program
+   <<F1>>          Help
+   <<Alt-F1>>      Previous help
+   <<F9>>          DOS-Shell
+   <<Alt-F4>>      End program
 
-   <<Alt-K>>    Calendar
-   <<Alt-E>>    Editor
-   <<Alt-T>>    Notepad
-   <<Alt-I>>    Print screen to file
-   <<Alt-1>>    Switch off monitor display
+   <<Alt-K>>       Calendar
+   <<Alt-E>>       Editor
+   <<Alt-T>>       Notepad
+   <<Alt-I>>       Print screen to file
+   <<Alt-1>>       Switch off monitor display
 
-   <<Alt-N>>    Browse nodelist
+   <<Alt-N>>       Nodelist lookup
+   <<Ctrl-Alt-N>>  Nodelist search
 @
 5
 <<CrossPoint - Support
@@ -9113,10 +9114,10 @@ If this weeks list number is 322, then next weeks
 will be 329 and so on and so forth.
 
 
-<<New>>      Configure either a new Node or Pointlist
-         It is possible to have a maximum of 100
+<<New>>      Configure either a new Node or Pointlist.
+         It is possible to have a maximum of 99
          lists. Packed Lists will be automatically
-         unpacked, providing the correct archiver has
+         unpacked, provided the correct archiver has
          been installed.
 
 <<Edit>>     Edit the configuration of the selected
@@ -9302,13 +9303,38 @@ Examples:
 
       Searches through Pointlists only.
 @
+958
+Press ...
+
+   <<L>>      to start a new nodelist lookup.
+
+   <<S>>      to start a new nodelist search.
+
+<<<Enter> >>  to write a message to the selected user
+          or to f'request a file from the selected
+          BBS. Due to safety reasons this function is
+          disabled under certain circumstances.
+
+<<<Ctrl-S> >> to start a (mark) text search. (Sorry, this
+          key is inconsistent with the one in the
+          message reader, but <<S>> is already used.)
+
+ <<<Tab> >>   to jump to the next marked search term.
+
+   <<E>>      to switch marking of search terms on/off.
+
+   <<W>>      to write the list to a text file (or to
+          the clipboard).
+
+   <<D>>      to make a printout of the list.
+
+ <<<Esc> >>   Guess what. ;-)
+
+@
 959
 <<Mail>>        Write a message to this User
 
 <<Request>>     Make a file request to this system
-
-<<Info>>        Lookup this system in the nodelist
-            (same as Alt-N)
 
 <<Abort>>       Self-explanatory, really :-)
 @
@@ -11889,13 +11915,13 @@ A very comprehensive "tool" for searching the
 nodelist for matching criteria.
 @
 13008
-<<Fido / Nodelists / Find>>
+<<Fido / Nodelists / Lookup>>
 
-You can browse the data for Fido nodes. Enter the
-node address in the usual form <Zone>:<Net>/<Node>.
-If you leave off the zone and even the net,
-CrossPoint will take the zone and net of your main
-Fido server (Bossnode) as default.
+You can lookup node and point data in all of your
+lists. Enter the node/point AKA in the usual form
+<<Zone:Net/Node[.Point]>>. If you leave off the zone and
+even the net, CrossPoint will take the zone and net
+of your main Fido server (Bossnode) as default.
 
 Instead of an address, you can enter the name of a
 sysop or point. Enter the surname, first part of the
@@ -12016,15 +12042,15 @@ string and CrossPoint looks through *all* lists and
 gathers all the occurrences together in a list.
 
 If you want to search for more as one item then
-divide the items with - /& -.
-For example:
-	/&terminal/&modem/&hello
+divide the items with <</&>>.  Example:
+
+               <<terminal/&modem/&hello
+
 will find all files whose description includes
 the words "terminal" AND "modem" AND "hello".
 
-Marking the files you want to order from this list
-with <Space>, press <Enter> to start setting up the
-request.
+Select the files you want to request with <Space>
+and press <Enter> to finish the request.
 @
 13301
 <<Re-Org / Misc. / Rebuild Ref. Links
