@@ -493,16 +493,20 @@ var x,y,yy  : byte;
   end;
 
   procedure show;
-  var proz : byte;
+  var
+    proz : byte;
+    x, y: Integer;
   begin
     attrtxt(col.colmbox);
     proz:=n*100 div count;
-    if proz<>lastproz then begin
+    if proz<>lastproz then
+    begin
       moff;
-      write(min(proz,100):3,#8#8#8);
+      Wrt2(Format('%3d', [min(proz,100)]));
+      GotoXY(WhereX-3, WhereY);
       mon;
       lastproz:=proz;
-      end;
+    end;
     if not break then begin
       testbrk(break);
       if break then begin
@@ -614,7 +618,8 @@ begin
             close(f1);
             end;
           moff;
-          write(getres2(451,5),#8#8#8#8#8);   { ' packen ...     %' }
+          Wrt2(getres2(451,5));
+          GotoXY(WhereX-5, WhereY); { ' packen ...     %' }
           mon;
           lastproz:=101;
           reset(f1,1);
@@ -696,6 +701,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2001/01/21 09:24:10  mk
+  - Write() -> Wrt2
+
   Revision 1.30  2001/01/14 10:13:34  mk
   - MakeHeader() integreated in new unit
 
