@@ -33,20 +33,30 @@ uses  xpglobal,
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,		{ Fuer die Sonderzeichen an der Console }
+{$ELSE }
+  crt,
 {$ENDIF }
   dos,typeform,fileio, xpdatum,montage;
 
 const
-      midlen      = 120;
+      midlen      = 160;
       orglen      = 80;
-      adrlen      = 80;
-      realnlen    = 70;               { L„nge Realname }
+      realnlen    = 120;              { L„nge Realname }
+      adrlen      = realnlen;
       hderrlen    = 60;
+{$IFDEF Ver32 }
+      maxemp      = 500;
+      maxulines   = 200;              { max. zus„tzliche U-Zeilen }
+      maxmore     = 50;               { max. String's pro RFC-Headerzeile }
+      maxrefs     = 50;               { max. gespeicherte References }
+      maxfollow   = 20;               { max. Followup-To-Zeilen }
+{$ELSE }
       maxemp      = 50;
       maxulines   = 60;               { max. zus„tzliche U-Zeilen }
       maxmore     = 15;               { max. String's pro RFC-Headerzeile }
       maxrefs     = 20;               { max. gespeicherte References }
       maxfollow   = 10;               { max. Followup-To-Zeilen }
+{$ENDIF }
 {$IFDEF BP }
       bufsize     = 16384;
       outbufsize  = 16384;
@@ -54,18 +64,15 @@ const
       bufsize     = 32768;
       outbufsize  = 32768;
 {$ENDIF }
-      BetreffLen  = 70;
+      BetreffLen  = 250;
       readempflist= true;
       postadrlen  = 80;
       telelen     = 60;
       homepagelen = 90;
-      { 01/2000 oh }
       custheadlen = 60;
-      { /oh }
       maxaddhds   = 10;
       xpboundary  : string = '-';     { 06.01.2000 robo }
 
-{      attrCrash   = $0002; }
       attrFile    = $0010;            { File Attach }
       AttrMPbin   = $0040;            { Multipart-Binary }
       attrReqEB   = $1000;            { EB anfordern }
@@ -161,8 +168,8 @@ type  OrgStr  = string[orglen];
                   kopien     : empfnodep;
                   xempf      : empflistt;
                   empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  betreff    : string[250];   { verl„ngert wegen MIME-Codierung }
-                  absender   : string[80];
+                  betreff    : string[BetreffLen]; { verl„ngert wegen MIME-Codierung }
+                  absender   : string[realnlen];
                   datum      : string[11];    { Netcall-Format }
                   zdatum     : string[22];    { ZConnect-Format }
 {$IFDEF BP }
@@ -896,15 +903,8 @@ begin
     if ersetzt<>''    then wrs('ersetzt: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
-
-    { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive     then wrs('X-NO-ARCHIVE: yes');
-    { /robo }
-
-    { 07.02.2000 robo - X-Priority Konvertierung }
     if priority<>0    then wrs('X-PRIORITY: '+strs(priority));
-    { /robo }
-
     if prio<>0        then wrs('Prio: '  +strs(prio));
     if organisation<>''  then wrs('ORG: '+organisation);
     if postanschrift<>'' then wrs('Post: '+postanschrift);
@@ -1750,51 +1750,41 @@ var p,i   : integer; { byte -> integer }
     if (firstchar(s0)='"') and (cpos('<',s0)>5) then begin  { neu in 3.11 }
       p:=pos('"',mid(s0,2));
 
-{ 23.11.1999 robo - Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
-
+      { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
       while s0[p]='\' do begin
         delete(s0,p,1);
         p:=pos('"',mid(s0,p+1))+p-1;
       end;
 
-{ /robo }
-
       if p>0 then begin
-{        realname:=copy(s0,2,min(40,p-1)); }
         realname:=copy(s0,2,min(realnlen,p-1));
-        { 11.10.1999 robo - Realname verl„ngert }
-
         s0:=trim(mid(s0,p+2));
         end;
       end;                                                  { ... bis hier }
     p:=cpos('(',s0);
     p2:=cpos('<',s0);      { 06.01.1999 robo - Klammer im Realname beachten }
     if (p>0) and ((p2=0) or (p2>cpos('>',s0))) then begin { 06.01.1999 robo }
-{      realname:=copy(s0,p+1,min(length(s0)-p-1,40)); }
       realname:=copy(s0,p+1,min(length(s0)-p-1,realnlen));
-      { 11.10.1999 robo - Realname verl„ngert }
-
-      s0:=trim(left(s0,min(p-1,80)));
+      s0:=trim(left(s0,min(p-1,realnlen)));
       p:=pos('),',realname);   { mehrerer ","-getrennte Adressen }
       if p>0 then truncstr(realname,p-1);
       end;
     p:=cpos('<',s0);
-    if p>0 then begin
+    if p>0 then
+    begin
       p2:=cpos('>',s0);
       if p2<p then adr:=copy(s0,p+1,AdrLen)
         else begin
           adr:=copy(s0,p+1,min(p2-p-1,AdrLen));
           if realname='' then
-{            if p=1 then realname:=trim(copy(s0,p2+1,40)) }
-{            else realname:=trim(left(s0,min(p-1,40)));   }
-            if p=1 then realname:=trim(copy(s0,p2+1,realnlen))
-            else realname:=trim(left(s0,min(p-1,realnlen)));
-            { 11.10.1999 robo - Realname verl„ngert }
-
-          end;
+            if p=1 then
+              realname:=trim(copy(s0,p2+1,realnlen))
+            else
+              realname:=trim(left(s0,min(p-1,realnlen)));
+        end;
       end
     else
-      adr:=left(s0,80);
+      adr:=left(s0,realnlen);
     if (adr[1]='@') and (cpos(':',adr)>0) then begin
       delete(adr,1,cpos(':',adr));   { Route-Adresse nach RFC-822 aufl”sen }
       if cpos('@',adr)=0 then adr:=adr+'@nowhere';
@@ -1821,17 +1811,12 @@ var p,i   : integer; { byte -> integer }
       _i:=1;                                   { 06.01.1999 robo }
       hd.empfanz:=0;
       repeat
-
-{ 06.01.1999 robo }
-{        pk:=cpos(',',sto); }
-
         _quote:=false;
         pk:=0;
         repeat
           inc(pk);
           if sto[pk]='"' then _quote:=not _quote;
         until ((sto[pk]=',') and not _quote) or (pk=length(sto));
-{ /robo }
 
         s0:=trim(left(sto,pk-1));
         sto:=trim(mid(sto,pk+1));
@@ -1851,9 +1836,7 @@ var p,i   : integer; { byte -> integer }
             s0:=mid(s0,p+1);
           end;
         inc(hd.empfanz);
-{        GetAdr(hd.xempf[hd.empfanz],d40); }  { hd.xempf[1]:=s0; }
         GetAdr(hd.xempf[hd.empfanz],drealn);   { hd.xempf[1]:=s0; }
-        { 11.10.1999 robo - Realname verl„ngert }
 
         if (sto='') and (_i<=manz) then begin      { 06.01.1999 robo }
           sto:=trim(smore[_i]);                    { 06.01.1999 robo }
@@ -2014,8 +1997,6 @@ var p,i   : integer; { byte -> integer }
 
     _i:=pos('>',s0);
     if _i>0 then s0:=copy (s0,1,_i-1);
-
-{ /robo }
 
     hd.ref:=s0;
   end;
@@ -2312,22 +2293,13 @@ begin
     if ustr(wab)=ustr(absender) then
       wab:='';
     MimeIsoDecode(betreff,250);
-{   MimeIsoDecode(realname,40); }
     MimeIsoDecode(realname,realnlen);
-    { 11.10.1999 robo - Realname verl„ngert }
-
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
 
-{ 28.01.2000 robo }
     for i := 1 to hd.ulines do MimeIsoDecode (uline^ [i], 255);
-{/robo }
 
- {  s:=betreff;  ISO2IBM; betreff:=s;
-    s:=realname; ISO2IBM; realname:=s;
-    s:=summary;  ISO2IBM; summary:=s;
-    s:=keywords; ISO2IBM; keywords:=s; }
     if (empfanz=1) and (followups=1) and (xempf[1]=followup[1]) then
       followups:=0;
     MimeAuswerten;
@@ -3538,6 +3510,9 @@ end.
 
 {
   $Log$
+  Revision 1.26  2000/05/05 18:13:00  mk
+  - einige Limits beseitigt
+
   Revision 1.25  2000/05/05 15:27:58  ml
   zpr und uuz wieder unter linux lauffähig (ncrt)
 

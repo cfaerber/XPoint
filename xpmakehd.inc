@@ -106,18 +106,10 @@ var i,res : integer;
   var p : byte;
   begin
     p:=pos(' (',line);
-    if (p=0) or (p<cpos('@',line)) then p:=80
+    if (p=0) or (p<cpos('@',line)) then p:= realnlen
     else
-
-{ 11.10.1999 robo - Realname verl„ngert }
-
-{      realname:=trim(copy(line,p+2,min(length(line)-p-2,40))); }
-       realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen)));
-
-
-{ /robo}
-
-    name:=left(line,min(79,p-1));
+      realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen)));
+    name:=left(line,min(realnlen-1,p-1));
   end;
 
   procedure LRead(var s:string; maxlen:byte);
@@ -607,6 +599,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/05/05 18:13:00  mk
+  - einige Limits beseitigt
+
   Revision 1.10  2000/05/04 11:02:18  mk
   - jetzt auch noch den Debug-Code entfernt
 

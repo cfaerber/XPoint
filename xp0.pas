@@ -67,11 +67,11 @@ const  {$IFDEF DPMI}
        BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fÅr }
        BrettLen    = 81;             { die entsprechenden Felder ver-  }
        eBrettLen   = 79;             { wendet werden                   }
-       AdrLen      = 80;
+       AdrLen      = 120;
        eAdrLen     = 79;
        BetreffLen  = 70;
        DateLen     = 11;
-       midlen      = 120;
+       midlen      = 160;
        AKAlen      = 127;
        OrgLen      = 80;             { Organisation }
        PostadrLen  = 80;             { Postadresse }
@@ -83,7 +83,7 @@ const  {$IFDEF DPMI}
        hdErrLen    = 60;
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
-       realnlen = 40;                { robo 01/00 LÑnge der Realnames }
+       realnlen = 120;               { LÑnge der Realnames }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -1134,6 +1134,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.37  2000/05/05 18:13:00  mk
+  - einige Limits beseitigt
+
   Revision 1.36  2000/05/04 18:43:15  jg
   - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
     entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
