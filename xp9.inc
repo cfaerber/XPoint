@@ -269,7 +269,7 @@
   begin
     dbGo(d,drec[p]);
     dbRead(d,'dateiname',fn);
-    ReadBox(nt,fn,boxpar);
+    ReadBox(0,fn,boxpar);
     pppm:=boxpar^.pppmode;
     if empty then
       nt:=nt_Netcall
@@ -1863,6 +1863,9 @@
 
 {
   $Log$
+  Revision 1.10.2.46  2001/09/06 19:12:32  mk
+  - fixed use of not initialized variable nt in NewBox
+
   Revision 1.10.2.45  2001/08/12 12:03:33  mk
   - optimized last checkin a bit more ;)
 
