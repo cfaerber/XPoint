@@ -230,9 +230,12 @@ begin
     parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8);
     end
   else parfn:=orgfn; 
-                              {Korrekte File-extension verwenden}  
-  parfn:=left(parfn,rightpos('.',parfn))+
-    iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
+                              {Korrekte File-extension verwenden}
+  if cpos('.',parfn)>0 then
+    parfn:=left(parfn,rightpos('.',parfn))
+  else
+    parfn:=parfn+'.';
+  parfn:=parfn+iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
@@ -247,6 +250,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.1  2000/10/11 14:52:11  mk
+  JG:- Bug bei Erstellung des Dateinamens behoben
+
   Revision 1.16  2000/05/04 10:43:01  mk
   - Unbenutze Units aus uses entnommen
 
