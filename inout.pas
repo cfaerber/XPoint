@@ -375,7 +375,7 @@ begin
       end;
 
     {$ELSE }
-      Debug.DebugLog('inout','Unimplemented function called (Cursor)',dlWarning);
+      Debug.DebugLog('inout','Unimplemented function called (Cursor)',dlTrace);
 (*      case t of
         curnorm : Cursoron;
         cureinf : CursorBig;
@@ -702,7 +702,7 @@ begin
   until z<>'!!';
 
   Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d','#%d'),
-    [Integer(ord(z[1])),Integer(ord(z[2]))]), DLTrace);
+    [Integer(ord(z[1])),Integer(ord(z[2]))]), dlTrace);
 end;
 
 Procedure testbrk(var brk:boolean);
@@ -1680,6 +1680,9 @@ end;
 
 {
   $Log$
+  Revision 1.86  2001/10/24 09:25:17  ma
+  - adjusted debug levels
+
   Revision 1.85  2001/10/20 17:26:39  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

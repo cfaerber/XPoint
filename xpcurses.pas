@@ -507,7 +507,7 @@ begin
   { Fenster erzeugen }
   win.wHnd:= newwin(win.Rows, win.Cols, win.y, win.x);
 
-  Debug.DebugLog('xpcurses',Format('MakeWindow(x1=%d,x2=%d,y1=%d,y2=%d)',[x1,x2,y1,y2]),dlDebug);
+  Debug.DebugLog('xpcurses',Format('MakeWindow(x1=%d,x2=%d,y1=%d,y2=%d)',[x1,x2,y1,y2]),dlTrace);
   Assert(Assigned(win.wHnd),'xpcurses'#0'MakeWindow failed');
 
   win.isRel:= false;
@@ -555,7 +555,7 @@ begin
   { Refresh erzwingen }
   wrefresh(ActWin.wHnd);
 
-  Debug.DebugLog('xpcurses',' RestoreWindow',dlInform);
+  Debug.DebugLog('xpcurses',' RestoreWindow',dlTrace);
 end;
 
 
@@ -851,7 +851,7 @@ begin
 
 again:
   l:= wgetch(BaseWin.wHnd);
-  Debug.DebugLog('xpcurses',Format('wgetch: %d',[Integer(l)]),DLTrace);
+  Debug.DebugLog('xpcurses',Format('wgetch: %d',[Integer(l)]),dlTrace);
 
   { if it's an extended key, then map to the IBM values }
   if (l > 255) or (l=KEY_MOUSE) then  // is it a ncurses-special key?
@@ -872,7 +872,7 @@ again:
   end else
     Result:= TranslateSpecialChar(chr(ord(l)));
 
-  Debug.DebugLog('xpcurses',Format('ReadKey: %d',[Integer(Result)]),DLTrace);
+  Debug.DebugLog('xpcurses',Format('ReadKey: %d',[Integer(Result)]),dlTrace);
   if (b) then echo;
 end;
 
@@ -1043,7 +1043,7 @@ begin
       delwin(ActWin.wHnd);
     system.Move(BaseWin, ActWin, sizeof(TWinDesc));
   end;
-  DebugLog('xpcurses','XPCurses::TextMode',dlDebug);
+  Debug.DebugLog('xpcurses','TextMode',dlDebug);
 
   LastMode := mode;
   DirectVideo := true;
@@ -1205,7 +1205,7 @@ begin
     Result := 7
   else
     Result := 3;
-  DebugLog('xpcurses',Format('Videotype:%d',[Integer(Result)]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('Videotype:%d',[Integer(Result)]),dlTrace);
 end;
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
@@ -1213,7 +1213,7 @@ end;
 procedure Window(x1, y1, x2, y2: integer);
 begin
   if not __isInit then InitXPCurses;
-  DebugLog('xpcurses',Format('Window(%d,%d,%d,%d)',[x1,x2,y1,y2]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('Window(%d,%d,%d,%d)',[x1,x2,y1,y2]),dlTrace);
 
   Exit;
   { Aus INOUT.PAS uebernommen }
@@ -1249,35 +1249,35 @@ begin
   GotoXY(x0, y0);
   SetTextAttr(ta);
 
-  DebugLog('xpcurses',Format('Display Hard(%d,%d,''%s'')',[x,y,s]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('Display Hard(%d,%d,''%s'')',[x,y,s]),dlTrace);
 end;
 
 procedure CursorOn;
 begin
   if not __isInit then InitXPCurses;
   curs_set(1);
-  DebugLog('xpcurses','Cursor On',dlTrace);
+  Debug.DebugLog('xpcurses','Cursor On',dlTrace);
 end;
 
 procedure CursorBig;
 begin
   if not __isInit then InitXPCurses;
   curs_set(2);
-  DebugLog('xpcurses','Cursor Big',dlTrace);
+  Debug.DebugLog('xpcurses','Cursor Big',dlTrace);
 end;
 
 procedure CursorOff;
 begin
   if not __isInit then InitXPCurses;
   curs_set(0);
-  DebugLog('xpcurses','Cursor Off',dlTrace);
+  Debug.DebugLog('xpcurses','Cursor Off',dlTrace);
 end;
 
 procedure mDelay(msec: word);
 begin
   if not __isInit then InitXPCurses;
   napms(msec);
-  DebugLog('xpcurses',Format('MDelay(%u {ms})',[msec]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('MDelay(%u {ms})',[msec]),dlTrace);
 end;
 
 { XPWIN32.PAS-Plagiat -------------------------------------------------- }
@@ -1287,7 +1287,7 @@ begin
   if not __isInit then InitXPCurses;
   getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenLines:= MaxRows;
-  DebugLog('xpcurses',Format('SysGetScreenLines: %d',[MaxRows]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('SysGetScreenLines: %d',[MaxRows]),dlTrace);
 end;
 
 function SysGetScreenCols: integer;
@@ -1295,7 +1295,7 @@ begin
   if not __isInit then InitXPCurses;
   getmaxyx(stdscr,MaxRows,MaxCols);
   SysGetScreenCols:= MaxCols;
-  DebugLog('xpcurses',Format('SysGetScreenCols: %d',[MaxCols]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('SysGetScreenCols: %d',[MaxCols]),dlTrace);
 end;
 
 { Ermittelt die gr”áte Ausdehnung des Screens, die in Abh„ngigkeit
@@ -1306,7 +1306,7 @@ begin
   getmaxyx(stdscr,MaxRows,MaxCols);
   Lines:= MaxRows;
   Cols:= MaxCols;
-  DebugLog('xpcurses',Format('SysGetMaxScreenSize(Lines:=%d,Cols:=%d)',[MaxRows,MaxCols]),dlTrace);
+  Debug.DebugLog('xpcurses',Format('SysGetMaxScreenSize(Lines:=%d,Cols:=%d)',[MaxRows,MaxCols]),dlTrace);
 end;
 
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
@@ -1317,7 +1317,7 @@ begin
   resizeterm(Lines, Cols);
   refresh;
 }
-  DebugLog('xpcurses',Format('SysSetScreenSize(Lines=%d,Cols=%d)',[Lines,Cols]),dlDebug);
+  Debug.DebugLog('xpcurses',Format('SysSetScreenSize(Lines=%d,Cols=%d)',[Lines,Cols]),dlDebug);
 end;
 
 procedure SysSetBackIntensity;
@@ -1357,7 +1357,7 @@ end;
 procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
-  DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
+  Debug.DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
 {$ifdef Debug}
   writeln;
   writeln('This message is visible only in the debug version!');
@@ -1398,12 +1398,12 @@ var
          RegStr := keyESCSeqs[I].Sequenz;
          Error := define_key(PChar(RegStr), keyESCSeqs[I].nccode);
          if (Error <> OK) then
-           DebugLog('xpcurses', Format('KeyDefinition: Error defining ' +
-           'Key [%s]->[%d]', [RegStr, keyESCSeqs[I].nccode]),dlDebug);
+           Debug.DebugLog('xpcurses', Format('KeyDefinition: Error defining ' +
+           'Key [%s]->[%d]', [RegStr, keyESCSeqs[I].nccode]),dlWarning);
        end;
   end;
 begin
-  DebugLog('xpcurses','StartCurses: Starting up Curses.',dlDebug);
+  Debug.DebugLog('xpcurses','StartCurses: Starting up Curses.',dlDebug);
   { save the current terminal settings }
   tcGetAttr(STDIN,tios);
   { Curses starten }
@@ -1551,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2001/10/24 09:25:17  ma
+  - adjusted debug levels
+
   Revision 1.60  2001/10/21 12:33:54  ml
   - killed local constant
   - fix for range-error
