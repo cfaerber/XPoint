@@ -25,6 +25,7 @@ unit ndiff;
 interface
 
 procedure StartCommandLineNdiff;
+procedure processlist(const nl, nd: String);
 
 implementation
 
@@ -72,63 +73,9 @@ begin
   halt(1);
 end;
 
-procedure fehler(txt: string);
+procedure fehler(const txt: string);
 begin
-  writeln;
-  writeln('Fehler: ', txt);
-  halt(1);
-end;
-
-procedure getpar;
-var
-  i: integer;
-  s: string;
-  p: byte;
-
-  procedure TestEx(fn: TFileName);
-  var
-    t: text;
-  begin
-    assign(t, fn);
-    reset(t);
-    if ioresult <> 0 then fehler(UpperCase(fn) + ' ist nicht vorhanden.');
-    close(t);
-  end;
-
-begin
-  if paramcount < 3 then helppage;
-  shrink := LowerCase(paramstr(2)) = '-s';
-  if shrink then
-  begin
-    if paramcount < 4 then helppage;
-    nd_file := paramstr(3);
-    regs := paramcount - 2;
-    for i := 2 to regs do
-    begin
-      s := paramstr(i + 2);
-      p := cpos(':', s);
-      if p = 0 then
-      begin
-        reg[i].zone := ival(s);
-        reg[i].region := $FFFF;
-      end
-      else
-      begin
-        reg[i].zone := ival(LeftStr(s, p - 1));
-        reg[i].region := ival(mid(s, p + 1));
-      end;
-      if reg[i].zone = 0 then
-        fehler('Ungltige Zone-Angabe: ' + s);
-    end;
-    nl_file := nd_file;
-  end
-  else
-  begin                                 { not shrink }
-    nl_file := paramstr(2);
-    nd_file := paramstr(3);
-    TestEx(nl_file);
-  end;
-  TestEx(nd_file);
+  raise Exception.Create(txt);
 end;
 
 procedure testversion;
@@ -151,7 +98,7 @@ begin
   nl_new := LeftStr(nl_file, cpos('.', nl_file)) + RightStr(nd_file, 3);
 end;
 
-procedure processlist;
+procedure processlist(const nl, nd: String);
 const
   temp = 'ndiff.$$$';
 var
@@ -168,6 +115,9 @@ var
   end;
 
 begin
+  nl_file := nl;
+  nd_file := nd;
+  TestVersion;
   writeln(nl_file, ' + ', nd_file, ' -> ', nl_new);
   fs := _filesize(nl_file);
   fsplit(nl_file, dir, name, ext);
@@ -230,6 +180,54 @@ begin
   rename(t3, nl_new);
   writeln(#13'ok.  ');
 end;
+
+procedure getpar;
+var
+  i: integer;
+  s: string;
+  p: byte;
+
+  procedure TestEx(const fn: TFileName);
+  begin
+    if not FileExists(fn) then fehler(FileUpperCase(fn) + ' ist nicht vorhanden.');
+  end;
+
+begin
+  if paramcount < 3 then helppage;
+  shrink := LowerCase(paramstr(2)) = '-s';
+  if shrink then
+  begin
+    if paramcount < 4 then helppage;
+    nd_file := paramstr(3);
+    regs := paramcount - 2;
+    for i := 2 to regs do
+    begin
+      s := paramstr(i + 2);
+      p := cpos(':', s);
+      if p = 0 then
+      begin
+        reg[i].zone := ival(s);
+        reg[i].region := $FFFF;
+      end
+      else
+      begin
+        reg[i].zone := ival(LeftStr(s, p - 1));
+        reg[i].region := ival(mid(s, p + 1));
+      end;
+      if reg[i].zone = 0 then
+        fehler('Ungltige Zone-Angabe: ' + s);
+    end;
+    nl_file := nd_file;
+  end
+  else
+  begin                                 { not shrink }
+    TestEx(paramstr(2));
+    ProcessList(paramstr(2), paramstr(3));
+  end;
+  TestEx(nd_file);
+end;
+
+
 
 procedure KillIndex;
 var
@@ -333,18 +331,15 @@ begin
   logo;
   getpar;
   if shrink then
-    shrinklist
-  else
-  begin
-    testversion;
-    processlist;
-  end;
+    shrinklist;
   KillIndex;
 end;
 
-end.
 {
   $Log$
+  Revision 1.17  2001/11/22 17:40:02  mk
+  - call node diff update directly
+
   Revision 1.16  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -387,3 +382,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

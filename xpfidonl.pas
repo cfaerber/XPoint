@@ -46,7 +46,7 @@ uses
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}   
-  xpfido;
+  xpfido, ndiff;
 
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
@@ -404,14 +404,15 @@ var diffdir  : string;
       exit;
       end;
     chdir(fidodir_);
+      UDiff:=true;
     log(NodeList.GetFilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
-    shell(OwnPath+'OPENXP NDIFF.EXE '+NodeList.GetFilename(i)+' '+ufile,250,3);
-    if errorlevel>0 then begin
+    try
+      Processlist(NodeList.GetFileName(i), ufile);
+    except
       arfehler(2112,auto);    { 'Fehler beim Bearbeiten der Node-/Pointdiff' }
       log(getres2(2130,4));   { dito }
-      end
-    else
-      UDiff:=true;
+      UDiff:=false;
+    end;
   end;
 
   function CopyUpdateFile:boolean;    { Update kopieren }
@@ -526,6 +527,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2001/11/22 17:40:02  mk
+  - call node diff update directly
+
   Revision 1.40  2001/11/22 10:39:58  mk
   - NDIFF is intern, removed test for ndiff.exe
 
