@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.20 RC3';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.20 RC4';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = '';           { '' oder ' beta' }
 
 {$IFDEF VER32 }
@@ -101,6 +101,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7.2.3  2000/06/01 15:45:21  mk
+  - RC4 definiert
+
   Revision 1.7.2.2  2000/04/30 09:47:47  mk
   - Versionsaenderung auf 3.20 RC3
 
