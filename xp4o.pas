@@ -10,14 +10,8 @@
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
-{$IFDEF Debug }
-  {$DEFINE Debugsuche }   { Checkfenster vor dem Start von Suchen anzeigen }
-{$ENDIF }
-
-{$DEFINE History}       { Such-History fuer RC hier erstmal ausklammern } 
-
-
 {$I XPDEFINE.INC }
+
 {$IFDEF BP }
   {$O+,F+}
 {$ENDIF }
@@ -136,11 +130,9 @@ type  suchrec    = record
                      typ           : string[10];
                    end;
 const srec       : ^suchrec = nil;
-{$Ifdef History}
       history0   : string[Suchlen]='';
       history1   : string[Suchlen]='';
       history2   : string[Suchlen]='';
-{$Endif}
 
 var x,y   : byte;
     brk   : boolean;
@@ -197,7 +189,7 @@ label ende;
   m,n,i   : byte;
   quotes  : boolean;
                                        
-{$IFDEF DebugSuche}                   { Zum Debuggen der Suchstringerkennung} 
+{$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung} 
   Procedure Show_Seekstrings;
   var n,x,y:byte;
    begin
@@ -229,7 +221,7 @@ label ende;
 {$ENDIF}
 
   begin
-{$IFDEF DebugSuche}
+{$IFDEF Debug}
       for n:=0 to 9 do
       begin
         seekstart[n]:=0;
@@ -294,7 +286,7 @@ label ende;
       seeknot[0]:=false; 
       end; 
 
-{$IFDEF DebugSuche}
+{$IFDEF Debug}
     if cpos('c',lstr(suchopt))>0 then show_seekstrings; { "Writeln is der Beste debugger..." }
 {$ENDIF}
 
@@ -449,10 +441,10 @@ label ende;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-          ukonv(betr2,high(betr2));
-          ukonv(user2,high(user2));  
-          ukonv(realn,high(realn)); 
-          ukonv(hdp^.fido_to,high(hdp^.fido_to));
+          UkonvStr(betr2,high(betr2));
+          UkonvStr(user2,high(user2));  
+          UkonvStr(realn,high(realn)); 
+          UkonvStr(hdp^.fido_to,high(hdp^.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
@@ -487,7 +479,7 @@ label ende;
         such:=hdp^.msgid;
         end;
 *)
-      if umlaut then ukonv(such,high(such));
+      if umlaut then UkonvStr(such,high(such));
 
       j:=0;
       repeat
@@ -508,7 +500,7 @@ label ende;
       if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
-        if umlaut then ukonv(such,high(such));    
+        if umlaut then UkonvStr(such,high(such));    
 
         j:=0;
         repeat
@@ -608,12 +600,10 @@ begin
       seek:=suchstring;
       maddstring(3,2,getres2(441,2),suchstring,32,SuchLen,range(' ',#255));
       mnotrim;
-{$ifdef History}
       mappsel(false,history0);
       mappsel(false,history1);
       mappsel(false,history2);
       mset3proc(seek_cutspace);
-{$endif}
       mhnr(530);                                       { 'Suchbegriff ' }
       if suchfeld<>'MsgID'
       then Begin 
@@ -631,7 +621,6 @@ begin
         end; 
       readmask(brk);
       closemask;
-{$ifdef History}
       if suchstring <> seek then
       begin
         if  (seek<>history0) and (seek<>history1) and (seek<>history2) then
@@ -641,7 +630,6 @@ begin
           history0:=seek;            
           end;
         end;
-{$endif}
       if suchfeld='Betreff' then begin
         i:=ReCount(suchstring);         { JG:15.02.00 Re's wegschneiden }
         srec^.betr:=suchstring
@@ -727,8 +715,8 @@ begin
       sst:=txt;
       user:=userform(user);
       if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        Ukonv(betr,high(betr)); Ukonv(user,high(user));
-       { Ukonv(txt,high(txt));} Ukonv(fidoempf,high(fidoempf));
+        UkonvStr(betr,high(betr)); UkonvStr(user,high(user));
+       { UkonvStr(txt,high(txt));} UkonvStr(fidoempf,high(fidoempf));
         end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); {UpString(txt);} UpString(fidoempf);
@@ -747,7 +735,7 @@ begin
       maxsize:=biskb*1024+1023;
       end;
    { else begin}
-      if umlaut then ukonv(sst,high(sst));                        {JG:15.02.00} 
+      if umlaut then UkonvStr(sst,high(sst));                        {JG:15.02.00} 
       if igcase then UpString(sst);
     {  end;}
 
@@ -894,7 +882,7 @@ begin
   dbReadN(mbase,mb_betreff,betr);
   dummy:=ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  ukonv(betr,high(betr));
+  UkonvStr(betr,high(betr));
   dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
@@ -903,7 +891,7 @@ begin
     dbReadN(mbase,mb_betreff,betr2);
     dummy:=ReCount(betr2);
     betr2:=trim(betr2);
-    ukonv(betr2,high(betr2));
+    UkonvStr(betr2,high(betr2));
     ll:=min(length(betr),length(betr2));
     if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then
       MsgAddmark;
@@ -2410,6 +2398,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/03/13 18:55:18  jg
+  - xp4o+typeform: Ukonv in UkonvStr umbenannt
+  - xp4o: Compilerschalter "History" entfernt,
+          "Debugsuche" durch "Debug" ersetzt
+
   Revision 1.24  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

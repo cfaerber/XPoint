@@ -169,7 +169,7 @@ function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadre
 {$IFDEF Delphi }
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
-procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
+procedure UkonvStr(var s:string;len:byte);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 {$IFDEF BP }
 { Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
@@ -2080,7 +2080,7 @@ end;
 {$ENDIF }
 
 
-procedure ukonv(var s:string;len:byte);         
+procedure UkonvStr(var s:string;len:byte);         
 var s2 : string;
   procedure conv(c1,c2:char);
   var p : byte;
@@ -2177,6 +2177,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/03/13 18:55:18  jg
+  - xp4o+typeform: Ukonv in UkonvStr umbenannt
+  - xp4o: Compilerschalter "History" entfernt,
+          "Debugsuche" durch "Debug" ersetzt
+
   Revision 1.19  2000/03/08 22:36:33  mk
   - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
 
