@@ -71,8 +71,8 @@ procedure set_AddServers_Allowances(var s:string);
 procedure set_ExtCfg_Allowances;
 procedure reset_Allowances(var s:string);
 function  addServersTest(var s:string):boolean;
-function  BfgToBox(var s:string):string;
-function  BoxToBfg(var s:string):string;
+function  BfgToBox(const s:string):string;
+function  BoxToBfg(const s:string):string;
 procedure SetUsername(s:string);
 
 implementation
@@ -448,7 +448,7 @@ begin  { --- of EditAddServersList --- }
   if s1 <> '' then
     repeat
       inc(entries);
-      p:=cpos(' ',s1);
+      p:=blankpos(s1);
       if p=0 then boxlist[entries]:=s1
       else begin
         boxlist[entries]:=left(s1,p-1);
@@ -601,7 +601,7 @@ begin
   box_anz:=0; bfglen:=0; boxlen:=0;
   repeat
     inc(box_anz);
-    p:=cpos(' ',s1);
+    p:=blankpos(s1);
     if p=0 then boxlist[box_anz]:=s1
     else begin
       boxlist[box_anz]:=left(s1,p-1);             { Boxen-Array fÅllen }
@@ -758,29 +758,30 @@ begin
 end;
 
 
-function BfgToBox(var s:string):string;
+function BfgToBox(const s:string):string;
 var   d      : DB;
       i,p    : byte;
-      s1     : string;              { BFG-Datei }
-      s2     : string[BoxNameLen];  { Boxname   }
-      s3     : string;              { Gesamtstring aller Boxnamen }
+      s1     : string;              { Temp-String (s-s2) }
+      s2     : string;              { BFG-Datei }
+      s3     : string[BoxNameLen];  { Boxname   }
+      s4     : string;              { Gesamtstring aller Boxnamen }
       fehler : string;
 const maxboxlen = 255;
 
-  function isValidBfgName(const s1:string):boolean;
+  function isValidBfgName(const bfg:string):boolean;
   var   i  : byte;
         vb : boolean;
   const ValidBfgCh : set of char=['A'..'Z','0'..'9','_','^','$','~','!',
                           '#','%','&','-','{','}','(',')','@','''','`'];
   begin
-    if (length(s1) > 8) or (IsDevice(s1)) then
+    if (length(bfg) > 8) or (IsDevice(bfg)) then
     begin
       isValidBfgName:=false;
       exit;
     end;
     vb:=true; i:=1;
-    while vb and (i<=length(s1)) do
-      if s1[i] in ValidBfgCh then inc(i)
+    while vb and (i<=length(bfg)) do
+      if bfg[i] in ValidBfgCh then inc(i)
       else vb:=false;
     isValidBfgName:=vb;
   end;
@@ -792,32 +793,33 @@ begin
     BfgToBox:='';
     exit;
   end;
-  s1:=''; s2:=''; s3:='';
+  s1:=''; s2:=''; s3:=''; s4:='';
   dbOpen(d,BoxenFile,1);
+  s1:=trim(s);
   repeat
-    p:=cpos(' ',s);
-    if p=0 then s1:=s
+    p:=blankpos(s1);
+    if p=0 then s2:=s1
     else begin
-      s1:=left(s,p-1);
-      s:=trim(mid(s,p+1));
+      s2:=left(s1,p-1);
+      s1:=trim(mid(s1,p+1));
     end;
-    if not isValidBfgName(ustr(s1)) then
+    if not isValidBfgName(ustr(s2)) then
     begin
       BfgToBoxOk:=false;
       if showErrors then
       begin
-        fehler:=getreps2(10900,67,ustr(s1));
+        fehler:=getreps2(10900,67,ustr(s2));
        { 'UngÅltiger Name fÅr Serverbox-Konfigurationsdatei: "%s.BFG"' }
         ConvertAddServersFehler(fehler);
       end
       else exit;
     end
     else begin
-      dbSeek(d,boidatei,ustr(s1));
+      dbSeek(d,boidatei,ustr(s2));
       if dbFound then
       begin
-        s2:=dbReadStr(d,'boxname');
-        if length(s3)+length(s2) > maxboxlen then
+        s3:=dbReadStr(d,'boxname');
+        if length(s4)+length(s3) > maxboxlen then
         begin
           BfgToBoxOk:=false;
           if showErrors then
@@ -829,13 +831,13 @@ begin
           else exit;
         end
         else
-          s3:=s3+s2+' ';
+          s4:=s4+s3+' ';
       end
       else begin
         BfgToBoxOk:=false;
         if showErrors then
         begin
-          fehler:=getreps2(10900,68,ustr(s1));
+          fehler:=getreps2(10900,68,ustr(s2));
                    { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
           ConvertAddServersFehler(fehler);
         end
@@ -844,16 +846,17 @@ begin
     end;
   until p=0;
   dbClose(d);
-  BfgToBox:=trim(s3);
+  BfgToBox:=trim(s4);
 end;
 
 
-function BoxToBfg(var s:string):string;
+function BoxToBfg(const s:string):string;
 var   d      : DB;
       i,p    : byte;
-      s1     : string;              { Boxname   }
-      s2     : string[8];           { BFG-Datei }
-      s3     : string;              { Gesamtstring aller BFG-Dateinamen }
+      s1     : string;              { Temp-String (s-s2) }
+      s2     : string;              { Boxname   }
+      s3     : string[8];           { BFG-Datei }
+      s4     : string;              { Gesamtstring aller BFG-Dateinamen }
       fehler : string;
 const maxbfglen = 160;
 begin
@@ -862,41 +865,42 @@ begin
     BoxToBfg:='';
     exit;
   end;
-  s1:=''; s2:=''; s3:='';
+  s1:=''; s2:=''; s3:=''; s4:='';
   dbOpen(d,BoxenFile,1);
+  s1:=trim(s);
   repeat
-    p:=cpos(' ',s);
-    if p=0 then s1:=s
+    p:=blankpos(s1);
+    if p=0 then s2:=s1
     else begin
-      s1:=left(s,p-1);
-      s:=trim(mid(s,p+1));
+      s2:=left(s1,p-1);
+      s1:=trim(mid(s1,p+1));
     end;
-    if length(s1) > BoxNameLen then
+    if length(s2) > BoxNameLen then
     begin
-      fehler:=getreps2(10900,69,s1); { 'UngÅltiger Serverbox-Name: %s' }
+      fehler:=getreps2(10900,69,s2); { 'UngÅltiger Serverbox-Name: %s' }
       ConvertAddServersFehler(fehler);
     end
     else begin
-      dbSeek(d,boiname,ustr(s1));
+      dbSeek(d,boiname,ustr(s2));
       if dbFound then
       begin
-        s2:=dbReadStr(d,'dateiname');
-        if length(s3)+length(s2) > maxbfglen then
+        s3:=dbReadStr(d,'dateiname');
+        if length(s4)+length(s3) > maxbfglen then
         begin
           fehler:=getreps2(10900,65,strs(maxbfglen));
     { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
           ConvertAddServersFehler(fehler);
         end else
-          s3:=s3+s2+' ';
+          s4:=s4+s3+' ';
       end else
       begin
-        fehler:=getreps2(10900,62,s1);
+        fehler:=getreps2(10900,62,s2);
         ConvertAddServersFehler(fehler); { 'Serverbox "%s" existiert nicht!' }
       end;
     end;
   until p=0;
   dbClose(d);
-  BoxToBfg:=ustr(trim(s3));
+  BoxToBfg:=ustr(trim(s4));
 end;
 
 
@@ -1043,7 +1047,7 @@ begin
   is_mailaddress:=true;
   b:=cpos('@',s);
   if (b<=1) or (cpos('@',mid(s,b+1))<>0)
-    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+    or (cpos('.',mid(s,b+1))=0) or (blankpos(s)<>0)
     or (s<>mailstring(s,false))
   then is_mailaddress:=false;
 end;
@@ -1057,7 +1061,7 @@ begin
   s1:=trim(s);
   if s1='' then exit;
   repeat
-    n:=cpos(' ',s1);
+    n:=blankpos(s1);
     if n=0 then s2:=s1
     else begin
       s2:=left(s1,n-1);
@@ -1817,6 +1821,14 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.26  2001/12/26 23:53:22  my
+  MY:- Vorbereitender Fix fÅr Multiserver-Netcall: Inhalt der an
+       'BfgToBox' Åbergebenen Variable 's' wird nicht mehr verÑndert (es
+       wÑre immer nur die letzte Serverbox mitgesendet worden). Fix auch
+       nach 'BoxToBfg' Åbernommen.
+
+  MY:- Einige "cpos(' ',s)" geÑndert in "blankpos(s)".
+
   Revision 1.1.2.25  2001/12/20 15:09:12  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
