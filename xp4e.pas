@@ -797,7 +797,7 @@ begin
     brtyp := ' ';
   if not trenn then begin
     if askloc or ParXX then begin
-      maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxNameLen,'>'); mhnr(402);
+      maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxNameLen,''); mhnr(402);
       mappcustomsel(BoxSelProc,false);       { 'Server    ' }
       msetvfunc(testpollbox);
       mset0proc(pb_wrntyp);
@@ -2494,6 +2494,9 @@ end;
 
 {
   $Log$
+  Revision 1.88.2.2  2002/07/18 16:10:51  ma
+  - cosmetics
+
   Revision 1.88.2.1  2002/07/18 01:00:48  mk
   - fixed potential AV with mbrettd calls
 
