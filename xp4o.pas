@@ -567,7 +567,7 @@ label ende;
 begin
   if suchopt[1]='*' then
   begin                                       {Erste Suche seit Programmstart ?}
-    if getres(1)='XP.HLP' then
+    if ustr(getres(1))='XP.HLP' then
       suchopt:='ai„'
     else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
       suchopt:='ai';
@@ -2407,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/05/22 15:52:55  jg
+  - File-Kleinschreibungs-Bugfix: Suchoptionen
+
   Revision 1.42  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
