@@ -256,7 +256,6 @@ var
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname;
 //    uu.ClearSourceFiles := true;
-      uu.NNTPSpoolFormat := true;
       uu.utoz;
     end;
     DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
@@ -427,6 +426,11 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.14  2003/10/05 12:36:54  mk
+        - removed RawFormat and NNTPSpoolFormat from ZCRFC
+        - internal NNTP uses rnews format now
+        - removed use of lines header
+
         Revision 1.39.2.13  2003/09/06 19:08:05  mk
         - correct ArticleIndex is now written to the rc-file, too
         - better connection status report
