@@ -182,7 +182,10 @@ begin { ZConnectNetcall }
 
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
-  UpArcFile:=boxpar^.sysopout+'CALLER.'+boxpar^.uparcext;
+  if Diskpoll then
+    UpArcFile:=boxpar^.sysopout
+  else
+    UpArcFile:='CALLER.'+boxpar^.uparcext;
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFile);
@@ -255,6 +258,10 @@ end.
 
 {
   $Log$
+  Revision 1.11.2.4  2003/04/24 22:52:19  ma
+  - fix: ZC CALLER file was put into sysop poll dir even if no sysop mode
+    configured
+
   Revision 1.11.2.3  2002/11/01 13:35:30  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers
