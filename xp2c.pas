@@ -1146,7 +1146,7 @@ begin
   { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
     bis jetzt kein bekannter WorkArround }
     close(lst);
-    assignlst(lst,DruckLPT-1);
+    assignlst(DruckLPT-1);
     rewrite(lst);
 {$ENDIF }
     GlobalModified;
@@ -1518,6 +1518,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/06/24 14:10:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.40  2000/06/23 15:59:17  mk
   - 16 Bit Teile entfernt
 

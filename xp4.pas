@@ -53,10 +53,11 @@ const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
       markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
       closeflag : boolean = false; { TClose -> Dateien schlie·en     }
+      nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
-      DispStrSize	= 255;
+      DispStrSize       = 255;
 
 type  dispstr   = string[DispStrSize];
       specstr   = string[DispStrSize];
@@ -1709,7 +1710,13 @@ begin      { --- select --- }
                  if c=k2_S then spezialmenue;         { 'S'pezial-MenÅ }
                  if empty then begin
                    if t[1]=k2_b then
-                     rfehler(446);   { 'Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...' }
+                   begin
+                     pushkey('b');
+                     t:=keyesc;
+                     c:=#0;
+                     nobrettweiter:=true;
+                     end;
+                 { rfehler(446); } { 'Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...' }
                    end
                  else begin
                    if t=keycr then
@@ -2030,6 +2037,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/06/24 14:10:28  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.27  2000/06/23 15:59:20  mk
   - 16 Bit Teile entfernt
 

@@ -67,7 +67,7 @@ const  {$IFDEF DPMI}
        BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fÅr }
        BrettLen    = 81;             { die entsprechenden Felder ver-  }
        eBrettLen   = 79;             { wendet werden                   }
-       AdrLen      = 120;
+       AdrLen      = 80;
        eAdrLen     = 79;
        BetreffLen  = 70;
        DateLen     = 11;
@@ -1181,6 +1181,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.57  2000/06/24 14:10:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.56  2000/06/23 15:59:15  mk
   - 16 Bit Teile entfernt
 

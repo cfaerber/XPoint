@@ -166,12 +166,10 @@ uses
 const
   highbyte : byte = 0;
 
-  {$IFDEF OS2 }
   lshift = 2;
   rshift = 1;
   ctrl   = 4;
   alt    = 8;
-  {$ENDIF }
 
 
 {$IFDEF FPC }
@@ -349,6 +347,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/06/24 14:10:26  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.24  2000/06/24 13:36:12  hd
   - Laesst sich jetzt auch wieder unter Linux compilieren (IFDEF DOS32)
 

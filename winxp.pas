@@ -645,12 +645,12 @@ end;
 {$ELSE }
 var
   i : byte;
-  j: Integer;
 begin
-  if (x2-x1<1) or (y2-y1<1) then begin
+  if (x2-x1<1) or (y2-y1<1) then
+  begin
     writeln('WPULL error');
     halt(1);
-    end;
+  end;
   savecursor;
   cursor(curoff);
   i:=1;
@@ -663,11 +663,7 @@ begin
     ashad:=shad;
     wi:=(r-l+1+shad)*2;
     moff;
-{$IFDEF BP }
-    MemSize := wi*(u-o+ashad+1);
-{$ELSE }
     MemSize := wi*(u-o+ashad+1)*2;
-{$ENDIF }
 
     getmem(savemem, MemSize);
 
@@ -956,6 +952,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/06/24 14:10:26  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.38  2000/06/23 15:59:14  mk
   - 16 Bit Teile entfernt
 

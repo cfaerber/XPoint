@@ -61,12 +61,6 @@ uses
    fileio;
 {$ENDIF }
 
-{$IFNDEF NCRT }
-var
-  vtype   : byte;
-{$ENDIF }
-
-
 {- BIOS-Routinen ----------------------------------------------}
 
 { hellen Hintergr. akt. }
@@ -117,6 +111,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/06/24 14:10:26  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.22  2000/06/22 19:53:28  mk
   - 16 Bit Teile ausgebaut
 

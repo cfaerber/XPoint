@@ -19,7 +19,7 @@ uses
   xpglobal, dos;
 
 function ClipAvailable:boolean;              { Clipboard verfÅgbar }
-function Clip2String(oneline:byte):string;   { Clipboardinhalt als String }
+function Clip2String:string;                 { Clipboardinhalt als String }
 procedure String2Clip(var str: String);      { String ins Clipboard}
 
 procedure FileToClip(fn:pathstr);
@@ -49,7 +49,7 @@ begin
  {$ENDIF }
 end;     { wird Clipboard unterstÅtzt? }
 
-function Clip2String(oneline:byte):string;
+function Clip2String: String;
 {$IFDEF Win32 }
 var
   P: Pointer;
@@ -243,6 +243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/06/24 14:10:26  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.21  2000/06/23 15:59:09  mk
   - 16 Bit Teile entfernt
 

@@ -1691,7 +1691,7 @@ begin
 {$IFNDEF FPC }
   { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
     bis jetzt kein bekannter WorkArround }
-    AssignLst(lst,DruckLPT-1);
+    AssignLst(DruckLPT-1);
     rewrite(lst);
 {$ENDIF }
     if aaa<>'' then
@@ -1789,6 +1789,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.65  2000/06/24 14:10:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.64  2000/06/23 15:59:17  mk
   - 16 Bit Teile entfernt
 

@@ -21,9 +21,6 @@
 UNIT printerx;
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O-,F+}
-{$ENDIF }
 
 {  ==================  Interface-Teil  ===================  }
 
@@ -89,7 +86,7 @@ var  checklst,xlatger : boolean;
      lst              : text;
      prterror         : perrfunc;
 
-Procedure assignlst(var f:text; d:word);
+Procedure assignlst(d:word);
 Function  PrintString(s:string):string;
 
 
@@ -113,26 +110,6 @@ type textbuf = array[0..126] of char;
                    1 : (ostr : string[127]);
                end;
 
-{$IFDEF BP }
-var
-  oldexit: pointer;
-
-Procedure xlate(var s:string; var bufpos:word);
-
-const con1 : string[10] = '„”Ž™šá';
-      con2 : string[10] = '{|}[\]~';
-
-var   i,p  : byte;
-
-begin
-  s[0]:=chr(succ(bufpos));
-  for i:=1 to length(s) do begin
-    p:=pos(copy(s,i,1),con1);
-    if p>0 then
-      s[i]:=con2[p];
-    end;
-end;
-{$ENDIF }
 
 function prtorgerror:boolean;
 var handle : word;
@@ -155,81 +132,12 @@ begin
   prtorgerror:=(c='A');
 end;
 
-{$IFDEF BP }
-function LstOutput(var f:textrec):integer;
-
-var p       : integer;
-    regs    : registers;
-
+procedure assignlst(d:word);
 begin
-  with f do begin
-    if xlatger and checklst then xlate(ostr,bufpos);
-    with regs do begin
-      p:=0;
-      while checklst and (p<bufpos) do begin
-        ah:=2;
-        dx:=prport;
-        intr($17,regs);
-        if (ah and $29)=0 then begin
-          ah:=0;
-          al:=byte(bufptr^[p]);
-          dx:=prport;
-          intr($17,regs);
-          end;
-        if (ah and $29)<>0 then
-          if prterror then checklst:=false
-          else
-        else
-{          if (ah and $80)=0 then }
-            inc(p);
-        end;
-      bufpos:=0;
-      end;
-    end;
-  lstoutput:=0;
-end;
-
-
-function lstignore(var f:textrec):integer;
-begin
-  lstignore:=0;
-end;
-{$ENDIF }
-
-
-procedure assignlst(var f:text; d:word);
-begin
-{$IFDEF BP }
-  with textrec(f) do begin
-    handle:=$ffff;
-    mode:=fmclosed;
-    bufsize:=sizeof(buffer);
-    bufptr:=@buffer;
-    openfunc:=@lstignore;
-    inoutfunc:=@lstoutput;
-    flushfunc:=@lstoutput;
-    closefunc:=@lstignore;
-    prport:=d;
-    name[0]:=#0;
-  end;
-{$ELSE }
   Assign(lst, 'lpt' + Chr(Ord('1')+d));
   if IOResult = 0 then ;
-{$ENDIF}
 end;
 
-
-{$IFDEF BP }
-  {$S-}
-  procedure newexit;
-  begin
-    exitproc:=oldexit;
-    close(lst);
-  end;
-  {$IFDEF Debug }
-    {$S+}
-  {$ENDIF }
-{$ENDIF }
 
 { ^X in Steuerzeichen umsetzen;  ^0 -> ^ }
 
@@ -265,18 +173,15 @@ end;
 
 
 begin
-{$IFDEF BP }
-  assignlst(lst,0);
-  rewrite(lst);
-  oldexit:=exitproc;
-  exitproc:=@newexit;
-{$ENDIF}
   checklst:=true;
   xlatger:=false;
   prterror:=prtorgerror;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/24 14:10:26  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.10  2000/05/13 09:32:56  mk
   - Crashing Bug unter Win9x und Win32-Version mit FPC behoben
 
