@@ -4100,8 +4100,11 @@ sch„tzen; er liegt in der Regel bei 5-10 Sekunden.
 182
 Falls Sie Sysop sind, m”chten Sie Ihre Netcallpuffer
 natrlich nicht per Modem verschicken, sondern "von
-Hand" in die Box einspielen. Dazu mssen Sie Cross-
-Point nur zwei Dateinamen mitteilen:
+Hand" in die Box einspielen.
+
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
 
 <<Eingabepuffer>>
 
@@ -4131,6 +4134,10 @@ tenpakete nicht per Modem bertragen, sondern auf
 Ihrer Festplatte gespeichert werden, sind Sie hier
 richtig.
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
+
 <<Eingangsverzeichnis>>
 
 Dies ist das Verzeichnis, aus dem XP bei einem Net-
@@ -4154,6 +4161,10 @@ Mode".
 
 @
 8035
+<<[x]>> -> Aktiviert den QWK-Transfer. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
+
 <<Eingangspakete>>
 
 Geben Sie hier Pfad + Namen der QWK-Pakete an, die
@@ -4161,11 +4172,11 @@ XP bei /Netcall/Einzeln einlesen soll, z.B.
 
    C:\INBOUND\*.QWK
 
-
 <<Ausgangsverzeichnis>>
 
 Dies ist das Verzeichnis, in dem XP die ausgehenden
 REP-Dateien mit den Antwortnachrichten ablegen soll.
+
 @
 8036
 Wenn Sie m”chten, daá ein- und ausgehende Nachrich-
@@ -4180,6 +4191,9 @@ Das Format und die Namen der Dateien sind allerdings
 auch davon abh„ngig, ob und welche der [SMTP-Optionen]@8017
 Sie ggf. unter /Edit/Boxen/Edit/Point gew„hlt haben.
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
 
 <<Eingangsverzeichnis>>
 
@@ -4203,7 +4217,7 @@ Mode".
 
 @
 8037
-<<Startprogramm>>
+<<Startprogramm
 
 Hier k”nnen Sie ein Programm oder einen DOS-Befehl
 eintragen, das/der zum Beginn jedes SysopMode-Net-
@@ -4212,7 +4226,7 @@ dann ntzlich, wenn die einzulesende Pufferdatei
 erst noch bereitgestellt werden muá (z.B. durch Zu-
 sammenkopieren mehrerer anderer Puffer).
 
-<<Endprogramm>>
+<<Endprogramm
 
 Dieses Programm wird nach jedem SysopMode-Netcall
 gestartet.
@@ -4286,7 +4300,7 @@ Erkundigen Sie sich bei Ihrem Sysop, zu welchen Uhr-
 zeiten keine Point-Anrufe erlaubt sind!
 
 Diese Einstellung gilt NICHT fr den Betrieb von XP
-im Sysop-Mode.
+im Sysop-Mode oder mit dem Netztyp RFC/Client.
 @
 198
 <<[x]>> -> Diese Box wird bei [/Netcall/Alle] bercksich-@11502
@@ -6199,6 +6213,9 @@ tet und erzeugt; in manchen F„llen wird eine Umbenen-
 nung n”tig sein. N„heres hierzu finden Sie unter
 "[Netztyp RFC/Client - Netcall-Ablauf]".@30230
 
+<<[x]>> -> Aktiviert den Sysop-Mode. Bitte machen Sie
+       anschlieáend folgende Eingaben bzw. berprfen
+       Sie die existierenden Werte:
 
 <<Eingangsverzeichnis>>
 
@@ -13670,12 +13687,22 @@ Geben Sie hier die gewnschte Anzahl von CrossPoint-
 Lizenzen ein.
 
 Falls Sie das Programm nur im Usenet/Internet einset-
-zen m”chten, ben”tigen Sie eine Registrierung fr
-"RFC/UUCP". Falls Sie das Programm im Z-Netz, Fido-
-Net, MausNet, MagicNET o.„. einsetzen m”chten,
-ben”tigen Sie eine Registrierung fr "Fido, Z-Netz,
-MausNet etc.". Fr einen Einsatz in <<allen>> Arten von
-Netzen ist eine Komplettregistrierung erforderlich.
+zen m”chten und dafr den Netztyp "RFC/Client" ver-
+wenden, k”nnen Sie sich fr eine beliebige Registrie-
+rungsvariante entscheiden. Jede Registrierung gilt
+gleichzeitig auch fr diesen Netztyp.
+
+Sollten Sie stattdessen jedoch den Netztyp "RFC/UUCP"
+verwenden, ben”tigen Sie hierfr die gesonderte
+RFC/UUCP-Registrierung.
+
+Falls Sie das Programm im Z-Netz, Fido-Net, MausNet,
+MagicNET o.„. einsetzen m”chten, ben”tigen Sie eine
+Registrierung fr "Fido, Z-Netz, MausNet etc.". Fr
+einen Einsatz in <<allen>> Arten von Netzen ist nur dann
+eine Komplettregistrierung erforderlich, wenn Sie
+fr Usenet/Internet den Netztyp "RFC/UUCP" verwenden
+(siehe oben).
 
 Mit einer Update-Registrierung k”nnen Sie Ihre
 einfache Registrierung zu einer Komplettregistrie-
@@ -15377,6 +15404,11 @@ einem MausNet-Relogin im Hauptmen.
 Bei Fido-Boxen ist ein Relogin aus technischen Grn-
 den unm”glich.
 
+Beim Netztyp <<RFC/Client>> ist diese Funktion ohne
+Wirkung - wenn Sie eine bestehende Verbindung nutzen
+wollen, fhren Sie einen normalen Netcall durch. Der
+Client muá diese dann ggf. selbst„ndig erkennen.
+
 @
 11506
 <<Netcall / Online  (CrossTerm)
@@ -15392,6 +15424,12 @@ oder Terminate ersetzen, sondern ist nur fr den
 gelegentlichen Anruf in Ihrer Serverbox gedacht, um
 z.B. das Postfach zu leeren oder eine Datei abzu-
 rufen.
+
+Beim Netztyp <<RFC/Client>> ist diese Funktion ohne
+Wirkung - wenn Sie eine bestehende Verbindung nutzen
+wollen, fhren Sie einen normalen Netcall durch. Der
+Client muá diese dann ggf. selbst„ndig erkennen.
+
 @
 11508
 <<Netcall / Spezial
