@@ -2610,7 +2610,7 @@ these attempts separately in another box here,
 @
 162
 CrossPoint waits this many seconds after an aborted
-netcall attempt, before trying again.
+netcall attempt before trying again.
 @
 163
 This sets the number of times CrossPoint will try to
@@ -3367,10 +3367,45 @@ import filter (not everyone's cup of tea and, in
 comparison with a), not worth the effort).
 @
 30107
-Enter the <<relative>> path to the directory where the
-client is installed.
+(See also: [Client Call]@30108
 
-(ToDo: comprehensive explanation, \@30107).
+Enter here the <<relative>> path of the XP directory
+to the directory in which the client is installed, or
+select one of the pre-defined entries with <<<F2> >>.
+The client <<must>> be installed in a directory
+immediately under the XP directory.
+
+For example, if your client is installed in a
+directory named CLIENT immediately under the XP
+directory, then enter:
+
+<<CLIENT\>> or
+<<.\CLIENT\>>
+
+Absolute paths, sub-direcectory levels, drive letters
+or paths above the XP directory are not acceptable in
+this field, neither can you give the XP directory nor
+leave it empty. The backslash at the end of the path
+is mandatory and will be added automatically if it is
+left out.
+
+If the sub-directory doesn't exist, you can allow XP
+to create it automatically. In addition, it can, by
+means of the macro <<$CLPATH>>, pass it through a
+[client-call] as a parameter and/or as a path to the@30108
+executing program.
+
+This path statement is also important to the
+[News/Echo Manager] because XP expects to find the@30231
+list of requested newsgroups (<<<SERVER>.RC>>) in the
+sub-directory specified here. Also, the list of
+available newsgroups (<<<SERVER>.BL>> or <<<SERVER>.GR>>) 
+will be looked for here unless you are using a client 
+which doesn't automatically update the newsgroup 
+list. In this case, you can read in a list with
+[/Message/News/Echo Manager/Read file] which will@11907
+then be saved in the XP sub-directory but it won't be
+updated automatically.
 @
 30108
 Enter the external command here that shall be run
@@ -7047,7 +7082,7 @@ Special keys are:
 <PgUp>, <PgDn>
 <Ctrl PgUp> -PgDn
 <Ins>, <Del>
-<Ctrl PrtScr>        Ctrl-PrintScreen
+<Ctrl PrtScr>         Ctrl-PrintScreen
 < >                  Space
 
 The characters <, > and ^ must also be enclosed in
