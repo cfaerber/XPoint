@@ -563,7 +563,7 @@ label ende,again;
       mnt  : longint;
       abl  : byte;
       mid  : string[20];
-      flags: integer;
+      flags: longint;
   begin
     rmessage(642);      { 'Nachricht wird archiviert...' }
     dbReadN(mbase,mb_ablage,abl);
@@ -1232,6 +1232,7 @@ var fn,tmp : pathstr;
     binaermail :boolean;
     aas    : array[1..3] of string[120];
     asnum  : byte;
+    flags  : longint;
 
   procedure write_archiv;
     procedure wrs(s:string);
@@ -1261,6 +1262,7 @@ var fn,tmp : pathstr;
 
 begin
   _UserAutoCreate:=UserAutoCreate;
+  dbreadN(mbase,mb_flags,flags);
   dbReadN(mbase,mb_ablage,abl);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
@@ -1318,6 +1320,7 @@ begin
   Writeheader(hdp^,tf,reflist);
   fmove(f,tf);
   dbAppend(mbase);
+  dbWriteN(mbase,mb_flags,flags);
   if hdp^.ref<>'' then inc(mnt,$100);
   if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
@@ -1427,6 +1430,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.26  2002/04/20 13:45:42  my
+  JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+       (Priorit„t, PGP-signiert, MIME-Multipart usw.) jetzt auch dann
+       erhalten, wenn die Archivierung aus einem AM-Brett heraus erfolgt.
+
   Revision 1.20.2.25  2002/04/19 16:38:06  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
