@@ -172,10 +172,16 @@ begin
         3 : echo:='';
       end
     else begin
-      echo:= dbReadNStr(bbase,bb_brettname);
-      if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (echo[1]<>'A') then echo:=''
-      else delfirst(echo);
+      if dbreccount(bbase)=0 then 
+        brk:=true
+      else begin
+        echo := dbReadStrN(bbase,bb_brettname);
+        if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (FirstChar(echo)<>'A') then 
+          echo:=''
+        else 
+          delfirst(echo);
       end;
+    end;
   if brk then begin
     freeres; exit; end;
   if (echo<>'') and (echo<>'*') and (pos('/files/',LowerCase(echo))>0) then begin
@@ -342,6 +348,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2001/08/24 08:20:35  mk
+  JG:- Fixed crash with F/A/A and empty Message Area database
+
   Revision 1.14  2001/08/12 11:50:42  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 
