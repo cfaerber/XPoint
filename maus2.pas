@@ -236,7 +236,7 @@ end;
 {$IFDEF NCRT}
 function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
 var rr: taste;
-    xx,yy: word;
+    xx,yy: Integer;
     bs:mmask_t;
 const
     was_inside:boolean=false;
@@ -560,6 +560,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/12/08 18:05:23  mk
+  - fixed Word/Integer-problem for linux
+
   Revision 1.49  2002/12/08 09:48:44  dodi
   - updated uses for NCRT
 
