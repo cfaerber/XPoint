@@ -923,7 +923,7 @@ begin
       ClearUnversandt(ppfile,box);
       closebox;
 
-      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then erase(f1);
+      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltZConnect] then erase(f1);
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
       end
