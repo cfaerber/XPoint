@@ -70,7 +70,7 @@ begin
    ClipAvailable := true;
  {$ELSE }
    {$IFDEF VP }
-     ClipAvailable := true;
+     ClipAvailable := false; { !! Funktioniert noch nicht sauber }
    {$ELSE }
      ClipAvailable := false;
    {$ENDIF }
@@ -643,6 +643,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/29 16:45:05  mk
+  - Verschiedene kleinere Aufraeumarbeiten
+
   Revision 1.13  2000/04/29 15:58:51  mk
   - Zwischenablage fuer Win32/OS/2 implementiert
 

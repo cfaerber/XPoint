@@ -199,7 +199,6 @@ Procedure clrscr;                            { statt CRT.clrscr         }
 Procedure DispHard(x,y:byte; s:string);      { String ohne berÅcksicht. }
                                              { des akt. Windows ausgeb. }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
-Function  memadr(x,y:byte):word;             { Bild-Speicheradresse     }
 procedure DosOutput;                         { auf CON: umschalten      }
 function  ticker:longint;                    { mem[Seg0040:$6c]         }
 
@@ -301,6 +300,9 @@ var    ca,ce,ii,jj : byte;
        istackp     : integer;
        autolast    : longint;   { Get: Tick des letzten AutoUp/Down }
 
+{ Bild-Speicheradresse     }
+function memadr(x,y:byte):word;forward;
+
 function ticker:longint;
 {$IFDEF Ver32 }
 var
@@ -318,12 +320,14 @@ end;
 
 { !! Diese Funktion lieft mit and $70 nur CAPSLock zurÅck,
   das kann nicht sinn der Sache sein. Mu· geprÅft werden }
-{$IFDEF BP }
-Function kbstat:byte;     { lokal }
+function kbstat:byte;     { lokal }
 begin
+{$IFDEF BP }
   kbstat:=mem[Seg0040:$17] and $70;
-end;
+{$ELSE }
+  kbstat := 0;
 {$ENDIF }
+end;
 
 Procedure window(l,o,r,u:byte);
 begin
@@ -458,7 +462,7 @@ begin
    nGotoXY(StdScr, sy[cursp],sx[cursp]);
 {$ELSE }
    gotoxy(sx[cursp],sy[cursp]);
-{$ENDIF }   
+{$ENDIF }
 {$IFDEF BP }
   curlen(sa[cursp],se[cursp]);
 {$ENDIF }
@@ -798,7 +802,7 @@ begin
   SetColorPair(attr);
   TextAttr:= attr;
   lastattr:= attr;
-{$ENDIF }   
+{$ENDIF }
   textcolor(attr and $8f);
   textbackground((attr and $7f) shr 4);
   lastattr:=attr;
@@ -1866,6 +1870,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/04/29 16:45:06  mk
+  - Verschiedene kleinere Aufraeumarbeiten
+
   Revision 1.28  2000/04/29 16:06:59  hd
   Linux-Anpassung
 

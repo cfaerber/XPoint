@@ -72,20 +72,15 @@ function  TempExtFile(path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
 function  _filesize(fn:pathstr):longint;        { Dateigrî·e in Bytes     }
 function  filetime(fn:pathstr):longint;         { Datei-Timestamp         }
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen  }
-procedure setfileattr(fn:pathstr; attr:word);   { Dateiattribute setzen   }
 function  copyfile(srcfn, destfn:pathstr):boolean; { Datei kopieren }
 Procedure era(s:string);                        { Datei lîschen           }
 procedure erase_mask(s:string);                 { Datei(en) lîschen       }
 Procedure erase_all(path:pathstr);              { Lîschen mit Subdirs     }
 function  _rename(n1,n2:pathstr):boolean;       { Lîschen mit $I-         }
-procedure move_mask(source,dest:pathstr; var res:integer);
-Function  ReadOnlyHidden(name:PathStr):boolean; { Datei Read Only ?       }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
-(*
-function  textfilesize(var t:text):longint;     { Grî·e v. offener Textdatei }
-*)
+
 {$IFDEF BP }
 function  diskfree(drive:byte):longint;         { 2-GB-Problem umgehen    }
 {$ENDIF }
@@ -93,9 +88,7 @@ function  exetype(fn:pathstr):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
-procedure fm_all;                               { Deny none               }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
-function  ShareLoaded:boolean;                  { Locking verfÅgbar       }
 function  lock(var datei:file; from,size:longint):boolean;
 procedure unlock(var datei:file; from,size:longint);
 function  lockfile(var datei:file):boolean;
@@ -119,10 +112,10 @@ uses
   linux;
 {$endif}
 
-var ShareDa : boolean;
+var
+  ShareDa : boolean;
 
-
-Function exist(n:string):boolean;
+function exist(n:string):boolean;
 {$IFDEF Ver32  }
 begin
   Exist := FileExists(n);
@@ -204,7 +197,7 @@ begin
     else if (name[length(name)]='/') then
       dellast(name);
     findfirst(name,Directory,sr);
-    IsPath:=(doserror=0) and (sr.attr and directory<>0);    
+    IsPath:=(doserror=0) and (sr.attr and directory<>0);
 {$ELSE }
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
@@ -287,7 +280,7 @@ begin
       if (name[1]<>'.') then
         if attr and Directory<>0 then
 {$IFDEF UnixFS }
-	  erase_all(path+name+'/')
+          erase_all(path+name+'/')
 {$ELSE }
           erase_all(path+name+'\')
 {$ENDIF }
@@ -308,18 +301,6 @@ begin
 {$ENDIF }
     dellast(path);
     rmdir(path);
-  end;
-end;
-
-Function ReadOnlyHidden(name:PathStr):boolean;
-var f    : file;
-    attr : rtlword;
-begin
-  assign(f,name);
-  if not existf(f) then ReadOnlyHidden:=false
-  else begin
-    getfattr(f,attr);
-    ReadOnlyHidden:=(attr and (ReadOnly or Hidden))<>0;
   end;
 end;
 
@@ -496,14 +477,6 @@ begin
   if ioresult<>0 then;
 end;
 
-procedure setfileattr(fn:pathstr; attr:word);   { Dateiattribute setzen }
-var f : file;
-begin
-  assign(f,fn);
-  setfattr(f,attr);
-  if ioresult<>0 then;
-end;
-
 function GetFileDir(p:pathstr):dirstr;
 var d : dirstr;
     n : namestr;
@@ -548,29 +521,6 @@ begin
   _rename:=(ioresult=0);
 end;
 
-
-procedure move_mask(source,dest:pathstr; var res:integer);
-var sr : searchrec;
-begin
-  res:=0;
-{$IFDEF UnixFS }
-  if lastchar(dest)<>'/' then
-    dest:=dest+'/';
-{$ELSE }
-  if lastchar(dest)<>'\' then
-    dest:=dest+'\';
-{$ENDIF }
-  findfirst(source,AnyFile-Directory,sr);
-  while doserror=0 do begin
-    if not _rename(getfiledir(source)+sr.name,dest+sr.name) then
-      inc(res);
-    findnext(sr);
-  end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
-end;
-
 { Extension anhÑngen, falls noch nicht vorhanden }
 
 procedure addext(var fn:pathstr; ext:extstr);
@@ -608,17 +558,6 @@ end;
 procedure fm_rw;      { Filemode Read/Write }
 begin
   filemode:=fmRW;
-end;
-
-procedure fm_all;     { Filemode Read/Write }
-begin
-  filemode:=fmDenyNone+fmRW;
-end;
-
-
-function ShareLoaded:boolean;
-begin
-  ShareLoaded:=shareda;
 end;
 
 {$IFDEF FPC }
@@ -740,30 +679,6 @@ begin
   filemode:=fm0;
 end;
 
-
-{ t mu· eine geîffnete Textdatei sein }
-(*
-function textfilesize(var t:text):longint;
-var regs  : registers;
-    fplow : word;           { alter Filepointer }
-    fphigh: word;
-begin
-  with regs do begin
-    ax:=$4201;              { File Pointer ermitteln }
-    bx:=textrec(t).handle;
-    cx:=0; dx:=0;
-    msdos(regs);
-    fphigh:=dx; fplow:=ax;
-    ax:=$4202;              { Dateigrî·e ermitteln }
-    cx:=0; dx:=0;
-    msdos(regs);
-    textfilesize:=$10000*dx+ax;
-    ax:=$4200;              { alte Position wiederherstellen }
-    cx:=fphigh; dx:=fplow;
-    msdos(regs);
-  end;
-end;
-*)
 procedure WildForm(var s: pathstr);
 var dir : dirstr;
     name: namestr;
@@ -865,6 +780,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/04/29 16:45:06  mk
+  - Verschiedene kleinere Aufraeumarbeiten
+
   Revision 1.24  2000/04/28 16:23:53  hd
   Linux-Anpassungen (UnixFS):
    - Backslash -> Slash

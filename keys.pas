@@ -135,23 +135,20 @@ var    func_proc : func_test;
 
 function  keypressed:boolean;
 function  readkey:char;
-function  ScrollMode:boolean;
 
-procedure flushtoforward;            { Tasten aus Puffer an forwardkeys anh. }
 procedure keyboard(s:string);        { s and forwardkeys anhÑngen            }
 procedure _keyboard(s:string);       { s vorne an forwardkeys anhÑngen       }
 procedure clearkeybuf;               { Tastaturpuffer lîschen                }
 Procedure pushkey(t:taste);          { Taste direkt in Tastaturpuffer schr.  }
 procedure pushkeyv(var t:taste);
-Procedure pushstr(s:string);         { String direkt in Tastaturpuffer schr. }
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
 
-Function  kbstat:byte;     { lokal }
 function  kb_shift:boolean;          { Shift gedrÅckt }
 function  kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 function  kb_alt:boolean;            { Alt gedrÅckt   }
+function  ScrollMode:boolean;
 
 
 implementation  { ---------------------------------------------------------- }
@@ -264,31 +261,15 @@ begin
     end;
 end;
 
-
-procedure flushtoforward;
-begin
-{$ifdef NCRT}
-  while ocrt.keypressed and (length(forwardkeys)<250) do
-    forwardkeys:=forwardkeys+ocrt.readkey;
-{$else}
-  while crt.keypressed and (length(forwardkeys)<250) do
-    forwardkeys:=forwardkeys+crt.readkey;
-{$endif}
-end;
-
-
 procedure keyboard(s:string);
 begin
-  { flushtoforward;   nicht sinnvoll !? }
   forwardkeys:=forwardkeys+s;
 end;
-
 
 procedure _keyboard(s:string);
 begin
   forwardkeys:=s+forwardkeys;
 end;
-
 
 procedure clearkeybuf;
 begin
@@ -377,26 +358,6 @@ begin
   pushkeyv(t);
 end;
 
-
-Procedure pushstr(s:string);
-var i : byte;
-begin
-  i:=1;
-  while i<=length(s) do
-    if s[i]>#0 then begin
-      pushkey(s[i]);
-      inc(i);
-      end
-    else
-      if i<length(s) then begin
-        pushkey(copy(s,i,2));
-        inc(i,2);
-        end
-      else
-        inc(i);    { gegen Endlosschleife }
-end;
-
-
 function ScrollMode:boolean;
 begin
 {$IFDEF BP }
@@ -406,14 +367,12 @@ begin
 {$ENDIF }
 end;
 
-Function kbstat:byte;     { lokal }
-begin
 {$IFDEF BP }
+function kbstat: byte;     { lokal }
+begin
   kbstat:=mem[Seg0040:$17];
-{$ELSE }
-  kbstat := 0; { !! Mu· auf den Plattformen portiert werden }
-{$ENDIF }
 end;
+{$ENDIF }
 
 function kb_shift:boolean;          { Shift gedrÅckt }
 begin
@@ -485,6 +444,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/04/29 16:45:06  mk
+  - Verschiedene kleinere Aufraeumarbeiten
+
   Revision 1.18  2000/04/29 16:18:58  hd
   Linux-Anpassung
 
