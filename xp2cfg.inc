@@ -1410,7 +1410,7 @@ begin
                     getx(su,  'ListVollbild',listvollbild) or
                     getx(su,  'ListUhr',listuhr) or
                     getx(su,  'ListEndCR',listendcr) or
-                    xp1.getw(su,  'LPT',DruckLPT) or
+                    getl(su,  'LPT',DruckLPT) or
                     getx(su,  'ListScroller',listscroller) or
                     getx(su,  'ListAutoScroll',listautoscroll) or
                     getx(su,  'LeseBestaetigung',mauslesebest) or
@@ -1705,6 +1705,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.12  2003/08/30 11:00:45  mk
+  - made printerlist dynamic
+
   Revision 1.144.2.11  2003/08/29 18:45:27  mk
   - added better printing support for linux
 
