@@ -94,7 +94,8 @@ var x,y      : byte;
     typ1     : char;
     ok       : boolean;
     adrbuch  : byte;
-    flags,atp: byte;
+    flags    : longint;
+    atp      : byte;
     grnr     : longint;
     ld       : longint;
     uflags   : byte;
@@ -1220,6 +1221,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/06/01 21:43:52  ma
+  - ReplaceOwn working now
+
   Revision 1.50  2001/04/07 11:38:22  ma
   - better debug log in puffer_ok
 
