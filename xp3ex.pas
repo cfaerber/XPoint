@@ -784,16 +784,21 @@ begin // extract_msg;
     if smdl(IxDat('2712300000'),edat) then
       dbReadN(mbase,mb_wvdatum,edat);
 //  iso1:=(dbReadInt(mbase,'netztyp') and $2000)<>0;
-    if hdp.charset<>'' then
+
+    if (hdp.charset<>'') and (UpperCase(LeftStr(hdp.mime.ctype,10))<>'MULTIPART/') then
       SourceCS := MimeGetCharsetFromName(ZcCharsetToMIME(hdp.charset))
     else
-      SourceCS := csCP437;
+      SourceCS := csCP437; // ZConnect charset
+
+    if SourceCS in [csASCII,csUNKNOWN,csISO8859_1] then
+      SourceCS := csCP1252;
 
     if ExtUTF8 then begin
-      if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
+      if not (SourceCS in [csUTF8,csASCII]) then
         SourceToUTF8 := CreateUTF8Encoder(SourceCS);
       TemplateToUTF8 := CreateUTF8Encoder(csCP437);
-    end else begin
+    end 
+    else begin
       if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
       begin
         if not (SourceCS in [csUTF8]) then
@@ -1231,6 +1236,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.104  2003/03/16 18:57:47  cl
+  - better handling of unknown charsets
+
   Revision 1.103  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

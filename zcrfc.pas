@@ -232,6 +232,15 @@ begin
   Mail.Clear;
 end;
 
+function MimeGetCompatibleCharsetFromName(const cs: string): TMIMECharsets;
+begin
+  Result := MimeGetCharsetFromName(cs);
+  case Result of
+    csUnknown,csASCII,csISO8859_1:      Result := csCP1252;
+//  cs8859_9:                           Result := csCP1254;    
+  end;
+end;
+
 function DecodePhrase(const input: string): string;
 begin
   result := RFC2047_Decode(rfcUnQuotePhrase(input),csCP437);
@@ -1187,9 +1196,7 @@ begin
       hd.typ:='B';
 
     if MimeContentTypeNeedCharset(ctype) and (hd.typ<>'M') then
-      if ((hd.x_charset='')or(UpperCase(hd.x_charset)='UNKNOWN-8BIT'))  then
-        hd.x_charset:='windows-1252' else
-      if not IsKnownCharset(hd.x_charset) then
+      if (hd.x_charset<>'') and not IsKnownCharset(hd.x_charset) then
         hd.error := 'Unsupported character set: ' + hd.x_charset;
   end;
 end;
@@ -2125,9 +2132,9 @@ begin
       inc(mails);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
-      recode := (not NoCharsetRecode ) and 
+      recode := (not NoCharsetRecode) and 
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
-      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
+      hd.charset:=iifs(recode,'IBM437',iifs(multi,'',iifs(hd.x_charset<>'',MimeCharsetToZC(hd.x_charset),'UNKNOWN')));
 
   // -- No envelope recipients so far; fake them -----------------------      
       if hd.Empfaenger.Count<=0 then
@@ -2158,7 +2165,7 @@ begin
         LastLineWasBlank:=(s=''); DecodeLine;
 
         if recode then
-          s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
+          s := RecodeCharset(s,MimeGetCompatibleCharsetFromName(hd.x_charset),csCP437);
 
         Mail.Add(s);
         inc(hd.groesse, length(s));
@@ -2259,8 +2266,8 @@ begin
       multi  := (hd.typ = 'M');
       recode := (not NoCharsetRecode ) and
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
-      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
-
+      hd.charset:=iifs(recode,'IBM437',iifs(multi,'',iifs(hd.x_charset<>'',MimeCharsetToZC(hd.x_charset),'UNKNOWN')));
+      
       if (mempf <> '') and (hd.empfaenger.count > 0) and (mempf <> hd.empfaenger[0]) then
       begin
         hd.oem.Assign(hd.Empfaenger);
@@ -2297,7 +2304,7 @@ begin
             DeleteFirstChar(s);
           DecodeLine;           { haengt CR/LF an, falls kein Base64 }
           if recode then
-            s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
+            s := RecodeCharset(s,MimeGetCompatibleCharsetFromName(hd.x_charset),csCP437);
 
           wrfs(s);
         end;
@@ -2380,7 +2387,7 @@ begin
       multi  := (hd.typ = 'M');
       recode := (not NoCharsetRecode ) and
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
-      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
+      hd.charset:=iifs(recode,'IBM437',iifs(multi,'',iifs(hd.x_charset<>'',MimeCharsetToZC(hd.x_charset),'UNKNOWN')));
 
       seek(f1, fp); ReadBuf; bufpos := bp;
       repeat                        { Header ueberlesen }
@@ -3758,6 +3765,9 @@ end;
 
 {
   $Log$
+  Revision 1.132  2003/03/16 18:59:37  cl
+  - better handling of unknown charsets
+
   Revision 1.131  2003/02/07 16:12:18  cl
   - BUGFIX: Fixed ``Cannot delete X-XXXXXX.OUT'' with Batched SMTP
 
