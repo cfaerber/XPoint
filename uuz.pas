@@ -82,6 +82,7 @@ const
   NewsMIME: boolean = false;
   NoMIME: boolean = false;              { -noMIME }
   MakeQP: boolean = false;              { -qp: MIME-quoted-printable }
+  ppp: boolean = false;
   CopyXLines: Boolean  = false;         { Alle X-Lines nach RFC zurÅckkopieren }
   RFC1522: boolean = false;             { Headerzeilen gem. RFC1522 codieren }
   getrecenvemp: boolean = false; { Envelope-EmpfÑnger aus Received auslesen? }
@@ -115,6 +116,14 @@ type
   charr = array[0..65530] of char;
   charrp = ^charr;
 
+  TUUZ = class
+  protected
+    addpath: String;
+  public
+    constructor create;
+    destructor Destroy; override;
+  end;
+
 var
   source, dest: String;                { Quell-/Zieldateien  }
   f1, f2: file;                         { Quell/Zieldatei     }
@@ -134,7 +143,6 @@ var
   s: string;
   qprint, b64: boolean;                 { MIME-Content-TT's (ReadRFCheader) }
   qprchar: set of char;
-  addpath: string;
   // Speichert zusÑtzliche Headertypen, Object-Pointer speichert Boolean
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
@@ -152,6 +160,22 @@ const
 
   // S wird StandardmÑ·ig mit dieser LÑnge allociert
   MaxSLen = 4096;
+
+var
+  UUZc: TUUZ;
+
+
+constructor TUUZ.create;
+begin
+  addpath := '';
+end;
+
+destructor TUUZ.Destroy;
+begin
+end;
+
+
+{ -------------------------------------------------------------------- }
 
 procedure IBM2ISO(var s: string);
 var
@@ -300,6 +324,9 @@ begin
           if switch = '1522' then
           RFC1522 := true
         else
+          if switch = 'ppp' then
+          ppp := true
+        else
           if switch[1] = 'u' then
         begin
           MailUser := mid(paramstr(i), 3);
@@ -353,7 +380,7 @@ end;
 
 procedure initvar;
 var
-  t: text;
+  t: Text;
 
   procedure rh(fn: String; mail: boolean);
   var
@@ -384,18 +411,6 @@ begin
   XLine := TStringList.Create;
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
-
-  if exist('addpath') then
-  begin                                 { ADDPATH: Zusatz fÅr Pfadzeile }
-    assign(t, 'addpath');
-    reset(t);
-    readln(t, addpath);
-    close(t);
-    if (addpath <> '') and (lastchar(addpath) <> '!') then
-      addpath := addpath + '!';
-  end
-  else
-    addpath := '';
 
   // zusÑtzliche Headerzeilen einlesen
   AddHd := TStringList.Create;
@@ -2872,7 +2887,7 @@ begin
         time + ' ' + right(dat, 5));    { akt. Datum/Uhrzeit }
     end
     else
-      wrs(f, 'Path: ' + addpath + pfad);
+      wrs(f, 'Path: ' + UUZc.addpath + pfad);
     wrs(f, 'Date: ' + dat);
     uuz.s := realname;
     IBM2ISO(uuz.s);
@@ -3268,11 +3283,14 @@ begin
   assign(f1, source);
   reset(f1, 1);
   adr := 0; n := 0;
-  assign(fc, dest + 'C-' + hex(NextUunumber, 4) + '.OUT'); { "C."-File }
-  rewrite(fc);
+  if not ppp then
+  begin
+    assign(fc, dest + 'C-' + hex(NextUunumber, 4) + '.OUT'); { "C."-File }
+    rewrite(fc);
+  end;
   if filesize(f1) < 10 then
   begin
-    close(f1); close(fc);
+    close(f1); if not ppp then close(fc);
     exit;
   end;
   assign(f, 'uuz.tmp');
@@ -3335,7 +3353,7 @@ begin
         flushoutbuf(f);
         WriteRfcTrailer(f);
         truncate(f);
-        wrs(f2, '#! rnews ' + strs(filesize(f)));
+        if not ppp then wrs(f2, '#! rnews ' + strs(filesize(f)));
         seek(f, 0);
         fmove(f, f2);
       end;
@@ -3346,7 +3364,7 @@ begin
     erase(f2)
   else
   begin
-    MakeXfile('news');
+    if not ppp then MakeXfile('news');
     writeln;
   end;
   close(f); erase(f);
@@ -3417,7 +3435,7 @@ begin
     if n = 0 then
       erase(f2)
     else
-      MakeXfile('smtp');
+      if not ppp then MakeXfile('smtp');
   end;
   close(f1);
   close(fc);
@@ -3435,6 +3453,7 @@ end;
 
 begin
   Randomize;
+  UUZc := TUUZ.Create;
   logo;
   initvar;
   getpar;
@@ -3445,10 +3464,14 @@ begin
   else
     ZtoU;
   donevar;
+  UUZc.Free;
 end.
 
 {
   $Log$
+  Revision 1.56  2000/08/15 19:40:03  mk
+  - kleinere Umbauten fuer internen UUZ und Option -ppp
+
   Revision 1.55  2000/08/08 11:56:18  mk
   - AnsiString-Fixes
 
