@@ -1013,7 +1013,7 @@
   procedure EditNNTP(var brk:boolean);
   var x,y   : Integer;
   begin
-    dialog(ival(getres2(950,0)),11,GetRes2(950,1),x,y);         { 'NNTP-Einstellungen' }
+    dialog(ival(getres2(950,0)),12,GetRes2(950,1),x,y);         { 'NNTP-Einstellungen' }
     with boxpar^ do begin
       maddstring(3,2,getres2(950,2),nntp_ip,25,255,             { 'Server    ~' }
                  range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
@@ -1022,7 +1022,8 @@
       maddstring(3,6,getres2(950,4),nntp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,8,getres2(950,5),nntp_pwd,25,255,'');        { 'Passwort  ~' }
         mhnr(40062);
-      maddint(3,10,getres2(950,6),nntp_maxnews,4,5,0,1000000);  { 'letzten X Nachrichten ' }
+      maddint(3,10,getres2(950,6),nntp_initialnewscount,4,5,0,1000000);  { 'Erstmalig abzuholende Nachrichten' }
+      maddint(3,11,getres2(950,7),nntp_maxnews,4,5,0,1000000);  { 'Maximal abzuholende Nachrichten' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1062,7 +1063,7 @@
       maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
         mhnr(40041);
-      maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'Vor SMTP einen POP3 Login ausfuehren' }
+      maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'SMTP-after-POP' }
       freeres;
       readmask(brk);
       enddialog;
@@ -2120,6 +2121,10 @@
 
 {
   $Log$
+  Revision 1.33  2001/10/05 20:55:02  ma
+  - initial number of newsgroup postings to fetch now independent
+    of maximum number to fetch
+
   Revision 1.32  2001/09/29 09:43:12  mk
   - fixed INetNameRead: 80 instead of 30 chars are allowed in eMail Addr
 

@@ -180,7 +180,8 @@ begin
     nntp_port:= 119;             { Port }
     nntp_id:= '';                { User-ID }
     nntp_pwd:= '';               { PAssword }
-    nntp_maxnews:= 100;          { Max news to get }
+    nntp_initialnewscount:= 100; { News to get initially}
+    nntp_maxnews:= 0;            { Max news to get }
 
     pop3_ip := 'pop3.domain.de';        { POP3: IP oder Domain }
     pop3_id := '';                      { POP3: User-ID, falls noetig }
@@ -367,6 +368,7 @@ begin
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id) or
             gets(s,su,'NNTP-Password',nntp_pwd) or
+            geti(su,  'NNTP-InitialNewsCount',nntp_initialnewscount) or
             geti(su,  'NNTP-MaxNews',nntp_maxnews) or
             gets(s,su,'POP3-IP', pop3_ip) or
             gets(s,su,'POP3-ID', pop3_id) or
@@ -544,6 +546,7 @@ begin
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
     if nntp_id<>''   then writeln(t,'NNTP-ID=',nntp_id);
     if nntp_pwd<>''  then writeln(t,'NNTP-Password=',nntp_pwd);
+    writeln(t,'NNTP-InitialNewsCount=',nntp_initialnewscount);
     writeln(t,'NNTP-MaxNews=',nntp_maxnews);
     //////////////////////////////////
     writeln(t,'POP3-IP=',pop3_ip);
@@ -691,6 +694,10 @@ end;
 
 {
   $Log$
+  Revision 1.54  2001/10/05 20:55:02  ma
+  - initial number of newsgroup postings to fetch now independent
+    of maximum number to fetch
+
   Revision 1.53  2001/09/30 00:39:06  ma
   - enabled ReplaceOwn by default
 

@@ -611,7 +611,8 @@ type   textp  = ^text;
                   nntp_port : integer;     { NNTP: Port, default: 119 }
                   nntp_id   : string;      { NNTP: User-ID, falls noetig }
                   nntp_pwd  : string;      { NNTP: Passwort, falls noetig }
-                  nntp_maxnews : integer;  { NNTP: MaxNews, default: 100 }
+                  nntp_initialnewscount : integer;  { NNTP: default: 100 }
+                  nntp_maxnews : integer;  { NNTP: default: 0 }
                   pop3_ip   : string;      { POP3: IP oder Domain }
                   pop3_id   : string;      { POP3: User-ID, falls noetig }
                   pop3_pwd  : string;      { POP3: Passwort, falls noetig }
@@ -1198,6 +1199,10 @@ implementation
 
 {
   $Log$
+  Revision 1.142  2001/10/05 20:55:01  ma
+  - initial number of newsgroup postings to fetch now independent
+    of maximum number to fetch
+
   Revision 1.141  2001/09/20 18:27:05  cl
   - configuration option for mouse wheel step width (no UI yet)
 

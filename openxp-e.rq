@@ -2164,7 +2164,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Port     ~
 4    User ID  ~
 5    Password ~
-6    Number of messages to get
+6    Messages to fetch initially
+7    Number of messages to fetch
 -
 
 + 951
@@ -3877,6 +3878,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.36  2001/10/05 20:55:00  ma
+# - initial number of newsgroup postings to fetch now independent
+#   of maximum number to fetch
+#
 # Revision 1.35  2001/09/13 13:30:50  ma
 # - reverted to cleaner code
 # - added client mode configuration

@@ -4479,6 +4479,12 @@ diese Daten nicht ben”tigt, so sollten Sie die Felder
 leer lassen.
 @
 40063
+Anzahl der bei Neubestellung einer Newsgroup abzu-
+holenden Artikel.
+
+0 = Alle vorhandenen Artikel vom Server abholen.
+@
+40064
 Anzahl der pro Newsgroup maximal abzuholenden Artikel.
 
 Vorsicht: Sind in einer Newsgroup seit dem letzten
@@ -7006,10 +7012,12 @@ Der Empfang einer Nachricht kann auch manuell mit
 
 Wenn Sie hier <<[x]>> einstellen, versieht OpenXP
 standardm„áig alle PMs an mehrere Empf„nger mit
-einer Blindkopie-Markierung (Blind Carbon Copy).
-Diese bewirkt, daá die einzelnen Empf„nger jeweils
-nicht die Namen der brigen Empf„nger erkennen
-k”nnen.
+einer Blindkopie-Markierung (Blind Carbon Copy,
+BCC). Diese bewirkt, daá die einzelnen Empf„nger
+jeweils nicht die Namen der brigen Empf„nger er-
+kennen k”nnen, im Gegensatz zum normalen Carbon
+Copy (CC), bei dem jeder Empf„nger die komplette
+Empf„ngerliste bekommt.
 
 Der Blindkopie-Status kann auch im Sendefenster je
 Nachricht mit <<<Ctrl-K> >>ein- oder ausgeschaltet
@@ -7055,8 +7063,13 @@ Antwort-an-Adresse verwendet, wenn vorhanden.
 
 <<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
        Header "X-No-Archive: Yes" versehen. Dadurch
-       werden Usenet-Archive wie DejaNews angewiesen,
+       werden Usenet-Archive wie Google angewiesen,
        die Nachricht nicht zu speichern.
+
+Das heiát jedoch auch, daá andere User bei Benutzen
+von Suchmaschinen Nachrichten von Ihnen nicht finden
+k”nnen - denken Sie daran, wenn Ihnen eine Suchma-
+schine wieder einmal eine Menge Zeit erspart.
 
 Auch wenn dieser Schalter aktiviert wird, ist das
 keine Garantie dafr, daá Ihre Nachrichten nicht

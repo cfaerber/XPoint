@@ -313,7 +313,7 @@ begin
         ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
         Group := LeftStr(Group, p-1);
       end else
-       ArticleIndex := 0;
+       ArticleIndex := -bp^.nntp_initialnewscount;
 
       POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
       NNTP.SelectGroup(Group);
@@ -322,7 +322,7 @@ begin
       For i := 0 to 40 - length(Group) do
         FillStr := FillStr + ' ';
 
-      if ArticleIndex<0 then
+      if ArticleIndex<0 then // "-n": fetch n articles
         Inc(ArticleIndex,NNTP.LastMessage)
       else
         if bp^.NNTP_MaxNews > 0 then
@@ -367,6 +367,10 @@ end;
 
 {
         $Log$
+        Revision 1.28  2001/10/05 20:55:03  ma
+        - initial number of newsgroup postings to fetch now independent
+          of maximum number to fetch
+
         Revision 1.27  2001/09/19 11:20:09  ma
         - implemented simple user break handling code
 

@@ -2253,11 +2253,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # NNTP
 0    45
 1    NNTP-Einstellungen
-2    Server    ~
-3    Port      ~
-4    Loginname ~
-5    Paáwort   ~
-6    maximal abzuholende Nachrichten
+2    Server      ~
+3    Port        ~
+4    Loginname   ~
+5    Paáwort     ~
+6    Erstmalig abzuholende Nachrichten
+7    Maximal abzuholende Nachrichten ~
 -
 
 + 951
@@ -3889,6 +3890,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.42  2001/10/05 20:55:01  ma
+# - initial number of newsgroup postings to fetch now independent
+#   of maximum number to fetch
+#
 # Revision 1.41  2001/09/25 21:07:45  cl
 # - added UI for non-RFC network charset selection
 #

@@ -369,8 +369,8 @@ begin
   maddbool(3,12 + j,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /ØUnversandt' }
   maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
-  maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
+  maddbool(3,15 + j,getres2(252,26),DefaultNokop); { 'alle Kopien als Blindkopien verschicken' }
+  maddbool(3,16 + j,getres2(252,29),NoArchive); mhnr(253); { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
   maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
@@ -1507,6 +1507,10 @@ end;
 
 {
   $Log$
+  Revision 1.109  2001/10/05 20:55:01  ma
+  - initial number of newsgroup postings to fetch now independent
+    of maximum number to fetch
+
   Revision 1.108  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

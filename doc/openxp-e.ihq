@@ -3162,6 +3162,12 @@ should enter them here. If you did not leave these
 fields blank.
 @
 40063
+Number of artikels to be fetched from newsgroup
+initially.
+
+0 = fetch all articles available.
+@
+40064
 Number of articles to be fetched at most per news-
 group.
 
