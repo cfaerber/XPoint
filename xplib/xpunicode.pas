@@ -137,7 +137,7 @@ begin
   { wcwidth() and wcswidth() as defined in "The Single UNIX	}
   { Specification, Version 2, The Open Group, 1997"		}
   { <http://www.UNIX-systems.org/online.html>			}
-  { 
+ 
   { Dereived from a C language file by				}
   { Markus Kuhn -- 2001-09-08 -- public domain			}
   
@@ -403,6 +403,9 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2003/08/26 22:56:18  cl
+// - fixes for Free PASCAL
+//
 // Revision 1.2  2003/03/16 18:55:27  cl
 // - started PasDoc documentation
 //

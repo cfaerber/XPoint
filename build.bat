@@ -10,7 +10,7 @@ if "%target%"=="" set target=%2
 if "%target%"=="" set target=win32
 set arg=
 if "%target%"=="dos32" set arg=-TGO32V2 -Fu.\dos32
-if "%target%"=="win32" set arg=-TWin32
+if "%target%"=="win32" set arg=-TWin32 -Sd
 if not "%arg%"=="" goto ok
 echo Platform must be dos32 or win32.
 goto Fehler

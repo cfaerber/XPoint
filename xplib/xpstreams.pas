@@ -63,9 +63,10 @@ type TConnectableStream = class (TStream)
       @param(AnOtherStream is the stream this stream connects to) }
     procedure Connect(AnOtherStream:TStream); virtual;
 
+  public
     {** Creates an instance of @classname . }
     constructor Create; overload;
-  public
+
     {** Destroys an instance of @classname . }
     destructor Destroy; override;
 
@@ -281,6 +282,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/08/26 22:56:18  cl
+// - fixes for Free PASCAL
+//
 // Revision 1.1  2003/08/26 22:46:31  cl
 // - moved xpstreams to xplib/
 // - split xpstreams into individual small files to remove some dependencies

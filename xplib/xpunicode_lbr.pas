@@ -158,8 +158,10 @@ type TUnicodeLineBreaker = class
 
 { ------------------------} implementation { ------------------------- }
 
-uses xpstreams, 
+uses xpstreams,
+{$IFDEF Delphi} 
   strutils,
+{$ENDIF}  
   sysutils;
 
 {$IFDEF UnixFS}
@@ -625,6 +627,9 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2003/08/26 22:56:18  cl
+// - fixes for Free PASCAL
+//
 // Revision 1.3  2003/08/26 22:46:31  cl
 // - moved xpstreams to xplib/
 // - split xpstreams into individual small files to remove some dependencies
