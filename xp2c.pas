@@ -85,6 +85,7 @@ procedure TestQC(var s:string);
 implementation  {----------------------------------------------------}
 
 uses
+  {$ifdef Win32} xpwin32, {$endif}
   xp1o,xp2,xp4o2,xp9bp, xpnt;
 
 const
@@ -1441,6 +1442,9 @@ end.
 
 {
   $Log$
+  Revision 1.94  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.93  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

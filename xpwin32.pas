@@ -50,6 +50,7 @@ function SysOutputRedirected: boolean;
 // Execute an external program; return errorlevel of called program if
 // successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
+Function GetEnv(envvar: string): string; { from FPC RTL }
 
 implementation
 
@@ -57,7 +58,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  dos, windows, winxp;
+  SysUtils, dos, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -175,9 +176,36 @@ begin
   if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 
+Function GetEnv(envvar: string): string;
+var
+   s : string;
+   i : longint;
+   hp,p : pchar;
+begin
+   Getenv:='';
+   p:=GetEnvironmentStrings;
+   hp:=p;
+   while hp^<>#0 do
+     begin
+        s:=strpas(hp);
+        i:=pos('=',s);
+        if uppercase(copy(s,1,i-1))=uppercase(envvar) then
+          begin
+             Getenv:=copy(s,i+1,length(s)-i);
+             break;
+          end;
+        { next string entry}
+        hp:=hp+strlen(hp)+1;
+     end;
+   FreeEnvironmentStrings(p);
+end;
+
 end.
 {
   $Log$
+  Revision 1.15  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.14  2001/01/05 18:36:05  ma
   - fixed SysExec
 

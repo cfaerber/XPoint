@@ -30,9 +30,9 @@ interface
 {$ifdef unix}
 uses sysutils,linux,xplinux,xpglobal,typeform;
 {$else }
-uses sysutils,xpglobal,dos,typeform
+uses sysutils,xpglobal,typeform
   {$ifdef vp} ,vpusrlow {$endif}
-  {$ifdef Win32} ,windows {$endif}
+  {$ifdef Win32} ,xpwin32, windows {$endif}
   {$ifdef Dos32} ,xpdos32 {$endif};
 {$endif}
 
@@ -174,9 +174,6 @@ function  FileMaskSize(const mask: string): longint;
 
 { Return file name (without extension) }
 function  GetBareFileName(const p: string):string;
-
-{ Replacement for Dos.GetEnv }
-function  GetEnv(const name: string): string;
 
 { Returns clear text error messages for IOError values; otxt if unknown }
 function  ioerror(i: integer; otxt: string):string;
@@ -635,12 +632,6 @@ begin
 end;
 {$endif }
 
-function GetEnv(const name: string): string;
-begin
-  {$ifdef Linux} result:= Linux.GetEnv(name);
-  {$else} result:=Dos.GetEnv(name); {$endif}
-end;
-
 function FileMaskSize(const mask: string): longint;
 var
   sr: tsearchrec;
@@ -673,6 +664,9 @@ end.
 
 {
   $Log$
+  Revision 1.97  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.96  2001/07/21 13:29:51  mk
   - Added RenameDir
   - minior fix for CreateMultipleDirectories

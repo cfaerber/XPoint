@@ -75,7 +75,9 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
 implementation
 
-uses StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
+uses
+  {$ifdef Win32} xpwin32, {$endif}
+  StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
 
 
 // get one line from lister, check for marked lines
@@ -1012,6 +1014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.83  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

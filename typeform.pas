@@ -1401,12 +1401,12 @@ end;
 
 { functions to convert from/to MSB and LSB }
 
-Function Swap16(X : Word) : Word; inline;
+Function Swap16(X : Word) : Word; {$IFNDEF Delphi} inline; {$ENDIF }
 Begin
   result:=(X and $ff) shl 8 + (X shr 8)
 End;
 
-Function Swap32(X: Longint): Longint; inline;
+Function Swap32(X: Longint): Longint; {$IFNDEF Delphi} inline; {$ENDIF }
 Begin
   result:=(x and $ff) shl 24 + (x and $ff00) shl 8 + (x and $ff0000) shr 8 + (x and $ff000000) shr 24;
 End;
@@ -1449,8 +1449,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.89  2001/07/28 12:19:41  mk
-  - removed assignment to for-loop variable 'i' in GetTokenC
+  Revision 1.90  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
 
   Revision 1.88  2001/07/02 23:41:32  mk
   - defect base64 lines are'nt decoded anymore (readded this fix)

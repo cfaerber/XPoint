@@ -44,6 +44,7 @@ procedure InitXPXUnit;
 implementation
 
 uses
+  {$ifdef Win32} xpwin32, {$endif}
   log,
   xp2;
 
@@ -177,6 +178,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.42  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

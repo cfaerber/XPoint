@@ -54,7 +54,9 @@ procedure PGP_EndSavekey;
 
 implementation  { --------------------------------------------------- }
 
-uses  xp3,xp3o,xp3o2,xp3ex,xp6,xpcc,xpnt;
+uses  xp3,xp3o,xp3o2,xp3ex,xp6,
+  {$ifdef Win32} xpwin32, {$endif}
+  xpcc,xpnt;
 
 const
   savekey : string = '';
@@ -838,6 +840,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/07/28 12:33:33  mk
+  - GetEnv is now in OS dependend and not in dos unit
+
   Revision 1.37  2001/07/23 16:05:22  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)
