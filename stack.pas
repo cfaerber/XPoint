@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 { Allgemeiner Stapel }
 
@@ -19,10 +18,10 @@ interface
 procedure spush(var x; size:word);
 procedure spop(var x);
 
-
 implementation
 
-uses TypeForm;
+uses
+  TypeForm, xpglobal;
 
 type  stp = ^ste;
       ste = record
@@ -36,18 +35,24 @@ type  stp = ^ste;
 const tail : stp = nil;
 
 
+{$IFDEF Debug }
 procedure error(txt:string);
 begin
   writeln('<Stack> ',txt);
   halt(1);
 end;
+{$ENDIF }
 
 
 procedure spush(var x; size:word);
 var p : stp;
 begin
+{$IFDEF BP }
+  {$IFDEF Debug }
   if maxavail<size+128 then
     error('Memory Overflow');
+  {$ENDIF }
+{$ENDIF }
   new(p);
   if tail=nil then begin
     tail:=p;
@@ -68,10 +73,12 @@ end;
 procedure spop(var x);
 var p : stp;
 begin
+{$IFDEF Debug }
   if tail=nil then
     error('Underflow');
   if @x<>tail^.adr then
     error('var mismatch');
+{$ENDIF }
   FastMove(tail^.inhalt^,x,tail^.groesse);
   freemem(tail^.inhalt,tail^.groesse);
   p:=tail;
@@ -81,9 +88,3 @@ end;
 
 
 end.
-{
-  $Log$
-  Revision 1.3  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-}
