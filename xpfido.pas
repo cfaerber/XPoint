@@ -1676,13 +1676,11 @@ label ende;
 
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
   var
-    p	     : Integer;
+    p	    : Integer;
     driveNr : Integer;
   begin
 {$IFDEF Linux}
-//     SysUtils.AddDisk(Path); wait for the fix in fpc ;-(
-//     driveNr := Drives;
-    driveNr := 0;   // its root
+     driveNr := SysUtils.AddDisk(Path);
 {$ELSE}     
      driveNr := ord(FirstChar(Path))-64;
 {$ENDIF}     
@@ -2243,6 +2241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/04/28 15:20:56  ml
+  - final fix for Diskfree (patch for sysutils needed)
+
   Revision 1.48  2001/04/27 10:00:40  ml
   - bugfix Diskfree in linux (while Reading Nodelist - temporarily Root-Diskfree till fpc-developer fixes his routines)
 
