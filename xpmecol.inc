@@ -6,9 +6,9 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 const colcfgfile = 'xpoint.col';
-      ParMono    = false;
 
 type  ColArr = array[0..3] of byte;
       ColRec = record
@@ -103,7 +103,9 @@ var   col   : colrec;
 
 procedure defaultcolors;
 begin
-  mono:=ParMono or (mem[Seg0040:$49]=7);
+{$IFDEF BP }
+  mono:=(mem[Seg0040:$49]=7);
+{$ENDIF }
   with col do
     if not mono then begin
       colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
@@ -322,7 +324,6 @@ var p,n,p1,i : byte;
     butt     : array[1..maxbutt] of string[30];
     butthigh : array[1..maxbutt] of byte;
     buttsp   : array[1..maxbutt] of byte;
-    bpx      : array[1..maxbutt] of byte;
     hot      : string[maxbutt];
     t        : taste;
     stop     : boolean;
@@ -337,7 +338,6 @@ var p,n,p1,i : byte;
     for i:=1 to n do begin
       if buttsp[i]>0 then
         gotoxy(wherex+buttsp[i],wherey);
-      bpx[i]:=wherex;
       if i=p then begin
         attrtxt(col.colbuttonarr);
         write(#16);
@@ -447,5 +447,9 @@ begin
       else readbutton:=p;
     end;
 end;
+{
+  $Log$
+  Revision 1.3  2000/03/04 10:42:25  mk
+  Versionsinfos hinzugefuegt und weiter portiert
 
-
+}

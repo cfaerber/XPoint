@@ -14,7 +14,7 @@ uses
 {$IFDEF BP }
   xdelay,
 {$ENDIF }
-  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video;
+  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video, xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -51,7 +51,6 @@ const mainmenu  : map = nil;
 var   menu      : array[0..menus] of ^string;
       menulevel : byte;
       main_n    : integer;
-      menustack : array[0..4] of byte;   { fÅr Rekonstruktion im Config-MenÅ }
       hmpos     : array[1..10] of byte;  { HauptmenÅ-XPos }
       hidden    : array[1..maxhidden] of integer;
       anzhidden : integer;
@@ -62,7 +61,9 @@ var   menu      : array[0..menus] of ^string;
 procedure wrlogo;
 begin
   writeln;
-  writeln('CrossPoint-MenÅeditor v1.02   (c) ''96-99 Peter Mandrella, Freeware');
+  writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
+  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
 
@@ -324,9 +325,7 @@ end;
 
 procedure showmain(nr:shortint);
 var i      : integer;
-    xp,xp2 : byte;
     s      : string[20];
-    p      : byte;
 begin
   if mainmenu=nil then begin
     new(mainmenu);
@@ -526,8 +525,9 @@ begin
 
       if nr=0 then begin
         if t=keyf10 then t:=keyesc;
+        { In der MenÅzeile îffnet Cursor Down das MenÅ }
         if t=keydown then t:=keycr;
-        end;
+      end;
 
       if t='+' then DoEnable;
       if t='-' then DoDisable;
@@ -541,7 +541,6 @@ begin
             else begin
               xx:=x+2; yy:=y+1+p; end;
             menupos[nr]:=p;
-            menustack[menulevel]:=p;
             inc(menulevel);
             get2:=getmenu(ma^[p].chain,'',xx,yy);
             dec(menulevel);
@@ -558,11 +557,8 @@ begin
              -3  : begin autolr:=4; t:=''; end;
             end  { case }
           end
-        else begin   { kein UntermenÅ }
-          { get2:=ma^[p].mpnr;
-            menustack[menulevel]:=p; }
-          t:='';
-          end
+        else
+          t:=''
       else  { not enabled }
         t:='';
 
@@ -584,7 +580,7 @@ begin
     EnableUpper:=(i<=n);
     end;
 
-  dispose(ma);
+  Dispose(ma);
 
   if t=keyesc then getmenu:=0
   else if t=keycr then getmenu:=get2
@@ -668,7 +664,6 @@ end;
 function askquit:boolean;
 var x,y : byte;
     t   : taste;
-    c   : char;
 begin
   msgbox(34,4,'',x,y);
   wrt(x+3,y+1,'énderungen sichern?');
@@ -702,10 +697,7 @@ begin
 end.
 {
   $Log$
-  Revision 1.4  2000/03/04 01:23:24  mk
-  Bug in XPME beseitigt und Code portiert
-
-  Revision 1.3  2000/02/15 20:43:37  mk
-  MK: Aktualisierung auf Stand 15.02.2000
+  Revision 1.5  2000/03/04 10:42:25  mk
+  Versionsinfos hinzugefuegt und weiter portiert
 
 }
