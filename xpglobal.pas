@@ -119,10 +119,21 @@ const
 {$ENDIF }
 
 const
-{$IFDEF Linux }              { ML 07.05.2000 unter linux '/' als Verzeichnis-Trennung }
-      dirdivchar   = '/';
+{$IFDEF UnixFS }
+  DirSepa  = '/';
+  WildCard = '*';
 {$ELSE }
-      dirdivchar   = '\';
+  DirSepa  = '\';
+  WildCard = '*.*';
+{$ENDIF }
+
+const
+{$IFDEF Ver32 }
+  MaxLenFilename = 255;
+  MaxLenPathname = 255;
+{$ELSE }
+  MaxLenFilename = 13;
+  MaxLenPathname = 72; { <- ist das richtig fuer DOS? }
 {$ENDIF }
 
 implementation
@@ -137,6 +148,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/05/09 13:14:32  hd
+  - DirSepa abhaengig von UnixFS, ebenso WildCard
+  - MaxLenFilename/-Pathname eingefuehrt (bitte DOS etc. anpassen)
+
   Revision 1.24  2000/05/07 11:29:48  ml
   Bug in typeform unter Linux keine '\' als Verzeichnistrennung...
 
