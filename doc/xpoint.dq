@@ -373,11 +373,11 @@ Falls das betreffende Brett nicht bei Ihrem Server verfÅgbar ist, fragen Sie
 bitte Ihren Sysop - er kann das Brett fÅr Sie bestellen.
 
 >>|
-::ErgÑnzen
 Es gibt noch einen ganz speziellen Service, der die Anzahl der immer wieder
-auftretenden Fragen reduzieren soll: Die FAQ-Server. Wer Zugang zu E-Mail-Diensten
-hat, kann Åber die 
-::
+auftretenden Fragen reduzieren soll: Die FAQ-Server. Frage einfach mal in
+den entsprechenden Echos/Newsgroups/Brettern (s. oben) nach, da es fÅr 
+verschiedene Netze dieses Angebot gibt (Usenet, Fido und Åber die entsprechenden
+Gateways).
 <<|
 
 
@@ -420,9 +420,8 @@ NatÅrlich Peter Mandrella fÅr die Freigabe des Quellcodes und fÅr das beste
 Pointprogramm der Welt. ;)
 Au·erdem Stefan Vinke, Ulf Hinze, Mark Peter Wege.
 
-Ganz besonders sind wir Bill Gates verbunden, da seine Betriebssysteme uns
-lange NÑchte gequÑlt haben. NatÅrlich nur aus dem Grunde, weil wir eh zuviel
-Zeit haben, und deshalb BeschÑftigung brauchen.
+Wir danken den Entwicklern vieler anderer Programme (vor allem Betriebssysteme), 
+die uns gezeigt haben, welche Fehler wir nicht imitieren sollten.
 <<|
 
 
@@ -495,7 +494,7 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      PMCONV.EXE       PM-Konvertierer; s. Anhang C
      MAGGI.EXE        Netcall-Konvertierer
      XPICONS.DLL      Icons fÅr MS-Windows
-     ZM.EXE           Zmodem-öbertragungsprotokoll
+     ZM.EXE           ZModem-öbertragungsprotokoll
      ZCONFIG.EXE      Konfigurationsprogramm fÅr ZM
 
 Wenn Sie CrossPoint bereits installiert haben und auf eine neuere Version
@@ -1292,8 +1291,8 @@ Bei Verwendung des Programms "BiModem" mu· in der BiModem-Konfiguration
 (Programm BICONFIG) das CrossPoint-Verzeichnis als Upload- und Download-Verzeichnis
 eingetragen sein.
 
-Am einfachsten ist es, wenn Sie einfach nur "Zmodem" als Up- und Download-Protokoll
-eintragen. CrossPoint verwendet dann das mitgelieferte Zmodem-Protokoll.
+Am einfachsten ist es, wenn Sie einfach nur "ZModem" als Up- und Download-Protokoll
+eintragen. CrossPoint verwendet dann das mitgelieferte ZModem-Protokoll.
 
 Bei MausTausch mÅssen Sie zusÑtzlich den Kennbuchstaben - d.h. den Anfangsbuchstaben
 - des verwendeten Protokolls angeben, also z.B. "Z" fÅr ZModem.
@@ -1479,7 +1478,7 @@ Im MausNet gibt es keinen Pseudouser, sondern die Brettverwaltung erfolgt
 Bevor Sie Bretter bestellen kînnen, benîtigt XP zunÑchst eine Brettliste,
 die Sie mit /Nachricht/Brettmanager/Liste_anfordern beim Brettverwalter
 bestellen kînnen. Um die Liste zu erhalten, mÅssen Sie anschlie·end ZWEI
-Netzanrufe (MausNet: einen Netzanruf) durchfÅhren. Soweit mîglich,liest
+Netzanrufe (MausNet: einen Netzanruf) durchfÅhren. Soweit mîglich, liest
 XP die Brettliste automatisch ein. Wenn nicht, dann wÑhlen Sie die Liste
 in Ihrem PM-Brett und verwenden Sie /Nachricht/Brettmanager/Liste_einlesen.
 
@@ -1784,7 +1783,9 @@ Online-Hilfe zu /Config/Optionen/GebÅhren/Tarife beschrieben.
 
 ˛ MenÅs
 
-Mit dem getrennt erhÑltlichen CrossPoint-MenÅeditor kînnen Sie einzelne
+>>|
+Mit dem  im Paket enthaltenem CrossPoint-MenÅeditor kînnen Sie einzelne
+<<|
 MenÅpunkte oder UntermenÅs vollstÑndig aus dem XP-MenÅ entfernen. Damit
 lÑ·t sich z.B. der Funktionsumfang von XP einschrÑnken, um die Bedienung
 fÅr unerfahrenere Anwender zu vereinfachen. Oder Sie kînnen z.B. das Fido-MenÅ
@@ -1792,9 +1793,7 @@ entfernen, falls Sie den Netztyp Fido nicht verwenden, oder den MenÅpunkt
 "Registrierung", wenn Sie bereits registriert sind.
 
 >>|
-::Und?
-Den MenÅeditor finden Sie als XPME*.* (diverse Packer) in vielen Boxen und 
-auf der Homepage (http://www.crosspoint.de).
+Den MenÅeditor finden Sie als XPME.EXE im CrossPoint-Verzeichnis.
 <<|
 
 
@@ -4777,7 +4776,7 @@ Funktionen.
 Tasten innerhalb von CrossTerm:
 
 <Alt O>      Optionen einsstellen (Schnisttstelle, Modem-Init, auto-
-             matischer Zmodem-Up/Download u.a.)
+             matischer ZModem-Up/Download u.a.)
 
 <Alt L>      îffnet bzw. schlie·t das Logfile.
 
@@ -4792,7 +4791,7 @@ Tasten innerhalb von CrossTerm:
 
 <F9>         DOS-Aufruf, wie (fast) Åberall in CrossPoint
 
-Falls der automatische Zmodem-Up/Download abgeschaltet ist, kînnen Sie
+Falls der automatische ZModem-Up/Download abgeschaltet ist, kînnen Sie
 dafÅr die Åblichen Tasten <PgUp> und <PgDn> verwenden.
 
 
@@ -5003,7 +5002,7 @@ Es soll keine vollstÑndigen Dokumentationen ("Polldocs") ersetzen, sondern
 Ihnen beim VerstÑndnis dessen helfen, was hinter den Kulissen ablÑuft, und
 Ihnen ermîglichen, technische Diskussionen zu verstehen. Eine bessere
 Beschreibung der einzelnen Nachrichtenformate finden Sie in folgenden Dokumenten:
-:: öberarbeiten, falls nîtig
+
 Z-Netz-Netcall  per Anhalter durch das Z-Netz ("Hitchhiker"),
                 15.2.91, von Patrick Schaaf
 
@@ -5026,7 +5025,7 @@ FidoNet         FTS-0001, FTS-0004, FSC-0039 u.a.
 QWK             QWK-Spezifikation v1.1 vom 17.8.91
 
 GS-Mailbox      Nicht dokumentiert. T.S. fragen :-)
-::
+
 
 
 Prinzipiell sind Nachrichtenpakete (Puffer) entweder leer, oder bestehen aus
@@ -5535,12 +5534,11 @@ COMx-RING             Klingelsignal-Erkennung
 COMx-16550            FIFO des 16550A verwenden
 COMx-Triggerlevel     FIFO-Triggerlevel
 COMx-Waehlsperre      Telekomgedenkminute
-::Unter UmstÑnden noch ISDN einfÅgen
 
 Einstellungen fÅr /XPoint/Terminal:
 
-AutoUpload            automatischer Zmodem-Upload
-AutoDownload          automatischer Zmodem-Download
+AutoUpload            automatischer ZModem-Upload
+AutoDownload          automatischer ZModem-Download
 TermPort              Schnittstelle
 TermBaud              Baudrate
 TermStatus            Statuszeile anzeigen
@@ -5643,7 +5641,7 @@ ZerbID         Zerberus- oder MagicNET-Programm-ID
 Upload         Upload-Befehl
 Download       Download-Befehl
 ProtokollTyp   MausNet: Kennbuchstabe des Up/Downloadprotokolls
-ZMOptions      zusÑtzliche Zmodem-Optionen
+ZMOptions      zusÑtzliche ZModem-Optionen
 UpArc          Upload-Packer
 DownArc        Download-Packer
 UpArcExt       Dateierweiterung der gesendeten Datei
@@ -6858,14 +6856,15 @@ Mîgliche Optionen sind:
    /trace aktiviert die Netcall-Scriptprotokollierung. Siehe Kap.
           8.1.
 
-   /w    Gibt nicht benîtigte Rechenzeit unter MS-Windows, OS/2 oder
-         Ñhnlichen Multitasking-Umgebungen frei. Dazu werden die
-         Uhr, der ScreenSaver und die /maus-Emulation abgeschaltet.
 >>|
-         Unter Windows braucht dieser Paramter nicht unbedingt ange-
-         geben zu werden, da XP die Rechenzeit dort automatisch frei
-         gibt. mit "/w0" kann diese Funktion aber generell abge-
-         schaltet werden.
+   /w    Gibt nicht benîtigte Rechenzeit unter MS-Windows, OS/2 oder
+         Ñhnlichen Multitasking-Umgebungen frei. Mit "/w2" erzwingt 
+         CrossPoint die Freigabe wie sie vor Version 3.2 realisiert
+         wurde: Abschalten der Uhr un der /maus-Emulation. Unter 
+         OS/2, Windows und Linux-DOSEmu braucht dieser Paramter 
+         nicht unbedingt angegeben zu werden, da XP die Rechenzeit
+         dort automatisch freigibt. mit "/w0" kann diese Funktion 
+         aber generell abgeschaltet werden.
 <<|
 
    /z:x  Stellt x Bildzeilen ein. X mu· einer der bei /Config/Anzei-
@@ -7008,7 +7007,7 @@ Folgende Dateien werden von CrossPoint verwendet und im XP-Verzeichnis abgelegt:
   KEYDEF.CFG     Tastenmakros
   PMCONV.EXE     Programm zum Konvertieren von PMs
   ZPR.EXE        ZCONNECT-Pufferreparierer
-  ZM.EXE         Zmodem-öbertragungsprotokoll
+  ZM.EXE         ZModem-öbertragungsprotokoll
   ZCONFIG.EXE    Konfigurationsprogramm fÅr ZM.EXE
   MAGGI.EXE      Puffer-Konvertierer fÅr MagicNET, MausTausch u.a.
   MPUFFER.*      die Pufferdateien, in denen Nachrichten gespeichert
@@ -7230,12 +7229,12 @@ in andere MausTausch-Frontends einlesen.
 
 ˛ ZM.EXE
 
-PD-Zmodem ist ein Zmodem-öbertragungsprotokoll. Es wird fÅr alle Fido-Netcalls
-verwendet und fÅr sonstige Netcalls, falls bei /Edit/Boxen/Edit/Points "Zmodem"
+PD-ZModem ist ein ZModem-öbertragungsprotokoll. Es wird fÅr alle Fido-Netcalls
+verwendet und fÅr sonstige Netcalls, falls bei /Edit/Boxen/Edit/Points "ZModem"
 als Protokoll eingetragen ist. Mit ZCONFIG.EXE kînnen die Farben und die Sprache
-von PD-Zmodem eingestellt werden.
+von PD-ZModem eingestellt werden.
 
-Eine ausfÅhrliche Dokumentation zu PD-Zmodem ist im PD-Zmodem-Paket enthalten,
+Eine ausfÅhrliche Dokumentation zu PD-ZModem ist im PD-ZModem-Paket enthalten,
 das Sie in vielen Boxen finden.
 
 
@@ -7246,9 +7245,8 @@ Eine Beschreibung dieser Programme finden Sie in FIDO.DOC.
 
 ˛ XPME.EXE
 
-::Na?
-Dies ist ein getrennt erhÑltlicher MenÅeditor, mit dem einzelne MenÅpunkte
-und UntermenÅs aus dem CrossPoint-MenÅ entfernt werden kînnen (s. Kap. 2.4).
+Dies ist der MenÅeditor, mit dem einzelne MenÅpunkte und UntermenÅs aus dem 
+CrossPoint-MenÅ entfernt werden kînnen (s. Kap. 2.4).
 
 
 
@@ -7260,18 +7258,29 @@ Die folgenden Programme haben sich bei uns (Team) bewÑhrt und kînnen fÅr den Ein
 mit CrossPoint empfohlen werden:
 
   o  das RSA-Codierprogramm PGP von Philip Zimmermann (s. Kap. 5.12)
-
-  o  das Grafik-Anzeigeprogramm VPIC von Bob Montgomery (s. auch
-     /Config/Extern/Viewer)
-
-  o  der Lister LIST von Vernon D. Buerg zum Anzeigen gro·er Nach-
-     richten, falls nicht genÅgend EMS/XMS-Speicher vorhanden ist
-
+>>|
   o  die Filter XP-Filter und CrossSecretary, die ganz gut bei einer
      Mailschwemme helfen
-::
 
+  o  PktXCode, um Dateien aus Mails extrahieren zu kînnen (Stichwort
+     UU-Encoding)
 
+  o  Momentan kînnen Sie noch nicht auf Server per PPP zugreifen,
+     obwohl diese mit am hÑufigsten vorkommen. Diese LÅcke schlie·en
+     die Tools UKA_PPP (DOS) und UKAW (Windows)
+
+  o  XPScore, um sich Mails nach eigene Geschmack vorsortieren zu
+     lassen
+
+  o  CrossPoint kann leider nicht die Zwischenablagen von Windows NT
+     (bzw. 2000) oder OS/2 nutzen, dafÅr sind extra Treiber nîtig:
+        
+        OS/2: Windoze Clipboard Emulator
+           http://www.hippo.ru/~nelescon/utils/CLIPVDM.ZIP
+        NT: 
+           http://www.faerber.muc.de/
+           ftp://ftp.muc.de/people/cfaerber/comp/xp/ntold09b.zip
+<<|
 
 
 D.  Der Umstieg auf CrossPoint
@@ -7355,7 +7364,7 @@ Fensters abschalten. Dadurch bleibt Ihnen Zeit, die Fehlermeldung zu lesen.
 
 ˛ HÑnger bei DatenÅbertragung
 
-Falls die Zmodem-öbertragung gelegentlich hÑngt, bis eine Taste drÅckt wird,
+Falls die ZModem-öbertragung gelegentlich hÑngt, bis eine Taste drÅckt wird,
 arbeitet die Leerlaufzeiterkennung von Windows zu empfindlich. In diesem Fall
 mÅssen Sie die Empfindlichkeit Åber die entsprechende Einstellung verringern
 (ab Windows 95) oder komplett abschalten.
@@ -7430,7 +7439,7 @@ mit "compact /c mpuffer.*" die Dateikomprimierung fÅr die Nachrichtenpuffer
 aktivieren (typische Packrate: 1,5 : 1). Die Performance des Programms wird
 dadurch kaum beeintrÑchtigt.
 
-Die meisten Zmodem-Protokolle, einschlie·lich PD-Zmodem, funktionieren unter
+Die meisten ZModem-Protokolle, einschlie·lich PD-ZModem, funktionieren unter
 Windows NT nicht zuverlÑssig bei hîheren Baudraten. In diesem Fall sollten Sie
 entweder GSZ verwenden, oder den FOSSIL-Treiber NTFOSS, den Sie z.B. in der
 XP-Supportbox finden. Falls NTFOSS nicht richtig funktioniert, sollten Sie
@@ -7813,7 +7822,7 @@ eine Datei.
 
 
 
---3 F: Wohein verschwinden PMs, die mit <Alt P> archiviert werden?
+--3 F: Wohin verschwinden PMs, die mit <Alt P> archiviert werden?
 
 --3 A: Sie werden in das PM-Archivbrett des Absenders verschoben. Siehe
 Kapitel 5.2.
@@ -8432,12 +8441,12 @@ o  diverse Kleinigkeiten korrigiert
 +  zusÑtzliche Einstellungen bei /Edit/Boxen/Edit/QWK
 +  Suche nach gelesenen Nachrichten
 +  /Config/Anzeige/Diverses: Screensaver - schwarzschalten
-+  /Config/Anzeige/PD-Zmodem
++  /Config/Anzeige/PD-ZModem
 +  MausTausch: ITI-Auswertung (zusÑtzliche Infofiles)
 +  /Edit/Boxen/Edit/Ausgangsfilter
 !  Fehler beim BlÑttern im Ungelesen-Mode behoben
    /XPoint/Terminal:
-+     PD-Zmodem-Autodownload und -Autoupload
++     PD-ZModem-Autodownload und -Autoupload
 +     Einstellungen mit Alt-O
 !  UUdecode-Fehler behoben (falsche DateilÑnge)
 *  /Nachricht/Alle/... abbrechbar
@@ -8478,7 +8487,7 @@ o  diverse Kleinigkeiten korrigiert
 3.11  (09.04.96)
 !  HÑnger beim Abbruch von Programmfunktionen behoben, die Åber ein
    Makro aufgerufen wurden [als Patch fÅr XP 3.1 verfÅgbar]
-!  Zmodem-Up/Download im Terminal funktioniert jetzt auch ohne
+!  ZModem-Up/Download im Terminal funktioniert jetzt auch ohne
    FOSSIL-Treiber [als Patch fÅr XP 3.1 verfÅgbar]
 !  interner Fehler im Lister behoben
 !  diverse Fehler im internen Terminal behoben
@@ -8670,8 +8679,6 @@ o  diverse Kleinigkeiten korrigiert
      <Alt V> Volltext
      <Alt B> Betreff
      <Alt U> User
-+  CAPI-Support unter Edit/Boxen/Modem/Schnittstelle
-+  Config/Modem/ISDN
 !  XPoint/Statistik/Speicher fÅhrte bei zuviel Speicher zu Fehlern
 +  die Quotefunktion unter Config/Optionen/Allgemeines wurde noch um
    das Zeichen & erweitert
@@ -8691,7 +8698,6 @@ o  diverse Kleinigkeiten korrigiert
 +  Config/Optionen/Nachrichten hat den neuen Schalter "Fragen bei 
    Antwort-an", also Auswertung des besagten Headers
 +  unter Nachricht/Direkt kann man per F2 aus der Userliste wÑhlen
-+  CAPI auch im Terminal nutzbar
 +  im Sendefenster kann mit "/" der EmpfÑnger nachtrÑglich geÑndert 
    werden
 !  Archiv-Erkennung verbessert
@@ -8703,10 +8709,9 @@ o  diverse Kleinigkeiten korrigiert
    zum Absturz
 +  beim exportieren in die Windows-Zwischenablage kann jetzt auch
    nur eine URL oder Mail-Adresse extrahiert werden
-!  Anzeigefehler bei ZPR mit gro·en Puffern behoben
 #  viele Routinen umgeschrieben und optimiert
 !  mehrfache Auswertung der Kommandozeile verhindert
-+  umlautabhÑngigkeit bei den Suchfunktionen "User", "Betreff" und
++  UmlautabhÑngigkeit bei den Suchfunktionen "User", "Betreff" und
    "FidoempfÑnger"
 !  Zwischenablage-Routinen gesÑubert
 *  die Brettvertreteradresse erlaubt jetzt auch Kurznamen und die
@@ -8714,6 +8719,16 @@ o  diverse Kleinigkeiten korrigiert
 !  Darstellungsfehler in Listboxen (Edit/Boxen, z.B.) behoben
 !  beim éndern des Lesen-Status einer Nachricht verabschiedete sich
    CrossPoint
++  AND/OR-VerknÅpfung in der Suche mîglich (s. Kapitel 3.9)
++  FQDN auch bei RFC-Boxen mîglich
++  Rechenzeitfreigabe verbessert
+     Automatische Freigabe unter OS/2, Windows und der DOSEmu von 
+      Linux
+     Uhr wird trotz Freigabe angezeigt
+     Neue Schalter
+       /w0 keine Freigabe
+       /w bzw. /W1 Verhalten wie bei automatischer Erkennung
+       /w2 Freigabe wie in Versionen vor 3.2
 <<|
 
 Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.DOC
