@@ -415,7 +415,10 @@ begin
                       else _domain:=rev+'@'+LowerCase(pointname)+domain;
         nt_Quick,
         nt_GS       : _domain:=rev+'@'+pointname;
-        nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
+        nt_UUCP,
+        nt_NNTP,
+        nt_POP3,
+        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
                         else _domain:=rev+'@'+fqdn;
       else
         _domain:='@'+box;
@@ -1145,6 +1148,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2001/04/17 01:03:03  ma
+  - enabled FQDN with NNTP/... server type
+
   Revision 1.51  2001/03/14 20:46:05  mk
   - removed registration routines
 
