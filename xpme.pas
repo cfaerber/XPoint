@@ -105,7 +105,7 @@ var t  : text;
     s  : string;
     i  : integer;
 begin
-  if not fileexists('openxp.res') and not fileexists('openxp-d.res') then begin
+  if not fileexists('openxp.rsp') and not fileexists('openxp-d.res') then begin
     wrlogo;
     writeln('Fehler: ''openxp-d.res'' nicht gefunden.'#7);
     writeln;
@@ -114,7 +114,7 @@ begin
     writeln;
     halt;
     end;
-  assign(t,'xp.res');
+  assign(t,'openxp.rsp');
   if existf(t) then begin
     reset(t);
     readln(t,s);
@@ -767,6 +767,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2001/08/01 09:06:24  cl
+  - renamed openxp.res to openxp.rsp
+
   Revision 1.34  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

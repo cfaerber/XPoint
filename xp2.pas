@@ -640,10 +640,10 @@ var lf : string;
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   rc:= findfirst(LibDir + 'openxp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
-  assign(t,FileUpperCase(OwnPath + 'openxp.res'));
+  assign(t,FileUpperCase(OwnPath + 'openxp.rsp'));
   reset(t);
   if ioresult<>0 then
-  begin                                     { Wenn openxp.RES nicht existiert }
+  begin                                     { Wenn openxp.rsp nicht existiert }
     if parlanguage='' then                                {/L Parameter beruecksichtigen}
     begin
        if length(sr.name) < LanguagePos then
@@ -697,7 +697,7 @@ var lf : string;
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
-    if FileExists(OwnPath + 'xp.res') then DeleteFile(OwnPath + 'xp.res');
+    if FileExists(OwnPath + 'openxp.rsp') then DeleteFile(OwnPath + 'openxp.rsp');
     interr(iifs(deutsch,'falsche Version von ','wrong version of ')+lf);
     end;
   GetResdata;
@@ -1090,6 +1090,9 @@ end.
 
 {
   $Log$
+  Revision 1.115  2001/08/01 09:06:23  cl
+  - renamed openxp.res to openxp.rsp
+
   Revision 1.114  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 

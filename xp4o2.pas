@@ -863,7 +863,7 @@ var s  : string;
     showscreen(false);
     aufbau:=true;
     if getres(6)=LangVersion then begin
-      assign(t,FileUpperCase('openxp.res'));
+      assign(t,FileUpperCase('openxp.rsp'));
       rewrite(t);
       writeln(t,FileUpperCase(ExpandFileName(sa[nr])));
       close(t);
@@ -933,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/08/01 09:06:23  cl
+  - renamed openxp.res to openxp.rsp
+
   Revision 1.40  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 
