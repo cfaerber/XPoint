@@ -36,14 +36,17 @@ uses
 {$ifdef vp }
   vpsyslow,
 {$endif}
-  dos,
 {$ifdef NCRT }
   xpcurses,
 {$else }
   crt,
 {$endif }
   sysutils,
-  keys, typeform, mouse, xp0, xpglobal;
+  keys,
+  typeform,
+  mouse,
+  xp0,
+  xpglobal;
 
 const  lastkey   : taste = '';
 
@@ -312,7 +315,7 @@ function ticker:longint;
 var
   h, m, s, hund : rtlword;
 begin
-  GetTime(h, m, s, hund);
+  DecodeTime(Now, h, m, s, hund);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
     (hund / (100 / TickFreq)));
 end;
@@ -455,7 +458,7 @@ var h,m,s,s100 : rtlword;
     i          : integer16;
     l          : longint;
 begin
-  gettime(h,m,s,s100);
+  DecodeTime(Now,h,m,s,s100);
   if s<>sec then begin
     disp_DT;
     sec:=s;
@@ -1643,6 +1646,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.63  2000/11/15 17:45:47  hd
+  - Unit DOS entfernt
+
   Revision 1.62  2000/10/25 17:32:12  fe
   Abhaengigkeitsprobleme (hoffentlich) beseitigt.
 
