@@ -911,28 +911,19 @@ begin
           net:=new_net;
           end;
         if not eof(nf) then begin
-          if (k='Host') or (k='Region') then begin
-            if ltyp<>nlFDpointlist then begin
-              net:=node;
-              np^[0].node:=0;
-              end
-            else
-              np^[0].node:=node;
-            np^[0].adr:=fpos-ll-2;
-            nodes:=1;
-            end
-          else begin  { zone }
-            if ltyp<>nlFDpointlist then begin
+          if ltyp<>nlFDpointlist then begin
+            if (k<>'Host') and (k<>'Region') then
               zone:=node;
-              net:=node;
-              end;
-            nodes:=1;
-            if ltyp=nlFDpointlist then
-              np^[0].node:=node
-            else
-              np^[0].node:=0;
+            net:=node;
+            np^[0].node:=0;
             np^[0].adr:=fpos-ll-2;
+            end
+          else begin
+            np^[0].node:=node;
+            np^[0].adr:=filepos(idf);
             end;
+
+          nodes:=1;
           node:=0;
           if ltyp=nlNodelist then
             AppUser(zone,net,node,0,fpos-ll-2);
@@ -2260,6 +2251,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.7  2002/08/02 22:47:38  my
+  MA:- Fix: Nodelisten-Abfrage mit <Alt-N> funktionierte bei Pointlisten
+       im FD-Format nicht immer (speziell nicht bei den Points des jeweils
+       ersten Nodes eines Netzes). Bei FD-Listen wird jetzt ein geÑnderter
+       Index geschrieben, damit ist jetzt auch die neue Standard-Pointliste
+       fÅr R24 (R24PNT) mit XP voll nutzbar.
+
   Revision 1.15.2.6  2001/08/11 22:18:05  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
