@@ -268,7 +268,7 @@ label fn_ende,fn_ende0;
     end;
 
   begin   { InitFidomailer }
-    with BoxPar^,ComN[comnr] do begin
+    with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
       if fidologfile<>'' then begin
         Fidomailer.logfile:= fidologfile;
@@ -298,6 +298,7 @@ label fn_ende,fn_ende0;
         Fidomailer.ModemDial:= MDial;
         Fidomailer.Phonenumbers:= telefon;
       end;
+      Fidomailer.DialupRequired:=True;
       Fidomailer.TimeoutConnectionEstablish:= connwait;
       Fidomailer.RedialWait:= redialwait;
       Fidomailer.MaxDials:= redialmax;
@@ -481,7 +482,7 @@ begin { FidoNetcall }
   FidoIPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
   Fidomailer:=TFidomailer.Create;
   Fidomailer.IPC:=FidoIPC;
-  if not Fidomailer.Activate(ComN[Comnr].MCommInit)then goto fn_ende;
+  if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then goto fn_ende;
   InitFidomailer;
 
   if packmail then begin
@@ -584,7 +585,6 @@ begin { FidoNetcall }
       DeleteFile(fidologfile);
       end;
     Fidomailer.Destroy;
-    FidoIPC.Destroy;
 end;
 
 
@@ -827,6 +827,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.3  2001/02/01 21:20:27  ma
   - compiling!
   - only Fido: UUCP/POP3/... routines are temporarily commented out

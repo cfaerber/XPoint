@@ -30,7 +30,7 @@ var FileToSend : String;
 begin
   log('+','starting mail transfer');
   if hello.h.capabilities and MyCap=0 then begin
-    FidomailerObj.WriteIPC(mcInfo,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
+    WriteIPC(mcInfo,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
     log(ErrChar,'no common transfer protocol');
     SleepTime(1000);
     aresult:=EL_nologin;
@@ -43,7 +43,7 @@ begin
   FidomailerObj:=Self;
   ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
   LogSending:=True; ZModemTimer.Init;
-  FidomailerObj.WriteIPC(mcInfo,getres2(30004,12),[0]);
+  WriteIPC(mcInfo,getres2(30004,12),[0]);
   if sendempty and ZedZap then
     ZModemSend(FCommObj,'',True,ErrorWord)
   else
@@ -52,7 +52,7 @@ begin
         if Pos(#9,FilesToSend)>0 then begin
           FileToSend:=Copy(FilesToSend,1,Pos(#9,FilesToSend)-1);
           Delete(FilesToSend,1,Pos(#9,FilesToSend));
-          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',DLInform);
+          DebugLog('ncfido','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',DLInform);
         end else begin
           FileToSend:=FilesToSend; FilesToSend:='';
         end;
@@ -61,10 +61,10 @@ begin
     end;
 
   if ErrorWord<>0 then begin
-    FidomailerObj.WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
-    DebugLog('XPFM','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
+    WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
+    DebugLog('ncfido','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
     if not FCommObj^.Carrier then begin
-      FidomailerObj.WriteIPC(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
+      WriteIPC(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
     end else
       log(ErrChar,'transfer aborted');
@@ -76,12 +76,12 @@ begin
     {ZModem-Ausgaberoutinen setzen}
     FidomailerObj:=Self;
     ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
-    FidomailerObj.WriteIPC(mcInfo,getres2(30004,13),[0]);    { 'Empfangen' }
+    WriteIPC(mcInfo,getres2(30004,13),[0]);    { 'Empfangen' }
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(FCommObj,MailPath,ErrorFlag);
     if (ErrorFlag) then begin
-      DebugLog('XPFM','ZModemReceive error: "'+ZModem.TransferMessage+'"',DLError);
-      FidomailerObj.WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
+      DebugLog('ncfido','ZModemReceive error: "'+ZModem.TransferMessage+'"',DLError);
+      WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
   end;
@@ -89,6 +89,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.1  2001/01/30 15:18:37  ma
   - moved protocols to separate source files
 

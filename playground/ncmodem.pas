@@ -281,7 +281,7 @@ begin
                     end;
       SDSendDial: begin
                     inc(iDial); CurrentPhonenumber:=GetNextPhonenumber(Phonenumbers);
-                    WriteIPC(mcInfo,'Dial %s try %i',[CurrentPhoneNumber,iDial]);
+                    WriteIPC(mcInfo,'Dial %s try %d',[CurrentPhoneNumber,iDial]);
                     while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);
                     SendMultCommand(ModemDial+CurrentPhonenumber,1); {Gegenstelle anwaehlen}
                     StateDialup:=SDWaitForConnect;
@@ -290,7 +290,7 @@ begin
                           FTimerObj.SetTimeout(TimeoutConnectionEstablish);
                           repeat
                             ProcessIncoming; ProcessKeypresses(false);
-                            WriteIPC(mcVerbose,'*%i',[System.Round(FTimerObj.SecsToTimeout)]);
+                            WriteIPC(mcVerbose,'*%d',[System.Round(FTimerObj.SecsToTimeout)]);
                           until FTimerObj.Timeout or(not WaitForAnswer);
                           result:=False;
                           if not FTimerObj.Timeout then begin
@@ -301,7 +301,7 @@ begin
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
                                 (FCommObj^.Carrier and(not FCommObj^.IgnoreCD))then begin {Connect!}
                               StateDialup:=SDConnect; result:=True;
-                              WriteIPC(mcInfo,'Connect %i',[Bauddetect(ModemAnswer)]);
+                              WriteIPC(mcInfo,'Connect %d',[Bauddetect(ModemAnswer)]);
                               if not FCommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
                               if not FCommObj^.Carrier then SleepTime(1000);
                             end
@@ -317,7 +317,7 @@ begin
                            WriteIPC(mcInfo,'Wait for next dial attempt',[0]);
                            if iDial<MaxDials then begin
                              repeat
-                               WriteIPC(mcVerbose,'*%i',[System.Round(FTimerObj.SecsToTimeout)]);
+                               WriteIPC(mcVerbose,'*%d',[System.Round(FTimerObj.SecsToTimeout)]);
                                ProcessIncoming; ProcessKeypresses(true);
                                if Pos('RING',ModemAnswer)<>0 then begin
                                  WriteIPC(mcInfo,'Ring detected',[0]);
@@ -356,6 +356,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.4  2001/01/28 00:13:58  ma
   - compiles!- untested though.
 

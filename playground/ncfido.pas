@@ -134,7 +134,7 @@ var
 procedure ZModemDispProc;
 var Remain: LongInt;
 begin
-  FidomailerObj.WriteIPC(mcVerbose,'*%i',[System.Round(TimerObj.ElapsedSec)]);
+  FidomailerObj.WriteIPC(mcVerbose,'*%d',[System.Round(TimerObj.ElapsedSec)]);
   if (ZModemTimer.ElapsedSec<=0)or(TransferBytes<=0) then
     Remain:=1
   else
@@ -142,7 +142,7 @@ begin
   if Remain<0 then
     Remain:=0;
 
-  FidomailerObj.WriteIPC(mcVerbose,'%ib %i sec',[TransferBytes,Remain]);  
+  FidomailerObj.WriteIPC(mcVerbose,'%db %d sec',[TransferBytes,Remain]);
   if LastErrorCount<>TransferError then begin
     FidomailerObj.WriteIPC(mcInfo,'%s',[TransferMessage]);
     LastErrorCount:=TransferError;
@@ -181,7 +181,7 @@ begin
   if t<=0 then t:=1; {Verhindere Division by zeros}
   cps:=System.Round(TransferBytes/t);
   if TransferName<>'' then begin
-    FidomailerObj.WriteIPC(mcInfo,'%ib %i cps',[TransferBytes,cps]);
+    FidomailerObj.WriteIPC(mcInfo,'%db %d cps',[TransferBytes,cps]);
 //    Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(System.Round(t))+'s, '+StrS(cps)+' cps');
   end;
 end;
@@ -298,7 +298,7 @@ begin
   SplitFido(OwnAddr,FA,2);
   InitHelloPacket;
   repeat
-    FidomailerObj.WriteIPC(mcInfo,'*%i',[System.Round(TimerObj.ElapsedSec)]);
+    WriteIPC(mcVerbose,'*%d',[System.Round(TimerObj.ElapsedSec)]);
     Ende:=true; aresult:=0;
     case fmSS(0) of            { YooHoo  }
       1 : fmS;              { FTS-001 }
@@ -324,6 +324,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.6  2001/02/01 21:20:27  ma
   - compiling!
   - only Fido: UUCP/POP3/... routines are temporarily commented out

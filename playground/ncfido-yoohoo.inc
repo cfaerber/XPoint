@@ -239,7 +239,7 @@ begin
       if not FCommObj^.Carrier then Timers[ti_Hello].SetTimeout(0);
     until Timers[ti_Hello].Timeout or (c=ACK) or (c='?') or (c=ENQ);
     if c='?' then begin
-      FidomailerObj.WriteIPC(mcError,getres2(30004,20)+' #%i',[retrycount]);   { 'Hello-Sendefehler' }
+      WriteIPC(mcError,getres2(30004,20)+' #%d',[retrycount]);   { 'Hello-Sendefehler' }
       DebugLog('ncfido','yoohoo hello send error',DLError);
     end;
     SleepTime(200);
@@ -328,7 +328,7 @@ begin
             inc(errors);
             if errors<10 then begin
               FCommObj^.SendChar('?');
-              FidomailerObj.WriteIPC(mcError,getres2(30004,21)+' #%i',[errors]);   { 'Hello-Empfangsfehler' }
+              WriteIPC(mcError,getres2(30004,21)+' #%d',[errors]);   { 'Hello-Empfangsfehler' }
               state:=2;
             end else
               state:=99;
@@ -336,7 +336,7 @@ begin
      10 : begin
             FCommObj^.PurgeInBuffer;
             FCommObj^.SendChar(ACK);
-            FidomailerObj.WriteIPC(mcInfo,getres2(30004,22),[0]);    { 'Handshake OK' }
+            WriteIPC(mcInfo,getres2(30004,22),[0]);    { 'Handshake OK' }
             fmRH:=true;
             { if DebugMode then WriteHello; }
             state:=99;
@@ -370,7 +370,7 @@ end;
 function TFidomailer.fmYS(state:byte):byte;     { WaZOO: 0=Abbruch, 1=Again, 2=ok }
 var c : char;
 begin
-  FidomailerObj.WriteIPC(mcInfo,'YooHoo',[0]);
+  WriteIPC(mcInfo,'YooHoo',[0]);
   log(' ','sType: FTS-0006 (YooHoo)');
   fmYS:=1;
   repeat
@@ -418,13 +418,16 @@ end;
 
 procedure TFidomailer.fmS;          { FTS-001 / FTS-007 }
 begin
-  FidomailerObj.WriteIPC(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
+  WriteIPC(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
   log(' ','sType: FTS-0001');
   SleepTime(2000);
 end;
 
 {
   $Log$
+  Revision 1.2  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.1  2001/01/30 15:18:37  ma
   - moved protocols to separate source files
 

@@ -35,7 +35,7 @@ type
 
   protected
     FVisible,LastMsgUnimportant: Boolean;
-    FPosX,FPosY,FWidth,FHeight: Integer;
+    FPosX,FPosY,FWidth,FHeight: Byte;
     FHeadline: String;
     FLines: TStringList;
     procedure Display;
@@ -45,7 +45,6 @@ type
     { True if visible, used also for hiding/restoring window }
     property IsVisible: Boolean read FVisible write SVisible;
 
-    constructor CreateWithPosSize(ix,iy,iw,ih: Integer; Headline: String; Visible: Boolean);
     constructor CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 
     { Displays a new message in window }
@@ -60,30 +59,21 @@ uses
   {$ifdef NCRT} XPCurses,{$endif}
   Typeform,Maus2,XP0,XP1;
 
-constructor TXPMessageWindow.CreateWithPosSize(ix,iy,iw,ih: Integer; Headline: String; Visible: Boolean);
+constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
-  FPosX:=ix; FPosY:=iy; FWidth:=iw; FHeight:=ih;
+  FWidth:=iw; FHeight:=ih;
   FHeadline:=Headline;
   FLines:=TStringList.Create;
   LastMsgUnimportant:=False;
   FVisible:=False; IsVisible:=Visible;
 end;
 
-constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
-begin
-  CreateWithPosSize((xp0.ScreenWidth div 2)-(iw div 2),
-                    (xp0.ScreenLines div 2)-(ih div 2),
-                    iw,ih,Headline,Visible);
-end;
-
 procedure TXPMessageWindow.SVisible(nVisible: Boolean);
-var x,y: byte;
 begin
   if nVisible<>FVisible then begin
     FVisible:=nVisible;
-    x:=FPosX-2; y:=FPosY-2;
     if nVisible then begin
-      diabox(FWidth+2,FHeight+2,FHeadline,x,y);
+      diabox(FWidth+3,FHeight+2,FHeadline,FPosX,FPosY);
       Display;
       end
     else
@@ -97,9 +87,9 @@ begin
   if not IsVisible then exit;
   for iLine:=0 to FHeight-1 do
     if iLine>=FLines.Count then
-      MWrt(FPosX,FPosY+iLine,Sp(FWidth))
+      MWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth))
     else
-      MWrt(FPosX,FPosY+iLine,FormS(FLines[iLine],FWidth));
+      MWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine],FWidth));
 end;
 
 procedure TXPMessageWindow.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
@@ -128,6 +118,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.1  2001/01/19 21:19:09  ma
   - will be used in (xp)ncfido, (xp)ncuucp...
   - compiles, but untested yet

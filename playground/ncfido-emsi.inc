@@ -90,7 +90,7 @@ var EMSIString,ED,EMSIData,EMSIData2,adr,hex4  : string;
     more      : boolean;
 
 begin
-  FidomailerObj.WriteIPC(mcInfo,'EMSI',[0]); {FCommObj^.SendString(EMSI_INQ+#13);}
+  WriteIPC(mcInfo,'EMSI',[0]); {FCommObj^.SendString(EMSI_INQ+#13);}
   log(' ','sType: EMSI');
   EMSIHandshake:=0;
                                                         { EMSI_DAT erzeugen }
@@ -128,7 +128,7 @@ begin
     more:=not Timers[ti_EMS1].Timeout and FCommObj^.CharAvail;
     if Timers[ti_EMS1].Timeout then dec(count);
     dec(scount);
-    if EMSIString=EMSI_NAK then FidomailerObj.WriteIPC(mcError,getres2(30004,23),[0]);   { 'EMSI_NAK: wiederhole EMSI-Paket' }
+    if EMSIString=EMSI_NAK then WriteIPC(mcError,getres2(30004,23),[0]);   { 'EMSI_NAK: wiederhole EMSI-Paket' }
   until ok or(count=0)or(scount=0)or not FCommObj^.Carrier;
   if not FCommObj^.Carrier then LogCarrier;
   if not ok then goto ende;
@@ -154,7 +154,7 @@ begin
         ok:=(hexval(hex4)=CRC16Block(EMSIString[3],Length(EMSIString)-2)); {fuehrende Sternchen von CRC aussparen}
         if not ok then begin
           FCommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
-          FidomailerObj.WriteIPC(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
+          WriteIPC(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
           SleepTime(150); FCommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
@@ -197,7 +197,7 @@ begin
       if settime then begin
         log('+','correcting time by '+iifs(trx>=sec70,'+','')+
             strs(trx-sec70)+' seconds');
-        FidomailerObj.WriteIPC(mcInfo,getres2(30004,25),[0]);    { 'korrigiere Uhrzeit' }
+        WriteIPC(mcInfo,getres2(30004,25),[0]);    { 'korrigiere Uhrzeit' }
       end;
     end;
     EMSIHandshake:=2;
@@ -207,6 +207,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/02/02 17:14:01  ma
+  - new Fidomailer polls :-)
+
   Revision 1.1  2001/01/30 15:18:37  ma
   - moved protocols to separate source files
 
