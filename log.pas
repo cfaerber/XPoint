@@ -132,7 +132,13 @@ end;
 
 function TLog.Open: boolean;
 begin
-  result:= true;
+//  result:= true;
+
+// Logs are disabled
+  result:= false;
+  FisOpen:= false;
+  exit;
+
   if FLogLevel=llNone then
     Exit
   else if FFilename='' then begin
@@ -216,6 +222,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/09/16 19:58:31  ma
+  - disabled for these logging routines are not used now
+
   Revision 1.10  2001/09/08 16:29:29  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
