@@ -789,8 +789,8 @@ begin
   writeln(t,'Quote=','"',quotechar,'"');
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
   otherqcback:=otherquotechars;
-  writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
-  writeln(t,'ScreenCols=', ScreenWidth);
+  writeln(t,'ScreenLines=',ConfigScreenLines);
+  writeln(t,'ScreenCols=', ConfigScreenWidth);
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
   writeln(t,'BlackSaver=',jnf(blacksaver));
@@ -1114,6 +1114,7 @@ var t       : text;
     aaa     : string;   { AutoAdvance }
     buf     : array[1..1024] of byte;
     mheader : string;
+    Lines, Cols: Integer;
 
   function getcommpar:boolean;
   var nr    : integer;
@@ -1342,8 +1343,8 @@ begin
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
-          getb(su,  'screenlines',screenlines) or
-          getb(su,  'screencols', ScreenWidth) or
+          getb(su,  'screenlines',ConfigScreenlines) or
+          getb(su,  'screencols', ConfigScreenWidth) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
           gets(s,su,'sendfiledir',sendpath,79) or
@@ -1572,11 +1573,12 @@ begin
     GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
+
     if ParZeilen>0 then
-    begin
-      cfgscrlines:=screenlines;
-      screenlines:=ParZeilen;
-    end;
+      ScreenLines:=ParZeilen;
+    SysGetMaxScreenSize(Lines, Cols);
+    ScreenLines := MinMax(ConfigScreenLines, 25, Lines);
+    ScreenWidth := MinMax(ConfigScreenWidth, 80, Cols);
 
     { if getenv(reverse('BPX'))<>LowerCase(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
@@ -1696,6 +1698,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.82  2000/07/31 09:56:55  mk
+  - ConfigScreenWidth und passende Logik hinzugefuegt
+
   Revision 1.81  2000/07/27 10:13:00  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

@@ -652,6 +652,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        deutsch    : boolean = true;
        screenlines: byte    = 25;      { Bildschirmzeilen       }
        screenwidth: byte    = 80;      { Bildschirmspalten      }
+       ConfigScreenLines:byte = 25;    { Config-Bildzeilen (wg. /z: }
+       ConfigScreenWidth:byte = 80;      { Config-Bildschirmspalten }
        OrgVideomode:word    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
        marksorted : boolean = false;   { marked^[] sortiert     }
@@ -994,7 +996,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        userweiter   : boolean;
        qchar        : string;        { zuletzt verwendeter Quote-String }
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
-       cfgscrlines  : byte;          { Config-Bildzeilen (wg. /z: }
        domainlist   : DomainNodeP;   { zum Erkennen von Replys auf eigene N. }
 
        maxmark   : word;             { maximal markierbare Msgs }
@@ -1085,6 +1086,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.83  2000/07/31 09:56:55  mk
+  - ConfigScreenWidth und passende Logik hinzugefuegt
+
   Revision 1.82  2000/07/27 13:41:49  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 

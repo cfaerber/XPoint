@@ -131,6 +131,9 @@ begin
     ParZeilen:=0;
     ScreenLines := aLines;
     ScreenWidth := aCols;
+    // Diese Žnderungen speichern wir auch in der Config ab
+    ConfigScreenLines := ScreenLines;
+    ConfigScreenWidth := ScreenWidth;
     lines(screenlines,fnkeylines);
     showscreen(false);
     XPhilite:=0;
@@ -591,6 +594,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/07/31 09:56:55  mk
+  - ConfigScreenWidth und passende Logik hinzugefuegt
+
   Revision 1.21  2000/07/27 10:13:02  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

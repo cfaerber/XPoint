@@ -53,8 +53,8 @@ end;
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 begin
   // !! ToDo, dynamisch holen
-  Lines := 120;
-  Cols := 160;
+  Lines := 55;
+  Cols := 80;
 end;
 
 procedure SysSetScreenSize(const Lines, Cols: Integer);
@@ -65,6 +65,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2000/07/31 09:56:55  mk
+  - ConfigScreenWidth und passende Logik hinzugefuegt
+
   Revision 1.2  2000/07/27 10:13:05  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
