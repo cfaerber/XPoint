@@ -169,6 +169,9 @@ begin
 {$ENDIF }
       test_defaultgruppen;
       test_systeme;
+      DefaultViewer := nil;
+      DefTextViewer := nil;
+      PTextViewer := nil;
       ReadDefaultViewers;
       testtelefon(telefonnr^);
       check_date;
@@ -196,6 +199,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.9.2.3  2000/11/17 12:16:18  mk
+  - Probleme beim aktualisieren der Defautviewer behoben
+
   Revision 1.9.2.2  2000/05/02 04:19:00  jg
   - XPoint.cfg Schalter DelViewTmp
     macht dasselbe wie die Umgebungsvariable DELVTMP

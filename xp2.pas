@@ -1103,11 +1103,13 @@ procedure ReadDefaultViewers;
   begin
     dbSeek(mimebase,mtiTyp,ustr(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
-       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
+       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then
+    begin
       dbReadN(mimebase,mimeb_programm,prog);
+      if viewer<>nil then freemem(viewer,length(viewer^)+1);
       getmem(viewer,length(prog)+1);   { auch bei prog=''! }
       viewer^:=prog;
-      end
+    end
     else
       viewer:=nil;
   end;
@@ -1122,6 +1124,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.8  2000/11/17 12:16:18  mk
+  - Probleme beim aktualisieren der Defautviewer behoben
+
   Revision 1.15.2.7  2000/11/13 18:50:24  mk
   - some improvments and fixes for lockfile handling
 
