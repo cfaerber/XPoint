@@ -1060,9 +1060,6 @@ fromstart:
     rfehler(609);   { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
     goto xexit;
   end;
-  if not (binary or TestXPointID)
-     and (pm or not ntForceMailer(netztyp)) then
-    XpID:=true;
   if pm and (UpperCase(LeftStr(empfaenger,length(mapsname)))=mapsname) then
     XpID:=false;
   if SendFlags and SendWAB<>0 then XpID:=false;
@@ -2102,6 +2099,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.107  2001/04/17 20:21:29  ma
+  - removed "## XP ##" checking
+
   Revision 1.106  2001/04/13 11:53:07  mk
   - pid fixed
 

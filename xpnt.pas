@@ -109,7 +109,6 @@ function ntPMTeleData(nt:byte):boolean;       { PMs: Telefon + Postanschrift }
 function ntAMTeleData(nt:byte):boolean;       { AMs: Telefon + Postanschrift }
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
-function ntForceMailer(nt:byte):boolean;      { '... (unregistriert)' anzeigen }
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Headaer }
 function ntBrettebene(nt:byte):boolean;       { Netztyp mit Brettebene }
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
@@ -706,13 +705,6 @@ begin
   ntOptIso:=(nt=nt_ZConnect);
 end;
 
-
-function ntForceMailer(nt:byte):boolean;      { '... (unregistriert)' anzeigen }
-begin
-  ntForceMailer:=(nt in [nt_ZConnect,nt_UUCP]);
-end;
-
-
 function ntPGP(nt:byte):boolean;              { PGP-Keys im Header }
 begin
   ntPGP:=(nt=nt_ZCONNECT) or
@@ -758,6 +750,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2001/04/17 20:21:29  ma
+  - removed "## XP ##" checking
+
   Revision 1.21  2001/04/05 14:58:12  ml
   -Fix: absender doesnt end with @ anymore
 

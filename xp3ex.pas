@@ -174,7 +174,6 @@ var size   : longint;
     ni     : NodeInfo;
     hdlines: longint;
     mstatus: string[80];
-    mailerflag : boolean;
     iso1   : boolean;    { charset: ISO1 }
     lasttrenn : boolean;
     mpdata : multi_part;
@@ -693,16 +692,6 @@ var size   : longint;
       end;
   end;
 
-  procedure TestSoftware;
-  begin
-    if not mailerflag then
-      if ntForceMailer(hdp.netztyp)
-         and (dbReadInt(mbase,'ablage')=10) then begin
-        wrs(gr(20)+xp_xp+' '+verstr+' '+gr(60));
-        mailerflag:=true;
-        end;
-  end;
-
   function ohfill(s:string;l:byte) : string;
   begin
     while (length(s)<l) do s:=s+#32;
@@ -792,13 +781,11 @@ begin
 
     sizepos:=-1;
     if (art=xTractHead) or (art=xTractDump) then begin
-      mailerflag:=false;
       lasttrenn:=false;
       for hdln:=0 to ExtraktHeader.anz  do
         case ExtraktHeader.v[hdln] of
 
     hdf_Trenn :  if not lasttrenn then begin                     { Trennzeile }
-                   if hdln=ExtraktHeader.anz then TestSoftware;
                    if( length(VarLister) <> 0 ) then             { wenn externer Lister verwendet wird }
                      wrs(dup(iif(art=xTractHead,70,72),'-'))
                    else
@@ -923,7 +910,6 @@ begin
 
     hdf_MAILER : if hdp.programm<>'' then begin
                    wrs(gr(20)+hdp.programm);    { 'Software   : ' }
-                   mailerflag:=true;
                    end;
 
     hdf_ORG    : if hdp.organisation<>'' then
@@ -979,8 +965,6 @@ begin
          if hdp.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
   end;
-
-      TestSoftware;
 
       extheadersize:=filepos(f)-extpos;
       exthdlines:=min(hdlines,screenlines-5);
@@ -1082,6 +1066,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/04/17 20:21:29  ma
+  - removed "## XP ##" checking
+
   Revision 1.67  2001/03/14 20:46:04  mk
   - removed registration routines
 
