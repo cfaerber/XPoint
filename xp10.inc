@@ -93,7 +93,7 @@ var brk     : boolean;
     i:=0;
     dat:=tf(date); tim:=left(time,5);
     lastbox:='';
-    while i<anzahl do
+    while i<e.Count do
     begin   { -1 wegen Splitting }
       Str2Time(e[i],tr);
       with tr do
@@ -234,12 +234,11 @@ var brk     : boolean;
       d   : DB;
   begin
     i:=0;                               //auch bei der Timingliste beginnen wir bei 0
-    while (i<=anzahl) do
-      if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin
-        crash:=(copy(e[i],37,6)='CRASHS');
+    while (i< e.Count) do
+      if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin { liegen crashes oder request an}
+        crash:=(copy(e[i],37,6)='CRASHS');  { es sollen offene crashs erledigt werden }
         ss:=left(e.Strings[i],36);
-        if i<anzahl then e.Delete(i);
-        dec(anzahl);
+        if i<e.Count then e.Delete(i);      { crash aus der Liste entfernen }
         assign(t,ReqDat);
         if existf(t) then begin
           reset(t);
@@ -254,11 +253,10 @@ var brk     : boolean;
               else if (sc<>'') and (sc[1]<>'>') then f:=true;
             until sc='';
             getNodeinfo(adr,ni,2);
-            if ((not crash and f) or (crash and not f and c)) and
-               ni.found and (anzahl<maxentries) then begin
+            if ((not crash and f) or (crash and not f and c)) and  { aktuellen crash gefunden ?}
+               ni.found and (e.Count<maxentries) then begin
               dbSeek(d,boiName,adr);
               if not dbFound then begin     { keine eingetragene Pollbox }
-                inc(anzahl);
                 sc:=ss+'CRASH '+adr;
                 e.Insert(i, sc);
                 inc(i);
@@ -489,14 +487,14 @@ var brk     : boolean;
     endtime:=formi(h,2)+':'+formi(m,2)+':'+formi(s,2);
   end;
 
-begin
+begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
   filewidth:=timingwidth;
   if crashall then begin
     MakeCrashliste;
     _anz:=anzahl;
     end
   else if not callall then begin
-    if tnr=0 then tnr:=ReadTimingNr(brk)
+    if tnr=0 then tnr:=ReadTimingNr(brk)     { hole nr der Timingliste }
     else brk:=false;
     if brk then exit;
     loadfile(1,TimingFile+strs(tnr));
@@ -507,7 +505,7 @@ begin
     MakeAllListe(brk,tnr<0);
     if brk then exit;
     tnr:=0;
-    _anz:=anzahl;
+    _anz:=anzahl;                          { Anzahl der EintÑge merken }
     end;
   if _anz=0 then begin
     trfehler(iif(callall,1005,1006),60);   { 'keine zutreffenden Boxen' / 'leere Timing-Liste' }
@@ -533,19 +531,19 @@ begin
     initscs;
     lsec:=right(time,2);
 
-    repeat
-      if right(time,2)<>lsec then begin
-        lsec:=right(time,2);
-        dec(scsavecnt);
+    repeat                              { Die Gro·e Schleife, Warten auf das nÑchste Ereignis }
+      if right(time,2)<>lsec then begin { eine neue Sekunde angebrochen }
+        lsec:=right(time,2);            { lsec erneuern }
+        dec(scsavecnt);                 { SreenSaveCounter }
         if scsavecnt=0 then begin
-          if timediff(endtime,time)>10 then begin
-            addendtime(-2); TimedScsaver(endtime); addendtime(2);
+          if timediff(endtime,time)>10 then begin     { ist die Zeit bis zum nÑhsten Ereignis > 10 sec }
+            addendtime(-2); TimedScsaver(endtime); addendtime(2);  {screensaver einschlten }
             end;
-          initscs;
+          initscs;                      { screensave counter neu initialisieren }
           end;
         end;
       set_active;
-      if anzeige then display
+      if anzeige then display           { Anzeige erneueren }
       else show_active;
       multi2;
       if endtime>=time then disprest;
@@ -554,12 +552,12 @@ begin
         initscs;
         end;
       ende:=ende or (callall and (anz=0));
-      while keypressed do
+      while keypressed do                                       { wurde Taste gedrÅckt }
         case readkey of
-          #27 : ende:=true;
-          ' ' : endtime:=time;
-          '+' : if endtime<'23:59:59' then addendtime(1);
-          '-' : if endtime>time then addendtime(-1);
+          #27 : ende:=true;                                     { esc   = timing abbrechen }
+          ' ' : endtime:=time;                                  { space = sofort ausfÅhren }
+          '+' : if endtime<'23:59:59' then addendtime(1);       { +     = Zeitspanne erhîhen }
+          '-' : if endtime>time then addendtime(-1);            { +     = Zeitspanne ernidrigen}
         end;
       if not ende then XpIdle;
     until ende or (date<>ldate);
@@ -645,6 +643,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/08/15 17:22:40  mk
+  - Bereitschaft funktionsfaehig, Kommentare hinzugefuegt
+
   Revision 1.11  2000/08/14 14:45:14  mk
   MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
 
