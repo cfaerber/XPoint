@@ -386,6 +386,15 @@ begin
 {$IFDEF Beta}
   if (win.wHnd = nil) then begin
     WriteLn('Error creating window (XPCurses::MakeWindow)');
+    WriteLn;
+    WriteLn('Paramter');
+    WriteLn('----------');
+    WriteLn('x1 = ',x1);
+    WriteLn('x2 = ',x2);
+    WriteLn('y1 = ',y1);
+    WriteLn('y2 = ',y2);
+    WriteLn;
+    WriteLn('Call failed: newwin(',win.Rows,',',win.Cols,',',win.y,',',win.x,');');
     halt(1);
   end;
 {$ENDIF }
@@ -1285,6 +1294,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/08/05 12:40:54  hd
+  - Erweiterte Fehlerausgabe in MakeWindow
+
   Revision 1.22  2000/08/01 16:40:49  ml
   - nicht benoetigte video.pas entfernt
 
