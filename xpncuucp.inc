@@ -1377,7 +1377,9 @@ begin { FidoSysopTransfer }
     NC^.sendbuf:=_filesize(ppfile);
     for i:=1 to addpkts^.anzahl do
       inc(NC^.sendbuf,_filesize(addpkts^.abfile[i]+BoxFileExt));
-    if (NC^.sendbuf>0) or (SendAKAs<>'') then begin                     // Ausgabepaket
+    if (NC^.sendbuf>0) or (SendAKAs<>'') then begin
+      Debug.DebugLog('xpncuucp','processing outgoing packets',DLInform);
+
       outmsgs:=testpuffer(ppfile,false,dummy);
       for i:=1 to addpkts^.anzahl do
         inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
@@ -1405,7 +1407,7 @@ begin { FidoSysopTransfer }
             for i:=1 to anzahl do
               if FileExists(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
           end;
-        end;
+        end; // if SysopPack...
 
       if (errorlevel<>0) and FileExists(ppfile) then begin
         ferror(729);     { 'Fehler bei ZFIDO-Konvertierung' }
@@ -1428,47 +1430,14 @@ begin { FidoSysopTransfer }
       with addpkts^ do
         for i:=1 to anzahl do
           if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
-
-      Debug.DebugLog('xpncuucp','processing incoming files',DLInform);
-      if not isEmptyDir(BoxPar^.sysopinp) then begin
-        Debug.DebugLog('xpncuucp','deleting old packets: "'+xp0.XFerDir+'*.pkt"',DLInform);
-        erase_mask(xp0.XFerDir+'*.pkt');                        // L”sche alle alten pakete im spool
-
-        Debug.DebugLog('xpncuucp','searching for uncompressed packets: "'+BoxPar^.sysopinp+'*.pkt"',DLInform);
-        dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
-        if dir.Count>0 then begin                               // *.pkt im SysopIn Verzeichnisvorhanden
-          for i:=0 to dir.Count-1 do begin                              //
-            Debug.DebugLog('xpncuucp','found a packet: "'+XFerDir+dir.Name[i]+'"',DLDebug);
-            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then begin // move *.pkt von SysOpIn -> Spool
-              Debug.DebugLog('xpncuucp','copied ok, deleting',DLDebug);
-              _era(dir.LongName[i]);
-              end;
-            end; // for
-          end;   // Dir.Count
-        if FidoImport(SysopInp,box) then begin
-          Debug.DebugLog('xpncuucp','FidoImport successful, deleting packets',DLDebug);
-          for i:=0 to dir.Count-1 do                            // alles *.pkts im SysOpIn l”schen
-            if FileExists(BoxPar^.sysopinp+dir.Name[i]) then    // Archive werden in func FidoImport gel”scht
-              _era(BoxPar^.sysopinp+dir.Name[i]);
-          end
-        else
-          Debug.DebugLog('xpncuucp','FidoImport not successful',DLError);
-        dir.Free;
-        end; // if not isEmptyDir...
-
-      end // SendAKAs<>''...
+      end
     else
-      Debug.DebugLog('xpncuucp','no akas',DLInform);
+      Debug.DebugLog('xpncuucp','no packets to send',DLInform);
 
-// if not isEmptyDir(BoxPar^.sysopinp)
-//    if not isEmptyDir(SysopInp) then begin   { -- Eingangspaket -- }
-//      erase_mask(xp0.XFerDir+WildCard);
-//      CopyPKTs;
-//      if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
-//        erase_mask(BoxPar^.sysopinp+WildCard);
-//      EmptySysin;
-//      window(1,1,80,25);
-//      end;
+    // process incoming files
+    if not isEmptyDir(BoxPar^.sysopinp) then
+      if not FidoImport(BoxPar^.sysopinp,box)then
+        Debug.DebugLog('xpncuucp','FidoImport not successful',DLError);
 
     Debug.DebugLog('xpncuucp','diffing',DLInform);
     if DoDiffs(FilePath+'*.*',true)=0 then;
@@ -1719,6 +1688,10 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/01/16 23:00:43  ma
+  - Fidosysopcall function simplified; be careful about files not being
+    deleted after call
+
   Revision 1.4  2001/01/16 08:14:17  mk
   - added Fileuppercase
 
