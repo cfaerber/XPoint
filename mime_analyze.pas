@@ -320,8 +320,12 @@ begin
       end {c=#10};
       CRPending := false;
 
+      {$R-} // possible fix for false range check error with FPC
       if 0 in [CurLineLenCR,CurLineLenLF,CurLineLenCRLF] then
-      begin
+      {$IFDEF DEBUG }
+        {$R+}
+      {$ENDIF }
+      begin                                           
         if c='.' then
           HasDangerousDot:=true else
         if c=From[1] then
@@ -553,6 +557,9 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2001/10/19 00:57:52  mk
+// - R- for possible false report of FPC in one line
+//
 // Revision 1.7  2001/09/10 17:25:17  cl
 // - BUGFIX: CR EOL was detected as LF and vice versa.
 //
