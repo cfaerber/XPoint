@@ -317,7 +317,6 @@ label ende;
   var size : longint;
       ofs  : longint;
       wsize: word;
-      TempKey: ShortString;
       s: String;
   begin
     dbReadN(mbase,mb_msgsize,size);
@@ -332,7 +331,6 @@ label ende;
       begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
-        TempKey := Key;
         if RegEx then
         begin
           RegExpr.Expression := key;
@@ -340,7 +338,10 @@ label ende;
           Move(p^, s[1], wsize);
           InText := RegExpr.Exec(s);
         end else
-        Intext:=TxtSeek(p,wsize,Tempkey,igcase,umlaut);
+        begin
+          TxtSeekKey := Key;
+          Intext:=TxtSeek(p,wsize,igcase,umlaut);
+        end;
       end else
         Intext:=false;
       end;
@@ -2439,6 +2440,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.107  2001/08/31 14:44:37  mk
+  - changed TxtSeek for Delphi/Kylix compatiblity
+
   Revision 1.106  2001/08/29 19:30:38  mk
   - added regex search for special search functions
 

@@ -63,7 +63,7 @@ procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
 procedure Iso1ToIBM(var data; size:word);
 procedure IBMToIso1(var data; size:word);
-function  TxtSeek(adr:pointer; size:word; var key:shortstring; igcase,umlaut:boolean):boolean;
+function  TxtSeek(adr:pointer; size:word; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
@@ -94,6 +94,8 @@ function  brettok(trenn:boolean):boolean;
 function  extmimetyp(typ:string):string;
 function  compmimetyp(typ:string):string;
 
+var
+  TxtSeekKey: ShortString;
 
 implementation  {-----------------------------------------------------}
 
@@ -143,7 +145,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-function TxtSeek(adr:pointer; size:word; var key:shortstring;igcase,umlaut:boolean):
+function TxtSeek(adr:pointer; size:word; igcase,umlaut:boolean):
          boolean;assembler;
 asm
          push ebp
@@ -192,7 +194,7 @@ asm
          pop   esi
          pop   ecx
 
-@case:   mov   edi,key
+@case:   mov   edi,offset TxtSeekKey
          sub   cl,[edi]
          sbb   ch,0
          jc    @nfound                 { key >= L„nge }
@@ -1135,6 +1137,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.62  2001/08/31 14:44:37  mk
+  - changed TxtSeek for Delphi/Kylix compatiblity
+
   Revision 1.61  2001/08/12 11:50:37  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 
