@@ -197,7 +197,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if ReplyPath<>'' then wrs('X-XP-MRP: '+replypath);
         if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
-        end
+        end;
       if fido_to<>''   then wrs('F-TO: '+fido_to);
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
@@ -441,6 +441,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.3  2000/09/17 07:56:44  mw
+  Compilierbarkeit einiger Dateien wiederhergestellt (XP.exe und DOCFORM.EXE)
+
   Revision 1.9.2.2  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
      proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO

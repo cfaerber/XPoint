@@ -161,8 +161,10 @@ var bs : string[20];
 
 begin
   writeln;  {TJ030200 - bissel der Herkunft wegen}
-  writeln('DocForm v'+l_ver+pformstr+' --> XP '+verstr+
-            betastr+' '+author_name+' '+x_copyright); 
+  {writeln('DocForm v'+l_ver+pformstr+' --> XP '+verstr+
+            betastr+' '+author_name+' '+x_copyright);}
+  writeln('DocForm v'+l_ver+' --> XP '+verstr+
+            betastr+' '+author_name+' '+x_copyright);
   writeln;
   infile:=paramstr(1);
   outfile:=paramstr(2);
@@ -199,6 +201,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/09/17 07:56:42  mw
+  Compilierbarkeit einiger Dateien wiederhergestellt (XP.exe und DOCFORM.EXE)
+
   Revision 1.6  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
