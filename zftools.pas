@@ -853,9 +853,9 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: OpenXP '+mid(programm,cpos(' ',programm)+2))
+        wrs(^A'PID: '+programm)
       else
-        wrs(^A'PID: OpenXP'+betastr+' '+verstr+pformstr);
+        wrs(^A'PID: '+xp_xp+verstr+pformstr+betastr);
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1562,6 +1562,7 @@ begin
         getrestofline;              { Tearline ueberlesen }
         if trim(LeftStr(s,4))='---' then begin
           prog2:=trim(mid(s,5));
+          // if tearline and header do not match, concatenate them
           if prog2<>'' then
             if hd.programm='' then hd.programm:=prog2
             else hd.programm:=hd.programm+' / '+prog2;
@@ -1804,6 +1805,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.28  2001/10/28 15:40:38  ma
+        - Fido mailer header uses standard format
+
         Revision 1.27  2001/10/20 17:26:44  mk
         - changed some Word to Integer
           Word = Integer will be removed from xpglobal in a while

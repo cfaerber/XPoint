@@ -1871,9 +1871,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
-    if (netztyp<>nt_Fido) or pm then
-      hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
-                     {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
+    hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
+                  {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
     hdp.organisation:=orga;
     if sdata^.ersetzt<>''then hdp.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2326,6 +2325,9 @@ finalization
 
 {
   $Log$
+  Revision 1.28  2001/10/28 15:40:38  ma
+  - Fido mailer header uses standard format
+
   Revision 1.27  2001/10/26 11:37:36  ma
   - use YEAR-MONTH-DAY
 
