@@ -51,7 +51,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
+28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Networks˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
 31  Fido,1f1^Request,1f2^File lists˘32,1f3File ^Areas˘38,1f4^Crash,1f5^Nodelists˘30,1f6^Options
@@ -1600,11 +1600,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 18   Get your user status
 20   Verbose list
 # Fido Areafix
-40   Liste of available echos
+40   List of available echos
 41   List of subscribed echos
 42   List of unsubscribed echos
 43   Help for Areafix commands
-44   Request echo contents
+44   Rescan echo contents
 # Alphanet 2000 AREAFIX
 50   Help for AREAFIX commands
 51   List of newsgroups
@@ -1970,7 +1970,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24   P^ronet,
 25   ^FTS,
 26   NNT^P,
-27   ^POP3,
+27   ^POP3/SMTP,
 28   ^UUCP,
 29   ^QWK,
 30   ^SMTP,
@@ -2038,16 +2038,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # POP3
 0    45
 1    Server    ~
-2    Loginname ~
-3    Pa·wort   ~
-4    Abgeholte Mails auf Server lîschen
+2    Login name~
+3    Password  ~
+4    Delete messages on Server
 -
 + 952
 # SMTP
 0    45
 1    Server    ~
-2    Loginname ~
-3    Pa·wort   ~
+2    Login name~
+3    Password  ~
 4    Vor SMTP einen POP3 Login ausfÅhren
 
 -
@@ -3242,7 +3242,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10 You can move a maximum of 90 newsgroups at the same time.
 11 There are unsent messages - can't change name of newsgroup.
 12 Not possible with internal newsgroups.
-13 Redicection ist not possible - incompatible type of net.
+13 Redirection is not possible - incompatible type of net.
 14 Renaming is not possible - newsgroup does alreadix exist!
 
 +   12800
@@ -3691,6 +3691,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.4  2001/04/08 20:20:02  mf
+# 10.28, 810.40, 810.44, 927.27, 951.2, 951.3, 951.4, 952.2
+# 952.3, 12700.13 changed.
+#
 # Revision 1.3  2001/04/07 09:50:35  mk
 # - updated
 #
