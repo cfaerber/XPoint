@@ -354,7 +354,6 @@ var regs  : registers;
   end;
 
   {$define usebatch}
-  {$ifdef debugtofile}{$i dbug.inc}{$endif}
 
 begin
   Xec:=ExecOk;
@@ -397,7 +396,6 @@ begin
     dpath:=getenv('comspec');
     WriteBatch(prog+para);
     para:=environment+' /c tmp.bat';
-    {$ifdef debugtofile}dBugLog(dpath+' '+para);{$endif}
   {$endif}
   
   {$IFNDEF DPMI}
@@ -479,8 +477,6 @@ begin
     {$ENDIF}
 
     end;  { is swapok }
-    {$ifdef debugtofile}dBugLog('Errorlevel: '+StrS(errorlevel));{$endif}
-    {$ifdef debugtofile}dBugLog('SET TEST='+GetEnv('TEST'));{$endif}
 
   if fs>0 then begin
     FastMove(p^,freeptr^,fs);
@@ -500,6 +496,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/05/06 17:27:54  mk
+  - weiterer Exxec-Fix fuer lange Kommandozeilen
+
   Revision 1.14  2000/05/05 00:10:49  oh
   -PGP-Aufrufe ueber Batch-Datei
 
