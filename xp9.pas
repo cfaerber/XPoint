@@ -157,7 +157,7 @@ begin
     testfidodir:=true
   else begin
     testfidodir:=false;
-    if right(s,1)<>'\' then s:=s+'\';
+    if right(s,1)<>DirSepa then s:=s+DirSepa;
     s:=FExpand(s);
     if s=OwnPath then
       rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
@@ -195,11 +195,11 @@ begin
   if UpArcNr<1 then exit;
   ls:=lstr(s);
   ext:='*';
-  if (left(ls,5)='pkarc') or (left(ls,5)='pkpak') then ext:='ARC'
-  else if left(ls,3)='lha' then ext:='LZH'
-  else if left(ls,5)='pkzip' then ext:='ZIP'
-  else if left(ls,3)='arj' then ext:='ARJ'
-  else if (left(ls,4)='copy') and (getfield(UpArcNr)<>'TXT') then ext:='';
+  if (left(ls,5)='pkarc') or (left(ls,5)='pkpak') then ext:='arc'
+  else if left(ls,3)='lha' then ext:='lzh'
+  else if left(ls,5)='pkzip' then ext:='zip'
+  else if left(ls,3)='arj' then ext:='arj'
+  else if (left(ls,4)='copy') and (getfield(UpArcNr)<>'txt') then ext:='';
   if ext<>'*' then setfield(UpArcNr,ext);
 end;
 
@@ -210,11 +210,11 @@ begin
   if DownArcNr<1 then exit;
   ls:=lstr(s);
   ext:='*';
-  if (left(ls,6)='pkxarc') or (left(ls,7)='pkunpak') then ext:='ARC'
-  else if left(ls,3)='lha' then ext:='LZH'
-  else if left(ls,7)='pkunzip' then ext:='ZIP'
-  else if left(ls,3)='arj' then ext:='ARJ'
-  else if (left(ls,4)='copy') and (getfield(DownArcNr)<>'TXT') then ext:='';
+  if (left(ls,6)='pkxarc') or (left(ls,7)='pkunpak') then ext:='arc'
+  else if left(ls,3)='lha' then ext:='lzh'
+  else if left(ls,7)='pkunzip' then ext:='zip'
+  else if left(ls,3)='arj' then ext:='arj'
+  else if (left(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
   if ext<>'*' then setfield(DownArcNr,ext);
 end;
 
@@ -401,7 +401,7 @@ begin
     testscript:=true
   else begin
     fsplit(s,dir,name,ext);
-    if ext='' then s:=dir+name+'.SCR';
+    if ext='' then s:=dir+name+'.scr';
     if exist(s) then
       testscript:=true
     else begin
@@ -489,11 +489,17 @@ begin
   if s='' then
     testlogfile:=true
   else begin
-    if lstr(s)='logfile' then
+    if lstr(s)='logfile' then		{ Diese Pruefung ist nun wirklich der Hit (hd) }
       if s[1]='l' then s:=s+'.log'
       else s:=s+'.LOG';
-    if not multipos('\:',s) then fn:=logpath+s
-    else fn:=s;
+{$IFDEF UnixFS}
+    if (cpos('/',s)=0) then
+{$ELSE }
+    if not multipos('\:',s) then
+{$ENDIF }
+      fn:=logpath+s
+    else 
+      fn:=s;
     if validfilename(fn) then
       testlogfile:=true
     else begin
@@ -1740,6 +1746,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/05/14 15:04:52  hd
+  - Anpassungen Linux
+
   Revision 1.17  2000/05/04 10:33:00  mk
   - unbenutzer TurboBox Code entfernt
 

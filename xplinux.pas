@@ -25,6 +25,7 @@ interface
 {$PACKRECORDS 4}
 
 uses
+  dos,
   linux,
   strings,
   sysutils,
@@ -60,6 +61,10 @@ function TestAccess(p: string; ta: TTestAccess): boolean;
 function ResolvePathName(p: string): string;
 procedure SetAccess(p: string; ta: TTestAccess);
 
+{ Zugriffe ueber /proc/* ----------------------------------------------- }
+
+function GetShortVersion: string;
+
 { XPLog gibt eine Logmeldung im Syslog aus }
 procedure XPLog(Level: integer; format_s: string; args: array of const);
 procedure XPLogMsg(Level: integer; logmsg: string);
@@ -70,6 +75,9 @@ procedure XPWarningLog(logmsg: string);
 procedure XPErrorLog(logmsg: string);
   
 implementation
+
+uses
+  typeform;
 
 const
   LOG_PRIMASK 		= $07;
@@ -151,7 +159,14 @@ const
   LOG_PERROR 	= $20;
 
   log_installed: boolean = false;
-  
+
+const				{ Common Environment-Vars }
+  envHome		= 'HOME';
+  envShell		= 'SHELL';
+
+const
+  fnProcVersion		= '/proc/version';	{ Versionsinfos }
+
 var
   SavedExitProc: Pointer;
   LogPrefix: array[0..255] of char;
@@ -202,26 +217,34 @@ end;
 function ResolvePathName(p: string): string;
 var
   s: string;
-{$IFDEF Debug}
-  m: string;
-{$ENDIF}
 begin
-  if (Length(p)=0) or (p[1] <> '~') then
-    ResolvePathName:= p
-  else begin
+  if (Length(p)=0) then
+    s:= ''
+  else
+    s:= iifs((p[1]='~'),getenv(envHome)+copy(p,2,length(p)-1),''+p);
 {$IFDEF Debug}
-    m:= s;
+  if (s<>'') then
+    XPDebugLog('Resolved: "'+p+'" -> "'+s+'"');
 {$ENDIF}
-    delete(p,1,1);
-    s:= getenv('HOME');
-    if (copy(s,Length(s),1) = DirSepa) then
-      ResolvePathName:= s+p
-    else
-      ResolvePathName:= s+DirSepa+p;
-{$IFDEF Debug}
-    XPDebugLog('Resolved: "'+m+'" -> "'+ResolvePathName+'"');
-{$ENDIF}
-  end;
+  ResolvePathName:=s;
+end;
+
+{ Zugriffe ueber /proc/* ----------------------------------------------- }
+
+function GetShortVersion: string;
+var
+  f: text;
+  s: string;
+begin
+  assign(f,fnProcVersion);
+  reset(f);
+  if (ioresult=0) then begin
+    readln(f,s);
+    close(f);
+    GetShortVersion:= copy(s,1,cpos('(',s)-2);
+  end else
+    GetShortVersion:= 'Linux Kernel '+strs((DosVersion and $ff00) shr 8)+'.'
+              +strs((DosVersion and $ff));
 end;
 
 { SysLog-Interface ----------------------------------------------------- }
@@ -325,6 +348,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/05/14 15:04:52  hd
+  - Anpassungen Linux
+
   Revision 1.13  2000/05/14 12:22:47  hd
   - ResolvePathName: Loest ~/ nach $HOME auf
 

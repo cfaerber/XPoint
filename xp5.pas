@@ -30,6 +30,7 @@ uses
 {$ENDIF }
 {$IFDEF Linux}
   linux,
+  xplinux,
 {$ENDIF}
       dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
@@ -544,9 +545,7 @@ begin
   wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
 {$ENDIF }
 {$IFDEF Linux }
-  wrt(x+4,y+12,'Linux-Kernel' + getres2(rnr,7)+' '
-      +strs((DosVersion and $ff00) shr 8)+'.'
-      +strs((DosVersion and $ff)));
+  wrt(x+4,y+12,GetShortVersion);
 {$ENDIF }
   attrtxt(col.colmbox);
 {$IFDEF VP }
@@ -1142,6 +1141,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/05/14 15:04:51  hd
+  - Anpassungen Linux
+
   Revision 1.24  2000/05/13 13:31:51  hd
   - XPoint/Statistik/Speicher angepasst (Linux)
 

@@ -440,8 +440,13 @@ begin                  { of Netcall }
     exit;
     end;
   dbRead(d,'dateiname',bfile);
+{$IFDEF UnixFS}
+  ppfile:=bfile+'.pp';
+  eppfile:=bfile+'.epp';
+{$ELSE}
   ppfile:=bfile+'.PP';       { muá ohne Pfad bleiben, wg. XPU.INC.ZtoRFC! }
   eppfile:=bfile+'.EPP';
+{$ENDIF}
   dbRead(d,'username',user);
   dbRead(d,'netztyp',netztyp);
   dbRead(d,'kommentar',komment);
@@ -656,7 +661,7 @@ begin                  { of Netcall }
         if logintyp<>ltUUCP then
           spufsize:=_filesize(upuffer);
         if errorlevel=MaggiFehler then begin
-          window(1,1,80,25);
+          {window(1,1,80,25);}
           trfehler(712,30);   { 'Fehler bei Netcall-Konvertierung' }
           goto ende0;
           end;
@@ -701,7 +706,7 @@ begin                  { of Netcall }
         end;
 
       if (uparcer<>'') and (logintyp<>ltUUCP) and not exist(caller) then begin
-        window(1,1,80,25);
+        {window(1,1,80,25);}
         trfehler(713,30);   { 'Fehler beim Packen!' }
         goto ende0;
         end;
@@ -735,7 +740,7 @@ begin                  { of Netcall }
         while not GetCTS(comnr) and not timeout(false) do
           tb;
         if timeout(false) then begin
-          window(1,1,80,25);
+          {window(1,1,80,25);}
           trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
           twin;
           writeln;
@@ -1158,7 +1163,7 @@ begin                  { of Netcall }
                   erase_mask('*.*');
                   RepStr(downarcer,called,OwnPath+XferDir+'*.*')
                   end;
-                window(1,1,80,25);
+                {window(1,1,80,25);}
                 end;
               if (DownArcer<>'') and
                  (not JanusP or (left(lstr(DownArcer),5)<>'copy ')) then
@@ -1175,7 +1180,7 @@ begin                  { of Netcall }
                 ltGS       : MovePuffers(XferDir+'*.PKT',dpuffer);
               end;                            { GS-PKTs zusammenkopieren }
               end;
-            window(1,1,80,25);
+            {window(1,1,80,25);}
             if pronet then begin
               GoDir(ownpath);
               if exist(XFerDir+'BRETTER.LST') then begin
@@ -1349,7 +1354,7 @@ ende0:
     dispose(addpkts);
     netcalling:=false;
     cursor(curoff);
-    window(1,1,80,25);
+    {window(1,1,80,25);}
     aufbau:=true;
     end;
   if Netcall_connect and not crash then
@@ -1556,6 +1561,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/14 15:04:51  hd
+  - Anpassungen Linux
+
   Revision 1.11  2000/05/07 18:15:09  hd
   - Kleine Aenderung fuer Linux
 

@@ -412,7 +412,7 @@ end;
 procedure showkeys(nr:integer);
 begin
   savecursor;
-  window(1,1,80,25);
+  {window(1,1,80,25);}
   xp1help.showkeys(nr);
   ttwin;
   restcursor;
@@ -1111,7 +1111,7 @@ begin
       CopyPKTs;
       if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
         EmptySysin;
-      window(1,1,80,25);
+      {window(1,1,80,25);}
       end;
     if DoDiffs(FilePath+'*.*',true)=0 then;
     Netcall_connect:=true;
@@ -1433,7 +1433,7 @@ end;
 procedure FossilTest;
 begin
   if comn[comnr].fossil and not FOSSILdetect then begin
-    window(1,1,80,25);
+    {window(1,1,80,25);}
     trfehler(732,esec);   { 'Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber' }
     twin;
     writeln;
@@ -1442,6 +1442,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/05/14 15:04:51  hd
+  - Anpassungen Linux
+
   Revision 1.20  2000/05/12 20:03:02  mk
   - Temp-Dateien werden bei ZConnect jetzt auch geloescht
 

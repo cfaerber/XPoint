@@ -63,21 +63,21 @@ end;
 
 procedure NoUUZ;
 begin
-  window(1,1,80,25);
+  {window(1,1,80,25);}
   trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
   twin;
 end;
 
 procedure NoUUCICO;
 begin
-  window(1,1,80,25);
+  {window(1,1,80,25);}
   trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
   twin;
 end;
 
 procedure PackFehler;
 begin
-  window(1,1,80,25);
+  {window(1,1,80,25);}
   trfehler(713,30);    { 'Fehler beim Packen!' }
   twin;
 end;
@@ -323,7 +323,7 @@ begin
     {$ENDIF}
     dispose(f1); dispose(f2);
     clrscr;
-    window(1,1,80,25);
+    {window(1,1,80,25);}
     shell('UUZ.EXE -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
@@ -390,7 +390,7 @@ begin
   if not exist('UUZ.EXE') then begin
     nouuz; exit;
     end;
-  window(1,1,80,25);
+  {window(1,1,80,25);}
   if (res=uu_ok) or (res=uu_recerr) then begin
     NC^.sendbuf:=spufsize;
     NC^.sendpack:=spacksize;
@@ -457,7 +457,7 @@ begin
       twin;
       cursor(curoff);
       ZtoRFC(false,ppfile,SysopOut);
-      window(1,1,80,25);
+      {window(1,1,80,25);}
       WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/05/14 15:04:51  hd
+  - Anpassungen Linux
+
   Revision 1.9  2000/04/18 11:23:51  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

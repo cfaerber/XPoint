@@ -771,31 +771,31 @@
     with boxpar^ do begin
       if (nt=nt_Fido) or (nt=nt_UUCP) then begin
         fl:=3; el:=35;
-        maddstring(3,2,getres2(923,3),sysopinp,el,60,'>');   { 'Eingangsverzeichnis  ' }
+        maddstring(3,2,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
         if nt=nt_UUCP then mhnr(8036) else mhnr(183);
         msetvfunc(testfidodir);
-        maddstring(3,4,getres2(923,4),sysopout,el,60,'>');   { 'Ausgangsverzeichnis  ' }
+        maddstring(3,4,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
         if nt=nt_UUCP then mhnr(8036) else mhnr(183);
         msetvfunc(testfidodir);
         end
       else if nt=nt_QWK then begin
         fl:=12; el:=33;
-        maddstring(3,2,getres2(923,12),sysopinp,el,60,'>'); mhnr(8035);  { 'Eingangspakete       ' }
+        maddstring(3,2,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
         msetvfunc(testqwkinfiles);
-        maddstring(3,4,getres2(923,13),sysopout,el,60,'>'); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
+        maddstring(3,4,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
         msetvfunc(testfidodir);
         end
       else begin
         fl:=5; el:=37;
-        maddstring(3,2,getres2(923,5),sysopinp,el,60,'>');  mhnr(182);  { 'Eingangspuffer  ' }
+        maddstring(3,2,getres2(923,5),sysopinp,el,MaxLenPathname,ValidDirCh);  mhnr(182);  { 'Eingangspuffer  ' }
         msetvfunc(validfile);
-        maddstring(3,4,getres2(923,6),sysopout,el,60,'>'); mhnr(182);   { 'Ausgangspuffer  ' }
+        maddstring(3,4,getres2(923,6),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(182);   { 'Ausgangspuffer  ' }
         msetvfunc(validfile);
         end;
       fl:=length(getres2(923,fl));
-      maddstring(3,6,forms(getres2(923,20),fl),sysopstart,el,60,''); mhnr(8037);
+      maddstring(3,6,forms(getres2(923,20),fl),sysopstart,el,MaxLenPathname,''); mhnr(8037);
           { 'Startprogramm ' }
-      maddstring(3,8,forms(getres2(923,21),fl),sysopend,el,60,''); mhnr(8037);
+      maddstring(3,8,forms(getres2(923,21),fl),sysopend,el,MaxLenPathname,''); mhnr(8037);
           { 'Endprogramm   ' }
       if nt=nt_QWK then begin
         maddbool(3,10,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung l”schen' }

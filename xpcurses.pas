@@ -1112,6 +1112,7 @@ begin
 {$IFDEF DEBUG }
   XPLog(LOG_DEBUG, 'procedure window(%d, %d, %d, %d)', [x1, x2, y1, y2]);
 {$ENDIF }
+  Exit;
   { Aus INOUT.PAS uebernommen }
   mwl:=x1; mwr:=x2;
   mwo:=y1; mwu:=y2;
@@ -1277,6 +1278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/14 15:04:52  hd
+  - Anpassungen Linux
+
   Revision 1.15  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 
