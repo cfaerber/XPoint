@@ -15,7 +15,7 @@
 { define debug}    { Empfangs-Logfile UU-DEBUG.                }
 { define sim}      { Simulierter Netcall; Eingabedatei: UUSIM. }
 
-uses  crt,dos,uart,typeform,fileio,video,winxp,inout,resource,xpglobal,lfn;
+uses  crt,dos,uart,typeform,fileio,video,winxp,inout,resource,xpglobal,clip,xpovl,lfn;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_parerr  = 1;
@@ -118,7 +118,12 @@ end;
 
 procedure InitVar;
 begin
-  if Win95_Aktiv then UseLFN := true;
+  If (WinVersion = 3) or { Win 9x/ME/... }
+     ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
+  begin
+    EnableLFN;
+    UseLfn := true;
+  end;
   uulog:=nil; deblog:=nil;
   with col do
     if color then begin
@@ -1932,6 +1937,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.9  2001/08/11 13:08:04  mk
+  - compilable again (lfn-changes, added xpovl)
+
   Revision 1.1.2.8  2001/03/15 07:48:53  mw
 
 
