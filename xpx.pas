@@ -17,7 +17,7 @@ unit xpx;
 interface
 
 uses
-  sysutils,
+  xpglobal,
 {$IFDEF Linux }
   xplinux,
 {$ENDIF }
@@ -26,7 +26,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal;
+  dos,dosx,typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
 implementation
 
@@ -48,7 +48,11 @@ end;
 procedure logo;
 var t : text;
 begin
+{$ifdef NCRT}
+  AssignCrt(t);
+{$else}
   assign(t,'');
+{$endif}
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -85,7 +89,6 @@ begin
     end;
 end;
 
-
 function _deutsch:boolean;
 var t : text;
     s : string;
@@ -100,7 +103,7 @@ begin
 end;
 
 {$ifndef Linux}
-{$S-}
+  {$S-}
 {$endif}
 procedure setpath;
 begin
@@ -168,9 +171,10 @@ begin
   if (OwnPath='') then begin
     OwnPath:=GetEnv('HOME');            { HOME= }
     if (OwnPath='') then begin
-      WriteLn('Need the environment variable ''HOME''!');
-      WriteLn;
-      Halt(2);
+      if _deutsch then
+        stop('Benoetige die Environmentvariable "HOME"!')
+      else
+        stop('Need the environment variable "HOME"!');
     end;
     if (right(OwnPath,1)<>DirSepa) then                 { $HOME/openxp/ }
       OwnPath:= OwnPath+DirSepa+BaseDir
@@ -182,12 +186,16 @@ begin
   end;
   if not (IsPath(OwnPath)) then                         { Existent? }
     if not (MakeDir(OwnPath, A_USERX)) then begin       { -> Nein, erzeugen }
-      WriteLn('Can''t create ''',OwnPath,'''.');
-      Halt(2);
+      if _deutsch then
+        stop('Kann "'+OwnPath+'" nicht anlegen!')
+      else
+        stop('Can''t create "'+OwnPath+'".');
     end;
   if not (TestAccess(OwnPath, taUserRWX)) then begin    { Ich will alle Rechte :-/ }
-    WriteLn('I need read, write and search rights on ''',OwnPath,'''.');
-    Halt(2);
+    if _deutsch then
+      stop('Das Programm muss Lese-, Schreib- und Suchberechtigung auf "'+OwnPath+'" haben.')
+    else
+      stop('I need read, write and search rights on "'+OwnPath+'".');
   end;
   SetCurrentDir(OwnPath);
 {$ELSE }
@@ -206,6 +214,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 17:32:40  hd
+  - Beruecksichtigung von "_deutsch"
+
   Revision 1.22  2000/07/04 12:04:32  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
