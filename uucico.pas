@@ -1747,8 +1747,8 @@ begin
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end
                   else begin
-                    s:=Unix2DOSfile(s,FilePath, UseLFN);
-                    if s='' then s:=Unix2DOSfile(source,FilePath, UseLFN);
+                    s:=Unix2DOSfile(s,FilePath, false);
+                    if s='' then s:=Unix2DOSfile(source,FilePath, false);
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
                     wrlog('S','receiving '+s+' as '+ustr(fn));
@@ -1926,6 +1926,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.6  2001/01/07 10:51:03  mk
+  - LFN beim requesten entfernt
+
   Revision 1.1.2.5  2001/01/01 22:03:03  mk
   - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
 
