@@ -388,9 +388,16 @@ begin
     if(SBufBeg > Low(SBuffer)) and              { data not at start and }
       ((SBufEnd+rr)>(High(SBuffer)+1)) then     { not enough room at end}
     begin
-      Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
-      SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
-      SBufBeg :=                     Low(SBuffer);
+      if SBufBeg<SBufEnd then
+      begin
+        Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
+        SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
+        SBufBeg :=                     Low(SBuffer);
+      end else
+      begin
+        SBufBeg := Low(SBuffer);
+        SBufEnd := Low(SBuffer);
+      end;      
     end;
 
     rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
@@ -607,6 +614,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2001/10/23 06:48:56  cl
+  - yet another range check error fix
+
   Revision 1.13  2001/09/08 14:53:55  cl
   - Delphi fixes
 
