@@ -674,6 +674,7 @@ begin
   adrpmonly:=false;
   newuseribm:=false;
   _usersortbox:=false;
+  NeuUserGruppe:=1;
   multipartbin:=true;
   mausmpbin:=false;
 
@@ -809,6 +810,7 @@ begin
   writeln(t,'BlackSaver=',jnf(blacksaver));
   writeln(t,'VESA-DPMS=',jnf(vesa_dpms));
   writeln(t,'Useraufnahme=',Uaufnahme_string);
+  writeln(t,'NeuUserGruppe=',NeuUsergruppe);
   writeln(t,'MaxBinarySave=',maxbinsave);
   writeln(t,'MaxNetMsgs=',maxnetmsgs);
   writelimits('MaxNetPM',1);
@@ -1351,6 +1353,7 @@ begin
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
           gets(s,su,'UserAufnahme',userauf,10) or
+          geti(su,  'NeuUsergruppe',Neuusergruppe) or
           gets(s,su,'Name_O''Maps',dummys,20) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
@@ -1648,6 +1651,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/04/15 09:57:59  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.29  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines

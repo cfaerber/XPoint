@@ -1069,7 +1069,7 @@ begin
   dbWriteN(ubase,ub_pollbox,pollbox);
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
   b:=1;
-  dbWriteN(ubase,ub_adrbuch,b);
+  dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
   if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
     inc(b,8); { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
   dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
@@ -1428,6 +1428,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.18  2000/04/04 21:01:23  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

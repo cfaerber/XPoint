@@ -134,7 +134,7 @@ begin
     rfehler(416);  { 'Im Brett dieses Users sind noch Nachrichten vorhanden!' }
     exit;
     end;
-  ab:=1-ab;
+  if ab<>0 then ab:=0 else ab:=NeuUserGruppe;
   dbWrite(ubase,'adrbuch',ab);
   dbFlushClose(ubase);
   if (ab=0) and (p=1) or (p=gl) then begin

@@ -472,6 +472,7 @@ K (c) '93-96 Peter Mandrella
 20   Enables special characters for new users
 21   Use of : and | is equal to quote char.
 22   Sort userwindow by servername
+23   Default Usergroup
 + 251
 # Extract as
 0    Text w/o head
@@ -2497,6 +2498,7 @@ K (c) '93-96 Peter Mandrella
 8    Umlauts
 9    Message filter
 10   Receipt requests
+11   Usergroup
 -
 2702 Add new user
 + 2703
@@ -2537,7 +2539,7 @@ K (c) '93-96 Peter Mandrella
 2713 Name of newsgroup has changed - adjust message headers
 2714 One moment please ...
 + 2715
-1    ^Comment,^Server,^Hold time,^Umlauts,^Filter
+1    ^Comment,^Server,^Hold time,^Umlauts,^Filter,^Group
 2    ^Comment,^Server,^Hold time,^Group,^Filter,^Access
 3    Edit %s marked Users
 4    Edit %s marked newsgroups

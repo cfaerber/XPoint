@@ -1554,7 +1554,7 @@ fromstart:
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
         b:=1;
-        dbWrite(ubase,'adrbuch',b);
+        dbWrite(ubase,'adrbuch',NeuUserGruppe);
         {if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
         { 14.02.2000 MH: UserFlags: 8=ASCII }
       if not newuseribm then inc(b,8); { MH: NewUserIBM berÅcksichtigen }
@@ -1582,7 +1582,7 @@ fromstart:
         dbRead(ubase,'adrbuch',b);
         if b=0 then begin
           b:=1;
-          dbWrite(ubase,'adrbuch',b);
+          dbWrite(ubase,'adrbuch',NeuUserGruppe);
           end;
         end;
 
@@ -2176,6 +2176,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.16  2000/04/11 19:34:01  oh
   - [tempdir]\header.hdr fuer Mailnachbearbeitung
 

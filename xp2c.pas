@@ -117,7 +117,7 @@ var x,y : byte;
     ua  : string[10];
     i   : integer;
 begin
-  dialog(56,18,getres2(250,1),x,y);    { 'allgemeine Optionen' }
+  dialog(56,19,getres2(250,1),x,y);    { 'allgemeine Optionen' }
   maddstring(3,2,getres2(250,2),QuoteChar,QuoteLen,QuoteLen,range(' ',#126));   { 'Quote-Zeichen ' }
   mset3proc(testqc);
   mnotrim; mhnr(210);
@@ -126,25 +126,28 @@ begin
   maddstring(3,5,getres2(250,4),ua,7,7,'');           { 'User-Aufnahme ' }
   for i:=5 to 7 do
     mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
+  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' } 
+  mhnr(8068);
   {$IFDEF DPMI}
     maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   {$ELSE}
-    maddbool(32,2,getres2(250,11),SwapToEMS);   { 'Auslagern in EMS' }
+    maddbool(32,2,getres2(250,11),SwapToEMS); mhnr(213);  { 'Auslagern in EMS' }
     maddbool(32,3,getres2(250,18),SwapToXMS);   { 'Auslagern in XMS' }
       mhnr(213);
     maddbool(32,4,getres2(250,10),AskQuit);
   {$ENDIF}
-  maddstring(3,7,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
+  maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                            { 'Archivbretter ' }
-  maddbool(3,9,getres2(250,13),archivloesch);    { 'archivierte Nachrichten lîschen' }
-  maddbool(3,10,getres2(250,14),newbrettende);   { 'neue Bretter am Ende anhÑngen' }
-  maddbool(3,11,getres2(250,15),UserBoxname);    { 'Boxname in PM-Brettern' }
-  maddbool(3,12,getres2(250,19),brettkomm);      { 'Kommentare aus Brettliste Åbernehmen' }
-  maddbool(3,13,getres2(250,20),newuseribm);     { 'Umlaute fÅr neue User zulassen' }
-  maddbool(3,14,getres2(250,21),OtherQuoteChars);{ 'Farbe auf fÅr Quotezeichen : und |' }
-  maddbool(3,15,getres2(250,22),_UserSortBox);   { 'Useranzeigen nach Server sortieren' }
-  maddint(3,17,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
-  maddtext(length(getres2(250,16))+11,17,getres2(250,17),0);   { 'MByte' }
+  maddbool(3,10,getres2(250,13),archivloesch);    { 'archivierte Nachrichten lîschen' }
+  maddbool(3,11,getres2(250,14),newbrettende);   { 'neue Bretter am Ende anhÑngen' }
+  maddbool(3,12,getres2(250,15),UserBoxname);    { 'Boxname in PM-Brettern' }
+  maddbool(3,13,getres2(250,19),brettkomm);      { 'Kommentare aus Brettliste Åbernehmen' }
+  maddbool(3,14,getres2(250,20),newuseribm);     { 'Umlaute fÅr neue User zulassen' }
+  maddbool(3,15,getres2(250,21),OtherQuoteChars);{ 'Farbe auf fÅr Quotezeichen : und |' }
+  maddbool(3,16,getres2(250,22),_UserSortBox);   { 'Useranzeigen nach Server sortieren' }
+
+  maddint(3,18,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
+  maddtext(length(getres2(250,16))+11,18,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
     if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
@@ -1385,6 +1388,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/04/15 09:57:59  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.20  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines

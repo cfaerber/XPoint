@@ -483,6 +483,7 @@ K (c) '93-98 Peter Mandrella
 20   Umlaute fr neue User zulassen
 21   Stelle : und | dem Quote-Zeichen gleich
 22   Userfenster nach Serverbox sortieren
+23   Standard Adressbuchgruppe
 + 251
 # Extrakt als
 0    Text ohne Kopf
@@ -2560,6 +2561,7 @@ K (c) '93-98 Peter Mandrella
 8    Umlaute
 9    Nachrichtenfilter
 10   Empfangsbest„tigungen
+11   Adressbuchgruppe
 -
 2702 neuen User anlegen
 + 2703
@@ -2600,7 +2602,7 @@ K (c) '93-98 Peter Mandrella
 2713 Brettname ge„ndert - Nachrichtenk”pfe anpassen
 2714 Einen Moment bitte ...
 + 2715
-1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter
+1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter,^Gruppe
 2    ^Kommentar,^Serverbox,^Haltezeit,^Gruppe,^Filter,^Zugriff
 3    %s markierte User bearbeiten
 4    %s markierte Bretter bearbeiten

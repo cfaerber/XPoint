@@ -268,7 +268,7 @@ end;
 
 
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten:integer; var flags:byte; edit:boolean;
+                   var halten,adr:integer; var flags:byte; edit:boolean;
                    var brk:boolean);
 var x,y  : byte;
     filt : boolean;
@@ -313,6 +313,8 @@ begin
   maddbool(3,12,getres2(2701,10),ebs);   { 'Empfangsbest„tigungen' }
   maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
   maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
+  maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
+  mhnr(8069);
   readmask(brk);
   if not brk then
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
@@ -326,7 +328,7 @@ function newuser:boolean;
 var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
-    halten       : integer;
+    halten,adr   : integer;
     b            : byte;
     brk          : boolean;
     flags        : byte;
@@ -335,8 +337,8 @@ begin
   komm:=''; pollbox:=DefaultBox;
   halten:=stduhaltezeit;
   newuser:=false;
-  flags:=1;  { neuer User <- Aufnehmen }
-  edituser(getres(2702),user,adresse,komm,pollbox,halten,flags,false,brk);   { 'neuen User anlegen' }
+  flags:=1;  adr:=1; { neuer User <- Aufnehmen }
+  edituser(getres(2702),user,adresse,komm,pollbox,halten,adr,flags,false,brk);   { 'neuen User anlegen' }
   if not brk then begin
     dbSeek(ubase,uiName,ustr(user));
     if dbFound then
@@ -351,7 +353,7 @@ begin
       dbWrite(ubase,'haltezeit',halten);
       dbWrite(ubase,'userflags',flags);
       b:=1;
-      dbWrite(ubase,'adrbuch',b);
+      dbWrite(ubase,'adrbuch',adr);
       dbWrite(ubase,'codierer',b);
       dbFlushClose(ubase);
       newuser:=true;
@@ -432,7 +434,7 @@ begin
       dbWriteN(ubase,ub_kommentar,komm);
       dbWriteN(ubase,ub_pollbox,pollbox);
       b:=1;
-      dbWriteN(ubase,ub_adrbuch,b);
+      dbWriteN(ubase,ub_adrbuch,b); {NeuUserGruppe nicht fuer Verteiler...}
       dbWriteN(ubase,ub_codierer,b);      { drfte egal sein }
       b:=5;
       dbWriteN(ubase,ub_userflags,b);     { aufnehmen & Verteiler }
@@ -600,7 +602,7 @@ begin
     else typ:=2+ival(right(cod,1));
     dbWrite(ubase,'codierer',typ);
     if pw<>'' then begin
-      adrb:=1;
+      adrb:=NeuUserGruppe;
       dbWrite(ubase,'adrbuch',adrb);
       end;
     flags:=flags and (not 2)+iif(defcode,2,0);
@@ -856,12 +858,12 @@ begin
     end;
 end;
 
-function modiuser(msgbrett:boolean):boolean;
+function modiuser(msgbrett:boolean):boolean; {us}
 var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
     size         : smallword;
-    halten       : integer;
+    halten,adr   : integer;   
     flags        : byte;
     brk          : boolean;
     rec          : longint;
@@ -880,8 +882,9 @@ begin
   dbRead(ubase,'pollbox',pollbox);
   dbRead(ubase,'haltezeit',halten);
   dbRead(ubase,'userflags',flags);
+  dbRead(ubase,'Adrbuch',adr);
   rec:=dbRecno(ubase);
-  edituser(getres(2710),user,adresse,komm,pollbox,halten,flags,true,brk);
+  edituser(getres(2710),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
   dbGo(ubase,rec);
   if not brk then begin                 { 'User bearbeiten' }
     if ustr(adresse)=ustr(user) then adresse:='';
@@ -890,6 +893,7 @@ begin
     dbWrite(ubase,'pollbox',pollbox);
     dbWrite(ubase,'haltezeit',halten);
     dbWrite(ubase,'userflags',flags);
+    dbWrite(ubase,'Adrbuch',adr);  
     dbFlushClose(ubase);
     if msgbrett then
       dbFlushClose(ubase)
@@ -1047,7 +1051,7 @@ var n,w    : shortint;
     x,y    : byte;
     brk    : boolean;
     s      : string[30];
-    halten : integer;
+    halten,adr : integer;
     htyp   : string[6];
     hzahl  : boolean;
     grnr   : longint;
@@ -1067,15 +1071,17 @@ begin
   else dispdat:=bbase;
   pushhp(iif(user,429,409));
   n:=MiniSel(34,10+(screenlines-25)div 2,'',getres2(2715,iif(user,1,2)),nn);
-  if n<>0 then nn:=abs(n);       { ^Kommentar,^Serverbox,^Haltezeit,^Gruppe/^Umlaute,^Filter }
+  if n<>0 then nn:=abs(n);       { ^Kommentar,^Serverbox,^Haltezeit,^Gruppe^Umlaute/^Filter }
   pophp;
   case n of
     1   : w:=49;    { Kommentar }
     2,3 : w:=37;    { Pollbox, Haltezeit }
     4   : if user then w:=40
           else w:=46;   { Gruppe }
-    5,6 : w:=37;
-  else begin
+    5   : w:=37;
+    6   : if user then w:=46
+          else w:=37;
+else begin
     freeres;
     exit;
     end;
@@ -1128,11 +1134,16 @@ begin
           filter:=not user;
           maddbool(3,2,getres2(2715,12),filter); mhnr(431);  { 'Nachrichtenfilter' }
         end;
-    6 : begin
+    6 : if not user then 
+        begin
           dbGo(bbase,bmarked^[0]);
           sperre:=(dbReadInt(bbase,'flags')and 8<>0);
-          maddbool(3,2,getres2(2715,13),sperre); mhnr(432);  { 'Schreibsperre' }
-        end;
+          maddbool(3,2,getres2(2715,13),sperre); mhnr(432)  { 'Schreibsperre' }
+          end 
+        else begin
+          adr:=NeuUserGruppe; 
+          maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);      
+          end;
   end;
   readmask(brk);
   enddialog;
@@ -1184,12 +1195,17 @@ begin
               else flags:=flags or 4;
               dbWriteN(bbase,bb_flags,flags);
               end;
-        6 : begin
+        6 : if not user then 
+            begin
               dbReadN(bbase,bb_flags,flags);
               if sperre then flags:=flags or 8
               else flags:=flags and (not 8);
               dbWriteN(bbase,bb_flags,flags);
-            end;
+              end
+            else begin
+              dbwrite(dispdat,'adrbuch',adr);
+              end;    
+
       end;
       end;
     aufbau:=true;
@@ -2197,6 +2213,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.11  2000/04/13 12:48:36  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

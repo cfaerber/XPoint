@@ -1009,13 +1009,13 @@ again:
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
                  b:=1;
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
-                 dbWriteN(ubase,ub_adrbuch,b);    { Adreábuch }
+                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adreábuch }
                  end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
                  if b=0 then begin
                    b:=1;
-                   dbWriteN(ubase,ub_adrbuch,b);
+                   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
                    end;
                  end;
                _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
@@ -1227,6 +1227,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.6  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

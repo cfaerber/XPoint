@@ -922,13 +922,13 @@ begin
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1;  { aufnehmen }
               dbWrite(ubase,'userflags',flags);
-              adrbuch:=1;
+              adrbuch:=NeuUserGruppe;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
               end
             else begin
               dbReadN(ubase,ub_adrbuch,adrbuch);
               if adrbuch=0 then begin
-                adrbuch:=1;
+                adrbuch:=NeuUserGruppe;
                 dbWriteN(ubase,ub_adrbuch,adrbuch);
                 end;
               end;
@@ -1169,6 +1169,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.9  2000/03/17 13:11:23  mk
   - Testpuffer einlesen jetzt ca. 4x schneller
 

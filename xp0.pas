@@ -834,6 +834,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        BlackSaver   : boolean;       { schwarzschalten }
        smallnames   : boolean;       { kleingeschriebene Brett/Usernamen }
        UserAufnahme : byte;          { 0=Alle, 1=Zerberus, 2=keine, 3=PM }
+       NeuUserGruppe: integer16;     { Gruppe der neuangelegte User angehoeren }
        MaxBinSave   : longint;
        MaxNetMsgs   : longint;       { Default-Wert fÅr neue Gruppen }
        ReHochN      : boolean;
@@ -1107,6 +1108,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.25  2000/04/15 09:57:59  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
   Revision 1.24  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
