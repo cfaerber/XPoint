@@ -18,8 +18,7 @@
  Levels: 1 - Standard-Logs
          2 - Bildschirmnachrichten
          3 - Modembefehle/antworten
-         4 - Mailer states
-}
+         4 - Zustaende der Statemachines}
 
 {$I XPDEFINE.INC }
 
@@ -35,7 +34,7 @@ uses
   xpglobal,montage,inout,winxp,ZModem,Timer,Debug;
 
 const aresult    : byte = 0;
-      brk_result: byte = EL_break;
+      brk_result: byte = EL_Break;
 
       maxfiles  = 500;
       ErrChar   = '#';
@@ -53,7 +52,7 @@ const aresult    : byte = 0;
       Password  : string[20] = '';
       txt       : string[40] = 'NetCalling ...';
       addtxt    : string[40] = '';
-      SendEmpty : boolean = false;      { m”glichst leerer Upload-Batch }
+      SendEmpty : boolean = false;      { moeglichst leerer Upload-Batch }
       DebugMode : boolean = false;
       Logfile   : pathstr = 'xp-fm.log';
       Lognew    : boolean = false;
@@ -73,13 +72,13 @@ const aresult    : byte = 0;
       tlevel    : byte       = 8;       { FIFO-Triggerlevel }
       Baud      : longint    = 2400;
       ModemInit : string[80] = '';
-      CommInitString: string = ''; {EleCOM comm object init string}
-      DialComm  : string[20] = '';      { ATDx }
+      CommInitString: string = '';      { EleCOM comm object init string}
+      CommandModemDial  : string[20] = '';      { ATDx }
       Phone     : string[80] = '';      { eine oder mehrere Nummern }
       IgCTS     : boolean    = false;
       IgCD      : boolean    = false;
       UseRTS    : boolean    = false;
-      ConnWait  : integer    = 60;      { warten auf CONNECT }
+      TimeoutConnectionEstablish  : integer    = 60;      { warten auf CONNECT }
       RedialWait: integer    = 60;
       RedWait2  : integer    = 30;
       RedialMax : integer    = 100;
@@ -92,6 +91,9 @@ const aresult    : byte = 0;
       mailing   : boolean   = false;    { Transfer gestartet }
       timediff  : longint   = 0;
       resopen   : boolean   = false;
+
+      TimeoutModemAnswer = 3;
+      TimeoutModemInit = 60;
 
 type  FidoAdr   = record
                     zone,net   : word;
@@ -131,12 +133,8 @@ begin
   assign(t,''); rewrite(t);
   writeln(t);
   writeln(t,'XP-FM  Fido Mailer ',verstr,pformstr, betastr, ' (c) ''93-99 by Peter Mandrella');
+  writeln(t,'(c) 2000 OpenXP Team');
   writeln(t);
-{$IFDEF Final}dsfkha{$ENDIF}
-{  if FOSSILdetect then begin
-    writeln(t,'FOSSIL driver detected');
-    writeln(t);
-  end;}
   close(t);
   starty:=wherey;
 end;
@@ -215,12 +213,12 @@ begin
       if id='logfile'    then logfile:=s else
       if id='lognew'     then begin logfile:=s; lognew:=true; end else
       if id='modeminit'  then modeminit:=s else
-      if id='dialcommand' then dialcomm:=s else
+      if id='dialcommand' then CommandModemDial:=s else
       if id='phone'      then phone:=trim(s) else
       if id='cts'        then IgCTS:=(ustr(s)='N') else
       if id='cd'         then IgCD:=(ustr(s)='N') else
       if id='rts'        then UseRTS:=(ustr(s)<>'N') else
-      if id='connwait'   then ConnWait:=minmax(ival(s),0,240) else
+      if id='connwait'   then TimeoutConnectionEstablish:=minmax(ival(s),0,240) else
       if id='redialwait' then RedialWait:=minmax(ival(s),2,1000) else
       if id='redialwait2'then RedWait2:=minmax(ival(s),2,1000) else
       if id='redialmax'  then RedialMax:=minmax(ival(s),0,1000) else
@@ -278,13 +276,6 @@ begin
         end;
     end;
   DebugLog('XPFM','Port initialization: '+CommInitString,1);
-{$IFDEF Final}asdf
-  if not FOSSILdetect then fossil:=false;
-  if fossil then begin
-    writeln('Using FOSSIL driver');
-    writeln;
-  end;
-{$ENDIF}
   if exist('RTS.FM') then UseRTS:=true;
 end;
 
@@ -412,13 +403,7 @@ begin
 end;
 
 procedure OpenLog;
-{$IFNDEF DPMI }
-{$IFDEF Final}
-var
-  fi : FossilInfo;
-  s  : string;
-{$ENDIF }
-{$ENDIF }
+
 begin
   assign(logf,logfile);
   if lognew or not existf(logf) then
@@ -427,18 +412,6 @@ begin
     append(logf);
   writeln(logf);
   writeln(logf,'----------  ',date,', XP-FM ',verstr,betastr);
-  {$IFNDEF DPMI}
-{$IFDEF Final}
-    if fossil and GetFossilInfo(modemline,fi) then begin
-      s:='FOSSIL driver: ';
-      while (length(s)<65) and (fi.IdAdr^<>#0) do begin
-        s:=s+fi.IdAdr^;
-        inc(longint(fi.IdAdr));
-      end;
-      log('%',s);
-    end;
-  {$ENDIF}
-  {$ENDIF}
 end;
 
 
@@ -476,16 +449,10 @@ begin
   Cursor(curnorm);
 end;
 
-function timeform(l:longint):string;
+procedure DisplayTime(l: longint);
 begin
-  timeform:=formi(l div 3600,2)+':'+formi((l mod 3600) div 60,2)+':'+
-            formi(l mod 60,2);
-end;
-
-procedure DisplayTime(l:longint);
-begin
-  Col(ColText);
-  wrt(scx+wdt-10,scy+1,timeform(l));
+  if l<0 then exit;
+  Col(ColText); wrt(scx+wdt-10,scy+1,formi(l div 3600,2)+':'+formi((l mod 3600) div 60,2)+':'+formi(l mod 60,2));
 end;
 
 procedure DisplayStatus(s:string; UseNewLine: Boolean);
@@ -517,18 +484,12 @@ end;
 procedure DisplayAndLog(c:char; s:string);
 begin DisplayStatus(s,True); log(c,s)end;
 
-procedure DisplayOnlineTime;
-begin DisplayTime(System.Round(TimerObj.ElapsedSec))end;
-
-
 { --- Interface-Routinen / Anwahl ----------------------------------- }
 
 var ReceivedUpToNow      : string;
     WaitForAnswer  : boolean;
     ModemAnswer   : string[80];
-    break     : boolean;
-{$IFDEF Final}    cps       : cpsrec;{$ENDIF}
-
+    GotUserBreak     : boolean;
 
 function GetCTS:boolean;
 begin
@@ -557,7 +518,7 @@ begin
   end else if idle then SleepTime(10);
 end;
 
-procedure ProcessKeypresses(space:boolean);
+procedure ProcessKeypresses(AcceptSpace:boolean);
 var c : char;
 begin
   if keypressed then begin
@@ -567,16 +528,20 @@ begin
               TimerObj.SetTimeout(0);
               WaitForAnswer:=False; ReceivedUpToNow:='';
               ModemAnswer:=getres(160);    { 'abgebrochen' }
-              break:=true;
+              GotUserBreak:=true;
             end;
       '+' : TimerObj.SetTimeout(TimerObj.SecsToTimeout+1);
       '-' : if TimerObj.SecsToTimeout>1 then TimerObj.SetTimeout(TimerObj.SecsToTimeout-1);
-      ' ' : if space then TimerObj.SetTimeout(0);
+      ' ' : if AcceptSpace then TimerObj.SetTimeout(0);
     end;
   end;
 end;
 
 function SendCommand(s:string): String;
+{Sendet Befehl an Modem; wartet maximal TimeoutModemAnswer Sekunden auf Antwort;
+ Antwort wird als Ergebnis zurueckgegeben, falls innerhalb dieser Zeit erfolgt;
+ ansonsten mit ProcessIncoming warten, bis WaitForAnswer False wird, Antwort steht
+ dann in ModemAnswer.}
 var p : byte; EchoTimer: tTimer;
 begin
   DebugLog('XPFM','Sending modem command: '+s,3);
@@ -590,7 +555,7 @@ begin
       end;
     until p=0;
     if not CommObj^.SendString(s+#13,True)then DebugLog('XPFM','Sending failed '+CommObj^.ErrorStr,3);
-    EchoTimer.Init; EchoTimer.SetTimeout(5); ReceivedUpToNow:=''; WaitForAnswer:=True;
+    EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
       ProcessIncoming(true); ProcessKeypresses(false);
     until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
@@ -601,6 +566,8 @@ begin
 end;
 
 function SendMultCommand(s:string): String;
+{Sendet durch \\ voneinander getrennte Befehle an Modem, zurueckgegeben wird letzte
+ Antwort des Modems, weiteres siehe SendCommand.}
 var p : byte; cmd: String;
 begin
   while (length(trim(s))>1) and not TimerObj.Timeout do begin
@@ -614,9 +581,6 @@ begin
 end;
 
 function DialUp:boolean;
-var nummer   : string[40];
-    s        : string;
-    Connected: Boolean;
 
   function GetTelefon:string;
   var p : byte;
@@ -652,108 +616,96 @@ var nummer   : string[40];
     ohnestrich:=nummer;
   end;
 
-begin
-  DialUp:=IgCD;
-  DisplayStatus(getres(161),True);     { 'Modem initialisieren' }
-  break:=false;
-  TimerObj.SetTimeout(60);
-  if dialcomm<>'' then begin
-    CommObj^.SendString(#13,False); SleepTime(150);
-    CommObj^.SendString(#13,False); SleepTime(300);
-    CommObj^.PurgeInBuffer;
-    SendCommand('AT');
-    ProcessKeypresses(false);
-  end;
-  if not TimerObj.Timeout then
-    SendMultCommand(ModemInit)
-  else begin
-    aresult:=EL_break;
-    exit;
-  end;
-  Connected:=False;
-  while (not Connected) and (dials<RedialMax) do begin
-    inc(dials);
-    nummer:=GetTelefon;
-    DisplayStatus(reps(getreps(162,nummer),strs(dials)),True);   { 'W„hle %s (Versuch %s) ...' }
-    log('+','Calling '+txt+', '+nummer);
-    TimerObj.SetTimeout(ConnWait);
+type tStateDialup= (SDInitialize,SDDial,SDWaitForNextCall,SDDone);
 
-    SendMultCommand(Dialcomm+nummer);
-    {Evtl. Antwort schon hier in ModemAnswer}
-    repeat
-      ProcessIncoming(true); ProcessKeypresses(false);
-      DisplayTime(System.Round(TimerObj.SecsToTimeout));
-      if (ModemAnswer='RINGING')or(ModemAnswer='RRING') then begin
-        if not DebugMode then DisplayStatus(ModemAnswer,True);
-        dec(disppos);
-        ModemAnswer:=''; WaitForAnswer:=true;
-      end;
-    until TimerObj.Timeout or(not WaitForAnswer);
-    DebugLog('XPFM','Connect string: '+ModemAnswer,2);
-    if break then
-      break:=false
-    else
-      if TimerObj.Timeout then ModemAnswer:=getres(163);   { 'keine Verbindung' }
-{!} if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
-    log('=',ModemAnswer);
-    SleepTime(500);
-    if not DebugMode then DisplayStatus(ModemAnswer,True);
-    if CommObj^.Carrier or (pos('CONNECT',ustr(ModemAnswer))>0) or (left(ustr(ModemAnswer),7)='CARRIER')
-    then begin
-      SetBaudDetect;
-      TimerObj.Start; {Online-Timer starten}
-      if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-      if not CommObj^.Carrier then SleepTime(1000);
-      DialUp:=true; Connected:=True;
-    end else begin
-      CommObj^.SendString(#13,False);
-      SleepTime(1000);
-      DisplayStatus(getres(165),True);   { 'warte auf n„chsten Anruf ...' }
-      if dials<RedialMax then begin
-        TimerObj.SetTimeout(RedialWait);
-        repeat
-          ProcessIncoming(true); ProcessKeypresses(true);
-          DisplayTime(System.Round(TimerObj.SecsToTimeout));
-        until TimerObj.Timeout;
-        if break then begin
-          aresult:=EL_break;
-          exit;
-        end;
-      end else
-        SleepTime(500);
+var nummer   : string[40];
+    s        : string;
+    StateDialup: tStateDialup;
+
+begin
+  StateDialup:=SDInitialize; Dials:=0; DialUp:=False;
+
+  while StateDialup<>SDDone do begin
+    case StateDialup of
+      SDInitialize: begin
+                      DisplayStatus(getres(161),True);     { 'Modem initialisieren' }
+                      TimerObj.SetTimeout(TimeoutModemInit);
+                      if CommandModemDial<>'' then begin
+                        CommObj^.SendString(#13,False); SleepTime(150);
+                        CommObj^.SendString(#13,False); SleepTime(300);
+                        CommObj^.PurgeInBuffer; SendCommand('AT'); ProcessKeypresses(false);
+                      end;
+                      if not TimerObj.Timeout then begin
+                        SendMultCommand(ModemInit); StateDialup:=SDDial;
+                      end;
+                    end;
+      SDDial: begin
+                nummer:=GetTelefon; inc(dials);
+                DisplayStatus(reps(getreps(162,nummer),strs(dials)),True);   { 'Waehle %s (Versuch %s) ...' }
+                log('+','Calling '+txt+', '+nummer);
+
+                TimerObj.SetTimeout(TimeoutConnectionEstablish);
+                SendMultCommand(CommandModemDial+nummer); {Gegenstelle anwaehlen}
+                {Evtl. Antwort schon hier in ModemAnswer}
+                repeat
+                  ProcessIncoming(true); ProcessKeypresses(false);
+                  DisplayTime(System.Round(TimerObj.SecsToTimeout));
+                  if (ModemAnswer='RINGING')or(ModemAnswer='RRING') then begin
+                    if not DebugMode then DisplayStatus(ModemAnswer,True);
+                    dec(disppos); ModemAnswer:=''; WaitForAnswer:=true;
+                  end;
+                until TimerObj.Timeout or(not WaitForAnswer);
+                if not TimerObj.Timeout then begin {Kein Timeout: Connect oder Busy - und vor allem kein Userbreak.}
+                  DebugLog('XPFM','Connect string: '+ModemAnswer,2);
+                  if left(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
+                  log('=',ModemAnswer); SleepTime(500);
+                  if not DebugMode then DisplayStatus(ModemAnswer,True);
+                  if ((pos('CONNECT',ustr(ModemAnswer))>0)or(left(ustr(ModemAnswer),7)='CARRIER'))or
+                      (CommObj^.Carrier and(not igcd))then begin {Connect!}
+                    StateDialup:=SDDone; DialUp:=True; SetBaudDetect; TimerObj.Start; {Online-Timer starten}
+                    if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
+                    if not CommObj^.Carrier then SleepTime(1000);
+                    inc(connects)
+                  end
+                end else begin {Timeout oder Userbreak}
+                  if not GotUserBreak then DisplayStatus(getres(163),True);   { 'keine Verbindung' }
+                  CommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
+                  StateDialup:=SDWaitForNextCall;
+                end;
+              end;
+      SDWaitForNextCall: if dials<RedialMax then begin
+                           DisplayStatus(getres(165),True);   { 'warte auf naechsten Anruf ...' }
+                           TimerObj.SetTimeout(RedialWait);
+                           repeat
+                             DisplayTime(System.Round(TimerObj.SecsToTimeout));
+                             ProcessIncoming(true); ProcessKeypresses(true);
+                           until TimerObj.Timeout;
+                           StateDialup:=SDInitialize;
+                         end else StateDialup:=SDDone;
     end;
-  end; { while }
-  if not CommObj^.Carrier then aresult:=EL_noconn;
+    ProcessKeypresses(false);
+    if GotUserBreak then begin DisplayStatus(getres(160),True); { 'abgebrochen' } aresult:=EL_break; exit end;
+  end;
 end;
 
 
-procedure Hangup;
+function Hangup: Boolean;
 var i : integer;
 begin
-  if CommObj^.Carrier then begin
-    DisplayStatus(getres(164),True);     { 'Modem auflegen' }
-    CommObj^.SetDTR(False);
-    for i:=1 to 6 do if CommObj^.Carrier then SleepTime(500);
-    CommObj^.SetDTR(True);
-    SleepTime(500);
-    if CommObj^.Carrier and GetCTS then begin
-      CommObj^.SendString('+++',False);
-      for i:=1 to 4 do
-        if CommObj^.Carrier then SleepTime(500);
-      if CommObj^.Carrier and GetCTS then
-        CommObj^.SendString('AT H0'#13,False);
-    end;
-  end else begin
-    CommObj^.SetDTR(False);
-    SleepTime(200);
-    CommObj^.SetDTR(True);
-    SleepTime(500);
-    if GetCTS then CommObj^.SendString(#13,False);
-    SleepTime(300);
-    if GetCTS then CommObj^.SendString(#13,False);
+  if(not igcd)and CommObj^.Carrier then DisplayStatus(getres(164),True); { 'Modem auflegen' }
+  CommObj^.PurgeInBuffer;
+  CommObj^.SetDTR(False);
+  SleepTime(500); for i:=1 to 6 do if(not igcd)and CommObj^.Carrier then SleepTime(500);
+  CommObj^.SetDTR(True);
+  SleepTime(500);
+  if GetCTS then begin
+    CommObj^.SendString('+++',False);
+    for i:=1 to 4 do if((not igcd)and CommObj^.Carrier)then SleepTime(500);
+    SleepTime(100);
   end;
+  if GetCTS then begin CommObj^.SendString('AT H0'#13,True); SleepTime(1000)end;
+  Hangup:=CommObj^.SendString('AT'+#13,True);
 end;
-
 
 {$I XP-FM.INC}          { YooHoo - Mailer }
 
@@ -790,13 +742,11 @@ begin
   repeat
     aresult:=EL_ok;
     if DialUp then begin
-      YooHooMailer;
+      YooHooMailer; {Im Mailer wird Mailing True gesetzt}
       if aresult<>0 then brk_result:=aresult;
-      inc(connects);
     end;
-    HangUp;
-    if mailing then
-      log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
+    if not HangUp then DisplayStatus('Modem konnte nicht aufgelegt werden!',True); {* In Resourcedatei uebernehmen}
+    if mailing then log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
     mailing:=false;
   until (aresult=EL_ok) or (aresult=EL_break) or
         (connects=MaxConn) or (dials=RedialMax);
@@ -814,6 +764,11 @@ end.
 
 {
   $Log$
+  Revision 1.17  2000/06/22 22:23:56  ma
+  - zur Anwahl wird jetzt State Machine benutzt
+  - verschiedene Aufraeumarbeiten und Umbenennungen
+  - Copyright-Meldung angepasst (+'(C) 2000 OpenXP Team')
+
   Revision 1.16  2000/06/22 19:53:29  mk
   - 16 Bit Teile ausgebaut
 
