@@ -26,7 +26,7 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 
 IMPLEMENTATION
 
-USES Dos
+USES Dos,Debug
 {$IFDEF Win32},Windows{$else},CRT{$endIF}; {for Delay/Sleep}
 
 CONST qLoops= 100; TickCap= 8640000; CLKTICKS=100;
@@ -50,7 +50,10 @@ PROCEDURE tTimer.Start;
 begin InitTicks:=GetTicks end;
 
 PROCEDURE tTimer.SetTimeout(TimeoutSec: Real); {Berücksichtigt Nullrückstellung um Mitternacht}
-begin TimeoutTicks:=(InitTicks+Round(TimeoutSec*CLKTICKS))MOD TickCap end;
+begin
+  if(TimeoutSec>0)and(TimeoutSec<0.07)then DebugLog('Timer','Timeout set critically low.',1);
+  TimeoutTicks:=(GetTicks+Round(TimeoutSec*CLKTICKS)+6)MOD TickCap
+end;
 
 FUNCTION tTimer.SecsToTimeout: Real; {funktioniert nur bis 12h Intervall zuverlässig}
 var T: LongInt;
@@ -104,6 +107,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/06/25 00:34:42  ma
+  - Bug in SetTimeout gefixt
+
   Revision 1.2  2000/06/23 15:59:13  mk
   - 16 Bit Teile entfernt
 
