@@ -2080,7 +2080,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Loginname ~
 3    Pa·wort   ~
 4    Abgeholte Mails auf Server lîschen
-5    Passwîrter verschlÅsselten (APOP)
+5    Passwîrter verschlÅsseln (APOP)
 6    nur neue Mail abholen
 -
 + 952
@@ -3652,6 +3652,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.6  2001/04/16 18:04:59  ma
+# - fixed typo
+#
 # Revision 1.5  2001/04/16 16:43:26  ml
 # - pop3 now only gets new mail
 # - added switch in pop3-boxconfig for getting only new mail
