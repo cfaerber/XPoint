@@ -721,7 +721,7 @@ begin
       sbrk:=false;
       Readln(t,s);
       if (length(s)>40) and sbreaks and
-         (LastChar(s)=' ') and (not eof(t) then begin
+         (LastChar(s)=' ') and (not eof(t)) then begin
         DeleteLastChar(s);
         sbrk:=true;
       end;
@@ -1803,6 +1803,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.81  2002/02/24 21:00:37  ma
+  - don't know how this ')' got lost ;-)
+
   Revision 1.80  2002/02/24 20:57:35  ma
   - LoadBlock's using Ansistrings now (also fixing some hangs)
 
