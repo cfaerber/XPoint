@@ -1298,10 +1298,10 @@ label abbr;
     inc(tearadr,tadd);
   end;
 
-  procedure exch_8d(var buf; size:smallword); assembler; {&uses edi}
+  procedure exch_8d(var buf; asize:word); assembler; {&uses edi}
   asm
 {$IFDEF BP }
-        mov cx, size
+        mov cx, asize
         les di, buf
         cld
 @l:     mov al, es:[di]
@@ -1311,7 +1311,7 @@ label abbr;
 @j:     stosb
         loop @l
 {$ELSE }
-        mov ecx, size
+        mov ecx, asize
         mov edi, buf
         cld
 @l:     mov al, [edi]
@@ -1810,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/05/28 20:25:17  mk
+  - exch_8d laeuft jetzt auch unter 32 Bit
+
   Revision 1.17  2000/05/26 00:01:10  mk
   - Assembler-Fixes (32 Bit)
 
