@@ -1305,7 +1305,7 @@ end;
 procedure TestUnregtime(x,y:byte; var stufe1:boolean);
 var timestamp  : word;
     first,last : word;
-    j,m,d      : rtlword;
+    j,m,d      : smallword;
     diff       : integer;
 begin
   stufe1:=false;
@@ -1576,6 +1576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/18 21:35:38  mk
+  - changes rtlword to smallword
+
   Revision 1.23  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 
