@@ -1508,6 +1508,9 @@ end;
 
 {
   $Log$
+  Revision 1.95  2002/08/10 15:49:26  cl
+  - fix for FPC 1.0.4
+
   Revision 1.94  2002/08/10 10:32:27  ma
   - dupekill when sorting in messages detects dupes in same buffer now
     (really kills crossposting dupes :-)
@@ -1682,4 +1685,3 @@ end;
 
 }
 end.
-

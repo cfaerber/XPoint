@@ -728,7 +728,7 @@ var
   f: Integer;
   Magic: TUTF8Magic;
 begin
-  f := FileOpen(Filename, fmOpenRead + fmShareDenyWrite);
+  f := FileOpen(Filename, fmOpenRead + fmDenyWrite);
   FileRead(f, Magic, SizeOf(Magic));
   FileClose(f);
   Result := CompareMem(@Magic, @UTF8Magic, SizeOf(Magic));
@@ -736,6 +736,9 @@ end;
 
 {
   $Log$
+  Revision 1.122  2002/08/10 15:49:25  cl
+  - fix for FPC 1.0.4
+
   Revision 1.121  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -705,7 +705,7 @@ begin
   attrtxt(col.colmbox);
   fm := FileMode;
   assign(f,puffer);
-  FileMode := fmOpenRead + fmShareDenyWrite;
+  FileMode := fmOpenRead + fmDenyWrite;
   reset(f,1);
   FileMode := fm;
   fs:=filesize(f);
@@ -1292,6 +1292,9 @@ end;
 
 {
   $Log$
+  Revision 1.96  2002/08/10 15:49:26  cl
+  - fix for FPC 1.0.4
+
   Revision 1.95  2002/08/10 10:32:26  ma
   - dupekill when sorting in messages detects dupes in same buffer now
     (really kills crossposting dupes :-)
