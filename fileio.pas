@@ -393,7 +393,8 @@ begin
   fn:=trim(fn);
   fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
   {$ifndef UnixFS}
-  if UpperCase(fn)='COPY' then exit(fn); // built-in in cli
+  if UpperCase(fn)='COPY' then
+    begin result:=fn; exit end; // built-in in cli
   if ExtractFileExt(fn)='' then begin
     result:=FindFile(fn+'.exe');
     if result='' then result:=FindFile(fn+'.com');
@@ -423,16 +424,17 @@ end;
 function ValidFileName(const name:string):boolean;
 var handle: longint;
 begin
+  result:=false;
   if (name='') or multipos('*?&',name) then
-    exit(false)
+    exit
   else if FileExists(name) then
-    exit(true)
+    result:=true
   else begin
     handle:=FileCreate(name);
     if handle<>-1 then begin
       FileClose(handle);
-      exit(SysUtils.DeleteFile(name));
-    end else exit(false);
+      result:=SysUtils.DeleteFile(name);
+    end;
   end;
 end;
 
@@ -440,7 +442,7 @@ function IsPath(const fname:string):boolean;
 var
   curdir: string;
 begin
-  if fname='' then exit(true);
+  if fname='' then begin result:=true; exit end;
   curdir:= GetCurrentDir;
   result:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
@@ -506,7 +508,7 @@ begin
     p:=iif(Pos(PathSepa,path)>0,Pos(PathSepa,path),Length(path)+1);
     adir:=Copy(path,1,p-1);
     CreateDir(adir);
-    if not IsPath(adir)then exit(adir);
+    if not IsPath(adir)then begin result:=adir; exit end;
     Delete(path,1,p);
   end;
 end;
@@ -515,7 +517,8 @@ function TempFile(const path: string): string;
 var
   n: string;
 begin
-  if not IsPath(path)then exit('');
+  result:='';
+  if not IsPath(path)then exit;
   repeat
     n:=formi(random(10000),4)+'.tmp'
   until not FileExists(AddDirSepa(path)+n);
@@ -525,7 +528,8 @@ end;
 function TempExtFile(path,ld,ext:string):string;
 var n : string[MaxLenFilename];
 begin
-  if not IsPath(path)then exit('');
+  result:='';
+  if not IsPath(path)then exit;
   repeat
     n:=ld+formi(random(10000),4)+ext
   until not FileExists(path+n);
@@ -648,6 +652,9 @@ end.
 
 {
   $Log$
+  Revision 1.87  2001/01/06 16:58:26  ma
+  - well. VP doesn't like exit(X).
+
   Revision 1.86  2001/01/06 16:13:30  ma
   - general cleanup
   - using SysUtil functions instead of System functions

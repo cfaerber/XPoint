@@ -151,23 +151,21 @@ end;
 function testfidodir(var s:string):boolean;   { Fido Sysop-Mode }
 begin
   if s='' then
-    exit(true)
+    result:=true
   else begin
-    testfidodir:=false;
+    result:=false;
     s:=AddDirSepa(ExpandFileName(s));
     if s=OwnPath then
       rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
     else
       if IsPath(s) then
-        exit(true)
+        result:=true
       else
         if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
-        begin
           if not CreateDir(s)then
             rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
           else
-            testfidodir:=true;
-          end;
+            result:=true;
     end;
 end;
 
@@ -1744,6 +1742,9 @@ end.
 
 {
   $Log$
+  Revision 1.55  2001/01/06 16:58:26  ma
+  - well. VP doesn't like exit(X).
+
   Revision 1.54  2001/01/06 16:16:02  ma
   - replaced progtest by xp2.testexecutable
   - removed SortMIMETypes and progtest

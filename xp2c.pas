@@ -787,7 +787,7 @@ end;
 function testfossil(var s:string):boolean;
 begin
   // obsolete
-  exit(false);
+  result:=false;
 end;
 
 procedure ModemConfig;
@@ -884,16 +884,17 @@ function formpath(var s:string):boolean;
 begin
   result:=false;
   s:=AddDirSepa(FileUpperCase(ExpandFileName(s)));
-  if not IsPath(s) then
+  if not IsPath(s) then begin
     if ReadJN(getres2(262,1),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
       if not CreateDir(s) then
         rfehler(208)      { 'Verzeichnis kann nicht angelegt werden!' }
-      else
-        exit(true)
-    else
-      exit(false)
-  else
-    exit(true);
+      else begin
+        result:=true; exit
+      end
+    end
+  else begin
+    result:=true; exit;
+  end;
 end;
 
 
@@ -1370,8 +1371,12 @@ begin
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.79  2001/01/06 16:58:26  ma
+  - well. VP doesn't like exit(X).
+
   Revision 1.78  2001/01/06 16:14:36  ma
   - removed obsolete CAPI code
   - renamed testexist to textexecutable
@@ -1397,206 +1402,4 @@ end.
 
   Revision 1.71  2000/12/03 22:23:08  mk
   - Improved Printing Support
-
-  Revision 1.70  2000/11/30 14:27:41  mk
-  - Removed Unit UART
-
-  Revision 1.69  2000/11/25 01:35:56  mk
-  - Weiterschalter sofort uebernehmen
-
-  Revision 1.68  2000/11/20 19:54:09  mk
-  - Automatische Datumsbezuege wieder wie immer (schaltbar)
-
-  Revision 1.67  2000/11/19 17:53:34  ma
-  - renamed existBin to ExecutableExists
-
-  Revision 1.66  2000/11/17 00:15:47  mk
-  - Virtual Pascal compatibility updates
-
-  Revision 1.65  2000/11/16 20:41:47  hd
-  - DOS Unit entfernt
-
-  Revision 1.64  2000/11/15 23:00:40  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.63  2000/11/13 11:09:29  ml
-  - uses serial kill - doesseems to be needed
-
-  Revision 1.62  2000/11/12 17:28:45  hd
-  - Terminal funktioniert (aber nur im Direkten Modus)
-
-  Revision 1.61  2000/11/10 19:21:31  hd
-  - Erste Vorbereitungen fuer das Terminal unter Linux
-    - Funktioniert prinzipiell, aber noch nicht wirklich
-
-  Revision 1.60  2000/11/10 13:20:45  hd
-  - COM-Ports aus dem Menu extrahiert
-
-  Revision 1.59  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.58  2000/11/01 11:01:14  mk
-  - Autodatumsbezuege jetzt immer in Netcall
-
-  Revision 1.57  2000/10/17 10:05:47  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.56  2000/09/25 20:07:53  my
-  - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
-  - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
-  - xp1o.pas: Strings "Windows-Clipboard" und "Win-Clipboard"
-    durch "Clipboard" ersetzt (wegen Unterstützung internes
-    Clipboard / JG - muß aber noch implementiert werden!).
-
-  Revision 1.55  2000/09/10 01:11:29  my
-  - kleine Layoutkorrektur (uebernommen von JG in 3.30)
-
-  Revision 1.54  2000/08/26 08:47:42  mk
-  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
-
-  Revision 1.53  2000/08/15 11:12:23  mk
-  MO: Bugfixes und Anpassungen fuer > 80 Spalten
-
-  Revision 1.52  2000/08/14 21:08:54  mk
-  - Bugfix fuer MiscAnzeigeCfg
-
-  Revision 1.51  2000/08/14 18:08:42  ma
-  - CommInit-F2-Vorgaben debuggt und verbessert
-
-  Revision 1.50  2000/08/07 09:23:23  mk
-  - Bug in PathConfig behoben
-
-  Revision 1.49  2000/07/27 10:13:00  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.48  2000/07/21 20:56:23  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.47  2000/07/13 11:04:31  ma
-  - Bugfix concerning Comminit help entry
-
-  Revision 1.46  2000/07/12 16:49:42  ma
-  - Comminit-String-Konfigurationseintrag hinzugefuegt
-
-  Revision 1.45  2000/07/12 14:43:45  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.44  2000/07/06 08:58:44  hd
-  - AnsiString
-
-  Revision 1.43  2000/07/04 12:04:20  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.42  2000/07/03 13:31:39  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.41  2000/06/24 14:10:27  mk
-  - 32 Bit Teile entfernt
-
-  Revision 1.40  2000/06/23 15:59:17  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.39  2000/06/20 18:18:45  hd
-  - https bei der URL ergaenzt. In dem Array 'protocols' koennen jetzt
-    beliebig viele weitere Protokolle definiert werden (MaxProtocols
-    nicht vergessen). Evtl. waere es auch noch sinnvoll gopher:// und
-    ftp:// zuzulassen.
-  - uses serial unter Linux hinzugefuegt (RTL-Unit von FPC)
-  - TerminalOptions an Linux angepasst
-
-  Revision 1.38  2000/06/04 16:57:25  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.37  2000/05/24 09:16:47  mk
-  - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
-
-  Revision 1.36  2000/05/15 20:56:40  oh
-  -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
-
-  Revision 1.35  2000/05/14 07:22:51  jg
-  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
-  - Feldtausch-Config: Defaultauswahl mit F2
-
-  Revision 1.34  2000/05/13 14:24:32  hd
-  - FormPath an Linux angepasst
-  - path_config, options, UI_options angepasst
-
-  Revision 1.33  2000/05/10 13:52:57  jg
-  - Viewer-Sicherheitslisten F2-Auswahl hatte ein ".ZIP" zuviel
-
-  Revision 1.32  2000/05/09 20:07:01  jg
-   Externe Viewer / Schutzmassnahmen:
-   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
-   - entsprechende Einstellungen unter Config/Optionen/Viewer
-
-  Revision 1.31  2000/05/08 18:40:47  hd
-  - NOEMS wieder entfernt
-
-  Revision 1.30  2000/05/08 18:32:08  hd
-  - Fix: Display-Bug in c/o/n (florian)
-
-  Revision 1.29  2000/05/08 13:53:43  hd
-  - Einige Aenderungen in den Dialogen
-
-  Revision 1.28  2000/05/02 20:51:49  hd
-  - Dynamische ZEitzone angepasst
-
-  Revision 1.27  2000/05/02 19:14:00  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.26  2000/05/02 12:36:49  sv
-  - Ueberbleibsel der alten Viewerkonfiguration beseitigt
-    Viewer werden nicht mehr in die Config-Datei geschrieben
-
-  Revision 1.25  2000/05/01 10:25:21  sv
-  - Schalter in 'News nicht archivieren lassen' umbenannt
-    und nach C/O/N verschoben
-  - 'Magics im <F3>-Request' war nur bei deutscher Sprache sichtbar
-
-  Revision 1.24  2000/04/24 11:28:54  mk
-  - 32 Bit: Drucken funktioniert jetzt
-
-  Revision 1.23  2000/04/22 13:54:08  mw
-
-  - TermInit Default angepasst
-  - TermInit hat jetzt ausw„hlbare Vorgaben
-  - Rechtschreibfehler in xp2.pas gefunden
-
-  Revision 1.22  2000/04/21 12:34:47  jg
-  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
-  - Archivier-Vermerk ist jetzt abschaltbar
-
-  Revision 1.21  2000/04/15 09:57:59  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.20  2000/04/13 20:18:03  jg
-  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
-  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
-  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
-
-  Revision 1.19  2000/04/13 12:48:35  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
 }
