@@ -236,7 +236,11 @@ begin
   SetHandles;
 {$ENDIF }
   ShellPath:=dospath(0);
+{$IFDEF UnixFS }
+  if Shellpath+'/'<>progpath then
+{$ELSE }
   if Shellpath+'\'<>progpath then
+{$ENDIF }
     GoDir(progpath);
   oldexit:=exitproc;
   exitproc:=@setpath;
@@ -283,6 +287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/03 20:38:21  hd
+  Unix-Anpassung
+
   Revision 1.12  2000/05/02 20:51:02  hd
   OwnPath an UnixFS angepasst
 
