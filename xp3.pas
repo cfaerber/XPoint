@@ -335,7 +335,6 @@ end;
 
 { in dieser Prozedur kein ReadN/WriteN verwenden, wegen }
 { XP2.NewFieldMessageID !                               }
-
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);
 var ok     : boolean;
     puffer : file;
@@ -346,7 +345,7 @@ var ok     : boolean;
     nopuffer: boolean;
 begin
   ok:=true;
-  dbReadN(mbase,mb_ablage,ablg);
+  dbRead(mbase,'ablage',ablg);  { KEIN 'dbReadN' VERWENDEN !!! }
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
   if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then begin
     ok:=false;
@@ -385,7 +384,7 @@ begin
       aufbau:=true;
       end;
     flags:=2;
-    dbWriteN(mbase,mb_halteflags,flags);
+    dbWrite(mbase,'halteflags',flags);  { KEIN 'dbWriteN' VERWENDEN !!! }
     end;
   if LeftStr(hd.FirstEmpfaenger,TO_len)=TO_ID then   { /TO: }
     hd.Firstempfaenger:=Mid(hd.Firstempfaenger,9);
@@ -1180,6 +1179,11 @@ end;
 
 {
   $Log$
+  Revision 1.78  2002/03/09 15:31:06  ma
+  MY+HG+JG:- Bugfix: OpenXP kann jetzt wieder eine Nachrichten-
+         Datenbank von XP v3.12 korrekt und ohne Stillstand des
+         Rechners konvertieren. Bug existent seit dem 12.08.2001.
+
   Revision 1.77  2002/01/13 15:15:50  mk
   - new "empfaenger"-handling
 
