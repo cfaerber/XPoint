@@ -444,7 +444,7 @@ label ende, restart;
       end
     else begin
       wsize:=min(size,psize);
-      ofs:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
+      ofs:=dbReadIntN(mbase, mb_msgsize)-dbReadIntN(mbase,mb_groesse);
 
       if headersuche=1 then begin           { nur Header durchsuchen }
         wsize:=ofs;
@@ -1120,7 +1120,7 @@ restart:
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
-        brk:=false;
+        brk:=false; i := 0;
         while not dbEOF(mbase) and not brk do begin
           _brett := dbReadNStr(mbase,mb_brett);
           if (bereich=0) or ((bereich=1) and (FirstChar(_brett)='A')) or
@@ -1128,8 +1128,9 @@ restart:
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
             dbNext(mbase);            { Satz gel”scht wurde               }
-          testbrk(brk);
-          end;
+          Inc(i);
+          if i mod 50 = 0 then testbrk(brk);
+        end;
         dbSetIndex(mbase,mi);
         end
 
@@ -1228,7 +1229,7 @@ begin
     UkonvStr(betr2, Length(betr2));
  (*  ll:=min(length(betr),length(betr2));
     if (ll>0) and (UpperCase(left(betr,ll))=UpperCase(left(betr2,ll))) then *)
-   if UpperCase(betr)=UpperCase(betr2) then 
+   if UpperCase(betr)=UpperCase(betr2) then
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
@@ -3036,6 +3037,9 @@ end;
 
 {
   $Log$
+  Revision 1.146  2002/09/09 08:33:53  mk
+  - some performance improvements
+
   Revision 1.145  2002/08/01 20:46:46  mk
   - fixed range check error, ansistring suchopt can be empty
 
