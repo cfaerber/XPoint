@@ -1,23 +1,21 @@
-{$I OCDEFINE.INC }
-
 unit Ringbuff;
+
 (*
-**
 ** Large char-buffer handling routines
-** Original copyright (c) 1998-1999 by Maarten Bekers
-** Adapted for ObjCOM by M.Kiesel 2000
-** See history below
-**
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
+
+{$I OCDEFINE.INC }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-Type tCharArray = Array[0..65520] of Char;
+type tCharArray = Array[0..65520] of Char;
+     tpCharArray = ^tCharArray;
 
-type tRingbuffer = Object
-          TxtArr     : ^tCharArray;
+     tRingbuffer = Object
+          TxtArr     : tpCharArray;
           TxtMaxLen  : Longint;
           TxtStartPtr: Longint;                      { Start of buffer ptr }
           CurTxtPtr  : Longint;                 { Maximum data entered yet }
@@ -34,7 +32,6 @@ type tRingbuffer = Object
           procedure Clear;
      end; { tRingbuffer }
      tpRingbuffer= ^tRingbuffer;
-
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  IMPLEMENTATION
@@ -143,6 +140,10 @@ end. { bufunit }
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:42:13  ma
+  - moved tCharArray to interface part
+  - introduced credits.txt
+
   Revision 1.3  2000/10/16 12:19:06  mk
   - added ocdefine.inc
 
