@@ -902,6 +902,21 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
 end;
 
 
+procedure WriteHeaderHdr;
+var f:text;
+begin
+  assign(f,temppath+'header.hdr');
+  rewrite(f);
+  writeln(f,'TYP: ',typ);
+  writeln(f,'BOX: ',box);
+{  writeln(f,'NETZTYP: ',netztyp); }
+  writeln(f,'EMPF: ',copy(empfaenger,2,99));
+  writeln(f,'FIDOTO: ',fidoto);
+  writeln(f,'BETREFF: ',betreff);
+  close(f);  
+end;
+
+
 begin      {-------- of DoSend ---------}
 {$Q-,R-,I-}
   DoSend:=false;
@@ -1076,7 +1091,7 @@ fromstart:
       _brett:=mbrettd(empfaenger[1],bbase);
       if dbReadInt(bbase,'flags') and 32<>0 then
         dbReadN(bbase,bb_adresse,fidoname);    { Brett-Origin }
-      end;
+    end;
     dbOpen(d,gruppenfile,1);          { max. BrettMsg-Grî·e ermitteln   }
     dbSeek(d,giIntnr,dbLongStr(grnr));
     if not dbFound then maxsize:=0    { dÅrfte nicht vorkommen }
@@ -1096,7 +1111,7 @@ fromstart:
     dbClose(d);
     edis:=2;
     if not binary then cancode:=-1;  { Rot13 mîglich }
-    end;   { of not pm }
+  end;   { of not pm }
 
   dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ÅberprÅfen }
   if box<>'' then begin            { nicht intern.. }
@@ -1105,10 +1120,9 @@ fromstart:
       dbClose(d);
       rfehler1(607,box);  { 'Unbekannte Serverbox: %s  -  Bitte ÅberprÅfen!' }
       goto xexit;                  { --> unbekannte Pollbox }
-      end;
+    end;
     dbRead(d,'boxname',box);       { Schreibweise korrigieren }
-    end
-  else                             { interne Msgs -> Default-Username }
+  end else                         { interne Msgs -> Default-Username }
     dbSeek(d,boiName,ustr(DefaultBox));
   LoadBoxData;
   if pm and not XP_ID_PMs then XpID:=false;
@@ -1125,7 +1139,7 @@ fromstart:
     if length(datei)>BetreffLen then begin
       rfehler(608);   { 'zu langer Datei-Pfad' }
       goto xexit;
-      end;
+    end;
     betreffbox:=false;
     binary:=false;
     FileAttach:=true;
@@ -1135,13 +1149,11 @@ fromstart:
       betreff:=datei;
       datei:=TempS(20000);
       MakeFile(datei);
-      end;
-    end
-  else
-    if binary and not ntBinary(netztyp) then begin
-      rfehler(609);   { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
-      goto xexit;
-      end;
+    end;
+  end else if binary and not ntBinary(netztyp) then begin
+    rfehler(609);   { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
+    goto xexit;
+  end;
   if not ((registriert.non_uucp and (netztyp<>nt_UUCP)) or
           (registriert.uucp and (netztyp=nt_UUCP)) or
           binary or TestXPointID)
@@ -1153,14 +1165,16 @@ fromstart:
 
   if (netztyp<>nt_Fido) then
     AltAdr:='';
-{ else
+{ 
+  else
     if (altadr<>'') and (cpos('.',altadr)=0) then
-      AltAdr:=AltAdr+'.'+pointname; }
+      AltAdr:=AltAdr+'.'+pointname;
+}
 
   if pm and not ntEmpfBest(netztyp) then begin
     flEB:=flEB or (left(betreff,length(EmpfBkennung))=EmpfBkennung);
     SetEBkennung;
-    end;
+  end;
   if not fileattach then
     ukstring(betreff);
   typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / 'îffentliche Nachricht' }
@@ -1195,7 +1209,7 @@ fromstart:
     if fidoam then begin
       maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
       mhnr(90);
-      end;
+    end;
     readmask(brk);
     closemask;
     closebox;
@@ -1205,31 +1219,32 @@ fromstart:
       if not pm then rfehler(635);  { 'Nachricht mu· einen Betreff haben' }
       if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
          not pm then goto xexit;
-      end;
+    end;
     if (_bezug<>'') and ntKomkette(netztyp) and
                     (ustr(left(betreff,20))<>ustr(oldbetr)) then begin
       pushhp(1501);
       if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff geÑndert - Verkettung beibehalten' }
              ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
       begin
-         _bezug:='';
-         _orgref:='';
-         DisposeReflist(_ref6list);
-         end
-      else
+        _bezug:='';
+        _orgref:='';
+        DisposeReflist(_ref6list);
+      end else
         { betreff:=left(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
       pophp;
       if brk then goto xexit;
-      end;
+    end;
     if pm and not ntEmpfBest(netztyp) then begin
       flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
       SetEBkennung;
-      end;
     end;
+  end;
 
   orgftime:=filetime(datei);
-  if edit then
+  if edit then begin
+    WriteHeaderHdr;
     EditNachricht(pgdown);
+  end;
   if not getsize then goto xexit;        { --> Nachrichten-Grî·e 0 }
   calc_hdsize;
 
@@ -1252,7 +1267,7 @@ fromstart:
         spezial:=false;
         attrtxt(col.coldialog);
         mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. ZurÅck }
-        end;
+      end;
     ReadAgain:
       n:=1;
       ShowLine(spezial);
@@ -1285,13 +1300,13 @@ fromstart:
           else      if n=6 then n:=0;        { ZurÅck      }
         end; { 05.02.2000 MH: ZurÅck-Button in allen Netztypen }
         if n=0 then n:=-1;
-        if n>0 then inc(n,10)
+        if n>0 then
+          inc(n,10)
         else begin
           p:=pos(upcase(t[1]),getres2(611,25));   { JNI˘BOCT }
           if p>0 then n:=p;
-          end;
-        end
-      else begin
+        end;
+      end else begin
         repeat
           t:='*';
           n:=readbutton(x+3,y+11,1,getres2(611,28)+
@@ -2161,6 +2176,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/04/11 19:34:01  oh
+  - [tempdir]\header.hdr fuer Mailnachbearbeitung
+
   Revision 1.15  2000/04/09 08:01:26  jg
   - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
 
