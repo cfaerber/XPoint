@@ -521,8 +521,8 @@ var flp : dbFLP;
         moff; write(n*100 div dbRecCount(mbase):3); mon;
         end;
       ReadHeader(hdp,hds,false);
-      if hdp.mimetyp<>'' then
-        dbWriteStr(mbase,'mimetyp',hdp.mimetyp);
+      if hdp.mime.ctype<>'' then
+        dbWriteStr(mbase,'mimetyp',hdp.mime.ctype);
       if hdp.boundary<>'' then begin
         dbReadN(mbase,mb_flags,flags);
         flags:=flags or 4;
@@ -942,6 +942,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2001/09/08 14:26:50  cl
+  - cleaned up MIME-related fields in THeader
+
   Revision 1.36  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

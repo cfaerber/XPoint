@@ -1006,7 +1006,7 @@ begin
             typ1:=UpCase(typ[1]);
             if (typ1<=' ') or (typ1>#126) then typ1:='?';
             dbWriteN(mbase,mb_typ,typ1);
-            dbWriteNStr(mbase,mb_mimetyp,mimetyp);
+            dbWriteNStr(mbase,mb_mimetyp,mime.ctype);
             dbWriteNStr(mbase,mb_brett,_brett);
             dbWriteN(mbase,mb_ablage,ablage);
             dbWriteN(mbase,mb_adresse,padr);
@@ -1228,6 +1228,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2001/09/08 14:27:29  cl
+  - cleaned up MIME-related fields in THeader
+
   Revision 1.67  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
