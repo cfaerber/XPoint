@@ -2081,15 +2081,17 @@ end;
 procedure ukonv(var s:string);         
   procedure conv(c1,c2:char);
   var p : byte;
+     c3 : char;
    begin
     repeat
       p:=cpos(c1,s);
       if p>0 then begin
         s[p]:=c2;
         if (c2<>'e') and (c2<>'E') then   {bei '‚' nur ein Zeichen ersetzen} 
-        begin 
-          if c2<>'s' then c2:='e';        {Ansonsten: ae,ue,oe,ss}
-          insert(c2,s,p+1);
+        begin           
+          if c2='s' then c3:=c2        {Ansonsten: ae,ue,oe,ss}
+          else c3:='e';
+          insert(c3,s,p+1);
           end;
         end; 
     until p=0;
@@ -2152,6 +2154,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.12  2000/02/28 18:12:50  jg
+  -Bugfix: mehrere gleiche Umlaute in einem String konvertieren
+
   Revision 1.11  2000/02/21 18:51:47  mk
   MH: Nachrichten mit Prioritaet ab High hervorheben
 
