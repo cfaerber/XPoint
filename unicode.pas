@@ -12,7 +12,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 
-unit Unicode;
+unit unicode;
 
 {$I XPDEFINE.INC }
 {$IFDEF FPC }
@@ -434,6 +434,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.3  2001/09/06 18:48:44  mk
   - fixed function result was unddefined in UCLength
 

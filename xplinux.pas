@@ -18,9 +18,9 @@
 }
 
 { XP - Linux - Supportroutinen }
-unit xplinux;
-
 {$I XPDEFINE.INC }
+
+unit xplinux;
 
 {$IFNDEF unix}
   {$FATAL Die Unit XPLINUX kann nur unter Linux compiliert werden }
@@ -39,12 +39,15 @@ interface
 {$ENDIF }
 
 uses
+  {$IFNDEF Kylix }
   linux,
-  strings,
-  sysutils,
+  {$ELSE }
+  Libc,
+  {$ENDIF }
+  SysUtils,
   xpglobal;
 
-{$IFDEF VP }
+{$IFNDEF FPC }
 const
   STAT_IRUSR = S_IRUSR;
   STAT_IWUSR = S_IWUSR;
@@ -451,6 +454,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.24  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

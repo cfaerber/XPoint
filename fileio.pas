@@ -28,7 +28,7 @@ unit fileio;
 interface
 
 {$ifdef unix}
-uses sysutils,linux,xplinux,xpglobal,typeform;
+uses sysutils, {$IFDEF FPC } Linux, {$ENDIF }xplinux,xpglobal,typeform;
 {$else }
 uses sysutils,xpglobal,typeform
   {$ifdef vp} ,vpusrlow {$endif}
@@ -668,6 +668,9 @@ end.
 
 {
   $Log$
+  Revision 1.103  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.102  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

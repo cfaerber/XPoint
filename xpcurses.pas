@@ -27,7 +27,9 @@ interface
 
 uses
 //  xpglobal,
+{$IFDEF FPC }
   linux,
+{$ENDIF }
   UTFTools,
   ncurses,
   xplinux;
@@ -1549,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.48  2001/09/03 16:09:34  ml
 
   - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug

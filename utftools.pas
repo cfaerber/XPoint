@@ -19,7 +19,7 @@
    Tools for Unicode-Strings
 }
 
-unit UTFTools;
+unit utftools;
 
 {$I XPDEFINE.INC }
 
@@ -74,6 +74,28 @@ type
     function Decode(const Source: PUTF8Char): String; override;
   end;
 
+{$IFDEF Linux }
+{$I charsets/cp437.inc }
+{$I charsets/cp866.inc }
+{$I charsets/cp1251.inc }
+{$I charsets/cp1252.inc }
+{$I charsets/cp1255.inc }
+{$I charsets/8859_1.inc }
+{$I charsets/8859_2.inc }
+{$I charsets/8859_3.inc }
+{$I charsets/8859_4.inc }
+{$I charsets/8859_5.inc }
+{$I charsets/8859_6.inc }
+{$I charsets/8859_7.inc }
+{$I charsets/8859_8.inc }
+{$I charsets/8859_9.inc }
+{$I charsets/8859_10.inc }
+{$I charsets/8859_13.inc }
+{$I charsets/8859_14.inc }
+{$I charsets/8859_15.inc }
+
+{$I charsets/aliases.inc }
+{$ELSE }
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
 {$I charsets\cp1251.inc }
@@ -94,6 +116,7 @@ type
 {$I charsets\8859_15.inc }
 
 {$I charsets\aliases.inc }
+{$ENDIF }
 
 function IsKnownCharset(Charset: String): Boolean;
 var
@@ -233,6 +256,9 @@ finalization
 end.
 
 // $Log$
+// Revision 1.4  2001/09/07 17:27:24  mk
+// - Kylix compatiblity update
+//
 // Revision 1.3  2001/04/09 13:18:15  cl
 // - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
 // - zcrfc.pas: regognition of all known charsets for news and smtp batches

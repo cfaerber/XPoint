@@ -26,7 +26,7 @@ unit typeform;
 interface
 
 uses
-  xpglobal, sysutils, classes;
+  xpglobal, sysutils, Classes;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -1488,6 +1488,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.97  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.96  2001/08/28 08:15:44  mk
   - blankpos(x) now with const parameter
 

@@ -50,14 +50,19 @@
   {$DEFINE Delphi }
 {$ENDIF }
 
-{$IFDEF VER140 }          { Delphi 6.0 }
+{$IFDEF VER140 }          { Delphi 6.0 and Kylix 1.0 }
   {$DEFINE Delphi }
+  {$IFDEF Linux }
+    {$DEFINE Kylix }
+  {$ENDIF }
 {$ENDIF }
 
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
      {$IFNDEF Delphi }
-        !! Only Freepascal, Delphi and Virtual Pascal is supported
+       {$IFNDEF Kylix }
+        !! Only Freepascal, Delphi, Kylix and Virtual Pascal is supported
+        {$ENDIF }
      {$ENDIF }
   {$ENDIF }
 {$ENDIF }
@@ -210,6 +215,9 @@
 
 {
   $Log$
+  Revision 1.70  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.69  2001/08/08 20:08:57  mk
   - Debug-Define for Delphi
 

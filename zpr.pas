@@ -33,7 +33,7 @@ implementation
 
 uses
 {$IFDEF unix}
-  XPLinux,
+  xplinux,
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,             { Fuer die Sonderzeichen an der Console }
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2001/09/07 17:27:24  mk
+  - Kylix compatiblity update
+
   Revision 1.39  2001/09/07 13:54:26  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
