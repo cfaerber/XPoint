@@ -234,6 +234,7 @@ begin
   if not FActive then begin 
     FErrorMsg:=ObjCOM.ErrorStr;
     WriteIPC(mcError,'%s',[FErrorMsg]);
+    Log(lcError,FErrorMsg);
     end;
   result:=FActive;
 end;
@@ -340,7 +341,7 @@ begin
     end;
   if Phonenumbers='' then begin
     Log(lcConnect,'CONNECT');
-    result:=true; exit
+    FConnected:=true; result:=true; exit
     end;
   FGotUserBreak := false;
   DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
@@ -416,9 +417,9 @@ begin
                                  WriteIPC(mcInfo,'Ring detected',[0]);
                                  WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWaitTime);
                                end;
+                             until FTimerObj.Timeout;
                              TXPMessageWindow(IPC).TimerDisplay:=mwElapsedTime;
                              TXPMessageWindow(IPC).TimerToUse:=@TXPMessageWindow(IPC).Timer;
-                             until FTimerObj.Timeout;
                              StateDialup:=SDInitialize;
                            end else StateDialup:=SDNoConnect;
                          end;
@@ -482,6 +483,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/03/03 00:25:48  ma
+  - small fixes
+
   Revision 1.19  2001/02/26 12:47:33  cl
   - oops; reverting accidentally committed modifications
 

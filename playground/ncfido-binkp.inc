@@ -353,7 +353,6 @@ var
             PendingFiles.Delete(iPending);
             PendingFilesWithPath.Delete(iPending);
             WriteIPC(mcInfo,'sent %s',[s]);
-            if(PendingFiles.Count<=0)and(TxState=TxWLA)then TxState:=TxDone;
             end;
         end;
       M_SKIP: begin
@@ -424,8 +423,8 @@ var
       TxWLA,TxDone: begin // pay attention to TheQueue even if in TxDone
         if TheQueue.Count>0 then begin
           ProcessTheQueue; result:=continue;
-          end else if RxState>=RxEOB then
-          TxState:=TxDone;
+          end else
+          if PendingFiles.Count<=0 then TxState:=TxDone;
         end;
       end;
   end;
@@ -493,6 +492,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2001/03/03 00:25:47  ma
+  - small fixes
+
   Revision 1.9  2001/02/23 16:09:13  ma
   - fixed session end detection bugs
 
