@@ -34,6 +34,7 @@ const xTractMsg   = 0;
       xTractDump  = 4;
 
       ExtCliptearline : boolean = true;
+      ExtChgtearline  : boolean = false;
 
 procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
@@ -358,7 +359,7 @@ var size   : longint;
   end;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
-  var s  : string;           { s. auch XP6.ClipTrealine!          }
+  var s  : string;           { s. auch XP6.Clip_Tearline!         }
       rr : word;
       p  : byte;
       l  : longint;
@@ -367,11 +368,40 @@ var size   : longint;
     seek(f,l);
     blockread(f,s[1],200,rr);
     s[0]:=chr(rr);
-    p:=pos(#13#10+XP_origin,s);
+    p:=max(0,length(s)-20);
+    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+      dec(p);
+{   p:=pos(#13#10+XP_origin,s); }
     if p>0 then begin
       seek(f,l+p-1);
       truncate(f);
       end;
+  end;
+
+  procedure Chg_Tearline;   { Fido - Tearline + Origin verfremden }
+  const splus : string [1] = '+';
+  var s  : string;
+      rr : word;
+      p  : byte;
+      l  : longint;
+  begin
+    l:=max(0,filesize(f)-200);
+    seek(f,l);
+    blockread(f,s[1],200,rr);
+    s[0]:=chr(rr);
+    p:=max(0,length(s)-20);
+    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+      dec(p);
+    if p>0 then begin
+      seek(f,l+p+2);
+      blockwrite(f,splus[1],1);
+      while (p<length(s)-11) and (copy(s,p,13)<>#13#10' * Origin: ') do
+        inc(p);
+      if p<length(s)-13 then begin
+        seek(f,l+p+2);
+        blockwrite(f,splus[1],1);
+      end;
+    end;
   end;
 
   function mausstat(s:string):string;
@@ -673,6 +703,7 @@ begin
       close(f);
       dispose(hdp);
       ExtCliptearline:=true;
+      ExtChgtearline:=false;
       exit;
       end;
     if append then begin
@@ -1047,6 +1078,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.10  2000/11/01 11:37:12  mk
+  RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
+
   Revision 1.17.2.9  2000/10/26 13:24:45  mk
   RB:- Tearline und Origin beim Quoten von Echomail verfremden
 

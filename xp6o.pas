@@ -162,7 +162,7 @@ label ende,nextpp;
   end;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
-  var s  : string;           { s. auch XP3EX.ClipTearline!        }
+  var s  : string;           { s. auch XP3EX.Clip_Tearline!        }
       rr : word;
       p  : byte;
       l  : longint;
@@ -769,9 +769,17 @@ again:
     binaermail:=false;
     end;
   case typ of
-      1 : extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+      1 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+          end;
       7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
-      2 : extract_msg(0,WeiterMsk,fn,false,1);
+      2 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,WeiterMsk,fn,false,1);
+          end;
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
@@ -940,9 +948,9 @@ again:
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
                  if typ=7 then begin
                    sData^.oab:=hdp^.absender;
-		   sData^.oar:=hdp^.realname;
-		   sData^.orghdp:=hdp;
-		   end;
+                   sData^.oar:=hdp^.realname;
+                   sData^.orghdp:=hdp;
+                   end;
                  if typ in [1,2,7] then
                    xp6.FileAttach:=(hdp^.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -1264,6 +1272,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.5  2000/11/01 11:37:13  mk
+  RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
+
   Revision 1.20.2.4  2000/10/16 09:03:39  sv
   - Ersetzt-Header wird nun beim Weiterleiten geloescht
 
