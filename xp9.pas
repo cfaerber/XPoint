@@ -91,7 +91,7 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       uucp_telfld:integer;
       uucp_ipfld: integer;
       uucp_portfld:integer;
-      
+
       DomainNt  : shortint;   { Netztyp f. setdomain() und testvertreterbox() }
       bDomainNt : byte;                                                { u.a. }
       EditPnt   : byte;       { Netztyp f. EditPointdaten }
@@ -624,7 +624,11 @@ var d         : DB;
             dbRead(d,'Netztyp',nt);
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
+            {$IFDEF Unix }
+              else dc:='* '
+            {$ELSE }
               else dc:='˚ '
+            {$ENDIF }
             else
               if s1=DefFidoBox then dc:='f '
               else dc:='  ';
@@ -1742,6 +1746,9 @@ end.
 
 {
   $Log$
+  Revision 1.56  2001/01/21 16:54:01  mk
+  - in unix do not use higher ascii chars (unisel)
+
   Revision 1.55  2001/01/06 16:58:26  ma
   - well. VP doesn't like exit(X).
 
