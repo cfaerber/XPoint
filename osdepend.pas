@@ -65,6 +65,9 @@ function GetTimeZone: String;
 
 implementation
 
+uses
+  Debug;
+
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
@@ -73,6 +76,9 @@ implementation
 
 {
         $Log$
+        Revision 1.6.2.4  2003/09/16 23:47:28  mk
+        - added Debug log to GetTimeZone
+
         Revision 1.6.2.3  2003/08/26 05:36:57  mk
         - added AutomaticTimeZone const and removed $IFDEFs
 
