@@ -1427,9 +1427,9 @@ begin
   if (fn<>'') then
   begin
     s := AddDirSepa(s);
-    if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
-    if LastChar(fn) = '\' then DeleteLastChar(fn);
-    ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
+    if Copy(fn, 1, 2) = '.' + DirSepa then fn := Copy(fn, 3, Length(fn));
+    if LastChar(fn) = DirSepa then DeleteLastChar(fn);
+    ok := (cPos(':', fn) = 0) and (cPos(DirSepa, fn) = 0) and (cPos('.', fn) < 2)
       and (Length(fn) > 0) and (LastChar(fn) <> '.');
     if not ok then
     begin
@@ -1621,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2002/01/09 02:40:56  mk
+  - fixed DirSepa for UnixFS
+
   Revision 1.35  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

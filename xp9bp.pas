@@ -573,7 +573,7 @@ begin
     writeln(t,'Client-Phone=', ClientPhone);
     writeln(t,'Client-Login=', ClientLogin);
     writeln(t,'Client-Password=', ClientPass);
-    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + DirSepa);
     if Trim(XFerDir) <> '' then CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
     writeln(t,'Client-ExternalConfig=', ClientExternalConfig);
     writeln(t,'Client-MailInServer=', ClientMailInServer);
@@ -694,6 +694,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2002/01/09 02:40:56  mk
+  - fixed DirSepa for UnixFS
+
   Revision 1.57  2002/01/02 15:33:52  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset

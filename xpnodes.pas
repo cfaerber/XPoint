@@ -208,9 +208,7 @@ var t  : text;
 label abbruch;
 begin
   if nodeopen then exit;
-  xpdir:=XP_Verzeichnis;
-  if (xpdir<>'') and (xpdir[length(xpdir)]<>'\') then
-    xpdir:=xpdir+'\';
+  xpdir:=AddDirSepa(XP_Verzeichnis);
   NL_anz:=0;
   new(nodelist);
   assign(t,xpdir+NodelistCfg);
@@ -438,6 +436,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2002/01/09 02:40:56  mk
+  - fixed DirSepa for UnixFS
+
   Revision 1.16  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
