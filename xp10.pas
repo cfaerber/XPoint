@@ -26,12 +26,12 @@ uses
 {$ENDIF }
   dos,stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
      maske,datadef,database,maus2,lister,resource,xpglobal,
-     xp0,xp1,xp1o2,xp1help,xp1input,xp5;
+     xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp5,xp9;
 
 
 procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header }
                                  { 5=Nodelisten, 6=Tarifgruppen             }
-procedure AutoTiming(tnr:integer; callall,crashall,special:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
 procedure AppPhoneZones;   { mappsel() fÅr GebÅhrenzonen }
 function  CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
@@ -48,6 +48,8 @@ function testaction(var s:string):boolean;
 procedure MakSelKeys(var t:taste);
 function checkday(var s:string):boolean;
 function _getmacro(s:string):string;
+
+procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
@@ -80,6 +82,9 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
                   ('Mo','Di','Mi','Do','Fr','Sa','So','F1','F2','F3');
       pagepos   : byte = 1;
       gpagepos  : byte = 1;
+
+      NetcallSpecialDat  = 'NETCALL.DAT';  { Textdatei fÅr /Netcall/Spezial }
+      maxbox             = 126;            { Anzahl max. zulÑssiger Boxen pro Zeile in NETCALL.DAT }
 
 type  TimeRec   = record
                     active    : boolean;
@@ -126,15 +131,20 @@ type  TimeRec   = record
                                  end; end;
       tarifap  = ^tarifarr;
 
-const anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
-var   e         : array[1..maxentries] of ^string;
-      filewidth : integer;
-      _bunla    : string[mtypes];     { 'BUNLAET' }
+const anzahl     : integer = 0;        { Reentrance - s. GetPhoneGebData! }
+var   e          : array[1..maxentries] of ^string;
+      filewidth  : integer;
+      _bunla     : string[mtypes];     { 'BUNLAET' }
 
-      phones    : ^phonea2;
-      tarif     : tarifap;
-      tables    : integer;    { Anzahl Tarif-Tabellen }
-      dayused   : wt_array;   { fÅr CheckDay() }
+      phones     : ^phonea2;
+      tarif      : tarifap;
+      tables     : integer;    { Anzahl Tarif-Tabellen }
+      dayused    : wt_array;   { fÅr CheckDay() }
+
+      netcalldat : text;
+      boxused    : array[1..maxbox] of boolean;
+      oldfield   : string[20];
+      NetcallSpecialList : array[0..NetcallSpecialMax] of String;  { Array fÅr Zeileninhalt NETCALL.DAT }
 
 
 function mtyp(nr:byte):string;
@@ -344,10 +354,12 @@ var t : text;
     s : string;
 begin
   anzahl:=0;
-  if exist(fn) then begin
+  if exist(fn) then
+  begin
     assign(t,fn);
     reset(t);
-    while not eof(t) and (anzahl<maxentries) and (memavail>10000) do begin
+    while not eof(t) and (anzahl<maxentries) and (memavail>10000) do
+    begin
       readln(t,s);
       if trim(s)<>'' then
         if (typ=2) and (left(s,1)='!') then
@@ -358,10 +370,10 @@ begin
           inc(anzahl);
           getmem(e[anzahl],filewidth+1);
           e[anzahl]^:=left(s,filewidth);
-          end;
-      end;
-    close(t);
+        end;
     end;
+    close(t);
+  end;
 end;
 
 procedure savefile(typ:byte; fn:pathstr);
@@ -2028,11 +2040,281 @@ begin
   if ParG2 then gtest2;
 end;
 
+
+procedure ReadNetcallSpecialData;
+var i : byte;
+begin
+  for i:=0 to NetcallSpecialMax do NetcallSpecialList[i] := '';
+  if exist(ownpath+NetcallSpecialDat) then
+  begin
+    i:=0;
+    assign(netcalldat,ownpath+NetcallSpecialDat);
+    reset(netcalldat);
+    if IOResult=0 then
+      while (not eof(netcalldat)) and (i <= NetcallSpecialMax) do
+      begin
+        readln(netcalldat, NetcallSpecialList[i]);
+        inc(i);
+      end;
+    close(netcalldat);
+  end;
+end;
+
+
+procedure set_boxe;
+var i,j  : shortint;
+    used : boolean;
+  oldpos: Byte;
+begin
+  used:=true;
+  oldpos := fieldpos;
+  i:=1;
+  while used and (i<=maxbox-1) do
+  begin
+    used:=(i=1) or boxused[i] or boxused[i-1];
+    j:=i+1;
+    while not used and (j<=maxbox-1) do
+    begin
+      used:=used or boxused[j];
+      inc(j);
+    end;
+    setfieldenable(i,used);
+    inc(i);
+  end;
+  if oldpos > i then
+  while i<=maxbox-1 do
+  begin
+    setfieldenable(i,false);
+    inc(i);
+  end;
+end;
+
+
+function box_test1(var s:string):boolean;
+begin
+  boxused[fieldpos]:=(trim(s)<>'');
+  set_boxe;
+  box_test1:=true;
+end;
+
+
+procedure getoldfield(var s:string);
+begin
+  oldfield:=s;
+end;
+
+
+function vtestbox(var s:string):boolean;
+var d      : DB;
+    i,j    : byte;
+    s1,s2: string;
+    dupeOK : boolean;
+begin
+  if s='' then vtestbox:=true
+  else begin
+    s1:='';
+    s2:='';
+    dupeOK:=false;
+    dbOpen(d,BoxenFile,1);
+    SeekLeftBox(d,s);
+    vtestbox:=dbFound;
+    if dbFound then
+    begin
+      dbRead(d,'boxname',s);
+      for i:=1 to maxbox-1 do
+      begin
+        if (boxused[i]) and (i<>fieldpos) then
+        begin
+          s1:=getfield(i);
+          if (mmodified) and (not dupeOK) and (not exit_mask)
+           and (s<>oldfield) and (ustr(s1)=ustr(s)) then
+            if not ReadJN(getres2(11000,24)+' "'+s+'" '+getres2(11000,25),false) then
+            { 'Box "%s" bereits in Liste vorhanden - trotzdem hinzufÅgen' }
+            begin
+              dbClose(d);
+              vtestbox:=false;
+              pushkey(keydel);
+              exit;
+            end else
+              dupeOK:=true;
+        end;
+        if i <> fieldpos then  { nicht als else-Zweig in obige Routine einbauen! }
+          s1:=getfield(i)      { Wert des Feldes i }
+        else
+          s1:=s;               { aktueller, noch nicht Åbernommener Wert }
+        if length(s2)+length(s1) > 255 then
+        begin
+          vtestbox:=false;
+          rfehler1(1026,strs(255-length(s2)));  { 'Eingabe zu lang! Noch %s Zeichen verfÅgbar.' }
+        end else
+          s2:=s2+s1+' ';       { Boxnamen addieren }
+      end
+    end else
+      rfehler(2702);           { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+    dbClose(d);
+  end;
+end;
+
+
+procedure EditNetcallDat;
+var x,y,p,i    : byte;
+    t          : taste;
+    modi       : boolean;
+
+const lines  = NetcallSpecialMax+1;
+
+  procedure edit(p:byte);
+  var   x,y     : byte;
+        h,i,j,n : byte;
+        s1,s2   : string;
+        box_anz : byte;
+        boxlist : array[1..maxbox] of string[20];
+        brk     : boolean;
+  begin
+    brk:=false;
+    box_anz:=0;
+    modi:=false;
+    for i:=1 to maxbox do boxlist[i] := '';
+    i:=1;
+    s1:=NetcallSpecialList[p-1];
+    if s1 <> '' then
+      repeat
+        n:=cpos(' ',s1);
+        if n=0 then s2:=s1
+        else begin
+          s2:=left(s1,n-1);
+          s1:=trim(mid(s1,n+1));
+        end;
+        boxlist[i]:=s2;
+        inc(i);
+      until n=0;
+    box_anz:=i-1;
+    h:=minmax(box_anz+2,6,screenlines-13);
+    diabox(32,h+4,getres2(11000,21)+' #'+strs(p)+' '+getres2(11000,23),x,y);
+                  { '/Netcall/Spezial #n bei:' }
+    inc(x); inc(y);
+    openmask(x,x+29,y+1,y+h,false);
+    for i:=1 to maxbox-1 do
+    begin
+      maddstring(2,i,strsn(i,3)+'.',boxlist[i],BoxNameLen,BoxNameLen,
+                '"!'+range('#','?')+range('A',#126)+'éôö');
+               { ^^ wegen "!" = TopCase }
+      mappcustomsel(BoxSelProc,false);
+      mset0proc(getoldfield);  { alten Feldinhalt sichern (fÅr vtestbox) }
+      mset1func(box_test1);
+      msetvfunc(vtestbox);     { Eingabe prÅfen (Existenz, Dupe, StringlÑnge) }
+      boxused[i]:=(boxlist[i]<>'');
+    end;
+    maskdontclear;
+    for i:=box_anz+2 to maxbox-1 do
+      setfieldenable(i,false);
+    wrt(x+23,y+h+2,' [F2] ');
+    pushhp(508);
+    readmask(brk);
+    pophp;
+    closemask;
+    closebox;
+    if brk then exit;
+    s1:='';
+    for i:=1 to maxbox do
+      if boxused[i] then                                     { leere EintrÑge filtern... }
+        s1:=s1+boxlist[i]+' ';                               { ...und neue Liste erstellen }
+    if trim(ustr(s1)) <> ustr(NetcallSpecialList[p-1]) then  { Vergleich vorher/nachher (ignore case) }
+    begin
+      NetcallSpecialList[p-1]:=trim(s1);                     { Array aktualisieren }
+      assign(netcalldat,ownpath+NetcallSpecialDat);
+      rewrite(netcalldat);
+      for i:=0 to NetcallSpecialMax do                       { NETCALL.DAT schreiben }
+        writeln(netcalldat,NetcallSpecialList[i]);
+      close(netcalldat);
+    end;
+  end;
+
+  procedure maus_bearbeiten;
+  var xx,yy  : integer;
+      inside : boolean;
+      outside: boolean;
+  begin
+    maus_gettext(xx,yy);
+    inside:=(xx>x) and (xx<x+72) and (yy>y+1) and (yy<=y+lines+1);
+    outside:=(xx<x) or (xx>x+72) or (yy<y) or (yy>y+lines+2);
+    if inside then
+      if (t=mausleft) or (t=mauslmoved) then
+        p:=yy-y-1
+      else if (t=mausunleft) or (t=mausldouble) then
+        t:=keycr
+      else
+        t:=#0
+    else if outside then
+      if (t=mausunleft) or (t=mausunright) then
+        t:=keyesc
+      else
+        t:=#0
+    else
+      t:=#0;
+  end;
+
+begin  { --- of EditNetcallDat --- }
+  selbox(73,NetcallSpecialMax+4,getres2(11000,20)+' '+getres2(11000,21)+
+   ' ('+NetcallSpecialDat+')',x,y,false);  { 'Boxenliste fÅr /Netcall/Spezial (NETCALL.DAT)' }
+  attrtxt(col.colsel2high);
+  mwrt(x+1,y+1,' '+getres2(11000,22));     { 'Nr.  Boxen' }
+  i:=0;
+  p:=1;
+  modi:=false;
+
+  ReadNetcallSpecialData;
+
+  repeat
+    moff;
+
+    for i:=0 to NetcallSpecialMax do
+    begin
+      if i=p-1 then attrtxt(col.colsel2bar)
+      else attrtxt(col.colsel2box);
+      wrt(x+1,y+2+i,iifs(i>8,' ','  ')+strs(i+1)+
+        ':  '+forms(trim(NetcallSpecialList[i]),65));
+    end;
+    mon;
+    repeat
+      if auswahlcursor then begin
+        gotoxy(x+1,y+1+p);
+        get(t,curon);
+        end
+      else
+        get(t,curoff);
+      if (t>=mausfirstkey) and (t<=mauslastkey) then
+        maus_bearbeiten;
+    until t<>#0;
+    if (t=keyup) and (p>1) then dec(p);
+    if (t=keydown) and (p<lines) then inc(p);
+    if (t=keyhome) or (t=keypgup) then p:=1;
+    if (t=keyend) or (t=keypgdn) then p:=lines;
+    if (t=keycr) or (ustr(t)='E') then edit(p);
+  until t=keyesc;
+  closebox;
+  freeres;
+end;
+
 {$I XP10.INC}    { Timinglisten-Interpreter }
 
 end.
 {
   $Log$
+  Revision 1.10.2.8  2001/10/16 18:36:01  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je
+         Eintrag stehen 255 Zeichen fÅr Boxnamen zur VerfÅgung. Die
+         EintrÑge werden in der Anzeige durchnumeriert.
+       - Editor fÅr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und StringlÑngencheck (Danke an mk fÅr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fÅr den als Parameter Åbergebenen Eintrag aus NETCALL.DAT
+         durchfÅhrt.
+
   Revision 1.10.2.7  2001/09/23 16:10:12  my
   MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
        der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind

@@ -264,14 +264,15 @@ begin
 
      15 : case m1 of                          { Netcall }
             1 : EinzelNetcall('');                           { Einzeln }
-            2 : AutoTiming(0,true,false,false);              { Alle    }
-            3 : AutoTiming(0,true,false,true);               { Spezial }
-            4 : AnrufStat;                                   { Letzte Anrufe }
-            5 : netcall_at('','');                           { Uhrzeit }
-            6 : netcall(true,'',false,true,false);           { Relogin }
-            7 : netcall(false,'',false,false,false);         { Online  }
-            9 : AutoTiming(0,false,false,false);
-           10 : UniEdit(1);
+            2 : AutoTiming(0,true,false,false,0);            { Alle    }
+            3 : AnrufStat;                                   { Letzte Anrufe }
+            4 : netcall_at('','');                           { Uhrzeit }
+            5 : netcall(true,'',false,true,false);           { Relogin }
+            6 : netcall(false,'',false,false,false);         { Online  }
+            8 : AutoTiming(0,true,false,true,0);             { Spezial }
+            9 : EditNetcallDat;                              { Spezial-Liste }
+           11 : AutoTiming(0,false,false,false,0);           { Bereitschaft }
+           12 : UniEdit(1);                                  { Timing-Liste }
           end;
 
      16 : case m1 of                                  { Edit }
@@ -414,7 +415,7 @@ begin
             4 : begin
                   if netcall(true,'',false,false,true) then;   { Crash   }
                   if (autocrash=' alle ') or (autocrash=CrashTemp) then begin
-                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false);
+                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false,0);
                     autocrash:='';
                     end;
                 end;
@@ -780,6 +781,20 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.6  2001/10/16 18:36:01  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je
+         Eintrag stehen 255 Zeichen fÅr Boxnamen zur VerfÅgung. Die
+         EintrÑge werden in der Anzeige durchnumeriert.
+       - Editor fÅr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und StringlÑngencheck (Danke an mk fÅr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fÅr den als Parameter Åbergebenen Eintrag aus NETCALL.DAT
+         durchfÅhrt.
+
   Revision 1.14.2.5  2001/09/23 16:10:11  my
   MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
        der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind

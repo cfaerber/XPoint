@@ -29,7 +29,7 @@
 {                  tnr=1 -> nur Crashs/Requests aus CRASH.TMP           }
 
 
-procedure AutoTiming(tnr:integer; callall,crashall,special:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
     anz,i   : integer;
@@ -48,7 +48,6 @@ var brk     : boolean;
 
 const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
       NetcallEndeFlag   : string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
-      NetcallSpecialDat : string[12] = 'NETCALL.DAT';  { Textdatei fÅr Netcall/Spezial }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
@@ -172,34 +171,75 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
   end;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
-  var d            : DB;
-      fn           : pathstr;
-      t,netcalldat : text;
-      ti           : string[5];
-      all          : string;
-      clientbox    : string;
-      currentbox   : string[BoxNameLen];
-      box          : string[BoxNameLen];
-      x,y          : byte;
-      p            : byte;
+  var d          : DB;
+      fn         : pathstr;
+      t          : text;
+      ti         : string[5];
+      all        : string;
+      clientbox  : string;
+      currentbox : string[BoxNameLen];
+      box        : string[BoxNameLen];
+      x,y        : byte;
+      i,p        : byte;
+      datDa      : boolean;
+
+    procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
+    var i          : byte;
+        netcalldat : text;
+    begin
+      if not exist(ownpath+NetcallSpecialDat) then
+      begin
+        datDa:=false;
+        if auto then
+        begin
+          trfehler(1016,60);   { 'Datei NETCALL.DAT nicht vorhanden' }
+          exit;
+        end;
+        if not ReadJN(getres2(11000,16)+' '+getres2(11000,17),true) then exit;
+                               { 'Datei NETCALL.DAT nicht vorhanden - neu anlegen' }
+        EditNetcallDat;
+        exit;
+      end;
+      datDa:=true;
+      ReadNetcallSpecialData;
+    end;
+
   begin
     all:='';
     clientbox:='';
     currentbox:='';
+    if special then
+    begin
+      InitNetcallSpecial;
+      if not datDa then exit;
+    end;
     dbOpen(d,BoxenFile,1);
     if special then
-      if exist(ownpath+NetcallSpecialDat) then
+    begin
+      if auto then   { /nsp:1..20 (automatisch) }
       begin
-        assign(netcalldat,ownpath+NetcallSpecialDat);
-        reset(netcalldat);
-        readln(netcalldat,all);
-        close(netcalldat);
+        i:=datLine;
+        if trim(NetcallSpecialList[i]) = '' then
+        begin
+          trfehler1(1019,strs(i+1),60);  { 'NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!' }
+          dbClose(d);
+          exit;
+        end;
       end
-      else begin
-        dbClose(d);
-        trfehler(1005,60);   { 'keine zutreffenden Boxen' }
-        exit;
-      end
+      else begin     { Netcall/Spezial (manuell) }
+      { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
+        i:=0;
+        while (trim(NetcallSpecialList[i]) = '') and (i <= NetcallSpecialMax-1) do
+          inc(i);
+        if trim(NetcallSpecialList[i]) = '' then
+        begin
+          rfehler(1018);  { 'NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!' }
+          dbClose(d);
+          exit;
+        end;
+      end;
+      all:=iifs(i>8,'',' ')+strs(i+1)+':  '+trim(NetcallSpecialList[i]);
+    end
     else
       while not dbEOF(d) do begin
         if dbReadInt(d,'script') and 2=0 then
@@ -209,26 +249,35 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
           if boxpar^.PPPMode then
           begin
             clientbox := clientbox+' '+currentbox;
-            currentbox := ''
+            currentbox := '';
           end;
           if currentbox <> '' then all:=all+' '+currentbox;
         end;
         dbNext(d);
       end;
-    all:=trim(all + clientbox);
+    if not special then all:=trim(all + clientbox);
     if all='' then brk:=true
     else begin
       if auto then
         brk:=false
       else begin
-        dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
-(*      if special then
-          mappcustomsel(sel_netcall,false); *)
+        if special then
+          dialog(72,3,getres2(1016,4),x,y)     { 'Spezial-Netcall bei:' }
+        else
+          dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
         maddstring(3,2,'',all,66,255,'>');
+        if special then
+          for i:=0 to NetcallSpecialMax do
+            if trim(NetcallSpecialList[i]) <> '' then  { nur EintrÑge anzeigen, die nicht leer sind }
+              mappsel(false,iifs(i>8,'',' ')+strs(i+1)+':  '+
+               trim(NetcallSpecialList[i]));
         readmask(brk);
         enddialog;
         end;
-      all:=ustr(trim(all))+' ';
+      if special and (cpos(':',all)=3) then
+        all:=ustr(trim(Mid(all,4)))+' '
+      else
+        all:=ustr(trim(all))+' ';
 
       if not brk then begin
         fn:=TempS(1000+dbRecCount(d)*200);
@@ -684,8 +733,23 @@ begin
     hinweis(getres2(1017,3));   { 'keine Tastenmakros definiert' }
   freeres;
 end;
+
 {
   $Log$
+  Revision 1.4.2.5  2001/10/16 18:36:02  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je
+         Eintrag stehen 255 Zeichen fÅr Boxnamen zur VerfÅgung. Die
+         EintrÑge werden in der Anzeige durchnumeriert.
+       - Editor fÅr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und StringlÑngencheck (Danke an mk fÅr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fÅr den als Parameter Åbergebenen Eintrag aus NETCALL.DAT
+         durchfÅhrt.
+
   Revision 1.4.2.4  2001/09/23 21:26:30  my
   MY+MK:- Fixed previous commit (dbCrash) and NETCALL.LST renamed
           to NETCALL.DAT

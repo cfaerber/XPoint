@@ -284,11 +284,15 @@ var i  : integer;
     if _is('trace')then ParTrace:=true else
     if _is('m')    then ParMono:=true else
     if _is('j')    then ParNojoke:=true else
-    if isl('n:')  then NetPar(ustr(mid(s,4))) else
-    if isl('nr:') then begin
-                         NetPar(ustr(mid(s,5)));
-                         ParRelogin:=true;
-                       end else
+    if isl('n:')   then NetPar(ustr(mid(s,4))) else
+    if isl('nr:')  then begin
+                          NetPar(ustr(mid(s,5)));
+                          ParRelogin:=true;
+                        end else
+    if isl('nsp:') then begin
+                          NetPar(ustr(mid(s,6)));
+                          ParNSpecial:=true;
+                        end else
     if _is('r')    then ParReorg:=true else
     if _is('rp')   then ParTestres:=false else
     if _is('pack') then ParPack:=true else
@@ -1008,6 +1012,20 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.25  2001/10/16 18:36:01  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 Eintr„ge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgew„hlt werden k”nnen. Je
+         Eintrag stehen 255 Zeichen fr Boxnamen zur Verfgung. Die
+         Eintr„ge werden in der Anzeige durchnumeriert.
+       - Editor fr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und Stringl„ngencheck (Danke an mk fr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fr den als Parameter bergebenen Eintrag aus NETCALL.DAT
+         durchfhrt.
+
   Revision 1.45.2.24  2001/09/16 20:21:45  my
   JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
           zeilen stehen nur die ersten 19 zur Verfügung).

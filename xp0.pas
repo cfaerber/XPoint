@@ -766,6 +766,7 @@ const
        ParNetcall : string[BoxNameLen] = '';  { autom. Netcall }
        ParNCtime  : string[5] = '';    { Uhrzeit f. autom. Netcall }
        ParRelogin : boolean = false;   { Relogin-Netcall        }
+       ParNSpecial: boolean = false;   { Netcall/Spezial        }
        ParReorg   : boolean = false;   { autom. Reorganisation  }
        ParSpecial : boolean = false;   { Spezial-Reorg - Puffer-reparieren }
        ParPack    : boolean = false;   { autom. Packen          }
@@ -1209,6 +1210,20 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.42  2001/10/16 18:36:01  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je
+         Eintrag stehen 255 Zeichen fÅr Boxnamen zur VerfÅgung. Die
+         EintrÑge werden in der Anzeige durchnumeriert.
+       - Editor fÅr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und StringlÑngencheck (Danke an mk fÅr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fÅr den als Parameter Åbergebenen Eintrag aus NETCALL.DAT
+         durchfÅhrt.
+
   Revision 1.54.2.41  2001/09/16 20:17:25  my
   JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
           Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in

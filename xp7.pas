@@ -35,6 +35,8 @@ function  AutoMode:boolean;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurÅckgesetzt }
       maxaddpkts   = 8;
+      NetcallSpecialMax = 19;          { siehe auch xp10.inc }
+
 
       { In abox stehen nur die Boxen fÅr die Daten zu verschicken sind }
       { (anzahl StÅck), in akabox alle eingetragenen Mitsende-Boxen    }
@@ -144,7 +146,7 @@ var bfile      : string[14];
     msgids     : boolean;         { fÅr MagicNET }
     alias      : boolean;         { Fido: Node- statt Pointadresse     }
     CrashBox   : FidoAdr;
-    OwnFidoAdr : string[20];    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
+    OwnFidoAdr : string[20];      { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
     ldummy     : longint;
     CrashPhone : string[30];
     NumCount   : byte;            { Anzahl Telefonnummern der Box }
@@ -1514,8 +1516,13 @@ begin
   if ParSendbuf<>'' then
     AutoSend(ParSendbuf);
   if ParNetcall<>'' then
-    if ParNetcall='*' then
-      AutoTiming(-1,true,false,false)      { Netcall/Alle }
+    if ParNSpecial then
+      if (ival(ParNetcall) >= 1) and (ival(ParNetcall) <= 20) then
+        AutoTiming(-1,true,false,true,ival(ParNetcall)-1)  { Netcall/Spezial }
+      else
+        trfehler1(749,ParNetcall,60) { '/nsp: UngÅltige Zeilenangabe fÅr NETCALL.DAT: %s' }
+    else if ParNetcall='*' then
+      AutoTiming(-1,true,false,false,0)                    { Netcall/Alle }
     else if not isbox(ParNetcall) then
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
     else
@@ -1524,7 +1531,7 @@ begin
       else
         Netcall_at(ParNCtime,ParNetcall);
   if ParTiming>0 then begin
-    AutoTiming(ParTiming,false,false,false);
+    AutoTiming(ParTiming,false,false,false,0);
     if quit then automode:=true;
     end;
   if ParDupeKill then
@@ -1563,6 +1570,20 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.19  2001/10/16 18:36:01  my
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
+  ------------------------------------------------------------------------
+  MY:- /Netcall/Spezial fertiggestellt:
+       - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
+         einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je
+         Eintrag stehen 255 Zeichen fÅr Boxnamen zur VerfÅgung. Die
+         EintrÑge werden in der Anzeige durchnumeriert.
+       - Editor fÅr NETCALL.DAT unter /Netcall/Spezial-Liste mit
+         Existenz-, Dupe- und StringlÑngencheck (Danke an mk fÅr Hilfe)
+       - Neuer Kommandozeilenparameter "/nsp:1..20", der einen /Netcall/
+         Spezial fÅr den als Parameter Åbergebenen Eintrag aus NETCALL.DAT
+         durchfÅhrt.
+
   Revision 1.16.2.18  2001/09/23 16:10:11  my
   MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
        der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind
