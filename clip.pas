@@ -212,10 +212,7 @@ function Clip2String(maxlen,oneline:byte):String; assembler;  {JG:06.02.00 Jetzt
 
 asm           les bx,@result
               mov word ptr es:[bx],0              { leerstring bei Fehler }
-              inc bx
-              push bx                             { Stringstart sichern}
-              push es
-
+ 
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
               cmp ax,1700h
@@ -235,8 +232,8 @@ asm           les bx,@result
               cmp dx,0                            { oder mehr als 256 Zeichen }
               jne @nope
  
-              pop es  
-              pop bx                              
+              les bx,@result
+              inc bx                              
               push ax                             { Textlaenge und start sichern }
               push bx
 
@@ -539,6 +536,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/25 08:47:14  jg
+  -Clip2String Bugfix zu rev1.8
+
   Revision 1.8  2000/02/25 07:55:35  jg
   -Clip2string konservativer geschrieben
 
