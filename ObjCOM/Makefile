@@ -109,10 +109,25 @@ PFLAGS += $(PF_$(CPU))
 
 all: objcom.o
 
+ifeq ($(OS),dos32)
 objcom.o: objcom.pas ocfdos.inc ocfdosh.inc ocsdos.inc ocsdosh.inc \
-	ocsos2.inc ocswin.inc ocswinh.inc octhread.o octwin.inc \
+	octhread.o ringbuff.o
+	$(PC) $(PFLAGS) $<
+endif
+ifeq ($(OS),linux)
+objcom.o: objcom.pas ocslin.inc ocslinh.inc octhread.o octwinh.inc \
+	ringbuff.o
+	$(PC) $(PFLAGS) $<
+endif
+ifeq ($(OS),os2)
+objcom.o: objcom.pas ocsos2.inc octhread.o ringbuff.o
+	$(PC) $(PFLAGS) $<
+endif
+ifeq ($(OS),win32)
+objcom.o: objcom.pas ocswin.inc ocswinh.inc octhread.o octwin.inc \
 	octwinh.inc ringbuff.o
 	$(PC) $(PFLAGS) $<
+endif
 
 octhread.o: octhread.pas
 	$(PC) $(PFLAGS) $<
@@ -131,6 +146,9 @@ clean:
 
 #
 # $Log$
+# Revision 1.4  2000/09/30 16:54:17  fe
+# Abhaengigkeiten angepasst.
+#
 # Revision 1.3  2000/09/28 14:22:08  fe
 # Ueberpruefung der Variablen eingebaut.
 # kleinere Korrekturen
