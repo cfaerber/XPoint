@@ -1193,7 +1193,6 @@ begin
   That's not a big problem as only NT/2k/XP allow switching charsets
   for the console (i.e. 95/98/ME _always_ uses the OEM codepage).
 }
-
   if Assigned(SourceToUTF8) then s := SourceToUTF8.Encode(s);
   if Assigned(UTF8ToDest)   then s := UTF8ToDest.Decode(s);
   
@@ -1238,7 +1237,7 @@ begin
 
   NewCP := GetCPfromCharset(NewCharset);
   IsUnicode := (NewCP = 65000) or (NewCP = 65001) or (NewCP = 1200);
-  if IsUnicode then NewCP := 1200;
+  if not IsUnicode then NewCP := GetOEMCP;
   SetConsoleOutputCP(NewCP);
   TrueOutputCP := GetConsoleOutputCP;
   convertersOK := false;
@@ -1266,16 +1265,17 @@ end;
 
 procedure InitCharsetSystem;
 begin
+  IsUnicode := false;
+  ConvertersOK := false;  
+
   if IsWindowsNT then
   begin
     SetConsoleCP(437);
     SetConsoleOutputCP(437);
   end;
 
-  IsUnicode := false;
   TrueOutputCP := GetConsoleOutputCP;
   OutputCharset := csCP437;
-  ConvertersOK := false;  
 end;
 
 procedure ExitCharsetSystem;
@@ -1522,6 +1522,9 @@ end;
 
 {
   $Log$
+  Revision 1.86  2002/07/24 00:09:46  cl
+  - Fixed illegal codepage with SetConsoleOutputCP
+
   Revision 1.85  2002/07/13 12:21:11  ma
   - fix wpull: window was not saved if y+shad>screenlines
 
