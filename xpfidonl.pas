@@ -189,13 +189,14 @@ var fn      : string;
     ar      : ArchRec;
     fa      : FidoAdr;
 
-  procedure PL_FormatDetect(fn:string; var format:byte);
+  procedure PL_FormatDetect(const fn:string; var format:byte);
   var t   : text;
       s   : string;
       n   : byte;
   begin
-    assign(t,fn);
-    if existf(t) then begin
+    if FileExists(fn) then
+    begin
+      Assign(t, fn);
       reset(t);
       n:=0;
       while (format=1) and (n<200) and not eof(t) do begin
@@ -256,12 +257,12 @@ begin   //function NewNodeEntry:boolean;
           detect:=false;
           if listfile='NODELIST.###' then begin         { Typvorgabe 'Nodeliste' }
             fupdatefile:='NODEDIFF.###';
-            fupdatearc:='NODEDIFF.A##';
+            fupdatearc:='NODEDIFF.Z##';
             detect:=true;
             end
           else if listfile='POINTS24.###' then begin    { Typvorgabe 'Points24' }
             fupdatefile:='PR24DIFF.###';
-            fupdatearc:='PR24DIFF.A##';
+            fupdatearc:='PR24DIFF.Z##';
             zone:=2;
             format:=2;
             detect:=true;
@@ -374,7 +375,7 @@ var diffdir  : string;
 
   function passend(const fn:string):boolean;
   begin
-    passend:=(diffnames=WildCard) or (extractfilename(fn)=diffnames);
+    passend:=(diffnames=WildCard) or (FileUpperCase(ExtractFilename(fn))=FileUpperCase(diffnames));
   end;
 
   procedure ExecProcessor(processor:string);
@@ -388,7 +389,7 @@ var diffdir  : string;
   end;
 
   function UDiff:boolean;      { Update diffen }
-  var s1,s2 : string[100];
+  var s1,s2 : string;
       t     : text;
       fm    : byte;
   begin
@@ -445,7 +446,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   reindex:=false;
   logopen:=false;
   diffdir:=ExtractFilePath(files);
-  diffnames:=extractfilename(files);
+  diffnames:=ExtractFilename(files);
 
   for i:=0 to NodeList.Count - 1 do
   with TNodeListItem(Nodelist.Items[i]) do
@@ -539,6 +540,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45.2.6  2004/01/25 13:39:38  mk
+  - misc small fido nodelist fixes
+
   Revision 1.45.2.5  2004/01/18 15:07:09  mk
   - use WildCard instead of * or *.*
 

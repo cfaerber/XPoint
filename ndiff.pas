@@ -36,6 +36,7 @@ const
   shrink: boolean = false;
   regs: integer = 0;
   maxregs = 50;
+  UseCommandLine: boolean = false;
 
 type
   regrec = record
@@ -48,7 +49,7 @@ var
   nl_file: TFileName;
   nl_new: TFileName;
   buf1, buf2,
-    buf3: array[0..8191] of byte;
+  buf3: array[0..8191] of byte;
   reg: array[1..maxregs] of regrec;
 
 procedure logo;
@@ -118,7 +119,8 @@ begin
   nl_file := nl;
   nd_file := nd;
   TestVersion;
-  writeln(nl_file, ' + ', nd_file, ' -> ', nl_new);
+  if UseCommandLine then
+    writeln(nl_file, ' + ', nd_file, ' -> ', nl_new);
   fs := _filesize(nl_file);
   fsplit(nl_file, dir, name, ext);
   assign(t1, nl_file); settextbuf(t1, buf1); reset(t1);
@@ -157,7 +159,8 @@ begin
         end;
     else
       begin
-        writeln(#13, 'fehlerhafte Zeile wird entfernt:   ', s);
+        if UseCommandLine then
+          writeln(#13, 'fehlerhafte Zeile wird entfernt:   ', s);
         exit;
       end;
     end;
@@ -178,7 +181,8 @@ begin
     close(t1); erase(t1);
   end;                                  { dann weg damit }
   rename(t3, nl_new);
-  writeln(#13'ok.  ');
+  if UseCommandLine then
+    writeln(#13'ok.  ');
 end;
 
 procedure getpar;
@@ -322,12 +326,14 @@ begin
   close(t2);
   erase(t1);
   rename(t2, nl_file);
-  writeln;
+  if UseCommandLine then
+    writeln;
   freemem(buf, bs);
 end;
 
 procedure StartCommandLineNdiff;
 begin
+  UseCommandLine := true;
   logo;
   getpar;
   if shrink then
@@ -337,6 +343,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.4  2004/01/25 13:39:38  mk
+  - misc small fido nodelist fixes
+
   Revision 1.17.2.3  2003/09/22 21:26:02  mk
   - removed dos unit
 
