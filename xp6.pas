@@ -746,6 +746,8 @@ begin
   else begin                       { Nach Pollbox-Wechsel }
     for i:=0 to cc_anz do
       ccm^[i].cpanz:=0;
+    first:=1;
+    if not verteiler then CollectFirstServer;   { nach Server sortieren }
     SortForServer_PM;
     FindXposts;
     end;
@@ -2415,6 +2417,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.52  2002/03/24 13:29:47  my
+  JG:- Fix fr Uralt-Bug: Das Eintragen eines Kopienempf„ngers ("k" im
+       Sendefenster) mit einer anderen Serverbox als der des Empf„ngers
+       sowie anschlieáendes Erzwingen des Versendens ber eine gemeinsame
+       Serverbox ("o" im Sendefenster) konnte zu abenteuerlichen Effekten
+       fhren (Absturz, H„nger, duplizierte Nachrichten). Variable "First"
+       war nicht initialisiert.
+
   Revision 1.39.2.51  2002/03/13 23:05:40  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrmpelt,
             von Redundanzen befreit, korrigiert und erweitert:
