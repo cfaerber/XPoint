@@ -775,6 +775,7 @@ begin
    addstr(p);
    refresh;
    StrDispose(p);
+end;
 {$ELSE }
 {$IFDEF Localscreen }
 var
@@ -1287,6 +1288,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/04/23 16:18:41  mk
+  - Source wieder unter Linux compilierbar
+
   Revision 1.23  2000/04/23 07:58:52  mk
   - OS/2-Portierung
 
