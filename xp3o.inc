@@ -90,7 +90,7 @@ var x,y,fm   : byte;
     aufnehmen: boolean;
     diff     : integer;
     d        : DB;
-    haltezeit: integer;
+    haltezeit: integer16;
     MsgCount : longint;
     brettlog,
     userlog  : text;
@@ -565,8 +565,8 @@ var x,y,fm   : byte;
         makeheader(zconnect,f,empfnr,0,hdsize,hdp^,ok,true);
         { 20.01.2000 robo - Schalter maildelxpost beachten }
 {        if hdp^.empfanz>maxcrosspost then begin }
-        if (hdp^.empfanz>maxcrosspost) 
-        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin 
+        if (hdp^.empfanz>maxcrosspost)
+        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
         { /robo }
           empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
           continue;
@@ -746,8 +746,8 @@ begin
         orgempf:=hdp^.empfaenger;
         { 20.01.2000 robo - Schalter maildelxpost beachten }
 {        if hdp^.empfanz>maxcrosspost then begin }
-        if (hdp^.empfanz>maxcrosspost) 
-        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin 
+        if (hdp^.empfanz>maxcrosspost)
+        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
         { /robo }
           empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
           continue;
@@ -960,9 +960,9 @@ begin
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(ref)) or
-              (filterattr and fattrHilite<>0) or 
+              (filterattr and fattrHilite<>0) or
               { Nachricht mit Priority High und Highest hevorheben }
-              (hdp^.Priority in [1..2]) 
+              (hdp^.Priority in [1..2])
             then begin
               attrtxt(col.colmboxhigh);
               showbetreff;
@@ -1169,6 +1169,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/04/15 21:44:46  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.10  2000/04/15 09:58:00  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

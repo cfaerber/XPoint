@@ -30,10 +30,10 @@ type  ccl   = array[1..maxcc] of AdrStr;
 
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
-procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer);
+procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
+procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
 procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
-procedure edit_verteiler(name:string; var anz:integer; var brk:boolean);
+procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
 procedure del_verteiler(name:string);
 
 function  cc_test1(var s:string):boolean;
@@ -136,9 +136,9 @@ begin
             if p>0 then s2[p]:='/';
           until p=0;
           dbSeek(bbase,biBrett,'A'+ustr(s2));
-           if dbfound then s:=s2;    
-          end;                  
-        end     
+           if dbfound then s:=s2;
+          end;
+        end
       else
         dbSeek(ubase,uiName,ustr(s));
       if dbFound then begin
@@ -192,7 +192,7 @@ begin
   until not xchg or (j=1);
 end;
 
-procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
+procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
 var x,y   : byte;
     i     : shortint;
     h     : byte;
@@ -247,7 +247,7 @@ end;
 
 { Verteiler-Liste einlesen; Name hat Format '[..]' }
 
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer);
+procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
 var t : text;
     s : string;
 begin
@@ -324,7 +324,7 @@ begin
 end;
 
 
-procedure edit_verteiler(name:string; var anz:integer; var brk:boolean);
+procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
 var cc  : ccp;
 begin
   new(cc);
@@ -339,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/15 21:44:48  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.10  2000/03/14 15:15:42  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

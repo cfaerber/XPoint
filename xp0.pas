@@ -195,7 +195,7 @@ const  {$IFDEF DPMI}
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
        uiName      = 1;                { User:    +USERNAME                 }
        uiAdrbuch   = 2;                {          ADRBUCH/+USERNAME         }
-       uiBoxName   = 3;                {          POLLBOX/+USERNAME         }  
+       uiBoxName   = 3;                {          POLLBOX/+USERNAME         }
        uiBoxAdrbuch= 4;                {          ADRBUCH/POLLBOX/+USERNAME }
        biBrett     = 1;                { Bretter: BRETTNAME                 }
        biGruppe    = 2;                {          GRUPPE                    }
@@ -821,7 +821,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ListerKB     : smallword;
        EditorKB     : smallword;
        stdhaltezeit,
-       stduhaltezeit: integer;
+       stduhaltezeit: integer16;
        QuoteChar    : string[QuoteLen];
        QuoteBreak   : byte;          { Zeilenumbruch fÅr Quoter }
        COMn         : array[1..MaxCom] of ComRec;  { Schnitten-Paras }
@@ -1108,6 +1108,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.28  2000/04/15 21:44:45  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.27  2000/04/15 13:36:08  oh
   - Flag falsch benamst: war R statt G wie Gruppe
 

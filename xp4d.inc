@@ -47,7 +47,7 @@ var
     s2      : string[20];
     size    : longint;
     typ     : char;
-    hzeit   : integer;  { Haltezeit }
+    hzeit   : integer16;  { Haltezeit }
     pbox    : string[BoxNameLen];
     komm    : string[30];
     dadr,pw : char;
@@ -149,14 +149,14 @@ begin  { __ Suchmarke }
           end;
     1,2,
     3,4 : begin { USERLISTE }
-    
+
            { LÑngen:
              FLAGS   4
              ADRBUCH 2
              PBOX    9
              HZEIT   4
-            }            
-    
+            }
+
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             dbReadN(ubase,ub_username,s);
             dbReadN(ubase,ub_kommentar,komm);
@@ -205,20 +205,20 @@ begin  { __ Suchmarke }
               kuerzen := true; { wir brauchen mehr Platz, also Felder kuerzen }
               dbReadN(ubase,ub_pollbox,pbox);
               brettform(s,0,true);
-              
+
               { (H)altezeit }
               taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
 
               { (B)OX }
               taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
-              
+
               { Adressbuch-(G)ruppe }
               taus[pos('G',UsrFeldTausch)] := strsn(ab,2);
             end;
-            
+
             { Falls (S)pezial EIN, dann mu· der folgende Resttext um
               20 Zeichen gekÅrzt werden: }
-            
+
             { Verteilername bzw. (A)dresse }
             taus[pos('A',UsrFeldTausch)]
               := Forms(s,
@@ -228,7 +228,7 @@ begin  { __ Suchmarke }
                      44-iif(kuerzen,20,0)
                    )
                  );
-              
+
             { (K)ommentar }
             taus[pos('K',UsrFeldTausch)]
               := Forms(komm,
@@ -248,7 +248,6 @@ begin  { __ Suchmarke }
 
           end;
         end;
-          
   10..12: begin { NACHRICHTENLISTE }
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
             dbReadN(mbase,mb_absender,s0);
@@ -371,13 +370,13 @@ begin  { __ Suchmarke }
                        and showmsgdatum)
                        or
                      (pos('F',MsgFeldTausch)<>pos('D',MsgFeldTausch)+1)
-                       
+
                     ) then taus[pos('F',MsgFeldTausch)] := ' '+dflags;
               end;
-              
+
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
-              
+
               { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
                                               iifs(pos('D',MsgFeldTausch)<>1,' ','')+
@@ -403,13 +402,13 @@ begin  { __ Suchmarke }
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
               end else begin
-              
+
               { (F)lags }
               taus[pos('F',MsgFeldTausch)] := iifs(pos('F',MsgFeldTausch)<>1,' ','')+
                                               dflags;
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
-              
+
               { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
                                               iifs(pos('D',MsgFeldTausch)<>1,' ','')+

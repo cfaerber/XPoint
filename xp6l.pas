@@ -42,7 +42,7 @@ type ccmore  = record
 
 var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
     min_send : longint;     { minimales Sendedatum (fÅr "D"atum) }
-    cc_anz   : integer;     { Anzahl CC-EmpfÑnger }
+    cc_anz   : integer16;   { Anzahl CC-EmpfÑnger }
     cc       : ccp;         { Kopie-EmpfÑnger }
     ccm      : ^ccmorea;
 
@@ -53,6 +53,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5  2000/04/15 21:44:47  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.4  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

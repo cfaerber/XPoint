@@ -140,7 +140,7 @@ var x,y,wdt: byte;
     bt,dbt,
     bbt    : longint;
     disp   : string[90];
-    hzeit  : integer;
+    hzeit  : integer16;
     hzahl  : boolean;
     dat    : datt;
     bi     : shortint;
@@ -706,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/04/15 21:44:47  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.7  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

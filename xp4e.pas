@@ -270,7 +270,7 @@ end;
 
 
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten,adr:integer; var flags:byte; edit:boolean;
+                   var halten,adr:integer16; var flags:byte; edit:boolean;
                    var brk:boolean);
 var x,y  : byte;
     filt : boolean;
@@ -342,7 +342,7 @@ function newuser:boolean;
 var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
-    halten,adr   : integer;
+    halten,adr   : integer16;
     b            : byte;
     brk          : boolean;
     flags        : byte;
@@ -465,7 +465,7 @@ var name,oldname : string[AdrLen];
     pollbox      : string[BoxNameLen];
     brk          : boolean;
     cc           : ccp;
-    anz          : integer;
+    anz          : integer16;
     rec          : longint;
 begin
   modiverteiler:=false;
@@ -673,7 +673,7 @@ end;
 
 
 procedure editbrett(var brett,komm,box,origin:string; var gruppe:longint;
-                    var halten:integer; var flags:byte; edit:boolean;
+                    var halten:integer16; var flags:byte; edit:boolean;
                     var brk:boolean);
 var x,y    : byte;
     askloc : boolean;
@@ -809,10 +809,10 @@ end;
 function testnoverteiler(var s:string):boolean;
 begin
   testnoverteiler:=true;
-  if (s[1]='[') and (s[length(s)]=']') then 
+  if (s[1]='[') and (s[length(s)]=']') then
   begin
     rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
-    testnoverteiler:=false;  
+    testnoverteiler:=false;
     end;
 end;
 
@@ -877,7 +877,7 @@ var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
     size         : smallword;
-    halten,adr   : integer;   
+    halten,adr   : integer16;
     flags        : byte;
     brk          : boolean;
     rec          : longint;
@@ -907,7 +907,7 @@ begin
     dbWrite(ubase,'pollbox',pollbox);
     dbWrite(ubase,'haltezeit',halten);
     dbWrite(ubase,'userflags',flags);
-    dbWrite(ubase,'Adrbuch',adr);  
+    dbWrite(ubase,'Adrbuch',adr);
     dbFlushClose(ubase);
     if msgbrett then
       dbFlushClose(ubase)
@@ -923,7 +923,7 @@ var brett : string[brettLen];
     box   : string[BoxNameLen];
     origin: string[80];
     gruppe: longint;
-    halten: integer;
+    halten: integer16;
     flags : byte;
     brk   : boolean;
     d     : DB;
@@ -974,7 +974,7 @@ var brett  : string[BrettLen];
     box    : string[BoxNameLen];
     origin : string[60];
     oldorig: string[60];
-    halten : integer;
+    halten : integer16;
     flags  : byte;
     brk    : boolean;
     gruppe : longint;
@@ -1065,7 +1065,7 @@ var n,w    : shortint;
     x,y    : byte;
     brk    : boolean;
     s      : string[30];
-    halten,adr : integer;
+    halten,adr : integer16;
     htyp   : string[6];
     hzahl  : boolean;
     grnr   : longint;
@@ -1148,15 +1148,15 @@ else begin
           filter:=not user;
           maddbool(3,2,getres2(2715,12),filter); mhnr(431);  { 'Nachrichtenfilter' }
         end;
-    6 : if not user then 
+    6 : if not user then
         begin
           dbGo(bbase,bmarked^[0]);
           sperre:=(dbReadInt(bbase,'flags')and 8<>0);
           maddbool(3,2,getres2(2715,13),sperre); mhnr(432)  { 'Schreibsperre' }
-          end 
+          end
         else begin
-          adr:=NeuUserGruppe; 
-          maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);      
+          adr:=NeuUserGruppe;
+          maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);
           end;
   end;
   readmask(brk);
@@ -1209,7 +1209,7 @@ else begin
               else flags:=flags or 4;
               dbWriteN(bbase,bb_flags,flags);
               end;
-        6 : if not user then 
+        6 : if not user then
             begin
               dbReadN(bbase,bb_flags,flags);
               if sperre then flags:=flags or 8
@@ -1218,7 +1218,7 @@ else begin
               end
             else begin
               dbwrite(dispdat,'adrbuch',adr);
-              end;    
+              end;
 
       end;
       end;
@@ -1468,7 +1468,7 @@ begin
   maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'Empf„nger ' }
     iifs(ntGrossUser(ntBoxNetztyp(box)),'>',''));
 {JG:05.02.00}
-  mappcustomsel(seluser,false);          
+  mappcustomsel(seluser,false);
 {/JG}
   msetvfunc(empftest);
   maddstring(3,4+pba,getres2(2718,3),betr,40,BetreffLen,'');  { 'Betreff   ' }
@@ -1895,7 +1895,7 @@ begin
 end;
 
 procedure auto_active;
-var flags : word;
+var flags : smallword;
 begin
   dbRead(auto,'flags',flags);
   flags:=flags xor 1;
@@ -2032,7 +2032,7 @@ begin
   oldtc:=trennchar;
   dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfgen' }
   komm:='';
-  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);  
+  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);
   mappsel(false,'ÄùÍùğù°ù±ù¯ù®ùúùş');              { 'Trennzeichen ' }
   mnotrim;
   msetvfunc(tnotempty);
@@ -2301,6 +2301,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/15 21:44:46  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.13  2000/04/15 21:22:46  jg
   - Trennzeilen fuer Userfenster eingebaut (STRG+T im Spezialmenue)
   - STRG+P im UserSpezialmenue (Position) verschiebt wie P im Brett-SpezialMenue

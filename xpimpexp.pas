@@ -72,7 +72,7 @@ var fn   : pathstr;
     repluser,replbretter : boolean;
 
   procedure wrhalten(d:DB);
-  var halten : integer;
+  var halten : integer16;
   begin
     halten:=r.haltezeit;
     dbWrite(d,'haltezeit',halten);
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/15 21:44:48  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.8  2000/04/13 12:48:40  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

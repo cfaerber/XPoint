@@ -360,8 +360,8 @@ begin
   umlauttest:=true;
   case umlaute of
     1 : for i:=1 to 7 do
-          if pos(um[i],s)>0 then ukonvstr(s,betrefflen); 
-          
+          if pos(um[i],s)>0 then ukonvstr(s,betrefflen);
+
   { 2 : for i:=1 to 7 do begin
           p:=pos(um[i],s);
           if p>0 then s[p]:=iso[i];
@@ -471,7 +471,7 @@ var f,f2     : ^file;
     pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     newbox   : string[20];  { Zwischensp. fÅr geÑnderte Pollbox   }
-    halten   : integer;     { Haltezeit fÅr neuen User            }
+    halten   : integer16;   { Haltezeit fÅr neuen User            }
     boxfile  : string[12];
     username : string[30];  { eigener Username                    }
     pointname: string[25];
@@ -913,7 +913,7 @@ begin
   writeln(f,'EMPF: ',copy(empfaenger,2,99));
   writeln(f,'FIDOTO: ',fidoto);
   writeln(f,'BETREFF: ',betreff);
-  close(f);  
+  close(f);
 end;
 
 
@@ -1165,7 +1165,7 @@ fromstart:
 
   if (netztyp<>nt_Fido) then
     AltAdr:='';
-{ 
+{
   else
     if (altadr<>'') and (cpos('.',altadr)=0) then
       AltAdr:=AltAdr+'.'+pointname;
@@ -1353,7 +1353,7 @@ fromstart:
                 { neuer Betreff }
                 readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
                 betreff:=trim(betreff);
-                if umlauttest(betreff) then; 
+                if umlauttest(betreff) then;
                 showbetreff;
                 n:=1;
               end;
@@ -2176,6 +2176,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/04/15 21:44:47  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.17  2000/04/15 09:58:00  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

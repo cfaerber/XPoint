@@ -85,7 +85,7 @@ end;
 
 procedure usermsg_window;      { Userliste -> TO-Brett }
 var mhd    : longint;
-    halten : integer;
+    halten : integer16;
     p2     : integer;
     bgr    : longint;
     rec    : longint;
@@ -212,7 +212,7 @@ begin
 end;
 
 procedure edverteiler;
-var anz : integer;
+var anz : integer16;
     brk : boolean;
     rec : longint;
 begin
@@ -299,7 +299,7 @@ var s      : string[adrlen];
     oldds  : specstr;
     _oldds : string[5];
     mhd    : longint;
-    halten : integer;
+    halten : integer16;
     size   : smallword;
     hdp    : headerp;
     hds    : longint;
@@ -1179,7 +1179,7 @@ var dat    : longint;
     p2     : integer;
     mdr    : dispra;
     flags  : byte;
-    halten : integer;
+    halten : integer16;
     mhd    : longint;
     _brett : string[5];
     weiter : boolean;
@@ -1330,7 +1330,7 @@ begin
 end;
 
 procedure add_haltezeit(ofs:shortint);
-var halten : integer;
+var halten : integer16;
 begin
   CondClearKeybuf;
   GoP;

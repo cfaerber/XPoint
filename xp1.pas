@@ -223,6 +223,8 @@ function  MsgidIndex(mid:string):longint;      { case-insensitive CRC32 }
 function getb(var su:string; v:string; var b:byte):boolean;   { PARSER }
 function getc(var su:string; v:string; var c:char):boolean;
 function geti(var su:string; v:string; var i:integer):boolean;
+{ wie geti, allerdings mit 16 Bit Integer }
+function geti16(var su:string; v:string; var i:integer16):boolean;
 function getw(var su:string; v:string; var w:smallword):boolean;
 function getl(var su:string; v:string; var l:longint):boolean;
 function getx(var su:string; v:string; var b:boolean):boolean;
@@ -1893,6 +1895,18 @@ begin
   else geti:=false;
 end;
 
+function geti16(var su:string; v:string; var i:integer16):boolean;
+var res : integer;
+    p   : byte;
+begin
+  p:=pos('=',su);
+  if scomp(su,v,p) then begin
+    val(trim(copy(su,p+1,255)),i,res);
+    geti16:=(res=0);
+    end
+  else geti16:=false;
+end;
+
 function getw(var su:string; v:string; var w:smallword):boolean;
 var res : integer;
     p   : byte;
@@ -2324,6 +2338,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/04/15 21:44:45  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.29  2000/04/13 13:54:45  mk
   - 32 Bit: Fehlerhafte Prozentanzeigen behoben
   - 32 Bit VP: Shift-Tab funktioniert jetzt

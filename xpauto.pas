@@ -31,10 +31,10 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   box     : string[BoxNameLen];  { optional        }
                   wotage  : byte;                { Bit 0=Mo        }
                   tage    : longint;             { Bit 0=1.        }
-                  monate  : word;                { Bit 0=Januar    }
+                  monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : word;             { 1=aktiv, 2=l”schen }
+                  flags   : smallword;           { 1=aktiv, 2=l”schen }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
                 end;
@@ -655,6 +655,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/15 21:44:48  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.6  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

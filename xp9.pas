@@ -305,17 +305,17 @@ begin
       if dbFound then
       begin
         dbRead(d,'Langname',s);         { ists ein Kurzname ? }
-        dbclose(d); 
+        dbclose(d);
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungltige Adresse' }
             testreplyto:=false;
-            end;             
-        end 
-      else begin     
+            end;
+        end
+      else begin
         rfehler(908);     { 'ungltige Adresse' }
-        dbclose(d); 
+        dbclose(d);
         testreplyto:=false;
         end;
       end
@@ -604,7 +604,7 @@ var d         : DB;
       s3         : string[80];
       scrp       : byte;
       limit,grnr : longint;
-      w          : word;
+      w          : smallword;
       hd,sig,qt  : char;
       qm         : string[8];
       nt,b       : byte;
@@ -721,7 +721,7 @@ var d         : DB;
 
   { --- Bearbeitungs-Routinen fr Gruppen-Liste ---------------------}
 
-  procedure ReadGruppe(edit:boolean; var name:string; var hzeit:integer;
+  procedure ReadGruppe(edit:boolean; var name:string; var hzeit:integer16;
                        var limit:longint; var umlaut:byte; var hd,qt,sig:string;
                        var flags:byte; var brk:boolean);
   const fname = '1234567890$_-';
@@ -786,7 +786,7 @@ var d         : DB;
 
   procedure NeueGruppe;
   var name   : string[30];
-      hzeit  : integer;
+      hzeit  : integer16;
       limit  : longint;
       umlaut : byte;
       flags  : byte;
@@ -823,7 +823,7 @@ var d         : DB;
 
   procedure EditGruppe;
   var name   : string[30];
-      hzeit  : integer;
+      hzeit  : integer16;
       limit  : longint;
       flags  : byte;
       umlaut : byte;
@@ -903,7 +903,7 @@ var d         : DB;
   end;
 
   procedure addhzeit(add:integer);
-  var hzeit : integer;
+  var hzeit : integer16;
   begin
     dbGo(d,drec[p]);
     dbRead(d,'haltezeit',hzeit);
@@ -1067,9 +1067,9 @@ var d         : DB;
         dbWrite(d,'Langname',lang);
         dbWrite(d,'pollbox',pollbox);
         dbFlushClose(d);
-        dbGo(d,drec[1]);       
+        dbGo(d,drec[1]);
         dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-        aufbau:=true; 
+        aufbau:=true;
         end;
       end;
   end;
@@ -1166,9 +1166,9 @@ var d         : DB;
       dbWriteN(d,mimeb_extension,ext);
       dbWriteN(d,mimeb_programm,prog);
       dbFlushClose(d);
-      dbGo(d,drec[1]);       
+      dbGo(d,drec[1]);
       dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-      aufbau:=true; 
+      aufbau:=true;
       end;
   end;
 
@@ -1333,7 +1333,7 @@ begin
           width:=65;
           buttons:=getres(909);   { ' ^Neu , ^L”schen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
-          pushhp(820);         {JG:1051->820}   
+          pushhp(820);         {JG:1051->820}
           nameofs:=2;
         end;
   end;
@@ -1740,6 +1740,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/15 21:44:48  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.11  2000/03/14 15:15:41  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

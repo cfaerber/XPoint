@@ -1099,7 +1099,6 @@ var t       : text;
     aaa     : string[5];   { AutoAdvance }
     buf     : array[1..1024] of byte;
     mheader : string;
-    aNeuUserGruppe: Integer;
 
   function getcommpar:boolean;
   var nr    : integer;
@@ -1311,7 +1310,6 @@ begin
     settextbuf(t,buf);
     reset(t);
     { Zwischenspeichern, da Integer16 nicht als var-Parameter funktioniert }
-    aNeuUserGruppe := NeuUserGruppe;
     while not eof(t) do begin
       readln(t,s);
       s:=trim(s);
@@ -1335,8 +1333,8 @@ begin
           gets(s,su,'gifviewer',viewers^[1].prog,40) or
           gets(s,su,'lbmviewer',viewers^[2].prog,40) or
           gets(s,su,'pcxviewer',viewers^[3].prog,40) or
-          geti(su,  'stdhaltezeit',stdhaltezeit) or
-          geti(su,  'stduserhaltezeit',stduhaltezeit) or
+          geti16(su,  'stdhaltezeit',stdhaltezeit) or
+          geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           { 01/2000 oh}
@@ -1356,7 +1354,7 @@ begin
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
           gets(s,su,'UserAufnahme',userauf,10) or
-          geti(su,  'NeuUsergruppe', aNeuusergruppe) or
+          geti16(su,  'NeuUsergruppe', Neuusergruppe) or
           gets(s,su,'Name_O''Maps',dummys,20) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
@@ -1539,7 +1537,6 @@ begin
         end;
       end;
     close(t);
-    NeuUserGruppe := aNeuUserGruppe;
 
     for i:=1 to 2 do
       if mheadercustom[i][length(mheadercustom[i])]=':' then
@@ -1655,6 +1652,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/04/15 21:44:46  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.31  2000/04/15 12:30:58  mk
   - Compilierfaehigkeit mit VP wieder hergestellt
 

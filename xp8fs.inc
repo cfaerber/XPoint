@@ -12,7 +12,7 @@
 
 function IsServer(box:string; var fstype:byte):boolean;
 var d     : DB;
-    flags : word;
+    flags : smallword;
 begin
   dbOpen(d,SystemFile,1);
   dbSeek(d,siName,ustr(box));
@@ -275,7 +275,7 @@ var d     : DB;
     fs    : string[BoxNameLen];
     fname : string[30];
     fpass : string[30];
-    w     : word;
+    w     : smallword;
     hd    : string[12];
     fn    : pathstr;
     t     : text;
@@ -534,6 +534,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/04/15 21:44:47  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.4  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

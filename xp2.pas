@@ -660,7 +660,7 @@ end;
 procedure test_defaultgruppen;
 var d     : DB;
 
-  procedure AppGruppe(name:string; limit:longint; halten:integer;
+  procedure AppGruppe(name:string; limit:longint; halten:integer16;
                       var grnr:longint);
   const b : byte = 1;
   var   s : string[8];
@@ -1103,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/04/15 21:44:46  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
   Revision 1.25  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
