@@ -2623,12 +2623,11 @@ o  Wartezeit fÅr empfangene Dateien von 1,5 auf 3 Minuten verdop-
 
 >>|
 3.2
-+  Anzeige des Nodestatus bei File Request und Nodelistensuche
++  Anzeige des Nodestatus bei File Requests
 +  Anzeige der Tarifzone im Mailer bei Crashs
 +  /Fido/Crash: Anruf bei mehreren markierten Nodes/Points
 +  Nodelist-Updates bei Sysopmode-Netcalls
 +  neue ISDN-Nodelistenflags werden erkannt
-+  mehr Platz fÅr die Anzeige der Flags
 *  Pointpa·wîrter mit mehr als 8 Zeichen (nur bei EMSI)
 *  /Wartung/Server-Wechsel berÅcksichtigt Fido-Adressen bei
    /Edit/Gruppen
@@ -2640,10 +2639,16 @@ o  Wartezeit fÅr empfangene Dateien von 1,5 auf 3 Minuten verdop-
 !  ZFIDO: Ausstieg bei Nachrichten mit sehr vielen VIA-Zeilen
           behoben
 !  Fehler bei Eingabe Ñhnlicher AKA-Adressen behoben
-!  Ausstieg bei /Fido/File Areas/Abbstellen in leerem Brett behoben
+!  Ausstieg bei /Fido/File_Areas/Abbstellen in leerem Brett behoben
 !  neu angelegte Bretter oder User bekamen als Serverbox immer die 
    Pollbox zugewiesen
-*  Nodeinformation auf ALT+N komplett Åberarbeitet
+*  Nodeinformation auf <Alt N> komplett Åberarbeitet
+     Platz fÅr mehr Flags
+     Nodestatus
+     Anzeige der E-Mail-Adresse (falls vorhanden)
++  bei der Anzeige der Ergebnisse des Nodelistbrowsers 
+   (Fido/Nodelisten/Durchsuchen) kann man Åber "Info" die Nodeinfo
+   (entspricht <Alt N>) anzeigen lassen
 <<|
-
+MO: Filesuche in FIDO Requestlisten mit bis zu f¸nf Suchbegriffen
 

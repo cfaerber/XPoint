@@ -240,13 +240,13 @@ Peter Mandrella, Dezember 1999
 >>|
 Mit viel Energie und Einsatz haben wir es geschafft, den komplizierten Quellcode
 von CrossPoint zu verstehen und vor allem zu bearbeiten. Unser Ziel war eine
-stabile Version, die vor allem Fehlerbereinigungen und Anpassungen an
-die aktuelle Netzwelt enthaelt. Portierungen auf andere Systeme ist geplant und
-wir haben bereits die Grundsteine gelegt, aber das hat eine niedrigere Prioritaet,
-da wir eben lieber mit etwas stabilem arbeiten als mit einem funktionsueberfrachteten
-Monstrum, damit treffen wir wohl die Meinung der meisten Anwender. In der 
-Hoffnung, dass wir gute Arbeit geleistet haben (und es war Arbeit), oeffnen wir
-jetzt den Vorhang.
+stabile Version, die grunds„tzlich nur Fehlerbereinigungen und Anpassungen an
+die aktuelle Netzwelt enthalten sollte (natrlich ist auch das eine oder andere
+neue Feature enthalten ;). Portierungen auf andere Systeme sind geplant, 
+doch diese haben eindeutig eine niedrigere Priorit„t, da wir eben lieber mit etwas 
+Stabilem arbeiten als mit einem funktionsberfrachteten Monstrum. Damit treffen 
+wir wohl die Meinung der meisten Anwender. In der Hoffnung, daá wir gute Arbeit 
+geleistet haben (und es war Arbeit), ”ffnen wir jetzt den Vorhang.
 
 Das OpenXP-Team
 <<|
@@ -365,12 +365,20 @@ im FidoNet:    CROSSPOINT.GER (fr CrossPoint selbst)
                CROSSTOOLS.GER (fr Zusatzprogramme)
 >>|
                CROSSPOINT.EXPERT.GER (fuer Fortgeschrittene)
+im MausNet:    maus.tausch.crosspoint
 <<|
-im MausNet:    MT.XP
 im Usenet:     de.comm.software.crosspoint
 
 Falls das betreffende Brett nicht bei Ihrem Server verfgbar ist, fragen Sie
 bitte Ihren Sysop - er kann das Brett fr Sie bestellen.
+
+>>|
+::Erg„nzen
+Es gibt noch einen ganz speziellen Service, der die Anzahl der immer wieder
+auftretenden Fragen reduzieren soll: Die FAQ-Server. Wer Zugang zu E-Mail-Diensten
+hat, kann ber die 
+::
+<<|
 
 
 >>|
@@ -378,12 +386,12 @@ bitte Ihren Sysop - er kann das Brett fr Sie bestellen.
 
 Das OpenXP-Team besteht aus:
 
-Markus Kaemmerer (Projekt-Koordination und Programmierung), Flups Baumann (Programmierung),
-Robert Boeck (Programmierung), Mathias Helm (Programmierung), Kai Henningsen, Oliver Hertel (Programmierung), 
-Martin Huckenbeck (Programmierung und Dokumentation), Torsten Jaehnigen (Programmierung), Matthias Leonhardt (Programmierung),
-Heiko Schoenfeld (Programmierung), Martin Wodrich (Programmierung), Martin Foster (englische Uebersetzung),
-Jochen Gehring (Beratung), Sebastian Mannke (Wunschliste), Maik Mueller (Mailingliste)
-Helmut Hullen (Bugliste), Christian Faulhammer (Dokumentation)
+Markus K„mmerer (Projekt-Koordination und Programmierung), Flups Baumann (Programmierung),
+Robert B”ck (Programmierung), Mathias Helm (Programmierung), Kai Henningsen, Oliver Hertel (Programmierung), 
+Martin Huckenbeck (Programmierung und Dokumentation), Torsten Jaehnigen (Programmierung), Michael Koppel,
+Matthias Leonhardt (Programmierung), Heiko Schoenfeld (Programmierung), Martin Wodrich (Programmierung), 
+Martin Foster (englische Uebersetzung), Jochen Gehring (Beratung), Sebastian Mannke (Wunschliste), 
+Maik Mueller (Mailingliste), Helmut Hullen (Bugliste), Christian Faulhammer (Dokumentation)
 <<|
 
 
@@ -408,7 +416,13 @@ und an die Zeitschrift c't dafr, daá es sie gibt.
 
 >>|
 Das Team dankt:
-Stefan Vinke, Ulf Hinze
+Natrlich Peter Mandrella fr die Freigabe des Quellcodes und fr das beste
+Pointprogramm der Welt. ;)
+Auáerdem Stefan Vinke, Ulf Hinze, Mark Peter Wege.
+
+Ganz besonders sind wir Bill Gates verbunden, da seine Betriebssysteme uns
+lange N„chte gequ„lt haben. Natrlich nur aus dem Grunde, weil wir eh zuviel
+Zeit haben, und deshalb Besch„ftigung brauchen.
 <<|
 
 
@@ -443,9 +457,6 @@ Software.
 
 Zun„chst ben”tigen Sie einen IBM-kompatiblen PC mit folgenden Eigenschaften:
 
->>|     
-     o  Coprozessor vorhanden
-<<|
      o  MS-DOS/PC-DOS ab Version 3.0 oder ein dazu kompatibles
         Betriebssystem
      o  mindestens 430K freier Hauptspeicher
@@ -474,6 +485,9 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      UPDATE.DOC       Hinweise fr den Umstieg auf neue XP-Versionen
      NEUES.DOC        Beschreibung neuer Features
      BESTELL.DOC      Bestellinformationen fr Zusatzprodukte
+>>|
+     ZPR.DOC          Dokumentation von ZPR.EXE
+<<|
      BEISPIEL.EXE     einige Beispiel-Briefschablonen (SFX-Archiv)
      SCRIPTS.EXE      Beispiel-Scriptdateien (SFX-Archiv, s.Kap.8.3)
      ZPR.EXE          Programm zum šberprfen und Reparieren von
@@ -487,16 +501,11 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
 Wenn Sie CrossPoint bereits installiert haben und auf eine neuere Version
 updaten m”chten, lesen Sie bitte UPDATE.DOC.
 
-::Noch aktuell?
-Wenn Sie CrossPoint im FidoNet einsetzen m”chten, ben”tigen Sie auáerdem
-das getrennt erh„ltliche XP-FIDO-Paket, fr den Einsatz im Usenet das getrennt
-erh„ltliche XP-UUCP-Paket und fr QWK-Boxen das getrennt erh„ltliche QWK-Paket.
-::
-
-Zus„tzlich ben”tigen Sie einen Packer und Entpacker (z.B. PKZip/PKUnzip),
-auáer im Usenet (Packer/Entpacker sind im UUCP-Paket enthalten). Genaueres
+>>|
+Sie ben”tigen einen Packer und Entpacker (z.B. PKZip/PKUnzip),
+auáer im Usenet (Packer/Entpacker sind bereits enthalten). Genaueres
 hierzu finden Sie in Kapitel 3.1.
-
+<<|
 
 Beim ersten Starten fragt XP folgende drei Eingaben ab:
 
@@ -516,15 +525,11 @@ dann lesen Sie nun zun„chst Anhang D durch. Haben Sie noch keine Erfahrung mit
 Points, dann lesen Sie bitte zun„chst das folgende Kapitel. Dort finden Sie
 alles Wissenswerte ber die Benutzung von Points.
 
-::Ist das noch aktuell?
 Wenn Sie es gar nicht mehr abwarten k”nnen, dann fahren Sie bei Kapitel 3.1
 fort. Dort steht, wie Sie Ihren Cross-Point zum Laufen bekommen. Fr die
-Verwendung im FidoNet lesen Sie bitte FIDO.DOC, das im getrennt erh„ltlichen
-Fido-Paket enthalten ist.
-::
->>| 
-Wenn Sie CrossPoint im Usenet nutzen wollen, lesen
-Sie bitte die Datei UUCP.DOC aus dem UUCP-Paket, fuer QWK entsprechend dasselbe. 
+>>|
+Verwendung im FidoNet lesen Sie bitte FIDO.DOC, fr UUCP UUCP.DOC und analog
+fr QWK.
 <<|
 
 
@@ -1732,7 +1737,7 @@ Pufferdateien neu aufbauen lassen (siehe Anhang H).
 
 ş Telefongebhren
 
->>I
+>>|
 Seit der Liberalisierung des Telefonmarktes ist es nahezu unm”glich, die Kosten
 korrekt zu ermitteln, es gibt aber ein Zusatzprogramm von Jan Neumann namens XPCBC,
 das auch bequeme Nutzung anderer Anbieter erlaubt, leider technisch bedingt nur
@@ -1787,6 +1792,7 @@ entfernen, falls Sie den Netztyp Fido nicht verwenden, oder den Menpunkt
 "Registrierung", wenn Sie bereits registriert sind.
 
 >>|
+::Und?
 Den Meneditor finden Sie als XPME*.* (diverse Packer) in vielen Boxen und 
 auf der Homepage (http://www.crosspoint.de).
 <<|
@@ -2425,7 +2431,7 @@ Jede Nachricht wird mit einer eindeutigen (meistens zumindest) "Identifikations-
 versehen, mit deren Hilfe auch die Bezugsverkettung realisiert wird. Es kommt
 ab und an vor, daá Schreiber auf eine ihrer alten Nachricht verweisen und
 einfach nur die ID nennen. Mit dieser Funktion (Nachricht/Suchen/MessageID und
-STRG+I im Lister) kann man gezielt nach diesen suchen.
+<Alt M> im Lister) kann man gezielt nach diesen suchen.
 <<|
 
 
@@ -3059,7 +3065,7 @@ Noch zwei Bemerkungen vorweg:
 Der Screen-Saver funktioniert zur Zeit (noch) nicht w„hrend der Wartezeiten
 zwischen mehreren Netcalls. Bei l„ngeren Wartezeiten empfiehlt sich also ein
 Abschalten des Monitors.
-::Hier war ich
+
 Treten w„hrend eines automatischen Vorgangs (Netcall, Reorg usw.) Fehler auf,
 dann wartet CrossPoint nur fr eine intern vorgegebene Zeit (i.d.R. einige
 Minuten) auf einen Tastendruck des Benutzers; danach f„hrt es automatisch fort.
@@ -3258,10 +3264,12 @@ wieder beendet und AUTOEXEC.BAT weiter ausgefhrt.
 
 ş Funktionstasten und Zusatz-Men
 
-CrossPoint besitzt zwar mit Archiv-Viewer, Lister, Editor und UUdecoder schon
-eine Reihe an ntzlichen "Programmen im Programm", aber es gibt natrlich noch
-unz„hlig viel mehr Dinge, die man mit Nachrichten anstellen k”nnte - z.B. auf
-Diskette kopieren oder auf Viren durchsuchen. Daher ist das Programm in dieser
+>>|
+CrossPoint besitzt zwar mit Archiv-Viewer, Lister, Editor und UUde- und -encoder
+<<|
+schon eine Reihe an ntzlichen "Programmen im Programm", aber es gibt natrlich 
+noch unz„hlig viel mehr Dinge, die man mit Nachrichten anstellen k”nnte - z.B. 
+auf Diskette kopieren oder auf Viren durchsuchen. Daher ist das Programm in dieser
 Beziehung sehr flexibel: Sie k”nnen mit /Config/Tasten die Funktionstasten mit
 beliebigen externen Programmen belegen, und mit /Config/Zusatz-Men das besagte
 Men um beliebige Programmaufrufe erweitern.
@@ -3567,7 +3575,11 @@ Verfahren Sie so fr jeden einzelnen Usernamen. Wahlweise k”nnen Sie auch
 den Usernamen weglassen, also nur die Box angeben - der Username wird dann
 jedesmal abgefragt, wenn Sie eine SETUSER-Taste verwenden. Sie k”nnen nun mit
 den entsprechenden Funktionstasten zwischen den Usernamen umschalten. Unter
-/Edit/Boxen k”nnen Sie kontrollieren, ob der Username korrekt gesetzt wurde.
+/Edit/Boxen k”nnen Sie kontrollieren, ob der Username korrekt gesetzt wurde, 
+>>|
+oder sie aktivieren unter Config/Anzeige/Diverses "Username anzeigen", um
+sich den aktuellen Usernamen rechts oben anzeigen zu lassen.
+<<|
 
 Vergessen Sie nicht, die Einstellungen mit /Config/Sichern zu speichern!
 
@@ -3586,7 +3598,7 @@ W„hlen Sie einfach im Sendefenster statt "Ja" die Option "Parken". Die Nachricht
 wird dann mit einer Originalempf„nger-Zeile (erste Nachrichtenzeile) versehen
 und im Brett /¯Unversandt abgelegt. Dort k”nnen Sie die Nachricht beliebig mit
 /Nachricht/ndern/Text bearbeiten und schlieálich mit /Nachricht/Weiterleiten/Erneut
-(Alt R) absenden - oder auch l”schen.
+(<Alt R>) absenden - oder auch l”schen.
 
 Die Originalempf„nger-Zeile sollten Sie normalerweise nicht „ndern; es sei denn,
 Sie entschlieáen sich, die Nachricht an einen anderen Empf„nger zu senden (z.B.
@@ -3710,9 +3722,9 @@ abgeschickt. Ansonsten erfolgt keine Codierung.
 In diesem Kapitel erfahren Sie, wie Sie mit CrossPoint Nachrichten regelm„áig
 verschicken lassen, wie Nachrichten zu einem bestimmten Datum automatisch
 versandt, und wie vorgefertigte Texte bequem wiederholt verschickt werden k”nnen.
- 0E0x0p0o0r0t0i0e0r0 sind das regelm„áige, automatische Bestellen von
+Typische Anwendungen sind das regelm„áige, automatische Bestellen von
 MAPS-Brettlisten und Fileserver-Dateilisten, oder das Versenden von FAQs
-(Frequent Asked (oder Answered?) Questions - Antworten auf h„ufig gestellte
+(Frequently Asked (oder Answered?) Questions - Antworten auf h„ufig gestellte
 Fragen) in bestimmten Brettern.
 
 Die Verwaltung der automatisch zu versendenden Nachrichten (kurz: AutoVersand-Nachrichten)
@@ -3840,6 +3852,14 @@ Betreff:    FILES
 Empf„nger:  FILESERVER@BOX.ZER
 bin„r:      N
 Wochentage: Sa
+
+>>|
+Fr Fido-Boxen gilt:
+Betreff:    FILES
+Empf„nger:  File Request@2:2452/125
+bin„r:      N
+Wochentage: Sa
+<<|
 
 
 ş Beispiel: regelm„áige Nachricht
@@ -4070,21 +4090,28 @@ signature" bezeichnet.
 PGP ist ein Public-Key-Verschlsselungsprogramm, das fr alle g„ngigen
 Betriebssysteme verfgbar ist. Es wurde 1991 von dem Amerikaner Philip
 Zimmermann entwickelt und erfreut sich seither bei DFš-Teilnehmern in der
-ganzen Welt st„ndig wachsender Beliebtheit. Bei einigen anderen Leuten
-ist das Programm allerdings weniger beliebt: In den USA gab es wegen des
-verwendeten RSA-Verfahrens Patentstreitigkeiten, und viele Innenminister
-betrachten PGP mit gr”átem Argwohn, weil damit erstmals ein praktisch nicht
-knackbares Verschlsselungssystem fr die breite ™ffentlichkeit zur Verfgung
+>>|
+ganzen Welt st„ndig wachsender Beliebtheit. Seit 5.0 vertreibt und entwickelt
+die Firma Network Associates PGP, es ist also ein mehr oder weniger kommerzielles
+Produkt geworden.
+<<|
+Bei einigen anderen Leuten ist das Programm allerdings weniger beliebt: In den USA 
+gab es wegen des verwendeten RSA-Verfahrens Patentstreitigkeiten, und viele 
+Innenminister betrachten PGP mit gr”átem Argwohn, weil damit erstmals ein praktisch 
+nicht knackbares Verschlsselungssystem fr die breite ™ffentlichkeit zur Verfgung
 steht.
 
 PGP ist fr nicht-gewerbliche Anwender freie Software (Freeware). Da es im
 Quelltext verfgbar ist, existieren inwischen mehrere parallel entwickelte
-Programmversionen, von denen z.Zt. zwei relevant sind: Die Version 2.6.2
-(oder nachfolgende) fr Nordamerika und die Version 2.6.2i (oder nachfolgende)
+>>|
+Programmversionen, von denen z.Zt. zwei relevant sind: Die Version 5.0
+(oder nachfolgende) fr Nordamerika und die Version 5.0i (oder nachfolgende)
 fr den Rest der Welt. Die amerikanische Version ist aus patentrechtlichen
 Grnden im Funktionsumfang eingeschr„nkt. Sie sollten also nach M”glichkeit
-die europ„ische Version verwenden, die Sie fr DOS in der CrossPoint-Supportbox
-oder in jeder anderen gutsortierten Mailbox finden.
+die europ„ische Version verwenden, die Sie fr DOS in jeder anderen gutsortierten 
+Mailbox finden. Obige Versionsangaben gelten nur fr DOS, fr Windows existieren
+weit umfangreichere Versionen, die sich aber (noch) nicht in CrossPoint einbinden lassen.
+<<|
 
 Leider gibt es bei der ganzen Sache aber auch einen Haken: Bevor Sie mit
 PGP arbeiten k”nnen, MšSSEN Sie die schwer verdauliche PGP-Dokumentation
@@ -4133,9 +4160,11 @@ Internet-Gateways laufen, funktionieren die Automatik-Funktionen bei ZCONNECT
 z.Zt. nicht sehr zuverl„ssig. Eine nderung an den Gateways k”nnte dieses
 Problem in Zukunft beheben.
 
-CrossPoint wurde mit PGP 2.6.i und 2.6.2i getestet. Es sollte auch mit neueren
-PGP-Versionen funktionieren, sofern an diesen nichts Wesentliches ge„ndert
-wurde.
+>>|
+CrossPoint wurde mit PGP 2.6.i, 2.6.2i und 5.0i getestet. Es sollte auch mit 
+neueren PGP-Versionen funktionieren, sofern an diesen nichts Wesentliches 
+ge„ndert wurde, wie dies mit der Version fnf geschehen ist.
+<<|
 
 
 ş Installation
@@ -4179,9 +4208,9 @@ gekennzeichnet.
 
 ş Nachrichten signieren
 
-Das Signieren von Nachrichten wird von XP z.Zt. nur bei ZCONNECT untersttzt;
-eine Erweiterung auf andere Netztypen ist geplant. Drcken Sie im Sendefenster
-"G" und aktivieren Sie den Signaturschalter.
+Das Signieren von Nachrichten wird von XP z.Zt. nur bei ZCONNECT und Fido 
+untersttzt; eine Erweiterung auf andere Netztypen ist geplant. Drcken Sie 
+im Sendefenster "G" und aktivieren Sie den Signaturschalter.
 
 Sie Signatur eingehender Nachrichten kann mit /Nachricht/PGP/Signatur_testen
 berprft werden. Dies ist natrlich nur m”glich, wenn Sie ber den ”ffentlichen
@@ -4207,7 +4236,10 @@ verwenden.
 
 Vorsicht: Je mehr Schlssel Ihr Schlsselring enth„lt, desto langsamer
 wird PGP! Sie sollten also nicht mehr Schlssel aufnehmen als notwendig
-und nicht ben”tigte Schlssel ggf. mit "pgp -kr <UserID>" wieder entfernen.
+>>|
+und nicht ben”tigte Schlssel ggf. mit "pgp -kr <UserID>" bzw. "pgpk -r <UserID>"
+(Version > 2.6.x) wieder entfernen.
+<<|
 
 Wenn Sie Ihren eigenen Schlssel einem anderen Point mitteilen oder ihn
 ver”ffentlichen m”chten (z.B. im Brett /T-NETZ/PGP/SCHLUESSEL), drcken
@@ -4216,8 +4248,11 @@ Sie im Sendefenster "G" und aktivieren Sie den entsprechenden Schalter
 nur ZCONNECT-Benutzer mit passender Software etwas anfangen k”nnen! Fr
 andere Benutzer und bei ”ffentlichen Nachrichten schreiben Sie den Schlssel
 besser in den Text der Nachricht. Dies geht z.Zt. nur manuell, indem Sie
-den Schlssel mit "pgp -kxa <UserID> <Dateiname>" extrahieren und dann im
-Editor mit Ctrl-K-R in Ihre Nachricht einlesen.
+>>|
+den Schlssel mit "pgp -kxa <UserID> <Dateiname>" bzw. "pgpk -xa <UserID> 
+<Dateiname>" extrahieren und dann im Editor mit Ctrl-K-R in Ihre Nachricht
+<<|
+einlesen.
 
 Beachten Sie, daá PGP-Schlssel recht umfangreich sein k”nnen. Sie sollten
 sie daher nicht wahllos bei allen Nachrichten mitschicken, um die Netze
@@ -4248,8 +4283,10 @@ Mit der ersten Funktion kann eine neue Adresse zu Ihrem Schssel hinzugefgt
 und mit der zweiten eine vorhandene Adresse gel”scht werden. Achten Sie dabei
 darauf, daá Sie nicht versehentlich den gesamten Schlssel l”schen (was leider
 mit der gleichen PGP-Funktion m”glich ist). Generell ist es keine schlechte
-Idee, fr solche F„lle eine Kopie Ihrer Schlsselringe (SECRING.PGP und
-PUBRING.PGP) an einem sicheren Ort aufzubewahren.
+>>|
+Idee, fr solche F„lle eine Kopie Ihrer Schlsselringe (SECRING.PGP/SKR und
+PUBRING.PGP/PKR) an einem sicheren Ort aufzubewahren.
+<<|
 
 
 ş Schluáwort
@@ -4259,15 +4296,18 @@ Ich geh”re selbst zu den eingangs erw„hnten Menschen, die konventionelle
 Verschlsselung in den meisten F„llen fr ausreichend halten. Trotzdem ist
 PGP ohne Zweifel ein wichtiges und auáergew”hnliches Programm. Gehen Sie
 verantwortungsbewuát damit um!
+>>|
+Fall Sie Ihre Nachrichten an den CrossPoint-Support (dev@openxp.de) mit 
+PGP verschlsseln m”chten, geben Sie einfach
 
-Fall Sie Ihre Nachrichten an den CrossPoint-Support mit PGP verschlsseln
-m”chten, geben Sie einfach
+      pgp -ka team.key (PGP < 5.0)
+      pgpk -a team.key (PGP > 5.0)
 
-      pgp -ka xp.ovr
-
-ein. Dadurch wird mein ”ffentlicher Schlssel in Ihren Schlsselring
-eingefgt.
-
+ein. Dadurch wird der ”ffentliche Team-Schlssel in Ihren Schlsselring
+eingefgt. Im Fido ist Verschlsselung zumeist eh nicht erlaubt und somit 
+entf„llt eine extra Ansprech-Adresse. Fragen Sie im Notfall in einem der 
+Support-Echos nach, viele Entwickler sind auch dort aktiv.
+<<|
 
 ş Technisches
 
@@ -4283,19 +4323,37 @@ verwendet, weil sie z.Zt. nicht ber Gateways hinweg funktioniert. Die
 ZCONNECT-Funktionen zum Widerrufen von Keys und zum automatischen Austauschen
 von Key-Signaturen sind z.Zt. nicht implementiert.
 
-CrossPoint verwendet im Einzelnen die folgenden PGP-Funktionen (ED =
-Eingabedatei, AD = Ausgabedatei, EmpfID = User-ID des Empf„ngers):
+CrossPoint verwendet im Einzelnen die folgenden PGP-Funktionen (ED =Eingabedatei, 
+AD = Ausgabedatei, EmpfID = User-ID des Empf„ngers):
+
+Version 2.6.x:
 
 Public Key extrahieren:       pgp -kx +armor=off <UserID> -o
                                                          PGP-KEY.BIN
 Nachricht verschlsseln:      pgp -ea * <EmpfID> <ED> -o <AD>
-Nextnachricht signieren:      pgp -sa * <EmpfID> <ED> -o <AD>
+Textnachricht signieren:      pgp -sa * <EmpfID> <ED> -o <AD>
 Nachricht verschl. + sign.:   pgp -esa * <EmpfID> <ED> -o <AD>
 Nachricht entschlsseln:      pgp <ED> -o <AD>
 Signatur berprfen:          pgp <ED> -o <AD>
 Schlssel in Ring einlesen:   pgp -ka <ED>
 eigenen Key editieren:        pgp -ke <UserID>
 User-ID l”schen               pgp -kr <UserID>
+
+>>|
+Version 5.x:
+
+Public Key extrahieren:       pgpk -x +armor=off <UserID> -o
+                                                         PGP-KEY.BIN
+Nachricht verschlsseln:      pgp e -r <EmpfID> -a <ED> -o <AD>
+Textnachricht signieren:      pgp s <EmpfID> -a <ED> -o <AD>
+Nachricht verschl. + sign.:   pgp e -r <EmpfID> -s -u <UserID> 
+                                                       <ED> -o <AD>
+Nachricht entschlsseln:      pgp v <ED> -o <AD>
+Signatur berprfen:          pgp v <ED> -o <AD>
+Schlssel in Ring einlesen:   pgpk -a <ED>
+eigenen Key editieren:        pgpk -e <UserID>
+User-ID l”schen               pgpk -r <UserID>
+<<|
 
 Fr "*" wird jeweils "-t" oder "+textmode=off" eingesetzt, je nachdem,
 ob es sich um eine Text- oder Bin„rnachricht handelt.
@@ -4313,7 +4371,7 @@ haben, und der Editor nie so universell wie QEdit sein. Es steht Ihnen frei,
 statt dessen zus„tzliche externe Programme einzubinden; fr die meisten Ansprche
 gengen aber auch die eingebauten Features.
 
-Ich pers”nlich benutze den eingebauten Lister, Editor und und Archiv-Viewer,
+Ich pers”nlich benutze den eingebauten Lister, Editor und Archiv-Viewer,
 jedoch ein zus„tzliches Terminalprogramm.
 
 
@@ -4338,7 +4396,10 @@ Weitere M”glichkeiten im Lister:
 
 <Ctrl D> druckt den angezeigten Text aus. Wahlweise k”nnen Sie auch mit "M" einen
 Markierbalken aktivieren und dann mit <Space> einzelne Zeilen, oder mit <F7> und
-<F8> Bl”cke von mehreren Zeilen markieren - <Ctrl D> druckt dann nur noch die
+>>|
+<F8> Bl”cke von mehreren Zeilen markieren (alternativ kann man wie mittlerweile 
+gewohnt <Shift Pfeiltasten> benutzen) - <Ctrl D> druckt dann nur noch die
+<<|
 markierten Zeilen. Alle n”tigen Drucker-Einstellungen finden Sie unter /Config/Drucker.
 
 "S" sucht nach einer anzugebenden Zeichenfolge. Wenn Sie ein kleines "s" verwenden,
@@ -4434,8 +4495,16 @@ absatz- und nicht zeilenweise zu arbeiten.
 
 Der XP-Editor wird mit WordStar-„hnlichen Kommandos bedient. Wer mit QEdit
 oder „hnlichen Editoren vertraut ist, wie Sie sie auch in den meisten anderen
-DOS-Pointprogrammen finden, sollte damit problemlos zurechtkommen. Einige
-Editor-Kommandos sind in einem Men zusammengefaát, das mit <F10> oder mit
+DOS-Pointprogrammen finden, sollte damit problemlos zurechtkommen. 
+>>|
+::SAA?
+Aber inzwischen ist dieser Standard veraltet und es hat sich der SAA-Standard
+(unter anderem in Windows) durchgesetzt, der doch sehr stark von WordStar abweicht. 
+Fr jeden Neuling ist es eine groáe Umstellung, deswegen sind die Tastaturkommandos 
+erweitert worden, um einen m”glichst reibungslosen Wechsel zu erm”glichen. Andererseits
+lassen sich Makros (s. Kapitel 5.4) fr *alle* Funktionen definieren.
+<<|
+Einige Editor-Kommandos sind in einem Men zusammengefaát, das mit <F10> oder mit
 der rechten Maustaste aktiviert wird.
 
 <F2> speichert den Text ab, <Esc> verl„át den Editor. <Shift F2> tut beides.
@@ -4447,6 +4516,36 @@ zu k”nnen, deren Breite gr”áer als der eingestellte rechte Rand ist, und die
 keine fortlaufenden Abs„tze besitzen. Befindet der Cursor sich innerhalb eines
 markierten Blockes (s.u.), so gelten <F3> und <F4> fr den gesamten Block.
 <Shift F3> und <Shift F4> schlieálich „ndern dem Umbruch im gesamten Text.
+
+
+>>|
+ş Editor-Einstellungen <Ctrl O><R>
+
+Aus dem Editor heraus kann der Dialog fr die Einstellungen per <Ctrl O><R>
+aufgerufen werden. Die einzelnen Punkte sind:
+                   
+  Rechter Rand      : In dieser Spalte wird der Text umgebrochen und
+                      eine neue Zeile angefangen
+
+  Absatzendezeichen : Abs„tze (mit <Enter> erzeugt) werden am Ende
+                      mit einem hier w„hlbaren Zeichen 
+                      gekennzeichnet (aber nur im Editor)
+
+  Autom. Einrcken  : Wenn Sie eine Zeile in Spalte fnf beginnen,
+                      landen Sie durch <Enter> direkt in der fnften
+                      Spalte der n„chsten Zeile
+
+  Persistente Bl”cke: Markierte Bl”cke bleiben beim Druck auf eine
+                      beliebige Taste erhalten, also ist auch ein 
+                      <Del> (alternativ dann halt <Ctrl K><Y>) hier 
+                      nutzlos
+
+  Quote-Reflow      : Wenn innerhalb des Zitates (Quote) einer
+                      Nachricht die <Enter>-Taste bet„tigt wird,
+                      fgt der Editor das Quote-Zeichen am Anfang
+                      der Zeile wieder ein. <Shift-Enter> bewirkt
+                      das jeweilige Gegenteil
+<<|
 
 
 ş Statuszeile
@@ -4463,27 +4562,36 @@ Zustand des Editors. Von links nach rechts werden angezeigt:
 
 ş Funktionstastenbersicht
 
-    <F1>        : Online-Hilfe
-    <F2>        : Text speichern
-    <F3>        : Absatzumbruch ausschalten
-    <F4>        : Absatzumbruch einschalten
-    <F5>        : Anzeige der Absatzendmarken umschalten
-    <F6>        : Tastenmakro-Auswahl
-    <F7>        : Blockanfang setzen
-    <F8>        : Blockende setzen
-    <F9>        : DOS-Shell
-    <F10>       : Men
+    <F1>                : Online-Hilfe
+    <F2>                : Text speichern
+    <F3>                : Absatzumbruch ausschalten
+    <F4>                : Absatzumbruch einschalten
+    <F5>                : Anzeige der Absatzendmarken umschalten
+    <F6>                : Tastenmakro-Auswahl
+    <F7>                : Blockanfang setzen
+    <F8>                : Blockende setzen
+    <F9>                : DOS-Shell
+    <F10>               : Men
 
-    <Shift F2>  : Text speichern und Editor verlassen
-    <Shift F3>  : Absatzumbruch im ganzen Text abschalten
-    <Shift F4>  : Absatzumbruch im ganzen Text einschalten
-    <Shift F5>  : Blockmarkierung ein/ausschalten (= <Ctrl K><H>)
+    <Shift F2>          : Text speichern und Editor verlassen
+    <Shift F3>          : Absatzumbruch im ganzen Text abschalten
+    <Shift F4>          : Absatzumbruch im ganzen Text einschalten
+    <Shift F5>          : Blockmarkierung ein/ausschalten 
+                          (= <Ctrl K><H>)
 
-    <Shift F7>  : Wort markieren  (= <Ctrl K><T>)
-    <Shift F8>  : Absatz markieren
-    <Shift F9>  : Zeile markieren
-    <Shift F10> : ganzen Text markieren
-
+    <Shift F7>          : Wort markieren  (= <Ctrl K><T>)
+    <Shift F8>          : Absatz markieren
+    <Shift F9>          : Zeile markieren
+    <Shift F10>         : ganzen Text markieren
+>>|
+    <Shift Pfeiltasten> : zeichweise markieren
+    <Shift End>         : vom Cursor bis Zeilenende markieren
+    <Shift Home>        : vom Cursor bis Zeilenanfang markieren
+    <Shift PgUp>        : eine Seite nach oben markieren
+    <Shift PgDown>      : eine Seite nach unten markieren
+    <Shift Enter>       : jeweils das gegenteilige von Quote-Reflow
+                          benutzen (s. o. "Editor-Einstellungen")
+<<|
 
 ş Funktionen zur Bearbeitung von Textbl”cken:
 
@@ -4493,8 +4601,14 @@ Die folgenden Funktionen beziehen sich immer auf den gerade markierten Block:
     <Ctrl K><C> : Block zur Cursorposition kopieren
     <Ctrl K><V> : Block zur Cursorposition verschieben
     <Ctrl K><Y> : Block l”schen
+>>|
+    <Del>       : Block l”schen
+<<|
     <Ctrl K><W> : Block in Datei schreiben
     <Ctrl K><R> : Block aus Datei lesen
+>>|
+    <Ctrl K><U> : Block aus Datei lesen und UUcodieren
+<<|
     <Ctrl K><O> : Block Rot13-codieren
     <Ctrl Q><B> : Cursor an Blockanfang bewegen
     <Ctrl Q><K> : Cursor an Blockende bewegen
@@ -4521,8 +4635,21 @@ noch folgende Funktionen zur Verfgung:
     <Ctrl Backspace> : Wort nach links l”schen
     <Ctrl Y>         : Zeile l”schen
     <Ctrl K><Y>      : Block l”schen
+>>|
+    <Del>            : Block l”schen
+<<|
     <Ctrl Q><Y>      : bis Absatzende l”schen
     <Alt Y>          : bis Textende l”schen (*)
+>>|
+
+  Nur in Verbindung mit der Windows Zwischenablage:
+  
+    <Shift Del>      : Block ausschneiden und ins Clipboard ver-
+                       schieben
+    <Shift Ins>      : Block an Cursorposition einfgen
+    <Ctrl Ins>       : Block ins Clipboard kopieren
+<<|
+
 
 (*) Bei einigen deutschen Tastaturtreibern sind <Alt Y> und <Alt Z> vertauscht.
 
@@ -4626,7 +4753,9 @@ AV ist Public Domain.
 ş Bild- und andere Viewer
 
 Neben Archiven kann XP auch den Inhalt anderer Dateien, wie z.B. GIF-Grafiken,
-automatisch anzeigen lassen. Dazu mssen bei /Config/Extern/Viewer entsprechende
+>>|
+automatisch anzeigen lassen. Dazu mssen bei /Edit/Viewer entsprechende
+<<|
 Anzeigeprogramme eingetragen werden.
 
 
@@ -4874,7 +5003,7 @@ Es soll keine vollst„ndigen Dokumentationen ("Polldocs") ersetzen, sondern
 Ihnen beim Verst„ndnis dessen helfen, was hinter den Kulissen abl„uft, und
 Ihnen erm”glichen, technische Diskussionen zu verstehen. Eine bessere
 Beschreibung der einzelnen Nachrichtenformate finden Sie in folgenden Dokumenten:
-
+:: šberarbeiten, falls n”tig
 Z-Netz-Netcall  per Anhalter durch das Z-Netz ("Hitchhiker"),
                 15.2.91, von Patrick Schaaf
 
@@ -4888,15 +5017,16 @@ RFC/UUCP        RFC 822 (Mail)
 
 MausTausch      Maustausch-Doku von Uwe Ohse, 1995
 
-MagicNET        MagicNet-Polldocs V1.8 vom 9.8.93
+>>|
+MagicNET        MagicNet-Polldocs V2.10b vom 9.8.93
+<<|
 
 FidoNet         FTS-0001, FTS-0004, FSC-0039 u.a.
 
 QWK             QWK-Spezifikation v1.1 vom 17.8.91
 
 GS-Mailbox      Nicht dokumentiert. T.S. fragen :-)
-
-Sie finden diese Texte u.a. in der CrossPoint-Supportbox.
+::
 
 
 Prinzipiell sind Nachrichtenpakete (Puffer) entweder leer, oder bestehen aus
@@ -4904,7 +5034,7 @@ einer beliebigen Anzahl aneinandergeh„ngter Nachrichten. Jede Nachricht besteht
 dabei aus einem Kopf - dem Header - und einem Nachrichtentext - dem Body.
 Der wesentliche Unterschied zwischen den einzelnen Formaten liegt im Aufbau
 des Kopfes; nur bei MausTausch ist alles ein wenig anders, aber dazu sp„ter.
-Den Kopf einer Nachricht k”nnen Sie brigens mit <Ctrl O> anzeigen lassen.
+Den Kopf einer Nachricht k”nnen Sie brigens mit "O" anzeigen lassen.
 
 
 ş Z-Netz-Netcallpuffer (alt)
@@ -4929,14 +5059,14 @@ Der Kopf einer Z-Netz-Nachricht besteht aus 8 festgelegten Zeilen:
                  ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
                  ³ Routpfad (BOX1!...!IHREBOX) ³
                  ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-                 ³ Message-ID  [1]             ³
+                 ³ MessageID  [1]              ³
                  ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
                  ³ Typ: T=Text, B=Bin„r        ³
                  ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
                  ³ Gr”áe in Bytes (ohne Kopf)  ³
                  ÔÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¾
 
-[1]  Die Message-ID ist eine eindeutige Kennung fr jede Nachricht. Sie
+[1]  Die MessageID ist eine eindeutige Kennung fr jede Nachricht. Sie
 dient zum Erkennen doppelter Nachrichten (Rekursionen).
 
 Die L„nge von Absender- und Empf„ngeradresse ist auf 40 Zeichen begrenzt.
@@ -5086,7 +5216,7 @@ Fido-Nachrichtenpakete bestehen aus einem starren Paketkopf von 58 Bytes,
 den einzelnen Nachrichten und zwei 0-Bytes. Die Nachrichten bestehen aus einem
 starren Header, einem flexiblen Header und einer ziemlich skurrilen Ansammlung
 von Steuer- und Textzeilen, beendet mit einem 0-Byte. Die Steuerzeilen -
-sogenannte "Klude-Lines" - beginnen jeweils mit einem Ctrl-A (ASCII 1), und
+sogenannte "Kludge-Lines" - beginnen jeweils mit einem Ctrl-A (ASCII 1), und
 k”nnen sowohl zu Beginn als auch am Ende der Nachricht stehen. Viele Fido-Pointprogramme
 oder Nachrichten-Lister zeigen diese Zeilen mit an; CrossPoint dagegen
 konvertiert sie in entsprechende ZConnect-Headerzeilen, die nur auf Wunsch
@@ -5097,12 +5227,6 @@ Bei Echomails (”ffentlichen Fido-Nachrichten) endet der Text mit einer
 "Origin"-Zeile, die die Adresse des Absenders enth„lt. Diese Zeile ist
 technisch notwendig, da die Absenderadresse im Nachrichtenkopf beim Weiterrouten
 der Nachricht ver„ndert wird. In PMs wird keine Origin-Zeile ben”tigt.
-
-Eine weitere herausragende Eigenschaft von Fido-Paketen ist, daá sie h„ufig
-fehlerhaft sind. Teilweise fehlen nur einzelne Steuerzeilen oder die Origin-Zeile,
-teilweise bestehen die Nachrichten auch zu 100% aus Datenmll. Schuld daran
-sind eine groáe Zahl von fehlerhaften Programmen und von unzuverl„ssig arbeitenden
-Systemen im FidoNet.
 
 Wenn Sie Fido-Pakete bearbeiten m”chten, besteht der einfachste Weg darin,
 sie mit ZFIDO (s. FIDO.DOC) ins ZConnect-Format und nachher wieder zurck ins
@@ -5172,38 +5296,50 @@ bitte der Online-Hilfe. Die Einstellungen von XPOINT.CFG sind im Config-Men
 „nderbar.
 
 Extrakttyp            /Nachricht/Extrakt/Als..  0=ohne Kopf,
-                        1=mit Kopf, 2=Puffer, 3=Quote
+                      1=mit Kopf, 2=Puffer, 3=Quote
 Brettanzeige          0=groá, 1=spezial, 2=klein
 ShowMsgDatum          Nachrichtendatum anzeigen
 Lister                [Pfad]Name der Listers; leer fr intern
 ListerKB              min. ben”tigter Speicherplatz fr ext. Lister
 ListVollbild          interner Lister: voller Bildschirm
+>>|
+ListEndCR             den Lister mit Enter auch wieder verlassen 
+                      (J/N)
+<<|
 ListWrap              interner Lister: Zeilenumbruch in Spalte 80
 Editor                [Pfad]Name des externen Editors
 EditorKB              min. ben”tigter Speicherplatz fr ext. Editor
 ExtEditor             Verwendung des externen Editors: 1=nur groáe
-                        Texte, 2=alle Nachrichten, 3=immer
+                      Texte, 2=alle Nachrichten, 3=immer
 AutoCPgDn             automatisches <PgDn> beim Start des Editors
+::?
 GifViewer             Viewer fr Bin„rnachrichten im GIF-Format
 LbmViewer             Viewer fr Bin„rnachrichten im IFF/ILBM-Format
 PcxViewer             Viewer fr Bin„rnachrichten im TIFF-Format
 Viewer1-Viewer4       Benutzerdefinierte Viewer
+::
 StdHaltezeit          Standard-Bretthaltezeit in Tagen; wird beim
-                        manuellen Anlegen neuer Bretter verwendet
+                      manuellen Anlegen neuer Bretter verwendet
 StdUserHaltezeit      Standard-Userhaltezeit in Tagen
 QuoteBreak            Umbruchspalte fr Quotes
 Quote                 Quote-String, eingeschlossen in ""
+>>|
+OtherQuoteChars       ":" und "|" als Quotezeichen erkennen? (J/N)
+AutoDatumsBezuege     Datumsbezge nach Netcall anpassen? (J/N)
+<<|
 ScreenLines           Anzahl Bildzeilen
 ScreenSaver           Sekunden bis zum Dunkelschalten des Bildes,
-                        0 = kein Screen-Saver
+                      0 = kein Screen-Saver
 SoftSaver             Bild 'weich' ausblenden
 BlackSaver            Bild schwarzschalten
 VESA-DPMS             Monitor in Stromsparmodus schalten
-Useraufnahme          Alle, Z-Netz oder Keine
+>>|
+Useraufnahme          Alle, Z-Netz oder PMs
+<<|
 MaxBinarySave         maximale Speichergr”áe fr Bin„rnachrichten
-                        in Bytes
+                      in Bytes
 MaxNetMsgs            max. Nachrichtengr”áe; Vorgabe beim Anlegen
-                        neuer Brettgruppen / Bytes
+                      neuer Brettgruppen / Bytes
 MaxNetPM              max. Gr”áe fr NetMails / Bytes
 MaxLocalPM            max. Gr”áe fr lokale PMs / Bytes
 ReHochN               Re^n verwenden
@@ -5217,7 +5353,7 @@ FileDir               File-Request-Verzeichnis
 ShowLogin             Loginbild bei Netcall anzeigen
 ArchivBretter         Archiv-Bretter
 ArchivL”schen         Nachrichten nach Archivierung (Alt-A) auf
-                        'l”schen' setzen
+                      'l”schen' setzen
 Shell25               bei DOS-Shell auf 25 Bildzeilen umschalten
 Edit25                fr externen Editor auf 25 Bildzeilen schalten
 MinMB                 minimaler freier Festplattenspeicher / MB
@@ -5228,7 +5364,7 @@ LPT                   Druckerschnittstelle (1=LPT1, 2=LPT2, 3=LPT3)
 DruckerInit           Drucker-Initialisierung vor jedem Ausdruck
 DruckerExit           Drucker-Initialisierung nach jedem Ausdruck
 Seitenlaenge          Zeilenabstand fr Seitenvorschbe, oder 0 fr
-                        keine
+                      keine
 FormFeed              Seitenvorschub-Code
 DruckRand             linker Rand in Druckzeichen
 XPoint-PM-ID          ## CrossPoint ##  in PMs
@@ -5237,23 +5373,23 @@ UserSlash             "/" vor PM-Brettern
 EditBackup            BAK's sofort l”schen
 KeepEdName            Name bei /Edit/Text beibehalten
 AbsenderAnzeige       Anzeige in Nachrichtenliste, 0=normal..6=Splt
-                        /klein (s. /Config/Anzeige/Nachrichten)
+                      /klein (s. /Config/Anzeige/Nachrichten)
 Environment           Gr”áe des Environment-Speichers bei DOS-Shell,
-                        oder 0 fr Default
+                      oder 0 fr Default
 ReadMode              0=Alles, 1=Ungelesen, 2=Neues
 AutoAdvance           weiterschalten bei Nachrichten/Brettern/Usern
 ScrollLock            ScrollLock verwenden
 HayesBefehle          J=Modem, N=Akkustikkoppler/ISDN/etc.
 GrossWandeln          Useradressen in eingehenden Puffern in Groá-
-                        schreibung wandeln
+                      schreibung wandeln
 EigeneMsgsHalten      Selbstgeschriebene Nachrichten auf 'halten'
 ShowUsername          Username bei Stammbox in 2. Bildzeile anzeigen
 SaveUnversandt        Bei <Esc> im Sendefenster Nachricht im Brett
-                        /¯Unversandt sichern
+                      /¯Unversandt sichern
 EmpfangsBestaetigung  autom. Empfangsbest„tigungen versenden
 12:00                 Erstellungszeit 00:00 bei allen ausgehenden
-                        Nachrichten (war in einer frheren Version
-                        mal 12:00...)
+                      Nachrichten (war in einer frheren Version
+                      mal 12:00...)
 Trennzeichen          Trennzeichen fr Bretter-Trennzeilen
 AutoArchiv            automatische PM-Archivierung
 NeueBrEnde            neue Bretter am Listenende anh„ngen
@@ -5284,16 +5420,27 @@ ListHighlight         *Hervorhebungen* im Lister
 ListFixedHead         feststehender Nachrichtenkopf im Lister
 MaggiVerkettung       Nachrichtenverkettung beim Netztyp MagicNET
 Header                Einstellungen von /Config/Anzeige/Kopf
+>>|
+HeaderCustom1-2       benutzerdefinierte Headerzeilen
+<<|
 Timezone              Zeitzone (/Config/Optionen/Nachrichten)
 SaveType              Art des Sicherns von Konfigurations-nderungen
                       0=automatisch, 1=manuell, 2=nach Rckfrage
 MaxCrosspost          Obergrenze fr eingehende Crosspostings
 Waehrung              W„hrung fr Gebhrenabsch„tzung
 GebCfos               cFos-Gebhrenbernahme
+>>|
+::Erg„nzen
+GebNoconn
+::
+<<|
 Feiertage             deutsche Feiertage bei Telefonkostenberech-
                       nung bercksichtigen
 Shell-Showpar         Parameterzeile bei DOS-Aufruf anzeigen
 Shell-Waitkey         Nach DOS-Aufruf auf Tastendruck wareten
+>>|
+AskReplyTo            Bei Header "Antwort-An" nachfragen (J/N)
+<<|
 UsePGP                automatische PGP-Codierung/Decodierung
 PGP-Batchmode         PGP-Schalter "+batchmode"
 PGP-UserID            eigene User-ID
@@ -5302,20 +5449,37 @@ PGP-AutoAM            Schlssel aus AMs automatisch einlesen
 PGP-WaitKey           nach PGP-Aufruf auf Tastendruck warten
 PGP-Logfile           Logfile fr automatische PGP-Aktionen
 PGP-SignAll           alle Nachrichten PGP-signieren
+>>|
+PGP-Version           die verwendete PGP-Version; n”tig, um
+                      die Syntax anpassen zu k”nnen
+<<|
 MessageBeep           Tonsignal Listenanfang/-ende
 NetcallUnmark         Nachrichtenmarkierungen nach Netcall aufheben
 DefaultNokop          ZCONNECT: NOKOP per Default mitsenden
 Blindensupport        zus„tzliche Untersttzung fr blinde User
 QuoteColors           mehrfarbige Quotes
 TrennKommentar        Art der Trennzeilen-Kommentar-Anzeige
+>>|
+TerminalBIOS          im Terminal die Bildschirmausgabe ber das
+                      BIOS direkt laufen lassen (J/N)
+Tonsignal             zus„tzliches Tonsignal, nach einer Re-
+                      organisation z.B. (J/N)
+Brettkommentar        Kommentare aus der Brettliste ber-
+                      nehmen (J/N)
+<<|
 
 Einstellungen, die nur das Z-Netz betreffen:
 
 Kleinschreibung       Kleinschreibung bei Useradressen zul„ssig
 InterruptLogin        Login mit ^X abbrechen
 ZC-ISO                ISO-Zeichensatz verwenden
-Post                  Postanschrift (/Config/Optionen/Nachrichten)
-Telefon               Telefonnummern (/C/Optionen/Nachrichten)
+>>|
+Post                  Postanschrift (/Config/Optionen/Adressen)
+Telefon               Telefonnummern (/C/Optionen/Adressen)
+Homepage              eventuelle Internet-Homepage (s. "Post")
+AdrPMonly             obige drei Header nur in PMs (J/N)
+NewUserIBM            Umlaute im Fido bei neuen Usern? (J/N)
+<<|
 pmCrypt               pmCrypt-Codierer-Einstellungen
 
 Einstellungen, die nur MausTausch betreffen:
@@ -5324,13 +5488,22 @@ MausLimit             OUTFILE-Gr”áe begrenzen
 LeseBestaetigung      fr jede gelesene PM eine Best„tigung an den
                       Absender schicken
 MausStatus            Statusmeldungen anfordern
+>>|
+BinMIME               Attachments als MIME (J/N)
+<<|
 
 Einstellungen, die nur RFC/UUCP betreffen:
 
 NewsMIME              MIME in News verwenden
 MIMEqp                MIME: quoted-printable verwenden
 RFC1522               MIME: Sonderzeichen in Headeern codieren
+>>|
+NoArchive             den Header X-NoArchive setzen (J/N)
+<<|
 NewsgroupAnzeige      Newsgroups in RFC-Schreibweise darstellen
+>>|
+BinMultipart          Attachments als MIME (J/N)
+<<|
 UShrinkHeader         berflssige Headerzeilen entfernen
 
 Einstellungen, die nur das FidoNet betreffen:
@@ -5362,6 +5535,7 @@ COMx-RING             Klingelsignal-Erkennung
 COMx-16550            FIFO des 16550A verwenden
 COMx-Triggerlevel     FIFO-Triggerlevel
 COMx-Waehlsperre      Telekomgedenkminute
+::Unter Umst„nden noch ISDN einfgen
 
 Einstellungen fr /XPoint/Terminal:
 
@@ -5383,17 +5557,17 @@ werden, oder z.Zt. nicht „nderbare Einstellungen.
 
 DefaultBox            Stammbox, muá groágeschrieben sein!
 DefaultFidoBox        Fido-Stammbox (primary Bossnode)
-EinhProZeile          Gebhreneinheiten/Zeile bei Gebhrenstatistik
+BetragProZeile        Gebhreneinheiten/Zeile bei Gebhrenstatistik
 EmpfBestKennung       Anforderung von Empfangsbest„tigungen, z.Zt ##
 ShrinkNodelist        Zonen/Regionen, auf die die Nodeliste einge-
-                        schr„nkt werden soll
+                      schr„nkt werden soll
 Nstat-MinFlags        Minimale Anzahl fr das Anzeigen von Flags in
-                        der Nodelisten-Statistik
+                      der Nodelisten-Statistik
 Nstat-AnzahlNetze     Anzahl der gr”áten Netze, die in der NL-Sta-
-                        tistik angezeigt werden sollen
+                      tistik angezeigt werden sollen
 CountDown             "Down"-Nodes bei der NL-Statistik mitz„hlen
 FileSuche             Suchbegriff von /Fido/Fileliste/Suchen
-TL-NetcallAlle        Schalter bei /Netcall/Letze_Anrufe
+TL-NetcallAlle        Schalter bei /Netcall/Letze_Anrufe (J/N)
 
 
 ş XPOINT.COL: Farb-Konfiguration
@@ -5430,10 +5604,10 @@ Sel1         Auswahllisten #1  (Brettmanager-Befehle etc.)
 Sel2         Auswahllisten #2  (/Edit/Boxen etc.)
 Buttons      Buttons
 Utility      Kalender
-Hilfe        Hilfsseiten
+Hilfe        Hilfeseiten
 Lister       interner Lister
-Quotes       interner Lister und Editor, Quoteebene 2-9
 Editor       interner Editor
+Quotes       interner Lister und Editor, Quoteebene 2-9
 ArcViewer    Statuszeile im Archiv-Viewer
 Maps         bestellte Bretter in Brettliste
 Mailer       Fido-Mailer und UUCP-uucico
@@ -5458,12 +5632,18 @@ Boxname        Netzname der Box
 Pointname      Pointname (Systemname)
 Username       zugeh”riger Username
 Domain         Domainname
+>>|
+::?
+FQDN
+::
+<<|
 Passwort       Point-Paáwort
 Telefon        Nummer der Box
 ZerbID         Zerberus- oder MagicNET-Programm-ID
 Upload         Upload-Befehl
 Download       Download-Befehl
 ProtokollTyp   MausNet: Kennbuchstabe des Up/Downloadprotokolls
+ZMOptions      zus„tzliche Zmodem-Optionen
 UpArc          Upload-Packer
 DownArc        Download-Packer
 UpArcExt       Dateierweiterung der gesendeten Datei
@@ -5499,6 +5679,7 @@ Eingangsfilter Programm, das vor jedem Puffereinlesen aufgerufen
                wird
 Ausgangsfilter wird vor dem Pufferexport aufgerufen
 SysopNetcall   Netzanrufbericht im Sysop-Mode
+SysopPacken    Ausgabepuffer im Sysop-Mode packen (J/N)
 JanusPlus      ZCONNECT: Janus+ verwenden
 DelQWK         QWK-Pakete nach Einlesen l”schen
 
@@ -5507,7 +5688,7 @@ Einstellungen, die nur das FidoNet betreffen:
 FidoFakenet    Pointnetz-Nummer
 Fido4Dadr      4D-Adressen verwenden
 TosScan        Boss arbeitet mit TosScan oder „hnlich gest”rter
-                 Software
+               Software
 LocalINTL      INTL bei lokalen Nachrichten erzeugen (fr d'Bridge)
 FidoArea+      "+" bei Area-Bestellungen
 AreaBetreff    Areafix-Befehle im Betreff bergeben
@@ -5515,23 +5696,21 @@ AreaPasswort   Paáwort fr Area-Manager
 FileScanner    Filescan-Name
 FilescanPW     Filescan-Paáwort
 EMSI           EMSI-Protokoll verwenden (J/N)
-GetTime        Uhrzeit von angerufener Box bernehmen
-NotSEmpty      leere Nachrichtenpakete schicken
-SysopPacken    Ausgabepuffer im Sysop-Mode packen
+GetTime        Uhrzeit von angerufener Box bernehmen (J/N)
+NotSEmpty      leere Nachrichtenpakete schicken (J/N)
 AKAs           AKA-Adressen
 SendAKAs       AKAs, fr die Pakete mitgeschickt werden sollen
 ExtFidoNames   erweiterte Paketdateinamen
-ZMOptions      zus„tzliche Zmodem-Optionen
 
 Einstellungen, die nur UUCP betreffen:
 
-UU-VarPacketSize    variable UUCP-Paketgr”áe
-UU-ForcePacketSize  Ausgangspaketgr”áe vorgeben
-UU-SizeNegotiation  Paketgr”áe bermitteln
+UU-VarPacketSize    variable UUCP-Paketgr”áe (J/N)
+UU-ForcePacketSize  Ausgangspaketgr”áe vorgeben (J/N)
+UU-SizeNegotiation  Paketgr”áe bermitteln (J/N)
 UU-protocols        aktivierte UUCP-Protokolle
 Brettmanagertyp     Typ des Brettmanagers
-Brettmanagerdomain  FQDN bei Brettmanager-Anfragen
-7e1Login            7-Bit-Login
+Brettmanagerdomain  FQDN bei Brettmanager-Anfragen (J/N)
+7e1Login            7-Bit-Login (J/N)
 
 
 
@@ -5571,8 +5750,8 @@ sind m”glich:
 <Ins>, <Del>         einfgen/l”schen
 <Ctrl PrtSc>         Ctrl-PrintScreen / Ctrl-Druck
 
-Folgende Sondertasten sind identisch mit Ctrl-Steuer-
-codes und als solche einzugeben:
+Folgende Sondertasten sind identisch mit Ctrl-Steuercodes und als 
+solche einzugeben:
 
 <Esc>        =  ^[
 <Tab>        =  ^I
@@ -5661,7 +5840,7 @@ Spalten   Inhalt
 
 ş DUPES.LOG
 
-Diese Datei wird bei /Wartung/DupeKill verwendet und enth„lt eine Liste aller
+Diese Datei wird bei /Wartung/Dupes_l”schen verwendet und enth„lt eine Liste aller
 gefundenen (und auf "l”schen" gesetzten) Dupes, also mehrfach vorhandener
 Nachrichten. Jeder DupeKill-Durchlauf erzeugt eine Zeile mit dem Inhalt
 "DupeKill gestartet am ... um ...", gefolgt von der Liste der Dupes und einer
@@ -5712,7 +5891,7 @@ siehe MausTausch-Doku).
 Die INF-Dateien enthalten Informationen ber automatisch zu bestellende
 Infofiles. So bedeutet z.B.
 
-          IGK 7 14.05.1992 15355
+          IGK 7 14.05.2000 15355
 
 daá die kurze Gruppenliste im Abstand von mindestens 7 Tagen bestellt werden
 soll, daá sie zuletzt am 14.05. bestellt wurde, und daá sie die CRC-Prfsumme
@@ -6021,7 +6200,7 @@ Hexadezimalziffern fr Netz- und Nodenummer erzeugt. Diese PP-Dateien drfen
 in Dateien mit den Namen <Boxname>.EPP (EPP = erweitertes Pollpaket) bereitgestellt
 werden. XP verbindet dann unmittelbar vor dem Netcall PP- und EPP-Datei und
 trennt sie nach dem Netcall wieder (die Trennung ist aus technischen Grnden
-n”tig ist, auf die ich hier nicht n„her eingehen m”chte).
+n”tig, auf die ich hier nicht n„her eingehen m”chte).
 
 Bitte gehen Sie mit diesem Feature „uáerst vorsichtig um! Verwenden Sie es
 auf keinen Fall, um eingehende Nachrichten von einer Box direkt an eine andere
@@ -6070,12 +6249,11 @@ entscheiden meist zu Beginn der Verbindung anhand einer speziellen "Eingabe"
 arbeitet.
 
 Ganz anders sieht es bei UUCP-Systemen aus (n„here Informationen dazu finden
-Sie in UUCP.DOC, das im getrennt erh„ltlichen UUCP-Paket enthalten ist), bei
-denen das Loginverfahren berhaupt nicht festgelegt ist. Meist geben diese
-Systeme "Login:" und "Password:" aus und erwarten an dieser Stelle die Eingabe
-der entsprechenden Daten, aber es kann durchaus vorkommen, daá ein UUCP-Rechner
-sich dem Benutzer v”llig anders pr„sentiert und z.B. zun„chst das Drcken von
-<Return> oder einer anderen Taste erwartet.
+Sie in UUCP.DOC), bei denen das Loginverfahren berhaupt nicht festgelegt ist. 
+Meist geben diese Systeme "Login:" und "Password:" aus und erwarten an dieser 
+Stelle die Eingabe der entsprechenden Daten, aber es kann durchaus vorkommen, 
+daá ein UUCP-Rechner sich dem Benutzer v”llig anders pr„sentiert und z.B. 
+zun„chst das Drcken von <Return> oder einer anderen Taste erwartet.
 
 Die Login-Scriptsprache von CrossPoint erm”glicht es, den Login-Vorgang auf
 einfache und effiziente Weise an einzelne Systeme anzupassen. Dazu k”nnen Sie
@@ -6683,6 +6861,12 @@ M”gliche Optionen sind:
    /w    Gibt nicht ben”tigte Rechenzeit unter MS-Windows, OS/2 oder
          „hnlichen Multitasking-Umgebungen frei. Dazu werden die
          Uhr, der ScreenSaver und die /maus-Emulation abgeschaltet.
+>>|
+         Unter Windows braucht dieser Paramter nicht unbedingt ange-
+         geben zu werden, da XP die Rechenzeit dort automatisch frei
+         gibt. mit "/w0" kann diese Funktion aber generell abge-
+         schaltet werden.
+<<|
 
    /z:x  Stellt x Bildzeilen ein. X muá einer der bei /Config/Anzei-
          ge/Zeilen angezeigten Zeilen-Werte sein.
@@ -6801,7 +6985,7 @@ CrossPoint gibt bei Beendigung folgende ERRORLEVEL-Werte zurck:
 10-255: Diese Errorlevel-Werte k”nnen mit der QUIT-Option in Timing-
         Listen erzeugt werden und dadurch von XP aus externe Pro-
         gramme steuern. Siehe auch Kap. 5.3 (automatische Netcalls).
-        Im Prinzip sind auch Werte von 0-9 m”glich, aber wie gesagt:
+        Im Prinzip sind auch Werte von 2-9 m”glich, aber wie gesagt:
         Besser nicht verwenden, da reserviert fr zuknftige Erwei-
         terungen.
 
@@ -6816,7 +7000,6 @@ Folgende Dateien werden von CrossPoint verwendet und im XP-Verzeichnis abgelegt:
   XP.EXE,XP.OVR  das Programm selbst
   XP.HLP         die Online-Hilfe
   XP-D.RES       deutsches Sprachmodul
-  *.DOC          Dokumentationen aller Art
   XPICONS.DLL    Icons fr MS-Windows
   XPOINT.CFG     Konfigurationsdatei (/Config-Men)
   XPOINT2.CFG    Konfigurationsdatei (interne Einstellungen)
@@ -6928,6 +7111,9 @@ Folgende Unterverzeichnisse legt CrossPoint automatisch an:
                  ein- und ausgehende Nachrichtenpakete (UUCP)
   SPOOL\JANUS\   eingehende Dateien bei ZCONNECT/JANUS
   BAD\           fehlerhafte bzw. nicht eingelesen Nachrichtenpakete
+>>|
+  DOC\           die Dokumentation zu CrossPoint
+<<|
 
 Das FILES-Verzeichnis k”nnen Sie unter /Config/Pfade „ndern. Im FIDO-Verzeichnis
 legt CrossPoint folgende Dateien ab:
@@ -6940,6 +7126,12 @@ legt CrossPoint folgende Dateien ab:
   *.FL           Fido-Filelisten
 
 sowie alle weiteren Node- und Pointlisten.
+
+>>|
+Im DOC-Verzeichnis landen natrlich:
+
+  *.DOC          Dokumentationen aller Art
+<<|
 
 Achtung! Modifizieren Sie auf keinen Fall irgendwelche Pufferdateien
 (MPUFFER.*, *.PP oder *.CP)! Ein einziges falsches Byte kann den gesamten
@@ -6965,21 +7157,7 @@ C.  Zusatzprogramme
 
 ş ZPR.EXE
 
-ZPR berprft ZCONNECT-Pufferdateien auf Korrektheit. Auáerdem kann ZPR
-defekte Pufferdateien reparieren. Das Programm ist fr den Fall gedacht,
-daá Sie von Ihrem Server fehlerhafte Nachrichtenpakete bekommen, die XP
-nicht einlesen kann (diese Pakete legt XP im Unterverzeichnis BAD ab),
-oder daá Ihre CrossPoint-Nachrichtendatenbank schwer besch„digt wurde und
-repariert werden muá (siehe Anhang H).
-
-Die Aufrufsyntax ist
-
-   ZPR <Dateiname>        zum šberprfen von Pufferdateien
-   ZPR -r <Dateiname>     zum Reparieren von Pufferdateien
-
-Neben ZPR.EXE gibt es noch die OS/2-Version ZPR2.EXE und eine ausfhrlichere
-Dokumentation (ZPR.DOC). Diese Dateien sind im vollst„ndigen ZPR-Paket enthalten,
-das Sie in der XP-Supportbox oder in jeder anderen gutsortierten Mailbox finden.
+s. ZPR.DOC
 
 
 ş PMCONV.EXE
@@ -7020,8 +7198,7 @@ aufrufen.
 
 Erzeugte ZConnect-Puffer k”nnen mit /XPoint/Import/Puffer eingelesen werden.
 N„heres ber den Aufbau der Pufferdateien finden Sie in Kapitel 7.1. Das
-Konvertieren von Fido-Paketen ist in FIDO.DOC beschrieben, das im getrennt
-erh„ltlichen Fido-Paket enthalten ist.
+Konvertieren von Fido-Paketen ist in FIDO.DOC beschrieben
 
 
 (Seven = Seven-Netz, Magic = MagicNET, Pro = ProNet, Z = ZConnect, Maus =
@@ -7059,29 +7236,28 @@ als Protokoll eingetragen ist. Mit ZCONFIG.EXE k”nnen die Farben und die Sprache
 von PD-Zmodem eingestellt werden.
 
 Eine ausfhrliche Dokumentation zu PD-Zmodem ist im PD-Zmodem-Paket enthalten,
-das Sie z.B. in der CrossPoint-Supportbox finden.
+das Sie in vielen Boxen finden.
 
 
-ş ZFIDO.EXE, YUP2PKT.EXE, NDIFF.EXE (im Fido-Paket enthalten)
+ş ZFIDO.EXE, YUP2PKT.EXE, NDIFF.EXE
 
-Eine Beschreibung dieser Programme finden Sie in FIDO.DOC, das ebenfalls im
-Fido-Paket enthalten ist.
+Eine Beschreibung dieser Programme finden Sie in FIDO.DOC.
 
 
 ş XPME.EXE
 
+::Na?
 Dies ist ein getrennt erh„ltlicher Meneditor, mit dem einzelne Menpunkte
 und Untermens aus dem CrossPoint-Men entfernt werden k”nnen (s. Kap. 2.4).
-ÿ
+
+
 
 ş empfehlenswerte Programme
 
-Die folgenden Programme haben sich bei mir bew„hrt und k”nnen fr den Einsatz
+>>|
+Die folgenden Programme haben sich bei uns (Team) bew„hrt und k”nnen fr den Einsatz
+<<|
 mit CrossPoint empfohlen werden:
-
-  o  der ShareWare-Editor QEdit zum Bearbeiten von Texten, die zu
-     groá fr den internen Editor sind (s. auch /Config/Extern
-     /Editor).
 
   o  das RSA-Codierprogramm PGP von Philip Zimmermann (s. Kap. 5.12)
 
@@ -7090,6 +7266,10 @@ mit CrossPoint empfohlen werden:
 
   o  der Lister LIST von Vernon D. Buerg zum Anzeigen groáer Nach-
      richten, falls nicht gengend EMS/XMS-Speicher vorhanden ist
+
+  o  die Filter XP-Filter und CrossSecretary, die ganz gut bei einer
+     Mailschwemme helfen
+::
 
 
 
@@ -7131,7 +7311,7 @@ Mit /XPoint/Import/Yuppie-Nachrichten k”nnen Sie eine komplette Yuppie-Nachricht
 konvertieren und einlesen lassen. Vor dem Import sollten Sie einmal den
 Yuppie-Menpunkt "Renumerieren" im Men "Poll" ausfhren, um die Datenbank
 zu packen.
-
+:;
 šberprfen Sie als N„chstes, ob bei /Edit/Boxen/Edit/Fido die gewnschte
 Bretthierarchie eingestellt ist, in die die Fido-Gruppen eingeordnet werden
 sollen. Beachten Sie auáerdem, daá XP alle Nachrichten automatisch mit der
@@ -7523,7 +7703,7 @@ G.  Fragen und Antworten
 
 Es gibt einige Fragen, die von CrossPoint-Usern sehr h„ufig gestellt werden.
 Damit ich diese nicht jede Woche neu beantworten muá, habe ich sie in einer
-kleinen Frage+Antwort-Liste zusammengefaát (einem "FAQ" (frequent asked
+kleinen Frage+Antwort-Liste zusammengefaát (einem "FAQ" (frequently asked
 questions), wie es im Fachchinesisch genannt wird).
 
 
@@ -7935,21 +8115,6 @@ Ein bei Config/Modem/... eingetragener Modem-Exit-Befehl wird bei Fido-Netcalls
 oder bei abgebrochenen Netcalls nicht ausgefhrt.
 
 
-ş Verkettung via Message-ID
-
-Die Verkettung von Nachrichten wird durch Vergleich von Message-IDs und
-Bezugs-IDs hergestellt. Dabei unterscheidet CrossPoint beim rechten Teil der
-IDs (ab dem "@") f„lschlicherweise zwischen Groá- und Kleinschreibung.
-Da es einzelne Internet-Systeme gibt, die die Schreibweise des rechten Teils
-der ID „ndern, kann es vorkommen, daá Nachrichten nicht korrekt verkettet
-werden. Dieses Problem wird in der n„chsten Version behoben.
-
-
-ş Betreffsuche
-
-Bei der Suche nach Betreffs werden nur die ersten 40 Zeichen bercksichtigt.
-
-
 
 
 K.  Versionsgeschichte
@@ -8233,7 +8398,7 @@ o  diverse Kleinigkeiten korrigiert
 *  es werden keine neuen Bretter mehr durch Crosspostings angelegt
 !  kleiner Bug im Lister (berflssige Leerzeilen) beseitigt
 !  Abschaltung des Lister-Umbruchs unter /C/X/Lister funktioniert
-   jetzt wieder; Links-/Rechtsbl„ttern mit Ctrl+Cursortasten
+   jetzt wieder; Links-/Rechtsbl„ttern mit <Ctrl Cursortasten>
 +  Makros in Signaturschablonen
 +  Signatur-Wechsler (s. Kap. 3.6)
 *  MagicNET: Fehlertoleranz beim Verarbeiten von MagicNet-Puffern
@@ -8461,8 +8626,6 @@ o  diverse Kleinigkeiten korrigiert
 +    /C/O/N/Verschiedenes: Binaermails als Attachments
 !  MausTausch: 5000-Zeilen-Beschr„nkung aufgehoben (Voraussetzung:
    gengend freier XMS-Speicher)
-#  von nun an werden nur noch Rechner mit internem Coprozessor 
-   untersttzt, dadurch reduziert sich die EXE-Groesse
 !  viele, viele kleine Bugs beseitigt, die nur in unwahrscheinlichen 
    F„llen auftreten konnten
 !  zwei Fehler beseitigt, die das Terminal ins Nirvana schickten
@@ -8499,27 +8662,60 @@ o  diverse Kleinigkeiten korrigiert
    der Enter-Taste zu verlassen
 +  auch Mails (nicht nur News) k”nnen jetzt auf Crosspostings per 
    Menpunkt unter Config/Optionen/Nachrichten gefiltert werden
-!  MIME-Mails mit mehr als 32.000 Zeilen machten Probleme
 !  Fehler in der Wochentagsberechnung behoben
 #  Volltextsuche optimiert und beschleunigt
-+  Nachricht/Suchen/MessageID 
++  Nachricht/Suchen/MessageID
 +  Integration der Suchfunktion in den Lister
+     <Alt M> MessageID
+     <Alt V> Volltext
+     <Alt B> Betreff
+     <Alt U> User
 +  CAPI-Support unter Edit/Boxen/Modem/Schnittstelle
 +  Config/Modem/ISDN
 !  XPoint/Statistik/Speicher fhrte bei zuviel Speicher zu Fehlern
-!  Das mehrfache Starten von XP hatte unter Umst„nden einen Total-
-   absturz zur Folge
 +  die Quotefunktion unter Config/Optionen/Allgemeines wurde noch um
    das Zeichen & erweitert
-+  Im Editor kann man mit STRG/CTRL+K+U eine Datei einfgen,
++  Im Editor kann man mit <Ctrl K><U> eine Datei einfgen,
    die direkt UUencodet wird
 !  viele Bugs (>10) im Lister entfernt
 !  berschreiben des Speichers in der Suchenfunktion verhindert
-+  der Inhalt der Windows Zwischenablage kann jetzt mit STRG/CTRL+V und 
-   STRG/CTRL+Einfg/Ins in jede Eingabemaske eingefgt werden
++  der Inhalt der Windows Zwischenablage kann jetzt mit <Ctrl V> und 
+   <Ctrl Ins> in jede Eingabemaske eingefgt werden
 *  Leerzeichen zwischen Quotezeichen werden gel”scht
++  Such-Tasten jetzt auch im Lister verfgbar
+     <Alt M> MessageID
+     <Alt V> Volltext
+     <Alt B> Betreff
+     <Alt U> User
++  O, I und G funktionieren auch im Lister
++  Config/Optionen/Nachrichten hat den neuen Schalter "Fragen bei 
+   Antwort-an", also Auswertung des besagten Headers
++  unter Nachricht/Direkt kann man per F2 aus der Userliste w„hlen
++  CAPI auch im Terminal nutzbar
++  im Sendefenster kann mit "/" der Empf„nger nachtr„glich ge„ndert 
+   werden
+!  Archiv-Erkennung verbessert
+!  viele Bugfixes
+!  Datenbank-Problem beim Netcall behoben
+*  Editor komplett berarbeitet
++  Quote-Reflow (s. Kapitel 6.2)
+!  das Einlesen von Puffern fhrt bei bestimmten F„llen nicht mehr 
+   zum Absturz
++  beim exportieren in die Windows-Zwischenablage kann jetzt auch
+   nur eine URL oder Mail-Adresse extrahiert werden
+!  Anzeigefehler bei ZPR mit groáen Puffern behoben
+#  viele Routinen umgeschrieben und optimiert
+!  mehrfache Auswertung der Kommandozeile verhindert
++  umlautabh„ngigkeit bei den Suchfunktionen "User", "Betreff" und
+   "Fidoempf„nger"
+!  Zwischenablage-Routinen ges„ubert
+*  die Brettvertreteradresse erlaubt jetzt auch Kurznamen und die
+   direkte Userauswahl mit <F2>
+!  Darstellungsfehler in Listboxen (Edit/Boxen, z.B.) behoben
+!  beim ndern des Lesen-Status einer Nachricht verabschiedete sich
+   CrossPoint
 <<|
 
 Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.DOC
-und UUCP.DOC.
+und UUCP.DOC.                 
 

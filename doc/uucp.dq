@@ -1987,12 +1987,16 @@ UUZ 3.11e  (Bugfix vom 22.12.96)
 >>|
 3.2
 +  X-No-Archive wird jetzt in beide Richtungen korrekt konvertiert
++  PGP jetzt auch bei UUCP/RFC m”glich
 *  Realnamel„nge auf 70 erweitert
 *  Newsgruppen-Namen werden nicht mehr automatisch in 
    Kleinschreibung umgewandelt, um Problemen mit nicht RFC-konformen 
    Newsservern aus dem Weg zu gehen
 !  Auch wenn ein Leerzeichen auf ?= folgt, wird richtig konvertiert
 !  viele Bugfixes in UUZ.EXE
++  News k”nnen jetzt das Flag X-Priority bekommen
+*  Kurznamen jetzt auch hier benutzbar:
+     Sendefenster Zusatz/PM-Antworten_An
+     Edit/Boxen/RFC/UUCP/Vertreter
 <<|
-
 
