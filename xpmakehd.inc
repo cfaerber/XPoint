@@ -400,8 +400,8 @@ begin
             if id = 'U-KEYWORDS'     then LRead(Keywords,60) else
             if id = 'U-SUMMARY'      then LRead(Summary,200) else
             if id = 'U-DISTRIBUTION' then LRead(Distribution,40) else
-            if id = 'U-X-NEWSREADER' then LRead(Programm,40) else
-            if id = 'U-X-MAILER'     then LRead(Programm,40) else
+            if id = 'U-X-NEWSREADER' then LRead(Programm,255) else
+            if id = 'U-X-MAILER'     then LRead(Programm,255) else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
             if id = 'U-X-HOMEPAGE' then LRead(homepage,HomepageLen) else
@@ -446,8 +446,8 @@ begin
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
             if id = 'BEZ'    then GetRef else
-            if id = 'MAILER' then LRead(programm,40) else
-            if id = 'ORG'    then LRead(organisation,orgLen) else 
+            if id = 'MAILER' then LRead(programm,255) else
+            if id = 'ORG'    then LRead(organisation,orgLen) else
             if id = 'OEM'    then GetName(oem,dummy) else
             if id = 'OAB'    then GetName(oab,oar) else
             if id = 'WAB'    then GetName(wab,war) else
@@ -526,7 +526,7 @@ begin
 { /robo }
 
             if id = 'BIN' then typ:='B' else
-            if id = 'MAL' then LRead(programm,40);
+            if id = 'MAL' then LRead(programm,255);
 
             { 01/2000 oh - Customizable Headerlines }
             if id = UStr(mheadercustom[1]) then LRead(Cust1,CustHeadLen)

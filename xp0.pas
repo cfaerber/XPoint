@@ -390,8 +390,8 @@ type   textp  = ^text;
                   charset    : string[7];
                   ccharset   : string[7];     { crypt-content-charset }
                   groesse    : longint;
-                  realname   : string[realnlen]; { MK 01/00 UUZ Fix von robo }
-                  programm   : string[40];    { Mailer-Name }
+                  realname   : string[realnlen];
+                  programm   : string;        { Mailer-Name }
                   organisation : OrgStr;
                   postanschrift: string[PostAdrLen];
                   telefon    : TeleStr;
@@ -1075,6 +1075,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.3  2000/06/04 11:09:10  mk
+  - programm-Zeile von 40 auf 255 Zeichen verlaengert
+
   Revision 1.10.2.2  2000/05/04 20:51:00  mk
   - kleiner Bug bei BetreffLen gefixt
 
