@@ -168,8 +168,10 @@ var s: TStream;
     except
       on EReadError do; // ignore
     end; // try;
-    d.Free;
-    pa.Free;
+    if Assiged(d) then
+      d.Free; 
+    if Assigned(pa) then
+      pa.Free;
   end;
 
 begin
@@ -320,6 +322,10 @@ end;
 
 //
 // $Log$
+// Revision 1.7.2.7  2003/09/29 10:45:53  mk
+// - fixed crash in ReadParts of TSendUUData.MIMEDecompose;
+//   this fixes missing text with N/U/E
+//
 // Revision 1.7.2.6  2002/07/26 08:41:49  mk
 // - fixed Bug #476655 kein nachträgliches Edit bei attachment
 //   at the end of every mime part, the last #0d0a is not part
