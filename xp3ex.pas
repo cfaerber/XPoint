@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Nachricht extrahieren }
@@ -1043,11 +1044,11 @@ begin
 
     { 01/2000 oh}
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp^.Cust1<>'' then begin
-                    wrs(ohfill(mheadercustom[1],11)+': '+hdp^.Cust1);
+                    wrs(ohfill(mheadercustom[1],length(getres2(361,2))-2)+': '+hdp^.Cust1);
                   end;
 
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp^.Cust2<>'' then begin
-                    wrs(ohfill(mheadercustom[2],11)+': '+hdp^.Cust2);
+                    wrs(ohfill(mheadercustom[2],length(getres2(361,2))-2)+': '+hdp^.Cust2);
                   end;
     { /oh }
 
@@ -1172,6 +1173,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.21  2001/09/18 13:45:22  my
+  MY:- Kleiner Optikfix: Userdefinierte Header werden nicht mehr fest mit
+       11 Stellen angezeigt, sondern die Laenge richtet sich nach der in
+       der Ressource definierten Laenge der uebrigen Headerzeilen (Res.
+       361,2). Anzeige damit auch sprachunabhaengig.
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.17.2.20  2001/08/12 11:20:29  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
