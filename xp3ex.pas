@@ -697,7 +697,8 @@ begin
   if art=xTractPuf then
     Xread(name,append)
   else begin
-    ReadHeadEmpf:=1; ReadKoplist:=true;
+    ReadHeadEmpf:=1; {ReadKoplist:=true;
+    readOemList := true;}
     new(hdp);
     ReadHeader(hdp^,hds,true);
     assign(f,name);
@@ -808,21 +809,27 @@ begin
                      end;
                  end;
 
-    hdf_KOP   :  if Assigned(hdp^.kopien) then begin
-                   s:=getres2(361,28)+hdp^.kopien^.empf;    { 'Kopien an  : ' }
-                   pnt:=hdp^.kopien^.next;
-                   while pnt<>nil do begin
-                     if length(s)+length(pnt^.empf)>iif(listscroller,76,77)
-                     then begin
-                       wrs(s); s:=getres2(361,28);
+    hdf_KOP   :  begin
+                   readkoplist := true;
+                   ReadHeader (hdp^, hds, false);
+                   if Assigned(hdp^.kopien) then
+                   begin
+                     s:=getres2(361,28)+hdp^.kopien^.empf;    { 'Kopien an  : ' }
+                     pnt:=hdp^.kopien^.next;
+                     while pnt<>nil do begin
+                       if length(s)+length(pnt^.empf)>iif(listscroller,76,77)
+                       then begin
+                         wrs(s); s:=getres2(361,28);
                        end
-                     else
-                       s:=s+', ';
-                     s:=s+pnt^.empf;
-                     pnt:=pnt^.next;
+                       else
+                         s:=s+', ';
+                       s:=s+pnt^.empf;
+                       pnt:=pnt^.next;
                      end;
-                   wrs(s);
+                     wrs(s);
                    end;
+                   DisposeEmpflist(hdp^.kopien);
+                 end;
 
     hdf_DISK  :  if hdp^.AmReplyTo<>'' then
                    if hdp^.amrepanz=1 then
@@ -863,9 +870,31 @@ begin
                        iifs(hdp^.realname<>'','  ('+hdp^.realname+')',''));
                  end;
 
-    hdf_OEM    : if (hdp^.oem<>'') and (left(hdp^.oem,length(hdp^.empfaenger))
+    hdf_OEM    : {if (hdp^.oem<>'') and (left(hdp^.oem,length(hdp^.empfaenger))
                      <>hdp^.empfaenger) then
                    wrs(gr(16)+hdp^.oem);         { 'Org.-Empf. : ' }
+                 begin
+                   readOemList := true;
+                   ReadHeader (hdp^, hds, false);
+                   if assigned (hdp^.oemlist) then
+                   begin
+                     s:=gr(16) + hdp^.oemlist^.empf;    { 'Org.-Empf. : ' }
+                     pnt:=hdp^.oemlist^.next;
+                     while pnt<>nil do begin
+                       if length(s)+length(pnt^.empf)>iif(listscroller,76,77)
+                       then begin
+                         wrs(s); s:=gr(16);
+                       end
+                       else
+                         s:=s+', ';
+                       s:=s+pnt^.empf;
+                       pnt:=pnt^.next;
+                     end;
+                     wrs(s);
+                   end;
+                   DisposeEmpflist(hdp^.oemlist);
+                 end;
+
     hdf_OAB    : if hdp^.oab<>'' then            { 'Org.-Abs.  : ' }
                    wrs(gr(18)+hdp^.oab+iifs(hdp^.oar<>'','  ('+hdp^.oar+')',''));
     hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
@@ -1073,7 +1102,6 @@ begin
       else
         if ExtChgTearline then Chg_Tearline;
     close(f);
-    DisposeEmpflist(hdp^.kopien);
     dispose(hdp);
     end;
   freeres;
@@ -1084,6 +1112,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.14  2001/04/28 15:47:33  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.17.2.13  2000/12/31 15:07:59  mk
   - Erhaten: zeigt Uhrzeit an
 

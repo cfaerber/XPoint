@@ -96,6 +96,22 @@ procedure mbshowtxt0(var s:string);
 procedure mbsetvertreter(var s:string);
 function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
+{ Folgende Routinen wurden aus PlatzgrÅnden aus XP4 ausgelagert: }
+
+procedure addToRTAList (var list :RTAEmpfaengerP; const empf :AdrStr; const RTAEmpf, vertreter, userUnbekannt :boolean;
+                        const typ :byte);
+procedure addList (var orginalList :RTAEmpfaengerP; var newList :empfNodeP; const typ :byte);
+procedure disposeRTAEmpfList (var list :RTAEmpfaengerP);
+procedure getEigeneAdressen (var eigeneAdressenBaum :domainNodeP);
+procedure freeEigeneAdressenBaum (var baum :domainNodeP);
+function eigeneAdresse (baum :domainNodeP; adresse :AdrStr) :boolean;
+procedure translateRTAEmpfList (var RTAEmpfList :RTAEmpfaengerP; var sendEmpfList :empfNodeP);
+function adrOkay (const adr :string) :boolean;
+procedure askRTA (const XPStart :boolean);
+procedure saveList (list :RTAEmpfaengerP; var sList :RTAEmpfaengerP);
+function userUnbekannt (const user :string) :boolean;
+procedure vertausche (var s1, s2 :RTAEmpfaengerT);
+procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
 
 implementation  { --------------------------------------------------- }
 
@@ -303,14 +319,14 @@ end;
 
 
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
-                   var halten,adr:integer16; var flags:byte; edit:boolean;
+                   var halten:integer16; var adr:byte; var flags:byte; edit:boolean;
                    var brk:boolean);
 var x,y  : byte;
     filt : boolean;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
-    AdrbuchDef  : Integer;
+    AdrbuchDef  :byte;
 begin
   new(adp);
   if left(user,4)<>#0+'$/T' then
@@ -372,7 +388,7 @@ begin
   readmask(brk);
   if not brk then
   begin
-    if (adrbuchdef<>0) and (byte(adr)=0) then
+    if (adrbuchdef<>0) and (adr=0) then
      if not readJN(GetRes(2738),false) then
        adr:=adrbuchdef;
     if farb=3 then Farb:=0;
@@ -390,7 +406,8 @@ function newuser:boolean;
 var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
-    halten,adr   : integer16;
+    halten       : integer16;
+    adr          : byte;
     b            : byte;
     brk          : boolean;
     flags        : byte;
@@ -935,7 +952,8 @@ var user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
     size         : smallword;
-    halten,adr   : integer16;
+    halten       : integer16;
+    adr          : byte;
     flags        : byte;
     brk          : boolean;
     rec          : longint;
@@ -2412,10 +2430,443 @@ begin
   closebox;
 end;
 
+{ Eine Adresse mit allen Parametern (RTAEmpfaenger, Vertreter, Typ) vorne (!)
+  an eine RTA-EmpfÑngerliste anfÅgen }
+
+procedure addToRTAList (var list :RTAEmpfaengerP; const empf :AdrStr; const RTAEmpf, vertreter, userUnbekannt :boolean;
+                        const typ :byte);
+var neu :RTAEmpfaengerP;
+begin
+  if not assigned (list) then        { Wenn RTA-EmpfÑngerliste leer... }
+  begin
+    new (list);
+    list^.empf := empf;
+    list^.RTAEmpf := RTAEmpf;
+    list^.vertreter := vertreter;
+    list^.userUnbekannt := userUnbekannt;
+    list^.typ := typ;
+    list^.next := nil;
+  end else
+  begin
+    new (neu);
+    neu^.empf := empf;
+    neu^.RTAEmpf := RTAEmpf;
+    neu^.vertreter := vertreter;
+    neu^.userUnbekannt := userUnbekannt;
+    neu^.typ := typ;
+    neu^.next := list;               { vorne anfÅgen }
+    list := neu;
+  end;
+end;
+
+{ Ganze EmpfÑngerlisten an eine RTA-EmpfÑngerliste anfÅgen }
+
+procedure addList (var orginalList :RTAEmpfaengerP; var newList :empfNodeP; const typ :byte);
+var lauf, neu :RTAEmpfaengerP;
+    loesch :empfNodeP;
+begin
+  if not assigned (newList) then exit;
+
+  if assigned (orginalList) then   { An bestehende Liste anfÅgen }
+  begin
+    neu := orginalList;
+    while assigned (neu^.next) do
+      neu := neu^.next;
+  end else
+    neu := nil;
+
+  if not assigned (neu) then       { bestehende Liste ist leer }
+  begin
+    new (neu);
+    neu^.next := nil;
+    neu^.empf := newList^.empf;
+    neu^.typ := typ;
+    neu^.RTAEmpf := false;
+    neu^.vertreter := false;
+    neu^.userUnbekannt := false;
+    loesch := newlist;
+    newList := newList^.next;
+    dispose (loesch);
+    orginalList := neu;
+  end;
+
+  while assigned (newList) do      { Einzelne Elemente in die neue Liste kopieren }
+  begin
+    if newList^.empf <> '' then    { Leerstrings sind keine Adressen! }
+    begin
+      new (neu^.next);
+      neu := neu^.next;
+      neu^.empf := newList^.empf;
+      neu^.typ := typ;
+      neu^.RTAEmpf := false;
+      neu^.vertreter := false;
+      neu^.userUnbekannt := false;
+      neu^.next := nil;
+    end;
+    loesch := newList;
+    newList := newList^.next;
+    dispose (loesch);
+  end;
+
+end;
+
+{ RTA-EmpfÑngerlisten freigeben }
+
+procedure disposeRTAEmpfList (var list :RTAEmpfaengerP);
+var lauf :RTAEmpfaengerP;
+begin
+  while assigned (list) do
+  begin
+    lauf := list^.next;
+    dispose (list);
+    list := lauf;
+  end;
+  list := nil;
+end;
+
+{ Bei dem "EmpfÑnger auswÑhlen"-Dialog aus XP4.ReplyToAll werden eigene
+  Adressen ausgenommen. 'getEigeneAdressen' liest die Adressen aus
+  den Boxenkonfigurationen und der XPOINT.CFG aus.
+  Als Datenstruktur wird ein "Baum" gewÑhlt }
+
+procedure getEigeneAdressen (var eigeneAdressenBaum :domainNodeP);
+var d         :DB;
+    adresse   :string[90];
+    flags     :byte;
+    username  :string[30];
+    pointname :string[25];
+    domain    :string[60];
+    box       :string[BoxNameLen];
+    aliaspt   :boolean;
+    s         :string;
+    notEigeneAdressenbaum :domainNodeP;
+
+  procedure insertNode (var node :domainNodeP; const adresse :string);
+  begin
+    if not assigned (node) then
+    begin
+      new (node);
+      node^.left := nil;
+      node^.right := nil;
+      getmem (node^.domain, length (adresse) + 1);
+      node^.domain^ := adresse;
+    end else
+      if node^.domain^ > adresse then
+        insertNode (node^.left, adresse)
+      else
+        insertNode (node^.right, adresse)
+  end;
+
+begin
+  eigeneAdressenBaum := nil;
+  notEigeneAdressenbaum := nil;
+
+  if assigned (RTANoOwnAddresses) then          { Adressen aus dem Config-     }
+  begin                                         { Setting RTANotEigeneAdressen }
+    s := RTANoOwnAddresses^;                    { verwerten                    }
+    repeat
+      if pos (' ', s) <> 0 then
+      begin
+        adresse := trim (copy (s, 1, pos (' ', s)));
+        delete (s, 1, pos (' ', s));
+      end else
+      begin
+        adresse := s;
+        s := '';
+      end;
+      if adrOkay (adresse) then
+        insertNode (notEigeneAdressenBaum, uStr (adresse));
+    until s = '';
+  end;
+
+  dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
+  while not dbEof (d) do
+  begin
+    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/UUCP }
+    begin                                           { Boxen berÅcksichtigen     }
+      dbRead (d, 'username', username);
+      dbRead (d, 'pointname', pointname);
+      dbRead (d, 'script', flags);
+      aliaspt := (flags and 4 <> 0);
+      dbRead (d, 'domain', domain);
+      dbRead (d, 'boxname', box);
+      case ntDomainType (dbReadInt (d, 'netztyp')) of
+        5: adresse := 'username' + '@' + iifs (aliaspt, pointname, box) + domain;
+        6: adresse := username + '@' +
+            iifs (aliaspt, box + ntServerDomain (box), pointname + domain);
+        else adresse := '';
+      end;
+      if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
+        insertnode (eigeneAdressenBaum, uStr (adresse));
+      dbRead (d, 'replyto', adresse);
+      if (adresse <> '') and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
+        insertnode (eigeneAdressenBaum, uStr (adresse));
+    end;
+    dbNext (d);
+  end;
+  dbClose (d);
+
+  if assigned (RTAOwnAddresses) then    { Adressen aus dem Config-Setting }
+  begin                                 { RTAEigeneAdressen verwerten     }
+    s := RTAOwnAddresses^;
+    repeat
+      if pos (' ', s) <> 0 then
+      begin
+        adresse := trim (copy (s, 1, pos (' ', s)));
+        delete (s, 1, pos (' ', s));
+      end else
+      begin
+        adresse := s;
+        s := '';
+      end;
+      if adrOkay (adresse) and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
+        insertNode (eigeneAdressenBaum, uStr (adresse));
+    until s = '';
+  end;
+
+  freeEigeneAdressenBaum (notEigeneAdressenbaum);
+end;
+
+{ Baumstuktur freigeben }
+
+procedure freeEigeneAdressenBaum (var baum :domainNodeP);
+var lauf :domainNodeP;
+begin
+  if Assigned (baum) then
+  begin
+    freeEigeneAdressenBaum (baum^.left);
+    lauf := baum^.right;
+    freemem (baum^.domain, length (baum^.domain^) + 1);
+    dispose (baum);
+    freeEigeneAdressenBaum (lauf);
+  end;
+end;
+
+{ 'true', wenn Adresse im Baum vorhanden; 'false', wenn nicht. }
+
+function eigeneAdresse (baum :domainNodeP; adresse :AdrStr) :boolean;
+var p :domainNodeP;
+begin
+  adresse := uStr (adresse);
+  p := baum;
+  while assigned (p) and (p^.domain^ <> adresse) do
+    if adresse < p^.domain^ then p := p^.left
+      else p := p^.right;
+  eigeneAdresse := assigned (p);
+end;
+
+{ RTA-EmpfÑngerliste in eine EmpfÑngerliste umwandeln, die XP6.DoSend versteht }
+
+procedure translateRTAEmpfList (var RTAEmpfList :RTAEmpfaengerP; var sendEmpfList :empfNodeP);
+var neu :empfNodeP;
+    loesch :RTAEmpfaengerP;
+begin
+  while assigned (RTAEmpfList) and not RTAEmpfList^.RTAEmpf do
+  begin  { Nur als RTAEmpf markierte Adressen berÅcksichtigen }
+    loesch := RTAEmpfList;
+    RTAEmpfList := RTAEmpfList^.next;
+    dispose (loesch);
+  end;
+
+  if assigned (RTAEmpfList) then
+  begin
+    neu := sendEmpfList;
+    while assigned (neu) do neu := neu^.next;  { sendEmpfList nicht leer? Seltsam }
+
+    if not assigned (neu) then                 { Erstes Element einfÅgen }
+    begin
+      new (neu);
+      neu^.next := nil;
+      neu^.empf := RTAEmpfList^.empf;
+      loesch := RTAEmpfList;
+      RTAEmpfList := RTAEmpfList^.next;
+      dispose (loesch);
+      sendEmpfList := neu;
+    end;
+
+    while assigned (RTAEmpfList) do { Alle weiteren EmpfÑnger Åbernehmen }
+    begin
+      if RTAEmpfList^.RTAEmpf then  { RTAEmpf beachten                   }
+      begin
+        new (neu^.next);
+        neu := neu^.next;
+        neu^.empf := RTAEmpfList^.empf;
+        neu^.next := nil;
+      end;
+      loesch := RTAEmpfList;
+      RTAEmpfList := RTAEmpfList^.next;
+      dispose (loesch);
+    end;
+    RTAEmpfList := nil;
+  end;
+end;
+
+{ true, wenn 'adr' ein "@" und einen Punkt im Domainteil der
+  Adresse enthÑlt }
+
+function adrOkay (const adr :string) :boolean;
+begin
+  adrOkay := (pos ('@', adr) <> 0)
+             and (pos ('.', mid (adr, pos ('@', adr))) <> 0);
+end;
+
+procedure askRTA (const XPStart :boolean);
+var x,y,i       :byte;
+    msglines, p :byte;
+    z           :taste;
+    res         :boolean;
+    s           :string;
+begin
+  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) then
+  begin
+    msglines := ival (getres2 (2750, 0));
+    msgbox (64, msglines + 5, '', x, y);
+    moff;
+    for i := 1 to msglines do
+    begin
+      s:=getres2 (2750, i);
+      gotoxy(x + 3, y + 1 + i);
+      repeat
+        p := cposx ('*', s);
+        write (left (s, p-1));
+        delete (s, 1, p);
+        p := cposx ('*', s);
+        attrtxt (col.colmboxhigh);
+        write (left (s, p - 1));
+        attrtxt (col.colmbox);
+        delete (s, 1, p);
+      until s = '';
+    end;
+    mon;
+    res := (ReadButton (x + 44, y + msglines + 3, 2, '*' + getres2(2750, 20), 1, true, z) = 1);
+    closebox;
+    freeres;
+    if res then
+      RTAMode := iif (askReplyTo, 15, 13)
+    else
+      RTAMode := iif (askReplyTo, 3, 0);
+
+    if XPStart then
+      saveConfig
+    else
+      globalModified;
+  end;
+end;
+
+procedure saveList (list :RTAEmpfaengerP; var sList :RTAEmpfaengerP);
+var lauf :RTAEmpfaengerP;
+begin
+  sList := nil;
+  lauf := nil;
+  while assigned (list) do   { RTA-EmpfÑngerliste sichern }
+  begin
+    if not assigned (sList) then
+    begin
+      new (sList);
+      sList^.empf := list^.empf;
+      sList^.RTAEmpf := list^.RTAEmpf;
+      sList^.vertreter := list^.vertreter;
+      sList^.typ := list^.typ;
+      sList^.next := nil;
+      lauf := sList;
+    end else
+    begin
+      new (lauf^.next);
+      lauf := lauf^.next;
+      lauf^.empf := list^.empf;
+      lauf^.RTAEmpf := list^.RTAEmpf;
+      lauf^.vertreter := list^.vertreter;
+      lauf^.typ := list^.typ;
+      lauf^.next := nil;
+    end;
+    list := list^.next;
+  end;
+end;
+
+function userUnbekannt (const user :string) :boolean;
+begin
+  dbSeek (ubase, uiName, uStr (user));
+  userUnbekannt := (not dbFound) and (user <> '');
+end;
+
+procedure vertausche (var s1, s2 :RTAEmpfaengerT);
+var h :RTAEmpfaengerT;
+begin
+  h.empf := s1.empf;
+  s1.empf := s2.empf;
+  s2.empf := h.empf;
+
+  h.typ := s1.typ;
+  s1.typ := s2.typ;
+  s2.typ := h.typ;
+
+  h.RTAEmpf := s1.RTAEmpf;
+  s1.RTAEmpf := s2.RTAEmpf;
+  s2.RTAEmpf := h.RTAEmpf;
+
+  h.vertreter := s1.vertreter;
+  s1.vertreter := s2.vertreter;
+  s2.vertreter := h.vertreter;
+
+  h.userUnbekannt := s1.userUnbekannt;
+  s1.userUnbekannt := s2.userUnbekannt;
+  s2.userUnbekannt := h.userUnbekannt;
+end;
+
+      procedure removeFromList (var list, vor, lauf :RTAEmpfaengerP);
+      begin
+        if assigned (vor) then
+        begin
+          vor^.next := lauf^.next;
+          dispose (lauf);
+          lauf := vor^.next;
+        end else
+        begin
+          list := lauf^.next;
+          dispose (lauf);
+          lauf := list;
+        end;
+      end;
 
 end.
 {
   $Log$
+  Revision 1.25.2.12  2001/04/28 15:47:34  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.25.2.11  2000/12/12 11:30:28  mk
   - FindClose hinzugefuegt
 

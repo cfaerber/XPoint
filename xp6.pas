@@ -87,6 +87,7 @@ type  SendUUdata = record
                      UV_edit    : boolean;        { <Esc> -> "J" }
                      empfrealname : string[40];
                      msgid, ersetzt    : string[MidLen];
+                     RTAHasSetVertreter :boolean;
                    end;
       SendUUptr   = ^SendUUdata;
 
@@ -494,14 +495,14 @@ var p      : byte;
       ccm_hand:=XmsAlloc(sizeof(ccm^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ccm_hand,ccm^,0,sizeof(ccm^));
  {*}  if not xms_ok then exit;
- (*     ma_size:=sizeof(marked^); 
+ (*     ma_size:=sizeof(marked^);
       ma_hand:=XmsAlloc(sizeof(marked^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ma_hand,marked^,0,sizeof(marked^));
  {*}  if not xms_ok then exit; *)
       XmsStored:=true;
       dispose(ccm); dispose(cc); (* dispose(marked); *)
       end; 
-  end;     
+  end;
 
   procedure get_arrays;       { Arrays neu Anlegen und aus XMS einlesen }
   begin
@@ -514,7 +515,7 @@ var p      : byte;
       XmsFree(ccm_hand);
       XmsFree(cc_hand);
       end;
-  end; 
+  end;
 
 begin
   edpush:=not editvollbild and
@@ -564,20 +565,39 @@ var i,first : integer;
 
   procedure GetInf(n:integer; var adr:string);
   var p : byte;
+      size :word;
+      temp :string[90];
   begin
     with ccm^[n] do begin
       ccpm:=(cpos('@',adr)>0);
       if ccpm then begin
         dbSeek(ubase,uiName,ustr(adr));
         if dbFound then begin
-          if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
-            dbwrite(ubase,'adrbuch',NeuUserGruppe);
-          dbReadN(ubase,ub_pollbox,server);
-          if (dbReadInt(ubase,'userflags') and 2<>0) and
-             (dbReadInt(ubase,'codierer')<>0) then
-            encode:=true;
+          size := 0;
+          if dbXsize (ubase, 'adresse') <> 0 then
+          begin
+            dbReadX (ubase, 'adresse', size, temp);
+            dbSeek (ubase, uiName, ustr (temp));
+            if dbFound then
+            begin
+{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{                dbwrite(ubase,'adrbuch',NeuUserGruppe);}
+              dbReadN(ubase,ub_pollbox,server);
+              if (dbReadInt(ubase,'userflags') and 2<>0) and
+                 (dbReadInt(ubase,'codierer')<>0) then
+                encode:=true;
+            end;
+          end else
+          begin
+{            if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{              dbwrite(ubase,'adrbuch',NeuUserGruppe);}
+            dbReadN(ubase,ub_pollbox,server);
+            if (dbReadInt(ubase,'userflags') and 2<>0) and
+               (dbReadInt(ubase,'codierer')<>0) then
+              encode:=true;
           end;
-        end
+        end;
+      end
       else begin
         p:=cpos(':',adr);
         if (adr[1]='+') and (p>0) then begin    { nicht eingetragenes Brett }
@@ -993,7 +1013,7 @@ begin
         if dbReadInt(ubase,'userflags') and 16<>0 then
           flEB:=true;
         size:=0;
-        if dbXsize(ubase,'adresse')=0 then adresse:=''
+        if (dbXsize(ubase,'adresse')=0) or sdata^.RTAHasSetVertreter then adresse:=''
         else dbReadX(ubase,'adresse',size,adresse);
         _brett:=mbrettd('U',ubase);
         if adresse<>'' then begin
@@ -1045,12 +1065,17 @@ begin
             if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
-                box:=DefaultBox
+              begin
+                box := getBrettUserPollBox (_brett);
+                if box = '' then
+                  box:=DefaultBox
+              end
               else
                 box:=OrigBox;
               end
             else
-              if _brett[1]='U' then box:=DefaultBox
+              if _brett[1]='U' then
+                box:=DefaultBox
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
@@ -1212,7 +1237,7 @@ fromstart:
     bboxwid:=min(betrlen,54);
     showempfs:=min(cc_anz,15);
     diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
-    mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empf„nger  ' }
+    mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'Empf„nger  ' }
     attrtxt(col.coldiahigh);
     moff;
     if empfaenger[1]=vert_char then
@@ -1941,7 +1966,12 @@ fromstart:
         repeat
           if ccm^[msgCPpos].ccpm then begin
             dbSeek(ubase,uiName,ustr(cc^[msgCPpos]));
-            if dbFound then _brett:=mbrettd('U',ubase);
+            if dbFound then
+            begin
+              _brett:=mbrettd('U',ubase);
+              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+                dbwrite(ubase,'adrbuch',NeuUserGruppe);
+            end;
             end
           else begin
             dbSeek(bbase,biBrett,'A'+ustr(cc^[msgCPpos]));
@@ -2218,6 +2248,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.28  2001/04/28 15:47:35  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.39.2.27  2001/03/27 12:27:28  mk
   - ops, fixed last commit
 

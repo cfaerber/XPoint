@@ -353,7 +353,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 206
 1    WARNING!
 2    There are only %s MB disk space left on
-3    drive %s !
+3    drive %s!
 -
 207  User defined nodelist %s not found!
 210  Not enough disk space!
@@ -406,9 +406,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   ORG (Organization)
 13   OAB (Original from)
 14   OEM (Original to)
-15   WAB (Resent by)
+15   WAB (Forwarded by)
 16   ERR (Error message)
-17   ANTW (Reply to)
+17   ANTW (Reply-To)
 18   DISK (Followup to)
 19   STW (Keywords)
 20   ZUSF (Summary)
@@ -533,19 +533,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    AMs
 3    always
 5    Message options
-6    Save binary messages up to:~
+6    Save binary files up to:~
 7    KB
 9    Bytes
-11   Standard news hold time:   ~
+11   Standard hold time AMs: ~
 12   Days
-13   Standard user PM hold time:~
-14   Hold own public messages
+13   Standard hold time PMs: ~
+14   Hold own AMs
 15   Creation time = 00:00
 16   Use Re^n
 17   Store unsent messages in /¯Unsent
 18   Send automatic receipts on request
 19   Automatic PM archiving
-23   ~Time zone
+23   Time zone
 24   Delete X-postings in more than
 25   newsgroups
 26   Send all carbon copies as BCC
@@ -553,7 +553,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 28   ask at Reply-To
 29   don't archive news
 30   ignore cancels/supersedes
-31   Hold own private messages
+31   Hold own PMs
+39   User selection list:    ~
+40   always
+41   Carbon Copies + Reply-To
+42   Carbon Copies
+43   Reply-To
+44   never
+45   user defined
 #
 100  68
 101  Address options
@@ -898,49 +905,49 @@ K (c) '2000 OpenXP Team, www.openxp.de
 360  decoding message...     %
 + 361
 1    ~ (internal CrossPoint Newsgroup)
-2    To:       ~
-3    Followup: ~
-4    Copy:     ~
-5    Subject:  ~
-6    From:     ~
-7    Path:     ~
-8    MessageID:~
-9    Date:     ~
+2    Recipient   :~
+3    Followup-To :~
+4    Copy        :~
+5    Subject     :~
+6    Sender      :~
+7    Path        :~
+8    MessageID   :~
+9    Date        :~
 10   received:~
-11   Size:      %s Bytes
-12   File:     ~
-13   PM Status:~
-14   Error!    ~
-15   ~         ~
-16   Orig. To: ~
-17   Forwarder:~
-18   Orig.From:~
-19   Reference:~
-20   Software: ~
-21   Status:   ~
-22   Keywords: ~
-23   Summary:  ~
-24   Organiz.: ~
-25   Address:  ~
-26   Phone:    ~
-27   Reply to: ~
-28   CC:       ~
-29   PGP staus:~
-30   Fido-To:  ~
-31   Distrib.: ~
-32   Homepage: ~
+11   Size        : %s Bytes    ~
+12   File        :~
+13   PM Status   :~
+14   Error!       ~
+15   ~            ~
+16   Original-To :~
+17   Forwarder   :~
+18   Orig. From  :~
+19   Reference   :~
+20   Software    :~
+21   Status      :~
+22   Keywords    :~
+23   Summary     :~
+24   Organization:~
+25   Address     :~
+26   Phone       :~
+27   Reply-To    :~
+28   Carbon Copy :~
+29   PGP status  :~
+30   Fido-To     :~
+31   Distribution:~
+32   Homepage    :~
 # [!MF!]
-33   Part:     ~
+33   Part        :~
 34   ~of~
 # [..]
-35   Priority: ~
+35   Priority    :~
 48   private mail
-50
-51   voice
-52   fax
+50   ~[invalid format]
+51   Voice
+52   Fax
 53   BBS
-54   pager
-55   answering machine
+54   Pager
+55   Answering machine
 60   (unregistered)
 -
 # first 6 chars of 361.6:
@@ -948,12 +955,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 363
 1    , Receipt Request
 2    , IsReceipt
-3    , Control-Message
-4    , pulblic key available
+3    , Control Message
+4    , public key available
 5    , mesage contains public key
 6    , key request
 7    , signature o.k.
-8    , invalid siganture!
+8    , invalid signature!
 9    , message has signature
 -
 
@@ -1166,13 +1173,17 @@ K (c) '2000 OpenXP Team, www.openxp.de
 474  Reading Message-IDs ...     %
 475  Reading reference tree...
 + 476
-1    Original sender:   ~
-2    Forwarding user:   ~
-3    Original recipient:~
+1    Original sender    :~
+2    Forwarding sender  :~
+3    CC recipient       :~
 4    Select recipient ...
-5    Sender         :   ~
-6    Forward address:   ~
-7    Reply-To-recipient:~
+5    Sender             :~
+6    Forward address    :~
+7    Reply-To recipient :~
+8    Original recipient :~
+9    Recipient          :~
+10   --- all (without own and marked addresses) ---
+11   --- marked ---
 -
 
 
@@ -1676,7 +1687,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 821  Import newsgroup list
 822  Import file-area list
 
-832  Noch zu verarbeiten:
+832  Still to process:
 833  fertig
 
 # XP8.INC
@@ -1842,11 +1853,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33   G protocol
 34   g protocol
 35   Size negotiation
-36   Batched SMTP (UUCP-Style)
-58   Batched SMTP (Client-Style)
-57   Client Mode (for external Mail/News Clients)
+36   Batched SMTP (UUCP style)
+58   Batched SMTP (Client style)
+57   Client mode (for external Mail/News Clients)
 59   Client call       ~
-63   Additional Server ~
+63   Additional servers~
 67   Client directory  ~
 37   z protocol
 38   f protocol
@@ -2014,10 +2025,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 935
 0    57
 1    Add viewer
-2    Change Viewer
-3    MIME-Type       ~
+2    Change viewer
+3    MIME type       ~
 4    File extension  ~
-5    Viewer-Program  ~
+5    Viewer program  ~
 -
 
 
@@ -2267,7 +2278,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2125 Copying nodelist
 + 2126
 0    69
-1    According to nodelist this BBS ist not online 24h/day. Please
+1    According to nodelist this BBS is not online 24h/day. Please
 2    consider that file requests may be restricted to certain hours.
 3    For more information ask the BBS' SysOp!
 + 2127
@@ -2720,7 +2731,30 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2737 Warning: Message encryption is not allowed in FidoNet!
 2738 Delete User from address book
 2739 Forward address not in database - create new user
++2740
+0 Assign Server "%s" to all unknown users (%s)?
+1 ~^Yes , ^No , Change ^Server , ^Back~
+-
++2750
+# number of lines
+0 11
+1 For  ZConnect  and  RFC Servers,  CrossPoint  provides  an
+2 enhanced reply function ("*Reply-To-All*").  With this reply
+3 function, a reply to a message with several recipients can
+4 simultaneously be sent to the sender and to all recipients
+5 of the replied  message automatically  (details see online
+6 help under *C*onfig/*O*ptions/M*e*ssages/User_selection_list).
+7
+8 This function  is not existent  respectively not activated
+9 in your current configuration.
+10
+11 Do you want to activate "*Reply-To-All*"?
+20 ~^Yes , ^No~
+-
 
+# --- XPREG -----------------------------------------------------------
+
+# 2900
 
 # --- XP_DES, XP_PGP --------------------------------------------------
 
@@ -2746,9 +2780,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 +  10000
 1  Help file %s not found!
-2  File extension must be .XPS !
+2  File extension must be .XPS!
 3  Illegal file or path name!
-4  Can't delete %s !?
+4  Can't delete %s!?
 5  Unknown directory: %s
 6  Not enough memory
 7  Not enough memory for calling external program.
@@ -2856,7 +2890,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 36 Cannot print binary message
 37 Unknown node address
 38 No files marked
-39 Delete unsent message with "Mail/Unsent/Delete" !
+39 Delete unsent message with "Mail/Unsent/Delete"!
 40 XPack - unknown file: %s
 41 Not enough memory to pack %s!
 42 Function is not allowed here
@@ -2896,7 +2930,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 19 This is not an unsent message!
 20 Not possible - please resend file
 21 Bad message packet:  %s
-22 Message does not exist in message packet !?
+22 Message does not exist in message packet!?
 24 Forwarding to this newsgroup is not allowed.
 25 Writing to this newsgroup is not allowed.
 26 Invalid original recipient line!
@@ -2928,7 +2962,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12 Error while converting messages
 13 Error while packing messages
 14 Modem not ready - or turned off?
-15 No message packet ?!
+15 No message packet?!
 16 /ips: error
 17 /n: unknown server: %s
 18 File not found
@@ -2959,7 +2993,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 42 Unknown node: %s
 43 No entries marked!
 44 Invalid spool directory
-45 Es konnten nicht alle Nachrichten versandt werden!
+45 Not all messages were sent!
+46 Invalid selection
+47 Oops - all matching recipients marked/filtered!?  (press F1 for help)
+48 Max. 126 recipients allowed (selected: %s)!  (press F1 for help)
 
 +  10800
 1  This server offers no automatic subscribing functions.
@@ -2987,10 +3024,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 23 File not found.
 24 Invalid converter configuration: no $INFILE specified
 25 Invalid converter configuration: no $OUTFILE specified
-26 This newsgroup cannot be subsribed.
+26 This newsgroup cannot be subscribed.
 27 This newsgroup cannot be unsubscribed.
-30 %s kann nicht bestellt werden
-31 %s wurde bereits bestellt
+28 Client mode - please order newsgroup list via external client!
+30 %s cannot be subscribed
+31 %s is subscribed already
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!
@@ -3033,24 +3071,24 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME types or file extensions not allowed!
 35 Default entry cannot be edited.
-36 This entry must not contain any path name!
+36 Entry must either contain nil or "CLPATH+" as path specification!
 37 Directory must not be equal to the XP spool directory!
-38 This path must contain ONE relative directory level!
-39 Dieser Pfad darf nicht leer sein!
+38 Only RELATIVE path ONE level DIRECTLY below XP directory allowed!
+39 This path must not be empty!
 
 +  11000
 1  unknown command
 2  unknown server
 3  This entry can't be deleted.
-4  This list may contain a maximum of %s Entries!
-5  No matching servers.
-6  Empty timing list.
-7  No more lines possible.
+4  This list may contain a maximum of %s entries!
+5  No matching servers
+6  Empty timing list
+7  Max %s lines possible!
 8  There must be at least one line.
 9  This node/point list is already active!
 10 File could not be imported as node/point list update.
-11 No more zones possible.
-12 No more phone fee groups possible.
+11 Max %s zones possible!
+12 Max %s phone fee groups possible!
 13 All weekdays and holidays are in use.
 14 Phone fee group 1 must not be deleted.
 15 %s already belongs to another phone fee group.
@@ -3111,7 +3149,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11 Error while converting messages
 12 Unknown server - select with <F2>
 13 Wrong net type - must be QWK od Fido!
-14 ZQWK.EXE not found! (ZQWK.EXE ist part of the XP QWK module)
+14 ZQWK.EXE not found! (ZQWK.EXE is part of the XP QWK module)
 15 ZQWK error %s
 
 +  12500

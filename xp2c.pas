@@ -30,7 +30,7 @@ uses
   capi,
 {$ENDIF CAPI }
      printerx,mouse,maus2,uart,resource,lister,editor,video,
-     xp0,xp1,xp1input,xpdatum, xpglobal;
+     xp0,xp1,xp1input,xpdatum, xpglobal, xpnt;
 
 procedure options;
 procedure UI_options;
@@ -299,45 +299,99 @@ begin
 end;
 
 procedure msgoptions;
+type str24 = string[24];
 var x,y : byte;
     brk : boolean;
     xid : string[7];
-    i   : byte;
+    i,j : byte;
     xnr : byte;
     xids: array[0..3] of string[6];
+    RTAStrings :array[0..4] of str24;
+    RTAErg :str24;
+    UUCP_ZConnectUsed :boolean;
+
+  function getRTAMode :str24;
+  begin
+    if RTAMode = 64 then        { immer }
+      getRTAMode := getres2 (252, 40)
+    else if RTAMode = 15 then   { Kopienempf. u. Antwort-an }
+      getRTAMode := getres2 (252, 41)
+    else if RTAMode = 13 then   { KopienempfÑnger }
+      getRTAMode := getres2 (252, 42)
+    else if RTAMode = 3 then    { Antwort-an }
+      getRTAMode := getres2 (252, 43)
+    else if RTAmode = 0 then    { nie }
+      getRTAMode := getres2 (252, 44)
+    else                        { benutzerdefiniert }
+      getRTAMode := getres2 (252, 50)
+  end;
+
+  procedure setRTAMode;
+  begin
+    if RTAErg = getres2 (252, 40) then
+      RTAMode := 64             { immer }
+    else if RTAErg = getres2 (252, 41) then
+      RTAMode := 15             { Kopienempf. u. Antwort-an }
+    else if RTAErg = getres2 (252, 42) then
+      RTAMode := 13             { KopienempfÑnger }
+    else if RTAErg = getres2 (252, 43) then
+      RTAMode := 3              { Antwort-an }
+    else if RTAErg = getres2 (252, 44) then
+      RTAMode := 0;             { nie }
+    { Wenn der User 'benutzerdefiniert gewÑhlt hat, dann bleibt diese
+      Einstellung erhalten }
+  end;
+
 begin
+  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] > 0;
   for i:=0 to 3 do
     xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
-  dialog(57,21,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
+  if UUCP_ZConnectUsed then
+    for i := 0 to 4 do
+      RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
+  j := iif (UUCP_ZConnectUsed, 1, 0);
+  dialog(57,iif (UUCP_ZConnectUsed, 21, 20),getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
   maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   { 'Tage' }
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
-  maddbool(3,7,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
-  maddbool(3,8,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
-  maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+
+  if UUCP_ZConnectUsed then
+  begin
+    RTAErg := getRTAMode;
+    maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
+    for i := 0 to 4 do
+      mappsel (true, RTAStrings[i]);
+    if RTAErg = getres2 (252, 50) then
+      mappsel (true, getres2 (252, 50));         { 'benutzerdefiniert' }
+    mhnr (258);
+  end;
+  maddbool(3,7 + j,getres2(252,14),haltown); mhnr (243); { 'Eigene Nachrichten halten' }
+  maddbool(3,8 + j,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
+  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
-  maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
-  maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+  maddbool(3,10 + j,getres2(252,16),rehochn);        { 'Re^n verwenden' }
+  maddstring(36,8 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1˘S+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
   xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
-  maddstring(36,9,'## XP ## ',xid,7,7,'');
+  maddstring(36,9 + j,'## XP ## ',xid,7,7,'');
   for i:=3 downto 0 do
     mappsel(true,xids[i]);   { 'immer˘AMs˘PMs˘nie' }
-  maddbool(3,12,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /ØUnversandt' }
-  maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
-  maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
-  maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
-  maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
-  maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
-  maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),20,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
-  maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddbool(3,12 + j,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /ØUnversandt' }
+  maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
+  maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
+  maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
+{  maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
+  maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
+  maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
+
+  maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
+  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddbool(3,20 + j,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -346,6 +400,7 @@ begin
       if lstr(xid)=lstr(xids[i]) then xnr:=i;
     XP_ID_PMs:=(xnr=1) or (xnr=3) or not registriert.r2;
     XP_ID_AMs:=(xnr=2) or (xnr=3){ or not registriert.r2};
+    if UUCP_ZConnectUsed then setRTAMode;
     GlobalModified;
     end;
   enddialog;
@@ -1449,6 +1504,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.17  2001/04/28 15:47:32  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.39.2.16  2001/01/10 17:39:03  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

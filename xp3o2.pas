@@ -96,6 +96,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
   var p  : empfnodep;
       p1 : byte;
       gb : boolean;
+      lauf :empfNodeP;
   begin
     with hd do begin
       if not orgdate then
@@ -120,7 +121,25 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);
       if AmReplyTo<>'' then wrs('Diskussion-in: '+AmReplyTo);
-      if oem<>'' then wrs('OEM: '+oem);
+      if assigned (oemlist) then
+      begin
+        lauf := oemlist;
+        while assigned (lauf) do
+        begin
+          wrs ('OEM: ' + lauf^.empf);
+          lauf := lauf^.next;
+        end;
+      end else
+        if oem<>'' then wrs('OEM: '+oem);
+      if assigned (kopien) then
+      begin
+        lauf := kopien;
+        while assigned (lauf) do
+        begin
+          wrs ('KOP: ' + lauf^.empf);
+          lauf := lauf^.next;
+        end;
+      end;
       wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
       if wab<>'' then wrs('WAB: '+wab+iifs(war='','',' ('+war+')'));
@@ -445,6 +464,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.6  2001/04/28 15:47:33  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.9.2.5  2000/10/18 21:39:11  mk
   - Fixes fuer F-TO
 

@@ -63,17 +63,17 @@ var i,j  : shortint;
 begin
   used:=true;
   i:=1;
-  while used and (i<=maxcc) do begin
+  while used and (i<=maxcc-1) do begin
     used:=(i=1) or ccused[i] or ccused[i-1];
     j:=i+1;
-    while not used and (j<=maxcc) do begin
+    while not used and (j<=maxcc-1) do begin
       used:=used or ccused[j];
       inc(j);
       end;
     setfieldenable(i,used);
     inc(i);
     end;
-  while i<=maxcc do begin
+  while i<=maxcc-1 do begin
     setfieldenable(i,false);
     inc(i);
     end;
@@ -162,7 +162,7 @@ begin
       else
         if (p>0) and not testmailstring(s) then
         begin
-          cc_testempf:=false; 
+          cc_testempf:=false;
           if left(s,1)=vert_char
             then s:=copy(s,2,length(s)-3);
           exit;
@@ -227,7 +227,7 @@ begin
   openmask(x,x+59,y+1,y+h,false);
 { SortCCs(cc,cc_anz); }
   small:=iifs(ntZonly and not smallnames,'>','');
-  for i:=1 to maxcc do begin
+  for i:=1 to maxcc - 1 do begin
     maddstring(2,i,strsn(i,3)+'.',cc^[i],50,eAdrLen,small);
     mappcustomsel(auto_empfsel,false);
     mset1func(cc_test1);
@@ -235,7 +235,7 @@ begin
     ccused[i]:=(cc^[i]<>'');
     end;
   maskdontclear;
-  for i:=cc_anz+2 to maxcc do
+  for i:=cc_anz+2 to maxcc - 1 do
     setfieldenable(i,false);
   wrt(x+53,y+h+2,' [F2] ');
   pushhp(600);
@@ -255,12 +255,12 @@ begin
         inc(cc_anz);
         cc^[cc_anz]:=cc^[i];
         end;
-    
+
     if cc_anz>0 then                 { wenn CCs da sind Verteilernamen suchen und aufloesen }
-    begin 
+    begin
       i:=0;
       repeat
-      inc(i);      
+      inc(i);
       if is_vname(cc^[i]) then
       begin                                                    { nach Verteilernamen suchen }
         assign(t,CCfile);
@@ -390,6 +390,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.2  2001/04/28 15:47:36  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.15.2.1  2000/07/30 12:51:08  jg
   - Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt
   - Darstellungsbug beim Crossposting an Fido Bretter behoben

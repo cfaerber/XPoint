@@ -708,6 +708,9 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      adresseAusgewaehlt :boolean;
+      saveDispRec :^dispra;
+      savePos     :shortint;
 
   label ende;
 
@@ -825,7 +828,624 @@ var t,lastt: taste;
         MF_brettda:=false;
     end;
 
+    procedure ReplyToAll (var brk :boolean);
+    type str90 = string[90];
+    var RTAEmpfList :RTAEmpfaengerP;
+        eigeneAdressenBaum :domainNodeP;
+        auswahlMarkierte :boolean;
+        RTA :boolean;
+        pmReplyTohasVertreter,
+        absenderHasVertreter,
+        wabHasVertreter,
+        pmReplyToIsUnknown,
+        absenderIsUnknown,
+        wabIsUnknown :boolean;
+
+      { Diese Prozedur ÅberprÅft die Åbergebene Liste auf Dupes,
+        ungÅltige Adressen und andere SpezialfÑlle. Nebenbei wird
+        sie auch noch alphabetisch sortiert }
+
+      procedure checklist (var list :RTAEmpfaengerP);
+      var lauf, vor :RTAEmpfaengerP;
+          anzahl, i :word;
+
+        procedure exchangeByte (var i, j :byte);
+        var h :byte;
+        begin
+          h := i;
+          i := j;
+          j := h;
+        end;
+
+      begin
+        anzahl := 0;
+        lauf := list;
+        vor := nil;
+        while assigned (lauf) do
+        begin
+          if pos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, pos (' ', lauf^.empf), 255);
+          { ^^ Realname entfernen }
+          if (uStr (lauf^.empf) = uStr (empf)) or (cpos ('@', lauf^.empf) = 0)
+            or (uStr (lauf^.empf) = uStr (hdp^.pmReplyTo))
+            or (not adrOkay (lauf^.empf))
+            {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
+            removeFromList (list, vor, lauf)
+          else begin
+            if eigeneAdresse (eigeneAdressenbaum, lauf^.empf) then lauf^.RTAEmpf := false
+              else lauf^.RTAEmpf := true;
+            lauf^.userUnbekannt := userUnbekannt (lauf^.empf);
+            inc (anzahl);
+            vor := lauf;
+            lauf := lauf^.next;
+          end;
+        end;
+
+        { alphabetisch sortieren }
+        for i := 1 to anzahl do
+        begin
+          lauf := list^.next;
+          vor := list;
+          while assigned (lauf) do
+          begin
+            if ustr (lauf^.empf) < ustr (vor^.empf) then
+              vertausche (lauf^, vor^);
+            vor := lauf;
+            lauf := lauf^.next;
+          end;
+         end;
+
+        { Dupes lîschen }
+        if assigned (list) then
+        begin
+          lauf := list^.next;
+          vor := list;
+          while assigned (lauf) do
+            if uStr (lauf^.empf) = uStr (vor^.empf) then
+            begin
+              if lauf^.typ > vor^.typ then exchangeByte (lauf^.typ, vor^.typ);
+              lauf^.vertreter := lauf^.vertreter or vor^.vertreter;
+              removefromlist (list, vor, lauf)
+            end
+            else begin
+              vor := lauf;
+              lauf := lauf^.next;
+            end;
+        end;
+      end;
+
+      { die Åbergebene Adresse wird durch die Vertreteradresse ersetzt,
+        sofern vorhanden. Es wird 'true' zurÅckgeben, wenn Vertreter
+        vorhanden. }
+
+      function getVertreter (var adr :str90) :boolean;
+      var size :word;
+      begin
+        dbSeek (ubase, uiName, uStr (adr));
+        if dbFound then
+        begin
+          size := 0;
+          if dbXsize (ubase, 'adresse') <> 0 then
+          begin
+            dbReadX (ubase, 'adresse', size, adr);
+            getVertreter := true;
+          end else
+            getVertreter := false;
+        end else
+          getVertreter := false;
+      end;
+
+      { Alle Adressen werden durch Vertreteradressen ersetzt (sofern
+        vorhanden). Die ersetzten Adressen werden markiert, damit im
+        Auswahl-Dialog durch ein Sternchen (*) angezeigt werden kann,
+        dass eine Vertreteradresse vorhanden ist. }
+
+      procedure checkVertreterAdressen (var list :RTAEmpfaengerP);
+      var lauf :RTAEmpfaengerP;
+          s    :str90;
+      begin
+        lauf := list;
+        while assigned (lauf) do
+        begin
+          lauf^.vertreter := getVertreter (lauf^.empf);
+          lauf := lauf^.next;
+        end;
+
+        absenderHasVertreter := getVertreter (hdp^.absender);
+        absenderIsUnknown := userUnbekannt (hdp^.absender);
+
+        pmReplyToHasVertreter := getVertreter (hdp^.pmReplyTo);
+        pmReplyToIsUnknown := userUnbekannt (hdp^.pmReplyTo);
+
+        wabHasVertreter := getVertreter (hdp^.wab);
+        wabIsUnknown := userUnbekannt (hdp^.wab);
+
+{        getVertreter (empf);}
+      end;
+
+      { Es wird ÅberprÅft, ob die gewÑhlten EmpfÑnger in der Userdatenbank
+        eingetragen sind. Wenn nicht, werden sie mit Adressbuchgruppe 0 an-
+        gelegt. Als Server wird der Server des Brettes der Ursprungsnachricht
+        gewÑhlt. Wenn kein gÅltiger Server gefunden werden konnte, dann
+        wird die Defaultbox vorgeschlagen }
+
+      function checkEmpf (var empf :str90; var RTAEmpfList :RTAEmpfaengerP) :boolean;
+      var unbekannteUser, lauf, vor :RTAEmpfaengerP;
+          brett :string[5];
+          box :string[BoxNameLen];
+          result :boolean;
+          anz :integer;
+          auswahl :byte;
+
+        procedure getPollBox;
+        begin
+          box := '';
+          dbRead (mbase, 'brett', brett);
+          if brett[1] in ['1', 'A'] then         { Brett }
+          begin
+            dbSeek (bbase, biIntNr, copy (brett, 2, 4));
+            if dbBOF (bbase) or dbEOF (bbase) then box := ''
+            else dbRead (bbase, 'pollbox', box);
+          end;
+          if not isBox (box) then box := DefaultBox;
+        end;
+
+        procedure getUnbekannteUser;
+        var lauf :RTAEmpfaengerP;
+        begin
+          unbekannteUser := nil;
+          if userUnbekannt (empf) then addToRTAList (unbekannteUser, empf, true, false, true, 3);
+          lauf := RTAEmpfList;
+          while assigned (lauf) do
+          begin
+            if lauf^.RTAEmpf and userUnbekannt (lauf^.empf) then
+              addToRTAList (unbekannteUser, lauf^.empf, true, false, true, 3);
+            lauf := lauf^.next;
+          end;
+        end;
+
+        { Die User werden mit Standardeinstellungen und Adressbuchgruppe 0
+          angelegt }
+
+        procedure userAnlegen (user, box :string);
+        var halten :integer16;
+            b :byte;
+        begin
+          dbAppend(ubase);                        { neuen User anlegen }
+          dbWrite(ubase,'username',user);
+          dbWrite(ubase,'pollbox',box);
+          halten:=stduhaltezeit;
+          dbWrite(ubase,'haltezeit',halten);
+          b:= 1+iif(newuseribm,0,8);
+          halten := 0;
+          dbWrite(ubase,'adrbuch', halten);
+          dbWrite(ubase,'userflags',b);      { aufnehmen }
+          dbFlushClose(ubase);
+        end;
+
+        { Allen neuen Usern wird der gleiche Server zugewiesen }
+
+        procedure pollBoxZuweisen (box :string);
+        var lauf :RTAEmpfaengerP;
+        begin
+          lauf := unbekannteUser;
+          while assigned (lauf) do
+          begin
+            userAnlegen (lauf^.empf, box);
+            lauf := lauf^.next;
+          end;
+        end;
+
+        { FÅr jeden User erscheint das bekannte Dialogfenster "User bearbeiten" }
+
+        procedure UserDialog (const box :string);
+        var lauf :RTAEmpfaengerP;
+        begin
+          lauf := unbekannteUser;
+          while assigned (lauf) do
+          begin
+            userAnlegen (lauf^.empf, box);
+            modiUser (false);
+            lauf := lauf^.next;
+          end;
+        end;
+
+        function serverDialog (var box :string; const anz :integer) :byte;
+        var x, y, breite, auswahl :byte;
+            z :taste;
+            s :string;
+            oldbox :string[BoxNameLen];
+        begin
+          pushhp (3001);
+          repeat
+            oldbox := box;
+            s := reps (getreps2 (2740, 0, box), formI (anz, 0));
+            breite := length (s) + 4;
+            msgBox (breite, 5, '', x, y);
+            moff;
+            wrt (x + 2, y + 1, s); { 'Allen unbekannten Usern (%s) als Serverbox "%s" zuweisen' }
+            mon;
+            auswahl := readButton (x + 2, y + 3, 2, '' + getres2 (2740,1), 1, true, z);
+{            ReadJNesc (reps (getreps (2740, formi (anz, 0)), box), true, brk);}
+            closeBox;
+            freeRes;
+            if auswahl = 3 then
+            begin
+              box := uniSel (1, false, box);
+              if box = '' then box := oldBox;
+            end;
+          until auswahl <> 3;
+          pophp;
+          serverDialog := auswahl;
+        end;
+
+        function checkAnzahl :boolean;
+        var lauf :RTAEmpfaengerP;
+            anz :integer;
+            ersterEmpfWirdErsetzt :boolean;
+        begin
+          lauf := RTAEmpfList;
+          anz := 0;
+          ersterEmpfWirdErsetzt := eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte;
+          while assigned (lauf) do
+          begin if lauf^.RTAEmpf then inc (anz); lauf := lauf^.next; end;
+          if anz > iif (ersterEmpfWirdErsetzt, 126, 125) then
+          begin
+            rfehler1 (748, formI (iif (ersterEmpfWirdErsetzt, anz, anz + 1), 0));
+              { Max. 126 EmpfÑnger erlaubt (ausgewÑhlt: %s)! (Hilfe mit F1) }
+            checkAnzahl := false;
+          end else
+            checkAnzahl := true;
+        end;
+
+      begin
+        result := true;
+        getPollBox;
+        getUnbekannteUser;
+        if checkAnzahl then
+        begin
+          if assigned (unbekannteUser) then
+          begin
+            lauf := unbekannteUser;
+            anz := 0;
+            while assigned (lauf) do
+            begin inc (anz); lauf := lauf^.next; end;
+            auswahl := ServerDialog (box, anz);
+
+            case auswahl of
+              0,4: result := false;
+              1:   PollBoxZuweisen (box);
+              2:   UserDialog (box);
+            end;
+          end;
+          if result and eigeneAdresse (eigeneAdressenbaum, empf) and not auswahlMarkierte then
+                                    { Bei RTA wird eine eigene Adresse als         }
+          begin                       { "erster EmpfÑnger" durch eine fremde ersetzt }
+            lauf := RTAEmpfList;
+            vor := nil;
+            while not lauf^.RTAEmpf do
+              removefromList (RTAEmpfList, vor, lauf);
+            if assigned (RTAEmpfList) then
+            begin
+              empf := RTAEmpfList^.empf;
+              vor := RTAEmpfList;
+              RTAEmpfList := RTAEmpfList^.next;
+              dispose (vor);
+            end;
+          end;
+        end else
+          result := false;
+        checkEmpf := result;
+        disposeRTAEmpfList (unbekannteUser);
+      end;
+
+      { Je nach Wert der Åbergebenen Variable wird ÅberprÅft, ob
+        - mind. eine fremde Adresse in der RTA-EmpfÑngerliste steht
+        - mind. eine fremde Adresse in der Liste steht, sofern
+          der vorgesehene EmpfÑnger der Nachricht keine eigene Adresse
+          ist oder mind zwei fremde Adresse vorhanden sind }
+
+      function RTAEmpfVorhanden (const one :boolean) :boolean;
+      var lauf :RTAEmpfaengerP;
+          anz :byte;
+      begin
+        anz := 0;
+        lauf := RTAEmpfList;
+        while assigned (lauf) and (anz < 2) do
+        begin
+          if lauf^.RTAEmpf then inc (anz);
+          lauf := lauf^.next;
+        end;
+        if one then
+          RTAEmpfVorhanden := anz >= 1
+        else
+          RTAEmpfVorhanden := (anz >= 1) and
+            (not eigeneAdresse (eigeneAdressenbaum, empf) or (anz >= 2));
+      end;
+
+      { 'EmpfÑnger auswÑhlen'-Dialogfenster }
+
+      function GetEmpfaenger (const replyTo :AdrStr) :string;
+      const leadingchar = #7;      { Das Zeichen durch das RTA-EmpfÑnger kenntlich gemacht werden }
+      var abs, s    :str90;
+          anz       :integer;      { Anzahl der Adressen im Fenster }
+          h         :word;         { Hîhe des Fensters/Listers }
+          x,y       :byte;
+          brk       :boolean;
+          auswahl   :string[110];
+          userError :boolean;      { Wenn der User alle Adressen markiert und 'alle' auswÑhlt :) }
+          RTAEmpfaengerVorhanden :boolean;
+          savedList :RTAEmpfaengerP;
+      label again;                 { Sprungmarke, um den Lister bei
+                                     Userfehlern/-abbruch wieder zu starten }
+
+        { öbergibt alle Adressen an den Lister }
+
+        procedure adressenHinzufuegen;
+
+          procedure add (const s :str90; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
+          var s1 :string;
+          begin
+            app_l (iifs (RTAEmpf and RTAEmpfaengerVorhanden, leadingChar, ' ') + getres2 (476, typ) +
+              iifs (not vertreter and not userUnbekannt, '  ', iifs (vertreter xor userUnbekannt, ' ', '')) +
+              iifs (vertreter, '*', '') + iifs (userUnbekannt, '(', '') + s + iifs (userUnbekannt, ')', ''));
+            inc (anz);
+          end;
+
+          procedure addLists;
+
+            procedure hinzu (const typ :byte);
+            var lauf :RTAEmpfaengerP;
+            begin
+              lauf := RTAEmpfList;
+              while assigned (lauf) do
+              begin
+                if lauf^.typ = typ then
+                  add (lauf^.empf, typ, lauf^.RTAEmpf, lauf^.vertreter, lauf^.userUnbekannt);
+                lauf := lauf^.next;
+              end;
+            end;
+
+          begin
+            hinzu (9);                                   { 'EmpfÑnger          :' }
+            hinzu (8);                                   { 'Original-EmpfÑnger :' }
+            hinzu (3);                                   { 'Kopien-EmpfÑnger   :' }
+          end;
+
+        begin
+          if hdp^.pmReplyTo <> '' then                   { 'Reply-To-EmpfÑnger :' }
+            add (hdp^.pmReplyTo, 7, not eigeneAdresse (eigeneAdressenbaum, hdp^.pmReplyTo),
+                 pmReplyToHasVertreter, pmReplyToIsUnknown);
+          if hdp^.wab <> '' then                         { 'Original-Absender  :' }
+            add (hdp^.absender, 1, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
+                 absenderHasVertreter, absenderIsUnknown)
+          else                                           { 'Absender           :' }
+            add (hdp^.absender, 5, (hdp^.pmReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp^.absender),
+              absenderHasVertreter, absenderIsUnknown);
+          if AdrOkay (hdp^.wab) then                     { 'Weiterleit-Absender:' }
+            add (hdp^.wab, 2, false, wabHasVertreter, wabIsUnknown);
+          addLists; { EmpfÑnger, Original-EmpfÑnger und Kopien-Empfaenger }
+        end;
+
+        { Adresse aus den vom Lister zurÅckgegeben Strings extrahieren }
+
+        function getAdresse (const s :string) :str90;
+        var adr :String[90];
+        begin
+          adr := trim (copy (s, length (getres2 (476, 1)) + 3, 91));
+          if adr[1] = '*' then delete (adr, 1, 1);
+          if adr[1] = '(' then delete (adr, 1, 1);
+          if adr[length (adr)] = ')' then delete (adr, length (adr), 1);
+          getAdresse := adr;
+        end;
+
+        procedure markierteAdressenEntfernen (var userError :boolean);
+        var lauf, vor, markierteAdressen, tempList :RTAEmpfaengerP;
+            s :string;
+
+          function AdresseMarkiert (const s: str90) :boolean;
+          var lauf :RTAEmpfaengerP;
+          begin
+            lauf := markierteAdressen;
+            while assigned (lauf) and (lauf^.empf <> s) do
+              lauf := lauf^.next;
+            AdresseMarkiert := assigned (lauf);
+          end;
+
+        begin
+          userError := false;
+          markierteAdressen := nil;  { Liste der markierten Adressen aufbauen }
+          s := first_marked;
+          repeat
+            if pos ('@', s) > 0 then
+              addToRTAList (markierteAdressen, uStr (getAdresse (trim (s))), true, false, false, 3);
+            s := next_marked;
+          until s = #0;
+
+          tempList := nil;                  { RTA-EmpfÑngerliste sichern, um bei    }
+          saveList (RTAEmpfList, tempList); { einem Usererror wiederholen zu kînnen }
+
+          vor := nil;
+          lauf := tempList;
+          while assigned (lauf) do
+          begin
+            if adresseMarkiert (uStr (lauf^.empf)) then { markierte Adressen lîschen }
+              removeFromList (tempList, vor, lauf)
+            else begin
+              vor := lauf;
+              lauf := lauf^.next;
+            end;
+          end;
+
+          if adresseMarkiert (uStr (abs)) then
+          begin { Wenn der "erste" EmpfÑnger markiert ist... }
+            vor := nil;
+            lauf := tempList;
+            while assigned (lauf) and not lauf^.RTAEmpf do
+              removeFromList (tempList, vor, lauf);
+            if assigned (lauf) then
+            begin
+              abs := lauf^.empf; { falls noch gÅltige Adressen vorhanden sind,    }
+                                 { wird die erste als neuer EmpfÑnger eingetragen }
+              removeFromList (tempList, vor, lauf);
+            end else             { Da hat der User wohl alle Adressen markiert... }
+            begin
+              abs := '';
+              RTA := false;
+              rfehler (747);     { 'Oops - *alle* passenden EmpfÑnger markiert/gefiltert!?' }
+              userError := true;
+            end;
+          end;
+
+          disposeRTAEmpfList (markierteAdressen);
+
+          if not userError then
+          begin
+            disposeRTAEmpfList (RTAEmpfList); { Wenn kein Fehler, dann neue Liste }
+            RTAEmpfList := tempList;          { Åbernehmen }
+          end else
+            disposeRTAEmpfList (tempList);    { neue Liste freigeben und noch einmal }
+        end;
+
+      begin
+        savedList := nil;
+        RTAEmpfaengerVorhanden := RTAEmpfVorhanden (false) and (RTAMode and 8 = 8);
+        openlist (2, 78, 10, 11, 0, '/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
+        if RTAEmpfaengerVorhanden then
+          app_l (' ' + getres2 (476, 10));    { 'alle'   }
+        app_l (' ' + getres2 (476, 11));      { 'markierte' }
+        anz := 0;
+        adressenHinzufuegen;
+
+        saveList (RTAEmpfList, savedList);
+
+        h := min(anz + iif (RTAEmpfaengerVorhanden, 4, 3), screenlines - 6);
+        selbox (65, h, getres2 (476, 4), x, y, true);  { 'EmpfÑnger wÑhlen' }
+        dec(h,2);
+        attrtxt(col.colselrahmen);
+        SetListsize(x + 1, x + 63, y + 1, y + h);
+        listboxcol;
+        listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
+        listSetStartPos (iif (RTAEmpfaengerVorhanden, iif (RTAStandard, 1, 3), 2));
+again:
+        pushhp (3000);
+        list(brk);
+        pophp;
+        if brk then abs := '' else
+        begin
+          auswahlMarkierte := false;
+          auswahl := trim (get_selection);
+          abs := getAdresse (auswahl);
+          if auswahl = getres2 (476,10) then      { 'alle' }
+          begin
+            RTA := true;
+            if replyTo <> '' then
+              abs := replyTo
+            else
+{              dbRead (dispdat, 'absender', abs);}
+              abs := hdp^.absender;
+            if list_markanz <> 0 then
+            begin
+              markierteAdressenEntfernen (usererror);
+              if userError then goto again;
+            end;
+          end
+          else if auswahl = getres2(476,11) then  { 'markiert' }
+          begin
+            if list_markanz = 0 then
+            begin
+              rfehler(743);                       { 'Keine EintrÑge markiert!' }
+              listSetStartPos (iif (RTAEmpfaengerVorhanden, 2, 1));
+              goto again;
+            end else
+            begin
+              auswahlMarkierte := true;
+              disposeRTAEmpfList (RTAEmpfList);
+              abs := getAdresse (trim (first_marked));
+              if pos ('@', abs) = 0 then abs := '';
+              s := next_marked;
+              repeat
+                if pos ('@', s) > 0 then  { MenÅzeilen filtern }
+                  if abs = '' then
+                    abs := getAdresse (trim (s))
+                  else
+                    addToRTAList (RTAEmpfList, getAdresse (trim (s)), true, false, false, 3);
+                s := next_marked;
+              until s = #0;
+              if assigned (RTAEmpfList) then RTA := true;
+            end;
+            if abs = '' then
+            begin
+              rfehler(746);                       { 'UngÅltige Auswahl' }
+              listSetStartPos (iif (RTAEmpfaengerVorhanden, 2, 1));
+              disposeRTAEmpfList (RTAEmpfList);
+              saveList (savedList, RTAEmpfList);
+              goto again;
+            end;
+          end;
+          if RTA then
+            if not checkEmpf (abs, RTAEmpfList) then
+            begin
+              disposeRTAEmpfList (RTAEmpfList);
+              saveList (savedList, RTAEmpfList);
+              RTA := false;
+              goto again;
+            end;
+        end;
+        closelist;
+        closebox;
+        freeres;
+        disposeRTAEmpfList (savedList);
+        adresseAusgewaehlt := true;
+        GetEmpfaenger := abs;
+      end;
+
+    begin
+      RTA := false;
+      RTAEmpfList := nil;
+      getEigeneAdressen (eigeneAdressenBaum);
+      brk := false;
+      dbRead(dispdat,'absender',empf);
+      if ntRealName(mbNetztyp) then dbRead(dispdat,'name',realname);
+      new (hdp);
+      readkoplist := true;      { KOP-Header auslesen }
+      readempflist := true;     { EMP-Header auslesen }
+      readHeadEmpf := 127;
+      readOEMList := true;      { OEM-Header auslesen }
+      readheader (hdp^, hds, false);
+
+      if (RTAMode and 4 = 4) or (RTAMode and 8 = 8) or (RTAMode and 64 = 64) then
+      begin
+        addList (RTAEmpfList, xp3.empfList, 9);
+        addList (RTAEmpfList, hdp^.oemList, 8);
+        addList (RTAEmpfList, hdp^.kopien, 3);
+      end;
+
+      checkVertreterAdressen (RTAEmpfList);
+
+      checkList (RTAEmpfList);
+
+      if ((hdp^.pmReplyTo <> '') and (RTAMode and 2 = 2) and (uStr (hdp^.pmReplyTo) <> uStr (empf))
+           and adrOkay (hdp^.pmReplyTo)
+         or (hdp^.wab <> '') and adrOkay (hdp^.wab) and (RTAMode and 1 = 1)
+         or RTAEmpfVorhanden (true) and (RTAMode and 4 = 4)
+         or RTAEmpfVorhanden (false) and (RTAMode and 8 = 8)
+         or (RTAMode and 64 = 64))
+         and (RTAMode <> 0)
+      then
+        empf := GetEmpfaenger (hdp^.pmReplyTo);
+
+      dispose (hdp);
+
+      if not RTA then
+        disposeRTAEmpfList (RTAEmpfList)
+      else
+        translateRTAEmpfList (RTAEmpfList, sendEmpfList);
+
+      freeEigeneAdressenBaum (eigeneAdressenBaum);
+    end;
+
   begin
+    adresseAusgewaehlt := false;
     fn:=TempS(2000);
     GoP;
     if reply then netztyp:=mbNetztyp
@@ -867,13 +1487,16 @@ var t,lastt: taste;
     else begin
       if (quote=2) and (markanz>0) and not MsgMarked then
         dbGo(mbase,marked^[0].recno);
-      if pm then begin
-        { 04.02.2000 robo }
-(*        if dbReadInt(mbase,'netztyp') and $800=0 then begin  { kein WAB/OEM } *)
+      if pm then
+      begin
+        if reply and ntReplyToAll (dbReadInt (mbase, 'netztyp')) then
+        begin
+          ReplyToAll (brk);
+          if brk or (empf = '') then exit;
+        end else
         if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
-        and not askreplyto
+        and not (RTAMode and 2 = 2)
         then begin
-        { /robo }
           dbRead(dispdat,'absender',empf);
           if ntRealName(mbNetztyp) then dbRead(dispdat,'name',realname);
           end
@@ -881,7 +1504,7 @@ var t,lastt: taste;
           empf:=GetWABreplyEmpfaenger(realname);
           if empf='' then exit;
           end
-        end
+      end
       else begin
         if dispmode<10 then
           if xposting and (bmarkanz>0) then begin
@@ -955,6 +1578,7 @@ var t,lastt: taste;
     else sigf:=SignatFile;
     new(sData);
     fillchar(sdata^,sizeof(sdata^),0);
+    if adresseAusgewaehlt then sdata^.RTAHasSetVertreter := true;
     if quote=2 then sdata^.quotestr:=qchar;
 
     if not usermsg then begin
@@ -1026,7 +1650,7 @@ var t,lastt: taste;
           end;
         if (rt<>'') and ((rt<>empf) or (rtanz>1)) then begin
           { 03.02.2000 robo }
-          if not askreplyto or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
+          if not adresseAusgewaehlt or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
           { /robo }
           if not pm then begin
             if rtanz>1 then
@@ -1091,13 +1715,27 @@ var t,lastt: taste;
       end;
     end;
 
+    { Die folgenden Zeilen (*) und wurden eingefuegt, weil man Kopien-
+      EmpfÑnger in DoSend mit select (3) auswÑhlen kann und damit u.U.
+      Daten ueberschrieben werden, die spÑter noch gebraucht werden }
+
+{*} if AutoArchiv and reply then
+{*} begin
+{*}   new (saveDispRec);
+{*}   saveDispRec^ := dispRec;
+{*}   savePos := p;
+{*} end;
+
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
       if AutoArchiv and reply then begin
+{*}     dispRec := saveDispRec^;
+{*}     p := savePos;
+{*}     dispose (saveDispRec);
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if (left(dbReadStr(mbase,'brett'),1)='1') and
+        if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStr(mbase,'brett'),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -1110,6 +1748,7 @@ var t,lastt: taste;
     force_quotemsk:='';
     if exist(fn) then _era(fn);
     setall;
+    disposeEmpfList (sendempflist);
     dispose(sData);
     qmpdata := nil;
   end;
@@ -2133,6 +2772,42 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.27  2001/04/28 15:47:34  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.26.2.26  2000/12/24 16:52:09  mk
   - lastmsg gross geschrieben
 

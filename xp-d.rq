@@ -547,9 +547,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    max. Speichergr”áe fr Bin„rnachrichten:~
 7    KB
 9    Bytes
-11   Standard-Bretthaltezeit: ~
+11   Standard-Bretthaltezeit:~
 12   Tage
-13   Standard-Userhaltezeit:  ~
+13   Standard-Userhaltezeit: ~
 14   Eigene Nachr. halten
 15   Erstellungszeit 00:00
 16   Re^n verwenden
@@ -565,6 +565,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 29   News-Archivierung im Netz verhindern
 30   Cancel- und Ersetzt-Nachrichten ignorieren
 31   Eigene PMs halten
+39   Empf„nger-Auswahlliste: ~
+40   immer
+41   Kopienempf. + Antwort-an
+42   Kopienempf„nger
+43   Antwort-an
+44   nie
+50   benutzerdefiniert
 #
 100  68
 101  Adreáeinstellungen (ZConnect / RFC)
@@ -908,42 +915,42 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 360  DES-Decodierung...     %
 + 361
 1    ~ (internes CrossPoint-Brett)
-2    Empfaenger :~
-3    Antwort in :~
-4    Kopie      :~
-5    Betreff    :~
-6    Absender   :~
-7    Pfad       :~
-8    Message-ID :~
-9    Datum      :~
+2    Empfaenger  :~
+3    Antwort in  :~
+4    Kopie       :~
+5    Betreff     :~
+6    Absender    :~
+7    Pfad        :~
+8    Message-ID  :~
+9    Datum       :~
 10   erhalten:~
 # die zus„tzlichen Leerzeichen werden fr das Ersetzen der Gr”áenangabe
 # bei Multipart-Nachrichten ben”tigt
-11   Groesse    : %s Bytes    ~
-12   Datei      :~
-13   PM-Status  :~
-14   Fehler!    :~
-15   ~           ~
-16   Org.-Empf. :~
-17   Weiterleiter~
-18   Org.-Abs.  :~
-19   Bezugs-ID  :~
-20   Software   :~
-21   Status     :~
-22   Stichworte :~
-23   Zus.fassung:~
-24   Organisat. :~
-25   Postadresse:~
-26   Telefon    :~
-27   Antwort an :~
-28   Kopien an  :~
-29   PGP-Status :~
-30   Fido-Empf. :~
-31   Distribut. :~
-32   Homepage   :~
-33   Teil       :~
+11   Groesse     : %s Bytes    ~
+12   Datei       :~
+13   PM-Status   :~
+14   Fehler!     :~
+15   ~            ~
+16   Orig.-Empf. :~
+17   Weiterleiter:~
+18   Orig.-Abs.  :~
+19   Bezugs-ID   :~
+20   Software    :~
+21   Status      :~
+22   Stichworte  :~
+23   Zus.fassung :~
+24   Organisation:~
+25   Postadresse :~
+26   Telefon     :~
+27   Antwort-an  :~
+28   Kopien an   :~
+29   PGP-Status  :~
+30   Fido-Empf.  :~
+31   Distribution:~
+32   Homepage    :~
+33   Teil        :~
 34   ~von~
-35   Priorit„t  :~
+35   Priorit„t   :~
 48   private Mail
 50   ~[ungltiges Format]
 51   Voice
@@ -1175,11 +1182,15 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 476
 1    Original-Absender  :~
 2    Weiterleit-Absender:~
-3    Original-Empf„nger :~
+3    Kopien-Empf„nger   :~
 4    Empf„nger w„hlen...
 5    Absender           :~
 6    Vertreter          :~
 7    Reply-To-Empf„nger :~
+8    Original-Empf„nger :~
+9    Empf„nger          :~
+10   --- alle (ohne eigene und ohne markierte Adressen) ---
+11   --- markierte ---
 -
 
 # XP4E: s. 2700
@@ -2767,7 +2778,26 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2737 Warnung: Nachrichtencodierung ist im FidoNet nicht zul„ssig!
 2738 User aus Adreábuch entfernen
 2739 Vertreter nicht in der Datenbank - neu anlegen
-
++2740
+0 Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
+1 ~^Ja , ^Nein , Anderer ^Server , ^Zurck~
+-
++2750
+# Zeilenzahl
+0 11
+1 CrossPoint stellt fr ZConnect-  und  RFC-Serverboxen eine
+2 erweiterte Antwortfunktion ("*Reply-To-All*") zur Verfgung,
+3 mit der  Sie die  Antwort auf eine  Nachricht mit mehreren
+4 Empf„ngern automatisch an den Absender  und alle Empf„nger
+5 einer Mail gleichzeitig senden k”nnen  (N„heres dazu siehe
+6 Online-Hilfe zu *C*onfig/*O*pt./*N*achr./Empf„nger-Auswahl).
+7
+8 Diese Funktion ist in Ihrer bisherigen Konfiguration nicht
+9 vorhanden bzw. nicht aktiviert.
+10
+11 Wollen Sie "*Reply-To-All*" aktivieren?
+20 ~^Ja , ^Nein~
+-
 
 # --- XPREG -----------------------------------------------------------
 
@@ -2891,7 +2921,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20 keine Nachrichten vorhanden!
 21 Warnung: Ablagendatei %s fehlt!
 22 Bitte verwenden Sie Nachricht/Unversandt/%s
-23 Bei Bin„rdateien nicht m”glich
+23 Bei Bin„rdateien nicht m”glich.
 24 Nachricht ist besch„digt  (Ablage %s)
 25 Bei unversandten Nachrichten nicht m”glich.
 26 Nachricht ist nicht mehr in der Datenbank vorhanden!
@@ -2947,7 +2977,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 19 keine unversandte Nachricht!
 20 nicht m”glich - bitte Datei neu versenden
 21 fehlerhaftes Pollpaket:  %s
-22 Nachricht nicht (mehr) im Pollpaket vorhanden !?
+22 Nachricht nicht (mehr) im Pollpaket vorhanden!?
 24 Weiterleiten in dieses Brett nicht m”glich
 25 Schreiben in dieses Brett ist nicht m”glich.
 26 Ungltige Originalempf„nger-Zeile!
@@ -2986,7 +3016,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 19 fehlerhaftes Fido-Paket
 20 interner Fehler (%s) im Fido-Mailer
 21 Fehler - bitte Modemeinstellungen (Carrier-Signal) berprfen!
-22 Fehler beim XP-FM-Aufruf ?!
+22 Fehler beim XP-FM-Aufruf?!
 23 ungltige SysopMode-Ausgabedatei
 24 Fehler bei der MAGGI-Konvertierung
 # File Attach-Datei fehlt
@@ -3011,6 +3041,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 43 Keine Eintr„ge markiert!
 44 ungltiges Spoolverzeichnis
 45 Es konnten nicht alle Nachrichten versandt werden!
+46 Ungltige Auswahl
+47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
+48 Max. 126 Empf„nger erlaubt (ausgew„hlt: %s)!  (Hilfe mit F1)
 
 +  10800
 1  Diese Box untersttzt keine Brettbestell-Funktionen.
@@ -3087,10 +3120,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 33 "rz" und "sz" mssen installiert sein!
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
-36 Dieser Eintrag darf entweder keinen oder muá den Client-Pfad enthalten!
+36 Eintrag darf entweder keine oder nur "CLPATH+" als Pfadangabe enthalten!
 37 Verzeichnis darf nicht gleich dem XP-Spool-Verzeichnis sein!
-38 Dieser Pfad muá EINE relative Verzeichnisebene enthalten!
-39 Dieser Pfad darf nicht leer sein!
+38 Nur RELATIVER Pfad EINE Ebene DIREKT unterhalb XP-Verzeichnis zul„ssig!
+39 Pfad darf nicht leer sein!
 
 +  11000
 1  unbekannter Befehl

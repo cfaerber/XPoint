@@ -42,6 +42,7 @@ const nt_ZConnect=2;
       BetreffLen= 70;
       readempflist = false;
       readkoplist  = false;
+      readOemList  = false;
       postadrlen= 80;
       telelen   = 60;
       adrlen    = 80;
@@ -115,6 +116,7 @@ type  charr       = array[0..65530] of char;
                  datei      : string[40];    { Dateiname }
                  prio       : byte;          { 10=direkt, 20=Eilmail }
                  oem,oab,wab: string[90];
+                 oemlist    : empfnodep;
                  oar,war    : string[realnlen];
                  real_box   : string[20];    { X-XP-BOX: Absendebox }
                  hd_point   : string[25];    { X-XP-PNT: Pointname  }
@@ -1832,6 +1834,42 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.7  2001/04/28 15:47:29  sv
+  - Reply-To-All :-) (Reply to sender and *all* recipients of a message
+                     simultaneously, except to own and marked addresses.
+                     'Reply-To-Marked' also possible. Automatically
+                     activated with <P>, <Ctrl-P> and <Shift-P> if not
+                     disabled in Config and if more than one reply address
+                     available after removal of dupes and invalid
+                     addresses. ZConnect and RFC only.)
+  - Changed C/O/N rsp. C/O/E for RTA (Reply-To-All) - removed "ask at
+    Reply-To", added "User selection list" option.
+  - Query upon first startup and after (first) creation of a ZConnect/RFC
+    server if RTA shall be activated.
+  - Bugfix: "Automatic PM archiving" didn't work if user had selected CC
+    recipients in the send window with <F2> (sometimes XP even crashed).
+  - When archiving PMs with <Alt-P>, headers EMP/KOP/OEM are not thrown
+    away anymore.
+  - OEM headers are read and stored in an internal list (needed for RTA
+    and message header display).
+  - All OEM headers are shown in the message header display now (rather
+    than just the last).
+  - DoSend: - When sending a mail to a CC recipient with a Stand-In/Reply-
+              To address, the server of the Reply-To user is used (rather
+              than the server of the 'original user').
+            - When sending a reply to a 'unknown user' (not yet in user
+              database) we try to catch the server from the message area
+              where the replied message is stored upon creating the user
+              (rather than using the 'default server' and unless the
+              server can be determined through the path).
+            - Fix: When sending a message to more than one user/newsgroup,
+              the first user/newsgroup was indented by one character in
+              the 'subject window'.
+            - Limited CC recipients to 125 in the send window (instead of
+              126 before).
+  - All ASCII characters can be displayed in the online help now
+    ("\axxx").
+
   Revision 1.15.2.6  2000/12/31 11:35:53  mk
   - fileio.disksize statt lfn.disksize benutzen
 
