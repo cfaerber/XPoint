@@ -724,8 +724,8 @@ begin
     else mdelay(500);
     closebox;
     end;
-  pophp;
 ende:
+  pophp;
   ss_active:=false;
 end;
 
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/12/18 09:22:59  mk
+  - fehlendes pophp ergaenzt
+
   Revision 1.44  2000/11/17 00:15:48  mk
   - Virtual Pascal compatibility updates
 
