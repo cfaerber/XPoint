@@ -764,7 +764,13 @@ begin
     else rewrite(t);
     for y:=1 to screenlines do begin
       for x:=1 to 80 do
-        write(t,copychr(x,y));
+        { Test auf unsichtbare Zeichen (wenn Vorder- und Hintergrund
+          gleich sind) }
+        if (mem[base:(2*x-1) + 2*zpz*(y-1)] and $0f) <>
+          ((mem[base:(2*x-1) + 2*zpz*(y-1)] and $70) shr 4) then
+          write(t,copychr(x,y))
+        else
+          write(t, ' ');
       writeln(t);
       end;
     message('OK.');
@@ -989,6 +995,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.4  2000/10/20 11:25:06  mk
+  - Fix for Bug #116155, Bildschirmauszug fehlerhaft
+
   Revision 1.27.2.3  2000/08/28 23:35:55  mk
   - LFN in uses hinzugefuegt
 
