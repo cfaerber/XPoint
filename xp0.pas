@@ -150,6 +150,9 @@ const  QPC_ID      = 'QPC:';
        extHelp     = '.hlp';
        extXps      = '.xps';
        extBak      = '.bak';
+       extIn       = '.in';
+       extOut      = '.out';
+       extMsg      = '.msg';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -191,6 +194,9 @@ const  QPC_ID      = 'QPC:';
        extHelp     = '.HLP';
        extXps      = '.XPS';
        extBak      = '.BAK';
+       extIn       = '.IN';
+       extOut      = '.OUT';
+       extMsg      = '.MSG';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -1226,6 +1232,9 @@ implementation
 
 {
   $Log$
+  Revision 1.184  2003/09/03 00:54:55  mk
+  - added multiserver netcall
+
   Revision 1.183  2003/09/01 16:17:12  mk
   - added printing support for linux
 

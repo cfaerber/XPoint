@@ -111,7 +111,7 @@ procedure set_AddServers_Allowances(var s:string);
 procedure set_ExtCfg_Allowances;
 procedure reset_Allowances(var s:string);
 function  addServersTest(var s:string):boolean;
-function  BfgToBox(var s:string):string;
+function  BfgToBox(s:string):string;
 function  BoxToBfg(var s:string):string;
 
 implementation  {---------------------------------------------------}
@@ -2853,7 +2853,7 @@ begin
 end;
 
 
-function BfgToBox(var s:string):string;
+function BfgToBox(s:string):string;
 var   d      : DB;
       p      : Integer;
       s1     : string;              { BFG-Datei }
@@ -3139,6 +3139,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2003/09/03 00:54:55  mk
+  - added multiserver netcall
+
   Revision 1.64  2003/08/28 14:13:03  mk
   - TUniSelType for UniSel instead of numeric constants
 

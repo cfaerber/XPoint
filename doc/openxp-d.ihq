@@ -5459,12 +5459,9 @@ senden und/oder empfangen wollen, tragen Sie hier
 die Namen der jeweiligen Server mit einem Leer-
 zeichen getrennt ein.
 
-Achten Sie bei der Eingabe darauf, genau den Namen
-zu verwenden, der der Serverbox-Konfigurationsdatei
-<Box>.BFG des jeweiligen Servers entspricht (im Zwei-
-fel drcken Sie <<<F9> >>und fhren im OpenXP-Ver-
-zeichnis den Befehl "dir *.bfg" aus, um die vor-
-handenen BFG-Dateien sehen zu k”nnen).
+Mit <<F2>> können Sie sich eine Liste der Serverboxen
+zusammenstellen. <<Ctrl-Del>> löscht die Auswahl
+komplett.
 
 OpenXP wird dann zu Beginn eines RFC/Client-
 Netcalls die ausgehenden Nachrichten der hier ein-
