@@ -1,0 +1,22 @@
+FeatureD ' FeatureLongD ' FeatureE ' FeatureLongE ' v320 ' v340 ' v370
+verbesserte MIME-Unterstützung '  ' improved MIME support '  ' x ' x ' x
+erhöhte Geschwindigkeit '  ' better performance '  ' x ' x ' x
+PGP5/6.5-Unterstützung '  ' Support for PGP5/6.5 '  ' x ' x ' x
+FQDN-Unterstützung '  ' FQDN support '  ' x ' x ' x
+Quote reflow '  ' Quote reflow '  ' x ' x ' x
+Prioritäten in Mail/News '  ' Priorities in Mail/News '  ' x ' x ' x
+Verbesserter Support v. ext. Viewern '  ' Improved external viewer support '  ' - ' x ' x
+Adressbuchgruppen '  ' Address book groups '  ' - ' x ' x
+UUE-Dekodierung im Lister '  ' Lister decodes UUE internally '  ' - ' x ' x
+Lange Dateinamen '  ' Long file name support '  ' - ' x ' x
+Schnellere Datenbank '  ' Faster database '  ' - ' x ' x
+UTF-8-Dekodierung '  ' UTF-8 support '  ' - ' x ' x
+Vergrößerte Kommentarbaum-Limits '  ' Thread list limits improved '  ' - ' x ' x
+Rücklaufnachrichten ersetzen Ursprungsnachricht '  ' ReplaceOwn '  ' - ' x ' x
+PPP-Modus '  ' PPP mode '  ' - ' x ' x
+Schnellere Suchgeschwindigkeit '  ' Improved search performance '  ' - ' x ' x
+32 Bit ' praktisch alle Limits entschärft ' 32 bit ' nearly all limits removed ' - ' - ' x
+Bildschirmgröße frei wählbar ' unter Win32/Linux '  Screen size freely configurable ' Win32/Linux ' - ' - ' x
+Integrierter NNTP/SMTP/POP3-Support ' in Arbeit ' Integrated NNTP/SMTP/POP3 support ' in Arbeit ' - ' - ' w
+Integriertes ZFido/UUZ '  ' Integrated ZFido/UUZ '  ' - ' - ' x
+Verbesserter Netcall-Support ' Netcall-over-IP/nativer Schnittstellenzugriff ' Improved netcall support ' Netcall over IP/native serial port support ' - ' - ' w
