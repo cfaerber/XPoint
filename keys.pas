@@ -151,8 +151,8 @@ var
   lastscancode : byte;
 {$ENDIF }
 
-procedure keyboard(s:string);        { s and forwardkeys anh„ngen            }
-procedure _keyboard(s:string);       { s vorne an forwardkeys anh„ngen       }
+procedure keyboard(const s:string);        { s and forwardkeys anh„ngen            }
+procedure _keyboard(const s:string);       { s vorne an forwardkeys anh„ngen       }
 procedure clearkeybuf;               { Tastaturpuffer l”schen                }
 Procedure pushkey(t:taste);          { Taste direkt in Tastaturpuffer schr.  }
 procedure pushkeyv(var t:taste);
@@ -229,12 +229,12 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-procedure keyboard(s:string);
+procedure keyboard(const s:string);
 begin
   forwardkeys:=forwardkeys+s;
 end;
 
-procedure _keyboard(s:string);
+procedure _keyboard(const s:string);
 begin
   forwardkeys:=s+forwardkeys;
 end;
@@ -374,6 +374,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/08/10 19:32:57  mk
+  - added const parameter to keyboard and _keyboard
+
   Revision 1.42  2001/08/10 19:22:47  mk
   - added Ctrl and Shift detection for Win9x
 
