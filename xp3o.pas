@@ -1048,7 +1048,7 @@ begin
 
   if auto and FileExists(EB_msk) then begin    { nur bei autom. EB }
     writeln(t);
-    writeln(t,'--');
+    writeln(t,'-- ');
     assign(t2,EB_msk);     { EB-Signatur anhaengen }
     reset(t2);
     while not eof(t2) do begin
@@ -1508,6 +1508,9 @@ end;
 
 {
   $Log$
+  Revision 1.85.2.4  2002/08/01 16:59:59  mk
+  - fixed signature, Bug #589617 3.8: Signaturabtrenner bei EB ist "--"
+
   Revision 1.85.2.3  2002/07/31 18:40:40  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now
