@@ -1665,10 +1665,10 @@ label ende;
     overwrite:=ReadJN(LeftStr(fn,40)+getres(2113),true);  { ' bereits vorhanden - Åberschreiben' }
   end;
 
-  function filetest(docopy:boolean; size:longint; path:string; fi:string):boolean;
-  var p : byte;
+  function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
+  var p : integer;
   begin
-    if (diskfree(ord(path[1])-64)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
+    if (diskfree(ord(FirstChar(Path))-64)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
@@ -2225,6 +2225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/01/15 23:01:39  mk
+  - diskfree with in64
+
   Revision 1.43  2001/01/07 12:34:36  mo
   - einig  ƒnderungen an TNodeList
 
