@@ -39,106 +39,9 @@ uses xpfido;
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
 
-procedure ReadOldNodeCFG;      { alte NODELIST.CFG laden }
-var t  : text;
-    s  : string;
-    p  : byte;
-    fa : FidoAdr;
-    Item: PNodeListItem;
-begin
-  assign(t,OldNLcfg);        { im FidoDir }
-  reset(t);
-  while not eof(t) do begin
-    readln(t,s);
-    UpString(s);
-    if (LeftStr(s,18)='NODELIST=NODELIST.') and FileExists(FidoDir+mid(s,10))
-    then
-    begin
-      New(Item); NodeList.mEntrys.Add(Item);
-      with Item^ do
-      begin
-        listfile:='NODELIST.###';
-        number:=ival(RightStr(s,3));
-        updatefile:='NODEDIFF.###';
-        updatearc:='NODEDIFF.A##';
-        DoDiff:=true;
-        format:=nlNodelist;
-        end;
-      end
-    else if (LeftStr(s,10)='POINTLIST=') and FileExists(FidoDir+mid(s,11)) then begin
-      p:=cpos('.',s);
-      if p>0 then
-      begin
-        New(Item); NodeList.mEntrys.Add(Item);
-        with Item^ do
-        begin
-          listfile:=copy(s,11,p-10)+'###';
-          number:=ival(RightStr(s,3));
-          if (pointlistn<>'') and (pointdiffn<>'') then begin
-            updatefile:=Pointdiffn+'.###';
-            updatearc:=Pointdiffn+'.A##';
-            DoDiff:=true;
-            end
-          else
-            DoDiff:=false;
-          if Pointlist4D then format:=nl4DPointlist else format:=nlPoints24;
-          zone:=DefaultZone;
-          end;
-        end;
-      end
-    else
-    if (LeftStr(s,9)='USERLIST=') then
-    begin
-      s:=trim(mid(s,10));
-      p:=cpos(',',s);
-      if (p>0) and FileExists(FidoDir+LeftStr(s,p-1)) then
-      begin
-        New(Item); NodeList.mEntrys.Add(Item);
-        with Item^ do
-        begin
-          listfile:=LeftStr(s,p-1);
-          s:=trim(mid(s,p+1));
-          p:=cpos('.',listfile);
-          if (p>0) and (length(listfile)-p=3) and isnum(mid(listfile,p+1))
-          then begin
-            number:=ival(mid(listfile,p+1));
-            listfile:=LeftStr(listfile,p)+'###';
-            end;
-          p:=cpos(',',s);
-          zone:=DefaultZone;
-          if p=0 then format:=ival(s)
-          else begin
-            format:=ival(LeftStr(s,p-1));
-            if format in [2,4] then      { Points24 / 4D-Pointlist }
-              zone:=ival(mid(s,p+1))
-            else begin
-              SplitFido(mid(s,p+1),fa,2);
-              zone:=fa.zone;
-              net:=fa.net;
-              node:=fa.node;
-              end;
-            end;
-          end;   { with }
-        end;   { exist }
-      end;   { USERLIST }
-    end;  { while }
-  close(t);
-(*
-  if (nodelist<>'') and not exist(FidoDir+nodelist) then begin
-    trfehler1(214,nodelist,10);   { 'Nodelist %s fehlt' }
-    nodelist:='';
-    end;
-  if (pointlist<>'') and not exist(FidoDir+pointlist) then begin
-    trfehler1(215,pointlist,10);   { 'Pointlist %s fehlt' }
-    pointlist:='';
-    end;
-*)
-end;
-
 procedure InitNodelist;
 var
     indexflag : boolean;
-    saveflag  : boolean;
     i         : integer;
     xni       : boolean;
 
@@ -161,31 +64,18 @@ var
     end;
   end;
 
-begin
-  if (_filesize(OldNLcfg)>0) and (_filesize(NodelistCfg)=0) then
-  begin
-    NodeList := TNodeList.Create;
-    ReadOldNodeCFG;                     { Nodelist-Konfiguration im alten  }
-    SortNodelists;                      { Format laden und im neuen Format }
-    saveflag:=true;                     { abspeichern                      }
-    _era(OldNLcfg);
-    indexflag:=true;
-    end
-  else begin
-    NodeList := TNodeList.Create;
-    NodeList.LoadConfigFromFile;   { Nodelist-Konfiguration im neuen }
-    indexflag:=false;                           { Format laden                    }
-    saveflag:=false;
-  end;
-  if saveflag then
-    NodeList.SaveConfigToFile;
+begin           //procedure InitNodelist;
+  NodeList := TNodeList.Create;
+  NodeList.LoadConfigFromFile;          { Nodelist-Konfiguration im neuen Format laden }
+  indexflag:=false;                     { altes Format wird nicht mehr untersttzt                    }
+
   for i:=0 to NodeList.mEntrys.Count - 1 do
     if not FileExists(FidoDir+NodeList.GetFilename(i)) then
       trfehler1(214,FidoDir+NodeList.GetFilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
   if NodeList.mEntrys.Count > 0 then
   begin
     NL_Datecheck;
-    xni:=FileExists(NodeIndexF);
+    xni:=FileExists(NodeIndexF);                //exists 'FIDO\NODELIST.IDX'
     if indexflag or not xni or not FileExists (UserIndexF) then
       MakeNodelistIndex;
     OpenNodeindex(NodeIndexF);
@@ -195,7 +85,7 @@ begin
       end;
     end
   else
-    Nodelist.mOpen:=false;
+    Nodelist.mOpen:=false;    //mOpen wird von procedure OpenNodeindex ggf. auf true gesetzt
 end;
 
 
@@ -311,7 +201,7 @@ var fn      : string;
       end;
   end;
 
-begin
+begin   //function NewNodeEntry:boolean;
   NewNodeEntry:=false;
   fn:=WildCard;
   useclip:=false;        { 'Neue Node-/Pointliste einbinden' }
@@ -395,7 +285,7 @@ begin
         end;
   pophp;
   freeres;
-end;
+end;    //function NewNodeEntry:boolean;
 
 
 procedure SortNodelists;       { nach Dateigr”áe sortieren }
@@ -645,6 +535,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/12/28 06:23:17  mo
+  -Support für alte Nodelisteneonfiguration entfernt
+
   Revision 1.27  2000/12/27 22:36:31  mo
   -new class TfidoNodeList
 
