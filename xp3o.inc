@@ -68,6 +68,7 @@ const
 
 var x,y      : Integer;
     f,pfile  : file;
+    fm: Byte;
     llbuf    : array[1..maxll] of longint;
     llanz    : integer;
     padr,size: longint;
@@ -686,8 +687,11 @@ begin
   else
     msgbox(47,11,getres(333),x,y);
   attrtxt(col.colmbox);
+  fm := FileMode;
   assign(f,puffer);
+  FileMode := fmOpenRead + fmShareDenyWrite;
   reset(f,1);
+  FileMode := fm;
   fs:=filesize(f);
   if fs<16 then begin
     close(f);
@@ -1253,6 +1257,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.6  2002/07/22 17:08:31  mk
+  - fixed Bug #496988: OXP-Linux: Dateirechte bei Pufferimport
+
   Revision 1.83.2.5  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 
