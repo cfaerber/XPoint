@@ -41,8 +41,8 @@ function ReadJNesc(const txt:string; default:boolean; var brk:boolean):boolean;
 function ReadIt(width:byte; txt,buttons:string; default:shortint;
                 var brk:boolean):shortint;
 function MiniSel(x,y: Integer; txt,auswahl:string; startpos:shortint):shortint;
-procedure EditDate(x,y: Integer; const txt:atext; var d:datetimest; var getdate,brk:boolean);
-
+procedure EditDate(x,y: Integer; const txt: atext; var zdatestr: datetimest;
+                   var getdate,brk: boolean);
 
 implementation
 
@@ -392,15 +392,17 @@ begin
 end;
 
 
-procedure EditDate(x,y: Integer; const txt:atext; var d:datetimest; var getdate,brk:boolean);
+procedure EditDate(x,y: Integer; const txt: atext; var zdatestr: datetimest;
+                   var getdate,brk: boolean);
 var width,height,i : byte;
-    d1,d2:datetimest;
+    SDate,STime: String;
 begin
-  d1:=fdat(d);
-  d2:=ftime(d);
+  SDate:=fdat(zdatestr);
+  STime:=ftime(zdatestr);
   width:=length(txt)+17;
   if getdate then
   begin
+    // REALLY bad style. Should definitely be rewritten.
     if (txt[1]='N') and (length(getres2(452,2))+13 > width) then
       width:=length(getres2(452,2))+13
     else if length(getres2(2720,5))+13 > width then
@@ -415,8 +417,8 @@ begin
   forcecolor:=false;
   openmask(x+1,x+length(txt)+10,y+1,y+height-2,false);
   maskrahmen(0,0,0,0,0);
-  madddate(3,1,txt,d1,false,false);
-  maddtime(length(txt)-length(getres2(2720,4))+3,2,getres2(2720,4),d2,false);
+  madddate(3,1,txt,SDate,false,false);
+  maddtime(length(txt)-length(getres2(2720,4))+3,2,getres2(2720,4),STime,false);
   if getdate then begin
     getdate:=false;
     maddbool(3,4,iifs(txt[1]='N',getres2(452,2),getres2(2720,5)),getdate);
@@ -425,14 +427,21 @@ begin
   closemask;
   wpop;
   blindoff;
-  if not brk then
-    for i:=1 to length(d) do
-      if d[i]=' ' then d[i]:='0';
+  if not brk then begin
+    zdatestr:=copy(SDate,7,2)+copy(SDate,4,2)+copy(SDate,1,2)+
+              copy(STime,1,2)+copy(STime,4,2);
+    for i:=1 to length(zdatestr) do
+      if zdatestr[i]=' ' then zdatestr[i]:='0';
+    end;
 end;
 
 
 {
   $Log$
+  Revision 1.29  2002/02/12 21:47:50  ma
+  - finally fixed EditDate.
+    rev 1.26/1.27 code changes should be rewritten.
+
   Revision 1.28  2002/02/09 14:18:06  ma
   - fixed EditDate (asm routine crashed)
 
