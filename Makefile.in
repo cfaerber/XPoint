@@ -43,7 +43,7 @@ mandir		= @mandir@
 # --- flags -----------------------------------------------------------
 
 PPC	= @PPC@
-PPC_FLAGS	= -Funetcall -FuObjCOM -Fulinux -dAUTOCONF
+PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -dAUTOCONF
 PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux
 
 # --- files -----------------------------------------------------------
@@ -113,8 +113,8 @@ openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 
 # --- files list ------------------------------------------------------
 
-MANIFEST.snap: $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES)
-	(for a in $^ ; do echo $$a ; done) > FILELIST
+MANIFEST.snap:
+	(for a in $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES) ; do echo $$a ; done) > FILELIST
 
 # --- autoconf configuration PASCAL adaptions -------------------------
 # config.inc: config.h Makefile
@@ -146,6 +146,9 @@ ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.6  2003/01/13 16:13:29  cl
+# - autoconf updates for cross-compilation
+#
 # Revision 1.5  2003/01/13 15:42:41  cl
 # - autoconf update for cross-compilation
 #
