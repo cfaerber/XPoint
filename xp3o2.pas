@@ -167,6 +167,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
       if error<>''     then wrs('ERR: '  +error);
       if programm<>''  then wrs('MAILER: '+programm);
+      if mime_attach and (netztyp=nt_ZConnect)
+                       then wrs('U-MIME-Version: 1.0');
       if prio<>0       then wrs('PRIO: '  +strs(prio));
       if organisation<>'' then wrs('ORG: '+organisation);
       if attrib and attrReqEB<>0 then
@@ -472,6 +474,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.14  2002/04/25 20:36:34  my
+  MY:- Fix MIME-Multipart-Versand: Beim Netztyp ZConnect wird jetzt der
+       Header "U-MIME-Version 1.0" erzeugt, damit von ZConnect nach RFC
+       gegatete Nachrichten als Multipart-Nachrichten erkannt werden.
+
   Revision 1.9.2.13  2001/12/20 15:22:13  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
