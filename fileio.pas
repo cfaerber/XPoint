@@ -649,15 +649,14 @@ begin
   {$ifdef vp }
   lock:=SysLockFile(datei,from,size)=0;
   {$else}
-  {$ifdef win32}
   (* Aus unbekannten GrÅnden funktioniert das ganze unter Windows 95
      nicht, wohl aber unter Windows NT
     Lock := Windows.LockFile(FileRec(Datei).Handle,
     Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
-  Lock := true;
-  {$endif}
-  {$ifdef UnixFS}                     { Filelocking f¸r Linux }
+  {$ifdef UnixFS}                     { Filelocking fÅr Linux }
   lock := flock (datei, LOCK_SH);
+  {$ELSE }
+  Lock := true;
   {$endif}
 {$ENDIF}
 {$ELSE }
@@ -863,6 +862,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2000/05/26 20:13:03  mk
+  - Lock war unter DOS32 Bit undefiniert
+
   Revision 1.34  2000/05/20 02:07:39  mk
   - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
 
