@@ -49,10 +49,6 @@ var
 
 var p : ^Pointer;
 
-procedure FontScrawl16; external;   {$L xpfnt1.obj}
-procedure FontC2; external;         {$L xpfnt2.obj}
-procedure FontBroadway14; external; {$L xpfnt3.obj}
-
 {$I XPFONTS.INC}
 
 procedure InternalFont;
@@ -65,6 +61,7 @@ begin
     1 : begin h:=14; p:=@FontC2; end;
     2 : begin h:=16; p:=@FontScrawl16; end;
     3 : begin h:=14; p:=@FontBroadway14; end;
+    4 : begin h:=14; p:=@Font8x14; end;
   else  h:=0;
   end;
   if h>0 then begin
@@ -323,6 +320,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.4.5  2002/06/09 08:41:26  mw
+
+  - Fonts jetzt nicht mehr als obj Datei im Source , sondern als DB-Zeile
+    in der xpfonts.inc
+
+  - Der interne 16*8 Font ist jetzt auch als Font Nr. 4 ansprechbar ( /f:*4 )
+
+  Achtung: Noch kein Euro in den Fonts.
+
   Revision 1.5.4.4  2000/11/16 18:09:50  mk
   - 26 Zeilen-Modus geht wieder (nur ein kleiner Typo)
 
