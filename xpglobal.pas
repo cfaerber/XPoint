@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.21.022';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.21.023';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
 {$IFDEF VER32 }
@@ -111,6 +111,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/22 18:18:44  mk
+  - Versionsinfo auf 3.21.23 geaendert
+
   Revision 1.14  2000/03/17 11:16:35  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 
