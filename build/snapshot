@@ -47,8 +47,8 @@ commit='- new version: '"$version"' CB'
 commit2='cvs -t ci -m "'"$commit"'" version.inc'
 echo $commit2
 pwd
-echo stop
-read a
+#echo stop
+#read a
 #cvs ci -m '- new version: '"$version"' CB' version.inc
 su -c "$commit2" boettger 
 pwd
@@ -58,11 +58,11 @@ pwd
 #sleep 5
 echo $version
 pwd
-echo stop
-read a
+#echo stop
+#read a
 echo "building OXP" $version
-echo stop
-read a
+#echo stop
+#read a
 "$scriptdir"buildxp $mainversion
 test -f "openxp" || echo "Ooops, no OXP-Binary"
 test -f "openxp" || exit
