@@ -98,7 +98,7 @@ const
   maxrec = 4500; { MK 01/00 von 3500 auf 4500 erh”ht }
 
 type statrec = record
-                 name   : ^string;
+                 name   : string;
                  bytes  : longint;
                  msgs   : longint;
                  hz     : integer;    { Haltezeit }
@@ -148,10 +148,10 @@ var brk       : boolean;
     found:=false;
     while not found and (l+1<r) do begin
       m:=(l+r) div 2;
-      if UpperCase(st^[m].name^)=usys then begin
+      if UpperCase(st^[m].name)=usys then begin
         found:=true; l:=m; end
       else
-        if UpperCase(st^[m].name^)<usys then r:=m
+        if UpperCase(st^[m].name)<usys then r:=m
         else l:=m;
       end;
     if not found then begin
@@ -163,8 +163,7 @@ var brk       : boolean;
       inc(l);
       if l<=snum then Move(st^[l],st^[l+1],(snum-l+1)*sizeof(statrec));
       with st^[l] do begin
-        getmem(name,length(sys)+1);
-        name^:=sys;
+        name:=sys;
         bytes:=0; msgs:=0;
         end;
       inc(snum);
@@ -218,8 +217,6 @@ var brk       : boolean;
   procedure free;
   var i : word;
   begin
-    for i:=1 to snum do
-      freemem(st^[i].name,length(st^[i].name^)+1);
     freemem(st,smax*sizeof(statrec));
   end;
 
@@ -381,7 +378,7 @@ begin
       writeln(t,dup(57,'-'));
       for i:=1 to snum do
         with st^[i] do begin
-          write(t,i:4,'  ',forms(name^,20),msgs:8,bytes:14);
+          write(t,i:4,'  ',forms(name,20),msgs:8,bytes:14);
           wrsum(i,9);
           writeln(t);
           end;
@@ -394,7 +391,7 @@ begin
       writeln(t,dup(78,'-'));
       for i:=1 to snum do
         with st^[i] do begin
-          write(t,i:4,'  ',forms(copy(name^,2,40),40),bytes:6,msgs:10);
+          write(t,i:4,'  ',forms(copy(name,2,40),40),bytes:6,msgs:10);
           wrsum(i,8);
           if hz>0 then writeln(t,hz:7)
           else if hz<0 then writeln(t,right('     #'+strs(-hz),7))
@@ -1254,6 +1251,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/06 17:33:25  hd
+  - ^string entfernt
+
   Revision 1.18  2000/07/06 08:58:46  hd
   - AnsiString
 
