@@ -2435,7 +2435,6 @@ value can be entered manually, eg. 4800.
 Any value is allowed, that the serial interface
 supports.
 Stick to the standard ones, though.
-
 @
 180
 Enter here the number of seconds a telephone unit
@@ -2443,8 +2442,9 @@ gives when calling this server (depends whether it
 is local or long distance) both for cheap rate
 and normal rate, and how much 100 units costs.
 Get these values from your phone book.
-
-Also enter the time it usually takes for this server
+@
+181
+Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
 CrossPoint cannot know when the phone is picked up,
@@ -2457,7 +2457,6 @@ timing between the click when the other side picks up
 and when the "CD" (Carrier Detect) lamp on the modem
 lights up.
 The time is between 5 and about 15 seconds usually.
-
 @
 182
 If you are a Sysop, you do not send your netcall by
@@ -2505,9 +2504,6 @@ transfer these packets to this mailbox by some other
 method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
-
-See also the chapter in FIDO.DOC, "Sysop Mode"
-
 @
 8035
 <<Input Packets>>
@@ -2660,6 +2656,10 @@ Notes:
    combine the filter programme in a batch file for
    the unpack operation.
 @
+8050
+A programme or batch file that will be called before
+packing up unsent messages into a mail packet.
+@
 8030
 Enter the name of a script file that will be started
 automatically for an online session ([Netcall/Online])@11505
@@ -2789,8 +2789,6 @@ Your real name in true life (you may leave it empty).
 Enter your full first and last name.
 @
 195
-(For more about domains: see XPOINT.DOC, Ch. 1.3).
-
 <<ZConnect:>>
 Enter the name of the domain to which your server
 belongs. It will be something like: "zer.de" or
