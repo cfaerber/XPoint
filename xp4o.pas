@@ -1637,7 +1637,7 @@ var hdp   : Theader;
 
 {$IFDEF Debug}
   procedure msgs_tuple;   { Fenster mit Datenbankinfo }
-  var i: integer;
+  var 
     x,y: Integer;
 
     procedure _(id:integer;s:string);
@@ -2515,6 +2515,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2001/12/31 16:24:33  mk
+  - removed unused variable
+
   Revision 1.124  2001/12/30 19:56:48  cl
   - Kylix 2 compile fixes
 
