@@ -8422,7 +8422,9 @@ dem gew„hlten User vereinbart haben:
       /Config/Extern/PGP eingerichtet haben.
 
 <<PGP/MIME:>> Wie <<PGP>>, verwendet jedoch die MIME-
-      Codierung nach RFC 2015, falls m”glich.
+      Codierung nach RFC 2015 (bzw. RFC 3156, wenn
+      Ihre PGP-Version dem OpenPGP-Standard, RFC@1010
+      2440, entspricht), falls m”glich.
 
       <<HINWEIS:>> Wenn Sie fr einen Benutzer PGP oder
       PGP/MIME einstellen, gilt diese Einstellung auch
@@ -11669,6 +11671,14 @@ Signaturen berprfen, dafr bietet diese PGP-Version
 die h”chste Sicherheit und ist insbesondere auch
 berhaupt fr DOS verfgbar.
 
+Als Alternative gibt es noch <<GnuPG>> (Windows und
+Linux). Dieses Programm unterstzt bereits die
+Kodierung nach dem OpenPGP-Standard (RFC 2440/3156).
+Leider muss wegen der Patentlage die fr PGP-2.x-
+Kompatibilit„t notwendige IDEA-Untersttzung separat
+installiert werden. Ferner sind fr PGP-Kompatibi-
+lit„t einige Kommandozeilenoptionen notwendig.
+
 Keine Probleme mit den neueren Schlsseln gibt es bei
 <<PGP 6.5.8>>, das allerdings fr DOS nicht zur Ver-
 fgung steht. Ferner hat diese Version eine Sicher-
@@ -11682,14 +11692,6 @@ nicht empfohlen. Neuere Versionen als PGP 6.5.8 wur-
 den noch nicht auf Kompatibilit„t getestet.
 
 [PGP - Detailinformationen]@1023
-
-Als Alternative gibt es noch <<GnuPG>> (Windows und
-Linux). Es untersttzt allerdings nicht ohne weiteres
-das Kodieren bzw. Dekodieren von Nachrichten nach dem
-alten PGP 2.x-Standard, dafr muá erst ein IDEA-Plug-
-in installiert werden. Ferner sind fr PGP-Kompatibi-
-lit„t einige Kommandozeilenoptionen notwendig.
-
 @
 1011
 Dieser Schalter aktiviert die Nutzung von PGP allge-
@@ -12145,10 +12147,28 @@ Aussagen zum Thema PGP (Stand Juni 2001):
 
    Beide Versionen laufen *nicht* unter reinem DOS!
 
-
 ş  <<PGP 7.x>> ist nicht Gegenstand dieser Online-Hilfe,
    da es von OpenXP (noch?) nicht untersttzt wird.
 
+ş  <<GnuPGP>> ist eine freie Implmentierung des OpenPGP-
+   Standards. Zu beachten ist allerdings hier:
+
+   - aufgrund der Patentlage muss der IDEA-
+     Algorithmus, der zur Kompatibilität mit
+     PGP-Versionen 2.6.x notwendig ist, separat
+     installiert werden.
+
+   - Wegen bekannt gewordener Sicherheitsprobleme
+     sollten sie <<mindestens>> die <<Version 1.0.6>>
+     verwenden.
+
+   - Wird der Schalter <<--openpgp>> verwendet,
+     entsprechen die PGP/MIME-Signaturen RFC 3156.
+
+   - GnuPG ist (noch) nicht für DOS verfügbar.
+
+   Mehr Informationen zu GnuPG finden Sie unter
+   <<http://www.gnupg.de/>>.
 
 <<Fazit
 
@@ -12163,12 +12183,10 @@ unter Windows ben”tigt, dem sei das Sharewareprogramm
 die 2.6.x-Versionen komfortabel steuern lassen:
 <<http://www.ncinter.net/~rewilson/PGPClick/>>
 
-
 Weitere Informationen zu PGP finden Sie im Kapitel
 "PGP-Verschlsselung" des Handbuchs und natrlich in
 der den PGP-Archiven beiliegenden Dateien und Doku-
 mentationen.
-
 
 Die obigen Informationen zu PGP wurden recherchiert,
 ausgewertet, (teilweise) verifiziert und dokumentiert
@@ -14581,7 +14599,6 @@ An dieser Stelle finden Sie Einstellungen, die
 die PGP-Funktionen betreffen.
 
 Siehe auch: [PGP - Informationen]@1010
-
 @
 12601
 <<XPoint / Statistik / Gebhren / Alle
@@ -16640,8 +16657,6 @@ Die fr CrossPoint geeigneten und empfehlenswerten
 PGP-Versionen erhalten Sie bei <<ftp.openxp.de>> oder
 per Fido File Request bei 2:248/2004. N„heres siehe
 unter: [PGP - Informationen]@1010
-
-Verwenden Sie PGP Version 2.6.3!
 @
 23002
 PGP hat die Nachricht nicht codiert. Aktivieren Sie
