@@ -44,6 +44,7 @@ procedure hilfealt;
 procedure dispfunctionkeys(editor:boolean);
 procedure do_help(n:word);
 
+
 implementation  { --------------------------------------------------- }
 
 uses xp1;
@@ -412,6 +413,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/01/22 19:15:28  mk
+  - after 3.40 merge fixes
+
   Revision 1.30  2002/01/22 18:08:33  cl
   - the never-ending after 3.40 merge story
 

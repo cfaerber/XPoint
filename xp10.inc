@@ -192,12 +192,12 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
       clientbox  : string;
       currentbox : string;
       box        : string;
-      x,y        : integer;
-      i,p,nt     : byte;
+      x,y        : Integer;
+      i,p,nt     : Integer;
       datDa      : boolean;
 
     procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
-    var i          : byte;
+    var i          : Integer;
         netcalldat : text;
     begin
       if not FileExists(ownpath+NetcallSpecialDat) then
@@ -261,7 +261,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
           currentbox := dbReadStr(d,'boxname');
           dbRead(d,'Netztyp',nt);
           ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-          if nt=nt_Client then          { RFC/Client? }
+          if nt=nt_Client  then          { RFC/Client? }
           begin
             clientbox := clientbox+' '+currentbox;
             currentbox := '';
@@ -291,9 +291,9 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
         enddialog;
         end;
       if special and (cpos(':',all)=3) then
-        all:=uppercase(trim(Mid(all,4)))+' '
+        all:=UpperCase(trim(Mid(all,4)))+' '
       else
-        all:=uppercase(trim(all))+' ';
+        all:=UpperCase(trim(all))+' ';
 
       if not brk then begin
         fn:=TempS(1000+dbRecCount(d)*200);
@@ -645,7 +645,7 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
       multi2;
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
-        if (anz=1) and (callall) and (Fileexists(ownpath+NetcallAlleFlag)) then
+        if (anz=1) and (callall) and (FileExists(ownpath+NetcallAlleFlag)) then
           RenameFile(ownpath+NetcallAlleFlag,ownpath+NetcallEndeFlag);
         execute1;
         initscs;
@@ -673,9 +673,10 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
   until ende;
   freeres;
   releaseliste;
-  if callall then begin
-    Deletefile(ownpath+NetcallAlleFlag);
-    Deletefile(ownpath+NetcallEndeFlag);
+  if callall then
+  begin
+    SafeDeleteFile(ownpath+NetcallAlleFlag);
+    SafeDeleteFile(ownpath+NetcallEndeFlag);
   end;
 end;
 
@@ -749,6 +750,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2002/01/22 19:15:28  mk
+  - after 3.40 merge fixes
+
   Revision 1.21  2002/01/22 18:08:33  cl
   - the never-ending after 3.40 merge story
 

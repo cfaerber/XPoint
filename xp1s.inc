@@ -458,8 +458,8 @@ end;
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurÅckwandeln                 }
 
-procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
-                   ed_ukonv:boolean);
+procedure editfile(name:pathstr; nachricht,reedit,senden:boolean;
+                   keeplines:byte;ed_ukonv:boolean);
 var
     bak : string;
     ms  : boolean;
@@ -474,7 +474,7 @@ begin
     end
   else begin
     if nachricht then pushhp(54);
-    TED(name,reedit,keeplines,ed_ukonv,false,false);
+    TED(name,reedit,keeplines,ed_ukonv,nachricht,senden);
     if nachricht then pophp;
     if nachricht and (FirstChar(VarEditor)='*') then begin
       DeleteFirstChar(VarEditor);
@@ -525,6 +525,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.73  2002/01/22 19:15:29  mk
+  - after 3.40 merge fixes
+
   Revision 1.72  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

@@ -2050,7 +2050,7 @@ begin
         close(t);
         end
       else begin
-        EditFile(fn,false,false,0,false);
+        EditFile(fn,false,false,false,0,false);
         if _filesize(fn)<=2 then begin
           rfehler(808);   { 'leere Nachricht - nicht abgeschickt' }
           comm:='';
@@ -2146,6 +2146,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2002/01/22 19:15:31  mk
+  - after 3.40 merge fixes
+
   Revision 1.66  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

@@ -1244,7 +1244,7 @@ begin
     else
       s:='  -  '+getreps(425,fdat(longdat(readdate)));  { 'Nachrichten seit dem %s' }
     end;
-    if newsgroupdispall or UserSlash or (left(s1,1)>='A') or (copy(dispspec,2,1)<>'/')
+    if newsgroupdispall or UserSlash or (LeftStr(s1,1)>='A') or (copy(dispspec,2,1)<>'/')
     then b:=2
     else b:=3;
     mwrt(1,4,' '+forms(copy(s1,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
@@ -1316,25 +1316,25 @@ begin
     dbSeek(bbase,biBrett,'A'+UpperCase(newsuch));
     if dbEOF(bbase) then exit;
     s := dbReadNStr(bbase,bb_brettname);
-    delfirst(s);
-    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+    DeleteFirstChar(s);
+    if UpperCase(LeftStr(s,length(newsuch)))<> UpperCase(newsuch) then
     begin
-      dbSeek(bbase,biBrett,'1'+ustr(newsuch));
+      dbSeek(bbase,biBrett,'1'+ UpperCase(newsuch));
       if dbEOF(bbase) then exit;
       s:= dbReadNStr(bbase,bb_brettname);
       DeleteFirstChar(s);
     end;
-    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+    if UpperCase(LeftStr(s,length(newsuch)))<>UpperCase(newsuch) then
       errsound
     else if ch<>'/' then
       suchok
     else begin
       pp:=pos('/',mid(s,length(newsuch)+1));
       if pp=0 then begin
-        dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
+        dbSeek(bbase,biBrett,'A'+UpperCase(s)+'/');
       {  if dbEOF(bbase) then dbSeek(bbase,biBrett,'1'+ustr(s)+'/');}
         if not dbEOF(bbase) and
-          (mid(left(dbReadStr(bbase,'brettname'),length(s)+2),1)=s+'/')
+          (mid(LeftStr(dbReadStr(bbase,'brettname'),length(s)+2),1)=s+'/')
         then begin
           newsuch:=s+'/';
           suchok;
@@ -1343,10 +1343,11 @@ begin
           errsound;
       end
       else begin
-        newsuch:=left(s,pp+length(newsuch));
+        newsuch:=LeftStr(s,pp+length(newsuch));
         suchok;
       end;
     end
+  end
   else begin
 
    dbSeek(ubase,uiName,UpperCase(newsuch));
@@ -1693,6 +1694,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.91  2002/01/22 19:15:30  mk
+  - after 3.40 merge fixes
+
   Revision 1.90  2002/01/13 15:07:30  mk
   - Big 3.40 Update Part I
 

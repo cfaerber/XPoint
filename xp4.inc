@@ -492,7 +492,7 @@ begin
               2 : UniEdit(6);
               3 : begin
                     Pushhp(979);
-                    EditFile(FeierDat,false,false,0,false);
+                    EditFile(FeierDat,false,false,false,0,false);
                     pophp;
                   end;
               4 : GebuehrOptions;
@@ -523,7 +523,7 @@ begin
                     pushkey(keyesc);
                     pushkey(keyF6);
                     end;
-              8 : About;
+              8 : ShowAboutDialog;
             end;
             menurestart:=true;
           end;
@@ -545,7 +545,7 @@ end;
 procedure Maus_Auswertung(ya:shortint; var t:taste);
 const lasty  : integer = 0;
       shortp : shortint = 0;
-var x,y : integer;
+var i, x,y : integer;
     n   : shortint;
 
   procedure page;
@@ -603,10 +603,10 @@ var x,y : integer;
   end;
 
   { Funktionstastenhandling fuer letzte Bildschirmzeile }
-(*
+
   function getfkeyfromscreen(x,y,mode:byte):byte; assembler;
   asm
-         push ds
+(*!!!         push ds
          mov ds,vbase
          xor bx,bx
          mov bl,x
@@ -699,8 +699,9 @@ var x,y : integer;
    @4:   add al,dl
          mov ah,0
    @end: pop ds
-  end;
 *)
+  end;
+
 begin
   maus_gettext(x,y);
   if y=2 then begin                                                 {2. Menueleiste }
@@ -728,7 +729,7 @@ begin
    if (t=mausunright) and (shortp=maxskeys+1) then begin         {Rechtsklick}
       dispshort(false); shortp:=0;
       if XPdisplayed and (x>(80-length(xp_xp))) then begin
-        if (shortkey[maxskeys+1].key='?') then About;
+        if (shortkey[maxskeys+1].key='?') then ShowAboutDialog;
         end
      else begin
        n:=getfkeyfromscreen(x,y,0);
@@ -807,6 +808,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2002/01/22 19:15:29  mk
+  - after 3.40 merge fixes
+
   Revision 1.37  2002/01/22 18:08:33  cl
   - the never-ending after 3.40 merge story
 

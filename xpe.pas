@@ -371,7 +371,7 @@ var ok   : boolean;
     t    : text;
 begin
   repeat
-    editfile(datei,false,false,1,false);    { in XP1 }
+    editfile(datei,false,false,false,1,false);    { in XP1 }
     if _filesize(datei)<=MaxSigsize then
       ok:=true
     else begin
@@ -417,7 +417,7 @@ begin
 {$ENDIF }
       then s:=sendpath+s;
     editname:=s;
-    EditFile(s,false,false,0,false);
+    EditFile(s,false,false,false,0,false);
     if useclip then WriteClipfile(s);
   end;
   pophp;
@@ -433,7 +433,7 @@ begin
   ma:=lastattr;
   savecursor;
   pushhp(54);
-  EditFile(s,false,false,0,false);
+  EditFile(s,false,false,false,0,false);
   pophp;
   restcursor;
   attrtxt(ma);
@@ -503,6 +503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2002/01/22 19:15:32  mk
+  - after 3.40 merge fixes
+
   Revision 1.33  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

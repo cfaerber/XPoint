@@ -38,7 +38,7 @@ uses
 
 procedure OpenXPInfo;
 procedure BetaMessage;
-procedure About;
+procedure ShowAboutDialog;
 
 implementation
 
@@ -116,7 +116,7 @@ begin
   freeres;
 end;
 
-procedure About;
+procedure ShowAboutDialog;
 var x,y : integer;
     z   : taste;
     ver : string;
@@ -172,6 +172,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2002/01/22 19:15:32  mk
+  - after 3.40 merge fixes
+
   Revision 1.33  2002/01/22 18:08:33  cl
   - the never-ending after 3.40 merge story
 

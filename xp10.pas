@@ -61,7 +61,8 @@ procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnt,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,
+  xpfidonl, xpnt;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -1441,7 +1442,7 @@ var
   begin
     fn:=FidoDir+NodeList.GetFilename(n);
     ft:=filetime(fn);
-    editfile(fn,false,false,0,false);
+    editfile(fn,false,false,false,0,false);
     if filetime(fn)<>ft then reindex:=true;
   end;
 
@@ -2183,6 +2184,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.69  2002/01/22 19:15:28  mk
+  - after 3.40 merge fixes
+
   Revision 1.68  2002/01/22 18:08:33  cl
   - the never-ending after 3.40 merge story
 

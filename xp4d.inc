@@ -269,15 +269,15 @@ begin  { __ Suchmarke }
             usrtausch('A',forms(s,h1));              { Verteilername bzw. (A)dresse }
             usrtausch('K',forms(komm,h2));           { (K)ommentar }
 
-            tausc:=0; dispbuf[y]^:='';                     { Felder zusammenkopieren }
+            tausc:=0; dispbuf[y]:='';                     { Felder zusammenkopieren }
             while (tausc<UsrFelderMax) do begin
               inc(tausc);
               if (taus[tausc]='') then continue;           { Leere Felder Åbergehen }
               abc:=' ';
-              if (dispbuf[y]^='') then abc:='';
-              dispbuf[y]^:=dispbuf[y]^+abc+taus[tausc];
+              if (dispbuf[y]='') then abc:='';
+              dispbuf[y]:=dispbuf[y]+abc+taus[tausc];
             end;
-            dispbuf[y]^:=forms(dispbuf[y]^, ScreenWidth);            { Sicherheitshalber nochmal kÅrzen }
+            dispbuf[y]:=forms(dispbuf[y], ScreenWidth);            { Sicherheitshalber nochmal kÅrzen }
 
             asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
                 mov al,uflags    { 000=normal   -> 0     100=niedrigste -> 5       }
@@ -344,6 +344,7 @@ begin  { __ Suchmarke }
                   end;
                 end;
               end;
+
             s1:= dbReadNStr(mbase,mb_betreff);
 
             if dispmode<>12 then
@@ -356,7 +357,7 @@ begin  { __ Suchmarke }
 *)
              if ((netztyp=nt_Maus) and (mnt and $100<>0)) or
                 (ntKomkette(netztyp) and (mnt and $100<>0) and
-                 (lstr(left(s1,3))<>'re:') and (left(s1,3)<>'Re^'))
+                 (LowerCase(leftStr(s1,3))<>'re:') and (LeftStr(s1,3)<>'Re^'))
                then s1:='-'+s1
              end;
 
@@ -379,7 +380,8 @@ begin  { __ Suchmarke }
               ulen:=iif(over80>2,27,25);    { wenn Platz fÅr vollen Username  }
               blen:=iif(over80>6,40,36);    { auch noch Platz fÅr den Betreff }
             { kein Datum anzeigen }
-            end else begin
+            end
+            else begin
               sdat:='';
               ulen:=27;
               blen:=40;
@@ -403,7 +405,8 @@ begin  { __ Suchmarke }
             end;
             _brett:= dbReadNStr(mbase,mb_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
-            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then begin
+            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then
+            begin
               inc(ulen,blen-pp);
               blen:=pp;
             end;
@@ -414,7 +417,7 @@ begin  { __ Suchmarke }
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
 
-            if (wvl=0) and (mnt and $4000<>0) then 
+            if (wvl=0) and (mnt and $4000<>0) then
               wvl:=5;
 
             dbReadN(mbase,mb_Halteflags,hflags);
@@ -446,16 +449,16 @@ begin  { __ Suchmarke }
               msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
                 iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
-
-            else begin                            { Nicht-Fido bzw. Dispmode 11,12 }
+            end
+            else { Nicht-Fido bzw. Dispmode 11,12 }
             begin
               if dispmode=12 then                 { Kommentarbaum }
               begin
-                s:=' '+BaumBlatt(baumdispofs, ulen+blen,bezpos,s,s1);
+                s:=' '+BaumBlatt(ReplyTreeOfs,bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]:=forms(dflags+siz+sdat+' '+s,ScreenWidth);
 
-              end 
+              end
               else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
 
@@ -470,10 +473,10 @@ begin  { __ Suchmarke }
               userflag[y]:=helpbyte;
 
               if (fidoqwk and (_brett[1]='A') and
-                  (HighlightName=ustr(dbReadStr(mbase,'name'))))
+                  (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
                 OR
                  ((cpos('@',dispspec)>0) and
-                  (ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0))))))
+                  (UpperCase(leftStr(s0,40))=UpperCase(copy(dispspec,2,min(40,length(s0))))))
                 OR
                  (mnt and $1000<>0)
                   then userflag[y]:=1
@@ -487,7 +490,7 @@ begin  { __ Suchmarke }
               iif(showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (A)bsender }
 
             if (dispmode<>12) then begin            { Kommentarbaum-Ausgabe ist fertig }
-              tausc:=0; dispbuf[y]^:='';            { Ansonsten Felder zusammenkopieren }
+              tausc:=0; dispbuf[y] :='';            { Ansonsten Felder zusammenkopieren }
               while (tausc<MsgFelderMax) do begin
                 inc(tausc);
                 if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
@@ -616,6 +619,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/01/22 19:15:29  mk
+  - after 3.40 merge fixes
+
   Revision 1.53  2002/01/13 15:15:51  mk
   - new "empfaenger"-handling
 

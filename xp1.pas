@@ -173,8 +173,8 @@ function  listfile(name,header:string; savescr,listmsg:boolean;
                    utf8:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(fn:string);
-procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
-                   ed_ukonv:boolean);
+procedure editfile(name: string; nachricht,reedit,senden:boolean;
+                   keeplines:byte;ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
 procedure set_checkdate;
@@ -1848,7 +1848,7 @@ end;
 
 procedure SafeDeleteFile(const Filename: String);
 begin
-  if (not sysutils.DeleteFile(Filename)) and FileExists(Filename) then
+  if FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
 end;
 
@@ -2043,6 +2043,9 @@ end;
 
 {
   $Log$
+  Revision 1.138  2002/01/22 19:15:27  mk
+  - after 3.40 merge fixes
+
   Revision 1.137  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

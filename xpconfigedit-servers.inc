@@ -978,7 +978,7 @@
           if not fileexists(extcfg_file) then
             if not ReadJN(getres(2725),false) then  { 'Datei nicht vorhanden - neu anlegen' }
               goto restart;
-          EditFile(extcfg_file,false,false,0,false);
+          EditFile(extcfg_file,false,false,false,0,false);
         end;
         if not WinExec then
         begin
@@ -2361,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.45  2002/01/22 19:15:31  mk
+  - after 3.40 merge fixes
+
   Revision 1.44  2002/01/21 22:45:48  cl
   - fixes after 3.40 merge
 

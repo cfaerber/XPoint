@@ -1836,7 +1836,7 @@ begin
   begin
     locked:=true;
     en:=EditNachricht;
-    EditFile(FileUpperCase('glossary.cfg'),false,false,0,false);
+    EditFile(FileUpperCase('glossary.cfg'),false,false,false,0,false);
     EditNachricht:=En;
     locked:=false;
     t:=keyesc;
@@ -1850,6 +1850,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.77  2002/01/22 19:15:27  mk
+  - after 3.40 merge fixes
+
   Revision 1.76  2002/01/19 14:17:01  mk
   - Big 3.40 update part IV
 

@@ -1902,7 +1902,7 @@ begin
     adddir(fn,sendpath);
     if not FileExists(fn) then begin
       if ReadJN(getres(2725),true) then    { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(fn,false,false,0,false);
+        EditFile(fn,false,false,false,0,false);
       AutoExistfile:=FileExists(fn);
       end
     else
@@ -2494,6 +2494,9 @@ end;
 
 {
   $Log$
+  Revision 1.87  2002/01/22 19:15:29  mk
+  - after 3.40 merge fixes
+
   Revision 1.86  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

@@ -103,7 +103,7 @@ function  testbrettscope(var s:string):boolean;
 procedure seek_cutspace(var s:string);
 
 procedure seekmenu(var s:string);
-procedure OldSEEK_ed(var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
+procedure OldSEEK_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
 
 function Bool_BrettGruppe(var s:string):boolean;
 function Bool_Brettindex(var s:string):boolean;
@@ -117,9 +117,6 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, x
      xplinux,
 {$ENDIF}
      regexpr;
-
-const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 255;
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -165,9 +162,9 @@ begin
   mid_suchoption:=true;
 end;
 
-procedure OldSEEK_ed(var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
+procedure OldSEEK_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
 begin
-  if (ustr(t)='E') then begin
+  if (UpperCase(t)='E') then begin
     EditFile(libraryFile,false,false,false,0,false);
     t:=keyesc;
     pushkey(keysf2);
@@ -175,42 +172,44 @@ begin
 end;
 
 procedure seekmenu(var s:string);
-  var t    : text;
-      brk  : boolean;
-      x,y  : byte;
 
 const height = 10;
       width  = 70;
+  var t    : text;
+      brk  : boolean;
+  x,y  : Integer;
+  List: TLister;
 begin
       assign(t,libraryFile);
       reset(t);
       s:='';
       if ioresult<>0 then exit;
       selbox(width+2,height+2,getres2(441,21),x,y,true);
-      openlist(x+1,x+width,y+1,y+height,0,'/NS/SB/DM/S/M/');
-      ListboxCol;
-      listarrows(x+width+1,y+1,y+height,col.colselrahmen,col.colselrahmen,'³');
+      List := TLister.CreateWithOptions(x+1,x+width,y+1,y+height,0,'/NS/SB/DM/S/M/');
+      ListboxCol(List);
+      List.SetArrows(x+width+1,y+1,y+height,col.colselrahmen,col.colselrahmen,'³');
       while not eof(t) do
       begin
         readln(t,s);
-        app_L(left(s,suchlen));
+        List.AddLine(LeftStr(s,suchlen));
         end;
-      listtp(oldseek_ed);
-      list(brk);
-      if list_markanz=0 then begin
-        s:=get_selection;
-        if s[1]=' ' then brk:=true;
+      List.OnKeyPressed := oldseek_ed;
+      brk := List.Show;
+      if List.SelCount =0 then
+      begin
+        s := List.GetSelection;
+        if FirstChar(s)=' ' then brk:=true;
         end
       else if not brk then begin
-        s:=first_marked;
+        s:= List.FirstMarked;
         x:=0;
         repeat
           if (s<>#0) and (s<>'') and (s[1]<>' ')
           then inc(x);
-          s:=next_marked;
+          s:= List.NextMarked;
         until (s=#0) or (x=histmax);
         for y:=histmax downto x do history[y]:=history[y-x];
-        s:=first_marked;
+        s:= List.FirstMarked;
         y:=0;
         repeat
           if (s<>#0) and (s<>'') and (s[1]<>' ')
@@ -218,13 +217,13 @@ begin
             history[y]:=s;
             inc(y);
             end;
-          s:=next_marked;
+          s:= List.NextMarked;
         until (y>x) or (s=#0);
         s:=history[0];
         history_changed:=true;
         pushkey(keyctcr);
         end;
-      closelist;
+      List.Free;
       closebox;
       close(t);
       if brk then s:='';
@@ -282,7 +281,7 @@ var x,y   : Integer;
     typa            : array[0..4] of string;
     RegExpr: TRegExpr;
 
-    seek            : string[suchlen];
+    seek            : string;
     found           : boolean;
     markedback      : marklistp;
     markanzback     : integer;
@@ -364,8 +363,8 @@ label ende, restart;
         seeknot[n]:=false;
         end;
 {$ENDIF}
-    suchand:=cpos('o',lstr(suchopt))=0;             { OR }
-    if not suchand or (cpos('a',lstr(suchopt))>0)   { oder AND ?}
+    suchand:=cpos('o', LowerCase(suchopt))=0;             { OR }
+    if not suchand or (cpos('a', LowerCase(suchopt))>0)   { oder AND ?}
      and not (trim(sst)='') then                    { und nicht Leertext (Suche-Spezial) }
     begin
       n:=0;
@@ -450,7 +449,7 @@ label ende, restart;
         end
       else if headersuche=2 then ofs:=0;    { Header und Text durchsuchen }
 
-      if (ofs>=0) and (ofs<wsize+1+length(key)) then begin
+      if (ofs>=0) and (ofs<wsize+1+length(key)) then
       begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
@@ -542,6 +541,8 @@ label ende, restart;
       realn : string;
       such  : string;
           j : byte;
+          d : Longint;
+          b : byte;
       found_not : boolean;
       foundmask : byte;
 
@@ -583,6 +584,7 @@ label ende, restart;
 
 {--Spezialsuche--}
     if spez then with srec^ do
+    begin
       if DateFit and SizeFit and TypeFit and StatOk then begin
         Betr2 := dbReadNStr(mbase,mb_betreff);
         if (betr<>'') and (length(betr2)=40) then begin
@@ -621,7 +623,7 @@ label ende, restart;
             then inc(foundmask,2);
           if ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser)
             then inc(foundmask,4);
-          if ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf)
+          if ((fidoempf='') or (pos(fidoempf,hdp.fido_to)>0) xor nfidoempf)
             then inc(foundmask);
           if foundmask and ormask <> 0 then goto msg_ok;
           if (foundmask and andmask) <> (andmask and not ormask) then exit;
@@ -662,20 +664,20 @@ msg_ok: MsgAddmark;
  
         if stricmp(suchfeld,'betreff') and (length(such)=40) 
         then begin
-          ReadHeader(hdp^,hds,false);
-          if length(hdp^.betreff)>40 then
-            such:=hdp^.betreff;
+          ReadHeader(hdp,hds,false);
+          if length(hdp.betreff)>40 then
+            such:=hdp.betreff;
           end;
          if suchfeld='MsgID' then begin
-          ReadHeader(hdp^,hds,false);
-          such:=hdp^.msgid;
+          ReadHeader(hdp,hds,false);
+          such:=hdp.msgid;
           end;
-        if umlaut then UkonvStr(such,high(such));
+        if umlaut then UkonvStr(such,Length(such));
 
         j:=0;
         repeat
-          seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
-          found:=((igcase and (pos(seek,UStr(such))>0)) or
+          seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
+          found:=((igcase and (pos(seek,UpperCase(such))>0)) or
            (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
           if suchand and not found and seeknot[j] then found:=true;
@@ -2968,6 +2970,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2002/01/22 19:15:29  mk
+  - after 3.40 merge fixes
+
   Revision 1.128  2002/01/13 15:15:52  mk
   - new "empfaenger"-handling
 
