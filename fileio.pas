@@ -207,15 +207,15 @@ var
   rc: integer;
 begin
   result:= true;
-  rc:= sysutils.findfirst(AddDirSepa(path)+WildCard,ffAnyFile,sr);
+  rc:= findfirst(AddDirSepa(path)+WildCard,ffAnyFile,sr);
   while rc = 0 do begin
     if (sr.name <> '.') and (sr.name <> '..') then begin
       result:= false;
       break;
     end;
-    rc:= sysutils.findnext(sr);
+    rc:= findnext(sr);
   end;
-  sysutils.findclose(sr);
+  findclose(sr);
 end;
 
 procedure FSplit(const path: string; var dir, name, ext: string);
@@ -408,11 +408,10 @@ procedure erase_mask(s:string);                 { Datei(en) l”schen }
 var
   sr : TSearchrec;
 begin
-  if Sysutils.findfirst(s, faAnyfile, sr) = 0 then
-  repeat
-    SysUtils.DeleteFile(ExtractFileDir(s) + '\' +sr.name);
-  until Sysutils.findnext(sr) <> 0;
-  SysUtils.FindClose(sr);
+  if findfirst(s, faAnyfile, sr) = 0 then repeat
+    DeleteFile(ExtractFileDir(s) + DirSepa +sr.name);
+  until findnext(sr) <> 0;
+  FindClose(sr);
 end;
 
 
@@ -498,11 +497,11 @@ end;
 function _filesize(const fn:string):longint;
 var sr : TSearchrec;
 begin
-  if SysUtils.Findfirst(fn,faAnyFile,sr) = 0 then
+  if Findfirst(fn,faAnyFile,sr) = 0 then
     Result := sr.Size
   else
     Result := 0;
-  SysUtils.Findclose(sr);
+  Findclose(sr);
 end;
 
 procedure MakeFile(fn:string);
@@ -520,11 +519,11 @@ end;
 function filetime(fn:string):longint;
 var sr : Tsearchrec;
 begin
-  if SysUtils.findfirst(fn,faAnyFile,sr) = 0 then
+  if findfirst(fn,faAnyFile,sr) = 0 then
     filetime:=sr.time
   else
     filetime:=0;
-  SysUtils.findclose(sr);
+  findclose(sr);
 end;
 
 function setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen }
@@ -602,6 +601,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/11/15 17:59:30  hd
+  - Fix: BackSlash unter UnixFS gibt es nicht
+
   Revision 1.70  2000/11/15 17:57:02  hd
   - FSplit implementiert
   - DOS-Unit entfernt
