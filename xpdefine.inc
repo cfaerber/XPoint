@@ -92,6 +92,7 @@
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
+  {$DEFINE i386 }
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -251,6 +252,9 @@
 
 {
   $Log$
+  Revision 1.81  2002/10/27 22:48:57  mk
+  - added i386 define when compiling with FPC
+
   Revision 1.80  2002/08/10 15:48:31  cl
   - avoid "Stack check is global under Linux" message with FPC
 
