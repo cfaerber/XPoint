@@ -1,0 +1,526 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN"> 
+<title>OpenXP Online - Logfile Version 3.40</title>
+ <meta http-equiv="Content-Type" content=
+"text/html; charset=iso-8859-1">  
+ 
+
+
+
+ 
+<b>xx.xx.2001 Version 3.40 RC3 </b>Reply-To-All, neuer Netztyp RFC/Client, WinNT/2000 
+Erkennung, 1001 Bugfixes 
+<ul>
+  <li>MK: UUCICO: es wurden ung&uuml;ltige Dateinamen erstellt, wenn die LFN-Unterst&uuml;tzung 
+    aktiviert ist 
+  <li>MK: Diskussion-In wird bei Nachricht/Weiterleiten/Kopie/Direkt jetzt gel&ouml;scht 
+  <li>MK: Schalter unter Config/Anzeige/Diverses hinzugef&uuml;gt, Farbpalette 
+    wird nur gesichert und restauriert, wenn Schalter gesetzt ist 
+  <li>MK: Maximale L&auml;nge des Suchbegriffes auf 120 Zeichen erh&ouml;ht (vorher 
+    73) 
+  <li>MK: Erstellung von Index-Dateien beschleunigt 
+  <li>MK: UUZ: Wenn keine To:-Zeile vorhanden war, wurden Mails als Unzustellbar 
+    deklariert 
+  <li>MK: Alle Operationen mit Lesen von Nachrichten deutlich beschleunigt (bei 
+    Volltextsuche etwa Faktor 2) 
+  <li>MY+MK: Client-Modus (siehe Edit/Boxen/Point) 
+  <li>MK: Replace Own implementiert 
+  <li>MK: H&auml;nger von UUZ bei bestimmten extrem langen Textzeilen beseitigt 
+  <li>MK: XP.EXE so modifiziert, das UKAW nicht mehr OpenXP erkennt und dadurch 
+    wieder sauber funktioniert und keine 'Upgrade-Mail' schreibt 
+  <li>JG: Bei bestimten Lesemodi wurde immer in das &uuml;bern&auml;chste Brett 
+    gesprungen, weitere Fixes f&uuml;r Brettweiterschalter 
+  <li>MK: Parameter /W schaltet jetzt die Uhr in der zweiten Zeile des Listers 
+    ab (nur bei feststehenden Header) 
+  <li>JG: Probleme mit Crash von Win98 bei schlie&szlig;en von XP behoben 
+  <li>MW: lange Dateinamen bei UUCP-Filerequest erm&ouml;glicht 
+  <li>SV+MY: Reply-To-All-Feature implementiert 
+  <li>MK: Fehler bei Bildschirmmodi mit mehr als 46 Zeilen behoben 
+  <li>MK: Fixes f&uuml;r VESA 60 Zeilen-Modus 
+  <li>JG: Fix: When browsing through messages with &lt;Ctrl-PgUp&gt;/&lt;Ctrl-PgDn&gt; 
+    and +/- the message that has been entered with the last &lt;Ctrl-Pg*&gt; was 
+    replaced in the message window with the message the message reader had entered 
+    first 
+  <li>JG: When creating a reply, mapping &quot;B&quot; =&gt; &quot;P&quot; now 
+    checks for the message status (PM/AM) rather than for the message area status. 
+    Thus mapping now also works in the reference tree and in the user database 
+  <li>JG: Fix: eliminated extreme hard disk activity when changing read mode in 
+    the message reading window with &lt;Alt-L&gt; 
+  <li>MK: Maggi: Maximale L&auml;nge f&uuml;r Betreffzeile von 60 auf 250 Zeichen 
+    erh&ouml;ht 
+  <li>MK: verschiedene LFN-Fixes (gro&szlig; geschriebene Dateinamen) 
+  <li>JG: Fix (DoSend): clear list of CC recipients after rfehler(606) (&quot;Internal 
+    newsgroup - writing not allowed!&quot;). Ancient bug that could lead to &quot;ghost 
+    CC recipients&quot; 
+  <li>JG: MIME multipart messages with lines longer than 255 chars are extracted 
+    correctly now (before they were truncated at pos 255) 
+  <li> JG: Header longer than 255 characters are splitted correctly now (at the 
+    last &quot; &quot;, &quot;,&quot; or &quot;;&quot; before pos 255 rather than 
+    exactly at pos 255). 
+  <li>JG: 'Xref' headers are not thrown away anymore 
+  <li>JG: fixed ancient 'forcebox' bug: it was possible to e.g. create a mail 
+    to an RFC recipient and then select a Fido server in the send window. 
+  <li>MK+MY: Erkennung von Win 2000, automatische Zuschalltung der LFN-Funktion 
+  <li>CF: NTVDM-Interface f&uuml;r die Erkennung der laufenden Windows-Version 
+    und automatische Aktivierung der LFN-Funktion 
+  <li>CF: Support des Clipboards unter Windows NT 4 
+  <li>MK: Fehler in Base64 decodierung (z.T. wurden mehr Zeichen als vorhanden 
+    decodiert) entfernt 
+  <li>JG: prevent creation of wrong ABS headers when doing N/W/O with News 
+  <li>JG: Fix (of an extremely ancient and annoying behaviour): When creating 
+    an (e.g. Reply-To) user upon replying to a message stored in a user folder, 
+    XP defaults to the server of the user folder where the message is stored rather 
+    than to the primary server. Finally!
+  <li> JG: Fix f&uuml;r COM-Reset<br>
+  
+</ul>
+<p><b></b> 
+<b>01.01.2001 Version 3.40 RC2 </b>kleinere Fixes 
+<ul>
+  <li>MK: Bugfix: Crash bei Aufruf des lokalen Menüs mit &lt;F10&gt; im Editor 
+    behoben, wenn keine Maus vorhanden ist
+  <li>MK: Bugfix: Crash im Lister bei 0-Byte-Nachrichten, feststehendem Nachrichtenkopf 
+    und Mausklick unterhalb des Nachrichtenkopfes beseitigt (Bug aus v3.12d) 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=109282&amp;group_id=3766">#109282</a>: 
+    Nachrichten/Weiterleiten/Kopie von Fido-Nachrichten erzeugt jetzt auch dann 
+    keine "doppelten" Tearlines und Origins mehr, wenn diese nur mit CRs (statt 
+    mit CR/LFs) eingeleitet werden
+  <li>MK: Neue Version des UUZ und UUCICO beigelegt, jetzt mit LFN- Unterstützung 
+    (für Windows 2000 bei UUCICO Config-Parameter "lfn" und bei UUZ Aufrufparameter 
+    -LFN angeben)
+  <li>MK: VGA-Farbpalette wird von XP jetzt nicht mehr angetastet, dadurch beliebige 
+    externe Manipulationen möglich
+  <li>MK: Bugfix: Verschiedene Probleme beim XP-Start mit TEMP- und LOG- Verzeichnis 
+    behoben
+  <li>MK: XPoint/Statistik/Datenbank zeigt jetzt präzisere Werte an
+  <li>MK: Bugfix: Beim Hinzufügen eines neuen Users konnte XP abstürzen, wenn 
+    im Feld "Adresse" die &lt;F2&gt; -Auswahl benutzt wurde und sich noch kein 
+    User in der Datenbank befand
+  <li>MK: Beim XP-Start mit Parameter /t:n (Timingliste) wird kein Betahinweis 
+    mehr angezeigt
+  <li>MK:UUZ: bei Verwendung des Parameters -uz wird bei existierender Zieldatei 
+    jetzt nicht mehr mit einer Fehlermeldung abgebrochen, sondern ein Backup der 
+    Zieldatei (<datei>.BAK) angelegt. Dadurch Problem des möglichen Datenverlustes 
+    bei einigen UKA_PPP- Installationen behoben, die den Eingangspuffer nach dem 
+    Einlesen in XP nicht gelöscht haben
+  <li>MK: Probleme mit der Meldung von zu wenig Festplattenplatz bei OS/2 behoben
+  <li>JG: Suche nach mehreren Message-IDs gleichzeitig möglich (s. Hilfe)
+  <li>JG: Bei Message-ID-Suche aus einer Liste markierter Nachrichten heraus Auswahlfeld 
+    "Bretter" ausgeblendet (wie bei den anderen Suchen auch)
+  <li>JG: Bugfix: Unter bestimmten Umständen wurden PMs beim Versenden mit dem 
+    Halte-Flag versehen, obwohl "eigene PMs halten" abgeschaltet war
+  <li>MK: Schalter unter Config/Optionen/Netze/Verschiedenes/Fido: "OpenXP-Version 
+    in Tearline schreiben"
+  <li>JG: Nachrichten-Kopfzeile "erhalten:" zeigt jetzt Datum *und* Uhrzeit an
+</ul>
+<b>26.12.2000 Version 3.40 RC1 </b>Der erste Release Candidate von OpenXP 3.40 
+<ul>
+  <li>MK: Problem beim aktualisieren von MIME-Viewern behoben 
+  <li>MK: Einige Bugs bei Fileservern behoben, bei denen die Boxnamen gr&ouml;&szlig;er 
+    als 8 Zeichen waren 
+  <li>MK: MIME-Erkennung wegen schrottiger Microsoft Outlook-Software angepasst 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=1112083&amp;group_id=3766">#112083</a>: 
+    Vertreteradressen blieben bei Boxwechsel erhalten 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=1116162&amp;group_id=3766">#116162</a>: 
+    U in der Nachrichten&uuml;bersicht wechselt nicht immer zum richtigen User 
+  <li>MK: Datumsbezuege aktualisieren nach Netcall wieder schaltbar 
+  <li>MK: Crash bei der Suche beseitigt, wenn man die History gew&auml;hlt hat 
+    und ein Suchbegriff l&auml;nger als 73 war 
+  <li>MK: Config/Editor hat die neuen Optionen nicht immer richtig &uuml;bernommen 
+  <li>MY: Kleinere Verbesserungen an der Hilfe und den Resourcen 
+  <li>MK: Dateiauswahlbox kann jetzt maximal 2048 statt 750 Dateien anzeigen und 
+    verbraucht weniger Speicher 
+  <li>MK: Config/Optionen/Bedienung: die &Auml;nderungen an den Weiterschalter 
+    werden jetzt sofort aktiv, nicht erst nach dem Neustart (Bug aus 3.12d) 
+  <li>RB: Erweiterter Test (mit Hilfe der MCBs), ob XP schon gestartet wurde 
+  <li>RB: Verschiedene Bugfixes (Crash im Editor, Cursor ans Ende nach Blockeinf&uuml;geoperationen, 
+    UUZ, Clipbaord) 
+  <li>MK: Flag 'Umlaute f&uuml;r neue User' wurde ab und zu mal nicht beachtet 
+  <li>MK: Kleinere LFN-Probleme beseitigt 
+  <li>MK: Kleinere Verbesserungen beim anlegen von bestimmten Pfaden 
+  <li>MH: Usersuche jetzt auch bei Auswahl &uuml;ber F2 m&ouml;glich 
+  <li>MK: Config/Optionen/Sprache wieder aktiviert 
+  <li>MK+MY: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=117117&amp;group_id=3766">#117117</a>: 
+    mehrere Bugs und Seiteneffekte beim Archivieren mit <alt-p>&lt;Alt-P> beseitigt 
+    (Kommentarbaum wurde stellenweise verlassen, es wurden "falsche" Nachrichten 
+    angezeigt u.ä.). (Bug aus v3.12d) 
+  <li>MK: Anzeigeproblem bei Userauswahl mit <f2> &lt;F2&gt; und "A" beim Eintragen 
+    einer User-Vertreteradresse behoben. (Bug aus 3.12d) 
+  <li> MK: Custom Header-Lines mit mehr als 19 Zeichen k&ouml;nnen jetzt eingegeben 
+    werden 
+  <li>MK: Mit X extrahierte Teile von Multipart-Nachrichten k&ouml;nnen jetzt 
+    in der Zwischenablage gespeichert werden 
+  <li>MK: Pollpakete werden bei Abbruch eines ZConnect-Poll nicht mehr weggeworfen 
+  <li>MK: Bei Nachricht/Unversand/Editieren erscheint jetzt kein Fehler mehr, 
+    wenn das Pollpaket komplett gel&ouml;scht wurde (Bug aus 3.12d) 
+  <li>MK: Fehler: PushHP Overflow beseitigt (Bug aus 3.12d) 
+  <li>MK: Farbpalette wird vor der Shell und dem Setzen von neuen Videomodi gesichert 
+    und bleibt damit erhalten 
+  <li>RB: Option -ppp in UUZ implementiert (pro Mail wird ein File erstellt), 
+    Schalter in Edit/Boxen/Point 
+  <li>JG: Bugs bei Spezial-Suche behoben 
+  <li>MK: Auch die letzten noch verbliebenen kleingeschriebenen Dateien in Großschreibung 
+    geändert (REGDATA.CFG, LASTMSG, HEADER.HDR) 
+  <li>MK: Fehlerhafte Base64-Zeilen werden soweit möglich erkannt und nicht decodiert 
+    - dadurch sehen z.B. PktXCode-User keinen Zeichenmüll mehr, sondern die korrekte 
+    PktXCode-Meldung
+</ul>
+<b>16.11.2000 Version 3.30.6&szlig;</b> Bessere Unterst&uuml;tzung der Standards, 
+Hilfe und Resourcen-Update, Fixes 
+<ul>
+  <li>FE: Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der proprietaeren 
+    X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO untergebracht. (X-XP-FTO 
+    wird aber weiterhin verarbeitet), Wegen Kompatiblit&auml;t f&uuml;r alte Tools 
+    mit &quot;-312&quot; in XP, ZFIDO und Maggi abschaltbar 
+  <li>FE: Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in RFC-Nachrichten 
+    konvertiert. (X-Comment-To) 
+  <li>FE: Auch bei RFC wird bei &ouml;ffentlichen Antworten auf Nachrichten mit 
+    Fido-To eine Fido-To-Zeile erzeugt. (Kleine Verbesserung fuer Leute, die mit 
+    RFC-Technik in Fido-Foren schreiben.) 
+  <li>FE: Cancelerstellung &uuml;berarbeitet 
+  <li>JG: Kleine Layoutkorrektur in C/O/V 
+  <li>MY: Weitere umfangreiche Verbesserungen an der Hilfe und den Resourcen 
+  <li>RB: UUZ: (X-)-Envelope-To-Unterstützung, QP Decode f&uuml;r verschiedene 
+    Header, Zeilen länger als 255 Zeichen werden nicht mehr abgeschnitten (Achtung: 
+    gilt nicht f&uuml;r Headerzeilen, nur die 32 Bit Version von UUZ unterst&uuml;tzt 
+    l&auml;ngere Header) 
+  <li>MK: '*' und '?' sind bei Eingabe von Verzeichnissen/Dateinamen jetzt wieder 
+    erlaubt, u.a. wichtig f&uuml;r QWK-User 
+  <li>MK+JG: Internes Clipboard (Datei CLIPBOARD.TMP) wird jetzt genutzt, wenn 
+    kein Windows Clipboard verf&uuml;gbar ist 
+  <li>MK: Kleingeschriebene START.BAT und STOP.BAT werden nicht mehr gel&ouml;scht 
+  <li>ML+MK: 80x60-Zeilen-Modus in C/A/Z hinzugef&uuml;gt, ben&ouml;tigt VESA 
+    BIOS, das diesen Modus unterst&uuml;tzt 
+  <li>JG: Fix: Aufnahme von Usern ins Adreßbuch, wenn diese schon in der Datenbank 
+    sind, auch bei CCs 
+  <li>JG: Beim Editieren von Usern mit Adressbuchgruppe "0" bleibt diese erhalten 
+    und wird nicht in "1" geaendert 
+  <li>MH: Bei Weiterleiten von Nachrichten werden jetzt Vertreteradressen und 
+    Schreibsperren beachtet 
+  <li>MK: Videomodus wird jetzt nach DOS-Shell nochmal komplett neu gesetzt, behebt 
+    verschiedene Probleme mit eigenen Zeichens&auml;tzen 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116196&amp;group_id=3766">#116196</a>: 
+    Drucken der Hilfe stellt jetzt die Hervorhebungen richtig dar (Bug aus 3.12d) 
+  <li>JG: Verschiedene Bugs in den externen Viewern behoben 
+  <li>RB: Supersedes (Ersetzt-Nachrichten) jetzt im Autoversand m&ouml;glich 
+  <li>RB: UUZ: Nachrichten mit dem UTF-8 (Unicode) Zeichensatz werden jetzt lesbar 
+    decodiert 
+  <li>MK: Deutlich verbessertes Behandlung von verschiedenen Zeichens&auml;tzen 
+    bei der Darstellung von MIME-Mails 
+  <li>MK: Datumsbez&uuml;ge &uuml;berarbeiten wird jetzt beim Puffereinlesen ausgef&uuml;hrt 
+  <li>MK: An vielen Punkten Probleme mit langen Dateinamen behoben 
+  <li>MK+MY: MIME-Viewer wird jetzt auch bei Singlepart MIME richtig ausgew&auml;hlt 
+    (2 Bugs aus Original 3.20) 
+  <li>MK+MY: Eintrag von mehreren identischen MIME-Typen ist nicht mehr erlaubt 
+    (Bug aus Original 3.20) 
+  <li>MK+MY: Eine handvoll weiterer kleiner MIME-Bugs beseitigt (Quoten aus Kommentarbaum, 
+    Binary-Erkennung usw.) (Bugs z.T. aus Original 3.20) 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116155&amp;group_id=3766">#116155</a>: 
+    Im Bildschirmauszug wurden versteckte Schalter in Dialogen gezeigt (Bug aus 
+    Original 3.12d) 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116197&amp;group_id=3766">#116197</a>: 
+    <shift-del>Kopieren und Einf&uuml;gen im Editor unterschl&auml;gt letztes 
+    Zeilenende/Leerzeile (Bug aus Original 3.12d) 
+  <li>MK: Mehrere Bugs bei Shift-P/Shift-B f&uuml;r das mehrfachquoten von Nachrichten 
+    behoben (Bugs z.T. aus Original 3.12d) 
+  <li>MK: Probleme beim setzen von Grafikmodi zwischen 44 und 50 Zeilen bei kaputten 
+    Grafikkartenbios behoben 
+  <li>MK: Crash bei Strg-&Uuml; im Nachrichtenfenster behoben 
+  <li>MK: Anschauen und extrahieren von Dateien aus Archiven funktioniert wieder 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=1121798group_id=3766">#112798</a>: 
+    Lange Dateinamen in Archiven werden jetzt unterst&uuml;tzt 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116156&amp;group_id=3766">#116156</a>: 
+    <shift-del> Beim mehrfachquoten wurde z.T. die falsche Schablone genutzt 
+  <li>MK+RB: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116186&amp;group_id=3766">#116186</a>: 
+    Die Anzahl der Ebenen im Kommentarbaum von 30 auf 97 erh&ouml;ht. Die Zahl 
+    der maximal verarbeiteten Nachrichten ist jetzt auf 3640 (vorher 5000) limitiert, 
+    Darstellung verbessert und der Baum ist mittels Ctrl-Links/Ctrl-Rechts verschiebbar 
+  <li>MK: Bug bei Shift-Enter auf SinglePart-MIME-Mails behoben 
+  <li>RB: Bei der URL-Erkennung wurden zu viele Zeichen als URL interpretiert 
+  <li>RB: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=109282&amp;group_id=3766">#109282</a>: 
+    Fido: N/W/K produziert doppelte Tearlines/Origins 
+  <li>FE: Handbuch &uuml;berarbeitet und Glossar hinzugef&uuml;gt 
+  <li>RB: korrekte Behandlung von '-' und '/' als Trennzeichen und an verschiedenen 
+    anderen Stellen im Editor 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116657&amp;group_id=3766">#116657</a>: 
+    Verschiedene Crashs bei Servernamen l&auml;nger als 15 Zeichen (Bug aus Original 
+    3.12d) 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=119897&amp;group_id=3766">#119897</a>: 
+    Ctrl-E geht nicht bei Anzeige der markierten Nachrichten (Bug aus Original 
+    3.12d) 
+  <li>MK: Bug <a href="https://sourceforge.net/bugs/?func=detailbug&amp;bug_id=116292&amp;group_id=3766">#116292</a>: 
+    Shartetest und Mehrfachstart von XP (Bug aus Original 3.20) 
+  <li>MK: Tearline enth&auml;lt jetzt keine XP-Werbung mehr 
+</ul>
+<p><b>31.08.2000 Version 3.30.5&szlig;</b> Video, LFN und IndexCache </p>
+<ul>
+  <li>MO: der erste Nodelistenindex ist jetzt ca. 10% kleiner als vorher 
+  <li>MK: Hotkey f&uuml;r Drucken funktionierte nicht, wenn man im Usermanager 
+    einen User ausgew&auml;hlt hat 
+  <li>MK: Test auf Share entfernt, da Abst&uuml;rze mit Novell Client 32 (Bug 
+    aus 3.12d) 
+  <li>MO: Alten Fehler (schon in 3.12d vorhanden) im Resourcen-Caching beseitigt 
+  <li>JG: Verbesserte Unterst&uuml;tzung der 28,30,33,36 Zeilenmodi, jetzt mit 
+    internem Font 
+  <li>MK: Indexcache f&uuml;r die Datenbank erh&ouml;ht die Geschwindigkeit der 
+    Datenbank (Bei Reorg sind es gut 10%), je langsamer die Festplatte ist, desto 
+    gr&ouml;&szlig;er der Geschwindigkeitsvorteil, au&szlig;erdem weitere &Auml;nderungen 
+    zur erh&ouml;hung der Datenbankgeschwindigkeit 
+  <li>JG: In PM-Brettern ist "P" gleichwertig zu "B", falls die beantwortete Nachricht 
+    keinen Reply-To Header enth&auml;lt 
+  <li>JG: "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz 
+  <li>JG: Parameter -K verarbeitet jetzt ganze Zeichenketten und Makrobefehle
+  <li>JG: Neuer Parameter -mailto: dem direkt ein Mailto-Link &uuml;bergeben wird 
+  <li>JG: Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut 
+  <li>MK: Es werden jetzt unter Windows 9x lange Dateinamen unterst&uuml;tzt, 
+    Windows 2000 wird nicht automatisch erkannt, dort kann die Unterst&uuml;tzung 
+    mit /LFN aktiviert werden 
+  <li>MF: Englische Hilfe aktualisiert 
+  <li>OH: F3-Request, ist die automatische Magic-Erkennung abgeschaltet, werden 
+    sie trotzdem erkannt, und zwar dann, wenn keine normalen Dateinamen gefunden 
+    wurden 
+  <li>MY: Umfangreiche inhaltliche und orthografische Korrektur der deutschen 
+    Hilfe und Resourcen<br>
+</ul>
+<b>18.08.2000 Version 3.30.4&szlig;</b> Wichtiger Bugfix 
+<ul>
+  <li>JG: Bugfix: Crashs im Zusammenhang mit dem Editorstart behoben
+  <li>JG: beim Neuanlegen von Usern mit Strg+U wird jetzt die Standard-Addressbuchgruppe 
+    benutzt 
+</ul>
+<b>13.08.2000 Version 3.30.3&szlig;</b> Bugfixes und wieder Mini-Features 
+<ul>
+  <li>MK: Textmakros $RNAME2 und $(RNAME2) hinzugef&uuml;gt, diese h&auml;ngen 
+    kein Leerzeichen an 
+  <li>MK: Unbekannte Konfigurationszeilen in xpoint.cfg werden jetzt nicht mehr 
+    angemeckert, sondern beim Schreiben der Konfiguration erhalten. Das erm&ouml;glicht 
+    den Wechsel zwischen verschiedenen XP-Versionen, ohne die halbe Konfiguration 
+    zu verlieren 
+  <li>MK: $DAY, $TIME und $FIRSTNAME als Makros f&uuml;r die englische Version 
+    eingebaut 
+  <li>JG: Bugfix f&uuml;r Aktivierung der Wiedervorlage im Lister, wenn die erste 
+    Mail angezeigt wird 
+  <li>JG: User-Editmenue: einstellbare Priorit&auml;tsfarbe f&uuml;r Nachrichten 
+    des Users 
+  <li>JG: UUE-Decoding direkt aus Lister mit "U" 
+  <li>JG: UUE-Decoding auch bei mehreren Files in einer Nachricht m&ouml;glich 
+  <li>MK: Beim exportieren von Files aus markierten Bereichen im Lister werden 
+    jetzt keine unn&ouml;tigen Leerzeichen in Leerzeilen mehr geschrieben 
+  <li>JG: Bugfix f&uuml;r URL-Erkennung 
+  <li>JG: Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G, Erkl&auml;rung 
+    Berührt der Cursor ein Wort, wird dieses Markiert, und in der Datei "glossary.cfg" 
+    nachgesehen ob es ein Kürzel ist. Wenn ja wird das Kürzelwort durch den Volltext 
+    ersetzt. Ist das Wort unbekannt oder der Cursor berührt gar keines, geht stattdessen 
+    ein Menue auf, in dem man mit den Cursortasten zwischen den eingetragenen 
+    Kürzeln wählen kann. Probierts einfach aus... (BTW: die Lister-Suchfunktion 
+    mit S klappt in dem Menue auch :), weitere Infos siehe Online-Hilfe 
+  <li>JG: Bugfix: Viewer-Beschraenkungen, an Config-Strings wurden u.U zuviele 
+    Punkte angehaengt 
+  <li>MK: Eine Hand voll Bugfixes wegen Zugriffe auf nicht initialisierte Stringvariablen, 
+    die wir durch die 32 Bit Portierung gefunden haben 
+  <li>JG: Crosspostings mit Shift+B: Beschraenkungen bei Verteilern, verschiedenen 
+    Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben. 
+  <li>MK: Fehler bei Anzeige von Nachrichten mit KOM:-Headerzeile korrigiert 
+  <li> JG: Userfenster: Strg+G markiert gesamte Adressbuchgruppe 
+  <li>JG: Letzte Zeile im letzen Part von MIME-Mails wird jetzt im Lister angezeigt 
+  <li>JG: Brett-Gelesen-Bug bei Nachricht/Alle behoben 
+  <li>JG: Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt 
+  <li>JG: 80K mehr Speicher im Editor (3 grosse Arrays im XMS zwischengelagert) 
+  <li>JG: Ungelesen-Workarround "Setbrettgelesen" jetzt auch beim Verlassen der 
+    Nachrichtenliste 
+  <li>JG: "U" (ins Userfenster Umschalten) funktioniert jetzt auch wenn die Markiert-Liste 
+    angezeigt wird 
+  <li>MK: Ben&ouml;tigte Filehandles auf 40 erh&ouml;ht, bei weniger Filehandles 
+    waren verschiedene Probleme zu erwarten 
+  <li>JG: Internal Database Error bei bestimmten Situationen von Nachricht/Extrakt/Brett 
+    behoben 
+  <li>JG: bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue 
+  <li>JG: Ungelesen Bug beim (K)illen von Nachrichten aus der Markiert-Liste behoben, 
+    evtl Allround-Fix fuer Ungelesen-Probleme in dieser Ecke 
+  <li>JG+MK: Verschiedene Fixes f&uuml;r Volltextsuche, unter anderem Absicherung 
+    gehen mehr als 10 Suchbegriffe 
+  <li>JG: Fido...Nodelisten abfragen Direkte Nachricht an Suchergebnis schicken 
+    funktioniert wieder
+  <li>JG: Fix f&uuml;r QuoteReflow mit mehreren Zeilen, die l&auml;nger sind als 
+    die unter Config/Optionen/Allgemeines eingestellte Zeilenl&auml;nge
+</ul>
+<b>07.07.2000 Version 3.30.2&szlig;</b> 32 Bit Teile entfernt, kleinere Bugfixes 
+und Mini-Features 
+<ul>
+  <li>MK: 32 Bit Teile entfernt 
+  <li>All: verschiedene kleinere Fixes 
+  <li>JG: MIME-Auswahl erscheint nicht mehr, wenn die Mail aus zwei Teilen besteht, 
+    der erste Teil Text/Plain ist, der zweite Teil "text/html" und der Mimetyp 
+    Multipart/Alternative oder der zweite Teil "text/vcard" ist 
+  <li>MF: Englische Resourcen und Hilfe aktualisiert 
+  <li>JG: Nach dem FIDO-Netcall wird der Bildschirm jetzt wieder richtig dargestellt 
+  <li>JG: Die Volltextsuche erlaubt jetzt '?' und '*' als Wildcards 
+  <li>JG: Suchfunktionen und "O" im Lister Nach Bewegung mit +/- und Cursor im 
+    Bezugsbaum wurde beim Zurueckspringen in den Lister die falsche Mail angesprungen 
+  <li>JG: Weitersuchen bei markierten Nachrichten: bei fehlgeschlagener Suche 
+    bleibt alte Markierung erhalten (falls genug Speicher frei ist) 
+  <li>JG: Verbesserungen f&uuml;r den 28 Zeilen-Modus, bitte ausf&uuml;hrlich 
+    testen! 
+  <li>MK: Bekannte Bildschirmausgaben wie aus 3.12 beim Einlesen von Puffern wieder 
+    hergestellt 
+  <li>JG: Bei FIDO-Nachrichten mit mehreren Brettempf&auml;ngern wird der FIDO-Empf&auml;nger 
+    jetzt in Klammern mit angezeigt
+</ul>
+<p><b>22.06.2000 Version 3.30.1&szlig;</b> Ab jetzt 16 Bit only in diesem Branch<BR>
+<UL>
+  <LI>HD: Weitere &auml;u&szlig;erst umfangreiche Arbeiten an der Linux-Version, 
+    alle &Auml;nderungen aufzuz&auml;hlen Seiten f&uuml;llen
+  <LI>MK: 32 Bit Versionen weiterentwickelt und einige Fehler beseitigt 
+  <LI>OH: Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne 
+  <LI>ML: Maus funktioniert jetzt unter Windows 32 Bit 
+  <LI>SV: Mit N/W/O weitergeleitete Nachrichten koennen nun nachtraeglich nicht 
+    mehr geaendert werden, XP-ID wird nicht mehr angehangen (unreg. Version) 
+  <LI>ML: Zeilenzahl &auml;ndern geht auch unter Windows 32 Bit jetzt provisorisch 
+  <LI>JG: Bugfix: vergessen Delviewtmp in XPOINT.CFG abzuspeichern 
+  <LI>JG+MK: Bildschirm wird nach Config/Anzeige/Farben wieder korrekt aufgebaut 
+  <LI>MK: Autoexec-Verzeichnis wird jetzt in32 Bit Versionen auch abgearbeitet, 
+    verschiedene andere Probleme in diesem Zusammenhang beseitigt 
+  <LI>JG: Empfaenger aendern: [F2] wird jetzt reingemalt 
+  <LI>JG: Optimierte 32 Bit Datenbankroutinen in der 16 Bit Version 
+  <LI>JG: Bugfix Schnellsuche mit `/` im Adressbuch (User die nicht im Adressbuch 
+    waren st&ouml;rten) 
+  <LI>JG: Fixes f&uuml;rs umschalten mit "A" zwischen Adressbuch und allen Usern 
+  <LI>JG: UUCP: Sysoptransfer mehr Sicherheit bei DEL *.* 
+  <LI>JG: Nachrichtenfenster: "U" zeigt ungelesene Nachrichten 
+  <LI>MK: Wegen verschiedenen Problemen die Beschr&auml;nkung der Kommandozeile 
+    auf 80/127 Zeichen wieder eingebaut 
+  <LI>MK: ZFIDO kann jetzt mit l&auml;ngeren PID-Strings umgehen 
+  <LI>CL: UUZ: Verbesserte Kompatibilität mit RFC 822: Kommentare (selten, kommen 
+    aber vor) werden nun entfernt, Erkennung von User-Agent, Content-Disposition 
+    (RFC 2183) wird erzeugt 
+  <LI>SV: Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten versendet 
+    werden (mit Nachricht/Weiterleiten/Ersetzen) 
+  <LI>SV: ZConnectler koennen jetzt auch canceln :-) 
+  <LI>JG: Empfaenger-aendern im Sendefenster: Bugfix: Verteiler funktioieren jetzt 
+    wieder 
+  <LI>JG: Erfolglose Suche: Fensterhintergrund wurde nicht wiederhergestellt 
+  <LI>HD: Anzeige bei Puffer einlesen funktioniert wieder sauber
+</UL>
+<p><b>14.05.2000 Version 3.21.024&szlig;</b> <BR> 
+<UL> <LI>FL: X-No-Archive, X-Homepage und X-Priority mit &quot;U-&quot; erweitert<LI>MK: 
+Alle 32 Bit Versionen k&ouml;nnen jetzt endlich auch drucken<LI>JG: Anzeige der 
+Nachrichtenflags (Halten,Wiedervorlage etc) im Lister <LI>JG: "H" im Lister kann 
+jetzt das Halteflag auch ausschalten, "V" im Lister schaltet das Wiedervorlageflag 
+Ein/Aus<LI>MK: Arbeiten an der Mausunterst&uuml;tzung in den 32 Bit Versionen, 
+diese ist aber noch nicht funktionst&uuml;chtig!<LI>MK+All: Verschiedene Fixes 
+f&uuml;r die 32 Bit Windows und OS/2 Versionen (Dank an Michael Koppel u.a.)<LI>HD+ML: 
+&Auml;u&szlig;erst umfangreiche Arbeiten an der Linux-Version von OpenXP (ncrt 
+statt ncurses, winxp, UnixFS usw.)<LI>JG: Editor: Pgdn in der letzten Textseite 
+springt ohne scrollen zum Textende beim Quote-Reflow wird der Cursor an den Zeilenanfang 
+gesetzt, und nicht mehr hinter das Quotezeichen <LI>JG: Lister: "/" als Hervorhebezeichen 
+erlaubt<LI>JG: C/O/N "Eigene Nachrichten Halten" gilt nicht mehr fuer PMs<LI>JG: 
+Konfigurierbare Farbe f&uuml;r die Priority der Nachrichten (siehe Config/Anzeige/Farben...Nachrichten)<LI>JG: 
+Jetzt werden auch bei eingehenden Zconnect-Mails Eilmail und Direktmail farbig 
+gekennzeichnet<LI>JG: Beseitigung verschiedener &quot;Ungelesen-Bugs&quot;<LI>MK: 
+Unterst&uuml;tzung der Zwischenablage f&uuml;r Windows und teils f&uuml;r OS/2 
+(nat&uuml;rlich ohne 64kb Limit der DOS-Version)<LI>MK: Unterst&uuml;tzung f&uuml;r 
+lange Filenamen in den 32 Bit Versionen deutlich erweitert<LI>JG: Leerzeichen 
+nach dem Quotezeichen bleiben jetzt wieder erhalten<LI>SV: Fix: Bei eingetragenem 
+FQDN wurden zu viele Mails hervorgehoben<LI>MK: Kleiner optischer Y2K-Bug in AutoSend/Info 
+behoben <LI>MK: Die 32 Bit Versionen f&uuml;r Windows und OS/2 werden ab sofort 
+mit Virtual Pascal 2.1 (statt 2.0) compiliert. Einige Fehler, speziell in der 
+OS/2-Version wurden beseitigt<LI>JG: Zahllose kleinere Fixes und Verbesserungen 
+f&uuml;r die neuen Features (Usergruppen usw.)<LI>SV: Schalter in 'News nicht 
+archivieren lassen' umbenannt und nach C/O/N verschoben<LI>JG: Verteiler als Empfaenger 
+bei Nachricht/Direkt; Nachricht/Weiterleiten und Sendefenster-Empfaengeraendern 
+erlaubt<LI>JG: XPoint.cfg Schalter DelViewTmp macht dasselbe wie die Umgebungsvariable 
+DELVTMP<LI>RB: UUCP: supersedes werden richtig konvertiert<LI>MK: Memory-Leak 
+bei der Bearbeitung von CCs beseitigt<LI>OH+MK: L&auml;ngenbegrenzung von 130 
+Zeichen f&uuml;r Kommandozeilenaufruf entfernt (wichtig f&uuml;r PGP mit langen 
+UserIDs)<LI>JG: Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten entsprechender 
+Menuepunkt unter Config/Anzeige/Farben/Lister <LI>MK: Unz&auml;hlige Limits in 
+UUZ und XP beseitigt oder zumindest deutlich reduziert. In 32 Bit Versionen existieren 
+einige Limits nicht mehr, die in der 16 Bit Version nicht ohne gro&szlig;en Aufwand 
+zu umgehen sind
+  <LI>MK: Erweiterte Erkennung von Dateinamen in Headern von MIME-Mails
+  <LI>JG: 
+Im "Kopien an" Dialog des Sendefensters sind jetzt ebenfalls Verteiler erlaubt.<LI>MK: 
+OpenXP gibt es jetzt auch als 32 Bit DOS DPMI Version, compiliert mit FreePascal<LI>OH: 
+Kleinere Verbesserungen bei PGP, unter anderem werden Signaturen beim Testen nicht 
+mehr gel&ouml;scht<LI>JG+MK: Bugfix f&uuml;r Clipboard-Crash Windows Clipboard-Routinen, 
+wenn die Zeichenkettenl&auml;nge durch 32 teilbar war (schon in 3.12 vorhanden)<LI>JG: 
+Bugfix: Leerzeichen nach Quotezeichen auch beim Zeilenumbruch beachten<LI>JG: 
+Externe Viewer: OS2/DOS Hybridprogramme die nicht unter OS/2 gestartet werden, 
+werden als DOS-Programme behandelt<LI>JG: Externe Viewer / Schutzmassnahmen: - 
+Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen - entsprechende 
+Einstellungen unter Config/Optionen/Viewer<LI>RB: Einige UUZ-Fixes (X-* -&gt; 
+U-X-*)<LI>JG: Temp-Dateien wurden bei Sysop-Modus und Boxentyp ZConnect nicht 
+gel&ouml;scht<LI> JG: Nachricht/Direkt + Weiterleiten..Direkt: Bretter sind jetzt 
+sowohl bei Direkteingabe (mit einleitendem "/") als auch per F2-Auswahl erlaubt<LI>JG: 
+User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen, Feldtausch-Config: 
+Defaultauswahl mit F2<LI>FE: Die Dokumentation wurde in das XML-Format (mit DocBook) 
+konvertiert, sieht jetzt ein wenig anders aus und wurde inhaltlich weiter &uuml;berarbeitet. 
+Die HTML-Version des Handbuches befindet sich auf <A HREF="http://www.openxp.de/handbuch">www.openxp.de/handbuch</A><BR></UL><p><b>23.04.2000 
+Version 3.21.023&szlig;</b> <BR> <UL> <LI>RB: Wort links vom Cursor l&ouml;schen 
+mit Strg-Del<LI>OH: Verbesserte Blindenunters&uuml;tzung: Config/Anzeige/Hilfen/Feldtausch 
+in Listen<LI>OH: PGP 6.5.x Unterst&uuml;tzung und fixes f&uuml;r die anderen PGP-Versionen<LI>JG: 
+Uhr wird jetzt auch im Lister bei feststehendem Header angezeigt<LI>MK+JG+RB+weitere: 
+Weitere umfangreiche Portierungsarbeiten, Unterst&uuml;tzung von Virtual Pascal 
+als weiteren Compiler, Dank an Hans-Juergen Taenzer<LI>ML+MK: Weitere Arbeiten 
+an der Linux-Portierung<LI>MK: Erweiterte Erkennung, ob Share geladen ist. Wenn 
+XP trotzdem meldet, das es schon gestartet wurde, obwohl das nicht der Fall ist, 
+dann mit dem Parameter /nolock starten<LI>OH: Userliste: Felder jetzt sortierbar: 
+Config/Anzeige/Hilfen<LI>JG: "Q" im Lister schaltet otherquotechars (benutzen 
+von | und :) um. Neue Einstellung wird dann auch beim Quoten verwendet<LI>JG: 
+Updates der englischen Hilfe (MIME)<LI>JG: Externe-Viewer (Windows): "START" als 
+Allroundviewer funktioniert jetzt auch mit der Loeschbatch-Variante<LI>MW: Eingabe 
+eines Datums im Kalender springt an das entsprechende Datum<LI>MW: Umfangreiche 
+&Auml;nderungen und Aktualisierungen der Default-Einstellungen von XP bei Neuinstallationen<LI>JG: 
+Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert<LI>MK: 
+Win32: deutlich schnellerer Bildaufbau, viele Bugfixes, Automatisches Anpassen 
+der Zeilenzahl an die Gr&ouml;&szlig;e der Console, ZPR portiert<LI>OH: C/O/e/V/Fido: 
+Magicerkennung abschaltbar<LI>JG: Config/Optionen/Editor hinzugef&uuml;gt<LI>OH: 
+Beim beantworten von Nachrichten wird jetzt die Datei header.hdr geschrieben, 
+die wichtige Informationen f&uuml;r Zusatzprogramme enth&auml;lt, welche Header 
+und Signaturen erstellen wollen<LI>JG: Userfenster koennen jetzt nach Servername 
+geordnet werden (`O`) sowie entsprechender Menuepunkt fuer Config/Optionen/Allgemeines<LI>JG: 
+Im "User Bearbeiten" Fenster (User-Spezial.."E"dit) gibt es jetzt einen neuen 
+Eintrag "Adressbuchgruppe" gültig sind Werte von 1-99 je höher der Wert ist desto 
+weiter unten wird dieser User einsortiert. Sind mehrere User markiert gibt es 
+jetzt im "E"Dit Menue auch einen Punkt "Gruppe" mit dem man die Adressbuchgruppe 
+für alle markierten User auf einen Schlag ändern kann. Trennzeilen mit STRG+T 
+im Spezialmenue, STRG+P verschiebt wie P im Brett-SpezialMen&uuml; einen oder 
+mehrere markierte User in eine andere Adressbuchgruppe<LI>JG: Unter Config/Optionen/Allgemeines 
+gibt es ein neues Feld "Standard Adressbuchgruppe" der hier eingetragene Wert 
+wird benutzt, wenn ein User neu angelegt (PM Empfangen/Geschrieben) wird bzw. 
+wenn man im User-Spezialmenue das Adressbuchflag umschaltet.<LI>JG: Lesemodus 
+&auml;ndern jetzt auch im Nachrichtenfenster<LI>JG: MIME-Flag wird jetzt beim 
+Archivieren mit &uuml;bernommen und der Archivier-Vermerk ist jetzt abschaltbar<LI>MK: 
+Erste Beta-Version von der OS/2-Version OpenXP/2 und arbeiten an der DPMI32 Bit 
+Version<LI>MK: Absturz beim decoden von MIME-Nachrichten mit Zeilen l&auml;nger 
+als 254 Zeichen beseitigt<LI>MK: Die 32 Bit Versionen k&ouml;nnen jetzt MIME-Nachrichten 
+extrahieren, die Zeilen l&auml;nger als 255 Zeichen enthalten (16 Bit Versionen 
+schneiden den Rest ab)</UL><p><b>22.03.2000 Version 3.21.022&szlig; Betatest f&uuml;r 
+die Portierung</b> <BR> <UL> <LI>JG: Bei Brettvertreteradresse (Spezial/Zugriff) 
+ist jetzt alles ausser Verteilerlisten erlaubt<LI>JG: Kein Crash mehr bei Spezialsuche/Betreff<LI>OH: 
+Erkennung der Magics f&uuml;r das Filerequest verbessert<LI>RB: Umfangreiche &Auml;ndeurng 
+am Tastatur-Handling, Strg-Einf geht jetzt auch<LI>JG: Suche ist jetzt mit UND/ODER-Verkn&uuml;pfung 
+m&ouml;glich, siehe Hilfe<LI>HS: FQDN jetzt auch bei UUCP Boxen<LI>RB: Weitere 
+Verbesserungen an der Zeitschleifenfreigabe, ACHTUNG: Die Uhr wird jetzt trotz 
+Rechenzeitfreigabe angezeigt<LI>ML: DOSEmu-Erkennung<LI>JG: Bugfix: Beim extrahieren 
+von Quoted Printable und Base64-Dateien wurde eine Zeile zu viel gelesen<LI>All: 
+Einen ganzen Stapel kleinerer Bugfixes und Updates der Doku/Hilfe, die z.T. durch 
+die Portierung erkannt wurden<LI>CF: Umfangreiche Aktualisierungen der Dokumentation<LI>MO: 
+fileseek fidofilelist, Quelltext renoviert und Suche nach ganzen Wörtern eingeführt</UL><P>Ab 
+hier Trennung (CVS-Branch) in zwei Versionen. Die Version beginnend mit 3.20 RC1 
+sind stabile Versionen, die zur Release weiterentwickelt werden. Die Version beginnend 
+mit 3.21.022 Beta ist die aktuelle Entwicklerversion, an der gr&ouml;&szlig;ere 
+&Auml;nderungen m&ouml;glich sind und gearbeitet wird.</P><UL><LI>MK: Erste lauff&auml;hige 
+32 Bit Versionen der Tools und vor allem von CrossPoint selbst (50 Stunden Arbeit...), 
+dabei komplettes XP und Tools portiert, inkl. Umschreiben der 16 Bit Assembler-Routinen 
+auf 32 Bit, API-Funktionen zur Tastaturabfrage, UART-Unit teils portiert, Shell 
+komplett neu geschrieben<LI>All: Stapelweise Bugfixes f&uuml;r Fehler, die erst 
+durch die Portierung gefunden wurden und nat&uuml;rlich anderer kleiner Fehler<LI>RB: 
+MIME-Nachrichten vom Typ text/html werden jetzt als ISO-Zeichensatz exportiert<LI>RB: 
+Umfangreiche &Auml;nderungen des Aufrufcodes f&uuml;r externe Viewer<LI>MK: Autoversand/Hinzuf&uuml;gen 
+ben&ouml;tigt jetzt keinen Dateinamen mehr<LI>RB: Bugfix f&uuml;r den Screensaver<LI>MK: 
+Bugfix f&uuml;r alten Fehler: Ausgangsfilter wird jetzt auch bei ZConnect-Boxen 
+ausgef&uuml;hrt, wenn der Sysop-Poll verwendet wird (vielen Dank an Helmut Guetschow 
+f&uuml;r die unerm&uuml;dliche Unterst&uuml;tzung)<LI>RB: Bug beim Erzeugen des 
+Received-Headers behoben, X-Mailer Zeile darf jetzt 60 statt 40 Zeichen sein<LI>RB: 
+Bl&ouml;cke reformatieren im Editor implementiert, Tastenkombination &lt;Ctrl&gt;&lt;B&gt;<LI>OH: 
+mehrere PGP-Bugfixes</UL>
