@@ -310,6 +310,7 @@ var x,y  : byte;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
+    AdrbuchDef  : byte;
 begin
   new(adp);
   if left(user,4)<>#0+'$/T' then
@@ -355,7 +356,8 @@ begin
     if farb >2 then inc(farb);
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
-    maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
+    maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
+    adrbuchdef:=adr;  
     mhnr(8069);
     end
 
@@ -370,6 +372,9 @@ begin
   readmask(brk);
   if not brk then
   begin
+    if (adrbuchdef<>0) and (byte(adr)=0) then 
+     if not readJN('User aus Adreábuch entfernen',false) then
+       adr:=adrbuchdef;  
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
@@ -2406,6 +2411,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.5  2000/10/03 02:36:13  my
+  JG:- Beim Editieren von Usern mit Adressbuchgruppe "0" bleibt
+       diese erhalten und wird nicht in "1" geaendert.
+
   Revision 1.25.2.4  2000/08/18 07:44:12  jg
   - beim Neuanlegen von Usern mit Strg+U wird jetzt
     die Standard-Addressbuchgruppe benutzt.
