@@ -788,9 +788,7 @@ v3.21/OpenXP/16  (xx.02.2003)
      enthalten, werden jetzt korrekt angezeigt.
   !  Windows-Crash beim Beenden von XP nach Fido-Netcall oder Verwendung
      des XP-Terminals auf schnellen Rechnern beseitigt (COM-Port wird
-     jetzt korrekt zurÅckgesetzt). (Bug aus v3.12d)
-  #  Interne Code-Optimierungen
-  *  Ressourcen und Hilfe angepa·t, wo erforderlich.
+     jetzt korrekt zurÅckgesetzt). (Bug aus v3.12d) 
   !  Diskussion-In: wurde beim Weiterleiten mit N/W/K bzw. N/W/D
      Åbernommen. Wird jetzt gelîscht.
   !  Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo
@@ -815,10 +813,6 @@ v3.21/OpenXP/16  (xx.02.2003)
      als Sysopmode-ZCONNECT-Box gefÅhrt wird).
   !  Die Mailerzeile wird beim Konvertieren in ZCONNECT jetzt immer
      als MAILER: geschrieben, und nicht mehr als Mailer:
-  !  Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt
-     *immer* vom IBM- in den ISO1-Zeichensatz konvertiert (vorher
-     geschah dies nur, wenn der Header "CHARSET: ISO1" nicht vorhanden
-     war).
   *  Programmbezeichnung ist jetzt Openxp/16, statt Openxp, da sich die
      Programmiererteams der 16 Bit und der 32 Bit Version getrennt haben.
      Die 16 Bit Version wird jetzt durch Openxp/16 weiterentwickelt.
@@ -826,6 +820,9 @@ v3.21/OpenXP/16  (xx.02.2003)
   !  Wird das automaische Anlegen eines Users beim Beantworten
      einer Nachricht (z.B. bei gesetztem Reply-To) abgebrochen, so
      wird der User jetzt auch wirklich nicht angelegt.
+
+  #  Interne Code-Optimierungen
+  *  Ressourcen und Hilfe angepa·t, wo erforderlich.
 
 Hinweis: Das vorliegende Programmpaket ist die voraussichtlich letzte
          Version von Openxp/16 die noch auf einem 8086/8088 aka XT lÑuft,
