@@ -813,6 +813,7 @@ var t,lastt: taste;
     end;
 
   begin
+    saveDispRec := nil; { Auf keinen Fall entfernen! }
     adresseAusgewaehlt := false;
     fn:=TempS(2000);
     GoP;
@@ -1085,6 +1086,7 @@ var t,lastt: taste;
       Empf„nger in DoSend mit select (3) ausw„hlen kann und damit u.U.
       Daten ueberschrieben werden, die sp„ter noch gebraucht werden }
 
+{*} saveDispRec := nil; { zur Sicherheit }
 {*} if AutoArchiv and reply then
 {*} begin
 {*}   new (saveDispRec);
@@ -1115,10 +1117,12 @@ var t,lastt: taste;
       end;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
-    then
-    begin
-      if AutoArchiv and reply then
-      begin
+    then begin
+      if AutoArchiv and reply then begin
+{*}     dispRec := saveDispRec^;
+{*}     p := savePos;
+{*}     dispose (saveDispRec);
+{*}     saveDispRec := nil;  { Auf keinen Fall entfernen! }
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
         if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStrN(mbase,mb_brett),1)='1') and
@@ -1130,12 +1134,13 @@ var t,lastt: taste;
     else
       SikMsg;
 
-    if AutoArchiv and reply then
-    begin
-{*}     dispRec := saveDispRec^;
-{*}     p := savePos;
-{*}     dispose (saveDispRec);
-    end;
+{*} if assigned (saveDispRec) then begin { Falls kein Reply... }
+{*}   dispRec := saveDispRec^;
+{*}   p := savePos;
+{*}   dispose (saveDispRec);
+{*}   saveDispRec := nil;
+{*} end;
+
     pgdown:=false;
   ende:
     force_quotemsk:='';
@@ -2170,6 +2175,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.48  2001/08/13 16:53:02  my
+  SV:- Fixed previous commit, as it fixed the small memory leak but also
+       re-activated the bug the original commit was supposed to fix:
+       "Automatic PM archiving" didn't work if user had selected an
+       recipient in the send window with <F2> (sometimes XP even crashed).
+
   Revision 1.26.2.47  2001/08/12 20:48:48  mk
   - fixes little memory leak
 
