@@ -7141,8 +7141,8 @@ matische Umstellung der Zeitzone:
            weise) als Sommerzeit fÅr Deutschland
            "<<S+1>>" eintragen, wird XP bei der Umstel-
            lung auf Winterzeit die Zone auf "<<W+0>>"
-           (statt auf "<<W+1>>", wie es eigentlich
-           korrekt wÑre), setzen.
+           setzen (statt auf "<<W+1>>", wie es eigentlich
+           korrekt wÑre).
 
 <<TZ-Var.>>    CrossPoint wertet fÅr die Umstellung der
            Zeitzone die Umgebungsvariable "<<TZ>>" aus,
@@ -7319,7 +7319,7 @@ daran, da· Sie dort das Vorzeichen umkehren mÅssen!
    SWT    Swedish Winter Time                    +1
    TAI    Time Atomic International               0
    UT     Universal Time                          0
-   UTC    Universal Coordinated Time              0
+   UTC    Universal Time Coordinated              0
    WADT   West Australian Daylight Time          +8
    WAST   West Australien Time                   +7
    WAT    West African Time                      -1

@@ -4575,14 +4575,14 @@ this setting have no effect, you don't even see it!
 
 @
 248
-ToDo: Explanation Time Zone Changeover options (\@248).
+ToDo: explanation Time Zone Changeover options (\@248).
 
 see also: [The TZ variable]@2481
 @
 2481
 <<The TZ variable
 
-ToDo: Comprehensive explanation TZ variable (\@2481).
+ToDo: comprehensive explanation TZ variable (\@2481).
 
 The correct TZ variable for Great Britain is:
 
@@ -4651,7 +4651,7 @@ invert the plus/minus sign!
    SWT    Swedish Winter Time                    +1
    TAI    Time Atomic International               0
 <<   UT     Universal Time                          0
-<<   UTC    Universal Coordinated Time              0
+<<   UTC    Universal Time Coordinated              0
    WADT   West Australian Daylight Time          +8
    WAST   West Australien Time                   +7
    WAT    West African Time                      -1
