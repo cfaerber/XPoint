@@ -85,8 +85,6 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 
 { DOS-Routinen }
 procedure FSplit(const path: string; var dir, name, ext: string);
-function  GetCBreak: boolean;
-procedure SetCBreak(const mode: boolean);
 
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
@@ -619,24 +617,6 @@ begin
 {$endif}
 end;
 
-function  GetCBreak: boolean;
-begin
-{$ifdef Unix}
-  result:= false;
-{$else}
-  {$error please implement code! }
-{$endif}
-end;
-
-procedure SetCBreak(const mode: boolean);
-begin
-{$ifdef Unix}
-{$else}
-  {$error please implement code! }
-{$endif}
-end;
-
-
 { Dir muß WildCards enthalten }
 function FileMaskSize(const mask: string): longint;
 var
@@ -660,6 +640,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2000/11/18 21:15:56  mk
+  - removed GetCBreak, SetCBreak - this routines are not necessary anymore
+
   Revision 1.82  2000/11/18 16:11:57  hd
   - Grml, on ist kein gültiger BEzeichner
 
