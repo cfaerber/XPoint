@@ -832,9 +832,9 @@ function Readkey: char;
      I := Ord(InChar);
      if (I > 128) and (PrefChar <> #0) then
      begin
-	Result := Chr(ISO2IBMTab[I]);
-        Debug.DebugLog('xpcurses',Format('Key translated: [%d] => [%d] prefchar=[%d]',
-		            [Ord(InChar), Ord(Result), Ord(PrefChar)]),dlTrace);
+       Result := Chr(ISO2IBMTab[I]);
+       Debug.DebugLog('xpcurses',Format('Key translated: [%d] => [%d] prefchar=[%d]',
+		     [Ord(InChar), Ord(Result), Ord(PrefChar)]),dlTrace);
      end;
      PrefChar := Result;
   end;
@@ -865,7 +865,7 @@ again:
        Goto again;
 
      Result:= DosSeq[1];              // first char is result
-     PrefChar := #0;
+     PrefChar := DosSeq[1];
 
      if Length(DosSeq)>=2 then
        Forwardkeys:=Mid(DosSeq,2)+Forwardkeys;
@@ -1542,6 +1542,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.7  2003/04/12 13:00:22  mk
+  - fixed garbage character in editor after del and high-ascii
+  - added more debugging output
+
   Revision 1.64.2.6  2003/01/17 13:04:35  mk
   - FPC compile problem is fixed in FPC now,
     code is now active again
