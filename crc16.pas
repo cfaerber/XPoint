@@ -4,6 +4,7 @@ UNIT CRC16;
 {$IFDEF BP }
   {$O+,F+}
 {$ENDIF }
+{$R-}
 
 interface
 
@@ -114,6 +115,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/30 21:02:53  mk
+  - $R- hinzugefuegt
+
   Revision 1.7  2000/04/29 16:10:40  mk
   - CRC16 als Overlay definiert
 
