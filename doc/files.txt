@@ -139,8 +139,10 @@ RC.PAS          Quelltext zu RC.EXE
 Verzeichnis .\DOC
 -----------------
 
-xpoint.xml      Handbuch im DocBook-Format
+xpoint.sgm      Handbuch im DocBook-Format
 xpoint.dsl      Stylesheet fuer Handbuch
+xpoint.cat      Katalogdatei fuer Handbuch
+
 dbform          Beschreibung der Datenbankfelder
 
 xp.ihq          Quelltext der deutschen Online-Hilfe
@@ -221,4 +223,5 @@ Resourcen:
     Die Funktionen zum Auslesen der compilierten Resourcendateien
   befinden sich in RESOURCE.PAS.
 
-
+DocBook (Handbuch):
+  siehe: <http://www.oasis-open.org/docbook/>
