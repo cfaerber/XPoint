@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 
@@ -20,17 +21,18 @@ interface
 
 uses
   crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-  maus2,mouse,resource,xpglobal,xp0,xp1,xp1o,xp1o2,xp1input,xp2c, lfn;
+  maus2,mouse,resource,xpglobal,xp0,xp1,xp1o,xp1o2,xp1input,xp2c,lfn;
 
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      enetztypen = 10;             { Netztypen umgeordnet auf DFUe-Welt anno 2001 }
+      enetztypen = 10;        { Netztypen umgeordnet auf DFUe-Welt anno 2001 }
       ntnr   : array[0..enetztypen-1] of byte = (40,2,30,31,20,0,3,4,10,11);
     { ntypes : array[0..enetztypen-1] of string[10] = ('Z-Netz','ZConnect',
                  'RFC/UUCP','MausTausch','Fido','QWK','MagicNET','ProNET',
                  'QuickMail','GS-Mailbox','Turbo-Box'); }
+      maxboxen = 127;         { max. Gr”áe des Arrays 'boxlist' }
 
 var   UpArcnr   : integer;    { fr EditPointdaten }
       DownArcNr : integer;
@@ -46,6 +48,19 @@ var   UpArcnr   : integer;    { fr EditPointdaten }
       amvfield  : integer;    { EditDiverses }
       downprotnr: integer;    { Edit/Point - Download-Protokoll }
 
+const own_Nt    : byte = 255;
+        { Netztyp f. "Zus„tzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      own_Name  : string[BoxNameLen] = '';
+        { Boxname f. "Zus„tzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      showErrors: boolean = true;
+        { Flag fr 'addServersTest' in xp9sel.pas }
+      BfgToBoxOk: boolean = true;
+        { Flag fr 'ChkAddServers' in xp7.inc }
+      maxbox    : byte = maxboxen;
+        { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
+
+
+function  Netz_Typ(nt:byte):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure get_first_box(d:DB);
 procedure BoxSelProc(var cr:customrec);
@@ -54,7 +69,7 @@ procedure GruppenSelproc(var cr:customrec);
 implementation  {---------------------------------------------------}
 
 uses
-  xp2b, xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,xpnt,xpterm,xpovl;
+  xp2b,xp2,xp3,xp3o,xp4rta,xp9bp,xp9sel,xp10,lister,xpnt,xpterm,xpovl;
 
 
 {$IFDEF FPC }
@@ -64,6 +79,18 @@ uses
 
 
 { fr maske.CustomSel }
+
+
+function Netz_Typ(nt:byte):string;
+var i : integer;
+begin
+  Netz_Typ:=ntName(nt_Netcall);
+  if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
+  else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U)
+  else for i:=1 to enetztypen-1 do
+    if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
+end;
+
 
 procedure BoxSelProc(var cr:customrec);
 var
@@ -77,6 +104,7 @@ begin
   BoxPar^ := TempBoxRec;
 end;
 
+
 procedure GruppenSelproc(var cr:customrec);
 begin
   with cr do begin
@@ -84,6 +112,7 @@ begin
     brk:=(s='');
     end;
 end;
+
 
 function getdname(nt:byte; boxname:string):string;
 var fa : fidoadr;
@@ -124,7 +153,7 @@ function UniSel(typ:byte; edit:boolean; default:string):string;
 const maxgl   = 40;
       dsellen = 20;
 var d         : DB;
-    p0,p,gl : integer;
+    p0,p,gl   : integer;
     t         : taste;
     drec      : array[1..maxgl] of longint;
     x,y       : byte;
@@ -142,16 +171,6 @@ var d         : DB;
     startmkey : boolean;   { beim Start war Maustaste gedrckt }
     directsel : string[dsellen];
     nameofs   : byte;
-
-  function Netz_Typ(nt:byte):string;
-  var i : integer;
-  begin
-    Netz_Typ:=ntName(nt_Netcall);
-    if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
-    else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U)
-    else for i:=1 to enetztypen-1 do
-      if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
-  end;
 
   procedure displine(i:integer);
   var s1,s2      : string[40];
@@ -972,7 +991,7 @@ begin
       end
     else begin
       gotoxy(x+length(directsel)+nameofs,y+p);
-      get(t,curon);
+      get(t,curoff);
       end;
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
@@ -1222,6 +1241,16 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.37  2001/11/20 23:22:55  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/Zus„tzliche_Server und
+       D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert, Details
+       siehe Mens und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgew„hlten Boxen(en)
+       abgelegt.
+  MY:- Cursorblinken in Boxauswahl (nonedit) deaktiviert
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.19.2.36  2001/09/07 01:42:01  mk
   - minior changes: some numeric constants do labled constants, const-parameter
 
