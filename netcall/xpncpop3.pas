@@ -39,7 +39,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; EMail, PPFile: Strin
 implementation  { ------------------------------------------------- }
 
 uses
-  Netcall,NCSocket,ncsmtp,ncpop3,
+  Netcall,ncsocket,ncsmtp,ncpop3,
   progressoutput,xpprogressoutputwindow,
 {$ifdef NCRT}
   XPCurses,
@@ -277,6 +277,9 @@ end;
                       
 {
   $Log$
+  Revision 1.38  2003/01/25 19:17:33  mk
+  - lowercase uses name ncsocket
+
   Revision 1.37  2002/12/14 22:43:41  dodi
   - fixed some hints and warnings
 
