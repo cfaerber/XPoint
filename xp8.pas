@@ -130,14 +130,11 @@ begin
   dbClose(d);
 end;
 
-function BoxHasMaps(box:string):boolean;
+function BoxHasMaps(const box:string):boolean;
 begin
-  if ntNoMaps(ntBoxNetztyp(box)) then begin
-    rfehler(801);   { 'Diese Box unterstuetzt keine Brettbestell-Funktionen.' }
-    BoxHasMaps:=false;
-    end
-  else
-    BoxHasMaps:=true;
+  Result := not ntNoMaps(ntBoxNetztyp(box));
+  if not Result then
+    rfehler(801);   { 'Diese Box unterstützt keine Brettbestell-Funktionen.' }
 end;
 
 procedure SendMaps(bef:string; var box,datei:string);
@@ -3131,6 +3128,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2003/08/25 20:45:56  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.88  2003/05/01 10:06:50  mk
   - fixed #721302: Fidoechos ueber Brettmanager bestellen
 

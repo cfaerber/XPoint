@@ -413,7 +413,7 @@ end;
 {$ENDIF }
 function ntNoMaps(nt:eNetz):boolean;
 begin
-  ntNoMaps:= nt in [nt_POP3];
+  ntNoMaps:= nt in [nt_POP3, nt_NNTP, nt_IMAP, nt_Client];
 end;
 {$IFDEF FPC }
   {$HINTS ON }
@@ -842,6 +842,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.56  2003/08/25 20:47:04  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.55  2003/05/01 09:52:30  mk
   - added IMAP support
 
