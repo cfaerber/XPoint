@@ -1224,7 +1224,7 @@ begin
 
   maddtext(3,y,GetRes2(253,25),col.coldiahigh);
   maddtext(3,y+1,GetRes2(253,26),col.coldiahigh);
-  maddbool(14,yi,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
+  maddbool(14,yi,getres2(253,11),MIMEqp); mhnr(7988); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,yi,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,yi,getres2(253,15),multipartbin);  { 'Keine einteiligen Binaernachrichten' }
   maddbool(14,yi,getres2(253,16),RFCAppendOldSubject); mhnr(7991);  { 'Alten Betreff anhaengen' }
@@ -1549,6 +1549,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.6  2003/08/24 12:04:25  mf
+  - Help ID 7988 added.
+
   Revision 1.127.2.5  2003/08/11 22:28:21  mk
   - removed Edit/netze/verschiedens/mime in news
 
