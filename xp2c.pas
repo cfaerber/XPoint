@@ -362,9 +362,6 @@ begin
   maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);        	{ 'Eigene Nachrichten halten' }
   maddbool(3,8 + j,getres2(252,31),haltownPM);        			{ 'Eigene PMs halten' }
   maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   			{ 'Erstellungszeit 00:00' }
-  maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);      { 'Eigene Nachrichten halten' }
-  maddbool(3,8 + j,getres2(252,31),haltownPM);               { 'Eigene PMs halten' }
-  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);            { 'Erstellungszeit 00:00' }
 
 {$IFNDEF Unix }
   mset1func(SetTimezone);
@@ -1551,6 +1548,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2002/04/04 21:38:06  ms
+  corrected duplicated line after the last check in
+
   Revision 1.124  2002/04/02 22:24:29  ms
   HelpID Changed from mhnr(1035) to mhnr(1032)
 
