@@ -376,11 +376,7 @@ procedure TNNTP.SelectGroup(const AGroupName: String);
       P := cPos(' ', IntChecker);
       if P <> 0 then
       begin
-        try
-          Result := StrToInt(Copy(IntChecker, 1, P-1));
-        except
-          Result := -1;
-        end;
+        StrToIntDef(Copy(IntChecker, 1, P-1), -1);
         IntChecker := Copy(IntChecker, P + 1, Length(WorkS) - P);
       end else
         Result := -1;
@@ -542,6 +538,9 @@ end.
 
 {
   $Log$
+  Revision 1.35  2002/02/13 18:26:44  mk
+  - use StrToIntDef instead of try except block
+
   Revision 1.34  2002/02/10 14:52:51  mk
   - added fetching new newsgroups (untested)
 
