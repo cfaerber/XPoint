@@ -190,9 +190,21 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF Linux}{$DEFINE Unix}{$ENDIF}
-{$IFDEF FreeBSD}{$DEFINE Unix}{$DEFINE BSD}{$ENDIF}
-{$IFDEF NetBSD}{$DEFINE Unix}{$DEFINE BSD}{$ENDIF}
+{$IFDEF Linux}
+  {$DEFINE Unix}
+{$ENDIF}
+
+{$IFDEF FreeBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
+  {$UNDEF Linux }
+{$ENDIF }
+
+{$IFDEF NetBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
+  {$UNDEF Linux }
+{$ENDIF }
 
 {$DEFINE i386}
 {$IFDEF i386}
@@ -320,6 +332,9 @@
 
 {
   $Log$
+  Revision 1.92  2003/01/16 11:09:02  mk
+  - undefine Linux in *BSD
+
   Revision 1.91  2003/01/08 22:05:26  mk
   - added handling for new switches NoDebug and NoSnapshot
 
