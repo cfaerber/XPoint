@@ -10,13 +10,16 @@
 
 { PMs mit TO-ID versehen }
 
-{$I XPDEFINE.INC }
+{$I XPDEFINE.INC}
 
 {$IFDEF Delphi }
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-uses  xpglobal, dos,typeform,xpdatum;
+{mw}
+{uses  xpglobal, dos,typeform,xpdatum;}
+uses  xpglobal, dos,typeform,xpdatum,xpovl;
+{/mw}
 
 const
       readfirst = 2500;
@@ -31,41 +34,126 @@ const
       attrIsEB    = $2000;            { EB                         }
       AttrPmReply = $0100;            { PM-Reply auf AM (Maus)     }
       AttrQuoteTo = $0400;            { QuoteTo (Maus)             }
+      {mw}
+      AttrControl = $0020;            { Cancel-Nachricht }
+      AttrQPC     = $0001;            { QPC-codiert                }
+      realnlen    = 40;
+      adrlen      = 80;
+      BetreffLen  = 250;
+      OrgLen      = 80;
+      postadrlen  = 80;
+      telelen     = 60;
+      homepagelen = 90;
+      hderrlen    = 40;
+      custheadlen = 60;
+      readempflist = false;
+      readkoplist  = false;
+      readOemList  = false;
+      mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-type   header = record
-                  netztyp    : byte;
-                  archive    : boolean;       { archivierte PM }
-                  empfaenger : string[90];    { Brett / User / TO:User }
-                  betreff    : string[40];
-                  absender   : string[80];
-                  datum      : string[11];    { Netcall-Format }
-                  zdatum     : string[20];    { ZConnect-Format; nur auslesen }
-                  ddatum     : string[14];    { Dateidatum, jjjjmmtthhmmss }
-                  empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  pfad       : string;        { Netcall-Format }
-                  msgid,ref  : string[midlen];{ ohne <> }
-                  typ        : string[1];     { T / B }
-                  groesse    : longint;
-                  komlen     : longint;       { Kommentar-L„nge }
-                  realname   : string[40];
-                  programm   : string[40];    { Mailer-Name }
-                  datei      : string[40];    { Dateiname }
-                  prio       : byte;          { 10=direkt, 20=Eilmail }
-                  real_box   : string[20];    { falls Adresse = User@Point }
-                  hd_point   : string[25];    { eigener Pointname }
-                  pm_bstat   : string[20];    { Bearbeitungs-Status }
-                  attrib     : word;          { Attribut-Bits }
-                  fido_to    : string[36];
+type      empfnodep=^empfnode;
+          empfnode= record
+                  next   : empfnodep;
+                  empf   : string[AdrLen];
                 end;
+
+          header = record
+                 netztyp    : byte;
+                 archive    : boolean;       { archivierte PM }
+                 empfaenger : string[90];    { Brett / User / TO:User }
+                 empfanz    : integer;
+                 kopien     : empfnodep;
+                 betreff    : string[BetreffLen];
+                 absender   : string[80];
+                 datum      : string[11];    { Netcall-Format }
+                 ddatum     : string[14];
+                 zdatum     : string[22];    { ZConnect-Format; nur auslesen }
+                 pfad       : HugeString;    { Netcall-Format }
+                 msgid,ref  : string[120];   { ohne <> }
+                 ersetzt    : string[120];   { ohne <> }
+                 typ        : string[1];     { T / B }
+                 crypttyp   : string[1];
+                 groesse    : longint;
+                 komlen     : longint;       { Kommentar-L„nge }
+                 ckomlen    : longint;
+                 realname   : string[realnlen];
+                 programm   : string[60];    { Mailer-Name }
+                 datei      : string[40];    { Dateiname }
+                 prio       : byte;          { 10=direkt, 20=Eilmail }
+                 oem,oab,wab: string[90];
+                 oemlist    : empfnodep;
+                 oar,war    : string[realnlen];
+                 real_box   : string[20];    { X-XP-BOX: Absendebox }
+                 hd_point   : string[25];    { X-XP-PNT: Pointname  }
+                 pm_bstat   : string[20];    { X-XP-BST: Bearb.-Status }
+                 org_msgid  : string[120];   { X-XP-ORGMID }
+                 org_xref   : string[120];   { X-XP-ORGREF }
+                 attrib     : word;          { X-XP-ATT    }
+                 filterattr : word;          { X-XP-F      }
+                 fido_to    : string[36];    { X-XP-FTO    }
+                 organisation  : string[OrgLen];
+                 postanschrift : string[PostAdrlen];
+                 telefon    : string[telelen];
+                 homepage   : string[homepagelen];
+                 PmReplyTo  : string[80];      { Reply-To }
+                 AmReplyTo  : string[80];
+                 amrepanz   : integer;
+                 error      : string[hderrlen];
+                 ReplyPath  : string[8];
+                 ReplyGroup : string[40];
+                 x_charset  : string[25];
+                 keywords   : string[60];
+                 summary    : string[200];
+                 priority   : byte;           { Priority by MH }
+                 distribution:string[40];
+                 pm_reply   : boolean;
+                 QuoteString: string[20];
+                 empfbestto : string[adrlen];
+                 charset    : string[7];
+                 ccharset   : string[7];
+                 vertreter  : string[80];
+                 XPointCtl  : longint;
+                 nokop      : boolean;
+                 mimever    : string[20];    { MIME }
+                 mimect     : string;
+                 boundary   : string[70];
+                 gate       : string[80];
+                 mimetyp    : string[30];
+                 xnoarchive: boolean;
+                 Cust1,Cust2: string[custheadlen];
+                 control    : string[150];
+               end;
+         {/mw}
 
       charr   = array[0..65530] of char;
       charrp  = ^charr;
+
 
 var   f,f2  : file;
       nn    : longint;
       uname : string;
       zconn : boolean;
 
+{mw}
+{Procedur aus maggi uebernommen}
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF FPC }
+procedure addtoempflist(s:string);
+begin
+end;
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF FPC }
+
+function compmimetyp(typ:string):string;
+begin
+  if left(typ,12)='application/' then
+    compmimetyp:=lstr(mid(typ,12))
+  else
+    compmimetyp:=lstr(typ);
+end;
+{/mw}
 
 procedure helppage;
 begin
@@ -135,7 +223,10 @@ begin
   rewrite(f2,1);
   while (adr<fs) do begin
     seek(f,adr);
-    makeheader(zconn,f,hds,hd,ok);
+    {mw}
+    {makeheader(zconn,f,hds,hd,ok);}
+    makeheader(zconn,f,0,0,hds,hd,ok,false);
+    {/mw}
     if not ok then
       error('Fehlerhafter Puffer!'#7);
     inc(n);
@@ -219,6 +310,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.2.1  2001/08/23 11:02:59  mk
+  MW:- made compilable
+
   Revision 1.3  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
