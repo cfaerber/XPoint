@@ -717,7 +717,7 @@ begin
     rfehler(807);
     exit;
     end;      
-  OpenList(1,1,80,1,-1,'/M/SB/S/');        { Dummy-Lister (ausserhalb des Screen } 
+  OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister } 
   read_BL_File(s1,false);                  { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
@@ -740,6 +740,7 @@ begin
     s1:=next_marked;
     end;
   makeRC(false,box);                       { (Noch) markierte Bretter abbestellen }
+  aufbau:=true;
 end;
 
 
@@ -769,7 +770,7 @@ begin
   if not ReadJN(getreps2(810,92,ustr(s1)),true) then exit;  { 'Abgleich RC-Datei mit %s' }
 
   moment;   
-  OpenList(1,1,80,1,-1,'/M/SB/S/');        { Dummy-Lister (ausserhalb des Screen }
+  OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
   read_BL_File(s1,true);                   { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
@@ -800,6 +801,7 @@ begin
   close(f1);
   CloseList;
   closebox;
+  aufbau:=true;
 end;
 
 Procedure ClientBL_Sort(box:string);
@@ -821,7 +823,7 @@ begin
   TempBl:=TempS(_Filesize(blfile));
   moment;
   shell(sorter+' /q /a /b /d /n /z '+blfile+' '+TempBl
-   +iifs(cpos('\',blfile)=0,' /+2',''),640,0);
+   +iifs(cpos('\',blfile)=0,' /+3',''),640,0);
   if (errorlevel=0) and (exist(TempBl)) then
     copyfile(TempBl,blfile)
   else rfehler(836);      { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
@@ -1840,9 +1842,11 @@ begin
   promaf:=ntProMaf(nt);
   case defcom of
     0 : begin
-          if not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster) then begin
-          rfehler(818);     { 'Bei dieser Box nicht m”glich.' }
-          exit;
+          if (not ppp) and
+            (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster))
+          then begin
+            rfehler(818);     { 'Bei dieser Box nicht m”glich.' }
+            exit;
           end;
         end;
     1 : if ppp then
@@ -2163,6 +2167,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.25  2001/07/14 01:12:44  my
+  - Fix RFC/Client: Newsgroup list in XP directory is sorted by column 3
+    now rather than by column 2 (RPSORT switch '/+2' => '/+3')
+  JG:- Fix RFC/Client: Corrected typo, thus N/M/A doesn't crash anymore
+       with particular graphics adapters/drivers
+  JG:- Fix RFC/Client: N/M/S doesn't lead to message box "Not possible
+       with this server." under certain circumstances anymore.
+
   Revision 1.10.2.24  2001/07/09 22:15:46  my
   JG+MY:- Optimized ClientBL_Sort procedure
 
