@@ -342,16 +342,22 @@ end;
 
 function ClipWrite2(format:word; lsize:longint; var ldata):boolean; near; assembler;
 asm
-              mov    ax,1703h
-              mov    dx,format
-              mov    si,word ptr lsize+2
-              mov    cx,word ptr lsize
-              mov    es,word ptr ldata+2
-              mov    bx,word ptr ldata
-              int    multiplex
-              or     ax,ax
-              jz     @cw1
-              mov    ax,1
+              mov ax,1703h
+              mov dx,format
+              mov si,word ptr lsize+2             { lsize ist zwar longint }
+              mov cx,word ptr lsize               { aber es werden maximal 64K genutzt } 
+              les bx,ldata
+
+              cmp cx,0ffffh                                                                        
+              je @1                               {Text MUSS mit #0 enden !!!!} 
+              mov di,cx
+              mov byte ptr es:[bx+di],0 
+              inc cx
+@1:
+              int multiplex
+              or ax,ax
+              jz @cw1
+              mov ax,1
 @cw1:
 end;
 
@@ -471,9 +477,15 @@ asm
               les bx,str
               mov si,0
               mov cx,si
-              mov cl,es:[bx]                      {Stringlaenge -> si:cx}
+              mov cl,es:[bx]                      {Stringlaenge -> si:cx}          
               inc bx                              {Textstart    -> es:bx}
 
+              cmp cl,255                                                                        
+              je @1                               {Text MUSS mit #0 enden !!!!} 
+              mov di,cx
+              mov byte ptr es:[bx+di],0 
+              inc cx
+@1:
               mov ax,1703h                        {String Ins Clipboard schreiben...}
               mov dx,cf_Oemtext                   {Als OEMTEXT}
               int multiplex
@@ -644,6 +656,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/05/08 15:04:16  jg
+  - Bugfix: 32*n Byte ins Clipboard kopieren (#0 fehlte)
+
   Revision 1.17  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 
