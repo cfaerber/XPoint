@@ -375,7 +375,7 @@ type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
 
 var
  IPort,ISpeed,IDataBits,IStopBits: LongInt;
- CParity: Char; IgnoreCD,UseFossil: Boolean;
+ CParity: Char; IgnoreCD: Boolean;
  PTag,Res: Integer; SOpt: String; ConnType: tConnType;
 
 begin
@@ -421,6 +421,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/09/29 16:20:13  fe
+  Ungenutzte, lokale Variable entfernt.
+
   Revision 1.2  2000/09/11 23:00:13  ma
   - provisional outgoing TCP support added
 
