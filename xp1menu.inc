@@ -22,11 +22,7 @@ begin
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
-{$IFDEF CAPI }
-      $125 : MenuHidden:=false;                      { Config/Modem/ISDN }
-{$ELSE }
-      $125 : MenuHidden:=true;
-{$ENDIF }
+      $125 : MenuHidden:=true;                       // Config/Optionen/ISDN
       $1c7 : MenuHidden := true;
       else   if anzhidden=0 then
                MenuHidden:=false
@@ -596,6 +592,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/12/04 10:04:33  mk
+  - enabled language switching again
+
   Revision 1.25  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 

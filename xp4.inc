@@ -102,13 +102,11 @@ begin
   aufbau:=true;
 end;
 
-{ Ausgeklammert, siehe auch xp4o2.pas und xp2.pas
 procedure _SetLanguage;
 begin
   SetLanguage;
   setmainkeys(dispmode);
 end;
-}
 
 procedure MenuConfigAnzeigeZeilen;
 var
@@ -394,7 +392,7 @@ begin
            12 : adroptions;
             6 : netcalloptions;
             9 : EditPassword;
-        {  10 : _SetLanguage; }
+           10 : _SetLanguage;
            11 : TerminalOptions;
           end;
 
@@ -596,6 +594,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/12/04 10:04:33  mk
+  - enabled language switching again
+
   Revision 1.26  2000/11/16 21:31:05  hd
   - DOS Unit entfernt
 

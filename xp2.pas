@@ -677,14 +677,12 @@ var lf : string;
         end;
       end;
     end;
-(*
-  if doserror=0 then begin
-    findnext(sr);
-    languageopt:=doserror=0);                 { Sprachaenderung aus Menue ausgeschalten }
-  end                                         { siehe auch xp4o2.pas und xp4.inc }
-  else
+
+  if rc =0 then
+  begin
+    languageopt:= findnext(sr)= 0;
+  end else
     languageopt:=false;
-*)
 
   FindClose(sr);
   if not FileExists(lf) then
@@ -1204,6 +1202,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.92  2000/12/04 10:04:33  mk
+  - enabled language switching again
+
   Revision 1.91  2000/12/03 14:20:33  mk
   - mdkir -> CreateDir
 

@@ -45,12 +45,12 @@ procedure GetKomflags(var _left,_right,up,down:boolean);
 function  BaumBlatt(Ofs:byte; bezpos:word; var s,s1:string):string;
 procedure ClearReplyTree;
 
-(* procedure SetLanguage; *)
+procedure SetLanguage;
 
 
 implementation  { ---------------------------------------------------- }
 
-uses xpheader, xp1o,xp3,xp3o,xp3ex;
+uses xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10;
 
 procedure packit(xpack:boolean; fname:string);
 var d  : DB;
@@ -816,34 +816,19 @@ begin
   ReplyTree.Clear;
 end;
 
-{
-Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
-
-wenn XP mit Englischen Resourcen geladen wurde
-(ob aus xp.res oder per Parameter /l:e ist egal)
-gibt es bei der ausfuehrung von "Freemain" einen RTE 204.
-ist kein EMS vorhanden gibt es unter Win98 einen GPF.
-Beim Start mit deutschen Resourcen funktioniert Die Routine
-einwandfrei (auch mehrmaliger Wechsel zwischen D und E...)
-ob die Deutschen Resourcen XP-E.RES oder XP.D.RES heissen ist egal.
-Der Wechsel zwischen zwei deutschen Resourcen klappt einwandfrei.
--> Filegroessen/Speicher Problem oder Fehler in XP-E.RES ?
-
-Siehe auch xp2.pas und xp4.inc
-}
-(*
 procedure SetLanguage;
 const maxs = 20;
 var s  : string;
     p  : byte;
     t  : text;
-    sr : searchrec;
-    s0 : string[40];
+    sr : TSearchrec;
+    s0 : string;
     sn : integer;
     sa : array[1..maxs] of string[12];
     nr : shortint;
     nl : string[4];
     old: string[4];
+    Result: Integer;
 
   function _SetLanguage(nl:string):boolean;
   var i : integer;
@@ -852,7 +837,6 @@ var s  : string;
     ParLanguage:=nl;
     deutsch:=(ParLanguage='D');
     CloseResource;           { alte Ressourcendatei schlieáen }
-    FreeResdata;
     freehelp;                { Online-Hilfe schlieáen         }
     OpenResource(sa[nr],ResMinmem);
     GetResdata;              { neue Resourcendatei ”ffnen     }
@@ -860,8 +844,6 @@ var s  : string;
     setmenus;
     freemain;
     SetNtAllowed;
-    for i:=keymacros downto 1 do
-      freemem(macrodef[i],length(macrodef[i]^)+1);
     readkeydefs;
     closebox;
     showscreen(false);
@@ -879,9 +861,15 @@ var s  : string;
 
 begin
   s:='';
-  findfirst('XP-*.RES',AnyFile,sr);
+  Result := FindFirst('XP-*.RES', faAnyFile,sr);
   sn:=0;
-  while doserror=0 do begin
+  while Result = 0 do
+  begin
+    // ReadOnly and DenyNone
+    {$IFDEF VP }
+    TextModeRead := $40;
+    {$ENDIF }
+    FileMode :=$40;
     assign(t,sr.name);
     reset(t);
     s0:='';
@@ -889,6 +877,7 @@ begin
     if not eof(t) then readln(t);
     if not eof(t) then readln(t,s0);
     close(t);
+    fm_rw;
     if s0<>'' then begin
       inc(sn);
       sa[sn]:=sr.name;
@@ -900,7 +889,7 @@ begin
       else
         s:=s+','+s0;
       end;
-    findnext(sr);
+    Result := Findnext(sr);
   end;
   FindClose(sr);
   delfirst(s);
@@ -925,11 +914,13 @@ begin
       menurestart:=true;
     end;
 end;
-*)
 
 end.
 {
   $Log$
+  Revision 1.30  2000/12/04 10:04:33  mk
+  - enabled language switching again
+
   Revision 1.29  2000/12/03 12:38:23  mk
   - Header-Record is no an Object
 
