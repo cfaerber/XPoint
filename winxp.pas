@@ -29,7 +29,8 @@ interface
 uses
   sysutils,
   {$IFDEF Win32 }
-    windows, 
+    windows,
+    messages, 
   {$ENDIF }
   {$IFDEF DOS32} 
     crt, {for GotoXY} 
@@ -38,10 +39,7 @@ uses
     xplinux,
     xpcurses, 
   {$ENDIF }
-  {$IFDEF VP } 
-    vpsyslow, 
-  {$ENDIF }
-  OsDepend, 
+  OsDepend,
   keys,
   inout,
   maus2,
@@ -331,20 +329,20 @@ function Wrt_Convert(const s: string):string; forward;
 {$IFNDEF NCRT }
 {$R-,Q-}
 procedure Wrt(const x,y: Integer; const s:string);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
 var
   WritePos: TCoord;                       { Upper-left cell to write from }
   OutRes: DWord;
   Len: Integer;
 {$ENDIF }
 begin
-  {$IFDEF Win32 }
+  {$IFDEF Win32Console }
     WritePos.X := x-1; WritePos.Y := y-1;
     Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
     WhereX := x + len; WhereY := y;
-    WritePos.X := WhereX - 1; 
-    SetConsoleCursorPosition(OutHandle, WritePos);   
+    WritePos.X := WhereX - 1;
+    SetConsoleCursorPosition(OutHandle, WritePos);
   {$ELSE }
     FWrt(x, y, s);
     GotoXY(x+Length(s), y);
@@ -352,20 +350,20 @@ begin
 end; { Wrt }
 
 procedure Wrt2(const s:string);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
 var
   WritePos: TCoord;                       { Upper-left cell to write from }
   OutRes: DWord;
   Len: Integer;
 {$ENDIF }
 begin
-  {$IFDEF Win32 }
-    WritePos.X := WhereX-1; WritePos.Y := WhereY-1; 
+  {$IFDEF Win32Console }
+    WritePos.X := WhereX-1; WritePos.Y := WhereY-1;
     Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
-    WhereX := WhereX + Len; 
+    WhereX := WhereX + Len;
     WritePos.X := WhereX;
-    SetConsoleCursorPosition(OutHandle, WritePos);  
+    SetConsoleCursorPosition(OutHandle, WritePos);
   {$ELSE }
     FWrt(WhereX, WhereY, s);
     GotoXY(WhereX+Length(s), WhereY);
@@ -377,20 +375,20 @@ end;
 {$IFNDEF NCRT }
 procedure FWrt(const x,y: Integer; const s:string);
 var
-  {$IFDEF Win32 }
+  {$IFDEF Win32Console }
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
     Len: Integer;
   {$ELSE}
    {$IFDEF DOS32 }
-    i, Count: Integer;
     s2: String;
    {$ENDIF }
   {$ENDIF }
+  i, Count: Integer;
 begin
-  {$IFDEF Win32 }
+  {$IFDEF Win32Console }
     { Kompletten String an einem StÅck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;  
+    WritePos.X := x-1; WritePos.Y := y-1;
     Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
   {$ELSE }
@@ -401,7 +399,7 @@ begin
         memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s2[i+1]);
     {$ELSE }
       GotoXY(x, y);
-      Write(OutputConvert(s));
+      Write(s);
     {$ENDIF }
   {$ENDIF Win32 }
 
@@ -421,7 +419,7 @@ begin
   end;
 {$ENDIF NCRT }
 
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
   procedure consolewrite(x,y:word; num: Integer);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
@@ -442,12 +440,8 @@ begin
       { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
       while((AttrBuf[i+1] = AttrBuf[j+2]) and (j<num)) do inc(j);
 
-      {$IFDEF VP }
-         SysWrtCharStrAtt(@CharBuf[i], j-i+1, x+i-2, y-1, byte(AttrBuf[i+1]));
-      {$ELSE VP }
-         TextAttr := AttrBuf[i+1];
-         FWrt(x+i-1, y, Copy(CharBuf, i, j-i+1));
-      {$ENDIF VP }
+      TextAttr := AttrBuf[i+1];
+      FWrt(x+i-1, y, Copy(CharBuf, i, j-i+1));
       i := j; inc(i);
     end;
   end;
@@ -506,7 +500,7 @@ end;
 {$ENDIF}
 
 procedure SDisp(const x,y:word; const s:string);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: ULong;
@@ -529,7 +523,7 @@ procedure SDisp(const x,y:word; const s:string);
 end;
 
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
 var
   ReadPos: TCoord;                       { Upper-left cell to Read from }
   OutRes: ULong;
@@ -546,10 +540,6 @@ begin
     w: SmallWord;
 {$ENDIF}
   begin
-    {$IFDEF VP }
-      c := SysReadCharAt(x-1, y-1);
-      Attr := SmallWord(SysReadAttributesAt(x-1, y-1));
-    {$ENDIF }
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2]);
       Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2+1]));
@@ -563,7 +553,7 @@ begin
 end;
 
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: ULong;
@@ -579,7 +569,7 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
 {$ENDIF }
 
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
 var
   BSize, Coord: TCoord;
   SourceRect: TSmallRect;
@@ -600,18 +590,13 @@ begin
   for y := o-1 to u-1 do
     for x := l-1 to r-1 do
     begin
-      {$IFDEF VP }
-        TLocalScreen(Buffer)[Offset] := SysReadCharAt(x, y);
-        TLocalScreen(Buffer)[Offset+1] := Char(SysReadAttributesAt(x, y));
-      {$ELSE }
-        {$IFDEF LocalScreen }
-          TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*ScreenWidth)*2];
-          TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*ScreenWidth)*2+1];
-        {$ENDIF }
-        {$IFDEF DOS32 }
-          TLocalScreen(Buffer)[Offset] := Char(Mem[$B800:(x+y*ScreenWidth)*2]);
-          TLocalScreen(Buffer)[Offset+1] := Char(Mem[$B800:(x+y*ScreenWidth)*2+1]);
-        {$ENDIF }
+      {$IFDEF LocalScreen }
+        TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*ScreenWidth)*2];
+        TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*ScreenWidth)*2+1];
+      {$ENDIF }
+      {$IFDEF DOS32 }
+        TLocalScreen(Buffer)[Offset] := Char(Mem[$B800:(x+y*ScreenWidth)*2]);
+        TLocalScreen(Buffer)[Offset+1] := Char(Mem[$B800:(x+y*ScreenWidth)*2+1]);
       {$ENDIF }
       Inc(Offset, 2);
     end;
@@ -619,7 +604,7 @@ begin
 end;
 
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
-{$IFDEF Win32 }
+{$IFDEF Win32Console }
 var
   BSize, Coord: TCoord;
   DestRect: TSmallRect;
@@ -658,12 +643,8 @@ begin
           s := s + Char(TLocalScreen(Buffer)[Offset]);
           Inc(Offset, 2);
         end;
-        {$IFDEF VP }
-           SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, Byte(TLocalScreen(Buffer)[Offset-1]));
-        {$ELSE VP }
-           TextAttr := SmallWord(Byte(TLocalScreen(Buffer)[Offset-1]));
-           FWrt(x, y, s);
-        {$ENDIF VP }
+        TextAttr := SmallWord(Byte(TLocalScreen(Buffer)[Offset-1]));
+        FWrt(x, y, s);
         x := j; inc(x);
       end;
     end;
@@ -1179,6 +1160,7 @@ var
   dwFlags: DWORD;
   
 begin
+{$IFDEF Win32Console }
   if Length(s)<=0 then begin result := 0; exit; end;
   MakeConverters;
 { 
@@ -1220,11 +1202,13 @@ begin
   end;
 
   Result := OutRes;
+{$ENDIF }
 end;
 
 procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
 var NewCP: IntegeR;
 begin
+{$IFDEF Win32Console }
   if not IsWindowsNT then exit;
 
   NewCP := GetCPfromCharset(NewCharset);
@@ -1233,11 +1217,14 @@ begin
   SetConsoleOutputCP(NewCP);
   TrueOutputCP := GetConsoleOutputCP;
   convertersOK := false;
+{$ENDIF }
 end;
 
 function  GetConsoleOutputCharset:TMimeCharsets;
 begin
+{$IFDEF Win32Console }
   result := GetCharsetfromCP(TrueOutputCP);
+{$ENDIF }
 end;
 
 procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
@@ -1252,9 +1239,9 @@ begin
 end;
 
 procedure InitCharsetSystem;
-begin       
-  if IsWindowsNT then 
-  begin 
+begin
+  if IsWindowsNT then
+  begin
     SetConsoleCP(437);
     SetConsoleOutputCP(437);
   end;
@@ -1363,10 +1350,91 @@ begin
   ExitCharsetSystem;
 end;
 
+{$IFDEF Win32GUI }
+const
+  AppName = 'OpenXP/32 GUI';
+
+function WindowProc(Window: HWnd; AMessage: UINT; WParam : WPARAM;
+                    LParam: LPARAM): LRESULT; stdcall; export;
+
+  var
+     dc : hdc;
+     ps : Tpaintstruct;
+     r : Trect;
+     s: String;
+     i,y: Integer;
+begin
+  WindowProc := 0;
+
+  case AMessage of
+    wm_paint:
+    begin
+      SetLength(s, ScreenWidth);
+      dc:=BeginPaint(Window,ps);
+      GetClientRect(Window, r);
+      for y := 0 to 20 do
+      begin
+        for i := 0 to ScreenWidth - 1do
+          s[1+i] := LocalScreen^[y*ScreenWidth*2+i*2];
+        TextOut(dc, 0, y*14, PChar(s), ScreenWidth);
+
+      end;
+      EndPaint(Window,ps);
+      Exit;
+    end;
+    wm_Destroy:
+      begin
+         PostQuitMessage(0);
+         Exit;
+      end;
+  end;
+
+  WindowProc := DefWindowProc(Window, AMessage, WParam, LParam);
+end;
+
+ { Register the Window Class }
+function WinRegister: Boolean;
+var
+  WindowClass: WndClass;
+begin
+  WindowClass.Style := cs_hRedraw or cs_vRedraw;
+  WindowClass.lpfnWndProc := TFNWndProc(@WindowProc);
+  WindowClass.cbClsExtra := 0;
+  WindowClass.cbWndExtra := 0;
+  WindowClass.hInstance := system.MainInstance;
+  WindowClass.hIcon := LoadIcon(0, idi_Application);
+  WindowClass.hCursor := LoadCursor(0, idc_Arrow);
+  WindowClass.hbrBackground := GetStockObject(BLACK_BRUSH);
+  WindowClass.lpszMenuName := nil;
+  WindowClass.lpszClassName := AppName;
+
+  Result := RegisterClass(WindowClass) <> 0;
+end;
+
+ { Create the Window Class }
+function WinCreate: HWnd;
+var
+  hWindow: HWnd;
+begin
+  hWindow := CreateWindow(AppName, 'OpenXP/32',
+              ws_OverlappedWindow, cw_UseDefault, cw_UseDefault,
+              cw_UseDefault, cw_UseDefault, 0, 0, system.MainInstance, nil);
+
+  if hWindow <> 0 then begin
+    ShowWindow(hWindow, CmdShow);
+    UpdateWindow(hWindow);
+  end;
+
+  Result := hWindow;
+end;
+{$ENDIF }
+
 procedure InitWinXPUnit;
 {$IFNDEF NCRT }
 var
   i: byte;
+  hWindow: HWnd;
+  aMessage: TMsg;
 begin
   for i:=1 to maxpull do
     pullw[i].free:=true;
@@ -1384,11 +1452,22 @@ begin
 {$IFDEF LocalScreen }
   GetMem(LocalScreen, SizeOf(LocalScreen^));
 {$ENDIF }
-{$IFDEF Win32 }
+
+{$IFDEF Win32Console }
   { Consolenhandle holen }
   OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
-{$ENDIF }
   InitCharsetSystem;
+{$ELSE }
+  if not WinRegister then begin
+    MessageBox(0, 'Register failed', nil, mb_Ok);
+    Exit;
+  end;
+  hWindow := WinCreate;
+  if longint(hWindow) = 0 then begin
+    MessageBox(0, 'WinCreate failed', nil, mb_Ok);
+    Exit;
+  end;
+{$ENDIF }
 
   SavedExitProc:= ExitProc;
   ExitProc:= @ExitWinXPUnit;
@@ -1396,6 +1475,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2002/01/12 11:10:12  mk
+  - Win32 GUI Part I
+
   Revision 1.74  2002/01/03 23:49:48  mk
   - fixed range check error (followed by a crash) in win32_wrt, when outres = 0
 

@@ -67,6 +67,7 @@ uses
      ndiff,    { nodelist diff      }
      replytoall,
      zftools,
+     windows,
      zcrfc;    { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
@@ -90,11 +91,15 @@ begin
     Result := false;
 end;
 
+
+
 procedure StartOpenXP;
 label ende;
 
-var pwcnt:byte;
-    pwrc:boolean;
+var
+  pwcnt:byte;
+  pwrc:boolean;
+  AMessage: TMsg;
 begin
  try
   if StartInternalTools then Exit;
@@ -112,7 +117,7 @@ begin
   InitXPXUnit;                  { XPX }
 { Program }
   readpar;
-  loadresource;
+  xp2.loadresource;
   initvar;
   TestAutostart;
     if not quit then
@@ -159,6 +164,15 @@ begin
         exitscreen(0);
         goto Ende;
       end;
+
+      {$IFDEF Win32Gui }
+      while GetMessage(AMessage, 0, 0, 0) do begin
+        TranslateMessage(AMessage);
+        DispatchMessage(AMessage);
+      end;
+      Halt(AMessage.wParam);
+      {$ENDIF }
+
 {$IFDEF Beta } { /nb schaltet Betameldung ab }
       if not ParNoBeta and (ParTiming = 0) then
       begin
@@ -184,8 +198,10 @@ begin
       showusername;
       AutoSend;
       AutoExec(true);
+
       if not AutoMode then     { in XP7 }
         mainwindow;
+
       AutoStop;
       closedatabases;
       exitscreen(iif(ParNojoke,0,1));
@@ -214,6 +230,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/01/12 11:10:12  mk
+  - Win32 GUI Part I
+
   Revision 1.9  2001/12/30 19:56:48  cl
   - Kylix 2 compile fixes
 

@@ -95,7 +95,11 @@
 {$ENDIF }
 
 {$IFDEF Delphi }
-  {$APPTYPE CONSOLE}
+  {$IFDEF GUI }
+    {$APPTYPE GUI }
+  {$ELSE }
+    {$APPTYPE CONSOLE }
+  {$ENDIF }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
@@ -105,14 +109,14 @@
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
-{$IFDEF Kylix }         
-  {$APPTYPE CONSOLE}
+{$IFDEF Kylix }
+  {$APPTYPE CONSOLE }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
   {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
-  {$MAXSTACKSIZE $00100000} 
+  {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
@@ -175,6 +179,12 @@
 
 {$IFDEF Win32 }
   {$DEFINE Sockets }     { Sockets vorhanden }
+  {$IFDEF GUI }
+    {$DEFINE Win32GUI }
+    {$DEFINE LocalScreen }
+  {$ELSE }
+    {$DEFINE Win32Console }
+  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF OS2 }
@@ -239,6 +249,9 @@
 
 {
   $Log$
+  Revision 1.78  2002/01/12 11:10:13  mk
+  - Win32 GUI Part I
+
   Revision 1.77  2001/12/31 15:18:10  mk
   - changed to 3.7.7
 
