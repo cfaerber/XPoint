@@ -31,12 +31,8 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.9.0';  { Versionnr. - steht nur an dieser Stelle }
-{$ifdef Linux}
-  betastr     = ' alpha';
-{$else}
-  betastr     = ' beta';      { ' ' oder ' beta' }
-{$endif}
+  verstr      = 'v3.9.1';       { Versionnr. - steht nur an dieser Stelle }
+  betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
   pformstr    = ' (Win32)';     { 32 Bit Windows mit FPC oder VP }
@@ -195,6 +191,10 @@ begin
 
 {
   $Log$
+  Revision 1.66  2002/05/08 11:01:16  mk
+  - 3.9.x is Alpha, not Beta
+  - version 3.9.1
+
   Revision 1.65  2002/04/30 08:56:16  mk
   - Version 3.9.0
 
