@@ -287,6 +287,7 @@ var x,y      : Integer;
       n  : longint;
       l  : integer;
   begin
+    Debug.DebugLog('xp3o','start bearbeite_cancels_supersedes',DLTrace);
     reset(cmessagefile);
     n:=0;
     FWrt(x+2,y+6,getres(341)); { 'Bearbeite Steuernachrichten...' }
@@ -553,12 +554,13 @@ var x,y      : Integer;
   procedure Bezugsverkettung;
   var n      : longint;
       c1,c2  : longint;
-      ll     : record
+      ll     : packed record
                  l   : longint;
                  dat : longint;
                end;
       empfnr : integer;
   begin
+    Debug.DebugLog('xp3o','start Bezugsverkettung',DLInform);
     moff;
     mstr:= getres(332);
     FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
@@ -581,7 +583,7 @@ var x,y      : Integer;
           empfnr:=hdp.Empfaenger.Count+1;                { Crossposting-Filter }
           continue;
         end;
-        blockread(pfile,ll,8);
+        blockread(pfile,ll, Sizeof(ll));
         if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
         begin
           c1:=MsgidIndex(hdp.msgid);
@@ -604,6 +606,7 @@ var x,y      : Integer;
     dbFlush(bezbase);
     close(f);
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
+    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
   end;
 
   procedure wrll(l:longint);
@@ -1238,6 +1241,10 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.3  2002/05/23 22:54:54  mk
+  - added debug logs for 'Bezugsverkettung' and 'bearbeite_cancels_supersedes'
+  - fixed record size bug in Bezugsverkettung
+
   Revision 1.83.2.2  2002/05/21 15:20:12  ma
   - added more debug logs
   - fixed hints and warnings
