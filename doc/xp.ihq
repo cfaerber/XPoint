@@ -1510,14 +1510,14 @@ Der Lister wird mit <<<Esc> >>verlassen.
 
 <<<Alt-V> >>Volltextsuche analog zu <<<Alt-M> >>starten
 
+<<<Alt-B> >>Betreffsuche. Suchbegriff ist die erste
+        markierte Textzeile, oder der Betreff der
+        aktuell angezeigten Nachricht.
+
 <<<Alt-U> >>startet die Usersuche. Ist eine Textzeile
         markiert, wird diese als Suchbegriff ber-
         nommen, ansonsten ist der Absendername aus
         der angezeigten Nachricht der Suchbegriff.
-
-<<<Alt-B> >>Betreffsuche. Suchbegriff ist die erste
-        markierte Textzeile, oder der Betreff der
-        aktuell angezeigten Nachricht.
 
 Fr alle aus dem Nachrichten-Lister heraus gestarte-
 ten Suchl„ufe gilt:
@@ -6556,6 +6556,20 @@ Geben Sie hier den Suchbegriff ein. Mit <<<F2> >>erhal-
 ten Sie eine Auswahl der drei zuletzt benutzten
 Suchbegriffe.
 
+
+<<Message-ID-Suche>>
+
+Bei der schnellen Suche ber die Bezugsdatenbank
+(siehe auch "[Teilstring-Suche]") ist immer die voll-@533
+st„ndige Message-ID anzugeben. Message-IDs, die Leer-
+zeichen enthalten, mssen in Anfhrungszeichen (<<">>)
+eingeschlossen werden. Die Suche nach mehreren
+Message-IDs gleichzeitig ist m”glich, wenn Sie diese
+mit Leerzeichen getrennt hintereinander eingeben.
+
+
+<<Volltext-, Betreff- und User-Suche>>
+
 Wenn Sie die Suchoptionen <<a>> oder <<o>> nicht verwenden,
 wird exakt nach dem Text gesucht, der hier eingege-
 ben wurde (natrlich unter Bercksichtigung der Such-
@@ -6566,7 +6580,7 @@ tag").
 
 Bei AND/OR-verknpften Suchl„ufen (mit den Such-
 optionen <<a>> bzw. <<o>>) k”nnen mehrere Begriffe durch
-Einschlieáen in Anfhrungszeichen (") zu einem Such-
+Einschlieáen in Anfhrungszeichen (<<">>) zu einem Such-
 begriff zusammengefaát werden:
 
 "Fischers Fritz" fischt "frische Fische"
@@ -6643,15 +6657,23 @@ soll:
 <<gew„hlt>>   das momentan gew„hlte Brett
 @
 533
-<<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
-        Es muá die komplette Message-ID angegeben
-        werden. Teilstring-Suche oder Verknpfungen
-        sind nicht m”glich.
+<<[ ]>> -> Sehr schnelle Suche ber Bezugsdatenbank. Es
+       muá die komplette Message-ID angegeben werden,
+       Teilstring-Suche oder Verknpfungen sind nicht
+       m”glich. Die Suche nach mehreren Message-IDs
+       gleichzeitig ist jedoch m”glich, wenn Sie
+       diese mit Leerzeichen getrennt hintereinander
+       eingeben.
 
-<<[x]>> --> Langsamere Suche ber Nachrichten-Header.
-        Es k”nnen (wie z.B. bei der Betreffsuche)
-        Teilstrings gesucht, Suchoptionen benutzt
-        und zu durchsuchende Bretter gew„hlt werden.
+<<[x]>> -> Langsamere Suche ber Nachrichten-Header. Es
+       k”nnen (wie z.B. bei der Betreffsuche) Teil-
+       strings gesucht, Suchoptionen benutzt und zu
+       durchsuchende Bretter gew„hlt werden.
+
+
+Fr beide Optionen gilt: Message-IDs, die Leerzeichen
+enthalten, mssen in Anfhrungszeichen (<<">>) einge-
+schlossen werden.
 @
 540
 Sie befinden sich im Tastenmakro-Editor - hier k”n-
@@ -10751,8 +10773,8 @@ alle Nachrichten-Markierungen auf.
 10508
 <<Nachricht / Suchen / Message-ID
 
-Oft wird auf andere Usenet-Artikel ber ihre
-Message-ID hingewiesen, mit diesem Menpunkt
+Speziell im Usenet wird auf andere Nachrichten oft
+ber ihre Message-ID hingewiesen. Mit dieser Funktion
 kann danach gesucht werden.
 @
 10601
