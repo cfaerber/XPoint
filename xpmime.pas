@@ -557,7 +557,7 @@ var   hdp      : THeader;
 //      length:=filesize(t);
 //      startline:=1;
         lines:=n-1;
-        part:=0;
+        part:=PartsList.Count-1;
         end;
       end;
 
@@ -599,10 +599,10 @@ begin                         { SelectMultiPart }
   else
     alter:=false;
 
-  if (index=0) and (PartsList.Count >anzahl0) then
+  if (index=0) and (PartsList.Count >anzahl0+1) then
     index:=PartsList.Count - 1
   else
-    index:=minmax(index,0,anzahl0-1);
+    index:=minmax(index,0,PartsList.Count-1);
 
   if PartsList.Count >0 then
     if not select or (PartsList.Count =1) then begin
@@ -885,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.65  2003/08/25 20:25:11  mk
+  - fixed #589633: 3.8: Taste "v" im Lister bei Multipart
+
   Revision 1.64  2002/12/21 05:38:02  dodi
   - removed questionable references to Word type
 
