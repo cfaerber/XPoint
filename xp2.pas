@@ -543,24 +543,26 @@ var i  : integer;
 
   procedure ReadParFile;
   begin
-    reset(t);
-    while not eof(t) do begin
-      readln(t,s);
-      s:=trim(s);
+    Reset(t);
+    while not eof(t) do
+    begin
+      Readln(t, s);
+      s := Trim(s);
       if s<>'' then ParAuswerten;
-      end;
-    close(t);
+    end;
+    Close(t);
   end;
 
 begin
   extended:=FileExists('xtended.15');
   { permanente Parameter-Datei }
-  if findfirst(AutoxDir+'*.opt',faAnyFile,sr)=0 then repeat
-    assign(t,AutoxDir+sr.name);
+  if Findfirst(OwnPath + AutoxDir + FileUpperCase('*.opt'), faAnyFile, sr) = 0 then
+  repeat
+    Assign(t, OwnPath + AutoxDir + sr.Name);
     ReadParfile;
-  until findnext(sr)<>0;
+  until FindNext(sr) <> 0;
   FindClose(sr);
-  for i:=1 to paramcount do begin      { Command-Line-Parameter }
+  for i:=1 to Paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
   end;
@@ -2783,6 +2785,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.161  2003/04/25 19:23:55  mk
+  - formated source for ReadParFile
+  - use OwnPath while searching for *.opt
+
   Revision 1.160  2003/04/12 08:03:44  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 
