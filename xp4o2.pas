@@ -267,19 +267,17 @@ var nn,n : longint;
     nr   : byte;
 
   procedure wrn;
-  var p : Integer;
+  var 
+    p : Integer;
   begin
     if nn=0 then exit;
     p:=n*100 div nn;
     if p<>lp then
     begin
-      gotoxy(xx,y+2);
       attrtxt(col.colmboxhigh);
-      moff;
-      write(p:3);
-      mon;
+      MWrt(xx,y+2, Format('%3d', [p]));
       lp:=p;
-      end;
+    end;
   end;
 
   function BezNr:byte;      { 1 = erster Crossposting-Empf„nger, sonst 2 }
@@ -367,11 +365,8 @@ var nn,n : longint;
   procedure wrn;
   begin
     if nn=0 then exit;
-    gotoxy(xx,y+2);
     attrtxt(col.colmboxhigh);
-    moff;
-    write(n*100 div nn:3);
-    mon;
+    MWrt(xx,y+2, Format('%3d', [n*100 div nn]));
   end;
 
 begin
@@ -933,6 +928,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/08/10 16:56:33  mk
+  - changed Write() to MWrt()
+
   Revision 1.41  2001/08/01 09:06:23  cl
   - renamed openxp.res to openxp.rsp
 

@@ -187,12 +187,9 @@ begin
       icShowPack,
       icShowKillX:   if percent<>lastper then begin
                        lastper:=percent;
-                       gotoxy(x+18,y+2);
-                       moff;
-                       write(icr.percent:3);
-                       mon;
+                       MWrt(x+18,y+2, Format('%3d', [icr.percent]));
                        multi2;
-                       end;
+                     end;
 
       icCloseWindow: begin
                        CloseBox;
@@ -221,6 +218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/08/10 16:56:33  mk
+  - changed Write() to MWrt()
+
   Revision 1.20  2001/07/31 16:18:40  mk
   - removed some unused variables
   - changed some LongInt to DWord
