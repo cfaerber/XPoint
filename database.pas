@@ -1163,28 +1163,23 @@ end;
 
 
 function dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;   { -1=unbekannt }
-var i : integer;
 begin
   with dp(dbp)^ do
   begin
-    i:=0;
+    Result :=0;
     feldname:= UpperCase(feldname); { UpString(feldname);}
-    while (i<=feldp^.felder) and (feldname<>feldp^.feld[i].fname) do
-      inc(i);
-    if i>feldp^.felder then
-      dbGetFeldNr:=-1
-    else
-      dbGetFeldNr:=i;
+    while (Result <=feldp^.felder) and (feldname<>feldp^.feld[Result].fname) do
+      inc(Result);
+    if Result >feldp^.felder then
+      Result :=-1;
   end;
 end;
 
 
 function GetFeldNr2(dbp:DB; const feldname:dbFeldStr):integer;   { -1=unbekannt }
-var nr : integer;
 begin
-  nr:=dbgetfeldnr(dbp,feldname);
-  if nr<0 then error('unbekannter Feldname: '+feldname);
-  GetFeldNr2:=nr;
+  Result :=dbgetfeldnr(dbp,feldname);
+  if Result < 0 then error('unbekannter Feldname: '+feldname);
 end;
 
 
@@ -1211,10 +1206,8 @@ end;
 { Feld mit Name 'feld' nach 'data' auslesen }
 
 procedure dbRead(dbp:DB; const feld:dbFeldStr; var data);
-var nr : integer;
 begin
-  nr:=GetFeldNr2(dbp,feld);
-  dbReadN(dbp,nr,data);
+  dbReadN(dbp, GetFeldNr2(dbp,feld), data);
 end;
 
 function dbReadNStr(dbp:DB; feldnr: integer): string;
@@ -1240,18 +1233,15 @@ end;
 
 
 function dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
-var l : longint;
 begin
-  l:=0;
-  dbRead(dbp,feld,l);   { 1/2/4 Bytes }
-  dbReadInt:=l;
+  Result :=0;
+  dbRead(dbp,feld, Result);   { 1/2/4 Bytes }
 end;
 
 function dbReadIntN(dbp:DB; Feldnr: Integer):longint;
-var l : longint;
 begin
-  l:=0;
-  dbReadN(dbp,feldnr,result);   { 1/2/4 Bytes }
+  Result :=0; 
+  dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
 end;
 
 { 'data' in Feld mit Nr. 'feldnr' schreiben }
@@ -1280,26 +1270,23 @@ procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 var
   s0: shortstring;
 begin
-  if length(s)>255 then SetLength(s0, 255)
-  else s0:= s;
+  if Length(s)>255 then 
+    SetLength(s0, 255)
+  else 
+    s0:= s;
   dbWriteN(dbp,feldnr,s0);
 end;
 
 { 'data' in Feld mit Name 'feld' schreiben }
 
 procedure dbWrite(dbp:DB; const feld:dbFeldStr; var data);
-var nr : integer;
 begin
-  nr:=GetFeldNr2(dbp,feld);
-  dbWriteN(dbp,nr,data);
+  dbWriteN(dbp, GetFeldNr2(dbp,feld),data);
 end;
 
 procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
-var
-  nr: integer;
 begin
-  nr:= GetFeldNr2(dbp,feld);
-  dbWriteNStr(dbp,nr,s);
+  dbWriteNStr(dbp, GetFeldNr2(dbp,feld), s);
 end;
 
 { Gr”sse eines externen Feldes abfragen }
@@ -1631,9 +1618,12 @@ begin
   ExitProc:= @ExitDataBaseUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.48  2001/09/06 16:22:42  mk
+  - optimized some functions (Result is now a real variable and temp variables
+    are not needed anymore)
+
   Revision 1.47  2001/08/12 11:29:13  mk
   - added dbReadStrN and dbReadIntN
 
@@ -1783,3 +1773,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+
