@@ -964,7 +964,7 @@ var i,j  : integer;
   begin
     with hd0 do begin
       i:=1;                 { Test auf Whitespaces vor Header }
-      while (fld[n][i]=' ') or (fld[n][i]=#9) do inc(i);
+      while (i <= Length(fld[n])) and ((fld[n][i]=' ') or (fld[n][i]=#9)) do inc(i);
       flag:=(i>1);
       if flag then begin
         wr('Leerzeichen vor Header '+ww+'entfernt',true);
@@ -1278,6 +1278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/10/04 15:39:09  mk
+  - Range-Check-Error in FldBezCheck beseitigt
+
   Revision 1.25  2000/09/25 18:53:25  mk
   - jetzt auf Ansistring portiert
 
