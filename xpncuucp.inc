@@ -1671,8 +1671,8 @@ end;
 procedure testBL;
 var f : file;
 begin
-  if not FileExists(bfile+'.bl') then begin
-    assign(f,bfile+'.bl');
+  if not FileExists(FileUpperCase(bfile+'.BL')) then begin
+    assign(f,FileUpperCase(bfile+'.BL'));
     rewrite(f,1);
     close(f);
     end;
@@ -1719,6 +1719,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/01/16 08:14:17  mk
+  - added Fileuppercase
+
   Revision 1.3  2001/01/14 10:13:36  mk
   - MakeHeader() integreated in new unit
 
