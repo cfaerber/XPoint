@@ -32,16 +32,20 @@
 # und die Modular Stylesheets
 # <http://nwalsh.com/docbook/dsssl/db157.zip> benoetigt.
 #
+# Zur Uebersetzung der Dokumentation in die Formate DVI, PS und PDF
+# werden darueberhinaus ein TeX-Paket und jadetex
+# <http://www.tug.org/applications/jadetex/> benoetigt.
+#
 # Unten muessen einige Variablen gesetzt werden.
 
 # make                   uebersetzt das ganze Programm
 # make install           installiert das Programm
 # make uninstall         deinstalliert das Programm
 # make clean             raeumt das Verzeichnis auf
-# make distclean         raeumt das Verzeichnis auf
-# make mostlyclean       raeumt das Verzeichnis auf
 # make maintainer-clean  raeumt das Verzeichnis auf inkl. Plaintext-Handbuch
+# make fulldoc           erstellt Dokumentation in allen moegl. Formaten
 # make dist              erstellt Quellcodearchiv
+# make docdist           erstellt Quellcodearchiv der Dokumentation
 
 
 # Das Betriebssystem, fuer das OpenXP uebersetzt werden soll.
@@ -121,7 +125,12 @@
 # Name des Quellcode-Archivs
 # (MUSS gesetzt werden, falls "make dist" aufgerufen wird.)
 #
-#DISTFILE = oxp370_s.rar
+#DISTFILE = oxp370_s
+
+# Name des Archivs mit der vollstaendigen Dokumentation
+# (MUSS gesetzt werden, falls "make docdist" aufgerufen wird.)
+#
+#DOCDISTFILE = oxp370_d
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
@@ -319,14 +328,15 @@ UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug dosx eddef editor encoder exxec feiertag fileio gpltools \
 	help inout ipaddr ipcclass keys lister maske maus2 modem \
 	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
-	printerx regexpr resource stack timer typeform uart uuz win2 \
-	winxp xp0 xp1 xp10 xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db \
-	xp2f xp3 xp3ex xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 \
-	xp6l xp6o xp7 xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti \
-	xp_pgp xp_uue xpauto xpcc xpcfg xpcurses xpdatum xpdiff \
-	xpdos32 xpe xpeasy xpf2 xpfido xpfidonl xpftnadr xpglobal \
-	xpimpexp xpipc xpkeys xplinux xpmaus xpmime xpnntp xpnodes \
-	xpnt xpos2 xpreg xpstat xpterm xpuu xpview xpwin32 xpx zmodem
+	printerx regexpr resource stack timer typeform uart unicode \
+	utftools uuz win2 winxp xp0 xp1 xp10 xp1help xp1input xp1o \
+	xp1o2 xp2 xp2c xp2db xp2f xp3 xp3ex xp3o xp3o2 xp4 xp4e xp4o \
+	xp4o2 xp4o3 xp5 xp6 xp6l xp6o xp7 xp7f xp7l xp7o xp8 xp9 xp9bp \
+	xp_des xp_iti xp_pgp xp_uue xpauto xpcc xpcfg xpcurses xpdatum \
+	xpdiff xpdos32 xpe xpeasy xpf2 xpfido xpfidonl xpftnadr \
+	xpglobal xpimpexp xpipc xpkeys xplinux xpmaus xpmime xpnntp \
+	xpnodes xpnt xpos2 xpreg xpstat xpterm xpuu xpview xpwin32 xpx \
+	zmodem
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -399,7 +409,8 @@ uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
 uucp-fl1$(EXEEXT): uucp-fl1.pas xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-uuzext$(EXEEXT): uuzext.pas uuz$(UNITEXT) xpglobal$(UNITEXT)
+uuzext$(EXEEXT): uuzext.pas uuz$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 ifeq ($(OS),linux)
@@ -850,19 +861,36 @@ uart$(UNITEXT): uart.pas dosx$(UNITEXT) inout$(UNITEXT) \
 	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
+unicode$(UNITEXT): unicode.pas xpdefine.inc xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+utftools$(UNITEXT): utftools.pas charsets$(SEP)8859_1.inc \
+	charsets$(SEP)8859_10.inc charsets$(SEP)8859_13.inc \
+	charsets$(SEP)8859_14.inc charsets$(SEP)8859_15.inc \
+	charsets$(SEP)8859_2.inc charsets$(SEP)8859_3.inc \
+	charsets$(SEP)8859_4.inc charsets$(SEP)8859_5.inc \
+	charsets$(SEP)8859_6.inc charsets$(SEP)8859_7.inc \
+	charsets$(SEP)8859_8.inc charsets$(SEP)8859_9.inc \
+	charsets$(SEP)cp1251.inc charsets$(SEP)cp1252.inc \
+	charsets$(SEP)cp1255.inc charsets$(SEP)cp437.inc \
+	charsets$(SEP)cp866.inc xpdefine.inc xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
 ifeq ($(OS),linux)
 
 uuz$(UNITEXT): uuz.pas fileio$(UNITEXT) montage$(UNITEXT) \
-	typeform$(UNITEXT) xpcurses$(UNITEXT) xpdatum$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT) xpheader.inc xplinux$(UNITEXT) \
+	typeform$(UNITEXT) unicode$(UNITEXT) utftools$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpheader.inc xplinux$(UNITEXT) \
 	xpmakehd.inc
 	$(PC) $(PFLAGS) $<
 
 else
 
 uuz$(UNITEXT): uuz.pas fileio$(UNITEXT) montage$(UNITEXT) \
-	typeform$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpheader.inc xpmakehd.inc
+	typeform$(UNITEXT) unicode$(UNITEXT) utftools$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xpheader.inc xpmakehd.inc
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -1871,8 +1899,8 @@ xpcfg$(UNITEXT): xpcfg.pas fileio$(UNITEXT) resource$(UNITEXT) \
 endif
 
 xpcurses$(UNITEXT): xpcurses.pas inout$(UNITEXT) ncurses$(UNITEXT) \
-	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xplinux$(UNITEXT)
+	typeform$(UNITEXT) utftools$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 xpdatum$(UNITEXT): xpdatum.pas montage$(UNITEXT) typeform$(UNITEXT) \
@@ -1882,7 +1910,7 @@ xpdatum$(UNITEXT): xpdatum.pas montage$(UNITEXT) typeform$(UNITEXT) \
 xpdiff$(UNITEXT): xpdiff.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-xpdos32$(UNITEXT): xpdos32.pas xpdefine.inc
+xpdos32$(UNITEXT): xpdos32.pas utftools$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 ifeq ($(OS),linux)
@@ -2071,9 +2099,9 @@ endif
 
 xpmime$(UNITEXT): xpmime.pas database$(UNITEXT) fileio$(UNITEXT) \
 	keys$(UNITEXT) lister$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
-	xp1$(UNITEXT) xp1o$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) \
-	xp3o$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) utftools$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp1o$(UNITEXT) xp3$(UNITEXT) \
+	xp3ex$(UNITEXT) xp3o$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
 	xpkeys$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -2106,7 +2134,7 @@ xpnt$(UNITEXT): xpnt.pas crc$(UNITEXT) database$(UNITEXT) \
 	xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
-xpos2$(UNITEXT): xpos2.pas xpdefine.inc
+xpos2$(UNITEXT): xpos2.pas utftools$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 ifeq ($(OS),linux)
@@ -2209,8 +2237,8 @@ xpview$(UNITEXT): xpview.pas database$(UNITEXT) dosx$(UNITEXT) \
 	xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-xpwin32$(UNITEXT): xpwin32.pas typeform$(UNITEXT) winxp$(UNITEXT) \
-	xpdefine.inc
+xpwin32$(UNITEXT): xpwin32.pas typeform$(UNITEXT) utftools$(UNITEXT) \
+	winxp$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
 ifeq ($(OS),linux)
@@ -2242,6 +2270,9 @@ $(RESFILES): %.res: %.rq rc$(EXEEXT)
 
 documentation:
 	$(MAKE) -C doc
+
+fulldoc:
+	$(MAKE) -C doc fulldoc
 
 # Installation
 
@@ -2329,7 +2360,8 @@ localclean: $(patsubst %,clean_%,$(COMPBINFILES)) \
 	$(patsubst %,clean_%,$(UNITS)) \
 	$(patsubst %,clean_%,$(RESFILES)) \
 	$(patsubst %,clean_%,$(RSTFILES))
-	-$(RM) $(DISTFILE)
+	-$(RM) $(DISTFILE).rar
+	-$(RM) $(DOCDISTFILE).rar
 
 $(patsubst %,clean_%,$(COMPBINFILES)): clean_%$(EXEEXT):
 	-$(RM) $*$(EXEEXT)
@@ -2368,22 +2400,39 @@ dist:
 	$(error Variable "DISTFILE" muss gesetzt werden)
 else
 dist:
-	-$(RM) $(DISTFILE)
-	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile icons.res \
-	*.inc *.pas *.rq *.bat
-	$(RAR) $(RARFLAGS) $(DISTFILE) beispiel$(SEP)*.scr \
+	-$(RM) $(DISTFILE).rar
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile \
+	icons.res *.inc *.pas *.rq *.bat
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr \
 	beispiel$(SEP)*.xps
-	$(RAR) $(RARFLAGS) $(DISTFILE) doc$(SEP)Makefile doc$(SEP)*.txt \
-	doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.xml \
-	doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat doc$(SEP)dbform \
-	doc$(SEP)readme.lnx
-	$(RAR) $(RARFLAGS) $(DISTFILE) linux$(SEP)*.inc
-	$(RAR) $(RARFLAGS) $(DISTFILE) ObjCOM$(SEP)Makefile \
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile \
+	doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq \
+	doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat \
+	doc$(SEP)dbform doc$(SEP)readme.lnx
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar ObjCOM$(SEP)Makefile \
 	ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
+endif
+
+ifeq (,$(DOCDISTFILE))
+docdist:
+	$(error Variable "DOCDISTFILE" muss gesetzt werden)
+else
+docdist: fulldoc
+	-$(RM) $(DOCDISTFILE).rar
+	$(RAR) $(RARFLAGS) $(DOCDISTFILE).rar doc$(SEP)*.txt \
+	doc$(SEP)xpoint.sgm doc$(SEP)xpoint.htm doc$(SEP)xpoint.rtf \
+	doc$(SEP)xpoint.tex doc$(SEP)xpoint.dvi doc$(SEP)xpoint.ps \
+	doc$(SEP)xpoint.pdf
 endif
 
 #
 # $Log$
+# Revision 1.18  2000/10/10 17:47:34  fe
+# Neue Dateien inkl. Abhaengigkeitsaenderungen ergaenzt.
+# Ergaenzungen fuer Dokumentation.
+#
 # Revision 1.17  2000/10/09 22:11:22  fe
 # Ergaenzungen fuer Handbuch.
 # URL von oxpcontr.rar ergaenzt.
