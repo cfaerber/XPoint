@@ -34,16 +34,24 @@ uses
 const
 {$IFDEF UnixFS }
         FidoDir_    = 'fido';
-        FidoDir     = FidoDir_+DirSepa;         { Nodelists }
-        FileLists   = FidoDir+'filelist.cfg';
-        NodelistCfg = FidoDir+'nodelist.cfg';
+        FidoDir     = FidoDir_+DirSepa;
+
+        FidoCfg     = 'fido.cfg';
+        FidoLog     = 'xpfido.log';             // XP-FM-Logfile
+
+        FileLists   = FidoDir+'filelist.cfg';   //
+        NodelistCfg = FidoDir+'nodelst.cfg';
         NodeindexF  = FidoDir+'nodelist.idx';
         UserindexF  = FidoDir+'nodeuser.idx';
 {$ELSE}
         FidoDir_    = 'FIDO';
-        FidoDir     = FidoDir_+DirSepa;         { Nodelists }
+        FidoDir     = FidoDir_+DirSepa;
+
+        FidoCfg     = 'FIDO.CFG';
+        FidoLog     = 'XPFIDO.LOG';             //XP-FM-Logfile
+
         FileLists   = FidoDir+'FILELIST.CFG';
-        NodelistCfg = FidoDir+'NODELIST.CFG';
+        NodelistCfg = FidoDir+'NODELST.CFG';
         NodeindexF  = FidoDir+'NODELIST.IDX';
         UserindexF  = FidoDir+'NODEUSER.IDX';
 {$ENDIF}
@@ -271,6 +279,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2000/12/29 11:08:17  mo
+  -nodelist.cfg rerenamed in nodlst.cfg
+
   Revision 1.5  2000/12/28 23:12:04  mo
   - class TNodeList ergänzt
 

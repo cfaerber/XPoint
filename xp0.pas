@@ -170,7 +170,6 @@ const
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
        MimetFile   = 'mimetyp';
-
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
        Cfg3File    = 'openxp.cfg';      { NEue cfg mit Sektionen }
@@ -185,12 +184,7 @@ const
        TimingDat   = 'timing.dat';
        KilledDat   = 'reorg.dat';
        CCfile      = 'verteil.dat';
-       FidoCfg     = 'fido.cfg';
-       NodelistCfg = FidoDir+'nodelst.cfg';
-       NodeindexF  = FidoDir+'nodelist.idx';
-       UserindexF  = FidoDir+'nodeuser.idx';
        ARCmailDat  = 'arcmail.dat';
-       FileLists   = FidoDir+'filelist.cfg';
        ReqDat      = 'request.dat';    { Crashs + Requests }
        RegDat      = 'regdat.xp';
        UUnumdat    = 'uunummer.dat';
@@ -199,7 +193,6 @@ const
        menufile    = 'xpmenu.dat';
        CrashTemp   = 'crash.tmp';
        GlossaryTemp= 'glossary.tmp';
-
        ErrlogFile  = 'errors.log';     { LogFiles }
        Logfile     = 'xpoint.log';
        BiLogFile   = 'logfile';        { fuer BiModem-Uebertragung }
@@ -209,7 +202,6 @@ const
        MausLogfile = 'maus.log';       { MAGGI: MausTausch-Logfile }
        MausPmLog   = 'mauspm.log';     { MAGGI: MausTausch-PM-Logfile }
        MausStLog   = 'mausstat.log';   { MAGGI: MausTausch-Nachrichtenstati }
-       FidoLog     = 'xpfido.log';     { XP-FM-Logfile   }
        UUCPlog     = 'xpuucp.log';     { uucico-Logfile  }
        ScerrLog    = 'scerrors.log';   { Script-Fehler   }
        NetcallLog  = 'netcall.log';    { Netcall-Logfile }
@@ -239,7 +231,6 @@ const
        TimingDat   = 'TIMING.DAT';
        KilledDat   = 'REORG.DAT';
        CCfile      = 'VERTEIL.DAT';
-       FidoCfg     = 'FIDO.CFG';
        ARCmailDat  = 'ARCMAIL.DAT';
        ReqDat      = 'REQUEST.DAT';    { Crashs + Requests }
        RegDat      = 'REGDAT.XP';
@@ -258,7 +249,6 @@ const
        MausLogfile = 'MAUS.LOG';       { MAGGI: MausTausch-Logfile }
        MausPmLog   = 'MAUSPM.LOG';     { MAGGI: MausTausch-PM-Logfile }
        MausStLog   = 'MAUSSTAT.LOG';   { MAGGI: MausTausch-Nachrichtenstati }
-       FidoLog     = 'XPFIDO.LOG';     { XP-FM-Logfile   }
        UUCPlog     = 'XPUUCP.LOG';     { uucico-Logfile  }
        ScerrLog    = 'SCERRORS.LOG';   { Script-Fehler   }
        NetcallLog  = 'NETCALL.LOG';    { Netcall-Logfile }
@@ -1137,6 +1127,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.113  2000/12/29 11:08:17  mo
+  -nodelist.cfg rerenamed in nodlst.cfg
+
   Revision 1.112  2000/12/28 19:16:07  mk
   - removed editpathname variables
 
