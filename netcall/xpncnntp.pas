@@ -219,6 +219,7 @@ var
   List          : TStringList;
   Group         : String;
   ArticleIndex,
+  iNewsFile,
   RCIndex       : Integer;
   RCList        : TStringList;          { .rc-File }
 
@@ -246,13 +247,10 @@ var
      aFile: string;
      i: Integer;
    begin
-     aFile:=OwnPath + XFerDir;
-     for i := 1 to Length(Group) do
-       if Group[i] in ['a'..'z', 'A'..'Z'] then
-         aFile := aFile + Group[i];
-     aFile := aFile  + IntToStr(ArticleIndex) + '.news';
+     aFile:= FileUpperCase(OwnPath + XFerDir + IntToStr(iNewsFile) + '.nws');
      List.SaveToFile(aFile);
      IncomingFiles.Add(aFile);
+     inc(iNewsFile);
      List.Clear;
      RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
    end;
@@ -287,6 +285,7 @@ begin
     List := TStringList.Create;
     RCList := TStringList.Create;
     RCList.LoadFromFile(RCFilename);
+    iNewsFile:= 0;
     NNTP.Connect;
 
     for RCIndex := 0 to RCList.Count - 1 do
@@ -351,6 +350,10 @@ end.
 
 {
         $Log$
+        Revision 1.23  2001/06/13 10:38:59  ma
+        - Incoming news files use short file names now for better compatibility
+          with external filters.
+
         Revision 1.22  2001/06/04 16:59:36  ma
         - improved lost connection handling
         - cosmetics
