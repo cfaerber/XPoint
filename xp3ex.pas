@@ -1051,10 +1051,10 @@ begin // extract_msg;
                         gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
-                    wrs437(ohfill(mheadercustom[1],length(getres2(361,2))-2)+': '+hdp^.Cust1);
+                    wrs437(ohfill(mheadercustom[1],length(getres2(361,2))-2)+': '+hdp.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
-                    wrs437(ohfill(mheadercustom[2],length(getres2(361,2))-2)+': '+hdp^.Cust2);
+                    wrs437(ohfill(mheadercustom[2],length(getres2(361,2))-2)+': '+hdp.Cust2);
                   end;
 
   { Prioritaet im Listenkopf anzeigen:                                    }
@@ -1104,7 +1104,7 @@ begin // extract_msg;
             false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
               ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
           end;
-          XreadF(hds+hdp^.komlen,str);
+          XreadS(hds+hdp.komlen,str);
         finally
           str.Free;
         end;
@@ -1223,6 +1223,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.92  2002/01/19 14:17:02  mk
+  - Big 3.40 update part IV
+
   Revision 1.91  2002/01/13 15:15:50  mk
   - new "empfaenger"-handling
 

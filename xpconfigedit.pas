@@ -110,6 +110,7 @@ const umtyp : array[0..5] of string[5] =
       SupportedNetTypes: array[0..3] of byte =
         (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
+      maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
       DownArcNr : integer;
@@ -2547,6 +2548,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2002/01/19 14:17:03  mk
+  - Big 3.40 update part IV
+
   Revision 1.38  2002/01/19 13:46:10  mk
   - Big 3.40 udpate part III
 

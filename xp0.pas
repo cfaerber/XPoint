@@ -635,22 +635,37 @@ type   textp  = ^text;
                   ClientPhone  : string;            { Client Telefon                }
                   ClientLogin  : string;            { Client Login                  }
                   ClientPass   : string;            { Client Passwort               }
+                  ClientAskIfConnect     : boolean; { Client RÅckfrage vor Anwahl     }
+                  ClientAskIfDisconnect  : boolean; { Client RÅckfrage vor Auflegen   }
+                  ClientKeepConnectStatus: boolean; { Client Verbindungsstatus halten }
                   ClientSpool  : string;            { Client Spool-Verzeichnis      }
                   ClientExternalConfig: string;     { Client externe Konfiguration  }
                   ClientMailInServer : string;      { Client Mail-Server   incoming }
+                  ClientMailInPort   : string;      { Client Mail-Port     incoming }
+                  ClientMailInProtocol  : string;   { Client Mail-Protok.  incoming }
                   ClientMailInEnv    : string;      { Client Mail-Envelope incoming }
                   ClientMailInUser   : string;      { Client Mail-User     incoming }
                   ClientMailInPass   : string;      { Client Mail-Passwort incoming }
-                  ClientMailInPort   : string;      { Client Mail-Port     incoming }
+                  ClientMailInUseEnvTo  : boolean;  { Client Mail (X-)Envelope-To auswerten }
+                  ClientMailInKeep      : boolean;  { Client Mail incoming nicht lîschen }
+                  ClientMailInAPOP      : boolean;  { Client Mail-Authentifizierung (APOP) incoming }
                   ClientMailOutServer: string;      { Client Mail-Server   outgoing }
+                  ClientMailOutPort  : string;      { Client Mail-Port     outgoing }
+                  ClientMailFallback    : string;   { Client Fallback-Server (Mail) }
                   ClientMailOutEnv   : string;      { Client Mail-Envelope outgoing }
                   ClientMailOutUser  : string;      { Client Mail-User     outgoing }
                   ClientMailOutPass  : string;      { Client Mail-Passwort outgoing }
-                  ClientMailOutPort  : string;      { Client Mail-Port     outgoing }
+                  ClientMailOutSMTPafterPOP : boolean; { Client Mail-Authentifizierung (SMTP after POP) outgoing }
+                  ClientMailOutSMTPLogin: boolean;  { Client Mail-Authentifizierung (SMTP AUTH) outgoing }
                   ClientNewsServer   : string;      { Client News-Server            }
+                  ClientNewsPort     : string;      { Client News-Port              }
+                  ClientNewsFallback : string;      { Client Fallback-Server (News) }
                   ClientNewsUser     : string;      { Client News-User              }
                   ClientNewsPass     : string;      { Client News-Passwort          }
-                  ClientNewsPort     : string;      { Client News-Port              }
+                  ClientNewsList        : boolean;  { Client News Liste anfordern/aktualisieren }
+                  ClientNewsMaxLen      : longint;  { Client News max. ArtikellÑnge (KB) }
+                  ClientNewsMax         : longint;  { Client News max. Artikelanzahl pro Newsgroup }
+                  ClientExternCfg       : string;   { Client externe Config    }
 
                   UUZCharsetRecode: boolean;
                 end;
@@ -1212,6 +1227,9 @@ implementation
 
 {
   $Log$
+  Revision 1.155  2002/01/19 14:17:02  mk
+  - Big 3.40 update part IV
+
   Revision 1.154  2002/01/14 11:40:56  cl
   - after-merge compile fixes
 

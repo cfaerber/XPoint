@@ -185,7 +185,7 @@ begin
             if not _UserAutoCreate then
               if not modiuser(false) then
               begin
-                dbseek(ubase,uiname,ustr(s));
+                dbseek(ubase,uiname, UpperCase(s));
                 if dbfound then dbDelete(ubase);
                 cc_testempf:=false;
               end;
@@ -408,6 +408,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/01/19 14:17:03  mk
+  - Big 3.40 update part IV
+
   Revision 1.31  2002/01/19 13:46:09  mk
   - Big 3.40 udpate part III
 

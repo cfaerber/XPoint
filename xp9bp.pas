@@ -215,26 +215,26 @@ begin
     ClientMailInEnv:= '';
     ClientMailInUser:= '';
     ClientMailInPass:= '';
-    PPPMailInUseEnvTo:= false;
-    PPPMailInKeep:= false;
-    PPPMailInAPOP:= false;
-    PPPMailOutServer:= '';
-    PPPMailOutPort:= '25';
-    PPPMailFallback:= '';
+    ClientMailInUseEnvTo:= false;
+    ClientMailInKeep:= false;
+    ClientMailInAPOP:= false;
+    ClientMailOutServer:= '';
+    ClientMailOutPort:= '25';
+    ClientMailFallback:= '';
     ClientMailOutEnv:= '';
     ClientMailOutUser:= '';
     ClientMailOutPass:= '';
-    PPPMailOutSMTPafterPOP:= false;
-    PPPMailOutSMTPLogin:= false;
-    PPPNewsServer:= '';
-    PPPNewsPort:= '119';
-    PPPNewsFallback:= '';
+    ClientMailOutSMTPafterPOP:= false;
+    ClientMailOutSMTPLogin:= false;
+    ClientNewsServer:= '';
+    ClientNewsPort:= '119';
+    ClientNewsFallback:= '';
     ClientNewsUser:= '';
     ClientNewsPass:= '';
-    PPPNewsList:= true;
-    PPPNewsMaxLen:= 0;
-    PPPNewsMax:= 0;
-    PPPExternCfg:= '';
+    ClientNewsList:= true;
+    ClientNewsMaxLen:= 0;
+    ClientNewsMax:= 0;
+    ClientExternCfg:= '';
 
     UUZCharsetRecode := true;
   end;
@@ -401,43 +401,43 @@ begin
             getr(su,  'Letzte Verbindung',double(LastCall)) or
 
             // Client Mode
-            gets(s,su,'Client-Path', PPPClientPath, MaxLenPathname) or
-            gets(s,su,'Client-Exec', PPPClient, MaxLenPathname) or
-            gets(s,su,'Client-AddServers', PPPAddServers, 160) or
-            gets(s,su,'Client-DialUp',PPPDialup,60) or
-            gets(s,su,'Client-Phone',PPPPhone,60) or
-            gets(s,su,'Client-Login',PPPLogin,60) or
-            gets(s,su,'Client-Password',PPPPass,20) or
-            getx(su,  'Client-AskIfConnect', PPPAskIfConnect) or
-            getx(su,  'Client-AskIfDisconnect', PPPAskIfDisconnect) or
-            getx(su,  'Client-KeepConnectStatus', PPPKeepConnectStatus) or
-            gets(s,su,'Client-Spool', PPPSpool, MaxLenPathname) or
-            gets(s,su,'Client-MailInServer', PPPMailInServer, 160) or
-            gets(s,su,'Client-MailInPort', PPPMailInPort, 50) or
-            gets(s,su,'Client-MailInProtocol', PPPMailInProtocol, 5) or
-            gets(s,su,'Client-MailInEnvelope', PPPMailInEnv, 160) or
-            gets(s,su,'Client-MailInUser', PPPMailInUser, 160) or
-            gets(s,su,'Client-MailInPassword', PPPMailInPass, 75) or
-            getx(su,  'Client-MailInUseEnvTo',PPPMailInUseEnvTo) or
-            getx(su,  'Client-MailInKeep',PPPMailInKeep) or
-            getx(su,  'Client-MailInAPOP',PPPMailInAPOP) or
-            gets(s,su,'Client-MailOutServer', PPPMailOutServer, 160) or
-            gets(s,su,'Client-MailOutPort', PPPMailOutPort, 50) or
-            gets(s,su,'Client-MailFallback', PPPMailFallback, 8) or
-            gets(s,su,'Client-MailOutEnvelope', PPPMailOutEnv, 160) or
-            gets(s,su,'Client-MailOutUser', PPPMailOutUser, 160) or
-            gets(s,su,'Client-MailOutPassword', PPPMailOutPass, 75) or
-            getx(su,  'Client-MailOutSMTPafterPOP',PPPMailOutSMTPafterPOP) or
-            getx(su,  'Client-MailOutSMTPLogin',PPPMailOutSMTPLogin) or
-            gets(s,su,'Client-NewsServer', PPPNewsServer, 160) or
-            gets(s,su,'Client-NewsPort', PPPNewsPort, 50) or
-            gets(s,su,'Client-NewsFallback', PPPNewsFallback, 8) or
-            gets(s,su,'Client-NewsUser', PPPNewsUser, 160) or
-            gets(s,su,'Client-NewsPassword', PPPNewsPass, 75) or
-            getx(su,  'Client-NewsList', PPPNewsList) or
-            getl(su,  'Client-NewsMaxLen', PPPNewsMaxLen) or
-            getl(su,  'Client-NewsMax', PPPNewsMax) or
-            gets(s,su,'Client-ExternalConfig', PPPExternCfg, MaxLenPathname) or
+            gets(s,su,'Client-Path', ClientPath) or
+            gets(s,su,'Client-Exec', ClientExec) or
+            gets(s,su,'Client-AddServers', ClientAddServers) or
+            gets(s,su,'Client-DialUp',ClientDialup) or
+            gets(s,su,'Client-Phone',ClientPhone) or
+            gets(s,su,'Client-Login',ClientLogin) or
+            gets(s,su,'Client-Password',ClientPass) or
+            getx(su,  'Client-AskIfConnect', ClientAskIfConnect) or
+            getx(su,  'Client-AskIfDisconnect', ClientAskIfDisconnect) or
+            getx(su,  'Client-KeepConnectStatus', ClientKeepConnectStatus) or
+            gets(s,su,'Client-Spool', ClientSpool) or
+            gets(s,su,'Client-MailInServer', ClientMailInServer) or
+            gets(s,su,'Client-MailInPort', ClientMailInPort) or
+            gets(s,su,'Client-MailInProtocol', ClientMailInProtocol) or
+            gets(s,su,'Client-MailInEnvelope', ClientMailInEnv) or
+            gets(s,su,'Client-MailInUser', ClientMailInUser) or
+            gets(s,su,'Client-MailInPassword', ClientMailInPass) or
+            getx(su,  'Client-MailInUseEnvTo',ClientMailInUseEnvTo) or
+            getx(su,  'Client-MailInKeep',ClientMailInKeep) or
+            getx(su,  'Client-MailInAPOP',ClientMailInAPOP) or
+            gets(s,su,'Client-MailOutServer', ClientMailOutServer) or
+            gets(s,su,'Client-MailOutPort', ClientMailOutPort) or
+            gets(s,su,'Client-MailFallback', ClientMailFallback) or
+            gets(s,su,'Client-MailOutEnvelope', ClientMailOutEnv) or
+            gets(s,su,'Client-MailOutUser', ClientMailOutUser) or
+            gets(s,su,'Client-MailOutPassword', ClientMailOutPass) or
+            getx(su,  'Client-MailOutSMTPafterPOP',ClientMailOutSMTPafterPOP) or
+            getx(su,  'Client-MailOutSMTPLogin',ClientMailOutSMTPLogin) or
+            gets(s,su,'Client-NewsServer', ClientNewsServer) or
+            gets(s,su,'Client-NewsPort', ClientNewsPort) or
+            gets(s,su,'Client-NewsFallback', ClientNewsFallback) or
+            gets(s,su,'Client-NewsUser', ClientNewsUser) or
+            gets(s,su,'Client-NewsPassword', ClientNewsPass) or
+            getx(su,  'Client-NewsList', ClientNewsList) or
+            getl(su,  'Client-NewsMaxLen', ClientNewsMaxLen) or
+            getl(su,  'Client-NewsMax', ClientNewsMax) or
+            gets(s,su,'Client-ExternalConfig', ClientExternCfg) or
 
             // UUZ-Parameter
             getx(su,  'UUZ-RecodeCharset', UUZCharsetRecode)
@@ -597,44 +597,44 @@ begin
     ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
 
-    writeln(t,'Client-Path=', PPPClientPath);
-    writeln(t,'Client-Exec=', PPPClient);
-    writeln(t,'Client-AddServers=', PPPAddServers);
-    writeln(t,'Client-DialUp=', PPPDialUp);
-    writeln(t,'Client-Phone=', PPPPhone);
-    writeln(t,'Client-Login=', PPPLogin);
-    writeln(t,'Client-Password=', PPPPass);
-    writeln(t,'Client-AskIfConnect=', jnf(PPPAskIfConnect));
-    writeln(t,'Client-AskIfDisconnect=', jnf(PPPAskIfDisconnect));
-    writeln(t,'Client-KeepConnectStatus=', jnf(PPPKeepConnectStatus));
+    writeln(t,'Client-Path=', ClientPath);
+    writeln(t,'Client-Exec=', ClientExec);
+    writeln(t,'Client-AddServers=', ClientAddServers);
+    writeln(t,'Client-DialUp=', ClientDialUp);
+    writeln(t,'Client-Phone=', ClientPhone);
+    writeln(t,'Client-Login=', ClientLogin);
+    writeln(t,'Client-Password=', ClientPass);
+    writeln(t,'Client-AskIfConnect=', jnf(ClientAskIfConnect));
+    writeln(t,'Client-AskIfDisconnect=', jnf(ClientAskIfDisconnect));
+    writeln(t,'Client-KeepConnectStatus=', jnf(ClientKeepConnectStatus));
     writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
     if Trim(XFerDir) <> '' then CreateMultipleDirectories(OwnPath + XFerDir + Dateiname);
-    writeln(t,'Client-MailInServer=', PPPMailInServer);
-    writeln(t,'Client-MailInPort=', PPPMailInPort);
-    writeln(t,'Client-MailInProtocol=', PPPMailInProtocol);
-    writeln(t,'Client-MailInEnvelope=', PPPMailInEnv);
-    writeln(t,'Client-MailInUser=', PPPMailInUser);
-    writeln(t,'Client-MailInPassword=', PPPMailInPass);
-    writeln(t,'Client-MailInUseEnvTo=', jnf(PPPMailInUseEnvTo));
-    writeln(t,'Client-MailInKeep=', jnf(PPPMailInKeep));
-    writeln(t,'Client-MailInAPOP=', jnf(PPPMailInAPOP));
-    writeln(t,'Client-MailOutServer=', PPPMailOutServer);
-    writeln(t,'Client-MailOutPort=', PPPMailOutPort);
-    writeln(t,'Client-MailFallback=', PPPMailFallback);
-    writeln(t,'Client-MailOutEnvelope=', PPPMailOutEnv);
-    writeln(t,'Client-MailOutUser=', PPPMailOutUser);
-    writeln(t,'Client-MailOutPassword=', PPPMailOutPass);
-    writeln(t,'Client-MailOutSMTPafterPOP=', jnf(PPPMailOutSMTPafterPOP));
-    writeln(t,'Client-MailOutSMTPLogin=', jnf(PPPMailOutSMTPLogin));
-    writeln(t,'Client-NewsServer=', PPPNewsServer);
-    writeln(t,'Client-NewsPort=', PPPNewsPort);
-    writeln(t,'Client-NewsFallback=', PPPNewsFallback);
-    writeln(t,'Client-NewsUser=', PPPNewsUser);
-    writeln(t,'Client-NewsPassword=', PPPNewsPass);
-    writeln(t,'Client-NewsList=', jnf(PPPNewsList));
-    writeln(t,'Client-NewsMaxLen=', PPPNewsMaxLen);
-    writeln(t,'Client-NewsMax=', PPPNewsMax);
-    writeln(t,'Client-ExternalConfig=', PPPExternCfg);
+    writeln(t,'Client-MailInServer=', ClientMailInServer);
+    writeln(t,'Client-MailInPort=', ClientMailInPort);
+    writeln(t,'Client-MailInProtocol=', ClientMailInProtocol);
+    writeln(t,'Client-MailInEnvelope=', ClientMailInEnv);
+    writeln(t,'Client-MailInUser=', ClientMailInUser);
+    writeln(t,'Client-MailInPassword=', ClientMailInPass);
+    writeln(t,'Client-MailInUseEnvTo=', jnf(ClientMailInUseEnvTo));
+    writeln(t,'Client-MailInKeep=', jnf(ClientMailInKeep));
+    writeln(t,'Client-MailInAPOP=', jnf(ClientMailInAPOP));
+    writeln(t,'Client-MailOutServer=', ClientMailOutServer);
+    writeln(t,'Client-MailOutPort=', ClientMailOutPort);
+    writeln(t,'Client-MailFallback=', ClientMailFallback);
+    writeln(t,'Client-MailOutEnvelope=', ClientMailOutEnv);
+    writeln(t,'Client-MailOutUser=', ClientMailOutUser);
+    writeln(t,'Client-MailOutPassword=', ClientMailOutPass);
+    writeln(t,'Client-MailOutSMTPafterPOP=', jnf(ClientMailOutSMTPafterPOP));
+    writeln(t,'Client-MailOutSMTPLogin=', jnf(ClientMailOutSMTPLogin));
+    writeln(t,'Client-NewsServer=', ClientNewsServer);
+    writeln(t,'Client-NewsPort=', ClientNewsPort);
+    writeln(t,'Client-NewsFallback=', ClientNewsFallback);
+    writeln(t,'Client-NewsUser=', ClientNewsUser);
+    writeln(t,'Client-NewsPassword=', ClientNewsPass);
+    writeln(t,'Client-NewsList=', jnf(ClientNewsList));
+    writeln(t,'Client-NewsMaxLen=', ClientNewsMaxLen);
+    writeln(t,'Client-NewsMax=', ClientNewsMax);
+    writeln(t,'Client-ExternalConfig=', ClientExternCfg);
 
     writeln(t,'UUZ-RecodeCharset=',jnf(UUZCharsetRecode));
   end;
@@ -739,6 +739,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/01/19 14:17:02  mk
+  - Big 3.40 update part IV
+
   Revision 1.59  2002/01/19 10:27:46  mk
   - Big 3.40 Update Part II
 

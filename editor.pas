@@ -95,7 +95,7 @@ procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer G
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2;
+uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -1850,6 +1850,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.76  2002/01/19 14:17:01  mk
+  - Big 3.40 update part IV
+
   Revision 1.75  2002/01/17 00:09:58  cl
   - more after-merge fixes
 
