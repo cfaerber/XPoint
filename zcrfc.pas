@@ -709,12 +709,18 @@ again:
 {$ENDIF}
 
 //{$IFNDEF UnixFS}  { argh }
-  if (ctype=compress_freeze) and (not existf(f1)) then
+  if (ctype=compress_freeze) and (not FileExists(Dest+fn)) then
     if FileExists(Dest+fn+'X') then
       renamefile(Dest+fn+'X',Dest+fn) else
     if FileExists(Dest+fn+'XZ') then
       renamefile(Dest+fn+'XZ',Dest+fn);
 //{$ENDIF}
+
+  if not FileExists(Dest+FN) then
+  begin
+    RenameFile(NewFN,Dest+FN);
+    raise Exception.Create(Format(GetRes2(10700,50),[Dest+FN]))
+  end;
 
   if batch then goto again;
 end;
@@ -2618,13 +2624,17 @@ begin
       inc(n);
 
       DeleteFiles.Add(spath+sr.name);
-    end;
-  except on Ex:Exception do
+  end;
+  except 
+    on Ex:Exception do
     begin
       if CommandLine then
         writeln(ex.message)
       else
         tfehler(ex.message,30);
+
+      if (LeftStr(sr.name, 2) = 'X-') and FileExists(spath + dfile) then
+        RenameFile(spath+dfile,BadDir+dfile);        
       RenameFile(spath+sr.name,BadDir+sr.name);
     end;
   end; //try
@@ -3655,6 +3665,17 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.13  2002/08/02 13:24:07  cl
+  - backport from 3.9.x:
+
+
+  Revision 1.111  2002/07/31 20:25:53  cl
+  - fixed lasf commit
+
+  Revision 1.110  2002/07/31 19:54:45  cl
+  - Fehler beim Entpacken von Dateien werden abgefangen; Dateien werden
+    nach BAD verschoben.
+
   Revision 1.97.2.12  2002/08/01 17:55:41  mk
   - added "-client" to help page
   - fixed creation of outgoing news with -client
