@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -56,7 +56,7 @@
   {$DEFINE VP }
   {$DEFINE Ver32 }
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
+  {&AlignCode-,AlignData-,AlignRec-,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
@@ -133,6 +133,9 @@
 
 {
   $Log$
+  Revision 1.51  2000/08/15 11:55:41  mk
+  - Unit wird nur unter 16 Bit gebraucht
+
   Revision 1.50  2000/08/07 23:29:59  mk
   - Optimize in Vp ausgeschaltet, da Fehlerhaft
 
