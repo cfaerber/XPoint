@@ -110,12 +110,12 @@ var sr    : searchrec;
     gzip  : boolean;
     f     : boolean;
 
- procedure DelAll(fn:string);
+ procedure DelAll(const fn:string);
  begin
-    findfirst(DestDir+fn,AnyFile-Directory,sr);
+    findfirst(DestDir+fn,$20,sr); { Normal und Archiv, kein Readonly }
     while doserror=0 do begin
-      assign(f1^,DestDir+sr.name);
-      erase(f1^);
+      assign(f1^, DestDir+sr.name);
+      if IOResult = 0 then Erase(f1^);
       findnext(sr);
     end;
     FindClose(sr);
@@ -620,6 +620,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.18  2001/08/11 08:50:37  mk
+  - check for IOResult in DelAll
+  - DelAll does not try to delete ReadOnly-Files
+
   Revision 1.13.2.17  2001/06/27 15:35:06  my
   - changed string for RFC/Client netcalls
 
