@@ -769,6 +769,7 @@ msg_ok: MsgAddmark;
     close(t);
   end;
 
+  // adds new message id to boxname.mid
   procedure AddMsgId;
   var
     Boxname, Filename: String;
@@ -777,21 +778,27 @@ msg_ok: MsgAddmark;
     if ReadJN('Soll die Message-ID online gesucht werden?', true) then
     begin
       BoxName := UniSel(1, false, DefaultBox);
-      Filename := GetServerFileName(Boxname, '.MID');
-      IDLIst := TStringList.Create;
-      try
-        if FileExists(OwnPath + Filename) then
-        begin
-          IDList.LoadFromFile(OwnPath + Filename);
-          IDList.Sort;
+      if BoxName <> '' then
+      begin
+        Filename := OwnPath + GetServerFileName(Boxname, extMid);
+        IDLIst := TStringList.Create;
+        try
+          with IDList do
+          begin
+            if FileExists(Filename) then
+            begin
+              LoadFromFile(Filename);
+              Sort;
+            end;
+            Sorted := true;
+            Duplicates := dupIgnore;
+            Add(Suchstring);
+            SaveToFile(Filename);
+          end;
+        finally
+          IDList.Free;
         end;
-        IDList.Sorted := true;
-        IDList.Duplicates := dupIgnore;
-        IDList.Add(Suchstring);
-        IDList.SaveToFile(OwnPath + Filename);
-      finally
-        IDList.Free;
-      end; 
+      end;
     end;
   end;
 
@@ -3010,6 +3017,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.8  2003/08/23 17:34:29  mk
+  - improved adding of new message ids
+
   Revision 1.138.2.7  2003/04/25 20:52:24  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
