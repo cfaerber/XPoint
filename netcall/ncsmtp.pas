@@ -103,6 +103,8 @@ resourcestring
 
   res_disconnect        = 'Trenne Verbindung...';
 
+  res_postmsg           = 'Verschicke Mail %d (gesamt %.0f%%)';
+
 constructor TSMTP.Create;
 begin
   inherited Create;
@@ -174,7 +176,7 @@ begin
   if ParseResult(s) <> 220 then // RÅckmeldung auswerten
     raise ESMTP.CreateFmt(res_connect2, [ErrorMsg]) // Unerreichbar
   else begin
-    Output(mcError,res_connect4, [Host.Name]); // Verbunden
+    Output(mcInfo, res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
   end;
 
@@ -262,15 +264,16 @@ const
   SMTPHeaderLines = 4;
 var
   From, Recip: String;
-  I: Integer;
+  iMail,I: Integer;
 begin
   if Mail.Count < SMTPHeaderLines then exit;
-  I := 0;
+  I := 0; iMail := 1;
   while I < Mail.Count - 1 do
   begin
     I := ParseHeader(Mail, I, I + SMTPHeaderLines, From, Recip);
+    Output(mcInfo, res_postmsg, [iMail, ((I + 2) / Mail.Count * 100)]);
     PostMail(Mail, From, Recip);
-    Inc(I);
+    Inc(I); Inc(iMail);
   end;
   if Pos(SMTPQUITSIGN, Mail[Mail.Count - 1]) <> 0 then
     ToLine := Mail.Count - 2; {prevent disconnect for every Mail }
@@ -290,6 +293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2001/06/02 14:09:27  ma
+  - added sending progress messages
+
   Revision 1.7  2001/05/27 14:27:22  ma
   - cleaned up exceptions (beware, there seem to be bugs in VP, use FPC
     instead)
