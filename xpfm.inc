@@ -868,7 +868,10 @@ begin
     SleepTime(1000);
     aresult:=EL_senderr
 
-  end else begin                                        { ZModem empfangen }
+  end else
+  begin                                        { ZModem empfangen }
+    {ZModem-Ausgaberoutinen setzen}
+    ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
     DisplayStatus(getres2(30004,13),True);    { 'Empfangen' }
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(CommObj,MailPath,ErrorFlag);
@@ -911,6 +914,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.7  2000/12/26 21:01:46  mk
+        - set StartProc and EndProc again before receive
+
         Revision 1.6  2000/12/25 19:08:46  mk
         - some optical improvements
 
