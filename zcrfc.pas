@@ -1909,8 +1909,10 @@ begin
               Uline.Add(s1);
         else
           if zz = 'from' then
+          begin
+            s0 := RFC2047_Decode(s0,csCP437);
             GetAdr(s0,absender,realname)
-          else
+          end else
             if zz = 'to' then
             GetEmpf
           else
@@ -1989,7 +1991,7 @@ begin
     if UpperCase(wab) = UpperCase(absender) then
       wab := '';
     betreff     := RFC2047_Decode(betreff,csCP437);
-    realname    := RFC2047_Decode(realname,csCP437);
+//    realname    := RFC2047_Decode(realname,csCP437);
     summary     := RFC2047_Decode(summary,csCP437);
     keywords    := RFC2047_Decode(keywords,csCP437);
     organisation:= RFC2047_Decode(organisation,csCP437);
@@ -3641,6 +3643,13 @@ end;
 
 {
   $Log$
+  Revision 1.96  2002/04/10 08:35:23  mk
+  MY[+JG]:- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach
+            RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
+            zerlegt wird (vorher wurde ein Header wie
+            'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?= <...>' nicht
+             korrekt decodiert).
+
   Revision 1.95  2002/04/06 17:07:48  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux
