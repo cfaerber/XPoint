@@ -120,14 +120,19 @@ procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
 { /robo }
 var useclip : boolean;
 begin
-  if save then fn:='' else fn:=SendPath+'*.*';
+  if save then fn:='' else fn:=SendPath+WildCard;
   useclip:=false;          { 'Block speichern' / 'Block laden' }
   if readfilename(getres(iif(save,2504,2505))
   { 04.02.2000 robo }
                   +iifs(uuenc,' '+getres(2509),'')
   { /robo }
                   ,fn,true,useclip) then begin
-    if not multipos('\:',fn) then fn:=sendpath+fn;
+{$IFDEF UNIXFS}
+    if not multipos('/',fn) 
+{$ELSE}
+    if not multipos('\:',fn) 
+{$ENDIF}
+      then fn:=sendpath+fn;
     end
   else
     fn:='';
@@ -275,11 +280,8 @@ begin
     end
   else
     m2t:=false;
-{$IFDEF NCRT }
-  ed:=EdInit(1,GetScreenCols,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
-{$ELSE }
-  ed:=EdInit(1,80,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
-{$ENDIF }
+  { screenwidth/screenlines (hd) }
+  ed:=EdInit(1,screenwidth,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
   if EdLoadFile(ed,fn,reedit,{iif(reedit,}1{,0)}) then;
   sichern(p);
   if EditFusszeile then DispFunctionkeys(true);
@@ -480,6 +482,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/22 16:12:11  hd
+  - Anpassung an UnixFS (Filesystem)
+  - screenwidth statt 80 (Screen)
+
   Revision 1.15  2000/05/09 13:13:10  hd
   - UnixFS: EditText angepasst
 
