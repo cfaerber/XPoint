@@ -134,7 +134,6 @@ var s      : string;
     fn,fn2 : pathstr;
     brk    : boolean;
     auto   : boolean;
-    ende   : boolean;
 begin
   with fkeys[nr]^[nn] do begin
     s:=prog;
@@ -155,10 +154,7 @@ begin
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
         if exist(fn) then
-          repeat
-            if listfile(fn,fn,true,false,0) = -4 then ende:=false
-            else ende:=true;
-          until ende
+          repeat until listfile(fn,fn,true,false,0) <> -4
         else
           rfehler(20);   { '*LIST: Datei nicht vorhanden!' }
         end
@@ -244,6 +240,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.6  2002/03/08 23:13:35  my
+  MK:- Kleine Codeoptimierung/Variableneinsparung.
+
   Revision 1.6.2.5  2001/12/05 19:28:21  my
   MY:- Wortumbruch kann jetzt auch im Archiv-Viewer mit <Ctrl-W>
        umgeschaltet werden (*LIST-Aufruf per ZusatzmenÅ oder Funktionstaste)
