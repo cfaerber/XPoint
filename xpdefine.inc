@@ -38,7 +38,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{$DEFINE Snapshot}
+{.$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -257,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.13  2003/01/22 21:42:59  mk
+  - Snapshot off
+
   Revision 1.78.2.12  2003/01/22 21:32:50  mk
   - packenums = 1 and packrecords = 8 for FPC, Delphi and Kylix
 
