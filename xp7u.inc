@@ -429,6 +429,7 @@ var dummy : longint;
   procedure EmptySysin;
   var sr : searchrec;
   begin
+    if not IsPath(BoxPar^.SysopInp) then exit;
     findfirst(BoxPar^.sysopinp+'*.*',0,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
@@ -476,6 +477,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.1  2000/05/30 17:17:50  jg
+  - UUCP Sysoptransfer mehr Sicherheit bei DEL *.*
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
