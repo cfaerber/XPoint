@@ -57,6 +57,7 @@ end; { func. OpenKeep }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {$IFDEF Win32}
+
 function TRawIPObj.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
 type
     PCardinal  = ^Cardinal;
@@ -113,7 +114,7 @@ begin
   SetErrorStr('Error connecting socket');
   ConnectIP:=false;
 end; { func. TTelnetObj.OpenCom }
-{$ENDIF} 
+{$ENDIF}
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -125,7 +126,7 @@ var
   Res: Integer;
 
 begin
-  Connect:=False; 
+  Connect:=False;
   FillChar(SAddr,SizeOf(SAddr),0);
 
   // Resolve host
@@ -351,6 +352,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.2  2001/02/10 22:18:16  cl
+  - fixed bug that made option negotiation fail
+
   Revision 1.1  2001/02/02 17:44:47  cl
   - alternative Telnet implementation - does not support full option negotiation (yet).
 

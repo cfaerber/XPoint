@@ -7,7 +7,9 @@ const
  TELNET_IAC= #255; TELNET_DONT= #254; TELNET_DO= #253;
  TELNET_WONT= #252; TELNET_WILL= #251;
 
- TELNETOPT_BINARY= #0; TELNETOPT_ECHO= #1;
+ TELNETOPT_BINARY= #0;
+ TELNETOPT_ECHO= #1;
+ TELNETOPT_SUPPRESS_GA = #2;
 
  TELNET_SE = #240; TELNET_NOP = #241; TELNET_SYNC = #242;
  TELNET_BRK = #243 ; TELNET_IP = #244; TELNET_AO = #245;
@@ -31,49 +33,67 @@ begin
   InBuffer.Done;
 end; { destructor Done }
 
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TTelnetObj.ConnectIP(DestHost: String; DestPort: Integer): boolean;
+var   success: boolean;
+      dummy:   longint;
+(* const options: string = TELNET_IAC + TELNET_WILL + TELNETOPT_SUPPRESS_GA +
+                        TELNET_IAC + TELNET_WILL + TELNETOPT_BINARY; *)
+begin
+  success := inherited ConnectIP(DestHost, DestPort);
+(* if success then inherited SendBlock(options,Length(options),dummy); *)
+  ConnectIP := success
+end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TTelnetObj.FillBuffer(block:boolean);
+procedure TTelnetObj.FillBuffer(min_read: Longint);
 var rd,rd2: LongINT;
     pos:longint;
     beg:longint;
 
   procedure handle_command(cmd:char);
-  begin end;
+  begin
+  end;
 
   procedure send_command(opt:char);
   var s:longint; os:string;
-  begin os:=TELNET_IAC+opt;
-  inherited SendBlock(os,length(os),s); end;
+  begin
+    os:=TELNET_IAC+opt;
+    inherited SendBlock(os[1],length(os),s);
+  end;
 
   procedure send_option(opt,par:char);
   var s:longint; os:string;
-  begin os:=TELNET_IAC+opt+par;
-  inherited SendBlock(os,length(os),s); end;
+  begin
+    os:=TELNET_IAC+opt+par;
+    inherited SendBlock(os[1],length(os),s);
+  end;
 
   procedure handle_option(opt,par:char);
   begin
-    { else } case opt of
+    case opt of
       TELNET_WILL: send_option(TELNET_DONT,par);
       TELNET_DO:   send_option(TELNET_WONT,par);
-    { end; }
     end;
   end;
+
 begin
+  (* calculate number of octets to be read *)
 
-  rd2:= 0;
+  rd := inherited CharCount;
 
-  if(block) then
-    rd := InBuffer.BufRoom-InTemp
-  else begin
-    rd := inherited CharCount;
-    if rd > InBuffer.BufRoom-InTemp then
-      rd := InBuffer.BufRoom-InTemp
-  end;
+  if (min_read > 0) and (min_read > InBuffer.BufUsed) then
+    if rd < min_read - InBuffer.BufUsed then rd := min_read - InBuffer.BufUsed;
 
-  if rd > 0 then inherited ReadBlock(InBuffer.TmpBuf^[InTemp],rd,rd2);
+  if rd > InBuffer.BufRoom-InTemp then
+    rd := InBuffer.BufRoom-InTemp;
+
+  rd2 := 0; if rd > 0 then inherited ReadBlock(InBuffer.TmpBuf^[InTemp],rd,rd2);
   InTemp:=InTemp+rd2;
+
+  (* now scan input buffer for TELNET commands *)
 
   pos:=0;
   beg:=0;
@@ -96,21 +116,33 @@ begin
       end;
 
       if InTemp-pos>=2 then case InBuffer.TmpBuf^[pos+1] of
+
+        (* double IAC => skip *)
+
         TELNET_IAC:     begin
-                          pos:=pos+2; beg:=pos+1; continue;
+                          pos:=pos+2; beg:=pos+1;
+                          continue;
                         end;
+
+        (* option negotiation *)
+
         TELNET_WILL,TELNET_WONT,TELNET_DO,TELNET_DONT:
                         if InTemp-pos<3 then break else begin
                           pos:=pos+3; beg:=pos;
                           handle_option(InBuffer.TmpBuf^[pos-2],InBuffer.TmpBuf^[pos-1]);
                           continue;
                         end;
+
+        (* other telnet commands *)
+
         else            begin
                           pos:=pos+2; beg:=pos;
                           handle_command(InBuffer.TmpBuf^[pos-1]);
                           continue;
                         end;
       end;
+
+      (* if we got here, there is an incomplete IAC sequence *)
 
       Move(InBuffer.TmpBuf^[pos],InBuffer.TmpBuf^,InTemp-pos);
       InTemp:=InTemp-pos;
@@ -129,7 +161,7 @@ begin
 
   while((Reads<BlockLen) and Carrier) do
   begin
-    FillBuffer(true);
+    FillBuffer(Blocklen-Reads);
     if(InBuffer.BufUsed>0) then
     begin
       readc:=InBuffer.BufUsed;
@@ -184,24 +216,23 @@ begin
 
     pos:=pos+1;
   end;
-
 end; { proc. tTelnetObj.SendBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tTelnetObj.GetChar: Char;
 var ReadC: Char;
-    Reads: LongInt;
 begin
-  TTelnetObj.ReadBlock(ReadC, SizeOf(ReadC), Reads);
-  if Reads<>0 then GetChar:=ReadC else GetChar:= #0;
+  while Carrier and (InBuffer.BufUsed <= 0) do FillBuffer(1);
+  if InBuffer.BufUsed >= 0 then InBuffer.Get(ReadC,1,true) else ReadC := #0;
+  GetChar:=ReadC;
 end; { func. tRawIPObj.GetChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tTelnetObj.CharAvail: Boolean;
 begin
-  if InBuffer.BufUsed <= 0 then FillBuffer(false);
+  if InBuffer.BufUsed <= 0 then FillBuffer(0);
   CharAvail:=InBuffer.BufUsed > 0;
 end; { func. tTelnetObj.CharAvail }
 
@@ -209,7 +240,7 @@ end; { func. tTelnetObj.CharAvail }
 
 function tTelnetObj.CharCount: Integer;
 begin
-  FillBuffer(false);
+  FillBuffer(0);
   CharCount:=InBuffer.BufUsed;
 end; { func. TTelnetObj.CharAvail }
 
@@ -217,12 +248,15 @@ end; { func. TTelnetObj.CharAvail }
 
 function tTelnetObj.Carrier: Boolean;
 begin
-  Carrier:= inherited Carrier or (inBuffer.BufUsed>0);
+  Carrier := (InBuffer.BufUsed>0) or inherited Carrier;
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 {
   $Log$
+  Revision 1.2  2001/02/10 22:18:16  cl
+  - fixed bug that made option negotiation fail
+
   Revision 1.1  2001/02/02 17:44:47  cl
   - alternative Telnet implementation - does not support full option negotiation (yet).
 

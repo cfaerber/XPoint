@@ -8,7 +8,8 @@ type tRawIPObj = Object(TCommObj)
         destructor Done; virtual;
 
         function  Connect(Dest: String): Boolean; virtual;
-        function  ConnectIP(DestHost: String; DestPort:Integer): Boolean; virtual;
+        function  ConnectIP(DestHost: String; DestPort: Integer): boolean; virtual;
+
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
@@ -58,6 +59,9 @@ Type tpRawIPObj = ^tRawIPObj;
 
 {
   $Log$
+  Revision 1.2  2001/02/10 22:18:16  cl
+  - fixed bug that made option negotiation fail
+
   Revision 1.1  2001/02/02 17:44:47  cl
   - alternative Telnet implementation - does not support full option negotiation (yet).
 
