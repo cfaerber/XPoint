@@ -597,7 +597,7 @@ begin                         { SelectMultiPart }
       brk := List.Show;
       if not brk then
       begin
-        mpdata.Assign(PartsList[List.SelLine+1]);
+        mpdata.Assign(PartsList[List.SelLine]);
         if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
            (mpdata.typ=getres2(2440,10)) then begin
           mpdata.typ:='text';
@@ -791,6 +791,9 @@ finalization
 
 {
   $Log$
+  Revision 1.55  2001/12/09 21:28:06  mk
+  - fixed index problem with PartsList (now beginning at 0 instead of 1)
+
   Revision 1.54  2001/12/09 16:28:00  mk
   - fixed last commit
 
