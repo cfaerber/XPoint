@@ -55,7 +55,7 @@ procedure EditNetcallDat;
 implementation  { ---------------------------------------------------- }
 
 uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9,xp9bp,xp9sel,xpauto,xpfido,
-      xpfidonl,xpovl;
+      xpfidonl,xpovl,xpnt;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -636,15 +636,15 @@ var brk      : boolean;
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
                   else s:=s+strs(anz)+' '+getres2(1003,2);  { 'Eintr„ge' }
-                Wrt2(forms(s,53));
+                FWrt(x+1, y+i, forms(s,53));
               end;
           4 : begin
                 s:=getres2(222,xhd[i+a]);
-                Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
+                fWrt(x+1, y+i, ' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
           5 : with nodelist^[a+i] do
-                Wrt2(' '+forms(listfile,14)+
+                FWrt(x+1, y+i,' '+forms(listfile,14)+
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+
                       forms(updatefile,14)+forms(updatearc,14)+
                       iifs(dodiff,'Diff  ','      ')+
@@ -656,8 +656,8 @@ var brk      : boolean;
         end;
       end;
     attrtxt(col.colsel2box);
-    wrt(x,y+1,iifc(a=0,'³',#30));
-    wrt(x,y+gl,iifc(a+gl<eanzahl,#31,'³'));
+    fwrt(x,y+1,iifc(a=0,'³',#30));
+    fwrt(x,y+gl,iifc(a+gl<eanzahl,#31,'³'));
     mon;
   end;
 
@@ -833,10 +833,7 @@ var brk      : boolean;
       else
         tt:='<'+ta^[ord(t2[2])]+'>';
     attrtxt(col.coldiahigh);
-    gotoxy(x,y);
-    moff;
-    write(' ',gett,' ');
-    mon;
+    mwrt(x, y, ' ' + gett + ' ');
   end;
 
   procedure ReadMacro(var s:string; var brk:boolean);
@@ -2126,7 +2123,7 @@ begin  { --- of EditNetcallDat --- }
     begin
       if i=p then attrtxt(col.colsel2bar)
       else attrtxt(col.colsel2box);
-      wrt(x+1,y+1+i,iifs(i>9,' ','  ')+strs(i)+
+      fwrt(x+1,y+1+i,iifs(i>9,' ','  ')+strs(i)+
         ':  '+forms(trim(NetcallSpecialList[i]),65));
     end;
     mon;
@@ -2155,6 +2152,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.11  2001/12/18 18:57:19  mk
+  - einige FWrt() statt Wrt() benutzt
+
   Revision 1.10.2.10  2001/11/20 23:16:08  my
   MY:- berflssiges 'uses xp9' entfernt
   MY:- Variable 'NetcallSpecialDat' => Konstante
