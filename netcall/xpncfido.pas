@@ -57,6 +57,9 @@ type
                ReqFile: TStringList; // needed for request result processing
              end;
 
+  { non-fatal error exception }
+  EFido= class(Exception);
+
 var
   AKABoxes: TAKABoxes;
   AKAs: string;
@@ -563,12 +566,13 @@ begin { FidoNetcall }
   AKABoxes.BoxName:=TStringList.Create;
   AKABoxes.ReqFile:=TStringList.Create;
   AKABoxes.PPFile:=TStringList.Create;
-  try
 
-    // Convert outgoing buffers
+  try
     if Crash then
       if not ProcessCrash(Crash,CrashOutBuffer)then
-        raise Exception.Create('');
+        raise EFido.Create('');
+
+    // Convert outgoing buffers
     ProcessAKABoxes(boxpar,boxname,Crash,CrashOutBuffer,ConvertedFiles,OutgoingFiles);
 
     if ConvertedFiles.Count>0 then
@@ -581,7 +585,7 @@ begin { FidoNetcall }
         result:=ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles);
         if result<>0 then begin
           trfehler(713,30);  { 'Fehler beim Packen!' }
-          raise Exception.Create('');
+          raise EFido.Create('');
           end;
         end
       else
@@ -661,7 +665,9 @@ begin { FidoNetcall }
       end;
 
   except
-    // ignore exceptions
+    on E: EFido do;
+    else
+      raise; 
     end;
 
   // let's clean up
@@ -896,6 +902,9 @@ end;
 
 {
   $Log$
+  Revision 1.33  2002/05/26 12:29:07  ma
+  - raise unexpected exceptions
+
   Revision 1.32  2002/04/14 12:00:55  mk
   - use SafeDeleteFile
 
