@@ -32,6 +32,7 @@ uses
   maus2,mouse,resource,xpglobal,
   xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
 
+function  Netz_Typ(nt:byte):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure BoxSelProc(var cr:customrec);
 procedure GruppenSelproc(var cr:customrec);
@@ -132,7 +133,22 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       pp_da     : boolean;    { unversandte Nachrichten vorhanden }
       amvfield  : integer;    { EditDiverses }
       downprotnr: integer;    { Edit/Point - Download-Protokoll }
+      MailInServerFld : integer; { Name MailInServer RFC/Client }
 
+const own_Nt    : byte = 255;
+        { Netztyp f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      own_Name  : string[BoxNameLen] = '';
+        { Boxname f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      showErrors: boolean = true;
+        { Flag fÅr 'addServersTest' in xp9sel.pas }
+      BfgToBoxOk: boolean = true;
+        { Flag fÅr 'ChkAddServers' in xp7.inc }
+      maxbox    : byte = maxboxen;
+        { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
+
+      delete_on_cDel  : boolean = false; { Steuerung des Verhaltens...   }
+      leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
+      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfÅgen }
 
 
 function CreateServerFilename(d: db; nt:byte; const boxname:string):string;
@@ -667,15 +683,6 @@ var d         : DB;
     directsel : string;
     nameofs   : byte;
 
-  function Netz_Typ(nt:byte):string;
-  var
-    i: Integer;
-  begin
-    Netz_Typ:=ntName(nt_Netcall);
-    for i:=0 to High(SupportedNetTypes) do
-      if nt=SupportedNetTypes[i] then Netz_Typ:=ntName(SupportedNetTypes[i]);
-  end;
-
   procedure displine(i:integer);
   var s1,s2,s3: string;
       limit,grnr : longint;
@@ -755,13 +762,14 @@ var d         : DB;
     end;
     if not setdefault and (i=p) then attrtxt(col.colsel2bar)
     else attrtxt(col.colsel2box);
-    mwrt(x+1,y+i,s);
+    fwrt(x+1,y+i,s);
   end;
 
   procedure display;
   var i : integer;
       b : boolean;
   begin
+    moff;
     if drec[1]=0 then begin
       dbGoTop(d); b:=true; end
     else begin
@@ -772,25 +780,27 @@ var d         : DB;
       end;
     fillchar(drec,sizeof(drec),0);
     i:=1;
-    while (i<=gl) and not dbEOF(d) do begin
+    while (i<=gl) and not dbEOF(d) do
+    begin
       displine(i);
       dbSkip(d,1);
       inc(i);
-      end;
+    end;
     attrtxt(col.colsel2box);
     if i<=gl then begin
       moff;
       clwin(x+1,x+width,y+i,y+gl);
       mon;
       end;
-    mwrt(x,y+1,iifc(b,'≥',#30));
-    mwrt(x,y+gl,iifc(dbEOF(d),'≥',#31));
+    fwrt(x,y+1,iifc(b,'≥',#30));
+    fwrt(x,y+gl,iifc(dbEOF(d),'≥',#31));
     if i=1 then begin
       attrtxt(col.colsel2bar);
-      mwrt(x+1,y+1,sp(width));
-      end;
+      fwrt(x+1,y+1,sp(width));
+    end;
     aufbau:=false;
     p0:=p;
+    mon;
   end;
 
   {$I xpconfigedit-servers.inc}
@@ -978,7 +988,7 @@ begin { --- UniSel --- }
       end
     else begin
       gotoxy(x+length(directsel)+nameofs,y+p);
-      get(t,curon);
+      get(t,curoff);
       end;
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
@@ -1104,16 +1114,23 @@ end;
 
 { fÅr maske.CustomSel }
 
-procedure BoxSelProc(var cr:customrec);
-var
-  TempBoxPar: BoxRec;
+
+function Netz_Typ(nt:byte):string;
+var i : integer;
 begin
-  TempBoxPar := BoxPar^;
-  with cr do begin
+  Netz_Typ:=ntName(nt_Netcall);
+  for i:=0 to enetztypen-1 do
+    if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
+end;
+
+
+procedure BoxSelProc(var cr:customrec);
+begin
+  with cr do
+  begin
     s:=UniSel(1,false,s);
     brk:=(s='');
-    end;
-  BoxPar^ := TempBoxPar;
+  end;
 end;
 
 
@@ -1621,6 +1638,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/01/19 10:27:46  mk
+  - Big 3.40 Update Part II
+
   Revision 1.36  2002/01/09 02:40:56  mk
   - fixed DirSepa for UnixFS
 
