@@ -47,15 +47,15 @@ type fdate = packed record
 
 function  schaltj(jahr:integer):boolean;
 function  ddow(dd:fdate):byte;
-function  dow(d:string):byte;           { Wochentag 1..7 }
-function  dowst(d:string):string;       { Wochentag Mo..So }
+function  dow(const d:string):byte;           { Wochentag 1..7 }
+function  dowst(const d:string):string;       { Wochentag Mo..So }
 
 procedure schalt(jahr:integer);         { Schaltjahr-Korrektur }
 procedure incd(var d);
 procedure decd(var d);
-function  prevd(d:datetimest):datetimest;
-function  nextd(d:datetimest):datetimest;
-function  sommer(d:datetimest):boolean;   { Sommerzeit? }
+function  prevd(const d:datetimest):datetimest;
+function  nextd(const d:datetimest):datetimest;
+function  sommer(const d:datetimest):boolean;   { Sommerzeit? }
 
 implementation
 
@@ -110,7 +110,7 @@ begin
 end;
 
 
-function prevd(d:datetimest):datetimest;
+function prevd(const d:datetimest):datetimest;
 var dat : fdate;
     res : integer;
 begin
@@ -124,7 +124,7 @@ begin
 end;
 
 
-function nextd(d:datetimest):datetimest;
+function nextd(const d:datetimest):datetimest;
 var dat : fdate;
     res : integer;
 begin
@@ -159,7 +159,7 @@ begin
 end;
 
 
-function dow(d:string):byte;
+function dow(const d:string):byte;
 var dd  : fdate;
     res : integer;
 begin
@@ -170,7 +170,7 @@ begin
 end;
 
 
-function dowst(d:string):string;       { Wochentag Mo..So }
+function dowst(const d:string):string;       { Wochentag Mo..So }
 begin
   dowst:=copy('MoDiMiDoFrSaSo',dow(d)*2-1,2);
 end;
@@ -178,7 +178,7 @@ end;
 
 { letzter Sonntag im M„rz - letzter Sonntag im September }
 
-function sommer(d:datetimest):boolean;
+function sommer(const d:datetimest):boolean;
 var t,m : byte;
     res : integer;
 begin
@@ -190,6 +190,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.2  2001/08/11 20:16:28  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.5.2.1  2001/07/01 15:42:12  my
   SV:- moved unit to overlay
 

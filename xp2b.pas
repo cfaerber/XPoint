@@ -22,7 +22,7 @@ uses crt, xpcfg,
      xp1help,xp5,xpdatum,xpeasy, lfn;
 
 procedure testlock;
-procedure DelTmpfiles(fn:string);
+procedure DelTmpfiles(const fn:string);
 procedure ReadDefaultViewers;
 
 procedure check_date;
@@ -81,7 +81,7 @@ begin
   FileMode := FMRW; { Filemode restaurieren! }
 end;
 
-procedure DelTmpfiles(fn:string);
+procedure DelTmpfiles(const fn:string);
 var sr : searchrec;
 begin
   findfirst(fn,ffAnyFile,sr);

@@ -42,18 +42,18 @@ var   wpstack  : array[1..maxpush] of word;
 procedure normwin;
 procedure clwin(l,r,o,u:word);
 
-procedure rahmen1(li,re,ob,un:byte; txt:string);    { Rahmen ≥ zeichen       }
-procedure rahmen2(li,re,ob,un:byte; txt:string);    { Rahmen ∫ zeichnen      }
-procedure rahmen3(li,re,ob,un:byte; txt:string);    { Special-Rahmen         }
-procedure rahmen1d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ≥ zeichen }
-procedure rahmen2d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ∫ zeichnen}
-procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
+procedure rahmen1(li,re,ob,un:byte; const txt:string);    { Rahmen ≥ zeichen       }
+procedure rahmen2(li,re,ob,un:byte; const txt:string);    { Rahmen ∫ zeichnen      }
+procedure rahmen3(li,re,ob,un:byte; const txt:string);    { Special-Rahmen         }
+procedure rahmen1d(li,re,ob,m,un:byte; const txt:string); { Doppelrahmen ≥ zeichen }
+procedure rahmen2d(li,re,ob,m,un:byte; const txt:string); { Doppelrahmen ∫ zeichnen}
+procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; const txt:string);
 procedure wshadow(li,re,ob,un:word);                { 8-Schatten }
 
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
+procedure wpull(x1,x2,y1,y2:byte; const text:string; var handle:word);
 procedure wrest(handle:word);
 procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
                 var n:word; var brk:boolean);
@@ -65,7 +65,7 @@ procedure wpop;
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
-procedure Wrt(const x,y:word; const s:string);
+procedure Wrt(x,y:byte; const s:string);
 { Schreiben eines Strings, wie Write, CursorPosition
   wird aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
@@ -73,7 +73,7 @@ procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der LocalScreen wird wenn nîtig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
-procedure FWrt(const x,y:word; const s:string);
+procedure FWrt(x,y: word; const s:string);
 
 
 { ========================= Implementation-Teil =========================  }
@@ -263,13 +263,13 @@ asm
 @wcende: call   mon
 end;
 
-procedure Wrt(const x,y:word; const s:string);
+procedure Wrt(x,y:byte; const s:string);
 begin
   gotoxy(x,y);
   write(s);
 end; { Wrt }
 
-procedure FWrt(const x,y:word; const s:string); assembler;
+procedure FWrt(x,y: Word; const s:string); assembler;
 asm
          push ds
          cld
@@ -302,7 +302,7 @@ begin
 end;
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
-procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; const txt:string);
 var la           : byte;
     ls,rs,os,us,
     i,nx,ny,del  : byte;
@@ -351,7 +351,7 @@ begin
   window(1,1,80,25);
 end;
 
-procedure rahmen1(li,re,ob,un:byte; txt:string);
+procedure rahmen1(li,re,ob,un:byte; const txt:string);
 begin
   normtxt;
   moff;
@@ -365,7 +365,7 @@ begin
 end;
 
 
-procedure rahmen2(li,re,ob,un:byte; txt:string);
+procedure rahmen2(li,re,ob,un:byte; const txt:string);
 begin
   normtxt;
   moff;
@@ -378,7 +378,7 @@ begin
 end;
 
 
-procedure rahmen3(li,re,ob,un:byte; txt:string);
+procedure rahmen3(li,re,ob,un:byte; const txt:string);
 begin
   normtxt;
   moff;
@@ -391,14 +391,14 @@ begin
 end;
 
 
-Procedure rahmen1d(li,re,ob,m,un:byte; txt:string);
+Procedure rahmen1d(li,re,ob,m,un:byte; const txt:string);
 begin
   rahmen1(li,re,ob,un,txt);
   mwrt(li,m,hbar(re-li+1));
 end;
 
 
-Procedure rahmen2d(li,re,ob,m,un:byte; txt:string);
+Procedure rahmen2d(li,re,ob,m,un:byte; const txt:string);
 begin
   rahmen2(li,re,ob,un,txt);
   mwrt(li,m,'Ã'+dup(re-li-1,'Õ')+'π');
@@ -415,7 +415,7 @@ begin
 end;
 
 
-Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
+Procedure wpull(x1,x2,y1,y2:byte; const text:string; var handle:word);
 var
   i : byte;
   j: Integer;
@@ -728,6 +728,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36.2.3  2001/08/11 20:16:28  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.36.2.2  2001/05/24 18:53:09  mk
   - 32 Bit Teile entfernt
 

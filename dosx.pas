@@ -40,7 +40,7 @@ procedure GoDir(path:pathstr);
 function  OutputRedirected:boolean;
 function  ConfigFILES:byte;                  { FILES= .. }
 function  FreeFILES(maxfiles:byte):word;     { freie Files; max. 255 }
-function  IsDevice(fn:pathstr):boolean;
+function  IsDevice(const fn:pathstr):boolean;
 
 procedure XIntr(intno:byte; var regs:registers);   { DPMI-kompatibler Intr }
 function  DPMIallocDOSmem(paras:word; var segment:word):word;
@@ -280,7 +280,7 @@ begin
 end;
 
 
-function IsDevice(fn:pathstr):boolean;
+function IsDevice(const fn:pathstr):boolean;
 var f    : file;
     regs : registers;
 begin
@@ -302,6 +302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.2  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.17.2.1  2000/06/22 17:13:44  mk
   - 32 Bit Teile entfernt
 

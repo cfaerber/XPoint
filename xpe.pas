@@ -24,11 +24,11 @@ uses
 
 const EditXkeyfunc : EdTProc = nil;
 
-procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
-procedure SigEdit(datei:string);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure SigEdit(const datei:string);
 procedure EditText;
 procedure Notepad;
-procedure EditSetbetreff(betr:string; maxlen:byte);
+procedure EditSetbetreff(const betr:string; maxlen:byte);
 function  EditGetBetreff:string;
 
 function  EditKeyFunc(var t:taste):boolean;
@@ -236,7 +236,7 @@ begin
 end;
 
 
-procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
 const inited : boolean = false;
       EditFusszeile = false;
 var   ed     : ECB;
@@ -284,7 +284,7 @@ end;
 
 { --- Nachrichteneditor ------------------------------------------- }
 
-procedure EditSetbetreff(betr:string; maxlen:byte);
+procedure EditSetbetreff(const betr:string; maxlen:byte);
 begin
   getmem(edbetreff,maxlen+1);
   edbmaxlen:=maxlen;
@@ -323,7 +323,7 @@ end;
 { --- Signatureditor ---------------------------------------------- }
 
 
-procedure SigEdit(datei:string);
+procedure SigEdit(const datei:string);
 var ok   : boolean;
     x,y  : byte;
     n,nn : shortint;
@@ -466,6 +466,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.3  2001/08/11 20:16:30  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.16.2.2  2000/12/12 14:03:57  mk
   - weitere lfn-fixes
 

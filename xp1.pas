@@ -110,8 +110,8 @@ procedure pophp;
 procedure freehelp;
 
 procedure setenable(mnu,nr:byte; flag:boolean);
-procedure setmenup(mnu:string; nr:byte; anew:string);
-procedure setmenupos(mnu:string; newpos:byte);
+procedure setmenup(const mnu:string; nr:byte; const anew:string);
+procedure setmenupos(const mnu:string; newpos:byte);
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
 procedure SetExtraktMenu;
@@ -127,14 +127,14 @@ procedure SetXPborder;
 procedure blindon(total:boolean);
 procedure blindoff;
 procedure getpos(width,height:byte; var x,y:byte);
-procedure openbox(width,height:byte; var txt:string; var x,y:byte; c1,c2:byte);
-procedure msgbox(width,height:byte; txt:string; var x,y:byte);
-procedure diabox(width,height:byte; txt:string; var x,y:byte);
-procedure selbox(width,height:byte; txt:string; var x,y:byte; hell:boolean);
-procedure listbox(width,height:byte; txt:string);
+procedure openbox(width,height:byte; const txt:string; var x,y:byte; c1,c2:byte);
+procedure msgbox(width,height:byte; const txt:string; var x,y:byte);
+procedure diabox(width,height:byte; const txt:string; var x,y:byte);
+procedure selbox(width,height:byte; const txt:string; var x,y:byte; hell:boolean);
+procedure listbox(width,height:byte; const txt:string);
 procedure listboxcol;
-procedure utilbox(l,r,o,u:byte; txt:string);
-procedure dialog(width,height:byte; txt:string; var x,y:byte);
+procedure utilbox(l,r,o,u:byte; const txt:string);
+procedure dialog(width,height:byte; const txt:string; var x,y:byte);
 procedure enddialog;
 procedure closebox;
 procedure moment;
@@ -149,28 +149,28 @@ procedure XP_testbrk(var brk:boolean);
 procedure errsound;
 function  _errsound:boolean;
 procedure signal;              { s. Config/Anzeige/Hilfen }
-procedure fehler(txt:string);
+procedure fehler(const txt:string);
 procedure rfehler(nr:word);
-procedure rfehler1(nr:word; txt:string);
-procedure hinweis(txt:string);
-function  mfehler(b:boolean; txt:string):boolean;
-function  fehlfunc(txt:string):boolean;
-procedure logerror(txt:string);
-procedure tfehler(txt:string; sec:integer);
+procedure rfehler1(nr:word; const txt:string);
+procedure hinweis(const txt:string);
+function  mfehler(b:boolean; const txt:string):boolean;
+function  fehlfunc(const txt:string):boolean;
+procedure logerror(const txt:string);
+procedure tfehler(const txt:string; sec:integer);
 procedure trfehler(nr:word; sec:integer);
-procedure trfehler1(nr:word; txt:string; sec:integer);
-procedure afehler(txt:string; auto:boolean);
+procedure trfehler1(nr:word; const txt:string; sec:integer);
+procedure afehler(const txt:string; auto:boolean);
 procedure arfehler(nr:word; auto:boolean);
-procedure interr(txt:string);
+procedure interr(const txt:string);
 function  ioerror(i:integer; otxt:atext):atext;
 
-procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
+procedure shell(const prog:string; space:word; cls:shortint);  { externer Aufruf }
 
-Procedure Start_OS2(Programm,Parameter,Title:String);
+Procedure Start_OS2(const Programm,Parameter,Title:String);
 
-function  listfile(name,header:string; savescr,listmsg:boolean;
+function  listfile(const name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
-procedure RemoveEOF(fn:pathstr);
+procedure RemoveEOF(const fn:pathstr);
 procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 procedure dosshell;
@@ -198,9 +198,9 @@ function  longdat(l:longint):string;              { Long -> Z-Date  }
 function  ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
 
-function  fdat(dat:string):string;             { Z-Datum -> Datum   }
-function  zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
-function  ftime(dat:string):string;            { Z-Datum -> Uhrzeit }
+function  fdat(const dat:string):string;             { Z-Datum -> Datum   }
+function  zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
+function  ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 function  Zdate:string;               { akt. Datum/Zeit im Z-Format }
 function  fuser(s:string):string;              { Spaces vor/hinter '@' }
 function  aufnahme_string:string;
@@ -225,27 +225,27 @@ function IS_QPC(var betreff:string):boolean;
 function IS_DES(var betreff:string):boolean;
 function IS_PMC(var betreff:string):boolean;
 
-procedure write_lastcall(dat:String);
+procedure write_lastcall(const dat:String);
 
 procedure InitPrinter;
 procedure PrintPage;
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 procedure ExitPrinter;
 
 function  TempFree:longint;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):pathstr;
-procedure _era(fn:pathstr);
-procedure ExErase(fn:pathstr);
+procedure _era(const fn:pathstr);
+procedure ExErase(const fn:pathstr);
 procedure _chdir(p:pathstr);
 function  testmem(size:longint; wait:boolean):boolean;
 
-procedure cm_w(s:string);                     { Command-Mode-Ausgabe }
-procedure cm_wl(s:string);                    { Writeln              }
+procedure cm_w(const s:string);                     { Command-Mode-Ausgabe }
+procedure cm_wl(const s:string);                    { Writeln              }
 procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
-procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+procedure SetBrettGelesen(const brett:string);       { Ungelesenflag des Bretts loeschen }
 
 implementation  {-------------------------------------------------------}
 
@@ -745,7 +745,7 @@ asm
 @ende:
 end; { of Listdisplay }
 
-procedure interr(txt:string);
+procedure interr(const txt:string);
 begin
   moff;
   cm_wl(txt);
@@ -905,7 +905,7 @@ begin
   printlines:=0;
 end;
 
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 begin
   writeln(lst,sp(DruckLira),s);
   inc(printlines);
@@ -1139,7 +1139,7 @@ begin
 end;
 
 
-procedure openbox(width,height:byte; var txt:string; var x,y:byte; c1,c2:byte);
+procedure openbox(width,height:byte; const txt:string; var x,y:byte; c1,c2:byte);
 begin
   blindon(true);
   getpos(width,height,x,y);
@@ -1158,19 +1158,19 @@ begin
 end;
 
 
-procedure msgbox(width,height:byte; txt:string; var x,y:byte);
+procedure msgbox(width,height:byte; const txt:string; var x,y:byte);
 begin
   openbox(min(width,screenwidth),height,txt,x,y,col.colmboxrahmen,col.colmbox);
 end;
 
 
-procedure diabox(width,height:byte; txt:string; var x,y:byte);
+procedure diabox(width,height:byte; const txt:string; var x,y:byte);
 begin
   openbox(width,height,txt,x,y,col.coldiarahmen,col.coldialog);
 end;
 
 
-procedure selbox(width,height:byte; txt:string; var x,y:byte; hell:boolean);
+procedure selbox(width,height:byte; const txt:string; var x,y:byte; hell:boolean);
 begin
   openbox(width,height,txt,x,y,
           iif(hell,col.colselrahmen,col.colsel2rahmen),
@@ -1190,7 +1190,7 @@ begin
     end;
 end;
 
-procedure listbox(width,height:byte; txt:string);
+procedure listbox(width,height:byte; const txt:string);
 var x,y : byte;
 begin
   selbox(width+2,height+2,txt,x,y,true);
@@ -1200,7 +1200,7 @@ begin
 end;
 
 
-procedure utilbox(l,r,o,u:byte; txt:string);
+procedure utilbox(l,r,o,u:byte; const txt:string);
 begin
   blindon(true);
   attrtxt(col.colutility);
@@ -1246,7 +1246,7 @@ begin
 end;
 
 
-procedure dialog(width,height:byte; txt:string; var x,y:byte);
+procedure dialog(width,height:byte; const txt:string; var x,y:byte);
 begin
   diabox(width+2,height+2,txt,x,y);
   inc(x); inc(y);
@@ -1309,7 +1309,7 @@ begin
   end;
 end;
 
-procedure _fehler(var txt:string; hinweis:boolean);
+procedure _fehler(txt:string; hinweis:boolean);
 var x,y   : byte;
     w1,w2 : word;
     lcol  : byte;
@@ -1328,7 +1328,7 @@ begin
   attrtxt(lcol);
 end;
 
-procedure fehler(txt:string);
+procedure fehler(const txt:string);
 begin
   _fehler(txt,false);
 end;
@@ -1343,35 +1343,34 @@ begin
   pophp;
 end;
 
-procedure rfehler1(nr:word; txt:string);
+procedure rfehler1(nr:word; const txt:string);
 begin
-  txt:=getreps2(10000+100*(nr div 100),nr mod 100,txt);
   freeres;
   pushhp(20000+nr);
-  _fehler(txt,false);
+  _fehler(getreps2(10000+100*(nr div 100),nr mod 100,txt),false);
   pophp;
 end;
 
-function mfehler(b:boolean; txt:string):boolean;
+function mfehler(b:boolean; const txt:string):boolean;
 begin
   if not b then _fehler(txt,false);
   mfehler:=not b;
 end;
 
 
-procedure hinweis(txt:string);
+procedure hinweis(const txt:string);
 begin
   _fehler(txt,true);
 end;
 
-function fehlfunc(txt:string):boolean;
+function fehlfunc(const txt:string):boolean;
 begin
   fehler(txt);
   fehlfunc:=true;
 end;
 
 
-procedure logerror(txt:string);
+procedure logerror(const txt:string);
 var f : text;
 begin
   assign(f,Logpath+ErrlogFile);
@@ -1382,7 +1381,7 @@ begin
   if ioresult<>0 then;   { Logpath k”nnte falsch gewesen sein }
 end;
 
-procedure tfehler(txt:string; sec:integer);
+procedure tfehler(const txt:string; sec:integer);
 var x,y : byte;
 begin
   msgbox(length(txt)+16,5,_fehler_,x,y);
@@ -1403,16 +1402,15 @@ begin
   freeres;
 end;
 
-procedure trfehler1(nr:word; txt:string; sec:integer);
+procedure trfehler1(nr:word; const txt:string; sec:integer);
 begin
-  txt:=getreps2(10000+100*(nr div 100),nr mod 100,txt);
   freeres;
   pushhp(20000+nr);
-  tfehler(txt,sec);
+  tfehler(getreps2(10000+100*(nr div 100),nr mod 100,txt),sec);
   pophp;
 end;
 
-procedure afehler(txt:string; auto:boolean);
+procedure afehler(const txt:string; auto:boolean);
 begin
   if auto then
     tfehler(txt,20)
@@ -1497,12 +1495,12 @@ begin
 end;
 
 
-function fdat(dat:string):string;             { Z-Datum -> Datum  }
+function fdat(const dat:string):string;             { Z-Datum -> Datum  }
 begin
   fdat:=copy(dat,5,2)+'.'+copy(dat,3,2)+'.'+left(dat,2);
 end;
 
-function zdow(dat:string):string;             { Z-Datum -> Mo/Di.. }
+function zdow(const dat:string):string;             { Z-Datum -> Mo/Di.. }
 var j : word;
     d : datetimest;
     n : integer;
@@ -1517,7 +1515,7 @@ begin
 end;
 
 
-function ftime(dat:string):string;            { Z-Datum -> Uhrzeit }
+function ftime(const dat:string):string;            { Z-Datum -> Uhrzeit }
 begin
   ftime:=copy(dat,7,2)+':'+copy(dat,9,2);
 end;
@@ -1727,7 +1725,7 @@ end;
 
 { Datum des letzten Netcalls merken }
 
-procedure write_lastcall(dat:String);
+procedure write_lastcall(const dat:String);
 var t : text;
 begin
   assign(t,ownpath+NewDateFile);
@@ -1919,7 +1917,7 @@ begin
 end;
 
 
-procedure _era(fn:pathstr);
+procedure _era(const fn:pathstr);
 var f : file;
 begin
   assign(f,fn);
@@ -1928,7 +1926,7 @@ begin
     trfehler1(4,ustr(fn),30);   { 'Kann '+ustr(fn)+' nicht l”schen!?' }
 end;
 
-procedure ExErase(fn:pathstr);
+procedure ExErase(const fn:pathstr);
 begin
   if exist(fn) then _era(fn);
 end;
@@ -2033,7 +2031,7 @@ begin
   MsgidIndex:=CRC32Str(mid);
 end;
 
-procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+procedure SetBrettGelesen(const brett:string);       { Ungelesenflag des Bretts loeschen }
 var b    : byte;                               { wenn keine ungelesenen Nachrichten }
     nope : boolean;
     rec  : longint;
@@ -2057,6 +2055,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.21  2001/08/11 20:16:29  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.48.2.20  2001/08/11 16:38:00  mk
   - XP1.pas is now overlay
   - resized Overlaybuffer

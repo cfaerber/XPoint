@@ -10,7 +10,7 @@
 
 { DOS-Shell }
 
-function repfile(var prog,name:string):string;
+function repfile(const prog,name:string):string;
 var p : byte;
 begin
   p:=pos('$FILE',ustr(prog));
@@ -41,7 +41,7 @@ procedure resetvideo; forward;
 const trackpath : boolean = false;
 
 
-procedure shell(prog:string; space:word; cls:shortint);  { Externer Aufruf }
+procedure shell(const prog:string; space:word; cls:shortint);  { Externer Aufruf }
 var sm2t     : boolean;
     _xp_     : string[4];
     maussave : mausstat;
@@ -177,7 +177,7 @@ Function DosStartSession(Var Data:TStartData):Word; Assembler;
         pop     ds
  End;
 
-Procedure Start_OS2(Programm,Parameter,Title:String);
+Procedure Start_OS2(const Programm,Parameter,Title:String);
 Var StartData:TStartData;
     Temp:String;
     PrgName,PrgParam,PrgTitle:PChar;
@@ -276,7 +276,7 @@ end;
 { 0=normal, -1=Minus, 1=Plus, 2=links, 3=rechts, 4=P/B/^P/^B (ListKey),
   5="0", 6=PgUp, 7=PgDn }
 
-function listfile(name,header:string; savescr,listmsg:boolean;
+function listfile(const name,header:string; savescr,listmsg:boolean;
                   cols:shortint):shortint; { Lister }
 var brk    : boolean;
     p      : scrptr;
@@ -417,7 +417,7 @@ begin
 end;
 
 
-procedure RemoveEOF(fn:pathstr);
+procedure RemoveEOF(const fn:pathstr);
 var f : file;
     b : byte;
 begin
@@ -511,6 +511,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.8  2001/08/11 20:16:29  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.24.2.7  2001/07/31 16:31:30  mk
   - fixed last commit, now using ChangeFileExt
 

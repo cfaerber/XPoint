@@ -183,7 +183,7 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 Procedure clrscr;                            { statt CRT.clrscr         }
-Procedure DispHard(x,y:byte; s:string);      { String ohne berÅcksicht. }
+Procedure DispHard(x,y:byte; const s:string);      { String ohne berÅcksicht. }
                                              { des akt. Windows ausgeb. }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
 procedure DosOutput;                         { auf CON: umschalten      }
@@ -705,7 +705,7 @@ begin
   crt.clrscr;
 end;
 
-Procedure disphard(x,y:byte; s:string);
+Procedure disphard(x,y:byte; const s:string);
 var
   offx : word;
   i    : byte;
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.7  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.38.2.6  2001/08/05 11:45:31  my
   - added new unit XPOVL.PAS ('uses')
 

@@ -38,7 +38,7 @@ const starting : boolean = true;
 var oldexit : pointer;
 
 
-procedure stop(txt:string);
+procedure stop(const txt:string);
 begin
   writeln;
   writeln(txt);
@@ -242,9 +242,6 @@ begin
 
 end;
 
-const
-  Open: String = 'Open';
-
 begin
   checkbreak:=false;
   if swap(dosversion)<MinVersion then
@@ -263,8 +260,8 @@ begin
   {$IFNDEF NO386 }      { Die XT Version darf hier nicht testen }
   if Test8086 < 2 then
   begin
-    Writeln(Open+'XP l„uft in dieser Version erst ab 386er CPUs mit CoProzessor.');
-    Writeln('Eine XT-Version kann von der Homepage http://www.' + Open+ 'xp.de bezogen werden.');
+    Writeln('OpenXP l„uft in dieser Version erst ab 386er CPUs mit CoProzessor.');
+    Writeln('Eine XT-Version kann von der Homepage http://www.' + 'openxp.de bezogen werden.');
     runerror := false;
     Halt(1);
   end;
@@ -299,6 +296,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.11  2001/08/11 20:16:30  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.18.2.10  2001/08/11 16:38:00  mk
   - XP1.pas is now overlay
   - resized Overlaybuffer

@@ -75,7 +75,7 @@ function  GetFileExt(const p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 function ChangeFileExt(const Filename, Ext: string): string;
 
-function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
+function  ioerror(i:integer; const otxt:atext):atext; { Fehler-Texte            }
 procedure WriteBatch(const s:string);                 { Batchfile erstellen     }
 function RenameDir(Const OldName, NewName : String) : Boolean;
 
@@ -346,7 +346,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function ioerror(i:integer; otxt:atext):atext;
+function ioerror(i:integer; const otxt:atext):atext;
 begin
   case i of
       2 : ioerror:='Datei nicht gefunden';
@@ -753,6 +753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.15  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.41.2.14  2001/08/11 17:19:44  my
   JG:- 'Testshare' now in ASM
 

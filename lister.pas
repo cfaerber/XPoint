@@ -69,14 +69,14 @@ procedure ListInitEMS(kb:longint);
 procedure SetListsize(_l,_r,_o,_u:byte);
 procedure app_l(ltxt:string);           { Zeile anh„ngen }
 procedure list_convert(cp:listConvert);
-procedure list_readfile(fn:string; ofs:word);
+procedure list_readfile(const fn:string; ofs:word);
 procedure ListSetStartpos(sp:longint);
 procedure list(var brk:boolean);
 procedure closelist;
 
 procedure setlistcol(lcol:listcol);
 procedure setlistcursor(cur:curtype);
-procedure listheader(s:string);
+procedure listheader(const s:string);
 procedure listwrap(spalte:byte);
 procedure listVmark(mp:markfunc);
 procedure listCRp(crp:listCRproc);
@@ -630,7 +630,7 @@ begin
   lXMSpage:=0; lXMSoffs:=1;    { bei Offset 1 beginnen, wg. NIL-Pointer }
 end;
 
-procedure list_readfile(fn:string; ofs:word);
+procedure list_readfile(const fn:string; ofs:word);
 type barr = array[0..65000] of byte;
 var f  : file;
     s     : string;
@@ -1324,7 +1324,7 @@ begin
   alist^.col:=lcol;
 end;
 
-procedure listheader(s:string);
+procedure listheader(const s:string);
 begin
   alist^.txt:=left(s,40);
 end;
@@ -1514,6 +1514,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.10  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.19.2.9  2001/08/05 11:45:31  my
   - added new unit XPOVL.PAS ('uses')
 

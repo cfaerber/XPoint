@@ -62,13 +62,13 @@ type   arcpath = string[79];
                  end;
 
 
-function  ArcType(fn:arcpath):shortint;
+function  ArcType(const fn:arcpath):shortint;
 function  ArcRestricted(atyp:shortint):boolean;
-procedure OpenArchive(fn:arcpath; atyp:shortint; var ar:ArchRec);  { 0=detect }
+procedure OpenArchive(const fn:arcpath; atyp:shortint; var ar:ArchRec);  { 0=detect }
 procedure ArcNext(var ar:ArchRec);
 procedure CloseArchive(var ar:ArchRec);
-function  UnSFX(name:arcpath; typ:shortint):boolean;
-function  ArchiveOk(fn:arcpath):boolean;
+function  UnSFX(const name:arcpath; typ:shortint):boolean;
+function  ArchiveOk(const fn:arcpath):boolean;
 
 
 implementation   { ------------------------------------------------- }
@@ -292,7 +292,7 @@ end;
 
 { negativer Wert: SFX }
 
-function ArcType(fn:arcpath):shortint;
+function ArcType(const fn:arcpath):shortint;
 var f    : file;
     idr  : record
              case integer of
@@ -476,7 +476,7 @@ begin
 end;
 
 
-procedure OpenArchive(fn:arcpath; atyp:shortint; var ar:ArchRec);  { 0=detect }
+procedure OpenArchive(const fn:arcpath; atyp:shortint; var ar:ArchRec);  { 0=detect }
 var zoohd : record
               txt     : array[0..19] of char;
               id      : longint;
@@ -892,7 +892,7 @@ begin
 end;
 
 
-function UnSFX(name:arcpath; typ:shortint):boolean;
+function UnSFX(const name:arcpath; typ:shortint):boolean;
 const maxbuf = 60000;
 var f1,f2 : file;
     rr    : word;
@@ -978,7 +978,7 @@ begin
 end;
 
 
-function ArchiveOk(fn:arcpath):boolean;
+function ArchiveOk(const fn:arcpath):boolean;
 var ar : archrec;
 begin
   OpenArchive(fn,0,ar);
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2001/08/11 20:16:26  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.10.2.2  2000/10/26 13:05:29  mk
   - Fixed Bug #112798: Lange Dateinamen in Archiven
 

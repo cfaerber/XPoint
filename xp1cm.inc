@@ -11,7 +11,7 @@
 
 const cm = false;
 
-procedure cm_w(s:string);
+procedure cm_w(const s:string);
 begin
   if cm then write(s)
   else write(s);
@@ -37,7 +37,7 @@ begin
     writeln;
 end;
 
-procedure cm_wl(s:string);
+procedure cm_wl(const s:string);
 begin
   cm_w(s);
   cm_wln;

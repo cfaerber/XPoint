@@ -83,10 +83,10 @@ procedure readHmask(mhelpnr:word; var brk:boolean); { .. mit Hilfsseiten }
 function  mmodified:boolean;                        { Inhalt ge„ndert   }
 procedure closemask;                                { Maske schlieáen   }
 procedure readstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
-                     chml:string; var brk:boolean);
+                     const chml:string; var brk:boolean);
 procedure mbeep;
 procedure DefaultColor(var col:colrec);             { col <- Default    }
-procedure masklanguage(_yesno:string);              { 'JN'              }
+procedure masklanguage(const _yesno:string);              { 'JN'              }
 
 procedure mdummyp(var inhalt:string);               { Dummy fr Test0   }
 function  mdummyf(var inhalt:string):boolean;       { Dummy fr Test1/2 }
@@ -102,7 +102,7 @@ procedure maskrahmen(rtyp,l,r,o,u:byte);     { Rahmentyp setzen }
 procedure masksetstat(keepon_esc,autosel:boolean; selkey:taste);
 procedure masksetfillchar(c:char);           { Fllzeichen setzen }
 procedure masksethelp(hx,hy,hl:byte; center:boolean);   { Hilfszeile einst. }
-procedure masksetfninfo(x,y:byte; text:string; fillc:char);
+procedure masksetfninfo(x,y:byte; const text:string; fillc:char);
 procedure masksetwrapmode(wm:wrapmodes);
 procedure masksetautojump(aj:byte);     { Sprungweite bei cr am unteren Rand }
 procedure masksetqfunc(qfunc:quitfunc);
@@ -505,7 +505,7 @@ end;
 
 { Info-Text fr SelKey einstellen }
 
-procedure masksetfninfo(x,y:byte; text:string; fillc:char);
+procedure masksetfninfo(x,y:byte; const text:string; fillc:char);
 begin
   with amaskp^.stat do begin
     fnix:=x; fniy:=y;
@@ -1099,7 +1099,7 @@ end;
 
 
 procedure readstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
-                     chml:string; var brk:boolean);
+                     const chml:string; var brk:boolean);
 begin
   openmask(x,x+length(text)+displ+2,y,y,false);
   maskrahmen(0,0,0,0,0);
@@ -1263,7 +1263,7 @@ begin
 end;
 
 
-procedure masklanguage(_yesno:string);               { 'JN' }
+procedure masklanguage(const _yesno:string);               { 'JN' }
 begin
   yesno:=_yesno;
 end;
@@ -1298,6 +1298,9 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.2  2001/08/11 20:16:28  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.8.2.1  2001/08/05 11:45:32  my
   - added new unit XPOVL.PAS ('uses')
 

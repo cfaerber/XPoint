@@ -14,11 +14,11 @@ function UpdCRC16(cp: byte; crc: smallword): smallword;
 function UpdCRC32(octet: byte; crc: longint) : longint;
 
 {Explizit: CRC wird blockweise berechnet}
-function CRC16Block(var data; size:smallword): smallword;
+function CRC16Block(const data; size:smallword): smallword;
 { Das L„ngenbyte wird mit einbezogen }
-function CRC16StrXP(s:string): smallword;
+function CRC16StrXP(const s:string): smallword;
 { Hier wird nur der String selbst genutzt }
-function CRC16Str(s:string): smallword;
+function CRC16Str(const s:string): smallword;
 
 function CRC32Block(var data; size: word): longint;
 function CRC32Str(s: string): longint;
@@ -83,7 +83,7 @@ BEGIN { UpdCRC }
    UpdCRC16 := crctab[((crc SHR 8) AND $FF)] XOR ((crc AND $FF)SHL 8) XOR cp
 END;
 
-function _CRC16(var data; size:smallword):smallword;
+function _CRC16(const data; size:smallword):smallword;
 type ba = array[0..65530] of byte;
 var c16,i : smallword;
 begin
@@ -94,7 +94,7 @@ begin
   _CRC16:=c16;
 end;
 
-function CRC16Block(var data; size:smallword):smallword;
+function CRC16Block(const data; size:smallword):smallword;
 type ba = array[0..65530] of byte;
 var c16,i : smallword;
 begin
@@ -108,12 +108,12 @@ begin
   CRC16Block:=c16;
 end;
 
-function Crc16StrXP(s:string):smallword;
+function Crc16StrXP(const s:string):smallword;
 begin
   Crc16StrXP:=_CRC16(s,length(s)+1);
 end;
 
-function Crc16Str(s:string):smallword;
+function Crc16Str(const s:string):smallword;
 begin
   Crc16Str:=_CRC16(s[1],length(s));
 end;
@@ -211,6 +211,9 @@ end.
 
 {
   $Log$
+  Revision 1.2.2.2  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.2.2.1  2000/07/01 11:17:26  mk
   - 32 Bit Teile entfernt
 

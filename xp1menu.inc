@@ -190,7 +190,7 @@ end;
 { &n :  Mennummer             }
 { &p :  Position im Menstring }
 
-procedure findnr(var mnu:string; nr:byte; var n,p:byte);
+procedure findnr(mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
   LoString(mnu);
@@ -217,7 +217,7 @@ end;
 
 { ACHTUNG!! es muss auf dem Heap genuf Platz fr menu[n]^ belegt sein!! }
 
-procedure setmenup(mnu:string; nr:byte; anew:string);
+procedure setmenup(const mnu:string; nr:byte; const anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
@@ -230,7 +230,7 @@ end;
 
 { neue Men-Position setzen }
 
-procedure setmenupos(mnu:string; newpos:byte);
+procedure setmenupos(const mnu:string; newpos:byte);
 var n,p : byte;
 begin
   findnr(mnu,1,n,p);
@@ -606,6 +606,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11.2.1  2001/08/11 20:16:29  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.11  2000/05/17 16:11:04  ml
   Zeilenanzahl aendern nun auch in Win32
 

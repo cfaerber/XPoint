@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,7 @@
 
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp2c;
 
@@ -1501,6 +1500,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.25  2001/08/11 20:16:29  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.39.2.24  2001/08/11 10:58:35  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

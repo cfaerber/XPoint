@@ -54,7 +54,7 @@ procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
 function  inithelp(name:pathstr; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
 procedure sethelppos(_x,_y,height:word);
-procedure help_printable(printchar:taste; pinit,pexit:string);
+procedure help_printable(printchar:taste; const pinit,pexit:string);
 
 procedure IHS(page:word);
 procedure releasehelp;
@@ -780,7 +780,7 @@ begin     { of IHS }
 end;
 
 
-procedure help_printable(printchar:taste; pinit,pexit:string);
+procedure help_printable(printchar:taste; const pinit,pexit:string);
 begin
   printch:=printchar;
   if _pinit<>nil then freemem(_pinit,length(_pinit^)+1);
@@ -798,6 +798,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.7  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.13.2.6  2001/06/21 21:26:50  my
   SV:- changed designator for ASCII values "nnn" from "\annn" to "{nnn}"
        (also due to compatibility with jgXP)

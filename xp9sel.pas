@@ -61,7 +61,7 @@ function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
 function  is_mailaddress(const s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
-function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
+function  ReadExtCfgFilename(const txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
 procedure SetUsername(s:string);
 
 implementation
@@ -70,7 +70,7 @@ uses
   xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm,xpovl;
 
 
-function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
+function  ReadExtCfgFilename(const txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
 var   x,y,n   : byte;
       brk     : boolean;
       fn      : string[20];
@@ -904,6 +904,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.17  2001/08/11 20:16:30  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.1.2.16  2001/08/11 10:58:38  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

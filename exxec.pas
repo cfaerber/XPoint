@@ -40,7 +40,7 @@ var
 
 { 0=ok, 1=Swap-Fehler }
 
-function Xec(var prog:string; space,envspace:word; var prompt:string;
+function Xec(prog:string; space,envspace:word; var prompt:string;
              var errorlevel:word):byte;
 
 
@@ -70,7 +70,7 @@ function exec2(var dpath,para:string; swapstart,swapmore:word; envir:pointer):wo
 external;
 {$L exxec.obj}
 
-function Xec(var prog:string; space,envspace:word; var prompt:string;
+function Xec(prog:string; space,envspace:word; var prompt:string;
              var errorlevel:word):byte;
 {$ifndef ver55}
   const freeptr : pointer = nil;
@@ -412,6 +412,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.5  2001/08/11 20:16:27  mk
+  - added const parameters if possible, saves about 2.5kb exe
+
   Revision 1.20.2.4  2000/12/12 14:03:55  mk
   - weitere lfn-fixes
 
