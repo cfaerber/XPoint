@@ -26,6 +26,8 @@
 
 { OS speceific uses }
 
+uses xpcurses;
+
 { local declaritions }
 
 { local functions }
@@ -33,17 +35,16 @@
 { implementation of the interface }
 
 procedure SysDelay(MS: Longint);
-var
-  StartTime, ActualTime: TDateTime;
 begin
-  StartTime := Time;
-  repeat
-    ActualTime := Time;
-  until ((StartTime + MS) >= ActualTime);
+  mdelay(MS);
 end;
 
 {
         $Log$
+        Revision 1.3  2001/10/27 16:14:14  ma
+        - fixed SysDelay
+          (fixed modem netcall malfunctions)
+
         Revision 1.2  2001/08/03 21:40:42  ml
         - compilable with fpc (linux)
 
