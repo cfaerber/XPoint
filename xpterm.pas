@@ -9,6 +9,7 @@
 { $Id$ }
 
 { CrossPoint - Terminal und Scripts }
+{ 2000 OpenXP Team }
 
 {$I XPDEFINE.INC}
 
@@ -16,19 +17,10 @@ unit xpterm;
 
 interface
 
-
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,
-{$IFDEF CAPI }
-  capi,
-{$ENDIF }
-      resource,xpglobal, xp0,xp1,xp1o2,xp1input;
-
+  {$IFDEF NCRT }xpcurses,{$ELSE }crt,{$ENDIF }
+  sysutils,dos,typeform,fileio,inout,keys,datadef,database,maus2,
+  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,Modem,Debug;
 
 function RunScript(test:boolean; scriptfile:string;
                    online,relogin:boolean; slog:textp):shortint;
@@ -61,7 +53,6 @@ const ansimode : boolean = true;
 var termlines    : byte;
     IgnCD,IgnCTS : boolean;
     comnr        : byte;
-    ISDN         : boolean;
     recs,lrecs   : string;
     display      : boolean;
     log          : boolean;
@@ -69,7 +60,6 @@ var termlines    : byte;
     la           : byte;
     open_log     : boolean;
     in7e1,out7e1 : boolean;
-    cps          : cpsrec;
     orgfossil    : boolean;
 
     ansichar     : boolean;       { ANSI-Sequenz aktiv }
@@ -103,19 +93,19 @@ end;
 procedure termscr;
 begin
   attrtxt(7);
-  window(1,1,screenwidth,screenlines);
+//  window(1,1,screenwidth,screenlines);
   moff;
   clrscr;
   mon;
   if TermStatus then begin
     termlines:=screenlines-1;
     ShowTermstatus;
-    window(1,2,screenwidth,termlines+1);
+//    window(1,2,screenwidth,termlines+1);
     end
   else begin
     termlines:=screenlines;
     m2t:=false;
-    window(1,1,screenwidth,termlines); 
+//    window(1,1,screenwidth,termlines); 
     windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
@@ -131,7 +121,7 @@ begin
   savecursor;
   mx:=wherex; my:=wherey;
   inout.cursor(curoff);
-  window(1,1,screenwidth,screenlines);
+//  window(1,1,screenwidth,screenlines);
   gotoxy(mx,my+iif(TermStatus,1,0));
   la:=lastattr;
 end;
@@ -139,9 +129,9 @@ end;
 procedure restwin;
 begin
   if TermStatus then
-    window(1,2,screenwidth,termlines+1)
+//    window(1,2,screenwidth,termlines+1)
   else
-    window(1,1,screenwidth,termlines);
+//    window(1,1,screenwidth,termlines);
   restcursor;
   windmax:=ScreenWidth-1+256*(screenlines-1);
   attrtxt(la);
@@ -208,14 +198,9 @@ begin
   with boxpar^,ComN[boxpar^.bport] do begin
     IgnCD:=IgCD; IgnCTS:=IgCTS;
     comnr:=bport;
-    ISDN:=(comnr>4);
     in7e1:=uucp7e1; out7e1:=uucp7e1;
     end;
 end;
-
-
-procedure sendstr(s:string); forward;
-
 
 procedure add_ansi(c:char);
 const maxpar = 20;
@@ -229,24 +214,16 @@ var parcount : byte;
     i        : integer;
 
   procedure set1;
-  begin
-    if ansipar[1]=0 then ansipar[1]:=1;
-  end;
+  begin if ansipar[1]=0 then ansipar[1]:=1 end;
 
   procedure set2;
-  begin
-    if ansipar[2]=0 then ansipar[2]:=1;
-  end;
+  begin if ansipar[2]=0 then ansipar[2]:=1 end;
 
   procedure savecur;
-  begin
-    mx:=wherex; my:=wherey;
-  end;
+  begin mx:=wherex; my:=wherey end;
 
   procedure restcur;
-  begin
-    gotoxy(mx,my);
-  end;
+  begin gotoxy(mx,my)end;
 
   procedure setcol;
   var at : byte;
@@ -281,7 +258,7 @@ begin
       moff;
       case c of
         'n'     : case ansipar[1] of
-                    6 : sendstr(#27'['+strs(wherey)+';'+strs(wherex)+'R');
+                    6 : CommObj^.SendString(#27'['+strs(wherey)+';'+strs(wherex)+'R',False);
                   end;
         'A'     : begin
                     set1;
@@ -392,74 +369,49 @@ var b : byte;
   end;
 
 begin
-{$IFDEF CAPI }
-   if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
-{$ELSE }
-   if receive(comnr,b) then
-{$ENDIF }
-  if ansichar then add_ansi(char(b))
-  else
-    if ansimode and (b=27) then begin
-      ansichar:=true;
-      ansilen:=0;
-      end
-    else begin
-      if in7e1 then b:=b and $7f;
-      if display then begin
-        moff;
-        if b=9 then write(sp(8-(wherex-1) mod 8))
-        else if b=12 then clrscr
-        else if b<>0 then
-          if termbios then BiosWrite(chr(b))
-          else write(chr(b));
-        mon;
-        end;
-      if (b=13) or (b=10) then begin
-        if open_log then begin
-          openlog(boxpar^.o_logfile);
-          open_log:=false;
-          end;
-        if b=13 then begin
-          if log then writeln(logfile,recs);
-          if log2<>nil then writeln(log2^,recs);
-          end;
-        recs:=''; lrecs:='';
+  if CommObj^.CharAvail then begin
+    b:=Ord(CommObj^.GetChar);
+    if ansichar then add_ansi(char(b))
+    else
+      if ansimode and (b=27) then begin
+        ansichar:=true;
+        ansilen:=0;
         end
-      else
-        if length(recs)<255 then begin
-          SetLength(recs, Length(recs)+1); {inc(byte(recs[0]));}
-          recs[length(recs)]:=chr(b);
-          SetLength(lrecs, Length(lrecs)+1); {inc(byte(lrecs[0]));}
-          lrecs[length(lrecs)]:=LoCase(chr(b));
+      else begin
+        if in7e1 then b:=b and $7f;
+        if display then begin
+          moff;
+          if b=9 then write(sp(8-(wherex-1) mod 8))
+          else if b=12 then clrscr
+          else if b<>0 then
+            if termbios then BiosWrite(chr(b))
+            else write(chr(b));
+          mon;
           end;
-      end;
+        if (b=13) or (b=10) then begin
+          if open_log then begin
+            openlog(boxpar^.o_logfile);
+            open_log:=false;
+            end;
+          if b=13 then begin
+            if log then writeln(logfile,recs);
+            if log2<>nil then writeln(log2^,recs);
+            end;
+          recs:=''; lrecs:='';
+          end
+        else begin recs:=recs+chr(b); lrecs:=lrecs+LoCase(chr(b))end;
+        end;
+  end;
 end;
 
 {$IFDEF Debug }
   {$R+}
 {$ENDIF }
 
-
 procedure tb;
 begin
   testbyte;
   multi2;
-end;
-
-procedure sendstr(s:string);
-var i : byte;
-begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_Sendstr(s)
-  else
-{$ENDIF }
-    for i:=1 to length(s) do begin
-      testbyte;
-      if out7e1 then SetParity(byte(s[i]),true);
-      if IgnCTS then SendByte(comnr,byte(s[i]))
-      else HSendByte(comnr,byte(s[i]));
-      end;
 end;
 
 procedure mdelay(msec:word; show:boolean);   { genaues Delay }
@@ -475,27 +427,6 @@ begin
     end;
 end;
 
-function Carrier:boolean;
-begin
-{$IFDEF CAPI }
-  if ISDN then
-    Carrier:=CAPI_Carrier
-  else
-{$ENDIF }
-  Carrier:=uart.carrier(comnr);
-end;
-
-procedure flushin;
-begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_flushinput
-  else
-{$ENDIF }
-    flushinput(comnr);
-end;
-
-
 procedure aufhaengen;
 var n,i : byte;
 begin
@@ -504,101 +435,13 @@ begin
   attrtxt(15); write(getres(2004)); attrtxt(7);   { trenne Verbindung }
   writeln;
   mon;
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_hangup
-  else
-{$ENDIF }
-  begin
-    n:=5;
-    zaehler[2]:=100;
-    while carrier and not IgnCD and (n>0) do begin
-      tb;tb;tb;
-      dec(n);
-      DropDtr(comnr);
-      i:=1;
-      while (i<=4) and carrier do begin
-        mdelay(500,true); tb;
-        inc(i);
-        end;
-      if carrier then begin
-        SendStr('+++');
-        mdelay(500,true);
-        multi2;
-        mdelay(500,true);
-        end;
-      flushin;
-      end;
-    setdtr(comnr);
-    sendstr(#13); mdelay(300,true);
-    flushin;
-    if Comn[comnr].MExit<>'' then begin
-      SendStr(Comn[comnr].MExit+#13);
-      mdelay(500,true);
-      end;
-    end;
+  Modem.Hangup;
 end;
-
-
-procedure FossilTest;
-begin
-  if comn[comnr].fossil and not FOSSILdetect then begin
-    trfehler(732,30);   { 'Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber' }
-    comn[comnr].fossil:=false;
-    end;
-end;
-
 
 procedure Activate;
 begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_resume
-  else
-{$ENDIF }
-    ActivateCom(comnr,2000,COMn[comnr].u16550);
+{    ActivateCom(comnr,2000,COMn[comnr].u16550);}
 end;
-
-
-procedure sendcomm(s:string);
-var p : byte;
-begin
-  flushin;
-  if not HayesComm or ISDN then exit;
-  repeat
-    p:=cpos('~',s);
-    if p>0 then begin
-      sendstr(left(s,p-1));
-      delete(s,1,p);
-      mdelay(200,true);
-      while received(comnr) do tb;
-      mdelay(850,true);
-      end;
-  until p=0;
-  sendstr(s+#13);
-  zaehler[3]:=COMn[comnr].warten;
-  repeat
-    tb;
-  until (zaehler[3]=0) or (recs='OK') or (recs='0') or (recs='ERROR');
-  repeat
-    tb;
-  until (zaehler[3]=0) or (recs='');   { auf CR warten }
-  mdelay(500,true);
-end;
-
-
-procedure sendmstr(s:string);
-var p : byte;
-begin
-  if not ISDN then
-    while length(trim(s))>1 do begin
-      p:=pos('\\',s);
-      if p=0 then p:=length(s)+1;
-      sendcomm(trim(left(s,p-1)));
-      s:=trim(mid(s,p+2));
-      end;
-end;
-
 
 function initcom:boolean;   { !! ISDN! }
 var d  : DB;
@@ -609,87 +452,21 @@ begin
   fn:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,fn,boxpar);
-  InitCom := true; { MK 12/99 wir gehen davon aus, das die Initialisierung ok lÑuft }
+  InitCom := true;
+
   if TermCOM<>0 then boxpar^.bport:=TermCOM;
   if TermBaud<>0 then boxpar^.baud:=TermBaud;
-  with boxpar^,ComN[boxpar^.bport] do begin
-    GetComData;    { IgnCD etc. }
+  with boxpar^,ComN[boxpar^.bport] do GetComData; { IgnCD etc. }
 
-{$IFDEF CAPI }
-  (* 04.02.2000 MH: HinzugefÅgt! *)
-   if ISDN and not (CAPI_Installed and (CAPI_Register=0)) then begin
-     rfehler(740);   { 'ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert' }
-      initcom:=false;
-     exit;
-    end;
-{$ENDIF }
-
-    orgfossil:=fossil;
-    FossilTest;
-
-  if not ISDN then begin (* 04.02.2000 MH: Um Kollision zu vermeiden *)
-
-    SetComParams(bport,fossil,Cport,Cirq);
-    if OStype<>OS_2 then
-      SaveComState(bport,cps);
-    SetTriggerLevel(tlevel);
-    if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
-    gotoxy(1,4);   { wegen BNU }
-
-  end;
-
-    Activate;
-
-     IgnCD:=IgCD; IgnCTS:=IgCTS;
-      mdelay(300,false);
-     flushin;
-
-{    mdelay(100,false);}
-    if not IgnCTS and not GetCTS(comnr) then mdelay(400,false);
-       { ^^ falls CTS von DTR abhÑngt.. }
-    if not IgnCTS and not GetCTS(comnr) then begin
-
-{$IFDEF CAPI }
-    if ISDN then
-      CAPI_release { 04.02.2000 MH: bei ISDN-CAPI abmelden }
-    else
-{$ENDIF }
-
-      releasecom(comnr);
-      if OStype<>OS_2 then
-        RestComState(comnr,cps);
-      rfehler(2002);     { 'Modem nicht bereit.' }
-      initcom:=false;
-      end
-    else begin
-      termscr;
-      moff;
-      writeln(getres(2005));
-      writeln;
-      mon;
-      if not carrier then begin
-        mdelay(100,true);
-      if not ISDN then
-        sendbyte(comnr,13);
-        mdelay(200,true);
-        if TermInit<>'' then SendMstr(TermInit);
-        end;
-      end;
-    end;
+  InitCom:=CommInit('serial port:2',CommObj);
+  {* Bitte NACH WELCHEN KRITERIEN wird im Original der Comport gewaehlt?!}
+  Modem.CommObj:=CommObj;
 end;
-
 
 procedure TermDeactivateCom;
 begin
-{$IFDEF CAPI }
-  if ISDN then
-    CAPI_suspend
-  else
-{$ENDIF }
-  begin
-    ReleaseCom(comnr);
-    ShellReleased:=true;
-  end;
+  CommObj^.Close; CommObj^.Done;
+  ShellReleased:=true;
 end;
 
 {$IFDEF FPC }
@@ -710,52 +487,8 @@ end;
 
 
 procedure UpDown(auto,download:boolean);
-var s       : string;
-    useclip : boolean;
-label ende;
 begin
-  if exist('zm.exe') then begin
-    SaveWin;
-    SaveCursor;
-    if not download then begin
-      s:='*.*';
-      useclip:=false;
-      if not ReadFilename(getres(2007),s,true,useclip) then begin  { 'Upload' }
-        RestCursor;
-        RestWin;
-        if auto then begin
-          flushin;
-          sendstr(dup(7,^X));
-          mdelay(500,true);
-          end;
-        goto ende;
-        end;
-      end;
-    RestCursor;
-    TermDeactivateCom;
-    with comn[comnr] do
-      shell('zm.exe -c'+iifs(fossil,strs(comnr)+' -f',
-                                    hex(Cport,3)+','+strs(CIrq))+
-                    iifs(IgCD,' -d','')+
-                    iifs(IgCTS,' -h','')+
-                    iifs(UseRTS,' -rts','')+
-                    iifs(u16550,'',' -n')+
-                    iifs(u16550,' -tl'+strs(tlevel),'')+
-                    ' -q '+
-                    iifs(download,'rz '+FilePath,'sz '+s),
-                    300,0);
-    if ShellReleased then begin
-      Activate;
-      ShellReleased:=false;
-      end;
-    RestWin;
-    end;
-ende:
-  recs:=''; lrecs:='';
-  flushin;
-  clearkeybuf;
 end;
-
 
 procedure SwitchStatus;
 var p     : pointer;
@@ -782,28 +515,27 @@ var stat : boolean;
     mcom : byte;        { ** }
     mbaud: longint;     { ** }
 begin
-  TermCOM:=boxpar^.bport;  mcom:=TermCom;   { ** }
-  TermBaud:=boxpar^.baud;  mbaud:=TermBaud; { ** }
+{  TermCOM:=boxpar^.bport;  mcom:=TermCom;
+  TermBaud:=boxpar^.baud;  mbaud:=TermBaud;
   stat:=TermStatus;
   init:=TermInit;
   SaveWin;
   TerminalOptions;
   RestWin;
-  if TermStatus<>stat then
-    SwitchStatus;
+  if TermStatus<>stat then SwitchStatus;
   if (TermCOM<>boxpar^.bport) or (TermBaud<>boxpar^.baud) or
-     ((TermInit<>init) and not carrier) then begin
-    if not carrier then
+     ((TermInit<>init) and not CommObj^.Carrier) then begin
+    if not CommObj^.Carrier then
       if not ISDN then DropDtr(boxpar^.bport);
-    ReleaseCom(boxpar^.bport);    { !! ISDN }
-    if not initcom then begin   { Fehler -> zurÅck auf alte Schnittstelle }
+    ReleaseCom(boxpar^.bport);
+    if not initcom then begin
       comn[boxpar^.bport].fossil:=orgfossil;
-      TermCOM:=mcom;      { ** }
-      TermBaud:=mbaud;    { ** }
+      TermCOM:=mcom;
+      TermBaud:=mbaud;
       SaveConfig;
-      if initcom then;    { ** }
+      if initcom then;
       end;
-    end;
+    end;}
 end;
 
 
@@ -817,20 +549,21 @@ var
   p    : pointer;
   rest : boolean;
 begin
+  Debug.DebugLog('XPFM','Terminal called',1);
   connected:=not direct;
   open_log:=false; log:=false;
   in7e1:=false; out7e1:=false;
   display:=true;
   ansimode:=true;
-  if direct and not initcom then begin
-    comn[boxpar^.bport].fossil:=orgfossil;
-    m2t:=true;
-    exit;
-    end;
+  if direct then
+    if not initcom then begin
+      comn[boxpar^.bport].fossil:=orgfossil;
+      m2t:=true;
+      exit;
+      end;
   with boxpar^,ComN[boxpar^.bport] do begin
     IgnCD:=IgCD; IgnCTS:=IgCTS;
     comnr:=bport;
-    ISDN:=(comnr>4);
     open_log:=not direct and (o_logfile<>'');
     recs:=''; lrecs:='';
     inout.cursor(curon);
@@ -845,7 +578,7 @@ begin
     ansirev:=false;
 
     while not ende do
-      if connected and not IgnCD and not carrier then begin
+      if connected and not IgnCD and not CommObj^.Carrier then begin
         moff;
         writeln;
         attrtxt(15); write(getres(2006)); attrtxt(7);   { 'Verbindung getrennt - Ende mit <Alt X>' }
@@ -854,9 +587,7 @@ begin
         connected:=false;
         end
       else begin
-        multi2;
-
-        testbyte;
+        multi2; testbyte;
         if AutoDownload and (pos('*'^X'B00',recs)>0) then
           UpDown(true,true)
         else if AutoUpload and (pos('*'^X'B01',recs)>0) then
@@ -870,13 +601,13 @@ begin
             end;
           Xmakro(t,64);
           if t=mausleft then t:=copychr(_mausx,_mausy);
-          if t=keyup then sendstr(ANSI_curup) else
-          if t=keydown then sendstr(ANSI_curdown) else
-          if t=keyleft then sendstr(ANSI_curleft) else
-          if t=keyrght then sendstr(ANSI_curright) else
-          if t=keydel then sendstr(#127) else
-          if t=keyhome then sendstr(ANSI_home) else
-          if t=keyend then sendstr(ANSI_end) else
+          if t=keyup then CommObj^.SendString(ANSI_curup,False) else
+          if t=keydown then CommObj^.SendString(ANSI_curdown,False) else
+          if t=keyleft then CommObj^.SendString(ANSI_curleft,False) else
+          if t=keyrght then CommObj^.SendString(ANSI_curright,False) else
+          if t=keydel then CommObj^.SendString(#127,False) else
+          if t=keyhome then CommObj^.SendString(ANSI_home,False) else
+          if t=keyend then CommObj^.SendString(ANSI_end,False) else
           if t=keyaltx then ende:=true else
           if t=keyalth then aufhaengen else
           if t=keyaltl then SwitchLogfile else
@@ -889,17 +620,16 @@ begin
                             end else
           if (t=keyalto) or (t=mausright) then begin
                               Options;
-                              connected:=carrier;
+                              connected:=CommObj^.Carrier;
                             end
           else
             if t=keyf9 then begin
-              { DropRTS(comnr); - Vorsicht, ZyXEL-Problem }
-              if not comn[bport].fossil then ReleaseCom(bport);
+{*              if not comn[bport].fossil then ReleaseCom(bport);
               savewin;
               dosshell;
               restwin;
               if not comn[bport].fossil then Activate;
-              if not ISDN then SetRTS(comnr);
+              SetRTS(comnr);}
               end
           else begin
             FuncExternal:=true;     { nur externe F-Tasten zugelassen }
@@ -913,21 +643,14 @@ begin
               if t[1]>#0 then
               begin
                 if out7e1 then SetParity(byte(t[1]),true);
-{$IFDEF CAPI }
-                if ISDN then
-                  CAPI_Sendstr(t[1])
-                else
-{$ENDIF }
-                  if IgnCTS then SendByte(comnr,byte(t[1]))
-                  else HSendByte(comnr,byte(t[1]));
+                CommObj^.SendChar(t[1])
               end;
             FuncExternal:=false;
             PreExtProc:=nil;
             end;
           end;
 
-        if not connected and carrier then
-          connected:=true;
+        if not connected and CommObj^.Carrier then connected:=true;
         end;
 
     @fnproc[0,9]:=p;
@@ -941,14 +664,9 @@ begin
     m2t:=true;
     showscreen(true);
     if direct then begin
-      if not carrier then begin
-        if not ISDN then DropDtr(bport);
-        { DropRts(bport); - Vorsicht, ZyXEL-Problem }
-        end;
-      rest:=not carrier;
-      ReleaseCom(bport);    { !! ISDN }
-      if (OStype<>OS_2) and rest then
-        RestComState(bport,cps);
+{*      if not CommObj^.Carrier then DropDtr(bport);}
+      rest:=not CommObj^.Carrier;
+      TermDeactivateCom;
       comn[bport].fossil:=orgfossil;
       end;
     end;
@@ -989,26 +707,22 @@ const MaxLines  = 500;
       varProtocol  = 6;   { MausTausch-Protokollkennung }
       varSerialNo  = 7;   { Maggi/Z-Seriennummer }
 
-type  stringp  = ^string;
-      ScrRec   = record
+type  ScrRec   = record
                    txtline   : integer;           { Zeilennr. in .SCR   }
                    onflag    : byte;              { 0=nix, 1=ON, 2=Timeout }
                                                   { 3=Online, 4=Relogin }
-                   onstrp    : stringp;           { .. String-Parameter }
-                   onstr     : string;
+                   onstr     : string;            { .. String-Parameter }
                    command   : shortint;          { Befehlsnummer       }
                    numpar    : longint;           { .. num. Parameter   }
                    cr,lf     : boolean;
-                   strparp   : stringp;           { .. String-Parameter }
-                   strpar    : string;
+                   strpar    : string;            { .. String-Parameter }
                  end;
       ScrArr   = array[0..MaxLines] of scrrec;
-      ScrArrP  = ^ScrArr;
 
-var   script   : ScrArrP;
+var   script   : ScrArr;
       lines    : integer;
       logins   : integer;       { verbleibende Login-Anzahl }
-      RunScriptRes: ShortInt;   { MK 01/2000 }
+      RunScriptRes: ShortInt;
 
 
 function LoadScript:boolean;
@@ -1016,12 +730,11 @@ type labela = array[1..maxlabels] of record
                                        name : string;
                                        line : integer;
                                      end;
-     lap    = ^labela;
 var t      : text;
     s,s0   : string;
     errlog : text;
     labels : integer;
-    _label : lap;
+    _label : labela;
     line   : integer;    { lfd. Zeile }
     errors : integer;
     stringflag : boolean;
@@ -1032,7 +745,7 @@ var t      : text;
     writeln(errlog,getreps2(2010,0,strs(line))+getreps2(2010,nr,txt));
     ok:=false;
     inc(errors);
-    fillchar(script^[lines+1],sizeof(ScrRec),0);
+{*    for i:=0 to MaxLines do script[i]:='';}
   end;
 
   procedure GetWord;     { nÑchstes Wort lesen }
@@ -1100,8 +813,8 @@ var t      : text;
   var p : byte;
   begin
     p:=1;
-    while (p<=labels) and (_label^[p].name<>s0) do inc(p);
-    if p<=labels then SeekLabel:=_label^[p].line
+    while (p<=labels) and (_label[p].name<>s0) do inc(p);
+    if p<=labels then SeekLabel:=_label[p].line
     else SeekLabel:=0;
   end;
 
@@ -1115,8 +828,8 @@ var t      : text;
       serror(3,strs(MaxLabels))    { 'Max. %s Sprungmarken mîglich!' }
     else begin
       inc(labels);
-      _label^[labels].name:=s0;
-      _label^[labels].line:=lines+1;
+      _label[labels].name:=s0;
+      _label[labels].line:=lines+1;
       end;
   end;
 
@@ -1125,7 +838,7 @@ var t      : text;
   procedure AddOnCommand;
   begin
     GetString;
-    if ok then with script^[lines+1] do begin
+    if ok then with script[lines+1] do begin
       if stringflag then LoString(s0)
       else UpString(s0);
       if onflag>0 then begin
@@ -1135,12 +848,7 @@ var t      : text;
       else begin
         if stringflag then begin
           onflag:=1;                          { ON "..." <Command> }
-          if length(s0)<=ShortStr then
-            onstr:=s0
-          else begin
-            getmem(onstrp,length(s0)+1);
-            onstrp^:=s0;
-            end;
+          onstr:=s0
           end
         else if s0='TIMEOUT' then             { ON TIMEOUT <Command> }
           onflag:=2
@@ -1172,7 +880,7 @@ var t      : text;
           serror(7,'')      { 'Text-Parameter erwartet' }
         else begin
           inc(lines);
-          with script^[lines] do begin
+          with script[lines] do begin
             command:=cmd;
             ss:=UpperCase(s0);
             if ss='$POINT'     then numpar:=varPoint else
@@ -1190,18 +898,13 @@ var t      : text;
           end
       else begin
         inc(lines);
-        with script^[lines] do begin
+        with script[lines] do begin
           command:=cmd;
-          if length(s0)<=ShortStr then
-            strpar:=s0
-          else begin
-            getmem(strparp,length(s0)+1);
-            strparp^:=s0;
-            end;
-          end;
+          strpar:=s0
         end;
+      end;
     if ok and not comment(s) then
-      with script^[lines] do begin
+      with script[lines] do begin
         GetWord;
         UpString(s0);
         if s0='CR' then cr:=true else
@@ -1214,7 +917,7 @@ var t      : text;
   procedure AddComm(cmd:integer);
   begin
     inc(lines);
-    script^[lines].command:=cmd;
+    script[lines].command:=cmd;
   end;
 
   procedure AddDisplayCommand;
@@ -1225,8 +928,8 @@ var t      : text;
       serror(9,'')      { 'ON oder OFF erwartet' }
     else begin
       inc(lines);
-      script^[lines].command:=cmdDisplay;
-      script^[lines].numpar:=iif(s0='ON',pDispOn,pDispOff);
+      script[lines].command:=cmdDisplay;
+      script[lines].numpar:=iif(s0='ON',pDispOn,pDispOff);
       end;
   end;
 
@@ -1238,8 +941,8 @@ var t      : text;
       serror(9,'')      { 'ON oder OFF erwartet' }
     else begin
       inc(lines);
-      script^[lines].command:=cmdANSI;
-      script^[lines].numpar:=iif(s0='ON',pAnsiOn,pAnsiOff);
+      script[lines].command:=cmdANSI;
+      script[lines].numpar:=iif(s0='ON',pAnsiOn,pAnsiOff);
       end;
   end;
 
@@ -1252,8 +955,8 @@ var t      : text;
       serror(10,'')      { 'ERROR oder FAIL erwartet' }
     else begin
       inc(lines);
-      script^[lines].command:=cmdEnd;
-      script^[lines].numpar:=iif(s0='',pEndOk,iif(s0='ERROR',pEndError,pEndFail));
+      script[lines].command:=cmdEnd;
+      script[lines].numpar:=iif(s0='',pEndOk,iif(s0='ERROR',pEndError,pEndFail));
       end;
   end;
 
@@ -1264,13 +967,13 @@ var t      : text;
       serror(11,'')      { 'ungÅltiger Delay-Parameter (Zahl erwartet)' }
     else begin
       inc(lines);
-      script^[lines].command:=cmdDelay;
-      script^[lines].numpar:=system.round(rval(s0)*1000);
+      script[lines].command:=cmdDelay;
+      script[lines].numpar:=system.round(rval(s0)*1000);
       if s<>'' then begin
         GetWord;
         UpString(s0);
         if s0='SHOW' then
-          script^[lines].strpar:=s0
+          script[lines].strpar:=s0
         else if not comment(s0) then
           serror(8,'');
         end;
@@ -1284,7 +987,7 @@ var t      : text;
       serror(12,'')      { 'numerischer Parameter erwartet' }
     else begin
       inc(lines);
-      with script^[lines] do begin
+      with script[lines] do begin
         command:=cmd;
         numpar:=ival(s0);
         if isint then
@@ -1298,12 +1001,12 @@ var t      : text;
     GetWord;
     LoString(s0);
     inc(lines);
-    with script^[lines] do begin
+    with script[lines] do begin
       command:=cmd;
       numpar:=SeekLabel;
       if numpar=0 then begin              { Label (noch) nicht vorhanden }
-        getmem(strparp,length(s0)+1);
-        strparp^:=s0;
+{*        getmem(strparp,length(s0)+1);}
+        strpar:=s0;
         end;
       end;
   end;
@@ -1337,21 +1040,17 @@ var t      : text;
   procedure TestLabels;
   var i : integer;
   begin
-    for i:=1 to lines do with Script^[i] do
+    for i:=1 to lines do with script[i] do
       if ((command=cmdGoto) or (command=cmdCall)) and (numpar=0) then begin
-        s0:=strparp^;
+        s0:=strpar;
         numpar:=SeekLabel;
-        if numpar=0 then
-          serror(13,s0);      { 'Sprungmarke fehlt: %s' }
-        freemem(strparp,length(s0)+1);
-        strparp:=nil;
+        if numpar=0 then serror(13,s0);      { 'Sprungmarke fehlt: %s' }
+        strpar:='';
         end;
   end;
 
 begin
-  new(_label);
-  new(script);
-  fillchar(script^,sizeof(script^),0);
+  fillchar(script,sizeof(script),0);
   labels:=0;
   assign(t,scriptfile);
   reset(t);
@@ -1361,7 +1060,7 @@ begin
   while not eof(t) and (lines<MaxLines) do begin
     ok:=true;
     inc(line);
-    script^[lines+1].txtline:=line;
+    script[lines+1].txtline:=line;
     readln(t,s);
     s:=trim(s);
     if not comment(s) then begin
@@ -1379,7 +1078,6 @@ begin
   freeres;
   close(errlog);
   close(t);
-  dispose(_label);
   LoadScript:=(errors=0);
 end;
 
@@ -1405,13 +1103,13 @@ var ip   : integer;
 
   function timeout:boolean;
   begin
-    timeout:=not (IgnCD or carrier) or (zaehler[2]=0);
+    timeout:=not (IgnCD or CommObj^.Carrier) or (zaehler[2]=0);
   end;
 
   function GetPar:string;
   var crlf : string;
   begin
-    with script^[ip],boxpar^ do begin
+    with script[ip],boxpar^ do begin
       if lf then
         if cr then crlf:=#13#10
         else crlf:=#10
@@ -1419,8 +1117,8 @@ var ip   : integer;
         if cr then crlf:=#13
         else crlf:='';
       case numpar of
-        0            : if strparp=nil then getpar:=strpar+crlf
-                       else getpar:=strparp^+crlf;
+        0            : if strpar='' then getpar:=strpar+crlf
+                       else getpar:=strpar+crlf;
         varPoint     : GetPar:=pointname+crlf;
         varUser      : GetPar:=username+crlf;
         varPassword  : GetPar:=passwort+crlf;
@@ -1449,19 +1147,18 @@ var ip   : integer;
         ExecuteScriptRes:=pEndError;
         end
       else if c>#0 then
-        sendstr(c);
+        CommObj^.SendString(c,False);
       end;
   end;
 
   procedure interprete;
   var doit : boolean;
   begin
-    with script^[ip] do begin
+    with script[ip] do begin
       case onflag of
         0 : doit:=true;
         1 : begin
-              if onstrp=nil then par:=onstr
-              else par:=onstrp^;
+              par:=onstr;
               doit:=(right(lrecs,length(par))=par);
               if doit then begin
                 if log2<>nil then write(log2^,recs);
@@ -1487,7 +1184,7 @@ var ip   : integer;
                           if log2<>nil then write(log2^,recs);
                           recs:=''; lrecs:='';
                         end;
-          cmdSend     : SendStr(GetPar);
+          cmdSend     : CommObj^.SendString(GetPar,False);
           cmdGoto     : ip:=numpar-1;
           cmdEnd      : begin
                           ende:=true;
@@ -1501,7 +1198,7 @@ var ip   : integer;
           cmdDisplay  : Display:=(numpar=pDispOn);
           cmdTimer    : zaehler[3]:=numpar;
           cmdRead     : tb;
-          cmdFlush    : flushin;
+          cmdFlush    : CommObj^.PurgeInbuffer;
           cmdCls      : clrscr;
           cmdCall     : if sp=maxstack then begin
                           runerror(5);      { 'StapelÅberlauf' }
@@ -1518,7 +1215,7 @@ var ip   : integer;
                           ip:=stack[sp];
                           dec(sp);
                         end;
-          cmdBreak    : SendBreak(comnr);
+          cmdBreak    : {*SendBreak(comnr)};
           cmdANSI     : begin
                           ansimode:=(numpar=pAnsiOn);
                           if not ansimode then ansichar:=false;
@@ -1549,7 +1246,7 @@ begin    { of ExecuteScript }
     end;
   repeat
     if ParTrace then begin                     { Trace-Zeile schreiben }
-      write(trace,script^[ip].txtline,' ');
+      write(trace,script[ip].txtline,' ');
       inc(tn);
       if tn>17 then begin
         tn:=0; writeln(trace);
@@ -1583,13 +1280,8 @@ end;
 procedure ReleaseScript;
 var i : integer;
 begin
-  for i:=lines downto 1 do with script^[i] do begin
-    if onstrp<>nil then
-      freemem(onstrp,length(onstrp^)+1);
-    if strparp<>nil then
-      freemem(strparp,length(strparp^)+1);
-    end;
-  dispose(script);
+  for i:=lines downto 1 do
+    with script[i] do begin onstr:=''; strpar:=''; end;
 end;
 
 
@@ -1610,6 +1302,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/09/30 19:54:44  ma
+  - auf ObjCOM umgestellt
+  - *grosses* Minenfeld: Bildschirmdarstellung noch kaputt,
+    Initialisierung fest einkompiliert (suche nach "CommInit"),
+    Skripte hoechstwahrscheinlich kaputt (wg. Ansistrings),
+    Up-/Downloads gehen genausowenig wie externe Aufrufe
+  - ansonsten aber alles in Butter. ;-)
+
   Revision 1.20  2000/07/30 08:49:54  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
