@@ -155,8 +155,14 @@ begin
     if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
     begin 
       SOpened:=True;
-      IDummy:=Sizeof(LocalAddr);  getsockname(SHandle,LocalAddr, IDummy);
-      IDummy:=Sizeof(RemoteAddr); getpeername(SHandle,RemoteAddr,IDummy);
+      IDummy:=Sizeof(LocalAddr);
+{$IFNDEF Linux}
+      getsockname(SHandle,LocalAddr, IDummy);
+{$ELSE}
+      getsocketname(SHandle,LocalAddr, IDummy);
+{$ENDIF}
+      IDummy:=Sizeof(RemoteAddr); 
+      getpeername(SHandle,RemoteAddr,IDummy);
       ConnectIP:=True;
       exit;
     end
@@ -527,6 +533,11 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/08/28 11:07:42  ml
+
+  - in linux getsockname is called getsocketname
+   -> compilable in linux
+
   Revision 1.10  2001/08/04 14:23:43  cl
   - Show IP address:port in progress window
 
