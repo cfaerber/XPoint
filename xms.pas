@@ -20,6 +20,12 @@
 UNIT XMS;
 
 {$I XPDEFINE.INC }
+
+{$IFNDEF BP }
+  !! Diese Routine kann nur unter Borland Pascal compiliert werdenÿ
+{$ENDIF }
+
+{$I XPDEFINE.INC }
 {$F+}
 
 {  ==================  Interface-Teil  ===================  }
@@ -63,7 +69,7 @@ begin
     if xmsok then begin
       ax:=$4310;
       intr($2f,regs);
-{$IFNDEF Ver32 }      xmscall:=ptr(es,bx); {$ENDIF}
+      xmscall:=ptr(es,bx);
       end;
     end;
 end;
@@ -101,38 +107,18 @@ end;
 
 
 
-{$IFDEF VER32 }
-function XmsVersion:word; begin end;
-function XmsTotal:word; begin end;
-function XmsAvail:word; begin end;
-
-function  XmsAlloc(KB:word):word; begin end;
-procedure XmsRealloc(handle:word; KB:word); begin end;
-procedure XmsFree(handle:word); begin end;
-procedure XmsRead(handle:word; var data; offset,size:longint); begin end;
-procedure XmsWrite(handle:word; var data; offset,size:longint); begin end;
-
-{$ELSE}
-
 {$L xms.obj}
 function XmsVersion:word; external;
 function XmsTotal:word; external;
 function XmsAvail:word; external;
-
 function  XmsAlloc(KB:word):word; external;
 procedure XmsRealloc(handle:word; KB:word);  external;
 procedure XmsFree(handle:word); external;
 procedure XmsRead(handle:word; var data; offset,size:longint); external;
 procedure XmsWrite(handle:word; var data; offset,size:longint);  external;
-{$ENDIF}
 
 
 begin
-  {$IFDEF VER32}
-    xmsok:=false;
-  {$ELSE}
-    xmsinit;
-  {$ENDIF}
+  xmsinit;
   result:=0;
 end.
-

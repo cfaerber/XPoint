@@ -22,6 +22,11 @@ begin
       $097 : MenuHidden:=not exzconfig;              { Config/Anz./Pd-Zmodem }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
+{$IFDEF CAPI }
+      $125 : MenuHidden:=false;                      { Config/Modem/ISDN }
+{$ELSE }
+      $125 : MenuHidden:=true;
+{$ENDIF }
       else   if anzhidden=0 then
                MenuHidden:=false
              else begin

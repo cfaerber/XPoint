@@ -24,10 +24,13 @@
 
 program xp;
 
-uses ems,xms,xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
-     printerx,crc16,resource,stack,clip,eddef,editor,capi,feiertag,
+     printerx,crc16,resource,stack,clip,eddef,editor,feiertag,
      xdelay,xpdiff,xpdatum,xpcrc32, xpglobal,
+{$IFDEF CAPI }
+     capi,
+{$ENDIF }
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
      xp1o,
@@ -80,7 +83,7 @@ uses ems,xms,xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 
 {$IFNDEF Ver32 } { Bei 32 Bit brauchen wir keine Overlays }
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
-{$O clip}    {$O editor}  {$O databaso} {$O capi}     {$O feiertag}
+{$O clip}    {$O editor}  {$O databaso} {$O feiertag}
 {$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
 {$O xp1help}
 {$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
@@ -93,6 +96,9 @@ uses ems,xms,xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
 {$O xpnt}    {$O xpdatum} {$O XP3}
+{$IFDEF CAPI }
+{$O capi }
+{$ENDIF }
 {$ENDIF }
 
 label ende;

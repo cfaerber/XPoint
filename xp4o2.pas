@@ -10,13 +10,16 @@
 { CrossPoint: DBs packen, Kommentarbaum u.a. }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp4o2;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      crt,dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
       resource,help, xpglobal, xp0,xp1,xp1input,xpnt,xpcrc32;
 
 { Deklaration des Kommentarbaums in XP0 }
@@ -836,7 +839,10 @@ begin
         s:=s+','+s0;
       end;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   delfirst(s);
   if s='' then
     fehler('No language files found !?')

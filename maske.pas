@@ -10,7 +10,9 @@
 { Maskeneditor; V1.1 08/91, 05/92 PM }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit  maske;
 

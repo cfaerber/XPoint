@@ -627,11 +627,17 @@
                                       stricmp(downloader,'ZMODEM')) then
         mdisable;
       maddstring(3,7+add,getres2(921,9),modeminit,41,60,''); { 'Modem-Init ' }
-      if bport=5 then schnitte:='ISDN'
-      else schnitte:='COM'+strs(bport);
+{$IFDEF CAPI }
+      if bport=5 then
+        schnitte:='ISDN'
+      else
+{$ENDIF }
+      schnitte:='COM'+strs(bport);
       maddstring(3,9+add,getres2(921,10),schnitte,4,4,'');   { 'Schnittstelle ' }
       mappsel(true,'COM1ùCOM2ùCOM3ùCOM4');
+{$IFDEF CAPI }
       if ntISDN(nt) then mappsel(true,'ISDN');
+{$ENDIF }
       maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'šbertragungsrate:' }
       mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
       msetvfunc(testbaud);
@@ -639,8 +645,11 @@
       freeres;
       readmask(brk);
       if not brk then
-        if schnitte='ISDN' then bport:=5
-        else bport:=ival(right(schnitte,1));
+{$IFDEF CAPI }
+          if schnitte='ISDN' then bport:=5
+        else
+{$ENDIF }
+          bport:=ival(right(schnitte,1));
       enddialog;
       end;
   end;

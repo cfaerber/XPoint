@@ -10,7 +10,9 @@
 { CrossPoint - UUDecode }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp_uue;
 
@@ -30,8 +32,8 @@ implementation
 
 uses xp3,xp3ex;
 
-const obufsize = 10000;
-      ibufsize = 15000;
+const obufsize = 12288; { MK 07.02.00 Auf 32 Byte Gr”áen angepasst }
+      ibufsize = 16384;
       maxbuf   : word = obufsize-4;
 
 type  buffer = array[0..50000] of byte;
@@ -49,13 +51,155 @@ var   s        : string[100];
       IO_Error : boolean;
 
 
+procedure flushbuf;                   {JG:08.02.00 Verschoben: wird von Decode aufgerufen...}          
+begin
+  if IO_error then exit;
+  blockwrite(f2^,outbuf^,bufp);
+  if inoutres<>0 then begin
+    fehler(ioerror(ioresult,getres2(10000,10)));
+    IO_error:=true;
+    end;
+  bufp:=0;
+end;
+
+
 {$IFDEF ver32}
 procedure decode;  begin end;
 procedure getstring; begin end;
+
+
 {$ELSE}
-procedure decode; near; external;
-procedure getstring; near; external;
-{$L xp_uue.obj}
+{ JG:08.02.00 In inline-Asm umgesetzt... & Bugfix wegen ($F-  ---->  $F+) }
+
+procedure decode; assembler; 
+asm
+          push ds
+          mov ax,seg @data        { JG: Eigentlich ueberfluessig, aber sicher ist sicher}
+          mov ds,ax      
+
+          mov si,offset s         { Adresse des zu dekod. Strings }
+          mov bx,2                { Offset innerhalb von s }
+
+          mov cl,1                { Schleifenz„hler }
+          mov ch,[si+1]           { 1. Byte : L„ngeninformation }
+          sub ch,' '
+          and ch,3fh
+
+@mloop0:  les di,outbuf           { Adresse des Ausgabepuffers }
+          add di,bufp
+
+@mainloop: 
+          cmp cl,ch               { i<=n ? }
+          jle @lp1
+          add word ptr ln,1       { inc(ln) }
+          adc word ptr ln+2,0
+          mov cl,ch
+          mov ch,0
+          add word ptr bytes,cx   { inc(bytes,n) }
+          adc word ptr bytes+2,0
+          jmp @ende
+
+@lp1:     mov dx,[si+bx]          { 4 Bytes dekodieren }
+          sub dx,2020h
+          mov ax,[si+bx+2]
+          sub ax,2020h
+          add bx,4
+          shl al,1
+          shl al,1
+          shl al,1
+          rcl dh,1
+          shl al,1
+          rcl dh,1
+          shl al,1
+          rcl dh,1
+          rcl dl,1
+          shl al,1
+          rcl dh,1
+          rcl dl,1
+          and ah,3fh
+          add al,ah
+          mov es:[di],dx
+          inc di
+          inc di
+          mov es:[di],al
+          inc di
+
+          mov ax,bufp
+          inc cl
+          inc ax
+          cmp cl,ch
+          ja @zende
+          inc cl
+          inc ax
+          cmp cl,ch
+          ja @zende
+          inc cl
+          inc ax
+@zende:   mov bufp,ax
+          cmp ax,maxbuf
+          ja @flush
+          jmp @mainloop
+
+@flush:   push si
+          push di
+          push bx
+          push cx
+          push es
+          push ds                          {+JG}
+          call far ptr flushbuf            {setzt bufp auf 0   JG:FAR }
+          pop ds                           {+JG} 
+          pop es
+          pop cx
+          pop bx
+          pop di
+          pop si
+          jmp @mloop0
+
+@ende:    pop ds    
+end;
+
+
+
+procedure getstring; assembler;
+asm
+          push ds
+          mov ax,seg @data       {JG...}
+          mov ds,ax
+
+          les si,inbuf
+          mov bx,ibufp
+          mov di,offset s
+          inc di
+          mov dx,ibufend
+          mov ah,0
+
+@getloop: cmp bx,dx               { ibufp > ibufend ? }
+          ja  @getende
+          mov al,es:[si+bx]
+          cmp al,' '              { Zeilenende ? }
+          jb  @getok
+          mov [di],al
+          inc di
+          inc bx
+          inc ah
+          cmp ah,100              { max. Stringl„nge }
+          jb  @getloop
+@getok:   mov al,2                { max. ein CR/LF berlesen }
+@getok2:  cmp bx,dx               { ibufp > ibufend ? }
+          ja @getende
+          cmp byte ptr es:[si+bx],' '
+          jae @getende
+          inc bx                  { Zeilenvorschbe berlesen }
+          dec al
+          jnz @getok2
+
+@getende: mov ibufp,bx
+          mov di,offset s
+          mov [di],ah             { Stringl„nge setzen (s[0]) }
+
+          pop ds                  {JG}                     
+end;
+
 {$ENDIF}
 
 
@@ -81,17 +225,6 @@ begin
   else getstring;        { String aus inbuf^[ibufp] --> s lesen }
 end;
 
-
-procedure flushbuf;
-begin
-  if IO_error then exit;
-  blockwrite(f2^,outbuf^,bufp);
-  if inoutres<>0 then begin
-    fehler(ioerror(ioresult,getres2(10000,10)));
-    IO_error:=true;
-    end;
-  bufp:=0;
-end;
 
 
 { f1 -> mit Assign zugewiesene Eingabedatei }
@@ -408,4 +541,3 @@ begin
 end;
 
 end.
-

@@ -10,7 +10,9 @@
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp9;
 
@@ -1098,10 +1100,11 @@ var d         : DB;
     else begin
       maddstring(3,2,getres2(935,3),typ,33,40,         { 'MIME-Typ         ' }
                  without(range('!','~'),'()<>@,;:\"[]?=')); { MK 12/99 Zeichen "/" zugelassen }
-        mhnr(1051);
+        mhnr(821); {JG: 1051->821}
       maddstring(3,4,getres2(935,4),ext,5,5,'<');              { 'Dateierweiterung ' }
+      mhnr(822); {JG}
       end;
-    maddstring(3,4+add,getres2(935,5),prog,33,ViewprogLen,''); mhnr(1053);  { 'Viewer-Programm  ' }
+    maddstring(3,4+add,getres2(935,5),prog,33,ViewprogLen,''); mhnr(823); {JG} { 'Viewer-Programm  ' }
       msetvfunc(progtest);
     freeres;
     repeat
@@ -1298,7 +1301,7 @@ begin
           width:=65;
           buttons:=getres(909);   { ' ^Neu , ^L”schen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
-          pushhp(1050);
+          pushhp(820);         {JG:1051->820}   
           nameofs:=2;
         end;
   end;

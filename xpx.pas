@@ -15,7 +15,11 @@ unit xpx;
 
 interface
 
-uses ems,crt, dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
+uses
+{$IFDEF BP }
+  ems,
+{$ENDIF }
+  crt, dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
 
 implementation
 
@@ -24,7 +28,9 @@ const MinVersion = $330;
       MinVerStr  = '3.3';
       MaxHandles = 31;
 {$ELSE}
+{$IFNDEF DPMI }
 uses overlay;
+{$ENDIF }
 const MinVersion = $300;
       MinVerStr  = '3.0';
       MaxHandles = 30;
@@ -175,8 +181,8 @@ begin
 end;
 
 
-{$F+,S-}
-procedure setpath;
+{$S-}
+procedure setpath; {$IFNDEF Ver32 } far; {$ENDIF }
 var i : integer;
 begin
   i:=ioresult;
@@ -189,7 +195,9 @@ begin
     end;
   exitproc:=oldexit;
 end;
-{$F-,S+}
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 
 procedure TestCD;
@@ -220,7 +228,7 @@ end;
 
 begin
   checkbreak:=false;
-{$IFNDEF Win32 }
+{$IFDEF BP } { Die Abfrage der DOS-Version ist nur bei 16 Bit sinnvoll }
   if swap(dosversion)<MinVersion then
     stop('DOS Version '+MinVerStr+' oder h”her erforderlich.');
 {$ENDIF }
@@ -248,7 +256,7 @@ begin
   {$ENDIF }
 {$ENDIF }
 
-{$IFNDEF Ver32}      { Unter 32 Bit haben wir keine Overlays }
+{$IFDEF BP }      { Unter 32 Bit haben wir keine Overlays }
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
     OvrInit('xp.ovr');

@@ -12,7 +12,9 @@
 { s. auch NETZTYP.DOC  }
 
 {$I XPDEFINE.INC }
-{$F+,O+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpnt;
 
@@ -624,7 +626,11 @@ end;
 
 function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
 begin
+{$IFDEF CAPI }
   ntISDN:=true; { MK 28.01.2000: CAPI-Support eingeschaltet }
+{$ELSE }
+  ntISDN:=false;
+{$ENDIF }
 end;
 
 

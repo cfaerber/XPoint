@@ -19,7 +19,7 @@ end;
 
 procedure cm_wln;
 const lines : byte = 1;
-var   dummy : char;
+{var   dummy : char; }
 begin
   if cm then begin
     writeln;
@@ -27,7 +27,7 @@ begin
     if lines=screenlines then begin
       if moremode then begin
         cm_w('<more>');
-        dummy:=cm_key;
+{        dummy:=}cm_key;
         cm_w(#13+'      '+#13);
         end;
       lines:=1;

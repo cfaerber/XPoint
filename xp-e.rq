@@ -38,7 +38,7 @@ K (c) '93-96 Peter Mandrella
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
 14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Kill,0e7^Print
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
-16  Edit,101^Templates˘8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,107T^ext        @E
+16  Edit,101^Templates˘8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone charges˘26
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
@@ -46,7 +46,7 @@ K (c) '93-96 Peter Mandrella
 21  Weiter,151^Copy,152^Original,153^EditTo,154^QuoteTo,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
 22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
-24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP,187^Viewer
+24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
@@ -65,7 +65,7 @@ K (c) '93-96 Peter Mandrella
 100 021^Calendar
 101 022^Archive Viewer
 # special menu choices
-200 $069,$097,$0b1,$11a,$1ca
+200 $069,$097,$0b1,$11a,$1ca,$125
 
 + 11
 1    Error
@@ -746,6 +746,11 @@ K (c) '93-96 Peter Mandrella
 9    Sign all messages
 10   Use PGP for RFC/UUCP
 11   Use PGP for Fido (not allowed in FidoNet!)
++ 272
+# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5 / X-MSMail-Prio.: High, Norm., Low
+0    25
+1    Send-Priority
+2    Priority ~
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -1187,6 +1192,24 @@ K (c) '93-96 Peter Mandrella
 8    Key was deleted.
 -
 
++ 530
+# Zeilenanzahl
+0    13
+1    This is a Beta-Version of Crosspoint, created by the OpenXP-       
+2    Developer-Team. Please notice, that there are surely still Bugs
+3    in this Beta-Version, which could damage your database, 
+4    or cause troubles if you use this XP-Version in public.
+5    If you use this version, you are fully responsible for all damage,
+6    you may cause with it. If you don't agree with this terms,
+7    please use a official release-version of Crosspoint. 
+8    If you have questions or suggestions to the project,
+9    please apply to the XP-support-forums, esp. the usenet-newsgroup
+10   de.comm.software.crosspoint and the official OpenXP Homepage 
+11   http://www.openxp.de.
+12
+13  Choose "Continue", to work with this betaversion.
+30   ~^Continue , ^Abbort~
+-
 # --- XP6 -------------------------------------------------------------
 
 # Don't use any non-7bit characters in the following line:
@@ -1220,6 +1243,9 @@ K (c) '93-96 Peter Mandrella
 11   PGP-Sig~
 12   PGP-Req~
 13   BCC~
+14   High~
+15   Normal~
+16   Low~
 -
 605  Crypting message...     %
 + 606
@@ -1274,7 +1300,7 @@ K (c) '93-96 Peter Mandrella
 20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,C^rash,P^GP,^Back
 21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
 22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-23   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^More,P^GP,^Back
+23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
 24   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^Back
 25   YNI˘SVOT
 28   ^Yes,^No,^Internal,S^pecial,˘7^Subj.,Ser^ver,C^ode
@@ -1311,6 +1337,7 @@ K (c) '93-96 Peter Mandrella
 619  was
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
+622  No function in this net
 
 # XP6.INC
 640  Rebuilding message packet...
@@ -1885,6 +1912,15 @@ K (c) '93-96 Peter Mandrella
 8    delete QWK packets
 9    E-Mail echo   ~
 -
+934  (intern)
++ 935
+0    57
+1    Add viewer
+2    Change Viewer
+3    MIME-Typ        ~
+4    File extension  ~
+5    Viewer-Program  ~
+-
 
 
 # --- XP10 ------------------------------------------------------------
@@ -2315,6 +2351,7 @@ K (c) '93-96 Peter Mandrella
 3    Paragraph end marker~
 4    Auto indent
 5    Persistent Blocks
+6    Quote-Reflow
 -
 2509 and UU-encode
 

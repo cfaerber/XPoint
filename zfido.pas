@@ -18,7 +18,8 @@
   {$M 16384,80000,110000}
 {$ENDIF }
 
-uses  crt,dos,dosx,typeform,fileio,xpdiff,xpdatum,xpglobal;
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      crt,dos,dosx,typeform,fileio,xpdiff,xpdatum,xpglobal;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -47,7 +48,7 @@ const XPrequest = 'File Request';
       attrCrash = $0002;
       attrFile  = $0010;
       attrReqEB = $1000;            { EB anfordern }
-      attrQPC   = $0001;
+      { attrQPC   = $0001; }
       attrKillSent = $0080;
 
 type  FidoAdr  = record
@@ -994,7 +995,6 @@ var f1,f2  : file;
     origin : fidoadr;
     madr   : longint;
     pm,via : boolean;
-    zero   : boolean;
     lfs    : byte;        { LF's am Zeilenende bei GetString }
     prog2  : string[60];
     brt2   : string[25];  { <- bretter }
@@ -1203,7 +1203,6 @@ label abbr;
 
   procedure ReadMsgToBuf(var hdgroesse:longint);
   var bpos  : word;
-      rr    : word;
       size  : word;
       addlf : smallword;
   begin
@@ -1635,7 +1634,10 @@ begin
     FidoZfile(d+sr.name,not fst);
     fst:=false;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 

@@ -143,7 +143,7 @@ entwicklung von CrossPoint durch das OpenXp-Projekt
 finden Sie auf:
 
         http://www.openxp.de
-	oder Request bei 2:248/2004
+        oder Request bei 2:248/2004
 
 Die offizielle Support-Mailbox im FidoNet ist Max
 Raabe's Klystron BBS:
@@ -1180,12 +1180,18 @@ soll.
         fÑnger nicht sehen kînnen, wer die Nachricht
         erhalten hat.
 
-<Esc>   die Nachricht wird verworfen. Sie ist aller-
+<<<Esc> >>  die Nachricht wird verworfen. Sie ist aller-
         dings noch nicht endgÅltig gelîscht, sondern
         liegt unter dem Namen LASTMSG im TemporÑrver-
         zeichnis. Wenn Sie /Config/Opt/Nachrichten
         /../ØUnversandt eingeschaltet haben, wird die
         Nachricht automatisch geparkt (s.o.).
+
+<</>>       Der EmpfÑnger der Nachricht wird geÑndert.
+        Wird der aktuelle Eintrag gelîscht, kann mit
+        <F2> zwischen Brett und Usern gewÑhlt werden.
+        ACHTUNG ! Diese Funktion sollte nur von 
+        erfahrenen Usern Benutzt werden.          
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, da· mehrere Nachrichen-Kopien Åber unterschied-
@@ -6793,41 +6799,61 @@ Feiertage sowie der 24.12. und 31.12. der Kategorie
 verbilligter Telefontarif!)
 @
 820
+Hier kînnen sie angeben, welche Programme Crosspoint
+zum Anzeigen diverser Dateiformate verwenden soll.
+
+<<Neu>>      Dient zum erstellen eines neuen Eintrags.
+
+<<Lîschen>>  Lîscht nach einer Sicherheitsabfrage den
+         gewÑhlten Eintrag.
+
+<<Edit>>     Ruft das Bearbeitungs-MenÅ auf. Hier kînnen
+         sie einen bestehenden Eintrag Ñndern.  
+
+@
+821
+Geben sie hier den MIME-Typ ein fÅr den dieser
+Eintrag gelten soll. Der Mime-Typ ist die MIME-Header
+Beschreibung dieser Dateiart. (Usenet)
+
+Wird eine entsprechende Mime-Nachricht empfangen
+kann diese mit dem Viewer-Programm angesehen werden. 
+ 
+@
+822
+Geben sie hier die Dateinamenerweiterung ein.
+
+Wird eine Binaernachricht oder ein Fido-Fileattach
+mit einer entsprechenden Datei empfangen,
+kann diese mit dem Viewer-Programm angesehen werden.
+
+Beachten Sie, da· bei Åber das Z-Netz verschickten 
+BinÑrnachrichten der Betreff der Nachricht nicht 
+unbedingt den korrekten Dateinamen enthalten mu·,
+und die Erkennung von Dateiformaten anhand des 
+Dateinamens daher im Z-Netz nicht in allen FÑllen
+funktioniert.
+
+@
+823
 Geben Sie hier an, welches Programm CrossPoint zum
-Anzeigen von GIF- bzw. IFF/ILMB- oder PCX-Grafiken
-verwenden soll. Das betrefffende Programm mu· sich
-im aktuellen Verzeichnis befinden oder Åber einen
-Pfad erreichbar sein. Das Programm wird automatisch
-aktiviert, sobald Sie eine BinÑrnachricht anwÑhlen,
-die eine Grafik im GIF- bzw. IFF/ILBM- oder PCX-
-Format enthÑlt.
+Anzeigen der Dateiart verwenden soll. 
+
+Das Programm mu· sich im aktuellen Verzeichnis
+befinden, oder Åber einen Pfad erreichbar sein.
+Das Programm wird automatisch aktiviert, sobald Sie
+eine BinÑr- oder MIME-Nachricht anwÑhlen,
+die die passende Dateiart enthÑlt.
 
 Wenn Sie als Parameter das Makro $FILE verwenden,
-wird es durch den Namen der Bilddatei ersetzt. An-
+wird es durch den Namen der Datei ersetzt. An-
 sonsten setzt XP den Namen der Datei als ersten
 Parameter hinter dem Programmnamen ein.
-
-ZusÑtzlich zu den drei vordefinierten Formaten kînnen
-Sie noch bis zu drei Anzeige-Programme fÅr beliebige
-andere Dateitypen eintragen. Dazu ist auf der linken
-Seite die Dateierweiterung der betreffenden Dateien
-einzutragen. Beachten Sie, da· bei Åber das Z-Netz
-verschickten BinÑrnachrichten der Betreff der Nach-
-richt nicht unbedingt den korrekten Dateinamen ent-
-halten mu·, und die Erkennung von Dateiformaten an-
-hand des Dateinamens daher im Z-Netz nicht in allen
-FÑllen funktioniert.
 
 Falls Sie als Viewer eine Batchdatei eintragen, mu·
 der Name der Datei voll ausgeschrieben werden, incl.
 ".BAT".
 
-@
-821
-^^820
-@
-822
-^^820
 @
 830
 Geben Sie die einzelnen Suchbegriffe ein. Nach dem
@@ -9442,6 +9468,8 @@ Schablonen erlaubt:
   $BRETT     -  der Brettname der Bezugsnachricht
   $AREA      -  der Echo- bzw. Gruppenname bei Fido-
                     oder MausNet-Nachrichten
+  $NEWSGROUP -  der Brettname in Usenet-Åblicher 
+                    Punktschreibweise
   $BETREFF   -  der Betreff der Bezugsnachricht
   $ERSTELLT  -  das Datum der Bezugsnachricht
   $MSGDATE   -  das Datum in amerik. Schreibweise
@@ -10483,13 +10511,14 @@ gelîscht und aus der Datei FILELIST.CFG ausgetragen.
 <<Fido / Filelisten / Suchen
 
 Hier kînnen Sie alle vorhandenen Filelisten nach
-einem bestimmten Begriff oder Dateinamen durchsu-
-chen und, falls gewÅnscht, die gefundenen Dateien
-requesten.
+bestimmten Begriffen oder Dateinamen durchsu-
+chen und anschlie·end die Dateien  requesten.
 
-Wenn Sie den zuletzt eingegebenen Suchbegriff Åber-
-nehmen, zeigt XP sofort das zwischengespeicherte
-Ergebnis der letzten Filelisten-Suche an.
+Wollen Sie nach meheren Begriffen suchen so trennen 
+sie die Begriffe mit: /&. Beispiel:
+            Haus/&Tuer
+findet Dateien die "Haus" UND "Tuer" in der 
+Filebeschreibung enthalten.
 @
 13301
 <<Wartung / Sonstiges / Neuaufbau Verkettung

@@ -10,7 +10,9 @@
 { Overlay-Teil zu xp1 }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp1o;
 
@@ -167,7 +169,6 @@ var s     : string;
     t:=keyesc;
   end;
 
-
 {JG:28.01.00}         
   procedure ShowfromLister;
   begin   
@@ -274,8 +275,7 @@ begin
 
    if t = keyaltm then begin                                   { ALT+M = Suche MessageID }
          if list_markanz=0 then global_suchstring:=''          {Nullstring ohne Markierung}
-           else begin global_suchstring:=first_marked;
-                global_suchstring:=mailstring(global_suchstring); end;
+           else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
          if Suche(getres(437),'MsgID@','') then ShowfromLister;   { gefundene Nachr. zeigen }
          ex(5)                                                    { Weiter im Lister }
          end ;
@@ -302,8 +302,7 @@ begin
   if t = keyaltu then begin                                     { Alt+U = User }
          if list_markanz=0 then
             global_suchstring:=dbreadstr(mbase,'Absender')
-            else begin global_suchstring:=first_marked;
-                 global_suchstring:=mailstring(global_suchstring); end;
+            else global_suchstring:=mailstring(first_marked);      {JG:06.02.00 Bugfix}
          if Suche(getres(416),'Absender@','') then Showfromlister;
          ex(5)
          end;
@@ -347,12 +346,14 @@ begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
-        if ntZConnect(mbNetztyp) then begin
+        { MK 09.02.2000: Sinn dieses Codeabschnittes ist nicht zu erkennen,
+          deshalb ausgeklammert }
+{        if ntZConnect(mbNetztyp) then begin
           writeln(tt,'Dummy:');
           writeln(tt);
           end
         else
-          for i:=1 to 8 do writeln(tt);
+          for i:=1 to 8 do writeln(tt); }
         s:=first_marked;
         nr:=current_linenr;
         while s<>#0 do begin

@@ -10,7 +10,9 @@
 { PGP-Codierung }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit  xp_pgp;
 

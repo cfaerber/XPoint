@@ -163,7 +163,7 @@ News Messages, and adjust settings for Areas.
 
    <<I>>    send a binary file into this Newsgroup.
 
-   <<V>>    Selects a [View] mode. A ""sign at left of@50
+   <<V>>    Selects a [View] mode. A "#"sign at left of@50
         the Newsgroup title shows when it contains
         something fitting the view mode to read.
 
@@ -1004,6 +1004,13 @@ decided if and how a message will actually be sent
         it exists in the <<TEMP directory>> under the
         name <<LASTMSG>> (only as long as no other
         message has been written!).
+
+<</>>       Changes the recipient of the message.
+        Delete the current entry to choose (with <F2>)
+        between users and newsgroups.
+        ATTENTION! only experienced users should 
+        use this function.       
+
 
 If the <<server>> is shown in <<brackets>>, it means that
 several copies of the message will be sent over
@@ -6080,37 +6087,56 @@ with <Ctrl-Enter>. It is not necessary to press
 
 @
 820
-Which external program CrossPoint should call for
-viewing GIF, IFF/ILMB or PCX graphics files. The
-program must be in the DOS Path for XP to find it.
+Enter which external program CrossPoint should call 
+for viewing binary files.
+
+<<New>>      Create a new entry.
+
+<<Delete>>   Delete the selected entry.
+         
+<<Edit>>     Change an existing entry.
+
+@
+821
+Enter the Mime-Type of this entry.
+(The Mime-Type is the MIME-Header description
+of the Filetype (Usenet))
+
+If you select a message with this Mime-Type,
+XP will show it with the Viewer-Programm.
+ 
+@
+822
+Enter the file extension.
+
+If you select a Binary file or a Fido-Fileattach
+with a file of this type, XP starts the viewer-
+programm to show it.
+ 
+Note that in Z-Netz the message subject does not
+always contain the correct file name, which makes
+recognising file types by name difficult.
+
+@
+823
+Enter which Programm CrossPoint should call to
+view files of this format.
+
+The program must be in the DOS Path for XP to find it.
+(or you may enter the path to the programm.)
 This program is started as soon as you select a
-binary file containing a picture in one of these
-formats.
+binary file or a MIME-Meassage, containing a File
+of the selected format. 
 
 If you give the macro $FILE as parameter, CrossPoint
 will put the file name in at this point, otherwise it
 gives the file name to the called viewer as the first
 parameter.
 
-In addition to the three pre-defined, 3 other viewers
-for any formats may also be entered. To achieve this,
-enter the respective viewer file name to the left of
-the file extension of the type you are defining.
-
-Note that in Z-Netz the message subject does not
-always contain the correct file name, which makes
-recognising file types by name difficult.
-
 If you wish to use a batch file to start your viewer,
 enter the name of the batch in full, eg. VIEW.BAT.
 (ie. incl. ".BAT")
 
-@
-821
-^^820
-@
-822
-^^820
 @
 830
 Enter the individual expressions to be searched for.
@@ -7798,6 +7824,8 @@ Forward templates.
   $BRETT     -  The name of the origin newsgroup
   $AREA      -  the name of the origin newsgroup for
                 FIDO & MausNet messages
+  $NEWSGROUP -  the name of the origin newsgroup in
+                dot notation as usual in the usenet
   $BETREFF   -  The subject of the original message
   $ERSTELLT  -  The date of the original message
   $MSGDATE   -  the date American style
@@ -8782,13 +8810,16 @@ searching for the file you want. Enter the search
 string and CrossPoint looks through *all* lists and
 gathers all the occurrences together in a list.
 
+If you want to search for more as one item then 
+divide the items with - /& -.
+For example:	
+	/&terminal/&modem/&hello
+will find all files whose description includes 
+the words "terminal" AND "modem" AND "hello".
+
 Marking the files you want to order from this list
 with <Space>, press <Enter> to start setting up the
 request.
-
-The last entered search string is always offered, if
-you accept this CrossPoint displays the stored result
-from the previous search.
 @
 13301
 <<Re-Org / Misc. / Rebuild Ref. Links
@@ -10568,7 +10599,7 @@ messages every time.
 ³³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ c = Encoded Message
 ³³³³                     w = Message "pending"
 ³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ ! = Outgoing Messages
-³³³                       = Pending Fido-Crash
+³³³                      # = Pending Fido-Crash
 ³³³                      * = Sent Fido-Crash(*)
 ³³ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ - = Message on "Delete"
 ³³ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ + = Message on "Hold"
@@ -10600,8 +10631,8 @@ For [details] of how to do things, press <Enter>.@30
    /Z-Netz/Wissenschaft/Allgemein
    /Fido/OS2.ger
    ¯Unsent
-  /Alt/Tasteless/Jokes
-  /Soc/Culture/British
+ # /Alt/Tasteless/Jokes
+ # /Soc/Culture/British
  ³
  ÀÄÄÄÄÄÄ Newsgroups with messages to see
          as defined by "View" mode

@@ -10,20 +10,23 @@
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp4o;
 
 interface
 
-uses crt,dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
+uses {$IFDEF virtualpascal}sysutils,{$endif}
+     crt,dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
      lister,archive,maus2,winxp,printerx,resource,xdelay, xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input;
 
 
 var  such_brett  : string[5];    { fÅr Suche im gewÑhlten Brett }
      FMsgReqnode : string[BoxNameLen];    { F3 - Request - Nodenr. }
-     Global_Suchstring : String[96];      {JG:04.02.00 Suchstring Zwischenspeicher fuer Lister}
+     Global_Suchstring : String[80];      {JG:04.02.00 Suchstring Zwischenspeicher fuer Lister}
 
 
 procedure msg_info;          { interpretierten Header anzeigen }
@@ -73,7 +76,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xp6,xpfido,xpmaus,xpview,
      xp_pgp;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 96;  {JG:04.02.00 auf 96 gesetzt (Clipboard verlangt dur 32 Teilbare anzahl...}
+      suchlen = 80;  {JG:06.02.00 wieder auf 80 gesetzt...}
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -153,7 +156,7 @@ var x,y   : byte;
     stata           : array[0..5] of string[10];
     typa            : array[0..4] of string[10];
 
-label ende;
+label ende,happyend;
 
 { R-}
   function InText(var key:string):boolean;
@@ -391,6 +394,24 @@ begin
 
       else srec^.txt:=suchstring;
       if suchstring='' then goto ende;
+
+{JG: 07.02.00}
+      if suchfeld='MsgID' then begin            {MID-Suche ueber Bezugsverkettung}
+        suche:=false;
+        if not brk then begin                   {JG:08.02.00 ESC-Reaktion wieder drinn...}
+          markanz:=0;  
+          n:=GetBezug(suchstring);                
+          if n<>0 then begin
+            dbGo(mbase,n);
+            MsgAddmark;
+            suche:=true;
+            end
+          else hinweis(getres2(441,18));  { 'keine passenden Nachrichten gefunden' }
+          end;
+        aufbau:=true;  
+        goto happyend;
+        end;
+{/JG}
       dec(x); inc(y);
 (*    end
     else begin
@@ -567,8 +588,9 @@ begin
     end
   else begin   { brk }
 ende:
-    CloseBox;
     suche:=false;
+happyend:             {JG:07.02.00}
+    CloseBox;
     end;
   freeres;
 end;
@@ -1167,10 +1189,16 @@ begin
     close(f);
     findnext(sr);
     if (doserror<>0) and not crashs then begin
+      {$IFDEF virtualpascal}
+      FindClose(sr);
+      {$ENDIF}
       findfirst('*.cp',0,sr);
       crashs:=true;
-      end;
     end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   dispose(hdp);
   closebox;
   if markanz=0 then

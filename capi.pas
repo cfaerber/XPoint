@@ -11,7 +11,9 @@
 { v0.9  30/01/93              }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 { todo: - eingehende Rufnummern merken                        }
 {       - gelegentliche šberprfung, ob Verbindung noch steht }
@@ -93,21 +95,68 @@ implementation  { ------------------------------------------------- }
 const Seg0040 = $40;
 {$ENDIF}
 
-{$I CAPIDEF.INC}    { Message-Nummern }
+const  CONNECT_REQ            = $0200;
+       CONNECT_CONF           = $0201;
+       CONNECT_IND            = $0202;
+       CONNECT_RESP           = $0203;
+       CONNECT_INFO_REQ       = $0900;
+       CONNECT_INFO_CONF      = $0901;
+       CONNECT_ACTIVE_IND     = $0302;
+       CONNECT_ACTIVE_RESP    = $0303;
+       DISCONNECT_REQ         = $0400;
+       DISCONNECT_CONF        = $0401;
+       DISCONNECT_IND         = $0402;
+       DISCONNECT_RESP        = $0403;
+       LISTEN_REQ             = $0500;
+       LISTEN_CONF            = $0501;
+       GET_PARAMS_REQ         = $0600;
+       GET_PARAMS_CONF        = $0601;
+       INFO_REQ               = $0700;
+       INFO_CONF              = $0701;
+       INFO_IND               = $0702;
+       INFO_RESP              = $0703;
+       DATA_REQ               = $0800;
+       DATA_CONF              = $0801;
+       DATA_IND               = $0802;
+       DATA_RESP              = $0803;
 
-{$IFDEF Ver32}
-procedure EventHandler;
-begin end;
-{$ELSE }
-{$L CAPI.OBJ}
-procedure EventHandler; far; external;
-{$ENDIF}
+       SELECT_B2_PROTO_REQ    = $4000;
+       SELECT_B2_PROTO_CONF   = $4001;
 
+       SELECT_B3_PROTO_REQ    = $8000;
+       SELECT_B3_PROTO_CONF   = $8001;
+       LISTEN_B3_REQ          = $8100;
+       LISTEN_B3_CONF         = $8101;
+       CONNECT_B3_REQ         = $8200;
+       CONNECT_B3_CONF        = $8201;
+       CONNECT_B3_IND         = $8202;
+       CONNECT_B3_RESP        = $8203;
+       CONNECT_B3_ACTIVE_IND  = $8302;
+       CONNECT_B3_ACTIVE_RESP = $8303;
+       DISCONNECT_B3_REQ      = $8400;
+       DISCONNECT_B3_CONF     = $8401;
+       DISCONNECT_B3_IND      = $8402;
+       DISCONNECT_B3_RESP     = $8403;
+       GET_B3_PARAMS_REQ      = $8500;
+       GET_B3_PARAMS_CONF     = $8501;
+       DATA_B3_REQ            = $8600;
+       DATA_B3_CONF           = $8601;
+       DATA_B3_IND            = $8602;
+       DATA_B3_RESP           = $8603;
+       RESET_B3_REQ           = $0100;
+       RESET_B3_CONF          = $0101;
+       RESET_B3_IND           = $0102;
+       RESET_B3_RESP          = $0103;
 
+       HANDSET_IND            = $8702;
+       HANDSET_RESP           = $8703;
 
-const local_timeout  = 5;             { Warten auf Antwort von Vermittlung }
-      remote_timeout = 20;            { Warten auf Antwort von Remote }
+       MANUFACTURER_REQ       = $ff00;
+       MANUFACTURER_CONF      = $ff01;
+       MANUFACTURER_IND       = $ff02;
+       MANUFACTURER_RESP      = $ff03;
 
+const
       CapiMaxmess  : byte = 40;       { max. Messages im Empfangspuffer }
       CapiWindows  : byte = 2;        { Windowgr”áe                     }
       CapiFramelen : word = 2048;     { max. Blockgr”áe - 128..2048     }
@@ -173,6 +222,52 @@ var CapiDetect : boolean;             { CAPI vorhanden (s. CAPI_Init)   }
 
 
 { --- Allgemeines ------------------------------------------------- }
+
+procedure messagehandler; forward;  {JG: Deklaration nach oben verlegt}
+
+{$IFDEF Ver32}                      {JG:09.02.00 ganzen Block unter Variable gelegt}
+procedure EventHandler;
+begin end;
+{$ELSE }
+
+{JG:09.02.00 CAPI.ASM als Inline ASM eingebunden}
+procedure EventHandler; far; assembler;
+var
+  oldstack : dword;
+asm
+         push  ax
+         push  bx
+         push  cx
+         push  dx
+         push  si
+         push  di
+         push  ds
+         push  es
+         push  bp
+         mov   ax,seg @data             { Datensegment setzen }
+         mov   ds,ax
+         mov   word ptr oldstack,sp     { alten SS:SP sichern }
+         mov   word ptr oldstack+2,ss
+         mov   ss,word ptr mh_stack+2   { neuen SS:SP laden }
+         mov   sp,word ptr mh_stack
+         add   sp,mstacksize
+         call  far ptr messagehandler   { JG:FAR! Message-Handler aufrufen }
+         mov   ss,word ptr oldstack+2   { Stack restaurieren }
+         mov   sp,word ptr oldstack
+         pop   bp
+         pop   es
+         pop   ds
+         pop   di
+         pop   si
+         pop   dx
+         pop   cx
+         pop   bx
+         pop   ax
+         iret
+end;
+{/JG}
+{$ENDIF}
+
 
 function Hex(l:longint; n:byte):string;
 const hexch : array[0..15] of char = '0123456789ABCDEF';
@@ -431,7 +526,7 @@ begin
 end;
 
 
-procedure PutMessage(command:word);  { Paramterblock erzeugen ... }
+procedure PutMessage(command:smallword);  { Paramterblock erzeugen ... }
 begin
   outmsgbuf.Appl_ID:=ApplID;         { Appl-ID }
   outmsgbuf.command:=hi(command);    { Command }
@@ -447,7 +542,7 @@ begin
   inc(outmsgptr);
 end;
 
-procedure PutWord(w:word);
+procedure PutWord(w:smallword);
 begin
   outmsgbuf.mdata[outmsgptr]:=lo(w);
   outmsgbuf.mdata[outmsgptr+1]:=hi(w);
@@ -526,7 +621,7 @@ end;
 { Messages in Timeout-Pausen zus„tzlich pollen, um evtl. }
 { bersehene Message-Pakete abzuholen                    }
 
-procedure MessageHandler; forward;
+{procedure MessageHandler; forward;  JG:09.09.00 nach oben verlegt}
 
 procedure ExtraHandler(var lt:longint);
 begin
@@ -1257,7 +1352,7 @@ end;
 
 var oldexit : pointer;
 
-{$F+} procedure newexit; {$F-}
+procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   exitproc:=oldexit;
   if state>=10 then begin

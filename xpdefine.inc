@@ -6,11 +6,6 @@
 { Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
 { --------------------------------------------------------------- }
 
-{ Wenn gesetzt, werden an manchen stellen Routinen aus Object Professional
-  von TurbuPower-Software eingesetzt. }
-
-{.$DEFINE OPro }
-
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
@@ -32,6 +27,10 @@
 { Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
 {.$DEFINE NO386 }
+
+{ Wenn dieser Schalter definiert ist, wird eine Version mit CAPI-
+  UnterstÅzung compiliert }
+{.$DEFINE CAPI }
 
 { --- ab hier sind keine énderungen nîtig --- }
 
@@ -79,15 +78,10 @@
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
-  {$ELSE }
-    {$IFNDEF OS2 }
-      {$DEFINE Win32 }
-    {$ENDIF }
   {$ENDIF }
   {$C-,H-,I-,M-,P-,T-,V-,X+}
   {$MODE TP }
   {$ASMMODE Intel }
-  {$DEFINE NOASM }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -106,4 +100,10 @@
   {$IFDEF VirtualPascal }
     {$R+,S+,Q+,Optimize-}
   {$ENDIF }
+{$ENDIF }
+
+{$IFDEF Ver32 }
+  {$IFDEF CAPI } { Umgeht hÑssliche Warnings in TMT Pascal }
+    {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
+  {$ENDIF CAPI }
 {$ENDIF }

@@ -10,7 +10,9 @@
 { === Datenbank ==================================================== }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit  xp2db;
 
@@ -299,7 +301,7 @@ var flp : dbFLP;
     dbAppendField(MsgFile,fld);
   end;
 
-  procedure kk;
+(*  procedure kk;
   var hdp : headerp;
       hds : longint;
       mnt : longint;
@@ -320,7 +322,7 @@ var flp : dbFLP;
     dispose(hdp);
     dbSetIndex(mbase,1);
     dbGoTop(mbase);
-  end;
+  end; *)
 
   { Feld 'Origin' in Gruppendatei einfÅgen (ab 1.92) }
   procedure NewFieldOrigin;
@@ -481,7 +483,6 @@ var flp : dbFLP;
   var x,y  : byte;
       nr,i : shortint;
       anz  : shortint;
-      brk  : boolean;
       t    : taste;
   begin
     anz:=res2anz(211)-2;

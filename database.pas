@@ -19,7 +19,11 @@ unit database;
 
 interface
 
-uses xpglobal, dos, typeform,ems,datadef;
+uses xpglobal,
+{$IFDEF BP }
+  ems,
+{$ENDIF }
+dos, typeform,datadef;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -760,12 +764,14 @@ begin
   begin
 {$IFDEF Debug }
     if dl then dbLog('DB schlie·en: '+fname);
+{$ENDIF }
     if (dbp=nil) or tempclosed then
     begin
+{$IFDEF Debug }
       if dl then dbLog('DB Fehler: Datei bereits geschlossen.');
+{$ENDIF }
       exit;
     end;
-{$ENDIF }
     dbFlush(dbp);
     if not hdupdate then writehd(dbp);
     if xflag then begin
@@ -790,7 +796,9 @@ begin
       freemem(recbuf,hd.recsize);
     dbReleaseFL(feldp);
     end;
+{$IFDEF BP }
   setemscache;
+{$ENDIF }
   if cacheanz > 0 then { MK 01/00 - Cachegrî·e mîglicherweise 0, dann nicht ausfÅhren!}
     for i:=0 to cacheanz-1 do
      if cache^[i].dbp=dbp then cache^[i].used:=false;
@@ -1552,14 +1560,17 @@ begin
     close(dblogfile);
 end;
 
-{$F+,S-}
-procedure _closelog;
+{$S-}
+procedure _closelog; {$IFNDEF Ver32 } far; {$ENDIF }
+
 begin
   exitproc:=oldexit;
   if ioresult<>0 then;
   dbCloseLog;
 end;
-{$F-,S+}
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 
 {=====================================================================}

@@ -44,7 +44,7 @@ var   hello   : record
       hellopkt: array[0..sizeof(hellor)+1] of char absolute hello;
       ZedZap  : boolean;
 
-      SLO    : boolean;      { SEAlink Overdrive }
+      SLO     : boolean;      { SEAlink Overdrive }
 
       _timer : array[0..timers-1] of word;
       ENDE   : boolean;
@@ -102,10 +102,10 @@ begin
   timeout:=(_timer[nr]=0);
 end;
 
-function gettimer(nr:word):word;
+{ function gettimer(nr:word):word;
 begin
   gettimer:=_timer[nr]
-end;
+end; }
 
 function gettimersec(nr:word):word;
 begin
@@ -179,8 +179,8 @@ begin
 end;
 
 procedure set_time(secs:longint);
-var y,m,d,dow : word;
-    h,min,s,s1: word;
+var y,m,d : word;
+    h,min,s: word;
 begin
   if secs<0 then exit;
   y:=1970;
@@ -194,7 +194,8 @@ begin
     dec(secs,tagsec*tage[m]);
     inc(m);
     end;
-  d:=secs div tagsec + 1; secs:=secs mod tagsec;
+{  d:=secs div tagsec + 1; MK 10.02.00 unn”tig }
+  secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
   s:=secs;
@@ -597,7 +598,7 @@ var s,ems_dat1,
     scount    : integer;
     ok        : boolean;
     buf,edat  : ^emsbuf;
-    edatlen,i : word;
+    edatlen : word;
     buflen,dl : word;
     bufpos    : word;
     hex4      : string[4];
@@ -850,8 +851,6 @@ end;
 
 procedure WaZOOsession;
 var i       : integer;
-    rok     : boolean;
-    b       : byte;
     zmpar   : string[100];
     zmresult: byte;
     t       : text;

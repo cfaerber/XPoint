@@ -10,7 +10,9 @@
 { CrossPoint - BoxPar verwalten }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp9bp;
 
@@ -425,11 +427,11 @@ var d     : DB;
 begin
   dbOpen(d,BoxenFile,1);               { zugeh”rigen Dateiname holen }
   dbSeek(d,boiName,ustr(box));
-  if dbFound then begin
+  if dbFound then
+  begin
     dbRead(d,'dateiname',bfile);
-    dbClose(d);
     ReadBox(nt,bfile,BoxPar);             { Pollbox-Parameter einlesen }
-    end;
+  end;
   dbClose(d);
 end;
 

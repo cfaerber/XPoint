@@ -8,7 +8,7 @@
 { --------------------------------------------------------------- }
 
 { XPFIDO - Nodeliste auslesen/abfragen }
-(* MH: Flaggr”áe 40 -> 65 / Liste ge„ndert *)
+{ MH: Flaggr”áe 40 -> 65 / Liste ge„ndert }
 
 procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
 var s  : ^string;
@@ -156,7 +156,9 @@ again:
         i:=0;
         while (i<nanz) and (np^[i].node<fa.node) do
           inc(i);
-        {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
           _adr:=np^[i].adr
         else
@@ -398,28 +400,24 @@ var x,y  : byte;
     adr  : string[30];
     fa   : fidoadr;
     first: boolean;
-    addl : boolean;
 begin
   if active or not TestNodelist or DisableAltN then exit;
   new(ni);
   active:=true;
-  addl:=(NL_anz>1);
-(* MH: AltN-Screen vergr”áern *)
-  diabox(77,iif(addl,10,9),getres2(2100,1),x,y);    { Node-Infos abfragen }
+{ MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
+  diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if MainNodelist>0 then begin
     attrtxt(col.coldiarahmen);
-    (* 01.02.2000 MH: Nodelistennr. nach r. verschoben *)
     mwrt(x+70,y,' '+formi(nodelist^[MainNodelist].number,3)+' ');
     attrtxt(col.coldialog);
-    end; (* MH: Aufbau ge„ndert, damit m”glichst viel angezeigt werden kann *)
-  mwrt(x+3,y+2,getres2(2100,2));     { Box   }             (* MH 03.02.2000 *)
+    end; { MH: Aufbau ge„ndert, damit m”glichst viel angezeigt werden kann }
+  mwrt(x+3,y+2,getres2(2100,2));     { Box   }             { MH 03.02.2000 }
   mwrt(x+3,y+3,getres2(2100,4));     { Sysop }
   mwrt(x+3,y+4,getres2(2100,5));     { TelNr }
   mwrt(x+3,y+5,getres2(2100,6));     { Flags }
-  mwrt(x+3,y+6,' ÚÄÄÄ¯ [                    ]'); {getres2(2100,3) Node  }
-  mwrt(x+37,y+7,getres2(2100,9));    { Status }
-  if addl then
-    mwrt(x+55,y+7,getres2(2100,8));  { Datei }
+  mwrt(x+3,y+7,' ÚÄÄÄ¯ [                    ]'); {getres2(2100,3) Node  }
+  mwrt(x+37,y+8,getres2(2100,9));    { Status }
+    mwrt(x+55,y+8,getres2(2100,8));  { Datei }
   adr:='';
   first:=true;
   TempOpen;
@@ -434,7 +432,7 @@ begin
       end;
     if not first or (adr='') then begin
       pushhp(750);
-      readstring(x+3,y+iif(addl,7,6),'AKAÄÄ¯',adr,20,20,'',brk);
+      readstring(x+3,y+8,'AKAÄÄ¯',adr,20,20,'',brk);
       pophp;
       end;
     first:=false;
@@ -450,21 +448,20 @@ begin
         end;
       attrtxt(col.coldialog);
       moff;
-    (* MH: Fenster putzen *) (* x1,x2,y1,y2 *)
-    clwin(x+10,x+75,y+2,y+iif(addl,5,4)); (* Oberer Block *)
-     clwin(x+45,x+51,y+7,y+iif(addl,7,6)); (* Status      *)
-      clwin(x+62,x+73,y+7,y+iif(addl,7,6)); (* Datei      *)
-       clwin(x+11,x+30,y+6,y+iif(addl,6,5)); (* Adr [ ]   *)
+    { MH: Fenster putzen }
+    clwin(x+10,x+75,y+2,y+5); { Oberer Block }
+     clwin(x+45,x+51,y+8,y+8); { Status      }
+      clwin(x+62,x+73,y+8,y+8); { Datei      }
+       clwin(x+11,x+30,y+7,y+7); { Adr [ ]   }
       if ni^.found then with ni^ do begin
-        attrtxt(col.coldiahigh);          (* MH 42 -> 65 *)
+        attrtxt(col.coldiahigh);    { MH: 42 -> 65 }
         wrt(x+10,y+2,left(boxname+', '+standort,65));
         wrt(x+10,y+3,sysop);
         wrt(x+10,y+4,telefon);
         wrt(x+10,y+5,fflags);
-        wrt(x+11,y+6,MakeFidoAdr(fa,true));
-        wrt(x+45,y+7,status); 
-        if addl then
-          wrt(x+62,y+7,NLfilename(datei));
+        wrt(x+11,y+7,MakeFidoAdr(fa,true));
+        wrt(x+45,y+8,status); 
+          wrt(x+62,y+8,NLfilename(datei));
         end;
       mon;
       end;
@@ -480,7 +477,7 @@ end;
 
 var  rdispx,rdispy : byte;
 
-procedure ShowRQ(s:string); (* MH: Liste angepasst *)
+procedure ShowRQ(s:string); { MH: Liste angepasst }
 var ni  : NodeInfo;
     add : byte;
 begin
@@ -501,13 +498,13 @@ begin
   if ni.found then begin
     mwrt(rdispx+add+2,rdispy,forms(iifs(ni.ispoint,ni.boxname,ni.sysop),33));
     mwrt(rdispx+56,rdispy-1,forms(NLfilename(ni.datei),12));
-    mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65)); (* MH: 40 -> 65 *)
+    mwrt(rdispx+add+2,rdispy+1,forms(ni.fflags,65)); { MH: 40 -> 65 }
     mwrt(rdispx+7,rdispy-1,forms(ni.status,12));
     end
   else begin
     mwrt(rdispx+add+2,rdispy,sp(33));
     mwrt(rdispx+56,rdispy-1,sp(12));
-    mwrt(rdispx+add+2,rdispy+1,sp(65)); (* MH: 40 -> 65 *)
+    mwrt(rdispx+add+2,rdispy+1,sp(65)); { MH: 40 -> 65 }
     mwrt(rdispx+7,rdispy-1,sp(12));
     end;
 end;
@@ -524,7 +521,7 @@ type NodeBrec = record
                   boxname : string[30];
                   standort: string[30];
                   telefon : string[20];
-                  flags   : string[65]; (* MH: 40 -> 65 *)
+                  flags   : string[65]; { MH: 40 -> 65 }
                   fnl,snl,
                   pl      : boolean;
                 end;
@@ -561,7 +558,7 @@ var   x,y,h   : byte;
 label again;
 
   procedure ParseFlags;
-  var s,s2 : string[65]; (* MH: 40 -> 65 *)
+  var s,s2 : string[65]; { MH: 40 -> 65 }
       p    : byte;
   begin
     flags:=0;
@@ -707,7 +704,7 @@ again:
       mnotrim;
     maddstring(3,6,getres2(2131,5),nodeadr,20,20,'0123456789:/.'); { 'Nodeadresse' }
     maddstring(3,7,getres2(2131,6),telefon,20,20,'0123456789-');   { 'Telefon' }
-    maddstring(3,9,getres2(2131,8),flags,30,65,'>');(*MH: 40>65*)  { 'Flags' }
+    maddstring(3,9,getres2(2131,8),flags,30,65,'>');  {MH: 40>65}  { 'Flags' }
     maddbool (3,11,getres2(2131,9),fnl);   { 'FidoNet-Nodeliste durchsuchen' }
     maddbool (3,12,getres2(2131,10),snl);  { 'sonstige Nodelisten durchsuchen' }
       mhnr(956);
@@ -735,8 +732,8 @@ again:
   mwrt(x+2,y+15,getres2(2131,21));   { 'Netz:'  }
   mwrt(x+28,y+14,getres2(2131,22));  { 'Eintr„ge:' }
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
-{$IFNDEF WIN32}
   openlist(2,78,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
+{$IFDEF BP }
   ListInitEMS(2048);   { 2 MB EMS reservieren }
 {$ENDIF}
   found:=0; n:=0;
@@ -826,10 +823,10 @@ again:
     dec(h,5);
     rdispx:=x+2; rdispy:=y+h+2;
     attrtxt(col.colselrahmen);
-    mwrt(x,rdispy-2,hbar(76));       (* MH: rdispy-1 -> rdispy-2 *)
+    mwrt(x,rdispy-2,hbar(76));       { MH: rdispy-1 -> rdispy-2 }
 {$IFNDEF WIN32}
-    SetListsize(x+1,x+74,y+1,y+h-1); (* MH: h -> h-1             *)
-    listboxcol;                      (* MH: Liste angepasst      *)
+    SetListsize(x+1,x+74,y+1,y+h-1); { MH: h -> h-1             }
+    listboxcol;                      { MH: Liste angepasst      }
     listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'³');
     listDp(ShowRQ);
     listTp(listext); listmakros:=0;

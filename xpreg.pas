@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -10,13 +11,15 @@
 { Registrierung }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpreg;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,ems,xms,
+uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,
       video,datadef,database,maus2,maske,xdelay,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
@@ -1491,7 +1494,7 @@ again:
   pushhp(iif(wait,1550,1551));
   n:=ReadButton(x+3,sely,2,'*'+sels,n,true,z);
   pophp;
-  s:=getres2(520,40);   { 'LIZENZ.DOC' }
+  s:='DOC\' + getres2(520,40);   { 'LIZENZ.DOC' }
   case n of
     1 : begin
           if not exist(s) then           { 'LIZENZ.DOC' }
@@ -1572,4 +1575,3 @@ begin
 end;
 
 end.
-

@@ -1,4 +1,4 @@
-{ --------------------------------------------------------------- }
+        { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
@@ -16,7 +16,13 @@ unit fileio;
 
 interface
 
-uses  xpglobal, dos,typeform;
+uses
+{$IFNDEF Delphi }
+  dos,
+{$ELSE }
+  sysutils,
+{$ENDIF }
+  xpglobal, typeform;
 
 const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMWrite      = $01;
@@ -66,11 +72,11 @@ function  lockfile(var datei:file):boolean;
 procedure unlockfile(var datei:file);
 
 procedure addext(var fn:pathstr; ext:extstr);
-procedure adddir(var fn:string; dir:dirstr);
+procedure adddir(var fn:pathstr; dir:dirstr);
 function  GetFileDir(p:pathstr):dirstr;
 function  GetFileName(p:pathstr):string;
 function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
-procedure WildForm(var s:string);              { * zu ??? erweitern }
+procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 
@@ -81,10 +87,6 @@ var ShareDa : boolean;
 
 
 Function exist(n:string):boolean;
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
     ex : boolean;
 begin
@@ -93,14 +95,16 @@ begin
   while not ex and (doserror=0) do begin
     findnext(sr);
     ex:=(doserror=0);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   exist:=ex;
 end;
-{$ENDIF}
 
 Function existf(var f):Boolean;
-var d  : integer;
-    fm : byte;
+var
+  fm : byte;
 begin
   fm:=filemode;
   filemode:=$40;
@@ -108,7 +112,7 @@ begin
   existf:=(ioresult=0);
   close(file(f));
   filemode:=fm;
-  d:=ioresult;
+  if ioresult = 0 then ;
 end;
 
 
@@ -143,11 +147,6 @@ end;
 
 
 Function IsPath(name:PathStr):boolean;         { Pfad vorhanden ? }
-{$IFDEF WIN32}
-begin
-  IsPath := true;
-end;
-{$ELSE}
 var sr : searchrec;
 begin
   name:=trim(name);
@@ -170,7 +169,6 @@ begin
       end;
     end;
 end;
-{$ENDIF}
 
 Procedure era(s:string);
 var f : file;
@@ -181,27 +179,21 @@ end;
 
 
 procedure erase_mask(s:string);                 { Datei(en) lîschen }
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
 begin
   findfirst(s,0,sr);
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
-{$ENDIF}
 
 { path: Pfad mit '\' am Ende! }
 
 procedure erase_all(path:pathstr);
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
     f  : file;
 begin
@@ -217,13 +209,15 @@ begin
           erase(f);
           end;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   if pos('\',path)<length(path) then begin
     dellast(path);
     rmdir(path);
     end;
 end;
-{$ENDIF}
 
 Function ReadOnlyHidden(name:PathStr):boolean;
 var f    : file;
@@ -335,10 +329,6 @@ end;
 
 
 function _filesize(fn:pathstr):longint;
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
 begin
   findfirst(fn,0,sr);
@@ -347,7 +337,6 @@ begin
   else
     _filesize:=sr.size;
 end;
-{$ENDIF}
 
 procedure MakeFile(fn:pathstr);
 var t : text;
@@ -361,10 +350,6 @@ begin
 end;
 
 function filetime(fn:pathstr):longint;
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
 begin
   findfirst(fn,AnyFile,sr);
@@ -373,13 +358,8 @@ begin
   else
     filetime:=0;
 end;
-{$ENDIF}
 
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var f : file;
 begin
   assign(f,fn);
@@ -388,7 +368,6 @@ begin
   close(f);
   if ioresult<>0 then;
 end;
-{$ENDIF}
 
 procedure setfileattr(fn:pathstr; attr:word);   { Dateiattribute setzen }
 var f : file;
@@ -435,10 +414,6 @@ end;
 
 
 procedure move_mask(source,dest:pathstr; var res:integer);
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var sr : searchrec;
 begin
   res:=0;
@@ -449,17 +424,15 @@ begin
     if not _rename(getfiledir(source)+sr.name,dest+sr.name) then
       inc(res);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
-{$ENDIF}
 
 { Extension anhÑngen, falls noch nicht vorhanden }
 
 procedure addext(var fn:pathstr; ext:extstr);
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
 var dir  : dirstr;
     name : namestr;
     _ext : extstr;
@@ -467,11 +440,10 @@ begin
   fsplit(fn,dir,name,_ext);
   if _ext='' then fn:=dir+name+'.'+ext;
 end;
-{$ENDIF}
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
-procedure adddir(var fn:string; dir:dirstr);
+procedure adddir(var fn: pathstr; dir:dirstr);
 var _dir : dirstr;
     name : namestr;
     ext  : extstr;
@@ -506,8 +478,9 @@ end;
 
 
 function lock(var datei:file; from,size:longint):boolean;
-{$IFDEF WIN32}
+{$IFDEF Ver32}
 begin
+  lock := false;
 end;
 {$ELSE}
 var regs : registers;
@@ -526,7 +499,7 @@ end;
 {$ENDIF}
 
 procedure unlock(var datei:file; from,size:longint);
-{$IFDEF WIN32}
+{$IFDEF Ver32}
 begin
 end;
 {$ELSE}
@@ -554,7 +527,7 @@ end;
 
 
 procedure TestShare;
-{$IFDEF WIN32}
+{$IFDEF Ver32 }
 begin
 end;
 {$ELSE}
@@ -587,7 +560,7 @@ end;
 { t mu· eine geîffnete Textdatei sein }
 
 function textfilesize(var t:text):longint;
-{$IFDEF WIN32}
+{$IFDEF Ver32}
 begin
 end;
 {$ELSE}
@@ -612,11 +585,7 @@ begin
 end;
 {$ENDIF}
 
-procedure WildForm(var s: string);
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
+procedure WildForm(var s: pathstr);
 var dir : dirstr;
     name: namestr;
     ext : extstr;
@@ -629,7 +598,6 @@ begin
   if p>0 then ext:=left(ext,p-1)+dup(5-p,'?');
   s:=dir+name+ext;
 end;
-{$ENDIF}
 
 { Zwei diskfree/disksize-Probleme umgehen:                   }
 {                                                            }
@@ -719,4 +687,3 @@ end;
 begin
   TestShare;
 end.
-

@@ -10,7 +10,9 @@
 { Editor v1.0   PM 05/93 }
 
 {$I XPDEFINE.INC}
-{$O+,F+,A+}
+{$IFDEF BP }
+  {$O+,F+,A+}
+{$ENDIF }
 
 unit editor;
 
@@ -80,10 +82,6 @@ const maxgl     = 60;
       screenwidth : byte = 80;
       message   : string[40] = '';
       ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
-      findstr   : string[maxfindlen] = '';
-      replaceby : string[maxfindlen] = '';
-      findigcase: boolean = true;
-      replaceask: boolean = true;
 
 type  charr    = array[0..65500] of char;
       charrp   = ^charr;
@@ -91,9 +89,13 @@ type  charr    = array[0..65500] of char;
       absatzp  = ^absatzt;
       absatzt  = record
                    next,prev  : absatzp;
-                   size,msize : word;       { msize = allokierte Grî·e }
+                   size,msize : smallword;       { msize = allokierte Grî·e }
                    umbruch    : boolean;
                    fill       : array[1..3] of byte;
+{$ifdef ver32}
+  { Achtung! hier gibts ein Problem! obiges sind genau 16 Byte!
+      asize beachten! }
+{$endif}
                    cont       : charr;
                  end;
       position = record
@@ -314,7 +316,7 @@ asm
             cmp   byte ptr [di+bx-1],'-'
             jnz   @ufound
 
-  @fnext:      
+  @fnext:
             dec   bx
             jnz   @floop
   @ufound:     
@@ -457,6 +459,9 @@ begin
     { 01/2000 oh }
     config.PersistentBlocks:=false;
     { /oh }
+    { 10.02.2000 robo }
+    config.QuoteReflow:=true;
+    { /robo }
     assign(t,EdConfigFile);
     if existf(t) then begin
       reset(t);
@@ -473,8 +478,12 @@ begin
             config.AutoIndent:=(mid(s,p+1)<>'n')
           { 01/2000 oh }
           else if left(s,p-1)='persistentblocks' then
-            config.PersistentBlocks:=(mid(s,p+1)<>'n');
+            config.PersistentBlocks:=(mid(s,p+1)<>'n')
           { /oh }
+          { 10.02.2000 robo }
+          else if left(s,p-1)='quotereflow' then
+            config.QuoteReflow:=(mid(s,p+1)<>'n');
+          { /robo }
         end;
       close(t);
       end;
@@ -635,7 +644,7 @@ procedure FreeLastDelEntry;
       freelast(dnp^.next);
   end;
 begin
-  if DelRoot<>nil then
+  if assigned(DelRoot) then
     freelast(delroot);
 end;
 
@@ -659,20 +668,22 @@ begin
 end;
 
 function memtest(size:longint):boolean;
+
   function memfull:boolean;
   begin
     memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
   end;
+
 begin
-  while (delroot<>nil) and memfull do
+  while assigned(delroot) and memfull do
     FreeLastDelEntry;
-  if memfull and (Clipboard<>nil) then
+  if memfull and assigned(Clipboard) then
     FreeBlock(Clipboard);
   if memfull then begin
     if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
     memerrfl:=true;
     memtest:=false;
-    end
+  end
   else
     memtest:=true;
 end;
@@ -686,7 +697,7 @@ begin
   else begin
     ms:=(size+15) and $fff0;        { auf 16 Bytes aufrunden }
     getmem(p,asize+ms);
-    fillchar(p^,asize,0);
+    fillchar(p^,asize,0); { next, prev implizit auf NIL setzen, Rest auf 0 }
     p^.size:=size;
     p^.msize:=ms;
     p^.umbruch:=true;
@@ -694,10 +705,11 @@ begin
     end;
 end;
 
-procedure freeabsatz(p:absatzp);
+procedure freeabsatz(var p:absatzp); { .robo }
 begin
-  if p<>nil then
+  if assigned(p) then { .robo }
     freemem(p,asize+p^.msize);
+  p:=nil; { .robo }
 end;
 
 function vap(p:absatzp):absatzp;     { virtuellen Speicher einblenden }
@@ -718,11 +730,11 @@ end;
 procedure FreeBlock(var ap:absatzp);
 var p : absatzp;
 begin
-  while ap<>nil do begin        { Text freigeben }
+  while assigned(ap) do begin { .robo }   { Text freigeben }
     p:=ap^.next;
     freeabsatz(ap);
     ap:=p;
-    end;
+  end;
 end;
 
 
@@ -732,7 +744,6 @@ end;
 {           2 = alles mit Umbruch laden                             }
 
 function LoadBlock(fn:pathstr; sbreaks:boolean; umbruch,rrand:byte):absatzp;
-const bufsize = 8192;
 var mfm   : byte;
     s     : string;
     t     : text;
@@ -743,7 +754,7 @@ var mfm   : byte;
     isize : word;
     sbrk  : boolean;
     root  : absatzp;
-    endcr : boolean;          { CR am Dateiende }
+{    endcr : boolean;   }       { CR am Dateiende }
     endlf : boolean;          { LF am Zeilenende }
     srest : boolean;
     pp    : byte;
@@ -773,9 +784,9 @@ begin
     p:=ptr(1,1);
 {$ENDIF}
     tail:=nil;
-    endcr:=false;
+{    endcr:=false; }
     srest:=false;
-    while (srest or not eof(t)) and (p<>nil) do begin
+    while (srest or not eof(t)) and assigned(p) do begin
       isize:=0;
       sbrk:=false;
       endlf:=false;
@@ -804,11 +815,11 @@ begin
           end;
         end;
       if eoln(t) and not srest then begin
-        endcr:=not eof(t);
+{        endcr:=not eof(t); }
         readln(t);
         end;
       p:=AllocAbsatz(isize);
-      if p<>nil then begin
+      if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
                      ((umbruch=1) and ((isize<rrand-15) or sbrk)));
@@ -868,14 +879,14 @@ begin
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
     while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
     s:='begin 644 '+fn;
-    while not eof(t) and (p<>nil) do begin
+    while not eof(t) and assigned(p) do begin
       if s='' then begin
         blockread(t,ibuf^,blen,b_read);
         encode_UU(ibuf^,b_read,s);
       end;
-          
+
       p:=AllocAbsatz(length(s));
-      if p<>nil then begin
+      if assigned(p) then begin
         p^.umbruch:=true;
         FastMove(s[1],p^.cont,length(s));
         AppP;
@@ -887,7 +898,7 @@ begin
         else if b_read=2 then s:='end'
         else if b_read=3 then str(filesize(t),s);
         p:=AllocAbsatz(length(s));
-        if p<>nil then begin
+        if assigned(p) then begin
           p^.umbruch:=true;
           FastMove(s[1],p^.cont,length(s));
           AppP;
@@ -909,7 +920,7 @@ begin
   with edp(ed)^ do begin
     edfile:=FExpand(fn);
     showfile:='  '+fitpath(edfile,max(14,w-40));
-    if root<>nil then FreeBlock(root);
+    if assigned(root) then FreeBlock(root);
     EdLoadFile:=false;
     root:=LoadBlock(fn,sbreaks,umbruch,rrand);
     if root=nil then
@@ -1000,7 +1011,7 @@ begin
   ofs0:=pstart.offset;
   ofse:=maxint;
   cr:=true;
-  while ap<>nil do begin
+  while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
     with vap(ap)^ do
       if softbreak then begin
@@ -1010,13 +1021,13 @@ begin
         if (size<>3) or (cont[0]<>'-') or (cont[1]<>'-') or (cont[2]<>' ') then
           { Signaturtrenner, nicht anfassen }
         while (size>0) and (cont[size-1]=' ') do dec(size);
-        while (ofs<min(size,ofse)) do 
+        while (ofs<min(size,ofse)) do
         begin
           nxo:=Advance(ap,ofs,rand);
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
-          if nxo<min(size,ofse) then 
+          if nxo<min(size,ofse) then
           begin
-            blockwrite(f,spc[1],3); cr:=true; 
+            blockwrite(f,spc[1],3); cr:=true;
           end else
             cr:=false;
             ofs:=nxo;
@@ -1029,7 +1040,7 @@ begin
         end;
     if ap=pende.absatz then ap:=nil
     else ap:=vap(ap)^.next;
-    if (ap<>nil) and (ofse=maxint) then begin
+    if assigned(ap) and (ofse=maxint) then begin
       blockwrite(f,crlf[1],2); cr:=true;
       end;
     end;
@@ -1251,7 +1262,7 @@ var  dl         : displp;
           end;
         if absende then begin
           ap:=vap(ap)^.next;
-          if ap<>nil then SetAbsCol;
+          if assigned(ap) then SetAbsCol;
           dofs:=0; line:=0;
           end
         else
@@ -1851,7 +1862,7 @@ var  dl         : displp;
                     aufbau:=true;
                     end;
                   if ((ay<=y) and ScrolLDown) or      { AutoScrolling }
-                     ((ay>=y+h-1) and (dl^[gl].absatz<>nil) and ScrollUp) then begin
+                     ((ay>=y+h-1) and assigned(dl^[gl].absatz) and ScrollUp) then begin
                     tc:=ticker;
                     keyboard(mauslmoved); inc(ly); display; showstat;
                     repeat until tc<>ticker;
@@ -1880,7 +1891,7 @@ begin
       gotoxy(x+scx-1,y+scy);
       if insertmode then get(t,curon)
       else get(t,cureinf);
-      if @TProc<>nil then
+      if assigned(TProc) then
         if TProc(t) then EdAddToken(e,EditfBreak);
       if (t>=mausfirstkey) and (t<=mauslastkey) then
         maus_bearbeiten;
@@ -1901,7 +1912,7 @@ end;
 
 procedure EdExit(var ed:ECB);      { Release }
 begin
-  if ed<>nil then begin
+  if assigned(ed) then begin
     FreeBlock(edp(ed)^.root);
     akted:=edp(ed)^.lastakted;
     dispose(edp(ed));

@@ -103,7 +103,10 @@ var sr    : searchrec;
       assign(f1^,DestDir+sr.name);
       erase(f1^);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
   procedure NoCompSmtp(w:word);       { rcsmtp -> csmtp }
@@ -150,7 +153,10 @@ var sr    : searchrec;
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     filesum:=sum;
   end;
 
@@ -235,7 +241,10 @@ begin
         end;
       inc(spacksize,_filesize(DestDir+sr.name));
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     dispose(f1); dispose(f2);
     end;
   uunum:=GetNextUUnummer;
@@ -307,7 +316,10 @@ begin
         end;
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     dispose(f1); dispose(f2);
     clrscr;
     window(1,1,80,25);
@@ -317,7 +329,10 @@ begin
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     findfirst(XFerDir+'D*',0,sr);   { briggebliebene D-Files sicherstellen }
     while doserror=0 do begin
 {$IFNDEF WIN32}
@@ -325,7 +340,10 @@ begin
         MoveToBad(XFerDir+sr.name);
 {$ENDIF}
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     EmptySpool('D*.OUT');        { ausgehende Pakete l”schen }
     EmptySpool('X*.OUT');        { C-File muá stehenbleiben! }
     if nDelPuffer and (errorlevel=0) and (testpuffer(dpuffer,false,dummy)>=0)
@@ -418,7 +436,10 @@ var dummy : longint;
       if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
         _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
   procedure EmptySysin;
@@ -428,7 +449,10 @@ var dummy : longint;
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
 begin

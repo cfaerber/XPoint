@@ -10,14 +10,20 @@
 { Lister - PM 11/91 }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 
 unit lister;
 
 interface
 
-uses  xpglobal, crt,typeform,ems,xms,fileio,inout,maus2,keys,winxp;
+uses  xpglobal, crt,typeform,
+{$IFDEF BP }
+  xms, ems,
+{$ENDIF }
+  fileio,inout,maus2,keys,winxp;
 
 const ListHelpStr : string[8] = 'Hilfe';
       ListUseXms  : boolean   = false;
@@ -59,7 +65,9 @@ type  liste   = pointer;
 { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
 procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
+{$IFDEF BP }
 procedure ListInitEMS(kb:longint);
+{$ENDIF }
 procedure SetListsize(_l,_r,_o,_u:byte);
 procedure app_l(ltxt:string);           { Zeile anh„ngen }
 procedure list_convert(cp:listConvert);
@@ -321,10 +329,13 @@ begin
 end;
 
 function EmsPtr(p:lnodep):lnodep;
+{$IFNDEF BP }
+begin
+  EmsPtr := p;
+end;
+{$ELSE }
 var sseg : word;
 begin
-{$ifndef ver32}
-
   {$ifndef DPMI}
     sseg := seg(p^) and $f000;
     if sseg=EmsBseg then begin
@@ -343,9 +354,9 @@ begin
         end
     else
   {$endif}
-  {$endif}
     EmsPtr:=p;
 end;
+{$ENDIF }
 
 procedure closelist;
 var lnp : lnodep;
@@ -360,14 +371,17 @@ begin
       lnp:=last^.prev;
       freemem(last,lnodelen+length(last^.cont));
       last:=lnp;
-      end;
+    end;
+{$IFDEF BP }
     if EmsPages>0 then
       EmsFree(EmsHandle);
-    if XmsPages>0 then begin
+    if XmsPages>0 then
+    begin
       XmsFree(XmsHandle);
       freemem(XmsPtr,XmsPagesize);
-      end;
     end;
+{$ENDIF }
+  end;
   dispose(lstack[lstackp].l);
   dec(lstackp);
   alist:=lstack[lstackp].l;
@@ -386,9 +400,9 @@ var p  : byte;
   var lt : byte;
   begin
     lt:=length(ltxt);
-{$IFNDEF ver32 }
     case memflag of
       0 : getmem(lnp,lnodelen+lt);
+{$IFDEF BP } { Wir untersttzen nur in BP XMS/EMS }
       1 : begin
             if lEMSoffs+lnodelen+lt>=16384 then begin
               inc(lEMSpage); lEMSoffs:=0; end;
@@ -401,12 +415,13 @@ var p  : byte;
             lnp:=ptr(lXMSpage,lXmsOffs);     { lXMSpage < $1000 ! }
             inc(lXmsOffs,lnodelen+lt);
           end;
+{$ENDIF }
       3 : begin
             writeln('LIST: internal memory allocation error');
             halt(1);
           end;
     end;
-{$ENDIF}
+{$IFDEF BP }
     with EmsPtr(lnp)^ do begin
       next:=nil;
       prev:=back;
@@ -414,6 +429,7 @@ var p  : byte;
       marked:=false;
       FastMove(ltxt,cont,lt+1);
       end;
+{$ENDIF }
   end;
 
   procedure apptxt;
@@ -489,6 +505,7 @@ begin
   alist^.startpos:=sp;
 end;
 
+{$IFDEF BP }
 procedure ListInitEMS(kb:longint);
 begin
   with alist^ do begin
@@ -497,9 +514,7 @@ begin
     if EmsPages>0 then dec(EmsPages);
     if EmsPages>0 then begin
       EmsPages:=min(EmsPages,(kb+15)div 16+1);
-{$IFNDEF Ver32 }
       EmsAlloc(EmsPages,EmsHandle);
-{$ENDIF }
       EmsBseg:=emsbase and $f000;
       end;
     end;
@@ -520,6 +535,7 @@ begin
       end;
   lXMSpage:=0; lXMSoffs:=1;    { bei Offset 1 beginnen, wg. NIL-Pointer }
 end;
+{$ENDIF }
 
 procedure list_readfile(fn:string; ofs:word);
 type barr = array[0..65000] of byte;
@@ -531,7 +547,11 @@ var f  : file;
     rr: word;
     fm    : byte;
 begin
+{$IFDEF BP }
   if (memavail+longint(EmsAvail)*16384+longint(XmsAvail)*1024<MinListMem+2000) or (maxavail<6000)
+{$ELSE }
+  if (memavail < MinListMem+2000) or (maxavail<6000)
+{$ENDIF }
   then begin
     app_l('zu wenig freier DOS-Speicher, um Datei anzuzeigen');
     exit;
@@ -547,8 +567,10 @@ begin
     rp:=1;
     if ioresult=0 then begin
       seek(f,ofs);
+{$IFDEF BP }
       if filesize(f)*2.5>memavail then
         ListInitEMS(filesize(f) div 400 - memavail div 2500);
+{$ENDIF }
       repeat
         blockread(f,p^[rp],ps-rp,rr);
         if (@ConvProc<>nil) and (rr>0) then ConvProc(p^[rp],rr);
@@ -577,7 +599,6 @@ var gl,p,y    : shortint;
     actl,                 { Zeiger auf erste Zeile }
     pl        : lnodep;   { Zeiger auf gew„hlte Zeile }
     more      : boolean;  { weitere Zeilen nach der letzen angezeigten vorh. }
-    ss        : boolean;
     f7p,f8p   : longint;
     suchline  : longint;   { Zeilennr.           }
     spos,slen : integer;   { Such-Position/L„nge }
@@ -1307,8 +1328,8 @@ end;
 
 
 function list_markanz:longint;
-var anz : longint;
-    lp  : lnodep;
+{var anz : longint;
+    lp  : lnodep; }
 begin
   list_markanz:=alist^.markanz;
 { lp:=EmsPtr(alist^.first);

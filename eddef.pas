@@ -144,6 +144,9 @@ type   EdColrec = record
                     { 01/2000 oh }
                     PersistentBlocks  : boolean;
                     { /oh }
+                    { 10.02.2000 robo }
+                    QuoteReflow       : boolean;
+                    { /robo }
                   end;
 
        EdAskQuit   = function(ed:ECB):taste;  { J/N/Esc }

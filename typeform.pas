@@ -180,15 +180,16 @@ type psplit = record              { Fr Pointer-Type-Cast }
 {$IFDEF Ver32 }
 
 { 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
-function CPos(c: char; const s: string): byte; assembler; {&uses edi}
+function CPos(c: char; const s: string): byte; assembler;
 asm
+         push   edi
          cld
          mov    edi,s
          xor    ecx, ecx
          mov    cl,[edi]
          jecxz  @notf            { s='' -> nicht gefunden }
          inc    ecx
-         mov    edx,ecx          { länge merken }
+         mov    edx,ecx          { l„nge merken }
          inc    edi
          mov    al,c
          repnz  scasb
@@ -197,7 +198,7 @@ asm
          sub    eax,ecx
          jmp    @end
 @notf:   xor    eax,eax
-@end:
+@end:    pop    edi
 end;
 
 {$ELSE}
@@ -228,20 +229,22 @@ end;
 {$IFDEF Ver32 }
 
 { 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
-procedure SetParity(var b:byte; even:boolean); assembler; {&uses edi}
+procedure SetParity(var b:byte; even:boolean); assembler;
 asm
+          push   edi
           mov    edi,b
           mov    al,[edi]
           cmp    even,0
           jz     @setodd
-          and    al,07fh               { Test auf gerade Parität }
+          and    al,07fh               { Test auf gerade Parit„t }
           jpe    @spok
           or     al,80h
           jmp    @spok
-@setodd:   and    al,07fh               { Test auf ungerade Parität }
+@setodd:  and    al,07fh               { Test auf ungerade Parit„t }
           jpo    @spok
           or     al,80h
-@spok:     mov    [edi],al
+@spok:    mov    [edi],al
+          pop edi
 end;
 
 {$ELSE}
@@ -257,10 +260,10 @@ asm
           jpe    @spok
           or     al,80h
           jmp    @spok
-@setodd:   and    al,07fh               { Test auf ungerade Parit„t }
+@setodd:  and    al,07fh               { Test auf ungerade Parit„t }
           jpo    @spok
           or     al,80h
-@spok:     mov    es:[di],al
+@spok:    mov    es:[di],al
 end;
 
 {$ENDIF}
@@ -632,38 +635,36 @@ end;
 {$ifdef ver32}
 
 { 01.02.2000 robo - 32 Bit }
+{ 08.02.2000 MK Tabellen als Konstanten, wegen FPC }
 
 function Upcase(const c:char): char; assembler;
+const
+  LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
+{$IFDEF Windows}
+   '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
+   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß';
+{$ELSE}
+   '€šƒ…€ˆ‰Š‹Œ’’“™•–—˜™š›œŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
+   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ';
+{$ENDIF}
 asm
     push ebx
     xor ebx,ebx
     mov   bl, c
     cmp   bl, 'a'                         { erst ab 'a'... }
     jb @noupcase
-    mov al,byte ptr cs:[offset @lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
+    mov al,byte ptr [offset lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
     jmp @Upcase_end
-
-{Win/DOS Tabellenteile nur mit dem jeweils passenden  }
-{Editor bzw. Zeichensatz aendern...                   }
-
-@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
-
-{$IFDEF Windows}
-         db '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß'
-{$ELSE}
-         db '€šƒ…€ˆ‰Š‹Œ’’“™•–—˜™š›œŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ'
-{$ENDIF}
-
 @noupcase:
     mov al,bl
-
 @Upcase_end:
     pop ebx
 end;
 
 function Locase(const c:char):char; assembler;
+const
+  Look: array[0..7] of char = '’¥€™š';
+  Get: array[0..7] of char = '‚†‘¤‡„”';
 asm
     push ebx
     mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
@@ -686,16 +687,13 @@ asm
 {$ELSE}
 
  @3: mov ebx,7
- @4: cmp byte ptr cs:[@look+eBX],al
+ @4: cmp byte ptr [look+eBX],al
      je @5
      dec ebx
      jns @4
      jmp @Locase_end
- @5: mov al,byte ptr cs:[@get+ebx]
+ @5: mov al,byte ptr [get+ebx]
      jmp @Locase_end
-
- @Look: db '’¥€™š'
- @Get:  db '‚†‘¤‡„”'
 
 {$ENDIF}
 
@@ -1935,90 +1933,33 @@ end;
 
 
 
-{ JG:04.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }  
+{JG 11.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }
+{MK 11.02.00  Ein wenig eleganter geschrieben }
+function mailstring(const s: String): string;
+const
+  MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@'];
+  WrongChar: set of Char = ['.', '_', '-'];
+var
+  i,j  : byte;
+begin
+  i:=cpos('@',s);                              {Ists ne Mailadresse ?}
+  if i <> 0 then
+  begin
+    while (s[i] in MailChar) and ( i > 0) do dec(i); { Anfang suchen... }
+    repeat                           { '.-_' sind am Anfang ungueltig }
+      inc(i);
+    until not (s[i] in WrongChar);
 
-function mailstring(const s: String): string; assembler;
-asm
-{$IFNDEF Ver32 }
-        mov dx,ds
-        cld
-        les di, @result
-        lds si, s
+    j := i;
+    while (s[j] in MailChar) and (j <= length(s)) do Inc(j); {Ende suchen...}
+    repeat                                   {.-_ sind am Ende ungueltig}
+      dec(j);
+    until not (s[j] in WrongChar);
 
-        mov cl,[si]
-        inc si
-        
-        mov bx,0        
-
-@@1:    cmp byte ptr [si+bx],'@'        { @ Suchen }                   
-        je @@2
-        inc bx
-        cmp bl,cl
-        je @end
-        jmp @@1
-
-@@2:    dec bx                          { gueltige Zeichen links des @ suchen }
-        js @@3         
-        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
-        cmp al,'_'
-        je @@2
-        cmp al,'-'
-        je @@2
-        cmp al,'.'
-        je @@2 
-        cmp al,'$'
-        je @@2 
-        cmp al,'@'
-        je @@2
-        cmp al,'0'
-        jb @@2a
-        cmp al,'9'
-        jna @@2        
-@@2a:   and al,0dfh
-        cmp al,'A'
-        jb @@3
-        cmp al,'Z'
-        jna @@2
-
-
-@@3:    lea si,[si+bx+1]                {SI= Start des neuen Strings}
-        mov bx,0
-        
-@@4:    inc bx                          { und nach rechts }
-        cmp bl,cl
-        je @@5
-        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
-        cmp al,'_'
-        je @@4
-        cmp al,'-'
-        je @@4
-        cmp al,'.'
-        je @@4 
-        cmp al,'$'
-        je @@4 
-        cmp al,'@'
-        je @@4
-        cmp al,'0'
-        jb @@4a
-        cmp al,'9'
-        jna @@4        
-@@4a:   and al,0dfh
-        cmp al,'A'
-        jb @@5
-        cmp al,'Z'
-        jna @@4
-
-@@5:    mov cx,bx
-
-@end:   mov al,bl
-        stosb
-        rep movsb            
-        mov ds,dx
-{$ENDIF }
-end;        
-{/JG}
-
-
+    MailString := copy(s, i, j-i+1);
+  end else
+    mailstring:=s;
+end;
 
 Function CreditCardOk(s:string):boolean;   { Kreditkartennummer berprfen }
 const cntab : array['0'..'9'] of byte = (0,2,4,6,8,1,3,5,7,9);
@@ -2049,34 +1990,29 @@ end;
 {$ifdef ver32}
 
 { 01.02.2000 robo - 32 Bit }
+{ 06.02.2000 MK - Optimiert }
 
 procedure FastMove(var Source, Dest; const Count: WORD); assembler;
 asm
-        mov  ecx, count
-        or   ecx, ecx        { Nichts zu kopieren? }
-        jz   @ende
-
-        push ebx
         push esi
         push edi
 
-        mov  edi, dest
-        mov  esi, source
+        mov  ecx, count
+        mov  eax, ecx
+        sar  ecx, 2
+        js   @ende
 
-        shr  ecx, 1
-        setc dl
-        shr  ecx, 1
+        mov  esi, source
+        mov  edi, dest
+
         cld
-        rep  movsd
-        jnc  @even2
-        movsw
-@even2: shr  dl, 1
-        jnc @even
-        movsb
-@even:  pop edi
+        rep movsd
+        mov ecx, eax
+        and ecx, $03
+        rep movsb
+
+@ende:  pop edi
         pop esi
-        pop ebx
-@ende:
 end;
 
 { /robo }
@@ -2135,4 +2071,3 @@ end;
 {$ENDIF }
 
 end.
-

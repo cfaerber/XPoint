@@ -1559,7 +1559,7 @@ begin
   attrtxt(7);
   clrscr;
   cursor(curoff);
-{$IFNDEF WIN32}
+{$IFNDEF Ver32}
   checkbreak:=false;
   setintvec(9,@dummy);
   repeat

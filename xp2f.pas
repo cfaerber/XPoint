@@ -10,7 +10,9 @@
 { CrossPoint Config - Farben, F-Tasten, Feiertage }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp2f;
 
@@ -26,13 +28,41 @@ procedure CfgColors;
 
 implementation  { -------------------------------------------------- }
 
+{ 10.02.2000 MK: In Inline-ASM umgebaut }
+{ wie windows.fwrt(), allerdings bleibt der TextBackground unver„ndert }
+procedure sdisp(x,y:word; var s:string); assembler;
+asm
+{$IFDEF BP }
+         cld
+         mov    es,base
+         mov    ax,y
+         dec    ax
+         mov    cl,5
+         shl    ax,cl
+         mov    di,ax
+         shl    ax,1
+         shl    ax,1
+         add    di,ax
+         add    di,x
+         add    di,x
+         sub    di,2
+         mov    ah,textattr
+         and    ah,15
+         lds    si,s
+         mov    ch,0
+         lodsb
+         mov    cl,al
+         jcxz   @nowrt
+@lp:     lodsb
+         stosb
+         and    byte ptr es:[di],0f0h
+         or     es:[di],ah
+         inc    di
+         loop   @lp
+@nowrt:
+{$ENDIF }
+end;
 
-{$IFDEF ver32}
-procedure sdisp(x,y:word; var s:string); begin end;
-{$ELSE}
-procedure sdisp(x,y:word; var s:string); near; external;
-{$L xp2f.obj}
-{$ENDIF}
 
 
 procedure EditFkeys(typ:byte);
@@ -43,8 +73,6 @@ var anzahl  : byte;
     txt     : string[10];
     t       : taste;
     modi    : boolean;
-    s       : string;
-    nk      : boolean;
 
   procedure edit(p:byte);
   var x,y,i : byte;
@@ -271,7 +299,7 @@ begin
     end;
 end;
 
-procedure showcol; far;
+procedure showcol; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     at(colmenu[0]);
@@ -305,7 +333,7 @@ begin
     end;
 end;
 
-procedure showmsgs; far;
+procedure showmsgs; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     at(colmsgsinfo);
@@ -328,7 +356,7 @@ begin
     end;
 end;
 
-procedure showmenus0; far;
+procedure showmenus0; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     at(colmenu[0]);
@@ -347,7 +375,7 @@ begin
     end;
 end;
 
-procedure wwin(l,r,o,u:byte; txt:string; rahmen,text:byte); far;
+procedure wwin(l,r,o,u:byte; txt:string; rahmen,text:byte); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   normattr:=rahmen; normtxt; forcecolor:=true;
   rahmen1(l,r,o,u,'');
@@ -358,7 +386,7 @@ begin
   clwin(l+1,r-1,o+1,u-1);
 end;
 
-procedure showmenus1; far;
+procedure showmenus1; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(32,48,2,11,'',colmenu[1],colmenu[1]);
@@ -383,7 +411,7 @@ begin
     end;
 end;
 
-procedure showmenus2; far;
+procedure showmenus2; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(34,55,5,13,'',colmenu[2],colmenu[2]);
@@ -405,7 +433,7 @@ begin
     end;
 end;
 
-procedure showmenus3; far;
+procedure showmenus3; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(36,57,12,17,'',colmenu[3],colmenu[3]);
@@ -424,7 +452,7 @@ begin
     end;
 end;
 
-procedure smsgbox; far;
+procedure smsgbox; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(40,70,10,15,'Meldung',colmboxrahmen,colmbox);
@@ -434,7 +462,7 @@ begin
     end;
 end;
 
-procedure sdialog; far;
+procedure sdialog; {$IFNDEF Ver32 } far; {$ENDIF }
 var i : byte;
 begin
   with col do begin
@@ -464,7 +492,7 @@ begin
     end;
 end;
 
-procedure sel1; far;
+procedure sel1; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(49,61,10,18,'',colselrahmen,colselbox);
@@ -484,7 +512,7 @@ begin
     end;
 end;
 
-procedure sel2; far;
+procedure sel2; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(33,78,7,19,'',colsel2rahmen,colsel2box);
@@ -514,7 +542,7 @@ begin
     end;
 end;
 
-procedure subox; far;
+procedure subox; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(35,75,10,18,'Kalender u.„.',colutility,colutility);
@@ -528,7 +556,7 @@ begin
     end;
 end;
 
-procedure shelp; far;
+procedure shelp; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(35,76,12,18,'',colhelp,colhelp);
@@ -546,7 +574,7 @@ begin
     end;
 end;
 
-procedure slister; far;
+procedure slister; {$IFNDEF Ver32 } far; {$ENDIF }
 var i : integer;
 begin
   with col do begin
@@ -586,7 +614,7 @@ begin
     end;
 end;
 
-procedure seditor; far;
+procedure seditor; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     at(coledithead);
@@ -634,7 +662,7 @@ begin
     end;
 end;
 
-procedure smailer; far;
+procedure smailer; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   with col do begin
     wwin(31,78,6,19,'',colmailer,colmailer);
@@ -658,7 +686,7 @@ begin
     end;
 end;
 
-procedure skeys; far;
+procedure skeys; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   showcol;
   wrkeys(true);
@@ -791,7 +819,9 @@ var y,ax,xp,yp : shortint;
     wrt(28,y+7,iifc(ax+7<nn,#16,' '));
     mon;
   end;
+{$IFDEF Debug }
   {$R+}
+{$ENDIF }
 
   procedure maus_bearbeiten;
   var xx,yy  : integer;

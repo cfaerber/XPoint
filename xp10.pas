@@ -11,7 +11,9 @@
 {              Nodelisten, Tarifgruppen                             }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp10;
 

@@ -151,7 +151,7 @@ const lshift = 2;
 
       highbyte : byte = 0;
 
-procedure func_dummy(var t:taste); far;
+procedure func_dummy(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
 end;
 
@@ -312,14 +312,14 @@ end;
 
 function ScrollMode:boolean;
 begin
-{$IFNDEF WIN32}
+{$IFNDEF Ver32}
   ScrollMode:=odd(mem[Seg0040:$17] shr 4);
 {$ENDIF }
 end;
 
 function kbstat:byte;
 begin
-{$IFNDEF WIN32}
+{$IFNDEF Ver32}
   kbstat:=mem[Seg0040:$17];
 {$ENDIF }
 end;

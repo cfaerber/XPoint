@@ -10,13 +10,16 @@
 { Import/Export }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpimpexp;
 
 interface
 
-uses  dos,typeform,fileio,inout,maske,datadef,database,maus2,resource,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      dos,typeform,fileio,inout,maske,datadef,database,maus2,resource,
       xp0,xp1, xpglobal;
 
 
@@ -601,7 +604,10 @@ var ypath : pathstr;
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     YupMailsize:=sum;
   end;
 

@@ -10,14 +10,17 @@
 { CrossPoint - StartUp }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp2;
 
 interface
 
-uses crt,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-     databaso,maske,video,help,ems,printerx,lister,win2,maus2,crc16,clip,
+uses {$IFDEF virtualpascal}sysutils,{$endif}
+     crt,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
+     databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
      xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum;
 
@@ -336,7 +339,10 @@ begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
@@ -349,7 +355,10 @@ begin
     if ioresult<>0 then
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht lîschen!');
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   if VideoType<2 then ParFontfile:='';
   if (ParFontfile<>'') and (ParFontfile[1]<>'*') then
     ParFontfile:=FExpand(ParFontfile);
@@ -479,9 +488,12 @@ begin
   if doserror=0 then begin
     findnext(sr);
     languageopt:=(doserror=0);
-    end
+  end
   else
     languageopt:=false;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   if not exist(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
@@ -866,7 +878,10 @@ begin
   while doserror=0 do begin
     _era(sr.name);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 
@@ -1015,6 +1030,7 @@ end;
 procedure testlock;
 var i : integer;
 begin
+{$IFDEF BP } { !! Diese Routine mu· noch portiert werden }
   if ParNolock then exit;
   assign(lockfile, 'lockfile');
   filemode:=FMRW + FMDenyWrite;
@@ -1033,6 +1049,7 @@ begin
   lockopen:=true;
   { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
   FileMode := FMRW;
+{$ENDIF }
 end;
 
 

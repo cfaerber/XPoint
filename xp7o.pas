@@ -10,14 +10,17 @@
 { XP7 - zus„tzlicher Overlay-Teil }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp7o;
 
 interface
 
-uses xpglobal, crt,dos,typeform,inout,fileio,datadef,database,resource,maus2,
-  uart, archive,xp0,xp1,xp7,xp_iti;
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      xpglobal, crt,dos,typeform,inout,fileio,datadef,database,resource,maus2,
+      uart, archive,xp0,xp1,xp7,xp_iti;
 
 procedure ttwin;
 procedure twin;
@@ -682,9 +685,12 @@ begin
         erase(f2);
         end;
       findnext(sr);
-      end;
-    close(f1);
     end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
+    close(f1);
+  end;
   cursor(curoff);
   moff; clrscr; mon;
 end;
@@ -702,7 +708,10 @@ begin
   while doserror=0 do begin
     inc(packetsize,sr.size);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 
@@ -719,7 +728,10 @@ begin
     while doserror=0 do begin
       last:=sr.name;
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     arc:=ArcType(XferDir+last);
     if (arc>0) and not ArchiveOk(XferDir+last) then
       MoveToBad(XferDir+last);

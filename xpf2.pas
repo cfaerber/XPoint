@@ -10,13 +10,16 @@
 { Fido-Modul, Teil 2 }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpf2;
 
 interface
 
-uses  xpglobal, crt,dos,typeform,fileio,archive,montage,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      xpglobal, crt,dos,typeform,fileio,archive,montage,
       xp0,xp1,xp1o,xp3,xp3o;
 
 
@@ -171,13 +174,16 @@ begin
                 if ProcessTICfile(FilePath+'TICK\'+sr.name) then;
                 _era(FilePath+'TICK\'+sr.name);
                 findnext(sr);
-                end;
               end;
-            end;   { of TIC-File vorhanden }
-          end;   { at>0 }
-        end;
-      end;   { rcvd }
-    end;
+              {$IFDEF virtualpascal}
+              FindClose(sr);
+              {$ENDIF}
+            end;
+          end;   { of TIC-File vorhanden }
+        end;   { at>0 }
+      end;
+    end;   { rcvd }
+  end;
 ende:
   close(t);
 
@@ -186,7 +192,10 @@ ende:
     if ProcessTICfile(FilePath+sr.name) then
       _era(FilePath+sr.name);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 
   close(f);
   if _filesize(tmp)>0 then

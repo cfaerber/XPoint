@@ -10,13 +10,16 @@
 { Nachrichten-Autoversandt; Autoexec }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpauto;
 
 interface
 
-uses  dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
       xp0,xp1, xpglobal;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
@@ -132,8 +135,6 @@ var mmask     : array[1..12] of boolean;
 
   function amodi:boolean;
   var fn : pathstr;
-      f  : file;
-      t  : longint;
       sr : searchrec;
   begin
     fn:=ar.datei;
@@ -386,7 +387,7 @@ var sr    : searchrec;
 {
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(multipos('*',BoxPar^.akas),pe_ForcePfadbox,0)) then begin
-}                          
+}
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
@@ -394,11 +395,14 @@ var sr    : searchrec;
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
             findnext(sr);
-            end;
           end;
-        _era('FPUFFER');
+          {$IFDEF virtualpascal}
+          FindClose(sr);
+          {$ENDIF}
         end;
+        _era('FPUFFER');
       end;
+    end;
   end;
 
   function SendMsg(delfile:boolean):boolean;
@@ -522,7 +526,7 @@ var sr    : searchrec;
   end;
 
   function SendPuffer:boolean;
-  var p   : byte;
+  var
       box : string[BoxNameLen];
   begin
     SendPuffer:=false;
@@ -597,7 +601,10 @@ begin
         end;
       end;
     ParGelesen:=mgel;
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 
@@ -621,7 +628,7 @@ var ar   : autorec;
     ldat,
     sdat : string[datelen];
 
-  procedure setfile(var s: string);
+  procedure setfile(var s: pathstr);
   var dir  : dirstr;
       name : namestr;
       ext  : extstr;

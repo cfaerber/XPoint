@@ -174,7 +174,7 @@ const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
        intmask    : array[1..coms] of byte = ($10,$08,0,0);
        intcom2    : array[1..coms] of boolean = (false,false,false,false);
        trigger    : byte = $80;
-
+{$IFDEF BP }
        datainout  = 0;     { UART-Register-Offsets }
        intenable  = 1;
        intids     = 2;     { Read  }
@@ -187,6 +187,7 @@ const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
 
        MS_CTS     = $10;       { Modem-Status-Register }
        MS_DSR     = $20;
+{$ENDIF }
        MS_RI      = $40;       { Ring Indicator: Klingelsignal }
        MS_DCD     = $80;       { Data Carrier Detect           }
        MC_DTR     = $01;       { Modem Control Register }
@@ -733,8 +734,7 @@ end;
 
 { Exit-Prozedur }
 
-{$F+}
-procedure comexit;
+procedure comexit; {$IFNDEF Ver32 } far; {$ENDIF }
 var i : byte;
 begin
   exitproc:=exitsave;
@@ -744,7 +744,6 @@ begin
       releasecom(i);
       end;
 end;
-{$F-}
 
 
 {--- Daten senden / empfangen ----------------------------------------}
@@ -754,7 +753,7 @@ end;
 procedure FossilFill(no:byte);
 var regs : registers;
 begin
-{$IFNDEF WIN32}
+{$IFNDEF Ver32}
   with regs do begin
     ah:=$18; cx:=bufsize[no] - 16;    { Platz fÅr PutByte lassen }
     es:=seg(buffer[no]^); di:=ofs(buffer[no]^);

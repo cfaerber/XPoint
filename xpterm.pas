@@ -10,7 +10,9 @@
 { CrossPoint - Terminal und Scripts }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpterm;
 
@@ -18,8 +20,10 @@ interface
 
 
 uses  crt,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
-      resource,capi,xpglobal,
-      xp0,xp1,xp1o2,xp1input;
+{$IFDEF CAPI }
+  capi,
+{$ENDIF }
+      resource,xpglobal, xp0,xp1,xp1o2,xp1input;
 
 
 function RunScript(test:boolean; scriptfile:pathstr;
@@ -389,7 +393,11 @@ var b : byte;
   end;
 
 begin
- if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
+{$IFDEF CAPI }
+   if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
+{$ELSE }
+   if receive(comnr,b) then
+{$ENDIF }
   if ansichar then add_ansi(char(b))
   else
     if ansimode and (b=27) then begin
@@ -442,9 +450,11 @@ end;
 procedure sendstr(s:string);
 var i : byte;
 begin
+{$IFDEF CAPI }
   if ISDN then
     CAPI_Sendstr(s)
   else
+{$ENDIF }
     for i:=1 to length(s) do begin
       testbyte;
       if out7e1 then SetParity(byte(s[i]),true);
@@ -468,14 +478,22 @@ end;
 
 function Carrier:boolean;
 begin
-  if ISDN then Carrier:=CAPI_Carrier
-  else Carrier:=uart.carrier(comnr);
+{$IFDEF CAPI }
+  if ISDN then
+    Carrier:=CAPI_Carrier
+  else
+{$ENDIF }
+  Carrier:=uart.carrier(comnr);
 end;
 
 procedure flushin;
 begin
-  if ISDN then CAPI_flushinput
-  else flushinput(comnr);
+{$IFDEF CAPI }
+  if ISDN then
+    CAPI_flushinput
+  else
+{$ENDIF }
+    flushinput(comnr);
 end;
 
 
@@ -510,10 +528,12 @@ begin
   attrtxt(15); write(getres(2004)); attrtxt(7);   { trenne Verbindung }
   writeln;
   mon;
+{$IFDEF CAPI }
   if ISDN then
-    if CAPI_hangup then
-    else
-  else begin
+    CAPI_hangup
+  else
+{$ENDIF }
+  begin
     n:=5;
     zaehler[2]:=100;
     while carrier and not IgnCD and (n>0) do begin
@@ -555,8 +575,12 @@ end;
 
 procedure Activate;
 begin
-  if ISDN then CAPI_resume
-  else ActivateCom(comnr,2000,COMn[comnr].u16550);
+{$IFDEF CAPI }
+  if ISDN then
+    CAPI_resume
+  else
+{$ENDIF }
+    ActivateCom(comnr,2000,COMn[comnr].u16550);
 end;
 
 
@@ -615,12 +639,14 @@ begin
   with boxpar^,ComN[boxpar^.bport] do begin
     GetComData;    { IgnCD etc. }
 
+{$IFDEF CAPI }
   (* 04.02.2000 MH: HinzugefÅgt! *)
    if ISDN and not (CAPI_Installed and (CAPI_Register=0)) then begin
      rfehler(740);   { 'ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert' }
       initcom:=false;
-     exit; 
+     exit;
     end;
+{$ENDIF }
 
     orgfossil:=fossil;
     FossilTest;
@@ -647,10 +673,11 @@ begin
        { ^^ falls CTS von DTR abhÑngt.. }
     if not IgnCTS and not GetCTS(comnr) then begin
 
-    if ISDN then begin   
-    if CAPI_release then { 04.02.2000 MH: bei ISDN-CAPI abmelden }
-     end
-      else
+{$IFDEF CAPI }
+    if ISDN then
+      CAPI_release { 04.02.2000 MH: bei ISDN-CAPI abmelden }
+    else
+{$ENDIF }
 
       releasecom(comnr);
       if OStype<>OS_2 then
@@ -678,12 +705,15 @@ end;
 
 procedure TermDeactivateCom;
 begin
+{$IFDEF CAPI }
   if ISDN then
     CAPI_suspend
-  else begin
+  else
+{$ENDIF }
+  begin
     ReleaseCom(comnr);
     ShellReleased:=true;
-    end;
+  end;
 end;
 
 function TermGetfilename(nr,nn:byte):pathstr;
@@ -894,14 +924,17 @@ begin
               shellreleased:=false;
               end
             else
-              if t[1]>#0 then begin
+              if t[1]>#0 then
+              begin
                 if out7e1 then SetParity(byte(t[1]),true);
+{$IFDEF CAPI }
                 if ISDN then
                   CAPI_Sendstr(t[1])
                 else
+{$ENDIF }
                   if IgnCTS then SendByte(comnr,byte(t[1]))
                   else HSendByte(comnr,byte(t[1]));
-                end;
+              end;
             FuncExternal:=false;
             PreExtProc:=nil;
             end;
@@ -1383,6 +1416,7 @@ var ip   : integer;
     stack: array[1..maxstack] of integer;
     sp   : integer;
     jmpcmd:set of byte;
+    ExecuteScriptRes: shortint;
 
   procedure RunError(nr:word);
   begin
@@ -1428,22 +1462,21 @@ var ip   : integer;
     end;
   end;
 
-  function testkey: boolean;
+  procedure TestKey;
   var c : char;
   begin
-    testkey := true;
     if keypressed then begin
       c:=readkey;
       if c=#27 then begin
         ende:=true;
-        TestKey := false;
+        ExecuteScriptRes:=pEndError;
         end
       else if c>#0 then
         sendstr(c);
       end;
   end;
 
-  procedure interprete(TmpExecuteScript: ShortInt);
+  procedure interprete;
   var doit : boolean;
   begin
     with script^[ip] do begin
@@ -1472,9 +1505,7 @@ var ip   : integer;
                           par:=lstr(getpar);
                           repeat
                             tb;
-                            if not testkey then
-                              TmpExecuteScript:=pEndError;
-
+                            testkey;
                           until timeout or (right(lrecs,length(par))=par) or ende;
                           if log2<>nil then write(log2^,recs);
                           recs:=''; lrecs:='';
@@ -1483,7 +1514,7 @@ var ip   : integer;
           cmdGoto     : ip:=numpar-1;
           cmdEnd      : begin
                           ende:=true;
-                          TmpExecuteScript:=numpar;
+                          ExecuteScriptRes:=numpar;
                         end;
           cmdDelay    : mdelay(numpar,strpar='SHOW');
           cmdWrite    : begin moff;
@@ -1548,13 +1579,12 @@ begin    { of ExecuteScript }
         tn:=0; writeln(trace);
         end;
       end;
-    interprete(ExecuteScript);
-    if not testkey then
-       ExecuteScript:=pEndError;
+    interprete;
+    Testkey;
 
     if ip>lines then begin
       ende:=true;
-      ExecuteScript:=pEndOk;
+      ExecuteScriptRes:=pEndOk;
       end;
   until ende or timeout;
   if sp>0 then
@@ -1569,7 +1599,8 @@ begin    { of ExecuteScript }
     end;
   freeres;
   if timeout then
-    ExecuteScript:=pEndError;
+    ExecuteScriptRes:=pEndError;
+  ExecuteScript := ExecuteScriptRes;
 end;
 
 

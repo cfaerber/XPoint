@@ -249,7 +249,6 @@ begin
     end;
 {$ENDIF }
   assign(t,paramstr(1));
-  {$I-}
   reset(t);
   if ioresult<>0 then error('CommandFile missing: '+ustr(paramstr(1)));
   while not eof(t) do begin
@@ -327,8 +326,6 @@ end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
 var p1,p2,p3 : byte;
-    res      : integer;
-    l        : longint;
 begin
   fillchar(frec,sizeof(frec),0);
   with frec do begin
@@ -468,8 +465,11 @@ begin
 end;
 
 procedure OpenLog;
-var fi : FossilInfo;
-    s  : string;
+{$IFNDEF DPMI }
+var
+  fi : FossilInfo;
+  s  : string;
+{$ENDIF }
 begin
   assign(logf,logfile);
   if lognew or not existf(logf) then
@@ -532,15 +532,15 @@ var regs : registers;
     buf  : array[0..127] of byte;
 begin
   GetBackIntensity:=false;
+{$IFNDEF Ver32 }
   with regs do begin
     ah:=$1b; bx:=0;
-{$IFNDEF Ver32 }
     es:=seg(buf); di:=ofs(buf);
-{$ENDIF }
     intr($10,regs);
     if al=$1b then
       GetBackIntensity:=(buf[$2d] and $20=0);
     end;
+{$ENDIF }
 end;
 
 procedure SetBackIntensity(hell:boolean);
@@ -555,7 +555,9 @@ begin
 end;
 
 procedure PushWindow;
+{$IFDEF BP }
 var i : integer;
+{$ENDIF }
 begin
   Cur0;
   mx:=wherex; my:=wherey;

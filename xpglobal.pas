@@ -17,7 +17,7 @@ interface
 {$ENDIF }
 
 const
-  verstr      = 'v3.20.019';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.20.020';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
 {$IFDEF VER32 }
@@ -109,7 +109,7 @@ type
 
   ComStr  = string;          { Command line string }
   PathStr = string;          { Full file path string }
-  DirStr  = string;          { Drive and directory string }
+            DirStr  = string;          { Drive and directory string }
   NameStr = string;          { File name string }
   ExtStr  = string;          { File extension string }
 

@@ -10,13 +10,16 @@
 { CrossPoint - Statistik-Routinen }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpstat;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      crt,dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
       lister,resource,xp0,xp2,xp1, xpglobal;
 
 
@@ -405,6 +408,7 @@ begin
     closebox;
     free;
     ShowStat(fn,getres2(2604,iif(art=0,11,12)));
+    freeres;  {JG: Resourcen freigeben...}
     end;
 end;
 
@@ -762,7 +766,10 @@ begin
       pp_epp[ppanz].esize:=0;
       end;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   findfirst('*.epp',0,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
@@ -778,7 +785,10 @@ begin
       pp_epp[ppanz].esize:=sr.size;
       end;
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   more:=(ppanz>screenlines-11);
   if more then dec(ppanz);
   for i:=1 to ppanz-1 do                       { Bubble-Sort Boxen }
@@ -823,7 +833,10 @@ begin
       inc(summsgs,testpuffer(sr.name,false,attsize));
       inc(sumbytes,sr.size+attsize);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
     inc(yy);
     end;

@@ -14,7 +14,7 @@ unit xpnodes;
 
 interface
 
-uses  dos;
+uses  {$IFDEF virtualpascal}sysutils,{$endif} dos;
 
 
 const PointNurNode = 0;      { Nur den Nodeteil der Adresse berÅcksichti-  }
@@ -342,7 +342,10 @@ begin
   while not ex and (doserror=0) do begin
     findnext(sr);
     ex:=(doserror=0);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   exist:=ex;
 end;
 
@@ -551,7 +554,9 @@ again:
         i:=0;
         while (i<nanz) and (np^[i].node<fa.node) do
           inc(i);
-        {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
           _adr:=np^[i].adr
         else

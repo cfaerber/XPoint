@@ -233,17 +233,15 @@ begin
 end;
 
 procedure error(txt:string);
-var
- IORes: Integer;
 begin
   writeln(#13'Fehler: ',txt);
-  close(f1); IORes := IOResult;
-  close(f2); IORes := IOResult;
-  close(f3); IORes := IOResult;
+  close(f1); if IOResult=0 then ;
+  close(f2); if IOResult=0 then ;
+  close(f3); if IOResult=0 then ;
   if fo<>'' then begin
     assign(f1,fo);
     erase(f1);
-    IORes := IOResult;
+    if IOResult=0 then ;
   end;
   if logopen then begin
     writeln(logfile,'* öberprÅfung abgebrochen: ',txt);
@@ -421,7 +419,7 @@ begin
 {$ELSE }
   FileSetAttr(bakname, faArchive);
 {$ENDIF }
-  erase(f); iow;
+  erase(f);
   assign(f,n);
 {$IFNDEF Delphi }
   setfattr(f,archive);
@@ -586,7 +584,7 @@ var bufanz,
     if (bufpos=bufanz) and not eof(f1) then begin
       inc(hdp^.hds,bufanz);
       ReadBuf;
-      bufpos:=0;
+      { bufpos:=0; Wird in ReadBuf schon gemacht }
       end;
   end;
 

@@ -99,22 +99,35 @@ end;
 
 procedure flushin;
 begin
-  if not ISDN then flushinput(comnr)
-  else CAPI_flushinput;
+{$IFDEF CAPI }
+  if ISDN then
+    CAPI_flushinput
+  else
+{$ENDIF CAPI }
+    flushinput(comnr);
 end;
 
 function carrier(bport:byte):boolean;
 begin
-  if ISDN then carrier:=CAPI_Carrier
-  else carrier:=uart.carrier(bport);
+{$IFDEF CAPI }
+  if ISDN then
+    carrier:=CAPI_Carrier
+  else
+{$ENDIF }
+    carrier:=uart.carrier(bport);
 end;
 
 
-{ R-}
 procedure testbyte;
 var b : byte;
 begin
-  if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then begin
+
+{$IFDEF CAPI }
+   if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
+{$ELSE }
+   if receive(comnr,b) then
+{$ENDIF }
+   begin
     if in7e1 then b:=b and $7f;
     if display then begin
       moff; write(chr(b)); mon; end;
@@ -147,7 +160,6 @@ begin
     zaehler[4]:=IdleTimeout;
     end;
 end;
-{ R+}
 
 procedure tb;
 begin
@@ -169,11 +181,13 @@ begin
             end;
     else begin
       if out7e1 then SetParity(byte(c),true);
+{$IFDEF CAPI }
       if ISDN then
         CAPI_SendStr(c)
       else
+{$ENDIF }
         if IgnCTS then SendByte(comnr,byte(c))
-        else HSendByte(comnr,byte(c));
+          else HSendByte(comnr,byte(c));
       end;
     end;
   end;
@@ -182,9 +196,11 @@ end;
 procedure sendstr(s:string);
 var i : byte;
 begin
+{$IFDEF CAPI }
   if ISDN then
     CAPI_Sendstr(s)
   else
+{$ENDIF }
     for i:=1 to length(s) do begin
       testbyte;
       if out7e1 then SetParity(byte(s[i]),true);
@@ -285,9 +301,11 @@ end;
 procedure sb(b:byte);
 begin
   if out7e1 then SetParity(b,true);
+{$IFDEF CAPI }
   if ISDN then
     CAPI_SendStr(char(b))
   else
+{$ENDIF }
     if IgnCTS then SendByte(comnr,b)
     else HSendByte(comnr,b);
 end;
@@ -296,6 +314,7 @@ procedure aufhaengen;
 var n,i : byte;
 begin
   display:=ParDebug;
+{$IFDEF CAPI }
   if ISDN then begin
     time(100);
     if not CAPI_hangup then writeln('ISDN/CAPI hanup error');
@@ -303,6 +322,7 @@ begin
     NC^.endtime:=zdate;
     end
   else
+{$ENDIF }
     if HayesComm then begin
       n:=5;
       time(100);
@@ -658,22 +678,27 @@ end;
 
 procedure Activate;
 begin
+{$IFDEF CAPI }
   if ISDN then
     CAPI_resume
   else
+{$ENDIF }
     ActivateCom(comnr,max(3000,min(maxavail-20000,10000)),COMn[comnr].u16550);
 end;
 
 procedure ReleaseC;
 var p : ScrPtr;
 begin
+{$IFDEF CAPI }
   if ISDN then
     CAPI_suspend
-  else begin
+  else
+{$ENDIF }
+  begin
     sichern(p);
     ReleaseCom(comnr);
     holen(p);
-    end;
+  end;
 end;
 
 function BimodemFehler:boolean;      { BiModem-Logfile ÅberprÅfen }
@@ -941,7 +966,10 @@ begin
   while doserror=0 do begin
     _era(XFerDir+sr.name);
     findnext(sr);
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 end;
 
 
@@ -965,7 +993,10 @@ var dummy : longint;
       if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
         _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
   procedure EmptySysin;
@@ -975,7 +1006,10 @@ var dummy : longint;
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
   procedure CopyFileAttaches(ppfile:pathstr);
@@ -1099,7 +1133,10 @@ var sr     : searchrec;
     while doserror=0 do begin
       inc(sum,sr.size);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     totalsize:=sum;
   end;
 
@@ -1110,7 +1147,10 @@ var sr     : searchrec;
     while doserror=0 do begin
       _era(GetFiledir(files)+sr.name);
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
   end;
 
   procedure ZQWKfehler;
@@ -1166,9 +1206,12 @@ begin
             { _era(sysdir+left(sr.name,cpos('.',sr.name))+qwkext);  { QWK-Paket lîschen }
             end;
           findnext(sr);
-          end;
         end;
+        {$IFDEF virtualpascal}
+        FindClose(sr);
+        {$ENDIF}
       end;
+    end;
     freeres;
 
     NC^.sendbuf:=_filesize(ppfile);              { 2. Export }

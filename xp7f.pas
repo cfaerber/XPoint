@@ -10,13 +10,16 @@
 { --- Fido - Netcall ------------------------------------------------- }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp7f;
 
 interface
 
-uses  crt,dos,dosx,typeform,montage,fileio,keys,maus2,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      crt,dos,dosx,typeform,montage,fileio,keys,maus2,
       inout,lister,resource,maske, xpglobal,
       xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
@@ -25,7 +28,7 @@ uses  crt,dos,dosx,typeform,montage,fileio,keys,maus2,
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
 function FidoNetcall(box:string; var bfile,ppfile,eppfile,sendfile,upuffer,
-                      downarcer:string; packmail,crash,alias:boolean;
+                      downarcer:pathstr; packmail,crash,alias:boolean;
                       addpkts:addpktpnt; var domain:string):shortint;
 function GetCrashbox:string;
 function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
@@ -236,7 +239,10 @@ begin
         end;
 {$ENDIF}
       findnext(sr);
-      end;
+    end;
+    {$IFDEF virtualpascal}
+    FindClose(sr);
+    {$ENDIF}
     if clrflag then ttwin;
 
     if exist(XFerDir+'*.PKT') then begin
@@ -259,8 +265,11 @@ begin
         while doserror=0 do begin
           _era(XFerDir+sr.name);
           findnext(sr);
-          end;
         end;
+        {$IFDEF virtualpascal}
+        FindClose(sr);
+        {$ENDIF}
+      end;
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
       if _filesize(fpuffer)>0 then
@@ -292,7 +301,7 @@ end;
 { Ergebnis: s. xpdiff                                                  }
 
 function FidoNetcall(box:string; var bfile,ppfile,eppfile,sendfile,upuffer,
-                     downarcer:string; packmail,crash,alias:boolean;
+                     downarcer:pathstr; packmail,crash,alias:boolean;
                      addpkts:addpktpnt; var domain:string):shortint;
 
 type rfnodep     = ^reqfilenode;
@@ -611,7 +620,10 @@ begin
       _era(XFerDir+sr.name);
     findnext(sr);
 {$ENDIF}
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
 
   ttwin;
   FidoNetcall:=EL_noconn;
@@ -749,7 +761,7 @@ begin
   if s[2]='C' then begin                { Crash-Empf„ngerliste anzeigen }
     new(hdp);
     assign(f,CrashFile(copy(s,6,18)));
-    {$I-} reset(f,1);
+    reset(f,1);
     if ioresult=0 then with hdp^ do begin
       sh:=true; adr:=0;
       lastempf:=''; count:=1; n:=0;

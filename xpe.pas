@@ -10,7 +10,9 @@
 { CrossPoint - Editor }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpe;
 
@@ -156,7 +158,7 @@ var x,y : byte;
     ec  : string[1];
 begin
   with cfg do begin
-    dialog(ival(getres2(2508,0)),8,getres2(2508,1),x,y);  { 30 / 'Editor-Einstellungen' }
+    dialog(ival(getres2(2508,0)),9,getres2(2508,1),x,y);  { 30 / 'Editor-Einstellungen' }
     maddint(3,2,getres2(2508,2),rechter_rand,5,2,60,77);  { 'rechter Rand  ' }
     ec:=absatzendezeichen;
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
@@ -165,6 +167,9 @@ begin
     { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bl”cke' }
     { /oh }
+    { 10.02.2000 robo }
+    maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
+    { /robo }
     readmask(brk);
     enddialog;
     if not brk then begin

@@ -11,22 +11,21 @@
 { CrossPoint - allg. Routinen }
 
 {$I XPDEFINE.INC }
-{$F+}
+{$IFDEF BP }
+  {$F+}
+  {$IFDEF DPMI}
+    {$C permanent}
+  {$ENDIF}
+{$ENDIF }
 
-{$IFDEF DPMI}
-{$C permanent}
-{$ENDIF}
 
 unit xp1;
 
 interface
 
 uses
-{$IFDEF OPro }
-  opexec, opxms,
-{$ENDIF}
   xpglobal, crt,dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
-  datadef,database,mouse,maus2,help,maske,ems,lister,printerx,xdelay,clip,
+  datadef,database,mouse,maus2,help,maske,lister,printerx,xdelay,clip,
   resource,xp0,xpcrc32;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
@@ -1100,11 +1099,14 @@ end;
 function getc(var su:string; v:string; var c:char):boolean;
 var p : byte;
 begin
+  { MK 09.02.00 Getc war nicht initialisiert }
   p:=pos('=',su);
-  if scomp(su,v,p) then
-    c:=su[p+1]
-  else
-    getc:=false;
+  if scomp(su,v,p) and (p + 1 <= Length(su)) then
+  begin
+    c:=su[p+1];
+    Getc := true;
+  end else
+    Getc := false;
 end;
 
 function geti(var su:string; v:string; var i:integer):boolean;
@@ -1179,11 +1181,11 @@ var res : integer;
     p   : byte;
 begin
   p:=pos('=',su);
-  if scomp(su,v,p) then begin
+  if scomp(su,v,p) then
+  begin
     ss:=copy(s,p+1,maxlen);
     gets:=true;
-    end
-  else
+  end else
     gets:=false;
 end;
 

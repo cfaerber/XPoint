@@ -15,19 +15,22 @@
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:shortint;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
-var i,o,res : integer;
+var i,res : integer;
+    o: word; { Offset im Lesepuffer }
     s       : string[20];
-    dummy   : string[40];
+    dummy   : string[realnlen];
     p    : byte;
-    id,id0  : string[30];
+    id   : String[30];
+{$ifdef ulines}
+    id0  : string[30];
+{$endif }
     buf     : charrp;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
-
 
   procedure ReadBuf;
   begin
@@ -74,7 +77,8 @@ var i,o,res : integer;
 { 11.10.1999 robo - Realname verl„ngert }
 
 {      realname:=trim(copy(line,p+2,min(length(line)-p-2,40))); }
-      realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen))); 
+       realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen)));
+
 
 { /robo}
 
@@ -142,7 +146,7 @@ var i,o,res : integer;
         else Move(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
 
 { /robo }
-                
+
         LRead(addref[addrefs],120);
         end;
   end;
@@ -160,7 +164,7 @@ var i,o,res : integer;
   procedure GetKop;
     procedure AddKop(var node:empfnodep);
     begin
-      if node=nil then begin
+      if Assigned(node) then begin
         new(node);
         LRead(node^.empf,AdrLen);
         node^.next:=nil;
@@ -363,9 +367,7 @@ begin
   fillchar(hd,sizeof(hd),0);
   bufsize:=min(maxavail-500,iif(zconnect,1000,400));
   getmem(buf,bufsize);
-{  xpmail:=false; }
-  size:=0;
-  ReadBuf;
+  size:=0; Readbuf;
   with hd do
     if ZConnect then begin
       netztyp:=nt_ZConnect;
@@ -379,7 +381,9 @@ begin
           if p=0 then ok:=false
           else begin
             id:=left(line,p-1);
+            {$ifdef ulines}
             id0:=id;
+            {$endif }
             tc:=line[p+1];
             for i:=1 to length(id) do         { UpperCase }
               if (id[i]>='a') and (id[i]<='z') then
@@ -391,7 +395,7 @@ begin
             while line[length(line)]=' ' do   { rtrim }
               dec(byte(line[0]));
 
-            { 01/2000 oh Auskommentiert, damit die CustomHeaders mit U-* tun } 
+            { 01/2000 oh Auskommentiert, damit die CustomHeaders mit U-* tun }
             if id[1]='U' then                      { RFC }
             if id = 'U-KEYWORDS'     then LRead(Keywords,60) else
             if id = 'U-SUMMARY'      then LRead(Summary,200) else
@@ -477,18 +481,21 @@ begin
               if id = 'X-XP-ARC' then archive:=true else
               if id = 'X-HOMEPAGE' then LRead(homepage,HomepageLen) else
 
-{ 06.09.1999 robo - X-No-Archive Konvertierung }
-
+              { 06.09.1999 robo - X-No-Archive Konvertierung }
               if id = 'X-NO-ARCHIVE' then begin
                 if LStr(line)='yes' then xnoarchive:=true;
               end else
- 
-{ /robo }
+              { /robo }
+              
+              { 07.02.2000 robo - X-Priority Konvertierung }
+              if id = 'X-PRIORITY' then priority:=minmax(ival(line),1,5) else
+              { /robo }
+              
               if tc=' ' then
                 if id = 'X-XP_F'   then filterattr:=minmax(ival(line),0,65535);
 
            end else
-            
+
             if pos('CRYPT',id)>0 then begin
               if id = 'CRYPT'       then GetCrypt else
               if id = 'CRYPT-CONTENT-TYP' then GetTyp(crypttyp,ccharset) else
@@ -553,7 +560,7 @@ begin
       getline(typ,1);
       getline(s,20);
       val(trim(s),groesse,res);
-      end;
+    end;
   freemem(buf,bufsize);
   CheckBetreff;
   {$IFDEF ConvBrettempf}             { /Brett@Box.domain -> /Brett }

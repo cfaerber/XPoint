@@ -8,13 +8,17 @@
 { --------------------------------------------------------------- }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp6o;
 
 interface
 
-uses xpglobal, crt,dos,typeform,fileio,inout,keys,datadef,database,maske,
+uses
+  {$IFDEF virtualpascal}sysutils,{$endif}
+  xpglobal, crt,dos,typeform,fileio,inout,keys,datadef,database,maske,
   crc16,lister, winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
@@ -37,7 +41,7 @@ procedure Unversandt(edit,modi:boolean);
 
 { edit und modi -> direkt ins Sendefenster }
 
-var x,y      : byte;
+var
     _brett   : string[5];
     betr     : string[BetreffLen];
     _date    : longint;
@@ -69,7 +73,6 @@ var x,y      : byte;
     ablage   : byte;
     madr     : longint;         { Adresse in Ablage }
     crc      : string[4];
-    i        : integer;
     nt       : longint;
 
 label ende,nextpp;
@@ -97,7 +100,7 @@ label ende,nextpp;
     freemem(p,ps);
   end;
 
-  function uvsXgroesse:longint;
+(*  function uvsXgroesse:longint;
   var t  : text;
       fn : pathstr;
       s  : string;
@@ -124,7 +127,7 @@ label ende,nextpp;
       end;
     close(t);
     erase(t);
-  end;
+  end;*)
 
   function EQ_empf:boolean;
   var ml : byte;
@@ -264,7 +267,10 @@ begin
       erase(f);
       if crash then DelCrashInf(hdp^.empfaenger);
       end;
-    end;
+  end;
+  {$IFDEF virtualpascal}
+  FindClose(sr);
+  {$ENDIF}
   closebox;
   if not found then begin
     rfehler(622);     { 'Nachricht nicht (mehr) im Pollpaket vorhanden !?' }
@@ -428,7 +434,6 @@ end;
   sendbox: Absende-Fenster anzeigen }
 
 procedure Weiterleit(typ:byte; sendbox:boolean);
-const crlf = #13#10;
 var fn     : pathstr;
     pm,brk : boolean;
     x,y,p  : byte;

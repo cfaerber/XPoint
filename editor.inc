@@ -40,12 +40,13 @@ begin
     end;
 end;
 
-function AbsDelete(ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
+function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
          forward;
 
 procedure TruncAbs;
 var
   p: word;
+  ap: absatzp; { .robo }
 begin
   with vActAbs^ do
   begin
@@ -58,7 +59,8 @@ begin
         dec(p);
       if p<size then
       begin
-        if AbsDelete(ActAbs,p,size-p,false,true) <> nil then ;
+        ap:=ActAbs; { .robo }
+        if AbsDelete(ap,p,size-p,false,true)<>nil then; { .robo }
         aufbau:=true;
       end;
     end;
@@ -120,16 +122,16 @@ begin
     for i:=1 to 7 do
       with block[i] do
         if oldabs=pos.absatz then begin
-          if newabs<>nil then pos.absatz:=newabs
+          if assigned(newabs) then pos.absatz:=newabs
           else pos.absatz:=nxt;
           if from<pos.offset then begin
             pos.offset:=max(from,pos.offset-len);
             if (i=1) or (i=2) then BlockAbsCut:=true;
             if from>=vap(oldabs)^.size-len then
               case i of
-                1,3..7 : if nxt<>nil then begin
+                1,3..7 : if assigned(nxt) then begin
                            pos.absatz:=nxt; pos.offset:=0; end;
-                2      : if prv<>nil then begin
+                2      : if assigned(prv) then begin
                            pos.absatz:=prv; pos.offset:=vap(prv)^.size; end;
               end;
             end;
@@ -206,7 +208,6 @@ end;
 procedure SeiteOben(korrblock:boolean);
 var i  : integer;
     ap : absatzp;
-    o  : integer;
 begin
   TruncAbs;
   with e^ do
@@ -215,7 +216,7 @@ begin
     else begin
       ap:=dl^[1].absatz;
       i:=gl-dl^[1].zeile;
-      while (i>0) and (vap(ap)^.prev<>nil) do begin
+      while (i>0) and assigned(vap(ap)^.prev) do begin
         ap:=vap(ap)^.prev;
         dec(i,alines(ap));
         end;
@@ -228,7 +229,7 @@ begin
 end;
 
 procedure SeiteUnten;
-var i,o : integer;
+var i : integer;
 begin
   TruncAbs;
   with e^ do begin
@@ -245,7 +246,7 @@ end;
 function ScrollUp:boolean;
 begin
   with e^ do
-    if dl^[2].absatz<>nil then begin
+    if assigned(dl^[2].absatz) then begin
       if scy=1 then TruncAbs;
       firstpar:=dl^[2].absatz;
       firstline:=dl^[2].zeile;
@@ -270,7 +271,7 @@ begin
       end
     else begin
       ap:=vap(dl^[1].absatz)^.prev;
-      if ap<>nil then begin
+      if assigned(ap) then begin
         firstpar:=ap;
         firstline:=alines(ap);
         dec(startline);
@@ -300,7 +301,7 @@ begin
       TruncAbs;    { bei Absatzwechsel Leerzeichen am Ende abschneiden }
     if scy=gl then ZeileUnten:=ScrollUp
     else
-      if dl^[scy+1].absatz<>nil then inc(scy)
+      if assigned(dl^[scy+1].absatz) then inc(scy)
       else ZeileUnten:=false;
     end;
 end;
@@ -363,7 +364,7 @@ procedure Seitenende;
 begin
   TruncAbs;
   with e^ do
-    while (scy<gl) and (dl^[scy+1].absatz<>nil) do
+    while (scy<gl) and assigned(dl^[scy+1].absatz) do
       inc(scy);
 end;
 
@@ -395,7 +396,7 @@ begin
     else begin
       ap:=dl^[1].absatz;
       p:=vap(ap)^.next;
-      while p<>nil do begin
+      while assigned(p) do begin
         inc(startline,alines(ap));
         ap:=p;
         p:=vap(ap)^.next;
@@ -494,14 +495,14 @@ begin
         b2:=block[2].pos.absatz;
         ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rÅckwÑrts suchen }
         touch1:=false; touch2:=false;
-        while (ap<>p.absatz) and (ap<>nil) do begin
+        while (ap<>p.absatz) and assigned(ap) do begin
           ap:=vap(ap)^.prev;
           if ap=b1 then touch1:=true;
           if ap=b2 then touch2:=true;
-          if ap<>nil then inc(l,alines(ap));
+          if assigned(ap) then inc(l,alines(ap));
           end;
         end;
-      if ap<>nil then begin
+      if assigned(ap) then begin
         firstpar:=ap; firstline:=alines(ap); scy:=1;
         dec(startline,l);
         if touch1 then block[1].disp:=2;
@@ -516,7 +517,7 @@ begin
         l:=alines(dl^[gl].absatz)-dl^[gl].zeile;
         ap:=vap(dl^[gl].absatz)^.next;
         touch1:=false; touch2:=false;
-        while (ap<>p.absatz) and (ap<>nil) do begin
+        while (ap<>p.absatz) and assigned(ap) do begin
           inc(l,alines(ap));
           ap:=vap(ap)^.next;
           if ap=b1 then touch1:=true;
@@ -686,11 +687,11 @@ procedure absatzwechsel(old,anew:absatzp; setpointer:boolean);
 begin
   with e^ do begin
     if setpointer then begin
-      if vap(old)^.prev<>nil then begin
+      if assigned(vap(old)^.prev) then begin
         vap2(anew)^.prev:=vap(old)^.prev;
         vap(vap(old)^.prev)^.next:=anew;
         end;
-      if vap(old)^.next<>nil then begin
+      if assigned(vap(old)^.next) then begin
         vap2(anew)^.next:=vap(old)^.next;
         vap(vap(old)^.next)^.prev:=anew;
         end;
@@ -712,7 +713,7 @@ begin
     end;
 end;
 
-function AbsDelete(ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
+function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
 var apnew : absatzp;
 begin
   AbsDelete:=ap;
@@ -721,35 +722,37 @@ begin
       apnew:=AllocAbsatz(len);
       FastMove(vap(ap)^.cont[from],vap2(apnew)^.cont,len);
       AddDelEntry(apnew);
-      end;
+    end;
     if vap(ap)^.size-len>=vap(ap)^.msize-15 then begin
       Move(vap(ap)^.cont[from+len],vap(ap)^.cont[from],vap(ap)^.size-from-len);
       dec(vap(ap)^.size,len);
       if blockabscut(ap,ap,from,len) then
         CheckBlockOrder;
-      end
+    end
     else begin
       apnew:=AllocAbsatz(vap(ap)^.size-len);
-      if apnew<>nil then begin
+      if assigned(apnew) then begin
         copyflags(ap,apnew);
         absatzwechsel(ap,apnew,true);
         FastMove(vap(ap)^.cont[0],vap2(apnew)^.cont[0],from);
         FastMove(vap(ap)^.cont[from+len],vap2(apnew)^.cont[from],vap(ap)^.size-from-len);
         if blockabscut(ap,apnew,from,len) then begin
-          NoDisplay; CheckBlockOrder; end;
+          NoDisplay;
+          CheckBlockOrder;
+        end;
         freeabsatz(ap);
         AbsDelete:=apnew;
-        end;
       end;
+    end;
     if bkorr then KorrBlockScrolled(true);
     e^.modified:=true;
-    end;
+  end;
 end;
 
 procedure moveworkpos(newwp:integer; wpa:absatzp);
 begin
   NoDisplay;
-  if wpa<>nil then begin
+  if assigned(wpa) then begin
     if ActAbs<>wpa then TruncAbs;
     while (ActAbs<>wpa) and ZeichenLinks do
       if aufbau then Display;
@@ -767,11 +770,38 @@ begin
     end;
 end;
 
+{ 10.02.2000 robo - aus xp3ex.pas entnommen und leicht verÑndert }
+function GetQuote(ap:absatzp):string;
+var p,q : byte;
+    s   : string;
+begin
+  p:=min(vap(ap)^.size,80);
+  fastmove(vap(ap)^.cont,s[1],p);
+  s[0]:=char(p);
+  p:=cpos('>',s);
+  if p>5 then p:=0
+  else if p>0 then begin
+    repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
+      q:=p+1;     { ermitteln                                    }
+      while (q<=length(s)) and (q-p<=4) and (s[q]<>'>') do
+        inc(q);
+      if (q<=length(s)) and (s[q]='>') then p:=q;
+    until q>p;
+    while (p<length(s)) and (s[p+1]='>') do inc(p);
+    while (p<length(s)) and (s[p+1]=' ') do inc(p);
+  end;
+  s:=left(s,p);
+  GetQuote:=s;
+end;
+{ /robo }
+
 procedure NewLine;              { Enter - Absatz einfÅgen }
 var ap,ap2   : absatzp;
     wp       : integer;
     copysize : integer;
     spaces   : integer;
+    quotes   : integer;  { 10.02.2000 robo - Anzahl Quotezeichen }
+    quotec   : string;   { 10.02.2000 robo - Quotezeichen }
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -788,16 +818,32 @@ begin
       wp:=workpos;
       copysize:=max(0,vap(ap)^.size-wp);
       spaces:=0;
+      { 10.02.2000 robo - Quote-Reflow }
+      if config.QuoteReflow xor kb_shift
+        then quotec:=GetQuote(ap)
+        else quotec:='';
+      quotes:=length(quotec);
       if config.autoindent then begin
+        while (length(quotec)>0) and (quotec[1]=' ') do delete(quotec,1,1);
+        quotes:=length(quotec);
         while (spaces<vap(ap)^.size) and (vap(ap)^.cont[spaces]=' ') do
           inc(spaces);
-        if spaces>=workpos then spaces:=0;
+        if spaces>=workpos then begin
+          spaces:=0;
+          quotes:=0;
         end;
-      if memtest(vap(ap)^.size) and createacopy(ap,ap2,wp-spaces,copysize+spaces)
+      end;
+      if quotes+spaces>workpos then quotes:=0;
+      if memtest(vap(ap)^.size) and createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
+      { /robo }
       then begin
         if spaces>0 then
           fillchar(vap(ap2)^.cont,spaces,' ');
-        if vap(ap)^.next<>nil then
+        { 10.02.2000 robo - Quote-Reflow }
+        if quotes>0 then  
+          fastmove(quotec[1],vap(ap2)^.cont[spaces],quotes);
+        { /robo }    
+        if assigned(vap(ap)^.next) then
           vap(vap(ap)^.next)^.prev:=ap2;
         vap2(ap2)^.next:=vap(ap)^.next;
         vap(ap)^.next:=ap2;
@@ -847,11 +893,11 @@ begin
           ap2:=vap(ap)^.next;
           blockabsinsert(ap,apnew,maxint,maxint);
           blockabsinsert(ap2,apnew,0,vap(ap)^.size);
-          if vap(ap)^.prev<>nil then begin
+          if assigned(vap(ap)^.prev) then begin
             vap2(apnew)^.prev:=vap(ap)^.prev;
             vap(vap(ap)^.prev)^.next:=apnew;
             end;
-          if vap(ap2)^.next<>nil then begin
+          if assigned(vap(ap2)^.next) then begin
             vap2(apnew)^.next:=vap(ap2)^.next;
             vap(vap(ap2)^.next)^.prev:=apnew;
             end;
@@ -889,28 +935,29 @@ end;
 
 procedure WortRechtsLoeschen;   { Wort rechts lîschen }
 var wp,wpnew,size : integer;
-    wpa           : absatzp;
+    wpa,ap        : absatzp; { .robo }
 begin
   size:=vActAbs^.size;
   if workpos>=size then
     DELchar
   else with e^ do begin
-    wpa:=ActAbs;  
+    wpa:=ActAbs;
     wp:=workpos;
     wpnew:=workpos;
     while (wpnew<size) and not (vActAbs^.cont[wpnew] in TrennZeich) do
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
-    wpa:=AbsDelete(ActAbs,wp,wpnew-wp,true,true);
+    ap:=ActAbs; { .robo }
+    wpa:=AbsDelete(ap,wp,wpnew-wp,true,true); { .robo }
     MoveWorkpos(wp,wpa);
     aufbau:=true;
-    end;
+  end;
 end;
 
 procedure WortLinksLoeschen;    { Wort links lîschen }
-var wp,wpnew,size : word;
-    wpa           : absatzp;
+var wp,wpnew{,size }: word;
+    wpa,ap        : absatzp; { .robo }
 begin
   if workpos=0 then
     BackSpace
@@ -918,30 +965,32 @@ begin
     zeilenende
   else with e^ do begin
     wpa:=ActAbs;
-    size:=vActAbs^.size; 
+{    size:=vActAbs^.size;    MK 06.02.00 Zuweisung unnîtig  }
     wp:=workpos;
     wpnew:=workpos;
     while (wpnew>0) and not (vActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
     if wpnew=workpos then dec(wpnew);
-    wpa:=AbsDelete(ActAbs,wpnew,wp-wpnew,true,true);
+    ap:=ActAbs; { .robo }
+    wpa:=AbsDelete(ap,wpnew,wp-wpnew,true,true); { .robo }
     MoveWorkPos(wpnew,wpa);
     aufbau:=true;
-    end;
+  end;
 end;
 
 procedure ZeileLoeschen;        { akt. Zeile lîschen }
-var apd   : absatzp;
-    bc    : boolean;
-    dummy : absatzp;
+var apd,ap : absatzp; { .robo }
+    bc     : boolean;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
-    if (vActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then
-      dummy:=AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true)
+    if (vActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
+      ap:=ActAbs; { .robo }
+      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+    end
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz lîschen }
       absatzwechsel(ActAbs,vActAbs^.next,false);
       bc:=BlockAbsCut(ActAbs,nil,0,vActAbs^.size);
-      if vActAbs^.prev<>nil then
+      if assigned(vActAbs^.prev) then
         vap(vActAbs^.prev)^.next:=vActAbs^.next;
       vap(vActAbs^.next)^.prev:=vActAbs^.prev;
       if memavail-asize-16>minfree then begin    { Dellisten-Eintrag }
@@ -950,28 +999,34 @@ begin
         vActAbs^.next:=apd; vActAbs^.prev:=nil;  { leeren Absatz anhÑngen }
         vap(apd)^.prev:=ActAbs;
         AddDelEntry(ActAbs);
-        end
-      else
-        FreeAbsatz(ActAbs);
+      end
+      else begin
+        ap:=ActAbs; { .robo }
+        FreeAbsatz(ap); { .robo }
+      end;
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
-      end
-    else                      { 3. Fall: Zeile aus Absatz lîschen }
-      dummy:=AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
+    end
+    else begin                     { 3. Fall: Zeile aus Absatz lîschen }
+      ap:=ActAbs; { .robo }
+      AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+    end;
   aufbau:=true;
 end;
 
 procedure AbsatzRechtsLoeschen;
-var wp,wpnew,size : integer;
-    wpa           : absatzp;
+var
+  wp,size : integer;
+  ap      : absatzp; { .robo }
 begin
   size:=vActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
-    wpa:=AbsDelete(ActAbs,wp,size-wp,true,true);
+    ap:=ActAbs; { .robo }
+    AbsDelete(ap,wp,size-wp,true,true); { .robo }
     aufbau:=true;
-    end;
+  end;
 end;
 
 
@@ -1057,7 +1112,7 @@ begin
   ZeichenEinfuegen(false);
 end;
 
-procedure Insert(blk:absatzp; var endpos:position); forward;
+procedure Insert(var blk:absatzp; var endpos:position); forward; { .robo }
 
 procedure tabulator;
 var n,i   : byte;
@@ -1101,11 +1156,11 @@ begin
     else begin
       mproc(vap(ap1)^.cont[ofs1],vap(ap1)^.size-ofs1);
       ap:=vap(ap1)^.next;
-      while (ap<>nil) and (ap<>ap2) do begin
+      while assigned(ap) and (ap<>ap2) do begin
         mproc(vap(ap)^.cont,vap(ap)^.size);
         ap:=vap(ap)^.next;
         end;
-      if (ap<>nil) then
+      if assigned(ap) then
         mproc(vap(ap2)^.cont,ofs2);
       end;
     modified:=true;
@@ -1211,7 +1266,7 @@ begin
   with e^ do begin
     SetBlock(1,root,0,2);
     ap:=ActAbs;
-    while vap(ap)^.next<>nil do ap:=vap(ap)^.next;
+    while assigned(vap(ap)^.next) do ap:=vap(ap)^.next;
     SetBlock(2,ap,vap(ap)^.size,3);
     KorrBlockScrolled(true);
     aufbau:=true;
@@ -1221,12 +1276,13 @@ end;
 { Block an Cursorposition einfÅgen; Blockzeiger auf Ende zurÅckliefern }
 { blk^ wird freigegeben!                                               }
 
-procedure Insert(blk:absatzp; var endpos:position);
+procedure Insert(var blk:absatzp; var endpos:position); { .robo }
 var ap,ap2,ap3,apn : absatzp;
     ss             : word;
     wp             : integer;
     spaces         : integer;
 begin
+  endpos.absatz:=nil; { .robo }
   if blk=nil then exit;
   ap:=ActAbs;
   spaces:=EndSpaces;
@@ -1235,7 +1291,9 @@ begin
     ss:=vap(ap)^.size+vap(blk)^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu gro· }
-    else if memtest(ss) then begin
+    else if memtest(ss) 
+    and assigned(blk) { .robo }
+    then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
       FastMove(vap(ap)^.cont,vap2(ap2)^.cont,wp-spaces);
@@ -1250,19 +1308,20 @@ begin
       blockabsinsert(ap,ap2,wp,ss);
       FreeAbsatz(ap);
       e^.modified:=true;
-      end;
+    end;
     FreeAbsatz(blk);
-    end
+  end
   else begin                              { mehrere AbsÑtze einfÅgen }
     apn:=blk;
-    while vap(apn)^.next<>nil do      { letzten Absatz in Block suchen }
+    while assigned(vap(apn)^.next) do      { letzten Absatz in Block suchen }
       apn:=vap(apn)^.next;
     if (vap(ap)^.size+vap(blk)^.size>maxabslen) or
        (vap(apn)^.size+vap(ap)^.size>maxabslen) then begin
       error(2);     { 'Absatz zu gro· }
       FreeBlock(blk);
-      end
+    end
     else if memtest(vap(ap)^.size+vap(blk)^.size+vap(apn)^.size+3*asize+spaces)
+    and assigned(blk) { .robo }
     then begin
       ap2:=AllocAbsatz(vap(blk)^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
@@ -1270,20 +1329,20 @@ begin
       fillchar(vap2(ap2)^.cont[wp-spaces],spaces,32);
       Move(vap(blk)^.cont,vap2(ap2)^.cont[wp],vap(blk)^.size);
       absatzwechsel(blk,ap2,true);
-      if vap(ap)^.prev<>nil then begin      { Verkettung mit vorausgeh. }
+      if assigned(vap(ap)^.prev) then begin      { Verkettung mit vorausgeh. }
         vap(ap2)^.prev:=vap(ap)^.prev;      { Text herstellen           }
         vap(vap(ap2)^.prev)^.next:=ap2;
-        end;
+      end;
       ss:=vap(ap)^.size+spaces-wp;              { Grî·e 2. Absatzteil }
       ap3:=AllocAbsatz(ss+vap(apn)^.size);
       copyflags(apn,ap3);
       Move(vap(apn)^.cont,vap2(ap3)^.cont,vap(apn)^.size);
       Move(vap(ap)^.cont[wp],vap2(ap3)^.cont[vap(apn)^.size],ss);
       absatzwechsel(apn,ap3,true);
-      if vap(ap)^.next<>nil then begin      { Verkettung mit nachfolg. }
+      if assigned(vap(ap)^.next) then begin      { Verkettung mit nachfolg. }
         vap(ap3)^.next:=vap(ap)^.next;      { Text herstellen          }
         vap(vap(ap3)^.next)^.prev:=ap3;
-        end;
+      end;
       blockabssplit(ap,ap2,ap3,wp);
       absatzwechsel(ap,ap2,false);
       endpos.absatz:=ap3;
@@ -1292,23 +1351,25 @@ begin
       FreeAbsatz(blk);
       FreeAbsatz(ap);
       e^.modified:=true;
-      end
+    end
     else
       FreeBlock(blk);
-    end;
+  end;
   KorrBlockScrolled(false);
   aufbau:=true;
 end;
 
-procedure InsertWithMark(ap:absatzp);
+procedure InsertWithMark(var ap:absatzp); { .robo }
 var pos : position;
 begin
-  if ap<>nil then begin
+  if assigned(ap) then begin
     Insert(ap,pos);
-    SetBlock(1,ActAbs,workpos,2);
-    SetBlock(2,pos.absatz,pos.offset,2);
-    KorrBlockScrolled(false);
-    end;
+    if assigned(pos.absatz) then begin { .robo }
+      SetBlock(1,ActAbs,workpos,2);
+      SetBlock(2,pos.absatz,pos.offset,2);
+      KorrBlockScrolled(false);
+    end;  
+  end;
 end;
 
 function CopyBlock:absatzp;    { Kopie des markierten Blocks anlegen }
@@ -1323,7 +1384,7 @@ begin
     else if block[1].pos.absatz=block[2].pos.absatz then begin
       ss:=block[2].pos.offset-block[1].pos.offset;    { Absatzausschnitt }
       ap:=AllocAbsatz(ss);
-      if ap<>nil then begin
+      if assigned(ap) then begin
         Copyflags(block[1].pos.absatz,ap);
         FastMove(vap(block[1].pos.absatz)^.cont[block[1].pos.offset],
              vap2(ap)^.cont,ss);
@@ -1337,7 +1398,7 @@ begin
         inc(tsize,vap(ap)^.size+asize+16);
         ap:=vap(ap)^.next;
       until (ap=block[2].pos.absatz) or (ap=nil);
-      if (ap<>nil) and memtest(tsize) then begin
+      if assigned(ap) and memtest(tsize) then begin
         ap:=block[1].pos.absatz;
         ss:=vap(ap)^.size-block[1].pos.offset;
         ap0:=AllocAbsatz(ss); ap1:=ap0;             { Startabsatz }
@@ -1374,10 +1435,12 @@ begin
     errsound
   else begin
     Insert(ap,endp);
-    SetBlockMark(1);
-    SetBlock(2,endp.absatz,endp.offset,2);
-    KorrBlockScrolled(false);
-    end;
+    if assigned(endp.absatz) then begin { .robo }
+      SetBlockMark(1);
+      SetBlock(2,endp.absatz,endp.offset,2);
+      KorrBlockScrolled(false);
+    end;  
+  end;
 end;
 
 function InBlock:boolean;    { workpos innerhalb des mark. Blockes }
@@ -1441,7 +1504,7 @@ var ap1,ap2,ap    : absatzp;
           SeitenAnfang; Zeilenanfang; end
         else
           GotoPos(block[1].pos,0)
-      else if wp.absatz<>nil then
+      else if assigned(wp.absatz) then
         GotoPos(wp,0);
   end;
 
@@ -1507,11 +1570,11 @@ begin
       blockabsinsert(ap1,apn,maxint,maxint);
       if blockabscut(ap2,ap2,0,ofs2) then;
       blockabsinsert(ap2,apn,0,ofs1);
-      if vap(ap1)^.prev<>nil then begin
+      if assigned(vap(ap1)^.prev) then begin
         vap2(apn)^.prev:=vap(ap1)^.prev;
         vap(vap(apn)^.prev)^.next:=apn;
         end;
-      if vap(ap2)^.next<>nil then begin
+      if assigned(vap(ap2)^.next) then begin
         vap2(apn)^.next:=vap(ap2)^.next;
         vap(vap(apn)^.next)^.prev:=apn;
         end;
@@ -1528,7 +1591,7 @@ begin
       block[2]:=block[1];           { markierter Block ist jetzt leer }
       blockinverse:=true;
       ap:=vap(apnew)^.next;
-      while ap<>nil do begin       { Pos.-Marker korrigieren }
+      while assigned(ap) do begin       { Pos.-Marker korrigieren }
         absatzwechsel(ap,apn,false);
         for i:=3 to 7 do
           if block[i].pos.absatz=ap then
@@ -1546,8 +1609,10 @@ begin
 end;
 
 procedure BlockKopieren;     { Ctrl-K-C }
+var ap : absatzp; { .robo }
 begin
-  InsertWithMark(CopyBlock);
+  ap:=CopyBLock; { .robo }
+  InsertWithMark(ap); { .robo }
 end;
 
 procedure BlockEinAus;
@@ -1575,7 +1640,7 @@ procedure BlockLoeschen;
 var ap : absatzp;
 begin
   ap:=CutBlock;
-  if ap<>nil then AddDelEntry(ap);
+  if assigned(ap) then AddDelEntry(ap);
 end;
 
 procedure RestLoeschen;     { ab Cursorposition bis Textende }
@@ -1593,7 +1658,7 @@ begin
     errsound
   else begin
     ap:=CutBlock;
-    if ap<>nil then InsertWithMark(ap);
+    if assigned(ap) then InsertWithMark(ap);
     end;
 end;
 
@@ -1623,17 +1688,19 @@ end;
 
 
 procedure BlockClpEinfuegen;
+var ap : absatzp; { .robo }
 begin
   with e^ do
     if Clipavailable then begin
       ClipToFile(EdTempFile);
-      InsertWithMark(LoadBlock(EdTempFile,false,0,rrand));
+      ap :=LoadBlock(EdTempFile,false,0,rrand); { .robo }
+      InsertWithMark(ap); { .robo }
       { if exist(EdTempFile) then era(EdTempFile); }
-      end
+    end
     else begin
       InsertWithMark(Clipboard);
       Clipboard:=CopyBlock;
-      end;
+    end;
 end;
 
 
@@ -1648,9 +1715,9 @@ begin
         error(5)     { 'Fehler: Datei nicht vorhanden' }
       else begin
         ap:=LoadBlock(fn,false,0,rrand);
-        if ap<>nil then InsertWithMark(ap);
-        end;
-    end;
+        if assigned(ap) then InsertWithMark(ap);
+      end;
+  end;
 end;
 
 { 31.01.2000 robo }
@@ -1665,9 +1732,9 @@ begin
         error(5)     { 'Fehler: Datei nicht vorhanden' }
       else begin
         ap:=LoadUUeBlock(fn);
-        if ap<>nil then InsertWithMark(ap);
-        end;
-    end;
+        if assigned(ap) then InsertWithMark(ap);
+      end;
+  end;
 end;
 { /robo }
 
@@ -1684,8 +1751,8 @@ begin
         else t:=Procs.Overwrite(e,fn);
         if (t='J') or (t='N') then
           if SaveBlock(block[1].pos,block[2].pos,fn,rrand,false,t='J',false) then;
-        end;
       end;
+    end;
 end;
 
 
@@ -1736,82 +1803,83 @@ var   stxt  : string[MaxFindLen];
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
+      apd   : absatzp; { .robo }
       insap : absatzp;
       pos   : position;
       repall: boolean;
       brk   : boolean;
       t     : taste;
       count : longint;
-      dummy : absatzp;
 begin
   if again and (lastop=0) then begin
     errsound;
     exit;
-    end;
+  end;
   if again then ersetzen:=(lastop=2)
   else lastop:=iif(ersetzen,2,1);
-  insap:=nil; 
+  insap:=nil;
   with e^ do
-    if again or
-       (ersetzen and Procs.ReplFunc(e,txt,repby,igcase)) or
-       (not ersetzen and Procs.FindFunc(e,txt,igcase)) then begin
-      if txt='' then exit;
-      if igcase then stxt:=UStr(txt)
-      else stxt:=txt;
-      brk:=false; repall:=false;
-      count:=0;
+  if again or
+     (ersetzen and Procs.ReplFunc(e,txt,repby,igcase)) or
+     (not ersetzen and Procs.FindFunc(e,txt,igcase)) then begin
+    if txt='' then exit;
+    if igcase then stxt:=UStr(txt)
+    else stxt:=txt;
+    brk:=false; repall:=false;
+    count:=0;
+    repeat
+      sofs:=min(workpos+1,vActAbs^.size-dl^[scy].offset);
+      ap:=ActAbs;
       repeat
-        sofs:=min(workpos+1,vActAbs^.size-dl^[scy].offset);
-        ap:=ActAbs;
-        repeat
-          spos:=SeekStr(vap(ap)^.cont[sofs],vap(ap)^.size-sofs,stxt,igcase);
-          if spos=-1 then begin
-            ap:=vap(ap)^.next;
-            sofs:=0;
+        spos:=SeekStr(vap(ap)^.cont[sofs],vap(ap)^.size-sofs,stxt,igcase);
+        if spos=-1 then begin
+          ap:=vap(ap)^.next;
+          sofs:=0;
+        end;
+      until (ap=nil) or (spos>=0);
+      if ap=nil then
+        if count=0 then error(6) else     { 'Text wurde nicht gefunden' }
+      else begin
+        inc(count);
+        pos.absatz:=ap;
+        pos.offset:=spos+sofs;
+        GotoPos(pos,1);
+        if ersetzen then with language^ do begin
+          if aufbau then Display;
+          if repall then begin
+            t:=replacechr[1];
+            testbrk(brk);
+          end
+          else begin
+            attrtxt(col.colstatus);
+            wrt(x,y,forms(' '+askreplace,w));
+            gotoxy(x+scx-1,y+scy);
+            repeat
+              get(t,curon); UpString(t);
+            until (cpos(t[1],replacechr)>0) or (t=keyesc);
+            if t[1]=replacechr[3] then begin
+              repall:=true; t:=replacechr[1];
             end;
-        until (ap=nil) or (spos>=0);
-        if ap=nil then
-          if count=0 then error(6) else     { 'Text wurde nicht gefunden' }
-        else begin
-          inc(count);
-          pos.absatz:=ap;
-          pos.offset:=spos+sofs;
-          GotoPos(pos,1);
-          if ersetzen then with language^ do begin
-            if aufbau then Display;
-            if repall then begin
-              t:=replacechr[1];
-              testbrk(brk);
-              end
-            else begin
-              attrtxt(col.colstatus);
-              wrt(x,y,forms(' '+askreplace,w));
-              gotoxy(x+scx-1,y+scy);
-              repeat
-                get(t,curon); UpString(t);
-              until (cpos(t[1],replacechr)>0) or (t=keyesc);
-              if t[1]=replacechr[3] then begin
-                repall:=true; t:=replacechr[1];
-                end;
-              brk:=(t=keyesc);
-              end;
-            if t[1]=replacechr[1] then begin  { ersetzen: Ja }
-              insap:=AllocAbsatz(length(repby));  { EinfÅgeabsatz erzeugen }
-              if insap=nil then brk:=true
-              else begin
-                FastMove(repby[1],vap(insap)^.cont,length(repby));
-                dummy:=AbsDelete(ActAbs,workpos,length(txt),false,true);
-                Insert(insap,pos);
-                MoveWorkpos(workpos+length(repby),ActAbs);
-                end;
-              end;
-            end
-          else
-            brk:=true;
+            brk:=(t=keyesc);
           end;
-      until (ap=nil) or brk;
-      if repall then message:=strs(count)+language^.ersetzt;
+          if t[1]=replacechr[1] then begin  { ersetzen: Ja }
+            insap:=AllocAbsatz(length(repby));  { EinfÅgeabsatz erzeugen }
+            if insap=nil then brk:=true
+            else begin
+              FastMove(repby[1],vap(insap)^.cont,length(repby));
+              apd:=ActAbs; { .robo }
+              AbsDelete(apd,workpos,length(txt),false,true); { .robo }
+              Insert(insap,pos);
+              MoveWorkpos(workpos+length(repby),ActAbs);
+            end;
+          end;
+        end
+        else
+          brk:=true;
       end;
+    until (ap=nil) or brk;
+    if repall then message:=strs(count)+language^.ersetzt;
+  end;
 end;
 
 
@@ -1976,6 +2044,9 @@ begin
     { 01/2000 oh }
     writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
     { /oh }
+    { 10.02.2000 robo }
+    writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
+    { /robo }
     end;
   close(t);
 end;

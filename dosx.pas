@@ -199,13 +199,13 @@ end;
 
 
 function GetDeviceType(drive:char):byte;
-{$IFNDEF WIN32} { !! MK 12/99 }
+{$IFNDEF ver2} { !! MK 12/99 }
 var dp   : array[-1..40] of byte;
     i    : integer;
     regs : registers;
 {$ENDIF}
 begin
-{$IFDEF WIN32} { !! MK 12/99 }
+{$IFDEF Ver32} { !! MK 12/99 }
   GetDeviceType := 5; { immer Festplatte }
 {$ELSE}
   with regs do begin
@@ -241,7 +241,7 @@ end;
 
 
 procedure readsec(drive,head:byte; track:integer; sec:shortint; var buffer);
-{$IFDEF WIN32} { !! MK 12/99 }
+{$IFDEF ver32} { !! MK 12/99 }
 begin
 {$ELSE}
 var regs : registers;
@@ -263,7 +263,7 @@ end;
 
 
 procedure writesec(drive,head:shortint; track:integer; sec:shortint; var buffer);
-{$IFDEF WIN32} { !! MK 12/99 }
+{$IFDEF ver32ÿ} { !! MK 12/99 }
 begin
 {$ELSE}
 var regs : registers;
@@ -357,7 +357,7 @@ end;
 function GetVolLabel(drive:char):string;
 var sr : searchrec;
 begin
-{$IFNDEF WIN32}
+{$IFNDEF ver32}
   findfirst(drive+':\*.*',VolumeID,sr);
   if doserror=0 then GetVolLabel:=sr.name
   else GetVolLabel:='';
@@ -368,7 +368,7 @@ end;
 
 
 procedure setfcbname(var fcb:fcbtype; name:string);
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -386,7 +386,7 @@ end;
 {$ENDIF}
 
 procedure SetVolLabel(drive:char; vlabel:string);
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -425,7 +425,7 @@ end;
 
 
 function InputRedirected:boolean;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -441,7 +441,7 @@ end;
 {$ENDIF}
 
 function OutputRedirected:boolean;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -482,7 +482,7 @@ end;
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz }
 
 function DriveType(drive:char):byte;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -524,7 +524,7 @@ end;
 
 
 function ConfigFILES:byte;                  { FILES= .. - DOS >= 2.0! }
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -550,7 +550,7 @@ end;
 {$ENDIF}
 
 function FreeFILES(maxfiles:byte):word;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -558,7 +558,6 @@ var f  : array[1..255] of ^file;
     i  : integer;
     fm : byte;
 begin
-  {$I-}
   i:=0;
   fm:=filemode;
   filemode:=$40;
@@ -621,7 +620,7 @@ begin
 end;
 
 function DPMIallocDOSmem(paras:word; var segment:word):word;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}
@@ -653,7 +652,7 @@ end;
 
 
 function IsDevice(fn:pathstr):boolean;
-{$IFDEF WIN32}
+{$IFDEF ver32}
 begin
 end;
 {$ELSE}

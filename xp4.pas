@@ -10,7 +10,9 @@
 { CrossPoint - Hauptmodul }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp4;
 
@@ -968,7 +970,7 @@ var t,lastt: taste;
           end;
         if (rt<>'') and ((rt<>empf) or (rtanz>1)) then begin
           { 03.02.2000 robo }
-          if not askreplyto then empf:=rt;  { Reply-To }
+          if not askreplyto or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
           { /robo }
           if not pm then begin
             if rtanz>1 then
@@ -1897,7 +1899,7 @@ selende:
 end;    { select }
 
 
-procedure TClose; far;
+procedure TClose; {$IFNDEF Ver32 } far; {$ENDIF }
 var f : file;
     r : integer;
 begin

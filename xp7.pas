@@ -10,14 +10,20 @@
 { Netcall-Teil }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit  xp7;
 
 interface
 
-uses  xpglobal, crt,dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
-      video,maske,maus2,montage,lister,resource,stack,capi,
+uses  {$IFDEF virtualpascal}sysutils,{$endif}
+      xpglobal, crt,dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
+      video,maske,maus2,montage,lister,resource,stack,
+{$IFDEF CAPI }
+  capi,
+{$ENDIF }
       xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
@@ -607,12 +613,14 @@ begin                  { of Netcall }
      exit;
      end;
 
+{$IFDEF CAPI }
    if ISDN and not (CAPI_Installed and (CAPI_Register=0)) then begin
      rfehler(740);   { 'ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert' }
      dispose(NC);
      dispose(addpkts);
      exit;
-     end;
+   end;
+{$ENDIF }
 
     { Ab hier kein exit mehr! }
 
@@ -624,7 +632,9 @@ begin                  { of Netcall }
 
     showkeys(0);
     if net and ntPackPuf(netztyp) then begin
+{$IFDEF CAPI }
       if ISDN then CAPI_suspend;
+{$ENDIF }
       assign(f,ppfile);
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP] then begin
         if not existf(f) then
@@ -694,7 +704,9 @@ begin                  { of Netcall }
         goto ende0;
         end;
       CallerToTemp;    { Maggi : OUT.ARC umbenennen }
+{$IFDEF CAPI }
       if ISDN then CAPI_resume;
+{$ENDIF }
       end;   { if net and not Turbo-Box }
 
     netcall:=false;
@@ -828,6 +840,7 @@ begin                  { of Netcall }
       write(getres2(703,4),zeit);    { ' um ' }
       mon;
 
+{$IFDEF CAPI }
       if ISDN then begin                      { ISDN-Anwahl }
         CAPI_showmessages(true,false);
         CAPI_debug:=ParDebug;
@@ -844,7 +857,9 @@ begin                  { of Netcall }
               end;
         end;
         end
-      else begin                              { Hayes-Anwahl }
+      else
+{$ENDIF CAPI }
+      begin                              { Hayes-Anwahl }
         mdelay(150);
         flushin;   { Return verschlucken }
         if display then begin
@@ -1317,10 +1332,12 @@ begin                  { of Netcall }
       end;
 
 ende0:
-    if ISDN then begin
-      if CAPI_release then;     { bei ISDN-CAPI abmelden }
-      end
-    else if net and (OStype<>OS_2) then
+{$IFDEF CAPI }
+    if ISDN then
+      CAPI_release     { bei ISDN-CAPI abmelden }
+    else
+{$ENDIF }
+    if net and (OStype<>OS_2) then
       RestComState(bport,cps);
     comn[boxpar^.bport].fossil:=orgfossil;
 

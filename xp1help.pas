@@ -10,7 +10,9 @@
 { CrossPoint - Hotkey-Anzeige und Online-Hilfe }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp1help;
 
@@ -287,7 +289,7 @@ end;
 
 
 procedure do_help(n:word);
-var   yadd : byte;
+var
       x,y  : byte;
       hlp  : string[10];
       mh   : boolean;

@@ -277,7 +277,9 @@ begin
 
      18 : case m1 of
             1..4 : ModemConfig(m1);
+{$IFDEF CAPI }
             5    : IsdnConfig;
+{$ENDIF CAPI }
           end;
 
      19 : case m1 of           { MAPS }

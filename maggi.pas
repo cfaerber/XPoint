@@ -33,7 +33,11 @@
   {$M 20000,50000,655360}
 {$ENDIF }
 
-uses  dos,xms,typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+uses  dos,
+{$IFDEF BP }
+  xms,
+{$ENDIF }
+typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const       nt_ZConnect=2;
       OrgLen    = 80;
@@ -48,7 +52,7 @@ const       nt_ZConnect=2;
       { 01/2000 oh }
       custheadlen = 60;
       { /oh }
-      realnlen= 70;
+      realnlen= 40;
 
       direction : byte = 0;
       infile    : pathstr = '';
@@ -70,8 +74,8 @@ const       nt_ZConnect=2;
       mausKF    : boolean = true;    { fb: Filter f?r Kommentare }
       MausIT_files : boolean = false;   { ITI/ITG -> Box.IT* }
 
-      attrCrash   = $0002;            { header.attrib: Crashmail   }
-      attrFile    = $0010;            { File attached              }
+      { attrCrash   = $0002; }        { header.attrib: Crashmail   }
+      { attrFile    = $0010; }        { File attached              }
       attrMPbin   = $0040;            { Multipart-Binary           }
       attrReqEB   = $1000;            { EB anfordern               }
       attrIsEB    = $2000;            { EB                         }
@@ -133,6 +137,7 @@ type  charr       = array[0..65530] of char;
                  x_charset  : string[25];
                  keywords   : string[60];
                  summary    : string[200];
+                 priority   : byte;           { Priority by MH }
                  distribution:string[40];
                  pm_reply   : boolean;
                  QuoteString: string[20];
@@ -203,7 +208,7 @@ begin
 end;
 
 procedure error(txt:atext);
-var ticker : longint {$IFNDEF Ver32 } absolute $40:$6c; {$ENDIF }
+var ticker : longint {$IFNDEF Ver32 } absolute $40:$6c {$ENDIF } ;
     t      : longint;
     i      : integer;
 begin
@@ -277,9 +282,6 @@ procedure loadbretter(pronet:boolean);
 const s : string = '';
       p : byte = 0;
 var t   : text;
-    i,j : integer;
-    pp  : pointer;
-    xch : boolean;
 
   procedure berror(txt:atext);
   begin
@@ -310,12 +312,10 @@ var t   : text;
 begin
   write('lade Brettliste ...');
   assign(t,brettfile);
-  {$I-}
   reset(t);
   if ioresult<>0 then
     error('Bretterdatei fehlt')
   else begin
-    {$I+}
     bretter:=0;
     while not eof(t) do begin
       readln(t,s);
@@ -357,7 +357,9 @@ begin
   writeln(' ok.');
   writeln;
 end;
-{$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
 
 
 procedure testfiles;
@@ -383,7 +385,9 @@ begin
   for i:=1 to length(s) do
     if (s[i]>=#128) then
       s[i]:=chr(iso2ibmtab[byte(s[i])]);
+{$IFDEF Debug }
   {$R+}
+{$ENDIF }
 end;
 
 
@@ -448,7 +452,6 @@ var hd   : header;
     i    : integer;
     nn   : longint;
     bp   : ^buf;
-    rr   : word;
     bpos : word;
     bsize: word;
     ef1  : boolean;
@@ -744,7 +747,7 @@ var hd    : header;
     fs    : longint;
     nn    : longint;
     alias : boolean;
-    SevenNet : boolean;
+{    SevenNet : boolean; }
     MagicNet : boolean;
     reqfile  : text;
     reqopen  : boolean;
@@ -770,7 +773,7 @@ var hd    : header;
   end;
 
 begin
-  SevenNet:=(lstr(netzname)='sevennet');
+{  SevenNet:=(lstr(netzname)='sevennet'); }
   MagicNet:=(lstr(netzname)='magicnet');
   reset(f1,1);
   rewrite(f2,1);
@@ -1061,9 +1064,7 @@ var hd     : header;
     _iti:=MausIT_files and not exist(boxname+'.iti');
     if _iti then writeln(t,':ITI -1');
     assign(t1,boxname+'.inf');
-    {$I-}
     reset(t1);
-    {$I+}
     if ioresult=0 then begin
       today:=right(date,4)+copy(date,4,2)+left(date,2);
       while not eof(t1) do begin
@@ -1145,7 +1146,9 @@ var hd     : header;
       writeln(t,':',s);
       dec(size,rr);
       end;
-    {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
     writeln(t,':`');
     writeln(t,':end');
     writeln(t,':size ',hd.groesse);
@@ -1163,9 +1166,7 @@ var hd     : header;
     if p>0 then begin
       ext:=mid(fn,p+1);
       assign(t,'mimetyp.cfg');
-      {$I-}
       reset(t);
-      {$I+}
       if ioresult=0 then begin
         while not eof(t) do begin
           readln(t,s);
@@ -1242,7 +1243,9 @@ var hd     : header;
       writeln(t,':',s);
       dec(size,rr);
       end;
-    {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
     writeln(t,':---');
   end;
 
@@ -1419,11 +1422,13 @@ var t1,log     : text;
     parname    : string[20];
     xline      : array[1..maxxlines] of ^string;
     xlines     : integer;
+{$IFDEF BP }
     fsize      : longint;
     xms        : byte;    { 0 = nicht initialisiert, 1=initialisiert }
     xmshandle  : word;                    { 2 = nicht verfÅgbar }
     xmssize    : longint;
     xmsoffset  : longint;
+{$ENDIF }
 
   function mausform(s:string):string;
   var p : byte;
@@ -1436,19 +1441,26 @@ var t1,log     : text;
   end;
 
   procedure appline(s:string; crlf:boolean);
+{$IFDEF BP }
   const cr_lf : array[0..1] of char = #13#10;
+{$ENDIF }
   begin
     if hd.mimever<>'' then
       ISO2IBM(s);
+{$IFDEF BP }
     if (xms=0) and (lines<maxilines) and
-       (((lines mod 16)<>0) or (memavail>10000)) then begin
+       (((lines mod 16)<>0) or (memavail>10000)) then
+{$ENDIF }
+    begin
       inc(lines);
       getmem(tbuf^[lines].s,length(s)+1);
       tbuf^[lines].s^:=s;
       tbuf^[lines].lf:=crlf;
       inc(hd.groesse,length(s)+iif(crlf,2,0));
-      end
-    else begin
+    end
+{$IFDEF BP }
+    else
+    begin
       if xms=0 then
         if XmsAvail > 0 then begin
           xmssize:=min(fsize div 1024+1,XmsAvail)*1024;
@@ -1472,6 +1484,7 @@ var t1,log     : text;
           end;
         end;
       end;
+{$ENDIF }
   end;
 
   function infofile(s:string):string;
@@ -1554,9 +1567,8 @@ var t1,log     : text;
 
   procedure WriteInfofile(fn:pathstr);
   var t : text;
-      s : string;
       i : longint;
-  begin {$I-}
+  begin
     assign(t,fn);
     rewrite(t);
     if ioresult=0 then begin
@@ -1567,7 +1579,7 @@ var t1,log     : text;
           write(t,tbuf^[i].s^);
       close(t);
       end;
-  end; {$I+}
+  end;
 
   procedure add_xline(s:string);
   begin
@@ -1577,6 +1589,7 @@ var t1,log     : text;
       end;
   end;
 
+{$IFDEF BP }
   procedure CopyXms;
   var buf : pointer;
       ofs : longint;
@@ -1592,6 +1605,7 @@ var t1,log     : text;
       end;
     freemem(buf,1024);
   end;
+{$ENDIF }
 
 begin
   new(b1);
@@ -1600,7 +1614,9 @@ begin
   for i:=1 to maxxlines do
     new(xline[i]);
   MausReadITI(boxname,info,infos);
+{$IFDEF BP }
   fsize:=_filesize(infile);
+{$ENDIF }
   assign(t1,infile); settextbuf(t1,b1^); reset(t1);
   assign(f2,outfile); rewrite(f2,1);
   assign(log,logfile); rewrite(log);
@@ -1609,7 +1625,9 @@ begin
   if not eof(t1) then readln(t1,s);
   nn:=0;
   while not eof(t1) do with hd do begin
+{$IFDEF BP }
     xms:=0;
+{$ENDIF }
     fillchar(hd,sizeof(hd),0);
     xlines:=0;
     typ:='T';
@@ -1783,10 +1801,12 @@ begin
                 wrs(tbuf^[i].s^)
               else
                 blockwrite(f2,tbuf^[i].s^[1],length(tbuf^[i].s^));
+{$IFDEF BP }
             if xms=1 then begin
               CopyXms;
               XmsFree(xmshandle);
               end;
+{$ENDIF }
             end;
           end;
         end;

@@ -10,7 +10,9 @@
 { Overlay-Unit mit Editierroutinen u.a. }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp4e;
 
@@ -761,6 +763,7 @@ var newstate : shortint;
     len,i    : byte;
     f1,f2    : string[1];
 begin
+  mbshowtext := true;
   if fieldpos=1 then f1:=trim(s) else f1:=trim(getfield(1));
   if fieldpos=2 then f2:=s else f2:=getfield(2);
   if f1='' then
@@ -778,7 +781,7 @@ end;
 
 procedure mbshowtxt0(var s:string);
 begin
-  if mbshowtext(s) then;
+  mbshowtext(s);
 end;
 
 procedure mbsetvertreter(var s:string);
@@ -894,7 +897,6 @@ var brett : string[brettLen];
     halten: integer;
     flags : byte;
     brk   : boolean;
-    b     : byte;
     d     : DB;
 begin
   newbrett:=false;
@@ -1355,9 +1357,9 @@ end;
 function dtestpollbox(var s:string):boolean;
 var d  : DB;
     adr: string[AdrLen];
-    orgnt : byte;
+{    orgnt : byte; }
 begin
-  orgnt:=ntBoxNetztyp(pbox);
+{  orgnt:=ntBoxNetztyp(pbox); }
   pbox:=s;
   dbOpen(d,BoxenFile,1);
   SeekLeftBox(d,s);
@@ -1593,7 +1595,15 @@ end;
 
 procedure auto_usersel(var cr:Customrec);               {Nur aus Userliste auswaehlen lassen}
 begin
-  auto_empfsel_do(cr,true);
+{JG:07.02.00  Verteiler bei Nachricht-Direkt verboten}
+  with cr do begin
+    auto_empfsel_do(cr,true);
+    if (dbReadInt(ubase,'userflags') and 4<>0) then begin
+      rfehler(301);   { 'bei Verteilern nicht m”glich' }
+      brk:=True;
+      end;
+    end;
+{/JG}
 end;             
 
 {/JG}
@@ -2076,7 +2086,7 @@ end;
 
 procedure MoveBretter;
 var rec,nr : longint;
-    step,i : integer;
+    step   : integer;
     bi     : shortint;
     f      : file of longint;
     l      : longint;

@@ -10,7 +10,9 @@
 { CrossPoint - 'maps & Fileserver }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp8;
 

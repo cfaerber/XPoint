@@ -23,7 +23,11 @@
 
 program uuz;
 
-uses  xpglobal, crt,dos,dosx,typeform,fileio,ems,xpdatum,montage,stack;
+uses  xpglobal,
+{$IFDEF BP }
+  ems,
+{$ENDIF }
+  crt,dos,dosx,typeform,fileio, xpdatum,montage,stack;
 
 const
       midlen      = 120;
@@ -74,7 +78,9 @@ const
       uncompress  = 'compress.exe -df ';
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
+{$IFDEF BP }
       SwapFileName= 'uuz.swp';
+{$ENDIF }
       UUserver    = 'UUCP-Fileserver';
       tspecials   = '()<>@,;:\"/[]?=';       { RFC822-Special Chars    }
       tspecials2  = tspecials+' ';           { RFC1341-Speical Chars   }
@@ -196,6 +202,7 @@ type  OrgStr  = string[orglen];
                   x_charset  : string[25];
                   keywords   : string[60];
                   summary    : string[200];
+                  priority   : byte;           { Priority by MH }
                   distribution:string[40];
                   pm_reply   : boolean;
                   sender     : string[80];
@@ -233,7 +240,6 @@ type  OrgStr  = string[orglen];
 
 var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       f1,f2         : file;          { Quell/Zieldatei     }
-      errorlevel    : integer;
       u2z           : boolean;       { Richtung; mail/news }
       mails,news    : longint;       { Counter             }
       buffer        : array[0..bufsize] of char;    { Kopierpuffer }
@@ -558,6 +564,11 @@ end;
 { --- Shell --------------------------------------------------------- }
 
 procedure shell(prog:string; space:word);  { Externer Aufruf }
+{$IFNDEF BP }
+begin
+  Exec(prog, '');
+end;
+{$ELSE }
 {$ifndef ver55}
   const freeptr : pointer = nil;
 {$endif}
@@ -597,8 +608,8 @@ var regs  : registers;
   procedure SwapOut(swapp,count:word);
   var page,spar,rr : word;
   begin
-{$IFNDEF Ver32 } { !! }
-    if EmsAvail>=count div 1024 +1 then begin
+    if EmsAvail>=count div 1024 +1 then
+    begin
       EMSAlloc(count div 1024+1,EMShandle);
       page:=0;
       repeat
@@ -632,13 +643,11 @@ var regs  : registers;
         if existf(swapfile) then erase(swapfile);
         end;
       end;
-{$ENDIF }
   end;
 
   procedure SwapIn(swapp,count:word);
   var rr,page,spar : word;
   begin
-{$IFNDEF Ver32 } { !! }
     if emshandle<>0 then begin
       page:=0;
       repeat
@@ -667,11 +676,13 @@ var regs  : registers;
       close(swapfile);
       erase(swapfile);
       end;
-{$ENDIF }
   end;
 
+  { MK Funktion ist eigentlich sinnlos, rausnehmen ? }
   procedure geterrorlevel;
-  var regs : registers;
+  var
+    regs : registers;
+    errorlevel    : integer;
   begin
     errorlevel:=lo(dosexitcode);
     if errorlevel=0 then begin
@@ -683,7 +694,6 @@ var regs  : registers;
 
 begin
   doserror:=0;
-{$IFNDEF Ver32 } { !! }
   if maxavail<$8000 then
     writeln('Zu wenig freier Speicher fr externen Programmaufruf!')
   else begin
@@ -770,8 +780,9 @@ begin
     if doserror<>0 then
       error('Fehler '+strs(doserror)+' bei Programm-Aufruf');
     end;
-{$ENDIF }
 end;
+
+{$ENDIF }
 
 
 procedure fmove(var f1,f2:file);
@@ -904,11 +915,13 @@ begin
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+    { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive     then wrs('X-NO-ARCHIVE: yes');
+    { /robo }
 
-{ /robo }
+    { 07.02.2000 robo - X-Priority Konvertierung }
+    if priority<>0    then wrs('X-PRIORITY: '+strs(priority));
+    { /robo }
 
     if prio<>0        then wrs('Prio: '  +strs(prio));
     if organisation<>''  then wrs('ORG: '+organisation);
@@ -1114,12 +1127,12 @@ begin
 end;
 
 
-procedure GetMimeVersion(var s:string); far;
+procedure GetMimeVersion(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   hd.mime.mversion:=s;
 end;
 
-procedure GetCTencoding(var s:string); far;
+procedure GetCTencoding(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   LoString(s);
   with hd.mime do
@@ -1132,7 +1145,7 @@ begin
 end;
 
 
-procedure GetContentType(var s:string); far;
+procedure GetContentType(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 var p     : byte;
     s1    : string[20];
     value : string;
@@ -1411,9 +1424,7 @@ begin
     if p>0 then begin
       ext:=mid(fn,p+1);
       assign(t,'mimetyp.cfg');
-      {$I-}
       reset(t);
-      {$I+}
       if ioresult=0 then begin
         while not eof(t) do begin
           readln(t,s);
@@ -1502,10 +1513,8 @@ end;
 procedure ReadString(umbruch:boolean);
 const l : byte = 0;
       c : char = #0;
-      savedi : word = 0;
-      savebx : word = 0;
 
-  procedure reload; far;
+  procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
   begin
     if eof(f1) then ok:=false
     else ReadBuf;
@@ -1517,6 +1526,11 @@ const l : byte = 0;
     if bufpos=bufanz then reload;
   end;
 
+{$IFNDEF Ver32 }
+const
+      savedi : word = 0;
+      savebx : word = 0;
+{$ENDIF }
 begin
   lasteol:=(eol>0);
   eol:=0;
@@ -1674,7 +1688,9 @@ begin
     s[0]:=chr(p);
     end;
 end;
-{$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
 
 
 procedure ReadRFCheader(mail:boolean; s0:string);
@@ -2029,22 +2045,30 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
   var p1,p2,p,i : byte;
       code      : char;
       qp        : boolean;
-      cset      : string[10];
+{      cset      : string[10];  MK: Wird im Original nicht benutzt }
   begin
     for i:=1 to length(ss) do
       if ss[i]=#9 then ss[i]:=' ';
 
-{ 28.01.2000 robo - Fix fr QP-Dekodierung }
+{ 09.02.2000 robo - Fix fr QP-Dekodierung }
     repeat
       p1:=pos('=?',ss);
-      if p1>0 then p2:=pos('?=',mid(ss,p1+5));
+      if p1>0 then begin
+        p2:=p1+5;
+        i:=0;
+        while (i<3) and (p2<length(ss)) do begin
+          if ss[p2]='?' then inc(i);
+          inc(p2);
+        end;
+        if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
+      end;
       if (p1>0) and (p2>0) then begin
-        s:=copy(ss,p1+2,p2+2);
-        delete(ss,p1,p2+6);
-        cset:='iso-8859';
+        s:=copy(ss,p1+2,p2-p1-2);
+        delete(ss,p1,p2-p1+2);
+{        cset:='iso-8859'; }
         p:=cpos('?',s);
         if p>0 then begin
-          cset:=lstr(left(s,min(8,p-1)));
+{          cset:=lstr(left(s,min(8,p-1))); }
           delete(s,1,p);
           p:=cpos('?',s);
           if p=2 then begin
@@ -2189,13 +2213,15 @@ begin
              if zz='x-zc-telefon' then telefon:=s0 else
              if zz='x-xp-ctl'     then XPointCtl:=ival(s0) else
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+             { 03.09.1999 robo - X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
                if LStr(s0)='yes' then xnoarchive:=true;
              end else
+             { /robo }
 
-{ /robo }
+             { 07.02.2000 robo - X-Priority Konvertierung }
+             if zz='x-priority'   then priority:=minmax(ival(s0),1,5) else
+             { /robo }
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -2511,7 +2537,6 @@ end;
 
 procedure ConvertNewsfile(fn:pathstr);
 var f       : file;
-    rr      : word;
     size,ss : longint;
     fp,bp,n : longint;
     freeze  : boolean;
@@ -3023,11 +3048,13 @@ begin
       else wrs(f,'X-Newsreader: '+programm);
       end;
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+    { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive then wrs(f,'X-No-Archive: yes');
+    { /robo }
 
-{ /robo }
+    { 07.02.2000 robo - X-No-Archive Konvertierung }
+    if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
+    { /robo }
 
     if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then
     with mime do begin

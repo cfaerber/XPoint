@@ -10,7 +10,9 @@
 { CrossPoint - UUCICO-Interface }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit  xpuu;
 

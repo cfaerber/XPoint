@@ -6,11 +6,13 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-
+{ 06.02.2000 MH: X-Priority f. RFC }
 { Overlay-Teile zu XP3 }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp3o2;
 
@@ -155,6 +157,10 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if postanschrift<>''       then wrs('POST: '+postanschrift);
       if telefon<>''   then wrs('TELEFON: '+telefon);
       if homepage<>''  then wrs('X-Homepage: '+homepage);
+      { 06.02.2000 MH: X-Priority, X-MSMail-Priority }
+      if priority<>0   then wrs('X-Priority: '+strs(priority));
+      if noarchive and (pmempfanz=0) and (netztyp=nt_UUCP) then 
+           wrs('X-No-Archive: Yes'); { MH }
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
       if distribution<>'' then wrs('U-Distribution: '+distribution);

@@ -18,7 +18,9 @@
 UNIT video;
 
 {$I XPDEFINE.INC}
-{$O+,F+,A+}
+{$IFDEF BP }
+  {$O+,F+,A+}
+{$ENDIF }
 
 
 {  ==================  Interface-Teil  ===================  }
@@ -156,7 +158,7 @@ begin
     {$IFDEF DPMI}
       DPMIsel:=DPMIallocDOSmem(16*height,DOSseg);
       if DOSseg=0 then exit;   { kein DOS-Speicher frei }
-      FastMove(data,mem[DPMIsel:0],256*height);
+      Move(data,mem[DPMIsel:0],256*height);
       es:=DOSseg; bp:=0;
     {$ELSE}
       es:=seg(data); bp:=ofs(data);
@@ -265,7 +267,7 @@ procedure SetScreenLines(lines:byte);
       else if height>10 then bh:=2   { 14er Font lesen }
       else bh:=3;                    { 8er Font lesen  }
       xintr($10,regs);
-      {$IFDEF DPMI}
+      {$IFDEF DPMIa}
       sel:=allocselector(0);
       if SetSelectorBase(sel,longint(es)*$10)=0 then;
       if SetSelectorLimit(sel,$ffff)=0 then;
@@ -427,8 +429,8 @@ begin
 end;
 
 
-{$F+,S-}
-procedure newexit;
+{$S-}
+procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   exitproc:=oldexit;
   cur1;

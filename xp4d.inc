@@ -35,7 +35,7 @@ const hf : array[0..4] of char = ' +-Aù';
       ge : array[0..1] of char = '> ';
       wv : array[0..4] of char = ' cwws';
 
-var adr     : string[AdrLen];
+var
     s,s0    : string[81];
     dat,edat: longint;
     sdat    : string[15];
@@ -55,9 +55,8 @@ var adr     : string[AdrLen];
     markc   : char;
     hd      : header;
     hds     : longint;
-    pp,pp2  : byte;
+    pp      : byte;
     wvl     : byte;
-    l       : longint;
     vert    : boolean;
     mnt     : longint;
     netztyp : byte;
@@ -318,7 +317,9 @@ begin
 end;
 
 
-{$B+}
+{$IFNDEF FPC }
+  {$B+}
+{$ENDIF }
 procedure display(p:shortint);
 var i,j : integer;
     mi  : shortint;
@@ -342,7 +343,9 @@ begin
   if dispmode=12 then xaufbau:=false;
   mdisplay:=false;
 end;
-{$B-}
+{$IFNDEF FPC }
+  {$B-}
+{$ENDIF }
 
 procedure redisplay(p:shortint);
 var i,bp : integer;

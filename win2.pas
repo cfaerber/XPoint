@@ -16,7 +16,9 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 UNIT win2;
 
@@ -1038,11 +1040,9 @@ begin
 end;
 
 
-{ F+}
 procedure pdummyproc;
 begin
 end;
-{ F-}
 
 
 procedure psave;   { Path-Liste sichern (1 x m”glich!) }
