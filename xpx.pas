@@ -321,13 +321,11 @@ begin
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
-  {$IFNDEF NO386}
   InitWinVersion;
 
   If (WinVersion = 3) or { Win 9x/ME/... }
      ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
     EnableLFN;
-  {$ENDIF}
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
   if right(ownpath,1)<>'\' then
@@ -343,6 +341,10 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.22  2003/01/19 08:29:12  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.18.2.21  2003/01/18 09:40:26  mw
   MW: - Fehler im letzten Commit korregiert (Es mu· immer
         EMSAvail/XMSAvail abgefragt werden, um festzustellen

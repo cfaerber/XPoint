@@ -117,14 +117,12 @@ end;
 
 procedure InitVar;
 begin
-  {$IFNDEF NO386}
   If (WinVersion = 3) or { Win 9x/ME/... }
      ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
   begin
     EnableLFN;
     UseLfn := true;
   end;
-  {$ENDIF}
   uulog:=nil; deblog:=nil;
   with col do
     if color then begin
@@ -1938,6 +1936,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.13  2003/01/19 08:29:11  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.1.2.12  2003/01/17 17:01:27  mw
   MW: - Make XT-Version compile again (Part 1)
 

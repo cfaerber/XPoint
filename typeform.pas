@@ -271,7 +271,7 @@ end;
 
 
 
-{$IFDEF NO386}
+{$IFDEF NOASM}
 
 Function Max(const a,b:longint):longint;
 begin
@@ -1505,7 +1505,7 @@ begin
 end;
 
 
-{$IFDEF NO386}
+{$IFDEF NOASM}
 function Hex(const l:longint; const n:byte):string;
 const hexch : array[0..15] of char = '0123456789ABCDEF';
 var   s    : string[8];
@@ -2064,6 +2064,10 @@ end;
   end.
 {
   $Log$
+  Revision 1.37.2.31  2003/01/19 08:29:10  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.37.2.30  2003/01/17 17:01:27  mw
   MW: - Make XT-Version compile again (Part 1)
 

@@ -412,7 +412,6 @@ var t : text;
   end;
 
 begin
-  {$IFNDEF NO386}
   InitWinVersion;
 
   If (WinVersion = 3) or { Win 9x/ME/... }
@@ -421,7 +420,6 @@ begin
     EnableLFN;
     UseLfn := true;
   end;
-  {$ENDIF}
   mails:=0; news:=0;
   uunumber:=0;
   new(uline);
@@ -3405,6 +3403,10 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.81  2003/01/19 08:29:11  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.35.2.80  2003/01/17 17:01:26  mw
   MW: - Make XT-Version compile again (Part 1)
 

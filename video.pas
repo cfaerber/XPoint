@@ -54,10 +54,8 @@ function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
 
-{$IFNDEF NO386}
 procedure GetPal;
 procedure SetPal;
-{$ENDIF}
 
 { ================= Implementation-Teil ==================  }
 
@@ -71,7 +69,6 @@ uses
 {$ENDIF }
    fileio,typeform,xpfonts,dos;
 
-{$IFNDEF NO386}
 type
   TPal1 = array[1..17] of Byte;
 
@@ -103,8 +100,6 @@ type
 var
   Pal1: ^TPal1;
   VGAPal: PVGAPal;
-
-{$ENDIF}
 
 {- BIOS-Routinen ----------------------------------------------}
 
@@ -308,8 +303,6 @@ begin
     end;
 end;
 
-{$IFNDEF NO386}
-
 constructor TVGAPal.Init;
 begin
   New(Pal);
@@ -382,13 +375,15 @@ begin
   end;
 end;
 
-{$ENDIF}
-
 begin
   getvideotype;
 end.
 {
   $Log$
+  Revision 1.20.2.14  2003/01/19 08:29:09  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.20.2.13  2003/01/17 18:41:00  mw
   MW: - Make XT-Version compile again (Part 2)
 

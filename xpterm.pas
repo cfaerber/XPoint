@@ -660,10 +660,8 @@ begin
       if OStype<>OS_2 then
       begin
         RestComState(comnr,cps);
-        {$IFNDEF NO386}
         if WinVersion >= 3 then
           SetUart(bport,baud,Pnone,8,1,not IgnCTS);
-        {$ENDIF}
       end;
       rfehler(2002);     { 'Modem nicht bereit.' }
       initcom:=false;
@@ -1617,6 +1615,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.7  2003/01/19 08:29:10  mw
+  MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
+        Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
+
   Revision 1.10.2.6  2003/01/17 18:41:00  mw
   MW: - Make XT-Version compile again (Part 2)
 
