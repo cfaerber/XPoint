@@ -488,7 +488,7 @@ var bufanz,
 
   procedure ReadBuf;
   begin
-    blockread(f1,buf,2048,bufanz);
+    blockread(f1,buf, BufSize,bufanz);
     ior;
     bufpos:=0;
   end;
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2001/12/05 11:18:31  mk
+  - use BufSize instead of numeric constant in blockreaad
+
   Revision 1.44  2001/12/04 22:47:49  mk
   - fixed range check error in ReadHeader
 
