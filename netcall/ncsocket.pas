@@ -138,7 +138,7 @@ type
 
 implementation
 
-uses debug;
+uses debug,typeform;
 
 constructor TSocketNetcall.Create;
 begin
@@ -301,6 +301,7 @@ end;
 function TSocketNetcall.ParseError(s: string): Boolean;
 begin
   Result := Copy(s, 1, 3) <> '+OK';
+  if not Result then FErrorMsg:= Mid(s, iif(Pos(' ',s)>0,Pos(' ',s)+1,1));
 end;
 
 procedure TSocketNetcall.ReadBuffer;
@@ -400,6 +401,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/05/23 23:54:01  ma
+  - fix: ParseError did not return ErrorMsg
+
   Revision 1.21  2001/05/16 01:59:16  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 
