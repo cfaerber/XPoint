@@ -557,7 +557,11 @@ procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
 var pold,name,ext,i: string;
     j,mlen: integer;
 begin
+{$IFDEF VP}
+  s := Mid(s,max(1,1+max(RightPos('/',s),RightPos('\',s))));
+{$ELSE}  
   s := ExtractFileName(s); (* replace path *)
+{$ENDIF}  
   path:= AddDirSepa(path);
 
   if s='' then s:='NONAME';
@@ -1198,6 +1202,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/03/19 12:23:36  cl
+  - fix for AssignUniqueDownload and VPAscal
+
   Revision 1.18  2001/03/16 23:05:07  cl
   - fixes for AssignUniqueDownload
   - fixes for ltUUCP
