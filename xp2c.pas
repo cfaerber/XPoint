@@ -235,6 +235,7 @@ begin
         end;
       SetMausEmu;
       end;
+    nachweiter:=AAmsg; brettweiter:=AAbrett; userweiter:=AAuser;
     GlobalModified;
     end;
   enddialog;
