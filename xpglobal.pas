@@ -17,6 +17,7 @@ interface
 const
   verstr      = 'v3.40';     { Versionsnr. - steht nur an dieser Stelle }
   betastr     = ' RC3';      { '' oder ' beta', ' RCn' usw. }
+  xmsstr      = ' (XMS)';
   author_name = 'OpenXP/16';
   author_fido = '2:2433/460';
   author_mail = 'support@openxp16.de';
@@ -86,6 +87,10 @@ end.
 
 {
   $Log$
+  Revision 1.29.2.23  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.29.2.22  2003/01/10 22:16:20  my
   MY:- Log-Kosmetik
 

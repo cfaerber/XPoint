@@ -688,7 +688,8 @@ var size   : longint;
     if not mailerflag then
       if not registriert.r2 and ntForceMailer(hdp^.netztyp)
          and (dbReadInt(mbase,'ablage')=10) then begin
-        wrs(gr(20)+xp_xp+' '+verstr+' '+gr(60));   { '(unregistriert)' }
+        wrs(gr(20)+xp_xp+' '+verstr+betastr+iifs(xmsovrbuf,xmsstr,'')+
+            ' '+gr(60));   { '(unregistriert)' }
         mailerflag:=true;
         end;
   end;
@@ -1181,6 +1182,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.27  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.17.2.26  2002/03/17 13:15:41  sv
   - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
     nicht

@@ -191,8 +191,10 @@ procedure Set_XP_ID;
 begin
   case netztyp of
     nt_UUCP,
-    nt_Client : XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr2)+' ##'+#13#10;
-    else        XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr1)+' ##'+#13#10;
+    nt_Client : XP_ID:='## '+xp_xp+' '+verstr+betastr+
+                       iifs(xmsovrbuf,xmsstr,'')+krk(regstr2)+' ##'+#13#10;
+    else        XP_ID:='## '+xp_xp+' '+verstr+betastr+
+                       iifs(xmsovrbuf,xmsstr,'')+krk(regstr1)+' ##'+#13#10;
   end;
 end;
 
@@ -233,7 +235,8 @@ begin
   else begin
     if not pm then
       if XP_Tearline then
-        s:=#13#10+xp_origin + ' ' + verstr + betastr + krk(regstr1)
+        s:=#13#10+xp_origin + ' ' + verstr + betastr +
+           iifs(xmsovrbuf,xmsstr,'') + krk(regstr1)
       else
         s:=#13#10+'---'
     else
@@ -1198,6 +1201,10 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.18.2.19  2003/01/16 23:30:34  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.18.2.18  2002/07/09 13:24:54  mk
   - KorrBoxname statt Checkbox oder Handarbeit benutzen
 

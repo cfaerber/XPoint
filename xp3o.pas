@@ -1010,7 +1010,7 @@ begin
   tmp:=TempS(2000);
   assign(t,tmp);
   rewrite(t);
-  write(t,'## ',getres2(337,iif(auto,2,1)),' '+xp_xp+' ',verstr);
+  write(t,'## ',getres2(337,iif(auto,2,1)),' '+xp_xp+' ',verstr+betastr);
   if registriert.r2 then write(t,' R');
   writeln(t);
   writeln(t,'## ',getres2(337,3));   { 'erhaltene Nachricht:' }
@@ -1520,6 +1520,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.15  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung bercksichtigt
+      - betastr an einigen Stellen erg„nzt
+
   Revision 1.21.2.14  2002/03/08 23:00:29  my
   MY:- Routine zum Ermitteln der eigenen Adresse bei Cancel- und
        Supersedes-Nachrichten fr RFC/Client sauberer gestaltet.

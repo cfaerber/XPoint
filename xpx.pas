@@ -252,8 +252,8 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,betastr,' ',x_copyright,
-            ' by ',author_name,' (',author_mail,')');
+  writeln(t,' ',verstr,betastr,iifs(xmsovrbuf,xmsstr,''));
+  writeln(t,x_copyright,' by ',author_name,' (',author_mail,')');
   writeln(t);
   if _deutsch then
   begin
@@ -342,6 +342,10 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.17  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.18.2.16  2003/01/14 21:47:08  mw
   MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
         (Wenn Compilerschalter gesetzt und kein EMS vorhanden)

@@ -413,7 +413,7 @@ begin
   writeln(t,'##  ',getreps2(800,iif(del,4,5),bretter));
   writeln(t,'##');
   writeln(t,'##  ',getres2(800,6));   { 'mit virtuellen GrÅ·en' }
-  writeln(t,'##     '+xp_xp+' ',verstr);
+  writeln(t,'##     '+xp_xp+' ',verstr+betastr);
   writeln(t);
   writeln(t,dup(40,'-'));
   writeln(t);
@@ -2194,6 +2194,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.37  2003/01/16 23:30:34  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.10.2.36  2002/03/10 13:52:06  my
   MY:- /Nachricht/Brettmanager/Bestellen: Abfrage "Anzahl Artikel" in
        Ressource verlagert und fÅr englische User lesbar gemacht. :)

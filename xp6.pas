@@ -2080,7 +2080,7 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      hdp^.programm:=xp_xp+' '+verstr+betastr
+      hdp^.programm:=xp_xp+' '+verstr+betastr+iifs(xmsovrbuf,xmsstr,'')
                      {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
                      +iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
@@ -2566,6 +2566,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.62  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.39.2.61  2002/05/25 21:38:45  my
   MY:- Die Headerzeile "X-XP-BOX" wird bei den Netztypen ZConnect und Fido
        jetzt nur noch in der Nachrichten-Datenbank (MPUFFER.*) erzeugt,

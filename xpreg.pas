@@ -1584,7 +1584,7 @@ var x,y : byte;
     DiaWidth : byte;
 begin
   addy := 0;
-  ver := xp_xp+' '+verstr+betastr;
+  ver := xp_xp+' '+verstr+betastr+iifs(xmsovrbuf,xmsstr,'');
   {$IFDEF Snapshot}
     addy := addy+1;
   {$ENDIF}
@@ -1632,6 +1632,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.11  2003/01/16 23:30:33  my
+  MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
+      - betastr an einigen Stellen ergÑnzt
+
   Revision 1.10.2.10  2002/04/14 14:28:13  my
   MY:- About-Dialog fÅr alle "Lebenslagen" fit gemacht (Breite des Dialogs
        und Position der Strings immer richtig berechnen), Position "XP"
