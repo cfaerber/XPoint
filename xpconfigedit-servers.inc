@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-  procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn,
+  procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn, email,
                      bdomain,fidoname:string; txt:atext; var brk:boolean);
   var x,y  : Integer;
       real : boolean;
@@ -30,8 +30,10 @@
       btxt : string;
       fido : boolean;
       s    : string;
-      yy   : byte;
+      p, yy: Integer;
+  label restart;
   begin
+  restart:
     DomainNt:=nt;
     real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
     dom:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_Fido,nt_UUCP];
@@ -41,7 +43,7 @@
     map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_QWK]);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
-           iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);
+           iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),txt,x,y);
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
     { Kleinschreibung fuer Boxname zulassen}
@@ -56,7 +58,7 @@
                'A'+without(allchar,'()'+iifs(ntNamespace(nt),'',' ')));
               { ^^ wegen "!" = TopCase }
       mhnr(191);                                       { 'Username  ' }
-    msetvfunc(notempty);
+    if not bdom then msetvfunc(notempty);
     yy:=6;
     if fido then begin
       maddstring(3,6,getres2(912,4),fidoname,30,40,range(' ',#126)); mhnr(196);
@@ -105,17 +107,53 @@
       end
     else
       bDomainNt:=0;
-    if fqdom then begin  { Eingabemoeglichkeit fuer FQDNs}
-      maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
-                 'A'+without(range('!','~'),' @<>/')); mhnr(40001);
+    if nt=nt_uucp then               { RFC/UUCP eMail-Adresse vereinfacht }
+    begin
+      maddstring(3,yy,getres2(912,12),email,30,80,''); mhnr(30001);
       inc(yy,2);
       end;
+    if fqdom then
+    begin  { Eingabemoeglichkeit fuer FQDNs}
+      maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
+                 'A'+without(range('!','~'),' @<>/_')); mhnr(40001);
+      msetvfunc(xp9_FQDNTest);
+      inc(yy,2);
+    end;
     freeres;
     readmask(brk);
-    if not brk and (name=DefFidoBox) then begin
+    if not brk and (name=DefFidoBox) then
+    begin
       HighlightName:=UpperCase(user);
       aufbau:=true;
     end;
+
+    if not brk and (nt=nt_uucp) then
+    begin
+      if (email<>'') then
+      begin
+        p :=cpos('@',email);
+        if (p<=1) or (cpos('@',mid(email,p+1))<>0)
+          or (cpos('.',mid(email,p+1))=0)
+          or (email<>mailstring(email,false))
+        then begin
+          rfehler(908);
+          enddialog;
+          goto restart;
+          end;
+        end;
+      if (user='') then
+        if (email='') then begin
+          hinweis(getres2(10900,40)); enddialog; goto restart;
+          end
+        else user := LeftStr(email,cpos('@',email)-1);
+      if (domain='') and (email<>'') then
+      begin
+        domain:=mid(email,cpos('@',email));
+        if cpos('.',domain)=0 then domain:=''
+         else domain:=mid(domain,cpos('.',domain));
+        end;
+      end;
+
     enddialog;
   end;
 
@@ -235,15 +273,6 @@
     freeres;
     readmask(brk);
     enddialog;
-
-    if not brk and (email<>'')
-    then begin
-      b:=cpos('@',email);
-      if b=0 then begin
-        hinweis(Getres2(10900,8));
-        goto restart;
-        end;
-      end;
   end;
 
   procedure NewBox;
@@ -318,7 +347,7 @@
       if nt in [nt_NNTP, nt_POP3] then
         INetNameRead(nt,name,user,komm,real,fqdom,brk)
       else
-        NameRead(nt,name,user,komm,maps,real,dom,fqdom,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
+        NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
       dbSeek(d,boiName,UpperCase(name));
       if dbFound then rfehler(921)   { 'Box ist bereits vorhanden' }
@@ -828,6 +857,7 @@
         mappsel(false,getres2(920,101));
         mhnr(30115);
       maddstring(3,5,getres2(920,107),ClientMailInEnv,35,160,'');    { 'Envelope-Adresse' }
+      msetvfunc(Multi_Mailstring);
       maddstring(3,6,getres2(920,108),ClientMailInUser,35,160,'');   { 'Benutzername' }
       maddstring(3,7,getres2(920,109),ClientMailInPass,18,75,'');    { 'Paáwort     ' }
       maddstring(43,7,getres2(920,110),ClientMailInPort,7,50,'0123456789 ');  { 'Port' }
@@ -836,6 +866,7 @@
       maddstring(3,11,getres2(920,106),ClientMailOutServer,35,160,'');  { 'Servername  ' }
         mappsel(false,getres2(920,103));
       maddstring(3,12,getres2(920,107),ClientMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
+      msetvfunc(Multi_Mailstring);
       maddstring(3,13,getres2(920,108),ClientMailOutUser,35,160,'');  { 'Benutzername' }
       maddstring(3,14,getres2(920,109),ClientMailOutPass,18,75,'');   { 'Paáwort     ' }
       maddstring(43,14,getres2(920,110),ClientMailOutPort,7,50,'0123456789 '); { 'Port' }
@@ -1035,7 +1066,7 @@
   procedure EditName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
-      realname        : string;
+      realname, email : String;
       dom,bdom,fqdom  : string;
       maps            : string;
       nt              : byte;
@@ -1051,10 +1082,11 @@
     maps:= dbReadStr(d,'nameomaps');
     realname:= dbReadStr(d,'realname');
     dom:= dbReadStr(d,'domain');
-    fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
+    fqdom:= dbReadStr(d,'fqdn');
+    eMail := dbreadStr(d,'email');
     bdom:= dbReadStr(d,'boxdomain');
     fidoname:= dbReadStr(d,'fidoname');
-    NameRead(nt,name,user,komm,maps,realname,dom,fqdom,bdom,fidoname,kompname,brk);
+    NameRead(nt,name,user,komm,maps,realname,dom,fqdom,email,bdom,fidoname,kompname,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
       newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
@@ -1090,9 +1122,15 @@
         boxpar^.boxname:=name;
         boxpar^.username:=user;
         if (nt=nt_Maus) then
-          boxpar^.pointname:=name;
+          boxpar^.pointname:=name
+        else if (boxpar^.pointname='') and (email<>'')
+        then begin
+          boxpar^.pointname:=mid(email,cpos('@',email)+1);
+          truncstr(boxpar^.pointname,
+            min(25,cposx('.',boxpar^.pointname)-1));
+          end;
         boxpar^._domain:=dom;
-        boxpar^._fqdn:=fqdom;  {16.01.00 HS}
+        boxpar^._fqdn:=fqdom;
         WriteBox(dname,boxpar);
         dbWriteStr(d,'boxname',name);
         dbWriteStr(d,'username',user);
@@ -1101,7 +1139,8 @@
         dbWriteStr(d,'nameomaps',maps);
         dbWriteStr(d,'realname',realname);
         dbWriteStr(d,'domain',dom);
-        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
+        dbWriteStr(d,'fqdn',fqdom);
+        dbWriteStr(d,'email',email);
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fidoname);
         dbFlushClose(d);
@@ -1987,6 +2026,14 @@
 
 {
   $Log$
+  Revision 1.9  2001/07/27 18:35:11  mk
+  JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
+          under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
+  JG+MY:- RFC/Client: removed unnecessary mask test in _EditPPP
+  JG+MY:- RFC/UUCP: improved check for valid eMail address under
+          Edit/Servers/Edit/Names/eMail_address
+  VS: ----------------------------------------------------------------------
+
   Revision 1.8  2001/07/23 16:05:23  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -80,7 +80,7 @@ function  JanusSwitch(var s:string):boolean;
 
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
-
+function  multi_Mailstring(var s:string):boolean;
 
 implementation  {---------------------------------------------------}
 
@@ -1363,9 +1363,9 @@ begin
     exit;
   end;
   b:=cpos('@',s);
-  if (b=0) or (cpos('@',mid(s,b+1))<>0)
+  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
     or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
-   then
+    or (s <> MailString(s, false)) then
   begin
      rfehler(908);
      exit;
@@ -1487,11 +1487,44 @@ begin
   end;
 end;
 
+function multi_Mailstring(var s:string):boolean;
+var n,b   : Integer;
+    s1,s2 : string;
+begin
+  multi_Mailstring:=true;
+  s1:=trim(s);
+  if s1='' then exit;
+  repeat
+    n:=cpos(' ',s1);
+    if n=0 then s2:=s1
+    else begin
+      s2:= LeftStr(s1,n-1);
+      s1:=trim(mid(s1,n+1));
+      end;
+    b:=cpos('@',s2);
+    if (b<=1) or (cpos('@',mid(s2,b+1))<>0)
+      or (cpos('.',mid(s2,b+1))=0)
+      or (s2<>mailstring(s2,false))
+    then begin
+      multi_mailstring:=false;
+      fehler(Getres2(10900,8)+': ' +s2); { 'Ung_ltige Adresse: 's2 }
+      exit;
+      end;
+  until n=0;
+end;
 
 end.
 
 {
   $Log$
+  Revision 1.9  2001/07/27 18:35:11  mk
+  JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
+          under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
+  JG+MY:- RFC/Client: removed unnecessary mask test in _EditPPP
+  JG+MY:- RFC/UUCP: improved check for valid eMail address under
+          Edit/Servers/Edit/Names/eMail_address
+  VS: ----------------------------------------------------------------------
+
   Revision 1.8  2001/07/27 18:14:40  mk
   - use AddDirSepa instead of own function
 
