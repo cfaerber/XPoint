@@ -12,9 +12,9 @@ Name: openxp
 #%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
 #%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl. -Ci -Co -Cr
 # -CX for Releases only
-#%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fl.
+#%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
 # for snapshots
-%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fl.
+%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
