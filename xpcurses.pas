@@ -39,7 +39,7 @@ uses
 {$ELSE}
   ncurses,
 {$ENDIF}
-{$IFDEF Linux}
+{$IFDEF Unix}
   mime,
 {$ENDIF}
   xplinux;
@@ -1548,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2003/01/11 22:30:47  mk
+  - changed define Linux->Unix
+
   Revision 1.68  2003/01/09 17:32:56  mk
   - fixes kylix compile bug (added j+ to this unit)
 
