@@ -7,33 +7,44 @@ program Example;
 uses ObjCOM,CRT;
 
 var CommObj: tpCommObj;
-    CommOpen,Pass: Boolean;
+    CommOpen,Pass,ConvInv: Boolean;
     C: Char;
-    SInit: String;
+    SInit,NInit: String;
     I: Integer;
 
 begin
-  WriteLn('Default init string: Serial Port:2 Speed:57600'); Write('Enter init string: '); ReadLn(SInit);
-  if SInit='' then SInit:='Serial Port:2 Speed:57600';
+  {$ifdef Linux}SInit:='Serial /dev/ttyS1 Speed:57600';
+  {$else}SInit:='Serial Port:2 Speed:57600';{$endif}
+  WriteLn('Default init string: ',SInit);
+  Write('Enter init string: '); ReadLn(NInit);
+  if NInit<>'' then SInit:=NInit;
   if not CommInit(SInit,CommObj)then begin WriteLn('Error opening port: ',ErrorStr); Halt(1)end;
 
   WriteLn('Special functions (press # to use):');
-  WriteLn('Q: Quit  S/P: SendStr/PauseCom test  D: Display carrier');
+  WriteLn('Q: Quit  S/P: SendStr/PauseCom test  D: Display carrier  C: Display<#32');
 
-  CommOpen:=True; Pass:=False;
+  CommOpen:=True; Pass:=False; ConvInv:=False;
   repeat
     while KeyPressed do
      begin
       c:=ReadKey;
       if c='#' then case UpCase(ReadKey)of
-        'Q': pass:=True; {CTRL-Q}
-        'S': begin WriteLn('SendStr result: ',CommObj^.SendString('ATZ'+#13,True)); Write(CommObj^.ErrorStr)end; {CTRL-S}
+        'Q': pass:=True;
+        'S': begin WriteLn('SendStr result: ',CommObj^.SendString('ATZ'+#13,True)); Write(CommObj^.ErrorStr)end;
         'P': begin CommOpen:=not CommOpen; WriteLn('CommOpen: ',CommOpen);
-                   if CommOpen then CommObj^.ResumeCom(False) else CommObj^.PauseCom(True)end; {CTRL-P}
-        'D': WriteLn('Carrier: ',CommObj^.Carrier); {CTRL-D}
+                   if CommOpen then CommObj^.ResumeCom(False) else CommObj^.PauseCom(True)end;
+        'C': begin ConvInv:=not ConvInv; WriteLn('Print ASCII values: ',ConvInv)end;
+        'D': WriteLn('Carrier: ',CommObj^.Carrier);
       end else CommObj^.SendChar(c);
      end;
-    I:=500; while CommObj^.CharAvail and(I>1)do begin Dec(I); Write(CommObj^.GetChar)end;
+    I:=500;
+    while CommObj^.CharAvail and(I>1)do begin
+      Dec(I);
+      C:=CommObj^.GetChar;
+      if C>=#32 then Write(C)
+      else if not ConvInv then Write(C)
+      else Write('#',Ord(C));
+    end;
     Delay(10);
   until Pass;
 
