@@ -351,16 +351,17 @@ var   hdp      : headerp;
     if hdp^.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
       while not eof(t) and (n<100) and
-         ((lstr(left(s,13))<>'content-type:') or (left(bound,2)<>'--')) do begin
+         ((lstr(left(s,13))<>'content-type:') or (left(bound,2)<>'--')) do
+      begin
         bound:=s;
         readln(t,s);
         inc(n);
-        end;
+      end;
       if bound='' then goto ende;
       hdp^.boundary:=mid(bound,3);
       close(t);
       reset(t);
-      end;
+    end;
 
     bptr:=0;
     push('--' + hdp^.boundary);
@@ -757,6 +758,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.7  2000/10/24 10:17:25  mk
+  - Sourceformatierungen verbessert
+
   Revision 1.12.2.6  2000/10/15 08:52:00  mk
   - misc fixes
 
