@@ -2825,7 +2825,7 @@ begin
       p := cpos('@', s);
       if SMTP then
       begin
-        if smtpfirst then
+        if smtpfirst or Client then
         begin
           wrs(f, 'HELO ' + mid(s, p + 1));
           smtpfirst := false;
@@ -3634,6 +3634,9 @@ end;
 
 {
   $Log$
+  Revision 1.108  2002/07/21 23:18:31  mk
+  - write 'HELO' header in client mode in every new file
+
   Revision 1.107  2002/07/21 13:38:17  mk
   - with SMTP swith on, create one file for every outgoing message
 
