@@ -553,19 +553,19 @@ begin
 end;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
-var pold,name,ext,i: string;
+var pold,name,ext,ext2,i: string;
     j,mlen: integer;
 begin
 {$IFDEF VP}
   s := Mid(s,max(1,1+max(RightPos('/',s),RightPos('\',s))));
-{$ELSE}  
+{$ELSE}
   s := ExtractFileName(s); (* replace path *)
-{$ENDIF}  
+{$ENDIF}
   path:= AddDirSepa(path);
 
   if s='' then s:='NONAME';
-  
-  (* 
+
+  (*
      replace invalid chars
 
      Unix: all, except '/' and #0
@@ -609,21 +609,21 @@ begin
   if FileExists(s) then begin
     j:=0;
     name:=name+'-'; (* sep *)
-   
+
     (* calculate max chars that may be added to name *)
-   
+
     {$IFDEF DOS32}
-    if not System.LFNSupport true then 
+    if not System.LFNSupport then
       mlen:=8-length(name)
-    else 
+    else
     {$ENDIF}
       mlen:=MaxLenPathName-Length(s)-length(Path)-1;
-  
+
     (* find free filename *)
-  
+
     repeat
       inc(j); i:=Strs(j);
-  
+
       if (mlen<length(i)) then begin
         name:=copy(name,1,max(0,length(name)-length(i)+mlen));
         mlen:=length(i);
@@ -1206,6 +1206,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/03/24 13:08:56  mk
+  - made compilable under DOS32
+
   Revision 1.7  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
