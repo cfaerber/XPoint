@@ -18,7 +18,7 @@ unit fileio;
 interface
 
 uses
-  xpglobal, dos, typeform;
+  xpglobal, dos, typeform, lfn;
 
 const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMWrite      = $01;
@@ -163,11 +163,11 @@ var
   sr : searchrec;
   ex : boolean;
 begin
-  Dos.FindFirst(n,anyfile-volumeid-directory,sr);
+  FindFirst(n,anyfile-volumeid-directory,sr);
   ex:=(doserror=0);
   while not ex and (doserror=0) do
   begin
-    Dos.FindNext(sr);
+    FindNext(sr);
     ex:=(doserror=0);
   end;
   exist:=ex;
@@ -226,7 +226,7 @@ begin
   else begin
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
-      Dos.findfirst(name+'*.*',ffAnyFile,sr);
+      findfirst(name+'*.*',ffAnyFile,sr);
       if doserror=0 then
         IsPath:=true
       else
@@ -235,7 +235,7 @@ begin
     else begin
       if name[length(name)]='\' then
         dellast(name);
-      Dos.findfirst(name,Directory,sr);
+      findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
   end;
@@ -274,10 +274,10 @@ end;
 procedure erase_mask(s:string);                 { Datei(en) lîschen }
 var sr : searchrec;
 begin
-  Dos.findfirst(s,ffAnyfile,sr);
+  findfirst(s,ffAnyfile,sr);
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
-    dos.findnext(sr);
+    findnext(sr);
   end;
 end;
 
@@ -289,7 +289,7 @@ var sr : searchrec;
     er : integer;
 begin
   { Auf keinen Fall das XP-Verzeichnis lîschen! }
-  Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
+  Findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
   er:=doserror;
   { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
   if (er=0) then exit;
@@ -298,7 +298,7 @@ begin
   { Oops, Rootverzeichnis erwischt! }
   if ((path='\') or (path='/')) then exit;
 
-  Dos.findfirst(path+WildCard,anyfile-VolumeID,sr);
+  findfirst(path+WildCard,anyfile-VolumeID,sr);
   while (doserror=0) do begin
     with sr do
       if (name[1]<>'.') then
@@ -309,7 +309,7 @@ begin
           if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
           erase(f);
         end;
-    dos.findnext(sr);
+    findnext(sr);
   end;
   if cpos(DirSepa,path)<length(path) then begin
     dellast(path);
@@ -447,7 +447,7 @@ end;
 function _filesize(fn:pathstr):longint;
 var sr : searchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   if doserror<>0 then
     _filesize:=0
   else
@@ -468,7 +468,7 @@ end;
 function filetime(fn:pathstr):longint;
 var sr : searchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   if doserror=0 then
     filetime:=sr.time
   else
@@ -735,6 +735,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.3  2000/08/28 23:14:59  mk
+  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
+
   Revision 1.41.2.2  2000/08/22 17:45:37  mk
   - Test auf Share entfernt
 

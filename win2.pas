@@ -32,7 +32,7 @@ uses
 {$else}
   crt,
 {$endif}
-  dos,dosx,keys,inout,maus2,typeform,winxp;
+  dos,dosx,keys,inout,maus2,typeform,winxp, lfn;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategr”áe/Datum anzeigen }
@@ -1113,6 +1113,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.3  2000/08/28 23:15:01  mk
+  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
+
   Revision 1.16.2.2  2000/08/22 09:29:32  mk
   - UStrHuge entfernt
 

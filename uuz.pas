@@ -28,7 +28,7 @@
 
 program uuz;
 
-uses  xpglobal, lfn, ems, crt, dos,typeform,fileio, xpdatum,montage;
+uses  xpglobal, ems, crt, dos,typeform,fileio, xpdatum,montage, lfn;
 
 const
       midlen      = 160;
@@ -3535,6 +3535,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.6  2000/08/28 23:15:00  mk
+  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
+
   Revision 1.35.2.5  2000/08/28 22:52:06  mk
   - LFN-Unterstuetzung freigeschaltet
 
