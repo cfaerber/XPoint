@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { Lister - PM 11/91 }
@@ -882,7 +883,12 @@ var gl,p,y    : shortint;
     begin
       i:=p+y+1; 
       While not ((i>gl+p+y) or ListfoundTab[i]) do inc(i);
-      if i>gl+y-1 then Dispseek:=$ff else Dispseek:=i-y;
+    { jg/my: Fix, Statuszeile berÅcksichtigt. In Ansichten wie }
+    {        dem Nodelist-Browser konnte sonst nach einer      }
+    {        Markiersuche eine Fundstelle in der letzten Zeile }
+    {        nicht mit <Tab> angesprungen werden.              }
+      if i>(gl+y)-byte(alist^.stat.statline) then Dispseek:=$ff
+        else Dispseek:=i-y;
     end;
     
   begin
@@ -1613,6 +1619,17 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.14  2003/03/17 22:54:25  my
+  MY+JG:- Fix: Wenn sich eine Fundstelle nach einer Markiersuche im letzten
+          Eintrag des Nodelist-Browsers befand, dann war diese zwar farblich
+          gekennzeichnet, konnte aber nicht mit <Tab> angesprungen werden (XP
+          hatte nicht berÅcksichtigt, da· der Lister bei dieser Form der
+          Darstellung keine Statuszeile hat). Dieser Fix wirkt sich auf alle
+          Stellen aus, bei denen der Lister zur Darstellung einer Auswahlliste
+          verwendet wird und eine Markiersuche mîglich ist.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.19.2.13  2002/03/27 19:47:54  my
   MY:- Bei der Anzeige von Dateien im internen Lister wird der Dateiname
        in der Kopfzeile jetzt immer an derselben Stelle angezeigt.
