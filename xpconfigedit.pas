@@ -1140,7 +1140,7 @@ end;
 
 function Netz_Typ(nt:byte):string;
 begin
-  Netz_Typ:=ntName(SupportedNetTypes[nt]);
+  Result := ntName(nt);
 end;
 
 
@@ -2552,6 +2552,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2002/01/30 23:07:58  mk
+  - fixed Netz_Typ
+
   Revision 1.42  2002/01/22 13:59:22  mk
   - after 3.40 merge fixes
 
