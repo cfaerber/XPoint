@@ -200,19 +200,19 @@ begin
   for i:=0 to 2 do mappsel(true,stp[i]); mhnr(586);
   maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-Men bei <Esc> vollst„ndig verlassen' }
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und Nachrichtenbersicht' }
+
+(* no mouse support implemented yet
   oldm:=_maus;
-{$IFDEF unix}
-  { Maus-Bedienung noch nicht implementiert }
-{$ELSE }
-  maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Maus-Bedienung' }
+  maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Mausbedienung' }
   maddbool(39,3,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
   maddbool(39,4,getres2(251,23),MausShInit);      { 'Initialisierung' }
-{$ENDIF }
   if MausDblClck>=mausdbl_slow then dbls:=dbl[0] else
   if MausDblClck>=mausdbl_norm then dbls:=dbl[1]
   else dbls:=dbl[2];
   maddstring(39,6,getres2(251,24),dbls,9,9,'<');  { 'Doppelklick ' }
   for i:=0 to 2 do mappsel(true,dbl[i]);
+*)
+
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1444,6 +1444,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2001/09/06 18:04:57  ma
+  - commented out mouse config options
+
   Revision 1.99  2001/08/11 23:06:30  mk
   - changed Pos() to cPos() when possible
 
