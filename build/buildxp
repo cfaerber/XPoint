@@ -61,9 +61,8 @@ subjectdos="OXP/32 v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux 
 subjectos2="OXP/32 v"$version": OS/2 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
 subjectfreebsd="OXP/32 v"$version": FreeBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
 subjectnetbsd="OXP/32 v"$version": NetBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
-#test -s compile-kylix-error-"$version".log && echo "buildxp: Ooops, Kylix had (fatal) errors"; elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < compile-kylix-error-"$version".log 
 test -f ../kylixout/openxp || echo "buildxp: Ooops, Kylix had (fatal) errors"
-test -f ../kylixout/openxp || elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < compile-kylix-error-"$version".log
+#test -f ../kylixout/openxp || elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < compile-kylix-error-"$version".log
 test -f "openxp" || echo "buildxp: Ooops, no openxp Linux binary" 
 test -f "openxp" || elm -s "$subject" openxp-cvs@lists.sourceforge.net < compile-fpc-error-"$version".log
 ### Crosscompiler
