@@ -36,7 +36,7 @@ var   getfilename : getf_func;
       PreExtProc  : procedure = nil;
 
 
-procedure prog_call(nr,nn:byte);
+procedure prog_call(nr,nn: Integer);
 function  test_fkeys(var t:taste):boolean;
 procedure Xmakro(var t:taste; flags:byte);
 
@@ -132,73 +132,88 @@ var   k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xpnetcall,xpconfigedit,xpauto;
+uses xp4o,xpnetcall,xpconfigedit,xpauto, clip;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
 
-procedure prog_call(nr,nn:byte);
+procedure prog_call(nr,nn: Integer);
 var s      : string;
-    p0     : byte;
-    fn,fn2 : string;
+    p0     : Integer;
+    fn, TempFileName: string;
     brk    : boolean;
     auto   : boolean;
 begin
-  with fkeys[nr][nn] do begin
+  with fkeys[nr][nn] do
+  begin
     s:=prog;
-    auto:=autoexec;
-    if s[1]='*' then begin
+    auto:=autoexec;              
+    if FirstChar(s) = '*' then
+    begin
       if funcexternal then exit;
       s:=UpperCase(trim(s));
+
       if copy(s,2,7)='NETCALL' then
-        EinzelNetcall(trim(copy(s,10,BoxNameLen)))
-      else if copy(s,2,8)='RNETCALL' then
-        netcall(true,trim(copy(s,11,BoxNameLen)),false,true,false)
-      else if mid(s,2)='REORG' then begin
+        EinzelNetcall(trim(copy(s,10,BoxNameLen))) else
+
+      if copy(s,2,8)='RNETCALL' then
+        netcall(true,trim(copy(s,11,BoxNameLen)),false,true,false) else
+      if mid(s,2)='REORG' then
+      begin
         MsgReorgScan(true,false,brk);
         if not brk then MsgReorg;
-        end
-      else if copy(s,2,7)='SETUSER' then
-        SetUsername(mid(trim(prog),10))    { in XPConfigEdit }
-      else if copy(s,2,4)='LIST' then begin
+      end else
+      if copy(s,2,7)='SETUSER' then
+        SetUsername(mid(trim(prog),10)) else   { in XPConfigEdit }
+      if copy(s,2,4)='LIST' then
+      begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
           repeat until listfile(fn,fn,true,false,false, 0) <> -4
         else
           rfehler(20);   { '*LIST: Datei nicht vorhanden!' }
-        end
-      else if copy(s,2,4)='EDIT' then begin
+      end else
+      if copy(s,2,4)='EDIT' then
+      begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
           EditFile(fn,false,false,false,0,false)
         else
           rfehler(23)    { '*EDIT: Datei nicht vorhanden!' }
-        end
-      else if mid(s,2)='AUTOEXEC' then
-        auto:=true
-      else if s<>'*' then
-        rfehler1(21,LeftStr(s,50));   { 'UngÅltige Funktion:  %s' }
-      end
-    else if s<>'' then begin
-      p0:=pos('$FILE',UpperCase(s));
-      if p0>0 then begin
-        fn:=getfilename(nr,nn);
+      end else
+      if mid(s,2)='AUTOEXEC' then
+        auto:=true else
+      if s<>'*' then
+        rfehler1(21,LeftStr(s,50));   { 'Ung¸ltige Funktion:  %s' }
+    end else
+    if s<>'' then
+    begin
+      p0 := pos('$FILE',UpperCase(s));
+      if p0 > 0 then
+      begin
+        fn := getfilename(nr,nn);
         if (fn='') or not FileExists(fn) then exit;
-        s:=copy(s,1,p0-1)+fn+copy(s,p0+5,120);
-        end;
-      if @preextproc<>nil then begin
+        s:= LeftStr(s, p0-1) + fn + Mid(s, p0+5);
+      end;
+
+      p0:=pos('$CLIP', UpperCase(s));
+      if p0 > 0 then
+        s:= LeftStr(s, p0-1) + Clip2String + Mid(s, p0+5);
+
+      if @preextproc <> nil then
+      begin
         preextproc;
         preextproc:=nil;
-        end;
+      end;
       shellkey:=warten;
-      if listout then begin
-        fn2:=TempFile(TempPath);
-        shell(s+'>'+fn2,speicher,0);
-        if listfile(fn2,'',true,false,false,0)<>0 then;
-        if FileExists(fn2) then DeleteFile(fn2);
-        end
-      else
-        shell(s,speicher,iif(vollbild,1,3));
+      if listout then
+      begin
+        TempFileName :=TempFile(TempPath);
+        shell(s+'>'+TempFileName,speicher,0);
+        listfile(TempFileName,'',true,false,false,0);
+        SafeDeleteFile(TempFileName);
+      end else
+        Shell(s, speicher, iif(vollbild,1,3));
       if (p0>0) and not bname and (FileExists(fn)) then
         DeleteFile(fn);
       end;
@@ -238,11 +253,16 @@ begin
   i:=1;
   while (i<=keymacros) and (((macroflags[i] and flags)=0) or (t<>macrokey[i])) do
     inc(i);
-  if i<=keymacros then begin
+  if i<=keymacros then
+  begin
     s:=macrodef[i];
-  //extract first key
-    if s[1]=#0 then t:=LeftStr(s,2)
-    else t:=s[1];
+
+    //extract first key
+    if FirstChar(s)=#0 then
+      t:=LeftStr(s,2)
+    else
+      t:=s[1];
+
     //insert(mid(s,length(t)+1),forwardkeys,1);
     _keyboard(mid(s,length(t)+1));
   end;
@@ -250,6 +270,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2003/09/07 18:51:55  mk
+  - added Makro $CLIP: insert content of Clipboard
+
   Revision 1.31  2003/04/25 21:11:19  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
