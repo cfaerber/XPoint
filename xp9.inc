@@ -127,10 +127,7 @@
     begin
       if (email<>'') then
       begin
-        b:=cpos('@',email);
-        if (b<=1) or (cpos('@',mid(email,b+1))<>0)
-          or (cpos('.',mid(email,b+1))=0)
-          or (email<>mailstring(email,false))
+        if not is_mailaddress(email)
         then begin
           rfehler(908);
           enddialog;
@@ -795,6 +792,68 @@
     dbGo(d,drec[1]);
     aufbau:=true;;
   end;
+
+  procedure EditExtern(const bfg:string; var brk:boolean);
+  var cfgfile       : string[60];
+      fullClientDir : dirstr;
+      dir           : dirstr;
+      name          : namestr;
+      ext           : extstr;
+  begin
+    with boxpar^ do begin
+      fullClientDir := FExpand(pppClientPath);
+      if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
+      begin
+        rfehler1(948,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
+        pushkey('e'); pushkey('c');
+        exit;
+      end;
+      if not (right(fullClientDir,1) = DirSepa) then
+        fullClientDir := fullClientDir + DirSepa;
+      cfgfile := trim(pppExternCfg);
+
+      { Hier wird nur der Wert pppExternCfg aus <Boxname>.BFG string-  }
+      { technisch aufbereitet und an ReadExtCfgFilename in xp9sel.pas  }
+      { Åbergeben. Die eigentlichen PrÅfungen finden dann dort statt.  }
+
+      { Dateinamen im oder unterhalb des XP-Verzeichnisses werden in   }
+      { der <Boxname>.BFG mit dem vorangestellten String "<XP>\",      }
+      { Dateinamen im Client-Verzeichnis ohne Pfad abgelegt. Dies hat  }
+      { den Zweck, die Datei auch dann finden zu kînnen, wenn sich das }
+      { XP-Verzeichnis und/oder -Laufwerk geÑndert haben sollte. Die   }
+      { gesamte Routine verhÑlt sich so, als sei das Client-Verzeich-  }
+      { nis das aktuelle Verzeichnis, d.h. auch (hÑndisch in die .BFG  }
+      { hinter "Client-ExternConfig=" eingeflickte) Angaben ohne voll- }
+      { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
+      { relativ zum Client-Verzeichnis betrachtet.                     }
+
+      if Copy(ustr(cfgfile), 1, 5) = ('<XP>' + DirSepa) then
+        cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
+      pushhp(30129);
+      { 'Externe Konfigurationsdatei laden' }
+      if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
+      begin
+        if LFNEnabled then cfgfile := GetShortName(cfgfile);
+        if not exist(cfgfile) then
+          if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
+        EditFile(cfgfile,false,false,0,false);
+        fsplit(cfgfile,dir,name,ext);
+        if ustr(dir) = ustr(fullClientDir) then
+          cfgfile := name + ext
+        else
+        if ustr(Copy(dir, 1, Length(ownpath))) = ustr(ownpath) then
+          cfgfile := '<XP>' + Copy(cfgfile, Length(ownpath), Length(cfgfile)-Length(ownpath)+1);
+        if not (ustr(cfgfile) = ustr(pppExternCfg)) then
+        begin
+          pppExternCfg := cfgfile;
+          WriteBox(bfg,boxpar);
+        end;
+      end;
+      freeres;
+      pophp;
+    end;
+  end;
+
 
   procedure EditTransport(nt:byte; var brk:boolean);
   var x,y : byte;
@@ -1618,14 +1677,14 @@
 
   procedure EditBox;
   const edb_pos : shortint = 1;
-     clientpos  : array[1..7] of Byte = (1,3,4,1,1,5,6);
+     clientpos  : array[1..7] of Byte = (1,4,5,1,1,6,7);
      lastclient : boolean = false;
   var n   : shortint;
       fn  : string[12];
       brk : boolean;
       nt  : byte;
       nts : string[20];
-      nts0: string[50];
+      nts0: string[70];
       nts2: string[40];
   begin
     dbGo(d,drec[p]);
@@ -1637,7 +1696,7 @@
     if (nt=nt_uucp) and boxpar^.pppMode then
     begin
       Pushhp(132);
-      nts0:='^Client,'+getres2(927,8)+getres2(927,2)+getres2(927,3);
+      nts0:='^Client,'+getres2(927,8)+getres2(927,9)+getres2(927,2)+getres2(927,3);
       nts2:=getres2(927,5)+getres2(927,6);
       if not lastclient then edb_pos:=clientpos[edb_pos];
       lastclient:=true;
@@ -1646,12 +1705,10 @@
       Pushhp(131);
       if lastclient then
       begin
-        if (edb_pos=2) then
+        if (edb_pos=2) or (edb_pos=3) then
           edb_pos:=1
-        else if (edb_pos=3) or (edb_pos=4) then
-          dec(edb_pos,1)
-        else if (edb_pos>4) then
-          inc(edb_pos,1);
+        else if (edb_pos=4) or (edb_pos=5) then
+          dec(edb_pos,2);
         end;
       lastclient:=false;
       nts0:=getres2(927,1)+getres2(927,2)+getres2(927,3)+getres2(927,4);
@@ -1679,10 +1736,11 @@
         case n of
           1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
           2 : EditTransport(nt,brk);
-          3 : EditModemdaten(nt,brk);
-          4 : EditGebuehren(nt,brk);
-          5 : EditDiverses(nt,brk);
-          6 : EditSysopdaten(nt,brk);
+          3 : EditExtern(fn,brk);
+          4 : EditModemdaten(nt,brk);
+          5 : EditGebuehren(nt,brk);
+          6 : EditDiverses(nt,brk);
+          7 : EditSysopdaten(nt,brk);
           end;
         end
       else begin 
@@ -1801,6 +1859,11 @@
 
 {
   $Log$
+  Revision 1.10.2.38  2001/07/31 15:36:01  my
+  - implemented is_emailaddress in NameRead
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.10.2.37  2001/07/23 17:05:36  my
   - changed "fehler(getres2(10900,8))" to "rfehler(908)"
 
