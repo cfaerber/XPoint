@@ -520,7 +520,8 @@ end;
 
 procedure EdSetConfig(cf:EdConfig);
 begin
-  akted^.config:=cf;
+  if akted <> nil then
+    akted^.config:=cf;
 end;
 
 procedure EdSetUkonv(umlaute_konvertieren:boolean);
@@ -1866,9 +1867,15 @@ begin
     end;
 end;
 
+initialization
+  AktEd := nil;
+finalization
 end.
 {
   $Log$
+  Revision 1.51  2001/02/19 11:48:49  mk
+  - fixed crash in config/optionen/editor
+
   Revision 1.50  2000/12/25 14:02:40  mk
   - converted Lister to class TLister
 
