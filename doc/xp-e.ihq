@@ -9075,13 +9075,6 @@ this.
 See also FIDO.DOC, "NodeList".
 @
 13003
-<<Fido / Nodelist / Index
-
-CrossPoint normally indexes the NodeList
-automatically. This function is just in case
-something should happen; you can force a re-index.
-@
-13004
 <<Fido / Nodelist / Shrink
 
 The [NodeList] is very large. If you will not need to@4024
@@ -9120,12 +9113,19 @@ Note: The shrinking of the NodeList can only be
 lifted by first removing the shrink conditions and
 then reading the whole list in again.
 ([/Fido/Nodelist/Activate]).@13001
+@
+13004
+<<Fido / Nodelist / Index
+
+CrossPoint normally indexes the NodeList
+automatically. This function is just in case
+something should happen; you can force a re-index.
 
 @
 13005
 Some statistics from your node list.
 @
-13006
+13008
 <<Fido / Nodelist / Find
 
 You can browse the data for Fido nodes. Enter the
@@ -9216,30 +9216,9 @@ a [timer list].@4022
 Functions for handling and analysing [node lists].@4024
 @
 13106
-<<Fido / Pointlist
-
-Functions for handling and analysing point lists
-in the POINTS24 format.
-@
-13107
 <<Fido / Options
 
-Fido specific settings.
-@
-13108
-<<Fido / Phone fees
-
-You can run an exact list of all telephone tariff
-regions here, to keep track of your Crash Calls
-wherever you may make them.
-
-You find the statistics produced under
-XPoint/Statistics/Phone fees.
-
-Note: the settings are only valid for Fido Crash
-Calls. For the charges to your "normal" server, the
-settings under /Edit/Servers/Edit/Phone fees are
-used.
+Fido-specific settings.
 @
 13201
 <<Fido / Filelists / Import
