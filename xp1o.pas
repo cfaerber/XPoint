@@ -319,7 +319,7 @@ begin
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
-      ex(5);
+      ex(-4);
       end;
     end;
 
@@ -975,6 +975,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.10  2001/08/29 21:42:22  my
+  JG:- Fix: Showing message header with 'O' in message reader after
+       <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
+       bar had been moved to with the message the lister was started with
+       (new exit code -4)
+
   Revision 1.19.2.9  2000/11/26 20:20:33  mk
   - Resource 136 hinzugefuegt
 
