@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id }
 
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
@@ -95,8 +96,11 @@ begin
   if ReadFilename(getres(2441),fn,true,useclip) then
   begin
     if not multipos(':\',fn) then fn:=ExtractPath+fn;
-    if exist(fn) then o:=overwrite(fn,true,brk)
-      else o:=true;
+    if exist(fn) then begin
+      if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
+      o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
+      end 
+    else o:=true;
     if not exist(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
   end;
@@ -694,3 +698,10 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/16 23:02:43  mk
+  JB: * Nachricht/Extrakt/Mime Decode die Zieldatei schon vorhanden und waehlt
+        entsprechend die Option Ueberschreiben/Anhaengen
+
+}
