@@ -1128,12 +1128,7 @@ begin                  { function Netcall }
   
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
-    if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
-    begin
-      ImportOK := true;
-      SafeDeleteFile(IncomingFiles[0]);
-    end else
-      ImportOK := false;
+    ImportOK := PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad);
   end else
     ImportOK := true;
 
@@ -1373,6 +1368,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.10  2003/01/22 21:14:02  ma
+  - should fix "Could not delete file..." warnings
+
   Revision 1.52.2.9  2002/08/12 12:10:08  ma
   - use old db field for looking up email address if appropriate
 
