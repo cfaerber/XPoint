@@ -97,7 +97,7 @@ begin                                { 13=Feeder, 14=postmaster, 15=online, 16=c
       mapstype:=4
     else if ntAreamgr(nt) then
       mapstype:=5
-    else if nt = nt_Client then
+    else if nt in [nt_NNTP,nt_POP3,nt_IMAP,nt_Client] then
       mapstype := 16
     else if (nt=nt_UUCP) then begin
       ReadBoxpar(nt,box);
@@ -469,7 +469,7 @@ label makercend;
 begin
   moment;
   MakeRc:=true;
-  ReadBox(0,box,boxpar);
+  ReadBox(0, GetServerFilename(Box, ''),boxpar);
   rcfile:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, extRc);
   blfile:=Get_BL_Name(box);
   if not FileExists(blfile) then
@@ -490,8 +490,8 @@ begin
   begin
     c:='*';
     Articles := '10';
-    dialog(30,3,'Newsgroups bestellen',x,y);
-    maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
+    dialog(length(getres2(10800,40))+9,3,getres2(10800,39),x,y);  { 'Newsgroups bestellen' }
+    maddstring(2,2,getres2(10800,40), Articles,4,4,'1234567890');  { 'Anzahl der Artikel'   }
     mhnr(11910);
     readmask(brk);
     enddialog;
@@ -589,7 +589,7 @@ var t1,t2    : text;
   @1:   lodsb                    { Brettnamenende suchen }
         cmp al,dh
         je @2
-        cmp al,'v'               { v und * werden als Bestellt-Flag akzeptiert }
+        cmp al,'û'               { v und * werden als Bestellt-Flag akzeptiert }
         je @3
         cmp al,dl
         je @3
@@ -606,7 +606,7 @@ var t1,t2    : text;
         std
         rep movsb                { s:='* '+s }
         dec edi
-        mov ax, dx
+        mov eax, edx
         stosw
         cld
         pop eax
@@ -626,6 +626,7 @@ begin
    else reset(t1);
   while not eof(t1) do
   begin
+    FillChar(s1[1], 255, ' ');
     readln(t1,s1);
     m:=length(s1)+2;
     n:=reformat_UKA_Brett(s1);
@@ -648,9 +649,10 @@ procedure MapsKeys(list:TLister;var t:taste); forward;
 
 procedure File_abbestellen(const box,f:string);
 var t1: Text;
-    s1,s2 : string;
+    s1,s2: string;
     brk   : boolean;
     List: TLister;
+    p: Cardinal;
 begin
   s1:=Get_BL_Name(box);
   if not fileExists(s1) then
@@ -659,11 +661,11 @@ begin
     exit;
     end;
   List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
-  list.OnKeyPressed := Mapskeys; 
-  read_BL_File(s1,false, List);            { Bestellt-Liste in Lister laden }
+  list.OnKeyPressed := Mapskeys;
+  read_BL_File(s1,true, List);             { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
-  brk := List.Show;                        { Dummy-Lister starten      }
+  List.Show;                               { Dummy-Lister starten      }
 
   assign(t1,f);
   s1:= List.FirstMarked;                   { Liste der bestellten Bretter     }
@@ -674,14 +676,18 @@ begin
     while not eof(t1) do
     begin
       readln(t1,s2);
-      if s2= TrimRight(copy(s1,3,78))
-        then brk:=false;                   { Bretter, die abzubestellen sind }
+      s1 := Trim(copy(s1,3,78));
+      p := cPos(' ', s1);
+      if p > 0 then s1 := copy(s1, 1, p-1);
+      if s2= s1 then
+        brk:=false;                   { Bretter, die abzubestellen sind }
       end;
     close(t1);
-    if brk then List.UnMarkLine;               { werden NICHT entmarkiert        }
+    if brk then
+      List.UnMarkLine;                     { werden NICHT entmarkiert        }
     s1:= List.NextMarked;
-    end;
-  makeRC(false,box, List);                { (Noch) markierte Bretter abbestellen }
+  end;
+  makeRC(false,box, List);                 { (Noch) markierte Bretter abbestellen }
   aufbau:=true;
 end;
 
@@ -2146,6 +2152,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2002/04/07 18:36:40  mk
+  - fixed some with newsgroup lists
+
   Revision 1.69  2002/03/03 15:45:54  cl
   - changed TListerColorEvent's first parameter from var => const
 

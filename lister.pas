@@ -1041,20 +1041,19 @@ begin
       Result := #0
     else
       Result := Lines[MarkPos];
-    Inc(MarkPos);
   end;
   FLinePos := MarkPos;
 end;
 
 function TLister.NextMarked: string;
 begin
+  Inc(MarkPos);
   while (MarkPos < Lines.Count) and (not Marked[MarkPos]) do
     Inc(MarkPos);
   if MarkPos = Lines.Count then
     Result := #0
   else
     Result := Lines[MarkPos];
-  Inc(MarkPos);
   FLinePos := MarkPos;
 end;
 
@@ -1085,7 +1084,7 @@ begin
     Result := #0
   else
   begin
-    Result := Lines[LinePos];
+    Result := Lines[FLinePos];
     Inc(FLinepos);
     if FLinepos = Lines.Count then
     begin
@@ -1101,14 +1100,14 @@ begin
     Result := #0
   else
   begin
-    Result := Lines[LinePos];
+    Result := Lines[FLinePos];
     Dec(FLinePos);
   end;
 end;
 
 procedure TLister.UnmarkLine;
 begin
-  Lines.Objects[LinePos] := nil;
+  Lines.Objects[FLinePos] := nil;
   Dec(FSelCount);
 end;
 
@@ -1135,6 +1134,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69  2002/04/07 18:36:40  mk
+  - fixed some with newsgroup lists
+
   Revision 1.68  2002/04/06 18:37:45  mk
   - fixed Ctrl-A in Lister (bug in setmark)
 
