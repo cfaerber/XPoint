@@ -299,7 +299,7 @@ begin
     repeat
       dbSkip(ubase,-1);
       incn;
-    until dbBOF(ubase) or ((dispmode=1) and even(dbReadInt(ubase,'adrbuch')))
+    until dbBOF(ubase) or ((dispmode=1) and not odd(dbReadInt(ubase,'adrbuch')))
           or UBmarked(dbRecno(ubase));
   if n>=gl then closebox;
   rec:=dbRecno(ubase);
@@ -1499,6 +1499,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/07/04 16:42:45  hd
+  - Funktion even entfernt
+
   Revision 1.28  2000/07/04 12:04:25  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -764,7 +764,7 @@ var d         : DB;
       retyp : string[10];  { Re^n / Re / Default / nein }
   begin
     dialog(ival(getres2(901,0)),10,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
-    if even(flags) then begin
+    if not odd(flags) then begin
       maddstring(3,2,getres2(901,3),name,30,30,''); mhnr(201);   { 'Name    ' }
       msetvfunc(notempty);
       end
@@ -1761,6 +1761,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 16:42:45  hd
+  - Funktion even entfernt
+
   Revision 1.22  2000/07/04 12:04:28  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

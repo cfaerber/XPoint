@@ -89,7 +89,6 @@ function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1    }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ÅberprÅfen }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
-function Even(const l:longint):boolean;            { not odd()                    }
 function FileName(var f):string;                { Dateiname Assign             }
 function FirstChar(const s:string):char;           { s[1]                         }
 function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkÅrzen    }
@@ -1163,13 +1162,6 @@ begin
   else IntQSum:=l mod 10 + IntQSum(l div 10);
 end;
 
-
-function Even(const l:longint):boolean;
-begin
-  even:=not odd(l);
-end;
-
-
 function Without(s1,s2:string):string;       { Strings "subtrahieren"  }
 var p,i : byte;
 begin
@@ -1568,6 +1560,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/07/04 16:42:45  hd
+  - Funktion even entfernt
+
   Revision 1.48  2000/07/04 16:30:37  hd
   - DirName, PAthNAme, ExtName auf TFilename umgestellt
   - ProgPath, ProgName, FitPath, Hex umgeschrieben
