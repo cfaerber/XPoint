@@ -949,7 +949,8 @@ begin
   dbRead(ubase,'pollbox',pollbox);
   dbRead(ubase,'haltezeit',halten);
   dbRead(ubase,'userflags',flags);
-  dbRead(ubase,'Adrbuch',adr);
+  if Pollbox='' then adr:=NeuUsergruppe {Bei neuem User Standard-Adressbuchgruppe}
+    else dbRead(ubase,'Adrbuch',adr);
   rec:=dbRecno(ubase);
   edituser(getres(2710),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
   dbGo(ubase,rec);
@@ -2405,6 +2406,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.4  2000/08/18 07:44:12  jg
+  - beim Neuanlegen von Usern mit Strg+U wird jetzt
+    die Standard-Addressbuchgruppe benutzt.
+
   Revision 1.25.2.3  2000/07/22 08:22:22  mk
   - Zugriff auf nicht initialisierte Variable beseitigt
 
