@@ -31,7 +31,7 @@ uses
 
 procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=Gebhren, 4=Header }
                                  { 5=Nodelisten, 6=Tarifgruppen             }
-procedure AutoTiming(tnr:integer; callall,crashall:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
 procedure AppPhoneZones;   { mappsel() fr Gebhrenzonen }
 function  CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
@@ -2033,6 +2033,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.7  2001/09/23 16:10:12  my
+  MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fr die Boxen in
+       der Reihenfolge ausfhrt, wie sie in NETCALL.LST aufgefhrt sind
+       (wird noch ausgebaut).
+
   Revision 1.10.2.6  2001/08/11 22:17:55  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

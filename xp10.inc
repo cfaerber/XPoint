@@ -29,7 +29,7 @@
 {                  tnr=1 -> nur Crashs/Requests aus CRASH.TMP           }
 
 
-procedure AutoTiming(tnr:integer; callall,crashall:boolean);
+procedure AutoTiming(tnr:integer; callall,crashall,special:boolean);
 var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
     anz,i   : integer;
@@ -46,8 +46,9 @@ var brk     : boolean;
     lsec    : string[2];
     f       : file;
 
-const NetcallAlleFlag: string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
-const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
+const NetcallAlleFlag    : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
+      NetcallEndeFlag    : string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
+      NetcallSpecialFile : string[12] = 'NETCALL.LST';  { Textdatei fÅr Netcall/Spezial }
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
@@ -173,7 +174,7 @@ const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box)
   procedure MakeAllListe(var brk:boolean; auto:boolean);
   var d          : DB;
       fn         : pathstr;
-      t          : text;
+      t,liste    : text;
       ti         : string[5];
       all        : string;
       clientbox  : string;
@@ -181,9 +182,18 @@ const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box)
       box        : string[BoxNameLen];
       x,y        : byte;
       p          : byte;
+      label maske;
   begin
     all:='';
     clientbox:='';
+    if special then
+    begin
+      assign(liste,ownpath+NetcallSpecialFile);
+      reset(liste);
+      readln(liste,all);
+      close(liste);
+      goto maske;
+    end;
     currentbox:='';
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
@@ -200,13 +210,16 @@ const NetcallEndeFlag: string[12] = 'NETCALL.END';  { N/A-Semaphore (letzte Box)
       end;
       dbNext(d);
     end;
+    maske:
     all:=trim(all + clientbox);
-    if all='' then brk:=true
+    if (all='') then brk:=true
     else begin
       if auto then
         brk:=false
       else begin
         dialog(72,3,getres2(1016,1),x,y);    { 'Netcall bei:' }
+(*      if special then
+          mappcustomsel(sel_netcall,false); *)
         maddstring(3,2,'',all,66,255,'>');
         readmask(brk);
         enddialog;
@@ -672,6 +685,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.4.2.3  2001/09/23 16:10:12  my
+  MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
+       der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind
+       (wird noch ausgebaut).
+
   Revision 1.4.2.2  2001/09/21 18:09:34  my
   MY:- Bei einem Netcall/Alle werden RFC/Client-Boxen ans Ende der
        Netcall-Liste sortiert (um existierende DUN-Verbindung stehenlassen

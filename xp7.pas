@@ -1515,7 +1515,7 @@ begin
     AutoSend(ParSendbuf);
   if ParNetcall<>'' then
     if ParNetcall='*' then
-      AutoTiming(-1,true,false)      { Netcall/Alle }
+      AutoTiming(-1,true,false,false)      { Netcall/Alle }
     else if not isbox(ParNetcall) then
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
     else
@@ -1524,7 +1524,7 @@ begin
       else
         Netcall_at(ParNCtime,ParNetcall);
   if ParTiming>0 then begin
-    AutoTiming(ParTiming,false,false);
+    AutoTiming(ParTiming,false,false,false);
     if quit then automode:=true;
     end;
   if ParDupeKill then
@@ -1563,6 +1563,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.18  2001/09/23 16:10:11  my
+  MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
+       der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind
+       (wird noch ausgebaut).
+
   Revision 1.16.2.17  2001/08/11 10:58:36  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

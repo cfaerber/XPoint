@@ -264,13 +264,14 @@ begin
 
      15 : case m1 of                          { Netcall }
             1 : EinzelNetcall('');                           { Einzeln }
-            2 : AutoTiming(0,true,false);                    { Alle    }
-            3 : AnrufStat;                                   { Letzte Anrufe }
-            4 : netcall_at('','');                           { Um..    }
-            5 : netcall(true,'',false,true,false);           { Relogin }
-            6 : netcall(false,'',false,false,false);         { Online  }
-            8 : AutoTiming(0,false,false);
-            9 : UniEdit(1);
+            2 : AutoTiming(0,true,false,false);              { Alle    }
+            3 : AutoTiming(0,true,false,true);               { Spezial }
+            4 : AnrufStat;                                   { Letzte Anrufe }
+            5 : netcall_at('','');                           { Uhrzeit }
+            6 : netcall(true,'',false,true,false);           { Relogin }
+            7 : netcall(false,'',false,false,false);         { Online  }
+            9 : AutoTiming(0,false,false,false);
+           10 : UniEdit(1);
           end;
 
      16 : case m1 of                                  { Edit }
@@ -413,7 +414,7 @@ begin
             4 : begin
                   if netcall(true,'',false,false,true) then;   { Crash   }
                   if (autocrash=' alle ') or (autocrash=CrashTemp) then begin
-                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true);
+                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false);
                     autocrash:='';
                     end;
                 end;
@@ -779,6 +780,11 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.5  2001/09/23 16:10:11  my
+  MY:- Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen in
+       der Reihenfolge ausfÅhrt, wie sie in NETCALL.LST aufgefÅhrt sind
+       (wird noch ausgebaut).
+
   Revision 1.14.2.4  2001/09/18 13:47:08  my
   MY:- Neuer Menuepunkt Nachricht/Alle/Ungelesen setzt alle angezeigten
        Nachrichten auf Ungelesen. Nachricht/Alle/Lesen umbenannt in
