@@ -1268,7 +1268,7 @@ var
 begin
   _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
-  dbReadN(mbase,mb_ablage,flags);
+  dbReadN(mbase,mb_flags,flags);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
   else
@@ -1437,6 +1437,9 @@ end;
 
 {
   $Log$
+  Revision 1.8  2003/05/01 19:15:44  mk
+  - fixed incorrect flags in ArchivAMToPM when archiving messages
+
   Revision 1.7  2003/03/30 12:43:41  mk
   - fixed Weiterleit enum
 
