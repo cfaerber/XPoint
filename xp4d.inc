@@ -218,7 +218,7 @@ begin  { __ Suchmarke }
             abc:=iifc(ab<>0,'û',' ')+iifc(odd(uflags),' ','#');
             dadr:=iifc(dbXsize(ubase,'adresse')>0,'*',' ');
             pw:=iifc((dbXsize(ubase,'passwort')>0) or
-                     (dbReadInt(ubase,'codierer')=9),'P',' ');
+                     (dbReadInt(ubase,'codierer') in [8,9]),'P',' ');
             vert:=(uflags and 4<>0);
             dbReadN(ubase,ub_haltezeit,hzeit);
 
@@ -606,6 +606,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/09/08 14:30:35  cl
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.49  2001/08/23 11:15:02  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
