@@ -780,7 +780,7 @@ begin
   maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
   { 'Feldtausch Nachrichten-Lesefenster': }
   maddstring(3,9,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
-             '>'+MsgFeldDef+LowerCase(MsgFeldDef)); mhnr(1035);
+             '>'+MsgFeldDef+LowerCase(MsgFeldDef)); mhnr(1032);
   mappsel(false,MsgFeldDef);
 { maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
@@ -1548,6 +1548,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2002/04/02 20:21:02  mk
+  MS:- corrected help id 1035 to 1032
+
   Revision 1.122  2002/03/23 10:37:55  mk
   - fixed help id 254
 
