@@ -55,7 +55,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2002';
+  x_copyright = '(c) 2000-2003';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -192,6 +192,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.32  2003/08/27 07:52:10  mk
+  - changed copyright year to 2003
+
   Revision 1.63.2.31  2003/08/24 19:43:44  mk
   - version 3.8.12 as snapshot with $define snapshot and debug info
 
