@@ -164,9 +164,9 @@ begin
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
-    if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'Alle'   }
-    else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-Netz' }
-    else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3  { 'PMs'    }
+    if uppercase(ua)=Uppercase(getres2(250,5)) then UserAufnahme:=0       { 'Alle'   }
+    else if Uppercase(ua)=Uppercase(getres2(250,6)) then UserAufnahme:=1  { 'Z-Netz' }
+    else if Uppercase(ua)=Uppercase(getres2(250,7)) then UserAufnahme:=3  { 'PMs'    }
     else UserAufnahme:=2;                                       { 'Keine'  }
     Usersortbox:=_usersortbox;
     otherqcback:=OtherQuoteChars;
@@ -386,7 +386,7 @@ begin
   readmask(brk);
   if not brk and mmodified then
   begin
-    if UUCP_ZConnectUsed then setRTAMode;
+    if rfc_ZConnectUsed then setRTAMode;
     GlobalModified;
   end;
   enddialog;
@@ -584,8 +584,8 @@ begin
   freeres;
   readmask(brk);
   if not brk and mmodified then
-+  begin
-+    ListWrapBack:=listwrap;
+  begin
+    ListWrapBack:=listwrap;
     GlobalModified;
   end;
   enddialog;
@@ -780,7 +780,7 @@ begin
   maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
   { 'Feldtausch Nachrichten-Lesefenster': }
   maddstring(3,9,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
-             '>'+MsgFeldDef+LStr(MsgFeldDef)); mhnr(1035);
+             '>'+MsgFeldDef+LowerCase(MsgFeldDef)); mhnr(1035);
   mappsel(false,MsgFeldDef);
 { maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
@@ -1555,6 +1555,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.118  2002/01/13 15:07:26  mk
   - Big 3.40 Update Part I
 

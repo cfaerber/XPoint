@@ -474,7 +474,7 @@ begin
     end
   else begin
     if nachricht then pushhp(54);
-    TED(name,reedit,keeplines,ed_ukonv);
+    TED(name,reedit,keeplines,ed_ukonv,false,false);
     if nachricht then pophp;
     if nachricht and (FirstChar(VarEditor)='*') then begin
       DeleteFirstChar(VarEditor);
@@ -525,6 +525,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.72  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.71  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

@@ -38,7 +38,9 @@ uses
 
 procedure OpenXPInfo;
 procedure BetaMessage;
+(*
 procedure About;
+*)
 
 implementation
 
@@ -116,8 +118,9 @@ begin
   freeres;
 end;
 
+(*
 procedure About;
-var x,y : byte;
+var x,y : integer;
     z   : taste;
     ver : string;
     addxVer,addxInf,addxDia,addy : shortint;
@@ -130,7 +133,7 @@ begin
   {$IFDEF Snapshot}
     addy := addy+1;
   {$ENDIF}
-  if registriert.r2 then addy := addy+1;
+//  if registriert.r2 then addy := addy+1;
   if length(ver) > 28 then  { Versionsstring l„nger als PM-Copyright }
   begin
     if odd(length(ver)) then
@@ -154,26 +157,27 @@ begin
   {$IFDEF Snapshot}
     wrt(x+3+addxVer,y+6,'Snapshot: '+compiletime);
   {$ENDIF}
-  if registriert.r2 then
-    wrt(x+3+addxVer,y+5+addy,getres2(520,19)+LizenzNummer);
   attrtxt(col.colmbox);
   wrt(x+9+addxInf,y+2,'Cross');
   wrt(x+20+addxInf,y+3,'Point');
   wrt(x+3+addxInf,y+7+addy,'(c) 1992-99  '+pm);
   wrt(x+3+addxInf,y+8+addy,x_copyright+'  '+author_name);
-  wrt(x+3+addxInf,y+10+addy,'Fido : '+author_fido);
+//wrt(x+3+addxInf,y+10+addy,'Fido : '+author_fido);
   wrt(x+3+addxInf,y+11+addy,'eMail: '+author_mail);
-  wrt(x+3+addxInf,y+12+addy,'WWW  : '+author_url);
+//wrt(x+3+addxInf,y+12+addy,'WWW  : '+author_url);
   mon;
   ReadButton(x+12+addxInf,y+14+addy,1,'*   ^OK   ',1,true,z);
   closebox;
   freeres;
 end;
-
+*)
 
 end.
 {
   $Log$
+  Revision 1.32  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.31  2002/01/19 13:46:10  mk
   - Big 3.40 udpate part III
 

@@ -95,7 +95,9 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keytab  : taste = #9;
 {$IFDEF FPC } { !! StrgTab statt ShiftTab, evtl. ein Bug in FPC }
        keystab : taste = #0#148;
+       keyctab : taste = #0#15;
 {$ELSE }
+       keyctab : taste = #0#148;
        keystab : taste = #0#15;
 {$ENDIF }
        keycr   : taste = #13;
@@ -386,6 +388,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.48  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

@@ -644,6 +644,8 @@ end;
 
 { RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
 
+procedure MapsKeys(list:TLister;var t:taste); forward;
+
 procedure File_abbestellen(const box,f:string);
 var t1: Text;
     s1,s2 : string;
@@ -657,7 +659,7 @@ begin
     exit;
     end;
   List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
-  listTp(Mapskeys); 
+  list.OnKeyPressed := Mapskeys; 
   read_BL_File(s1,false, List);            { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
@@ -1258,12 +1260,12 @@ begin
   end;
 end;
 
-procedure MapsKeys(var t:taste);
+procedure MapsKeys(list:TLister;var t:taste);
 begin
 
   if t=keytab then t:=keyctab
   else if (t=keyctab) or (t=keystab) then t:=keytab;
-
+(*
   if t=^S then t:='s'
   else if t='s' then
   begin
@@ -1274,13 +1276,13 @@ begin
       t:=keyctab;
       end;
     end;
-
+*)
 {  if t=^S then if Suche(getres(438),'#','') then begin
     ListShowSeek:=true;
     pushkey(keyctab);
     end; }
 
-  if ustr(t)='E' then ListShowSeek:=not Listshowseek;
+  if uppercase(t)='E' then ListShowSeek:=not Listshowseek;
 
   if t[1]=^H then begin
     pushkey('S');
@@ -1705,7 +1707,7 @@ var brk     : boolean;
     postmaster : boolean;
     promaf  : boolean;
     lines   : byte;
-    i       : integer;
+    i,j     : integer;
     List: TLister;
     x, y: Integer;
 
@@ -2144,6 +2146,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.65  2002/01/13 15:07:31  mk
   - Big 3.40 Update Part I
 

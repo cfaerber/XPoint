@@ -249,6 +249,8 @@ procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
+function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
+
 procedure InitXP1Unit;
 
 implementation  {-------------------------------------------------------}
@@ -2002,6 +2004,23 @@ begin
   cursor(curon);
 end;
 
+{$IFDEF Snapshot}
+function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
+begin
+  CompileTime := FormatDateTime('yyyy-mm-dd-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  {$IFDEF Delphi }
+    + 'd'
+  {$ENDIF }
+  {$IFDEF Kylix }
+    + 'k'
+  {$ENDIF }
+  {$IFDEF FPC }
+    + 'f'
+  {$ENDIF}
+  ;
+end;
+{$ENDIF}
+
 var
   SavedExitProc: pointer;
 
@@ -2024,6 +2043,9 @@ end;
 
 {
   $Log$
+  Revision 1.137  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.136  2002/01/06 19:31:43  ma
   - getX now supports searching for multiple keys
     (provides backwards compatibility in case of changed key names)

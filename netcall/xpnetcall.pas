@@ -1352,7 +1352,7 @@ begin
     AutoSend(ParSendbuf);
   if ParNetcall<>'' then
     if ParNetcall='*' then
-      AutoTiming(-1,true,false)      { Netcall/Alle }
+      AutoTiming(-1,true,false,false,1)      { Netcall/Alle }
     else if not isbox(ParNetcall) then
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
     else
@@ -1361,7 +1361,7 @@ begin
       else
         Netcall_at(ParNCtime,ParNetcall);
   if ParTiming>0 then begin
-    AutoTiming(ParTiming,false,false);
+    AutoTiming(ParTiming,false,false,false,1);
     if quit then automode:=true;
     end;
   if ParDupeKill then
@@ -1399,6 +1399,9 @@ end;
 
 {
   $Log$
+  Revision 1.46  2002/01/21 23:30:13  cl
+  - post-3.40 merge fixes
+
   Revision 1.45  2002/01/13 15:15:57  mk
   - new "empfaenger"-handling
 

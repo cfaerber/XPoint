@@ -103,7 +103,6 @@ function testreplyto(var s:string):boolean;
 function pgpo_sigtest(var s:string):boolean;
 function pgpo_keytest(var s:string):boolean;
 
-
 implementation  { --------------------------------------------------- }
 
 uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
@@ -288,23 +287,6 @@ begin
     setfield(1,_jn_[2]);
   pgpo_keytest:=true;
 end;
-
-{$IFDEF Snapshot}
-function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-begin
-  CompileTime := FormatDateTime('yyyy-mm-dd-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
-  {$IFDEF Delphi }
-    + 'd'
-  {$ENDIF }
-  {$IFDEF Kylix }
-    + 'k'
-  {$ENDIF }
-  {$IFDEF FPC }
-    + 'f'
-  {$ENDIF}
-  ;
-end;
-{$ENDIF}
 
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
@@ -946,22 +928,21 @@ begin
   if (_bezug<>'') and ntKomkette(netztyp) and
                   (uppercase(betreff)<>uppercase(oldbetr)) then begin
     pushhp(1501);
-    if not ReadJNesc(getres(617),(leftstr(betreff,5)=leftstr(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
-           ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
+    if not ReadJNesc(getres(617),(leftstr(betreff,5)=leftstr(oldbetr,5)) 
+       or ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
+          { 'Betreff ge„ndert - Verkettung beibehalten' }
     begin
       _bezug:='';
       _orgref:='';
-      DisposeReflist(_ref6list);
-    end else
-      if RFC_AddOldBetreff and (netztyp in [nt_UUCP,nt_Client]) then begin
-        ReCount(Oldbetr);
-        betreff:=left(betreff+' (was: '+oldbetr,betrlen-1)+')';
-        end;
+      sData.References.Clear;
+    end else 
+      if RFCAppendOldSubject and (netztyp in [nt_UUCP,nt_Client]) then
+        betreff:=betreff+' (was: '+oldbetr+')';
     pophp;
     if brk then exit;
   end;
   if pm and not ntEmpfBest(netztyp) then begin
-    flEB:=(left(betreff,length(EmpfBkennung))=EmpfBkennung);
+    flEB:=(leftstr(betreff,length(EmpfBkennung))=EmpfBkennung);
     SetEBkennung;
   end;
 end;
@@ -1835,7 +1816,7 @@ fromstart:
             hdp.real_box:=box;
           end;
       8 : begin
-            hdp.absender:=email;
+            iifs(sData.SenderMail='',username,sData.SenderMail);
             hdp.real_box:=box;
           end;
     end;
@@ -2346,6 +2327,9 @@ finalization
 
 {
   $Log$
+  Revision 1.39  2002/01/21 23:30:13  cl
+  - post-3.40 merge fixes
+
   Revision 1.38  2002/01/21 22:45:48  cl
   - fixes after 3.40 merge
 

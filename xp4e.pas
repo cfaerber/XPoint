@@ -104,7 +104,7 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fr writecode() }
@@ -1311,7 +1311,7 @@ begin
       if flags=3 then Flags:=0;
       if flags>3 then dec(flags);
       end;
-    if n=2 then rfc:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
+    if n=2 then rfcnetflag:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
@@ -1444,7 +1444,6 @@ var
     p     : byte;
     verteiler : boolean;
     newbrett  : boolean;
-  _UserAutoCreate:=true;
 
   function ShrinkEmpf(user,system:string):string;
   begin
@@ -1456,6 +1455,8 @@ begin
   oldpb:=pbox;
   verteiler:=false;
   newbrett:=false;
+  _UserAutoCreate:=true;
+
   brett:=(FirstChar(s)='/') and (cpos('@',s)=0);
   if trim(s)='' then
     exit
@@ -1732,16 +1733,17 @@ begin
       5:  begin
             d:=reorgdate;
             if d<>'' then readdate:=ixdat(d);
-            if right(d,4)<>'0000' then showtime:=true;
+            if rightstr(d,4)<>'0000' then showtime:=true;
+          end;
       6 : begin
             d:=longdat(readdate);
             if (Aktdispmode>=10) and not empty
               then getdate:=true else getdate:=false;
-            EditDatee(15,11+(screenlines-25)div 2,getres2(2720,3),d,getdate,brk);   { 'Lesen ab Datum:' }
+            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,brk);   { 'Lesen ab Datum:' }
             if not brk then begin
               if getdate then d:=longdat(dbreadint(mbase,'empfdatum'));
               readdate:=ixdat(d);
-              if right(d,4)<>'0000' then showtime:=true;
+              if rightstr(d,4)<>'0000' then showtime:=true;
             end;
           end;
       7 : begin
@@ -1900,7 +1902,7 @@ begin
     adddir(fn,sendpath);
     if not FileExists(fn) then begin
       if ReadJN(getres(2725),true) then    { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(fn,false,false,false,0,false);
+        EditFile(fn,false,false,0,false);
       AutoExistfile:=FileExists(fn);
       end
     else
@@ -2492,6 +2494,9 @@ end;
 
 {
   $Log$
+  Revision 1.86  2002/01/21 23:30:12  cl
+  - post-3.40 merge fixes
+
   Revision 1.85  2002/01/13 15:15:52  mk
   - new "empfaenger"-handling
 
