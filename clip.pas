@@ -25,9 +25,11 @@ const
 {$else}
   {$ifdef Linux}
   ClipAvailAble         = true;         { Simuliertes Clipboard a la MC }
+  {$DEFINE UseClipFile }                { Clipboard in ein File }
   {$else}
-   {$IFDEF VP }
-  ClipAvailable         = false; { !! Funktioniert noch nicht sauber }
+   {$IFDEF DOS32 }
+   ClipAvailable        = true;
+   {$DEFINE UseClipFile }               { Clipboard in ein File }
    {$ELSE }
   ClipAvailable         = false;
    {$ENDIF }
@@ -43,9 +45,9 @@ procedure ClipToFile(fn:TFilename);
 implementation  { ---------------------------------------------------- }
 
 uses
-{$ifdef Linux}
   xp0,
   fileio,
+{$ifdef Linux}
   linux,
   xplinux;
 {$else}
@@ -59,15 +61,19 @@ uses
 {$endif}
 
 
-{$ifdef Linux}
+{$ifdef UseClipFile }
 function ClipFilename: TFilename;
 begin
-  ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(GetUid);
+  {$IFDEF Linux }
+    ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(GetUid);
+  {$ELSE }
+    ClipFilename:= TempPath+'CLIPBRD.TEMP';
+  {$ENDIF }
 end;
 {$endif}
 
 function Clip2String: string;
-{$ifdef Linux}
+{$ifdef UseClipFile }
 var
   f: text;
   s: string;
@@ -139,7 +145,7 @@ end;
 {$endif}
 
 procedure String2Clip(var Str: String);             { String ins Clipboard }
-{$ifdef Linux}
+{$ifdef UseClipFile }
 var
   f: text;
 begin
@@ -148,7 +154,9 @@ begin
   if ioresult=0 then begin
     writeln(f,str);
     close(f);
+    {$IFDEF Linux }
     SetAccess(ClipFilename, taUserRW);
+    {$ENDIF }
   end;
 end;
 {$else}
@@ -186,11 +194,14 @@ end;
 {$endif}
 
 procedure FileToClip(fn:TFilename);
-{$ifdef Linux}
+{$ifdef UseClipFile }
 begin
   if FileExists(fn) then begin
     if CopyFile(fn, ClipFilename) then
-      SetAccess(ClipFilename, taUserRW);
+{$IFDEF Linux }
+      SetAccess(ClipFilename, taUserRW)
+{$ENDIF }
+      ;
   end;
 end;
 {$else}
@@ -246,7 +257,7 @@ end;
 {$endif}
 
 procedure ClipToFile(fn:TFilename);
-{$ifdef Linux}
+{$ifdef UseClipFile }
 begin
   if FileExists(ClipFilename) then begin
     if not CopyFile(ClipFilename, fn) then
@@ -312,6 +323,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/10/04 15:38:45  mk
+  - Clipboard-Support auch fuer DOS32
+
   Revision 1.25  2000/07/09 08:35:12  mk
   - AnsiStrings Updates
 
