@@ -234,10 +234,10 @@ procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 var rr: Longint;
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
-  rr:=0;
+  reads:=0;
 
   repeat
-    rr := WinSock.recv(SHandle,Block,Blocklen-Reads,0);
+    rr := WinSock.recv(SHandle,(PChar(@Block)+Reads)^,Blocklen-Reads,0);
     case rr of
       0:            SOpened:=false;
       SOCKET_ERROR: begin
@@ -247,6 +247,7 @@ begin
                     end;
       else reads:=reads+rr;
     end;
+    DebugLog('ObjCOM','ReadBlock --> '+IntToStr(rr),2);
   until (reads>=blocklen) or (not SOpened);
 
 end; { proc. tRawIPObj.ReadBlock }
@@ -358,6 +359,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.5  2001/03/26 22:18:48  cl
+  - fixed last checkin
+
   Revision 1.4  2001/03/26 21:30:30  cl
   - workaround: Winsock.recv does not always read all available bytes.
 
