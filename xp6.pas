@@ -896,7 +896,7 @@ end;
 procedure WriteHeaderHdr;
 var f:text;
 begin
-  assign(f,temppath+'header.hdr');
+  assign(f,temppath+'HEADER.HDR');
   rewrite(f);
   writeln(f,'TYP: ',typ);
   writeln(f,'BOX: ',box);
@@ -2216,6 +2216,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.23  2000/12/24 16:51:57  mk
+  - header.hdr grosss geschrieben
+
   Revision 1.39.2.22  2000/12/20 18:47:00  mk
   - Schalter Binaernachrichten fuer ZC entfernt
 
