@@ -75,6 +75,7 @@ begin
   if nope then MakeFile(fn);
   shell(fp,600,3);
   if nope then _era(fn);
+  if IOResult = 0 then ;
 end;
 
 
@@ -848,6 +849,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.23  2001/09/16 10:29:20  mk
+  - reset IOResult at end of CallFilter, avoids possible error chain
+
   Revision 1.13.2.22  2001/08/12 11:20:37  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
