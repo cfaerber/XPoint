@@ -71,7 +71,7 @@ begin
       nt_Fido  : MagicBrett:='/FIDO/';
       nt_UUCP  : begin
                    uparcer:='compress -v -b12 $PUFFER';
-                   downarcer:='compress -vdf $DOWNFILE';
+                   downarcer:='gzip -vdf $DOWNFILE'; {alt: compress}
                    unfreezer:='freeze -vdif $DOWNFILE';
                    ungzipper:='gzip -vdf $DOWNFILE';
                    chsysbetr:='your latest sys file entry';
@@ -139,7 +139,7 @@ begin
     NotSEmpty:=false;
     brettmails:=true;
     MaxWinSize:=7;
-    MaxPacketSize:=64;
+    MaxPacketSize:=4096; {alt: 64}
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
@@ -526,6 +526,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/13 21:23:05  mw
+
+  - Defaults angepasst: - max. Paketgr”áe statt 64 jetzt 4096
+                        - compress-Entpacker jetzt gzip
+
+  - In der uucp.dq im Glosar den Hinweis auf die Aufl”sung des IN e.V.
+    eingebaut (Kann man vielleicht noch detailierter machen).
+
   Revision 1.7  2000/05/04 10:33:00  mk
   - unbenutzer TurboBox Code entfernt
 
