@@ -803,6 +803,25 @@ end;
     if FileExists(eppfile) then _era(eppfile);
   end;
 
+  { Append all files in list to first file in list }
+  function MergeFiles(List: TStringList): boolean;
+  var i: integer; aFile,bFile: file;
+  begin
+    result:=false;
+    if List.Count<=0 then exit;
+    result:=true;
+    Assign(bFile,List[0]); Reset(bFile,1); Seek(bFile,FileSize(bFile));
+    while List.Count>1 do begin
+      Assign(aFile,List[1]); Reset(aFile,1);
+      result:=fmove(aFile,bFile);
+      Close(aFile);
+      if not result then break;
+      DeleteFile(List[1]);
+      List.Delete(1);
+      end;
+    close(bFile);
+  end;
+
 var NetcallLogfile: String;
 
 begin                  { function Netcall }
@@ -1003,9 +1022,11 @@ begin                  { function Netcall }
     end; {with boxpar}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
-  for i:=1 to IncomingFiles.Count do
-    if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
-      if FileExists(IncomingFiles[i-1])then _era(IncomingFiles[i-1]);
+  if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
+    CallFilter(true,IncomingFiles[0]);
+    if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
+      if FileExists(IncomingFiles[0])then _era(IncomingFiles[0]);
+    end;
   IncomingFiles.Destroy;
   freeres;
   netcalling:=false;
@@ -1216,6 +1237,11 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/04/21 13:02:50  ma
+  - incoming files are merged now
+  - executing incoming filter
+  - not many test runs have been made, please check.
+
   Revision 1.15  2001/04/16 16:56:18  ml
   - smtpafterpop-setting does the job now
 
