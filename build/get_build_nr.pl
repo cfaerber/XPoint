@@ -61,8 +61,8 @@ print "export OPENXP_MAINVER=$MAINVER\n";
 print "export OPENXP_SUBVER=$SUBVER\n";
 print "export OPENXP_BUILD=$BUILD\n";
 print "export OPENXP_RELEASE=$RELEASE\n";
-print "SET OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
-print "SET OXP_OPTS=$OPTS\n";
+print "export OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
+print "export OXP_OPTS='$OPTS'\n";
 
 $VERZ = $ENV{'TEMP'};
 if (!$VERZ) { $VERZ = '/tmp' } 
