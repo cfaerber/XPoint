@@ -1132,8 +1132,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
 {$IFDEF Ver32}
+{$IFDEF NCRT}
+       charbuf	   : string[254];		  { Nicht zu klein :-) }
+       attrbuf	   : array [1..254] of smallword;
+{$ELSE }
        charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
+{$ENDIF}
 {$ENDIF}
 
 implementation
@@ -1141,6 +1146,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.41  2000/05/09 19:09:20  hd
+  - charbuf/attrbuf vergroessert
+
   Revision 1.40  2000/05/09 15:51:50  hd
   - TempBatchFN eingefuegt
 
