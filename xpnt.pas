@@ -719,9 +719,10 @@ begin
   ntFilename := (nt in [nt_ZConnect,nt_UUCP]);
 end;
 
-function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
+function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All allowed? }
 begin
-  ntReplyToAll := (nt in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
+  // only LSB contains net type
+  ntReplyToAll := ((nt and $FF) in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
 end;
 
 function ntValidAddress(nt:byte;const addr:string):boolean;
@@ -739,6 +740,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.37  2001/10/18 10:57:52  mk
+  - fixed bug in ntReplyToAll introduced with last commit from ML
+
   Revision 1.36  2001/10/17 22:11:25  ml
   - removed some range-check Errors
 
