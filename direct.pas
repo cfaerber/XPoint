@@ -177,7 +177,7 @@ begin
   VDir:= ExtractFilePath(path);
   { Complete the path if not given }
   if VDir = '' then
-    VDir:= ExtractFilePath(ExpandFileName('.'));
+    VDir:= ExtractFilePath(ExpandFileName('dummy'));
   VMask:= ExtractFileName(path);
   if VMask='' then
     VMask:= '*.*';
@@ -316,6 +316,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.4  2001/02/08 19:59:52  ma
+        - fixed: was operating on parent directory if no path was given in file mask
+
         Revision 1.3  2000/12/07 18:40:07  hd
         - new function: isEmpty
         - fix: logical error in mask searching
