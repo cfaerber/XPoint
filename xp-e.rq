@@ -293,7 +293,7 @@ K (c) '93-96 Peter Mandrella
 6    ~          /rp     doesn't test for TSR programs after DOS-shell
 7    ~          /sd     prevents automatic Smartdrive cache flushing
 8    ~          /ss     start screen saver at once
-9    ~          /trace  enable script protocol (see XPOINT.DOC, 8.1)
+9    ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
 10   ~          /w0     don't free unused system resources
 11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
 12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
@@ -314,7 +314,7 @@ K (c) '93-96 Peter Mandrella
 27
 28   ~          /av:<File>          view archive file
 29   ~          /f:<File>[.FNT]     load font file
-30   ~          /gd:<File>          select phone fee file (see FIDO.DOC)
+30   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
 31
 32   ~          /ip:PUF   import puffer file
 33   ~          /ipe:PUF  import puffer file with receive date = creation date
@@ -1189,7 +1189,7 @@ K (c) '93-96 Peter Mandrella
 5
 6    If you have any questions, problems or suggestions concerning XP
 7    feel free to contact the CrossPoint support hotline.  E-Mail ad-
-8    dresses are listed in *README.DOC*.
+8    dresses are listed in *README.TXT*.
 19   License No:~
 #
 20   Choose "Continue" if you agree to these terms of license.
@@ -2129,7 +2129,7 @@ K (c) '93-96 Peter Mandrella
 6    Sorting user index ...
 7    Packing user index ...      %
 -
-2102 Nodelist configuration - see FIDO.DOC
+2102 Nodelist configuration - see FIDO.TXT
 2103 Copying point list
 + 2104
 1    Shrink nodelist
