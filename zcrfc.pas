@@ -2242,7 +2242,7 @@ begin
               if leftstr(zz,6) = 'x-ftn-' then
               Uline.Add('F-' + rightstr(s1,length(s1)-6))
             else
-              if (zz <> 'xref') and (LeftStr(zz, 4) <> 'x-xp') then
+              if { (zz <> 'xref') and} (LeftStr(zz, 4) <> 'x-xp') then
               Uline.Add(s1);
         else
           if zz = 'from' then
@@ -3829,6 +3829,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/05/30 21:22:55  mk
+  JG:- 'Xref' headers are not thrown away anymore
+
   Revision 1.56  2001/05/20 18:23:02  cl
   - fixed bug in RFC2047_Decode w/ bare "=?" sequences
 
