@@ -2059,9 +2059,7 @@ fromstart:
 
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:=Trim(pformstr);
-    DeleteFirstChar(hdp.programm); DeleteLastChar(hdp.programm);
-    hdp.programm:=xp_xp+'/'+verstr+{$IFDEF Snapshot}  '-' + compiletime+{$ENDIF}'-'+hdp.programm;
+    hdp.programm:=xp_xp+'/'+verstr + {$IFDEF Snapshot} '-' + compiletime + {$ENDIF} pformstr;
     hdp.organisation:=orga;
     if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2517,6 +2515,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.18  2003/08/22 19:09:12  mk
+  - second fix for #733047: Bad User-Agent header syntax
+
   Revision 1.48.2.17  2003/08/15 21:30:32  mk
   - fixed #733047: Bad User-Agent header syntax
 
