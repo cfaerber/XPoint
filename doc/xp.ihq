@@ -101,10 +101,10 @@ M”glichkeiten:
 ş  Es gibt im Internet auch einige Homepages zum
    Thema CrossPoint:
 
-         http://www.crosspoint.de
+         http://www.crosspoint.de/
          (Offizelle XP-Homepage von Peter Mandrella)
 
-         http://www.openxp.de
+         http://www.openxp.de/
          (Offizielle Homepage des OpenXP-Projekts)
 
          Bugreports fr Fehlermeldungen sollten in
@@ -481,8 +481,8 @@ Folgende Funktionen stehen zur Verfgung:
   ^D   Druckt die gew„hlte Nachricht; siehe auch
        [/Config/Drucker].@10606
 
-   ##   zeigt bei Fido-/MausNet-Nachrichten den
-       Kommentarbaum an.
+   ##   zeigt bei Fido-, MausNet-, ZCONNECT- und
+       Usenet-Nachrichten den Kommentarbaum an.
 
   ^W   schaltet die automatische Weiterschaltung
        beim Lesen ein bzw. aus.
@@ -667,7 +667,7 @@ kann mit <Ctrl-links/rechts> der Text seitlich ge-
 bl„ttert werden. Statt <PgDn> kann auch <Space>
 verwendet werden.
 
-<<s>> sucht einen anzugebenden Begriff. Groá/Klein-
+<<s>> sucht einen anzugebenden Begriff. Groá-/Klein-
   schreibung werden dabei ignoriert. <Tab> wiederholt
   die letzte Suche.
 
@@ -699,7 +699,7 @@ Der Lister wird mit <Esc> verlassen.
 
 <<O>> Zeigt den Original-Nachrichtenkopf an.
 
-<<U>> Dekodiert evtl. enthaltene UUE-Bl”cke
+<<U>> Decodiert evtl. enthaltene UUE-Bl”cke
   (siehe auch [Nachricht / Extrakt / UUdecode]).@11202
 
 
@@ -709,13 +709,6 @@ Der Lister wird mit <Esc> verlassen.
       Findet sich eine "<news:"-Kennung in dieser
       Zeile, wird automatisch nur die MessageID als
       Suchbegriff verwendet.
-
-      War die Suche erfolgreich, werden die gefunde-
-      nen Nachrichten angezeigt. Diese k”nnen dann
-      gelesen werden, <ESC> aus der Nachrichten-
-      anzeige springt zurck in das Listerfenster
-      mit der Nachricht, von dem aus die Suche ge-
-      startet wurde.
 
 <<Alt-T>> startet die Volltextsuche analog zu <<Alt-M>>.
 
@@ -727,6 +720,16 @@ Der Lister wird mit <Esc> verlassen.
 <<Alt-B>> Betreffsuche. Suchbegriff ist die erste
       markierte Textzeile, oder der Betreff der
       aktuell angezeigten Nachricht.
+
+Fr alle aus dem Nachrichten-Lister heraus gestarte-
+ten Suchl„ufe gilt:
+
+      War die Suche erfolgreich, werden die gefunde-
+      nen Nachrichten angezeigt und k”nnen dann
+      gelesen werden. Mit <ESC> in der Nachrichten-
+      anzeige kehren Sie zurck in den Nachrichten-
+      Lister zu der Nachricht, von dem aus die Suche
+      gestartet wurde.
 
 
 <<L>> setzt die angezeigte Nachricht auf "L”schen" und
@@ -748,8 +751,8 @@ Der Lister wird mit <Esc> verlassen.
 <<F>> schaltet farbliche *Hervorhebungen* ein/aus
   (siehe [/Config/Optionen/Lister]).@237
 
-<<Q>>   schaltet um, ob ":" und "|" als Quote-Zeichen
-    interpretiert werden oder nicht.
+<<Q>> schaltet um, ob ":" und "|" als Quote-Zeichen
+  interpretiert werden oder nicht.
 
 <<Ctrl-R>> schaltet die Rot13-Codierung ein/aus.
 
@@ -762,7 +765,8 @@ balken auf die n„chste Nachricht springt, unabh„ngig
 von der Einstellung bei /Config/Optionen/Bedienung.
 
 
-<<Bei kommentarverketteten Nachrichten (Maus, Fido):
+<<Bei kommentarverketteten Nachrichten (Maus, Fido,
+<<ZCONNECT, Usenet):
 
 <<+>> springt zum ersten Kommentar der Nachricht, falls
   vorhanden.
@@ -770,10 +774,10 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 <<->> springt zur Bezugsnachricht, falls vorhanden.
 
 <<Ctrl-PgUp>> springt zur chronologisch vorausgehenden
-      Nachricht im gleichen Brett.
+  Nachricht im gleichen Brett.
 
 <<Ctrl-PgDn>> springt zur chronologisch nachfolgenden
-      Nachricht im gleichen Brett.
+  Nachricht im gleichen Brett.
 
 <<Cursor-links>> und <<Cursor-rechts>> wechseln zwischen
   Kommentaren auf die gleiche Nachricht.
@@ -781,9 +785,9 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 
 <<Bei nicht verketteten Nachrichten (QuickMail u.a.):
 
-<<+>> springt zur nachfolgenden Nachricht
+<<+>> springt zur nachfolgenden Nachricht.
 
-<<->> springt zur vorausgehenden Nachricht
+<<->> springt zur vorausgehenden Nachricht.
 
 
 Auáerdem k”nnen mit /Config/Tasten/Makros beliebige
@@ -993,7 +997,7 @@ markiert.
 <Ctrl-K><Y> : Block l”schen
 <Ctrl-K><W> : Block in Datei schreiben
 <Ctrl-K><R> : Block aus Datei lesen
-<Ctrl-K><U> : Block aus Datei lesen und UU-kodieren
+<Ctrl-K><U> : Block aus Datei lesen und UU-codieren
 <Ctrl-K><O> : Block Rot13-codieren
 <Ctrl-K><S> : Schreibweise (groá/klein) wechseln
 <Ctrl-Q><B> : Cursor an Blockanfang bewegen
@@ -1200,7 +1204,7 @@ OpenXP
 >
 
 >home<
-http://www.openxp.de
+http://www.openxp.de/
 >
 
 >pm<
@@ -1589,7 +1593,7 @@ ken Sie <Enter>, oder brechen Sie die Auswahl mit
 <Esc> ab.
 @
 81
-Sie haben eine Nachricht mit einem File-Attach ge-
+Sie haben eine Nachricht mit einem File Attach ge-
 w„hlt, also eine Nachricht, die aus einem Text mit
 angeh„ngter Datei besteht.
 
@@ -2882,7 +2886,7 @@ Mode".
 <<Startprogramm>>
 
 Hier k”nnen Sie ein Programm oder einen DOS-Befehl
-eintragen, das/der zum Beginn jedes Sysopmode-Net-
+eintragen, das/der zum Beginn jedes SysopMode-Net-
 calls ausgefhrt werden soll. Dies ist vor allem
 dann ntzlich, wenn die einzulesende Pufferdatei
 erst noch bereitgestellt werden muá (z.B. durch Zu-
@@ -2890,7 +2894,7 @@ sammenkopieren mehrerer anderer Puffer).
 
 <<Endprogramm>>
 
-Dieses Programm wird nach jedem Sysopmode-Netcall
+Dieses Programm wird nach jedem SysopMode-Netcall
 gestartet.
 @
 8039
@@ -3492,8 +3496,8 @@ Adressen wieder aus der Datenbank entfernt.
 
 @
 8068
-Neu aufgenommene User werden dieser
-[Adreábuchgruppe] zugeordnet.@8069
+Neu aufgenommene User werden dieser [Adreábuchgruppe]
+zugeordnet.@8069
 
 @
 8069
@@ -5103,7 +5107,7 @@ sind *nicht* innerhalb von CrossTerm verfgbar:
 
 @
 442
-Der Typ der Nachricht, die an $FILE bergeben wird.
+Der Typ der Nachricht, die an <<$FILE>> bergeben wird.
 Es stehen die gleichen Formate wie bei /Nachricht
 /Extrakt/Als.. zur Verfgung:
 
@@ -5120,7 +5124,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
            nen/BrettQuote).
 @
 443
-<<[x]>> -> XP versucht bei der Verwendung von $FILE, den
+<<[x]>> -> XP versucht bei der Verwendung von <<$FILE>>, den
        Dateinamen aus dem Betreff zu erzeugen.
 
 <<[ ]>> -> XP erzeugt einen Tempor„r-Dateinamen.
@@ -5153,7 +5157,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
        wird das Autoexec-Verzeichnis (s. Handbuch,
        Kapitel 7.6) abgearbeitet. Wenn Sie als
        Programmname nur "*" angeben, bewirkt die
-       Funktiostaste nichts auáer dem Autoexec-
+       Funktionstaste nichts auáer dem Autoexec-
        Aufruf.
 @
 448
@@ -5230,7 +5234,7 @@ folge.
 <<L”schen>>   l”scht das gew„hlte System.
 
 <<Edit>>      dient zum Editieren des gew„hlten
-          Systems
+          Systems.
 
 <<OK>>        O.k. eben.
 
@@ -5916,8 +5920,8 @@ weich(R)-kompatibler Maustreiber.
        - fr Linksh„nder.
 @
 558
-<<[x]>> -> Nach jedem DOS-Aufruf (Editor, ext. Lister, F9
-       etc.) wird die Maus initialisiert.
+<<[x]>> -> Nach jedem DOS-Aufruf (Editor, ext. Lister,
+       <F9> etc.) wird die Maus initialisiert.
 
 <<[ ]>> -> Die Maus wird nur beim Programmstart initiali-
        siert.
@@ -7393,16 +7397,16 @@ Dateinamens daher im Z-Netz nicht in allen F„llen
 funktioniert.
 
 
-Hinweise:
+<<Hinweise:
 
 Wenn Sie einen HTML-Viewer eintragen (MIME-Typ
-<<text/html>>), dann sollten Sie <<htm>> als Datei-
-erweiterung angeben, da sonst der externe Viewer die
-tempor„re Datei u.U. nicht als HTML-Datei erkennt.
+<<text/html>>), dann sollten Sie <<htm>> als Dateierweite-
+rung angeben, da sonst der externe Viewer die tempo-
+r„re Datei u.U. nicht als HTML-Datei erkennt.
 
 Wenn Sie bei einem Multiformat-MIME-Typ keine Datei-
 erweiterung eintragen, k”nnen sie unter Windows den
-Befehl "start" verwenden, um immer automatisch die
+Befehl <<start>> verwenden, um immer automatisch die
 Datei an den passenden Viewer zu bergeben (das ist
 der Viewer, der in Windows fr den entsprechenden
 Dateityp registriert ist).
@@ -7424,7 +7428,7 @@ Das Programm wird automatisch aktiviert, sobald Sie
 eine Bin„r- oder MIME-Nachricht anw„hlen, die den
 passenden Dateityp enth„lt.
 
-Wenn Sie als Parameter das Makro $FILE verwenden,
+Wenn Sie als Parameter das Makro <<$FILE>> verwenden,
 wird es durch den Namen der Datei ersetzt. An-
 sonsten setzt XP den Namen der Datei als ersten
 Parameter hinter dem Programmnamen ein.
@@ -7453,14 +7457,13 @@ m”gliche Vorgehensweisen:
 <<Sichere Dateierweiterungen>>
 
 Wenn bei den Einstellungen fr externe Viewer
-(<<Edit/Viewer>>) ein MIME-Typ ohne Dateierweite-
-rung angegeben wurde, k”nnen Nachrichten im MIME-
-Multiformat (z.B. <<Application/octet-stream>>) mit
-einem Allround-Viewer betrachtet werden. Unter
-Windows bietet es sich an, hierfr den Befehl
-"start" zu verwenden, der die Datei automatisch
-an den passenden (fr den fr den jeweiligen Datei-
-typ registrierten) Viewer bergibt.
+(E<<D>>it/<<V>>iewer) ein MIME-Typ ohne Dateierweiterung
+angegeben wurde, k”nnen Nachrichten im MIME-Multi-
+format (z.B. <<Application/octet-stream>>) mit einem
+Allround-Viewer betrachtet werden. Unter Windows
+bietet sich hierfr der Befehl <<start>> an, der die
+Datei automatisch an den passenden (fr den fr den
+jeweiligen Dateityp registrierten) Viewer bergibt.
 
 Allerdings besteht bei dieser Funktion die Gefahr,
 daá Mail-Viren oder andere gef„hrliche Dateien
@@ -7493,7 +7496,7 @@ Dateierweiterungen haben, werden immer mit dem
 XP-internen Lister/Viewer ge”ffnet.
 
 Siehe auch: 
-[Ungef„hrliche Dateierweiterungen]@8072
+[Sichere Dateierweiterungen]@8072
 [Viewer-Programm fr verd„chtige Dateien]@8074
 @
 8074
@@ -7509,7 +7512,7 @@ XP-internen Lister/Viewer angezeigt.
 
 Siehe auch:
 [Lister-Dateierweiterungen]@8073
-[Ungef„hrliche Dateierweiterungen]@8072
+[Sichere Dateierweiterungen]@8072
 
 @
 830
@@ -9818,8 +9821,8 @@ gew„hlten Brettes, in eine Datei.
 Hier werden alle Nachrichten des angezeigten Kommen-
 tarbaums in eine Datei geschrieben.
 
-Der Kommentarbaum einer Fido-, Maus- oder ZCONNECT-
-Nachricht wird mit "\#" aktiviert.
+Der Kommentarbaum einer Fido-, Maus-, ZCONNECT- oder
+Usenet-Nachricht wird mit "\#" aktiviert.
 @
 11205
 <<Nachricht / Extrakt / Markiert
@@ -12337,7 +12340,7 @@ lers (XP-FM), die nicht zu Ihrer CrossPoint-Version
 kompatibel ist.
 @
 20723
-Sie haben bei /Edit/Boxen/Edit/Sysopmode einen un-
+Sie haben bei /Edit/Boxen/Edit/SysopMode einen un-
 gltigen Ausgabedateinamen angegeben.
 @
 20724
@@ -12355,7 +12358,7 @@ kopiert werden. Vermutlich ist die Datei nicht mehr
 vorhanden.
 @
 20727
-Bei /Edit/Boxen/Edit/Sysopmode ist ein nicht exi-
+Bei /Edit/Boxen/Edit/SysopMode ist ein nicht exi-
 stierendes Verzeichnis eingetragen.
 @
 20728
@@ -12654,8 +12657,8 @@ Signal finden Sie im Kapitel "kleine Modemkunde" im
 Handbuch.
 @
 22003
-Sie haben eine Funktiostaste verwendet, die das
-Makro $FILE enth„lt. Dies ist nur anwendbar, wenn
+Sie haben eine Funktionstaste verwendet, die das
+Makro <<$FILE>> enth„lt. Dies ist nur anwendbar, wenn
 eine Nachricht gew„hlt ist. Korrigieren Sie ggf. die
 Einstellung bei /Config/Tasten.
 @
