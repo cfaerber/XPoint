@@ -751,7 +751,8 @@ begin
       Testviralextension;
 
                                                        {Einteilige nicht text/plain Message }
-      if (mp=1) and (mimetyp<>'text/plain') and (Mimetyp <>'') then 
+      if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
+         and (left(mimetyp,9)<>'multipart') then
       begin                                       
         multipart:=false;
         pushhp(94);    
@@ -771,7 +772,7 @@ begin
           then viewer.prog:='';
 
       end else
-      multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
+        multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (left(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
@@ -1531,6 +1532,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.6  2000/08/05 14:59:17  jg
+  - Bugfix: Singlepart Menue darf nur kommen, wenns kein Multipart ist
+
   Revision 1.25.2.5  2000/08/05 14:36:57  jg
   - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 
