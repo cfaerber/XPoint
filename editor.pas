@@ -1127,7 +1127,7 @@ begin
     if ap=pende.absatz then ap:=nil
     else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
-      blockwrite(f,crlf[1],2); {cr:=true; }
+      blockwrite(f,crlf[1],2); cr:=true;
       end;
     end;
   if not cr and forcecr then
@@ -2015,6 +2015,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.9  2000/11/19 10:34:55  mk
+  - more crlf fixes
+
   Revision 1.9.2.8  2000/11/10 05:20:57  mk
   RB:- Umbruch Fix
 
