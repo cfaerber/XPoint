@@ -95,7 +95,7 @@ var NAKcount : byte;
 
     function TE: Boolean;
     begin
-      DebugLog('ncfido','TE '+ems_req,DLDebug);
+//      DebugLog('ncfido','TE '+ems_req,DLDebug);
       while (ems_req<>'') and (ems_req[1]<>'*') do
         delete(ems_req,1,1);
       if length(ems_req)<7 then
@@ -123,7 +123,7 @@ begin
   NAKtimer:=false;
   repeat
     if State<>LastState then begin
-      DebugLog('ncfido','fmSS state: '+Char(state+48),DLDebug);
+//      DebugLog('ncfido','fmSS state: '+Char(state+48),DLDebug);
       LastState:=State;
     end;
     case state of
@@ -428,6 +428,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/04/03 13:21:12  ma
+  - disabled some debug logs
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
