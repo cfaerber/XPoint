@@ -193,8 +193,9 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
       currentbox : string;
       box        : string;
       x,y        : Integer;
-      i,p,nt     : Integer;
+      i,p        : Integer;
       datDa      : boolean;
+      nt         : Byte;
 
     procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
     var i          : Integer;
@@ -750,6 +751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2002/02/09 18:33:31  mk
+  - fixed range check error in MakeAllList
+
   Revision 1.22  2002/01/22 19:15:28  mk
   - after 3.40 merge fixes
 
