@@ -1368,7 +1368,7 @@ fromstart:
               end;
        11   : if binary then rfehler(612)   { 'Bei Bin„rnachrichten nicht m”glich.' }
               else
-                {if cc_anz>0 then rfehler(613)   { 'Bei mehreren Kopien nicht m”glich.' }
+                {if cc_anz>0 then rfehler(613) }  { 'Bei mehreren Kopien nicht m”glich.' }
                 {else} senden:=3;   { Parken }
        12   : if cc_anz>0 then    { Datum }
                 rfehler(613)
@@ -2045,15 +2045,9 @@ end; {------ of DoSend -------}
 procedure send_file(pm,binary:boolean);
 const xp_support = 'A/T-NETZ/SUPPORT/XPOINT';
 var
-{$ifdef hasHugeString}
     empf,repto : string;
     betr,dummy : string;
     hf         : string;
-{$else}
-    empf,repto : string[AdrLen];
-    betr,dummy : string[BetreffLen];
-    hf         : string[12];
-{$endif}
     reptoanz   : integer;
     fn         : string;
     useclip    : boolean;
@@ -2072,15 +2066,14 @@ var
 begin
   betr:='';
   case aktdispmode of
-   -1..0 : dbReadN(bbase,bb_brettname,empf); { B^in„r / Text^File an Brett }
-    1..4 : dbReadN(ubase,ub_username,empf);  { B^in„r / Text^File an User }
+   -1..0 : empf := dbReadNStr(bbase,bb_brettname); { B^in„r / Text^File an Brett }
+    1..4 : empf := dbReadNStr(ubase,ub_username);  { B^in„r / Text^File an User }
   10..19 : begin
-             dbReadN(mbase,mb_absender,empf);  { ^I/^F an Absender der Msg }
-             dbReadN(mbase,mb_betreff,betr);
+             empf := dbReadNStr(mbase,mb_absender);  { ^I/^F an Absender der Msg }
+             betr := dbReadNStr(mbase,mb_betreff);
              ReplyText(betr,false);
            end;
   end;
-  empf:=left(empf,79);
   fn:=sendpath+Wildcard;
   useclip:=true;
   if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'Bin„rdatei' / 'Textdatei' versenden }
@@ -2098,9 +2091,8 @@ begin
       fn:=FExpand(fn);
       if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
       else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
-      else (* if _filesize(fn)+MaxHdsize>TempFree then
-        rfehler(617)   { 'zu wenig Platz auf Tempor„r-Laufwerk' }
-      else *) begin
+      else
+      begin
         {fsplit(fn,dir,name,ext);}
         if betr='' then betr:=ExtractFileName(fn)
         else betr:=left(ExtractFilename(fn)+' ('+betr,39)+')';
@@ -2155,6 +2147,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/20 09:11:50  mk
+  - AnsiString-Fix fuer dbReadN
+
   Revision 1.50  2000/07/15 20:02:59  mk
   - AnsiString updates, noch nicht komplett
 
