@@ -18,7 +18,6 @@ unit fileio;
 interface
 
 uses
-  xpglobal,
 {$IFDEF Ver32 }
   sysutils,
 {$ENDIF }
@@ -32,6 +31,7 @@ uses
   windows,
  {$ENDIF }
 {$endif}
+  xpglobal,
   dos, typeform;
 
 {$ifdef vp }
@@ -121,7 +121,11 @@ var
 function exist(n:string):boolean;
 {$IFDEF Ver32  }
 begin
+{$IFDEF UnixFS}
+  Exist:= FileExists(ResolvePathName(n));
+{$ELSE }
   Exist := FileExists(n);
+{$ENDIF }
 end;
 {$ELSE }
 var sr : searchrec;
@@ -173,7 +177,11 @@ begin
 {$ENDIF }
     ValidFileName:=false
   else begin
+{$IFDEF UnixFS}
+    assign(f, ResolvePathName(name));		{ ~/ aufloesen }
+{$ELSE}
     assign(f,name);
+{$ENDIF}
     if existf(f) then ValidFileName:=true
     else begin
       rewrite(f);
@@ -193,6 +201,7 @@ begin
     IsPath:=false
   else begin
 {$IFDEF UnixFS }
+    name:= ResolvePathName(name);
     { Laufwerksbuchstaben gibt es nicht, aber immer das
       Wurzelverzeichnis }
     if (name=DirSepa) then
@@ -231,8 +240,13 @@ var bufs,rr:word;
 begin
   bufs:=min(maxavail,65520);
   getmem(buf,bufs);
+{$IFDEF UnixFS}
+  assign(f1,ResolvePathName(srcfn));
+  assign(f2,ResolvePathName(destfn));
+{$ELSE }
   assign(f1,srcfn);
   assign(f2,destfn);
+{$ENDIF }
   reset(f1,1);
   rewrite(f2,1);
   while not eof(f1) and (inoutres=0) do begin
@@ -249,7 +263,11 @@ end;
 Procedure era(s:string);
 var f : file;
 begin
+{$IFDEF UnixFS}
+  assign(f,ResolvePathName(s));
+{$ELSE}
   assign(f,s);
+{$ENDIF}
   erase(f);
 end;
 
@@ -257,7 +275,11 @@ end;
 procedure erase_mask(s:string);                 { Datei(en) l”schen }
 var sr : searchrec;
 begin
+{$IFDEF UnixFS}
+  findfirst(ResolvePathName(s),ffAnyFile,sr);
+{$ELSE}
   findfirst(s,ffAnyfile,sr);
+{$ENDIF}
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
@@ -273,6 +295,9 @@ procedure erase_all(path:pathstr);
 var sr : searchrec;
     f  : file;
 begin
+{$IFDEF UnixFS}
+  path:= ResolvePathName(path);
+{$ENDIF}
   findfirst(path+WildCard,anyfile-VolumeID,sr);
   while doserror=0 do begin
     with sr do
@@ -289,7 +314,7 @@ begin
   {$IFDEF Ver32}
   FindClose(sr);
   {$ENDIF}
-  if pos(DirSepa,path)<length(path) then begin
+  if cpos(DirSepa,path)<length(path) then begin
     dellast(path);
     rmdir(path);
   end;
@@ -302,6 +327,9 @@ var bakname : string;
     name    : namestr;
     ext     : extstr;
 begin
+{$IFDEF UnixFS}
+  n:= ResolvePathName(n);
+{$ENDIF}
   assign(f,n);
   if not existrf(f) then exit;
   fsplit(n,dir,name,ext);
@@ -381,7 +409,11 @@ procedure mklongdir(path:pathstr; var res:integer);
 const testfile = 'test0000.$$$';
 var p : byte;
 begin
+{$IFDEF UnixFS}
+  path:=ResolvePathName(trim(path));
+{$ELSE}
   path:=trim(path);
+{$ENDIF}
   if path='' then begin
     res:=0;
     exit;
@@ -419,24 +451,36 @@ begin
   repeat
     n:=formi(random(10000),4)+'.tmp'
   until not exist(path+n);
+{$IFDEF UnixFS}
+  TempFile:=ResolvePathName(path+n);
+{$ELSE}
   TempFile:=path+n;
+{$ENDIF}
 end;
 
 function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
 { ld max. 4 Zeichen, ext mit Punkt '.bat' }
-var n : string[12];
+var n : string[MaxLenFilename];
 begin
   repeat
     n:=ld+formi(random(10000),4)+ext
   until not exist(path+n);
+{$IFDEF UnixFS}
+  TempExtFile:=ResolvePathName(path+n);
+{$ELSE }
   TempExtFile:=path+n;
+{$ENDIF }
 end;
 
 
 function _filesize(fn:pathstr):longint;
 var sr : searchrec;
 begin
+{$IFDEF UnixFS}
+  findfirst(ResolvePathName(fn),ffAnyFile,sr);
+{$ELSE}
   findfirst(fn,ffAnyFile,sr);
+{$ENDIF}
   if doserror<>0 then
     _filesize:=0
   else
@@ -449,7 +493,11 @@ end;
 procedure MakeFile(fn:pathstr);
 var t : text;
 begin
+{$IFDEF UnixFS}
+  assign(t,ResolvePathName(fn));
+{$ELSE}
   assign(t,fn);
+{$ENDIF}
   rewrite(t);
   if ioresult=5 then
     setfattr(t,0)
@@ -460,7 +508,11 @@ end;
 function filetime(fn:pathstr):longint;
 var sr : searchrec;
 begin
+{$IFDEF UnixFS}
+  findfirst(ResolvePathName(fn),ffAnyFile,sr);
+{$ELSE}
   findfirst(fn,ffAnyFile,sr);
+{$ENDIF}
   if doserror=0 then
     filetime:=sr.time
   else
@@ -473,7 +525,11 @@ end;
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
 var f : file;
 begin
+{$IFDEF UnixFS}
+  assign(f,ResolvePathName(fn));
+{$ELSE}
   assign(f,fn);
+{$ENDIF}
   reset(f,1);
   setftime(f,newtime);
   close(f);
@@ -485,7 +541,11 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
+{$IFDEF UnixFS}
+  fsplit(ResolvePathName(p),d,n,e);
+{$ELSE}
   fsplit(p,d,n,e);
+{$ENDIF}
   GetFileDir:=d;
 end;
 
@@ -494,7 +554,11 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
+{$IFDEF UnixFS}
+  fsplit(ResolvePathName(p),d,n,e);
+{$ELSE}
   fsplit(p,d,n,e);
+{$ENDIF}
   GetFileName:=n+e;
 end;
 
@@ -503,7 +567,11 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
+{$IFDEF UnixFS}
+  fsplit(ResolvePathName(p),d,n,e);
+{$ELSE}
   fsplit(p,d,n,e);
+{$ENDIF}
   GetBareFileName:=n;
 end;
 
@@ -512,15 +580,24 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
+{$IFDEF UnixFS}
+  fsplit(ResolvePathName(p),d,n,e);
+{$ELSE}
   fsplit(p,d,n,e);
+{$ENDIF}
   GetFileExt:=mid(e,2);
 end;
 
 function _rename(n1,n2:pathstr):boolean;
 var f : file;
 begin
+{$IFDEF UnixFS}
+  assign(f,ResolvePathName(n1));
+  rename(f,ResolvePathName(n2));
+{$ELSE}
   assign(f,n1);
   rename(f,n2);
+{$ENDIF}
   _rename:=(ioresult=0);
 end;
 
@@ -531,6 +608,9 @@ var dir  : dirstr;
     name : namestr;
     _ext : extstr;
 begin
+{$IFDEF UnixFS}
+  fn:=ResolvePathName(fn);
+{$ENDIF}
   fsplit(fn,dir,name,_ext);
   if _ext='' then fn:=dir+name+'.'+ext;
 end;
@@ -542,6 +622,9 @@ var _dir : dirstr;
     name : namestr;
     ext  : extstr;
 begin
+{$IFDEF UnixFS}
+  fn:=ResolvePathName(fn);
+{$ENDIF}
   fsplit(fn,_dir,name,ext);
   if _dir='' then begin
     if dir[length(dir)]<>DirSepa then dir:=dir+DirSepa;
@@ -730,6 +813,9 @@ var f       : file;
     hdadr   : longint;
     version : byte;
 begin
+{$IFDEF UnixFS}
+  fn:= ResolvePathName(fn);
+{$ENDIF}
   assign(f,fn);
   resetfm(f,FMDenyWrite);
   blockread(f,magic,2);
@@ -781,6 +867,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/05/14 12:21:42  hd
+  - Anpassungen an UnixFS
+
   Revision 1.30  2000/05/09 15:51:23  hd
   - UnixFS: WriteBatch angepasst
   - $I- wieder entfernt (war FPC Workaround)
