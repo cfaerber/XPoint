@@ -2325,7 +2325,8 @@ begin
     fk:=forwardkeys; forwardkeys:='';
     if test_fkeys(t) then;
     keyboard(fk);
-    xp1o.listext(t);
+    if (t<>^S) and (t<>^W) and (t<>keytab) and (t<>'s') then
+      xp1o.listext(t);
     end;
 end;
 
@@ -2953,6 +2954,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.48  2003/04/26 23:22:18  my
+  MY:- Letzten Commit gefixt: Auch das Betrachten des Headers mit "o" ist
+       im Sinne von XP ein "Archiv-Viewer", es waren daher dort jetzt
+       Funktionen wie <Ctrl-W> deaktiviert, die nicht hÑtten deaktiviert
+       sein sollen. Deaktivierung der Funktionen "s", <Ctrl-S>, <Tab> und
+       <Ctrl-W> jetzt explizit in 'ArcSpecial' nur fÅr den "echten"
+       Archiv-Viewer realisiert.
+
   Revision 1.47.2.47  2003/04/21 16:22:46  my
   MY:- Fix: Funktionen "s" und <Ctrl-S> (Textsuche), <Tab> (nÑchsten
        Suchbegriff anspringen) und <Ctrl-W> (Umbruch togglen) im Archiv-

@@ -341,36 +341,33 @@ begin
 
   if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
-  if listmakros<>16 then  { diese Funktionen im Archiv-Viewer abschalten }
+  if t=keytab then t:=keyctab
+  else if (t=keyctab) or (t=keystab) then t:=keytab;
+
+  if t=^S then
   begin
-
-    if t=keytab then t:=keyctab
-    else if (t=keyctab) or (t=keystab) then t:=keytab;
-
-    if t=^S then
+    t:='s';
+    c:='s';
+  end
+  else if t='s' then
+  begin
+    t:='';
+    if Suche(getres(438),'#','') then
     begin
-      t:='s';
-      c:='s';
-    end
-    else if t='s' then
-    begin
-      t:='';
-      if Suche(getres(438),'#','') then
-      begin
-        ListShowSeek:=true;
-        t:=keyctab;
-      end;
+      ListShowSeek:=true;
+      t:=keyctab;
     end;
+  end;
 
-    if t=^W then                                   { '^W' = Umbruch togglen }
-    begin
-      listwrap:=not listwrap;
-      ex(-5);
-    end;
+  if t=^W then                                     { '^W' = Umbruch togglen }
+  begin
+    listwrap:=not listwrap;
+    ex(-5);
+  end;
 
-  end   { /Funktionen im Archiv-Viewer abschalten }
-
-  else if t=mausldouble then t:=keycr;  { Archiv-Viewer }
+  if listmakros=16 then   { Archiv-Viewer }
+    if t=mausldouble then
+      t:=keycr;
 
   if Listmakros=8 then   { Diese Funktionen NUR im Nachrichten-Lister ausfÅhren, nicht im Archivviewer... }
   begin
@@ -1044,6 +1041,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.32  2003/04/26 23:22:18  my
+  MY:- Letzten Commit gefixt: Auch das Betrachten des Headers mit "o" ist
+       im Sinne von XP ein "Archiv-Viewer", es waren daher dort jetzt
+       Funktionen wie <Ctrl-W> deaktiviert, die nicht hÑtten deaktiviert
+       sein sollen. Deaktivierung der Funktionen "s", <Ctrl-S>, <Tab> und
+       <Ctrl-W> jetzt explizit in 'ArcSpecial' nur fÅr den "echten"
+       Archiv-Viewer realisiert.
+
   Revision 1.40.2.31  2003/04/21 16:21:52  my
   MY+JG:- Fix: Nachrichten-Suchfunktionen im Lister (<Alt-M>, <Alt-V>,
           <Alt-B>, <Alt-U>) sind wie dokumentiert nur noch im Nachrichten-
