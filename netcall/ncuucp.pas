@@ -373,7 +373,8 @@ begin
     result := pprot.RunProtocol;
 
   except
-    on Ex:Exception do begin
+    on Ex:ENetcall do // handle here only netcall exceptions
+    begin
       Output(mcError,'%s',[ex.message]);
       result := el_nologin;
     end;
@@ -1123,6 +1124,10 @@ end.
 
 {
   $Log$
+  Revision 1.19  2002/02/13 18:27:26  mk
+  - handle only ENetcall-Errors in this unit, all other Exceptions should
+    go there normal way to the debuglog.txt
+
   Revision 1.18  2002/02/13 12:35:35  cl
   - fixed "Range Check Error" on UUCP startup with simple UUCP callees
     (see also <mid:xpbm5535843@dirk.deimeke.net>)
