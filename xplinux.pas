@@ -26,7 +26,7 @@ function StrDostoLinux(const InStr : String): String;
 const
    MaxConvChars					       = 7;
    dos2lin	: array [0..1] of String[MaxConvChars] =
-       ('„”?á™š',
+       ('„”á™š',
 	'äöüßÄÖÜ');
 var
    I, CI : Integer;
@@ -44,6 +44,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2000/03/26 11:04:10  ml
+  zpr-Anzeige in linux geht jetzt
+
   Revision 1.2  2000/03/14 15:15:42  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -22,6 +22,9 @@
 {$ENDIF }
 
 uses
+{$IFDEF Linux }
+   XPLinux,
+{$ENDIF }   
 {$IFNDEF Delphi }
   dos,
 {$ELSE }
@@ -225,15 +228,29 @@ begin
   writeln;
 end;
 
-procedure helppage;
-{ ML 26.02.2000 Linux benutzt kein Carriage Return... }
 {$IFDEF Linux }
+{ ML 26.02.2000 Linux benutzt kein Carriage Return... }
+procedure helppage;
 const crlf = #10;
-{$ELSE }
-const crlf = #13#10;
-{$ENDIF }
 begin
-  writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
+   writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
+          crlf,
+          'Schalter:  -f   Fehler in ZPR.LOG aufzeichnen'+crlf+
+          StrDosToLinux('           -h   strenge Headerzeilen-öberprÅfung')+crlf,
+          StrDosToLinux('           -l   defekte Nachrichten lîschen')+crlf+
+          '           -r   Puffer reparieren'+crlf+
+          StrDosToLinux('           -w   Warnungen unterdrÅcken')+crlf,
+          '           -z   fehlerhafte Zeilen anzeigen'+crlf,
+          crlf,
+          '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben'
+	   );
+  halt(2);
+end;
+{$ELSE}
+procedure helppage;
+const crlf = #13#10;
+begin
+   writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
           crlf,
           'Schalter:  -f   Fehler in ZPR.LOG aufzeichnen'+crlf+
           '           -h   strenge Headerzeilen-öberprÅfung'+crlf,
@@ -242,9 +259,11 @@ begin
           '           -w   Warnungen unterdrÅcken'+crlf,
           '           -z   fehlerhafte Zeilen anzeigen'+crlf,
           crlf,
-          '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben');
+          '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben'
+	   );
   halt(2);
 end;
+{$ENDIF}
 
 procedure error(txt:string);
 begin
@@ -1354,6 +1373,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/26 11:04:10  ml
+  zpr-Anzeige in linux geht jetzt
+
   Revision 1.8  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 
