@@ -870,10 +870,8 @@ again:
      Result:= DosSeq[1];              // first char is result
      PrefChar := #0;
 
-// 
-{$WARNING ACHTUNG fuer Hans-Peter: Code noch portieren!!!!!! }
-//     if Length(DosSeq)>=2 then
-//       Forwardkeys:=Mid(DosSeq,2)+Forwardkeys;
+    if Length(DosSeq)>=2 then
+      _KeyBoard(Mid(DosSeq,2);
 
   end else
     Result:= TranslateSpecialChar(chr(ord(l)));
@@ -1548,6 +1546,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2003/01/26 12:18:24  mk
+  - forwardkeys is not public anymore, use _keboard in readkey
+
   Revision 1.70  2003/01/17 13:04:44  mk
   - FPC compile problem is fixed in FPC now,
     code is now active again
