@@ -181,6 +181,9 @@ function  GetEnv(const name: string): string;
 { Returns clear text error messages for IOError values; otxt if unknown }
 function  ioerror(i: integer; otxt: string):string;
 
+{ raises an exception if there was an IOError }
+procedure IOExcept(e: ExceptClass);
+
 {$ifndef Unix}
 { Returns concatenation of all valid drive letters }
 function  alldrives: string;
@@ -318,6 +321,10 @@ begin
      16 : ioerror:='Verzeichnis kann nicht gelîscht werden';
      18 : ioerror:='Fehler bei Dateisuche';
     101 : ioerror:='Diskette/Platte voll';
+    102 : ioerror:='Dateiname fehlt';
+    103 : ioerror:='Datei nicht geîffnet';
+    104 : ioerror:='Datei nicht zum Lesen geîffnet';
+    105 : ioerror:='Datei nicht zum Schreiben geîffnet';
     150 : ioerror:='Diskette ist schreibgeschÅtzt';
     152 : ioerror:='keine Diskette eingelegt';
 154,156 : ioerror:='Lesefehler (Diskette/Platte defekt)';
@@ -328,6 +335,14 @@ begin
   else
     ioerror:=otxt;
   end;
+end;
+
+procedure IoExcept(e:ExceptClass);
+var r: rtlword;
+begin
+  r:=IOResult;
+  if r<>0 then
+    raise E.Create(ioerror(r,'Unbekannter E/A-Fehler #'+StrS(r)));
 end;
 
 procedure fm_ro;      { Filemode ReadOnly }
@@ -648,6 +663,10 @@ end.
 
 {
   $Log$
+  Revision 1.95  2001/03/16 17:04:53  cl
+  - IoExcept (checks for IoError and raises exception)
+
+
   Revision 1.94  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
