@@ -287,6 +287,7 @@ var x,y      : Integer;
       n  : longint;
       l  : integer;
   begin
+    Debug.DebugLog('xp3o','start bearbeite_cancels_supersedes',DLTrace);
     reset(cmessagefile);
     n:=0;
     FWrt(x+2,y+6,getres(341)); { 'Bearbeite Steuernachrichten...' }
@@ -551,7 +552,7 @@ var x,y      : Integer;
   end;
 
   procedure Bezugsverkettung;
-  var n      : longint;
+  var n      : longint;     
       c1,c2  : longint;
       ll     : packed record
                  l   : longint;
@@ -605,7 +606,7 @@ var x,y      : Integer;
     dbFlush(bezbase);
     close(f);
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
-    Debug.DebugLog('xp3o','end Bezugsverkettung',DLInform);
+    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
   end;
 
   procedure wrll(l:longint);
@@ -1251,6 +1252,9 @@ end;
 
 {
   $Log$
+  Revision 1.87  2002/05/23 22:52:10  mk
+  - added more debug logs
+
   Revision 1.86  2002/05/23 22:49:01  mk
   - added debug logs for 'Bezugsverkettung'
   - fixed record size bug in Bezugsverkettung
