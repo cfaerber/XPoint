@@ -2618,7 +2618,7 @@ type
     end;
 
     with Regs do begin
-      CX := $8000; // return a path containing the SUBSTed letter
+      CX := $8000; { return a path containing the SUBSTed letter }
       ES := Seg(TName);
       DI := Ofs(TName);
       if not Int21name($7160, PathName) then begin
@@ -2651,7 +2651,7 @@ type
     end;
 
     with Regs do begin
-      CX := $0001;
+      CX := $8001; { return a path containing the SUBSTed letter }
       ES := Seg(TName);
       DI := Ofs(TName);
       if not Int21name($7160, PathName) then
@@ -2683,7 +2683,7 @@ type
     end;
 
     with Regs do begin
-      CX := $0002;
+      CX := $8002; { return a path containing the SUBSTed letter }
       ES := Seg(TName);
       DI := Ofs(TName);
       if not Int21name($7160, PathName) then begin
@@ -2960,7 +2960,7 @@ ExitPoint:
     end;
 
     with Regs do begin
-      CX := $0001;
+      CX := $8001; // return a path containing the SUBSTed letter
       ES := Seg(Dest^);
       DI := Ofs(Dest^);
       if not Int21namePChar($7160, PathName) then
@@ -2994,7 +2994,7 @@ ExitPoint:
     end;
 
     with Regs do begin
-      CX := $0002;
+      CX := $8002; // return a path containing the SUBSTed letter
       ES := Seg(Dest^);
       DI := Ofs(Dest^);
       if not Int21namePChar($7160, PathName) then begin
