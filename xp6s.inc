@@ -206,7 +206,7 @@ begin
   else begin
     if not pm then
       if XP_Tearline then
-        s:=#13#10+xp_origin + ' ' + verstr + betastr
+        s:=#13#10+xp_origin + ' ' + verstr + betastr + krk(regstr1)
       else
         s:=#13#10+'---'
     else
@@ -242,7 +242,7 @@ begin
        (right(lstr(empfaenger),6)<>'/mt.xp')) or
        (registriert.r2 and not XP_ID_AMs)) then
     XpID:=false;
-  XID:=iifs(XpID and (netztyp<>nt_Fido),XP_ID,'');
+  XID:=iifs(XpID { and (netztyp<>nt_Fido) },XP_ID,'');
   inc(addsize,length(XID));
   inc(addsize,length(fido_origin(true)));
 { if flMnet then inc(addsize,length(MausNet)+2);
@@ -1154,6 +1154,14 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.14  2002/03/31 15:52:31  my
+  MY:- In der Fido-Tearline wird jetzt hinter der Versionsnummer wieder
+       der Registrierungsvermerk "R" angezeigt (User-Request).
+
+  MY:- XP-Reklamebanner "## CrossPoint ... ##" wird jetzt auch an Fido-
+       Netmails angeh„ngt, wenn C/O/N/##_XP_## auf "PMs" oder "immer"
+       steht (User-Request).
+
   Revision 1.18.2.13  2002/03/08 23:07:26  my
   MY:- corrected CVS log
 
