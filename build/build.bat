@@ -109,6 +109,7 @@ MOVE *.hlp ..\Build\XPDIR\
 @COPY DOC\OXPGUIDE.TXT Build\XPDIR\DOC\
 @COPy DOC\README.TXT Build\XPDIR\DOC\
 @COPY DOC\SLIZENZ.TXT Build\XPDIR\DOC\
+@COPY DOC\SNAPSHOt.TXt Build\XPDIR\DOC\
 @COPY DOC\UPDATE.TXT Build\XPDIR\DOC\
 @COPY DOC\UUCP.TXT Build\XPDIR\DOC\
 @COPY DOC\VERSION.TXT Build\XPDIR\DOC\
@@ -121,11 +122,14 @@ MOVE *.hlp ..\Build\XPDIR\
 @COPY Beispiel\*.scr Build\XPDIR\Samples\
 @COPY Beispiel\*.dat Build\XPDIR\Samples\
 @COPY Beispiel\*.cfg Build\XPDIR\Samples\
+@COPY Beispiel\*.reg Build\XPDIR\Samples\
+@COPY Beispiel\*.dat Build\XPDIR\
 
 @REM SONSTIGES
 @COPY *.DLL Build\XPDIR\
 @COPY File_id.diz Build\XPDIR\
 @COPY *.EXE Build\XPDIR\
+@COPY *.COM Build\XPDIR\
 @COPY FIDO.PC Build\XPDIR\
 @COPY *.ICO Build\XPDIR\
 
@@ -148,6 +152,9 @@ MOVE *.hlp ..\Build\XPDIR\
 GOTO ENDE
 {
   $Log$
+  Revision 1.1.4.3  2003/04/11 21:16:23  mw
+  MW: - Anpassung wegen Dateien die es nur in der 3.40er Version gibt.
+
   Revision 1.1.4.2  2003/04/11 09:21:02  mw
   MW: - Neues Buildsystem fÅr Openxp/16 3.40 implementiert
 
