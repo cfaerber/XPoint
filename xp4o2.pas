@@ -581,12 +581,14 @@ begin
   until (n= MaxKommLevels) or (bez=0);
   brett:= dbReadNStr(mbase,mb_brett);
   maxebene:=0;
+  dbDisableIndexCache;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   fillchar(xlines,sizeof(KommLines),0);
   RecurBez(0,dbRecno(mbase),xlines,true,betr,brett);
   if ReplyTree.Count > 0 then
     TReplyTreeItem(ReplyTree[0]^).flags:=TReplyTreeItem(ReplyTree[0]^).flags or kflBetr;
+  dbEnableIndexCache;
   dbSetIndex(bezbase,mi);
   Hdp.Free;
   closebox;
@@ -927,6 +929,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2002/09/09 08:28:03  mk
+  - disable indexcache in reply tree
+
   Revision 1.58  2002/07/29 07:17:20  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
