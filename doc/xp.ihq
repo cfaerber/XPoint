@@ -4235,7 +4235,7 @@ Geben Sie Ihr Login-Paáwort ein.
 
 <<alle anderen Netze:>>
 
-Dies ist das Paáwort, daá Sie beim Einloggen als User
+Dies ist das Paáwort, das Sie beim Einloggen als User
 (also nicht als Point) verwenden. Es KANN das gleiche
 sein wie das Pointpaáwort, muá es aber nicht.
 
@@ -5198,7 +5198,7 @@ dem Bezeichner "<<Client-MailInUser=>>" gespeichert.
 
 @
 30118
-Das Paáwort, daá Sie fr die Authentifizierung bei
+Das Paáwort, das Sie fr die Authentifizierung bei
 diesem Mail-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
@@ -5358,7 +5358,7 @@ dem Bezeichner "<<Client-MailOutUser=>>" gespeichert.
 
 @
 30123
-Das Paáwort, daá Sie fr die Authentifizierung bei
+Das Paáwort, das Sie fr die Authentifizierung bei
 diesem SMTP-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
@@ -5437,7 +5437,7 @@ datei <Box>.BFG unter dem Bezeichner
 "<<Client-NewsUser=>>" gespeichert.
 @
 30127
-Das Paáwort, daá Sie fr die Authentifizierung bei
+Das Paáwort, das Sie fr die Authentifizierung bei
 diesem News-Server ben”tigen. Wenn der Server keine
 Authentifizierung erfordert, lassen Sie den Eintrag
 frei.
@@ -16990,7 +16990,7 @@ Falls Sie die Serverbox gewechselt haben, empfiehlt
 sich /Wartung/Server-Wechsel.
 @
 20617
-Auf dem Laufwerk, daá bei /Config/Pfade als Teil des
+Auf dem Laufwerk, das bei /Config/Pfade als Teil des
 Tempor„r-Verzeichnisses eingetragen ist, ist nicht
 gengend freier Platz vorhanden.
 @
