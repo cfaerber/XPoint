@@ -403,6 +403,7 @@ begin
   attrtxt(ma);
 end;
 
+
 procedure Editor_options;  { EditorOptionen Extern aendern }
 var config : Edconfig;
     brk    : boolean;
@@ -411,16 +412,25 @@ var config : Edconfig;
     p      : byte;
 
 begin
-    assign(t,editor.EdConfigFile);
-    brk:=true;
-    if not existf(t) then errsound
-    else begin
-      reset(t);
-      while not eof(t) do begin
-        readln(t,s);
-        LoString(s);
-        p:=cpos('=',s);
-        with config do       
+  assign(t,editor.EdConfigFile);
+  brk:=true;
+
+  if not existf(t) then            { neues Defaultconfig erstellen }
+  begin
+    config.rechter_rand:=74;
+    config.absatzendezeichen:='ú';
+    config.AutoIndent:=true;
+    config.PersistentBlocks:=true;
+    config.QuoteReflow:=true;
+    end
+
+  else begin
+    reset(t);                      { oder existierendes Configfile laden }
+    while not eof(t) do begin
+      readln(t,s);
+      LoString(s);
+      p:=cpos('=',s);
+      with config do       
         if p>0 then
           if left(s,p-1)='rechterrand' then
             config.rechter_rand:=ival(mid(s,p+1))
@@ -432,27 +442,32 @@ begin
             config.PersistentBlocks:=(mid(s,p+1)<>'n')
           else if left(s,p-1)='quotereflow' then
             config.QuoteReflow:=(mid(s,p+1)<>'n');
-        end;
-      close(t);
-      EditCfgFunc(config,brk);
-      if not brk then begin
-        rewrite(t);
-        with Config do begin
-          writeln(t,'RechterRand=',rechter_rand);
-          writeln(t,'AbsatzEnde=',absatzendezeichen);
-          writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
-          writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
-          writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
-          end;
-        close(t);
-        end;
       end;
-    menurestart:=brk;
+    close(t);
+    end;
+
+  EditCfgFunc(config,brk);         { Menue aufrufen }
+
+  if not brk then begin            { und Aenderungen speichern }
+    rewrite(t);
+    with Config do begin
+      writeln(t,'RechterRand=',rechter_rand);
+      writeln(t,'AbsatzEnde=',absatzendezeichen);
+      writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
+      writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
+      writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
+      end;
+    close(t);
+    end;
+  menurestart:=brk;
 end;
 
 end.
 {
   $Log$
+  Revision 1.12  2000/04/15 14:08:06  jg
+  - Bugfix: Erstaufruf der Editoroptionen ging nur aus dem Editor heraus.
+
   Revision 1.11  2000/04/14 14:55:35  jg
   - Bugfix: es gab zwei Routinen namens Editoptions...
 
