@@ -1746,6 +1746,7 @@ var  dl         : displp;
     if t=^G      then b:=EditfDEL         else    { WS-Zweitbelegung }
     if t=keyf5   then b:=EditfAbsatzmarke else
     if t=^T      then b:=EditfDelWordRght else
+    if t=keycdel then b:=EditfDelWordRght else
     if t=^Y      then b:=EditfDelLine     else
     if t=^P      then b:=EditfCtrlPrefix  else
     if t=keyf3   then b:=EditfWrapOff     else
@@ -1996,6 +1997,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/03/22 19:43:01  rb
+  <Ctrl Del>: Wort rechts l”schen
+
   Revision 1.16  2000/03/21 21:19:09  rb
   Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
 

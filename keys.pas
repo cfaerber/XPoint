@@ -77,6 +77,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyins  : taste = #0#82;
        keycins : taste = #0#146;
        keydel  : taste = #0#83;
+       keycdel : taste = #0#147;
 
        keyesc  : taste = #27;       { sonstige Tasten }
        keybs   : taste = #8;
@@ -460,6 +461,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/22 19:43:01  rb
+  <Ctrl Del>: Wort rechts l”schen
+
   Revision 1.13  2000/03/16 10:14:24  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert

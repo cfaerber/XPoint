@@ -820,7 +820,8 @@ x = 1 to 5
 In addition to the usual <Backspace> and <Del> Keys,
 The following functions are available:
 
-    <Ctrl T>         : Delete word right
+    <Ctrl T>,         
+    <Ctrl Del>       : Delete word right
     <Ctrl Backspace> : Delete word left
     <Ctrl Y>         : Delete line
     <Ctrl K><Y>      : Delete Block
