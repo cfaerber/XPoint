@@ -45,7 +45,7 @@ var   hello   : record
       hellopkt: array[0..sizeof(hellor)+1] of char absolute hello;
       ZedZap,LogSending  : boolean;
 
-      DisplayTimer: tTimer; {Wird zum Ausrechnen der ZModem-Restzeit und zur Anzeige genutzt}
+      ZModemTimer: tTimer; {Wird zum Ausrechnen der ZModem-Restzeit genutzt}
       Timers : array[0..qTimers-1] of tTimer;
       ENDE   : boolean;
       Dummy  : LongInt;
@@ -59,36 +59,32 @@ var
 procedure ZModemDispProc;
 var Remain: LongInt;
 begin
-  if(DisplayTimer.Timeout)OR(LastErrorCount<>TransferError)then begin
-    DisplayTime(System.Round(TimerObj.ElapsedSec));
-    if(DisplayTimer.ElapsedSec<=0)or(TransferBytes<=0)then Remain:=1
-      else Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/DisplayTimer.ElapsedSec)-DisplayTimer.ElapsedSec);
-    if Remain<0 then Remain:=0;
-    DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',UseNextLine);
-    UseNextLine:=False;
-    if LastErrorCount<>TransferError then
-      begin
-        DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
-        LastErrorCount:=TransferError; UseNextLine:=True;
-      end;
-    DisplayTimer.SetTimeout(0.5);
-  end;
+  DisplayTime(System.Round(TimerObj.ElapsedSec));
+  if(ZModemTimer.ElapsedSec<=0)or(TransferBytes<=0)then Remain:=1
+    else Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ZModemTimer.ElapsedSec)-ZModemTimer.ElapsedSec);
+  if Remain<0 then Remain:=0;
+  DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',UseNextLine);
+  UseNextLine:=False;
+  if LastErrorCount<>TransferError then
+    begin
+      DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
+      LastErrorCount:=TransferError; UseNextLine:=True;
+    end;
 end;
 
 procedure ZModemStartProc;
-var I,P: Integer; F: Text;
+var I,P: Integer;
 const PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
 begin
   {Ab jetzt Statusmeldungen anzeigen}
-  DisplayTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0; UseNextLine:=True;
+  ZModemTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0; UseNextLine:=True;
   if LogSending then
     DisplayStatus(getres(192)+' '+TransferName+'...',True)
   else begin
     DisplayStatus(getres(193)+' '+TransferName+'...',True);
     {Mailpakete, erkennbar an ihrer Extension, wandern in anderes Verzeichnis als sonstige Dateien.}
-    I:=0; repeat Inc(I); P:=Pos('.'+PKTExtensions[I],TransferName)until(P<>0)or(I>=8);
-    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9']))then
-      TransferPath:=FilePath; {File ist kein Mailpaket}
+    I:=0; repeat Inc(I); P:=Pos('.'+PKTExtensions[I],FileUpperCase(TransferName))until(P<>0)or(I>=8);
+    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9']))then TransferPath:=FilePath; {File ist kein Mailpaket}
   end;
 end;
 
@@ -97,20 +93,23 @@ var s: String; t,cps: LongInt;
 begin
   DispProc:=NIL; {Keine Statusmeldungen mehr anzeigen}
   if LogSending then s:='Sent ' else S:='Rcvd ';
-  t:=System.Round(DisplayTimer.ElapsedSec); if t<=0 then t:=1; {Verhindere Division by zeros}
-  cps:=TransferBytes DIV t; DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',False);
-  Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '
-           +StrS(t)+'s, '
-           +StrS(cps)+' cps');
+  t:=System.Round(ZModemTimer.ElapsedSec); if t<=0 then t:=1; {Verhindere Division by zeros}
+  cps:=TransferBytes DIV t;
+  if TransferName<>'' then begin
+    DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',UseNextLine);
+    Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(t)+'s, '+StrS(cps)+' cps');
+  end;
 end;
 
 { -- allgemeine Routinen ---------------------------------}
 
+function GetString(var buf; Len: Integer): String;
+{Gibt Len Zeichen aus buf als String zurueck}
+var s: String; begin SetLength(s,Len); Move(Buf,s[1],Len); GetString:=s; Debug.DebugLog('XPFM','GetString: "'+s+'"',5)end;
+
 procedure SetZero(var buf; s:string; ml:byte);
-begin
-  s:=s+#0;
-  Move(s[1],buf,min(ml,length(s)));
-end;
+{Bewegt max. ml Zeichen aus S in Buf und haengt #0 an}
+begin s:=s+#0; Move(s[1],buf,min(ml,length(s)))end;
 
 procedure InitHelloPacket;
 begin
@@ -132,13 +131,6 @@ begin
     if OwnDomain<>'' then inc(capabilities,do_domain);
   end;
 end;
-
-{  !!!!!!
-  function gettimer(nr:word):word;
-  begin
-    gettimer:=Timers[nr]
-  end;
-}
 
 function ProductName(pc:word):string;
 var t : text;
@@ -251,7 +243,7 @@ const ACK        = #$06;     { s. FTS-006, S. 10 }
 function fmSS(state:byte):byte;    { 0=brk, 1=FTS-001, 2=YooHoo, 3=EMSI }
 var NAKcount : byte;
     NAKtimer : boolean;
-    ems_req  : string[20];
+    ems_req  : string;
     c        : char;
 
   function TestEmsiReq:boolean;
@@ -273,8 +265,7 @@ var NAKcount : byte;
     if c<' ' then
       TestEmsiReq := TE
     else begin
-      inc(byte(ems_req[0]));
-      ems_req[length(ems_req)]:=UpCase(c);
+      ems_req:=ems_req+UpCase(c);
       if length(ems_req)=length(EMSI_REQ) then
         TestEmsiReq := TE
       else
@@ -385,18 +376,19 @@ begin
 end;
 
 
-function fmSH(state:byte):byte;     { Send Hello Packet }
+function fmSH:byte;     { Send Hello Packet }
 var RetryCount : byte;
     i          : integer;
     crc        : smallword;
     c          : char;
+
+
 begin
   RetryCount:=0;
   repeat
     inc(RetryCount);
     CommObj^.SendChar(#$1f);                 { $1f senden }
-    for i:=0 to sizeof(hellor)-1 do     { Hello senden }
-      CommObj^.SendChar(HelloPkt[i]);
+    for i:=0 to sizeof(hellor)-1 do CommObj^.SendChar(HelloPkt[i]); { Hello senden }
     CommObj^.PurgeInBuffer;
     crc:=CRC16Block(hello,sizeof(hellor));
     CommObj^.SendChar(char(hi(crc)));        { CRC senden }
@@ -520,24 +512,20 @@ end;
 
 
 procedure LogHelloData;
-var s : string[80];
 
-  procedure get0(var buf; max:byte);
+  function GetZString(var buf; max:byte): string;
+  type tCArray= array[0..65000]of char;
   var p : byte;
   begin
     p:=0;
-    while (string(buf)[p]<>#0) and (p<max) do
-      inc(p);
-    s[0]:=chr(p);
-    Move(buf,s[1],p);
+    while(tCArray(buf)[p]<>#0)and(p<max)do inc(p);
+    getzstring:=GetString(buf,p);
   end;
 
 begin
   with hello.h do begin
-    Get0(MyName,59);
-    log('~','Node: '+s);
-    Get0(SysopName,19);
-    log('~','Sysop: '+s);
+    log('~','Node: '+GetZString(MyName,59));
+    log('~','Sysop: '+GetZString(SysopName,19));
     log('~','Capabilities: '+hex(capabilities,4));
     log('~','Using: '+ProductName(product)+' v'+strs(HiVersion)+'.'+formi(loversion,2));
   end;
@@ -552,7 +540,7 @@ begin
   fmYS:=1;
   repeat
     case state of
-      1 : case fmSH(1) of            { Send Hello }
+      1 : case fmSH of            { Send Hello }
             0 : begin
                   fmYS:=0; state:=99;
                   log(ErrChar,'Error sending hello packet');
@@ -596,199 +584,142 @@ end;
 
 { --- EMSI_DAT-Handshake --------------------------------------------- }
 
-function EmsiDat:byte;    { 0=Abbruch, 1=Again, 2=ok->WaZOO }
-const maxemsdat = 8192;
-type  emsbuf    = array[0..maxemsdat-1] of char;
-var s,ems_dat1,
-    ems_dat2  : string;
-    adr       : string[50];
-    count     : byte;
-    scount    : integer;
-    ok        : boolean;
-    buf,edat  : ^emsbuf;
-    edatlen : word;
-    buflen,dl : word;
-    bufpos    : word;
-    hex4      : string[4];
-    s2        : string[80];
-    sec70,trx : longint;
-    l         : longint;
-    ercount   : integer;
-    more      : boolean;
+function EMSIHandshake:byte;    { 0=Abbruch, 1=Again, 2=ok->WaZOO }
 
 label ende;
 
-  procedure Add(s:string);
-  begin
-    Move(s[1],edat^[edatlen],length(s));
-    inc(edatlen,length(s));
-  end;
+var OtherData: String;
 
-  procedure DebugLog;
-  var s2 : string[66];
-      w  : word;
+  function ReadEMSIString(secs: Integer): String;
+  {Liest Zeile vom Modem, gibt evtl. gelesenen EMSI-String zurueck,
+   andere gelesene Zeichen wandern in OtherData}
+  var c  : char; EMSIString: String;
   begin
-    w:=0;
-    repeat
-      s2[0]:=chr(min(66,buflen-w));
-      Move(buf^[w],s2[1],length(s2));
-      inc(w,length(s2));
-      log('d',s2);
-    until w>=buflen
-  end;
-
-  procedure DebugFlush;
-  var s : string;
-      b : byte;
-  begin
-    repeat
-      s:='';
-      while (length(s)<66) and CommObj^.CharAvail do
-        begin b:=Ord(CommObj^.GetChar); if b>=32 then s:=s+chr(b) end;
-      if s<>'' then log('d',s);
-    until not CommObj^.CharAvail;
-  end;
-
-  procedure ReadEmsiString(secs,maxlen:word);
-  var c  : char;
-      s0 : string;
-  begin
-    buflen:=0;
-    s0:='';
-    Timers[ti_EMS1].SetTimeout(secs);
+    OtherData:=''; EMSIString:=''; Timers[ti_EMS1].SetTimeout(secs);
     c:=#0;
     repeat
       if CommObj^.CharAvail then begin
         c:=CommObj^.GetChar;
         if (c>=' ') then
-          if (buflen=0) and (c<>'*') then
-            s0:=s0+c
-          else if buflen<maxemsdat then begin
-            buf^[buflen]:=c;
-            inc(buflen);
-          end;
+          if(Length(EMSIString)=0)and(c<>'*') then {Nicht-EMSI-Daten gelesen}
+            OtherData:=OtherData+c
+          else
+            EMSIString:=EMSIString+c;
       end;
-    until (c=#13) or (c=#10) or (buflen=maxlen) or Timers[ti_EMS1].Timeout or
-          not CommObj^.Carrier;
-    if DebugMode and (s0<>'') then
-      log('d',s0);
-    s[0]:=chr(min(255,buflen));
-    Move(buf^,s[1],length(s));
-    if DebugMode then DebugLog;
-    bufpos:=0;
+    until (c=#13) or (c=#10) or Timers[ti_EMS1].Timeout or not CommObj^.Carrier;
+    DebugLog('XPFM','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',3);
+    ReadEMSIString:=EMSIString;
   end;
 
-  procedure GetBufStr;
-  var bp : word;
+  function ExtractEMSIData(var EMSIString: String): String;
+  {Holt Datenblock (durch geschweifte Klammern gekennzeichnet) aus EMSI-String und loescht
+   ihn daraus}
+  var I,J: Integer; S: String;
   begin
-    s:='';
-    while (bufpos<buflen) and (buf^[bufpos]<>'{') do
-      inc(bufpos);
-    if (bufpos<buflen) then begin
-      bp:=bufpos+1;
-      while (buf^[bufpos]<>'}') and (bufpos<buflen) do
-        inc(bufpos);
-      s[0]:=chr(min(255,bufpos-bp));
-      Move(buf^[bp],s[1],length(s));
-      inc(bufpos);
+    I:=Pos('{',EMSIString); J:=Pos('}',EMSIString);
+    if J>I then begin S:=Copy(EMSIString,I+1,J-I); Delete(EMSIString,1,J)end
+    else if I=0 then S:=''
+    else begin
+      DebugLog('XPFM','Strange EMSI string: "'+EMSIString+'"',3);
+      Delete(EMSIString,1,J); S:='';
     end;
+    DebugLog('XPFM','Processing EMSI data: "'+S+'"',3);
+    ExtractEMSIData:=S;
   end;
 
-  function sevenbit(s:string):string;
+  function Convert2SevenBit(s:string):string;
+  {Konvertiert Backslashes und ASCII>127 in Strings zu ASCII<=127}
   var i : byte;
   begin
     i:=1;
     while i<=length(s) do begin
-      if s[i]='\' then
-        insert('5c',s,i+1)   { Backslash -> \5c }
-      else if s[i]>#$7e then
-        s:=left(s,i-1)+'\'+LowerCase(hex(ord(s[i]),2))+mid(s,i+1);
+      if s[i]='\' then insert('5c',s,i+1)   { Backslash -> \5c }
+      else if s[i]>#$7e then s:=left(s,i-1)+'\'+LowerCase(hex(ord(s[i]),2))+mid(s,i+1);
       inc(i);
     end;
-    sevenbit:=s;
+    Convert2SevenBit:=s;
   end;
 
+var EMSIString,ED,EMSIData,EMSIData2,adr,hex4  : string;
+    count     : byte;
+    scount,dl : integer;
+    ok        : boolean;
+    sec70,trx : longint;
+    l         : longint;
+    ercount   : integer;
+    more      : boolean;
+
 begin
-  DisplayStatus('EMSI',True);
-{  CommObj^.SendString(EMSI_INQ+#13); }
+  DisplayStatus('EMSI',True); {CommObj^.SendString(EMSI_INQ+#13);}
   log(' ','sType: EMSI');
-  new(buf); getmem(edat,1024);
-  EmsiDat:=0;
+  EMSIHandshake:=0;
                                                         { EMSI_DAT erzeugen }
   sec70:=secsfrom70;
-  ems_dat1:='{'+Password+'}{8N1,PUA}{ZAP,ZMO,XMA,ARC,FNC}{'+
+  EMSIData:='{'+Password+'}{8N1,PUA}{ZAP,ZMO,XMA,ARC,FNC}{'+
             hex(prodcode,2)+'}{CrossPoint/XP-FM}{'+mid(verstr,2)+'}{'+SerNr+
-            '}{IDENT}{['+SevenBit(SysName)+']';
-  ems_dat2:='[]['+SevenBit(UserName)+'][-Unpublished-]['+iifs(baud>=9600,
+            '}{IDENT}{['+Convert2SevenBit(SysName)+']'+
+            '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(baud>=9600,
             '9600',strs(baud))+'][]}'+
             iifs(SendTrx,'{TRX#}{['+hex(sec70,8)+']}','');
-  edatlen:=0;
-  adr:=OwnAddr;
-  if OwnDomain<>'' then adr:=adr+'@'+OwnDomain;
-  Add('EMSI_DAT'+hex(8+length(adr)+iif(akas<>'',length(akas)+1,0)+
-                     length(ems_dat1)+length(ems_dat2),4));
-  Add('{EMSI}{'+adr);
-  if akas<>'' then Add(' '+akas);
-  Add('}'+ems_dat1);
-  Add(ems_dat2);
+  if OwnDomain<>'' then adr:=OwnAddr+'@'+OwnDomain else adr:=OwnAddr;
+  EMSIData2:='EMSI_DAT'+hex(8+length(adr)+iif(akas<>'',length(akas)+1,0)+
+             length(EMSIData),4)+'{EMSI}{'+adr;
+  if akas<>'' then EMSIData2:=EMSIData2+' '+akas;
+  EMSIData:=EMSIData2+'}'+EMSIData;
 
+  Debug.DebugLog('XPFM','EMSIData: "'+EMSIData+'"',5);
   count:=5; ercount:=0; ok:=false; more:=false;
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
     if not more then begin
       CommObj^.SendString('**',False);                         { EMSI_DAT senden }
-      CommObj^.SendBlock(edat^,edatlen,Dummy);
-      ProcessIncoming(False);
-      if DebugMode then
-        DebugFlush
-      else
-        CommObj^.PurgeInBuffer;
-      CommObj^.SendString(hex(CRC16Block(edat^,edatlen),4)+#13,False);
+      CommObj^.SendBlock(EMSIData[1],Length(EMSIData),Dummy);
+      ProcessIncoming(False); CommObj^.PurgeInBuffer;
+      CommObj^.SendString(hex(CRC16Block(EMSIData[1],Length(EMSIData)),4)+#13,False);
     end;
     repeat
-      ReadEmsiString(5,length(EMSI_ACK));        { warten auf EMSI_ACK / _NAK }
-      if Timers[ti_EMS1].Timeout then
-        CommObj^.SendString(EMSI_INQ+#13,False)
-      else if s=EMSI_REQ then begin
+      EMSIString:=ReadEMSIString(5); { warten auf EMSI_ACK / _NAK }
+      if Timers[ti_EMS1].Timeout then CommObj^.SendString(EMSI_INQ+#13,False)
+      else if EMSIString=EMSI_REQ then begin
         inc(ercount);
         if ercount>2 then CommObj^.SendString(EMSI_INQ+#13,False);
       end;
-    until (s<>EMSI_REQ) and ((s<>'') or Timers[ti_EMS1].Timeout);
-    ok:=(s=EMSI_ACK);
+    until(EMSIString<>EMSI_REQ)and((EMSIString<>'')or Timers[ti_EMS1].Timeout);
+    ok:=(EMSIString=EMSI_ACK);
     more:=not Timers[ti_EMS1].Timeout and CommObj^.CharAvail;
     if Timers[ti_EMS1].Timeout then dec(count);
     dec(scount);
-    if (s=EMSI_NAK) then
-      DisplayAndLog(ErrChar,getres(187));   { 'EMSI_NAK: wiederhole EMSI-Paket' }
-  until ok or (count=0) or (scount=0) or not CommObj^.Carrier;
+    if EMSIString=EMSI_NAK then DisplayAndLog(ErrChar,getres(187));   { 'EMSI_NAK: wiederhole EMSI-Paket' }
+  until ok or(count=0)or(scount=0)or not CommObj^.Carrier;
   if not CommObj^.Carrier then LogCarrier;
   if not ok then goto ende;
 
   count:=10;
   ok:=false;
   repeat
-    ReadEmsiString(7,maxemsdat);               { EMSI_DAT empfangen }
-    if (s='') then begin
+    EMSIString:=ReadEmsiString(7);               { EMSI_DAT empfangen }
+    if EMSIString='' then begin
       if Timers[TI_EMS1].Timeout then begin
         CommObj^.SendString(EMSI_HBT+#13,False);
         mdelay(200);
       end;
     end else begin
-      while left(s,length(EMSI_ACK))=EMSI_ACK do begin
-        delete(s,1,length(EMSI_ACK));
-        inc(bufpos,length(EMSI_ACK));
-      end;
-      while (left(s,2)<>'**') and (s<>'') do begin
-        delete(s,1,1); inc(bufpos);
-      end;
-      if left(s,length(EMSI_DAT))=EMSI_DAT then begin
-        dl:=hexval(copy(s,length(EMSI_DAT)+1,4));    { PaketlÑnge }
-        Move(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
-        ok:=(hexval(hex4)=CRC16Block(buf^[bufpos+2],dl+12));
+      while left(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
+      while(left(EMSIString,2)<>'**')and(EMSIString<>'')do delete(EMSIString,1,1);
+      if left(EMSIString,length(EMSI_DAT))=EMSI_DAT then begin
+        Debug.DebugLog('XPFM','Received EMSI_DAT',5);
+        dl:=hexval(copy(EMSIString,length(EMSI_DAT)+1,4));    { Paketlaenge }
+        hex4:=Copy(EMSIString,Length(EMSI_DAT)+1+4+dl,4);     { CRC }
+        Delete(EMSIString,Length(EMSI_DAT)+1+4+dl,4);
+        Debug.DebugLog('XPFM','Read CRC: "'+hex4+'"',5);
+        Debug.DebugLog('XPFM','Expected CRC: "'+Hex(CRC16Block(EMSIString[1],Length(EMSIString)),4)+'"',5);
+        ok:=(hexval(hex4)=CRC16Block(EMSIString[1],Length(EMSIString)));
         if not ok then begin
-          CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
+          Debug.DebugLog('XPFM','CRC error',5);
+{          CommObj^.SendString(EMSI_NAK+#13,False);}       { CRC-Fehler }
           DisplayAndLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
-        end else begin
+        end;{ else} begin ok:=true; {* Not final}
+          Debug.DebugLog('XPFM','CRC ok',5);
           mdelay(150);
           CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
@@ -798,35 +729,30 @@ begin
   until ok or (count=0) or not CommObj^.Carrier;
 
   if ok then begin                         { Daten auslesen }
-    { bufpos:=0; }
     fillchar(hello,sizeof(hello),0);
-    getbufstr;   { EMSI }
-    getbufstr;   { AKA's }
-    log('~','AKA: '+s);
-    getbufstr;   { password }
-    if trim(s)<>'' then
-      if (UpperCase(s)=UpperCase(password)) then
+    ExtractEMSIData(EMSIString);   { EMSI }
+    log('~','AKA: '+ExtractEMSIData(EMSIString)); { AKAs }
+    ED:=ExtractEMSIData(EMSIString);   { password }
+    if trim(ED)<>'' then
+      if (UpperCase(ED)=UpperCase(password)) then
         log(' ','Password ok')
       else
-        log('#','Password error ('+s+')');
-    getbufstr;   { link codes }
-    getbufstr;   { compatibility codes }
-    log('~','Compatibility: '+s);
-    upString(s);
-    if pos('ZMO',s)>0 then inc(hello.h.capabilities,Zed_Zipper);
-    if pos('ZAP',s)>0 then inc(hello.h.capabilities,Zed_Zapper);
-    if pos('NRQ',s)=0 then inc(hello.h.capabilities,WaZooFReq);
-    getbufstr;                 { mailer product code }
-    getbufstr; s2:=s;          { mailer name }
-    getbufstr; s2:=s2+' v'+s;  { mailer version }
-    getbufstr; s2:=s2+' '+s;   { mailer S/N }
-    log('~','Using: '+s2);
+        log('#','Password error ('+ED+')');
+    ExtractEMSIData(EMSIString);   { link codes }
+    ED:=ExtractEMSIData(EMSIString);   { compatibility codes }
+    log('~','Compatibility: '+ED);
+    upString(ED);
+    if pos('ZMO',ED)>0 then inc(hello.h.capabilities,Zed_Zipper);
+    if pos('ZAP',ED)>0 then inc(hello.h.capabilities,Zed_Zapper);
+    if pos('NRQ',ED)=0 then inc(hello.h.capabilities,WaZooFReq);
+    ExtractEMSIData(EMSIString);                 { mailer product code }
+    log('~','Using: '+ExtractEMSIData(EMSIString)+
+            ' v'+ExtractEMSIData(EMSIString)+' '+ExtractEMSIData(EMSIString)); { mailer name/version/sn }
     trx:=0;
-    while bufpos<buflen do begin
-      getbufstr; s2:=s;        { optionale Felder auswerten }
-      getbufstr;
-      if UpperCase(s2)='TRX#' then  { transaction number }
-        trx:=hexval(copy(s,2,8));
+    while EMSIString<>'' do begin
+      if UpperCase(ExtractEMSIData(EMSIString))='TRX#' then
+        trx:=hexval(copy(ExtractEMSIData(EMSIString),2,8)) { transaction number }
+      else ExtractEMSIData(EMSIString);
     end;
     if trx<>0 then begin
       log(':','Tranx: '+hex(sec70,8)+' / '+hex(trx,8));
@@ -840,18 +766,16 @@ begin
         DisplayStatus(getres(182),True);    { 'korrigiere Uhrzeit' }
       end;
     end;
-    EmsiDat:=2;
+    EMSIHandshake:=2;
   end else
     if not CommObj^.Carrier then LogCarrier;
 ende:
-  dispose(buf);
-  freemem(edat,1024);
 end;
 
 
 { --- FTS-0001/0007 - Transfer --------------------------------------- }
 
-procedure fmS(state:byte);          { FTS-001 / FTS-007 }
+procedure fmS;          { FTS-001 / FTS-007 }
 begin
   DisplayStatus('FTS-0001 / '+getres(184),True);    { 'nicht implementiert' }
   log(' ','sType: FTS-0001');
@@ -862,96 +786,15 @@ end;
 { --- WaZOO - Transfer ----------------------------------------------- }
 
 procedure WaZOOsession;
-var i       : integer;
-    zmpar   : string[100];
-    zmresult: byte;
-    t       : text;
+var FileToSend : String;
     ErrorFlag: Boolean;
     ErrorWord: System.Word;
-
-  procedure ProcessLogfile(send:boolean);
-  var s    : string;
-      ss   : string[40];
-      num  : longint;
-      ok   : boolean;
-      time : datetimest;
-      fn   : pathstr;
-      bytes: longint;      { num0 + Recover-Bytes }
-      rbytes: longint;     { tatsÑchlich Åbertragene Bytes }
-      secs : longint;
-      cps  : longint;
-      i    : integer;
-
-    function addtime(t:datetimest; secs:longint):string;
-    var l : longint;
-    begin
-      l:=longint(ival(left(t,2)))*3600+ival(copy(t,4,2))*60+ival(right(t,2));
-      inc(l,secs);
-      if l<0 then inc(l,24*3600);
-      addtime:=formi(l div 3600,2)+':'+formi((l div 60)mod 60,2)+':'+
-               formi(l mod 60,2);
-    end;
-
-  begin
-    reset(t);
-    while not eof(t) do begin
-      readln(t,s);
-      if firstchar(s)=';' then begin   { Logfile wurde nicht erzeugt }
-        close(t);
-        exit;
-      end;
-      if UpCase(firstchar(s)) in ['Z','E','L'] then begin
-        ok:=(UpperCase(GetToken(s,' '))='Z');   { Kennung }
-        if gettoken(s,' ')='' then;        { Datum }
-        time:=gettoken(s,' ');             { Uhrzeit }
-        fn:=UpperCase(GetToken(s,','));         { Dateiname }
-        s:=s+',';
-        rbytes:=-1;
-        while s<>'' do begin
-          ss:=GetToken(s,',');
-          if cpos('/',ss)>0 then rbytes:=ival(GetToken(ss,'/'));
-          num:=ival(GetToken(ss,' '));
-          LoString(ss);
-          if ss='bytes' then bytes:=num else
-          if ss='s'     then secs:=num else
-          if ss='cps'   then cps:=num
-
-          { !!!!!!!!
-          else
-          if ss='errors' then !? ;
-          }
-
-        end;
-        if rbytes=0 then      { komplett-Recovery }
-          log('*','Skipped '+fn+'; '+strs(bytes)+'b')
-        else begin
-          logwithtime('*',addtime(time,secs),
-                      iifs(send,'Sent ','Rcvd ')+fn+'; '+
-                      strs(iif(rbytes>=0,rbytes,bytes))+'b, '+strs(secs)+'s, '+
-                      strs(cps)+' cps'+iifs(ok,'',', error'));
-          if send and ok then
-            for i:=1 to sendfiles do begin   { Datei ok -> aus Sendeliste entfernen }
-              { log('0',getfilename(fn)+' '+getfilename(sendfile[i]^)); }
-              if stricmp(getfilename(fn),getfilename(SendFile[i]^)) and
-                 (pos('.REQ',UpperCase(fn))=0) then begin
-                if i<sendfiles then
-                  Move(sendfile[i+1],sendfile[i],4*(sendfiles-i));
-                dec(sendfiles);
-              end;
-            end;
-        end;
-      end;  { firstchar <> 'T' }
-    end;  { while not eof(t) }
-    close(t);
-    erase(t);
-    if ioresult<>0 then;
-  end;
 
 begin
   log('+','starting mail transfer');
   mailing:=true;
   if hello.h.capabilities and MyCap=0 then begin
-    DisplayStatus(getres(185),True);    { 'keine öbertragung mîglich :-(' }
+    DisplayStatus(getres(185),True);    { 'keine öbertragung m"glich :-(' }
     log(ErrChar,'no common transfer protocol');
     mdelay(1000);
     aresult:=EL_nologin;
@@ -961,16 +804,22 @@ begin
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
 
   {ZModem-Ausgaberoutinen setzen} ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
-  LogSending:=True; DisplayTimer.Init;
+  LogSending:=True; ZModemTimer.Init;
   DisplayStatus(getres(192),True);
-  if sendempty and ZedZap then begin
-    DisplayTimer.Start; ZModemSend(CommObj,'',True,ErrorWord)
-  end else
+  if sendempty and ZedZap then
+    ZModemSend(CommObj,'',True,ErrorWord)
+  else
     begin
-      i:=1;
       repeat
-        DisplayTimer.Start; ZModemSend(CommObj,sendfile[i]^,i=sendfiles,ErrorWord); inc(i)
-      until(ErrorWord<>0)or(i>sendfiles)
+        if Pos(#9,FilesToSend)>0 then begin
+          FileToSend:=Copy(FilesToSend,1,Pos(#9,FilesToSend)-1);
+          Delete(FilesToSend,1,Pos(#9,FilesToSend));
+          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',5);
+        end else begin
+          FileToSend:=FilesToSend; FilesToSend:='';
+        end;
+        ZModemSend(CommObj,FileToSend,FilesToSend='',ErrorWord);
+      until(ErrorWord<>0)or(FilesToSend='');
     end;
 
   if ErrorWord<>0 then begin
@@ -1006,13 +855,13 @@ begin
     DisplayTime(System.Round(TimerObj.ElapsedSec));
     ENDE:=true; aresult:=0;
     case fmSS(0) of            { YooHoo  }
-      1 : fmS(4);              { FTS-001 }
+      1 : fmS;              { FTS-001 }
       2 : case fmYS(1) of      { WaZOO   }
             0 : aresult:=EL_nologin;
             1 : ENDE:=false;
             2 : WaZOOsession;  { Batch Up/Download }
           end;
-      3 : case EmsiDat of      { EMSI }
+      3 : case EMSIHandshake of      { EMSI }
             0 : aresult:=EL_nologin;
             1 : ENDE:=false;
             2 : WaZOOsession;  { Batch Up/Download }
@@ -1025,6 +874,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/07/12 16:52:42  ma
+  - Anpassungen an Ansistrings:
+    - EMSI-Handshake *deutlich* vereinfacht
+    - Sendfile-Liste von Array auf einzelnen String geaendert
+
   Revision 1.15  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
