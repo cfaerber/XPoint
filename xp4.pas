@@ -650,7 +650,8 @@ var t,lastt: taste;
               end;
       11    : begin
                 markpos:=markanz-1;
-                dbGo(dispdat,marked^[markpos].recno);
+                if MarkPos>= 0 then
+                  dbGo(dispdat,marked^[markpos].recno);
               end;
       12    : begin
                 bezpos:= ReplyTree.Count - 1;
@@ -666,8 +667,8 @@ var t,lastt: taste;
 
   Procedure GoStart;
   begin
-  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
-    then _GoEnd else _GoStart;
+    if MsgNewfirst and ((dispmode=10) or (dispmode=11))
+      then _GoEnd else _GoStart;
   end; 
 
   Procedure GoEnd;
@@ -2343,6 +2344,9 @@ end;
 
 {
   $Log$
+  Revision 1.122.2.2  2002/05/20 14:20:04  mk
+  - fixed crash with Ctrl-E after N/U/Z with only one unsend message
+
   Revision 1.122.2.1  2002/04/20 16:08:34  cl
   - fixed recipient duplication bug
 
