@@ -16,8 +16,7 @@
 function Unix2DOSfile(fn,destdir: String): String;
 var p,i     : byte;
     allowed : set of char;
-    name    : namestr;
-    ext     : extstr;
+    name, ext: string;
     n       : word;
 begin
   UpString(fn);
