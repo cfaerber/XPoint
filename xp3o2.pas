@@ -421,6 +421,8 @@ begin
   dbWriteN(mbase,mb_gelesen,b);
   RereadBrettdatum(dbReadStr(mbase,'brett'));
   dbGo(mbase,rec);
+  setbrettgelesen(dbreadstr(mbase, 'brett'));
+  dbGo(mbase,rec);
 end;
 
 
@@ -435,10 +437,13 @@ end;
 
 
 end.
-<<<<<<< xp3o2.pas
-=======
 {
   $Log$
+  Revision 1.4.2.2  2001/07/11 20:35:31  mk
+  JG:- ungelesen-fix, Unread flag of /Netcall ("/Netzanruf")
+    message area should now always be set correctly => "Update date
+    entries after netcall" under C/O/C should not be necessary anymore.)
+
   Revision 1.4.2.1  2000/04/24 19:23:32  mk
   FL: Einige Tags mit U- versehen
 
@@ -455,5 +460,4 @@ end.
   - ZPR auf VP portiert
   - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
->>>>>>> 1.7
-
+}
