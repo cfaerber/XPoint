@@ -573,7 +573,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
-  haltownpm:=false; 
+  haltownpm:=false;
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -694,7 +694,6 @@ begin
   PGP_log:=false;
   PGP_signall:=false;
   PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
-  AutoDatumsBezuege:=false;
 end;
 
 
@@ -910,7 +909,6 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1344,7 +1342,7 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege',autodatumsbezuege) or
+          getx(su,  'autodatumsbezuege', dummyb) or
           getb(su,  'screenlines',ConfigScreenlines) or
           getb(su,  'screencols', ConfigScreenWidth) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
@@ -1701,6 +1699,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.88  2000/11/01 11:01:15  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.87  2000/10/17 10:05:48  mk
   - Left->LeftStr, Right->RightStr
 

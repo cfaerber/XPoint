@@ -405,11 +405,6 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
-  { Nach dem Netcall DatumsbezÅge setzen, damit
-    /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if Assigned(NC) then
-    if AutoDatumsBezuege and not NC^.Abbruch then
-      bd_setzen(true);
 end;
 
 
@@ -777,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/11/01 11:01:15  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.32  2000/10/24 14:32:46  mk
   - Datumsbezuege wieder korrigiert
 

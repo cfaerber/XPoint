@@ -831,7 +831,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        mheadercustom : array[1..2] of string = ('','');
 
-       AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
@@ -1169,6 +1168,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.96  2000/11/01 11:01:14  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.95  2000/11/01 10:26:36  mk
   - Limits im Kommentarbaum erhoeht
 

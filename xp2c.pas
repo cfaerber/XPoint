@@ -456,7 +456,7 @@ procedure netcalloptions;
 var x,y : byte;
     brk : boolean;
 begin
-  dialog(59,11,getres2(254,1),x,y);     { 'Netcall-Optionen' }
+  dialog(59,10,getres2(254,1),x,y);     { 'Netcall-Optionen' }
   maddbool(3,2,getres2(254,2),ShowLogin); mhnr(560);   { 'Login-Bild zeigen' }
   maddbool(3,3,getres2(254,3),BreakLogin);   { 'Login-Bild abbrechen' }
   hayes:=hayescomm;
@@ -468,7 +468,6 @@ begin
   maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Groáschreibung umwandeln' }
   maddbool(3,7,getres2(254,14),netcalllogfile); { 'vollst„ndiges Netcall-Logfile (NETCALL.LOG)' }
   maddbool(3,9,getres2(254,15),netcallunmark);  { 'Nachrichtenmarkierungen nach Netcall aufheben' }
-  maddbool(3,10,getres2(254,16),AutoDatumsBezuege);  { 'Datumsbezge nach Netcall anpassen' }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -1493,6 +1492,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/11/01 11:01:14  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.57  2000/10/17 10:05:47  mk
   - Left->LeftStr, Right->RightStr
 

@@ -1084,9 +1084,13 @@ begin
     close(userlog);
     puffereinlesen:=true;
 
-    mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
+    write(getres(320));   { 'Datumsbezge werden berarbeitet...     %' }
+    GotoXY(WhereX-5, WhereY);
+    BrettDatumSetzen(true);
+    moff; Wrt2(getres(321)); mon;  { ' fertig.' }
 
-    end   { if Puffer_ok }
+    mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
+  end   { if Puffer_ok }
 
   else begin
     close(f);
@@ -1158,6 +1162,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/11/01 11:01:15  mk
+  - Autodatumsbezuege jetzt immer in Netcall
+
   Revision 1.32  2000/10/17 10:05:49  mk
   - Left->LeftStr, Right->RightStr
 
