@@ -76,7 +76,7 @@ const
 
 var
   Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer end;
-  Logfile: Text; Logfilename: string;
+  Logfile: Text; Logfilename,Logfiledir: string;
 
 function FindBadge(Badge: string): Integer;
 var
@@ -128,8 +128,14 @@ var
   SR: TSearchRec;
   Rew: Boolean;
   err: integer;
+  cd:  string;
+  
 begin
   if Logging then Exit;
+  
+  cd := GetCurrentDir;
+  if Logfiledir<>'' then SetCurrentDir(Logfiledir) else Logfiledir:=cd;
+
   {$IFDEF Debug} if Filename = '' then Filename := '*debuglog.txt'; {$ENDIF}
   Logfilename := Filename;
   Logging := True;
@@ -162,6 +168,8 @@ begin
   end
   else
     Logging := False;
+
+  SetCurrentDir(cd);
 end;
 
 procedure CloseLogfile;
@@ -178,6 +186,7 @@ begin
 end;
 
 initialization
+  Logfiledir:='';
   OpenLogfile(False, GetEnv('DEBUG'));
 
 finalization
@@ -187,6 +196,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/02/22 16:03:50  cl
+  - logfile always opened in same dir (no wandering if shell/TempCloseLog is called)
+
   Revision 1.10  2001/01/04 22:01:31  ma
   - re-enabled default logging if cond variable DEBUG is set
   - logfile will be overwritten on program start, so no problems should occur.
