@@ -200,10 +200,14 @@ begin
 end;
 
 function TPascalFileStream.Write(const Buffer; Count: Longint): Longint;
-var R: Integer;
+var
+  R: Integer;
+  Buffervar: Pointer;
 begin
   IOResult;
-  System.BlockWrite(FPFile^,Buffer,Count,R);            IOExcept(EWriteError);
+  Buffervar := @Buffer; // fpc gets error if assigning const to var-param
+  System.BlockWrite(FPFile^,Buffervar,Count,R);
+  IOExcept(EWriteError);
   Result := R;
 end;
 
