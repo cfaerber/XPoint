@@ -1876,7 +1876,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 31   max. UUCP-g-Fenstergr”áe  ~
 62   maximale Dateigr”áe    ~
 64   Batched SMTP-Modus~
-65   ausùSMTP/UUCPùSMTP/PPP
+65   ausùSMTP/UUCPùSMTP/Client
 32   variable UUCP-g-Paketgr”áe
 60   Ausgangspaketgr”áe vorgeben
 61   Login mit 7/E/1
@@ -1884,7 +1884,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 34   g-Protokoll
 35   Dateigr”áe bertragen
 36   Batched SMTP (UUCP-Style)
-58   Batched SMTP (PPP-Style)
+58   Batched SMTP (Client-Style)
 57   Client-Modus (fr externe Mail-/News-Clients)
 59   Client-Aufruf     ~
 63   Zus„tzliche Boxen ~
