@@ -69,7 +69,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
 implementation
 
-uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
+uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
 
 
 function getline:string;                          { Eine Zeile vom Lister uebernehmen }
@@ -325,6 +325,8 @@ begin
   begin
 
     if upcase(c) = k2_I then msg_info;                         { 'I' fuer Lister }
+
+    if upcase(c) = 'U' then uudecode;                          { 'U' = UUDecode }
 
     if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
@@ -986,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/16 16:45:39  mk
+  JG: UUE-Decoding direkt aus Lister mit U
+
   Revision 1.49  2000/07/11 21:39:20  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates
