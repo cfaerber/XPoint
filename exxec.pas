@@ -11,7 +11,6 @@
 { Exec-Swapper }
 
 {$I XPDEFINE.INC }
-{$define debugtofile}
 
 {$IFDEF BP }
   {$F+}
@@ -496,6 +495,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/13 15:12:27  oh
+  -persoenliche debug-Zeile entfernt
+
   Revision 1.16  2000/05/07 17:50:07  mk
   - Limits fuer Dateinamen entfernt
 
