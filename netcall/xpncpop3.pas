@@ -143,8 +143,8 @@ begin
   SMTP.Free;
   if result then begin
     ClearUnversandt(PPFile,BoxName);
-    SaveDeleteFile(PPFile);
-    SaveDeleteFile(RFCFile);
+    SafeDeleteFile(PPFile);
+    SafeDeleteFile(RFCFile);
   end;
 end;
 
@@ -277,6 +277,9 @@ end;
                       
 {
   $Log$
+  Revision 1.31  2001/12/26 01:35:33  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.30  2001/12/21 21:25:18  cl
   BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
   SEE ALSO: <8FIVnDgocDB@3247.org>

@@ -1533,6 +1533,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.78  2001/12/24 23:07:04  mk
   - updates for nt_Client
 
@@ -1561,7 +1564,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.70  2001/09/07 13:54:20  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

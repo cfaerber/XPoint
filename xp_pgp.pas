@@ -237,7 +237,7 @@ begin
   if UsePGP and (PGP_UserID<>'') then begin
     secring:=filesearch('PUBRING.PGP',getenv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
-      SaveDeleteFile(PGPkeyfile);
+      SafeDeleteFile(PGPkeyfile);
       if PGPVersion=PGP2 then
         RunPGP('-kx +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile)
       else if PGPVersion=GPG then
@@ -817,7 +817,7 @@ begin
     if DoSend(true,tmp,true,false,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
               hd,SendPGPreq) then;
-    SaveDeleteFile(tmp);
+    SafeDeleteFile(tmp);
     end;
   freeres;
 end;
@@ -898,8 +898,8 @@ begin
 
   if sigtest then begin
     PGP_WaitKey:=false;
-    SaveDeleteFile(tmp);
-    SaveDeleteFile(_source);
+    SafeDeleteFile(tmp);
+    SafeDeleteFile(_source);
   end;
 
   if not FileExists(tmp2) then begin
@@ -950,7 +950,7 @@ begin
       fmove(f2,f);
       close(f2);
       close(f);
-      SaveDeleteFile(tmp2);
+      SafeDeleteFile(tmp2);
       Xwrite(tmp);
       wrkilled;
       dbWriteN(mbase,mb_typ,hdp.typ[1]);
@@ -963,8 +963,8 @@ begin
     end;
   end;
   { Aufraeumen: }
-  SaveDeleteFile(tmp);
-  SaveDeleteFile(tmp2);
+  SafeDeleteFile(tmp);
+  SafeDeleteFile(tmp2);
 end;
 
 
@@ -1065,7 +1065,7 @@ begin
     tmp2:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(xTractPuf,'',tmp2,false,0);
     PGP_DecodeKey(tmp2,tmp);
-    SaveDeleteFile(tmp2);
+    SafeDeleteFile(tmp2);
     end;
   if not FileExists(tmp) then
     rfehler(3005)         { 'Fehler beim Auslesen des PGP-Keys' }
@@ -1082,7 +1082,7 @@ begin
       RunPGP('-ka '+tmp);
 
     PGP_WaitKey:=mk;
-    SaveDeleteFile(tmp);
+    SafeDeleteFile(tmp);
   end;
   Hdp.Free;
 end;
@@ -1132,7 +1132,7 @@ begin
     extract_msg(xTractPuf,'',tmp,false,0);
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
-    SaveDeleteFile(tmp);
+    SafeDeleteFile(tmp);
   end;
   Hdp.Free;
 end;
@@ -1142,7 +1142,7 @@ procedure PGP_EndSavekey;
 begin
   if Savekey <> '' then
   begin
-    SaveDeleteFile(savekey);
+    SafeDeleteFile(savekey);
     Savekey:='';
   end;
 end;
@@ -1162,6 +1162,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.59  2001/12/02 12:11:21  cl
   - got two range check errors
 
@@ -1219,7 +1222,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.43  2001/09/07 13:54:23  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -688,6 +688,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.55  2001/11/24 20:29:25  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 
@@ -707,7 +710,7 @@ end;
   - some AnsiString fixes
 
   Revision 1.50  2001/09/07 13:54:23  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

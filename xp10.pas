@@ -1466,7 +1466,7 @@ var
                 1,brk) of
       1 : del_it;
       3 : begin
-            SaveDeleteFile(FidoDir+NodeList.GetFilename(strIdx));
+            SafeDeleteFile(FidoDir+NodeList.GetFilename(strIdx));
             del_it;
           end;
     end;
@@ -2067,6 +2067,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.65  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.64  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 
@@ -2083,7 +2086,7 @@ end.
   - some AnsiString fixes
 
   Revision 1.60  2001/09/07 13:54:18  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

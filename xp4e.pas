@@ -2438,6 +2438,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.81  2001/10/12 22:59:38  mk
   - fixed writing "Kommentar" in AddNewBrett
 
@@ -2454,7 +2457,7 @@ end;
   - adaptions/fixes for PGP/MIME support
 
   Revision 1.77  2001/09/07 13:54:20  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

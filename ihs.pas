@@ -432,6 +432,9 @@ end.
 
 {
   $Log$
+  Revision 1.30  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.29  2001/09/25 21:14:13  cl
   - Delphi compile fix
 
@@ -443,7 +446,7 @@ end.
   - extHlp -> extHelp  (wrong spelled constant-name)
 
   Revision 1.26  2001/09/07 13:54:17  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

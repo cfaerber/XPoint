@@ -663,6 +663,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.46  2001/10/20 17:26:43  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
@@ -679,7 +682,7 @@ end;
   - some AnsiString fixes
 
   Revision 1.42  2001/09/07 13:54:24  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

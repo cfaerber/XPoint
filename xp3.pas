@@ -1143,6 +1143,9 @@ finalization
 
 {
   $Log$
+  Revision 1.74  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.73  2001/12/22 22:15:05  mk
   - search templates always in our main path
 
@@ -1169,7 +1172,7 @@ finalization
   - some AnsiString fixes
 
   Revision 1.66  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 }

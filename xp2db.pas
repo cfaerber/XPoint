@@ -198,7 +198,7 @@ var flp : dbFLP;
       fsize:=4; fnlen:=10;
       end;
     dbAppendField(BrettFile,fld);
-    SaveDeleteFile(BrettFile+dbIxExt);
+    SafeDeleteFile(BrettFile+dbIxExt);
     AlphaBrettindex;
   end;
 
@@ -945,6 +945,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.39  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
@@ -956,7 +959,7 @@ end;
   - cleaned up MIME-related fields in THeader
 
   Revision 1.36  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -1709,6 +1709,9 @@ begin
 
 {
   $Log$
+  Revision 1.131  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.130  2001/11/04 15:20:20  my
   MY: - Default fÅr "Systemname in PM-Brettern" (userboxname) true
 
@@ -1738,7 +1741,7 @@ begin
   - Kylix compatibility stage II
 
   Revision 1.122  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -310,7 +310,7 @@ begin
       closebox;
     end else begin
       Debug.DebugLog('xpncfido','no files to process',DLInform);
-      SaveDeleteFile(fpuffer);
+      SafeDeleteFile(fpuffer);
     end;
   end; { with }
   freeres;
@@ -894,6 +894,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2001/12/26 01:35:33  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.27  2001/11/17 13:35:12  mk
   - fixed range check error in match()
 

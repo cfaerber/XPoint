@@ -1902,7 +1902,7 @@ begin
             decomp:=TempPath+datei;  { Stack sparen ... }
             if ViewArchive(decomp,newarc)<>0 then; 
         end;
-        SaveDeleteFile(temppath+datei);
+        SafeDeleteFile(temppath+datei);
         end;
       { GoDir(OwnPath); }
       end;
@@ -2121,7 +2121,7 @@ begin
   fmove(f1,f2);
   close(f1);
   close(f2);
-  SaveDeleteFile(DupeFile+dbIxExt);
+  SafeDeleteFile(DupeFile+dbIxExt);
   closebox;
   dbOpen(d,DupeFile,1);   { indizieren }
   n:=1; ll:=0;
@@ -2515,6 +2515,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.122  2001/11/11 00:47:14  ma
   - added temporary debug log
 
@@ -2557,7 +2560,7 @@ end;
   - adaptions/fixes for MIME support
 
   Revision 1.110  2001/09/07 13:54:21  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

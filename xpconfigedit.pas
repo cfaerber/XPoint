@@ -1621,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.33  2001/12/24 23:07:04  mk
   - updates for nt_Client
 
@@ -1660,7 +1663,7 @@ end;
   - some AnsiString fixes
 
   Revision 1.21  2001/09/07 13:54:23  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

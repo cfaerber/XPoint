@@ -1115,6 +1115,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.13  2001/12/23 10:07:36  cl
   - file size shown correctly
 
@@ -1141,7 +1144,7 @@ end;
   - adaptions/fixes for PGP/MIME support
 
   Revision 1.6  2001/09/07 13:54:25  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -276,14 +276,14 @@ begin
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
           if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) then
-            SaveDeleteFile(datei);
+            SafeDeleteFile(datei);
           dbDelete(auto);
           aufbau:=true;
           end;
         end;
       SaveUVS:=muvs;
       if tmp then
-        SaveDeleteFile(datei);
+        SafeDeleteFile(datei);
       freesenduudatamem(sdata)
       end;
     end;
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.44  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -688,7 +691,7 @@ end.
   - adaptions/fixes for MIME support
 
   Revision 1.41  2001/09/07 13:54:23  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -942,8 +942,8 @@ begin
 
     if not FileAttach then
     begin
-      SaveDeleteFile(fn2);    { Temp-Dateien l”schen }
-      SaveDeleteFile(fn);
+      SafeDeleteFile(fn2);    { Temp-Dateien l”schen }
+      SafeDeleteFile(fn);
     end;
     lastmpsel:=mpselect;
     mpselect:=false;
@@ -969,7 +969,7 @@ begin
       spop(disprec);
       dbGo(mbase,rec);
       if ListQuoteMsg<>'' then begin
-        SaveDeleteFile(ListQuoteMsg);
+        SafeDeleteFile(ListQuoteMsg);
         ListQuoteMsg:='';
         end;
       keydisp:=skeydisp;
@@ -1611,6 +1611,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.86  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.85  2001/12/09 13:20:06  mk
   - fixed crashing bug with new TMimePart
 
@@ -1632,7 +1635,7 @@ begin
   - More uniform naming of MIME functions/types/consts
 
   Revision 1.79  2001/09/07 13:54:21  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

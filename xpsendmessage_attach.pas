@@ -1029,13 +1029,13 @@ begin
     shell25:=ms;
     removeeof(FileName);
     if BakExt<>'' then
-      SaveDeleteFile(ChangeFileExt(FileName, '.'+bakext)); { .BAK löschen }
+      SafeDeleteFile(ChangeFileExt(FileName, '.'+bakext)); { .BAK löschen }
   end else
   begin
     if IsNachricht then pushhp(54);
     TED(FileName,true,iif(editvollbild,0,2),Umlaute);
     if IsNachricht then pophp;
-    SaveDeleteFile(ChangeFileExt(FileName, '.BAK')); { .BAK löschen }
+    SafeDeleteFile(ChangeFileExt(FileName, '.BAK')); { .BAK löschen }
 //  EditFile(FileName,IsNachricht,true,
 //    iif(editvollbild,0,2),Umlaute);
   end;  

@@ -1102,6 +1102,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.130  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.129  2001/10/26 11:20:38  ma
   - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
     with Unix)
@@ -1138,7 +1141,7 @@ finalization
   - Kylix compatibility stage II
 
   Revision 1.119  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

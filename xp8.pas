@@ -2030,7 +2030,7 @@ begin
           end
         else
           SendMaps(comm,box,fn);
-      SaveDeleteFile(fn);
+      SafeDeleteFile(fn);
       end;
     end;
   if maus then
@@ -2107,6 +2107,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.63  2001/11/24 20:29:24  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 
@@ -2133,7 +2136,7 @@ end;
   - adaptions/fixes for MIME support
 
   Revision 1.56  2001/09/07 13:54:22  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

@@ -767,7 +767,7 @@ var t,lastt: taste;
       SikMsg := FileUpperCase(SikMsg);
       assign(f,fn);
       if existf(f) then begin
-        SaveDeleteFile(TempPath+sikmsg);
+        SafeDeleteFile(TempPath+sikmsg);
         rename(f,TempPath+sikmsg);
         if ioresult<>0 then;     { falls LASTMSG Read-Only war.. }
         end;
@@ -2283,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.111  2001/12/08 09:23:02  mk
   - create list of MIME parts dynamically
 
@@ -2307,7 +2310,7 @@ end;
   - adaptions/fixes for MIME support
 
   Revision 1.104  2001/09/07 13:54:20  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

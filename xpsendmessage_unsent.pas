@@ -1122,7 +1122,7 @@ again:
   if nextwl>-1 then begin
     inc(nextwl);
     if nextwl<markanz then begin
-      SaveDeleteFile(fn);
+      SafeDeleteFile(fn);
       dbGo(mbase,marked^[nextwl].recno);
       goto again;    { naechste Nachricht wl/arch. }
       end;
@@ -1321,6 +1321,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.11  2001/12/15 09:44:36  mk
   - added some comments
 
@@ -1347,7 +1350,7 @@ end;
   - adaptions/fixes for PGP/MIME support
 
   Revision 1.4  2001/09/07 13:54:25  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

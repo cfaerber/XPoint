@@ -1186,7 +1186,7 @@
       assign(f,ownpath+old_dname+ext);
       if existf(f) then 
       begin
-        SaveDeleteFile(ownpath+dname+ext);
+        SafeDeleteFile(ownpath+dname+ext);
         rename(f,ownpath+dname+ext);
       end;
     end;
@@ -2095,6 +2095,9 @@
 
 {
   $Log$
+  Revision 1.41  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.40  2001/11/24 20:29:25  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 
@@ -2149,7 +2152,7 @@
   - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
 
   Revision 1.24  2001/09/07 13:54:23  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 }

@@ -1274,6 +1274,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.47  2001/12/22 16:39:56  mk
   - show help with "openxp zpr"
 
@@ -1302,7 +1305,7 @@ end;
   - Kylix compatiblity update
 
   Revision 1.39  2001/09/07 13:54:26  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

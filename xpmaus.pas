@@ -819,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.34  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
@@ -831,7 +834,7 @@ end;
   - adaptions/fixes for MIME support
 
   Revision 1.31  2001/09/07 13:54:24  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

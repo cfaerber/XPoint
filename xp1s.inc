@@ -458,7 +458,7 @@ begin
     bak:='BAK';
     end;
   if bak<>'' then
-    SaveDeleteFile(ChangeFileExt(Name, '.'+bak)); { .BAK löschen }
+    SafeDeleteFile(ChangeFileExt(Name, '.'+bak)); { .BAK löschen }
 end;
 
 
@@ -499,6 +499,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.70  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.69  2001/10/20 21:35:48  ml
   - saving/restoring terminal for calling external programs works now
 
@@ -525,7 +528,7 @@ begin
   - some AnsiString fixes
 
   Revision 1.62  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

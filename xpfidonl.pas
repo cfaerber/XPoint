@@ -426,7 +426,7 @@ var diffdir  : string;
         log(getreps2(2130,5,extractfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
       else begin
-        SaveDeleteFile(newlist);
+        SafeDeleteFile(newlist);
         log(ufile+' -> '+newlist);
         if filecopy(ufile,newlist) then
           CopyUpdateFile:=true
@@ -458,7 +458,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       ExpandFilePath(uarchive);
       unarcflag:=false;                           { Update-Archiv auspacken }
       if (uarchive<>'') and passend(uarchive) then begin
-        SaveDeleteFile(diffdir+ufile);
+        SafeDeleteFile(diffdir+ufile);
         log(getreps2(2130,1,uarchive));      { 'entpacke %s' }
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
         if not unarcflag then
@@ -489,8 +489,8 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         end;
       if done then begin
         if auto and fDelUpdate then begin    { evtl. Update-Files l”schen }
-          SaveDeleteFile(uarchive);
-          SaveDeleteFile(ufile);
+          SafeDeleteFile(uarchive);
+          SafeDeleteFile(ufile);
           end;
         reindex:=true;
         end;
@@ -527,6 +527,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.41  2001/11/22 17:40:02  mk
   - call node diff update directly
 
@@ -541,7 +544,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.37  2001/09/07 13:54:24  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

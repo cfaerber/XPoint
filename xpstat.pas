@@ -1264,6 +1264,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.48  2001/10/12 22:55:26  mk
   - fixed some Write()
 
@@ -1283,7 +1286,7 @@ end;
   - adaptions/fixes for PGP/MIME support
 
   Revision 1.43  2001/09/07 13:54:25  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

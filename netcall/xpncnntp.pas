@@ -221,13 +221,13 @@ begin
   NNTP.Free;
   if result then begin
     ClearUnversandt(PPFile,BoxName);
-    SaveDeleteFile(PPFile);
-    SaveDeleteFile(RFCFileDummy);
+    SafeDeleteFile(PPFile);
+    SafeDeleteFile(RFCFileDummy);
     RFCFileDummy := RFCFile + 'X-0002.OUT';
-    SaveDeleteFile(RFCFileDummy);
+    SafeDeleteFile(RFCFileDummy);
     end;
   RFCFileDummy := RFCFile + 'C-0000.OUT';
-  SaveDeleteFile(RFCFileDummy);
+  SafeDeleteFile(RFCFileDummy);
 end;
 
 function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles, DeleteSpoolFiles: TStringList): boolean;
@@ -369,6 +369,9 @@ end;
 
 {
         $Log$
+        Revision 1.33  2001/12/26 01:35:33  cl
+        - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
         Revision 1.32  2001/12/21 21:25:18  cl
         BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
         SEE ALSO: <8FIVnDgocDB@3247.org>

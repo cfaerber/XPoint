@@ -1804,7 +1804,7 @@ begin
     closearchive(ar);
     if (ar.name='') and fehlfunc(getres2(2117,5)) then goto ende;  { 'Fehler in Archivdatei' }
     if not FileTest(true,ar.orgsize,FidoPath,ar.name) then     goto ende;
-    SaveDeleteFile(FidoPath+ar.name);
+    SafeDeleteFile(FidoPath+ar.name);
     if not UniExtract(fn,FidoPath,ar.name) then                goto ende;
     fi:=ar.name;
     copied:=true;
@@ -1829,7 +1829,7 @@ begin
   if ExtractFileExt(fi) <> extFl then 
   begin
     fi2:= ChangeFileExt(fi, extFl);
-    SaveDeleteFile(FidoPath+fi2);
+    SafeDeleteFile(FidoPath+fi2);
     if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
       goto ende;
@@ -1881,7 +1881,7 @@ begin
           if not comment then inc(nn);
           end
         else
-          SaveDeleteFile(FidoDir+mid(s,p+1));
+          SafeDeleteFile(FidoDir+mid(s,p+1));
         end;
       close(t1); close(t2);
       erase(t1);
@@ -2264,6 +2264,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2001/12/26 01:35:32  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.66  2001/11/22 10:39:58  mk
   - NDIFF is intern, removed test for ndiff.exe
 
@@ -2302,7 +2305,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.56  2001/09/07 13:54:24  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

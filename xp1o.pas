@@ -1038,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.104  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.103  2001/11/11 00:53:23  ma
   - added '+' to URLChars
 
@@ -1069,7 +1072,7 @@ end;
   - Kylix compatibility stage II
 
   Revision 1.94  2001/09/07 13:54:18  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 

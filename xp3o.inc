@@ -484,7 +484,7 @@ var x,y      : Integer;
     rps(s,'$INFILE',temppath+cryptedfile);
     rps(s,'$OUTFILE',uncfile);
     rps(s,'$USER',hdp.absender);
-    SaveDeleteFile(uncfile);
+    SafeDeleteFile(uncfile);
     savecursor;
     sichern(sp);
     shell(s,600,3);                     { Nachricht decodieren }
@@ -1217,7 +1217,7 @@ begin
   else
     while FileExists(BadDir+name+ext) and (ext<>'.999') do
       ext:='.'+formi(ival(mid(ext,2))+1,3);
-  SaveDeleteFile(BadDir+name+ext);
+  SafeDeleteFile(BadDir+name+ext);
   if not FileExists(BadDir+name+ext) then begin
     assign(f,fn);
     rename(f,BadDir+name+ext);
@@ -1227,6 +1227,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
   Revision 1.76  2001/10/22 21:55:46  cl
   - killed more range check errors
 
@@ -1258,7 +1261,7 @@ end;
   - cleaned up MIME-related fields in THeader
 
   Revision 1.67  2001/09/07 13:54:19  mk
-  - added SaveDeleteFile
+  - added SafeDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
 
