@@ -68,7 +68,7 @@ function Xec(var prog:string; space,envspace:word; var prompt:string;
 var
     pp    : byte;
     para  : string;
-    dpath : pathstr;
+    dpath : string;
 begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
@@ -148,7 +148,7 @@ var regs  : registers;
     orgenv: word;
     envir : array[0..1023+18] of byte;    { neues Environment }
     newenv: pointer;
-    dpath : pathstr;
+    dpath : string;
     para  : string;
     pp    : byte;
 
@@ -496,6 +496,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/07 17:50:07  mk
+  - Limits fuer Dateinamen entfernt
+
   Revision 1.15  2000/05/06 17:27:54  mk
   - weiterer Exxec-Fix fuer lange Kommandozeilen
 
