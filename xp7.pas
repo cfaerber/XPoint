@@ -677,6 +677,9 @@ begin                  { of Netcall }
             rename(f,upuffer);
             spufsize:=size;
             shell(uparcer,500,1);           { Upload-Packer }
+            { fix fÅr LFN-Unit, die vergisst, den Namen bei Rename
+              in der Filevariablen zu speichern }
+            assign(f, upuffer);
             if ff then
               erase(f)
             else
@@ -1548,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.4  2000/12/17 23:20:29  mk
+  - temp. fix fuer verlorene Pakete bei ZConnect
+
   Revision 1.16.2.3  2000/08/28 23:35:55  mk
   - LFN in uses hinzugefuegt
 
