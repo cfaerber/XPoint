@@ -1,5 +1,5 @@
-*OpenXP/32 v3.8.x Beta<br />
-OpenXP/32 v3.8.x Beta<br />
+*OpenXP/32 v3.8.x Beta<br /><small>empfohlen für Anwender; nur noch Fixes und ggf. Backports von getesteten Features aus der v3.9.x</small>
+OpenXP/32 v3.8.x Beta<br /><small>recommended for users; fixes and backports of well-tested v3.9.x features</small>
 /openxp/oxp32win.rar
 Win32-Version [RAR]
 Win32 version [RAR]
