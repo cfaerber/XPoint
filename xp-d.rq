@@ -543,6 +543,7 @@ K (c) '93-98 Peter Mandrella
 27   bei Mail ebenso
 28   fragen bei Antwort-an
 29   News nicht archivieren lassen
+30   Cancel- und Ersetzt-Mails ignorieren
 #
 100  68
 101  Adreáeinstellungen (ZCONNECT / RFC)
@@ -721,7 +722,6 @@ K (c) '93-98 Peter Mandrella
 1    externe Codierprogramme
 2    Name          Codierer               Decodierer              bin„r
 -
-266  Anzeige-Programme fr ...
 + 267
 # Fensterbreite
 0    49
@@ -876,7 +876,7 @@ K (c) '93-98 Peter Mandrella
 338  Puffer berprfen...     ~
 339  Brettindex wird angelegt...     %
 340  Brettindex berarbeiten ...     %
-341  Cancel-Nachrichten bearbeiten ...~
+341  Cancel-/Ersetzt-Nachrichten bearbeiten ...~
 342  Seitenvorschub nach jeder Nachricht
 343  <kein Betreff>
 
@@ -2912,6 +2912,7 @@ K (c) '93-98 Peter Mandrella
 35 Nachricht muá einen Betreff haben.
 36 Bin„rnachrichten sind in diesem Netz nicht m”glich.
 37 Server„nderung nicht m”glich - abweichende Brettebene!
+38 Als 'Original' weitergeleitete Nachrichen drfen nicht ge„ndert werden!
 
 +  10700
 1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!

@@ -532,6 +532,7 @@ K (c) '93-96 Peter Mandrella
 27   at mail as well
 28   ask at Reply-To
 29   don't archive news
+30   ignore cancels/supersedes
 #
 100  68
 101  Address settings (ZCONNECT / RFC)
@@ -866,7 +867,7 @@ K (c) '93-96 Peter Mandrella
 338  Testing message packet...     ~
 339  Building newsgroup index...     %
 340  Rebuilding newsgroup index ...     %
-341  Cancelling messages ...~
+341  Cancelling and superseding messages ...~
 342  Form feed after each message
 343  <no subject>
 
@@ -2846,6 +2847,7 @@ K (c) '93-96 Peter Mandrella
 35 Message must have a subject.
 36 Binary mails are not possible here.
 37 Cannot change server - different newsgroup names!
+38 You are not allowed to change this Message!
 
 +  10700
 1  Internal error: Newsgroup with unsent message not found!
