@@ -184,7 +184,7 @@ end;
 
 procedure freemain;
 begin
-  freemem(mainmenu, sizeof(menuarray));
+  if Assigned(MainMenu) then Freemem(mainmenu, sizeof(menuarray));
   mainmenu:=nil;
 end;
 
@@ -610,6 +610,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2001/10/17 20:56:23  mk
+  - fixed AVs in exit parts of unit
+
   Revision 1.34  2001/10/17 10:07:38  ml
   - use integer for cursorpos to prevent range errors
 

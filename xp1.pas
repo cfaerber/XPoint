@@ -193,7 +193,7 @@ procedure FlushClose;
 procedure xp_DB_Error;    { Aufruf bei <DB> internem Fehler }
 
 function fmove(var f1,f2:file): boolean;
-procedure iso_conv(var buf; bufsize:word);
+procedure iso_conv(var buf; bufsize: Integer);
 
 function  aFile(nr:byte):string;
 
@@ -341,7 +341,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
 end;
 {$ENDIF }
 
-procedure iso_conv(var buf; bufsize:word); assembler;  {&uses ebx, edi}
+procedure iso_conv(var buf; bufsize: Integer); assembler;  {&uses ebx, edi}
 asm
          cld
          mov    edi, buf
@@ -1783,13 +1783,14 @@ end;
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
 
 function fmove(var f1,f2:file): boolean;
+const 
+  BufSize = 65536;
 var x,y   : Integer;
     p     : pointer;
-    ps : word;
     box   : boolean;
     fpos,
     fsize : longint;
-    rr: word;
+    rr: Integer;
 
   procedure show(n:longint);
   begin
@@ -1798,9 +1799,8 @@ var x,y   : Integer;
   end;
 
 begin
-  ps:=65536;
   result:=true;
-  getmem(p,ps);
+  getmem(p, BufSize);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
     box:=(fsize>1024*1024) and (ExtractFileExt(FileName(f1))<>'.$$$');
@@ -1811,7 +1811,7 @@ begin
       fpos:=0;
       end;
     while not eof(f1) and (inoutres=0) do begin
-      blockread(f1,p^,ps,rr);
+      blockread(f1,p^, BufSize,rr);
       show(rr div 2);
       blockwrite(f2,p^,rr);
       show(rr - rr div 2);
@@ -1825,7 +1825,7 @@ begin
       result:=false;
       end;
     end;
-  freemem(p,ps);
+  Freemem(p);
 end;
 
 
@@ -2055,7 +2055,7 @@ begin
   dbReleaseCache;
   if not closed then closedatabases;
   SysSetBackIntensity;
-  FreeMem(MainMenu);
+  FreeMain;
 end;
 
 procedure InitXP1Unit;
@@ -2067,6 +2067,9 @@ end;
 
 {
   $Log$
+  Revision 1.128  2001/10/17 20:56:23  mk
+  - fixed AVs in exit parts of unit
+
   Revision 1.127  2001/10/17 10:07:38  ml
   - use integer for cursorpos to prevent range errors
 

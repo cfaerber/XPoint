@@ -161,7 +161,7 @@ type  charr    = array[0..65500] of char;
 
 
 var   Defaults : edp;
-      language : ldataptr;
+      language : ldataptr = nil;
       akted    : edp;
       delroot  : delnodep;         { Liste gel”schter Bl”cke }
       ClipBoard: absatzp;
@@ -1767,9 +1767,12 @@ end;
 initialization
   AktEd := nil;
 finalization
-  Dispose(Language);
+  if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.69  2001/10/17 20:56:24  mk
+  - fixed AVs in exit parts of unit
+
   Revision 1.68  2001/10/17 07:29:11  mk
   - corrected range check error
   - converted some Word to Integer
