@@ -519,7 +519,13 @@ var   hdp      : THeader;
               parname:=LowerCase(GetToken(s,'='));
               if firstchar(s)='"' then DeleteFirstChar(s);
               if lastchar(s)='"' then DeleteLastChar(s);
-              if (pos('name', parname) >0) then filename:=s;
+              if (pos('name', parname) >0) then
+              begin
+                if cPos(';', s) > 0 then
+                  filename:= LeftStr(s, cPos(';', s)-1)
+                else
+                  Filename := s;
+              end;
             end;
         until endhd or eof(t);
         startpos := curpos - length(bufline);
@@ -887,6 +893,9 @@ finalization
 
 {
   $Log$
+  Revision 1.60  2002/04/20 15:00:35  mk
+  - fixed extraction of filename in content-disposition header
+
   Revision 1.59  2002/03/03 15:53:32  cl
   - MPData now contains byte offset, not line counts (better performance)
 
