@@ -1011,7 +1011,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        xaufbau      : boolean;       { Bezugsbaum neu einlesen        }
        readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues }
        readdate     : longint;       { 3=Heute, 4=Datum              }
-       nachweiter   : boolean;       { Auto-Advace im Msg-Fenster    }
+       nachweiter,nw: boolean;       { Auto-Advace im Msg-Fenster    }         
        brettweiter  : boolean;
        userweiter   : boolean;
        qchar        : string[20];    { zuletzt verwendeter Quote-String }
@@ -1109,6 +1109,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.30  2000/04/25 08:45:23  jg
+  - kleine Aenderungen zur Suche des Nachrichtenweiterschalten-Bugs
+   (Variable NW nach xp0 verlagert + Anzeige wenn STRG+W ausgefuehrt wird)
+
   Revision 1.29  2000/04/21 12:34:47  jg
   - MIME-Flag wird jetzt beim Archivieren mit uebernommen
   - Archivier-Vermerk ist jetzt abschaltbar

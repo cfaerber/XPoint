@@ -442,7 +442,7 @@ var fn     : pathstr;
     typ    : char;
     arc    : shortint;
     _down  : boolean;
-    nw     : boolean;
+    old_nw : boolean; 
     lres   : shortint;
     ende   : boolean;
     pushed : boolean;
@@ -1410,7 +1410,7 @@ procedure switch_weiterschalt;
 begin
   NachWeiter:=not NachWeiter;
   attrtxt(col.colmenu[0]);
-  mwrt(69,1,iifc(NachWeiter,' ','W'));
+  mwrt(69,1,iifc(NachWeiter,'W','-'));
 end;
 
 procedure seek_brett(fwd:boolean);
