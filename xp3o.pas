@@ -546,6 +546,7 @@ var fname   : string;
   function ETyp:byte;
   var typ : char;
   begin
+    dbGoTop(mbase); // verhindert internal Error wegen EOF
     dbRead(mbase,'Typ',typ);
     if (typ='B') and (not IS_QPC(betreff)) and (not IS_DES(betreff)) and
        odd(ExtraktTyp) then
@@ -1465,6 +1466,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/08/03 14:31:03  mk
+  - internal Error bei EType behoben
+
   Revision 1.30  2000/07/29 22:09:27  mk
   JG: - Brett-Gelesen-Bug bei Nachricht/Alle behoben
 
