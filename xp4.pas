@@ -1115,11 +1115,10 @@ var t,lastt: taste;
       end;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
-    then begin
-      if AutoArchiv and reply then begin
-{*}     dispRec := saveDispRec^;
-{*}     p := savePos;
-{*}     dispose (saveDispRec);
+    then
+    begin
+      if AutoArchiv and reply then
+      begin
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
         if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStrN(mbase,mb_brett),1)='1') and
@@ -1130,6 +1129,13 @@ var t,lastt: taste;
       end
     else
       SikMsg;
+
+    if AutoArchiv and reply then
+    begin
+{*}     dispRec := saveDispRec^;
+{*}     p := savePos;
+{*}     dispose (saveDispRec);
+    end;
     pgdown:=false;
   ende:
     force_quotemsk:='';
@@ -2164,6 +2170,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.47  2001/08/12 20:48:48  mk
+  - fixes little memory leak
+
   Revision 1.26.2.46  2001/08/12 11:20:31  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
