@@ -39,7 +39,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 implementation  { ------------------------------------------------- }
 
 uses
-  NCSMTP,NCPOP3,                  { TNetcall, TSocketNetcall }
+  Netcall,NCSocket,NCSMTP,NCPOP3,
   progressoutput,xpprogressoutputwindow,
 {$ifdef NCRT}
   XPCurses,
@@ -53,11 +53,11 @@ uses
 {$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
   res_smtpinit          = '%s Mails verschicken';
   res_pop3init          = '%s Mails holen';
-  res_mailstat          = '%d Mails in %d Bytes';
-  res_nomail            = 'Keine neuen Mails';
-  res_newmail           = '%d neue Mails';
+  res_mailstat          = '%d (%d neue) Mails in %d Bytes';
   res_getmail           = 'Hole Mail Nr. %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
+
+  res_strange           = 'Interner Fehler'; // just in case...
 
 function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
@@ -167,8 +167,7 @@ var
 var
   POP           : TPOP3;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
-  FirstMail     : Integer;
-  UIDLFile      : Text;
+  FirstMail,LastMail : Integer;
   UIDLFileName  : String;
 begin
   if bp^.pop3_ip='' then exit; // exit immediately if no server specified
@@ -186,15 +185,11 @@ begin
     POP.Password:= bp^.pop3_pwd;
   end;
 
-  { Get last retrieved UIDL from file }
+  { Get last retrieved UIDLs from file }
   GetServerFileName(BoxName,UIDLFileName);
   UIDLFileName:=FileUpperCase(OwnPath+UIDLFileName+'.udl');
-  if FileExists(UIDLFileName)then begin
-    Assign(UIDLFile,UIDLFileName);
-    Reset(UIDLFile);
-    ReadLn(UIDLFile,POP.LastUIDL);
-    Close(UIDLFile);
-    end;
+  if FileExists(UIDLFileName)then
+    POP.UIDLs.LoadFromFile(UIDLFileName);
 
   { Verbinden }
   try
@@ -203,18 +198,16 @@ begin
     POP.Connect;
     POP.Stat;
 
-    POWindow.WriteFmt(mcInfo,res_mailstat,[POP.MailCount,POP.MailSize]);
+    POWindow.WriteFmt(mcInfo, res_mailstat,
+                      [POP.MailCount, POP.NewMailCount, POP.MailSize]);
 
-    FirstMail := 1;
+    FirstMail := 1; LastMail := POP.MailCount;
     if POP.OnlyNew then begin
-      FirstMail := POP.GetLast;
-      if FirstMail = POP.MailCount then
-        POWindow.WriteFmt(mcInfo,res_nomail,[0])
-      else
-        POWindow.WriteFmt(mcInfo,res_newmail,[POP.MailCount-FirstMail]);
+      FirstMail := POP.LastRead + 1;
+      LastMail := POP.NewMailCount + FirstMail - 1;
       end;
 
-    for i := FirstMail + 1 to POP.MailCount do
+    for i := FirstMail to LastMail do
     begin
       POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
       POP.Retr(i, List);
@@ -227,15 +220,18 @@ begin
 //    SaveMail;
     POP.Disconnect;
   except
-    POWindow.WriteFmt(mcError,res_noconnect,[0]);
+    on E: EPOP3 do
+      POWindow.WriteFmt(mcError, E.Message, [0]);
+    on E: ESocketNetcall do
+      POWindow.WriteFmt(mcError, res_noconnect, [0])
+    else
+      POWindow.WriteFmt(mcError, res_strange, [0]);
     result:= false;
   end;
-  if POP.LastUIDL<>'' then begin
-    Assign(UIDLFile,UIDLFileName);
-    ReWrite(UIDLFile);
-    WriteLn(UIDLFile,POP.LastUIDL);
-    Close(UIDLFile);
-    end;
+  if POP.UIDLs.Count>0 then
+    POP.UIDLs.SaveToFile(UIDLFileName)
+  else
+    DeleteFile(UIDLFileName);
   List.Free;
   POP.Free;
   ProcessIncomingFiles(IncomingFiles);
@@ -245,6 +241,10 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/05/23 23:55:04  ma
+  - full UIDL support (needs testing)
+  - cleaned up exceptions
+
   Revision 1.15  2001/05/20 12:21:45  ma
   - added UIDL support
 

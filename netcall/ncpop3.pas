@@ -36,7 +36,7 @@ uses
   sysutils;
 
 type
-  EPOP3                = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
+  EPOP3          = class(ESocketNetcall);
 
 type
   TPOP3 = class(TSocketNetcall)
@@ -48,12 +48,20 @@ type
     FUseAPOP            : Boolean;   { APOP = encrypted passwords }
     FOnlyNew            : Boolean;   { nur neue Mails holen }
     FUser, FPassword    : string;    { Identifikation }
-    FLastUIDL           : string;    { UIDL of last retrieved message,
-                                         used/updated if LAST not implemented }
-    FMailCount, FMailSize: Integer;
-    FUIDLs              : TStringList;
+    FMailCount, FMailSize, FLastRead: Integer;
+    FSupportUIDLs       : Boolean;   { Flag: Server supports UIDLs }
+    FAvailableUIDLs     : TStringList; { NEW available mail UIDLs }
 
+    { Return MailCount-LastReadID or FAvailableUIDLs.Count depending
+      on whether LAST is implemented or not }
+    function SNewMailCount: Integer;
+    function SLastRead: Integer;
+    function MapUIDL(Nr: Integer): Integer;
   public
+    { List of already retrieved mail UIDLs, used and updated by
+      RetrAll/LastRead/Retr }
+    UIDLs: TStringList;
+
     constructor Create;
     constructor CreateWithHost(s: string);
     destructor Destroy; override;
@@ -62,26 +70,30 @@ type
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
     property UseAPOP: Boolean read FUseAPOP write FUseAPOP;
+    { Take only new mails into account, remap mail numbers (if UIDL support) -
+      initialize before Stat }
     property OnlyNew: Boolean read FOnlyNew write FOnlyNew;
-    property LastUIDL: string read FLastUIDL write FLastUIDL;
+    { Count of mails in mbox }
     property MailCount: Integer read FMailCount;
+    { Count of NEW mails }
+    property NewMailCount: Integer read SNewMailCount;
     property MailSize: Integer read FMailSize;
+    { Number of last read mail - 0 with UIDL support and OnlyNew}
+    property LastRead: Integer read SLastRead;
 
     { Verbindung herstellen }
     function Connect: boolean; override;
 
     { Abmelden }
-    procedure DisConnect; override;
+    procedure Disconnect; override;
 
     { Anmelden (wird von Connect aufgerufen) }
     function  Login: boolean;
 
     { -------- POP3-Zugriffe }
 
-    // FÅllt MailCount und MailSize mit Daten
+    // Initializes UIDL and statistical variables, should be called after Connect
     function Stat: boolean;
-    // Holt die Nummer der letzten ungelesenen Nachricht
-    function GetLast: Integer;
     // EmpfÑngt eine Nachricht
     function Retr(ID: Integer; List: TStringList): boolean;
     // EmpfÑngt alle Nachrichten
@@ -115,6 +127,8 @@ resourcestring
 
   res_disconnect        = 'Trenne Verbindung...';
 
+  res_nolastinfo        = 'Server bietet weder LAST noch UIDL'; // just in case...
+
 constructor TPOP3.Create;
 begin
   inherited Create;
@@ -125,8 +139,10 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
-  FLastUIDL:='';
-  FUIDLs:=TStringList.Create;
+  FLastRead:= -1;
+  FSupportUIDLs:= False;
+  UIDLs:=TStringList.Create;
+  FAvailableUIDLs:=TStringList.Create;
 end;
 
 constructor TPOP3.CreateWithHost(s: string);
@@ -139,13 +155,16 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
-  FLastUIDL:='';
-  FUIDLs:=TStringList.Create;
+  FLastRead:= -1;
+  FSupportUIDLs:= False;
+  UIDLs:=TStringList.Create;
+  FAvailableUIDLs:=TStringList.Create;
 end;
 
 destructor TPOP3.Destroy;
 begin
-  FUIDLs.Destroy;
+  UIDLs.Destroy;
+  FAvailableUIDLs.Destroy;
   inherited Destroy;
 end;
 
@@ -157,11 +176,7 @@ begin
   begin
     // Authorisierung bei POP3 immer nîtig
     if (FUser='') or (FPassword='') then
-    begin
-      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-      DisConnect;
-      exit;
-    end;
+      raise EPOP3.CreateFmt(res_connect3, ['Invalid account info']); // Anmeldung fehlgeschlagen
 
     case FUseAPOP of
       false: begin // standard plaintext login
@@ -170,39 +185,28 @@ begin
          SReadLn(s);
 
          if ParseError(s) then // RÅckmeldung auswerten
-         begin
-           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-           DisConnect;
-           exit;
-         end;
+           raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
 
          SWritelnFmt('PASS %s', [FPassword]);
          SReadLn(s);
 
          if ParseError(s) then // RÅckmeldung auswerten
-         begin
-           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-           DisConnect;
-           exit;
-         end;
+           raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+
          Result := true;
          end;
 
       true: begin // use APOP
-         if FTimestamp='' then begin // APOP is not supported
-           Output(mcError,res_noapop,[0]);
-           Disconnect;
-           exit;
-           end;
+         if FTimestamp='' then // APOP is not supported
+           raise EPOP3.CreateFmt(res_noapop, [0]);
+
          Output(mcInfo,res_apoplogin,[0]);
          SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
          SReadLn(s);
 
-         if ParseError(s) then begin // RÅckmeldung auswerten
-           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-           DisConnect;
-           exit;
-           end;
+         if ParseError(s) then // RÅckmeldung auswerten
+           raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+
          Result := true;
          end;
       end;
@@ -224,12 +228,8 @@ begin
   FServer := s;
 
   if ParseError(s) then // RÅckmeldung auswerten
-  begin
-    Output(mcError,res_connect2, [ErrorMsg]); // Unerreichbar
-    DisConnect;
-    exit;
-  end else
-  begin
+    raise EPOP3.CreateFmt(res_connect2, [ErrorMsg]) // Unerreichbar
+  else begin
     Output(mcInfo,res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
     if (pos('<',s)<pos('@',s))and(pos('@',s)<pos('>',s)) then // APOP timestamp found
@@ -240,73 +240,136 @@ begin
 
   { Anmelden }
   if not Login then
-  begin
-    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    DisConnect;
-    exit;
-  end;
+    raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+
   Result:= true;
 end;
 
-procedure TPOP3.DisConnect;
+procedure TPOP3.Disconnect;
 begin
   Output(mcInfo,res_disconnect,[0]);
   if Connected then
     SWriteln('QUIT');
-  inherited DisConnect;
+  inherited Disconnect;
+end;
+
+function TPOP3.SNewMailCount: Integer;
+begin
+  if FSupportUIDLs then
+    result := FAvailableUIDLs.Count
+  else
+    result := MailCount - FLastRead;
+end;
+
+function TPOP3.SLastRead: Integer;
+begin
+  Result := FLastRead;
+  if OnlyNew and FSupportUIDLs then
+    Result := 0;
 end;
 
 function TPOP3.Stat: Boolean;
 var
   s: String;
   p: Integer;
+  UIDL: String; Nr: Integer;
+  ServerUIDLs: TStringList;
 begin
   Result := false;
-  if Connected then
+  if not Connected then exit;
+
+  SWriteln('STAT');
+  SReadln(s);
+  if not ParseError(s) then
   begin
-    SWriteln('STAT');
+    // +OK 2 320
+    s := Copy(s, 5, Length(s)); p := Pos(' ', s);
+    FMailCount := StrToInt(Trim(Copy(s, 1, p)));
+    s := Trim(Copy(s, p, Length(s)))+ ' ';
+    FMailSize := StrToInt(Copy(s, 1, Pos(' ', s)-1));
+  end else
+    exit;
+  Result := true;
+
+  SWriteln('UIDL');
+  SReadln(s);
+  if not ParseError(s) then begin // UIDLs supported by peer
+    FSupportUIDLs := true;
+    ServerUIDLs := TStringList.Create;
     SReadln(s);
-    if not ParseError(s) then
-    begin
-      // +OK 2 320
-      s := Copy(s, 5, Length(s)); p := Pos(' ', s);
-      FMailCount := StrToInt(Trim(Copy(s, 1, p)));
-      s := Trim(Copy(s, p, Length(s)))+ ' ';
-      FMailSize := StrToInt(Copy(s, 1, Pos(' ', s)-1));
-    end else
+    while s <> '.' do begin
+      UIDL := Mid(s, Pos(' ', s) + 1);
+      Nr := StrToIntDef(LeftStr(s, Pos(' ', s) - 1), 0);
+      if UIDLs.IndexOf(UIDL) = -1 then begin
+        // This UIDL is new, add to available list
+        FAvailableUIDLs.Add(UIDL);
+        FAvailableUIDLs.Objects[FAvailableUIDLs.Count - 1] := Pointer(Nr);
+        end;
+      ServerUIDLs.Add(UIDL);
+      SReadln(s);
+      end;
+    // we're done, now delete old UIDLs not available from server anymore
+    // from UIDL list to prevent it from getting big
+    Nr := 0;
+    while Nr < UIDLs.Count do
+      if ServerUIDLs.IndexOf(UIDLs[Nr]) = -1 then
+        UIDLs.Delete(Nr)
+      else
+        Inc(Nr);
+    ServerUIDLs.Destroy;
+    FLastRead := 0;
+    end;
+
+  SWriteLn('LAST');
+  SReadLn(s);
+  if ParseError(s) then
+    if (FLastRead = -1)and(FOnlyNew) then
+      raise EPOP3.Create(res_nolastinfo)
+    else
       exit;
-    Result := true;
-  end;
+  s := Copy(s, 5, Length(s));
+  s := Copy(s, 1, Pos(' ', s) - 1);
+  FLastRead := StrToIntDef(s, 0);
+end;
+
+function TPOP3.MapUIDL(Nr: Integer): Integer;
+begin
+  if (not FSupportUIDLs)or(not OnlyNew) then
+    result:=Nr
+  else
+    result:=Integer(FAvailableUIDLs.Objects[Nr - 1]);
 end;
 
 function TPOP3.Retr(ID: Integer; List: TStringList): boolean;
 var
   s: string;
-  i: integer;
+  Nr: Integer;
 begin
   Result := false;
-  if Connected then
+  if not Connected then exit;
+
+  ID := MapUIDL(ID);
+  SWritelnFmt('RETR %d', [ID]);
+  SReadln(s);
+  if not ParseError(s) then
   begin
-    SWritelnFmt('RETR %d', [ID]);
-    SReadln(s);
-    if not ParseError(s) then
+    while s <> '.' do
     begin
-      while s <> '.' do
-      begin
-        SReadln(s);
-        if s <> '.' then List.Add(s);
-      end;
-    end else
-      exit;
-    Result := true;
-    for i := 0 to FUIDLs.Count - 1 do begin
-      s := FUIDLs[i];
-      if Copy(s, 1, Pos(' ', s)) = (strs(ID) + ' ') then begin
-        LastUIDL := Mid(s, Pos(' ', s) + 1);
+      SReadln(s);
+      if s <> '.' then List.Add(s);
+    end;
+  end else
+    exit;
+  Result := true;
+
+  if FSupportUIDLs then
+    // mark UIDL as retrieved
+    for Nr := 0 to FAvailableUIDLs.Count - 1 do
+      if Integer(FAvailableUIDLs.Objects[Nr]) = ID then begin
+        if UIDLs.IndexOf(FAvailableUIDLs[Nr]) = -1 then
+          UIDLs.Add(FAvailableUIDLs[Nr]);
         break;
         end;
-      end;
-  end;
 end;
 
 function TPOP3.Dele(ID: Integer): boolean;
@@ -316,41 +379,12 @@ begin
   Result := false;
   if Connected then
   begin
-    SWritelnFmt('DELE %d', [ID]);
+    SWritelnFmt('DELE %d', [MapUIDL(ID)]);
     SReadln(s);
     if ParseError(s) then
       exit;
     Result := true;
   end;
-end;
-
-function TPOP3.GetLast: Integer;
-var
-  s: String;
-begin
-  Result := 0;
-  SWriteln('LAST');
-  SReadln(s);
-  case ParseError(s) of
-    true: begin // LAST not implemented on server side
-      SWriteln('UIDL');
-      SReadln(s);
-      if not ParseError(s)then begin
-        SReadln(s);
-        while s<>'.' do begin
-          FUIDLs.Add(s);
-          if LastUIDL=Mid(s, Pos(' ', s) + 1) then
-            result := StrToIntDef(LeftStr(s, Pos(' ', s) - 1), 0);
-          SReadln(s);
-          end;
-        end;
-      end;
-    false: begin // LAST working
-      s := Copy(s, 5, Length(s));
-      s := Copy(s, 1, Pos(' ', s) - 1);
-      Result := StrToIntDef(s, Result);
-      end;
-    end;
 end;
 
 function TPOP3.RetrAll(List: TStringList): boolean;
@@ -360,10 +394,10 @@ var
 begin
   result:=true;
   if OnlyNew then
-    FirstMail := GetLast + 1
+    FirstMail := LastRead + 1
   else
     FirstMail := 1;
-  for i := FirstMail to FMailCount do
+  for i := FirstMail to FirstMail+NewMailCount-1 do
     result:=result and Retr(i, List)
 end;
 
@@ -386,6 +420,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2001/05/23 23:55:04  ma
+  - full UIDL support (needs testing)
+  - cleaned up exceptions
+
   Revision 1.13  2001/05/20 12:21:45  ma
   - added UIDL support
 
