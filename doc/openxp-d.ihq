@@ -8777,10 +8777,6 @@ Das Makro <<$CLIP>> fÅgt den aktuellen Inhalt des
 Clipboards ein. Das ermîglicht z.B. die Åbergabe von
 URLs an das aufgerufene Programm.                              
 
-Das Makro <<$CLIP>> fÅgt den aktuellen Inhalt des
-Clipboards ein. Das ermîglicht z.B. die Åbergabe von
-URLs an das aufgerufene Programm.                              
-
 Nehmen wir z.B. an, da· Sie den Archiv-Verwalter SHEZ
 einbinden mîchten. Dann geben Sie als Programmname
 einfach  SHEZ $FILE  an. Nun kînnen Sie eine belie-
@@ -12599,7 +12595,6 @@ zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
 diese Form der User ID zu verwenden.
 
 @
-
 1019
 Geben Sie hier Kommandozeilenparameter ein, die von
 GnuPG beim VerschlÅsseln von Nachrichten benutzt
