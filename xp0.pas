@@ -1209,7 +1209,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
   charbuf     : shortstring;                 { Nicht zu klein :-) }
-  attrbuf     : array [0..sizeof(shortstring)] of smallword;
+  attrbuf     : array [1..sizeof(shortstring)] of smallword;
 
   // Speichert alle Zeilen in der Konfiguration, die nicht
   // erkannt und ausgewertet wurden, siehe xp2cfg.inc
@@ -1225,6 +1225,9 @@ implementation
 
 {
   $Log$
+  Revision 1.179  2003/06/14 09:27:08  mk
+  -attrbuf starts now with 1 again, this fixes last committ
+
   Revision 1.178  2003/05/10 16:34:30  mk
   - fixed highlighting of lines in lister
 
