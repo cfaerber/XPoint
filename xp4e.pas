@@ -309,6 +309,7 @@ var x,y  : byte;
     filt : boolean;
     uml  : boolean;
     ebs  : boolean;
+    farb : byte;
 begin
   new(adp);
   if left(user,4)<>#0+'$/T' then
@@ -350,6 +351,10 @@ begin
     maddbool(3,12,getres2(2701,10),ebs);   { 'Empfangsbest„tigungen' }
     maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
     maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
+    farb:=(flags shr 5);
+    if farb >2 then inc(farb); 
+    maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
+    mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
     mhnr(8069);
     end
@@ -364,7 +369,12 @@ begin
 
   readmask(brk);
   if not brk then
+  begin
+    if farb=3 then Farb:=0;
+    if farb>3 then dec(farb); 
+    flags:=(flags and not $E0) or (farb shl 5);
     flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
+    end;
   enddialog;
   freeres;
   dispose(adp);
@@ -2392,6 +2402,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.1  2000/07/12 17:10:59  jg
+  - User-Editmenue: einstellbare Prioritaetsfarbe fuer Msgs des Users
+
   Revision 1.25  2000/05/13 18:23:52  jg
   - Nachricht/Direkt + Weiterleiten..Direkt:
     Bretter sind jetzt sowohl bei Direkteingabe (mit einleitendem "/")

@@ -3406,6 +3406,29 @@ im Userfenster zusammengruppieren will, muss man sie
 nur in dieselbe Adressbuchgruppe stecken.
 
 Minimalwert ist 1 Maximalwert ist 99
+@
+8075
+Priorit„t:
+
+Diese Einstellung ist als "humane" Alternative 
+zum Filter (Nachrichten dieses Users werden
+dunkel dargestellt) oder zum Hervorheben von 
+Nachrichten wichtiger Personen gedacht.
+
+Der hier eingestellte Wert entspricht der
+unter Config/Anzeige/Farben/Nachrichten
+eingestellten Priori„ts-Farbe.
+
+gltige Werte sind:
+
+0 - normaler User
+1 - h”chste Priorit„t
+2 - hohe Priorit„t
+4 - niedrige Priorit„t
+5 - niedrigste Priorit„t
+
+Diese Einstellung gilt nur fr die  ”ffentlichen
+Nachrichten des Users. PMs sind nicht betroffen.
 
 @
 213

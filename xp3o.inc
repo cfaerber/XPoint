@@ -843,6 +843,7 @@ begin
 
           attrtxt(col.colmboxhigh);
           dbSeek(ubase,uiName,ustr(absender));
+          uflags:=0; 
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
               mwrt(29,wherey,forms(absender,22));
@@ -1016,8 +1017,12 @@ begin
             if filterattr and fattrLoeschen<>0 then flags:=2;
             if filterattr and fattrHalten<>0 then flags:=1;
             dbWriteN(mbase,mb_halteflags,flags);
-                                                    { Prioritaeten in anderer Farbe.... }
-            if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
+ 
+                                                   {Fuer User spezifizierte Farbe einstellen}
+            if uflags and $E0 <> 0 then                      
+             mbflags:=longint((uflags and $E0) shr 2)          
+                                                   { Prioritaeten in anderer Farbe.... }
+            else if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
             else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    }
             else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
             else if hdp^.Priority=1 then mbflags:=8      { hoechste   }
@@ -1196,6 +1201,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.2  2000/07/12 17:10:59  jg
+  - User-Editmenue: einstellbare Prioritaetsfarbe fuer Msgs des Users
+
   Revision 1.21.2.1  2000/07/06 21:20:23  mk
   - Alten Puffereinlesenscreen wiederhergestellt
 
