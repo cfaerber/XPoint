@@ -173,8 +173,10 @@ var s: TStream;
     except
       on EReadError do; // ignore
     end; // try;
-    d.Free;
-    pa.Free;
+    if Assiged(d) then
+      d.Free; 
+    if Assigned(pa) then
+      pa.Free;
   end;
 
 begin
@@ -301,6 +303,11 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2003/09/29 10:46:41  mk
+// - fixed crash in ReadParts of TSendUUData.MIMEDecompose;
+//   this fixes missing text with N/U/E
+// - this is bug  #809655: 3.8.12. Multipart lässt sich nicht edieren
+//
 // Revision 1.3  2003/04/28 20:18:58  cl
 // - CRLF at the end of a text file is now uniformly handled as the start of
 //   an additional line.
