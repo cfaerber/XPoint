@@ -1672,7 +1672,7 @@ end;
 function AutoExistfile(var s:string):boolean;
 var fn : pathstr;
 begin
-  autoexistfile := false;              { MK 12/99 Zur Sicherheit }
+  autoexistfile := true;
   if s<>'' then begin
     fn:=s;
     adddir(fn,sendpath);
@@ -2197,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.1  2000/03/10 00:10:08  mk
+  Fix: Autoversand/Hinzufuegen benoetigt keinen Dateinamen mehr
+
   Revision 1.9  2000/02/27 10:08:42  jg
   - Bei Brettvertreteradresse (Spezial..zUgriff) ist jetzt
     alles ausser Verteilerlisten erlaubt.
