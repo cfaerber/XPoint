@@ -37,6 +37,11 @@ uses
   linux,
 {$ENDIF}
 {$ENDIF }
+{$IFDEF FPC }
+  {$IFDEF Win32 }
+    Windows,
+  {$ENDIF }
+{$ENDIF }
   typeform,
   keys, //taste
   inout,datadef,help,lister,
@@ -3276,6 +3281,9 @@ end;
 
 {
   $Log$
+  Revision 1.176  2003/01/24 12:44:54  mk
+  - added windows to uses
+
   Revision 1.175  2003/01/24 12:07:17  cl
   - added debug output for _era, SafeDeleteFile, SafeMakeBak
 
