@@ -186,7 +186,7 @@ begin
           iifs(s>left(s,length(getres(151))+47-6),
               left(s,length(getres(151))+47-9)+'...',s)+'"',x,y);
         maddstring(3,2,getres(151),s1,40,
-          127-(p1-1+iif(length(mid(s,p1+4))>0,length(mid(s,p1+4)),0)),'');
+          127-(p1-1+max(length(mid(s,p1+4)),0)),'');
         readmask(brk);
         enddialog;
         pophp;
@@ -256,6 +256,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.9  2002/04/13 22:26:30  my
+  MY:- Code geringfÅgig optimiert ($ASK)
+
   Revision 1.6.2.8  2002/04/12 14:34:16  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
