@@ -35,9 +35,6 @@ uses
   xpglobal,
   debug,
   sysutils,
-{$IFNDEF Linux}
-  strutils,
-{$ENDIF}
   typeform,
   keys;
 
@@ -265,6 +262,9 @@ initialization
 
 {
   $Log$
+  Revision 1.29  2001/09/21 13:11:09  mk
+  - made compilable with FPC
+
   Revision 1.28  2001/09/17 22:26:50  ml
   - compilable in linux (strutils doesn't exist there)
 

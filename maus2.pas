@@ -31,8 +31,6 @@ uses
   xplinux,
   xpcurses,
   ncurses,
-{$ELSE }
-{$IFNDEF Delphi }  crt,{$ENDIF }
 {$endif}
 {$IFDEF Win32}
   Windows,
@@ -114,9 +112,9 @@ const  maxinside = 25;
        lmb    : DWORD   = 0;
 {$ENDIF Win32}
 
-var    kx,ky  : integer;           { Koordinaten der letzten Aktion }
-       inside : array[1..maxinside,0..3] of byte;
-       insen  : array[1..maxinside,0..2] of boolean;
+var    
+  inside : array[1..maxinside,0..3] of byte;
+  insen  : array[1..maxinside,0..2] of boolean;
 
 function has_moved(x,y:byte): boolean;
 begin
@@ -141,7 +139,6 @@ end;
 function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
 var keyout: boolean;
     i: integer;
-    moved: boolean;
     xx,yy: word;
     wdist: Integer16;
 const
@@ -566,6 +563,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2001/09/21 13:11:09  mk
+  - made compilable with FPC
+
   Revision 1.36  2001/09/20 18:28:23  cl
   - mouse support in message lister
 
