@@ -277,7 +277,7 @@ var
    end;
 
 const
-  MaxMessagecount = 5; // Maximum number of Messages in Pipeline
+  MaxMessagecount = 15; // Maximum number of Messages in Pipeline
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
@@ -285,6 +285,7 @@ var
   RCFilename    : String;
   MIDFilename   : String;
   oArticle      : integer;
+  ArticleCount  : Integer;
   s, MsgId: String;
 begin
   { POWindow erstellen }
@@ -366,8 +367,9 @@ begin
         begin
           POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
 
-          NNTP.GetMessage(ArticleIndex, Min(MaxMessageCount, NNTP.LastMessage - ArticleIndex + 1), List, HeaderOnly);
-          Inc(ArticleIndex, MaxMessageCount);
+          ArticleCount := Min(MaxMessageCount, NNTP.LastMessage - ArticleIndex + 1);
+          NNTP.GetMessage(ArticleIndex, ArticleCount, List, HeaderOnly);
+          Inc(ArticleIndex, ArticleCount);
 
           if List.Count > 10000 then
             SaveNews(true);
@@ -424,6 +426,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.11  2003/09/05 17:02:50  mk
+        - fixed bug with to large ArticleIndex
+
         Revision 1.39.2.10  2003/09/04 23:11:22  mk
         - minimal fix for new nnntp
         - get only five messages at once in the pipeline
