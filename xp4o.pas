@@ -1118,10 +1118,10 @@ var fn   : string;
     l    : longint;
 begin
   dbReadN(mbase,mb_typ,typ);
-  if typ='B' then begin
+  if (typ='B') or (typ='M') then begin
     rfehler(423);   { 'Bei Binaerdateien nicht moeglich' }
     exit;
-    end;
+  end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
   hdp := THeader.Create;
   ReadHeader(hdp,hds,true);           { Heder einlesen }
@@ -1658,7 +1658,7 @@ begin
     if msgid<>''    then apps(13,msgid);
     if References.Count > 0 then apps(14, References[References.Count-1]);
     if pm_bstat<>'' then apps(15,pm_bstat);
-    apps(16,typstr(typ,mimetyp));
+    apps(16,typstr(typ,mime.ctype));
     if programm<>'' then apps(17,programm);
     if datei<>''    then apps(18,datei+ddat);
     apps(19,strs(groesse)+getres(13));
@@ -2442,6 +2442,10 @@ end;
 
 {
   $Log$
+  Revision 1.111  2001/09/08 14:31:31  cl
+  - cleaned up MIME-related fields in THeader
+  - adaptions/fixes for MIME support
+
   Revision 1.110  2001/09/07 13:54:21  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
