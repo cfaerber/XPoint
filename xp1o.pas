@@ -120,9 +120,6 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
-const
-  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-    '-','_','#','=','&','%','@','$',',','+'];
 var x,y : Integer;
   brk : boolean;
   fn  : string;
@@ -154,27 +151,11 @@ begin
       exit;
       end
     else
-    if useclip and (s='CLIPBOARD (URL)') then begin               { Markierten Text als URL}
+    if useclip and (s='CLIPBOARD (URL)') then
+    begin               { Markierten Text als URL}
       s:=getline;
-      y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
-      if y=0 then y:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
-      if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
-      if y<>0 then
-      begin
-        s:=mid(s,y);
-        y:=1;
-        while (y<=length(s)) and (s[y] in urlchars) do
-        begin
-          // "," is a valid url char, but test for things like
-          // "see on http:///www.openxp.de, where" ...
-          // in this case, "," does not belong to the url
-          if (s[y] = ',') and (y<Length(s)) and (not (s[y+1] in urlchars)) then
-            break;
-          inc(y); {Ende der URL suchen...}
-        end;
-        s:=leftStr(s,y-1);
-      end;
+      if FindUrl(s, x, y) then
+        s := Copy(s, x, y-x);
       string2clip(s);
       ReadFilename:=false;
       exit;
@@ -1077,6 +1058,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2003/09/21 20:12:22  mk
+  - use new Function FindURL in ReadFilename
+
   Revision 1.122  2003/09/07 18:41:19  mk
   - added special handling of "," while detecting URLs
 
