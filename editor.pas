@@ -24,8 +24,8 @@ uses
 
 
 const 
-      EdConfigFile    : string[10] = 'EDITOR.CFG';
-      EdGlossaryFile  : string[12] = 'GLOSSARY.CFG';
+      EdConfigFile    = 'EDITOR.CFG';
+      EdGlossaryFile  = 'GLOSSARY.CFG';
       EdSelcursor     : boolean = false; { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
       EditResetoldpos : boolean = false;
@@ -1832,6 +1832,9 @@ end.
 
 {
   $Log$
+  Revision 1.25.2.19  2001/12/05 23:18:56  my
+  MY:- 2 initialized consts => consts
+
   Revision 1.25.2.18  2001/10/22 23:05:35  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
@@ -1839,13 +1842,13 @@ end.
 
   Revision 1.25.2.17  2001/09/16 20:34:14  my
   JG+MY:- <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
-          Einfügen)
+          Einfgen)
 
-  JG+MY:- Editor-Menü (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
-          und "Beenden" hinzugefügt
+  JG+MY:- Editor-Men (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugefgt
 
   JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
-          Windows-Clipboard nicht verfügbar ist. Altes Editor-RAM-
+          Windows-Clipboard nicht verfgbar ist. Altes Editor-RAM-
           Clipboard deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
@@ -1855,7 +1858,7 @@ end.
 
   Revision 1.25.2.15  2001/09/06 10:43:54  mk
   - Robos Blockmarieren mit Shift wesentlich vereinfacht, spart 1kb Exe
-    (Rückportiert von 32 Bit)
+    (Rckportiert von 32 Bit)
 
   Revision 1.25.2.14  2001/09/06 10:38:25  mk
   - added keys shift-ins, shift-del and ctrl-ins in Editor
