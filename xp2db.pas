@@ -17,7 +17,7 @@ unit  xp2db;
 
 interface
 
-uses  
+uses
   crt, dos,typeform,fileio,inout,keys,datadef,database,databaso,
       resource,maus2,xpglobal, ems, datadef1,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
@@ -690,7 +690,7 @@ begin
     end;
 
   if not exist(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
-    initflp(17);  {16.01.00 HS: Erweitert um 1 fÅr neues Feld}
+    initflp(17);
     AppS('Boxname',20);
     AppS('Username',30);
     AppS('Kommentar',30);
@@ -701,7 +701,7 @@ begin
     AppS('Realname',40);
     AppS('Pointname',25);
     AppS('Domain',60);
-    AppS('FQDN',60);  {16.01.00 HS: fÅr Message-IDs}
+    AppS('FQDN',60);
     AppS('EMail',80);
     AppS('Fidoname',40);
     AppS('ReplyTo',80);
@@ -892,6 +892,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.5  2001/07/22 21:44:56  mk
+  - removed some old comments
+
   Revision 1.12.2.4  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and
