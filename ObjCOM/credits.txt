@@ -1,0 +1,43 @@
+ ObjCOM credits
+================
+
+ObjCOM consists of code from many different people. In spite of creating
+a chaos of comments in the source, credits are made here.
+
+Please contact Malte Kiesel (m.kiesel@iname.com, come.to/schnoerkel) if
+you have any comments or feel that changes should be made.
+
+[---]
+
+Maarten Bekers, elevator@wxs.nl, www.elebbs.com
+  2000: Idea and most code (EleCOM), * ;-)
+
+Patrick Hunlock
+  1994: Dos serial routines (ASYNC.ZIP), ocsdos
+
+Malte Kiesel, m.kiesel@iname.com, come.to/schnoerkel
+  2000: Integration and improvement of Patrick's ASYNC, ocsdos
+  2000: Linux port (wrapper for Sebastian's serial.pas), ocslin
+  2000: Rewrote (very simple) TCP port, octwin
+  2000: Renamed this EleCOM version to ObjCOM in agreement with Maarten to
+        avoid confusion
+  2000: CommInit and single-uses-statement changes, objcom
+        ...many other small changes
+
+Sebastian Guenther, sg@freepascal.org
+  2000: Linux serial port unit, serial.pas
+
+Markus Kaemmerer, mk@happyarts.de, www.happyarts.de
+  2000: Compiler define file, ocdefine
+
+Ken J. Wright
+  2000: Linux port bugfix, serial.pas ocslin
+
+Hristo Chilingirov, hgch@usa.net
+  2000: Bugfixing and new functions in Patrick's ASYNC, ocsdos
+
+Name, eMail, Homepage
+   Year: Subject, files where to find code (now, may have been named
+         differently in the past)
+
+[EoF]
