@@ -1363,7 +1363,7 @@ begin
                     getx(su,  'defaultnokop',defaultnokop) or
                     getx(su,  'delviewtmp',delviewtmp) then EntryFound := true;
             'E': if getb(su,  'ExtraktTyp',defextrakttyp) or
-                    getx(su,  'Enable-UTf8',Enable_UTF8) or
+                    getx(su,  'Enable-UTF8',Enable_UTF8) or
                     xp1.gets(s,su,'editor',vareditor) or
                     xp1.getw(su,  'editorkb', dummyi) or
                     xp1.gets(s,su,'extractdir',extractpath) or
@@ -1721,6 +1721,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.19  2004/07/20 14:26:22  mk
+  - do not add duplicate references
+
   Revision 1.144.2.18  2004/05/08 23:53:28  mk
   - fixed 799307: zweimal 'TimeZone' in xpoint.cfg
 

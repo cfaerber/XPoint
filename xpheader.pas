@@ -231,6 +231,7 @@ begin
   MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
   References.Duplicates := dupIgnore;
+  References.CaseSensitive := false;
   XEmpf := TStringList.Create;
   OEM := TStringList.Create;
   XOEM := TStringList.Create;
@@ -819,6 +820,9 @@ end;
 
 {
   $Log$
+  Revision 1.26.2.3  2004/07/20 14:26:22  mk
+  - do not add duplicate references
+
   Revision 1.26.2.2  2003/04/25 20:52:25  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

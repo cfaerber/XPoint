@@ -1683,13 +1683,17 @@ var
     procedure GetRef(line: string;var hd: theader);
     var
       p: integer;
+      s: String;
     begin
       while (FirstChar(line) = '<') do
         with hd do begin
           p := cpos('>', line);
           if p < 3 then p := length(line) + 1;
 
-          References.Add(copy(line, 2, p - 2));
+          s := copy(line, 2,p - 2);
+          // do not add duplicates
+          if References.IndexOf(s) = 0 then
+            References.Add(s);
 
           while (p < length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
             inc(p);
@@ -3696,6 +3700,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.33  2004/07/20 14:26:22  mk
+  - do not add duplicate references
+
   Revision 1.97.2.32  2003/12/07 16:41:17  mk
   - fixed crash in ZtoRFCDate when date is empty
 
