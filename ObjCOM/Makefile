@@ -157,7 +157,7 @@ LIBEXT = .aw
 endif
 
 PF_dos32 = -TGO32V2
-PF_freebsd = -TFREEBSD -dUnixDevelop
+PF_freebsd = -TFREEBSD
 PF_linux = -TLINUX -dUnixDevelop
 PF_os2 = -TOS2
 PF_win = -TWIN32
@@ -286,6 +286,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.14  2000/11/22 20:58:22  fe
+# Fixed.
+#
 # Revision 1.13  2000/11/14 18:45:20  fe
 # Dependecies fixed.
 #
