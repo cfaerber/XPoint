@@ -406,7 +406,7 @@ begin
     if exist(eppfile) then
       _era(eppfile);
     if res=uu_ok then
-      wrtiming('NETCALL '+boxpar^.boxname);
+      wrtiming('NETCALL '+ustr(boxpar^.boxname));
     if res=uu_recerr then begin    { doppeltes Senden verhindern }
       assign(f,XFerDir+caller);
       rewrite(f,1);                   { Inhalt des C-Files l”schen }
@@ -609,6 +609,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.10  2001/02/28 13:57:41  mk
+  - grossschreibung Boxname
+
   Revision 1.13.2.9  2001/02/11 12:32:03  mk
   - Client-Modus Updates
 
