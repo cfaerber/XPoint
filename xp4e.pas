@@ -180,7 +180,9 @@ begin
     p:=cpos('@',s);
     if p>0 then
       if (pos('.',mid(s,p+1))=0) then
-        s:=s+ntAutoDomain(pbox,false);
+        { Adresse darf nicht l„nger als 79 Zeichen sein }
+        if Length(s + ntAutoDomain(pbox,false)) <= eAdrLen then
+          s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
     else if (pb_netztyp=nt_fido) and nodeopen then
@@ -2204,6 +2206,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.7  2001/08/27 08:27:49  mk
+  - fixed crash when addresslen > 80 chars
+
   Revision 1.9.2.6  2000/12/25 18:59:29  mk
   - Usergruppe auf 0 oder 1 setzen
 
