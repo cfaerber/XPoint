@@ -1287,9 +1287,14 @@ begin
     system.fillchar(uda,sizeof(uda),0);
 end;
 
-
+initialization
+finalization
+  FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.33  2001/09/21 16:16:47  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.32  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -103,7 +103,6 @@ end;
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
 var s    : string;
     i,ml : byte;
-    n    : byte;
 begin
   s:=''; ml:=14;
   for i:=1 to 10 do
@@ -1085,9 +1084,18 @@ Begin
    if UsrfeldPos2=33 Then UsrFeldpos2:=32;
 end;
 
-
+initialization
+finalization
+  ReplyTree.Free;
+  BadConfigLinesList.Free;
+  Dispose(bmarked);
+  FreeMem(marked);
+  FreeMem(Boxpar);
 {
   $Log$
+  Revision 1.123  2001/09/21 16:16:48  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.122  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

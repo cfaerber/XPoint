@@ -1768,9 +1768,12 @@ end;
 initialization
   AktEd := nil;
 finalization
-
+  Dispose(Language);
 {
   $Log$
+  Revision 1.66  2001/09/21 16:16:47  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.65  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

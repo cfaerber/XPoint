@@ -765,8 +765,14 @@ begin
   _pexit:=pexit;
 end;
 
+initialization
+finalization
+  FreeMem(pa);
 {
   $Log$
+  Revision 1.39  2001/09/21 16:16:47  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.38  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

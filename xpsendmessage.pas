@@ -2215,6 +2215,7 @@ xexit2:
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
 
+  Dispose(cc); Dispose(ccm);
   for ii:=0 to parts.count-1 do
     TObject(parts[ii]).Free;
   parts.Free;
@@ -2314,6 +2315,9 @@ finalization
 
 {
   $Log$
+  Revision 1.18  2001/09/21 16:16:49  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.17  2001/09/19 18:02:36  cl
   - various small fixes
 

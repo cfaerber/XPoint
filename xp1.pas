@@ -2050,6 +2050,7 @@ begin
   dbReleaseCache;
   if not closed then closedatabases;
   SysSetBackIntensity;
+  FreeMem(MainMenu);
 end;
 
 procedure InitXP1Unit;
@@ -2061,6 +2062,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2001/09/21 16:16:47  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.122  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

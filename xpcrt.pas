@@ -29,7 +29,7 @@ unit xpcrt;
 interface
 
 uses
-  XPGlobal;
+  Windows, XPGlobal;
 
 function keypressed: boolean;
 function readkey: char;
@@ -52,7 +52,7 @@ implementation
 {$ENDIF}
 
 uses
-  Debug, Windows, SysUtils, Mouse;
+  Debug, SysUtils, Mouse;
 
 //function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
 //function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
@@ -306,6 +306,9 @@ initialization
 
 {
   $Log$
+  Revision 1.15  2001/09/21 16:16:48  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.14  2001/09/19 20:41:33  mk
   - fixed checkin 1.9 from ma: special handling for cursor keys in Win98 is
     now included again

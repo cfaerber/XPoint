@@ -695,6 +695,7 @@ var size   : longint;
     ohfill:=s;
   end;
 
+Label Exit;
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
   TempKopien := TStringList.Create;
@@ -714,17 +715,16 @@ begin
       rewrite(f,1);
       close(f);
       Hdp.Free;
-      ExtCliptearline:=true;
-      ExtChgtearline:=false;
-      exit;
+      Goto Exit;
     end;
-    if append then begin
+      if append then begin
       reset(f,1);
       if ioresult<>0 then rewrite(f,1)
       else seek(f,filesize(f));
       end
     else
       rewrite(f,1);
+
     extpos:=filepos(f);
     dbReadN(mbase,mb_EmpfDatum,edat);
     if smdl(IxDat('2712300000'),edat) then
@@ -1095,6 +1095,7 @@ begin
     Hdp.Free;
   end;
   freeres;
+Exit:
   ExtCliptearline:=true;
   ExtChgtearline:=false;
   TempKopien.Free;
@@ -1102,6 +1103,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2001/09/21 16:16:48  mk
+  - fixed some memory leaks (thanks to BoundsChecker)
+
   Revision 1.79  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
