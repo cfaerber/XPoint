@@ -808,7 +808,8 @@ begin
 end;
 
 
-{ z„hlt die Replys am linken Ende von betr; betr wird dabei ge„ndert! }
+{ Zaehlt die "Re:"s am Anfang von betr;
+  loescht fuehrende "Re:"s und angehaengte alte Betreffs. }
 
 function ReCount(var betr:string):integer;
 const reanz = 8;
@@ -1178,6 +1179,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2002/04/13 16:29:13  ma
+  - clarified comments
+
   Revision 1.79  2002/03/24 14:18:20  mk
   - removed lonly label "ende"
 
