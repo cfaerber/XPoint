@@ -78,6 +78,16 @@ type
     function Decode(const Source: PUTF8Char): String; override;
   end;
 
+// -------------------------------------------------------------------
+//   US-ASCII
+//     This is a special case, too, because we have to replace all
+//     8 bit characters (for decoding only, for encoding use a superset!)
+// -------------------------------------------------------------------
+
+  TAsciiUTF8Decoder = class(TUTF8Decoder)
+  public
+    function Decode(const Source: PUTF8Char): String; override;
+  end;
 
 // -------------------------------------------------------------------
 //   Simple 8-bit character sets
@@ -271,6 +281,19 @@ begin
   end;
 end;
 
+function TAsciiUTF8Decoder.Decode(const Source: PUTF8Char): String;
+var
+  p: PUTF8Char;
+begin
+  SetLength(Result, 0);
+  p := Source;
+  while p[0] <> #0 do
+    case p[0] of
+      #0..#127: begin Result := Result + p[0]; Inc(p); end;
+      #$80..#$BF: ;// ignore second..n-th byte of UTF-8 sequences
+      #$C0..#$FF: begin Result := Result + '?'; Inc(p); end;
+    end;
+end;
 
 // -------------------------------------------------------------------
 //   Simple 8-bit character sets
@@ -434,6 +457,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/09/08 14:20:50  cl
+  - added TAsciiUTF8Decoder (for encoding, use a superset)
+
   Revision 1.4  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 
