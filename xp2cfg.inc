@@ -307,8 +307,8 @@ begin
     saveconfig;
     if parTiming=0 then
     begin
-      msgbox(59,8,_hinweis_,x,y);
-      mwrt(x+3,y+2,getres2(252,56));  { 'Automatische Sommer-/Winterzeit-Umstellung aktiviert.' }
+      msgbox(58,8,_hinweis_,x,y);
+      mwrt(x+3,y+2,getres2(252,56));  { 'Automatische Zeitzonen-Umstellung aktiviert.' }
       mwrt(x+3,y+3,'');
       mwrt(x+3,y+4,getres2(252,57));  { 'Bitte Einstellung unter /Config/Optionen/Nachrichten'  }
       mwrt(x+3,y+5,getres2(252,58));  { 'ÅberprÅfen und ggf. Ñndern.'                           }
@@ -1830,6 +1830,11 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.30  2001/10/27 15:55:03  my
+  MY:- Hinweistext Zeitzonen-Umstellung prÑzisiert/korrigiert.
+  MY:- Autom. Umstellung wird auch dann aktiviert, wenn ein Timing-
+       Parameter angegeben wurde (es erfolgt dann nur keine Meldung).
+
   Revision 1.62.2.29  2001/10/27 03:20:24  my
   MY:- Keine ZeitzonenprÅfung wenn "Erstellungszeit 00:00"
 

@@ -170,11 +170,8 @@ begin
         end;
       end;
 {$ENDIF }
-      if parTiming = 0 then
-      begin
-        askRTA(true);     { Bei neuer Version RTA-Konfiguration abfragen }
-        setAutoTZ(true);  { autom. Sommer-/Winterzeit-Umstellung aktivieren }
-      end;
+      if parTiming = 0 then askRTA(true);  { Bei neuer Version RTA-Konfiguration abfragen }
+      setAutoTZ(true);                     { autom. Zeitzonen-Umstellung aktivieren }
       test_defaultgruppen;
       test_systeme;
       DefaultViewer := nil;
@@ -209,6 +206,11 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.24  2001/10/27 15:55:03  my
+  MY:- Hinweistext Zeitzonen-Umstellung pr„zisiert/korrigiert.
+  MY:- Autom. Umstellung wird auch dann aktiviert, wenn ein Timing-
+       Parameter angegeben wurde (es erfolgt dann nur keine Meldung).
+
   Revision 1.29.2.23  2001/10/26 17:40:01  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.

@@ -579,7 +579,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 53   Datum
 54   TZ-Var.
 55   TZ/Datum
-56   Automatische Sommer-/Winterzeit-Umstellung aktiviert.
+56   Automatische Zeitzonen-Umstellung aktiviert.
 57   Bitte Einstellung unter /Config/Optionen/Nachrichten
 58   ÅberprÅfen und ggf. korrigieren bzw. Ñndern.
 59   Die Zeitzone wurde auf "%s" geÑndert
