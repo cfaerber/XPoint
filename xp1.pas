@@ -966,6 +966,9 @@ end;
 
 procedure PrintLine(const s:string);
 begin
+  {$IFDEF Unix }
+    s := IBMToISO(s);
+  {$ENDIF }
   writeln(lst,sp(DruckLira),s);
   inc(printlines);
   if (DruckFormlen>0) and (printlines>=DruckFormlen) then
@@ -2125,6 +2128,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.22  2003/09/05 18:22:14  mk
+  - fixed for printing support under linux
+
   Revision 1.147.2.21  2003/08/30 10:33:04  mk
   - fixes for printing under Unix
 

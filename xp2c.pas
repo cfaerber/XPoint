@@ -1124,13 +1124,13 @@ begin
   PrinterList := TStringList.Create;
   try
     {$IFDEF Unix }
-      printcap := TStringList.Create;
+      printcap := TStringList .Create;
       try
         printcap.LoadFromFile('/etc/printcap');
         for i := 0 to printcap.Count - 1 do
           if FirstChar(printcap[i]) <> '#' then
           begin
-            s := LeftStr(printcap[i], Pos('|', printcap[i])-1);
+            s := LeftStr(printcap[i], Pos('|', printcap[i]+'|')-2);
             if s <> '' then
               PrinterList.Add(s);
           end;
@@ -1139,9 +1139,8 @@ begin
       end;
       lpt := PrinterName;
     {$ELSE }
-      PrinterList.Add('LPT1');
-      PrinterList.Add('LPT2');
-      PrinterList.Add('LPT3');
+      for i := 1 to 4 do
+        PrinterList.Add('LPT' + IntToStr(i));
       if DruckLPT > 0 then
         lpt:=PrinterList[DruckLPT-1];
     {$ENDIF }
@@ -1585,6 +1584,9 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.14  2003/09/05 18:22:15  mk
+  - fixed for printing support under linux
+
   Revision 1.127.2.13  2003/08/31 15:51:29  mk
   - renamed Timezone to XpTimezone, avoids problems with linux
     function with the same name (kylix)
