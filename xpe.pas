@@ -29,8 +29,8 @@ uses
 
 const EditXkeyfunc : EdTProc = nil;
 
-procedure TED(var fn:pathstr; reedit:boolean; keeplines:byte; ukonv:boolean);
-procedure SigEdit(datei:pathstr);
+procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure SigEdit(datei:string);
 procedure EditText;
 procedure Notepad;
 procedure EditSetbetreff(betr:string; maxlen:byte);
@@ -39,11 +39,11 @@ function  EditGetBetreff:string;
 function  EditKeyFunc(var t:taste):boolean;
 
 function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
-function  EditOverwrite(ed:ECB; fn:pathstr):taste;   { šberschr.: J/N/Esc }
+function  EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
 { 04.02.2000 robo }
-{ procedure EditAskFile(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+{ procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
+procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
@@ -99,7 +99,7 @@ begin
   freeres;
 end;
 
-function EditOverwrite(ed:ECB; fn:pathstr):taste;   { šberschr.: J/N/Esc }
+function EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 var brk : boolean;
 begin
   if Overwrite(fn,false,brk) then EditOverwrite:=_jn_[1]
@@ -113,8 +113,8 @@ begin
 end;
 
 { 04.02.2000 robo }
-{ procedure EditAskFile(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+{ procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
+procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
 var useclip : boolean;
 begin
@@ -172,7 +172,7 @@ end;
 
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
 var x,y : byte;
-    ec  : string[1];
+    ec  : string;
 begin
   with cfg do begin
     dialog(ival(getres2(2508,0)),9,getres2(2508,1),x,y);  { 30 / 'Editor-Einstellungen' }
@@ -253,7 +253,7 @@ begin
 end;
 
 
-procedure TED(var fn:pathstr; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
 const inited : boolean = false;
       EditFusszeile = false;
 var   ed     : ECB;
@@ -340,7 +340,7 @@ end;
 { --- Signatureditor ---------------------------------------------- }
 
 
-procedure SigEdit(datei:pathstr);
+procedure SigEdit(datei:string);
 var ok   : boolean;
     x,y  : byte;
     n,nn : shortint;
@@ -379,7 +379,7 @@ end;
 
 
 procedure EditText;
-var s       : pathstr;
+var s       : string;
     useclip : boolean;
 begin
   if keepedname then
@@ -404,7 +404,7 @@ end;
 
 
 procedure Notepad;
-var s  : pathstr;
+var s  : string;
     ma : byte;
 begin
   s:='NOTEPAD';
@@ -480,6 +480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 14:49:29  hd
+  - AnsiString
+
   Revision 1.17  2000/06/29 13:00:59  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

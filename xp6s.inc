@@ -14,7 +14,7 @@
 
 { Signatur-Shuffler / Signatur-Makro-Ersetzer }
 
-procedure MakeSignature(var signat, sigfile:pathstr; var sigtemp:boolean);
+procedure MakeSignature(var signat, sigfile:string; var sigtemp:boolean);
 const sigsep = '-*-';
 var t,t2    : text;
     s       : string;
@@ -164,7 +164,7 @@ begin
   end;
 end;
 
-function orishuffle(fn:pathstr):string;
+function orishuffle(fn:string):string;
 var t     : text;
     s     : string;
     buf   : array[0..511] of byte;
@@ -451,7 +451,10 @@ var p     : ^barr;
     rr: word;
     rr0   : word;
 begin
-  size := 32768;
+{$ifdef FPC}
+{$HINT Bitte mal pruefen. 'siz' war nicht initialisiert! }
+{$endif}
+  siz:= 32768; {size := 32768; <-- War das so richtig???? }
   getmem(p,siz);
   fm_ro; reset(f^,1); fm_rw;
   seek(f^,ofs);
@@ -513,7 +516,7 @@ begin
   dbWriteN(mbase,mb_unversandt,flag);
 end;
 
-procedure pmCryptFile(var hd:xp0.header; var fn:pathstr);
+procedure pmCryptFile(var hd:xp0.header; var fn:string);
 var s   : string;
     hdp : headerp;
     hds : longint;
@@ -640,11 +643,11 @@ begin
       inc(nq);
     end;
   close(t);
-  if (nq/n)>=0.5 then begin
+  if real(nq)/ real(n)>=0.5 then begin
     lines:=ival(getres2(606,1));
     msgbox(51,lines+6,getres2(606,0),x,y);    { 'Hinweis' }
     for i:=1 to lines-1 do
-      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(nq/n*100,0)));
+      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(nq div n*100,0)));
     mwrt(x+3,y+lines+2,getres2(606,lines+1));
     errsound;
     a:='';
@@ -860,8 +863,11 @@ begin
   if existf(f^) then begin
     fm_ro; reset(f^,1); fm_rw;
     seek(f^,max(0,filesize(f^)-length(XP_ID)-100));
+{$ifdef hasHugeString}
+    SetLength(s,length(XP_ID)+100);
+{$endif}
     blockread(f^,s[1],length(XP_ID)+100,rr);
-    s[0]:=chr(rr);
+    SetLength(s, rr); { s[0]:=chr(rr); }
     close(f^);
     TestXPointID:=(pos(XP_ID,s)>0);
     end;
@@ -1096,7 +1102,7 @@ procedure GetPrio;
 var
   x, y: byte;
   brk: boolean;
-  Prio: string[10];
+  Prio: string;
 begin                                                  { 'Sende-Priorit„t' }
   Dialog(ival(getres2(272, 0)), 3, getres2(272, 7), x, y);
   Prio:=GetRes2(272, iif(rfcprio=0,6,rfcprio));
@@ -1128,6 +1134,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.21  2000/07/05 14:46:47  hd
+  - AnsiString
+
   Revision 1.20  2000/07/04 12:04:26  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -2107,9 +2107,6 @@ var
 {$endif}
     reptoanz   : integer;
     fn         : string;
-    dir        : string;
-    name       : string;
-    ext        : string;
     useclip    : boolean;
     sData      : SendUUptr;
 
@@ -2209,6 +2206,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/07/05 14:49:29  hd
+  - AnsiString
+
   Revision 1.45  2000/07/05 14:46:47  hd
   - AnsiString
 
