@@ -172,7 +172,9 @@ procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr)
 procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 {$IFDEF BP }
-function lnxversion:word;                      { Dosemu-Version (analog zu dosversion), sonst 0 }
+{ Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
+  dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
+function DOSEmuVersion: String;
 {$ENDIF }
 { ================= Implementation-Teil ==================  }
 
@@ -2158,26 +2160,31 @@ asm
 end;
 
 {$IFDEF BP }
-{ Erkennt die Version des DOSEmu, wenn XP darin gestartet wird }
-function lnxversion:word;
-var biosdate:string[8];
-    vseg:word;
+function DOSEmuVersion: String;
+var
+  biosdate:string[8];
+  vseg:word;
+  minor, major: byte;
+  patchlevel: word;
 begin
-  lnxversion:=0;
+  DOSEMuVersion:= '';
   fastmove(ptr($f000,$fff5)^,biosdate[1],8);
   biosdate[0]:=char(8);
   vseg:=memw[0:$e6*4+2];
-  if (vseg=$f000) and (biosdate='02/25/93') then begin
+  if (vseg=$f000) and (biosdate='02/25/93') then
+  begin
     asm
-      xor ax,ax
-      mov vseg,ax
-      int 0e6h
-      cmp ax,0aa55h
-      jne @nodosemu
-      mov vseg,bx
-    @nodosemu:
+       xor ax,ax
+       mov vseg,ax
+       int 0e6h
+       cmp ax,0aa55h
+       jne @nodosemu
+       mov major, bh
+       mov minor, bl
+       mov patchlevel, cx
+@nodosemu:
     end;
-    lnxversion:=vseg;
+    DOSEmuVersion:= StrS(major) + '.' + StrS(minor) + '.' + StrS(patchlevel);
   end;
 end;
 {$ENDIF }
@@ -2185,6 +2192,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/03/04 15:54:43  mk
+  Funktion zur DOSEmu-Erkennung gefixt
+
   Revision 1.16  2000/03/02 18:32:23  mk
   - Code ein wenig aufgeraeumt
 

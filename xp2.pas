@@ -337,7 +337,7 @@ var i  : integer;
 begin
   { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
 {$IFDEF BP }
-  if (winversion>0) or (lo(dosversion)>=20) or (lnxversion>0)
+  if (winversion>0) or (lo(dosversion)>=20) or (DOSEmuVersion <> '')
     then ParWintime:=1;
 {$ENDIF }
   extended:=exist('xtended.15');
@@ -1101,6 +1101,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.16  2000/03/04 15:54:43  mk
+  Funktion zur DOSEmu-Erkennung gefixt
+
   Revision 1.15  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert
   - Sprachabfrage bei allererstem Start eingebaut

@@ -319,7 +319,7 @@ begin
   gotoxy(x,y);
 {$IFDEF BP }
   if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
-  else if lnx then write(lo(lnxversion),'.',hi(lnxversion))
+  else if lnx then write(DOSEmuVersion)
   else begin
     write(lo(dosversion):2,'.',formi(hi(dosversion),2));
     if win then begin
@@ -355,7 +355,7 @@ begin
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
   os2:=lo(dosversion)>=10;
-  lnx:=lnxversion>0;
+  lnx:=DOSEMuVersion <> '';
   wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
   if win then
     wrt(x+4,y+9,'Windows'+getres2(rnr,7));
@@ -412,7 +412,7 @@ begin
   wrt(x+4,y+7,getres2(rnr,6));   { verfgbar }
   os2:=lo(dosversion)>=10;
 {$IFDEF BP }
-  lnx:=lnxversion>0;
+  lnx:=DOSEmuVersion <> '';
 {$ENDIF }
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
@@ -1010,6 +1010,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/04 15:54:43  mk
+  Funktion zur DOSEmu-Erkennung gefixt
+
   Revision 1.9  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

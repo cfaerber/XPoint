@@ -306,7 +306,7 @@ begin
     then Int15delay:=4
     else Int15delay:=ParOS2;
   if lo(DosVersion)>=20 then OStype:=os_2
-  else if lnxversion>0 then OStype:=os_linux
+  else if DOSEMuVersion <> '' then OStype:=os_linux
   else if Winversion>0 then OStype:=os_windows
   else OStype:=os_dos;
 {$ELSE }
@@ -1603,6 +1603,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/03/04 15:54:43  mk
+  Funktion zur DOSEmu-Erkennung gefixt
+
   Revision 1.14  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 
