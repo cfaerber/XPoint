@@ -1854,8 +1854,8 @@ fromstart:
       dbWrite(mbase,'gelesen',b);
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
-      else if not (HaltOwn and (sendbox or _verteiler)) then
-        b:=0;
+      else if not (HaltOwn and (sendbox or _verteiler)) 
+        or pm then b:=0;                { Eigene Nachrichten Halten gilt nicht fuer Mails }
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
@@ -2178,6 +2178,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/04/27 09:45:40  jg
+  - C/O/N "Eigene Nachrichten Halten" gilt nicht mehr fuer PMs
+
   Revision 1.20  2000/04/18 16:17:33  jg
   - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
   - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
