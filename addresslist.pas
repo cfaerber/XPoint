@@ -94,57 +94,14 @@ type
     property DisplayString: string read GetDisplayString;
     property AddressType: TAddressListType read FAddrType write FAddrType;    
   end;
-(*
-  TAddressListItem = class
-  private
-    FAddress:   string;
-    FRealName:  string;
-    FBoxName:   string;
-    FGroup:     Integer;
-    FNetztyp:   Byte;
-    FNewUser:   boolean;
-    FAddrType:  TAddressListType;
-
-    function GetAddrRN: string;
-    function GetRFCAddr: string;
-    procedure SetRFCAddr(NewValue: string);
-
-    function GetXPAddress: string;
-    procedure SetXPAddress(const NewValue: string);
-
-    function GetDisplayString: string;
-
-    function GetVerteiler:boolean;
-    function GetPM:boolean;    
-  public
-    constructor Create;
-    
-    procedure Assign(otherList: TAddressListItem); virtual;
-
-    property RFCAddr:  string  read GetRFCAddr write SetRFCAddr;
-    property AddressWithName: string read GetAddrRN write SetRFCAddr;
-    
-    property Address:  string  read FAddress   write FAddress;
-    property RealName: string  read FRealName  write FRealName;
-    property BoxName:  string  read FBoxName   write FBoxName;    
-    property Group:    Integer read FGroup     write FGroup;
-    property Netztyp:  Byte    read FNetztyp   write FNetztyp;
-    property NewUser:  Boolean read FNewUser   write FNewUser;
-
-    property DisplayString: string read GetDisplayString;
-    property Verteiler: boolean read GetVerteiler;
-    property PM: boolean read GetPM;
-    property XPAddress: string read GetXPAddress write SetXPAddress;
-
-    property AddressType: TAddressListType read FAddrType write FAddrType;
-  end;
-*)
 
   TAddressList = class
   private
     FGroupNames: TStringList;
     FObjects: TList;
     function GetCount: Integer;
+    function GetCapacity: Integer;
+    procedure SetCapacity(NewCapacity: Integer);
     function GetAddress(Index: Integer): TAddressListItem;
   public
     constructor Create;
@@ -173,6 +130,8 @@ type
     property Adresses[Index: Integer]: TAddressListItem read GetAddress; default;
     property GroupNames: TStringList read FGroupNames;
     property Count: integer read GetCount;
+    property Capacity: integer read GetCapacity write SetCapacity;
+    
   end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
@@ -389,11 +348,14 @@ begin
   for i:=0 to Source.Count-1 do
     with InsertNew(Index+i) do begin
       Assign(Source[i]);
-      if(Source[i].Group>=0) then begin
+      if(Source[i].Group<0) then 
+        LG := -1 
+      else 
+      begin
         if (Source[i].Group<>LG) then
           LG := GroupNames.Add(Source.GroupNames[Source[i].Group]);
         Group  := LG;
-      end;
+      end 
     end;
 end;
 
@@ -439,6 +401,16 @@ end;
 function TAddressList.GetCount: Integer;
 begin
   result := FObjects.Count;
+end;
+
+function TAddressList.GetCapacity: Integer;
+begin
+  result := FObjects.Capacity;
+end;
+
+procedure TAddressList.SetCapacity(NewCapacity: Integer);
+begin
+  FObjects.Capacity := NewCapacity;
 end;
 
 {---------------------- RFC 2822 Address Lists ----------------------- }
@@ -753,6 +725,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.5  2002/05/01 18:39:54  cl
+// - added property TAddressList.Capacity (delegated to FObjects: TList member)
+//
 // Revision 1.4  2002/04/20 13:56:54  ml
 // - kylix compatibility
 //
