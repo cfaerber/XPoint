@@ -149,14 +149,14 @@ Var
     type
 
        attr_t = chtype;
-       ldat = record
+       ldat = packed record
             text : ^chtype;
             firstchar : integer;
             lastchar : integer;
             oldindex : integer;
          end;
 
-       _win_st = record
+       _win_st = packed record
             _cury : integer;
             _curx : integer;
             _maxy : integer;
@@ -183,7 +183,7 @@ Var
             _pary : longint;
 //            _parent : ^WINDOW;
             _parent : longint;
-            _pad : record
+            _pad : packed record
                  _pad_y : integer;
                  _pad_x : integer;
                  _pad_top : integer;
@@ -746,7 +746,7 @@ Var
       mmask_t = cardinal;
       pmmask_t = ^mmask_t;
 
-      MEVENT = record
+      MEVENT = packed record
         id:    system.smallint;
         x,y,z: longint;
         bstate: mmask_t;
@@ -1745,6 +1745,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/10/15 09:32:42  ml
+  - now using packed records
+
   Revision 1.4  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
