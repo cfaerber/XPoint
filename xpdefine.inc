@@ -44,6 +44,7 @@
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
+  {$DEFINE hasHugeString}
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 0.99.14 }
@@ -115,6 +116,9 @@
 
 {
   $Log$
+  Revision 1.43  2000/07/06 09:12:09  mk
+  - AnsiString Updates
+
   Revision 1.42  2000/07/05 17:10:54  mk
   - AnsiString Updates
 

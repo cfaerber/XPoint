@@ -56,10 +56,10 @@ type ubrec = record
                nextfree  : longint;
                typ       : byte;    { 0=User, 1=Brett }
                aufnehmen : byte;
-               name      : string;
-               adresse   : string;
+               name      : string[80];
+               adresse   : string[80];
                haltezeit : byte;
-               pollbox   : string;
+               pollbox   : string[8];
                ablage    : byte;
                xx3       : byte;
                zielnetz  : byte;    { 1=Zerberus, 2=Magic }
@@ -507,9 +507,9 @@ BEGIN
       Seek(index,x.KommentarZu);
       read(index,tempx);
       Seek(daten,tempx.DIndex);
-      SetLength(idzeile^, 40);			{ Init }
+      SetLength(idzeile^, 40);                  { Init }
       blockread(daten,idzeile^[1],40,rr);
-      SetLength(idzeile^, rr);			{ Korrekt }
+      SetLength(idzeile^, rr);                  { Korrekt }
       writeln(outfile,'-',left(idzeile^,cpos(#13,idzeile^)-1));
       Seek(daten,Seek_daten_merk);
       Seek(index,seek_index_merk);
@@ -702,6 +702,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/06 09:12:09  mk
+  - AnsiString Updates
+
   Revision 1.18  2000/07/06 08:58:46  hd
   - AnsiString
 

@@ -241,10 +241,10 @@ var   fb     : pathstr;
         x,w : fnst;
     begin
       i:=l; j:=r;
-      x := UStrHuge(f^[(l+r) div 2]);
+      x := Uppercase(f^[(l+r) div 2]);
       repeat
-        while UStrHuge(f^[i]) < x do inc(i);
-        while UStrHuge(f^[j]) > x do dec(j);
+        while Uppercase(f^[i]) < x do inc(i);
+        while Uppercase(f^[j]) > x do dec(j);
         if i<=j then
         begin
           w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
@@ -1107,6 +1107,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/06 09:12:08  mk
+  - AnsiString Updates
+
   Revision 1.20  2000/07/05 09:27:09  hd
   - AnsiString-Anpassung
 

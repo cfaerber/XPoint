@@ -551,7 +551,7 @@ begin
   EdModified:=edp(ed)^.modified;
 end;
 
-function EdFilename(ed:ECB):pathstr;
+function EdFilename(ed:ECB):string;
 begin
   EdFilename:=edp(ed)^.edfile;
 end;
@@ -1879,6 +1879,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/06 09:12:08  mk
+  - AnsiString Updates
+
   Revision 1.32  2000/07/05 17:10:53  mk
   - AnsiString Updates
 
