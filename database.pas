@@ -805,7 +805,7 @@ var typ,i,j : integer;
     l,x     : longint;
 
   procedure writeinfo;
-  var r : record
+  var r : packed record
             gtyp : byte;
             siz  : longint;
           end;
@@ -820,7 +820,7 @@ var typ,i,j : integer;
   end;
 
   procedure writedel(adr:longint; typ:byte; chain:longint);
-  var r : record
+  var r : packed record
             gtyp : byte;
             nextfree,lastfree : longint;
           end;
@@ -900,12 +900,12 @@ end;
 
 
 procedure FreeExtRec(dbp:DB; adr:longint);
-type rtyp =  record
+type rtyp =  packed record
                typ      : byte;
                next,last: longint;
              end;
 var r1,r2  : rtyp;
-    rr     : record
+    rr     : packed record
                lastr : byte;
                _rr   : rtyp;
              end;
@@ -1073,13 +1073,13 @@ end;
 { auf n„chsten Satz springen      }
 
 procedure dbDelete(dbp:DB);
-var clrec : record
+var clrec : packed record
               rflag : byte;
               free  : longint;
             end;
     key   : string;
     i     : integer;
-    ll    : record
+    ll    : packed record
               adr  : longint;
               size : longint;
             end;
@@ -1281,7 +1281,7 @@ end;
 
 
 procedure feseek(dbp:DB; const feld:dbFeldStr; var l:longint);
-var rr : record
+var rr : packed record
            adr  : longint;
            size : longint;
          end;
@@ -1391,7 +1391,7 @@ end;
 
 procedure fealloc(dbp:DB; const feld:dbFeldStr; size:longint; var adr:longint);
 var nr      : byte;
-    ll      : record
+    ll      : packed record
                 adr     : longint;
                 oldsize : longint;
               end;
@@ -1585,6 +1585,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.38  2000/10/04 15:39:54  mk
+  - Alignemt-Probleme beseitigt
+
   Revision 1.37  2000/08/26 09:10:27  mk
   - Pointercheck hinzugefuegt
 
