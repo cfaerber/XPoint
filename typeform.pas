@@ -26,7 +26,12 @@ unit typeform;
 interface
 
 uses
-  xpglobal, dos;
+  xpglobal,
+{$ifndef Linux}
+ {$HINT Bitte pruefen, ob die wirklich notwendig ist!!! }
+  dos,
+{$endif}
+  sysutils;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -87,13 +92,13 @@ function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren  
 function Even(const l:longint):boolean;            { not odd()                    }
 function FileName(var f):string;                { Dateiname Assign             }
 function FirstChar(const s:string):char;           { s[1]                         }
-function fitpath(path:pathstr; n:byte):pathstr;   {+ Pfad evtl. abk걊zen    }
+function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abk걊zen    }
 function FormI(const i:longint; const n:Byte):string;    { i-->str.; bis n mit 0 auff.  }
 function FormR(const r:real; const vk,nk:byte):string;   { r-->str.; vk+nk mit 0 auff.  }
 function FormS(s:string; n:byte):string;     { String auf n Stellen mit ' ' }
 function GetToken(var s:string; delimiter:string):string;
 function HBar(const len:byte):string;              { 쳐컴컴컴컴...컴컴컴컴캑      }
-function Hex(const l:longint; const n:byte):string;      { Hex-Zahl mit n Stellen       }
+function Hex(const l:integer; const n:integer):string;      { Hex-Zahl mit n Stellen       }
 function HexVal(const s:string):longint;           { Hex-Val                      }
 function Hoch(const r:real; const n:integer):real;       { Hoch <-- r^n                 }
 function iif(b:boolean; l1,l2:longint):longint; { IIF Integer               }
@@ -130,8 +135,8 @@ function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
 function PosN(s1,s2:string; n:byte):byte;    { POS ab Stelle n              }
 function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0     }
 function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
-function ProgName:NameStr;                   { Name des Programms           }
-function ProgPath:PathStr;                   { Pfad des Programms           }
+function ProgName:TFilename;                   { Name des Programms           }
+function ProgPath:TFilename;                   { Pfad des Programms           }
 function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
 function QSum(const s:string):longint;             { Quersumme                    }
 function Range(const c1,c2:char):string;           { z.B. ('1','5') = '12345'     }
@@ -142,7 +147,6 @@ function Round(const r:real; const nk:integer):real;     { Real --> Real auf nk 
 function RVal(const s:string):real;                { Value Real                   }
 function Sgn(const x:longint):longint;       { Signum Integer               }
 function SgnR(const x:real):real;            { Signum Real                  }
-function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname k걊zen        }
 function SMatch(s1,s2:string):byte;          { Anzahl der 갶ereinst. Bytes  }
 function SiMatch(s1,s2:string):byte;         { dto., ignore case            }
 function Sp(const n:integer):string;               { space$                       }
@@ -176,8 +180,10 @@ Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Parit꼝 setzen  }
+{$ifndef Linux}
 Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
 Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
+{$endif}
 Procedure TruncStr(var s:string; n:byte);    { String k걊zen                }
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
@@ -191,10 +197,6 @@ function ConvertFileName(s:string): String;
 { ================= Implementation-Teil ==================  }
 
 implementation
-
-{ SysUtils wird bei OpenXP als Standard RTL Unit vorausgesetzt! }
-uses
-  SysUtils;
 
 type psplit = record              { F걊 Pointer-Type-Cast }
                 o,s : smallword;
@@ -447,6 +449,7 @@ begin
   Date:= FormatDateTime('dd.mm.yyyy', Now);
 end;
 
+{$ifdef}
 Procedure SetSysTime(const t:DateTimeSt);
 VAR st,mi,se,res : Integer;
 begin
@@ -464,6 +467,7 @@ begin
   Val(Copy(d,7,4),j,res);
   setdate(j,m,t);
 end;
+{$endif}
 
 function Dup(const n:integer; const c:Char):string;
 VAR h : String;
@@ -862,14 +866,9 @@ end;
 
 
 function IVal(s:string):longint;
-var l   : longint;
-    res : integer;
 begin
-  if s[1]='+' then delete(s,1,1);
-  val(trim(s),l,res);
-  IVal:=l;
+  IVal:= StrToIntDef(s,0);
 end;
-
 
 function RVal(const s:string):real;
 var r   : real;
@@ -880,55 +879,28 @@ begin
 end;
 
 
-function progname:namestr;
-var ps : pathstr;
-    ds : dirstr;
-    ns : namestr;
-    es : extstr;
+function progname: TFilename;
+var s : TFilename;
+    p : integer;
 begin
-  ps:=paramstr(0);
-  if ps='' then progname:=''
-  else begin
-    fsplit(ps,ds,ns,es);
-    progname:=ns;
-    end;
+  s:= ExtractFileName(ParamStr(0));
+  p:= RightPos('.', s);
+  if p>0 then
+    SetLength(s,p-1);
+  ProgName:= s;
 end;
 
 
-function progpath:pathstr;
-var ps : pathstr;
-    ds : dirstr;
-    ns : namestr;
-    es : extstr;
+function progpath: TFilename;
 begin
-  ps:=paramstr(0);
-  if ps='' then progpath:=''
-  else begin
-    fsplit(ps,ds,ns,es);
-    progpath:=ds;
-    end;
+  ProgPath:= ExtractFilePath(ParamStr(0));
 end;
 
 
-function Hex(const l:longint; const n:byte):string;
-const hexch : array[0..15] of char = '0123456789ABCDEF';
-var   s    : string[8];
-      f    : shortint;
-      trim : boolean;
+function Hex(const l:integer; const n:integer):string;
 begin
-  trim:=(n=0);
-  f:=iif(trim,28,(n-1)*4);
-  s:='';
-  while f>=0 do begin
-    s:=s+hexch[(l shr f)and $f];
-    dec(f,4);
-    end;
-  if trim then
-    while (length(s)>1) and (s[1]='0') do
-      delete(s,1,1);
-  Hex:=s;
+  Hex:= IntToHex(l, n);
 end;
-
 
 function HexVal(const s:string):longint;
 var l   : longint;
@@ -955,7 +927,7 @@ end;
 
 
 function FileName(var f):string;
-var s : pathstr;
+var s : TFilename;
     i : byte;
 begin
   Move(filerec(f).name,s[1],79);
@@ -1034,18 +1006,18 @@ begin
   long:=l;
 end;
 
-
-function shortpath(path:pathstr; n:byte):pathstr;
-var ds : dirstr;
-    ns : namestr;
-    es : extstr;
+{
+function shortpath(path:TFilename; n:byte):TFilename;
+var ds : TFilename;
+    ns : TFilename;
+    es : TFilename;
 begin
   fsplit(path,ds,ns,es);
   ds:=left(ds,n-length(ns+es));
   dellast(ds);
   shortpath:=ds+DirSepa+ns+es;
 end;
-
+}
 
 function center(const s:string; n:byte):string;
 begin
@@ -1137,22 +1109,22 @@ begin
 end;
 
 
-function fitpath(path:pathstr; n:byte):pathstr;
-var dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
-    p    : byte;
+function fitpath(path:TFilename; n:integer):TFilename;
+var dir  : TFilename;
+    l    : integer;
 begin
-  if length(path)<=n then fitpath:=path
+  l:= Length(path);
+  if (l<n) or (l<4) then
+    fitpath:= path
   else begin
-    fsplit(path,dir,name,ext);
-    while length(dir)+length(name)+length(ext)+4>n do begin
-      p:=length(dir)-1;
-      while dir[p]<>DirSepa do dec(p);
-      dir:=left(dir,p);
-      end;
-    fitpath:=dir+'...'+DirSepa+name+ext;
-    end;
+    dir:= ExtractFilePath(path);
+    l:= Length(dir);
+    if l>4 then begin
+      Delete(dir,l-4,4);
+      fitpath:= dir+'...'+DirSepa+ExtractFileName(path);
+    end else
+      fitpath:= '...'+DirSepa+ExtractFileName(path);
+  end;
 end;
 
 
@@ -1596,6 +1568,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/07/04 16:30:37  hd
+  - DirName, PAthNAme, ExtName auf TFilename umgestellt
+  - ProgPath, ProgName, FitPath, Hex umgeschrieben
+  - ShortPath entfernt
+  - Linux-Version:
+    - DOS-Unit entfernt (SetDate/SetTime funktionieren sowieso nicht)
+
   Revision 1.47  2000/07/04 11:40:12  hd
   - UStr, LStr entfernt
   - FUStr in FileUpperCase umbenannt
