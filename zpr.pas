@@ -984,9 +984,10 @@ var i,j  : integer;
         dec(contpos[n],i-1);
         end;
       i:=1;                 { Test auf unerlaubte Zeichen }
-      while (i<contpos[n]) and (fld[n][i] in kchar) do
+      while (i<contpos[n]) and (i <= Length(fld[n])) and (fld[n][i] in kchar) do
         inc(i);
-      if fld[n][i]<>':' then begin
+      if (i <= Length(fld[n])) and (fld[n][i]<>':') then
+      begin
         wr('ungltiger Header '+ww+'entfernt',true);
         wrehd(n);
         fld[n]:='';
@@ -1290,6 +1291,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/01/11 13:07:39  mk
+  - fixed two ansistring bugs
+
   Revision 1.31  2000/12/31 12:49:08  mk
   - integrated zpr in openxp
 
