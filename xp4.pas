@@ -781,7 +781,7 @@ var t,lastt: taste;
       end;
     end;
 
-    { Diskussion-In's 2 bis Ende nach SendEmpfList^ einlesen }
+    { Diskussion-In's 2 bis Ende nach SendEmpfList einlesen }
 
     procedure AddMultipleFollowups;
     var hdp : Theader;
@@ -791,7 +791,7 @@ var t,lastt: taste;
       hdp := THeader.Create;
       readheader(hdp,hds,false);
       with hdp do
-        for i:=0 to followup.count-1 do begin
+        for i:=1 to followup.count-1 do begin
           dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
           EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
         end;
@@ -2131,6 +2131,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.80  2001/02/16 21:42:14  mk
+  - fixed bug in AddMultibleFollowups
+
   Revision 1.79  2001/02/16 21:25:32  mk
   - fixed count bug in mf_bretta
 
