@@ -242,6 +242,7 @@ end;
 
 procedure getmaus(var stat:mausstat);
 begin
+{$IFDEF BP }
   if maus then
   asm
     cmp maus,false
@@ -254,6 +255,7 @@ begin
     mov es:[di+4],dx
   @1:
   end else
+{$ENDIF }
   with stat do
   begin
     x := 0;
@@ -519,6 +521,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/04/15 18:19:49  mk
+  - Getmaus sicherer gemacht (2)
+
   Revision 1.8  2000/04/15 18:07:50  mk
   - Getmaus sicherer gemacht
 
