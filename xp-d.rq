@@ -269,7 +269,7 @@ K (c) '93-98 Peter Mandrella
 3    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert,d^eaktiviert+gew„hlt
 4    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert,d^eaktiviert+gew„hlt
 5    ^Taste,Te^xt,^aktivierte Taste,a^ktivierter Text
-6    ^Trennlinien,^Statuszeile ArcViewer,^Bestellte Bretter,Bild^rand
+6    ^Trennlinien,^Statuszeile ArcViewer,^Bestellte Bretter
 7    ^Text,^gew„hlt,^markiert,T^rennzeile
 8    ^Text,^markiert,^gew„hlt,^Infozeile,^hervorgehoben,g^ew„hlt+hervorgeh.,Priorit„t ^1 (h”chste),Priorit„t ^2 (hoch),Priorit„t ^4 (niedrig),Priorit„t ^5 (niedrigste)
 9    ^Text,^Rahmen,^hervorgehoben

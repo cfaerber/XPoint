@@ -267,7 +267,7 @@ K (c) '93-96 Peter Mandrella
 3    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
 4    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
 5    ^Key,Te^xt,^Active key,Active ^Text
-6    ^Split lines,S^tatus line ArcViewer,subscribed ^newsgroups,Screen ^border
+6    ^Split lines,S^tatus line ArcViewer,subscribed ^newsgroups
 7    ^Text,^Selected,^Marked,S^plit line
 8    ^Text,^Marked,^Selected,^Info line,^Highlighted,S^elected+highlighted,Priority ^1 (highest),Priority ^2 (high),Priority ^4 (low),Priority ^5 (lowest)
 9    ^Text,^Border,^Highlighted
