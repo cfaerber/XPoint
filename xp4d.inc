@@ -418,7 +418,8 @@ begin  { __ Suchmarke }
               dbReadN(mbase,mb_name,s0);
               ulen:=19; {Absender-laenge}
               msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
-              msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+iif(Showrealos and not MarkUnversandt,5,0))); { (B)etreff }
+              msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
+                iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
               end 
             else begin                            { Nicht-Fido bzw. Dispmode 11,12 }
@@ -429,7 +430,8 @@ begin  { __ Suchmarke }
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
                 end 
-              else msgtausch('B',forms(s1,blen-1+h3+iif(Showrealos and not MarkUnversandt,5,0)));         { (B)etreff }
+              else msgtausch('B',forms(s1,blen-1+h3+
+                iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
 
               asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
                   mov al,flags     { 000=normal   -> 0     100=niedrigste -> 5       } 
@@ -456,7 +458,8 @@ begin  { __ Suchmarke }
             msgtausch('F',dflags);                     { (F)lags }
             msgtausch('G',siz);                        { (G)roesse }
             msgtausch('D',iifs(showmsgdatum,sdat,'')); { (D)atum }
-            msgtausch('A',forms(s,ulen+h3-iif(showrealos and not MarkUnversandt,5,0)));           { (A)bsender }
+            msgtausch('A',forms(s,ulen+h3-
+              iif(showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (A)bsender }
 
 
             if (dispmode<>12) then begin            { Kommentarbaum-Ausgabe ist fertig }
@@ -584,6 +587,9 @@ end;
 
 {
   $Log$
+  Revision 1.27.2.8  2001/10/16 18:37:25  my
+  MY+JG:- Letzten Commit etwas besser abgesichert
+
   Revision 1.27.2.7  2001/10/09 16:39:20  my
   MY:- C/A/N/Realname_anzeigen bzw. <Ctrl-N> wird bei unversandten Nachrichten
        jetzt ignoriert, dadurch bleibt Boxname immer sichtbar.
