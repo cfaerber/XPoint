@@ -344,7 +344,7 @@ var diffdir  : string;
     TmpDoDiff: boolean;
     ucount   : byte;     { ZÑhler fÅr Update-Files mit Nummern }
 
-  procedure log(txt:string);
+  procedure log(const txt:string);
   begin
     if not logopen then begin
       assign(logfile,LogPath+'NODELIST.LOG');
@@ -539,6 +539,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45.2.4  2003/09/21 16:26:53  mk
+  - added const parameter for log()
+
   Revision 1.45.2.3  2003/08/24 21:35:35  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems
