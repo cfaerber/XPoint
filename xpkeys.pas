@@ -132,14 +132,14 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xpnetcall,xpconfigedit,xpauto;
+uses xp4o,xpnetcall,xpconfigedit,xpauto, clip;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
 
 procedure prog_call(nr,nn:byte);
 var s      : string;
-    p0     : byte;
+    p0, p1 : byte;
     fn,fn2 : string;
     brk    : boolean;
     auto   : boolean;
@@ -147,7 +147,8 @@ begin
   with fkeys[nr][nn] do begin
     s:=prog;
     auto:=autoexec;
-    if s[1]='*' then begin
+    if FirstChar(s) = '*' then
+    begin
       if funcexternal then exit;
       s:=UpperCase(trim(s));
       if copy(s,2,7)='NETCALL' then
@@ -179,13 +180,19 @@ begin
       else if s<>'*' then
         rfehler1(21,LeftStr(s,50));   { 'UngÅltige Funktion:  %s' }
       end
-    else if s<>'' then begin
+    else if s<>'' then
+    begin
       p0:=pos('$FILE',UpperCase(s));
       if p0>0 then begin
         fn:=getfilename(nr,nn);
         if (fn='') or not FileExists(fn) then exit;
-        s:=copy(s,1,p0-1)+fn+copy(s,p0+5,120);
-        end;
+        s:= LeftStr(s, p0-1) + fn + Mid(s, p0+5);
+      end;
+
+      p1 := Pos('$CLIP', UpperCase(s));
+      if p1 > 0 then
+        s:= LeftStr(s, p1-1) + Clip2String + Mid(s, p1+5);
+
       if @preextproc<>nil then begin
         preextproc;
         preextproc:=nil;
@@ -246,9 +253,11 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.24.2.4  2003/09/07 18:50:12  mk
+  - added Makro $CLIP: insert content of Clipboard
+
   Revision 1.24.2.3  2003/04/25 20:52:26  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
@@ -333,3 +342,4 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
