@@ -840,10 +840,10 @@ begin
                 empfaenger:='$/¯'+Mid(empfaenger,10);
                 end
             else
-              if empfaenger[2]='¯' then
+              if (Length(Empfaenger) >= 2) and (empfaenger[2]='¯') then
                 empfaenger:='$'+empfaenger
               else
-                if (atp=0) and (LeftStr(empfaenger,1)='/') then
+                if (atp=0) and (FirstChar(empfaenger) = '/') then
                   empfaenger:='A'+empfaenger
                 else begin
                   if atp=0 then empfaenger:='1/'+empfaenger
@@ -1221,6 +1221,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2001/06/04 16:32:23  mk
+  - fixed possible crash (empfaenger[2])
+
   Revision 1.51  2001/06/01 21:43:52  ma
   - ReplaceOwn working now
 
