@@ -383,9 +383,15 @@ begin
           moff;
           if b=9 then write(sp(8-(wherex-1) mod 8))
           else if b=12 then clrscr
+{$ifdef Unix}
+          { Muss noch ueberarbeitet werden }
+          else if (b<>0) and (b<>13) then
+            write(chr(b));
+{$else}
           else if b<>0 then
             if termbios then BiosWrite(chr(b))
             else write(chr(b));
+{$endif}
           mon;
           end;
         if (b=13) or (b=10) then begin
@@ -584,7 +590,7 @@ begin
   Scroll(win, true);
   attrtxt(15); 
   writeln('OpenXP ', verstr, betastr, pformstr);
-  writeln('Terminal Emulation Ready');
+  writeln('Terminal Emulation Ready (',CommObj^.GetBPSRate,')');
   attrtxt(7);
   writeln;
   open_log:=false;
@@ -1459,6 +1465,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.24  2000/11/12 17:28:45  hd
   - Terminal funktioniert (aber nur im Direkten Modus)
 

@@ -1291,6 +1291,11 @@ begin
     CloseFile(__F);
     __isopen:=false;
   end;
+  writeln;
+  writeln('This message is only in the debug version visible!');
+  write('Please press enter...');
+  readln;
+  writeln;
 {$endif}
   { Noch ein SubWindow vorhanden= }
   if (BaseSub <> nil) then
@@ -1428,6 +1433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.31  2000/11/12 17:28:45  hd
   - Terminal funktioniert (aber nur im Direkten Modus)
 

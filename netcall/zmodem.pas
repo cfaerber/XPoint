@@ -1,6 +1,6 @@
-UNIT ZModem;
-
 { $Id$ }
+
+UNIT ZModem;
 
 (*                           ZMODEM fuer Turbo-Pascal                           *)
 (*                       Copywrite (c) by Stefan Graf 1990                     *)
@@ -19,7 +19,7 @@ UNIT ZModem;
          4 - alle empfangenen/gesendeten Bytes}
 
 {a$DEFINE Log}  {ermoeglicht Loglevel 4, verbraucht viel Rechenzeit}
-{$IFDEF FPC}{$HINTS OFF}{$NOTES OFF}{$ENDIF}
+{$IFDEF FPC}{.$HINTS OFF}{.$NOTES OFF}{$ENDIF}
 
 {$i xpdefine.inc}
 
@@ -43,7 +43,7 @@ PROCEDURE ZmodemReceive (    vCommObj    : tpCommObj;  (* ObjCOM communication o
 PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication object            *)
                              pathname   : STRING;     (* Path und Filename                      *)
                              lastfile   : Boolean;
-                         VAR fehler     : WORD);      (* Bei Fehler in der Uebertragung <> 0     *)
+                         VAR fehler     : smallword);      (* Bei Fehler in der Uebertragung <> 0     *)
 
 {Variablen mit Infos fuer die Ausgaberoutine}
 
@@ -60,7 +60,7 @@ PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication o
 
     TransferTotalTime,             (* Voraussichtliche Uebertragungsdauer in Sek.         *)
     TransferBlockSize,             (* Gr"sse des letzen Datenblockes                     *)
-    TransferError      : WORD;     (* Anzahl der erkannten Uebertragungsfehler            *)
+    TransferError      : smallword;     (* Anzahl der erkannten Uebertragungsfehler            *)
                                                                                       (*S: Bei Startproc gesetzt*)
 
     FileAddition       : (NewFile,RecoverFile,ReplaceFile);
@@ -68,8 +68,8 @@ PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication o
 IMPLEMENTATION
 
 USES
-{$ifdef NCRT}
-  XPCurses,
+{$ifdef Unix}
+  xpcurses,
 {$else}
   Crt,
 {$endif}
@@ -81,7 +81,7 @@ USES
 
   VAR
     diskbuffer : ARRAY [0..DiskBufferSize] OF CHAR;
-    bufferpos  : WORD;
+    bufferpos  : smallword;
 
 FUNCTION Z_OpenFile(VAR f: FILE; pathname: STRING): BOOLEAN;
 BEGIN {$I-}
@@ -116,19 +116,19 @@ BEGIN {$I-}
    Z_SeekFile := (IOresult = 0)
 END; {$I+}
 
-FUNCTION Z_WriteFile(VAR f: FILE; VAR buff; bytes: WORD): BOOLEAN;
+FUNCTION Z_WriteFile(VAR f: FILE; VAR buff; bytes: smallword): BOOLEAN;
 
 BEGIN {$I-}
    IF ((bufferpos + bytes) > DiskBufferSize) THEN BEGIN
      BlockWrite(f,diskbuffer,bufferpos);
      bufferpos:=0;
    END;  (* of IF *)
-   System.Move (buff,diskbuffer [bufferpos],bytes);
+   Move (buff,diskbuffer [bufferpos],bytes);
    INC (bufferpos,bytes);
    Z_WriteFile := (IOresult = 0)
 END; {$I+}
 
-FUNCTION Z_ReadFile(VAR f: FILE; VAR buff; btoread: WORD; VAR bread: WORD): BOOLEAN;
+FUNCTION Z_ReadFile(VAR f: FILE; VAR buff; btoread: smallword; VAR bread: smallword): BOOLEAN;
 BEGIN {$I-}
    BlockRead(f,buff,btoread,bread);
    Z_ReadFile := (IOresult = 0)
@@ -162,7 +162,7 @@ CONST
    D1 =  146097;
    D2 = 1721119;
 
-Procedure GregorianToJulianDN(Year, Month, Day : Integer;
+Procedure GregorianToJulianDN(Year, Month, Day : integer16;
                                   var JulianDN : LongInt);
 var
   Century,
@@ -182,14 +182,14 @@ begin {GregorianToJulianDN}
                                     + XYear + Century;
 end; {GregorianToJulianDN}
 
-Procedure JulianDNToGregorian(JulianDN : word;
-                  var Year, Month, Day : word);
+Procedure JulianDNToGregorian(JulianDN : smallword;
+                  var Year, Month, Day : smallword);
 var
   Temp,
   XYear   : LongInt;
   YYear,
   YMonth,
-  YDay    : Integer;
+  YDay    : integer16;
 begin {JulianDNToGregorian}
   Temp := (((JulianDN - D2) shl 2) - 1);
   XYear := (Temp mod D1) or 3;
@@ -234,25 +234,13 @@ FUNCTION Z_FromUnixDate(s: STRING): LONGINT;
 VAR
    dt: DateTime;
    secspast, datenum: LONGINT;
-   n: WORD;
-{$ifdef Unix}
-{$ifdef FPC}
-   y, m, d: longint; { Var parameter must match exactly }
-{$endif}
-{$endif}
+   n: smallword;
 BEGIN
    secspast := LONGINT(0);
    FOR n := 1 TO Length(s) DO
       secspast := (secspast SHL 3) + Ord(s[n]) - $30;
    datenum := (secspast DIV 86400) + c1970;
-{$ifdef Unix}
-{$ifdef FPC}
-   JulianDNToGregorian(datenum,y,m,d);
-   dt.year:= y; dt.month:= m; dt.day:= d;
-{$else}
    JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
-{$endif}
-{$endif}
    secspast := secspast MOD 86400;
    dt.hour := secspast DIV 3600;
    secspast := secspast MOD 3600;
@@ -385,16 +373,16 @@ VAR
    rxhdr        : hdrtype;    {receive header var}
    rxtimeout,
    rxtype,
-   rxframeind   : INTEGER;
+   rxframeind   : integer16;
    attn         : buftype;
    secbuf       : buftype;
    fname        : STRING;
-   fmode        : INTEGER;
+   fmode        : integer16;
    ftime,
    fsize        : LONGINT;
    send32crc    : BOOLEAN;  (* TRUE, wenn 32-Bit-CRC benutzt werden darf *)
    zcps,
-   zerrors      : WORD;
+   zerrors      : smallword;
    txpos        : LONGINT;
    txhdr        : hdrtype;
    ztime        : LONGINT;
@@ -433,12 +421,12 @@ BEGIN
   LogChars:=LogChars+I2H[Ord(C) SHR 4]+I2H[Ord(C) AND 15]+' ';
 END;
 
-PROCEDURE AddLogMessage(Msg: String; Level: Integer);
+PROCEDURE AddLogMessage(Msg: String; Level: integer16);
 BEGIN
   WriteChars; DebugLog('ZModem',Msg,Level);
 END;
 
-FUNCTION HeaderName(c: Integer): String;
+FUNCTION HeaderName(c: integer16): String;
 CONST HeaderNames: ARRAY[0..19]OF String[10]= 
       ('ZRQINIT','ZRINIT','ZSINIT','ZACK','ZFILE','ZSKIP','ZNAK','ZABORT',
        'ZFIN','ZRPOS','ZDATA','ZEOF','ZFERR','ZCRC','ZCHALLENGE','ZCOMPL',
@@ -464,7 +452,7 @@ VAR
    crc   : LONGINT;
 
    n,
-   bread : INTEGER;
+   bread : integer16;
 
 BEGIN
    crc := $FFFFFFFF;
@@ -484,14 +472,14 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetByte (tenths : INTEGER) : INTEGER;
+FUNCTION Z_GetByte (tenths : integer16) : integer16;
 
 (* Reads a byte from the modem - Returns RCDO if *)
 (* no carrier, or ZTIMEOUT if nothing received   *)
 (* within 'tenths' of a second.                  *)
 
   VAR
-    c    : INTEGER;
+    c    : integer16;
     time : LONGINT;
 
 BEGIN
@@ -524,7 +512,7 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_qk_read : INTEGER;
+FUNCTION Z_qk_read : integer16;
 
 (* Just like Z_GetByte, but timeout value is in *)
 (* global var rxtimeout.                        *)
@@ -534,7 +522,7 @@ FUNCTION Z_qk_read : INTEGER;
 
     ch   : CHAR;
 
-    c    : INTEGER;
+    c    : integer16;
 
     time : LONGINT;
 
@@ -566,7 +554,7 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_TimedRead : INTEGER;
+FUNCTION Z_TimedRead : integer16;
 
 (* A Z_qk_read, that strips parity and *)
 (* ignores XON/XOFF characters.        *)
@@ -598,7 +586,7 @@ END;
 (* Senden des Zeichen in <c>.                  *)
 (* Es wird gewartet, bis das Modem bereit ist. *)
 
-PROCEDURE Z_SendByte (c : INTEGER);
+PROCEDURE Z_SendByte (c : integer16);
 
   VAR
     time : LONGINT;
@@ -645,7 +633,7 @@ PROCEDURE Z_PutString (VAR p: buftype);
 (* 222 (2 second delay).                            *)
 
   VAR
-    n : WORD;
+    n : smallword;
 
 BEGIN
   n := 0;
@@ -683,9 +671,9 @@ PROCEDURE Z_SendHexHeader (htype : BYTE ; VAR hdr : hdrtype);
 (* Sends a zmodem hex type header *)
 
 VAR
-   crc : WORD;
+   crc : smallword;
    n,
-   i   : INTEGER;
+   i   : integer16;
 
 BEGIN
    Z_SendByte (ZPAD);                  { '*' }
@@ -704,7 +692,7 @@ BEGIN
    crc := UpdCRC16 (0,crc);
    crc := UpdCRC16 (0,crc);
 
-   Z_PutHex (Lo (crc SHR 8));
+   Z_PutHex (Lo (smallword(crc SHR 8)));
    Z_PutHex (Lo (crc));
 
    Z_SendByte (13);                    { make it readable to the other end }
@@ -736,13 +724,13 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetZDL : INTEGER;
+FUNCTION Z_GetZDL : integer16;
 
 (* Gets a byte and processes for ZMODEM escaping or CANcel sequence *)
 
   VAR
      c,
-     d  : INTEGER;
+     d  : integer16;
 
 BEGIN
    c := Z_qk_read;
@@ -781,10 +769,10 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetHex: INTEGER;
+FUNCTION Z_GetHex: integer16;
 (* Get a byte that has been received as two ASCII hex digits *)
 VAR
-   c, n: INTEGER;
+   c, n: integer16;
 
 BEGIN
    n := Z_TimedRead;
@@ -815,14 +803,14 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetHexHeader(VAR hdr: hdrtype): INTEGER;
+FUNCTION Z_GetHexHeader(VAR hdr: hdrtype): integer16;
 
 (* Receives a zmodem hex type header *)
 
   VAR
-    crc : WORD;
+    crc : smallword;
     c,
-    n   : INTEGER;
+    n   : integer16;
 
 BEGIN
    c := Z_GetHex;
@@ -872,14 +860,14 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetBinaryHeader (VAR hdr: hdrtype) : INTEGER;
+FUNCTION Z_GetBinaryHeader (VAR hdr: hdrtype) : integer16;
 
 (* Same as above, but binary with 16 bit CRC *)
 
 VAR
-   crc : WORD;
+   crc : smallword;
    c,
-   n   : INTEGER;
+   n   : integer16;
 
 BEGIN
    c := Z_GetZDL;
@@ -925,11 +913,11 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetBinaryHead32(VAR hdr: hdrtype): INTEGER;
+FUNCTION Z_GetBinaryHead32(VAR hdr: hdrtype): integer16;
 (* Same as above but with 32 bit CRC *)
 VAR
    crc: LONGINT;
-   c, n: INTEGER;
+   c, n: integer16;
 BEGIN
    c := Z_GetZDL;
    IF (c < 0) THEN BEGIN
@@ -971,7 +959,7 @@ END;
 
 (*************************************************************************)
 
-FUNCTION Z_GetHeader (VAR hdr: hdrtype): INTEGER;
+FUNCTION Z_GetHeader (VAR hdr: hdrtype): integer16;
 
 (* Use this routine to get a header - it will figure out  *)
 (* what type it is getting (hex, bin16 or bin32) and call *)
@@ -981,7 +969,7 @@ LABEL
    gotcan, again, agn2, splat, done;  {sorry, but it's actually eisier to}
 
 VAR                                   {follow, and lots more efficient   }
-   c, n, cancount: INTEGER;           {this way...                       }
+   c, n, cancount: integer16;           {this way...                       }
 
 BEGIN
    IF (zbaud > $3FFF) THEN
@@ -1102,7 +1090,7 @@ VAR
    rzbatch     : BOOLEAN;
    outfile     : FILE;     {this is the file}
    tryzhdrtype : BYTE;
-   rxcount     : INTEGER;
+   rxcount     : integer16;
    filestart   : LONGINT;
    isbinary,
    eofseen     : BOOLEAN;
@@ -1114,17 +1102,17 @@ VAR
 
 (* Empfangen von Datenbloecken mit 16 o. 32-Bit-CRC *)
 
-FUNCTION RZ_ReceiveData (VAR buf : buftype ; blength : INTEGER) : INTEGER;
+FUNCTION RZ_ReceiveData (VAR buf : buftype ; blength : integer16) : integer16;
 
   LABEL
     crcfoo;
 
   VAR
     c,
-    d          : INTEGER;
+    d          : integer16;
 
     n,
-    crc        : WORD;
+    crc        : smallword;
 
     crc32      : LONGINT;
 
@@ -1238,7 +1226,7 @@ PROCEDURE RZ_AckBibi;
 (* ACKnowledge the other ends request to terminate cleanly *)
 
   VAR
-    n : INTEGER;
+    n : integer16;
 
 BEGIN
    Z_PutLongIntoHeader (rxpos);
@@ -1264,12 +1252,12 @@ END;
 
 (*************************************************************************)
 
-FUNCTION RZ_InitReceiver: INTEGER;
+FUNCTION RZ_InitReceiver: integer16;
 
   VAR
      c,
      n,
-     errors : INTEGER;
+     errors : integer16;
 
      stop,
      again  : BOOLEAN;
@@ -1373,7 +1361,7 @@ END;
 
 (*************************************************************************)
 
-FUNCTION RZ_GetHeader: INTEGER;
+FUNCTION RZ_GetHeader: integer16;
 {Get receive file info and process}
 
   VAR
@@ -1381,7 +1369,7 @@ FUNCTION RZ_GetHeader: INTEGER;
     e,
     p,
     n,
-    i          : INTEGER;
+    i          : integer16;
 
     makefile   : BOOLEAN;
 
@@ -1405,9 +1393,10 @@ BEGIN
    INC (p);
 
    (* get rid of drive & path specifiers *)
-
+{$ifndef UnixFS}
    WHILE (Pos (':',s) > 0) DO Delete (s,1,Pos (':',s));
-   WHILE (Pos ('\',s) > 0) DO Delete (s,1,Pos ('\',s));
+{$endif}
+   WHILE (Pos (DirSepa,s) > 0) DO Delete (s,1,Pos (DirSepa,s));
    fname := s;
 
    TransferName:=fname;
@@ -1495,7 +1484,7 @@ END;  (* of RZ_GetHeader *)
 
 (*************************************************************************)
 
-FUNCTION RZ_SaveToDisk (VAR rxbytes : LONGINT) : INTEGER;
+FUNCTION RZ_SaveToDisk (VAR rxbytes : LONGINT) : integer16;
 
 BEGIN
 {$IFDEF Final}   ModemStop (modemkanal);{$ENDIF}
@@ -1511,14 +1500,14 @@ END;
 
 (*************************************************************************)
 
-FUNCTION RZ_ReceiveFile : INTEGER;
+FUNCTION RZ_ReceiveFile : integer16;
 
   LABEL
     err, nxthdr, moredata;
 
   VAR
     c,
-    n       : INTEGER;
+    n       : integer16;
 
     rxbytes : LONGINT;
 
@@ -1531,10 +1520,10 @@ FUNCTION RZ_ReceiveFile : INTEGER;
 
   (***********************************************************************)
 
-  FUNCTION SaveDataBlock : INTEGER;
+  FUNCTION SaveDataBlock : integer16;
 
     VAR
-      c : INTEGER;
+      c : integer16;
 
   BEGIN
     n := 10;
@@ -1682,11 +1671,11 @@ END;
 
 (*************************************************************************)
 
-FUNCTION RZ_ReceiveBatch : INTEGER;
+FUNCTION RZ_ReceiveBatch : integer16;
 
   VAR
     s    : STRING;
-    c    : INTEGER;
+    c    : integer16;
     done : BOOLEAN;
 
 BEGIN
@@ -1755,7 +1744,7 @@ PROCEDURE ZmodemReceive (    vCommObj    : tpCommObj;  (* ObjCOM communication o
                          VAR fehlerflag : BOOLEAN);   (* TRUE, wenn ein Fehler aufgetreten ist  *)
 
 VAR
-   i: INTEGER;
+   i: integer16;
 
 BEGIN
    AddLogMessage('ZModem receiving: '+path,1);
@@ -1771,8 +1760,10 @@ BEGIN
 
      zbaud:=CommObj^.GetBPSrate;
 
-     zrxpath := path;
-     IF (zrxpath [Length (zrxpath)] <> '\') AND (zrxpath <> '') THEN zrxpath:=zrxpath + '\';
+     IF (path <> '') AND (path [Length(path)] <> DirSepa) THEN
+       zrxpath:=path + DirSepa
+     else
+       zrxpath:= path;
 
      rxtimeout := 10 * 18;
      tryzhdrtype := ZRINIT;
@@ -1798,11 +1789,11 @@ END;
 VAR
    infile     : FILE;
    strtpos    : LONGINT;
-   rxbuflen   : INTEGER;
+   rxbuflen   : integer16;
    txbuf      : buftype;
-   blkred     : INTEGER;
+   blkred     : integer16;
 
-   fheaderlen : WORD;
+   fheaderlen : smallword;
 
 
 PROCEDURE SZ_Z_SendByte(b: BYTE);
@@ -1822,11 +1813,11 @@ END;
 PROCEDURE SZ_SendBinaryHeader (htype : BYTE ; VAR hdr : hdrtype);
 
   VAR
-    crc   : WORD;
+    crc   : smallword;
 
     crc32 : LONGINT;
 
-    n     : INTEGER;
+    n     : integer16;
 
 BEGIN
   Z_SendByte (ZPAD);
@@ -1865,7 +1856,7 @@ BEGIN
     crc := UpdCRC16 (0,crc);
     crc := UpdCRC16 (0,crc);
 
-    SZ_Z_SendByte (Lo (crc SHR 8));
+    SZ_Z_SendByte (Lo (smallword(crc SHR 8)));
     SZ_Z_SendByte (Lo (crc));
   END;  (* of ELSE *)
 
@@ -1876,14 +1867,14 @@ END;
 
 (*************************************************************************)
 
-PROCEDURE SZ_SendData (VAR buf : buftype ; blength : INTEGER ; frameend : BYTE);
+PROCEDURE SZ_SendData (VAR buf : buftype ; blength : integer16 ; frameend : BYTE);
 
   VAR
-    crc   : WORD;
+    crc   : smallword;
 
     crc32 : LONGINT;
 
-    t     : INTEGER;
+    t     : integer16;
 
 BEGIN
   IF send32crc THEN BEGIN
@@ -1921,7 +1912,7 @@ BEGIN
     crc := UpdCRC16 (0,crc);
     crc := UpdCRC16 (0,crc);
 
-    SZ_Z_SendByte (Lo (crc SHR 8));
+    SZ_Z_SendByte (Lo (smallword(crc SHR 8)));
     SZ_Z_SendByte (Lo (crc));
 
   END;  (* of ELSE *)
@@ -1964,12 +1955,12 @@ END;
 
 (*************************************************************************)
 
-FUNCTION SZ_GetReceiverInfo: INTEGER;
+FUNCTION SZ_GetReceiverInfo: integer16;
 
   VAR
     n,
     c,
-    rxflags : INTEGER;
+    rxflags : integer16;
 
 BEGIN
    FOR n := 1 TO 10 DO BEGIN
@@ -1984,7 +1975,7 @@ BEGIN
                        Z_SendHexHeader (ZRQINIT,txhdr)
                      END;
              ZRINIT: BEGIN
-                       rxbuflen := (WORD (rxhdr [ZP1]) SHL 8) OR rxhdr [ZP0];
+                       rxbuflen := (smallword (rxhdr [ZP1]) SHL 8) OR rxhdr [ZP0];
                        send32crc:=MakeCRC32 AND ((rxhdr [ZF0] AND CANFC32) <> 0);
                        IF send32crc THEN
                          TransferCheck:='CRC-32'
@@ -2007,11 +1998,11 @@ END;
 
 (*************************************************************************)
 
-FUNCTION SZ_SyncWithReceiver: INTEGER;
+FUNCTION SZ_SyncWithReceiver: integer16;
 
   VAR
     c,
-    num_errs : INTEGER;
+    num_errs : integer16;
 
     numstr   : STRING [10];
 
@@ -2072,20 +2063,20 @@ END;
 
 (*************************************************************************)
 
-FUNCTION SZ_SendFileData: INTEGER;
+FUNCTION SZ_SendFileData: integer16;
 
 LABEL
    waitack, somemore;
 
 VAR
-   c,e        : INTEGER;
+   c,e        : integer16;
 
    newcnt,
    blklen,
    blkred,
    maxblklen,
    goodblks,
-   goodneeded : WORD;
+   goodneeded : smallword;
 
    ch         : CHAR;
 
@@ -2096,7 +2087,7 @@ BEGIN
    goodneeded := 1;
 
    IF (zbaud < 300) THEN maxblklen := 128       {* Naja...}
-   ELSE maxblklen := (WORD (zbaud) DIV 300) * 256;
+   ELSE maxblklen := (smallword (zbaud) DIV 300) * 256;
 
    IF (maxblklen > ZBUFSIZE) THEN maxblklen:=ZBUFSIZE;
    IF (rxbuflen > 0) AND (rxbuflen < maxblklen) THEN maxblklen:=rxbuflen;
@@ -2266,10 +2257,10 @@ END;
 
 (*************************************************************************)
 
-FUNCTION SZ_SendFile : INTEGER;
+FUNCTION SZ_SendFile : integer16;
 
   VAR
-    c    : INTEGER;
+    c    : integer16;
     done : BOOLEAN;
 
 BEGIN
@@ -2345,11 +2336,11 @@ END;
 PROCEDURE ZmodemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication object            *)
                              pathname   : STRING;     (* Path und Filename                      *)
                              lastfile   : Boolean;
-                         VAR fehler     : WORD);      (* Bei Fehler in der Uebertragung <> 0     *)
+                         VAR fehler     : smallword);      (* Bei Fehler in der Uebertragung <> 0     *)
 
 VAR
    s: STRING;
-   n: INTEGER;
+   n: integer16;
 
 BEGIN
    AddLogMessage('ZModem sending: '+pathname,1);
@@ -2394,14 +2385,14 @@ BEGIN
        FOR n:=1 TO Length (s) DO IF (s [n] IN ['A'..'Z']) THEN s [n]:=Chr (Ord (s [n]) + $20);
 
        FillChar (txbuf,ZBUFSIZE,0);
-       System.Move (s [1],txbuf [0],Length (s));
+       Move (s [1],txbuf [0],Length (s));
        fheaderlen:=Length (s);
      END ELSE BEGIN
        TransferName:=''; TransferSize:=0; TransferTotalTime:=1; TransferPath:='';
      END;
 
      IF (zbaud > 0) THEN
-        rxtimeout := INTEGER ((614400 DIV zbaud) * 10) DIV 18
+        rxtimeout := integer16 ((614400 DIV zbaud) * 10) DIV 18
      ELSE rxtimeout := 180;
      IF (rxtimeout < 180) THEN rxtimeout := 180;
 
@@ -2467,8 +2458,8 @@ END.
 
 {
   $Log$
-  Revision 1.5  2000/11/09 18:51:41  hd
-  - Anpassungen an Linux
+  Revision 1.6  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
 
   Revision 1.4  2000/10/29 16:18:25  fe
   Mit VPC uebersetzbar gemacht.

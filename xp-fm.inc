@@ -60,40 +60,56 @@ procedure ZModemDispProc;
 var Remain: LongInt;
 begin
   DisplayTime(System.Round(TimerObj.ElapsedSec));
-  if(ZModemTimer.ElapsedSec<=0)or(TransferBytes<=0)then Remain:=1
-    else Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ZModemTimer.ElapsedSec)-ZModemTimer.ElapsedSec);
-  if Remain<0 then Remain:=0;
+  if (ZModemTimer.ElapsedSec<=0)or(TransferBytes<=0) then
+    Remain:=1
+  else
+    Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ZModemTimer.ElapsedSec)-ZModemTimer.ElapsedSec);
+  if Remain<0 then
+    Remain:=0;
   DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',UseNextLine);
   UseNextLine:=False;
-  if LastErrorCount<>TransferError then
-    begin
-      DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
-      LastErrorCount:=TransferError; UseNextLine:=True;
-    end;
+  if LastErrorCount<>TransferError then begin
+    DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
+    LastErrorCount:=TransferError; UseNextLine:=True;
+  end;
 end;
 
 procedure ZModemStartProc;
-var I,P: Integer;
-const PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
+var
+  I,P: Integer;
+const
+  PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
 begin
   {Ab jetzt Statusmeldungen anzeigen}
-  ZModemTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0; UseNextLine:=True;
+  ZModemTimer.Start;
+  DispProc:=ZModemDispProc;
+  LastErrorCount:=0;
+  UseNextLine:=True;
   if LogSending then
     DisplayStatus(getres(192)+' '+TransferName+'...',True)
   else begin
     DisplayStatus(getres(193)+' '+TransferName+'...',True);
-    {Mailpakete, erkennbar an ihrer Extension, wandern in anderes Verzeichnis als sonstige Dateien.}
-    I:=0; repeat Inc(I); P:=Pos('.'+PKTExtensions[I],FileUpperCase(TransferName))until(P<>0)or(I>=8);
-    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9']))then TransferPath:=FilePath; {File ist kein Mailpaket}
+    { Mailpakete, erkennbar an ihrer Extension, wandern in anderes
+      Verzeichnis als sonstige Dateien. }
+    I:=0;
+    repeat
+      Inc(I);
+      P:=Pos('.'+PKTExtensions[I],UpperCase(TransferName))
+    until (P<>0)or(I>=8);
+    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9','A'..'Z'])) then
+      TransferPath:= FilePath; {File ist kein Mailpaket}
   end;
 end;
 
 procedure ZModemEndProc;
-var s: String; t,cps: LongInt;
+var
+  s     : String;
+  t,cps : LongInt;
 begin
   DispProc:=NIL; {Keine Statusmeldungen mehr anzeigen}
   if LogSending then s:='Sent ' else S:='Rcvd ';
-  t:=System.Round(ZModemTimer.ElapsedSec); if t<=0 then t:=1; {Verhindere Division by zeros}
+  t:=System.Round(ZModemTimer.ElapsedSec);
+  if t<=0 then t:=1; {Verhindere Division by zeros}
   cps:=TransferBytes DIV t;
   if TransferName<>'' then begin
     DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',UseNextLine);
@@ -105,11 +121,21 @@ end;
 
 function GetString(var buf; Len: Integer): String;
 {Gibt Len Zeichen aus buf als String zurueck}
-var s: String; begin SetLength(s,Len); Move(Buf,s[1],Len); GetString:=s; Debug.DebugLog('XPFM','GetString: "'+s+'"',4)end;
+var
+  s: String;
+begin
+  SetLength(s,Len);
+  Move(Buf,s[1],Len);
+  GetString:=s;
+  Debug.DebugLog('XPFM','GetString: "'+s+'"',4);
+end;
 
 procedure SetZero(var buf; s:string; ml:byte);
 {Bewegt max. ml Zeichen aus S in Buf und haengt #0 an}
-begin s:=s+#0; Move(s[1],buf,min(ml,length(s)))end;
+begin
+  s:=s+#0;
+  Move(s[1],buf,min(ml,length(s)));
+end;
 
 procedure InitHelloPacket;
 begin
@@ -783,7 +809,7 @@ end;
 procedure WaZOOsession;
 var FileToSend : String;
     ErrorFlag: Boolean;
-    ErrorWord: word;
+    ErrorWord: system.word;
 
 begin
   log('+','starting mail transfer');
@@ -869,6 +895,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.19  2000/10/29 16:18:25  fe
   Mit VPC uebersetzbar gemacht.
 

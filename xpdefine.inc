@@ -105,7 +105,7 @@
     {$D+}
     {$M+}                 { Typeinfo for RTTI }
     {$L+}		  { Local Symbols }
-    {$Q+}		  { Overflow-Check }
+    {$Q-}		  { Overflow-Check }
     {$R-}		  { Range Check (must be off!) }
     {$Y+}		  { Browser Informations }
   {$ENDIF }
@@ -180,6 +180,9 @@
 
 {
   $Log$
+  Revision 1.62  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.61  2000/11/11 20:13:53  mk
   - first delphi compilation support
 

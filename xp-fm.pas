@@ -328,7 +328,7 @@ begin
   if not ValidFilename(FilePath+'1$2$3.9x9') then
     rerror(101);                      { 'Illegal InPath' }
   if MailPath='' then rerror(102);    { 'MailPath missing' }
-  if RightStr(MailPath,1)<>'\' then MailPath:=MailPath+'\';
+  if RightStr(MailPath,1)<>DirSepa then MailPath:=MailPath+DirSepa;
   if not ValidFilename(MailPath+'1$2$3.9x9') then
     rerror(103);                      { 'Illegal MailPath' }
   if not ValidFilename(zmtempfile) then
@@ -345,17 +345,19 @@ begin
     rerror1(108,OwnAddr);           { 'Illegal / Incomplete address:  %s' }
   if (baud<300) or (115200 mod baud<>0) then
     rerror(109);                    { 'illegal baudrate' }
+{$ifndef Unix}
   if not fossil then begin
     if ModemPort=0 then
       rerror(110);                    { 'Port address missing' }
     if IRQ=0 then
       rerror(111);                    { 'IRQ No missing' }
   end;
+{$endif}
 end;
 
 function getscreenlines:byte;
 begin
-   getscreenlines:=25
+   getscreenlines:=SysGetScreenLines;
 end;
 
 function CountPhoneNumbers:integer;
@@ -522,15 +524,22 @@ begin
 
   connects:=0;
   repeat
-    aresult:=EL_ok; mailing:=false; Modem.DisplayProc:=DialUpDisplay; LastState:=SDConnect;
+    aresult:=EL_ok;
+    mailing:=false;
+    Modem.DisplayProc:=DialUpDisplay;
+    LastState:=SDConnect;
     if DialUp(Phone,ModemInit,CommandModemDial,RedialMax,TimeoutConnectionEstablish,RedialWait)then begin
       inc(Connects);
       YooHooMailer; {Im Mailer wird Mailing True gesetzt}
-      if aresult<>0 then brk_result:=aresult;
-    end else if DUDState=SDUserBreak then aresult:=EL_break;
+      if aresult<>0 then
+        brk_result:=aresult;
+    end else if DUDState=SDUserBreak then
+      aresult:=EL_break;
     DisplayStatus(getres(164),True); { 'Modem auflegen' }
-    if not HangUp then DisplayStatus(getres(167),True); { 'Modem evtl. nicht aufgelegt?!' }
-    if mailing then log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
+    if not HangUp then
+      DisplayStatus(getres(167),True); { 'Modem evtl. nicht aufgelegt?!' }
+    if mailing then
+      log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
   until(aresult=EL_ok)or(aresult=EL_break)or(connects=MaxConn);
 
   if(connects=0)then aresult:=EL_noconn;
@@ -546,6 +555,9 @@ end.
 
 {
   $Log$
+  Revision 1.28  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.27  2000/11/09 19:44:30  hd
   - Anpassungen an Linux
 

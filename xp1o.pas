@@ -913,9 +913,6 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
       hdadr   : longint;
       version : byte;
   begin
-  {$IFDEF UnixFS }
-    fn:= ResolvePathName(fn);
-  {$ENDIF }
     assign(f,fn);
     resetfm(f,FMDenyWrite);
     blockread(f,magic,2);
@@ -1051,6 +1048,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/11/14 14:47:52  hd
+  - Anpassung an Linux
+
   Revision 1.67  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 
