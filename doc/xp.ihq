@@ -6806,12 +6806,12 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[ ]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neuen
        Internet-Mailprogrammen verstanden.
 
-<<[x]>> -> XP verschickt Bin„rnachrichten - wie in den
+<<[ ]>> -> XP verschickt Bin„rnachrichten - wie in den
        Programmversion 3.0 bis 3.11 - als einteilige
        MIME-Nachrichten. Dieses Format ist einfach,
        korrekt und platzsparend, wird aber leider
