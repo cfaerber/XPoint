@@ -723,6 +723,7 @@ begin
   WhereXY(x, y);
 // prevent invalid values
   if x > 10000 then x := 10000;
+  if x < -10000 then x := -10000;
   WhereX:= x;
 end;
 
@@ -733,6 +734,7 @@ begin
   WhereXY(x, y);
 // prevent invalid values
   if y > 10000 then y := 10000;
+  if y < -10000 then y := -10000;
   WhereY:= y;
 end;
 
@@ -828,7 +830,7 @@ function Readkey: char;
      I := Ord(InChar);
      if (I > 128) and (PrefChar <> #0) then
      begin
-	Result := Chr(IBM2ISOTab[I]);
+	Result := Chr(ISO2IBMTab[I]);
         Debug.DebugLog('xpcurses',Format('Key translated: [%d] => [%d] prefchar=[%d]',
 		            [Ord(InChar), Ord(Result), Ord(PrefChar)]),dlTrace);
      end;
@@ -1552,6 +1554,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/10/17 10:54:58  ml
+  - fix for umlaut
+  - range Error fix
+
   Revision 1.57  2001/10/17 10:07:38  ml
   - use integer for cursorpos to prevent range errors
 
