@@ -122,11 +122,13 @@ uses
   datadef1;
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
+{ JG 22.05.00: Fuer BP 386+ Versionen erstellt}
 procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
 {$IFDEF BP }
+ {$IFDEF NO386}
 asm
          push ds
-                  les   di, nodep
+         les   di, nodep
          lds   si, rbuf
          mov   dl,es:[di+2]            { Keysize }
          mov   dh,0
@@ -154,7 +156,50 @@ asm
          jnz   @exlp
 @nokeys: pop ds
 end;
-{$ELSE } {!!! Hier mu· noch mal ÅberprÅft werden }
+
+ {$ELSE} {Expand_node BP+386}
+asm
+         push ds
+         les di,nodep
+         lds si,rbuf
+         mov dl,es:[di+2]              { Keysize }
+         mov dh,0
+         add dx,9                      { plus LÑngenbyte plus Ref/Data }
+         mov bx,136                    { (264) sizeof(inodekey); }
+         sub bx,dx
+         add di,14
+         cld
+         lodsw                         { Anzahl SchlÅssel im Node }
+         stosw                         { Anzahl speichern }
+         db 66h                        { Ref+Data von key[0] Åbertragen }
+         movsw
+         db 66h
+         movsw
+
+         cmp ax,0
+         je @nokeys
+         add di,128                    { (256) key[0].keystr Åberspringen }
+
+@exlp:   mov cx,dx
+         shr cx,2                      { Ref, Data und Key Åbertragen }
+         db 66h
+         rep movsw                     { rep movsd }
+         jnc @even2
+         movsw
+@even2:  test dl,1
+         je @even
+         movsb
+@even:
+         add di,bx
+         dec ax
+         jnz @exlp
+
+@nokeys: pop ds
+end;
+
+ {$ENDIF}
+
+{$ELSE } {!!! Hier mu· noch mal ÅberprÅft werden } {Expand_node VER32}
 asm
          mov   edi, nodep
          mov   esi, rbuf
@@ -189,6 +234,7 @@ end;
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler; {&uses ebx, esi, edi }
 {$IFDEF BP }
+ {$IFDEF NO386 }
 asm
          xor   cx,cx
          les   di,cache
@@ -214,7 +260,37 @@ asm
 @cfound: les   di,i
          mov   es:[di],cx
 end;
-{$ELSE }
+
+ {$ELSE }  {Seek_cache BP + 386 }
+asm
+         push ds
+         mov cx,0
+         db 66h
+         mov bx,word ptr dbp
+         db 66h
+         mov dx,word ptr ofs
+         lds di,cache
+
+@sc_lp:  cmp byte ptr [di],0           { not used? }
+         je @nextc
+         db 66h
+         cmp [di+1],bx                 { dbp gleich? }
+         jne @nextc
+         db 66h
+         cmp [di+5],dx                 { ofs gleich? }
+         je @cfound
+@nextc:  add di,1080                   { sizeof(cachepage) }
+         inc cx
+         cmp cx,cacheanz
+         jb @sc_lp
+
+@cfound: les di,i
+         mov es:[di],cx
+         pop ds
+end;
+ {$ENDIF }
+
+{$ELSE }  { Seek_cache Ver32 }
 asm
          xor   ecx, ecx
          mov   edi, cache
@@ -242,6 +318,7 @@ end;
 
 procedure seek_cache2(var _sp:integer); assembler; {&uses ebx, edi}
 {$IFDEF BP }
+ {$IFDEF NO386}
 asm
          les   di,cache
          mov   ax,0ffffh               { s := maxlongint }
@@ -269,7 +346,44 @@ asm
 @nofree: les   di,_sp
          mov   es:[di],bx
 end;
-{$ELSE }
+
+ {$ELSE}  { Seek_cache2 BP + 386 }
+asm
+         push ds
+         lds di,cache
+         db 66h
+         xor ax,ax
+         mov bx,ax                     { sp:=0 }
+         mov cx,ax                     { i:=0 }
+         db 66h
+         dec ax                        { EAX = -1 / s := maxlongint }
+
+@clp:    cmp byte ptr [di],0          { not used ? }
+         je @sc2ok
+
+         db 66h
+         mov dx,[di+9]
+         db 66h
+         cmp ax,dx                    { cache^[i].lasttick < s ? }
+         jnb @nexti
+         db 66h
+         mov ax,dx                    { s:=cache^[i].lasttick }
+         mov bx,cx                    { sp:=i; }
+
+@nexti:  add di,1080
+         inc cx
+         cmp cx,cacheanz
+         jb @clp
+         jmp @nofree
+
+@sc2ok:  mov bx,cx                     { sp:=i }
+@nofree: les di,_sp
+         mov es:[di],bx
+         pop ds
+end;
+ {$ENDIF}
+
+{$ELSE }  { Seek_cache2 Ver32 }
 asm
          mov   edi, cache
          xor   eax, eax                { EAX = 0 }
@@ -277,17 +391,15 @@ asm
          mov   ecx, eax                { ECX = 0, i := 0 }
          dec   eax                     { EAX = FFFFFFFF, s := maxlongint }
 
-@clp:    cmp   byte ptr [edi],0      { not used ? }
+@clp:    cmp   byte ptr [edi],0        { not used ? }
          jz    @sc2ok
-         cmp   [edi+11],dx           { cache^[i].lasttick < s ? }
-         ja    @nexti
-         jb    @smaller
-         cmp   [edi+9],ax
+         mov   edx,[edi+9]
+         cmp   edx,eax                 { cache^[i].lasttick < s ? }
          jae   @nexti
-@smaller:mov   ax,[edi+9]            { s:=cache^[i].lasttick }
-         mov   dx,[edi+11]
-         mov   ebx,ecx                   { sp:=i; }
+         mov   eax,edx                 { s:=cache^[i].lasttick }
+         mov   ebx,ecx                 { sp:=i; }
 @nexti:  add   edi,1080
+
          inc   ecx
          cmp   ecx,cacheanz
          jb    @clp
@@ -1731,6 +1843,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/24 21:23:54  mk
+  JG: 32 Bit Optimierungen, Fixes fuer 16+32 Bit Version
+
   Revision 1.18  2000/05/06 15:57:03  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog
