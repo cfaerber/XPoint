@@ -25,11 +25,9 @@ var i,res : integer;
     s       : string;
     dummy   : string;
     id      : string;
-{$ifdef ulines}
     id0     : string;
-{$endif }
     p    : integer;
-    buf     : charrp;
+    buf     : PCharArray;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
@@ -194,50 +192,53 @@ var i,res : integer;
   var s : string;
   begin
     s := Uppercase(line);
-    if s='QPC' then inc(hd.attrib,attrQPC)
-    {$IFDEF PGP}
-      else if s='PGP' then inc(hd.pgpflags,fPGP_encoded)
-    {$ENDIF}
-    ;
+    if s='QPC' then
+      inc(hd.attrib,attrQPC)
+    else if s='PGP' then
+      inc(hd.pgpflags,fPGP_encoded);
   end;
 
-  {$IFDEF PGP}
-    procedure GetSigned;
-    var s : string;
-    begin
-      s := UpperCase(line);      if s='PGP' then inc(hd.pgpflags,fPGP_signed) else
-      if s='PGPCLEAR' then inc(hd.pgpflags,fPGP_clearsig);
-    end;
+  procedure GetSigned;
+  var
+    s : string;
+  begin
+    s := UpperCase(line);
+    if s='PGP' then
+      inc(hd.pgpflags,fPGP_signed)
+    else
+      if s='PGPCLEAR' then
+        inc(hd.pgpflags,fPGP_clearsig);
+  end;
 
-    procedure GetPGP;
-    var s : string;
-    begin
-      s := UpperCase(line);
-      if s='PLEASE' then inc(hd.attrib,fPGP_please) else
-      if s='REQUEST' then inc(hd.pgpflags,fPGP_request);
-    end;
+  procedure GetPGP;
+  var
+    s : string;
+  begin
+    s := UpperCase(line);
+    if s='PLEASE' then inc(hd.attrib,fPGP_please) else
+    if s='REQUEST' then inc(hd.pgpflags,fPGP_request);
+  end;
 
-    procedure GetPGPid;
-    var s : string;
-        p : integer;
-    begin
-      s := line;
-      p:=cpos('<',s);
-      if (p>0) and (lastchar(s)='>') then begin
-        delete(s,1,p);
-        dellast(s);
-        if cpos('@',s)>0 then hd.pgp_uid:=s;
-        end;
-    end;
+  procedure GetPGPid;
+  var s : string;
+      p : integer;
+  begin
+    s := line;
+    p:=cpos('<',s);
+    if (p>0) and (lastchar(s)='>') then begin
+      delete(s,1,p);
+      dellast(s);
+      if cpos('@',s)>0 then hd.pgp_uid:=s;
+      end;
+  end;
 
-    procedure GetXPpgp;
-    var s : string;
-    begin
-      s := LowerCase(Line);
-      if s='sigok'    then hd.pgpflags := hd.pgpflags or fPGP_sigok else
-      if s='sigerror' then hd.pgpflags := hd.pgpflags or fPGP_sigerr;
-    end;
-  {$ENDIF}
+  procedure GetXPpgp;
+  var s : string;
+  begin
+    s := LowerCase(Line);
+    if s='sigok'    then hd.pgpflags := hd.pgpflags or fPGP_sigok else
+    if s='sigerror' then hd.pgpflags := hd.pgpflags or fPGP_sigerr;
+  end;
 
   procedure GetQStr;
   begin
@@ -332,9 +333,7 @@ begin
           if p<2 then ok:=false // Die ID muss mindestens ein Zeichen sein
           else begin
             id:=LeftStr(line,p-1);
-            {$ifdef ulines}
             id0:=id;
-            {$endif }
             if length(line)>p then tc:=line[p+1]; { Fix: Exception bei leeren Headern }
             for i:=1 to length(id) do         { UpperCase }
               if (id[i]>='a') and (id[i]<='z') then
@@ -378,12 +377,9 @@ begin
 
             { Mime-Version wegschmeissen - wird neu erzeugt}
             if id = 'U-MIME-VERSION' then else
-
-            {$ifdef ulines}
-              begin
+            begin
                 ULine.Add(mid(id0,3)+': '+line);
-              end
-            {$endif}
+            end
 
             else
 
@@ -440,10 +436,8 @@ begin
             if id = 'ERSETZT' then ersetzt := Line else
             if id = 'LDA' then expiredate := line else
             if id = 'F-TO' then fido_to := line else
-            {$ifdef ulines}
             if leftstr(id,2) = 'F-' then
               fline.add(rightstr(id,length(id)-2)+': '+line) else
-            {$endif}
 
 
             if FirstChar(id)='X' then begin               { XP }
@@ -473,7 +467,6 @@ begin
               if id = 'CRYPT-CONTENT-CHARSET' then GetCharset(ccharset) else
               if id = 'CRYPT-CONTENT-KOM' then val(line,ckomlen,res);
               end else
-            {$IFDEF PGP}
               if id = 'SIGNED'         then GetSigned else
               if id = 'U-X-SIGNED'     then GetSigned else
               if pos('PGP',id)>0 then begin
@@ -488,7 +481,6 @@ begin
                 if id = 'X-XP-PGP'           then GetXPpgp;
                 end
               else
-            {$ENDIF}
 
             if id = 'ABR' then LRead(realname) else { ZConnect 1.9 }
             if id = 'BIN' then typ:='B' else
@@ -499,15 +491,11 @@ begin
             else
             if id = UpperCase(mheadercustom[2]) then Cust2 := line
 
-            {$ifdef ulines}
             else
               // unbearbeitete X-Lines fuer UUZ merken
               if Copy(id, 1, 2) = 'X-' then
                 XLine.Add(mid(id0,3)+': '+line) else
               zline.add(id+': '+line);
-            {$else }
-            ;
-            {$endif}
 
             line:='*';
             end;
@@ -548,6 +536,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2001/01/11 13:21:35  mk
+  - fixed chararr-bugs and removed some unnecessary defines
+
   Revision 1.43  2001/01/05 09:33:11  mk
   - removed THeader.Ref
 

@@ -126,7 +126,7 @@ uses
 {$I charsets\8859_15.inc }
 
 const
-  bufsize = 65536;
+  bufsize = 65535;
   readEmpfList = true;
   xpboundary: string = '-';
 
@@ -185,15 +185,15 @@ const
 type
   mimeproc = procedure(var s: string);
 
-  charr = array[0..65530] of char;
-  charrp = ^charr;
+  TCharArray = array[0..bufsize] of char;
+  PCharArray = ^TCharArray;
 
 var
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
   hd: Theader;
-  outbuf: charrp;
-  outbufpos: word;
+  outbuf: PCharArray;
+  outbufpos: Integer;
   s: string;
   qprint, b64: boolean;                 { MIME-Content-TT's (ReadRFCheader) }
   qprchar: set of char;
@@ -321,10 +321,12 @@ var
   i,j: integer;
   ina: boolean;
 begin
-  for i:=0 to b.count-1 do begin
+  for i:=0 to b.count-1 do
+  begin
     ina:=false;
     for j:=0 to a.count-1 do
-      if a[j]=b[i] then begin
+      if a[j]=b[i] then
+      begin
         ina:=true;
         break
       end;
@@ -588,8 +590,6 @@ const
   ReadKoplist = false;
 
   {$DEFINE uuzrefs}
-  {$DEFINE ulines}
-  {$DEFINE pgp}
 
   {$DEFINE uuzmime }
 
@@ -3717,6 +3717,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/01/11 13:21:35  mk
+  - fixed chararr-bugs and removed some unnecessary defines
+
   Revision 1.24  2001/01/05 09:33:11  mk
   - removed THeader.Ref
 

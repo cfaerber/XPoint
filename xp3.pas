@@ -154,7 +154,9 @@ asm
          push ebp
          cld
          mov   esi,adr
-         mov   ecx,size
+         mov   ecx, size
+         or    ecx, ecx
+         jz    @nfound
          mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
@@ -347,8 +349,6 @@ begin
 end;
 
 {$define convbrettempf}
-{$define pgp}
-{$define ulines }
 {$I xpmakehd.inc}           { MakeHeader() }
 
 
@@ -1145,6 +1145,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.55  2001/01/11 13:21:35  mk
+  - fixed chararr-bugs and removed some unnecessary defines
+
   Revision 1.54  2001/01/04 16:54:21  mk
   - const-Parameter in isbox() verwenden
 
