@@ -1455,9 +1455,15 @@ var  dl         : displp;
   begin
     b := 0;
     if t=#127    then b:=EditfDelWordLeft else
+{$IFDEF ncrt}
+    if t=keygreymult then b:=EditfCCopyBlock else
+    if t=keygreyminus then b:=EditfCutBlock   else
+    if t=keygreyplus  then b:=EditfPasteBlock else
+{$ELSE}
     if lastscancode=GreyMult  then b:=EditfCCopyBlock else
     if lastscancode=GreyMinus then b:=EditfCutBlock   else
     if lastscancode=GreyPlus  then b:=EditfPasteBlock else
+{$ENDIF}       
     if t>=' '    then b:=EditfText        else
 
     if t=keyesc  then b:=EditfBreak       else
@@ -1762,6 +1768,10 @@ end.
 
 {
   $Log$
+  Revision 1.59  2001/09/03 16:09:34  ml
+
+  - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
+
   Revision 1.58  2001/08/10 18:58:18  mk
   - added support for marking blocks with shift-cursor
 

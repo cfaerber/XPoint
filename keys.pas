@@ -126,6 +126,10 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyaltl = #0#38;       keyalty = #0#44;
        keyaltm = #0#50;       keyaltz = #0#21;
 
+       keygreymult  = #0#55;
+       keygreyminus = #0#74;
+       keygreyplus  = #0#78;
+
        GreyMult  = 55;              { Scancodes }
        GreyMinus = 74;
        GreyPlus  = 78;
@@ -374,6 +378,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/09/03 16:09:34  ml
+
+  - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
+
   Revision 1.43  2001/08/10 19:32:57  mk
   - added const parameter to keyboard and _keyboard
 

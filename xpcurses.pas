@@ -177,7 +177,6 @@ const
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
-   lastscancode : byte   = 0;
 
 type
   { Fuer den internen Gebrauch }
@@ -856,7 +855,7 @@ begin
 {$ENDIF}
 
   { if it's an extended key, then map to the IBM values }
-  if (l > 255) then
+  if (l > 255) then  // is it a ncurses-special key?
   begin
      DosSeq := TranslateESCSeq(l);
      
@@ -869,7 +868,6 @@ begin
        ungetch(ord(DosSeq[I]));
   end else
     Readkey:= TranslateSpecialChar(chr(ord(l)));
-  lastscancode := Ord(PrefChar);
   if (b) then echo;
 end;
 
@@ -1551,6 +1549,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/09/03 16:09:34  ml
+
+  - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
+
   Revision 1.47  2001/07/23 15:36:46  ml
   - Editor: Numblock Copy/Paste/Insert works now in linux
 
