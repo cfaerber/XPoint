@@ -159,24 +159,21 @@ begin { ZConnectNetcall }
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
     _era(PufferFile);
+    OutgoingFiles.Destroy;
     exit;
     end
   else _era(PufferFile);
 
   case Diskpoll of
     false: begin  // use mailer to transfer files
-      GenericMailer:=TGenericMailer.CreateWithIPC(TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True));
-      Proceed:=GenericMailer.Activate(ComN[boxpar^.bport].MCommInit);
-      if not Proceed then begin
-        trfehler1(2340,GenericMailer.ErrorMsg,30);
-        end else begin
-        InitMailer;
-        Proceed:=GenericMailer.Connect;
-        end;
+      GenericMailer:=TGenericMailer.
+                     CreateWithCommInitAndIPC(ComN[boxpar^.bport].MCommInit,
+                     TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True));
+      InitMailer;
+      Proceed:=GenericMailer.Connect;
       if Proceed then begin
         result:=el_nologin;
-        CommObj:=GenericMailer.CommObj;
-        Proceed:=RunScript(BoxPar,CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
+        Proceed:=RunScript(BoxPar,GenericMailer.CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
         end;
 //** Transmit serial number
       if Proceed then begin
@@ -191,6 +188,7 @@ begin { ZConnectNetcall }
       GenericMailer.Disconnect;
       if Proceed then result:=el_ok;
 
+      Delay(2000);
       GenericMailer.Destroy;
       end;
     true: begin  // diskpoll, call appropriate programs
@@ -222,6 +220,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/19 12:18:29  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.5  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors

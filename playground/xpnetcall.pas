@@ -596,8 +596,6 @@ var
     IncomingFiles: TStringList;
 
 
-label ende0;
-
   procedure AppendEPP;
   var f,f2 : file;
   begin
@@ -860,8 +858,8 @@ begin                  { function Netcall }
     Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
 
     if PerformDial then begin
-      if not fileexists(ppfile)then makepuf(ppfile,false);
       NetcallLogfile:=TempFile('');
+      if not fileexists(ppfile)then makepuf(ppfile,false);
       inmsgs:=0; outmsgs:=0; outemsgs:=0;
       cursor(curoff);
       inc(wahlcnt);
@@ -869,26 +867,26 @@ begin                  { function Netcall }
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
           case FidoNetcall(BoxName,Boxpar,crash,sysopmode,domain,NetcallLogfile,IncomingFiles) of
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
-            EL_noconn : begin Netcall_connect:=false; goto ende0; end;
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+            EL_noconn : begin Netcall_connect:=false; end;
             EL_recerr,
             EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); goto ende0; end;
-            EL_break  : begin  Netcall:=false; goto ende0; end;
-          else begin Netcall:=true; goto ende0; end;
+            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+            EL_break  : begin Netcall:=false; end;
+          else begin Netcall:=true; end;
             end; {case}
           end; {case ltFido}
 
         ltZConnect: begin
           Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
           case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
-            EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
-            EL_noconn : begin Netcall_connect:=false; goto ende0; end;
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+            EL_noconn : begin Netcall_connect:=false; end;
             EL_recerr,
             EL_senderr,
-            EL_nologin: begin Netcall_connect:=true; inc(connects); goto ende0; end;
-            EL_break  : begin  Netcall:=false; goto ende0; end;
-          else begin Netcall:=true; goto ende0; end;
+            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+            EL_break  : begin  Netcall:=false; end;
+          else begin Netcall:=true end;
             end; {case}
           end; {case ltZConnect}
 
@@ -905,10 +903,10 @@ begin                  { function Netcall }
 
 //**      RemoveEPP;
       if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
+      if FileExists(NetcallLogfile)then _era(NetcallLogfile); //** until log file processing implemented
       end; {if PerformDial}
     end; {with boxpar}
 
-ende0:
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+Stringlist(IncomingFiles),DLDebug);
   for i:=1 to IncomingFiles.Count do
     if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
@@ -1123,6 +1121,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/02/19 12:18:29  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.10  2001/02/12 23:43:25  ma
   - some fixes
 

@@ -40,7 +40,7 @@ type
     FPosX,FPosY,FWidth,FHeight: Byte;
     FHeadline: String;
     FLines: TStringList;
-    procedure Display;
+    procedure Display(RefreshContent: Boolean);
     procedure SVisible(nVisible: Boolean);
 
   public
@@ -65,8 +65,8 @@ type
 implementation  { ------------------------------------------------- }
 
 uses
-  {$ifdef NCRT} XPCurses,{$endif}
-  Typeform,Maus2,XP0,XP1,Debug;
+  {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
+  typeform,winxp,xp0,xp1,debug;
 
 constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
@@ -84,14 +84,14 @@ begin
     FVisible:=nVisible;
     if nVisible then begin
       diabox(FWidth+3,FHeight+2,FHeadline,FPosX,FPosY);
-      Display;
+      Display(true);
       end
     else
       closebox;
   end;
 end;
 
-procedure TXPMessageWindow.Display;
+procedure TXPMessageWindow.Display(RefreshContent: Boolean);
 var iLine: Integer; s: string;
 begin
   if not IsVisible then exit;
@@ -102,12 +102,16 @@ begin
                       TimerToUse^.SecsToTimeout/60/60/24);
     mwNone: s:='';
   end;
-  if s<>'' then MWrt(FPosX+2+FWidth-9,FPosY,FormS(s,8));
-  for iLine:=0 to FHeight-1 do
-    if iLine>=FLines.Count then
-      MWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth))
-    else
-      MWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine],FWidth));
+  if s<>'' then FWrt(FPosX+2+FWidth-9,FPosY,FormS(s,8));
+  if RefreshContent then
+    for iLine:=0 to FHeight-1 do
+      if iLine>=FLines.Count then
+        FWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth))
+      else begin
+        if iLine=(FLines.Count-1)then TextAttr:=col.colmailerhigh else TextAttr:=col.colmailer;
+        FWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine],FWidth));
+        TextAttr:=col.colmailer;
+        end
 end;
 
 { fmt='': only update timer }
@@ -126,7 +130,7 @@ begin
     LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
     FLines.Add(s);
     end;
-  Display;
+  Display(fmt<>'');
 end;
 
 destructor TXPMessageWindow.Destroy;
@@ -140,6 +144,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/19 12:18:28  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.5  2001/02/18 16:20:06  ma
   - BinkP's working! :-) - had to cope with some errors in BinkP protocol
     specification...

@@ -62,6 +62,9 @@ type
       procedure Send;
     end;
 
+const
+  stFrameType: array[0..10]of string= ('M_NUL','M_ADR','M_PWD','M_FILE','M_OK','M_EOB','M_GOT','M_ERR','M_BSY','M_GET','M_SKIP');
+
 // ************************** Binkp frame class implementation ************************
 
 function tBinkpFrame.SFrameType: tFrameType;
@@ -104,7 +107,7 @@ begin
         dec(reads,readthistime); inc(DataRead,readthistime);
         end;
       end else if FDataSize>$7fff then
-        Debug.DebugLog('ncfido','got binkp command frame '+Strs(Data[1])+' '+SCommandPar,DLDebug)
+        Debug.DebugLog('ncfido','got binkp frame '+stFrameType[Data[1]]+' '+SCommandPar,DLDebug)
       else
         Debug.DebugLog('ncfido','got binkp data frame, size '+Strs(FDataSize),DLDebug)
     end;
@@ -146,7 +149,8 @@ begin
     if FDataSize<=$7fff then
       Debug.DebugLog('ncfido','sent binkp data frame, size '+Strs(FDataSize),DLDebug)
     else
-      Debug.DebugLog('ncfido','sent binkp command frame '+Strs(Data[1])+' '+SCommandPar+', size '+strs(FDataSize and $7fff),DLDebug);
+      Debug.DebugLog('ncfido','sent binkp command frame '+stFrameType[Data[1]]+
+                     ' '+SCommandPar+', size '+strs(FDataSize and $7fff),DLDebug);
     end;
 end;
 
@@ -161,7 +165,7 @@ var
 
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
-  WriteIPC(mcVerbose,'Setting up connection...',[0]);
+  WriteIPC(mcVerbose,'Authenticating...',[0]);
   repeat
     if LastState<>State then begin
       Debug.DebugLog('ncfido','binkp session setup state '+Strs(Ord(State)),DLDebug);
@@ -195,13 +199,13 @@ begin
       IfSecure: begin
         if Password='-' then begin
           result:=0; State:=Done;
-          WriteIPC(mcInfo,'Connection established',[0]);
+          WriteIPC(mcInfo,'Authentication successful',[0]);
         end else State:=WaitOk;
         end;
       WaitOk: begin
         BpF.ReadFromStream(True);
         case BpF.FrameType of
-          M_OK: begin WriteIPC(mcInfo,'Connection established',[0]); result:=0; State:=Done; end;
+          M_OK: begin WriteIPC(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
           M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
           M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
           M_NUL: Log(lcInfo,BpF.CommandPar);
@@ -261,8 +265,8 @@ var
         end;
       RxAccF: begin
         WriteIPC(mcVerbose,'receiving %s',[RxFilename]);
-        if FileExists(FilePath+RxFilename)then begin // file exists
-          RxFileHandle:=FileOpen(FilePath+RxFilename,fmOpenReadWrite);
+        if FileExists(IncomingDir+RxFilename)then begin // file exists
+          RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=FileSeek(RxFileHandle,0,fsFromEnd);
             OutBpF.SendCommandFrame(M_GET,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime)+' '+IntToStr(RxOffset));
@@ -272,7 +276,7 @@ var
             RxState:=RxWaitF;
             end;
           end else begin // file does not exist
-          RxFileHandle:=FileCreate(FilePath+RxFilename);
+          RxFileHandle:=FileCreate(IncomingDir+RxFilename);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=0;
             RxState:=RxReceD;
@@ -303,14 +307,14 @@ var
       RxWriteD: begin
         if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
         RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
-        WriteIPC(mcVerbose,'receiving %s %.0f%%',[RxFilename,RxFilePos/RxSize*100]);
+        WriteIPC(mcVerbose,'receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
         if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
         if RxFilePos=RxSize then begin
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
           WriteIPC(mcInfo,'%s received',[RxFilename]);
-          IncomingFiles.Add(FilePath+RxFilename);
+          IncomingFiles.Add(IncomingDir+RxFilename);
           end;
         if RxFilePos<RxSize then RxState:=RxReceD;
         end;
@@ -469,6 +473,14 @@ begin
           end;
         end;
     end;
+    if (KeyPressed and(ReadKey=#27))or
+       (not CommObj^.Carrier)then begin
+      if not CommObj^.Carrier then
+        WriteIPC(mcError,'Connection lost',[0])
+      else
+        WriteIPC(mcError,'User break',[0]);
+      if OutgoingFiles.Count<=0 then result:=1 else result:=2; State:=Done
+      end;
   until State=Done;
   InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy;
 end;
@@ -476,6 +488,10 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/02/19 12:18:28  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.5  2001/02/18 16:20:06  ma
   - BinkP's working! :-) - had to cope with some errors in BinkP protocol
     specification...

@@ -68,6 +68,7 @@ type
   public
     {These HAVE to be initialized when calling PerformNetcall}
     OutgoingFiles,IncomingFiles: TStringList;
+    IncomingDir: String;
     AKAs: String;
     Username: String;
     OwnAddr: String;
@@ -76,8 +77,6 @@ type
     Password: String;
     SysName: String;
     SerNr: String;
-    MailPath: String;
-    FilePath: String;
     ExtFNames: Boolean;
     SendEmpty: Boolean;
     TXT: String;
@@ -93,6 +92,7 @@ type
 implementation
 
 uses
+  {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
   zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
@@ -206,47 +206,51 @@ end;
 function TFidomailer.PerformNetcall: Integer;
 var iTimer: Integer; Ende: Boolean;
 begin
-  result:=el_noconn;
+  aresult:=el_noconn; result:=el_noconn;
   if not Connect then exit;
+  TimerObj.Init; Log(lcCalling,'calling '+txt);
 
   if SetTime then begin //** BinkP mailer
     if BinkPSessionSetup=0 then
-      if BinkPFileTransfer=0 then result:=el_ok;
-    exit;
+      if BinkPFileTransfer=0 then aresult:=el_ok;
+    end else begin // standard mailer
+    for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
+    SplitFido(OwnAddr,FA,2);
+    InitHelloPacket;
+    repeat
+      Ende:=true; aresult:=0;
+      case fmSS(0) of            { YooHoo  }
+        1 : fmS;                 { FTS-001 }
+        2 : case fmYS(1) of      { WaZOO   }
+              0 : aresult:=EL_nologin;
+              1 : ENDE:=false;
+              2 : WaZOOsession;  { Batch Up/Download }
+            end;
+        3 : case EMSIHandshake of      { EMSI }
+              0 : aresult:=EL_nologin;
+              1 : ENDE:=false;
+              2 : WaZOOsession;  { Batch Up/Download }
+            end;
+      end;
+      if aresult=EL_nologin then log(lcError,'login handshake failed');
+    until ENDE;
     end;
 
-  TimerObj.Init; Log(lcCalling,'calling '+txt);
-  for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
-  SplitFido(OwnAddr,FA,2);
-  InitHelloPacket;
-  repeat
-    Ende:=true; aresult:=0;
-    case fmSS(0) of            { YooHoo  }
-      1 : fmS;              { FTS-001 }
-      2 : case fmYS(1) of      { WaZOO   }
-            0 : aresult:=EL_nologin;
-            1 : ENDE:=false;
-            2 : WaZOOsession;  { Batch Up/Download }
-          end;
-      3 : case EMSIHandshake of      { EMSI }
-            0 : aresult:=EL_nologin;
-            1 : ENDE:=false;
-            2 : WaZOOsession;  { Batch Up/Download }
-          end;
-    end;
-    if aresult=EL_nologin then log(lcError,'login handshake failed');
-  until ENDE;
   SleepTime(2000);
   TimerObj.Done;
   Log(lcExit,'exiting');
   Disconnect;
-  PerformNetcall:=aresult;
+  result:=aresult;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.16  2001/02/19 12:18:28  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.15  2001/02/18 16:20:06  ma
   - BinkP's working! :-) - had to cope with some errors in BinkP protocol
     specification...

@@ -63,7 +63,7 @@ begin
   begin                                        { ZModem empfangen }
     {ZModem-Ausgaberoutinen setzen}
     WriteIPC(mcVerbose,getres2(30004,13),[0]);    { 'Empfangen' }
-    ZModemOkay:=ZModemObj.Receive(MailPath,IncomingFiles);
+    ZModemOkay:=ZModemObj.Receive(IncomingDir,IncomingFiles);
     if (not ZModemOkay) then begin
       WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
@@ -74,6 +74,10 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/02/19 12:18:28  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.7  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors

@@ -386,8 +386,7 @@ label fn_ende,fn_ende0;
       Fidomailer.RedialWaitTime:= redialwait;
       Fidomailer.MaxDialAttempts:= redialmax;
 //**      Fidomailer.MaxConn:= connectmax;
-      Fidomailer.FilePath:= xp0.FilePath;
-      Fidomailer.MailPath:= ownpath+XFerDir;
+      Fidomailer.IncomingDir:= ownpath+XFerDir;
       Fidomailer.ExtFNames:= ExtPFiles;
 
       fileatts:=0;
@@ -630,14 +629,9 @@ begin { FidoNetcall }
 
   case Diskpoll of
     false: begin  // use mailer to transfer files
-      Fidomailer:=TFidomailer.CreateWithIPC(TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True));
-      if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
-        trfehler1(2340,Fidomailer.ErrorMsg,30);
-        Fidomailer.Destroy; // releases IPC
-        _era(UpArcFilename);
-        OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
-        exit;
-        end;
+      Fidomailer:=TFidomailer.
+                  CreateWithCommInitAndIPC(ComN[boxpar^.bport].MCommInit,
+                  TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True));
       Fidomailer.OutgoingFiles:=OutgoingFiles; Fidomailer.IncomingFiles:=IncomingFiles;
       InitFidomailer;
       result:=Fidomailer.PerformNetcall;
@@ -896,6 +890,10 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/02/19 12:18:29  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.15  2001/02/18 16:20:06  ma
   - BinkP's working! :-) - had to cope with some errors in BinkP protocol
     specification...

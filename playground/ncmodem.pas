@@ -53,13 +53,15 @@ type
     FPhonenumbers: String;
     WaitForAnswer,FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
-    FErrorMsg,FLogfileName,ReceivedUpToNow,ModemAnswer: String;
+    FErrorMsg,FLogfileName,FCommInit,ReceivedUpToNow,ModemAnswer: String;
 
     FPhonenumber: String;
     FLineSpeed: Longint;
     FConnectString: String;
 
     procedure SLogfileName(S: String);
+    { Creates FCommObj from FCommInit }
+    function Activate: Boolean;
 
     {Process incoming bytes from modem: store in ReceivedUpToNow or move
      all bytes received yet to ModemAnswer and set WaitForAnswer to False
@@ -122,12 +124,10 @@ type
     property GotUserBreak: Boolean read FGotUserBreak;
     property ErrorMsg: string read FErrorMsg;
 
-    { Create with IPC class }
-    constructor CreateWithIPC(aIPC: TIPC);
+    { Create with CommInit string and IPC class }
+    constructor CreateWithCommInitAndIPC(const aCommInit: string; aIPC: TIPC);
     { Create with CommObj. Intended for online calls. Active and
-      Connected return true after call. This class does not care
-      for CommObj release even when disposed if created with this
-      constructor. }
+      Connected return true after call. }
     constructor CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
     { Disconnects if phonenumbers not empty.
       Disposes CommObj.
@@ -135,16 +135,13 @@ type
       Disposes IPC. }
     destructor Destroy; override;
 
-    { Initializes comm channel, s is ObjCOM CommInit string. }
-    function Activate(s: String): Boolean;
-    { Connects (= dials if necessary) }
+    { Connects (= initializes comm channel and dials if necessary) }
     function Connect: boolean; virtual;
 
     { Logs an event in log file. See lc* log char consts.}
     procedure Log(c: Char; const s: String);
 
     { Disconnects.
-      Closes log file.
       Hangs up if phonenumbers specified. }
     procedure Disconnect; virtual;
   end;
@@ -184,10 +181,10 @@ begin
   result:=n;
 end;
 
-constructor TModemNetcall.CreateWithIPC(aIPC: TIPC);
+constructor TModemNetcall.CreateWithCommInitAndIPC(const aCommInit: string; aIPC: TIPC);
 begin
   inherited Create;
-  FConnected:=False; FActive:=False; FErrorMsg:=''; IPC:=aIPC;
+  FConnected:=False; FActive:=False; FErrorMsg:=''; IPC:=aIPC; FCommInit:=aCommInit;
   WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
@@ -196,14 +193,15 @@ end;
 
 constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
 begin
-  CreateWithIPC(aIPC);
+  CreateWithCommInitAndIPC('',aIPC);
   FCommObj:=p; FActive:=True; FConnected:=True;
 end;
 
 destructor TModemNetcall.Destroy;
 begin
-  if (FPhonenumber<>'')and FConnected then Disconnect;
+  if FConnected then Disconnect;
   if FActive then begin FCommObj^.Close; Dispose(FCommObj,Done)end;
+  if FLogfileOpened then Close(FLogfile);
   inherited destroy;
 end;
 
@@ -220,10 +218,13 @@ begin
   FLogfileOpened:=True;
 end;
 
-function TModemNetcall.Activate(s: String): Boolean;
+function TModemNetcall.Activate: Boolean;
 begin
-  FActive:=CommInit(s,FCommObj);
-  if not FActive then FErrorMsg:='Error activating comm channel: '+ObjCOM.ErrorStr;
+  if not FActive then FActive:=CommInit(FCommInit,FCommObj);
+  if not FActive then begin 
+    FErrorMsg:=ObjCOM.ErrorStr;
+    WriteIPC(mcError,'%s',[FErrorMsg]);
+    end;
   result:=FActive;
 end;
 
@@ -322,6 +323,11 @@ var
   CurrentPhonenumber: String;
 
 begin
+  if not FActive then begin
+    WriteIPC(mcVerbose,'Opening comm channel',[0]);
+    result:=Activate;
+    if not result then begin SleepTime(2000); exit end;
+    end;
   if Phonenumbers='' then begin result:=true; exit end;
   FGotUserBreak := false;
   DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
@@ -435,13 +441,16 @@ begin
     end;
   end;
   FConnected:=False;
-  if FLogfileOpened then Close(FLogfile);
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.15  2001/02/19 12:18:28  ma
+  - simplified ncmodem usage
+  - some small improvements
+
   Revision 1.14  2001/02/18 16:20:06  ma
   - BinkP's working! :-) - had to cope with some errors in BinkP protocol
     specification...
