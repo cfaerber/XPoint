@@ -31,7 +31,7 @@ uses
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,datadef,database,maske, xpheader,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
-  xp2c,xp_des,xpe,fidoglob;
+  xpcc, xp2c,xp_des,xpe,fidoglob;
 
 procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);
@@ -1063,16 +1063,21 @@ again:
                dbSeek(ubase,uiName,UpperCase(name));
                if not dbFound then
                begin   { User noch nicht vorhanden }
-                 pollbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
-                 if not IsBox(pollbox) then
+                 pollbox:=defaultbox;
+                 defaultbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
+                 if not IsBox(defaultbox) then
                  begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
-                   pollbox := dbReadNStr(bbase,bb_pollbox);
+                   DefaultBox := dbReadNStr(bbase, bb_pollbox);
+                 end;
+                 ReplaceVertreterbox(defaultbox,true);
+                 if not cc_testempf(hdp.absender)
+                 then begin
+                   defaultbox:=pollbox;
+                   goto ende;
+                   end;
+                 defaultbox:=pollbox;
                  end
-                 else
-                   ReplaceVertreterbox(pollbox,true);
-                 AddNewUser(Name, Pollbox);
-               end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
                  if b=0 then
@@ -1170,6 +1175,20 @@ begin
     else box:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
     AddNewUser(hdp.absender,box);
     end;
+
+  box:=defaultbox;
+  dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
+  if dbFound then DefaultBox := dbReadNStr(bbase,bb_pollbox)
+    else defaultbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
+  ReplaceVertreterbox(defaultbox,true);
+  if not cc_testempf(hdp.absender) then
+  begin
+    defaultbox:=box;
+    _era(fn);
+    exit;
+  end;
+  defaultbox:=box;
+
   tmp:=TempS(_filesize(fn)+2000);
   assign(tf,tmp);
   rewrite(tf,1);
@@ -1293,6 +1312,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2001/08/02 22:43:00  mk
+  JG:- When archiving a PM/AM with <Alt-P> and user doesn't exist already,
+         XP brings up a 'create user' dialogue and defaults to the server of
+         the message folder where the message is currently stored. Reply
+         servers are considered (if any).
+
   Revision 1.64  2001/07/28 12:04:14  mk
   - removed crt unit as much as possible
 
