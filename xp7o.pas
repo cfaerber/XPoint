@@ -399,7 +399,10 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { 01/2000 oh: Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then bd_setzen(true);
+  if AutoDatumsBezuege then begin 
+    window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
+    bd_setzen(true);
+    end; 
   { /oh }
 end;
 
@@ -777,4 +780,3 @@ end;
 
 
 end.
-
