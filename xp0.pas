@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Deklarationen }
@@ -42,7 +42,7 @@ const  {$IFDEF DPMI}
        {$ENDIF}
 
        LangVersion = '13';           { Version des Sprachmoduls }
-       menus       = 40;             { Anzahl der Menus }
+       menus       = 43;             { Anzahl der Menus (+1 wegen Zusatzmenueerweiterung) }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
        maxmarklist = 5000;           { MK: Maximale Anzahl markierter Msgs }
@@ -87,6 +87,7 @@ const  {$IFDEF DPMI}
 {       AutoDatumsBezuege : boolean = false; } {unnîtig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
+          FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
@@ -707,13 +708,13 @@ type   textp  = ^text;
 const
        menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-                                            1,1,1,1,1,1,1);
+                                            1,1,1,1,1,1,1,1,1,1);
        menable : array[0..menus] of word = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                            0,0,0,0,0,0,0);
+                                            0,0,0,0,0,0,0,0,0,0);
        checker : array[0..menus] of byte = (0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,0,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                                            0,0,0,0,0,0,0);
+                                            0,0,0,0,0,0,0,0,0,0);
 
        OStype : (os_dos,os_linux,os_windows,os_2) = os_dos;
 
@@ -811,9 +812,9 @@ const
        MoreMode   : boolean = true;
        Developer  : boolean = false;
        SupportCfg : string[12] = 'SUPPORT.CFG';
-       UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
+       UseNewCfg  : boolean = false;   { neue cfg, wird in initvar (xp2cfg) gesetzt }
 
-       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
+       Delviewtmp : boolean = false;   { Win-Viewertempfiles erst beim naechsten Start loeschen }
 
                          { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }
 
@@ -821,8 +822,6 @@ const
        viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
        viewer_lister : string = '.TXT.ASC';                 { immer internen Lister benutzen }
        viewer_scanner : string[viewproglen] = '';            { Viewer bei Antwort=Nein }
-
-       { 01/2000 oh }
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
@@ -836,10 +835,9 @@ const
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
-       UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
+       UsrFeldDef = 'FHBGAK'; { Standardreihenfolge: Feldtausch Userliste }
 
-       showungelesen : boolean = false;   { Bretter mit ungel. Nachrichten auch markieren }
-       { /oh }
+       showungelesen : boolean = true;    { kombinierter Ungelesen-Modus }
 
        ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
 
@@ -916,7 +914,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ListUhr      : Boolean;       { Uhr bei Vollbildlister }
        ListEndCR    : boolean;       { internen Lister mit <cr> beenden }
        ListWrap     : boolean;
-       FKeys        : array[0..3] of fkeyp;
+       FKeys        : array[0..4] of fkeyp;
        Unpacker     : ^UnpackRec;
        EditVollbild : boolean;
        ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=gro·e Files }
@@ -992,7 +990,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ZC_xposts    : boolean;       { ZConnect-Crosspostings }
        ZC_ISO       : boolean;       { ISO-8859-1 verwenden }
        leaveconfig  : boolean;       { /Config-MenÅ bei <Esc> ganz verlassen }
-       NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" }
+       NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" (nur RFC) }
+       NewsgroupDispAll: boolean;    { fÅr alle Gruppen }
        NetcallLogfile:boolean;       { Logfile Åber Netcalls fÅhren }
        ShrinkUheaders : boolean;     { UUZ-Schalter -r }
        ListHighlight: boolean;       { ** und __ auswerten }
@@ -1022,6 +1021,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
+       MsgNewFirst  : boolean;       { Nachrichtenanzeige umgekehrt: neue oben }
        MsgFeldTausch   : string[MsgFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Brettliste Felder vertauscht werden }
@@ -1029,14 +1029,15 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Userliste Felder vertauscht werden }
        UsrFeldPos1  : Byte;          { Spezialmodus Position der Usernamen (FeldTausch) }
-       UsrFeldPos2  : Byte;          { Normalmodus Position der Uusernamen (FeldTausch) }
+       UsrFeldPos2  : Byte;          { Normalmodus Position der Usernamen (FeldTausch) }
        Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
        brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
-       Usersortbox  : boolean;       {im Userfenster nach Boxname Sortieren}
-       _Usersortbox : boolean;       {Hilfszeiger fuer Config }
+       Usersortbox  : boolean;       { im Userfenster nach Boxname sortieren }
+       _Usersortbox : boolean;       { Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-BinÑrnachrichten als Multipart }
+       RFC_AddOldBetreff : boolean;  { RFC: Bei Betreffaenderung alten Betreff anhaengen }
        mausmpbin    : boolean;       { dto. fÅr MausTausch }
        askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN }
 
@@ -1104,7 +1105,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
        macrodef    : array[1..maxkeys] of ^string;
-       shortkey    : array[1..maxskeys] of KeyRec;
+       shortkey    : array[1..maxskeys+1] of KeyRec;
        shortkeys   : shortint;
        registriert : record r1,r2:boolean; nr:longint;
                             uucp,non_uucp:boolean;
@@ -1208,6 +1209,36 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.41  2001/09/16 20:17:25  my
+  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
+          unten)
+
+  JG+MY:- Feldtausch ge‰ndert/verbessert: Default jetzt FHBGAK, jedes Feld
+          kann weggelassen werden, bei Weglassen groﬂer Felder werden die
+          ¸brigen Felder verbreitert. /Config/Anzeige/Hilfen
+          ¸bersichtlicher gestaltet.
+
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh‰ngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei ƒnderung des
+          Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
+          automatisch angeh‰ngt.
+
+  JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verf¸gung).
+
+  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
+          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+          Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
+          Registrierungsfenster optisch angepaﬂt.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.54.2.40  2001/07/31 15:33:14  my
   - RFC/Client: implemented "External Settings" under
     Edit/Servers/Edit/... (load external config file)
