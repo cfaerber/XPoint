@@ -48,7 +48,8 @@ function SysGetDriveType(drive:char):byte;
 // Returns the used Codepage in form of the Unicode charset
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysOutputRedirected: boolean;
-// Execute an externel program
+// Execute an external program; return errorlevel of called program if
+// successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
 
 implementation
@@ -697,11 +698,13 @@ begin
   Result := false;
 end;
 
-// Execute an externel program
 function SysExec(const Path, CmdLine: String): Integer;
+var TempError: Integer;
 begin
-  Exec(Path, CmdLine);
-  Result := DosExitCode;
+  DosError:=0;
+  SwapVectors; Exec(Path, CmdLine); SwapVectors;
+  TempError:=DosError; DosError:=0;
+  if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 
 var
@@ -712,8 +715,12 @@ initialization
 finalization
   SetCBreak(CheckBreak);
 end.
+
 {
   $Log$
+  Revision 1.12  2001/01/05 18:36:05  ma
+  - fixed SysExec
+
   Revision 1.11  2000/11/18 21:33:07  mk
   - disabled Ctrl-Break
 
@@ -725,34 +732,4 @@ end.
 
   Revision 1.8  2000/10/19 20:52:23  mk
   - removed Unit dosx.pas
-
-  Revision 1.7  2000/10/10 12:15:23  mk
-  - SysGetConsoleCodepage added
-
-  Revision 1.6  2000/10/03 15:45:07  mk
-  - DOS32-Implementation von DriveType und AllDrives
-
-  Revision 1.5  2000/10/03 03:25:04  mk
-  - VESA Textmodi mit 80/132 Spalten implementiert
-
-  Revision 1.4  2000/09/30 16:42:56  mk
-  - CAZ fuer DOS32
-
-  Revision 1.3  2000/07/31 09:56:55  mk
-  - ConfigScreenWidth und passende Logik hinzugefuegt
-
-  Revision 1.2  2000/07/27 10:13:05  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.1  2000/06/29 13:00:59  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
 }

@@ -47,7 +47,8 @@ procedure RegisterMailClient;
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
-// Execute an externel program
+// Execute an external program; return errorlevel of called program if
+// successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
 
 implementation
@@ -164,16 +165,22 @@ begin
   Result := false;
 end;
 
-// Execute an externel program
+// Execute an external program
 function SysExec(const Path, CmdLine: String): Integer;
+var TempError: Integer;
 begin
+  DosError:=0;
   Exec(Path, CmdLine);
-  Result := DosExitCode;
+  TempError:=DosError; DosError:=0;
+  if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 
 end.
 {
   $Log$
+  Revision 1.14  2001/01/05 18:36:05  ma
+  - fixed SysExec
+
   Revision 1.13  2000/11/18 21:10:00  mk
   - added SysExec
 
@@ -188,51 +195,4 @@ end.
 
   Revision 1.9  2000/10/19 19:53:08  mk
   - Fix for SysSetScreenSize when resizing the window at runtime
-
-  Revision 1.8  2000/10/10 12:15:23  mk
-  - SysGetConsoleCodepage added
-
-  Revision 1.7  2000/09/30 16:34:50  mk
-  - SysSetBackIntensity
-
-  Revision 1.6  2000/08/14 14:43:00  mk
-  - RegisterMailClient hinzugefuegt
-
-  Revision 1.5  2000/07/27 10:13:06  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.4  2000/06/29 13:01:03  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.3  2000/05/14 22:06:30  mk
-  - Zeilenzahl mindestens 25
-
-  Revision 1.2  2000/04/13 12:48:42  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.1  2000/03/14 15:15:42  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-
 }
