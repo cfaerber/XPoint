@@ -86,7 +86,8 @@ type
     dword =      longint; { = signed }
     longword=    longint;
     rtlword =    longint;     { 32 Bit bei VP }
-    variant =    pointer; // Naja....
+    variant =    pointer; // Naja...
+    Int64 =      longint; // Ohje...
   {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
@@ -146,6 +147,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/10/17 20:35:50  mk
+  - Int64=LongInt (urghl!) bei VirtualPascal hinzugefuegt
+
   Revision 1.40  2000/10/10 21:58:57  mk
   - LongWord fuer VirtualPascal hinzugefuegt
 
