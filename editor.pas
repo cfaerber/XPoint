@@ -678,17 +678,6 @@ begin
   p:=nil; { .robo }
 end;
 
-function vap(p:absatzp):absatzp;     { virtuellen Speicher einblenden }
-begin
-  vap:=p;
-end;
-
-function vap2(p:absatzp):absatzp;   { Absatz parallel einblenden }
-begin
-  vap2:=p;
-end;
-
-
 { ------------------------------------------------------------ Edit }
 
 { Block freigeben }
@@ -938,7 +927,7 @@ end;
 function Advance(ap:absatzp; offset,rand:word):integer;
 var zlen : integer;   { Zeilenl„nge }
 begin
-  with vap(ap)^ do
+  with ap^ do
     if not umbruch or (size-offset<=rand) then
       Advance:=size
     else begin
@@ -979,7 +968,7 @@ begin
   cr:=true;
   while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
-    with vap(ap)^ do
+    with absatzp(ap)^ do
       if softbreak then begin
         ofs:=0;
 
@@ -1005,7 +994,7 @@ begin
         ofs0:=0;
         end;
     if ap=pende.absatz then ap:=nil
-    else ap:=vap(ap)^.next;
+    else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
       blockwrite(f,crlf[1],2); cr:=true;
       end;
@@ -1097,7 +1086,6 @@ var  dl         : displp;
   function alines(ap:absatzp):integer;     { # Zeilen eines Absatzes }
   var o,n : integer;
   begin
-    ap:=vap(ap);
     if not ap^.umbruch then
       alines:=1
     else begin
@@ -1130,22 +1118,22 @@ var  dl         : displp;
         pdiff: integer;
     begin     
       p0:=0;
-      s:=vap(ap)^.size;
-      while (p0<15) and (p0<s) and (vap(ap)^.cont[p0]<=' ') do inc(p0);
+      s:=ap^.size;
+      while (p0<15) and (p0<s) and (ap^.cont[p0]<=' ') do inc(p0);
       p:=p0;
       qn:=0;
       repeat
         while (p-p0<6) and (p<s) and
         (
-          (vap(ap)^.cont[p]<>'>') and
-          (not OtherQuoteChars or not (vap(ap)^.cont[p] in QuoteCharSet))
+          (ap^.cont[p]<>'>') and
+          (not OtherQuoteChars or not (ap^.cont[p] in QuoteCharSet))
         )
         do inc(p);
         pdiff:=p-p0;
         if (p<s) and
         (
-          (vap(ap)^.cont[p]='>') or
-          (OtherQuoteChars and (vap(ap)^.cont[p] in QuoteCharSet))
+          (ap^.cont[p]='>') or
+          (OtherQuoteChars and (ap^.cont[p] in QuoteCharSet))
         )
         then begin
           inc(qn);
@@ -1180,7 +1168,7 @@ var  dl         : displp;
         dl^[i].offset:=dofs;
         dl^[i].zeile:=line;
         nxo:=Advance(ap,dofs,rrand);
-        absende:=(nxo=vap(ap)^.size);
+        absende:=(nxo=ap^.size);
         if not dispnoshow then begin
           if blockstat=0 then begin
             if (ap=block[1].pos.absatz) and (block[1].pos.offset<=nxo) then begin
@@ -1198,7 +1186,7 @@ var  dl         : displp;
               bende:=block[2].pos.offset-dofs;
             end;
           s[0]:=chr(minmax(nxo-dofs-xoffset,0,w));
-          if s<>'' then FastMove(vap(ap)^.cont[dofs+xoffset],s[1],length(s));
+          if s<>'' then FastMove(ap^.cont[dofs+xoffset],s[1],length(s));
           if length(s)<w then begin
             if (s<>'') and absende then begin               { Absatzende-Marke }
               s[length(s)+1]:=absatzende;
@@ -1227,7 +1215,7 @@ var  dl         : displp;
           if bende<bemax then blockstat:=2;
           end;
         if absende then begin
-          ap:=vap(ap)^.next;
+          ap:=ap^.next;
           if assigned(ap) then SetAbsCol;
           dofs:=0; line:=0;
           end
@@ -1305,7 +1293,7 @@ var  dl         : displp;
       begin
         with e^ do begin
           GetPosition(m_pos);
-          m_pos.offset:=min(m_pos.offset,vap(m_pos.absatz)^.size);
+          m_pos.offset:=min(m_pos.offset,m_pos.absatz^.size);
           if not moved then begin
             if ((PosCoord(m_pos,2)<>PosCoord(block[1].pos,block[1].disp))
             and (PosCoord(m_pos,2)<>PosCoord(block[2].pos,block[2].disp)))
@@ -1751,7 +1739,7 @@ var  dl         : displp;
       with e^ do
         if dl^[scy].absatz=nil then begin
           while dl^[scy].absatz=nil do dec(scy);
-          scx:=vap(dl^[scy].absatz)^.size-dl^[scy].offset+1;
+          scx:=dl^[scy].absatz^.size-dl^[scy].offset+1;
           end;
     end;
 
@@ -1892,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/02 20:51:22  rb
+  Wrapper-Funktionen vap und vap2 aus Editor entfernt
+
   Revision 1.8  2000/02/29 19:44:38  rb
   Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
 
