@@ -464,7 +464,7 @@ label ende, restart;
           TxtSeekKey := Key;
           Intext := TxtSeek(p,wsize,igcase,umlaut);
           // hack to allow searching in iso charset
-          if result = false then
+          if (result = false) and (wsize > 0) then
           begin
             SetString(s,pChar(p), wsize);
             s := isotoibm(s);
@@ -3025,6 +3025,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.13  2004/07/18 15:46:53  mk
+  - fixed last commit
+
   Revision 1.138.2.12  2004/07/12 18:41:07  mk
   - fixed bug #892470, convert full text to ibm charset before searching
 
