@@ -893,7 +893,6 @@ var w1,w2: word;
       win,os2,
       winnt   : boolean;
       t       : text;
-      del_all_viewer_tmp: boolean;
   begin
     PrepareExe:=0;
     exepath:=left(prog,blankposx(prog)-1);
@@ -909,24 +908,26 @@ var w1,w2: word;
     os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
-    if win then begin
-      Del_all_Viewer_tmp:=false;          
-      batfile:=TempExtFile(temppath,'wrun','.bat');
-      assign(t,batfile);
-      rewrite(t);
-      writeln(t,'@echo off');
-      writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
-      writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
-      writeln(t);
-      writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
-      writeln(t,'echo.');
-      writeln(t,'start %1 '+prog);
-      writeln(t,'if !%1==!/wait del '+parfn);
-      writeln(t,'del '+batfile);
-      close(t);
-      if winnt then
-        prog:='cmd /c start cmd /c '+batfile
-        else prog:='start command /c'+batfile+iifs(del_all_viewer_tmp,'',' /wait');
+    if win then begin        
+      if getenv('DELVTMP')<>'' then prog:='start '+parfn 
+      else begin
+        batfile:=TempExtFile(temppath,'wrun','.bat');
+        assign(t,batfile);
+        rewrite(t);
+        writeln(t,'@echo off');
+        writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
+        writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
+        writeln(t);
+        writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
+        writeln(t,'echo.');
+        writeln(t,'start /wait '+prog);
+        writeln(t,'del '+parfn);
+        writeln(t,'del '+batfile);
+        close(t);
+        if winnt then
+          prog:='cmd /c start cmd /c '+batfile
+          else prog:='start command /c'+batfile
+        end; 
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -964,6 +965,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/03/04 12:39:36  jg
+  - weitere Aenderungen fuer externe Windowsviewer
+    Umgebungsvariable DELVTMP
+
   Revision 1.20  2000/03/04 11:07:32  jg
   - kleine Aenderungen am Tempfilehandling fuer externe Windowsviewer
 

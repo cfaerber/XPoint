@@ -133,6 +133,11 @@ begin
     end;
     showscreen(true);
     DelTmpfiles('*.$$$');
+    if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
+      chdir(temppath); 
+      DelTmpfiles('TMP-????.*');
+      chdir(ownpath);
+      end;
     testdiskspace;
     {$IFDEF BP }
     testfilehandles;
@@ -189,6 +194,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.10  2000/03/04 12:39:36  jg
+  - weitere Aenderungen fuer externe Windowsviewer
+    Umgebungsvariable DELVTMP
+
   Revision 1.9  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 
