@@ -1652,7 +1652,6 @@ fromstart:
     dbAppend(mbase);            { neue mbase.INT_NR fÅr MessageID }
     hdp^.msgid:=MessageID;
     sData^.msgid:=hdp^.msgid;
-    hdp^.ersetzt:=sData^.ersetzt;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
     begin
@@ -1664,8 +1663,6 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      { MK 01/00 VerkÅrzte Anzeige der Versionstypen/nummern }
-      { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
       hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
                      +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
@@ -2135,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.68  2000/10/11 08:45:38  mk
+  RB:- Fix fuer Ersetzt-Nachrichten
+
   Revision 1.67  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 
