@@ -5172,8 +5172,9 @@ Enter the activity which CrossPoint should carry out.
 @
 530
 Enter the search string.
-With [F2] you get a history-menu
-of the last 3 search-strings.
+
+With <<<F2> >>you get a history menu of the last 3
+search strings.
 
 
 If you are using AND/OR combination
@@ -5189,33 +5190,35 @@ will search for
 "to write here"
 
 
-<<~>> works as NOT-Operator: If a word is found
-that is marked with (~) the search fails.
-
+"<<~>>" works as NOT-Operator: If a word is found
+that is marked with <<~>>, the search fails.
 
 
 Type <<Ctrl-V>> or <<Shift-Ins>> to insert the
-Windows-Clipboard. An acoustic signal indicates,
+Windows clipboard. An acoustic signal indicates
 that the clipboard contains too much (or none) text.
 
 <<Ctrl-C>> or <<Ctrl-Ins>> copies the text of this
-box to the Windows-Clipboard.
+box to the Windows clipboard.
 
 @
 531
 Enter the type of search.
 
-<<i>>  Ignore case ("u" may also be used instead of
-   i") when searching.
+<<i>>  Ignore case.
 
-<<a>>  AND-Combined: Searching is succesfull,
+<<u>>  Disregard German <<U>>mlauts (ae=Ñ, oe=î, ue=Å, ss=·).
+   This option always includes the <<i>> option (ignore
+   case).
+
+<<a>>  AND-Combined: Searching is successful,
    if ALL keywords are found.
 
 <<o>>  OR-Combined: Searching is successful,
    if ANY keyword is found.
 
 
-(Delete entries with the <Del> key or Ctrl-Y.)
+(Delete entries with the <Del> or <Space> key.)
 @
 532
 CrossPoint searches in the groups defined here.
