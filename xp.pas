@@ -112,6 +112,9 @@ uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 
 label ende;
 
+var pwcnt:byte;
+    pwrc:boolean;
+
 begin
   readpar;
   loadresource;
@@ -151,7 +154,12 @@ begin
     testfilehandles;
     {$ENDIF }
     initdatabase;
-    if password then
+    pwcnt:=0; { drei PW-Versuche, dann beenden }
+    repeat
+      pwrc:=password;
+      inc(pwcnt);
+    until (pwrc or (pwcnt=3));
+    if pwrc then
     begin
       test_defaultbox;
       ReadDomainlist;
@@ -204,6 +212,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.16  2000/04/03 00:27:33  oh
+  - Startpasswort: drei Versuche statt nur einem.
+
   Revision 1.15  2000/03/25 20:22:20  mk
   - kleinere Anpassungen fuer Linux
 
