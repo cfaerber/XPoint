@@ -2186,12 +2186,923 @@ begin
   closebox;
 end;
 
+{.$I xp8fs.inc}     { Fileserver }
 
-{$I xp8fs.inc}     { Fileserver }
-{$I xp8.inc}       { Fido FileScan }
+{----- Fileserver --------------------------------------------------}
+
+function IsServer(box:string; var fstype:byte):boolean;
+var d     : DB;
+    flags : smallword;
+begin
+  dbOpen(d,SystemFile,1);
+  dbSeek(d,siName,UpperCase(box));
+  if dbFound then begin
+    dbRead(d,'flags',flags);
+    dbRead(d,'fs-typ',fstype);
+    end;
+  dbClose(d);
+  IsServer:=dbFound and (flags and 1<>0);
+end;
+
+{ Erstellt aus einem Boxnamen (bis 20 Zeichen) einen Filenamen, der nur
+  8+3 Zeichen lang ist }
+
+function MangleBoxName(const s: String): String;
+begin
+  if Length(s) <= 8 then
+    MangleBoxName := s
+  else
+    MangleBoxName := LeftStr(s, 4) + Hex(CRC32Str(UpperCase(s)), 4);
+  Result := FileUpperCase(Result);
+end;
+
+
+{ msg => aktuelle Nachricht wird eingelesen }
+
+procedure FS_ReadList(msg:boolean);
+const
+      tbufs = 2048;
+var
+    absender : string;
+    box      : string;   { das ist auf jeden Fall eine Zerberus-Box.. }
+    convert  : string;
+    x,y,p,p2 : Integer;
+    f        : file;
+    fn       : string;
+    t1,t2    : text;
+    s,s2     : string;
+    useclip  : boolean;
+    fstype   : byte;
+    tbuf     : pointer;
+
+  procedure wrl;
+  begin
+    writeln(t2,s[1],'   ',trim(Mid(s,2)));
+  end;
+
+  procedure WriteFST(typ:byte);
+  var d : DB;
+  begin
+    dbOpen(d,SystemFile,1);
+    dbSeek(d,siName,UpperCase(box));
+    if dbFound then
+      dbWrite(d,'fs-typ',typ);
+    dbClose(d);
+  end;
+
+  procedure GetConvert;
+  var d : DB;
+  begin
+    dbOpen(d,SystemFile,1);
+    dbSeek(d,siName,UpperCase(box));
+    convert:= dbReadStr(d,'ZBV1');
+    dbClose(d);
+  end;
+
+begin
+  if msg then begin
+    if (LeftStr(UpperCase(dbReadStrN(mbase,mb_betreff)),5)<>'FILES') and
+       not ReadJN(getres(811),true) then   { 'Sind Sie sicher, dass das eine Fileliste ist' }
+      exit;
+    absender:= dbReadStrN(mbase,mb_absender);
+    p:=cpos('@',absender);
+    p2:=p+cPos('.',copy(absender,p+1,20));
+    if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
+      trfehler(809,60);   { 'fehlerhafter Absender!?' }
+      exit;
+      end;
+    box:=copy(absender,p+1,p2-p-1);
+    if not IsServer(box,fstype) then begin
+      trfehler1(810,box,60);   { 'Das System %s ist nicht als Fileserver eingetragen.' }
+      exit;
+      end;
+    end
+  else begin
+    fn:=FilePath+WildCard;
+    useclip:=false;
+    if not readfilename(getres(812),fn,true,useclip) then exit;   { 'Fileserver-Liste' }
+    if not FileExists(fn) then begin
+      rfehler(811);   { 'Datei ist nicht vorhanden.' }
+      exit;
+      end;
+    box:=UniSel(3,false,'');
+    if box='' then exit;
+    if not IsServer(box,fstype) then begin
+      trfehler1(812,UpperCase(box),60);   { '%s ist kein Fileserver.' }
+      exit;
+      end;
+    end;
+
+  msgbox(48,3,'',x,y);
+  mwrt(x+3,y+1,getreps(813,UpperCase(box)));   { 'File-Liste fuer %s wird eingelesen ...' }
+  if msg then begin
+    fn:=TempS(dbReadInt(mbase,'groesse')+5000);
+    assign(f,fn);
+    rewrite(f,1);
+    XreadF(dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse'),f);
+    close(f);
+    end;
+  getmem(tbuf,tbufs);
+  assign(t1,fn);
+  settextbuf(t1,tbuf^,tbufs);
+  reset(t1);
+  if fstype<3 then begin
+    s:=''; s2:='';
+    while not eof(t1) and
+          ((pos('Typ',s)=0) or (pos('Dateiname',s)=0)) and
+          ((pos('Name',s)=0) or (pos('Beschreibung',s)=0)) and
+          (pos('Í file description Í',LowerCase(s))=0) do begin
+      s2:=s;
+      readln(t1,s);
+      end;
+    if eof(t1) then begin
+      closebox;
+      close(t1);
+      freemem(tbuf,tbufs);
+      if msg then _era(fn);
+      trfehler(813,60);   { 'unbekanntes Listenformat :-(' }
+      exit;
+      end;
+    fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',LowerCase(s))>0,2,0));
+    WriteFST(fstype);
+    end;
+  GetServerName(box); { Gross- und Kleinschreibung korrigieren }
+  makebak(MangleBoxName(box)+ extFl, ExtBak);
+  case fstype of
+    0 : begin      { SendZMsg }
+          assign(t2,MangleBoxName(box)+ extFl);
+          rewrite(t2);
+          readln(t1,s);
+          repeat
+            if copy(s,1,1)='%' then begin           { Kommentarzeile }
+              writeln(t2);
+              wrl;
+              writeln(t2);
+              readln(t1,s);
+              end
+            else
+              if (Length(s) >= 2) and (s[1]<>' ') and (s[2]=' ') then begin
+                repeat
+                  if eof(t1) then s2:=''
+                  else readln(t1,s2);
+                  if (s2<>'') and (LeftStr(s2,5)='     ') then
+                    s:=s+' '+trim(s2);
+                until (s2='') or (LeftStr(s2,5)<>'     ');
+                wrl;
+                s:=s2;
+                if (s='') then readln(t1,s);
+                end
+              else
+                readln(t1,s);
+          until eof(t1);
+          close(t2);
+        end;
+
+    1 : begin      { iMLS-Fileserver }
+          assign(t2, MangleBoxName(box)+extFl);
+          rewrite(t2);
+          writeln(t2,s2);
+          writeln(t2,s);
+          while not eof(t1) do begin
+            readln(t1,s); writeln(t2,s);
+            end;
+          close(t2);
+        end;
+
+    2 : begin      { NCB-Mail-Fileserver }
+          close(t1); reset(t1);
+          assign(t2, MangleBoxName(box)+ extFl);
+          rewrite(t2);
+          while not eof(t1) do begin
+            readln(t1,s); writeln(t2,s);
+            end;
+          close(t2);
+        end;
+
+    3 : begin      { UUCP-Fileserver }
+          GetConvert;
+          if pos('$INFILE',convert)=0 then
+            rfehler(824)    { 'Ungueltiger Konvertierer-Eintrag: $INFILE fehlt' }
+          else if pos('$OUTFILE',convert)=0 then
+            rfehler(825)    { 'Ungueltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
+          else begin
+            exchange(convert,'$INFILE',fn);
+            exchange(convert,'$OUTFILE', MangleBoxName(box)+ extFl);
+            shell(convert,300,3);
+            if errorlevel=1 then rfehler(821);
+            end;
+        end;
+
+  end;
+  close(t1);
+  if msg then erase(t1);
+  freemem(tbuf,tbufs);
+  closebox;
+end;
+
+
+var fstyp : byte;   { 0=SendZMsg, 1=iMLS }
+
+function testmark(const s:string; block:boolean):boolean;
+begin
+  if (s<>'') and
+     (((fstyp=0) and (FirstChar(s)<>'%') and (copy(s,2,1)=' ')) or
+      ((fstyp=1) and (LeftStr(s,5)<>'Name-') and (FirstChar(s)<>' ')) or
+      ((fstyp=2) and (s<>'') and (s[1]>' ') and (s[1]<'°')) or
+      ((fstyp=3) and (trim(s)<>''))) then
+    testmark:=true
+  else begin
+    if not block then errsound;
+    testmark:=false;
+    end;
+end;
+
+
+function UUsendTestSourcefile(var s:string):boolean;
+var
+  name : string;
+
+   procedure SetDestfile;
+   begin
+     if getfield(fieldpos+1)='' then
+       setfield(fieldpos+1,LowerCase(extractfilename(s)));
+   end;
+
+begin
+  s:=ExpandFileName(s);
+  if FileExists(s) and not isPath(s) then begin
+    SetDestfile;
+    UUSendTestSourcefile:=true;
+  end else begin                        { Datei fehlt }
+    if not multipos('*?',s) then
+    begin
+      if (LastChar(s)<>DirSepa) {and (rc<>0)} then begin
+        rfehler(823);               { 'Datei nicht gefunden.' }
+        UUsendTestSourcefile:=false;
+        exit;
+      end;
+      s:= AddDirSepa(s)+WildCard;
+    end;
+    selcol;
+    name:=fsbox(screenlines div 2 - 5,s,'','',true,false,false);
+    if name='' then
+      UUsendTestSourcefile:=false
+    else begin
+      s:=name;
+      SetDestfile;
+      UUsendTestSourcefile:=true;
+      end;
+    end;
+end;
+
+
+{ comm:    '' / 'FILES' / 'HILFE'     }
+{ request: 0=nein, 1=SEND, 2=TRANSFER }
+
+procedure FS_command(comm:string; request:byte);
+var d     : DB;
+    fs    : string;
+    fname : string;
+    fpass : string;
+    hd    : string;
+    w     : smallword;
+    fn    : string;
+    t     : text;
+    brk   : boolean;
+    s     : string;
+    p     : byte;
+    enterfiles : boolean;
+    List: TLister;
+
+  procedure GetFilelist;
+  var dateien : string;
+      anz     : longint;
+      s       : string;
+  label again;
+  begin
+    showkeys(10);
+    List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
+    List.ReadFromFile(MangleBoxName(fs)+ extFl,0);
+    List.OnTestMark := testmark;
+  again:
+    brk := List.Show;
+    if not brk then
+    begin
+      anz:= List.SelCount;
+      s:= List.FirstMarked;
+      if (anz=0) and not (testmark(s,false)) then
+        goto again;
+      if anz=0 then anz:=1;
+      dateien:=getres2(814,iif(anz<>1,2,1));
+      if not ReadJN(reps(reps(getreps2(814,3,strs(anz)),dateien),fs),true)   { '%s %s bei %s bestellen' }
+        then goto again;
+      freeres;
+      end;
+    aufbau:=true;
+  end;
+
+  procedure GetTransCeiver;
+  var adr : string;
+  begin
+    select(3);
+    if selpos=0 then brk:=true
+    else begin
+      dbGo(ubase,selpos);
+      adr:= dbReadNStr(ubase,ub_username);
+      if FirstChar(adr)=vert_char then 
+      begin
+        rfehler(814);    { 'Verteiler sind hier nicht erlaubt.' }
+        brk:=true;
+        end
+      else begin
+        rewrite(t);
+        writeln(t,'%',adr);
+        close(t);
+        end;
+      end;
+  end;
+
+  procedure readservice;
+  var s   : string;
+      x,y : Integer;
+  begin
+    diabox(49,5,getres(815),x,y);   { 'Service-Befehl' }
+    s:='';
+    readstring(x+3,y+2,getres(816),s,32,32,'',brk);    { 'Befehl: ' }
+    if not brk then comm:=comm+' '+s;
+    closebox;
+  end;
+
+  procedure fscomm(comm:string);
+  var domain : string;
+      sdata  : TSendUUData;
+  begin
+    if isbox(fs) then domain:=ntServerDomain(fs)
+    else domain:='.ZER';
+
+    sData := TSendUUData.Create;
+    sData.AddText(fn,false);
+    sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+domain;
+    sData.Subject := comm;
+    sData.CreateMessages;
+    sData.Free;
+(*    
+    if DoSend(true,fn,false,false,fname+'@'+fs+domain,comm,
+              false,false,false,false,false,nil,hd,0) then;
+*)              
+  end;
+
+  procedure uucomm(comm:string);
+  var sdata: TSendUUData;
+  begin
+
+    sData := TSendUUData.Create;
+    sData.AddText(fn,false);
+    sData.forcebox:=fs;
+
+    GetServerName(fs);      { korrekte Schreibweise ermitteln }
+    sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+ntServerDomain(fs);
+    sData.Subject := comm;
+    sData.CreateMessages;
+    sData.Free;
+(*    
+    if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),comm,
+              false,false,false,false,false,nil,hd,0) then;
+*)              
+  end;
+
+  procedure UUsendfile;
+  var x,y    : Integer;
+      brk    : boolean;
+      source,
+      dest   : string;
+      sdata  : TSendUUData;
+  begin
+    dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
+    source:=WildCard; dest:='';
+    maddstring(3,2,getres2(818,2),source,41,70,'>'); mhnr(890);
+    msetvfunc(UUsendTestSourcefile);
+    maddstring(3,4,getres2(818,3),dest,41,79,'');
+    readmask(brk);
+    enddialog;
+    if FileExists(source) and (dest<>'') then begin
+      rewrite(t);
+      writeln(t,dest);
+      close(t);
+//    xpsendmessage.EditAttach:=false; 
+xpsendmessage.noCrash:=true;
+      GetServerName(fs);      { korrekte Schreibweise ermitteln }
+
+      sData := TSendUUData.Create;
+      sData.AddText(fn,false);
+      sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+ntServerDomain(fs);
+      sData.Subject := expandfilename(source);
+      sData.CreateMessages;
+      sData.Free;
+(*      
+      if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),
+                expandfilename(source),
+                false,true,false,false,false,nil,hd,0) then;
+*)                
+      end;
+  end;
+
+  procedure ReadFiles;
+  var x,y : Integer;
+  begin
+    dialog(ival(getres2(818,10)),3,getres2(818,11),x,y);   { 'UUCP-Filerequest' / 'Dateien ' }
+    s:='';
+    maddstring(3,2,getres2(818,12),s,43,250,''); mhnr(895);
+    readmask(brk);
+    if s='' then brk:=true;
+    enddialog;
+  end;
+
+  function UU_directory:string;
+  var s : string;
+      p : byte;
+  begin
+    s:= List.PrevLine;
+    while (s<>#0) and (LeftStr(LowerCase(s),10)<>'directory ') do
+      s:=List.PrevLine;
+    if s=#0 then s:=''
+    else begin
+      s:=trim(mid(s,11));
+      TrimFirstChar(s, '"');
+      p:=blankpos(s);
+      if p>0 then truncstr(s,p-1);
+      if LastChar(s)='"' then DeleteLastChar(s);
+      s:=trim(s);
+      if s<>'' then begin
+        if (LastChar(s)=':') and (cpos('/',s)>0) then
+          DeleteLastChar(s);
+        if not (LastChar(s) in [':','/']) then
+          s:=s+'/';
+        end;
+      end;
+    UU_directory:=s;
+  end;
+
+  procedure AskStart;
+  begin
+    if ReadJN(getres(819),true) then
+      AutoCrash:='*'+fs;
+  end;
+
+begin
+  fs:=UniSel(3,false,'');
+  if fs<>'' then begin
+    dbOpen(d,SystemFile,1);
+    dbSeek(d,siName,UpperCase(fs));
+    fname:=dbReadStr(d,'fs-name');
+    fpass:=dbReadStr(d,'fs-passwd');
+    dbRead(d,'flags',w);
+    dbRead(d,'fs-typ',fstyp);
+    dbClose(d);
+    enterfiles:=not FileExists(MangleBoxName(fs)+extFl);
+    if w and 1=0 then
+      rfehler(815)      { 'Das gewaehlte System ist kein Fileserver!' }
+    else if (request>0) and (fstyp<>3) and enterfiles then
+      rfehler1(816,fs)  { 'keine Fileliste fuer %s vorhanden' }
+    else if (comm='SERVICE') and (fpass='') then
+      rfehler(817)      { 'Passwort erforderlich - bitte unter /Edit/Systeme eintragen!' }
+    else if (comm='SENDEN') and (fstyp<>3) then
+      rfehler(822)      { 'Senden ist nur bei UUCP-Fileservern moeglich!' }
+    else begin
+      fn:=TempS(1000);
+      assign(t,fn);
+      hd:='';
+      if fstyp=3 then begin      { UUCP-Fileserver }
+        if not isBox(fs) then
+          rfehler(820)
+        else if comm='FILES' then begin
+          GetServerName(fs);
+          rewrite(t);
+          writeln(t,fpass);
+          close(t);
+          uucomm('Request');
+          end
+        else if (comm='') and (request=1) then begin
+          if enterfiles then
+            ReadFiles
+          else
+            GetFileList;
+          if not brk then begin
+            rewrite(t);
+            if enterfiles then begin
+              s:=s+' ';
+              repeat
+                p:=blankpos(s);
+                writeln(t,LeftStr(s,p-1));
+                s:=trimleft(mid(s,p));
+              until s='';
+              end
+            else begin
+              FlushClose;
+              s:=trim(List.FirstMarked);
+              while s<>#0 do begin
+                p:=blankpos(s);
+                if p>0 then truncstr(s,p-1);
+                if multipos(_MPMask,s) then writeln(t,s)
+                else writeln(t,UU_directory+s);
+                s:=List.NextMarked;
+                end;
+              List.Free;
+              end;
+            close(t);
+            uucomm('Request');
+            AskStart;   { sofort anrufen? }
+            end
+          else
+            if not enterfiles then List.Free;
+          end
+        else if comm='SENDEN' then
+          UUSendfile
+        else                     { HILFE, TRANSFER, SERVICE }
+          rfehler(819);          { 'Bei UUCP-Fileservern nicht moeglich.' }
+        end
+      else begin                 { SendZMsg/iMLS/NCB-Mail-Fileserver }
+        rewrite(t);
+        if comm='SERVICE' then writeln(t,'%',fpass)
+        else writeln(t);
+        close(t);
+        if comm='SERVICE' then readservice
+        else brk:=false;
+        if not brk then
+          if request=0 then
+            fscomm(comm)
+          else begin
+            GetFileList;
+            if not brk then begin
+              if request=2 then    { Transfer }
+                GetTransCeiver;
+              if not brk then begin
+                s:=List.FirstMarked;
+                while s<>#0 do begin
+                  if fstyp=0 then
+                    s:=trim(Mid(s,2));
+                  s:=LeftStr(s,cPos(' ',s)-1);
+                  fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
+                  s:=List.NextMarked;
+                  end;
+                AskStart;   { sofort anrufen? }
+              end;
+            end;
+            List.Free;
+          end;
+        end;
+      if existf(t) then
+        erase(t);
+      end;
+    end;
+end;
+
+{.$I xp8.inc}       { Fido FileScan }
+
+{ Fido FileScan }
+
+procedure SendFilescan(var fn:string);
+var leer : string;
+    sdata: TSendUUData;
+begin
+  leer:='';
+  sData.forcebox:=boxpar^.boxname;
+
+  sData := TSendUUData.Create;
+  sData.AddText(fn,false);
+  sData.Subject := boxpar^.FilescanPW;
+  sData.EmpfList.AddNew.ZCAddress := BoxPar^.filescanner+'@'+boxpar^.boxname;
+  sData.CreateMessages;
+  sData.Free;
+
+(*  
+  if DoSend(true,fn,false,false,BoxPar^.filescanner+'@'+boxpar^.boxname,
+            boxpar^.FilescanPW,false,false,false,false,false,
+            nil,leer,0) then;
+*)            
+end;
+
+
+procedure GetFilescanBox(var box:string);
+begin
+  box:=UniSel(1,false,DefFidoBox);
+  if box='' then exit;
+  if ntBoxNetztyp(box)<>nt_Fido then begin
+    rfehler1(852,box);     { '%s ist keine Fido-Box!' }
+    box:='';
+    end
+  else
+    ReadBoxpar(nt_Fido,box);
+end;
+
+
+function fileechomarkfunc(const s:string; block:boolean):boolean;
+begin
+  if trim(s)='' then begin
+    if not block then errsound;
+    fileechomarkfunc:=false;
+    end
+  else
+    fileechomarkfunc:=true;
+end;
+
+function fileechocolfunc(const s:string; line:longint):byte;
+begin
+  if (s<>'') and (s[1]='*') then
+    fileechocolfunc:=col.ColMapsBest
+  else
+    fileechocolfunc:=0;
+end;
+
+function echoname(s:string):string;
+begin
+  s:=trim(s);
+  while FirstChar(s)<'0' do DeleteFirstChar(s);
+  if blankpos(s)>0 then truncstr(s,blankpos(s)-1);
+  echoname:=s;
+end;
+
+procedure FilescanList(art:shortint);     { 1=bestellen, 2=abbestellen }
+var
+    box : string;
+    fl  : string;
+    ask : string;
+    s   : string;
+    t   : text;
+    fn  : string;
+    anz : longint;
+    brk : boolean;
+  List: TLister;
+
+label
+  again;
+begin
+  GetFilescanBox(box);
+  if box='' then exit;
+  fl:=GetServerFilename(box, extFbl);
+  if not FileExists(fl) then begin
+    rfehler1(853,box); exit;
+    end; 
+  List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,Screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+             'APGD/'+iifs(_maus and ListScroller,'VSC/',''));
+  List.ReadFromFile(fl,0);
+  case art of
+    1 : showkeys(12);
+    2 : showkeys(11);
+  end;
+again:
+  List.OnTestMark := FileechoMarkfunc;
+  List.OnColor := FileechoColfunc;
+  brk := List.Show;
+  if not brk then begin
+    anz:=List.SelCount;
+    if anz=0 then anz:=1;
+    if (anz=1) and (echoname(List.FirstMarked)='') then begin
+      errsound;
+      goto again;
+      end;
+    case art of
+      1 : ask:=getres2(852,iif(anz=1,1,2));
+      2 : ask:=getres2(852,iif(anz=1,3,4));
+    end;
+    if anz=1 then ask:=reps(ask,echoname(List.FirstMarked))
+    else ask:=reps(ask,strs(anz));
+    if not ReadJN(ask,true) then
+      goto again;
+    fn:=TempS(20000);
+    assign(t,fn);
+    rewrite(t);
+    s:=List.FirstMarked;
+    while s<>#0 do begin
+      write(t,iifc(art=1,'+','-'),echoname(s),#13#10);
+      s:=List.NextMarked;
+      end;
+    close(t);
+    SendFilescan(fn);
+    _era(fn);
+    end;
+  freeres;
+  List.Free;
+  aufbau:=true;
+end;
+
+
+procedure AddFileechos;
+begin
+  FilescanList(1);
+end;
+
+
+procedure RemoveFileechos;
+var
+    echo   : string;
+    _brett : string;
+    box    : string;
+    s      : string;
+    brk    : boolean;
+    d      : DB;
+    n,i    : longint;
+    fn     : string;
+    t      : text;
+begin
+  echo:='';
+  brk:=false;
+  if (aktdispmode=10) and not dbEOF(mbase) and not dbBOF(mbase) then begin
+    _brett:= dbReadNStr(mbase,mb_brett);
+    dbSeek(bbase,biIntnr,mid(_brett,2));
+    if dbFound and (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))=nt_Fido) then begin
+      echo:= dbReadNStr(bbase,bb_brettname);
+      if FirstChar(echo) ='A' then 
+        DeleteFirstChar(echo)
+      else 
+        echo:='';
+      end;
+    end
+  else if (aktdispmode=-1) or (aktdispmode=0) then
+    if bmarkanz>0 then
+      case ReadIt(length(getres2(852,6))+4,getres2(852,6),getres2(852,7),1,brk) of
+        1 : echo:='*';          { 'alle markierten File Areas abbestellen' }
+        2 : brk:=true;
+        3 : echo:='';
+      end
+    else begin
+      if dbreccount(bbase)=0 then 
+        brk:=true
+      else begin
+        echo := dbReadStrN(bbase,bb_brettname);
+        if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (FirstChar(echo)<>'A') then 
+          echo:=''
+        else 
+          DeleteFirstChar(echo);
+      end;
+    end;
+  if brk then begin
+    freeres; exit; end;
+  if (echo<>'') and (echo<>'*') and (pos('/files/',LowerCase(echo))>0) then begin
+    s:=getreps2(852,5,LeftStr(echo,40));
+    case ReadIt(max(length(s)+4,40),s,getres2(852,7),1,brk) of
+      1 : begin end;
+      2 : brk:=true;
+      3 : echo:='';
+    end;
+    end;
+  freeres;
+  if brk then exit;
+
+  fn:=TempS(20000); assign(t,fn);
+  if (echo='') or ((echo<>'*') and (pos('/files/',LowerCase(echo))=0)) then
+    FilescanList(2)                                     { Auswahl aus Liste }
+  else if echo<>'*' then begin          { ein Brett abbestellen }
+    ReadBoxPar(nt_Fido,dbReadStrN(bbase,bb_pollbox));
+    rewrite(t);
+    delete(echo,1,length(boxpar^.magicbrett));
+    if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
+    write(t,'-',echo,#13#10);
+    close(t);
+    SendFilescan(fn);
+    _era(fn);
+    end
+  else begin                            { markierte Bretter abbestellen }
+    dbOpen(d,BoxenFile,1);
+    while not dbEOF(d) do begin
+      if dbReadInt(d,'netztyp')=nt_Fido then
+      begin
+        box:= UpperCase(dbReadStr(d,'boxname'));
+        ReadBoxPar(nt_Fido,box);
+        n:=0;
+        for i:=0 to bmarkanz-1 do begin
+          dbGo(bbase,bmarked^[i]);
+          echo:= dbReadNStr(bbase,bb_brettname);
+          DeleteFirstChar(echo);
+          if (UpperCase(dbReadStrN(bbase,bb_pollbox))=box) and
+             (LeftStr(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
+             and (pos('/files/',LowerCase(echo))>0)
+          then begin
+            if n=0 then rewrite(t);
+            delete(echo,1,length(boxpar^.magicbrett));
+            if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
+            write(t,'-',echo,#13#10);
+            inc(n);
+            end;
+          end;
+        if n>0 then begin
+          close(t);
+          SendFilescan(fn);
+          end;
+        end;
+      dbNext(d);
+      end;
+    dbClose(d);
+    SafeDeleteFile(fn);
+  end;
+end;
+
+
+procedure FilescanReadlist;
+var fa  : FidoAdr;
+    box : string;
+begin
+  if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
+    rfehler(850)     { 'Keine Filescan-Nachricht gewaehlt!' }
+  else begin
+    splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
+    box:=MakeFidoAdr(fa,false);
+    if not IsBox(box) then
+      rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
+    else begin
+      message(getreps(850,box));       { 'Fileecho-Liste fuer %s wird eingelesen ...' }
+      extract_msg(xTractMsg,'',GetServerFilename(box, extFbl),false,0);
+      mdelay(500);
+      closebox;
+      end;
+    end;
+end;
+
+
+{ Fileecho-Liste aus Datei nach .FBL einlesen }
+
+procedure FilescanReadfile;
+var
+    box     : string;
+    bfile   : string;
+    fn      : string;
+    useclip : boolean;
+begin
+  box:=UniSel(1,false,DefaultBox);
+  if box='' then exit;   { brk }
+  if ntBoxNetztyp(box)<>nt_Fido then begin
+    rfehler1(852,box);    { '%s ist keine Fido-Box!' }
+    exit;
+    end;
+  fn:=WildCard;
+  useclip:=true;
+  if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
+  bfile := GetServerFilename(Box, '');
+  ReadBox(0,bfile,boxpar);
+  message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fuer %s wird eingelesen ...' }
+  Filecopy(fn, bfile + extFbl);
+  Closebox;
+  if useclip or ReadJN(getreps(817,fn),false) then   { '%s loeschen' }
+    _era(fn);
+end;
+
+
+procedure FilescanCommands(cmd:shortint);
+var
+  List: TLister;
+    box  : string;
+    comm : string;
+    s    : string;
+    n,i  : integer;
+    brk  : boolean;
+    fn   : string;
+    t    : text;
+    x,y  : Integer;
+begin
+  GetFilescanbox(box);
+  if box='' then exit;
+  brk:=false;
+  if cmd=1 then
+    comm:='LIST'
+  else begin
+    n:=ival(getres2(851,2));                          { 'Nachricht an %s' }
+    List := listbox(ival(getres2(851,0)),n,getreps2(851,1,boxpar^.filescanner+' @ '+box));
+    for i:=1 to n do
+      List.AddLine(' '+getres2(851,i+2));
+    brk := List.Show;
+    closebox;
+    if not brk then
+    begin
+      comm:=trim(List.GetSelection);
+      TruncStr(comm,pos('  ',comm)-1);
+    end;
+    List.Free;
+  end;
+  if comm='PWD' then begin
+    dialog(43,3,'',x,y);
+    s:=boxpar^.FilescanPW;
+    maddstring(3,2,getres2(851,20),s,12,12,'>'); mhnr(87);
+    readmask(brk);
+    enddialog;
+    if not brk then comm:=comm+' '+s;
+    end;
+  if not brk then begin
+    fn:=TempS(2048);
+    assign(t,fn);
+    rewrite(t);
+    write(t,'%',comm,#13#10);
+    close(t);
+    SendFilescan(fn);
+    _era(fn);
+    end;
+  freeres;
+end;
 
 {
   $Log$
+  Revision 1.80  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.79  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

@@ -3,27 +3,17 @@ program openxp;
 {$I xpdefine.inc }
 
 {%File 'xpmecol.inc'}
-{%File 'databas2.inc'}
-{%File 'database.inc'}
-{%File 'editor.inc'}
 {%File 'maske.inc'}
 {%File 'osdbsd.inc'}
 {%File 'osddos32.inc'}
 {%File 'osdlinux.inc'}
 {%File 'osdos2.inc'}
 {%File 'osdwin32.inc'}
-{%File 'xp10.inc'}
-{%File 'xp10p.inc'}
-{%File 'xp1menu.inc'}
-{%File 'xp1s.inc'}
-{%File 'xp2cfg.inc'}
 {%File 'xp3o.inc'}
 {%File 'xp4.inc'}
 {%File 'xp4d.inc'}
 {%File 'xp4o.inc'}
 {%File 'xp4w.inc'}
-{%File 'xp8.inc'}
-{%File 'xp8fs.inc'}
 {%File 'xpconfigedit-groups.inc'}
 {%File 'xpconfigedit-mimetypes.inc'}
 {%File 'xpconfigedit-pseudos.inc'}
@@ -32,7 +22,6 @@ program openxp;
 {%File 'xpdefine.inc'}
 {%File 'xpf1.inc'}
 {%File 'xpfiles.inc'}
-{%File 'databas1.inc'}
 {%File 'netcall\ncuucp-t.inc'}
 {%File 'netcall\ncfido-emsi.inc'}
 {%File 'netcall\ncfido-wazoo.inc'}

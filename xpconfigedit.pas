@@ -115,7 +115,7 @@ uses
   sysutils,
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   {$IFDEF unix}xplinux,{$ENDIF}
-  fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,  fidoglob,
+  fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
   xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,xpnt,
   xpmodemscripts, replytoall, 
   xpglobal;
@@ -2518,6 +2518,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.52  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

@@ -31,7 +31,7 @@ implementation
 
 uses
   sysutils,
-  typeform, xpglobal;
+  typeform, fileio, xpglobal;
 
 const
   shrink: boolean = false;
@@ -338,6 +338,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.19  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

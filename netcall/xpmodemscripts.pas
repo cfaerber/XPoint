@@ -28,9 +28,9 @@ unit xpmodemscripts;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF}
-  sysutils,typeform,fileio,inout,keys,datadef,database,maus2, winxp,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,progressoutput;
+  xp0,  //BoxPtr
+  ObjCOM,  //TCommStream
+  progressoutput; //TProgressOutput
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;
@@ -39,7 +39,12 @@ function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgre
 
 implementation
 
-uses  timer,debug;
+uses
+  sysutils,
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
+  typeform,inout,keys,maus2, winxp,resource,timer,debug,
+  xp1,
+  xpglobal;
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;
@@ -49,7 +54,7 @@ const MaxLines  = 500;
       Maxlabels = 100;
 {     MaxlabelLen = 20;}
 
-      pEndOK    = 0;      { RÅckgabewerte von RunScript      }
+      pEndOK    = 0;      { Rueckgabewerte von RunScript      }
       pEndError = 1;      { = num. Parameter des END-Befehls }
       pEndFail  = 2;
       pEndSyntax= 3;      { Syntax Error }
@@ -68,8 +73,8 @@ const MaxLines  = 500;
 
       varPoint     = 1;   { Pointname }
       varUser      = 2;   { Username }
-      varPassword  = 3;   { Netcall-Pa·wort }
-      varOpassword = 4;   { Login-Pa·wort }
+      varPassword  = 3;   { Netcall-Passwort }
+      varOpassword = 4;   { Login-Passwort }
       varLogin     = 5;   { UUCP/QM-Login }
       varProtocol  = 6;   { MausTausch-Protokollkennung }
       varSerialNo  = 7;   { Maggi/Z-Seriennummer }
@@ -192,7 +197,7 @@ var t      : text;
     if SeekLabel<>0 then
       serror(2,s0)                 { 'Sprungmarke "%s" existiert bereits' }
     else if labels=MaxLabels then
-      serror(3,strs(MaxLabels))    { 'Max. %s Sprungmarken mîglich!' }
+      serror(3,strs(MaxLabels))    { 'Max. %s Sprungmarken moeglich!' }
     else begin
       inc(labels);
       _label[labels].name:=s0;
@@ -226,7 +231,7 @@ var t      : text;
         else if s0='RELOGIN' then             { ON RELOGIN <Command> }
           onflag:=5
         else begin
-          serror(5,'');     { 'ungÅltige ON-Funktion ' }
+          serror(5,'');     { 'ungueltige ON-Funktion ' }
           s:='';
           end;
         if onflag<>0 then begin
@@ -258,7 +263,7 @@ var t      : text;
             if ss='$PROTOCOL'  then numpar:=varProtocol else
             if ss='$SERIALNO'  then numpar:=varSerialNo else
             begin
-              serror(14,ss);     { 'ungÅltiges Textmakro: %s' }
+              serror(14,ss);     { 'ungueltiges Textmakro: %s' }
               dec(lines);
               end;
             end;
@@ -277,7 +282,7 @@ var t      : text;
         if s0='CR' then cr:=true else
         if s0='LF' then lf:=true else
         if s0='CRLF' then begin cr:=true; lf:=true; end else
-        serror(16,s0);    { 'ungÅltiger Parameter: %s' }
+        serror(16,s0);    { 'ungueltiger Parameter: %s' }
         end;
   end;
 
@@ -331,7 +336,7 @@ var t      : text;
   begin
     GetWord;
     if rval(s0)=0 then
-      serror(11,'')      { 'ungÅltiger Delay-Parameter (Zahl erwartet)' }
+      serror(11,'')      { 'ungueltiger Delay-Parameter (Zahl erwartet)' }
     else begin
       inc(lines);
       script[lines].command:=cmdDelay;
@@ -398,9 +403,9 @@ var t      : text;
     if s0='RETURN'  then AddComm(cmdReturn)   else
     if s0='BREAK'   then AddComm(cmdBreak)    else
     if s0='ANSI'    then AddAnsiCommand       else
-    serror(15,s0);    { 'ungÅltiger Befehl: %s' }
+    serror(15,s0);    { 'ungueltiger Befehl: %s' }
     if ok and not comment(s) then
-      serror(8,'');    { 'ÅberflÅssige Daten am Zeilenende' }
+      serror(8,'');    { 'ueberfluessige Daten am Zeilenende' }
   end;
 
   procedure TestLabels;
@@ -580,7 +585,7 @@ var ip   : integer;
           cmdFlush    : CommObj.PurgeInbuffer;
           cmdCls      : clrscr;
           cmdCall     : if sp=maxstack then begin
-                          runerror(5);      { 'StapelÅberlauf' }
+                          runerror(5);      { 'Stapelueberlauf' }
                           sp:=0;
                           end
                         else begin
@@ -664,6 +669,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/12/07 04:41:49  dodi
+  remove merged include files
+
   Revision 1.9  2002/07/25 20:44:02  ma
   - updated copyright notices
 

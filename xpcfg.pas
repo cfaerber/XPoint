@@ -75,7 +75,7 @@ uses
 {$IFDEF unix}
   xplinux,
 {$ENDIF}
-  typeform, 
+  typeform,resource, 
   xpglobal;
 
 type
@@ -498,6 +498,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.14  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

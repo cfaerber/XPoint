@@ -528,16 +528,1016 @@ end;
 
 {===== Indizierung ==================================================}
 
-{$I databas1.inc}      { Index-Routinen 1 }
-{$I database.inc}      { B-Tree-Routinen  }
-{$I databas2.inc}      { Index-Routinen 2 }
+{.$I databas1.inc}      { Index-Routinen 1 }
+
+{ Cache-Seiten allokieren }
+
+procedure dbSetindexcache(pages:word);
+begin
+  cacheanz:=pages;
+  getmem(cache,pages*sizeof(cachepage));
+  fillchar(cache^,pages*sizeof(cachepage),0);
+end;
+
+procedure dbReleasecache;
+begin
+  if cacheanz>0 then
+    freemem(cache,cacheanz*sizeof(cachepage));
+  cacheanz:=0;
+end;
+
+procedure dbEnableIndexCache;
+begin
+  dbSetIndexCache(OldCacheAnz);
+end;
+
+procedure dbDisableIndexCache;
+begin
+  OldCacheAnz := CacheAnz;
+  dbReleaseCache;
+end;
+
+procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
+var
+  s,i,j,sp : integer;
+  TempCachePage: PCachepage;
+begin
+  with dp(dbp)^ do
+    if cacheanz=0 then begin
+      seek(fi,offs);
+      blockread(fi,data,irsize);
+      end
+    else
+    begin
+      i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
+      TempCachePage := @cache^[i]; // MUCH faster8!
+      while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used) do
+      begin
+        Dec(i);
+        if i<0 then break;
+        TempCachePage := @cache^[i];
+      end;
+
+      if i>=0 then
+      begin
+        Move(cache^[i].page,data,irsize);
+        cache^[i].lasttick:=ticker;
+        end
+      else begin
+        seek(fi,offs);
+        blockread(fi,data,irsize);
+
+        s:=maxlongint;
+        sp:=0;
+
+        i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
+        TempCachePage := @cache^[i];
+        while TempCachePage.used do
+        begin
+          with TempCachePage^ do 
+            if lasttick<s then
+            begin
+              s:=lasttick;
+              sp:=i;
+            end;
+          Dec(i);
+          if i<0 then break;
+          TempCachePage := @cache^[i];
+        end;
+        if i>=0 then sp:=i;
+
+        cache^[sp].used:=true;
+        cache^[sp].lasttick:=ticker;
+        cache^[sp].dbp:=dbp;
+        cache^[sp].ofs:=offs;
+        Move(data,cache^[sp].page,irsize);
+        end;
+      end;
+end;
+
+
+procedure cache_write(dbp:DB; irsize:word; offs:longint; var data);
+var i,sp : integer;
+    s    : longint;
+begin
+  with dp(dbp)^ do
+  begin
+    seek(fi,offs);
+    blockwrite(fi,data,irsize);
+    if cacheanz>0 then
+    begin
+      i:=0;
+      sp:=0; s:=maxlongint;
+      while (i<cacheanz) and (not cache^[i].used or (cache^[i].dbp<>dbp) or
+                              (cache^[i].ofs<>offs)) do begin
+        if not cache^[i].used then begin
+          sp:=i; s:=0;
+          end
+        else if cache^[i].lasttick<s then begin
+          sp:=i; s:=cache^[i].lasttick;
+          end;
+        inc(i);
+        end;
+      if i<cacheanz then   { Seite schon im Cache vorhanden }
+        Move(data,cache^[i].page,irsize)
+      else
+      begin
+        cache^[sp].lasttick:=ticker;
+        cache^[sp].dbp:=dbp;
+        cache^[sp].ofs:=offs;
+        Move(data,cache^[sp].page,irsize);
+        i:=sp;
+      end;
+      cache^[i].used:=true;
+      end;
+    end;
+end;
+
+
+{ Platz fuer Index-Knoten auf Heap belegen }
+
+procedure AllocNode(dbp:DB; indnr:word; var np:inodep);
+var size: word;
+begin
+  with dp(dbp)^.index^[indnr] do begin
+    size:=16+(nn+1)*sizeof(inodekey);
+    getmem(np,size);
+    with np^ do begin
+      memsize:=size;
+      ksize:=keysize;
+      irsize:=irecsize;
+      db_p:=dbp;
+      nk:=nn;
+      end;
+    end;
+end;
+
+
+{ Index-Knoten auf Heap freigeben }
+
+procedure FreeNode(var np:inodep);
+begin
+  freemem(np,np^.memsize);
+end;
+
+procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
+asm
+         mov   edi, nodep
+         mov   esi, rbuf
+         xor   edx, edx
+         mov   dl, [edi+2]             { Keysize }
+         add   edx,9                   { plus Laengenbyte plus Ref/Data }
+         mov   ebx,136                 { (264) sizeof(inodekey); }
+         sub   ebx,edx
+         add   edi,14
+         xor   eax, eax
+         cld
+         lodsw                         { Anzahl Schluessel im Node }
+         stosw                         { Anzahl speichern }
+@noerr:  mov   ecx,2                   { Ref+Data von key[0] uebertragen }
+         rep   movsd
+         mov   ecx,eax
+         jecxz @nokeys
+         add   edi,128                 { (256) key[0].keystr ueberspringen }
+         mov   eax, ecx
+@exlp:   mov   ecx, edx
+         rep   movsb                   { Ref, Data und Key uebertragen }
+         add   edi, ebx
+         dec   eax
+         jnz   @exlp
+@nokeys:
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
+
+{ Index-Knoten einlesen }
+
+procedure ReadNode(offs:longint; var np:inodep);
+var rbuf : barrp;
+{$IFDEF Delphi }
+    wp   : ^smallword absolute rbuf;
+    i,o: integer;
+{$ENDIF }
+begin
+  with np^,dp(db_p)^ do
+  begin
+      getmem(rbuf,irsize);
+      filepos:=offs;
+      cache_read(db_p,irsize,offs,rbuf^);
+      { !!      Hier muss noch was getan werden, denn so klappt das unter
+        32 Bit einfach nicht... }
+//      if wp^>nk then
+//        error('fehlerhafte Indexseite in '+fname+dbIxExt);
+
+{$IFNDEF Delphi }
+      expand_node(rbuf, np);
+{$ELSE }
+      anzahl:=wp^;
+      Move(rbuf^[2],key[0].data,8);
+      o:=10;
+      for i:=1 to anzahl do begin
+        Move(rbuf^[o],key[i],9+ksize);
+        inc(o,9+ksize);
+       end;
+{$ENDIF }
+      freemem(rbuf,irsize);
+     end;
+end;
+
+
+{ Index-Knoten schreiben }
+
+procedure WriteNode(var np:inodep);
+var rbuf : barrp;
+    wp   : ^smallword absolute rbuf;
+    i,o  : word;
+begin
+  with np^, dp(db_p)^ do begin
+      getmem(rbuf,irsize);
+      wp^:=anzahl;
+      Move(key[0].data,rbuf^[2],8);
+      o:=10;
+      for i:=1 to anzahl do begin
+        Move(key[i],rbuf^[o],9+ksize);
+        inc(o,9+ksize);
+        end;
+      cache_write(db_p,irsize,filepos,rbuf^);
+      freemem(rbuf,irsize);
+      end;
+end;
+
+
+{ einzelnen Index in Header schreiben }
+
+procedure writeindf(dbp:DB; indnr:word);
+begin
+  with dp(dbp)^ do begin
+    seek(fi,32*indnr);
+    blockwrite(fi,index^[indnr],32);
+    end;
+end;
+
+
+{ Datensatz in Indexdatei belegen }
+
+procedure AllocateIrec(dbp:DB; indnr:word; var adr:longint);
+begin
+  with dp(dbp)^,index^[indnr] do
+      if firstfree=0 then adr:=filesize(fi)
+      else begin
+        adr:=firstfree;
+        seek(fi,adr);
+        blockread(fi,firstfree,4);
+        writeindf(dbp,indnr);
+        end;
+end;
+
+
+{ Datensatz in Indexdatei freigeben }
+
+procedure ReleaseIrec(dbp:DB; indnr:word; adr:longint);
+var l : longint;
+begin
+  with dp(dbp)^ , index^[indnr] do begin
+      l:=firstfree;
+      firstfree:=adr;
+      writeindf(dbp,indnr);
+      seek(fi,adr);
+      blockwrite(fi,l,4);
+      end;
+end;
+
+{.$I database.inc}      { B-Tree-Routinen  }
+
+{ B-Tree-Routinen }
+
+{ Falls der gesuchte Schluessel nicht im Knoten bf^ enthalten ist, }
+{ liefert searchpage (in x) die Nummer des naechstkleineren Keys.  }
+{ Das kann auch die Nummer 0 sein!                                }
+
+procedure searchpage(bf:inodep; const searchkey:string; searchrec:longint;
+                     var x:integer);
+var r,l : integer;
+    ke  : boolean;
+    TempSearchKey: String[127]; // performance critical, due to comparing ansistring with shortstring
+begin
+  l:=0;
+  r:=succ(bf^.anzahl);
+  found:=false;
+  TempSearchKey := SearchKey;
+  while (l+1<r) and not found do begin
+    x:=(l+r) div 2;
+    ke:=bf^.key[x].keystr=Tempsearchkey;
+    if ke and ((searchrec=0) or (bf^.key[x].data=searchrec)) then
+      found:=true
+    else
+      if (ke and (searchrec<bf^.key[x].data)) or (Tempsearchkey<bf^.key[x].keystr)
+      then r:=x
+      else l:=x;
+  end;
+  if not found then
+    x:=l
+  else
+    if searchrec=0 then
+      while (x>1) and (bf^.key[x-1].keystr=TempSearchkey) do dec(x);
+end;
+
+
+{ Key zusammensetzen }
+
+procedure getkey(dbp:DB; indnr:word; old:boolean; var key:string);
+var i,j : byte;
+    s   : string;
+    r   : real;
+    rb  : barrp;
+    s2: ShortString;
+begin
+  with dp(dbp)^ do
+    with index^[indnr] do
+      if feldanz and $80<>0 then
+        if old then begin
+          rb:=recbuf; recbuf:=orecbuf;
+          key:=ifunc(dbp);
+          recbuf:=rb;
+          end
+        else
+          key:=ifunc(dbp)
+      else begin
+        key:='';
+        if old then rb:=orecbuf
+        else rb:=recbuf;
+        for i:=1 to feldanz do
+          with feldp^.feld[ifeldnr[i] and $fff] do
+            case ftyp of
+              1 : begin
+                    Move(rb^[fofs],s2,rb^[fofs]+1);
+                    if length(s2)+1>fsize then SetLength(s2, fsize-1);
+                    s := s2;
+                    if ifeldnr[i] and $8000<>0 then s:=UpperCase(s);
+                    if feldanz=i then key:=key+s
+                    else key:=key+forms(s,fsize-1);
+                  end;
+              2 : for j:=1 to fsize do
+                    key := Key + char(rb^[fofs+fsize-j]);
+              3 : begin
+                    Move(rb^[fofs],r,6);
+                    str(r:20:3,s);
+                    key:=key+s;
+                  end;
+              4 : for j:=1 to 4 do
+                    key := key + char(rb^[fofs+4-j]);
+            end;
+        end;
+end;
+
+
+{ Index-Schluessel 'key' in Index Nr. 'indnr' von Datenbank 'dbp' einfuegen }
+
+procedure insertkey(dbp:DB; indnr:word; const key:string);
+
+var bf        : inodep;
+    risen     : boolean;
+    rootsplit : boolean;
+    rootitem  : inodekey;
+    newroot   : inodep;
+
+    srecno    : longint;      { gesuchte Adresse (data) }
+
+  procedure split(bf:inodep; var item:inodekey; x:integer);
+  var splititem : inodekey;
+      splitbf   : inodep;
+      z,n       : integer;
+  begin
+    AllocNode(dbp,indnr,splitbf);
+    allocateIrec(dbp,indnr,splitbf^.filepos);
+    with dp(dbp)^.index^[indnr] do begin
+      n:=nn div 2;
+      if x<n then begin
+        splititem:=bf^.key[n];
+        for z:=n-1 downto x+1 do
+          bf^.key[z+1]:=bf^.key[z];
+        bf^.key[x+1]:=item;
+        end
+      else
+        if x>n then begin
+          splititem:=bf^.key[n+1];
+          for z:=n+2 to x do
+            bf^.key[z-1]:=bf^.key[z];
+          bf^.key[x]:=item;
+          end
+        else
+          splititem:=item;
+      splitbf^.key[0].ref:=splititem.ref;
+      splititem.ref:=splitbf^.filepos;
+      item:=splititem;
+      for z:=n+1 to nn do
+        splitbf^.key[z-n]:=bf^.key[z];
+      bf^.anzahl:=n;
+      splitbf^.anzahl:=nn-n;
+      end;
+    writenode(splitbf);
+    freenode(splitbf);
+  end;
+
+  procedure update(node:longint; var rise:boolean; var risenitem:inodekey);
+  var x,z   : integer;
+  begin
+    if node=0 then begin
+      rise:=true;
+      risenitem.keystr:=key;
+      risenitem.data:=srecno;
+      risenitem.ref:=0;
+      end
+    else begin
+      readnode(node,bf);
+      searchpage(bf,key,srecno,x);
+      risen:=false;
+      update(bf^.key[x].ref,risen,risenitem);
+      if risen then begin
+        readnode(node,bf);
+        if bf^.anzahl<dp(dbp)^.index^[indnr].nn then
+          with bf^ do begin
+            inc(anzahl);
+            for z:=anzahl-1 downto x+1 do
+              key[z+1]:=key[z];
+            key[x+1]:=risenitem;
+            rise:=false;
+            end
+        else begin
+          split(bf,risenitem,x);
+          rise:=true;
+          end;
+        writenode(bf);
+        end;
+      end;
+  end;
+
+begin   { insertkey }
+  with dp(dbp)^ do
+    with index^[indnr] do begin
+      srecno:=recno;
+      allocnode(dbp,indnr,bf);
+      allocnode(dbp,indnr,newroot);
+
+      rootsplit:=false;
+      update(rootrec,rootsplit,rootitem);
+      if rootsplit then begin
+        allocateIrec(dbp,indnr,newroot^.filepos);
+        newroot^.anzahl:=1;
+        newroot^.key[0].ref:=rootrec;
+        newroot^.key[1]:=rootitem;
+        writenode(newroot);
+        rootrec:=newroot^.filepos;
+        writeindf(dbp,indnr);
+        end;
+
+    if indnr=actindex then tiefe:=0;
+    end;
+  freenode(newroot);
+  freenode(bf);
+end;
+
+
+{ Index-Schluessel 'key' aus Index Nr. 'indnr' von Datenbank 'dbp' loeschen }
+
+procedure deletekey(dbp:DB; indnr:word; const key:string);
+var z         : longint;
+    underflow : boolean;
+    bf        : inodep;
+    delrec    : longint;     { Datensatz-Nr. }
+    n         : word;
+
+  procedure del(node:longint; var underflow:boolean);
+  var x,z : integer;
+      y   : longint;
+
+    procedure compensate(precedent,node:longint; path:integer;
+                         var underflow:boolean);
+    var neighbour     : longint;
+        numbf2,numbf3 : integer;
+        x,z           : integer;
+        bf1,bf2,bf3   : inodep;
+    begin
+      allocnode(dbp,indnr,bf1);
+      allocnode(dbp,indnr,bf2);
+      allocnode(dbp,indnr,bf3);
+      readnode(node,bf1);
+      readnode(precedent,bf3);
+      numbf3:=bf3^.anzahl;
+      if path<numbf3 then begin
+        inc(path);
+        neighbour:=bf3^.key[path].ref;
+        readnode(neighbour,bf2);
+        numbf2:=bf2^.anzahl;
+        x:=(succ(numbf2)-n) div 2;
+        bf1^.key[n]:=bf3^.key[path];
+        bf1^.key[n].ref:=bf2^.key[0].ref;
+        if x>0 then begin
+          for z:=1 to x-1 do
+            bf1^.key[z+n]:=bf2^.key[z];
+          bf3^.key[path]:=bf2^.key[x];
+          bf3^.key[path].ref:=neighbour;
+          bf2^.key[0].ref:=bf2^.key[x].ref;
+          numbf2:=numbf2-x;
+          for z:=1 to numbf2 do
+            bf2^.key[z]:=bf2^.key[z+x];
+          bf2^.anzahl:=numbf2;
+          bf1^.anzahl:=n-1+x;
+          writenode(bf1);
+          writenode(bf2);
+          writenode(bf3);
+          underflow:=false
+          end
+        else begin
+          for z:=1 to n do
+            bf1^.key[z+n]:=bf2^.key[z];
+          for z:=path to numbf3-1 do
+            bf3^.key[z]:=bf3^.key[z+1];
+          bf1^.anzahl:=dp(dbp)^.index^[indnr].nn;
+          bf3^.anzahl:=pred(numbf3);
+          underflow:=numbf3<=n;
+          writenode(bf1);
+          writenode(bf3);
+          releaseIrec(dbp,indnr,neighbour);
+          end
+        end
+      else begin
+        neighbour:=bf3^.key[pred(path)].ref;
+        readnode(neighbour,bf2);
+        numbf2:=succ(bf2^.anzahl);
+        x:=(numbf2-n) div 2;
+        if x>0 then begin
+          for z:=n-1 downto 1 do
+            bf1^.key[z+x]:=bf1^.key[z];
+          bf1^.key[x]:=bf3^.key[path];
+          bf1^.key[x].ref:=bf1^.key[0].ref;
+          numbf2:=numbf2-x;
+          for z:=x-1 downto 1 do
+            bf1^.key[z]:=bf2^.key[z+numbf2];
+          bf1^.key[0].ref:=bf2^.key[numbf2].ref;
+          bf3^.key[path]:=bf2^.key[numbf2];
+          bf3^.key[path].ref:=node;
+          bf2^.anzahl:=pred(numbf2);
+          bf1^.anzahl:=n-1+x;
+          writenode(bf1);
+          writenode(bf2);
+          writenode(bf3);
+          underflow:=false;
+          end
+        else begin
+          bf2^.key[numbf2]:=bf3^.key[path];
+          bf2^.key[numbf2].ref:=bf1^.key[0].ref;
+          for z:=1 to n-1 do
+            bf2^.key[z+numbf2]:=bf1^.key[z];
+          bf2^.anzahl:=dp(dbp)^.index^[indnr].nn;
+          bf3^.anzahl:=pred(numbf3);
+          underflow:=numbf3<=n;
+          writenode(bf2);
+          writenode(bf3);
+          releaseIrec(dbp,indnr,node);
+          end;
+        end;
+      freenode(bf3); freenode(bf2); freenode(bf1);
+    end;
+
+    procedure findgreatest(node1:longint; var underflow:boolean);
+    var node2 : longint;
+        numbf : integer;
+        bf1   : inodep;
+    begin
+      allocnode(dbp,indnr,bf1);
+      readnode(node1,bf1);
+      numbf:=bf1^.anzahl;
+      node2:=bf1^.key[numbf].ref;
+      if node2<>0 then begin
+        findgreatest(node2,underflow);
+        if underflow then
+          compensate(node1,node2,numbf,underflow);
+        end
+      else begin
+        bf^.key[x].keystr:=bf1^.key[numbf].keystr;
+        bf^.key[x].data:=bf1^.key[numbf].data;
+        numbf:=pred(numbf);
+        underflow:=numbf<n;
+        bf1^.anzahl:=numbf;
+        writenode(bf1);
+        writenode(bf);
+        end;
+      freenode(bf1);
+    end;
+
+  begin    { del }
+    if node=0 then
+      underflow:=false
+    else begin
+      readnode(node,bf);
+      searchpage(bf,key,delrec,x);
+      if found then begin
+        y:=bf^.key[x-1].ref;
+        if y=0 then begin
+          dec(bf^.anzahl);
+          underflow:=bf^.anzahl<n;
+          for z:=x to bf^.anzahl do
+            bf^.key[z]:=bf^.key[z+1];
+          writenode(bf);
+          end
+        else begin
+          findgreatest(y,underflow);
+          if underflow then
+            compensate(node,y,x-1,underflow);
+          end;
+        end
+      else begin
+        y:=bf^.key[x].ref;
+        del(y,underflow);
+        if underflow then
+          compensate(node,y,x,underflow);
+        end
+      end
+  end;
+
+begin    { deletekey }
+  allocnode(dbp,indnr,bf);
+  with dp(dbp)^ do
+    with index^[indnr] do begin
+      n:=nn div 2;
+      delrec:=recno;
+      del(rootrec,underflow);
+      readnode(rootrec,bf);
+      if underflow and (bf^.anzahl=0) then begin
+        z:=rootrec;
+        if bf^.key[0].ref<>0 then begin
+          readnode(bf^.key[0].ref,bf);
+          rootrec:=bf^.filepos;
+          end
+        else
+          rootrec:=0;
+        releaseIrec(dbp,indnr,z);
+        end;
+      writeindf(dbp,indnr);
+      if indnr=actindex then tiefe:=0;
+      end;
+  freenode(bf);
+end;
+
+
+{ rekursiv im Index 'indnr' von Datenbank 'dbp' nach dem Schluessel }
+{ 'searchkey' suchen; falls rec=true, so wird zusaetzlich nach der  }
+{ Satznummer 'data' gesucht.                                       }
+{ Falls gefunden, ist found=true und data=Satznummer.              }
+
+procedure findkey(dbp:DB; indnr:word; searchkey:string; rec:boolean;
+                  var data:longint);
+
+var bf   : inodep;
+    x,i  : integer;
+    srec : longint;
+    nf   : boolean;
+    rr   : longint;
+
+  procedure searchbtree(y:longint);
+  begin
+    with dp(dbp)^ do
+      if y=0 then
+        found:=false
+      else begin
+        readnode(y,bf);
+        searchpage(bf,searchkey,srec,x);
+        with dp(dbp)^ do begin
+          inc(tiefe);
+          vpos[tiefe]:=y;
+          if x=bf^.anzahl then vx[tiefe]:=-x
+          else vx[tiefe]:=x;
+          if not found then
+            searchbtree(bf^.key[x].ref)
+          else
+            data:=bf^.key[x].data;
+          end;
+        end;
+  end;
+
+  { Weitersuchen, ob im linken Teilbaum des gefundenen Nodes }
+  { noch gleiche Schluessel existieren.                       }
+
+  procedure searchequal;
+  var ok    : boolean;
+      tmark : integer;
+  begin
+    with dp(dbp)^ do begin
+      ok:=bf^.key[x-1].ref<>0;
+      tmark:=tiefe;
+      while ok do begin
+        if found then
+          dec(vx[tiefe]);
+        readnode(bf^.key[vx[tiefe]].ref,bf);
+        searchpage(bf,searchkey,srec,x);
+        ok:=(found and (bf^.key[x-1].ref<>0)) or
+            (not found and (x=bf^.anzahl) and (bf^.key[x].ref<>0));
+        inc(tiefe);
+        vpos[tiefe]:=bf^.filepos;
+        vx[tiefe]:=x;
+        if found then begin
+          tmark:=tiefe;
+          data:=bf^.key[x].data;
+          end;
+        end;
+      if tiefe>tmark then begin
+        inc(vx[tmark]);
+        tiefe:=tmark;
+        end;
+      end;
+  end;
+
+begin
+  allocnode(dbp,indnr,bf);
+  with dp(dbp)^ do begin
+    tiefe:=0;
+    if rec then srec:=data else srec:=0;
+    found:=false;
+    rr:=dp(dbp)^.index^[indnr].rootrec;
+    if rr=0 then begin
+      dBOF:=true; dEOF:=true;
+      end
+    else begin
+      dBOF:=false; dEOF:=false;
+      searchbtree(rr);
+
+      if not found then begin            { die Tiefen-Liste auf den  }
+        nf:=(vx[tiefe]<0);               { naechstgroesseren Schluessel }
+        for i:=tiefe downto 1 do         { positionieren ...         }
+          if vx[i]<0 then
+            if nf then dec(tiefe)
+            else vx[i]:=-vx[i]
+          else
+            nf:=false;
+        if tiefe=0 then dEOF:=true
+        else begin
+          inc(vx[tiefe]);
+          readnode(vpos[tiefe],bf);
+          data:=bf^.key[vx[tiefe]].data;
+          end;
+        end
+      else
+        for i:=1 to tiefe do
+          vx[i]:=abs(vx[i]);
+
+      if found and not rec then begin
+        searchequal;
+        found:=true;
+        end;
+      end;
+    end;
+  freenode(bf);
+end;
+
+{.$I databas2.inc}      { Index-Routinen 2 }
+
+procedure OpenIndex(dbp:DB);   { intern }
+var icr : dbIndexCRec;
+    i,j : integer;
+    _d,
+    _n,
+    _e  : string;
+    mfm : byte;
+
+  procedure CreateIndex(dbp:DB);
+  var i      : integer;
+      p      : byte;
+      fn     : dbFeldStr;
+      upflag : word;
+      fnr    : integer;
+      if_flag: boolean;
+      key    : string;
+      mfm    : byte;
+  begin
+    dbDisableIndexCache;
+    with dp(dbp)^ do begin
+      mfm:=filemode; filemode:=$42;
+      rewrite(fi,1);
+{$IFDEF UnixFS }
+      close(fi);
+      SetAccess(fname+dbIxExt, taUserRW);
+      reset(fi,1);
+{$ENDIF }
+      filemode:=mfm;
+      with ixhd do begin
+        fillchar(ixhd,sizeof(ixhd),0);
+        magic:=ix_magic;
+        ixversion:=indexver;
+        icr.command:=icIndexNum;
+        ICP(icr);
+        indizes:=icr.indexnr;
+        hdsize:=32*(indizes+1);
+        end;
+      blockwrite(fi,ixhd,32);
+      getmem(index,sizeof(ixfeld)*ixhd.indizes);
+      fillchar(index^,sizeof(ixfeld)*ixhd.indizes,0);
+      for i:=1 to ixhd.indizes do
+        with index^[i] do begin
+          icr.command:=icIndex;
+          icr.indexnr:=i;
+          ICP(icr);
+          feldanz:=0;
+          if FirstChar(icr.indexstr)='!' then begin
+            keysize:=icr.indexsize;
+            ifunc:=icr.indexfunc;
+            if_flag:=true;
+            delete(icr.indexstr,1,1);
+            end
+          else
+            if_flag:=false;
+          icr.indexstr:=UpperCase(icr.indexstr)+'/';
+          repeat
+            p:=cpos('/',icr.indexstr);
+            fn:=copy(icr.indexstr,1,p-1);
+            icr.indexstr:=copy(icr.indexstr,p+1,255);
+            upflag:=0;
+            if FirstChar(fn)='+' then begin
+              upflag:=$8000; delete(fn,1,1); end;
+            fnr:=dbGetFeldNr(dbp,fn);
+            if fnr<0 then error('Ungueltiges Index-Feld: '+fn);
+            inc(feldanz);
+            ifeldnr[feldanz]:=upflag+fnr;
+            feldp^.feld[fnr].indexed:=true;
+            if not if_flag then begin
+              inc(keysize,feldp^.feld[fnr].fsize);
+              if feldp^.feld[fnr].ftyp=1 then dec(keysize);
+              end;
+          until icr.indexstr='';
+          if keysize>127 then begin
+            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu groáer Indexschluessel');
+            end;
+          nn:=max(2,128 div (keysize+12))*2;
+          irecsize:=nn*(9+keysize)+10;
+          if if_flag then feldanz:=feldanz or $80;   { IFunc-Flag }
+          blockwrite(fi,index^[i],32);
+          feldanz:=feldanz and $7f;
+          end;
+
+      flindex:=false;
+      icr.command:=icOpenWindow;
+      ICP(icr);
+      icr.command:=icShowIx;
+      dbGoTop(dbp);
+      while not dbEOF(dbp) do begin
+        icr.percent:=recno*100 div hd.recs;
+        ICP(icr);
+        for i:=1 to ixhd.indizes do begin
+          getkey(dbp,i,false,key);
+          insertkey(dbp,i,key);
+          end;
+        dbSkip(dbp,1);
+        end;
+      icr.command:=icCloseWindow;
+      ICP(icr);
+      flindex:=true;
+    end;
+    dbEnableIndexCache;
+  end;
+
+begin
+  with dp(dbp)^ do
+  begin
+    fsplit(fname,_d,_n,_e);
+    icr.df:=_n+_e;
+    assign(fi,fname+dbIxExt);
+    if not FileExists(fname +dbIxExt) then
+      CreateIndex(dbp)
+    else
+    begin
+      mfm:=filemode; filemode:=$42;
+      reset(fi,1);
+      blockread(fi,ixhd,sizeof(ixhd));
+      filemode:=mfm;
+      if ioresult<>0 then
+        CreateIndex(dbp)
+      else begin
+        if ixhd.magic<>ix_magic then
+          error('fehlerhafte Indexdatei: '+fname+dbIxExt);
+        getmem(index,sizeof(ixfeld)*ixhd.indizes);
+        blockread(fi,index^,sizeof(ixfeld)*ixhd.indizes);
+        for i:=1 to ixhd.indizes do
+          with index^[i] do begin
+            if feldanz and $80<>0 then begin
+              feldanz:=feldanz and $7f;
+              icr.command:=icIndex;
+              icr.indexnr:=i;
+              ICP(icr);
+              if keysize<>icr.indexsize then
+              error('Index(datei?) fehlerhaft!');
+              ifunc:=icr.indexfunc;
+              end;
+            for j:=1 to feldanz do
+              feldp^.feld[ifeldnr[j] and $fff].indexed:=true;
+            end;
+        end;
+      end;
+      lastindex:=0; actindex:=0;
+  end;
+  dbSetIndex(dbp,1);
+end;
+
+
+{ Index fuer Sortier-Reihenfolge setzen                    }
+{ unabhaengig von dbSeek (lastindex kann <> actindex sein) }
+{ indnr=0 -> physikalische Reihenfolge bei offenem Index  }
+
+procedure dbSetIndex(dbp:DB; indnr:word);
+begin
+  korr_actindex(dbp);
+  with dp(dbp)^ do
+    if indnr<>actindex then begin
+      if indnr>ixhd.indizes then
+        error('falsche Index-Nr.: '+strs(indnr));
+      actindex:=indnr;
+      tiefe:=0;
+      end;
+end;
+
+
+function dbGetIndex(dbp:DB):word;
+begin
+  dbGetINdex:=dp(dbp)^.actindex;
+end;
+
+
+{ im aktuellen Index von Datenbank 'dbp' nach Schluessel 'key' suchen }
+{ Ergebnis kann mit dbFound abgefragt werden. Ist found=false, aber  }
+{ auch EOF=False, dann ist der naechst*groessere* Satz gueltig.         }
+
+procedure dbSeek(dbp:DB; indnr:word; const key:string);
+var x : longint;
+begin
+  dbFlush(dbp);
+  with dp(dbp)^ do begin
+    findkey(dbp,indnr,key,false,x);
+    lastindex:=indnr;
+    if not found and (tiefe=0) then
+      dEOF:=true
+    else
+      GoRec(dbp,x);
+    end;
+end;
+
+
+{ dbFound ist nur *unmittelbar* nach einer Suche mir dbSeek sinnvoll! }
+
+function dbFound:boolean;
+begin
+  dbFound:=found;
+end;
+
+{ Schluessel-Strings erzeugen }
+
+function dbIntStr(i:integer16):string;
+begin
+  dbIntStr:=chr(hi(i))+chr(lo(i));
+end;
+
+
+function dbLongStr(l:longint):string;
+type ca = array[1..4] of char;
+var s : string[4];
+    i : integer;
+begin
+  s[0]:=#4;
+  for i:=1 to 4 do s[i]:=ca(l)[5-i];
+  dbLongStr:=s;
+end;
+
+
+{ Die Indexversion wird von OpenIndex.CreateIndex }
+{ in den Indexheader geschrieben                  }
+
+procedure dbSetIndexVersion(version:byte);
+begin
+  indexver:=version;
+end;
+
+
+function dbGetIndexVersion(filename:dbFileName):byte;
+var ixhd : ixheader;
+    f    : file;
+begin
+  assign(f,filename);
+  reset(f,1);
+  if ioresult<>0 then
+    dbGetIndexVersion:=255
+  else begin
+    blockread(f,ixhd,32);
+    dbGetIndexVersion:=ixhd.ixversion;
+    close(f);
+    end;
+end;
 
 
 {===== Datenbank bearbeiten =========================================}
 
 { Datenbank oeffnen.  flags:  Bit 0:  1 = Inidziert             }
 {                                                              }
-{ xflag und ixflag werden erst *nach* erfolgreichem ™ffnen der }
+{ xflag und ixflag werden erst *nach* erfolgreichem Oeffnen der }
 { Dateien gesetzt, um bei IOErrors Folgefehler zu vermeiden.   }
 
 procedure dbOpen(var dbp:DB; name:dbFileName; flags:word);
@@ -1599,6 +2599,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.60  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

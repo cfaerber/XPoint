@@ -877,8 +877,612 @@ begin
 end;
 
 
-{$I xp1menu.inc}   { Menuefunktionen }
+{.$I xp1menu.inc}   { Menuefunktionen }
 
+{ XP1: Menuefunktionen }
+
+
+function MenuHidden(mpnr:integer):boolean;
+var l,r,m : integer;
+begin
+  if ((mpnr=$001) or (mpnr=$011)) then
+    MenuHidden:=false    { /XPoint/Registrierung }
+  else
+    case mpnr of
+         0 : MenuHidden:=false;                      { zur Sicherheit ... }
+{$ifdef DOS32}
+      $017 : MenuHidden:=true;                       { X/Telnet }
+{$endif}
+      $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
+      $0f5,$0f6 : MenuHidden:=true;                  { Netcall/Relogin, Netcall/Online }
+      $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
+      $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
+      $125 : MenuHidden:=true;                       // Config/Optionen/ISDN
+      $1c7 : MenuHidden := true;
+      else   if anzhidden=0 then
+               MenuHidden:=false
+             else begin
+               l:=1; r:=anzhidden;
+               while (r-l>1) do begin
+                 m:=(l+r) div 2;
+                 if hidden^[m]<mpnr then l:=m
+                 else r:=m;
+                 end;
+               MenuHidden:=(mpnr=hidden^[l]) or (mpnr=hidden^[r]);
+             end;
+    end;
+end;
+
+
+procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
+var s       : string;
+    p,p2,p3 : Integer;
+label again;
+begin
+  n:=0;
+again:
+  s:=menu[nr];
+  repeat
+    p:=cPos(',',s);
+    if p>0 then begin
+      inc(n);
+      with ma^[n] do begin
+        mstr:='';
+        s:=Mid(s, p+1);
+        if nummern and (LeftStr(s,2)<>'-,') then begin
+          mpnr:=hexval(LeftStr(s,3));
+          delete(s,1,3);
+          enabled:=(menable[nr] and (word(1) shl (mpnr and 15)))=0;
+          end
+        else begin
+          mpnr:=0;
+          enabled:=true;
+          end;
+        if FirstChar(s)='!' then begin      { Menue nicht verlassen? }
+          keep:=true;
+          delete(s,1,1);
+          end
+        else
+          keep:=false;
+        p2:=cPos('^',s);
+        p3:=cPos(',',s);
+        if (p3=0) or ((p2>0) and (p2<p3)) then begin
+          if p2>0 then delete(s,p2,1);
+          if p3>0 then dec(p3);
+          hpos:=p2;
+          end
+        else
+          hpos:=0;
+        p2:=p3;
+        if p2=0 then mstr:=s
+        else mstr:=LeftStr(s,p2-1);
+        if hpos>0 then hkey:=System.UpCase(mstr[hpos])
+        else hkey:=#255;
+        if cPos('ù',mstr)>0 then begin
+          p2:=cPos('ù',mstr);
+          chain:=ival(copy(mstr,p2+1,40));
+          mstr:=copy(mstr,1,p2-1);
+          if (nr>0) and (pos('..',mstr)=0) then mstr:=mstr+'..';
+          end
+        else chain:=0;
+        if MenuHidden(mpnr) or    { versteckten Menuepunkt ueberspringen }
+          ((mstr='-') and ((n=1) or (ma^[n-1].mstr='-')))   { doppelter Sep.? }
+        then
+          dec(n);
+        end;
+      end;
+  until p=0;
+  while (n>0) and (ma^[n].mstr='-') do    { Separatoren am Ende entfernen }
+    dec(n);
+  if nr=2 then begin
+    nr:=menus;
+    goto again;
+    end;
+end;
+
+
+procedure showmain(nr:shortint);
+var i      : integer;
+    s      : string;
+    p      : byte;
+    x:   Integer;
+begin
+  if mainmenu=nil then begin
+    getmem(mainmenu,sizeof(menuarray));
+    splitmenu(0,mainmenu,main_n,true);
+    p:=2;
+    for i:=1 to main_n do begin
+      mainrange[i,0]:=p;
+      inc(p,length(mainmenu^[i].mstr)+2);
+      mainrange[i,1]:=p-1;
+      end;
+    end;
+  mainmenu^[3].enabled:=(aktdispmode<>20);
+  setenable(0,3,aktdispmode<>20);
+  x := 2;
+  moff;
+  for i:=1 to main_n do
+    with mainmenu^[i] do begin
+      hmpos[i]:= x+1;
+      if enabled then begin
+        if nr=i then
+          attrtxt(col.colmenuinv[0])
+        else
+          attrtxt(col.colmenu[0]);
+        s:=mstr;
+        FWrt(x, 1, ' ' + s + ' ');
+        if i=nr then
+          attrtxt(col.colmenuinvhi[0])
+        else
+          attrtxt(col.colmenuhigh[0]);
+        FWrt(x+hpos, 1, s[hpos]);
+        x := x + Length(s) + 2;
+      end
+      else begin
+        attrtxt(col.colmenudis[0]);
+        FWrt(x, 1, ' ' + mstr + ' ');
+        x := x + Length(mstr) + 2;
+      end;
+    end;
+  mon;
+end;
+
+
+function mainkey(p:byte):taste;
+var i : integer;
+begin
+  mainkey:=#0;
+  for i:=1 to main_n do
+    if (p>=mainrange[i,0]) and (p<=mainrange[i,1]) then
+      with mainmenu^[i] do
+        mainkey:=UpCase(mstr[hpos]);
+end;
+
+
+procedure freemain;
+begin
+  if Assigned(MainMenu) then Freemem(mainmenu, sizeof(menuarray));
+  mainmenu:=nil;
+end;
+
+
+{ Menuepunkt suchen             }
+{ mnu:  Menuename               }
+{ nr :  Nummer des Menuepunkts  }
+{ &n :  Menuenummer             }
+{ &p :  Position im Menuestring }
+
+procedure findnr(var mnu:string; nr:byte; var n,p:byte);
+begin
+  n:=0;
+  mnu := LowerCase(mnu);
+  while LowerCase(LeftStr(menu[n],length(mnu)))<>mnu do inc(n);
+  p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]))+1;
+end;
+
+
+{ Menuepunkt ein- uder ausschalten    }
+{ mnu:  Name des Menues               }
+{ nr :  Nummer des Menuepunkts        }
+
+procedure setenable(mnu,nr:byte; flag:boolean);
+begin
+  if flag then menable[mnu]:=menable[mnu] and not (word(1) shl nr)
+  else menable[mnu]:=menable[mnu] or (word(1) shl nr);
+end;
+
+
+{ Menuepunkt aendern             }
+{ mnu: Name des Menues          }
+{ nr : Position des Menuepunkts }
+{ new: neuer Menuepunkt         }
+
+{ ACHTUNG!! es muss auf dem Heap genuf Platz fuer menu[n]^ belegt sein!! }
+
+procedure setmenup(mnu:string; nr:byte; anew:string);
+var n,p,p2 : byte;
+begin
+  findnr(mnu,nr,n,p);
+  p2:=cPos(',',Mid(menu[n],p));
+  if p2=0 then p2:=length(menu[n])+1
+  else inc(p2,p+1);
+  menu[n]:=LeftStr(menu[n],p-1)+anew+Mid(menu[n],p2);
+end;
+
+
+{ neue Menue-Position setzen }
+
+procedure setmenupos(mnu:string; newpos:byte);
+var n,p : byte;
+begin
+  findnr(mnu,1,n,p);
+  menupos[n]:=newpos;
+end;
+
+
+procedure miscschab;
+var s       : string;
+    useclip : boolean;
+begin
+  s:= '*' + extXps;
+  useclip:=false;
+  if readfilename(getres(103),s,false,useclip) then
+  begin  { Schablone bearbeiten }
+    if ExtractFileExt(s) = '' then
+      s := ChangeFileExt(s, extXps);
+
+    if FileUpperCase(ExtractFileExt(s)) <> extXps then
+    begin
+      rfehler(2);    { Dateierweiterung muss .XPS sein! }
+      exit;
+    end;
+    EditFile(s,false,false,false,0,false);
+  end;
+end;
+
+
+procedure SetExtraktMenu;
+var n : byte;
+begin
+  n:=ival(getres2(104,2));
+  setmenup('Extrakt',6,getres2(104,1)+
+           copy(getres2(104,3),ExtraktTyp*n+1,n)+'ù13');
+  freeres;
+end;
+
+
+{ Menuepunkt direkt ausfuehren und zurueck zum Menue }
+
+procedure menu_keep(m:integer);
+var m1 : byte;
+    wp : boolean;
+begin
+  m1:=m mod 16;
+  case m div 16 of
+    8 : begin
+          wp:=(exteditor<3) and (m1<14);
+          if wp then begin
+            attrtxt(col.coledithead);
+            moff;
+            wpush(1,80,1,2,'-');
+            Fwrt(1,1,forms(' '+getres2(132,m1),80));
+            mon;
+            end;
+          case m1 of           { Schablonen }
+            1 : editfile(headerfile,false,false,false,1,false);
+            2 : editfile(headerpriv,false,false,false,1,false);
+            3 : editfile(quotemsk,false,false,false,1,false);
+            4 : editfile(quotepriv,false,false,false,1,false);
+            5 : editfile(quotepmpriv,false,false,false,1,false);
+            6 : editfile(quotetomsk,false,false,false,1,false);
+            7 : editfile(weitermsk,false,false,false,1,false);
+            8 : editfile(erneutmsk,false,false,false,1,false);
+           10 : sigedit(signatfile);
+           11 : sigedit(privsignat);
+           12 : editfile(EB_msk,false,false,false,1,false);
+           13 : editfile(CancelMsk,false,false,false,1,false);
+           14 : miscschab;
+          end;
+          if wp then wpop;
+        end;
+   13 : begin                { Extrakt Als... }
+          ExtraktTyp:=m1-1;
+          SetExtraktMenu;
+        end;
+  end;
+end;
+
+
+{ Menuesystem. -------------------------------------------- }
+{ nr       : Menuenummer                                    }
+{ enterkey : erster Tastendruck                            }
+{ x,y      : Koordinaten fuer Untermenue-Anzeige             }
+{ Return   : xxy (Hex!) : Punkt y in Menue xx wurde gewaehlt }
+{             0: Menue mit Esc oder sonstwie abgebrochen    }
+{            -1: Untermenue nach links verlassen            }
+{            -2: Untermenue nach rechts verlassen           }
+
+function getmenu(nr:byte; enterkey:taste; x,y:integer):integer;
+var ma    : map;
+    n,i   : integer;
+    t     : taste;
+    p,ml  : byte;
+    pold  : byte;
+    get2  : integer;
+    xx,yy : integer;
+    autolr: byte;
+    dead  : boolean;   { alle disabled }
+    has_checker : boolean;
+    mausback : boolean;
+    longmenu : boolean; {Menue mit mehr als 13 Menuepunkten (Zusatz)}
+
+  procedure display;
+  var i,hp  : byte;
+      s     : string;
+      check : char;
+
+      begin
+    if nr=0 then showmain(p)
+    else begin
+      moff;
+      for i:=1 to n do begin
+        s:=ma^[i].mstr;
+        hp:=ma^[i].hpos;
+        if (i<>p) or dead then
+          if ma^[i].enabled then attrtxt(col.colmenu[menulevel])
+          else attrtxt(col.colmenudis[menulevel])
+        else
+          if ma^[i].enabled then attrtxt(col.colmenuinv[menulevel])
+          else attrtxt(col.colmenuseldis[menulevel]);
+        check:=iifc(checker[nr]=i,'û',' ');
+        if s='-' then
+          Fwrt(x,y+i,'Ã'+dup(ml,'Ä')+'´')
+        else if hp=0 then
+          Fwrt(x+1,y+i,check+forms(s,ml-1))
+        else if not ma^[i].enabled then
+          Fwrt(x+1,y+i,' '+forms(s,ml-1))
+        else
+        begin
+          FWrt(x+1,y+i, forms(check+s,ml));
+          if i<>p then
+            attrtxt(col.colmenuhigh[menulevel])
+          else
+            attrtxt(col.colmenuinvhi[menulevel]);
+          FWrt(x+1+hp, y+i, s[hp]);
+{          wrt(x+1,y+i,check+LeftStr(s,hp-1));
+          if i<>p then
+            attrtxt(col.colmenuhigh[menulevel])
+          else
+            attrtxt(col.colmenuinvhi[menulevel]);
+          Wrt2(s[hp]);
+          if i<>p then
+            attrtxt(col.colmenu[menulevel])
+          else
+            attrtxt(col.colmenuinv[menulevel]);
+          Wrt2(forms(copy(s,hp+1,40),ml-hp-1));  }
+          end
+        end;
+      mon;
+      end;
+  end;
+
+  function nomp(p:byte):boolean;
+  begin
+    nomp:=(ma^[p].mstr='-') or ((nr=0) and not ma^[p].enabled);
+  end;
+
+  function nr0pos(mx:byte):byte;
+  var i : byte;
+  begin
+    i:=1;
+    while (i<main_n) and (mx>mainrange[i,1]) do inc(i);
+    nr0pos:=i;
+  end;
+
+  procedure maus_auswertung;
+  var mx,my  : integer;
+      _mx,_my : integer;
+      inside : boolean;
+  begin
+    maus_gettext(_mx,_my);
+    mx:=_mx-x; my:=_my-y;
+    if nr>0 then
+      inside:=(mx>=1) and (mx<=ml) and (my>=1) and (my<=n)
+    else begin
+      inside:=(_my=1) and (mx>=mainrange[1,0]) and (mx<=mainrange[main_n,1]);
+      my:=nr0pos(mx);
+      end;
+    if inside and not nomp(my) then begin
+      if t=mausunleft then begin
+        p:=my; t:=keycr; display; end else
+      if t=mausright then t:=keyesc else
+      if (t=mausleft) or (t=mauslmoved) then begin
+        p:=my;
+        if nr=0 then begin display; t:=keycr; end;
+        end;
+      end
+    else if not inside then
+      if (t=mausleft) or
+         ((nr>0) and (_my=1) and (t=mauslmoved) and (nr0pos(_mx)<>menupos[0]))
+      then
+        mausback:=true
+      else
+        if t=mausright then
+          t:=keyesc;
+  end;
+
+  function Zusatz_II:byte;  { Benutzte Punkte in den ersten 10 Zusatzmenue-  }
+  var i,n:byte;             { eintraegen zaehlen (ergibt die korrekte Grenze }
+  begin                     { fuer Uebergang von Fkeys[0] zu Fkeys[4])       }
+    n:=0;
+    for i:=1 to 10 do
+      if Fkeys[0][i].menue<>'' then inc(n);
+    Zusatz_II:=n;
+  end;
+
+begin
+  get2 := -1;
+  if nr=0 then begin
+    menulevel:=0;
+    if menurestart then enterkey:=mainmenu^[menustack[0]].hkey;
+    end;
+  getmem(ma,sizeof(menuarray));
+  splitmenu(nr,ma,n,true);
+  if n=0 then begin    { leeres Menue durch XPME }
+    dispose(ma);
+    getmenu:=0;
+    exit;
+    end;
+  has_checker:=(checker[nr]>0);
+  p:=min(menupos[nr],n);
+  i:=1;
+  while nomp(p) and (i<=n) do begin
+    p:=p mod n + 1; inc(i);
+    end;
+  dead:=i>n;
+  autolr:=0;
+  if nr>0 then begin
+    ml:=0;
+    for i:=1 to n do
+      ml:=max(ml,length(ma^[i].mstr));
+    inc(ml,2);
+    x:=min(x,78-ml);
+    attrtxt(col.colmenu[menulevel]);
+    forcecolor:=true;
+    if menulevel=1 then blindon(false);
+    wpushs(x,x+ml+1,y,y+n+1,'');
+    forcecolor:=false;
+    end
+  else
+    if (nr=0) and (enterkey<>keyf10) then begin
+      i:=1;
+      while (i<=n) and (ma^[i].hkey<>UpperCase(enterkey)) do inc(i);
+      if i<=n then begin
+        p:=i;
+        autolr:=1;
+        end;
+      end;
+
+  mausback:=false;
+  pold:=99;
+  repeat
+    mauszuo:=(p>1); mauszuu:=(p<n);
+    hlp(10000+(ma^[p].mpnr shr 4)*100 + (ma^[p].mpnr and $f));
+    if p<>pold then display;
+    pold:=p;
+    case autolr of
+      4 : begin t:=mausleft; autolr:=0; end;
+      3 : begin t:=keyrght; autolr:=1; end;
+      2 : begin t:=keyleft; autolr:=1; end;
+      1 : begin t:=keycr; autolr:=0; end;
+    else
+      if menurestart then
+        if menulevel=menulast then begin
+          menurestart:=false;
+          p:=menustack[menulevel];
+          t:='';
+          end
+        else
+          t:=ma^[menustack[menulevel]].hkey
+      else
+        if auswahlcursor then begin
+          if nr=0 then gotoxy(hmpos[p]-1,1)
+          else gotoxy(x+1,y+p);
+          get(t,curon);
+          end
+        else
+          get(t,curoff);
+    end;
+    if (t>=mausfirstkey) and (t<=mauslastkey) then
+      maus_auswertung;
+    if t=keyaf4 then quit:=true;
+    if not dead then begin
+      i:=1;
+      case t[1] of 
+        #132: t[1] := #142; // Bildschirm ä in Tastatur ä umwandeln
+        // ö und ü noch hinzufügen
+      end;
+      while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
+      if (i<=n) and (ma^[i].enabled) then begin
+        p:=i; t:=keycr;
+        hlp(10000+(ma^[p].mpnr shr 4)*100 + (ma^[p].mpnr and $f));
+        display;
+        end
+      else begin
+        if t=keyhome then begin
+          p:=1;
+          if nomp(p)  then t:=keytab;
+          end;
+        if t=keyend then begin
+          p:=n;
+          if nomp(p) then t:=keystab;
+          end;
+        if ((nr=0) and (t=keyrght)) or ((nr>0) and (t=keydown)) or
+           (t=keytab) or (not has_checker and (t=' ')) then
+            repeat
+              p:=(p mod n)+1
+            until not nomp(p);
+        if has_checker and (t=' ') then checker[nr]:=p;
+        if ((nr=0) and (t=keyleft)) or
+           ((nr>0) and (t=keyup)) or (t=keystab) then
+             repeat
+               if p=1 then p:=n else dec(p)
+             until not nomp(p);
+        end;
+
+      if nr=0 then begin
+        if t=keyf10 then t:=keyesc;
+        if t=keydown then t:=keycr;
+        end;
+
+      get2:=0;
+      if (nr<>2) or (p<Zusatz_II+4) then longmenu:=false
+        else longmenu:=true;
+      if t=keycr then
+        if ma^[p].enabled then
+          if ma^[p].chain>0 then begin
+            if nr=0 then begin
+              xx:=hmpos[p]-1; yy:=2; end
+            else begin
+              xx:=x+2; yy:=y+1+p; end;
+            menupos[nr]:=p;
+            menustack[menulevel]:=p;
+            inc(menulevel);
+            get2:=getmenu(ma^[p].chain,'',xx,yy);
+            dec(menulevel);
+            case get2 of
+              0  : if nr>0 then t:='';
+             -1  : if nr>0 then t:=keyleft
+                   else begin
+                     autolr:=2; t:=''; end;
+             -2  : if nr>0 then t:=keyrght
+                   else begin
+                     autolr:=3; t:=''; end;
+             -3  : begin autolr:=4; t:=''; end;
+            end  { case }
+          end
+        else begin   { kein Untermenue }
+          { get2:=16*nr+p; - altes Menuesystem bis XP 3.1 }
+          get2:=ma^[p].mpnr;
+          menustack[menulevel]:=p;
+          menulast:=menulevel;
+          end
+      else begin   { nicht enabled }
+        errsound;
+        t:='';
+        end;
+
+      if (ma^[p].keep) and (get2>0) then begin
+        menu_keep(get2);        { direkt auswerten - Menue nicht verlassen }
+        splitmenu(nr,ma,n,true);
+        display;
+        t:='';
+        end;
+
+      end;   { not dead }
+
+  until (t=keyesc) or (t=keycr) or ((nr>0) and ((t=keyleft) or (t=keyrght)))
+        or mausback or quit;
+
+  if has_checker and (t=keycr) then checker[nr]:=p;
+  if nr>0 then begin
+    wpop;
+    if menulevel=1 then blindoff;
+    end
+  else showmain(0);
+  menupos[nr]:=p;
+  freemem(ma,sizeof(menuarray));
+
+  if t=keyesc then getmenu:=0
+  else if t=keycr then
+  begin
+    if longmenu then get2:=get2+$1000-4;
+    getmenu:=get2;
+    end
+  else if t=keyleft then getmenu:=-1
+  else if mausback then getmenu:=-3
+  else getmenu:=-2;
+end;
 
 { ----- Externe Programme ------------------------------------------- }
 
@@ -988,8 +1592,508 @@ begin
   CloseLst;
 end;
 
-{$I xp1s.inc}    { Shell }
+{.$I xp1s.inc}    { Shell }
 
+{ DOS-Shell }
+
+function repfile(const prog,name:string):string;
+var p : byte;
+begin
+  p:=pos('$FILE',UpperCase(prog));
+  if p>0 then
+    result:=LeftStr(prog,p-1)+name+copy(prog,p+5,127)
+  else
+    result:=prog+' '+name;
+end;
+
+const trackpath : boolean = false;
+
+{ call of external program. errorlevel returned in gloval var errorlevel.
+  errorlevel is negative if call was not performed (program not found).
+  prog may be a batch file or using pipes. program extension MAY be specified
+  as well as program path.
+  CAUTION: Automatically chdirs back to "ownpath"!
+  cls:   0=nicht loeschen; 1=loeschen, 2=loeschen+Hinweis, 3=Mitte loeschen
+         -1=loeschen/25 Zeilen, 4=loeschen/nicht sichern,
+         5=nicht loeschen/nicht sichern }
+procedure shell(const prog:string; space:word; cls:shortint);
+
+  { returned: errorlevel called program returned if call successful
+    negative errorlevel if program not found }
+  function Xec(command:string; const prompt:string):Integer;
+
+  {$ifdef UnixFS}
+  {$ifdef Unix}
+  begin
+    Debug.TempCloseLog(False);
+    Debug.DebugLog('xp1s','saving terminal state', DLInform);
+    def_prog_mode();           { save current tty modes }
+    endwin();                  { restore original tty modes }
+{$IFDEF Kylix}
+
+    Result:=libc.system(PChar(command));
+{$ELSE}
+    Result:=linux.shell(command);
+{$ENDIF}
+    Debug.DebugLog('xp1s','reload terminal state', DLInform);
+    refresh();                 { restore save modes, repaint screen }
+    Debug.TempCloseLog(True);
+    Debug.DebugLog('xp1s','called program "'+command+'": result '+
+                   strs(Result),iif(Result=0,DLInform,DLError));
+  end;
+  {$else}
+  {$error Please implement this function for your OS}
+  {$endif}
+  {$else} // OS is Dos, Win or OS2
+  var
+    pp    : byte;
+    parameters,commandsave : string;
+    callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
+  begin
+    pp:=cPos(' ',command);
+    if pp=0 then parameters:=''
+    else begin
+      parameters:=trim(Mid(command,pp+1));
+      command:=LeftStr(command,pp-1);
+    end;
+    command:=FileUpperCase(command);
+
+    callviacli:=(cPos('|',parameters)>0) or (cPos('>',parameters)>0) or (cPos('<',parameters)>0);
+    commandsave:=command;
+    if not callviacli then begin
+      command:=FindExecutable(command);
+      if (command='') // file not found, assume it is built-in in cli
+         or(UpperCase(ExtractFileExt(command))= extBatch) // batch files have to be run via cli
+         or(ExtractFileExt(command)='') // FindExecutable WILL find "copy" as built-in in cli
+        then begin
+        callviacli:=true; command:=commandsave;
+      end;
+    end;
+    if trim(command)='' then begin result:=-100; exit end;
+    if callviacli then begin
+      parameters:=' /c '+command+' '+parameters;
+      command:=getenv('comspec');
+    end;
+
+    Debug.TempCloseLog(False);
+    Result:=SysExec(command, parameters);
+    Debug.TempCloseLog(True);
+    Debug.DebugLog('xp1s','called program "'+command+'" with parameters "'+parameters+'": result '+
+                   strs(Result),iif(Result=0,DLInform,DLError));
+  end;
+  {$endif}
+
+  procedure ShowPar;
+  var
+      x,y,p,p2 : Integer;
+  begin
+    savecursor;
+    cursor(curoff);
+    if length(prog)<=74 then
+      message(prog)
+    else begin
+      msgbox(76,4,'',x,y);
+      p:=blankposx(prog);
+      p2:=71;
+      while prog[p2]<>' ' do dec(p2);
+      mwrt(x+3,y+1,LeftStr(prog,p2-1));
+      mwrt(x+3+p,y+2,LeftStr(mid(prog,p2+1), 71-p));
+      end;
+    wkey(15,false);
+    closebox;
+    restcursor;
+  end;
+
+var
+  sm2t     : boolean;
+  maussave : mausstat;
+  sp       : scrptr;
+
+begin
+  CloseAblage;
+  if (ParDebFlags and 1<>0) or ShellShowpar then
+    ShowPar;
+  getmaus(maussave);
+  xp_maus_aus;
+  if (cls<>4) and (cls<>5) then begin
+    sichern(sp);
+    savecursor;
+    end;
+  TempClose;
+  freehelp;
+
+  { -> evtl. normaler Video-Mode }
+  sm2t:=m2t;
+  attrtxt(7);
+  case abs(cls) of
+    1,2,4 : begin
+              clrscr;
+              m2t:=false;
+            end;
+    3   : begin
+            clwin(1,ScreenWidth,4,screenlines-2);
+            gotoxy(1,5);
+          end;
+  end;
+  {$ifdef Win32}
+  // todo: adjust screen size with Win9x/ME only, not with WinNT/2000
+  SysSetScreenSize(25,80);
+  Window(1,1,80,25);
+  {$endif}
+  if (cls=2) or (cls=-1) then
+  begin
+    if shell25 and (screenlines>25) then
+      SysSetScreenSize(25, 80);
+    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurueck zu CrossPoint. }
+  end;
+  cursor(curon);
+
+  Errorlevel := Xec(prog,'[XP]');
+
+  if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
+  begin
+    if deutsch and (random<0.02) then write('Pressen Sie einen Schluessel ...')
+    else write(getres(12));  { Taste druecken ... }
+    m2t:=false;
+    pushhp(51);
+    clearkeybuf;
+    wait(curon);
+    pophp;
+    m2t:=true;
+    shellkey:=false;
+  end;
+
+  SysSetBackintensity;
+  SetScreenSize;
+  cursor(curoff);
+  if (cls<>4) and (cls<>5) then holen(sp);
+  m2t:=sm2t;
+  Disp_DT;
+  if (cls<>4) and (cls<>5) then restcursor;
+
+  xp_maus_an(maussave.x,maussave.y);
+
+  if (ErrorLevel<0) and (ErrorLevel<>-4) then
+    fehler(ioerror(-ErrorLevel,getres(115)));   { Fehler bei Programm-Aufruf }
+
+  if trackpath then getdir(0,shellpath);
+  SetCurrentDir(OwnPath);
+  TempOpen;
+end;
+
+{ Execute an external program and add any files created in current dir to SL }
+function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
+begin
+  curdir:=GetCurrentDir;
+  dir1:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  Shell(prog,space,cls);
+  result:=errorlevel;
+  newfiles:='';
+  SetCurrentDir(curdir);
+  dir2:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  for i:=0 to dir2.Count-1 do begin
+    fileexisted:=false;
+    for j:=0 to dir1.Count-1 do
+      if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
+    if not fileexisted then begin
+      SL.Add(ExpandFilename(dir2.Name[i]));
+      if newfiles<>'' then newfiles:=newfiles+', ';
+      newfiles:=newfiles+ExpandFilename(dir2.Name[i]);
+      end;
+    end;
+  dir1.destroy; dir2.destroy;
+  Debug.DebugLog('xpnetcall','new files created by external program: '+newfiles,DLDebug);
+  SetCurrentDir(OwnPath);
+end;
+
+function listheadercol:byte; { Headerzeilenfarbe entsprechend Hervorhebungsflag waehlen }
+var nt : longint;
+begin
+  dbreadN(mbase,mb_netztyp,nt);
+  listheadercol:=iif(nt and $1000 = 0,col.collistheader,col.collistheaderhigh);
+end;
+
+function listcolor(const s:string; line:longint):byte;
+var p,p0,ml : byte;
+    qn,pdiff: integer;
+begin
+  listhicol:=col.collisthigh;
+  // highlight header lines
+  if line<exthdlines then
+    listcolor:=listheadercol
+  else if s='' then
+    listcolor:=0
+  else if s[1]<=^c then
+    listcolor:=iif((length(s)>1) and kludges,col.collistmarked,$ff)
+  else begin
+    p:=1;
+    ml:=min(length(s),6);
+    while (p<=ml) and ((s[p]=' ') or (s[p]=^I)) do
+      inc(p);
+    p0:=p;
+    qn:=0;
+    repeat
+       while (s <> '') and (p<=length(s)) and (p-p0<6) and
+       (
+         (s[p]<>'>') and
+         (not OtherQuoteChars or not (s[p] in QuoteCharSet))
+       )
+       do inc(p);
+      pdiff:=p-p0;
+
+      if (s <> '') and (p<=length(s)) and (s[p]='>') or
+         (OtherQuoteChars and (p<=length(s)) and (s[p] in QuoteCharSet)) then
+      begin
+        inc(qn);
+        p0:=p;
+      end;
+      inc(p);
+    until (p>length(s)) or (pdiff=6);
+    if qn<1 then
+      listcolor:=0
+    else begin
+      listcolor:=col.collistquote[min(qn,iif(QuoteColors,9,1))];
+      listhicol:=col.collistqhigh[min(qn,iif(QuoteColors,9,1))]
+      end;
+    end;
+end;
+
+
+{ 0=normal, -1=Minus, 1=Plus, 2=links, 3=rechts, 4=P/B/^P/^B (ListKey),
+  5="0", 6=PgUp, 7=PgDn }
+
+function listfile(name,header:string; savescr,listmsg:boolean;
+                  utf8:boolean;
+                  cols:shortint):shortint; { Lister }
+var
+    List   : TLister;
+    p      : scrptr;
+    oldm   : byte;
+    msg    : boolean;
+    lf     : string;
+    pp     : byte;
+    lt     : byte;
+    lfirst : byte;     { Startzeile Lister }
+    lofs   : word;     { Ladeposition Datei }
+    dphb   : byte;     { Uhr Hintergrundfarbe Backup }
+    wrapb  : boolean;  { Backup no_ListWrapToggle }
+
+    OldTCS,OldLCS: TMimeCharsets;
+
+  procedure ShowMsgHead;
+  var t : text;
+      s : string;
+      i : integer;
+  begin
+    assign(t,name); reset(t);
+    attrtxt(listheadercol);
+    if UTF8 then SetLogicalOutputCharset(csUTF8);
+    for i:=1 to exthdlines do begin
+      readln(t,s);
+      mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
+      inc(lfirst);
+      inc(lofs,length(s)+2);
+      end;
+    if UTF8 then SetLogicalOutputCharset(csCP437);
+    close(t);
+    exthdlines:=0;
+    lfirst:=min(lfirst,screenlines-5);
+  end;
+
+begin
+  listexit:=0;
+  wrapb:=no_ListWrapToggle;
+  no_ListWrapToggle:=false;
+  dphb := 0;
+  if varlister<>'' then begin
+    lf:=repfile(VarLister,name);
+    pp:=pos('$TYPE',UpperCase(lf));
+    if pp>0 then begin
+      lt:=iif(listmsg,iif(listkommentar,2,1),0);
+      lf:=LeftStr(lf,pp-1)+strs(lt)+mid(lf,pp+5);
+      end;
+    shell(lf,0,1);
+    if errorlevel in [100..110] then ExtListKeys;
+    end
+  else begin
+    if savescr then sichern(p);
+    lfirst:=iif(listvollbild,1,4); lofs:=0;
+    if listvollbild then begin                      { Bei Vollbild-lister : }
+      if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }
+      else begin
+        dphb:=dphback;
+        if listmsg and ListFixedhead and (exthdlines>0) then   {   Wenn fester Header }
+          dphback:=listheadercol                   {   dann Uhr aktiv mit Headerfarbe }
+        else begin
+          dphback:=col.colliststatus;              {   bei freiem Header }
+          timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
+          end;
+        end;
+      end;
+    if ListMsg and ListFixedHead then
+      ShowMsgHead;
+
+    if IsFileUTF8(name) then UTF8 := true;
+    if UTF8 then
+    begin
+      OldTCS := GetConsoleOutputCharset;
+      OldLCS := GetLogicalOutputCharset;
+      SetConsoleOutputCharset(csUTF8);
+      SetLogicalOutputCharset(csCP437);
+    end;
+
+    List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
+             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
+             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
+             iifs(_maus and ListScroller,'VSC/','')+
+             iifs(listmsg,'ROT/',''));
+    if listwrap {or listkommentar} then
+      list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
+//!!    if listmsg and ConvIso then List.OnConvert := ISO_conv;
+    if not ListAutoscroll then List.Stat.Autoscroll := false;
+    msg:=(_filesize(name)>1024*100);
+    if msg then rmessage(130);    { 'Lade Datei ...' }
+    List.ReadFromFile(name,lofs);
+    if msg then closebox;
+    List.HeaderText := header;
+    List.OnKeypressed := listExt;
+    List.UTF8Mode := utf8;
+    llh:=listmsg;
+    oldm:=ListMakros;
+    if listmsg then ListMakros:=8;
+    if cols<>0 then
+    begin
+      List.OnColor := listColor;
+      if cols and 2<>0 then
+      begin
+        List.OnDisplayLine := Listdisplay;
+        xp1o.ListXHighlight:=ListHighlight;
+        end;
+      end;
+    pushhp(39);
+    if _maus and listscroller and listvollbild then begin
+      attrtxt(col.colliststatus);
+      mwrt(1,lfirst,sp(ScreenWidth));
+      end;
+
+    if listmsg then
+    begin
+      dbReadN(mbase,mb_halteflags,listhalten);
+      dbReadN(mbase,mb_unversandt,listunvers);
+      dbReadN(mbase,mb_flags,listflags);
+      end
+    else begin
+      Listunvers:=0; Listhalten:=0; Listflags:=0;
+      end;
+
+    List.Show;
+    Listunvers:=0; Listhalten:=0; Listflags:=0;
+    pophp;
+    ListMakros:=oldm;
+
+    if UTF8 then
+    begin
+      SetConsoleOutputCharset(OldTCS);
+      SetLogicalOutputCharset(OldLCS);
+    end;
+
+    if listvollbild and listuhr and ListMsg then begin
+     dphback:=dphb;                        {Uhrfarbe reseten}
+     if not Listfixedhead then timey:=1;   {Und evtl. Position}
+     end;
+   m2t:=true;
+    if savescr then holen(p);
+    List.Free;
+  end;
+  exthdlines:=0;
+  llh:=false;
+  if listexit<>4                         { Wenn nicht Editor gestartet wird... }
+    then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
+  listfile:=listexit;
+  no_ListWrapToggle:=wrapb;
+end;
+
+
+procedure RemoveEOF(const fn:string);
+var f : file;
+    b : byte;
+begin
+  assign(f,fn);
+  reset(f,1);
+  if ioresult<>0 then exit;    { Datei nicht gesichert }
+  if filesize(f)>0 then begin
+    seek(f,filesize(f)-1);
+    blockread(f,b,1);
+    if b=26 then begin
+      seek(f,filesize(f)-1);
+      truncate(f);
+      end;
+    end;
+  close(f);
+end;
+
+
+{ reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
+{         TED-Softreturns zurueckwandeln                 }
+
+procedure editfile(const name: string; nachricht,reedit,senden:boolean;
+                   keeplines:byte;ed_ukonv:boolean);
+var
+    bak : string;
+    ms  : boolean;
+begin
+  if ((exteditor=3) or ((exteditor=2) and nachricht)) and (VarEditor<>'')
+     and (VarEditor[1]<>'*') then begin
+    ms:=shell25; shell25:=edit25;
+    shell(repfile(VarEditor,name),0,-1);
+    shell25:=ms;
+    removeeof(name);
+    bak := EditorBakExt;
+  end
+  else begin
+    if nachricht then pushhp(54);
+    TED(name,reedit,keeplines,ed_ukonv,nachricht,senden);
+    if nachricht then pophp;
+    if nachricht and (FirstChar(VarEditor)='*') then begin
+      DeleteFirstChar(VarEditor);
+      shell(repfile(VarEditor,name),0,3);
+      insert('*',VarEditor,1);
+      end;
+    bak:='BAK';
+    end;
+  if bak<>'' then
+    SafeDeleteFile(ChangeFileExt(Name, '.'+bak)); { .BAK löschen }
+end;
+
+
+{ Achtung! ShellPath kann mit oder ohne '\' am Ende sein! }
+
+procedure dosshell;
+
+  {$IFNDEF DPMI}
+  function environment:string;
+  begin
+    if envspace=0 then environment:=''
+    else environment:=' /E:'+strs(envspace);
+  end;
+  {$ENDIF }
+
+begin
+  if DisableDos then
+    fehler(getres(116))   { DOS-Shell hier nicht moeglich }
+  else begin
+    SetCurrentDir(ShellPath);
+    if ioresult<>0 then SetCurrentDir(ownpath);
+    trackpath:=true;
+    {$IFDEF Unix }
+      shell(getenv('SHELL'),0, 2);
+    {$ELSE }
+      shell(getenv('COMSPEC')+environment,640,2);
+    {$ENDIF }
+    trackpath:=false;
+    end;
+end;
 
 procedure delete_tempfiles;
 begin
@@ -2148,6 +3252,9 @@ end;
 
 {
   $Log$
+  Revision 1.165  2002/12/07 04:41:48  dodi
+  remove merged include files
+
   Revision 1.164  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
