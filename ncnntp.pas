@@ -32,7 +32,6 @@ uses
   IPCClass,             { TIPC }
   NetCall,              { TNetcall }
   NCSocket,             { TSoketNetcall }
-  Sockets,              { Socket-Interface }
   Classes,              { TStringList }
   sysutils;
 
@@ -257,6 +256,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2000/08/01 21:45:09  mk
+        - Unit Sockets entfernt
+
         Revision 1.4  2000/08/01 18:06:18  mk
         - WriteFMT in SWriteln geaendert
 
