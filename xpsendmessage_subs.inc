@@ -340,7 +340,16 @@ begin
   end;
 
   if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
-  if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
+
+  if flPGPsig then begin
+    if((docode=8) or ((docode=0) and (cancode=8)) or
+      ((docode=0) and (cancode=9) and (Parts.Count<>1))) and ntMIME(netztyp) then
+      flags:=flags+getres2(604,19)    { 'PGP/MIME-Sig ' }
+    else
+      flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
+  end;
+
+
   if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
   attrtxt(col.coldiarahmen);
   if trim(flags)='' then
@@ -1097,6 +1106,9 @@ end;
 
 {
   $Log$
+  Revision 1.9  2001/09/12 21:22:12  cl
+  - added flag PGP/MIME-Sig
+
   Revision 1.8  2001/09/08 18:46:43  cl
   - small bug/compiler warning fixes
 
