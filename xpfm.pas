@@ -105,7 +105,7 @@ type  FidoAdr   = record
                     node,point : word;
                   end;
 
-var   
+var
       FA        : FidoAdr;
       logf      : text;
       nocarrier : string;   { Carrier futsch }
@@ -221,7 +221,6 @@ begin
   //if not ExecutableExists('rz') then error(getres(118));
   //if not ExecutableExists('sz') then error(getres(119));
 {$else}
-  if not ExecutableExists(zmprog) then error(getres(115));   { 'ZM.EXE fehlt' }
   if ModemPort=0 then
     case ModemLine of
       1 : ModemPort:=$3f8;    2 : ModemPort:=$2f8;
@@ -371,6 +370,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/12/22 10:17:49  mk
+        - compatibility update for VP
+
         Revision 1.2  2000/12/14 16:28:33  hd
         - Fido netcall as unit
           - does not work proper now, just to the CONNECT :-(

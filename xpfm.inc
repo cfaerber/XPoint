@@ -208,8 +208,8 @@ end;
 function secsfrom70:longint;
 var i         : integer;
     secs      : longint;
-    y,m,d     : rtlword;
-    h,min,s,s1: rtlword;
+    y,m,d     : smallword;
+    h,min,s,s1: smallword;
 begin
   decodedate(now,y,m,d);
   decodetime(now,h,min,s,s1);
@@ -373,7 +373,7 @@ begin
                 Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
               end;
-	      if CommObj^.CharAvail then state:=4;
+              if CommObj^.CharAvail then state:=4;
             end;
           end;
       4 : begin
@@ -912,6 +912,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.3  2000/12/22 10:17:48  mk
+        - compatibility update for VP
+
         Revision 1.2  2000/12/18 00:09:56  ma
         - debug output changed
 
