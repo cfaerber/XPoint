@@ -1520,10 +1520,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-//  Linux.SigNal(SIGWINCH, SigHandler);
-//  Linux.SigNal(SIGHUP, SigHandler);
-//  Linux.SigNal(SIGQUIT, SigHandler);
-//  Linux.SigNal(SIGKILL, SigHandler);
+  Linux.SigNal(SIGWINCH, SigHandler);
+  Linux.SigNal(SIGHUP, SigHandler);
+  Linux.SigNal(SIGQUIT, SigHandler);
+  Linux.SigNal(SIGKILL, SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1542,6 +1542,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.6  2003/01/17 13:04:35  mk
+  - FPC compile problem is fixed in FPC now,
+    code is now active again
+
   Revision 1.64.2.5  2003/01/11 22:33:12  mk
   - made FreeBSD version ready
 
