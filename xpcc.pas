@@ -110,7 +110,7 @@ begin
         dbOpen(d,PseudoFile,1);
         dbSeek(d,piKurzname,UpperCase(s));
         if dbFound then begin
-          dbRead(d,'Langname',s);
+          s := dbReadStr(d,'Langname');
           p:=cpos('@',s);
           end
         else begin
@@ -388,6 +388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/08/13 21:47:32  mk
+  - fuer Langname auf dbReadStr umgestellt
+
   Revision 1.19  2000/07/21 20:56:30  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
