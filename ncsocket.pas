@@ -4,12 +4,12 @@
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
    later version.
-  
+
    The software is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -28,54 +28,56 @@ unit NCSocket;
 interface
 
 uses
-  xpglobal,		{ Nur wegen der Typendefinition }
-  NetCall,		{ TNetcall }
-  IPAddr,		{ TIP }
+  xpglobal,             { Nur wegen der Typendefinition }
+  NetCall,              { TNetcall }
+  IPAddr,               { TIP }
+{$IFDEF Win32 }
   winsock,
-  Sockets,		{ Socket-Interface }
+{$ENDIF }
+  Sockets,              { Socket-Interface }
   sysutils;
 
 
 type
-  ESocketNetcall		= class(ENetcall);		{ Allgemein (und Vorfahr) }
-  ESNInvalidPort		= class(ESocketNetcall);	{ Ungueltiger Port }
+  ESocketNetcall                = class(ENetcall);              { Allgemein (und Vorfahr) }
+  ESNInvalidPort                = class(ESocketNetcall);        { Ungueltiger Port }
 
 type
   TSocketNetcall = class(TNetcall)
 
   private
-  
-    FAddr	: TInetSockAddr;	{ Socket-Parameter-Block }
-    FHandle	: longint;		{ Socket-Handle }
-    FConnected	: boolean;		{ Flag }
+
+    FAddr       : TInetSockAddr;        { Socket-Parameter-Block }
+    FHandle     : longint;              { Socket-Handle }
+    FConnected  : boolean;              { Flag }
 
   protected
-    
-    FPort		: integer;		{ Portnummer }
-    tin, tout		: text;			{ Pseudo-Text-Dateien }
-    FErrorMsg	: string;		{ Fehlertext }
-    
+
+    FPort               : integer;              { Portnummer }
+    tin, tout           : text;                 { Pseudo-Text-Dateien }
+    FErrorMsg   : string;               { Fehlertext }
+
     procedure SActive(b: boolean);
     procedure SPort(i: integer);
 
     { Ermittelt den Result-Code }
     function ParseResult(s: string): integer;
-    
+
   public
 
-    { --- Basisdaten }  
-    
+    { --- Basisdaten }
+
     { Hostadresse }
-    Host		: TIP;
+    Host                : TIP;
     { Port }
     property Port:integer read FPort write SPort;
 
     { --- Eigenschaften }
-    
+
     { Verbindung }
     property Active: boolean read FConnected write SActive;
     property Connected: boolean read FConnected;
-    
+
     property ErrorMsg: string read FErrorMsg;
 
     { Konstruktoren }
@@ -89,7 +91,7 @@ type
 
     { Strukturen freigeben }
     destructor Destroy; override;
-        
+
   end;
 
 implementation
@@ -156,7 +158,11 @@ begin
   { Adresse uebernehmen }
   FAddr.Addr:= Host.Raw;
   { Verbinden }
+{$IFDEF Win32 }
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+{$ELSE }
+  FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
+{$ENDIF }
   if Sockets.Connect(FHandle, FAddr, tin, tout) then begin
     reset(tin);
     rewrite(tout);
@@ -208,17 +214,15 @@ end;
 
 end.
 {
-	$Log$
-	Revision 1.3  2000/07/27 10:12:59  mk
-	- Video.pas Unit entfernt, da nicht mehr noetig
-	- alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-	- an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-	- Dialog zur Auswahl der Zeilen/Spalten erstellt
+  $Log$
+  Revision 1.4  2000/07/27 10:27:28  mk
+  - Commitfehler beseitigt
 
-	Revision 1.2  2000/07/25 18:02:18  hd
-	- NNTP-Unterstuetzung (Anfang)
-	
-	Revision 1.1  2000/07/25 12:52:24  hd
-	- Init
-	
+
+  Revision 1.2  2000/07/25 18:02:18  hd
+  - NNTP-Unterstuetzung (Anfang)
+
+  Revision 1.1  2000/07/25 12:52:24  hd
+  - Init
+
 }
