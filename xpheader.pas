@@ -374,7 +374,6 @@ procedure THeader.WriteZConnect(stream:TStream);
           s := UpperCase(s);
         writeln_s(stream,'EMP: '+ s);
       end;
-      Empfaenger.Clear;
 
 {      if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);}
@@ -639,6 +638,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/02/06 21:26:20  mk
+  MA:- do not clear empfaenger list after writeing the header
+
   Revision 1.21  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 
