@@ -900,8 +900,7 @@ begin
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
   b:=1;
   dbWriteN(ubase,ub_adrbuch,b);
-  if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
-    inc(b,8); { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
+  b:=1 + iif(newuseribm,0,8);
   dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
 end;
 
@@ -1261,6 +1260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.2  2000/11/30 14:15:03  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.12.2.1  2000/07/26 09:30:38  mk
   - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
 

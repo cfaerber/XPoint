@@ -891,7 +891,7 @@ begin
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-              flags:=1;  { aufnehmen }
+              flags:=1 +iif(newuseribm,0,8);
               dbWrite(ubase,'userflags',flags);
               adrbuch:=1;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
@@ -1142,6 +1142,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.3  2000/11/30 14:15:03  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.6.2.2  2000/06/01 15:17:04  mk
   - Unnoetigen Parameter in Multi2 entfernt
 
