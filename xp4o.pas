@@ -26,7 +26,6 @@ uses
 {$endif}
 {$IFDEF NCRT }
   xpcurses,
-  sysutils,
 {$ELSE }
   crt,
 {$ENDIF }
@@ -2408,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/05/14 10:00:43  hd
+  - Fix: SysUtils doppelt
+
   Revision 1.40  2000/05/14 07:22:21  mk
   - weiterer Fix fuer Debug-Modus
 
