@@ -249,12 +249,15 @@ begin
 end;
 
 procedure wrkeys(high:boolean);
+var len :integer;
 begin
+  len:=Screenwidth-80;
   with col do begin
     at(colkeys);
-    wrt(31,2,'  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ');
-    wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS             '+
-           right(sp(10)+xp_xp,10));
+    wrt(31,2,forms('  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ',len+50));
+    wrt(31,screenlines,forms('F1-Hilfe  F6-Makros  F9-DOS'
+                              +dup(13+len,' ')
+                              +right(sp(10)+xp_xp,10),len+50));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -273,14 +276,15 @@ procedure showcol;
 var
   Len: Integer;
 begin
-  len := ScreenWidth - 80 + 50;
+  len := ScreenWidth-80+50;
   with col do begin
     at(colmenu[0]);
     moff;
-    wrt(31,1,'  '+iifs(xp_xp='CrossPoint','X',' ')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ');
+    wrt(31,1,forms(
+    '  '+iifs(xp_xp='CrossPoint','X','?')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ',len));
     at(colmenuhigh[0]);
     if xp_xp='CrossPoint' then wrt(33,1,'X')
-    else wrt(34,1,'P');
+    else wrt(33,1,'?');
     wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
     wrkeys(false);
@@ -307,22 +311,24 @@ begin
 end;
 
 procedure showmsgs;
+  var len :integer;
 begin
+  len:=Screenwidth-80+50;
   with col do begin
     at(colmsgsinfo);
     moff;
-    wrt(31,4,forms(' /Z-NETZ/DATENSCHUTZ/ALLGEMEIN',50));
+    wrt(31,4,forms(' /Z-NETZ/DATENSCHUTZ/ALLGEMEIN',len));
     at(colmsgs);
-    wrt(31,5,'      391 01.11.91 GUENNI@GCS.ZER          Datensc');
-    wrt(31,6,' >    592 03.11.91 H_TIETZ@TELEMAIL.ZER    Re: Per');
-    wrt(31,8,' >    140 04.11.91 GUIDO@FISHTOWN.ZER      Re: Dat');
-    wrt(31,11,'      619 16.11.91 BYTEBOOSTERS@AME.ZER    infos z');
-    wrt(31,12,' >     2k 16.11.91 P.SCHAAR@LINK-HH.ZER    Re: Dat');
+    wrt(31, 5,forms('      391 01.11.91 GUENNI@GCS.ZER          Datenschutz',len));
+    wrt(31, 6,forms(' >    592 03.11.91 H_TIETZ@TELEMAIL.ZER    Re: Personunion',len));
+    wrt(31, 8,forms(' >    140 04.11.91 GUIDO@FISHTOWN.ZER      Re: Datenschutz',len));
+    wrt(31,11,forms('      619 16.11.91 BYTEBOOSTERS@AME.ZER    infos zu fido :-)',len));
+    wrt(31,12,forms(' >     2k 16.11.91 P.SCHAAR@LINK-HH.ZER    Re: Datenklau',len));
     at(colmsgshigh);
-    wrt(31,7,'þ     262 04.11.91 R.SAUER@BIONIC.ZER      Re: Per');
-    wrt(31,9,'þ     532 05.11.91 U.FLECKENSTEIN@MAX-002. Personu');
+    wrt(31, 7,forms('þ     262 04.11.91 R.SAUER@BIONIC.ZER      Re: Personunion',len));
+    wrt(31, 9,forms('þ     532 05.11.91 U.FLECKENSTEIN@MAX-002. Personunion',len));
     at(colmsgsinv);
-    wrt(31,10,'      532 10.11.91 E.PETERSEN@TRILOS.ZER   Re: U.F');
+    wrt(31,10,forms('      532 10.11.91 E.PETERSEN@TRILOS.ZER   Re: U.F',len));
     at(colmsgs);
     mon;
     clwin(31,ScreenWidth,13,screenlines-2);
@@ -334,7 +340,7 @@ begin
   with col do begin
     at(colmenu[0]);
     moff;
-    wrt(31,1,'  XPoint  Wartung  Nachricht  NeTcall  Fido  Edit ');
+    wrt(31,1,forms('   Point  Wartung  Nachricht  NeTcall  Fido  Edit ', Screenwidth-80+50));
     at(colmenuhigh[0]);
     wrt(33,1,'X'); wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
@@ -548,18 +554,19 @@ begin
 end;
 
 procedure slister;
-var i : integer;
+var i, len :integer;
 begin
+  len:=Screenwidth-80+50;
   with col do begin
     at(colliststatus);
     moff;
-    wrt(31,1,forms('    1    20       '#31'    F1-Hilfe',50));
+    wrt(31,1,forms('    1    20       '#31'    F1-Hilfe',len));
     at(collistheader);
-    wrt(31,2,'Empfaenger : /Z-NETZ/TELECOM/POINTS              ');
-    wrt(31,3,'Betreff    : NEU: CrossPoint v2.0                ');
-    wrt(31,4,'Absender   : P.MANDRELLA@SPS-HH.ZER              ');
-    wrt(31,5,'Datum      : Fr 06.11.92, 00:11                  ');
-    wrt(31,6,'-------------------------------------------------');
+    wrt(31,2,forms('Empfaenger : /Z-NETZ/TELECOM/POINTS ',len));
+    wrt(31,3,forms('Betreff    : NEU: CrossPoint v2.0   ',len));
+    wrt(31,4,forms('Absender   : P.MANDRELLA@SPS-HH.ZER ',len));
+    wrt(31,5,forms('Datum      : Fr 06.11.92, 00:11     ',len));
+    wrt(31,6,forms(dup(len,'-'),len));
     at(collisttext);
     clwin(31,ScreenWidth,7,screenlines);
     wrt(31,18,'- normaler Text -');
@@ -567,14 +574,14 @@ begin
     wrt(47,25,'Wort');
     for i:=9 downto 1 do begin
       at(collistquote[i]);
-      wrt(31,17-i,forms(dup(i,'>')+' Quote Ebene '+strs(i)+'  (hervorgehoben)',49));
+      wrt(31,17-i,forms(dup(i,'>')+' Quote Ebene '+strs(i)+'  (hervorgehoben)',len-1));
       at(col.collistqhigh[i]);
       wrt(48+i,17-i,'hervorgehoben');
       end;
     at(collistselbar);
-    wrt(31,20,forms('- Auswahlbalken -',49));
+    wrt(31,20,forms('- Auswahlbalken -',len-1));
     at(collistmarked);
-    wrt(31,22,forms('- markierte Zeile -',50));
+    wrt(31,22,forms('- markierte Zeile -',len));
     at(collistfound);
     wrt(42,24,'Wort');
     at(collisthigh);
@@ -588,14 +595,16 @@ begin
 end;
 
 procedure seditor;
+  var len :integer;
 begin
+  len:=Screenwidth-80+50;
   with col do begin
     at(coledithead);
     moff;
-    wrt(31,1,' Nachricht an  SYSOP@MEINEBOX.ZER           21:13 ');
-    wrt(31,2,' Betreff:      Testnachricht                      ');
+    wrt(31,1,forms(' Nachricht an  SYSOP@MEINEBOX.ZER           21:13 ',len));
+    wrt(31,2,forms(' Betreff:      Testnachricht                      ',len));
     at(coleditstatus);
-    wrt(31,3,' Z 1       S 1           155k         G:\1932.TMP ');
+    wrt(31,3,forms(' Z 1       S 1           155k         G:\1932.TMP ',len));
     at(coledittext);
     clwin(31,ScreenWidth,4,screenlines);
     wrt(31,7,'- normaler Text -');
@@ -769,7 +778,7 @@ var y,ax,xp,yp : shortint;
     moff;
     fwrt(2,y-1,s0);
     fwrt(2,screenlines,s0);
-    for i:=0 to 15 do begin
+    for i:=0 to 15 do begin    { Zeichne Farbpallete}
       xx:=3;
       wrt(2,y+i,' ');
       for j:=0 to 7 do begin
@@ -974,7 +983,8 @@ begin
              end;
            until m=0;
        8 : repeat    { Nachrichten }
-             ssp:=showmsgs; ssp;
+             ssp:=showmsgs;
+             ssp;
              m:=readmenu(8);
              case m of
                1 : cset(colmsgs);
@@ -1136,6 +1146,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/08/17 13:33:06  mk
+  MO:- Farbsetup fuer Screen > 80 Zeichen angepasst
+
   Revision 1.22  2000/07/27 13:41:50  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 
