@@ -482,8 +482,8 @@ var Count: Integer;
       if sendFlags and sendHalt<>0 then b:=1
       else if Intern then b:=0
       else if flLoesch then b:=2
-      else if (pm and not HaltOwnPM) then b:=0 { Eigene Nachrichten Halten gilt nicht fuer Mails }
-      else b:=1;
+      else if (HaltOwn and (not pm)) or (HaltOwnPM and pm) then b:=1
+      else b:=0;
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
@@ -644,7 +644,7 @@ var Count: Integer;
     
     // Um sicher zu stellen, dass ältere XPs nicht aus EMP/KOP plötzlich
     // ein To/CC machen (wäre fatal, falls BCCs dabei sind), wird das 
-    // BCC-Flag gesetzt, wenn BCCs vorhanden sind
+    // BCC-Flag gesetzt, wenn BCCs vorhanden sind.
     
       EMP.AddStrings(BCC);
       CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,BCC.Count>0);
@@ -777,6 +777,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.3  2002/05/20 15:22:44  cl
+// - BUGFIX: newly created messages were on hold even when they should not
+//
 // Revision 1.2  2002/05/09 15:18:06  cl
 // - fixed internal messages
 //
