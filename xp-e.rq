@@ -1833,8 +1833,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33   G protocol
 34   g protocol
 35   Size negotiation
-36   Batched SMTP
-57   create a single file for each mail
+36   Batched SMTP / PPP Mode
+57   PPP Mode: one File per PM
 37   z protocol
 38   f protocol
 39   e protocol
