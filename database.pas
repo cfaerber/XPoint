@@ -140,9 +140,9 @@ uses
 {$IFDEF debug}
   debug,
 {$ENDIF}
-  fileio,
+  fileio,       // fsplit
   typeform,
-  inout,
+  inout,        // only: ticker
   datadef1;
 
 procedure dbSetICP(p:dbIndexCProc);
@@ -561,6 +561,7 @@ procedure cache_read(dbp:DB; irsize:xpWord; offs:longint; var data);
 var
   s,i,sp : integer;
   TempCachePage: PCachepage;
+
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -2584,6 +2585,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2003/01/27 18:14:39  cl
+  - added comments in uses declaration
+
   Revision 1.64  2002/12/22 10:24:32  dodi
   - redesigned database initialization
 
