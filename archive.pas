@@ -23,7 +23,14 @@ unit archive;
 
 interface
 
-uses   xpglobal, crt, dos, typeform, montage;
+uses
+  xpglobal,
+{$IFNDEF Linux }
+  crt,
+{$ENDIF }
+  dos,
+  typeform,
+  montage;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -1023,6 +1030,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 17:17:21  hd
+  uses crt fuer Linux entfernt, da unnoetig.
+
   Revision 1.8  2000/03/14 15:15:34  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
