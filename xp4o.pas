@@ -1241,7 +1241,7 @@ begin
   aufbau:=true;
 end;
 
-
+//Nachricht/Suchen/Wiedervorlage
 procedure SucheWiedervorlage;
 var x,y,xx : Integer;
     brk    : boolean;
@@ -1301,13 +1301,14 @@ begin
   testbase(ubase);
   if not brk then
     testbase(bbase);
+  CloseBox;
   if not brk then
     if markanz=0 then
       hinweis(getres(444))   { 'keine Wiedervorlage-Nachrichten gefunden' }
     else begin
       signal;
       select(11);
-      end;
+    end;
 end;
 
 
@@ -3030,6 +3031,9 @@ end;
 
 {
   $Log$
+  Revision 1.141  2002/07/22 09:58:46  mk
+  - added missing CloseBox in SucheWiedervorlage
+
   Revision 1.140  2002/07/18 01:11:57  mk
   - fixed potential AV with mbrettd calls
 
