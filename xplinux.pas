@@ -40,7 +40,7 @@ const
   LOG_DEBUG 		= 7;
 
 { XPLog gibt eine Logmeldung im Syslog aus }
-procedure XPLog(Level: integer; format: string; args: array of const);
+procedure XPLog(Level: integer; format_s: string; args: array of const);
 procedure XPLogMsg(Level: integer; logmsg: string);
 procedure XPDebugLog(logmsg: string);
 procedure XPInfoLog(logmsg: string);
@@ -146,19 +146,23 @@ procedure syslog(__pri:longint; __fmt:pchar; args:array of const);cdecl;external
 
 { Proceduren ----------------------------------------------------------- }
 
-procedure XPLog(Level: integer; format: string; args: array of const);
+procedure XPLog(Level: integer; format_s: string; args: array of const);
 var
-  p: array[0..255] of char;
+  s: string;
 begin
+  if not (log_installed) then		{ Kann beim Init der Unit's vorkommen }
+    exit;
   { Da FPC einen Internal Error bei syslog(level,p,args) erzeugt,
     muessen wir die Wandelung selbst vornehmen }
-  StrPCopy(p, format);
-  StrFmt(LogString, p, args);
+  s:= Format(format_s, args);
+  StrPCopy(LogString, s);
   syslog(Level, LogString, [0]);
 end;
 
 procedure XPLogMsg(Level: integer; logmsg: string);
 begin
+  if not (log_installed) then
+    exit;
   StrPCopy(LogString, logmsg);
   syslog(Level, LogString, [0]);
 end;
@@ -202,6 +206,13 @@ procedure InitLogStream;
 var
   s: string;
 begin
+{$IFDEF DEBUG }
+  if (log_installed) then begin
+    XPErrorLog('Panic: Unit initilized twice!');
+    WriteLn('Zweite Initialisierung der Unit XPLinux!');
+    halt;
+  end;
+{$ENDIF }
   s:= ExtractFileName(ParamStr(0));
   s:= s+'['+IntToStr(GetPid)+']';
   StrPCopy(LogPrefix, s);
@@ -227,6 +238,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.7  2000/05/05 15:00:09  hd
   - SysLog-Interface (Linux)
 

@@ -36,16 +36,19 @@ const DPMS_On       = 0;    { Monitor an }
       DPMS_Suspend  = 2;    { Stromsparstufe 2 }
       DPMS_Off      = 4;    { Monitor aus }
 
+{$IFNDEF NCRT }
       vrows  : word = 80;                  { Anzahl Bildspalten  }
       vrows2 : word = 160;                 { Bytes / Zeile       }
       vlines : word = 25;                  { Anzahl Bildzeilen   }
-
+{$ENDIF }
 var  vbase  : word;                        { Screen-Base-Adresse }
 
-
+{$IFNDEF NCRT }
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
+{$ENDIF }
 function  GetVideoMode:byte;
 procedure SetVideoMode(mode:byte);
+
 {$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
@@ -57,32 +60,32 @@ function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 {$ENDIF }
+{$IFNDEF NCRT }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
-
+{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
 implementation
 
+{$IFNDEF NCRT }
 uses
-
 {$IFDEF BP }
   {$IFDEF DPMI }
   WinAPI,
   {$ENDIF}
 {$ENDIF }
-{$IFDEF NCRT }
-  xpcurses,
-  winxp,
-{$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
    fileio;
+{$ENDIF }
 
+{$IFNDEF NCRT }
 var
   vtype   : byte;
+{$ENDIF }
 
 {$IFDEF BP }
 type ba  = array[0..65000] of byte;
@@ -96,6 +99,7 @@ var
 
 { Grafikkarte ermitteln: 0=Herc, 1=CGA, 2=EGA, 3=VGA
   und in vtype speichern }
+{$IFNDEF NCRT }
 procedure GetVideotype; assembler;
 asm
 {$IFDEF BP }
@@ -134,6 +138,7 @@ function  VideoType:byte;
 begin
   VideoType := vtype;
 end;
+{$ENDIF } {NCRT }
 
 { BIOS-Mode-Nr. setzen }
 procedure SetVideoMode(mode:byte); assembler;
@@ -365,6 +370,7 @@ end;
 { EGA:       25,26,29,31,35,38,43,50                    }
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
+{$IFNDEF NCRT }
 procedure SetScreenLines(lines:byte);
 {$IFDEF BP }
 
@@ -484,6 +490,7 @@ begin
 {$ENDIF }
   vlines:=lines;
 end;
+{$ENDIF }
 
 function getvideomode:byte;
 begin
@@ -494,6 +501,7 @@ begin
 {$ENDIF}
 end;
 
+{$IFNDEF NCRT }
 function getscreenlines:byte;
 {$IFDEF BP }
 var regs : registers;
@@ -523,6 +531,7 @@ begin
 {$ENDIF }
 {$ENDIF }
 end;
+{$ENDIF } { NCRT }
 
 {$IFDEF BP }
 function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
@@ -538,11 +547,21 @@ begin
 end;
 {$ENDIF }
 
+{$IFNDEF NCRT }
 begin
   getvideotype;
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.18  2000/05/06 15:57:03  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.17  2000/05/03 00:21:20  mk
   - unbenutzte Units aus uses entfernt
 

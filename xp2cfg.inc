@@ -347,7 +347,7 @@ begin
 
   randomize;
 {$IFDEF NCRT }
-  ScreenWidth:= ScreenCols;
+  ScreenWidth:= GetScreenCols;
 {$ELSE }
   screenwidth:=80;
 {$ENDIF }
@@ -1716,6 +1716,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.49  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.48  2000/05/04 18:43:15  jg
   - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
     entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister

@@ -115,7 +115,11 @@ procedure OpenIndex(dbp:DB);   { intern }
 
 implementation  {=======================================================}
 
-uses datadef1;
+uses
+{$IFDEF Linux }
+  xplinux,
+{$ENDIF }
+  datadef1;
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
 procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
@@ -1631,6 +1635,9 @@ procedure dbLog(s:string);
 begin
   if dl then
     writeln(dblogfile,s);
+  {$IFDEF Linux }
+  XPDebugLog(s);
+  {$ENDIF }
 end;
 {$ENDIF }
 
@@ -1724,6 +1731,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/05/06 15:57:03  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.17  2000/04/29 07:59:03  mk
   - Funktion FUStr fuer Filenamen Up/Locase eingebaut
 

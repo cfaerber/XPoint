@@ -133,6 +133,7 @@
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
+  {$UNDEF CAPI }	 { Nichts dergleichen }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
@@ -175,6 +176,14 @@
 
 {
   $Log$
+  Revision 1.24  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.23  2000/05/01 19:00:28  hd
   Kein LocalScreen bei NCRT
 

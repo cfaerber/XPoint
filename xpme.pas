@@ -175,16 +175,16 @@ begin
   y2:= GetScreenLines-2;
   rahmen1(x1,x2,y1,y2,'');
   wrt(x1+2,y1,' CrossPoint-Meneditor ');
-  clwin(x1+1,x2-1,y1+1,y2-1);
+  clwin(x1+1,x2-2,y1+1,y2-2);
   forcecolor:=false;
   attrtxt(col.colutihigh);
-  wrt(x1+4,y1+2,#27#24#25#26);
-  wrt(x1+4,y1+3,'+ -');
-  wrt(x1+4,y1+4,'Esc');
+  wrt(x1+3,y1+1,#27#24#25#26);
+  wrt(x1+3,y1+2,'+ -');
+  wrt(x1+3,y1+3,'Esc');
   attrtxt(col.colutility);
-  wrt(x1+9,y1+2,'Men(punkt) w„hlen');
-  wrt(x1+9,y1+3,'Men(punkt) (de)aktivieren');
-  wrt(x1+9,y1+42,'Ende');
+  wrt(x1+8,y1+1,'Men(punkt) w„hlen');
+  wrt(x1+8,y1+2,'Men(punkt) (de)aktivieren');
+  wrt(x1+8,y1+3,'Ende');
   {$ELSE }
   rahmen1(38,78,18,23,'');
   wshadow(39,79,19,24);
@@ -751,6 +751,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.16  2000/05/06 11:25:13  hd
   - Kleinere Aenderungen fuer Linux:
     - Hintergrund nutzt gesamten Screen (nicht nur 80x25)

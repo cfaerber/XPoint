@@ -250,6 +250,11 @@ asm
 end;
 {$ELSE }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
+{$IFDEF NCRT }
+begin
+  PaintBox(l, r, o, u, attr, clr);
+end;
+{$ELSE }
 var
   i: integer;
   SaveAttr: Byte;
@@ -268,6 +273,7 @@ begin
   end;
   TextAttr := SaveAttr;
 end;
+{$ENDIF NCRT }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -1262,12 +1268,6 @@ end;
 var
   i: byte;
 begin
-{$ifdef NCRT}
-  if not (MinimumScreen(80, 25)) then begin
-    writeln('This program needs a screen with 80x25!');
-    halt(1);
-  end;
-{$endif}
   oldexit:=exitproc;
   exitproc:=@DoneVar;
 {$IFDEF NCRT }
@@ -1294,6 +1294,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/05/06 15:57:03  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.28  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

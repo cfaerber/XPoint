@@ -22,7 +22,8 @@ INTERFACE
 
 uses
   linux,
-  ncurses;
+  ncurses,
+  xplinux;
   
 {$PACKRECORDS 4}
 {$linklib panel}
@@ -136,12 +137,28 @@ type
 var
   ActWin: TWinDesc;		{ Aktueller Screen }
   BaseWin: TWinDesc;		{ Basis-Screen }
+  BaseSub: PWindow;		{ wird fuer window() benoetigt }
 
 var
   CheckBreak,
   CheckEOF,
   CheckSnow,
   DirectVideo: Boolean;
+
+{ Konstanten aus VIDEO.PAS --------------------------------------------- }
+
+const
+  vrows : word = 80;                  { Anzahl Bildspalten  }
+  vrows2: word = 160;                 { Bytes / Zeile       }
+  vlines: word = 25;                  { Anzahl Bildzeilen   }
+
+{ Var's aus INOUT.PAS -------------------------------------------------- }
+
+var
+  mwl,mwo,				{ Werden von window gesetzt }
+  mwr,mwu: byte;
+
+
 
 procedure AssignCrt(var F: Text);
 procedure ClrEol;
@@ -162,9 +179,22 @@ procedure TextColor(att : byte);
 procedure SetTextAttr(attr: byte);
 procedure TextMode(mode : word);
 
-{ Liefert die Anzahl der Zeilen/Spalten }
-function ScreenRows: integer;
-function ScreenCols: integer;
+{ Servive-Funktionen auf dem aktiven Screen ---------------------------- }
+
+procedure PaintBox(l, r, o, u, attr: integer; clr: boolean);
+
+{ Teile aus VIDEO.PAS -------------------------------------------------- }
+
+function VideoType: byte;
+procedure SetScreenLines(lines: integer);
+function GetScreenLines: integer;
+function GetScreenCols: integer;
+
+{ Teile aus INOUT.PAS -------------------------------------------------- }
+
+{ Setzt ein Fenster }
+procedure Window(x1, y1, x2, y2: integer);
+
 
 { false, wenn der Screen kleiner als Cols/Rows }
 function MinimumScreen(Cols, Rows: Word): boolean;
@@ -214,8 +244,6 @@ function SetColorPair(att: integer): integer;
 procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
 procedure RestoreWindow(var win: TWinDesc);
 
-procedure Window(x1, y1, x2, y2: integer);
-
 implementation
 
 uses
@@ -229,14 +257,16 @@ const
    STDERR = 2;
 
 var
-   ExitSave : pointer;                { pointer to original exit proc }
-   fg,bg : integer;                   { foreground & background }
-   cp : array [0..7,0..7] of integer; { color pair array }
-   ps : array [0..255] of char;       { for use with pchars }
-   MaxRows,                           { set at startup to terminal values }
-   MaxCols : longint;                 { for columns and rows }
-   tios : TermIOS;                    { saves the term settings at startup }
-   LastTextAttr: byte;                { Letzte gesetzte Farbe }
+   ExitSave : pointer;                  { pointer to original exit proc }
+   fg,bg : integer;                     { foreground & background }
+   cp : array [0..7,0..7] of integer;   { color pair array }
+   ps : array [0..255] of char;         { for use with pchars }
+   MaxRows,                             { set at startup to terminal values }
+   MaxCols : longint;                   { for columns and rows }
+   tios : TermIOS;                      { saves the term settings at startup }
+   LastTextAttr: byte;                  { Letzte gesetzte Farbe }
+   LastWindMin,			   	{ Manipulationen abfangen }
+   LastWindMax: word;
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -270,7 +300,27 @@ type
 
 procedure Window(x1, y1, x2, y2: integer);
 begin
-  { Erstmal sehen, ob die Funktion benoetigt wird }
+{$IFDEF DEBUG }
+  XPLog(LOG_DEBUG, 'procedure window(%d, %d, %d, %d)', [x1, x2, y1, y2]);
+{$ENDIF }
+  { Aus INOUT.PAS uebernommen }
+  mwl:=x1; mwr:=x2;
+  mwo:=y1; mwu:=y2;
+  { Noch ein anderes Fenster vorhanden? }
+  if (BaseSub <> nil) then
+    delwin(BaseSub);
+  { Soll die Fenstereinstellung auf Default gesetzt werden? }
+  if (x1=1) and (x2=MaxCols) and (y1=1) and (y2=MaxCols) then begin
+    BaseSub:= nil;
+    WindMin:= 0;
+    WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
+  end else begin
+    BaseSub:= subwin(StdScr, y2-y1, x2-x1, y1, x1);
+    WindMin:= ((y1-1) shl 8) + (x1-1);		{ Wind* berechnen }
+    WindMax:= ((y2-1) shl 8) + (x2-1);
+  end;
+  LastWindMin:= WindMin;
+  LastWindMax:= WindMax;
 end;
 
 { initialize a color pair }
@@ -329,16 +379,6 @@ begin
   if (att and $80) = $80 then 
     atts:= atts or A_BLINK;
   CursesAtts:= atts;
-end;
-
-function ScreenRows: integer;
-begin
-  ScreenRows:= MaxRows;
-end;
-
-function ScreenCols: integer;
-begin
-  ScreenCols:= MaxCols;
 end;
 
 function MinimumScreen(Cols, Rows: Word): boolean;
@@ -506,6 +546,36 @@ procedure StringOutXY(x, y: integer; s: string);
 begin
   GotoXY(x, y);
   StringOut(s);
+end;
+
+procedure PaintBox(l, r, o, u, attr: integer; clr: boolean);
+var
+  Sub: PWindow;
+  ta: byte;
+  x,y: integer;
+begin
+  Sub:= subwin(ActWin.wHnd, u-o+1, r-l+1, o-1, l-1);
+  if (Sub=nil) then begin
+    XPErrorLog('Can''t create sub window (XPCurses::PaintBox)');
+{$IFDEF Beta }
+    WriteLn('Can''t create sub window (XPCurses::PaintBox)');
+    halt(1);
+{$ENDIF }
+  end else begin
+    ta:= TextAttr;
+    WhereXY(x, y);
+    SetTextAttr(attr);
+    if (clr) then begin
+      wbkgd(Sub, CursesAtts(TextAttr));
+      touchwin(Sub);
+      werase(sub);
+    end;
+    box(Sub, 0, 0);
+    wrefresh(Sub);
+    delwin(Sub);
+    SetTextAttr(ta);
+    GotoXY(x, y);
+  end;
 end;
 
 function IsEcho: boolean;
@@ -961,10 +1031,47 @@ function move_panel(_para1:pPANEL; _para2:longint; _para3:longint):longint;cdecl
 function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl; external;
 function panel_hidden(_para1:pPANEL):longint;cdecl; external;
 
+
+{ Teile aus VIDEO.PAS -------------------------------------------------- }
+
+function VideoType: byte;
+begin
+  if (has_colors = 0) then
+    VideoType:= 7
+  else
+    VideoType:= 3;
+end;
+
+procedure SetScreenLines(lines: integer);
+{ Soll die Anzahl der Zeilen am Bildschrim setzen, wird unter
+  Linux nicht verwendet }
+begin
+{$IFDEF DEBUG }
+  XPLog(LOG_DEBUG, 'procedure SetScreenLines(%d)', [lines]);
+{$ENDIF }
+end;
+
+function GetScreenLines: integer;
+{ Gibt die Anzahl der Zeilen beim Start von XP zurueck.
+  TODO: Dynamische Bildschirmanpassung }
+begin
+  GetScreenLines:= MaxRows;
+end;
+
+function GetScreenCols: integer;
+begin
+  GetScreenCols:= MaxCols;
+end;
+
+{ Unit-Interna --------------------------------------------------------- }
+
 { exit procedure to ensure curses is closed up cleanly }
 procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
+  { Noch ein SubWindow vorhanden= }
+  if (BaseSub <> nil) then
+    delwin(BaseSub);
   { Cursor an }
   CursorOn;
   { Eventuell nicht ausgefuehrte Aenderungen darstellen }
@@ -999,6 +1106,11 @@ begin
      win.PrevWin:= nil;
      getmaxyx(stdscr,MaxRows,MaxCols);
      win.Cols:= MaxCols; win.Rows:= MaxRows;
+     vrows:= MaxCols; vrows2:= MaxCols * 2;
+     vlines:= MaxRows;
+     WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
+     LastWindMin:= 0;
+     LastWindMax:= WindMAx;
      win.x:= 0; win.y:= 0;
      win.isRel:= false;
      { define the the alt'd keysets for ncurses }
@@ -1045,9 +1157,21 @@ begin
     halt;
   end;
 
+  if not (MinimumScreen(80, 24)) then begin
+    endwin; { Curses beenden }
+    writeln('This program needs a screen with 80 x 24!');
+    writeln('Your console has only ', GetScreenCols, ' x ', GetScreenLines, '.');
+    {$IFDEF Linux }
+    XPLog(LOG_ERR, 'TTY is to small (%d x %d), need 80 x 24', [GetScreenCols, GetScreenLines]);
+    {$ENDIF }
+    halt(1);
+  end;
+
   { Am Anfang ist die Basis auch Aktuell }
   FastMove(BaseWin, ActWin, sizeof(TWinDesc));
 
+  BaseSub:= nil;
+  
   { TextMode(LastMode); }
 
   { Redirect the standard output }
@@ -1065,6 +1189,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.7  2000/05/03 20:37:26  hd
   - Neue Funktion: StringOutXYBaseWin: Schreibt Fensterunabhaengig
     (keine Aenderung des Cursors)

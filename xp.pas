@@ -34,6 +34,10 @@
 program xp;
 
 uses xpx,
+{$IFDEF Linux }
+     linux,
+     xplinux,
+{$ENDIF }
 {$IFDEF NCRT }
      xpcurses,
 {$ELSE }
@@ -221,6 +225,14 @@ ende:
 end.
 {
   $Log$
+  Revision 1.26  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.25  2000/05/04 10:32:57  mk
   - unbenutzer TurboBox Code entfernt
 

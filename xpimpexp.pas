@@ -35,7 +35,14 @@ function imptestpollbox(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt, winxp;
+uses
+{$IFDEF Linux }
+  xplinux,
+{$ENDIF }
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xp9,xpnt, winxp;
 
 const mdaten = 'MDATEN.DAT';    { fr ImportMautaubase }
       mindex = 'MDATEN.IND';
@@ -698,6 +705,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.10  2000/04/18 11:23:52  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

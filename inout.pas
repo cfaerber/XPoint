@@ -179,7 +179,9 @@ Procedure multi2(cur:curtype);                  { vorgeg. Backgr.-Prozess }
 Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
+{$IFNDEF NCRT }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
+{$ENDIF }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
 Procedure GetCur(var a,e,x,y:byte);          { Cursorbereich abfragen   }
 Procedure SaveCursor;                        { Cursor retten            }
@@ -195,7 +197,9 @@ Procedure AttrTxt(attr:byte);                { Textfarbe nach Attr.     }
 Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
+{$IFNDEF NCRT }
 Procedure clrscr;                            { statt CRT.clrscr         }
+{$ENDIF }
 Procedure DispHard(x,y:byte; s:string);      { String ohne bercksicht. }
                                              { des akt. Windows ausgeb. }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
@@ -288,8 +292,10 @@ type   editsa      = array[1..500] of edits;   { nur fr Type Cast }
 var    ca,ce,ii,jj : byte;
        sx,sy,sa,se,
        wl,wr,wo,wu : array[1..maxsave] of byte;
+{$IFNDEF NCRT }
        mwl,mwo,
        mwr,mwu     : byte;
+{$ENDIF }
        cursp       : shortint;
        oldexit     : pointer;
        sec         : word;
@@ -329,21 +335,18 @@ begin
 {$ENDIF }
 end;
 
+{$IFNDEF NCRT }
 Procedure window(l,o,r,u:byte);
 begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
-{$ifdef NCRT}
-  xpcurses.window(l,o,r,u);
-{$else}
   crt.window(l,o,r,min(u,25));
   if (l=1) and (o=1) and (r=80) and (u=25) then
     crt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
   else
     crt.windmax:=crt.windmax and $ff + 256*(u-1);
-{$endif}
 end;
-
+{$ENDIF } { NCRT }
 
 {$IFDEF BP }
 Procedure CurLen(a,e:byte); assembler;
@@ -784,12 +787,13 @@ begin
   if forcecolor then exit;
 {$IFDEF NCRT }
   SetColorPair(attr);
-  TextAttr:= attr;
+  SetTextAttr(attr);
   lastattr:= attr;
-{$ENDIF }
+{$ELSE }
   textcolor(attr and $8f);
   textbackground((attr and $7f) shr 4);
   lastattr:=attr;
+{$ENDIF }
 end;
 
 
@@ -816,7 +820,7 @@ begin
   AttrTxt(HighAttr);
 end;
 
-
+{$IFNDEF NCRT }
 Procedure clrscr;
 {$ifndef ver32}
 var regs : registers;
@@ -826,12 +830,9 @@ begin
   regs.ax:=$500;      { Video-Seite 0 setzen }
   intr($10,regs);
   {$endif}
-  {$ifdef NCRT}
-  xpcurses.ClrScr;
-  {$else}
   crt.clrscr;
-  {$endif}
 end;
+{$ENDIF }
 
 (* schon in win definiert - falls gebraucht, unit winxp einbinden!
 Procedure Wrt(x,y:byte; s:string);
@@ -1862,6 +1863,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2000/05/06 15:57:03  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.32  2000/05/03 20:35:02  hd
   - disphard angepasst
 

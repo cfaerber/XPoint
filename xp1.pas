@@ -1240,6 +1240,16 @@ procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
 begin
+{$IFDEF NCRT }
+  screenlines:= GetScreenLines;
+  iosclines:=screenlines;
+  crline:=screenlines;
+  actscreenlines:=screenlines;
+  screenwidth:=GetScreenCols;
+  zpz:= GetScreenCols;
+  cursor(curoff);
+  window(1,1,screenwidth,screenlines);
+{$ELSE }
   if (videotype<2) or ParLCD then
     screenlines:=25
   else
@@ -1268,6 +1278,7 @@ begin
   screenwidth:=zpz;
   cursor(curoff);
   window(1,1,80,25);
+{$ENDIF }
   new(ma);
   splitmenu(ZeilenMenue,ma,n,true);
   for i:=1 to n do
@@ -1308,7 +1319,13 @@ begin
   xp_maus_aus;
   attrtxt(7);
   setscreensize(newmode);
+{$IFDEF NCRT }
+  { Seltsamerweise ist der Wert von Screenlines in der Prozedur
+  lines trotz der neuen Festsetzung 25 -> Workaround }
+  lines(GetScreenLines, 1);
+{$ELSE }
   lines(screenlines,1);
+{$ENDIF }
   clrscr;
 {$IFDEF BP }
   if (videotype>1) and not ParMono then
@@ -2355,6 +2372,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/05/06 15:57:04  hd
+  - Diverse Anpassungen fuer Linux
+  - DBLog schreibt jetzt auch in syslog
+  - Window-Funktion implementiert
+  - ScreenLines/ScreenWidth werden beim Start gesetzt
+  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
+  - Keine CAPI bei Linux
+
   Revision 1.36  2000/05/03 17:15:07  hd
   - Anpassung an UnixFS (_chdir)
 
