@@ -265,9 +265,9 @@ end;
 
 procedure SetLanguage;
 begin
-  if not exist('XPUU-'+language+'.RES') then
+  if not fileexists('XPUU-'+language+'.RES') then
     language:='E';
-  if not exist('XPUU-'+language+'.RES') then
+  if not fileexists('XPUU-'+language+'.RES') then
     StopError('XPUU-'+language+'.RES not found');
   OpenResource('XPUU-'+language+'.RES',40000);
   resopen:=true;
@@ -304,7 +304,7 @@ begin
   perr:=getres(100);
   if Boxname='' then rerror(101);     { 'Server name missing' }
   if Pointname='' then rerror(102);   { 'Point name missing'  }
-  if (Commandfile='') or not exist(CommandFile) then
+  if (Commandfile='') or not fileexists(CommandFile) then
     rerror(103); { 'UUCP Command file missing' }
   if comnr=0 then rerror(104);        { 'Port number missing' }
   if RightStr(FilePath,1)<>'\' then FilePath:=FilePath+'\';
@@ -1525,7 +1525,7 @@ begin
         end
       else
         fn:=XFerDir+fn[length(fn)-4]+'-'+RightStr(fn,4)+'.OUT';
-      if exist(fn) then begin
+      if fileexists(fn) then begin
         if not SizeN and (pos('""',s)>0) then
           s:=trim(LeftStr(s,pos('""',s)-1));
         WrLog('+','sending '+fn+' as '+sf);
@@ -1592,7 +1592,7 @@ begin
         logerror('invalid request destination file: '+fn);
         goto next;
         end;
-      while exist(FilePath+fn) do begin      { Neuen Dateinamen erzeugen }
+      while fileexists(FilePath+fn) do begin      { Neuen Dateinamen erzeugen }
         p:=cpos('.',fn);
         if p=0 then
           fn:=fn+'.001'
@@ -1935,7 +1935,7 @@ end;
 
 begin
   logo;
-  if exist(uucicores) then DeleteFile(uucicores);
+  if fileexists(uucicores) then DeleteFile(uucicores);
   InitVar;
   ReadConfig;
   SetLanguage;
@@ -1949,6 +1949,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/11/18 14:07:48  fe
+  Replaced exist() with fileexists().
+
   Revision 1.5  2000/11/14 11:14:31  mk
   - removed unit dos from fileio and others as far as possible
 
