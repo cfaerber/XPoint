@@ -26,7 +26,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF }
+{$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
@@ -2347,6 +2347,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/05/02 20:11:16  mk
+  - ncrt vergessen
+
   Revision 1.33  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 
