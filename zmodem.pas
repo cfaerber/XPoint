@@ -256,7 +256,6 @@ function Z_FromUnixDate(s: string): LONGINT;
 const tagsec = 24*60*60;
 var
   dt: TDateTime;
-  ts   : TTimeStamp;
   secs: Integer;
   year, month, day: Integer;
 begin
@@ -736,9 +735,7 @@ procedure Z_SendHexHeader(htype: BYTE; var hdr: hdrtype);
 
 var
   crc: smallword;
-  n,
-    i: integer16;
-
+  n: integer16;
 begin
   Z_SendByte(ZPAD);                     { '*' }
   Z_SendByte(ZPAD);                     { '*' }
@@ -792,8 +789,7 @@ function Z_GetZDL: integer16;
 (* Gets a byte and processes for ZMODEM escaping or CANcel sequence *)
 
 var
-  c,
-    d: integer16;
+  c: integer16;
 
 begin
   c := Z_qk_read;
@@ -1506,14 +1502,9 @@ function RZ_GetHeader: integer16;
 
 var
   returncode,
-    e,
-    p,
-    n,
-    i: integer16;
+    p: integer16;
 
   makefile: BOOLEAN;
-
-  multiplier: LONGINT;
 
   s,
     tname: string;
@@ -1669,8 +1660,6 @@ var
     n: integer16;
 
   rxbytes: LONGINT;
-
-  sptr: string;
 
   done: BOOLEAN;
 
@@ -1850,7 +1839,6 @@ end;
 function RZ_ReceiveBatch: integer16;
 
 var
-  s: string;
   c: integer16;
   done: BOOLEAN;
   pfrec: ^filerec;
@@ -2162,8 +2150,7 @@ function SZ_GetReceiverInfo: integer16;
 
 var
   n,
-    c,
-    rxflags: integer16;
+    c: integer16;
 
 begin
   for n := 1 to 10 do
@@ -2740,6 +2727,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2000/12/25 18:47:27  mk
+  - Variable GotUserBreak initalisieren
+
   Revision 1.11  2000/12/25 17:43:52  mk
   - fixed time calculation
 

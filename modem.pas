@@ -181,6 +181,7 @@ var
   CurrentPhonenumber: String;
 
 begin
+  GotUserBreak := false;
   DebugLog('Modem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
                    Strs(MaxDials)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWait),1);
   StateDialup:=SDInitialize; iDial:=0; DialUp:=False;
@@ -288,6 +289,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/12/25 18:47:27  mk
+  - Variable GotUserBreak initalisieren
+
   Revision 1.6  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

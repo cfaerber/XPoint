@@ -230,7 +230,7 @@ var y,m : word;
     h,min,s: word;
 begin
 {$ifndef Unix}
-  if secs<0 then exit;
+(*  if secs<0 then exit;
   y:=1970;
   while secs>=iif(schaltj(y),366,365)*tagsec do begin
     dec(secs,iif(schaltj(y),366,365)*tagsec);
@@ -245,7 +245,7 @@ begin
   secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
-  s:=secs;
+  s:=secs; *)
   {$ifdef FPC}
   {$hint under Unix we do not set up the time now. please do the dos/win-code }
   {$endif}
@@ -911,6 +911,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.5  2000/12/25 18:47:27  mk
+        - Variable GotUserBreak initalisieren
+
         Revision 1.4  2000/12/25 16:36:37  mk
         - modified EMSI Info
 
