@@ -7,6 +7,8 @@ Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
 %define version %version%
 %define release %release%
+%define compopts %compopts%
+
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
 # -CX for Releases only
@@ -49,7 +51,7 @@ OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networ
 #patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
 #patch < /home/leo/openxptools/xp4.pas.diff
 #ppc386 %{ppcopts} openxp
-ppc386 -B %{ppcopts} openxp
+ppc386 -B %{compopts} %{ppcopts} openxp
 ppc386 %{toolsppcopts} rc
 ppc386 %{toolsppcopts} ihs
 ./rc openxp-d.rq

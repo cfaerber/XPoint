@@ -6,11 +6,25 @@
   $MAINVER = "unkown";
   $SUBVER = "unkown";
   $BUILD = "unkown";
+  $RELEASE = "";
   
 
   open(InFile, "../xpglobal.pas");
   while (<InFile>) {
     if (/mainver.*=.*\'(.*)\.(.*)\'/ig ) { $MAINVER = $1; $SUBVER=$2 }  
+  }
+  close(InFile);
+
+  open(InFile, "../version.inc");
+  while (<InFile>) {
+    if (/buildver.*=.*\'(.*)\'/ig ) { $BUILD = $1;  }
+  }
+  close(InFile);
+
+
+  open(InFile, "../xpdefine.inc");
+  while (<InFile>) {
+    if (/\{\$DEFINE Snapshot\}/ig ) { $RELEASE = "1" }  
   }
   close(InFile);
 
@@ -27,7 +41,14 @@
   while (<InFile>) {
 
     if (s/\%version\%/$MAINVER\.$SUBVER/ig) {  }
-    if (s/\%release\%/$BUILD/ig) {  }
+    s/\%release\%/$BUILD/ig;
+    
+    if ($RELEASE eq "1") {
+      s/\%compopts\%/-CX -OG3p3r/ig; 
+    } else
+    {
+      s/\%compopts\%/-gl -OG3p3/ig; 
+    }
 
     print OutFile;
   }
@@ -38,6 +59,7 @@
 print "export OPENXP_MAINVER=$MAINVER\n";
 print "export OPENXP_SUBVER=$SUBVER\n";
 print "export OPENXP_BUILD=$BUILD\n";
+print "export OPENXP_RELEASE=$RELEASE\n";
 
 $VERZ = $ENV{'TEMP'};
 if (!$VERZ) { $VERZ = '/tmp' } 
