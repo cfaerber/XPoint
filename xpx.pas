@@ -121,11 +121,11 @@ var t : text;
     s : string;
 begin
   filemode:=0;
-  assign(t,'xp.res');
+  assign(t,OwnPath+'openxp.rsp');
   reset(t);
   readln(t,s);
   close(t);
-  _deutsch:=(ioresult=0) and (UpperCase(s)='OPENXP-D.RES');
+  _deutsch:=(ioresult=0) and (UpperCase(RightStr(s,6))='-D.RES');
   filemode:=2;
 end;
 
@@ -175,6 +175,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2003/03/16 19:02:06  cl
+  - initial support for langage files in encodings different from CP437
+
   Revision 1.52  2002/12/12 11:58:53  dodi
   - set $WRITEABLECONT OFF
 

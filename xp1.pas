@@ -1911,7 +1911,7 @@ var
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
-    if UTF8 then SetLogicalOutputCharset(csCP437);
+    if UTF8 then SetLogicalOutputCharset(csInternal);
     close(t);
     exthdlines:=0;
     lfirst:=min(lfirst,screenlines-5);
@@ -3295,6 +3295,9 @@ end;
 
 {
   $Log$
+  Revision 1.179  2003/03/16 19:02:06  cl
+  - initial support for langage files in encodings different from CP437
+
   Revision 1.178  2003/02/13 14:41:57  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister

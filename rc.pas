@@ -104,13 +104,22 @@ end;
 
 
 procedure ReadHeader;
-var header : array[0..127] of byte;
+var header : array[0..255] of byte;
     ofs    : integer;
     s      : string;
 begin
   fillchar(header,sizeof(header),0);
-  header[0]:=13; header[1]:=10;
-  ofs:=2;
+  header[0] := $AD;
+  header[1] := Ord('X');
+  header[2] := Ord('P');
+  header[3] := Ord('-');
+  header[4] := Ord('R');
+  header[5] := Ord('e');
+  header[6] := Ord('s');
+  header[7] := 13;
+  header[8] := 10;
+  
+  ofs:=9;
   repeat
     inc(line);
     readln(t,s);
@@ -120,10 +129,19 @@ begin
         Move(s[1],header[ofs],length(s));
         inc(ofs,length(s));
         end;
-      end;
+      end else
+    if LeftStr(s,1)='L' then begin
+      s:=LeftStr(Trim(mid(s,2)),15)+#0;
+      Move(s[1],header[$D0],length(s));
+    end else
+    if LeftStr(s,1)='N' then begin
+      s:=LeftStr(Trim(mid(s,2)),31)+#0;
+      Move(s[1],header[$E0],length(s));
+    end;      
   until trim(s)='';
   header[ofs]:=26;
-  blockwrite(f,header,128);
+  blockwrite(f,header,256);
+
   seek(f,256);
 end;
 
@@ -345,11 +363,12 @@ begin
   seek(f,128);
   fillchar(d,sizeof(d),0);
   d[1]:=blocks;
-  blockwrite(f,d,16);
+  blockwrite(f,d,2);
+  seek(f,128+16);
   blockwrite(f,block,64);
   d[1]:=0;
-  for i:=1 to 3 do
-    blockwrite(f,d,16);
+//for i:=1 to 3 do
+//  blockwrite(f,d,16);
   close(f);
   close(t);
   writeln('ok.');
@@ -384,6 +403,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.26  2003/03/16 19:02:06  cl
+        - initial support for langage files in encodings different from CP437
+
         Revision 1.25  2002/08/31 22:50:36  cl
         - added support for C-like \nnn escapes.
 

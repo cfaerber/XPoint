@@ -1,9 +1,18 @@
-K CrossPoint v3.70 resource file
-K Deutsch
-K (c) '93-98 Peter Mandrella
-K (c) '2000 OpenXP-Team, www.openxp.de
+K OpenXP/32 Ressource File
+K (c) 1993-1990 Peter Mandrella
+K (c) 2000-2003 OpenXP-Team, www.openxp.de
+L de_DE
+N Deutsch
 
 # $Id$
+
+# Locale Information
++ 1 
+1 OPENXP-D.HLP
+2 de_DE
+3 Deutsch
+4 IBM437
+-
 
 # Online-Hilfe, Tastenmakros
 1 OPENXP-D.HLP
@@ -4093,6 +4102,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.70  2003/03/16 19:02:05  cl
+# - initial support for langage files in encodings different from CP437
+#
 # Revision 1.69  2003/01/28 10:42:25  cl
 # - Added statistical SPAM filter
 #

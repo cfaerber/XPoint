@@ -278,7 +278,7 @@ procedure TLister.SetCP437;
 begin
   if not UTF8Mode then exit;
   if not FIsUTF8 then exit;
-  SetLogicalOutputCharset(csCP437);
+  SetLogicalOutputCharset(csInternal);
   FIsUTF8 := false;
 end;
 
@@ -743,7 +743,7 @@ begin // Show
     OldTCS := GetConsoleOutputCharset;
     OldLCS := GetLogicalOutputCharset;
     SetConsoleOutputCharset(csUTF8);
-    SetLogicalOutputCharset(csCP437);
+    SetLogicalOutputCharset(csInternal);
   end;
   
   if startpos > DispLines then
@@ -1097,6 +1097,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.79  2003/03/16 19:02:05  cl
+  - initial support for langage files in encodings different from CP437
+
   Revision 1.78  2003/02/13 14:41:57  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister

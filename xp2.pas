@@ -661,6 +661,10 @@ begin
     getkey(k4_H);  getkey(k4_F);
     freeres;
     end;
+
+  WinXP.csInternal := MimeGetCharsetFromName(GetRes2(1,4));    
+  SetLogicalOutputCharset(WinXP.csInternal);
+  SetConsoleOutputCharset(WinXP.csInternal);
 end;
 
 procedure FreeResdata;
@@ -2788,6 +2792,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.156  2003/03/16 19:02:06  cl
+  - initial support for langage files in encodings different from CP437
+
   Revision 1.155  2003/01/18 00:46:28  cl
   - autoconf update
 

@@ -47,6 +47,8 @@ const
       maxpush = 20;
 
 var   shadowcol: byte = 8;
+      csInternal: TMimeCharsets = csCP437;
+      csSystem: TMimeCharsets = csCP437;
 
 {$IFNDEF NCRT}
 const
@@ -1242,9 +1244,10 @@ begin
 
   NewCP := GetCPfromCharset(NewCharset);
   IsUnicode := (NewCP = 65000) or (NewCP = 65001) or (NewCP = 1200);
-  if not IsUnicode then NewCP := GetOEMCP;
+  if IsUnicode then NewCP := GetOEMCP;
   SetConsoleOutputCP(NewCP);
   TrueOutputCP := GetConsoleOutputCP;
+  if TrueOutputCP <> NewCP then IsUnicode := true;  
   convertersOK := false;
 {$ENDIF }
 end;
@@ -1527,6 +1530,9 @@ end;
 
 {
   $Log$
+  Revision 1.95  2003/03/16 19:02:06  cl
+  - initial support for langage files in encodings different from CP437
+
   Revision 1.94  2003/01/07 09:21:54  mk
   - fixed Kylix compilation problem (TextAttr is Byte)
 
