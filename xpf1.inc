@@ -152,6 +152,7 @@ again:
     //alle netze einer Zone
     blockread(nodef,bp^,banz*sizeof(netrec));   // bp netrecL   {net,zone,ant, dateiNo(fnr), flag (1=Pointliste), adr, sortl }
     l:=$10000*fa.zone+fa.net;
+    {$R-}
     netp:=1;
     while (netp<=banz) and (bp^[netp].sortl<l) do
       inc(netp);
@@ -170,6 +171,9 @@ again:
         i:=0;
         while (i<nanz) and (np^[i].node<fa.node) do      //np bis zur Node# abklappern
           inc(i);                                        //enth„lz nun den passenden Satz
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
           _adr:=np^[i].adr                               //adresse zur Node#'12478'
         else
@@ -219,7 +223,7 @@ end;
 procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
 type ubufa  = array[0..blocksize-1] of byte;
 var  f     : file;
-     name  : string[MaxNameLen];
+     name  : string;
      vname : string;
      s     : string;
      p,x,y : Integer;
@@ -249,14 +253,13 @@ label ende;
     with user do begin
       name[0]:=chr(getbyte);    { n Zeichen bernehmen }
       flags:=getbyte;
-      b:=getbyte;  
+      b:=getbyte;
       not0:=(b and $40)=0;
       adr3:=(b and $80)<>0;
       b:=b and $3f;
       if b>0 then begin            { restlichen Namen kopieren }
         if b+length(name)>MaxNameLen then begin
           rfehler(2120);   { 'Fehler im Nodelisten-Userindex' }
-          writeln(length(name), name);
           b:=MaxNameLen-length(name);
           end;
         Move(buf^[bufp],name[length(name)+1],b);
@@ -319,7 +322,7 @@ begin
     end;
   name:=trim(name);
   if name='' then exit;
-  Name := UpperCase(name);
+  UpString(name);
   assign(f,UserIndexF);
   reset(f,1);
   new(buf);
@@ -896,8 +899,8 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
-  Revision 1.40.2.1  2002/06/10 08:07:24  mk
-  - improved memory preallocation for outstream (see last fix)
+  Revision 1.40.2.2  2002/06/10 08:10:42  mk
+  - removed last checkin, this was only internal debug code, not meant to be included
 
   Revision 1.40  2001/11/18 12:31:22  mk
   - fixed some file case problems with fido file lists
