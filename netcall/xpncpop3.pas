@@ -194,77 +194,83 @@ begin
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
   { Host und ... }
   POP:= TPOP3.CreateWithHost(bp^.pop3_ip);
-  Pop.UseAPOP := BoxPar^.Pop3_APOP;
-  Pop.OnlyNew := BoxPar^.Pop3_Onlynew;
-  { POWindow erstellen }
-  POP.ProgressOutput:= POWindow;
-  { ggf. Zugangsdaten uebernehmen }
-  if (bp^.pop3_id<>'') and (bp^.pop3_pwd<>'') then begin
-    POP.User:= bp^.pop3_id;
-    POP.Password:= bp^.pop3_pwd;
-  end;
-  POP.Port := Bp^.POP3_Port;
-
-  { Get last retrieved UIDLs from file }
-  UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
-  if FileExists(UIDLFileName)then
-    POP.UIDLs.LoadFromFile(UIDLFileName);
-
-  { Verbinden }
   try
-    List := TStringList.Create;
-    POP.Connect;
-    POP.Stat;
-
-    POWindow.WriteFmt(mcInfo, res_mailstat,
-                      [POP.MailCount, POP.NewMailCount, POP.MailSize]);
-
-    FirstMail := 1; LastMail := POP.MailCount;
-    if POP.OnlyNew then begin
-      FirstMail := POP.LastRead + 1;
-      LastMail := POP.NewMailCount + FirstMail - 1;
-      end;
-
-    for i := FirstMail to LastMail do
-    begin
-      POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
-      POP.Retr(i, List);
-      if BoxPar^.Pop3_Clear then POP.Dele(I);
-      // UUZ muá erweitert werden,wenn das funktionieren soll
-      // if List.Count > 10000 then
-      SaveMail;
+    Pop.UseAPOP := BoxPar^.Pop3_APOP;
+    Pop.OnlyNew := BoxPar^.Pop3_Onlynew;
+    { POWindow erstellen }
+    POP.ProgressOutput:= POWindow;
+    { ggf. Zugangsdaten uebernehmen }
+    if (bp^.pop3_id<>'') and (bp^.pop3_pwd<>'') then begin
+      POP.User:= bp^.pop3_id;
+      POP.Password:= bp^.pop3_pwd;
     end;
-//    SaveMail;
-  except
-    on E: EPOP3 do begin
-      POWindow.WriteFmt(mcError, E.Message, [0]);
-      result:= false;
-      end;
-    on E: EUserBreakError do begin
-      POWindow.WriteFmt(mcError, res_userbreak, [0]);
-      result:= false;
-      end;
-    on E: ESocketNetcall do begin
-      POWindow.WriteFmt(mcError, res_noconnect, [0]);
-      result:= false;
-      end;
-    on E: Exception do begin
-      POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
-      result:= false;
-      {$IFDEF DEBUG } 
-        // crash in Debug-Versions to give line information
-        raise; 
-      {$ENDIF }        
-      end; 
-  end;
-  POP.Disconnect;
+    POP.Port := Bp^.POP3_Port;
 
-  if POP.UIDLs.Count>0 then
-    POP.UIDLs.SaveToFile(UIDLFileName)
-  else
-    DeleteFile(UIDLFileName);
-  List.Free;
-  POP.Free;
+    { Get last retrieved UIDLs from file }
+    UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
+    if FileExists(UIDLFileName)then
+      POP.UIDLs.LoadFromFile(UIDLFileName);
+
+    { Verbinden }
+    try
+      List := TStringList.Create;
+      try
+        pop.connect;
+        pop.stat;
+
+        powindow.writefmt(mcinfo, res_mailstat,
+                          [pop.mailcount, pop.newmailcount, pop.mailsize]);
+
+        firstmail := 1; lastmail := pop.mailcount;
+        if pop.onlynew then begin
+          firstmail := pop.lastread + 1;
+          lastmail := pop.newmailcount + firstmail - 1;
+          end;
+
+        for i := firstmail to lastmail do
+        begin
+          powindow.writefmt(mcverbose,res_getmail,[i]);
+          pop.retr(i, list);
+          if boxpar^.pop3_clear then pop.dele(i);
+          // uuz muá erweitert werden,wenn das funktionieren soll
+          // if list.count > 10000 then
+          savemail;
+        end;
+  //    SaveMail;
+      finally
+        List.Free;
+      end;
+    except
+      on E: EPOP3 do begin
+        POWindow.WriteFmt(mcError, E.Message, [0]);
+        result:= false;
+        end;
+      on E: EUserBreakError do begin
+        POWindow.WriteFmt(mcError, res_userbreak, [0]);
+        result:= false;
+        end;
+      on E: ESocketNetcall do begin
+        POWindow.WriteFmt(mcError, res_noconnect, [0]);
+        result:= false;
+        end;
+      on E: Exception do begin
+        POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
+        result:= false;
+        {$IFDEF DEBUG } 
+          // crash in Debug-Versions to give line information
+          raise; 
+        {$ENDIF }        
+        end; 
+    end;
+    POP.Disconnect;
+
+    if POP.UIDLs.Count>0 then
+      POP.UIDLs.SaveToFile(UIDLFileName)
+    else
+      DeleteFile(UIDLFileName);
+  finally
+    POP.Free;
+  end;
   ProcessIncomingFiles(IncomingFiles);
 
   if BoxPar^.POP3_ForceOneArea then begin
@@ -280,6 +286,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.5  2003/04/25 17:31:57  mk
+  - changed order of try finally blocks a little bit
+
   Revision 1.32.2.4  2003/04/03 13:33:46  mk
   - POP3 and SMTP-Port is now configurable in *.bfg
 
