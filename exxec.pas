@@ -84,12 +84,12 @@ begin
     dpath:=getenv('comspec');
   end;
   Debug.TempCloseLog(False);
-{$IFNDEF Unix }
+{$IFDEF DOS32 }
   SwapVectors;
   DosError :=0;
 {$ENDIF }
-  SysExec(dpath, para);
-{$IFNDEF Unix }
+  Result := SysExec(dpath, para);
+{$IFDEF DOS32 }
   TempError:=DosError; if TempError=0 then Result:=DosExitCode else Result:=-TempError;
   SwapVectors;
   DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
@@ -101,6 +101,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/11/22 18:57:12  mk
+  - compile fixes for non win32/linux-systems
+
   Revision 1.34  2000/11/19 17:51:32  ma
   - Bugfix, error level is now returned properly in Win32
     again.
