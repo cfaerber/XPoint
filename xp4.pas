@@ -1078,7 +1078,22 @@ var t,lastt: taste;
   end;
 
   procedure _brief_senden(c:char);
+  var hdp : headerp;
+      hds : longint;
   begin
+    if (left(dispspec,1)='1') then
+    begin                           { Bei PM-Brett und Msg ohne Replyto }
+      new(hdp);                     { automatisch "P" statt "B" benutzen }
+      ReadHeader(hdp^,hds,false);
+      if (hdp^.amreplyto='') or ((hdp^.empfanz=1) and
+        (hdp^.empfaenger=hdp^.amreplyto)) then
+      begin
+        if c=k2_b  then c:=k2_p;
+        if c=k2_cb then c:=k2_cp;
+        if c=k2_SB then c:=k2_SP;
+        end;
+      dispose(hdp);
+      end;
     if c=k2_b  then brief_senden(true,false,false,0) else
     if c=k2_cb then brief_senden(true,false,false,1) else
     if c=k2_SB then brief_senden(true,false,false,2) else
@@ -2063,6 +2078,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.7  2000/08/25 19:21:57  jg
+  - In PM-Brettern ist "P" Gleichwertig zu "B"
+    Falls die Beantwortete Nachricht keinen Reply-To Header enthaelt.
+
   Revision 1.26.2.6  2000/08/12 17:12:34  jg
   - Ungelesen-Workarround Setbrettgelesen funktioniert jetzt auch
     Wenn Msgbase keine Nachricht mehr fuer dieses mehr Brett enthaelt.
