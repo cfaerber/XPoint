@@ -151,10 +151,10 @@ xp4o2.pas
 xp4o3.pas
 xp4w.inc
 xp5.pas
-xp6.pas
-xp6l.pas
-xp6o.pas
-xp6s.inc
+xp6.pas		xpsendmessage.pas
+xp6l.pas	xpsendmessage_internal.pas
+xp6o.pas	xpsendmessage_unsent.pas
+xp6s.inc	xpsendmessage_subs.inc
 xp8.inc
 xp8.pas
 xp8fs.inc
@@ -224,6 +224,9 @@ xpncfido.pas................ Fido netcall unit
 Please delete logs in a way no more than a few logs are visible here.
 
 $Log$
+Revision 1.3  2001/09/08 14:15:09  cl
+- xp6*.* => xpsendmessage*.*
+
 Revision 1.2  2001/01/04 16:08:29  ma
 xpncfido, xpncuucp, xpnetcall, xpmodemscripts, xpterminal,
 xpncnntp, xpncpop3
