@@ -376,6 +376,7 @@ begin
     while s <> '.' do
     begin
       SReadln(s);
+      // !!todo: strip "."
       if s <> '.' then List.Add(s);
     end;
   end else
@@ -428,7 +429,7 @@ begin
   Result := false;
   if Connected then
   begin
-    SWriteln('RESET');
+    SWriteln('RSET');
     SReadln(s);
     if ParseError(s) then
       exit;
@@ -438,6 +439,9 @@ end;
 
 {
   $Log$
+  Revision 1.18.2.4  2004/07/26 17:21:36  mk
+  - fixed RSET command (not used until now)
+
   Revision 1.18.2.3  2003/08/27 16:22:04  mk
   - show disconnect message only once
 
