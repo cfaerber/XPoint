@@ -64,7 +64,7 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
 
 implementation
 
-uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;                 {JG:24.01.00}
+uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
 
 var mo,bo,uo : boolean;
     mp,bp,up : longint;
@@ -860,13 +860,15 @@ end;
 {$IFNDEF Delphi5}
 procedure XPWinShell(prog:string; space:word; cls:shortint);
 
-  procedure PrepareExe;    { Stack sparen }
+  function PrepareExe:boolean;    { Stack sparen }
+  { gibt true zurÅck, wenn das zu startende Programm KEIN OS/2 Programm ist }
   var ext     : string[3];
       exepath : pathstr;
       et      : TExeType;
       win,os2 : boolean;
       t       : text;
   begin
+    PrepareExe:=true;
     exepath:=left(prog,blankposx(prog)-1);
     ext:=GetFileExt(exepath);
     if ext='' then exepath:=exepath+'.exe';
@@ -892,12 +894,14 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
         writeln(t,'cmd /c "start /wait %1 %2 %3 %4 %5 %6"');
         writeln(t,'echo.');
         close(t);
-        end;
+      end;
       prog:='winrun.bat '+prog;
-      end
+    end
     else if os2 then begin
-      if not exist('os2run.bat') then begin
-        assign(t,'os2run.bat');
+      if not exist('postsem.exe') then write(#7)
+      else if exetype('postsem.exe')<>ET_OS2_32 then write(#7)
+      else begin
+        assign(t,'os2run.cmd');
         rewrite(t);
         writeln(t,'@echo off');
         writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von OS/2-Viewern');
@@ -905,23 +909,31 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
         writeln(t);
         writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
         writeln(t,'echo.');
-        writeln(t,'cmd /c %1 %2 %3 %4 %5 %6');
+        writeln(t,prog);
+        writeln(t,ownpath,'postsem.exe XPOS2SEM32');
         writeln(t,'echo.');
         close(t);
-        end;
-      prog:='os2run.bat '+prog;
+        PrepareExe:=false;
       end;
+    end;  
   end;
 
 begin
-  PrepareExe;
-  shell(prog,space,cls);
+  if PrepareExe
+  then shell(prog,space,cls)
+  else begin
+    Start_OS2(ownpath+'os2run.cmd','','XP-View OS/2');
+    OS2_WaitForEnd('\SEM32\XPOS2SEM32');
+  end;  
 end;
 {$ENDIF}
 
 end.
 {
   $Log$
+  Revision 1.12  2000/02/24 23:50:11  rb
+  Aufruf externer Viewer bei OS/2 einigermassen sauber implementiert
+
   Revision 1.11  2000/02/23 23:49:47  rb
   'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
 

@@ -58,6 +58,35 @@ type mprec     = record
                  end;
      ahidden   = array[1..maxhidden] of integer;
 
+Type TStartData = record
+		    Length:        Word; { Must be 0x18,0x1E,0x20,0x32, or 0x3C }
+		    Related:       Word; { 00 independent, 01 child }
+		    FgBg:          Word; { 00 foreground, 01 background }
+		    TraceOpt:      Word; { 00-02, 00 = no trace }
+		    PgmTitle:      PChar; { max 62 chars or 0000:0000 }
+		    PgmName:       PChar; { max 128 chars or 0000:0000 }
+		    PgmInputs:     PChar; { max 144 chars or 0000:0000 }
+		    TermQ:         PChar; { reserved, must be 00000000 }
+		    Environment:   PChar; { max 486 bytes or 0000:0000 }
+		    InheritOpt:    Word;  { 00 or 01 }
+		    SessionType:   Word;  { 00 OS/2 session manager determines type (default)
+					    01 OS/2 full-screen
+					    02 OS/2 window
+					    03 PM
+					    04 VDM full-screen
+					    07 VDM window }
+		    IconFile:      PChar; { max 128 chars or 0000:0000 }
+		    PgmHandle:     LongInt; { reserved, must be 00000000 }
+		    PgmControl:    Word;
+		    InitXPos:      Word;
+		    InitYPos:      Word;
+		    InitXSize:     Word;
+		    InitYSize:     Word;
+		    Reserved:      Word; { 0x00 }
+		    ObjectBuffer:  PChar; { reserved, must be 00000000 }
+		    ObjectBuffLen: LongInt; { reserved, must be 00000000 }
+  End;
+
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -148,6 +177,10 @@ procedure interr(txt:string);
 function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
+
+Procedure Start_OS2(Programm,Parameter,Title:String);
+Procedure OS2_WaitForEnd(_Semaphore:String);
+
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(fn:pathstr);
@@ -230,7 +263,7 @@ uses
 {$IFDEF BP }
   xpfonts,
 {$ENDIF }
-  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt;
+  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -1572,6 +1605,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/24 23:50:11  rb
+  Aufruf externer Viewer bei OS/2 einigermassen sauber implementiert
+
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
