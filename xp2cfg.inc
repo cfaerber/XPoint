@@ -8,6 +8,8 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
+{$r-}
+
 const cfs : array[0..3] of string = ('Z','Shift','Ctrl','Alt');
 
 procedure defaultcolors;
@@ -376,8 +378,10 @@ begin
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
   new(boxpar);
-  for i:=0 to 3 do
-    new(fkeys[i]);
+  new(fkeys[0]);
+  new(fkeys[1]);
+  new(fkeys[2]);
+  new(fkeys[3]);
   aktdispmode:=0;
   kombaum:=nil;
 
@@ -1634,7 +1638,7 @@ begin
     viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
-      if mheadercustom[i][length(mheadercustom[i])]=':' then
+      if (length(mheadercustom[i])>0) and (mheadercustom[i][length(mheadercustom[i])]=':') then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
     MsgFeldTausch:=UpperCase(MsgFeldTausch);
@@ -1775,7 +1779,7 @@ begin
 
   readmenudat;
   setmenus;
-  checker[11]:=(pos(strs(screenlines),menu[11]^)-5) div 6;
+  checker[11]:=(pos(strs(screenlines),menu[11])-5) div 6;
   SetExtraktMenu;
   setaltfkeys;
   masksetmausarrows(true);
@@ -1783,6 +1787,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.71  2000/07/07 11:00:32  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.70  2000/07/06 08:58:45  hd
   - AnsiString
 

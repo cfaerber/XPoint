@@ -710,8 +710,7 @@ var ma     : map;
 
 begin
   ms:=GetRes2(201,nr);
-  getmem(menu[25],length(ms)+3);
-  menu[25]^:='X,'+ms;
+  menu[25]:='X,'+ms;
   new(ma);
   splitmenu(25,ma,n,false);
   ml:=0;
@@ -741,7 +740,6 @@ begin
   until (t=keycr) or (t=keyesc);
   menup[nr]:=p;
   dispose(ma);
-  freemem(menu[25],length(ms)+3);
   if t=keyesc then readmenu:=0
   else readmenu:=p;
 end;
@@ -1138,6 +1136,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/07 11:00:33  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.17  2000/07/06 08:58:45  hd
   - AnsiString
 

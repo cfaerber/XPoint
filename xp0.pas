@@ -1132,7 +1132,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        IntGruppe,LocGruppe,NetzGruppe : longint;   { INT_NRs der Std.-Gruppen }
 
-       menu         : array[0..menus] of ^string;
+       menu         : array[0..menus] of string;
 {$ifdef hasHugeString}
        SwapFileName : string;
        helpfile     : string;     { XP.HLP     }
@@ -1570,6 +1570,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.67  2000/07/07 11:00:31  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.66  2000/07/06 09:23:07  mk
   - _days_ in String umgewandelt
 

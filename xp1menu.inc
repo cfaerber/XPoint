@@ -47,7 +47,7 @@ procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 var s       : string;
     p,p2,p3 : byte;
 begin
-  s:=menu[nr]^;
+  s:=menu[nr];
   n:=0;
   repeat
     p:=pos(',',s);
@@ -188,8 +188,8 @@ procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
   LoString(mnu);
-  while LowerCase(left(menu[n]^,length(mnu)))<>mnu do inc(n);
-  p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]^))+1;
+  while LowerCase(left(menu[n],length(mnu)))<>mnu do inc(n);
+  p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]))+1;
 end;
 
 
@@ -215,10 +215,10 @@ procedure setmenup(mnu:string; nr:byte; anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
-  p2:=pos(',',copy(menu[n]^,p,255));
-  if p2=0 then p2:=length(menu[n]^)+1
+  p2:=pos(',',copy(menu[n],p,255));
+  if p2=0 then p2:=length(menu[n])+1
   else inc(p2,p+1);
-  menu[n]^:=left(menu[n]^,p-1)+anew+copy(menu[n]^,p2,255);
+  menu[n]:=left(menu[n],p-1)+anew+copy(menu[n],p2,255);
 end;
 
 
@@ -600,6 +600,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/07/07 11:00:32  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.15  2000/07/06 08:58:44  hd
   - AnsiString
 

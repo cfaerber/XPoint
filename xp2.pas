@@ -82,8 +82,7 @@ var   zaehlx,zaehly : byte;
 
 procedure setmenu(nr:byte; s:string);
 begin
-  getmem(menu[nr],length(s)+1);
-  menu[nr]^:=s;
+  menu[nr]:=s;
 end;
 
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
@@ -91,7 +90,6 @@ var s    : string;
     i,ml : byte;
     n    : byte;
 begin
-  freemem(menu[2],length(menu[2]^)+1);
   s:=''; ml:=14;
   n:=0;
   for i:=1 to 10 do
@@ -103,8 +101,7 @@ begin
         end;
   if s<>'' then s:=',-'+s;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
-  getmem(menu[2],length(s)+1);
-  menu[2]^:=s;
+  menu[2]:=s;
 end;
 
 
@@ -119,10 +116,7 @@ end;
 
 
 procedure freemenus;
-var i : integer;
 begin
-  for i:=0 to menus do
-    freemem(menu[i],length(menu[i]^)+1);
 end;
 
 
@@ -1074,6 +1068,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/07/07 11:00:32  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.53  2000/07/06 09:23:08  mk
   - _days_ in String umgewandelt
 

@@ -138,12 +138,21 @@ begin
 end;
 
 function JumpKey(start: PCfgEntry; k: string): PCfgEntry;
+  function EndSection(s: PCfgEntry): boolean;
+  begin
+    if s=nil then
+      EndSection:= true
+    else if (length(s^.key)>0) and (s^.key[1]='[') then
+      EndSection:= true
+    else
+      EndSection:= false;
+  end;
 var
   s: string;
 begin
   UpString(k);
   start:= start^.next;                          { Da nach JumpSektion angesprungen... }
-  while (start<>nil) and (start^.key[1]<>'[') do begin
+  while not EndSection(start) do begin
     s:= start^.key;
     UpString(s);
     if (s=k) then begin                         { Gefunden }
@@ -369,7 +378,7 @@ function AddKeyInSection(start: PCfgEntry): PCfgEntry;
 var
   last: PCfgEntry;
 begin
-  while (start^.next<>nil) and (start^.key<>'[') do begin
+  while (start^.next<>nil) and (length(start^.key)>0) and (start^.key<>'[') do begin
     last:= start;
     start:= start^.next;
   end;
@@ -481,6 +490,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/07/07 11:00:33  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.4  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

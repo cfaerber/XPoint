@@ -1031,11 +1031,11 @@ begin
   cursor(curoff);
   window(1,1,80,25);
 {$ENDIF }
-  new(ma);
+  getmem(ma,sizeof(map));
   splitmenu(ZeilenMenue,ma,n,true);
   for i:=1 to n do
     if screenlines=ival(ma^[i].mstr) then menupos[ZeilenMenue]:=i;
-  dispose(ma);
+  freemem(ma,sizeof(map));
   set_helppos;
 end;
 
@@ -2023,6 +2023,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/07/07 11:00:32  hd
+  - AnsiString
+  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
+
   Revision 1.57  2000/07/06 09:23:07  mk
   - _days_ in String umgewandelt
 
