@@ -102,6 +102,10 @@ procedure dbRestartHU(dbp:DB);
 function  dbReadUserflag(dbp:DB; nr:byte):word;          { nr=1..8 }
 procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 
+{ NEue Funktionen wg. AnsiString }
+
+function dbReadNStr(dbp:DB; feldnr: integer): string;
+
 {--------------------------------------------- interne Routinen --------}
 
 procedure OpenIndex(dbp:DB);   { intern }
@@ -1182,6 +1186,12 @@ begin
   dbReadN(dbp,nr,data);
 end;
 
+function dbReadNStr(dbp:DB; feldnr: integer): string;
+var s: shortstring;
+begin
+  dbReadN(dbp,feldnr, s);
+  dbReadNStr:= s;
+end;
 
 function dbReadStr(dbp:DB; feld:dbFeldStr):string;
 var s: shortstring;
@@ -1189,6 +1199,7 @@ begin
   dbRead(dbp,feld,s);
   dbReadStr:=s;
 end;
+
 
 function dbReadInt(dbp:DB; feld:dbFeldStr):longint;
 var l : longint;
@@ -1530,6 +1541,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.30  2000/07/09 14:52:41  hd
+  - neu: dbReadNStr
+
   Revision 1.29  2000/07/09 09:09:53  mk
   - Newexit in Initialization/Finalization umgewandelt
 
