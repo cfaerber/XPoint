@@ -154,7 +154,7 @@ function SendNNTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean
   begin
     MakeMimetypCfg;
     with boxpar^ do begin
-//      uu := TUUZ.Create;
+      uu := TUUZ.Create;
       if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
@@ -180,6 +180,7 @@ var
   i             : integer;              { -----"------- }
   List          : TStringList;
   aFile         : string;
+  RFCFileDummy : String;
 begin
   ZtoRFC(bp,PPFile,RFCFile);
   { ProgressOutput erstellen }
@@ -209,13 +210,15 @@ begin
   try
     result:= true;
     List := TStringList.Create;
+    List.LoadFromFile(RFCFile + 'D-0001.OUT');
     NNTP.Connect;
+
     { Name und IP anzeigen }
     MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
     MWrt(x+15,y+8,FormS(NNTP.Server,50));
     MWrt(x+15,y+2,'Mails senden');
 
-//** send mails
+    NNTP.PostPlainRFCMessages(List);
 
     NNTP.Disconnect;
   except
@@ -227,7 +230,12 @@ begin
   if result then begin
     ClearUnversandt(PPFile,BoxFile);
     if FileExists(PPFile)then _era(PPFile);
-    if FileExists(RFCFile)then _era(RFCFile);
+    RFCFileDummy := RFCFile + 'C-0000.OUT';
+    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    RFCFileDummy := RFCFile + 'D-0001.OUT';
+    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    RFCFileDummy := RFCFile + 'X-0002.OUT';
+    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
     end;
   closebox;
 end;
@@ -371,6 +379,9 @@ end.
 
 {
         $Log$
+        Revision 1.7  2001/04/06 21:06:38  ml
+        - nntpsend now working
+
         Revision 1.6  2001/04/06 12:54:01  mk
         - fixed unix filename handling with .bl/.rc
 

@@ -101,6 +101,7 @@ type
 
     { Message vom server holen }
     function PostMessage(Message: TStringList): Integer; virtual;
+    function PostPlainRFCMessages(Message: TStringList): Integer;
 
     { next 3 only available after selecting Group }
     { first Message of this group hold by server }
@@ -500,9 +501,52 @@ begin
   end;
 end;
 
+function TNNTP.PostPlainRFCMessages(Message: TStringList): Integer;
+var
+  Error, I: Integer;
+  s: String;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    Output(mcInfo,res_post1, [0]);
+    SWriteln('POST');
+    SReadln(s);
+    Error := ParseResult(s);
+    I := 1;
+    while Error = nntp_PostPleaseSend do
+    begin
+      repeat
+        SWriteln(Message[I]);
+        Inc(I);
+      until (I >= Message.Count) or (Pos('#! rnews', Message[I]) = 1);
+      SWriteln(nntpMsg_EndSign);
+      SReadln(s);
+      Error := ParseResult(s);
+      if (Error = nntp_PostArticlePosted) and (I < Message.Count) then
+      begin
+        SWriteln('POST');
+        SReadln(s);
+        Error := ParseResult(s);
+        Inc(I);
+      end;
+    end;
+
+    if Error = nntp_PostArticlePosted then
+       Result := 0
+    else
+       Result := Error;
+
+    Output(mcInfo,res_post2, [0]);
+  end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.18  2001/04/06 21:06:38  ml
+  - nntpsend now working
+
   Revision 1.17  2001/04/05 13:25:47  ml
   - NNTP is working now!
 

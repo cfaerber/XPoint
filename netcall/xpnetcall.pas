@@ -974,7 +974,7 @@ begin                  { function Netcall }
         ltNNTP: begin
           Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
           GetNNTPMails(BoxName,Boxpar,IncomingFiles);
-//          SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
+          SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
         end;
 
         else
@@ -1202,6 +1202,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/04/06 21:06:39  ml
+  - nntpsend now working
+
   Revision 1.12  2001/04/06 12:54:01  mk
   - fixed unix filename handling with .bl/.rc
 
