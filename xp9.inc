@@ -528,9 +528,9 @@
             maddint(3,11,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergr”áe  ' }
             maddint(3,12,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigr”áe   ' }
               mhnr(8025);
-            maddtext(35,12,'KB',0);
+            maddtext(37,12,'KB',0);
 
-            maddstring(3,13,getres2(920,64),TempSmtp,9,9,'');
+            maddstring(3,13,getres2(920,64),TempSmtp,11,11,'');
             mappsel(true,getres2(920,65)); mhnr(8017);
 
             Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
@@ -1402,6 +1402,9 @@
 
 {
   $Log$
+  Revision 1.10.2.22  2001/04/23 06:38:47  mk
+  - E/B/E/P Maske vergroessert
+
   Revision 1.10.2.21  2001/04/20 17:28:50  mk
   - misc updates
 

@@ -1872,9 +1872,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 27   GNU-ZIP-Entpacker~
 28   ZModem-Optionen  ~
 # UUCP
-30   max. UUCP-g-Paketgr”áe ~
-31   max. UUCP-g-Fenstergr”áe  ~
-62   maximale Dateigr”áe    ~
+30   max. UUCP-g-Paketgr”áe   ~
+31   max. UUCP-g-Fenstergr”áe    ~
+62   maximale Dateigr”áe      ~
 64   Batched SMTP-Modus~
 65   ausùSMTP/UUCPùSMTP/Client
 32   variable UUCP-g-Paketgr”áe
