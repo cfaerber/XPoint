@@ -43,7 +43,7 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr: integer;
 implementation
 
 uses
-  xpdatum, xpnt, xp3, Xp0, SysUtils, Typeform;
+  xpdatum, xpnt, xp3, Xp0, SysUtils, Typeform, mime, xpmime;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
@@ -176,8 +176,9 @@ var i,res : integer;
   procedure GetTyp(var typ,charset:string);
   begin
     if line<>'' then begin
+      if (UpperCase(line)='MIME') then typ:='M' else
       if (UpperCase(line)<>'TRANSPARENT') then typ:='B';
-      if (typ<>'T') and (typ<>'') then charset:='';
+      if (typ<>'T') and (typ<>'M') and (typ<>'') then charset:='';
       end;
   end;
 
@@ -224,8 +225,11 @@ var i,res : integer;
     s := Uppercase(line);
     if s='QPC' then
       inc(hd.attrib,attrQPC)
+    else if(s='PMCRYPT2')or(s='PM-CRYPT') then
+      inc(hd.attrib,attrPMCrypt) 
     else if s='PGP' then
       inc(hd.pgpflags,fPGP_encoded);
+    hd.crypt.method:=s;
   end;
 
   procedure GetSigned;
@@ -286,31 +290,39 @@ var i,res : integer;
   end;
 
   procedure ParseContentType(var hd:Theader);
-  var p       : integer;
-      parname,
-      parval  : string;
+  var pa: TMimeContentType;
   begin
-    hd.mimetyp:=compmimetyp(LowerCase(GetToken(line,';')));
-    while line<>'' do begin
-      parname:=LowerCase(GetToken(line,'='));
-      p:=1;
-      while (p<=length(line)) and (line[p]<>';') do begin
-        if line[p]='\' then delete(line,p,1);
-        inc(p);
-        end;
-      parval:=LeftStr(line,p-1);
-      if firstchar(parval)='"' then begin
-        delfirst(parval);
-        if lastchar(parval)='"' then dellast(parval);
-        end;
-      line:=trim(mid(line,p+1));
-      if parname='boundary' then hd.boundary:=LeftStr(parval,70) else
-      if (parname='name') and (hd.datei='') then hd.datei:=LeftStr(parval,40) else
-      if parname='type' then hd.mimereltyp:=LeftStr(parval,25) else
-      if (parname='charset') and (hd.x_charset='') then hd.x_charset:=LeftStr(parval,25);
-      end;
+    pa := TMimeContentType.Create(line);
+    if (pa.boundary           <>'')                       then hd.boundary := pa.boundary;
+    if (pa.ParamValues['name']<>'') and (hd.datei    ='') then hd.datei    := pa.ParamValues['name'];
+    if (pa.Charset            <>'') and (hd.x_charset='') then hd.x_charset:= pa.Charset;
+//    pa.Boundary:='';
+//    pa.Charset :='';
+    hd.Mime.CType := pa.AsString;
+    pa.free;
   end;
 
+  procedure ParseDisposition(var hd:Theader);
+  var pa: TMimeDisposition;
+  begin
+    pa := TMimeDisposition.Create(line);
+    if (pa.ParamValues['filename']<>'') and (hd.datei='') then hd.datei := pa.ParamValues['filename'];
+    if (pa.ParamValues['modification-date']<>'') and (hd.ddatum='') then hd.ddatum := RFC2Zdate(pa.ParamValues['modification-date']);
+    hd.Mime.Disposition := pa.AsString;
+    pa.free;
+  end;
+
+  procedure ParseEncoding(var hd:THeader);
+  var ll: string;
+  begin
+    ll:=LowerCase(line);
+    if ll='8bit' then hd.mime.encoding:=MimeEncoding8bit else
+    if ll='7bit' then hd.mime.encoding:=MimeEncoding7bit else
+    if ll='quoted-printable' then hd.mime.encoding:=MimeEncodingQuotedPrintable else
+    if ll='base64' then hd.mime.encoding:=MimeEncodingBase64 else
+    if ll='binary' then hd.mime.encoding:=MimeEncodingBinary else
+    hd.mime.encoding:=MimeEncodingUnknown;
+  end;
 
   procedure CheckEmpfs;          { /Brett@Box.domain -> /Brett }
     procedure check(var s:string);
@@ -372,15 +384,19 @@ begin
             {  dec(byte(line[0])); }
 
             { Auskommentiert, damit die CustomHeaders mit U-* tun }
-            if FirstChar(id)='U' then                      { RFC }
+            if LeftStr(id,2)='U-' then                      { RFC }
+            begin
             if id = 'U-KEYWORDS'     then Keywords := Line else
             if id = 'U-SUMMARY'      then Summary := line else
             if id = 'U-DISTRIBUTION' then Distribution:= line else
             if id = 'U-X-NEWSREADER' then Programm:= line else
             if id = 'U-X-MAILER'     then Programm := line else
-            if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
             if id = 'U-X-HOMEPAGE'   then homepage := Line else
+            if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
+            if id = 'U-CONTENT-TRANSFER-ENCODING' then ParseEncoding(hd) else
+            if id = 'U-CONTENT-DISPOSITION' then ParseDisposition(hd) else
+            if id = 'U-CONTENT-ID'   then Mime.CID := line else
 
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
@@ -401,12 +417,18 @@ begin
             else
 
             { Mime-Version wegschmeissen - wird neu erzeugt}
-            if id = 'U-MIME-VERSION' then else
-            begin
-                ULine.Add(mid(id0,3)+': '+line);
-            end
+            if id = 'U-MIME-VERSION' then
+              mime.mversion:=line
+            else
+              ULine.Add(mid(id0,3)+': '+line);
+            end // 'U-'
 
             else
+
+            if id = 'MIME-TYPE'      then ParseContentType(hd) else
+            if id = 'MIME-ENCODING'  then ParseEncoding(hd) else
+            if id = 'MIME-VERSION'   then mime.mversion := line else
+            if id = 'MIME-ID'        then mime.Cid      := line else
 
             if id = 'EMP' then GetEmpf else             { ZConnect 3.0 }
             if id = 'ABS' then GetName(absender,realname) else
@@ -489,9 +511,9 @@ begin
 
             if pos('CRYPT',id)>0 then begin
               if id = 'CRYPT'       then GetCrypt else
-              if id = 'CRYPT-CONTENT-TYP' then GetTyp(crypttyp,ccharset) else
-              if id = 'CRYPT-CONTENT-CHARSET' then GetCharset(ccharset) else
-              if id = 'CRYPT-CONTENT-KOM' then val(line,ckomlen,res);
+              if id = 'CRYPT-CONTENT-TYP' then GetTyp(crypt.typ,crypt.charset) else
+              if id = 'CRYPT-CONTENT-CHARSET' then GetCharset(crypt.charset) else
+              if id = 'CRYPT-CONTENT-KOM' then val(line,crypt.komlen,res);
               end else
               if id = 'SIGNED'         then GetSigned else
               if id = 'U-X-SIGNED'     then GetSigned else
@@ -564,6 +586,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/09/08 14:37:48  cl
+  - cleaned up MIME-related fields in THeader
+
   Revision 1.12  2001/09/06 19:31:20  mk
   - removed some hints und warnings
 
