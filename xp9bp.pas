@@ -159,7 +159,7 @@ begin
     SizeNego:=true;
     UUsmtp:=false;
     UUprotos:='tGgz';
-    ReplaceOwn := false;
+    ReplaceOwn := true;
     efilter:='';
     afilter:='';
     SysopNetcall:=true;
@@ -691,6 +691,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/09/30 00:39:06  ma
+  - enabled ReplaceOwn by default
+
   Revision 1.52  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
