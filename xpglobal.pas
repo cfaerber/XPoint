@@ -24,14 +24,14 @@
 unit xpglobal;
 
 interface
-
+                                                                  
 {$I xpdefine.inc }
 
 // format the following strings in a way that
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.8.8';       { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.8.9d';      { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -192,6 +192,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.23  2003/04/25 20:46:16  mk
+  - version 3.8.9d
+
   Revision 1.63.2.22  2003/01/22 21:42:27  mk
   - Version 3.8.8
 
