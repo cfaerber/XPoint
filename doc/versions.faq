@@ -1,16 +1,16 @@
 Versionen von CrossPoint(R) und Derivaten
-Versions of CrossPoint(R) and derivatives
+CrossPoint(R) versions and derivatives
 =========================================
 
 Es wurde vor allem Wert auf die Verwandtschaft der verschiedenen XP-
-Versionen gelegt. Daher wurden Versionen, bei denen keine Abspaltung,  
-keine Umbenennung oder eine énderung des Versionsschemas vorkam,  
+Versionen gelegt. Daher wurden Versionen, bei denen keine Abspaltung,
+keine Umbenennung oder eine énderung des Versionsschemas vorkam,
 ausgelassen. Au·erdem is die Zeitlinie nicht ganz exakt.
 
-The following genealogy focuses on the relationship of different XP  
-versions. Therefore, versions at which no fork, renaming or change in  
-numberig scheme has occured are not mentioned. Further, the timeline is
-not exact.
+The following diagram outlines the relationship between the different
+versions of CrossPoint. Versions which have no fork, which have been
+renamed, or had their numbering schemes changed are not included. Please
+note that the dates are not exact.
 
 1990    CrossPoint 1.0
               |
@@ -43,7 +43,7 @@ not exact.
       3.8.11   3.9.7     FreeXP 3.40 RC3
 
 Ehemalige Versionen
-Historical versions
+Version history
 ===================
 
 CrossPoint 3.12 <http://www.crosspoint.de>
@@ -64,17 +64,17 @@ OpenXP 3.20.001..3.20e
 jgXP 3.217..3.219
         Weiterentwicklung von Jochen Gehring; ein Gro·teil der Features
         wurde in die OpenXP/16 Åbernommen.
-        Branch by Jochen Gehring; most features have been ported
-        to OpenXP/16
+        Branch by Jochen Gehring; many features have been ported
+        to FreeXP (formerly OpenXP/16)
 
 XP^2 3.30.001..3.31.006 <http://www.xp2.de>
         UrsprÅnglich ein OS/2-Port; wegen Differenzen innerhalb von
         OpenXP wurde aber schlie·lich ebenfalls eine 16-Bit-DOS-Version
         erstellt. Beta-Versionen fÅr OS/2 und Win32 existieren, wurden
         aber nicht verîffentlicht.
-        Originally a port to OS/2; due to disputes within OpenXP a
-        16 bit DOS version has been created too. Beta versions for OS/2
-        and Win32 exist but have not been published.
+        Originally started out as a port to OS/2 and owing to "disputes" 
+        with OpenXP, a 16 bit DOS version was developed. Beta versions 
+        for OS/2 and Win32 exist but have not been released.
 
 Aktuelle Entwicklungszweige
 Current development branches
@@ -84,17 +84,16 @@ OpenXP <http://www.openxp.de>
         Auch OpenXP/32: 32-Bit-Version, portiert auf Win32 und Linux.
         Die einzige Version, die unter der GNU General Public License
         verfÅgbar ist (seit Version 3.7.4).
-        Aka OpenXP/32: 32 bit version, ported to Win32 and Linux. Only
-        version available under the GNU General Public License (from
-        version 3.7.4).
+        Also known as OpenXP/32: 32 bit version ported to Win32 and Linux.
+        From version 3.7.4, released under the GNU General Public Licence.
 
 FreeXP <http://www.freexp.de>
         Ehem. OpenXP/16: Weiterentwicklung des DOS-Zweiges. Die Lizenz
         ist mittlerweile Open-Source-Ñhnlich (aber nicht zertifiziert),
         aber inkompatibel zur GPL.
-        Formerly OpenXP/16: Further developed DOS/16 version. In the
-        meantime under a (non-certified) Open Source-like license
-        incompatible to the GPL.
+        Formerly OpenXP/16: DOS 16 bit version currently under strong 
+        development. In the meantime under a (non-certified) 
+        Open Source-like license incompatible to the GPL.
 
 
 
