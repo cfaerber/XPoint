@@ -19,6 +19,7 @@ UNIT ZModem;
          4 - alle empfangenen/gesendeten Bytes}
 
 {a$DEFINE Log}  {ermoeglicht Loglevel 4, verbraucht viel Rechenzeit}
+{$IFDEF FPC}{$HINTS OFF}{$NOTES OFF}{$ENDIF}
 
 INTERFACE
   USES ObjCOM;
@@ -392,21 +393,22 @@ BEGIN Timecounter:=System.Round(TimerObj.ElapsedSec*18.2)END;
 
 {************ Logging routines ***************}
 
-VAR LogWasOutgoing: Boolean; LogChars: String; LogTimer: tTimer;
+VAR LoggedBytesAreOutgoing: Boolean; LogChars: String; LogTimer: tTimer;
 
 PROCEDURE WriteChars;
 VAR S: String;
 BEGIN
-  IF LogWasOutgoing THEN S:='Out ' ELSE S:='In ';
+  IF LoggedBytesAreOutgoing THEN S:='Out ' ELSE S:='In ';
+{  IF LogTimer.Timeout THEN S:=S+'T ';}
   IF LogChars<>'' THEN DebugLog('ZModem',S+LogChars,4);
-  LogChars:='';
+  LogChars:=''; LogTimer.SetTimeout(0.5);
 END;
 
 PROCEDURE AddLogChar(C: Char; Outgoing: Boolean);
 CONST I2H: ARRAY[0..15]OF Char= ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
 BEGIN
-  IF(LogTimer.Timeout)OR((LogWasOutgoing XOR Outgoing)OR(Length(LogChars)>70))THEN
-    BEGIN WriteChars; LogWasOutgoing:=Outgoing; LogTimer.SetTimeout(0.5)END;
+  IF LogTimer.Timeout OR(LoggedBytesAreOutgoing<>Outgoing)OR(Length(LogChars)>70)THEN
+    BEGIN WriteChars; LoggedBytesAreOutgoing:=Outgoing END;
   LogChars:=LogChars+I2H[Ord(C) SHR 4]+I2H[Ord(C) AND 15]+' ';
 END;
 
@@ -493,7 +495,8 @@ BEGIN
 
     UNTIL (TimeCounter > time);
 
-    Z_GetByte := ZTIMEOUT        { timed out }
+    Z_GetByte := ZTIMEOUT;        { timed out }
+    DebugLog('ZModem','getbyte timeout',3)
   END;  (* of ELSE *)
 END;
 
@@ -526,13 +529,13 @@ BEGIN
     REPEAT
       IF CommObj^.CharAvail THEN BEGIN
         ch:=CommObj^.GetChar;
-       {$IFDEF Log} AddLogChar(Char(C),False); {$ENDIF}
+       {$IFDEF Log} AddLogChar(Char(Ch),False); {$ENDIF}
         stop:=TRUE;
       END;  (* of IF *)
     UNTIL stop OR (TimeCounter > time) OR NOT CommObj^.Carrier;
 
     IF (TimeCounter > time) THEN
-      c:=ZTIMEOUT
+      BEGIN c:=ZTIMEOUT; DebugLog('ZModem','qk_read timeout',3)END
     ELSE IF NOT CommObj^.Carrier THEN
       c:=RCDO
     ELSE c:=ORD (ch);
@@ -549,11 +552,7 @@ FUNCTION Z_TimedRead : INTEGER;
 
 VAR
    stop : BOOLEAN;
-
    ch   : CHAR;
-
-   c    : INTEGER;
-
    time : LONGINT;
 
 BEGIN
@@ -562,17 +561,14 @@ BEGIN
    REPEAT
      IF CommObj^.CharAvail THEN BEGIN
        ch:=CommObj^.GetChar;
-       {$IFDEF Log} AddLogChar(Char(C),False); {$ENDIF}
+       {$IFDEF Log} AddLogChar(Ch,False); {$ENDIF}
        IF (ch <> CHR (XON)) AND (ch <> CHR (XOFF)) THEN stop:=TRUE;
      END;  (* of IF *)
    UNTIL stop OR (TimeCounter > time) OR NOT CommObj^.Carrier;
 
-   IF (TimeCounter > time) THEN
-     c:=ZTIMEOUT
-   ELSE IF NOT CommObj^.Carrier THEN
-     c:=RCDO
-   ELSE c:=ORD (ch);
-   Z_TimedRead := c
+   Z_TimedRead:=Ord(Ch);
+   IF (TimeCounter > time) THEN BEGIN Z_TimedRead:=ZTIMEOUT; DebugLog('ZModem','timedread timeout',3)END
+   ELSE IF NOT CommObj^.Carrier THEN Z_TimedRead:=RCDO;
 END;
 
 
@@ -703,40 +699,17 @@ END;
 (*************************************************************************)
 
 FUNCTION Z_PullLongFromHeader (VAR hdr : hdrtype) : LONGINT;
-
-  TYPE
-    longarray = ARRAY [0..3] OF BYTE;
-
-  VAR
-    l       : LONGINT;
-
-    longptr : longarray ABSOLUTE l;
-
 BEGIN
-   longptr [0]:=hdr [ZP0];
-   longptr [1]:=hdr [ZP1];
-   longptr [2]:=hdr [ZP2];
-   longptr [3]:=hdr [ZP3];
-
-   Z_PullLongFromHeader := l
+   Z_PullLongFromHeader := Longint(hdr[ZP3])SHL 24+Longint(hdr[ZP2])SHL 16+Longint(hdr[ZP1])SHL 8+hdr[ZP0];
 END;
 
 
 (*************************************************************************)
 
 PROCEDURE Z_PutLongIntoHeader (l : LONGINT);
-
-  TYPE
-    longarray = ARRAY [0..3] OF BYTE;
-
-  VAR
-    longptr : longarray ABSOLUTE l;
-
 BEGIN
-  txhdr [ZP0]:=longptr [0];
-  txhdr [ZP1]:=longptr [1];
-  txhdr [ZP2]:=longptr [2];
-  txhdr [ZP3]:=longptr [3];
+  txhdr [ZP0]:=l AND $FF; txhdr [ZP1]:=(l SHR 8)AND $FF;
+  txhdr [ZP2]:=(l SHR 16)AND $FF; txhdr [ZP3]:=(l SHR 24)AND $FF;
 END;
 
 
@@ -1228,11 +1201,9 @@ crcfoo:
            done:=TRUE;
          END  (* of IF THEN *)
          ELSE BEGIN
-           buf [INTEGER (rxcount)]:=Lo (c);
-           INC (rxcount);
-           IF uses32crc THEN
-             crc32:= UpdCRC32 (Lo (c),crc32)
-           ELSE crc := UpdCRC16 (Lo (c),crc);
+           buf[rxcount]:=Lo(c);
+           Inc(rxcount);
+           IF uses32crc THEN crc32:=UpdCRC32(Lo(c),crc32)ELSE crc:=UpdCRC16(Lo(c),crc);
          END;  (* of ELSE *)
       END;  (* of ELSE *)
    UNTIL done;
@@ -2274,7 +2245,7 @@ END;
 
 (*************************************************************************)
 
-FUNCTION SZ_SendFile(NoFile: Boolean) : INTEGER;
+FUNCTION SZ_SendFile : INTEGER;
 
   VAR
     c    : INTEGER;
@@ -2302,13 +2273,9 @@ BEGIN
       END;
 
       FillChar (txhdr,4,0);
-      IF NOT NoFile THEN BEGIN
-        txhdr [ZF0] := ZCRESUM;                       (* Recover zulassen *)
-        SZ_SendBinaryHeader (ZFILE,txhdr);
-        SZ_SendData (txbuf,fheaderlen,ZCRCW);
-      END ELSE BEGIN
-        Z_SendHexHeader (ZFIN,txhdr);
-      END;
+      txhdr [ZF0] := ZCRESUM;                       (* Recover zulassen *)
+      SZ_SendBinaryHeader (ZFILE,txhdr);
+      SZ_SendData (txbuf,fheaderlen,ZCRCW);
 
       SleepTime (500);
 
@@ -2319,10 +2286,7 @@ BEGIN
             RCDO,
             ZTIMEOUT,
             ZFIN,
-            ZABORT: BEGIN
-                       IF(c=ZFIN)AND NoFile THEN SZ_SendFile:=0 ELSE SZ_SendFile := ZERROR;
-                       Exit
-                    END;
+            ZABORT: BEGIN SZ_SendFile := ZERROR; Exit END;
             ZRINIT : {null - this will cause a loopback};
               ZCRC : BEGIN
                        Z_PutLongIntoHeader (Z_FileCRC32 (infile));
@@ -2412,7 +2376,7 @@ BEGIN
        Move (s [1],txbuf [0],Length (s));
        fheaderlen:=Length (s);
      END ELSE BEGIN
-       TransferName:='Empty'; TransferSize:=0; TransferTotalTime:=1; TransferPath:='';
+       TransferName:=''; TransferSize:=0; TransferTotalTime:=1; TransferPath:='';
      END;
 
      IF (zbaud > 0) THEN
@@ -2446,8 +2410,12 @@ BEGIN
          END;  (* of IF *)
        END  (* of IF THEN *)
        ELSE BEGIN
-         n := SZ_SendFile(pathname='');
-         IF pathname<>'' THEN Z_CloseFile (infile);
+         IF pathname<>'' THEN BEGIN
+           n := SZ_SendFile;
+           Z_CloseFile (infile);
+         END ELSE BEGIN
+           n:=ZOK; lastfile:=True;
+         END;
 
          CASE n OF
            ZSKIP : fehler:=9;
@@ -2472,12 +2440,16 @@ END;
 
 BEGIN
   TimerObj.Init; LogTimer.Init; MakeCRC32:=TRUE;  RecoverAllow:=TRUE;
-  DispProc:=NIL; StartProc:=NIL; EndProc:=NIL; LogWasOutgoing:=TRUE; LogChars:='';
+  DispProc:=NIL; StartProc:=NIL; EndProc:=NIL; LoggedBytesAreOutgoing:=TRUE; LogChars:='';
 END.
 
 
 {
   $Log$
+  Revision 1.2  2000/07/13 23:59:30  ma
+  - mehr Debuglogs
+  - leeres Send funktioniert jetzt richtig
+
   Revision 1.1  2000/06/22 17:29:39  mk
   - auf Units ObjCOM/Timer/CRC/Debug umgestellt
   - leere Send-Session implementiert (noch fehlerhaft)
