@@ -152,6 +152,7 @@ begin
 {$endif}
 end;
 
+{$IFDEF FPC }
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
 var
   fn : string;
@@ -168,7 +169,7 @@ begin
   System.Rewrite(F,l);
 end;
 
-procedure XPRewrite(var F: file; cm: TCreateMode);
+procedure XPRewrite(var F: text; cm: TCreateMode);
 var
   fn : string;
 begin
@@ -181,8 +182,9 @@ begin
   end; { if }
   System.Rewrite(F);
 end;
+{$ENDIF }
 
-procedure XPRewrite(var F: text; cm: TCreateMode);
+procedure XPRewrite(var F: file; cm: TCreateMode);
 var
   fn : string;
 begin
@@ -575,6 +577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/11/15 12:24:37  mk
+  - vp compatiblity update
+
   Revision 1.67  2000/11/14 20:49:22  ma
   - geht jetzt auch unter Dos/Win wieder...
 
