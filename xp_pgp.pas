@@ -636,9 +636,9 @@ begin
   fis.Free;
 
     if PGPVersion=PGP2 then
-      RunPGP('-sab +textmode=off '+OwnUserID+' -o '+fo+fi)
+      RunPGP('-sab +textmode=off '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPS.EXE','-a -b '+OwnUserID+' -o '+fo+fi)
+      RunPGP5('PGPS.EXE','-a -b '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=GPG then
       RunGPG('-s -a --detach-sign --force-v3-sigs -o '+fo+' '+OwnUserID+' '+fi)
     else begin
@@ -1161,6 +1161,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/09/29 10:49:46  ma
+  - fixed: PGP signing
+
   Revision 1.54  2001/09/19 18:05:08  cl
   - implemented option "PGP/MIME" in "Config/Extern/PGP"
 
