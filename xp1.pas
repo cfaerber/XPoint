@@ -1520,16 +1520,19 @@ var p0: Integer; aKey, ConfKey: String;
 begin
   p:=cpos('=',s);
   ConfKey:=UpperCase(Trim(LeftStr(s,p-1)));
+  Keys := UpperCase(Keys);
   repeat
     p0:=cpos('|',keys);
-    if p0<>0 then begin
-      aKey:=LeftStr(keys,p0-1);
+    if p0<>0 then
+    begin
+      aKey:=Copy(keys, 1, p0-1);
       Delete(keys,1,p0);
-      end else begin
+    end else
+    begin
       aKey:=keys;
       keys:='';
-      end;
-    result:=UpperCase(Trim(aKey))=ConfKey;
+    end;
+    result:=Trim(aKey)=ConfKey;
   until result or (keys='');
 end;
 
@@ -2043,6 +2046,9 @@ end;
 
 {
   $Log$
+  Revision 1.141  2002/02/25 17:54:04  mk
+  - little optimization for scomp
+
   Revision 1.140  2002/02/18 00:57:16  mk
   - fixed Arithmetic overflow in Show() from fmove
 
