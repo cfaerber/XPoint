@@ -319,7 +319,7 @@ function compiletime:string;      { Erstelldatum von XP.EXE als String uebergebe
 var                                          { Format: 1105001824 }
  d:datetime;
 begin
-  unpacktime(filetime(ownpath+'xp.exe'),d);
+  unpacktime(filetime(ownpath+'xp.ovr'),d);
   compiletime:=(formi(d.day,2)+formi(d.month,2)+right(formi(d.year,2),2)
     +formi(d.hour,2)+formi(d.min,2));
 end;
@@ -2218,6 +2218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.26  2001/03/27 08:25:22  mk
+  - snapshot datum aus der xp.ovr ermitteln
+
   Revision 1.39.2.25  2001/01/04 09:25:05  mk
   - eigene Mails in der Datenbank markieren
 
