@@ -38,7 +38,7 @@ type
   public
     constructor Create(FIsText: Boolean);
     function Write(const Buffer; Count: Longint): Longint; override;
-    procedure SetSize(NewSize:Longint);
+    procedure SetSize(NewSize:Longint); override;
   end;
 
   TQuotedPrintableDecoderStream = class(TMimeTransferDecoderStream)
@@ -253,6 +253,9 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2001/09/17 16:16:14  cl
+// - SetSize is now correctly marked as override
+//
 // Revision 1.5  2001/09/10 15:58:01  ml
 // - Kylix-compatibility (xpdefines written small)
 // - removed div. hints and warnings
