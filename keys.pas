@@ -309,7 +309,11 @@ begin
 {$IFDEF Win32 }
   kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
 {$ELSE }
+  {$IFDEF DOS32}
   kb_shift := kbstat and (lshift+rshift)<>0;
+  {$ELSE}
+  kb_shift:= false;
+  {$ENDIF}
 {$ENDIF }
 end;
 
@@ -318,7 +322,11 @@ begin
 {$IFDEF Win32 }
   kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
 {$ELSE }
+  {$IFDEF DOS32}
   kb_ctrl := kbstat and ctrl<>0;
+  {$ELSE}
+  kb_ctrl:= false;
+  {$ENDIF}
 {$ENDIF }
 end;
 
@@ -327,7 +335,11 @@ begin
 {$IFDEF Win32 }
   kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
 {$ELSE }
+  {$IFDEF DOS32}
   kb_alt := kbstat and alt<>0;
+  {$ELSE}
+  kb_alt:= false;
+  {$ENDIF}
 {$ENDIF }
 end;
 
@@ -337,6 +349,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/06/24 13:36:12  hd
+  - Laesst sich jetzt auch wieder unter Linux compilieren (IFDEF DOS32)
+
   Revision 1.23  2000/06/23 15:59:11  mk
   - 16 Bit Teile entfernt
 
