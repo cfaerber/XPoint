@@ -454,7 +454,7 @@ begin
   n:=0; sum:=0;
   for i:=0 to 9 do begin
     dbGetFrag(ubase,i,fsize,anz,gsize);
-    wrt(x+2+(i div 5)*30,y+4+(i mod 5),format('%7d%8d%9d',[fsize,anz,gsize]));
+    mwrt(x+2+(i div 5)*30,y+4+(i mod 5),format('%7d%8d%9d',[fsize,anz,gsize]));
     inc(n,anz); inc(sum,gsize);
     end;
   mwrt(x+4,y+10,'gesamt:  '+strs(sum)+' Bytes in '+strs(n)+' Fragmenten');
@@ -648,8 +648,8 @@ var x,y : Integer;
     n:=(d=nil);
     if n then
       dbOpen(d,datei,0);
-    wrt(x+3,y+yy,format('%12s%8d%12d%%%s',[FileUpperCase(datei),dbRecCount(d),
-                        prozent,strsrnp(_filesize(datei+dbExt),13,0)]));
+    mwrt(x+3,y+yy,format('%12s%8d%12d%%%s',[FileUpperCase(datei),dbRecCount(d),
+                         prozent,strsrnp(_filesize(datei+dbExt),13,0)]));
     if n then dbClose(d);
   end;
 
@@ -801,7 +801,7 @@ begin
   repeat
     attrtxt(col.coldiainp);
     mwrt(x+7+length(txt),y+2,typeform.dup(length(s),'*')+sp(16-length(s)));
-    wrt(x+7+length(txt+s),y+2,''); // this wrt was a gotoxy
+    gotoxy(x+7+length(txt+s),y+2);
     get(t,curon);
     if (t>=mausfirstkey) and (t<=mauslastkey) then
       maus_bearbeiten;
@@ -940,6 +940,9 @@ end.
 
 {
   $Log$
+  Revision 1.61  2001/09/18 13:57:45  ma
+  - small mouse cursor related fixes
+
   Revision 1.60  2001/09/16 19:53:58  ma
   - fixed calendar and statistics display problems (please check)
 
