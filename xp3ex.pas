@@ -48,7 +48,7 @@ const xTractMsg   = 0;
       ExtChgtearline  : boolean = false;
 
 procedure rps(var s:string; s1,s2:string);
-procedure rpsuser(var s:string; name:string; var realname:string);
+procedure rpsuser(var s:string; name: string; const realname:string);
 procedure rpsdate(var s:string);
 procedure ExtractSetMimePart(MimePart: TMimePart);
 procedure extract_msg(art:Integer; schablone:string; name:string;
@@ -72,7 +72,7 @@ begin
   until p=0;
 end;
 
-procedure rpsuser(var s:string; name:string; var realname:string);
+procedure rpsuser(var s:string; name: string; const realname:string);
 var p,p2 : byte;
     komm : string[40];
     vorn : boolean;
@@ -1226,6 +1226,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.96  2002/04/14 22:22:58  cl
+  - rpsuser(): changed var to const
+
   Revision 1.95  2002/03/25 22:03:08  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
