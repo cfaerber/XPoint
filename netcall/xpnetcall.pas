@@ -908,7 +908,7 @@ end;
       closebox;
       _era(ppfile);
       end;
-    SaveDeleteFile(eppfile);
+    SafeDeleteFile(eppfile);
   end;
 
   { Append all files in list to first file in list }
@@ -992,9 +992,9 @@ begin                  { function Netcall }
   _fido:=(netztyp=nt_Fido);
   _uucp:=(netztyp=nt_UUCP);
   if _maus then begin
-    SaveDeleteFile(mauslogfile);
-    SaveDeleteFile(mauspmlog);
-    SaveDeleteFile(mausstlog);
+    SafeDeleteFile(mauslogfile);
+    SafeDeleteFile(mauspmlog);
+    SafeDeleteFile(mausstlog);
   end;
 
   Debug.DebugLog('xpnetcall','testing buffers',DLInform);
@@ -1148,7 +1148,7 @@ begin                  { function Netcall }
 
 //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
-    SaveDeleteFile(NetcallLogfile);
+    SafeDeleteFile(NetcallLogfile);
     end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
@@ -1158,7 +1158,7 @@ begin                  { function Netcall }
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
     begin
       ImportOK := true;
-      SaveDeleteFile(IncomingFiles[0]);
+      SafeDeleteFile(IncomingFiles[0]);
     end else
       ImportOK := false;
   end else
@@ -1166,11 +1166,22 @@ begin                  { function Netcall }
 
   if ImportOK and (DeleteSpoolFiles.Count>0) then 
     if SysopMode or nDelPuffer then
+    begin
+      Debug.DebugLog('xpnetcall','deleting incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
-        DeleteFile(DeleteSpoolFiles[i])
-    else
+      begin
+        SafeDeleteFile(DeleteSpoolFiles[i]);
+        Debug.DebugLog('xpnetcall','deleted '+(DeleteSpoolFiles[i]),DLInform);
+      end;
+    end else
+    begin
+      Debug.DebugLog('xpnetcall','renaming incoming spool files',DLInform);
       for i := 0 to (DeleteSpoolFiles.Count-1) do
-        MakeBak(DeleteSpoolFiles[i],'BAK');        
+      begin
+        SafeMakeBak(DeleteSpoolFiles[i],'BAK');        
+        Debug.DebugLog('xpnetcall','renamed '+(DeleteSpoolFiles[i]),DLInform);
+      end;
+    end;
     
   xp3o.ForceRecipient:= '';
   IncomingFiles.Free;
@@ -1386,6 +1397,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2001/12/26 00:49:43  cl
+  - added error messages and debug log to deletion of incoming spool files
+
   Revision 1.42  2001/12/21 21:25:18  cl
   BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
   SEE ALSO: <8FIVnDgocDB@3247.org>
