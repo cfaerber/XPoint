@@ -66,3 +66,11 @@ K Deutsch
 192 Senden
 193 Empfangen
 195 Carrier-Abbruch
+
++  10500
+#  Diverse Fehlermeldungen
+1  BAD ist voll, Åberschreibe die letzte Datei!
+2  Kann %s nicht lîschen!
+3  Kann %s nicht ins BAD verschieben!
+-
+

@@ -65,3 +65,11 @@ K English
 192 upload
 193 download
 195 carrier lost
+
++  10500
+#  Diverse Fehlermeldungen
+1  Warning: BAD is full, overwriting last file!
+2  Can't delete %s
+3  Can't move %s to BAD!
+-
+

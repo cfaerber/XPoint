@@ -27,7 +27,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,xpdiff,xpdatum,xpglobal;
+  typeform,fileio,xpdiff,xpdatum,xpglobal;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -35,8 +35,8 @@ const XPrequest = 'File Request';
       midlen    = 120;
       maxvia    = 100;
 
-      infile    : pathstr = '';       { kann Wildcard enthalten }
-      outfile   : pathstr = '';
+      infile    : string = '';       { kann Wildcard enthalten }
+      outfile   : string = '';
       fromadr   : string = '';
       toadr     : string = '';
       direction : byte = 0;           { 1 = Z->F, 2 = F->Z }
@@ -414,7 +414,9 @@ begin
 end;
 
 procedure testfiles;
-var sr : searchrec;
+var
+  sr : tsearchrec;
+  rc : integer;
 begin
   if (infile='') or (outfile='') or
      ((direction=1) and ((fromadr='') or (toadr=''))) then
@@ -423,8 +425,8 @@ begin
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
-  dos.findfirst('BAD',Directory,sr);
-  baddir:=(doserror=0) and (sr.attr and Directory<>0);
+  rc:= findfirst('bad',faDirectory,sr);
+  baddir:=(rc=0) and (sr.attr and faDirectory<>0);
   FindClose(sr);
 end;
 
@@ -469,32 +471,32 @@ begin
       error('ungÅltige To-Adresse: '+toadr);
 end;
 
-procedure MoveToBad(fn:pathstr);
-{$ifdef UnixFS }
-const BadDir = 'bad/';
-{$else}
-const BadDir = 'BAD\';
-{$endif}
+procedure MoveToBad(const fn:string);
 var
-    dir, name, ext : string;
-    f    : file;
+  name,
+  s,
+  BadDir : string;
+  i      : integer;
 begin
-  fsplit(fn,dir,name,ext);
-  if ext='' then
-    ext:='.001'
-  else
-    while fileexists(BadDir+name+ext) and (ext<>'.999') do
-      ext:='.'+formi(ival(mid(ext,2))+1,3);
-  if fileexists(BadDir+name+ext) then begin
-    assign(f,BadDir+name+ext);
-    erase(f);
-    if ioresult<>0 then;
-    end;
-  if not fileexists(BadDir+name+ext) then begin
-    assign(f,fn);
-    rename(f,BadDir+name+ext);
-    end;
-  if ioresult<>0 then;
+  BadDir:= FileUpperCase('bad')+DirSepa;
+  name:= ExtractFileName(fn);
+  s:= ExtractFileExt(fn);
+  i:= Pos(s,name);
+  if i<>0 then
+    Delete(name,i,Length(s));
+  for i:= 0 to $fff do begin
+    s:= BadDir+name+'.'+IntToHex(i,3);
+    if not FileExists(s) then
+      break;
+  end;
+  { Pruefen, ob Ueberlauf }
+  if FileExists(s) then begin
+    trfehler(501,10);   { Nicht mehr genug Platz }
+    if not DeleteFile(s) then
+      trfehler1(502,s,30);
+  end;
+  if not RenameFile(fn,s) then
+    trfehler1(503,fn,30);
 end;
 
 
@@ -1793,6 +1795,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.4  2000/11/16 13:38:19  hd
+        - MoveToBad neu implementiert
+          - Auf SysUtils umgestellt
+          - Neues Limit der Extension: $fff (war 999)
+
         Revision 1.3  2000/11/15 23:37:34  fe
         Corrected some string things.
 
