@@ -88,8 +88,11 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keychom : taste = #0#119;
        keycend : taste = #0#117;
        keyins  : taste = #0#82;
+       keysins  : taste = #0#5;
        keycins : taste = #0#146;
+       keycins2 : taste = #0#4;
        keydel  : taste = #0#83;
+       keysdel : taste = #0#7;
        keycdel : taste = #0#147;
 
        keyesc  : taste = #27;       { sonstige Tasten }
@@ -449,6 +452,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.2  2001/09/06 10:38:26  mk
+  - added keys shift-ins, shift-del and ctrl-ins in Editor
+
   Revision 1.21.2.1  2000/07/21 17:32:27  jg
   - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
 

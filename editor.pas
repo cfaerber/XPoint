@@ -1606,11 +1606,16 @@ var  dl         : displp;
     if t=keyhome then b:=EditfBOL         else
     if t=^Z      then b:=EditfScrollUp    else
     if t=^W      then b:=EditfScrollDown  else
-    if t=keyins  then b:=EditfChangeInsert else
-    if t=keycins then b:=editfCCopyBlock  else
+    if t=keyins  then if kb_shift then b := EditfPasteBlock
+                         else b:=EditfChangeInsert else
+    if t=keysins  then b := EditfPasteBlock else
+    if (t=keycins) or
+       (t=keycins2) then b:=editfCCopyBlock  else
     if t=keycr   then b:=EditfNewline     else
     if t=keybs   then b:=EditfBS          else
-    if t=keydel  then b:=EditfDEL         else
+    if t=keydel  then if kb_shift then b := EditfCutBlock else
+                         b:=EditfDEL else
+    if t=keysdel then b := EditfCutBlock else
     if t=^G      then b:=EditfDEL         else    { WS-Zweitbelegung }
     if t=keyf5   then b:=EditfAbsatzmarke else
     if t=^T      then b:=EditfDelWordRght else
@@ -1880,6 +1885,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.14  2001/09/06 10:38:25  mk
+  - added keys shift-ins, shift-del and ctrl-ins in Editor
+
   Revision 1.25.2.13  2001/08/05 11:45:31  my
   - added new unit XPOVL.PAS ('uses')
 
