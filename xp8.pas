@@ -1530,7 +1530,7 @@ begin
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
       ppp := BoxPar^.PPPMode;
-      {if BoxPar^.SysopInp+BoxPar^.PPPClientPath<>'' then ppp := false;}
+      {if BoxPar^.SysopInp+BoxPar^.SysopOut<>'' then ppp := false;}
     end else
       ppp := false;
     qwk:=(netztyp=nt_QWK);
@@ -2137,6 +2137,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.20  2001/06/19 17:01:47  my
+  - minor fixes with nil effect :-)
+
   Revision 1.10.2.19  2001/06/17 23:51:02  my
   - RFC/Client: new commands under Message/Message_Area_Manager/Others:
     Sort/Sync/Delete

@@ -227,7 +227,6 @@
     maddstring(3,20,getres2(920,91),PPPPhone,18,60,'');     { 'Telefon' }
 
     maddstring(36,18,getres2(920,92),PPPLogin,18,60,'');    { 'Login' }
-    loginfld:=fieldpos;
 
     maddstring(36,20,getres2(920,93),PPPPass,18,20,'');     { 'Paáwort' }
 
@@ -1695,6 +1694,9 @@
 
 {
   $Log$
+  Revision 1.10.2.29  2001/06/19 17:01:47  my
+  - minor fixes with nil effect :-)
+
   Revision 1.10.2.28  2001/06/19 01:24:45  my
   - RFC/Client: removed superfluos items in Edit/Servers/Edit/Misc.
 
