@@ -13,6 +13,8 @@
 
 <h3>General</h3>
 
+<base target="_top">
+
 OpenXP is developed by many people. Therefore every developer has to follow
 some rules.
 
@@ -20,13 +22,15 @@ some rules.
 <a href="http://mail1.sourceforge.net/mailman/listinfo/openxp-dev">maillinglist</a>.
 English postings will be answered in english - and are very welcome :-).
 
-<p>You can use <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi">cvsWeb</a>
+<p>You can use <a href="http://fries7-73.stw.uni-jena.de/cvs/cvsweb.cgi" target="_self">cvsWeb</a>
 to browse the CVS repository and see file logs (both login and password "cvs").
 
-<p>OpenXP compiles with <a href="http://www.freepascal.org" target="_blank">FreePascal</a>
-and <a href="http://www.vpascal.com" target="_blank">Virtual Pascal</a>.
+<p>OpenXP compiles with <a href="http://www.freepascal.org">FreePascal</a>
+and <a href="http://www.vpascal.com">Virtual Pascal</a>.
 
-<p><b>Be aware OpenXP is an open source project. That means any changes you make
+<a name="legal"><h3>Legal</h3></a>
+
+<b>Be aware OpenXP is an open source project. That means any changes you make
 to it are free and not someone's property and can be used in any other
 open source project as well. This is especially true for the XP2 project
 with which fixes and changes are shared.</b>
@@ -34,15 +38,23 @@ with which fixes and changes are shared.</b>
 Mandrella's source license (which basically states Crosspoint versions have
 to be registered - negotiations are being made in order to make 32 bit versions
 totally free) the differencies (code parts) that make up OpenXP from Crosspoint
-are programmed in the spirit of the LGPL (a GNU Public License version that allows
-usage of the code in commercial programs provided any changes the code used is free
-and will be published as well - see <a href="http://www.fsf.org/copyleft/licenses.html"
-target="_blank">Free Software Foundation license page</a> for further information.
+can be protected by several licenses - each programmer is free to choose. Licenses
+proposed are the <i>BSD license</i> (basically a Public Domain license with protected
+author credits) and the <i>LGPL</i> (Lesser GNU Public License; stronger copyleft than
+BSD as any derivative of the code has to be at least LGPL again). Note GPL (without
+"L") is not suitable for any code used in OpenXP for usage of GPL'd code in non-GPL'd
+projects (like Crosspoint) is forbidden.
+<br>If you create or check in any new units, please choose a proper Open Source
+license and add a note in the unit's header.
+<p>For information on Open Source licenses visit <a href="http://www.opensource.org">
+OpenSource.org</a> of the <a href="http://www.fsf.org/copyleft/licenses.html">
+FSF license page</a>. Some licenses are available on the
+<a href="ftp://ftp.openxp.de/openxp/devdoc/license" target="_self">OpenXP ftp server</a>.
 
 <h3>Getting the source code</h3>
 <a href="http://www.cvshome.com" target="_blank">CVS</a> is used for managing
 the sources. A Windows and OS/2 version can be found on the
-<a href="ftp://ftp.openxp.de/openxp/tools">OpenXP ftp server</a>.
+<a href="ftp://ftp.openxp.de/openxp/tools" target="_self">OpenXP ftp server</a>.
 
 <p>CVS uses a "main source archive", called repository. Every developer uses
 a copy of this repository called "working directory" on his machine. CVS
@@ -171,7 +183,7 @@ in einem Kommentar beim Prozedurkopf hervorgehoben werden.
 Da an diesem Projekt viele Leute  arbeiten, ist es wichtig, einen einheitlichen
 Standard zu haben, wie neuer Code in die offizielle Distribution gebracht wird.
 Dazu wird das GNU Tool DIFF genutzt, welches auch auf unserem
-<a href="ftp://ftp.openxp.de/openxp">ftp-server</a> liegt. 
+<a href="ftp://ftp.openxp.de/openxp" target="_self">ftp-server</a> liegt. 
 Um potentiellen Problemen vorzubeugen, mu&szlig; DIFF mit der Option -u verwendet 
 werden (Dank an Robo f&uuml;r diesen Hinweis).
 
