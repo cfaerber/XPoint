@@ -5864,13 +5864,13 @@ supported.
 
 @
 660
-Set which format your messages are transferred with.
+Enter the Network type for this Server:
 
 <<RFC/UUCP>>    for UseNet, SubNet etc.
 
 <<Fido>>        for Fido and compatible Nets
 
-<<QWK>>         makes XP into a QWK-Off-line-Reader
+<<QWK>>         makes XP into a QWK Offline Reader
 
 <<ZConnect>>    new Z-Netz format and compatibles
 
@@ -5886,28 +5886,29 @@ Enter the name of the user who is to be accepted or
 rejected.
 @
 680
-Enter the name of your main server. You can add more
-servers later, and change your main server.
+Enter the name of your main Server. You can add more
+Servers <<and>> change your main Server later.
 
-The Net Name is the short form of the box name, as
-it appears in your user name.
+The Net Name is the short form of the Server name, as
+it appears in your User name.
 
-In Fido put the node address for your box here, in
+In Fido, enter the Node address of your BossNode, in
 the form Zone:Net/Node.
 @
 681
-Enter the type of net your main server belongs to.
-You can use <F2> to call up a list to select from.
-Possible entries are:
+Enter the type of Network your main Server belongs
+to. You can press <F2> to call up a pick-list to
+select from. Possible entries are:
 
 <<RFC/UUCP>>    UseNet
-<<Fido>>        Fido and compatible
-<<QWK>>         Boxes with QWK-Interface
-<<ZConnect>>    for ZERBERUS-5.0-Boxen
+<<Fido>>        Fido and compatible Networks
+<<QWK>>         QWK Network
+<<ZConnect>>    ZERBERUS-5.0 systems
 <<Z-Netz>>      Z-Netz or ComLink
 @
 682
-Your Username in the specified box.
+Your Username for this Server. This will usually be
+your <<OWN>> name.
 @
 690
 <<Fido
@@ -7310,13 +7311,12 @@ For editing the text of outgoing messages waiting to
 be sent, use [/Message/Outgoing/Edit]@10401
 @
 10306
-<<Message / Forward
+<<Message / Action
 
-This menu contains various possibilities for sending
-a message in the data base to another person or
-newsgroup. Either as a pure copy or as edited and
-commented text, if you wish. See on-line help for the
-individual menu items.
+This menu contains various options for sending a
+message, already in the message base, either to 
+another person or to another newsgroup. See the 
+online help for the individual menu items.
 @
 10308
 <<Message / News manager
@@ -8889,10 +8889,10 @@ message.
 
 NOTE: The "Forward" template is used but the
       "Signature ((Pub)/(Priv))" template is <<NOT>>
-      used. In other words, your signature will <<NOT>> 
-      be added to the end of the forwarded message 
-      and so therefore, if you would like your 
-      signature added, you must add it manually 
+      used. In other words, your signature will <<NOT>>
+      be added to the end of the forwarded message
+      and so therefore, if you would like your
+      signature added, you must add it manually
       before saving the message.
 
       For the techies :-)
