@@ -773,7 +773,7 @@ begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
                      ((umbruch=1) and ((length(s2)<=rrand) or sbrk)));
-        if length(s)>0 then
+        if length(s2)>0 then
           Move(s2[1],p^.cont,length(s2));
         AppP;
       end;
@@ -4054,6 +4054,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.95  2003/04/23 19:32:36  mk
+  - fixed bug in LoadBlock
+
   Revision 1.94  2003/04/15 13:33:06  mk
   - fixed Loadblock
 
