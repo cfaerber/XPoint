@@ -881,6 +881,8 @@ From left to right:
 <Ctrl Q><B> : Set Cursor at Block begin
 <Ctrl Q><K> : Set Cursor at Block end
 
+<Ctrl+Enter>: Invokes the [Glossary] function@64
+
 Keys from the number keypad:
 
 *  Copies marked block to clipboard
@@ -951,6 +953,72 @@ They can be <<recalled with Ctrl-U>>
         marked, the text from the paragraph where
         the cursor is to the next empty line is
         reformatted.
+@
+64
+<<Glossary>>
+<<-------->>
+
+By means of a pick-list, this function allows text to
+be imported directly into the editor. For this to
+work, a file named <<GLOSSARY.CFG>> must be present in
+the CrossPoint HOME directory.
+
+By pressing Ctl-Enter whilst in the message editor, a
+pick-list will appear, allowing the user to import
+any of the pre-written text "modules" found in
+GLOSSARY.CFG into the message editor. The text
+"module" will be inserted at the cursor position so
+be very careful because if the cursor is positioned
+on a word, that word will be <<replaced>> by the imported
+text "module".
+
+
+<<Rules for configuring GLOSSARY.CFG:>>
+<<---------------------------------->>
+
+Each text "module" must be given a description. This
+is achieved by enclosing either a single descriptive
+word or a descriptive sentence between the ">" and
+"<" characters. All text that follows the "<"
+character will be considered as the actual text
+"module". The end of module marker is the next ">"
+character to be encounterd.
+
+
+<<Example 1:>>
+<<--------->>
+
+>Sig<
+Regards,
+Fred
+>
+
+Upon pressing Ctl-Enter in the message editor and
+then by hitting <return> over ">Sig<" in the
+pick-list, "Regards,
+            Fred"
+will be imported at the cursor position.
+
+
+<<Example 2:>>
+<<--------->>
+
+>Sig<
+Regards,
+Fred
+>Cut<
+=== Cut ===
+>
+
+Upon pressing Ctl-Enter in the message editor and
+then by hitting <return> over ">Cut<" in the
+pick-list, "=== Cut ===" will be imported at the
+cursor position.
+
+
+This is quite a powerful function and the possibile
+uses are endless. Even a text file could be imported
+this way!
 @
 8063
 <<Line length>>
