@@ -23,8 +23,8 @@ REMOVE=rm
 MKDIR=install -m 755 -d
 RMDIR=rmdir
 ECHO=echo
-INSTALL_EXE=install -m 755
-INSTALL_DAT=install -m 644
+INSTALL_EXE=install -b -V t -s -p -m 755
+INSTALL_DAT=install -b -V existing -p -m 644
 INSTALL_DIR=/usr/local/xp/
 BIN_DIR=/usr/bin/
 LINK=ln -s
@@ -111,12 +111,15 @@ dist-clean:
 install: $(XP)
 	-$(MKDIR) $(INSTALL_DIR)
 	$(INSTALL_EXE) $(XP) $(INSTALL_DIR)
-	$(LINK) $(INSTALL_DIR)$(XP) $(BIN_DIR)$(XP)
+	-$(LINK) $(INSTALL_DIR)$(XP) $(BIN_DIR)$(XP)
 	$(INSTALL_DAT) xp-d.res $(INSTALL_DIR)
 	$(INSTALL_DAT) xp-e.res $(INSTALL_DIR)
 
 #
 # $Log$
+# Revision 1.3  2000/08/07 10:23:56  hd
+# - Installation unter Linux angepasst
+#
 # Revision 1.2  2000/08/07 10:08:23  hd
 # - Makefile angepasst
 #
