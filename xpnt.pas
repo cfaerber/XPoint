@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Netztypen   PM 04/92 }
 { s. auch NETZTYP.DOC  }
@@ -71,7 +72,8 @@ function ntGrossUser(nt:byte):boolean;        { User-Groáschreibung   }
 function ntGrossBrett(nt:byte):boolean;       { Bretter-Groáschreibung }
 function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
 function ntKomkette(nt:byte):boolean;         { Kommentar-Verkettung  }
-function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }
+{ 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
+(*function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }*)
 function ntRfcCompatibleID(nt:byte):boolean;  { RFC-Msgid             }
 function ntMIDCompatible(n1,n2:byte):boolean; { austauschbare MsgIDs  }
 function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
@@ -468,14 +470,14 @@ begin
   ltVarBuffers:=(lt=ltFido);   { evtl. ltUsenet }
 end;
 
-
+(*     { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
 function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }
 begin
   ntUserIBMchar:=newuseribm or
                  ((nt<>nt_Fido) and (nt<>nt_QWK) and (nt<>nt_Turbo) and
                   (nt<>nt_UUCP));
 end;
-
+*)
 
 function ntRfcCompatibleID(nt:byte):boolean;
 begin
@@ -753,3 +755,9 @@ end;
 begin
   fillchar(ntused,sizeof(ntused),0);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

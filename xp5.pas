@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Utilities }
 
@@ -21,9 +22,9 @@ interface
 uses  xpglobal,
       {$IFDEF virtualpascal}sysutils,{$endif}
       crt,dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
-      video,datadef,database,maus2,maske,xdelay,clip,resource,
+      video,datadef,database,maus2,maske,clip,resource,
 {$IFDEF BP }
-      ems,xms,
+      ems,xms, xdelay,
 {$ENDIF }
       xp0,xp1,xp1input,xp1o,xp1o2;
 
@@ -208,7 +209,7 @@ begin
     if (lm<>mm) or (lj<>jj) then begin
       attrtxt(col.colutihigh);
       moff;
-      gotoxy(rx+4,ry+1); write(cal,' ',mm:2,'/',jj:2,'   ');
+      gotoxy(rx+4,ry+1); write(cal,' ',mm:2,'/',jj:4);
       {Erweitert für Jahre kleiner 1000 durch MW 01/2000}
       mon;
       attrtxt(col.colutility);
@@ -641,7 +642,9 @@ begin
     end;
   mborder:=col.colborder;
   col.colborder:=0;
+{$IFDEF BP }
   SetXPborder;
+{$ENDIF }
   scactive:=true;
   if vesa_dpms and SetVesaDPMS(DPMS_Suspend) then;
   et:=(endtime<'24');
@@ -682,7 +685,9 @@ begin
     restcursor;
   until topen;
   col.colborder:=mborder;
+{$IFDEF BP }
   SetXPborder;
+{$ENDIF }
   scactive:=false;
   if vesa_dpms and SetVesaDpms(DPMS_On) then;
 end;
@@ -1000,3 +1005,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

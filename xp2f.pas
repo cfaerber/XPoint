@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint Config - Farben, F-Tasten, Feiertage }
 
@@ -922,7 +923,9 @@ begin
     rfehler(216)        { 'Bei Hercules-Grafikkarten nicht m”glich!' }
   else
     col.colborder:=(col.colborder+1) mod iif(videotype<2,16,64);
+{$IFDEF BP }
   SetXPborder;
+{$ENDIF }
 end;
 
 procedure CfgColors;
@@ -940,7 +943,9 @@ begin
   pushhp(52);
   repeat
     ssp:=showcol; ssp;
+    {$IFDEF BP }
     SetXPborder;
+    {$ENDIF }
     n:=readmenu(0);
     with col do
     case n of
@@ -1161,4 +1166,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

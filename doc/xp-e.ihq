@@ -1062,6 +1062,20 @@ be saved. <Esc> breaks off.
 
 If no other path is given, XP puts the file in the
 Extract Directory [/Config/Path/Extract].@261
+
+With F2 you can copy to the Windows-Clipboard.
+
+<<Windows-Clipboard>> 
+copies the marked Text to the Clipboard
+
+<<Win-Clipboard (URL)>> 
+tries to generate a Internet-URL (FTP:// or HTTP://)
+from the first marked line and copies this to the
+Clipboard
+
+<<Win-Clipboard (MAIL)>> 
+like before, but generates a Mail-Adress.
+
 @
 75
 Enter the File Name where the decoded file should be

@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XP-ZConnect <-> FTS-0001 - Konvertierer }
 { (c) PM 06/92         FTS-0001, FSC-0039 }
@@ -994,7 +995,7 @@ var f1,f2  : file;
     s      : string;
     origin : fidoadr;
     madr   : longint;
-    pm,via : boolean;
+    via : boolean;
     lfs    : byte;        { LF's am Zeilenende bei GetString }
     prog2  : string[60];
     brt2   : string[25];  { <- bretter }
@@ -1003,7 +1004,6 @@ var f1,f2  : file;
     pok    : boolean;
     msgbuf : charrp;      { Puffer fr kompletten Nachrichteninhalt }
     mbufsize : word;      { Puffergr”áe                       }
-    msgsize : word;       { gr”áe des aktuellen Pufferinhalts }
     oversize: longint;    { abgeschnittener Nachrichtenteil >48k }
     cxlate  : byte;        { 0=ASCII/IBMPC, 1=LATIN-1, 2=MAC }
     fromline: string[250];
@@ -1471,7 +1471,6 @@ begin
         attrib:=mattrib and $3012;   { Crash, File, ReqEB, IsEB }
         if (attrib and attrFile<>0) and (cpos('\',betreff)>0) then
           betreff:=GetFileName(betreff);   { Pfad aus Betreff entfernen }
-        pm:=(fido_to='');
         end;
 
       adr0:=adr;              { wird unten ge„ndert, falls Origin vorhanden }
@@ -1662,3 +1661,9 @@ begin
   else FidoZ;
   halt(result);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -193,7 +194,6 @@ var   fb     : pathstr;
       dpath  : pathstr;    { Display-Path }
       chgdrive : boolean;
       wpushed  : boolean;
-      c      : char;
       height : shortint;
       na,ia  : byte;
       drives : string[80];
@@ -791,7 +791,7 @@ var   i,j     : integer;
 
   procedure psearch(p:pathstr; ebene:byte);
   var sr   : searchrec;
-      n1   : word;
+      { n1   : word;  MK 14.02.2000 Variable wird nicht benutzt }
       de   : integer;
   begin
     findfirst(p+'*.*',directory+hidden+readonly+sysfile,sr);
@@ -806,7 +806,7 @@ var   i,j     : integer;
           inc(dsb,size);
           end;
         end;
-    n1:=pn;
+    { n1:=pn; }
     while de=0 do begin
       sn:=sr.name;
       multi2(curoff);
@@ -827,7 +827,7 @@ var   i,j     : integer;
       glc:=iifc(de=0,'Ã','À');
       papp(sp(ebene)+glc+'ÄÄ'+sn);
       if memerr then exit;
-      n1:=pn;
+      { n1:=pn; }
       psearch(p+sn+'\',ebene+3);
       if brk then exit;
       if memerr then exit;
@@ -1086,4 +1086,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

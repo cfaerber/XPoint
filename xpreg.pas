@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Registrierung }
 
@@ -20,7 +21,7 @@ unit xpreg;
 interface
 
 uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,
-      video,datadef,database,maus2,maske,xdelay,clip,resource,printerx,
+      video,datadef,database,maus2,maske,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
 procedure copyright(wait:boolean);
@@ -1575,3 +1576,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

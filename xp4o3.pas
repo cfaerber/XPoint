@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {$I XPDEFINE.INC}
 {$IFDEF BP }
@@ -48,9 +49,7 @@ var fn   : pathstr;
     if fn='' then
       fn:=d+msgtempfile
       else fn:=d+fn;
-{$IFNDEF WIN32}
     if cpos('.',fn)=0 then fn:=fn+'.';
-{$ENDIF}
   end;
 
 begin
@@ -58,21 +57,15 @@ begin
   with fkeys[nr]^[nn] do begin
     if bname then begin
       dbReadN(mbase,mb_betreff,betr);
-{$IFNDEF WIN32}
       UpString(betr);
-{$ENDIF}
       i:=1;
       while (i<=length(betr)) and
             (betr[i] in ['A'..'Z','_','-','é','ô','ö','#','@','$','!','0'..'9','\']) do
         inc(i);
-{$IFNDEF WIN32}
       fn:=left(betr,min(i-1,iif(cpos('.',fn)>0,12,8)));
-{$ENDIF}
       end;
     setfn;
-{$IFNDEF WIN32}
     extract_msg(ntyp,iifs(ntyp=3,QuoteMsk,''),fn,false,1);
-{$ENDIF}
     end;
   __getfilename:=fn;
 end;
@@ -107,10 +100,8 @@ const sm_pos : byte = 1;        { Position im Spezial-MenÅ }
 var   n,x,y  : shortint;
       s      : string;
 begin
-{$IFNDEF WIN32}
   x:=iif(mauskey,60,31);
   y:=iif(mauskey,4,9+(screenlines-25)div 2);
-{$ENDIF}
   case aktdispmode of
     11 : s:=getres2(23,2);
     12 : s:=getres2(23,2);
@@ -155,9 +146,7 @@ begin
   ReadHeader(hdp^,hds,false);
   fn:=hdp^.betreff;
   dispose(hdp);
-{$IFNDEF WIN32}
   if not multipos('\:',fn) then fn:=FilePath+fn;
-{$ENDIF}
   readmsg_getfilename:=fn;
 end;
 
@@ -174,7 +163,7 @@ var hdp : headerp;
     adra: array[1..maxadr] of ^adrstr;
     resn: array[1..maxadr] of integer;
     i   : integer;
-    size: word;
+{    size: word; }
 
   procedure appadr(adr:string; nr:integer);
   begin
@@ -187,7 +176,6 @@ var hdp : headerp;
    end;
 
 begin
-{$IFNDEF WIN32}
   new(hdp);
   ReadHeader(hdp^,hds,false);
   { 03.02.2000 robo }
@@ -240,7 +228,6 @@ begin
     end;
   dispose(hdp);
   GetWABreplyEmpfaenger:=abs;
-{$ENDIF}
 end;
 
 
@@ -255,7 +242,6 @@ var i,n    : integer;
 
   procedure TestServer;   { Crossposting bei diesem Server erlaubt? }
   begin
-{$IFNDEF WIN32}
     dbSeek(d,boiName,ustr(server));
     if not dbFound then
       ok:=false
@@ -265,7 +251,6 @@ var i,n    : integer;
       if not ok then rfehler1(480,left(e,40));   { '%s: Crossposting ist hier nicht erlaubt.' }
       brk:=(lastkey=keyesc);
       end;
-{$ENDIF}
   end;
 
 begin
@@ -296,21 +281,17 @@ begin
         ok:=false;
         end
       else begin
-{$IFNDEF WIN32}
         delfirst(e);
-{$ENDIF}
         TestServer;
         end;
       end;
     if ok then
-{$IFNDEF WIN32}
       if s0='' then s0:=ustr(server)
       else if s0<>ustr(server) then begin
         rfehler(481);   { 'Crosspostings sind nur innerhalb eines Servers mîglich!' }
         ok:=false;
         brk:=true;
         end;
-{$ENDIF}
     if brk then break;    { for-Schleife verlassen }
     if ok and ((pm and (n<maxcc)) or (not pm and (n<MaxXposts))) then begin
       AddToEmpflist(e);
@@ -320,9 +301,7 @@ begin
   dbClose(d);
   if empflist=nil then brk:=true;
   if not brk then begin
-{$IFNDEF WIN32}
     empf:=iifs(pm,'','A')+empflist^.empf;
-{$ENDIF}
     p:=empflist^.next;
     dispose(empflist); empflist:=nil;
     sendempflist:=p;
@@ -334,3 +313,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

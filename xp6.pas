@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { MH: PGP-Sig auch in RFC, Zur…k Button f. alle Netztypen }
 
@@ -847,9 +848,7 @@ fromstart:
   fidoname:='';
 
   ch:=' ';
-  if pm then begin  { MH: IBM=0, ASCII=1, ISO=2 }
-   if ntUserIBMchar(netztyp) then umlaute:=0 { MH: NewUserIBM ber…ksichtigen }
-    else umlaute:=1;
+  if pm then begin
     fidoto:='';
     dbSeek(ubase,uiName,ustr(empfaenger));
     if dbFound then begin
@@ -899,6 +898,9 @@ fromstart:
         end;
       end
     else begin    { Empf�nger unbekannt }
+    { 14.02.2000 MH: IBM=0, ASCII=1, ISO=2 }
+    if newuseribm then umlaute:=0 { MH: NewUserIBM ber…ksichtigen }
+     else umlaute:=1;
       empfneu:=true;
       verteiler:=false;
       if fileserver(empfaenger) or _sendmaps then begin
@@ -1424,7 +1426,9 @@ fromstart:
         dbWrite(ubase,'haltezeit',halten);
         b:=1;
         dbWrite(ubase,'adrbuch',b);
-        if netztyp=nt_Fido then inc(b,8);  { ASCII-Umlaute }
+        {if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
+        { 14.02.2000 MH: UserFlags: 8=ASCII }
+      if not newuseribm then inc(b,8); { MH: NewUserIBM ber…ksichtigen }
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
@@ -2030,3 +2034,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

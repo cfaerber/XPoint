@@ -17,7 +17,7 @@ interface
 {$ENDIF }
 
 const
-  verstr      = 'v3.20.020';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.20.021';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
 {$IFDEF VER32 }

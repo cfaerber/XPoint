@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -66,9 +67,7 @@ function  sommer(d:datetimest):boolean;   { Sommerzeit? }
 
 IMPLEMENTATION
 
-
 function schaltj(jahr:integer):boolean;
-
 begin
   schaltj:=((jahr mod 4)=0) xor
            ((jahr mod 100)=0) xor
@@ -200,3 +199,9 @@ end;
 begin
   adow:=dow(date);
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

@@ -7,9 +7,14 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Exaktes Delay fÅr Turbo Pascal }
 {$I XPDEFINE.INC }
+
+{$IFNDEF BP }
+  Unit wird nur unter Turbo Pascal benîtigt
+{$ENDIF }
 
 unit xdelay;
 
@@ -19,16 +24,12 @@ procedure delay(ms:word);
 
 implementation
 
-var Seg40 : word;
+var
+  Seg40 : word;
 
-{$IFDEF ver32}
-procedure delay_ini; begin end;
-procedure delay(ms:word); begin end;
-{$ELSE}
 procedure delay_ini; external;
 procedure delay(ms:word); external;
 {$L xdelay.obj}
-{$ENDIF}
 
 begin
   {$IFDEF DPMI}
@@ -38,3 +39,9 @@ begin
   {$ENDIF}
   delay_ini;
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

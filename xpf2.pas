@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Fido-Modul, Teil 2 }
 
@@ -30,28 +31,23 @@ implementation   { -------------------------------------------------- }
 
 uses xpnt,xp3o2;
 
-
+(*
 function UNIX2Zdate(secs:longint):string;
 const tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
       tagsec = 86400;  { 24*60*60 }
 var y,m,d,dow : word;
-    h,min,s   : word;
-
-  function schalt(jahr:word):boolean;
-  begin
-    schalt:=(jahr mod 4=0) xor (jahr mod 100=0) xor (jahr mod 400=0);
-  end;
+    h,min   : word;
 
   procedure setfeb(y:word);
   begin
-    if schalt(y) then tage[2]:=29
+    if schaltj(y) then tage[2]:=29
     else tage[2]:=28;
   end;
 
 begin
   y:=1970;
-  while secs>=iif(schalt(y),366,365)*tagsec do begin
-    dec(secs,iif(schalt(y),366,365)*tagsec);
+  while secs>=iif(schaltj(y),366,365)*tagsec do begin
+    dec(secs,iif(schaltj(y),366,365)*tagsec);
     inc(y);
     end;
   setfeb(y); m:=1;
@@ -62,9 +58,8 @@ begin
   d:=secs div tagsec + 1; secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
-  s:=secs;
   UNIX2Zdate:=formi(y mod 100,2)+formi(m,2)+formi(d,2)+formi(h,2)+formi(min,2);
-end;
+end; *)
 
 
 { TIC-Files verarbeiten; BoxPar^ muá korrekte geladen sein! }
@@ -205,4 +200,3 @@ end;
 
 
 end.
-

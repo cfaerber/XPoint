@@ -27,7 +27,7 @@ program xp;
 uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc16,resource,stack,clip,eddef,editor,feiertag,
-     xdelay,xpdiff,xpdatum,xpcrc32, xpglobal,
+     xpdiff,xpdatum,xpcrc32, xpglobal,
 {$IFDEF CAPI }
      capi,
 {$ENDIF }
@@ -144,7 +144,7 @@ begin
         goto Ende;
       end;
 {$IFDEF Beta } { MK 25.01.2000 Betameldung anzeigen, /nb schaltet diese ab }
-      if not (AutoMode or ParNoBeta) then
+      if not ParNoBeta then
       begin
         BetaMessage;
         if quit then
@@ -182,3 +182,9 @@ ende:
   runerror:=false;
   halt(errlevel);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

@@ -6,11 +6,15 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint-MenÅeditor }
 
-uses  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,
-      xdelay;
+uses
+{$IFDEF BP }
+  xdelay,
+{$ENDIF }
+  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -695,3 +699,9 @@ begin
   wrlogo;
   if saved then writeln('énderungen wurden gesichert.'#10);
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

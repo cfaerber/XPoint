@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { YooHoo/EMSI - Mailer - Modul }
 
@@ -148,14 +149,9 @@ end;
 const tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
       tagsec = 86400;  { 24*60*60 }
 
-function schalt(jahr:word):boolean;
-begin
-  schalt:=(jahr mod 4=0) xor (jahr mod 100=0) xor (jahr mod 400=0);
-end;
-
 procedure setfeb(y:word);
 begin
-  if schalt(y) then tage[2]:=29
+  if schaltj(y) then tage[2]:=29
   else tage[2]:=28;
 end;
 
@@ -169,7 +165,7 @@ begin
   gettime(h,min,s,s1);
   secs:=0;
   for i:=1970 to y-1 do
-    inc(secs,iif(schalt(i),366,365)*tagsec);    { Jahre }
+    inc(secs,iif(schaltj(i),366,365)*tagsec);    { Jahre }
   setfeb(y);
   for i:=1 to m-1 do
     inc(secs,longint(tage[i])*tagsec);          { + Monate }
@@ -184,8 +180,8 @@ var y,m,d : word;
 begin
   if secs<0 then exit;
   y:=1970;
-  while secs>=iif(schalt(y),366,365)*tagsec do begin
-    dec(secs,iif(schalt(y),366,365)*tagsec);
+  while secs>=iif(schaltj(y),366,365)*tagsec do begin
+    dec(secs,iif(schaltj(y),366,365)*tagsec);
     inc(y);
     if y>2099 then exit;
     end;
@@ -1075,3 +1071,9 @@ begin
   until ENDE;
   mdelay(2000);
 end;
+{
+  $Log$
+  Revision 1.4  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { ZPR - ZCONNECT-Pufferreparierer }
 { PM 08/93, 10/93                 }
@@ -34,6 +35,12 @@ const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       knownheaders= 24;     { Headerzeilen, deren Syntax bekannt ist       }
       stdhdlines  = 7;      { Anzahl Pflichtheaderzeilen                   }
       TO_ID       = '/'#0#0#8#8'TO:';
+
+{$IFDEF Linux }              { ML 13.02.2000 unter linux keine '/' als Param verwenden }
+      paramchars   = ['-'];
+{$ELSE }
+      paramchars   = ['-','/'];
+{$ENDIF }
 
       logfilename = 'ZPR.LOG';
 
@@ -346,7 +353,9 @@ begin
   err:=false;
   for i:=1 to paramcount do begin
     s:=trim(paramstr(i));
-    if (left(s,1)='-') or (left(s,1)='/') then begin
+    if length(left(s,1)) > 0 then
+    begin    { ML 13.02.2000 Überprüfung nun mit paramchars }
+      if s[1] in paramchars then begin
       delete(s,1,1);
       s:=lstr(s);
       j:=1;
@@ -368,13 +377,16 @@ begin
         end;
       end
     else begin
+{$IFNDEF Linux }
       UpString(s);
+{$ENDIF }
       if fi='' then fi:=s
       else if fo='' then begin
         fo:=s; ParRep:=true; end
       else error('berflssiger Parameter: "'+s+'"');
       end;
     end;
+  end;
   if err then halt(2);
 end;
 
@@ -714,12 +726,9 @@ procedure wrproz(adr:longint);
 const proz : byte = 101;
 var p2 : byte;
 begin
-  if prozent and (fsize>0) then begin
-{$IFDEF Ver32 } { Hier sparen wir uns die Flieákomma-Berechnungen }
-    p2:=iif(adr<=0,0,adr) * 100 div fsize;
-{$ELSE }
+  if prozent and (fsize>0) then
+  begin
     p2:=system.round(iif(adr<=0,0,adr) / fsize*100);
-{$ENDIF }
     if p2<>proz then begin
       proz:=p2;
       write(#13,proz:4,'%');
@@ -1359,3 +1368,9 @@ begin
   statistik;
   halt(sgn(errmsgs));
 end.
+{
+  $Log$
+  Revision 1.4  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

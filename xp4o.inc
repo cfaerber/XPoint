@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XP4O - Reorganisation }
 
@@ -711,4 +712,9 @@ begin
   markanz:=0;
   aufbau:=true; xaufbau:=true;
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

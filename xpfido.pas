@@ -6,7 +6,8 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-(* MH: Flaggr”áe: 40 -> 65 *)
+{ $Id$ }
+
 { Nodelist }
 
 {$I XPDEFINE.INC}
@@ -278,7 +279,7 @@ var x,y        : byte;
   end;
 
   procedure WriteBerindex;
-  var i    : integer;
+  var
       r    : berrec;
       na   : ^netrecl;
       rr   : word;
@@ -2213,4 +2214,10 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}
 

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -47,8 +48,10 @@ function  GetVideoPage:byte;               { aktuelle Video-Seite abfragen }
 function  GetVideoMode:byte;
 procedure SetVideoMode(mode:byte);
 procedure SetVideoPage(page:byte);         { angezeigte Seite setzen }
+{$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
+{$ENDIF }
 
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 
@@ -75,10 +78,11 @@ procedure vwrt(x,y:word; txt:String; attr:byte);
 
 IMPLEMENTATION
 
-{$IFDEF DPMIa}
-uses  WinAPI;
-{$ENDIF}
-
+{$IFDEF BP }
+  {$IFDEF DPMI }
+  uses  WinAPI;
+  {$ENDIF}
+{$ENDIF }
 
 const clchar : char = ' ';
       rchar  : array[1..4,1..6] of char =
@@ -101,24 +105,14 @@ var vtype   : byte;
 
 {$IFDEF ver32}
 function  videotype:byte; begin end;
-procedure setvideomode; begin end;          { BIOS-Mode-Nr. setzen }
-
+procedure setvideomode; begin end;         { BIOS-Mode-Nr. setzen }
 function  GetVideoPage:byte; begin end;     { aktuelle Video-Seite abfragen }
 procedure setvideopage(page:byte); begin end;
-procedure SetBorder64(color:byte); begin end; { EGA-Rahmenfarbe einstellen }
-procedure SetBorder16(color:byte); begin end; { CGA-Rahmenfarbe einstellen }
 procedure SetBackIntensity(hell:boolean); begin end; { hellen Hintergr. akt. }
 
 procedure setcur(x,y:byte); begin end;     { Cursor positionieren }
 procedure cur1; begin end;                 { Cursor an }
 procedure cur0; begin end;                 { Cursor aus }
-
-procedure make15; begin end;
-procedure make13; begin end;
-procedure make12; begin end;
-procedure make11; begin end;
-procedure make10; begin end;
-procedure make9; begin end;
 
 {$ELSE}
 {$L video.obj}
@@ -209,6 +203,7 @@ end;
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
+{$IFDEF BP }
 
   procedure loadcharset(height:byte);
   var regs : registers;
@@ -261,18 +256,17 @@ procedure SetScreenLines(lines:byte);
   begin
     getmem(p2,15*256);
     with regs do begin
-{$IFNDEF ver32}
       ax:=$1130;
       if height>14 then bh:=6        { 16er Font lesen }
       else if height>10 then bh:=2   { 14er Font lesen }
       else bh:=3;                    { 8er Font lesen  }
       xintr($10,regs);
-      {$IFDEF DPMIa}
+      {$IFDEF DPMI }
       sel:=allocselector(0);
       if SetSelectorBase(sel,longint(es)*$10)=0 then;
       if SetSelectorLimit(sel,$ffff)=0 then;
       es:=sel;
-      {$ENDIF}
+      {$ENDIF }
       p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
       case height of
         15 : make15;
@@ -283,7 +277,6 @@ procedure SetScreenLines(lines:byte);
          9 : make9;
          7 : make7;
       end;
-{$ENDIF}      
       LoadFont(height,p2^);
 {      ax:=$1110;
       bx:=height shl 8;
@@ -297,8 +290,10 @@ procedure SetScreenLines(lines:byte);
     freemem(p2,15*256);
   end;
 
+{$ENDIF}
 begin
   sclines:=25;
+{$IFDEF BP }
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
     1 : setvideomode(3);       { CGA: nur 25 Zeilen }
@@ -332,6 +327,7 @@ begin
         end;
   end;
   vlines:=lines;
+{$ENDIF } { !! Evtl. vlines richtig setzen }
 end;
 
 
@@ -443,4 +439,9 @@ begin
   oldexit:=exitproc;
   exitproc:=@newexit;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

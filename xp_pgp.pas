@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { PGP-Codierung }
 
@@ -159,7 +160,7 @@ begin
       if PGPVersion=PGP2 then
         RunPGP('-kx +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile)
       else
-        RunPGP5('PGPK.EXE','-x +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile);
+        RunPGP5('PGPK.EXE','-x +armor=off '+IDform(PGP_UserID)+' -o '+PGPkeyfile);
       end;
     end;
 end;
@@ -283,26 +284,33 @@ begin
 
   if fido_origin<>'' then StripOrigin;
   t:=iifs(hd.typ='T','t',' +textmode=off');
-  if PGP_UserID<>'' then uid:=' -u '+IDform(PGP_UserID)
-  else uid:='';
-  if encode and not sign then begin                     { codieren }
+  if PGP_UserID<>'' then begin
+    if PGPVersion=PGP2 then uid:=' -u '+IDform(PGP_UserID)
+                       else uid:=IDform(PGP_UserID)
+  end else uid:='';
+  
+  { --- codieren --- }
+  if encode and not sign then begin                     
     if PGPVersion=PGP2 then
       RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else
-      RunPGP5('PGPE.EXE','-a'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
-  end else if not encode and sign then begin            { signieren }
+      RunPGP5('PGPE.EXE','-a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp);
+  
+  { --- signieren --- }
+  end else if not encode and sign then begin            
     if PGPVersion=PGP2 then
-      RunPGP('-sa'+t+' '+filename(source)+' -o '+tmp+uid)
-    else                                                  { codieren+signieren }
-      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp+uid)
-  end else begin                                       { codieren+signieren }
+      RunPGP('-esa'+t+' '+filename(source)+' -o '+tmp+uid)
+    else                                                  
+      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp+uid);
+  
+  { --- codieren+signieren --- }
+  end else begin                                       
     if PGPVersion=PGP2 then
-      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp
-           {+uid wird zu lang!} )
+      RunPGP('-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} )
     else
-      RunPGP5('PGPE.EXE','-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp
-           {+uid wird zu lang!} )
+      RunPGP5('PGPE.EXE','-sa'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} ); 
   end;
+  
   if fido_origin<>'' then AddOrigin;
 
   if exist(tmp) then begin
@@ -688,4 +696,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

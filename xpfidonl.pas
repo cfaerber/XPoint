@@ -302,6 +302,7 @@ var  fne_first : integer;
 function setfnlenable(var s:string):boolean;
 var i : integer;
 begin
+  setfnlenable := true;     { MK 14.02.00 Standard-Wert setzen }
   if (s='') or (length(s)=1) then
     for i:=fne_first to fne_first+2 do
       setfieldenable(i,s<>'');
@@ -747,3 +748,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

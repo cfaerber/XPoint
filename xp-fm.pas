@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Fido-Mailer fÅr CrossPoint }
 { (c) 06/92 by PM            }
@@ -22,7 +23,7 @@
 
 program xp_fm;
 
-uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc, xpglobal;
+uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc, xpglobal, montage;
 
 const aresult    : byte = 0;
       brk_result: byte = EL_break;
@@ -1070,3 +1071,9 @@ begin
   CloseResource;
   halt(aresult);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

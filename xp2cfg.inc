@@ -839,6 +839,7 @@ begin
   writeln(t,'Doppelklick=',MausDblclck);
   writeln(t,'MausInit=',jnf(mausshinit));
   writeln(t,'ISO2IBM=',jnf(ConvISO));
+  writeln(t,'NewUserIBM=',jnf(newuseribm));
   writeln(t,'KommPfeile=',jnf(KomArrows));
   writeln(t,'ListScroller=',jnf(listscroller));
   writeln(t,'ListAutoScroll=',jnf(listautoscroll));
@@ -903,7 +904,6 @@ begin
   writeln(t,'Telefon=',telefonnr^);
   writeln(t,'Homepage=',wwwHomepage^);
   writeln(t,'AdrPMonly=',jnf(adrpmonly));
-  writeln(t,'NewUserIBM=',jnf(newuseribm));
   for i:=1 to maxpmc do
     with pmcrypt[i] do
       writeln(t,'pmCrypt',i,'=',name,'~',encode,'~',decode,'~',iifc(binary,'J','N'));

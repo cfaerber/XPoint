@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Schnittstelle zum Resourcen-Compiler RC }
 { PM 12/92                                }
@@ -106,7 +107,9 @@ end;
 
 procedure OpenResource(fn:string; preloadmem:longint);
 var i  : integer;
+{$IFDEF BP }
     pg : byte;
+{$ENDIF }
     fm : byte;
 begin
   if f<>nil then
@@ -128,9 +131,10 @@ begin
     getmem(index[i],block[i].anzahl*4);
     seek(f^,block[i].fileadr);
     blockread(f^,index[i]^,block[i].anzahl*4);
-    if block[i].flags and flPreload<>0 then begin
-      pg:=(longint(block[i].contsize)+$3fff) div $4000;
+    if block[i].flags and flPreload<>0 then
+    begin
 {$IFDEF BP }
+      pg:=(longint(block[i].contsize)+$3fff) div $4000;
       if emsavail>=pg then begin
         EmsAlloc(pg,block[i].emshandle);
         block[i].emspages:=pg;
@@ -382,3 +386,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

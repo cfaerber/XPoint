@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { DATABASE.PAS: Overlay-Teil }
 
@@ -83,7 +84,7 @@ procedure dbCreate(filename:dbFileName; flp:dbFLP);
 var hd    : dbheader;
     ehd   : dbdheader;
     f     : file;
-    i,res : integer;
+    i     : integer;
     size  : word;
     fld   : dbFeld;
     xflag : boolean;
@@ -132,7 +133,7 @@ begin
 
   assign(f,filename+dbIxExt);
   erase(f);
-  res:=ioresult;
+  if ioresult = 0 then ;
 end;
 
 
@@ -351,7 +352,6 @@ var n,i   : longint;
     fld   : dbfeld;
     p     : pointer;
     bp    : ^byte absolute p;
-    pp    : byte;
 begin
   assign(f1,filename+dbExt);
   reset(f1,1);
@@ -381,7 +381,8 @@ begin
       blockread(f1,p^,hd.recsize);
       if bp^ and rFlagDeleted=0 then begin
         inc(n);
-        irec.percent:=100*n div hd.reccount;
+        irec.percent:=100 * n div hd.reccount;
+
         irec.command:=icShowPack;
         ICP(irec);
         blockwrite(f2,p^,hd.recsize);
@@ -406,4 +407,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:35  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

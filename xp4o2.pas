@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint: DBs packen, Kommentarbaum u.a. }
 
@@ -111,7 +112,6 @@ var _brett,
     recnt   : integer;
     user    : string[AdrLen];   { Bezugs-User }
     ref     : string[midlen];   { Bezugs-MesssageID }
-    n       : longint;
     ml      : byte;
     hdp     : ^header;
     hds     : longint;
@@ -675,7 +675,6 @@ procedure GetKomflags(var _left,_right,up,down:boolean);
 var hdp      : headerp;
     hds      : longint;
     rec,dat  : longint;
-    rec0     : longint;
     ref,dat0 : longint;
     mi       : shortint;
     vor      : boolean;
@@ -868,4 +867,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

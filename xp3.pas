@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Verarbeitung von Pointdaten }
 
@@ -711,8 +712,8 @@ begin
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
   b:=1;
   dbWriteN(ubase,ub_adrbuch,b);
-  if not ntUserIBMchar(ntBoxNetztyp(pollbox)) then
-    inc(b,8);
+  if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
+    inc(b,8); { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
   dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
 end;
 
@@ -1072,4 +1073,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

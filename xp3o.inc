@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 
 procedure readpuffer;
@@ -812,10 +813,10 @@ begin
               pb:=pollbox_str(zconnect,true);
               dbWrite(ubase,'pollbox',pb);
               dbWrite(ubase,'haltezeit',stduhaltezeit);
-              flags:=1+iif(ntUserIBMchar(netztyp),0,8);  { aufnehmen / Umlaute }
+              flags:=1+iif(newuseribm {ntUserIBMchar(netztyp)},0,8);  { aufnehmen / Umlaute }
               dbWrite(ubase,'userflags',flags);
               writeln(userlog,logstr(absender));
-              end;
+              end;        { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
             aufnehmen:=true;
             end
           else
@@ -1141,4 +1142,9 @@ begin
     if ioresult<>0 then;
     end;
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

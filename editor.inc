@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Offset der Cursorposition in dl^[scy].absatz; kann gr”áer }
 { als die L„nge des Absatzes sein!                          }
@@ -823,26 +824,23 @@ begin
         then quotec:=GetQuote(ap)
         else quotec:='';
       quotes:=length(quotec);
-      if config.autoindent then begin
-        while (length(quotec)>0) and (quotec[1]=' ') do delete(quotec,1,1);
-        quotes:=length(quotec);
+      if quotes=vap(ap)^.size
+        then quotes:=0; { kein Reflow bei gequoteten Leerzeilen }
+      if quotes>wp then quotes:=0;
+      if config.autoindent and (quotes=0) then begin
         while (spaces<vap(ap)^.size) and (vap(ap)^.cont[spaces]=' ') do
           inc(spaces);
-        if spaces>=workpos then begin
-          spaces:=0;
-          quotes:=0;
-        end;
+        if spaces>=wp then spaces:=0;
       end;
-      if quotes+spaces>workpos then quotes:=0;
       if memtest(vap(ap)^.size) and createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
       { /robo }
       then begin
         if spaces>0 then
-          fillchar(vap(ap2)^.cont,spaces,' ');
+          fillchar(vap(ap2)^.cont,spaces,' ')
         { 10.02.2000 robo - Quote-Reflow }
-        if quotes>0 then  
-          fastmove(quotec[1],vap(ap2)^.cont[spaces],quotes);
-        { /robo }    
+        else if quotes>0 then
+          fastmove(quotec[1],vap(ap2)^.cont[0],quotes);
+        { /robo }
         if assigned(vap(ap)^.next) then
           vap(vap(ap)^.next)^.prev:=ap2;
         vap2(ap2)^.next:=vap(ap)^.next;
@@ -855,7 +853,10 @@ begin
         KorrBlockScrolled(false);
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
-        moveworkpos(spaces,actabs);
+        { 14.02.2000 robo - Quote-Reflow }
+        { moveworkpos(spaces,actabs); }
+        moveworkpos(spaces+quotes,actabs);
+        { /robo }
         modified:=true;
         aufbau:=true;
         end;
@@ -2082,4 +2083,9 @@ begin
         end;
       end;
 end;
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:35  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

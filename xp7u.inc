@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 
 var uunum : word;    { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
@@ -362,9 +363,8 @@ end;
 
 
 function UUCPnetcall: Boolean;
-var sr      : searchrec;
+var
     result  : integer;
-    logfile : pathstr;
     f       : file;
 begin
   recs:='';
@@ -428,20 +428,6 @@ end;
 procedure UUCPSysopTransfer;
 var dummy : longint;
 
-  procedure CopyPKTs;   { PKT's vom Sysopeingangsvereichnis -> SPOOL }
-  var sr : searchrec;
-  begin
-    findfirst(BoxPar^.sysopinp+'*.PKT',0,sr);
-    while doserror=0 do begin
-      if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
-        _era(BoxPar^.sysopinp+sr.name);
-      findnext(sr);
-    end;
-    {$IFDEF virtualpascal}
-    FindClose(sr);
-    {$ENDIF}
-  end;
-
   procedure EmptySysin;
   var sr : searchrec;
   begin
@@ -490,4 +476,9 @@ begin
     Netcall_connect:=true;
     end;
 end;
+{
+  $Log$
+  Revision 1.4  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

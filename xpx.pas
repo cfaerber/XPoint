@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - First Unit }
 
@@ -23,18 +24,18 @@ uses
 
 implementation
 
-{$IFNDEF BP }
-const MinVersion = $330;
-      MinVerStr  = '3.3';
-      MaxHandles = 31;
-{$ELSE}
-{$IFNDEF DPMI }
-uses overlay;
-{$ENDIF }
-const MinVersion = $300;
-      MinVerStr  = '3.0';
-      MaxHandles = 30;
-var   handles    : array[1..maxhandles] of byte;
+{$IFDEF BP }
+  {$IFDEF DPMI}
+  const MinVersion = $330;
+        MinVerStr  = '3.3';
+        MaxHandles = 31;
+  {$ELSE}
+  uses  overlay;
+  const MinVersion = $300;
+        MinVerStr  = '3.0';
+        MaxHandles = 30;
+  var   handles    : array[1..maxhandles] of byte;
+  {$ENDIF}
 {$ENDIF}
 
 const starting : boolean = true;
@@ -50,16 +51,6 @@ begin
   runerror:=false;
   halt(1);
 end;
-
-
-function plevelstr:string;           { Patchlevel }
-begin
-  if lastchar(patchlevel)='0' then
-    plevelstr:=''
-  else
-    plevelstr:=' pl'+lastchar(patchlevel);
-end;
-
 
 { Diese Funktion und deren Aufruf dÅrfen nicht verÑndert werden }
 { (siehe LIZENZ.TXT).                                           }
@@ -103,13 +94,12 @@ begin
     end;
 end;
 
-
+{$IFDEF BP }
 procedure SetHandles;
 var i    : integer;
     regs : registers;
 begin
   {$IFNDEF DPMI }
-{$IFNDEF Ver32 }
     for i:=1 to maxhandles do
       handles[i]:=$ff;
     for i:=1 to 5 do
@@ -117,7 +107,6 @@ begin
     MemW[PrefixSeg:$32] := MaxHandles;
     MemW[PrefixSeg:$34] := Ofs(handles);
     MemW[PrefixSeg:$36] := Seg(handles);
-{$ENDIF }
   {$ELSE}
     with regs do begin
       ah:=$67;
@@ -128,7 +117,9 @@ begin
       end;
   {$ENDIF}
 end;
+{$ENDIF }
 
+{$IFDEF BP }
 procedure TestOVR;
 var ft   : longint;
     c,cc : char;
@@ -166,6 +157,7 @@ begin
       end;
     end;
 end;
+{$ENDIF }
 
 function _deutsch:boolean;
 var t : text;
@@ -236,7 +228,9 @@ begin
   if left(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
+{$IFDEF BP }
   SetHandles;
+{$ENDIF }
   ShellPath:=dospath(0);
   if Shellpath+'\'<>progpath then
     GoDir(progpath);
@@ -278,3 +272,9 @@ begin
   TestCD;
   starting:=false;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
+
+}

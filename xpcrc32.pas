@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {$I XPDEFINE.INC }
 
@@ -14,74 +15,78 @@ unit xpcrc32;
 
 interface
 
+uses xpglobal;
+
 function crc32(st:string):longint;
 function crc32block(var data; size:word):longint;
 function crc32file(fn:string):longint;
 
-
 implementation
 
 VAR
-   CRC_input      : WORD;
-   CRC_reg_lo     : WORD;
-   CRC_reg_hi     : WORD;
+   CRC_reg_lo     : smallWORD;
+   CRC_reg_hi     : smallWORD;
 
-
-procedure CCITT_CRC32_calc;         {  CRC-32  }
-BEGIN
-{$IFNDEF ver32}
-   inline( $8B/$1E/CRC_reg_lo );    {       mov     bx,CRC_reg_lo     }
-   inline( $8B/$16/CRC_reg_hi );    {       mov     dx,CRC_reg_hi     }
-   inline( $B9/>$08 );              {       mov     cx,8              }
-   inline( $A1/CRC_input );         {       mov     ax,CRC_input      }
-   inline( $D0/$D8 );               {  u1:  rcr     al,1              }
-   inline( $D1/$DA );               {       rcr     dx,1              }
-   inline( $D1/$DB );               {       rcr     bx,1              }
-   inline( $73/$08 );               {       jnc     u2               }
-   inline( $81/$F3/$8320 );         {       xor     bx,8320h          }
-   inline( $81/$F2/$EDB8 );         {       xor     dx,EDB8h          }
-   inline( $E2/$EE );               {  u2:  loop    u1                }
-   inline( $89/$1E/CRC_reg_lo );    {       mov     CRC_reg_lo,bx     }
-   inline( $89/$16/CRC_reg_hi );    {       mov     CRC_reg_hi,dx     }
-{$ENDIF}
-END;
+{ MK 14.02.2000 Die Routine verarbeitet jetzt komplette Bl”cke, das
+  vereinfacht das komplette Handling; funktioniert auch in 32 Bit-Vers. }
+procedure CCITT_CRC32_calc_Block(var block; size: smallword); assembler;        {  CRC-32  }
+asm
+     xor bx, bx      { CRC mit 0 initialisieren }
+     xor dx, dx
+{$IFDEF BP }
+     les di, block
+{$ELSE }
+     mov edi, block
+{$ENDIF }
+     mov si, size
+{$IFDEF BP }
+@u3: mov al, byte ptr es:[di]
+{$ELSE }
+@u3: mov al, byte ptr [edi]
+{$ENDIF }
+     mov cx, 8
+@u1: rcr al, 1
+     rcr dx, 1
+     rcr bx, 1
+     jnc @u2
+     xor bx, $8320
+     xor dx, $edb8
+@u2: loop @u1
+     inc di
+     dec si
+     jnz @u3
+     mov CRC_reg_lo, bx
+     mov CRC_reg_hi, dx
+end;
 
 function CRC32(st : string) : longint;
-var
-  a : byte;
 begin
   CRC_reg_lo := 0;
   CRC_reg_hi := 0;
-  for a:=1 to length (st) do begin
-    CRC_input := byte (st[a]);
-    CCITT_CRC32_calc;
-  end;
+  CCITT_CRC32_calc_Block(st[1], length(st));
   CRC32 := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
 end;
 
 
 function crc32block(var data; size:word):longint;
-type barr = array[0..65530] of byte;
+{type barr = array[0..65530] of byte;
 var
-  a : word;
+  a : byte; }
 begin
   CRC_reg_lo := 0;
   CRC_reg_hi := 0;
-  for a:=0 to size-1 do begin
-    CRC_input := barr(data)[a];
-    CCITT_CRC32_calc;
-  end;
+  CCITT_CRC32_calc_block(data, size);
   CRC32block := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
 end;
 
 
 function crc32file(fn:string):longint;
 type barr = array[0..4095] of byte;
-var  crc  : longint;
+var
      f    : file;
      mfm  : byte;
      bp   : ^barr;
-     rr,a : word;
+     rr : word;
 begin
   assign(f,fn);
   mfm:=filemode; filemode:=$40;
@@ -93,15 +98,11 @@ begin
     CRC_reg_lo:=0;
     CRC_reg_hi:=0;
     new(bp);
-    while not eof(f) do begin
-{$IFNDEF WIN32}
-      blockread(f,bp^,4096,rr);
-{$ENDIF}
-      for a:=0 to rr-1 do begin
-        CRC_input:=bp^[a];
-        CCITT_CRC32_calc;
-        end;
-      end;
+    while not eof(f) do
+    begin
+      blockread(f,bp^,sizeof(bp^),rr);
+      CCITT_CRC32_calc_block(bp^, sizeof(bp^))
+    end;
     close(f);
     dispose(bp);
     CRC32file := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
@@ -110,5 +111,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/15 20:43:37  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
-
+}

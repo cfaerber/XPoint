@@ -1244,6 +1244,22 @@ kiert ist, wird der gesamte Text gespeichert.
 Wenn Sie den Dateinamen ohne Pfad angeben, legt XP
 die Datei im Extrakt-Verzeichnis ([/Config/Pfade/Ext.])@261
 ab.
+
+Mit F2 kommen sie zur Auswahl fr das 
+Windows-Clipboard.
+
+<<Windows-Clipboard>> 
+kopiert den markierten Text ins Clipboard
+
+<<Win-Clipboard (URL)>> 
+versucht aus der ersten markierten Zeile eine 
+Internet-URL (FTP:// oder HTTP://) auszuschneiden, 
+und kopiert diese ins Windows Clipboard.
+
+<<Win-Clipboard (MAIL)>> 
+Analog zur vorherigen Funktion, nur wird hier 
+versucht eine Mailadresse zu generieren.
+
 @
 75
 Geben Sie den Namen an, unter dem die decodierte

@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - allg. Routinen }
 
@@ -24,8 +25,11 @@ unit xp1;
 interface
 
 uses
+{$IFDEF BP }
+  xdelay,
+{$ENDIF }
   xpglobal, crt,dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
-  datadef,database,mouse,maus2,help,maske,lister,printerx,xdelay,clip,
+  datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,xpcrc32;
 
 const maxhidden  = 500;                 { max. versteckte Menpunkte }
@@ -99,7 +103,9 @@ procedure newscreenlines(m:integer);
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer16);
 procedure SetMausEmu;
+{$IFDEF BP }
 procedure SetXPborder;
+{$ENDIF }
 
 procedure blindon(total:boolean);
 procedure blindoff;
@@ -465,6 +471,7 @@ begin
       LoadFontfile(ParFontfile);
 end;
 
+{$IFDEF BP }
 procedure SetXPborder;
 begin
   case videotype of
@@ -472,6 +479,7 @@ begin
     2,3 : SetBorder64(col.colborder and $3f);
   end;
 end;
+{$ENDIF }
 
 
 { Zeilenzahl einstellen; evtl. Videomodus zurcksetzen }
@@ -543,7 +551,9 @@ begin
   lines(screenlines,1);
   clrscr;
   if (videotype>1) and not ParMono then setbackintensity(true);
+{$IFDEF BP }
   SetXPborder;
+{$ENDIF }
   with col do begin
     attrtxt(colmenu[0]);
     write(sp(screenwidth));
@@ -583,7 +593,9 @@ begin
         end;
     end;
   if (videotype>1) and not ParMono then setbackintensity(true);
+{$IFDEF BP }
   SetXPborder;
+{$ENDIF }
 end;
 
 
@@ -592,8 +604,10 @@ var i : integer;
 begin
   moff;
   attrtxt(7);
+{$IFDEF BP }
   if col.colborder<>0 then
     setborder16(0);
+{$ENDIF }
   clrscr;
   SetVideoMode(OrgVideomode);
 { screenlines:=25;
@@ -782,8 +796,11 @@ end;
 
 procedure errsound;
 begin
-  if not ParQuiet or soundflash then begin
+  if not ParQuiet or soundflash then
+  begin
+{$IFDEF BP }
     if soundflash then SetBorder16(3);
+{$ENDIF }
     sound(1000);
     delay(25);
     sound(780);
@@ -791,7 +808,9 @@ begin
     nosound;
     if soundflash then begin
       mdelay(60);
+      {$IFDEF BP }
       SetXPborder;
+      {$ENDIF }
       end;
     end;
 end;
@@ -1547,4 +1566,9 @@ end;
 {$I xp1cm.inc}
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

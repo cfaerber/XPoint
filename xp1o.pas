@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Overlay-Teil zu xp1 }
 
@@ -83,7 +84,13 @@ begin
   dialog(45+length(fn),3,txt,x,y);
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,78,'');   { Dateiname: }
-  if useclip then mappsel(false,'Windows-Clipboard');
+  if useclip then begin
+{JG:10.02.00}
+    mappsel(false,'Windows-Clipboard');
+    mappsel(false,'Win-Clipboard (URL)');
+    mappsel(false,'Win-Clipboard (MAIL)');
+    end;
+{/JG}
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -93,6 +100,33 @@ begin
       ClipToFile(s);
       end
     else
+{JG:11.02.00}
+    if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
+      s:=mailstring(first_marked);
+      string2clip(s);                                        { ins Clipboard }
+      ReadFilename:=false;
+      exit;
+      end
+    else  
+    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}      
+      s:=first_marked;
+      y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
+      if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
+      if y<>0 then begin
+        s:=mid(s,y); x:=0;                                      
+        repeat
+          inc (y);                                           {Ende der URL suchen...}   
+          if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
+          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']' : x:=y-1; end;        
+        until x<>0; 
+        s:=left(s,x);
+        end;
+      string2clip(s);                                       
+      ReadFilename:=false;
+      exit;
+      end
+    else 
+{/JG}
       useclip:=false;
     if (trim(s)='') or ((length(s)=2) and (s[2]=':')) or (right(s,1)='\') then
       s:=s+'*.*'
@@ -346,14 +380,12 @@ begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
-        { MK 09.02.2000: Sinn dieses Codeabschnittes ist nicht zu erkennen,
-          deshalb ausgeklammert }
-{        if ntZConnect(mbNetztyp) then begin
+        if ntZConnect(mbNetztyp) then begin
           writeln(tt,'Dummy:');
           writeln(tt);
           end
         else
-          for i:=1 to 8 do writeln(tt); }
+          for i:=1 to 8 do writeln(tt);
         s:=first_marked;
         nr:=current_linenr;
         while s<>#0 do begin
@@ -888,4 +920,9 @@ end;
 {$ENDIF}
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

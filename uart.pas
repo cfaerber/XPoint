@@ -6,6 +6,7 @@
 (*                                                         *)
 (*                                  PM 07/91, 01/93, 06/93 *)
 (***********************************************************)
+{ $Id$ }
 
 {$I XPDEFINE.INC }
 
@@ -219,6 +220,7 @@ begin
 end;
 
 
+{$IFDEF BP }
 {$IFDEF DPMI}
 
 function DPMIallocDOSmem(paras:word; var segment:word):word;
@@ -248,20 +250,9 @@ begin
 end;
 
 {$ENDIF}
-
+{$ENDIF}
 
 {--- Interrupt-Handler -----------------------------------------------}
-
-procedure cli; assembler;
-asm
-    cli                 { Interrupts sperren   }
-end;
-
-procedure sti; assembler;
-asm
-    sti
-end;
-
 
 {$IFDEF ver32} { MK 12/99 }
 procedure com1server;
@@ -466,7 +457,8 @@ function GetCfosCharges(no:word):integer;
 var regs : registers;
 begin
   GetCfosCharges:=-1;
-  with regs do begin
+  with regs do
+  begin
     ax:=$9000;
     intr(FInt,regs);
     if ax=$1969 then begin
@@ -476,9 +468,10 @@ begin
       intr(FInt,regs);
       if ax=0 then GetCfosCharges:=bx;
       end;
-    sti;
     end;
-  sti;
+  asm
+    sti;
+  end;
 end;
 
 
@@ -1106,4 +1099,9 @@ begin
   fillchar(active,sizeof(active),false);
   fillchar(fossil,sizeof(fossil),false);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

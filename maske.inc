@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {----------------------------- MAIN --------------------------}
 
@@ -26,8 +27,6 @@ var ax,p,myp  : integer;
     mzu,mzo   : boolean;
     mzl,mzr   : boolean;
     crec      : ^customrec;
-    fnkn      : byte;
-    inss      : string[fndeflen];
     fwd       : boolean;
     maussel   : boolean;
     poutside  : boolean;
@@ -159,13 +158,19 @@ var ax,p,myp  : integer;
 
     function testdate:boolean;
     var t,m,j : word;
+     s: string;
     begin
       with feld^ do
         if pempty and (cont^=mask) then
           testdate:=true
         else begin
-          if len=8 then j:=ival(copy(cont^,7,2))+1900
-          else j:=ival(copy(cont^,7,4));
+          if len=8 then
+          begin
+            { MK 13.02.2000 Y2K Fix }
+            j :=ival(copy(cont^,7,2));
+            if j < 70 then inc(j, 2000) else inc(j, 1900);
+          end else
+            j:=ival(copy(cont^,7,4));
           schalt(j);
           t:=ival(copy(cont^,1,2));
           m:=ival(copy(cont^,4,2));
@@ -925,7 +930,7 @@ begin   { readmask }
           if yp>1 then begin
             i:=yp; x:=fld[yp]^.yy;
             while (i>1) and (x-fld[i]^.yy<un-ob) do dec(i);
-            adiff:=(un-ob+1)-(x-fld[i]^.yy);
+            { adiff:=(un-ob+1)-(x-fld[i]^.yy); }
             movefield(i-yp);
             {if (a>0) and (adiff>0) then begin
               a:=max(0,a-adiff);
@@ -1050,4 +1055,9 @@ begin   { readmask }
   dispose(s);
   help_page:=helpsave;
 end;   { readmask }
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

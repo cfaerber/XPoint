@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Archiv-Routinen              }
 { fr ARC, ZOO, LZH, ZIP, ARJ, }
@@ -22,7 +23,7 @@ unit archive;
 
 interface
 
-uses   xpglobal, crt, dos, typeform;
+uses   xpglobal, crt, dos, typeform, montage;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -270,16 +271,11 @@ begin
   else iif:=l2;
 end;
 
-function schalt(jahr:word):boolean;
-begin
-  schalt:=(jahr mod 4=0) xor (jahr mod 100=0) xor (jahr mod 400=0);
-end;
-
 function monthlen(j,m:word):word;
 begin
   case m of
     1 : monthlen:=31;
-    2 : if schalt(j) then monthlen:=29
+    2 : if schaltj(j) then monthlen:=29
         else monthlen:=28;
     3 : monthlen:=31;
     4 : monthlen:=30;
@@ -304,8 +300,8 @@ var dt   : DateTime;
 begin
   with dt do begin
     year:=1970;
-    while (secs>=iif(schalt(year),366,365)*tagsec) and (year<=2099) do begin
-      dec(secs,iif(schalt(year),366,365)*tagsec);
+    while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
+      dec(secs,iif(schaltj(year),366,365)*tagsec);
       inc(year);
       end;
     if year>2099 then
@@ -693,16 +689,11 @@ label again;
       l    : longint;
       tage : word;
 
-    function schalt(j:word):boolean;
-    begin
-      schalt:=(j mod 400=0) xor (j mod 100=0) xor (j mod 4=0);
-    end;
-
     function monthlen(j,m:word):word;
     begin
       case m of
         1 : monthlen:=31;
-        2 : if schalt(j) then monthlen:=29
+        2 : if schaltj(j) then monthlen:=29
             else monthlen:=28;
         3 : monthlen:=31;
         4 : monthlen:=30;
@@ -730,12 +721,12 @@ label again;
     secs:=OctVal(s);
     with dt do begin
       year:=1970;
-      if schalt(year) then tage:=366
+      if schaltj(year) then tage:=366
       else tage:=365;
       while (secs>=tage*tagsec) and (year<=2099) do begin
         dec(secs,tage*tagsec);
         inc(year);
-        if schalt(year) then tage:=366
+        if schaltj(year) then tage:=366
         else tage:=365;
         end;
       if year>2099 then
@@ -1048,4 +1039,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:35  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}

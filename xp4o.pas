@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
@@ -18,9 +19,12 @@ unit xp4o;
 
 interface
 
-uses {$IFDEF virtualpascal}sysutils,{$endif}
+uses
+{$IFDEF virtualpascal}
+  sysutils,
+{$endif}
      crt,dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
-     lister,archive,maus2,winxp,printerx,resource,xdelay, xpglobal,
+     lister,archive,maus2,winxp,printerx,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input;
 
 
@@ -2126,4 +2130,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 20:43:36  mk
+  MK: Aktualisierung auf Stand 15.02.2000
 
+}
