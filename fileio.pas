@@ -85,6 +85,8 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 
 { DOS-Routinen }
 procedure FSplit(const path: string; var dir, name, ext: string);
+function  GetCBreak: boolean;
+procedure SetCBreak(on: boolean);
 
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
@@ -617,6 +619,24 @@ begin
 {$endif}
 end;
 
+function  GetCBreak: boolean;
+begin
+{$ifdef Unix}
+  result:= false;
+{$else}
+  {$error please implement code! }
+{$endif}
+end;
+
+procedure SetCBreak(on: boolean);
+begin
+{$ifdef Unix}
+{$else}
+  {$error please implement code! }
+{$endif}
+end;
+
+
 { Dir muﬂ WildCards enthalten }
 function FileMaskSize(const mask: string): longint;
 var
@@ -640,6 +660,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2000/11/18 16:09:56  hd
+  - Get-/SetCBreak
+    - Diese Routinen muessen fuer andere OS als Linux implementiert werden!!
+
   Revision 1.80  2000/11/16 22:35:29  hd
   - DOS Unit entfernt
 
