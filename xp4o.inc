@@ -495,7 +495,6 @@ var x,y,yy  : byte;
   procedure show;
   var
     proz : byte;
-    x, y: Integer;
   begin
     attrtxt(col.colmbox);
     proz:=n*100 div count;
@@ -701,6 +700,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2001/01/21 09:34:38  mk
+  - removed unused variables from last commit
+
   Revision 1.31  2001/01/21 09:24:10  mk
   - Write() -> Wrt2
 
