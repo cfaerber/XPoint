@@ -100,9 +100,13 @@ begin
     List:= TStringList.Create;
     try
       if not NNTP.Connect then raise Exception.Create('');
-      List.Duplicates:= dupIgnore;
+      List.Duplicates:= dupIgnore;                    
       bfile := GetServerFilename(BoxName, extBl);
-      FromDate := FileDateToDateTime(FileAge(bfile));
+      try
+        FromDate := FileDateToDateTime(FileAge(bfile));
+      except
+        FromDate := NaN;
+      end;
       if (bFile <> '') and NNTP.List(List,false, OnlyNew, FromDate) then
       begin
         { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
@@ -124,9 +128,9 @@ begin
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
       result:= false;
-      end
-    else begin
-      POWindow.WriteFmt(mcError,res_noconnect,[0]);
+    end;
+    on E: Exception do begin
+      POWindow.WriteFmt(mcError,E.Message,[0]);
       result:= false;
     end;
   end;
@@ -365,6 +369,11 @@ end;
 
 {
         $Log$
+        Revision 1.39  2002/03/16 18:22:31  cl
+        - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
+          already existed.
+        - Exception message now logged instead of 'Verbindungsaufbau fehlgeschlagen'
+
         Revision 1.38  2002/02/21 13:52:36  mk
         - removed 21 hints and 28 warnings
 

@@ -312,7 +312,7 @@ begin
       exit;
     end;
 
-    if OnlyNew then                                     { Liste anfordern }
+    if OnlyNew and (not IsNAN(FromDateTime)) then       { Liste anfordern }
       SWriteln('NEWGROUPS ' + FormatDateTime('yymmdd hhnnss', FromDateTime))
     else
       SWriteln('LIST');                                 { Liste anfordern }
@@ -538,6 +538,11 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/03/16 18:22:31  cl
+  - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
+    already existed.
+  - Exception message now logged instead of 'Verbindungsaufbau fehlgeschlagen'
+
   Revision 1.36  2002/02/21 08:59:28  mk
   - misc fixes
   - added timestame to newgroups
