@@ -699,7 +699,7 @@ var x,y : byte;
       if dbPhysRecs(d)=0 then
         prozent:=100
       else
-        prozent:=dbRecCount(d) * 100 div dbPhysRecs(d);
+        prozent:=dbRecCount(d) * 100.0 / dbPhysRecs(d);
     end;
 
   begin
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.8  2000/12/29 21:58:55  mk
+  - Datenbankstatistik ist jetzt genauer
+
   Revision 1.27.2.7  2000/12/18 09:19:57  mk
   - fehlendes pophp ergaenzt
 
