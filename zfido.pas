@@ -335,7 +335,7 @@ begin
       xpwindow:=ival(mid(s,4))
     else if (left(s,4)='-PC:') or (left(s,4)='/PC:') then
       prodcode:=hexval(mid(s,5))
-    else if (s='-nli') or (s='-NLI') then
+    else if (s='-NLI') or (s='/NLI') then
       LocalIntl:=false
     else if (left(s,3)='-P:') or (left(s,3)='/P:') then
       ppassword:=mid(s,4)
@@ -1060,14 +1060,15 @@ label abbr;
     if p=0 then p:=cpos(#10,s);
     if p=0 then p:=cpos(#0,s);
     lfs:=0;
-    if p>1 then                 //war p>0, das h„ngt bei p=1
-    begin
+    if (p>0) then begin                     //im String ein cr, lf oder #0
       SetLength(s, p-1);
-      if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
-      while (p<rr) and (s[p+1]=#10) do begin
-        inc(p);   { LFs berlesen }
-        inc(lfs);
-        end;
+      if (p>1) then begin
+        if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
+        while (p<rr) and (s[p+1]=#10) do begin
+          inc(p);                                 { LFs berlesen }
+          inc(lfs);
+          end;
+        end
       end
     else
       p:=rr;
@@ -1387,7 +1388,7 @@ begin
       goto abbr;
       end;
     mhd.mpktver:=0;
-    blockread(f1,mhd,14,rr);        { letzte Msg: 2 Bytes = 0 }
+    blockread(f1,mhd,14,rr);            { letzte Msg: 2 Bytes = 0 }
     if mhd.mpktver=2 then begin
       inc(anz_msg);
       write(#8#8#8#8#8,anz_msg:5);
@@ -1396,9 +1397,9 @@ begin
       adr:=filepos(f1);
       blockread(f1,buf,sizeof(buf),rr);
       p:=0;
-      fdat:=getstr(19);
-      tou:=getstr(36);            { From/To/Subject einlesen.. }
-      fromu:=getstr(36);
+      fdat:=getstr(19);                 // Datum
+      tou:=getstr(36);                  // From/To/Subject einlesen..
+      fromu:=getstr(36);                // From user
       subj:=getstr(72);
       inc(adr,p);
       isfmpt:=false; istopt:=false;
@@ -1680,6 +1681,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/10/04 21:44:28  mo
+  - kleine Korrektur
+
   Revision 1.37  2000/10/03 18:06:52  mo
   - jetzt klappt's auch wieder mit den exportieren
 
