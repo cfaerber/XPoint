@@ -455,8 +455,11 @@ begin
           if switch = '1522' then
           RFC1522 := true
         else
-          if (switch = 'ppp') or (switch = 'client') then
+          if switch = 'ppp' then
           ppp := true
+        else
+          if switch = 'client' then
+          client := true
         else
           if switch[1] = 'u' then
         begin
@@ -3334,7 +3337,7 @@ begin
   server := UpperCase(UUserver + '@' + _to);
   files := 0;
 
-  CreateNewfile(false);                        { 1. Durchgang: News }
+  if not client then CreateNewfile(false);           { 1. Durchgang: News }
   fs := filesize(f1);
   repeat
     seek(f1, adr);
@@ -3353,6 +3356,7 @@ begin
 //      end else
       begin                             { AM }
         inc(n);if CommandLine then  write(#13'News: ', n);
+        if client then CreateNewFile(false);
         seek(f1, adr + hds);
 
         f := TMemoryStream.Create;
@@ -3386,10 +3390,13 @@ begin
 
         f.Free;
         f0.Free;
+        if client then F2.Free;
       end;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  f2.Free; f2:=nil;
+  if not Client then
+    f2.Free;
+  f2:=nil;
 
   if n = 0 then
      _era(iifs(ppp and not client,dest,dest+fn+ExtOut))
@@ -3477,6 +3484,7 @@ begin
   writeln('uuz -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
   writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
+  writeln('              -client    =  Mode for net type RFC/Client');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/g/z/bSMTP = compressed)');
@@ -3486,6 +3494,8 @@ begin
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
   writeln('              -x      =  Export all unkown X-Lines');
+  writeln('              -client =  Mode for net type RFC/Client:');
+  writeln('                         Create one SMTP file per outgoing message');
   halt(1);
 end;
 
@@ -3645,6 +3655,10 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.12  2002/08/01 17:55:41  mk
+  - added "-client" to help page
+  - fixed creation of outgoing news with -client
+
   Revision 1.97.2.11  2002/07/31 14:48:20  mk
   - fixed create of file names for client-mode (CreateNewFile)
 
