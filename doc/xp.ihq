@@ -12582,7 +12582,7 @@ schneidung von einer Minute entstehen wrde.
 
 @
 808
-Altes Gebuehrenmodel:
+<<Altes Gebhrenmodell:
 
 Geben Sie hier jeweils den Preis einer Tarifeinheit
 in 1/100 W„hrungseinheiten und die Dauer in Sekunden
@@ -12591,50 +12591,45 @@ ein, getrennt durch "/". Zum Beispiel
       6/240
 
 fr eine Tarifeinheit, die 240 Sekunden dauert und
-6 Cent kostet. Es sind auch Bruchteile von Sekun-
-den m”glich, z.B.
+6 Cent kostet. Es k”nnen auch W„hrungs- und Sekunden-
+bruchteile eingegeben werden, z.B.
 
-      11/10.5
+      3.1/10.5
 
 fr eine fiktive Tarifeinheit, die zehneinhalb
-Sekunden dauert und 11 Cent kostet.
+Sekunden dauert und 3,1 Cent kostet.
 
-Ausserdem sind auch Bruchteile von 
-1/100 W„hrungseinheiten moeglich, z.B. 
-
-     3.1/60
-
-fr eine fiktive Tarifeinheit, die 1 Minute dauert
-und rechnerische 3.1 Cent kostet.
-
-Moeglich sind auch Tarife mit Verbindungsentgelt.
-Diese werden durch die Eingabe einer 3. Zahl 
-beschrieben, z.B.
+M”glich sind auch Tarife mit einem zus„tzlichen
+fixen Verbindungsentgelt. Dieses kann, getrennt
+durch "/", als dritter Wert angegeben werden, z.B.
 
       1.1/10.5/10.1
 
 fr eine fiktive Tarifeinheit, die zehneinhalb
-Sekunden dauert und 11 Cent kostet und zusaetzlich
-10.1 Cent pro Verbindung kostet.
+Sekunden dauert, 1,1 Cent kostet und bei der ein
+zus„tzliches Verbindungsentgelt von 10,1 Cent
+erhoben wird.
 
-Neues Gebuehrenmodel:
 
-Geben Sie hier jeweils den rechnerischen Preis
-pro Minute in 1/100 W„hrungseinheiten (wie er
-auch in vielen Tariftabellen steht) und die Dauer
-eines Abrechnungstaktes in Sekunden ein, getrennt
-durch "/". Zum Beispiel
+<<Neues Gebhrenmodell:>> (siehe Schalter unter C/O/G/S)
 
-       1.5/240
+Geben Sie hier jeweils die Kosten pro Minute in 1/100
+W„hrungseinheiten (wie sie auch in den meisten Tarif-
+tabellen zu finden sind) sowie die Dauer eines
+Abrechnungstaktes in Sekunden ein, getrennt durch
+"/". Zum Beispiel
 
-fr einen Tarif, der einen Abrechnungstakt von
-240 Sekunden hat und anderhalb Cent pro Minute
-kostet. Was aequivalent zu 6/240 bei Nutzung
-des alten Modells ist.
+      1.5/240
 
-Bruchteile von Sekunden sind aehnlich dem
-alten Modell moeglich. Ebenso Tarife mit
-Verbindungsentgelt.
+fr einen fiktiven Tarif, der einen Abrechnungstakt
+von 240 Sekunden hat und 1,5 Cent pro Minute kostet
+(bei Nutzung des alten Modells entspr„che dies der
+Eingabe "6/240").
+
+Wie beim alten Modell ist auch hier die Eingabe von
+W„hrungs- und Sekundenbruchteilen sowie von zus„tz-
+lichen fixen Verbindungsentgelten m”glich.
+
 @
 809
 An dieser Stelle wird festgelegt, fr welche Wochen-
@@ -13669,13 +13664,12 @@ Die W„hrungseinheit, die bei der Gebhrenabsch„tzung
 angegeben wird.
 @
 974
-<<[ ]>> -> XP verwendet das alte Modell mit
-       Preis pro Tarifeinheit und Dauer einer
-       Tarifeinheit.
+<<[ ]>> -> XP verwendet das [alte Gebhrenmodell]@808
+       (Preis pro Tarifeinheit und Dauer einer
+       Tarifeinheit).
 
-<<[x]>> -> XP verwendet das neue Modell mit
-       rechnerischer Minutenpreis und 
-       Abrechnungstakt.
+<<[x]>> -> XP verwendet das [neue Gebhrenmodell]@808
+       (Minutenpreis und Abrechnungstakt).
 @
 979
 In der Datei <<FEIERTAG.DAT>> k”nnen beliebig viele
