@@ -460,15 +460,13 @@ function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 implementation
 
 function CountChar(const c: char; const s: string): integer;
-const
-  j: integer = 0;
 var
   i: integer;
 begin
+  Result := 0;
   for i:= 1 to length(s) do
     if s[i]=c then
-      inc(j);
-  CountChar:= j;
+      inc(Result);
 end;
 
 function CPos(c: char; const s: string): integer;
@@ -1701,6 +1699,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.4  2002/11/10 10:57:49  mk
+  - fixed bug in countchar
+
   Revision 1.107.2.3  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 
