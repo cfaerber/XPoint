@@ -1,0 +1,1594 @@
+$Id$
+
+                      ----===========================----
+                           OpenXP Installation Guide
+                         (Incorporating the  XP - FAQ)
+                                  - - oOo - -
+                    Copyright (C) Martin Foster 1997 - 2003
+                              FidoNet 2:250/501.2
+                      ----===========================----
+
+                         -- Last revision: 01/11/03 --
+
+        (Please note: this document needs much more work to bring it
+         right up-to-date.)
+
+        --------------------------- Preface ---------------------------
+
+        This guide has been written as an aid to getting you started
+        with OpenXP. The intentions are to get you as far as making
+        your first poll to your Boss, sending an AreaFix request and
+        then processing the resultant list. In no way is it intended
+        as a tutorial in the use of OpenXP. This document relates to
+        the OpenXP versions 3.8.xx and 3.9.xx only.
+
+        "The OpenXP Projekt" has the author's written permission to
+        include this document in any and/or all of its OpenXP
+        distribution archives.
+
+        Alterations/amendments to this guide by anyone other than the
+        copyright holder are expressely forbidden. Any alterations or
+        amendments which are felt to be necessary should be submitted
+        to the copyright holder at either of the following address:
+            Netmail: 2:250/501.2   eMail: martin@fido.vmailer.net
+        ---------------------------------------------------------------
+
+        Before commencing the OpenXP installation, you MUST obtain
+        the following information from your Boss .....
+
+        1. Your Point number.
+        2. Which archiver to use.
+        3. Your Boss's online hours.
+        4. Your session password.
+        5. Does your Boss's mailer support EMSI.
+        6. Does your Boss's mailer support FTS-0006.
+        7. Does your Boss use 4-D or 3-D addressing.
+        8. What name(s) does his AreaFix programme respond to.
+        9. What name(s) does his AllFix programme respond to.
+
+        ---------------------------------------------------------------
+        IMPORTANT NOTE: In the unlikely event that your Boss's mailer
+        neither supports EMSI nor FTS-0006, you will NOT be able to
+        poll him with OpenXP! In this event, then there's no point in
+        going any further than here :-((
+        ---------------------------------------------------------------
+
+        BASIC FidoNet Point Installation(4D)
+        ====================================
+
+         1. Preliminary work.
+         --------------------
+
+          1.1 Extract the contents of the OpenXP archive into a
+              directory of your choice (suggest "OPENXP"). Please
+              note: the archive contains three directories; DOC,
+              SAMPLES and BEISPIEL, so the relevant archiver switch
+              must be used to extract these directories. In the case
+              of PKUNZIP, the relevant switch is "-d".
+
+          1.2 Next, either copy or move the contents of the SAMPLES
+              directory into your OpenXP HOME directory. These
+              are sample message templates and scripts which may
+              be edited later to suit your own taste. The BEISPIEL
+              directory can be ignored as this contains German
+              templates and scripts.
+
+          1.3 Now start OpenXP by typing OPENXP.EXE and when prompted
+              for the language, type "E" and then press <Enter>.
+              Please note: the default language is German and so if
+              you press <Enter> without pressing "E" first, everything
+              will be in German!
+
+         2. Basic Configuration.
+         -----------------------
+
+
+          =============================================================
+          *** ONLINE HELP IS AVAILABLE AT ANY TIME BY PRESSING <F1> ***
+          =============================================================
+
+
+          N.B. To move between fields either press <tab>, <up-arrow>
+               or <down-arrow>. To "check" a box, press the <spacebar>
+
+          2.1 You should now have a box in the middle of the screen
+              which requires you to input information in three fields:
+
+              "Type of net" -------> Press F2 and cursor down to "Fido"
+                                     and press <Enter>
+
+              "Server name" -------> Enter the node number of your BOSS
+                                     and then press <Enter>
+                                     (e.g. 2:250/333)
+
+              "User name" ---------> Enter your OWN name and then press
+                                     <Enter>
+                                     (e.g. Joe Bloggs)
+
+          2.2 You should now be presented with a more or less blank
+              screen. Along the top of the screen you will notice a menu
+              bar with eight options. For a basic configuration, some
+              but not all of these options need to be configured. Look
+              at the menu bar across the top of the screen, either
+              select "Config" and press <Enter> or press "C". Now
+              either select "Modem" and press <Enter> or press "M".
+              Select the comport that your modem is connected to
+              (e.g COM2) and press <Enter>. A box should now appear
+              in the middle of the screen.
+
+              "Use FOSSIL driver" -----> Leave this blank.
+
+              "Port address (hex)" ----> If you are using standard
+                                         comport addressing, leave this
+                                         as it is. If you are NOT using
+                                         standard comport addressing,
+                                         enter the comport address here
+
+              "IRQ number" ------------> If you are using standard
+                                         comport addressing, leave this
+                                         as it is. If you are NOT using
+                                         standard comport addressing,
+                                         enter the IRQ number here.
+
+              "Modem init" ------------> Enter your modem init string
+                                         here. (e.g AT&F&C1&D2)
+
+              "Modem exit" ------------> Enter the string you would
+                                         like OpenXP to send to the
+                                         modem when you exit from the
+                                         programme. Usually this would
+                                         be ATZ
+
+              "Dial comm." ------------> Press F2 and select ATDT
+
+              "German Telekomm
+               commemorative minute" --> Leave this blank.
+
+              "Ignore CD" -------------> Leave this blank.
+
+              "Ignore CTS" ------------> Leave this blank.
+
+              "Use RTS" ---------------> Check this box.
+
+              "Detect RING" -----------> Leave this blank.
+
+              "16550 FIFO" ------------> In some instances, OpenXP
+                                         will automatically detect the
+                                         presence of a 16550 UART and
+                                         place an "X" in this box.
+                                         However, if you know that you
+                                         have a 16550 UART and
+                                         OpenXP doesn't detect it,
+                                         you will have to check this box
+                                         yourself. If you don't have a
+                                         16550 UART, leave this box
+                                         blank.
+
+              "trigger level" ---------> This only applies if you have
+                                         a 16550 UART and the default
+                                         is 8. If you need to change
+                                         this, press F2 and select the
+                                         desired value.
+
+          2.3 Now press <Enter> to save your settings and return to
+              the main screen.
+
+
+          2.4 The next option that needs to be configured is "Edit".
+              Press "d". A pull-down menu should now appear. Either
+              cursor down to "Servers" and press <Enter> or press "S".
+              You should now have a large box in the middle of your
+              screen. At the bottom of the box there are six options.
+              Either cursor along to "Edit" and press <Enter> or press
+              "E". You should now see a pull-down menu with seven
+              options. The menu bar should be over "Point". Now press
+              <Enter> and another box should appear on your screen.
+              This box contains several input fields. To move between
+              the fields either press <tab> or <down arrow>:
+
+          2.5 "Point number" ----------> Enter your Point number (e.g. 1)
+
+              "Point net" -------------> Leave this as it is (20000)
+
+              "Phone" -----------------> Enter the phone number of your
+                                         BOSS (e.g. 01274484076)
+
+              "Passwd" ----------------> Enter your session password
+
+              "Upload packer" ---------> Press F2 and a pick-list will
+                                         appear. By pressing <down arrow>
+                                         you can select which archiver
+                                         you want to use for your
+                                         outgoing mail packets. Once the
+                                         menu-bar is over the archiver
+                                         you want to use, press <Enter>.
+
+              "Download unpacker ------> Exactly the same procedure as
+                                         for "Upload packer", except
+                                         with this option, you choose
+                                         which archiver to use for
+                                         incoming mail packets. Ideally,
+                                         it should be the same one as
+                                         your upload packer.
+
+              "Zmodem options" --------> Leave blank.
+
+              "AKA's" -----------------> Leave blank.
+
+              "Send packets for" ------> Leave blank.
+
+              "4D addresses" ----------> If your Boss uses 4-D
+                                         addressing, you need to check
+                                         this box. If your Boss uses 3-D
+                                         addressing, this box needs to
+                                         be empty.
+
+              "TosScan" ---------------> Leave this box empty.
+
+              "EMSI" ------------------> If your Boss's mailer supports
+                                         EMSI, check this box. If it
+                                         doesn't, leave it empty.
+
+              "Set system clock" ------> Leave empty.
+
+              "Packet password" -------> If you have agreed a packet
+                                         password with your Boss, check
+                                         this box. If you haven't, leave
+                                         it empty.
+
+              "Use node address" ------> Leave empty.
+
+              "Send empty packet" -----> Some mailers need to receive
+                                         something before they will send
+                                         anything. Check with your Boss
+                                         to see if his is one of this
+                                         type of mailer. If it is, you
+                                         need to check this box. If it
+                                         isn't, leave it empty. In most
+                                         cases, leave this box empty.
+                                         If your Boss is using T-Mail,
+                                         this box needs to be checked.
+
+              "Ext. packet names" -----> Check this box but it would be
+                                         advisable to ask your Boss if
+                                         his mail processing software
+                                         supports this feature.
+
+          2.6 Now press <enter> to save your settings and return to the
+              previous screen.
+
+          2.7 Make sure that "Edit" is highlighted and then press
+              <Enter>. Cursor down to "Modem" and press <Enter>.
+
+              "Wait for connection" ---> This should be set to a minimum
+                                         of 50
+
+              " Dial pause" -----------> This is the time (in seconds)
+                                         that you want OpenXP to
+                                         wait between dialling attempts
+                                         (e.g 60)
+
+              "max.dialling attempts" -> Set this to the number of
+                                         attempts that you want
+                                         OpenXP to re-dial after
+                                         receiving either a "BUSY" or a
+                                         "NO CARRIER" message (e.g 10)
+
+              "max.connects" ----------> This should be set to the
+                                         number of times you want
+                                         OpenXP to re-call your BOSS
+                                         following a failed session. It
+                                         is advisable to set this to 2
+
+              "min. cps rate" ---------> This is the minimum CPS rate at
+                                         which you will allow OpenXP
+                                         to transfer mail/files to/from
+                                         your Boss. If the CPS rate
+                                         drops below the figure that you
+                                         enter here, OpenXP will
+                                         disconnect from your Boss. It's
+                                         entirely a matter for you to
+                                         decide what to enter here. A
+                                         suggested figure for a 14400
+                                         modem would be 1200. A
+                                         suggested figure for a 28800
+                                         modem would be 2500. However,
+                                         if you enter "0" here,
+                                         OpenXP will allow the CPS
+                                         rate to fall indefinitely.
+
+              "Modem init." -----------> If you do NOT wish to use the
+                                         default init string, you can
+                                         enter a different one here. If
+                                         you DO want to use the default
+                                         init string, leave this field
+                                         empty.
+
+              "Interface" -------------> Press "F2" and select the
+                                         comport to use.
+
+              "Speed" -----------------> Press "F2" and select the
+                                         baudrate.
+
+          2.8 Now press <Enter> to save your settings and return to the
+              previous screen.
+
+          2.9 Make sure that "Edit" is highlighted and then press
+              <Enter>. Cursor down to "Names" and press <Enter>.
+
+              "Node number" -----------> Your BOSS's node number should
+                                         already be in this box. If it
+                                         isn't, enter it here.
+
+              "User name" -------------> Your OWN name should already be
+                                         in this box. If it isn't, enter
+                                         it here.
+
+              "Origin" ----------------> Enter your origin line here
+                                         (e.g "My Point")
+
+              "Comment" ---------------> You can enter anything you like
+                                         in here! It is usual to enter
+                                         the name of your Boss's system.
+
+              "Domain" ----------------> Press "F2" and select
+                                         "fidonet".
+
+          2.10 Now press <Enter> to save your settings and return to the
+               previous screen.
+
+          2.11 Make sure that "Edit" is highlighted and then press
+               <Enter>. Cursor down to "Fido" and press <Enter>.
+
+              "AreaFix (Name)" --------> Press "F2" and select "Areafix"
+
+              "AreaFix (Password)" ----> Enter your areafix password
+                                         here. This is usually the same
+                                         as your session password but
+                                         you will need to verify this
+                                         with your Boss.
+
+              ""+" for area requests" -> Normally this can be left blank
+                                         but consult your Boss to be
+                                         absolutely sure.
+
+              "Commands as subject" ---> Check this box.
+
+              "d'Bridge areafix" ------> If your Boss is using the
+                                         D'Bridge mailer, check this
+                                         box. If he isn't, leave it
+                                         blank.
+
+              "FileScan (Name)" -------> Press "F2" and select "AllFix"
+
+              "FileScan (Password)" ---> Enter your AllFix password
+                                         here. This is usually the same
+                                         as your session password but
+                                         you will need to verify this
+                                         with your Boss.
+
+              "Misc. Newsgroups" ------> Press "F2" and select "/FIDO/"
+
+          2.12 Now press <Enter> to save your settings and return to
+               the previous screen.
+
+          2.13 Make sure that "Edit" is highlighted and then press
+               <Enter>. Cursor down to "Misc." and press <Enter>.
+               If your Boss is NOT online 24 hours, you need to configure
+               "Netcall". Example: if your Boss is online from 22:00 to
+               06:00, you would need to do this:
+
+               "Netcall" ------> Exclude from 06:00 to 22:00
+                                times
+
+              If your Boss IS online 24 hours, you need do nothing with
+              the above option.
+
+              "Misc (/Netcall/All)" ---> This box needs to be checked.
+
+          2.14 Now press <Enter> to save your settings and return to
+               the previous screen.
+
+          2.15 Now select "OK" and press <Enter> to take you back to
+               the main screen.
+
+          2.16 The BASIC installation is now complete.
+
+         3. Notes.
+         ---------
+
+          3.1  An areas list is NOT required prior to polling your Boss
+               for the first time but just for the sake of completeness,
+               full instructions for obtaining an areas list are
+               provided in section 4.
+
+          3.2  It is NOT necessary to manually configure echo areas
+               prior to polling your Boss for the first time.
+
+          3.3  A nodelist is NOT required for a BASIC FidoNet Point
+               Installation.
+
+          3.4  The OpenXP main archives are available  on the
+               internet at:
+                           http://www.openxp.com
+                           ftp://ftp.openxp.de/openxp
+
+          3.5  English language support for OpenXP is available in the
+               FidoNet international echo XPOINT. At the time of writing,
+               the echo is on the Z1B and the Z2-R25 and Z2-R24 backbones.
+               English language support may also be sought in the German
+               newsgroup "de.comm.software.crosspoint". Articles in English
+               ARE allowed in this newsgroup.
+
+         4. Requesting and processing an areas list.
+         -------------------------------------------
+
+          4.1  From OpenXP's main screen, select "Message". From the
+               menu that has now appeared, select "News manager". From
+               the sub-menu select "Get list" and press <Enter>.
+               OpenXP will now generate an areafix request. If you
+               wish to view the areafix request prior to sending it to
+               your Boss, select "Message/Unsent/show" and press
+               <Enter>. The message header information should now be
+               displayed. To view the message itself, press <Enter>.
+               When you have looked at the areafix message, press <ESC>,
+               <ESC>, to bring you back to the main screen.
+
+          4.2  And now for the big moment - sending the areafix request
+               to your Boss. First make sure your modem is switched on
+               and then from the main screen, press "N", then press
+               "S" - it's as simple as that! Now sit back and watch it
+               all happen :-)
+
+          4.3  Assuming that all went well with the poll, you must now
+               poll your Boss again to pickup the areas list. Depending
+               on how your Boss has his system set up will determine how
+               long to wait before calling back. Most Bosses process
+               areafix requests 'on the spot'. It's entirely a matter for
+               you to decide how long to wait before attempting to pickup
+               the areas list but I would suggest waiting at least five
+               minutes. To pickup the list, press "N" followed by "S"
+               from the main screen and OpenXP will call your Boss
+               to pickup the waiting areas list.
+
+          4.4  You should now have two folders displayed on your main
+               screen. One of the folders should be named "/ØNetcall",
+               which contains extracts from the logfile and the other
+               should be marked "/<yourname>", which is your incoming
+               netmail folder. To process the areas list, cursor over
+               the folder named "/<yourname>" and press <Enter>.
+               Assuming that the only item in this folder is the areas
+               list, now select "Message/News manager/Import list" and
+               press <Enter>. If there is more than the areas list in
+               this folder, you need to cursor over the areas list prior
+               to selecting "Message/News manager/Import list".
+               OpenXP will now read the areas list and import it
+               into its database. To view the areas list, cursor over
+               the areas list and press <Enter>.
+
+          4.5  To fix-in(subscribe) to an area(s), select "Message/News
+               manager/Subscribe" and press <Enter>. The areas list
+               will now be displayed. To fix into areas it's a simple
+               matter of cursoring over the area(s) and pressing the
+               <spacebar>. When you have finished, press <Enter> and
+               you will be asked to confirm your choice(s). It's a
+               simple "Yes/No" reply. Assuming that you answered yes,
+               OpenXP will generate the areafix request. To send the
+               request, get back to the main screen and press "N"
+               followed by "S".
+
+=========================================================================
+
+
+        Basic/Desirable tweaks 'n twiddles
+        ==================================
+         Once the first three polls have been successfully made, a few
+         tweaks need to be done before polling your Boss again.
+         Although not mandatory, they could be considered desirable ...
+
+         1. From the menu bar across the top of OpenXP's main
+            screen, select "Config". From the drop down menu, select
+            "Options" and from that drop down menu, select "Messages".
+            Cursor down to "Use Re^n", un-check the box and press
+            <Enter>. The cursor should now be in  the "Time Zone" box.
+            Enter here your Time Zone, in the form "W+x" or "W-x",
+            where "+x" equals the number of hours ahead of UTC and
+            where "-x" equals the number of hours behind UTC. Now press
+            <Enter>. The cursor should now be in the "## XP ##" box.
+            Press F2, cursor down to "never" and press <Enter>. Check
+            the next box and press <Enter> and then press <Enter> on
+            the remaining options.
+
+         2. From the menu bar across the top of OpenXP's main
+            screen, select "Edit". From the drop down menu, select
+            "Groups". Cursor down to "Netz" and press "E". Now cursor
+            down to "Replies" and press F2. Cursor down to "none" and
+            press <Enter>, <Enter>. Press "O" to save the new
+            setting.
+
+         3. From the menu bar across the top of OpenXP's main
+            screen, select "Config". From the drop down menu, select
+            "Options" and from that drop down menu, select "Netcall".
+            Cursor down to "Complete netcall logfile (NETCALL.LOG)" and
+            check the box. Now press <Enter>, <Enter> to save the new
+            setting.
+
+         4. From the menu bar across the top of OpenXP's main
+            screen, select "Config". from the drop down menu, select
+            "Options" and from that drop down menu, select "Addresses".
+            In the "Organization" field, enter your system name e.g.
+            "My Point" - without the quotes. Now press <Enter> and
+            in the "Postal address" field, write your City/Town. Leave
+            all other fields blank.
+
+         5. Before writing any messages, it would be advisable to
+            configure your "signature" and "greetings" templates. By
+            doing this, you will be saving yourself a lot of
+            unnecessary typing. To configure these templates, select
+            "Edit" from the menu bar across the top of OpenXP's
+            main screen and from the drop down menu, select
+            "Templates". For your netmail signature, cursor down to
+            "PrIvSignature" and press <Enter>. This will place you in
+            the OpenXP editor where you may define your netmail
+            signature. Once you are happy with your signature, press
+            <ESC> and answer "Yes" to the question. Now cursor up to
+            "Signature" and press <Enter> to get back into the editor,
+            where you may now define your echomail signature. Repeat
+            the "<ESC>, "Yes" process to save your echomail signature.
+            Now cursor up to "PrivHead" and press <Enter> to get back
+            into the editor where you may now define your netmail
+            "greeting". This could be something like "Hi $VORNAME" or
+            "Hello $VORNAME" - without the quotes. $VORNAME will
+            translate to the first name of the person you are writing
+            to but only for new netmail messages. For netmail replies,
+            see "PrivQuote". Now repeat the "<ESC>", "Yes" process to
+            save your netmail greeting. Now cursor up to "Head" and
+            press <Enter> to get back into the editor where you may
+            now define your echomail "greeting". This could be
+            something like "Hello All" or "Hi" - without the quotes.
+            Now repeat the "<ESC>", "Yes" process to save your echomail
+            greeting. A full explanation on the use and configuration
+            of templates can be found in "TEMPLATE.HTO" which is
+            available for file request from 2:250/333. For further help
+            with OpenXP, link into the FidoNet echo XPOINT.
+
+            Have Fun! :-)
+
+========================================================================
+
+Command line switches for starting CrossPoint
+=============================================
+
+CrossPoint is started with:
+
+              XP [/Option1 /Option2 ...]
+
+Options are:
+
+   /?         Help
+
+   /av:       Runs the integrated archive viewer.
+              eg. XP /av:file.zip. Wildcards allowed.
+
+   /f:<File>  loads a EGA/VGA-Font File (Screen Font)
+              in the usual formats (8x8, 8x16 Pixels)
+              If no extension is given, .FNT assumed.
+
+   /gd:       selects another phone charge file (Default:
+              GEBUEHR.DAT).
+
+   /j         no dumb remark when exiting CrossPoint....
+
+   /k:X       passes the (single) keystroke X to the
+              programme, where X is any character.
+              (Can start a key macro on start-up)
+
+   /l:X       selects the language, eg. /l:E for English.
+              Of course, the language module must be installed.
+
+   /LCD       changes colours to improve screen visibility
+              on laptops etc.
+              see also /m below.
+
+   /m         forces a black & white display.
+
+   /maus      activates a Cursor-Mouse emulation.
+
+   /pw:xxx    passes the start-up password direct.
+
+   /q         deactivates all sounds, so as not to
+              wake you at night..
+
+   /rp        Do not check TSRs
+              CrossPoint normally checks after a
+              DOS-Shell whether TSRs were loaded and
+              exits if yes. (It is rarely advisable to
+              load TSRs in a shell). However, if you must,
+              this switch stops the check.
+
+   /sd        Do not flush Smartdrive;
+              Normally XP flushes the smartdrive write
+              cache (if active) at regular intervals to
+              minimise data loss possibilities. This
+              deactivates this flushing if you don't like
+              it.
+
+   /trace     activates netcall script logging.
+
+   /w         Give up CPU time under Windows. To lower the
+              load on the CPU when XP is idle, the screen
+              saver, clock and mouse emulation is
+              switched off.
+
+   /z:x       Set x screen lines. x must be one of the
+              values shown under /Config/Display/Lines.
+
+For the following options, if you set more than one,
+they are carried out in the order shown here.
+/ip & /ips may not be specified simultaneously.
+In this case the LAST given is run.
+
+
+   /autostart:hhmm-hhmm  Starts CrossPoint if the
+              current time is in the given time period.
+              This entry is designed for the autoexec.bat
+              file and starting the PC with a time switch.
+              If the time at start is in the given period,
+              XP starts up.
+
+   /user:BOX:NAME  sets the User name for the given
+              Box. For multi-user points.
+              For Fido use "_" instead of ":" in
+              the Box name.
+
+   /ip:FILE   Imports the specified file name as
+              puffer, as under (/XPoint/Import
+              /Puffer). The filename may be a full
+              path; the file must have a PUFFER
+              format.
+
+   /ipe:FILE  as /ip, but sets the receive date for
+              messages to the date they were
+              written.
+
+   /ips:BOX:FILE  reads in the puffer FILE, and also
+              lays it up ready to send to BOX.
+              For Fido use "_" instead of ":" in
+              the box name.
+
+   /g         is an extra switch for /ip and /ipe, which
+              sets the imported messages direct to "already
+              read". Not necessary for /ips
+
+   /n:BOX[:hh:mm]  starts CrossPoint making a call to
+              the given box. If the time is
+              specified, it waits to make a
+              netcall at the given time.
+              For Fido use "_" instead of ":" in
+              the box name.
+
+   /n:*       starts CrossPoint to make a  /Netcall/All.
+
+   /nr:BOX    makes a relogin netcall at the given box.
+              The connect must already exist, and the
+              box be waiting for "Username".
+              (Z-Netz only)
+
+   /t:n       starts CrossPoint running Timing List
+              no. "n"
+
+   /r         does a Re-Org/Messages
+
+   /pack      does a Re-Org/Pack
+
+   /xpack     only pack files whose use lies under 100%
+              A file name may be specified,
+              eg. /xpack:USER packs only the User File.
+
+   /ss        start screensaver
+
+   /x         End Program. Since it is carried out last, it
+              is used to end the program after other tasks
+              have been carried out by other parameters,
+
+Diagnostics Options:
+
+   /d         debug mode; displays more information during
+              the progress of a netcall.
+
+   /df:1      shows the command call when an external
+              program is called (icl. parameters).
+
+   /df:2      waits for a key to be pressed after an
+              external program call.
+
+Instead of specifying long command lines when
+calling CrossPoint, you can list your favourite
+parameters in files for the AUTOEXEC directory.
+
+                   ---=== Frequently Asked Questions ===---
+
+1. Writing/Sending Messages
+===========================
+
+Q1.1 I have a NetMail from my Boss in my personal area. What is the
+     preferred method of repling to messages that are in there.
+
+A1.1 If you want to quote the original message, press "Ctl-P"
+     If you don't want to quote the original message, press "P"
+
+     *****
+
+Q1.2 How do I initiate a NetMail to someone.
+
+A1.2 Goto "Message/Direct" and press <return>. A box will appear in the
+     middle of the screen with a "To" field and a "Subject" field.
+     Methinks that this is self-explanatory<g>. However, the "To" field
+     is rather natty and deserves further explanation. You can either
+     enter a name, a part-name or a node number and *providing* you have
+     a nodelist installed, XP will do a nodelist lookup for you. If you
+     enter a part-name, XP will popup all the matches it finds in the
+     nodelist and then it's up-to-you to select the correct one. Neat or
+     what? :-))
+
+     One thing I should mention at this point is, that if you have more
+     than one Server(Boss) set up, you will get an additional field in
+     the box where you can define which Server to send the netmail via.
+
+     *****
+
+Q1.3 How would one send a NetMail direct to a Point's BossNode with the
+     intention that the Netmail should be passed to the Point?
+
+A1.3 Goto "Message/Direct" and enter the Point's name as the recipient.
+     If the recipient is in your address book, XP will find him and tag
+     his address on the end of his name. If he isn't in your addrees book
+     you would need to enter the details manually like so .....
+     "Geoff Bent@2:250/333.7". Then proceed as normal with your message.
+     When you come to save the message and you get the *big* box on the
+     screen with the numerous options at the bottom, select "Special" and
+     then select "Crash". XP will then ask you if you want to send the
+     message now or later. If you elect to send it now, XP will call
+     2:250/333 but the message will still be addressed to 2:250/333.7
+     The same applies if you elect to send the message later.
+
+     *****
+
+Q1.4 I want to import a text file into a message. I might be able to use
+     that F10 drop-down menu, but I haven't found out how to do that yet.
+
+A1.4 The way that the F10 menu is worded, it tends to give the idea that
+     it's a 3 key, all at the same time, command. It isn't, it's the same
+     as many other Text Editors - the use of an old WordStar command. When
+     you press CTRL+K by itself, you'll notice a  ^K  appear up on the
+     top left of your screen, it's then "waiting" for you to bang the
+     other key, which for import/read is the R key. You should then get
+     a wildcard choice, which you can accept, or you can just type in
+     the Path/Name of the text file you want to import.
+
+     *****
+
+Q1.5 I can reply to the "From:" writers. How do I reply to the "To:"
+     adresses and quote parts of the message at the same time?
+
+A1.5 Whilst you have a list of messages displayed, cursor over the one
+     you wish to reply to and press Ctl-Q.
+
+     *****
+
+Q1.6 How *do* you do that; reply to a message in another area I mean?
+
+A1.6 That's where the "Message/Forward" routine comes into play. But
+     before you try it, you need to have the relevant template set up
+     correctly.
+
+     Goto "Edit/Templates/QuoteTo" and edit the template accordingly.
+     Here's mine for you to have a look at .....
+     === Cut ===
+     - Hello $VORNAME -
+
+     ** Replying to a post in "$BRETT" **
+
+     $ERSTELLT, $MUSER rattled off a missive entitled "$BETREFF":
+     === Cut ===
+
+     Once you've adapted yours to suit and chosen a message to reply to,
+     goto the 'dreaded' "Message/Forward" thing and select "QuoteTo".
+     XP will ask you if you want to reply in a newsgroup, to a user or
+     direct. Select whichever one suits the occasion and away ya go :-)
+
+     *****
+
+Q1.7 I'm replying to a message by pressing the letter R and am using
+     Xpoint's internal editor to do so. However, I'd like to be able to
+     see the message whilst I'm inserting my comments, so I'm clearly
+     pressing the wrong button. Can you clarify which button does what
+     when I have a message on screen and I wish to reply please.
+
+A1.7 CTRL+R is what you're looking for, which gives you the quoted reply
+     format. R, as you've found, just gives you the non-quote response.
+     However, if you want to send the reply as a netmail - you've got
+     CTRL+P or P at your disposal.
+
+     With some messages, you'll find that you'll need the F4 key to bring
+     the odd long line back into a decent format. The CTRL+K, then R
+     routine is, as with a fair number of other editors, handy for
+     importing other text into your message.
+
+     *****
+
+Q1.8 What happens when I press the Esc key to save a message?
+
+A1.8 The use of the ESC key seems to be almost a "standard" with some
+     (most ?) of these German progs, and they then also seem to give a
+     "do you want to change your mind" screen or choice next. That
+     secondary screen that appears does seem a bit overdone at first, but
+     it defaults to the "Send" so you only need to hit the Return/Enter
+     key as soon as you see the screen. Later, after maybe a bit of
+     experimentation - or wondering how you can twiddle summat at about
+     the stage you want to send the message, some of those choices on that
+     secondary screen can come in useful.
+
+     *****
+
+Q1.9 I don't know/cannot see what the "F3" key does.
+
+A1.9 In the message editor, F3 turns word-wrap OFF
+
+     *****
+
+Q1.10 I don't know/cannot see what CTL-R does
+
+A1.10 Quote-reply - echomail ONLY
+
+      *****
+
+Q1.11 What happens if I press "W"
+
+A1.11 It depends on which "menu screen" you're in.
+
+      On that first screen that XP defaults to, using the W when cursored
+      over a folder produces an Echomail message.
+      If you've used the TAB key to get to the second screen and are showing
+      your active outgoing netmail folders, then the W will start you orft
+      writing a Private netmail message.
+
+      _But_ - the above is only true provided that you've _not_ activated
+      that (S)pecial option. When that's been invoked - W then means
+      "manually set up a new Folder".
+
+      *****
+
+Q1.12 How do I initiate a message in NetMail?
+
+A1.12 a) Use the main menu choice.  Message==>Direct. Then follow the
+      choices etc. or
+
+      b) Assuming that you've already sent netmail to someone, an outgoing
+      netmail (Private Mail, or PM, in XPoint's terms) folder has been
+      automatically generated.
+
+      To access this outgoing netmail folders screen, press your TAB key and
+      you'll see another screen somewhat similar to your "Echomail" screen,
+      but in the following format:-
+
+        XPoint  Re-Org  Message  Netcall  Fido  Edit  Config  Tools
+        All  Write  Textfile  Binary  Special  Seek  Address-book  PW
+      ---------------------------------------------------------------
+      -    ALLFIX@2:250/333
+      -    Anders Danielsson@2:203/620
+      -    AreaFix@2:13840/0
+      -    Areafix@2:250/333
+      -    Chris Horn@2:241/505.4
+      -    Dave Rosendale@2:250/355.1
+      -    Dave Rosendale@2:250/377
+      -    David Pratt@2:250/355
+      -    Geoff Bent@2:250/333.7
+      -    Michael Kirst@1:3633/36
+      ============================ Cut ==================
+
+      Each one of those entries with ye tick in front of them, is an outgoing
+      netmail folder. Which you can use in a similar manner to those Echomail
+      folders. To initiate a new message to one of them, same applies as the
+      Echomail idea, cursor over the name/address you're interested in and
+      press W.
+
+      Now - here's a handy thing :)  Note that on that 2nd menu line there's
+      a Binary choice. Binary = programs/archives.  Now, if you want to send
+      someone such a file, it's a case of cursoring over the name/address -
+      then select "I" undt voila, you can then select the file you want to
+      send - complete with a little message.  2nd Note: that bInary choice
+      is also available on your Echomail screen, but that action could be
+      curtailed at the Boss end - so ain't, as you'd guess, particularly
+      recommended in some situations.
+
+      *****
+
+Q1.13 How do I change the flavour of a netmail (e.g. Normal to Crash)
+
+A1.13 Now hereby can hang a longish tale .....
+
+      The default of XPoint is to route all netmail through your Boss.
+      So, generally, until you instruct it otherwise _and_ have a Nodelist
+      added, you can't send a Crash flavoured netmail.
+
+      Thus, I'm interpreting your question to read "How to change from its
+      Normal flavour to Crash flavour so that it can be sent directly to
+      the Node or Boss of a Point"....... in which case, that's where that
+      secondary screen comes into operation when you've written a Netmail
+      and used the ESC key and accepted the "OK to save" little message.
+      Up then pops that secondary screen, along the bottom of which - are a
+      number of "button" appearance selections. One of them is "Special".
+      Selecting that choice, brings up yet another sub-screen where you can
+      select "Crash" - which then bungs you back to the previous screen
+      where you can select the Send choice.
+
+      At this point - you, depending in some cases as to whereabouts in a
+      folder you are, will then get another small screen asking you if you
+      wish to start the Crash call now or not. Selecting the Now choice,
+      XPoint immediately starts calling out.
+
+      If you've told it NOT to do the immediate Crash call, then the message
+      is saved but is tagged by XPoint as being of Crash status and will
+      send that message if/when you decide to call that Node for some reason.
+      Or.....>
+
+      Having opted for the "not now" attribute, later on you can then send
+      the Crash mail by using the main menu choice of Fido===>Crash. If
+      you've only the one place to Crash mail to, then that'll go. If you've
+      saved a few different Crash messages addressed to different systems,
+      you're then offered a sub-screen where you can select the
+      address/message to send.
+
+      And there's another choice - which you'll possibly get to later :))
+
+      *****
+
+Q1.14 I have (inadvertently, because I'd forgotten the P/R association)
+      sent two netmail messages into an echo. The query is: How do I change
+      echomail to netmail and vice versa?
+
+A1.14 Strictly speaking, this is not possible. However, an echomail message
+      can be copied into netmail and vice versa .....
+
+      a) Netmail=>Echomail. Main menu, Message==>Forward_To===>(choice),
+      where (choice) is best perhaps the "Edit To" selection, unless you
+      prefer the "Quote To" choice. You'll get a choice come up as to
+      whether you want to Forward (Copy To, whatever) the message to a
+      "Newsgroup" or "User". Newsgroup=Echo, User=Netmail. Select
+      "Newsgroup" and a list of newsgroups will then be displayed. Cursor
+      over the newsgroup to copy to and press <return>. The message will be
+      copied to that area and you will then be taken to the editor so that
+      you can make any desired changes. To save the copy, just go through
+      the normal "save" procedure.
+
+      b) Echomail=>Netmail. Go through the same procedure as in "a)" but
+      select either "User" or "Direct" instead of "Newsgroup". If you
+      select "User", then the person's name/address must already exist in
+      the secondary outgoing Private Mail screen. If you select "Direct",
+      then you need to enter either a name, part-name or node number in the
+      box which has now appeared.
+
+      *****
+
+Q1.15 How do I get rid of the "Re:" in the subject line of a reply?
+
+A1.15 In the  Config==>Options==>Messages have you got similar to this:-
+
+          +- Message options ---------------------------------------+
+          ›                                                         ›
+          ›  Save binary messages up to:     400  KB                ›
+          ›                                                         ›
+          ›  Standard news hold time:        90  Days               ›
+          ›  Standard user PM hold time:    120  Days               ›
+          ›                                                         ›
+          ›   [ ]   Hold own messages                               ›
+          ›   [ ]   Creation time = 00:00     Time zone  S+2       ›
+      ------> [ ]   Use Re^n                  ## XP ##   always    ›
+      |   ›                                                         ›
+      |   ›   [ ]   Store unsent messages in /ØUnsent               ›
+      |   ›   [x]   Send automatic receipts on request              ›
+      |   ›   [ ]   Automatic PM archiving                          ›
+      |   ›                                                         ›
+      |   ›  Delete X-postings with more than  20  newsgroups       ›
+      |   ›                                                         ›
+      |   ›  Organization     -=Wherever/whatever=-                 ›
+      |   ›  Postal address   33 Backofbeyond USAA                  ›
+      |   ›  Phone                                                  ›
+      |   ›                                                         ›
+      |   +---------------------------------------------------------+
+      With that "Use Re^n" empty ???
+
+      And in the next "hidden away" spot, Edit==>Groups==>Edit<probably the
+      Net one>:-
+         +-----------------------------------------------------------+
+         ›    7     Comdor                       IBM         300.000 ›
+         ›    1 KQS Intern                       IBM         500.000 ›
+         ›   +- Edit Group --------------------------------------+00 ›
+         ›   ›                                                   › 8 ›
+         ›   ›  Name     Netz                                    ›   ›
+         ›   ›                                                   ›   ›
+         ›   ›  Limit             0  Bytes                       ›   ›
+         ›   ›                                Head   HEADER     ›   ›
+         ›   ›  Hold:         90  Days       Quote   QBRETT     ›   ›
+         ›   ›  Spec.chr.  IBM          Signature   SIGNATUR   ›   ›
+         ›   ›                                                   ›   ›
+         ›   ›  Replies    none                                 ›   ›
+         ›   ›            +---------+                            ›   ›
+         ›   +------------› Default ›--------------------- [F2] -+   ›
+         +----------------› Re^n:   ›--------------------------------›
+         ›   New      Dele› Re:     ›t     Fido      OK             ›
+         +----------------› none    ›--------------------------------+
+                          +---------+
+      In that "Replies" bit, hit F2 and then select "none".
+
+      *****
+
+Q1.16 Can I Fattach? In echomail?
+
+A1.16 XPoint won't allow you to send a File Attach with an Echomail message.
+      Although, according to that second line hotkey menu in the echomail
+      folder screen, it's apparently available - if you try it, you'll get
+      a message telling you that it's a no-go in a Fido type area. I've got
+      to assume that the choice is there (Binary or Textfile) for other
+      types of nets and/or Internet useage.
+
+      But this should work :)
+      TAB to the Netmail folder screen.
+      Cursor over the particular name/address that you want to send the file
+      to.
+      Select the B(i)nary choice from that second line.
+      You'll then be presented with XP's "picklist" screen, once you've
+      either selected that *.* wildcard choice or told it to use a different
+      Path for its search.
+      Cursor over the file to be sent.  Press Enter/Return.
+      You'll then be invited to write a netmail message as soon as you've
+      done that - because XP slaps you straight into the message editor.
+      You've got to produce your own "Hi xxxxx," and "TaTa" lines, it's also
+      advisable to add a "dummy" tearline of 3 dashes on the line following
+      your signature (just-in-case).
+
+      *****
+
+
+2. Reading messages
+===================
+
+Q2.1 What can I do with Ctrl-A and Ctrl-E whilst reading messages?
+
+A2.1 Ctl-A marks every line and Ctl-E un-marks every line.
+
+     *****
+
+Q2.2 How do I show the message kludges?
+
+A2.2 Ah! .. this is a little tricky.
+     TTBOMK, there are two ways of doing this but because of the complexity
+     of one of them, I'll advise on the easy one for now <coff> :-)
+
+     You need to have a list of messages in front of you. Cursor over the
+     desired message and press "I" und voila, a pretty box should appear
+     with all sorts of info for your perusal :-))
+
+     *****
+
+Q2.3 What is the command to export a message to the printer or to a text
+     file please?
+
+A2.3 Whilst reading a message, press "W" to export the message to a text
+     file or press "D" to export it to the printer.
+
+     *****
+
+Q2.4 I cannot see how to use the marked items or marked block, I suppose
+     that this means they can be cut out and pasted elsewhere (with the
+     F10 menu?)
+
+A2.4 Errm, nope :)
+
+     F7 - mark start of block
+     F8 - mark end of block
+
+     Ctl-KC - copy block to cursor position
+     Ctl-KV - move block to cursor position
+     Ctl-KY - delete block
+     Ctl-KW - write block to file
+     Ctl-KO - ROT13 encrypt block
+     Ctl-QB - move cursor to beginning of block
+     Ctl-QK - move cursor to end of block
+
+     *****
+
+Q2.5 Backspace - I don't know/cannot see what it does
+
+A2.5 This one's a bit subtle .....
+     Whilst reading a message, if you press <ESC>, you are taken back to
+     the list of messages and the highlight bar is advanced to the next
+     message. If, however, you were to press <backspace> instead of <ESC>,
+     you would still be taken back to the list of messages but the
+     highlight bar would remain on the message you've just read.
+
+     *****
+
+Q2.6 How do you read other flavours (than ZIP) for a Fattach?
+     What if the Fattach is ARJ'd, LHA'd or RAR'd or one of the more
+     obscure compressors?
+
+A2.6 Ah!  Sounds as though you might have missed that little gem tucked
+     away in XP's automagic config part ;)
+
+     Have a look in that XPOINT.CFG file, methinks you'll find XP has
+     already found all the archivers you've got available in your main
+     Path :)
+
+     If you use the menu selection of Config==>External and then select the
+     Unpacker choice offered. You'll notice that there's quite a range of
+     Archivers listed, which XP "sniffs out" to see if you've got them in
+     your Path - and bungs a tick mark on the right hand side of the screen
+     if it can find them. There's, normally, no need to alter any of those
+     bits. Quite a crafty little sniffing job that it does.
+
+     *****
+
+Q2.7 Not quite a query-more of the look what I've found thingie:-
+     In the message reader with the individual messages screened and one
+     highlighted, if I press the [Backspace] key the message appears in a
+     Hex format. Isn't that clever? But is it any use?
+
+A2.7 I can't imagine what that could be used for but someone may have a
+     use for it :-)
+
+     *****
+
+Q2.8 How do you produce that ladder diagram of messages responses?
+
+A2.8 Have you tried the "trick" of using the # key when cursored over a
+     message ?? If not, then try it when cursored over this one. You'll
+     need a fair number of messages in the Folder to demonstrate its
+     usefulness though.
+
+     *****
+
+Q2.9 Is it possible to export this ladder diagram to a File or printer or
+     to include it within another message please?
+
+A2.9 Use the ALT+I routine. One minor problem though - if there's a long
+     thread, you've got to do individual screen dumps and then "marry" them
+     together.
+
+     *****
+
+Q2.10 How can I extract parts of messages when using the Reader/Lister?
+
+A2.10 Tap the M key, and you should get a cursor bar, or line-highlight bar,
+      showing at or near the top of the screen.
+
+      You'll possibly discover that use of the up and down cursor keys will
+      move it. But the use of the left and right cursor keys will "kill" it.
+
+      Now, while that bar's showing, press the space-bar a few times and you
+      should observe that some of the lines have changed colour.
+      The space-bar toggles the line colouring so you can cancel the marking
+      of unwanted parts.
+
+      If you now tap the W key, you can now write those lines out to a text
+      file of your choice........ This could be useful perhaps ?
+
+      If you tap the "D" key it might also allow you to print just those
+      lines instead of the whole message.
+
+      *****
+
+Q2.11 Is there a Search function?
+
+A2.11 If you're using the Reader/Lister by means of the "Archive Viewer"
+      choice - where you're attempting to read some lengthy documentation
+      file is to use the S key to call up the Search feature. When you use
+      that S key, a Search command line appears at the bottom of the screen
+      - you just type in the text that you want to search for, press
+      Enter/Return and away it trundles. To repeat the search, use the
+      TAB key.
+
+      *****
+
+Q2.12 Can you search more than just one message?
+
+A2.12 Try the Message==>Search routine, either globally or in an individual
+      message area ?  Spacebar will get rid of the "marked flag".
+
+      After Note: Crumbs! That's powerful. I searched for "Motherboard"
+      which (from my very limited message base) gave me three different
+      echos in which there were messages that had that expression in the
+      text!
+
+      *****
+
+
+3. Nodelist Support
+===================
+
+Q3.1 Please remind me how I get the Region25 Nodelist operative with Xpoint
+
+A3.1 Main menu, Fido=>>Nodelist==>Configure.  Preferably have the Nodelist/s
+     that are needed already tucked away into XP's /FIDO sub-directory.
+
+     Snapshot coming up .....
+
+     +- Configure node/point list -----------------------+
+     ›                                                   ›
+     ›  List name         REGION25.###      Number  285  ›
+     ›
+     ›  Format of list    Node list                     ›
+     ›  Zone/Address                                     ›
+     ›                                                   ›
+     ›  Update file
+     ›  Update archive
+     ›                                                   ›
+     ›  Process by                                       ›
+     ›                                                   ›
+     ›   [ ]   Diff update
+     ›   [ ]   Delete update after processing
+     ›                                                   ›
+     +-------------------------------------------- [F2] -+
+
+     I realise that this doesn't exactly answer your question but I'm sure
+     there will be a more comprehensive reply shortly.
+
+     *****
+
+Q3.2 How do I look up a particular address?
+
+A3.2 Alt-N
+
+     *****
+
+
+4. Address Book
+===============
+
+Q4.1 Now I've discovered that if I press the Tab key, I can find a huge
+     list of addresses (the majority of which I'll rarely want to use) is
+     there a convenient way of deleting those that I don't want please?
+
+A4.1 If none of those addresses have a little "v" by the side of them,
+     then they're addresses that aren't "active" in your outgoing netmail
+     AddressBook. Try just pressing the (A)ll hotkey and you _should_ be
+     left with just the Active addresses showing.
+
+     That's one of the ways to either activate an address and get its own
+     outgoing netmail folder slot going, or to de-activate an address you
+     no longer need a folder for. The other main ways of getting one of
+     those folders activated is just to use that Message==>Direct routine,
+     or use an ALT+P(or P) when replying to a message.
+
+     *****
+
+Q4.2 I have discovered if, with the list on screen I press b for the
+     Address- Book, I get a little tick against a name and if I press b
+     again against that same name the individual is deleted. This seems a
+     long-winded procedure so what's the short-cut please? :-)
+
+A4.2 This is something that I've never really looked at but methinks either
+     "Re-Org/Users" or "Re-Org/Address-book" should do what you want. I've
+     just had a quick look at both of them and they also appear to be a bit
+     long-winded :(
+
+     ******
+
+Q4.3 Next question - "where do all those addresses originate from ?" :-
+
+A4.3 You'll have noticed with XPoint, that when an incoming mail bundle is
+     being tossed, loadsa names and addresses flash up the screen - true ?
+     All those names/addresses get bunged into a mixture of files named
+     USER.xxx which then get used as XP's AddressBook database. One of the
+     nice bits about that User database is that it acts as almost an
+     extension to the Nodelist that you're using - quite handy if you want
+     to whip orft a netmail to someone and for some reason you've mislaid
+     their address, but you've remembered their name.
+
+     It's main "snag" when doing that though, is when the addressee happens
+     to be a Node who also uses a Point number for some activies. XP, in
+     that case will just present you with the Nodelist entry information for
+     the address. Similarly, if the name of a Point coincides with that of a
+     Node's name :(
+
+     *****
+
+
+5. Templates
+============
+
+Q5.1 How does one arrange for an automatic salutation (i.e. "Hi xxxx,")
+     to the xxxx adressee?
+
+A5.1 This is done by tweeking two of the templates .....
+
+     Goto "Edit/Templates" and select "PrivHead". This is the default
+     template that is used by XP for private messages(netmail). In this
+     one you could put something like "Hi $VORNAME", where the macro
+     "$VORNAME" is translated as the addressee's christian name. The one
+     to tweek for public messages(echomail) is "Head". As yet, I haven't
+     found a macro that translates to the addressee's christian name only.
+
+     *****
+
+Q5.2 How does one arrange for a signature ending (e.g. "Regards,[LFCR]
+     Geoff")?
+
+A5.2 Yet another template to be tweeked .....
+
+     Goto "Edit/Templates" and select "PrivSignature". This is the default
+     template for private messages(netmail). In this one you could put
+     something like "Regards,"
+                    "Geoff"
+
+     The one to tweek for public messages(echomail) is "Signature". You
+     could put the same in here as in your private sig.
+
+     *****
+
+
+6. Miscellaneous
+================
+
+Q6.1 Where is the CONNECT speed recorded?
+
+A6.1 XPFIDO.LOG is the main place. But the info's also given to you in the
+     little "netmail" bunged into the /ØNetcall folder after you've made an
+     outgoing call.
+
+     *****
+
+Q6.2 I've looked in the Netcall folder and the CONNECT: part is always
+     blank. Is there a setting that I've missed somewhere?
+
+A6.2 What I _think_ it is - if you go into your Edit==>Server, perhaps use
+     your Bosses entry as the test one to try, select the Edit, then the
+     Modem portion and add into the init string S95=3  Hopefully, that
+     should fix it. XPoint doesn't seem to "like" large S95 values. You
+     also need to have W2 enabled.
+
+     *****
+
+Q6.3 I'd have cut it out of my Netcall folder and placed it in here to
+     show you (but I haven't worked out how to do that yet :-))  )
+
+A6.3 While you're reading that message in the Netcall folder, you've got a
+     couple of options open to you either:-
+
+     a) Use W to write the full message contents to an ASCII file of your
+     own naming convention, or
+
+     b) Use ALT+I to dump just the amount displayed on the screen, to a
+     similarly named file.
+
+     Then, you can import the file into a message with the CTRL+K -
+     then R command.
+
+     *****
+
+Q6.4 What's the significance of the R at the end of your tearline please?
+
+A6.4 (R)egistered :-)
+
+     *****
+
+Q6.5 I've been wondering about that "Special" function?
+
+A6.5 Now take this bit s-l-o-w and steady, if you don't then be it all on
+     yer own head.
+
+     When in that first screen. Select (S)pecial. You'll notice that the
+     screen layout will alter slightly. Take note also that the Menu
+     second-line choices also alter somewhat, might be an idea to make a
+     note of them. Now select (S)pecial again to take you back to your
+     original screen layout.
+
+     Now, use your TAB key to go into your outgoing mail folders area.
+     Select (S)pecial again. Again, there's a bit of a screen layout change
+     plus alterations to that Menu second-line choice. (S)pecial again to
+     get back to your original. Later on, when you've grown accustomed to it,
+     you may find that you've no need to swap backwards and forwards with
+     that (S)pecial choice. But you've _got_ to remember that there are
+     changes in those "hotkey" choices - one or two can be semi-dangerous
+     if you happen to forget.
+
+     Now TAB back to your first screen. Select (S)pecial again. Now cursor
+     over an Echo folder where it doesn't matter too much if you cock
+     things up. Select the "Edit" choice of that second line. You'll find
+     that you can pull a fair few tweaks :)  So, experiment.
+
+     If you do the same sort of playing/experiment on an outgoing netmail
+     folder in the other folder area, you'll find that you can pull some
+     useful twiddles there as well.  have fun :)))))))
+
+     If/when you do start having a look at, and/or use, that (S)pecial
+     function - try to force yourself to remember that those 2nd line
+     Hotkey choices have changed. Can be a shade dangerous if you forget :(
+
+     *****
+
+Q6.6 How do I add Tools to XP?
+
+A6.6 The object of the following exercise is to add a "Tool" to XP, so that
+     you can call it up as & when needed in a similar fashion to using XP's
+     Archive Viewer Tool. As a starter example, I might have the following
+     Tools available when I access that T from the top menu:-
+
+=== Cut ===
+     XPoint  Re-Org  Message  Netcall  Fido  Edit  Config  Tools
+     All  Write  Textfile  Binary  Special  Show: from 23.+------------------+
+                                                          › Calendar      @K ›
+      /ØNetcall                                           › Archive Viewer   ›
+      /ØNetzanruf                                         +------------------›
+      /ØStatistics                                        › PC-Tools         ›
+      /Archie                                             › Inspect-A        ›
+     /Archie Swan                                Personal› NortonComm       ›
+      /Sysop                                              +------------------+
+=== Cut ===
+
+     The way to add an additional Tool:-
+     Select Config==>Tools_Menu and you'll be presented with a screen like:-
+
+   +- Tools Menu ----------------------------------------------------------+
+   ›     Menu           Program                    $FILE      S W L A  Mem ›
+   › 1                                                                     ›
+   › 2                                                                     ›
+ and so on down to:
+   › 9                                                                     ›
+   › 10                                                                    ›
+   +-----------------------------------------------------------------------+
+
+     Cursor over one of those numbered slots and press Enter - where you'll
+     be presented with a screen that looks like the following:
+
+   +- Tools+- Tools Menu <number of slot>--------------------------+-------+
+  ›     Me›                                                       ›A  Mem ›
+   › 1   ^P›  Menu display   ^Inspect-A                            ›   600 ›
+   › 2   ^I›                                                       ›   600 ›
+   › 3   ^N›  Program name   inspect.exe                           ›   600 ›
+   › 4     ›                                                       ›       ›
+   › 5     ›  $FILE-Msg.     w/o header        [ ]   Subject-name ›       ›
+  › 6     ›                                                       ›       ›
+   › 7     ›   [ ]   Wait                                          ›       ›
+   › 8     ›   [x]   Fullscreen            Memory:   600  KBytes   ›       ›
+   › 9     ›   [ ]   Output to lister                              ›       ›
+   › 10    ›   [ ]   Look for files in AUTOEXEC directory          ›       ›
+   +-------›                                                       ›-------+
+           +-------------------------------------------------------+
+
+     Fill in the bits as above, not forgetting to press Enter/Return on the
+     last entry and Inspect will be available for use in that Tools menu.
+     NOTE:-  That " ^ " character (shifted 6) is placed directly in front of
+     the Letter that you wish to be used as the hotkey selection. So the
+     above  ^Inspect-A gives me the I as the hotkey. Simple as that.
+
+     *****
+
+Q6.7 How do I upload a text file?
+
+A6.7 Depends how you use the Textfile choice.
+
+     1. Selecting it when you're just cursored over one of the Echomail
+        Folders - yes, it works.  The text file gets converted into an
+        Echomail message!
+
+     2. If, however, you enter into one of the folders and cursor over one
+        of the messages, say from me to you, and then select Textfile
+        (to be found in the (O)ther menu selection) - you'll find that XP
+        will present you with the Private Message (Netmail) choice screen.
+
+     Needs to be used with a shade of care ;)
+
+     *****
+
+Q6.8 I was successful in sending a Crash Mail to the Node of a point earlier
+     i.e. until I saw that the number being dialled was preceded by the
+     international prefix 44- rather than the Nodelist number having the
+     "44-" removed and replaced by "0". I immediately hung up but the
+     question is where and how is this change done please?
+
+A6.8 Menubar,  Fido===>Options, I have:-
+
+     +- Fido Options ---------------------------------+
+     ›                                                ›
+     ›  Int. dial prefix    00                        ›
+     ›  Nat. dial prefix    0                         ›
+     ›  Your dialing code   44-1977                   ›
+     ›                                                ›
+     ›   [x]   Import nodelist updates automatically  ›
+     ›   [ ]   Delete empty messages                  ›
+     ›   [x]   Automatic TIC file processing          ›
+     ›   [x]   Hold requests if files are missing     ›
+     ›                                                ›
+     ›   [x]   Delete Via lines                       ›
+     ›                                                ›
+     ›  Standard echomail recipient   All             ›
+     ›                                                ›
+     +------------------------------------------------+
+
+     This should fix things - if you change yours accordingly Note that:
+     "Your dialing code" above refers to the international number followed
+     by your telephone exchange area code.
+
+     *****
+
+Q6.9 What's this Macros busines? Care to illustrate?
+
+A6.9 I decided that - come hellorhighwater - somehow I was going to use
+     XP's terminal mode for the odd BBS call _without_ having to manually
+     type in things such as ATDxxxxx then Name and then Password. My
+     "get out" turned out to be that selection of Config==>Keys==>Macros
+
+     Choice of New gives the following screen:-
+
+     +- Create key macro ---------------------------------------+
+     ›                                                          ›
+     ›  Macro for   All                                        ›
+     ›                                                          ›
+     ›  Comment                                                 ›
+     ›                                                          ›
+     ›  Key                                                     ›
+     ›                                                          ›
+     ›  Macro                                                   ›
+     ›                                                          ›
+     +--------------------------------------------------- [F2] -+
+
+     Pressing F2 on that "Macro for" slot gives you control on where you
+     want the Macro to be used. I didn't want it to be a Global selection,
+     so I chose Terminal.
+
+     "Comment" is just as it says - a small reminder about what you might
+     have set the macro up for.
+
+     "Key" - could be slightly tricky.  This is where you identify the
+     particular "hotkey" that you're going to use.  Doesn't appear to accept
+     Fxx keys, and although the length of the input "block" seems to indicate
+     a fair amount can be bunged in there - only one of the normal Alpha,
+     Numeric, or keys like Home/End etc., seem to be able to be accepted.
+     So, you need to take a bit of care as to which key you select, then
+     "tap" the key and an entry will appear in that slot.
+
+     "Macro" - this accepts the keystrokes that you want to use, e.g. an
+     entry of:-
+     Geoff Bent^M
+     is produced by typing:
+     Geoff Bent as normal, and then the Return/Enter key.
+
+     Note the small "help" info that appears at the top right of the screen
+     for saving/exiting while you're inputting stuff in that Macro slot,
+     as while you're in there - you can't get on-line help from the F1 key,
+     even if you could read it.
+
+     As a consequence, I started with 3 macros so that in Terminal mode -
+     the Home key does the dialling out, then the End key tells the BBS my
+     moniker, and the "`" (backwards apostrophe) gives the Password.
+
+     Only starters this. But it looks like it could be useful.
+
+     *****
+
+===========================================================================
+
+
+     =====================================================================
+     My thanks go to Archie Swan at 2:250/333.2@fidonet for the help,
+     information and support he has provided me with.
+
+     My thanks also go to Geoff Bent at 2:250/333.7@fidonet for being the
+     conscripted 'Guinea Pig' and for providing most of the questions in
+     the FAQ :-)
+     
+     In addition, my thanks go to all CrossPoint developers and contributors
+     for giving CrossPoint a much needed injection of new life, for
+     recognising and supporting the English speaking users and for
+     simplifying its installation and use.
+     =====================================================================
+
+$Log$
+Revision 1.1.2.1  2003/11/01 11:07:46  mf
+MF:- Initial comit of the English installation guide/FAQ.
+   - This document replaces OXPGUIDE.TXT
+   - It is not up-to-date but will be brought up-to-date
+   - as and when time permits.
+
