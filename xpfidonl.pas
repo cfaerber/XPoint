@@ -34,7 +34,7 @@ procedure InitNodelist;
 procedure EditNLentry(var NLItem: TNodeListItem; var brk:boolean);
 function  NewNodeEntry:boolean;
 
-function  DoDiffs(files:string; auto:boolean):byte;
+function  DoDiffs(const files:string; auto:boolean):byte;
 procedure ManualDiff;
 
 function  setfnlenable(var s:string):boolean;
@@ -228,7 +228,7 @@ begin   //function NewNodeEntry:boolean;
         OpenArchive(fn,arc,ar);
         if stricmp(ar.name,'FILE_ID.DIZ') then
           ArcNext(ar);
-        ffn:=UpperCase(ar.name);
+        ffn:=FileUpperCase(ar.name);
         if ffn='' then ffn:=ExtractFilename(fn); { getfilename(fn);}
         CloseArchive(ar);
         end
@@ -297,19 +297,21 @@ begin   //function NewNodeEntry:boolean;
 end;    //function NewNodeEntry:boolean;
 
 
-function ReplNr(fn:string; number:integer):string;
-var p : byte;
+function ReplNr(const fn:string; number:integer):string;
+var
+  p : Integer;
 begin
   p:=pos('###',fn);
   if p>0 then
     ReplNr:=LeftStr(fn,p-1)+formi(number,3)+mid(fn,p+3)
-  else begin
+  else
+  begin
     p:=pos('##',fn);
     if p>0 then
       ReplNr:=LeftStr(fn,p-1)+formi(number mod 100,2)+mid(fn,p+2)
     else
       ReplNr:=fn;
-    end;
+  end;
 end;
 
 
@@ -326,9 +328,9 @@ end;
 { Bei Update-Files mit fortlaufender Nummer versucht XP, die  }
 { n„chsten vier Updates einzubinden.                          }
 
-function  DoDiffs(files:string; auto:boolean):byte;
+function  DoDiffs(const files:string; auto:boolean):byte;
 var diffdir  : string;
-    diffnames: string[12];
+    diffnames: string;
     i        : integer;
     newlist  : string;
     uarchive : string;
@@ -460,7 +462,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       unarcflag:=false;                           { Update-Archiv auspacken }
       if (uarchive<>'') and passend(uarchive) then begin
         SafeDeleteFile(diffdir+ufile);
-        log(getreps2(2130,1,uarchive));      { 'entpacke %s' }
+        log(getreps2(2130,1,ufile + ' from ' + uarchive));      { 'entpacke %s' }
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
         if not unarcflag then
           log(getres2(2130,2));              { 'Fehler beim Entpacken' }
@@ -537,6 +539,10 @@ finalization
 
 {
   $Log$
+  Revision 1.45.2.1  2002/05/01 17:12:21  mk
+  JG:- Fix: Die Unterdr?ckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
+       <Shift-Esc> funktionierte nicht im Lesemodus "Alles".
+
   Revision 1.45  2002/04/14 11:01:54  mk
   - fixed memory leaks
 
