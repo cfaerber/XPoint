@@ -1395,26 +1395,23 @@ end;
 procedure resetvideo;
 var m3 : boolean;
 begin
-  if startvideotype>0 then begin
+  if startvideotype>0 then
+  begin
     m3:=true;
     if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
     else m3:=false;
     if (videotype>1) and not ParLCD then
-{$IFDEF BP }
       if ParFontfile<>'' then
         XPFont
       else
-{$ENDIF }
-      if getscreenlines<>screenlines then begin
+      begin
         if not m3 then setvideomode(3);
         setscreenlines(screenlines);
         setmauswindow(0,639,0,screenlines*8-1);
         end;
     end;
   if (videotype>1) and not ParMono then setbackintensity;
-{$IFDEF BP }
   SetXPborder;
-{$ENDIF }
 end;
 
 
@@ -2407,6 +2404,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.2  2000/10/06 21:10:27  mk
+  - spezieller Zeilenmodus wird nach Shell jetzt komplett restauriert
+
   Revision 1.48.2.1  2000/07/01 09:22:56  mk
   - Mailerstringanpassungen
 
