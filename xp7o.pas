@@ -402,11 +402,12 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege and not NC^.Abbruch then
-  begin
-    window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
-    bd_setzen(true);
-  end;
+  if Assigned(NC) then
+    if AutoDatumsBezuege and ((NC^.Recpack > 0) or (NC^.Recbuf >0)) then
+    begin
+      window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
+      bd_setzen(true);
+    end;
 end;
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
@@ -779,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.3  2000/10/15 09:43:27  mk
+  OH:- Datumsbezuege aktualisieren nur noch wenn noetig
+
   Revision 1.13.2.2  2000/10/11 08:48:51  mk
   - DatumsbezÅge nach Netcall ueberarbeiten, #116428
 
