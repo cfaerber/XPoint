@@ -36,6 +36,9 @@ const hf : array[0..4] of char = ' +-Aù';
       wv : array[0..4] of char = ' cwws';
 
 var
+    taus    : array[1..MsgFelderMax+UsrFelderMax] of string[81];
+    tausc   : 1..MsgFelderMax+UsrFelderMax;
+    kuerzen : boolean;
     s,s0    : string[81];
     dat,edat: longint;
     sdat    : string[15];
@@ -145,7 +148,8 @@ begin  { __ Suchmarke }
               end;
           end;
     1,2,
-    3,4 : begin
+    3,4 : begin { USERLISTE }
+            for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             dbReadN(ubase,ub_username,s);
             dbReadN(ubase,ub_kommentar,komm);
             dbReadN(ubase,ub_adrbuch,ab);
@@ -156,34 +160,64 @@ begin  { __ Suchmarke }
                      (dbReadInt(ubase,'codierer')=9),'P',' ');
             vert:=(uflags and 4<>0);
             dbReadN(ubase,ub_haltezeit,hzeit);
+            
             if vert then begin
-              s:=vert_name(s);
-              s2:=strsn(hzeit,3)+' ';
-            end else
-              s2:=abc+pw+dadr;
+              { Verteiler }
+              s := vert_name(s);
+              { Haltezeit hier ins Flag-Feld einfuegen (F ist richtig!) }
+              taus[pos('F',UsrFeldTausch)] := strsn(hzeit,3)+' '; { Laenge 4 }
+            end else begin
+              { Flags }
+              taus[pos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
+            end;
+              
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
-            if not dispext then begin
-              if FeldtauschVorlesen then
-                dispbuf[y]^:=s2+' '+forms(komm+sp(max(2,32-length(komm)))+s,75)
-              else
-                dispbuf[y]^:=s2+' '+forms(s+sp(max(2,42-length(s)))+komm,75)
-            end else begin
+            
+            kuerzen := false;
+            if dispext then begin
+            { Anzeige/Spezial }
+              kuerzen := true; { wir brauchen mehr platz, also Felder kuerzen }
               dbReadN(ubase,ub_pollbox,pbox);
               brettform(s,0,true);
               if vert then
-                s2:=s2+'       '
+                { KEINE Haltezeit bei Verteiler }
+                taus[pos('H',UsrFeldTausch)] := '      '
               else
-                s2:=s2+'  '+hz(hzeit)+' ';
-              if FeldtauschVorlesen then
-                dispbuf[y]^:=s2+forms(pbox,9)+' '+
-                             forms(komm+sp(max(1,20-length(komm)))+s,59)
-              else
-                dispbuf[y]^:=s2+forms(pbox,9)+' '+
-                             forms(s+sp(max(1,36-length(s)))+komm,59);
+                { Haltezeit bei Usern }
+                taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
+                
+              { BOX }
+              taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
             end;
+            
+            { Verteilername bzw. Adresse }
+            taus[pos('A',UsrFeldTausch)]
+              := Forms(s,
+                iif(pos('A',UsrFeldTausch)<pos('K',UsrFeldTausch),
+                    max(44-iif(kuerzen,9,0),length(s)),
+                    74-max(39,length(komm))-iif(kuerzen,8,0)
+                   )
+              );
+                
+            { Kommentar }
+            taus[pos('K',UsrFeldTausch)]
+              := Forms(komm,
+                iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
+                    max(39-iif(kuerzen,9,0),length(komm)),
+                    74-max(35,length(s))-iif(kuerzen,8+9,0)
+                   )
+              );
+              
+            { Felder zusammenkopieren }
+            dispbuf[y]^:=taus[1];
+            for tausc := 2 to UsrFelderMax do
+              dispbuf[y]^:=dispbuf[y]^+iifs(length(taus[tausc])>0,' ','')+taus[tausc];
+            dispbuf[y]^:=forms(dispbuf[y]^,80);
+            
           end;
-  10..12: begin
+  10..12: begin { NACHRICHTENLISTE }
+            for tausc := 1 to MsgFelderMax do taus[tausc]:='';
             dbReadN(mbase,mb_absender,s0);
             dbReadN(mbase,mb_netztyp,mnt);
             fileatt:=(mnt and $200<>0);
@@ -292,28 +326,34 @@ begin  { __ Suchmarke }
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
               
+{             
               if Feldtauschvorlesen then
                 dispbuf[y]^:=dflags+' '+forms(s1,iif(showmsgdatum,21,27))+' '
                 +forms(s,19)+' '+forms(s0,19)+' '+siz+sdat
               else
+}              
                 dispbuf[y]^:=dflags+siz+sdat+' '+forms(s,19)+' '+forms(s0,19)+
                              ' '+forms(s1,iif(showmsgdatum,22,28));
               
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
             end else begin
+{             
               if Feldtauschvorlesen then begin
                 if dispmode=12 then
                   s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
                 else
                   s:=forms(s1,blen)+' '+forms(s,ulen);
                 dispbuf[y]^:=dflags+' '+s+siz+sdat;
-              end else begin
+              end else 
+}              
+              begin
                 if dispmode=12 then
                   s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
                 else
                   s:=forms(s,ulen)+' '+forms(s1,blen);
                 dispbuf[y]^:=dflags+siz+sdat+' '+s;
               end;
+              
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name'))) then
                 userflag[y]:=true
@@ -323,6 +363,13 @@ begin  { __ Suchmarke }
                 else
                   userflag[y]:=(mnt and $1000<>0);
             end;
+            
+            { Felder zusammenkopieren }
+{           
+            dispbuf[y]^ := taus[1];
+            for tausc := 2 to MsgFelderMax do dispbuf[y]^:=dispbuf[y]^+' '+taus[tausc];
+            dispbuf[y]^:=forms(dispbuf[y]^,80);
+}           
           end;
      20 : dispbuf[y]^:=AutoShow;
   end;

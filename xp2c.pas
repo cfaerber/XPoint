@@ -700,14 +700,17 @@ procedure AccessibilityOptions;
 var x,y : byte;
     brk : boolean;
 begin
-  dialog(41,9,getres2(260,11),x,y);
+  dialog(41,10,getres2(260,11),x,y);
   maddbool(3,2,getres2(260,5),auswahlcursor);{ 'Auswahlcursor in MenÅs/Listen' }
     mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
-  maddbool(3,4,getres2(260,15),feldtauschvorlesen); { 'Feldtausch in Listen' }
-  maddbool(3,5,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
-  maddbool(3,6,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
-  maddbool(3,8,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
+  { 'Feldtausch in Nachrichten-Liste': }
+  maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,'FHDAEB');
+  { 'Feldtausch in Userliste': }
+  maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,'FHBAK');
+  maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
+  maddbool(3,7,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
+  maddbool(3,9,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin

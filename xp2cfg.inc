@@ -676,7 +676,9 @@ begin
   vesa_dpms:=false;
   termbios:=false;
   tonsignal:=false;
-  feldtauschvorlesen:=false;
+  
+  MsgFeldTausch:='FHDAEB'; { Flags/Haltezeit/Datum/Abs/Empf/Betreff }
+  UsrFeldTausch:='FHBAK';  { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
 
   UsePGP:=false;
   PGPbatchmode:=true;
@@ -915,7 +917,8 @@ begin
   writeln(t,'TrennKommentar=',trennkomm);
   writeln(t,'TerminalBIOS=',jnf(termbios));
   writeln(t,'Tonsignal=',jnf(tonsignal));
-  writeln(t,'FeldtauschVorlesen=',jnf(feldtauschvorlesen));
+  writeln(t,'MsgFeldTausch=',MsgFeldTausch);
+  writeln(t,'UsrFeldTausch=',UsrFeldTausch);
   writeln(t,'Brettkommentar=',jnf(brettkomm));
   wrhd(4);                                             { Z-Netz }
   writeln(t,'Kleinschreibung=',jnf(smallnames));
@@ -1496,7 +1499,8 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
-          getx(su,  'feldtauschvorlesen',feldtauschvorlesen) or
+          gets(s,su,'msgfeldtausch',MsgFeldTausch,MsgFelderMax) or
+          gets(s,su,'usrfeldtausch',UsrFeldTausch,UsrFelderMax) or
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
@@ -1613,6 +1617,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/04/01 02:21:47  oh
+  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
+
   Revision 1.21  2000/03/25 16:29:29  mk
   - 32 Bit: Zeilenzahl fest auf 25 gestellt
 

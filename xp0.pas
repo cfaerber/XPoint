@@ -85,6 +85,8 @@ const  {$IFDEF DPMI}
        ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
        ResMinmem   = 340000;
        realnlen = 40;                { robo 01/00 LÑnge der Realnames }
+       MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
+       UsrFelderMax = 5;             { max. Feldzahl in der Userliste }
 
        patchlevel  : string[13] = '*patchlevel*0';
 {$IFDEF Ver32 }
@@ -948,9 +950,12 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
-       feldtauschvorlesen:boolean;   { fÅr blinde Benutzer, die sich Ausgaben
-                                       vorlesen lassen, kînnen in der Brett- und
-                                       der Userliste Felder vertauscht werden }
+       MsgFeldTausch   : string[MsgFelderMax]; { fÅr blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, kînnen
+                                       in der Brettliste Felder vertauscht werden }
+       UsrFeldTausch   : string[UsrFelderMax]; { fÅr blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, kînnen
+                                       in der Userliste Felder vertauscht werden }
        brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
@@ -1086,6 +1091,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.17  2000/04/01 02:21:47  oh
+  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
+
   Revision 1.16  2000/03/25 11:46:09  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
   - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
