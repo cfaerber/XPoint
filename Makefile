@@ -880,8 +880,7 @@ montage$(UNITEXT): montage.pas typeform$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-mouse$(UNITEXT): mouse.pas maus2$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+mouse$(UNITEXT): mouse.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 ncnntp$(UNITEXT): ncnntp.pas ipcclass$(UNITEXT) ncsocket$(UNITEXT) \
@@ -1980,9 +1979,9 @@ xpcfg$(UNITEXT): xpcfg.pas fileio$(UNITEXT) resource$(UNITEXT) \
 
 endif
 
-xpcurses$(UNITEXT): xpcurses.pas inout$(UNITEXT) ncurses$(UNITEXT) \
-	typeform$(UNITEXT) utftools$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xplinux$(UNITEXT)
+xpcurses$(UNITEXT): xpcurses.pas ncurses$(UNITEXT) typeform$(UNITEXT) \
+	utftools$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 xpdatum$(UNITEXT): xpdatum.pas montage$(UNITEXT) typeform$(UNITEXT) \
@@ -2579,6 +2578,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.29  2000/10/24 17:37:24  fe
+# Zirkulaere Abhaengigkeiten beseitigt.
+#
 # Revision 1.28  2000/10/24 14:50:43  fe
 # Abhaengigkeiten aktualisiert.
 # Kleine Verbesserungen.

@@ -102,6 +102,8 @@ const
    KEY_ALTMINUS = 502; { alt/= }
    KEY_ALTTAB   = 503; { alt/tab }
 
+   dphback    : byte     = 7;         { Attribut fuer DispHard          }
+
 type
   { Fuer den internen Gebrauch }
   PPanel = ^TPanel;
@@ -263,7 +265,6 @@ uses
 {$ifdef Debug}
   SysUtils,             { FormatDateTime etc. }
 {$endif}
-  inout,                { dhpback }
   typeform;             { ISOTab }
 
 const
@@ -1420,6 +1421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/10/24 17:37:24  fe
+  Zirkulaere Abhaengigkeiten beseitigt.
+
   Revision 1.29  2000/10/10 12:15:24  mk
   - SysGetConsoleCodepage added
 

@@ -76,7 +76,6 @@ implementation
 
 {$IFDEF VP }
 uses
-  maus2,
   vpsyslow;
 {$ENDIF }
 
@@ -276,6 +275,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.19  2000/10/24 17:37:24  fe
+  Zirkulaere Abhaengigkeiten beseitigt.
+
   Revision 1.18  2000/08/03 21:27:08  mk
   - Variablengroessen angepasst (xp_maus_an)
 
