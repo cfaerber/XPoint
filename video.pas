@@ -358,23 +358,6 @@ end;
 
 procedure SetScreenLines(lines:byte);
 
-  procedure loadcharset(height:byte);
-  var regs : registers;
-  begin
-    with regs do begin
-      ah:=$11;
-      case height of
-         8 : al:=$12;
-        14 : al:=$11;
-        16 : al:=$14;
-      else
-        exit;
-      end;
-      bl:=0;
-      intr($10,regs);
-    end;
-  end;
-
   procedure setuserchar(height:byte);   { height = 12/11/10/9/7 }
   var regs  : registers;
       sel   : word;
@@ -407,8 +390,9 @@ procedure SetScreenLines(lines:byte);
     end;
 
   begin
-    getmem(p2,15*256);
-    with regs do begin
+    getmem(p2,16*256);
+    with regs do
+    begin
       ax:=$1130;
       if height>14 then bh:=6        { 16er Font lesen }
       else if height>10 then bh:=2   { 14er Font lesen }
@@ -429,13 +413,15 @@ procedure SetScreenLines(lines:byte);
         10 : make10;
          9 : make9;
          7 : make7;
+       else
+         Move(p1^, p2^, height*4096);
       end;
       LoadFont(height,p2^);
       {$IFDEF DPMIa}
       if FreeSelector(sel)=0 then;
       {$ENDIF}
       end;
-    freemem(p2,15*256);
+    freemem(p2,16*256);
   end;
 
 begin
@@ -443,28 +429,28 @@ begin
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
     1 : setvideomode(3);       { CGA: nur 25 Zeilen }
     2 : begin
+          setvideomode(3);
           case lines of        { EGA }
-            25     : loadcharset(14);
             26     : setuserchar(13);
             27..29 : setuserchar(12);
             30..31 : setuserchar(11);
             32..35 : setuserchar(10);
             36..38 : setuserchar(9);
-            39..43 : loadcharset(8);
+            39..43 : setuserchar(8);
             44..50 : setuserchar(7);
           end;
         end;
     3 : begin
+          setvideomode(3);
           case lines of
-            25     : loadcharset(16);
             26     : setuserchar(15);
-            27..28 : loadcharset(14);
+            27..28 : setuserchar(14);
             29..30 : setuserchar(13);
             31..33 : setuserchar(12);
             34..36 : setuserchar(11);
             37..40 : setuserchar(10);
             41..44 : setuserchar(9);
-            45..50 : loadcharset(8);
+            45..50 : setuserchar(8);
             51..57 : setuserchar(7);
           end;
         end;
@@ -489,6 +475,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.2  2000/07/05 16:20:51  mk
+  JG: - Verbesserungen fuer den 28 Zeilen-Modus, bitte testen!
+
   Revision 1.20.2.1  2000/06/22 17:13:45  mk
   - 32 Bit Teile entfernt
 
