@@ -113,16 +113,17 @@ end;
 procedure ZModemEndProc;
 var
   s     : String;
-  t,cps : LongInt;
+  cps   : LongInt;
+  t     : Real;
 begin
   DispProc:=NIL; {Keine Statusmeldungen mehr anzeigen}
   if LogSending then s:='Sent ' else S:='Rcvd ';
-  t:=System.Round(ZModemTimer.ElapsedSec);
+  t:=ZModemTimer.ElapsedSec;
   if t<=0 then t:=1; {Verhindere Division by zeros}
-  cps:=TransferBytes DIV t;
+  cps:=System.Round(TransferBytes/t);
   if TransferName<>'' then begin
     DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',UseNextLine);
-    Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(t)+'s, '+StrS(cps)+' cps');
+    Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(System.Round(t))+'s, '+StrS(cps)+' cps');
   end;
 end;
 
@@ -248,7 +249,7 @@ begin
   {$ifdef FPC}
   {$hint under Unix we do not set up the time now. please do the dos/win-code }
   {$endif}
-  {dos.}settime(h,min,s,0);
+  {dos.settime(h,min,s,0);}
 {$endif}
 end;
 
@@ -285,6 +286,7 @@ var NAKcount : byte;
     NAKtimer : boolean;
     ems_req  : string;
     c        : char;
+    LastState: Integer;
 
   function TestEmsiReq:boolean;
 
@@ -314,10 +316,13 @@ var NAKcount : byte;
   end;
 
 begin
-  fmSS:=0;
+  fmSS:=0; LastState:=State;
   NAKtimer:=false;
   repeat
-    DebugLog('XPFM','fmSS state: '+Char(state+48),5);
+    if State<>LastState then begin
+      DebugLog('XPFM','fmSS state: '+Char(state+48),5);
+      LastState:=State;
+    end;
     case state of
       0 : begin                           { FTS-007 S. 8 }
             Timers[ti_ALL1].SetTimeout(30);
@@ -368,31 +373,27 @@ begin
                 Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
               end;
-              state:=4;
+	      if CommObj^.CharAvail then state:=4;
             end;
           end;
       4 : begin
-            if not CommObj^.CharAvail then
-              state:=3
-            else begin
-              c:=CommObj^.GetChar;
-              case c of
-                ENQ : begin
-                        fmSS:=2; state:=99;   { WaZOO selected }
-                      end;
-                'C' : state:=5;
-                NAK : begin
-                        inc(NAKcount);
-                        state:=5;
-                      end;
-                else begin
-                  Timers[ti_NAK].SetTimeout(0);
-                  NAKtimer:=false;
-                  if UseEMSI and TestEmsiReq then begin
-                    fmSS:=3; state:=99;
-                  end else
-                    state:=3;
-                end;
+            c:=CommObj^.GetChar;
+            case c of
+              ENQ : begin
+                      fmSS:=2; state:=99;   { WaZOO selected }
+                    end;
+              'C' : state:=5;
+              NAK : begin
+                      inc(NAKcount);
+                      state:=5;
+                    end;
+              else begin
+                Timers[ti_NAK].SetTimeout(0);
+                NAKtimer:=false;
+                if UseEMSI and TestEmsiReq then begin
+                  fmSS:=3; state:=99;
+                end else
+                  state:=3;
               end;
             end;
           end;
@@ -714,7 +715,7 @@ begin
     if not more then begin
       CommObj^.SendString('**',False);                         { EMSI_DAT senden }
       CommObj^.SendBlock(EMSIData[1],Length(EMSIData),Dummy);
-      ProcessIncoming(False); CommObj^.PurgeInBuffer;
+      CommObj^.PurgeInBuffer;
       CommObj^.SendString(hex(CRC16Block(EMSIData[1],Length(EMSIData)),4)+#13,False);
     end;
     repeat
@@ -858,7 +859,8 @@ begin
     end;
 
   if ErrorWord<>0 then begin
-    DisplayStatus(getres2(30004,14)+' '+Char(ErrorWord+48),True);            { 'Uebertragung abgebrochen' }
+    DisplayStatus(getres2(30004,14),True);            { 'Uebertragung abgebrochen' }
+    DebugLog('XPFM','ZModemSend error: "'+ZModem.TransferMessage+'"',1);
     if not CommObj^.Carrier then begin
       DisplayStatus(nocarrier,True);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
@@ -872,6 +874,7 @@ begin
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(CommObj,MailPath,ErrorFlag);
     if (ErrorFlag) then begin
+      DebugLog('XPFM','ZModemReceive error: "'+ZModem.TransferMessage+'"',1);
       DisplayStatus(getres2(30004,14),True);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
@@ -909,6 +912,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.2  2000/12/18 00:09:56  ma
+        - debug output changed
+
         Revision 1.1  2000/12/14 14:13:59  hd
         - Init: Include part for XPFM
           - token from XP-FM.INC
