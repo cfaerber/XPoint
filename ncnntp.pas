@@ -178,10 +178,27 @@ end;
 
 function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
 var
-  s     : string;
-  code  : integer;
-  p     : integer;
-  i     : integer;
+  s, grdesc,
+  gn       : string;
+  code     : integer;
+  i,ni     : integer;
+
+  // extract the first word of GroupString - which is the only the Name
+  function GetGroupName(Group: String; var GroupDescription: String): String;
+  var
+    p      : integer;
+  begin
+    Result := Trim(Group);
+
+    p:= pos(#9,Result);
+    if p=0 then p:= pos(' ',Result);
+    if p<>0 then
+    begin
+      GroupDescription := Copy(Result,p+1,length(Result)-p);
+      Result:= Copy(Result,1,p-1);
+    end;
+  end;
+
 begin
   Result := false;
   aList.Clear;
@@ -196,7 +213,9 @@ begin
       exit;
     end;
 
-    SWriteln('LIST ACTIVE');
+
+    // get list of newsgroups
+    SWriteln('LIST');
     SReadln(s);
     if not (ParseResult(s) in [200, 215]) then
     begin
@@ -217,20 +236,48 @@ begin
       end;
       inc(i);
       if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
-      s:= Trim(s);
-      if not withDescr then begin
-        p:= pos(' ',s);
-        if p=0 then p:= pos(#9,s);
-        if p<>0 then s:= Copy(s,1,p-1);
+
+      aList.Add(GetGroupName(s, grdesc));
+    end; { while }
+
+    WriteIPC(mcInfo,res_list4, [aList.Count]);
+    aList.Sort;
+
+    // get optional descriptions of newsgroups
+    SWriteln('LIST NEWSGROUPS');
+    SReadln(s);
+    if not (ParseResult(s) in [200, 215]) then
+    begin
+      WriteIPC(mcError,res_list3,[Host.Name]);
+      exit;
+    end;
+
+    i:=0;
+    while true do
+    begin
+      SReadln(s);
+      code:= ParseResult(s);
+      if code=0 then break
+      else if code<>-1 then begin
+        WriteIPC(mcError,res_list3,[Host.Name]);
+        Result:= false;
+        exit;
       end;
-      aList.Add(s);
-{$ifdef FPC}
-     if s = '' then
-      s:=''; { Workaround for bug #1067 }
-{$endif}
+      inc(i);
+      if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
+
+      gn := GetGroupName(s, grdesc);
+
+      // kill 1-Char-Descriptions like '?'...
+      if length(grdesc) > 1 then
+      // replace the Groupname with Groupname+Description
+        if aList.Find(gn, ni) then
+          aList[ni] := s;
+
     end; { while }
     WriteIPC(mcInfo,res_list4, [aList.Count]);
     aList.Sort;
+
     Result:= true;
   end;
 end;
@@ -238,6 +285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/08/15 14:51:05  ml
+  - nntp-listen abholen jetzt funktionsfaehig mit Descriptions
+
   Revision 1.8  2000/08/03 06:56:35  mk
   - Updates fuer Errorhandling
 
