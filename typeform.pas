@@ -175,15 +175,15 @@ function ConvertFileName(const s:string): String;
 procedure ZtoZCdatumNTZ(var d1,d2:string);
 function  DecodeBase64(const s: String):String;
 
-function HostToLittleEndian16(host:smallword):smallword; 
-function LittleEndianToHost16(host:smallword):smallword; 
-function HostToLittleEndian32(host:    dword):    dword; 
-function LittleEndianToHost32(host:    dword):    dword; 
+function HostToLittleEndian16(host:smallword):smallword;
+function LittleEndianToHost16(host:smallword):smallword;
+function HostToLittleEndian32(host:    dword):    dword;
+function LittleEndianToHost32(host:    dword):    dword;
 
-function HostToBigEndian16(host:smallword):smallword; 
-function BigEndianToHost16(host:smallword):smallword; 
-function HostToBigEndian32(host:    dword):    dword; 
-function BigEndianToHost32(host:    dword):    dword; 
+function HostToBigEndian16(host:smallword):smallword;
+function BigEndianToHost16(host:smallword):smallword;
+function HostToBigEndian32(host:    dword):    dword;
+function BigEndianToHost32(host:    dword):    dword;
 
 function StringListToString(SL: TStringList): String;
 
@@ -1363,12 +1363,17 @@ begin
   if length(s) >= 3 then
   begin
     if LastChar(s) = '=' then
+    begin
       if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
         pad := 2
       else
-        pad := 1
-    else
+        pad := 1;
+      // falls ein zus„tzliches "=" angeh„ngt wurde, diesen Datensatz verwerfen
+      if Length(s) mod 4 <> 0 then
+        Pad := 3;
+    end else
       pad := 0;
+
     p1 := 1;
     while p1 <= length(s) do
     begin
@@ -1431,6 +1436,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.87  2001/07/01 23:03:33  mk
+  - fixed base64 decoding
+
   Revision 1.86  2001/05/20 12:16:12  ma
   - added StrgListToString
 
