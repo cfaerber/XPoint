@@ -516,7 +516,31 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
         end;
     end;
 
+    procedure SetBIOSFont(height:byte);
+    var
+      Reg: TRealRegs;
+    begin
+      with Reg do
+      begin
+        ah:=$11;
+        case height of
+           8 : al:=$12;
+          16 : al:=$14;
+        end;
+        bl:=0;
+        RealIntr($10, Reg);
+      end;
+    end;
+
   begin
+    if Height in [8, 16] then
+    begin
+      case Height of
+        8: SetBIOSFont(8);
+        16: SetBIOSFont(16);
+      end;
+      exit;
+    end;
     GetMem(NewFont, 16*256);  // 256 Zeichen mit bis zu 16 Zeilen, 4096 Bytes
     GetMem(OrgFont, 16*256);
 
@@ -547,7 +571,6 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
     else
       Move(OrgFont^, NewFont^, 4096);
     end;
-
     LoadNewFont(Height, NewFont);
 
     FreeMem(OrgFont);
@@ -675,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/10/26 07:20:22  mk
+  - Grafikmodus mit 8 Zeilen/Zeichen wird jetzt direkt ueber das BIOS gesetzt
+
   Revision 1.8  2000/10/19 20:52:23  mk
   - removed Unit dosx.pas
 
