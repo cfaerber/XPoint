@@ -488,14 +488,15 @@ begin
         end;
       scy:=i;
       end
-    else begin
+    else
+    begin
+      b1:=block[1].pos.absatz;
+      b2:=block[2].pos.absatz;
+      touch1:=false; touch2:=false;
       if dir=1 then
         ap:=nil
       else begin
-        b1:=block[1].pos.absatz;
-        b2:=block[2].pos.absatz;
         ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rÅckwÑrts suchen }
-        touch1:=false; touch2:=false;
         while (ap<>p.absatz) and assigned(ap) do begin
           ap:=ap^.prev;
           if ap=b1 then touch1:=true;
@@ -2413,6 +2414,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.21  2001/09/06 15:53:52  mk
+  - fixed possible uninitialized variables
+
   Revision 1.19.2.20  2001/09/06 13:06:45  mk
   - fix possible crash in QuoteReflow
   - optimized some code
