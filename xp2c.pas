@@ -149,7 +149,7 @@ begin
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten lîschen' }
   maddbool(3,11,getres2(250,24),archivtext); mhnr(8070);  { 'Archivierungsvermerk erstellen' }
   maddbool(3,12,getres2(250,14),newbrettende); mhnr(219); { 'neue Bretter am Ende anhÑngen' }
-  maddbool(3,13,getres2(250,15),UserBoxname);             { 'Boxname in PM-Brettern' }
+  maddbool(3,13,getres2(250,15),UserBoxname);             { 'Systemname in PM-Brettern' }
   maddbool(3,14,getres2(250,19),brettkomm);               { 'Kommentare aus Brettliste Åbernehmen' }
   maddbool(3,15,getres2(250,20),newuseribm);              { 'Umlaute fÅr neue User zulassen' }
   maddbool(3,16,getres2(250,22),_UserSortBox);            { 'Useranzeigen nach Server sortieren' }
@@ -1523,6 +1523,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2001/10/10 20:57:10  mk
+  - fixed little comment
+
   Revision 1.111  2001/10/08 18:03:39  mk
   - added units mime and utftools to allow this unit compile
 
