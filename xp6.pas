@@ -515,7 +515,7 @@ var i,first : integer;
       if ccpm then begin
         dbSeek(ubase,uiName,UpperCase(adr));
         if dbFound then begin
-          dbReadN(ubase,ub_pollbox,server);
+          Server := dbReadNStr(ubase,ub_pollbox);
           if (dbReadInt(ubase,'userflags') and 2<>0) and
              (dbReadInt(ubase,'codierer')<>0) then
             encode:=true;
@@ -530,7 +530,7 @@ var i,first : integer;
         else begin
           if adr[1]='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
           else dbSeek(bbase,biBrett,UpperCase(adr));
-          if dbFound then dbReadN(bbase,bb_pollbox,server)
+          if dbFound then Server := dbReadNStr(bbase,bb_pollbox)
           else if CrosspostBox<>'' then begin
             adr:='+'+CrosspostBox+':'+adr;
             server:=UpperCase(CrosspostBox);
@@ -1029,7 +1029,7 @@ fromstart:
     if binary or not dbFound then umlaute:=0
     else dbRead(d,'umlaute',umlaute);
     if (fidoname='') and dbFound then
-      dbRead(d,'Origin',fidoname);
+      FidoName := dbReadStr(d,'Origin');
     if dbFound then
       dbRead(d,'Adresse',AltAdr)
     else
@@ -1484,7 +1484,7 @@ fromstart:
       if pm then begin
         dbAppend(ubase);                        { neuen User anlegen }
         dbWriteStr(ubase,'username',empfaenger);
-        dbWrite(ubase,'pollbox',box);
+        dbWriteStr(ubase,'pollbox',box);
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
         b:=1;
@@ -1501,7 +1501,7 @@ fromstart:
         dbWriteNStr(bbase,bb_brettname,empfaenger);
         wbox:=iifs(empfaenger[1]='$','',box);
         intern:=intern or (wbox='');
-        dbWriteN(bbase,bb_pollbox,wbox);
+        dbWriteNStr(bbase,bb_pollbox,wbox);
         halten:=stdhaltezeit;
         dbWriteN(bbase,bb_haltezeit,halten);
         dbWriteN(bbase,bb_gruppe,grnr);
@@ -1771,19 +1771,19 @@ fromstart:
         end;
       dbWriteN(mbase,mb_netztyp,l);
       shortmid:=FormMsgid(hdp^.msgid);
-      dbWriteN(mbase,mb_msgid,shortmid);
-      dbWriteN(mbase,mb_brett,_brett);
-      dbWriteN(mbase,mb_betreff,hdp^.betreff);
-      dbWriteN(mbase,mb_absender,hdp^.absender);
+      dbWriteNStr(mbase,mb_msgid,shortmid);
+      dbWriteNStr(mbase,mb_brett,_brett);
+      dbWriteNStr(mbase,mb_betreff,hdp^.betreff);
+      dbWriteNStr(mbase,mb_absender,hdp^.absender);
       l:=ixdat(hdp^.datum);
       dbWriteN(mbase,mb_origdatum,l);
       dbWriteN(mbase,mb_empfdatum,sendedat);
       dbWriteN(mbase,mb_groesse,hdp^.groesse);
       dbWriteN(mbase,mb_typ,hdp^.typ[1]);
       if ntEditBrettempf(netztyp) then
-        dbWriteN(mbase,mb_name,hdp^.fido_to)
+        dbWriteNStr(mbase,mb_name,hdp^.fido_to)
       else if ntRealname(netztyp) then
-        dbWriteN(mbase,mb_name,hdp^.realname);
+        dbWriteNStr(mbase,mb_name,hdp^.realname);
       b:=1;
       dbWrite(mbase,'gelesen',b);
       if sendFlags and sendHalt<>0 then b:=1
@@ -2123,6 +2123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/07/21 20:56:26  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.53  2000/07/21 17:39:54  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

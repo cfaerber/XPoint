@@ -439,7 +439,7 @@ begin
   else begin
     dbOpen(d,BoxenFile,1);
     SeekLeftBox(d,s);
-    if dbFound then dbRead(d,'boxname',s);
+    if dbFound then s := dbReadStr(d,'boxname');
     dbClose(d);
     if not dbFound then rfehler(2702);    { 'unbekannte Serverbox - w„hlen mit <F2>' }
     vtestpollbox:=dbFound;
@@ -2415,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/07/21 20:56:25  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.36  2000/07/21 18:57:52  mk
   - weiteren Zugriff auf nicht initialisierten String beseitigt
 

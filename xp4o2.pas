@@ -510,7 +510,7 @@ var hdp    : headerp;
         repeat
           anz:=0;
           while not _last and (anz<bmax) do begin
-            dbReadN(bezbase,bezb_msgid,mid);
+            dbReadN(bezbase,bezb_msgid, mid);
             if dbReadInt(bezbase,'datum') and 3=0 then
               AddD0
             else
@@ -888,6 +888,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 20:56:26  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.18  2000/07/10 15:09:37  hd
   - Ansistring
 

@@ -643,7 +643,7 @@ begin
                 wr_btext(t,true,uucp);
               if maf or pronet then ReadBrettliste;
               end;
-            dbReadN(bbase,bb_brettname,brett);
+            Brett := dbReadNStr(bbase,bb_brettname);
             if maus or fido or qwk then begin
               if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=
                  UpperCase(boxpar^.magicbrett)
@@ -1589,6 +1589,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 20:56:29  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.18  2000/07/21 17:14:40  hd
   - Anpassung an die Datenbank (AnsiString)
 

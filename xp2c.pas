@@ -1350,7 +1350,7 @@ begin
   if (TermCOM=0) or (TermBaud=0) then begin
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,UpperCase(DefaultBox));
-    dbRead(d,'dateiname',fn);
+    fn := dbReadStr(d,'dateiname');
     dbClose(d);
     ReadBox(0,fn,boxpar);
     if TermCom=0 then TermCom:=boxpar^.bport;
@@ -1494,6 +1494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.47  2000/07/13 11:04:31  ma
   - Bugfix concerning Comminit help entry
 

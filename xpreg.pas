@@ -500,17 +500,17 @@ var brk,modi : boolean;
     regsite  : array[1..regsites] of SiteRec;
 
   function GetAbsAddress(d:DB):string;
-  var box   : string[20];
-      point : string[25];
-      user  : string[30];
-      domain: string[60];
+  var box   : string;
+      point : string;
+      user  : string;
+      domain: string;
       alias : boolean;
-      adr   : string[80];
+      adr   : string;
   begin
-    dbRead(d,'boxname',box);
-    dbRead(d,'username',user);
-    dbRead(d,'pointname',point);
-    dbRead(d,'domain',domain);
+    box := dbReadStr(d,'boxname');
+    User := dbReadStr(d,'username');
+    Point := dbReadStr(d,'pointname');
+    domain := dbReadStr(d,'domain');
     alias:=dbReadInt(d,'script') and 4<>0;
     case dbReadInt(d,'netztyp') of
       nt_ZConnect : adr:=user+'@'+box+domain;
@@ -1247,7 +1247,7 @@ var brk,modi : boolean;
       dbOpen(d,BoxenFile,1);
       dbSeek(d,boiName,DefFidoBox);
       if dbFound then begin
-        dbRead(d,'username',name);
+        Name := dbReadStr(d,'username');
         if not lipo then
           padr:=dbReadStr(d,'boxname')+'.'+dbReadStr(d,'pointname');
         end;
@@ -1575,6 +1575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/21 20:56:30  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.15  2000/07/12 14:43:48  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

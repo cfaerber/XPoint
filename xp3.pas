@@ -853,26 +853,26 @@ procedure makeuser(absender,pollbox:string);
 var b : byte;
 begin
   dbAppend(ubase);
-  dbWriteN(ubase,ub_username,absender);
-  dbWriteN(ubase,ub_pollbox,pollbox);
+  dbWriteNStr(ubase,ub_username,absender);
+  dbWriteNStr(ubase,ub_pollbox,pollbox);
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
   b:=1;
   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
   if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
-    inc(b,8); { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
+    inc(b,8); { Netzunabh„ngige Useraufnahme }
   dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
 end;
 
 
 { EQ-betreff = left(betreff)='*crypted*' and hexval(right(betreff))=orgGroesse }
-{        oder  (betr = dbread(mbase,betreff)) oder                         }
+{        oder  (betr = dbreadStr(mbase,betreff)) oder                         }
 
 function EQ_betreff(var betr:string):boolean;
 var pmcrypted : boolean;
-    betreff   : string[betrefflen];
-    b2        : string[40];
+    betreff   : string;
+    b2        : string;
 begin
-  dbReadN(mbase,mb_betreff,betreff);
+  Betreff := dbReadNStr(mbase,mb_betreff);
   betreff:=trimright(betreff);
   b2:=trimright(left(betr,40));
   pmcrypted:=(left(betr,length(PMC_ID))=PMC_ID);
@@ -888,12 +888,12 @@ end;
 function grQuoteMsk:string;
 var d     : DB;
     grnr  : longint;
-    brett : string[5];
+    brett : string;
     n     : integer;
     qm    : string[8];
 begin
   grQuoteMsk:=QuoteMsk;
-  dbReadN(mbase,mb_brett,brett);
+  Brett := dbReadNStr(mbase,mb_brett);
   dbSeek(bbase,biIntnr,copy(brett,2,4));
   if dbFound then begin
     dbReadN(bbase,bb_gruppe,grnr);
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.39  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.38  2000/07/21 17:39:52  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

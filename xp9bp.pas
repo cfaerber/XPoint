@@ -429,7 +429,7 @@ begin
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
   begin
-    dbRead(d,'dateiname',bfile);
+    bfile := dbReadStr(d,'dateiname');
     ReadBox(nt,bfile,BoxPar);             { Pollbox-Parameter einlesen }
   end;
   dbClose(d);
@@ -528,6 +528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/21 20:56:29  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.15  2000/07/12 15:27:01  hd
   - Ansistring
 

@@ -48,7 +48,6 @@ procedure Unversandt(edit,modi:boolean);
 
 { edit und modi -> direkt ins Sendefenster }
 var
-{$ifdef hasHugeString}
     _brett   : string;
     betr     : string;
     _date    : longint;
@@ -81,40 +80,6 @@ var
     madr     : longint;         { Adresse in Ablage }
     crc      : string;
     nt       : longint;
-{$else}
-    _brett   : string[5];
-    betr     : string[BetreffLen];
-    _date    : longint;
-    dat      : string[DateLen];
-    groesse  : longint;
-    tmp      : pathstr;
-    sr       : searchrec;
-    found    : boolean;
-    f        : file;
-    hdp0,hdp : headerp;
-    rr       : word;
-    hds      : longint;
-    ok       : boolean;
-    adr,fsize: longint;
-    headerf  : string[12];
-    pm       : boolean;
-    rec,rec2 : longint;
-    uvs      : byte;
-    typ      : char;
-    empf     : string[AdrLen];
-    orghalt  : byte;
-    zconnect : boolean;
-    fs       : longint;
-    box      : string[BoxNameLen];
-    crash    : boolean;
-    sdata    : SendUUptr;
-    sendflags: word;
-    empfnr   : shortint;
-    ablage   : byte;
-    madr     : longint;         { Adresse in Ablage }
-    crc      : string[4];
-    nt       : longint;
-{$endif}
 
 label ende,nextpp;
 
@@ -178,13 +143,8 @@ label ende,nextpp;
   end;
 
   procedure set_forcebox;
-{$ifdef hasHugeString}
   var abs  : string;
       bbox : string;
-{$else}
-  var abs  : string[AdrLen];
-      bbox : string[BoxNameLen+10];
-{$endif}
       p    : byte;
   begin
     if hdp^.real_box<>'' then
@@ -192,7 +152,7 @@ label ende,nextpp;
     else if not crash then
       forcebox:=box             { Box entsprechend PP-Dateiname }
     else begin
-      dbReadN(mbase,mb_absender,abs);
+      Abs := dbReadNStr(mbase,mb_absender);
       p:=cpos('@',abs);
       if p>0 then begin
         bbox:=mid(abs,p+1);      { Box aus Absendername }
@@ -271,7 +231,7 @@ begin
     goto ende;
   end;
 
-  dbReadN(mbase,mb_brett,_brett);
+  _brett := dbReadNStr(mbase,mb_brett);
   betr:=hdp0^.betreff;
   dbReadN(mbase,mb_origdatum,_date);
   dat:=longdat(_date);
@@ -488,7 +448,6 @@ end;
 
 procedure Weiterleit(typ:byte; sendbox:boolean);
 var
-{$ifdef hasHugeString}
     fn      : string;
     oempf   : string;
     s       : string;
@@ -503,22 +462,6 @@ var
     betr    : string;
     aas     : array[1..3] of string;
     leerz   : string;
-{$else}
-    fn     : pathstr;
-    oempf  : string[40];
-    s      : string[60];
-    leer    : string[12];
-    sigfile : string[12];
-    _brett  : string[5];
-    ebrett  : string[5];
-    obrett  : string[5];
-    empf    : string[90];
-    pollbox : string[BoxNameLen];
-    name    : string[AdrLen];
-    betr    : string[BetreffLen];
-    aas      : array[1..3] of string[120];
-    leerz   : string[5];
-{$endif}
     pm,brk : boolean;
     x,y,p  : byte;
     ta     : taste;
@@ -561,7 +504,7 @@ label ende,again;
     asnum:=0;
     if archivtext and not binaermail then begin
       wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
-      dbReadN(mbase,mb_brett,_brett);
+      _brett := dbReadNStr(mbase,mb_brett);
       if (_brett[1]<>'U') or (typ=5) then
         wrs(getres2(641,2)+iifs(pmarchiv,': /',' : ')+hdp^.empfaenger);   { '## Ursprung' }
       if not pmarchiv and (typ<>5) then
@@ -590,13 +533,8 @@ label ende,again;
 
   procedure archivieren;       { 5: In Archiv-Brett archivieren }
   var
-{$ifdef hasHugeString}
       tmp  : string;
       mid  : string;
-{$else}
-      tmp  : pathstr;
-      mid  : string[20];
-{$endif}
       f,tf : file;
       dat  : longint;
       edat : longint;
@@ -637,14 +575,14 @@ label ende,again;
     mnt:=hdp^.netztyp;
     if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
     dbWriteN(mbase,mb_netztyp,mnt);
-    dbWriteN(mbase,mb_brett,ebrett);
-    dbWriteN(mbase,mb_betreff,betr);
-    dbWriteN(mbase,mb_absender,hdp^.absender);
+    dbWriteNStr(mbase,mb_brett,ebrett);
+    dbWriteNStr(mbase,mb_betreff,betr);
+    dbWriteNStr(mbase,mb_absender,hdp^.absender);
     dbWriteN(mbase,mb_flags,flags);
     dat:=IxDat(hdp^.datum); dbWriteN(mbase,mb_origdatum,dat);
     dbWriteN(mbase,mb_empfdatum,edat);
     mid:=FormMsgid(hdp^.msgid);
-    dbWriteN(mbase,mb_msgid,mid);
+    dbWriteNStr(mbase,mb_msgid,mid);
     l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
     hdp^.typ:=iifc(binaermail,'B','T');   { Typ korrigieren }
     b:=ord(hdp^.typ[1]);    dbWriteN(mbase,mb_typ,b);
@@ -819,7 +757,7 @@ begin
 
 again:
   dbReadN(mbase,mb_typ,ntyp);
-  dbReadN(mbase,mb_brett,_brett);
+  _brett := dbReadNStr(mbase,mb_brett);
   if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
     rfehler(620);    { 'Nicht m”glich - bitte Nachricht erneut versenden.' }
     dispose(hdp);
@@ -850,13 +788,13 @@ again:
       5 : binaermail:=IsBinary;
       6 : begin                          { 6: Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
-            dbReadN(mbase,mb_absender,name);
+            Name := dbReadNStr(mbase,mb_absender);
             dbSeek(ubase,uiName,UpperCase(name));
             if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
               size:=0;
               dbReadX(ubase,'adresse',size,name);
               if name<>'' then dbSeek(ubase,uiName,UpperCase(name))
-              else dbReadN(mbase,mb_absender,name);
+              else Name := dbReadNStr(mbase,mb_absender);
               end;
             write_archiv(true);
             if ntZConnect(hdp^.netztyp) then begin
@@ -917,12 +855,12 @@ again:
                    if selpos<=0 then goto ende;
                    if pm then begin
                      dbGo(ubase,selpos);
-                     dbReadN(ubase,ub_username,empf);
+                     Empf := dbReadNStr(ubase,ub_username);
                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                      end
                    else begin
                      dbGo(bbase,selpos);
-                     dbReadN(bbase,bb_brettname,empf);
+                     Empf := dbReadNStr(bbase,bb_brettname);
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht m”glich' }
                        goto ende;
@@ -1026,7 +964,7 @@ again:
                close(t);
                unpark:=IsOempf(empf);
                if not unpark then begin
-                 dbReadN(mbase,mb_brett,_brett);
+                 _Brett := dbReadNStr(mbase,mb_brett);
                  if _brett[1]<'A' then begin
                    rfehler(625);    { 'Schreiben in dieses Brett ist nicht m”glich.' }
                    goto ende;
@@ -1087,15 +1025,15 @@ again:
                dbSeek(ubase,uiName,UpperCase(name));
                if not dbFound then begin   { User noch nicht vorhanden }
                  dbAppend(ubase);
-                 dbWriteN(ubase,ub_username,name);
+                 dbWriteNStr(ubase,ub_username,name);
                  pollbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
                  if not IsBox(pollbox) then begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
-                   dbReadN(bbase,bb_pollbox,pollbox);
+                   pollbox := dbReadNStr(bbase,bb_pollbox);
                    end
                  else
                    ReplaceVertreterbox(pollbox,true);
-                 dbWriteN(ubase,ub_pollbox,pollbox);
+                 dbWriteNStr(ubase,ub_pollbox,pollbox);
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
                  b:=1;
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
@@ -1109,9 +1047,9 @@ again:
                    end;
                  end;
                _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
-               dbreadN(mbase,mb_brett,obrett);   { Originalbrett retten }
-               dbWriteN(mbase,mb_brett,_brett);
-               dbWriteN(mbase,mb_betreff,betr);
+               obrett := dbreadNStr(mbase,mb_brett);   { Originalbrett retten }
+               dbWriteNStr(mbase,mb_brett,_brett);
+               dbWriteNStr(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
                dbWriteN(mbase,mb_typ,ntyp);
                dbReadN(mbase,mb_unversandt,b);
@@ -1154,17 +1092,10 @@ end;
 
 procedure ArchivAMtoPM;
 var
-{$ifdef hasHugeString}
     fn,tmp : string;
     mid    : string;
     ebrett : string;
     box    : string;
-{$else}
-    fn,tmp : pathstr;
-    mid    : string[20];
-    ebrett : string[5];
-    box    : string[BoxNameLen];
-{$endif}
     f,tf   : file;
     t      : text absolute tf;
     dat    : longint;
@@ -1200,7 +1131,7 @@ begin
   dbSeek(ubase,uiName,UpperCase(hdp^.absender));
   if not dbFound then begin                        { Userbrett neu anlegen }
     dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
-    if dbFound then dbReadN(bbase,bb_pollbox,box)
+    if dbFound then Box := dbReadNStr(bbase,bb_pollbox)
     else box:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
     makeuser(hdp^.absender,box);
     end;
@@ -1222,13 +1153,13 @@ begin
   if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
   ebrett:=mbrettd('U',ubase);
-  dbWriteN(mbase,mb_brett,ebrett);
-  dbWriteN(mbase,mb_betreff,hdp^.betreff);
-  dbWriteN(mbase,mb_absender,hdp^.absender);
+  dbWriteNStr(mbase,mb_brett,ebrett);
+  dbWriteNStr(mbase,mb_betreff,hdp^.betreff);
+  dbWriteNStr(mbase,mb_absender,hdp^.absender);
   dat:=IxDat(hdp^.datum); dbWriteN(mbase,mb_origdatum,dat);
   dbWriteN(mbase,mb_empfdatum,edat);
   mid:=FormMsgid(hdp^.msgid);
-  dbWriteN(mbase,mb_msgid,mid);
+  dbWriteNStr(mbase,mb_msgid,mid);
   l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
   hdp^.typ:=ntyp;
   b:=ord(hdp^.typ[1]);    dbWriteN(mbase,mb_typ,b);
@@ -1327,6 +1258,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/21 20:56:27  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.29  2000/07/21 17:39:55  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

@@ -100,12 +100,12 @@ begin
     if not brk then
       if user then begin
         dbGo(ubase,selpos);
-        dbReadN(ubase,ub_username,s);
+        s := dbReadNStr(ubase,ub_username);
         s:=vert_name(s);
         end
       else begin
         dbGo(bbase,selpos);
-        dbReadN(bbase,bb_brettname,s);
+        s := dbReadNStr(bbase,bb_brettname);
         delete(s,1,1);
       end;
     end;
@@ -183,8 +183,8 @@ end;
 
 procedure BrettdatumSetzen(show:boolean);
 var d1,d2        : longint;
-    _brett,_mbrett : string[5];
-    brett          : string[BrettLen];
+    _brett,_mbrett : string;
+    brett          : string;
     recs,n         : longint;
     flags          : byte;
     gelesen        : byte;
@@ -202,7 +202,7 @@ begin
       moff; write(n div recs:3,#8#8#8); mon;
       end;
     dbReadN(bbase,bb_ldatum,d1);
-    dbReadN(bbase,bb_brettname,brett);
+    brett := dbReadNStr(bbase,bb_brettname);
     _brett:=mbrettd(brett[1],bbase);
 
     dbSeek(mbase,miBrett,_brett+#255);  { erste Msg im nÑchsten Brett suchen: }
@@ -211,7 +211,7 @@ begin
     else
       dbSkip(mbase,-1);
     if dbEOF(mbase) or dbBOF(mbase) then _mbrett:=''
-    else dbReadN(mbase,mb_brett,_mbrett);
+    else _mbrett := dbReadNStr(mbase,mb_brett);
     if _mbrett=_brett then      { falls Brett nicht leer }
       dbReadN(mbase,mb_empfdatum,d2)
     else
@@ -220,7 +220,7 @@ begin
 
     dbSeek(mbase,miGelesen,_brett+#0);    { erste (ungelesene) Msg suchen }
     if not dbEOF(mbase) then begin
-      dbReadN(mbase,mb_brett,_mbrett);
+      _mbrett := dbReadNStr(mbase,mb_brett);
       if _mbrett=_brett then
         dbReadN(mbase,mb_gelesen,gelesen)
       else
@@ -263,7 +263,7 @@ begin
     else
       dbSkip(mbase,-1);
     if dbBOF(mbase) or dbEOF(mbase) then _mbrett:=''
-    else dbRead(mbase,'Brett',_mbrett);
+    else _mbrett := dbReadStr(mbase,'Brett');
     if _mbrett=_brett then      { falls Brett nicht leer }
       dbRead(mbase,'EmpfDatum',d2)
     else
@@ -301,7 +301,7 @@ begin
     else
       dbSkip(mbase,-1);
     if dbBOF(mbase) or dbEOF(mbase) then _mbrett:=''
-    else dbRead(mbase,'Brett',_mbrett);
+    else _Mbrett := dbReadStr(mbase,'Brett');
     if (_mbrett=_brett) then
       mug:=not (dbReadInt(mbase,'gelesen')=1)
     else
@@ -326,7 +326,7 @@ begin
   cr.brk:=(selpos=0);
   if not cr.brk then begin
     dbGo(bbase,selpos);
-    dbReadN(bbase,bb_brettname,cr.s);
+    cr.s := dbReadNStr(bbase,bb_brettname);
     delete(cr.s,1,1);
     end;
 end;
@@ -336,15 +336,9 @@ procedure Bverknuepfen;
 var x,y     : byte;
     brk     : boolean;
     newbrett,
-{$ifdef hasHugeString}
     oldbrett,
     _oldbrett,_newbrett,_brett : string;
     newempf : string;
-{$else}
-    oldbrett: string[BrettLen];
-    _oldbrett,_newbrett,_brett : string[5];
-    newempf : string[adrlen];
-{$endif}
     rec     : longint;
     modihead: boolean;
     n       : longint;
@@ -388,7 +382,7 @@ begin
     else begin
       _newbrett:=mbrettd(newbrett[1],bbase);
       dbGo(bbase,rec);
-      dbRead(bbase,'brettname',oldbrett);
+      oldbrett := dbReadStr(bbase,'brettname');
       _oldbrett:=mbrettd(oldbrett[1],bbase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
@@ -403,7 +397,7 @@ begin
           moff;
           gotoxy(x+25,y+1); write(n:4);
           mon;
-          dbRead(mbase,'brett',_brett);
+          _brett := dbReadStr(mbase,'brett');
           if odd(dbReadInt(mbase,'unversandt')) then
             dbSkip(mbase,1)
           else
@@ -412,7 +406,7 @@ begin
               rec:=dbRecno(mbase);
               if dbEOF(mbase) then dbGoEnd(mbase)
               else dbSkip(mbase,-1);
-              dbWrite(mbase,'brett',_newbrett);
+              dbWriteStr(mbase,'brett',_newbrett);
               if modihead then NeuerEmpfaenger(newempf);  { xp3o }
               dbGo(mbase,rec);
               end;
@@ -445,7 +439,7 @@ begin
       cr.brk:=true;
       end
     else
-      dbReadN(ubase,ub_username,cr.s);
+      cr.s := dbReadNStr(ubase,ub_username);
     end;
 end;
 *)
@@ -453,15 +447,9 @@ end;
 procedure Uverknuepfen;   { Userbretter verknÅpfen }
 var x,y      : byte;
     brk      : boolean;
-{$ifdef hasHugeString}
     newuser,
     olduser  : string;
     _olduser,_newuser,_user: string;
-{$else}
-    newuser,
-    olduser  : string[AdrLen];
-    _olduser,_newuser,_user: string[5];
-{$endif}
     rec,rec2 : longint;
     n        : longint;
     mi       : word;
@@ -494,7 +482,7 @@ begin
       _newuser:=mbrettd('U',ubase);
       rec2:=dbRecno(ubase);
       dbGo(ubase,rec);
-      dbRead(ubase,'username',olduser);
+      olduser := dbReadStr(ubase,'username');
       _olduser:=mbrettd('U',ubase);
       mi:=dbGetIndex(mbase);
       dbSetIndex(mbase,miBrett);
@@ -508,7 +496,7 @@ begin
           moff;
           gotoxy(x+25,y+1); write(n:4);
           mon;
-          dbReadN(mbase,mb_brett,_user);
+          _user := dbReadNStr(mbase,mb_brett);
           if odd(dbReadInt(mbase,'unversandt')) then
             dbSkip(mbase,1)
           else
@@ -517,7 +505,7 @@ begin
               rec:=dbRecno(mbase);
               if dbEOF(mbase) then dbGoEnd(mbase)
               else dbSkip(mbase,-1);
-              dbWrite(mbase,'brett',_newuser);
+              dbWriteStr(mbase,'brett',_newuser);
               dbGo(mbase,rec);
               end;
         until (_user<>_olduser) or dbEOF(mbase);
@@ -542,17 +530,10 @@ procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 var fname   : string;
     x,y,p   : byte;
     n       : longint;
-{$ifdef hasHugeString}
     _brett,_b : string;
     brett   : string;
     betreff : string;
     text    : string;
-{$else}
-    _brett,_b : string[5];
-    brett   : string[BrettLen];
-    betreff : string[betrefflen];
-    text    : string[40];
-{$endif}
     i       : integer;
     schab   : string;
     ok      : boolean;
@@ -599,7 +580,7 @@ begin
     else begin
       ReadHeader(hdp^,hds,true);
       if (hdp^.datei='') or (hds=-1) then begin
-        dbRead(mbase,'Betreff',betreff);
+        Betreff := dbReadStr(mbase,'Betreff');
         if left(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         if recount(betreff)>0 then;  { entfernt Re^n }
@@ -662,7 +643,7 @@ begin
                 end;
             2 : begin
                   if (AktDispmode>=10) and (AktDispmode<=19) then begin
-                    dbRead(mbase,'brett',_brett);
+                    _brett := dbReadStr(mbase,'brett');
                     case rdmode of
                       0 : dbSeek(mbase,miBrett,_brett);
                       1 : begin
@@ -674,12 +655,12 @@ begin
                     end;
                     end
                   else begin
-                    dbRead(bbase,'brettname',brett);
+                    brett := dbReadStr(bbase,'brettname');
                     _brett:=mbrettd(brett[1],bbase);
                     dbSeek(mbase,miBrett,_brett);
                     end;
                   repeat
-                    dbRead(mbase,'brett',_b);
+                    _b := dbReadStr(mbase,'brett');
                     if _b=_brett then readit;
                     dbNext(mbase);
                   until (_b<>_brett) or dbEOF(mbase) or
@@ -728,7 +709,7 @@ end;
 
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 var i,ii     : longint;
-    _brett,_b: string[5];
+    _brett,_b: string;
     x,y,attr : byte;
     gelesen  : byte;
     isflags  : byte;
@@ -789,7 +770,7 @@ begin
   i:=0; ii:=0;
   if (aktdispmode=10) then
   begin
-    dbRead(mbase,'brett',_brett);
+    _brett := dbReadStr(mbase,'brett');
     case rdmode of
       0 : dbSeek(mbase,miBrett,_brett);
       1 : begin
@@ -813,7 +794,7 @@ begin
       11 : dbGo(mbase,marked^[i].recno);
       12 : dbGo(mbase,kombaum^[i].msgpos);
     end;
-    dbRead(mbase,'brett',_b);
+    _b := dbReadStr(mbase,'brett');
     deleted:=false;
     if (aktdispmode=11) or (aktdispmode=12) or (_b=_brett) then begin
       attrtxt(col.colmboxhigh);
@@ -946,7 +927,7 @@ var d     : DB;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  dbRead(d,'dateiname',bf);
+  bf := dbReadStr(d,'dateiname');
   dbClose(d);
   assign(f1,fn);
   reset(f1,1);
@@ -967,21 +948,12 @@ end;
 procedure empfang_bestaetigen(var box:string);
 var tmp  : string;
     t,t2 : text;
-{$ifdef hasHugeString}
     orgd : string;
     leer : string;
     betr : string;
     _br  : string;
     empf : string;
     st   : string;
-{$else}
-    orgd : string[DateLen];
-    leer : string[12];
-    betr : string[BetreffLen];
-    _br  : string[5];
-    empf : string[AdrLen];
-    st   : string[30];
-{$endif}
     hdp  : headerp;
     hds  : longint;
     s    : string;
@@ -990,7 +962,7 @@ var tmp  : string;
 begin
   auto:=(box<>'');
   if not auto then begin
-    dbReadN(mbase,mb_brett,_br);
+    _br := dbReadNStr(mbase,mb_brett);
     if (_br[1]<>'1') and (_br[1]<>'A') and (_br[1]<>'U') then begin
       rfehler(307);   { 'EmpfangsbestÑtigung in diesem Brett nicht mîglich' }
       exit;
@@ -1075,7 +1047,7 @@ end;
 
 procedure CancelMessage;
 var
-    _brett : string[5];
+    _brett : string;
     dat    : string;
     leer   : string;
     box    : string;
@@ -1091,7 +1063,7 @@ begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Lîschen" lîschen!' }
     exit;
     end;
-  dbReadN(mbase,mb_brett,_brett);
+  _Brett := dbReadNStr(mbase,mb_brett);
   if (_brett[1]<>'A') and not ntCancelPM(mbNetztyp) then begin
     rfehler(311);     { 'Nur bei îffentlichen Nachrichten mîglich!' }
     exit;
@@ -1195,13 +1167,12 @@ var
     d      : DB;
     fn     : string;
     sData  : SendUUptr;
-    { vor    : empfnodep; } { Wird nicht benutzt, 2000-07-05, hd }
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten kînnen nicht ersetzt werden.' }
     exit;
     end;
-  dbReadN(mbase,mb_brett,_brett);
+  _Brett := dbReadNStr(mbase,mb_brett);
   if (_brett[1]<>'A') then begin
     rfehler(317);     { 'Nur bei îffentlichen Nachrichten mîglich!' }
     exit;
@@ -1213,7 +1184,7 @@ begin
   if _brett[1]<>'U' then begin
     dbSeek(bbase,biIntnr,copy(_brett,2,4));
     if not dbFound then exit;
-    dbReadN(bbase,bb_pollbox,box);
+    box := dbReadNStr(bbase,bb_pollbox);
     end
   else begin
     hdp := AllocHeaderMem;
@@ -1221,8 +1192,8 @@ begin
     dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
     FreeHeaderMem(hdp);
     if not dbFound then exit;
-    dbReadN(ubase,ub_pollbox,box);
-    end;
+    box := dbReadNStr(ubase,ub_pollbox);
+  end;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
@@ -1464,13 +1435,13 @@ end;
 
 function IsBinary:boolean;
 const bufsize = 1024;
-var betr : string[BetreffLen];
+var betr : string;
     fn   : string;
     f    : file;
     buf  : charrp;
     i, rr : word;
 begin
-  dbReadN(mbase,mb_betreff,betr);
+  Betr := dbReadNStr(mbase,mb_betreff);
   if (left(betr,length(QPC_ID))<>QPC_ID) and
      (left(betr,length(DES_ID))<>DES_ID) then
     IsBinary:=(dbReadInt(mbase,'typ')=ord('B'))
@@ -1494,6 +1465,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/21 20:56:24  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.27  2000/07/21 13:23:45  mk
   - Umstellung auf TStringList
 

@@ -137,11 +137,12 @@ begin
   _brett:=mbrettd('U',ubase);
   dbSeek(mbase,miBrett,_brett);
   if dbEOF(mbase) then _mbrett:=''
-  else _mbrett:= dbReadNStr(mbase,mb_brett);
-  if (ab<>0) and (_mbrett=_brett) then begin
+  else _mbrett := dbReadNStr(mbase,mb_brett);
+  if (ab<>0) and (_mbrett=_brett) then
+  begin
     rfehler(416);  { 'Im Brett dieses Users sind noch Nachrichten vorhanden!' }
     exit;
-    end;
+  end;
   if ab<>0 then ab:=0 else ab:=NeuUserGruppe;
   dbWrite(ubase,'adrbuch',ab);
   dbFlushClose(ubase);
@@ -920,7 +921,7 @@ begin
 
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
-        lres:=0;  { !! ungelesen-Mode }
+        lres:=0;}  { !! ungelesen-Mode }
       if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then begin
         if lres<6 then SetGelesen;
         case lres of
@@ -1285,7 +1286,7 @@ var dat    : longint;
       dbReadN(bbase,bb_haltezeit,halten);
       gethdat(halten);
       end;
-    dbReadN(bbase,bb_gruppe,brettgruppe);
+    dbReadN(bbase,bb_gruppe, BrettGruppe);
     if alle then set_allmode:=true;
     U_read:=false;
   end;
@@ -1507,6 +1508,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2000/07/21 20:56:26  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.36  2000/07/21 17:39:54  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

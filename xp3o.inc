@@ -71,7 +71,6 @@ var x,y      : byte;
     i        : integer;
     hdsize   : longint;
     rr       : word;
-{$ifdef hasHugeString}
     dat      : string;
     name     : string;
     pb       : string;
@@ -83,19 +82,6 @@ var x,y      : byte;
     pmvertreter : string;
     sysbetreff  : string;  { Betreff von Changesys/getsys }
     orgempf  : string;
-{$else}
-    dat      : string[11];
-    name     : string[AdrLen];
-    pb       : string[20];
-    _brett   : string[5];
-    mapsname : string[20];
-    seekbr   : string[BrettLen];
-    msgid2   : string[19];    { gekrzte MsgID (FormMsgid) fr mbase }
-    amvertreter,
-    pmvertreter : string[BoxnameLen];
-    sysbetreff  : string[50];  { Betreff von Changesys/getsys }
-    orgempf  : string[AdrLen];
-{$endif}
     tobrett  : boolean;
     typ1     : char;
     ok       : boolean;
@@ -281,15 +267,9 @@ var x,y      : byte;
 
   procedure bearbeite_cancels_supersedes;
   var
-{$ifdef hasHugeString}
       id : string;
       abs: string;
       str: string;
-{$else}
-      id : string[MidLen];
-      abs: string[AdrLen];
-      str: string[20];
-{$endif}
       sender :custheadstr;
       rec: longint;
       n  : longint;
@@ -518,7 +498,7 @@ var x,y      : byte;
         Xwrite(tmp);
         wrkilled;
         _era(tmp);
-        dbWriteN(mbase,mb_betreff,hdp2^.betreff);
+        dbWriteNStr(mbase,mb_betreff,hdp2^.betreff);
         dbWriteN(mbase,mb_typ,hdp2^.typ[1]);
         dbWriteN(mbase,mb_groesse,hdp^.groesse);
         dbReadN(mbase,mb_unversandt,uvs);
@@ -838,9 +818,9 @@ begin
             if adrok(absender) then begin
               { mwrt(29,wherey,forms(absender,22)); }
               dbAppend(ubase);
-              dbWrite(ubase,'username',absender);
+              dbWriteStr(ubase,'username',absender);
               pb:=pollbox_str(zconnect,true);
-              dbWrite(ubase,'pollbox',pb);
+              dbWriteStr(ubase,'pollbox',pb);
               dbWrite(ubase,'haltezeit',stduhaltezeit);
               flags:=1+iif(newuseribm {ntUserIBMchar(netztyp)},0,8);  { aufnehmen / Umlaute }
               dbWrite(ubase,'userflags',flags);
@@ -891,9 +871,9 @@ begin
                   dbClose(d);
                   end;
                 dbAppend(bbase);
-                dbWriteN(bbase,bb_brettname,empfaenger);
+                dbWriteNStr(bbase,bb_brettname,empfaenger);
                 pb:=pollbox_str(zconnect,false);
-                dbWriteN(bbase,bb_pollbox,pb);
+                dbWriteNStr(bbase,bb_pollbox,pb);
                 dbWriteN(bbase,bb_haltezeit,haltezeit);
                 dbWriteN(bbase,bb_gruppe,grnr);
                 flags:=iif(netztyp=nt_UUCP,16,0);
@@ -918,8 +898,8 @@ begin
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
               if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
-              dbWriteN(ubase,ub_username,name);
-              dbWriteN(ubase,ub_pollbox,pb);
+              dbWriteNStr(ubase,ub_username,name);
+              dbWriteNStr(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1;  { aufnehmen }
               dbWrite(ubase,'userflags',flags);
@@ -969,8 +949,8 @@ begin
             if charset='iso1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
             dbWriteN(mbase,mb_netztyp,mnt);
-            dbWriteN(mbase,mb_betreff,betreff);
-            dbWriteN(mbase,mb_absender,absender);
+            dbWriteNStr(mbase,mb_betreff,betreff);
+            dbWriteNStr(mbase,mb_absender,absender);
             ld:=ixdat(datum);
             dbWriteN(mbase,mb_origdatum,ld);
             ld:=ixdat(dat);
@@ -980,17 +960,17 @@ begin
             if (typ1<=' ') or (typ1>#126) then typ1:='?';
             dbWriteN(mbase,mb_typ,typ1);
             dbWriteN(mbase,mb_mimetyp,mimetyp);
-            dbWriteN(mbase,mb_brett,_brett);
+            dbWriteNStr(mbase,mb_brett,_brett);
             dbWriteN(mbase,mb_ablage,ablage);
             dbWriteN(mbase,mb_adresse,padr);
             size:=groesse+hdsize;
             dbWriteN(mbase,mb_msgsize,size);
             msgid2:=FormMsgid(msgid);
-            dbWriteN(mbase,mb_msgid,msgid2);
+            dbWriteNStr(mbase,mb_msgid,msgid2);
             if ntEditBrettempf(netztyp) then   { Fido, QWK }
-              dbWriteN(mbase,mb_name,fido_to)
+              dbWriteNStr(mbase,mb_name,fido_to)
             else
-              dbWriteN(mbase,mb_name,realname);
+              dbWriteNStr(mbase,mb_name,realname);
             if IsGelesen then begin
               flags:=1;
               dbWriteN(mbase,mb_gelesen,flags);
@@ -1178,6 +1158,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/07/21 20:56:24  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.28  2000/07/21 17:39:53  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

@@ -73,15 +73,16 @@ begin
     while not (dbEOF(d) or brk) do begin
       inc(n);
       if not user then begin
-        dbReadN(bbase,bb_brettname,brett);
+        brett := dbReadNStr(bbase,bb_brettname);
         brettc:=brett[1];
         end
-      else dbReadN(ubase,ub_username,brett);
+      else
+        brett := dbReadNStr(ubase,ub_username);
       _brett:=mbrettd(brettc,d);
       dbSeek(mbase,miBrett,_brett);
       leer:=dbEOF(mbase);
       if not leer then begin
-        dbReadN(mbase,mb_brett,_mbrett);
+        _Mbrett := dbReadNStr(mbase,mb_brett);
         leer:=_mbrett<>_brett;
         end;
 
@@ -589,7 +590,7 @@ var x,y,yy  : byte;
         newbrett:='/Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES'
       else
         newbrett:='/T-NETZ/SUPPORT/XPOINT/ALLGEMEINES';
-      dbWriteN(bbase,bb_adresse,newbrett);
+      dbWriteNStr(bbase,bb_adresse,newbrett);
       end;
   end;
 
@@ -712,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/07/21 20:56:25  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.20  2000/07/21 17:39:53  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

@@ -469,7 +469,7 @@ begin                  { of Netcall }
     trfehler1(709,box,60);   { 'unbekannte Box:  %s' }
     exit;
     end;
-  dbRead(d,'dateiname',bfile);
+  bfile := dbReadStr(d,'dateiname');
 {$IFDEF UnixFS}
   ppfile:=bfile+'.pp';
   eppfile:=bfile+'.epp';
@@ -477,10 +477,10 @@ begin                  { of Netcall }
   ppfile:=bfile+'.PP';       { muá ohne Pfad bleiben, wg. XPU.INC.ZtoRFC! }
   eppfile:=bfile+'.EPP';
 {$ENDIF}
-  dbRead(d,'username',user);
+  user := dbReadStr(d,'username');
   dbRead(d,'netztyp',netztyp);
-  dbRead(d,'kommentar',komment);
-  dbRead(d,'domain',domain);
+  komment := dbReadStr(d,'kommentar');
+  domain := dbReadStr(d,'domain');
   msgids:=(dbReadInt(d,'script') and 8=0);
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
@@ -1589,6 +1589,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/21 20:56:28  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.22  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

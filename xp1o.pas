@@ -695,7 +695,7 @@ begin
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound and (box<>'') and not dbEOF(d) and
      (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then begin
-    dbRead(d,'boxname',box);
+    Box := dbReadStr(d,'boxname');
     dbSeek(d,boiName,UpperCase(box));
     end;
 end;
@@ -772,7 +772,7 @@ begin
   if dbFound or
      (not dbEOF(d) and (UpperCase(left(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)))
   then
-    dbRead(d,'boxname',box);  { -> korrekte Schreibweise des Systemnamens }
+    box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
   dbClose(d);
 end;
 
@@ -981,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.53  2000/07/17 14:11:02  mk
   JG:- Bugfixes fuer URL-Erkennung
 

@@ -627,8 +627,7 @@ var d         : DB;
   end;
 
   procedure displine(i:integer);
-  var s1,s2      : string[40];
-      s3         : string[80];
+  var s1,s2,s3: string;
       scrp       : byte;
       limit,grnr : longint;
       w          : smallword;
@@ -636,12 +635,12 @@ var d         : DB;
       qm         : string[8];
       nt,b       : byte;
       dc         : string[2];
-      adr        : string[AdrLen];
+      adr        : string;
   begin
     drec[i]:=dbRecno(d);
     case typ of
-      1 : dbRead(d,'Boxname',s1);
-      2 : dbRead(d,'Name',s1);
+      1 : s1 := dbReadStr(d,'Boxname');
+      2 : s1 := dbReadStr(d,'Name');
     end;
     if setdefault and (UpperCase(s1)=UpperCase(default)) then begin
       p:=i;
@@ -649,8 +648,8 @@ var d         : DB;
       end;
     case typ of
       1 : begin     { Boxen }
-            dbRead(d,'Username',s2);
-            dbRead(d,'Kommentar',s3);
+            s2 := dbReadStr(d,'Username');
+            s3 := dbReadStr(d,'Kommentar');
             dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
             if s1=DefaultBox then
@@ -675,9 +674,9 @@ var d         : DB;
                iifs(limit>0,strsrnp(limit,12,0),sp(11)+' ì')+' ';
           end;
       3 : begin     { Systeme }
-            dbRead(d,'name',s1);
-            dbRead(d,'kommentar',s2);
-            dbRead(d,'fs-passwd',s3);
+            s1 := dbReadStr(d,'name');
+            s2 := dbReadStr(d,'kommentar');
+            s3 := dbReadStr(d,'fs-passwd');
             dbRead(d,'flags',w);
             dbRead(d,'fs-typ',b);
             if b=3 then dc:=' U'
@@ -686,15 +685,15 @@ var d         : DB;
             s:=dc+iifs((s3='') or (b=3),'  ','P ')+forms(s1,15)+' '+forms(s2,31);
           end;
       4 : begin     { Kurznamen }
-            dbRead(d,'kurzname',s1);
-            dbRead(d,'langname',adr);
-            dbRead(d,'pollbox',s2);
+            s1  := dbReadStr(d,'kurzname');
+            adr := dbReadStr(d,'langname');
+            s2  := dbReadStr(d,'pollbox');
             s:=' '+forms(s1,12)+' '+forms(adr,36)+' '+forms(s2,12);
           end;
       5 : begin     { MIME-Typen }
-            dbRead(d,'typ',s1);
-            dbRead(d,'extension',s2);
-            dbRead(d,'programm',s3);
+            s1 := dbReadStr(d,'typ');
+            s2 := dbReadStr(d,'extension');
+            s3 := dbReadStr(d,'programm');
             if s3='' then s3:=getres(934)    { '(intern)' }
             else if length(s3)>31 then s3:=left(s3,31)+'...';
             s1:=extmimetyp(s1);
@@ -1758,6 +1757,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/07/21 20:56:29  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.30  2000/07/21 17:39:56  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

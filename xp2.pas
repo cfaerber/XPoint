@@ -613,8 +613,7 @@ end;
 
 procedure test_defaultbox;
 var d    : DB;
-    tmpS,                       { Records in der DB sind shortstrings }
-    dname: shortstring;
+    tmpS, dname: string;
 begin
 {$IFDEF Debug }
   dbLog('-- Boxen ÅberprÅfen');
@@ -637,18 +636,17 @@ begin
       else
       {$ENDIF}
       xp9.get_first_box(d);
-      dbRead(d,'dateiname',dname);
+      dName := dbReadStr(d,'dateiname');
       end
     else begin
       dbGoTop(d);
-      dbRead(d,'boxname',tmpS);
-      DefaultBox:= tmpS;
-      dbRead(d,'dateiname',dname);
+      DefaultBox := dbReadStr(d,'boxname');
+      dName := dbReadStr(d,'dateiname');
       end;
     SaveConfig;
     end
   else
-    dbRead(d,'Dateiname',dname);
+    dName := dbReadStr(d,'Dateiname');
   {$ifdef Debug}
   dbLog('-- Defaultbox: "'+tmpS+'"');
   dbLog('-- Dateiname : "'+dname+'"');
@@ -1073,6 +1071,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.62  2000/07/21 17:39:52  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

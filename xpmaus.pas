@@ -204,7 +204,7 @@ begin
             case art of
               0 : begin
                     msgid:=FormMsgid(hdp^.msgid);
-                    dbWriteN(mbase,mb_msgid,msgid);   { neue MsgID in die Datenbank }
+                    dbWriteNStr(mbase,mb_msgid,msgid);   { neue MsgID in die Datenbank }
                     l:=MsgidIndex(anew);
                     dbWriteN(bezbase,bezb_msgid,l);   { neue MsgID in die BezBase }
                     repeat                            { BezBase-References updaten }
@@ -328,13 +328,13 @@ begin
   while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
     if dbReadInt(mbase,'halteflags')<>2 then begin
       rec:=dbRecno(mbase);
-      dbReadN(mbase,mb_absender,abs);
+      abs := dbReadNStr(mbase,mb_absender);
       maus:=trim(mid(abs,cpos('@',abs)+1));
       if (info=nil) and exist(maus+'.iti') then begin
         new(info);
         MausReadITI(maus,info,infos);
         end;
-      dbReadN(mbase,mb_betreff,betreff);
+      Betreff := dbReadNStr(mbase,mb_betreff);
       attrtxt(col.colmboxhigh);
       moff;
       wrt(x+14,y+2,maus+': '+forms(betreff,30));
@@ -343,7 +343,7 @@ begin
       while not dbBOF(mbase) and (dbReadStr(mbase,'brett')=brett) do begin
         if (dbReadInt(mbase,'halteflags')=0) and
            (dbReadStr(mbase,'betreff')=betreff) then begin
-          dbReadN(mbase,mb_absender,abs);
+          abs := dbReadNStr(mbase,mb_absender);
           if (maus=trim(mid(abs,cpos('@',abs)+1))) or NetInfofile then begin
             inc(n);
             mwrt(x+14,y+3,strs(n));
@@ -837,6 +837,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/21 20:56:30  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.13  2000/07/21 17:39:57  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

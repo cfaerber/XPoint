@@ -153,7 +153,7 @@ begin
       if dbFound then begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
-        else dbReadN(ubase,ub_username,s);
+        else s := dbReadNStr(ubase,ub_username);
         if left(s,1)=vert_char
           then s:=copy(s,2,length(s)-3);
         end
@@ -388,6 +388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 20:56:30  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.18  2000/07/04 12:04:29  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

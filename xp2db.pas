@@ -94,25 +94,6 @@ var flp : dbFLP;
     dd  : DB;
 
 
-{ 3.21 Beta 23 -> Beta 24 Userfenster-Trennzeilen beim Start korrigieren }
-
-  procedure FixBeta23Trennzeilen;
-  var s : String[BrettLen];
-  Begin
-    dbSetindex(ubase,1);
-    dbGoTop(ubase);
-    while not dbeof(ubase) do
-    begin
-      dbReadN(ubase,ub_username,s);
-      if left(s,3)='$/T' then
-      begin
-        s:=#0+s;
-        dbwriteN(ubase,ub_username,s);
-        end;
-      dbnext(ubase);
-      end;
-  end;
-
   procedure initflp(nr:word);
   begin
     dbAllocateFL(flp,nr);
@@ -177,7 +158,7 @@ var flp : dbFLP;
         inc(n); wrn;
         ReadHeader(hdp^,hds,false);
         if hds>1 then
-          dbWriteN(mbase,idnr,hdp^.msgid);
+          dbWriteNStr(mbase,idnr,hdp^.msgid);
         dbNext(mbase);
         end;
       FreeHeaderMem(hdp);
@@ -236,9 +217,9 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
     dbOpen(d,BoxenFile,0);
     while not dbEOF(d) do begin
-      dbRead(d,'dateiname',fn);
+      fn := dbReadStr(d,'dateiname');
       ReadBox(0,fn,BoxPar);
-      dbWrite(d,'pointname',BoxPar^.pointname);
+      dbWriteStr(d,'pointname',BoxPar^.pointname);
       dbNext(d);
       end;
     dbClose(d);
@@ -895,12 +876,17 @@ begin
     close(t);
   end;
 
-  FixBeta23Trennzeilen;
+
+
+
 end;
 
 end.
 {
   $Log$
+  Revision 1.17  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.16  2000/07/21 17:39:52  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

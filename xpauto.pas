@@ -72,11 +72,11 @@ uses xp1o,xp3,xp3o,xp6,xp9bp,xpmaus,xpnt;
 procedure AutoRead(var ar:AutoRec);
 begin
   with ar do begin
-    dbRead(auto,'dateiname',datei);
-    dbRead(auto,'betreff',betreff);
+    datei := dbReadStr(auto,'dateiname');
+    Betreff := dbReadStr(auto,'betreff');
     dbRead(auto,'typ',typ);
     dbRead(auto,'empfaenger',empf);
-    dbRead(auto,'pollbox',box);
+    box := dbReadStr(auto,'pollbox');
     dbRead(auto,'wochentage',wotage);
     dbRead(auto,'tage',tage);
     dbRead(auto,'monate',monate);
@@ -91,11 +91,11 @@ end;
 procedure AutoWrite(var ar:AutoRec);
 begin
   with ar do begin
-    dbWrite(auto,'dateiname',datei);
-    dbWrite(auto,'betreff',betreff);
+    dbWriteStr(auto,'dateiname',datei);
+    dbWriteStr(auto,'betreff',betreff);
     dbWrite(auto,'typ',typ);
-    dbWrite(auto,'empfaenger',empf);
-    dbWrite(auto,'pollbox',box);
+    dbWriteStr(auto,'empfaenger',empf);
+    dbWriteStr(auto,'pollbox',box);
     dbWrite(auto,'wochentage',wotage);
     dbWrite(auto,'tage',tage);
     dbWrite(auto,'monate',monate);
@@ -708,6 +708,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 20:56:30  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.18  2000/07/05 12:47:28  hd
   - AnsiString
 

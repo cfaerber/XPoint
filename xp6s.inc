@@ -763,14 +763,14 @@ begin
   if filecopy(datei,fn) then;
   dbOpen(auto,AutoFile,1);
   dbAppend(auto);
-  dbWrite(auto,'dateiname',fn);
-  dbWrite(auto,'betreff',betreff);
+  dbWriteStr(auto,'dateiname',fn);
+  dbWriteStr(auto,'betreff',betreff);
   if pm then empf:=empfaenger
   else empf:=mid(empfaenger,2);
-  dbWrite(auto,'empfaenger',empf);
+  dbWriteStr(auto,'empfaenger',empf);
   typ:=iifc(binary,'B','T');
   dbWrite(auto,'typ',typ);
-  dbWrite(auto,'pollbox',box);
+  dbWriteStr(auto,'pollbox',box);
   dat:=IxDispdat(senddate);
   dbWrite(auto,'datum1',dat);
   mon:=$fff;
@@ -823,7 +823,7 @@ procedure LoadBoxData;
 var flags : byte;
 begin
   if forceabs='' then
-    dbRead(d,'username',username)
+    UserName := dbReadStr(d,'username')
   else
     username:=forceabs;
   PointName := dbReadStr(d,'pointname');
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.26  2000/07/21 20:56:28  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.25  2000/07/21 17:39:56  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

@@ -157,7 +157,7 @@ var f      : file;
           end
         else begin
           _brett:=mbrettd('A',bbase);
-          dbReadN(bbase,bb_pollbox,pbox);
+          pbox := dbReadNStr(bbase,bb_pollbox);
           end;
         end
       else begin
@@ -166,7 +166,7 @@ var f      : file;
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
           _brett:=mbrettd('U',ubase);
-          dbReadN(ubase,ub_pollbox,pbox);
+          pbox := dbReadNStr(ubase,ub_pollbox);
           end;
         end;
       if pbox<>'!?!' then begin
@@ -176,7 +176,7 @@ var f      : file;
         else dbSkip(mbase,-1);
         if not dbEOF(mbase) and not dbBOF(mbase) then
           repeat
-            dbReadN(mbase,mb_brett,_mbrett);
+            _MBrett := dbReadNStr(mbase,mb_brett);
             if _mbrett=_brett then begin
               dbReadN(mbase,mb_unversandt,uvs);
               if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
@@ -795,6 +795,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/21 20:56:28  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.21  2000/07/21 17:39:56  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

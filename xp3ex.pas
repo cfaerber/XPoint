@@ -157,7 +157,7 @@ var size   : longint;
     hs     : string[25];
     i,hdln : integer;
     p      : byte;
-    _brett : string[5];
+    _brett : string;
     extpos : longint;
     wempf  : string;
     ni     : NodeInfo;
@@ -677,7 +677,7 @@ begin
   else mpdata:=ex_mpdata^;
   ex_mpdata:=nil;
   multipart:=(mpdata.startline>0);
-  dbReadN(mbase,mb_brett,_brett);
+  _brett := dbReadNStr(mbase,mb_brett);
   if art=xTractPuf then
     Xread(name,append)
   else begin
@@ -1063,6 +1063,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.32  2000/07/21 17:39:52  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

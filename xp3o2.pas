@@ -346,8 +346,8 @@ begin
     if not dbFound then begin
       inc(n);
       dbAppend(bbase);
-      dbWriteN(bbase,bb_brettname,s);
-      dbWriteN(bbase,bb_pollbox,box);
+      dbWriteNStr(bbase,bb_brettname,s);
+      dbWriteNStr(bbase,bb_pollbox,box);
       dbWriteN(bbase,bb_haltezeit,stdhaltezeit);
       dbWriteN(bbase,bb_gruppe,NetzGruppe);
       if brettkomm then
@@ -360,7 +360,7 @@ begin
         SetBrettindex;
       end
     else if komm<>'' then
-      dbWriteN(bbase,bb_kommentar,komm);
+      dbWriteNStr(bbase,bb_kommentar,komm);
     end;
 end;
 
@@ -446,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/21 20:56:24  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.17  2000/07/21 17:39:53  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

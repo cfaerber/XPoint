@@ -432,13 +432,13 @@ label ende;
 {--Spezialsuche--}
     if spez then with srec^ do
       if DateFit and SizeFit and TypeFit and StatOk then begin
-        dbReadN(mbase,mb_betreff,betr2);
+        Betr2 := dbReadNStr(mbase,mb_betreff);
         if (betr<>'') and (length(betr2)=40) then begin
           ReadHeader(hdp^,hds,false);
           if length(hdp^.betreff)>40 then
             betr2:=hdp^.betreff;
           end;
-        dbReadN(mbase,mb_absender,user2);
+        user2 := dbReadNStr(mbase,mb_absender);
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
           dbReadN(mbase,mb_name,realn);
           end
@@ -813,8 +813,9 @@ begin
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
         brk:=false;
-        while not dbEOF(mbase) and (markanz<maxmark) and not brk do begin
-          dbReadN(mbase,mb_brett,_brett);
+        while not dbEOF(mbase) and (markanz<maxmark) and not brk do
+        begin
+          _brett := dbReadNStr(mbase,mb_brett);
           if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
@@ -839,7 +840,7 @@ begin
                 end
               else begin
                 dbGo(bbase,bmarked^[i]);
-                dbReadN(bbase,bb_brettname,brett);
+                brett := dbReadNStr(bbase,bb_brettname);
                 TestBrett(mbrettd(brett[1],bbase));
                 end;
               inc(i);
@@ -849,7 +850,7 @@ begin
         else
           case aktdispmode of
             -1..0 : begin
-                      dbReadN(bbase,bb_brettname,brett);
+                      brett := dbReadNStr(bbase,bb_brettname);
                       TestBrett(mbrettd(brett[1],bbase));
                     end;
              1..4 : TestBrett(mbrettd('U',ubase));
@@ -912,16 +913,16 @@ var betr,betr2   : string;
 
 begin
   moment;
-  dbReadN(mbase,mb_betreff,betr);
+  Betr := dbReadNStr(mbase,mb_betreff);
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
   UkonvStr(betr,Length(betr));
-  dbReadN(mbase,mb_brett,brett);
+  Brett := dbReadNStr(mbase,mb_brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
   markanz:=0;
   repeat
-    dbReadN(mbase,mb_betreff,betr2);
+    Betr2 := dbReadNStr(mbase,mb_betreff);
     ReCount(betr2);
     betr2:=trim(betr2);
     UkonvStr(betr2,Length(betr2));
@@ -930,7 +931,7 @@ begin
       MsgAddmark;
     dbSkip(mbase,1);
     if not dbEOF(mbase) then
-      dbReadN(mbase,mb_brett,_brett);
+      _Brett := dbReadNStr(mbase,mb_brett);
   until dbEOF(mbase) or (_brett<>brett);
   closebox;
   signal;
@@ -971,7 +972,7 @@ begin
       dbSeek(mbase,miBrett,_brett+dat);
       mbrett:=_brett;
       while not dbEOF(mbase) and (mbrett=_brett) do begin
-        dbReadN(mbase,mb_brett,mbrett);
+        mbrett := dbReadNStr(mbase,mb_brett);
         if mbrett=_brett then MsgAddmark;
         dbSkip(mbase,1);
         end;
@@ -1047,7 +1048,7 @@ begin
       erase(f);
       wrkilled;
       TruncStr(hdp^.betreff,40);
-      dbWriteN(mbase,mb_betreff,hdp^.betreff);
+      dbWriteNStr(mbase,mb_betreff,hdp^.betreff);
       PGP_EndSavekey;
       aufbau:=true;
       xaufbau:=true;
@@ -1196,7 +1197,7 @@ begin
     dbReadN(mbase,mb_gelesen,b);
     if b=1 then b:=0 else b:=1;
     dbWriteN(mbase,mb_gelesen,b);
-    dbReadN(mbase,mb_brett,brett);
+    Brett := dbReadNStr(mbase,mb_brett);
     if b=1 then begin
       dbSeek(mbase,miGelesen,brett+#0);
       if dbEOF(mbase) or (dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0)
@@ -1459,7 +1460,7 @@ begin
           else dbSkip(mbase,-1);
           if not dbEOF(mbase) and not dbBOF(mbase) then
             repeat
-              dbReadN(mbase,mb_brett,_mbrett);
+              _MBrett := dbReadNStr(mbase,mb_brett);
               if _mbrett=_brett then begin
                 dbReadN(mbase,mb_unversandt,uvs);
                 dbReadN(mbase,mb_typ,mtyp);
@@ -1973,7 +1974,7 @@ begin
       if listfile(fn,fn,true,false,0)=0 then;           { und File einfach nur anzeigen }
       listmakros:=lm;
       end
-      { rfehler(434)   { 'keine Archivdatei' }
+      { rfehler(434)  } { 'keine Archivdatei' }
     else
       if ViewArchive(fn,arc)=0 then;
     end
@@ -2002,7 +2003,7 @@ var d     : DB;
   procedure log_it;
   var _brett : string;
   begin
-    dbRead(d,'brett',_brett);
+    _brett := dbReadStr(d,'brett');
     write(log,fdat(longdat(dbReadInt(d,'origdatum'))),' ');
     if _brett[1]='U' then
       write(log,forms(dbReadStr(d,'absender'),32))
@@ -2150,7 +2151,7 @@ begin
       inc(n);
       gotoxy(x+13,y+4); write(n*100 div nn:3);
       gotoxy(x+35,y+4); write(nf:4);
-      dbReadN(ubase,ub_username,uname);
+      UName := dbReadNStr(ubase,ub_username);
       if pos(suchst,UpperCase(uname))>0 then begin
         UBAddmark(dbRecno(ubase));
         if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
@@ -2402,7 +2403,7 @@ begin
       if msgmarked then
         msgUnmark;
       wrkilled;
-      dbRead(mbase,'Brett',_brett);
+      _brett := dbReadStr(mbase,'Brett');
       DelBezug;
       dbDelete(mbase);
       if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
@@ -2415,6 +2416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/07/21 20:56:25  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
   Revision 1.54  2000/07/21 17:39:53  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 
