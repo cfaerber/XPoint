@@ -33,7 +33,7 @@ case "$mainversion" in
        # for releases
        # fpcopts='-Ci -Co -Cr -Ct -XX -CX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        # cross compiling
-       fpcoptscross='-gl -Ci -Co -Cr -Ct -XX -Fu./ObjCOM -Fu./netcall -FU../output -Fl../output'
+       fpcoptscross='-gl -Ci -Co -Cr -Ct -XX -Fu./ObjCOM -Fu./netcall -Fuxplib -Fubuild -FU../output -Fl../output'
        echo "fpc option $fpcopts"
        ;;
     3.9)
@@ -42,7 +42,7 @@ case "$mainversion" in
        #fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -Fu'"$sourcedir"'build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        fpcgen='-Ci -Co -Cr -Ct -FuObjCOM -Funetcall -Fuxplib -Fubuild -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        fpcopts="$OXP_OPTS"' '"$fpcgen"
-       fpcoptscross='-Ci -Co -Cr -Ct -gl -Fu./ObjCOM -Fu./netcall -Fu./xplib -FU../output -Fl../output'
+       fpcoptscross='-Ci -Co -Cr -Ct -gl -Fu./ObjCOM -Fu./netcall -Fu./xplib -Fubuild -FU../output -Fl../output'
        echo "fpc options $fpcopts"
        ;;
     *) 
