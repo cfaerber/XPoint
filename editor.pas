@@ -743,6 +743,7 @@ begin
           read(t,s)
         else
           srest:=false;
+        if s = '' then break;
         pp:=cpos(#10, s);
         if pp>0 then
         begin
@@ -771,7 +772,7 @@ begin
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((length(s)<=rrand) or sbrk)));
+                     ((umbruch=1) and ((length(s2)<=rrand) or sbrk)));
         if length(s)>0 then
           Move(s2[1],p^.cont,length(s2));
         AppP;
@@ -4053,6 +4054,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.94  2003/04/15 13:33:06  mk
+  - fixed Loadblock
+
   Revision 1.93  2003/04/12 14:33:46  mk
   - fixed LoadBlock: Umbruch is handled correctly again
 
