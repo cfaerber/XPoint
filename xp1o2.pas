@@ -56,11 +56,7 @@ again:
     rest:=system.round((t0-ticker)/18.2);
     if count and (rest mod 60<>last) then begin
       moff;
-{$IFDEF unix}
-       Fwrt(WhereX,WhereY,Format('%.2d:%.2d',[rest div 60,rest mod 60]));
-{$ELSE}
-      write(formi(rest div 60,2),':',formi(rest mod 60,2),#8#8#8#8#8);
-{$ENDIF}
+      Fwrt(WhereX,WhereY,Format('%.2d:%.2d',[rest div 60,rest mod 60]));
       mon;
       last:=rest mod 60;
       end;
@@ -217,6 +213,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2001/01/21 09:39:45  mk
+  - removed special Unix handing for FWrt in Wkey()
+
   Revision 1.13  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
