@@ -40,7 +40,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000';
+  x_copyright = '(c) 2000-01';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -101,6 +101,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7.2.12  2001/06/10 10:52:32  mk
+  - Copyright auf 2000-01 geaendert
+
   Revision 1.7.2.11  2001/05/17 15:01:40  mk
   - Versionsnummer auf 3.20e geaendert
 
