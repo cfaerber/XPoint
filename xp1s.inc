@@ -40,7 +40,7 @@ procedure shell(prog:string; space:word; cls:shortint);
   {$ifdef Unix}
   begin
     Debug.TempCloseLog(False);
-    Result:=Linux.Shell(command);
+    Result:=linux.shell(command);
     Debug.TempCloseLog(True);
     Debug.DebugLog('xp1s','called program "'+command+'": result '+
                    strs(Result),iif(Result=0,DLInform,DLError));
@@ -463,6 +463,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/03/03 10:57:43  ml
+  - compilable under linux
+
   Revision 1.49  2001/01/15 23:27:35  mk
   - removed Editorkb, Listerkb
 

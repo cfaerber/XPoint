@@ -28,7 +28,7 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}maske,
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,Modem,Debug;
+  resource,xpglobal,xp0,xp1,xp1o2,xp1input,objcom,Modem,Debug;
 
 procedure termscr;
 procedure telnet;
@@ -734,6 +734,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/03/03 10:57:44  ml
+  - compilable under linux
+
   Revision 1.2  2001/01/07 20:35:23  cl
   OpenXP-Telnet (hpts. zum Debuggen der TCP/IP-Unterstützung)
 

@@ -32,6 +32,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+{$IFDEF linux }
+  linux,
+{$ENDIF }
 {$IFDEF Win32 }
   windows,
   xpwin32,
@@ -2049,6 +2052,9 @@ end.
 
 {
   $Log$
+  Revision 1.103  2001/03/03 10:57:43  ml
+  - compilable under linux
+
   Revision 1.102  2001/02/25 15:25:22  ma
   - added GPL headers
   - cosmetics
