@@ -1146,20 +1146,22 @@ outer:
     Result := RecodeCharset(ss,csCP1252,csTo);
 end;
 
-function RFC2047_Encode(ss: string; csFrom: TMimeCharsets;MaxFirstLen,MaxLen:Integer;EOL:String):String;
+function RFC2047_Encode(ss: string; csFrom: TMimeCharsets; MaxFirstLen,MaxLen:Integer;EOL:String):String;
 var pos:   integer; // current scan position
-    enc:   boolean;
+    enc,noascii,first:   boolean;
     ds: string;     // recoded string
     csTo:  TMimeCharsets;
-    dlen:  Integer;
 
   procedure psq(x:string);
   begin
-    if Length(ss)-dlen+Length(x)>MaxLen-2 then
+    if (Length(x)>MaxFirstLen-2) and (not first) then
     begin
-      Result:='?='+EOL+' =?'+MimeCharsetNames[csTo]+'?Q?';
-      dlen:=Length(ss);
+      Result:=Result+'?='+EOL+' =?'+MimeCharsetNames[csTo]+'?Q?';
+      MaxFirstLen := Min(76,MaxLen) - 6 - Length(MimeCharsetNames[csTo]);
     end;
+    Result := Result + x;
+    Dec(MaxFirstLen,Length(x));
+    first := false;
   end;
 
   procedure pec(c:char);
@@ -1180,31 +1182,54 @@ var pos:   integer; // current scan position
 begin
   ds:=RecodeCharset(ss,csFrom,csUTF8);          // convert to UTF-8
   enc:=false;
+  noascii:=false;
   result:='';
 
   for pos:=1 to Length(ds) do
-    if (ds[pos] in [#0..#$21,#$80..#$FF]) or
+    if (ds[pos] in [#$80..#$FF]) then
+    begin
+      enc := true;
+      noascii := true;
+      break;
+    end else
+    if (ds[pos] in [#0..#$21]) or
       ((pos>1) and ( ((ds[pos-1]='=') and (ds[pos]='?')) or
                      ((ds[pos-1]='?') and (ds[pos]='=')) ) ) then
-      begin enc:=true; break; end;
+    begin 
+      enc:=true;
+    end;
 
   if enc then
   begin
-    ss:=RecodeCharset(ds,csUTF8,csISO8859_1);   // convert to ISO-8859-1
-    if RecodeCharset(ss,csISO8859_1,csUTF8)=ds then // ISO-8859-1 works!
+    if not noascii then
     begin
-      ds:=ss;
-      csTo:=csISO8859_1;
+      ss := ds;
+      csTo:=csASCII;
     end else
-      csTo:=csUTF8;
+    begin
+      ss:=RecodeCharset(ds,csUTF8,csISO8859_1);   // convert to ISO-8859-1
+      if RecodeCharset(ss,csISO8859_1,csUTF8)=ds then // ISO-8859-1 works!
+      begin
+        ds:=ss;
+        csTo:=csISO8859_1;
+      end else
+      begin
+        ss:=RecodeCharset(ds,csUTF8,csISO8859_15);   // convert to ISO-8859-15
+        if RecodeCharset(ss,csISO8859_15,csUTF8)=ds then // ISO-8859-15 works!
+        begin
+          ds:=ss;
+          csTo:=csISO8859_15;
+        end else
+          csTo:=csUTF8;
+      end;
+    end;
 
-    if MaxLen>75 then MaxLen:=76;
-    if MaxFirstLen>75 then MaxFirstLen:=75;
-
-    MaxLen:=MaxFirstLen;
-    DLen:=0;
+    MaxFirstLen := Min(76,MaxFirstLen);
 
     Result:='=?'+MimeCharsetNames[csTo]+'?Q?';
+    Dec(MaxFirstLen,5+Length(MimeCharsetNames[csTo]));
+
+    first := true;        
 
     for pos:=1 to length(ds) do
     begin
@@ -1221,6 +1246,9 @@ begin
       else
         psq(ds[pos]);
     end;
+
+    Result:=Result+'?=';
+    Dec(MaxFirstLen,2);
   end else // !enc
   begin
     Result:=ss;
@@ -1292,6 +1320,9 @@ end;
 
 //
 // $Log$
+// Revision 1.21  2002/05/20 15:18:17  cl
+// - added/fixed functions for proper RFC 2047 encoding
+//
 // Revision 1.20  2002/05/14 07:44:57  mk
 // *** empty log message ***
 //

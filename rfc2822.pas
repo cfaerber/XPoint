@@ -27,6 +27,7 @@ unit rfc2822;
 uses
   Classes,
   utftools,
+  mime,
   unicode,
   addresslist;
 
@@ -49,12 +50,20 @@ type
     property Content: string read FContent;
   end;
 
+{ -------------- RFC 2822 Folding ------------------------------------ }
+
+function RFCFoldString(const source: string;
+  var MaxFirstLen, MaxLen: integer; const EOL: String):string;
+
 { -------------- RFC 2822 Comment/Quoted-String Handling ------------- }
 
 function RFCRemoveComments(const source: string): string;
 
 function RFCQuotePhrase(const source: string; strict:boolean): string;
 function RFCUnQuotePhrase(const source: string): string;
+
+function RFCQuoteEncodePhraseFolded(const Source:string; CharSet: TMimeCharsets; 
+        var MaxFirstLen, MaxLen: integer; const EOL: String):string;
 
 { ------------------------ RFC 2822 Addresses ------------------------ }
 
@@ -147,6 +156,37 @@ begin
   FEnd:=(t2='');
 end;
 
+{ -------------- RFC 2822 Folding ------------------------------------ }
+
+function RFCFoldString(const source: string;
+  var MaxFirstLen, MaxLen: integer; const EOL: String):string;
+
+var i: integer;         // current position
+    lb: integer;        // last blank
+    pc: integer;        // already processed
+  
+begin
+  lb := 0;
+  pc := 0;
+
+  for i:= 1 to Length(source) do 
+  begin
+    if (Source[i] in [#9,#32]) and ((i=0) or (Source[i-1]<>'\')) then
+      lb := i;
+
+    if (i-pc > MaxFirstLen) and (lb>pc) then
+    begin
+      result := result + Copy(source,pc+1,lb-pc-1) + EOL + #32;
+      MaxFirstLen := MaxLen - 1;
+      pc := i-1;
+      lb := pc;
+    end;
+  end;
+
+  result := result + Mid(source, pc+1);
+  MaxFirstLen := MaxFirstLen - (Length(source)-(pc+1));
+end;
+
 { --------------------- RFC 2822 Comment Handling -------------------- }
 
 function RFCRemoveComments(const source: string): string;
@@ -189,22 +229,9 @@ begin
   end;
 end;
 
-function RFCQuotePhrase(const source: string; strict:boolean): string;
+function _internal_RFCQuotePhrase(const source: string; Strict, NeedQuotes:boolean): string;
 var i: integer;
-    NeedQuotes: boolean;
-    
 begin
-  NeedQuotes := false;
-
-  if (FirstChar(Source) in ['.',' ']) or (LastChar(Source) in ['.',' ']) then
-    NeedQuotes:=true
-  else
-  for i := 1 to Length(source) do 
-    if not ((Source[i] in (atext+['.',' '])) or (((not strict) and (Ord(Source[i])and $80<>0)))) then begin
-      NeedQuotes:=true;
-      break;
-    end;
-    
   if NeedQuotes then
     result := '"' 
   else
@@ -218,6 +245,23 @@ begin
 
   if NeedQuotes then
     result := result + '"';
+end;
+
+function RFCQuotePhrase(const source: string; strict:boolean): string;
+var i: integer;
+    NeedQuotes: boolean;
+    
+begin
+  NeedQuotes := false;
+  if (FirstChar(Source) in ['.',' ']) or (LastChar(Source) in ['.',' ']) then
+    NeedQuotes:=true
+  else
+  for i := 1 to Length(source) do 
+    if not ((Source[i] in (atext+['.',' '])) or (((not strict) and (Ord(Source[i])and $80<>0)))) then begin
+      NeedQuotes:=true;
+      break;
+    end;    
+  result := _internal_RFCQuotePhrase(source,Strict,NeedQuotes);    
 end;
 
 function RFCUnQuotePhrase(const source: string): string;
@@ -257,6 +301,55 @@ begin
 
   SetLength(result,c);
 end;
+
+function RFCQuoteEncodePhraseFolded(const Source: string; CharSet: TMimeCharsets;
+        var MaxFirstLen, MaxLen: integer; const EOL: String):string;
+var NeedQuotes:   boolean;
+    NeedEncoding: boolean;
+    BlankCount:   integer;
+
+    CSource:      string;
+    
+    i: integer;
+begin
+  CSource := Convert8BitToUTF(Source,CharSet);
+  BlankCount := 0;  
+
+  if (Pos('=?',CSource)>0)or(Pos('?=',CSource)>0) then
+    NeedEncoding := true
+  else if (FirstChar(CSource) in ['.',' ']) or (LastChar(CSource) in ['.',' ']) then
+    NeedQuotes:=true
+  else
+  for i := 1 to Length(CSource) do 
+  begin
+    if not (CSource[i] in (atext+['.',' '])) then
+      NeedQuotes:=true;
+
+    // runs of too many blanks will break some software when folded
+    if CSource[i] = ' ' then
+      inc(BlankCount) 
+    else
+      BlankCount := 0;      
+      
+    if (BlankCount>MaxLen-2) or not (CSource[i] in [#9,#32..#126]) then begin
+      NeedEncoding:=true;
+      break;
+    end;
+  end;
+
+  if NeedEncoding then 
+  begin
+    result := RFC2047_Encode(CSource,csUTF8,    
+        MaxFirstLen,MaxLen,EOL);
+  end else
+  begin
+    Result := CSource;
+    if NeedQuotes then
+      result := _internal_RFCQuotePhrase(result,true,NeedQuotes);
+    result := RFCFoldString(result, MaxFirstLen, MaxLen, EOL);
+  end;
+end;
+
 
 { ------------------------ RFC 2822 Addresses ------------------------ }
 
@@ -474,6 +567,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2002/05/20 15:18:17  cl
+// - added/fixed functions for proper RFC 2047 encoding
+//
 // Revision 1.9  2002/04/20 13:56:54  ml
 // - kylix compatibility
 //
