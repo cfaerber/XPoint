@@ -29,54 +29,31 @@ uses
   xpglobal, 
   dos;
 
-{$IFNDEF UnixFS }
 function  GetDrive:char;
 function  alldrives:string;
 function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
                                             { 4=Device, 5=Netz              }
-{$ENDIF }
 function  dospath(d:byte):pathstr;
 procedure GoDir(path:pathstr);
 
 
 function  OutputRedirected:boolean;
-{$IFDEF BP }
 function  ConfigFILES:byte;                  { FILES= .. }
 function  FreeFILES(maxfiles:byte):word;     { freie Files; max. 255 }
-{$ENDIF }
 function  IsDevice(fn:pathstr):boolean;
 
-{$IFDEF BP }
 procedure XIntr(intno:byte; var regs:registers);   { DPMI-kompatibler Intr }
 function  DPMIallocDOSmem(paras:word; var segment:word):word;
 procedure DPMIfreeDOSmem(selector:word);
-{$ENDIF }
 
 
 { ================= Implementation-Teil ==================  }
 
 implementation
 
-{$IFNDEF UnixFS } { Wird alles nicht benoetigt }
-{$IFDEF Ver32 }
-uses
-  {$ifdef vp }
-  vpsyslow,
-  {$endif}
-  {$IFDEF Win32 }
-  windows,
-  {$ENDIF }
-  sysutils;
-{$ENDIF }
-{$ENDIF } { UnixFS }
-
-{$IFDEF BP }
 const DPMI   = $31;
-{$ENDIF }
 
-{$IFNDEF UnixFS }
 function GetDrive:char;
-{$IFDEF BP }
 var regs : registers;
 begin
   with regs do begin
@@ -84,32 +61,18 @@ begin
     msdos(regs);
     getdrive:=chr(al+65);
   end;
-{$ELSE  }
-var
-  s: String;
-begin
-  s := GetCurrentDir;
-  GetDrive := s[1];
-{$ENDIF }
 end;
-{$ENDIF } { UnixFS }
 
 { 0=aktuell, 1=A, .. }
 
 function dospath(d:byte):pathstr;
 var s : string;
 begin
-{$IFDEF UnixFS }
-  getdir(0, s);
-{$ELSE }
   getdir(d,s);
-{$ENDIF }
   dospath:=s;
 end;
 
-{$IFNDEF UnixFS }
 procedure SetDrive(drive:char);
-{$IFDEF BP }
 var regs : registers;
 begin
   with regs do begin
@@ -117,43 +80,21 @@ begin
     dl:=ord(UpCase(drive))-65;
     msdos(regs);
     end;
-{$ELSE }
-begin
-  SetCurrentDir(Drive + ':');
-{$ENDIF }
 end;
-{$ENDIF } { UnixFS }
 
 procedure GoDir(path:pathstr);
 begin
   if path='' then exit;
-{$IFNDEF UnixFS }
   SetDrive(path[1]);
   if (length(path)>3) and (path[length(path)]=DirSepa) then
-{$ELSE }
-  if (path[length(path)]=DirSepa) then
-{$ENDIF }
     Delete(path, Length(path), 1); { dec(byte(path[0])); }
   chdir(path);
 end;
 
 
 function OutputRedirected:boolean;
-{$IFDEF Ver32}
-begin
-  {$IFDEF OS2 }
-    { VP 2.0 ist fehlerhaft, Funktion geht nur unter OS/2 }
-    {$IFDEF VP }
-       OutputRedirected := SysFileIsDevice(SysFileStdOut) = 0;
-    {$ELSE }
-       OutputRedirected := false;
-    {$ENDIF }
-  {$ELSE }
-    OutputRedirected := false;
-  {$ENDIF }
-end;
-{$ELSE}
-var regs : registers;
+var
+  regs : registers;
 begin
   with regs do begin
     ax:=$4400;
@@ -162,56 +103,13 @@ begin
     OutputRedirected:=(flags and fcarry=0) and (dx and 128=0);
   end;
 end;
-{$ENDIF}
 
 { Buf sollte im Datensegment liegen }
 { ben”tigt DOS ab Version 3.0       }
 { pro Handle wird 1 Byte ben”tigt   }
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
-
-{$IFNDEF UnixFS }
 function DriveType(drive:char):byte;
-{$IFDEF Ver32  }
-const
-  DriveStr: String = '?:\'+#0;
-{$ifdef vp }
-  var
-    dt:TDriveType;
-{$endif}
-begin
-  {$ifdef vp }
-  dt:=SysGetDriveType(drive);
-  case dt of
-    dtFloppy,
-    dtHDFAT,
-    dtHDHPFS,
-    dtHDNTFS,
-    dtHDExt2     : DriveType:=1;
-    dtTVFS       : DriveType:=3;
-    dtNovellNet,
-    dtLAN        : DriveType:=5;
-    dtCDRom      : DriveType:=6;
-    else           DriveType:=0;
-  end;
-  {$else}
-    {$IFDEF Win32 }
-      DriveStr[1] := Drive;
-      case GetDriveType(@DriveStr[1]) of
-        DRIVE_REMOVABLE,
-        DRIVE_FIXED:     DriveType := 1;
-        DRIVE_RAMDISK:   DriveType := 2;
-        DRIVE_REMOTE:    DriveType := 5;
-        DRIVE_CDROM:     DriveType := 6;
-      else
-        DriveType := 0;
-      end;
-    {$ELSE }
-      DriveType := 1;
-    {$ENDIF }
-  {$endif}
-end;
-{$ELSE }
 
   function laufwerke:byte;
   var regs : registers;
@@ -240,13 +138,9 @@ begin
         drivetype:=1;
     end;
 end;
-{$ENDIF }
-{$ENDIF } { UnixFS }
 
-{$IFNDEF UnixFS }
 function alldrives:string;
 
-  {$IFDEF BP  }
   function GetMaxDrive:char;
   var regs : registers;
   begin
@@ -258,48 +152,21 @@ function alldrives:string;
       GetMaxDrive:=chr(al+64);
     end;
   end;
-  {$ENDIF }
 
 var b : byte;
     s : string;
-{$IFDEF BP }
     c : char;
-{$ENDIF }
-{$IFDEF Ver32 }
-    Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
-    i: integer;
-{$ENDIF }
 begin
   b:=0;
-{$IFDEF BP }
   for c:='A' to GetMaxdrive do
     if drivetype(c)>0 then begin
       inc(b);
       s[b]:=c;
     end;
-{$ELSE }
-  {$IFDEF Vp }
-    Drives:=SysGetValidDrives;
-  {$ELSE }
-    {$IFDEF Win32 }
-      Drives := GetLogicalDrives;
-    {$ELSE }
-      Drives := 1 shl 27 - 1; {!!}
-    {$ENDIF }
-  {$ENDIF }
-    for i := 0 to 25 do
-      if (Drives and (1 shl i)) > 0 then
-      begin
-        inc(b);
-        s[b] := Chr(i + 65);
-      end;
-{$ENDIF }
   s[0]:=chr(b);
   alldrives:=s;
 end;
-{$ENDIF } { UnixFS }
 
-{$IFDEF BP }
 function ConfigFILES:byte;                  { FILES= .. - DOS >= 2.0! }
 type wa   = array[0..2] of word;
 var  regs : registers;
@@ -320,9 +187,7 @@ begin
     ConfigFILES:=n;
   end;
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 function FreeFILES(maxfiles:byte):word;
 var f  : array[1..255] of ^file;
     i  : integer;
@@ -347,9 +212,7 @@ begin
   end;
   filemode:=fm;
 end;
-{$ENDIF}
 
-{$IFDEF BP }
 procedure XIntr(intno:byte; var regs:registers);   { DPMI-kompatibler Intr }
 var dpmistruc : record
                   edi,esi,ebp,reserved : longint;
@@ -389,9 +252,7 @@ begin
     end;
   {$ENDIF}
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 function DPMIallocDOSmem(paras:word; var segment:word):word;
 var regs : registers;
 begin
@@ -409,9 +270,7 @@ begin
     end;
   end;
 end;
-{$ENDIF}
 
-{$IFDEF BP }
 procedure DPMIfreeDOSmem(selector:word);
 var regs : registers;
 begin
@@ -419,11 +278,9 @@ begin
   regs.dx:=selector;
   intr(DPMI,regs);
 end;
-{$ENDIF }
 
 
 function IsDevice(fn:pathstr):boolean;
-{$IFDEF BP }
 var f    : file;
     regs : registers;
 begin
@@ -440,17 +297,14 @@ begin
       end;
     close(f);
     end;
-{$ELSE }
-begin
-  { COMs sind Devices, der Rest nicht }
-  IsDevice := Pos('COM', fn) = 1;
-{$ENDIF }
 end;
-
 
 end.
 {
   $Log$
+  Revision 1.17.2.1  2000/06/22 17:13:44  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.17  2000/05/09 13:10:14  hd
   - UnixFS: get/setdrive entfernt
   - GoDir: dec(path[0]) durch delete(path, length(path), 1) ersetzt

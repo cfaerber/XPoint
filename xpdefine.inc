@@ -28,7 +28,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{$DEFINE Snapshot}
+{.$DEFINE Snapshot}
 
 { Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
@@ -69,103 +69,19 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF VER130 }          { Delphi 5 }
-  {$DEFINE Ver32 }
-  {$DEFINE Win32 }
-  {$DEFINE Delphi }
-  {$A+,B-,C-,D+,E-,F-,G+,H-,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U+,V-,W-,X+,Y-,Z1}
-  {$UNDEF NeedReg }
-{$ENDIF }
-
-{$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
-  {$DEFINE VP }
-  {$DEFINE Ver32 }
-  {$B-,D-,H-,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
-  {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
-  {$UNDEF NeedReg }
-{$ENDIF }
-
-{$IFDEF FPC }             { Freepascal >= 0.99.14 }
-  {$DEFINE Ver32 }
-  {$IFDEF GO32V2 }
-    {$DEFINE DOS32 }
-    {$UNDEF DPMI }
-  {$ENDIF }
-  {$C-,H-,I-,M-,P-,T-,V-,X+}
-  {$MODE TP }
-  {$ASMMODE Intel }
-  {$GOTO ON }
-  {$UNDEF NeedReg }
-{$ENDIF }
-
 {$IFDEF DebugInfo }
-  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
-    {$D+,L+,Y+}
-  {$ENDIF }
-  {$IFDEF VirtualPascal }
-    {$D+,LocInfo+}
-  {$ENDIF }
+  {$D+,L+,Y+}
 {$ENDIF }
 
 {$IFDEF Debug }
-  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
-    {$R+,S+,Q+}
-  {$ENDIF }
-  {$IFDEF VirtualPascal }
-    {$R+,S+,Q+,W+,Optimize-}
-  {$ENDIF }
+  {$R+,S+,Q+}
 {$ENDIF }
-
-{$IFDEF Ver32 }
-  {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
-{$ENDIF }
-
-{$IFDEF DOS32 }
-  {$DEFINE NeedReg }     { 32 Bit DOS-Versionen mÅssen registriert werden }
-  {$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
-{$ENDIF }
-
-{$IFDEF Linux }
-  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$UNDEF CAPI }         { Nichts dergleichen }
-{$ENDIF }
-
-{$IFDEF FreeBSD }
-  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-{$ENDIF }
-
-{ --- ErklÑrungen der selbst gesetzen Defines --- }
-
-{
-  LocalSceeen
-
-  Jede Routine, die in den Bildschirmspeicher schreibt, aktualisiert einen
-  internen Puffer um die énderung fÅr das Restaurieren von Fensterhinter-
-  grÅnden wieder anzeigen verfÅgbar zu haben. Das ist bei allen Betriebs-
-  systemen nîtig, wo der Bildschirm nicht wieder ausgelesen werden kann,
-  z.B. bei Linux
-
-  UnixFS
-
-  OpenXP lÑuft auf einem Unix-Dateisystem, es werden damit Dateinamen nach
-  Gro·- und Kleinschreibung unterschieden und der "/" statt "\" benutzt.
-  Dateinamen, die von OpenXP erzeugt oder benutzt werden, mÅssen immer
-  komplett klein geschrieben sein.
-
-  NCRT
-
-  Baut auf der Curses-Lib auf. Dient als Interface zur Konsole bei z.B.
-  Linux. Ob es mit Curses-Versionen unter Windows oder OS/2 laeuft, bliebe
-  zu testen. Die Units sind bei FreePascal unter Packages.
-
-}
-
 
 {
   $Log$
+  Revision 1.30.2.1  2000/06/22 17:13:46  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.30  2000/05/27 08:42:33  mk
   - Debugmodus wieder standardmaessig aus
 

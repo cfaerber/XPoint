@@ -67,7 +67,7 @@ Ich kann gerne auch eine fertig compilierte Version der RTL bereit-
 stellen, sofern Borland dies erlaubt. Wer daran interessiert ist, mîge
 bei Borland eine entsprechende Erlaubnis einholen.
 
-2. Compilieren der einzelnen Module (16 Bit)
+2. Compilieren der einzelnen Module
 -----------------------------------
 
 Die einzelnen Programmdateien werden mit folgenden Kommandos compiliert
@@ -77,31 +77,3 @@ bzw. formatiert:
      XP.HLP        ihs xp.ihq
      *.RES         rc <Dateiname.rq>
      *.TXT         df.bat    (Quelldateien: *.dq)
-
-
-3. Compilieren der einzelnen Module (32 Bit)
------------------------------------
-
-Die 32 Bit Versionen von OpenXP werden sowohl imt dem FreePascal-Compiler
-(FPC) als auch mit Virtual Pascal 2.0 compiliert. FreePascal ist ein freier
-Compiler und steht unter der GPL. Die aktuellste Version befindet sich
-jeweils auf http://www.freepascal.org. Die Version 0.99.14 ist in einigen
-FÑllen nicht ausreichend, es sollte der aktuellste Compilersnapshot genommen
-werden.
-
-Virtual Pascal ist in kommerzieller Crosscompiler fÅr OS/2 und Win32 (mit
-Erweiterungen auch fÅr DPMI32 und Linux). Die Homepage befindet sich auf
-www.vpascal.com.
-
-Als Optionen sind fÅr die Distributions-Version -XX -CX (SmartLinking) und
--O3 (hohe Optimierungen) zu verwenden. Die RTL sollte mit make smart neu
-compiliert werden, so das sie auch Smartlinkable ist. Das verringert die
-Grî·e der EXE-Datei. FÅr die Weiterentwicklung ist das aber nicht von
-Bedeutung.
-
-FÅr FPC gibt es eine IDE, die sich auch auf der Homepage befindet.
-
-Das öbersetzen der Sourcen ist ansonsten ohne weitere Arbeiten mîglich.
-Bei FreePascal reicht ein "PPC386 XP", bei Virtual Pascal ist es am
-einfachsten, XP.PAS in die IDE zu laden und mit F9 zu Åbersetzen. Alle
-nîtigen Compilereinstellungen werden in der XPDEFINE.INC gesetzt.

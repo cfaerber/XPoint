@@ -14,38 +14,13 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF Win32 }
-  {$R ICONS.RES }
-{$ENDIF }
-
-{$IFDEF BP }
-  {$F+}
-  {$M 32768,131072,655360}
-{$ENDIF}
-
-{$IFDEF OS2 }
-  {$M 131072,524288}
-{$ENDIF }
+{$F+}
+{$M 32768,131072,655360}
 
 program xp;
 
 uses xpx,
-{$IFDEF Linux }
-     linux,
-     xplinux,
-{$ENDIF }
-{$IFDEF NCRT }
-     xpcurses,
-{$ELSE }
      crt,
-{$ENDIF }
-{$IFDEF OS2 }
-     os2base,
-{$ENDIF }
      dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
@@ -105,7 +80,6 @@ uses xpx,
 {$ENDIF }
      xpimpexp; { Import/Export      }
 
-{$IFNDEF Ver32 } { Bei 32 Bit brauchen wir keine Overlays }
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
 {$O clip}    {$O editor}  {$O databaso} {$O feiertag}
 {$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
@@ -122,7 +96,6 @@ uses xpx,
 {$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
 {$IFDEF CAPI }
 {$O capi }
-{$ENDIF }
 {$ENDIF }
 
 label ende;
@@ -166,12 +139,7 @@ begin
       chdir(ownpath);
       end;
     testdiskspace;
-    {$IFDEF BP }
     testfilehandles;
-    {$ENDIF }
-    {$IFDEF OS2 }
-      DosSetMaxFH(255);
-    {$ENDIF }
     initdatabase;
     pwcnt:=0; { drei PW-Versuche, dann beenden }
     repeat
@@ -188,7 +156,7 @@ begin
         exitscreen(0);
         goto Ende;
       end;
-{$IFDEF Beta } { MK 25.01.2000 Betameldung anzeigen, /nb schaltet diese ab }
+{$IFDEF Beta } { Betameldung anzeigen, /nb schaltet diese ab }
       if not ParNoBeta then
       begin
         BetaMessage;
@@ -213,9 +181,7 @@ begin
       if not AutoMode then     { in XP7 }
         mainwindow;
       AutoStop;
-{$IFDEF BP }
       FlushSmartdrive(true);
-{$ENDIF }
       closedatabases;
       exitscreen(iif(ParNojoke,0,1));
       delete_tempfiles;
@@ -231,6 +197,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.1  2000/06/22 17:13:46  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.29  2000/06/19 23:14:47  mk
   - CRCFile rausgenommen, verschiedenes
 

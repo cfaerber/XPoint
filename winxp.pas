@@ -21,28 +21,11 @@ unit winxp;
 interface
 
 uses
-{$IFDEF Win32 }
-  windows, strings,
-{$ENDIF }
-{$IFDEF Linux }
-  xplinux, strings,
-{$ENDIF }
-{$IFDEF VP }
-  vpsyslow,
-{$ENDIF }
-{$ifdef NCRT}
-  xpcurses,
-{$else}
   crt,
-{$endif}
   dos,keys,inout,maus2,typeform, xpglobal;
 
-const 
-{$IFDEF NCRT }
-      maxpull = 50; { sichern/holen verwenden auch diese Funktionen }
-{$ELSE }
+const
       maxpull = 30;
-{$ENDIF }
       maxpush = 20;
 
       crline  : byte = 25;      { zeile fÅr Alt-F10-Copyright }
@@ -56,9 +39,7 @@ var   wpstack  : array[1..maxpush] of word;
       warrcol  : byte;        { Farbe fÅr Pfeile          }
       selp     : selproc;
 
-{$IFNDEF NCRT }
 procedure normwin;
-{$ENDIF }
 procedure clwin(l,r,o,u:word);
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);    { Rahmen ≥ zeichen       }
@@ -81,7 +62,6 @@ procedure wpush(x1,x2,y1,y2:byte; text:string);
 procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
 
-{$IFNDEF NCRT }
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
@@ -94,48 +74,6 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn nîtig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
 procedure FWrt(const x,y:word; const s:string);
-{$ENDIF }
-
-{$IFDEF Ver32 }
-
-{ Schreiben eines Strings ohne Update der Cursor-Position
-  Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
-procedure SDisp(const x,y:word; const s:string);
-
-procedure consolewrite(x,y:word; num:dword);
-
-
-{ Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
-  managen }
-
-{ Liest ein Zeichen direkt von der Konsole aus
-  x und y beginnen mit 1 }
-procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
-
-{ Diese Routinen kopieren rechteckige Bildschirmbereiche aus
-  der Console heraus und wieder hinein. Der Buffer mu· dabei
-  die dreifache Grî·e (Win32) der Zeichenzahl besitzen. Die Koordinaten
-  beginnen bei 1/1.
-
-  Unter Win32 enthÑlt der Buffer ein Byte Zeichen und zwei Byte
-  fÅr das Attribut. Unter anderen Betriebssystemen darf das
-  anders gemacht werden. }
-procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
-procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
-
-
-{ FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
-  Die Koordinaten beginnen bei 1/1.
-  Die Routine ist bis jetzt unter Win32 mit API und fÅr den
-  Rest mit FWrt implementiert }
-procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$ENDIF }
-
-{$IFDEF Win32 }
-var
-    { EnthÑlt das Fensterhandle fÅr die Console }
-    OutHandle     : THandle;
-{$ENDIF }
 
 
 { ========================= Implementation-Teil =========================  }
@@ -146,15 +84,7 @@ uses xp0;
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');
-{$ifdef NCRT }
-      { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
-        an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
-      CharSize =        1;              { Groesse eines Zeichens }
-      AttrSize =        1;              { Groesse eines Attributs }
-      LSSize =          $7fff;          { Sollte fuer 160 x 100 reichen }
-{$else }
       LSSize = $1fff;
-{$endif }
       shad  : byte = 0;  { Zusatz-Fensterbreite/hîhe }
 
 type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
@@ -165,27 +95,17 @@ type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
     Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
   TLocalScreen = array[0..LSSize] of char;
 
-{$IFDEF LocalScreen }
-var
-  LocalScreen: ^TLocalScreen;
-{$ENDIF }
-
 var pullw   : array[1..maxpull] of record
                                      l,r,o,u,wi : byte;
                                      ashad      : byte;
-{$IFDEF NCRT }
-                                     win        : TWinDesc;
-{$ELSE }
                                      savemem    : ^memarr;
                                      free       : boolean;
                                      MemSize    : LongInt;
-{$ENDIF }
                                    end;
     rahmen  : shortint;
     oldexit : pointer;
 
 
-{$IFDEF BP }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean); assembler;
 asm
          cld
@@ -253,31 +173,7 @@ asm
          mov   al,[bx+5]
          stosw
 end;
-{$ELSE }
-{$IFNDEF NCRT }
-procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
-var
-  i: integer;
-  SaveAttr: Byte;
-begin
-  SaveAttr := TextAttr; TextAttr := Attr;
-  Fwrt(l, o, rchar[typ,1] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,3]);
-  Fwrt(l, u, rchar[typ,5] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,6]);
 
-  { Wird benutzt, wenn Fenster im Rahmen gefÅllt werden soll }
-  for i := o+1 to u -1 do
-  begin
-    FWrt(l, i, rchar[typ, 4]);
-    FWrt(r, i, rchar[typ, 4]);
-    if clr then
-      FillScreenLine(l+1, i-1, ' ', r-l-2);
-  end;
-  TextAttr := SaveAttr;
-end;
-{$ENDIF NCRT }
-{$ENDIF }
-
-{$IFDEF BP }
 procedure wshadow(li,re,ob,un:word); assembler;
 asm
          call  moff
@@ -330,40 +226,7 @@ asm
 
 @nors:   call  mon
 end;
-{$ELSE }
-{$IFDEF NCRT }
-procedure wshadow(li,re,ob,un:word);
-begin
-  { Vorlaeufig kein Schatten unter Linux }
-end;
-{$ELSE }
-procedure wshadow(li,re,ob,un:word);
-var
-  i: Integer;
-  c: Char;
-  Attr: SmallWord;
-  save: byte;
-begin
-  moff;
-  save := textattr;
-  textattr := shadowcol;
-  for i := ob to un do
-  begin
-    GetScreenChar(re, i, c, Attr);
-    fwrt(re, i, c);
-  end;
-  for i := li to re do
-  begin
-    GetScreenChar(i, un, c, Attr);
-    fwrt(i, un, c);
-  end;
-  textattr := save;
-  mon;
-end;
-{$ENDIF }
-{$ENDIF }
 
-{$IFDEF BP }
 procedure clwin(l,r,o,u:word); assembler;
 asm
          call   moff
@@ -399,30 +262,13 @@ asm
          jmp    @wclo
 @wcende: call   mon
 end;
-{$ELSE }
-procedure clwin(l,r,o,u:word);
-var
-  i: Integer;
-begin
-  for i := o to u do
-    FillScreenLine(l, i, ' ', r-l+1);
-end;
-{$ENDIF }
 
-{$IFNDEF NCRT }
 procedure Wrt(const x,y:word; const s:string);
 begin
-{$IFDEF BP }
   gotoxy(x,y);
   write(s);
-{$ELSE }
-  FWrt(x, y, s);
-  GotoXY(x+Length(s), y);
-{$ENDIF BP }
 end; { Wrt }
-{$ENDIF }
 
-{$IFDEF BP }
 procedure FWrt(const x,y:word; const s:string); assembler;
 asm
          push ds
@@ -447,278 +293,13 @@ asm
          loop   @lp
 @nowrt:  pop ds
 end;
-{$ELSE }
-{$IFNDEF NCRT }
-procedure FWrt(const x,y:word; const s:string);
-var
-  i, Count: Integer;
-  {$IFDEF Win32 }
-    WritePos: TCoord;                       { Upper-left cell to write from }
-    OutRes: DWord;
-  {$ENDIF }
-  xold, yold: Integer;
-begin
-  {$IFDEF Win32 }
-    { Kompletten String an einem StÅck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;
-    {$IFDEF FPC }
-      WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-      FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, @OutRes);
-    {$ELSE }
-      WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-      FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
-    {$ENDIF }
-  {$ELSE }
-    {$IFDEF VP }
-     {$R-}
-      SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
-    {$ELSE }
-      xold := WhereX; yold := WhereY;
-      GotoXY(x, y);
-      Write(s);
-      { Cursor an Originalposition zurÅcksetzen }
-      GotoXY(xold, yold);
-    {$ENDIF }
-  {$ENDIF Win32 }
 
-  {$IFDEF Localscreen }
-  { LocalScreen Åbernimmt die énderungen }
-    if s <> '' then
-      begin
-        Count := ((x-1)+(y-1)*zpz)*2;
-        FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
-        for i := 1 to Length(s) do
-        begin
-          LocalScreen^[Count] := s[i];
-          Inc(Count, 2);
-        end;
-       end;
-  {$ENDIF LocalScreen }
-  end;
-{$ENDIF NCRT }
-{$ENDIF BP }
 
-{$IFDEF Ver32}
-{$IFDEF Win32 }
-  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
-  var                                           { Attribute in xp0.attrbuf (Array of smallword)}
-    WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
-    OutRes: LongInt;                            { Auf Konsole ausgeben....}
-  begin
-    WritePos.X := x-1; WritePos.Y := y-1;
-  {$IFDEF FPC }
-    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, @OutRes);
-    writeConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, @OutRes);
-  {$ELSE }
-    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
-    WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);
-  {$ENDIF}
-  end;
-{$ELSE }
-  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
-  var
-    s: String;
-    i, j: Integer;
-  begin
-    i := 1;
-    while i < num do
-    begin
-      j := i;
-      { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
-      while((AttrBuf[i+1] = AttrBuf[j+2]) and (j<num)) do inc(j);
-
-      {$IFDEF VP }
-         SysWrtCharStrAtt(@CharBuf[i], j-i+1, x+i-2, y-1, byte(AttrBuf[i+1]));
-      {$ELSE VP }
-         TextAttr := AttrBuf[i+1];
-         FWrt(x+i-1, y, Copy(CharBuf, i, j-i+1));
-      {$ENDIF VP }
-      i := j; inc(i);
-    end;
-  end;
-{$ENDIF Win32 }
-{$ENDIF Ver32 }
-
-{$IFDEF Ver32 }
-procedure SDisp(const x,y:word; const s:string);
-{$IFDEF Win32 }
-  var
-    WritePos: TCoord;                       { Upper-left cell to write from }
-    OutRes: LongInt;
-  begin
-    { Kompletten String an einem StÅck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;
-{$IFDEF FPC }
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-{$ELSE }
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-{$ENDIF }
-    { !! Hier mÅsste noch die Textfarbe verÑndert werden,
-      nicht aber der Texthintergrund }
-{$ELSE Win32 }
-  begin
-    FWrt(x, y, s);
-{$ENDIF Win32 }
-end;
-{$ENDIF }
-
-{$IFDEF Ver32 }
-procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
-{$IFDEF Win32 }
-var
-  ReadPos: TCoord;                       { Upper-left cell to Read from }
-  OutRes: LongInt;
-  aChr: Char;
-  aAttr: SmallWord;
-begin
-  ReadPos.X := x-1; ReadPos.Y := y-1;
-{$IFDEF FPC }
-  ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, @OutRes);
-  ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, @OutRes);
-{$ELSE }
-  ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, OutRes);
-  ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, OutRes);
-{$ENDIF }
-  c := aChr; Attr := aAttr;
-{$ELSE }
-  begin
-    {$IFDEF VP }
-      c := SysReadCharAt(x-1, y-1);
-      Attr := SmallWord(SysReadAttributesAt(x-1, y-1));
-    {$ENDIF }
-    {$IFDEF LocalScreen }
-      c := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2]);
-      Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]));
-    {$ENDIF }
-{$ENDIF }
-end;
-
-procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$IFDEF Win32 }
-  var
-    WritePos: TCoord;                       { Upper-left cell to write from }
-    OutRes: LongInt;
-  begin
-    WritePos.x := x-1; WritePos.y := y-1;
-{$IFDEF FPC }
-    FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, @OutRes);
-    FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, @OutRes)
-{$ELSE }
-    FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, OutRes);
-    FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, OutRes)
-{$ENDIF }
-  end;
-{$ELSE }
-  begin
-    FWrt(x, y, Dup(Count, Chr));
-  end;
-{$ENDIF }
-
-procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
-{$IFDEF Win32 }
-var
-  BSize, Coord: TCoord;
-  SourceRect: TSmallRect;
-begin
-  BSize.X := r-l+1; BSize.Y := u-o+1;
-  Coord.X := 0; Coord.Y := 0;
-  with SourceRect do
-  begin
-    Left := l-1; Right := r-1;
-    Top := o-1; Bottom := u-1;
-  end;
-{$IFDEF FPC }
-   ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
-{$ELSE }
-   ReadConsoleOutput(OutHandle, @Buffer, BSize, Coord, SourceRect);
-{$ENDIF }
-{$ELSE }
-var
-  x, y, Offset: Integer;
-begin
-  Offset := 0;
-  for y := o-1 to u-1 do
-    for x := l-1 to r-1 do
-    begin
-      {$IFDEF VP }
-        TLocalScreen(Buffer)[Offset] := SysReadCharAt(x, y);
-        TLocalScreen(Buffer)[Offset+1] := Char(SysReadAttributesAt(x, y));
-      {$ELSE }
-        {$IFDEF LocalScreen }
-          TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*zpz)*2];
-          TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*zpz)*2+1];
-        {$ENDIF }
-      {$ENDIF }
-      Inc(Offset, 2);
-    end;
-{$ENDIF }
-end;
-
-procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
-{$IFDEF Win32 }
-var
-  BSize, Coord: TCoord;
-  DestRect: TSmallRect;
-begin
-  BSize.X := r-l+1; BSize.Y := u-o+1;
-  Coord.X := 0; Coord.Y := 0;
-  with DestRect do
-  begin
-    Left := l-1; Right := r-1;
-    Top := o-1; Bottom := u-1;
-  end;
-{$IFDEF FPC }
-  WriteConsoleOutput(OutHandle, Char_Info(Buffer), BSize, Coord, @DestRect);
-{$ELSE }
-  WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, DestRect);
-{$ENDIF }
-{$ELSE }
-  var
-    x, y, i, j, Offset: Integer;
-    s: String;
-  begin
-    Offset := 0;
-    for y := o to u do
-    begin
-      {$IFDEF LocalScreen }
-        { LocalScreen zeilenweise aktualisieren }
-        Fastmove(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*zpz+l-1)*2], (r-l+1)*2);
-      {$ENDIF }
-      x := l;
-      while x <= r do
-      begin
-        j := x;
-        { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
-        while (TLocalScreen(Buffer)[Offset+1] = TLocalScreen(Buffer)[Offset+3+(j-x)*2])
-          and (j<r) do inc(j);
-
-        s := '';
-        for i := x to j do
-        begin
-          s := s + Char(TLocalScreen(Buffer)[Offset]);
-          Inc(Offset, 2);
-        end;
-        {$IFDEF VP }
-           SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, Byte(TLocalScreen(Buffer)[Offset-1]));
-        {$ELSE VP }
-           TextAttr := SmallWord(Byte(TLocalScreen(Buffer)[Offset-1]));
-           FWrt(x, y, s);
-        {$ENDIF VP }
-        x := j; inc(x);
-      end;
-    end;
-{$ENDIF }
-end;
-
-{$ENDIF Ver32 }
-
-{$IFNDEF NCRT }
 procedure Wrt2(const s:string);
 begin
   FWrt(WhereX, WhereY, s);
   GotoXY(WhereX+Length(s), WhereY);
 end;
-{$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
@@ -765,12 +346,10 @@ begin
     end;
 end;
 
-{$IFNDEF NCRT }
 procedure normwin;
 begin
   window(1,1,80,25);
 end;
-{$ENDIF }
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);
 begin
@@ -1187,6 +766,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36.2.1  2000/06/22 17:13:45  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.36  2000/05/10 11:01:14  hd
   - maxpull erhoeht
 

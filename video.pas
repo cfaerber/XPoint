@@ -19,9 +19,7 @@
 UNIT video;
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+,A+}
-{$ENDIF }
+{$O+,F+,A+}
 
 
 {  ==================  Interface-Teil  ===================  }
@@ -36,77 +34,53 @@ const DPMS_On       = 0;    { Monitor an }
       DPMS_Suspend  = 2;    { Stromsparstufe 2 }
       DPMS_Off      = 4;    { Monitor aus }
 
-{$IFNDEF NCRT }
       vrows  : word = 80;                  { Anzahl Bildspalten  }
       vrows2 : word = 160;                 { Bytes / Zeile       }
       vlines : word = 25;                  { Anzahl Bildzeilen   }
-{$ENDIF }
 var  vbase  : word;                        { Screen-Base-Adresse }
 
-{$IFNDEF NCRT }
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
-{$ENDIF }
 function  GetVideoMode:byte;
 procedure SetVideoMode(mode:byte);
 
-{$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
-{$ENDIF }
 procedure SetBackIntensity;                { heller Hintergrund setzen }
 
-{$IFDEF BP }
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
-{$ENDIF }
 
-{$IFNDEF NCRT }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
-{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
 implementation
 
-{$IFNDEF NCRT }
 uses
 {$IFDEF BP }
   {$IFDEF DPMI }
   WinAPI,
   {$ENDIF}
 {$ENDIF }
-{$IFDEF Win32 }
-  xpwin32,
-{$ENDIF }
-{$IFDEF OS2 }
-  os2base,
-{$ENDIF }
    fileio;
-{$ENDIF }
 
-{$IFNDEF NCRT }
 var
   vtype   : byte;
-{$ENDIF }
 
-{$IFDEF BP }
 type ba  = array[0..65000] of byte;
      bp  = ^ba;
 var
     p1,p2   : bp;                    { Zeiger fÅr Font-Generator }
-{$ENDIF }
 
 
 {- BIOS-Routinen ----------------------------------------------}
 
 { Grafikkarte ermitteln: 0=Herc, 1=CGA, 2=EGA, 3=VGA
   und in vtype speichern }
-{$IFNDEF NCRT }
 procedure GetVideotype; assembler;
 asm
-{$IFDEF BP }
          push  bp
          mov    ax,40h
          mov    es,ax
@@ -133,9 +107,6 @@ asm
 
 @isCGA:  mov    vtype,1
 @ok:     pop bp
-{$ELSE }
-        mov vtype, 3                    { immer VGA in 32 Bit Systemen }
-{$ENDIF }
 end;
 
 function  VideoType:byte;
@@ -143,12 +114,9 @@ begin
   VideoType := vtype;
 end;
 
-{$ENDIF } {NCRT }
-
 { BIOS-Mode-Nr. setzen }
 procedure SetVideoMode(mode:byte); assembler;
 asm
-{$IFDEF BP }
          push bp
          mov    al,mode
          mov    bx,40
@@ -161,10 +129,8 @@ asm
          mov    ah,0
          int    $10
          pop bp
-{$ENDIF }
 end;
 
-{$IFDEF BP }
 { EGA-Rahmenfarbe einstellen }
 procedure SetBorder64(color:byte); assembler;
 asm
@@ -182,36 +148,14 @@ asm
          int    $10
 end;
 
-{$ENDIF}
-
 { hellen Hintergr. akt. }
-{$IFDEF BP }
 procedure SetBackIntensity; assembler;
 asm
          mov    ax,1003h
          xor    bl,bl
          int    $10
 end;
-{$ELSE }
-procedure SetBackIntensity;
-{$IFDEF OS2 }
-var
-  State: VioIntensity;
-{$ENDIF }
-begin
-  {$IFDEF OS2 }
-    with State do
-    begin
-      cb := 6;
-      rType := 2;
-      fs := 1;
-    end;
-    VioSetState(State, 0);
-  {$ENDIF }
-end;
-{$ENDIF }
 
-{$IFDEF BP }
 procedure LoadFont(height:byte; var data);
 var regs    : registers;
     DPMIsel : word;
@@ -383,43 +327,27 @@ asm
          jnz   @c9lp
          pop ds
 end;
-{$ENDIF }
 
 function getvideomode:byte;
 begin
-{$IFDEF BP }
    getvideomode:=mem[Seg0040:$49];
-{$ELSE }
-   getVideoMode := 3; { VGA }
-{$ENDIF}
 end;
 
-{$IFNDEF NCRT }
 
 function getscreenlines:byte;
-{$IFDEF BP }
-  var
-    regs : registers;
+var
+  regs : registers;
+begin
+  if vtype<2 then
+    vlines:=25
+  else with regs do
   begin
-    if vtype<2 then
-      vlines:=25
-    else with regs do
-    begin
-      ax:=$1130;
-      bh:=0;
-      intr($10,regs);
-      vlines:=dl+1;
-    end;
-    getscreenlines:=vlines;
-{$ELSE }
-  {$IFDEF Win32 }
-    begin
-      vlines := Win32GetScreenLines;
-      GetScreenLines := vlines;
-  {$ELSE }
-      GetScreenLines := 25;
-  {$ENDIF } { Win32 }
-{$ENDIF } { BP }
+    ax:=$1130;
+    bh:=0;
+    intr($10,regs);
+    vlines:=dl+1;
+  end;
+  getscreenlines:=vlines;
 end;
 
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
@@ -429,7 +357,6 @@ end;
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
-{$IFDEF BP }
 
   procedure loadcharset(height:byte);
   var regs : registers;
@@ -511,9 +438,7 @@ procedure SetScreenLines(lines:byte);
     freemem(p2,15*256);
   end;
 
-{$ENDIF}
 begin
-{$IFDEF BP }
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
     1 : setvideomode(3);       { CGA: nur 25 Zeilen }
@@ -544,13 +469,9 @@ begin
           end;
         end;
   end;
-{$ENDIF }
   vlines:=lines;
 end;
 
-{$ENDIF } { NCRT }
-
-{$IFDEF BP }
 function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 var regs : registers;
 begin
@@ -562,15 +483,15 @@ begin
     SetVesaDPMS:=(ax=$4f);
     end;
 end;
-{$ENDIF }
 
-{$IFNDEF NCRT }
 begin
   getvideotype;
-{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.20.2.1  2000/06/22 17:13:45  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.20  2000/06/21 20:26:33  mk
   - ein klein wenig mehr Ordnung im Source
 

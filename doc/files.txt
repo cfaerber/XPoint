@@ -134,14 +134,6 @@ IHS.PAS         Quelltext zu IHS.EXE
 DOCFORM.PAS     Quelltext zu DOCFORM.EXE
 RC.PAS          Quelltext zu RC.EXE
 
-Linux: wird zum compilieren der anderen Versionen nicht benötigt
-----------------------------------------------------------------
-
-XPCURSES.PAS    XP-spezifisches Interface zur Ansteuerung der Curses-Lib.
-                (wird nur unter Unix-Derivaten benoetigt)
-XPLINUX.PAS	XP-spezifisches Interface unter Linux
-README.LNX      Hinweise fuer die Benutzung unter Linux
-
 Verzeichnis .\DOC
 -----------------
 
@@ -157,8 +149,6 @@ RC.EXE          Compiler fr *.RQ -> *.RC
 DOCFORM.EXE     Formatierer fr *.DQ -> *.DOC
 IHS.EXE         Compiler fr *.IHQ -> *.HLP
 
-
-README.LNX	Hinweise zur Nutzung unter Linux
 
 Dateiformate
 ------------

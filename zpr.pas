@@ -13,21 +13,9 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFNDEF VER32 }
 {$M 16384,65536,65536}
-{$ENDIF }
 
 uses
-{$IFDEF Linux }
-  XPLinux,
-{$ENDIF }
-{$IFDEF NCRT }
-  xpcurses,		{ Fuer die Sonderzeichen an der Console }
-{$ENDIF }
   dos, typeform, dosx, xpglobal;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
@@ -37,21 +25,12 @@ const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       stdhdlines  = 7;      { Anzahl Pflichtheaderzeilen                   }
       TO_ID       = '/'#0#0#8#8'TO:';
 
-{$IFDEF Linux }              { ML 13.02.2000 unter linux keine '/' als Param verwenden }
-      paramchars   = ['-'];
-{$ELSE }
       paramchars   = ['-','/'];
-{$ENDIF }
 
       logfilename = 'ZPR.LOG';
 
-    {$ifdef os2}
-      ReadFilemode  = $40;
-      WriteFilemode = $12;
-    {$else}
       ReadFilemode  = 2;
       WriteFilemode = 2;
-    {$endif}
 
 type
   PathStr = string;          { Full file path string }
@@ -163,33 +142,6 @@ var   oldexit   : pointer;
       kchar     : set of char;  { in Header-Bezeichnern erlaubte Zeichen }
       brchar    : set of char;  { in Brettnamen erlaubte Zeichen         }
 
-{$IFDEF Ver32 }
-function  TestControlChar(var s:string):boolean; assembler; {&uses esi}
-asm
-         mov    esi, s
-         cld
-         lodsb
-         xor   ecx,ecx
-         mov   cl, al
-         xor   edx, edx                  { true }
-         jecxz @tcende
-@tclp:   lodsb
-         cmp   al, ' '
-         jae   @tok
-         cmp   al, 9
-         je    @tok
-         inc   edx                       { false }
-         jmp   @tcende
-@tok:    loop  @tclp
-@tcende: mov   eax,edx                   { Funktionsergebnis }
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-{$ELSE}
-
 function  TestControlChar(var s:string):boolean; assembler;
 asm
          push ds
@@ -211,7 +163,6 @@ asm
 @tcende: mov   ax,bx                   { Funktionsergebnis }
          pop ds
 end;
-{$ENDIF }
 
 procedure logo;
 begin
@@ -225,12 +176,7 @@ begin
 end;
 
 procedure helppage;
-{$IFDEF Linux }
-{ ML 26.02.2000 Linux benutzt kein Carriage Return... }
-const crlf = #10;
-{$ELSE}   
 const crlf = #13#10;
-{$ENDIF}   
 begin
    writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
           crlf,
@@ -361,9 +307,7 @@ begin
         end;
       end
     else begin
-{$IFNDEF Linux }
       UpString(s);
-{$ENDIF }
       if fi='' then fi:=s
       else if fo='' then begin
         fo:=s; ParRep:=true; end
@@ -410,18 +354,10 @@ begin
   fsplit(n,dir,name,ext);
   bakname:=dir+name+'.'+newext;
   assign(f,bakname);
-{$IFNDEF Delphi }
   setfattr(f,archive);  { evtl. altes BAK lîschen }
-{$ELSE }
-  FileSetAttr(bakname, faArchive);
-{$ENDIF }
   erase(f);
   assign(f,n);
-{$IFNDEF Delphi }
   setfattr(f,archive);
-{$ELSE }
-  FileSetAttr(n, faArchive);
-{$ENDIF }
   rename(f,bakname);
   if ioresult<>0 then;
 end;
@@ -447,9 +383,7 @@ begin
     error('CrossPoint-MPUFFER-Dateien dÅrfen nicht direkt modifiziert werden!');
 end;
 
-{$IFDEF BP }
-  {$F+}
-{$ENDIF}
+{$F+}
 procedure newexit;
 begin
   if (right(fo,3)='$$$') then begin     { evtl. Tempfile lîschen }
@@ -459,9 +393,7 @@ begin
     end;
   exitproc:=oldexit;
 end;
-{$IFDEF BP }
-  {$F-}
-{$ENDIF}
+{$F-}
 
 procedure openfiles;
 var dir  : dirstr;
@@ -1355,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.1  2000/06/22 17:13:46  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.14  2000/05/05 15:27:57  ml
   zpr und uuz wieder unter linux lauff‰hig (ncrt)
 
