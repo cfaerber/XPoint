@@ -20,7 +20,7 @@ uses
   typeform,fileio, xpglobal,sysutils;
 
 const maxpages = 4096;
-      version  = '1.22';
+      version  = '1.23';
       date     = '''89-91,95,00';
       obufsize = 16384;
 
@@ -351,31 +351,40 @@ begin
   writeln('Intelligent Help System '+version+' (c) '+date+' Peter Mandrella (C) OpenXP Team');
   write('Source File: ');
   fname:=paramstr(1);
-  if fname='' then readln(fname)
-  else writeln(fname+'.ihq');
+  if fname='' then
+    readln(fname);
+  if FName = '' then exit;
 
-  if not exist(fname+'.ihq') then begin
+  FName := FileUpperCase(ChangeFileExt(FName, '.ihq'));
+  if ParamStr(1) <> '' then writeln(fname);
+
+  if not FileExists(fname) then
+  begin
     writeln; writeln('Error: File not found.');
     halt(1);
   end;
 
-  getmem(p,20000);
-  assign(t,fname+'.ihq');
-  settextbuf(t,p^,20000);
+  getmem(p,32768);
+  assign(t,fname);
+  settextbuf(t,p^,32768);
   reset(t);
 
   outpath:='';
-  if (paramcount=2) then begin
-    outpath:=paramstr(2);
-    if outpath<>'' then begin
-      if outpath[length(outpath)]<>'\' then
-        outpath:=outpath+'\';
+  if paramcount=2  then
+  begin
+    outpath := paramstr(2);
+    if outpath <> '' then
+    begin
+      OutPath := AddDirSepa(OutPath);
       fsplit(fname,dir,name,ext);
       fname:=name
     end
   end;
 
-  assign(f,outpath+fname+'.hlp'); rewrite(f,1);
+  FName := FileUpperCase(OutPath + ChangeFileExt(FName, '.hlp'));
+  Writeln('Destination File: ', FName);
+  assign(f,fname);
+  rewrite(f,1);
 
   create_header;
   qvwun:=0;
@@ -410,6 +419,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2000/11/12 22:30:12  mk
+  - fixed some linux and other problems
+
   Revision 1.17  2000/11/12 11:04:21  mk
   - some Limits increased
 
