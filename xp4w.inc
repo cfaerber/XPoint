@@ -539,6 +539,7 @@ var fn     : pathstr;
     poppush  : boolean;
     mimetyp  : string[30];
     viewer   : ViewInfo;
+    nw_mp : boolean;
 
   function fnform(fname:string; len:integer):string;
   begin
@@ -789,10 +790,11 @@ begin
   mpselect:=true;
   mpart_nr:=1;
   poppush:=true;
+  nw_mp:=NachWeiter;
 
   repeat                { +/- - Schleife }
     nw:=NachWeiter;     { kann vom Lister verÑndert werden }
-    _down:=NachWeiter and not ((rdmode=1) and (dispmode=10));
+    _down:=NachWeiter and nw_mp and not ((rdmode=1) and (dispmode=10));
     ende:=true;
     GoP;
     aktdisprec:=dbRecno(mbase);
@@ -853,17 +855,17 @@ begin
       GetExtViewer(mpdata.fname,viewer);    { Dateiendung hat bei Viewerauswahl }
       if viewer.prog='' then                { Vorrang vor dem Mimetyp }
         GetMimeViewer(mimetyp,viewer);
-                                                       {Einteilige nicht text/plain Message }
+                                            { Einteilige nicht text/plain Message }
       if ((mp=1) or (mp=2)) and (mimetyp <>'') and (mimetyp<>'text/plain')
         and (left(mimetyp,9)<>'multipart') then
       begin
         multipart:=false;
         pushhp(94);
-        listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
+        listbox(56,min(screenlines-4,2),getres2(2440,9));  { 'Nachrichtenteil ƒ Zeilen ƒ Dateiname' }
         app_l(forms(' '
           + typname(left(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),30)
           + '  ' + fnform(mpdata.fname,23) + ' 1');
-        app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
+        app_l(' '+forms(getres2(2440,10),55)+' 1');  { 'gesamte Nachricht' }
         listTp(SSP_Keys);
         ListSetStartpos(1);
         list(brk);
@@ -872,11 +874,11 @@ begin
         pophp;
         if brk then goto nextmsg;
         if kb_ctrl then begin
-          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { Ctrl evtl. kÅnstlich "gedrÅckt" }
+          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { <Ctrl> evtl. kÅnstlich "gedrÅckt" }
           viewer.prog:='*intern*';
         { GetDefaultViewer('text/plain', Viewer); }
           end; 
-        if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
+        if copy(get_selection,2,10)=left(getres2(2440,10),10)  { 'gesamte Na' }
           then viewer.prog:='*intern*';
           { GetDefaultViewer('text/plain', Viewer); }
         Testviralextension;
@@ -896,7 +898,7 @@ begin
           end;
         SelectMultiPart(mpselect,mpart_nr,mp=2,mpdata,brk);
         if kb_ctrl then begin
-          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { Ctrl evtl. kÅnstlich "gedrÅckt" }
+          mem[Seg0040:$17]:=mem[Seg0040:$17] and not 4;  { <Ctrl> evtl. kÅnstlich "gedrÅckt" }
           mpdata.typ:='text'; mpdata.subtyp:='plain'; mimetyp:='text/plain';
           end; 
         pophp;
@@ -1141,6 +1143,8 @@ begin
                   inc(mpart_nr);
                 mpselect:=true;
                 ende:=false;
+                nw_mp:=NachWeiter;
+                NachWeiter:=nw;
                 end
               else begin
                 SetGelesen;
@@ -1711,6 +1715,13 @@ begin
   aufbau:=true;
 end;
 
+procedure switch_weiterschalt;
+begin
+  NachWeiter:=not NachWeiter;
+  attrtxt(col.colmenu[0]);
+  mwrt(71,1,iifc(NachWeiter,' ','W'));
+end;
+
 procedure seek_brett(fwd:boolean);
 var i   : integer;
     rec : longint;
@@ -1745,6 +1756,21 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.37  2002/04/07 22:32:40  my
+  MY:- Der 983. Nachrichten-Weiterschalter-Fix: Wenn bei einer MIME-
+       Multipart-Nachricht der Lister mit <Backspace> verlassen wurde, war
+       ein aktivierter Nachrichten-Weiterschalter fÅr den Rest der XP-
+       Sitzung deaktiviert, wenn er nicht ausdrÅcklich mit <Ctrl-W> wieder
+       aktiviert wurde. Der Schalter behÑlt jetzt seinen Status fÅr die
+       nachfolgenden Nachrichten bei, beim Verlassen des MIME-AuswahlmenÅs
+       kommt es hinsichtlich des Weiterschaltens zur nÑchsten Nachricht
+       darauf an, wie der Lister beim zuletzt betrachteten Nachrichtenteil
+       verlassen wurde (<Backspace> => nicht weiterschalten, <Esc> =>
+       weiterschalten).
+
+  MY:- Anzeige des manuell mit <Ctrl-W> gesetzten Nachrichten-Weiter-
+       schalters in oberer MenÅleiste wieder eingebaut.
+
   Revision 1.25.2.36  2002/03/31 15:50:54  my
   JG:- Im MIME-AuswahlmenÅ kann jetzt mit <Ctrl-Enter> oder <Space>
        (Leertaste) die Anzeige mit dem XP-Lister statt mit dem
