@@ -45,13 +45,48 @@ function Xec(var prog:string; space,envspace:word; var prompt:string;
 
 implementation  { --------------------------------------------------- }
 
+
 {$IFNDEF BP }
+
+uses
+  sysutils;
 
 function Xec(var prog:string; space,envspace:word; var prompt:string;
              var errorlevel:word):byte;
+
+  function environment:string;
+  begin
+    if envspace=0 then environment:=''
+    else environment:=' /E:'+strs(envspace);
+  end;
+var
+    pp    : byte;
+    para  : string[130];
+    dpath : pathstr;
 begin
+  pp:=pos(' ',prog);
+  if pp=0 then para:=''
+  else begin
+    para:=' '+trim(copy(prog,pp+1,127));
+    prog:=left(prog,pp-1);
+    end;
+  prog:=ustr(prog);
+
+  if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
+    dpath:=''
+  else begin
+    if FileExists(prog) then dpath:=prog
+    else dpath:=UStr(fsearch(prog,getenv('PATH')));
+    if (right(dpath,4)<>'.EXE') and (right(dpath,4)<>'.COM') then
+      dpath:='';
+    end;
+  if (para<>'') and (para[1]<>' ') then para:=' '+para;
+  if dpath='' then begin
+    para:=environment+' /c '+prog+para;
+    dpath:=getenv('comspec');
+    end;
+  Exec(dpath, para);
   Xec := ExecOk;
-  Exec(prog, '');
 end;
 
 {$ELSE }
@@ -79,10 +114,8 @@ function exec2(var dpath,para:string; swapstart,swapmore:word; envir:pointer):wo
 external;
 {$L exxec.obj}
 
-
 function Xec(var prog:string; space,envspace:word; var prompt:string;
              var errorlevel:word):byte;
-{$IFDEF BP }
 {$ifndef ver55}
   const freeptr : pointer = nil;
 {$endif}
@@ -286,16 +319,6 @@ var regs  : registers;
       errorlevel:=regs.al;
       end;
   end;
-{$ENDIF }
-  function exist(s:string):boolean;
-  var sr : searchrec;
-  begin
-    findfirst(s,0,sr);
-    exist:=doserror=0;
-    {$IFDEF Ver32 }
-    findclose(sr);
-    {$ENDIF }
-  end;
 
   function environment:string;
   begin
@@ -303,9 +326,18 @@ var regs  : registers;
     else environment:=' /E:'+strs(envspace);
   end;
 
+  function exist(s:string):boolean;
+  var sr : searchrec;
+  begin
+    findfirst(s,0,sr);
+    exist:=doserror=0;
+    {$IFDEF Ver32 }
+      findclose(sr);
+    {$ENDIF }
+  end;
+
 begin
   Xec:=ExecOk;
-{$IFDEF BP }
   if so(freeptr).o>0 then          { Gr”áe der Free-Liste ermitteln }
     fs:=$1000a-so(freeptr).o
   else
@@ -314,7 +346,6 @@ begin
     getmem(p,fs);
     FastMove(freeptr^,p^,fs);
     end;
-{$ENDIF }
 
   pp:=pos(' ',prog);
   if pp=0 then para:=''
@@ -338,7 +369,6 @@ begin
     dpath:=getenv('comspec');
     end;
 
-{$IFDEF BP }
   {$IFNDEF DPMI}
     paras:=memw[prefixseg:2]-prefixseg+1;
     space:=(space+1)*64;   { KB -> Paragraphs, + 1 extra-KB }
@@ -383,22 +413,16 @@ begin
     else
       fileanz:=0;
     {$ENDIF}
-{$ENDIF }
 
     swapvectors;
-{$IFDEF BP }
     if swapmore=0 then
-{$ENDIF }
       exec(dpath,para)
-{$IFDEF BP }
     else begin
       doserror:=0;
       inoutres:=Exec2(dpath,para,swapstart,swapmore,newenv);
       if ioresult<>0 then Xec:=ExecSwaperr;
       end;
-{$ENDIF }
     swapvectors;
-{$IFDEF BP }
     {$IFNDEF DPMI}
     if fileanz>0 then begin
       memw[prefixseg:$32]:=fileanz;
@@ -431,7 +455,6 @@ begin
     FastMove(p^,freeptr^,fs);
     freemem(p,fs);
     end;
-{$ENDIF }
 end;
 
 {$ENDIF }
@@ -443,6 +466,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

@@ -237,9 +237,7 @@ var nlp       : NL_ap;
   begin
     getdate(dt.year,dt.month,dt.day,dummy);
     gettime(dt.hour,dt.min,dt.sec,dummy);
-{$IFNDEF WIN32}
     PackTime(dt,ActTime);
-{$ENDIF }
     if filetime(NodelistCfg)>filetime(UserIndexf) then begin
       if filetime(NodelistCfg)>ActTime then
         setfiletime(NodelistCfg,ActTime);
@@ -746,6 +744,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:34  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -18,12 +18,10 @@ unit fileio;
 interface
 
 uses
-{$IFNDEF Delphi }
-  dos,
-{$ELSE }
+{$IFDEF Ver32 }
   sysutils,
 {$ENDIF }
-  xpglobal, typeform;
+  dos, xpglobal, typeform;
 
 const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMWrite      = $01;
@@ -91,6 +89,11 @@ var ShareDa : boolean;
 
 
 Function exist(n:string):boolean;
+{$IFDEF Ver32  }
+begin
+  Exist := FileExists(n);
+end;
+{$ELSE }
 var sr : searchrec;
     ex : boolean;
 begin
@@ -100,11 +103,9 @@ begin
     findnext(sr);
     ex:=(doserror=0);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
   exist:=ex;
 end;
+{$ENDIF }
 
 Function existf(var f):Boolean;
 var
@@ -696,6 +697,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.9  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

@@ -75,7 +75,7 @@ procedure dbSetIndex(dbp:DB; indnr:word);
 function  dbGetIndex(dbp:DB):word;
 procedure dbSeek(dbp:DB; indnr:word; key:string);
 function  dbFound:boolean;
-function  dbIntStr(i:integer):string;
+function  dbIntStr(i:integer16):string;
 function  dbLongStr(l:longint):string;
 
 {--------------------------------------------- Daten lesen/schreiben ---}
@@ -178,7 +178,7 @@ end;
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ENDIF }
 
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
+procedure seek_cache(dbp:pointer; ofs:longint; var i:integer16); assembler;
 asm
 {$IFDEF BP }
          xor   cx,cx
@@ -221,11 +221,11 @@ end;
          inc   ecx
          cmp   ecx,cacheanz
          jb    @sc_lp
-@cfound: mov   [i], ecx
+@cfound: mov   [i], cx
 end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ENDIF }
 
-procedure seek_cache2(var _sp:integer); assembler;
+procedure seek_cache2(var _sp:integer16); assembler;
 asm
 {$IFDEF BP }
          les   di,cache
@@ -280,7 +280,7 @@ end;
          jmp   @nofree
 
 @sc2ok:  mov   ebx,ecx                   { sp:=i }
-@nofree: mov   [_sp], ebx
+@nofree: mov   [_sp], bx
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ENDIF }
 
@@ -1708,6 +1708,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.10  2000/03/08 22:36:32  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

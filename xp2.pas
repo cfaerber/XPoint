@@ -347,7 +347,7 @@ begin
     ReadParfile;
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
@@ -363,7 +363,7 @@ begin
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
   if VideoType<2 then ParFontfile:='';
@@ -513,7 +513,7 @@ begin
     languageopt:=false;
 *)
 
-  {$IFDEF virtualpascal}
+  {$IFDEF Ver32 }
   FindClose(sr);
   {$ENDIF}
   if not exist(lf) then
@@ -783,7 +783,6 @@ var t   : text;
     p   : byte;
     l1,l2,l3 : integer32;
     l   : integer32;
-    i   : integer16;
     code: integer32;
     rp  : ^boolean;
     c   : char;
@@ -817,7 +816,9 @@ begin
          (l=4266) or (l=4333) or         { storniert                      }
          (l=8113) or                     { Key in CCC.GER ver”ffentlicht  }
          (l=6323) or                     { Key in Cracker-Kreisen aufgetaucht }
+{$IFNDEF Debug }
          (l=101) or                      { Key im Usenet aufgetaucht }
+{$ENDIF }
          (l=0) or (l=11232) or (l=12345) or (l=23435) or (l=32164) or
          (l=33110) or (l=34521) or (l=54321) or (l=12034) then   { Hacks }
         l:=0;
@@ -825,18 +826,12 @@ begin
       rp:=@registriert;
       inc(longint(rp));
       l1:=CRC16strXP(reverse(hex(l+11,4))); l1:=l1 xor (l1 shl 4);
-{$IFDEF Debug} { MK 01/00 Hier ist der Artithmetik-šberlauf erwnscht! }
-{$Q-}
-{$ENDIF }
-      if l<=maxint then begin
-        i:=l;           { Registrierungs-Bug emulieren: Integer l„uft ber }
-        l2:=CRC16strXP(reverse(hex(i*3,5)));
-        end
+
+      { Registrierungsbug Plattformunabh„nig emulieren }
+      if l<=maxint then
+        l2:=CRC16strXP(reverse(hex(l*3-65535,5)))
       else
         l2:=CRC16strXP(reverse(hex(l*3,5)));
-{$IFDEF Debug}
-{$Q+}
-{$ENDIF }
       l2:=l2 xor (l2*37);
       l3:=l1 xor l2 xor CRC16strXP(reverse(strs(l)));
       delete(s,1,p);
@@ -1101,6 +1096,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.18  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.17  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

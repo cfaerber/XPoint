@@ -20,6 +20,9 @@ begin
     case mpnr of
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
+{$IFDEF Ver32 }
+      $095 : MenuHidden:=true;
+{$ENDIF }
       $097 : MenuHidden:=not exzconfig;              { Config/Anz./Pd-Zmodem }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
@@ -568,6 +571,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

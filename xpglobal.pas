@@ -76,11 +76,14 @@ type
       integer =    longint;
       word =       longint; { = signed }
       dword =      longint; { = signed }
-    {$ELSE }
-      { Borland Pascal ab Version 9, 32 Bit }
+    {$ENDIF }
+    {$IFDEF FPC }
+      { FreePascal, 32 Bit }
       integer8 =   shortint;
-      integer16 =  smallint;
+      integer16 =  integer;
       integer32 =  longint;
+      { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
+{      integer =    longint;} { !!! }
       word =       longint; { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
@@ -102,13 +105,15 @@ begin
   {$IFDEF Debug }
     {$IFDEF FPC }
        Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
-        ' by ', {$I %USER%}, ' with Compiler ', {$I %FPCVERSION%},
-        ' for ', {$I %FPCTARGET%});
+        ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
     {$ENDIF }
   {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.11  2000/03/09 23:39:34  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.10  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

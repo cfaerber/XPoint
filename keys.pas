@@ -220,13 +220,8 @@ end;
 
 procedure flushtoforward;
 begin
-{$IFDEF WIN32 }
-  while keypressed and (length(forwardkeys)<250) do
-    forwardkeys:=forwardkeys+readkey;
-{$ELSE}
   while crt.keypressed and (length(forwardkeys)<250) do
     forwardkeys:=forwardkeys+crt.readkey;
-{$ENDIF}
 end;
 
 
@@ -297,7 +292,7 @@ const start = $80;
 {$ENDIF}
 
 begin
-{$IFNDEF Ver32 }
+{$IFDEF BP }
   asm
     cli
   end;
@@ -414,6 +409,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.8  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 

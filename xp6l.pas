@@ -15,7 +15,7 @@ unit xp6l;
 
 interface
 
-uses  xp0,xpcc;
+uses  xp0,xpcc, xpglobal;
 
 
 { Tabelle fr IBM -> ISO-Konvertierung }

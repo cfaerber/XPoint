@@ -192,7 +192,7 @@ end;
 
 { SchlÅssel-Strings erzeugen }
 
-function dbIntStr(i:integer):string;
+function dbIntStr(i:integer16):string;
 begin
   dbIntStr:=chr(hi(i))+chr(lo(i));
 end;
@@ -234,6 +234,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.3  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

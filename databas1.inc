@@ -173,7 +173,7 @@ end;
 
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
-    wp   : ^word absolute rbuf;
+    wp   : ^smallword absolute rbuf;
     i,o: integer;
 begin
   with np^ do
@@ -181,22 +181,23 @@ begin
       getmem(rbuf,irsize);
       filepos:=offs;
       cache_read(db_p,irsize,offs,rbuf^);
-{$IFDEF BP }
       { Hier muá noch was getan werden, denn so klappt das unter
         32 Bit einfach nicht... }
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
-{$ENDIF }
 
-{     anzahl:=wp^;     (expand_node alt)
+{$IFDEF Ver32 }
+      { Expand-Node Pascal Version }
+      anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
       o:=10;
       for i:=1 to anzahl do begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
-        end; }
-
+      end;
+{$ELSE }
       expand_node(rbuf,np);
+{$ENDIF }
       freemem(rbuf,irsize);
      end;
 end;
@@ -206,7 +207,7 @@ end;
 
 procedure WriteNode(var np:inodep);
 var rbuf : barrp;
-    wp   : ^word absolute rbuf;
+    wp   : ^smallword absolute rbuf;
     i,o  : word;
 begin
   with np^ do
@@ -268,6 +269,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.7  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

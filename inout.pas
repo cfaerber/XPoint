@@ -29,7 +29,8 @@ UNIT inout;
 
 INTERFACE
 
-uses   xpglobal, dos, crt,keys,typeform,fileio,mouse, xp0;
+uses
+  xpglobal, dos, crt,keys,typeform,mouse, xp0;
 
 const  lastkey   : taste = '';
 
@@ -262,7 +263,13 @@ procedure mdelay(msec:word);
 
 IMPLEMENTATION
 
+
 uses   maus2, winxp;
+
+{$IFDEF Win32 }
+procedure GetLocalTime(var t : TSystemTime);
+     external 'kernel32' name 'GetLocalTime';
+{$ENDIF }
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -288,11 +295,19 @@ var    ca,ce,ii,jj : byte;
        istackp     : integer;
        autolast    : longint;   { Get: Tick des letzten AutoUp/Down }
 
-
 function ticker:longint;
+{$IFDEF Win32 }
+var
+  T: TSystemTime;
+{$ENDIF }
 begin
 {$IFDEF BP }
     ticker:=meml[Seg0040:$6c];
+{$ELSE }
+  GetLocalTime(T);
+  with T do
+    Ticker := (wMilliSeconds div 55) + wSecond * 18 + wMinute * 18 * 60 +
+      wHour * 18 * 60 * 60 + wDay * 18 * 60 * 60 * 24;
 {$ENDIF}
 end;
 
@@ -1697,7 +1712,7 @@ end;
 
 procedure IoVideoInit;
 begin
-{$IFNDEF WIN32}
+{$IFDEF BP }
   color:=(mem[Seg0040:$49]<>7);
   if color then testcga;
   getzpz;
@@ -1739,6 +1754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.12  2000/03/08 22:36:33  mk
   - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
 

@@ -637,9 +637,7 @@ begin
         end;
       end
     else if developer then begin
-{$IFNDEF WIN32}
       sound(4000); delay(5); nosound;
-{$ENDIF}
       end;
     dbSetIndex(bezbase,mi);
     end;
@@ -719,9 +717,7 @@ begin
   else begin
     getftime(f,l);
     close(f);
-{$IFNDEF WIN32}
     unpacktime(l,dt);
-{$ENDIF}
     with dt do
       ZCfiletime:=formi(year,4)+formi(month,2)+formi(day,2)+
                   formi(hour,2)+formi(min,2)+formi(sec,2);
@@ -743,11 +739,9 @@ begin
     hour:=ival(copy(ddatum,9,2));
     min:=ival(copy(ddatum,11,2));
     sec:=ival(copy(ddatum,13,2));
-{$IFNDEF WIN32}
     packtime(dt,l);
     setftime(f,l);
     close(f);
-{$ENDIF}
     end;
 end;
 
@@ -971,6 +965,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.25  2000/03/07 17:45:14  jg
   - Viewer: Bei Dateien mit Leerzeichen im Namen wird
     grundsaetzlich ein .tmp File erzeugt

@@ -191,7 +191,7 @@ var size   : longint;
       pw    : string;
       coder : byte;
       siz0  : smallword;
-      passpos : word;
+      passpos : smallword;
       show  : boolean;
       x,y   : byte;
       _off  : longint;
@@ -1028,6 +1028,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.11  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.10  2000/02/28 23:43:01  rb
   Grmpf, ich hatte vergessen, das nicht mehr ben”tigte 'IniQuote' auszukommentieren
 

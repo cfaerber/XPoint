@@ -64,7 +64,7 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 { procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas } 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:word);
+              var passpos:smallword);
 procedure Iso1ToIBM(var data; size:word);
 procedure IBMToIso1(var data; size:word);
 function  TxtSeek(adr:pointer; size:word; var key:string; igcase,umlaut:boolean):boolean;
@@ -140,24 +140,20 @@ const IBM2ISOtab : array[0..255] of byte =
 
 
 {$IFDEF ver32}
-procedure Rot13(var data; size:word); begin end;
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:word); begin end;
+              var passpos:smallword); begin end;
 function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
          boolean; begin end;
 procedure Iso1ToIBM(var data; size:word); begin end;
 procedure IBMToIso1(var data; size:word); begin end;
 
 {$ELSE}
-{dont $L xp3.obj}
 
 { JG:17.02.00 Prozeduren aus XP3.ASM integriert }
 { jetzt in TYPEFORM.PAS: procedure Rot13(var data; size:word); assembler; }
 
-
-
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:word); assembler;
+              var passpos:smallword); assembler;
 
 { decode:  TRUE -> dekodieren, FALSE -> codierem                  }
 { data:    Zeiger auf Datenblock                                  }
@@ -1261,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.12  2000/02/20 20:46:17  jg
   Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
   Todo aktualisiert

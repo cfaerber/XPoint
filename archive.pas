@@ -284,9 +284,6 @@ end;
 { Sekunden seit 1970 in DOS-Timestamp umwandeln }
 
 procedure GetDateFrom70(secs:longint; var datum,uhrzeit:word);
-{$IFNDEF WIN32}
-
-
 const tagsec = 24*60*60;
 var dt   : DateTime;
     l    : longint;
@@ -314,11 +311,6 @@ begin
   uhrzeit:=l and $ffff;
   datum:=l shr 16;
 end;
-{$ELSE}
-begin
-end;
-{$ENDIF}
-
 
 { negativer Wert: SFX }
 
@@ -675,7 +667,6 @@ label again;
   end;
 
   procedure CalcUnixTime(s:string; var zeit,datum:word);
-{$IFNDEF WIN32}
   const  tagsec = 24*60*60;
   var dt   : DateTime;
       secs : longint;
@@ -739,10 +730,6 @@ label again;
     zeit := l and $ffff;
     datum := l shr 16;
   end;
-{$ELSE}
-begin
-end;
-{$ENDIF}
 
 begin
   with ar do
@@ -998,7 +985,7 @@ begin
     if pkch<>'PK' then inc(arcofs);   { altes PKZIP-SFX-Format }
     seek(f1,arcofs);
     end;
-{$IFNDEF WIN32}
+{$IFDEF BP }
   ps:=min(maxavail-1000,maxbuf);
 {$ENDIF}
   getmem(p,ps);
@@ -1034,6 +1021,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

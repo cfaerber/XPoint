@@ -719,13 +719,11 @@ var brk      : boolean;
       mappsel(false,getres2(1004,1));
       for i:=1 to 7 do mappsel(false,wtage[i]);
       maddstring(3,8,getres2(1004,9),action,30,80,'');   { 'Aktion     ' }
-{$IFNDEF WIN32}
       mappsel(false,boxsel1^);
       if boxsel2^<>'' then
         mappsel(false,boxsel2^);
       for i:=2 to comms do mappsel(false,comstr[i]);
       msetvfunc(testaction);
-{$ENDIF}
       readmask(brk);
       enddialog;
       if not brk then begin
@@ -1338,7 +1336,6 @@ var brk      : boolean;
     list(brk);
     closebox;
     if not brk then begin
-{$IFNDEF WIN32}
       s:=trim(get_selection);
       i:=res2anz(222);
       while (i>0) and ((pos(s,getres2(222,i))=0) or (pos(s,getres2(222,i))>10) or
@@ -1348,7 +1345,6 @@ var brk      : boolean;
       Move(xhd[p+a],xhd[p+a+1],(anzahl-p-a));
       xhd[p+a]:=i;
       modi:=true;
-{$ENDIF}
       end;
     closelist;
   end;
@@ -1408,13 +1404,9 @@ var brk      : boolean;
       ft : longint;
   begin
     fn:=FidoDir+NLfilename(n);
-{$IFNDEF WIN32}
     ft:=filetime(fn);
-{$ENDIF}
     editfile(fn,false,false,0,false);
-{$IFNDEF WIN32}
     if filetime(fn)<>ft then reindex:=true;
-{$ENDIF}
   end;
 
 
@@ -1761,14 +1753,10 @@ begin
       modi:=false;
       end;
     if (typ=5) and ((nr=0) or (nr=okb)) and modi then begin
-{$IFNDEF WIN32}
       oldft:=filetime(NodelistCfg);
-{$ENDIF}
       SaveNodeCfg;
-{$IFNDEF WIN32}
       if (oldft<>0) and not reindex then  { autom. Neuindizierung bei }
         setfiletime(NodelistCfg,oldft);   { n„chstem Programmstart verhindern }
-{$ENDIF}
       modi:=false;
       end;
   until ((nr=0) or (nr=okb)) and
@@ -2050,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

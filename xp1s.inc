@@ -119,9 +119,10 @@ begin
     ExecDeutsch:=deutsch;
 
     ExecResident:=resiprog;
+{$IFDEF BP }
     ExecUseEms:=SwapToEms;
     ExecUseXms:=SwapToXms;
-
+{$ENDIF }
     case Xec(prog,space,envspace,_xp_,errorlevel) of
       ExecSwaperr : begin
                       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
@@ -453,6 +454,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.13  2000/03/08 22:13:31  rb
   nicht mehr benîtigte Routinen fÅr OS/2 Programmaufruf entfernt
 

@@ -21,7 +21,7 @@ unit  maus2;
 
 interface
 
-uses  crt,mouse,keys;
+uses  crt,mouse,keys, xpglobal;
 
 const mausleft    = #0#240;       { links gedrckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -337,6 +337,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 

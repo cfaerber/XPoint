@@ -20,7 +20,7 @@ unit xpcc;
 interface
 
 uses  typeform,fileio,inout,maske,datadef,database,stack,resource,
-      xp0,xp1,xp1input;
+      xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 50;
       ccte_nobrett : boolean = false;
@@ -339,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/09 23:39:34  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.8  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

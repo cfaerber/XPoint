@@ -253,7 +253,7 @@ asm
          dec    ecx
          jnz    @llp                   { endet Zeile nicht auf LF ? }
 
-@ende:   mov    [rp],1
+@ende:   mov    dword ptr [rp],1
          jmp @the_end
 
 @nocr:   inc    edx                     { ein Zeichen weiter }
@@ -1634,6 +1634,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.8  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.7  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

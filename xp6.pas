@@ -488,12 +488,10 @@ begin
     mon;
     end;
   if pushpgdn then pushkey(keycpgd);
-{$IFNDEF WIN32}
   if exteditor<3 then EditSetBetreff(betreff,betrlen);
   editfile(datei,true,
            (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
            iif(editvollbild,0,2),umlaute=1);
-{$ENDIF}
   if exteditor<3 then betreff:=EditGetbetreff;
   if edpush then begin
     moff; wpop; mon;
@@ -580,10 +578,9 @@ var i,j,first : integer;
       s   : AdrStr;
     function IndexStr(i:integer):string;
     begin
-    {$IFNDEF Ver32}
       with ccm^[i] do
-        IndexStr:=char(encode)+forms(server,BoxNameLen)+char(ccpm);
-    {$ENDIF }
+        { !! Char(Byte(x)) ist eine groáe Schweinerei, evtl. mal „ndern }
+        IndexStr:=char(byte(encode))+forms(server,BoxNameLen)+char(byte(ccpm));
     end;
   begin
     repeat
@@ -1134,9 +1131,7 @@ fromstart:
       end;
     end;
 
-{$IFNDEF WIN32}
   orgftime:=filetime(datei);
-{$ENDIF}
   if edit then
     EditNachricht(pgdown);
   if not getsize then goto xexit;        { --> Nachrichten-Gr”áe 0 }
@@ -1827,9 +1822,7 @@ fromstart:
         case docode of
           1 : encode_file(false,f^,f2^);
           2 : begin
-{$IFNDEF WIN32}
                 DES_PW(passwd^);
-{$ENDIF}
                 encode_file(true,f^,f2^);
               end;
         end;
@@ -2071,6 +2064,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.8  2000/03/07 20:36:03  jg
   - Bugfix: Versand von bereits r/w geoeffneten Dateien fehlermeldung
     statt 0-byte Mails bei Binaerfiles bzw. RTE 200 bei Textfiles

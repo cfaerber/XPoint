@@ -27,14 +27,9 @@ INTERFACE
 
 uses xpglobal, crt,dos, typeform;
 
-var  readfail,writefail : boolean;
-
 function  GetDrive:char;
-procedure SetDrive(drive:char);
 function  dospath(d:byte):pathstr;
 procedure GoDir(path:pathstr);
-function  GetMaxDrive:char;
-function  laufwerke:byte;                   { Åber int $11 }
 function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
                                             { 4=Device, 5=Netz              }
 function  alldrives:string;
@@ -55,13 +50,19 @@ procedure DPMIfreeDOSmem(selector:word);
 
 { ================= Implementation-Teil ==================  }
 
-IMPLEMENTATION
+implementation
+
+{$IFDEF Ver32 }
+uses sysutils;
+{$ENDIF }
+
 
 {$IFDEF BP }
 const DPMI   = $31;
 {$ENDIF }
 
 function GetDrive:char;
+{$IFDEF BP }
 var regs : registers;
 begin
   with regs do begin
@@ -69,17 +70,13 @@ begin
     msdos(regs);
     getdrive:=chr(al+65);
     end;
-end;
-
-
-procedure SetDrive(drive:char);
-var regs : registers;
+{$ELSE  }
+var
+  s: String;
 begin
-  with regs do begin
-    ah:=$e;
-    dl:=ord(UpCase(drive))-65;
-    msdos(regs);
-    end;
+  s := GetCurrentDir;
+  GetDrive := s[1];
+{$ENDIF }
 end;
 
 { 0=aktuell, 1=A, .. }
@@ -91,6 +88,20 @@ begin
   dospath:=s;
 end;
 
+procedure SetDrive(drive:char);
+{$IFDEF BP }
+var regs : registers;
+begin
+  with regs do begin
+    ah:=$e;
+    dl:=ord(UpCase(drive))-65;
+    msdos(regs);
+    end;
+{$ELSE }
+begin
+  SetCurrentDir(Drive + ':');
+{$ENDIF }
+end;
 
 procedure GoDir(path:pathstr);
 begin
@@ -99,27 +110,6 @@ begin
   if (length(path)>3) and (path[length(path)]='\') then
     dec(byte(path[0]));
   chdir(path);
-end;
-
-
-function GetMaxDrive:char;
-var regs : registers;
-begin
-  with regs do begin
-    ah:=$19;            
-    msdos(regs);        { aktuelles LW abfragen; 0=A, 1=B usw. }
-    ah:=$e; dl:=al;
-    msdos(regs);        { aktuelles LW setzen; liefert lastdrive in al }
-    GetMaxDrive:=chr(al+64);
-    end;
-end;
-
-function laufwerke:byte;
-var regs : registers;
-begin
-  intr($11,regs);
-  if not odd(regs.ax) then laufwerke:=0
-  else laufwerke:=(regs.ax shr 6) and 3 + 1;
 end;
 
 
@@ -146,7 +136,26 @@ end;
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz }
 
+
 function DriveType(drive:char):byte;
+
+
+{$IFDEF Ver32  }
+begin
+  { !! Hier sollte speziell fÅr das Betriebssystem eine saubere
+    Implementation gemacht werden }
+  DriveType := 1
+end;
+{$ELSE }
+
+  function laufwerke:byte;
+  var regs : registers;
+  begin
+    intr($11,regs);
+    if not odd(regs.ax) then laufwerke:=0
+    else laufwerke:=(regs.ax shr 6) and 3 + 1;
+  end;
+
 var regs : registers;
 begin
   if (drive='B') and (laufwerke=1) then
@@ -166,8 +175,22 @@ begin
         drivetype:=1;
       end;
 end;
+{$ENDIF }
 
 function alldrives:string;
+
+  function GetMaxDrive:char;
+  var regs : registers;
+  begin
+    with regs do begin
+      ah:=$19;
+      msdos(regs);        { aktuelles LW abfragen; 0=A, 1=B usw. }
+      ah:=$e; dl:=al;
+      msdos(regs);        { aktuelles LW setzen; liefert lastdrive in al }
+      GetMaxDrive:=chr(al+64);
+      end;
+  end;
+
 var b : byte;
     s : string;
     c : char;
@@ -306,6 +329,7 @@ end;
 
 
 function IsDevice(fn:pathstr):boolean;
+{$IFDEF BP }
 var f    : file;
     regs : registers;
 begin
@@ -322,14 +346,19 @@ begin
       end;
     close(f);
     end;
+{$ELSE }
+begin
+  IsDevice := true;
+{$ENDIF }
 end;
 
-begin
-  readfail:=false;
-  writefail:=false;
+
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

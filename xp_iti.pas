@@ -18,7 +18,7 @@ unit  xp_iti;
 
 interface
 
-uses  typeform,fileio;
+uses  typeform,fileio, xpglobal;
 
 const MaxMausInfos = 200;
 

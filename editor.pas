@@ -163,11 +163,6 @@ var   Defaults : edp;
 
 { ------------------------------------------------ externe Routinen }
 
-{$IFDEF ver32}
-function SeekStr(var data; len:word; var s:string; igcase:boolean):integer; begin end;
-function FindUmbruch(var data; zlen:integer):integer; begin end;
-{$ELSE}
-
 function SeekStr(var data; len:word;
                  var s:string; igcase:boolean):integer; assembler;
   { -1 = nicht gefunden, sonst Position }
@@ -176,6 +171,7 @@ asm
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
                db    'å','ç','é','è','ê','í','í','ì','ô'
   @start:
+{$IFDEF BP }
          push  ds
          lds   si,data
          push  si     { robo }
@@ -233,17 +229,74 @@ asm
          sub   ax,si  { robo }
   @sende:
          pop   ds
+{$ELSE }
+         mov    esi,data
+         push   esi     { robo }
+         mov    edi,s
+         mov    ecx,len
+         mov    al,[edi]              { ax:=length(s) - < 127! }
+         cbw
+         inc   ecx
+         sub   ecx,eax
+         jbe   @nfound
+         mov   dh,igcase
+
+  @sblp1:
+         xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
+         mov   dl,[edi]                { Key-LÑnge }
+  @sblp2:
+         mov   al,[esi+ebx]
+         or    dh,dh                   { ignore case (gro·wandeln) ? }
+         jz    @noupper
+         cmp   al,'a'
+         jb    @noupper
+         cmp   al,'z'
+         ja    @umtest
+         and   al,0dfh
+         jmp   @noupper                { kein Sonderzeichen }
+  @umtest:
+         cmp   al,128
+         jb    @noupper
+         cmp   al,148
+         ja    @noupper
+         push  ebx
+         mov   ebx,offset @uppertab-128
+         segcs
+         xlat
+         pop   ebx
+  @noupper:
+         cmp   al,[edi+ebx+1]
+         jnz   @nextb
+         inc   ebx
+         dec   dl
+         jz    @found
+         jmp   @sblp2
+  @nextb:
+         inc   esi
+         loop  @sblp1
+
+  @nfound:
+         pop   esi     { robo }
+         mov   eax,-1
+         jmp   @sende
+  @found:
+         mov   eax,esi
+         pop   esi
+         sub   eax,esi
+  @sende:
+{$ENDIF }
 end;
 
 
-function FindUmbruch(var data; zlen:integer):integer; assembler;
+function FindUmbruch(var data; zlen:integer16):integer; assembler;
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
+{$IFDEF BP }
             push  ds
             lds   si,data
             mov   bx,zlen
 
-  @floop:      
+  @floop:
             mov   al,[si+bx]
             cmp   al,' '               { ' ' -> unbedingter Umbruch }
             jz    @ufound
@@ -269,7 +322,7 @@ asm
             jbe   @ufound
             jmp   @fnext
 
-  @testslash:  
+  @testslash:
             cmp   bx,1
             ja    @testslash2
             mov   bx,0
@@ -288,11 +341,55 @@ asm
   @ufound:     
             mov   ax,bx
             pop ds
-end;
+{$ELSE }
+            mov   esi,data
+            movzx ebx,zlen
+  @floop:
+            mov   al,[esi+ebx]
+            cmp   al,' '               { ' ' -> unbedingter Umbruch }
+            jz    @ufound
 
-{ /robo }  
-  
-{$ENDIF}
+            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
+            jnz   @testslash           {        Zeichen folgt: }
+            mov   al,[esi+ebx+1]
+            cmp   al,'0'               { '0'..'9' }
+            jb    @fnext
+            cmp   al,'9'
+            jbe   @ufound
+            cmp   al,'A'               { 'A'..'Z' }
+            jb    @fnext
+            cmp   al,'Z'
+            jbe   @ufound
+            cmp   al,'a'               { 'a'..'z' }
+            jb    @fnext
+            cmp   al,'z'
+            jbe   @ufound
+            cmp   al,'Ä'               { 'Ä'..'•' }
+            jb    @fnext
+            cmp   al,'•'
+            jbe   @ufound
+            jmp   @fnext
+
+  @testslash:
+            cmp   ebx,1
+            ja    @testslash2
+            mov   ebx,0
+            jmp   @ufound
+  @testslash2:
+            cmp   al,'/'               { '/' -> Umbruch, falls kein }
+            jnz   @fnext               {        Trennzeichen vorausgeht }
+            cmp   byte ptr [edi+ebx-1],' '
+            jz    @fnext
+            cmp   byte ptr [edi+ebx-1],'-'
+            jnz   @ufound
+
+  @fnext:
+            dec   ebx
+            jnz   @floop
+  @ufound:
+            mov   eax,ebx
+{$ENDIF }
+end;
 
 procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
@@ -735,9 +832,7 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
     filemode:=mfm;
-{$IFNDEF ver32}
     p:=ptr(1,1);
-{$ENDIF}
     tail:=nil;
 {    endcr:=false; }
     srest:=false;
@@ -827,9 +922,7 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); reset(t,1);
     filemode:=mfm;
-{$IFNDEF ver32}
     p:=ptr(1,1);
-{$ENDIF}
     tail:=nil;
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
     while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
@@ -1880,6 +1973,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.9  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
 

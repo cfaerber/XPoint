@@ -19,7 +19,9 @@
 {$ENDIF }
 
 {$IFDEF FPC }
-  {$R ICONS.RES }
+  {$IFNDEF DOS32 }
+    {$R ICONS.RES }
+  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -200,8 +202,8 @@ ende:
 end.
 {
   $Log$
-  Revision 1.12  2000/03/09 13:12:00  mk
-  - Icons in 32 Bit EXE hinzugefuegt
+  Revision 1.13  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.11  2000/03/07 17:45:11  jg
   - Viewer: Bei Dateien mit Leerzeichen im Namen wird

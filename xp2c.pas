@@ -149,7 +149,7 @@ begin
     else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
     else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
     { else UserAufnahme:=2;  keine - gibt's nicht mehr }
-{$IFNDEF WIN32} { MK 12/99 }
+{$IFDEF BP }
     ListUseXms:=SwapToXms;
 {$ENDIF}
     GlobalModified;
@@ -439,14 +439,12 @@ begin
   s2:=trim(s);
   if left(s2,1)='*' then delfirst(s2);
   if cpos(' ',s2)>0 then s2:=copy(s2,1,cpos(' ',s)-1);
-{$IFNDEF WIN32} { MK 12/99 }
   if (s2='') or (FSearch(s2,GetEnv('PATH'))<>'') then
     testexist:=true
   else begin
     rfehler(206);   { 'Programm nicht erreichbar (Extension nicht vergessen!)' }
     testexist:=false;
     end;
-{$ENDIF}
 end;
 
 procedure listoptions;
@@ -709,19 +707,15 @@ begin
   if not brk and mmodified then begin
     if auswahlcursor then begin
       MaskSelcursor(curon);
-{$IFNDEF WIN32} { MK 12/99 }
       SetListCursor(curon);
       SetWinSelCursor(curon);
       EdSelcursor:=true;
-{$ENDIF}
       end
     else begin
       MaskSelcursor(curoff);
-{$IFNDEF WIN32} { MK 12/99 }
       SetListCursor(curoff);
       SetWinSelCursor(curoff);
       EdSelcursor:=false;
-{$ENDIF}
       end;
     GlobalModified;
     end;
@@ -1047,9 +1041,13 @@ begin
     for i := 1 to high(lpts) do
       if lpt = lpts[i] then DruckLPT := i;
 {    DruckLPT:=ival(lpt[4]); }
+{$IFDEF BP }
+    { !! Hier kracht es in der 32 Bit Version,
+      das muss genauer untersucht werden }
     close(lst);
     assignlst(lst,DruckLPT-1);
     rewrite(lst);
+{$ENDIF }
     GlobalModified;
   end;
   enddialog;
@@ -1304,13 +1302,11 @@ end;
 
 function testpgpexe(var s:string):boolean;
 begin
-{$IFNDEF WIN32} { MK 12/99 }
   if (s=_jn_[1]) and (fsearch('PGP.EXE',getenv('PGPPATH'))='') and
                      (fsearch('PGP.EXE',getenv('PATH'))='') then begin
     rfehler(217);    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
     s:=_jn_[2];
     end;
-{$ENDIF}
 end;
 
 function testxpgp(var s:string):boolean;

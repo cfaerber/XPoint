@@ -598,9 +598,7 @@ label ende,again;
     empf:=''; komm:='';
     maddstring(3,2,'Empf„nger ',empf,43,eAdrLen,'');
     mappcustomsel(xp3o.seluser,false);
-{$IFNDEF WIN32}
     msetvfunc(testmausempf);
-{$ENDIF}
     maddstring(3,4,'Kommentar ',komm,43,255,'');
     new(hdp); ReadHeader(hdp^,hds,false);
     mauswlbox:=pfadbox(true,hdp^.pfad);

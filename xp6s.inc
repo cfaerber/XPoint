@@ -457,19 +457,13 @@ begin
   seek(f^,ofs);
   while not eof(f^) do begin
     if ((umlaute<>1) and (umlaute<>2)) or newbin then begin
-{$IFNDEF WIN32}
       blockread(f^,p^,siz,rr);
-{$ENDIF}
       if iso then IbmToIso1(p^,rr);
       end
     else begin
-{$IFNDEF WIN32}
       blockread(f^,p^[1500],siz-1500,rr);  { Platz fÅr Umlaut-Konvertierung }
-{$ENDIF}
       rr0:=rr;
-{$IFNDEF WIN32}
       ukonv(umlaute,p^,rr);   { verÑndert evtl. rr }
-{$ENDIF}
       inc(fs,rr-rr0);
       end;
     if code=-1 then Rot13(p^,rr);
@@ -500,13 +494,11 @@ begin
     x:=0;
   ofs:=0;
   while not eof(f1) do begin
-{$IFNDEF ver32}
     blockread(f1,p^,8000,rr);
     if des then
       DES_code(false,p^,ofs,total,rr,x,y)
     else
       QPC(false,p^,rr,passwd,passpos);
-{$ENDIF}
     blockwrite(f2,p^,rr);
     inc(ofs,rr);
     end;
@@ -1136,6 +1128,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.10  2000/03/09 23:39:34  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.9  2000/03/01 09:24:30  mk
   HS: - FQDN jetzt auch bei UUCP-Boxen
 

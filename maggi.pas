@@ -38,7 +38,7 @@ uses  dos,
 {$IFDEF BP }
   xms,
 {$ENDIF }
-typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+  typeform,fileio,montage,xpdatum,xp_iti, xpglobal, inout;
 
 const       nt_ZConnect=2;
       OrgLen    = 80;
@@ -209,7 +209,7 @@ begin
 end;
 
 procedure error(txt:atext);
-var ticker : longint {$IFNDEF Ver32 } absolute $40:$6c {$ENDIF } ;
+var
     t      : longint;
     i      : integer;
 begin
@@ -217,7 +217,7 @@ begin
   for i:=1 to 18 do begin
     t:=ticker;
     repeat until ticker<>t;
-    end;
+  end;
   halt(1);
 end;
 
@@ -1854,6 +1854,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

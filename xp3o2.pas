@@ -18,7 +18,7 @@ unit xp3o2;
 
 interface
 
-uses typeform,datadef,database,resource,xp0,xp6;
+uses typeform,datadef,database,resource,xp0,xp6, xpglobal;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);

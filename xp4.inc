@@ -206,6 +206,9 @@ begin
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
                   shell('zconfig.exe',200,1);
+{$IFDEF Ver32 } { Eine Fehlerabfrage wird nicht gemacht, also Fehler l”schen }
+                  doserror := 0;
+{$ENDIF }
                   menurestart:=true;
                 end;
             8 : AccessibilityOptions;
@@ -572,6 +575,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.9  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.8  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

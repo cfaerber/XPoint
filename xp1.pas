@@ -624,16 +624,16 @@ end;
 
 { --- Bildschirmzeilen -------------------------------------}
 
+{$IFDEF BP }
 procedure XPFont;
 begin
-{$IFDEF BP }
   if not ParLCD then
     if ParFontfile[1]='*' then
       InternalFont
     else
       LoadFontfile(ParFontfile);
-{$ENDIF }
 end;
+{$ENDIF }
 
 {$IFDEF BP }
 procedure SetXPborder;
@@ -653,10 +653,13 @@ var ma  : map;
     n,i : integer;
 begin
   if (videotype<2) or ParLCD then screenlines:=25
-  else if ParFontfile<>'' then begin
+  else if ParFontfile<>'' then
+  begin
+{$IFDEF BP }
     XPFont;
+{$ENDIF }
     screenlines:=GetScreenlines;
-    end;
+  end;
   if (ParFontfile='') and not ParLCD then begin
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then begin
@@ -748,9 +751,12 @@ begin
     if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
     else m3:=false;
     if (videotype>1) and not ParLCD then
+{$IFDEF BP }
       if ParFontfile<>'' then
         XPFont
-      else if getscreenlines<>screenlines then begin
+      else
+{$ENDIF }
+      if getscreenlines<>screenlines then begin
         if not m3 then setvideomode(3);
         setscreenlines(screenlines);
         setmauswindow(0,639,0,screenlines*8-1);
@@ -889,9 +895,7 @@ begin
   blindon(true);
   attrtxt(col.colutility);
   forcecolor:=true;
-{$IFNDEF ver32}
   wpushs(l,r,o,u,'');
-{$ENDIF}
   forcecolor:=false;
   if txt<>'' then
     mwrt(l+2,o,' '+txt+' ');
@@ -900,10 +904,8 @@ end;
 
 procedure closebox;
 begin
-{$IFNDEF ver32}
   wpop;
   blindoff;
-{$ENDIF}
 end;
 
 
@@ -1730,6 +1732,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/03/09 23:39:32  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.14  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

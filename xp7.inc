@@ -343,7 +343,7 @@ begin
         if IgnCD or carrier(comnr) then begin
           DropDtr(comnr);
           mdelay(500);
-{$IFNDEF WIN32}
+{$IFDEF BP }
           SetDtr(comnr);
 {$ENDIF}
           i:=1;
@@ -355,7 +355,7 @@ begin
         flushin;
         if IgnCD then n:=0;
         end;
-{$IFNDEF WIN32}
+{$IFDEF BP }
       setdtr(comnr);
 {$ENDIF}
       NC^.hanguptime:=100-zaehler[2];   { +1 fÅr Rundungsfehler }
@@ -929,18 +929,14 @@ begin
           ltQuick : QuickToZ(SysopInp,fn,false,3);
           ltGS    : QuickToZ(SysopInp,fn,true,3);
           ltMaus  : begin
-{$IFNDEF WIN32}
                       ft:=filetime(box+'.itg');
-{$ENDIF}
                       MausToZ(SysopInp,fn,3);
                       MausGetInfs(box,mauslogfile);
                       MausLogFiles(0,false,box);
                       MausLogFiles(1,false,box);
                       MausLogFiles(2,false,box);
-{$IFNDEF WIN32}
                       if ft<>filetime(box+'.itg') then
                         MausImportITG(box);
-{$ENDIF}
                     end;
         end;
         end;
@@ -1271,10 +1267,8 @@ begin
     sound(745);
     mdelay(75);
     end;
-{$IFNDEF WIN32}
   nosound;
   mwriteln;
-{$ENDIF}
 
   _ende:=false;
   zaehler[2]:=300;
@@ -1433,6 +1427,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/03/09 23:39:34  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.5  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

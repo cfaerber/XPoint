@@ -1795,9 +1795,7 @@ var fn   : pathstr;
     i    : integer;
     sex  : pathstr;
 begin
-{$IFNDEF WIN32}
   fn:=trim(copy(get_selection,2,12));
-{$ENDIF}
   sex:=exdir; exdir:=TempPath;
   ShowArch(fn);
   exdir:=sex;
@@ -1886,7 +1884,6 @@ var ar   : ArchRec;
 begin
   if abs(typ)=ArcDWC then
     renameDWC;
-{$IFNDEF WIN32}
   OpenList(1,80,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
   OpenArchive(fn,typ,ar);
   listcrp(ShowArch);
@@ -1929,7 +1926,6 @@ begin
     _era(fn);
   aufbau:=true;
   ViewArchive:=listexit;
-{$ENDIF}
 end;
 
 procedure FileArcViewer(fn:pathstr);
@@ -2233,7 +2229,6 @@ var files    : string;
 
 begin
   nnode:='';
-{$IFNDEF WIN32}
   if not list_selbar and (list_markanz=0) then begin
     rfehler(438);   { 'keine Dateien markiert' }
     exit;
@@ -2384,7 +2379,6 @@ begin
     rfehler(438)    { 'keine Dateien markiert' }
   else
     nnode:=FidoRequest(node,files);
-{$ENDIF}
 end;
 
 
@@ -2416,6 +2410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
   Revision 1.23  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 
