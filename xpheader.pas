@@ -48,8 +48,9 @@ type
     procedure SetFistEmpfaenger(const Value: String);
     function GetTypChar: Char;
 
-  private
+  public // TODO: should be private when makeheader is made a method!
     FTo,FCC,FBCC: string;        
+  private
     function GetTo: string;         procedure SetTo(s:string);
     function GetCC: string;         procedure SetCC(s:string);
     function GetBCC: string;        procedure SetBCC(s:string);
@@ -422,6 +423,10 @@ procedure THeader.WriteZConnect(stream:TStream);
       writeln_s(stream,'ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then writeln_s(stream,'OAB: '+oab+iifs(oar='','',' ('+oar+')'));
       if wab<>'' then writeln_s(stream,'WAB: '+wab+iifs(war='','',' ('+war+')'));
+
+      if fto<>'' then writeln_s(stream,'U-TO: '+fto);
+      if fcc<>'' then writeln_s(stream,'U-CC: '+fcc);
+      
       writeln_s(stream,'BET: '+betreff);
       writeln_s(stream,'EDA: '+zdatum);
       writeln_s(stream,'MID: '+msgid);
@@ -727,7 +732,6 @@ begin
 
   { -- Build list of Newsgroups -------------------------------------- } 
   n.Sorted := true;
-  n.CaseSensitive := false;
 
   while Length(s)>0 do
   begin
@@ -810,6 +814,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/03/03 18:02:24  cl
+  - FPC fix
+
   Revision 1.25  2002/03/03 15:52:36  cl
   - start for envelope/informative recipient handling
 
