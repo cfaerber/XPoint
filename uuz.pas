@@ -1432,7 +1432,12 @@ end;
 
 
 procedure SetMimeData;
+var
+  i: Integer;
 begin
+  xpboundary := '----=_NextPart_';
+  for i := 1 to 10 + random (20) do
+    xpboundary := xpboundary + char (random (25) + byte ('A'));
   with hd,hd.mime do begin
     mversion:='1.0';
     if typ='T' then begin
@@ -1440,7 +1445,7 @@ begin
       else if MakeQP then encoding:=encQP
       else encoding:=enc8bit;
 
-{ 03.02.2000 robo - multipart/mixed outgoing }
+      { multipart/mixed outgoing }
 
       if left(mimetyp,10)='multipart/' then begin
         ctype:=tMultipart;
@@ -3561,7 +3566,7 @@ end;
 
 
 begin
-  test8086:=0;
+  Randomize;
   logo;
   initvar;
   getpar;
@@ -3574,6 +3579,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.2  2000/07/12 07:58:53  mk
+  RB:- XPBoundary Default in SetMimeData
+
   Revision 1.35.2.1  2000/07/02 10:42:59  mk
   - pformstr entfernt
 
