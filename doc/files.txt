@@ -4,9 +4,10 @@ Dateien im OpenXP Verzeichnis
 ARCHIVE.PAS     Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
 CAPI*.*         unvollendetes ISDN-CAPI-1.1-Modul
 CLIP.*          Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
-CRC16.PAS       CRC-16 berechnen
+CRC.PAS         CRC16/32-Routinen
 DATA*.*         Datenbankfunktionen fÅr *.DB1/*.IX1/*.EB1
 DBASE.PAS       dBASE-Dateien auslesen (fÅr YUP2PKT)
+DEBUG.PAS       Debug-Unit. Per Environment steuerbare Logmessages.
 DOSX.PAS        DOS- und BIOS-Funktionen
 ED*.*           Editor
 EMS.PAS         EMS-Speicherverwaltung
@@ -24,7 +25,7 @@ MOUSE.*         Auswertung von Maus-Interrupts (INT 33)
 PRINTERX.PAS    Druckerausgabe
 RESOURCE.PAS    String-Resourcen: *.RES auslesen
 STACK.PAS       ein primitiver Stack
-TPZCRC.PAS      CRC-16 und CRC-32 berechnen
+TIMER.PAS       Timer-Routinen
 TYPEFORM.*      Typumwandlungen, Stringformatierungen etc.
 UART.PAS        Ein-/Ausgabe via serieller Schnittstelle oder FOSSIL
 VIDEO.*         Video-BIOS-Funktionen
@@ -86,7 +87,6 @@ XP9.*           (fast) alle Funktionen im Edit-MenÅ
 XPAUTO.PAS      AutoVersandt, Autoexec-Verzeichnis
 XPCC.PAS        Verteiler
 XPCFG.PAS	3. Cfg-Datei
-XPCRC32.PAS     CRC-32 berechnen
 XPDATUM.PAS     Datumsumwandlungen
 XPDEF.INC       globale Compiler-Definitionen
 XPDIFF.PAS      Definitionen fÅr XP, XP-FM und ZFIDO
