@@ -23,7 +23,7 @@ uses xpglobal,
   archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
-const maxgl   = 50;
+const maxgl   = 46;
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -2021,6 +2021,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.16  2001/05/18 09:10:14  mk
+  - maxgl wieder auf 46 gestellt
+
   Revision 1.6.2.15  2001/05/17 14:57:29  mk
   - fix fuer Modi ueber 46 Zeilen
 
