@@ -27,7 +27,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038Message Area ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
-5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
+5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save        @S
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
