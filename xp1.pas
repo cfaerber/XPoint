@@ -1952,13 +1952,7 @@ end;
 
 procedure set_checkdate;
 begin
-  { !!
-  fillchar(dt,sizeof(dt),0);
-  getdate(dt.year,dt.month,dt.day,dummy);
-  gettime(dt.hour,dt.min,dt.sec,dummy);
-  packtime(dt,pdt);
-  if pdt shr 16 <> filetime(NewDateFile) shr 16 then
-    fileio.setfiletime(NewDateFile,pdt); }
+  FileClose(FileCreate(NewDateFile));
 end;
 
 
@@ -2097,6 +2091,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.3  2002/05/02 18:34:01  mk
+  - fixed #216189 - Check letzter Programmstart
+
   Revision 1.147.2.2  2002/05/01 16:37:37  mk
   - fixed last commit
 
