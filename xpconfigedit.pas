@@ -1198,18 +1198,21 @@ end;
 
 
 procedure gf_getntyp(var s:string);
-var uucp : boolean;
+var uucp,client : boolean;
 begin
+  setfieldtext(fieldpos+1,getres2(912,iif(LowerCase(s)=LowerCase(ntName(nt_Client)),13,2)));
   gf_fido:=(LowerCase(s)=LowerCase(ntName(nt_Fido)));
   uucp:=(LowerCase(s)=LowerCase(ntName(nt_UUCP)));
-  if (LowerCase(s)=LowerCase(ntName(nt_Maus))) or gf_fido or uucp then
+  client:=(LowerCase(s)=LowerCase(ntName(nt_Client)));
+  if (LowerCase(s)=LowerCase(ntName(nt_Maus))) or gf_fido or uucp or client then
     set_chml(userfield,'')
   else
     set_chml(userfield,'>');
-  if uucp then
+  if uucp or client then
     set_chml(fieldpos+1,'')
   else
     set_chml(fieldpos+1,'>');
+  setfieldtext(userfield,getres2(912,iif(client,12,3)));
 end;
 
 function xp9_testbox(var s:string):boolean;
@@ -1618,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2001/12/23 13:06:16  mk
+  - fixed gf_getnettype for ClientMode
+
   Revision 1.30  2001/12/13 17:06:46  mk
   - removed unused variable
 
