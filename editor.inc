@@ -118,7 +118,7 @@ begin
         if oldabs=pos.absatz then begin
           if assigned(newabs) then pos.absatz:=newabs
           else pos.absatz:=nxt;
-          if from<pos.offset then begin
+          if from<=pos.offset then begin
             pos.offset:=max(from,pos.offset-len);
             if (i=1) or (i=2) then BlockAbsCut:=true;
             if from>{=}oldabs^.size{-len} then
@@ -2417,6 +2417,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.13  2000/11/28 10:13:49  mk
+  RB:- major Bugfix for special Ctrg-Y/Ctrg-B handling
+
   Revision 1.19.2.12  2000/11/05 15:22:00  mk
   RB:- Aenderungen bezueglich - und /
 
