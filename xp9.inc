@@ -93,6 +93,7 @@
       bDomainNt:=nt;
       maddstring(3,yy,getres2(912,10),bdomain,30,60,        { 'Serverdomain' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(8034);
+      mset3proc(SetDomain2);
       inc(yy,2);
       end
     else
@@ -1699,6 +1700,9 @@
 
 {
   $Log$
+  Revision 1.34  2000/12/03 14:19:41  mk
+  - Serverdom mit Punkt
+
   Revision 1.33  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

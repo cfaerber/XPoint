@@ -386,6 +386,17 @@ begin
       end;
 end;
 
+procedure SetDomain2(var s:string);
+begin
+  if trim(s)<>'' then
+    if DomainNt=nt_Fido then
+      while (LeftStr(s,1)='.') or (LeftStr(s,2)='@') do
+        delfirst(s)
+    else begin
+      if s[1]<>'.' then
+         s:='.'+s;
+    end;
+end;
 
 procedure testArcExt(var s:string);
 begin
@@ -1809,6 +1820,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.50  2000/12/03 14:19:41  mk
+  - Serverdom mit Punkt
+
   Revision 1.49  2000/11/19 17:53:34  ma
   - renamed existBin to ExecutableExists
 
