@@ -758,27 +758,6 @@ var fn     : pathstr;
 
 label ende0,nextmsg;
 
-(*  exit codes Lister:
-
-    -128 bis  -5 = Keine Aktion, Fehlerton und Lister mit aktueller
-       8 bis 127 = Nachricht neu starten (Kommentarbaumbewegungen beachten)
-
-    -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
-    -3  = Kommentarbaum anzeigen
-    -2  = Wiedervorlageflag umschalten
-    -1  = <->
-     0  = <Esc>
-     1  = <+>
-     2  = <Links>
-     3  = <Rechts>
-     4  = Quote erstellen entsprechend "Listkey"
-     5  = Keine Aktion, Lister mit der Nachricht neu starten,
-          auf der in der NachrichtenÅbersicht der Cursorbalken steht,
-          bzw. mit der der Lister zuletzt geîffnet wurde
-          (Kommentarbaumbewegungen werden rÅckgÑngig gemacht).
-     6  = <Ctrl-PgUp>
-     7  = <Ctrl-PgDn> *)
-
 begin
   pushed:=false;
   first:=true;
@@ -839,7 +818,7 @@ begin
          ((lres <> -2) and (lres <> -4)) and ReadJN(getres(433),false) then  { 'Kommentar anzeigen' }
       begin
         ExtractKom(fn);
-        repeat until listfile(fn,'Kommentar',true,false,0) <> -4;  { <Ctrl-W> berÅcksichtigen! }
+        listfile(fn,'Kommentar',true,false,0);
         _era(fn);
         goto ende0;
       end;
@@ -880,7 +859,7 @@ begin
           end; 
         if copy(get_selection,2,10)=left(getres2(2440,10),10)  { 'gesamte Na' }
           then viewer.prog:='*intern*';
-          { GetDefaultViewer('text/plain', Viewer); }
+        { then GetDefaultViewer('text/plain', Viewer); }
         Testviralextension;
       end else
       begin
@@ -910,11 +889,13 @@ begin
           else
             mimetyp:='text/plain';
 
-          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
-          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
-            GetMimeViewer(mimetyp,viewer);
-          Testviralextension;                    { Schutz vor Mail-Viren }
-
+          if mimetyp<>'text/plain' then
+          begin
+            GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+            if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+              GetMimeViewer(mimetyp,viewer);
+            Testviralextension;                    { Schutz vor Mail-Viren }
+          end;
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
         end;
       end
@@ -1046,6 +1027,30 @@ begin
     { einer anderen Nachricht oder einem anderen Nachrichtenteil }
     { springen:                                                  }
 
+(*  exit codes Lister:
+
+    -128 bis  -5 = Keine Aktion, Fehlerton und Lister mit aktueller
+       8 bis 127 = Nachricht neu starten (Kommentarbaumbewegungen beachten)
+
+    -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
+    -3  = Kommentarbaum anzeigen
+    -2  = Wiedervorlageflag umschalten
+    -1  = <->
+     0  = <Esc>
+     1  = <+>
+     2  = <Links>
+     3  = <Rechts>
+     4  = Quote erstellen entsprechend "Listkey"
+     5  = Keine Aktion, Lister mit der Nachricht neu starten,
+          auf der in der NachrichtenÅbersicht der Cursorbalken steht,
+          bzw. mit der der Lister zuletzt geîffnet wurde
+          (Kommentarbaumbewegungen werden rÅckgÑngig gemacht).
+     6  = <Ctrl-PgUp>
+     7  = <Ctrl-PgDn> *)
+
+    { <Ctrl-W> aus Nicht-Textlister evtl. rÅckgÑngig machen}
+    if lres = -5 then xp0.listwrap:=not xp0.listwrap;
+
     if lres=4 then
     begin
       sm2t:=m2t; m2t:=false;
@@ -1086,7 +1091,7 @@ begin
       ende:=false;
     end
 
-    else if lres = -4 then ende:=false    { "O" oder <Ctrl-W> im Lister }
+    else if lres = -4 then ende:=false    { "O" im Lister }
 
     else begin
 
@@ -1130,7 +1135,7 @@ begin
             if u_read then aufbau:=true;
           end
           else begin
-            errsound; ende:=false;
+            if lres <> -4 then errsound; ende:=false; {-4 (Sub-) Listerende ohne Aktion }
           end;
         end
       else
@@ -1721,7 +1726,7 @@ procedure switch_weiterschalt;
 begin
   NachWeiter:=not NachWeiter;
   attrtxt(col.colmenu[0]);
-  mwrt(71,1,iifc(NachWeiter,' ','W'));
+  mwrt(71,1,iifc(NachWeiter,'W','w'));
 end;
 
 procedure seek_brett(fwd:boolean);
@@ -1758,6 +1763,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.39  2002/04/12 14:32:47  my
+  MY:- Logik bei der Anzeige des manuell mit <Ctrl-W> betÑtigten
+       Nachrichten-Weiterschalters geÑndert: Gro·es "W" steht fÅr
+       "Weiterschalter aktiviert", kleines "w" steht fÅr "Weiterschalter
+       deaktiviert".
+
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.25.2.38  2002/04/09 20:50:00  my
   JG:- Fixes Brett-Weiterschalter:
        1) Wenn im Anzeigemodus "Nur Bretter anzeigen, die auf den aktiven
