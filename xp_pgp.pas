@@ -29,7 +29,9 @@ interface
 uses
   sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader,
 {$IFDEF unix}
+{$IFDEF fpc}
   linux,
+{$ENDIF}  
 {$ENDIF}
   xp0,xp1;
 
@@ -59,6 +61,9 @@ implementation  { --------------------------------------------------- }
 
 uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
+  {$IFDEF Kylix}
+  libc,
+  {$ENDIF}  
   xpcc,xpnt;
 
 const
@@ -136,7 +141,12 @@ procedure RunPGP5(exe,par:string);
 var path : string;
     pass,batch : string;
     {$ifdef unix}
-    dir, name, ext: shortstring;
+    dir, name, ext:
+    {$IFDEF fpc}
+    shortstring;
+    {$ELSE}
+    string;
+    {$endif}
     {$endif}
 begin
   {$ifdef unix}
@@ -844,6 +854,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.43  2001/09/07 13:54:23  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

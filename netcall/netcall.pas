@@ -23,7 +23,7 @@
 
 {$I XPDEFINE.INC}
 
-unit Netcall;
+unit netcall;
 
 interface
 
@@ -95,11 +95,14 @@ end.
 
 {
 	$Log$
+	Revision 1.5  2001/09/07 23:24:57  ml
+	- Kylix compatibility stage II
+
 	Revision 1.4  2001/04/16 18:13:28  ma
 	- ProgOutWin now pauses a bit on closing
 	  (some seconds if an error occured, one second if not)
 	- removed other delays
-
+	
 	Revision 1.3  2001/03/21 19:17:09  ma
 	- using new netcall routines now
 	- renamed IPC to Progr.Output

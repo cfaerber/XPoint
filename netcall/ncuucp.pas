@@ -62,7 +62,7 @@ type
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
-xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math, ipaddr,
+xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr,
 {$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}
 {$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},xpcrt{$ENDIF};
 
@@ -1120,6 +1120,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
   Revision 1.14  2001/08/12 20:05:23  cl
   - FIX: delay at UUCICO start
 

@@ -39,7 +39,7 @@ interface
 {$ENDIF }
 
 uses
-  {$IFNDEF Kylix }
+  {$IFDEF fpc }
   linux,
   {$ELSE }
   Libc,
@@ -97,6 +97,10 @@ function MakeDir(p: string; a: longint): boolean;
 function TestAccess(p: string; ta: TTestAccess): boolean;
 function ResolvePathName(p: string): string;
 procedure SetAccess(p: string; ta: TTestAccess);
+{$IFDEF Kylix }
+function Diskfree(drive: byte): LongInt;
+function DiskSize(drive: byte): LongInt;
+{$ENDIF}
 
 { Zugriffe ueber /proc/* ----------------------------------------------- }
 
@@ -446,6 +450,19 @@ begin
   result:= Linux.Shell(AddDirSepa(path)+CmdLine);
 end;
 
+{$IFDEF Kylix }
+function Diskfree(drive: byte): LongInt;
+begin
+  {Todo1: get free diskspace in Kylix !!!!!!!!!}
+  Result := 1000000000;
+end;
+
+function DiskSize(drive: byte): LongInt;
+begin
+  {Todo1: get diskspace in Kylix !!!!!!!!!}
+  Result := 1000000000;
+end;
+{$ENDIF}
 {$ifdef UseSysLog}
 
 begin
@@ -454,6 +471,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.25  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 

@@ -27,7 +27,13 @@ unit xp2;
 interface
 
 uses
-  {$IFDEF unix} xplinux, xpcurses, linux, {$ENDIF}
+  {$IFDEF unix}
+  xplinux,
+  xpcurses,
+  {$IFDEF fpc}
+  linux,
+  {$ENDIF}
+  {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
   {$IFDEF DOS32} xpdos32, {$ENDIF }
   {$IFDEF OS2} xpos2, {$ENDIF }
@@ -81,6 +87,9 @@ implementation  {-----------------------------------------------------}
 
 uses
  xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg
+{$IFDEF Kylix}
+  ,libc
+{$ENDIF}  
  {$IFDEF UnixFS},xpx{$ENDIF};
 
 var   zaehlx,zaehly : byte;
@@ -1079,6 +1088,9 @@ end;
 
 {
   $Log$
+  Revision 1.120  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.119  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

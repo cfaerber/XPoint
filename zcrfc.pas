@@ -35,7 +35,9 @@ uses xpglobal,
   xp0,
   xp1,
   {$IFDEF unix}
+  {$IFDEF fpc}
   linux,
+  {$ENDIF }
   XPLinux,
   {$ENDIF }
   {$IFDEF NCRT }
@@ -553,7 +555,11 @@ begin
 
   p := pos('$PUFFER',UpperCase(uparc));
 {$IFDEF UnixFS}
+{$IFDEF fpc}
   Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7));
+{$ELSE}
+  Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
+{$ENDIF}
 {$ELSE}
   Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
 {$ENDIF}
@@ -695,7 +701,11 @@ again:
 
   p := pos('$DOWNFILE',UpperCase(arcer));
 {$IFDEF UnixFS}
+{$IFDEF fpc}
   Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9));
+{$ELSE}
+  Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
+{$ENDIF}
 {$ELSE}
   Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
 {$ENDIF}
@@ -2494,7 +2504,9 @@ begin
   end;
   close(f1);
   pfrec:= @f1;
+{$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name,0);             { Archivbit abschalten }
+{$ENDIF}
 end;
 
 { SMTP-Mail -> ZCONNECT }
@@ -2617,7 +2629,9 @@ begin
   until ende;
   close(f1);
   pfrec:= @f1;
+{$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name, 0); { Archivbit abschalten }
+{$ENDIF}  
   if CommandLine then writeln(' - ok');
 end;
 
@@ -2726,7 +2740,9 @@ begin
   ende:
   close(f1);
   pfrec:= @f1;
+{$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name, 0);            { Archivbit abschalten }
+{$ENDIF}  
   if CommandLine then  if n = 0 then writeln;
 end;
 
@@ -3804,6 +3820,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.69  2001/09/06 19:31:21  mk
   - removed some hints und warnings
 

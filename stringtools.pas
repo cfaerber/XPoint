@@ -21,7 +21,7 @@
 
 {$I XPDEFINE.INC}
 
-unit StringTools;
+unit stringtools;
 
 interface
 
@@ -54,6 +54,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.3  2001/03/22 18:25:09  ma
   - FmtDateTime: "mm" means "month", *not* "minute".
 

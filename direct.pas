@@ -28,7 +28,7 @@
 
 { Contains class TDirectory }
 
-unit Direct;
+unit direct;
 
 {
   TDirectory can be used to explore a directory. The class
@@ -316,6 +316,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2001/09/07 23:24:53  ml
+        - Kylix compatibility stage II
+
         Revision 1.4  2001/02/08 19:59:52  ma
         - fixed: was operating on parent directory if no path was given in file mask
 

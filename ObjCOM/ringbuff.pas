@@ -1,11 +1,11 @@
-unit Ringbuff;
+unit ringbuff;
 
 (*
 ** Large char-buffer handling routines
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-{$I OCDEFINE.INC }
+{$I ocdefine.inc }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  INTERFACE
@@ -127,6 +127,9 @@ end. { bufunit }
 
 {
   $Log$
+  Revision 1.6  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.5  2000/12/18 00:22:41  ma
   - using real ring buffer strategy now
 

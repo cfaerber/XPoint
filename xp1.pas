@@ -31,7 +31,9 @@ uses
   xpcurses,
 {$ENDIF }
 {$IFDEF linux }
+{$IFDEF fpc}
   linux,
+{$ENDIF}  
 {$ENDIF }
 {$IFDEF Win32 }
   windows,
@@ -2051,6 +2053,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.118  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

@@ -866,7 +866,7 @@ begin
   writeheaderlines;
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
-  writeln(t,'TimeZone=',timezone);
+  writeln(t,'TimeZone=',xpdatum.timezone);
   writeln(t,'SaveType=',savetype);
   writeln(t,'Maxcrosspost=',maxcrosspost);
   writeln(t,'MailDelXPost=',jnf(maildelxpost));
@@ -1693,6 +1693,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.122  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

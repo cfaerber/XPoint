@@ -23,7 +23,7 @@
 
 {$I XPDEFINE.INC}
 
-unit NCSMTP;
+unit ncsmtp;
 
 interface
 
@@ -293,6 +293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
   Revision 1.10  2001/08/27 09:18:08  ma
   - Envelope-From is server mail address now even if From has been changed
     by roles or other feature

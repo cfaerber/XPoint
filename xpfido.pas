@@ -118,7 +118,11 @@ procedure NodeSelProc(var cr:customrec);
 
 implementation
 
-uses  xpnt,xp2,xp3,xp4e,xpfidonl;
+uses  xpnt,xp2,xp3,xp4e,
+{$IFDEF Kylix}
+  xplinux,
+{$ENDIF}   
+xpfidonl;
 
 
 { --- Nodelisten ----------------------------------------------------- }
@@ -1679,8 +1683,11 @@ label ende;
     p       : Integer;
     driveNr : Integer;
   begin
+     driveNr := 0;
 {$IFDEF Linux}
+{$IFDEF fpc}
      driveNr := SysUtils.AddDisk(Path);
+{$ENDIF}     
 {$ELSE}
      driveNr := ord(FirstChar(Path))-64;
 {$ENDIF}
@@ -2247,6 +2254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.56  2001/09/07 13:54:24  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

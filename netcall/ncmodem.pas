@@ -22,7 +22,7 @@
 {$I XPDEFINE.INC}
 
 { OpenXP modem netcall base class }
-unit NCModem;
+unit ncmodem;
 
 interface
 
@@ -519,6 +519,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.6  2001/08/11 23:06:43  mk
   - changed Pos() to cPos() when possible
 

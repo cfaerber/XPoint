@@ -31,11 +31,17 @@ uses
   linux,
 {$ENDIF }
   UTFTools,
+{$IFDEF Kylix}
+  ncursix,
+{$ELSE}
   ncurses,
+{$ENDIF}
   xplinux;
 
+{$IFDEF fpc }
 {$packrecords 4}
 {$linklib panel}
+{$ENDIF}
 
 const
 
@@ -1161,6 +1167,7 @@ end;
 
 { Panel-Funktionen ---------------------------------------- }
 
+{$IFDEF fpc }
 function panel_window(_para1:pPANEL):pWINDOW;cdecl; external;
 procedure update_panels;cdecl; external;
 function hide_panel(_para1:pPANEL):longint;cdecl; external;
@@ -1174,7 +1181,24 @@ function panel_below(_para1:pPANEL):pPANEL;cdecl; external;
 function move_panel(_para1:pPANEL; _para2:longint; _para3:longint):longint;cdecl; external;
 function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl; external;
 function panel_hidden(_para1:pPANEL):longint;cdecl; external;
+{$ELSE}
+const
+  libpanelmodulename = 'libpanel.so.5';
 
+function panel_window(_para1:pPANEL):pWINDOW;cdecl; external libpanelmodulename;
+procedure update_panels;cdecl; external libpanelmodulename;
+function hide_panel(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+function show_panel(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+function del_panel(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+function top_panel(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+function bottom_panel(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+function new_panel(_para1:pWINDOW):pPANEL;cdecl; external libpanelmodulename;
+function panel_above(_para1:pPANEL):pPANEL;cdecl; external libpanelmodulename;
+function panel_below(_para1:pPANEL):pPANEL;cdecl; external libpanelmodulename;
+function move_panel(_para1:pPANEL; _para2:longint; _para3:longint):longint;cdecl; external libpanelmodulename;
+function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl; external libpanelmodulename;
+function panel_hidden(_para1:pPANEL):longint;cdecl; external libpanelmodulename;
+{$ENDIF}
 
 { Teile aus VIDEO.PAS -------------------------------------------------- }
 
@@ -1551,6 +1575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.49  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 

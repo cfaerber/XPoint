@@ -22,7 +22,7 @@
 {$I xpdefine.inc }
 
 { Timer unit }
-unit Timer;
+unit timer;
 
 interface
 
@@ -147,6 +147,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.18  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

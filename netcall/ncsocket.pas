@@ -24,7 +24,7 @@
 
 {$I XPDEFINE.INC}
 
-unit NCSocket;
+unit ncsocket;
 
 interface
 
@@ -41,7 +41,11 @@ uses
   {$IFDEF OS2 }
     os2sock,
   {$ELSE }
+  {$IFDEF Kylix}
+    libc,
+  {$ELSE}
     sockets,
+  {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 {$ENDIF }
@@ -65,7 +69,11 @@ type
 {$IFDEF Win32}
     FAddr       : TSockAddr;            { Socket-Parameter-Block }
 {$ELSE}
+{$IFDEF fpc}
     FAddr       : TInetSockAddr;
+{$ELSE}
+    FAddr       : TSockAddr;            { Socket-Parameter-Block }
+{$ENDIF}
 {$ENDIF}
     FHandle     : longint;              { Socket-Handle }
     FConnected  : boolean;              { Flag }
@@ -234,6 +242,16 @@ begin
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if WinSock.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
 {$ELSE}
+{$IFDEF Kylix}
+  FAddr.sin_Family:= AF_INET;
+  { Hi-/Lo-Word vertauschen }
+  FAddr.sin_Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
+  { Adresse uebernehmen }
+  FAddr.sin_Addr.s_addr:= Host.Raw;
+  { Verbinden }
+  FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  if libc.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
+{$ELSE}
   FAddr.Family:= AF_INET;
   { Hi-/Lo-Word vertauschen }
   FAddr.Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
@@ -249,6 +267,7 @@ begin
   {$ENDIF }
     {$ENDIF}
     Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
+{$ENDIF}
 {$ENDIF}
   begin
     FConnected:= false;
@@ -355,7 +374,11 @@ begin
 {$IFDEF Win32}
   FErrorCode := WSAGetLastError;
 {$ELSE}
+{$IFDEF fpc}
   FErrorCode := SocketError;
+{$ELSE}
+  FErrorCode := -1; {TODO1: !!!!!!!kylix-support}
+{$ENDIF}
 {$ENDIF}
   raise ESocketError.CreateFMT('SocketError %d', [FErrorCode]);
 end;
@@ -401,6 +424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
   Revision 1.25  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 

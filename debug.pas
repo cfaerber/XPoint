@@ -23,7 +23,7 @@
 {$I XPDEFINE.INC }
 
 { Debug logfile unit }
-unit Debug;
+unit debug;
 
 interface
 
@@ -70,7 +70,13 @@ procedure OpenLogfile(App: Boolean; Filename: string);
 implementation
 
 uses
-  {$IFDEF Linux}Linux,{$ENDIF }
+  {$IFDEF Linux}
+  {$IFDEF Kylix}
+  libc,
+  {$ELSE} {fpc}
+  Linux,
+  {$ENDIF }
+  {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF Dos32} xpdos32, {$ENDIF}
   SysUtils,TypeForm;
@@ -95,7 +101,7 @@ begin
                      ((Logbadges[I].Badge = Badge) or (I = qLogbadges));
   if (Logbadges[I].Badge = '') and (I <= qLogbadges) then {Open new entry}
   begin
-    Logbadges[I].Badge := Badge; S := GetEnv(Badge);
+    Logbadges[I].Badge := Badge; S := GetEnv(PChar(Badge));
     if S = '' then S := GetEnv('DEFAULT');
     if S = '' then Str(DLDefault,S);
     Val(S, Logbadges[I].Level, Temp); FindBadge := I
@@ -225,6 +231,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.18  2001/08/04 20:19:13  mk
   - added some dos compatibility functions
 

@@ -42,7 +42,11 @@ function  setfnlenable(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xpfido;
+uses
+{$IFDEF Kylix}
+  xplinux,
+{$ENDIF}   
+  xpfido;
 
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
@@ -61,9 +65,13 @@ var
     begin
       if FileDateToDateTime(FileAge(NodeListCfg))> now then
       begin
+{$IFDEF Kylix}
+        FileSetDate(NodeListCfg, DateTimeToFileDate(now));
+{$ELSE}
         fh := FileOpen(NodeListCfg, fmOpenReadWrite);
         FileSetDate(fh, DateTimeToFileDate(now));
         FileClose(fh);
+{$ENDIF}
       end;
       indexflag:=true;
     end;
@@ -522,6 +530,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.37  2001/09/07 13:54:24  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

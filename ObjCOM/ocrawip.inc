@@ -48,7 +48,14 @@ end; { destructor Done }
 
 procedure TRawIPStream.SetErrorStr(prefix: string);
 begin
-  ErrorStr := prefix+' (#'+IntToStr({$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF})+')';
+  ErrorStr := prefix+' (#'+IntToStr(
+  {$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}
+  {$IFDEF Kylix}
+  0// TIdStack.WSTranslateSocketErrorMsg
+  {$ELSE}
+  sockets.SocketError
+  {$ENDIF}
+  {$ENDIF})+')';
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -75,6 +82,7 @@ end; { func. OpenKeep }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {$IFDEF Linux}
+{$IFDEF fpc}
   type THostEnt = record
     h_Name     : pchar;   { Official name }
     h_Aliases  : ppchar;  { Null-terminated list of aliases}
@@ -93,6 +101,7 @@ end; { func. OpenKeep }
   function inet_addr(Name:PChar): Cardinal; cdecl; external;
   function htons(host:Word): Word; cdecl; external;
   function ntohs(host:Word): Word; cdecl; external;
+{$ENDIF}  
 {$ENDIF}
 
 function TRawIPStream.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
@@ -103,7 +112,11 @@ var
 {$IFDEF WIN32}
     Addr:     TSockAddrIn;
 {$ELSE}
+{$IFDEF Kylix}
+    Addr:     TSockAddrIn;
+{$ELSE}
     Addr:     TInetSockAddr;
+{$ENDIF}
 {$ENDIF}
     DestHE:   PHostEnt;
     DestHEP:  PPCardinal; { really }
@@ -138,13 +151,24 @@ begin
     if DestIPNr=0 then begin SetErrorStr('Host has no address'); exit; end;
   end;
 
-  SHandle:={$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.Socket(AF_INET,SOCK_STREAM,0);
-  if {$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF} <>0 then
+  {$IFDEF WIN32}
+  SHandle:=WinSock.Socket(AF_INET,SOCK_STREAM,0);
+  if WinSock.WSAGetLastError <> 0 then
+  {$ELSE}
+  {$IFDEF fpc}
+  SHandle:=sockets.Socket(AF_INET,SOCK_STREAM,0);
+  if sockets.SocketError <> 0 then
+  {$ELSE}
+  SHandle:=Socket(AF_INET,SOCK_STREAM,0);
+  if SHandle = - 1 then
+  {$ENDIF}
+  {$ENDIF}
   begin
     SetErrorStr('Error obtaining socket');
     exit;
   end;
 
+  {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
   addr.{$IFDEF WIN32}sin_family{$ELSE}family{$ENDIF} := AF_INET;
   addr.{$IFDEF WIN32}sin_port  {$ELSE}port  {$ENDIF} := htons(DestPort);
 
@@ -153,7 +177,7 @@ begin
     addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c];
 
     if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
-    begin 
+    begin
       SOpened:=True;
       IDummy:=Sizeof(LocalAddr);
 {$IFNDEF Linux}
@@ -161,12 +185,13 @@ begin
 {$ELSE}
       getsocketname(SHandle,LocalAddr, IDummy);
 {$ENDIF}
-      IDummy:=Sizeof(RemoteAddr); 
+      IDummy:=Sizeof(RemoteAddr);
       getpeername(SHandle,RemoteAddr,IDummy);
       ConnectIP:=True;
       exit;
     end
   end;
+  {$ENDIF}
 
   { Could not connect to any of the addresses :-( }
   SetErrorStr('Error connecting socket');
@@ -208,7 +233,7 @@ procedure TRawIPStream.Close;
 begin
   if GetHandle <> INVALID_SOCKET then
   begin
-    {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.ShutDown(SHandle,2);
+    {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}ShutDown(SHandle,2);
     {$IFDEF WIN32}WinSock.CloseSocket(SHandle);{$ENDIF}
     SHandle := INVALID_SOCKET;
   end;
@@ -239,7 +264,7 @@ procedure TRawIPStream.SendBlock(var Block; BlockLen: Longint; var Written: Long
 begin
   DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),dlDebug+2);
 
-  Written:={$IFDEF WIN32}WinSock{$ELSE}Sockets{$ENDIF}.send(SHandle,Block,BlockLen,0);
+  Written:={$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}send(SHandle,Block,BlockLen,0);
   if not Written > 0 then
   begin
     SetErrorStr('SendBlock');
@@ -251,7 +276,7 @@ end; { proc. TRawIPStream.SendBlock }
 
 procedure TRawIPStream._ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
-  reads := {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.recv(SHandle,Block,Blocklen,0);
+  reads := {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}sockets.{$ENDIF}{$ENDIF}recv(SHandle,Block,Blocklen,0);
   case reads of
     0:            begin
                     SOpened:=false;
@@ -322,7 +347,16 @@ end; { func. TRawIPStream.CharAvail }
 
 function TRawIPStream._CharCount: Integer;
 var   SSet:  TFDSet;
-const NilTm: TTimeVal = {$IFDEF WIN32}(tv_sec:0;tv_usec:0){$ELSE}(sec:0;usec:0){$ENDIF};
+const NilTm: TTimeVal =
+  {$IFDEF WIN32}
+  (tv_sec:0;tv_usec:0)
+  {$ELSE}
+  {$IFDEF fpc}
+  (sec:0;usec:0)
+  {$ELSE}
+  (tv_sec:0;tv_usec:0)
+  {$ENDIF}
+  {$ENDIF};
 begin
 {$IFNDEF VP} { - VPascal has crippled Winsock - }
   FD_ZERO(SSet); FD_SET (SHandle,SSet);
@@ -330,6 +364,7 @@ begin
   SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
 {$ENDIF}
 
+  {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
   case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
@@ -338,6 +373,7 @@ begin
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
+  {$ENDIF}
   DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlDebug+2);
 end; { func. TTelnetObj.CharAvail }
 
@@ -456,8 +492,10 @@ var     InFree_size,OutFree_size: Integer;
 begin
   InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
   OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
+  {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
   if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFNDEF FPC}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
   if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFNDEF FPC}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  {$ENDIF}
   InFree :=InFree+Sizeof(SBuffer)-(SBufEnd-SBufBeg)
 end; { proc. TTelnetObj.GetBufferStatus }
 
@@ -505,34 +543,73 @@ end; { func. ReadyToSend }
 
 function TRawIPStream.GetRemoteIP:   Cardinal; 
 begin 
-  Result := RemoteAddr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF}; 
+  Result := RemoteAddr.
+  {$IFDEF WIN32}
+  sin_addr.s_addr
+  {$ELSE}
+  {$IFDEF fpc}
+  addr
+  {$ELSE}
+  sin_addr.s_addr
+  {$ENDIF}
+  {$ENDIF};
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TRawIPStream.GetRemotePort: Integer;  
-begin 
-  Result := NToHS(RemoteAddr.{$IFDEF WIN32}sin_port{$ELSE}port{$ENDIF}); 
+function TRawIPStream.GetRemotePort: Integer;
+begin
+  Result := NToHS(RemoteAddr.
+  {$IFDEF WIN32}
+  sin_port
+  {$ELSE}
+  {$IFDEF fpc}
+  port
+  {$ELSE}
+  sin_port
+  {$ENDIF}
+  {$ENDIF});
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TRawIPStream.GetLocalIP:   Cardinal; 
-begin 
-  Result := LocalAddr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF}; 
+function TRawIPStream.GetLocalIP:   Cardinal;
+begin
+  Result := LocalAddr.
+  {$IFDEF WIN32}
+  sin_addr.s_addr
+  {$ELSE}
+  {$IFDEF fpc}
+  addr
+  {$ELSE}
+  sin_addr.s_addr
+  {$ENDIF}
+  {$ENDIF};
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TRawIPStream.GetLocalPort: Integer;  
-begin 
-  Result := NToHS(LocalAddr.{$IFDEF WIN32}sin_port{$ELSE}port{$ENDIF}); 
+function TRawIPStream.GetLocalPort: Integer;
+begin
+  Result := NToHS(LocalAddr.
+  {$IFDEF WIN32}
+  sin_port
+  {$ELSE}
+  {$IFDEF fpc}
+  port
+  {$ELSE}
+  sin_port
+  {$ENDIF}
+  {$ENDIF});
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 {
   $Log$
+  Revision 1.12  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.11  2001/08/28 11:07:42  ml
 
   - in linux getsockname is called getsocketname

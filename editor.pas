@@ -1236,7 +1236,7 @@ var  dl         : displp;
   end;
 
 
-  {$I EDITOR.INC}
+  {$I editor.inc}
 
   function PosCoord(pos:position; disp:byte):longint; forward;
 
@@ -1770,6 +1770,9 @@ end.
 
 {
   $Log$
+  Revision 1.61  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.60  2001/09/06 10:37:27  mk
   - added keys shift-ins and shift-del in Editor
 

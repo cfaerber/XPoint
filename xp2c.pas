@@ -27,7 +27,12 @@ unit xp2c;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses, linux,{$ENDIF }
+  {$IFDEF NCRT}
+  xpcurses,
+  {$IFDEF fpc}
+  linux,
+  {$ENDIF}
+  {$ENDIF }
   sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
   printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
   xpglobal;
@@ -86,6 +91,9 @@ implementation  {----------------------------------------------------}
 
 uses
   {$ifdef Win32} xpwin32, {$endif}
+{$IFDEF Kylix}
+  libc,
+{$ENDIF}  
   xp1o,xp2,xp3, xp4o2,xp9bp, xpnt;
 
 const
@@ -1439,6 +1447,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.101  2001/09/07 10:56:00  mk
   - added GetServerFilename
 

@@ -43,7 +43,17 @@ type TRawIPStream = Class(TCommStream)
 	SBufBeg,SBufEnd: Longint;
 
       private  
-        RemoteAddr,LocalAddr: {$IFDEF WIN32} TSockAddrIn; {$ELSE} TInetSockAddr; {$ENDIF}
+        RemoteAddr,
+        LocalAddr:
+          {$IFDEF Kylix}
+          TSockAddrIn;
+          {$ELSE}
+          {$IFDEF WIN32}
+          TSockAddrIn;
+          {$ELSE}
+          TInetSockAddr;
+          {$ENDIF}
+          {$ENDIF}
 
       protected
 	function GetRemoteIP  : Cardinal; virtual;
@@ -59,6 +69,9 @@ type TRawIPStream = Class(TCommStream)
 
 {
   $Log$
+  Revision 1.7  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.6  2001/08/04 14:23:43  cl
   - Show IP address:port in progress window
 

@@ -5,7 +5,7 @@
   Copywrite (c) by Stefan Graf 1990
   Based on TPZ.PAS from Philip R. Burn's PIPTERM. }
 
-unit ZModem;
+unit zmodem;
 
 {$I xpdefine.inc}
 
@@ -128,7 +128,7 @@ var
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses,{$ELSE} xpcrt,{$ENDIF}
+  {$IFDEF Unix} xpcurses, xplinux,{$ELSE} xpcrt,{$ENDIF}
   SysUtils, Debug, CRC;
 
 var TimerObj: tTimer;
@@ -1884,12 +1884,16 @@ begin
 
     Z_CloseFile(outfile);
     pfrec := @outfile;
+{$IFDEF Kylix}
+    FileSetDate(pfrec^.name, ftime);
+{$ELSE}
     fh := FileOpen(pfrec^.name, fmOpenWrite);
     if fh >= 0 then
     begin
       FileSetDate(fh, ftime);
       FileClose(fh);
     end;
+{$ENDIF}
 
     {Reset (outfile);
     IF (IOResult = 0) THEN BEGIN
@@ -2731,6 +2735,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
   Revision 1.21  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 

@@ -31,15 +31,15 @@ program openxp;
 {%File 'xpf1.inc'}
 {%File 'xpfiles.inc'}
 {%File 'databas1.inc'}
-{%File 'netcall\ncuucp-t.inc'}
-{%File 'netcall\ncfido-emsi.inc'}
-{%File 'netcall\ncfido-wazoo.inc'}
-{%File 'netcall\ncfido-yoohoo.inc'}
-{%File 'netcall\ncuucp-e.inc'}
-{%File 'netcall\ncuucp-fz.inc'}
-{%File 'netcall\ncuucp-g.inc'}
-{%File 'netcall\ncfido-binkp.inc'}
-{%File 'ObjCOM\ocsdos.inc'}
+{%File 'netcall/ncuucp-t.inc'}
+{%File 'netcall/ncfido-emsi.inc'}
+{%File 'netcall/ncfido-wazoo.inc'}
+{%File 'netcall/ncfido-yoohoo.inc'}
+{%File 'netcall/ncuucp-e.inc'}
+{%File 'netcall/ncuucp-fz.inc'}
+{%File 'netcall/ncuucp-g.inc'}
+{%File 'netcall/ncfido-binkp.inc'}
+{%File 'ObjCOM/ocsdos.inc'}
 {%File 'xpsendmessage_subs.inc'}
 
 uses
@@ -145,33 +145,36 @@ uses
   zcrfc in 'zcrfc.pas',
   OSDepend in 'osdepend.pas',
   SysUtils,
-  ZModem in 'netcall\zmodem.pas',
-  ncgeneric in 'netcall\ncgeneric.pas',
-  NCModem in 'netcall\ncmodem.pas',
-  NCNNTP in 'netcall\ncnntp.pas',
-  NCPOP3 in 'netcall\ncpop3.pas',
-  NCSMTP in 'netcall\ncsmtp.pas',
-  NCSocket in 'netcall\ncsocket.pas',
-  ncuucp in 'netcall\ncuucp.pas',
-  Netcall in 'netcall\netcall.pas',
-  xpmodemscripts in 'netcall\xpmodemscripts.pas',
-  xpncfido in 'netcall\xpncfido.pas',
-  xpncnntp in 'netcall\xpncnntp.pas',
-  xpncpop3 in 'netcall\xpncpop3.pas',
-  xpncuucp in 'netcall\xpncuucp.pas',
-  xpnczconnect in 'netcall\xpnczconnect.pas',
-  xpnetcall in 'netcall\xpnetcall.pas',
-  ncfido in 'netcall\ncfido.pas',
-  dos in 'delphi\dos.pas',
-  ObjCOM in 'objcom\objcom.pas',
-  Ringbuff in 'ObjCOM\ringbuff.pas',
+  ZModem in 'netcall/zmodem.pas',
+  ncgeneric in 'netcall/ncgeneric.pas',
+  NCModem in 'netcall/ncmodem.pas',
+  NCNNTP in 'netcall/ncnntp.pas',
+  NCPOP3 in 'netcall/ncpop3.pas',
+  NCSMTP in 'netcall/ncsmtp.pas',
+  NCSocket in 'netcall/ncsocket.pas',
+  ncuucp in 'netcall/ncuucp.pas',
+  Netcall in 'netcall/netcall.pas',
+  xpmodemscripts in 'netcall/xpmodemscripts.pas',
+  xpncfido in 'netcall/xpncfido.pas',
+  xpncnntp in 'netcall/xpncnntp.pas',
+  xpncpop3 in 'netcall/xpncpop3.pas',
+  xpncuucp in 'netcall/xpncuucp.pas',
+  xpnczconnect in 'netcall/xpnczconnect.pas',
+  xpnetcall in 'netcall/xpnetcall.pas',
+  ncfido in 'netcall/ncfido.pas',
+  dos in 'delphi/dos.pas',
+  objcom in 'ObjCOM/objcom.pas',
+  Ringbuff in 'ObjCOM/ringbuff.pas',
   xpcrt in 'xpcrt.pas',
   archive in 'archive.pas',
   xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
   xpsendmessage in 'xpsendmessage.pas',
   RegExpr in 'regexpr.pas',
-  main in 'main.pas';
+  main in 'main.pas',
+  xpcurses in 'xpcurses.pas',
+  ncursix in 'ncursix.pas',
+  xplinux in 'xplinux.pas';
 
 {$R *.RES}
 begin

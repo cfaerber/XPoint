@@ -22,7 +22,7 @@
 
 { Contains OS depending functions }
 
-unit OSDepend;
+unit osdepend;
 
 interface
 
@@ -54,6 +54,9 @@ implementation
 end.
 {
         $Log$
+        Revision 1.4  2001/09/07 23:24:53  ml
+        - Kylix compatibility stage II
+
         Revision 1.3  2001/08/04 20:19:13  mk
         - added some dos compatibility functions
 

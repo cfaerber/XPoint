@@ -33,12 +33,21 @@ type TSerialStream = class(TCommStream)
         procedure PauseCom(CloseCom: Boolean); override;
         procedure ResumeCom(OpenCom: Boolean); override;
         private
-         SHandle: Longint; InBuffer: tRingbuffer; fds : fdset;
+         SHandle: Longint;
+         InBuffer: tRingbuffer;
+{$IFDEF Kylix}
+         fds : Tfdset;
+{$ELSE}
+         fds : fdset;
+{$ENDIF}
          procedure ProcIncoming;
      end; { object TSerialStream }
 
 {
   $Log$
+  Revision 1.7  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.6  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

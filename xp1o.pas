@@ -30,7 +30,9 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
+{$IFDEF fpc}
   linux,
+{$ENDIF}  
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
@@ -1024,6 +1026,9 @@ end;
 
 {
   $Log$
+  Revision 1.95  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.94  2001/09/07 13:54:18  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

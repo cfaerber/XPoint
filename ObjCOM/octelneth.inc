@@ -2,7 +2,7 @@
 ** ObjCOM telnet communication implementation header file
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
-
+                
 type TTelnetStream = Class(TRawIPStream)
         constructor Create;
         destructor Destroy; override;
@@ -40,6 +40,9 @@ type TTelnetStream = Class(TRawIPStream)
 
 {
   $Log$
+  Revision 1.6  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.5  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

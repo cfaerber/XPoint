@@ -19,7 +19,7 @@
 
 {$I XPDEFINE.INC }
 
-unit XPCfg;
+unit xpcfg;
 
 interface
 
@@ -500,6 +500,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.11  2001/09/06 19:28:57  mk
   - removed unsed unit fileio from uses
 

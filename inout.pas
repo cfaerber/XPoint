@@ -1655,9 +1655,11 @@ begin
   ExitProc:= @ExitInOutUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.74  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.73  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 
@@ -1885,3 +1887,5 @@ end.
   LocalScreen fuer xpme komplett implementiert
 
 }
+end.
+

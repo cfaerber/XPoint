@@ -20,7 +20,7 @@
 }
 {$i xpdefine.inc}
 
-unit Log;
+unit log;
 
 interface
 
@@ -217,6 +217,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.9  2001/09/07 23:24:53  ml
+        - Kylix compatibility stage II
+
         Revision 1.8  2001/07/31 16:18:39  mk
         - removed some unused variables
         - changed some LongInt to DWord

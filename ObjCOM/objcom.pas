@@ -1,4 +1,4 @@
-unit ObjCOM;
+unit objcom;
 (*
 ** ObjCOM base unit
 **
@@ -13,12 +13,21 @@ unit ObjCOM;
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$I OCDEFINE.INC}
+{$I ocdefine.inc}
 
 uses Ringbuff,Classes
      {$IFDEF DOS32},Ports{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
-     {$IFDEF Linux},Linux,Sockets{$ENDIF}
+     {$IFDEF Linux}
+     {$IFDEF fpc}
+     ,Linux
+     ,sockets
+     {$ENDIF}
+     {$IFDEF Kylix}
+     ,libc
+     ,KernelIoctl
+     {$ENDIF}
+     {$ENDIF}
      {$IFDEF OS2},OCThread
        {$IFDEF VIRTUALPASCAL},OS2Base{$ELSE},OS2Def,DosCalls{$ENDIF}
      {$ENDIF}
@@ -98,7 +107,7 @@ function CommInit(S: String): TCommStream;
 function FossilDetect: Boolean;
 
 {$IFDEF Win32} {$I OCSWinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
+{$IFDEF Linux} {$I ocslinh.inc} {$I ocrawiph.inc} {$I octelneth.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
@@ -109,7 +118,7 @@ function FossilDetect: Boolean;
 uses Sysutils,Timer,Debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
+{$IFDEF Linux} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
@@ -471,6 +480,9 @@ end.
 
 {
   $Log$
+  Revision 1.26  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.25  2001/08/04 18:00:24  mk
   - fixed little compile problem with VP and Delphi
 

@@ -24,7 +24,7 @@
 { OpenXP message window class; used by some netcall classes.
   Displays a window in which for example progress messages may
   be displayed. }
-unit XPProgressOutputWindow;
+unit xpprogressoutputwindow;
 
 interface
 
@@ -276,6 +276,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.5  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

@@ -28,7 +28,11 @@ function TSerialStream.LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
 begin
   LOpen:=False;
   InitFailed:=True;
+{$IFDEF Kylix}
+  SHandle:= Integer(fdOpen(Integer(ComPort), 'r'));
+{$ELSE}
   SHandle:= fdOpen(ComPort, OPEN_RDWR or OPEN_EXCL or OPEN_NONBLOCK);
+{$ENDIF}
   if SHandle < 0 then begin
     DebugLog('ObjCOM','Can''t open '+ComPort,1);
     ErrorStr:='Device not found';
@@ -70,7 +74,11 @@ begin
   fd_set(SHandle,fds);
   If Select(SHandle+1,@fds,nil,nil,0) > 0
   Then Begin
+{$IFDEF Kylix}
+    R:=recv(SHandle,Buf,8192, 0);
+{$ELSE}
     R:=fdRead(SHandle,Buf,8192);
+{$ENDIF}
     If r > 0 Then InBuffer.Put(Buf,R);
   End;
 end;
@@ -126,13 +134,22 @@ begin
     tios.c_iflag:= tios.c_iflag or IXON or IXOFF;
   { Non Canonical Input }
   tios.c_lflag:= 0;
+{$IFDEF Kylix}
+  tios.c_cc[VTIME]:= #1; { Kurz warten, wozu gibt es Buffer }
+  tios.c_cc[VMIN]:= #0; { Mindestens nichts }
+{$ELSE}
   tios.c_cc[VTIME]:= 1; { Kurz warten, wozu gibt es Buffer }
   tios.c_cc[VMIN]:= 0; { Mindestens nichts }
+{$ENDIF}
   { Setzen }
   tios.c_iflag:= tios.c_iflag or IGNPAR; { Ignore parity errors }
   tios.c_cflag:= tios.c_cflag or CREAD; { Lesen erlaubt }
   tcFlush(SHandle,TCIOFLUSH);
+{$IFDEF Kylix}
+  fdatasync(SHandle);
+{$ELSE}
   fdFlush(SHandle);
+{$ENDIF}
   tcSetAttr(SHandle, TCSANOW, tios);
   result:= true;
 end; { proc. TSerialStream.SetLine }
@@ -144,8 +161,13 @@ begin
   if DontClose then EXIT;
 
   tcFlush(SHandle,TCIOFLUSH);
+{$IFDEF Kylix}
+  fdatasync(SHandle);
+  fClose(PIOFile(SHandle));
+{$ELSE}
   fdFlush(SHandle);
   fdClose(SHandle);
+{$ENDIF}
   SHandle:=0;
 end; { func. TSerialStream.CloseCom }
 
@@ -153,7 +175,11 @@ end; { func. TSerialStream.CloseCom }
 
 function TSerialStream.SendChar(C: Char): Boolean;
 begin
+{$IFDEF Kylix}
+  Result:= (send(SHandle,C,sizeof(char), 0)=sizeof(char));
+{$ELSE}
   Result:= (fdWrite(SHandle,C,sizeof(char))=sizeof(char));
+{$ENDIF}
 end; { proc. TSerialStream.SendChar }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -169,7 +195,11 @@ end; { func. TSerialStream.GetChar }
 
 procedure TSerialStream.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
+{$IFDEF Kylix}
+  Written:= send(SHandle,Block,BlockLen, 0);
+{$ELSE}
   Written:= fdWrite(SHandle,Block,BlockLen);
+{$ENDIF}
   if Written<0 then                             { 0 indicates an error }
     Written:= 0;
 end; { proc. TSerialStream.SendBlock }
@@ -318,6 +348,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.9  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.8  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

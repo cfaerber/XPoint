@@ -28,7 +28,9 @@ interface
 
 uses
 {$IFDEF unix}
+{$IFDEF fpc}
   linux,
+{$ENDIF }
 {$ENDIF }
   sysutils,
   typeform,
@@ -132,12 +134,21 @@ begin
 end;
 
 {$IFDEF unix}
-function TimeZone: string[7];
+function TimeZone: string;
 var
   tzBase, tzMinutes, tzHours: LongInt;
   isNegative: boolean;
   s: string[7];
+  {$IFDEF Kylix }
+  tzseconds: LongInt;
+  tzdaylight: Boolean;
+  {$ENDIF}
 begin
+  {$IFDEF Kylix }
+  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
+  tzseconds := 0;
+  tzdaylight := False;
+  {$ENDIF}
   { Abweichung in positiven Minuten darstellen }
   if (tzseconds < 0) then begin
     isNegative:= true;
@@ -192,6 +203,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.16  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -13,10 +13,24 @@
 
 { -- Do not modify from this line! -- }
 
+{$IFDEF VER130 }          { Delphi 5.0 }
+  {$DEFINE Delphi }
+{$ENDIF }
+
+{$IFDEF VER140 }          { Delphi 6.0 and Kylix 1.0 }
+  {$DEFINE Delphi }
+  {$IFDEF Linux }
+    {$DEFINE Kylix }
+  {$ENDIF }
+{$ENDIF }
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
-     { !! Only FreePascal and Virtual Pascal Supported }
-     { !! ToDo: Delphi Support }
+     {$IFNDEF Delphi }
+       {$IFNDEF Kylix }
+        !! Only Freepascal, Delphi, Kylix and Virtual Pascal is supported
+        {$ENDIF }
+     {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 
@@ -80,6 +94,9 @@
 
 {
   $Log$
+  Revision 1.7  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.6  2001/01/31 20:18:19  cl
   - improved Win32 rawip implementation:
     - no own ringbuffer

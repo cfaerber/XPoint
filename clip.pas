@@ -58,10 +58,14 @@ implementation  { ---------------------------------------------------- }
 
 uses
   xp0,
-{$ifdef unix}
+{$IFDEF unix}
+{$IFDEF fpc}
   linux,
+{$ELSE}
+  libc,  
+{$ENDIF}
   xplinux,
-{$else}
+{$ELSE}
 {$IFDEF Win32 }
   windows,
 {$ENDIF }
@@ -333,6 +337,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.33  2001/09/07 18:02:50  ml
   - compilable with fpc in linux
 

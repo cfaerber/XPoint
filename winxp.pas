@@ -32,7 +32,8 @@ uses
   windows,
 {$ENDIF }
 {$IFDEF unix}
-  xplinux, strings, xpcurses,
+  xplinux,
+  xpcurses,
 {$ENDIF }
 {$IFDEF VP }
   vpsyslow,
@@ -1013,6 +1014,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.60  2001/08/10 20:57:57  mk
   - removed some hints and warnings
   - fixed some minior bugs

@@ -22,7 +22,7 @@
 {$I XPDEFINE.INC }
 
 { OpenXP ZC<->FTS-0001 converter unit }
-unit ZFTools;
+unit zftools;
 
 interface
 
@@ -1802,6 +1802,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.22  2001/09/07 23:24:55  ml
+        - Kylix compatibility stage II
+
         Revision 1.21  2001/08/11 23:06:40  mk
         - changed Pos() to cPos() when possible
 

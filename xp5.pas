@@ -33,7 +33,9 @@ uses
     vputils,
   {$endif}
 {$IFDEF unix}
+{$IFDEF fpc}
   linux,
+{$ENDIF}  
   xplinux,
   xpcurses,
 {$ENDIF}
@@ -57,6 +59,9 @@ procedure InitPWsystem;
 
 
 implementation  {-----------------------------------------------------}
+{$IFDEF Kylix}
+  uses libc;
+{$ENDIF}
 
 
 procedure kalender;
@@ -124,7 +129,7 @@ var   nt,n,mnt,
     nt:=mnt;
     attrtxt(col.colutility);
     moff;
-    wrt(rx+2,ry+11,dup(10,'Ä'));
+    wrt(rx+2,ry+11,typeform.dup(10,'Ä'));
     while j<n do begin
       le:=le+1;
       for i:=nt to 7 do begin
@@ -221,7 +226,7 @@ begin
 
   attrtxt(col.colutility);
   moff;
-  wrt(rx,ry+2,'Ã'+dup(30,'Ä')+'´');
+  wrt(rx,ry+2,'Ã'+typeform.dup(30,'Ä')+'´');
   gotoxy(rx+3,ry+3); write(getres2(501,1));   { 'Mo  Di  Mi  Do  Fr  Sa  ' }
   attrtxt(col.colutihigh); write(getres2(501,2));  { 'So' }
   attrtxt(col.colutility);
@@ -437,7 +442,7 @@ begin
 {$ENDIF}
   mon;
   freeres;
-  wait(curon);
+  xp1.wait(curon);
   closebox;
  {$endif}
 end;
@@ -462,7 +467,7 @@ begin
     inc(n,anz); inc(sum,gsize);
     end;
   mwrt(x+4,y+10,'gesamt:  '+strs(sum)+' Bytes in '+strs(n)+' Fragmenten');
-  wait(curoff);
+  xp1.wait(curoff);
   closebox;
 end;
 
@@ -676,7 +681,7 @@ begin
   wrd(12,BezugFile,bezbase);
   wrd(13,MimetFile,mimebase);
   mwrt(x+3,y+15,getres(12));    { 'Taste drcken...' }
-  wait(curon);
+  xp1.wait(curon);
   closebox;
   freeres;
 end;
@@ -807,7 +812,7 @@ begin
   brk:=false;
   repeat
     attrtxt(col.coldiainp);
-    mwrt(x+7+length(txt),y+2,dup(length(s),'*')+sp(16-length(s)));
+    mwrt(x+7+length(txt),y+2,typeform.dup(length(s),'*')+sp(16-length(s)));
     gotoxy(x+7+length(txt+s),y+2);
     get(t,curon);
     if (t>=mausfirstkey) and (t<=mauslastkey) then
@@ -858,7 +863,7 @@ begin
     wrt(x+3,y+2+i,getres2(510,21+i));
   wrt(x+3,wherey+2,getres(12));   { 'Taste drcken... ' }
   mon;
-  wait(curon);
+  xp1.wait(curon);
   closebox;
 
   main:=(ReadIt(42,getres2(510,1),            { 'Welches Paáwort soll ge„ndert werden?' }
@@ -939,12 +944,15 @@ begin
     wrt(x+3,y+2+i,getres2(511,i));
   wrt(x+3,y+anz+4,getres(12));   { 'Taste drcken ...' }
   mon;
-  wait(curon);
+  xp1.wait(curon);
   closebox;
 end;
 
 {
   $Log$
+  Revision 1.57  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.56  2001/09/06 18:48:12  mk
   - fixed use of mattr in TimedScsaver
 

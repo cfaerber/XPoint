@@ -176,9 +176,11 @@ end; { proc. tRawIPObj.ReadBlock }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function TTelnetStream.SendChar(C: Char): Boolean;
-const iac: string= TELNET_IAC+TELNET_IAC;
-var Written: LongInt;
+var
+  Written: LongInt;
+  iac: string;
 begin
+  iac := TELNET_IAC+TELNET_IAC;
   if c=TELNET_IAC then
     begin inherited SendBlock(iac,2,Written); result:= Written>=2; end
   else
@@ -254,6 +256,9 @@ end;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 {
   $Log$
+  Revision 1.6  2001/09/07 23:24:56  ml
+  - Kylix compatibility stage II
+
   Revision 1.5  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

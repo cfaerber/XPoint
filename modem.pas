@@ -20,7 +20,7 @@
 
 {$I XPDEFINE.INC }
 
-unit Modem;
+unit modem;
 
 interface
 
@@ -300,6 +300,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.14  2001/08/10 19:13:00  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

@@ -24,7 +24,7 @@
 
 {$I XPDEFINE.INC}
 
-unit IPAddr;
+unit ipaddr;
 
 interface
 
@@ -39,7 +39,9 @@ uses
   {$IFDEF OS2 }
     os2sock,
   {$ELSE }
+  {$IFDEF fpc}
     sockets,
+  {$ENDIF}
   {$ENDIF }
 {$ENDIF }
 {$ENDIF }
@@ -103,6 +105,10 @@ type
   end;
 
 implementation
+{$IFDEF Kylix}
+  uses
+    libc;
+{$ENDIF }
 
 {$IFDEF VP }
 const
@@ -113,6 +119,7 @@ resourcestring
   res_IPAddrTypeError      = 'Unknown address typ: %d, expected %d!';
   res_IPNoIPv4Error        = 'This is not an IPv4 address!';
 
+{$IFNDEF Kylix}
 {$ifdef unix}
 {$LINKLIB c}
 {$ENDIF}
@@ -131,6 +138,7 @@ type
   PHostEnt = ^THostEnt;
 
 function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+{$ENDIF}
 {$endif}
 {$endif}
 
@@ -236,6 +244,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.11  2001/05/16 01:59:15  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 

@@ -23,7 +23,7 @@
 
 {$I XPDEFINE.INC}
 
-unit NCPOP3;
+unit ncpop3;
 
 interface
 
@@ -420,6 +420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
   Revision 1.15  2001/08/11 23:06:43  mk
   - changed Pos() to cPos() when possible
 

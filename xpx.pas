@@ -30,7 +30,9 @@ uses
   xpglobal,
 {$IFDEF unix}
   xplinux,
+{$IFDEF fpc}
   linux,
+{$ENDIF }
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
@@ -179,6 +181,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/09/07 23:24:55  ml
+  - Kylix compatibility stage II
+
   Revision 1.44  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

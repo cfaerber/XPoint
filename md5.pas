@@ -30,7 +30,7 @@
 * Implements a translation of
 *" RSA Data Security, Inc. MD5 Message-Digest Algorithm" based on RFC1321...
 */}
-unit MD5;
+unit md5;
 
 {$i xpdefine.inc}
 {$ifdef VP}{$q-}{$endif}
@@ -390,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
+
   Revision 1.3  2001/05/19 15:54:03  ma
   - added CRAM-MD5 support
 

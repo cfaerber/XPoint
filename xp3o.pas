@@ -85,6 +85,9 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 implementation  {-----------------------------------------------------}
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+{$IFDEF Kylix}
+  xplinux,
+{$ENDIF}  
   xpmakeheader;
 
 
@@ -1518,6 +1521,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2001/09/07 23:24:54  ml
+  - Kylix compatibility stage II
+
   Revision 1.70  2001/09/07 13:54:20  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
