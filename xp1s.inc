@@ -97,7 +97,7 @@ begin
   ExecDeutsch:=deutsch;
 
   Errorlevel := Xec(prog,'[XP]');
-  DebugLog('XP1','xp1s Xec result: '+strs(Errorlevel),1);
+  DebugLog('xp1','called "'+prog+'", result '+strs(Errorlevel),iif(Errorlevel=0,DLInform,DLError));
 
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
@@ -189,8 +189,7 @@ end;
 function listfile(name,header:string; savescr,listmsg:boolean;
                   cols:shortint):shortint; { Lister }
 var
-  List: TLister;
-brk    : boolean;
+    List   : TLister;
     p      : scrptr;
     oldm   : byte;
     msg    : boolean;
@@ -301,7 +300,7 @@ begin
       Listunvers:=0; Listhalten:=0; Listflags:=0;
       end;
 
-    brk := List.Show;
+    List.Show;
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
@@ -413,8 +412,12 @@ begin
     trackpath:=false;
     end;
 end;
+
 {
   $Log$
+  Revision 1.46  2001/01/04 23:16:40  ma
+  - refined debug logs
+
   Revision 1.45  2000/12/26 15:40:08  mk
   - fixed highlight list header
 
@@ -423,154 +426,4 @@ end;
 
   Revision 1.43  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
-
-  Revision 1.42  2000/11/14 11:14:32  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.41  2000/10/17 10:05:47  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.40  2000/10/04 18:14:59  mk
-  - AnsiString-Fix
-
-  Revision 1.39  2000/10/03 15:44:50  mk
-  - Fix fuer restaurierung des Screens nach DOS-Shell
-
-  Revision 1.38  2000/09/30 16:34:50  mk
-  - SysSetBackIntensity
-
-  Revision 1.37  2000/09/03 20:42:13  ma
-  - Debuglogs
-  - Anpassungen an geaendertes Exxec (Shellaufruf)
-
-  Revision 1.36  2000/08/17 12:10:14  mk
-  MO: Headerzeilenlaenge fuer Screen > 80 Zeichen angepasst
-
-  Revision 1.35  2000/08/14 20:41:22  mk
-  - Exec-Routinen besser auf 32 Bit Bedingungen angepasst
-
-  Revision 1.34  2000/08/04 22:12:48  mk
-  MO: - Nachrichtenanzeige im Lister, headerzeilen > 80
-
-  Revision 1.33  2000/08/01 20:14:32  mk
-  - ResetVideo entfernt
-
-  Revision 1.32  2000/07/27 13:41:49  mk
-  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
-
-  Revision 1.31  2000/07/27 10:13:00  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.30  2000/07/23 10:01:00  mk
-  - memavail wo moeglich rausgenommen
-
-  Revision 1.29  2000/07/06 08:58:44  hd
-  - AnsiString
-
-  Revision 1.28  2000/07/04 12:04:20  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.27  2000/07/03 15:23:26  hd
-  - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
-  - GoDir durch SetCurrentDir ersetzt
-
-  Revision 1.26  2000/06/23 15:59:17  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.25  2000/06/22 19:53:30  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.24  2000/06/05 16:16:23  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.23  2000/05/10 10:31:26  hd
-  - Fixe Verdrahtung 80x25 unter Curses aufgehoben
-
-  Revision 1.22  2000/05/07 18:00:45  mk
-  - Fix in ShowPar fuer extrem lange Kommaondozeilen
-
-  Revision 1.21  2000/05/04 18:43:15  jg
-  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
-    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
-
-  Revision 1.20  2000/04/24 13:17:39  jg
-  - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
-  - "H" im Lister kann jetzt das Halteflag auch ausschalten
-  - "V" im Lister schaltet das Wiedervorlageflag Ein/Aus
-
-  Revision 1.19  2000/04/13 12:48:35  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.18  2000/04/01 07:41:38  jg
-  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
-    neue Einstellung wird dann auch beim Quoten verwendet
-  - Hilfe aktualisiert, und Englische Hilfe fuer
-    Config/Optionen/Allgemeines auf Stand gebracht.
-
-  - Externe-Viewer (Windows): "START" als Allroundviewer
-    funktioniert jetzt auch mit der Loeschbatch-Variante
-  - Text fuer MIME-Auswahl in englische Resource eingebaut
-
-  Revision 1.17  2000/03/25 11:46:10  jg
-  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
-  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
-
-  Revision 1.16  2000/03/23 15:47:23  jg
-  - Uhr im Vollbildlister aktiv
-    (belegt jetzt 7 Byte (leerzeichen vorne und hinten)
-
-  Revision 1.15  2000/03/14 15:15:38  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.14  2000/03/09 23:39:33  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.13  2000/03/08 22:13:31  rb
-  nicht mehr benîtigte Routinen fÅr OS/2 Programmaufruf entfernt
-
-  Revision 1.12  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.11  2000/03/06 05:14:15  jg
-  Schînheitsfix fÅr Lister : Uhr bei riesigen Nachrichten rechtzeitig abschalten
-
-  Revision 1.10  2000/03/02 21:19:51  jg
-  - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
-
-  Revision 1.9  2000/02/27 08:24:57  jg
-  -Strings.StrPCopy wird wieder benutzt...
-
-  Revision 1.8  2000/02/26 18:14:47  jg
-  - StrPCopy in Xp1s.inc integriert
-  - Suche aus Archivviewer wieder zugelassen
-    (zwecks Headereintregsuche im "O" Fenster)
-
-  Revision 1.7  2000/02/24 23:50:11  rb
-  Aufruf externer Viewer bei OS/2 einigermassen sauber implementiert
-
-  Revision 1.6  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.5  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
