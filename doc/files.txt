@@ -1,5 +1,5 @@
-Dateien im OpenXP-Source-Verzeichnis
-------------------------------------
+Dateien im OpenXP Verzeichnis
+-----------------------------
 
 ARCHIVE.PAS     Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
 CAPI*.*         unvollendetes ISDN-CAPI-1.1-Modul
@@ -47,17 +47,38 @@ XP1HELP.*       Online-Hilfe aufrufen
 XP1INPUT.PAS    diverse Eingaberoutinen
 XP1MENU.INC     Menfunktionen
 XP1O*.PAS       Diverses
+ - xp1o.pas      Lister-Tastenabfrage     
+   xp1s.inc      Lister-Hauptschleife
+   ...    
 XP1S.INC        externe Programme aufrufen
 XP2.PAS, XP2CFG.INC,
 XP2DB.PAS       Initialisierungen bei Programmstart
-XP2C.PAS        /XPoint/Config
+XP2C.PAS        Konfiguration aendern /XPoint/Config
+XP2CFG.INC      Konfiguration laden
 XP2F.*          Fressen, Ficken, Fernsehen
 XP3*.*          diverse Nachrichten-(Verarbeitungs/Datenbank)-Funktionen
+ - xp3.pas        diverse Funktionen fuer Pointdatenverwaltung 
+ - xp3o.pas       diverse Funktionen fuer Nachrichtenverwaltung 
+ - xp3o2.pas      dito
+ - xp3o.inc       Puffer einlesen
+ - xp3ex.pas      Nachrichten extrahieren
+    
 XP3EX.PAS       Nachrichten extrahieren
-XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation,
-                Suchfunktionen u.a.
+XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunktionen u.a.        
+ - xp4.pas       Tastaturabfragen,N/B/U-Fenster
+ - xp4.inc       Hauptmenueabfrage
+ - xp4d.inc      Zeilenanzeigeroutine fuer N/B/U-Fenster
+ - xp4e.pas      Editierfunktionen fuer N/B/U-Fenster  
+ - xp4o.pas      Suchfunktionen, Dupekill 
+ - xp4o.inc      Reorganisation
+ - xp4o2.inc     DB-Packen, Kommentarbaum
+ - xp4o3.pas     diverse Hilfsfunktionen fuer XP4
+ - xp4w.inc      Auswahl und Aufruf von Lister bzw. externem Viewer 
+
 XP5.PAS         Kalender, Screen Saver, Paáwort u.a.
 XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
+ - xp6.pas       Hauptroutine Nachrichten verschicken
+   ... 
 XP7*.*          Netcall-Funktionen
 XP8.*           Brettmanager-Funktionen
 XP8FS.INC       Fileserver-Funktionen
@@ -104,21 +125,37 @@ ZPR.*           ZCONNECT-Pufferreparierer (ZPR.EXE)
 UUCP-FL1.PAS    Beispiel fr UUCP-Filelisten-Konvertierer
 XPNODES.PAS     Unit fr Zugriff auf den XP-Nodelistenindex
 
+XP.IHQ          Quelltext der deutschen Online-Hilfe
+XP-E.IHQ        Quelltext der englischen Online-Hilfe
+*.DQ            Quelltexte der Dokumentation
+
 IHS.PAS         Quelltext zu IHS.EXE
 DOCFORM.PAS     Quelltext zu DOCFORM.EXE
 RC.PAS          Quelltext zu RC.EXE
+
+Linux: wird zum compilieren der anderen Versionen nicht benötigt
+----------------------------------------------------------------
+
+XPCURSES.PAS    XP-spezifisches Interface zur Ansteuerung der Curses-Lib.
+                (wird nur unter Unix-Derivaten benoetigt)
+XPLINUX.PAS	XP-spezifisches Interface unter Linux
+README.LNX      Hinweise fuer die Benutzung unter Linux
 
 Verzeichnis .\DOC
 -----------------
 
 XPOINT.XML      XML-Docbook des Handbuches
-XPOINT.DSL      Sylesheet fr Handbuch
-
-XP.IHQ          Quelltext der deutschen Online-Hilfe
-XP-E.IHQ        Quelltext der englischen Online-Hilfe
-*.DQ            Quelltexte der Dokumentation
-
+XPOINT.DSL      Sylesheet für Handbuch
 DBFORM          Beschreibung der Datenbankfelder
+
+
+Die folgenden Tools liegen nur im Source vor und können mit allen
+unterstützen Compilern aktualisiert werden:
+
+RC.EXE          Compiler fr *.RQ -> *.RC
+DOCFORM.EXE     Formatierer fr *.DQ -> *.DOC
+IHS.EXE         Compiler fr *.IHQ -> *.HLP
+
 
 README.LNX	Hinweise zur Nutzung unter Linux
 
@@ -155,3 +192,5 @@ Resourcen:
   sind.
     Die Funktionen zum Auslesen der compilierten Resourcendateien
   befinden sich in RESOURCE.PAS.
+
+
