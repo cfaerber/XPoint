@@ -84,8 +84,8 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$INLINE ON }
-  {$PACKRECORDS Default } { Default: 2 }
-  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$PACKRECORDS 8 }       { Default: 2 }
+  {$PACKENUM 1 }          { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
@@ -257,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.12  2003/01/22 21:32:50  mk
+  - packenums = 1 and packrecords = 8 for FPC, Delphi and Kylix
+
   Revision 1.78.2.11  2003/01/18 23:59:47  mk
   - define NCRT for Unix
 
