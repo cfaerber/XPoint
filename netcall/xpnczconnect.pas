@@ -182,7 +182,10 @@ begin { ZConnectNetcall }
 
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
-  UpArcFile:=boxpar^.sysopout+'CALLER.'+boxpar^.uparcext;
+  if Diskpoll then
+    UpArcFile:=boxpar^.sysopout
+  else
+    UpArcFile:='CALLER.'+boxpar^.uparcext;
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFile);
@@ -253,6 +256,10 @@ end;
 
 {
   $Log$
+  Revision 1.16  2003/04/24 22:53:02  ma
+  - fix: ZC CALLER file was put into sysop poll dir even if no sysop mode
+    configured
+
   Revision 1.15  2002/12/14 22:43:41  dodi
   - fixed some hints and warnings
 
