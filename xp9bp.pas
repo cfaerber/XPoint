@@ -139,7 +139,7 @@ begin
     NotSEmpty:=false;
     brettmails:=true;
     MaxWinSize:=7;
-    MaxPacketSize:=4096; {alt: 64}
+    MaxPacketSize:=1024; {alt: 64}
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
@@ -526,6 +526,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/15 05:24:05  mw
+
+  - Default angepasst: - UUCP-Paketsize jetzt 1024
+                       - RFC1522 eingeschaltet (MIME im Header)
+
   Revision 1.8  2000/05/13 21:23:05  mw
 
   - Defaults angepasst: - max. Paketgr”áe statt 64 jetzt 4096

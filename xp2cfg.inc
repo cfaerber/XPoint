@@ -715,7 +715,7 @@ begin
   ss_passwort:=false;
   NewsMIME:=true;
   MIMEqp:=false;
-  RFC1522:=false;
+  RFC1522:=true; {alt: false}
   NoArchive:=true; {!MH:}
   FidoDelEmpty:=false;
   KeepVia:=false;
@@ -1796,6 +1796,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.54  2000/05/15 05:24:05  mw
+
+  - Default angepasst: - UUCP-Paketsize jetzt 1024
+                       - RFC1522 eingeschaltet (MIME im Header)
+
   Revision 1.53  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 
