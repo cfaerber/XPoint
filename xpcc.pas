@@ -170,7 +170,6 @@ begin
               end;
             end;
           aufbau:=true;
-          cc_testempf:=true;
           end
         else
           cc_testempf:=false;
@@ -350,6 +349,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2001/07/10 19:02:00  my
+  - fixed previous commit
+
   Revision 1.7.2.1  2001/07/10 14:48:04  mk
   JG:- Fix: Cancelling the automatic creation (e.g. of an Reply-To)
        user with <Esc> does *not* create the user anymore :-)
