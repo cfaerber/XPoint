@@ -1521,8 +1521,9 @@ begin
                     getx(su,  'terminalbios',termbios) or
                     getx(su,  'tonsignal',tonsignal) then EntryFound := true;
                     if AutomaticTimeZone then
-                      if xp1.gets(s,su,'TimeZone',dummytz) then EntryFound := true
-                    else
+                    begin
+                      if xp1.gets(s,su,'TimeZone', dummytz) then EntryFound := true
+                    end else
                       if xp1.gets(s,su,'TimeZone', XpTimeZone) then EntryFound := true;
                  end;
             'U': if xp1.gets(s,su,'UserAufnahme',userauf) or
@@ -1720,6 +1721,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.18  2004/05/08 23:53:28  mk
+  - fixed 799307: zweimal 'TimeZone' in xpoint.cfg
+
   Revision 1.144.2.17  2003/09/16 23:51:10  mk
   - set correct standard value for XPTimeZone
 
