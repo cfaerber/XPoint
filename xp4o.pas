@@ -2134,10 +2134,10 @@ begin
     seek(f,hds);
     truncate(f);
     close(f);
-    lm:=listmakros;                                   { Aktuelle Makros merken,       }
-    listmakros:=16;                                   { Archivviewermakros aktivieren }
-    repeat until ListFile(fn,getres(460),true,false,0) <> -4;  { 'Nachrichten-Header' }
-    listmakros:=lm;                                   { wieder alte Makros benutzen   }
+    lm:=listmakros;                         { Aktuelle Makros merken,       }
+    listmakros:=16;                         { Archivviewermakros aktivieren }
+    ListFile(fn,getres(460),true,false,0);  { 'Nachrichten-Header'          }
+    listmakros:=lm;                         { wieder alte Makros benutzen   }
     _era(fn);
     end;
   dispose(hdp);
@@ -2220,8 +2220,7 @@ begin
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
             ViewFile(TempPath+datei,viewer,false)
           else
-            repeat until ListFile(TempPath+datei,fitpath(datei,
-                         iif(listuhr,33,40)),true,false,0) <> -4;
+            ListFile(TempPath+datei,fitpath(datei,iif(listuhr,33,40)),true,false,0);
           end
         else
           if memavail<20000 then
@@ -2370,13 +2369,13 @@ begin
     end;
   CloseArchive(ar);
   exdir:='';
-  llh:=true; no_ListWrapToggle:=true; listexit:=0;
+  llh:=true; ListCtrlWdisabled:=true; listexit:=0;
   lm:=ListMakros; ListMakros:=16;
   pushhp(67);
   list(brk);
   pophp;
   ListMakros:=lm;
-  no_ListWrapToggle:=false;
+  ListCtrlWdisabled:=false;
   dispose(abuf[arcbufp]);
   dec(arcbufp);
   CloseList;
@@ -2404,10 +2403,10 @@ begin
   if exist(fn) then begin
     arc:=ArcType(fn);
     if ArcRestricted(arc) then arc:=0;
-    if arc=0 then begin                                 { Wenns kein Archiv war...      }
+    if arc=0 then begin                     { Wenn's kein Archiv war...     }
       lm:=listmakros;
-      listmakros:=16;                                   { Archivviewermacros benutzen!  }
-      repeat until listfile(fn,fn,true,false,0) <> -4;  { und File einfach nur anzeigen }
+      listmakros:=16;                       { Archivviewer-Makros benutzen! }
+      listfile(fn,fn,true,false,0);         { und File einfach nur anzeigen }
       listmakros:=lm;
       end
       { rfehler(434)   { 'keine Archivdatei' }
@@ -2927,6 +2926,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.43  2002/04/12 14:34:16  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.47.2.42  2002/04/09 21:08:47  my
   JG:- Fix Archiv-Viewer: Bei Dateinamen, die keinen Punkt enthielten,
        wurden innerhalb eines Archivs nur die ersten vier Stellen

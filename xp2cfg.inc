@@ -871,7 +871,6 @@ begin
   writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
-  ListWrapBack:=ListWrap;
   writeln(t,'ViewerSave=',viewer_save);
   writeln(t,'ViewerLister=',viewer_lister);
   writeln(t,'ViewerVirscan=',viewer_scanner);
@@ -1720,7 +1719,6 @@ begin
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
-    ListWrapBack:=ListWrap;
     otherqcback:=otherquotechars;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
@@ -1835,6 +1833,12 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.36  2002/04/12 14:34:16  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.62.2.35  2002/03/08 22:55:35  my
   MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
        kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:

@@ -27,8 +27,7 @@ const ListKommentar     : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg      : string = '';
       ListXHighlight    : boolean = true;    { fÅr F-Umschaltung }
       ListShowSeek      : boolean = false;
-      ListWrapToggle    : boolean = false;   { fÅr Wortumbruch-Umschaltung }
-      no_ListWrapToggle : boolean = false;   { Wortumbruch-Umschaltung verhindern }
+      ListCtrlWdisabled : boolean = false;   { Wortumbruch-Umschaltung verhindern }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -347,14 +346,15 @@ begin
       end else
     end;
 
-  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
+  if (t=^W) then                                              { '^W' = Umbruch togglen }
+    if not ListCtrlWdisabled then
+    begin
+      listwrap:=not listwrap;
+      ex(-5);
+    end
+    else errsound;
 
-  if (c=^W) and not no_ListWrapToggle then                    { '^W' = Umbruch togglen }
-  begin
-    listwrap:=not listwrap;
-    ListWrapToggle:=true;
-    ex(-4);
-  end;
+  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
   if Listmakros=8 then   { Diese Funktionen NUR im Nachrichten-Lister ausfÅhren, nicht im Archivviewer... }
   begin
@@ -1031,6 +1031,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.27  2002/04/12 14:34:15  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.40.2.26  2002/03/08 22:57:44  my
   MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
        funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),

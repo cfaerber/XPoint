@@ -155,7 +155,7 @@ begin
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
         if exist(fn) then
-          repeat until listfile(fn,fn,true,false,0) <> -4
+          listfile(fn,fn,true,false,0)
         else
           rfehler(20);   { '*LIST: Datei nicht vorhanden!' }
         end
@@ -256,6 +256,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.8  2002/04/12 14:34:16  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mssen.
+
   Revision 1.6.2.7  2002/03/31 15:53:04  my
   JG+MY:- Konfigurierbare Funktionstasten (<Shift-F1> etc.) untersttzen
           jetzt das Makro $ASK, das einen Eingabedialog ausfhrt, mittels

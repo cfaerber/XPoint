@@ -840,8 +840,7 @@ const
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
-       Otherqcback : boolean = false;     { Backup von Otherqqotechars zum Umschalten }
-       ListWrapBack : boolean = true;     { Backup von ListWrap zum Umschalten }
+       Otherqcback : boolean = false;     { Backup von Otherquotechars zum Umschalten }
 
        PGP2 = '2.6.x';
        PGP5 = '5.x';
@@ -1228,8 +1227,15 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 implementation
 
 end.
+
 {
   $Log$
+  Revision 1.54.2.52  2002/04/12 14:34:15  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.54.2.51  2002/03/31 15:46:57  my
   JG+MY:- Durch den Ausbau von 'Do_XPHilite' ÅberflÅssig gewordene
           Variablen und Anweisungen eliminiert.
@@ -1450,7 +1456,8 @@ end.
   - weitere arbeiten am Client-Modus
 
   Revision 1.54.2.27  2001/01/10 17:39:02  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.54.2.26  2001/01/03 22:46:47  mk
   - Parameter /Pal hinzugefuegt
@@ -1474,7 +1481,8 @@ end.
   - Farbalette vor Schell/Videomodus umschalten sichern
 
   Revision 1.54.2.19  2000/12/17 23:34:41  mk
-  - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
+  - Config/Extern/Shell/Videomodus nach Shell setzen
+    (Res 257,6, Help-ID 311) implementiert
 
   Revision 1.54.2.18  2000/12/06 01:47:31  mk
   - weitere Dateinamen gross geschrieben
@@ -1577,7 +1585,7 @@ end.
 
   Revision 1.42  2000/05/09 20:07:01  jg
    Externe Viewer / Schutzmassnahmen:
-   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
+   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformat-MIME-Typen
    - entsprechende Einstellungen unter Config/Optionen/Viewer
 
   Revision 1.41  2000/05/09 19:09:20  hd
@@ -1617,7 +1625,7 @@ end.
 
   Revision 1.30  2000/04/25 08:45:23  jg
   - kleine Aenderungen zur Suche des Nachrichtenweiterschalten-Bugs
-   (Variable NW nach xp0 verlagert + Anzeige wenn STRG+W ausgefuehrt wird)
+    (Variable NW nach xp0 verlagert + Anzeige wenn STRG+W ausgefuehrt wird)
 
   Revision 1.29  2000/04/21 12:34:47  jg
   - MIME-Flag wird jetzt beim Archivieren mit uebernommen
@@ -1630,14 +1638,16 @@ end.
   - Flag falsch benamst: war R statt G wie Gruppe
 
   Revision 1.26  2000/04/15 12:37:57  oh
-  - User/Nachrichten/Kommentarbaum-Listenanzeige verbessert, Feld Adressbuch in Userliste eingefuegt
+  - User/Nachrichten/Kommentarbaum-Listenanzeige verbessert, Feld
+    Adressbuch in Userliste eingefuegt
 
   Revision 1.25  2000/04/15 09:57:59  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+  - User-Adressbuch Moeglichkeit zur Erstellung von Usergruppen im
+    Spezialmenue
+  - Config/Optionen/Allgemeines "Standard-Adressbuchgruppe" fuer neue User
 
   Revision 1.24  2000/04/13 20:18:03  jg
-  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Userfenster koennen jetzt nach Servername geordnet werden ('O')
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
   - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
 
@@ -1660,7 +1670,7 @@ end.
   - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
 
   Revision 1.20  2000/04/04 21:01:22  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fÅr VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.19  2000/04/02 11:33:54  oh
   - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
@@ -1676,7 +1686,8 @@ end.
   - Text fuer MIME-Auswahl in englische Resource eingebaut
 
   Revision 1.17  2000/04/01 02:21:47  oh
-  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
+  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe
+    fuer die MsgListe vorbereitet
 
   Revision 1.16  2000/03/25 11:46:09  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet

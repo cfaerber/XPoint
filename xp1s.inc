@@ -288,7 +288,9 @@ var brk    : boolean;
     lfirst : byte;     { Startzeile Lister }
     lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
-    wrapb  : boolean;  { Backup no_ListWrapToggle }
+    lwback : boolean;  { Backup Listwrap }
+    ehlback: integer;  { Backup ExtHdLines }
+    cwdisbk: boolean;  { Backup ListCtrlWdisabled }
 
   procedure ShowMsgHead;
   var t : text;
@@ -310,93 +312,94 @@ var brk    : boolean;
   end;
 
 begin
-  listexit:=0;
-  wrapb:=no_ListWrapToggle;
-  no_ListWrapToggle:=false;
-  listseekcol:=col.collistfound;
-  if Suchergebnis then listshowseek:=true
-    else listshowseek:=false;
-  if varlister<>'' then begin
-    lf:=repfile(VarLister,name);
-    pp:=pos('$TYPE',ustr(lf));
-    if pp>0 then begin
-      lt:=iif(listmsg,iif(listkommentar,2,1),0);
-      lf:=left(lf,pp-1)+strs(lt)+mid(lf,pp+5);
-      end;
-    shell(lf,ListerKB,1);
-    if errorlevel in [100..110] then ExtListKeys;
-    end
-  else begin
-    if savescr then sichern(p);
-    lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then begin                        { Bei Vollbild-Lister: }
-      if {not listmsg or} not listuhr then m2t:=false { Uhr nur im Message-Lister... }
-      else begin
-        dphb:=dphback;
-        if listmsg and ListFixedhead and (exthdlines>0) then   {   Wenn fester Header }
-          dphback:=listheadercol                   { dann Uhr aktiv mit Headerfarbe }
+  ehlback:=exthdlines;
+  lwback:=listwrap;
+  cwdisbk:=ListCtrlWdisabled;
+  repeat                      { fÅr <Ctrl-W> (Wortumbruch-Toggle) }
+    ListCtrlWdisabled:=false;
+    exthdlines:=ehlback;
+    listexit:=0;
+    listseekcol:=col.collistfound;
+    if Suchergebnis then listshowseek:=true
+      else listshowseek:=false;
+    if varlister<>'' then begin
+      lf:=repfile(VarLister,name);
+      pp:=pos('$TYPE',ustr(lf));
+      if pp>0 then begin
+        lt:=iif(listmsg,iif(listkommentar,2,1),0);
+        lf:=left(lf,pp-1)+strs(lt)+mid(lf,pp+5);
+        end;
+      shell(lf,ListerKB,1);
+      if errorlevel in [100..110] then ExtListKeys;
+      end
+    else begin
+      if savescr then sichern(p);
+      lfirst:=iif(listvollbild,1,4); lofs:=0;
+      if listvollbild then begin                        { Bei Vollbild-Lister: }
+        if {not listmsg or} not listuhr then m2t:=false { Uhr nur im Message-Lister... }
         else begin
-          dphback:=col.colliststatus;              { bei freiem Header }
+          dphb:=dphback;
+          if listmsg and ListFixedhead and (exthdlines>0) then   {   Wenn fester Header }
+            dphback:=listheadercol                   { dann Uhr aktiv mit Headerfarbe }
+          else begin
+            dphback:=col.colliststatus;              { bei freiem Header }
+            end;
           end;
         end;
-      end;
-    if ListMsg and ListFixedHead then
-      ShowMsgHead;
+      if ListMsg and ListFixedHead then
+        ShowMsgHead;
 
-    openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
-             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
-             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
-             iifs(_maus and ListScroller,'VSC:080/','')+
-             iifs(listmsg,'ROT/',''));
+      openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
+               iif(listvollbild,screenlines,screenlines-fnkeylines-1),
+               iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
+               iifs(_maus and ListScroller,'VSC:080/','')+
+               iifs(listmsg,'ROT/',''));
 
-    if listwrap {or listkommentar} then
-      lister.listwrap(iif(_maus and listscroller,screenwidth-1,screenwidth));
-    if listmsg and ConvIso then list_convert(ISO_conv);
-    if not ListAutoscroll then listNoAutoscroll;
-    msg:=(_filesize(name)>1024*100);
-    if msg then rmessage(130);    { 'Lade Datei ...' }
-    list_readfile(name,lofs);
-    if msg then closebox;
-    listheader(header);
-    listTp(listExt);   llh:=listmsg;
-    oldm:=ListMakros;
-    if listmsg then ListMakros:=8;
-    if cols<>0 then begin
-      listCFunc(listColor);
-      if cols and 2<>0 then begin
-        listDLproc(listDisplay);
-        xp1o.ListXHighlight:=ListHighlight;
+      if listwrap {or listkommentar} then
+        lister.listwrap(iif(_maus and listscroller,screenwidth-1,screenwidth));
+      if listmsg and ConvIso then list_convert(ISO_conv);
+      if not ListAutoscroll then listNoAutoscroll;
+      msg:=(_filesize(name)>1024*100);
+      if msg then rmessage(130);    { 'Lade Datei ...' }
+      list_readfile(name,lofs);
+      if msg then closebox;
+      listheader(header);
+      listTp(listExt);   llh:=listmsg;
+      oldm:=ListMakros;
+      if listmsg then ListMakros:=8;
+      if cols<>0 then begin
+        listCFunc(listColor);
+        if cols and 2<>0 then begin
+          listDLproc(listDisplay);
+          xp1o.ListXHighlight:=ListHighlight;
+          end;
         end;
-      end;
-    pushhp(39);
-    if _maus and listscroller and listvollbild then begin
-      attrtxt(col.colliststatus);
-      mwrt(1,lfirst,sp(screenwidth));
-      end;
+      pushhp(39);
+      if _maus and listscroller and listvollbild then begin
+        attrtxt(col.colliststatus);
+        mwrt(1,lfirst,sp(screenwidth));
+        end;
 
-    list_infos(listmsg);
+      list_infos(listmsg);
 
-    list(brk);
-    Listunvers:=0; Listhalten:=0; Listflags:=0;
-    pophp;
-    ListMakros:=oldm;
-    if listvollbild and listuhr {and ListMsg}
-    then dphback:=dphb;                  { Uhrfarbe resetten  }
-    m2t:=true;
-    if savescr then holen(p);
-    closelist;
+      list(brk);
+      Listunvers:=0; Listhalten:=0; Listflags:=0;
+      pophp;
+      ListMakros:=oldm;
+      if listvollbild and listuhr {and ListMsg}
+      then dphback:=dphb;          { Uhrfarbe resetten  }
+      m2t:=true;
+      if savescr then holen(p);
+      closelist;
     end;
+  until listexit<>-5;  { <Ctrl-W> }
+  listwrap:=lwback;
+  ListCtrlWdisabled:=cwdisbk;
   exthdlines:=0;
   llh:=false;
-  if listexit<>4 then                    { Wenn nicht Editor gestartet wird...        }
-    otherquotechars:=otherqcback;        { Status der Quotechars '|' und ':' resetten }
-  if (listexit<>-4) and (ListWrapToggle) then
-  begin
-    ListWrap:=ListWrapBack;              { Status Wortumbruch resetten }
-    ListWrapToggle:=false;
-  end;
+  if listexit<>4 then              { Wenn nicht Editor gestartet wird...        }
+    otherquotechars:=otherqcback;  { Status der Quotechars '|' und ':' resetten }
   listfile:=listexit;
-  no_ListWrapToggle:=wrapb;
   ListShowSeek:=false;
 end;
 
@@ -495,6 +498,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.17  2002/04/12 14:34:15  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.24.2.16  2002/03/27 19:51:26  my
   MY:- Interne énderung: An einigen Stellen den festen Wert "80" durch die
        Variable "screenwidth" ersetzt.

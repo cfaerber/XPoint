@@ -571,10 +571,7 @@ begin
   freeres;
   readmask(brk);
   if not brk and mmodified then
-  begin
-    ListWrapBack:=listwrap;
     GlobalModified;
-  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1521,6 +1518,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.35  2002/04/12 14:34:15  my
+  JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
+          umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
+          durchlaufen statt explizit bei jedem Routinenaufruf von
+          listfile angegeben werden zu mÅssen.
+
   Revision 1.39.2.34  2002/03/10 13:51:26  my
   MY:- Hîhe/Breite von /Config/Anzeige/Diverses korrigiert und an
        englische Ressource angepa·t (Breite aus res. 260,0 aulesen).
