@@ -366,29 +366,18 @@ begin
   end;
   SetConsoleCursorInfo(Outhandle, Info);
 {$ELSE }
-  {$IFDEF FPC }
-    {$IFDEF OS2 }
-      case t of
-        curnorm : SysSetCurType(-85, -100, true);
-        cureinf : SysSetCurType(0, -100, true);
-        curoff  : SysSetCurType(-100, -100, false);
-      end;
-
-    {$ELSE }
-      Debug.DebugLog('inout','Unimplemented function called (Cursor)',dlTrace);
-(*      case t of
-        curnorm : Cursoron;
-        cureinf : CursorBig;
-        curnone,
-        curoff  : CursorOff;
-      end; *)
-    {$ENDIF }
-  {$ENDIF }
-  {$IFDEF VP }
+  {$IFDEF OS2 }
     case t of
-      curnorm : SysTVSetCurType(-85, -100, true);
-      cureinf : SysTVSetCurType(0, -100, true);
-      curoff  : SysTVSetCurType(-100, -100, false);
+      curnorm : SysSetCurType(-85, -100, true);
+      cureinf : SysSetCurType(0, -100, true);
+      curoff  : SysSetCurType(-100, -100, false);
+    end;
+  {$ELSE }
+    case t of
+      curnorm : Cursoron;
+      cureinf : CursorBig;
+      curnone,
+      curoff  : CursorOff;
     end;
   {$ENDIF }
 {$ENDIF }
@@ -1680,6 +1669,9 @@ end;
 
 {
   $Log$
+  Revision 1.87  2001/12/24 16:49:53  mk
+  - implemented Cursor for DOS32
+
   Revision 1.86  2001/10/24 09:25:17  ma
   - adjusted debug levels
 
