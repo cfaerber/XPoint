@@ -1,230 +1,213 @@
-Dateien im OpenXP Verzeichnis
------------------------------
-
-$Id$
-
-ARCHIVE.PAS     Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
-CAPI*.*         unvollendetes ISDN-CAPI-1.1-Modul
-CLIP.*          Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
-CRC.PAS         CRC16/32-Routinen
-DATA*.*         Datenbankfunktionen fÅr *.DB1/*.IX1/*.EB1
-DBASE.PAS       dBASE-Dateien auslesen (fÅr YUP2PKT)
-DEBUG.PAS       Debug-Unit. Per Environment steuerbare Logmessages.
-DOSX.PAS        DOS- und BIOS-Funktionen
-ED*.*           Editor
-EMS.PAS         EMS-Speicherverwaltung
-EXXEC.*         externe Programme aufrufen; Swapping
-FEIERTAG.PAS    Feiertage ermitteln
-FILEIO.PAS      Dateien, Pfade, Laufwerke
-HELP.PAS        Online-Hilfe: *.HLP auslesen und anzeigen
-INOUT.PAS       Diverse Funktionen fÅr Tastatureingabe und Bildschirmausgabe
-KEYS.PAS        Tastatureingabe
-LISTER.*        Lister
-MASKE.*         Dialoge / Eingabemasken
-MAUS2.PAS       Auswertung von Mauseingaben
-MONTAGE.PAS     Datumsfunktionen
-MOUSE.*         Auswertung von Maus-Interrupts (INT 33)
-PRINTERX.PAS    Druckerausgabe
-RESOURCE.PAS    String-Resourcen: *.RES auslesen
-STACK.PAS       ein primitiver Stack
-TIMER.PAS       Timer-Routinen
-TYPEFORM.*      Typumwandlungen, Stringformatierungen etc.
-UART.PAS        Ein-/Ausgabe via serieller Schnittstelle oder FOSSIL
-VIDEO.*         Video-BIOS-Funktionen
-WIN2.PAS        Auswahlfenster
-WINDOWS.*       Fenster allgemein
-XDELAY.*        Ersatz fÅr CRT-Delay
-XMS.*           XMS-Speicherverwaltung
-
-XP.PAS          CrossPoint-Hauptprogramm, Real-Mode-Version
-XL.PAS          CrossPoint-Hauptprogramm, DPMI-Version
-XP_DES.*        DES-Verschluesselung
-XP_ITI.PAS      MausTausch-ITI-File auswerten
-XP_PGP.*        PGP-Schnittstelle
-XP_UUE.*        UUDecode
-XP0.PAS         globale Definitionen und Deklarationen
-XP1.*           alles Mîgliche
-XP10*.*         Timinglisten, Tastenmakros, GebÅhrenzonen etc.
-XP1CM.INC       ein ÅberflÅssiges Relikt
-XP1HELP.*       Online-Hilfe aufrufen
-XP1INPUT.PAS    diverse Eingaberoutinen
-XP1MENU.INC     MenÅfunktionen
-XP1O*.PAS       Diverses
- - xp1o.pas      Lister-Tastenabfrage     
-   xp1s.inc      Lister-Hauptschleife
-   ...    
-XP1S.INC        externe Programme aufrufen
-XP2.PAS, XP2CFG.INC,
-XP2DB.PAS       Initialisierungen bei Programmstart
-XP2C.PAS        Konfiguration aendern /XPoint/Config
-XP2CFG.INC      Konfiguration laden
-XP2F.*          Fressen, Ficken, Fernsehen
-XP3*.*          diverse Nachrichten-(Verarbeitungs/Datenbank)-Funktionen
- - xp3.pas        diverse Funktionen fuer Pointdatenverwaltung 
- - xp3o.pas       diverse Funktionen fuer Nachrichtenverwaltung 
- - xp3o2.pas      dito
- - xp3o.inc       Puffer einlesen
- - xp3ex.pas      Nachrichten extrahieren
-    
-XP3EX.PAS       Nachrichten extrahieren
-XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunktionen u.a.        
- - xp4.pas       Tastaturabfragen,N/B/U-Fenster
- - xp4.inc       Hauptmenueabfrage
- - xp4d.inc      Zeilenanzeigeroutine fuer N/B/U-Fenster
- - xp4e.pas      Editierfunktionen fuer N/B/U-Fenster  
- - xp4o.pas      Suchfunktionen, Dupekill 
- - xp4o.inc      Reorganisation
- - xp4o2.inc     DB-Packen, Kommentarbaum
- - xp4o3.pas     diverse Hilfsfunktionen fuer XP4
- - xp4w.inc      Auswahl und Aufruf von Lister bzw. externem Viewer 
-
-XP5.PAS         Kalender, Screen Saver, Pa·wort u.a.
-XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
- - xp6.pas       Hauptroutine Nachrichten verschicken
-   ... 
-XP7*.*          Netcall-Funktionen
-XP8.*           Brettmanager-Funktionen
-XP8FS.INC       Fileserver-Funktionen
-XP9.*           (fast) alle Funktionen im Edit-MenÅ
-XPAUTO.PAS      AutoVersandt, Autoexec-Verzeichnis
-XPCC.PAS        Verteiler
-XPCFG.PAS	3. Cfg-Datei
-XPDATUM.PAS     Datumsumwandlungen
-XPDEF.INC       globale Compiler-Definitionen
-XPDIFF.PAS      Definitionen fÅr XP, XP-FM und ZFIDO
-XPEASY.PAS      Einfache Erstkonfiguration
-XPE.PAS         Aufruf des internen Editors
-XPFIDO.PAS, XPF1.INC,
-XPF2.PAS        Fido-Funktionen
-XPFIDONL.PAS    Fido-Nodelisten-Funktionen
-XPFONTS.PAS     Bildschirmfonts
-XPIMPEXP.PAS    Import/Export-Funktionen
-XPKEYS.PAS      Funktionstasten und Makros
-XPMAKEHD.INC    ZCONNECT- und Z3.8-Header parsen
-XPMAUS.PAS      MausTausch-Funktionen
-XPMIME.PAS      nur XP 3.2: MIME-Viewer-Funktionen
-XPNT.PAS        Netztypen
-XPREG.PAS       /XPoint/Registrierung
-XPSTAT.PAS      /XPoint/Statistik
-XPTERM.PAS      /XPoint/Terminal
-XPUU.PAS        UUCICO-Aufruf
-XPVIEW.PAS      BinÑrfile-Viewer
-XPX.PAS         erste Unit: Startup-Funktionen
-XP-*.RQ         Resourcendateien fÅr CrossPoint
-XPFNT*.OBJ      Bildschirmfonts
-
-NDIFF.PAS       Nodelist-Differ (NDIFF.EXE)
-PMCONV.PAS      PM-Puffer-Konvertierer (PMCONV.EXE)
-MAGGI.PAS       Multiformat-Konvertierer (MAGGI.EXE)
-UUZ.PAS         UUCP/RFC-Konvertierer (UUZ.EXE)
-XPFILES.INC     Dateinamenskonvertierung fÅr UUZ
-XP-FM.*         Fido-Mailer (XP-FM.EXE)
-XPFM-*.RQ       Resourcen-Quelltexte fÅr den Fido-Mailer
-XPME.PAS, XPMECOL.INC
-                MenÅeditor (XPME.EXE)
-ZFIDO.*         FTSC-Konvertierer (ZFIDO.EXE)
-ZPR.*           ZCONNECT-Pufferreparierer (ZPR.EXE)
-
-UUCP-FL1.PAS    Beispiel fÅr UUCP-Filelisten-Konvertierer
-XPNODES.PAS     Unit fÅr Zugriff auf den XP-Nodelistenindex
-
-XP.IHQ          Quelltext der deutschen Online-Hilfe
-XP-E.IHQ        Quelltext der englischen Online-Hilfe
-*.DQ            Quelltexte der Dokumentation
-
-IHS.PAS         Quelltext zu IHS.EXE
-DOCFORM.PAS     Quelltext zu DOCFORM.EXE
-RC.PAS          Quelltext zu RC.EXE
-
-build.bat       DOS-Batchdatei zum Compilieren von OpenXP
-
-Verzeichnis .\DOC
------------------
-
-xpoint.sgm      Handbuch im DocBook-Format
-xpoint.dsl      Stylesheet fuer Handbuch
-xpoint.cat      Katalogdatei fuer Handbuch
-
-fido.dq         Fido-Dokumentation im Quelltext
-uucp.dq         UUCP-Dokumentation im Quelltext
-
-xp.ihq          Quelltext der deutschen Online-Hilfe
-xp-e.ihq        Quelltext der englischen Online-Hilfe
-
-authors.txt     Namen und E-Mail-Adressen der OpenXP-Autoren
-dbform.txt      Beschreibung der Datenbankfelder
-devtodo.txt     zu erledigende Aufgaben
-files.txt       Liste der Dateien im OpenXP-Quellcode (diese Datei)
-gpl.txt         GNU General Public License
-make.txt        Anleitung zum Compilieren von OpenXP
-planung.txt     Strategieplanung fuer die weiteren OpenXP-Versionen
-readme.txt      wichtige Hinweise
-slizenz.txt     Lizenz des OpenXP-Quellcode
-tools.txt       Tabelle von externen XP-Tools
-versions.txt    Versions-FAQ fuer CrossPoint und OpenXP
-
-Verzeichnis "beispiel"
-----------------------
-
-glossary.cfg    Beispieldatei fuer Glossary-Funktion (Editor)
-gsbox.scr       Login-Script fuer GSMail
-madness.scr     Login-Script fuer Madness-Boxen
-magic.scr       Login-Script fuer MagicNET
-maus.scr        Login-Script fuer MAUS-Boxen
-o-magic.scr     Login-Script fuer MagicNET (Online)
-oz-netz.scr     Login-Script fuer Z-Netz (Online)
-pcsysop.scr     Login-Script fuer NetLand und PCNet
-privhead.xps    Schablone fuer ???
-qbrett.xps      Schablone fuer ???
-qpmpriv.xps     Schablone fuer ???
-qpriv.xps       Schablone fuer ???
-quark.scr       Login-Script fuer QUARK-Boxen
-quoteto.xps     Schablone fuer ???
-uucp.scr        Login-Script fuer UUCP
-z-netz.scr      Login-Script fuer Z-Netz
-
-
-Die folgenden Tools liegen nur im Source vor und kˆnnen mit allen
-unterst¸tzen Compilern aktualisiert werden:
-
-RC.EXE          Compiler fÅr *.RQ -> *.RC
-DOCFORM.EXE     Formatierer fÅr *.DQ -> *.DOC
-IHS.EXE         Compiler fÅr *.IHQ -> *.HLP
-
-
-Dateiformate
-------------
-
-Datenbank-Format
-  Die Datei DBFORM enthÑlt eine kurze öbersicht Åber die einzelnen
-  Datensatzfelder in den DB1-Dateien. Eine Beschreibung des
-  Datenbank-Dateiformates existiert nicht; Sie werden also in den
-  Quelltexten (DATA*.PAS und DATA*.INC) nachlesen muessen.
-
-Online-Hilfe:
-  Die Datei XP.IHQ beinhaltet die einzelnen, numerierten Seiten der
-  Online-Hilfe incl. Formatierungen fÅr Querverweise und Hervorhe-
-  bungen. Das Format sollte recht einfach zu verstehen sein.
-  Bitte beachten Sie, da· allen "@"-Zeichen im Hilfetext ein "\"
-  vorangestellt werden mu·, da diese sonst als Steuerzeichen
-  interpretiert wÅrden.
-    Es existiert eine englische Version der Online-Hilfe (XP-E.IHQ),
-  die jedoch groesstenteils noch auf dem Stand von XP 2.1 ist.
-    Die Funktionen zum Auslesen der compilierten Hilfsdatei befinden
-  sich in HELP.PAS.
-
-Resourcen:
-  Die Dateien XP-D.RC und XP-E.RC enthalten alle sprachabhaengigen
-  Texte und Tastendruecke; au·erdem enthalten Sie Angaben Åber die
-  Abmessungen einiger Diualogboxen. Die Datei XP-E.RC ist nicht mehr
-  auf dem aktuellen Stand. XPFM-*.RC enthalten entsprechende Dateien
-  fÅr XP-FM.
-    Alle EintrÑge in den Ressourcendateien sind durchnumeriert. Ein
-  Eintrag kann aus einer einzelnen Zeile, oder aus einer Gruppe von
-  numerierten Subzeilen bestehen, die in "+" und "-" eingeschlossen
-  sind.
-    Die Funktionen zum Auslesen der compilierten Resourcendateien
-  befinden sich in RESOURCE.PAS.
-
-DocBook (Handbuch):
-  siehe: <http://www.oasis-open.org/docbook/>
+# Dateien im OpenXP Verzeichnis
+#
+# $Id$
+#
+Makefile	Makefile fuer GNU make
+Makefile.lnx	???
+archive.pas	Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
+beispiel/glossary.cfg	Beispieldatei fuer Glossary-Funktion (Editor)
+beispiel/gsbox.scr	Login-Script fuer GSMail
+beispiel/madness.scr	Login-Script fuer Madness-Boxen
+beispiel/magic.scr	Login-Script fuer MagicNET
+beispiel/maus.scr	Login-Script fuer MAUS-Boxen
+beispiel/o-magic.scr	Login-Script fuer MagicNET (Online)
+beispiel/oz-netz.scr	Login-Script fuer Z-Netz (Online)
+beispiel/pcsysop.scr	Login-Script fuer NetLand und PCNet
+beispiel/privhead.xps	Schablone fuer ???
+beispiel/qbrett.xps	Schablone fuer ???
+beispiel/qpmpriv.xps	Schablone fuer ???
+beispiel/qpriv.xps	Schablone fuer ???
+beispiel/quark.scr	Login-Script fuer QUARK-Boxen
+beispiel/quoteto.xps	Schablone fuer ???
+beispiel/uucp.scr	Login-Script fuer UUCP
+beispiel/xpmailto.reg	???
+beispiel/z-netz.scr	Login-Script fuer Z-Netz
+build.bat	DOS-Batchdatei zum Compilieren von OpenXP
+clip.pas	Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
+crc.pas	CRC16/32-Routinen
+databas1.inc	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+databas2.inc	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+database.inc	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+database.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+databaso.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+datadef.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+datadef1.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
+dbase.pas	dBASE-Dateien auslesen (fuer YUP2PKT)
+debug.pas	Debug-Unit. Per Environment steuerbare Logmessages.
+doc/authors.txt	Namen und E-Mail-Adressen der OpenXP-Autoren
+doc/dbform.txt	Beschreibung der Datenbankfelder
+doc/devtodo.txt	zu erledigende Aufgaben
+doc/fido.dq	Fido-Dokumentation im Quelltext
+doc/files.txt	Liste der Dateien im OpenXP-Quellcode (diese Datei)
+doc/gpl.txt	GNU General Public License
+doc/make.txt	Anleitung zum Compilieren von OpenXP
+doc/readme.txt	wichtige Hinweise
+doc/slizenz.txt	Lizenz des OpenXP-Quellcode
+doc/tools.txt	Tabelle von externen XP-Tools
+doc/update.txt	Hinweise fuer OpenXP-Updates
+doc/uucp.dq	UUCP-Dokumentation im Quelltext
+doc/versions.txt	Versions-FAQ fuer CrossPoint und OpenXP
+doc/xp-e.ihq	Quelltext der englischen Online-Hilfe
+doc/xp.ihq	Quelltext der deutschen Online-Hilfe
+doc/xpoint.cat	Katalogdatei fuer Handbuch
+doc/xpoint.dsl	Stylesheet fuer Handbuch
+doc/xpoint.sgm	Handbuch im DocBook-Format
+docform.pas	Quelltext zu DOCFORM.EXE
+dosx.pas	DOS- und BIOS-Funktionen
+eddef.pas	Editor
+editor.inc	Editor
+editor.pas	Editor
+ems.pas	EMS-Speicherverwaltung
+encoder.pas	???
+exxex.asm	externe Programme aufrufen; Swapping
+exxex.obj	externe Programme aufrufen; Swapping
+exxec.pas	externe Programme aufrufen; Swapping
+feiertag.pas	Feiertage ermitteln
+file_id.diz	???
+fileio.inc	???
+fileio.pas	Dateien, Pfade, Laufwerke
+help.pas	Online-Hilfe: *.HLP auslesen und anzeigen
+icons.res	Icons fuer OpenXP im Windows-Format
+ihs.pas	Quelltext zu IHS.EXE (Helpfile-Compiler)
+inout.pas	Diverse Funktionen fuer Tastatureingabe und Bildschirmausgabe
+ipaddr.pas	Klasse TIP zur Verwaltung einer IP-Adresse (GPL)
+ipcclass.pas	Klasse TIPC (Inter Process Communication) (GPL)
+keys.pas	Tastatureingabe
+lfn.pas	???
+lister.pas	Lister
+maggi.pas	Multiformat-Konvertierer (MAGGI.EXE)
+maske.inc	Dialoge / Eingabemasken
+maske.pas	Dialoge / Eingabemasken
+maus2.pas	Auswertung von Mauseingaben
+modem.pas	Modemroutinen
+montage.pas	Datumsfunktionen
+mouse.pas	Auswertung von Maus-Interrupts (INT 33)
+ncnntp.pas	???
+ncpop3.pas	???
+ncsmtp.pas	???
+ncsocket.pas	???
+ndiff.pas	Nodelist-Differ (NDIFF.EXE)
+netcall.pas	Abstrakte Klasse TNetcall (GPL)
+pmconv.pas	PM-Puffer-Konvertierer (PMCONV.EXE)
+printerx.pas	Druckerausgabe
+rc.pas	Quelltext zu RC.EXE (Resourcen-Compiler)
+regexpr.pas	???
+resource.pas	String-Resourcen: *.RES auslesen
+stack.pas	ein primitiver Stack
+timer.pas	Timer-Routinen
+typeform.pas	Typumwandlungen, Stringformatierungen etc.
+uart.pas	Ein-/Ausgabe via serieller Schnittstelle oder FOSSIL
+uucico.pas	???
+uucp-fl1.pas	Beispiel fuer UUCP-Filelisten-Konvertierer
+uucp-g.inc	???
+uuz.pas	UUCP/RFC-Konvertierer
+uuzext.pas	externer UUCP/RFC-Konvertierer
+video.pas	Video-BIOS-Funktionen
+win2.pas	Auswahlfenster
+winxp.pas	???
+xp-d.rq	deutsches Sprachmodul fuer XP
+xp-e.rq	englisches Sprachmodul fuer XP
+xp-fm.inc	Fido-Mailer (XP-FM.EXE)
+xp-fm.pas	Fido-Mailer (XP-FM.EXE)
+xp.pas	CrossPoint-Hauptprogramm, Real-Mode-Version
+xp0.pas	globale Definitionen und Deklarationen
+xp1.pas	alles Moegliche
+xp10.inc	Timinglisten, Tastenmakros, Gebuehrenzonen etc.
+xp10.pas	Timinglisten, Tastenmakros, Gebuehrenzonen etc.
+xp10p.inc	Timinglisten, Tastenmakros, Gebuehrenzonen etc.
+xp1cm.inc	ein ueberfluessiges Relikt
+xp1help.pas	Online-Hilfe aufrufen
+xp1input.pas	diverse Eingaberoutinen
+xp1menu.inc	Menuefunktionen
+xp1o.pas	Diverses: Lister-Tastenabfrage
+xp1o2.pas	Diverses
+xp1s.inc	externe Programme aufrufen
+xp2.pas	Initialisierungen bei Programmstart
+xp2b.pas	???
+xp2c.pas	Konfiguration aendern /XPoint/Config
+xp2cfg.inc	Konfiguration laden
+xp2db.pas	Initialisierungen bei Programmstart
+xp2f.pas	Fressen, Ficken, Fernsehen
+xp3.pas	diverse Funktionen fuer Pointdatenverwaltung
+xp3ex.pas	Nachrichten extrahieren
+xp3o.inc	Puffer einlesen
+xp3o.pas	diverse Funktionen fuer Nachrichtenverwaltung 
+xp3o2.pas	diverse Funktionen fuer Nachrichtenverwaltung 
+xp4.inc	Hauptmenueabfrage
+xp4.pas	Tastaturabfragen,N/B/U-Fenster
+xp4d.inc	Zeilenanzeigeroutine fuer N/B/U-Fenster
+xp4e.pas	Editierfunktionen fuer N/B/U-Fenster
+xp4o.inc	Reorganisation
+xp4o.pas	Suchfunktionen, Dupekill
+xp4o2.pas	DB-Packen, Kommentarbaum
+xp4o3.pas	diverse Hilfsfunktionen fuer XP4
+xp4w.inc	Auswahl und Aufruf von Lister bzw. externem Viewer
+xp5.pas	Kalender, Screen Saver, Passwort u.a.
+xp6.pas	Hauptroutine Nachrichten verschicken
+xp6l.pas	Nachrichten verschicken (... in DB und Puffer schreiben)
+xp6o.pas	Nachrichten verschicken (... in DB und Puffer schreiben)
+xp6s.inc	Nachrichten verschicken (... in DB und Puffer schreiben)
+xp7.inc	Netcall-Funktionen
+xp7.pas	Netcall-Funktionen
+xp7f.pas	Netcall-Funktionen
+xp7l.pas	Netcall-Funktionen
+xp7o.pas	Netcall-Funktionen
+xp7u.inc	Netcall-Funktionen
+xp8.inc	Brettmanager-Funktionen
+xp8.pas	Brettmanager-Funktionen
+xp8fs.inc	Brettmanager-Funktionen
+xp9.inc	(fast) alle Funktionen im Edit-Menue
+xp9.pas	(fast) alle Funktionen im Edit-Menue
+xp9bp.pas	(fast) alle Funktionen im Edit-Menue
+xp_des.pas	DES-Verschluesselung
+xp_iti.pas	MausTausch-ITI-File auswerten
+xp_pgp.pas	PGP-Schnittstelle
+xp_uue.pas	UUDecode
+xpauto.pas	AutoVersandt, Autoexec-Verzeichnis
+xpcc.pas	Verteiler
+xpcfg.pas	3. Cfg-Datei
+xpdatum.pas	Datumsumwandlungen
+xpdefine.inc	???
+xpdiff.pas	Definitionen fuer XP, XP-FM und ZFIDO
+xpdos32.pas	???
+xpe.pas	Aufruf des internen Editors
+xpeasy.pas	Einfache Erstkonfiguration
+xpf1.inc	Fido-Funktionen
+xpf2.pas	Fido-Funktionen
+xpfido.pas	Fido-Funktionen
+xpfidonl.pas	Fido-Nodelisten-Funktionen
+xpfiles.inc	Dateinamenskonvertierung fuer UUZ
+xpfm-d.rq	deutsches Sprachmodul fuer Fido-Mailer
+xpfm-e.rq	englisches Sprachmodul fuer Fido-Mailer
+xpfnt1.obj	Bildschirmfonts
+xpfnt2.obj	Bildschirmfonts
+xpfnt3.obj	Bildschirmfonts
+xpfonts.pas	Bildschirmfonts
+xpftnadr.pas	???
+xpglobal.pas	???
+xpheader.inc	???
+xpimpexp.pas	Import/Export-Funktionen
+xpipc.pas	???
+xpkeys.pas	Funktionstasten und Makros
+xpmakehd.inc	ZCONNECT- und Z3.8-Header parsen
+xpmaus.pas	MausTausch-Funktionen
+xpme.pas	Menueeditor (XPME.EXE)
+xpmecol.inc	Menueeditor (XPME.EXE)
+xpmime.pas	nur XP 3.2: MIME-Viewer-Funktionen
+xpnntp.pas	???
+xpnodes.pas	Unit fuer Zugriff auf den XP-Nodelistenindex
+xpnt.pas	Netztypen
+xpos2.pas	???
+xpreg.pas	/XPoint/Registrierung
+xpstat.pas	/XPoint/Statistik
+xpterm.pas	/XPoint/Terminal
+xpuu-d.rq	deutsches Sprachmodul fuer UUCICO
+xpuu-e.rq	englisches Sprachmodul fuer UUCICO
+xpuu.pas	UUCICO-Aufruf
+xpview.pas	Binaerfile-Viewer
+xpwin32.pas	???
+xpx.pas	erste Unit: Startup-Funktionen
+yup2pkt.pas	???
+zfido.pas	FTSC-Konvertierer (ZFIDO.EXE)
+zmodem.pas	ZModem-Unit
+zpr.pas	ZCONNECT-Pufferreparierer (ZPR.EXE)
