@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Eingaberoutinen }
@@ -36,7 +37,7 @@ function ReadJNesc(txt:string; default:boolean; var brk:boolean):boolean;
 function ReadIt(width:byte; txt,buttons:string; default:shortint;
                 var brk:boolean):shortint;
 function MiniSel(x,y:byte; txt,auswahl:string; startpos:shortint):shortint;
-procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var getdate,brk:boolean);
 
 
 implementation
@@ -398,32 +399,91 @@ begin
 end;
 
 
-procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var getdate,brk:boolean);
 var width,height,i : byte;
+    d1,d2:datetimest;
 begin
-  width:=length(txt)+17; height:=3;
+  d1:=fdat(d);
+  d2:=ftime(d);
+  width:=length(txt)+17;
+  if getdate then
+  begin
+    if (txt[1]='N') and (length(getres2(452,2))+13 > width) then
+      width:=length(getres2(452,2))+13
+    else if length(getres2(2720,5))+13 > width then
+      width:=length(getres2(2720,5))+13;
+  end;
+  height:=iif(Getdate,6,4);
   if x=0 then getpos(width,height,x,y);
   blindon(true);
   attrtxt(col.coldiarahmen);
   forcecolor:=true;
   wpushs(x,x+width-1,y,y+height-1,'');
   forcecolor:=false;
-  openmask(x+1,x+length(txt)+10,y+1,y+1,false);
+  openmask(x+1,x+length(txt)+10,y+1,y+height-2,false);
   maskrahmen(0,0,0,0,0);
-  madddate(3,1,txt,d,false,false);
+  madddate(3,1,txt,d1,false,false);
+  maddtime(length(txt)-length(getres2(2720,4))+3,2,getres2(2720,4),d2,false);
+  if getdate then begin
+    getdate:=false;
+    maddbool(3,4,iifs(txt[1]='N',getres2(452,2),getres2(2720,5)),getdate);
+    end;
   readmask(brk);
   closemask;
   wpop;
   blindoff;
   if not brk then
-    for i:=1 to length(d) do
-      if d[i]=' ' then d[i]:='0';
+  begin
+    asm 
+      les di,d
+      mov al,10
+      stosb 
+      mov ax,word ptr d1[7]
+      or ax,3030h
+      stosw
+      mov ax,word ptr d1[4]
+      or ax,3030h
+      stosw
+      mov ax,word ptr d1[1]
+      or ax,3030h
+      stosw
+      mov ax,word ptr d2[1]
+      stosw
+      mov ax,word ptr d2[4]
+      stosw
+    end;
+(*
+    asm 
+      push ds
+      mov cx,word ptr d1[1]
+      mov bx,word ptr d1[4]
+      mov ax,word ptr d1[7]
+      mov dx,word ptr d2[1]
+      mov di,word ptr d2[4]
+      lds si,d
+      or cx,3030h
+      or bx,3030h 
+      or ax,3030h
+      mov byte ptr [si],10
+      mov word ptr [si+1],ax
+      mov word ptr [si+3],bx
+      mov word ptr [si+5],cx
+      mov word ptr [si+7],dx
+      mov word ptr [si+9],di
+      pop ds  
+     end;  *)
+    end;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.7.2.2  2001/09/16 20:21:12  my
+  JG+MY:- 'Editdate' nimmt jetzt Datums- und Uhrzeitangaben an
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.7.2.1  2001/08/11 22:17:56  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
