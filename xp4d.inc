@@ -23,7 +23,7 @@
 
 { --- Zeile einlesen und anzeigen --- }
 
-procedure brettform(var s:string; flags:byte; user:boolean);
+procedure brettform(var s:string; flags:Longint; user:boolean);
 var i : byte;
 begin
   case brettanzeige of
@@ -632,6 +632,10 @@ end;
 
 {
   $Log$
+  Revision 1.62  2003/02/02 17:17:26  cl
+  - BUGFIX (FPC): ``Range Check Error in 3.9 28.1.03 W32 bei Navigation in
+    Brettuebersicht'', see <8f6oMi+Uo+D@doebe.li>
+
   Revision 1.61  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 
