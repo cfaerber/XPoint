@@ -752,8 +752,8 @@ begin
     if dispusername<>du then showusername;
 
     for i:=1 to 2 do
-      if mheadercustom[i][length(mheadercustom[i])]=':' then
-        delete(mheadercustom[i],length(mheadercustom[i]),1);
+      if LastChar(mheadercustom[i])=':' then
+        DelLast(mheadercustom[i]);
 
     GlobalModified;
   end;
@@ -1492,6 +1492,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/08/14 21:08:54  mk
+  - Bugfix fuer MiscAnzeigeCfg
+
   Revision 1.51  2000/08/14 18:08:42  ma
   - CommInit-F2-Vorgaben debuggt und verbessert
 
