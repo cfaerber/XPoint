@@ -1218,6 +1218,10 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.34  2001/09/03 19:19:54  mw
+
+  - Small Cleanup
+
   Revision 1.19.2.33  2001/08/11 10:58:37  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit
@@ -1390,10 +1394,8 @@ end.
   xpcurses statt crt in den Units
 
   Revision 1.15  2000/04/29 11:54:09  mw
-
   - MIME in News voreingestellt
   - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf ver„ndert
 
   Revision 1.12  2000/04/15 21:44:48  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
