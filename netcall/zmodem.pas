@@ -299,7 +299,7 @@ function monthlen(j,m:integer):integer;
 begin
   case m of
     1 : monthlen:=31;
-    2 : if schaltj(j) then monthlen:=29
+    2 : if IsLeapYear(j) then monthlen:=29
         else monthlen:=28;
     3 : monthlen:=31;
     4 : monthlen:=30;
@@ -321,8 +321,8 @@ begin
   secs := OctVal(s);
   year:=1970;
   month:=1;
-  while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
-    dec(secs,iif(schaltj(year),366,365)*tagsec);
+  while (secs>=iif(IsLeapYear(year),366,365)*tagsec) and (year<=2099) do begin
+    dec(secs,iif(IsLeapYear(year),366,365)*tagsec);
     inc(year);
   end;
   if year>2099 then
@@ -2489,6 +2489,9 @@ begin
 
 {
   $Log$
+  Revision 1.33  2003/08/28 00:17:00  mk
+  - SchaltJ() -> IsLeapYear()
+
   Revision 1.32  2002/12/28 20:11:08  dodi
   - start keyboard input redesign
 

@@ -254,7 +254,7 @@ function monthlen(j,m:xpWord):xpWord;
 begin
   case m of
     1 : monthlen:=31;
-    2 : if schaltj(j) then monthlen:=29
+    2 : if IsLeapYear(j) then monthlen:=29
         else monthlen:=28;
     3 : monthlen:=31;
     4 : monthlen:=30;
@@ -277,8 +277,8 @@ var dt   : TDateTime;
 begin
   year:=1970;
   month:=1;
-  while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
-    dec(secs,iif(schaltj(year),366,365)*tagsec);
+  while (secs>=iif(IsLeapYear(year),366,365)*tagsec) and (year<=2099) do begin
+    dec(secs,iif(IsLeapYear(year),366,365)*tagsec);
     inc(year);
     end;
   if year>2099 then
@@ -941,6 +941,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2003/08/28 00:16:59  mk
+  - SchaltJ() -> IsLeapYear()
+
   Revision 1.36  2003/08/24 21:43:36  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

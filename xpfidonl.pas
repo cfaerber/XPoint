@@ -371,7 +371,7 @@ var diffdir  : string;
 
   function NextNumber(number:integer):integer;
   begin
-    NextNumber:=(number+6) mod iif(schaltj(ival(RightStr(date,4))-1),366,365) + 1;
+    NextNumber:=(number+6) mod iif(IsLeapYear(ival(RightStr(date,4))-1),366,365) + 1;
   end;
 
   procedure ExpandFilePath(var s:string);
@@ -552,6 +552,9 @@ finalization
 
 {
   $Log$
+  Revision 1.49  2003/08/28 00:16:59  mk
+  - SchaltJ() -> IsLeapYear()
+
   Revision 1.48  2003/08/24 21:43:39  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

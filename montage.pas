@@ -47,7 +47,6 @@ type fdate = packed record
                j   : smallword;
              end;
 
-function  schaltj(jahr:integer):boolean;
 function  ddow(dd:fdate):byte;
 function  dow(d:string):byte;           { Wochentag 1..7 }
 function  dowst(d:string):string;       { Wochentag Mo..So }
@@ -61,17 +60,9 @@ function  sommer(const d,z:datetimest):boolean;   { Sommerzeit? }
 
 implementation
 
-function schaltj(jahr:integer):boolean;
-begin
-  schaltj:=((jahr mod 4)=0) xor
-           ((jahr mod 100)=0) xor
-           ((jahr mod 400)=0);
-end;
-
-
 procedure schalt(jahr:integer);
 begin
-  if schaltj(jahr) then monat[2].zahl:=29
+  if IsLeapYear(jahr) then monat[2].zahl:=29
   else monat[2].zahl:=28;
 end;
 
@@ -200,6 +191,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2003/08/28 00:16:59  mk
+  - SchaltJ() -> IsLeapYear()
+
   Revision 1.17  2002/12/21 05:37:51  dodi
   - removed questionable references to Word type
 

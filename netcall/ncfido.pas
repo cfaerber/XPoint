@@ -154,7 +154,7 @@ const tagsec = 86400;  { 24*60*60 }
 
 procedure setfeb(y:xpWord);
 begin
-  if schaltj(y) then
+  if IsLeapYear(y) then
     tage[2]:=29
   else
     tage[2]:=28;
@@ -170,7 +170,7 @@ begin
   decodetime(now,h,min,s,s1);
   secs:=0;
   for i:=1970 to y-1 do
-    inc(secs,iif(schaltj(i),366,365)*tagsec);    { Jahre }
+    inc(secs,iif(IsLeapYear(i),366,365)*tagsec);    { Jahre }
   setfeb(y);
   for i:=1 to m-1 do
     inc(secs,longint(tage[i])*tagsec);          { + Monate }
@@ -260,6 +260,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2003/08/28 00:17:00  mk
+  - SchaltJ() -> IsLeapYear()
+
   Revision 1.14  2003/01/13 22:05:20  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups
