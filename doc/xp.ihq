@@ -1082,7 +1082,7 @@ richten und Bretteinstellungen.
            passende Nachrichten.
          ¯ Brett enth„lt sowohl zum aktiven Lesemodus
            passende als auch ungelesene Nachrichten.
-         \a026 Brett enth„lt ungelesene, aber keine
+         {026} Brett enth„lt ungelesene, aber keine
            auf den aktiven Lesemodus passenden
            Nachrichten.
 
@@ -1240,8 +1240,7 @@ angezeigt.
          eingetragene Editor verwendet.
 
 <<<Shift-B> >>schickt einen Brief als Crossposting an
-         alle markierten User. Dies ist nur bei
-         ZConnect-Servern m”glich.
+         alle markierten User.
 
    <<E>>     schickt eine vorbereitete Textdatei an den
          gew„hlten User bzw. die Verteiler-Empf„nger.
@@ -2824,7 +2823,7 @@ Reihenfolge.
         lungen zusammengefaát, die den Betrieb von
         CrossPoint mit externen Clients betreffen,
         u.a. der Name des Servers, die eMail-Adresse,
-        das Client-Verzeichnis und der Aufrufbefehl
+        das [Client-Verzeichnis] und der [Aufrufbefehl]@30107 30108
         zum Starten des Clients.
 
 <<Modem>>   Hier k”nnen Sie optionale Angaben zu Ihren
@@ -3761,10 +3760,11 @@ teren Anrufe mehr durch und kehrt zum Programm zu-
 rck.
 @
 164
-So oft versucht XP, sich bei der angerufenen Box ein-
-zuloggen. Funktioniert das Einloggen auch nach der
-angegebenen Zahl von Versuchen nicht, bricht XP den
-Netzanruf ab und l„át das Modem auflegen.
+So oft versucht XP, sich bei der angerufenen Box
+<<w„hrend jeder hergestellten Verbindung>> einzuloggen.
+Funktioniert das Einloggen auch nach der angegebenen
+Zahl von Versuchen nicht, bricht XP den Netzanruf ab
+und l„át das Modem auflegen.
 
 Funktionieren Anrufe auch bei mehreren Loginversuchen
 nicht, dann ist davon auszugehen, daá der Pointname
@@ -3887,8 +3887,8 @@ Dokumentation des FOSSIL-Treibers.
 
 @
 180
-W„hlen Sie mit <<<F2> >>die Telefon-Tarifzone fr diesen
-Server.
+W„hlen Sie mit <<<F2> >>die Telefon-Tarifzone fr diese
+Box.
 
 Unter /Config/Optionen/Gebhren/Tarifzonen k”nnen
 Tarifzonen bearbeitet oder neu eingerichtet werden.
@@ -3976,8 +3976,8 @@ REP-Dateien mit den Antwortnachrichten ablegen soll.
 @
 8036
 Wenn Sie m”chten, daá ein- und ausgehende Nachrich-
-tenpakete nicht per UUCP, sondern lokal auf Ihrer
-Festplatte bertragen gespeichert werden, sind Sie
+tenpakete nicht per UUCP bertragen, sondern lokal
+auf Ihrer Festplatte gespeichert werden, sind Sie
 hier richtig. Bitte beachten Sie, daá XP UUCP-Datei-
 namen in einem bestimmten Format erwartet und
 erzeugt; in den meisten F„llen wird eine Umbenennung
@@ -4468,6 +4468,12 @@ Message-ID insgesamt.
 
 @
 30100
+<<Netztyp RFC/Client - Allgemeines
+
+Siehe auch: [Netztyp RFC/Client - Netcall-Ablauf]@30200
+----------- [Netztyp RFC/Client - Brettmanager]@30201
+            [Netztyp RFC/Client - Multiserverbetrieb]@30109
+
 Der Netztyp <<RFC/Client>> ist eine flexible und univer-
 selle Schnittstelle zur Durchfhrung von Netcalls mit
 beliebigen externen Mail- und News-Clients, die
@@ -4500,7 +4506,7 @@ eines Netcalls, der Arbeitsweise des Nachrichtenkon-
 vertierers UUZ, des internen Brettmanagers usw.)
 finden Sie in XPCLIENT.TXT sowie hier:
 
-[RFC/Client: Netcall-Ablauf und weitere Details]@30200
+[Netztyp RFC/Client - Netcall-Ablauf]@30200
 
 @
 30101
@@ -4634,6 +4640,8 @@ Vergleich zu a) den Aufwand nicht wert).
 
 @
 30107
+(Siehe auch: [Client-Aufruf])@30108
+
 Geben Sie hier den <<relativen>> Pfad vom XP-Verzeichnis
 zu dem Verzeichnis an, in dem der Client installiert
 ist, oder w„hlen Sie mit <<<F2> >>einen der vorbereiteten
@@ -4645,7 +4653,7 @@ Beispiel: Wenn Ihr Client im Verzeichnis CLIENT
 installiert ist, das sich unmittelbar unterhalb des
 XP-Verzeichnisses befindet, geben Sie hier an:
 
-<<CLIENT\>>  oder
+<<CLIENT\>>   oder
 <<.\CLIENT\>>
 
 Absolute Pfadangaben, mehrere Verzeichnisebenen,
@@ -4656,23 +4664,27 @@ selbst angeben oder das Feld gar ganz leer lassen.
 Der Backslash am Ende des Pfades ist obligatorisch,
 wird aber automatisch erg„nzt, wenn er fehlt.
 
-Diese Pfadangabe ist u.a. fr den internen Brett-
-manager wichtig, weil XP in dem hier angegebenen
-Verzeichnis immer die Liste der bestellten Newsgroups
-(<Box>.RC) erwartet. Auáerdem wird hier die Liste der
-vorhandenen Newsgroups (<Box>.BL oder <Box>.GR)
-gesucht - wenn Sie nicht mit Nachricht/Brettmanager/
-Datei_einlesen eine Liste eingelesen haben, die im
-XP-Verzeichnis abgelegt wurde.
-
 Wenn das Verzeichnis noch nicht existiert, k”nnen Sie
 es von XP automatisch anlegen lassen. Es kann auáer-
 dem ber das Makro <<$CLPATH>> beim [Client-Aufruf] dem@30108
 auszufhrenden Programm als Parameter und/oder als
 Pfad zum auszufhrenden Programm bergeben werden.
 
+Diese Pfadangabe ist auch fr den [Brettmanager] wich-@30201
+tig, weil XP in dem hier angegebenen Verzeichnis
+immer die Liste der bestellten Newsgroups (<<<Box>.RC>>)
+erwartet. Auch die Liste der verfgbaren Newsgroups
+(<<<Box>.BL>> oder <<<Box>.GR>>) wird hier gesucht - es sei
+denn, Sie verwenden einen Client, der die Newsgroup-
+Liste nicht automatisch aktualisiert: In diesem Fall
+k”nnen Sie mit [/Nachricht/Brettmanager/Datei_einlesen]@11907
+eine Liste einlesen, die dann im XP-Verzeichnis abge-
+legt (und nicht automatisch aktualisiert) wird.
+
 @
 30108
+(Siehe auch: [Client-Verzeichnis])@30107
+
 Tragen Sie hier das Programm ein, das CrossPoint bei
 einem RFC/Client-Netcall ausfhren soll. Fr einige
 g„ngige Clients bzw. Client-Kits k”nnen Sie mit <<<F2> >>
@@ -4722,7 +4734,7 @@ geben werden. Hierfr stehen Ihnen folgende Makros
 zur Verfgung, die z.B. in Batchdateien oder Scripts
 weiterverarbeitet werden k”nnen:
 
-<<$CLPATH>> - der unter "Client-Verzeichnis" definierte
+<<$CLPATH>> - der unter "[Client-Verzeichnis]" definierte@30107
           relative Pfad zu dem Verzeichnis, in dem
           der externe Client installiert ist.
 
@@ -4745,7 +4757,7 @@ nach dem n„chsten Netcall eben ohne Drucker dastehen.
 Weitere Hinweise u.a. zum Ablauf eines Netcalls im
 Detail finden Sie in XPCLIENT.TXT sowie hier:
 
-[RFC/Client: Netcall-Ablauf und weitere Details]@30200
+[Netztyp RFC/Client - Netcall-Ablauf]@30200
 
 
 <<Hinweise fr Windows-GUI-Clients
@@ -4793,8 +4805,14 @@ solange, bis sie ihre Arbeit beendet haben.
 
 @
 30109
+<<Netztyp RFC/Client - Multiserverbetrieb
+
+Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
+----------- [Netztyp RFC/Client - Netcall-Ablauf]@30200
+            [Netztyp RFC/Client - Brettmanager]@30201
+
 (Diese Funktion ist noch nicht implementiert, aber
-man kann schon mal lesen, wie es werden soll.)  :-)
+man kann schon mal lesen, was es werden soll.)  :-)
 
 Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
 ten weiterer in XP eingerichteter Server mitsenden
@@ -4906,8 +4924,274 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-Password=>>" gespeichert.
 @
+30120
+So viele Sekunden wartet der Client nach dem Senden
+des W„hlbefehls darauf, daá eine Verbindung mit dem
+angerufenen Provider zustandekommt. Danach betrachtet
+er den Anruf als gescheitert und wartet auf den
+n„chsten Anruf.
+
+Achtung: Viele Modems besitzen eine eingebaute War-
+tezeit, nach der die Anwahl automatisch abgebrochen
+wird; blich sind 60 Sekunden. Wenn Sie hier eine
+l„ngere Zeit eintragen, mssen Sie ggf. auch diese
+Modemeinstellung entsprechend erh”hen; n„heres dazu
+finden Sie in Ihrem Modemhandbuch.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<ConnWait=>>"
+gespeichert.
+
+@
+30121
+So viele Sekunden wartet der Client nach erfolgrei-
+cher Verbindung auf das Einloggen. Ist nach Verstrei-
+chen der Zeit kein erfolgreicher Login zustandegekom-
+men, betrachtet der Client den Anruf als gescheitert.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<LoginWait=>>"
+gespeichert.
+@
+30122
+So viele Sekunden wartet der Client nach einem abge-
+brochenen Anruf; danach fhrt er einen erneuten Anruf
+durch.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<RedialWait=>>"
+gespeichert.
+@
+30123
+So oft wiederholt der Client - falls n”tig - den
+Netzanruf. Wurde auch nach der angegebenen Zahl von
+Versuchen kein Anruf korrekt beendet, so fhrt XP
+keine weiteren Anrufe mehr durch und kehrt zum
+Programm zurck.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<RedialMax=>>"
+gespeichert.
+@
+30124
+So oft versucht der Client, sich bei dem angerufenen
+Provider <<w„hrend jeder hergestellten Verbindung>> ein-
+zuloggen. Funktioniert das Einloggen auch nach der
+angegebenen Zahl von Versuchen nicht, bricht der
+Client den Netzanruf ab und l„át das Modem auflegen.
+
+Funktionieren Anrufe auch bei mehreren Loginversuchen
+nicht, dann ist davon auszugehen, daá die Zugangs-
+daten oder das Paáwort falsch sind. Um Genaueres ber
+die Fehlerursache herauszufinden, sehen Sie die Logs
+durch, die Ihr Client (hoffentlich) erstellt.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<RetryLogin=>>"
+gespeichert.
+
+@
+30125
+Es gibt zwei M”glichkeiten fr einen erfolglosen
+Netcall-Versuch:
+
+ş  Es kam keine Verbindung zustande (besetzt, Gegen-
+   stelle hebt nicht ab etc.).
+
+ş  Es kam eine Verbindung zustande, aber das Login
+   war nicht erfolgreich (falsches Paáwort, fehler-
+   haftes Authentifizierungsverfahren etc.).
+
+Sie k”nnen hier einstellen, wie oft fehlgeschlagene
+Netcalls <<mit>> zustandegekommener Verbindung wieder-
+holt werden sollen.
+
+Beispiel: Wenn Sie "max. Connects" auf 10 und "max.
+W„hlversuche" auf 50 eingestellt haben, wird nach 10
+fehlerhaften Verbindungen oder nach 50 erfolglosen
+Anwahlversuchen der Netcall abgebrochen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<ConnectMax=>>"
+gespeichert.
+
+@
+30126
+Grunds„tzlich wird der Befehl zur Modem-Initialisie-
+rung mit /Config/Modem eingestellt. Ben”tigen Sie
+jedoch fr unterschiedliche Zug„nge spezielle Modem-
+einstellungen, um z.B. ein bestimmtes šbertragungs-
+verfahren auszuw„hlen, dann k”nnen Sie diese hier
+<<zus„tzlich>> angeben. Es wird in jedem Fall zuerst
+der generelle und dann der zugangsspezifische Modem-
+Init-Befehl ausgegeben.
+
+Bitte beachten Sie, daá die Modem-Befehlszeile mit
+einem "AT" beginnen muá!
+
+Durch Einfgen von "\\" k”nnen auch mehrere Zeilen
+erzeugt werden, z.B. "ATE1\\ATS13=32". I.d.R. ist
+dies aber nicht n”tig, sondern die Modembefehle
+k”nnen alle hinter einem AT aufeinanderfolgen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<ModemInit=>>"
+gespeichert.
+
+@
+30127
+Die Nummer der Schnittstelle, an der das Modem ange-
+schlossen ist, das fr den Anruf bei der gew„hlten
+Box verwendet wird. Es werden die Schnittstellen
+COM1 bis COM4 untersttzt.
+
+Bitte berprfen Sie auch, ob die Schnittstellen-
+Konfiguration unter /Config/Modem/COMx korrekt ist.
+Insbesondere bei Verwendung von COM3 und COM4 mssen
+eine korrekte Portadresse und IRQ-Nummer eingetragen
+werden!
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Port=>>"
+gespeichert.
+
+@
+30128
+Die Geschwindigkeit ("Baudrate" oder "DTE-Rate"),
+mit der die Daten zwischen Computer und Modem ausge-
+tauscht werden. Diese Geschwindigkeit kann, muá aber
+nicht gleich derjenigen sein, mit der die Daten zwi-
+schen Ihrem und dem angerufenen Modem bertragen
+werden ("Link-Rate").
+
+Bei Modems mit eingebauter Datenkompression (z.B.
+MNP5 oder V.42bis) sollte die DTE-Rate <<h”her>> als
+die Link-Rate sein. Beachten Sie aber, daá XTs und
+langsame ATs u.U. mit hohen DTE-Raten (ber 19200
+Baud) Probleme haben. Fr hohe Baudraten sollte
+die Schnittstelle m”glichst mit einem [16550A-Chip]@961
+ausgestattet und dieser unter /Config/Modem akti-
+viert sein.
+
+Statt der ber <<<F2> >>ausw„hlbaren Werte k”nnen Sie
+auch beliebige andere sinnvolle Baudraten angeben,
+z.B. 4800. CrossPoint l„át alle Eingaben zu, die von
+der seriellen Schnittstelle untersttzt werden.
+
+Falls Sie Ihr Modem ber einen FOSSIL-Treiber ansteu-
+ern und mit mehr als 38.400 bps arbeiten m”chten, muá
+die Baudrate durch den FOSSIL-Treiber fest vorgegeben
+("gelockt") werden. N„heres dazu finden Sie in der
+Dokumentation des FOSSIL-Treibers.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Baud=>>"
+gespeichert.
+
+@
+30130
+W„hlen Sie mit <<<F2> >>die Telefon-Tarifzone fr diesen
+Zugangsprovider.
+
+Unter /Config/Optionen/Gebhren/Tarifzonen k”nnen
+Tarifzonen bearbeitet oder neu eingerichtet werden.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Tarifzone=>>"
+gespeichert.
+
+@
+30131
+Die Connect-Dauer gibt an, wie lange das Modem zum
+Verbindungsaufbau ben”tigt. Diese Option befindet
+sich deshalb unter dem Stichwort "Gebhren", weil
+sie ausschlieálich zur exakten Gebhrenabsch„tzung
+verwendet wird. Schalten Sie das Modem auf "mith”-
+ren" und messen Sie die Zeit zwischen dem Abheben
+des angerufenen Modems und dem Aufleuchten der CD-
+Lampe. Bei einem internen Modem mssen Sie den Wert
+sch„tzen; er liegt in der Regel bei 5-10 Sekunden.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<ConnectTime=>>"
+gespeichert.
+@
+30140
+Wenn Sie m”chten, daá ein- und ausgehende Nachrichten
+nicht mittels Ihres Clients bertragen, sondern lokal
+auf Ihrer Festplatte gespeichert werden, sind Sie
+hier richtig. Bitte beachten Sie, daá CrossPoint RFC-
+Nachrichtendateien in einem bestimmten Format erwar-
+tet und erzeugt; in manchen F„llen wird eine Umbenen-
+nung n”tig sein. N„heres hierzu finden Sie unter
+"[Netztyp RFC/Client - Netcall-Ablauf]".@30200
+
+
+<<Eingangsverzeichnis>>
+
+Dies ist das Verzeichnis, aus dem XP bei einem Net-
+call die Nachrichten einlesen soll. XP liest alle
+Nachrichten aus dem angegebenen Verzeichnis ein und
+l”scht anschlieáend den gesamten Verzeichnisinhalt.
+
+<<Ausgangsverzeichnis>>
+
+In diesem Verzeichnis legt XP ausgehende Nachrichten
+ab. ACHTUNG! Sie mssen nach einer Weiterverarbeitung
+der ausgehenden Nachrichten selbst dafr sorgen, daá
+die Dateien gel”scht werden!
+
+@
 30200
-<<RFC/Client: Netcall-Ablauf und weitere Details
+<<Netztyp RFC/Client - Netcall-Ablauf
+
+Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
+----------- [Netztyp RFC/Client - Brettmanager]@30201
+            [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
 Hier finden Sie einige weiterfhrende Informationen
 zum Betrieb einer in XP eingerichteten RFC/Client-
@@ -5011,11 +5295,11 @@ fende vierstellige Zahl.
 
 <<<Box>.BL>> oder <<<Box>.GR>>  Die Gesamtliste aller vorhan-
    denen Bretter (Newsgroups) einer Serverbox - liegt
-   i.d.R. im Client-Verzeichnis (speziell bei Einsatz
+   i.d.R. im [Client-Verzeichnis] (speziell bei Einsatz@30107
    eines der diversen UKA*-Clients), kann aber auch
-   (ausschlieálich als <<<Box>.BL>>!) im XP-Verzeichnis
-   liegen (siehe auch "Der interne Brettmanager"
-   weiter unten).
+   im XP-Verzeichnis (dann aber ausschlieálich als
+   <<<Box>.BL>>!) liegen.
+   Siehe auch: [Netztyp RFC/Client - Brettmanager]@30201
 
 <<<Box>.RC>>  Die Liste aller bestellten Bretter
    (Newsgroups) einer Serverbox - liegt immer im
@@ -5086,7 +5370,7 @@ folgenden Einzelschritten ab:
     von *.MSG nach *.IN.
 
 10. Schreiben des <<Netzanrufberichts>> mit Anh„ngen der
-    Datei XPCLIENT.LOG (im Client-Verzeichnis). Die
+    Datei XPCLIENT.LOG (im [Client-Verzeichnis]). Die@30107
     Datei wird anschlieáend gel”scht.
 
 
@@ -5174,69 +5458,194 @@ den Schaltern aufgerufen:
 
 @
 30201
-<<Der interne Brettmanager
+<<Netztyp RFC/Client - Brettmanager
 
-CrossPoint bietet auch fr den Netztyp RFC/Client
-einen integrierten Brettmanager, der sich in seiner
-Funktionsweise an der g„ngigen Praxis einiger popu-
-l„rer Clients (n„mlich der sog. UKA*-Clients) anlehnt
-- leider gibt es hierfr keinen definierten Standard.
-Es kann also durchaus passieren, daá die von dem
-Brettmanager untersttzten Funktionen von dem von
-Ihnen eingesetzten Client nicht (oder nicht richtig)
-verstanden werden.
+Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
+----------- [Netztyp RFC/Client - Netcall-Ablauf]@30200
+            [Netztyp RFC/Client - Multiserverbetrieb]@30109
 
-
-ş Brett-/Newsgroup-Liste beziehen und aktualisieren
-
-  Alle bekannten Clients bieten eine Option, mit der
-  eine Brettliste bezogen bzw. aktualisiert werden
-  kann - diese Option sollten Sie aktivieren.
-
-  CrossPoint geht davon aus, daá die Gesamtliste der
-  vorhandenen Newsgroups im Client-Verzeichnis liegt
-  und den Namen <<<Box>.BL>> tr„gt. Der Client muá also
-  neue Newsgroups dieser Datei hinzufgen.
-
-  Leider gibt es im Usenet noch immer kein Verfahren,
-  mit dem sich nicht mehr existierende Newsgroups
-  erkennen und automatisch aus der Liste austragen
-  lieáen. Wenn Sie also von Zeit zu Zeit eine top-
-  aktuelle Liste beziehen m”chten, l”schen Sie die
-  alte <<<Box>.BL>> - der Client bezieht dann i.d.R.
-  eine komplett neue Liste vom Newsserver.
-
-  Zum L”schen der Liste k”nnen Sie auch den Men-
-  Befehl Nachricht/Brettmanager/Liste_anfordern
-  verwenden. Wenn Sie nach dem n„chsten Netcall keine
-  aktuelle Newsgroup-Liste vorfinden sollten, ist
-  entweder die entsprechende Option ihres Clients
-  nicht aktiviert (oder Ihr Client hat keine solche
-  Option), oder der Client legt die Liste unter einem
-  anderen Dateinamen als <<<Box>.BL>> ab. In diesem
-  Fall bleibt Ihnen nur brig, die Brettliste vor
-  und nach jedem Netcall mittels Batch- oder Script-
-  datei in den Namen umzubenennen, den Ihr Client
-  erwartet.
+Der integrierte Brettmanager von CrossPoint unter-
+sttzt den Netztyp RFC/Client mit einigen speziellen
+Funktionen, die sich von denen der brigen Netztypen
+unterscheiden und sich an der Praxis einiger g„ngiger
+RFC-Clients (n„mlich der sog. UKA*-Clients) orientie-
+ren. Einen klar definierten Standard gibt es hierfr
+leider nicht. Es ist also insofern durchaus m”glich,
+daá der von Ihnen eingesetzte Client die vom Brett-
+manager untersttzten Funktionen nicht (oder nicht
+richtig) interpretiert.
 
 
-ş Bretter/Newsgroups (ab-)bestellen
+<<ş Brett-/Newsgroup-Liste beziehen und aktualisieren
 
-  Die aktuell bestellten Newsgroups werden in einer
-  Liste gefhrt, die ebenfalls im Client-Verzeichnis
-  liegt und den Namen <<<Box>.RC>> tr„gt. Der Client muá
-  also bei jedem News-Transport die neuen Nachrichten
-  der darin verzeichneten Newsgroups anfordern. Wenn
-  der Client einen anderen Dateinamen erwarten soll-
-  te, mssen Sie die Liste bei jedem Netcall ggf.
-  (per Batch- oder Scriptdatei) umbenennen.
+  Die g„ngigen RFC-Clients bieten eine Option, mit
+  der Sie eine Brettliste anfordern bzw. die vorhan-
+  dene Liste automatisch aktualisieren lassen k”nnen
+  - diese Option(en) sollten Sie zun„chst aktivieren.
 
-  Das Bestellen und Abbestellen von Newsgroups funk-
+  Beim Netztyp RFC/Client untersttzt CrossPoint fol-
+  gende Dateinamen und Speicherorte fr Brettlisten
+  (in dieser Reihenfolge):
+
+  <<<Box>.BL>>  (XP-Verzeichnis)
+  <<<Box>.BL>>  (Client-Verzeichnis)
+  <<<Box>.GR>>  (Client-Verzeichnis)
+
+  D.h., CrossPoint sucht in dieser Reihenfolge nach
+  einer Brettliste und ”ffnet beim Ausfhren der
+  entsprechenden Brettmanager-Funktionen die erste
+  Liste, die gefunden wurde.
+
+  Grunds„tzlich gilt: Wenn Ihr Client eine automa-
+  tische Aktualisierung von Brettlisten untersttzt,
+  sollte die Newsgroup-Liste immer im Client-Ver-
+  zeichnis abgelegt sein (im XP-Verzeichnis darf dann
+  keine Liste <<<Box>.BL>> existieren!). Besitzt Ihr
+  Client keine Aktualisierungsfunktion, sollten Sie
+  die Liste immer im XP-Verzeichnis ablegen. Wie Sie
+  dies im Detail erreichen und wie der Umgang damit
+  in der Praxis funktioniert, wird im folgenden genau
+  erl„utert.
+
+  Die einzelnen (und zum Teil unterschiedlichen)
+  Schritte zum Beziehen und Einrichten einer Gesamt-
+  liste der verfgbaren Newsgroups in Abh„ngigkeit
+  davon, ob der Client eine automatische Aktualisie-
+  rung der Liste untersttzt oder nicht, gehen aus
+  folgender Tabelle hervor:
+
+  RFC-Clients <<mit>>          ³ RFC-Clients <<ohne>>
+  Aktualisierungsfunktion  ³ Aktualisierungsfunktion
+  ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+  Client-Option "Liste neu ³ Client-Option "Liste neu
+  anfordern" aktivieren    ³ anfordern" aktivieren
+  (i.d.R. bereits aktiv)   ³ (i.d.R. deaktiviert)
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  /Nachricht/Brettmanager/ ³
+  Sonstiges/[L”schen] (falls ³       (entf„llt)@11904
+  alte Liste vorhanden)    ³
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   Netcall durchfhren (Liste <<<Box>.BL>> oder <<<Box>.GR>>
+   liegt anschlieáend im Client-Verzeichnis)
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  <<Nicht>> Nachricht/Brett-   ³ /Nachricht/Brettmanager/
+  manager/[Datei_einlesen]   ³ [Datei_einlesen] (Liste im@11907 11907
+  ausfhren!               ³ Client-Verz. ausw„hlen,
+                           ³ nach Einlesen l”schen)
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  Liste <<<Box>.BL>>/<<<Box>.GR>>  ³ Liste <<<Box>.BL>> liegt im
+  liegt im Client-Verz.    ³ XP-Verzeichnis
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+   [/Nachricht/Brettmanager/Sonstiges/Abgleich]  (nur,@11904
+   wenn sich eine Datei <<<Box>.RC>> im Client-Verzeich-
+   nis befindet, die die bestellten Gruppen enth„lt)
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+                           ³ Client-Option "Liste neu
+      (entf„llt i.d.R.)    ³ anfordern" ggf. wieder
+                           ³ deaktivieren
+  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+  Damit ist zwar eigentlich fast alles gesagt :-),
+  zu einigen Schritten ist eine erg„nzende Erl„ute-
+  rung aber sicher sinnvoll und notwendig:
+
+  <<>> Die Client-Option "Newsgroup-Liste neu anfordern"
+    ist bei Clients, die eine automatische Aktuali-
+    sierung der Newsgroup-Liste untersttzen, i.d.R.
+    mit der Option "Newsgroup-Liste aktualisieren" zu
+    einer Funktion zusammengefaát: wenn eine Liste
+    existiert, wird sie aktualisiert, wenn keine
+    existiert, wird eine neue Liste angefordert.
+
+    "Aktualisierung" bedeutet bei RFC-Brettlisten:
+    Neue Gruppen werden zwar zur Liste hinzugefgt,
+    in der Zwischenzeit (meist wegen Umbenennung)
+    nicht mehr existierende Gruppen jedoch *nicht*
+    entfernt. Hierfr gibt es im Usenet leider immer
+    noch kein definiertes und funktionierendes Ver-
+    fahren. Es empfiehlt sich daher, von Zeit zu Zeit
+    trotz automatischer Aktualisierung eine neue
+    Gesamtliste anzufordern.
+
+  <<>> Wenn Sie nach dem Netcall keine aktuelle News-
+    group-Liste vorfinden sollten, war entweder die
+    entsprechende Option ihres Clients nicht akti-
+    viert, oder Ihr Client hat keine solche Option,
+    oder der Client legt die Liste unter einem ande-
+    ren Dateinamen als <<<Box>.BL>> oder <<<Box>.GR>> ab. In
+    diesem Fall mssen Sie die Brettliste vor und
+    nach jedem Netcall mittels Batch- oder Script-
+    befehlen in den Namen umbenennen, den Ihr Client
+    erwartet. Weitere Hinweise zu <<Dateinamenskonven-
+    <<tionen>> finden Sie dort.
+
+  <<>> Bei RFC-Clients, die eine automatische Aktuali-
+    sierung der Newsgroup-Liste untersttzen (und das
+    ist bei den g„ngigen UKA*-Clients der Regelfall),
+    sollten Sie die Funktion /Nachricht/Brettmanager/
+    [Datei_einlesen] deshalb *nicht* ausfhren, damit@11907
+    XP keine Liste <<<Box>.BL>> im XP-Verzeichnis ablegt.
+    Anderenfalls wrde die Liste im Client-Verzeich-
+    nis (falls sie nach dem Einlesen nicht gel”scht
+    wurde) zwar bei jedem Netcall aktualisiert wer-
+    den, der XP-Brettmanager wrde aber immer auf die
+    (nicht aktualisierte) Liste im XP-Verzeichnis zu-
+    greifen <<=> >>Client und XP arbeiten nicht synchron.
+
+    Hingegen wird der XP-Brettmanager, wenn er keine
+    <<<Box>.BL>> im XP-Verzeichnis vorfindet, immer auf
+    die neueste, vom Client aktualisierte Liste im
+    Client-Verzeichnis zugreifen.
+
+    Bei Clients ohne automatische Aktualisierung w„re
+    das ausdrckliche Einlesen theoretisch zwar eben-
+    falls nicht zwingend erforderlich, solange sich
+    der Client an die <<Dateinamenskonventionen>> (siehe
+    dort) h„lt - dennoch ist es unbedingt sinnvoll
+    und ratsam: Der Brettmanager kann dann bestimmte
+    Aktionen aufgrund des XP-eigenen Formats deutlich
+    schneller ausfhren (zu Formaten siehe "<<Brett-
+    <<listen-Formate>>" weiter unten).
+
+  <<>> Das Ausfhren der Funktion /Nachr./Brettmanager/
+    [Sonstiges/Abgleich] nach dem Erhalt (und ggf. Ein-@11904
+    lesen) der neuen Liste ist nur dann sinnvoll und
+    notwendig, wenn sich im Client-Verzeichnis die
+    Datei <<<Box>.RC>> befindet, die die bestellten
+    Newsgroups enth„lt. Zu Funktion und Aufbau der
+    RC-Datei siehe weiter unten bei "<<RC-Datei -
+    <<Funktion, Aufbau und Abgleich>>".
+
+  <<>> Bei RFC-Clients, die keine automatische Aktuali-
+    sierung der Brettliste untersttzen, sollten Sie
+    nach dem Netcall, mit dem die Liste bertragen
+    wurde, die Option zur Neuanforderung der Liste
+    wieder deaktivieren - es sei denn, sie m”chten
+    mit jedem Netcall eine neue (und meist recht
+    groáe) Gesamtliste erhalten. Die Liste wird in
+    jedem Fall erst dann wieder aktualisiert, wenn
+    Sie auf dem oben beschriebenen Wege eine neue
+    Gesamtliste bezogen und mit /Nachr./Brettmanager/
+    [Datei_einlesen] eingebunden haben.@11907
+
+
+<<ş Newsgroups bestellen/abbestellen
+
+  Das <<Bestellen>> und <<Abbestellen>> von Newsgroups funk-
   tioniert im wesentlichen genauso, wie Sie es auch
   von den brigen Netztypen oder von UUCP her kennen:
   Sie markieren die (ab-)zubestellenden Bretter und
   drcken <<<Enter> >>- die anschlieáende Rckfrage
-  beantworten Sie mit "Ja".
+  beantworten Sie mit "Ja" (oder auch nicht :-)).
+
+  Der Brettmanager aktualisiert dann sowohl die
+  Brettliste selbst als auch die Datei <<<Box>.RC>>, in
+  der bestellte Gruppen ein- und abbestellte Gruppen
+  ausgetragen werden (N„heres zur RC-Datei s. unten
+  bei "<<RC-Datei - Funktion, Aufbau und Abgleich>>").
+  Neu bestellte Newsgroups, die noch nicht in Ihrer
+  Bretter-Datenbank enthalten sind, werden automa-
+  tisch angelegt.
 
   Bei neu bestellten Newsgroups werden Sie vom Brett-
   manager noch aufgefordert, die Anzahl der letzten
@@ -5244,27 +5653,159 @@ verstanden werden.
   Newsgroup(s) angefordert werden sollen. Der Stan-
   dardwert ist 10 Artikel je Newsgroup, Sie k”nnen
   hier jeden beliebigen Wert bis 9999 angeben. Dieser
-  Wert wird als negative Zahl ("-10") hinter den
-  Namen der Newsgroup geschrieben. Wenn Sie "0" an-
-  geben, l”sen Sie bei den meisten Clients einen
-  "Rescan" aus, d.h. der Client fordert s„mtliche auf
-  dem Newsserver verfgbaren Artikel der Newsgroup
-  an. M”glicherweise bietet Ihr Client eine Option,
-  die Gesamtanzahl dieser Artikel zu begrenzen.
+  Wert wird als negative Zahl ("-10") in die RC-Datei
+  hinter den Namen der Newsgroup geschrieben. Wenn
+  Sie "0" angeben, l”sen Sie bei den meisten Clients
+  einen "Rescan" aus, d.h. der Client fordert s„mt-
+  liche auf dem News-Server verfgbaren Artikel der
+  jeweiligen Newsgroup an. M”glicherweise bietet Ihr
+  Client eine Option, die Gesamtanzahl dieser Artikel
+  zu begrenzen.
 
-  Im Unterschied zu anderen Netztypen oder zum UUCP-
-  Protokoll wird also keine Nachricht an irgendeinen
-  Pseudo-User erstellt, der den von Ihnen ge„uáerten
-  Bestellwunsch ausfhrt, sondern die (ab-)bestell-
-  te(n) Newsgroup(s) wird/werden aus der Liste der
-  bestellten Newsgroups aus- bzw. eingetragen.
+  Im Unterschied zu anderen Netztypen wie RFC/UUCP
+  werden also keine Nachrichten an ein Steuerprogramm
+  auf dem News-Server erstellt, das die Brettmanager-
+  Befehle ausfhrt, sondern die gesamte Verwaltung
+  und Steuerung des Bestellsystems fr Newsgroups
+  findet ausschlieálich lokal auf Ihrem PC statt.
 
-  Das Format der Liste der bestellten Newsgroups ist
-  einfach: auf den Namen der Newsgroup folgt durch
-  ein Leerzeichen getrennt der 'article counter', der
-  die Nummer des letzten geholten Artikels fr diese
-  Newsgroup enth„lt. Sie k”nnen die Datei <<<Box>.RC>>
-  also notfalls auch per Hand editieren.
+
+<<ş Dateinamenskonventionen
+
+  Voraussetzung fr ein problemloses Zusammenspiel
+  zwischen dem XP-Brettmanager und den externen RFC-
+  Clients ist, daá die Namen der in XP eingerichteten
+  Serverbox, der Brettliste im Client-Verzeichnis
+  (sofern sie dort liegt, bei ins XP-Verzeichnis ein-
+  gelesenen Listen sorgt XP selbst fr die korrekte
+  Benennung) und der aktiven Client-Konfigurations-
+  datei identisch sind. Genauer: der Namensanteil
+  ohne Dateierweiterung dieser Dateien muá identisch
+  sein.
+
+  Beispiel: Sie haben Ihre Serverbox "Freeline"
+  genannt. CrossPoint geht dann von folgenden Datei-
+  namen aus:
+
+  <<FREELINE.BFG>>     (Serverbox-Konfigurationsdatei im
+                    XP-Verzeichnis)
+  <<FREELINE.>>CFG     (Client-Konfigurationsdatei im
+                    Client-Verzeichnis)
+  <<FREELINE>>.BL/.GR  (Brettliste im Client-Verzeichnis)
+
+  Die Dateierweiterung ".CFG" fr die Client-Konfigu-
+  rationsdatei im Client-Verzeichnis ist lediglich
+  ein Beispiel und kann je nach Client variieren
+  (andere m”gliche Dateierweiterungen w„ren z.B.
+  ".$CF" oder ".BFG"). Die Dateierweiterungen ".BL"
+  und ".GR" fr die Brettlisten entsprechen den von
+  den g„ngigen UKA*-Clients verwendeten Endungen.
+
+  Wenn beim [Client-Aufruf] der Serverbox-Name <<FREELINE>>@30108
+  als Parameter bergeben wurde, wird der Client die
+  Brettliste unter dem Namen <<FREELINE.BL>> (oder
+  <<FREELINE.GR>>) speichern bzw. aktualisieren.
+
+  Wenn Ihr Client einer anderen Konvention hinsicht-
+  lich Dateiname und/oder Dateierweiterung folgt, ist
+  es erforderlich, daá Sie die Brettliste oder die
+  Konfigurationsdatei vor und nach jedem Netcall in
+  die Namen umbenennen, die Ihr Client erwartet.
+
+
+<<ş RC-Datei - Funktion, Aufbau und Abgleich
+
+  Beim Bestellen bzw. Abbestellen von Newsgroups und
+  beim News-Transport kommt beim Netztyp RFC/Client
+  einer weiteren Datei wesentliche Bedeutung zu:
+
+  <<<Box>.RC>>  (Client-Verzeichnis)
+
+  Die zentrale Funktion der RC-Datei ist, daá der
+  RFC-Client aus dieser Datei die Informationen
+  ausliest, die er zum News-Transport ben”tigt.
+
+  Denn w„hrend die Gesamtliste <<<Box>.BL>> oder <<<Box>.GR>>
+  alle verfgbaren Newsgroups enth„lt, werden in der
+  Datei <<<Box>.RC>> nur bestellte Gruppen ein- bzw.
+  abbestellte Gruppen wieder ausgetragen. Zus„tzlich
+  werden die bestellten Gruppen in der Gesamtliste
+  verwaltet (= mit einer Markierung versehen).
+
+  Die Datei <<<Box>.RC>> wird immer und ausschlieálich im
+  Client-Verzeichnis erwartet. Sie enth„lt auáer den
+  Namen der bestellten Newsgroups direkt dahinter
+  noch den sog. "article counter". Anhand dieses Z„h-
+  lers kann der Client beim News-Transport erkennen,
+  welche lfd. Nummer der letzte bezogene Artikel der
+  jeweiligen Newsgroup hatte und er ist daher in der
+  Lage, nur alle neuen Artikel (= Artikel mit einer
+  h”heren Nummer) anzufordern. Nach Beendigung der
+  šbertragung aktualisiert der Client die Z„hler in
+  der RC-Datei.
+
+  Fr die Synchronisierung von Gesamtliste und RC-
+  Datei sorgt XP bei jedem (Ab-)Bestellvorgang auto-
+  matisch - unabh„ngig davon, ob die Gesamtliste im
+  Client- oder im XP-Verzeichnis liegt.
+
+  Sollten Sie oder ein externes Programm RC-Datei
+  bzw. Brettliste manipuliert oder Sie eine neue
+  Gesamtliste der verfgbaren Newsgroups angefordert
+  haben, kann es sein, daá RC-Datei und als bestellt
+  markierte Gruppen in der Brettliste nicht mehr
+  synchron sind. Sie k”nnen (bei neu angeforderten
+  Listen mssen) die Brettliste dann manuell mit der
+  RC-Datei [abgleichen].@11904
+
+  Sollte Ihr Client einen anderen Dateinamen als
+  <<<Box>.RC>> erwarten, mssen Sie die RC-Datei vor und
+  nach jedem Netcall ggf. umbenennen.
+
+
+<<ş Brettlisten-Formate
+
+  Wenn Sie die Brettlisten, die im XP-Verzeichnis
+  mittels [/Nachricht/Brettmanager/Datei_einlesen]@11907
+  abgelegt werden, und die Brettlisten, die sich im
+  Client-Verzeichnis befinden, einem genaueren Ver-
+  gleich unterziehen, werden Sie feststellen, daá das
+  Format dieser beiden Listen unterschiedlich ist.
+
+  Brettlisten im XP-Verzeichnis haben z.B. zwei Leer-
+  zeichen vor jedem Gruppennamen, Listen im Client-
+  Verzeichnis jedoch nicht. Auch sind die Markierun-
+  gen fr bestellte Bretter unterschiedlich (im XP-
+  Verzeichnis vor, im Client-Verzeichnis hinter den
+  Gruppennamen). Dies ist notwendig, um die Kompati-
+  bilit„t der im Client-Verzeichnis liegenden Listen
+  mit den g„ngigen Clients sicherzustellen, die diese
+  Listen aktualisieren.
+
+  Das alles braucht Sie aber nicht weiter zu kmmern:
+  Sie werden n„mlich auch feststellen, daá das Anzei-
+  geformat im XP-Brettmanager immer identisch ist,
+  egal welches dieser Listenformate Sie laden: die
+  Gruppennamen sind um zwei Zeichen eingerckt, be-
+  stellte Gruppen sind mit einem "<<*>>" davor markiert.
+
+  Allerdings kann es sein, daá die Bearbeitung der im
+  Client-Verzeichnis abgelegten Listen wegen der bei
+  jedem Laden erforderlichen internen Umwandlung
+  etwas langsamer erfolgt als die der im "Original"-
+  XP-Format abgelegten Listen im XP-Verzeichnis.
+
+
+<<ş Sonstige Funktion(en)
+
+Neben den bereits erl„uterten Funktionen <<L”schen>> und
+<<Abgleich>> finden Sie unter [/Nachr./Brettm./Sonstiges]@11904
+noch die Funktion <<Sortieren>>: Durch die automa-
+tische Aktualisierung, die neue Newsgroups immer an
+das Ende der bisherigen Liste anh„ngt, ist es sinn-
+voll, die Liste von Zeit zu Zeit alphabetisch zu
+sortieren (es sei denn, Ihr Client oder Client-Kit
+erledigt das nach jedem Netcall automatisch fr Sie).
 
 @
 196
@@ -11560,8 +12101,8 @@ folgenden Funktionen zur Verfgung:
 
    a) Die Mail wird an <<alle>> in der Liste aufgefhrten
       Adressen versandt, <<auáer>>
-      <<\a026>> an von Ihnen markierte und
-      <<\a026>> an Ihre eigenen Adressen.
+      <<{026}>> an von Ihnen markierte und
+      <<{026}>> an Ihre eigenen Adressen.
       "Eigene Adressen" heiát: alle ZConnect- und
       RFC-Adressen, die aus den von Ihnen eingerich-
       teten Serverboxen ermittelt werden k”nnen. Da-
@@ -11580,7 +12121,7 @@ folgenden Funktionen zur Verfgung:
    Alle Adressen, die bei Auswahl der Funktion
    "<<alle>> (...)" unter Anwendung dieser Regeln in
    die Sendeliste bernommen wrden, sind mit dem
-   Zeichen "<<\a007>>" zu Beginn des jeweiligen Eintrags
+   Zeichen "<<{007}>>" zu Beginn des jeweiligen Eintrags
    gekennzeichnet.
 
    Die Auswahl "<<alle>> (...)" steht nur zur Verfgung,
@@ -11652,18 +12193,18 @@ Auswahlliste angezeigt.
 
 <<Empf„ngerlisten-Anzeige
 
- \a007Absender           :  *theo1\@tester.de
+ {007}Absender           :  *theo1\@tester.de
   Empf„nger          :  (theo2\@tester.de)
- \a007Original-Empf„nger :   theo3\@tester.de
- \a007Kopien-Empf„nger   :   theo4\@tester.de
- \a007Kopien-Empf„nger   : *(theo5\@tester.de)
+ {007}Original-Empf„nger :   theo3\@tester.de
+ {007}Kopien-Empf„nger   :   theo4\@tester.de
+ {007}Kopien-Empf„nger   : *(theo5\@tester.de)
  ³³                    ³³³
  ³³                    ³³ÀÄÄÄÄÄÄ Empf„nger
  ³³                    ³ÃÄÄ () = Empf„nger nicht
  ³³                    ³³        in User-Datenbank
  ³³                    ÀÁÄÄÄ * = Vertreteradresse
  ³ÀÄÄÄÄÄ Eigenschaft gem„á ZConnect-Header
- ÀÄÄ \a007 = User wird bei Auswahl "alle (...)"
+ ÀÄÄ {007} = User wird bei Auswahl "alle (...)"
          in Sendeliste bernommen
 
 @
@@ -13251,6 +13792,24 @@ und bestellen, vorausgesetzt, es ist eine Brettliste
 vorhanden. Erscheint die Meldung "keine Brettliste
 vorhanden", dann sollten Sie zun„chst mit dem ent-
 sprechenden Menpunkt eine Liste anfordern.
+
+
+Es stehen folgende Tasten zur Verfgung:
+
+ <<<Space> >>  Brett markieren/entmarkieren
+
+  <<<F7> >>    Blockmarkierung: Anfangsmarke setzen
+
+  <<<F8> >>    Blockmarkierung: Endemarke setzen
+
+    <<S>>      sucht einen anzugebenden Begriff.
+           Groá-/Kleinschreibung werden dabei
+           ignoriert. <<<Tab> >>wiederholt die
+           letzte Suche.
+
+<<<Shift-S> >> wie <<S>>, jedoch unter Beachtung von
+           Groá- und Kleinschreibung.
+
 @
 11902
 <<Nachricht / Brettmanager / Abbestellen
@@ -13288,6 +13847,8 @@ Sie beim n„chsten Netcall.
 
 <<RFC/Client:
 
+(Siehe auch: [Netztyp RFC/Client - Brettmanager])@30201
+
 Die g„ngigen externen RFC-Clients erledigen Anforde-
 rung und Aktualisierung der Liste der verfgbaren
 Newsgroups i.d.R. automatisch. Die in diesem Men
@@ -13305,13 +13866,15 @@ direkt lokal ausgefhrt.
              werden nur bestellte Gruppen ein- bzw.
              abbestellte Gruppen ausgetragen. Sollten
              Sie oder ein externes Programm RC-Datei
-             oder Brettliste manipuliert haben, kann
-             es sein, daá RC-Datei und Brettliste
-             nicht mehr synchron sind. Dieser Befehl
-             fhrt einen Abgleich zwischen RC-Datei
-             und Brettliste durch (kann bei langsamen
-             PCs und/oder wenig Plattencache etwas
-             l„nger dauern).
+             bzw. Brettliste manipuliert oder Sie
+             eine neue Liste angefordert haben (siehe
+             <<L”schen>>), kann es sein, daá RC-Datei und
+             als bestellt markierte Gruppen in der
+             Brettliste nicht mehr synchron sind.
+             Dieser Befehl fhrt einen Abgleich der
+             RC-Datei mit der Brettliste durch (kann
+             bei langsamen PCs und/oder wenig Fest-
+             plattencache etwas l„nger dauern).
 
   <<L”schen>>    Die Brettliste wird gel”scht. Auf diese
              Weise veranlassen Sie den externen
@@ -13323,7 +13886,8 @@ direkt lokal ausgefhrt.
              die automatische Aktualisierung zwar
              neue Gruppen zur Liste hinzufgt, nicht
              mehr existierende Gruppen jedoch nicht
-             l”scht.
+             l”scht. Bitte fhren Sie nach Erhalt der
+             neuen Liste einmal einen <<Abgleich>> durch.
 
 
 <<RFC/UUCP:
@@ -13401,11 +13965,20 @@ Dieser Menpunkt dient zum Einlesen einer Brettliste.
 Voraussetzung dafr ist, daá Sie eine von der Box er-
 stellte Nachricht gew„hlt haben, die eine Brettliste
 enth„lt. Die Liste wird in einer Datei mit dem Namen
-<Box>.BL gespeichert und kann sp„ter fr /Nachricht
-/Brettmanager/Bestellen verwendet werden.
+<Box>.BL im XP-Verzeichnis gespeichert und kann sp„-
+ter fr [/Nachricht/Brettmanager/Bestellen] verwendet@11901
+werden.
 
 Falls schon eine Brettliste vorhanden ist, wird diese
 in <Box>.BAK umbenannt.
+
+Beim Netztyp <<RFC/Client>> steht diese Funktion zwar
+zur Verfgung, es wird jedoch dann stattdessen die
+Funktion [/Nachricht/Brettmanager/Datei_einlesen] aus-@11907
+gefhrt. Bitte beachten Sie den Hinweis dort, wann
+und warum Sie die Funktion ggf. *nicht* verwenden
+sollten.
+
 @
 11907
 <<Nachricht / Brettmanager / Datei einlesen
@@ -13417,10 +13990,31 @@ Brettliste zu aktivieren.
 
 Falls Sie aber bereits eine Liste als Datei besitzen,
 z.B. aus einem anderen Pointprogramm, oder neue Li-
-sten nicht als Nachricht sondern als Datei erhalten,
-z.B. als File Attach im FidoNet, k”nnen Sie diese
-Datei hier statt einer Nachricht als Brettliste ein-
-lesen.
+sten nicht als Nachricht sondern als Datei erhalten
+(z.B. als File Attach im FidoNet oder beim Netztyp
+[RFC/Client]), k”nnen Sie diese Datei hier statt einer@30100
+Nachricht als Brettliste einlesen.
+
+Die Liste wird in einer Datei mit dem Namen <Box>.BL
+im XP-Verzeichnis gespeichert und kann sp„ter fr
+[/Nachricht/Brettmanager/Bestellen] verwendet werden.@11901
+
+<<Hinweis:>> Beim Netztyp <<RFC/Client>> sollten Sie diese
+Funktion nur verwenden, wenn Sie einen externen RFC-
+Client einsetzen, der *keine* automatische Aktuali-
+sierung von Newsgroup-Listen untersttzt. Durch das
+Einlesen wrde die Brettliste im XP-Verzeichnis abge-
+legt werden, RFC-Clients, die die Liste bei jedem
+Netcall automatisch aktualisieren, erwarten diese
+jedoch im [Client-Verzeichnis]. CrossPoint greift bei@30107
+Brettmanager-Funktionen automatisch auf die Brett-
+liste <Box>.BL oder <Box>.GR im Client-Verzeichnis
+zu, wenn es im XP-Verzeichnis keine Liste <Box>.BL
+vorfindet.
+
+N„heres dazu siehe auch unter:
+[Netztyp RFC/Client - Brettmanager]@30201
+
 @
 11908
 <<Nachricht / Brettmanager / Maus-Infos  (nur MausNet)
@@ -13457,7 +14051,7 @@ Diese Einstellung hat nur Einfluá auf die zwischen
 zwei Netcalls fr die jeweilige Serverbox neu
 bestellten Gruppen. Nach jedem Netcall sind die
 Artikelz„hler in der Liste der bestellten Newsgroups
-(Datei <<<Box>.RC>> im Client-Verzeichnis) auf dem
+(Datei <<<Box>.RC>> im [Client-Verzeichnis]) auf dem@30107
 aktuellen Stand und es werden bei den folgenden
 Netcalls immer die jeweils aktuellen, noch nicht
 vorhandenen Artikel fr jede dort eingetragene Gruppe
