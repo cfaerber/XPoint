@@ -2193,7 +2193,7 @@ soll.
          ausw„hlen.
 
 <<Emp.>>     Der Empf„nger der Nachricht wird ge„ndert.
-         Wird der aktuelle Eintrag gel”scht, kann mit
+oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          <<<F2> >>zwischen Brettern und Usern gew„hlt
          werden. Statt der kompletten Adresse k”nnen
          Sie auch ein unter [/Edit/Kurznamen] definier-@11605
@@ -2205,8 +2205,8 @@ soll.
          gehalten werden, wenn der Schalter bet„tigt
          wird (also <<<Shift-M> >>oder Shift-Mausklick).
 
-         ACHTUNG! Diese Funktion sollte nur von erfah-
-         renen Anwendern benutzt werden!
+         ACHTUNG! Diese Funktion sollte nur von
+         erfahrenen Anwendern benutzt werden!
 
 <<Betreff>>  „ndert den Betreff.
 
