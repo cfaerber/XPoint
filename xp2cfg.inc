@@ -75,7 +75,7 @@ const maxcol = 30;
 var t       : text;
     s       : string;
     ca      : array[1..maxcol] of byte;
-    n,p     : byte;
+    n,p     : Integer;
     msk,mnr : byte;
     s1      : string;
     l       : longint;
@@ -1099,16 +1099,7 @@ end;
 procedure readconfig;
 var t       : text;
     s,su    : string;
-    i, p    : byte;
-    userauf : string;
-    dummys  : string;
-    dummyb  : boolean;
-    dummybb : byte;
-    dummyi:   smallword;
-    aaa     : string;   { AutoAdvance }
-    buf     : array[1..1024] of byte;
-    mheader : string;
-    Lines, Cols: Integer;
+    i, p    : Integer;
 
   function getcommpar:boolean;
   var nr    : integer;
@@ -1152,7 +1143,7 @@ var t       : text;
   end;
 
   function getfkeys:boolean;
-  var i,j,nr,p0 : shortint;
+  var i,j,nr,p0 : Integer;
       ss        : string;
   begin
     if LeftStr(su,5)<>'FKEY-' then
@@ -1205,7 +1196,7 @@ var t       : text;
   end;
 
   function getpmc:boolean;
-  var p  : byte;
+  var p  : Integer;
       s2 : string;
   begin
     if (LeftStr(su,9)<'PMCRYPT1=') or (LeftStr(su,9)>'PMCRYPT'+strs(maxpmc)+'=') then
@@ -1241,7 +1232,7 @@ var t       : text;
   end;
 
   function getviewers:boolean;
-  var p : byte;
+  var p : integer;
   begin
     if (LeftStr(su,8)<'VIEWER1=') or (LeftStr(su,8)>'VIEWER'+strs(maxviewers-defviewers)+'=')
     then
@@ -1260,8 +1251,7 @@ var t       : text;
   end;
 
   function GetPmLimits(txt:string; nr:byte):boolean;
-  var i : integer;
-      p : byte;
+  var p,i : integer;
   begin
     if LeftStr(su,length(txt))<>txt then
       GetPmLimits:=false
@@ -1303,6 +1293,15 @@ var
   dummytz: string;
 {$ENDIF }
   EntryFound: Boolean;
+  userauf : string;
+  dummys  : string;
+  dummyb  : boolean;
+  dummybb : byte;
+  dummyi:   smallword;
+  aaa     : string;   { AutoAdvance }
+  buf     : array[1..8192] of byte;
+  mheader : string;
+  Lines, Cols: Integer;
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration einlesen');
@@ -1314,13 +1313,13 @@ begin
   begin
     settextbuf(t,buf);
     reset(t);
-    { Zwischenspeichern, da Integer16 nicht als var-Parameter funktioniert }
-    while not eof(t) do begin
-      readln(t,s);
-      s:=trim(s);
-      su:=UpperCase(s);
+    while not eof(t) do
+    begin
+      Readln(t,s);
+      s := Trim(s);
       if (s<>'') and (s[1]<>'#') then
       begin
+        su := UpperCase(s);
         p:=cPos('=',s);
         EntryFound := false;
         if (p<>0) then
@@ -1352,6 +1351,7 @@ begin
                     getx(su,  'brettkommentar',brettkomm) or
                     getx(su,  'binmultipart',multipartbin) or
                     getx(su,  'binmime',mausmpbin) then EntryFound := True;
+            'C':    if getcommpar then EntryFound := true;
             'D': if xp1.gets(s,su,'defaultbox',defaultbox) or   { -> Config2 }
                     xp1.gets(s,su,'DruckerInit',druckinit) or
                     getb(su,  'DruckRand',drucklira) or
@@ -1375,7 +1375,7 @@ begin
                     getx(su,  'EmpfangsBestaetigung',EmpfBest) or
                     xp1.gets(s,su,'EmpfBestKennung',empfbkennung) then  { -> Config2 }
                     EntryFound := true;
-            'F': if xp1.gets(s,su,'filedir',filepath) or
+            'F': if getfkeys or xp1.gets(s,su,'filedir',filepath) or
                     xp1.gets(s,su,'FormFeed',druckff) or
                     getx(su,  'FidoDelEmpty',FidoDelEmpty) or
                     getx(su,  'feiertage',autofeier) or
@@ -1453,7 +1453,7 @@ begin
                     getx(su,  'newuseribm',newuseribm) then EntryFound := true;
             'O': if getx(su,  'otherquotechars',otherquotechars) or
                     xp1.gets(s,su,'Organisation',orga) then EntryFound := true;
-            'P': if xp1.gets(s,su,'pcxviewer',viewers[3].prog) or
+            'P': if getpmc or xp1.gets(s,su,'pcxviewer',viewers[3].prog) or
                     xp1.gets(s,su,'Pointliste',pointlistn) or
                     xp1.gets(s,su,'Pointdiff',pointdiffn) or
                     xp1.gets(s,su,'Post',postadresse) or
@@ -1467,11 +1467,11 @@ begin
                     getx(su,  'pgp-signall',PGP_signall) or
                     xp1.gets(s,su,'pgp-version',PGPVersion) or
                     xp1.gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions) or
-                    getx(s,   'pgp-mime',PGP_MIME)  then EntryFound := true;
+                    getx(s,   'pgp-mime',PGP_MIME) then EntryFound := true;
             'Q': if getb(su,  'quotebreak',quotebreak) or
                     xp1.gets(s,su,'quote',quotechar) or
                     getx(su,  'quotecolors',quotecolors) then EntryFound := true;
-            'R': if getx(su,  'ReHochN',rehochn) or
+            'R': if getRTAAdressen or getx(su,  'ReHochN',rehochn) or
                     getx(su,  'RenameCALLED',dummyb) or
                     geti(su,  'ReadMode',defreadmode) or
                     getx(su,  'RFC1522',RFC1522) or
@@ -1540,7 +1540,7 @@ begin
                     xp1.gets(s,su,'usrfeldtausch',UsrFeldTausch) or
                     getx(su,  'usersortbox',_usersortbox) or
                     getx(su,  'UserAutoCreate',UserAutoCreate) then EntryFound := true;
-            'V': if xp1.gets(s,su,'ViewerSave',viewer_save) or
+            'V': if getviewers or xp1.gets(s,su,'ViewerSave',viewer_save) or
                     xp1.gets(s,su,'ViewerLister',viewer_lister) or
                     xp1.gets(s,su,'ViewerVirscan',viewer_scanner) or
                     xp1.gets(s,su,'Vorwahl',vorwahl) or
@@ -1550,16 +1550,6 @@ begin
             'Z': if getx(su,  'ZCrossPostings',dummyb) or
                     getx(su,  'zc-iso',zc_iso) or
                     getx(su,  'zc-mime',zc_mime) then EntryFound := true;
-          end;
-          if not EntryFound then
-          begin
-            if
-              getcommpar or
-              getfkeys or
-              getpmc or
-              getviewers or
-              getRTAAdressen
-            then EntryFound := true;
           end;
         end;
         if not EntryFound then
@@ -1716,6 +1706,9 @@ begin
 
 {
   $Log$
+  Revision 1.144  2002/03/03 23:17:59  mk
+  - more simplification of readconfig
+
   Revision 1.143  2002/03/03 21:55:16  mk
   - made readconfig about 20times faster
 
