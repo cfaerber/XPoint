@@ -153,7 +153,7 @@ begin
         goto Ende;
       end;
 {$IFDEF Beta } { Betameldung anzeigen, /nb schaltet diese ab }
-      if not ParNoBeta then
+      if not ParNoBeta and (ParTiming = 0) then
       begin
         BetaMessage;
         if quit then
@@ -196,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.9  2000/12/30 16:06:10  mk
+  - bei Parameter /t:x keinen Betahinweis zeigen
+
   Revision 1.29.2.8  2000/12/12 14:03:56  mk
   - weitere lfn-fixes
 
