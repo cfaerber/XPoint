@@ -109,7 +109,7 @@ const
 var hayes     : boolean;
     small     : boolean;
     zcmime_old: boolean;
-    tzfeld,tzfeld1: shortint;
+    tzfeld: shortint;
     GPGEncodingOptionsField: integer;
 
 function testbrett(var s:string):boolean;
@@ -286,7 +286,6 @@ end;
 function SetTimezone(var s:string):boolean;
 begin
   setfieldenable(tzfeld,s=_jn_[2]);
-  setfieldenable(tzfeld1,s=_jn_[2]);
   settimezone:=true;
 end;
 
@@ -1548,6 +1547,10 @@ end;
 
 {
   $Log$
+  Revision 1.127  2002/04/06 13:52:35  mk
+  - fixed SetTimezone
+    (fixes crash while changing 'Erstellungszeit' in Config/Optionen/Nachrichten
+
   Revision 1.126  2002/04/05 19:51:09  ms
   Help ID's for /C/A/D/ corrected:
 
