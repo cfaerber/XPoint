@@ -886,8 +886,7 @@ begin
           else
             if empfaenger[1]<>'A' then
               aufnehmen:=true
-                         { not developer or
-                         ((pos('@mips.pfalz.de',absender)=0) and
+                         {((pos('@mips.pfalz.de',absender)=0) and
                           (pos('news@pythia.lunetix.de',absender)=0) and
                           (pos('news@dfki.uni-sb.de',absender)=0)) }
             else begin
@@ -931,7 +930,7 @@ begin
                 dbWriteNStr(bbase,bb_pollbox,pb);
                 dbWriteN(bbase,bb_haltezeit,haltezeit);
                 dbWriteN(bbase,bb_gruppe,grnr);
-                flags:=iif(netztyp=nt_UUCP,16,0);
+                flags:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
                 dbWriteN(bbase,bb_flags,flags);
                 if newbrettende then
                   SetBrettindexEnde
@@ -1238,6 +1237,10 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/07/29 12:57:27  ma
+  - removed Developer and ntAllowed variables
+  - fixed setting of NNTP area db flags
+
   Revision 1.57  2001/07/23 16:05:18  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

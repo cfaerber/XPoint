@@ -433,7 +433,7 @@ var f,f2     : file;
   function uucpbrett(s:string; edis:byte):string;
   var i : integer;
   begin
-    if (edis=1) or (netztyp<>nt_UUCP) or not NewsgroupDisp then
+    if (edis=1) or (not netztyp IN [nt_UUCP,nt_NNTP]) or not NewsgroupDisp then
       uucpbrett:=mid(s,edis)
     else begin
       delete(s,1,2);
@@ -1254,7 +1254,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         end;
       case n of
         0   : if SaveUVS and not binary then senden:=3   { Abbruch }
-              else if sdata^.uv_edit then senden:=iif(developer,0,1)
+              else if sdata^.uv_edit then senden:=1
               else senden:=0;
         1   : if not pm or (cc_anz>0) or not EmpfError then
                 if (OverSize=0) or (msgprio>0) or
@@ -1476,7 +1476,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         halten:=stdhaltezeit;
         dbWriteN(bbase,bb_haltezeit,halten);
         dbWriteN(bbase,bb_gruppe,grnr);
-        b:=iif(netztyp=nt_UUCP,16,0);
+        b:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
         dbWriteN(bbase,bb_flags,b);
         SetBrettindex;
         _brett:=mbrettd(empfaenger[1],bbase);
@@ -2040,34 +2040,29 @@ begin
   fn:=sendpath+Wildcard;
   useclip:=true;
   if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'Binaerdatei' / 'Textdatei' versenden }
-  then
-    if binary and (LeftStr(empf,length(xp_support))=xp_support) and
-       ((LeftStr(extractfilename(fn),4)='PDZM') or
-        (LeftStr(extractfilename(fn),3)='ZPR')) and not developer then
-      fehler('Bitte Åberlassen Sie das Versenden dieses Programms dem Programmautor!')
-    else begin
-      if not multipos(_MPMask,fn) then fn:=sendpath+fn else
-      fn:=ExpandFileName(fn);
-      if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
-      else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
-      else
-      begin
-        {fsplit(fn,dir,name,ext);}
-        if betr='' then betr:=ExtractFileName(fn)
-        else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
-        sdata:=allocsenduudatamem;
-        if aktdispmode in [10..19] then begin
-          get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
-          if repto<>'' then empf:=repto;
-          end;
-        hf:='';
-        sendfilename:=UpperCase(ExtractFilename(fn));
-        sendfiledate:=zcfiletime(fn);
-        if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
-        freesenduudatamem(sData);
+  then begin
+    if not multipos(_MPMask,fn) then fn:=sendpath+fn else
+    fn:=ExpandFileName(fn);
+    if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
+    else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
+    else
+    begin
+      {fsplit(fn,dir,name,ext);}
+      if betr='' then betr:=ExtractFileName(fn)
+      else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
+      sdata:=allocsenduudatamem;
+      if aktdispmode in [10..19] then begin
+        get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
+        if repto<>'' then empf:=repto;
         end;
-      if useclip then _era(fn);
+      hf:='';
+      sendfilename:=UpperCase(ExtractFilename(fn));
+      sendfiledate:=zcfiletime(fn);
+      if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
+      freesenduudatamem(sData);
       end;
+    if useclip then _era(fn);
+    end;
 end;
 
 
@@ -2104,6 +2099,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.120  2001/07/29 12:57:27  ma
+  - removed Developer and ntAllowed variables
+  - fixed setting of NNTP area db flags
+
   Revision 1.119  2001/07/28 12:04:13  mk
   - removed crt unit as much as possible
 
