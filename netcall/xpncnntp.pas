@@ -63,7 +63,7 @@ uses
   res_postnewsinit      = '%s News senden';
   res_getnewsinit       = '%s News holen';
   res_setnewsgroup      = 'Newsgroup %s (%d von %d)';
-  res_getposting        = 'Hole Artikel %d von %d';
+  res_getposting        = 'Hole Artikel %d bis %d von %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
   res_userbreak         = 'Abbruch durch User';
 
@@ -261,7 +261,7 @@ var
     uu.free;
    end;
 
-   procedure SaveNews(UpdateRCList: Boolean);
+   procedure SaveNews;
    var
      aFile: string;
    begin
@@ -270,8 +270,6 @@ var
      IncomingFiles.Add(aFile);
      inc(iNewsFile);
      List.Clear;
-     if UpdateRCLIst then
-       RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex) + iifs(HeaderOnly, ' HdrOnly', '');
    end;
 
 const
@@ -363,18 +361,19 @@ begin
         Inc(ArticleIndex);
         while ArticleIndex <= NNTP.LastMessage do
         begin
-          POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
-
           ArticleCount := Min(MaxMessageCount, NNTP.LastMessage - ArticleIndex + 1);
+
+          POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle, ArticleIndex-oArticle+ArticleCount-1, NNTP.LastMessage-oArticle]);
           NNTP.GetMessage(ArticleIndex, ArticleCount, List, HeaderOnly);
           Inc(ArticleIndex, ArticleCount);
 
           if List.Count > 10000 then
-            SaveNews(true);
+            SaveNews;
         end;
-        if List.Count > 0 then SaveNews(true);
+        if List.Count > 0 then
+          SaveNews;
+        RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex-1) + iifs(HeaderOnly, ' HdrOnly', '');
       end;
-      Dec(ArticleIndex); 
 
       List.Clear;
       if FileExists(MidFilename) then
@@ -397,7 +396,8 @@ begin
             MidList.Delete(0);
           end;
           MidList.SaveToFile(MidFilename);
-          if List.Count > 0 then SaveNews(false);
+          if List.Count > 0 then
+            SaveNews;
         finally
           MidList.Free;
         end;
@@ -425,6 +425,10 @@ end;
 
 {
         $Log$
+        Revision 1.54  2003/09/06 19:07:42  mk
+        - correct ArticleIndex is now written to the rc-file, too
+        - better connection status report
+
         Revision 1.53  2003/09/05 18:43:23  mk
         - added Dec(ArticleIndex) at end of poll to correct ArticleIndex in *.rc
 
