@@ -26,38 +26,24 @@ unit utftools;
 interface
 
 uses
-  Unicode;
+  Unicode,Mime;
 
-type
-  // Attention: sorting must be equal with KnownCharsetNames !
-  TUnicodeCharsets = (csUnicode, csCP437, csCP866, csCP1251, csCP1252, csCP1255,
-    csISO8859_1, csISO8859_2, csISO8859_3, csISO8859_4, csISO8859_5,
-    csISO8859_6, csISO8859_7, csISO8859_8, csISO8859_9, csISO8859_10,
-    csISO8859_13, csISO8859_14, csISO8859_15, csUTF7, csUnknown);
-
-const
-  KnownCharsetCount = 19;
-  KnownCharsetNames: array[0..KnownCharsetCount] of String = (
-    'utf-8', 'windows-437', 'windows-866',  'windows-1251',  'windows-1252',  'windows-1255',
-    'iso-8859-1', 'iso-8859-2', 'iso-8859-3', 'iso-8859-4', 'iso-8859-5',
-    'iso-8859-6', 'iso-8859-7', 'iso-8859-8', 'iso-8859-9', 'iso-8859-10',
-    'iso-8859-13', 'iso-8859-14', 'iso-8859-15', 'utf-7');
 
 function IsKnownCharset(Charset: String): Boolean;
-function GetCharsetFromName(Charset: String): TUnicodeCharsets;
+function MimeGetCharsetFromName(Charset: String): TMIMECharsets;
 
-function Convert8BitToUTF(Str: String; CharSet: TUnicodeCharsets): String;
-function ConvertUTFTo8Bit(Str: String; CharSet: TUnicodeCharsets): String;
+function Convert8BitToUTF(Str: String; CharSet: TMimeCharsets): String;
+function ConvertUTFTo8Bit(Str: String; CharSet: TMimeCharsets): String;
 
-function CreateUTF8Encoder(Charset: TUnicodeCharsets): TUTF8Encoder;
-function CreateUTF8Decoder(Charset: TUnicodeCharsets): TUTF8Decoder;
+function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
+function CreateUTF8Decoder(Charset: TMimeCharsets): TUTF8Decoder;
 
-function RecodeCharset(const s: String; cs_from,cs_to: TUnicodeCharsets): String;
+function RecodeCharset(const s: String; cs_from,cs_to: TMimeCharsets): String;
 
 implementation
 
 uses
-  SysUtils;
+  SysUtils,Typeform;
 
 // -------------------------------------------------------------------
 //   UTF-8 (null encoder)
@@ -114,39 +100,38 @@ type
 {$I charsets\8859_13.inc }
 {$I charsets\8859_14.inc }
 {$I charsets\8859_15.inc }
-
 {$I charsets\aliases.inc }
 {$ENDIF }
 
 function IsKnownCharset(Charset: String): Boolean;
 var
-  i: Integer;
+  i: TMimeCharsets;
 begin
-  Result := false;
-  Charset:=LowerCase(ResolveCharsetAlias(Charset));
-  for i := 0 to KnownCharsetCount do
-    if Charset = KnownCharsetNames[i] then
+  Charset:=MimeCharsetCanonicalName(Charset);
+  for i := Low(MimeCharsetNames) to High(MimeCharsetNames) do
+    if (Charset=MimeCharsetNames[i]) and (i<>csUnknown) then
     begin
       Result := true;
       Exit;
     end;
+  Result := false;
 end;
 
-function GetCharsetFromName(Charset: String): TUnicodeCharsets;
+function MimeGetCharsetFromName(Charset: String): TMimeCharsets;
 var
-  i: Integer;
+  i: TMimeCharsets;
 begin
   Result := csUnknown;
-  Charset:=LowerCase(ResolveCharsetAlias(Charset));
-  for i := 0 to KnownCharsetCount do
-    if Charset = KnownCharsetNames[i] then
+  Charset:=MimeCharsetCanonicalName(Charset);
+  for i := Low(MimeCharsetNames) to High(MimeCharsetNames) do
+    if (Charset = MimeCharsetNames[i]) and (i<>csUnknown) then
     begin
-      Result := TUnicodeCharsets(i);
+      Result := TMimeCharsets(i);
       Exit;
     end;
 end;
 
-function GetT8BitTable(CharSet: TUnicodeCharsets): T8BitTable;
+function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 begin
   case CharSet of
     csCP437: Result := CP437Transtable;
@@ -188,20 +173,21 @@ end;
 //   Create En/Decoder class instance from TUnicodeCharsets
 // -------------------------------------------------------------------
 
-function CreateUTF8Encoder(Charset: TUnicodeCharsets): TUTF8Encoder;
+function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
 begin
   case Charset of
-    csUnicode:   result:=TUTF8NullEncoder.Create;
+    csUTF8,csASCII,csUnknown: result:=TUTF8NullEncoder.Create;
     csISO8859_1: result:=TAnsiUTF8Encoder.Create;
     else         result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
   end;
 end;
 
-function CreateUTF8Decoder(Charset: TUnicodeCharsets): TUTF8Decoder;
+function CreateUTF8Decoder(Charset: TMimeCharsets): TUTF8Decoder;
 begin
   case Charset of
-    csUnicode:   result:=TUTF8NullDecoder.Create;
+    csUTF8,csUnknown: result:=TUTF8NullDecoder.Create;
     csISO8859_1: result:=TAnsiUTF8Decoder.Create;
+    csASCII:     result:=TAsciiUTF8Decoder.Create;
     else         result:=T8BitUTF8Decoder.Create(GetT8BitTable(Charset));
   end;
 end;
@@ -210,35 +196,46 @@ end;
 //   Generic charset conversion
 // -------------------------------------------------------------------
 
-var UTF8_Encoders: array[TUnicodeCharsets] of TUTF8Encoder;
-    UTF8_Decoders: array[TUnicodeCharsets] of TUTF8Decoder;
+var UTF8_Encoders: array[TMimeCharsets] of TUTF8Encoder;
+    UTF8_Decoders: array[TMimeCharsets] of TUTF8Decoder;
 
-function RecodeCharset(const s: String; cs_from,cs_to: TUnicodeCharsets): String;
+function RecodeCharset(const s: String; cs_from,cs_to: TMimeCharsets): String;
 begin
-  if not assigned(UTF8_Decoders[cs_to  ]) then
-    UTF8_Decoders[cs_to  ]:=CreateUTF8Decoder(cs_to  );
-  if not assigned(UTF8_Encoders[cs_from]) then
-    UTF8_Encoders[cs_from]:=CreateUTF8Encoder(cs_from);
+  if cs_from=cs_to then
+    Result:=s
+  else
+  if (cs_from=csCP437) and (cs_to in [csISO8859_1,csASCII]) then
+    Result:=IbmToIso(s)
+  else
+  if (cs_to=csCP437) and (cs_from in [csISO8859_1,csASCII,csUnknown]) then
+    Result:=IsoToIbm(s)
+  else
+  begin
+    if not assigned(UTF8_Decoders[cs_to  ]) then
+      UTF8_Decoders[cs_to  ]:=CreateUTF8Decoder(cs_to  );
+    if not assigned(UTF8_Encoders[cs_from]) then
+      UTF8_Encoders[cs_from]:=CreateUTF8Encoder(cs_from);
 
-  Result := UTF8_Decoders[cs_to].Decode(PUTF8Char(
-      UTF8_Encoders[cs_from].Encode(s)));
+    Result := UTF8_Decoders[cs_to].Decode(PUTF8Char(
+        UTF8_Encoders[cs_from].Encode(s)));
+  end;
 end;
 
-function Convert8BitToUTF(Str: String; CharSet: TUnicodeCharsets): String;
+function Convert8BitToUTF(Str: String; CharSet: TMimeCharsets): String;
 begin
   if not assigned(UTF8_Encoders[CharSet]) then
     UTF8_Encoders[CharSet]:=CreateUTF8Encoder(CharSet);
   Result := PUTF8Char(UTF8_Encoders[CharSet].Encode(str));
 end;
 
-function ConvertUTFTo8Bit(Str: String; CharSet: TUnicodeCharsets): String;
+function ConvertUTFTo8Bit(Str: String; CharSet: TMimeCharsets): String;
 begin
   if not assigned(UTF8_Decoders[CharSet]) then
     UTF8_Decoders[CharSet]:=CreateUTF8Decoder(CharSet);
   Result := UTF8_Decoders[CharSet].Decode(PUTF8Char(str));
 end;
 
-var cs:TUnicodeCharsets;
+var cs:TMimeCharsets;
 
 initialization
   for cs := low(UTF8_Encoders) to high(UTF8_Encoders) do
@@ -256,6 +253,11 @@ finalization
 end.
 
 // $Log$
+// Revision 1.5  2001/09/08 14:23:27  cl
+// - Moved MIME functions to mime.pas
+// - More uniform naming of MIME functions/types/consts
+// - optimized RecodeCharset to replace zcrfc.decodecharset
+//
 // Revision 1.4  2001/09/07 17:27:24  mk
 // - Kylix compatiblity update
 //
