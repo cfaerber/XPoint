@@ -74,11 +74,11 @@ type  nodeinfo = record
                  end;
 
 procedure MakeNodelistIndex;
-procedure OpenNodeindex(fn:string);
+procedure OpenNodeindex(const fn:string);
 procedure CloseNodeindex;
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:integer);
-function  IsFidoNode(adr:string):boolean;
-function  FidoIsISDN(var fa:FidoAdr):boolean;
+procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
+function  IsFidoNode(const adr:string):boolean;
+function  FidoIsISDN(const fa:FidoAdr):boolean;
 { returns node name if node supports BinkP; node name may not be a valid IP }
 { address, there seems to be no standard :-( }
 function  FidoIsBinkP(var fa:FidoAdr):string;
@@ -95,7 +95,7 @@ procedure DelFidolist;
 function  TestNodelist:boolean;
 function  testDefbox:boolean;
 
-function  FidoFilename(var fa:FidoAdr):string;
+function  FidoFilename(const fa:FidoAdr):string;
 function  CrashFile(adr:string):string;
 procedure GetReqFiles(adr:string; var files:string);
 function  FidoPhone(var fa:FidoAdr; var nl_phone:string):string;
@@ -197,7 +197,6 @@ type  noderec = packed record
                   end;
 
 type  bereichlst = array[1..maxber] of berrec;
-      filep      = ^file;
 
 const nodelistopen : boolean = false;
 
@@ -205,7 +204,7 @@ var   NX_adrnetx   : longint;
       bereiche     : word;
       berliste     : ^bereichlst;
       nodef        : file;
-      nodelf       : filep;
+      nodelf       : file;
       FreqLst      : string;
       DelFilelist  : boolean;   { lokal NodeSelProc }
       UserBlocks   : longint;
@@ -999,7 +998,7 @@ begin
 end;
 
 
-procedure OpenNodeindex(fn:string);
+procedure OpenNodeindex(const fn:string);
 var hd  : idxheader;
     uhd : udxheader;
     rr  : Integer;
@@ -1283,7 +1282,8 @@ begin
   else
     node:=MakeFidoAdr(fa,true);
   maddstring(3,2,getres(2107),node,20,25,''); mhnr(730);  { 'Node/Name ' }
-  if request and FileExists(FileLists) and FileExists(FidoDir+'*.FL') then begin
+  if request and FileExists(FileLists) and FileExists(FidoDir+'*' + extFl) then 
+  begin
     mappcustomsel(NodeSelproc,false); mselhnr(85);
     DelFilelist:=false;
     end;
@@ -1373,7 +1373,7 @@ begin
   testDefbox:=(DefFidobox<>'');
 end;
 
-function FidoFilename(var fa:FidoAdr):string;
+function FidoFilename(const fa:FidoAdr):string;
 begin
   FidoFilename:=FileUpperCase(hex(fa.net,4)+hex(fa.node,4));
 end;
@@ -1713,14 +1713,13 @@ label ende;
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
-    else if RightStr(fi,3)='.FL' then
+    else if ExtractFileExt(fi) = extFl then
       filetest:=true
-    else begin
-      p:=cpos('.',fi);
-      if p=0 then fi:=fi+'.FL'
-      else fi:=LeftStr(fi,p)+'FL';
+    else 
+    begin
+      fi := ChangeFileExt(fi, extFl);
       filetest:=(not FileExists(path+fi) or overwrite(path+fi));
-      end;
+    end;
   end;
 
   procedure UpdateReqdat;
@@ -1766,7 +1765,8 @@ begin
   fi:=ExtractFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
-  if (p>0) and (ival(LeftStr(fi,p-1))>0) then begin
+  if (p>0) and (ival(LeftStr(fi,p-1))>0) then 
+  begin
     fillchar(fa,sizeof(fa),0);
     if not Nodelist.Open then
       node:=''
@@ -1812,7 +1812,7 @@ begin
     copied:=true;
     end
   else if ExtractFilePath(fn)=FidoPath then begin   { ungepackt, in FIDO\ }
-    if RightStr(fn,3)<>'.FL' then
+    if RightStr(fn,3)<> extFl then
       if not FileTest(false,0,FidoPath,fi) then goto ende;
     copied:=false;
     end
@@ -1827,11 +1827,10 @@ begin
     closebox;
     copied:=true;
     end;
-
-  if RightStr(fi,3)<>'.FL' then begin
-    p:=cpos('.',fi);
-    if p=0 then fi2:=fi+'.FL'
-    else fi2:=LeftStr(fi,p)+'FL';
+                          
+  if ExtractFileExt(fi) <> extFl then 
+  begin
+    fi2:= ChangeFileExt(fi, extFl);
     SaveDeleteFile(FidoPath+fi2);
     if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
@@ -1860,7 +1859,7 @@ var cr    : CustomRec;
     nn    : longint;
     comment: boolean;
 begin
-  if not FileExists(FileLists) or not FileExists(FidoDir+'*.FL') then
+  if not FileExists(FileLists) or not FileExists(FidoDir+'*' +extFl) then
     rfehler(2119)   { 'keine Filelisten vorhanden' }
   else begin
     cr.s:='';
@@ -1918,9 +1917,9 @@ function FidoSeekfile:string;
     searchStr        : array[0..SearchStr_maxIdx] of string;
     x,y              : Integer;
     brk              : boolean;
-    pFileListCfg     : ^text;
-    pOutput          : ^text;
-    pFileListe       : ^text;
+    pFileListCfg     : text;
+    pOutput          : text;
+    pFileListe       : text;
     anz_FileFound, p : longint;
     tb               : pointer;
     scp              : scrptr;
@@ -1947,9 +1946,9 @@ function FidoSeekfile:string;
     { Alle Tests bestanden }
     fInStr:=true;
   end;
-  procedure pTestWriteln(s:string);
+  procedure pTestWriteln(const s:string);
   begin
-    writeln(pOutput^,s);
+    writeln(pOutput,s);
     if IOResult<>0 then begin
       fehler(ioerror(ioresult,getres2(2120,1)));   { 'Schreibfehler' }
       brk:=true;
@@ -2053,21 +2052,21 @@ function FidoSeekfile:string;
     attrtxt(col.colmboxhigh);
     mwrt(x+13,y+2,forms(mid(sNodInf,p+1),12));  { Dateiname anzeigen }
     getNodeinfo(LeftStr(sNodInf,p-1),ni^,1);
-    settextbuf(pFileListe^,tb^,tbs);
-    reset(pFileListe^);
+    settextbuf(pFileListe,tb^,tbs);
+    reset(pFileListe);
     begin                                  { write header}
       sNodInf:=LeftStr(sNodInf,p-1)+' ';      { s:= 2:244/1278 }
       if ni^.found then sNodInf:=sNodInf+'('+ni^.boxname+', '+ni^.standort+', '+sFlistName  +')'
       else sNodInf:=sNodInf+'(??, '+sFlistName  +')';         { s:= 2:244/1278 (C-Box, Frankfurt, 02441278.FL}
-      writeln(pOutput^,' ',' '+sNodInf);
-      writeln(pOutput^,' ',' '+typeform.dup(length(sNodInf),'Ä'));
-      writeln(pOutput^);
+      writeln(pOutput,' ',' '+sNodInf);
+      writeln(pOutput,' ',' '+typeform.dup(length(sNodInf),'Ä'));
+      writeln(pOutput);
     end;
     apos:=0;                                    { Zeilenz„hler ungltig setzen}
     beginSafe:=false;
-    while not eof(pFileListe^) and (not brk) do               {'FIDO\22441278.fl'}
+    while not eof(pFileListe) and (not brk) do               {'FIDO\22441278.fl'}
     begin
-      readln(pFileListe^,sZeile);               {lese Zeile aus der Fileliste }
+      readln(pFileListe,sZeile);               {lese Zeile aus der Fileliste }
       pTabExpand(sZeile);
       { ist gelesene Zeile eine headerzeile }
       if ( FirstChar(sZeile) >' ') and( sZeile <> '') and (( FirstChar(sZeile) <#176)or( FirstChar( sZeile) >#223)) then
@@ -2086,15 +2085,14 @@ function FidoSeekfile:string;
         inc(apos);
       end;
     end; { while not eof(pFileListe^) do begin}
-    close(pFileListe^);
+    close(pFileListe);
   end;
 
 
 begin       { FidoSeekfile:string;************************ }
-
   FidoSeekfile:='';
   anz_FileFound:=0;                     { Anzahl der gefunden Dateien =0 }
-  if not FileExists(FileLists) or not FileExists(FidoDir+'*.FL') then
+  if not FileExists(FileLists) or not FileExists(FidoDir+'*' + extFl) then
   begin
     fehler(getres2(2120,2));            { 'keine Filelisten vorhanden' }
     goto ende;
@@ -2126,49 +2124,43 @@ begin       { FidoSeekfile:string;************************ }
     msgbox(30,6,getres2(2120,6),x,y);   { 'Suchen ..' }
     mwrt(x+3,y+2,getres2(2120,7));      { 'Datei' }
     mwrt(x+3,y+3,getres2(2120,8));      { 'gefunden' }
-    new(pFileListCfg);
-    new(pOutput);
-    new(pFileListe);
     new(ni);
     tbs:=16384;
     getmem(tb,tbs);
-    assign(pOutput^,seekfile);
-    rewrite(pOutput^);
+    assign(pOutput,seekfile);
+    rewrite(pOutput);
     len:=length(getres2(2120,9))+3;
-    writeln(pOutput^,' ',' '+typeform.dup(len+length(seek),'Í'));
-    writeln(pOutput^,' ',' '+getres2(2120,9),' "',mid(fidolastseek,3),'"');   { 'Dateisuche nach' .. }
-    writeln(pOutput^,' ',' '+typeform.dup(len+length(seek),'Í'));
-    writeln(pOutput^);
-    assign(pFileListCfg^,FileLists);
-    reset(pFileListCfg^);
-    while ( not eof(pFileListCfg^)) and (not brk) do       {noch Eintr„ge in der cfg.datei}
+    writeln(pOutput,' ',' '+typeform.dup(len+length(seek),'Í'));
+    writeln(pOutput,' ',' '+getres2(2120,9),' "',mid(fidolastseek,3),'"');   { 'Dateisuche nach' .. }
+    writeln(pOutput,' ',' '+typeform.dup(len+length(seek),'Í'));
+    writeln(pOutput);
+    assign(pFileListCfg,FileLists);
+    reset(pFileListCfg);
+    while ( not eof(pFileListCfg)) and (not brk) do       {noch Eintr„ge in der cfg.datei}
     begin
-      readln(pFileListCfg^,sNodInf); sNodInf:=trim(sNodInf);
+      readln(pFileListCfg,sNodInf); sNodInf:=trim(sNodInf);
       p:=cpos('=',sNodInf);
       if (sNodInf<>'') and (FirstChar(sNodInf)<>'#') and (FirstChar(sNodInf) <>';') and (p>0) then
       begin
         sFlistName:= UpperCase(mid(sNodInf,p+1));        { Name der Fileliste z.B: 22441278.fl}
-        assign(pFileListe^,FidoDir+sFlistName  );    { pFileListe='FIDO\22441278.fl'}
-        if existf(pFileListe^) then
+        assign(pFileListe,FidoDir+sFlistName  );    { pFileListe='FIDO\22441278.fl'}
+        if existf(pFileListe) then
           pBearbeiteFileListe;
       end;
     end;
     saveconfig2;
     xp1.signal;
-    close(pFileListCfg^);
-    close(pOutput^);
+    close(pFileListCfg);
+    close(pOutput);
     if brk then
     begin
-      erase(pOutput^);
+      erase(pOutput);
       fidolastseek:=fidolastseek+#27;
     end;
     if IoResult<>0 then;
     closebox;
     freemem(tb,tbs);
     dispose(ni);
-    dispose(pFileListe);
-    dispose(pOutput);
-    dispose(pFileListCfg);
   end;               { fidolastseek<>oldseek }
   if not brk then    { gefundene Dateien Listen und ggf. requesten }
   begin
@@ -2210,7 +2202,7 @@ ende:
   freeres;
 end;
 
-function FidoIsISDN(var fa:FidoAdr):boolean;
+function FidoIsISDN(const fa:FidoAdr):boolean;
 var ni : NodeInfo;
 begin
   GetNodeInfo(MakeFidoAdr(fa,true),ni,2);
@@ -2274,6 +2266,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2001/11/18 12:31:22  mk
+  - fixed some file case problems with fido file lists
+
   Revision 1.64  2001/10/20 17:26:42  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

@@ -78,8 +78,8 @@ procedure getablsizes;
 function  QuoteSchab(pm:boolean):string;
 procedure ClearPGPflags(hdp:theader);
 
-function  MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
-function  IsNodeAddress(adr:string):boolean;
+function  MakeFidoAdr(const frec:fidoadr; usepoint:boolean):string;
+function  IsNodeAddress(const adr:string):boolean;
 procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
 
 function  vert_name(s:string):string;
@@ -1068,14 +1068,14 @@ begin
 end;
 
 
-function MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
+function MakeFidoAdr(const frec:fidoadr; usepoint:boolean):string;
 begin
   with frec do
     MakeFidoadr:=strs(zone)+':'+strs(net)+'/'+strs(node)+
                  iifs(ispoint and usepoint,'.'+strs(point),'');
 end;
 
-function IsNodeAddress(adr:string):boolean;
+function IsNodeAddress(const adr:string):boolean;
 var p : byte;
 begin
   p:=cpos(':',adr);
@@ -1143,6 +1143,9 @@ finalization
 
 {
   $Log$
+  Revision 1.72  2001/11/18 12:31:22  mk
+  - fixed some file case problems with fido file lists
+
   Revision 1.71  2001/10/23 22:59:17  ma
   - fixed: file_box failed with unix file systems
     (tried to search for lowercase but db index is uppercase)

@@ -92,28 +92,26 @@ var s  : string;
 begin           
   ni.found:=false;                                             
   if nfile>NodeList.Count-1 then exit;
-  new(nodelf);                                            //es kann ein nodelisten index von
-  assign(nodelf^,FidoDir+NodeList.GetFilename(nfile));
-  resetfm(nodelf^,fmRead);
+  assign(nodelf,FidoDir+NodeList.GetFilename(nfile));    //es kann ein nodelisten index von
+  resetfm(nodelf,fmRead);
   if ioresult=0 then
   begin
     { reset(nodelf^,1);  !?!? }
-    seek(nodelf^,adr);
+    seek(nodelf,adr);
     SetLength(s,255);
-    blockread(nodelf^,s[1],255,rr);
+    blockread(nodelf,s[1],255,rr);
     SetLength(s,rr);
     SetLength(s,cpos(#13,s)-1);
     SetInfo;
     ni.found:=true;
-    close(nodelf^);
+    close(nodelf);
     end;
-  dispose(nodelf);
 end;
 
 
 { Pointtyp: 0=nur Node, 1=Point/Node, 2=bei nicht gef. Point wiederholen }
 
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:integer);
+procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
 var fa     : fidoadr;
     i,netp : integer;
     bp     : ^netrecl;
@@ -214,7 +212,7 @@ again:
 end;
 
 
-function IsFidoNode(adr:string):boolean;
+function IsFidoNode(const adr:string):boolean;
 var ni : NodeInfo;
 begin
   GetNodeInfo(adr,ni,1);
@@ -901,6 +899,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
+  Revision 1.40  2001/11/18 12:31:22  mk
+  - fixed some file case problems with fido file lists
+
   Revision 1.39  2001/10/20 17:26:42  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
