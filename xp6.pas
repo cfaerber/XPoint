@@ -1937,8 +1937,8 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
-                     {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
+      hdp^.programm:=xp_xp+' '+verstr+betastr
+                     {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
                      +iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
@@ -2415,6 +2415,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.50  2002/03/09 21:50:12  my
+  MY:- Versionsstrings korrigiert/ge„ndert:
+       - Snapshot-Versionsstrings werden jetzt nach dem Muster
+         "CrossPoint [OpenXP/16] v3.40 RC3 @ 0903022151 R/C816" gebildet
+         (zus„tzliche Leerzeichen vor Beta-String und vor/nach "@").
+       - Bei ausgehenden Fido-Nachrichten wird jetzt derselbe Versionsstring
+         erzeugt wie bei allen anderen Netztypen.
+       - Bei eingehenden Fido-Nachrichten wird in der MAILER-Zeile die
+         Tearline jetzt nur noch dann mit " / " an die PID angeh„ngt, wenn
+         PID und Tearline nicht gleich sind und die PID keinen der Strings
+         "crosspoint", "openxp", "xp2" oder "xp " enth„lt.
+
   Revision 1.39.2.49  2002/03/08 23:05:08  my
   MY:- Fix: Ein Wechsel im Sendefenster ("o") von einer RFC/Client- zu
        einer RFC/UUCP-Box oder umgekehrt ist auch bei ”ffentlichen

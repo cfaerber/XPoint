@@ -16,7 +16,7 @@ interface
 
 const
   verstr      = 'v3.40';     { Versionsnr. - steht nur an dieser Stelle }
-  betastr     = ' RC3';      { '' oder ' beta' }
+  betastr     = ' RC3';      { '' oder ' beta', ' RCn' usw. }
   author_name = 'OpenXP/16';
   author_fido = '2:2433/460';
   author_mail = 'support@openxp16.de';
@@ -85,6 +85,18 @@ implementation
 end.
 {
   $Log$
+  Revision 1.29.2.20  2002/03/09 21:50:13  my
+  MY:- Versionsstrings korrigiert/ge„ndert:
+       - Snapshot-Versionsstrings werden jetzt nach dem Muster
+         "CrossPoint [OpenXP/16] v3.40 RC3 @ 0903022151 R/C816" gebildet
+         (zus„tzliche Leerzeichen vor Beta-String und vor/nach "@").
+       - Bei ausgehenden Fido-Nachrichten wird jetzt derselbe Versionsstring
+         erzeugt wie bei allen anderen Netztypen.
+       - Bei eingehenden Fido-Nachrichten wird in der MAILER-Zeile die
+         Tearline jetzt nur noch dann mit " / " an die PID angeh„ngt, wenn
+         PID und Tearline nicht gleich sind und die PID keinen der Strings
+         "crosspoint", "openxp", "xp2" oder "xp " enth„lt.
+
   Revision 1.29.2.19  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte

@@ -916,7 +916,7 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: CrossPoint/OpenXP '+mid(programm,cpos(' ',programm)+2));
+        wrs(^A'PID: '+programm);
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1650,7 +1650,13 @@ begin
           prog2:=trim(mid(s,5));
           if prog2<>'' then
             if hd.programm='' then hd.programm:=prog2
-            else hd.programm:=hd.programm+' / '+prog2;
+            else hd.programm:=hd.programm +
+                              iifs((hd.programm=prog2) or
+                                   (pos(lstr(hd.programm),'crosspoint')=0) or
+                                   (pos(lstr(hd.programm),'openxp')=0) or
+                                   (pos(lstr(hd.programm),'xp2')=0) or
+                                   (pos(lstr(hd.programm),'xp ')=0),
+                                   '',' / '+prog2);
           tear_2:=adr;
           end;
         end
@@ -1812,6 +1818,18 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.12  2002/03/09 21:50:13  my
+  MY:- Versionsstrings korrigiert/ge„ndert:
+       - Snapshot-Versionsstrings werden jetzt nach dem Muster
+         "CrossPoint [OpenXP/16] v3.40 RC3 @ 0903022151 R/C816" gebildet
+         (zus„tzliche Leerzeichen vor Beta-String und vor/nach "@").
+       - Bei ausgehenden Fido-Nachrichten wird jetzt derselbe Versionsstring
+         erzeugt wie bei allen anderen Netztypen.
+       - Bei eingehenden Fido-Nachrichten wird in der MAILER-Zeile die
+         Tearline jetzt nur noch dann mit " / " an die PID angeh„ngt, wenn
+         PID und Tearline nicht gleich sind und die PID keinen der Strings
+         "crosspoint", "openxp", "xp2" oder "xp " enth„lt.
+
   Revision 1.21.2.11  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
