@@ -820,6 +820,8 @@ const
        ParNolock  : boolean = false;   { keine Lockfile-öberprÅfung }
 {$IFDEF Beta }
        ParNoBeta  : boolean = false;   { keine Beta-Meldung }
+{$ELSE }
+       ParNoBeta  : boolean = true;    
 {$ENDIF }
        OldXPComp  : boolean = false;   { XP 3.12 KompatibilitÑtsmodus }
        ParSavePal : boolean = false;   { Farbpalette sichern }
@@ -1234,6 +1236,10 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.57  2003/01/10 17:37:00  mw
+
+  MW: - XP compilierte als Nicht-Beta nicht.
+
   Revision 1.54.2.56  2003/01/10 14:04:21  mw
 
   MW:
