@@ -93,10 +93,10 @@ var ss : string[BoxNameLen];
    function SameServer:boolean;
    var i : integer;
    begin
-     ss:=PTccmore(Cccm[iif(verteiler,1,0)]).server;
+     ss:=ccm^[iif(verteiler,1,0)].server;
      SameServer:=true;
      for i:=1 to cc_anz do
-       if PTccmore(Cccm[i]).server<>ss then begin
+       if ccm^[i].server<>ss then begin
          ss:=''; SameServer:=false;
          end;
    end;
@@ -314,7 +314,7 @@ var flags : string[80];
   begin
     anz:=0;
     for i:=1 to cc_anz do
-      if cpos('@',ccL^[i])>0 then inc(anz);
+      if cpos('@',cc^[i])>0 then inc(anz);
     pmcc_anz:=anz;
   end;
 
@@ -711,7 +711,7 @@ begin
     rewrite(f,1);
     wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
     for i:=1 to cc_anz do
-      wrs(getres(600)+' '+ccL^[i]);
+      wrs(getres(600)+' '+cc^[i]);
     wrs('');
     assign(f2,datei);
     reset(f2,1);
@@ -1161,6 +1161,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.46  2001/01/07 10:03:16  mo
+  -Aenderungen an ccmore und ccmorea zurückgenommen
+
   Revision 1.45  2001/01/06 21:13:36  mo
   - Änderung an TnodeListItem
 
