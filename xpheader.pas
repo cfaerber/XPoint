@@ -30,7 +30,7 @@ unit xpheader;
 
 interface
 
-uses Classes,Mime;
+uses Classes,Mime,addresslist,xpnt;
 
 type
   mimedata = record
@@ -72,7 +72,7 @@ type
     property BCC: string read GetBCC write SetBCC;
     property Newsgroups: string read GetNewsgroups write SetNewsgroups;
 
-  { -- MakeEnvelope -------------------------------------------------- }
+  { -- ReconstructEnvelope ------------------------------------------- }
     procedure ReconstructEnvelope;
     
   public
@@ -143,14 +143,12 @@ type
     zline: TStringList;
     fline: TStringList;
     References: TStringList;            // references:
-    xempf: TStringList;
     mailcopies: tstringlist;
-    xoem: TStringList;
     MIME: mimedata;
     gateway: string;
     sender: string;
     lines: longint;                     { "Lines:" }
-    envemp: string;
+//  envemp: string;
 
     constructor Create;
     destructor Destroy; override;
@@ -179,6 +177,37 @@ type
 
   TSendUUData = class
   public
+    EmpfList   : TAddressList; // includes Newsgroups
+
+    has_pm   : boolean;     { Has private (email) message recipients   }
+    has_am   : boolean;     { Has public (news, GABELN) recipients     }
+
+    can_crash: boolean;     { FTN Crash mails allowed (what did you think?!) }
+
+    Boxen    : TStringList;
+    
+    has_zc   : boolean;     { ZConnect-Empfänger vorhanden        }
+    has_rfc  : boolean;     { RFC-Empfänger vorhanden             }
+    has_maus : boolean;     { Maus-Empfänger vorhanden            }
+    has_ftn  : boolean;     { FTN-Empfänger vorhanden             }
+
+    zc_charsets   : TStringList;     { ZConnect-Empfänger vorhanden    }
+    rfc_charsets  : TStringList;     { RFC-Empfänger vorhanden         }
+    maus_charsets : TStringList;     { Maus-Empfänger vorhanden        }
+    ftn_charsets  : TStringList;     { FTN-Empfänger vorhanden         }
+
+    maxsize  : longint;     { ab hier muss gesplittet werden      }
+    attachMode: TAttachMode;{ erlaubter Attachment-Modus          }
+    
+  private
+    function GetEmpf1Address:  string; procedure SetEmpf1Address (NewValue: string);
+    function GetEmpf1RealName: string; procedure SetEmpf1RealName(NewValue: string);
+
+  public
+    property Empf1Address  : string read GetEmpf1Address  write SetEmpf1Address;
+    property Empf1RealName : string read GetEmpf1RealName write SetEmpf1RealName;
+
+  public  
     Replyto    : String;
     followup   : TStringlist;
     References : TStringList;
@@ -193,9 +222,9 @@ type
     orghdp     : THeader;
     quotestr   : string;
     UV_edit    : boolean;        { <Esc> -> "J" }
-    empfrealname : string;
     msgid,
     ersetzt    : string;
+    msgidtyp   : byte;    
     SenderRealname,
     SenderMail,
     FQDN : string;  { overriding standards in DoSend if set }
@@ -204,20 +233,25 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Clear;
+    
+  public
+    procedure MergeCharsets(nt:byte;NewCharsets:TStringList);    
+    procedure MergeMsgType(nt:byte;pm:boolean);
   end;
 
 implementation
 
 uses
-  SysUtils,Typeform,xp0,xpnt,xpdatum,xp_pgp,xpmakeheader,xpstreams;
+  SysUtils,Typeform,xp0,xpdatum,xp_pgp,xpmakeheader,xpstreams,
+  rfc2822, addresses;
 
 constructor THeader.Create;
 begin
   inherited Create;
   Empfaenger := TStringList.Create;
   Kopien := TStringList.Create;
-//  CC := TStringList.Create;
-//  BCC := TStringList.Create;
+// CC := TStringList.Create;
+// BCC := TStringList.Create;
   ULine := TStringList.Create;
   XLIne := TStringList.Create;
   fLine := TStringList.Create;
@@ -227,9 +261,9 @@ begin
   MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
   References.Duplicates := dupIgnore;
-  XEmpf := TStringList.Create;
+// XEmpf := TStringList.Create;
   OEM := TStringList.Create;
-  XOEM := TStringList.Create;
+// XOEM := TStringList.Create;
   Clear;
 end;
 
@@ -312,13 +346,12 @@ begin
   zline.clear;
   fline.clear;
   References.Clear;
-  xempf.clear;
+// xempf.clear;
   mailcopies.clear;
-  xoem.clear;
+// xoem.clear;
   gateway:= '';
   sender:= '';
   lines := 0;
-  envemp:= '';
   with mime do
   begin
     mversion := '';
@@ -343,9 +376,9 @@ begin
   Followup.Free;
   Mailcopies.free;
   References.Free;
-  XEmpf.Free;
+// XEmpf.Free;
   OEM.Free;
-  XOEM.Free;
+// XOEM.Free;
   inherited destroy;
 end;
 
@@ -674,7 +707,11 @@ end;
 
 function THeader.GetCC: string;
 begin
-  result := FCC;
+  if (Length(FTo)>0) or (Length(FCC)>0) then
+    result := FCC
+  else
+  // see http://cr.yp.to/immhf/recip.html ------------------------------  
+    result := 'recipient list not shown: ;';
 end;
 
 procedure THeader.SetCC(s:string);
@@ -762,30 +799,102 @@ begin
 end;
 
 procedure THeader.ReconstructEnvelope;
+var n:   TStringList;
+    i,j: integer;
 begin
+  n := TStringList.Create;
+ try
 
+  { -- Build list of Newsgroups -------------------------------------- } 
+  n.Sorted := true;
+
+  RFCReadAddressList(FTo, n,nil);
+  RFCReadAddressList(FCC, n,nil);
+  RFCReadAddressList(FBCC,n,nil);
+
+  { -- Walk KOP ------------------------------------------------------ } 
+  for i:=KOPien.Count-1 downto 0 do
+    if cpos('@',KOPien[i])=0 then      // ignore mail addreses
+      if N.Find(KOPien[i],j) then          
+        N.Delete(j)                     // no need to add
+      else
+        Kopien.Delete(i);               // no longer in Newsgroups
+      
+  { -- Walk EMP ------------------------------------------------------ }
+  for i:=EMPfaenger.Count-1 downto 0 do
+    if cpos('@',EMPfaenger[i])<>0 then  
+      EMPfaenger.Delete(i);             // delete all Newsgroups
+
+  { -- Add new Newsgroups to EMP ------------------------------------- }
+  EMPfaenger.AddStrings(N);
+
+ finally
+  n.Free;
+ end;
 end;
 
 { TSendUUData }
 
 constructor TSendUUData.Create;
 begin
+  EmpfList := TAddressList.Create;
   Followup := TStringlist.Create;
   References := TStringList.Create;
   OEM := TStringList.Create;
+
+  Boxen        := TStringList.Create;
+  Boxen.Sorted     := true;
+  Boxen.Duplicates := dupIgnore;
+  
+  zc_charsets  := TStringList.Create;
+  rfc_charsets := TStringList.Create;
+  maus_charsets:= TStringList.Create;
+  ftn_charsets := TStringList.Create;
+
   Clear;
 end;
 
 destructor TSendUUData.Destroy;
 begin
+  EmpfList.Free;
   FollowUp.Free;
   REferences.Free;
   OEM.Free;
+
+  Boxen    .Free;
+    
+  zc_charsets  .Free;
+  rfc_charsets .Free;
+  maus_charsets.Free;
+  ftn_charsets .Free;
+  
   inherited;
 end;
 
 procedure TSendUUData.Clear;
 begin
+  EmpfList.Clear;
+
+  has_pm   := false;
+  has_am   := false;
+
+  can_crash:= false;
+
+  Boxen    .Clear;
+    
+  has_zc   := false;
+  has_rfc  := false;
+  has_maus := false;
+  has_ftn  := false;
+
+  zc_charsets  .Clear;
+  rfc_charsets .Clear;
+  maus_charsets.Clear;
+  ftn_charsets .Clear;
+
+  maxsize   := MAXINT;
+  attachMode:= attachMIME;
+ 
   Replyto := '';
   followup.Clear;
   References.Clear;
@@ -802,7 +911,7 @@ begin
   orghdp := nil;
   quotestr := '';
   UV_edit:= false; { <Esc> -> "J" }
-  empfrealname := '';
+//empfrealname := '';
   msgid := '';
   ersetzt := '';
   SenderRealname := '';
@@ -812,8 +921,104 @@ begin
   boundary := '';
 end;
 
+function TSendUUData.GetEmpf1Address:  string; 
+begin
+  if EmpfList.Count<=0 then
+    result := ''
+  else
+  if EmpfList[0].Address is TEmailAddress then
+    result := EmpfList[0].XPAddress
+  else
+    result := EmpfList[0].ZCAddress;
+end;
+
+procedure TSendUUData.SetEmpf1Address (NewValue: string);
+begin
+  if EmpfList.Count<=0 then
+    EmpfList.AddNew.ZCAddress := NewValue
+  else
+  if EmpfList[0].Address is TDomainEmailAddress then
+    TDomainEmailAddress(EmpfList[0].Address).AddrSpec := NewValue
+  else
+    EmpfList[0].ZCAddress := NewValue;
+end;
+
+function TSendUUData.GetEmpf1RealName: string; 
+var item:TAddressListItem;
+begin
+  if (EmpfList.Count>0) and (EmpfList[0].Address is TDomainEmailAddress) then
+    result := (EmpfList[0].Address as TDomainEMailAddress).Realname
+  else 
+    result := '';
+end;
+
+procedure TSendUUData.SetEmpf1RealName(NewValue: string);
+var item:TAddressListItem;
+begin
+  if (EmpfList.Count>0) and (EmpfList[0].Address is TDomainEmailAddresS) then
+    (EmpfList[0].Address as TDomainEMailAddress).Realname := NewValue;
+end;
+
+procedure TSendUUData.MergeCharsets(nt:byte;NewCharsets:TStringList);
+var i,i2: integer;
+    n: TStringList;
+    List: TStringList;    
+
+  procedure Normalise(List:TStringList);
+  var i: integer;
+  begin
+    for i:=List.Count-1 downto 0 do
+      List[i] := MimeCharsetCanonicalName(List[i]);
+  end;
+    
+begin
+  if nt in netsRFC       then List := rfc_charsets  else
+  if nt in [nt_ZConnect] then List := zc_charsets   else
+  if nt in netsFTN       then List := ftn_charsets  else
+  if nt in [nt_Maus]     then List := maus_charsets else exit;
+
+  if List.Count<=0 then
+  begin
+    List.Assign(NewCharsets);
+    Normalise(List);
+  end else
+  begin
+    N := TStringList.Create;
+   try
+    N.Assign(NewCharsets);
+    Normalise(N);
+    N.Sorted := true;
+
+    for i:= List.Count-1 downto 0 do
+      if not N.Find(List[i],i2) then
+        List.Delete(i);
+   finally
+    N.Free;
+   end; 
+  end;
+
+  if List.Count<=0 then
+    List.Add('US-ASCII');
+end;
+
+procedure TSendUUData.MergeMsgType(nt:byte;pm:boolean);
+begin
+  if nt in netsRFC       then has_rfc := true else
+  if nt in [nt_ZConnect] then has_zc  := true else
+  if nt in netsFTN       then has_ftn := true else
+  if nt in [nt_Maus]     then has_maus:= true;
+
+  if pm then has_pm := true else has_am := true;
+end;
+
 {
   $Log$
+  Revision 1.27  2002/04/14 22:33:10  cl
+  - New address handling, supports To, CC, and BCC
+  - Nearly complete rewrite of DoSend's message creation
+  - Added TAddress and TAddressList
+  - Moved many local variables from DoSend into TSendUUData fields
+
   Revision 1.26  2002/03/03 18:02:24  cl
   - FPC fix
 

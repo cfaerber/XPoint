@@ -361,6 +361,8 @@ begin
             { Auskommentiert, damit die CustomHeaders mit U-* tun }
             if LeftStr(id,2)='U-' then                      { RFC }
             begin
+            if id = 'U-TO'           then FTo := Line else
+            if id = 'U-CC'           then FCC := Line else
             if id = 'U-KEYWORDS'     then Keywords := Line else
             if id = 'U-SUMMARY'      then Summary := line else
             if id = 'U-DISTRIBUTION' then Distribution:= line else
@@ -560,6 +562,12 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/04/14 22:33:10  cl
+  - New address handling, supports To, CC, and BCC
+  - Nearly complete rewrite of DoSend's message creation
+  - Added TAddress and TAddressList
+  - Moved many local variables from DoSend into TSendUUData fields
+
   Revision 1.24  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 
