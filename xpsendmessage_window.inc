@@ -687,7 +687,7 @@ var
 
     Inhalt := Trim(Inhalt);
 
-    if Inhalt = List[ii].DisplayString then begin
+    if (Inhalt = List[ii].DisplayString) or (not Done) then begin
       result := true;
       exit;
     end;
@@ -1589,6 +1589,10 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2003/03/16 18:59:09  cl
+// - fixed bug that would delete addresses from the list under certain
+//   circumstances.
+//
 // Revision 1.7  2003/01/27 18:45:46  cl
 // - send window rewrite IIb: implemented hotkeys
 //
