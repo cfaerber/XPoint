@@ -31,15 +31,9 @@ procedure FS_ReadList(msg:boolean);
 const
       tbufs = 2048;
 var
-{$ifdef hasHugeString}
     absender : string;
     box      : string;   { das ist auf jeden Fall eine Zerberus-Box.. }
     convert  : string;
-{$else}
-    absender : string[Adrlen];
-    box      : string[8];   { das ist auf jeden Fall eine Zerberus-Box.. }
-    convert  : string[100];
-{$endif}
     x,y,p,p2 : byte;
     f        : file;
     fn       : string;
@@ -69,7 +63,7 @@ var
   begin
     dbOpen(d,SystemFile,1);
     dbSeek(d,siName,UpperCase(box));
-    dbRead(d,'ZBV1',convert);
+    convert:= dbReadStr(d,'ZBV1');
     dbClose(d);
   end;
 
@@ -78,7 +72,7 @@ begin
     if (left(UpperCase(dbReadStr(mbase,'betreff')),5)<>'FILES') and
        not ReadJN(getres(811),true) then   { 'Sind Sie sicher, daá das eine Fileliste ist' }
       exit;
-    dbRead(mbase,'absender',absender);
+    absender:= dbReadStr(mbase,'absender');
     p:=cpos('@',absender);
     p2:=p+pos('.',copy(absender,p+1,20));
     if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
@@ -279,17 +273,10 @@ end;
 
 procedure FS_command(comm:string; request:byte);
 var d     : DB;
-{$ifdef hasHugeString}
     fs    : string;
     fname : string;
     fpass : string;
     hd    : string;
-{$else}
-    fs    : string[BoxNameLen];
-    fname : string[30];
-    fpass : string[30];
-    hd    : string[12];
-{$endif}
     w     : smallword;
     fn    : string;
     t     : text;
@@ -332,7 +319,7 @@ var d     : DB;
     if selpos=0 then brk:=true
     else begin
       dbGo(ubase,selpos);
-      dbReadN(ubase,ub_username,adr);
+      adr:= dbReadNStr(ubase,ub_username);
       if left(adr,1)=vert_char then begin
         rfehler(814);    { 'Verteiler sind hier nicht erlaubt.' }
         brk:=true;
@@ -357,7 +344,7 @@ var d     : DB;
   end;
 
   procedure fscomm(comm:string);
-  var domain : string[60];
+  var domain : string;
   begin
     if isbox(fs) then domain:=ntServerDomain(fs)
     else domain:='.ZER';
@@ -380,7 +367,7 @@ var d     : DB;
       dest   : string;
   begin
     dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
-    source:='*.*'; dest:='';
+    source:=WildCard; dest:='';
     maddstring(3,2,getres2(818,2),source,41,70,'>'); mhnr(890);
     msetvfunc(UUsendTestSourcefile);
     maddstring(3,4,getres2(818,3),dest,41,79,'');
@@ -444,8 +431,8 @@ begin
   if fs<>'' then begin
     dbOpen(d,SystemFile,1);
     dbSeek(d,siName,UpperCase(fs));
-    dbRead(d,'fs-name',fname);
-    dbRead(d,'fs-passwd',fpass);
+    fname:=dbReadStr(d,'fs-name');
+    fpass:=dbReadStr(d,'fs-passwd');
     dbRead(d,'flags',w);
     dbRead(d,'fs-typ',fstyp);
     dbClose(d);
@@ -493,7 +480,7 @@ begin
               while s<>#0 do begin
                 p:=blankpos(s);
                 if p>0 then truncstr(s,p-1);
-                if multipos(':/',s) then writeln(t,s)
+                if multipos(_MPMask,s) then writeln(t,s)
                 else writeln(t,UU_directory+s);
                 s:=next_marked;
                 end;
@@ -548,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/07/21 17:14:40  hd
+  - Anpassung an die Datenbank (AnsiString)
+
   Revision 1.10  2000/07/20 16:49:59  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

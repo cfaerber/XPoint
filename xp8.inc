@@ -62,17 +62,10 @@ end;
 
 procedure FilescanList(art:shortint);     { 1=bestellen, 2=abbestellen }
 var
-{$ifdef hasHugeString}
     box : string;
     fl  : string;
     ask : string;
     s   : string;
-{$else}
-    box : string[BoxNameLen];
-    fl  : string[12];
-    ask : string[40];
-    s   : string[80];
-{$endif}
     t   : text;
     fn  : string;
     anz : longint;
@@ -138,17 +131,10 @@ end;
 
 procedure RemoveFileechos;
 var
-{$ifdef hasHugeString}
     echo   : string;
     _brett : string;
     box    : string;
     s      : string;
-{$else}
-    echo   : string[80];
-    _brett : string[5];
-    box    : string[BoxNameLen];
-    s      : string[80];
-{$endif}
     brk    : boolean;
     d      : DB;
     n,i    : longint;
@@ -158,11 +144,11 @@ begin
   echo:='';
   brk:=false;
   if (aktdispmode=10) and not dbEOF(mbase) and not dbBOF(mbase) then begin
-    dbReadN(mbase,mb_brett,_brett);
+    _brett:= dbReadNStr(mbase,mb_brett);
     dbSeek(bbase,biIntnr,mid(_brett,2));
     if dbFound and (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))=nt_Fido) then begin
-      dbReadN(bbase,bb_brettname,echo);
-      if echo[1]='A' then delfirst(echo)
+      echo:= dbReadNStr(bbase,bb_brettname);
+      if (echo<>'') and (echo[1]='A') then delfirst(echo)
       else echo:='';
       end;
     end
@@ -174,7 +160,7 @@ begin
         3 : echo:='';
       end
     else begin
-      dbReadN(bbase,bb_brettname,echo);
+      echo:= dbReadNStr(bbase,bb_brettname);
       if (ntBoxNetztyp(dbReadStr(bbase,'pollbox'))<>nt_Fido) or (echo[1]<>'A') then echo:=''
       else delfirst(echo);
       end;
@@ -208,13 +194,12 @@ begin
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
       if dbReadInt(d,'netztyp')=nt_Fido then begin
-        dbRead(d,'boxname',box);
-        UpString(box);
+        box:= UpperCase(dbReadStr(d,'boxname'));
         ReadBoxPar(nt_Fido,box);
         n:=0;
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
-          dbReadN(bbase,bb_brettname,echo);
+          echo:= dbReadNStr(bbase,bb_brettname);
           delfirst(echo);
           if (UpperCase(dbReadStr(bbase,'pollbox'))=box) and
              (left(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
@@ -242,11 +227,7 @@ end;
 
 procedure FilescanReadlist;
 var fa  : FidoAdr;
-{$ifdef hasHugeString}
     box : string;
-{$else}
-    box : string[BoxnameLen];
-{$endif}
 begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
     rfehler(850)     { 'Keine Filescan-Nachricht gewÑhlt!' }
@@ -269,13 +250,8 @@ end;
 
 procedure FilescanReadfile;
 var
-{$ifdef hasHugeString}
     box     : string;
     bfile   : string;
-{$else}
-    box     : string[BoxNameLen];
-    bfile   : string[8];
-{$endif}
     fn      : string;
     useclip : boolean;
     d       : DB;
@@ -286,12 +262,12 @@ begin
     rfehler1(852,box);    { '%s ist keine Fido-Box!' }
     exit;
     end;
-  fn:='*.*';
+  fn:=WildCard;
   useclip:=true;
   if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  dbRead(d,'dateiname',bfile);
+  bfile:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
@@ -304,15 +280,9 @@ end;
 
 procedure FilescanCommands(cmd:shortint);
 var
-{$ifdef hasHugeString}
     box  : string;
     comm : string;
     s    : string;
-{$else}
-    box  : string[BoxnameLen];
-    comm : string[20];
-    s    : string[12];
-{$endif}
     n,i  : integer;
     brk  : boolean;
     fn   : string;
@@ -358,6 +328,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/21 17:14:40  hd
+  - Anpassung an die Datenbank (AnsiString)
+
   Revision 1.5  2000/07/05 15:12:15  hd
   - AnsiString
 

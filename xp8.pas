@@ -59,15 +59,9 @@ implementation  { ------------------------------------------------- }
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,xp9bp,xp9,xpnt;
 
-{$ifdef hasHugeString}
 const mapsbox : string = '';
 
 var mapsname : string;
-{$else}
-const mapsbox : string[BoxNameLen] = '';
-
-var mapsname : string[20];
-{$endif}
     mapsnt   : byte;
     mapsart  : byte;
 
@@ -81,7 +75,7 @@ begin                                { 13=Feeder, 14=postmaster               }
   if not dbFound then
     mapstype:=0
   else begin
-    dbRead(d,'nameomaps',mapsname);     { muá vor MAF-Test stehen !! }
+    mapsname:= dbReadStr(d,'nameomaps');     { muá vor MAF-Test stehen !! }
     dbRead(d,'netztyp',nt);
     if ntMAF(nt) then
       mapstype:=2
@@ -125,11 +119,7 @@ end;
 
 procedure SendMaps(bef:string; var box,datei:string);
 var
-{$ifdef hasHugeString}
     hf : string;
-{$else}
-    hf : string[12];
-{$endif}
     mt : byte;
     nt : byte;
 
@@ -329,9 +319,9 @@ var
   procedure Guppie(typ:byte);   { 1=GUP, 2=AutoSys, 3=Feeder }
   var tn    : string;
       t1,t2 : text;
-      s     : string[120];
+      s     : string;
       d     : DB;
-      domain: string[60];
+      domain: string;
   begin
     ReadBoxpar(0,box);
     tn:=TempS(_filesize(datei)*2);
@@ -417,7 +407,7 @@ end;
 
 
 procedure wr_btext(var t:text; del,news:boolean);
-var bretter : string[15];
+var bretter : string;
 begin
   writeln(t,'##  ',getres2(800,1));   { 'Lieber Systemverwalter,' }
   writeln(t,'##');
@@ -440,24 +430,14 @@ procedure MapsDelBrett(brett:string);
 const maxmaggi = 500;
 
 type maggibrett  = record
-{$ifdef hasHugeString}
                      code  : string;
                      name  : string;
-{$else}
-                     code  : string[4];
-                     name  : string[40];
-{$endif}
                    end;
     ma           = array[1..maxmaggi] of maggibrett;
 var t     : text;
     fn    : string;
-{$ifdef hasHugeString}
     box   : string;
     bfile : string;
-{$else}
-    box   : string[20];
-    bfile : string[8];
-{$endif}
     i,nr  : integer;
     d     : DB;
     topen : boolean;
@@ -574,7 +554,7 @@ begin
     MapsBrettliste(1)
   else if nr=1 then begin
     if brett<>'' then begin
-      dbRead(bbase,'pollbox',box);
+      box:= dbReadStr(bbase,'pollbox');
       if box='' then begin
         rfehler(802);   { 'Dieses Brett hat keine Serverbox!' }
         exit; end;
@@ -627,7 +607,7 @@ begin
         dbOpen(d,OwnPath+BoxenFile,1);
         dbSeek(d,boiName,UpperCase(box));
         if dbFound then begin
-          dbRead(d,'dateiname',bfile);
+          bfile:= dbReadStr(d,'dateiname');
           ReadBrettliste;
           writeln(t,brettcode(copy(brett,2,40)));
           end;
@@ -651,7 +631,7 @@ begin
         uucp:=(dbReadInt(d,'netztyp')=nt_UUCP);
         pronet:=(dbReadInt(d,'netztyp')=nt_Pronet);
         qwk:=(dbReadInt(d,'netztyp')=nt_QWK);
-        dbRead(d,'dateiname',bfile);
+        bfile:= dbReadStr(d,'dateiname');
         if maus or fido or qwk or uucp then
           ReadBox(0,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
@@ -705,7 +685,7 @@ end;
 function ReadMafList(fn:string; var bfile:string):boolean;
 var t1,t2 : text;
     s     : string;
-    ss    : string[40];
+    ss    : string;
 
   function zok:boolean;
   begin
@@ -760,17 +740,10 @@ end;
 
 procedure MapsReadList;
 var
-{$ifdef hasHugeString}
     absender : string;
     box      : string;
     betreff  : string;
     bfile    : string;
-{$else}
-    absender : string[Adrlen];
-    box      : string[BoxNameLen];
-    betreff  : string[BetreffLen];
-    bfile    : string[8];
-{$endif}
     d        : DB;
     fido     : boolean;
     turbo    : boolean;
@@ -779,13 +752,13 @@ var
     bpsik    : BoxPtr;
 label ende;
 begin
-  dbReadN(mbase,mb_absender,absender);
-  dbReadN(mbase,mb_betreff,betreff);
+  absender:= dbReadNStr(mbase,mb_absender);
+  betreff:= dbReadNStr(mbase,mb_betreff);
   box:=systemname(absender);
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
-    dbRead(d,'dateiname',bfile)
+    bfile:= dbReadStr(d,'dateiname')
   else
     if automessaging then begin
       trfehler1(804,box,20);   { 'unbekannte Box (%s) - Brettliste wurde nicht eingelesen' }
@@ -807,7 +780,8 @@ begin
   turbo:=(mapstype(box)=9);
   uucp:=(mapstype(box) in [7,11]);
   bpsik:=boxpar;
-  new(boxpar);
+  getmem(boxpar,sizeof(BoxRec));
+  fillchar(boxpar^,sizeof(BoxRec),0);
   ReadBox(0,bfile,boxpar);
   if mapstype(box) in [2,8] then begin
     message('Brettliste fr '+UpperCase(box)+' wird eingelesen ...');
@@ -839,7 +813,7 @@ begin
       end;
     end;
 ende:
-  dispose(boxpar);
+  freemem(boxpar);
   boxpar:=bpsik;
 end;
 
@@ -848,13 +822,8 @@ end;
 
 procedure MapsReadFile;
 var
-{$ifdef hasHugeString}
     box     : string;
     bfile   : string;
-{$else}
-    box     : string[BoxNameLen];
-    bfile   : string[8];
-{$endif}
     fn      : string;
     useclip : boolean;
     d       : DB;
@@ -870,7 +839,7 @@ begin
   promaf:=(mapstype(box)=8);
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  dbRead(d,'dateiname',bfile);
+  bfile:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Brettliste fr %s wird eingelesen ...' }
@@ -924,17 +893,10 @@ end;
 
 procedure MapsBrettliste(art:byte);
 var d      : DB;
-{$ifdef hasHugeString}
     box    : string;
     ask    : string;
     bretter: string;
     lfile  : string;
-{$else}
-    box    : string[BoxNameLen];
-    ask    : string[60];
-    bretter: string[15];
-    lfile  : string[12];
-{$endif}
     fn     : string;
     brk    : boolean;
     t      : text;
@@ -964,8 +926,8 @@ label again;
       s:=trim(mid(s,3)); p:=cpos(' ',s); end;
     if p=0 then p:=cpos(#9,s);
     if p>0 then s:=left(s,p-1);
-    if s[1]='+' then delfirst(s);
-    if s[1]='*' then delfirst(s);
+    if (s<>'') and (s[1]='+') then delfirst(s);
+    if (s<>'') and (s[1]='*') then delfirst(s);
     p:=pos('....',s);         { direkt angeh„ngten Kommentar abschneiden }
     if p>0 then truncstr(s,p-1);
     fidobrett:=s;
@@ -973,14 +935,10 @@ label again;
 
   procedure writeform;
   var p  : byte;
-{$ifdef hasHugeString}
       gr : string;
-{$else}
-      gr : string[78];
-{$endif}
   begin
     if maf then
-      if s[41]<>' ' then
+      if (length(s)>40) and (s[41]<>' ') then
         writeln(t,copy(s,41,4))
       else
         writeln(t,trim(copy(s,41,6)))
@@ -1000,8 +958,8 @@ label again;
         write(t,'+');
       if art=1 then write(t,'-');
       s:=fidobrett(s);
-(*      if (art=4) and not BoxPar^.areabetreff then
-        s:=s+' -R'; {'%Rescan '+s;}     { rescan } *)
+{      if (art=4) and not BoxPar^.areabetreff then }
+{        s:=s+' -R';} {'%Rescan '+s;}     { rescan }
       writeln(t,s);
       end
     else if qwk then begin
@@ -1081,9 +1039,9 @@ begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then begin
-    dbRead(d,'dateiname',fn);
+    fn:= dbReadStr(d,'dateiname');
     netztyp:=dbReadInt(d,'netztyp');
-    dbRead(d,'nameomaps',mapsname);
+    mapsname:= dbReadStr(d,'nameomaps');
     maf:=ntMAF(netztyp);
     promaf:=ntProMAF(netztyp);
     quick:=ntQuickMaps(netztyp);
@@ -1202,13 +1160,8 @@ end;
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
 var brk     : boolean;
     comm    : string;
-{$ifdef hasHugeString}
     box     : string;
     domain  : string;
-{$else}
-    box     : string[BoxNameLen];
-    domain  : string[60];
-{$endif}
     t       : text;
     fn      : string;
     d       : DB;
@@ -1266,13 +1219,8 @@ var brk     : boolean;
 
   procedure gruppenuser;
   var
-{$ifdef hasHugeString}
       gruppe : string;
       user   : string;
-{$else}
-      gruppe : string[80];
-      user   : string[80];
-{$endif}
       x,y,p  : byte;
       brk    : boolean;
       aufnehm: boolean;
@@ -1281,16 +1229,16 @@ var brk     : boolean;
     gruppe:=''; user:='';
     case aktdispmode of
       -1,0 : if not dbEOF(bbase) then
-               dbReadN(bbase,bb_brettname,gruppe);
+               gruppe:= dbReadNStr(bbase,bb_brettname);
       1..4 : if not dbEOF(ubase) then begin
-               dbReadN(ubase,ub_username,user);
+               user:= dbReadNStr(ubase,ub_username);
                end;
     10..12 : if not dbEOF(mbase) then begin
                if not aufnehm then
-                 dbReadN(mbase,mb_absender,user);
+                 user:= dbReadNStr(mbase,mb_absender);
                dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
                if dbFound then
-                 dbReadN(bbase,bb_brettname,gruppe);
+                 gruppe:= dbReadNStr(bbase,bb_brettname);
                end;
     end;
     if user<>'' then begin
@@ -1331,9 +1279,9 @@ begin
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  dbRead(d,'nameomaps',mapsname);
+  mapsname:= dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',nt);
-  dbRead(d,'domain',domain);
+  domain:= dbReadStr(d,'domain');
   dbClose(d);
   maf:=ntMAF(nt);
   ntQuickMaps(nt);
@@ -1641,6 +1589,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/21 17:14:40  hd
+  - Anpassung an die Datenbank (AnsiString)
+
   Revision 1.17  2000/07/11 21:39:22  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates
