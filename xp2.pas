@@ -367,9 +367,8 @@ var i  : integer;
     if _is('nb')   then else
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
-{$IFDEF XMSOVR }  {Dummy da schon in xpx.pas komplett ausgewertet}
-    if _is('xmsovr')   then else
-{$ENDIF }
+    {Dummy da schon in xpx.pas komplett ausgewertet}
+    if _is('noovrbuf')   then else
     if isl('lfn') and (not LFNEnabled) then EnableLFN else
     if isl('312') then OldXPComp := true else
     if _is('nolock') then ParNolock:=true
@@ -1029,6 +1028,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.32  2003/04/12 08:23:57  mw
+  MW: - Wegfall des Schalters /xmsovr und neuer Schalter /noovrbuf
+
   Revision 1.45.2.31  2003/01/14 21:47:09  mw
   MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
         (Wenn Compilerschalter gesetzt und kein EMS vorhanden)

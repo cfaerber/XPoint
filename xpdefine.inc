@@ -43,10 +43,6 @@
   UnterstÅzung compiliert }
 {.$DEFINE CAPI }
 
-{ Wenn dieser Schalter definiert ist, wird der Overlay-Buffer im
-  XMS angelegt, wenn kein EMS zur Verfuegung steht }
-{$DEFINE XMSOVR }
-
 { --- ab hier sind keine énderungen nîtig --- }
 
 { GrundsÑtzlich mu· ersteinmal in jeder Version die Registrierungs-
@@ -84,6 +80,9 @@
 
 {
   $Log$
+  Revision 1.30.2.12  2003/04/12 08:23:57  mw
+  MW: - Wegfall des Schalters /xmsovr und neuer Schalter /noovrbuf
+
   Revision 1.30.2.11  2003/03/17 23:18:55  my
   MY:- Text des letzten Commits gekÅrzt.
 

@@ -297,27 +297,22 @@ begin
 
     {Lightweight-Readpar}
     noovrbuf:=false;
-    xmsovrbuf:=false; 
+    xmsovrbuf:=true; 
     for i:=1 to paramcount do begin     
       if ((paramstr(i)='/?') and (not noovrbuf)) then noovrbuf:=true;
       if ((ustr(left(paramstr(i),4))='/AV:') and (not noovrbuf)) then noovrbuf:=true;
-      {$IFDEF XMSOVR } 
-      if (ustr(paramstr(i))='/XMSOVR') then xmsovrbuf:=true;
-      {$ENDIF }                                                 
+      if (ustr(paramstr(i))='/NOOVRBUF') then noovrbuf:=true;                                              
     end;
 
-    {$IFDEF XMSOVR } 
+    {Overlaycache anlegen in EMS oder XMS}
     if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>2040)) then begin
       OvrInitEMS;
       xmsovrbuf:=false;
     end 
     else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>2040)) then
       OvrInitXMS
-    else xmsovrbuf:=false; 
-    {$ELSE }
-    if ((EmsTest) and (not noovrbuf)) then
-      OvrInitEMS;
-    {$ENDIF }
+    else xmsovrbuf:=false;  
+   
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
@@ -341,6 +336,9 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.23  2003/04/12 08:23:57  mw
+  MW: - Wegfall des Schalters /xmsovr und neuer Schalter /noovrbuf
+
   Revision 1.18.2.22  2003/01/19 08:29:12  mw
   MW: - énderungen bezÅglich Wiedercompilierbarkeit einer XT-Version entfernt.
         Eine XT-Version von Openxp/16 V3.40 ist nicht mehr mîglich !!!
