@@ -1,0 +1,21 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# zcjanusp.scr: Z-Netz JanusPlus-Login-Script (Standard)
+
+         WRITE "Login..."
+         WAITFOR "ername"
+         SEND "JANUS2" cr
+         WRITE "Login...."
+         WAITFOR "stemname:"
+         SEND $POINT cr
+         WRITE "Login....."
+         WAITFOR "sswort:"
+         SEND $PASSWORD cr
+         WRITE "Login......"
+         WAITFOR "nning arc"
+         WRITELN "Login successful"
+         END
