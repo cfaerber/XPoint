@@ -165,10 +165,7 @@ begin
     end;
     enddialog;
   end;
-  getdate(dt.year,dt.month,dt.day,dow);
-  gettime(dt.hour,dt.min,dt.sec,t);                { 't'     miábrauchen }
-  packtime(dt,ddiff);                              { 'ddiff' miábrauchen }
-  setfiletime(ownpath+newdatefile,ddiff);         { Datum/Zeit 'touchen' }
+  set_checkdate;  { NEUES.DAT 'touchen' }
 end;
 
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -210,6 +207,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.13  2003/04/03 17:35:17  my
+  MY:- Letzten Commit optimiert: Bestehende Routine statt redundanten Code
+       verwenden (Hinweis MK).
+
   Revision 1.1.2.12  2003/04/02 20:30:23  my
   MY:- Fix: Dateidatum und -uhrzeit von NEUES.DAT werden jetzt beim
        Programmstart immer auf den aktuellen Wert gesetzt (Datum und
