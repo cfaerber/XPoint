@@ -210,6 +210,7 @@ begin
   { IP jetzt aufloesen }
   if not Host.Resolved then
     Host.Resolve;
+  FillChar(FAddr, SizeOf(FAddr), 0);
 {$IFDEF Win32}
   FAddr.sin_Family:= AF_INET;
   { Hi-/Lo-Word vertauschen }
@@ -376,6 +377,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/12/26 12:09:01  mk
+  - clear FAddr before use
+
   Revision 1.14  2000/09/04 11:15:37  hd
   - Fix: Disconnect hatte FConnected nicht zurueckgesetzt (Dank an das
     FPC-Team)
