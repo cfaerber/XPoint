@@ -863,7 +863,7 @@ begin
     if distribution <> '' then wrs('U-Distribution: ' + distribution);
     if mime.boundary <> '' then wrs('X-XP-Boundary: ' + mime.boundary);
     if gateway <> '' then wrs('X-Gateway: ' + gateway);
-    if sender <> '' then wrs('U-Sender: ' + sender);
+    if sender<> '' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender);
     if control <> '' then
     begin
       if LowerCase(LeftStr(control, 7)) = 'cancel ' then wrs('STAT: CTL');
@@ -3829,6 +3829,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2001/07/09 08:44:59  mk
+  - prevent creation of wrong ABS headers when doing N/W/O with News
+
   Revision 1.58  2001/06/13 10:37:52  ma
   - fixed: News files using integrated client spool format were incorrectly
     processed if NNTPSpoolFormat was true, but file ext not ".news".
