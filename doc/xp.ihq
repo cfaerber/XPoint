@@ -6106,13 +6106,15 @@ gesuchten Nachrichten in KByte an. 99999 steht fÅr
 "beliebig gro·".
 @
 636
-<<Alles>>   Das Eingabefeld hat keine Bedeutung.
+<<Alles>>     Das Eingabefeld hat keine Bedeutung.
 
-<<Text>>    sucht nur nach Textnachrichten.
+<<Text>>      sucht nur nach Textnachrichten.
 
-<<BinÑr>>   sucht nur nach BinÑrnachrichten.
+<<BinÑr>>     sucht nur nach BinÑrnachrichten.
 
-<<FAttach>> sucht nach Fido-File-Attach-Nachrichten.
+<<FAttach>>   sucht nach Fido-File-Attach-Nachrichten.
+
+<<Multipart>> sucht nach Multipart-MIME-Nachrichten.
 @
 637
 <<Alles>>    Das Eingabefeld hat keine Bedeutung.
@@ -6934,6 +6936,17 @@ sandten Nachrichten zu Ñndern, mÅssen Sie diese mit
 /Nachricht/Unversandt/lîschen lîschen und neu sen-
 den.
 
+@
+803
+<<[X]>> -> Ihre îffentlichen Nachrichten werden mit dem
+       Header "X-No-Archive: yes" versehen. Dadurch
+       werden die Usenet-Archive wie DejaNews ange-
+       wiesen, die Nachricht nicht zu speichern.
+
+Auch wenn dieser Schalter aktiviert wird, ist das
+keine Garantie dafÅr, dass Ihre Nachrichten nicht
+doch gespeichert werden. "Das Usenet vergisst
+nicht!"
 @
 8100
 Wie in Kapitel "Kommentarverkettung" von XPOINT.TXT
@@ -9783,6 +9796,17 @@ XP das unter [/Config/Pfade/Sende-Verzeichnis] einge-@262
 stellte Verzeichnis.
 
 Siehe auch:  [interner Editor]@54
+@
+11608
+<<Edit / Viewer
+
+Hier kînnen Sie Viewer-Programme (Anzeigeprogramme)
+fÅr bestimmte Typen von BinÑrnachrichten und fÅr die
+verschiedenen MIME-Typen angeben. Wenn eine BinÑr-
+nachricht vom betreffenden Typ bzw. ein Teil einer
+MIME-Nachricht mit <Enter> angewÑhlt wird, aktiviert
+CrossPoint statt des Listers dann das dazugehîrige
+Programm.
 @
 11650
 Folgende Makros kînnen in allen Schablonen einge-
