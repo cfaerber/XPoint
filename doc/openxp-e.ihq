@@ -6210,6 +6210,7 @@ Enter the type of search.
 <<o>>  OR-Combined: Searching is successful,
    if ANY keyword is found.
 
+<<r>>  Use perl compatible regular expressions.
 
 (Delete entries with the <Del> or <Space> key.)
 @

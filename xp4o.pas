@@ -83,7 +83,7 @@ procedure seek_cutspace(var s:string);
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp, viewer;
+     xp_pgp, viewer, RegExpr;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
       suchlen = 255;
@@ -169,7 +169,8 @@ var x,y   : Integer;
     _vondat,_bisdat : longint;
     minsize,maxsize : longint;
     igcase          : boolean;
-    umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}
+    umlaut          : boolean;          // Schalter zum Umlaute ignorieren
+    regex           : boolean;          // regexpressions zulassen?
     bereich         : shortint;
     _brett          : string;
     mi,add          : byte;
@@ -316,6 +317,8 @@ label ende;
       ofs  : longint;
       wsize: word;
       TempKey: ShortString;
+      RegExpr: TRegExpr;
+      s: String;
   begin
     dbReadN(mbase,mb_msgsize,size);
     if size=0 then begin   { leerer Datensatz - vermutlich durch RuntimeError }
@@ -325,13 +328,22 @@ label ende;
     else begin
       wsize:=min(size,psize);
       ofs:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
-      if (ofs>0) and (ofs<wsize+1+length(key)) then begin
+      if (ofs>0) and (ofs<wsize+1+length(key)) then 
+      begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
         TempKey := Key;
+        if RegEx then
+        begin
+          RegExpr := TRegExpr.Create;
+          RegExpr.Expression := key;
+          SetLength(s, wsize);
+          Move(p^, s[1], wsize);
+          InText := RegExpr.Exec(s);
+          RegExpr.Free;
+        end else
         Intext:=TxtSeek(p,wsize,Tempkey,igcase,umlaut);
-        end
-      else
+      end else
         Intext:=false;
       end;
   end;
@@ -656,7 +668,7 @@ begin
           end;
         end;
       if suchfeld='Betreff' then begin
-        i:=ReCount(suchstring);         { JG:15.02.00 Re's wegschneiden }
+        i:=ReCount(suchstring);         // Re's wegschneiden 
         srec^.betr:=suchstring
         end
 
@@ -726,6 +738,7 @@ begin
     sst:=suchstring;
     igcase:=multipos('iu',LowerCase(suchopt));
     umlaut:=multipos('„”u',LowerCase(suchopt));
+    regex := cpos('r', LowerCase(suchopt)) <> 0;
     bereich:=0;                                                 // default = Alles ( 0)
     for i:=1 to 4 do
       if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i; // 0='Alle' 1='Netz' 'User' 'markiert' 'gew„hlt'
@@ -826,8 +839,8 @@ begin
         while not dbEOF(mbase) and (markanz<maxmark) and not brk do
         begin
           _brett := dbReadNStr(mbase,mb_brett);
-          if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
-                            ((bereich=2) and (_brett[1]='U')) then
+          if (bereich=0) or ((bereich=1) and (FirstChar(_brett)='A')) or
+                            ((bereich=2) and (FirstChar(_brett)='U')) then
             TestMsg;
           if not dbEOF(mbase) then      { kann passieren, wenn fehlerhafter }
             dbNext(mbase);              { Satz geloescht wurde               }
@@ -2414,6 +2427,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.105  2001/08/28 13:24:35  mk
+  - added support for regular expressions
+
   Revision 1.104  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 

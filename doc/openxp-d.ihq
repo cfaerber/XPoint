@@ -8587,6 +8587,8 @@ Buchstabenfolge ein:
    <<EINE(S)>> der angegebenen Worte/Phrasen gefunden
    wird.
 
+<<r>>  Perl-kompatible Regular Expressions verwenden.
+
 Wenn Sie keine Suchoption wnschen, dann l”schen Sie
 diese (z.B. mit <<<Del> >>oder der Leertaste).
 

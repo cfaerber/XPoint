@@ -170,7 +170,8 @@ uses
   archive in 'archive.pas',
   xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
-  xpsendmessage in 'xpsendmessage.pas';
+  xpsendmessage in 'xpsendmessage.pas',
+  RegExpr in 'regexpr.pas';
 
 {$R *.RES}
 function StartInternalTools: Boolean;
