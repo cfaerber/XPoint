@@ -506,6 +506,12 @@ begin
             else
             if id = UpperCase(mheadercustom[2]) then LRead(Cust2);
 
+            {$ifdef ulines}
+              // unbearbeitete X-Lines fÅr UUZ merken
+              if Copy(id, 1, 2) = 'X-' then
+                XLine.Add(mid(id0,3)+': '+line);
+            {$endif}
+
             line:='*';
             end;
           end
@@ -541,6 +547,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/08/03 15:26:50  mk
+  - XLines-Handling hinzugefuegt
+
   Revision 1.29  2000/07/26 08:18:50  mk
   - fixes und AnsiString-Updates
 
