@@ -34,21 +34,14 @@ uses
 
 function FidoNetcall(box: string;
                      boxpar: boxptr;
-                     var ppfile,eppfile,sendfile,upuffer:string;
-                     packmail,crash,alias:boolean;
-                     var domain:string;
-                     var Fidologfile: String;
+                     ppfile: string;
+                     crash,alias:boolean;
+                     domain:string;
+                     Fidologfile: String;
                      const OwnFidoAdr: String;
-                     OutgoingFiles,IncomingFiles: TStringList):shortint;
-{Processes (decompresses and converts buffers to ZC/moves requested files
- to file dir) files in FilesToProcess. FilesToProcess will contain
- uncompressed ZC buffer filenames only when finished.}
-procedure ProcessFiles(FilesToProcess: TStringList;
-                       const DirWhereToProcess,RequestedFilesDir: String;
-                       const Decompressor: String;
-                       boxpar: boxptr);
+                     IncomingFiles: TStringList):shortint;
+
 function GetCrashbox:string;
-function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
 
 procedure EditRequest(Self: TLister; var t:taste);
 procedure ShowRQ(s:string);
@@ -58,33 +51,6 @@ implementation   { -------------------------------------------------- }
 uses
   direct,ncfido,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,
   datadef,database,xp9bp,xpnt,xpnetcall;
-
-procedure SaveArcname(var box,name:string);
-var t1,t2 : text;
-    s     : string[80];
-    f     : boolean;
-begin
-  f:=false;
-  assign(t2,'arcmail.$$$');
-  rewrite(t2);
-  assign(t1,ArcMailDat);
-  if existf(t1) then begin
-    reset(t1);
-    while not eof(t1) do begin
-      readln(t1,s);
-      if LeftStr(s,length(box)+1)=box+'=' then begin
-        writeln(t2,box,'=',name); f:=true; end
-      else
-        writeln(t2,s);
-      end;
-    close(t1);
-    end;
-  if not f then
-    writeln(t2,box,'=',name);
-  close(t2);
-  if FileExists(arcmaildat) then DeleteFile(arcmaildat);
-  rename(t2,arcmaildat);
-end;
 
 procedure ZtoFido(boxpar: boxptr;
                   source,dest:string;
@@ -194,7 +160,6 @@ begin { ZtoFido }
     dest:=orgdest;
 //**    for i:=1 to addpkts^.anzahl do
 //**      dest:=dest+' '+addpkts^.addpkt[i];
-    exchange(boxpar^.uparcer,'$PUFFER',dest);
     end
   else Debug.DebugLog('xpncfido','no akas',DLInform);
   Debug.DebugLog('xpncfido','converting to fido finished',DLInform);
@@ -204,7 +169,7 @@ end;
 {Processes (decompresses and converts buffers to ZC/moves requested files
  to file dir) files in FilesToProcess. FilesToProcess will contain
  uncompressed ZC buffer filenames only when finished.}
-procedure ProcessFiles(FilesToProcess: TStringList;
+procedure ProcessIncomingFiles(FilesToProcess: TStringList;
                        const DirWhereToProcess,RequestedFilesDir: String;
                        const Decompressor: String;
                        boxpar: boxptr);
@@ -311,12 +276,12 @@ end;
 { Ergebnis: s. xpdiff                                                  }
 function FidoNetcall(box: string;
                      boxpar: boxptr;
-                     var ppfile,eppfile,sendfile,upuffer:string;
-                     packmail,crash,alias:boolean;
-                     var domain:string;
-                     var Fidologfile: String;
+                     ppfile: string;
+                     crash,alias:boolean;
+                     domain:string;
+                     Fidologfile: String;
                      const OwnFidoAdr: String;
-                     OutgoingFiles,IncomingFiles: TStringList):shortint;
+                     IncomingFiles: TStringList):shortint;
 
 type rfnodep     = ^reqfilenode;
      reqfilenode = record
@@ -333,8 +298,9 @@ var aresult  : integer;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
     dir      : TDirectory;
-    ShellCommandUparcer: String;
+    ShellCommandUparcer,UpBufferFilename: String;
     Fidomailer: TFidomailer;
+    OutgoingFiles: TStringList;
 
 label fn_ende,fn_ende0;
 
@@ -386,15 +352,6 @@ label fn_ende,fn_ende0;
         Fidomailer.AKAs:= aka;
     end;
 
-    function EmptyPKTs:boolean;
-    var i : integer;
-    begin
-      EmptyPKTs:=(_filesize(upuffer)<=60);
-//**      for i:=1 to addpkts^.anzahl do
-//**        if _filesize(addpkts^.addpkt[i])>60 then
-//**          EmptyPKTs:=false;
-    end;
-
   begin   { InitFidomailer }
     with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
@@ -437,17 +394,6 @@ label fn_ende,fn_ende0;
       WriteAttach(ppfile);
 //**      for i:=1 to addpkts^.anzahl do
 //**        WriteAttach(addpkts^.abfile[i]+BoxFileExt);
-      if (request='') and (FileAtts=0) and (_filesize(upuffer)<=60) and
-         {**(addpkts^.anzahl=0) and} not NotSEmpty then
-        Fidomailer.sendempty:= true;
-      if ((request='') and (FileAtts=0)) or not EmptyPKTs then
-        if packmail then
-          OutgoingFiles.Add(sendfile)
-        else begin
-          OutgoingFiles.Add(upuffer);
-//**          for i:=1 to addpkts^.anzahl do
-//**            OutgoingFiles.Add(addpkts^.addpkt[i]);
-        end;
       if request<>'' then
         OutgoingFiles.Add(request);
 //**      for i:=1 to addpkts^.akanz do
@@ -534,22 +480,54 @@ label fn_ende,fn_ende0;
         SetRequest(fa,'');
   end;
 
+  function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
+  var fn    : string[12];
+      a1,a2 : fidoadr;
+      t     : text;
+      s     : string[80];
+  begin
+    splitfido(_from,a1,DefaultZone);
+    splitfido(_to,a2,DefaultZone);
+    {$Q-} { ArtithmetikÅberlauf erwÅnscht }
+    fn:=hex(boxpar^.fpointnet-a2.net,4)+hex(a1.point-a2.node,4)+'.'+
+        copy('MOTUWETHFRSASU',dow(date)*2-1,2);
+    {$IFDEF DEBUG }
+    {$Q+}
+    {$ENDIF}
+    if FileExists(ArcmailDat) then begin
+      assign(t,arcmaildat);
+      reset(t);
+      while not eof(t) and (length(fn)<12) do begin
+        readln(t,s);
+        if LeftStr(s,length(_to)+12)=_to+'='+fn then
+          fn:=fn+strs((ival(RightStr(s,1))+1)mod 10);
+        end;
+      close(t);
+      end;
+    if length(fn)<12 then fn:=fn+'1';
+    ARCmail:=fn;
+  end;
+
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
 
-  ZtoFido(boxpar,ppfile,upuffer,ownfidoadr,1,alias);
+  // Convert outgoing buffers
+  UpBufferFilename:=LeftStr(date,2)+LeftStr(typeform.time,2)+
+                            copy(typeform.time,4,2)+RightStr(typeform.time,2)+
+                            '.PKT';
+  ZtoFido(boxpar,ppfile,UpBufferFilename,ownfidoadr,1,alias);
 
+  // Compress outgoing buffers
   ShellCommandUparcer:=boxpar^.uparcer;
-  exchange(ShellCommandUparcer,'$UPFILE',sendfile);
-  exchange(ShellCommandUparcer,'$PUFFER',upuffer);
+  exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
+  exchange(ShellCommandUparcer,'$UPFILE',ArcMail(ownfidoadr,boxpar^.boxname));
+  OutgoingFiles:=TStringList.Create;
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
     result:=el_noconn; exit;
     end
-  else _era(upuffer);
+  else _era(UpBufferFilename);
 
-  Fidomailer:=TFidomailer.Create;
-  result:=EL_ok;
 //**  for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
 //**    splitfido(addpkts^.akabox[i],fa,DefaultZone);
 //**    addpkts^.reqfile[i]:=FidoAppendRequestfile(fa);
@@ -566,13 +544,8 @@ begin { FidoNetcall }
          else komment:=ni.boxname+', '+ni.standort;
     end;
 
-  if packmail then begin
-    DeleteFile(upuffer);
-//**    for i:=1 to addpkts^.anzahl do
-//**      DeleteFile(addpkts^.addpkt[i]);
-    end;
-
   { Init Fidomailer obj }
+  result:=EL_ok;
   Fidomailer:=TFidomailer.Create;
   if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
     trfehler1(2340,Fidomailer.ErrorMsg,30);
@@ -580,9 +553,8 @@ begin { FidoNetcall }
     end;
   Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
   Fidomailer.FilesToSend:=OutgoingFiles; Fidomailer.FilesReceived:=IncomingFiles;
-  OutgoingFiles.Clear;
   InitFidomailer;
-  FidoNetcall:=EL_noconn;
+  result:=EL_noconn;
   aresult:=Fidomailer.PerformNetcall;
   Fidomailer.Destroy;
 
@@ -594,13 +566,9 @@ begin { FidoNetcall }
     end;
   FidoNetcall:=aresult;
 
-  if packmail then
-    DeleteFile(sendfile)
-  else begin
-    DeleteFile(upuffer);
 //**    for i:=1 to addpkts^.anzahl do
 //**      DeleteFile(addpkts^.addpkt[i]);
-    end;
+
   case aresult of
     EL_ok    : if not crash then wrtiming('NETCALL '+boxpar^.boxname);
     EL_break : goto fn_ende;
@@ -618,7 +586,6 @@ begin { FidoNetcall }
 
   if (aresult=EL_ok) or (aresult=EL_recerr) then begin   { Senden OK }
     Moment;
-    if not crash and packmail then SaveArcname(boxpar^.boxname,sendfile);
     if request<>'' then ProcessRequestResult(MakeFidoAdr(fa,true));
 //**    for i:=1 to addpkts^.akanz do
 //**      if addpkts^.reqfile[i]<>'' then
@@ -629,7 +596,6 @@ begin { FidoNetcall }
       ClearUnversandt(ppfile,box);    { Pollbox ist der BossNode! }
       _era(ppfile);
       end;
-    if FileExists(eppfile) then _era(eppfile);
 //**    for i:=1 to addpkts^.anzahl do begin
 //**      ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
 //**      _era(addpkts^.abfile[i]+BoxFileExt);
@@ -637,7 +603,7 @@ begin { FidoNetcall }
     closebox;
     end;
 
-  ProcessFiles(IncomingFiles,XFerDir,xp0.Filepath,boxpar^.downarcer,boxpar);
+  ProcessIncomingFiles(IncomingFiles,XFerDir,xp0.Filepath,boxpar^.downarcer,boxpar);
 
   fn_ende0:
 //**    WriteFidoNetcallLog(fidologfile,iifs(crash,DefFidoBox,Boxpar^.boxname),crash);
@@ -666,6 +632,8 @@ begin { FidoNetcall }
       Debug.DebugLog('xpncfido','deleting netcall temporary log file: "'+fidologfile+'"',DLInform);
       DeleteFile(fidologfile);
       end;
+
+    OutgoingFiles.Destroy;
 end;
 
 
@@ -876,38 +844,14 @@ begin
 end;
 
 
-function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
-var fn    : string[12];
-    a1,a2 : fidoadr;
-    t     : text;
-    s     : string[80];
-begin
-  splitfido(_from,a1,DefaultZone);
-  splitfido(_to,a2,DefaultZone);
-  {$Q-} { ArtithmetikÅberlauf erwÅnscht }
-  fn:=hex(boxpar^.fpointnet-a2.net,4)+hex(a1.point-a2.node,4)+'.'+
-      copy('MOTUWETHFRSASU',dow(date)*2-1,2);
-  {$IFDEF DEBUG }
-  {$Q+}
-  {$ENDIF}
-  if FileExists(ArcmailDat) then begin
-    assign(t,arcmaildat);
-    reset(t);
-    while not eof(t) and (length(fn)<12) do begin
-      readln(t,s);
-      if LeftStr(s,length(_to)+12)=_to+'='+fn then
-        fn:=fn+strs((ival(RightStr(s,1))+1)mod 10);
-      end;
-    close(t);
-    end;
-  if length(fn)<12 then fn:=fn+'1';
-  ARCmail:=fn;
-end;
-
 end.
 
 {
   $Log$
+  Revision 1.9  2001/02/06 11:45:06  ma
+  - xpnetcall doing even less: file name handling has to be done in
+    specialized netcall units from now on
+
   Revision 1.8  2001/02/05 22:33:56  ma
   - added ZConnect netcall (experimental status ;-)
   - modemscripts working again

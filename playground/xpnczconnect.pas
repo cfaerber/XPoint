@@ -31,16 +31,17 @@ uses
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes;
 
 
-function ZConnectNetcall(box,ppfile: string;
+function ZConnectNetcall(box: string;
                          boxpar: boxptr;
-                         OutgoingFiles,IncomingFiles: TStringList;
-                         caller: String):shortint;
+                         ppfile: string;
+                         IncomingFiles: TStringList):shortint;
 
 implementation   { -------------------------------------------------- }
 
 uses
   direct,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
   datadef,database,xp9bp,xpnt,xpnetcall,ncgeneric,objcom,ipcclass;
+
 
 {Processes (decompresses and merges buffers/moves requested files
  to file dir) files in FilesToProcess. FilesToProcess will contain
@@ -106,14 +107,15 @@ begin
   freeres;
 end;
 
-function ZConnectNetcall(box,ppfile: string;
+function ZConnectNetcall(box: string;
                          boxpar: boxptr;
-                         OutgoingFiles,IncomingFiles: TStringList;
-                         caller: String):shortint;
+                         ppfile: string;
+                         IncomingFiles: TStringList):shortint;
 
 var
   GenericMailer: TGenericMailer;
   CommObj: tpCommObj;
+  OutgoingFiles: TStringList;
 
   procedure InitMailer;
   begin   { InitGenericMailer }
@@ -144,11 +146,12 @@ var
 begin { ZConnectNetcall }
   Debug.DebugLog('xpncfido','zc netcall starting',DLInform);
 
+  // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
   ShellCommandUparcer:=boxpar^.uparcer;
-  exchange(ShellCommandUparcer,'$UPFILE',caller);
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
-
+  exchange(ShellCommandUparcer,'$UPFILE','CALLER.'+boxpar^.uparcext);
+  OutgoingFiles:=TStringList.Create;
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
     OutgoingFiles.Clear;
@@ -156,6 +159,7 @@ begin { ZConnectNetcall }
     end
   else _era(PufferFile);
 
+  // Call mailer
   GenericMailer:=TGenericMailer.Create;
   if not GenericMailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
     trfehler1(2340,GenericMailer.ErrorMsg,30);
@@ -179,12 +183,17 @@ begin { ZConnectNetcall }
   CommObj^.Close; Dispose(CommObj,Done);
 
   ProcessIncomingFiles(IncomingFiles,ownpath+xferdir,ownpath+filepath,boxpar);
+  OutgoingFiles.Destroy;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.2  2001/02/06 11:45:06  ma
+  - xpnetcall doing even less: file name handling has to be done in
+    specialized netcall units from now on
+
   Revision 1.1  2001/02/05 22:33:56  ma
   - added ZConnect netcall (experimental status ;-)
   - modemscripts working again

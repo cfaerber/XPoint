@@ -49,12 +49,12 @@ function  OutFilter(var ppfile:string):boolean;
 procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anh‰ngen }
 
 procedure ClearUnversandt(puffer,BoxName:string);
-procedure LogNetcall(secs:word; crash:boolean);
-procedure SendNetzanruf(once,crash:boolean);
-procedure SendFilereqReport;
-procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
-procedure MoveRequestFiles(var packetsize:longint);
-procedure MoveLastFileIfBad;
+//**procedure LogNetcall(secs:word; crash:boolean);
+//**procedure SendNetzanruf(once,crash:boolean);
+//**procedure SendFilereqReport;
+//**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
+//**procedure MoveRequestFiles(var packetsize:longint);
+//**procedure MoveLastFileIfBad;
 
 procedure AponetNews; {?!}
 
@@ -75,28 +75,7 @@ const esec        = 30;    { Sekunden warten bei Fehler }
 
       forcepoll   : boolean = false;   { Ausschlu·zeiten ignorieren }
 
-type NCstat = record
-                datum              : string;
-                BoxName                : string;
-                starttime,conntime : string;
-                conndate           : string;
-                connsecs           : integer;
-                connstr            : string;
-                addconnects        : word;      { bei mehreren Fido- }
-                logtime,waittime   : integer;   {    Anwahlversuchen }
-                hanguptime         : integer;
-                sendtime,rectime   : longint;
-                sendbuf,sendpack   : longint;
-                recbuf,recpack     : longint;
-                endtime            : string;
-                kosten             : real;
-                abbruch            : boolean;
-                telefon            : string;
-              end;
-     NCSptr = ^NCstat;
-
 var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
-     NC        : NCSptr;
      ConnTicks : longint;
      outmsgs   : longint;  { Anzahl versandter Nachrichten }
      outemsgs  : longint;  { Anzahl mitgeschickter EPP-Nachrichten }
@@ -140,7 +119,7 @@ begin
     fileexisted:=false;
     for j:=0 to dir1.Count-1 do
       if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
-    if not fileexisted then SL.Add(dir2.Name[i]);
+    if not fileexisted then SL.Add(ExpandFilename(dir2.Name[i]));
     end;
   dir1.destroy; dir2.destroy;
   Debug.DebugLog('xpnetcall','new files created by external program: '+Stringlist(SL),DLDebug);
@@ -306,8 +285,8 @@ begin
 end;
 
 
-procedure LogNetcall(secs:word; crash:boolean);
-var t : text;
+//** procedure LogNetcall(secs:word; crash:boolean);
+{var t : text;
 begin
   assign(t,logpath+Logfile);
   if existf(t) then append(t)
@@ -319,11 +298,11 @@ begin
               formi(secs div 3600,2),':',formi((secs div 60) mod 60,2),':',
               formi(secs mod 60,2));
   close(t);
-end;
+end;}
 
 
-procedure SendNetzanruf(once,crash:boolean);
-var t,log         : text;
+//**procedure SendNetzanruf(once,crash:boolean);
+(* var t,log         : text;
     fn            : string;
     sum           : word;
     hd            : string;
@@ -407,7 +386,7 @@ begin
       if endtime<>'' then begin
         writeln(t);
         cfos:='';
-(*        if gebCfos and comn[comnr].fossil and (GetCfosCharges(comnr)>0)
+        if gebCfos and comn[comnr].fossil and (GetCfosCharges(comnr)>0)
         then begin
           kosten:=GetCfosCharges(comnr)*Einheitenpreis;
           cfos:=', cFos';
@@ -416,7 +395,7 @@ begin
           kosten:={* laeuft noch nicht wieder CalcGebuehren(conndate,conntime,sum)}0;
           DebugLog('xpnetcall','CalcGebuehren omitted',4);
           cfos:='';
-          end;       *)
+          end;
         if kosten>0 then
           writeln(t,getres2(700,1),'(',boxpar^.gebzone,cfos,  { 'Telefonkosten ' }
                     '):  ',waehrung,'  ',kosten:0:2);
@@ -493,202 +472,7 @@ begin
     /ªNetzanruf korrekt in der Brettliste auftaucht }
   if AutoDatumsBezuege then
     bd_setzen(true);
-end;
-
-{ UUCP-Logfile:
-
-+ 02:04:44  requesting file: ~/index
-  02:04:44  request acceppted
-* 02:05:23  received INDEX.002, 144458 bytes, 3704 cps, 0 errors }
-
-procedure SendFilereqReport;
-var t1,t2  : text;
-    fn     : string;
-    n      : longint;
-    nofiles: longint;
-    s      : string;
-    p      : byte;
-    source : string;
-    dest   : string;
-    size   : longint;
-    total  : longint;
-
-  procedure incn;
-  begin
-    inc(n);
-    if n=1 then begin
-      rewrite(t2);
-      writeln(t2);
-      writeln(t2,getres2(722,1),FilePath);   { 'Zielverzeichnis: ' }
-      writeln(t2);
-      writeln(t2,getres2(722,2));   { 'Originaldatei                   Zieldatei         Grˆﬂe' }
-      writeln(t2,dup(59,'-'));
-      end;
-  end;
-
-begin
-  assign(t1,FidoLogfile);
-  if not existf(t1) then exit;
-  reset(t1);
-  fn:=TempS(10000);
-  assign(t2,fn);
-  n:=0; nofiles:=0;
-  total:=0;
-  while not eof(t1) do begin
-    repeat
-      readln(t1,s);
-      if s[1]='S' then p:=1
-      else p:=pos('requesting file:',s);
-    until (p>0) or eof(t1);
-    if p>0 then begin
-      if p=1 then begin       { "Hold"-Datei }
-        {
-          S 03:09:10  receiving ~/internet.txt as F:\XP\FILES\--INTERN.TXT
-        }
-        p:=pos('receiving',s);     { receiving Blafasel as BLAFASEL }
-        s:=trim(mid(s,p+9));
-        p:=blankpos(s);
-        source:=LeftStr(s,p-1);
-        delete(s,1,p+3);
-        dest:=trim(s);
-        size:=_filesize(dest);
-        dest:=ExtractFilename(dest);
-        end
-      else begin
-        source:=trim(mid(s,p+16));
-        p:=length(source);
-        while (p>0) and not (source[p] in ['/','\',':']) do dec(p);
-        source:=mid(source,p+1);
-        readln(t1,s);
-        p:=pos('accepted',s);
-        if p>0 then begin
-          readln(t1,s);
-          p:=pos('received',s);
-          if p>0 then begin
-            dest:=mid(s,p+9);
-            if cpos(',',dest)>0 then truncstr(dest,cpos(',',dest)-1);
-            p:=cpos(',',s);
-            delete(s,1,p+1);
-            p:=blankpos(s);
-            size:=ival(LeftStr(s,p));
-            end;
-          end    { of accepted }
-        else if pos('refused',s)>0 then begin
-          incn;
-          inc(nofiles);
-          writeln(t2,forms(source,30),'  ',getres2(722,6));   { '* Datei fehlt *' }
-          end;
-        end;
-      if p>0 then begin
-        incn;
-        writeln(t2,forms(source,30),'  ',forms(dest,14),
-                   strsrnp(size,12,0));
-        inc(total,size);
-        end
-      end;
-    end;
-  close(t1);
-  if n>0 then begin
-    writeln(t2,dup(59,'-'));
-    writeln(t2,forms(getres2(722,3),32),forms(strs(n)+getres2(722,4),14),  { 'gesamt' / ' Dateien' }
-               strsrnp(total,12,0));
-    close(t2);
-    if SendPMmessage(getres2(722,5),fn,BoxPar^.boxname) then;
-    _era(fn);
-    end;
-  freeres;
-end;
-
-
-procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
-var f1,f2 : file;
-    sr    : tsearchrec;
-    rc    : integer;
-    df    : Int64;
-begin
-  moff;
-  writeln;
-  writeln(getres(723));        { 'Pufferdateien werden zusammenkopiert ...' }
-  writeln;
-  mon;
-  if FileExists(dest) then DeleteFile(dest);
-  rc:= findfirst(fmask,faAnyFile,sr);
-  if rc=0 then begin
-    assign(f1,dest);
-    rewrite(f1,1);
-    cursor(curon);
-    df:=diskfree(0);
-    while rc=0 do begin
-      moff;
-      if sr.size+50000>df then begin
-        writeln(sr.name,'   - ',getres(724));
-          { 'nicht gen¸gend Plattenplatz - Datei wird in BAD abgelegt' }
-        mon;
-        MoveToBad(ExtractFilePath(fmask)+sr.name);
-        end
-      else begin
-        writeln(sr.name,'   - ',strsrnp(sr.size,9,0),getres(13));  { ' Bytes' }
-        mon;
-        assign(f2,ExtractFilePath(fmask)+sr.name);
-        if sr.size>70 then begin     { kleinere ZCONNECT-Puffer sind }
-          //setfattr(f2,0);            { auf jeden Fall fehlerhaft     }
-          reset(f2,1);
-          fmove(f2,f1);
-          close(f2);
-          end;
-        erase(f2);
-        end;
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    close(f1);
-  end;
-  cursor(curoff);
-  moff; clrscr; mon;
-end;
-
-
-{ Alle Dateien, die nicht auf ?Pnnnnnn.* passen, aus SPOOL nach }
-{ FILES verschieben. Gesamtgrˆﬂe der ¸brigen Dateien ermitteln. }
-
-procedure MoveRequestFiles(var packetsize:longint);
-var
-  sr : tsearchrec;
-  rc : integer;
-begin
-  { ToDo }
-  packetsize:=0;
-  rc:= findfirst(XferDir+Wildcard,faAnyFile,sr);
-  while rc=0 do begin
-    inc(packetsize,sr.size);
-    rc:= findnext(sr);
-  end;
-  FindClose(sr);
-end;
-
-
-{ Testen, ob letzte ¸bertragene Janus+-Archivdatei unvollst‰ndig ist. }
-{ Falls ja -> nach BAD verschieben.                                   }
-
-procedure MoveLastFileIfBad;
-var sr   : tsearchrec;
-    rc   : integer;
-    last : string;
-    arc  : shortint;
-begin
-  rc:= findfirst(XferDir+WildCard,faAnyFile,sr);
-  if rc=0 then begin
-    while rc=0 do begin
-      last:=sr.name;
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    arc:=ArcType(XferDir+last);
-    if (arc>0) and not ArchiveOk(XferDir+last) then
-      MoveToBad(XferDir+last);
-    end;
-end;
-
+end; *)
 
 { ApoNet: nach erfolgreichem Netcall automatisch letzte Nachricht }
 {         in bestimmtem Brett anzeigen                            }
@@ -744,8 +528,6 @@ var
     CrashPhone : string;
     scrfile    : string;
     domain     : string;
-    caller,called,
-    upuffer,dpuffer,
     olddpuffer : string;
     nulltime   : string;      { Uhrzeit der ersten Anwahl }
     ende   : boolean;
@@ -784,11 +566,10 @@ var
     source     : string;
     ff         : boolean;
 
-    ScreenPtr : ScrPtr; { Bildschirmkopie }
-    isdn       : boolean;
+    ScreenPtr  : ScrPtr; { Bildschirmkopie }
     jperror    : boolean;
     uu : TUUZ;
-    OutgoingFiles,IncomingFiles: TStringList;
+    IncomingFiles: TStringList;
 
 
 label ende0;
@@ -946,220 +727,6 @@ end;
 
 {------------- end mail conversion routines --------------}
 
-procedure SysopTransfer;
-var f1,f2 : file;
-    fn    : string;
-    dummy : longint;
-    ft    : longint;
-
-  procedure RemoveMausmark;   { Schlu·zeile mit '#' entfernen }
-  var s  : string[10];
-      rr : word;
-      p  : byte;
-  begin
-    if filesize(f2)>=3 then begin
-      seek(f2,max(0,filesize(f2)-5));
-      blockread(f2,s[1],10,rr);
-      s[0]:=chr(rr);
-      p:=pos('#'#13#10,s);
-      if p>0 then begin
-        seek(f2,filesize(f2)-length(s)+p-1);
-        truncate(f2);
-        end;
-      end;
-  end;
-
-begin
-  inmsgs:=0; outmsgs:=0; outemsgs:=0;
-  with boxpar^ do
-  begin
-    if not ValidFilename(SysopOut) then
-    begin
-      trfehler(723,30);   { 'ungÅltige Ausgabedatei' }
-      exit;
-    end;
-
-    assign(f2,SysopOut);
-    if existf(f2) then
-    begin
-      reset(f2,1);
-      seek(f2,filesize(f2));
-    end else
-      rewrite(f2,1);
-
-    assign(f1,ppfile);
-
-    if (logintyp=ltMaus) and not existf(f1) then
-    begin
-      rewrite(f1,1); close(f1); { fÅr leeres INFILE }
-    end;
-
-    if existf(f1) then
-    begin
-      if logintyp in [ltMaus,ltZConnect] then
-      begin
-        fn:=TempS(_filesize(ppfile)+10000);
-        case logintyp of
-          ltMaus  : ZtoMaus(ppfile,fn,3);
-          ltZConnect: ZFilter(ppfile,fn);
-        end;
-        if errorlevel=MaggiFehler then
-        begin
-          trfehler(724,30);   { 'Fehler bei der MAGGI-Konvertierung' }
-          if FileExists(fn) then _era(fn);
-          close(f2);
-          exit;
-        end;
-        assign(f1,fn);
-      end;
-
-      { Puffer vor Reset(f1, 1) testen, da sonst sharing violation }
-
-      outmsgs:=testpuffer(ppfile,false,dummy);
-
-      reset(f1,1);
-      NC^.sendbuf:=filesize(f1);
-      if logintyp=ltMaus then
-        RemoveMausmark;
-
-      fmove(f1,f2);            { .PP an Ausgabepuffer hÑngen }
-      close(f1);
-      close(f2);
-
-      Moment;
-
-      outmsgs:=0;
-      RemoveEPP;
-      ClearUnversandt(ppfile,BoxName);
-      closebox;
-
-      if logintyp in [ltMaus,ltZConnect] then erase(f1);
-      _era(ppfile);
-      if FileExists(eppfile) then _era(eppfile);
-      end
-    else begin
-      close(f2);
-    end;
-    if _filesize(SysopOut)=0 then _era(SysopOut);
-
-    fn:=SysopInp;
-    assign(f1,fn);
-    if not existf(f1) then begin
-      rewrite(f1,1);
-      close(f1);
-      end
-    else
-      if logintyp=ltMaus then begin
-        fn:=TempS(_filesize(fn)+10000);
-        ft:=filetime(BoxName+'.itg');
-        MausToZ(SysopInp,fn,3);
-        MausGetInfs(BoxName,mauslogfile);
-        MausLogFiles(0,false,BoxName);
-        MausLogFiles(1,false,BoxName);
-        MausLogFiles(2,false,BoxName);
-        if ft<>filetime(BoxName+'.itg') then
-          MausImportITG(BoxName);
-      end;
-    NC^.recbuf:=_filesize(SysopInp);
-    CallFilter(true,fn);
-    if PufferEinlesen(fn,BoxName,false,false,true,pe_Bad) then begin
-      _era(SysopInp);               { Eingabepuffer l"schen }
-    { if _maus and not MausLeseBest then
-        MausPMs_bestaetigen(BoxName);   - abgeschafft, da im MausNet unerwÅnscht }
-      end;
-    if (logintyp=ltMaus) and (FileExists(fn)) then
-      _era(fn);
-    Netcall_connect:=true;
-    end;
-end;
-
-{------------- end sysop transfer --------------}
-
-  procedure SetFilenames;
-  begin
-    with BoxPar^ do begin
-      case logintyp of
-        ltZConnect: begin     { Namen muessen ohne Pfade sein! }
-                       caller:='CALLER.'+uparcext;
-                       called:='CALLED.'+downarcext;
-                       upuffer:=PufferFile;
-                       dpuffer:=PufferFile;
-                     end;
-        ltMaus     : begin
-                       caller:='INFILE.'+uparcext;
-                       called:='OUTFILE.'+uparcext;
-                       upuffer:='INFILE.TXT';
-                       dpuffer:='OUTFILE.TXT';
-                     end;
-        ltFido     : begin
-                       caller:=ARCmail(OwnFidoAdr,boxname);
-                       called:='XXX$$$';
-                       upuffer:=LeftStr(date,2)+LeftStr(typeform.time,2)+
-                                copy(typeform.time,4,2)+RightStr(typeform.time,2)+
-                                '.PKT';
-                       dpuffer:='YYY$$$';
-                       fidologfile:='';
-                     end;
-        ltNNTP      : begin
-                       caller:='NNTPDMY1';
-                       called:='NNTPDMY2';
-                       upuffer:='NNTPPUF';
-                       dpuffer:='NNTPPUF';
-                     end;
-        ltPOP3      : begin
-                       caller:='POP3DMY1';
-                       called:='POP3DMY2';
-                       upuffer:='POP3PUF1';
-                       dpuffer:='POP3PUF2';
-                     end;
-        ltUUCP     : begin
-//**                       caller:='C-'+hex(uu_nummer,4)+'.OUT';
-                       called:='uudummy';
-                       upuffer:='UPUFFER';
-                       dpuffer:='UPUFFER';
-                     end;
-      end;
-//      if UpperCase(LeftStr(uploader+' ',7))='ZMODEM ' then
-//        uploader:=ZM(uploader,true);
-//      if UpperCase(LeftStr(downloader+' ',7))='ZMODEM ' then
-//        downloader:=ZM(downloader,false);
-      exchange(uploader,'$PORT',strs(bport));
-      exchange(uploader,'$ADDRESS',hex(comn[bport].Cport,3));
-      exchange(uploader,'$IRQ',strs(comn[bport].Cirq));
-      exchange(uploader,'$SPEED',strs(baud));
-      exchange(uploader,'$UPFILE',caller);
-      exchange(uploader,'$LOGFILE',OwnPath+bilogfile);
-      if janusplus then
-        exchange(uploader,'$DOWNPATH','SPOOL')
-      else
-        exchange(uploader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
-      exchange(downloader,'$PORT',strs(bport));
-      exchange(downloader,'$ADDRESS',hex(comn[bport].Cport,3));
-      exchange(downloader,'$IRQ',strs(comn[bport].Cirq));
-      exchange(downloader,'$SPEED',strs(baud));
-      exchange(downloader,'$DOWNFILE',called);
-      if janusplus then
-        exchange(downloader,'$DOWNPATH','SPOOL')
-      else
-        exchange(downloader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
-      bimodem:=ntExtProt(netztyp) and (pos('bimodem',LowerCase(uploader))>0);
-      end;
-  end;
-
-  procedure wrscript(x,y,col:byte; txt:string);
-  begin
-    spush(dphback,sizeof(dphback));
-    dphback:=col;
-    moff;
-    {$IFDEF unix}
-    writeln('To Do: XP7::Netcall::WRScript -> ''', txt, '''');
-    {$ELSE }
-    disphard(x,y,txt);
-    {$ENDIF }
-    mon;
-    spop(dphback);
-  end;
-
   procedure AppendNetlog;
   const bs = 4096;
   var t  : text;
@@ -1170,7 +737,7 @@ end;
     if existf(t) then append(t)
     else rewrite(t);
     writeln(t);
-    writeln(t,reps(reps(getreps(716,date),BoxName),nc^.starttime));
+//**    writeln(t,reps(reps(getreps(716,date),BoxName),nc^.starttime));
     writeln(t);
     getmem(buf,bs);
     settextbuf(netlog^,buf^,bs);
@@ -1331,7 +898,6 @@ begin                  { function Netcall }
       end;
     end;
 
-  upuffer:=''; caller:='';
   NumCount:=CountPhonenumbers(boxpar^.telefon); NumPos:=1;
   FlushClose;
 
@@ -1350,44 +916,20 @@ begin                  { function Netcall }
         exit;
         end;
       if (logintyp=ltQWK) and not ExecutableExists(ZQWKBin) then begin
-        trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
-      New(NC);
-      fillchar(NC^,sizeof(nc^),0);
-//** Addpkts.create;
-      SetFilenames;
-
-      Debug.DebugLog('xpnetcall','deleting old buffers',DLInform);
-      if FileExists(upuffer) then _era(upuffer);  { evtl. alte PUFFER loeschen }
-      if FileExists(dpuffer) then _era(dpuffer);
-      if FileExists(caller) then _era(caller);
-      end
-    else begin   { not PerformDial }
-      new(NC);
-//** addpkts.create;
-      end;
-
-    if PerformDial and (IsPath(upuffer) or IsPath(dpuffer)) then begin
-      if IsPath(upuffer) then
-        rfehler1(741,extractfilename(upuffer))    { 'Loeschen Sie das Unterverzeichnis "%s"!' }
-      else
-        rfehler1(741,extractfilename(dpuffer));
-      dispose(NC);
-
-//** addpkts.destroy;
-
-      exit;
+        trfehler(111,esec);      { 'ZQWK.EXE fehlt! }
+        exit;
+        end;
       end;
 
     Debug.DebugLog('xpnetcall','saving screen',DLInform);
     Sichern(ScreenPtr);
 
-    AppendEPP;
+//**    AppendEPP;
 
     netcalling:=true;
     showkeys(0);
     netcall:=false;
     connects:=0;
-    OutgoingFiles:=TStringList.Create;
     IncomingFiles:=TStringList.Create;
 
     {------------------------- call appropriate mailer ------------------------}
@@ -1401,9 +943,8 @@ begin                  { function Netcall }
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
-          case FidoNetcall(BoxName,Boxpar,ppfile,eppfile,caller,upuffer,
-                           uparcer<>'',crash,alias,domain,fidologfile,
-                           OwnFidoAdr,OutgoingFiles,IncomingFiles) of
+          case FidoNetcall(BoxName,Boxpar,ppfile,crash,alias,domain,logfile,
+                           OwnFidoAdr,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -1419,7 +960,7 @@ begin                  { function Netcall }
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
-          case ZConnectNetcall(BoxName,ppfile,Boxpar,OutgoingFiles,IncomingFiles,caller) of
+          case ZConnectNetcall(BoxName,Boxpar,ppfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -1436,12 +977,12 @@ begin                  { function Netcall }
           Debug.DebugLog('xpnetcall','converting received buffers',DLInform);
           uu := TUUZ.Create;
           uu.source := 'spool'+DirSepa+'*.mail';
-          uu.dest := dpuffer;
+          uu.dest := 'POP3IBUF';
           uu.OwnSite := boxpar^.pointname+domain;
           uu.ClearSourceFiles := true;
           uu.utoz;
           uu.free;
-          IncomingFiles.Add(dpuffer);
+          IncomingFiles.Add('POP3IBUF');
           end; {case ltPOP3}
 
         else
@@ -1449,25 +990,18 @@ begin                  { function Netcall }
           trfehler(799,30); { 'Funktion nicht implementiert' }
         end; {case LoginTyp}
 
-      if ltVarBuffers(logintyp) then begin
-        if (upuffer<>'') and FileExists(upuffer) then _era(upuffer);
-        if (caller<>'') and FileExists(caller) then _era(caller);
-        end;
-      RemoveEPP;    { Falls ein TurboBox-Netcall abgebrochen wurde; }
-                    { in allen anderen Faellen ist das EPP bereits   }
-                    { entfernt.                                     }
+//**      RemoveEPP;
       if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
       end; {if PerformDial}
-    end; {*if PerformDial?!}
+    end; {with boxpar}
 
 ende0:
-  Debug.DebugLog('xpnetcall','Netcall finished. Outgoing: '+Stringlist(OutgoingFiles)+
-                             ', incoming: '+Stringlist(IncomingFiles),DLDebug);
+  Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+Stringlist(IncomingFiles),DLDebug);
   for i:=1 to IncomingFiles.Count do
     if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
-      _era(IncomingFiles[i-1]);
+      if FileExists(IncomingFiles[i-1])then _era(IncomingFiles[i-1]);
+  IncomingFiles.Destroy;
   freeres;
-//** addpkts.destroy;
   netcalling:=false;
   cursor(curoff);
   Holen(ScreenPtr);
@@ -1676,6 +1210,10 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/06 11:45:06  ma
+  - xpnetcall doing even less: file name handling has to be done in
+    specialized netcall units from now on
+
   Revision 1.4  2001/02/05 22:33:56  ma
   - added ZConnect netcall (experimental status ;-)
   - modemscripts working again
