@@ -1533,6 +1533,9 @@ fromstart:
                     dbSeek(d,boiName,ustr(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine Bin„rnachrichten m”glich :-(' }
+                    else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp'))) or
+                     not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
+                      rfehler(629)   { 'nicht m”glich - unterschiedliche Netztypen' }
                     else begin
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
@@ -1641,9 +1644,9 @@ fromstart:
                   showbox;   { evtl. in Klammern }
                   end;
                 if echomail and (ustr(t)=fidokey) then begin
-                  readstring(x+13,y+2,'',fidoto,35,35,'',brk);
+                  readstring(x+13,y+4,'',fidoto,35,35,'',brk);
                   attrtxt(col.coldiahigh);
-                  mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
+                  mwrt(x+13,y+4,' '+forms(fidoto,35)+' ');
                   end;
                 end;
       end;
@@ -1841,9 +1844,9 @@ fromstart:
        hdp^.absender:=(left(force_absender,cposx(' ',force_absender)-1));
        n:=cpos('(',force_absender);
        if n>0 then begin
-         force_absender:=mid(force_absender,n+1);
-         n:=cposx(')',force_absender);
-         hdp^.realname:=left(force_absender,n-1);
+         hdp^.realname:=mid(force_absender,n+1);
+         n:=cposx(')',hdp^.realname);
+         hdp^.realname:=left(hdp^.realname,n-1);
          end;
        end;
 
@@ -2370,6 +2373,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.31  2001/06/26 20:14:37  my
+  JG:- fixed 'change sender' bug: when changing F-TO the input field
+       was 2 lines too high.
+  JG:- fixed 'change sender' bug: when a public message was cc'd to a user,
+       the mail to the user had a wrong sender (first name of realname).
+  JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
+       an RFC recipient and then select a Fido server in the send window.
+
   Revision 1.39.2.30  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and
