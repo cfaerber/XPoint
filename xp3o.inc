@@ -847,9 +847,10 @@ begin
           multi2; initscs;
 
           attrtxt(col.colmboxhigh);
+          truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
           dbSeek(ubase,uiName,ustr(absender));
           uflags:=0;
-          if not dbFound and (Length(Absender)<=80) then
+          if not dbFound {and (Length(Absender)<=80)} then
           begin          { neuen User anlegen }
             if adrok(absender) then begin
               mwrt(29,wherey,forms(absender,22));
@@ -1236,6 +1237,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.15  2001/08/26 15:38:28  my
+  JG+MY:- Fix: When auto-creating a user with an address longer than 80
+          chars the user flags (Prio, Filter, Return Receipt) of the last
+          DB entry were used (dbSeek couldn't find the address with more
+          than 80 chars). Address string is truncated to eAdrLen now.
+
   Revision 1.21.2.14  2001/08/12 11:20:30  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
