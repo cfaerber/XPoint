@@ -91,7 +91,7 @@ function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-    '-','_','#','=','&','%','@','$'];
+    '-','_','#','=','&','%','@','$',','];
 var x,y : byte;
   brk : boolean;
   fn  : string;
@@ -1011,6 +1011,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2001/02/11 21:02:00  mk
+  - , is now valid char for URLs
+
   Revision 1.76  2001/01/05 09:33:09  mk
   - removed THeader.Ref
 
