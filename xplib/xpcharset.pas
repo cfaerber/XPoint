@@ -75,7 +75,9 @@ function RecodeCharset(const s: String; cs_from,cs_to: TMimeCharsets): String;
 { ------------------------} implementation { ------------------------- }
 
 uses
-  strutils,
+  {$IFDEF Delphi }
+    strutils,
+  {$ENDIF }
   sysutils,
   xpcharset_codec;
 
@@ -269,6 +271,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.2  2003/09/29 21:08:15  mk
+// - don't use strutils for fpc
+//
 // Revision 1.1  2003/09/29 20:47:18  cl
 // - moved charset handling/conversion code to xplib
 //
