@@ -384,7 +384,6 @@ const
        hdf_ersetzt = 33;
        hdf_control = 34;
 
-
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -857,6 +856,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
 
+       Boundary_Counter: Word = 0;
+
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
        ub_username,ub_adresse,ub_kommentar,ub_adrbuch,ub_pollbox,
@@ -997,6 +998,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        pmlimits     : array[1..maxpmlimits,1..2] of longint;
        ZC_xposts    : boolean;       { ZConnect-Crosspostings }
        ZC_ISO       : boolean;       { ISO-8859-1 verwenden }
+       ZC_MIME      : boolean;       { MIME für ZConnect verwenden }
        leaveconfig  : boolean;       { /Config-Menue bei <Esc> ganz verlassen }
        NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" }
        NetcallLogfile:boolean;       { Logfile ueber Netcalls fuehren }
@@ -1049,6 +1051,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        UsePGP       : boolean;       { PGP verwenden }
        PGPbatchmode : boolean;       { PGP-Schalter +batchmode verwenden }
        PGP_UUCP     : boolean;       { PGP fuer RFC/UUCP }
+       PGP_MIME     : boolean;       { PGP bei RFC/UUCP (und ZConnect) als MIME }
        PGP_Fido     : boolean;       { PGP fuer Fido }
        PGP_UserID   : string;        { Netzadresse von Key }
        PGP_AutoPM   : boolean;       { Keys aus PMs automatisch einlesen }
@@ -1194,6 +1197,10 @@ implementation
 
 {
   $Log$
+  Revision 1.139  2001/09/08 14:24:17  cl
+  - added PGP_MIME configuration option
+  - added ZC_MIME configuration option
+
   Revision 1.138  2001/09/07 18:02:50  ml
   - compilable with fpc in linux
 

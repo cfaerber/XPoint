@@ -615,6 +615,7 @@ begin
   pmlimits[6,1]:=20000; pmlimits[6,2]:=0;     { QM/GS      }
   ZC_xposts:=true;
   ZC_iso:=false;
+  ZC_Mime:=false;
   leaveconfig:=false;
   NewsgroupDisp:=false;
   NetcallLogfile:=false;
@@ -663,6 +664,7 @@ begin
   UsePGP:=false;
   PGPbatchmode:=true;
   PGP_UUCP:=false {true};
+  PGP_MIME:=true;
   PGP_Fido:=false;
   PGP_UserID:='';
   PGP_AutoPM:=true;
@@ -886,6 +888,7 @@ begin
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
   writeln(t,'PGP-GPGEncodingOptions=',PGP_GPGEncodingOptions);
+  writeln(t,'PGP-MIME=',jnf(PGP_Mime));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -913,6 +916,7 @@ begin
   writeln(t,'Kleinschreibung=',jnf(smallnames));
   writeln(t,'InterruptLogin=',jnf(BreakLogin));
   writeln(t,'ZC-ISO=',jnf(zc_iso));
+  writeln(t,'ZC-MIME=',jnf(zc_mime));
   writeln(t,'Post=',postadresse);
   writeln(t,'Telefon=',telefonnr);
   writeln(t,'Homepage=',wwwHomepage);
@@ -1484,6 +1488,7 @@ begin
           getx(su,  'maildelxpost',maildelxpost) or
           getx(su,  'keeprequests',keeprequests) or
           getx(su,  'zc-iso',zc_iso) or
+          getx(su,  'zc-mime',zc_mime) or
           gets(s,su,'waehrung',waehrung) or
           getl(su,  'gebnoconn',GebNoconn) or
           getx(su,  'gebcfos',GebCfos) or
@@ -1508,6 +1513,7 @@ begin
           getx(su,  'pgp-signall',PGP_signall) or
           gets(s,su,'pgp-version',PGPVersion) or
           gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions) or
+          getx(s,   'pgp-mime',PGP_MIME) or
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
           getx(su,  'defaultnokop',defaultnokop) or
@@ -1693,6 +1699,10 @@ end;
 
 {
   $Log$
+  Revision 1.124  2001/09/08 14:26:11  cl
+  - added PGP_MIME configuration option
+  - added ZC_MIME configuration option
+
   Revision 1.123  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
