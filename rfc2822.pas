@@ -267,28 +267,25 @@ end;
 function RFCUnQuotePhrase(const source: string): string;
 var
   i,l,c: integer;
-  s: boolean;
-  q: boolean;
 
   procedure _(NewChar: char);
   begin
     inc(c);
     result[c] := NewChar;
   end;
-  
+
 begin
   SetLength(result,Length(source));
   c := 0;
 
-  i := 1; l:=length(source); 
+  i := 1; l:=length(source);
   while i<=l do begin
     case source[i] of
-      '\': if i<l-1 then 
+      '\': if i<l-1 then
            begin
              inc(c);
              result[c] := (source[i+1]);
              inc(i);
-             s := false;
            end;
       '"': begin (* noop *) end;
       else begin
@@ -313,7 +310,9 @@ var NeedQuotes:   boolean;
     i: integer;
 begin
   CSource := Convert8BitToUTF(Source,CharSet);
-  BlankCount := 0;  
+  BlankCount := 0;
+  NeedQuotes := false;
+  NeedEncoding := false;  
 
   if (Pos('=?',CSource)>0)or(Pos('?=',CSource)>0) then
     NeedEncoding := true
@@ -382,7 +381,7 @@ end;
 //                         [CFWS]
 
 function RFCIsValidAddress(const addr:string): boolean;
-var i,p:integer;
+var i : integer;
     q : boolean; { in a quoted-string/domain-literal                   }
     d : boolean; { directly after a dot or at start (not counting FWS) }
     aq: boolean; { directly after a quoted-string   (not counting FWS) }
@@ -567,6 +566,10 @@ end;
 
 //
 // $Log$
+// Revision 1.11  2002/06/29 13:54:00  mk
+// - removed unused variables
+// - initialize some uninitialized variables before use
+//
 // Revision 1.10  2002/05/20 15:18:17  cl
 // - added/fixed functions for proper RFC 2047 encoding
 //
