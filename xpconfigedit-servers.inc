@@ -107,7 +107,7 @@
       bDomainNt:=0;
     if fqdom then begin  { Eingabemoeglichkeit fuer FQDNs}
       maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
-                 'A'+without(range('!','~'),' @<>/')); mhnr(30001);
+                 'A'+without(range('!','~'),' @<>/')); mhnr(40001);
       inc(yy,2);
       end;
     freeres;
@@ -139,11 +139,11 @@
     maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));
       msetvfunc(notempty);
-      mhnr(30002);
+      mhnr(40002);
 
     maddstring(3,10,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
            'A'+without(range('!','~'),' @<>/'));
-      mhnr(30001);
+      mhnr(40001);
     freeres;
     readmask(brk);
     enddialog;
@@ -937,11 +937,11 @@
     with boxpar^ do begin
       maddstring(3,2,getres2(950,2),nntp_ip,25,255,             { 'Server    ~' }
                  range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
-        mhnr(30060);
+        mhnr(40060);
       maddint(3,4,getres2(950,3),nntp_port,4,5,0,65535);        { 'Port      ~' }
       maddstring(3,6,getres2(950,4),nntp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,8,getres2(950,5),nntp_pwd,25,255,'');        { 'Passwort  ~' }
-        mhnr(30062);
+        mhnr(40062);
       maddint(3,10,getres2(950,6),nntp_maxnews,4,5,0,1000000);  { 'letzten X Nachrichten ' }
       freeres;
       readmask(brk);
@@ -956,10 +956,10 @@
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(951,2),pop3_ip,25,255,             { 'Server    ~' }
-                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-'); mhnr(30020);
+                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-'); mhnr(40020);
       maddstring(3,4,GetRes2(951,3), pop3_id,25,255,'');        { 'Loginname ~' }
       maddstring(3,6,GetRes2(951,4), pop3_pwd,25,255,'');       { 'Passwort  ~' }
-        mhnr(30021);
+        mhnr(40021);
       maddbool(3,8, GetRes2(951,5), pop3_clear);                { 'Abgeholte Mails loeschen' }
       maddbool(3,9, GetRes2(951,6), pop3_APOP);                 { 'APOP benutzen' }
       maddbool(3,10, GetRes2(951,7), pop3_OnlyNew);             { 'Nur neue Mails' }
@@ -978,10 +978,10 @@
     begin
       maddstring(3,2,GetRes2(952,2),smtp_ip,25,255,             { 'Server    ~' }
                  range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
-        mhnr(30040);
+        mhnr(40040);
       maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
-        mhnr(30041);
+        mhnr(40041);
       maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'Vor SMTP einen POP3 Login ausfuehren' }
       freeres;
       readmask(brk);
@@ -1989,6 +1989,9 @@
 
 {
   $Log$
+  Revision 1.5  2001/07/21 18:06:54  mk
+  - modified duplicate help topics
+
   Revision 1.4  2001/07/21 16:02:11  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

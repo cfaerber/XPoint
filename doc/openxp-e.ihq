@@ -3078,7 +3078,7 @@ eg. 2:345/678\@fidonet.
 Message-ID).
 
 @
-30001
+40001
 Enter the 'fully qualified domain name' that will
 be used for creating message ids here.
 
@@ -3088,57 +3088,57 @@ If you do not have an own domain you may get one
 suitable for FQDNs at
 <<http://fqdn.th-h.de>> or <<http://www.myfqdn.de>>.
 @
-30002
+40002
 Please enter your eMail address here.
 @
-30020
+40020
 Please enter the machine name or ip address of
 the POP3 server here (for example pop.gmx.de).
 
 Leave this field blank if you do not want mail
 to be fetched.
 @
-30021
+40021
 Please enter login data for the POP3 server here.
 @
-30022
+40022
 If activated mails will be deleted on the POP3 server
 once fetched.
 
 Should be activated if CrossPoint is the only
 program you use for reading mails.
 @
-30023
+40023
 If activated login data will be encrypted upon
 transmission. You should use this function if
 the server supports it.
 
 If in doubt just try and disable only if no success.
 @
-30024
+40024
 If activated only new not yet retrieved mail will
 be fetched upon netcall. If the POP3 server supports
 UIDLs (which is standard now) this feature will work
 even if you use another program parallel to
 CrossPoint with the same server.
 @
-30025
+40025
 If activated all mails fetched will be put in the
 message area associated with your own eMail address.
 @
-30040
+40040
 Please enter the machine name or ip address of the
 SMTP server here (for example smtp.gmx.de).
 
 Leave this field blank if you do not want mail
 to be sent.
 @
-30041
+40041
 Please enter your login data here if the SMTP server
 supports SMTP Auth. If this is not the case leave
 these fields blank.
 @
-30042
+40042
 If activated CrossPoint will first check for incoming
 mails and then send outgoing mails.
 
@@ -3147,21 +3147,21 @@ that do not support SMTP Auth.
 
 Let this option activated if in doubt.
 @
-30060
+40060
 Please enter the machine name or ip address of the
 NNTP server here (for example news.shlink.de).
 @
-30061
+40061
 Enter the TCP/IP port of the NNTP service here.
 
 Standard is 119.
 @
-30062
+40062
 If you got login data for using the NNTP service you
 should enter them here. If you did not leave these
 fields blank.
 @
-30063
+40063
 Number of articles to be fetched at most per news-
 group.
 

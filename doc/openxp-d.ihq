@@ -4229,7 +4229,7 @@ Domain ein (normalerweise ".magic" bzw. ".pro").
 in der Message-ID verwendet.)
 
 @
-30001
+40001
 Geben Sie hier den 'Fully Qualified Domain Name' ein,
 der zur Erstellung der Message-IDs (MID) benutzt
 werden soll. Ihre Nachrichten erhalten dann die
@@ -4246,25 +4246,25 @@ Falls Sie keine eigene Domain haben, k”nnen Sie unter
 <<http://fqdn.th-h.de>> oder <<http://www.myfqdn.de>>
 eine eigene fr FQDNs benutzbare Subdomain bekommen.
 @
-30002
+40002
 Geben Sie hier Ihre E-Mail-Adresse ein.
 @
-30020
+40020
 Geben Sie hier den Rechnernamen oder die IP-Adresse
 des POP3-Servers an (Beispiel: pop.gmx.de).
 
 Lassen Sie dieses Feld frei, falls keine Mails
 abgeholt werden sollen.
 @
-30021
+40021
 Geben Sie hier die Logindaten fr den POP3-Server
 an.
 @
-30022
+40022
 Falls aktiviert, werden die Mails auf dem POP3-Server
 nach dem Abholen gel”scht.
 @
-30023
+40023
 Falls aktiviert, wird das Paáwort verschlsselt ber-
 tragen. Falls der POP3-Server dies untersttzt,
 sollte diese Option unbedingt gew„hlt werden.
@@ -4272,7 +4272,7 @@ sollte diese Option unbedingt gew„hlt werden.
 Im Zweifelsfall einfach ausprobieren und nur bei
 Fehlfunktion ausstellen.
 @
-30024
+40024
 Falls aktiviert, werden nur neue, bisher noch nicht
 abgeholte Mails abgeholt. Falls der POP3-Server
 UIDLs untersttzt (wie inzwischen Standard), kommt
@@ -4280,7 +4280,7 @@ dieses Feature selbst dann nicht durcheinander,
 wenn Sie mit einem anderen Programm den gleichen
 Server abfragen.
 @
-30025
+40025
 Falls aktiviert, werden die eingehenden Mails alle
 in das der eigenen E-Mail-Adresse zugeordnete Brett
 eingeordnet. Normalerweise werden die Mails in das
@@ -4289,19 +4289,19 @@ aber angesichts der Tatsache, daá eingehende Mail
 nicht unbedingt die eigene E-Mail-Adresse als Em-
 pf„nger haben muá, unpraktisch sein kann.
 @
-30040
+40040
 Geben Sie hier den Rechnernamen oder die IP-Adresse
 des SMTP-Servers an (Beispiel: smtp.gmx.de).
 
 Lassen Sie dieses Feld frei, falls keine Mails ver-
 sendet werden sollen.
 @
-30041
+40041
 Geben Sie hier Ihre Logindaten an, falls der SMTP-
 Server SMTP Auth untersttzt. Sollte dies nicht der
 Fall sein, lassen Sie diese Felder frei.
 @
-30042
+40042
 Falls aktiviert, wird vor dem Versenden der Mails
 mittels SMTP erst per POP3 eingehende Mail abgeholt.
 Einige Freemail-Provider ben”tigen dieses Verfahren,
@@ -4310,23 +4310,23 @@ vorzuziehen.
 
 Lassen Sie diese Option im Zweifelsfall aktiviert.
 @
-30060
+40060
 Geben Sie hier den Rechnernamen oder die IP-Adresse
 des NNTP-Hosts an (Beispiel: news.shlink.de).
 @
-30061
+40061
 Hier geben Sie den Port an, ber den der NNTP-Dienst
 erreichbar ist.
 
 Im Normalfall ist dies der Port 119.
 @
-30062
+40062
 Wenn Sie Zugangsdaten fr die Nutzung des NNTP-Dienstes
 erhalten haben, so tragen Sie diese hier ein. Werden
 diese Daten nicht ben”tigt, so sollten Sie die Felder
 leer lassen.
 @
-30063
+40063
 Anzahl der pro Newsgroup maximal abzuholenden Artikel.
 
 Vorsicht: Sind in einer Newsgroup seit dem letzten
