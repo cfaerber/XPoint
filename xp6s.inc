@@ -1105,6 +1105,9 @@ begin                                                  { 'Sende-Priorit„t' }
 
   if not brk and mmodified then
   begin
+    if Prio = GetRes2(272, 6) then          { 'keine' }
+      RFCPrio := 0
+    else
     if Prio = GetRes2(272, 1) then          { 'H”chste' }
       RFCPrio := 1
     else
@@ -1124,6 +1127,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.17  2000/05/29 15:13:42  jg
+  - Fix: Priority-Header abschaltbar
+
   Revision 1.16  2000/05/06 17:29:23  mk
   - DOS DPMI32 Portierung
 
