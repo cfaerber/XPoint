@@ -483,7 +483,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 18   XMS verwenden
 19   Kommentare aus Brettliste Åbernehmen
 20   Umlaute fÅr neue User zulassen
-21   Stelle : und | dem Quote-Zeichen gleich
+21   Behandle ":" und "|" als Quote-Zeichen
 + 251
 # Extrakt als
 0    Text ohne Kopf
@@ -503,7 +503,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Nachr.-Weiterschalter
 17   Brett-Weiterschalter
 18   User-Weiterschalter
-19   Lesemodus ~
+19   Lesemodus  ~
 20   Extrakt als~
 21   Mausbedienung
 22   Tasten vertauschen
@@ -540,7 +540,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
 28   fragen bei Antwort-an
-29   News nicht archivieren lassen
+29   News-Archivierung im Netz verhindern
 30   Cancel-Nachrichten ignorieren
 #
 100  68
@@ -2361,7 +2361,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 95   Keine Nachrichten im QWK-File! (-QZ)
 96   Unbekanntes Packerformat (-QZ)
 97   Befehlsinterpreter (COMMAND.COM) nicht gefunden
-98   Unbekannter Dos-Fehler
+98   Unbekannter DOS-Fehler
 99   QWK-File-Name fehlt (-QZ)
 101  Laufwerk nicht bereit
 102  PlattenkapazitÑt nicht ausreichend
@@ -2518,7 +2518,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 2612
 1    Nodelist     | Zone                     | Reg. | Netze | Nodes | Nodes/Netz
 2    gesamt                                  |
-3    Die %s grîssten Netze:
+3    Die %s grî·ten Netze:
 4    Netz    | Name                           | Nodes
 5    Flags:
 10   Points  ~
