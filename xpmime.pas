@@ -657,7 +657,7 @@ var   input,t : text;
     end;
 
   begin
-    if length(s)<4 then s:=''
+    if (length(s)<4) or ((Length(Trim(s)) mod 4) <> 0) then Exit
     else begin
       if LastChar(s)='=' then
         if s[length(s)-1]='=' then pad:=2
@@ -772,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/12/25 23:58:07  mk
+  - fehlerhafte Base64-Zeilen werden nicht mehr dekodiert
+
   Revision 1.42  2000/12/25 14:02:45  mk
   - converted Lister to class TLister
 
