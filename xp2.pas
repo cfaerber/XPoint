@@ -783,6 +783,7 @@ var t   : text;
     p   : byte;
     l1,l2,l3 : integer32;
     l   : integer32;
+    i: integer16;
     code: integer32;
     rp  : ^boolean;
     c   : char;
@@ -828,10 +829,12 @@ begin
       l1:=CRC16strXP(reverse(hex(l+11,4))); l1:=l1 xor (l1 shl 4);
 
       { Registrierungsbug Plattformunabh„nig emulieren }
-      if l<=maxint then
-        l2:=CRC16strXP(reverse(hex(l*3-65535,5)))
+      { 10923 * 3 ist gr”áer als maxint (32767) }
+      if l<10923 then
+        l2:=CRC16strXP(reverse(hex(l*3,5)))
       else
-        l2:=CRC16strXP(reverse(hex(l*3,5)));
+        l2:=CRC16strXP(reverse(hex(l*3-65536,5)));
+
       l2:=l2 xor (l2*37);
       l3:=l1 xor l2 xor CRC16strXP(reverse(strs(l)));
       delete(s,1,p);
@@ -1096,6 +1099,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.19  2000/03/10 13:29:33  mk
+  Fix: Registrierung wird sauber erkannt
+
   Revision 1.18  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
