@@ -284,7 +284,7 @@ begin
   end;
   day:=secs div tagsec + 1; secs:=secs mod tagsec;
   dt := EncodeDate(Year, Month, Day) +
-    EncodeTime(secs div 3600, secs mod 3600, secs div 60, secs mod 60);
+    EncodeTime(secs div 3600, secs mod 3600 div 60, secs mod 60, 0);
   ts:= DateTimeToTimeStamp(dt);
   uhrzeit:= ts.time;
   datum:= ts.date;
@@ -935,6 +935,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/12/25 17:43:02  mk
+  - fixed Bug in DateTime-Calculation
+
   Revision 1.23  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 
