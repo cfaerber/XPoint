@@ -847,6 +847,7 @@ end;
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
     mappcustomsel(scr_auto_empfsel,false);
+    msetvfunc(testmailstring);
     readmask(brk);
     closemask;
     attrtxt(col.coldiahigh);
@@ -865,11 +866,6 @@ begin  { 05.02.2000 MH: 70 -> 78 f. Zurck }
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empf„nger ' }
-(*{JG:06.02.00}
-  attrtxt(col.coldiahigh);
-  wrt(x+4,y+2,'m');                 { * = Empfaenger aendern }
-  attrtxt(col.coldialog);
-{/JG} *)
   if echomail then begin
     wrt(x+3,y+4,getres2(611,11));    { 'An' }
     inc(y,2);
@@ -2196,6 +2192,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/04/29 19:11:51  jg
+  - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
+    und "Kopien an" + "Empfaenger aendern" im Sendefenster
+
   Revision 1.22  2000/04/28 22:30:10  jg
   - Diverse Verbesserungen beim Versenden mit Priority
   - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail

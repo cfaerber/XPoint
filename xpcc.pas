@@ -147,6 +147,12 @@ begin
         else dbReadN(ubase,ub_username,s);
         end
       else
+        if (p>0) and not testmailstring(s) then
+        begin
+          cc_testempf:=false; 
+          exit;
+          end
+      else
         if ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
                   iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
         then begin                                           { 'neu anlegen' }
@@ -339,6 +345,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/29 19:11:52  jg
+  - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
+    und "Kopien an" + "Empfaenger aendern" im Sendefenster
+
   Revision 1.11  2000/04/15 21:44:48  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

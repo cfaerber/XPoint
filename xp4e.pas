@@ -59,6 +59,7 @@ procedure copy_address(var s:string);
 procedure get_address(var s:string);
 function  test_verteiler(var s:string):boolean;
 function  usertest(var s:string):boolean;
+function  testmailstring(var s:string):boolean;
 function  writecode(var s:string):boolean;
 function  testgruppe(var s:string):boolean;
 function  empftest(var s:string):boolean;
@@ -188,6 +189,14 @@ begin
     else if (pb_netztyp=nt_fido) and nodeopen then
       usertest:=Testfido(s);
     end;
+end;
+
+function testmailstring(var s:string):boolean;
+var ok:boolean;
+begin
+  ok:=(s=mailstring(s,false));
+  if not ok then rfehler(2251);
+  testmailstring:=ok; 
 end;
 
 function writecode(var s:string):boolean;
@@ -1388,7 +1397,7 @@ begin
   p:=cpos('@',s);
   if p>0 then
     s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1));
-  empftest:=ok;
+  empftest:=ok and testmailstring(s);
 end;
 
 
@@ -2303,6 +2312,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/04/29 19:11:51  jg
+  - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
+    und "Kopien an" + "Empfaenger aendern" im Sendefenster
+
   Revision 1.17  2000/04/27 07:23:34  jg
   - Bugfixes Adressbuchgruppen:
     Beim Editieren eines einzelnen Users wurde die Anzeige nicht aktualisiert
