@@ -59,6 +59,7 @@ Newsgroups:    crosspoint.openxp16.pub.allgemein
 eMail:         support@openxp16.de
 ------         (Wird an Mailingliste weitergeleitet)
 
+
 Internet:      http://www.openxp16.de
 ---------
 
@@ -757,8 +758,9 @@ Interne nderungen
 ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ OpenXP/16 ÄÙ
 
 
-01.01.2002-08.03.2002
----------------------
++---------------------+----------------------------------------------+
+|  01.01.-08.03.2002  |  ab hier Snapshot vom 09.03.2002, 00:00 Uhr  |
++---------------------+----------------------------------------------+
 
 MY:
 - RFC/Client: Multiserver-Netcall implementiert. Die aus- und
@@ -1171,9 +1173,10 @@ JG+MY:
 
 MY:
 - Optik-Fix: Wenn ein Brett (z.B. Mailingliste) den String "OpenXP/16"
-  oder "OpenXP/32" enth„lt, wird der Schr„gstrich in der Brettanzeige
-  und der Quote-Schablone $NEWSGROUP an dieser Stelle nicht mehr durch
-  einen Punkt ersetzt.
+  oder "OpenXP/32" enth„lt, wird bei aktivierter Punktschreibweise fr
+  alle Bretter der Schr„gstrich in der Brettanzeige und der Quote-
+  Schablone $NEWSGROUP an dieser Stelle nicht mehr durch einen Punkt
+  ersetzt.
   XP3EX.PAS, XP4D.INC
 
 
@@ -1258,8 +1261,9 @@ MY:
   README.TXT
 
 
-09.03.2002
-----------
++--------------+----------------------------------------------+
+|  09.03.2002  |  ab hier Snapshot vom 09.03.2002, 23:26 Uhr  |
++--------------+----------------------------------------------+
 
 MY:
 - Versionsstrings korrigiert/ge„ndert:
@@ -1276,7 +1280,7 @@ MY:
 
 
 JG:
-- Fix: Wenn unter /Edit/Viewer der MIME-Typ "text/plain" angelegt und
+- Fix: Wenn unter /Edit/Viewer ein MIME-Typ "text/..." angelegt und
   kein externer Viewer eingetragen war, fhrte dies beim ™ffnen einer
   Nachricht, die keinen U-Content-Type-Header trug, zu der (falschen und
   harmlosen) Fehlermeldung "Fehler beim Dateizugriff :-(".
@@ -1284,10 +1288,397 @@ JG:
 
 
 JG:
-- Einige kleinere Korrekturen bei der Anzeige von LFN-Dateinamen in
-  Archiven vorgenommen und die Anzeige von Dateien, die sich in einem
-  Unterverzeichnis des Archivs befinden, implementiert.
+- Einige kleinere Korrekturen bei der Anzeige von Dateien mit langen
+  Dateinamen in Archiven vorgenommen und die Anzeige von Dateien, die
+  sich in einem Unterverzeichnis des Archivs befinden, implementiert.
   XP4O.PAS, ARCHIVE.PAS
+
+
++--------------+----------------------------------------------+
+|  10.03.2002  |  ab hier Snapshot vom 31.03.2002, 00:00 Uhr  |
++--------------+----------------------------------------------+
+
+MY:
+- H”he/Breite von /Config/Anzeige/Diverses korrigiert und an englische
+  Ressource angepaát.
+  XP2C.PAS, XP-D.RQ, XP-E.RQ
+
+
+MY:
+- /Nachricht/Brettmanager/Bestellen: Abfrage "Anzahl Artikel" in
+  Ressource verlagert und fr englische User lesbar gemacht. :)
+  XP8.PAS, XP-D.RQ, XP-E.RQ
+
+
+JG+MY:
+- Kleine Korrektur bei der Anzeige (bzw. dem Entpacker-Aufruf) von
+  Dateien im Archiv-Viewer (Entpacker-Parameter werden nicht mehr in
+  Anfhrungszeichen eingeschlossen).
+  XP4O.PAS
+
+
+JG:
+- Beim einzeiligen Einfgen des Clipboard-Inhalts (z.B. in Eingabe-
+  felder) werden Steuerzeichen am Stringende nicht mehr in Leerzeichen
+  umgewandelt, sondern entfernt.
+  CLIP.PAS
+
+
+JG:
+- Rechts-/Links-Scrolling im Archiv-Viewer aktiviert. Dadurch kann bei
+  Dateien, die in einem Unterverzeichnis des Archivs liegen und/oder
+  die einen langen Dateinamen haben, jetzt der vollst„ndige Pfad- und
+  Dateiname betrachtet werden.
+  XP4O.PAS
+
+
++-----------------------------------+
+|  11.03.2002 [und 14./15.03.2002]  |
++-----------------------------------+
+
+JG+MY+RB:
+- Erkennung des UUE-Boundarys sauberer gestaltet (wenn ein Text zuf„llig
+  nur das Wort "begin" am Anfang irgendeiner Zeile stehen hatte, dann
+  wurde der danach folgende UUE-Block nicht erkannt).
+  XP_UUE.PAS
+
+
+JG:
+- Tonsignal beim Einfgen eines nicht vorhandenen oder zu groáen
+  Clipboard-Inhalts wird jetzt (wie alle anderen akustischen Meldungen
+  von XP auch) immer ber den PC-Lautsprecher ausgegeben.
+  CLIP.PAS
+
+
++------------------+
+|  13./14.03.2002  |
++------------------+
+
+SV[+MY]:
+- Bei Nachrichten mit KOM-Header wird ein ndern des Textes via N//T
+  jetzt verhindert.
+  XP4O.PAS, XP-D.RQ, XP-E.RQ
+
+
+RB[+MY]:
+- Gesamte Zeichensatzdecodierung und -konvertierung entrmpelt, von
+  Redundanzen befreit, korrigiert und erweitert:
+  - Alle Decodier- und Konvertierroutinen in neue Unit MIMEDEC.PAS
+    verlagert.
+  - Nach RFC 1522 codierte Dateinamen in Attachments werden jetzt
+    decodiert (XPMIME.PAS).
+  - 'MimeIsoDecode' kann jetzt auch andere Zeichens„tze als ISO-8859-1
+    konvertieren. Daher erfolgt bei nach RFC 1522 codierten Headerzeilen
+    im Anschluá an die qp- oder base64-Decodierung keine starre
+    ISO-8859-1-Konvertierung mehr, sondern es wird der deklarierte
+    Zeichensatz korrekt bercksichtigt.
+  - Untersttzung fr Zeichens„tze ISO-8859-15 und Windows-1252
+    implementiert.
+  XP3.PAS, XP3EX.PAS, XP6.PAS, XPMIME.PAS, MAGGI.PAS, TYPEFORM.PAS,
+  UUZ.PAS, ZFIDO.PAS, [MIMEDEC.PAS]
+
+
++------------------+
+|  14./15.03.2002  |
++------------------+
+
+JG:
+- Fix: Bei der Brett-Schnellsuche mit "." oder "/" wurden keine PM-
+  Bretter mehr gefunden, wenn vorher aufgrund der Eingabe schon ein
+  ”ffentliches Brett (oder umgekehrt) gefunden worden war - die Suche
+  hing dann beim jeweiligen Brett-Typ fest.
+  XP4W.INC
+
+
+JG+MY:
+- Bei der Brett-Schnellsuche werden "@" und "/" bei der Eingabe jetzt
+  gleichwertig behandelt (falls die Punktschreibweise fr alle Bretter
+  aktiviert ist).
+  XP4W.INC
+
+
++--------------+
+|  15.03.2002  |
++--------------+
+
+JG:
+- Fix: Bei der Brett-Schnellsuche mit "." oder "/" stand der Cursor bei
+  gefundenen PM-Brettern um eine Stelle zu weit rechts, wenn gleich-
+  zeitig C/A/B/"/"_bei_PM-Brettern und die Punktschreibweise fr alle
+  Bretter deaktiviert waren.
+  XP4.PAS
+
+
++--------------+
+|  17.03.2002  |
++--------------+
+
+SV:
+- Fix: Das Archivieren von Nachrichten mit KOM-Header funktioniert nun
+  in allen Variationen und es wird beim Beantworten einer solchen
+  Nachricht jetzt nur noch der eigentliche Text (ohne Kommentar) in den
+  Editor geladen.
+  XP0.PAS, XP3EX.PAS, XP6O.PAS
+
+
+MY:
+- Fix: Wenn w„hrend des Editierens einer Nachricht mit <Alt-E> eine
+  externe Datei editiert wurde, dann wurde beim Verlassen der Nachricht
+  diese ebenfalls als Datei behandelt (kein 'Parken'-Button, falscher
+  Dialog "Datei wurde ge„ndert").
+  EDITOR.PAS, XPE.PAS
+
+
+JG:
+- Fix: Wenn beim Lesen von MIME-Multipart-Nachrichten die Auswahl
+  "gesamte Nachricht" getroffen wurde, wurde je nach zuf„lligem Inhalt
+  der Variable 'charset' die Nachricht mal in den IBM-Zeichensatz
+  konvertiert und mal nicht.
+  XPMIME.PAS
+
+
++--------------+
+|  22.03.2002  |
++--------------+
+
+RB:
+- base64-Decodierung nochmals korrigiert und optimiert (u.a. werden
+  ungltige base64-Strings nicht mehr decodiert).
+  MIMEDEC.PAS
+
+
++--------------+
+|  24.03.2002  |
++--------------+
+
+JG:
+- Fix fr Uralt-Bug: Das Eintragen eines Kopienempf„ngers ("k" im
+  Sendefenster) mit einer anderen Serverbox als der des Empf„ngers sowie
+  anschlieáendes Erzwingen des Versendens ber eine gemeinsame Serverbox
+  ("o" im Sendefenster) konnte zu abenteuerlichen Effekten fhren
+  (Absturz, H„nger, duplizierte Nachrichten). Variable "First" war nicht
+  initialisiert.
+  XP6.PAS
+
+
++--------------+
+|  27.03.2002  |
++--------------+
+
+JG+MY:
+- Fix: Bei Dateianh„ngen in MIME-Multipart-Nachrichten, die nach der
+  Deklaration des Dateinamens in einem "gefalteten" Header noch weitere
+  Angaben wie "modification-date" enthielten, hielt XP diese Angaben fr
+  einen Bestandteil des Dateinamens und konnte daher die Datei im
+  Archiv-Viewer nicht korrekt extrahieren (bzw. gab die Fehlermeldung
+  "Fehler beim Dateizugriff :-(" aus), wenn fr den MIME-Typ
+  'text/plain' der Viewer "(intern)" definiert war.
+  XPMIME.PAS
+
+MY:
+- Fix Archiv-Viewer: Wenn die zu entpackende Datei bereits vorhanden und
+  der Dateiname l„nger war als die in der Fehlermeldung "xyz existiert
+  schon. šberschreiben?" darzustellende (und daher zu krzende) L„nge
+  des Dateinamens, dann hing XP in einer Endlosschleife fest. Der Name
+  wird jetzt in der Reihenfolge Erweiterung, Pfad, Dateiname gekrzt.
+  Dieser Fix betrifft auch alle anderen Stellen, an denen die Routine
+  'fitpath' verwendet wird.
+  TYPEFORM.PAS
+
+MY:
+- Fix Archiv-Viewer: Lange Dateinamen wurden nicht korrekt an den
+  Entpacker bergeben und der Entpacker konnte daher die Datei im Archiv
+  nicht finden (Code von JG am 09.03.2002 nicht vollst„ndig eingebaut).
+  XP4O.PAS
+
+MY:
+- Fix Archiv-Viewer: Wenn XP unter einem LFN-f„higen Betriebssystem lief
+  und die zu entpackende Datei einen langen Dateinamen hatte, jedoch ein
+  nicht LFN-f„higer Entpacker wie PKUNZIP v2.04g verwendet wurde, dann
+  wurde die Datei zwar (mit einem kurzen Dateinamen) entpackt, aber von
+  XP nicht angezeigt ("Datei wurde nicht korrekt entpackt"). XP hatte
+  ausschlieálich nach dem langen Dateinamen gesucht und konnte daher die
+  mit dem kurzen Dateinamen entpackte Datei nicht finden.
+  XP4O.PAS
+
+MY:
+- Fix Archiv-Viewer: Entpacker-Aufrufe, die aufgrund der L„nge des
+  Dateinamens der zu entpackenden Datei l„nger als 127 Zeichen wurden,
+  werden jetzt abgefangen (statt erst den Entpacker aufzurufen und
+  anschlieáend je eine Fehlermeldung vom Entpacker und von XP zu
+  kassieren).
+  XP4O.PAS, XP-D.RQ, XP-E.RQ
+
+MY:
+- Bei der Anzeige von Dateien im internen Lister wird der Dateiname in
+  der Kopfzeile jetzt immer an derselben Stelle angezeigt (unabh„ngig
+  von der Einstellung C/O/L/Rollbalken_bei_Mausbedienung).
+  LISTER.PAS
+
+RB[+MY]:
+- Fehlertolerantere Fassung fr die Decodierung von nach RFC 1522
+  codierten Headerzeilen: Bei Leerzeichen im codierten String wird nicht
+  mehr abgebrochen (relevant z.B. bei VSOUP).
+  MIMEDEC.PAS
+
+JG+MY:
+- Wenn der ASCII-Wert #245 (= Paragraphen-Zeichen unter Codepage 850)
+  ber die Tastatur eingegeben wird, dann wird dieser auf den Wert #21
+  (= Paragraphenzeichen unter Codepage 437 *und* 850) umgesetzt. Fix fr
+  User, die mit XP unter Codepage 850 arbeiten und bei denen ansonsten
+  das Paragraphenzeichen nicht korrekt beim Empf„nger ankommen wrde.
+  INOUT.PAS
+
+MY+JG:
+- Das Paragraphenzeichen (#21) kann jetzt in allen Eingabefeldern, in
+  denen alle Zeichen zugelassen sind, eingegeben werden.
+  MASKE.PAS, MASKE.INC
+
+MY:
+- Interne nderung: An einigen Stellen den festen Wert "80" durch die
+  Variable "screenwidth" ersetzt.
+  XP1S.INC
+
+MY:
+- Interne nderung: Die LFN-Untersttzung wird bei Angabe des Kommando-
+  zeilenschalters "/lfn" nur noch dann aktiviert, wenn sie nicht bereits
+  sowieso schon aktiviert war.
+  XP2.PAS
+
+
++--------------+
+|  29.03.2002  |
++--------------+
+
+MY:
+- Untersttzung des Headers "U-Delivered-To" fr eingehende SMTP-Mails
+  implementiert: Bei Angabe des Schalters "-UseEnvTo" (beim Netztyp
+  RFC/Client zu aktivieren ber "D/B/E/N/Envelope-Header_auswerten")
+  wird statt des SMTP-Headers "RCPT TO" die im (letzten) Header
+  "U-Delivered-To" befindliche Mail-Adresse in den ZConnect-Header
+  "EMP:" geschrieben. Falls zus„tzlich ein "(X-)Envelope-To"-Header
+  vorhanden ist, hat dieser Vorrang.
+  UUZ.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+MY:
+- Ausgehende MIME-Multipart-Nachrichten werden jetzt auch dann keiner
+  Zeichensatzkonvertierung unterzogen, wenn der Header "CHARSET: ISO1"
+  nicht vorhanden ist. Der Header "CHARSET: ISO1" verhindert aber (wie
+  bisher) ebenfalls eine Zeichensatzkonvertierung.
+  UUZ.PAS
+
+MY:
+- Bei eingehenden MIME-Multipart-Nachrichten wird kein Header
+  "TYP: MIME" mehr erzeugt (Kompatibilit„t mit anderen XP-Versionen).
+  UUZ.PAS
+
+MY:
+- Ein- wie ausgehende Nachrichten werden dann als MIME-Multipart-
+  Nachrichten betrachtet, wenn sie einen entsprechenden Content-Type-
+  Header *oder* den Header "TYP: MIME" (oder beides) tragen.
+  UUZ.PAS
+
+MY:
+- Fix: Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt *immer*
+  vom IBM- in den ISO1-Zeichensatz konvertiert (vorher geschah dies nur,
+  wenn der Header "CHARSET: ISO1" nicht vorhanden war).
+  UUZ.PAS
+
+
++------------------+
+|  30./31.03.2002  |
++------------------+
+
+MY:
+- UUZ-Schalter "-client" fr eingehende Nachrichten implementiert
+  (damit der korrekte Header "X-XP-NTP: 41" geschrieben wird).
+  UUZ-Hilfeausgabe angepaát.
+  XP7U.INC, UUZ.PAS
+
+MY:
+- Geringfgige Code-Optimierung (copy => mid).
+  XP7.INC
+
+JG:
+- Fix: Leertasten beim Anlegen von Tastaturmakros werden jetzt als "< >"
+  ins Makro geschrieben (relevant bei Leertasten am Anfang oder am Ende
+  des Makros).
+  XP10.PAS, XP.IHQ, XP-E.IHQ
+
+JG:
+- Im MIME-Auswahlmen kann jetzt mit <Ctrl-Enter> oder <Space>
+  (Leertaste) die Anzeige mit dem XP-Lister statt mit dem eingetragenen
+  MIME-Viewer erzwungen werden.
+  XP4W.INC, XPMIME.PAS, XP.IHQ, XP-E.IHQ
+
+JG:
+- Fix MIME-Viewer: <Esc> in der Mailviren-Warnabfrage l„dt die Nachricht
+  jetzt in den internen Lister und nicht mehr ins "Viewer-Programm fr
+  verd„chtige Dateien" (C/O/V).
+  XP4W.INC
+
+JG:
+- Fix Nachrichtenweiterschalter: Funktion des Schalters war bei MIME-
+  Multipart-Nachrichten oftmals vom Zufall abh„ngig.
+  XP4W.INC
+
+JG:
+- Schnellsuche Brett-šbersicht: Funktion der abgekrzten Suche (Sprung
+  zur n„chsten Ebene der Bretthierarchie) mittels "/" deaktiviert.
+  Feature erfllte seinen Zweck nicht wirklich und blockierte normale
+  Suchen (z.B. kam man nie auf "crosspoint/openxp16/pub/allgemein", wenn
+  vorher "CROSSPOINT.GER" angesprungen worden war).
+  XP4W.INC
+
+JG:
+- Schnellsuche Brett- und User-šbersicht: Leertaste beendet die Suche
+  nicht mehr (<Esc> oder <Enter> funktionieren nach wie vor). So k”nnen
+  jetzt auch Bretter gesucht werden, die Leerzeichen im Namen haben.
+  XP4.PAS
+
+JG[+MY]:
+- Durch den Ausbau von 'Do_XPHilite' berflssig gewordene Variablen
+  und Anweisungen eliminiert.
+  XP0.PAS, XP4.PAS, XP4.INC
+
+JG:
+- Zeilenanzahl (C/A/Z) wird nur noch dann neu gesetzt, wenn notwendig.
+  XP1.PAS
+
+JG:
+- Variable 'msgflags' von integer in longint ge„ndert.
+  XP6O.PAS
+
+JG:
+- In den Datum-Lesemodi (Neues, Heute, Reorg., Datum/Zeit) werden
+  Bretter, die Wiedervorlage-Nachrichten, aber weder ungelesene noch auf
+  den Lesemodus zutreffende enthalten, mit einem "*" markiert.
+  XP4D.INC, XP.IHQ, XP-E.IHQ
+
+MY:
+- In der Fido-Tearline wird jetzt hinter der Versionsnummer wieder der
+  Registrierungsvermerk "R" angezeigt (User-Request).
+  XP6S.INC
+
+MY:
+- XP-Reklamebanner "## CrossPoint ... ##" wird jetzt auch an Fido-
+  Netmails angeh„ngt, wenn C/O/N/##_XP_## auf "PMs" oder "immer" steht
+  (User-Request).
+  XP6S.INC
+
+MY:
+- Die farbliche Unterlegung der Funktionstasten in der oberen Funktions-
+  tastenleiste geriet hin und wieder durcheinander (nach N/S/S z.B.).
+  Ursprngliche (nicht optimierte) Display-Routine 'showkeys.ks' wieder
+  eingebaut.
+  XP1HELP.PAS
+
+JG+MY:
+- Konfigurierbare Funktionstasten (<Shift-F1> etc.) untersttzen jetzt
+  das Makro $ASK, das einen Eingabedialog ausfhrt, mittels dessen dem
+  auszufhrenden Programm einer oder mehrere Parameter bergeben werden
+  k”nnen (z.B. URL aus Lister kopieren und mit Browser starten).
+  XPKEYS.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -1296,20 +1687,26 @@ JG:
 OpenXP/16: Entwickler und weitere aktiv Mitwirkende
 ===================================================
 
-MY: Michael Heydekamp      (Entwicklung, Online-Hilfe, Initiator)
+MY: Michael Heydekamp      (Koordination, Entwicklung, Online-Hilfe,
+                            User/Tester, Bugfinder, Ideengeber)
 JG: Jochen Gehring         (Entwicklung, Beratung [jgXP])
 SV: Stefan Vinke           (Entwicklung, Beratung)
-AS: Andreas Seybold        (Entwicklung)
-RB: Robert B”ck            (Entwicklung, Beratung [XP2-Team])
+RB: Robert B”ck            (Entwicklung, Beratung, Webseite [XP2-Team])
 MH: Martin Max Huckenbeck  (Entwicklung, Beratung [XP2-Team])
 OH: Oliver Hertel          (Entwicklung, Beratung [XP2-Team])
 MM: Maik Mller            (Entwicklung, Beratung [XP2-Team])
-ST: Steve Tell             (Webseite, User/Tester, Bugfinder,
-                            Ideengeber)
 HH: Heiko Hamann           (Webseite, User/Tester, Bugfinder,
-                            Ideengeber, evtl. sporadische Entwicklung)
-JM: Joachim Merkel         (User/Tester, Bugfinder, Ideengeber, evtl.
-                            sporadische Entwicklung, ZC/RFC-Konformit„t)
+                            Ideengeber, evtl. gelegentliche
+                            Entwicklung)
+JM: Joachim Merkel         (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung,
+                            ZC/RFC-Konformit„t)
+MW: Martin Wodrich         (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
+AS: Andreas Seybold        (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
+MF: Martin Foster          (User/Tester, Bugfinder, Ideengeber,
+                            engl. Ressourcen und Online-Hilfe)
 HG: Harald Gerber          (User/Tester, Bugfinder, Ideengeber)
 JP: Jan Peters             (User/Tester, Bugfinder, Ideengeber)
 JS: Jan Selmer             (User/Tester, Bugfinder, Ideengeber)
@@ -1320,9 +1717,10 @@ AA: Andreas Andre          (User/Tester, Bugfinder, Ideengeber)
 TJ: Thomas Jacoby          (User/Tester, Bugfinder, Ideengeber)
 FH: Frank Hennig           (User/Tester, Bugfinder, Ideengeber)
 KK: Klaus-Peter Kleinsimon (User/Tester, Bugfinder, Ideengeber)
-AB: Andreas Bauer          (User/Tester, Bugfinder, Ideengeber, evtl.
-                            sporadische Entwicklung)
+AB: Andreas Bauer          (User/Tester, Bugfinder, Ideengeber,
+                            evtl. gelegentliche Entwicklung)
 AS: Alfred Schroeder       (User/Tester, Bugfinder, Ideengeber)
 HT: Hans-Jrgen T„nzer     (User/Tester, Bugfinder, Ideengeber)
 MK: Markus K„mmerer        (Gelegentliche Bugfixes [OpenXP/32])
 MA: Malte Kiesel           (Gelegentliche Bugfixes [OpenXP/32])
+CF: Claus F„rber           (Gelegentliche Bugfixes [OpenXP/32])
