@@ -8,16 +8,6 @@ Project coordination, programming <form action="https://www.paypal.com/cgi-bin/w
 UUZ, UUCP, RFC-Konformität
 UUZ, UUCP, RFC conformance
 
-<a href="http://come.to/schnoerkel/">Malte Kiesel</a>
-<a href="mailto:ma&#64;openxp.de">ma</a>
-Fidomailer, Netcall-Routinen, ObjCOM
-Fidomailer, netcall functions, ObjCOM
-
-<a href="http://www.uni-jena.de/~i7lema">Matthias Leonhardt</a>
-<a href="mailto:ml&#64;openxp.de">ml</a>
-Linux-Portierung, CVS Server
-Porting to Linux, CVS Server
-
 <a href="http://www.stuebner.de">Matthias St&uuml;bner</a>
 <a href="mailto:ms&#64;openxp.de">ms</a>
 Dokumentation, Onlinehilfe
