@@ -60,7 +60,7 @@ type
   protected
 
     FName       : string;       { FQDN }
-    FIP         : longint;      { Raw-IP }
+    FIP         : LongWord;     { Raw-IP }
     FResolved   : boolean;      { Aufgeloest (aufloesbar) }
     FAutoResolve: boolean;      { Automatisches aufloesen? }
 
@@ -69,8 +69,8 @@ type
     function  GName: string;
 
     procedure SAutoResolve(b: boolean);
-    procedure SName(s: string);
-    procedure SRaw(i: longint);
+    procedure SName(const s: string);
+    procedure SRaw(i: LongWord);
 
   public
 
@@ -90,8 +90,8 @@ type
       (vorsicht bei Internet by Call) }
     property AutoResolve: boolean read FAutoResolve write SAutoResolve;
 
-    { Raw behandelt die IP als Longint }
-    property Raw: longint read FIP write SRaw;
+    { Raw behandelt die IP als LongWord }
+    property Raw: LongWord read FIP write SRaw;
 
     { Adresse aufgeloset }
     property Resolved: boolean read FResolved;
@@ -166,7 +166,7 @@ begin
   end;
 end;
 
-procedure TIP.SName(s: string);
+procedure TIP.SName(const s: string);
 var
   hostinfo: PHostent;
 begin
@@ -192,7 +192,7 @@ begin
 end;
 
 
-procedure TIP.SRaw(i: longint);
+procedure TIP.SRaw(i: LongWord);
 var
   hostinfo: PHostent;
 begin
@@ -244,6 +244,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2001/10/19 00:35:55  mk
+  - fixed range check error: RAW-IP Adress is LongWord, not Integer
+
   Revision 1.13  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
