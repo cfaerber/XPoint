@@ -87,7 +87,7 @@ var  fname,
 
    procedure create_header;
    var s        : string;
-       x,y      : byte;
+       x,y      : integer;
        ixp,illp : word;
        flags    : string[80];
        b        : byte;
@@ -121,12 +121,12 @@ var  fname,
    end;
 
    function create_page:boolean;
-   type za = array[1..250] of string[127];
+   type za = array[1..500] of string[127];
    var pnr,last,next,
        size          : word;
        i,lines,p,
        p1,p2,res     : integer;
-       qvws          : byte;
+       qvws          : integer;
        s,qvref,st    : string;
        z             : ^za;
        qvw           : array[1..1024] of packed record
@@ -136,7 +136,7 @@ var  fname,
 
      function nextqvref:word;
      var s : string[10];
-         p : byte;
+         p : integer;
          w : word;
          r : integer;
      begin
@@ -153,7 +153,7 @@ var  fname,
      end;
 
      function compr(s:string):string;
-     var p,p1 : byte;
+     var p,p1 : integer;
      begin
        while pos('   ',s)>0 do begin
          p:=pos('   ',s); p1:=p;
@@ -419,6 +419,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2000/11/13 18:57:56  mk
+  - Limit der maximalen Zeilen auf 500 gesetzt
+
   Revision 1.18  2000/11/12 22:30:12  mk
   - fixed some linux and other problems
 
