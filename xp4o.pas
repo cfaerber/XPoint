@@ -1734,9 +1734,9 @@ begin
         gotoxy(xx,y+2); write(n*100 div cnt:3);
         if user then
         begin
-          s:=dbReadStr(ubase,'username');
+          s:=dbReadStrN(ubase,ub_username);
           ab:=dbreadint(ubase,'adrbuch');
-          sa:=dbreadstr(ubase,'pollbox');
+          sa:=dbReadStrN(ubase,ub_pollbox);
           if (dbReadInt(ubase,'userflags') and 4=0) AND       { keine Verteiler }
            (left(s,4)<>#0+'$/T') AND                          { keine Trennzeile }
           not (onlyadress and (ab=0))                         { Evtl. nur Adressbuch-User }
@@ -1755,7 +1755,7 @@ begin
         else begin
           if sort=2 then ab:=dbreadint(bbase,'gruppe')
           else ab:=-1;
-          s:=dbReadStr(bbase,'brettname');
+          s:=dbReadStrN(bbase,bb_brettname);
           if left(s,3)='$/T'           { keine Trennzeile }
           then begin
            if sort=1 then writeln(t,dup(40,s[4]));
@@ -2895,6 +2895,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.35  2002/01/30 17:44:37  mk
+  - const-parameter fuer dbReadXX verwenden
+
   Revision 1.47.2.34  2001/12/20 15:22:14  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
