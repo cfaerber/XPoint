@@ -1091,7 +1091,9 @@ label again;
                end;
             1: begin // disconnect
                  List.Lines.Delete(List.Lines.IndexOf(s));
-                 RCList[RCList.IndexOf(s + ' *')] := s1;
+                 Index := RCList.IndexOf(s1 + ' *');
+                 if Index = -1 then Index := RCList.IndexOf(s1);
+                 if Index <> -1 then RCList[Index] := s1;
                end;
           end;
         except
@@ -1697,6 +1699,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/04/07 10:06:42  mk
+  - fixed disconnect of newsgroups
+
   Revision 1.38  2001/04/06 12:54:01  mk
   - fixed unix filename handling with .bl/.rc
 
