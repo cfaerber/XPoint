@@ -1198,7 +1198,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                     ||  ||\-- Reply-To-Empf„nger vorhanden
                     ||  |\--- KOP/OEM/EMP vorhanden
                     ||  \---- RTA
-                    ||
+                    ||                                                 
                     |\------- immer
                     \-------- erster Start nach neuer Version }
 
@@ -1215,11 +1215,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses : string;
 
-{ Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attributen }
-{ in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
-
-  charbuf     : shortstring;                 { Nicht zu klein :-) }
-  attrbuf     : array [1..sizeof(shortstring)] of smallword;
+       AttrBuf: array[1..sizeof(Shortstring)] of SmallWord;
 
   // Speichert alle Zeilen in der Konfiguration, die nicht
   // erkannt und ausgewertet wurden, siehe xp2cfg.inc
@@ -1235,6 +1231,16 @@ implementation
 
 {
   $Log$
+  Revision 1.188  2003/09/21 20:17:39  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
   Revision 1.187  2003/09/11 22:30:05  mk
   - added special color for signatures
 

@@ -511,7 +511,7 @@ end;
     result := (FirstChar(s)<>'=') or ((Length(s)>=2)and(s[2]<>'-'));
   end;
 
-  procedure SelectAddress_OnDisplay(x, y: xpWord; var s: string);
+  procedure SelectAddress_OnDisplay(x, y: Integer; var s: string);
   var i: Integer;
   begin
     i := CPos('=',s);
@@ -2070,6 +2070,16 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.15  2003/09/21 20:17:41  mk
+// - rewrite of Listdisplay:
+//   removed Assemlber function MakeListDisplay, now
+//   recoded in Pascal in ListDisplay
+// - use Integer instead of xpWord in TListerDisplayLineEvent
+// - removed global Variable CharBuf
+// - new parameters for ConsoleWrite, removed CharBuf support
+// - Highlight Lines with URL in Lister
+// - Added support for Highlighting in Lister with Unicode-Display
+//
 // Revision 1.14  2003/09/16 23:56:42  cl
 // - USABILITY FIX: #704179 - 3.9.4: n/u/ä -> Änderungen speichern
 //

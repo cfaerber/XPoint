@@ -653,163 +653,73 @@ const
             0  +  1 +         8          ){ #255 };
 
 { Variable in XP0.PAS: }
-{ charbuf     : string[255];}                  {82 Zeichen}
-{ attrbuf     : array [1..255] of smallword;}  {82 Attribute}
+{ charbuf     : string[255];}
+{ attrbuf     : array [1..255] of smallword;}
 
-{ Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
-{ mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
-
-procedure MakeListDisplay(const s: shortstring); assembler; {&uses ebx, esi, edi}
-
-asm
-            mov edi,s
-            cld
-            xor ecx,ecx
-            mov cl,[edi]
-            inc edi
-            push ecx
-
-            xor ebx,ebx                    { s + color -> dispbuf }
-
-            mov dh,0
-            mov dl,textattr
-            mov al,' '                     { Abgrenzung links }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc ebx
-
-@dcopylp:   mov al,[edi]
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc edi
-            inc ebx
-            loop @dcopylp
-
-            mov al,' '                     { Abgrenzung rechts }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            pop ecx
-
-            cmp ListXhighlight,0           { keine Hervorhebungen? }
-            je @nodh
-            mov al,'*'
-            call @testattr                 { sichert cx }
-            mov al,'_'
-            call @testattr
-            mov   al,'/'
-            call  @testattr
-
-@nodh:      mov byte ptr charbuf[0],cl
-            add ecx,ecx
-            mov word ptr attrbuf[0],cx
-            jmp @ende
-
-
-{-----------------------}
-
-@testattr:  pusha
-            mov edx,ecx
-            xor ebx,ebx
-
-            {-----------}
-@ta1:       push eax
-            mov ecx,edx
-            xor esi,esi
-
-@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }
-            jne @tanext1
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],1      { Byte vor Startzeichen ok? }
-             jz @tanext1
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],2      { Byte vor Startzeichen ok? }
-             jnz @tastart                          { Startzeichen gefunden }
-
-@tanext1:   inc esi
-            loop @talp1
-            jmp @taende
-
-            {-----------}
-
-@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }
-            dec ecx
-            jz @taende                             { Mindestens 1 Zeichen abstand }
-            dec ecx                                { min. ein Zeichen Abstand }
-            jz @taende
-            inc si                                 { dann Endzeichen Checken }
-
-@talp2:     cmp al,byte ptr charbuf[esi]
-            jne @tanext2
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],4      { Byte vor Endzeichen ok? }
-             jz @tanext2
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],8      { Byte nach Endzeichen ok? }
-             jnz @tafound2                        { Endzeichen gefunden }
-
-@tanext2:   inc esi
-            loop @talp2
-            jmp @taende
-
-            {------------}
-
-@tafound2:  push ecx
-            mov ecx,esi
-            sub ecx,edi
-            dec ecx                                { cx <- Anzahl hervorgeh. Zeichen }
-            mov ah,listhicol
-
-@tacopy1:   mov al,byte ptr charbuf[edi+1]        { hervorgehobenen Text eins nach }
-            mov byte ptr charbuf[edi],al          { vorne kopieren; Farbe tauschen }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            loop @tacopy1
-
-            pop ecx
-            dec ecx                                { restliche Zeichen }
-            jz @addspace
-
-@tacopy2:   mov al,byte ptr charbuf[edi+2]         { Zeichen nach links schieben }
-            mov byte ptr charbuf[edi],al
-            mov ah,byte ptr attrbuf[edi*2+4]       { Attribute ebenso !!! }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            dec ecx
-            jns  @tacopy2
-
-@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anhaengen }
-            pop eax
-            jmp @ta1                               { ... und das Ganze nochmal }
-
-@taende:    pop eax
-            mov ecx,edx
-            popa
-            ret
-            // this is end of internal function testattr
-{-------------------------}
-@ende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end; { of MakeListdisplay }
-{$ENDIF }
-
-
-procedure ListDisplay(x,y:xpWord; var s:string);
+procedure ListDisplay(x,y: Integer; var s: string);
 var
-  s0: shortstring;
-begin
-  s0:= s;
-  makelistdisplay(s0);
-  Consolewrite(x,y,length(s0));
-  s:= s0;                               { Falls var irgendeine Bedeutung hat }
-end;
+  i, j, j2, c, a, b,
+  StartAttr, CountAttr: Integer;
+  Unicode: Boolean;
+  CharBuf: String;
 
-procedure ListDisplayUTF8(x,y:xpWord; var s: string);
+   procedure WriteChar(i: Integer);
+   begin
+     CharBuf[j] := s[i];
+     AttrBuf[j2] := TextAttr;
+     Inc(j); Inc(j2);
+     {$IFDEF Win32Console }
+       if (s[i] > Char($7f)) and not Unicode then
+       begin
+         Unicode := true;
+         Dec(j2);
+       end else
+         Unicode := false;
+     {$ENDIF }
+   end;
+
 begin
-  FWrt(x,y,s);
+  s := ' ' + s + ' ';
+  i := 1; j := 1; j2 := 1;
+  Unicode := false;
+  SetLength(CharBuf, Length(s));
+  Fillchar(attrbuf, Sizeof(attrbuf), 0);
+
+  while i < length(s) do
+  begin
+    Inc(i);
+    if s[i] in ['*', '_', '/'] then
+    begin                                      // check starting char
+      if ((Delimiters[Ord(s[i-1])] and 1) <> 0) and
+        ((Delimiters[Ord(s[i+1])] and 2) <> 0) then
+      begin
+        Inc(i); StartAttr := j2;
+        CountAttr := 0;
+        while i < Length(s) do
+        begin
+          WriteChar(i);
+          Inc(i); Inc(CountAttr);              // at least one char space
+          if s[i] in ['*', '_', '/'] then     // check ending char
+          begin
+            if ((Delimiters[Ord(s[i-1])] and 4) <> 0) and
+              ((Delimiters[Ord(s[i+1])] and 8) <> 0) then
+            begin
+              for c := 0 to CountAttr-1 do
+                AttrBuf[StartAttr+c] := ListHiCol;
+              break;
+            end;
+          end;
+       end;
+      end;
+    end else
+      WriteChar(i);
+  end;
+
+  if FindUrl(s, a, b) then
+    for i := a+1 to b do
+      attrbuf[i] := ListHiCol;
+
+  Consolewrite(x, y, CharBuf);
 end;
 
 procedure interr(const txt:string);
@@ -1990,10 +1900,7 @@ begin
       List.OnColor := listColor;
       if cols and 2<>0 then
       begin
-        if utf8 then 
-          List.OnDisplayLine := ListdisplayUTF8
-        else
-          List.OnDisplayLine := Listdisplay;
+        List.OnDisplayLine := Listdisplay;
         xp1o.ListXHighlight:=ListHighlight;
         end;
       end;
@@ -3297,6 +3204,16 @@ end;
 
 {
   $Log$
+  Revision 1.189  2003/09/21 20:17:40  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
   Revision 1.188  2003/09/14 14:20:32  mk
   - fixed not working Ctrl-W in Lister
 
@@ -3619,5 +3536,4 @@ end;
   - Replaced initlization by InitxxxUnit to get control over init processes
 }
 end.
-
 

@@ -121,7 +121,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   {$IFDEF unix}xplinux,{$ENDIF}
   fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
-  xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,
+  xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp, classes,
   xpmodemscripts,
   addresses,
   xpglobal;
@@ -2274,7 +2274,7 @@ end;
 procedure EditAddServersList(var cr:customrec);
 var   d          : DB;
       x,y     : integer;
-      nt: eNetz;  //integer?
+      nt: eNetz;  // byte!
       t          : taste;
       nr,bp      : shortint;
       gl,width   : Integer;
@@ -2591,22 +2591,19 @@ begin  { --- of EditAddServersList --- }
 end;
 
 
-function addServersTest(var s:string):boolean;
-var   p,i,j,
-      box_anz    : Integer;
-      nt         : eNetz;
-      s1         : string;
-      d          : DB;
-      boxlist    : array[1..maxboxen] of string;
-      dupelist   : array[1..maxboxen] of byte;       { Array fuer Dupes }
+function addServersTest(var s: String): Boolean;
+var
+  i, Dummy: Integer;
+  s1: string;
+  BoxList: TStringList;
 
-  { Die hier mehrfach vorkommende Pruefung "if own_Name <> '' then..."  }
+  { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
-  { 'Zusaetzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
+  { 'ZusÑtzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
   { Fido) sind oder aus 'EditNetcallDat' in xp10.pas kommen. In        }
   { letzterem Fall ziehen wir abweichende (= weniger restriktive)      }
   { Konsequenzen - z.B. lassen wir nach positiv beantworteter          }
-  { Rueckfrage Dupes zu und uebergehen ueberfluessige bzw. unzutreffende   }
+  { RÅckfrage Dupes zu und Åbergehen ÅberflÅssige bzw. unzutreffende   }
   { Tests wie "eingetragene Box = editierte Box?".                     }
 
   { Die Variable 'showErrors' dient als Flag, ob die Einzel-Fehlermel- }
@@ -2617,124 +2614,69 @@ var   p,i,j,
 
   { Hinweis: 'addServersTest' wird sowohl als 'normale' Funktion als   }
   { auch als Masken-Testfunktion mittels 'msetvfunc(addServersTest)'   }
-  { (siehe '_EditPPP' in xp9.inc) aufgerufen. Aus diesem Grund koennen  }
+  { (siehe '_EditPPP' in xp9.inc) aufgerufen. Aus diesem Grund kînnen  }
   { wir die oben angesprochenen Bedingungen nicht als Parameter        }
-  { uebergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
-  { ueber Variablen ab.                                                 }
+  { Åbergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
+  { Åber Variablen ab.                                                 }
 
 begin
-  addServersTest:=true;
+  Result := true;
   s1:=trim(s);
-  if s1='' then exit;
-  if own_Name <> '' then
-    maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
-  for i:=1 to maxbox do boxlist[i] := '';
-  box_anz:=0;
-  repeat
-    inc(box_anz);
-    p:=cpos(' ',s1);
-    if p=0 then boxlist[box_anz]:=s1
-    else begin
-      boxlist[box_anz]:=leftstr(s1,p-1);             { Boxen-Array fuellen }
-      s1:=trim(mid(s1,p+1));
-    end;
-  until p=0;
-  { ------------------------------------------------------ }
-  { Dupeschleife - fuellt ein Array mit den Werten:         }
-  {   0 = Box ist ein Dupe                                 }
-  {   i = Anzahl gleicher Eintraege (wird im ersten         }
-  {       (Element, in dem die Box vorkommt, eingetragen)  }
-  { In Abhaengigkeit von diesen Werten in 'dupelist' werden }
-  { die in 'boxlist' hinterlegten Boxen durch die Funktion }
-  { gejagt oder uebersprungen (wenn Wert=0). Grund: Wir     }
-  { wollen fuer jede mehrfach vorkommende Box nur einmal    }
-  { die Fehlermeldung(en) ausgeben (und damit auch die     }
-  { Performance erhoehen).                                  }
-  { Diese Dupebehandlung gilt nur im Box-Config-Dialog     }
-  { (weil in 'EditNetcallDat' Dupes zulaessig sind).        }
-  { ------------------------------------------------------ }
-  for i:=1 to box_anz do dupelist[i] := 1;
-  for i:=1 to box_anz do                           { Dupe-Array fuellen }
-  begin
-    if dupelist[i]=0 then continue;
-    for j:=i to box_anz do
+  if s1='' then
+    Exit;
+
+  BoxList := TStringList.Create;
+  BoxList.Sorted := true;
+  try
+    for i := 1 to WordCount(s1) do
     begin
-      if (j=i) or (dupelist[j]=0) then continue;
-      if uppercase(boxlist[j]) = uppercase(boxlist[i]) then
+      s := Trim(UpperCase(ExtractWord(i, s1)));
+      if (Own_Name <> '') and BoxList.Find(s, Dummy) then
       begin
-        inc(dupelist[i]);                { Anzahl der Eintraege erhoehen }
-        dupelist[j]:=0;                  { 0 = Dupe                    }
-      end;
-    end;
-  end;
-  { ----------------- Ende Dupeschleife ------------------ }
-  dbOpen(d,BoxenFile,1);
-  for i:=1 to box_anz do
-  begin
-    if own_Name <> '' then
-    begin
-      if dupelist[i]=0 then continue;
-      if dupelist[i] > 1                          { Box-Config-Dialog? }
-      then begin
-        addServersTest:=false;
-        if showErrors then
-          fehler(getreps2(10900,60,boxlist[i]) + ' ' +
-                 getreps2(10900,61,strs(dupelist[i])))
-                              { 'Serverbox "%s" ist %s mal vorhanden!' }
-        else begin
-          dbClose(d);
-          exit;
-        end;
-      end;
-    end;
-    dbSeek(d,boiName,uppercase(boxlist[i]));
-    if not dbFound then
-    begin
-      addServersTest:=false;
-      if showErrors then
-        rfehler1(962,boxlist[i])   { 'Serverbox "%s" existiert nicht!' }
-      else begin
-        dbClose(d);
-        exit;
-      end;
-    end
-    else if own_Name <> '' then                   { Box-Config-Dialog? }
-    begin
-      if uppercase(boxlist[i]) = own_Name then
+        Result := false;
+        if ShowErrors then
+          fehler(getreps2(10900,60, s)) { 'Serverbox "%s" ist mehrfach vorhanden!' }
+        else
+          break;
+      end else
+        BoxList.Add(s);
+
+      if GetServerFileName(s, '') = '' then
       begin
-        addServersTest:=false;
-        if showErrors then
-          rfehler1(963,boxlist[i])
-              { Serverbox "%s" ist identisch mit editierter Serverbox!'}
-        else begin
-          dbClose(d);
-          exit;
-        end;
-      end
-      else begin
-        nt := dbNetztyp(d);
-        if nt <> own_Nt then
+        Result := false;
+        if ShowErrors then
+          RFehler1(962, s)   { 'Serverbox "%s" existiert nicht!' }
+        else
+          break;
+      end else
+      if own_Name <> '' then                   { Box-Config-Dialog? }
+      begin
+        if s = Uppercase(own_Name) then
         begin
-          addServersTest:=false;
-          if showErrors then
-            fehler(getreps2(10900,60,boxlist[i])+' '+
-                   getreps2(10900,64,Netz_Typ(own_Nt)))
-                   { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
-          else begin
-            dbClose(d);
-            exit;
+          Result := false;
+          if ShowErrors then
+            RFehler1(963, s)
+                { Serverbox "%s" ist identisch mit editierter Serverbox!'}
+          else
+            break;
+        end else
+        begin
+          if ntBoxNetztyp(s) <> own_Nt then
+          begin
+            Result := false;
+            if ShowErrors then
+              Fehler(getreps2(10900,60, s) + ' ' +
+                     getreps2(10900,64,Netz_Typ(own_Nt)))
+                     { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
+            else
+              break;
           end;
         end;
       end;
     end;
+  finally
+    BoxList.Free;
   end;
-  if box_anz >= maxbox then
-  begin
-    addServersTest:=false;
-    if showErrors then
-      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-Eintraege moeglich!' }
-  end;
-  dbClose(d);
 end;
 
 
@@ -2994,6 +2936,16 @@ end;
 
 {
   $Log$
+  Revision 1.68  2003/09/21 20:17:40  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
   Revision 1.67  2003/09/15 16:06:30  mk
   - cleaned up RFC/Client code
   - removed some limits

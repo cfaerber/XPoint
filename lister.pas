@@ -63,7 +63,7 @@ type
   TListerTestSelectEvent = function(const s: string; down: boolean): boolean;
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
-  TListerDisplayLineEvent = procedure(x, y: xpWord; var s: string);
+  TListerDisplayLineEvent = procedure(x, y: Integer; var s: String);
   TListerColorEvent = function(const s: string; line: longint): byte;
 
   { moegliche Optionen fuer den Lister                             }
@@ -1115,6 +1115,16 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.90  2003/09/21 20:17:39  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
   Revision 1.89  2003/09/11 22:30:04  mk
   - added special color for signatures
 

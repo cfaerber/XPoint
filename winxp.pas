@@ -132,7 +132,7 @@ procedure ClrScr;
   Der Textbackground (nicht die Farbe!) wird nicht veraendert }
 procedure SDisp(const x,y:xpWord; const s:string);
 
-procedure consolewrite(x,y:xpWord; num: Integer);
+procedure consolewrite(x,y: Integer; const s: String);
 
 
 { Routinen fuer 32 Bit Versionen, die den Zugriff auf den Bildschirm
@@ -441,28 +441,29 @@ end;
 {$ENDIF NCRT }
 
 {$IFDEF Win32Console }
-  procedure consolewrite(x,y:xpWord; num: Integer);  { 80  Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y: Integer; const s: String);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
     OutRes: ULong;                            { Auf Konsole ausgeben....}
+    Len: Integer;
   begin
     WritePos.X := x-1; WritePos.Y := y-1;
-    Num := Win32_Wrt(WritePos,Copy(charbuf,1,num));
-    WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
+    Len := Win32_Wrt(WritePos, s);
+    WriteConsoleOutputAttribute(OutHandle, @attrbuf[1], Len, WritePos, OutRes);  end;
 {$ELSE }
-  procedure consolewrite(x,y:xpWord; num: Integer);  { Num = Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y: Integer; const s: String);  { Num = Chars in xp0.charpuf (String) }
   var
-    i, j: Integer;                        
+    i, j: Integer;
   begin
-    i := 1;                             
-    while i < num do
+    i := 1;
+    while i < Length(s) do
     begin
       j := i;
       { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
-      while((AttrBuf[i+1] = AttrBuf[j+2]) and (j<num)) do inc(j);
+      while((AttrBuf[i+1] = AttrBuf[j+1]) and (j < Length(s))) do inc(j);
 
       TextAttr := Byte(AttrBuf[i+1]);
-      FWrt(x+i-1, y, Copy(CharBuf, i, j-i+1));
+      FWrt(x+i-1, y, Copy(s, i, j-i+1));
       i := j; inc(i);
     end;
   end;
@@ -1537,6 +1538,16 @@ end;
 
 {
   $Log$
+  Revision 1.98  2003/09/21 20:17:39  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
   Revision 1.97  2003/08/25 07:05:50  mk
   - added OS/2 support
 
