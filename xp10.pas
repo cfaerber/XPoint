@@ -850,8 +850,8 @@ var
       t1     : taste;
       ta     : tap;
       tt     : string;
-      ms     : string;
-      ok     : boolean;
+      MacroString: string;
+      ok,ESCPressed: boolean;
       komm   : string;
   begin
     dialog(58,9,getres2(1006,1),x,y);    { 'Tastatur-Makro anlegen' }
@@ -895,56 +895,70 @@ var
       readmkey(false,x+13,y+5,ta,tt);
 
       attrtxt(col.coldialog);
-      mwrt(x+34,y+1,'<Shift '#17'Ä>  = '+getres2(1006,6));   { 'l”schen' }
-      mwrt(x+34,y+2,'<Shift Esc> = '+getres2(1006,7));       { 'Abbruch' }
-      mwrt(x+33,y+3,' <Shift '#17'ÄÙ> = '+getres2(1006,8));  { 'ok'      }
+      mwrt(x+33,y+1,'<ESC> '#17'Ä    = '+getres2(1006,6));   { 'l”schen' }
+      mwrt(x+33,y+2,'<ESC> c     = '+getres2(1006,7));       { 'Abbruch' }
+      mwrt(x+33,y+3,'<ESC> '#17'ÄÙ   = '+getres2(1006,8));   { 'ok'      }
+      mwrt(x+33,y+4,'<ESC> <ESC> = <ESC>');
 
-      ms:='';                        { Definition einlesen }
+      MacroString:='';                        { Definition einlesen }
       a:=0;
       brk:=false; ok:=false;
       repeat
+        ESCPressed:=false;
         attrtxt(col.coldiainp);
-        mwrt(x+13,y+7,' '+forms(mid(ms,a+1),40)+' ');
-        gotoxy(x+14+length(ms)-a,y+7);
+        mwrt(x+13,y+7,' '+forms(mid(MacroString,a+1),40)+' ');
+        gotoxy(x+14+length(MacroString)-a,y+7);
+
         repeat
           get(t1,curon);
           if t1=keyf1 then begin
             pushhp(547); hilfe; pophp;
             end;
+          if t1=keyesc then
+            if not ESCPressed then begin
+              // remember ESC and read in next key
+              ESCPressed:=true;
+              t1:=keyf1;
+              end else begin
+              // ESC pressed twice, this is a real ESC
+              ESCPressed:=false;
+              end;
         until (t1<>keyf1) and keyok(ta,t1);
-        if kb_shift and (t1=keybs) then begin
-          if (ms<>'') then begin
-            if RightStr(ms,1)='>' then
+
+        if ESCPressed and (t1=keybs) then begin
+          // Delete last macro key
+          if (MacroString<>'') then begin
+            if RightStr(MacroString,1)='>' then
             begin
-              setlength(ms, length(ms)-2);{dec(byte(ms[0]),2);}  { 2 wg. '>', '<' und '^' }
-              while (ms<>'') and (RightStr(ms,1)<>'<') do
-                Dellast(ms);
-              Dellast(ms)
+              setlength(MacroString, length(MacroString)-2); { 2 wg. '>', '<' und '^' }
+              while (MacroString<>'') and (RightStr(MacroString,1)<>'<') do
+                Dellast(MacroString);
+              Dellast(MacroString)
             end
-            else if (length(ms)>=2) and (ms[length(ms)-1]='^') then
-              SetLength(ms, length(ms)-2)
+            else if (length(MacroString)>=2) and (MacroString[length(MacroString)-1]='^') then
+              SetLength(MacroString, length(MacroString)-2)
             else
-              DelLast(ms);
-            a:=max(0,min(a,length(ms)-40));
+              DelLast(MacroString);
+            a:=max(0,min(a,length(MacroString)-40));
             end;
           end
         else begin
-          brk:=(t1=keyesc) and kb_shift;
-          ok:=(t1=keycr) and kb_shift;
-          if (length(ms)<190) and not (ok or brk) then begin
-            if t1='>' then ms:=ms+'<>>'
-            else if t1='<' then ms:=ms+'<<>'
-            else if t1='^' then ms:=ms+'<^>'
-            else if t1>=' ' then ms:=ms+t1
-            else if t1>=#1 then ms:=ms+'^'+chr(ord(t1[1])+64)
-            else ms:=ms+'<'+ta^[ord(t1[2])]+'>';
-            a:=max(a,length(ms)-40);
+          brk:=(t1='c') and ESCPressed;
+          ok:=(t1=keycr) and ESCPressed;
+          if (length(MacroString)<190) and not (ok or brk) then begin
+            if t1='>' then MacroString:=MacroString+'<>>'
+            else if t1='<' then MacroString:=MacroString+'<<>'
+            else if t1='^' then MacroString:=MacroString+'<^>'
+            else if t1>=' ' then MacroString:=MacroString+t1
+            else if t1>=#1 then MacroString:=MacroString+'^'+chr(ord(t1[1])+64)
+            else MacroString:=MacroString+'<'+ta^[ord(t1[2])]+'>';
+            a:=max(a,length(MacroString)-40);
             end;
           end;
       until brk or ok;
       spop(hotkeys);
       if not brk then begin
-        s:=forms(tt,15)+forms(mt,10)+ms;
+        s:=forms(tt,15)+forms(mt,10)+MacroString;
         if komm<>'' then s:=forms(s,225)+komm;
         end;
       dispose(ta);
@@ -2061,6 +2075,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.56  2001/07/27 19:01:01  ma
+  - changed behaviour of macro entering routine, works with Win9x now
+
   Revision 1.55  2001/07/23 16:05:17  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)
