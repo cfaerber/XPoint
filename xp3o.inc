@@ -930,7 +930,7 @@ begin
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-              flags:=1;  { aufnehmen }
+              flags:=1 +iif(newuseribm,0,8);
               dbWrite(ubase,'userflags',flags);
               adrbuch:=NeuUserGruppe;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
@@ -1202,6 +1202,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.6  2000/11/30 14:10:36  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.21.2.5  2000/11/20 19:42:15  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 

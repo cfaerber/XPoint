@@ -1051,7 +1051,7 @@ again:
                    ReplaceVertreterbox(pollbox,true);
                  dbWriteN(ubase,ub_pollbox,pollbox);
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-                 b:=1;
+                 b:=1 + iif(newuseribm,0,8);
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
                  dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adreábuch }
                  end
@@ -1276,6 +1276,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.10  2000/11/30 14:10:36  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.20.2.9  2000/11/22 09:47:24  mk
   MH:- Kommentarbaum wurde unnoetigerweise neu aufgebaut
 

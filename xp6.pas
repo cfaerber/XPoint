@@ -1578,11 +1578,8 @@ fromstart:
         dbWrite(ubase,'pollbox',box);
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
-        b:=1;
+        b:=1+iif(newuseribm,0,8);;
         dbWrite(ubase,'adrbuch',NeuUserGruppe);
-        {if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
-        { 14.02.2000 MH: UserFlags: 8=ASCII }
-      if not newuseribm then inc(b,8); { MH: NewUserIBM berÅcksichtigen }
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
@@ -2218,6 +2215,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.18  2000/11/30 14:10:36  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.39.2.17  2000/11/19 11:12:25  mk
   - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
 
