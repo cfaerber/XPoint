@@ -41,13 +41,14 @@ const
   pformstr    = ' (OS/2)';      { 32 Bit OS/2 mit FPC oder VP }
   {$ENDIF}
   {$IFDEF Linux}
-  {$ifndef BSD}
   pformstr    = ' (Linux)';     { 32 Bit Linux mit FPC oder VP }
-  {$endif}
   {$ENDIF}
   {$IFDEF FreeBSD}
-   pformstr    = ' (FreeBSD)';  { 32 Bit native FreeBSD v4+ mit FPC }
-  {$endif}
+  pformstr    = ' (FreeBSD)';   { 32 Bit native FreeBSD v4+ mit FPC }
+  {$ENDIF}
+  {$IFDEF NetBSD}
+  pformstr    = ' (NetBSD)';    { 32 Bit native NetBSD mit FPC }
+  {$ENDIF}
   {$IFDEF Dos32 }
   pformstr    = ' (DOS32)';     { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
@@ -191,6 +192,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.21  2003/01/19 11:29:21  mk
+  - added NetBSD to pformstr
+
   Revision 1.63.2.20  2003/01/05 21:44:34  mk
   - version 3.8.7pl9
 
