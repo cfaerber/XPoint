@@ -1574,7 +1574,7 @@ var t      : longint;
   procedure idle;
   begin
   {$IFDEF Win32 }
-    Sleep(0);
+    Sleep(1);
   {$ENDIF }
   {$IFDEF OS2 }
     DosSleep(1);
@@ -1656,6 +1656,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.56  2000/09/05 16:12:53  mo
+  -  Rechenzeitfreigabe: wieder auf sleep(1) geaendert
+
   Revision 1.55  2000/08/26 12:47:11  mk
   - Sleep(1) in Sleep(0) geaendert, das reicht zur Rechenzeitfreigabe
 
