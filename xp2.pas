@@ -614,6 +614,8 @@ end;
 
 
 procedure loadresource;             { Sprachmodul laden }
+const
+   LanguagePos = 8;
 var lf : string;
     lf2: string;
     sr : tsearchrec;
@@ -639,7 +641,12 @@ var lf : string;
   begin                                     { Wenn openxp.RES nicht existiert }
     if parlanguage='' then                                {/L Parameter beruecksichtigen}
     begin
-      parlanguage:=sr.name[4];
+       if length(sr.name) < LanguagePos then
+       begin
+	 SetLength(sr.name, LanguagePos);
+	 sr.name[LanguagePos] := 'D'
+       end;
+      parlanguage:=sr.name[LanguagePos];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
       repeat
         ca:=locase(readkey);                              { Und ansonsten Auswahl-Bringen }
@@ -1074,6 +1081,9 @@ end.
 
 {
   $Log$
+  Revision 1.106  2001/04/05 15:58:36  ml
+  - removed access-violation while getting the language
+
   Revision 1.105  2001/03/30 13:09:35  mk
   - renamed config/help/main-files
 
