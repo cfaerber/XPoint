@@ -95,7 +95,7 @@ type
     procedure SelectGroup(const AGroupName: String); virtual;
 
     { Message vom server holen }
-    function GetMessage(msgNr: Integer; Message: TStringList): Integer; virtual;
+    function GetMessage(MsgID: String; Message: TStringList; HeaderOnly: Boolean): Integer; virtual;
 
     { Message vom server holen }
     function PostMessage(Message: TStringList): Integer; virtual;
@@ -146,8 +146,9 @@ resourcestring
   res_groupnotfound     = 'Gruppe %s nicht gefunden';
   res_error             = 'Fehler: %s';
 
-  res_msg1              = 'hole Artikel %d, Zeile %d';
-  res_msg3              = 'Artikel %d nicht mehr auf Server vorhanden';
+  res_msg1              = 'hole Artikel %s, Zeile %d';
+  res_msg2              = 'hole Header %s, Zeile %d';
+  res_msg3              = 'Artikel %s nicht mehr auf Server vorhanden';
 
   res_posterror         = 'Fehler %d beim Absenden des Artikels';
   res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
@@ -430,7 +431,7 @@ begin
 end;
 
 
-function TNNTP.GetMessage(msgNr: Integer; Message: TStringList): Integer;
+function TNNTP.GetMessage(MsgID: String; Message: TStringList; HeaderOnly: Boolean): Integer;
 var
   Error,iLine: Integer;
   s: String;
@@ -440,12 +441,15 @@ begin
   if Connected then
   begin
     // select one newsgroup
-    SWriteln('ARTICLE '+ IntToStr(msgNr));
+    if HeaderOnly then
+      SWriteln('HEAD ' + MsgID)
+    else
+      SWriteln('ARTICLE ' + MsgID);
     SReadln(s);
     Error := ParseResult(s);
     if Error > 400 then
     begin
-      Output(mcError,res_msg3, [msgNr]);
+      Output(mcError,res_msg3, [MsgID]);
       Result := Error;
       exit;
     end;
@@ -454,8 +458,9 @@ begin
     repeat
       SReadln(s);
       inc(iLine);
-      if Timer.Timeout then begin
-        Output(mcVerbose,res_msg1, [msgNr,iLine]);
+      if Timer.Timeout then
+      begin
+        Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [MsgID,iLine]);
         Timer.SetTimeout(1);
         end;
       Message.Add(s);
@@ -542,6 +547,10 @@ end;
 
 {
   $Log$
+  Revision 1.41  2003/04/25 21:11:21  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.40  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 

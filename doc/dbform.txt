@@ -42,7 +42,7 @@ MSGS:  Nachrichtendatei
                                  ab 3.21: 8+16+32=Priority:
                                            000=normal / 001=hoechste / 010=hoch               
                                            011=niedrig / 100=niedrigste
-				 XP/2:    64=HeaderOnly, 128=HDO-Request
+				 ab OpenXP/32 3.9.5: 64=HeaderOnly, 128=HDO-Request
                                  ab 3.30: 256 = Eigene Nachricht (fuer Replaceown)
 				 ab OpenXP/32 3.9.5: 512+1024=SPAM-Status:
 					   00=nichts / 01=potentiell SPAM /

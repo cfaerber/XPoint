@@ -644,6 +644,7 @@ begin
     getkey(k2_R);  getkey(k2_cN); getkey(k2_BB); getkey(k2_A);
     getkey(k2_b);  getkey(k2_cB); getkey(k2_SB); getkey(k2_p);
     getkey(k2_cP); getkey(k2_SP); getkey(k2_cT); getkey(k2_cQ);
+    getkey(k2_M); 
     s:=getres2(22,4);          { AutoVersand }
     p:=1;
     getkey(k3_H);  getkey(k3_E);  getkey(k3_L);  getkey(k3_A);
@@ -2785,6 +2786,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.162  2003/04/25 21:11:15  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.161  2003/04/25 19:23:55  mk
   - formated source for ReadParFile
   - use OwnPath while searching for *.opt

@@ -160,7 +160,7 @@ type
     gateway: string;
     sender: string;
     lines: longint;                     { "Lines:" }
-//  envemp: string;
+    XPMode: string;
 
     ListID, ListPost,
     ListSubscribe,
@@ -885,6 +885,10 @@ end;
 
 {
   $Log$
+  Revision 1.37  2003/04/25 21:11:19  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.36  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

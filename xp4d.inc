@@ -424,7 +424,17 @@ begin  { __ Suchmarke }
             dbReadN(mbase,mb_unversandt,unvers);
             dbReadN(mbase,mb_Typ,typ);
             dbReadN(mbase,mb_flags,flags);
-            if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
+
+            case typ of
+              'T': typ := iifc((flags and 64<>0) and (size=0),'H',
+                   iifc((flags and 128<>0) and (size=0),'R',
+                   iifc(fileatt,'F',
+                   iifc(flags and 4<>0,'M',' '))));
+              'B': If Size = 0 then
+                     Typ := iifc(flags and 64<>0,'H',
+                            iifc(flags and 128<>0,'R','B'));
+            end;
+
             wvl:=(unvers and 12) div 4;
 
             if (wvl=0) and (mf_PGPsig in mnt.flags) then
@@ -632,6 +642,10 @@ end;
 
 {
   $Log$
+  Revision 1.63  2003/04/25 21:11:17  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.62  2003/02/02 17:17:26  cl
   - BUGFIX (FPC): ``Range Check Error in 3.9 28.1.03 W32 bei Navigation in
     Brettuebersicht'', see <8f6oMi+Uo+D@doebe.li>

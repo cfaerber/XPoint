@@ -1378,6 +1378,15 @@ Folgende Funktionen stehen zur Verfgung:
          richt. Gibt es mehrere m”gliche Bezugsnach-
          richten, dann werden diese markiert.
 
+   <<M>>   Komplette Nachricht zu einer Headeronly-Nachricht
+       anfordern oder Anforderung rückgängig machen.
+       Der Nachrichtenkopf wird durch die vollständige Nachricht
+       ersetzt. Der Status dieser Nachrichten wird
+       mit einem 'R' oder 'H' gekennzeichnet.
+
+       (Diese Funktion steht nur dem RFC/Client und RFC/NNTP
+       zur Verfügung)
+
    <<B>>     Schreiben einer Brettantwort auf die
          gew„hlte Nachricht. Es wird die unter
          /Edit/Schablonen/[Kopf] gew„hlte Schablone@10801

@@ -33,7 +33,7 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.9.4';       { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.9.5';       { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -221,6 +221,10 @@ begin
 
 {
   $Log$
+  Revision 1.77  2003/04/25 21:11:18  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.76  2003/01/24 20:05:06  mk
   - Version 3.9.4
 

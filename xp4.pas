@@ -1982,6 +1982,85 @@ var t,lastt: taste;
     nosuccess:=true;
   end;
 
+  procedure ToggleMessageIDRequest;
+  var
+    IDList: TStringList;
+    hd: THeader;
+    hds: Integer;
+    Box, Filename: String;
+    Flags: Longint;
+    Index: Integer;
+    MsgCount: Integer;
+    nt: Byte;
+  begin
+    IDList := TStringList.Create;
+    try
+      IDList.Sorted := true;
+      IDList.Duplicates := dupIgnore;
+      GoP;
+      Marked.Sort;
+      MsgCount := 0;
+
+      repeat
+        if Marked.Count > 0 then
+          dbGo(mbase, Marked[MsgCount].recno);
+
+        Box := dbReadNStr(mbase, mb_brett);
+        dbSeek(bbase,BiIntnr,copy(Box,2,4));
+        Box := dbReadNStr(bbase, bb_pollbox);      { Pollbox des Brettes     }
+        // Hilfe nachtragen
+
+        Filename := GetServerFileName(Box, '.MID');
+        if Filename = '' then
+          break; // Meldung: falsche Box!!
+        if FileExists(OwnPath + Filename) then
+        begin
+          IDList.LoadFromFile(OwnPath + Filename);
+          IDList.Sort;
+        end;
+
+        dbRead(mbase, 'netztyp', nt);
+        if not nt in [nt_Client, nt_NNTP] then     
+        begin
+          Fehler(GetRes(439));  // 'Funktion wird nur für RFC/Client und RFC/NNTP unterstützt'
+          break;
+        end;
+
+
+        dbReadN(mbase, mb_flags, Flags);
+        hd := THeader.Create;
+        try
+          ReadHeader(hd, hds, true);
+          if pos('@', hd.FirstEmpfaenger) = 0 then
+          begin
+            if flags and 64 <> 0 then                 // H-Flag
+            begin
+              IDList.Add(hd.msgid);
+              Flags := Flags or 128;                  // add R-Flag
+              Flags := Flags and (not 64);            // remove H-Flag
+            end else
+            if flags and 128 <> 0 then                // R-Flag
+            begin
+              if IDList.Find(Hd.MsgID, Index) then
+                IDList.Delete(Index);                 // delete Msg-ID Flag
+              Flags := Flags or 64;                   // add H-Flag
+              Flags := Flags and (not 128);           // remove R-Flag
+            end;
+          end;
+        finally
+          hd.Free;
+        end;
+        dbWriteN(mbase, mb_flags, Flags);
+        IDList.SaveToFile(OwnPath + Filename);
+        Inc(MsgCount);
+      until MsgCount >= Marked.Count;
+    finally
+      IDList.Free;
+    end;
+    Marked.UnSort;
+    Reread_line;
+  end;
+
 begin      { --- select --- }
   if dispmode=11 then
     if markaktiv then begin
@@ -2007,7 +2086,7 @@ begin      { --- select --- }
   if (dispmode=10) and user_msgs then begin { User-Fenster }
     rdmode:=0;         { immer Alles anzeigen }
     if msgnewfirst 
-      then autokey:=keyhome 
+      then autokey:=keyhome
       else autokey:=keyend;  { ab ans Ende          }
     end
   else
@@ -2060,7 +2139,6 @@ begin      { --- select --- }
 
   else
     gostart;  { aufbau:=true }
-
 
   if (dispmode>=10) and (dispmode<=19) then show_info;  { 1. Zeile }
   if (dispmode=-1) or (dispmode=3) or (dispmode=4) then begin
@@ -2497,12 +2575,13 @@ begin      { --- select --- }
                    if c=k2_BB then Bezugsbaum;                      { '#' }
                    if ParDebug and (c='!') then begin GoP; disprecno; end;
                    end;
-                 if dispmode=10 then begin
-                   if c=k2_A then all_mode;                         { 'A' }
-                   if t=keyaltl then reset_lesemode;                { ALT+L }
+                   if dispmode=10 then begin
+                     if c=k2_A then all_mode;                       { 'A' }
+                     if t=keyaltl then reset_lesemode;              { ALT+L }
                    end;
-               end;
-        20   : begin                        { Autoversand-Liste }
+                   if t=k2_M then ToggleMessageIDRequest;           { 'M' }
+                 end;
+      20   : begin                        { Autoversand-Liste }
                  if (t=keyins) or (c=k3_H) then _auto_new;          { 'H' }
                  if not empty then begin
                    if c=k3_E then _auto_edit;                       { 'E' }
@@ -2789,6 +2868,10 @@ end;
 
 {
   $Log$
+  Revision 1.141  2003/04/25 21:11:16  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.140  2003/04/19 07:37:11  mk
   - clear organisation header in brief_senden
 

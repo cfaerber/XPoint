@@ -122,7 +122,7 @@ uses
   archive,maus2,winxp,printerx,resource,osdepend,
   xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp3,xp3o,xp3o2,xp3ex,xp4,xp4o2,
   xpkeys,xpnt,xpfido,xpmaus,xpheader, xpmakeheader,
-  xp_pgp,debug,viewer, MarkedList, regexpr,
+  xp_pgp,debug,viewer, MarkedList, regexpr, xpconfigedit,
   xprope,
   xpspam,
   xpglobal;
@@ -776,7 +776,32 @@ msg_ok: MsgAddmark;
     rewrite(t);
     for i:=0 to opthmax do writeln(t,opthist[i]);
     close(t);
+  end;
 
+  procedure AddMsgId;
+  var
+    Boxname, Filename: String;
+    IDList: TStringList;
+  begin
+    if ReadJN('Soll die Message-ID online gesucht werden?', true) then
+    begin
+      BoxName := UniSel(1, false, DefaultBox);
+      Filename := GetServerFileName(Boxname, '.MID');
+      IDLIst := TStringList.Create;
+      try
+        if FileExists(OwnPath + Filename) then
+        begin
+          IDList.LoadFromFile(OwnPath + Filename);
+          IDList.Sort;
+        end;
+        IDList.Sorted := true;
+        IDList.Duplicates := dupIgnore;
+        IDList.Add(Suchstring);
+        IDList.SaveToFile(OwnPath + Filename);
+      finally
+        IDList.Free;
+      end; 
+    end;
   end;
 
 {--# Suche #--}
@@ -864,7 +889,7 @@ restart:
       CheckHistory;
 
       if suchfeld='Betreff' then begin
-        i:=ReCount(suchstring);         // Re's wegschneiden 
+        i:=ReCount(suchstring);         // Re's wegschneiden
         srec^.betr:=suchstring
         end
 
@@ -1186,13 +1211,18 @@ restart:
 {--Suche beendet--}
 
     if (Marked.Count =0) or (holdmarked and (Marked.Count=markanzback))   { Nichts gefunden }
-    then begin 
-      if me then begin
-        hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-        aufbau:=true;               { wg. geloeschter Markierung! }
-        end; 
-      goto ende;                    { Fenster wiedeherstellen...} 
-      end
+    then
+    begin 
+      if me then
+      begin
+        if Suchfeld = 'MsgID' then
+          AddMsgId
+        else
+          hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
+        aufbau:=true;               { wg. gelöschter Markierung! }
+      end;
+      goto ende;                    { Fenster wiedeherstellen...}
+    end
       
     else begin
       Suchergebnis:=true;
@@ -3805,6 +3835,10 @@ end;
 
 {
   $Log$
+  Revision 1.157  2003/04/25 21:11:17  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.156  2003/04/13 17:36:42  mk
   - purge old mail one day faster than before (same as OpenXP 3.40)
 

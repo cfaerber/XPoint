@@ -111,6 +111,7 @@ var   k0_S  : char = 'S';      { Spezial-Mode         }
       k2_SP : char = 'P';      { Multiquote-PM        }
       k2_cT : char = ''^T;     { User-Paáwort-Edit    }
       k2_cQ : char = ''^Q;     { indirekter Fido-Quote}
+      k2_M  : char = 'M';      { MessageID-Request    }
 
       k3_H  : char = 'H';      { neuer AV-Eintrag     }
       k3_E  : char = 'E';      { AutoVersand Edit     }
@@ -249,6 +250,10 @@ end;
 
 {
   $Log$
+  Revision 1.31  2003/04/25 21:11:19  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.30  2002/12/28 20:11:07  dodi
   - start keyboard input redesign
 

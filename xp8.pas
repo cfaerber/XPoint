@@ -1506,7 +1506,23 @@ label again;
     RCFilename: String;
     Index: Integer;
     Unmarklist: TStringlist;
+    Articles: Integer;
+    x, y: Integer;
+    HeaderOnly: Boolean;
+    brk: Boolean;
   begin
+    if Art = 0 then
+    begin
+      Articles := 10;
+      HeaderOnly := false;
+      Dialog(30, 5, getres2(810,83),x,y);                        { 'Newsgroups bestellen' }
+      MAddbool(2, 2, Getres2(810, 84), HeaderOnly);              { 'Nur Header bestellen'}
+      MAddInt(2, 4, Getres2(810, 85), Articles,4, 6, 0, 30000);  { 'Anzahl der Artikel'   }
+      MAppsel(False, Getres2(810, 86));
+      ReadMask(brk);
+      EndDialog;
+    end;
+
     Moment;
     RCList := TStringList.Create;
     if Art = 0 then
@@ -1542,7 +1558,7 @@ label again;
                    end;
                    if Index = RCList.Count then // no dupe found
                    begin
-                     RCList.Add(s1);
+                     RCList.Add(s1 + ' -' + IntToStr(Articles) + iifs(HeaderOnly, ' HdrOnly', ''));
                      List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
                    end;
                  end;
@@ -3117,6 +3133,10 @@ end;
 
 {
   $Log$
+  Revision 1.87  2003/04/25 21:11:17  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.86  2003/02/13 14:41:58  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister

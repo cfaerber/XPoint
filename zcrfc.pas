@@ -895,6 +895,7 @@ begin
     if (charset<>'') and (charset<>'US-ASCII') and (charset<>'IBM437') then wrs('Charset: '+charset);
     if x_charset<>'' then wrs('X-XP-Charset: '+x_charset);
     if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
+    if xpmode <> ''  then wrs('X-XP-MODE: ' + XPMode);
 
       if (Boundary<>'') or (Mime.CType<>'') then
       begin
@@ -1857,6 +1858,9 @@ begin
             else
               if zz = 'x-xp-ctl' then
               XPointCtl := IVal(s0)
+            else
+              if zz = 'x-xp-mode' then
+              XPMode := s0
             else
               { X-No-Archive Konvertierung }
               if zz = 'x-no-archive' then
@@ -3765,6 +3769,10 @@ end;
 
 {
   $Log$
+  Revision 1.133  2003/04/25 21:11:19  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
   Revision 1.132  2003/03/16 18:59:37  cl
   - better handling of unknown charsets
 
