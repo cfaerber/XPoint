@@ -63,7 +63,7 @@ procedure AddToReflist(ref:string);
 
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr: integer;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.41  2000/07/23 21:20:47  mk
+  - Bugfix fuer neue makeheader-definition
+
   Revision 1.40  2000/07/22 14:05:26  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)
