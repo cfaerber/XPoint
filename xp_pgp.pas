@@ -72,6 +72,7 @@ implementation  { --------------------------------------------------- }
 
 uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
+  {$ifdef OS2} xpos2, {$endif}
   {$ifdef DOS32} xpdos32, {$endif}
   {$IFDEF Kylix}
   libc,
@@ -1204,6 +1205,9 @@ end;
 
 {
   $Log$
+  Revision 1.76  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.75  2003/08/24 21:43:38  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

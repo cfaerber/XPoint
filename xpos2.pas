@@ -30,7 +30,7 @@ unit xpos2;
 interface
 
 uses
-  UTFTools;
+  UTFTools, Mime;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;
@@ -49,6 +49,7 @@ function SysOutputRedirected: boolean;
 // Execute an externel program
 function SysExec(const Path, CmdLine: String): Integer;
 procedure SysSetCurType(Y1,Y2: Integer; Show: Boolean);
+Function GetEnv(envvar: string): string; { from FPC RTL }
 
 implementation
 
@@ -186,9 +187,17 @@ begin
   VioSetCurType(CurData^, 0);
 end;
 
+Function GetEnv(envvar: string): string;
+begin
+  Result := Dos.GetEnv(envvar);
+end;
+
 end.
 {
   $Log$
+  Revision 1.11  2003/08/25 07:05:51  mk
+  - added OS/2 support
+
   Revision 1.10  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 

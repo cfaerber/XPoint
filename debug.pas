@@ -94,6 +94,7 @@ uses
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF Dos32} xpdos32, {$ENDIF}
+  {$IFDEF OS2} xpos2, {$ENDIF}
   TypeForm,
   xpglobal; //not really
 
@@ -311,6 +312,9 @@ finalization
 
 {
   $Log$
+  Revision 1.36  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.35  2003/01/01 16:19:44  mk
   - changes to made FreeBSD-Version compilable
 

@@ -189,6 +189,7 @@ implementation  { ------------------------------------------------------- }
 uses
   typeform,
   {$ifdef Win32} xpwin32, windows, {$endif}
+  {$ifdef os2} xpos2, {$endif}
   debug,xp0;
 
 {$ifdef unix}
@@ -710,6 +711,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.124  2003/08/24 21:43:36  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

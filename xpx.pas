@@ -48,6 +48,7 @@ implementation
 
 uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF OS2} xpos2, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   log,xp2;
 
@@ -175,6 +176,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2003/08/25 07:05:51  mk
+  - added OS/2 support
+
   Revision 1.54  2003/08/24 21:43:40  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

@@ -322,7 +322,11 @@ begin
     FillScreenLine(l, i, ' ', r-l+1);
 end;
 
-{$IFDEF DOS32}
+{$IFDEF DOS32 }
+type TCoord= record x,y: integer end;
+{$ENDIF}
+
+{$IFDEF os2 }
 type TCoord= record x,y: integer end;
 {$ENDIF}
 
@@ -385,7 +389,10 @@ end;
 
 {$IFNDEF NCRT }
 procedure FWrt(const x,y: Integer; const s:string);
+
+{$IFNDEF OS2}
 var
+{$ENDIF}
   {$IFDEF Win32Console }
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
@@ -1530,6 +1537,9 @@ end;
 
 {
   $Log$
+  Revision 1.97  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.96  2003/08/11 22:10:35  mk
   - changed OpenXP/32 to OpenXP
 

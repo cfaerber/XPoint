@@ -172,6 +172,7 @@ implementation  { ---------------------------------------------------------- }
 uses
   {$ifdef NCRT} xpcurses, {$endif}
   {$ifdef Win32} Windows, xpcrt, {$endif}
+  {$ifdef os2} crt, {$endif}
   {$IFDEF DOS32} go32, crt, {$ENDIF}
   {$IFDEF VP} vpsyslow, {$ENDIF}
   inout,
@@ -468,6 +469,9 @@ initialization
 
 {
   $Log$
+  Revision 1.56  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.55  2003/04/12 08:03:42  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 

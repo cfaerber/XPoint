@@ -89,6 +89,7 @@ uses
   {$ENDIF}
   {$ENDIF }
   {$ifdef Win32} xpwin32, {$endif}
+  {$ifdef os2} xpos2, {$endif}
   {$ifdef Dos32} xpdos32, {$endif}
 {$IFDEF Kylix}
   libc,
@@ -1550,6 +1551,9 @@ end;
 
 {
   $Log$
+  Revision 1.139  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.138  2003/08/04 22:48:14  mk
   - removed Edit/netze/verschiedens/mime in news
 

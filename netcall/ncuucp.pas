@@ -162,6 +162,7 @@ uses
   sysutils, Math,
 {$IFDEF Unix} xpcurses, {$ENDIF}
 {$IFDEF Win32} xpwin32, {$ENDIF}
+{$IFDEF OS2} xpos2, {$ENDIF}
 {$IFDEF DOS32} xpdos32, {$ENDIF}
   timer,xp1,
   typeform, progressoutput, resource, debug,
@@ -1131,6 +1132,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2003/08/25 07:05:52  mk
+  - added OS/2 support
+
   Revision 1.31  2003/08/24 21:43:41  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

@@ -93,6 +93,7 @@ uses
 {$ENDIF}
 {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
+  {$IFDEF OS2} xpos2, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   stringtools,fileio,inout,maus2,printerx,database,maske,archive,resource,clip,
   xp0,xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
@@ -1068,6 +1069,9 @@ end;
 
 {
   $Log$
+  Revision 1.121  2003/08/25 07:05:50  mk
+  - added OS/2 support
+
   Revision 1.120  2003/08/24 21:43:37  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems
