@@ -25,8 +25,8 @@ unit charmaps;
 interface
 
 uses
-  Unicode,  //T8BitTable
-  mime;     //TMimeCharsets
+  xpunicode,    //T8BitTable
+  mime;         //TMimeCharsets
 
 {$IFDEF Unix }
 {$I charsets/cp437.inc }
@@ -121,6 +121,10 @@ end.
 
 //
 // $Log$
+// Revision 1.12  2003/02/13 14:41:57  cl
+// - implemented correct display of UTF8 in the lister
+// - implemented Unicode line breaking in the lister
+//
 // Revision 1.11  2003/01/16 11:14:20  mk
 // - some *BSD-releated changes
 //

@@ -26,7 +26,7 @@ unit utftools;
 interface
 
 uses
-  unicode,mime;
+  xpunicode,unicode,mime;
 
 
 function IsKnownCharset(Charset: String): Boolean;
@@ -46,7 +46,8 @@ implementation
 
 uses
   SysUtils,
-  Typeform,charmaps,
+  Typeform,
+  charmaps,
   xpglobal; //not really
 
 // -------------------------------------------------------------------
@@ -205,6 +206,10 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.18  2003/02/13 14:41:57  cl
+// - implemented correct display of UTF8 in the lister
+// - implemented Unicode line breaking in the lister
+//
 // Revision 1.17  2002/12/06 14:27:27  dodi
 // - updated uses, comments and todos
 //

@@ -132,7 +132,6 @@ type
     function GetMarked(Index: Integer): boolean;
     procedure SetMarked(Index: Integer; NewValue: boolean);
     procedure SetHeaderText(s: String);
-    function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte): Integer;
 
   private
     FIsUTF8: boolean;
@@ -154,7 +153,7 @@ type
     // append one line
     procedure AddLine(Line: String);
     // read file from Ofs into Lines of Lister
-    procedure ReadFromFile(const Filename: string; ofs: Integer);
+    procedure ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
     // Show Lister, Result is true if ESC was pressed
     function Show: Boolean;
     procedure SetArrows(x, y1, y2, acol, bcol: byte; backchr: char);
@@ -195,73 +194,13 @@ uses
   {$IFDEF NCRT }
   xpcurses,
   {$ENDIF }
+  xpunicode_linebreak,
   typeform,
+  charmaps,     // for CP 437 map
   inout, maus2, winxp, resource,
   xp0,mime,utftools,unicode;
 
 { TLister }
-
-// Zerlegen des Buffers in einzelne Zeilen
-
-function TLister.make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte):
-  Integer;
-var
-  i, j: Integer;
-  s: string;
-  MaxLen: Integer;                      // Maximale Leselaenge
-  TempIJ: Integer;                      // Temporaer i + j in der Hauptschleife
-begin
-  Result := 0;
-  if BufLen = 0 then exit;
-  if wrap = 0 then wrap := 255;
-  Wrap := Min(Wrap, 255); // Begrenzung der Zeilenlaenge auf 255 Zeichen
-  j := 0;
-  while j < BufLen do
-  begin
-    // vorher auswerten, um Rechenzeit in der Hauptschleife zu sparen
-    MaxLen := Min(Wrap + j, BufLen);
-    TempIJ := j;
-
-    // solange, bis entweder Zeilenende, Wrap-Bereich ueberschritten,
-    // Laenge des Buffers erreicht oder maximale Zeilenaenge erreicht
-    while (buf[TempIJ] <> #13) and (buf[TempIJ] <> #10) and (TempIJ < MaxLen) do
-      inc(TempIJ);
-    i := TempIJ - j;                    // i = laenge der neuen Zeile
-
-    // Spezialbehandlung, wenn Zeile umgebrochen werden muss
-    if i = wrap then
-    begin
-      i := wrap;
-      while (i > 20) and (Buf[i + j] <> ' ') do
-        dec(i);
-      // wenn keine Umbruchstelle gefunden wurde, Wrap-Laenge uebernehmen
-      // ansonsten Leerzeichen ueberspringen
-      if i = 20 then
-        i := wrap
-      else
-        inc(i);
-    end;
-
-    // wenn kein Zeilenende gefunden wurde, aber Puffer alle ist
-    if i + j = BufLen then
-    begin
-      Result := i;
-      Move(Buf[j], Buf[0], i);
-      Exit;
-    end
-    else
-    begin
-      SetLength(s, i);
-      if i > 0 then
-        Move(Buf[j], S[1], i);
-      AddLine(s);
-    end;
-    // CRLF ueberlesen
-    if Buf[i + j] = #13 then inc(i);
-    if Buf[i + j] = #10 then inc(i);
-    inc(j, i);
-  end;
-end;
 
 constructor TLister.Create;
 begin
@@ -379,53 +318,29 @@ begin
   Lines.AddObject(Line, nil);
 end;
 
-procedure TLister.ReadFromFile(const Filename: string; ofs: Integer);
-var
-  f: file;
-  s: string;
-  p: ^ListerCharArray;
-  ps: xpWord;
-  rp: Integer;
-  rr: Integer;
-  fm: byte;
+procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
+var input: TFileStream;
+    breaker: TUnicodeLineBreaker;
+
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
-  assign(f, FileName);
-  fm := filemode; filemode := 0;
-  reset(f, 1);
-  filemode := fm;
-  ps := ListerBufferCount;
-  getmem(p, ps);
-  rp := 0; rr := 0;
-  if ioresult = 0 then
-  begin
-    seek(f, ofs);
-    repeat
-      blockread(f, p^[rp], ps - rp, rr);
-      // detect EF BB BF at the beginning of the file and switch to UFT-8
-      if (Ofs = 0) and (rp = 0) and (rr >= 3) and
-        (p^[0] = Char($EF)) and (p^[1] = Char($BB)) and (p^[2] = Char($BF)) then
-        begin
-          FUTF8Mode := true;
-          // skip first three chars
-          Move(p^[3], p^[0], rr);
-          Dec(rr, 3)
-        end;
-      if Assigned(FOnConvert) and (rr > 0) then FOnConvert(p^[rp], rr);
-      // TempRP := rp;
-      rp := make_list(p^, rr + rp, stat.wrappos);
-    until eof(f);
-    close(f);
-    if rp > 0 then
-    begin { den Rest der letzten Zeile noch anhaengen.. }
-      SetLength(s, rp);
-      Move(p^[0], s[1], rp);
-      AddLine(s);
+
+  Input := TFileStream.Create(Filename,fmOpenRead);
+  try
+    Breaker := TUnicodeLineBreaker.Create;
+    try
+      if FUTF8Mode then Breaker.SetUTF8
+      else Breaker.SetCodePage(CP437TransTable);
+      Breaker.MaxWidth := iif(Line_Break,self.w,MaxInt);
+      Breaker.TabWidth := 8;
+      Breaker.Sink := Lines;
+      Breaker.AddData(Input);      
+    finally
+      Breaker.Destroy;
     end;
-    // Sonderbehandlung fuer die letzte Leerzeile
-//    if p^[rr + TempRP - 1] = #10 then AddLine('');
+  finally
+    Input.Destroy;
   end;
-  freemem(p, ps);
 end;
 
 
@@ -527,14 +442,25 @@ var
         else
           attrtxt(col.coltext);
 
-      if xa = 1 then
-        s := forms(s, w)
-      else
-        s := forms(Mid(s, xa), w);
+      if FUTF8Mode then
+      begin
+        if xa = 1 then 
+          s := UTF8FormS(s,w)
+        else
+          s := UTF8FormS(UTF8Mid(s,xa),w);
+      end else
+      begin
+        if xa = 1 then
+          s := forms(s, w)
+        else
+          s := forms(Mid(s, xa), w);
+      end;
+      
       if Assigned(FOnDisplayLine) then
         FOnDisplayLine(l, y + i, s)
       else
         FWrt(l, y + i, s);
+
       if (FirstLine + i = suchline) and (slen > 0) and (spos >= xa) and (spos
         <= xa + w - slen) then
       begin
@@ -1171,6 +1097,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.78  2003/02/13 14:41:57  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.77  2003/01/07 00:20:37  cl
   - added OnTestSelect event
 

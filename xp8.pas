@@ -675,7 +675,7 @@ begin
     end;
   close(t1);
   close(t2);
-  List.ReadFromFile(tname,0);
+  List.ReadFromFile(tname,0,false);
   List.HeaderText := s;
   _era(tname);
   closebox;
@@ -1583,6 +1583,8 @@ label again;
     CloseBox;
   end;
 
+var ws: integer;
+
 begin
   if mapsbox='' then begin
     box:=UniSel(1,false,DefaultBox);
@@ -1632,7 +1634,7 @@ begin
                    'APGD/'+iifs(_maus and listScroller,'VSC/',''));
         // preallocate ram for stringlist do speed up loading
         List.Lines.Capacity := _FileSize(lfile) div 25;
-        List.Lines.LoadFromFile(lfile);
+        List.ReadFromFile(lfile,0,false);
         case art of
           0 : showkeys(9);
           1 : showkeys(-9);
@@ -2492,7 +2494,7 @@ var d     : DB;
   begin
     showkeys(10);
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
-    List.ReadFromFile(MangleBoxName(fs)+ extFl,0);
+    List.ReadFromFile(MangleBoxName(fs)+ extFl,0,false);
     List.OnTestMark := testmark;
   again:
     brk := List.Show;
@@ -2855,7 +2857,7 @@ begin
     end; 
   List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,Screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
              'APGD/'+iifs(_maus and ListScroller,'VSC/',''));
-  List.ReadFromFile(fl,0);
+  List.ReadFromFile(fl,0,false);
   case art of
     1 : showkeys(12);
     2 : showkeys(11);
@@ -3115,6 +3117,10 @@ end;
 
 {
   $Log$
+  Revision 1.86  2003/02/13 14:41:58  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.85  2003/02/07 16:11:01  cl
   - BUGFIX: BretterAnlegen was not called for NNTP
   - BUGFIX: correct handling of TAB character in Group lists

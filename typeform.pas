@@ -372,7 +372,7 @@ function LastChar(const s:string):char;
 function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkuerzen    }
 function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mit 0 auff.  }
 function FormR(const r:real; const vk,nk:integer):string;   { r-->str.; vk+nk mit 0 auff.  }
-function FormS(const s:string; n:integer):string;     { String auf n Stellen mit ' ' }
+function FormS(const s:string; n:integer):string; { String auf n Stellen mit ' ' }
 function GetToken(var s:string; delimiter:string):string;
 function GetTokenC(var s:string; delim_chars:string):string;
 function HBar(const len:integer):string;              { 쳐컴컴컴컴...컴컴컴컴캑      }
@@ -436,6 +436,9 @@ procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
+function UTF8Mid(const s:string; n:integer):string;       { Rest des Strings ab Pos.    }
+function UTF8FormS(const s:string; n:integer):string; { String auf n Stellen mit ' ' }
+
 { Lo/Upcase-String fuer Files, abhaengig von UnixFS }
 function FileUpperCase(const s:string):string;
 function Without(const s1,s2:string):string;       { Strings "subtrahieren"       }
@@ -478,10 +481,11 @@ function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 // scans Buffer with Len for first occurrence of char c
 function BufferScan(const Buffer; Len: Integer; c: Char): Integer; 
 
-
 { ================= Implementation-Teil ==================  }
 
 implementation
+
+uses xpunicode;
 
 type
 {$IFDEF Delphi }
@@ -778,6 +782,24 @@ begin
     Result[i]:=' ';
 end;
 
+function UTF8FormS(const s:string; n:integer):string; overload;
+var Position: Integer;
+    Pos2: Integer;
+    W: Integer;
+begin
+  Position := 1;
+  Pos2 := 1;
+  Result := '';
+  while Position <= Length(s) do
+  begin
+    w := UnicodeCharacterWidth(UTF8GetCharNext(s,Position));
+    if w < 0 then w := 1;      
+    if w > n then break;
+    dec(n,w);
+    Pos2 := Position;
+  end;
+  Result := LeftStr(s,Position-1) + Sp(n);
+end;
 
 function StrS(const l:longint):string;
 begin
@@ -1080,6 +1102,17 @@ end;
 function Mid(const s:string; const n:integer):string;
 begin
   mid:=copy(s,n,length(s));
+end;
+
+function UTF8Mid(const s:string; n:integer):string;
+var Position: Integer;
+begin
+  Position := 1;
+  while n > 1 do begin
+    dec(n);
+    UTF8NextChar(s,Position);
+  end;
+  Result := Mid(s,Position);
 end;
 
 function Range(const c1,c2:char):string;
@@ -1901,6 +1934,10 @@ end;
 
 {
   $Log$
+  Revision 1.127  2003/02/13 14:41:57  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.126  2002/12/21 05:37:52  dodi
   - removed questionable references to Word type
 

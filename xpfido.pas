@@ -2380,7 +2380,7 @@ var s   : string;
 begin
   List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
   rmessage(2110);   { 'Lade Fileliste ...' }
-  List.ReadFromFile(FreqLst,0);
+  List.ReadFromFile(FreqLst,0,true);
   closebox;
   List.OnTestMark := fstestmark;
   sichern(p);
@@ -3087,7 +3087,7 @@ begin       { FidoSeekfile:string;************************ }
   end;               { fidolastseek<>oldseek }
   if not brk then begin   { gefundene Dateien Listen und ggf. requesten }
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
-    List.ReadFromFile(seekfile,0);
+    List.ReadFromFile(seekfile,0,false);
     List.OnTestMark := fstestmark;
     List.OnKeypressed := listext;                { 'D' + 'W' }
     llh:=false; listmakros:=0;
@@ -3183,6 +3183,10 @@ end;
 
 {
   $Log$
+  Revision 1.78  2003/02/13 14:41:58  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.77  2003/01/16 11:14:20  mk
   - some *BSD-releated changes
 

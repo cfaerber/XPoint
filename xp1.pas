@@ -810,6 +810,11 @@ begin
   s:= s0;                               { Falls var irgendeine Bedeutung hat }
 end;
 
+procedure ListDisplayUTF8(x,y:xpWord; var s: string);
+begin
+  FWrt(x,y,s);
+end;
+
 procedure interr(const txt:string);
 begin
   moff;
@@ -1970,11 +1975,11 @@ begin
     if not ListAutoscroll then List.Stat.Autoscroll := false;
     msg:=(_filesize(name)>1024*100);
     if msg then rmessage(130);    { 'Lade Datei ...' }
-    List.ReadFromFile(name,lofs);
+    List.UTF8Mode := utf8;
+    List.ReadFromFile(name,lofs,true);
     if msg then closebox;
     List.HeaderText := header;
     List.OnKeypressed := listExt;
-    List.UTF8Mode := utf8;
     llh:=listmsg;
     oldm:=ListMakros;
     if listmsg then ListMakros:=8;
@@ -1983,7 +1988,10 @@ begin
       List.OnColor := listColor;
       if cols and 2<>0 then
       begin
-        List.OnDisplayLine := Listdisplay;
+        if utf8 then 
+          List.OnDisplayLine := ListdisplayUTF8
+        else
+          List.OnDisplayLine := Listdisplay;
         xp1o.ListXHighlight:=ListHighlight;
         end;
       end;
@@ -3287,6 +3295,10 @@ end;
 
 {
   $Log$
+  Revision 1.178  2003/02/13 14:41:57  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.177  2003/01/25 14:24:27  mk
   - GetLastError only for Win32
 

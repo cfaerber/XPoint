@@ -24,27 +24,20 @@ unit unicode;
 interface
 
 uses
-  xpglobal;
+  xpglobal,xpunicode;
 
 type
-  UCChar = LongWord;            // Unicode char type (32 bit)
-
-  // Table for translating 8 bit characters
-  P8BitTable = ^T8BitTable;
-  T8BitTable = array[Char] of UCChar;
 
 // -------------------------------------------------------------------
 //   UTF-8 support
 // -------------------------------------------------------------------
 
-  UTF8String = AnsiString;
   PUTF8Char = PChar;
 
   function UCLength(const s: UTF8String): Integer;
   function UCStrLen(const s: PUTF8Char): Integer;
   function PrevChar(const s: PUTF8Char): PUTF8Char;
   function NextChar(const s: PUTF8Char): PUTF8Char;
-
 
 type
 
@@ -139,7 +132,7 @@ type
 
   TMBCSTableEntry = record
     Char1, Char2: Char;
-    UnicodeChar: UCChar;
+    UnicodeChar: TUnicodeChar;
   end;
 
   TMBCSUTF8Encoder = class(TUTF8Encoder)
@@ -164,7 +157,7 @@ uses charmaps;
 // -------------------------------------------------------------------
 
 {$R-,Q-}
-function UnicodeToUTF8(c: UCChar): UTF8String;
+function UnicodeToUTF8(c: TUnicodeChar): UTF8String;
 begin
   if c <= $007f then
     Result := Chr(c)
@@ -186,7 +179,7 @@ end;
 // same as UnicodeToUTF8, but changes a given string at position index
 // length of the given string is not checked!
 //todo: assert same size, or handle replacement of chars of different size
-procedure UnicodeToUTF8ToString(c: UCChar; var s: String; var Index: Integer);
+procedure UnicodeToUTF8ToString(c: TUnicodeChar; var s: String; var Index: Integer);
 begin
   if c <= $007f then
   begin
@@ -298,7 +291,7 @@ var
 begin
   SetLength(Result, 0);
   for i := 1 to Length(Source) do
-      Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
+      Result := Result + UnicodeToUTF8(TUnicodeChar(Ord(Source[i])));
 end;
 
 { TAnsiUTF8Decoder }
@@ -373,7 +366,7 @@ end;
 constructor T8BitUTF8Decoder.Create(const ATable: T8BitTable);
 var
   i: Char;
-  c: UCChar;
+  c: TUnicodeChar;
   Index: Integer;
   L1Table: PL2RevTable;
 begin
@@ -490,7 +483,7 @@ begin
   begin
     c := Source[i];
     if not Ord(c) in [$80..$9F] then
-      UnicodeToUTF8ToString(UCChar(Ord(c)), Result, j)
+      UnicodeToUTF8ToString(TUnicodeChar(Ord(c)), Result, j)
     else
       UnicodeToUTF8ToString(CP1252TransTable[c], Result, j);
   end;
@@ -550,6 +543,10 @@ end;
 
 {
   $Log$
+  Revision 1.14  2003/02/13 14:41:57  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
   Revision 1.13  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
