@@ -181,6 +181,7 @@ procedure TextMode(mode : word);
 
 { Servive-Funktionen auf dem aktiven Screen ---------------------------- }
 
+procedure HorizLine(y: integer);	{ horizontale Line zeichnen }
 
 { Teile aus VIDEO.PAS -------------------------------------------------- }
 
@@ -973,6 +974,20 @@ Begin
   ClrScr;
 end;
 
+{ Verschiedene Service-Funktionen -------------------------------------- }
+
+procedure HorizLine(y: integer);
+var
+  sw: PWindow;
+begin
+  if (TextAttr<>LastTextAttr) then		{ Hat jemand an Attr gefummelt? }
+    SetTextAttr(TextAttr);
+  sw:= subwin(ActWin.wHnd, 1, MAxCols, y-1, 0);	{ SubWindow erzeugen }
+  whline(sw, ACS_HLINE, MaxCols);		{ Linie malen }
+  wrefresh(sw);					{ und anzeigen }
+  delwin(sw);					{ Window loeschen }
+end;
+
 { Teile der WINXP.PAS -------------------------------------------------- }
 
 { Schreiben an X/Y, update des Cursors }
@@ -1209,7 +1224,7 @@ begin
      nonl;                      { don't process cr in newline }
      intrflush(stdscr,bool(false)); 
      keypad(stdscr,bool(true));
-     scrollok(stdscr,bool(true));
+     scrollok(stdscr,bool(false));
      win.whnd:= stdscr;		{ Handle merken }
      win.phnd:= nil;		{ Noch kein Panel }
      win.PrevWin:= nil;
@@ -1282,6 +1297,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/05/08 13:17:11  hd
+  - HorizLine: Stellt eine horizontale Linie dar
+
   Revision 1.11  2000/05/07 18:17:36  hd
   - Wrt, Wrt2, FWrt und qrahmen sind jetzt Bestandteil von XPCURSES.PAS
   - Kleiner Fix im Window-Handling
