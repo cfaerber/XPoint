@@ -361,8 +361,8 @@ var f,f2     : ^file;
     pointname: string[25];
     email    : string[80];
     sendedat : longint;     { Empfangsdatum                       }
-    XP_ID    : string[40];
-    XID      : string[40];  { CrossPoint-ID                       }
+    XP_ID    : string[50];
+    XID      : string[50];  { CrossPoint-ID                       }
     passwd   : ^string;     { Pa·wort des empfangenden Users      }
     passpos  : smallword;   { PW-Position fÅr QPC                 }
     newbin   : boolean;     { Typ nach Codierung                  }
@@ -2397,6 +2397,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.44  2001/11/30 17:27:04  mk
+  - fixed to short XP_ID String
+
   Revision 1.39.2.43  2001/10/26 17:40:03  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.

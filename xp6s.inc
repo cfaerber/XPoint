@@ -152,7 +152,7 @@ begin
     else KomOrgreg:='';
 end;
 
-function krk(s:string):string;
+function krk(const s:string):string;
 begin
   if (KomOrgReg='') or (s='') then
     krk:=s
@@ -1151,6 +1151,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.10  2001/11/30 17:27:05  mk
+  - fixed to short XP_ID String
+
   Revision 1.18.2.9  2001/08/23 11:04:05  mk
   - little code optimization (const parameter, MWrt)
 
