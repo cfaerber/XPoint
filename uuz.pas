@@ -98,6 +98,7 @@ const
       OwnSite     : string[60] = '';        { fÅr EmpfÑngeradresse von Mails }
       shrinkheader: boolean = false;         { uz: r-Schalter }
       nomailer    : boolean = false;
+      OldXPComp   : boolean = false;  { Kompatibel zu altem XP 3.12 (F-TO) }
 
       tText       = 1;        { Content-Types: plain, richtext       }
       tMultipart  = 2;        { mixed, parallel, alternative, digest }
@@ -355,6 +356,8 @@ begin
           EnableLFN else
         if switch='r' then
           shrinkheader:=true;
+        if switch='312' then
+          OldXPComp := true;
         end
       else
         if source=''  then source:=ustr(paramstr(i)) else
@@ -870,7 +873,11 @@ begin
     wrs('X-XP-NTP: '+strs(netztyp));
     attrib:=attrib and not (attrReqEB+attrIsEB);
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('F-TO: '+fido_to);
+    if fido_to<>''  then
+      if OldXPComp then
+        wrs('X-XP-FTO: '+fido_to)
+      else
+        wrs('F-FTO: '+fido_to)
     if XPointCtl<>0 then wrs('X-XP-CTL: '+strs(XPointCtl));
     wrs('');
     end;
@@ -3520,6 +3527,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.16  2000/10/18 08:49:38  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.35.2.15  2000/10/15 08:51:59  mk
   - misc fixes
 

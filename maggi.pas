@@ -70,6 +70,7 @@ const nt_ZConnect=2;
       mausON    : boolean = true;    { ”ffentl. Nachrichten anfordern }
       mausKF    : boolean = true;    { fb: Filter f?r Kommentare }
       MausIT_files : boolean = false;   { ITI/ITG -> Box.IT* }
+      OldXPComp : boolean = false; { XP 3.12 Kompatibilit„t: F-TO -> X-XP-FTO }
 
       { attrCrash   = $0002; }        { header.attrib: Crashmail   }
       { attrFile    = $0010; }        { File attached              }
@@ -196,7 +197,7 @@ begin
   writeln;
   writeln('    -qz  =  QuickNET -> ZConnect       -pz  =  ProNET -> ZConnect');
   writeln('    -zq  =  ZConnect -> QuickNet       -zp  =  ZConnect -> ProNet');
-  writeln('    -g   =  GS-Mailbox');
+  writeln('    -g   =  GS-Mailbox                 -312 =  Kompatibilit„tsmodus zu 3.12');
   halt(1);
 end;
 
@@ -254,6 +255,7 @@ begin
     else if _is('on') then MausON:=false
     else if _is('kf') then mausKF:=false
     else if _is('it') then MausIT_Files:=true
+    else if _is('312') then OldXPComp := true;
     else if (left(s,1)='/') or (left(s,1)='-') then parerr
     else if infile='' then infile:=s
     else if outfile='' then outfile:=s
@@ -629,7 +631,10 @@ begin
             wrml(mline[i]^);
           wrs('X-XP-NTP: '+iifs(pronet,'4','3'));
           if fido_to<>'' then
-            wrs('F-TO: '+fido_to);
+            if OldXPComp then
+              wrs('X-XP-FTO: '+fido_to)
+            else
+              wrs('F-TO: '+fido_to);
           wrs('');
           end
         else begin                   { M->N }
@@ -1827,6 +1832,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.4  2000/10/18 08:49:38  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.15.2.3  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
      proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO

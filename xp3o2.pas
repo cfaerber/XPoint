@@ -10,9 +10,7 @@
 { Overlay-Teile zu XP3 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp3o2;
 
@@ -198,7 +196,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
         end;
-      if fido_to<>''   then wrs('F-TO: '+fido_to);
+      if fido_to<>''   then
+        if OldXPComp then
+          wrs('X-XP-FTO: '+fido_to)
+        else
+          wrs('F-TO: '+fido_to);
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
                                 iifs(boundary<>'','; boundary="'+boundary+'"','')+
@@ -441,6 +443,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.4  2000/10/18 08:49:40  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.9.2.3  2000/09/17 07:56:44  mw
   Compilierbarkeit einiger Dateien wiederhergestellt (XP.exe und DOCFORM.EXE)
 

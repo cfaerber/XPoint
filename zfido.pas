@@ -15,9 +15,7 @@
 { Errorlevel:  0=ok, 1=Fehler             }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$M 16384,80000,110000}
-{$ENDIF }
+{$M 16384,80000,110000}
 
 uses crt, dos,typeform,fileio,xpdiff,xpdatum,xpglobal, lfn;
 
@@ -43,6 +41,7 @@ const XPrequest = 'File Request';
       DelEmpty  : boolean = false;
       BadDir    : boolean = false;   { BAD\ vorhanden }
       KeepVia   : boolean = false;
+      OldXPComp : boolean = false;  { KompatiblitÑt zu 3.12, F-TO->X-XP-FTO }
 
       ReadFirst = 2500;
       attrCrash = $0002;
@@ -376,6 +375,7 @@ begin
   writeln('      ToAdr       =  zone:net/node[.point]');
   writeln('      -d          =  leere Nachrichten lîschen');
   writeln('      -via        =  Via-Zeilen *nicht* lîschen');
+  writeln('      -312        =  KompatibilitÑtsmodus zu 3.12');
   writeln;
   writeln('      InPKT kann Wildcards enthalten.');
   halt(1);
@@ -428,6 +428,8 @@ begin
       KeepVia:=true
     else if (s='-?') or (s='/?') then
       helppage
+    else if (s='-312') or (s='/312') then
+      OldXPComp := true
     else if (s[1]='-') or (s[1]='/') then
       warnung('ungÅltiger Schalter: '+paramstr(i))
     else
@@ -693,7 +695,11 @@ begin
     wrs('X_C:');
     wrs('X-XP-NTP: '+strs(netztyp));
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('F-TO: '+fido_to);
+    if fido_to<>''  then
+      if OldXPComp then
+        wrs('X-XP-FTO: '+fido_to)
+      else
+        wrs('F-TO: '+fido_to);
     if fido_flags<>'' then wrs('X-Fido-Flags: '+fido_flags);
     if x_charset<>''  then wrs('X-Charset: '+x_charset);
     if org_msgid<>''  then wrs('X-XP-ORGMID: '+org_msgid);
@@ -1803,6 +1809,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.5  2000/10/18 08:49:40  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.21.2.4  2000/09/12 12:42:00  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
      proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO

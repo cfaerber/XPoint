@@ -99,12 +99,7 @@ const  {$IFDEF DPMI}
        MausinfoBrett= '$/¯Mausinfo';
        uuserver    = 'UUCP-Fileserver';
 
-{$IFDEF UnixFS }
-       BaseDir     = '.openxp/';     { Basisverzeichnis }
-       ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
-{$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
-{$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
        XFerDir_    = 'spool';         { eingehende Mailbatches }
@@ -274,10 +269,8 @@ const  {$IFDEF DPMI}
        hdf_FILE   = 10;       hdf_ZUSF    = 20;     hdf_xNoArchive = 32; {!MH:}
        hdf_STAT   = 11;       hdf_DIST    = 21;
        hdf_ORG    = 12;       hdf_POST    = 22;
-       { 01/2000 oh }
        hdf_Cust1  = 29;
        hdf_Cust2  = 30;
-       { /oh }
        hdf_ersetzt = 33;
        hdf_control = 34;
 
@@ -776,16 +769,13 @@ const
        ParG2      : boolean = false;   { Gebhren berechnen }
        ParNolock  : boolean = false;   { keine Lockfile-šberprfung }
 {$IFDEF Beta }
-       ParNoBeta  : boolean = false;   { MK 01/00 keine Beta-Meldung }
+       ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
+       OldXPComp  : boolean = false;   { XP 3.12 Kompatibilit„tsmodus }
 
        MoreMode   : boolean = true;
        Developer  : boolean = false;
-{$IFDEF UnixFS }
-       SupportCfg : string[12] = 'support.cfg';
-{$ELSE }
        SupportCfg : string[12] = 'SUPPORT.CFG';
-{$ENDIF }
        UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
 
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
@@ -1161,6 +1151,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.11  2000/10/18 08:49:39  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.54.2.10  2000/10/17 00:16:43  mk
   - LFN Unit hinzugefuegt (Bug #112966)
 

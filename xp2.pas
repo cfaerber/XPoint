@@ -344,6 +344,7 @@ var i  : integer;
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
     if isl('lfn') then EnableLFN else
+    if isl('312') then OldXPComp := true else
     if _is('nolock') then ParNolock:=true
     else               begin
                          writeln('unbekannte Option: ',paramstr(i),#7);
@@ -1094,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.9  2000/10/18 08:49:40  mk
+  - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
+
   Revision 1.45.2.8  2000/10/10 22:49:45  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 
