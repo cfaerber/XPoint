@@ -1138,10 +1138,8 @@ end;
 
 
 function Netz_Typ(nt:byte):string;
-var i : integer;
 begin
-  // if nt in [ ??? was kommt hier rein ??? ] then
-    Netz_Typ:=ntName(nt);
+  Netz_Typ:=ntName(SupportedNetTypes[nt]);
 end;
 
 
@@ -2553,6 +2551,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2002/01/22 01:25:37  mk
+  - hopefully fixed net_type
+
   Revision 1.40  2002/01/21 22:45:48  cl
   - fixes after 3.40 merge
 
