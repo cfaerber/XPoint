@@ -67,7 +67,7 @@ uses windows;
 { procedure setOF(para:ULONG);   external 'ntvdm.exe';  }
 { procedure setMSW(para:USHORT); external 'ntvdm.exe';  }
 
-function  GetVDMAddress(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; external 'ntdvm.exe' name 'MGetVdmAddress';
+function  GetVDMAddress(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; external 'ntvdm.exe' name 'MGetVdmPointer';
 function  FreeVDMPointer(Address:ULONG; Size:USHORT; Buffer:Pointer; ProtectedMode:BOOL):BOOL; begin FreeVDMPointer := true; end;
 
 { --- Exact Windows Version ------------------------------------- }
@@ -229,7 +229,7 @@ end;
 
 { --- VDD calls ------------------------------------------------- }
 
-procedure OpenXP_Call; export;
+procedure OPENXP_CALL; stdcall; export;
 begin
   case getDX of
     $0000: get_windows_version;
@@ -240,19 +240,22 @@ begin
   end;
 end;  
 
-procedure OpenXP_Init; export;
+procedure OPENXP_INIT; stdcall; export;
 begin
 end;
 
 { --- DLL exports ----------------------------------------------- }
 
-exports OpenXP_Init;
-exports OpenXP_Call;
+exports OPENXP_INIT;
+exports OPENXP_CALL;
 
 end.
 
 {
   $Log$
+  Revision 1.1.2.8  2003/03/01 16:55:59  cl
+  - fixed last commit
+
   Revision 1.1.2.7  2003/03/01 16:28:46  cl
   - next try for xp_ntvdm.dll
 
