@@ -1394,6 +1394,7 @@ end;
 
 procedure resetvideo;
 var m3 : boolean;
+  sp:scrptr;
 begin
   if startvideotype>0 then
   begin
@@ -1405,10 +1406,12 @@ begin
         XPFont
       else
       begin
+        sichern(sp);
         if not m3 then setvideomode(3);
         setscreenlines(screenlines);
         setmauswindow(0,639,0,screenlines*8-1);
-        end;
+        holen(sp);
+      end;
     end;
   if (videotype>1) and not ParMono then setbackintensity;
   SetXPborder;
@@ -2404,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.3  2000/10/09 16:28:14  mk
+  - Bildschirm in Resetvideo vor Moduswechsel sichern und restaurieren
+
   Revision 1.48.2.2  2000/10/06 21:10:27  mk
   - spezieller Zeilenmodus wird nach Shell jetzt komplett restauriert
 
