@@ -437,7 +437,7 @@ function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gross         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gross  }
 procedure TrimFirstChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
-procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
+procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Ende des String entfernen }
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
@@ -1995,6 +1995,9 @@ end;
 
 {
   $Log$
+  Revision 1.132  2003/08/25 22:38:09  mk
+  - fixed comment for TrimLastChar
+
   Revision 1.131  2003/08/23 23:02:35  mk
   - removed hints and warnings
 
