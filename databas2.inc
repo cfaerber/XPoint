@@ -93,8 +93,7 @@ var icr : dbIndexCRec;
               end;
           until icr.indexstr='';
           if keysize>127 then begin
-            writeln('<DB> interner Fehler: zu gro·er IndexschlÅssel');
-            halt(1);
+            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu gro·er IndexschlÅssel');
             end;
           nn:=max(2,128 div (keysize+12))*2;
           irecsize:=nn*(9+keysize)+10;
@@ -260,6 +259,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2002/11/14 20:02:40  cl
+  - changed some fatal errors to exceptions to allow better debugging
+
   Revision 1.14  2002/07/25 20:43:51  ma
   - updated copyright notices
 

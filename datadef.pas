@@ -97,11 +97,15 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
                       end;
         dbIndexCProc= procedure(var ICR:dbIndexCrec);  { s. Dateiende! }
 
+        EXPDatabase = class(EXPoint) end;
 
 implementation
 
 {
   $Log$
+  Revision 1.10  2002/11/14 20:02:40  cl
+  - changed some fatal errors to exceptions to allow better debugging
+
   Revision 1.9  2002/07/25 20:43:51  ma
   - updated copyright notices
 

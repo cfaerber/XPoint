@@ -238,18 +238,28 @@ begin
     blockread(f1,recbuf^,hd.recsize);
     if inoutres<>0 then
      begin
+(*     
       writeln;
       writeln('<DB> interner Fehler '+strs(inoutres)+' beim Lesen aus '+fname+dbext);
       writeinf(dbp);
+*)      
       if flindex and (ioresult=100) then begin
+(*      
         writeln(sp(79));
         writeln('Indexdatei ist fehlerhaft und wird bei n„chstem Programmstart neu angelegt. ');
+*)        
         close(f1); close(fi);
         erase(fi);
+
+        raise EXPDatabase.Create(1,'<DB> interner Fehler '+strs(inoutres)+' beim Lesen aus '+fname+dbext
+          +#13#10'Indexdatei ist fehlerhaft und wird bei n„chstem Programmstart neu angelegt.');        
+
         end
-      else
+      else begin
         if dbInterrProc<>nil then
           proctype(dbInterrProc);
+        raise EXPDatabase.Create(1,'<DB> interner Fehler '+strs(inoutres)+' beim Lesen aus '+fname+dbext+'.');        
+        end;
       halt(1);
       end;
     if flindex then move(recbuf^,orecbuf^,hd.recsize);
@@ -587,7 +597,10 @@ var i,o   : integer;
           assign(fi,fname+dbIxExt);
           erase(fi);
           if ioresult=0 then ;
+(*          
           halt(1);
+*)
+          raise EXPDatabase.Create(1,'<DB> interner Fehler: '+fname+dbExt+' ist fehlerhaft!');
           end;
         if reccount>recs then begin
           reccount:=recs;
@@ -1584,10 +1597,13 @@ end;
 
 {
   $Log$
+  Revision 1.59  2002/11/14 20:02:40  cl
+  - changed some fatal errors to exceptions to allow better debugging
+
   Revision 1.58  2002/09/30 12:17:46  cl
   - BUGFIX <8Wv6b4jJcDB@3247.org>: off-by-one error
 
-  Revision 1.52.2.3  2002/09/09 08:29:14  mk
+  Revision 1.57  2002/09/09 08:29:36  mk
   - some performance improvements
 
   Revision 1.56  2002/07/25 20:43:51  ma

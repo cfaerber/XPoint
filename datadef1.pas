@@ -198,8 +198,11 @@ begin
   lastioerror:=ioresult;
   if lastioerror<>0 then 
   begin
+(*  
     writeln('<DB> I/O-Fehler '+strs(lastioerror));
     halt(1);
+*)
+    raise EXPDatabase.Create(1,'<DB> I/O-Fehler '+strs(lastioerror));
   end;
   iohandler:=true;
 end;
@@ -209,12 +212,17 @@ end;
 
 procedure error(txt:string);
 begin
+(*
   writeln;
   writeln('<DB> interner Fehler: ',txt);
+*)
   Debug.DebugLog('datadef1','DB Error: '+txt,dlError);
   if dbInterrProc<>nil then
     proctype(dbInterrProc);
+(*    
   halt(1);
+*)
+  raise EXPDatabase.Create(1,'<DB> interner Fehler: '+txt);
 end;
 
 
@@ -237,6 +245,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/11/14 20:02:40  cl
+  - changed some fatal errors to exceptions to allow better debugging
+
   Revision 1.21  2002/09/09 08:42:32  mk
   - misc performance improvements
 
