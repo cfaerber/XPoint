@@ -2373,14 +2373,14 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
-	xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
+	xp1$(UNITEXT) xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT) xpcurses$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
-	xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
+	xp1$(UNITEXT) xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -2625,6 +2625,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.44  2000/11/16 15:26:45  fe
+# Fixed dependencies.
+#
 # Revision 1.43  2000/11/15 23:13:00  fe
 # Fixed dependencies.
 #
