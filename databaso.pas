@@ -16,7 +16,7 @@ unit databaso;
 
 interface
 
-uses xpglobal,dos,typeform,datadef;
+uses xpglobal,typeform,datadef;
 
 
 procedure dbCreate(filename:dbFileName; flp:dbFLP);
@@ -430,6 +430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/11/15 18:01:31  hd
+  - Unit DOS entfernt
+
   Revision 1.11  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
