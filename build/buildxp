@@ -1,33 +1,47 @@
 #/bin/bash
-cd ~/openxp/openxp
-# baue Beta 3.7.8
-cvs up -r branch_3_7_8
+echo "Starting $0 $*"
+scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$1"/
+sourcedir="$versiondir"openxp/
+subversion="$1".0
+cd "$sourcedir"
+#echo $scriptdir
+#echo $versiondir
+#echo $sourcedir
+#echo $subversion
+pwd
+#sleep 5
+# baue Beta 
+echo "Build version $1 in $sourcedir"
+case "$1" in
+   3.8)
+      echo "Updating CVS for $1 "
+      cvs up -r branch_3_7_8
+      ;;
+   3.9)
+      echo "Updating CVS for $1 "
+      cvs up -A
+      ;;
+    *)
+        echo "Usage: $0 {3.8|3.9}"
+        exit 1
+        ;;
+esac
 find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" | xargs -t rm
-rm output/*
+rm "$versiondir"output/*
 rm compile*.log compile*.err 
-./makexp 3.7.8
+"$scriptdir"makexp $1 
 ./rc openxp-d.rq
 ./rc openxp-e.rq
 ./ihs doc/openxp-d.ihq
 ./ihs doc/openxp-e.ihq
-cp kylixout/openxp openxp-kylix
-cp openxp openxp-3.7.8
-cp openxp-kylix openxp-kylix-3.7.8
-tar cvIf openxp-3.7.8-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+cp -a "$versiondir"kylixout/openxp openxp-kylix
+cp -a openxp openxp-$subversion
+cp -a openxp-d.res openxp-d.res-$subversion
+cp -a openxp-e.res openxp-e.res-$subversion
+cp -a doc/openxp-d.hlp doc/openxp-d.hlp-$subversion
+cp -a doc/openxp-e.hlp doc/openxp-e.hlp-$subversion
+cp -a openxp-kylix openxp-kylix-$subversion
+tar cvIf "$versiondir"openxp-"$subversion"-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
 #
-# baue nun alpha 3.7.9
-cvs up -A
-find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" | xargs -t rm 
-rm output/*
-rm compile.log compile.err compile-kylix*
-./makexp 3.7.9
-#make
-./rc openxp-d.rq
-./rc openxp-e.rq
-./ihs doc/openxp-d.ihq
-./ihs doc/openxp-e.ihq
-cp kylixout/openxp openxp-kylix
-cp openxp openxp-3.7.9
-cp openxp-kylix openxp-kylix-3.7.9
-tar cvIf openxp-3.7.9-linux-`date -I`.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
-#
+echo "Finished $0"

@@ -14,7 +14,7 @@ Name: openxp
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 Version: %{version}
-Release: 2
+Release: 3
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team
 Source: /usr/src/packages/SOURCES/openxp-%{version}.tar.gz
@@ -65,8 +65,8 @@ mkdir $RPM_BUILD_ROOT%{Prefix}/doc
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
-cp rc $RPM_BUILD_ROOT%{Prefix}/bin
-cp ihs $RPM_BUILD_ROOT%{Prefix}/bin
+#cp rc $RPM_BUILD_ROOT%{Prefix}/bin
+#cp ihs $RPM_BUILD_ROOT%{Prefix}/bin
 
 # copy resources
 cp openxp-d.res openxp-e.res $RPM_BUILD_ROOT%{Prefix}/lib
@@ -90,8 +90,8 @@ popd
 %define Prefix /usr/local/lib/openxp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
-/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
-/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
+#/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
+#/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
 /bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
 # echo preend >> /tmp/rpm.log
 

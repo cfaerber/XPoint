@@ -1,16 +1,43 @@
 #!/bin/bash
-fpc -B -Ci -Co -Cr -Ct openxp 2> compile-$1.err | tee compile-$1.log
-grep -i warning compile-$1.log > warning-$1.log
-grep -i hint compile-$1.log > hint-$1.log
-grep -i note compile-$1.log > note-$1.log
-grep Error compile-$1.log > error-$1.log
-grep Fatal compile-$1.log > fatal-$1.log
-fpc -B -Ci -Co -Cr -Ct -O2 -Op2 rc
-fpc -Ci -Co -Cr -Ct -OG3p3r ihs
-dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-$1.err | tee compile-kylix-$1.log
-grep -i warning compile-kylix-$1.err > warning-kylix-$1.log
-grep -i hint compile-kylix-$1.err > hint-kylix-$1.log
-grep -i note compile-kylix-$1.err > note-kylix-$1.log
-grep Error compile-kylix-$1.err > error-kylix-$1.log
-grep -i Fatal compile-kylix-$1.err > fatal-kylix-$1.log
+echo "Starting $0 $*"
+scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$1"/
+sourcedir=$versiondir'openxp/'
+subversion="$1".0
+cd "$sourcedir"
+#sleep 5
+case "$1" in
+    3.8)
+       echo "Version $1"
+       fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       echo "fpc option $fpcopts"
+       ;;
+    3.9)
+       echo "Version $1"
+       fpcopts='-Ci -Co -Cr -Ct -gl -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       echo "fpc options $fpcopts"
+       ;;
+    *) 
+       echo "No options set"
+       ;;
+esac
+##fpc -B -Ci -Co -Cr -Ct -O2 -Op2 openxp
+##ppc386 -B -Ci -Co -Cr -Ct -OG3p3r openxp
+echo "Compiling version $1 with option $fpcopts"
+fpc -B $fpcopts openxp 2> compile-$subversion.err | tee compile-$subversion.log
 
+grep -i warning compile-"$subversion".log > warning-"$subversion".log
+grep -i hint compile-"$subversion".log > hint-"$subversion".log
+grep -i note compile-"$subversion".log > note-"$subversion".log
+grep Error compile-"$subversion".log > error-"$subversion".log
+grep Fatal compile-"$subversion".log > fatal-"$subversion".log
+fpc $fpcopts -Fl"$versiondir"output -O2 -OG3p3r -CX- -XX rc
+fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX ihs
+dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-"$subversion".err | tee compile-kylix-"$subversion".log
+grep -i warning compile-kylix-"$subversion".err > warning-kylix-"$subversion".log
+grep -i hint compile-kylix-"$subversion".err > hint-kylix-"$subversion".log
+grep -i note compile-kylix-"$subversion".err > note-kylix-"$subversion".log
+grep Error compile-kylix-"$subversion".err > error-kylix-"$subversion".log
+grep -i Fatal compile-kylix-"$subversion".err > fatal-kylix-"$subversion".log
+
+echo "Finished $0"

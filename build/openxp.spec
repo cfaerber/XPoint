@@ -1,23 +1,21 @@
-# Openxp.spec  first version created by Matthias Leonhardt <ml@mleo.net>
+# Openxp.spec  first version created by Matthias Leonhardt
 # 07.11.2000   some changes to get it running
 # 11.11.2000   some more changes to get more running
 # 15.10.2001   fix for symlinks-kill
-# 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
 Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
-%define version 3.7.9
+%define version 3.7.6
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -FU. -FuObjCOM -Funetcall
-#%define helpdir /home/boettger/openxp/openxp/contrib
-##%define filelist /home/boettger/openxp/openxptools/filelist.lst
-%define filelist /tmp/filelist.lst
+%define ppcopts -FuObjCOM -Funetcall
+%define helpdir /home/leo/openxp/contrib
+%define filelist /home/leo/openxptools/filelist.lst
 %define Prefix /usr/local/lib/openxp
 Version: %{version}
 Release: 1
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team
-Source: /usr/src/packages/SOURCES/openxp-%{version}.tar.gz
+Source: /usr/src/packages/SOURCES/openxp.tar.gz
 BuildRoot: /tmp/openxp-root
 # Following are optional fields
 URL: http://www.openxp.de
@@ -28,7 +26,7 @@ BuildArchitectures: i386
 Requires: ncurses
 #Obsoletes:
 %description
-OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
+OpenXP - the mail- and newsreader for fido and other networks
 
 %prep
 
@@ -41,8 +39,7 @@ OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other net
 #make openxp
 #patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
 #patch < /home/leo/openxptools/xp4.pas.diff
-#ppc386 %{ppcopts} openxp
-ppc386 -B %{ppcopts} openxp
+ppc386 %{ppcopts} openxp
 ppc386 %{ppcopts} rc
 ppc386 %{ppcopts} ihs
 ./rc openxp-d.rq
@@ -65,19 +62,16 @@ mkdir $RPM_BUILD_ROOT%{Prefix}/doc
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
-#cp rc $RPM_BUILD_ROOT%{Prefix}/bin
-#cp ihs $RPM_BUILD_ROOT%{Prefix}/bin
 
 # copy resources
 cp openxp-d.res openxp-e.res $RPM_BUILD_ROOT%{Prefix}/lib
 
 # copy Helpfiles
-#pushd .
-#cd %{helpdir}
-rm -rf doc/CVS
+pushd .
+cd %{helpdir}
 cp doc/* $RPM_BUILD_ROOT%{Prefix}/doc
-#popd
-#cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
+popd
+cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz $RPM_BUILD_ROOT%{Prefix}/doc
 
 pushd .
@@ -90,8 +84,6 @@ popd
 %define Prefix /usr/local/lib/openxp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
-#/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
-#/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
 /bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
 # echo preend >> /tmp/rpm.log
 

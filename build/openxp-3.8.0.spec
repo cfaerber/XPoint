@@ -5,10 +5,10 @@
 # 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
 Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
-%define version 3.7.9
+%define version 3.8.0
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -FU. -FuObjCOM -Funetcall
+%define ppcopts -CX -XX -FU. -FuObjCOM -Funetcall -Fl.
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
