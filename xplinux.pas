@@ -16,13 +16,17 @@ unit xplinux;
   {$FATAL Die Unit XPLINUX kann nur unter Linux compiliert werden }
 {$ENDIF }
 
-{$mode objfpc}
+{$IFDEF FPC }
+  {$mode objfpc}
+{$ENDIF }
 
 interface
 
-{ C default packing is dword }
-{$linklib c}
-{$PACKRECORDS 4}
+{$IFDEF FPC }
+  { C default packing is dword }
+  {$linklib c}
+  {$PACKRECORDS 4}
+{$ENDIF }
 
 uses
   dos,
@@ -32,27 +36,37 @@ uses
   xpglobal;
 
 const
-  A_USER		= STAT_IRUSR or STAT_IWUSR;	{ User lesen/schreiben }
-  A_USERX		= A_USER or STAT_IXUSR;		{ dito + ausfuehren }
+{$IFDEF VP }
+  STAT_IRUSR = S_IRUSR;
+  STAT_IWUSR = S_IWUSR;
+  STAT_IXUSR = S_IXUSR;
+  STAT_IRWXU = S_IRWXU;
+{$ENDIF }
 
-  LOG_EMERG 		= 0;
-  LOG_ALERT 		= 1;
-  LOG_CRIT 		= 2;
-  LOG_ERR 		= 3;
-  LOG_WARNING 		= 4;
-  LOG_NOTICE 		= 5;
-  LOG_INFO 		= 6;
-  LOG_DEBUG 		= 7;
+  A_USER                = STAT_IRUSR or STAT_IWUSR;     { User lesen/schreiben }
+  A_USERX               = A_USER or STAT_IXUSR;         { dito + ausfuehren }
+
+  LOG_EMERG             = 0;
+  LOG_ALERT             = 1;
+  LOG_CRIT              = 2;
+  LOG_ERR               = 3;
+  LOG_WARNING           = 4;
+  LOG_NOTICE            = 5;
+  LOG_INFO              = 6;
+  LOG_DEBUG             = 7;
 
 type
-  TTestAccess 		= (		{ Zugriffsrechte (wird nach Bedarf erweitert) }
+  TTestAccess           = (             { Zugriffsrechte (wird nach Bedarf erweitert) }
                             taUserR,
-			    taUserW,
-			    taUserRW,
-			    taUserX,
-			    taUserRX,
+                            taUserW,
+                            taUserRW,
+                            taUserX,
+                            taUserRX,
                             taUserRWX
                           );
+{$IFDEF VP }
+  Stat = TStat;
+{$ENDIF }
 
 { Verzeichnis-/Datei-Routinen ------------------------------------------ }
 
@@ -73,107 +87,132 @@ procedure XPInfoLog(logmsg: string);
 procedure XPNoticeLog(logmsg: string);
 procedure XPWarningLog(logmsg: string);
 procedure XPErrorLog(logmsg: string);
-  
+
 implementation
 
 uses
   typeform;
 
+
+
 const
-  LOG_PRIMASK 		= $07;
-  LOG_KERN 		= 0 shl 3;
-  LOG_USER 		= 1 shl 3;
-  LOG_MAIL 		= 2 shl 3;
-  LOG_DAEMON 		= 3 shl 3;
-  LOG_AUTH 		= 4 shl 3;
-  LOG_SYSLOG 		= 5 shl 3;
-  LOG_LPR 		= 6 shl 3;
-  LOG_NEWS 		= 7 shl 3;
-  LOG_UUCP 		= 8 shl 3;
-  LOG_CRON 		= 9 shl 3;
-  LOG_AUTHPRIV 		= 10 shl 3;
-  LOG_FTP 		= 11 shl 3;
-  LOG_LOCAL0 		= 16 shl 3;
-  LOG_LOCAL1 		= 17 shl 3;
-  LOG_LOCAL2 		= 18 shl 3;
-  LOG_LOCAL3 		= 19 shl 3;
-  LOG_LOCAL4 		= 20 shl 3;
-  LOG_LOCAL5 		= 21 shl 3;
-  LOG_LOCAL6 		= 22 shl 3;
-  LOG_LOCAL7 		= 23 shl 3;
-  LOG_NFACILITIES 	= 24;
-  LOG_FACMASK 		= $03f8;
-  INTERNAL_NOPRI 	= $10;
-  INTERNAL_MARK 	= LOG_NFACILITIES shl 3;
- 
+  LOG_PRIMASK           = $07;
+  LOG_KERN              = 0 shl 3;
+  LOG_USER              = 1 shl 3;
+  LOG_MAIL              = 2 shl 3;
+  LOG_DAEMON            = 3 shl 3;
+  LOG_AUTH              = 4 shl 3;
+  LOG_SYSLOG            = 5 shl 3;
+  LOG_LPR               = 6 shl 3;
+  LOG_NEWS              = 7 shl 3;
+  LOG_UUCP              = 8 shl 3;
+  LOG_CRON              = 9 shl 3;
+  LOG_AUTHPRIV          = 10 shl 3;
+  LOG_FTP               = 11 shl 3;
+  LOG_LOCAL0            = 16 shl 3;
+  LOG_LOCAL1            = 17 shl 3;
+  LOG_LOCAL2            = 18 shl 3;
+  LOG_LOCAL3            = 19 shl 3;
+  LOG_LOCAL4            = 20 shl 3;
+  LOG_LOCAL5            = 21 shl 3;
+  LOG_LOCAL6            = 22 shl 3;
+  LOG_LOCAL7            = 23 shl 3;
+  LOG_NFACILITIES       = 24;
+  LOG_FACMASK           = $03f8;
+  INTERNAL_NOPRI        = $10;
+  INTERNAL_MARK         = LOG_NFACILITIES shl 3;
+
 type
   TSysLogCode = record
-                  name	: string[10];
-                  value	: longint;
+                  name  : string[10];
+                  value : longint;
                 end;
 const
   PrioNames: array[1..12] of TSysLogCode = (
-	(name : 'alert'; 	value: LOG_ALERT ),
-	(name : 'crit'; 	value: LOG_CRIT ),
-	(name : 'debug'; 	value: LOG_DEBUG ),
-	(name : 'emerg'; 	value: LOG_EMERG ),
-	(name : 'err';		value: LOG_ERR ),
-	(name : 'error'; 	value: LOG_ERR ),		
-	(name : 'info';		value: LOG_INFO ),
-	(name : 'none'; 	value: INTERNAL_NOPRI ),	
-	(name : 'notice'; 	value: LOG_NOTICE ),
-	(name : 'panic'; 	value: LOG_EMERG ),
-	(name : 'warn'; 	value: LOG_WARNING ),
-	(name : 'warning'; 	value: LOG_WARNING ) );
+        (name : 'alert';        value: LOG_ALERT ),
+        (name : 'crit';         value: LOG_CRIT ),
+        (name : 'debug';        value: LOG_DEBUG ),
+        (name : 'emerg';        value: LOG_EMERG ),
+        (name : 'err';          value: LOG_ERR ),
+        (name : 'error';        value: LOG_ERR ),
+        (name : 'info';         value: LOG_INFO ),
+        (name : 'none';         value: INTERNAL_NOPRI ),
+        (name : 'notice';       value: LOG_NOTICE ),
+        (name : 'panic';        value: LOG_EMERG ),
+        (name : 'warn';         value: LOG_WARNING ),
+        (name : 'warning';      value: LOG_WARNING ) );
 
    FacNames: array[1..22] of TSysLogCode = (
-	(name : 'auth';		value: LOG_AUTH ),
-	(name : 'authpriv';	value: LOG_AUTHPRIV ),
-	(name : 'cron';		value: LOG_CRON ),
-	(name : 'daemon';	value: LOG_DAEMON ),
-	(name : 'ftp';		value: LOG_FTP ),
-	(name : 'kern';		value: LOG_KERN ),
-	(name : 'lpr';		value: LOG_LPR ),
-	(name : 'mail';		value: LOG_MAIL ),
-	(name : 'mark';		value: INTERNAL_MARK ),
-	(name : 'news';		value: LOG_NEWS ),
-	(name : 'security';	value: LOG_AUTH ),	
-	(name : 'syslog';	value: LOG_SYSLOG ),
-	(name : 'user';		value: LOG_USER ),
-	(name : 'uucp';		value: LOG_UUCP ),
-	(name : 'local0';	value: LOG_LOCAL0 ),
-	(name : 'local1';	value: LOG_LOCAL1 ),
-	(name : 'local2';	value: LOG_LOCAL2 ),
-	(name : 'local3';	value: LOG_LOCAL3 ),
-	(name : 'local4';	value: LOG_LOCAL4 ),
-	(name : 'local5';	value: LOG_LOCAL5 ),
-	(name : 'local6';	value: LOG_LOCAL6 ),
-	(name : 'local7';	value: LOG_LOCAL7 ));
+        (name : 'auth';         value: LOG_AUTH ),
+        (name : 'authpriv';     value: LOG_AUTHPRIV ),
+        (name : 'cron';         value: LOG_CRON ),
+        (name : 'daemon';       value: LOG_DAEMON ),
+        (name : 'ftp';          value: LOG_FTP ),
+        (name : 'kern';         value: LOG_KERN ),
+        (name : 'lpr';          value: LOG_LPR ),
+        (name : 'mail';         value: LOG_MAIL ),
+        (name : 'mark';         value: INTERNAL_MARK ),
+        (name : 'news';         value: LOG_NEWS ),
+        (name : 'security';     value: LOG_AUTH ),
+        (name : 'syslog';       value: LOG_SYSLOG ),
+        (name : 'user';         value: LOG_USER ),
+        (name : 'uucp';         value: LOG_UUCP ),
+        (name : 'local0';       value: LOG_LOCAL0 ),
+        (name : 'local1';       value: LOG_LOCAL1 ),
+        (name : 'local2';       value: LOG_LOCAL2 ),
+        (name : 'local3';       value: LOG_LOCAL3 ),
+        (name : 'local4';       value: LOG_LOCAL4 ),
+        (name : 'local5';       value: LOG_LOCAL5 ),
+        (name : 'local6';       value: LOG_LOCAL6 ),
+        (name : 'local7';       value: LOG_LOCAL7 ));
 
 const
-  LOG_PID 	= $01;
-  LOG_CONS 	= $02;
-  LOG_ODELAY 	= $04;
-  LOG_NDELAY 	= $08;
-  LOG_NOWAIT 	= $10;
-  LOG_PERROR 	= $20;
+  LOG_PID       = $01;
+  LOG_CONS      = $02;
+  LOG_ODELAY    = $04;
+  LOG_NDELAY    = $08;
+  LOG_NOWAIT    = $10;
+  LOG_PERROR    = $20;
 
   log_installed: boolean = false;
 
-const				{ Common Environment-Vars }
-  envHome		= 'HOME';
-  envShell		= 'SHELL';
+const                           { Common Environment-Vars }
+  envHome               = 'HOME';
+  envShell              = 'SHELL';
 
 const
-  fnProcVersion		= '/proc/version';	{ Versionsinfos }
+  fnProcVersion         = '/proc/version';      { Versionsinfos }
 
 var
   SavedExitProc: Pointer;
   LogPrefix: array[0..255] of char;
   LogString: array[0..1024] of char;
 
+{ Interface-Routinen fÅr Virtual Pascal -------------------------------- }
+
+{$IFDEF VP }
+function Chmod(path:pathstr;Newmode:longint):Boolean;
+var
+  AStr: AnsiString;
+begin
+  Astr := Path;
+  ChMod := LnxChMod(PCHar(AStr), NewMode) = 0;
+end;
+
+function GetPid: LongInt;
+begin
+  GetPid := LnxGetPid;
+end;
+{$ENDIF }
+
 
 { Verzeichnis-Routinen ------------------------------------------------- }
+{$IFDEF VP }
+function StrP(s: String): AnsiString;
+begin
+  StrP := s;
+end;
+{$ENDIF }
 
 function MakeDir(p: string; a: longint): boolean;
 begin
@@ -184,22 +223,35 @@ begin
     MakeDir:= chmod(p, a);
 end;
 
-function TestAccess(p: string; ta: TTestAccess): boolean;
+function TestAccess(p: String; ta: TTestAccess): boolean;
 var
   info: stat;
 begin
+{$IFDEF FPC }
   if not (fstat(p, info)) then
+{$ELSE }
+  if Lnxstat(PChar(StrP(p)), info) <> 0 then
+{$ENDIF }
     TestAccess:= false
   else with info do begin
     case ta of
+{$IFDEF FPC }
       taUserR:   TestAccess:= (uid and STAT_IRUSR) <> 0;
-      taUserW:	 TestAccess:= (uid and STAT_IWUSR) <> 0;
+      taUserW:   TestAccess:= (uid and STAT_IWUSR) <> 0;
       taUserRW:  TestAccess:= (uid and (STAT_IRUSR or STAT_IWUSR)) <> 0;
       taUserRWX: TestAccess:= (uid and STAT_IRWXU) <> 0;
       taUserX:   TestAccess:= (uid and STAT_IXUSR) <> 0;
       taUserRX:  TestAccess:= (uid and (STAT_IRUSR or STAT_IXUSR)) <> 0;
+{$ELSE }
+      taUserR:   TestAccess:= (st_uid and S_IRUSR) <> 0;
+      taUserW:   TestAccess:= (st_uid and S_IWUSR) <> 0;
+      taUserRW:  TestAccess:= (st_uid and (S_IRUSR or S_IWUSR)) <> 0;
+      taUserRWX: TestAccess:= (st_uid and S_IRWXU) <> 0;
+      taUserX:   TestAccess:= (st_uid and S_IXUSR) <> 0;
+      taUserRX:  TestAccess:= (st_uid and (S_IRUSR or S_IXUSR)) <> 0;
+{$ENDIF }
     end;
-  end;  
+  end;
 end;
 
 procedure SetAccess(p: string; ta: TTestAccess);
@@ -249,10 +301,17 @@ end;
 
 { SysLog-Interface ----------------------------------------------------- }
 
+{$IFDEF FPC }
 procedure closelog;cdecl;external;
 procedure openlog(__ident:pchar; __option:longint; __facilit:longint);cdecl;external;
 function setlogmask(__mask:longint):longint;cdecl;external;
 procedure syslog(__pri:longint; __fmt:pchar; args:array of const);cdecl;external;
+{$ELSE }
+procedure closelog;begin end;
+procedure openlog(__ident:pchar; __option:longint; __facilit:longint);begin end;
+function setlogmask(__mask:longint):longint;begin end;
+procedure syslog(__pri:longint; __fmt:pchar; args:array of const);begin end;
+{$ENDIF }
 
 { Log-Proceduren ------------------------------------------------------- }
 
@@ -260,7 +319,7 @@ procedure XPLog(Level: integer; format_s: string; args: array of const);
 var
   s: string;
 begin
-  if not (log_installed) then		{ Kann beim Init der Unit's vorkommen }
+  if not (log_installed) then           { Kann beim Init der Unit's vorkommen }
     exit;
   { Da FPC einen Internal Error bei syslog(level,p,args) erzeugt,
     muessen wir die Wandelung selbst vornehmen }
@@ -344,10 +403,13 @@ end;
 
 begin
   InitLogStream;
-  
+
 end.
 {
   $Log$
+  Revision 1.15  2000/05/14 17:29:04  ml
+  - VP-Portierung fÅr linux
+
   Revision 1.14  2000/05/14 15:04:52  hd
   - Anpassungen Linux
 
