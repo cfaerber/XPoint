@@ -755,9 +755,9 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
        
-       AutoDatumsBezuege : boolean = false;
+{       AutoDatumsBezuege : boolean = false; }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS }
        
-       { /oh }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1070,6 +1070,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.8  2001/07/18 17:13:17  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.10.2.7  2000/11/17 22:34:36  mk
   - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
 

@@ -683,10 +683,9 @@ begin
   PGP_waitkey:=false;
   PGP_log:=false;
   PGP_signall:=false;
-  { 01/2000 oh }
   PGPVersion:=PGP2;
-  AutoDatumsBezuege:=true;
-  { /oh }
+{  AutoDatumsBezuege:=true; }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS }
 end;
 
 
@@ -900,8 +899,8 @@ begin
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   { 01/2000 oh }
   writeln(t,'PGP-Version=',PGPVersion);
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
-  { /oh }
+{  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege)); }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS }
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
   writeln(t,'DefaultNokop=',jnf(defaultnokop));
@@ -1311,10 +1310,9 @@ begin
           geti(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
-          { 01/2000 oh}
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege',autodatumsbezuege) or
-          { /oh }
+{          getx(su,  'autodatumsbezuege',autodatumsbezuege) or }
+{ unn”tig seit Fix von jg in XP3O2.PAS und XP4.PAS }
           getb(su,  'screenlines',screenlines) or
           gets(su,su,'tempdir',temppath,79) or
           gets(su,su,'extractdir',extractpath,79) or
@@ -1607,6 +1605,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.8  2001/07/18 17:13:17  my
+  - removed switch and netcall routine
+    "update date entries after netcall"
+
   Revision 1.13.2.7  2000/11/17 10:52:42  mk
   - Autodatumsbezuege default true
 
