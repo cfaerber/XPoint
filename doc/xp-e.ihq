@@ -3232,22 +3232,8 @@ This option can be manually edited by pressing the
 selecting <<S>>pecial/<<E>>dit.
 
 Note: For all other Networks, umlauts are displayed.
-
 @
 223
-This option determines how the User-window will be
-sorted:
-
-<<[x]>> -> It will be sorted initially by Server, then
-       by User-name.
-
-<<[ ]>> -> Sorted by User-name.
-
-This option may be manually toggled in the
-User-window by pressing "O".
-
-@
-224
 Some users use the "|" and ":" characters as a quote
 character instead of the more commonly used ">"
 character. When either of these other characters are
@@ -3256,7 +3242,7 @@ characters here and "colour quotes" will be used,
 just as they would for the ">" character.
 
 @
-225
+224
 You can set a level for minimum free hard disk space
 which must be available when XP <<starts>> (what
 happens cannot be controlled). If the space available
