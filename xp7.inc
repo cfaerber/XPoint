@@ -964,32 +964,32 @@ var dummy : longint;
 begin { FidoSysopTransfer }
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do begin
-    if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
-      trfehler(727,30);   { 'ungltiges Eingabeverzeichnis' }
+    if not IsPath(SysopInp) then begin          // Verzeichnisse testen
+      trfehler(727,30);                         // 'ungltiges Eingabeverzeichnis'
       exit;
       end;
     if not IsPath(SysopOut) then begin
-      trfehler(728,30);   { 'ungltiges Ausgabeverzeichnis' }
+      trfehler(728,30);                         // 'ungltiges Ausgabeverzeichnis'
       exit;
       end;
 
     NC^.sendbuf:=_filesize(ppfile);
     for i:=1 to addpkts^.anzahl do
       inc(NC^.sendbuf,_filesize(addpkts^.abfile[i]+BoxFileExt));
-    if (NC^.sendbuf>0) or (SendAKAs<>'') then begin     { -- Ausgabepaket -- }
+    if (NC^.sendbuf>0) or (SendAKAs<>'') then begin                     // Ausgabepaket
       outmsgs:=testpuffer(ppfile,false,dummy);
       for i:=1 to addpkts^.anzahl do
         inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
       if SysopPack then begin
-        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);    { ZFIDO }
+        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);    // ZFIDO
         if (errorlevel=MaggiFehler) and FileExists(ppfile) then begin
-          ferror(729);   { 'Fehler bei der ZFIDO-Konvertierung' }
+          ferror(729);                          // 'Fehler bei der ZFIDO-Konvertierung'
           exit;
           end;
         if errorlevel=0 then begin
           exchange(uparcer,'$UPFILE',caller);
           SetCurrentDir(SysopOut);
-          shell(uparcer,500,3);                         { packen }
+          shell(uparcer,500,3);                 // packen
           end;
         if FileExists(SysopOut+upuffer) then _era(SysopOut+upuffer);
         with addpkts^ do
@@ -1021,26 +1021,24 @@ begin { FidoSysopTransfer }
       end;
 
 
-
-
-      if not isEmptyDir(BoxPar^.sysopinp) then
+      if not isEmptyDir(BoxPar^.sysopinp) then                  // SysOp Eingansverzeichnis leer
       begin
-        erase_mask(xp0.XFerDir+'*.pkt');                        //L”sche alle alten pakete
+        erase_mask(xp0.XFerDir+'*.pkt');                        // L”sche alle alten pakete im spool
 
         dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
         if dir.Count>0 then begin                               // *.pkt im SysopIn Verzeichnisvorhanden
           for i:=0 to dir.Count-1 do begin                              //
-            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then // move *.pkt vonSysOpIn -> Spool
+            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then // move *.pkt von SysOpIn -> Spool
               _era(dir.LongName[i]);
-            end; //for
-          end;   //Dir.Count
+            end; // for
+          end;   // Dir.Count
         if FidoImport(SysopInp,box) then
-          for i:=0 to dir.Count-1 do                            //alles aus dem Sysopin l”schen
-            if FileExists(BoxPar^.sysopinp+dir.Name[i]) then
+          for i:=0 to dir.Count-1 do                            // alles *.pkts im SysOpIn l”schen
+            if FileExists(BoxPar^.sysopinp+dir.Name[i]) then    // Archive werden in func FidoImport gel”scht
               _era(BoxPar^.sysopinp+dir.Name[i]);
         dir.Free;
 
-        end; //if  FileExists(BoxPar^.sysopinp+'*.*') then
+        end; // if not isEmptyDir(BoxPar^.sysopinp)
 
 
 //    if not isEmptyDir(SysopInp) then begin   { -- Eingangspaket -- }
@@ -1348,6 +1346,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.53  2001/01/02 09:29:38  mo
+  -Kommentare hinzugefügt und ergänzt
+
   Revision 1.52  2001/01/01 16:18:17  mo
   -Sysoppoll: arcmail wird wieder entpackt,
   -aus dem Indir werden nur noch die pkts und die arc gelöscht

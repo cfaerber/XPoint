@@ -794,8 +794,8 @@ begin
       getmem(p,psize);
       brk:=false;
 
-      if aktdispmode=11 then
-      begin                       {-- Suche markiert (Weiter suchen) --}
+      if aktdispmode=11 then            //11-Suchergebnis
+      begin                             {-- Suche markiert (Weiter suchen) --}
         getmem(markedback,maxmark * sizeof(markrec));
         for i:=0 to markanz do markedback^[i]:=marked^[i];
         markanzback:=markanz;
@@ -813,11 +813,10 @@ begin
           hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
           markanz:=markanzback;
           for i:=0 to markanz do marked^[i]:=markedback^[i];
-        end;
+          end;
         if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
-      end
-
-      else if bereich<3 then begin              //0='Alle' 'Netz' 'User' 'markiert' 'gewÑhlt'
+        end
+      else if bereich<3 then begin      //'Alle'=0 'Netz'=1 'User'=2 'markiert'=3 'gewÑhlt'=4
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
@@ -828,33 +827,33 @@ begin
           if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
-          if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
-            dbNext(mbase);            { Satz geloescht wurde               }
+          if not dbEOF(mbase) then      { kann passieren, wenn fehlerhafter }
+            dbNext(mbase);              { Satz geloescht wurde               }
           testbrk(brk);
           end;
         dbSetIndex(mbase,mi);
         end
 
-      else begin                                         {-- Suche: aktuelles Brett --}
+      else begin                        // Suche: Bereich markiert, gewÑhlt
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,miBrett);
-        if bereich=3 then begin     { markiert }
-          if aktdispmode<10 then begin
+        if bereich=3 then begin                         // markiert
+          if aktdispmode<10 then begin                  // Nachrichten oder UserÅbersicht
             i:=0;
-            uu:=(aktdispmode>0);
+            uu:=(aktdispmode>0);                        // nicht in BrettÅbersicht
             while (i<bmarkanz) and not brk do begin
-              if uu then begin
+              if uu then begin                         // in UserÅbersicht
                 dbGo(ubase,bmarked^[i]);
                 TestBrett(mbrettd('U',ubase));
                 end
-              else begin
+              else begin                                // in Brettuebersicht
                 dbGo(bbase,bmarked^[i]);
                 brett := dbReadNStr(bbase,bb_brettname);
                 TestBrett(mbrettd(brett[1],bbase));
                 end;
               inc(i);
-              end;
-            end;
+              end;      // while (i<bmarkanz) and not brk do begin
+            end;        // if aktdispmode<10 then begin
           end
         else
           case aktdispmode of
@@ -2425,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.89  2001/01/02 09:29:38  mo
+  -Kommentare hinzugef¸gt und erg‰nzt
+
   Revision 1.88  2001/01/01 20:17:35  mo
   -Spezialsuche in markierten Brettern -lter Satnd wieder hergesetllt
 
