@@ -185,13 +185,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if hd_point<>''  then wrs('X-XP-PNT: '+hd_point);
         if pm_bstat<>''  then wrs('X-XP-BST: '+pm_bstat);
         if attrib<>0     then wrs('X-XP-ATT: '+hex(attrib,4));
-        if fido_to<>''   then wrs('X-XP-FTO: '+fido_to);
         if ReplyPath<>'' then wrs('X-XP-MRP: '+replypath);
         if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
-        end
-      else
-        if fido_to<>''   then wrs('F-TO: '+fido_to);
+        end;
+      if fido_to<>''   then wrs('F-TO: '+fido_to);
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
                                 iifs(boundary<>'','; boundary="'+boundary+'"','')+
@@ -376,7 +374,7 @@ begin
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
-    if netztyp=nt_ZConnect then
+    if netztyp in [nt_ZConnect,nt_UUCP,nt_NNTP] then
       if hdp^.fido_to<>'' then xp0.fidoto:=realname
       else xp0.fidoto:=''
     else begin
@@ -434,6 +432,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/09/06 21:31:01  fe
+  /home/fe/foo
+
   Revision 1.20  2000/07/22 14:05:27  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

@@ -567,7 +567,7 @@ begin
     wrs('X-XP-NTP: ' + strs(netztyp));
     attrib := attrib and not (attrReqEB + attrIsEB);
     if attrib <> 0 then wrs('X-XP-ATT: ' + hex(attrib, 4));
-    if fido_to <> '' then wrs('X-XP-FTO: ' + fido_to);
+    if fido_to <> '' then wrs('F-TO: ' + fido_to);
     if XPointCtl <> 0 then wrs('X-XP-CTL: ' + strs(XPointCtl));
     wrs('');
   end;
@@ -1919,7 +1919,10 @@ begin
             else
               Uline.Add('U-' + s1);
           'x':
-            if zz = 'x-gateway' then
+            if zz = 'x-comment-to' then
+              fido_to := s0
+            else
+              if zz = 'x-gateway' then
               gateway := s0
             else
               if zz = 'x-mailer' then
@@ -3017,6 +3020,8 @@ begin
       wrs(f, 'X-XP-Ctl: ' + strs(XPointCtl));
     if ersetzt <> '' then
       wrs(f, 'Supersedes: <' + ersetzt + '>');
+    if fido_to <> '' then
+      wrs(f, 'X-Comment-To: ' + ersetzt);
 
     for i := 0 to uline.Count - 1 do
     begin
@@ -3409,6 +3414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/09/06 21:31:01  fe
+  /home/fe/foo
+
   Revision 1.58  2000/08/28 18:53:04  mk
   - FPC-Kompatiblitaets-Fix
 

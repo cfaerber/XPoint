@@ -530,6 +530,7 @@ begin
           if id='BEZ'  then ref:=left(line,midlen) else
           if id='MAILER' then programm:=line else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
+          if id='F-TO' then fido_to:=left(line,36) else
           if id='CRYPT' then pgpencode:=true else
           if id='SIGNED' then pgpsigned:=(pos('PGP',UpperCase(line))>0) else
           if id[1]='X' then
@@ -604,7 +605,7 @@ begin
     wrs('X_C:');
     wrs('X-XP-NTP: '+strs(netztyp));
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('X-XP-FTO: '+fido_to);
+    if fido_to<>''  then wrs('F-TO: '+fido_to);
     if fido_flags<>'' then wrs('X-Fido-Flags: '+fido_flags);
     if x_charset<>''  then wrs('X-Charset: '+x_charset);
     if org_msgid<>''  then wrs('X-XP-ORGMID: '+org_msgid);
@@ -620,7 +621,7 @@ end;
 
 { Im Packet-Header mssen die Adressen verwendet werden, die als      }
 { Parameter bergeben wurden (_from/_to). In den Nachrichten-Headern  }
-{ mssen die Adressen aus den Feldern ABS, EMP und X-XP-FTO verwendet }
+{ mssen die Adressen aus den Feldern ABS, EMP und F-TO verwendet     }
 { werden.                                                             }
 
 procedure ZFidoProc;          { ZCONNECT -> FTS-0001 }
@@ -1671,6 +1672,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/09/06 21:31:01  fe
+  /home/fe/foo
+
   Revision 1.31  2000/08/08 13:18:16  mk
   - s[Length(s)] durch Lastchar ersetzt
 

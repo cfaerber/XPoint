@@ -520,7 +520,7 @@ begin
             wrml(mline[i]);
           wrs('X-XP-NTP: '+iifs(pronet,'4','3'));
           if fido_to<>'' then
-            wrs('X-XP-FTO: '+fido_to);
+            wrs('F-TO: '+fido_to);
           wrs('');
           end
         else begin                   { M->N }
@@ -1610,6 +1610,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/09/06 21:31:01  fe
+  /home/fe/foo
+
   Revision 1.23  2000/08/08 13:18:13  mk
   - s[Length(s)] durch Lastchar ersetzt
 
