@@ -325,8 +325,8 @@ begin
     xnr:=0;
     for i:=0 to 3 do
       if LowerCase(xid)=LowerCase(xids[i]) then xnr:=i;
-    XP_ID_PMs:=(xnr=1) or (xnr=3) or not registriert.r2;
-    XP_ID_AMs:=(xnr=2) or (xnr=3){ or not registriert.r2};
+    XP_ID_PMs:=(xnr=1) or (xnr=3);
+    XP_ID_AMs:=(xnr=2) or (xnr=3);
     GlobalModified;
     end;
   enddialog;
@@ -1389,6 +1389,9 @@ end.
 
 {
   $Log$
+  Revision 1.85  2001/03/14 20:46:03  mk
+  - removed registration routines
+
   Revision 1.84  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

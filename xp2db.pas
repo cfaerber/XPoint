@@ -861,18 +861,6 @@ begin
     write_lastcall(ZDate);
 
   getablsizes;
-  reg_hinweis:=false;
-{$IFDEF NeedReg }
-  dbOpen(dd,BoxenFile,0);
-  while not dbEOF(dd) do
-  begin
-    if (not registriert.uucp and (dbReadInt(dd,'netztyp')=nt_UUCP)) or
-       (not registriert.non_uucp and (dbReadInt(dd,'netztyp')<>nt_UUCP)) then
-      reg_hinweis:=true;
-    dbNext(dd);
-  end;
-  dbClose(dd);
-{$ENDIF }
 
   if not FileExists(WeiterMsk) then
   begin
@@ -912,6 +900,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/03/14 20:46:03  mk
+  - removed registration routines
+
   Revision 1.27  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

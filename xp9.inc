@@ -442,7 +442,7 @@
                     mset3proc(uucp_getloginname);
 
                     _conn_mode:=iifs((conn_mode=conn_mode_modem),getres2(920,71),
-		                iifs((conn_mode=conn_mode_tcpip),getres2(920,72),getres2(920,76)));
+                                iifs((conn_mode=conn_mode_tcpip),getres2(920,72),getres2(920,76)));
                     maddstring(3,5,getres2(920,70),_conn_mode,6,6,'');     { 'Modus   ' }
                     mappsel(true,getres2(920,71)+'ù'+getres2(920,72)+'ù'+getres2(920,76));
                     mset1func(uucp_setmode);
@@ -473,7 +473,7 @@
         malltrim;
       end;
 
-      if nt in [nt_Netcall,nt_ZConnect,nt_Magic,nt_Pronet] then 
+      if nt in [nt_Netcall,nt_ZConnect,nt_Magic,nt_Pronet] then
       begin
         maddstring(iif(pronet,39,38),3,getres2(920,13)+iifs(pronet,' ',''),zerbid,4,4,'>');
         msetvfunc(zidtest); mhnr(143);                         { 'Ser.Nr.' }
@@ -486,15 +486,15 @@
         mhnr(8006);
       end;
 
-      if fido then 
+      if fido then
       begin
         maddstring(27,3,getres2(920,15),passwort,18,18,''); mhnr(153);
         mset3proc(fidotestpasslen);                            { 'Passwort' }
       end;
-      
+
       add:=iif(nt=nt_Maus,0,1);
 
-      if fido or uucp then 
+      if fido or uucp then
       begin
         add:=iif(uucp,0,-2);
         lhapar:=' -m';
@@ -507,16 +507,16 @@
                         'hslink.exe -P$PORT -U$DOWNPATH $UPFILEùbimodem /L $PORT /U $UPFILE /I $LOGFILE');
           msetvfunc(testexecutable);                      { 'Upload-Protokoll  ' }
         maddstring(3,5+add,getres2(920,21),downloader,br,100,'');
-          if pronet then 
-	    mappsel(false,'Zmodemùdsz.exe port $PORT rzùgsz.exe portx $ADDRESS,$IRQ rz')
-          else 
-	    mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ rz $DOWNFILE');
-          if zc then 
-	    mappsel(false,'gsz.exe portx $ADDRESS,$IRQ rz $DOWNPATH');
+          if pronet then
+            mappsel(false,'Zmodemùdsz.exe port $PORT rzùgsz.exe portx $ADDRESS,$IRQ rz')
+          else
+            mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ rz $DOWNFILE');
+          if zc then
+            mappsel(false,'gsz.exe portx $ADDRESS,$IRQ rz $DOWNPATH');
           msetvfunc(testexecutable);                      { 'Download-Protokoll' }
           downprotnr:=fieldpos;
-        if prototyp='' then 
-	  prototyp:='Z';
+        if prototyp='' then
+          prototyp:='Z';
         if nt=nt_Maus then begin
           maddstring(3,6,getres2(920,22),prototyp,1,1,'>'); mhnr(150);
           mappsel(false,'ZùM');                     { 'Protokoll-Kennung ' }
@@ -526,7 +526,7 @@
       end; { not fido, not uucp }
 
       maddstring(3,7+add,getres2(920,23),uparcer,br,60,''); mhnr(146);
-      
+
       if uucp then begin                        { 'Upload-Packer     ' }
          mappsel(false,'compress -vf -b12 $PUFFERùcompress -vf -b16$PUFFERùfreeze -vif $PUFFERùgzip -vf $PUFFERùbzip2 -vf $PUFFER');
          mhnr(8020);
@@ -538,7 +538,7 @@
       mset3proc(set_uparcext);
 
       maddstring(3,8+add,getres2(920,iif(uucp,25,24)),downarcer,br,60,'');
-      
+
       if uucp then                              { 'Download-Entpacker' }
         mappsel(false,'compress -vdf $DOWNFILEùgzip -vdf $DOWNFILE')
       else
@@ -567,7 +567,7 @@
         UpArcNr:=0; DownArcNr:=0;
       end else
 
-      if uucp then 
+      if uucp then
       begin
         maddstring(3,9+add,getres2(920,26),unfreezer,br,40,'');  { 'Freeze-Entpacker' }
         mappsel(false,'freeze -vdif $DOWNFILE');
@@ -579,41 +579,41 @@
         mappsel(false,'bzip2 -vdf $DOWNFILE');
           mhnr(8026);
         msetvfunc(testexecutable);
-        
-	Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
+
+        Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
         Ue:=cpos('e',uuprotos)>0; Uz:=cpos('z',uuprotos)>0;
         Uf:=cpos('f',uuprotos)>0;
         Ut:=cpos('t',uuprotos)>0;
 
         maddbool(3,13,getres2(920,36),uusmtp); mhnr(8017); { 'Batched SMTP'                  }
-	  mhnr(8017);
+          mhnr(8017);
         maddbool(3,14,getres2(920,35),SizeNego);           { 'Dateigroesse uebertragen'      }
-	  mhnr(8014);
+          mhnr(8014);
           mset1func(uucp_setsznego);
         maddbool(3,15,getres2(920,32),VarPacketSize);      { 'variable Paketgroesse'         }
           mhnr(8012);
-	  if not (ug or u_g) then MDisable;
-	  uucp_gvarfld:=fieldpos;
+          if not (ug or u_g) then MDisable;
+          uucp_gvarfld:=fieldpos;
         maddbool(3,16,getres2(920,60),ForcePacketsize);    { 'Ausgangspaketgroesse vorgeben' }
-	  mhnr(8013);
-	  if not (ug or u_g) then MDisable;
-	  uucp_gforfld:=fieldpos;
+          mhnr(8013);
+          if not (ug or u_g) then MDisable;
+          uucp_gforfld:=fieldpos;
 
         maddint(3,18,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigroesse   '      }
           mhnr(8025);
-	  if not SizeNego then MDisable;
-	  uucp_maxsizefld:=fieldpos;
+          if not SizeNego then MDisable;
+          uucp_maxsizefld:=fieldpos;
         maddtext(35,18,'kB',0);
         maddint(3,19,getres2(920,30),maxpacketsize,5,4,64,4096); { 'max. UUCP-Paketgroesse ' }
           mappsel(true,'64ù128ù256ù512ù1024ù2048ù4096');
-          mhnr(8010);                                      
-	  if not (ug or u_g) then MDisable;
-	  uucp_gpktfld:=fieldpos;
+          mhnr(8010);
+          if not (ug or u_g) then MDisable;
+          uucp_gpktfld:=fieldpos;
         maddint(3,20,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergroesse  '    }
           mappsel(true,'7ù6ù5ù4ù3ù2');
-          mhnr(8011);                                      
-	  if not (ug or u_g) then MDisable;
-	  uucp_gwinfld:=fieldpos;
+          mhnr(8011);
+          if not (ug or u_g) then MDisable;
+          uucp_gwinfld:=fieldpos;
 
         uup1:=fieldpos+1;
         maddbool(43,13,getres2(920,66),Ut);    { 't-Protokoll' }
@@ -624,11 +624,11 @@
           uucp_pefld:=fieldpos;
         maddbool(43,15,getres2(920,33),U_G);   { 'G-Protokoll' }
           mhnr(8015);
-	  uucp_p_Gfld:=fieldpos;
+          uucp_p_Gfld:=fieldpos;
           mset1func(uucp_setprot);
         maddbool(43,16,getres2(920,34),Ug);    { 'g-Protokoll' }
           mhnr(8015);
-	  uucp_pgfld:=fieldpos;
+          uucp_pgfld:=fieldpos;
           mset1func(uucp_setprot);
         maddbool(43,17,getres2(920,37),Uz);    { 'z-Protokoll' }
           mhnr(8015);
@@ -641,18 +641,18 @@
         uparcnr:=0; downarcnr:=0;
 
         uucp_setmode  (_conn_mode);
-	
-        masksetqfunc(testuucp);
-      end else 
 
-      if zc then 
+        masksetqfunc(testuucp);
+      end else
+
+      if zc then
       begin
         maddbool(3,10+add,getres2(920,44),JanusPlus);    { 'Janus+' }
         mset1func(JanusSwitch);
         mhnr(8018);
         maddstring(33,10+add,getres2(920,43),uparcext,3,3,'>');
       end                                         { 'Packer-Extension    ' }
-         
+
       else { not fido, not uucp, not zc }
       begin
         maddstring(3,10+add,getres2(920,40),uparcext,3,3,'>');
@@ -667,21 +667,21 @@
           mset3proc(TestArcext);    { TXT im MausNet verhindern }
       end;
     end; { with boxpar^ do }
-    
+
     freeres;
     EditPnt:=nt;
-    
+
     readmask(brk);
 
-    if not brk then 
+    if not brk then
     begin
       dbWriteStr(d,'pointname',pname);
       boxpar^.pointname:=pname;
-      
-      if ntOnePW(nt) then 
+
+      if ntOnePW(nt) then
         boxpar^.o_passwort:=boxpar^.passwort;
 
-      if fido then with boxpar^ do 
+      if fido then with boxpar^ do
       begin
         flags:=flags and (not 4) + iif(fnode,4,0);
         dbWrite(d,'script',flags);
@@ -690,11 +690,11 @@
         if (pp=1) or ((pp>0) and (SendAKAs[pp-1]=' ')) then
           delete(SendAKAs,pp,length(boxname)+1);
       end else
-      
-      if uucp then with boxpar^ do 
+
+      if uucp then with boxpar^ do
       begin
         conn_mode:=iif(_conn_mode=getres2(920,71),conn_mode_modem,
-	           iif(_conn_mode=getres2(920,72),conn_mode_tcpip,conn_mode_telnet));
+                   iif(_conn_mode=getres2(920,72),conn_mode_tcpip,conn_mode_telnet));
         uuprotos:='';
         if Ut and (conn_mode<>conn_mode_modem) then
           uuprotos:=uuprotos+'t';
@@ -1683,10 +1683,7 @@
       end; { case nt }
       if not brk then
         WriteBox(fn,boxpar);
-      brk:=reg_hinweis;
-      reg_hinweis:=false; { Damit der Lizenz-Bildschirm nicht angezeigt wird }
       ReadDomainList;
-      reg_hinweis:=brk;
       end;
     pophp;
   end;
@@ -1770,6 +1767,9 @@
 
 {
   $Log$
+  Revision 1.42  2001/03/14 20:46:05  mk
+  - removed registration routines
+
   Revision 1.41  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

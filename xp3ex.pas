@@ -696,9 +696,9 @@ var size   : longint;
   procedure TestSoftware;
   begin
     if not mailerflag then
-      if not registriert.r2 and ntForceMailer(hdp.netztyp)
+      if ntForceMailer(hdp.netztyp)
          and (dbReadInt(mbase,'ablage')=10) then begin
-        wrs(gr(20)+xp_xp+' '+verstr+' '+gr(60));   { '(unregistriert)' }
+        wrs(gr(20)+xp_xp+' '+verstr+' '+gr(60));
         mailerflag:=true;
         end;
   end;
@@ -1082,6 +1082,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2001/03/14 20:46:04  mk
+  - removed registration routines
+
   Revision 1.66  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

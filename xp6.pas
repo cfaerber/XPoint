@@ -1062,9 +1062,7 @@ fromstart:
     rfehler(609);   { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
     goto xexit;
   end;
-  if not ((registriert.non_uucp and (netztyp<>nt_UUCP)) or
-          (registriert.uucp and (netztyp=nt_UUCP)) or
-          binary or TestXPointID)
+  if not (binary or TestXPointID)
      and (pm or not ntForceMailer(netztyp)) then
     XpID:=true;
   if pm and (UpperCase(LeftStr(empfaenger,length(mapsname)))=mapsname) then
@@ -1643,8 +1641,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
       hdp.programm:=xp_xp+' '+verstr+Trim(betastr)
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
-                     +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
-                            registriert.tc+strs(registriert.nr),'');
+                     +pformstr;
     hdp.organisation:=orga;
     if sdata^.ersetzt<>''then hdp.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2106,6 +2103,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.101  2001/03/14 20:46:04  mk
+  - removed registration routines
+
   Revision 1.100  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -60,7 +60,6 @@ procedure SaveConfig2;
 procedure cfgsave;       { mit Fenster }
 procedure GlobalModified;
 function  AskSave:boolean;
-procedure read_regkey;   { registriert? }
 procedure test_pfade;
 procedure test_defaultbox;
 procedure test_defaultgruppen;
@@ -914,98 +913,6 @@ begin
       end;
 end;
 
-procedure read_regkey;
-var t   : text;
-    s   : string;
-    p   : byte;
-    l1,l2,l3 : integer32;
-    l   : integer32;
-    code: integer32;
-    rp  : ^boolean;
-
-begin
-  regstr1:=''; regstr2:=''; registriert.nr:=0;
-  registriert.komreg:=false;
-  registriert.orgreg:=false;
-  assign(t,regdat);
-  if existf(t) then begin
-    reset(t);
-    readln(t,s);
-    s:=trim(s);
-    close(t);
-    if firstchar(s)='!' then begin
-      registriert.komreg:=true;
-      registriert.orgreg:=true;
-      delfirst(s);
-      end;
-    p:=cpos('-',s);
-    if p>0 then begin
-      if FirstChar(s) in ['A','B','C'] then begin
-        registriert.tc:=s[1]; delete(s,1,1); dec(p);
-        end
-      else
-        registriert.tc:='A';
-      l:=ival(LeftStr(s,p-1));              { lfd. Nummer }
-      if ((l>=4001) and (l<=4009)) or
-         (l=800) or                      { Key in Cracker-Box aufgetaucht }
-         (l=4088) or                     { Key auf CD-ROM aufgetaucht     }
-         (l=4266) or (l=4333) or         { storniert                      }
-         (l=8113) or                     { Key in CCC.GER ver”ffentlicht  }
-         (l=6323) or                     { Key in Cracker-Kreisen aufgetaucht }
-         (l=101) or                      { Key im Usenet aufgetaucht }
-         (l=0) or (l=11232) or (l=12345) or (l=23435) or (l=32164) or
-         (l=33110) or (l=34521) or (l=54321) or (l=12034) then   { Hacks }
-        l:=0;
-      registriert.nr:=l;
-      rp:=@registriert;
-      inc(longint(rp));
-      l1:=CRC16strXP(reverse(hex(l+11,4))); l1:=l1 xor (l1 shl 4);
-
-      { Registrierungsbug Plattformunabh„nig emulieren }
-      { 10923 * 3 ist gr”áer als maxint (32767) }
-      if l<10923 then
-        l2:=CRC16strXP(reverse(hex(l*3,5)))
-      else
-        l2:=CRC16strXP(reverse(hex(l*3-65536,5)));
-
-      l2:=l2 xor (l2*37);
-      l3:=l1 xor l2 xor CRC16strXP(reverse(strs(l)));
-      delete(s,1,p);
-      p:=cpos('-',s); if p=0 then p:=length(s)+1;
-      code:=ival(LeftStr(s,p-1));                { -Code }
-      if registriert.nr=0 then code:=-1;
-      delete(s,1,p);
-      case registriert.tc of
-        'A' : begin
-                rp^:=(code=l1);
-                if rp^ then begin
-                  registriert.non_uucp:=true;
-                  regstr1:=' R';
-                  end;
-              end;
-        'C' : begin
-                rp^:=(code=l3);
-                if rp^ then begin
-                  registriert.uucp:=true; registriert.non_uucp:=true;
-                  regstr1:=' R'; regstr2:=' R'; end;
-              end;
-        'B' : begin
-                rp^:=(code=l2);
-                if rp^ then begin
-                  registriert.uucp:=true;
-                  regstr2:=' R';
-                  end;
-              end;
-      end;
-      with registriert do begin
-        komreg:=komreg and IsKomCode(nr);
-        orgreg:=orgreg and IsOrgCode(nr);
-        end;
-      end;
-    end;
-end;
-
-
 procedure DelTmpfiles(fn:string);
 begin
   erase_mask(fn);
@@ -1143,8 +1050,6 @@ begin
     dbNext(d);
   end;
   dbClose(d);
-  if reg_hinweis and (ParTiming=0) and (ParAutost='') then
-    copyright(true);
 end;
 
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -1172,6 +1077,9 @@ end.
 
 {
   $Log$
+  Revision 1.103  2001/03/14 20:46:03  mk
+  - removed registration routines
+
   Revision 1.102  2001/02/25 15:40:21  ma
   - added GPL headers
   - shortened CVS logs

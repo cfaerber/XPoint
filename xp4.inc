@@ -174,9 +174,9 @@ begin
     m1:=m and 15;
     case m div 16 of
       1 : case m1 of           { XPoint }
-            1 : copyright(false);
+            1 : OpenXPInfo;
             5 : terminal(true);
-	    7 : telnet;
+            7 : telnet;
             6 : dosshell;
             8 : if AskSave then quit:=true;
           end;
@@ -605,6 +605,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2001/03/14 20:46:04  mk
+  - removed registration routines
+
   Revision 1.29  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

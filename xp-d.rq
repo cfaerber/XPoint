@@ -23,7 +23,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 10
 # Do NOT change the first word in each of the following lines!
 0   Main,001^XPointù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2
-1   XPoint,011^Registrierung,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016^DOS        F9,-,018^Beenden
+1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016^DOS        F9,-,018^Beenden
 # Zusatz-Men hier nur fr XPME (s.u.) :
 2   Zusatz,021^Kalender,022^Archiv-Viewer
 3   Nachricht,031^Suchenù5,032E^xtraktù12,033^Unversandtù4,034^Alleù14,035^ndernù22,036^Weiterleitenù21,-,038Brett^managerù19,039^Fileserverù20,03aP^GPù40,03b^Direkt
@@ -1234,31 +1234,24 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Zeilenanzahl
 0    11
 1    Vielen Dank, daá  Sie sich zum Arbeiten mit CrossPoint entschie-
-2    den haben.  Bitte beachten Sie, daá CrossPoint ein Sharewarepro-
-3    gramm ist. Als nicht-gewerblicher Anwender drfen Sie CrossPoint
-4    fr 30 Tage kostenlos testen;  danach wird eine  Registrierungs-
-5    gebhr in H”he von  DM 50,- f„llig.  Gewerbliche Anwender mssen
-6    das Programm vor der ersten Benutzung registrieren.  Weitere In-
-7    formationen zur Registrierung finden Sie in *LIZENZ.DOC*.
+2    den haben.
+3    !
+4    !
+5    !
+6    !
+7    !
 8
-9    Bei Fragen, Problemen oder  Anregungen wenden  Sie sich bitte an
-10   den CrossPoint-Support - entsprechende Netzadressen und eine Li-
-11   ste der CrossPoint-Supportbretter finden Sie in *XPOINT.TXT*.
-19   Lizenznummer:~
+9
+10   !
+11   !
 #
 20   W„hlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
 21   standen sind.
 26   Sie arbeiten seit ber %s Monaten unregistriert mit CrossPoint!
-30   ~^LIZENZ.DOC , ^Registrierung , ^Weiter , ^Abbruch~
-31   ~^LIZENZ.DOC , ^Registrierungsformular , ^Code eingeben~
-32   ~^LIZENZ.DOC , ^Code eingeben~
-40   LIZENZ.DOC
-41   %s fehlt!
+30   ^Weiter
 # gleiche Taste zum Drucken wie in 22.5:
 42   <Ctrl-D>=Drucken    <Esc>=Ende~
 50   ~^Registrierungsformular , ^Code eingeben~
-# Registrierungsformular J/N
-99   J
 + 521
 1    Sie sind bereits registriert. M”chten Sie die Registrierung l”schen
 2    Registrierungs-Code:~
@@ -3603,6 +3596,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.100  2001/03/14 20:46:01  mk
+# - removed registration routines
+#
 # Revision 1.99  2001/03/05 00:10:18  cl
 # - added config for UUCP-t protocol
 #

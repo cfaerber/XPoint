@@ -25,7 +25,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #          darf *nicht* bersetzt werden. Es wird von XP nur intern verwendet
 #          und nicht angezeigt.
 0   Main,001^XPointù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2
-1   XPoint,011^Register,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
+1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
@@ -1211,26 +1211,21 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 520
 # number of lines
 0    8
-1    Thank you for using CrossPoint. Please note that CrossPoint is
-2    NOT free software, it is shareware and you must register after a
-3    30-day evaluation period. For further information, including
-4    prices and a registration form, contact the author.
-5
-6    If you have any questions, problems or suggestions concerning XP,
-7    please feel free to post in either the FidoNet echo XPOINT or the
-8    German newsgroup de.comm.software.crosspoint
-19   License No:~
+1    Thank you for using CrossPoint.
+2    !
+3    !
+4    !
+5    !
+6    !
+7    !
+8    !
 #
 20   Choose "Continue" if you agree to these terms of license.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^LIZENZ.DOC , ^Enter Key , ^Continue , ^Quit~
-32   ~^LIZENZ.DOC , ^Enter Key~
-40   LIZENZ.DOC
-41   %s not found!
+30   ^Continue
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
-99   N
 
 + 521
 1    You are registered already. Would you like to delete the reg. key
@@ -3625,6 +3620,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.125  2001/03/14 20:46:02  mk
+# - removed registration routines
+#
 # Revision 1.124  2001/03/05 00:10:18  cl
 # - added config for UUCP-t protocol
 #

@@ -105,7 +105,6 @@ begin
   begin
     cursor(curoff);
     defaultcolors; SetColors;
-    read_regkey;
     readconfig;    { setzt Menues }
     if ParG1 or ParG2 then
     begin
@@ -188,6 +187,9 @@ end.
 
 {
   $Log$
+  Revision 1.53  2001/03/14 20:46:02  mk
+  - removed registration routines
+
   Revision 1.52  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

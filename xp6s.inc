@@ -151,27 +151,11 @@ begin
       FidoAbsAdr:=box+'.'+pointname;
 end;
 
-function KomOrgReg:string;
-begin
-  with registriert do
-    if orgreg then KomOrgreg:='Org-'
-    else if komreg then KomOrgreg:='Kom-'
-    else KomOrgreg:='';
-end;
-
-function krk(s:string):string;
-begin
-  if (KomOrgReg='') or (s='') then
-    krk:=s
-  else
-    krk:=' '+KomOrgReg+trim(s);
-end;
-
 procedure Set_XP_ID;
 begin
   case netztyp of
-    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+krk(regstr2)+' ##'+#13#10;
-    else      XP_ID:='## '+xp_xp+' '+verstr+krk(regstr1)+' ##'+#13#10;
+    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+' ##'+#13#10;
+    else      XP_ID:='## '+xp_xp+' '+verstr+' ##'+#13#10;
   end;
 end;
 
@@ -245,8 +229,7 @@ begin
     inc(addsize,_filesize(sigfile));
   if (netztyp=nt_Maus) and not pm and (Developer or
      ((RightStr(LowerCase(empfaenger),11)<>'/maustausch') and
-       (RightStr(LowerCase(empfaenger),6)<>'/mt.xp')) or
-       (registriert.r2 and not XP_ID_AMs)) then
+       (RightStr(LowerCase(empfaenger),6)<>'/mt.xp'))) then
     XpID:=false;
   XID:=iifs(XpID and (netztyp<>nt_Fido),XP_ID,'');
   inc(addsize,length(XID));
@@ -1162,6 +1145,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/03/14 20:46:05  mk
+  - removed registration routines
+
   Revision 1.50  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

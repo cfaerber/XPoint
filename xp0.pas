@@ -1060,21 +1060,12 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        macrodef    : array[1..maxkeys] of string;
        shortkey    : array[1..maxskeys] of KeyRec;
        shortkeys   : shortint;
-       registriert : record r1,r2:boolean; nr:longint;
-                            uucp,non_uucp:boolean;
-                            tc:char;        { A=normal, B=UUCP, C=komplett }
-                            komreg,           { R-Kom / R-Org anzeigen }
-                            orgreg:boolean;
-                     end;
-       regstr1     : string;      { muss unmittelbar hinter registriert stehen! }
-       regstr2     : string;      { fuer UUCP }
        AutoCrash   : string;     { Crash automatisch starten; *.. -> normaler Netcall }
        ntAllowed   : set of byte;    { zulaessige Netztypen }
        extheadersize : integer;      { groesse des Kopfes bei xp3.extract_msg() }
        extHdLines  : integer;        { Anzahl Kopfzeilen bei Extrakt mit Kopf }
        fidobin     : boolean;        { Binaernachrichten im FidoNet moeglich }
        ExtraktHeader : ExtHeaderType;
-       reg_hinweis : boolean;        { Fenster bei Programmstart anzeigen }
 
        PointListn  : string;      { alte Pointlisten-Daten }
        PointDiffn  : string;
@@ -1131,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.122  2001/03/14 20:46:02  mk
+  - removed registration routines
+
   Revision 1.121  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

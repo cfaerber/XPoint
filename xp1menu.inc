@@ -24,7 +24,7 @@
 function MenuHidden(mpnr:integer):boolean;
 var l,r,m : integer;
 begin
-  if not registriert.r2 and ((mpnr=$001) or (mpnr=$011)) then
+  if ((mpnr=$001) or (mpnr=$011)) then
     MenuHidden:=false    { /XPoint/Registrierung }
   else
     case mpnr of
@@ -603,6 +603,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2001/03/14 20:46:03  mk
+  - removed registration routines
+
   Revision 1.28  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

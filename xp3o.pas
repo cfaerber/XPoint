@@ -1013,7 +1013,6 @@ begin
   assign(t,tmp);
   rewrite(t);
   write(t,'## ',getres2(337,iif(auto,2,1)),' '+xp_xp+' ',verstr);
-  if registriert.r2 then write(t,' R');
   writeln(t);
   writeln(t,'## ',getres2(337,3));   { 'erhaltene Nachricht:' }
   writeln(t);
@@ -1507,6 +1506,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/03/14 20:46:04  mk
+  - removed registration routines
+
   Revision 1.51  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

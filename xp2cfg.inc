@@ -258,8 +258,6 @@ end;
 
 
 procedure initvar;
-var {i    : integer;}
-    rp   : ^boolean;
 begin
   {$IFDEF unix }
     OSType := os_Linux;
@@ -311,10 +309,6 @@ begin
   aktdispmode:=0;
   ReplyTree := TList.Create;
 
-
-  rp:=@registriert;         { regrec.r2:=false - noch nicht registriert }
-  inc(longint(rp));
-  rp^:=false;
 
   BadConfigLinesList := TStringList.Create;
 
@@ -514,7 +508,7 @@ begin
   gebnoconn:=0;
   gebCfos:=false;
   autofeier:=true;
-  
+
   maildelxpost:=false;
   askreplyto:=false;
 
@@ -1604,9 +1598,6 @@ begin
     MausSwapped:=SwapMausKeys;
     maus_setdblspeed(minmax(mausdblclck,1,50));
     SetMausEmu;
-    if not registriert.r2 then begin
-      XP_ID_PMs:=true; { XP_ID_AMs:=true; }
-      end;
     FidoTo:=brettalle;
     if auswahlcursor then
     begin
@@ -1693,6 +1684,9 @@ end;
 
 {
   $Log$
+  Revision 1.110  2001/03/14 20:46:03  mk
+  - removed registration routines
+
   Revision 1.109  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
