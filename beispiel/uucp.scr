@@ -1,0 +1,28 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# uucp.scr: Netcall-Script fuer UUCP-Systeme
+# Die Vergleichstexte sind nicht case-sensitiv!
+
+       on    relogin send cr
+first: timer 5
+start: read
+       on    "login:" goto login
+       on    timeout goto cr
+       goto  start
+cr:    send  cr                              # hey, aufwachen!
+       goto  first
+
+login: send  $LOGIN cr
+loop:  read
+       on    "login:" send $LOGIN cr
+       on    "password:" send $PASSWORD cr
+       on    "passwort:" send $PASSWORD cr
+       on    "^Pshere" goto ende             # uucico-Startkennung
+       goto  loop
+
+ende:  write "^M       ^M"                   # ^Pshere loeschen
+

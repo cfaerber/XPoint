@@ -1,0 +1,30 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# maus.scr: kombiniertes Netcall- und Online-Script fuer MAUS-Boxen
+
+          on      relogin goto relogin
+start:    read
+          on      "mausnet laeuft" goto abbruch
+          on      "werdaauchimmerhieranruft" goto abbruch
+          on      "(j/n)" goto login         # .. eingetragener Benutzer (j/n)
+          goto    start
+
+abbruch:  delay   1
+          end     fail
+
+login:    on      online send "J"            # .. eingetragener Benutzer: Ja
+          on      netcall send "MausTausch"  # MausTausch-Login
+          send    $USER cr
+          send    $PASSWORD cr               # Tausch-PW = Online-PW!
+          on      online end
+          goto    netcall
+
+relogin:  send    "T"                        # Hauptmenuepunkt "Tausch"
+          delay   1
+netcall:  flush
+          send    $PROTOCOL                  # Protokoll-Kennung
+          waitfor "protokoll startet"

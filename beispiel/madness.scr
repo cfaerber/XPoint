@@ -1,0 +1,29 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# madness.scr: TumTausch- und Online-Script fuer Madness-Boxen
+# PM 31.10.93
+
+          on      relogin goto tausch
+start:    waitfor ">"
+          delay   0.5 show
+          on      netcall send "MTausch" cr   # Startkennung TumTausch
+          on      netcall goto net
+          send    cr
+          waitfor "<RETURN>"
+          send    cr
+net:      waitfor "name >"
+          send    $USER cr
+          waitfor "passwort"
+          delay   0.5 show
+          send    $PASSWORD cr
+          on      online end
+          waitfor "z-modem"
+          delay   0.5 show
+tausch:   send    cr                          # <cr> fuer ZModem
+          waitfor "**^XB"                     # ZModem-Startkennung
+          end
+
