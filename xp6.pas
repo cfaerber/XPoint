@@ -1109,7 +1109,7 @@ fromstart:
     fidoam:=ntEditBrettempf(netztyp) and not pm;
     bboxwid:=min(betrlen,54);
     showempfs:=min(cc_anz,15);
-    diabox(bboxwid+19,iif(fidoam,9,7+showempfs),typ,x,y);
+    diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
     mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empf„nger  ' }
     attrtxt(col.coldiahigh);
     moff;
@@ -2117,6 +2117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/07/29 14:32:30  mk
+  JG: - Dialogbox-Bug beseitigt
+
   Revision 1.56  2000/07/27 10:13:03  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
