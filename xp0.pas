@@ -49,7 +49,7 @@ const
        menus       = 43;             { Anzahl der Menus (+1 wegen Zusatzmenueerweiterung) }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
-       maxmarklist = 20000;          { Maximale Anzahl markierter Msgs }
+       maxmark     = 20000;          { Maximale Anzahl markierter Msgs }
        QuoteLen    = 5;              { maximale QuoteChar-Laenge }
        Ablagen     = 20;             { 0..9 }
        maxpmc      = 3;              { installierbare pmCrypt-Verfahren }
@@ -493,7 +493,7 @@ type   textp  = ^text;
                      intnr : longint;
                    end;
 
-       marklist = array[0..maxmarklist] of markrec;
+       marklist = array[0..maxmark] of markrec;
        marklistp= ^marklist;
        bmarklist= array[0..maxbmark-1] of longint;
        bmarkp   = ^bmarklist;
@@ -1130,7 +1130,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
        domainlist   : TStringList;   { zum Erkennen von Replys auf eigene N. }
 
-       maxmark   : word;             { maximal markierbare Msgs }
        marked    : marklistp;        { Liste der markierten Msgs     }
        markanz   : integer;          { Anzahl markierte Msgs         }
        bmarked   : bmarkp;           { Liste der markierten Bretter/User }
@@ -1232,6 +1231,10 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.7  2002/07/22 15:49:59  mk
+  - removed variable maxmarklist, because this is a dupe to maxmark
+    this results in maximum 20000 marked messages instead of 5000 before
+
   Revision 1.158.2.6  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 

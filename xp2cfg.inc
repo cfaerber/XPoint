@@ -289,7 +289,6 @@ begin
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
-  maxmark:=5000;
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
   aktdispmode:=0;
@@ -1706,6 +1705,10 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.4  2002/07/22 15:49:59  mk
+  - removed variable maxmarklist, because this is a dupe to maxmark
+    this results in maximum 20000 marked messages instead of 5000 before
+
   Revision 1.144.2.3  2002/07/21 20:14:35  ma
   - changed copyright from 2001 to 2002
 
