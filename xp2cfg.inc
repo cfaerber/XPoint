@@ -1542,8 +1542,8 @@ begin
       end;
     close(t);
 
-    viewer_save:=Viewer_save+'.';
-    viewer_lister:=Viewer_Lister+'.';
+    if lastchar(viewer_save)<>'.' then viewer_save:=Viewer_save+'.';
+    if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
       if (length(mheadercustom[i])>0) and (mheadercustom[i][length(mheadercustom[i])]=':') then
@@ -1695,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.79  2000/07/22 13:29:30  mk
+  JG: - Bugfix: Viewer-Beschraenkungen, an Config-Strings wurden u.U. zuviele Punkte angehaengt
+
   Revision 1.78  2000/07/20 18:11:55  mk
   - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
 
