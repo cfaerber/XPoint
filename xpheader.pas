@@ -71,7 +71,7 @@ type
     property CC:  string read GetCC  write SetCC;
     property BCC: string read GetBCC write SetBCC;
     property Newsgroups: string read GetNewsgroups write SetNewsgroups;
-
+    
   { -- ReconstructEnvelope ------------------------------------------- }
     procedure ReconstructEnvelope;
     
@@ -132,7 +132,6 @@ type
     pgp_uid: string;                    { alternative Adresse          }
     vertreter: string;
     XPointCtl: longint;
-    nokop: boolean;
     boundary: string;                   { MIME-Multipart-Boundary      }
     gate: string;
     xnoarchive: boolean;
@@ -142,6 +141,7 @@ type
     xline: TStringList;                 // X-Zeilen, die 'uebrig' sind
     zline: TStringList;
     fline: TStringList;
+    nokop: boolean;
     References: TStringList;            // references:
     mailcopies: tstringlist;
     MIME: mimedata;
@@ -277,6 +277,11 @@ begin
   Kopien.Clear;
 //  CC.Clear;
 //  BCC.Clear;
+  FTo := '';
+  FCC := '';
+  FBCC:= '';
+  Nokop := false;
+
   betreff := '';
   absender := '';
   datum := '';
@@ -710,8 +715,7 @@ begin
   if (Length(FTo)>0) or (Length(FCC)>0) then
     result := FCC
   else
-  // see http://cr.yp.to/immhf/recip.html ------------------------------  
-    result := 'recipient list not shown: ;';
+    result := '';
 end;
 
 procedure THeader.SetCC(s:string);
@@ -724,7 +728,7 @@ var i: integer;
 begin
   { -- if we have non-envelope information, use it ------------------- }
   if (Length(FTo)>0) or (Length(FCC)>0) or (Length(FBCC)>0) then
-    result := FTo else
+    result := FBCC else
     
   { -- construct BCC out of EMP if STAT: BCC is set ------------------ }
   if not nokop then
@@ -1013,6 +1017,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2002/05/20 15:20:17  cl
+  - new address handling fixes
+
   Revision 1.28  2002/05/12 17:58:59  ma
   - fixed: Reply-To handling was broken if real name specified in Reply-To
 
