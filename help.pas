@@ -233,9 +233,7 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
-{ MK 06.01.2000 Von Inline in ASM 16 und 32 Bit konvertiert }
 procedure decode(buf:pointer; size:word); assembler; {&uses ebx}
-{$IFDEF Ver32 }
 asm
         mov ecx, size
         mov ebx, buf
@@ -249,20 +247,9 @@ end ['EAX', 'EBX', 'ECX'];
 {$ELSE }
 end;
 {$ENDIF }
-{$ELSE }
-asm
-        mov cx, size
-        les bx, buf
-        mov al, 7
-@lp:    xor es:[bx], al
-        add al, 125
-        inc bx
-        loop @lp;
-end;
-{$ENDIF }
 
 procedure loadpage(nr:word; pstentry:boolean);
-type buft    = array[1..30000] of byte;
+type buft    = array[1..32768] of byte;
 var  size    : word;
      buf     : ^buft;
      i,sl,ps : byte;
@@ -774,6 +761,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/06/23 15:59:11  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.14  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

@@ -18,9 +18,9 @@ interface
 uses
   xpglobal, dos;
 
-function ClipAvailable:boolean;                    { Clipboard verfÅgbar }
-function Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
-procedure String2Clip(var str: String);            { STring ins Clipboard}
+function ClipAvailable:boolean;              { Clipboard verfÅgbar }
+function Clip2String(oneline:byte):string;   { Clipboardinhalt als String }
+procedure String2Clip(var str: String);      { String ins Clipboard}
 
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
@@ -28,18 +28,13 @@ procedure ClipToFile(fn:pathstr);
 implementation  { ---------------------------------------------------- }
 
 uses
-  strings,
 {$IFDEF Win32 }
   windows,
 {$ENDIF }
 {$IFDEF VP }
   vpsyslow,
 {$ENDIF }
-  typeform;
-
-type
-  ca  = array[0..65530] of char;
-  cap = ^ca;
+  strings;
 
 function ClipAvailable:boolean;
 begin
@@ -54,7 +49,7 @@ begin
  {$ENDIF }
 end;     { wird Clipboard unterstÅtzt? }
 
-function Clip2String(maxlen,oneline:byte):string;
+function Clip2String(oneline:byte):string;
 {$IFDEF Win32 }
 var
   P: Pointer;
@@ -248,6 +243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/06/23 15:59:09  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.20  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

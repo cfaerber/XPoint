@@ -11,15 +11,12 @@
 
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp2c;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -78,7 +75,6 @@ function testtimezone(var s:string):boolean;
 function SetTimezone(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
-function dpmstest(var s:string):boolean;
 function testfilename( var s:string):boolean;
 
 procedure setvorwahl(var s:string);
@@ -99,13 +95,13 @@ uses
   {$ELSE}
   {$FATALERROR Check if you have an unit called 'serial' }
   {$ENDIF}
-{$ENDIF} 
+{$ENDIF}
   xp1o,
   xp2,
   xp4o2,
   xp9bp;
 
-const 
+const
   MaxProtocols = 2;
   Protocols: array[1..MaxProtocols] of string = (
     'http://',
@@ -152,14 +148,7 @@ begin
     mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
   maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
   mhnr(8068);
-  {$IFNDEF BP}
-    maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
-  {$ELSE}
-    maddbool(32,2,getres2(250,11),SwapToEMS); mhnr(213);  { 'Auslagern in EMS' }
-    maddbool(32,3,getres2(250,18),SwapToXMS);   { 'Auslagern in XMS' }
-      mhnr(213);
-    maddbool(32,4,getres2(250,10),AskQuit);
-  {$ENDIF}
+  maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten lîschen' }
@@ -184,9 +173,6 @@ begin
     else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
     { else UserAufnahme:=2;  keine - gibt's nicht mehr }
     Usersortbox:=_usersortbox;
-{$IFDEF BP }
-    ListUseXms:=SwapToXms;
-{$ENDIF}
     GlobalModified;
     end;
   enddialog;
@@ -342,16 +328,12 @@ begin
   maddbool(3,12,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,13,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,14,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  { 03.02.2000 robo }
   maddbool(3,15,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
-  { /robo }
   maddbool(3,16,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,17,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,19,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
   maddtext(9+length(getres2(252,24)),19,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
-  { 20.01.2000 robo }
   maddbool(3,20,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
-  { /robo }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -389,8 +371,8 @@ function testurl(var s:string):boolean;
       protocol:= '';
     for i:= 1 to MaxProtocols do
       if (protocol=protocols[i]) then begin
-	NoProtocol:= false;
-	exit;
+        NoProtocol:= false;
+        exit;
       end;
     NoProtocol:= true;
   end;
@@ -478,7 +460,7 @@ begin
   hayes:=hayescomm;
   maddbool(34,2,getres2(254,4),hayescomm);   { 'Hayes-Befehle' }
   msetvfunc(testhayes);
-  { maddbool(34,3,getres2(254,5),RenCALLED);   { 'CALLED umbenennen' }
+  { maddbool(34,3,getres2(254,5),RenCALLED);  } { 'CALLED umbenennen' }
   maddbool(3,5,getres2(254,6),nDelPuffer);   { 'Nachrichtenpakete nach Einlesen lîschen' }
     mhnr(564);
   maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Gro·schreibung umwandeln' }
@@ -526,7 +508,6 @@ begin
   maddbool(3,11,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
   maddbool(3,12,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  { 22.01.2000 robo }
   maddbool(3,14,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
 {$ELSE }
@@ -546,11 +527,9 @@ begin
   maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
   maddbool(3,13,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  { 22.01.2000 robo }
   maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
 {$ENDIF } { Linux }
-  { /robo }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -600,7 +579,7 @@ begin
   for i:=1 to 3 do
     mappsel(true,edtype[i]);
   maddbool(3,8,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
-{ maddbool(3,9,getres2(256,11),editvollbild);  { 'interner Editor - Vollbild' }
+{ maddbool(3,9,getres2(256,11),editvollbild);}  { 'interner Editor - Vollbild' }
   maddbool(3,9,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
 {$IFNDEF Linux }
   maddbool(3,10,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
@@ -743,20 +722,6 @@ begin
   scstest:=(ival(s)=0) or (ival(s)>=5);
 end;
 
-function dpmstest(var s:string):boolean;
-begin
-{$IFDEF BP }
-  if (s=_jn_[2]) or SetVesaDpms(DPMS_On) then
-    dpmstest:=true
-  else begin
-    rfehler(219);     { 'Ihre Grafikkarte unterstÅtzt kein VESA-DPMS.' }
-    dpmstest:=false;
-    end;
-{$ELSE }
-    dpmstest:=false;
-{$ENDIF }
-end;
-
 procedure MiscAnzeigeCfg;
 var i,x,y    : byte;
     brk,du : boolean;
@@ -772,8 +737,6 @@ begin
     msetvfunc(scstest);
   maddbool(3,4,getres2(260,2),softsaver);     { 'weich ausblenden' }
   maddbool(3,5,getres2(260,6),blacksaver);    { 'schwarzschalten' }
-  maddbool(3,6,getres2(260,9),vesa_dpms);     { 'Stromsparmodus' }
-    mset1func(dpmstest);
   maddbool(3,7,getres2(260,3),ss_passwort);   { 'Startpa·wort abfragen' }
   du:=dispusername;
   maddbool(3,9,getres2(260,4),dispusername);  { 'Username anzeigen' }
@@ -853,7 +816,7 @@ begin
     i:=pos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
-    for i := 1 to length(UsrFeldDef) do 
+    for i := 1 to length(UsrFeldDef) do
      if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
     if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
     GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
@@ -1385,13 +1348,13 @@ begin
   maddbool(3,7,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
   maddbool(3,8,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
   maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
-  repeat    
+  repeat
     readmask(brk);
-    if not brk then 
+    if not brk then
       ok:= exist('/dev/'+dev);
     if not ok then begin
-      rfehler1(221,TermDevice);	{ Das Device '/dev/%s' existiert nicht }
-      dev:= TermDevice;		{ Alte Vorgabe wiederholen }
+      rfehler1(221,TermDevice); { Das Device '/dev/%s' existiert nicht }
+      dev:= TermDevice;         { Alte Vorgabe wiederholen }
     end;
     if not brk and mmodified and ok then begin
       TermDevice:= dev;
@@ -1509,14 +1472,14 @@ end;
 function testfilename(var s:string):boolean;
 var i : byte;
     c : char;
-begin 
+begin
   testfilename:=true;
   for i:=1 to length(s) do
   begin
-    c:=s[i];    
+    c:=s[i];
     if not ((c='.') or (c in ['A'..'Z']) or (c in ['0'..'9']))
       then testfilename:=false;
-    end;  
+    end;
  end;
 
 procedure ViewerOptions;
@@ -1524,7 +1487,7 @@ var x,y : byte;
     brk : boolean;
 begin
   if right(viewer_save,1)='.' then viewer_save:=left(viewer_save,length(viewer_save)-1);
-  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1); 
+  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1);
 
   dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
   maddtext(2,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
@@ -1533,21 +1496,21 @@ begin
   maddtext(2,7,getres2(273,2),col.coldiahigh);    { 'Sicherheit bei Multiformat Mime-Viewern:'}
   maddtext(3,9,getres2(273,3),0);          { Sichere Dateiendungen (externen Viewer benutzen):}
   maddstring(3,10,'',viewer_save,50,255,'>');
-  mset1func(testfilename); 
-  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF'); 
+  mset1func(testfilename);
+  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF');
   maddtext(3,12,getres2(273,4),0);          {Internen Lister benutzen bei diesen Dateiendungen:}
   maddstring(3,13,'',viewer_lister,50,255,'>');
-  mset1func(testfilename); 
+  mset1func(testfilename);
   mappsel(false,'.TXT.ASC');
   maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verdÑchtige Dateiformate}
-  maddstring(3,16,'',viewer_scanner,50,viewproglen,'');  
+  maddstring(3,16,'',viewer_scanner,50,viewproglen,'');
   msetvfunc(testexist);
   readmask(brk);
   if not brk and mmodified then
     GlobalModified;
   enddialog;
   freeres;
-  menurestart:=brk;  
+  menurestart:=brk;
   viewer_save:=Viewer_save+'.';
   viewer_lister:=Viewer_Lister+'.';
 end;
@@ -1555,6 +1518,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/06/23 15:59:17  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.39  2000/06/20 18:18:45  hd
   - https bei der URL ergaenzt. In dem Array 'protocols' koennen jetzt
     beliebig viele weitere Protokolle definiert werden (MaxProtocols

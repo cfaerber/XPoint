@@ -345,9 +345,6 @@ begin
         if IgnCD or carrier(comnr) then begin
           DropDtr(comnr);
           mdelay(500);
-{$IFDEF BP }
-          SetDtr(comnr);
-{$ENDIF}
           i:=1;
           while (i<=iif(IgnCd,1,6)) and carrier(comnr) do begin
             mdelay(500); tb;
@@ -357,9 +354,6 @@ begin
         flushin;
         if IgnCD then n:=0;
         end;
-{$IFDEF BP }
-      setdtr(comnr);
-{$ENDIF}
       NC^.hanguptime:=100-zaehler[2];   { +1 fr Rundungsfehler }
       NC^.endtime:=zdate;
       sendstr(#13); mdelay(300);
@@ -675,11 +669,7 @@ begin
     CAPI_resume
   else
 {$ENDIF }
-  {$IFDEF BP }
-    ActivateCom(comnr,max(3000,min(maxavail-20000,10000)),COMn[comnr].u16550);
-  {$ELSE }
-    ActivateCom(comnr,10000,COMn[comnr].u16550);
-  {$ENDIF }
+  ActivateCom(comnr,10000,COMn[comnr].u16550);
 end;
 
 procedure ReleaseC;
@@ -977,9 +967,7 @@ begin
     _era(XFerDir+sr.name);
     findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1004,9 +992,7 @@ var dummy : longint;
         _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure EmptySysin;
@@ -1017,9 +1003,7 @@ var dummy : longint;
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure CopyFileAttaches(ppfile:pathstr);
@@ -1144,9 +1128,7 @@ var sr     : searchrec;
       inc(sum,sr.size);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     totalsize:=sum;
   end;
 
@@ -1158,9 +1140,7 @@ var sr     : searchrec;
       _era(GetFiledir(files)+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure ZQWKfehler;
@@ -1213,13 +1193,11 @@ begin
           CallFilter(true,XFerDir+sr.name);
           if PufferEinlesen(XFerDir+sr.name,box,false,false,true,pe_Bad) then begin
             _era(XFerDir+sr.name);    { Eingabepuffer l”schen }
-            { _era(sysdir+left(sr.name,cpos('.',sr.name))+qwkext);  { QWK-Paket l”schen }
+            { _era(sysdir+left(sr.name,cpos('.',sr.name))+qwkext); } { QWK-Paket l”schen }
             end;
           findnext(sr);
         end;
-        {$IFDEF Ver32}
         FindClose(sr);
-        {$ENDIF}
       end;
     end;
     freeres;
@@ -1445,6 +1423,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/06/23 15:59:24  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.24  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

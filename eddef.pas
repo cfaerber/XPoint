@@ -84,9 +84,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfDeltoEnd    = 77;         { L”schen bis Absatzende         }
        EditfParagraph   = 78;         { ^P^U                           }
        EditfChangeCase  = 79;         { Alt-3                          }
-       { 31.01.2000 robo }
        EditfReadUUeBlock= 80;         { Block aus Datei einlesen & UU-Encode }
-       { /robo }
        EditfFormatBlock = 81;         { Block reformatieren            }
 
        EditfFind        = 100;        { Suchen                         }
@@ -143,21 +141,14 @@ type   EdColrec = record
                     absatzendezeichen : char;
                     rechter_rand      : word;
                     AutoIndent        : boolean;
-                    { 01/2000 oh }
                     PersistentBlocks  : boolean;
-                    { /oh }
-                    { 10.02.2000 robo }
                     QuoteReflow       : boolean;
-                    { /robo }
                   end;
 
        EdAskQuit   = function(ed:ECB):taste;  { J/N/Esc }
        EdAskOverwrite = function(ed:ECB; fn:pathstr):taste;
        EdMessage   = procedure(txt:string; error:boolean);   { Meldung anzeigen }
-       { 04.02.2000 robo }
-       { EdAskFile   = procedure(ed:ECB; var fn:pathstr; save:boolean); }  { Dateinameneingabe }
        EdAskFile   = procedure(ed:ECB; var fn:pathstr; save,uuenc:boolean);  { Dateinameneingabe }
-       { /robo }
        EdFindPanel = function(ed:ECB; var txt:string; var igcase:boolean):boolean;
        EdReplPanel = function(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
        EdConfigPanel = procedure(var cfg:EdConfig; var brk:boolean);
@@ -178,6 +169,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6  2000/06/23 15:59:09  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.5  2000/03/17 21:22:10  rb
   vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
 

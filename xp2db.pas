@@ -11,15 +11,12 @@
 { === Datenbank ==================================================== }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
-unit  xp2db;
+unit xp2db;
 
 interface
 
-uses  
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -103,7 +100,7 @@ var flp : dbFLP;
   Begin
     dbSetindex(ubase,1);
     dbGoTop(ubase);
-    while not dbeof(ubase) do  
+    while not dbeof(ubase) do
     begin
       dbReadN(ubase,ub_username,s);
       if left(s,3)='$/T' then
@@ -111,7 +108,7 @@ var flp : dbFLP;
         s:=#0+s;
         dbwriteN(ubase,ub_username,s);
         end;
-      dbnext(ubase); 
+      dbnext(ubase);
       end;
   end;
 
@@ -613,10 +610,9 @@ begin
 {$ENDIF }
   dbSetICP(ICP);
   dbSetIndexVersion(3);
-{  if (emsavail>=4) or (memavail>180000) then
-    dbSetIndexCache(50,true); }
 
-  if not exist(MsgFile+dbext) then begin   { XPOINT: Nachrichtendatei }
+  if not exist(MsgFile+dbext) then
+  begin   { XPOINT: Nachrichtendatei }
     initflp(19);
     AppS('Brett',5);
     AppS('Betreff',40);
@@ -842,14 +838,16 @@ begin
   dbClose(dd);
   OpenDatabases;
   GetFieldNumbers;
+
   if dbReadUserflag(mbase,8)=0 then InitPWsystem;
-  if dbReadUserflag(mbase,4) < 4 then begin
+  if dbReadUserflag(mbase,4) < 4 then
+  begin
     if dbReadUserflag(mbase,4) < 3 then
       FixWiedervorlage;
     if dbReccount(mbase)>0 then
       BezugReadmids;
     dbWriteUserflag(mbase,4,4);
-    end;
+  end;
 
   if not exist(OwnPath+NewDateFile) then
     write_lastcall(ZDate);
@@ -857,15 +855,17 @@ begin
   getablsizes;
   reg_hinweis:=false;
   dbOpen(dd,BoxenFile,0);
-  while not dbEOF(dd) do begin
+  while not dbEOF(dd) do
+  begin
     if (not registriert.uucp and (dbReadInt(dd,'netztyp')=nt_UUCP)) or
        (not registriert.non_uucp and (dbReadInt(dd,'netztyp')<>nt_UUCP)) then
       reg_hinweis:=true;
     dbNext(dd);
-    end;
+  end;
   dbClose(dd);
 
-  if not exist(WeiterMsk) then begin
+  if not exist(WeiterMsk) then
+  begin
     assign(t,WeiterMsk);
     rewrite(t);
     writeln(t,getres2(223,1));  { '## Nachricht vom $ERSTELLT weitergeleitet' }
@@ -874,28 +874,35 @@ begin
     freeres;
     writeln(t);
     close(t);
-    end;
+  end;
+
   if exist(QuotePriv) and not exist(QuotePMpriv) then
     if filecopy(QuotePriv,QuotePMpriv) then;
-  if not exist(CancelMsk) then begin
+  if not exist(CancelMsk) then
+  begin
     assign(t,CancelMsk);
     rewrite(t);
     writeln(t,'Message was cancelled.');
     close(t);
-    end;
+  end;
+
   if (_filesize(FeierDat)=0) and IsRes(243) then begin
     assign(t,FeierDat);
     rewrite(t);
     for i:=1 to res2anz(243) do
       writeln(t,getres2(243,i));
     close(t);
-    end;
+  end;
+
   FixBeta23Trennzeilen;
 end;
 
 end.
 {
   $Log$
+  Revision 1.13  2000/06/23 15:59:18  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.12  2000/05/06 17:50:06  hd
   - Div-0-Fehler entfernt
 

@@ -8,14 +8,9 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen }
-
 { Nachrichten versenden, weiterleiten, unversandt-bearbeiten }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp6;
 
@@ -118,8 +113,6 @@ implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
-
-{$IFDEF Ver32 }
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -224,114 +217,6 @@ begin
       break;
     end;
 end;
-
-{$else }
-
-{ MK 11.01.2000 In Inline-Assembler konvertiert }
-procedure ukonv(typ:byte; var data; var bytes:word); assembler;
-asm
-         mov   dx,0
-         les   di,bytes
-         mov   cx,es:[di]
-         jcxz  @ende
-         les   di, data
-         lea   si,[di+1500]
-         cld
-         mov   bl,typ
-         cmp   bl,2                    { ISO? }
-         jz    @isolp
-
-@uklp:   mov   al,es:[si]              { IBM -> ASCII }
-         cmp   al,'Ñ'
-         jnz   @noae
-         mov   ax,'ea'
-         jmp   @conv
-@noae:   cmp   al,'î'
-         jnz   @nooe
-         mov   ax,'eo'
-         jmp   @conv
-@nooe:   cmp   al,'Å'
-         jnz   @noue
-         mov   ax,'eu'
-         jmp   @conv
-@noue:   cmp   al,'é'
-         jnz   @no_ae
-         mov   ax,'eA'
-         jmp   @conv
-@no_ae:  cmp   al,'ô'
-         jnz   @no_oe
-         mov   ax,'eO'
-         jmp   @conv
-@no_oe:  cmp   al,'ö'
-         jnz   @no_ue
-         mov   ax,'eU'
-         jmp   @conv
-@no_ue:  cmp   al,'·'
-         jnz   @noconv
-         mov   ax,'ss'
-@conv:   stosw
-         inc   dx
-         cmp   dx,1500
-         jz    @ende                    { Konvertierpuffer voll :-( }
-         inc   si
-         loop  @uklp
-         jmp   @ende
-@noconv: stosb
-         inc   si
-         loop  @uklp
-         jmp   @ende
-
-@isolp:  mov   al,es:[si]
-         inc   si
-         stosb
-         loop  @isolp
-
-@ende:    les   di,bytes
-         add   es:[di],dx
-end;
-
-function  testbin(var bdata; rr:word):boolean; assembler;
-asm
-         push ds
-         mov   cx,rr
-         lds   si,bdata
-         cld
-@tbloop:  lodsb
-         cmp   al,9
-         jb    @is_bin                  { BinÑrzeichen 0..8 }
-         cmp   al,127
-         jae   @is_bin                  { "binÑr"zeichen 127..255 }
-         cmp   al,32
-         jae   @no_bin                  { ASCII-Zeichen 32..126 }
-         cmp   al,13
-         jbe   @no_bin                  { erlaubte Zeichen 9,10,12,13 }
-@is_bin: mov   ax,1                     { TRUE: BinÑrzeichen gefunden }
-         jmp   @tbend
-@no_bin: loop  @tbloop
-         mov   ax,cx                    { FALSE: nix gefunden }
-@tbend:  pop ds
-end;
-
-function  ContainsUmlaut(var s:string):boolean; assembler;
-asm
-         push ds
-         cld
-         lds   si,s
-         lodsb
-         mov   cl,al
-         mov   ch,0
-         jcxz  @cu_ende
-@cu_loop: lodsb
-         or    al,al
-         js    @cu_found
-         loop  @cu_loop
-         jmp   @cu_ende
-@cu_found: mov  cx,1
-@cu_ende: mov   ax,cx
-         pop ds
-end;
-
-{$ENDIF }
 
 procedure ukstring(var s:string);
 const du : string[14] = 'aeoeueAeOeUess';
@@ -877,7 +762,7 @@ end;
     if (adresse<>'') and (cc_testempf(adresse)) then begin
       if (adresse[1]='[') and (adresse[length(adresse)]=']')
         then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
-      else if not kb_s then 
+      else if not kb_s then
       begin
         cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
         fillchar(cc^,sizeof(cc^),0);
@@ -960,13 +845,6 @@ begin      {-------- of DoSend ---------}
   parken:=false;
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
-  {$IFDEF BP }
-  if memavail<20000 then
-  begin
-    rfehler(605);   { 'zu wenig freier Speicher zum Absenden der Nachricht' }
-    goto xexit2;
-  end;
-  {$ENDIF }
   new(f); new(f2);
   new(fn); new(fn2); new(fn3);
   assign(f^,datei);
@@ -2248,6 +2126,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/06/23 15:59:22  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.39  2000/06/19 20:21:46  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

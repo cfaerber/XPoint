@@ -1151,8 +1151,6 @@ begin
 end;
 {$ELSE }
 
-{$ifdef ver32}
-{ 01.02.2000 robo - 32 Bit}
 function Left(const s: String; n: byte): string; {&uses esi,edi} assembler;
 asm
         cld
@@ -1171,28 +1169,8 @@ end ['EAX', 'ECX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
-{ /robo }
-{$else}
-function Left(const s: String; n: byte): string; assembler;
-asm
-        mov     bx, ds
-        cld
-        les     di, @result
-        lds     si, s
-        mov     ah, 0
-        lodsb
-        cmp     al, n
-        jb      @1
-        mov     al, n
-@1:     mov     cx, ax
-        stosb
-        rep movsb
-        mov     ds, bx
-end;
-{$endif}
 {$ENDIF }
 
-{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
 {$IFDEF NOASM }
 function Right(s:string; n:byte):string;
 begin
@@ -1202,8 +1180,6 @@ begin
     Right:=copy(s,length(s)-n+1,255);
 end;
 {$ELSE }
-{$ifdef ver32}
-{ 01.02.2000 robo - 32 Bit}
 function Right(const s: string; n: byte):string; {&uses esi,edi} assembler;
 asm
         cld
@@ -1230,44 +1206,14 @@ end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
-{ /robo }
-{$else}
-function Right(const s: string; n: byte):string; assembler;
-asm
-        mov     bx, ds
-        cld
-        lds     si, s
-        les     di, @result
-        xor     ax, ax
-        xor     cx, cx
-        mov     cl, n
-        lodsb
-        cmp     al, n                   { n > als L„nge von s }
-        jnb @3
-        mov     cl, al
-@3:     mov     dl, al                  { Stringl„nge merken }
-        sub     al, cl
-        jnc @1
-        mov     cl, dl
-        xor     ax, ax
-@1:     mov     es:[di], cl
-        inc     di
-        add     si, ax
-        rep movsb
-        mov     ds, bx
-end;
-{$endif}
 {$ENDIF }
 
-{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
 {$IFDEF NOASM }
 function Mid(const s:string; const n:byte):string;
 begin
   mid:=copy(s,n,255);
 end;
 {$ELSE }
-{$ifdef ver32}
-{ 01.02.2000 robo - 32 Bit}
 function Mid(const s:string; const n:byte): string; {&uses esi,edi} assembler;
 asm
         cld
@@ -1300,39 +1246,7 @@ end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
-{ /robo }
 
-{$else}
-function Mid(const s:string; const n:byte): string; assembler;
-asm
-        mov     bx, ds
-        cld
-        les     di, @result
-        lds     si, s
-        xor     dx, dx
-        xor     cx, cx
-        lodsb
-        cmp     al, n
-        jnb @3
-        mov     al, cl              { n > als L„nge von s }
-        stosb
-        jmp @2
-@3:     mov     dl, al
-        sub     al, n
-        inc     al
-        jnbe   @4
-        dec  al                     { Stringl„nge 255, n = 0 }
-@4:     cmp     al, dl
-        jc      @1
-        mov     al, dl
-@1:     mov     cl, al
-        stosb
-        sub     dx, cx
-        add     si, dx
-        rep movsb
-@2:     mov     ds, bx
-end;
-{$endif}
 {$ENDIF}
 
 function trim(s:string):string;
@@ -2009,11 +1923,6 @@ begin
     rforms:=sp(n-length(s))+s;
 end;
 
-{$ifdef ver32}
-
-{ 01.02.2000 robo - 32 Bit }
-{ 06.02.2000 MK - Optimiert }
-
 procedure FastMove(var Source, Dest; const Count: WORD); {&uses esi,edi} assembler;
 asm
         mov  ecx, count
@@ -2035,61 +1944,6 @@ end ['EAX', 'ECX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
-
-{ /robo }
-
-{$else}
-
-{$IFDEF NO386 }
-{ JG+MK+de.comp.lang.assembler.x86: Superschnelle MOVE-Routine }
-procedure FastMove(var Source, Dest; const Count: WORD); assembler;
-asm
-        mov  cx, count
-        or   cx, cx        { Nichts zu kopieren? }
-        jz   @ende
-
-        mov  bx, ds
-        les  di, dest
-        lds  si, source
-
-        cld
-        shr  cx, 1
-        rep  movsw          { Zuerst die geraden W”rter, wegen Alignment }
-        jnc  @even
-        movsb
-@even:  mov ds, bx
-@ende:
-end;
-
-{$ELSE }
-
-procedure FastMove(var Source, Dest; const Count: WORD); assembler;
-asm
-        mov  cx, count
-        or   cx, cx        { Nichts zu kopieren? }
-        jz   @ende
-
-        mov  bx, ds
-        les  di, dest
-        lds  si, source
-
-        cld
-        shr  cx, 1
-        db $0F,$92,$C2     { setc dl }
-        shr  cx, 1
-        db $66
-        rep  movsw         { rep movsd }
-        jnc  @even2
-        movsw
-@even2: shr  dl, 1
-        jnc @even
-        movsb
-@even:  mov ds, bx
-@ende:
-end;
-
-{$ENDIF }
-{$ENDIF }
 
 
 procedure UkonvStr(var s:string;len:byte);
@@ -2185,6 +2039,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/06/23 15:59:13  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.38  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

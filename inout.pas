@@ -452,7 +452,6 @@ begin
 {$ENDIF }
 end;
 
-{&optimize+}
 Procedure multi2;
 var h,m,s,s100 : rtlword;
     i          : integer16;
@@ -478,12 +477,9 @@ begin
     end;
   multi3;
 end;
-{&optimize+}
 
-
+(*
 procedure showstatus(do_rest:boolean);
-{$IFDEF BP }
-
 const stt : array[1..3] of string[8]  = (' CAPS ',' NUM ',' SCROLL ');
       stm : array[1..3] of string[16] = ('','','');
 
@@ -529,11 +525,7 @@ begin
     end;
 
   st1:=kbstat;
-{$ELSE }
-begin
-
-{$ENDIF }
-end;
+end; *)
 
 
 procedure dummyFN;
@@ -649,11 +641,12 @@ begin
               end;
             end
           end;
-        if (kbstat<>st1) and (statposx<>0) then begin
-          showstatus(true);
+        if (kbstat<>st1) and (statposx<>0) then
+        begin
+          // showstatus(true);
           z:=#0#0;
           exit;
-          end;
+        end;
       until (z<>#255) or keypressed;   { KEYS.keypressed! }
       key_pressed:=true;
       if not keypressed then begin
@@ -1658,6 +1651,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/06/23 15:59:11  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.39  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

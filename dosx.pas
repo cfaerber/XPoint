@@ -16,14 +16,14 @@
 (*                                                         *)
 (***********************************************************)
 
-UNIT dosx;
+unit dosx;
 
 {$I XPDEFINE.INC}
 
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses
   xpglobal,
@@ -47,7 +47,6 @@ function  IsDevice(fn:pathstr):boolean;
 implementation
 
 {$IFNDEF UnixFS } { Wird alles nicht benoetigt }
-{$IFDEF Ver32 }
 uses
   {$ifdef vp }
   vpsyslow,
@@ -56,7 +55,6 @@ uses
   windows,
   {$ENDIF }
   sysutils;
-{$ENDIF }
 {$ENDIF } { UnixFS }
 
 {$IFNDEF UnixFS }
@@ -104,7 +102,6 @@ end;
 
 
 function OutputRedirected:boolean;
-{$IFDEF Ver32}
 begin
   {$IFDEF OS2 }
     { VP 2.0 ist fehlerhaft, Funktion geht nur unter OS/2 }
@@ -117,17 +114,6 @@ begin
     OutputRedirected := false;
   {$ENDIF }
 end;
-{$ELSE}
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$4400;
-    bx:=textrec(output).handle;
-    intr($21,regs);
-    OutputRedirected:=(flags and fcarry=0) and (dx and 128=0);
-  end;
-end;
-{$ENDIF}
 
 { Buf sollte im Datensegment liegen }
 { ben”tigt DOS ab Version 3.0       }
@@ -137,7 +123,6 @@ end;
 
 {$IFNDEF UnixFS }
 function DriveType(drive:char):byte;
-{$IFDEF Ver32  }
 const
   DriveStr: String = '?:\'+#0;
 {$ifdef vp }
@@ -176,36 +161,6 @@ begin
     {$ENDIF }
   {$endif}
 end;
-{$ELSE }
-
-  function laufwerke:byte;
-  var regs : registers;
-  begin
-    intr($11,regs);
-    if not odd(regs.ax) then laufwerke:=0
-    else laufwerke:=(regs.ax shr 6) and 3 + 1;
-  end;
-
-var regs : registers;
-begin
-  if (drive='B') and (laufwerke=1) then
-    drivetype:=0
-  else
-    with regs do begin
-      ax:=$4409;
-      bl:=ord(drive)-64;
-      msdos(regs);
-      if flags and fcarry<>0 then
-        drivetype:=0
-      else
-        if dx and $8000<>0 then drivetype:=3 else
-        if dx and $1000<>0 then drivetype:=5 else
-        if dx and $8ff=$800 then drivetype:=2 else
-        if dx and $4000<>0 then drivetype:=4 else
-        drivetype:=1;
-    end;
-end;
-{$ENDIF }
 {$ENDIF } { UnixFS }
 
 {$IFNDEF UnixFS }
@@ -246,6 +201,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/23 15:59:09  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.18  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

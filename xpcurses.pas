@@ -6,22 +6,19 @@
 { $Id$ }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$F+}
-{$ENDIF }
 
 unit xpcurses;
 
 {  ==========================  Interface-Teil  ==========================  }
 
-INTERFACE
+interface
 
 uses
   linux,
   ncurses,
   xplinux,
   xpglobal;
-  
+
 {$PACKRECORDS 4}
 {$linklib panel}
 
@@ -108,33 +105,33 @@ type
   { Fuer den internen Gebrauch }
   PPanel = ^TPanel;
   TPanel = record
-             win 	: PWindow;
-             wstarty 	: longint;
-             wendy 	: longint;
-             wstartx 	: longint;
-             wendx 	: longint;
-             below 	: PPanel;
-             above 	: PPanel;
-             user 	: longint; { NCURSES_CONST void  user; }
-             obscure 	: pointer;
+             win        : PWindow;
+             wstarty    : longint;
+             wendy      : longint;
+             wstartx    : longint;
+             wendx      : longint;
+             below      : PPanel;
+             above      : PPanel;
+             user       : longint; { NCURSES_CONST void  user; }
+             obscure    : pointer;
        end;
 
   { Screen-Beschreiber }
   PWinDesc = ^TWinDesc;
   TWinDesc = record
-               wHnd		: PWindow;	{ Window-Handle }
-	       pHnd		: PPanel;	{ Panel-Handle }
-	       x, y		: word;		{ Offset des Bereichs (0,0 }
-	       Rows, Cols	: word;		{ Ausdehnung }
-	       isRel		: boolean;	{ Relative Koordinaten ? }
-	       isEcho		: boolean;	{ Eingaben zeigen? }
-	       PrevWin		: PWinDesc;	{ vorheriges Fenster }
+               wHnd             : PWindow;      { Window-Handle }
+               pHnd             : PPanel;       { Panel-Handle }
+               x, y             : word;         { Offset des Bereichs (0,0 }
+               Rows, Cols       : word;         { Ausdehnung }
+               isRel            : boolean;      { Relative Koordinaten ? }
+               isEcho           : boolean;      { Eingaben zeigen? }
+               PrevWin          : PWinDesc;     { vorheriges Fenster }
              end;
 
 var
-  ActWin: TWinDesc;		{ Aktueller Screen }
-  BaseWin: TWinDesc;		{ Basis-Screen }
-  BaseSub: PWindow;		{ wird fuer window() benoetigt }
+  ActWin: TWinDesc;             { Aktueller Screen }
+  BaseWin: TWinDesc;            { Basis-Screen }
+  BaseSub: PWindow;             { wird fuer window() benoetigt }
 
 var
   CheckBreak,
@@ -152,7 +149,7 @@ const
 { Var's aus INOUT.PAS -------------------------------------------------- }
 
 var
-  mwl,mwo,				{ Werden von window gesetzt }
+  mwl,mwo,                              { Werden von window gesetzt }
   mwr,mwu: byte;
 
 procedure InitXPCurses;
@@ -178,7 +175,7 @@ procedure TextMode(mode : word);
 
 { Servive-Funktionen auf dem aktiven Screen ---------------------------- }
 
-procedure HorizLine(y: integer);	{ horizontale Line zeichnen }
+procedure HorizLine(y: integer);        { horizontale Line zeichnen }
 
 { Teile aus VIDEO.PAS -------------------------------------------------- }
 
@@ -190,13 +187,12 @@ function GetScreenCols: integer;
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
 { Setzt ein Fenster }
-procedure mDelay(msec: word);			{ Warten }
-procedure Window(x1, y1, x2, y2: integer);	{ CRT-Window }
+procedure mDelay(msec: word);                   { Warten }
+procedure Window(x1, y1, x2, y2: integer);      { CRT-Window }
 
 { Teile der WINXP.PAS -------------------------------------------------- }
 
 procedure FWrt(const x, y: word; const s: string);
-procedure NormWin;
 procedure qrahmen(l,r,o,u,typ,attr: integer; clr: boolean);
 procedure Wrt(const x, y: word; const s: string);
 procedure Wrt2(const s: string );
@@ -227,7 +223,7 @@ procedure CursorBig;
 procedure CursorOff;
 
 
-{ Echo legt fest, ob Tastatureingaben gezeigt werden. Per Default wird 
+{ Echo legt fest, ob Tastatureingaben gezeigt werden. Per Default wird
   dieses immer auf false gesetzt }
 function IsEcho: boolean;
 procedure SetEcho(b: boolean);
@@ -277,7 +273,7 @@ var
    MaxCols : longint;                   { for columns and rows }
    tios : TermIOS;                      { saves the term settings at startup }
    LastTextAttr: byte;                  { Letzte gesetzte Farbe }
-   LastWindMin,			   	{ Manipulationen abfangen }
+   LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 
 {==========================================================================
@@ -361,9 +357,9 @@ var
   atts: longint;
 begin
   atts:= color_pair(SetColorPair(att));
-  if IsBold(att) then 
+  if IsBold(att) then
     atts:= atts or A_BOLD;
-  if (att and $80) = $80 then 
+  if (att and $80) = $80 then
     atts:= atts or A_BLINK;
   CursesAtts:= atts;
 end;
@@ -423,7 +419,7 @@ begin
   if (win.PrevWin^.wHnd <> nil) then begin
     FastMove(win.PrevWin^, ActWin, sizeof(TWinDesc));
     freemem(win.PrevWin, sizeof(TWinDesc));
-  end else 
+  end else
     FastMove(BaseWin, ActWin, sizeof(TWinDesc));
   { Re-Init }
   FillChar(win, sizeof(TWinDesc), 0);
@@ -437,7 +433,7 @@ begin
 end;
 
 
-{ Die Funktion erwartet einen Char aus der CodePage 437 und 
+{ Die Funktion erwartet einen Char aus der CodePage 437 und
   gibt einen ISO-Char bzw. den TTY-Code zurueck. Eignet sich
   nur fuer Bildschirmausgaben! Setzt einen ISO-Zeichensatz
   ISO-8859-1 an der Konsole voraus (was in D ueblich ist). }
@@ -445,47 +441,47 @@ function CvtToISOConsole(ch: char): longint;
 begin
   if (ch in [#0..#255]) then begin
     case ch of
-      #24, #30: 
+      #24, #30:
           CvtToISOConsole:= ACS_UARROW;
-      #25, #31: 
+      #25, #31:
           CvtToISOConsole:= ACS_DARROW;
-      #26, #16: 
+      #26, #16:
           CvtToISOConsole:= ACS_RARROW;
-      #27, #17: 
+      #27, #17:
           CvtToISOConsole:= ACS_LARROW;
-      #176, #177, #178: 
+      #176, #177, #178:
           CvtToISOConsole:= ACS_CKBOARD;
-      #180, #181, #182, #185: 
+      #180, #181, #182, #185:
           CvtToISOConsole:= ACS_RTEE;
-      #183, #184, #187, #191: 
+      #183, #184, #187, #191:
           CvtToISOConsole:= ACS_URCORNER;
-      #188, #189, #190, #217: 
+      #188, #189, #190, #217:
           CvtToISOConsole:= ACS_LRCORNER;
-      #192, #200, #211, #212: 
+      #192, #200, #211, #212:
           CvtToISOConsole:= ACS_LLCORNER;
-      #193, #202, #207, #208: 
+      #193, #202, #207, #208:
           CvtToISOConsole:= ACS_BTEE;
-      #194, #203, #209, #210: 
+      #194, #203, #209, #210:
           CvtToISOConsole:= ACS_TTEE;
-      #195, #198, #199, #204: 
+      #195, #198, #199, #204:
           CvtToISOConsole:= ACS_LTEE;
-      #196, #205: 
+      #196, #205:
           CvtToISOConsole:= ACS_HLINE;
-      #197, #206, #215, #216: 
+      #197, #206, #215, #216:
           CvtToISOConsole:= ACS_PLUS;
-      #201, #213, #214, #218: 
+      #201, #213, #214, #218:
           CvtToISOConsole:= ACS_ULCORNER;
       #227:
-	  CvtToISOConsole:= ACS_PI;
-      #241: 
+          CvtToISOConsole:= ACS_PI;
+      #241:
           CvtToISOConsole:= ACS_PLMINUS;
       #242:
           CvtToISOConsole:= ACS_GEQUAL;
       #243:
           CvtToISOConsole:= ACS_LEQUAL;
-      #248: 
+      #248:
           CvtToISOConsole:= ACS_DEGREE;
-      #249: 
+      #249:
           CvtToISOConsole:= ACS_BULLET;
       #254:
           CvtToISOConsole:= ACS_BLOCK;
@@ -520,7 +516,7 @@ procedure StringOut(s: string);
 var
   i: integer;
 begin
-  { Da waddstr auch nur waddch benutzt, duerfte es von der 
+  { Da waddstr auch nur waddch benutzt, duerfte es von der
     PErformance keinen Unterschied geben. }
   for i:= 1 to Length(s) do
     { ToDo: Andere Consolen unterstuetzen }
@@ -581,11 +577,11 @@ var
   x0, y0: longint;
 begin
   getyx(ActWin.wHnd, y0, x0);
-  if (ActWin.isRel) then begin		{ Relative Koo' aufloesen? }
-    x:= x0 + 1;				{ -> Relativ zum Window }
+  if (ActWin.isRel) then begin          { Relative Koo' aufloesen? }
+    x:= x0 + 1;                         { -> Relativ zum Window }
     y:= y0 + 1;
   end else begin
-    x:= x0 + ActWin.x + 1;		{ -> Absolut zum Screen }
+    x:= x0 + ActWin.x + 1;              { -> Absolut zum Screen }
     y:= y0 + ActWin.y + 1;
   end;
 end;
@@ -632,7 +628,7 @@ begin
   getbegyx(ActWin.wHnd, yb, xb);
   getmaxyx(ActWin.wHnd, ym, xm);
   tmp := subwin(ActWin.wHnd, 1, xm-x, yb+y, xb+x);
-  if tmp = nil then 
+  if tmp = nil then
     Exit;
   wbkgd(tmp, CursesAtts(TextAttr));
   werase(tmp);
@@ -736,26 +732,26 @@ begin
       KEY_ALTTAB : c:= #15; { alt/tab }
     else
       begin
-        if l = Key_f(1) then c := #59 
-	else if l = Key_f(2) then c := #60 
-	else if l = Key_f(3) then c := #61 
-	else if l = Key_f(4) then c := #62 
-	else if l = Key_f(5) then c := #63 
-	else if l = Key_f(6) then c := #64 
-	else if l = Key_f(7) then c := #65 
-	else if l = Key_f(8) then c := #66 
-	else if l = Key_f(9) then c := #67 
-	else if l = Key_f(10) then c := #68 
-	else if l = Key_f(11) then c := #84 
-	else if l = Key_f(12) then c := #85 
-	else if l = Key_f(13) then c := #86 
-	else if l = Key_f(14) then c := #87 
-	else if l = Key_f(15) then c := #88 
-	else if l = Key_f(16) then c := #89 
-	else if l = Key_f(17) then c := #90 
-	else if l = Key_f(18) then c := #91 
-	else if l = Key_f(19) then c := #92
-	else if l = Key_f(20) then c := #93;
+        if l = Key_f(1) then c := #59
+        else if l = Key_f(2) then c := #60
+        else if l = Key_f(3) then c := #61
+        else if l = Key_f(4) then c := #62
+        else if l = Key_f(5) then c := #63
+        else if l = Key_f(6) then c := #64
+        else if l = Key_f(7) then c := #65
+        else if l = Key_f(8) then c := #66
+        else if l = Key_f(9) then c := #67
+        else if l = Key_f(10) then c := #68
+        else if l = Key_f(11) then c := #84
+        else if l = Key_f(12) then c := #85
+        else if l = Key_f(13) then c := #86
+        else if l = Key_f(14) then c := #87
+        else if l = Key_f(15) then c := #88
+        else if l = Key_f(16) then c := #89
+        else if l = Key_f(17) then c := #90
+        else if l = Key_f(18) then c := #91
+        else if l = Key_f(19) then c := #92
+        else if l = Key_f(20) then c := #93;
       end;
     end; { case }
     if xtnded then begin
@@ -960,12 +956,12 @@ procedure HorizLine(y: integer);
 var
   sw: PWindow;
 begin
-  if (TextAttr<>LastTextAttr) then		{ Hat jemand an Attr gefummelt? }
+  if (TextAttr<>LastTextAttr) then              { Hat jemand an Attr gefummelt? }
     SetTextAttr(TextAttr);
-  sw:= subwin(ActWin.wHnd, 1, MAxCols, y-1, 0);	{ SubWindow erzeugen }
-  whline(sw, ACS_HLINE, MaxCols);		{ Linie malen }
-  wrefresh(sw);					{ und anzeigen }
-  delwin(sw);					{ Window loeschen }
+  sw:= subwin(ActWin.wHnd, 1, MAxCols, y-1, 0); { SubWindow erzeugen }
+  whline(sw, ACS_HLINE, MaxCols);               { Linie malen }
+  wrefresh(sw);                                 { und anzeigen }
+  delwin(sw);                                   { Window loeschen }
 end;
 
 { Teile der WINXP.PAS -------------------------------------------------- }
@@ -988,7 +984,7 @@ begin
   { Aenderung bein Textattribut bearbeiten }
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
-  { Da waddstr auch nur waddch benutzt, duerfte es von der 
+  { Da waddstr auch nur waddch benutzt, duerfte es von der
     PErformance keinen Unterschied geben. }
   for i:= 1 to Length(s) do
     { ToDo: Andere Consolen unterstuetzen }
@@ -1126,7 +1122,7 @@ begin
     WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
   end else begin
     BaseSub:= subwin(StdScr, y2-y1, x2-x1, y1, x1);
-    WindMin:= ((y1-1) shl 8) + (x1-1);		{ Wind* berechnen }
+    WindMin:= ((y1-1) shl 8) + (x1-1);          { Wind* berechnen }
     WindMax:= ((y2-1) shl 8) + (x2-1);
   end;
   LastWindMin:= WindMin;
@@ -1198,16 +1194,16 @@ begin
      Exit;
    end else begin
      StartCurses:= true;
-     start_color;		{ Farbe aktivieren }
+     start_color;               { Farbe aktivieren }
      cbreak;                    { disable keyboard buffering }
      raw;                       { disable flow control, etc. }
      noecho;                    { do not echo keypresses }
      nonl;                      { don't process cr in newline }
-     intrflush(stdscr,bool(false)); 
+     intrflush(stdscr,bool(false));
      keypad(stdscr,bool(true));
      scrollok(stdscr,bool(false));
-     win.whnd:= stdscr;		{ Handle merken }
-     win.phnd:= nil;		{ Noch kein Panel }
+     win.whnd:= stdscr;         { Handle merken }
+     win.phnd:= nil;            { Noch kein Panel }
      win.PrevWin:= nil;
      getmaxyx(stdscr,MaxRows,MaxCols);
      win.Cols:= MaxCols; win.Rows:= MaxRows;
@@ -1239,9 +1235,9 @@ end;
 procedure InitXPCurses;
 begin
   { load the color pairs array with color pair indices (0..63) }
-  for bg := 0 to 7 do 
+  for bg := 0 to 7 do
     for fg := 0 to 7 do cp[bg,fg]:= (bg*8)+fg;
-     
+
   { initialize ncurses }
   if not StartCurses(BaseWin) then begin
     writeln('Curses cannot be loaded!');
@@ -1262,7 +1258,7 @@ begin
   FastMove(BaseWin, ActWin, sizeof(TWinDesc));
 
   BaseSub:= nil;
-  
+
   { TextMode(LastMode); }
 
   { Redirect the standard output }
@@ -1282,6 +1278,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/06/23 15:59:25  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.17  2000/05/14 17:22:51  hd
   - Linux: Manuelle Init. der XPCurses
 

@@ -8,47 +8,10 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{$IFDEF BP }
-procedure setemscache;
-var i : integer;
-begin
-  if dbEMShandle<>0 then
-    for i:=0 to 3 do                { EMS einblenden }
-      EmsPage(dbEMShandle,i,i);
-end;
-{$ENDIF }
-
-
-{ Cache-Seiten allokieren }
-
-(* Routine wird von Peter nicht benutzt }
-procedure dbSetindexcache(pages:word);
-begin
-  if pages>maxcache then error('Zu viele Cache-Seiten');
-  cacheanz:=pages;
-  if _ems and emstest and (emsavail>=4) then begin
-    EmsAlloc(4,dbEMShandle);
-    cache:=ptr(emsbase,0);
-    setemscache;
-    end
-  else
-  begin
-    getmem(cache,pages*sizeof(cachepage));
-    dbEMShandle:=0;
-    end;
-  fillchar(cache^,pages*sizeof(cachepage),0);
-end;
-*)
-
 procedure dbReleasecache;
 begin
   if cacheanz>0 then
-{$IFDEF BP }
-    if dbEMShandle<>0 then
-      EmsFree(dbEMShandle)
-    else
-{$ENDIF }
-      freemem(cache,cacheanz*sizeof(cachepage));
+    freemem(cache,cacheanz*sizeof(cachepage));
   cacheanz:=0;
 end;
 
@@ -62,9 +25,6 @@ begin
       end
     else
     begin
-{$IFDEF BP }
-      setemscache;
-{$ENDIF }
       seek_cache(dbp,offs,i);
 
 {      i:=0;
@@ -108,13 +68,12 @@ procedure cache_write(dbp:DB; irsize:word; offs:longint; var data);
 var i,sp : integer;
     s    : longint;
 begin
-  with dp(dbp)^ do begin
+  with dp(dbp)^ do
+  begin
     seek(fi,offs);
     blockwrite(fi,data,irsize);
-    if cacheanz>0 then begin
-{$IFDEF BP }
-      setemscache;
-{$ENDIF }
+    if cacheanz>0 then
+    begin
       i:=0;
       sp:=0; s:=maxlongint;
       while (i<cacheanz) and (not cache^[i].used or (cache^[i].dbp<>dbp) or
@@ -266,6 +225,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/06/23 15:59:09  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.11  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

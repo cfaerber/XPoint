@@ -11,9 +11,6 @@
 { CrossPoint - StartUp }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp2;
 
@@ -62,14 +59,10 @@ procedure test_defaultbox;
 procedure test_defaultgruppen;
 procedure test_systeme;
 procedure testdiskspace;
-{$IFDEF BP }
-procedure testfilehandles;
-{$ENDIF }
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
 procedure check_date;
 procedure ReadDomainlist;
-procedure testlock;
 procedure ReadDefaultViewers;
 
 procedure ShowDateZaehler;
@@ -338,10 +331,6 @@ var i  : integer;
 
 begin
   { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
-{$IFDEF BP }
-  if (winversion>0) or (lo(dosversion)>=20) or (DOSEmuVersion <> '')
-    then ParWintime:=1;
-{$ENDIF }
   extended:=exist('xtended.15');
 {$IFDEF UnixFS }
   findfirst(AutoxDir+'*.opt',0,sr);
@@ -353,9 +342,7 @@ begin
     ReadParfile;
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
@@ -373,10 +360,7 @@ begin
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht lîschen!');
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
-  if ParDebug then Multi3:=ShowStack;
   if ParDDebug then dbOpenLog('database.log');
   ListDebug:=ParDebug;
   if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
@@ -531,9 +515,7 @@ begin { loadresource }
     languageopt:=false;
 *)
 
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   if not exist(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
@@ -798,25 +780,6 @@ begin
       end;
 end;
 
-
-{$IFDEF BP }
-procedure testfilehandles;
-var f,nf : byte;
-begin
-  abgelaufen1:=false; {(right(date,4)+copy(date,4,2)>reverse('104991')); }
-  abgelaufen2:=false; { abgelaufen1; }
-  f:=FreeFILES(20);
-  if (f>5) and (f<16) then begin
-    nf:=((ConfigFILES+(16-f)+4)div 5)*5;
-    rfehler1(210,strs(nf));
-    runerror:=false;
-    exitscreen(0);
-    halt(1);
-    end;
-end;
-{$ENDIF }
-
-
 procedure read_regkey;
 var t   : text;
     s   : string[20];
@@ -917,9 +880,7 @@ begin
     _era(sr.name);
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1066,31 +1027,6 @@ begin
     copyright(true);
 end;
 
-
-procedure testlock;
-var i : integer;
-begin
-  if ParNolock then exit;
-  assign(lockfile, 'lockfile');
-  filemode:=FMRW + FMDenyWrite;
-  rewrite(lockfile);
-  if (ioresult<>0) or not fileio.lockfile(lockfile) then
-  begin
-    writeln;
-    for i:=1 to res2anz(244) do
-      writeln(getres2(244,i));
-    mdelay(1000);
-    close(lockfile);
-    if ioresult<>0 then;
-    runerror:=false;
-    halt(1);
-  end;
-  lockopen:=true;
-  { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
-  FileMode := FMRW;
-end;
-
-
 procedure ReadDefaultViewers;
 
   procedure SeekViewer(mimetyp:string; var viewer:pviewer);
@@ -1137,6 +1073,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/06/23 15:59:17  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.46  2000/06/22 19:53:30  mk
   - 16 Bit Teile ausgebaut
 

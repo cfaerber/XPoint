@@ -11,9 +11,6 @@
 { CrossPoint - UUDecode }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp_uue;
 
@@ -39,7 +36,7 @@ implementation
 
 uses xp3,xp3ex;
 
-const obufsize = 12288; { MK 07.02.00 Auf 32 Byte Grî·en angepasst }
+const obufsize = 12288; { Auf 32 Byte Grî·en angepasst }
       ibufsize = 16384;
       maxbuf   : word = obufsize-4;
 
@@ -69,8 +66,6 @@ begin
   bufp:=0;
 end;
 
-
-{$IFDEF ver32}
 { !! Ungetestet und unoptimiert }
 procedure decode; assembler;  {&uses ebx, esi, edi}
 asm
@@ -185,144 +180,11 @@ end ['EAX', 'EBX', 'ECX', 'ESI'];
 end;
 {$ENDIF }
 
-
-{$ELSE}
-
-procedure decode; assembler;
-asm
-          push ds
-          mov ax,seg @data        { JG: Eigentlich ueberfluessig, aber sicher ist sicher}
-          mov ds,ax
-
-          mov si,offset s         { Adresse des zu dekod. Strings }
-          mov bx,2                { Offset innerhalb von s }
-
-          mov cl,1                { SchleifenzÑhler }
-          mov ch,[si+1]           { 1. Byte : LÑngeninformation }
-          sub ch,' '
-          and ch,3fh
-
-@mloop0:  les di,outbuf           { Adresse des Ausgabepuffers }
-          add di,bufp
-
-@mainloop:
-          cmp cl,ch               { i<=n ? }
-          jle @lp1
-          add word ptr ln,1       { inc(ln) }
-          adc word ptr ln+2,0
-          mov cl,ch
-          mov ch,0
-          add word ptr bytes,cx   { inc(bytes,n) }
-          adc word ptr bytes+2,0
-          jmp @ende
-
-@lp1:     mov dx,[si+bx]          { 4 Bytes dekodieren }
-          sub dx,2020h
-          mov ax,[si+bx+2]
-          sub ax,2020h
-          add bx,4
-          shl al,1
-          shl al,1
-          shl al,1
-          rcl dh,1
-          shl al,1
-          rcl dh,1
-          shl al,1
-          rcl dh,1
-          rcl dl,1
-          shl al,1
-          rcl dh,1
-          rcl dl,1
-          and ah,3fh
-          add al,ah
-          mov es:[di],dx
-          inc di
-          inc di
-          mov es:[di],al
-          inc di
-
-          mov ax,bufp
-          inc cl
-          inc ax
-          cmp cl,ch
-          ja @zende
-          inc cl
-          inc ax
-          cmp cl,ch
-          ja @zende
-          inc cl
-          inc ax
-@zende:   mov bufp,ax
-          cmp ax,maxbuf
-          ja @flush
-          jmp @mainloop
-
-@flush:   push si
-          push di
-          push bx
-          push cx
-          push es
-          push ds                          {+JG}
-          call far ptr flushbuf            {setzt bufp auf 0   JG:FAR }
-          pop ds                           {+JG}
-          pop es
-          pop cx
-          pop bx
-          pop di
-          pop si
-          jmp @mloop0
-
-@ende:    pop ds
-end;
-
-
-
-procedure getstring; assembler;
-asm
-          push ds
-          mov ax,seg @data       {JG...}
-          mov ds,ax
-
-          les si,inbuf
-          mov bx,ibufp
-          mov di,offset s
-          inc di
-          mov dx,ibufend
-          mov ah,0
-
-@getloop: cmp bx,dx               { ibufp > ibufend ? }
-          ja  @getende
-          mov al,es:[si+bx]
-          cmp al,' '              { Zeilenende ? }
-          jb  @getok
-          mov [di],al
-          inc di
-          inc bx
-          inc ah
-          cmp ah,100              { max. StringlÑnge }
-          jb  @getloop
-@getok:   mov al,2                { max. ein CR/LF Åberlesen }
-@getok2:  cmp bx,dx               { ibufp > ibufend ? }
-          ja @getende
-          cmp byte ptr es:[si+bx],' '
-          jae @getende
-          inc bx                  { ZeilenvorschÅbe Åberlesen }
-          dec al
-          jnz @getok2
-
-@getende: mov ibufp,bx
-          mov di,offset s
-          mov [di],ah             { StringlÑnge setzen (s[0]) }
-
-          pop ds                  {JG}
-end;
-
-{$ENDIF}
-
-
 procedure ReadInputLine;
-const ibufmin   = 255;
-var   bytesread : word;
+const
+  ibufmin   = 255;
+var
+  bytesread : word;
 begin
   if ibufend<ibufp then begin
     blockread(f1^,inbuf^,ibufsize-5,bytesread);
@@ -658,6 +520,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/23 15:59:25  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.13  2000/05/22 17:05:40  hd
   - FUStr statt UStr
   - multipos angepasst

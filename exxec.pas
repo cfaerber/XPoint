@@ -25,8 +25,6 @@ const ExecOk      = 0;
       ExecSwapre  = 3;
 
       ExecTestres : boolean = true;
-      ExecUseEms  : boolean = true;
-      ExecUseXms  : boolean = true;
       ExecSwapfile: pathstr = 'SWAPFILE.$$$';
       ExecDeutsch : boolean = true;
 
@@ -104,6 +102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/06/23 15:59:10  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.21  2000/06/22 19:53:25  mk
   - 16 Bit Teile ausgebaut
 

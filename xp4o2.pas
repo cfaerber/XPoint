@@ -11,9 +11,6 @@
 { CrossPoint: DBs packen, Kommentarbaum u.a. }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp4o2;
 
@@ -774,7 +771,6 @@ begin
 end;
 
 
-(*
 {
 Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
 
@@ -790,7 +786,7 @@ Der Wechsel zwischen zwei deutschen Resourcen klappt einwandfrei.
 
 Siehe auch xp2.pas und xp4.inc
 }
-
+(*
 procedure SetLanguage;
 const maxs = 20;
 var s  : string;
@@ -861,9 +857,7 @@ begin
       end;
     findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   delfirst(s);
   if s='' then
     fehler('No language files found !?')
@@ -891,6 +885,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/06/23 15:59:21  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.11  2000/06/19 20:20:21  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

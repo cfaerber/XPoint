@@ -483,9 +483,7 @@ begin
     error('UngÅltige Ausgabedatei: '+outfile);
   dos.findfirst('BAD',Directory,sr);
   baddir:=(doserror=0) and (sr.attr and Directory<>0);
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
 end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
@@ -1785,9 +1783,7 @@ begin
     fst:=false;
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1814,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/06/23 15:59:26  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.21  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

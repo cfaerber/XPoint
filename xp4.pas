@@ -11,9 +11,6 @@
 { CrossPoint - Hauptmodul }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp4;
 
@@ -30,11 +27,7 @@ uses xpglobal,
 
 
 const
-{$IFDEF BP }
-  maxgl   = 46;
-{$ELSE }
   maxgl   = 60;
-{$ENDIF }
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -63,11 +56,7 @@ const suchch    = #254;
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
-{$ifdef Ver32}
       DispStrSize	= 255;
-{$else}
-      DispStrSize	= 81;
-{$endif}
 
 type  dispstr   = string[DispStrSize];
       specstr   = string[DispStrSize];
@@ -286,9 +275,7 @@ var t,lastt: taste;
     suchst : string[maxsuch];
     suchen : boolean;
     savedd : DB;          { dispdat }
-{$IFDEF Ver32 }
     TempBack: Boolean;
-{$ENDIF }
 
   procedure lcol(y,pp:shortint);
   begin
@@ -1101,10 +1088,6 @@ var t,lastt: taste;
   begin
     if komaktiv then
       rfehler(406)   { 'Kommentarbaum ist bereits aktiv' }
-{$IFDEF BP }
-    else if maxavail<20000 then
-      rfehler(407)   { 'zu wenig Hauptspeicher' }
-{$ENDIF }
     else if dbRecCount(bezbase)=0 then
       rfehler(408)   { 'kein Kommentarbaum vorhanden' }
     else begin
@@ -1905,12 +1888,8 @@ begin      { --- select --- }
               write_disp_line(1,0,false);
               inc(i);
               dec(komofs);
-{$IFDEF BP }
-   {$B+}    until (i=gl) or not BACK;   {$B-}
-{$ELSE }
               TempBack := BACK;
             until (i=gl) or not TempBACK;
-{$ENDIF }
             for i:=1 to gl do
               showline(i,p);
             end;
@@ -1990,7 +1969,7 @@ selende:
 end;    { select }
 
 
-procedure TClose; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure TClose;
 var f : file;
 begin
   if closeflag then begin
@@ -2051,6 +2030,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/06/23 15:59:20  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.26  2000/06/12 15:07:49  hd
   - DispStr angepasst
 

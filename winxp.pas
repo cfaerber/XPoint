@@ -53,9 +53,6 @@ var   wpstack  : array[1..maxpush] of word;
       warrcol  : byte;        { Farbe fÅr Pfeile          }
       selp     : selproc;
 
-{$IFNDEF NCRT }
-procedure normwin;
-{$ENDIF }
 procedure clwin(l,r,o,u:word);
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);    { Rahmen ≥ zeichen       }
@@ -254,12 +251,15 @@ end; { Wrt }
 {$IFNDEF NCRT }
 procedure FWrt(const x,y:word; const s:string);
 var
+  {$IFDEF LocalScreen }
   i, Count: Integer;
+  {$ENDIF }
   {$IFDEF Win32 }
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
+  {$ELSE }
+    xold, yold: Integer;
   {$ENDIF }
-  xold, yold: Integer;
 begin
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
@@ -560,13 +560,6 @@ begin
     end;
 end;
 
-{$IFNDEF NCRT }
-procedure normwin;
-begin
-  window(1,1,80,25);
-end;
-{$ENDIF }
-
 procedure rahmen1(li,re,ob,un:byte; txt:string);
 begin
   normtxt;
@@ -660,7 +653,6 @@ begin
     end;
   savecursor;
   cursor(curoff);
-  normwin;
   i:=1;
   while not pullw[i].free do
     inc(i);
@@ -698,11 +690,7 @@ begin
   pullw[handle].win.wHnd:= nil;
 end;
 {$ELSE }
-var
-  i : byte;
-  j, Offset: integer;
 begin
-  normwin;
   with pullw[handle] do
   begin
     moff;
@@ -797,10 +785,6 @@ begin    { of wslct }
     end;
   pos:=min(pos,anz);
   savecursor;
-{$IFNDEF ver32}
-  cursor(curoff);
-{$ENDIF}
-  normwin;
   ende:=false;
   with pullw[handle] do begin
     for i:=1 to anz do
@@ -972,6 +956,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38  2000/06/23 15:59:14  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.37  2000/06/22 19:53:29  mk
   - 16 Bit Teile ausgebaut
 

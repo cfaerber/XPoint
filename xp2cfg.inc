@@ -511,8 +511,6 @@ begin
   MaxBinSave:=20;
   MaxNetMsgs:=20000;
   ReHochN:=false;
-  SwapToEMS:=true;
-  SwapToXMS:=true;
   longnames:=true;
   HayesComm:=true;
   ShowLogin:=true;
@@ -882,8 +880,6 @@ begin
   writelimits('MaxNetPM',1);
   writelimits('MaxLocalPM',2);
   writeln(t,'ReHochN=',jnf(rehochn));
-  writeln(t,'SwapToEMS=',jnf(swaptoems));
-  writeln(t,'SwapToXMS=',jnf(swaptoxms));
   if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
     if fustr(temppath)<>fustr(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
@@ -1467,8 +1463,6 @@ begin
           getpmlimits('MAXNETPM=',1) or
           getpmlimits('MAXLOCALPM=',2) or
           getx(su,  'ReHochN',rehochn) or
-          getx(su,  'SwapToEMS',swaptoems) or
-          getx(su,  'SwapToXMS',swaptoxms) or
           getx(su,  'LongNames',longnames) or
           getx(su,  'ShowLogin',showlogin) or
           getx(su,  'InterruptLogin',BreakLogin) or
@@ -1577,10 +1571,8 @@ begin
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
           gets(su,su,'Header',mheader,255) or
-          { 01/2000 oh }
           gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
           gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
-          { /oh }
 {$IFDEF Linux }
           gets(su,su,'timezone',dummytz,7) or
 {$ELSE }
@@ -1592,9 +1584,7 @@ begin
           getb(su,  'isdn1-controller',ISDN_controller) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
-          { 20.01.2000 robo }
           getx(su,  'maildelxpost',maildelxpost) or
-          { /robo }
           getx(su,  'keeprequests',keeprequests) or
           getx(su,  'zc-iso',zc_iso) or
           gets(s,su,'waehrung',waehrung,5) or
@@ -1609,9 +1599,7 @@ begin
           gets(s,su,'terminit',TermInit,40) or
           getx(su,  'shell-showpar',ShellShowpar) or
           getx(su,  'shell-waitkey',ShellWaitkey) or
-          { 03.02.2000 robo }
           getx(su,  'askreplyto',askreplyto) or
-          { /robo }
           getx(su,  'usepgp',UsePGP) or
           getx(su,  'pgp-batchmode',PGPbatchmode) or
           getx(su,  'uucp-pgp',PGP_UUCP) or
@@ -1622,9 +1610,7 @@ begin
           getx(su,  'pgp-waitkey',PGP_WaitKey) or
           getx(su,  'pgp-logfile',PGP_log) or
           getx(su,  'pgp-signall',PGP_signall) or
-          { 01/2000 oh }
           gets(s,su,'pgp-version',PGPVersion,5) or
-          { /oh }
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
           getx(su,  'defaultnokop',defaultnokop) or
@@ -1696,11 +1682,11 @@ begin
     else if ustr(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
-{$IFDEF BP }
+(*
     { In 32 Bit Versionen ist lst am Anfang nicht geîffnet, das
       schlie·en wÅrde zu einem IOResult 103 fÅhren }
     close(lst);                           { Drucker-Schnitte }
-{$ENDIF }
+*)
     DruckLPT:=min(5,max(DruckLpt,1));
 {$IFNDEF FPC }
   { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
@@ -1708,7 +1694,8 @@ begin
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
 {$ENDIF }
-    if aaa<>'' then begin
+    if aaa<>'' then
+    begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
       AAbrett:=copy(aaa,2,1)='J';
@@ -1735,9 +1722,6 @@ begin
     SetDefaultHeader;
     SaveConfig;
     end;
-  {$IFDEF BP }
-  ListUseXms:=SwapToXms;
-  {$ENDIF}
   trennkomm:=minmax(trennkomm,1,3);
 
   assign(t,ownpath+Cfg2File);         { Config2 einlesen }
@@ -1805,6 +1789,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.64  2000/06/23 15:59:17  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.63  2000/06/22 19:53:30  mk
   - 16 Bit Teile ausgebaut
 

@@ -30,14 +30,7 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-{$IFDEF BP }
-  {$M 20000,50000,655360}
-{$ENDIF }
-
 uses dos,
-{$IFDEF BP }
-  xms,
-{$ENDIF }
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect=2;
@@ -465,7 +458,7 @@ var hd   : header;
           inc(l); s[l]:=chr(b); end;
       until (b=13) or (bpos>=bsize);
     s[0]:=chr(l);
-    { if b=13 then getb;     { LF Åberlesen }
+    { if b=13 then getb; }    { LF Åberlesen }
   end;
 {$IFDEF Debug }
   {$R+}
@@ -1401,13 +1394,6 @@ var t1,log     : text;
     parname    : string[20];
     xline      : array[1..maxxlines] of ^string;
     xlines     : integer;
-{$IFDEF BP }
-    fsize      : longint;
-    xms        : byte;    { 0 = nicht initialisiert, 1=initialisiert }
-    xmshandle  : word;                    { 2 = nicht verfÅgbar }
-    xmssize    : longint;
-    xmsoffset  : longint;
-{$ENDIF }
 
   function mausform(s:string):string;
   var p : byte;
@@ -1420,16 +1406,9 @@ var t1,log     : text;
   end;
 
   procedure appline(s:string; crlf:boolean);
-{$IFDEF BP }
-  const cr_lf : array[0..1] of char = #13#10;
-{$ENDIF }
   begin
     if hd.mimever<>'' then
       s := ISOToIBM(s);
-{$IFDEF BP }
-    if (xms=0) and (lines<maxilines) and
-       (((lines mod 16)<>0) or (memavail>10000)) then
-{$ENDIF }
     begin
       inc(lines);
       getmem(tbuf^[lines].s,length(s)+1);
@@ -1437,33 +1416,6 @@ var t1,log     : text;
       tbuf^[lines].lf:=crlf;
       inc(hd.groesse,length(s)+iif(crlf,2,0));
     end
-{$IFDEF BP }
-    else
-    begin
-      if xms=0 then
-        if XmsAvail > 0 then begin
-          xmssize:=min(fsize div 1024+1,XmsAvail)*1024;
-          xmshandle:=xmsalloc(xmssize div 1024);
-          if xmsresult=0 then begin
-            xms:=1; xmsoffset:=0;
-            end
-          else
-            xms:=2;
-          end
-        else
-          xms:=2;
-      if (xms=1) and (xmsoffset+length(s)+2<xmssize) then begin
-        XmsWrite(xmshandle,s[1],xmsoffset,length(s));
-        inc(xmsoffset,length(s));
-        inc(hd.groesse,length(s));
-        if crlf then begin
-          XmsWrite(xmshandle,cr_lf,xmsoffset,2);
-          inc(xmsoffset,2);
-          inc(hd.groesse,2);
-          end;
-        end;
-      end;
-{$ENDIF }
   end;
 
   function infofile(s:string):string;
@@ -1507,11 +1459,7 @@ var t1,log     : text;
       b1,b2,
       b3,b4: byte;
   begin
-    {$IFDEF BP }
-      bufs:=min(maxavail-16,65500);
-    {$ELSE }
-      bufs:=65536;
-    {$ENDIF }
+    bufs:=65536;
     getmem(buf,bufs);
     bufp:=0;
     i:=1;
@@ -1572,24 +1520,6 @@ var t1,log     : text;
       end;
   end;
 
-{$IFDEF BP }
-  procedure CopyXms;
-  var buf : pointer;
-      ofs : longint;
-      blk : word;
-  begin
-    getmem(buf,1024);
-    ofs:=0;
-    while (ofs<xmsoffset) do begin
-      blk:=min(1024,xmsoffset-ofs);
-      XmsRead(xmshandle,buf^,ofs,blk);
-      blockwrite(f2,buf^,blk);
-      inc(ofs,1024);
-      end;
-    freemem(buf,1024);
-  end;
-{$ENDIF }
-
 begin
   new(b1);
   new(tbuf);
@@ -1607,10 +1537,8 @@ begin
   assign(stlog,stlogfile); rewrite(stlog);
   if not eof(t1) then readln(t1,s);
   nn:=0;
-  while not eof(t1) do with hd do begin
-{$IFDEF BP }
-    xms:=0;
-{$ENDIF }
+  while not eof(t1) do with hd do
+  begin
     fillchar(hd,sizeof(hd),0);
     xlines:=0;
     typ:='T';
@@ -1784,12 +1712,6 @@ begin
                 wrs(tbuf^[i].s^)
               else
                 blockwrite(f2,tbuf^[i].s^[1],length(tbuf^[i].s^));
-{$IFDEF BP }
-            if xms=1 then begin
-              CopyXms;
-              XmsFree(xmshandle);
-              end;
-{$ENDIF }
             end;
           end;
         end;
@@ -1831,6 +1753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/06/23 15:59:12  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.15  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

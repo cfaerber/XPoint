@@ -1,10 +1,10 @@
-UNIT Timer;
+unit Timer;
 
 { $Id$ }
 
 {Timer unit. Also provides delay routines. Timer object is secure for delays shorter than 12h.}
 
-INTERFACE
+interface
 
 TYPE
 	tTimer= OBJECT
@@ -17,7 +17,7 @@ TYPE
 			PROCEDURE SetTimeout(TimeoutSec: Real); {Method Timeout will be true TimeoutSec after calling this method}
               PRIVATE
 			InitTicks,TimeoutTicks: LongInt;
-              END;
+              end;
 			
 FUNCTION Calibrate: LongInt;                 {Busy loop}
 PROCEDURE WaitTime(Milliseconds: Real);
@@ -27,82 +27,86 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 IMPLEMENTATION
 
 USES Dos
-{$IFDEF Win32},Windows{$ELSE},CRT{$ENDIF}; {for Delay/Sleep}
+{$IFDEF Win32},Windows{$else},CRT{$endIF}; {for Delay/Sleep}
 
 CONST qLoops= 100; TickCap= 8640000; CLKTICKS=100;
 
-VAR Speed: LongInt; Calibrated: Boolean;
+var Speed: LongInt; Calibrated: Boolean;
 
 PROCEDURE SleepTime(Milliseconds: Real);
-BEGIN {$IFDEF Win32}Sleep(Round(Milliseconds)){$ELSE}Delay(Round(Milliseconds)){$ENDIF}END;
+begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){$endIF}end;
 
 FUNCTION GetTicks: LongInt;
-VAR H,M,S,S100: Word;
-BEGIN GetTime(H,M,S,S100); GetTicks:=S100+S*100+M*60*100+H*60*60*100 END;
+var H,M,S,S100: Word;
+begin GetTime(H,M,S,S100); GetTicks:=S100+S*100+M*60*100+H*60*60*100 end;
 
 CONSTRUCTOR tTimer.Init;
-BEGIN Start; SetTimeout(0)END;
+begin Start; SetTimeout(0)end;
 
 DESTRUCTOR tTimer.Done;
-BEGIN END;
+begin end;
 
 PROCEDURE tTimer.Start;
-BEGIN InitTicks:=GetTicks END;
+begin InitTicks:=GetTicks end;
 
 PROCEDURE tTimer.SetTimeout(TimeoutSec: Real); {Berücksichtigt Nullrückstellung um Mitternacht}
-BEGIN TimeoutTicks:=(InitTicks+Round(TimeoutSec*CLKTICKS))MOD TickCap END;
+begin TimeoutTicks:=(InitTicks+Round(TimeoutSec*CLKTICKS))MOD TickCap end;
 
 FUNCTION tTimer.SecsToTimeout: Real; {funktioniert nur bis 12h Intervall zuverlässig}
-VAR T: LongInt;
-BEGIN
+var T: LongInt;
+begin
  T:=GetTicks;
- IF TimeoutTicks>T THEN {Timeout vermutlich in der Zukunft}
-  IF(TimeoutTicks-T)>(TickCap DIV 2)THEN {doch in der Vergangenheit, aber Reset seitdem}
+ if TimeoutTicks>T then {Timeout vermutlich in der Zukunft}
+  IF(TimeoutTicks-T)>(TickCap DIV 2)then {doch in der Vergangenheit, aber Reset seitdem}
    SecsToTimeout:=(T+TickCap-TimeoutTicks)/CLKTICKS
-  ELSE {tatsächlich in der Zukunft}
+  else {tatsächlich in der Zukunft}
    SecsToTimeout:=(TimeoutTicks-T)/CLKTICKS
- ELSE {Timeout vermutlich in der Vergangenheit}
-  IF(T-TimeoutTicks)>(TickCap DIV 2)THEN {doch in der Zukunft, aber Reset kommt}
+ else {Timeout vermutlich in der Vergangenheit}
+  IF(T-TimeoutTicks)>(TickCap DIV 2)then {doch in der Zukunft, aber Reset kommt}
    SecsToTimeout:=(TimeoutTicks+TickCap-T)/CLKTICKS
-  ELSE
+  else
    SecsToTimeout:=(TimeoutTicks-T)/CLKTICKS;
-END;
+end;
 
 FUNCTION tTimer.Timeout: Boolean;
-BEGIN Timeout:=GetTicks>=TimeoutTicks END;
+begin Timeout:=GetTicks>=TimeoutTicks end;
 
 FUNCTION tTimer.ElapsedSec: Real;
-VAR T: LongInt;
-BEGIN
+var T: LongInt;
+begin
  T:=GetTicks;
- IF T<InitTicks THEN
+ if T<InitTicks THEN
   ElapsedSec:=Real(TickCap-InitTicks+T)/CLKTICKS
- ELSE
+ else
   ElapsedSec:=Real(T-InitTicks)/CLKTICKS
-END;
+end;
 
 FUNCTION Calibrate: LongInt;
-VAR I,J,K: LongInt;
-BEGIN
+var I,J,K: LongInt;
+begin
  Calibrated:=True; Speed:=0; K:=0;
  I:=GetTicks; REPEAT UNTIL I<>GetTicks;
- I:=GetTicks; REPEAT FOR J:=0 TO qLoops DO K:=1-K; Inc(Speed) UNTIL I<>GetTicks;
+ I:=GetTicks; REPEAT for J:=0 to qLoops DO K:=1-K; Inc(Speed) UNTIL I<>GetTicks;
  Calibrate:=Speed;
-END;
+end;
 
 PROCEDURE WaitTime(Milliseconds: Real);
-VAR I,J,K: LongInt;
-BEGIN
- K:=0; IF NOT Calibrated THEN Calibrate;
- FOR I:=1 TO Round(Milliseconds*CLKTICKS/1000*Speed)DO
-  FOR J:=0 TO qLoops DO K:=1-K;
-END;
+var I,J,K: LongInt;
+begin
+ K:=0; if NOT Calibrated then Calibrate;
+ for I:=1 to Round(Milliseconds*CLKTICKS/1000*Speed)DO
+  for J:=0 to qLoops DO K:=1-K;
+end;
 
-
-BEGIN Calibrated:=False END.
+begin
+  Calibrated:=False
+end.
 
 {
   $Log$
+  Revision 1.2  2000/06/23 15:59:13  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.1  2000/06/19 20:16:03  ma
   - wird erstmal nur fuer den neuen XP-FM benoetigt
 

@@ -83,7 +83,7 @@ begin
 end;
 
 {$S-}
-procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure newexit;
 begin
   exitproc:=oldexit;
   if f<>nil then closeresource;
@@ -346,6 +346,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/06/23 15:59:13  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.8  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

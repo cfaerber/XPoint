@@ -27,7 +27,6 @@ uses
   fileio,inout,maus2,keys,winxp;
 
 const ListHelpStr : string[8] = 'Hilfe';
-      ListUseXms  : boolean   = false;
       ListDebug   : boolean   = false;
       Listunvers  : byte      = 0;
       Listhalten  : byte      = 0;
@@ -110,8 +109,6 @@ implementation  { ------------------------------------------------ }
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       MinListMem : word = 15000;   { min. Bytes fÅr app_l        }
-      XmsPagesize = 4096;          { min. 1024 Bytes             }
-      XmsPageKB = XmsPagesize div 1024;
 
 type  lnodep  = ^listnode;
       listnode= record
@@ -166,12 +163,6 @@ type  liststat= record
                   dproc     : listDproc;
                   colfunc   : listColFunc;
                   displproc : listDisplProc;
-                  EmsPages  : word;
-                  EmsHandle : word;
-                  XmsPages  : word;
-                  XmsHandle : word;
-                  XmsPtr    : pointer;   { Adresse Xms-Seitenpuffer }
-                  XmsPage   : word;      { Nummer der aktiven XMS-Seite }
                   lastheap  : lnodep;    { letzter Node im Heap }
                   ConvProc  : listConvert;
                   startpos  : longint;
@@ -194,7 +185,7 @@ var   lstack  : array[0..maxlst] of record
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
-      MemFlag : byte;      { Ziel fÅr app_l: 0=Heap, 1=EMS, 2=XMS, 3=full }
+      MemFlag : byte;      { Ziel fÅr app_l: 0=Heap, 3=full }
 
 
 
@@ -432,9 +423,8 @@ procedure closelist;
 var lnp : lnodep;
 begin
   if lstackp=0 then interr('Underflow');
-  with alist^ do begin
-  { while (last<>nil) and (seg(last^)and $f000=EmsBSeg) do
-      last:=EmsPtr(last)^.prev; }
+  with alist^ do
+  begin
     if lastheap<>nil then
       last:=lastheap;
     while last<>nil do begin     { Liste freigeben }
@@ -488,13 +478,6 @@ var p  : byte;
       end;
   end;
 
-  procedure memfull;
-  begin
-    ltxt:=''; apptxt;
-    ltxt:='** zu wenig EMS/XMS-Speicher, um die komplette Datei anzuzeigen **';
-    apptxt;
-  end;
-
 begin
   if (length(ltxt)=1) and (ltxt[1]=#13) then
     exit;    { einzelnes CR ignorieren }
@@ -503,13 +486,8 @@ begin
     with alist^ do
       case memflag of
         0 : if (memavail<MinListMem) then
-              if emspages+xmspages=0 then begin
-                memfull;
-                memflag:=3;
-                end
-              else begin
-                if emspages>0 then memflag:=1
-                else memflag:=2;
+              begin
+                memflag:=2;
                 lastheap:=last;
               end;
       end;
@@ -978,8 +956,8 @@ var gl,p,y    : shortint;
       moff;
       attrtxt(col.colstatus);
       gotoxy(l,o);
-      write(forms('EMS: '+strs(EmsPages*16)+' KB    '+
-                  'XMS: '+strs(XmsPages*XmsPageKB)+' KB',w));
+      (* write(forms('EMS: '+strs(EmsPages*16)+' KB    '+
+                  'XMS: '+strs(XmsPages*XmsPageKB)+' KB',w)); *)
       mon;
       get(t,curoff);
       showstat;
@@ -1401,6 +1379,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/06/23 15:59:12  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.20  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

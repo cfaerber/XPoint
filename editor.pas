@@ -92,15 +92,11 @@ type  charr    = array[0..65500] of char;
       charrp   = ^charr;
 
       absatzp  = ^absatzt;
-      absatzt  = record
+      absatzt  = packed record
                    next,prev  : absatzp;
                    size,msize : smallword;       { msize = allokierte Gr”áe }
                    umbruch    : boolean;
                    fill       : array[1..3] of byte;
-{$ifdef ver32}
-  { Achtung! hier gibts ein Problem! obiges sind genau 16 Byte!
-      asize beachten! }
-{$endif}
                    cont       : charr;
                  end;
       position = record
@@ -1886,6 +1882,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/06/23 15:59:10  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.26  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

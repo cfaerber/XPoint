@@ -654,7 +654,6 @@ begin
           while not dbEOF(mbase) do begin
             if n>count then
               errflag:=true;
-            if ParDebug then ShowStack;
             if n mod 10=0 then show;
             dbReadN(mbase,mb_ablage,ablage);
             if ablage=abl then begin
@@ -720,6 +719,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/06/23 15:59:21  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.14  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

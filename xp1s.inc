@@ -21,7 +21,7 @@ begin
 end;
 
 
-procedure Resiprog; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure Resiprog;
 begin
   if ExecTestres then
     interr(getres(109));  { Residentes Programm geladen! CrossPoint wird beendet.. }
@@ -80,11 +80,6 @@ begin
   de:=0;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
-{$IFDEF BP }
-  if maxavail<$4000 then
-    rfehler(7)  { Zu wenig freier Speicher fr externen Programmaufruf! }
-  else
-{$ENDIF }
   begin
     { trackpath:=(dospath(0)+'\'=OwnPath) or (dospath(0)=shellpath); }
     getmaus(maussave);
@@ -126,10 +121,6 @@ begin
     ExecDeutsch:=deutsch;
 
     ExecResident:=resiprog;
-{$IFDEF BP }
-    ExecUseEms:=SwapToEms;
-    ExecUseXms:=SwapToXms;
-{$ENDIF }
     case Xec(prog,space,envspace,_xp_,errorlevel) of
       ExecSwaperr : begin
                       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
@@ -172,62 +163,6 @@ begin
   TempOpen;
 end;
 
-{$IFDEF BP }
-Function DosStartSession(Var Data:TStartData):Word; Assembler;
- Asm
-        mov     ah, $64
-        mov     bx, $0025
-        mov     cx, $636C
-        push    ds
-        lds     si, Data
-        int     $21
-        pop     ds
- End;
-
-Procedure Start_OS2(Programm,Parameter,Title:String);
-Var StartData:TStartData;
-    Temp:String;
-    PrgName,PrgParam,PrgTitle:PChar;
-Begin
-  GetMem(PrgName,256);
-  GetMem(PrgParam,256);
-  GetMem(PrgTitle,256);
-  Temp:='CMD.EXE';
-  StrPCopy(PrgName,Temp);
-  Temp:='/C'+' '+Programm+' '+Parameter;
-  StrPCopy(PrgParam,Temp);
-  StrPCopy(PrgTitle,Title);
-  With StartData Do Begin
-    Length:=SizeOf(TStartData);
-    Related:=1;
-    FgBg:=0;
-    TraceOpt:=0;
-    PgmTitle:=PrgTitle;
-    PgmName:=PrgName;
-    PgmInputs:=PrgParam;
-    TermQ:=Nil;
-    Environment:=Nil;
-    InheritOpt:=0;
-    SessionType:=2;
-    IconFile:=Nil;
-    PgmHandle:=0;
-    PgmControl:=0;
-    InitXPos:=0;
-    InitYPos:=0;
-    InitXSize:=0;
-    InitYSize:=0;
-    Reserved:=0;
-    ObjectBuffer:=Nil;
-    ObjectBuffLen:=0;
-  End;
-
-  DosStartSession(StartData);
-  FreeMem(PrgTitle,256);
-  FreeMem(PrgParam,256);
-  FreeMem(PrgName,256);
-End;
-{$ENDIF }
-
 function listheadercol:byte; { Headerzeilenfarbe entsprechend Hervorhebungsflag waehlen }
 var nt : longint;
 begin
@@ -235,7 +170,7 @@ begin
   listheadercol:=iif(nt and $1000 = 0,col.collistheader,col.collistheaderhigh);
 end;
 
-function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
+function listcolor(var s:string; line:longint):byte;
 var p,p0,ml : byte;
     qn,pdiff: integer;
 begin
@@ -519,6 +454,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/06/23 15:59:17  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.25  2000/06/22 19:53:30  mk
   - 16 Bit Teile ausgebaut
 

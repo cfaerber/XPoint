@@ -13,8 +13,6 @@ unit mouse;
 
 {$I XPDEFINE.INC }
 
-{  ==================  Interface-Teil  ===================  }
-
 interface
 
 uses
@@ -54,25 +52,21 @@ var    maus,mausda : boolean;
 
 procedure mausunit_init;
 
-procedure mausinit;                      { 0: Maustreiber zurÅcksetzen }
-procedure mausan;                        { 1: Mauscursor einschalten   }
-procedure mausaus;                       { 2: Mauscursor ausschalten   }
-procedure getmaus(var stat:mausstat);    { 3: Mauszustand ermitteln    }
-procedure setmaus(x,y: integer16);       { 4: neue Mausposition setzen }
+procedure mausinit;                      { Maustreiber zurÅcksetzen }
+procedure mausan;                        { Mauscursor einschalten   }
+procedure mausaus;                       { Mauscursor ausschalten   }
+procedure getmaus(var stat:mausstat);    { Mauszustand ermitteln    }
+procedure setmaus(x,y: integer);         { neue Mausposition setzen }
 
-function mausx:word;      { 3: Maus-X-Koordinate holen }
-function mausy:word;      { 3: Maus-Y-Koordinate holen }
-function maust:word;      { 3: Maustastenzustand holen }
-
-procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);     { 7/8 }
+function mausx:word;      { Maus-X-Koordinate holen }
+function mausy:word;      { Maus-Y-Koordinate holen }
+function maust:word;      { Maustastenzustand holen }
 
 {$IFDEF VP }
 procedure InitMouseThread;
 procedure DoneMouseThread;
 procedure UpdateMouseStatus;
 {$ENDIF }
-
-{ ================= Implementation-Teil ==================  }
 
 implementation
 
@@ -83,11 +77,10 @@ uses
 {$ENDIF }
 
 const
-      intset  : boolean = false;
+ intset  : boolean = false;
 
-var   oldexit : pointer;
-
-
+var
+  oldexit : pointer;
 
 procedure mausinit;
 begin
@@ -186,16 +179,9 @@ begin
   {$ENDIF }
 end;
 
-procedure setmaus(x,y: integer16);
+procedure setmaus(x,y: integer);
 begin
 end;
-
-
-procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);
-begin
-end;
-
-
 
 {$S-}
 procedure newexit;
@@ -294,6 +280,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/06/23 15:59:13  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.14  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

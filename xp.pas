@@ -88,9 +88,6 @@ uses xpx,
      xp_iti,   { Maus-ITI-Infofile  }
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
-{$IFDEF BP }
-     xpfonts,  { interne Fonts      }
-{$ENDIF }
      xpimpexp; { Import/Export      }
 
 label ende;
@@ -102,9 +99,6 @@ begin
   readpar;
   loadresource;
   initvar;
-{$IFNDEF VP }
-  testlock;
-{$ENDIF }
   TestAutostart;
     if not quit then
   begin
@@ -193,6 +187,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.31  2000/06/23 15:59:15  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.30  2000/06/22 19:53:29  mk
   - 16 Bit Teile ausgebaut
 

@@ -9,7 +9,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ File-I/O, Locking und Dateinamenbearbeitung }
+{ File-I/O und Dateinamenbearbeitung }
 
 {$I XPDEFINE.INC }
 
@@ -87,10 +87,6 @@ function  exetype(fn:pathstr):TExeType;
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
-function  lock(var datei:file; from,size:longint):boolean;
-procedure unlock(var datei:file; from,size:longint);
-function  lockfile(var datei:file):boolean;
-procedure unlockfile(var datei:file);
 
 procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
@@ -714,57 +710,6 @@ begin
   filemode:=fmRW;
 end;
 
-{$IFDEF FPC }
-  { Wir wissen, was Hi/Lo bei Longint zurÅckliefert }
-  {$WARNINGS OFF }
-{$ENDIF }
-
-function lock(var datei:file; from,size:longint):boolean;
-begin
-  {$ifdef vp }
-    lock:=SysLockFile(datei,from,size)=0;
-  {$else}
-    (* Aus unbekannten GrÅnden funktioniert das ganze unter Windows 95
-       nicht, wohl aber unter Windows NT
-      Lock := Windows.LockFile(FileRec(Datei).Handle,
-      Lo(From), Hi(From), Lo(Size), Hi(Size)) *)
-    {$ifdef UnixFS}                     { Filelocking fÅr Linux }
-      lock := flock (datei, LOCK_SH);
-    {$ELSE }
-      Lock := true;
-    {$endif}
-  {$endif }
-end;
-
-procedure unlock(var datei:file; from,size:longint);
-begin
- {$ifdef vp }
-  if SysUnLockFile(datei,from,size)=0 then ;
- {$else}
-   {$ifdef win32}
-      Windows.UnLockFile(FileRec(Datei).Handle,
-        Lo(From), Hi(From), Lo(Size), Hi(Size));
-   {$endif}
-   {$ifdef UnixFS}                 { ML 25.03.2000    Filelocking f¸r Linux }
-     flock(Datei, LOCK_UN);
-   {$endif}
- {$endif}
-end;
-
-{$IFDEF FPC }
-  { Wir wissen, was Hi/Lo bei Longint zurÅckliefert }
-  {$WARNINGS ON }
-{$ENDIF }
-
-function lockfile(var datei:file):boolean;
-begin
-  lockfile:=lock(datei,0,maxlongint);
-end;
-
-procedure unlockfile(var datei:file);
-begin
-  unlock(datei,0,maxlongint);
-end;
 
 procedure resetfm(var f:file; fm:byte);
 var fm0 : byte;
@@ -857,6 +802,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/06/23 15:59:10  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.42  2000/06/22 19:53:25  mk
   - 16 Bit Teile ausgebaut
 

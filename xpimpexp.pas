@@ -11,9 +11,6 @@
 { Import/Export }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpimpexp;
 
@@ -610,9 +607,7 @@ var ypath : pathstr;
       inc(sum,sr.size);
       Dos.findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     YupMailsize:=sum;
   end;
 
@@ -706,6 +701,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/23 15:59:26  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.15  2000/06/16 19:56:24  mk
   - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
 

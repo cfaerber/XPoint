@@ -11,9 +11,6 @@
 { Overlay-Teil von XP3: Nachrichten-Verwaltung }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp3o;
 
@@ -1062,7 +1059,6 @@ var _brett : string[5];
     fn     : pathstr;
     t      : text;
     empf   : string[AdrLen];
-    i      : integer;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/L”schen" l”schen!' }
@@ -1174,7 +1170,6 @@ var _brett : string[5];
     adr    : string[adrlen];
     leer   : string[12];
     empf   : string[AdrLen];
-    i      : integer;
     fn     : pathstr;
     sData  : SendUUptr;
     vor    : empfnodep;
@@ -1478,6 +1473,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/06/23 15:59:19  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.21  2000/06/19 20:19:56  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

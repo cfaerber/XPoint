@@ -13,20 +13,12 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFNDEF VER32 }
-{$M 16384,65536,65536}
-{$ENDIF }
-
 uses
 {$IFDEF Linux }
   XPLinux,
 {$ENDIF }
 {$IFDEF NCRT }
-  xpcurses,		{ Fuer die Sonderzeichen an der Console }
+  xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ENDIF }
   dos, typeform, dosx, xpglobal;
 
@@ -163,7 +155,6 @@ var   oldexit   : pointer;
       kchar     : set of char;  { in Header-Bezeichnern erlaubte Zeichen }
       brchar    : set of char;  { in Brettnamen erlaubte Zeichen         }
 
-{$IFDEF Ver32 }
 function  TestControlChar(var s:string):boolean; assembler; {&uses esi}
 asm
          mov    esi, s
@@ -188,31 +179,6 @@ end ['EAX', 'ECX', 'EDX', 'ESI'];
 end;
 {$ENDIF }
 
-{$ELSE}
-
-function  TestControlChar(var s:string):boolean; assembler;
-asm
-         push ds
-         lds   si,s
-         cld
-         lodsb
-         mov   cl,al
-         mov   ch,0                     { true }
-         xor   bx,bx
-         jcxz  @tcende
-@tclp:   lodsb
-         cmp   al,' '
-         jae   @tok
-         cmp   al,9
-         je    @tok
-         inc   bx                      { false }
-         jmp   @tcende
-@tok:    loop  @tclp
-@tcende: mov   ax,bx                   { Funktionsergebnis }
-         pop ds
-end;
-{$ENDIF }
-
 procedure logo;
 begin
   writeln;
@@ -226,11 +192,11 @@ end;
 
 procedure helppage;
 {$IFDEF Linux }
-{ ML 26.02.2000 Linux benutzt kein Carriage Return... }
+{ Linux benutzt kein Carriage Return... }
 const crlf = #10;
-{$ELSE}   
+{$ELSE}
 const crlf = #13#10;
-{$ENDIF}   
+{$ENDIF}
 begin
    writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
           crlf,
@@ -1355,6 +1321,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/06/23 15:59:27  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.14  2000/05/05 15:27:57  ml
   zpr und uuz wieder unter linux lauffähig (ncrt)
 

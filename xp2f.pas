@@ -11,9 +11,6 @@
 { CrossPoint Config - Farben, F-Tasten, Feiertage }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp2f;
 
@@ -305,7 +302,7 @@ begin
     end;
 end;
 
-procedure showcol; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showcol;
 begin
   with col do begin
     at(colmenu[0]);
@@ -339,7 +336,7 @@ begin
     end;
 end;
 
-procedure showmsgs; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showmsgs;
 begin
   with col do begin
     at(colmsgsinfo);
@@ -362,7 +359,7 @@ begin
     end;
 end;
 
-procedure showmenus0; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showmenus0;
 begin
   with col do begin
     at(colmenu[0]);
@@ -381,7 +378,7 @@ begin
     end;
 end;
 
-procedure wwin(l,r,o,u:byte; txt:string; rahmen,text:byte); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure wwin(l,r,o,u:byte; txt:string; rahmen,text:byte);
 begin
   normattr:=rahmen; normtxt; forcecolor:=true;
   rahmen1(l,r,o,u,'');
@@ -392,7 +389,7 @@ begin
   clwin(l+1,r-1,o+1,u-1);
 end;
 
-procedure showmenus1; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showmenus1;
 begin
   with col do begin
     wwin(32,48,2,11,'',colmenu[1],colmenu[1]);
@@ -417,7 +414,7 @@ begin
     end;
 end;
 
-procedure showmenus2; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showmenus2;
 begin
   with col do begin
     wwin(34,55,5,13,'',colmenu[2],colmenu[2]);
@@ -439,7 +436,7 @@ begin
     end;
 end;
 
-procedure showmenus3; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure showmenus3;
 begin
   with col do begin
     wwin(36,57,12,17,'',colmenu[3],colmenu[3]);
@@ -458,7 +455,7 @@ begin
     end;
 end;
 
-procedure smsgbox; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure smsgbox;
 begin
   with col do begin
     wwin(40,70,10,15,'Meldung',colmboxrahmen,colmbox);
@@ -468,7 +465,7 @@ begin
     end;
 end;
 
-procedure sdialog; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure sdialog;
 var i : byte;
 begin
   with col do begin
@@ -498,7 +495,7 @@ begin
     end;
 end;
 
-procedure sel1; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure sel1;
 begin
   with col do begin
     wwin(49,61,10,18,'',colselrahmen,colselbox);
@@ -518,7 +515,7 @@ begin
     end;
 end;
 
-procedure sel2; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure sel2;
 begin
   with col do begin
     wwin(33,78,7,19,'',colsel2rahmen,colsel2box);
@@ -548,7 +545,7 @@ begin
     end;
 end;
 
-procedure subox; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure subox;
 begin
   with col do begin
     wwin(35,75,10,18,'Kalender u.„.',colutility,colutility);
@@ -562,7 +559,7 @@ begin
     end;
 end;
 
-procedure shelp; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure shelp;
 begin
   with col do begin
     wwin(35,76,12,18,'',colhelp,colhelp);
@@ -580,7 +577,7 @@ begin
     end;
 end;
 
-procedure slister; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure slister;
 var i : integer;
 begin
   with col do begin
@@ -620,7 +617,7 @@ begin
     end;
 end;
 
-procedure seditor; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure seditor;
 begin
   with col do begin
     at(coledithead);
@@ -668,7 +665,7 @@ begin
     end;
 end;
 
-procedure smailer; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure smailer;
 begin
   with col do begin
     wwin(31,78,6,19,'',colmailer,colmailer);
@@ -692,7 +689,7 @@ begin
     end;
 end;
 
-procedure skeys; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure skeys;
 begin
   showcol;
   wrkeys(true);
@@ -1171,6 +1168,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/23 15:59:18  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.13  2000/06/22 19:53:31  mk
   - 16 Bit Teile ausgebaut
 

@@ -1,16 +1,14 @@
-UNIT CRC;
+unit CRC;
 
 { $Id$ }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 {$R-}
 
 interface
 
-uses xpglobal;
+uses
+  xpglobal;
 
 {Iterativ: CRC wird jeweils fuer ein Byte aktualisiert}
 function UpdCRC16(cp: byte; crc: smallword): smallword;
@@ -82,9 +80,9 @@ CONST crctab: ARRAY[0..255] OF smallWORD = (
 { Translated to Turbo Pascal (tm) V4.0 March, 1988 by J.R.Louvau }
 
 FUNCTION UpdCRC16(cp: BYTE; crc: smallWORD): smallWORD;
-BEGIN { UpdCRC }
+begin { UpdCRC }
    UpdCRC16 := crctab[((crc SHR 8) AND $FF)] XOR ((crc AND $FF)SHL 8) XOR cp
-END;
+end;
 
 function _CRC16(var data; size:smallword):smallword;
 type ba = array[0..65530] of byte;
@@ -164,10 +162,10 @@ $bdbdf21c, $cabac28a, $53b39330, $24b4a3a6, $bad03605, $cdd70693, $54de5729, $23
 $b3667a2e, $c4614ab8, $5d681b02, $2a6f2b94, $b40bbe37, $c30c8ea1, $5a05df1b, $2d02ef8d
 );
 
-FUNCTION UpdCRC32(octet: BYTE; crc: LONGINT) : LONGINT;
-BEGIN { UpdCRC32 }
+function UpdCRC32(octet: BYTE; crc: LONGINT) : LONGINT;
+begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR LONGINT(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
-END;
+end;
 
 procedure CCITT_CRC32_calc_Block(var block; size: word);
                                 {&uses ebx,esi,edi} assembler;  {  CRC-32  }
@@ -202,7 +200,6 @@ begin
   CRC32Str := CRC_Reg;
 end;
 
-
 function crc32block(var data; size:word):longint;
 begin
   CRC_Reg := 0;
@@ -211,9 +208,11 @@ begin
 end;
 
 end.
-
 {
   $Log$
+  Revision 1.4  2000/06/23 15:59:09  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.3  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

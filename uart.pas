@@ -211,9 +211,7 @@ var    active     : array[1..fcoms] of boolean;
        bufi,bufo  : array[1..fcoms] of word;
        buflow     : array[1..coms] of word;
        bufhigh    : array[1..coms] of word;
-{$IFDEF Ver32 }
        PortHandle: LongInt;
-{$ENDIF }
 
 
 procedure error(text:string);
@@ -228,90 +226,6 @@ begin
   strs:=s;
 end;
 
-{--- Interrupt-Handler -----------------------------------------------}
-
-{$IFDEF BP }
-
-procedure com1server; interrupt;
-begin
-  buffer[1]^[bufi[1]]:=port[ua[1]];
-  inc(bufi[1]); if bufi[1]=bufsize[1] then bufi[1]:=0;
-  if intcom2[1] then port[$a0]:=$20;
-  port[$20]:=$20;                      { EOI }
-end;
-
-procedure com2server; interrupt;
-begin
-  buffer[2]^[bufi[2]]:=port[ua[2]];
-  inc(bufi[2]); if bufi[2]=bufsize[2] then bufi[2]:=0;
-  if intcom2[2] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-
-procedure com3server; interrupt;
-begin
-  buffer[3]^[bufi[3]]:=port[ua[3]];
-  inc(bufi[3]); if bufi[3]=bufsize[3] then bufi[3]:=0;
-  if intcom2[3] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-
-procedure com4server; interrupt;
-begin
-  buffer[4]^[bufi[4]]:=port[ua[4]];
-  inc(bufi[4]); if bufi[4]=bufsize[4] then bufi[4]:=0;
-  if intcom2[4] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-
-procedure com1FIFOserver; interrupt;
-begin
-  if port[ua[1]+intids] and 4<>0 then
-    repeat
-      buffer[1]^[bufi[1]]:=port[ua[1]];
-      inc(bufi[1]); if bufi[1]=bufsize[1] then bufi[1]:=0;
-    until not odd(port[ua[1]+linestat]);
-  if intcom2[1] then port[$a0]:=$20;
-  port[$20]:=$20;                      { Interrupt-Controller resetten }
-end;
-
-procedure com2FIFOserver; interrupt;
-begin
-  if port[ua[2]+intids] and 4<>0 then
-    repeat
-      buffer[2]^[bufi[2]]:=port[ua[2]];
-{  write(chr(buffer[2]^[bufi[2]])); }
-      inc(bufi[2]); if bufi[2]=bufsize[2] then bufi[2]:=0;
-    until not odd(port[ua[2]+linestat]);
-  if intcom2[2] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-
-procedure com3FIFOserver; interrupt;
-begin
-  if port[ua[3]+intids] and 4<>0 then
-    repeat
-      buffer[3]^[bufi[3]]:=port[ua[3]];
-      inc(bufi[3]); if bufi[3]=bufsize[3] then bufi[3]:=0;
-    until not odd(port[ua[3]+linestat]);
-  if intcom2[3] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-
-procedure com4FIFOserver; interrupt;
-begin
-  if port[ua[4]+intids] and 4<>0 then
-    repeat
-      buffer[4]^[bufi[4]]:=port[ua[4]];
-      inc(bufi[4]); if bufi[4]=bufsize[4] then bufi[4]:=0;
-    until not odd(port[ua[4]+linestat]);
-  if intcom2[4] then port[$a0]:=$20;
-  port[$20]:=$20;
-end;
-{$ENDIF}
-
-
-
 {--- UART-Typ ermitteln ----------------------------------------------}
 
 { Hinweis: Die Erkennung des 16550A funktioniert nur bei Chips,  }
@@ -320,42 +234,8 @@ end;
 {          16500A's - ich schÑtze, fÅr ca. 97-99%                }
 
 function ComType(no:byte):byte;     { Typ des UART-Chips ermitteln }
-{$IFDEF BP }
-var uart        : word;
-    lsave,ssave : byte;
-    isave,iir   : byte;
-begin
-  uart:=ua[no];
-  lsave:=port[uart+linectrl];
-  port[uart+linectrl]:=lsave xor $ff;
-  if port[uart+linectrl]<>lsave xor $ff then
-    ComType:=UartNone
-  else begin
-    port[uart+linectrl]:=lsave;
-    ssave:=port[uart+scratch];
-    port[uart+scratch]:=$5a;
-    if port[uart+scratch]<>$5a then
-      ComType:=Uart8250                 { kein Scratchpad vorhanden }
-    else begin
-      port[uart+scratch]:=$a5;
-      if port[uart+scratch]<>$a5 then
-        ComType:=Uart8250               { kein Scratchpad vorhanden }
-      else begin
-        isave:=port[uart+intids];
-        port[uart+fifoctrl]:=1;
-        iir:=port[uart+intids];
-        if isave and $80=0 then port[uart+fifoctrl]:=0;
-        if iir and $40<>0 then ComType:=Uart16550A
-        else if iir and $80<>0 then ComType:=Uart16550
-        else ComType:=Uart16450;
-        end;
-      end;
-    port[uart+scratch]:=ssave;
-    end;
-{$ELSE }
 begin
   ComType := Uart16550A;
-{$ENDIF}
 end;
 
 
@@ -365,33 +245,8 @@ end;
 {              Angaben Åber die I/O-Puffer sind ohne Bedeutung      }
 
 function GetFossilInfo(no:word; var fi:FossilInfo):boolean;
-{$IFDEF BP }
-var regs : registers;
-    dsel : word;
-begin
-  fillchar(fi,sizeof(fi),0);
-  with regs do begin
-    ax:=$1b00;
-    cx:=sizeof(fi);
-    {$IFDEF DPMI}
-      dsel:=DPMIallocDOSmem(sizeof(fi) div 16 +1,es);
-      FastMove(fi,mem[dsel:0],sizeof(fi));   { ** }
-      di:=0;
-    {$ELSE}
-      es:=seg(fi); di:=ofs(fi);
-    {$ENDIF}
-    dx:=no-1;
-    intr(FInt,regs);
-    {$IFDEF DPMI}
-      FastMove(mem[dsel:0],fi,sizeof(fi));
-      DPMIfreeDOSmem(dsel);
-    {$ENDIF}
-    GetFossilInfo:=(fi.size<>0) and (fi.version<>0);
-    end;
-{$ELSE }
 begin
   GetFossilInfo := false;
-{$ENDIF }
 end;
 
 function FOSSILdetect:boolean;
@@ -404,29 +259,8 @@ end;
 { cFos: GebÅhreneinheiten des laufenden oder des letzten Anrufs abfragen }
 
 function GetCfosCharges(no:word):integer;
-{$IFDEF BP }
-var regs : registers;
 begin
   GetCfosCharges:=-1;
-  with regs do
-  begin
-    ax:=$9000;
-    intr(FInt,regs);
-    if ax=$1969 then begin
-      ax:=$9003;
-      dx:=no-1;
-      bx:=$ffff;
-      intr(FInt,regs);
-      if ax=0 then GetCfosCharges:=bx;
-      end;
-    end;
-  asm
-    sti;
-  end;
-{$ELSE }
-begin
-  GetCfosCharges:=-1;
-{$ENDIF }
 end;
 
 
@@ -552,15 +386,6 @@ end;
 
 procedure clearstatus(no:byte);
 begin
-{$IFNDEF ver32}
-  if not fossil[no] then begin
-    if port[ua[no]+datainout]<>0 then;               { dummy-Read }
-    if port[ua[no]+linestat]<>0 then;
-    if port[ua[no]+modemstat]<>0 then;
-    if intcom2[no] then port[$a0]:=$20;
-    port[$20]:=$20;
-    end;
-{$ENDIF}
 end;
 
 
@@ -665,32 +490,9 @@ end;
 
 
 procedure releasecom(no:byte);
-{$IFNDEF ver32}
-var regs : registers;
-{$ENDIF }
 begin
   if not active[no] then
     error('Schnittstelle '+strs(no)+' nicht aktiv!')
-{$IFNDEF ver32}
-  else begin
-    active[no]:=false;
-    if fossil[no] then with regs do begin
-      ah:=5; dx:=no-1;
-      intr(FInt,regs);
-      end
-    else begin
-      port[ua[no]+intenable]:=0;
-      if intcom2[no] then
-        port[$a1]:=port[$a1] or intmask[no]   { Controller: COMn-Ints sperren }
-      else
-        port[$21]:=port[$21] or intmask[no];
-      port[ua[no]+fifoctrl]:=0;
-      setintvec(IntNr(no),savecom[no]);
-      clearstatus(no);
-      end;
-    FreeComBuffer(no);
-    end;
-{$ENDIF}
 end;
 
 
@@ -702,7 +504,7 @@ end;
 
 { Exit-Prozedur }
 
-procedure comexit; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure comexit;
 var i : byte;
 begin
   exitproc:=exitsave;
@@ -979,18 +781,10 @@ end;
 
 procedure DropRts(no:byte);                 { RTS=0 setzen      }
 begin
-{$IFNDEF ver32}
-  if not fossil[no] then
-    port[ua[no]+modemctrl]:=port[ua[no]+modemctrl] and (not MC_RTS);
-{$ENDIF}
 end;
 
 procedure SetRts(no:byte);                  { RTS=1 setzen      }
 begin
-{$IFNDEF ver32}
-  if not fossil[no] then
-    port[ua[no]+modemctrl]:=port[ua[no]+modemctrl] or MC_RTS;
-{$ENDIF}
 end;
 
 
@@ -1102,6 +896,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/06/23 15:59:13  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.8  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

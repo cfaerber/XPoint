@@ -105,9 +105,7 @@ var sr    : searchrec;
       erase(f1^);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure NoCompSmtp(w:word);       { rcsmtp -> csmtp }
@@ -155,9 +153,7 @@ var sr    : searchrec;
       inc(sum,sr.size);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     filesum:=sum;
   end;
 
@@ -243,9 +239,7 @@ begin
       inc(spacksize,_filesize(DestDir+sr.name));
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     dispose(f1); dispose(f2);
     end;
   uunum:=GetNextUUnummer;
@@ -318,12 +312,9 @@ begin
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     dispose(f1); dispose(f2);
     clrscr;
-    {window(1,1,80,25);}
     shell(UUZBin+' -uz -w:'+strs(screenlines)+
           ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
@@ -331,18 +322,14 @@ begin
       MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     findfirst(XFerDir+'D*',ffAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
     while doserror=0 do begin
       if sr.attr and dos.Archive<>0 then
         MoveToBad(XFerDir+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     EmptySpool('D*.OUT');        { ausgehende Pakete lîschen }
     EmptySpool('X*.OUT');        { C-File mu· stehenbleiben! }
     if nDelPuffer and (errorlevel=0) and (testpuffer(dpuffer,false,dummy)>=0)
@@ -435,9 +422,7 @@ var dummy : longint;
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
 begin
@@ -477,6 +462,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/06/23 15:59:25  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.13  2000/06/20 18:20:08  hd
   - Anpassungen an Linux
 

@@ -206,9 +206,8 @@ begin
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
                   shell('zconfig.exe',200,1);
-{$IFDEF Ver32 } { Eine Fehlerabfrage wird nicht gemacht, also Fehler l”schen }
+                  { !! Eine Fehlerabfrage wird nicht gemacht, also Fehler l”schen }
                   doserror := 0;
-{$ENDIF }
                   menurestart:=true;
                 end;
             8 : AccessibilityOptions;
@@ -580,6 +579,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.15  2000/06/23 15:59:20  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.14  2000/06/10 20:15:11  sv
   - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
     versendet werden (mit Nachricht/Weiterleiten/Ersetzen)

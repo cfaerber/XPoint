@@ -164,18 +164,21 @@ uses
 {$ENDIF }
 
 const
+  highbyte : byte = 0;
+
+  {$IFDEF OS2 }
   lshift = 2;
   rshift = 1;
   ctrl   = 4;
   alt    = 8;
+  {$ENDIF }
 
-  highbyte : byte = 0;
 
 {$IFDEF FPC }
   {$HINTS OFF }
 {$ENDIF }
 
-procedure func_dummy(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure func_dummy(var t:taste);
 begin
 end;
 
@@ -334,6 +337,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/06/23 15:59:11  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.22  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

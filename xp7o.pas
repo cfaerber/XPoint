@@ -11,9 +11,6 @@
 { XP7 - zus„tzlicher Overlay-Teil }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp7o;
 
@@ -696,9 +693,7 @@ begin
         end;
       Dos.findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     close(f1);
   end;
   cursor(curoff);
@@ -719,9 +714,7 @@ begin
     inc(packetsize,sr.size);
     Dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -739,9 +732,7 @@ begin
       last:=sr.name;
       Dos.findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     arc:=ArcType(XferDir+last);
     if (arc>0) and not ArchiveOk(XferDir+last) then
       MoveToBad(XferDir+last);
@@ -787,6 +778,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/23 15:59:24  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.13  2000/05/26 13:59:12  hd
   - Fix: Ganzes Fenster loeschen
   - Fix: findclose bei allen 32-Bit-Versionen

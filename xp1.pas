@@ -12,13 +12,6 @@
 { CrossPoint - allg. Routinen }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F+}
-  {$IFDEF DPMI}
-    {$C permanent}
-  {$ENDIF}
-{$ENDIF }
-
 
 unit xp1;
 
@@ -106,7 +99,6 @@ var printlines : longint;
     anzhidden  : integer;             { Anzahl der unsichtbaren Menpkte. }
 
 
-procedure showstack;                  { Stack/Heap-Anzeige im Debug-Mode }
 {$IFNDEF NCRT }
 procedure sound(hz:word);
 {$ENDIF }
@@ -143,9 +135,6 @@ procedure newscreenlines(m:integer);
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer16);
 procedure SetMausEmu;
-{$IFDEF BP }
-procedure SetXPborder;
-{$ENDIF }
 
 procedure blindon(total:boolean);
 procedure blindoff;
@@ -189,10 +178,6 @@ function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
-{$IFDEF BP }
-Procedure Start_OS2(Programm,Parameter,Title:String);
-{$ENDIF }
-
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(fn:pathstr);
@@ -200,9 +185,6 @@ procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
-{$IFDEF BP }
-procedure FlushSmartdrive(show:boolean);
-{$ENDIF }
 procedure set_checkdate;
 
 procedure opendatabases;
@@ -276,9 +258,6 @@ function  cm_key:char;
 implementation  {-------------------------------------------------------}
 
 uses
-{$IFDEF BP }
-  xpfonts,
-{$ENDIF }
   xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
 { Diese Tabelle konvertiert NUR ™š„”á !    }
@@ -304,12 +283,10 @@ var  menulevel : byte;                  { Menebene }
      main_n    : integer;               { MPs im Hauptmen }
      mainrange : array[1..10,0..1] of byte;
      listhicol : byte;
-     startvideotype : byte;
      winstack  : array[1..maxwinst] of scrptr;   { fr Blindensupport }
      mst       : boolean;
 
 
-{$IFDEF Ver32 }
 function  ixdat(s:string):longint; assembler;  {&uses ebx, esi}
 asm
          mov   esi,s
@@ -380,74 +357,6 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
-
-
-{$ELSE}
-
-function  ixdat(s:string):longint; assembler;
-asm
-         les   si,s
-         inc   si                       { L„nge ist z.Zt. immer 10 }
-         call  @getbyte                 { Jahr }
-         cmp   al,70
-         jae   @neunzehn
-         add   al,100
-@neunzehn:mov   dh,al
-         call  @getbyte                 { Monat }
-         mov   cl,4
-         shl   al,cl
-         mov   dl,al
-         mov   cx,0
-         call  @getbyte                 { Tag }
-         shr   al,1
-         rcr   ch,1
-         add   dl,al
-         call  @getbyte                 { Stunde }
-         shl   al,1
-         shl   al,1
-         add   ch,al
-         call  @getbyte                 { Minute }
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         add   ch,al
-         mov   ax,cx
-         jmp   @ende
-
-@getbyte:mov   al,es:[si]
-         inc   si
-         sub   al,'0'
-         mov   ah,10
-         mul   ah
-         add   al,es:[si]
-         sub   al,'0'
-         inc   si
-         retn
-@ende:
-end;
-
-procedure iso_conv(var buf; bufsize:word); assembler;
-asm
-         cld
-         les   di,buf
-         mov   cx,bufsize
-         mov   bx,offset isotab1 - 0c0h
-@isolp:  mov   al,es:[di]
-         cmp   al,0c0h
-         jb    @noconv
-         xlat
-@noconv: stosb
-         loop  @isolp
-end;
-
-{$ENDIF}
-
-
 
 { Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
@@ -581,7 +490,7 @@ const
             0  +      2 + 4              ,{ x }
             0  +      2 + 4              ,{ y }
             0  +      2 + 4              ,{ z }
-            0  +  1                      ,{ { }
+            0  +  1                      ,(* { *)
             0                            ,{ | }
             0  +              8          ,{   }
             0                            ,{ ~ }
@@ -715,151 +624,6 @@ const
             0  +          4              ,{ ý }
             0                            ,{ þ }
             0  +  1 +         8          ){ #255 };
-
-{$IFDEF BP}
-
-var
-  dispbuf: array[1..164] of byte;  {82 Zeichen und 82 Attribute}
-
-procedure ListDisplay(x,y:word; var s:string); far; assembler;
-
-asm
-            les di,s
-            cld
-            xor cx,cx
-            mov cl,es:[di]
-            inc di
-            push cx
-            mov bx,offset dispbuf          { s + color -> dispbuf }
-            mov ah,textattr
-            mov al,' '                     { Abgrenzung links }
-            mov [bx],ax
-            add bx,2
-
-@dcopylp:   mov al,es:[di]
-            inc di
-            mov [bx],ax
-            add bx,2
-            loop @dcopylp
-            mov al,' '                     { Abgrenzung rechts }
-            mov [bx],ax
-            pop cx
-
-            cmp ListXhighlight,0           { keine Hervorhebungen? }
-            jz @nodh
-            mov al,'*'
-            call @testattr                 { sichert cx }
-            mov al,'_'
-            call @testattr
-            mov   al,'/'
-            call  @testattr
-
-@nodh:      mov ax,base                   { dispbuffer -> Bildschirm }
-            mov es,ax
-            mov ax,y
-            dec ax
-            mov si,zpz
-            add si,si                     { si <- 160 }
-            mul si
-            mov di,x
-            dec di
-            add di,di
-            add di,ax                     { es:di <- Bildschirmadresse }
-            mov si,offset dispbuf[2]
-            rep movsw
-
-            jmp @ende
-
-
-{-----------------------}
-
-@testattr:  mov dx,cx
-            xor bx,bx
-
-            {-----------}
-@ta1:       push ax
-            mov cx,dx
-            xor si,si
-
-@talp1:     cmp al,byte ptr dispbuf[si]            { Startzeichen checken }
-            jne @tanext1
-
-             mov bl,byte ptr dispbuf[si-2]
-             test byte ptr delimiters[bx],1        { Byte vor Startzeichen ok? }
-             jz @tanext1
-             mov bl,byte ptr dispbuf[si+2]
-             test byte ptr delimiters[bx],2        { Byte vor Startzeichen ok? }
-             jnz @tastart                          { Startzeichen gefunden }
-
-@tanext1:   add si,2
-            loop @talp1
-            jmp @taende
-
-            {-----------}
-
-@tastart:   mov di,si                              { Di = Byte nach Startzeichen }
-            dec cx
-            jz @taende
-            dec cx                                 { min. ein Zeichen Abstand }
-            jz @taende
-            add si,4                               { dann Endzeichen Checken }
-
-@talp2:     cmp al,byte ptr dispbuf[si]
-            jne @tanext2
-
-             mov bl,byte ptr dispbuf[si-2]
-             test byte ptr delimiters[bx],4        { Byte vor Endzeichen ok? }
-             jz @tanext2
-             mov bl,byte ptr dispbuf[si+2]
-             test byte ptr delimiters[bx],8       { Byte nach Endzeichen ok? }
-             jnz @tafound2                        { Endzeichen gefunden }
-
-@tanext2:   add si,2
-            loop @talp2
-            jmp @taende
-
-            {------------}
-
-@tafound2:  push cx
-            mov cx,si
-            sub cx,di
-            shr cx,1
-            dec cx                                 { cx <- Anzahl hervorgeh. Zeichen }
-            mov ah,listhicol
-
-@tacopy1:   mov al,byte ptr dispbuf[di+2]          { hervorgehobenen Text eins nach }
-            mov word ptr dispbuf[di],ax            { vorne kopieren; Farbe tauschen }
-            add di,2
-            loop @tacopy1
-
-            pop cx
-            dec cx                                 { restliche Zeichen }
-            jz @addspace
-
-@tacopy2:   mov ax,word ptr dispbuf[di+4]
-            mov word ptr dispbuf[di],ax
-            add di,2
-            loop @tacopy2
-
-@addspace:  mov byte ptr dispbuf[di],' '           { 2 Leerzeichen anh„ngen }
-            mov byte ptr dispbuf[di+2],' '
-            pop ax
-            jmp @ta1                               { ... und das Ganze nochmal }
-
-
-@taende:    pop ax
-            mov cx,dx
-            retn
-
-{-------------------------}
-@ende:
-end; { of Listdisplay }
-
-
-
-{$ELSE}
-
-{ --- 32-Bit --- }
 
 { Variable in XP0.PAS: }
 { charbuf     : string[82];                  {82 Zeichen}
@@ -1006,12 +770,6 @@ begin
   Consolewrite(x,y,length(s));
 end;
 
-
-{$ENDIF}
-
-
-
-
 procedure interr(txt:string);
 begin
   moff;
@@ -1116,20 +874,15 @@ end;
 
 procedure xp_maus_an(x,y: integer16);
 begin
-{$Q-}
   if _maus then begin
     if startup or MausShInit then
       mausinit;
     if (x+y>=0) then
       setmaus(x,y);
-    setmauswindow(0,639,0,screenlines*8-1);
     mausan;
     maus_tasten_an;
     maus_cursor:=true;
     end;
-{$IFDEF Debug }
-  {$Q+}
-{$ENDIF }
 end;
 
 procedure SetMausEmu;
@@ -1158,16 +911,9 @@ begin
 {$ELSE }
     scsize:=screenlines*2*screenwidth;
 {$ENDIF }
-{$IFDEF BP }
-    if maxavail<scsize+500 then interr('Speicher-šberlauf');
-{$ENDIF }
     getmem(p,scsize);               { Bild sichern }
     moff;
-{$IFDEF BP }
-    FastMove(mem[base:0],p^,scsize);
-{$ELSE }
     ReadScreenRect(1, screenwidth, 1, screenlines, p^);
-{$ENDIF }
     mon;
   end;
 {$ENDIF}
@@ -1181,12 +927,8 @@ begin
   with sp do
   begin
     moff;
-    {$IFDEF BP }
-      FastMove(p^,mem[base:0],scsize);
-    {$ELSE }
-      {$IFNDEF NCRT }
-        WriteScreenRect(1, screenwidth, 1, screenlines, p^);
-      {$ENDIF }
+    {$IFNDEF NCRT }
+      WriteScreenRect(1, screenwidth, 1, screenlines, p^);
     {$ENDIF }
     mon;
     disp_DT;
@@ -1238,28 +980,6 @@ end;
 
 
 { --- Bildschirmzeilen -------------------------------------}
-
-{$IFDEF BP }
-procedure XPFont;
-begin
-  if not ParLCD then
-    if ParFontfile[1]='*' then
-      InternalFont
-    else
-      LoadFontfile(ParFontfile);
-end;
-{$ENDIF }
-
-{$IFDEF BP }
-procedure SetXPborder;
-begin
-  case videotype of
-    1   : SetBorder16(col.colborder and $f);
-    2,3 : SetBorder64(col.colborder and $3f);
-  end;
-end;
-{$ENDIF }
-
 
 { Zeilenzahl einstellen; evtl. Videomodus zurcksetzen }
 
@@ -1360,9 +1080,6 @@ begin
 {$ENDIF }
   clrscr;
   setbackintensity;
-{$IFDEF BP }
-  SetXPborder;
-{$ENDIF }
   with col do begin
     attrtxt(colmenu[0]);
     Wrt2(sp(screenwidth));
@@ -1389,10 +1106,8 @@ end;
 { --- Videomode nach Shell- bzw. externem Aufruf neusetzen ----- }
 
 procedure resetvideo;
-var m3 : boolean;
 begin
   setscreenlines(screenlines);
-  setmauswindow(0,639,0,screenlines*8-1);
   setbackintensity;
 end;
 
@@ -1402,10 +1117,6 @@ var i : integer;
 begin
   moff;
   attrtxt(7);
-{$IFDEF BP }
-  if col.colborder<>0 then
-    setborder16(0);
-{$ENDIF }
   clrscr;
   if deutsch then
     case joke of
@@ -1589,8 +1300,7 @@ procedure errsound;
 begin
   if not ParQuiet or soundflash then
   begin
-{$IFDEF BP }
-    if soundflash then SetBorder16(3);
+(* noch zu portieren !!
     sound(1000);
     delay(25);
     sound(780);
@@ -1599,11 +1309,8 @@ begin
     if soundflash then
     begin
       mdelay(60);
-      {$IFDEF BP }
-      SetXPborder;
-      {$ENDIF }
     end;
-{$ENDIF }
+*)
   end;
 end;
 
@@ -2100,9 +1807,6 @@ begin
   if bbase<>nil then dbClose(bbase);
   if bezbase<>nil then dbClose(bezbase);
   if mimebase<>nil then dbClose(mimebase);
-{$IFDEF BP }
-  FlushSmartdrive(false);
-{$ENDIF }
   opendb:=false;
 end;
 
@@ -2116,9 +1820,6 @@ begin
     dbTempClose(mimebase);
     if miscbase<>nil then
       dbTempClose(miscbase);
-{$IFDEF BP }
-    FlushSmartdrive(false);
-{$ENDIF }
     closed:=true;
     end;
 end;
@@ -2151,40 +1852,11 @@ begin
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-  if lockopen then begin
-    fileio.unlockfile(xp0.lockfile);
-    close(xp0.lockfile);
-    erase(xp0.lockfile);
-    if ioresult<>0 then ;
-  end;
   setbackintensity;
 end;
 {$IFDEF Debug }
   {$S+}
 {$ENDIF }
-
-procedure showstack;
-{$IFDEF BP }
-const lastsptr : word = 0;
-      lastavail: longint = 0;
-var b : byte;
-{$ENDIF }
-begin
-{$IFDEF BP }
-  if (sptr<>lastsptr) or (memavail<>lastavail) then begin
-    b:=dphback; dphback:=col.colkeys;
-    {$IFDEF DPMI}
-      disphard(70,screenlines,hex(sptr,4)+'/'+hex(memavail,6));
-    {$ELSE}
-      disphard(71,screenlines,hex(sptr,4)+'/'+hex(memavail,5));
-    {$ENDIF}
-    dphback:=b;
-    lastsptr:=sptr;
-    lastavail:=memavail;
-    end;
-{$ENDIF }
-end;
-
 
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
 
@@ -2204,11 +1876,7 @@ var x,y   : byte;
   end;
 
 begin
-{$IFDEF BP }
-  ps:=min(maxavail-5000,60000);
-{$ELSE }
   ps:=65536;
-{$ENDIF }
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
@@ -2309,18 +1977,6 @@ begin
   mdelay(1);
 end;
 
-{$IFDEF BP }
-procedure FlushSmartdrive(show:boolean);   { Schreibcache leeren }
-begin
-  if not ParNoSmart and (SmartCache(ord(getdrive)-65)=2) then begin
-    if show then rmessage(131);   { 'Leere Smartdrive-Schreibcache...' }
-    SmartResetCache;
-    if show then closebox;
-    end;
-end;
-{$ENDIF }
-
-
 procedure set_checkdate;
 var dt    : datetime;
     dummy : rtlword;
@@ -2389,6 +2045,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/06/23 15:59:15  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.49  2000/06/22 19:53:29  mk
   - 16 Bit Teile ausgebaut
 

@@ -12,18 +12,12 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
-
 unit xp4o;
 
 interface
 
 uses
-{$IFDEF Ver32 }
   sysutils,
-{$endif}
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -784,11 +778,7 @@ begin
       n:=0; nf:=0;
       new(hdp);
       attrtxt(col.coldiahigh);
-      {$IFDEF BP }
-        psize:=min(maxavail-10000,60000);
-      {$ELSE }
-        psize:=65536;
-      {$ENDIF }
+      psize:=65536;
       getmem(p,psize);
       brk:=false;
 
@@ -872,14 +862,14 @@ begin
 {--Suche beendet--}
 
     if markanz=0 then               { Nichts gefunden }
-    begin 
+    begin
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
         aufbau:=true;               { wg. gelîschter Markierung! }
-        end; 
-      goto ende;                    { Fenster wiedeherstellen...} 
+        end;
+      goto ende;                    { Fenster wiedeherstellen...}
       end
-      
+
     else begin
       suche:=true;                  { Suche erfolgreich }
       signal;
@@ -1141,11 +1131,7 @@ begin
     end
   else
   begin
-    {$IFDEF BP }
-       ps:=min(maxavail,32768);
-    {$ELSE }
-      ps:=32768;
-    {$ENDIF }
+    ps:=32768;
     getmem(p,ps);
     seek(f,adr+dbReadInt(mbase,'msgsize')-size);
     repeat
@@ -1406,13 +1392,12 @@ begin
   if uvs_active then exit;
   crashs:=false;
   dos.findfirst('*.pp',dos.Archive,sr);
-  if doserror<>0 then begin
-    {$IFDEF Ver32 }
-      FindClose(sr);
-    {$ENDIF}
+  if doserror<>0 then
+  begin
+    FindClose(sr);
     dos.findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
-    end;
+  end;
   markanz:=0;
   moment;
   new(hdp);
@@ -1484,17 +1469,14 @@ begin
       end;
     close(f);
     findnext(sr);
-    if (doserror<>0) and not crashs then begin
-      {$IFDEF Ver32 }
+    if (doserror<>0) and not crashs then
+    begin
       FindClose(sr);
-      {$ENDIF}
       dos.findfirst('*.cp',dos.Archive,sr);
       crashs:=true;
     end;
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   dispose(hdp);
   closebox;
   if markanz=0 then
@@ -1782,7 +1764,7 @@ begin
     decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
     shell(decomp,400,3);
     if exdir='' then begin
-      { !?! GoDir(temppath);     { wurde durch Shell zurÅckgesetzt }
+      { !?! GoDir(temppath); }    { wurde durch Shell zurÅckgesetzt }
       if not exist(temppath+datei) then
         rfehler(430)       { 'Datei wurde nicht korrekt entpackt.' }
       else begin
@@ -2073,9 +2055,6 @@ begin
   era(DupeFile+dbIxExt);
   writeln(log);
   close(log);
-{$IFDEF BP }
-  FlushSmartdrive(true);
-{$ENDIF }
   dbTempOpen(mbase);
   if not autodupekill then
   begin
@@ -2420,6 +2399,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/06/23 15:59:21  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.47  2000/06/17 06:18:35  jg
   - Bugfix: erfolglose Suche: Fensterhintergrund wurde nicht wiederhergestellt
 

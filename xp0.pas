@@ -906,8 +906,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        MaxBinSave   : longint;
        MaxNetMsgs   : longint;       { Default-Wert fÅr neue Gruppen }
        ReHochN      : boolean;
-       SwapToEMS    : boolean;       { EMS-Swapper fÅr DOS-Shell }
-       SwapToXMS    : boolean;       { XMS-Swapper fÅr DOS-Shell }
        HayesComm    : boolean;
        ShowLogin    : boolean;
        BreakLogin   : boolean;
@@ -1183,6 +1181,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.56  2000/06/23 15:59:15  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.55  2000/06/22 19:53:29  mk
   - 16 Bit Teile ausgebaut
 

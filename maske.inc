@@ -921,12 +921,12 @@ begin   { readmask }
           if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
             if replace then
             begin                                             { Ersetzen }
-              s^:=clip2string(maxlen,1);
+              s^:=clip2string(1);
               i:=length(s^);
               p:=1; ax:=0; replace:=false;
               end
             else begin                                        { Einfuegen }
-              s^:=clip2string(maxlen-length(cont^),1);
+              s^:=clip2string(1);
               i:=length(s^);
               s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
               end;
@@ -1070,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.14  2000/06/23 15:59:12  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.13  2000/05/06 17:29:20  mk
   - DOS DPMI32 Portierung
 

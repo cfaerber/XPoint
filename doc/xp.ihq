@@ -219,15 +219,15 @@ richten und Bretteinstellungen.
        Anzeige der Bretter, die auf den Lese-Modus
        zutreffen, um.
 
-   U   schaltet die zus„tzliche Anzeige der Bretter 
+   U   schaltet die zus„tzliche Anzeige der Bretter
        mit ungelesenen Nachrichten Ein/Aus:
 
         steht dann fr "Nur gelesene, zum Lesemodus
-       passende Nachrichten". 
+       passende Nachrichten".
        Sind sowohl ungelesene Nachrichten im Brett,
        als auch welche die zum Lesemodus passen
        (oder beides gleichzeitig), steht ein ¯
-       am linken Brettrand. 
+       am linken Brettrand.
        Trifft der Lesemodus nicht auf das Brett zu,
        aber es enth„lt ungelesene Nachrichten,
        steht ein dnner Pfeil davor.
@@ -1253,12 +1253,12 @@ soll.
         ACHTUNG ! Bitte berdenken Sie vor dem
         Benutzen dieser Funktion, ob Sie damit nicht
         andere Netzteilnehmer ver„rgern k”nnten.
-        
+
         Normalerweise werden auch "Kopien-an" Eintr„ge
         durch diese Funktion gel”scht. Ist das nicht
         erwnscht, muss die <<Shift-Taste>> gehalten
         werden, wenn der Schalter bet„tigt wird.
-        (Also Shift+M oder Shift+Mausklick) 
+        (Also Shift+M oder Shift+Mausklick)
 
 <<Betreff>> „ndert den Betreff.
 
@@ -3406,30 +3406,6 @@ im Userfenster zusammengruppieren will, muss man sie
 nur in dieselbe Adressbuchgruppe stecken.
 
 Minimalwert ist 1 Maximalwert ist 99
-
-@
-213
-Mit dem Schalter <<Auslagern in EMS>> wird festgelegt,
-wohin CrossPoint beim Aufrufen externer Programme -
-insbesondere beim DOS-Aufruf mit <F9> - seine Daten
-(ca. 350 KB) auslagern soll. Falls Sie den Schalter
-<<Auslagern in XMS>> aktivieren, wird zus„tzlich der XMS-
-Speicher zum Auslagern verwendet. Wenn kein EMS oder
-XMS zur Verfgung steht, werden die Daten auf Fest-
-platte geschrieben; dies ist deutlich langsamer als
-ein Auslagern in den EMS- oder XMS-Speicher.
-
-Diese Schalter k”nnen im Normalfall immer aktiv
-bleiben, weil XP automatisch erkennt, ob EMS- oder
-XMS-Speicher vorhanden ist. Ein Deaktivieren macht
-nur Sinn, wenn der EMS- oder XMS-Speicher knapp ist,
-wenn die aufgerufenen Programme selbst EMS- bzw.
-XMS-Speicher ben”tigen oder wenn ein Fehler im
-Speichermanager (EMM386, QEMM etc.) auftritt.
-
-Der Schalter <<XMS verwenden>> kontrolliert auáerdem die
-Verwendung von XMS-Speicher zum Anzeigen groáer
-Nachrichten oder Brett- oder Dateilisten.
 
 @
 214
@@ -7252,7 +7228,7 @@ U. die tempor„re Datei nicht als HTML-Datei erkennt.
 
 Wenn Sie bei einem Multiformat-Mime-Typ
 keine Dateiendung eintragen, k”nnen Allround-Viewer
-wie "START" unter Windows benutzt werden, 
+wie "START" unter Windows benutzt werden,
 um immer automatisch den passenden Viewer zu verwenden.
 
 Siehe dazu auch [Viewer-Sicherheitseinstellungen.]@8072
@@ -7285,7 +7261,7 @@ gibt es zwei Vorgehensweisen:
 
 <<[ ]>> -> Es wird zusaetzlich zum Viewer-Programm
        eine Batchdatei ge”ffnet, die wartet bis
-       das Viewer-Programm beendet wird und dann 
+       das Viewer-Programm beendet wird und dann
        sich selbst und die Tempor„rdatei l”scht.
 
 <<[X]>> -> Crosspoint l”scht die Tempor„rdatei
@@ -7296,7 +7272,7 @@ gibt es zwei Vorgehensweisen:
 
 Wenn bei Mime-Viewer Eintr„gen keine Dateiendung
 angegeben wird, k”nnen Multiformat-Mimetypen
-(z.B Application/octet-stream) mit einem 
+(z.B Application/octet-stream) mit einem
 Allround-Viewer angesehen werden. Unter Windows
 bietet sich dazu der Befehl "START" an.
 
@@ -7306,33 +7282,33 @@ Dateien direkt ausgefhrt werden.
 
 Zum Schutz davor kommt bei allen Dateieendungen
 die nicht in dieser Liste eingetragen sind,
-eine Sicherheitsabfrage, bevor die Dateien 
+eine Sicherheitsabfrage, bevor die Dateien
 ge”ffnet werden.
 
-Wird diese Abfrage mit "Nein" beantwortet, 
-wird der interne Lister bzw das unten eingetragene 
+Wird diese Abfrage mit "Nein" beantwortet,
+wird der interne Lister bzw das unten eingetragene
 [Viewerprogramm fuer Verd„chtige Dateien]@8074
 benutzt, um die Datei anzusehen.
 
-Die Dateieendungen mssen incl. Punkt 
+Die Dateieendungen mssen incl. Punkt
 eingegeben werden (also ".HTM" nicht nur "HTM")
-Folgende Dateiformate sind zu gef„hrlich, 
+Folgende Dateiformate sind zu gef„hrlich,
 und werden in dieser Liste ignoriert:
 .EXE .COM .BAT .BTM .CMD .PIF .LNK .INF .REG
 
-Siehe auch: 
+Siehe auch:
 [Lister-Dateiendungen]@8073
 @
 8073
 <<Lister-Dateiendungen>>
 
-Dateien in Multiformat-Mimetyp Mails, 
-die eine dieser Dateiendungen haben, werden immer 
+Dateien in Multiformat-Mimetyp Mails,
+die eine dieser Dateiendungen haben, werden immer
 mit dem XP-internen Lister/Viewer ge”ffnet.
 
-Siehe auch: 
+Siehe auch:
 [Ungef„hrliche Dateiendungen]@8072
-[Viewerprogramm fuer Verd„chtige Dateien]@8074 
+[Viewerprogramm fuer Verd„chtige Dateien]@8074
 @
 8074
 <<Viewerprogramm fuer Verd„chtige Dateien>>
@@ -8197,7 +8173,7 @@ eine davon an. Die Adresse sollte exakt die gleiche
 Schreibweise wie im PGP-Key haben, d.h.
 
      Vorname Nachname <user\@do.main>
-     
+
 Wir empfehlen die Verwendung der Hex-ID, die sie
 erhalten, wenn sie z.B. pgp -kv (UserID) eingeben:
 
@@ -8953,17 +8929,17 @@ fachen.
 
 Hier k”nnen Sie eine Nachricht direkt an einen User
 oder ein Brett senden. Ohne den Empf„nger vorher in
-Brett oder Userliste anlegen zu mssen. 
+Brett oder Userliste anlegen zu mssen.
 
 <<Server:>>    Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
            erscheint nur, wenn mehr als eine Server-
            box erfaát ist. Es gengt, den Anfangs-
            buchstaben des Boxnamens einzugeben.
- 
+
            Bei bereits angelegten Usern/Brettern
            wird dieses Feld automatisch gesetzt.
-            
+
 
 <<Empf„nger>>  Der Name des Users. CrossPoint erg„nzt
            den Namen bei Bedarf automatisch um Box-
@@ -10551,7 +10527,7 @@ Puffer-Kopf der Nachricht bleibt also unver„ndert.
 Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
 die als Textnachrichten verschickt wurden und daher
 nicht vom Archiv-Viewer erkannt werden, bzw. fr
-Multipart-Mime-Nachrichten, die wegen fehlerhaften 
+Multipart-Mime-Nachrichten, die wegen fehlerhaften
 Headerzeilen nicht als MIME erkannt wurden.
 @
 12206

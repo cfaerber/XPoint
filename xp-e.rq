@@ -460,14 +460,12 @@ K (c) '93-96 Peter Mandrella
 6    Z-Netz
 7    PMs
 10   Ask before Quit
-11   Swap to EMS
 12   Archive prefix~
 13   Delete archived messages
 14   Append new newsgroups at end
 15   Server name in PM-newsgroups
 16   Minimum disk space on drive %s~
 17   MBytes
-18   Use XMS
 19   Use descriptions from newsgroup list
 20   Enables umlauts for new Users
 21   Treat : and | as quote characters
@@ -657,7 +655,6 @@ K (c) '93-96 Peter Mandrella
 6    Lock screen-blanker
 7    optical sound signal
 8    Blank window background
-9    Power saver
 10   Terminal BIOS output
 11   Accessibility options
 12   additional sound signals
@@ -3155,7 +3152,7 @@ K (c) '93-96 Peter Mandrella
 8  verbirgt. Fuer den allgemeinen Syntax beachten Sie bitte folgendes:
 9  - Kommentare werden durch das '#'-Zeichen eingeleitet
 10 - Sie koennen eigene Kommentare einfuegen, diese bleiben erhalten
-11 - Sektionen stehen in eckigen Klammern ('[' und ']'). 
+11 - Sektionen stehen in eckigen Klammern ('[' und ']').
 12 - Eine Sektion kann nur einmal vorkommen
 13 - Sie endet mit dem Beginn einer neuen Sektion.
 14 - Jeder Eintrag besteht aus einem Schluessel und einem Wert

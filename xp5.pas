@@ -11,9 +11,6 @@
 { CrossPoint - Utilities }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp5;
 
@@ -34,9 +31,6 @@ uses
 {$ENDIF}
       dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
-{$IFDEF BP }
-      ems,xms,
-{$ENDIF }
       xp0,xp1,xp1input,xp1o,xp1o2;
 
 procedure kalender;
@@ -355,159 +349,10 @@ begin
     inc(sum,sr.size);
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   xpspace:=sum;
   moff;
 end;
-
-{$IFDEF BP }
-
-function dfree:longint;
-begin
-  mon;
-  dfree:=dos.diskfree(0);
-  moff;
-end;
-
-procedure writever(os2,win,lnx:boolean; x,y:byte);
-begin
-  gotoxy(x,y);
-  if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
-  else if lnx then write(DOSEmuVersion)
-  else begin
-    write(lo(dosversion):2,'.',formi(hi(dosversion),2));
-    if win then begin
-      gotoxy(x,y+1);
-      write(hi(winversion):2,'.',formi(lo(winversion),2));
-      end;
-    end;
-end;
-
-{$IFDEF DPMI}
-
-procedure memstat;
-const rnr = 500;
-var
-    x,y  : byte;
-    ems  : longint;
-    os2  : boolean;
-    win  : boolean;
-    lnx  : boolean;
-    free : longint;
-begin
-  win:=(WinVersion>0);
-  win := true;
-  msgbox(45,iif(win,12,11),getres2(rnr,1),x,y);
-  attrtxt(col.colmboxhigh);
-  moff;
-  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
-  wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
-  wrt(x+4,y+5,xp_xp);             { CrossPoint }
-  wrt(x+4,y+6,getres2(rnr,4));    { frei }
-  os2:=lo(dosversion)>=10;
-  lnx:=DOSEMuVersion <> '';
-  wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
-  if win then
-    wrt(x+4,y+9,'Windows'+getres2(rnr,7));
-  attrtxt(col.colmbox);
-{  gotoxy(x+19,y+4); write(regs.ax:4,' KB');  - freier Speicher }
-{  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB'); - XP-Speicher }
-  gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-  gotoxy(x+32,y+4);
-  if dos.disksize(0)>0 then
-    write((dos.disksize(0) / $100000):6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  gotoxy(x+32,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-                          xpspace(XferDir)) / $100000:6:1,' MB');
-  gotoxy(x+32,y+6);
-  free:=dfree;
-  if free>=0 then write((free / $100000):6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+22,y+8);
-  wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
-  mon;
-  freeres;
-  wait(curon);
-  closebox;
-end;
-
-{$ELSE}
-
-procedure memstat;
-const rnr = 500;
-type so = record
-            o,s : word;
-          end;
-var regs : registers;
-    x,y  : byte;
-    ems  : longint;
-    os2  : boolean;
-    win  : boolean;
-    lnx  : boolean;
-    free : longint;
-begin
-  win:=(WinVersion>0);
-  msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
-  attrtxt(col.colmboxhigh);
-  moff;
-  wrt(x+19,y+2,'DOS-RAM        EMS          XMS        '+
-               right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
-  wrt(x+4,y+4,getres2(rnr,2));   { gesamt }
-  wrt(x+4,y+5,xp_xp);            { CrossPoint }
-  wrt(x+4,y+6,getres2(rnr,4));   { frei }
-  wrt(x+4,y+7,getres2(rnr,6));   { verfÅgbar }
-  os2:=lo(dosversion)>=10;
-  lnx:=DOSEmuVersion <> '';
-  wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
-  if win then
-    wrt(x+4,y+10,'Windows'+getres2(rnr,7));
-  attrtxt(col.colmbox);
-  intr($12,regs);
-  gotoxy(x+19,y+4); write(regs.ax:4,' KB');
-  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
-  gotoxy(x+19,y+6); write(memavail div 1024:4,' KB');
-  gotoxy(x+19,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
-  { (ovrheaporg+3) div 64:4, ' KB'); }
-  if emstest then
-  begin
-    gotoxy(x+31,y+4);
-    { 29.01.2000 Stefan Vinke, RTE 215 bei 64 MB EMS }
-    write(longint(emstotal)*16:5,' KB');
-    ems:=0;
-    if (OvrEmshandle<>0) and (OvrEmsHandle<>$ffff) then
-      inc(ems,EmsHandlePages(OvrEmshandle)*16);
-    if dbEMShandle<>0 then inc(ems,EmsHandlePages(dbEMShandle)*16);
-    inc(ems,resemspages*16);
-    gotoxy(x+31,y+5); write(ems:5,' KB');
-    gotoxy(x+31,y+6); write(emsavail*16:5,' KB');
-  end;
-  if xmstest then begin
-    gotoxy(x+44,y+4); write(xmstotal:5,' KB');
-    gotoxy(x+44,y+5); write(0:5,' KB');
-    gotoxy(x+44,y+6); write(xmsavail:5,' KB');
-    end;
-  gotoxy(x+57,y+4);
-  if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  gotoxy(x+57,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-                          xpspace(XferDir)) / $100000:6:1,' MB');
-  free:=dfree;
-  gotoxy(x+57,y+6);
-  if free>=0 then write(free / $100000:6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+21,y+9);
-  wrt(x+62-length(getres2(rnr,9)),y+iif(win,10,9),getres2(rnr,9)+'...');
-  mon;
-  freeres;
-  wait(curon);
-  closebox;
-end;
-
-{$ENDIF DPMI }
-
-{$ELSE BP }
 
 procedure memstat;
 const rnr = 500;
@@ -581,9 +426,6 @@ begin
   closebox;
 end;
 
-{$ENDIF}
-
-
 { USER.EB1 - Fragmentstatistik, nur deutsche Version }
 
 procedure fragstat;
@@ -623,12 +465,7 @@ const maxstars = 40;
       scactive : boolean = false;
 
 var c       : char;
-{$IFDEF BP }
-    kstat   : word;
-    p       : pointer;
-{$ELSE }
     p       : scrptr;
-{$ENDIF }
     mattr   : byte;
     star    : array[1..maxstars] of record
                   x,y,state,xs : byte;
@@ -653,11 +490,7 @@ var c       : char;
 
   function endss:boolean;
   begin
-    if ((keypressed
-{$IFDEF BP }
-    or (kstat<memw[$40:$17])
-{$ENDIF }
-    ) and (et or not ss_passwort or scpassword))
+    if ((keypressed) and (et or not ss_passwort or scpassword))
        or (time>=endtime) then begin
       endflag:=true;
       endss:=true;
@@ -682,33 +515,6 @@ var c       : char;
       dec(n);
     end;
   end;
-
-{$IFDEF BP }
-  procedure scrollout;
-  var i : integer;
-  begin
-    if softsaver then
-      for i:=1 to vlines do begin
-        Move(mem[base:0],mem[base:160],(vlines-1)*160);
-        if i=1 then wrt(1,1,sp(80));
-          delay(10);
-        end
-    else
-      clrscr;
-  end;
-
-  procedure scrollin;
-  var i : integer;
-  begin
-    if SoftSaver then
-      for i:=vlines-1 downto 0 do begin
-        Move(p^,mem[base:i*160],(vlines-i)*160);
-          delay(5);
-        end
-    else
-      Move(p^,mem[base:0],vlines*160);
-  end;
-{$ENDIF }
 
   procedure showstars;
   const xx : boolean = true;
@@ -773,13 +579,7 @@ begin
     end;
   mborder:=col.colborder;
   col.colborder:=0;
-{$IFDEF BP }
-  SetXPborder;
-{$ENDIF }
   scactive:=true;
-{$IFDEF BP }
-  if vesa_dpms and SetVesaDPMS(DPMS_Suspend) then;
-{$ENDIF }
   et:=(endtime<'24');
   repeat
     tempclose;
@@ -788,22 +588,12 @@ begin
     cursor(curoff);
     textbackground(black);
     textcolor(lightgray);
-{$IFDEF BP }
-    getmem(p,vrows2*vlines);
-    Move(mem[base:0],p^,vrows2*vlines);
-    mattr:=textattr;
-    scrollout;
-{$ELSE }
     Sichern(p);
     ClrScr;
-{$ENDIF}
 
     fillchar(star,sizeof(star),0);
     endflag:=false;
     repeat
-{$IFDEF BP }
-      kstat:=memw[$40:$17];
-{$ENDIF}
       showstars;
       if et then ShowResttime;
       sdelay(200);
@@ -814,21 +604,11 @@ begin
       if c=#0 then c:=readkey;
       end;
     initscs;
-{$IFDEF BP }
-    scrollin;
-    freemem(p,vrows2*vlines);
-    mon;
-{$ELSE }
     Holen(p);
-{$ENDIF }
     textattr:=mattr;
     restcursor;
   until topen;
   col.colborder:=mborder;
-{$IFDEF BP }
-  SetXPborder;
-  if vesa_dpms and SetVesaDpms(DPMS_On) then;
-{$ENDIF }
   scactive:=false;
 end;
 
@@ -1141,6 +921,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/06/23 15:59:22  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.27  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

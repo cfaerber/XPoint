@@ -9,9 +9,6 @@
 { $Id$ }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp6o;
 
@@ -285,9 +282,7 @@ begin
       if crash then DelCrashInf(hdp^.empfaenger);
       end;
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   closebox;
   if not found then begin
     rfehler(622);     { 'Nachricht nicht (mehr) im Pollpaket vorhanden !?' }
@@ -1254,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/06/23 15:59:23  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.20  2000/06/19 20:22:13  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -471,14 +471,12 @@ K (c) '93-98 Peter Mandrella
 6    Z-Netz
 7    PMs
 10   Fragen bei Quit
-11   Auslagern in EMS
 12   Archivbretter~
 13   archivierte Nachrichten lîschen
 14   neue Bretter am Ende anhÑngen
 15   Systemname in PM-Brettern
 16   minimaler Platz auf Laufwerk %s   ~
 17   MByte
-18   XMS verwenden
 19   Kommentare aus Brettliste Åbernehmen
 20   Umlaute fÅr neue User zulassen
 21   Stelle : und | dem Quote-Zeichen gleich
@@ -667,7 +665,6 @@ K (c) '93-98 Peter Mandrella
 6    schwarzschalten
 7    optisches Tonsignal
 8    Fensterhintergrund ausblenden
-9    Stromsparmodus
 10   BIOS-Ausgabe im Terminal
 11   Anzeigehilfen
 12   zusÑtzliches Tonsignal
@@ -3192,7 +3189,7 @@ K (c) '93-98 Peter Mandrella
 +   14000
 #   Zeilenanzahl
 0   10
-1   Willkommen als neuer Benutzer 
+1   Willkommen als neuer Benutzer
 2   Als allererstes muessen sie noch einige Einstellungen taetigen
 3   Hierzu gehoeren u.a. auch die Einstellungen rund um den verwendeten
 4   Server. Hierzu gibt es zwei Moeglichkeiten
@@ -3257,7 +3254,7 @@ K (c) '93-98 Peter Mandrella
 8  verbirgt. Fuer den allgemeinen Syntax beachten Sie bitte folgendes:
 9  - Kommentare werden durch das '#'-Zeichen eingeleitet
 10 - Sie koennen eigene Kommentare einfuegen, diese bleiben erhalten
-11 - Sektionen stehen in eckigen Klammern ('[' und ']'). 
+11 - Sektionen stehen in eckigen Klammern ('[' und ']').
 12 - Eine Sektion kann nur einmal vorkommen
 13 - Sie endet mit dem Beginn einer neuen Sektion.
 14 - Jeder Eintrag besteht aus einem Schluessel und einem Wert

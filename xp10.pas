@@ -12,9 +12,6 @@
 {              Nodelisten, Tarifgruppen                             }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp10;
 
@@ -2027,6 +2024,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/23 15:59:16  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 
