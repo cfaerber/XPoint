@@ -1995,14 +1995,14 @@ begin
     mon:=monstring(monate);
     dialog(59,13,getres2(2726,iif(kopie,2,1)),x,y);   { 'AutoVersand-Nachricht (kopieren) }
     maddstring(3,2,getres2(2726,3),betreff,42,40,'');  mhnr(570);  { 'Betreff   ' }
-    maddstring(3,3,getres2(2726,4),datei,42,80,'>');  { 'Datei     ' }
+    maddstring(3,3,getres2(2726,4),datei,42,80,'');  { 'Datei     ' }
     malltrim;
     mappcustomsel(AutoFilename,false);
     msetvfunc(AutoExistfile);
     maddstring(3,4,getres2(2726,5),empf,42,eAdrLen,'');
     mappcustomsel(auto_empfsel,false);                { 'Empf„nger ' }
     msetvfunc(auto_testempf);
-    maddstring(3,6,getres2(2726,6),box,17,17,'>');    { 'Server    ' }
+    maddstring(3,6,getres2(2726,6),box,17,BoxnameLen,'');    { 'Server    ' }
     mappcustomsel(BoxSelProc,false);
     msetvfunc(atestpollbox);
     maddstring(3,8,getres2(2726,7),tg,17,60,'0123456789,');  { 'Tage      ' }
@@ -2516,6 +2516,10 @@ end;
 
 {
   $Log$
+  Revision 1.97  2002/07/25 20:33:28  ma
+  - fixed: AutoVersand/File names were automatically converted to uppercase,
+    resulting in problems with Linux
+
   Revision 1.96  2002/07/22 10:07:09  mk
   - do not try to delete existing files
 
