@@ -459,6 +459,7 @@ var i  : integer;
     if _is('d')    then ParDebug:=true else
     if isl('df:') then ParDebFlags:=ParDebFlags or ival(mid(s,5)) else
     if isl('dl:') then SetDebugLoglevels(mid(s,5)) else
+    if isl('dlmax') then SetDebugLoglevels('default=10') else
     if _is('dd')   then ParDDebug:=true else
     if _is('trace')then ParTrace:=true else
     if _is('j')    then ParNojoke:=true else
@@ -1098,6 +1099,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142.2.8  2003/09/30 15:01:55  mk
+  - added /dlmax as shortcut for /dl:default=10
+
   Revision 1.142.2.7  2003/08/25 18:01:31  mk
   - added XPFirstStart again and fixed incorrect RTA Message at first start
 
