@@ -207,8 +207,10 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-        if LeftStr(dbReadStr(mbase,'brett'),1)<>'1' then
-          disprec[1]:=0;
+{        don't know whats this for :-(
+         if you comment this out, Alt-p in reply trees points does an esc afterwards
+         if LeftStr(dbReadStr(mbase,'brett'),1)<>'1' then
+          disprec[1]:=0; }
         end
       else
         GoP;
@@ -2125,6 +2127,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/11/15 12:24:21  mk
+  - fixed bug with Alt-P in reply trees
+
   Revision 1.59  2000/11/14 15:51:30  mk
   - replaced Exist() with FileExists()
 
