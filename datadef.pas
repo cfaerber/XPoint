@@ -45,8 +45,14 @@ const
 
 type
   {$IFDEF FPC}
-  {$PACKENUM 1}
+    {$PACKENUM 1}
   {$ENDIF}
+  {$IFDEF Delphi }
+    {$Z1 }
+  {$ENDIF }
+  {$IFDEF Kylix }
+    {$Z1 }
+  {$ENDIF } 
   eFieldType = (
     dbNone, //0, dummy
     dbTypeString, //= 1;    { String mit Laengenbyte, Freiraum 0-gefuellt }
@@ -56,6 +62,15 @@ type
     dbUntyped,    //= 5;    { untypisiert, feste Laenge                   }
     dbUntypedExt  //= 6;    { bis 32K Laenge, 4Byte-Zeiger auf DBD-File   }
   );
+  {$IFDEF FPC}
+    {$PACKENUM 4}
+  {$ENDIF}
+  {$IFDEF Delphi }
+    {$Z4 }
+  {$ENDIF }
+  {$IFDEF Kylix }
+    {$Z4 }
+  {$ENDIF } 
 
 const
         dbFlagIndexed = 1;  //or True?    { Flag fuer dbOpen }
@@ -123,6 +138,9 @@ implementation
 
 {
   $Log$
+  Revision 1.15  2003/01/22 21:33:11  mk
+  - packenums = 1 and packrecords = 8 for FPC, Delphi and Kylix
+
   Revision 1.14  2003/01/22 13:45:55  cl
   - fixed database problems with FPC,
     see http://sourceforge.net/mailarchive/message.php?msg_id=3592257

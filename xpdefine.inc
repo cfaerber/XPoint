@@ -115,8 +115,8 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$INLINE ON }
-  {$PACKRECORDS Default } { Default: 2 }
-  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$PACKRECORDS 8 }       { Default: 2, use 8 like Delphi }
+  {$PACKENUM 4 }          { Default: 4, valid: 1, 2, 4, Normal, Default, use 4 like Delphi (Z4) }
   {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
@@ -132,7 +132,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z4}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -143,7 +143,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z4}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -332,6 +332,9 @@
 
 {
   $Log$
+  Revision 1.93  2003/01/22 21:33:11  mk
+  - packenums = 1 and packrecords = 8 for FPC, Delphi and Kylix
+
   Revision 1.92  2003/01/16 11:09:02  mk
   - undefine Linux in *BSD
 
