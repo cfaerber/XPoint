@@ -100,8 +100,10 @@ const
   MaxLenPathname = 255;
 
 type
+  PCharArray = ^TCharArray;
   TCharArray = array[0..MaxInt] of Char;
-  TByteArray = array[0..MaxInt] of Char;
+  PByteArray = ^TByteArray;
+  TByteArray = array[0..MaxInt] of Byte;
 
 implementation
 
@@ -117,8 +119,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.34  2000/07/20 17:02:21  mk
-  - TCharArray, TByteArray hinzugefuegt
+  Revision 1.35  2000/07/20 17:10:10  mk
+  - Zeiger auf neue Array-Typen hinzugefuegt
 
   Revision 1.33  2000/07/04 17:34:42  hd
   - "Compiled at..." unter Linux entfernt
