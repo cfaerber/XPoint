@@ -292,11 +292,10 @@ asm
   and ax,4
   and bx,1
   shl bx,1
-  shl bx,1
   and cx,2
-  shl cx,1
-  add ax,bx
-  add ax,cx
+  shr cx,1
+  or ax,bx
+  or ax,cx
 @1:
 {$ENDIF }
 end;
@@ -513,6 +512,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/04/06 20:55:52  rb
+  Bugfixes; ich wills schliesslich keinen Murks hinterlassen
+
   Revision 1.6  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

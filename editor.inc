@@ -1828,6 +1828,10 @@ begin
     if blockinverse or blockhidden then begin
       { kein Block markiert oder Blockmarkierung ausgeschaltet:
         ActAbs bis Leerzeile formatieren }
+      if ActAbs^.size=0 then begin { Leerzeile -> abbrechen }
+        errsound;
+        exit;
+      end;
       SetBlock(1,ActAbs,0,2);
       ap:=ActAbs;
       if config.QuoteReflow and assigned(ap^.next)
@@ -1983,6 +1987,7 @@ begin
       end
       else ap:=ap^.next;
     until ap=block[2].pos.absatz^.next;
+    CheckBlockOrder;
     modified:=true;
     aufbau:=true;
   end;
@@ -2275,6 +2280,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/04/06 20:55:52  rb
+  Bugfixes; ich wills schliesslich keinen Murks hinterlassen
+
   Revision 1.16  2000/03/27 22:21:59  rb
   Bugfix fÅr 'Block reformatieren'
 
