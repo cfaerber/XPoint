@@ -217,15 +217,15 @@ ihs$(EXE_EXT): ihs.pas fileio.o typeform.o xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
 endif
 
-maggi$(EXE_EXT): maggi.pas fileio.o montage.o typeform.o xp_iti.o xpdatum.o \
-	xpdefine.inc xpglobal.o xpheader.inc xpmakehd.inc
+maggi$(EXE_EXT): maggi.pas fileio.o montage.o typeform.o xp_iti.o \
+	xpdatum.o xpdefine.inc xpglobal.o xpheader.inc xpmakehd.inc
 	$(PC) $(PFLAGS) $<
 
 ndiff$(EXE_EXT): ndiff.pas fileio.o typeform.o xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
 
 pmconv$(EXE_EXT): pmconv.pas typeform.o xpdatum.o xpdefine.inc \
-	xpglobal.o xpmakehd.inc
+	xpglobal.o xpheader.inc xpmakehd.inc xpnt.o
 	$(PC) $(PFLAGS) $<
 
 rc$(EXE_EXT): rc.pas fileio.o typeform.o xpdefine.inc xpglobal.o
@@ -1419,6 +1419,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.10  2000/10/01 07:50:52  fe
+# Abhaengigkeiten von pmconv aktualisiert.
+#
 # Revision 1.9  2000/09/30 16:52:38  fe
 # maggi.pas ist jetzt uebersetzbar.
 #
