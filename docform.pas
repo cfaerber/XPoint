@@ -15,7 +15,7 @@
 
 {$I XPDEFINE.INC }
 
-uses dos,typeform,fileio,xpglobal;
+uses dos,typeform,fileio,xpglobal, sysutils;
 
 const
         l_ver = '1.03'; {TJ030200 - naja, der schnelleren Uebersicht wegen}
@@ -162,7 +162,7 @@ var bs : string[20];
 begin
   writeln;  {TJ030200 - bissel der Herkunft wegen}
   writeln('DocForm v'+l_ver+pformstr+' --> XP '+verstr+
-            betastr+' '+author_name+' '+x_copyright); 
+            betastr+' '+author_name+' '+x_copyright);
   writeln;
   infile:=paramstr(1);
   outfile:=paramstr(2);
@@ -199,6 +199,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/07/04 10:06:37  mk
+  - SysUtils eingefuegt
+
   Revision 1.6  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
