@@ -1393,7 +1393,7 @@ end;
 
 {$IFDEF Win32GUI }
 const
-  AppName = 'OpenXP/32 GUI';
+  AppName = 'OpenXP GUI';
 
 function WindowProc(Window: HWnd; AMessage: UINT; WParam : WPARAM;
                     LParam: LPARAM): LRESULT; stdcall; export;
@@ -1522,6 +1522,9 @@ end;
 
 {
   $Log$
+  Revision 1.84.2.3  2003/08/11 22:28:20  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.84.2.2  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 

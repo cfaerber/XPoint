@@ -162,7 +162,6 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
     with boxpar^ do
     begin
       uu := TUUZ.Create;
-      if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
       uu.MailUser := BoxPar^.UserName;
@@ -414,6 +413,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.5  2003/08/11 22:28:26  mk
+        - removed Edit/netze/verschiedens/mime in news
+
         Revision 1.39.2.4  2003/04/25 20:52:29  mk
         - added Headeronly and MessageID request
           toggle with "m" in message view

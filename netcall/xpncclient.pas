@@ -52,7 +52,6 @@ var
       uu.PPP := true;
       uu.SMTP := true;
       uu.Client := true;
-      if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
       uu.MailUser := BoxPar^.UserName;
@@ -179,6 +178,9 @@ end;
 
 {
   $Log$
+  Revision 1.2.2.6  2003/08/11 22:28:26  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.2.2.5  2002/08/03 16:31:45  mk
   - fixed unsendt-handling in client-mode
 

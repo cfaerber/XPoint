@@ -581,7 +581,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Im Z-Netz sind z.Zt. keine kleingeschriebenen Adressen erlaubt!
 7    Mîchten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
-9    MIME auch fÅr News verwenden
 10   ISO-8859-1-Zeichensatz
 11   MIME: Quoted-Printable voreinstellen
 12   MIME: Sonderzeichen in Headerzeilen
@@ -3999,6 +3998,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.12  2003/08/11 22:28:19  mk
+# - removed Edit/netze/verschiedens/mime in news
+#
 # Revision 1.57.2.11  2003/04/25 20:52:21  mk
 # - added Headeronly and MessageID request
 #   toggle with "m" in message view

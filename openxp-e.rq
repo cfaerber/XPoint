@@ -570,7 +570,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    Lower case names are not allowed in Z-Netz. Do you really want to
 7    activate this option?
 8    ~^Yes ,  ^No ~
-9    Use MIME for news
 10   ZCONNECT: ISO charset
 11   MIME: quoted-printable
 12   Use MIME for header contents
@@ -3989,6 +3988,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.9  2003/08/11 22:28:19  mk
+# - removed Edit/netze/verschiedens/mime in news
+#
 # Revision 1.49.2.8  2003/04/25 20:52:21  mk
 # - added Headeronly and MessageID request
 #   toggle with "m" in message view

@@ -593,7 +593,6 @@ begin
   ShowRealnames:=true;
   MsgNewFirst:=false;
   ss_passwort:=false;
-  NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true;
   multipartbin:=true;
@@ -931,7 +930,6 @@ begin
   writeln(t,'MausStatus=',jnf(MausPSA));
   writeln(t,'BinMIME=',jnf(mausmpbin));
   wrhd(6);                                             { RFC/UUCP }
-  writeln(t,'NewsMIME=',jnf(NewsMIME));
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
   writeln(t,'NoArchive=',jnf(NoArchive));
@@ -1442,7 +1440,7 @@ begin
                     getx(su,  'NeueBrEnde',newbrettende) or
                     xp1.gets(s,su,'NatVorwahl',natvorwahl) or
                     getx(su,  'NurZNetz',dummyb) or
-                    getx(su,  'NewsMIME',NewsMIME) or
+                    getx(su,  'NewsMIME',dummyb) or
                     getx(su,  'NoArchive',NoArchive) or
                     getx(su,  'NewsgroupAnzeige',newsgroupdisp) or
                     getx(su,  'NewsgroupAnzeigeAlle',newsgroupdispall) or
@@ -1704,6 +1702,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.7  2003/08/11 22:28:21  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.144.2.6  2003/04/12 08:05:53  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 

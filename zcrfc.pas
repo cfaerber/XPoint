@@ -107,7 +107,6 @@ type
     FileUser: string;
     RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
-    NewsMIME: boolean;
     ppp: boolean;                // internel PPP Mode
     client: boolean;             // Client-Mode
     SMTP: boolean;
@@ -269,7 +268,6 @@ begin
   ParSize := false;             { Size negotiation }
   ParECmd := false;
   SMTP:= false;
-  NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
   NNTPSpoolFormat:= false;
   NoCharsetRecode:= true;
@@ -436,9 +434,6 @@ begin
         begin
           news_compression:=compress_gzip;
         end
-        else
-          if switch = 'mime' then
-          NewsMIME := true
         else
           if switch = 'nomime' then
           NoMIME := true
@@ -3007,7 +3002,7 @@ begin
         Wrs(f, XLine[i]);
 
     if (typ='M') or (not NoMIME and (mail or
-       (NewsMIME and ((x_charset <> '') or (typ='B'))) )) then
+       ((x_charset <> '') or (typ='B'))) ) then
       WriteMIME(true);
 
     if summary <> '' then
@@ -3548,7 +3543,6 @@ begin
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/g/z/bSMTP = compressed)');
-  writeln('              -MIME   =  Use MIME for news');
   writeln('              -noMIME =  Do not create any MIME headers');
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
@@ -3715,6 +3709,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.27  2003/08/11 22:28:22  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.97.2.26  2003/06/22 11:06:54  mk
   - removed last fix, the fix does not work for internal raw format
 

@@ -10706,20 +10706,6 @@ sollten Sie auch die Adreá-Groáwandlung unter
        Status bei jedem Netzanruf und die Wartezeit
        zum Einlesen der Status nach dem Anruf.
 @
-796
-<<[x]>> -> OpenXP verwendet auch bei ”ffentlichen
-       Nachrichten (News) den MIME-Standard (RFC
-       2045 ff.), um die Verwendung von Umlauten und 
-       anderen Sonderzeichen zu kennzeichnen. Dies ist
-       die empfohlene Einstellung.
-
-<<[ ]>> -> MIME wird gem„á seiner Spezifikation nur fr
-       Mail verwendet. Dies sollten Sie nur dann tun, 
-       wenn Ihre ”ffentlichen Nachrichten keine Sonder-
-       zeichen enthalten, d.h. als Zeichensatz der be-
-       treffenden Brettgruppe bei /Edit/Gruppen sollte
-       "ASCII" gew„hlt sein.
-@
 797
 <<[x]>> -> Vereinfacht ausgedrckt: OpenXP verwendet
        ein spezielles Verfahren namens "quoted-prin-

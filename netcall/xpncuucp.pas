@@ -114,7 +114,6 @@ var
       uu.uparcer_smtp := BoxPar^.UpArcer;
       uu.uparcer_news := BoxPar^.UpArcer;
 
-      uu.NewsMime := NewsMIME;
       uu.MakeQP   := MIMEqp;
       uu.RFC1522  := RFC1522;
 
@@ -368,6 +367,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.17.2.5  2003/08/11 22:28:26  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.17.2.4  2002/08/23 10:20:03  cl
   - Added DebugLog output for TUUZ.ZToU
 

@@ -74,7 +74,6 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; EMail, PPFile: Strin
       uu := TUUZ.Create;
       uu.SMTP := true;
       uu.PPP := true;
-      if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
       uu.MailUser := BoxPar^.UserName;
@@ -287,6 +286,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.7  2003/08/11 22:28:26  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.32.2.6  2003/04/28 08:39:18  mk
   - do POP.Disconnect in try except block first time, to give
     helpful error messages instead of a crash
