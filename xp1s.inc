@@ -64,7 +64,7 @@ var sm2t     : boolean;
       p2:=71;
       while prog[p2]<>' ' do dec(p2);
       mwrt(x+3,y+1,left(prog,p2-1));
-      mwrt(x+3+p,y+2,mid(prog,p2+1));
+      mwrt(x+3+p,y+2,left(mid(prog,p2+1), 71-p));
       end;
     wkey(15,false);
     windmin:=w1; windmax:=w2;
@@ -540,6 +540,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.2  2000/05/07 18:01:13  mk
+  - Fix in ShowPar fuer extrem lange Kommaondozeilen
+
   Revision 1.10.2.1  2000/04/02 19:12:28  mk
   JG: - Fix für Abschaltung der Uhr in MIME-Mails
 
