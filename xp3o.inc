@@ -116,13 +116,15 @@ var x,y,fm   : byte;
     cancels     : integer;
     orgempf  : string[AdrLen];
     mbflags  : longint;
+    mstr     : string;		{ Message-Text }
+    sp       : scrptr;
 
   function puffer_ok:boolean;
   var ok : boolean;
   begin
     moff;
-    writeln;
-    write(getres(331));    { 'Puffer ÅberprÅfen...' }
+    mstr:=getres(331);
+    FWrt(x+2,y+2,mstr);    { 'Puffer ÅberprÅfen...' }
     mon;
     MsgCount:=0; adr:=0;
     repeat
@@ -130,21 +132,18 @@ var x,y,fm   : byte;
       if MsgCount mod 10=0 then
       begin
         moff;
-{$IFDEF BP }
-        write(MsgCount:6,#8#8#8#8#8#8);
-{$ELSE }
-        FWrt(WhereX+5, WhereY+5, StrS(MsgCount));
-{$ENDIF }
+        FWrt(x+3+length(mstr),y+2, StrS(MsgCount));
         mon;
       end;
       seek(f,adr);
       makeheader(zconnect,f,0,0,hdsize,hdp^,ok,true);
       inc(adr,hdsize+hdp^.groesse);
     until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zusÑtzliche }
-    moff;
-    if MsgCount>1 then writeln(MsgCount:6)     { Zeichen enthalten, die      }
-    else writeln;                              { weggeschluckt werden.       }
-    mon;
+    if (MsgCount>0) then begin
+      moff;
+      FWrt(x+3+length(mstr),y+2,strs(MsgCount));
+      mon;
+    end;
     puffer_ok:=ok and (adr<=fs+8);
     diff:=min(maxint,max(0,fs-adr));
   end;
@@ -192,35 +191,9 @@ var x,y,fm   : byte;
            ((useraufnahme=3) and pm);
   end;
 
-  procedure showbetreff;
-  begin
-    mwrt(52,wherey,forms(hdp^.betreff,23));
-  end;
-
-  procedure wwin;
-  begin
-{$IFDEF BP }
-    window(x+2,y+1,x+76,y+screenlines-8);
-{$ELSE }
-    window(x+2,y+2,x+76,y+15);
-{$ENDIF }
-  end;
-
   function isl(s:string):boolean;
   begin
     isl:=left(hdp^.betreff,length(s))=s;
-  end;
-
-  procedure w0;
-  begin
-    savecursor;
-    window(1,1,80,25);
-  end;
-
-  procedure w1;
-  begin
-    wwin;
-    restcursor;
   end;
 
   function LeftAbsender(s:string):boolean;
@@ -279,14 +252,11 @@ var x,y,fm   : byte;
       n  : longint;
       rec: longint;
   begin
-    moff; writeln; mon;
     reset(cancelfile);
     n:=0;
     while not eof(cancelfile) do begin
       inc(n);
-      moff;
-      write(#13,getres(341),n);
-      mon;
+      { write(#13,getres(341),n); }
       readln(cancelfile,rec);
       dbGo(mbase,rec);
       readln(cancelfile,id);
@@ -294,7 +264,6 @@ var x,y,fm   : byte;
       CancelMsg(id,abs);
       end;
     close(cancelfile);
-    moff; writeln; mon;
   end;
 
   function IsCancelMsg:boolean;
@@ -351,10 +320,7 @@ var x,y,fm   : byte;
            (ustr(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
            (pos('BRETTLISTE',ustr(betreff))>0)))      { ZQWK }
           then begin
-        showbetreff;
-        w0;
         MapsReadList;
-        w1;
         end;
 
       if (left(ustr(betreff),6)='FILES.') and (cpos('@',absender)>0) and
@@ -364,10 +330,7 @@ var x,y,fm   : byte;
         if cpos('.',box)>0 then begin
           box:=left(box,cpos('.',box)-1);
           if IsServer(box,fstype) and (fstype<>3) then begin
-            showbetreff;
-            w0;
             FS_Readlist(true);
-            w1;
             end;
           end;
         end;
@@ -377,20 +340,14 @@ var x,y,fm   : byte;
           ((empfbkennung<>'') and (isl(empfbkennung) or
             isl(QPC_ID+empfbkennung) or isl(DES_ID+empfbkennung)))) then
       begin
-        showbetreff;
-        w0;
         empfang_bestaetigen(pollbox);
-        w1;
         end;
 
       if (sysbetreff<>'') and (empfaenger[1]='1') and (lstr(betreff)=sysbetreff) and
          (LeftAbsender('changesys') or LeftAbsender('news') or
           LeftAbsender('postmaster') or LeftAbsender('root')) then
       begin
-        showbetreff;
-        w0;
         GetSysfile;
-        w1;
         end;
 
       if UsePGP and (empfaenger[1]='1') { PM } and
@@ -401,28 +358,19 @@ var x,y,fm   : byte;
           xp6.forcebox:=pfadbox(true,pfad);
         xp6._bezug:=msgid;
         xp6._beznet:=netztyp;
-        w0;
         PGP_SendKey(iifs(pgp_uid='',absender,pgp_uid));
-        w1;
         xp6.forcebox:='';
         end;
 
       if IsCancelMsg then begin
-        showbetreff;
-        w0;
         writeln(cancelfile,dbRecno(mbase));
         writeln(cancelfile,trim(mid(betreff,8)));
         writeln(cancelfile,absender);
         inc(cancels);
-        w1;
         end;
 
-      if IsSupportCFG then begin
-        showbetreff;
-        w0;
+      if IsSupportCFG then
         XRead(SupportCfg,false);
-        w1;
-        end;
       end;
     automessaging:=false;
   end;
@@ -445,6 +393,7 @@ var x,y,fm   : byte;
       ok       : boolean;
       orgsize  : longint;
       orgempf  : AdrStr;
+      sp       : scrptr;
   begin
     size:=0;
     dbSeek(ubase,uiName,ustr(hdp^.absender));
@@ -467,7 +416,7 @@ var x,y,fm   : byte;
     rps(s,'$USER',hdp^.absender);
     if exist(uncfile) then _era(uncfile);
     savecursor;
-    window(1,1,80,25);
+    sichern(sp);
     shell(s,600,3);                     { Nachricht decodieren }
     if existf(f) then erase(f);       { codierte Msg lîschen, falls noch da }
     if not exist(uncfile) then
@@ -507,34 +456,24 @@ var x,y,fm   : byte;
         hdp^.empfaenger:=orgempf;
         end;
       end;
-    wwin;
+    holen(sp);
     restcursor;
     dispose(hdp2);
   end;
 
   procedure DecPGP;
   var s : string[AdrLen];
+      sp: scrptr;
   begin
     s:=hdp^.empfaenger;
     hdp^.empfaenger:=orgempf;
-    attrtxt(col.colmboxhigh);
-    showbetreff;
     savecursor;
-    window(1,1,80,25);
+    sichern(sp);
     LogPGP(getreps2(3002,2,hdp^.absender));  { 'decodiere Nachricht von %s' }
     PGP_DecodeMessage(hdp,false);
-    wwin;
+    holen(sp);
     restcursor;
     hdp^.empfaenger:=s;
-  end;
-
-  procedure wrp;
-  var ps : string[3];
-  begin
-    ps:=strs(inmsgs*100 div msgcount);
-    moff;
-    FWrt(x+73-length(ps), y, ' ' + ps + '% ');
-    mon;
   end;
 
   procedure Bezugsverkettung;
@@ -545,12 +484,13 @@ var x,y,fm   : byte;
                  dat : longint;
                end;
       empfnr : integer;
-      xx     : byte;
+      xx,yy  : byte;
   begin
     moff;
-    writeln;
-    write(getres(332));   { 'Bezugsverkettung...' }
-    xx:=wherex+1;
+    msgbox(25,5,'',xx,yy);
+    Wrt(xx+2,yy+2,getres(332)); { 'Bezugsverkettung...' }
+    xx:=WhereX+1; yy:= WhereY;
+    FWrt(xx,yy,'0%');
     mon;
     reset(f,1);
     fs:=filesize(f);
@@ -585,21 +525,15 @@ var x,y,fm   : byte;
           end;
         inc(empfnr);
       until empfnr>hdp^.empfanz;
-{$IFDEF BP }
-      gotoxy(xx,wherey);
       moff;
-      write(nbez,' (',n*100 div msgcount,'%) ');
-{$ELSE }
-      moff;
-      FWrt(xx+2, wherey+5, ' ('+ StrS(n*100 div msgcount) + '%) ');
-{$ENDIF }
+      FWrt(xx,yy,StrS(n*100 div msgcount)+'%');
       mon;
       inc(adr,hdp^.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
     dbRestartHU(bezbase);
     dbFlush(bezbase);
     close(f);
-    writeln;
+    closebox;
   end;
 
   procedure wrll(l:longint);
@@ -640,8 +574,7 @@ begin
   inmsgs:=0;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
-  msgbox(78,screenlines-6,getres(333),x,y);    { 'Puffer einlesen' }
-  wwin;
+  msgbox(60,7,getres(333),x,y);    { 'Puffer einlesen' }
   attrtxt(col.colmbox);
   zconnect:=ZC_puffer(puffer);
   assign(f,puffer);
@@ -650,10 +583,12 @@ begin
   if fs<16 then begin
     close(f);
     moff;
-    writeln(#10,getres(334));    { 'leerer Puffer' }
+    rmessage(334);	{ 'leerer Puffer' }
     mon;
     wkey(1,false);
     closebox;
+    closebox;
+    freeres;
     puffereinlesen:=true;
     exit;
     end;
@@ -704,7 +639,9 @@ begin
       dbClose(d);
       end;
 
-    moff; writeln(getres(335)); mon;    { 'Puffer kopieren...' }
+    moff; 
+    Wrt(x+2,y+3,getres(335));		{ 'Puffer kopieren...' }
+    mon;
     assign(pfile,aFile(ablage));        { Puffer in die kleinste }
     if existf(pfile) then begin         { Ablage kopieren ..     }
       reset(pfile,1);
@@ -723,7 +660,12 @@ begin
       dec(size,rr);
     until eof(f);
     close(pfile);
-
+    moff;
+    Wrt2(' '+getres2(324,7));		{ fertig }
+    mstr:= getres2(330,6);		{ Importiere Nachrichten }
+    FWrt(x+2,y+4,mstr+' 0%');
+    mon;
+    
     assign(pfile,TempS(msgcount*8+2048));
     rewrite(pfile,1);
     llanz:=0;
@@ -808,24 +750,10 @@ begin
                       empfaenger:='1/'+left(empfaenger,atp-1);
                   pm:=true;
                   end;
-          moff;
-{$IFDEF BP }
-          writeln;
-          if empfaenger[1]='U' then begin
-            write('AN:'); fm:=24; end
-          else
-            fm:=27;
-          write(forms(copy(empfaenger,2,40),fm),' ',forms(absender,22),' ',forms(betreff,23));
-{$ELSE }
-          writeln;
-          if empfaenger[1]='U' then
-          begin
-            fm:=24; FWrt(WhereX+3, WhereY+4, 'AN:')
-          end else
-            fm:=27;
-          FWrt(WhereX+fm+3-27, WhereY+4, forms(copy(empfaenger,2,40),fm) + ' ' + forms(absender,22) + ' ' + forms(betreff,23));
-{$ENDIF }
-          mon;
+
+          if empfaenger[1]='U' then fm:=24
+          else fm:=27;
+
           multi2(curoff); initscs;
 
           attrtxt(col.colmboxhigh);
@@ -861,8 +789,8 @@ begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
-                mwrt(1,wherey,forms(copy(empfaenger,2,27),27));
-                if left(empfaenger,1)<>'A' then grnr:=IntGruppe
+                
+		if left(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
                   p0:=posn('/',seekbr,3);
@@ -895,12 +823,9 @@ begin
                 flags:=iif(netztyp=nt_UUCP,16,0);
                 dbWriteN(bbase,bb_flags,flags);
                 if newbrettende then
-                  SetBrettindexEnde
-                else begin
-                  w0;
+		  SetBrettindexEnde
+                else
                   SetBrettindex;
-                  w1;
-                  end;
                 writeln(brettlog,logstr(copy(empfaenger,2,255)));
                 end;   { aufnehmen }
               end    { not dbFound }
@@ -916,7 +841,7 @@ begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
-              if pos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
+              if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
@@ -963,12 +888,8 @@ begin
               (filterattr and fattrHilite<>0) {or}
               { Nachricht mit Priority High und Highest hevorheben }
               {(hdp^.Priority in [1..2])}
-            then begin
-              attrtxt(col.colmboxhigh);
-              showbetreff;
-              attrtxt(col.colmbox);
+            then
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
-              end;
             if charset='iso1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
             dbWriteN(mbase,mb_netztyp,mnt);
@@ -1026,41 +947,31 @@ begin
                ((PGP_AutoAM and (firstchar(empfaenger)='A')) or
                 (PGP_AutoPM and (firstchar(empfaenger)='1')))
             then begin
-              attrtxt(col.colmboxhigh);
-              showbetreff;
               savecursor;
-              window(1,1,80,25);
+	      sichern(sp);
               PGP_ImportKey(true);
-              wwin;
+	      holen(sp);
               restcursor;
               end;
             if (firstchar(empfaenger)='1') and UsePGP and
                (pgpflags and fPGP_encoded<>0) then
               DecPGP else
             if (firstchar(empfaenger)='1') and
-               (left(betreff,length(PMC_ID))=PMC_ID) then begin
-              attrtxt(col.colmboxhigh);
-              showbetreff;
+               (left(betreff,length(PMC_ID))=PMC_ID) then
               pmCryptDecode;
-              attrtxt(col.colmboxhigh);
-              showbetreff;
-              end;
 
             msgsent:=true;
             end
           else begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
-            gotoxy(wherex,wherey-1);
             end;
 
           inc(empfnr);
           end;           { with hdp^ }
-        if msgsent then begin
-          attrtxt(col.colmboxhigh);
+        if msgsent then
           TestControlMessage;
-          end;
-        attrtxt(col.colmbox);
+
         if (hdp^.empfanz>1) and (empfnr>hdp^.empfanz) and not msgsent and
            not IsCancelMsg then begin
           { Nachricht nach /Junk }
@@ -1082,17 +993,20 @@ begin
       inc(adr,hdp^.groesse+hdsize);
       inc(padr,hdp^.groesse+hdsize);
       inc(inmsgs);
-      wrp;
+      if ((inmsgs mod 3) = 0) then begin	{ User beruhigen }
+        moff;
+        FWrt(x+3+length(mstr),y+4,strs((inmsgs * 100) div MsgCount)+'%');
+	mon;
+      end;
     until adr>=fs-3;     { 3 Byte Toleranz }
+    moff;
+    FWrt(x+3+length(mstr),y+4,'100%');
+    mon;
     dbrestartHU(mbase);
     dbFlush(mbase);
     close(f);
     inc(ablsize[ablage],fs);
 
-    moff;
-    writeln;
-    if not aufnehmen then writeln;
-    mon;
     FlushLL;
     if zconnect then
       Bezugsverkettung;
@@ -1113,40 +1027,37 @@ begin
   else begin
     close(f);
     moff;
-    writeln;
+    msgbox(78,9,getres2(336,1),x,y);	{ 'ACHTUNG !!!' }
     attrtxt(col.colmboxhigh);
-    writeln(getres2(336,1));    { 'ACHTUNG !!!' }
-    writeln;
+
     if check then
-      writeln(getres2(336,2)+ustr(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
+      FWrt(x+2,y+2,getres2(336,2)+fustr(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
     else
-      writeln(getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
-    writeln(getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
+      FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
+    FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
     if pflags and pe_Bad<>0 then begin
       MoveToBad(puffer);
-      writeln;
-      writeln(getres2(336,5));    { 'Datei wurde im Unterverzeichnis BAD abgelegt.' }
+      FWrt(x+2,y+5,getres2(336,5));    { 'Datei wurde im Unterverzeichnis BAD abgelegt.' }
       logerror(getres2(336,6));   { 'Fehlerhafter Netcallpuffer wurde im Unterverzeichnis BAD abgelegt.' }
       end
     else
       logerror(getres2(336,8)+puffer);   { 'Netcallpuffer wurde nicht eingelesen: ' }
     attrtxt(col.colmbox);
-    writeln;
     mon;
     errsound;
     moff;
-    write(getres(12));   { 'Taste drÅcken ...' }
+    Wrt(x+2,y+7,getres(12));   { 'Taste drÅcken ...' }
     mon;
     errsound;
     cursor(curon);
     wkey(180,true);    { max. 3 Minuten }
     cursor(curoff);
-    freeres;
+    closebox;
     end;
 
   dispose(hdp);
+  freeres;
   freemem(p,bufsize);
-  window(1,1,80,25);
   closebox;
   aufbau:=true; xaufbau:=true;
 end;
@@ -1180,6 +1091,15 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/05/14 17:05:36  hd
+  - Beim Puffereinlesen wird nur noch die %-Zahl gezeigt.
+    Die Funktionen hinsichtlich PGP/DES beim Einlesen konnte ich
+    hier nicht pruefen. Ich kann daher nicht sagen, ob die
+    komplette Sicherung des Schirms (sichern/holen) ausreicht.
+
+    Durch den Wegfall der ueberfluessigen Anzeige beim Einlesen
+    duerfte sich die Geschwindigkeit drastisch erhoehen.
+
   Revision 1.15  2000/05/14 13:58:05  hd
   - WildCard (readpuffer)
 

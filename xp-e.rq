@@ -837,6 +837,7 @@ K (c) '93-96 Peter Mandrella
 3    Take server from path line
 4    Send receipts on request
 5    Mark messages as "read"
+6    Import messages
 -
 331  Testing messages...
 332  Linking references...
