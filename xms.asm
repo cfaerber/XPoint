@@ -8,7 +8,7 @@
 ; Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der
 ; Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.
 ; ---------------------------------------------------------------
-
+; $Id:
 ; Routinen fÅr XMS.PAS
 
 
@@ -244,47 +244,6 @@ XmsWrite  endp
 
           end
 
-; JM 14.04.03
-; - Bezeichnung in "Routinen fÅr XMS.PAS" geaendert (war EMS.PAS)
-; - Neue Function XmsAvail:
-;   - stueckweise (zu je 100 Kb), kumulierte Reservierung und Freigabe
-;     des verfuegbaren XMS-Speichers bis zur Pruefung von max ca. 16 Mb
-;   - im Fehlerfall (ax = 0) bei der Reservierung wird genauer auf den
-;     Fehlercode A0h geprueft und nur in dem Fall wird der letzte
-;     erfolgreich reservierte Wert als available gemeldet
-;     (Voraussetzung ist daher, dass der XMS-Treiber zumindest diesen
-;     Fehlercode der Belegung alles freien XMS-Speichers liefert.)
-;   - bei anderen Fehlerursachen wird XmsAvail beendet und meldet
-;     0 Kb XMS-Speicher, wobei der Fehlercode (nunmehr) aus result
-;     ermittelt werden koennte.
-;   - der als verfÅgbar gemeldete XMS-Speicher ist bei Erreichen
-;     des max. Werts immer nur der mind. verfÅgbare XMS-Speicher.
-
-; MY 16.04.03
-; - Neues XmsAvail von JG eingebaut (Zitat aus Mail):
-;   - Grîsse abfragen (DX=Gesamt, AX=grîsster freier Block)
-;   - trotzdem gesamten Speicher anfordern
-;   - Wenn's klappt: Block wieder freigeben und "gesamten Speicher"
-;     melden, ansonsten "grîssten freien Block" melden
-;   Das muss reichen, Win32+ kann immer den "gesamten freien Speicher"
-;   liefern, egal was es als "grîssten freien Block" meldet, und
-;   jenseits von Win9x lÅgen die XMS-Funktionen nicht.
-
-; JM 23.04.03
-; - modifiziertes (JG-) xmsavail
-;   - Wie bisher wird zuerst mit XmsTotal, der gesamte als frei
-;     (DX=Gesamt. AX=grî·ter freier Block) gemeldete Speicher angefordert.
-;   - Wird der nicht reserviert (da u.U. mehr als 16 Mb gesamt freier
-;     XMS-Speicher gemeldet werden, aber Win2K, WinXP, dennoch "nur"
-;     max. 16 Mb EMB reserviert, wogegen Win9x i.A. alles reserviert),
-;     - wird nicht gleich der grî·te als verfÅgbar (in AX) ausgewiesene
-;       Block gemeldet (weil ebenfalls u.U. ein grî·eren Wert
-;       als 16 Mb von Win2K, WinXP dem XMS-Treiber Åbergeben wurde),
-;     - sondern genau 16 Mb angefordert und im  Erfolgsfall als grî·ter,
-;       verfÅgbar freier Block an XPoint zurÅckgegeben.
-;   - Erst wenn das nicht klappt, wird der ursprÅnglich grî·te, freie
-;     Block an XPoint gemeldet.
-
 ; JM (JG-) 05.05.03
 ; - xmsavail auf die Besonderheiten bei Windows 200/NT angepasst.
 ;
@@ -311,4 +270,46 @@ XmsWrite  endp
 ;       war, wird versucht dieser Wert zu reservieren
 ;     - ist auch dieser Wert nicht testweise belegbar, dann wird
 ;       der in der ersten Abfrage ermittelte grî·te, freie Block gemeldet
+
+; JM 23.04.03
+; - modifiziertes (JG-) xmsavail
+;   - Wie bisher wird zuerst mit XmsTotal, der gesamte als frei
+;     (DX=Gesamt. AX=grî·ter freier Block) gemeldete Speicher angefordert.
+;   - Wird der nicht reserviert (da u.U. mehr als 16 Mb gesamt freier
+;     XMS-Speicher gemeldet werden, aber Win2K, WinXP, dennoch "nur"
+;     max. 16 Mb EMB reserviert, wogegen Win9x i.A. alles reserviert),
+;     - wird nicht gleich der grî·te als verfÅgbar (in AX) ausgewiesene
+;       Block gemeldet (weil ebenfalls u.U. ein grî·eren Wert
+;       als 16 Mb von Win2K, WinXP dem XMS-Treiber Åbergeben wurde),
+;     - sondern genau 16 Mb angefordert und im  Erfolgsfall als grî·ter,
+;       verfÅgbar freier Block an XPoint zurÅckgegeben.
+;   - Erst wenn das nicht klappt, wird der ursprÅnglich grî·te, freie
+;     Block an XPoint gemeldet.
+
+; MY 16.04.03
+; - Neues XmsAvail von JG eingebaut (Zitat aus Mail):
+;   - Grîsse abfragen (DX=Gesamt, AX=grîsster freier Block)
+;   - trotzdem gesamten Speicher anfordern
+;   - Wenn's klappt: Block wieder freigeben und "gesamten Speicher"
+;     melden, ansonsten "grîssten freien Block" melden
+;   Das muss reichen, Win32+ kann immer den "gesamten freien Speicher"
+;   liefern, egal was es als "grîssten freien Block" meldet, und
+;   jenseits von Win9x lÅgen die XMS-Funktionen nicht.
+
+; JM 14.04.03
+; - Bezeichnung in "Routinen fÅr XMS.PAS" geaendert (war EMS.PAS)
+; - Neue Function XmsAvail:
+;   - stueckweise (zu je 100 Kb), kumulierte Reservierung und Freigabe
+;     des verfuegbaren XMS-Speichers bis zur Pruefung von max ca. 16 Mb
+;   - im Fehlerfall (ax = 0) bei der Reservierung wird genauer auf den
+;     Fehlercode A0h geprueft und nur in dem Fall wird der letzte
+;     erfolgreich reservierte Wert als available gemeldet
+;     (Voraussetzung ist daher, dass der XMS-Treiber zumindest diesen
+;     Fehlercode der Belegung alles freien XMS-Speichers liefert.)
+;   - bei anderen Fehlerursachen wird XmsAvail beendet und meldet
+;     0 Kb XMS-Speicher, wobei der Fehlercode (nunmehr) aus result
+;     ermittelt werden koennte.
+;   - der als verfÅgbar gemeldete XMS-Speicher ist bei Erreichen
+;     des max. Werts immer nur der mind. verfÅgbare XMS-Speicher.
+
 

@@ -1,3 +1,4 @@
+; $Id:
 TITLE Turbo Pascal XMS support for loading overlays - By Wilbert van Leijen
 PAGE 65, 132
 LOCALS @@
@@ -327,10 +328,10 @@ Code       ENDS
            END
 
 ;~~~~~~~~~~~~~~~~~~~
+; 16.03.03  MW  Neue Variable ovrmemsize zeigt die Groesse des Overlay
+;               im XMS an.
+;
 ; 08.03.03  JM  wegen des EMM386 von NovelDos 7.0, der das Register BX
 ;               bei der šBergabe einer 32-Bit Adresse in BX:DI
 ;               beim Kopieren von Units aus der Overlaydatei ins XMS nullt,
 ;               wird in Zeile 174/176 das Register BX gesichert
-;
-; 16.03.03  MW  Neue Variable ovrmemsize zeigt die Groesse des Overlay
-;               im XMS an.
