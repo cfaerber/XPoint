@@ -146,6 +146,9 @@ ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.1  2003/02/21 19:20:05  cl
+# - moved Makefile.in to Makefile.am
+#
 # Revision 1.8  2003/01/13 23:34:25  cl
 # - autoconf update
 #
