@@ -133,6 +133,42 @@ var flp : dbFLP;
       end;
   end;
 
+  procedure CheckFieldStr(const filename,fieldname: string; length: integer; const default: string);
+  var fld : dbFeldTyp;
+        d : DB;
+  begin
+    if not dbHasField(filename,LowerCase(fieldname)) then
+    begin
+      with fld do begin
+        fname:=fieldname; ftyp:=dbTypeString;
+        fsize:=length;
+      end;
+      dbAppendField(filename,fld);
+
+      if default<>'' then
+      begin
+        dbOpen(d,BoxenFile,0);
+        while not dbEOF(d) do begin
+          dbWriteStr(d,fieldname,default);
+          dbNext(d);
+        end;
+        dbClose(d);
+      end;      
+    end;
+  end;
+
+  {$IFDEF Debug}
+  // For developers only, to remove fields no longer needed, renamed, 
+  // etc. during development process.
+  
+  procedure CheckNoField(const filename,fieldname: string);
+  var  d : DB;
+  begin
+    if dbHasField(filename,LowerCase(fieldname)) then
+      dbDeleteField(filename,fieldname);
+  end;
+  {$ENDIF}
+  
   { Feld 'MsgID' in Nachrichtendatei einfÅgen (ab 1.01) }
   procedure NewFieldMessageID;
   var fld : dbFeldTyp;
@@ -804,6 +840,14 @@ begin
     AppS('amreplyto',80);  AppS('amfqdn',60);
     AppS('pmrealname',40); AppS('pmmail',80);
     AppS('pmreplyto',80);  AppS('pmfqdn',60);
+
+    AppS('QuoteChar',QuoteLen);
+    
+    AppS('QuoteToMsk',8);
+    AppS('PMKopf',8);
+    AppS('PMSignatur',8);
+    AppS('PMQuoteMsk',8);
+        
     dbCreate(GruppenFile,flp);
     dbReleaseFL(flp);
     end
@@ -815,6 +859,16 @@ begin
     if not dbHasField(GruppenFile,'amrealname') then
       NewFieldsForRoles;
     end;
+
+    CheckFieldStr(GruppenFile,'QuoteChar',QuoteLen, '');
+    CheckFieldStr(GruppenFile,'QuoteToMsk',8, 'QUOTETO');
+    CheckFieldStr(GruppenFile,'PMKopf',    8, 'PMKOPF');
+    CheckFieldStr(GruppenFile,'PMSignatur',8, 'PRIVSIG');
+    CheckFieldStr(GruppenFile,'PMQuoteMsk',8, 'QPRIV');
+
+    {$IFDEF Debug} 
+      CheckNoField (GruppenFile,'QuoteTmpl');
+    {$ENDIF}
 
   if not FileExists(SystemFile+dbExt) then begin      { SYSTEME: Fileserver u.a. }
     initflp(8);
@@ -943,6 +997,10 @@ end;
 
 {
   $Log$
+  Revision 1.44  2002/11/14 20:07:28  cl
+  - Simplified adding new fields to DB.
+  - New DB fields (GRUPPEN): QuoteChar, QuoteToMsk, PMKopf, PMSignatur, PMQuoteMsk.
+
   Revision 1.43  2002/07/25 20:43:54  ma
   - updated copyright notices
 
