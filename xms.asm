@@ -100,6 +100,7 @@ XmsAvail  proc     far
           mov      ah,8               ; xmsvail (orig,)
           call     dword ptr xmscall
           mov      di,dx              ; dx=total free XMS
+          mov      cx,dx
           mov      si,ax              ; ax=biggest free EMB
           cmp      dx,16384
           ja       e20                ; total free >16 Mb
@@ -107,22 +108,34 @@ XmsAvail  proc     far
 e20:      mov      ah,9               ; xmsalloc
           call     dword ptr xmscall
           cmp      ax,1
-          je       e22                ; total free ok
+          je       e24                ; total free >16 Mb Kb ok
 e21:      mov      di,16384           ; 16 Mb
           mov      dx,di
           mov      ah,9               ; xmsalloc
           call     dword ptr xmscall
           cmp      ax,1
-          je       e22                ; 16 Mb ok
+          je       e24                ; 16 Mb ok
           mov      di,15215           ; ca. 15 Mb
           mov      dx,di
           mov      ah,9               ; xmsalloc
           call     dword ptr xmscall
           cmp      ax,1
-          je       e22                ; ca. 15 Mb ok
-          mov      ax,si
+          je       e24                ; ca. 15 Mb ok
+          cmp      cx,15214
+          jbe      e22                ; <= 15214 Kb
+          jmp      e23                ; discard dx
+e22:      cmp      cx,0               ; total free XMS=0
+          mov      ax,0
+          je       e2
+          mov      di,cx
+          mov      dx,di
+          mov      ah,9               ; xmsalloc
+          call     dword ptr xmscall
+          cmp      ax,1
+          je       e24                ; <= 15124 Kb ok
+e23:      mov      ax,si
           jmp      e2
-e22:      mov      ah,0ah             ; xmsfree
+e24:      mov      ah,0ah             ; xmsfree
           call     dword ptr xmscall
           mov      ax,di
 e2:       ret
@@ -272,7 +285,7 @@ XmsWrite  endp
 ;   - Erst wenn das nicht klappt, wird der ursprnglich gr”áte, freie
 ;     Block an XPoint gemeldet.
 
-; JM (JG-) 04.05.03
+; JM (JG-) 05.05.03
 ; - xmsavail auf die Besonderheiten bei Windows 200/NT angepasst.
 ;
 ;   Tests ergaben, dass WindowsXP und die beiden Windows2000/NT
@@ -290,9 +303,12 @@ XmsWrite  endp
 ;
 ;   - zuerst wird der max. freie XMS und gr”áte EMB-Block ermittelt
 ;   - liegt der max. freie Wert XMS-Speicher ber 16 MB, dann versucht
-;     xmsavail ihn testweise zu reservieren
+;     xmsavail ihn zu reservieren
 ;     - klappt das nicht, dann werden 16348 Kb versucht
 ;     - klappt auch das nicht, werden 15215 Kb versucht
-;   - sollten auch die 15215 Kb nicht reservierbar sein, wird der
-;     in der ersten Abfrage ermittelt gr”áte, freie Block gemeldet
+;     - sollten auch die 15215 Kb nicht reservierbar sein und der
+;       zuerst gemeldete gesamte freie Speicher kleiner als 15215 Kb
+;       war, wird versucht dieser Wert zu reservieren
+;     - ist auch dieser Wert nicht testweise belegbar, dann wird
+;       der in der ersten Abfrage ermittelte gr”áte, freie Block gemeldet
 
