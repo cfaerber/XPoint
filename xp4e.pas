@@ -1341,6 +1341,7 @@ var ok    : boolean;
     size  : smallword;
     p     : byte;
     verteiler : boolean;
+    newbrett  : boolean; 
 
   function ShrinkEmpf(user,system:string):string;
   begin
@@ -1351,6 +1352,7 @@ begin
   ok:=true;
   oldpb:=pbox;
   verteiler:=false;
+  newbrett:=false;
   brett:=(left(s,1)='/') and (cpos('@',s)=0);
   if trim(s)='' then
     exit
@@ -1401,12 +1403,26 @@ begin
         s:=left(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
   if ok and not verteiler then begin
-    if cpos('@',s)=0 then dbSeek(bbase,biBrett,ustr(s))
+    if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(ustr(s),1)) {ohne "/"}
     else dbSeek(ubase,uiName,ustr(s));
     attrtxt(iif(dbFound,col.coldialog,col.coldiahigh));
     wrt(empfx,empfy,getres2(2718,2));    { 'Empf„nger' }
     freeres;
-    if dbFound then begin
+
+    if not dbFound and (cpos('@',s)=0) then  { Nicht Vorhandenes Brett }
+    begin
+      dbSeek(bbase,biBrett,'1'+mid(ustr(s),1));  { Internes PM-Brett ? }
+      if dbfound or (s='/') then 
+      begin 
+        errsound;
+        ok:=false;
+        end
+      else ok:=cc_testempf(s); 
+      if ok then newbrett:=true;
+      end;
+
+    if dbfound or newbrett then
+    begin
       if cpos('@',s)=0 then
         dbReadN(bbase,bb_Pollbox,_pbox)
       else begin
@@ -1519,14 +1535,14 @@ begin
     end;
   maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'Empf„nger ' }
     iifs(ntGrossUser(ntBoxNetztyp(box)),'>',''));
-{JG:05.02.00}
-  mappcustomsel(seluser,false);
-{/JG}
+  if pmonly then mappcustomsel(seluser,false)
+  else mappcustomsel(auto_empfsel,false);
   msetvfunc(empftest);
   maddstring(3,4+pba,getres2(2718,3),betr,40,BetreffLen,'');  { 'Betreff   ' }
   _pmonly:=pmonly;
   freeres;
   sel_verteiler:=true;
+  if pb then _keyboard(keydown);
   readmask(brk);
   sel_verteiler:=false;
   betr:=left(trim(betr),ntBetreffLen(pb_netztyp));
@@ -1548,22 +1564,41 @@ var brk  : boolean;
     headf: string[12];
     sigf : string[12];
     sdata: SendUUPtr;
+    pm   : boolean;
+    d    : DB;
+    grnr : longint;
 begin
   empf:=''; betr:='';
-  ReadDirect(getres(2719),empf,betr,box,true,brk);   { 'private Nachricht' }
+  ReadDirect(getres(2719),empf,betr,box,false,brk);   { 'private Nachricht' }
   if brk then exit;
   fn:=TempS(2000);
   dbGo(mbase,0);    { -> Kennung fr dosend(), daá kein Brett-Reply }
-  real:='';
-  BriefSchablone(true,HeaderPriv,fn,empf,real);
-  headf:='';
-  sigf:=PrivSignat;
+  real:=''; 
+  pm:=(pos('@',empf)>0);
+  if pm then
+  begin                                            {User}
+    BriefSchablone(true,HeaderPriv,fn,empf,real);
+    headf:='';
+    sigf:=PrivSignat;
+    end
+  else begin                                       {Brett}     
+    empf:='A'+empf;
+    dbSeek(bbase,biBrett,ustr(empf));
+    dbRead(bbase,'gruppe',grnr);
+    dbOpen(d,GruppenFile,1);
+    dbSeek(d,giIntnr,dbLongStr(grnr));
+    headf:=dbReadStr(d,'kopf')+'.xps';
+    sigf:=dbReadStr(d,'signatur')+'.xps';
+    dbclose(d);
+    BriefSchablone(false,headf,fn,empf,real);
+    headf:='';
+    end;
   if autocpgd then pgdown:=true;
   forcebox:=box;
   new(sdata);
   fillchar(sdata^,sizeof(sdata^),0);
   sdata^.empfrealname:=real;
-  if DoSend(true,fn,empf,betr,true,false,true,false,true,sdata,headf,sigf,0)
+  if DoSend(pm,fn,empf,betr,true,false,true,false,true,sdata,headf,sigf,0)
   then;
   dispose(sdata);
   pgdown:=false;
@@ -2357,6 +2392,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/05/13 18:23:52  jg
+  - Nachricht/Direkt + Weiterleiten..Direkt:
+    Bretter sind jetzt sowohl bei Direkteingabe (mit einleitendem "/")
+    als auch per F2-Auswahl erlaubt.
+
   Revision 1.24  2000/05/13 09:14:40  jg
   - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
 

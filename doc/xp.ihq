@@ -8912,21 +8912,27 @@ fachen.
 <<Nachricht / Direkt
 
 Hier k”nnen Sie eine Nachricht direkt an einen User
-senden, ohne den Namen aus der Userliste w„hlen oder
-evtl. neu anlegen zu mssen. Es sind drei Eingaben
-erforderlich:
+oder ein Brett senden. Ohne den Empf„nger vorher in
+Brett oder Userliste anlegen zu mssen. 
 
 <<Server:>>    Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
            erscheint nur, wenn mehr als eine Server-
            box erfaát ist. Es gengt, den Anfangs-
            buchstaben des Boxnamens einzugeben.
+ 
+           Bei bereits angelegten Usern/Brettern
+           wird dieses Feld automatisch gesetzt.
+            
 
 <<Empf„nger>>  Der Name des Users. CrossPoint erg„nzt
            den Namen bei Bedarf automatisch um Box-
-           namen oder ".ZER". Noch nicht in der User-
-           liste vorhandene User sind an der Hervor-
+           namen oder ".ZER". Noch nicht angelegte
+           User oder Bretter sind an der Hervor-
            hebung des Wortes "Empf„nger" zu erkennen.
+
+           Brettnamen gebe Sie hier ein, indem Sie
+           "/" als erstes Zeichen verwenden.
 
 <<Betreff>>    Der gewnschte Betreff der Nachricht.
 
