@@ -870,7 +870,6 @@ function UTF8FormS(const s:string; StartColumn, Columns:integer):string; overloa
 var Position, NewPosition: Integer;
     StartPosition: Integer;
     W: Integer;
-    C: TUniCodeChar;
 begin
   StartPosition := 1;
   while (StartColumn > 1) do
@@ -1950,7 +1949,7 @@ end;
 
 function FindURL(const s: String; var x, y: Integer): Boolean;
 const
-  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
     '-','_','#','=','&','%','@','$',',','+'];
 begin
   x:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
@@ -2063,6 +2062,9 @@ end;
 
 {
   $Log$
+  Revision 1.140  2003/09/26 11:45:24  mk
+  - added ";" to list of valid urlchars
+
   Revision 1.139  2003/09/25 20:27:39  cl
   - BUGFIX: UTF8Mid works with characters, not columns => use extended version
     of UTF8FormS for lister.
