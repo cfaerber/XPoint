@@ -987,7 +987,12 @@ begin
 
   if RecodedCharset or RecodedEncoding then
   begin
-    ins := TFileStream.Create(pa.FileName,fmOpenRead);
+    try
+      ins := TFileStream.Create(pa.FileName,fmOpenRead);
+    except
+      on E: EFOpenError do
+        ins := TFileStream.Create(pa.FileName,fmCreate);
+    end;
 
     try // [1]
       FileName := TempS(_FileSize(pa.FileName));
