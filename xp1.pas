@@ -864,7 +864,9 @@ asm
             cmp si,160                        { oder Bildschirmrand erreicht ist.}
             jne @@1
 
-@@2:        pop bx
+@@2:        mov di,y
+            mov byte ptr ListFoundTab[di],1
+            pop bx
             pop cx 
             pop dx 
             pop di
@@ -1223,8 +1225,10 @@ end;
 
 
 procedure showusername;
-var d    : DB;
-    user : string[40];
+var d        : DB;
+    user     : string[76];
+    realname : string[40];
+    nt       : byte;
 
   procedure showtline;
   begin
@@ -1232,13 +1236,51 @@ var d    : DB;
     wrt(1,3,dup(screenwidth,'ﬂ'));
   end;
 
+  function def_adresse:string;
+  var trueboxname : string[BoxNameLen];
+      username    : string[30];
+      pointname   : string[25];
+      domain      : string[60];
+      email       : string[eAdrLen];
+      flags       : byte;
+      aliaspt     : boolean;
+  begin
+    trueboxname:=dbReadStr(d,'boxname');
+    username:=dbReadStr(d,'username');
+    pointname:=dbReadStr(d,'pointname');
+    domain:=dbReadStr(d,'domain');
+    email:=dbReadStr(d,'email');
+    dbRead(d,'script', flags);
+    aliaspt:=(flags and 4 <> 0);
+    case nt of
+      nt_Client  : def_adresse:=left(email,cpos('@',email)-1) +
+                                ' @ ' + mid(email,cpos('@',email)+1);
+      nt_UUCP    : def_adresse:=iifs(email<>'', left(email,cpos('@',email)-1) +
+                                ' @ ' + mid(email,cpos('@',email)+1),
+                                username + ' @ ' +
+                                iifs (aliaspt, trueboxname + ntServerDomain(DefaultBox),
+                                      pointname + domain));
+      nt_ZConnect: def_adresse:=username + ' @ ' +
+                                iifs (aliaspt, pointname, trueboxname) + domain;
+    else
+      def_adresse:=username + ' @ ' + trueboxname;
+    end;
+  end;
+
+
 begin
   if dispusername and not startup then begin
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,ustr(DefaultBox));
     showtline;
     if dbFound then begin
-      dbRead(d,'username',user);
+      nt:=dbReadInt(d,'netztyp');
+      realname:=iifs(ntRealname(nt),dbReadStr(d,'realname'),'');
+      user:=left(def_adresse,sizeof(user));
+      if (length(user)+length(realname)) <= screenwidth-7 then
+        user:=user + iifs(realname<>'',' ('+realname+')','')
+      else if length(user) <= screenwidth-10 then
+        user:=user + iifs(realname<>'',' ('+left(realname,screenwidth-10-length(user))+'...)','');
       mwrt(screenwidth-2-length(user),3,' '+user+' ');
       end;
     dbClose(d);
@@ -2233,7 +2275,7 @@ begin
   if not brk then begin
     testbrk(brk);
     if brk then begin
-      pushhp(1504);
+      pushhp(1520);
       if not ReadJN(getres(160),true) then brk:=false;   { 'Abbrechen' }
       pophp;
       end;
@@ -2302,6 +2344,43 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.32  2002/03/08 22:56:39  my
+  MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+       kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
+       - Beim Netztyp RFC/Client mu·, bei RFC/UUCP kann eine gÅltige und
+         vollstÑndige eMail-Adresse statt des Usernamens Åbergeben werden;
+       - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+       - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+         wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope
+         nicht leer sein (= gelîscht werden);
+       - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+         Zeichen vergrî·ert (bei externen Befehlen sind max. 127 Zeichen
+         zulÑssig);
+       - Hinweismeldung "Username: <neuer Username>" am Schlu· der Routine
+         zeigt jetzt komplette Adresse an und berÅcksichtigt Alias-Points
+         (RFC/UUCP und ZConnect).
+       Weitere Details siehe Hilfe.
+
+  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
+       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
+         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
+  JG:- Wenn im Brettmanager eine Markiersuche mit "s" durchgefÅhrt wurde
+       und die eingestellte Farbe fÅr Zeilen- und Wortmarkierung identisch
+       war, dann blieb der Cursorbalken nach DrÅcken von <Tab> nicht nur
+       auf den markierten Suchergebnissen, sondern auch auf bestellten
+       Brettern stehen.
+
   Revision 1.48.2.31  2001/12/11 17:47:43  my
   MY:- ANSI-MÅll und Typos im CVS-Log bereinigt.
 
