@@ -257,7 +257,7 @@ function ShowDownloadTable($downfile) {
             }
           } else {
             $line = str_replace("<Date>", Date("Y-m-d"), $line);
-            echo $line;
+//            echo $line;
 
             if ($fhandle) {
               $fsize = ftp_size($fhandle, $line);
