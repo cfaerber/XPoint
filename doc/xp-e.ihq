@@ -114,6 +114,7 @@ one of the following channels:
 þ  <<Bug reports>> should be directed as follows
    (in descending priority):
 
+
    Usenet     Write an article to:
               <<crosspoint.openxp16.pub.allgemein
 
@@ -136,7 +137,8 @@ one of the following channels:
               such. This group is available at the
               news server news.kannofant.de *only*.
 
-   Internet   eMail to: <<support\@openxp16.de
+
+   eMail      Write to: <<support\@openxp16.de
               With this address you have access to
               the OpenXP/16 mailing list to which
               the developers are also subscribed and
@@ -149,8 +151,15 @@ one of the following channels:
               same way by using the message text
               "<<unsubscribe openxp16-list>>".
 
+
    WWW        <<http://www.openxp16.de/
-              (under construction)
+              The official Internet homepage of
+              OpenXP/16. Under "šber OpenXP/16" all
+              contact channels can be used with a
+              mouse click. A website for OpenXP/16
+              in English language is available at:
+              <<http://mysite.freeserve.com/openxp16eng>>
+
 
    Fido       Echomail in: <<XPOINT>>
               Although not directly linked to the
@@ -1455,18 +1464,20 @@ be saved. <Esc> breaks off.
 If no other path is given, XP puts the file in the
 Extract Directory [/Config/Path/Extract].@261
 
-With F2 you can copy to the Windows-Clipboard.
+With F2 you can copy to the Windows Clipboard.
 
-<<Windows-Clipboard>>
-copies the marked Text to the Clipboard
+<<Clipboard>>
+Copies the marked text to the Clipboard.
 
-<<Win-Clipboard (URL)>>
-tries to generate a Internet-URL
-(FTP:// or HTTP:// or WWW.) from the first marked
-line and copies it to the Windows-Clipboard.
+<<Clipboard (URL)>>
+Tries to recognize an Internet URL (ftp:// or http://
+or www.) in the first marked line and copies it to
+the Clipboard. If XP recognizes an eMail address, it
+guesses the homepage URL
+(<<xx\@openxp16.de>> => <<http://www.openxp16.de>>).
 
-<<Win-Clipboard (MAIL)>>
-like before, but generates a Mail-Adress.
+<<Clipboard (MAIL)>>
+As before, but generates an eMail address.
 
 @
 75

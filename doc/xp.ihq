@@ -154,6 +154,7 @@ Sie verschiedene M”glichkeiten:
 ş  <<Bugreports>> sollten bevorzugt wie folgt gemeldet
    werden (mit absteigender Priorit„t):
 
+
    Usenet     Schreiben Sie einen Artikel in:
               <<crosspoint.openxp16.pub.allgemein
 
@@ -178,7 +179,7 @@ Sie verschiedene M”glichkeiten:
               erh„ltlich.
 
 
-   Internet   eMail an: <<support\@openxp16.de
+   eMail      Schreiben Sie an: <<support\@openxp16.de
               Damit erreichen Sie die [Mailingliste]@12
               von OpenXP/16, die ebenfalls von den
               Entwicklern gelesen wird und an der sie
@@ -193,7 +194,10 @@ Sie verschiedene M”glichkeiten:
               
 
    WWW        <<http://www.openxp16.de/
-              (to be completed)
+              Die Internet-Homepage von OpenXP/16.
+              Auf der Seite "šber OpenXP/16" sind
+              dort nochmals alle Kontakte aufgefhrt
+              und per Mausklick erreichbar.
 
 
    Fido       Echomail in: <<CROSSPOINT.OPENXP16.GER
@@ -2817,9 +2821,12 @@ Mit <<<F2> >>kommen sie zur Auswahl fr das Clipboard
 Kopiert den markierten Text ins Clipboard.
 
 <<Clipboard (URL)>>
-Versucht aus der ersten markierten Zeile eine
+Versucht, aus der ersten markierten Zeile einen
 Internet-URL ("ftp://" oder "http://" oder "www.")
-auszuschneiden, und kopiert diese ins Clipboard.
+auszuschneiden und kopiert diesen ins Clipboard.
+Wenn XP eine Mail-Adresse erkennt, dann wird aus
+dieser der Homepage-URL erraten
+(<<xx\@openxp16.de>> => <<http://www.openxp16.de>>).
 
 <<Clipboard (MAIL)>>
 Analog zur vorherigen Funktion, nur wird hier
