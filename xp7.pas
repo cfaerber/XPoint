@@ -20,7 +20,7 @@ interface
 uses
       {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
       sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
-      fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,
+      fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,debug,
       resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
@@ -637,8 +637,7 @@ begin                  { of Netcall }
       assign(f,ppfile);
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP, ltNNTP, ltPOP3] then
       begin
-        if not existf(f) then
-          makepuf(ppfile,false);      { leeren Puffer erzeugen }
+        if not existf(f) then makepuf(ppfile,false);      { leeren Puffer erzeugen }
         case logintyp of
           ltMagic : ZtoMaggi(ppfile,upuffer,pronet,1);
           ltQuick : ZtoQuick(ppfile,upuffer,false,1);
@@ -684,10 +683,7 @@ begin                  { of Netcall }
             rename(f,upuffer);
             spufsize:=size;
             shell(uparcer,500,1);           { Upload-Packer }
-            if ff then
-              erase(f)
-            else
-              rename(f,ppfile);
+            if ff then erase(f) else rename(f,ppfile);
             RemoveEPP;
             end;
           end;
@@ -1301,8 +1297,7 @@ begin                  { of Netcall }
         end;
 
   ende0:
-      if net and (OStype<>OS_2) then
-        RestComState(bport,cps);
+      if(net and (OStype<>OS_2))and(not _fido)then RestComState(bport,cps);
       comn[boxpar^.bport].fossil:=orgfossil;
     end else // not LoginTyp ltNNTP, ltPOP, ltIMAP
     begin
@@ -1332,8 +1327,7 @@ begin                  { of Netcall }
     {window(1,1,screenwidth,screenlines);}
     aufbau:=true;
     end;
-  if Netcall_connect and not crash then
-    AponetNews;
+  if Netcall_connect and not crash then AponetNews;
 end;
 
 
@@ -1536,6 +1530,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/09/05 17:25:13  ma
+  - kein RestComState fuer Fido
+
   Revision 1.31  2000/08/27 10:37:09  mk
   - UUZ ist jetzt intern
 
