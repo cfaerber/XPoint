@@ -729,10 +729,9 @@
     dbRead(d,'nameomaps',maps);
     dbRead(d,'realname',realname);
     dbRead(d,'domain',dom);
-    dbRead(d,'fqdn',fqdom);  {16.01.00 HS}
+    dbRead(d,'fqdn',fqdom);
     dbRead(d,'boxdomain',bdom);
     dbRead(d,'fidoname',fidoname);
-    {16.01.00 HS}
     NameRead(nt,name,user,komm,maps,realname,dom,fqdom,bdom,fidoname,kompname,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
@@ -768,6 +767,9 @@
             renbox('.BL');
             renbox('.FBL');
             renbox('.INF');
+
+            renbox(BoxPar^.PPPClientpath+'.BL');
+            renbox(BoxPar^.PPPClientpath+'.RC');
             end;
           end;
         end;
@@ -1371,6 +1373,9 @@
 
 {
   $Log$
+  Revision 1.10.2.14  2001/03/19 17:35:46  mk
+  - neuer Brettmanager
+
   Revision 1.10.2.13  2001/01/30 10:01:23  mk
   - weitere arbeiten am Client-Modus
 

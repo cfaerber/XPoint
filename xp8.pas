@@ -422,6 +422,180 @@ begin
   freeres;
 end;
 
+function MakeRC(bestellen: boolean; box: string):boolean;
+type
+  Buffer = array[0..4095] of Byte;
+var t1,t2      : text;
+    rcfile,blfile : string;
+    Line,Line2    : string;
+    Count,
+    LineCount     : integer;
+    marked : boolean;
+    Buf1, Buf2: ^Buffer;
+
+  procedure domark;
+  const
+    MaxStr = 50;
+  var
+    i, j: Integer;
+    LineArray: array[1..MaxStr] of String;
+    LineMark: array[1..MaxStr] of Boolean;
+  begin
+    blfile:=ustr(boxfilename(box))+'.BL';
+    if not exist(rcfile) or not exist(blfile) then exit;
+    Assign(t2,blfile);
+    SetTextBuf(t2, Buf2^);
+    Reset(t2);
+    Assign(t1,TempFile('')); { neues BL-File }
+    SetTextBuf(t1, Buf1^);
+    Rewrite(t1);
+
+    OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/');
+    list_readfile(rcfile,0);
+
+    repeat   { bestellte Bretter markieren }
+      FillChar(LineMark, SizeOf(LineMark), 0);
+      i := 1;
+      while (i<=MaxStr) and (not Eof(t2)) do
+      begin
+        Readln(t2, Line2);
+        line2:=rtrim(line2);
+        if lastchar(line2)='˚' then dellast(line2);
+        if (cpos(' ',line2)<>0) and (firstchar(line2)<>'!') then
+          line2:=copy(line2,1,cpos(' ',line2)-1);
+        LineArray[i] := Line2;
+        inc(i);
+      end;
+      Dec(i);
+      line := first_line;
+      while line <> #0 do
+      begin
+        for j := 1 to i do
+        begin
+          if copy(line,1,cpos(' ',line)-1)=LineArray[j] then
+            LineMark[j] := true;
+        end;
+        line := next_line;
+      end;
+      for j := 1 to i do
+      begin
+        if LineMark[j] then
+          writeln(t1,LineArray[j]+'   ˚')
+        else
+          writeln(t1,LineArray[j]);
+      end;
+    until eof(t2);
+    CloseList;
+    signal; wkey(1,false);
+    close(t2);
+    close(t1);
+    erase(t2);
+    rename(t1,blfile);
+  end;
+
+label makercend;
+
+begin
+  New(Buf1); New(Buf2);
+  moment;
+  MakeRc:=true;
+  ReadBox(0,box,boxpar);
+  rcfile:=ustr(boxfilename(box))+'.RC';
+  Assign(t1,rcfile);       { BOX.RC }
+  SetTextBuf(t1, Buf1^);
+  if not (exist(rcfile)) then
+  begin
+    Rewrite(t1);
+    Close(t1);
+  end;
+  if bestellen then
+  begin
+    line := first_marked;
+    while line <> #0 do
+    begin   { PrÅfen, ob Brett schon bestellt }
+      Reset(t1);
+      while not eof(t1) do
+      begin
+        Readln(t1, Line2);
+        if cpos(' ',line2) <> 0 then
+          line2:=copy(line2,1,cpos(' ',line2)-1);
+        if lastchar(line)='˚' then dellast(line);
+        if (rtrim(Line)=Line2) or (firstchar(Line)='!') then
+        begin
+          if (firstchar(Line)='!') then
+            rfehler1(830,Line)
+          else  { '%s kann nicht bestellt werden' }
+            rfehler1(831,Line);      { '%s wurde bereits bestellt'     }
+          close(t1);
+          MakeRc:=false;
+          CloseList;
+          goto MakeRCEnd;
+        end;
+      end;
+      Close(t1);
+      line := next_marked;
+    end;
+    Append(t1);
+    line := first_marked;
+    while line <> #0  do
+    begin  { neue Bretter an RC-File anhÑngen }
+      writeln(t1,Line + ' -'+StrS(10){!!});
+      line := next_marked;
+    end;
+    Close(t1);
+  end else
+  begin             { abbestellen }
+    MakeRc:=false;
+    Assign(t2,TempFile('')); { RC-Copy-File }
+    SetTextBuf(t2, Buf2^);
+    ReWrite(t2);             { ????.TMP: neues BOX.RC      }
+    line := first_marked;
+    while line <> #0 do
+    begin
+      LineCount:=0;
+      Count:=0;
+      if cpos(' ',line)<>0 then line:=copy(line,1,cpos(' ',line)-1);
+      Reset(t1);
+      while not eof(t1) do
+      begin
+        readln(t1,Line2);
+        if cpos(' ',line2)<>0 then line2:=copy(line2,1,cpos(' ',line2)-1);
+        if (Line=Line2) then
+          break
+        else
+          inc(LineCount);      { zu lîschende Zeile suchen }
+      end;
+      Close(t1);
+      Reset(t1);
+      while Count < LineCount do begin
+        readln(t1,Line2);
+        writeln(t2,Line2);   { bis Zeile neuschreiben }
+        inc(Count);
+      end;
+      Readln(t1,Line2);      { zu lîschende Zeile Åberlesen }
+      while not eof(t1) do begin
+        Readln(t1,Line2);
+        Writeln(t2,Line2);   { zuende schreiben }
+      end;
+      Close(t1);
+      Erase(t1);
+      Close(t2);
+      Rename(t2,rcfile);
+      Assign(t2,TempFile(''));
+      SetTextBuf(t2, Buf2^);
+      Rewrite(t2);
+      Line := next_marked;
+    end;
+    Close(t2);
+    Erase(t2);
+  end;
+  CloseList;
+  domark;
+makercend:
+  InOutRes:=0;
+  closebox;
+  Dispose(Buf1); Dispose(Buf2);
+end;
 
 { bbase-aktuelles Brett abbstellen   }
 { brett='' -> markierte Bretter abb. }
@@ -904,12 +1078,13 @@ var d      : DB;
     fido   : boolean;
     gs     : boolean;
     uucp   : boolean;
+    ppp: boolean;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
     ask    : string[60];
     bretter: string[15];
-    lfile  : string[12];
+    lfile  : string;
     verbose: boolean;
 
 label again;
@@ -1046,11 +1221,14 @@ begin
     fido:=ntAreamgr(netztyp);
     gs:=(netztyp=nt_GS);
     uucp:=(netztyp=nt_UUCP);
-    if uucp then begin
+    if uucp then
+    begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
       postmaster:=(boxpar^.BMtyp=bm_postmaster);
-      end;
+      ppp := BoxPar^.PPPMode;
+      if BoxPar^.SysopInp+BoxPar^.SysopOut<>'' then ppp := false;
+    end;
     qwk:=(netztyp=nt_QWK);
     end
   else begin
@@ -1063,10 +1241,13 @@ begin
   if fn='' then
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
   else begin
-    if (art=1) and exist(fn+'.BBL') and changesys then
-      lfile:=fn+'.BBL'
+    if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
+      lfile:=fn+'.BBL' else
+    if (art=1) and exist(fn+'.RC') and ppp then
+      lfile:=fn+'.RC'
     else lfile:=fn+'.BL';
-    if not exist(lfile) then
+    if ppp then lfile := BoxPar^.PPPClientPath + lfile;
+    if not exist(lfile) or (_fileSize(lfile) = 0) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
       if fido or maus or qwk then
@@ -1103,6 +1284,11 @@ begin
             goto again;
             end;
           end;
+        if ppp and (anz=1) then
+        if (art=0) and (firstchar(first_marked)='!') then begin
+          rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
+          goto again;
+        end;
         bretter:=getres2(807,iif(anz=1,1,2));
         case art of
             0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
@@ -1127,17 +1313,25 @@ begin
             end;
           if fido then writeln(t,'---');
           close(t);
-          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+          if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
             BretterAnlegen;
-          CloseList;
           if art=3 then
             verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
-          case art of
-            0 : sendmaps('ADD',box,fn);
-            1 : sendmaps('DEL',box,fn);
-            3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
-            4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
-          end;
+          if not ppp then
+            case art of
+              0 : sendmaps('ADD',box,fn);
+              1 : sendmaps('DEL',box,fn);
+              3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
+              4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
+            end;
+          if ppp and (art in [0,1]) then
+            if MakeRC(art=0,box) then
+            begin
+              OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/');
+              list_readfile(fn,0);
+              BretterAnlegen;
+              CloseList;
+            end;
           erase(t);
           end
         else begin
@@ -1151,7 +1345,6 @@ begin
       end;
     end;
 end;
-
 
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
 var brk     : boolean;
@@ -1584,6 +1777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.7  2001/03/19 17:35:46  mk
+  - neuer Brettmanager
+
   Revision 1.10.2.6  2001/01/16 08:13:04  mk
   - Grosschreibung von Dateinamen
 

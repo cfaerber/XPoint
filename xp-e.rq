@@ -1676,6 +1676,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 821  Import newsgroup list
 822  Import file-area list
 
+832  Noch zu verarbeiten:
+833  fertig
+
 # XP8.INC
 
 850  Reading file echo list for %s ...
@@ -2986,6 +2989,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25 Invalid converter configuration: no $OUTFILE specified
 26 This newsgroup cannot be subsribed.
 27 This newsgroup cannot be unsubscribed.
+30 %s kann nicht bestellt werden
+31 %s wurde bereits bestellt
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!

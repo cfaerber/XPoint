@@ -24,7 +24,7 @@ uses
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
-      resource,xpglobal, xp0,xp1,xp1o2,xp1input, lfn;
+      clip, resource,xpglobal, xp0,xp1,xp1o2,xp1input, lfn;
 
 
 function RunScript(test:boolean; scriptfile:pathstr;
@@ -652,7 +652,7 @@ begin
 
 {$IFDEF CAPI }
     if ISDN then
-      CAPI_release { 04.02.2000 MH: bei ISDN-CAPI abmelden }
+      CAPI_release { bei ISDN-CAPI abmelden }
     else
 {$ENDIF }
 
@@ -660,7 +660,8 @@ begin
       if OStype<>OS_2 then
       begin
         RestComState(comnr,cps);
-        SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+        if WinVersion >= $400 then
+          SetUart(bport,baud,Pnone,8,1,not IgnCTS);
       end;
       rfehler(2002);     { 'Modem nicht bereit.' }
       initcom:=false;
@@ -1614,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2001/03/19 17:35:47  mk
+  - neuer Brettmanager
+
   Revision 1.10.2.3  2001/03/01 09:34:18  mk
   JG:- fix fuer COM-Reset
 

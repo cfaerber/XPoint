@@ -91,6 +91,7 @@ function  get_selection:string;
 function  first_marked:string;
 function  next_marked:string;
 function  list_markanz:longint;
+function  list_lineanz: longint;
 function  first_line:string;
 function  next_line:string;
 function  prev_line:string;
@@ -1438,6 +1439,10 @@ begin
   list_markanz:=anz; }
 end;
 
+function list_lineanz: longint;
+begin
+  list_lineanz:=alist^.lines;
+end;
 
 function first_line:string;
 begin
@@ -1498,6 +1503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.5  2001/03/19 17:35:45  mk
+  - neuer Brettmanager
+
   Revision 1.19.2.4  2000/12/27 21:46:30  mk
   - crash bei 0 zeilen langen Nachrichten, feststehenden Headern und Mausklick behoben
 

@@ -23,7 +23,7 @@ uses
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
-      xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu, lfn;
+      clip, xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu, lfn;
 
 
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
@@ -1319,7 +1319,8 @@ ende0:
     if net and (OStype<>OS_2) then
     begin
       RestComState(bport,cps);
-      SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+      if WinVersion >= $400 then
+        SetUart(bport,baud,Pnone,8,1,not IgnCTS);
     end;
     comn[boxpar^.bport].fossil:=orgfossil;
 
@@ -1547,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.9  2001/03/19 17:35:46  mk
+  - neuer Brettmanager
+
   Revision 1.16.2.8  2001/03/01 09:34:18  mk
   JG:- fix fuer COM-Reset
 

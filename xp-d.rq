@@ -1719,6 +1719,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 822  Fileecho-Liste einlesen
 823  Filecho-Liste fr %s wird eingelesen...
 
+832  Noch zu verarbeiten:
+833  fertig
+
 # XP8.INC
 850  Fileecho-Liste fr %s wird eingelesen...
 + 851
@@ -3037,6 +3040,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 25 Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt
 26 Dieses Brett kann nicht bestellt werden.
 27 Dieses Brett kann nicht abbestellt werden.
+30 %s kann nicht bestellt werden
+31 %s wurde bereits bestellt
 # XP8.INC
 50 Keine Filescan-Nachricht gew„hlt!
 51 %s ist kein eingetragener Fido-Server!
