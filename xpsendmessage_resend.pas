@@ -1052,8 +1052,7 @@ again:
                     sData.sendfilename:=hdp.datei;
                     sData.sendfiledate:=hdp.ddatum;
                   end;
-                 { suboptimal }
-                  if ((typ in [wlKopie..wlQuoteTo,wlOriginal]) and (not pm)) then
+                  if ((typ in [wlKopie..wlQuoteTo,wlOriginal]) and (not pm)) and (am_replyto <> '') then
                     with sData.EmpfList.AddNew do begin zcaddress:=am_replyto; addresstype := atFollowupTo; end;
                   if typ in [wlKopie,wlErneut,wlOriginal] then sData.quotestr:=hdp.quotestring;
                   if typ=wlOriginal then sData.orghdp:=hdp;
@@ -1437,6 +1436,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2003/08/26 00:35:58  mk
+  - fixed empty followup in weiterleit()
+
   Revision 1.9  2003/08/24 23:33:27  cl
   - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
     Nachricht löschen (nach Versand), Empfangsbestätigungen,
