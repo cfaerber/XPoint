@@ -73,7 +73,6 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
 { --- Initialization/Destruction ------------------------------------------ }
 
 constructor TUUCProtocolG.Create(caller: TUUCPNetcall);
-var i : integer;
 begin
   inherited Create(caller);
   Close:=false;
@@ -85,7 +84,6 @@ begin
 end;
 
 destructor TUUCProtocolG.Destroy;
-var i:integer;
 begin
 //  for i:=0 to 7 do if assigned(Buffer[i]) then dispose(Buffer[i]);
 end;
@@ -213,10 +211,8 @@ end;
 { --- protocol startup/shutdown --------------------------------------------- }
 
 function TUUCProtocolG.InitProtocol:boolean;
-var i : integer;
-    n : byte;
+var n : byte;
     CtlHeader: CP_HEADER;
-    s : string;
 begin
   DebugLog('uucp-g','UUCP-G: InitProtocol',dlInform);
 try
@@ -293,8 +289,7 @@ end;
 end;
 
 procedure TUUCProtocolG.ExitProtocol;
-var i : integer;
-    n : byte;
+var n : byte;
     CtlHeader: CP_Header;
 label close_done;
 begin
@@ -452,17 +447,11 @@ end;
 
 procedure TUUCProtocolG.Receive(var f:file;var s:string;command:boolean);    { Befehl oder Datei empfangen }
 var n,size,i,j   : integer;
-    b            : byte;
     w            : smallword;
     off,sub      : integer;
     AckEach      : boolean;
     blksize      : word;
-    ftyped       : boolean;
-    timeout      : boolean;
-    timeouts     : integer;
     CtlHeader    : CP_Header;
-
-label abbruch;
 
   procedure AckBuffer;
   var i : integer;
@@ -612,8 +601,6 @@ begin
     inc(ofs,size);
   until ofs>length(s);
 
-  DebugLog('uucp-g','Sent Command',dlInform);
-
   if not WaitAcknowledge(true) then
     raise EUUCProtFile.Create('error sending command');
 end;
@@ -621,19 +608,14 @@ end;
 function TUUCProtocolG.GetCommand: string;
 var f:file;
 begin
-  DebugLog('uucp-g','Getting Command',dlInform);
   Receive(f,result,True);
   DebugLog('uucp-g','Got Command: '+result,dlInform);
 end;
 
 procedure TUUCProtocolG.SendFile(var f:file; offset:longint);
-var size : longint;
-    rr   : word;
+var rr   : word;
     buf  : CP_Buffer;
-label ende;
 begin
-  seek(f,offset);
-  size:=offset;
   BufFirst:=Send_Seqnr; BufAnz:=0;
 
   DebugLog('uucp-g',Format('Sending File',[0]),dlInform);
@@ -662,6 +644,12 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/03/25 18:44:04  cl
+  - moved ncuucp-fz.inc from playground to main
+  - enabled UUCP-f/z in ncuucp.pas
+  - cleanups, removed some unnecessary variables
+  - some minor fixes
+
   Revision 1.1  2001/03/24 22:55:29  cl
   - moved from playground to main
 

@@ -29,6 +29,7 @@ end;
 
 procedure TUUCProtocolE.SendCommand(s:string);
 begin
+  DebugLog('uucp-e','Sending Command: '+s,dlInform);
   CommObj.SendString(s+#0,false);
   Netcall.TestBreak;
 end;
@@ -42,7 +43,7 @@ begin
     if CommObj.CharAvail then
     begin
       c:= CommObj.GetChar;
-      if c=#0 then exit;
+      if c=#0 then Break;
       result:=result+c;
     end else
     begin
@@ -50,6 +51,8 @@ begin
       mdelay(0);
     end;
   until false;
+  
+  DebugLog('uucp-e','Got Command: '+result,dlInform);
 end;
 
 procedure TUUCProtocolE.SendFile(var f:file; offset:longint);
@@ -58,12 +61,11 @@ var   len,rd,sd : LongInt;
       s    : string;
       buf  : packed array[1..bsiz] of char;
 begin
-  seek(f,offset);
+  DebugLog('uucp-e','Sending File',dlInform);
   len:=Filesize(f);
 
   s:=StrS(len);
   s:=s+StringOfChar(#0,20-length(s));
-
   CommObj.SendString(s,false);
 
   while len>0 do
@@ -78,12 +80,11 @@ begin
 end;
 
 procedure TUUCProtocolE.RecFile(var f:file);
-const bsiz = 8192; (* MUST be >= 20 *)
 var   len,rd : LongInt;
       s    : string;
-      buf  : packed array[1..bsiz] of char;
+      buf  : packed array[1..8192] of char;
 begin
-  seek(f,0); truncate(f);
+  DebugLog('uucp-e','Receiving File',dlInform);
 
   SetLength(s,20);
   CommObj.ReadBlock(s[1],20,rd);
@@ -96,7 +97,7 @@ begin
 
   while len>0 do
   begin
-    CommObj.ReadBlock(buf,min(len,bsiz),rd);
+    CommObj.ReadBlock(buf,min(len,sizeof(buf)),rd);
     BlockWrite(f,buf,rd);
     len:=len-rd;
     FileAdvance(buf,rd);
@@ -106,6 +107,12 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/03/25 18:44:04  cl
+  - moved ncuucp-fz.inc from playground to main
+  - enabled UUCP-f/z in ncuucp.pas
+  - cleanups, removed some unnecessary variables
+  - some minor fixes
+
   Revision 1.1  2001/03/24 22:55:29  cl
   - moved from playground to main
 

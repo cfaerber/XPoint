@@ -42,7 +42,7 @@ function UUCPNetcall(boxname: string;
 implementation
 
 uses
-  xp3,xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
+  xp3,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
   xpnt,xpnetcall,ncuucp,objcom;
 
 function UUCPNetcall(boxname: string;
@@ -158,7 +158,7 @@ var
 
           repeat
             seek(f1,adr); blockread(f1,s[1],40,rr); s[0]:=chr(rr);
-            p:=cpos(#10,s); s[0]:=chr(p-1); inc(adr,p); {!! BUG: Lines MUST NOT be longer than 255 chars !!}
+            p:=cpos(#10,s); s[0]:=chr(p-1); inc(adr,p);
             if (s='C rcsmtp') or (s='C rfsmtp') or (s='C rgsmtp') or (s='C rzsmtp') then s:='C rsmtp';
             s:=s+#10;
             blockwrite(f2,s[1],length(s));
@@ -485,7 +485,7 @@ begin {function UUCPNetcall}
   end; {!diskpoll}
 
   if result IN [el_recerr,el_ok] then begin
-    Debug.DebugLog('xpncucp','sending upbuffer was successful, clearing unsent flags',DLInform);
+    Debug.DebugLog('xpncuucp','sending upbuffer was successful, clearing unsent flags',DLInform);
     if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname); _era(ppfile); end;
   end;
 
@@ -495,6 +495,12 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/03/25 18:44:04  cl
+  - moved ncuucp-fz.inc from playground to main
+  - enabled UUCP-f/z in ncuucp.pas
+  - cleanups, removed some unnecessary variables
+  - some minor fixes
+
   Revision 1.1  2001/03/24 22:55:29  cl
   - moved from playground to main
 

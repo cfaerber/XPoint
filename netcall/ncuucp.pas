@@ -60,7 +60,7 @@ type
 
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
-uses typeform, zmodem, progressoutput, resource, sysutils, debug, montage, crc,
+uses typeform, zmodem, progressoutput, resource, sysutils, debug,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
 {$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}xpdos32{$ENDIF},crt{$ENDIF};
 
@@ -71,7 +71,7 @@ xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
 {   |     +-- TUUCProtocolT      (t protocol)                                  }
 {   |     +-- TUUCProtocolE      (e protocol)                                  }
 {   |     +-- TUUCProtocolG      (gGv protocols)                               }
-{   |     \-- TUUCProtocolFZ     (fz protocols)  TODO                          }
+{   |     \-- TUUCProtocolFZ     (fz protocols)                                }
 {   +-- TUUCProtocolA (not yet implemented)                                    }
 {   \-- TUUCProtocolI (not yet implemented)                                    }
 {                                                                              }
@@ -89,22 +89,10 @@ xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
 type
   EUUCProtocol = class (ENetcall) end;
   EUUCProtFile = class (EUUCProtocol) end;
-  EUUCProtFileRepeat=class(EUUCProtFile) end;
-
-{ --- UUCICO result codes --------------------------------------------------- }
-
-const uu_ok      = 0;       { Ergebniscodes von ucico }
-      (* uu_parerr  = 1; *)
-      uu_nologin = 2;
-      uu_senderr = 3;
-      uu_recerr  = 4;
-      uu_xfererr = 7;  { send or receive error }
-      uu_unknown = 15; { unknown error }
 
 { --- UUCICO timeout constants ----------------------------------------------- }
 
-const LoginTimeout  =  60;    { Hangup-Timeout bei uucp-Starthandshake  }
-      InitTimeout   =   5;    { g: Repeat-Timeout bei INIT-Packets      }
+const InitTimeout   =   5;    { g: Repeat-Timeout bei INIT-Packets      }
       AckTimeout    =  10;    { g: Repeat-Timeout bei Warten auf ACK    }
       ExitTimeout   =   2;    { g: Repeat-Timeout bei CLOSE             }
       RecvTimeout   =  15;    { g: Repeat-Timeout beim Warten auf Daten }
@@ -185,7 +173,7 @@ type TUUCProtocolSimple = class(TUUCProtocol)
     (* common protocol functions *)
     function  RepeatGetCommand(c:char):string;
     procedure RepeatSendFile  (var f:file; offset:longint);
-    procedure RepeatRecFile   (var f:file; size:longint);
+    procedure RepeatRecFile   (var f:file);
 
     (* high level protocol functions *)
     (* master: process command file *)
@@ -327,7 +315,7 @@ end;
 {$I ncuucp-t.inc}
 {$I ncuucp-g.inc}
 {$I ncuucp-e.inc}
-{.I ncuucp-fz.inc}
+{$I ncuucp-fz.inc}
 
 { --- TUUCPNetcall -------------------------------------------------------- }
 
@@ -342,31 +330,31 @@ begin
     else if CommObj is TRawIPObj then
       TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+TRawIPObj(CommObj).Hostname+', '+TRawIPObj(CommObj).IPAddr+')' *);
 
-try
-  case InitHandshake of
-    't':         pprot := TUUCProtocolT.Create(self);
-    'g','G','v': pprot := TUUCProtocolG.Create(self);
-    'e':         pprot := TUUCProtocolE.Create(self);
-//  'f':         pprot := TUUCProtocolFZ.Create(self,true);
-//  'z':         pprot := TUUCProtocolFZ.Create(self,false);
-  else
-    raise EUUCProtocol.Create('Protocol unimplemented');
+  try
+    case InitHandshake of
+      't':         pprot := TUUCProtocolT.Create(self);
+      'g','G','v': pprot := TUUCProtocolG.Create(self);
+      'e':         pprot := TUUCProtocolE.Create(self);
+      'f':         pprot := TUUCProtocolFZ.Create(self,true);
+      'z':         pprot := TUUCProtocolFZ.Create(self,false);
+    else
+      raise EUUCProtocol.Create('Protocol unimplemented');
+    end;
+  
+    if not assigned(pprot) then
+      raise EUUCProtocol.Create('Protocol initialization failed');
+  
+    result := pprot.RunProtocol;
+  
+  except
+    on Ex:Exception do begin
+      Output(mcError,'%s',[ex.message]);
+      result := el_nologin;
+    end;
   end;
 
-  if not assigned(pprot) then
-    raise EUUCProtocol.Create('Protocol initialization failed');
+  if result<>el_ok then MDelay(750);
 
-  result := pprot.RunProtocol;
-
-except
-  on Ex:Exception do begin
-    Output(mcError,'%s',[ex.message]);
-//  Log     (lcError,      ex.message); -- BUG: crashes?!
-    result := el_nologin;
-  end;
-end;
-  if result<>el_ok then
-    MDelay(750);
   if assigned(pprot) then
     pprot.Free;
 end;
@@ -376,7 +364,6 @@ end;
 function TUUCPNetcall.InitHandshake:char;
 var n,i : integer;                            { --- uucp - Init-Handshake }
     s   : string;
-    ti  : longint;
 
   function GetUUStr:string;        { uucp-String empfangen }
   var recs: string;
@@ -447,7 +434,6 @@ end;
 { - - UUCP protocol shutdown - - - - - - - - - - - - - - - - - - - - - - - - }
 
 procedure TUUCPNetcall.FinalHandshake;           { --- uucp - Handshake vor Hangup }
-var b : byte;
 begin
   Output(mcVerbose,'UUCP Final Handshake',[0]);
 
@@ -528,7 +514,7 @@ begin
     FDialog := TProgressOutputWindowDialog(Caller.ProgressOutput) else
     FDialog := Nil;
 
-  Total_Start := (GetTicks/100);
+  Total_Start := (GetTicks/100.0);
   Total_Size  := 0;
   Total_Files := 0;
   Total_Errors:= 0;
@@ -586,15 +572,16 @@ end;
 function TUUCProtocolSimple.RunProtocol: integer;
 begin
   if not InitProtocol then
-    result:=uu_nologin
-  else try
+    result:=EL_nologin
+  else 
+  try
     if not Master then
-      result:= uu_senderr
+      result:= EL_senderr
     else
     if not Slave then
-      result:= uu_recerr
+      result:= EL_recerr
     else
-      result:=uu_ok;
+      result:=EL_ok;
   finally
     ExitProtocol;
   end;
@@ -611,7 +598,6 @@ function TUUCProtocolSimple.Master:Boolean;
 var cin : text;
     s   : string;        { unparsed UUCP command }
     c   : TUUCPCommand;  { parsed UUCP command }
-    a   : string;        { unparsed UUCP response }
     r   : TUUCPResponse; { parsed UUCP response }
 
   (* Handle S/E command as master *)
@@ -659,7 +645,7 @@ var cin : text;
     if not r.Parse(RepeatGetCommand('R')) then { RY/RN }
       raise EUUCProtFile.Create('Remote refused to send '+c.src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
   try
-    RepeatRecFile(f,r.restart);
+    RepeatRecFile(f);
     Netcall.Log('*','received file - '+file_str);
     Netcall.Output(mcInfo,'Requested %s as %s (%s)',[c.src,c.dest,file_str]);
   except
@@ -684,32 +670,33 @@ begin { TUUCProtocolSimple.Master:Boolean; }
   assign(cin,Netcall.CommandFile);
   reset (cin);
 
-try
-  while ((IOResult=0) or true) and not SeekEof(cin) do
-  begin
-    readln(cin,s);
-    c.Parse(s);
   try
-    if (c.cmd='S') or (c.cmd='E') then Do_SE else
-    if (c.cmd='R')                then Do_R  else
-      raise EUUCProtFile.Create('Unknown/unsupported UUCP command: '+s);
+    while ((IOResult=0) or true) and not SeekEof(cin) do
+    begin
+      readln(cin,s);
+      c.Parse(s);
+    try
+      if (c.cmd='S') or (c.cmd='E') then Do_SE else
+      if (c.cmd='R')                then Do_R  else
+        raise EUUCProtFile.Create('Unknown/unsupported UUCP command: '+s);
+    except
+      on e:EUUCProtFile do begin
+        Netcall.Log(lcError,e.message);
+        Netcall.Output(mcError,'%s',[e.message]);
+      end;
+    end;
+      Netcall.TestBreak;
+      if IOResult<>0 then ;
+    end; { while !eof }
+  
   except
-    on e:EUUCProtFile do begin
+    on e:Exception do begin
       Netcall.Log(lcError,e.message);
       Netcall.Output(mcError,'%s',[e.message]);
+      result:=false;
     end;
   end;
-    Netcall.TestBreak;
-    if IOResult<>0 then ;
-  end; { while !eof }
 
-except
-  on e:Exception do begin
-    Netcall.Log(lcError,e.message);
-    Netcall.Output(mcError,'%s',[e.message]);
-    result:=false;
-  end;
-end;
   close(cin);
   erase(cin);
 end;
@@ -717,12 +704,10 @@ end;
 { - - Slave: receive files - - - - - - - - - - - - - - - - - - - - - - - - - - }
 
 function TUUCProtocolSimple.Slave:Boolean;
-var s   : string;       { unparsed incoming command }
-    c   : TUUCPCommand; { parsed incoming command }
+var c   : TUUCPCommand; { parsed incoming command }
 
   function BecomeSlave:boolean; (* was named GetSlave in orig. XP ;-))) *)
   var r: TUUCPResponse;
-      a: string;
   begin
     SendCommand('H');
     if r.Parse(RepeatGetCommand('H')) { HY/HN } then begin
@@ -763,9 +748,7 @@ var s   : string;       { unparsed incoming command }
       raise;
     end;
     try
-      RepeatRecFile(f,c.size);
-      IOExcept(EUUCProtFile);
-
+      RepeatRecFile(f);
       Netcall.Log('*','received file - '+File_Str);
       Netcall.Output(mcInfo,'Received %s as %s (%s)',[c.src,s,file_str]);
     except
@@ -789,14 +772,15 @@ var s   : string;       { unparsed incoming command }
   end;
 
 begin
-  result:=true;
-
   if not BecomeSlave then
-    Netcall.Output(mcInfo,'Remote has no files to receive',[0])
-  else
   begin
-    Netcall.Output(mcInfo,'UUCICO running as slave.',[0]);
+    Netcall.Output(mcInfo,'Remote has no files to receive',[0]);
+    result:=true;
+    exit;
+  end;
+
   try
+    Netcall.Output(mcInfo,'UUCICO running as slave.',[0]);
     while true do
     begin
       c.Parse(GetCommand);
@@ -818,14 +802,17 @@ begin
     end; //try
     end;
     result:=true;
+    exit;
+    
   except
     on e:Exception do begin
       Netcall.Log(lcError,e.message);
       Netcall.Output(mcError,'%s',[e.message]);
       result:=false;
+      exit;
     end;
   end; //try
-  end;
+
 end;
 
 { - - higher level protocol implementation function  - - - - - - - - - - - - - }
@@ -849,47 +836,26 @@ begin
 end;
 
 procedure TUUCProtocolSimple.RepeatSendFile(var f:file; offset:longint);
-var FileRetries: integer;
 begin
-  FileRetries:=10;
-  if offset <0 then offset:=0;
-  try
-    try
-      FileRestart;
-      SendFile(f,offset);
-    except
-      on e:EUUCProtFileRepeat do begin
-        FileRetries:=FileRetries-1;
-        File_Errors:=File_Errors+1;
-        if FileRetries<=0 then raise EUUCProtFile.Create(e.message+' - maximum retry count reached')
-        else Netcall.log(lcStop,e.message+' - repeating file');
-      end;
-    end;
-  finally
-    close(f);
-  end;
+try
+  if offset<0 then offset:=0;
+  seek(f,offset);
+  SendFile(f,offset);
+finally
+  close(f);
+end;
   FileDone;
 end;
 
-procedure TUUCProtocolSimple.RepeatRecFile(var f:file; size:longint);
-var FileRetries: integer;
+procedure TUUCProtocolSimple.RepeatRecFile(var f:file);
 begin
-  FileRetries:=10;
-try
   try
-    FileRestart;
+    seek(f,0); truncate(f);
     RecFile(f);
   except
-    on e:EUUCProtFileRepeat do begin
-      FileRetries:=FileRetries-1;
-      File_Errors:=File_Errors+1;
-      if FileRetries<=0 then raise EUUCProtFile.Create(e.message+' - maximum retry count reached')
-      else Netcall.log(lcStop,e.message+' - repeating file');
-    end; // on EUUCProtFileRepeat
+    close(f); erase(f); raise;
   end;
-except
-  close(f); erase(f); raise;
-end;
+
   close(f);
   FileDone;
 end;
@@ -951,7 +917,7 @@ end;
 function TUUCProtocolSimple.File_Str:string;
 var T:Double;
 begin
-  T:=(GetTicks/100);
+  T:=(GetTicks/100.0);
   result:=StrS(file_pos)+' bytes';
   if T>file_start then
   result:=result+', '+StrS(System.Round(file_pos/(T-file_start)))+' bytes/s';
@@ -962,6 +928,7 @@ end;
 procedure TUUCProtocolSimple.FileStart(fn:string;send:boolean;size:longint);
 begin
   File_Errors:=0;
+  FileRestart;
   if not assigned(Dialog) then exit;
   Dialog.WrtText(02,3,iifs(send,getres2(2300,11),getres2(2300,12))); {'Senden:  '/'Empfangen:'}
   Dialog.WrtData(15,3,ExtractFileName(fn),46,false);
@@ -972,7 +939,7 @@ end;
 
 procedure TUUCProtocolSimple.FileReStart;
 begin
-  File_Start:=(GetTicks/100);
+  File_Start:=(GetTicks/100.0);
   File_Pos  :=0;
   if not assigned(Dialog) then exit;
   Dialog.WrtData(15,5,'0',10,true);
@@ -982,13 +949,13 @@ procedure TUUCProtocolSimple.FileAdvance(var buf;addsize:longint);
 var T:Double;
     b:boolean;
 begin
-  T := (GetTicks/100);
+  T := (GetTicks/100.0);
   b := File_Pos=0;
   File_Pos := File_Pos+AddSize;
 
   if not assigned(Dialog) then exit;
 
-  T:=(GetTicks/100); Dialog.WriteFmt(mcInfo,'',[0]);
+  T:=(GetTicks/100.0); Dialog.WriteFmt(mcInfo,'',[0]);
   Dialog.WrtData(15,5,StrS(File_Pos           ),10,true);
   Dialog.WrtData(28,7,StrS(File_Pos+Total_Size),10,true);
   if File_Start <T then Dialog.WrtData(46,5,StrS(Min(99999,System.Round((File_Pos           )/(T-File_Start )))),7,true);
@@ -1043,6 +1010,12 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/03/25 18:44:04  cl
+  - moved ncuucp-fz.inc from playground to main
+  - enabled UUCP-f/z in ncuucp.pas
+  - cleanups, removed some unnecessary variables
+  - some minor fixes
+
   Revision 1.2  2001/03/24 23:43:08  cl
   - fixes for DOS32
 

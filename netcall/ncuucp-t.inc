@@ -29,6 +29,8 @@ end;
 
 procedure TUUCProtocolT.SendCommand(s:string);
 begin
+  DebugLog('uucp-t','Sending Command: '+s,dlInform);
+
   s:=s+StringOfChar(#0,512-(length(s) mod 512));
   CommObj.SendString(s,false);
   Netcall.TestBreak;
@@ -40,6 +42,7 @@ var   block: packed array [0..(bsize-1)] of char;
       len  : longint;
 begin
   block[bsize-1]:=#0;
+  result:='';
   repeat
     TimerObj.SetTimeout(DataTimeout);
     while CommObj.CharCount<bsize do
@@ -51,6 +54,8 @@ begin
     CommObj.ReadBlock(block[low(block)],bsize,len);
     AppendStr(result,block);
   until block[high(block)]=#0;
+  
+  DebugLog('uucp-t','Got Command: '+result,dlInform);
 end;
 
 procedure TUUCProtocolT.SendFile(var f:file; offset:longint);
@@ -61,54 +66,62 @@ var   rd   : LongInt;
         dat: packed array[0..1023] of char;
       end;
 begin
-  seek(f,offset);
-
-  repeat
+  DebugLog('uucp-t','Sending File',dlInform);
+ 
+  while not eof(f) do begin
+    Netcall.TestBreak;
     BlockRead(f,buf.dat,1024,rd);
     buf.len:=HostToBigEndian32(rd);
     CommObj.SendBlock(buf,4+rd,sd);
     FileAdvance(buf.dat,rd);
-    Netcall.TestBreak;
-  until eof(f);
+  end;
 
   buf.len:=HostToBigEndian32(0);
   CommObj.SendBlock(buf,4,sd);
 end;
 
 procedure TUUCProtocolT.RecFile(var f:file);
-var rd,r:LongInt;
+var rd:  LongInt;
     len: LongInt;
     dat: packed array[1..1024] of char;
 begin
-  seek(f,0); truncate(f);
+  DebugLog('uucp-t','Receiving File',dlInform);
 
   repeat
+    Netcall.Timer.SetTimeout(ProtTimeout);
+    while CommObj.CharCount<4 do
+      Netcall.TestTimeout;
+  
     CommObj.ReadBlock(len,4,rd);
-    Netcall.TestBreak;
-
     len:=BigEndianToHost32(len);
+
     if len=0 then
       exit else
-    if (len<0) or (len>1024) then
+    if (len<1) or (len>1024) then
       raise EUUCProtocol.Create('UUCP-t: Illegal block size: '+StrS(Len));
 
-    TimerObj.SetTimeout(DataTimeout);
+    Netcall.Timer.SetTimeout(DataTimeout);
     while len>=CommObj.CharCount do
       Netcall.TestTimeout;
 
-//    repeat
+//  repeat
       CommObj.ReadBlock(dat[low(dat)],len,rd);
       BlockWrite(f,dat,rd);
       FileAdvance(dat,rd);
-//      len:=len-rd;
-//    until len<=0;
+//    len:=len-rd;
+//  until len<=0;
 
-//    Netcall.TestBreak;
   until false;
 end;
 
 {
   $Log$
+  Revision 1.2  2001/03/25 18:44:04  cl
+  - moved ncuucp-fz.inc from playground to main
+  - enabled UUCP-f/z in ncuucp.pas
+  - cleanups, removed some unnecessary variables
+  - some minor fixes
+
   Revision 1.1  2001/03/24 22:55:29  cl
   - moved from playground to main
 
