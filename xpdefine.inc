@@ -1,11 +1,25 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on February, 17st 2000 by Markus KÑmmerer <mk@happyarts.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+
+   Global compiler directives for OpenXP und Tools
+}
 
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
@@ -114,6 +128,9 @@
 
 {
   $Log$
+  Revision 1.46  2000/07/23 22:01:23  mk
+  - Units unter die GPL gestellt
+
   Revision 1.45  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
