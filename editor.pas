@@ -294,7 +294,7 @@ end;
 {$ENDIF }
 
 
-function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi}
+function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
 {$IFDEF BP }
@@ -349,7 +349,7 @@ asm
             pop ds
 {$ELSE }
             mov   esi,data
-            movzx ebx,zlen
+            mov   ebx,zlen
   @floop:
             mov   al,[esi+ebx]
             cmp   al,' '               { ' ' -> unbedingter Umbruch }
@@ -1062,6 +1062,7 @@ begin
       Advance:=size
     else begin
       zlen:=min(rand,size-offset-1);
+      if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
       zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
     { while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
         dec(zlen); }
@@ -2014,6 +2015,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.7  2000/11/05 15:15:03  mk
+  RB:- Aenderungen bezueglich - und /
+
   Revision 1.9.2.6  2000/11/01 10:08:14  mk
   - fixes Bug #116197, last CRLLF in SaveBlock
 
