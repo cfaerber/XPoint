@@ -1308,6 +1308,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Normal~
 17   Low~
 18   Lowest~
+19   PGP/MIME-Sig~
 -
 605  Crypting message...     %
 + 606
@@ -1402,9 +1403,76 @@ K (c) '2000 OpenXP Team, www.openxp.de
 622  No function in this net
 
 + 624
-0  ~^New , De^lete , ^Edit , ^Up , ^Down ,˙8 ^Close~
-#  ~^Neu ,^Lîschen,B^earbeiten, ^Auf , A^b ,˙4S^chlie·en
-10 (intern)
+0  ~^New , ^Edit , De^lete , ^Up , ^Down ,˘8 ^Close~
+1  Attach a ^file,Create new ^text
+2  ~^New , ^Edit ,˘38 ^Close~
+
+3 Send message part
+4 This message part has been created or modified.
+5 ~ ^Save to file , ^Don't save , ^Cancel ~
+
+7 ^Text,
+8 M^etadata,File t^ype
+
+10 (no description)
+
+21    Metadata
+#  +------------------------------------------------------------+
+13   File name  ~
+14   Description~
+
+12   Disposition~
+
+15   Modified   ~
+16   Created    ~
+17   Accessed   ~
+#  +------------------------------------------------------------+
+
+24 Attachment
+25 Inline
+
+26 CRLF (DOS)
+27 LF (Unix)
+28 CR (Mac)
+29 None/Binary
+
+30 7 Bit
+31 8 Bit
+32 Quoted-Printable
+33 Base64
+
+60 PGP-ASCII
+# GnuPG:
+61 ISO-8859-1˘ISO-8859-2˘KOI8-R˘UTF-8
+# PGP2:
+62 ISO-8859-1˘KOI8-R
+
+35 ISO-8859-1˘UTF-8˘Windows-1252˘IBM437
+36 ISO-8859-1˘UTF-8
+38 US-ASCII
+39 IBM437
+
+37 text/plain˘application/octet-stream
+
+40    File type and encoding
+#  +------------------------------------------------------------+
+41   Vorsicht: énderungen an diesen Einstellungen kînnen zu un-
+42   erwÅnschten Nebeneffekten fÅhren.
+
+45   Network  File type ~
+
+46   ~        Encoding  ~
+47   ~        Charset   ~
+
+43   Original EOL type  ~
+44   ~        Charset   ~
+
+50 Attach a file
+
+100 Can't copy file for editing.
+101 Can't create a new file.
+102 File does not exist.
+103 A message must contain at least one part.
 
 # XP6.INC
 640  Rebuilding message packet...
@@ -3066,6 +3134,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 36 Binary mails are not possible here.
 37 Cannot change server - different newsgroup names!
 38 You are not allowed to change this message!
+39 Operation not allowed with MIME multipart messages.
 
 +  10700
 1  Internal error: Newsgroup with unsent message not found!
@@ -3113,6 +3182,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 42 Unknown node: %s
 43 No entries marked!
 44 Can't talk to the device!
+45 Unknown file format: %s
 46 Invalid selection
 47 Oops - all matching recipients marked/filtered!?  (press F1 for help)
 # Not available
@@ -3296,6 +3366,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2  Message contains no uu-encoded file
 3  Can't decode file.
 4  You cannot decode more than %s marked parts.
+5  Too many nested message parts.
 
 10 unsupported net type
 11 Error while converting messages
@@ -3783,6 +3854,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.34  2001/09/12 22:13:25  cl
+# - English ressources for MIME support
+#
 # Revision 1.33  2001/09/08 14:17:28  cl
 # - added ressources for MIME and multipart support
 #
