@@ -380,7 +380,6 @@
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
       Ue,Uz  : boolean;  { UUCP-e }
       Uf     : boolean;  { UUCP-f }
-      uucp_modefld:integer;
       flags  : byte;
       fnode  : boolean;  { Fido-Absender: Nodenummer }
       pp     : byte;
@@ -436,7 +435,7 @@
 		    maddstring(3,5,getres2(920,70),_uucp_mode,6,6,'');	   { 'Modus   ' }
 		    mappsel(true,getres2(920,71)+'ù'+getres2(920,72));
 		    mset1func(uucp_setmode);
-		      uucp_modefld:=fieldpos;
+		    // uucp_modefld:=fieldpos;
 
 		    maddstring(23,5,getres2(920,73),telefon,31,60,'');	   { 'Telefon ' }
 		      uucp_telfld:=fieldpos;
@@ -485,12 +484,12 @@
         maddstring(3,4+add,getres2(920,20),uploader,br,100,''); mhnr(144);
           mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ sz $UPFILEù'+
                         'hslink.exe -P$PORT -U$DOWNPATH $UPFILEùbimodem /L $PORT /U $UPFILE /I $LOGFILE');
-          msetvfunc(progtest);                      { 'Upload-Protokoll  ' }
+          msetvfunc(testexecutable);                      { 'Upload-Protokoll  ' }
         maddstring(3,5+add,getres2(920,21),downloader,br,100,'');
           if pronet then mappsel(false,'Zmodemùdsz.exe port $PORT rzùgsz.exe portx $ADDRESS,$IRQ rz')
           else mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ rz $DOWNFILE');
           if zc then mappsel(false,'gsz.exe portx $ADDRESS,$IRQ rz $DOWNPATH');
-          msetvfunc(progtest);                      { 'Download-Protokoll' }
+          msetvfunc(testexecutable);                      { 'Download-Protokoll' }
           downprotnr:=fieldpos;
         if prototyp='' then prototyp:='Z';
         if nt=nt_Maus then begin
@@ -516,7 +515,7 @@
             mappsel(false,'pkarc a $UPFILE $PUFFERùpkpak a $UPFILE $PUFFERùlharc a'+lhapar+' $UPFILE $PUFFERù'+
                           'lha a'+lhapar+' $UPFILE $PUFFERùpkzip $UPFILE $PUFFERùarj a $UPFILE $PUFFERù'+
                           'rar -std a $UPFILE $PUFFERùcopy $PUFFER $UPFILE');
-          msetvfunc(progtest);
+          msetvfunc(testexecutable);
           mset3proc(set_uparcext);
         maddstring(3,8+add,getres2(920,iif(uucp,25,24)),downarcer,br,60,'');
           if uucp then                              { 'Download-Entpacker' }
@@ -525,19 +524,19 @@
             mappsel(false,'pkxarc $DOWNFILEùpkunpak $DOWNFILEùlharc e $DOWNFILEùlha e $DOWNFILEù'+
                           'pkunzip $DOWNFILEùarj e $DOWNFILEùcopy $DOWNFILE $PUFFERù'+
                           'rar -std e $DOWNFILE');
-          msetvfunc(progtest);
+          msetvfunc(testexecutable);
           mset3proc(set_downarcext);
         if uucp then begin
           maddstring(3,9+add,getres2(920,26),unfreezer,br,40,'');  { 'Freeze-Entpacker' }
           mappsel(false,'freeze -vdif $DOWNFILE');
-          msetvfunc(progtest);
+          msetvfunc(testexecutable);
           maddstring(3,10+add,getres2(920,27),ungzipper,br,40,''); { 'gzip-Entpacker' }
           mappsel(false,'gzip -vdf $DOWNFILE');
-          msetvfunc(progtest);
+          msetvfunc(testexecutable);
           maddstring(3,11+add,getres2(920,57),unbzipper,br,40,''); { 'bzip2-Entpacker' }
           mappsel(false,'bzip2 -vdf $DOWNFILE');
           mhnr(8026);
-          msetvfunc(progtest);
+          msetvfunc(testexecutable);
           end;
         if not fido then
           if uucp then begin
@@ -668,53 +667,22 @@
                                       stricmp(downloader,'ZMODEM')) then
         mdisable;
       maddstring(3,7+add,getres2(921,9),modeminit,41,60,''); { 'Modem-Init ' }
-{$IFDEF CAPI }
-      if bport=5 then
-        schnitte:='ISDN'
-      else
-{$ENDIF }
       schnitte:='COM'+strs(bport);
       maddstring(3,9+add,getres2(921,10),schnitte,4,4,'');   { 'Schnittstelle ' }
       mappsel(true,'COM1ùCOM2ùCOM3ùCOM4');
-{$IFDEF CAPI }
-      if ntISDN(nt) then mappsel(true,'ISDN');
-{$ENDIF }
       maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'Uebertragungsrate:' }
       mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
       msetvfunc(testbaud);
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
       freeres;
       readmask(brk);
-      if not brk then
-{$IFDEF CAPI }
-          if schnitte='ISDN' then bport:=5
-        else
-{$ENDIF }
-          bport:=ival(RightStr(schnitte,1));
+      if not brk then bport:=ival(RightStr(schnitte,1));
       enddialog;
       end;
     end;
   end;
 
-  procedure Editgebuehren(var brk:boolean);
-  var x,y   : byte;
-      crash : boolean;
-  begin
-    crash:=(boxpar^.boxname='99:99/98') or (boxpar^.boxname='99:99/99');
-    dialog(ival(getres2(922,0)),iif(crash,3,5),kompname,x,y);
-    with boxpar^ do begin
-      if not crash then begin
-        maddstring(3,2,getres2(922,1),gebzone,20,20,'');   { 'Tarifzone      ' }
-        AppPhoneZones; mhnr(180);
-        end;
-      maddint(3,iif(crash,2,4),getres2(922,5),conn_time,2,2,0,99);    { 'Connect-Dauer: ' }
-        mhnr(181);
-      maddtext(length(getres2(922,5))+9,iif(crash,2,4),getres2(922,6),0);   { 'Sek.' }
-      freeres;
-      readmask(brk);
-      enddialog;
-      end;
-  end;
+  // procedure Editgebuehren(var brk:boolean);  Removed in Rev. 1.37
 
   procedure EditNNTP(var brk:boolean);
   var x,y   : byte;
@@ -1728,6 +1696,11 @@
 
 {
   $Log$
+  Revision 1.37  2001/01/06 16:15:33  ma
+  - replaced progtest by xp2.testexecutable
+  - removed EditGebuehren
+  - removed obsolete CAPI code
+
   Revision 1.36  2000/12/29 22:29:05  mk
   CL:- fixes for UUCP config dialogue
 
@@ -1739,36 +1712,4 @@
 
   Revision 1.33  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
-
-  Revision 1.32  2000/11/14 15:51:35  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.31  2000/11/12 14:39:09  mk
-  - disabled menu Gebuehren
-
-  Revision 1.30  2000/11/04 18:57:49  fe
-  Link to bzip2 helppage added.
-
-  Revision 1.29  2000/11/02 21:27:04  fe
-  bzip2 support added.
-
-  Revision 1.28  2000/10/22 21:59:00  mk
-  - case of .pp and .epp is now UnixFS dependent
-
-  Revision 1.27  2000/10/17 10:05:56  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.26  2000/10/10 05:53:45  mk
-  - Edit QWK braucht kein Point und Modem-Eintrag
-
-  Revision 1.25  2000/09/29 11:30:38  fe
-  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
-  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
-
-  Revision 1.24  2000/09/29 11:27:43  fe
-  Ungenutzte, lokale Variablen entfernt.
-
-  Revision 1.23  2000/09/25 03:44:32  mk
-  - Loginfo hinzugefuegt
-
 }
