@@ -75,9 +75,8 @@ type DateTimeSt = string[11];
      atext      = s80;
 
 Function Bin(l:longint; n:byte):string;      { Bin-Zahl mit n Stellen       }
-Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
-Function BlankposHuge(var s:Hugestring):Integer;        { Position von ' ' oder #9     }
-Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
+Function Blankpos(const s:string):byte;        { Position von ' ' oder #9     }
+Function BlankposX(const s:string):byte;       { length(s)+1, falls bp=0      }
 Function Center(const s:string; n:byte):string;    { String auf n Zchn. zentrieren}
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 Function CPos(c:char; const s:string):byte;    { schnelles POS fÅr CHARs      }
@@ -129,7 +128,7 @@ Function MinMax(const x,min,max:longint):longint;  { x -> [min,max]             
 Function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
 Function MinR(const a,b:real):real;                { Minimum Real                 }
 Function MinS(const a,b:string):string;            { Minimum String               }
-Function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+Function MultiPos(const s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
 Function Oct(l:longint):string;              { Longint -> Oktalstring       }
 Function OctVal(s:string):longint;           { Oktalstring -> Logint        }
 Function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
@@ -155,8 +154,8 @@ Function RVal(const s:string):real;                { Value Real                 
 Function Sgn(const x:longint):longint;       { Signum Integer               }
 Function SgnR(const x:real):real;            { Signum Real                  }
 Function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname kÅrzen        }
-Function SMatch(s1,s2:string):byte;          { Anzahl der Åbereinst. Bytes  }
-Function SiMatch(s1,s2:string):byte;         { dto., ignore case            }
+Function SMatch(const s1,s2:string):byte;          { Anzahl der Åbereinst. Bytes  }
+Function SiMatch(const s1,s2:string):byte;         { dto., ignore case            }
 Function Sp(const n:integer):string;               { space$                       }
 Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
 Function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich               }
@@ -173,7 +172,6 @@ Function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
 Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
 function UStr(const s:String):String;              { UpperString                  }
-function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
 { Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
 Function FUStr(const s:string):string;
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
@@ -202,7 +200,7 @@ procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 { Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
   dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
 function DOSEmuVersion: String;
-function IsoToIbm(s:string): String;            { Konvertiert ISO in IBM Zeichnen }
+function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 { Holt so viel Speicher wie mîglich, mindestens aber MinMen und
   gibt im Fehlerfalle eine Fehlermeldung aus. RÅckgabewert ist
   der tatsÑchlich allocierte Speicher }
@@ -1668,7 +1666,7 @@ begin
 end;
 
 
-Function MultiPos(s1,s2:string):boolean;
+Function MultiPos(const s1,s2:string):boolean;
 var i  : byte;
     mp : boolean;
 begin
@@ -1757,7 +1755,7 @@ begin
 end;
 
 
-Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
+Function Blankpos(const s:string):byte;        { Position von ' ' oder #9     }
 var p1,p2 : byte;
 begin
   p1:=cpos(' ',s);
@@ -1778,7 +1776,7 @@ begin
 end;
 
 
-Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
+Function BlankposX(const s:string):byte;       { length(s)+1, falls bp=0      }
 var p : byte;
 begin
   p:=blankpos(s);
@@ -1942,7 +1940,7 @@ begin
 end;
 
 
-Function SMatch(s1,s2:string):byte;          { Anzahl der Åbereinst. Bytes  }
+Function SMatch(const s1,s2:string):byte;          { Anzahl der Åbereinst. Bytes  }
 var p,ml : byte;
 begin
   p:=0;
@@ -1953,7 +1951,7 @@ begin
 end;
 
 
-Function SiMatch(s1,s2:string):byte;         { dto., ignore case }
+Function SiMatch(const s1,s2:string):byte;         { dto., ignore case }
 var p,ml : byte;
 begin
   p:=0;
@@ -2172,7 +2170,7 @@ begin
       StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
 end;
 
-function IsoToIbm(s:string): String;
+function IsoToIbm(const s:string): String;
 var
   i : integer;
 begin
@@ -2199,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.6  2000/08/22 09:27:00  mk
+  - Allgemeine Performance erhoeht
+
   Revision 1.37.2.5  2000/08/14 21:11:28  mk
   - Bugfix fuer Mailerstring
 

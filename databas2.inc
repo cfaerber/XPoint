@@ -173,7 +173,7 @@ end;
 { Ergebnis kann mit dbFound abgefragt werden. Ist found=false, aber  }
 { auch EOF=False, dann ist den nÑchst*grîssere* Satz gÅltig.         }
 
-procedure dbSeek(dbp:DB; indnr:word; key:string);
+procedure dbSeek(dbp:DB; indnr:word; const key:string);
 var x : longint;
 begin
   dbFlush(dbp);
@@ -239,6 +239,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.1  2000/08/22 09:28:53  mk
+  - Allgemeine Performance erhoeht
+
   Revision 1.5  2000/05/09 15:52:40  hd
   - UnixFS: Access-Mode eingefuegt
 
