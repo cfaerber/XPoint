@@ -240,7 +240,7 @@ var t   : text;
     useclip : boolean;
     ft  : longint;
 begin
-  if not exist('MAGGI.EXE') then begin
+  if not existBin(MaggiBin) then begin
     rfehler(102);    { 'Netcallkonvertierer MAGGI.EXE fehlt!' }
     exit;
     end;
@@ -248,7 +248,7 @@ begin
     rfehler1(741,'PUFFER');
     exit;
     end;
-  fn:='*.*';
+  fn:=WildCard;
   useclip:=false;
   if ReadFilename(getres(2420),fn,true,useclip)   { 'Nachrichtenpaket konvertieren/einlesen' }
   then
@@ -310,27 +310,27 @@ begin
       ReadBoxpar(nt,box);
       s:='PUFFER';
       case iif(impnt<>nt_QWK,nt,impnt) of
-        nt_Magic : shell('MAGGI.EXE -mz -n'+boxpar^.MagicNET+' '+fn+' PUFFER '+
+        nt_Magic : shell(MaggiBin+' -mz -n'+boxpar^.MagicNET+' '+fn+' PUFFER '+
                          box+'.BL',300,3);
         nt_Quick,
-        nt_GS    : shell('MAGGI.EXE -qz '+fn+' PUFFER',300,3);
+        nt_GS    : shell(MaggiBin+' -qz '+fn+' PUFFER',300,3);
         nt_Maus  : begin
                      ft:=filetime(box+'.itg');
-                     shell('MAGGI.EXE -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
+                     shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
                          '-it '+fn+' PUFFER',300,3);
                    end;
-        nt_Fido  : if not exist('ZFIDO.EXE') then begin
-                     fehler('Netcallkonvertierer ZFIDO.EXE fehlt!');
+        nt_Fido  : if not existBin(ZFidoBin) then begin
+                     fehler('Netcallkonvertierer "'+ZFidoBin+'" fehlt!');
                      exit;
                      end
                    else
-                     shell('ZFIDO.EXE -fz -h'+BoxPar^.MagicBrett+' '+
+                     shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+
                            iifs(KeepVia,'-via ','')+
                            fn+' PUFFER -w:'+strs(screenlines),300,3);
-        nt_QWK   : if not exist('ZQWK.EXE') then
-                     rfehler(2414)   { 'ZQWK.EXE fehlt! (ZQWK.EXE ist im getrennt erhÑltlichen QWK-Paket enthalten)' }
+        nt_QWK   : if not existBin(ZQWKBin) then
+                     rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt! (ZQWK.EXE ist im getrennt erhÑltlichen QWK-Paket enthalten)' }
                    else begin
-                     shell('ZQWK.EXE -qz -c'+BoxFilename(box)+' -b'+box+
+                     shell(ZQWKBin+' -qz -c'+BoxFilename(box)+' -b'+box+
                            ' -i'+fn+' -o'+GetFileDir(fn)+' -h'+BoxPar^.MagicBrett+
                            iifs(nt=nt_Fido,' -t30',''),600,1);
                      if errorlevel=100 then begin
@@ -538,7 +538,7 @@ end;
 procedure ReadOutfile(var box:string);
 begin
   ReadBoxPar(0,box);
-  shell('MAGGI.EXE -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+outtmp+' PUFFER',
+  shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+outtmp+' PUFFER',
         300,3);
   if errorlevel<>0 then
     fehler('Fehler bei Nachrichtenkonvertierung')
@@ -556,7 +556,7 @@ var mtpath : pathstr;
     x,y    : byte;
     box    : string[boxnamelen];
 begin
-  if not mfehler(exist('MAGGI.EXE'),'MAGGI.EXE fehlt!') then begin
+  if not mfehler(existBin(MaggiBin),MaggiBin+' fehlt!') then begin
     dialog(51,9,'',x,y);
     maddtext(3,2,'Geben Sie den Namen der Box, fÅr die die Daten',0);
     maddtext(3,3,'eingelesen werden sollen, und den Namen Ihres',0);
@@ -570,12 +570,11 @@ begin
     closemask;
     closebox;
     if brk or (mtpath='') then exit;
-    if (right(mtpath,1)<>'\') then
-      mtpath:=mtpath+'\';
+    mtpath:= AddDirSepa(mtpath);
     if not mfehler(ntBoxNetztyp(box)=nt_Maus,box+' ist keine MausNet-Box') and
        not mfehler(IsPath(mtpath),'ungÅltiges Verzeichnis') then begin
       if not exist(mtpath+mdaten) and IsPath(mtpath+'daten') then
-        mtpath:=mtpath+'DATEN\';
+        mtpath:=mtpath+FUStr('daten')+DirSepa;
       if not mfehler(exist(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
          not mfehler(exist(mtpath+mindex),mtpath+mindex+' fehlt') and
          not mfehler(diskfree(0)>2.5*_filesize(mtpath+mdaten),
@@ -619,10 +618,10 @@ var ypath : pathstr;
   procedure ImportYupbase;
   const TempPKT = '1.PKT';
   begin
-    shell('YUP2PKT.EXE '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
+    shell(Yup2PktBin+' '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
     if not mfehler(errorlevel=0,'Fehler bei Nachrichtenkonvertierung') then begin
       ReadBoxPar(0,DefFidoBox);
-      shell('ZFIDO.EXE -fz -h'+boxpar^.MagicBrett+' '+TempPKT+' PUFFER',300,3);
+      shell(ZFidoBin+' -fz -h'+boxpar^.MagicBrett+' '+TempPKT+' PUFFER',300,3);
       if errorlevel<>0 then
         fehler('Fehler bei Nachrichtenkonvertierung')
       else begin
@@ -634,8 +633,8 @@ var ypath : pathstr;
   end;
 
 begin
-  if not mfehler(exist('YUP2PKT.EXE'),'YUP2PKT.EXE fehlt!') and
-     not mfehler(exist('ZFIDO.EXE'),'ZFIDO.EXE fehlt!') and
+  if not mfehler(existBin(Yup2PktBin),'"'+Yup2PktBin+'" fehlt!') and
+     not mfehler(existBin(ZFidoBin),'"'+ZFidoBin+'" fehlt!') and
      not FehlerFidoStammbox then
   begin
     dialog(56,5,'',x,y);
@@ -646,11 +645,12 @@ begin
     closemask;
     closebox;
     if brk or (ypath='') then exit;
-    if (right(ypath,1)<>'\') then
-      ypath:=ypath+'\';
+    ypath:=AddDirSepa(ypath);
     if not mfehler(IsPath(ypath),'ungÅltiges Verzeichnis') then begin
-      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+'MAILBASE') then
-        ypath:=ypath+'MAILBASE\';
+      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+FUStr('mailbase')) then
+        ypath:=ypath+FUStr('mailbase')+DirSepa;
+      { Gibt es Yuppi unter Linux? Wenn ja, sind die Dateinamen 
+        klein oder gross geschrieben? }
       if not mfehler(exist(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
          not mfehler(exist(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
          not mfehler(diskfree(0)>2.5*YupMailsize,
@@ -672,7 +672,7 @@ var x,y     : byte;
     name    : namestr;
     ext     : extstr;
 begin
-  if not mfehler(exist('ZQWK.EXE'),getres2(2422,1)) and not FehlerFidoStammbox
+  if not mfehler(existBin(ZQWKBin),getres2(2422,1)) and not FehlerFidoStammbox
   then begin
     fn:='*.QWK';
     useclip:=false;
@@ -686,7 +686,7 @@ begin
       if not brk then begin
         if left(bretth,1)<>'/' then bretth:='/'+bretth;
         if right(bretth,1)<>'/' then bretth:=bretth+'/';
-        shell('ZQWK.EXE -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
+        shell(ZQWKBin+' -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fsplit(fn,dir,name,ext);
         fn:=name+'.ZER';
         if not exist(fn) then
@@ -705,6 +705,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/16 14:50:13  hd
+  - exist an einigen Stellen durch existBin ersetzt
+  - Hart codierte Dateinamen (ZQWK.EXE etc.) durch Konstanten ersetzt
+
   Revision 1.13  2000/05/29 20:21:42  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 
