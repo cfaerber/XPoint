@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 {$I XPDEFINE.INC }
@@ -37,6 +37,9 @@ function  SmartSetCache(drive,b:byte):boolean;  { 0=nope, 1=read, 2=write }
 procedure SmartResetCache;
 procedure SmartFlushCache;
 
+const
+  ClipFileName : string[8] = 'CLIP.TXT';
+
 implementation  { ---------------------------------------------------- }
 
 uses
@@ -46,7 +49,6 @@ const
   Multiplex = $2f;
   cf_Oemtext   = 7;
   maxfile   = 65520;
-  ClipFileName = 'CLIPBRD.TMP';
 
 type
   ca  = array[0..65530] of char;
@@ -636,6 +638,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.11  2001/09/16 20:36:27  my
+  JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
+          Windows-Clipboard nicht verfügbar ist. Altes Editor-RAM-
+          Clipboard deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.19.2.10  2001/08/05 11:42:18  my
   - moved 'DOSEmuVersion' from TYPEFORM.PAS to CLIP.PAS
   - commented out 'erase_all' in FILEIO.PAS (unused)
