@@ -80,7 +80,7 @@ Function BlankposX(const s:string):byte;       { length(s)+1, falls bp=0      }
 Function Center(const s:string; n:byte):string;    { String auf n Zchn. zentrieren}
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 Function CPos(c:char; const s:string):byte;    { schnelles POS fr CHARs      }
-Function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1    }
+Function CPosX(c:char; const s:string):byte;   { pos=0 -> pos:=length(s)+1    }
 Function CreditCardOk(s:string):boolean;     { Kreditkartennummer berprfen }
 Function Date:DateTimeSt;                    { dt. Datumsstring             }
 Function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
@@ -1903,7 +1903,7 @@ begin
 end;
 
 
-Function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1 }
+Function CPosX(c:char; const s:string):byte;   { pos=0 -> pos:=length(s)+1 }
 var p : byte;
 begin
   p:=cpos(c,s);
@@ -2224,6 +2224,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.10  2000/11/17 12:17:24  mk
+  - cposx hat jetzt const-parameter
+
   Revision 1.37.2.9  2000/10/15 09:28:05  mk
   - LFN fixes
 
