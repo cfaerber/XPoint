@@ -241,8 +241,8 @@ begin
             gets(s,su,'Boxname',boxname,BoxNameLen) or
             gets(s,su,'Pointname',pointname,25) or
             gets(s,su,'Username',username,30) or
-            gets(s,su,'Domain',dummys,1) or
-            gets(s,su,'FQDN',dummys,1) or  {16.01.00 HS}
+            gets(s,su,'Domain',_domain,1) or
+            gets(s,su,'FQDN',_fqdn,1) or  {16.01.00 HS}
             gets(s,su,'Passwort',passwort,25) or
             gets(s,su,'Telefon',telefon,60) or
             gets(s,su,'ZerbID',zerbid,4) or
@@ -613,6 +613,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/04/21 18:34:24  cl
+  - FIX: BoxPtr^._Domain was not read in
+
   Revision 1.37  2001/04/21 17:40:21  ma
   - case in file name of new .BFGs was wrong
 
