@@ -403,7 +403,7 @@ var f,f2     : file;
     oversize : longint;     { Nachrichtenlimit Åberschritten      }
     parken   : boolean;     { Nachricht nach /ØUnversandt         }
     bin_msg  : boolean;     { BinÑr-Versandmeldung                }
-    SendDefault : byte;
+    SendDefault : shortint;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
     netztyp  : byte;        { Netztyp                             }
@@ -1248,7 +1248,8 @@ fromstart:
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
-          SendDefault:=senden; forcebox:='';
+          SendDefault:=senden;
+          forcebox:='';
           pophp;
           closebox;
           goto fromstart;
@@ -2125,6 +2126,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.60  2000/08/22 14:02:40  mk
+  - SendenDefault in Shortint geaendert
+
   Revision 1.59  2000/08/10 16:59:24  mk
   - SendEmpfListe wird jetzt erzeugt und freigegeben
 
