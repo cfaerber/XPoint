@@ -44,7 +44,7 @@ procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
 
 procedure PGP_EncodeStream(var data:TStream; var hd: Theader;
                          RemoteUserID:string; encode,sign:boolean;
-                         var fido_origin:string);
+                         const fido_origin:string);
 procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
 procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
 
@@ -301,6 +301,7 @@ procedure PGP_SendKey(empfaenger:string);   { Antwort auf Key-Request senden }
 var t   : text;
     tmp : string;
     hd  : string;
+   sdata: TSendUUData;
 begin
   UpdateKeyfile;
   if not FileExists('pgp-key.bin') then exit;
@@ -313,9 +314,20 @@ begin
   writeln(t);
   close(t);
   hd:='';
+
+  sData := TSendUUData.Create;
+  sData.EmpfList.AddNew.ZCAddress := empfaenger;
+  sData.Subject := getres2(3000,1); { 'Antwort auf PGP-Key-Anforderung' }
+  sData.flPGPKey := true;
+  sData.AddText(tmp,true);
+
+  sData.CreateMessages;
+  sData.Free;
+(*  
   if DoSend(true,tmp,true,false,empfaenger,getres2(3000,1),  { 'Antwort auf PGP-Key-Anforderung' }
             false,false,false,false,true,nil,
             hd,SendPGPkey) then
+*)            
     LogPGP(getreps2(3002,1,empfaenger));   { 'sende Public Key an %s' }
 //  if FileExists(tmp) then _era(tmp);
   freeres;
@@ -329,7 +341,7 @@ end;
 
 procedure PGP_EncodeStream(var data:TStream; var hd: theader;
                          RemoteUserID:string; encode,sign:boolean;
-                         var fido_origin:string);
+                         const fido_origin:string);
 var b    : byte;
     nt   : longint;
     t    : string;
@@ -392,6 +404,8 @@ begin
       hd.charset:=MimeCharsetToZC(hd.x_charset);
     end;
   end;
+
+  CopyStream(data,fis);
 
   if fido_origin<>'' then
     fis.CopyFrom(data,data.Size-length(fido_origin)-2)
@@ -771,6 +785,7 @@ var user : string;
     hd   : string;
     ok   : boolean;
     nt   : byte;
+    sdata: TSendUUData;
 begin
   _UserAutoCreate:=false;
   case aktdispmode of
@@ -816,10 +831,23 @@ begin
     writeln(t);
     close(t);
     hd:='';
+
+    sData := TSendUUData.Create;
+    try
+      sData.AddText(tmp,true);
+      sData.EmpfList.AddNew.ZCAddress := user;
+      sData.Subject := getres2(3001,2);  { 'PGP-Keyanforderung' }
+      sData.flPGPReq := true;
+      sData.CreateMessages;
+    finally
+      sData.Free;
+    end;
+(*  
     if DoSend(true,tmp,true,false,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
               hd,SendPGPreq) then;
-    SafeDeleteFile(tmp);
+*)              
+//  SafeDeleteFile(tmp);
     end;
   freeres;
 end;
@@ -1168,6 +1196,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2002/09/13 18:42:48  cl
+  - fixed MIME-signing with PGP v2
+
   Revision 1.69  2002/07/25 20:43:55  ma
   - updated copyright notices
 
