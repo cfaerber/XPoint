@@ -250,7 +250,7 @@ asm
          inc    edi
          loop   @cloop
 @norest: inc    edx
-         mov    [rp],edx               { Offset fÅr nÑchsten Block }
+         mov    dword ptr [rp],edx               { Offset fÅr nÑchsten Block }
          jmp @the_end
 
 @no0:    cmp    dl,ah                  { max. LÑnge erreicht? }
@@ -272,7 +272,7 @@ asm
          mov    ebx,bxsave
          mov    ecx,cxsave
 
-@clok:   mov    dh,0
+@clok:   mov    dh, 0
          mov    [esi-1],dl           { LÑngenbyte = wrap }
          call   @appcall
          add    esi,edx
@@ -460,24 +460,24 @@ var p  : byte;
       linenr:=alist^.lines;
       marked:=false;
       cont:= ltxt;
-      end;
+    end;
   end;
 
   procedure apptxt;
   var lp : lnodep;
   begin
-    with alist^ do begin
+    with alist^ do
+    begin
       inc(lines);
       appnode(lp,last);
       if first=nil then first:=lp
       else last^.next:=lp;
       last:=lp;
-      end;
+    end;
   end;
 
 begin
-  if (length(ltxt)=1) and (ltxt[1]=#13) then
-    exit;    { einzelnes CR ignorieren }
+  if ltxt=#13 then  exit;    { einzelnes CR ignorieren }
   { MemAvail wird aus ZeitgrÅnden nur bei jeder 15. Zeile getestet }
   if (mmm=15) or (memflag=2) then begin
     with alist^ do
@@ -490,7 +490,8 @@ begin
       end;
     mmm:=0;
     end;
-  if memflag<3 then begin
+  if memflag<3 then
+  begin
     p:=cpos(TAB,ltxt);
     while p>0 do begin
       delete(ltxt,p,1);
@@ -499,7 +500,7 @@ begin
       end;
     apptxt;
     inc(mmm);
-    end;
+  end;
 end;
 
 
@@ -527,14 +528,17 @@ begin
   with alist^ do
   begin
     txt:=fitpath(FileUpperCase(fn),40);
-    ps:=min(10000,memavail-10000);
-    getmem(p,ps);
     assign(f,fn);
     fm:=filemode; filemode:=0;
     reset(f,1);
     filemode:=fm;
+    // ps:=16384;
+    // !! TemporÑrer Fix fuer AbstÅrze mit FPC
+    ps := FileSize(f);
+    getmem(p,ps);
     rp:=1;
-    if ioresult=0 then begin
+    if ioresult=0 then
+    begin
       seek(f,ofs);
       repeat
         blockread(f,p^[rp],ps-rp,rr);
@@ -1372,6 +1376,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/09/24 04:47:58  mk
+  - temp. fix fuer list_readfile
+
   Revision 1.30  2000/09/11 17:13:53  hd
   - Kleine Arbeiten an NNTP
 
