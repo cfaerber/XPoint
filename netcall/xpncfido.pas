@@ -708,35 +708,36 @@ procedure ShowRQ(s:string);
 var hdp   : THeader;
     hds   : longint;
     f     : file;
-    sh,ok : boolean;
+    EnoughSpace,ok : boolean;
     adr   : longint;
     lastempf : string[40];
     ss    : string;
     count : longint;
     n     : longint;
+    stemp : string;
 begin
-  gotoxy(rdispx,rdispy);
-  attrtxt(col.colselbox);
-  if s[2]='C' then begin                { Crash-Empf„ngerliste anzeigen }
+  stemp:=''; attrtxt(col.colselbox);
+
+  { Display mail recipient and mail subject }
+  if s[2]='C' then begin
     hdp := THeader.Create;
     assign(f,CrashFile(copy(s,6,18)));
     reset(f,1);
     if ioresult=0 then with hdp do begin
-      sh:=true; adr:=0;
+      EnoughSpace:=true; adr:=0;
       lastempf:=''; count:=1; n:=0;
-      moff;
-      while not eof(f) and sh do begin
+      while not eof(f) and EnoughSpace do begin
         inc(n);
         MakeHeader(true,f,0,hds,hdp,ok,false,true);
         empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
         if empfaenger=lastempf then
           inc(count)
         else begin
-          if count>1 then begin write(' (',count,')'); count:=1; end;
-          sh:=(wherex+length(empfaenger)<65);
-          if sh then begin
-            if wherex>rdispx then write(', ');
-            write(empfaenger);
+          if count>1 then begin stemp:=stemp+format(' (%d)',[count]); count:=1 end;
+          EnoughSpace := length(stemp)+length(empfaenger) < 65;
+          if EnoughSpace then begin
+            if length(stemp)>0 then stemp:=stemp+', ';
+            stemp:=stemp+empfaenger;
             lastempf:=empfaenger
             end
           else
@@ -746,14 +747,19 @@ begin
         seek(f,adr);
         end;
       close(f);
-      if n=1 then write(' (',LeftStr(hdp.betreff,69-wherex),')');
-      if count>1 then write(' (',count,')');
-      if not sh then write(', ...');
-      mon;
+      
+      if n=1 then
+        stemp:=stemp+' ('+LeftStr(hdp.betreff,69-length(stemp))+')';
+      if count>1 then
+        stemp:=stemp+' ('+inttostr(count)+')';
+      if not EnoughSpace then
+        stemp:=stemp+', ...';
       end;
     Hdp.Free;
     end;
-  moff; write(sp(72-wherex)); mon;
+  mwrt(rdispx,rdispy,forms(stemp,61));
+
+  { Display crash file name }
   if UpCase(s[3])='R' then begin
     ss:=''; GetReqFiles(trim(copy(s,6,18)),ss);
     TrimFirstChar(ss, '>');
@@ -883,6 +889,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2001/09/16 19:52:13  ma
+  - fixed Fido/Crash dialog display problems
+
   Revision 1.19  2001/09/08 16:29:45  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
