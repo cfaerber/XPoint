@@ -19,7 +19,7 @@ uses
   ncurses,
   xplinux;
 
-{$PACKRECORDS 4}
+{$packrecords 4}
 {$linklib panel}
 
 const
@@ -151,7 +151,7 @@ procedure AssignCrt(var F: Text);
 procedure ClrEol;
 procedure ClrScr;
 procedure ClrBot;
-procedure Delay(DTime: Word);
+procedure Delay(DTime: integer);
 procedure DelLine;
 procedure HighVideo;
 procedure InsLine;
@@ -269,9 +269,8 @@ var
    ExitSave : pointer;                  { pointer to original exit proc }
    fg,bg : integer;                     { foreground & background }
    cp : array [0..7,0..7] of integer;   { color pair array }
-   ps : array [0..255] of char;         { for use with pchars }
    MaxRows,                             { set at startup to terminal values }
-   MaxCols : longint;                   { for columns and rows }
+   MaxCols : integer;                   { for columns and rows }
    tios : TermIOS;                      { saves the term settings at startup }
    LastTextAttr: byte;                  { Letzte gesetzte Farbe }
    LastWindMin,                         { Manipulationen abfangen }
@@ -305,48 +304,50 @@ type
   End;
 {==========================================================================}
 
+{ Farben zwischen Curses und IBM konvertieren }
+function Curses2IBM(attr: integer): integer;
+begin
+  case attr of
+    COLOR_BLACK   : result:= black;
+    COLOR_RED     : result:= red;
+    COLOR_GREEN   : result:= green;
+    COLOR_YELLOW  : result:= brown;
+    COLOR_BLUE    : result:= blue;
+    COLOR_MAGENTA : result:= magenta;
+    COLOR_CYAN    : result:= cyan;
+    COLOR_WHITE   : result:= lightgray;
+  else
+    result:= attr;
+  end;
+end;
 
+function IBM2Curses(attr: integer): integer;
+begin
+  case attr of
+    black     : result:= COLOR_BLACK;
+    red       : result:= COLOR_RED;
+    green     : result:= COLOR_GREEN;
+    brown     : result:= COLOR_YELLOW;
+    blue      : result:= COLOR_BLUE;
+    magenta   : result:= COLOR_MAGENTA;
+    cyan      : result:= COLOR_CYAN;
+    lightgray : result:= COLOR_WHITE;
+  else
+    result:= attr;
+  end;
+end;
 
 { initialize a color pair }
 function SetColorPair(att: integer): integer;
 var
   i: integer;
-{ ncurses constants
-   COLOR_BLACK   = 0;
-   COLOR_RED     = 1;
-   COLOR_GREEN   = 2;
-   COLOR_YELLOW  = 3;
-   COLOR_BLUE    = 4;
-   COLOR_MAGENTA = 5;
-   COLOR_CYAN    = 6;
-   COLOR_WHITE   = 7;
-}
 begin
   bg := att div 16;
-  fg := att - ((att div 16) * 16);
+  fg := att - (bg * 16);
   while bg > 7 do dec(bg,8);
   while fg > 7 do dec(fg,8);
-  { map to ncurses color values }
-  case bg of
-    0: bg:= COLOR_BLACK;
-    1: bg:= COLOR_BLUE;
-    2: bg:= COLOR_GREEN;
-    3: bg:= COLOR_CYAN;
-    4: bg:= COLOR_RED;
-    5: bg:= COLOR_MAGENTA;
-    6: bg:= COLOR_YELLOW;
-    7: bg:= COLOR_WHITE;
-  end;
-  case fg of
-    0: fg:= COLOR_BLACK;
-    1: fg:= COLOR_BLUE;
-    2: fg:= COLOR_GREEN;
-    3: fg:= COLOR_CYAN;
-    4: fg:= COLOR_RED;
-    5: fg:= COLOR_MAGENTA;
-    6: fg:= COLOR_YELLOW;
-    7: fg:= COLOR_WHITE;
-  end;
+  bg:= IBM2Curses(bg);
+  fg:= IBM2Curses(fg);
   i:= cp[bg,fg];
   init_pair(i,fg,bg);
   SetColorPair:= i;
@@ -357,7 +358,7 @@ function CursesAtts(att: byte): longint;
 var
   atts: longint;
 begin
-  atts:= color_pair(SetColorPair(att));
+  atts:= COLOR_PAIR(SetColorPair(att));
   if IsBold(att) then
     atts:= atts or A_BOLD;
   if (att and $80) = $80 then
@@ -383,7 +384,7 @@ begin
   win.Cols:= x2-win.x; win.Rows:= y2-win.y;
   { Fenster erzeugen }
   win.wHnd:= newwin(win.Rows, win.Cols, win.y, win.x);
-{$IFDEF Beta}
+{$IFDEF Debug}
   if (win.wHnd = nil) then begin
     WriteLn('Error creating window (XPCurses::MakeWindow)');
     WriteLn;
@@ -449,6 +450,7 @@ end;
   ISO-8859-1 an der Konsole voraus (was in D ueblich ist). }
 function CvtToISOConsole(ch: char): longint;
 begin
+  CvtToISOConsole:= 0;
   if (ch in [#0..#255]) then begin
     case ch of
       #24, #30:
@@ -496,7 +498,7 @@ begin
       #254:
           CvtToISOConsole:= ACS_BLOCK;
     else
-      CvtToISOConsole:= IBM2ISOTab[Ord(ch)]{ or A_ALTCHARSET };
+      CvtToISOConsole:= IBM2ISOTab[Ord(ch)] {or A_ALTCHARSET} ;
     end;
   end else
     CvtToISOConsole:= Ord(ch);
@@ -785,81 +787,66 @@ end;
   and read(ln).
  =========================================================================}
 
-function CrtWrite(Var F: TextRec): Integer;
-{ Write  }
+function CrtWrite(var F: TextRec): integer;
 var
-  Temp: string;
-  idx: longint;
+  i: integer;
 begin
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
-  idx:=0;
+  i:=0;
   while (F.BufPos>0) do begin
-    waddch(ActWin.wHnd, CvtToISOConsole(F.BufPTR^[idx]));
+    waddch(ActWin.wHnd, CvtToISOConsole(F.BufPTR^[i]));
     dec(F.BufPos);
-    inc(idx);
+    inc(i);
   end;
   wrefresh(ActWin.wHnd);
   CrtWrite:=0;
 end;
 
-Function CrtRead(Var F: TextRec): Integer;
-{
-  Read from CRT associated file.
-}
+function CrtRead(var F: TextRec): integer;
 var
-  i : longint;
-Begin
+  i: integer;
+begin
   F.BufEnd:=fdRead(F.Handle, F.BufPtr^, F.BufSize);
 { fix #13 only's -> #10 to overcome terminal setting }
-  for i:=1to F.BufEnd do
-   begin
-     if (F.BufPtr^[i-1]=#13) and (F.BufPtr^[i]<>#10) then
+  for i:=1 to F.BufEnd do begin
+    if (F.BufPtr^[i-1]=#13) and (F.BufPtr^[i]<>#10) then
       F.BufPtr^[i-1]:=#10;
-   end;
+  end;
   F.BufPos:=F.BufEnd;
   CrtWrite(F);
   CrtRead:=0;
-End;
+end;
 
-Function CrtReturn(Var F:TextRec):Integer;
-Begin
+function CrtReturn(var F: TextRec):integer;
+begin
   CrtReturn:=0;
 end;
 
-Function CrtClose(Var F: TextRec): Integer;
-{
-  Close CRT associated file.
-}
-Begin
+function CrtClose(var F: TextRec): integer;
+begin
   F.Mode:=fmClosed;
   CrtClose:=0;
-End;
+end;
 
-Function CrtOpen(Var F: TextRec): Integer;
+function CrtOpen(var F: TextRec): integer;
 {
   Open CRT associated file.
 }
-Begin
-  If F.Mode=fmOutput Then
-   begin
-     TextRec(F).InOutFunc:=@CrtWrite;
-     TextRec(F).FlushFunc:=@CrtWrite;
-   end
-  Else
-   begin
-     F.Mode:=fmInput;
-     TextRec(F).InOutFunc:=@CrtRead;
-     TextRec(F).FlushFunc:=@CrtReturn;
-   end;
+begin
+  if F.Mode=fmOutput then begin
+    TextRec(F).InOutFunc:= @CrtWrite;
+    TextRec(F).FlushFunc:= @CrtWrite;
+  end else begin
+    F.Mode:=fmInput;
+    TextRec(F).InOutFunc:= @CrtRead;
+    TextRec(F).FlushFunc:= @CrtReturn;
+  end;
   TextRec(F).CloseFunc:=@CrtClose;
   CrtOpen:=0;
-End;
+end;
 
 procedure AssignCrt(var F: Text);
-{
-  Assign a file to the console. All output on file goes to console instead.
-}
 begin
   Assign(F,'');
   TextRec(F).OpenFunc:=@CrtOpen;
@@ -871,7 +858,7 @@ end;
 { set the text background color }
 procedure TextBackground(att: byte);
 begin
-  SetTextAttr(((att shl 4) and ($f0 and not Blink)) or (TextAttr and ($0f OR Blink)));
+  SetTextAttr(((att shl 4) and ($f0 and not Blink)) or (TextAttr and ($0f or Blink)));
 end;
 
 { set the text foreground color }
@@ -883,13 +870,13 @@ end;
 { set to high intensity }
 procedure HighVideo;
 begin
-  TextColor(TextAttr Or $08);
+  TextColor(TextAttr or $08);
 end;
 
 { set to low intensity }
 procedure LowVideo;
 begin
-  TextColor(TextAttr And $77);
+  TextColor(TextAttr and $77);
 end;
 
 { set to normal display colors }
@@ -899,7 +886,7 @@ begin
 end;
 
 { Wait for DTime milliseconds }
-procedure Delay(DTime: Word);
+procedure Delay(DTime: integer);
 begin
   napms(DTime);
 end;
@@ -938,7 +925,7 @@ begin
 end;
 
 procedure TextMode(mode: word);
-Begin
+begin
   if (ActWin.wHnd <> BaseWin.wHnd) then begin
     if (ActWin.pHnd <> nil) then
       del_panel(ActWin.pHnd);
@@ -957,7 +944,7 @@ Begin
   DirectVideo := true;
   CheckSnow := true;
   NormVideo;
-  ClrScr;
+  {ClrScr;}
 end;
 
 { Verschiedene Service-Funktionen -------------------------------------- }
@@ -1205,49 +1192,53 @@ function StartCurses(var win: TWinDesc): Boolean;
 var
   i : integer;
   s : string[3];
+  w : PWindow;
 begin
   { save the current terminal settings }
   tcGetAttr(STDIN,tios);
   { Curses starten }
-   if initscr=Nil then begin
-     StartCurses:= false;
-     Exit;
-   end else begin
-     StartCurses:= true;
-     start_color;               { Farbe aktivieren }
-     cbreak;                    { disable keyboard buffering }
-     raw;                       { disable flow control, etc. }
-     noecho;                    { do not echo keypresses }
-     nonl;                      { don't process cr in newline }
-     intrflush(stdscr,bool(false));
-     keypad(stdscr,bool(true));
-     scrollok(stdscr,bool(false));
-     win.whnd:= stdscr;         { Handle merken }
-     win.phnd:= nil;            { Noch kein Panel }
-     win.PrevWin:= nil;
-     getmaxyx(stdscr,MaxRows,MaxCols);
-     win.Cols:= MaxCols; win.Rows:= MaxRows;
-     WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
-     LastWindMin:= 0;
-     LastWindMax:= WindMAx;
-     win.x:= 0; win.y:= 0;
-     win.isRel:= false;
-     { define the the alt'd keysets for ncurses }
-     { alt/a .. atl/z }
-     for i:= ord('a') to ord('z') do begin
-       s:= #27+chr(i)+#0;
-       define_key(@s[1],400+i-32);
-     end;
+  w:= initscr;
+  if w=Nil then begin
+    StartCurses:= false;
+    exit;
+  end else begin
+    StartCurses:= true;
+    start_color;               { Farbe aktivieren }
+    cbreak;                    { disable keyboard buffering }
+    raw;                       { disable flow control, etc. }
+    noecho;                    { do not echo keypresses }
+    nonl;                      { don't process cr in newline }
+    intrflush(stdscr,bool(false));
+    keypad(stdscr,bool(true));
+    scrollok(stdscr,bool(false));
+    if w<>stdscr then
+      stdscr:= w;
+    win.whnd:= stdscr;         { Handle merken }
+    win.phnd:= nil;            { Noch kein Panel }
+    win.PrevWin:= nil;
+    getmaxyx(stdscr,MaxRows,MaxCols);
+    win.Cols:= MaxCols; win.Rows:= MaxRows;
+    WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
+    LastWindMin:= 0;
+    LastWindMax:= WindMax;
+    win.x:= 0; win.y:= 0;
+    win.isRel:= false;
+    { define the the alt'd keysets for ncurses }
+    { alt/a .. atl/z }
+    for i:= ord('a') to ord('z') do begin
+      s:= #27+chr(i)+#0;
+      define_key(@s[1],400+i-32);
+    end;
      { alt/1 .. alt/9 }
-     for i:= 1 to 9 do begin
-       s:= #27+chr(i)+#0;
-       define_key(@s[1],490+i);
-     end;
-     s:= #27+'0'+#0; define_key(@s[1],500); { alt/0 }
-     s:= #27+'-'+#0; define_key(@s[1],501); { alt/- }
-     s:= #27+'='+#0; define_key(@s[1],502); { alt/= }
-     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
-   end;
+    for i:= 1 to 9 do begin
+      s:= #27+chr(i)+#0;
+      define_key(@s[1],490+i);
+    end;
+    s:= #27+'0'+#0; define_key(@s[1],500); { alt/0 }
+    s:= #27+'-'+#0; define_key(@s[1],501); { alt/- }
+    s:= #27+'='+#0; define_key(@s[1],502); { alt/= }
+    s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
+  end;
 end;
 
 procedure InitXPCurses;
@@ -1262,18 +1253,15 @@ begin
     halt;
   end;
 
+  { Am Anfang ist die Basis auch Aktuell }
+  system.Move(BaseWin, ActWin, sizeof(TWinDesc));
+
   if not (MinimumScreen(80, 24)) then begin
     endwin; { Curses beenden }
     writeln('This program needs a screen with 80 x 24!');
     writeln('Your console has only ', SysGetScreenCols, ' x ', SysGetScreenLines, '.');
-    {$IFDEF Linux }
-    XPLog(LOG_ERR, 'TTY is to small (%d x %d), need 80 x 24', [SysGetScreenCols, SysGetScreenLines]);
-    {$ENDIF }
     halt(1);
   end;
-
-  { Am Anfang ist die Basis auch Aktuell }
-  system.Move(BaseWin, ActWin, sizeof(TWinDesc));
 
   BaseSub:= nil;
 
@@ -1288,6 +1276,8 @@ begin
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
 
+  ESCDELAY:= 100;		{ 100 ms }
+
   { set the unit exit procedure }
   ExitSave:= ExitProc;
   ExitProc:= @EndXPCurses;
@@ -1296,6 +1286,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/09/10 11:25:10  hd
+  - Escape-Delay verkuerzt
+
   Revision 1.24  2000/09/09 15:40:45  hd
   - Fix: MakeWindow-Exception
 
