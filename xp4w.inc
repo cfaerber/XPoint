@@ -748,7 +748,6 @@ begin
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
       GetMimeViewer(mimetyp,viewer);
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
-      Testviralextension;
 
                                                        {Einteilige nicht text/plain Message }
       if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
@@ -770,12 +769,15 @@ begin
         if brk then goto nextmsg;
         if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
           then viewer.prog:='';
-
+        Testviralextension;
       end else
+      begin
+        Testviralextension;
         multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (left(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
+      end;
       if multipart then
       begin
         pushhp(94);
@@ -1532,6 +1534,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.7  2000/10/09 16:26:36  mk
+  JG:- MIME-Viewer Fixes
+
   Revision 1.25.2.6  2000/08/05 14:59:17  jg
   - Bugfix: Singlepart Menue darf nur kommen, wenns kein Multipart ist
 
