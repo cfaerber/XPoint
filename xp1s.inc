@@ -47,7 +47,6 @@ var sm2t     : boolean;
     maussave : mausstat;
     sp       : scrptr;
     de       : integer;
-    pal: ppal;
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -104,18 +103,6 @@ begin
               gotoxy(1,5);
             end;
     end;
-    if vtype = 3 then
-    begin
-      GetMem(Pal, SizeOf(TPal));
-      asm
-	      mov ax, 01017h
-	      mov bx, 0
-	      mov cx, 256
-              push ds
-	      les dx, dword ptr Pal
-	      int 10h
-      end;
-    end;
     if (cls=2) or (cls=-1) then begin
       if shell25 and (screenlines>25) then
         setvideomode(3);
@@ -159,17 +146,6 @@ begin
       end;
 
     resetvideo;
-    if vtype = 3 then
-    begin
-      asm
-	      mov ax, 01012h
-	      mov bx, 0
-	      mov cx, 256
-	      les dx, dword ptr Pal
-	      int 10h
-      end;
-      FreeMem(pal, SizeOf(TPal));
-    end;
     cursor(curoff);
     if (cls<>4) and (cls<>5) then holen(sp);
     m2t:=sm2t;
@@ -535,6 +511,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.2  2000/12/29 02:22:20  mk
+  - palette sichern verbessert
+
   Revision 1.24.2.1  2000/12/19 00:23:57  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 

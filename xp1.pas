@@ -1050,9 +1050,22 @@ end;
 procedure resetvideo;
 var m3 : boolean;
   sp:scrptr;
+  pal: ppal;
+
 begin
   if startvideotype>0 then
   begin
+    if vtype = 3 then
+    begin
+      GetMem(Pal, SizeOf(TPal));
+      asm
+	      mov ax, 01009h
+	      mov bx, 0
+	      mov cx, 16
+	      les dx, dword ptr Pal
+	      int 10h
+      end;
+    end;
     m3:=true;
     if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
     else m3:=false;
@@ -1069,6 +1082,17 @@ begin
       end;
     end;
   if (videotype>1) and not ParMono then setbackintensity;
+  if vtype = 3 then
+  begin
+    asm
+	     mov ax, 01002h
+	     mov bx, 0
+	     mov cx, 16
+	     les dx, dword ptr Pal
+	     int 10h
+     end;
+     FreeMem(pal, SizeOf(TPal));
+  end;
   SetXPborder;
 end;
 
@@ -2031,6 +2055,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.11  2000/12/29 02:22:20  mk
+  - palette sichern verbessert
+
   Revision 1.48.2.10  2000/12/19 00:23:56  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 

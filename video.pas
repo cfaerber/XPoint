@@ -41,7 +41,7 @@ const DPMS_On       = 0;    { Monitor an }
 var  vbase  : word;                        { Screen-Base-Adresse }
      vtype   : byte;
 type
-  TPal = array[0..255, 0..2] of Byte;
+  TPal = array[1..17] of Byte;
   ppal = ^tpal;
 
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
@@ -234,10 +234,9 @@ begin
     3 : begin
           GetMem(Pal, SizeOf(TPal));
           asm
-	          mov ax, 01017h
+	          mov ax, 01009h
 	          mov bx, 0
-	          mov cx, 256
-                  push ds
+	          mov cx, 16
 	          les dx, dword ptr Pal
 	          int 10h
           end;
@@ -258,10 +257,10 @@ begin
   end;
   if vtype = 3 then
   begin
-    asm
-	    mov ax, 01012h
+   asm
+	    mov ax, 01002h
 	    mov bx, 0
-	    mov cx, 256
+	    mov cx, 16
 	    les dx, dword ptr Pal
 	    int 10h
     end;
@@ -287,6 +286,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.9  2000/12/29 02:22:20  mk
+  - palette sichern verbessert
+
   Revision 1.20.2.8  2000/12/19 00:23:55  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 
