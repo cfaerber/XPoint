@@ -52,7 +52,7 @@ function  BoxFilename(var box:string):string;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
-function  GetBezug(var ref:string):longint;
+function  GetBezug(const ref:string):longint;
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(var fn:string):string;   { ZC-Dateidatum }
@@ -578,8 +578,10 @@ var c1,c2 : longint;
 begin
   if ntKomkette(hd.netztyp) and (hd.msgid<>'') then begin
     c1:=MsgidIndex(hd.msgid);
-    if hd.ref='' then c2:=0
-    else c2:=MsgidIndex(hd.ref);
+    if hd.References.Count = 0 then
+      c2:=0
+    else
+      c2:=MsgidIndex(hd.GetLastReference);
     dbAppend(bezbase);           { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
     dbWriteN(bezbase,bezb_msgpos,satz);
@@ -669,7 +671,7 @@ begin
 end;
 
 
-function GetBezug(var ref:string):longint;
+function GetBezug(const ref:string):longint;
 var pos : longint;
 begin
   dbSeek(bezbase,beiMsgid,dbLongStr(MsgidIndex(ref)));
@@ -1009,6 +1011,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.75  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 

@@ -1257,7 +1257,7 @@ begin
   fn:=TempS(8196);
   extract_msg(0,'',fn,false,0);
   leer:='';
-  _bezug:=hdp.ref;
+  _bezug:=hdp.GetLastReference;
   _beznet:=hdp.netztyp;
   _betreff:=hdp.betreff;
   sdata:=allocsenduudatamem;
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.48  2001/01/04 21:21:10  ma
   - added/refined debug logs
 

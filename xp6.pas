@@ -1625,14 +1625,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     sData^.msgid:=hdp.msgid;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-    begin
-      hdp.ref:=_bezug;
       sData^.References.Add(_bezug);
-    end;
-    if (_beznet>=0) then begin  // bugfiy fÅr VP
+
+    if (_beznet>=0) then  // bugfix fÅr VP
       if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
         hdp.org_xref:=_orgref;
-      end;
+
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
@@ -1739,7 +1737,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         dbWriteN(mbase,mb_ablage,b);
         end;                                 { ansonsten bleibt's bei 0 }
       l:=netztyp;
-      if hdp.ref<>'' then inc(l,$100);
+      if hdp.GetLastReference <> '' then inc(l,$100); // rÅckwÑrts-verkettet
       if FileAttach then inc(l,$200);
       if hdp.pm_reply then inc(l,$400);
       if (hdp.wab<>'') or (hdp.oem<>'') then inc(l,$800);
@@ -2102,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.92  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.91  2001/01/04 08:18:37  mo
   -bugfix f¸r VP
 

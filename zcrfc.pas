@@ -702,7 +702,6 @@ begin
     if typ = 'B' then wrs('TYP: BIN');
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
-    if ref <> '' then wrs('BEZ: ' + ref);
     for i := 0 to References.Count -1 do
       wrs('BEZ: ' + References[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
@@ -1818,12 +1817,14 @@ var
 
     p:=cpos('<',line);
     q:=cpos('>',line);
-    if (p>0) and (q>1) then begin
+    if (p>0) and (q>1) then
+    begin
       line:=copy(line,p+1,q-p-1);
       { eine Message-ID enthaelt ein @ und kein Space }
-      if (cpos('@',line)>0) and (cpos(' ',line)=0) then begin
+      if (cpos('@',line)>0) and (cpos(' ',line)=0) then
+      begin
         hd.References.clear;
-        hd.ref := line
+        hd.References.Add(line);
       end
     end else
       uline.add('U-In-Reply-To: '+line)
@@ -2480,7 +2481,7 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
 
-      if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
+      if (mempf <> '') and (hd.xempf.count = 0) or ((hd.xempf.count > 0) and (mempf <> hd.xempf[0])) then
       begin
         hd.xoem.Assign(hd.xempf);
         hd.XEmpf.Clear;
@@ -3084,28 +3085,26 @@ begin
 
     wrs(f, 'Message-ID: <' + msgid + '>');
 
-    if ref <> '' then
+    if References.Count > 0 then
       if mail and (attrib and attrPmReply = 0) then
-      // BEZ bei Strg-B Antworten in Mailinglisten
-      begin
-        if References.Count > 0 then Ref := References[References.Count-1]; { neu }
-        wrs(f, 'In-Reply-To: <' + ref + '>');
-      end
+        // BEZ bei Strg-B Antworten in Mailinglisten
+        wrs(f, 'In-Reply-To: <' + GetLastReference + '>')
       else
       begin
         // References einigermassen RFC-konform kuerzen
         repeat
-          j := 12 + length(ref) + 2;
+          j := 14;
           for i := 0 to References.Count - 1 do
             j := j + length(References[i]) + 3;
           if j > 980 then
-            // Erste Referenz loeschen um Platz zu schaffen
-            References.Delete(0);
+            // delete second reference to make space for additional references
+            // first reference should not be deleted
+            References.Delete(1);
         until j <= 980;
 
         first := true;
-        s := '<' + ref + '>';
-        for i := 0 to References.Count -1 do
+        s := '<' + References[0] + '>';
+        for i := 1 to References.Count -1 do
         begin
           if length(s) + length(References[i]) > iif(first, 60, 70) then
             wrref;
@@ -3530,8 +3529,9 @@ begin
     binmail := (hd.typ <> 'T');
     if cpos('@', hd.empfaenger) = 0 then { AM }
       if binmail and not NewsMIME then
+      begin
         if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
-      else
+      end else
       begin                             { AM }
         inc(n);if CommandLine then  write(#13'News: ', n);
         seek(f1, adr + hds);
@@ -3717,6 +3717,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2001/01/05 09:33:11  mk
+  - removed THeader.Ref
+
   Revision 1.23  2001/01/02 15:48:55  mk
   - fixed bugs with replyto and references
 

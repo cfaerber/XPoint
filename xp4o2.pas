@@ -193,7 +193,7 @@ begin
   markanz:=0;
   hdp:= THeader.Create;
   ReadHeader(hdp,hds,false);
-  ref:=hdp.ref;
+  ref:=hdp.GetLastReference;
   if (ref<>'') and (ntKomkette(hdp.netztyp)) then begin
     bezg:=GetBezug(ref);
     if bezg<>0 then begin
@@ -317,10 +317,9 @@ begin
   hd:= THeader.Create;
   while not dbEOF(mbase) do begin
     inc(n); wrn;
-    if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then begin
-      hd.msgId:='';
-      hd.ref:='';
-      hd.empfanz:=0;
+    if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then
+    begin
+      hd.clear;
       ReadHeader(hd,hds,false);
       if hds>1 then
         if hd.empfanz=1 then
@@ -565,15 +564,16 @@ begin
   n:=0;
   nullid:=0;
   repeat
-    hdp.ref:='';
+    Hdp.Clear;
     ReadHeader(hdp,hds,false);
-    if (hds=1) or (hdp.ref='') then bez:=0
-    else begin
-      bez:=GetBezug(hdp.ref);
+    if (hds=1) or (hdp.References.Count = 0) then bez:=0
+    else
+    begin
+      bez:=GetBezug(hdp.GetLastReference);
       if bez<>0 then
         dbGo(mbase,bez)
       else
-        nullid:=MsgidIndex(hdp.ref);
+        nullid:=MsgidIndex(hdp.GetLastReference);
       end;
     inc(n);
   until (n= MaxKommLevels) or (bez=0);
@@ -611,8 +611,9 @@ begin
   dbSetIndex(bezbase,beiRef);
   BezSeek:=false;
   ReadHeader(hdp,hds,true);
-  if (hds>1) and (hdp.ref<>'') then begin
-    ref:=MsgidIndex(hdp.ref);
+  if (hds>1) and (hdp.References.Count > 0) then
+  begin
+    ref:=MsgidIndex(hdp.GetLastReference);
     dbSeek(bezbase,beiRef,dbLongStr(ref));
     if dbFound then begin
       vor:=true;
@@ -655,7 +656,7 @@ begin
   BezSeekBezug:=false;
   ReadHeader(hdp,hds,true);
   if hds>1 then begin
-    rec:=getBezug(hdp.ref);
+    rec:=getBezug(hdp.GetLastReference);
     if rec<>0 then begin
       dbGo(mbase,rec);
       BezSeekBezug:=true;
@@ -708,12 +709,14 @@ begin
   hdp:= THeader.Create;
   ReadHeader(hdp,hds,true);
   _left:=false; _right:=false; up:=false; down:=false;
-  if hds>1 then begin
-    up:=(hdp.ref<>'');
+  if hds>1 then
+  begin
+    up:=(hdp.References.Count > 0);
     dbSeek(bezbase,beiRef,LeftStr(dbReadStr(mbase,'msgid'),4));
     down:=dbFound;
-    if hdp.ref<>'' then begin
-      ref:=MsgidIndex(hdp.ref);
+    if hdp.References.Count > 0 then
+    begin
+      ref:=MsgidIndex(hdp.GetLastReference);
       dbSeek(bezbase,beiRef,dbLongStr(ref));
       if dbFound then begin
         vor:=true;
@@ -922,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.33  2001/01/03 13:07:51  mo
   -bug in der Bezugsverkettung gefixt
 

@@ -655,7 +655,8 @@ begin
       inc(nq);
     end;
   close(t);
-  if real(nq)/ real(n)>=0.5 then begin
+  if real(nq)/ real(n)>=0.5 then
+  begin
     lines:=ival(getres2(606,1));
     msgbox(51,lines+6,getres2(606,0),x,y);    { 'Hinweis' }
     for i:=1 to lines-1 do
@@ -1160,6 +1161,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.44  2001/01/05 09:33:10  mk
+  - removed THeader.Ref
+
   Revision 1.43  2001/01/02 10:05:26  mk
   - implemented Header.References
 

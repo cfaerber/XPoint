@@ -323,7 +323,7 @@ begin
         hdp.empfaenger:=hdp.empfaenger+'@'+box+'.ZER';
     dbReadN(mbase,mb_typ,typ);
     set_forcebox;
-    xp6._bezug:=hdp0.ref;
+    xp6._bezug:=hdp0.GetLastReference;
     xp6._orgref:=hdp0.org_xref;
     xp6._beznet:=hdp0.netztyp;
     xp6._replyPath:=hdp0.replypath;
@@ -940,7 +940,6 @@ again:
                    _orgref:=hdp.org_msgid;
                    _beznet:=hdp.netztyp;
                    sData^.References.Assign(Hdp.References);
-                   sData^.References.Add(hdp.ref+'aus xp6o.weiterleit');
                    flQto:=true;
                    end;
                  if typ in [1,7] then begin
@@ -1010,7 +1009,7 @@ again:
                  pm:=cpos('@',empf)>0;
                  if not pm then empf:='A'+empf;
                  end;
-               _bezug:=hdp.ref;
+               _bezug:=hdp.GetLastReference;
                _orgref:=hdp.org_xref;
                _beznet:=hdp.netztyp;
                fidoto:=hdp.fido_to;
@@ -1028,7 +1027,6 @@ again:
                  followup.assign(hdp.followup);
                  replyto.assign(hdp.replyto);
                  References.Assign(Hdp.References);
-                 References.Add(hdp.ref);
                  Keywords:=hdp.Keywords;
                  Summary:=hdp.Summary;
                  Distribute:=hdp.Distribution;
@@ -1172,7 +1170,7 @@ begin
   fmove(f,tf);
   dbAppend(mbase);
   mnt:=hdp.netztyp;
-  if hdp.ref<>'' then inc(mnt,$100);
+  if hdp.References.Count > 0 then inc(mnt,$100);
   if (hdp.wab<>'') or (hdp.oem<>'') then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
   ebrett:=mbrettd('U',ubase);
@@ -1281,6 +1279,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/01/05 09:33:10  mk
+  - removed THeader.Ref
+
   Revision 1.53  2001/01/03 11:48:23  mk
   - am_replyto bei N/W/K/D loeschen
 

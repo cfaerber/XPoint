@@ -554,7 +554,6 @@ var x,y      : byte;
       repeat
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
-        { 20.01.2000 robo - Schalter maildelxpost beachten }
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
@@ -565,8 +564,10 @@ var x,y      : byte;
         begin
           inc(nbez);
           c1:=MsgidIndex(hdp.msgid);
-          if hdp.ref='' then c2:=0
-          else c2:=MsgidIndex(hdp.ref);
+          if hdp.References.Count = 0 then
+            c2:=0
+          else
+            c2:=MsgidIndex(hdp.GetLastReference);
           dbAppend(bezbase);
           dbWriteN(bezbase,bezb_msgpos,ll.l);
           dbWriteN(bezbase,bezb_msgid,c1);
@@ -933,13 +934,13 @@ begin
               end;
             dbAppend(mbase);
             mnt:=netztyp;
-            if ref<>'' then inc(mnt,$100);
+            if References.Count > 0 then inc(mnt,$100); // rÅckwÑrtsverkettet
             if attrib and attrFile<>0 then inc(mnt,$200);
             if pm_reply then inc(mnt,$400);
             if (wab<>'') or (oem<>'') then inc(mnt,$800);
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
-              IsOwnDomain(ref)) or
+              IsOwnDomain(GetLastReference)) or
               (filterattr and fattrHilite<>0) {or}
               { Nachricht mit Priority High und Highest hevorheben }
               {(hdp.Priority in [1..2])}
@@ -1170,6 +1171,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.42  2001/01/04 21:21:10  ma
   - added/refined debug logs
 

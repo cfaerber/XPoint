@@ -58,7 +58,7 @@ type
     zdatum: string;                     { ZConnect-Format; nur auslesen }
     orgdate: boolean;                   { Ausnahme: zdatum schreiben   }
     pfad: string;                       { Netcall-Format               }
-    msgid, ref: string;                 { ohne <>                      }
+    msgid: string;                      { ohne <>                      }
     ersetzt: string;                    { ohne <>                      }
     typ: string;                        { T / B                        }
     crypttyp: string;                   { '' / T / B                   }
@@ -129,6 +129,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Clear;
+    function GetLastReference: String;
   end;
 
   SendUUdata = record
@@ -280,11 +281,22 @@ begin
   inherited destroy;
 end;
 
+function THeader.GetLastReference: String;
+begin
+  try
+    Result := References[References.Count-1];
+  except
+    Result := '';
+  end;
+end;
 
 end.
 
 {
   $Log$
+  Revision 1.6  2001/01/05 09:33:10  mk
+  - removed THeader.Ref
+
   Revision 1.5  2001/01/02 15:47:33  mk
   - clear mimedata in THeader.Clear
 

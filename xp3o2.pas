@@ -73,7 +73,6 @@ procedure WriteHeader(var hd:theader; var f:file);
     i: Integer;
     s: String;
     gb : boolean;
-    MaxRef: Integer;
   begin
     with hd do begin
       if not orgdate then
@@ -110,13 +109,13 @@ procedure WriteHeader(var hd:theader; var f:file);
       wrs('MID: '+msgid);
       if ersetzt<>'' then wrs('ersetzt: '+ersetzt);
 
-      // MaxRef := Min(ntMaxRef(hd.Netztyp), References.Count);
       for i := 0 to References.Count - 1 do
         wrs('BEZ: '+ References[i]);
 
-      if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then begin
+      if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then
+      begin
         wrs('STAT: CTL');
-        wrs('CONTROL: cancel <'+ref+'>');
+        wrs('CONTROL: cancel <' + GetLastReference + '>');
       end;
       wrs('ROT: '+pfad);
 
@@ -447,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
   Revision 1.34  2001/01/02 10:05:25  mk
   - implemented Header.References
 

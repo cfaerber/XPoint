@@ -98,7 +98,6 @@ function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
 function ntBoxnameLen(nt:byte):byte;          { max. L„nge von Servernamen }
 function ntPMTeleData(nt:byte):boolean;       { PMs: Telefon + Postanschrift }
 function ntAMTeleData(nt:byte):boolean;       { AMs: Telefon + Postanschrift }
-function ntMaxRef(nt:byte):byte;              { max. References }
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 function ntOptIso(nt:byte):boolean;           { wahlweise ISO-Zeichensatz }
 function ntForceMailer(nt:byte):boolean;      { '... (unregistriert)' anzeigen }
@@ -673,18 +672,6 @@ begin
 end;
 
 
-function ntMaxRef(nt:byte):byte;              { max. References }
-begin
-  case nt of
-    nt_UUCP,
-    nt_NNTP,
-    nt_POP3     : ntMaxRef:=5;
-    nt_ZConnect : ntMaxRef:=3;
-  else            ntMaxRef:=1;
-  end;
-end;
-
-
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 begin
   ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet,nt_NNTP,nt_POP3]);
@@ -761,6 +748,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2001/01/05 09:33:11  mk
+  - removed THeader.Ref
+
   Revision 1.18  2000/10/17 10:06:00  mk
   - Left->LeftStr, Right->RightStr
 

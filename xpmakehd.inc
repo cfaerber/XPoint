@@ -130,15 +130,6 @@ var i,res : integer;
     inc(hd.empfanz);
   end;
 
-  procedure GetRef;
-  begin
-    with hd do
-    begin
-      References.Add(Line);
-      Ref := Line
-    end;
-  end;
-
   procedure GetKop;
   begin
     if ReadKoplist then
@@ -411,7 +402,7 @@ begin
             if id = 'LEN'    then val(line,groesse,res) else
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
-            if id = 'BEZ'    then GetRef else
+            if id = 'BEZ'    then References.Add(Line) else
             if id = 'MAILER' then programm := line else
             if id = 'ORG'    then organisation := line else
             if id = 'OEM'    then GetName(oem,dummy) else
@@ -557,6 +548,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2001/01/05 09:33:11  mk
+  - removed THeader.Ref
+
   Revision 1.42  2001/01/02 10:05:27  mk
   - implemented Header.References
 
