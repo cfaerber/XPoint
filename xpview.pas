@@ -223,10 +223,11 @@ begin
  
   prog:=viewer.prog;
   orgfn:=iifs(fn1<>'',fn1,fn);
+                                    { Tempdatei mit richtiger Extension versorgen }
 
-  if not fileattach then
-  begin
-    parfn:=left(orgfn,length(orgfn)-3);    { Tempdatei mit richtiger Extension versorgen }
+  if not fileattach and (ustr(right(orgfn,4))='.TMP') then
+  Begin
+    parfn:=left(orgfn,length(orgfn)-3);    
     parfn:=left(parfn,length(parfn)-5)+'TMP-'+right(parfn,5)+viewer.ext; 
     _rename(orgfn,parfn);
     end
@@ -246,6 +247,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/05 07:23:23  jg
+  - Externe Viewer: nur .TMP Dateien werden noch nach TMP-*.* Umbenannt
+
   Revision 1.9  2000/03/04 18:34:18  jg
   - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
     mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
