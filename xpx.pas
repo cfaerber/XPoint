@@ -266,6 +266,10 @@ begin
 
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
+{$IFDEF UnixFS }
+  if right(ownpath,1)<>'/' then
+    ownpath:= ownpath+'/';
+{$ELSE }
   if right(ownpath,1)<>'\' then
     ownpath:=ownpath+'\';
   if cpos(':',ownpath)=0 then begin
@@ -273,11 +277,15 @@ begin
     ownpath:=getdrive+':'+ownpath;
     end;
   UpString(ownpath);
+{$ENDIF }
   TestCD;
   starting:=false;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/02 20:51:02  hd
+  OwnPath an UnixFS angepasst
+
   Revision 1.11  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 
