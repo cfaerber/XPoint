@@ -1,14 +1,22 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{ $Id$
 
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 procedure readpuffer;
 var x,y   : byte;
@@ -115,7 +123,6 @@ var x,y      : byte;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
     cust_header : custheadstr;
-    testl: Integer;
 
   function puffer_ok:boolean;
   var ok : boolean;
@@ -950,6 +957,7 @@ begin
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
             if charset='iso1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
+            Debug.DebugLog('xp3o','subject "'+betreff+'", msgid "'+msgid+'"',DLDebug);
             dbWriteN(mbase,mb_netztyp,mnt);
             dbWriteNStr(mbase,mb_betreff,betreff);
             dbWriteNStr(mbase,mb_absender,absender);
@@ -1050,6 +1058,8 @@ begin
             FlushLL;
             seek(pfile,sizeof(pfile));   { 0/0-Eintr„ge fr nicht einsor- }
             end;                         { tierte Xpostings berspringen  } *)
+
+        Debug.DebugLog('xp3o','ok, next message',DLDebug);
       until empfnr>hdp.empfanz;
 
       inc(adr,hdp.groesse+hdsize);
@@ -1171,8 +1181,14 @@ begin
     if ioresult<>0 then;
     end;
 end;
+
 {
   $Log$
+  Revision 1.45  2001/01/10 19:36:52  ma
+  - added verbose message import debug logs
+  - added GPL header
+  - shortened CVS logs
+
   Revision 1.44  2001/01/10 11:17:34  mk
   JG:- fix for user names longer 80 chars (MK)
 
@@ -1190,146 +1206,4 @@ end;
 
   Revision 1.39  2000/12/03 12:38:21  mk
   - Header-Record is no an Object
-
-  Revision 1.38  2000/11/30 16:59:38  hd
-  - Fix: illegal character
-
-  Revision 1.37  2000/11/30 14:38:09  mk
-  - fixed NewUserIBM when adding new uesers
-
-  Revision 1.36  2000/11/20 19:54:11  mk
-  - Automatische Datumsbezuege wieder wie immer (schaltbar)
-
-  Revision 1.35  2000/11/14 15:51:29  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.34  2000/11/05 15:23:10  mk
-  - Ansicht der Datumsbezuege korrigiert
-
-  Revision 1.33  2000/11/01 11:01:15  mk
-  - Autodatumsbezuege jetzt immer in Netcall
-
-  Revision 1.32  2000/10/17 10:05:49  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.31  2000/08/23 13:55:13  mk
-  - Datenbankfunktionen mit Const-Parametern wo moeglich
-  - dbReadX und Co auf 32 Bit angepasst
-
-  Revision 1.30  2000/07/22 14:05:26  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.29  2000/07/21 20:56:24  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.28  2000/07/21 17:39:53  mk
-  - Umstellung auf THeader.Create/FreeHeaderMem
-
-  Revision 1.27  2000/07/20 16:49:58  mk
-  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
-
-  Revision 1.26  2000/07/13 16:44:57  mk
-  JG: - User-Editmenu: einstellbare Prioritaetsfarbe fuer Msgs des User
-
-  Revision 1.25  2000/07/07 14:38:36  hd
-  - AnsiString
-  - Kleine Fixes nebenbei
-  - dbReadStr angepasst
-
-  Revision 1.24  2000/07/05 15:46:47  hd
-  - AnsiString
-
-  Revision 1.23  2000/07/04 12:04:22  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.22  2000/06/29 13:00:55  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.21  2000/06/17 13:09:09  hd
-  - Fix: Puffer ko[emailadresse]
-
-  Revision 1.20  2000/06/04 16:57:25  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.19  2000/06/01 16:03:05  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.18  2000/05/15 20:02:38  mk
-  - Optische Korrekturen fuer Puffer importieren
-
-  Revision 1.17  2000/05/15 10:03:04  hd
-  Bezuege im gleichen Fenster beim Puffereinlesen
-
-  Revision 1.16  2000/05/14 17:05:36  hd
-  - Beim Puffereinlesen wird nur noch die %-Zahl gezeigt.
-    Die Funktionen hinsichtlich PGP/DES beim Einlesen konnte ich
-    hier nicht pruefen. Ich kann daher nicht sagen, ob die
-    komplette Sicherung des Schirms (sichern/holen) ausreicht.
-
-    Durch den Wegfall der ueberfluessigen Anzeige beim Einlesen
-    duerfte sich die Geschwindigkeit drastisch erhoehen.
-
-  Revision 1.15  2000/05/14 13:58:05  hd
-  - WildCard (readpuffer)
-
-  Revision 1.14  2000/05/04 10:32:58  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.13  2000/04/28 22:30:10  jg
-  - Diverse Verbesserungen beim Versenden mit Priority
-  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
-
-  Revision 1.12  2000/04/28 14:52:52  jg
-  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
-    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
-
-  Revision 1.11  2000/04/15 21:44:46  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.10  2000/04/15 09:58:00  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.9  2000/03/17 13:11:23  mk
-  - Testpuffer einlesen jetzt ca. 4x schneller
-
-  Revision 1.8  2000/03/16 10:14:24  mk
-  - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
-
-  Revision 1.7  2000/03/14 15:15:39  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.6  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.5  2000/02/21 19:25:07  mk
-  MH: Bugfix fuer Priority hervorheben
-
-  Revision 1.4  2000/02/21 18:51:47  mk
-  MH: Nachrichten mit Prioritaet ab High hervorheben
-
-  Revision 1.3  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
 }
