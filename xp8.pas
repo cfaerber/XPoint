@@ -513,6 +513,8 @@ begin
     line := first_marked;
     while line <> #0 do
     begin   { PrÅfen, ob Brett schon bestellt }
+      if cpos(' ',line) <> 0 then
+        line:=copy(line,1,cpos(' ',line)-1);
       Reset(t1);
       while not eof(t1) do
       begin
@@ -539,6 +541,8 @@ begin
     line := first_marked;
     while line <> #0  do
     begin  { neue Bretter an RC-File anhÑngen }
+      if cpos(' ',line) <> 0 then
+        line:=copy(line,1,cpos(' ',line)-1);
       writeln(t1,Line + ' -'+StrS(10){!!});
       line := next_marked;
     end;
@@ -1268,13 +1272,14 @@ begin
   dbClose(d);
   if fn='' then
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
-  else begin
+  else
+  begin
+    if ppp then fn := BoxPar^.PPPClientPath + fn;
     if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
       lfile:=fn+'.BBL' else
-    if (art=1) and exist(fn+'.RC') and ppp then
+    if (art=1) and ppp and exist(fn+'.RC') and ppp then
       lfile:=fn+'.RC'
     else lfile:=fn+'.BL';
-    if ppp then lfile := BoxPar^.PPPClientPath + lfile;
     if not exist(lfile) or (_fileSize(lfile) = 0) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
@@ -1800,6 +1805,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.9  2001/03/25 12:01:06  mk
+  - zwei kleine Fehler im Brettmanager beseitigt
+
   Revision 1.10.2.8  2001/03/24 10:13:57  mk
   - automatisches anlegen der Bretter im Brettmanager
 
