@@ -3123,3 +3123,174 @@ K (c) '93-96 Peter Mandrella
 3 **B
 -
 
+# --- Texte in der Konfiguration --------------------------------------
+
+# Fuer die Studie der neuen Cfg-Datei. Resource z.Zt. nur in Deutsch
+# Ich wuerde ja eine hoehere Nummer nehmen, aber ist sicher, dass
+# XP keinen signed int benutzt? :-/
+# Die Resource 0 enthaelt die Zeilenzahl.
+
++ 31000
+# Intro Datei
+0 28
+1 Konfigurationsdatei fuer OpenXP
+2 ----------------------------------------------------------------------
+3
+4  In dieser Datei werden alle Informationen gespeichert. Sie koennen
+5  diese Datei auch manuell aendern, auch wenn es meistens keinen Sinn
+6  macht. Die Datei gliedert sich in verschiedene Sektionen. Zu jeder
+7  Sektion finden Sie einen Hinweis, welche Bedeutung sich dahinter
+8  verbirgt. Fuer den allgemeinen Syntax beachten Sie bitte folgendes:
+9  - Kommentare werden durch das '#'-Zeichen eingeleitet
+10 - Sie koennen eigene Kommentare einfuegen, diese bleiben erhalten
+11 - Sektionen stehen in eckigen Klammern ('[' und ']'). 
+12 - Eine Sektion kann nur einmal vorkommen
+13 - Sie endet mit dem Beginn einer neuen Sektion.
+14 - Jeder Eintrag besteht aus einem Schluessel und einem Wert
+15 - Bei dem Schluessel ist die Schreibweise egal
+16 - Beim Wert haengt es von der moeglichen Interpretation ab
+17
+18 Beachten Sie bitte auch folgendes: Die in dieser Datei enthaltenen
+19 Konfigurationsdaten werden als letztes von OpenXP eingelesen. Nicht
+20 alle Schluesselwoerter, die Sie aus den bisherigen Dateien
+21 XPOINT.CFG, XPOINT2.CFG und XPOINT.COL kennen, werden hier
+22 automatisch unterstuetzt. Welche Einstellungsmoeglichkeiten durch
+23 diese Konfigurationsdatei unterstuetzt werden, entnehmen Sie bitte
+24 dieser Datei. Wenn in kuenftigen Versionen neuen Konfigurationsdaten
+25 hinzugefuegt werden, finden Sie diese automatisch in dieser Datei
+26 wieder.
+27
+28
+-
+
++ 31001
+# Global
+0 1
+1 Globale Einstellungen
+-
+
++ 31002
+# Color
+0 1
+1 Farbeinstellungen
+-
+
++ 31003
+# Dos
+0 1
+1 Dos-Einstellungen
+-
+
++ 31004
+# Linux
+0 10
+1
+2  In der Sektion Linux befinden sich verschiedene Einstellungen,
+3  die fuer den Betrieb unter Linux von Bedeutung sind. Wichtig ist
+4  dabei, dass u.U. Angaben vorhanden sind, die in einer anderen
+5  Form in einer der anderen Konfigurationsdateien vorhanden sind.
+6  Fuer die Linux-Version sind dann jedoch die Einstellungen aus
+7  dieser Datei relevant. Diesen Punkt sollten Sie unbedingt
+8  beachten, falls Sie Tools von Drittanbietern verwenden
+9
+10
+-
+
++ 31005
+# OS2
+0 1
+1 OS/2 Einstellungen
+-
+
++ 31006
+# Win
+0 1
+1 Windows-Einstellungen
+-
+
++ 31007
+# Z-Netz
+0 1
+1 Einstellungen zum Z-Netz
+-
+
++ 31008
+# RFC
+0 1
+1 Einstellungen zu RFC
+-
+
++ 31009
+# Maus
+0 1
+1 Hier finden Sie die Einstellungen zum MausTausch
+-
+
++ 31010
+# FTN
+0 1
+1 Hier befinden sich die fuer FTN-Formate spezifischen Einstellungen
+-
+
++ 31011
+# User
+0 1
+1 Hier befinden sich die benutzerspezifischen Einstellungen
+-
+
++ 31012
+# F-Keys
+0 1
+1 Hier sind die Definitionen der Funktionstasten
+-
+
++ 31013
+# TempDir
+0 7
+1
+2
+3 TempDir bestimmt das Verzeichnis, welches von OpenXP fuer
+4 temporaere Dateien benutzt werden soll. Wenn Sie diesen
+5 Wert aendern, so stellen Sie sicher, dass ausreichend
+6 Platz in dem Verzeichnis zur Verfuegung steht.
+7
+-
+
++ 31014
+# ExtractDir
+0 5
+1
+2
+3 ExtractDir bestimmt das Verzeichnis, in welches die Daten
+4 gespeichert werden, die Sie extrahieren.
+5
+-
+
++ 31015
+# SendfileDir
+0 6
+1
+2
+3 SendfileDir bestimmt das Verzeichnis, in welchem sich die Dateien
+4 befinden, die versandt werden sollen (z.B. Autoversandt), wenn Sie
+5 keinen vollstaendigen Pfad angegeben haben.
+6
+-
+
++ 31016
+# LogDir
+0 4
+1
+2
+3 LogDir bezeichnets das Verzeichnis fuer die Log-Dateien.
+4
+-
+
++ 31017
+# FileDir
+0 4
+1
+2
+3 FileDir dient der Ablage von Dateien.
+4
+-

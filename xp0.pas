@@ -791,6 +791,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 {$ELSE }
        SupportCfg : string[12] = 'SUPPORT.CFG';
 {$ENDIF }
+       UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
+       
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
                          { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }                                  
@@ -1157,6 +1159,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.47  2000/05/14 09:54:58  hd
+  - 3. Cfg-Datei
+
   Revision 1.46  2000/05/14 07:22:51  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
   - Feldtausch-Config: Defaultauswahl mit F2

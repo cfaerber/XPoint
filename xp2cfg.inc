@@ -339,6 +339,21 @@ begin
   {$ENDIF }
 {$ENDIF }
 
+  { Standard-Sektion fuer die neue Cfg-Datei vorbereiten }
+  case OSType of
+    os_dos:				{ DOS }
+      MySection:= csDos;
+    os_linux:				{ Linux }
+      begin
+        MySection:= csLinux;
+	UseNewCfg:= true;		{ Brauche eigene cfg }
+      end;
+    os_2:				{ OS/2 }
+      MySection:= csOS2;
+    os_windows:				{ Windows }
+      MySection:= csWin;
+  end;
+
   setcolors;
   masksetwrapmode(endonlast);
   masksetarrowspace(true);
@@ -484,7 +499,7 @@ begin
   { /oh }
   Screenlines:=25;
 {$IFDEF UnixFS }
-  temppath:='/var/tmp/';                    {alt: temppath:=ownpath;}
+  temppath:='/tmp/';                        {alt: temppath:=ownpath;}
   extractpath:=ownpath+'files/';            {alt: extractpath:='';}
   sendpath:=ownpath+'send/';                {alt: sendpath:='';}
   logpath:=OwnPath+'log/';                  {alt: logpath:=OwnPath;}
@@ -792,6 +807,9 @@ end;
 procedure saveconfig;
 var t   : text;
     i,j : integer;
+{$IFDEF UnixFS}
+    oldf: boolean;
+{$ENDIF }
 
   procedure writelimits(txt:string; nr:byte);
   var i : integer;
@@ -824,6 +842,9 @@ var t   : text;
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration sichern');
+{$ENDIF }
+{$IFDEF UnixFS}
+  oldf:= exist(ownpath+cfgfile);	{ Merken, ob die Datei existierte }
 {$ENDIF }
   assign(t,ownpath+cfgfile);
   rewrite(t);
@@ -873,16 +894,18 @@ begin
   writeln(t,'ReHochN=',jnf(rehochn));
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
-  if fustr(temppath)<>fustr(ownpath) then	{ FUStr wie UStr, wenn nicht UnixFS }
-    writeln(t,'TempDir=',temppath);
-  if extractpath<>'' then
-    writeln(t,'ExtractDir=',extractpath);
-  if sendpath<>'' then
-    writeln(t,'SendfileDir=',sendpath);
-  if fustr(logpath)<>fustr(ownpath) then
-    writeln(t,'LogDir=',logpath);
-  if fustr(filepath)<>ownpath+InfileDir then
-    writeln(t,'FileDir=',filepath);
+  if (OSType<>os_linux) then begin		{ DOS-Einstellungen nicht veraendern! }
+    if fustr(temppath)<>fustr(ownpath) then	{ FUStr wie UStr, wenn nicht UnixFS }
+      writeln(t,'TempDir=',temppath);
+    if extractpath<>'' then
+      writeln(t,'ExtractDir=',extractpath);
+    if sendpath<>'' then
+      writeln(t,'SendfileDir=',sendpath);
+    if fustr(logpath)<>fustr(ownpath) then
+      writeln(t,'LogDir=',logpath);
+    if fustr(filepath)<>ownpath+InfileDir then
+      writeln(t,'FileDir=',filepath);
+  end;
   writeln(t,'ShowLogin=',jnf(ShowLogin));
   writeln(t,'ArchivBretter=',archivbretter);
   writeln(t,'ArchivLoeschen=',jnf(archivloesch));
@@ -1079,6 +1102,24 @@ begin
   writeln(t,'TermInit=',TermInit);
 
   close(t);
+
+{$IFDEF UnixFS}
+  if not (oldf) then				{ chmod nur, wenn die Datei neu }
+    SetAccess(ownpath+cfgfile, taUserRW);	{ ansonsten nicht }
+{$ENDIF }
+
+  if (UseNewCfg) then begin
+    if not (OpenCfg(ownpath+cfg3file)) then begin
+      writeln('Interer Fehler');
+      halt(2);
+    end;
+    PutCfg('TempDir',temppath,MySection,31013);
+    PutCfg('ExtractDir',extractpath,MySection,31014);
+    PutCfg('SendfileDir',sendpath,MySection,31015);
+    PutCfg('LogDir',logpath,MySection,31016);
+    PutCfg('FileDir',filepath,MySection,31017);
+    CloseCfg;
+  end;
   freeres;
   cfgmodified:=false;
 end;
@@ -1086,10 +1127,16 @@ end;
 
 procedure saveconfig2;
 var t   : text;
+{$IFDEF UnixFS}
+    oldf: boolean;
+{$ENDIF }
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration #2 sichern');
 {$ENDIF }
+{$IFDEF UnixFS}
+  oldf:= exist(ownpath+cfg2file);
+{$ENDIF}
   assign(t,ownpath+cfg2file);
   rewrite(t);
   if ioresult<>0 then begin
@@ -1110,6 +1157,10 @@ begin
   writeln(t,'FileSuche=',fidolastseek);
   writeln(t,'TL-NetcallAlle=',jnf(XSA_NetAlle));
   close(t);
+{$IFDEF UnixFS}
+  if not (oldf) then
+    SetAccess(ownpath+cfg2file,taUserRW);
+{$ENDIF}
 end;
 
 
@@ -1716,6 +1767,25 @@ begin
     SaveConfig2;
     end;
 
+  { NEue Konfigurationsdatei bearbeiten }
+  if (UseNewCfg) then begin
+    if not (OpenCfg(ownpath+cfg3file)) then begin
+      writeln('Interner Fehler: open(',ownpath+cfg3file,')');
+      halt(2);
+    end;
+    s:= GetCfg('TempDir',MySection);
+    if (s='') then PutCfg('TempDir',temppath,MySection,31013) else temppath:= s;
+    s:= GetCfg('FileDir',MySection);
+    if (s='') then PutCfg('FileDir',filepath,MySection,31017) else filepath:= s;
+    s:= GetCfg('ExtractDir',MySection);
+    if (s='') then PutCfg('ExtractDir',extractpath,MySection,31014) else extractpath:= s;
+    s:= GetCfg('SendfileDir',MySection);
+    if (s='') then PutCfg('SendfileDir',sendpath,MySection,31015) else sendpath:= s;
+    s:= GetCfg('LogDir',MySection);
+    if (s='') then PutCfg('LogDir',logpath,MySection,31016) else logpath:= s;
+    CloseCfg;
+  end;
+
   readmenudat;
   setmenus;
   checker[11]:=(pos(strs(screenlines),menu[11]^)-5) div 6;
@@ -1726,6 +1796,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.53  2000/05/14 09:54:58  hd
+  - 3. Cfg-Datei
+
   Revision 1.52  2000/05/14 07:22:51  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
   - Feldtausch-Config: Defaultauswahl mit F2

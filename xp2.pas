@@ -28,7 +28,7 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
 {$IFDEF Linux}
   xplinux,
 {$ENDIF}
-{  xpcfg,}
+  xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
@@ -1135,6 +1135,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/05/14 09:54:58  hd
+  - 3. Cfg-Datei
+
   Revision 1.38  2000/05/14 07:22:51  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
   - Feldtausch-Config: Defaultauswahl mit F2

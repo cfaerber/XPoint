@@ -399,11 +399,12 @@ begin
   { Neues Window als aktuell setzen }
   FastMove(win, ActWin, sizeof(TWinDesc));
   show_panel(win.pHnd);
-  { Inhalt loeschen }
-  ClrScr;
-  { Rahmen zeichnen }
-  if (f) then
+  if (f) then begin
+    { Inhalt loeschen }
+    ClrScr;
+    { Rahmen zeichnen }
     box(win.wHnd, 0, 0);
+  end;
   { Titel }
   if (Length(s) > 0) then begin
     mvwaddstr(win.wHnd, 0, 2, StrPCopy(p, ' ' + s + ' '));
@@ -1276,6 +1277,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/05/14 09:54:58  hd
+  - 3. Cfg-Datei
+
   Revision 1.14  2000/05/13 09:42:26  hd
   xpglobal wird benoetigt (Typen)
 

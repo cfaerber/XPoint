@@ -64,6 +64,7 @@ XP8FS.INC       Fileserver-Funktionen
 XP9.*           (fast) alle Funktionen im Edit-MenÅ
 XPAUTO.PAS      AutoVersandt, Autoexec-Verzeichnis
 XPCC.PAS        Verteiler
+XPCFG.PAS	3. Cfg-Datei
 XPCRC32.PAS     CRC-32 berechnen
 XPDATUM.PAS     Datumsumwandlungen
 XPDEF.INC       globale Compiler-Definitionen
@@ -119,6 +120,7 @@ XP-E.IHQ        Quelltext der englischen Online-Hilfe
 
 DBFORM          Beschreibung der Datenbankfelder
 
+README.LNX	Hinweise zur Nutzung unter Linux
 
 Dateiformate
 ------------
