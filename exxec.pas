@@ -66,13 +66,13 @@ function Xec(var prog:string; space,envspace:word; var prompt:string;
   end;
 var
     pp    : byte;
-    para  : string[130];
+    para  : string;
     dpath : pathstr;
 begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
-    para:=' '+trim(copy(prog,pp+1,127));
+    para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
     end;
   prog:=ustr(prog);
@@ -148,7 +148,7 @@ var regs  : registers;
     envir : array[0..1023+18] of byte;    { neues Environment }
     newenv: pointer;
     dpath : pathstr;
-    para  : string[130];
+    para  : string;
     pp    : byte;
 
     swapfile : file;
@@ -482,6 +482,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/04/26 18:31:21  mk
+  - Para auf 255 vergroessert
+
   Revision 1.11  2000/04/16 20:38:49  mk
   - Fixes fuer FindFirst (2)
 
