@@ -74,6 +74,10 @@ type
   Stat = TStat;
 {$ENDIF }
 
+
+function SysExec(const Path, CmdLine: String): Integer;
+
+
 { Verzeichnis-/Datei-Routinen ------------------------------------------ }
 
 function MakeDir(p: string; a: longint): boolean;
@@ -103,7 +107,8 @@ function SysOutputRedirected: boolean;
 implementation
 
 uses
-  typeform;
+  typeform,
+  fileio;
 
 
 {$ifdef UseSysLog}
@@ -423,6 +428,11 @@ begin
   Result := false;
 end;
 
+function SysExec(const Path, CmdLine: String): Integer;
+begin
+  result:= Linux.Shell(AddDirSepa(path)+CmdLine);
+end;
+
 {$ifdef UseSysLog}
 
 begin
@@ -431,6 +441,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/11/19 16:51:02  hd
+  - SysExec
+
   Revision 1.22  2000/11/16 19:23:53  hd
   - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
 
