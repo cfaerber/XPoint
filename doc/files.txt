@@ -19,6 +19,7 @@ KEYS.PAS        Tastatureingabe
 LISTER.*        Lister
 MASKE.*         Dialoge / Eingabemasken
 MAUS2.PAS       Auswertung von Mauseingaben
+MODEM.PAS       Modemroutinen
 MONTAGE.PAS     Datumsfunktionen
 MOUSE.*         Auswertung von Maus-Interrupts (INT 33)
 PRINTERX.PAS    Druckerausgabe
@@ -31,6 +32,7 @@ VIDEO.*         Video-BIOS-Funktionen
 WIN2.PAS        Auswahlfenster
 WINDOWS.*       Fenster allgemein
 XDELAY.*        Ersatz fÅr CRT-Delay
+ZMODEM.*        ZModem-Unit
 
 XP.PAS          CrossPoint-Hauptprogramm, Real-Mode-Version
 XL.PAS          CrossPoint-Hauptprogramm, DPMI-Version
@@ -127,9 +129,9 @@ XP.IHQ          Quelltext der deutschen Online-Hilfe
 XP-E.IHQ        Quelltext der englischen Online-Hilfe
 *.DQ            Quelltexte der Dokumentation
 
-IHS.PAS         Quelltext zu IHS.EXE
+IHS.PAS         Quelltext zu IHS.EXE (Helpfile-Compiler)
 DOCFORM.PAS     Quelltext zu DOCFORM.EXE
-RC.PAS          Quelltext zu RC.EXE
+RC.PAS          Quelltext zu RC.EXE (Resourcen-Compiler)
 
 Linux: wird zum compilieren der anderen Versionen nicht benˆtigt
 ----------------------------------------------------------------
