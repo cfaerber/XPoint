@@ -83,7 +83,7 @@ const max_arc = 3;   { maximale verschachtelte Archivdateien }
 
 type arcbuf = record
                 arcer_typ : shortint;
-                arcname   : string;
+                arcname   : shortstring;
               end;
      arcbp  = ^arcbuf;
 
@@ -2426,6 +2426,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/09/26 05:12:26  mk
+  - Archivviewer AnsiString-Fix
+
   Revision 1.67  2000/09/25 17:56:13  mk
   - nicht aktivierter Eintrag Bretter ist jetzt richtig verschwunden
 
