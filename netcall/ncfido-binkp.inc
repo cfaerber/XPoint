@@ -236,7 +236,7 @@ end;
 { Binkp file transfer procedure. Results are 0: OK, 1: at least sent all files, 2: not all files sent }
 function TFidomailer.BinkPFileTransfer: byte;
 type
-  tState= (WaitConn,InitTransfer,Switch,Receive,Transmit,Done);
+  tState= (WaitConn,InitTransfer,Switch,Receive,Transmit,Done,ConnLost);
   tRxState= (RxWaitF,RxAccF,RxReceD,RxWriteD,RxEOB,RxDone);
   tTxState= (TxGNF,TxTryR,TxReads,TxWLA,TxDone);
   tResult= (OK,Continue,Failure);
@@ -478,8 +478,12 @@ begin
           result:=0; State:=Done;
           end else if FCommObj^.CharAvail then
             State:=Receive
-          else if FCommObj^.ReadyToSend(1024) then
-            State:=Transmit;
+          else if FCommObj^.ReadyToSend(1024) or
+                  // Ensure transmit routine calls ProcessTheQueue - even if connection already down
+                  ((TxState=TxWLA)and(TheQueue.Count>0))then
+            State:=Transmit
+          else if not FCommObj^.Carrier then
+            State:=ConnLost;
           //** if timeout...
         end;
       Receive: begin
@@ -496,13 +500,15 @@ begin
             Continue: ;
           end;
         end;
+      ConnLost: begin
+        Output(mcError,'Connection lost',[0]);
+        Log(lcError,'Connection lost');
+        State:=Done; result:=BreakTransfer;
+        end;
     end;
-    if (KeyPressed and(ReadKey=#27))or
-       (not CommObj^.Carrier)then begin
-      if not CommObj^.Carrier then
-        Output(mcError,'Connection lost',[0])
-      else
-        Output(mcError,'User break',[0]);
+    if (KeyPressed and(ReadKey=#27))then begin
+      Output(mcError,'User break',[0]);
+      Log(lcError,'User break');
       result:=BreakTransfer;
       end;
   until State=Done;
@@ -512,6 +518,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/05/09 19:37:53  ma
+  - connection termination recognition changed again
+
   Revision 1.2  2001/04/18 11:02:13  ma
   - using StrgList.IndexOf instead of Find, Find only works on sorted
     Strglists.
