@@ -715,7 +715,7 @@ v3.20d/OpenXP  (01.01.2001)
 !  User wurden bei der Neuaufnahme manchmal ans Ende sortiert (diese
    User k”nnen in der User-šbersicht mit "S"pezial/"E"dit und <Ctrl-
    Enter> "repariert" werden).
-!  Crash im Lister bei 0-Byte-Nachrichten, festehendem Nachrichtenkopf
+!  Crash im Lister bei 0-Byte-Nachrichten, feststehendem Nachrichtenkopf
    und Mausklick unterhalb des Nachrichtenkopfes beseitigt.
 !  Ein paar „ltere kleine Bugs in der Spezial-Suche behoben.
 !  Nachrichten/Weiterleiten/Kopie von Fido-Nachrichten erzeugt jetzt
@@ -724,6 +724,6 @@ v3.20d/OpenXP  (01.01.2001)
 !  Beim Hinzufgen eines neuen Users konnte XP abstrzen, wenn im Feld
    "Adresse" die <F2>-Auswahl benutzt wurde und sich noch kein User in
    der Datenbank befand.
-+  Suche nach mehreren Message-IDs gleichzeitig m”glich.
++  Suche nach mehreren Message-IDs gleichzeitig m”glich (s. Hilfe).
 !  Bei Message-ID-Suche aus einer Liste markierter Nachrichten heraus
-   Eingabefeld "Bretter" ausgeblendet (wie bei den anderen Suchen auch).
+   Auswahlfeld "Bretter" ausgeblendet (wie bei den anderen Suchen auch).
