@@ -18,7 +18,7 @@ uses
 {$ENDIF }
   winxp,
 {$IFDEF NCRT }
-  oCrt,
+  xpcurses,
   xp0, { Fuer ScreenLines und ScreenWidth }
 {$ELSE } 
   crt,
@@ -65,15 +65,10 @@ var   menu      : array[0..menus] of ^string;
       anzhidden : integer;
       specials  : string;
 
-
 procedure wrlogo;
 begin
   writeln;
-{$IFDEF Linux }
-  writeln(StrDosToLinux('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware'));
-{$ELSE }
   writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
-{$ENDIF }
   writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
@@ -83,13 +78,7 @@ end;
 procedure error(txt:string);
 begin
   wrlogo;
-   writeln('Fehler: ',
-{$IFDEF Linux }
-       StrDosToLinux(txt),
-{$ELSE }
-       txt,
-{$ENDIF }
-       #7);
+   writeln('Fehler: ', txt, #7);
   if ropen then CloseResource;
   halt;
 end;
@@ -105,11 +94,7 @@ begin
     writeln('Fehler: ''xp-d.res'' nicht gefunden.'#7);
     writeln;
     writeln('Starten Sie dieses Programm bitte in einem Verzeichnis, in dem');
-{$IFDEF Linux }
-    writeln(StrDosToLinux('CrossPoint vollstÑndig installiert wurde.'));
-{$ELSE }
     writeln('CrossPoint vollstÑndig installiert wurde.');
-{$ENDIF }
     writeln;
     halt;
     end;
@@ -117,11 +102,6 @@ begin
   if existf(t) then begin
     reset(t);
     readln(t,s);
-{$IFDEF Linux }
-    { LoString(s); }                  { ML Linux braucht Lowcase }
-    { Widerspruch. Ueblich ist LoCase, aber es muss nicht. Der
-      Anwender wird schon wissen, was er tut. }
-{$ENDIF }
     close(t);
     end
   else
@@ -131,11 +111,7 @@ begin
   OpenResource(s,10000);
   ropen:=true;
   if ival(getres(6))<11 then
-{$IFDEF Linux }
-  error(StrDosToLinux('Es wird CrossPoint Version 3.11 oder hîher benîtigt!'));
-{$ELSE }
   error('Es wird CrossPoint Version 3.11 oder hîher benîtigt!');
-{$ENDIF }
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
     getmem(menu[i],length(s)+1);
@@ -176,7 +152,7 @@ begin
   inc(windmax,$100);
   setbackintensity(true);
   attrtxt(col.colmenu[0]);
-  {$IFDEF NCRT }
+  {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
   wrt2(sp(ScreenWidth));
   attrtxt(col.colback);
   for i:=1 to ScreenLines do
@@ -665,21 +641,12 @@ begin
     read(f,version);
     if version<>meversion then begin
       wrlogo;
-{$IFDEF Linux }
-      writeln(StrDosToLinux('WARNUNG: XPME kann das Format der MenÅdatei (XPMENU.DAT) nicht'));
-      writeln('         erkennen. Die Datei wurde entweder mit einer neueren');
-      writeln(StrDosToLinux('         Version des MenÅeditors erstellt oder ist beschÑdigt.'));
-      writeln(StrDosToLinux('         Wenn Sie jetzt fortfahren, wird diese Datei gelîscht,'));
-      writeln(StrDosToLinux('         d.h. eventuelle Informationen Åber (de)aktivierte'));
-      writeln(StrDosToLinux('         MenÅpunkte gehen verloren.'));
-{$ELSE }
-      writeln('WARNUNG: XPME kann das Format der MenÅdatei (XPMENU.DAT) nicht');
+      writeln('WARNUNG: XPME kann das Format der MenÅdatei (',menufile,') nicht');
       writeln('         erkennen. Die Datei wurde entweder mit einer neueren');
       writeln('         Version des MenÅeditors erstellt oder ist beschÑdigt.');
       writeln('         Wenn Sie jetzt fortfahren, wird diese Datei gelîscht,');
       writeln('         d.h. eventuelle Informationen Åber (de)aktivierte');
       writeln('         MenÅpunkte gehen verloren.');
-{$ENDIF }
       writeln;
       write('Fortfahren (J/N)? '#7);
       rdjn(c,'N');
@@ -751,6 +718,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/05/02 14:38:35  hd
+  Laeuft jetzt unter Linux. String-Konvertierung wird in XPCURSES.PAS
+  vorgenommen, so dass alle StrDosToLinux-Aufrufe entfernt wurden.
+  Die Konvertierungsroutine beruecksichtigt auch Ausgaben via Write
+  und WriteLn.
+
   Revision 1.14  2000/04/29 16:13:29  hd
   Linux-Anpassung
 
