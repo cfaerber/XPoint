@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
+  stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
   classes, maske,datadef,database,maus2,lister,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input,xp5;
 
@@ -2050,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.43  2000/11/16 19:42:57  hd
+  - DOS Unit entfernt
+
   Revision 1.42  2000/11/14 15:51:27  mk
   - replaced Exist() with FileExists()
 
