@@ -329,7 +329,9 @@ var x,y : Integer;
   end;
 
 begin
-  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] > 0;
+  UUCP_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
+    ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0;
+
   if UUCP_ZConnectUsed then
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
@@ -1186,7 +1188,6 @@ end;
 procedure netoptions;
 var x,y   : Integer;
     brk   : boolean;
-    add   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 
@@ -1523,6 +1524,9 @@ end;
 
 {
   $Log$
+  Revision 1.113  2001/11/01 08:25:52  mk
+  - allow RTA menu in msgoptions when client and pop3, nntp and imap-boxes are available
+
   Revision 1.112  2001/10/10 20:57:10  mk
   - fixed little comment
 
