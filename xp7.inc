@@ -993,7 +993,18 @@ var dummy : longint;
   end;
 
   procedure CopyPKTs;   { PKT's vom Sysopeingangsvereichnis -> SPOOL }
-  var sr : searchrec;
+  var
+    sr   : TSearchRec;
+  begin
+    if sysutils.findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile, sr)=0 then repeat
+      if pos('.PKT',UpperCase(sr.name))>0 then
+        if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
+          _era(BoxPar^.sysopinp+sr.name);
+    until sysutils.findnext(sr)<>0;
+    sysutils.findclose(sr);
+  end;
+
+{  var sr : searchrec;
   begin
     findfirst(BoxPar^.sysopinp+'*.PKT',ffAnyFile,sr);
     while doserror=0 do begin
@@ -1002,7 +1013,7 @@ var dummy : longint;
       findnext(sr);
     end;
     FindClose(sr);
-  end;
+  end;}
 
   procedure EmptySysin;
   var sr : searchrec;
@@ -1432,6 +1443,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/11/14 21:10:27  hd
+  - Fix: Unix: auch *.pkt, *.Pkt ... werden kopiert (vorher nur *.PKT)
+
   Revision 1.39  2000/11/14 15:51:33  mk
   - replaced Exist() with FileExists()
 
