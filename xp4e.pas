@@ -1705,7 +1705,7 @@ begin
   DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0);
   sData.Free;
   pgdown:=false;
-  if FileExists(fn) then DeleteFile(fn);
+  SafeDeleteFile(fn);
 end;
 
 
@@ -2494,6 +2494,9 @@ end;
 
 {
   $Log$
+  Revision 1.88.2.6  2002/07/26 08:10:27  mk
+  - do not try to delete existing files
+
   Revision 1.88.2.5  2002/07/25 20:32:36  ma
   - fixed: AutoVersand/File names were automatically converted to uppercase,
     resulting in problems with Linux
