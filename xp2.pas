@@ -272,7 +272,8 @@ var i  : integer;
         k:=cposX('&',s3);
         keyboard(copy(s3,9,k-9));
         end;
-      end;  
+      end;
+    ParNoBeta := true;
   end;
 
   procedure ParAuswerten;
@@ -1012,6 +1013,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.26  2001/10/21 14:40:41  mk
+  - /nb bei /mailto
+
   Revision 1.45.2.25  2001/10/16 18:36:01  my
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
   ------------------------------------------------------------------------
