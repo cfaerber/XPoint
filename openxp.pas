@@ -30,6 +30,9 @@ uses
 {$IFDEF Linux }
   cmem,
 {$ENDIF }
+{$IFDEF Win32 }
+  cmem,
+{$ENDIF }
   Main;
 
 begin
