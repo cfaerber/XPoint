@@ -97,6 +97,9 @@ uses
 
 var   zaehlx,zaehly : byte;
 
+{$IFDEF AUTOCONF}
+{$INCLUDE config.inc}
+{$ENDIF}
 
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
 var s       : string;
@@ -276,12 +279,28 @@ procedure initdirs;
 
   procedure GetLibDir;
   begin
-    {$ifdef UnixDevelop}
-    Libdir:= './';
-    {$else}
-    {$ifdef BSD}
-    LibDir := AddDirSepa('/usr/local/share/' + XPDirName); { Lib/Res-Verzeichnis }
-    DocDir := AddDirSepa('/usr/local/doc/' + XPDirName);   { Lib/Res-Verzeichnis }
+    {$IFDEF UnixDevelop}
+      LibDir:= './';
+    {$ELSE}
+      {$IFDEF AUTOCONF}
+        LibDir := AddDirSepa(CONF_DATADIR) + XPDirName; { Lib/Res-Verzeichnis }
+        DocDir := AddDirSepa(CONF_DATADIR) + XPDirName; { Lib/Res-Verzeichnis }
+      {$ELSE}
+      {$IFDEF BSD}
+        LibDir := AddDirSepa('/usr/local/share/' + XPDirName); { Lib/Res-Verzeichnis }
+        DocDir := AddDirSepa('/usr/local/doc/' + XPDirName);   { Lib/Res-Verzeichnis }
+      {$ELSE}
+        LibDir := AddDirSepa('/usr/lib/' + XPDirName) + 'lib';                    { Lib/Res-Verzeichnis }
+        DocDir := AddDirSepa('/usr/lib/' + XPDirName) + 'doc';                    { Lib/Res-Verzeichnis }
+        if not isPath(LibDir) then
+        begin
+          LibDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'lib';
+          DocDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'doc';
+        end;
+      {$ENDIF}
+      {$ENDIF}
+    {$ENDIF}
+
     if not isPath(LibDir) then
     begin
       if _deutsch then
@@ -291,27 +310,9 @@ procedure initdirs;
         stop('The programm is not installed correctly - LibDir: "' +
              LibDir + '" not available.');
     end;
-    {$else}
-    LibDir := AddDirSepa('/usr/lib/' + XPDirName) + 'lib';                    { Lib/Res-Verzeichnis }
-    DocDir := AddDirSepa('/usr/lib/' + XPDirName) + 'doc';                    { Lib/Res-Verzeichnis }
-    if not isPath(LibDir) then
-    begin
-      LibDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'lib';
-      DocDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'doc';
-      if not isPath(LibDir) then
-      begin
-        if _deutsch then
-          stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
-               LibDir + '" nicht vorhanden.')
-        else
-          stop('The programm is not installed correctly - LibDir: "' +
-               LibDir + '" not available.');
-      end;
-    end;
+
     LibDir := AddDirSepa(LibDir);
     DocDir := AddDirSepa(DocDir);
-    {$endif}
-    {$endif}
   end;
 
 begin {initdirs}
@@ -1099,9 +1100,12 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
-  Revision 1.142.2.9  2003/10/08 20:54:11  cl
+  Revision 1.142.2.10  2003/10/08 21:02:32  cl
   - fixed autoconf for stable branch
 
+
+  Revision 1.142.2.9  2003/10/08 20:54:11  cl
+  - fixed autoconf for stable branch
 
   Revision 1.142.2.8  2003/09/30 15:01:55  mk
   - added /dlmax as shortcut for /dl:default=10
@@ -1136,6 +1140,21 @@ finalization
   Revision 1.142.2.1  2002/05/19 10:51:00  mk
   - added "--help" to display command line parameters
   - added some consts
+
+
+  Revision 1.146  2002/07/26 08:19:23  mk
+  - MarkedList is now a dynamically created list, instead of a fixed array,
+    removes limit of 5000 selected messages
+
+  Revision 1.145  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
+  Revision 1.144  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
+  Revision 1.143  2002/05/19 10:50:35  mk
+  - added "--help" to display command line help
+  - added some const-parameters
 
   Revision 1.142  2002/04/14 11:01:54  mk
   - fixed memory leaks
