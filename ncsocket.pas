@@ -177,6 +177,7 @@ destructor TSocketNetcall.Destroy;
 begin
   if FConnected then
     DisConnect;
+  FConnected:= false;
   Host.Clear;
   inherited destroy;
 end;
@@ -375,6 +376,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/09/04 11:15:37  hd
+  - Fix: Disconnect hatte FConnected nicht zurueckgesetzt (Dank an das
+    FPC-Team)
+
   Revision 1.13  2000/08/07 14:35:57  mk
   - Zahl der Ein- und Ausgangsbytes werden jetzt gezaehlt
 
