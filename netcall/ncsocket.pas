@@ -288,7 +288,9 @@ procedure TSocketNetcall.DisConnect;
 begin
   if FConnected then begin
     ShutDown(FHandle, 2); // SD_BOTH
-    CloseSocket(FHandle);
+    {$IFDEF Win32 }
+      CloseSocket(FHandle);
+    {$ENDIF }
     FConnected := false;
   end;
 end;
@@ -435,6 +437,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/04/14 12:51:55  mk
+  - use CloseSocket only with Win32
+
   Revision 1.33  2002/04/14 12:01:24  mk
   - Close Socket-Handle in TSocketNetcall.DisConnect
 
