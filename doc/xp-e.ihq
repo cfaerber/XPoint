@@ -8557,6 +8557,13 @@ be presented by default.
 
 See also:  [internal Editor]@54
 @
+11608
+<<Edit / Viewer
+
+You can enter here the name of a programme for
+viewing different types of binary and MIME type
+messages.
+@
 11650
 The following macros can be used in templates
 (except signatures), and will be replaced at the time
