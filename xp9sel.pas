@@ -59,7 +59,7 @@ function  testZCpointname(var s:string):boolean;
 function  JanusSwitch(var s:string):boolean;
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
-function  is_mailaddress(var s:string):boolean;
+function  is_mailaddress(const s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
 function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
 
@@ -148,7 +148,7 @@ restart:
 end;
 
 
-function is_mailaddress(var s:string):boolean;
+function is_mailaddress(const s:string):boolean;
 var b: byte;
 begin
   is_mailaddress:=true;
@@ -829,6 +829,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.11  2001/07/31 17:25:41  mk
+  - is_mailadress hat einen const statt var-parameter
+
   Revision 1.1.2.10  2001/07/31 15:36:41  my
   MY+JG:- new function is_mailaddress, also implemented in all
           functions and procedures involved (multi_Mailstring and
