@@ -1733,7 +1733,8 @@ again:
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       new(hdp);                     { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp^,hds,false);
-      if (hdp^.amreplyto='') or ((hdp^.empfanz=1) and
+      if (Dispmode<>12) and (hdp^.amreplyto='')
+        or ((hdp^.empfanz=1) and
         (hdp^.empfaenger=hdp^.amreplyto)) then
       begin
         if c=k2_b  then c:=k2_p;
@@ -2740,6 +2741,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.33  2001/06/05 20:33:02  my
+  JG:- Fix: When using <Ctrl-B> in a reference tree on a public
+       message, XP created a private message if the reference
+       tree contained both public and private messages and if
+       the reference tree was activated from a private message.
+
   Revision 1.26.2.32  2001/05/23 10:29:47  mk
   JG:- ungelesen-fix
 
