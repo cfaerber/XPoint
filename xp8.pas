@@ -1162,6 +1162,7 @@ var absender : string[Adrlen];
     uucp     : boolean;
     fn       : pathstr;
     bpsik    : BoxPtr;
+    i        : byte;
 label ende;
 begin
   dbReadN(mbase,mb_absender,absender);
@@ -1195,11 +1196,21 @@ begin
   new(boxpar);
   ReadBox(0,bfile,boxpar);
   if boxpar^.pppMode then
+  begin
+    if deutsch then
     begin
       pushkey('N');
       pushkey('M'); 
       pushkey('D');
-      exit;
+      end
+    else begin
+      pushkey('M');
+      pushkey('M');
+      pushkey('F');
+      end;
+    for i:=1 to length(box) do pushkey(box[i]);
+    pushkey(keycr);
+    exit;
     end;
   if mapstype(box) in [2,8] then begin
     message('Brettliste fÅr '+ustr(box)+' wird eingelesen ...');
@@ -2142,6 +2153,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.22  2001/07/06 15:35:38  my
+  JG:- Fix for RFC/Client: <Enter> needs not be pressed twice anymore
+       when N/M/E is mapped to N/M/D
+  JG:- Fix for RFC/Client: Mapping N/M/E => N/M/D now also works
+       with English (M/M/I => M/M/F).
+
   Revision 1.10.2.21  2001/07/04 01:32:08  my
   JG:- fixed two Bugs (N/M/E and non-existent RC file when subscribing)
 
