@@ -28,7 +28,7 @@ uses
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
 procedure MausInfoReorg;
-function  MausBestPM:boolean;     { gelesene Maus-PM bestÑtigen }
+function  MausBestPM:boolean;     { gelesene Maus-PM bestaetigen }
 procedure MausImportITG(box:string);
 procedure MausEditInfos;
 procedure MausPMs_bestaetigen(box:string);
@@ -40,10 +40,10 @@ implementation  { ---------------------------------------------------- }
 uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
 
 
-{ art=0 : ZurÅckgelieferte Maus-MessageIDs aus Logfile in  }
-{         Datenbank und Verkettungsdatei einlesen.         }
-{ art=1 : ZurÅckgelieferte PM-Status in Datenbank einlesen }
-{ art=2 : Fehlermeldungs-Nachricht in PM senden            }
+{ art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }
+{         Datenbank und Verkettungsdatei einlesen.          }
+{ art=1 : Zurueckgelieferte PM-Status in Datenbank einlesen }
+{ art=2 : Fehlermeldungs-Nachricht in PM senden             }
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
 var t,t2 : text;
@@ -131,7 +131,7 @@ begin
     if (LeftStr(s,1)='#') and ((art=1) or (length(s)=11)) and not eof(t)
     then begin
       anew:='!';
-      while not eof(t) and (LeftStr(anew,1)='!') do   { Kommentare Åberlesen }
+      while not eof(t) and (LeftStr(anew,1)='!') do   { Kommentare ueberlesen }
         readln(t,anew);
       anew:=trim(anew);   { dies ist entweder eine ID oder ein Status }
       if ((art<>2) and (LeftStr(anew,1)='=')) or ((art=2) and (LeftStr(anew,1)='?'))
@@ -155,7 +155,7 @@ begin
 
         if dbFound then begin
           stop:=false;
-          repeat          { zugehîrigen mbase-Datensatz ermitteln }
+          repeat          { zugehoerigen mbase-Datensatz ermitteln }
             dbReadN(bezbase,bezb_msgpos,l);
             if dbDeleted(mbase,l) then stop:=true
             else begin
@@ -171,7 +171,7 @@ begin
 
           if not stop and ((art<>1) or ((hdp^.pm_bstat<>anew) and (anew[1]<>'N')))
           then begin
-            inc(n);                         { gefunden / Status geÑndert }
+            inc(n);                         { gefunden / Status geaendert }
             attrtxt(col.colmboxhigh);
             mwrt(x,y,strsn(n,3));
             if art<2 then begin
@@ -355,7 +355,7 @@ end;
 
 { true -> 'z'-Flag geÑndert }
 
-function MausBestPM:boolean;     { gelesene Maus-PM bestÑtigen }
+function MausBestPM:boolean;     { gelesene Maus-PM bestaetigen }
 var t   : text;
     fn  : string;
     leer: string;
@@ -459,7 +459,7 @@ begin
         writeln(t2,sb);
         if pos('L+',sfl)>0 then begin
           wf:=iif(pos('S-',sfl)>0,8,0);     { Schreibzugriff gesperrt? }
-          if wf=8 then begin   { automatisches Lîschen des Schreibschutzes }
+          if wf=8 then begin   { automatisches Loeschen des Schreibschutzes }
                                { ist problematisch ...                     }
             dbSeek(bbase,biBrett,'A'+UpperCase(BoxPar^.MagicBrett+sg));
             if dbFound and (dbReadInt(bbase,'flags')and 8<>wf) then begin
@@ -508,31 +508,31 @@ var  box    : string[BoxNameLen];
       if i>0 then info^[i].intervall:=intervall;
     end;
   begin
-    _set('IIE',30);    { EinfÅhrung in die Maus }
-    _set('IIB',30);    { Bedienungsanleitung    }
-    _set('IIA',30);    { MenÅ-Kurzanleitung     }
-    _set('IIG',30);    { Gruppen-Anleitung      }
-    _set('IIH',30);    { Hardware der MAUS      }
-    _set('III',30);    { Technische Informationen }
-    _set('IIM',7);     { MAUS-Beitrag           }
-    _set('IIL',14);    { Login-Zeiten           }
-    _set('IIT',30);    { MausTausch-Anleitung   }
-    _set('IIK',0);     { Kommerzielles          }
-    _set('IIP',30);    { PM-Manifest            }
-    _set('IIN',14);    { Nutzungsbedingungen    }
-    _set('INA',30);    { MausNet-Anleitung      }
-    _set('INK',14);    { Kurze Boxen-Liste      }
-    _set('INL',30);    { Lange Boxen-Liste      }
-    _set('ING',0);     { Netzgruppen-Liste      }
-    _set('INP',0);     { Netzplan               }
-    _set('IGT',30);    { Box-Vorspann           }
-    _set('IGE',0);     { Box-Abspann            }
-    _set('IGS',0);     { Spruch des Tages       }
-    _set('IGK',0);     { Kurze Gruppenliste     }
-    _set('IGL',30);    { Lange Gruppenliste     }
-    _set('ITB',0);     { Maschinenlesbare Boxenliste }
+    _set('IIE',30);    { Einfuehrung in die Maus       }
+    _set('IIB',30);    { Bedienungsanleitung           }
+    _set('IIA',30);    { Menue-Kurzanleitung           }
+    _set('IIG',30);    { Gruppen-Anleitung             }
+    _set('IIH',30);    { Hardware der MAUS             }
+    _set('III',30);    { Technische Informationen      }
+    _set('IIM',7);     { MAUS-Beitrag                  }
+    _set('IIL',14);    { Login-Zeiten                  }
+    _set('IIT',30);    { MausTausch-Anleitung          }
+    _set('IIK',0);     { Kommerzielles                 }
+    _set('IIP',30);    { PM-Manifest                   }
+    _set('IIN',14);    { Nutzungsbedingungen           }
+    _set('INA',30);    { MausNet-Anleitung             }
+    _set('INK',14);    { Kurze Boxen-Liste             }
+    _set('INL',30);    { Lange Boxen-Liste             }
+    _set('ING',0);     { Netzgruppen-Liste             }
+    _set('INP',0);     { Netzplan                      }
+    _set('IGT',30);    { Box-Vorspann                  }
+    _set('IGE',0);     { Box-Abspann                   }
+    _set('IGS',0);     { Spruch des Tages              }
+    _set('IGK',0);     { Kurze Gruppenliste            }
+    _set('IGL',30);    { Lange Gruppenliste            }
+    _set('ITB',0);     { Maschinenlesbare Boxenliste   }
     _set('ITG',1);     { Maschinenlesbare Gruppenliste }
-    _set('ITI',1);     { Maschinenlesbare Infoliste }
+    _set('ITI',1);     { Maschinenlesbare Infoliste    }
   end;
 
   procedure ReadINF;
@@ -802,7 +802,7 @@ begin
     MausReadITI(box,_info,_infos);   { Maus.ITI -> _info^ }
     getinfofiles;                    { Maus.INF -> info^  }
     readlogfile;                     { Maus.LOG -> info^  }
-  { InfosOhneCRC;                    { info^ <- Datum von J## setzen }
+  { InfosOhneCRC; }                  { info^ <- Datum von J## setzen }
     writeinfofiles;                  { info^ -> Maus.INF  }
     dispose(_info);
     dispose(info);
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/11/02 15:33:28  fe
+  Added forgotten "}".
+
   Revision 1.17  2000/10/26 12:06:34  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 
