@@ -27,7 +27,7 @@ procedure InitDatabase;
 
 implementation  { --------------------------------------------------- }
 
-uses xp4o2, winxp;
+uses xp4o2;
 
 
 procedure GetFieldNumbers;
@@ -529,7 +529,7 @@ var flp : dbFLP;
         end;
       dbNext(mbase);
       end;
-    wrn;
+    if (nn<>0) then wrn; { Division / 0 (hd) }
     BrettdatumSetzen(false);
     dbSetIndex(mbase,1);
     dbGoTop(mbase);
@@ -862,8 +862,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.6  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.5.2.1  2000/05/06 18:06:14  mk
+  HD: - Fix fuer Division durch 0
 
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
