@@ -179,7 +179,7 @@ end;
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI']; *)
 {$ENDIF }
 
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer16); assembler;
+procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
 asm
 {$IFDEF BP }
          xor   cx,cx
@@ -222,13 +222,13 @@ end;
          inc   ecx
          cmp   ecx,cacheanz
          jb    @sc_lp
-@cfound: mov   [i], cx
+@cfound: mov   [i], ecx
 end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ENDIF }
 
-procedure seek_cache2(var _sp:integer16); assembler;
-asm
+procedure seek_cache2(var _sp:integer); assembler;
 {$IFDEF BP }
+asm
          les   di,cache
          mov   ax,0ffffh               { s := maxlongint }
          mov   dx,ax
@@ -256,6 +256,7 @@ asm
          mov   es:[di],bx
 end;
 {$ELSE }
+asm
          push  edi
          mov   edi, cache
          xor   eax, eax                { EAX = 0 }
@@ -281,7 +282,7 @@ end;
          jmp   @nofree
 
 @sc2ok:  mov   ebx,ecx                   { sp:=i }
-@nofree: mov   [_sp], bx
+@nofree: mov   [_sp], ebx
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ENDIF }
 
@@ -1711,6 +1712,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/14 18:16:15  mk
+  - 16 Bit Integer unter FPC auf 32 Bit Integer umgestellt
+
   Revision 1.12  2000/03/14 15:15:34  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
