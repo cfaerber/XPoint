@@ -292,7 +292,7 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('yyyy-dd-mm-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  CompileTime := FormatDateTime('yyyy-mm-dd-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
   {$IFDEF Delphi }
     + 'd'
   {$ENDIF }
@@ -2326,6 +2326,9 @@ finalization
 
 {
   $Log$
+  Revision 1.27  2001/10/26 11:37:36  ma
+  - use YEAR-MONTH-DAY
+
   Revision 1.26  2001/10/26 11:23:32  ma
   - fixes and changes concerning CompileTime mailer header
 
