@@ -56,17 +56,11 @@ procedure SendNetzanruf(logfile: string);
 //**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 //**procedure MoveRequestFiles(var packetsize:longint);
 //**procedure MoveLastFileIfBad;
+function GetServerFilename(boxname: string; var bfile: string): boolean;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string); { makes a a download filename usable and unique }
 
 procedure AponetNews; {?!}
-
-{ Converts stringlist to space separated string }
-function StringListToString(SL: TStringList): String;
-
-{ Executes a shell command and puts any files created while executing this
-  command in SL }
-function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
 
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
@@ -94,43 +88,25 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 
 implementation  {---------------------------------------------------}
 
-uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
+uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xp9,xp10,xpheader,
      xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp, xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
-function StringListToString(SL: TStringList): String;
-var i: Integer;
+function GetServerFilename(boxname: string; var bfile: string): boolean;
+var d: DB;
 begin
-  result:='';
-  for i:=0 to SL.Count-1 do
-    result:=result+SL[i]+' ';
-  DelLast(result);
-end;
-
-function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
-var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
-begin
-  curdir:=GetCurrentDir;
-  dir1:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
-  Shell(prog,space,cls);
-  result:=errorlevel;
-  newfiles:='';
-  SetCurrentDir(curdir);
-  dir2:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
-  for i:=0 to dir2.Count-1 do begin
-    fileexisted:=false;
-    for j:=0 to dir1.Count-1 do
-      if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
-    if not fileexisted then begin
-      SL.Add(ExpandFilename(dir2.Name[i]));
-      if newfiles<>'' then newfiles:=newfiles+', ';
-      newfiles:=newfiles+ExpandFilename(dir2.Name[i]);
-      end;
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,UpperCase(BoxName));
+  if not dbFound then begin
+    dbClose(d);
+    trfehler1(709,BoxName,60);
+    result:=false;
+    exit;
     end;
-  dir1.destroy; dir2.destroy;
-  Debug.DebugLog('xpnetcall','new files created by external program: '+newfiles,DLDebug);
-  SetCurrentDir(OwnPath);
+  bfile := dbReadStr(d,'dateiname');
+  dbClose(d);
+  result:=true;
 end;
 
 function exclude_time:byte;
@@ -1237,6 +1213,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/05/20 12:22:55  ma
+  - moved some functions to proper units
+
   Revision 1.18  2001/05/12 09:53:58  ma
   - added: error message if no login script is specified with UUCP
 

@@ -64,22 +64,6 @@ uses
   res_getposting        = 'Hole Artikel %d von %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
 
-function GetServerFilename(boxname: string; var bfile: string): boolean;
-var d: DB;
-begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(BoxName));
-  if not dbFound then begin
-    dbClose(d);
-    trfehler1(709,BoxName,60);
-    result:=false;
-    exit;
-    end;
-  bfile := dbReadStr(d,'dateiname');
-  dbClose(d);
-  result:=true;
-end;
-
 function GetAllGroups(BoxName: string; bp: BoxPtr): boolean;
 var
   NNTP          : TNNTP;                { Socket }
@@ -363,6 +347,9 @@ end.
 
 {
         $Log$
+        Revision 1.21  2001/05/20 12:22:55  ma
+        - moved some functions to proper units
+
         Revision 1.20  2001/04/27 10:18:27  ma
         - added "-n" feature in .rc file
         - using "new" NNTP spool format
