@@ -102,8 +102,12 @@ procedure SerSetParams(Handle: TSerialHandle; BitsPerSec: LongInt;
   Flags: TSerialFlags);
 var
   tios: termios;
-begin
+begin {Linux.tcgetattr does this better?!?}
+ {$ifndef BSD}
   ioctl(Handle, TCGETS, @tios);
+ {$else}
+  ioctl(Handle, TIOCGETA,@tios);
+ {$endif}
 
   case BitsPerSec of
     50: tios.c_cflag := B50;
@@ -123,8 +127,10 @@ begin
     57600: tios.c_cflag := B57600;
     115200: tios.c_cflag := B115200;
     230400: tios.c_cflag := B230400;
+ {$ifndef BSD}
     460800: tios.c_cflag := B460800;
-    else tios.c_cflag := B9600;
+ {$endif}  
+   else tios.c_cflag := B9600;
   end;
 
   case ByteSize of
@@ -146,19 +152,30 @@ begin
     tios.c_cflag := tios.c_cflag or CRTSCTS;
 
   tios.c_cflag := tios.c_cflag or CLOCAL or CREAD;
-
+ {$ifndef BSD}
   ioctl(Handle, TCSETS, @tios);
+ {$else}
+  ioctl(Handle, TIOCSETA, @tios);
+ {$endif}
 end;
 
 function SerSaveState(Handle: TSerialHandle): TSerialState;
 begin
   ioctl(Handle, TIOCMGET, @Result.LineState);
+ {$ifndef BSD} 
   ioctl(Handle, TCGETS, @Result.tios);
+ {$else}
+  ioctl(Handle, TIOCGETA, @Result.tios);
+ {$endif}
 end;
 
 procedure SerRestoreState(Handle: TSerialHandle; State: TSerialState);
 begin
+ {$ifndef BSD}
   ioctl(Handle, TCSETS, @State.tios);
+ {$else}
+  ioctl(Handle, TIOCSETA, @State.tios);
+ {$endif}
   ioctl(Handle, TIOCMSET, @State.LineState);
 end;
 
