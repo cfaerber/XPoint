@@ -1947,14 +1947,18 @@ begin
 end;
 
 procedure set_checkdate;
+var f:file;
+    b:byte;
 begin
-  { !!
-  fillchar(dt,sizeof(dt),0);
-  getdate(dt.year,dt.month,dt.day,dummy);
-  gettime(dt.hour,dt.min,dt.sec,dummy);
-  packtime(dt,pdt);
-  if pdt shr 16 <> filetime(NewDateFile) shr 16 then
-    fileio.setfiletime(NewDateFile,pdt); }
+  b := ReadMode;
+
+  ReadMode := fmOpenReadWrite;
+
+  assign(d,NewDateFile);
+  reset(d,1);
+  close(d);
+
+  ReadMode := b;
 end;
 
 
@@ -2093,6 +2097,10 @@ end;
 
 {
   $Log$
+  Revision 1.148  2002/04/25 23:01:59  cl
+  - BUGFIX: #216189 - Check letzter Programmstart
+    replaced (deactivated) xp1.set_checkdate with portable version.
+
   Revision 1.147  2002/04/13 16:10:16  ma
   - fixed scomp: Scanning for multiple configuration keys did not work
 
