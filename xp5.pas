@@ -510,19 +510,17 @@ var c       : char;
   procedure sdelay(n:word);
   var t:longint;
   begin
-    n:=n div 2; 
+    n:=n div 2;
     n:=n div screenlines;
     { weil das innere delay wg. ticker von 10 ms auf 50 ms ge„ndert wurde }
 
     t:=ticker;
     while (n>0) and not endss do begin
-{TAINTED}
       if ParWintime=1 then begin
         while t=ticker do mdelay(0); { mdelay(50) geht nicht wg. multi2 }
         if t<ticker then inc(t) else t:=ticker;
       end
       else delay(50);
-{/TAINTED}      
       dec(n);
     end;
   end;
@@ -942,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/02/28 14:25:46  mk
+  - removed some tainted comments
+
   Revision 1.47  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

@@ -89,11 +89,9 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
-{TAINTED}		      
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
     '-','_','#','=','&','%','@','$',','];
-{/TAINTED}    
 var x,y : byte;
   brk : boolean;
   fn  : string;
@@ -135,9 +133,7 @@ begin
       begin
         s:=mid(s,y);
         y:=1;
-{TAINTED}	
         while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
-{/TAINTED}	
         s:=leftStr(s,y-1);
       end;
       string2clip(s);
@@ -866,6 +862,10 @@ end;
 { Hier bin ich nicht ganz sicher, ob wirklich nichts mehr
 von rb stammt. Ich habe aber eine Idee, das ganz neu zu
 implementieren - cl. }
+{ Die meisten dieser Routinen wurden mit Jochen und der
+  Maillingliste zusammen entwickelt, mssen aber sowieso
+  zum Groáteil gel”scht werden, da unter 32 Bit das Handling
+  entweder nicht n”tig ist oder umgeschrieben werden muá. MK }
 {/TAINTED}
 
 function XPWinShell(prog:string; parfn:string; space:word;
@@ -932,7 +932,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
   { Programmtyp:
     0 DOS
     1 Windows
-    2 OS/2 	}
+    2 OS/2      }
   var
       exepath,
       batfile : string;
@@ -1019,6 +1019,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.79  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
   Revision 1.78  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 

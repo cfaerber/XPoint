@@ -33,9 +33,7 @@ const xTractMsg   = 0;
       xTractDump  = 4;
 
       ExtCliptearline : boolean = true;
-{TAINTED}      
       ExtChgtearline  : boolean = false;
-{/TAINTED}      
 
 procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
@@ -308,16 +306,11 @@ var size   : longint;
   begin
     qchar:=QuoteChar;
 
-{TAINTED}
-    { 31.01.2000 robo }
     p:=cpos('&',qchar);
     p2:=cpos('#',hdp.absender);
     if p>0 then qchar[p]:='$';
 
-{    if netztyp=nt_UUCP then begin }
     if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
-    { /robo}
-{/TAINTED}    
 
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
@@ -383,19 +376,19 @@ var size   : longint;
       end;
   end;
 
-{TAINTED}
   procedure Chg_Tearline;   { Fido - Tearline + Origin verfremden }
-  const splus : string [1] = '+';
+  const
+    PlusChar: Char = '+';
+    SearchOffset = 200;
   var s  : string;
-      rr : word;
-      p  : byte;
-      l  : longint;
+      rr,p, l: Integer;
   begin
-    l:=max(0,filesize(f)-200);
+    l := max(0, FileSize(f)- SearchOffset);
     seek(f,l);
-    setlength(s, 200);
-    blockread(f,s[1],200,rr);
-    if rr <> 200 then setlength(s, rr);
+    SetLength(s, SearchOffset);
+    blockread(f, s[1], SearchOffset, rr);
+    SetLength(s, rr);
+
     p:=max(0,length(s)-20);
     while (p>0) and (copy(s,p,5)<>#13#10'---') and (copy(s,p,4)<>#13'---') do
       dec(p);
@@ -403,18 +396,17 @@ var size   : longint;
     begin
       if s[p+4] <> '-' then dec(p);
       seek(f,l+p+2);
-      blockwrite(f,splus[1],1);
+      blockwrite(f, PlusChar, 1);
       while (p<length(s)-11) and (copy(s,p,13)<>#13#10' * Origin: ')
         and (copy(s,p,12)<>#13' * Origin: ') do
         inc(p);
       if p<length(s)-12 then
       begin
         seek(f,l+p+2);
-        blockwrite(f,splus[1],1);
+        blockwrite(f, PlusChar,1);
       end;
     end;
   end;
-{/TAINTED}
 
   function mausstat(s:string):string;
   var dat: string[20];
@@ -552,9 +544,7 @@ var size   : longint;
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=LeftStr(reads,p);
-{TAINTED}      
       if (leftStr(s,11)=' * Origin: ') or (leftStr(s,4)='--- ') or (s='---') then s[2]:='+';
-{/TAINTED}      
       if not iso1 and ConvIso and (s<>'') then begin
         convstr:= s;
         ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
@@ -600,7 +590,7 @@ var size   : longint;
           end;
           insert(qspaces,s,1); inc(p,length(qspaces));
         end;
-{TAINTED}	
+{TAINTED}
         q:=1;
         while (s[q] in [' ','A'..'Z','a'..'z','0'..'9','Ñ','î','Å','·','é','ô','ö'])
           and (q<p) do inc(q);
@@ -612,7 +602,7 @@ var size   : longint;
           end
           else inc(q);
         end;
-{/TAINTED}	
+{/TAINTED}
         p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if LeftStr(s,length(lastqc))=lastqc then
@@ -731,9 +721,7 @@ begin
       close(f);
       Hdp.Free;
       ExtCliptearline:=true;
-{TAINTED}      
       ExtChgtearline:=false;
-{/TAINTED}      
       exit;
     end;
     if append then begin
@@ -983,7 +971,7 @@ begin
        case hdp.Priority of
 
      { an manchen ist die Erfindung der Addition und des +-Operators scheinbar
-     spurlos vor¸bergegangen ;-) } 
+     spurlos vor¸bergegangen ;-) }
 
          { Wert aus Header uebernehmen                                     }
          1: wrs(gr(35) + GetRes2(272, 1));     { 'Prioritaet  : Hoechste'  }
@@ -1089,24 +1077,23 @@ begin
     if (hdp.netztyp=nt_Fido) and (art=xTractMsg) then
       if ExtCliptearline then
         Clip_Tearline
-{TAINTED}	
       else
         if ExtChgTearline then Chg_Tearline;
-{/TAINTED}	
     close(f);
     Hdp.Free;
   end;
   freeres;
   ExtCliptearline:=true;
-{TAINTED}  
   ExtChgtearline:=false;
-{/TAINTED}  
   TempKopien.Free;
 end;
 
 end.
 {
   $Log$
+  Revision 1.64  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
   Revision 1.63  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

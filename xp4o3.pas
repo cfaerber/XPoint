@@ -192,14 +192,9 @@ begin
       end
     else begin
       anz:=0;
-{TAINTED}      
-      { 03.02.2000 robo }
-      { suboptimal }
       if hdp.replyto.count>0 then
         appadr(hdp.replyto[0],7);                   {'Reply-To-Empfaenger :' }
-      { /robo }
-{/TAINTED}      
-      if hdp.wab<>'' then appadr(hdp.absender,1)   { 'Original-Absender  :' }
+      if hdp.wab<>'' then appadr(hdp.absender,1)    { 'Original-Absender  :' }
       else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
         appadr(hdp.wab,2);                          { 'Weiterleit-Absender:' }
@@ -312,6 +307,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/02/28 14:25:46  mk
+  - removed some tainted comments
+
   Revision 1.22  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

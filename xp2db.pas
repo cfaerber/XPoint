@@ -511,7 +511,6 @@ var flp : dbFLP;
     freeres;
   end;
 
-{TAINTED}
   { Feld 'LastMsgID' in Autoversand einfÅgen (ab 3.3) }
   procedure NewFieldLastMsgID;
   var fld : dbFeldTyp;
@@ -522,7 +521,6 @@ var flp : dbFLP;
       end;
     dbAppendField(AutoFile,fld);
   end;
-{/TAINTED}  
 
   { Wiedervorlage-Datum 31.12.1999 durch 31.12.2027 ersetzen }
   procedure FixWiedervorlage;
@@ -782,9 +780,7 @@ begin
       end;
 
   if not FileExists(AutoFile+dbExt) then begin        { AUTOMSG: autom. Versand }
-  {TAINTED}
     initflp(14);
-  {TAINTED}    
     AppS('Dateiname',80);
     AppS('Betreff',40);
     AppX('Typ',dbTypeInt,1,1);
@@ -798,18 +794,14 @@ begin
     AppX('Flags',dbTypeInt,2,5);
     AppX('LastDate',dbTypeInt,4,10);
     AppX('LastFdate',dbTypeInt,4,10);
-  {TAINTED}
     AppS('LastMsgID',120);
-  {/TAINTED}    
     dbCreate(AutoFile,flp);
     dbReleaseFL(flp);
   end
-{TAINTED}  
   else begin
     if not dbHasField(AutoFile,'LastMsgID') then
       NewFieldLastMsgID;
   end;
-{/TAINTED}  
 
   if not FileExists(PseudoFile+dbExt) then begin      { PSEUDOS: EmpfÑnger-KÅrzel }
     initflp(4);
@@ -911,6 +903,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
   Revision 1.25  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

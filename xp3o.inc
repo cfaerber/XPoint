@@ -786,20 +786,16 @@ begin
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
-        orgempf:=hdp.empfaenger;	
+        orgempf:=hdp.empfaenger;
         { Schalter maildelxpost beachten }
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
-{TAINTED}	
-  { ??? -- was ist hier passiert }
-        { /robo }
-{/TAINTED}	
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
         if junk then begin
           hdp.empfanz:=1;
-          { KH 01/00 Unterscheidung von der Pseudo-Newsgroup junk }
+          { Unterscheidung von der Pseudo-Newsgroup junk }
           hdp.empfaenger:='/¯Nix'
           end;
         if grosswandeln and not zconnect then begin
@@ -1220,6 +1216,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
   Revision 1.48  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

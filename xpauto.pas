@@ -31,10 +31,10 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : word; 	{ 1=aktiv, 2=l”schen, 4=Žnderung, 8=supersede }
+                  flags   : word;       { 1=aktiv, 2=l”schen, 4=Žnderung, 8=supersede }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
-                  lastmid : string;	{ letzte verwendete mid }
+                  lastmid : string;     { letzte verwendete mid }
                 end;
 
 procedure AutoRead(var ar:AutoRec);
@@ -243,18 +243,14 @@ begin
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:=allocsenduudatamem;
-{TAINTED}      
       if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
-{/TAINTED}      
       if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
-{TAINTED}	
         dbWrite(auto,'lastmsgid',sData^.msgid);
-{/TAINTED}	
         fh:= FileOpen(datei,fmOpenRead);
         tt:= FileGetDate(fh);
         FileClose(fh);
@@ -670,6 +666,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/02/28 14:25:47  mk
+  - removed some tainted comments
+
   Revision 1.34  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 

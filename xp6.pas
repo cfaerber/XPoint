@@ -929,10 +929,7 @@ fromstart:
         end;
       end
     else begin                                                 { Empfaenger unbekannt }
-{TAINTED}{ unklar }
-    { 14.02.2000 MH: IBM=0, ASCII=1, ISO=2 }
-    if newuseribm then umlaute:=0 { MH: NewUserIBM beruecksichtigen }
-{/TAINTED}    
+    if newuseribm then umlaute:=0 { NewUserIBM beruecksichtigen }
      else umlaute:=1;
       empfneu:=true;
       verteiler:=false;
@@ -1198,13 +1195,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           nt_ZConnect :  if n=6 then n:=9    { Prio        }
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
-                    else if n=9 then n:=0;   { MH: Zurueck } 
+                    else if n=9 then n:=0;   { MH: Zurueck }
           nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio} { unbedenklich }
                       else if n=7 then n:=10 { Zusatz      }
                       else if n=8 then n:=11 { MH: PGP-Sig } { unbedenklich }
                       else if n=9 then n:=0; { Zurueck     }
           else      if n=6 then n:=0;        { Zurueck     }
-        end; {TAINTED} { unklar }{ 05.02.2000 MH: Zurueck-Button in allen Netztypen } {/TAINTED}
+        end;
         if n=0 then n:=-1;
         if n>0 then
           inc(n,10)
@@ -2100,6 +2097,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.99  2001/02/28 14:25:46  mk
+  - removed some tainted comments
+
   Revision 1.98  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 
