@@ -149,24 +149,35 @@ begin
         if not dbfound then
         begin
           s2:=s;
-          repeat
-            p:=cpos('.',s2);
-            if p>0 then s2[p]:='/';
-          until p=0;
+          p:=cpos('.',s2);
+          if p>0 then s2[p]:='/';
           dbSeek(bbase,biBrett,'A'+UpperCase(s2));
-           if dbfound then s:=s2;
+          if dbfound then s:=s2
+          else begin
+            repeat
+              p:=cpos('.',s2);
+              if p>0 then s2[p]:='/';
+            until p=0;
+            dbSeek(bbase,biBrett,'A'+UpperCase(s2));
+             if dbfound then s:=s2;
+            end;
           end;
+          p:=0;
         end
       else
         dbSeek(ubase,uiName,UpperCase(s));
+
       testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
+
       if dbFound then begin
         cc_testempf:=true;
-        if p=0 then s:=mid(dbReadStrN(bbase,bb_brettname),2)
-        else s := dbReadNStr(ubase,ub_username);
-        if FirstChar(s)=vert_char
-          then s:=copy(s,2,length(s)-3);
-        end
+        if p=0 then
+          s:=mid(dbReadStrN(bbase,bb_brettname),2)
+        else
+          s := dbReadNStr(ubase,ub_username);
+        if FirstChar(s)=vert_char then
+          s:=copy(s,2,length(s)-3);
+      end
       else
         if (p>0) and not testmailstring(s) then
         begin
@@ -408,6 +419,15 @@ end;
 
 {
   $Log$
+  Revision 1.33  2002/03/17 11:20:36  mk
+  JG+MY:- Fix: Beim ndern des Empf„ngers im Sendefenster konnte es zu
+          Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
+          anlegen?") kommen, wenn es sich z.B. um Fido-Bretter mit
+          Brettebenen handelte und unter /Config/Anzeige/Bretter die
+          Punktschreibweise fr alle Bretter gew„hlt war. Zusatz-Fix fr
+          pr„zisere Anzeige und Bestimmung der Brettebene im Sendefenster
+          implementiert.
+
   Revision 1.32  2002/01/19 14:17:03  mk
   - Big 3.40 update part IV
 
