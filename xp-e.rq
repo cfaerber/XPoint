@@ -1887,13 +1887,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 92   Login  ~
 93   Password
 100  Mail server for incoming mail (POP3/SMTP/IMAP)
-101  Mail server for outgoing mail (SMTP)
-102  News server (NNTP)
-103  Server name    ~
-104  Envelope address
-105  User name      ~
-106  Password       ~
-107  Port
+101  mail.btinternet.com
+102  Mail server for outgoing mail (SMTP)
+103  mail.btinternet.com
+104  News server (NNTP)
+105  news.btinternet.com
+106  Server name    ~
+107  Envelope address
+108  User name      ~
+109  Password       ~
+110  Port
 #
 40   UpPack extension ~
 41   DownPack ext.~

@@ -776,28 +776,28 @@
     dialog(58,20,kompname,x,y);
     with boxpar^ do begin
       maddtext(3,2,getres2(920,100),col.coldiahigh);
-      maddstring(3,4,getres2(920,103),PPPMailInSrvr,35,160,'');   { 'Servername  ' }
-        mappsel(false,'pop.t-online.deùpop.gmx.deùpop.kundenserver.de');
+      maddstring(3,4,getres2(920,106),PPPMailInSrvr,35,160,'');   { 'Servername  ' }
+        mappsel(false,getres2(920,101));
         mhnr(30115);
-      maddstring(3,5,getres2(920,104),PPPMailInEnv,35,160,'');    { 'Envelope-Adresse' }
-      maddstring(3,6,getres2(920,105),PPPMailInUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,7,getres2(920,106),PPPMailInPass,18,75,'');    { 'Paáwort     ' }
-      maddstring(43,7,getres2(920,107),PPPMailInPort,7,50,'0123456789 ');  { 'Port' }
-        mappsel(false,'110ù25ù143');
-      maddtext(3,9,getres2(920,101),col.coldiahigh);
-      maddstring(3,11,getres2(920,103),PPPMailOutSrvr,35,160,'');  { 'Servername  ' }
-        mappsel(false,'mailto.t-online.deùsmtprelay.t-online.deùmail.gmx.deùsmtp.kundenserver.de');
-      maddstring(3,12,getres2(920,104),PPPMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
-      maddstring(3,13,getres2(920,105),PPPMailOutUser,35,160,'');  { 'Benutzername' }
-      maddstring(3,14,getres2(920,106),PPPMailOutPass,18,75,'');   { 'Paáwort     ' }
-      maddstring(43,14,getres2(920,107),PPPMailOutPort,7,50,'0123456789 '); { 'Port' }
+      maddstring(3,5,getres2(920,107),PPPMailInEnv,35,160,'');    { 'Envelope-Adresse' }
+      maddstring(3,6,getres2(920,108),PPPMailInUser,35,160,'');   { 'Benutzername' }
+      maddstring(3,7,getres2(920,109),PPPMailInPass,18,75,'');    { 'Paáwort     ' }
+      maddstring(43,7,getres2(920,110),PPPMailInPort,7,50,'0123456789 ');  { 'Port' }
+        mappsel(false,'110ù25ù143ù585ù993');
+      maddtext(3,9,getres2(920,102),col.coldiahigh);
+      maddstring(3,11,getres2(920,106),PPPMailOutSrvr,35,160,'');  { 'Servername  ' }
+        mappsel(false,getres2(920,103));
+      maddstring(3,12,getres2(920,107),PPPMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
+      maddstring(3,13,getres2(920,108),PPPMailOutUser,35,160,'');  { 'Benutzername' }
+      maddstring(3,14,getres2(920,109),PPPMailOutPass,18,75,'');   { 'Paáwort     ' }
+      maddstring(43,14,getres2(920,110),PPPMailOutPort,7,50,'0123456789 '); { 'Port' }
         mappsel(false,'25');
-      maddtext(3,16,getres2(920,102),col.coldiahigh);
-      maddstring(3,18,getres2(920,103),PPPNewsSrvr,35,160,'');   { 'Servername  ' }
-        mappsel(false,'news.t-online.deùnews.cis.dfn.de');
-      maddstring(3,19,getres2(920,105),PPPNewsUser,35,160,'');   { 'Benutzername' }
-      maddstring(3,20,getres2(920,106),PPPNewsPass,18,75,'');    { 'Paáwort     ' }
-      maddstring(43,20,getres2(920,107),PPPNewsPort,7,50,'0123456789 ');  { 'Port' }
+      maddtext(3,16,getres2(920,104),col.coldiahigh);
+      maddstring(3,18,getres2(920,106),PPPNewsSrvr,35,160,'');   { 'Servername  ' }
+        mappsel(false,getres2(920,105));
+      maddstring(3,19,getres2(920,108),PPPNewsUser,35,160,'');   { 'Benutzername' }
+      maddstring(3,20,getres2(920,109),PPPNewsPass,18,75,'');    { 'Paáwort     ' }
+      maddstring(43,20,getres2(920,110),PPPNewsPort,7,50,'0123456789 ');  { 'Port' }
         mappsel(false,'119');
 
       maddtext(0,8,'Ã'+dup(58,'Ä')+'´', 0);  { Linie }
@@ -1772,6 +1772,11 @@
 
 {
   $Log$
+  Revision 1.10.2.33  2001/06/29 16:36:39  my
+  - extended POP3/SMTP/NNTP server list
+  - moved list to ressources
+  - extended list of ports for incoming mail
+
   Revision 1.10.2.32  2001/06/29 01:24:56  my
   - RFC/Client: implemented Mail/News server configuration
 

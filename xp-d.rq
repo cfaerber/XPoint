@@ -1928,13 +1928,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 92   Login  ~
 93   Paáwort~
 100  Mail-Server fr eingehende Mail (POP3/SMTP/IMAP)
-101  Mail-Server fr ausgehende Mail (SMTP)
-102  News-Server (NNTP)
-103  Servername     ~
-104  Envelope-Adresse
-105  Benutzername   ~
-106  Paáwort        ~
-107  Port
+101  pop.t-online.deùpop.gmx.netùpop3.nexgo.deùmail.epost.deùpop3.epost.deùpop3.web.deùpop.compuserve.deùpop.mail.yahoo.deùpop.addcom.deùpop.tiscalinet.deùpop.worldonline.deùpop3.planetinternet.deùpop.kundenserver.deùmail.komtel.net
+102  Mail-Server fr ausgehende Mail (SMTP)
+103  mailto.t-online.deùsmtprelay.t-online.deùmail.gmx.netùmail.nexgo.deùpostman.nexgo.deùmail.epost.deùsmtp.web.deùsmtp.compuserve.deùsmtp.mail.yahoo.deùsmtp.addcom.deùsmtp.tiscalinet.deùsmtp.worldonline.deùmailhost.planetinternet.deùsmtp.kundenserver.deùmail.komtel.net
+104  News-Server (NNTP)
+105  news.t-online.deùnews.cis.dfn.deùnews.nexgo.deùxnews.nexgo.deùnews.compuserve.deùnews.tiscali.deùnews.worldonline.deùnews.planetinternet.deùnews.komtel.net
+106  Servername     ~
+107  Envelope-Adresse
+108  Benutzername   ~
+109  Paáwort        ~
+110  Port
 #
 40   Packer-Extension ~
 # ProNet:
