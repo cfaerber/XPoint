@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 { Overlay-Teile zu XP3 }
 
@@ -224,6 +225,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
       end else
         if fido_to<>''   then wrs('F-TO: '+fido_to);
+      if (netztyp=nt_ZConnect) and (real_box<>'') then
+        wrs('X-XP-BOX: '+real_box); { Test: 'X-XP-BOX' auch bei ZConnect }
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
                                 iifs(boundary<>'','; boundary="'+boundary+'"','')+
@@ -234,7 +237,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       wrs('LEN: '+strs(groesse));
       if komlen>0 then wrs('KOM: '+strs(komlen));
       wrs('');
-      end;
+    end;
   end;
 
 begin
@@ -468,6 +471,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.12  2001/09/18 22:33:39  my
+  MY:- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
+       erzeugt.
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.9.2.11  2001/09/11 12:07:31  cl
   - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
 
