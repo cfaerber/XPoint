@@ -265,37 +265,48 @@ var size   : longint;
   end;
 
   procedure DumpMsg;
-  const hc : array[0..15] of char = '0123456789ABCDEF';
-  var s   : string;
-      i   : integer;
+  var s   : string[80];
       rr  : word;
-      buf : array[0..15] of byte;
-      adr : word;
-      p,b : byte;
-      s68 : atext;
+      adr : dword;
   begin
     moment;
     adr:=0;
-    s68:=sp(68);
     repeat
-      blockread(decf,buf,16,rr);
-      dec(rr);
-      s:=hex(adr,4)+s68;
-      p:=7;
-      for i:=0 to min(15,rr) do begin
-        b:=buf[i];
-        s[p]:=hc[b shr 4];
-        s[p+1]:=hc[b and 15];
-        inc(p,3);
-        if i=7 then inc(p);
-        if b<32 then
-          s[i+57]:='ú'
-        else
-          s[i+57]:=chr(b);
-        end;
+      s:=hex(adr,8)+':'+sp(68);
+      blockread(decf,s[61],16,rr);
+      asm
+           mov di,12
+           mov cx,rr
+           mov si,61
+           mov ax,cx
+           add al,60
+           mov byte ptr s[0],al
+           mov dl,'-'
+           mov byte ptr s[23],dl 
+           mov byte ptr s[35],dl
+           mov byte ptr s[47],dl 
+       @0: mov dl,byte ptr s[si]
+           mov al,dl
+           aam 16
+           or ax,3030h 
+           xchg al,ah
+           cmp al,'9' 
+           jna @1
+           add al,7
+       @1: cmp ah,'9'
+           jna @2
+           add ah,7
+       @2: mov word ptr s[di],ax
+           add di,3  
+           cmp dl,' '
+           jnb @4
+           mov byte ptr s[si],'ú'
+       @4: inc si
+           loop @0           
+      end; 
       wrslong(s);
       inc(adr,16);
-    until eof(decf) or (adr>$ffe0) or (ioresult<>0);
+    until eof(decf) or (ioresult<>0);
     closebox;
   end;
 
@@ -897,18 +908,44 @@ begin
 
     hdf_OAB    : if hdp^.oab<>'' then            { 'Org.-Abs.  : ' }
                    wrs(gr(18)+hdp^.oab+iifs(hdp^.oar<>'','  ('+hdp^.oar+')',''));
+
     hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
                    wrs(gr(17)+hdp^.wab+iifs(hdp^.war<>'','  ('+hdp^.war+')',''));
+
     hdf_ANTW   : if (hdp^.pmReplyTo<>'') and
                     ((ustr(hdp^.pmReplyTo)<>ustr(hdp^.absender))) then   { 'Antwort an : ' }
                    wrs(gr(27)+hdp^.pmReplyTo);
 
-    hdf_BET    : wrs(gr(5)+left(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
+    hdf_BET    : begin
+                   tmp:=TempS(2000+dbReadInt(mbase,'msgsize')
+                     *iif(art=xTractQuote,1,4));
+                   assign(t,tmp);
+                   Xread(tmp,false);    { Erstmal Betreff aus Nachricht holen... }
+                   reset(t);
+                   repeat
+                     readln(t,s);
+                   until (s='') or (left(s,4)='BET:') or eof(t);
+                   close(t);
+                   _era(tmp);
+                   if left(s,4)='BET:' then s:=mid(s,6)
+                     else s:=hdp^.betreff; 
+                   ln:=length(getres2(361,5));
+                   p:=0;
+                   repeat                               { langen Betreff umbrechen }
+                     lr:=rightpos(' ',left(s,78-ln));
+                     if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
+                     wrs(iifs(p=0,gr(5),sp(ln))+left(s,lr));
+                     inc(p);
+                     s:=mid(s,lr+1);
+                   until s='';
+                 end;
+
     hdf_ZUSF   : if hdp^.summary<>'' then        { 'Zus.fassung: ' }
-                (*   wrs(gr(23)+hdp^.summary); *)
+                 (*   wrs(gr(23)+hdp^.summary); *)
                  begin  
                    s:=hdp^.summary;
                    p:=0;
+                   ln:=length(getres2(361,23));
                    repeat                               { lange Zusammenfassung umbrechen }
                      lr:=rightpos(' ',left(s,78-ln));
                      if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
@@ -917,6 +954,7 @@ begin
                      s:=mid(s,lr+1);
                    until s='';
                    end;
+
     hdf_STW    : if hdp^.keywords<>'' then       { 'Stichworte : ' }
                    wrs(gr(22)+hdp^.keywords);
 
@@ -938,14 +976,20 @@ begin
                      end;
                    end;
 
-    hdf_MID    : if hdp^.msgid<>'' then
-                   wrs(gr(8)+hdp^.msgid);        { 'Message-ID : ' }
+    hdf_MID    : begin
+                   ln:=length(getres2(361,8));                  { 'Message-ID : ' }
+                   wrs(gr(8)+left(hdp^.msgid,78-ln));
+                   if length(hdp^.msgid)>78-ln then 
+                     wrs(sp(ln)+copy(hdp^.msgid,79-ln,78-ln));
+                 end;
+
     hdf_BEZ    : if hdp^.ref<>'' then            { 'Bezugs-ID  : ' }
                    wrs(gr(19)+hdp^.ref+iifs(hdp^.refanz=0,'',', ...'));
 
-    hdf_EDA    : wrs(gr(9)+copy(zdow(hdp^.datum),1,2)+' '+fdat(hdp^.datum)+', '+  { 'Datum      : ' }
-                     ftime(hdp^.datum)+iifs(hdp^.datum<>longdat(edat),'  ('+
-                        gr(10)+fdat(longdat(edat))+', '+ftime(longdat(edat))+')',''));   { 'erhalten: ' }
+    hdf_EDA    : wrs(gr(9)+iifs(hdp^.Datum='','N/A',copy(zdow(hdp^.datum),1,2)+' ' { 'Datum' }
+                  +fdat(hdp^.datum)+', '+ftime(hdp^.datum))
+                  +iifs(hdp^.datum<>longdat(edat),'  ('+gr(10)
+                  +fdat(longdat(edat))+', '+ftime(longdat(edat))+')','')); { 'erhalten: ' }
 
     hdf_LEN    : begin
                    sizepos:=filesize(f);
@@ -959,8 +1003,10 @@ begin
 
     hdf_ORG    : if hdp^.organisation<>'' then
                    wrs(gr(24)+hdp^.organisation);   { 'Organisat. : ' }
+
     hdf_POST   : if hdp^.postanschrift<>'' then
                    wrs(gr(25)+hdp^.postanschrift);  { 'Postadresse: ' }
+
     hdf_TEL    : if hdp^.telefon<>'' then
                    wrs(gr(26)+telestring(hdp^.telefon));  { 'Telefon    : ' }
 
@@ -971,10 +1017,12 @@ begin
 
     hdf_MSTAT  : if (hdp^.pm_bstat<>'') and (hdp^.pm_bstat[1]<>'N') then
                    wrs(gr(13)+mausstat(hdp^.pm_bstat));     { 'PM-Status  : ' }
+
     hdf_STAT   : begin
                    GetStatus;
                    if mstatus<>'' then wrs(gr(21)+mstatus);  { 'Status:    : ' }
                  end;
+
     hdf_PGPSTAT: begin
                    GetPgpStatus;
                    if mstatus<>'' then wrs(gr(29)+mstatus);  { 'PGP-Status : ' }
@@ -997,6 +1045,7 @@ begin
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp^.Cust1<>'' then begin
                     wrs(ohfill(mheadercustom[1],11)+': '+hdp^.Cust1);
                   end;
+
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp^.Cust2<>'' then begin
                     wrs(ohfill(mheadercustom[2],11)+': '+hdp^.Cust2);
                   end;
@@ -1123,6 +1172,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.18  2001/08/08 17:02:42  my
+  Some fixes and improvements from JG:
+  - Fix: Summary header is wrapped correctly now
+  - Subject header is now read from MPUFFER (if possible) and may be up to
+    255 chars long
+  - Subject and MsgID headers are also wrapped now if longer than 78 chars
+  - Messages with an invalid date (usually spam) do now show "N/A" rather
+    than an empty date/time mask ("..,:") in the message reader header
+  - Hex-Dump (Ctrl-H) now also shows messages >64k and is in HIEW style
+
   Revision 1.17.2.17  2001/08/07 13:28:45  my
   - completed previous commit (compiles again)
 
