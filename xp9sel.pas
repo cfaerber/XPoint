@@ -666,7 +666,7 @@ begin
         if showErrors then
           fehler(getreps2(10900,58,boxlist[i]) + ' ' +
                  getreps2(10900,59,strs(dupelist[i])))
-                            { 'Serverbox "%s" ist "%s" mal vorhanden!' }
+                              { 'Serverbox "%s" ist %s mal vorhanden!' }
         else begin
           closeRestore;
           exit;
@@ -1782,6 +1782,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.23  2001/11/21 02:59:35  my
+  MY:- Unwichtige Code-Kosmetik
+
   Revision 1.1.2.22  2001/11/20 23:24:26  my
   MY:- Konfiguration Multiserverbetrieb (D/B/E/C/Zus„tzliche_Server und
        D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert, Details
