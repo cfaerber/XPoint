@@ -171,7 +171,7 @@ begin
   if Connected then
   begin
     if (FUser='') or (FPassword='') then
-      FErrorCode := 480
+      FErrorCode := nntp_AuthRequired
     else begin
       SWritelnFmt('AUTHINFO USER %s', [FUser]);
       SReadLn(s);
@@ -185,7 +185,7 @@ begin
     end;
   end else
     FErrorCode := 500;
-  Result := (FErrorCode = 480) or       { OK without Auth }
+  Result := (FErrorCode = nntp_AuthRequired) or       { OK without Auth }
             (FErrorCode = 281);         { OK with    Auth }
 end;
 
@@ -542,6 +542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/04/23 06:57:45  ml
+  - NNTP-BoxPar for getting last X Mails
+
   Revision 1.22  2001/04/21 15:43:56  ma
   - added sending progress messages
 

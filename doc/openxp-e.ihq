@@ -2173,7 +2173,7 @@ OpenXP always accepts all packet sizes and different
 packet sizes in a single connection.
 @
 8013
-<<[ ]>> ->  OpenXP uses the packet size requested 
+<<[ ]>> ->  OpenXP uses the packet size requested
         by the called system.
 
 <<[x]>> ->  OpenXP uses the packet size set above for
@@ -2208,7 +2208,7 @@ If more than one protocol is selected, OpenXP will
 use the first protocol in the list below that
 matches. For example, if all protocols are selected,
 OpenXP will prefer UUCP-g over UUCP-z if both are
-supported by the remote system. To avoid this, un- 
+supported by the remote system. To avoid this, un-
 select the protocols you do not want to use.
 
 Normally, selecting all protocols will result in the
@@ -2216,12 +2216,12 @@ optimal protocol being used.
 
 <<UUCP-g>>   This is a standard protcol supported by
          virtuall alle UUCP systems.
-        
+
          It features error correction, [packet sizes]@8010
          of 32 to 4096 bytes and large [window sizes].@8011
          Some systems are also able to handle
          [variable packet sizes].@8012
-       
+
          Some systems only support a small subset of
          the protocol; sometimes only small packet
          sizes of 64 bytes and windows of 3 packets,
@@ -2235,8 +2235,8 @@ optimal protocol being used.
          is selected.
 
 
-<<UUCP-t>>  
-<<UUCP-e>> 
+<<UUCP-t>>
+<<UUCP-e>>
          These protocols do not feature and type of
          error correction or flow control, so they
          are only usable with connections that are
@@ -2250,8 +2250,8 @@ optimal protocol being used.
          connections already secured by MNP or V.42.
 
 
-<<UUCP-f>>   
-         
+<<UUCP-f>>
+
          This protocol will only use printable ASCII
          characters. Other characters will be trans-
          formed to ASCII in an inefficient way, which
@@ -2291,8 +2291,8 @@ the moment.
          efficiency, etc. have the same properties as
          in the ZModem protcol.
 
-<<UUCP-v>>   
-         
+<<UUCP-v>>
+
          Another protocol identical to the g proto-
          col. It guarantees the acceptance of
          [variable packet] sizes. All systems@8012
@@ -3031,7 +3031,7 @@ Message-ID).
 
 @
 30002
-Here you have to enter the address of your NNTP host. 
+Here you have to enter the address of your NNTP host.
 This can be an IP number or a domain.
 
 (Default: 127.0.0.1, example: news.shlink.de).
@@ -3054,6 +3054,9 @@ Port SMTP
 @
 30007
 Port POP, normal: 110
+@
+30008
+get the last X News. 0 = get all news.
 @
 8034
 Enter the name of your UUCP Server here.
@@ -8627,11 +8630,11 @@ properly defined and that CrossPoint can find them.
 <<Netcall / All
 
 This makes a Netcall to all of the Servers for which
-the box under /Edit/Servers/Edit/Misc/Netcall All is 
+the box under /Edit/Servers/Edit/Misc/Netcall All is
 switched on.
 
 A command line showing all the Servers to be called
-will be shown, which may be edited if you don't want 
+will be shown, which may be edited if you don't want
 to call them all.
 
 The [command line parameter] "/n:*" does the@4020

@@ -330,7 +330,7 @@ Mîgliche Optionen sind:
 
 <</trace>> aktiviert die Netcall-Scriptprotokollierung
       (s. XPOINT.TXT, Kap. 8.1.).
- 
+
 <</w>>    gibt nicht benîtigte Rechenzeit unter Multi-
 <</w1>>   tasking-Umgebungen frei. Unter Windows, OS/2
       und Linux DOS-Emu ist die Angabe dieses Para-
@@ -1737,7 +1737,7 @@ gen gehen dabei verloren. Wahlweise kînnten Sie auch
 die Datei XPOINT.COL lîschen.
 
 Mit ØSichernÆ werden die geÑnderten Farben in
-XPOINT.COL gesichert. Nicht gesicherte énderungen 
+XPOINT.COL gesichert. Nicht gesicherte énderungen
 bleiben nur bis zum Beenden des Programms aktiv.
 @
 53
@@ -3284,7 +3284,7 @@ Falls die empfangenen Pakete deutlich grî·er als die
 gesendeten Pakete sind (z.B. 1024 Bytes beim Empfang
 und 64 Bytes beim Senden), lÑsst sich der Durchsatz
 evtl. erhîhen, indem Sie mit diesem Schalter die
-Sendepaketgrî·e fest einstellen. 
+Sendepaketgrî·e fest einstellen.
 @
 8014
 <<[x]>> -> CrossPoint schlÑgt dem angerufenen System eine
@@ -3316,8 +3316,8 @@ zustande kommen, wenn sie alle Protokolle aktiviert
 lassen.
 
 <<UUCP-g>>   Dies ist ein Standardprotokoll, das von
-         allen UUCP-Systemen beherrscht wird. 
-         
+         allen UUCP-Systemen beherrscht wird.
+
          Es bietet eine fehlersichere öbertragung,
          [Paketgrî·en] von 32 bis 4096 Bytes und@8010
          [Fenstergrî·en] bis zu 7 Pakete. Manche@8011
@@ -3378,7 +3378,7 @@ nicht unterstÅtzt:
 
          NatÅrlich werden auch variable Paketgrî·en
          unterstÅtzt, ferner bietet das Protokoll
-         eine recht effiziente Fehlerkorrektur.  
+         eine recht effiziente Fehlerkorrektur.
 
          Das Protokoll erfordert jedoch eine Verbin-
          dung, die alle 8-Bit-Zeichen Åbertragen kann.
@@ -3399,7 +3399,7 @@ nicht unterstÅtzt:
          [variabler Paketgrî·en] garantiert. Alle Sys-@8012
          teme, die UUCP-v unterstÅtzen, beherrschen
          dies auch mit UUCP-G; OpenXP unterstÅtzt
-         daher dieses Protokoll nicht gesondert.  
+         daher dieses Protokoll nicht gesondert.
 
 <<UUCP-x>>   Ein Protokoll fÅr Verbindungen Åber das
          X.25-Netzwerk (in Deutschland DATEX-P
@@ -4241,6 +4241,9 @@ Port SMTP
 30007
 Port POP, normal: 110
 @
+30008
+Hole nur die letzten X News. 0 = Hole alle News.
+@
 8034
 Geben Sie hier die Domain des UUCP-Servers an.
 @
@@ -4856,7 +4859,7 @@ und beim automatischen Anlegen neuer User.
 <<[x]>> -> Selbstgeschriebene 'îffentliche' Nachrichten
        werden automatisch auf "Halten" gesetzt,
        werden also bei der Reorganisation nicht
-       gelîscht (sog. 'EGO-Archiv'). 
+       gelîscht (sog. 'EGO-Archiv').
 
 <<[ ]>> -> Selbstgeschriebene 'îffentliche' Nachrichten
        werden behandelt wie alle anderen Nachrichten
@@ -6705,7 +6708,7 @@ Mit den Wildcard-Zeichen <<?>> oder <<*>> kînnen Sie Platz-
 halter fÅr ein oder mehrere (bzw. kein) Zeichen an-
 geben:
 
-Fi???e 
+Fi???e
 
 ... findet z.B. "Fische" und "Finale", aber nicht
 "Filme" oder "Filterzigarette", wÑhrend
@@ -7359,7 +7362,7 @@ Mit den Wildcard-Zeichen <<?>> oder <<*>> kînnen Sie Platz-
 halter fÅr ein oder mehrere (bzw. kein) Zeichen an-
 geben:
 
-Fi???e 
+Fi???e
 
 ... findet z.B. "Fische" und "Finale", aber nicht
 "Filme" oder "Filterzigarette", wÑhrend
@@ -8918,7 +8921,7 @@ Wenn Sie wÅnschen, da· Antworten auf Ihre Nachricht
 nicht îffentlich in ein oder mehrere Bretter erfol-
 gen, sondern Sie per PM erreichen, dann schreiben Sie
 in dieses Feld den Begriff <<poster>> (in Kleinbuch-
-staben). 
+staben).
 
 Wenn Antworten auf Ihre Nachrichten in einem be-
 stimmten Brett immer in das gleiche andere Brett
@@ -9870,7 +9873,7 @@ Aussagen zum Thema PGP (Stand April 2001):
      fÅr Details hierzu interessiert, sei auf
      <<http://senderek.de/security/key-experiments.html>>
      verwiesen.
-     
+
    - Die zusÑtzlichen Features, die die Versionsfami-
      lien 5.x und 6.x gegenÅber den 2.6.x-Versionen
      bieten (Stichworte CMR, ADK) sind a) nicht nur

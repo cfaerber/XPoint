@@ -591,6 +591,7 @@ type   textp  = ^text;
                   nntp_port : integer;     { NNTP: Port, default: 119 }
                   nntp_id   : string;      { NNTP: User-ID, falls noetig }
                   nntp_pwd  : string;      { NNTP: Passwort, falls noetig }
+                  nntp_maxnews : integer;  { NNTP: MaxNews, default: 100 }
                   pop3_ip   : string;      { POP3: IP oder Domain }
                   pop3_id   : string;      { POP3: User-ID, falls noetig }
                   pop3_pwd  : string;      { POP3: Passwort, falls noetig }
@@ -1123,6 +1124,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.126  2001/04/23 06:57:44  ml
+  - NNTP-BoxPar for getting last X Mails
+
   Revision 1.125  2001/04/16 16:43:26  ml
   - pop3 now only gets new mail
   - added switch in pop3-boxconfig for getting only new mail

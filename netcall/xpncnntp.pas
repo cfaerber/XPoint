@@ -321,7 +321,12 @@ begin
       For i := 0 to 40 - length(Group) do
         FillStr := FillStr + ' ';
 
-      if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
+      if bp^.NNTP_MaxNews > 0 then
+      begin
+        if (NNTP.LastMessage - ArticleIndex) > (bp^.NNTP_MaxNews) then
+          ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
+      end;
+
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
       oArticle:=ArticleIndex;
 
@@ -354,6 +359,9 @@ end.
 
 {
         $Log$
+        Revision 1.19  2001/04/23 06:57:45  ml
+        - NNTP-BoxPar for getting last X Mails
+
         Revision 1.18  2001/04/21 15:45:44  ma
         - deleting existing outgoing RFC file before conversion now
 

@@ -2075,6 +2075,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Port      ~
 3    Loginname ~
 4    Paáwort   ~
+5    maximal abzuholende Nachrichten
 -
 
 + 951
@@ -3656,6 +3657,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.10  2001/04/23 06:57:44  ml
+# - NNTP-BoxPar for getting last X Mails
+#
 # Revision 1.9  2001/04/22 11:31:41  ma
 # - added /dl description (/?)
 #

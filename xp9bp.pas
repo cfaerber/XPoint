@@ -180,6 +180,7 @@ begin
     nntp_port:= 119;             { Port }
     nntp_id:= '';                { User-ID }
     nntp_pwd:= '';               { PAssword }
+    nntp_maxnews:= 100;          { Max news to get }
 
     pop3_ip := 'pop3.domain.de';        { POP3: IP oder Domain }
     pop3_id := '';                      { POP3: User-ID, falls noetig }
@@ -338,6 +339,7 @@ begin
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
             gets(s,su,'NNTP-Password',nntp_pwd,255) or
+            geti(su,  'NNTP-MaxNews',nntp_maxnews) or
             gets(s,su,'POP3-IP', pop3_ip,255) or
             gets(s,su,'POP3-ID', pop3_id,255) or
             gets(s,su,'POP3-Password', pop3_pwd, 255) or
@@ -486,6 +488,7 @@ begin
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
     if nntp_id<>''   then writeln(t,'NNTP-ID=',nntp_id);
     if nntp_pwd<>''  then writeln(t,'NNTP-Password=',nntp_pwd);
+    writeln(t,'NNTP-MaxNews=',nntp_maxnews);
     //////////////////////////////////
     writeln(t,'POP3-IP=',pop3_ip);
     if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
@@ -613,6 +616,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/04/23 06:57:44  ml
+  - NNTP-BoxPar for getting last X Mails
+
   Revision 1.38  2001/04/21 18:34:24  cl
   - FIX: BoxPtr^._Domain was not read in
 

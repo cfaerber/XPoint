@@ -736,7 +736,7 @@
   procedure EditNNTP(var brk:boolean);
   var x,y   : byte;
   begin
-    dialog(ival(getres2(950,0)),9,'NNTP-Einstellungen',x,y);
+    dialog(ival(getres2(950,0)),11,'NNTP-Einstellungen',x,y);
     with boxpar^ do begin
       maddstring(3,2,getres2(950,1),nntp_ip,25,255,             { 'Server    ~' }
           range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
@@ -745,7 +745,8 @@
       mhnr(30003);
       maddstring(3,6,getres2(950,3),nntp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,8,getres2(950,4),nntp_pwd,25,255,'');        { 'Passwort  ~' }
-      mhnr(30004);
+      maddint(3,10,getres2(950,5),nntp_maxnews,4,5,0,1000000);     { 'letzten X Nachrichten ' }
+      mhnr(30008);
       freeres;
       readmask(brk);
       enddialog;
@@ -1746,6 +1747,9 @@
 
 {
   $Log$
+  Revision 1.47  2001/04/23 06:57:44  ml
+  - NNTP-BoxPar for getting last X Mails
+
   Revision 1.46  2001/04/16 16:43:26  ml
   - pop3 now only gets new mail
   - added switch in pop3-boxconfig for getting only new mail

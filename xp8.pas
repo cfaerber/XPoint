@@ -1085,7 +1085,7 @@ label again;
                    rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
                  else
                  begin
-                   RCList.Add(s1+' -100');
+                   RCList.Add(s1);
                    List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
                  end;
                end;
@@ -1699,6 +1699,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/04/23 06:57:44  ml
+  - NNTP-BoxPar for getting last X Mails
+
   Revision 1.40  2001/04/21 17:39:25  ma
   - only the newest 100 articles are read from newly subscribed NGs
     (this is meant as a temporarily workaround only)
