@@ -428,7 +428,7 @@ begin  { __ Suchmarke }
 
               { Kommentarbaum }
               if dispmode=12 then begin
-                s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
+                s:=' '+BaumBlatt(ReplyTreeOfs, bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]:=forms(dflags+siz+sdat+' '+s,ScreenWidth);
               end else begin
@@ -599,6 +599,11 @@ end;
 
 {
   $Log$
+  Revision 1.40  2000/11/12 11:34:05  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.39  2000/10/22 21:58:58  mk
   - case of .pp and .epp is now UnixFS dependent
 

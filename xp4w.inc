@@ -398,10 +398,12 @@ procedure SetKomOfs1;
 begin
   if dispmode<>12 then exit;
   komofs:=0;
-  while (komofs<komanz) and (kombaum^[komofs].msgpos<>dbRecno(mbase)) do
+  while (komofs< ReplyTree.Count) and (TReplyTreeItem(ReplyTree[komofs]^).msgpos<>dbRecno(mbase)) do
     inc(komofs);
-  if komofs>=komanz then begin
-    write(#7); komofs:=0; end;
+  if komofs>= ReplyTree.Count then
+  begin
+    write(#7); komofs:=0;
+  end;
 end;
 
 procedure GoDown;
@@ -1619,6 +1621,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.51  2000/11/12 11:34:06  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.50  2000/11/11 10:18:41  mk
   - DBEOF Crash behoben
 

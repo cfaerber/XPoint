@@ -163,6 +163,7 @@ var gl      : shortint;
     markpos : integer;
     bezpos  : integer;
     komofs  : integer;     { Offset vom disprec[1] im Komm-Baum (0..) }
+    ReplyTreeOfs: Integer; { Offset for Reply Tree }
     lastdm  : shortint;
 
 label selende;
@@ -387,12 +388,14 @@ var t,lastt: taste;
              dbGo(mbase,marked^[markpos].recno);
              forth:=true;
              end;
-      12 : if bezpos>=komanz-1 then forth:=false
-           else begin
+      12 : if bezpos>= ReplyTree.Count - 1 then
+             forth:=false
+           else
+           begin
              inc(bezpos);
-             dbGo(mbase,kombaum^[bezpos].msgpos);
+             dbGo(mbase,TReplyTreeItem(ReplyTree[bezpos]^).msgpos);
              forth:=true;
-             end;
+           end;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
         if not dbEOF(mbase) then
@@ -437,7 +440,7 @@ var t,lastt: taste;
       12 : if bezpos=0 then Back:=false
            else begin
              dec(bezpos);
-             dbGo(mbase,kombaum^[bezpos].msgpos);
+             dbGo(mbase,TReplyTreeItem(ReplyTree[bezpos]^).msgpos);
              back:=true;
              end;
     else
@@ -586,9 +589,9 @@ var t,lastt: taste;
                   dbGo(dispdat,marked^[0].recno);
               end;
         12  : begin
-                bezpos:=0; komofs:=0;
-                if komanz>0 then
-                  dbGo(mbase,kombaum^[0].msgpos);
+                bezpos:=0; komofs:=0; ReplyTreeOfs := 0;
+                if ReplyTree.Count > 0 then
+                  dbGo(mbase, TReplyTreeItem(ReplyTree[0]^).msgpos);
               end;
         20  : dbGoTop(dispdat);
     end;
@@ -640,9 +643,9 @@ var t,lastt: taste;
                 dbGo(dispdat,marked^[markpos].recno);
               end;
       12    : begin
-                bezpos:=komanz-1;
-                dbGo(mbase,kombaum^[bezpos].msgpos);
-                komofs:=max(0,komanz-gl);
+                bezpos:= ReplyTree.Count - 1;
+                dbGo(mbase, TReplyTreeItem(ReplyTree[bezpos]^).msgpos);
+                komofs:=max(0, ReplyTree.Count -gl);
               end;
       20    : dbGoEnd(dispdat);
     end;
@@ -1163,17 +1166,17 @@ var t,lastt: taste;
       bezbetr:= dbReadNStr(mbase,mb_betreff);
       xp0.kombrett:= dbReadNStr(mbase,mb_brett);
       BezBaum(bezbetr);
-      if komanz<2 then
+      if ReplyTree.Count < 2 then
         rfehler(409)   { 'keine Bezge vorhanden' }
-      else begin
+      else
+      begin
         GoP;
         select(12);
         setall;
-        end;
-      freemem(kombaum,komanz*sizeof(komrec));
-      kombaum:=nil;
-      komaktiv:=false;
       end;
+      ClearReplyTree;
+      komaktiv:=false;
+    end;
   end;
 
 
@@ -1427,20 +1430,20 @@ begin      { --- select --- }
   actgl:=gl;
 
   if dispmode=12 then begin
-    bezpos:=0; komofs:=0;
-    while (bezpos<komanz) and (kombaum^[bezpos].msgpos<>dbRecno(mbase)) do begin
+    bezpos:=0; komofs:=0; ReplyTreeOfs := 0;
+    while (bezpos< ReplyTree.Count) and (TReplyTreeItem(ReplyTree[bezpos]^).msgpos<>dbRecno(mbase)) do begin
       inc(bezpos); inc(komofs);
       end;
-    if bezpos=komanz then
+    if bezpos= ReplyTree.Count then
       gostart
     else begin
       if bezpos<gl then begin
         p:=bezpos+1;
-        disprec[1]:=kombaum^[0].msgpos;
+        disprec[1]:= TReplyTreeItem(ReplyTree[0]^).msgpos;
         komofs:=0;
         end
       else begin
-        disprec[1]:=kombaum^[bezpos-gl+5].msgpos;
+        disprec[1]:= TReplyTreeItem(ReplyTree[bezpos-gl+5]^).msgpos;
         p:=gl-4;
         dec(komofs,gl-5);
         end;
@@ -1831,8 +1834,18 @@ begin      { --- select --- }
                        if c='+' then _BezSeekKommentar;
                        if t=keyleft then _BezSeek(true);
                        if t=keyrght then _BezSeek(false);
+                       if t=keyclft then
+                       begin
+                         ReplyTreeOfs := max(0, ReplyTreeOfs-komwidth);
+                         aufbau:=true;
                        end;
-                     end
+                       if t=keycrgt then
+                       begin
+                         ReplyTreeOfs := min(maxebene*komwidth,ReplyTreeOfs+komwidth);
+                         aufbau:=true;
+                       end;
+                    end
+                   end
                    else begin   { 11 }
                      if c=' ' then MarkedUnmark;
                      if c=k2_EA then begin                          { 'A' }
@@ -2112,6 +2125,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/11/12 11:34:05  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.57  2000/11/08 17:56:15  mk
   - fixed Bug #119897: Ctrl E in Displaymode 11
 

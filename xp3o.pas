@@ -72,7 +72,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp, xp4o2;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -710,8 +710,8 @@ begin
                   signal;
                 end;
             4 : begin
-                  for i:=0 to komanz-1 do begin
-                    dbGo(mbase,kombaum^[i].msgpos);
+                  for i:=0 to ReplyTree.Count-1 do begin
+                    dbGo(mbase,TReplyTreeItem(ReplyTree[i]^).msgpos);
                     readit;
                     end;
                   signal;
@@ -822,7 +822,7 @@ begin
     inc(n);
     case aktdispmode of
       11 : dbGo(mbase,marked^[i].recno);
-      12 : dbGo(mbase,kombaum^[i].msgpos);
+      12 : dbGo(mbase,TReplyTreeItem(ReplyTree[i]^).msgpos);
     end;
     _b := dbReadStr(mbase,'brett');
     deleted:=false;
@@ -885,7 +885,7 @@ begin
     XP_testbrk(brk);
   until brk or ((aktdispmode=10) and ((_b<>_brett) or dbEOF(mbase) or
         ((rdmode=1) and xp3o.gelesen))) or ((aktdispmode=11) and (i=markanz))
-        or ((aktdispmode=12) and (i=komanz));
+        or ((aktdispmode=12) and (i=ReplyTree.Count));
   dbFlush(mbase);
   if art=7 then begin
     writeln(t);
@@ -901,10 +901,11 @@ begin
     if art>4 then RereadUngelesen(_brett);
     if rdmode=1 then _keyboard(keyhome);
     end;
-  if (art=6) and (aktdispmode=12) then begin
-    komanz:=0;
+  if (art=6) and (aktdispmode=12) then
+  begin
+    ClearReplyTree;
     keyboard(keyesc);
-    end;
+  end;
   CloseBox;
   signal;
   aufbau:=true;
@@ -1496,6 +1497,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/11/12 11:34:05  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.39  2000/11/02 09:47:23  mk
   - AnsiString Fix
 

@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
+  dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes,
       resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
 
 { Deklaration des Kommentarbaums in XP0 }
@@ -42,7 +42,8 @@ function  BezSeek(back:boolean):boolean;
 function  BezSeekBezug:boolean;
 function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
-function  BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
+function  BaumBlatt(Ofs:byte; bezpos:word; var s,s1:string):string;
+procedure ClearReplyTree;
 
 (* procedure SetLanguage; *)
 
@@ -50,9 +51,6 @@ function  BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
 implementation  { ---------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3ex;
-
-const
-  emax = 129;   { maximale Tiefe }
 
 procedure packit(xpack:boolean; fname:string);
 var d  : DB;
@@ -397,9 +395,9 @@ var hdp    : headerp;
     mi,n   : shortint;
     brett  : string;
     nullid : longint;
-    kb2    : komlistp;
+    xlines : kommLines;
 
-  procedure RecurBez(ebene:shortint; rec: LongInt; spuren1, spuren2:Int64; last:boolean;
+  procedure RecurBez(ebene:shortint; rec: LongInt; Spuren: KommLines; last:boolean;
                      var betr,brett:string);
   const bmax  = 205;
   type  brec  = record
@@ -409,7 +407,7 @@ var hdp    : headerp;
         blist = array[1..bmax] of brec;
   var id     : longint;
       ida    : array[0..3] of char absolute id;
-      ba     : ^blist;
+      ba,ba2 : ^blist;
       anz    : longint;
       i,j    : integer;
       more   : boolean;
@@ -418,16 +416,22 @@ var hdp    : headerp;
       _brett : string;
       r      : brec;
       mid    : longint;
+      spnr,
+      spb    : Integer;
 
     procedure wr;
+    var
+      NewItem: ^TReplyTreeItem;
     begin
       newbetr:= dbReadNStr(mbase,mb_betreff);
       _brett:= dbReadNStr(mbase,mb_brett);
-      if nullid=0 then begin
-        with kombaum^[komanz] do begin
+      if nullid=0 then
+      begin
+        GetMem(NewItem, SizeOf(NewItem^));
+        with NewItem^ do
+        begin
           MsgPos:=dbRecno(mbase);
-          lines1:=spuren1;
-          lines2:=spuren2;
+          Lines := Spuren;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
           if recount(newbetr)=0 then;
@@ -438,8 +442,8 @@ var hdp    : headerp;
           else if _brett<>brett then
             inc(flags,kflBrett);
           end;
-        inc(komanz);
-        end;
+        ReplyTree.Add(NewItem);
+      end;
     end;
 
     procedure GetSeekID;
@@ -500,17 +504,16 @@ var hdp    : headerp;
     end;
 
   begin
-    if (ebene<emax) and (komanz<maxkomm) and
-       (rec<>0) and not dbDeleted(mbase,rec) then
+    if (Ebene< MaxKommLevels) and (rec<>0) and not dbDeleted(mbase,rec) then
     begin
       if ebene>maxebene then inc(maxebene);
-      new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
       wr;
       GetSeekID;
       if dbFound then
         repeat
+          getmem(ba,sizeof(brec)*bmax);
           anz:=0;
           while not _last and (anz<bmax) do begin
             dbReadN(bezbase,bezb_msgid, mid);
@@ -519,6 +522,10 @@ var hdp    : headerp;
             else
               if not AddDx then AddD0;
             end;
+          getmem(ba2,sizeof(brec)*anz);
+          Move(ba^,ba2^,sizeof(brec)*anz);
+          freemem(ba,sizeof(brec)*bmax);
+          ba:=ba2;
           more:=not _last;
           for i:=1 to anz-1 do           { Bubble-Sort nach Datum }
             for j:=anz downto i+1 do
@@ -526,32 +533,29 @@ var hdp    : headerp;
                 r:=ba^[j-1]; ba^[j-1]:=ba^[j]; ba^[j]:=r;
                 end;
           if more then dbReadN(bezbase,bezb_msgpos,rec);
-          for i:=1 to anz do begin
+          for i:=1 to anz do
+          begin
             mmore:=more or (i<anz);
-            if mmore then
-            begin
-              if ebene < 64 then
-                RecurBez(ebene+1,ba^[i].pos,
-                  spuren1+(Int64(1) shl Int64(ebene)), spuren2, not mmore,newbetr,_brett)
-              else
-                RecurBez(ebene+1,ba^[i].pos,
-                  spuren1, spuren2+(Int64(1) shl Int64(ebene-64)), not mmore,newbetr,_brett)
-            end else
-              RecurBez(ebene+1,ba^[i].pos,spuren1, spuren2,not mmore,newbetr,_brett);
-            end;
+            xlines:=spuren;
+            if mmore and (ebene<MaxKommLevels-1) then begin
+              spnr:=ebene div 32;
+              spb:=ebene and (32-1);
+              xlines[spnr]:=xlines[spnr] or (1 shl spb);
+             end;
+            RecurBez(ebene+1,ba^[i].pos,xlines,not mmore,newbetr,_brett);
+          end;
+          freemem(ba,sizeof(brec)*anz);
+
           if more then dbGo(bezbase,rec);
         until not more;
-      dispose(ba);
-      end;
+    end;
   end;
 
 begin
   if ReCount(betr)=0 then;
   rmessage(475);    { 'Kommentarbaum einlesen...' }
-  if kombaum<>nil then
-    freemem(kombaum,komanz*sizeof(komrec));
-  hdp:= AllocHeaderMEm;
-  getmem(kombaum,maxkomm*sizeof(komrec));
+  ClearReplyTree;
+  hdp:= AllocHeaderMem;
   n:=0;
   nullid:=0;
   repeat
@@ -565,18 +569,16 @@ begin
         nullid:=MsgidIndex(hdp^.ref);
       end;
     inc(n);
-  until (n=emax) or (bez=0);
+  until (n= MaxKommLevels) or (bez=0);
   brett:= dbReadNStr(mbase,mb_brett);
-  komanz:=0; maxebene:=0;
+  maxebene:=0;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
-  RecurBez(0,dbRecno(mbase),0,0,true,betr,brett);
-  kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
+  fillchar(xlines,sizeof(KommLines),0);
+  RecurBez(0,dbRecno(mbase),xlines,true,betr,brett);
+
+  TReplyTreeItem(ReplyTree[0]^).flags:=TReplyTreeItem(ReplyTree[0]^).flags or kflBetr;
   dbSetIndex(bezbase,mi);
-  getmem(kb2,komanz*sizeof(komrec));
-  Move(kombaum^,kb2^,komanz*sizeof(komrec));
-  freemem(kombaum);
-  kombaum:=kb2;
   FreeHeaderMem(hdp);
   closebox;
   if maxebene<10 then komwidth:=3
@@ -741,13 +743,16 @@ end;
 
 { s=User, s1=Betreff }
 
-function BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
+function BaumBlatt(ofs:byte; bezpos:word; var s,s1:string):string;
 var ss : string[255];
     i  : integer;   { muá longint sein, damit (1 shl i) longint ist }
     p  : byte;
     bs : string;
+    sn,
+    sb : Integer;
 begin
-  with kombaum^[bezpos] do begin
+  with TReplyTreeItem(ReplyTree[bezpos]^) do
+  begin
     if not KomShowAdr then begin
       p:=cpos('@',s);
       if p>0 then SetLength(s, p-1);
@@ -767,29 +772,43 @@ begin
       ss:=''
     else
     begin
-      _ebene:=min(_ebene,emax);
+      _ebene:=min(_ebene, MaxKommLevels);
       ss:=sp((_ebene-1)*komwidth);
       for i:=0 to _ebene-2 do
-        if i < 64 then
-        begin
-          if lines1 and (Int64(1) shl Int64(i))<>0 then
-            ss[i*komwidth+1]:='³'
-        end else
-          if lines2 and (Int64(1) shl Int64(i-64))<>0 then
+      begin
+        sn:=i div 32;
+        sb:=i and (32-1);
+        if lines[sn] and (1 shl sb)<>0 then
             ss[i*komwidth+1]:='³';
+      end;
       if flags and kflLast<>0 then
         ss:=ss+LeftStr('ÀÄÄÄ',komwidth)
       else
-      ss:=ss+LeftStr('ÃÄÄÄ',komwidth);
+        ss:=ss+LeftStr('ÃÄÄÄ',komwidth);
     end;
-    ss:=ss+s;
+    if ofs>0 then
+    begin
+      i:=0;
+      while (i<ofs) and (i<length(ss))
+        and (pos(ss[i+1],' ³ÃÀÄ')>0) do inc(i);
+      delete(ss,1,i);
+      ss:='®'+ss;
+    end;
     if flags and (kflBetr+kflBrett)<>0 then
-      BaumBlatt:=forms(ss,len-min(length(bs+s1),35)-3)+'  '+LeftStr(bs+s1,35)+' '
+      BaumBlatt:=forms(ss+s, max(length(ss+s), 35)) + '  ' + bs + s1
     else
-      BaumBlatt:=forms(ss,len)
+      BaumBlatt:=ss+s;
     end;
 end;
 
+procedure ClearReplyTree;
+var
+  i: Integer;
+begin
+  for i := 0 to ReplyTree.Count - 1 do
+    FreeMem(ReplyTree[i]);
+  ReplyTree.Clear;
+end;
 
 {
 Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
@@ -905,6 +924,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/12 11:34:06  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.24  2000/11/01 10:26:36  mk
   - Limits im Kommentarbaum erhoeht
 

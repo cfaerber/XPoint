@@ -356,7 +356,7 @@ const
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
-       maxkomm    = 20000;              { Kommentarbaum }
+       MaxKommLevels = 512;            { Maximum Levels in Reply Tree }
        kflLast    = 1;
        kflBetr    = 2;
        kflPM      = 4;
@@ -675,15 +675,15 @@ type   textp  = ^text;
 
        proc   = procedure;
 
-       komrec   = packed record
-                    msgpos : longint;
-                    lines1: int64;
-                    lines2: Int64;
-                    _ebene: shortint;
-                    flags : byte;
-                  end;
-       komliste = array[0..maxkomm-1] of komrec;   { Kommentarbaum }
-       komlistp = ^komliste;
+       { Reply Tree }
+       KommLines = array[0..(MaxKommLevels div 32) - 1] of DWord;
+       TReplyTreeItem = packed record
+                          msgpos : longint;
+                          Lines: KommLines;
+                         _ebene: shortint;
+                         flags : byte;
+                        end;
+       TReplyTree = TList;   { Kommentarbaum }
 
        ExtHeaderType = record
                          v      :array[0..maxheaderlines] of byte;
@@ -1139,8 +1139,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        FidoDelEmpty: boolean;        { 0-Byte-Nachrichten loeschen }
        KeepVia     : boolean;        { ZFIDO: Option -via }
 
-       kombaum     : komlistp;       { Kommentarbaum }
-       komanz      : word;           { Anzahl Eintraege }
+       ReplyTree   : TReplyTree;       { Kommentarbaum }
        maxebene    : integer;
        komwidth    : integer;       { Anzeigeabstand zwischen Ebenen }
        kombrett    : string;      { Brettcode der Ausgangsnachricht }
@@ -1171,6 +1170,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.99  2000/11/12 11:34:04  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.98  2000/11/09 18:51:42  hd
   - Anpassungen an Linux
 

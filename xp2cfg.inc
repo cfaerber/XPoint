@@ -306,7 +306,8 @@ begin
   new(fkeys[2]);
   new(fkeys[3]);
   aktdispmode:=0;
-  kombaum:=nil;
+  ReplyTree := TList.Create;
+
 
   rp:=@registriert;         { regrec.r2:=false - noch nicht registriert }
   inc(longint(rp));
@@ -1699,6 +1700,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.90  2000/11/12 11:34:05  mk
+  - removed some limits in Reply Tree
+  - implementet moving the tree with cursor keys (RB)
+  - optimized display of the tree
+
   Revision 1.89  2000/11/01 23:03:46  mv
    - if(n)def Linux -> if(n)def Unix fixes
 
