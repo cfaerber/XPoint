@@ -350,7 +350,7 @@ begin
     if ntAutoZer(nt) then
       ntAutoDomain:='.ZER'
     else if (nt=nt_ZConnect) and not ownbox then
-      ntAutoDomain:='.do.main'
+      ntAutoDomain:='.invalid'
     else
       if ntDomainType(nt) in [5,6] then
         ntAutoDomain:=dbReadStr(d,'domain');
@@ -377,7 +377,7 @@ function ntDefaultDomain(nt:byte):string;     { Domain fÅr neue Boxen }
 begin
   case nt of
     nt_Pronet   : ntDefaultDomain:='.pro';
-    nt_ZConnect : ntDefaultDomain:='.do.main';
+    nt_ZConnect : ntDefaultDomain:='.invalid';
     nt_Fido     : ntDefaultDomain:='';
   else
     ntDefaultDomain:='';
@@ -745,6 +745,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9.2.1  2000/10/05 20:27:49  fe
+  ZC-Defaultdomain von '.do.main' nach '.invalid' geaendert.  (RFC 2606)
+
   Revision 1.9  2000/06/19 20:22:48  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 
