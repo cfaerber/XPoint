@@ -125,8 +125,7 @@ begin
   ReadBuf;
   repeat
     ReadInputString(s);
-    while (s[length(s)]=' ') do
-      dec(byte(s[0]));
+    s := TrimRight(s);
     if (s='') or (s[1]=' ') or (s[1]='#') then
       writeln(t2,s)
     else if (s[1]='/') or (s[1]='~') then begin
@@ -152,6 +151,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.2  2000/08/08 13:18:14  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.1  2000/05/11 14:25:02  mk
   - Utility hinzugefuegt
 

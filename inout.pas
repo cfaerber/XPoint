@@ -969,7 +969,7 @@ begin
   IF a=keycr THEN enderded:=enreturn;
   mwrt(x,y,s+sp(ml-length(s)));
   if (art<>edittabelle) and rdedtrunc then
-    while s[length(s)]=' ' do dellast(s);
+    s := TrimRight(s);
   curon:=curnorm;
   retonfn:=r1;
   mauszul:=mlm; mauszur:=mrm;
@@ -1237,9 +1237,9 @@ VAR res:Integer;
 begin
   repeat
     s:=strsr(r,5);
-    while s[length(s)]='0' do
+    while LastChar(s)='0' do
       dellast(s);
-    if s[length(s)]='.' then dellast(s);
+    if LastChar(s)='.' then dellast(s);
     while (s<>'') and (s[1]=' ') do
       delfirst(s);
     bd(x,y,'',s,9,2,brk);
@@ -1450,8 +1450,8 @@ begin
         edproc(x,y,s,px,en)
       else begin
         readedit(x,y,'',s,len,chml[1],byte(px),edittabelle,en);
-        while s[length(s)]=' ' do dellast(s);
-        end;
+        s := TrimRight(s);
+      end;
       pl:=px;
       if en=enabbr then brk:=true else begin
         tproc(s,ok); if not ok then en:=enno;
@@ -1656,6 +1656,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.53  2000/08/08 13:18:13  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.52  2000/08/08 00:00:40  mk
   - AnsiString-Bug beseitigt
 

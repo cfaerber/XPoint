@@ -376,7 +376,7 @@ laden:
       end;
     if blocksatz and (length(s)>wd div 3) then begin
       if pos('@',s)>0 then lc:=s[pos('@',s)-1]
-      else lc:=s[length(s)];
+      else lc:=LastChar(s);
       if pos('#',s)>0 then lc:='#';
       if pos(lc,'#.?!:')=0 then begin
         while length(s)<wd do begin
@@ -754,6 +754,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/08/08 13:18:13  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.21  2000/07/17 13:29:51  mk
   - AnsiString-Updates, Hilfe geht jetzt
 

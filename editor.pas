@@ -724,10 +724,11 @@ begin
           srest:=true;
         end
         else begin
-          if (length(s)>40) and sbreaks and eoln(t) and (s[length(s)]=' ')
+          if (length(s)>40) and sbreaks and eoln(t) and (LastChar(s)=' ')
              and not eof(t)
-          then begin
-            SetLength(s, Length(s)-1); {dec(byte(s[0]));}
+          then
+          begin
+            DelLast(s);
             sbrk:=true;
             readln(t);
           end;
@@ -1834,6 +1835,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/08/08 13:18:13  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.38  2000/07/23 10:00:59  mk
   - memavail wo moeglich rausgenommen
 

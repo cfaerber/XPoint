@@ -460,8 +460,6 @@ var ax,p,myp  : integer;
           s:=cont;
           if autotrim=1 then
             s:= TrimRight(s)
-            { while s[length(s)]=' ' do
-              dec(byte(s[0])) }
           else
             s:=trim(s);
           if (s<>cont) and (xtest1(s)) then;
@@ -1078,6 +1076,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.27  2000/08/08 13:18:13  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.26  2000/08/06 10:17:27  mk
   - AnsiString fix
 

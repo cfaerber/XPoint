@@ -226,8 +226,8 @@ var cname : string;
 begin
   attrtxt(col.coldialog);
   if (LowerCase(left(s,3))='pmc') and
-        ((length(s)>0) and (ival(s[length(s)]) in [1..maxpmc])) then begin
-    cname:=pmcrypt[ival(s[length(s)])].name;
+        ((length(s)>0) and (ival(LastChar(s)) in [1..maxpmc])) then begin
+    cname:=pmcrypt[ival(LastChar(s))].name;
     if cname='' then cname:=getres(2700);    { 'noch nicht definiert' }
     mwrt(39,wcy,forms('('+cname+')',30));
     end
@@ -866,7 +866,7 @@ end;
 function testnoverteiler(var s:string):boolean;
 begin
   testnoverteiler:=true;
-  if (Length(s) > 1) and (s[1]='[') and (s[length(s)]=']') then
+  if (FirstChar(s)='[') and (LastChar(s)=']') then
   begin
     rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
     testnoverteiler:=false;
@@ -2415,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/08/08 13:18:15  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.37  2000/07/21 20:56:25  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

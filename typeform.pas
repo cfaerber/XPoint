@@ -403,7 +403,7 @@ begin
     s:=copy(s,2,vk-4)+'.'+copy(s,vk-2,3)+','+right(s,nk)
   else
     s:=copy(s,1,vk)+','+right(s,nk);
-  if s[length(s)]=',' then
+  if LastChar(s)=',' then
     s:=' '+copy(s,1,length(s)-1);
   strsrnp:=s;
 end;
@@ -1285,6 +1285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/08/08 13:18:14  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.64  2000/08/08 12:05:40  mk
   - fix fuer BlankPosX und FirstChar liefert jetzt #0 bei Length(s)=0
 

@@ -1209,16 +1209,18 @@ begin
             else
               while (size>0) or (bufpos<rr) do begin
                 getline;
-                if (length(s)>2) and (s[length(s)]=#10) and
+                if (length(s)>2) and (LastChar(s)=#10) and
                    (s[length(s)-1]=#13) and (s[length(s)-2]=' ') then
                    delete(s,length(s)-2,1);
-                if (length(s)>2) and (s[length(s)]=#10) and
+                if (length(s)>2) and (LastChar(s)=#10) and
                    (s[length(s)-1]=#13) and (s[length(s)-2]=' ') then
                    delete(s,length(s)-2,1);
                 write(t,fch,s);
                 if not pmb then
-                  if s[length(s)]=#10 then fch:=':'
-                  else fch:='';
+                  if LastChar(s)=#10 then
+                    fch:=':'
+                  else
+                    fch:='';
                 end;
             if not pmb and (fch='') then writeln(t);
             end;
@@ -1608,6 +1610,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/08/08 13:18:13  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.22  2000/07/23 10:00:59  mk
   - memavail wo moeglich rausgenommen
 

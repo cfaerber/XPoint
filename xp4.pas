@@ -1548,8 +1548,8 @@ begin      { --- select --- }
     c:=UpCase(t[1]);
 
     if dispmode<>12 then begin
-      if t=keyleft then t:=mainkeys[length(mainkeys)];   { 'Z' }
-      if t=keyrght then t:=mainkeys[1];                  { 'X' }
+      if t=keyleft then t:=LastChar(mainkeys);   { 'Z' }
+      if t=keyrght then t:=FirstChar(MainKeys);  { 'X' }
       end;
     if (dispmode<>3) and (dispmode<>4) and (dispmode<>-1) and
        ((t=keyf10) or (t=keyf4) or (pos(UpperCase(t),mainkeys)>0)) then begin
@@ -2053,6 +2053,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/08/08 13:18:15  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.42  2000/08/05 17:28:24  mk
   JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 

@@ -505,7 +505,7 @@ var size   : longint;
     blanklines:=0;
     while not eof(t) do begin
       read(t,reads);                         { max. 120 Zeichen einlesen }
-      endspace:=(reads[length(reads)]=' ') or eoln(t);
+      endspace:=(LastChar(reads)=' ') or eoln(t);
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=left(reads,p);
@@ -586,11 +586,9 @@ var size   : longint;
             { Change hd 2000-07-03 RTrim entfernt }
             { TrimRight entfernt mehr als nur Space, also bitte pruefen!!! }
             s:= TrimRight(s);
-            { while s[length(s)]=' ' do dec(byte(s[0]));}   { rtrim(s) }
-            { /Change }
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
-              endspace:=(reads[length(reads)]=' ') or eoln(t);
+              endspace:=(LastChar(reads)=' ') or eoln(t);
               if not iso1 and ConvIso and (reads<>'') then begin
                 convstr:= reads;
                 ISO_conv(convstr[1],length(convstr));    { ISO-Konvertierung }
@@ -604,7 +602,7 @@ var size   : longint;
               stmp:='';
             end;
           end;
-        s:= TrimRight(s); { while (s[length(s)]=' ') do dec(byte(s[0]));}   { rtrim }
+        s:= TrimRight(s);
         wrslong(s);
       end;
       readln(t);
@@ -1058,6 +1056,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/08/08 13:18:14  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.39  2000/07/30 07:58:52  mk
   - Trim aus RPS() entfernt
 

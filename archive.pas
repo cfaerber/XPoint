@@ -634,8 +634,8 @@ label again;
   var l   : longint;
  {      res : integer;           MK 12/99 }
   begin
-    while (s<>'') and (s[length(s)]<'0') do SetLength(s, Length(s)-1); {dec(byte(s[0]));}
-    while (s<>'') and (s[1]=' ') do delete(s,1,1);
+    while (s<>'') and (LastChar(s)<'0') do SetLength(s, Length(s)-1); {dec(byte(s[0]));}
+    s := TrimLeft(s);
     l:=0;
     while s<>'' do begin      { oktal-Value berechnen }
       l:=8*l+ord(s[1])-48;
@@ -985,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/08/08 13:18:12  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.15  2000/07/05 09:27:08  hd
   - AnsiString-Anpassung
 

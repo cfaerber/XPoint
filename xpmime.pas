@@ -632,7 +632,7 @@ var   input,t : text;
   begin
     if length(s)<4 then s:=''
     else begin
-      if s[length(s)]='=' then
+      if LastChar(s)='=' then
         if s[length(s)-1]='=' then pad:=2
         else pad:=1
       else pad:=0;
@@ -732,6 +732,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/08/08 13:18:16  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.24  2000/08/05 17:28:24  mk
   JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 

@@ -247,12 +247,12 @@ begin
   else begin
     if not multipos('*?',s) then begin
       findfirst(s,ffAnyFile,sr);
-      if (s[length(s)]<>'\') and (doserror<>0) then begin
+      if (LastChar(s)<>'\') and (doserror<>0) then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
         exit;
         end;
-      if s[length(s)]<>'\' then s:=s+'\';
+      if LastChar(s)<>'\' then s:=s+'\';
       s:=s+'*.*';
       end;
     selcol;
@@ -408,12 +408,12 @@ var d     : DB;
       if s[1]='"' then delfirst(s);
       p:=blankpos(s);
       if p>0 then truncstr(s,p-1);
-      if s[length(s)]='"' then dellast(s);
+      if LastChar(s)='"' then dellast(s);
       s:=trim(s);
       if s<>'' then begin
-        if (s[length(s)]=':') and (cpos('/',s)>0) then
+        if (LastChar(s)=':') and (cpos('/',s)>0) then
           dellast(s);
-        if not (s[length(s)] in [':','/']) then
+        if not (LastChar(s) in [':','/']) then
           s:=s+'/';
         end;
       end;
@@ -535,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/08/08 13:18:15  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.12  2000/07/27 10:13:04  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

@@ -1242,7 +1242,7 @@ label abbr;
       s:=trim(mid(s,p+1));
       while (s<>'') and ((s[1]<'0') or (s[1]>'9')) do
         delfirst(s);
-      while (s<>'') and ((s[length(s)]<'0') or (s[length(s)]>'9')) do
+      while (s<>'') and ((LastChar(s)<'0') or (LastChar(s)>'9')) do
         DelLast(s);
       splitfido(s,origin);
       end;
@@ -1671,6 +1671,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/08/08 13:18:16  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.30  2000/07/21 17:39:58  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

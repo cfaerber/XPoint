@@ -891,7 +891,7 @@ var brk      : boolean;
               Dellast(ms)
             end
             else if (length(ms)>=2) and (ms[length(ms)-1]='^') then
-              SetLength(ms, length(ms)-2) {dec(byte(ms[0]),2)}
+              SetLength(ms, length(ms)-2)
             else
               DelLast(ms);
             a:=max(0,min(a,length(ms)-40));
@@ -2022,6 +2022,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/08/08 13:18:14  mk
+  - s[Length(s)] durch Lastchar ersetzt
+
   Revision 1.27  2000/08/04 09:06:25  mk
   - Bug in NLFilename nach Stringlistumestellung behoben
 
