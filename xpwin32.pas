@@ -45,6 +45,8 @@ procedure SysSetBackIntensity;
 procedure RegisterMailClient;
 // Returns the used Codepage in form of the Unicode charset
 function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetDriveType(drive:char):byte;
+function SysOutputRedirected: boolean;
 
 implementation
 
@@ -134,9 +136,35 @@ begin
   end;
 end;
 
+{ 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
+function SysGetDriveType(drive:char):byte;
+const
+  DriveStr: String = '?:\'+#0;
+begin
+  DriveStr[1] := Drive;
+  case GetDriveType(@DriveStr[1]) of
+    DRIVE_REMOVABLE,
+    DRIVE_FIXED:     SysGetDriveType := 1;
+    DRIVE_RAMDISK:   SysGetDriveType := 2;
+    DRIVE_REMOTE:    SysGetDriveType := 5;
+    DRIVE_CDROM:     SysGetDriveType := 6;
+  else
+    SysGetDriveType := 0;
+  end;
+end;
+
+function SysOutputRedirected: boolean;
+begin
+  // ToDo
+  Result := false;
+end;
+
 end.
 {
   $Log$
+  Revision 1.10  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.9  2000/10/19 19:53:08  mk
   - Fix for SysSetScreenSize when resizing the window at runtime
 

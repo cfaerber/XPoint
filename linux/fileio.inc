@@ -102,6 +102,13 @@ begin
   SetCurrentDir(curdir);
 end;
 
+function dospath(d:byte):pathstr;
+var s : string;
+begin
+  getdir(0, s);
+  dospath:=s;
+end;
+
 
 function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
@@ -417,8 +424,19 @@ begin
   if ioresult<>0 then;
 end;
 
+function IsDevice(fn:pathstr):boolean;
+begin
+  { COMs sind Devices, der Rest nicht }
+
+  { Noch nicht implementiert !!!! }
+  IsDevice := false;
+end;
+
 {
         $Log$
+        Revision 1.7  2000/10/19 20:52:26  mk
+        - removed Unit dosx.pas
+
         Revision 1.6  2000/10/19 12:57:31  mk
         - deleted unused function erase_all
 

@@ -62,7 +62,7 @@ uses
 {$IFDEF Win32 }
   Windows,
 {$ENDIF }
-  xpglobal, dos, typeform, dosx, inout;
+  xpglobal, dos, typeform, inout;
 
 const  coms       = 4;     { Anzahl der unterstÅtzten Schnittstellen }
        fcoms      = 50;    { Anzahl unterstÅtzter FOSSIL-Schnittstellen }
@@ -884,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2000/10/19 20:52:21  mk
+  - removed Unit dosx.pas
+
   Revision 1.11  2000/08/08 23:18:25  mk
   - Crash temporaer beseitigt
 

@@ -25,11 +25,13 @@ uses
   sysutils,
 {$ifdef vp }
   vpusrlow,
-{$else}
- {$IFDEF Win32 }
-  windows,
- {$ENDIF }
 {$endif}
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
   xpglobal,
   dos, typeform;
 
@@ -93,9 +95,12 @@ procedure adddir(var fn:string; dir:string);
 function  GetFileDir(p:string):string;
 function GetBareFileName(p:string):string;
 procedure WildForm(var s: string);              { * zu ??? erweitern }
+function  dospath(d:byte):pathstr;
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 procedure WriteBatch(s:string);                 { Batchfile erstellen     }
+function alldrives:string;
+function  IsDevice(fn:pathstr):boolean;
 
 implementation  { ------------------------------------------------------- }
 
@@ -222,6 +227,14 @@ begin
   findclose(sr);
   end;
 end;
+
+function dospath(d:byte):pathstr;
+var s : string;
+begin
+  getdir(d,s);
+  dospath:=s;
+end;
+
 
 function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
@@ -525,11 +538,45 @@ begin
   if ioresult<>0 then;
 end;
 
+function IsDevice(fn:pathstr):boolean;
+begin
+  { COMs sind Devices, der Rest nicht }
+  IsDevice := Pos('COM', fn) = 1;
+end;
+
 {$endif} { Linux }
+
+function alldrives:string;
+var
+  s : string;
+  Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
+  i: integer;
+begin
+  s := '';
+  {$IFNDEF DOS32 }
+    {$IFDEF Win32 }
+      Drives := GetLogicalDrives;
+    {$ELSE }
+      Drives := 1 shl 27 - 1; {!!}
+    {$ENDIF }
+    for i := 0 to 25 do
+      if (Drives and (1 shl i)) > 0 then
+        s := s + Chr(i + 65);
+  {$ELSE }
+    for i:=Ord('A') to Ord(SysGetMaxdrive) do
+      if SysGetDrivetype(Char(i))>0 then
+        s := s + Chr(i);
+  {$ENDIF }
+
+  alldrives:=s;
+end;
 
 end.
 {
   $Log$
+  Revision 1.57  2000/10/19 20:52:20  mk
+  - removed Unit dosx.pas
+
   Revision 1.56  2000/10/19 12:57:43  mk
   - deleted unused function erase_all
 

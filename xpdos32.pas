@@ -47,6 +47,7 @@ function SysGetMaxDrive:char;
 function SysGetDriveType(drive:char):byte;
 // Returns the used Codepage in form of the Unicode charset
 function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysOutputRedirected: boolean;
 
 implementation
 
@@ -665,10 +666,18 @@ begin
   Result := csCP437;
 end;
 
+function SysOutputRedirected: boolean;
+begin
+  // ToDo
+  Result := false;
+end;
 
 end.
 {
   $Log$
+  Revision 1.8  2000/10/19 20:52:23  mk
+  - removed Unit dosx.pas
+
   Revision 1.7  2000/10/10 12:15:23  mk
   - SysGetConsoleCodepage added
 

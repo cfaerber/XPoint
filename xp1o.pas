@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,dosx,typeform,keys,fileio,inout,maus2,lister,
+  sysutils,dos,typeform,keys,fileio,inout,maus2,lister,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -985,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/10/19 20:52:21  mk
+  - removed Unit dosx.pas
+
   Revision 1.62  2000/10/17 12:53:19  mk
   - einige Funktionen auf Sysutils umgestellt
 

@@ -24,7 +24,7 @@ uses
   crt,
 {$ENDIF }
  sysutils,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
-      win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
+      win2,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/10/19 20:52:22  mk
+  - removed Unit dosx.pas
+
   Revision 1.45  2000/10/17 10:05:50  mk
   - Left->LeftStr, Right->RightStr
 

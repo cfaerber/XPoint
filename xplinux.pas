@@ -46,7 +46,7 @@ const
 const                           { Common Environment-Vars }
   envHome               = 'HOME';
   envShell              = 'SHELL';
-  envXPHome		= 'XPHOME'; { XP-Basis-Verzeichnis }
+  envXPHome             = 'XPHOME'; { XP-Basis-Verzeichnis }
 
   A_USER                = STAT_IRUSR or STAT_IWUSR;     { User lesen/schreiben }
   A_USERX               = A_USER or STAT_IXUSR;         { dito + ausfuehren }
@@ -92,6 +92,8 @@ procedure XPInfoLog(logmsg: string);
 procedure XPNoticeLog(logmsg: string);
 procedure XPWarningLog(logmsg: string);
 procedure XPErrorLog(logmsg: string);
+
+function SysOutputRedirected: boolean;
 
 implementation
 
@@ -402,12 +404,22 @@ begin
   ExitProc:= @XPLinuxExit;
 end;
 
+function SysOutputRedirected: boolean;
+begin
+  // ToDo
+  Result := false;
+end;
+
+
 begin
   InitLogStream;
 
 end.
 {
   $Log$
+  Revision 1.18  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.17  2000/05/15 14:01:51  hd
   Fix Bedingte Compilierung
 

@@ -34,7 +34,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,
+  dos,typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,crc,xpglobal, classes,debug;
 
@@ -2004,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.83  2000/10/19 20:52:21  mk
+  - removed Unit dosx.pas
+
   Revision 1.82  2000/10/17 20:36:50  mk
   - Diskfree/Disksize von Longint auf Int64 umgestellt
 

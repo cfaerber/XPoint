@@ -45,6 +45,8 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 procedure SysSetBackIntensity;
 // Returns the used Codepage in form of the Unicode charset
 function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetDriveType(drive:char):byte;
+function SysOutputRedirected: boolean;
 
 implementation
 
@@ -141,9 +143,24 @@ begin
   Result := csCP437;
 end;
 
+function SysGetDriveType(drive:char):byte;
+begin
+  // Todo
+  Result := 0;
+end;
+
+function SysOutputRedirected: boolean;
+begin
+  // ToDo
+  Result := false;
+end;
+
 end.
 {
   $Log$
+  Revision 1.6  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.5  2000/10/10 12:15:24  mk
   - SysGetConsoleCodepage added
 

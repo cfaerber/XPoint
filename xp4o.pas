@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
+     dos,typeform,fileio,inout,keys,montage,maske,datadef,database,
      lister,archive,maus2,winxp,printerx,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input;
 
@@ -2424,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/10/19 20:52:22  mk
+  - removed Unit dosx.pas
+
   Revision 1.70  2000/10/17 10:05:51  mk
   - Left->LeftStr, Right->RightStr
 

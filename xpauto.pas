@@ -17,7 +17,7 @@ unit xpauto;
 interface
 
 uses  sysutils,
-      dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
+      dos,montage,typeform,fileio,inout,datadef,database,resource,
       xp0,xp1, xpglobal;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
@@ -645,7 +645,7 @@ var ar   : autorec;
     if dir='' then s:=name
     else if dir[2]=':' then
       s:=LeftStr(dir,2)+name
-    else s:=getdrive+':'+name;
+    else s:=LeftStr(GetCurrentDir,2)+name;
 {$ENDIF }
   end;
 
@@ -667,6 +667,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/10/19 20:52:23  mk
+  - removed Unit dosx.pas
+
   Revision 1.24  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

@@ -34,7 +34,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
+  sysutils,xpcfg,dos,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
   xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,
@@ -186,7 +186,7 @@ begin
   for i:=1 to n do begin
     writeln(getres2(202,i));
     if (i+5) mod (sclines-1)=0 then
-      if not outputredirected then begin
+      if not Sysoutputredirected then begin
         write(getres(12));
         get(t,curon);
         write(#13,sp(30),#13);
@@ -293,7 +293,7 @@ begin
   begin
     if LeftStr(ownpath,1)<>'\' then
       ownpath:='\'+ownpath;
-    ownpath:=getdrive+':'+ownpath;
+    ownpath:=LeftStr(GetCurrentDir, 2) +ownpath;
   end;
   OwnPath := UpperCase(ownpath);
   LibDir  := progpath;
@@ -1205,6 +1205,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2000/10/19 20:52:22  mk
+  - removed Unit dosx.pas
+
   Revision 1.76  2000/10/19 15:25:06  mk
   - sstringp in AnsiString umgewandelt
 

@@ -29,8 +29,18 @@ uses
 {$else}
   crt,
 {$endif}
+{$IFDEF Win32 }
+  windows,
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
   sysutils,
-  dos,dosx,keys,inout,maus2,typeform,winxp;
+  dos,keys,inout,maus2,typeform,winxp;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategr”áe/Datum anzeigen }
@@ -314,7 +324,7 @@ var   fb     : pathstr;
       moff;
 {$IFNDEF UnixFS }
       if s[1]='[' then
-        case drivetype(s[2]) of
+        case SysGetDriveType(s[2]) of
           2 : Wrt2(forms('RAM-Disk',59));
           3 : Wrt2(forms('Subst-Laufwerk',59));
           4 : Wrt2(forms('device driven',59));
@@ -1098,6 +1108,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/10/19 20:52:21  mk
+  - removed Unit dosx.pas
+
   Revision 1.24  2000/10/17 10:05:44  mk
   - Left->LeftStr, Right->RightStr
 

@@ -17,7 +17,7 @@ unit xpview;
 
 interface
 
-uses xpglobal,sysutils,dos,dosx,typeform,fileio,inout,database,xp0,xp1,xpnt;
+uses xpglobal,sysutils,dos,typeform,fileio,inout,database,xp0,xp1,xpnt;
 
 
 type viewinfo = record
@@ -252,6 +252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.24  2000/10/19 15:25:07  mk
   - sstringp in AnsiString umgewandelt
 

@@ -21,7 +21,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ENDIF }
-  sysutils, dos, typeform, dosx, xpglobal;
+  sysutils, dos, typeform, xpglobal;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -1278,6 +1278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.27  2000/10/17 10:06:02  mk
   - Left->LeftStr, Right->RightStr
 

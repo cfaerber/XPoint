@@ -26,7 +26,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio,mouse,inout,xp0,crc,sysutils;
+  dos,typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
 function _deutsch:boolean;
 procedure stop(txt:string);
@@ -167,6 +167,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.30  2000/10/19 20:52:24  mk
+  - removed Unit dosx.pas
+
   Revision 1.29  2000/10/17 10:06:02  mk
   - Left->LeftStr, Right->RightStr
 

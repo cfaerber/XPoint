@@ -23,7 +23,7 @@ uses
 {$ELSE}
   crt,
 {$ENDIF }
-  sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
+  sysutils,xpglobal,dos,typeform,uart,datadef,database,
   fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,debug,
   resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
@@ -1544,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/10/19 20:52:22  mk
+  - removed Unit dosx.pas
+
   Revision 1.35  2000/10/17 10:05:54  mk
   - Left->LeftStr, Right->RightStr
 
