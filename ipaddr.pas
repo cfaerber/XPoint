@@ -83,6 +83,9 @@ type
 
     { Loeschen vorhandener Daten }
     procedure Clear; virtual;
+    
+    { Jetzt aufloesen }
+    procedure Resolve;
 
   end;
 
@@ -153,6 +156,7 @@ begin
       if (h_Length<>4) then
         raise EIPNoIPv4.Create('This is not an IPv4 address!');
       Move(h_Addr_list^^,FIP,h_Length);
+      FName:= Name;
       FResolved:= true;
     end;
   end;
@@ -185,6 +189,20 @@ begin
   end;
 end;
 
+procedure TIP.Resolve;
+var
+  b: boolean;
+begin
+  b:= AutoResolve;
+  FResolved:= false;
+  AutoResolve:= true;
+  if FIP<>0 then
+    Raw:= FIP
+  else if FName<>'' then
+    Name:= FName;
+  AutoResolve:= b;
+end;
+
 function TIP.GAsString: string;
 begin
   Result:= Format('%d.%d.%d.%d', [Atom[1], Atom[2], Atom[3], Atom[4]]);
@@ -194,6 +212,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/07/24 08:15:12  hd
+        - Resolve, AutoResolve
+
         Revision 1.2  2000/07/23 22:00:57  mk
         - modified variable names THostEnt to work as well under Win32
 
