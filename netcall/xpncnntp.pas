@@ -366,6 +366,7 @@ begin
        ArticleIndex := 0;
 
       NNTP.SelectGroup(Group);
+      MWrt(x+15,y+3,'aus Gruppe: ' + Group);
 
       if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
@@ -403,6 +404,9 @@ end.
 
 {
         $Log$
+        Revision 1.12  2001/04/12 00:13:19  ml
+        - Groupname is now shown while downloading nntp
+
         Revision 1.11  2001/04/09 09:12:20  ma
         - cosmetics
 
