@@ -145,12 +145,12 @@ begin
 end;
 
 function alldrives:string;
-var b : byte;
-    s : string;
-    Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
-    i: integer;
+var
+  s : string;
+  Drives: longint; { Bitmaske mit vorhandenen Laufwerken }
+  i: integer;
 begin
-  b:=0;
+  s := '';
   {$IFDEF Vp }
     Drives:=SysGetValidDrives;
   {$ELSE }
@@ -162,14 +162,9 @@ begin
   {$ENDIF }
     for i := 0 to 25 do
       if (Drives and (1 shl i)) > 0 then
-      begin
-        inc(b);
-        s[b] := Chr(i + 65);
-      end;
-  SetLength(s, b);
+        s := s + Chr(i + 65);
   alldrives:=s;
 end;
-
 
 function IsDevice(fn:pathstr):boolean;
 begin
@@ -182,6 +177,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/15 20:02:58  mk
+  - AnsiString updates, noch nicht komplett
+
   Revision 1.23  2000/07/04 21:23:07  mk
   - erste AnsiString-Anpassungen
 

@@ -170,7 +170,7 @@ asm
                db    'å','ç','é','è','ê','í','í','ì','ô'
   @start:
          mov    esi,data
-         push   esi     { robo }
+         push   esi
          mov    edi,s
          mov    ecx,len
          mov    al,[edi]              { ax:=length(s) - < 127! }
@@ -215,7 +215,7 @@ asm
          loop  @sblp1
 
   @nfound:
-         pop   esi     { robo }
+         pop   esi
          mov   eax,-1
          jmp   @sende
   @found:
@@ -377,9 +377,7 @@ begin
     fn:='';
     mf:=fchar; fchar:=' ';
     bd(x,y,'Block '+iifs(save,'speichern','laden')
-    { 04.02.2000 robo }
            +iifs(uuenc,' und UU-kodieren','')
-    { /robo }
            +': ',fn,min(w-20,70),1,brk);
     fchar:=mf;
     if brk then fn:='';
@@ -419,12 +417,8 @@ begin
     config.absatzendezeichen:='˙';
     config.rechter_rand:=74;
     config.AutoIndent:=true;
-    { 01/2000 oh }
     config.PersistentBlocks:=true;
-    { /oh }
-    { 10.02.2000 robo }
     config.QuoteReflow:=true;
-    { /robo }
     assign(t,EdConfigFile);
     if existf(t) then begin
       reset(t);
@@ -439,14 +433,10 @@ begin
             config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
           else if left(s,p-1)='autoindent' then
             config.AutoIndent:=(mid(s,p+1)<>'n')
-          { 01/2000 oh }
           else if left(s,p-1)='persistentblocks' then
             config.PersistentBlocks:=(mid(s,p+1)<>'n')
-          { /oh }
-          { 10.02.2000 robo }
           else if left(s,p-1)='quotereflow' then
             config.QuoteReflow:=(mid(s,p+1)<>'n');
-          { /robo }
         end;
       close(t);
       end;
@@ -472,7 +462,6 @@ begin
     menue[2]:='^Ausschneiden   -';
     menue[3]:='^EinfÅgen       +';
     menue[4]:='^Laden        ^KR';
-    { 03.02.2000 robo }
     menue[5]:='La^den UUE    ^KU';
     menue[6]:='^Speichern    ^KW';
     menue[7]:='-';
@@ -481,7 +470,6 @@ begin
     menue[10]:='-';
     menue[11]:='^Optionen';
     { menue[12]:='.. s^ichern'; }
-    { /robo }
     end;
   delroot:=nil;
   Clipboard:=nil;
@@ -643,11 +631,11 @@ begin
   allocabsatz:=p;
 end;
 
-procedure freeabsatz(var p:absatzp); { .robo }
+procedure freeabsatz(var p:absatzp);
 begin
-  if assigned(p) then { .robo }
+  if assigned(p) then
     freemem(p,asize+p^.msize);
-  p:=nil; { .robo }
+  p:=nil;
 end;
 
 { ------------------------------------------------------------ Edit }
@@ -657,7 +645,7 @@ end;
 procedure FreeBlock(var ap:absatzp);
 var p : absatzp;
 begin
-  while assigned(ap) do begin { .robo }   { Text freigeben }
+  while assigned(ap) do begin   { Text freigeben }
     p:=ap^.next;
     freeabsatz(ap);
     ap:=p;
@@ -700,7 +688,8 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  if exist(fn) then begin
+  if exist(fn) then
+  begin
     getmem(ibuf,maxabslen);
     getmem(tbuf,4096);
     mfm:=filemode; filemode:=0;
@@ -714,14 +703,18 @@ begin
     tail:=nil;
 {    endcr:=false; }
     srest:=false;
-    while (srest or not eof(t)) and assigned(p) do begin
+    while (srest or not eof(t)) and assigned(p) do
+    begin
       isize:=0;
       sbrk:=false;
       endlf:=false;
       while (srest and (isize=0) or not (eoln(t) or endlf))
-            and (isize<maxabslen-255) do begin
-        if not srest then read(t,s)
-        else srest:=false;
+            and (isize<maxabslen-255) do
+      begin
+        if not srest then
+          read(t,s)
+        else
+          srest:=false;
         pp:=cpos(#10,s);
         if pp>0 then begin
           endlf:=(pp=length(s));
@@ -729,7 +722,7 @@ begin
           inc(isize,pp-1);
           delete(s,1,pp);
           srest:=true;
-          end
+        end
         else begin
           if (length(s)>40) and sbreaks and eoln(t) and (s[length(s)]=' ')
              and not eof(t)
@@ -737,15 +730,15 @@ begin
             SetLength(s, Length(s)-1); {dec(byte(s[0]));}
             sbrk:=true;
             readln(t);
-            end;
+          end;
           Move(s[1],ibuf^[isize],length(s));
           inc(isize,length(s));
-          end;
         end;
+      end;
       if eoln(t) and not srest then begin
 {        endcr:=not eof(t); }
         readln(t);
-        end;
+      end;
       p:=AllocAbsatz(isize);
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
@@ -753,11 +746,11 @@ begin
                      ((umbruch=1) and ((isize<rrand-15) or sbrk)));
         Move(ibuf^,p^.cont,isize);
         AppP;
-        end;
       end;
+    end;
     close(t);
-    freemem(tbuf,4096);
-    freemem(ibuf,maxabslen);
+    freemem(tbuf);
+    freemem(ibuf);
 {    if endcr then begin
       p:=AllocAbsatz(0);
       p^.umbruch:=(umbruch<>0);
@@ -768,7 +761,6 @@ begin
   LoadBlock:=root;
 end;
 
-{ 31.01.2000 robo }
 function LoadUUeBlock(fn:pathstr):absatzp;
 const blen = 45;
 var mfm   : byte;
@@ -794,10 +786,11 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  if exist(fn) then begin
+  if exist(fn) then
+  begin
     getmem(ibuf,sizeof(tbytestream));
     mfm:=filemode; filemode:=0;
-    assign(t,fn); reset(t,1);
+    assign(t,fn);  reset(t,1);
     filemode:=mfm;
 {$IFDEF VP }
     p := ptr(1);
@@ -841,7 +834,6 @@ begin
   end;
   LoadUUeBlock:=root;
 end;
-{ /robo }
 
 
 function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
@@ -946,9 +938,9 @@ begin
       if softbreak then begin
         ofs:=0;
 
-        { 05.01.2000 robo - Signaturtrenner beachten }
+        { Signaturtrenner beachten }
         if (size<>3) or (cont[0]<>'-') or (cont[1]<>'-') or (cont[2]<>' ') then
-          { Signaturtrenner, nicht anfassen }
+        { Signaturtrenner, nicht anfassen }
         while (size>0) and (cont[size-1]=' ') do dec(size);
         while (ofs<min(size,ofse)) do
         begin
@@ -1015,8 +1007,7 @@ var  dl         : displp;
      e          : edp;
      tk         : EdToken;
      trennzeich : set of char;     { fÅr Wort links/rechts }
-     tbm        : integer;      { 17.01.2000 robo - Blockmarker, auf dem
-                                                    der Cursor steht }
+     tbm        : integer;      { Blockmarker, auf dem der Cursor steht }
 
   procedure showstat;
   begin
@@ -1235,9 +1226,7 @@ var  dl         : displp;
 
   {$I EDITOR.INC}
 
-  { 14.01.2000 robo }
   function PosCoord(pos:position; disp:byte):longint; forward;
-  { /robo }
 
   procedure InterpreteToken(tk:integer);
 
@@ -1266,7 +1255,7 @@ var  dl         : displp;
       if EdSave(ed) then Quit;
     end;
 
-    { 17.01.2000 robo - Block markieren }
+    { Block markieren }
     procedure shift_markieren(moved, up:boolean);
       var m_pos:position;
       begin
@@ -1316,9 +1305,8 @@ var  dl         : displp;
           end;
         end;
       end;
-    { /robo }
 
-    { 17.01.2000 robo - Block entmarkieren }
+    { Block entmarkieren }
     procedure entmarkieren;
       begin
         with e^ do
@@ -1327,7 +1315,6 @@ var  dl         : displp;
            aufbau:=true;
          end;
       end;
-    { /robo }
 
   begin
     with e^ do begin
@@ -1335,7 +1322,7 @@ var  dl         : displp;
       case tk of
         -1                : CorrectWorkpos;
 
-        { 17.01.2000 robo - Blockoperationen }
+        { Blockoperationen }
         editfText         : if e^.config.persistentblocks
                              then ZeichenEinfuegen(false)
                              else begin
@@ -1355,8 +1342,7 @@ var  dl         : displp;
                               else if (blockinverse or blockhidden)
                                then DELchar
                                else BlockLoeschen;
-        { /robo }
-        { 01.02.2000 robo - Blockoperationen }
+        { Blockoperationen }
         editfNewline      : if e^.config.persistentblocks
                              then NewLine
                              else begin
@@ -1389,12 +1375,11 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                Paragraph;
                              end;
-        { /robo }
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
 
-        { 17.01.2000 robo - Block markieren }
+        { Block markieren }
         editfBOL          : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
@@ -1419,10 +1404,9 @@ var  dl         : displp;
                               SeiteUnten;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }
         editfScrollUp     : Scroll_Up;
         editfScrollDown   : Scroll_Down;
-        { 17.01.2000 robo - Block markieren }
+        { Block markieren }
         editfUp           : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
@@ -1483,7 +1467,6 @@ var  dl         : displp;
                               WortRechts;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }
 
         editfLastpos      : GotoPos(lastpos,0);
         editfMark1        : SetMarker(1);
@@ -1503,8 +1486,8 @@ var  dl         : displp;
         editfFindReplace  : Suchen(false,true);
         editfFindRepeat   : Suchen(true,false);
 
-        { 17.01.2000 robo - shift-ins: Block einfuegen - Zweitbelegung
-                            ctrl-ins: Block kopieren - Zweitbelegung   }
+        { shift-ins: Block einfuegen - Zweitbelegung
+          ctrl-ins: Block kopieren - Zweitbelegung   }
         editfChangeInsert : begin
                               if kb_shift
                                then if e^.config.persistentblocks
@@ -1517,7 +1500,6 @@ var  dl         : displp;
                                 end
                                 else e^.insertmode:=not e^.insertmode;
                             end;
-        { /robo }
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
         editfAbsatzmarke  : SetAbsatzmarke;
         editfWrapOn       : UmbruchEin;
@@ -1536,13 +1518,11 @@ var  dl         : displp;
         editfDelBlock     : BlockLoeschen;
         editfMoveBlock    : BlockVerschieben;
         editfReadBlock    : BlockEinlesen;
-        { 17.01.2000 robo }
         editfReadUUeBlock : BlockUUeEinlesen;
-        { /robo }
         editfWriteBlock   : BlockSpeichern;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
-        { 17.01.2000 robo - Blockoperationen }
+        { Blockoperationen }
         editfPasteBlock   : if e^.config.persistentblocks
                              then BlockClpEinfuegen
                              else begin
@@ -1551,7 +1531,6 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-        { /robo }
         editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
@@ -1672,9 +1651,7 @@ var  dl         : displp;
                         'B' : b:=EditfBlockBegin;
                         'K' : b:=EditfBlockEnd;
                         'R' : b:=EditfReadBlock;
-                        { 31.01.2000 robo }
                         'U' : b:=EditfReadUUeBlock;
-                        { /robo }
                         'W' : b:=EditfWriteBlock;
                         'O' : b:=EditfRot13;
                         'T' : b:=EditfMarkWord;
@@ -1862,6 +1839,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/07/15 20:02:59  mk
+  - AnsiString updates, noch nicht komplett
+
   Revision 1.34  2000/07/14 11:35:41  mk
   - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
 

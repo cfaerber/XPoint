@@ -438,7 +438,7 @@ end;
 procedure wrs(s:string);
 begin
   s:=s+#13#10;
-  blockwrite(f2^,s[1],length(s));
+  blockwrite(f2,s[1],length(s));
 end;
 
 { Datei aus f (geschlossen) an f2 (offen) anh„ngen }
@@ -456,23 +456,23 @@ begin
 {$endif}
   siz:= 32768; {size := 32768; <-- War das so richtig???? }
   getmem(p,siz);
-  fm_ro; reset(f^,1); fm_rw;
-  seek(f^,ofs);
-  while not eof(f^) do begin
+  fm_ro; reset(f,1); fm_rw;
+  seek(f,ofs);
+  while not eof(f) do begin
     if ((umlaute<>1) and (umlaute<>2)) or newbin then begin
-      blockread(f^,p^,siz,rr);
+      blockread(f,p^,siz,rr);
       if iso then IbmToIso1(p^,rr);
       end
     else begin
-      blockread(f^,p^[1500],siz-1500,rr);  { Platz fr Umlaut-Konvertierung }
+      blockread(f,p^[1500],siz-1500,rr);  { Platz fr Umlaut-Konvertierung }
       rr0:=rr;
       ukonv(umlaute,p^,rr);   { ver„ndert evtl. rr }
       inc(fs,rr-rr0);
       end;
     if code=-1 then Rot13(p^,rr);
-    blockwrite(f2^,p^,rr);
+    blockwrite(f2,p^,rr);
     end;
-  close(f^);
+  close(f);
   freemem(p,siz);
 end;
 
@@ -551,9 +551,9 @@ var s   : string;
     isbin:=false;
     getmem(buf,bufs);
     while not isbin and not eof(f) do begin
-      blockread(f,buf^,bufs,rr);
+      blockread(f,buf,bufs,rr);
       if rr>0 then
-        isbin:=testbin(buf^,rr);
+        isbin:=testbin(buf,rr);
       end;
     seek(f,0);
     freemem(buf,bufs);
@@ -561,23 +561,23 @@ var s   : string;
   end;
 
 begin
-  assign(f2^,temppath+cryptedfile);
-  if existf(f2^) then erase(f2^);
-  assign(f2^,temppath+uncryptedfile); rewrite(f2^,1);
-  assign(f^,fn);
-  fm_ro; reset(f^,1); fm_rw;
+  assign(f2,temppath+cryptedfile);
+  if existf(f2) then erase(f2);
+  assign(f2,temppath+uncryptedfile); rewrite(f2,1);
+  assign(f,fn);
+  fm_ro; reset(f,1); fm_rw;
   new(hdp);
-  makeheader(ntZConnect(hd.netztyp),f^,0,0,hds,hdp^,ok,false);
+  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp^,ok,false);
   oemp:=hdp^.empfaenger;
   if hdp^.netztyp=nt_ZConnect then with hdp^ do begin
     AddZer(absender);
     AddZer(empfaenger);
     end;
   hdp^.netztyp:=nt_Netcall;
-  WriteHeader(hdp^,f2^,nil);
-  seek(f^,hds);
-  fmove(f^,f2^);
-  close(f^); close(f2^);
+  WriteHeader(hdp^,f2,nil);
+  seek(f,hds);
+  fmove(f,f2);
+  close(f); close(f2);
   s:=pmcrypt[docode-2].encode;
   rps(s,'$KEY',passwd);
   rps(s,'$INFILE',temppath+uncryptedfile);
@@ -587,28 +587,28 @@ begin
   shell(s,500,3);                     { Nachricht codieren }
   if exist(temppath+uncryptedfile) then
     _era(temppath+uncryptedfile);
-  assign(f^,temppath+cryptedfile);
-  if not existf(f^) then
+  assign(f,temppath+cryptedfile);
+  if not existf(f) then
     rfehler(603)    { 'Datei wurde nicht codiert!' }
   else begin
-    reset(f^,1);
-    bin:=pmcrypt[docode-2].binary or IsBinary(f^);
+    reset(f,1);
+    bin:=pmcrypt[docode-2].binary or IsBinary(f);
     if bin and not ntBinary(netztyp) then
       rfehler(609)     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
     else begin
-      assign(f2^,fn);
-      rewrite(f2^,1);
-      hd.groesse:=filesize(f^);
+      assign(f2,fn);
+      rewrite(f2,1);
+      hd.groesse:=filesize(f);
       hd.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
                   hex(dbReadInt(mbase,'groesse'),6);
       hd.typ:=iifc(bin,'B','T');
       inc(hd.attrib,AttrPmcrypt);
-      WriteHeader(hd,f2^,_ref6list);
-      fmove(f^,f2^);
-      close(f2^);
+      WriteHeader(hd,f2,_ref6list);
+      fmove(f,f2);
+      close(f2);
       SetCryptFlag;
       end;
-    close(f^); erase(f^);
+    close(f); erase(f);
     end;
 end;
 
@@ -710,16 +710,16 @@ begin
     for i:=1 to cc_anz do
       wrs(getres(600)+' '+cc^[i]);
     wrs('');
-    assign(f2^,datei);
-    reset(f2^,1);
-    fmove(f2^,f);
-    close(f2^); close(f);
-    erase(f2^);
+    assign(f2,datei);
+    reset(f2,1);
+    fmove(f2,f);
+    close(f2); close(f);
+    erase(f2);
     rename(f,datei);
     if ioresult<>0 then begin
-      rewrite(f2^,1); reset(f,1);
-      fmove(f,f2^);
-      close(f); close(f2^);
+      rewrite(f2,1); reset(f,1);
+      fmove(f,f2);
+      close(f); close(f2);
       erase(f);
       end;
     end;
@@ -826,19 +826,19 @@ begin
     dbRead(d,'username',username)
   else
     username:=forceabs;
-  dbRead(d,'pointname',pointname);
-  dbRead(d,'dateiname',boxfile);
-  dbRead(d,'nameomaps',mapsname);
+  PointName := dbReadStr(d,'pointname');
+  BoxFile := dbReadStr(d,'dateiname');
+  Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
-  dbRead(d,'realname',realname);
+  Realname := dbReadStr(d,'realname');
   dbRead(d,'script',flags);
   if fidoname='' then
-    dbRead(d,'fidoname',fidoname);
+    FidoName := dbReadStr(d,'fidoname');
   aliaspt:=(flags and 4<>0);
   nomids:=(flags and 8<>0);
   nobox:=(flags and 16<>0);
-  dbRead(d,'domain',domain);
-  dbRead(d,'fqdn',fqdn);  {16.01.00 HS}
+  Domain := dbReadStr(d,'domain');
+  FQDN := dbReadStr(d,'fqdn');
   if sData^.pmreplyto='' then
     dbRead(d,'ReplyTo',sdata^.pmreplyto);
   betrlen:=ntBetreffLen(netztyp);
@@ -869,16 +869,16 @@ var s  : string;
 begin
   Set_XP_ID;
   TestXPointID:=true;
-  assign(f^,datei);
-  if existf(f^) then begin
-    fm_ro; reset(f^,1); fm_rw;
-    seek(f^,max(0,filesize(f^)-length(XP_ID)-100));
+  assign(f,datei);
+  if existf(f) then begin
+    fm_ro; reset(f,1); fm_rw;
+    seek(f,max(0,filesize(f)-length(XP_ID)-100));
 {$ifdef hasHugeString}
     SetLength(s,length(XP_ID)+100);
 {$endif}
-    blockread(f^,s[1],length(XP_ID)+100,rr);
+    blockread(f,s[1],length(XP_ID)+100,rr);
     SetLength(s, rr); { s[0]:=chr(rr); }
-    close(f^);
+    close(f);
     TestXPointID:=(pos(XP_ID,s)>0);
     end;
 end;
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.23  2000/07/15 20:02:59  mk
+  - AnsiString updates, noch nicht komplett
+
   Revision 1.22  2000/07/06 12:39:35  hd
   - ^string entfernt
 

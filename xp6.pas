@@ -361,7 +361,7 @@ function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
                 var header,signat:string; sendFlags:word):boolean;
 
-var f,f2     : ^file;
+var f,f2     : file;
     edis     : byte;
     x,y      : byte;
     brk      : boolean;
@@ -868,8 +868,7 @@ begin      {-------- of DoSend ---------}
   parken:=false;
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
-  new(f); new(f2);
-  assign(f^,datei);
+  assign(f,datei);
 
   sdNope:=(sdata=nil);
   if sdNope then
@@ -889,7 +888,7 @@ begin      {-------- of DoSend ---------}
   begin
     if not exist(datei) then
     begin       { leere Datei anlegen }
-      rewrite(f^); close(f^);
+      rewrite(f); close(f);
     end;
     OrigBox:='';
   end;
@@ -931,7 +930,7 @@ fromstart:
     if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
-      dbRead(ubase,'pollbox',box);
+      Box := dbReadStr(ubase,'pollbox');
       if verteiler then begin  { Verteiler }
         cancode:=0;
         read_verteiler(vert_name(empfaenger),cc,cc_anz);
@@ -954,7 +953,7 @@ fromstart:
           dbSeek(ubase,uiName,UpperCase(empfaenger));
           end;
         if dbFound then begin
-          dbRead(ubase,'pollbox',box);   { leider doppelt nîtig :-/ }
+          Box := dbReadStr(ubase,'pollbox');   { leider doppelt nîtig :-/ }
           _brett:=mbrettd('U',ubase);
           dbRead(ubase,'codierer',cancode);
           if (cancode<>9) and (dbXsize(ubase,'passwort')=0) then
@@ -1005,7 +1004,7 @@ fromstart:
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
-                else dbRead(bbase,'pollbox',box);
+                else Box := dbReadStr(bbase,'pollbox');
                 if box='' then box:=DefaultBox;  { dÅrfte nicht vorkommen }
                 end;
             ReplaceVertreterbox(box,true);
@@ -1030,13 +1029,13 @@ fromstart:
       grnr:=iif(newbrettgr<>0,newbrettgr,IntGruppe);
       end
     else begin
-      dbRead(bbase,'pollbox',box);    { Nachricht an vorhandenes Brett  }
+      Box := dbReadStr(bbase,'pollbox');    { Nachricht an vorhandenes Brett  }
       if (box='') and (empfaenger[1]='$') then
         box:=InternBox;               { /Netzanruf, /Statistik ... }
       dbRead(bbase,'gruppe',grnr);
       _brett:=mbrettd(empfaenger[1],bbase);
       if dbReadInt(bbase,'flags') and 32<>0 then
-        dbReadN(bbase,bb_adresse,fidoname);    { Brett-Origin }
+        FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
     end;
     dbOpen(d,gruppenfile,1);          { max. BrettMsg-Grî·e ermitteln   }
     dbSeek(d,giIntnr,dbLongStr(grnr));
@@ -1067,7 +1066,7 @@ fromstart:
       rfehler1(607,box);  { 'Unbekannte Serverbox: %s  -  Bitte ÅberprÅfen!' }
       goto xexit;                  { --> unbekannte Pollbox }
     end;
-    dbRead(d,'boxname',box);       { Schreibweise korrigieren }
+    Box := dbReadStr(d,'boxname');       { Schreibweise korrigieren }
   end else                         { interne Msgs -> Default-Username }
     dbSeek(d,boiName,UpperCase(DefaultBox));
   LoadBoxData;
@@ -1552,19 +1551,19 @@ fromstart:
       fn:=datei
     else
       fn:=TempS(system.round((_filesize(datei)+addsize+2000)*1.5));
-    assign(f2^,datei);
+    assign(f2,datei);
     iso:=not binary and ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe);
     if not binary then begin
-      assign(f2^,fn);
-      rewrite(f2^,1);
+      assign(f2,fn);
+      rewrite(f2,1);
       if header<>'' then begin           { Header }
-        assign(f^,header);
+        assign(f,header);
         AppendFile(docode,0,iso);
         end;
-      assign(f^,datei);                   { Text }
+      assign(f,datei);                   { Text }
       AppendFile(docode,0,iso);
       if not flOhnesig and (sigfile<>'') then begin       { Signatur }
-        assign(f^,sigfile);
+        assign(f,sigfile);
         AppendFile(docode,0,iso);
         end;
       fo:=fido_origin(false);
@@ -1572,25 +1571,25 @@ fromstart:
         wrs(fo)
       else
         if XpID then                       { ID }
-          blockwrite(f2^,XID[1],length(XID));
-      close(f2^);
+          blockwrite(f2,XID[1],length(XID));
+      close(f2);
       end;
 
     { --- 2. Schritt: Nachricht in mbase/MPUFFER ablegen --------------- }
 
     bin_msg:=binary and (maxbinsave>0) and (fs>maxbinsave*1024);
     if not bin_msg then
-      assign(f^,fn)
+      assign(f,fn)
     else begin
-      assign(f2^,TempPath+'binmsg');
-      rewrite(f2^,1);
+      assign(f2,TempPath+'binmsg');
+      rewrite(f2,1);
       wrs('');
       wrs(getres2(612,2));   { 'BinÑrdatei verschickt' }
       wrs('');
       wrs(getreps2(612,3,UpperCase(datei)));   { 'Dateiname: %s' }
       wrs(getreps2(612,4,strs(fs)));      { 'Grî·e    : %s Bytes' }
-      close(f2^);
-      assign(f^,TempPath+'binmsg');
+      close(f2);
+      assign(f,TempPath+'binmsg');
       end;
     fillchar(hdp^,sizeof(hdp^),0);
     hdp^.netztyp:=netztyp;
@@ -1759,19 +1758,19 @@ fromstart:
     msgCPpos:=0;
 
     fm_ro;
-    reset(f^,1);
+    reset(f,1);
     fm_rw;
-    hdp^.groesse:=filesize(f^);
+    hdp^.groesse:=filesize(f);
     fn2:=TempS(hdp^.groesse+4000);
-    assign(f2^,fn2);
-    rewrite(f2^,1);
+    assign(f2,fn2);
+    rewrite(f2,1);
     for ii:=1 to msgCPanz-1 do
       AddToEmpflist(cc^[ii]);
-    WriteHeader(hdp^,f2^,_ref6list);
-{    hdsize:=filepos(f2^); }
-    fmove(f^,f2^);
-    close(f^);
-    close(f2^);
+    WriteHeader(hdp^,f2,_ref6list);
+{    hdsize:=filepos(f2); }
+    fmove(f,f2);
+    close(f);
+    close(f2);
 
     repeat                                   { einzelne Crosspostings in }
       if ntZConnect(netztyp) then begin      { mbase ablegen             }
@@ -1895,33 +1894,33 @@ fromstart:
     if not intern then begin
       if (docode=1) or (docode=2) then begin
         SetCryptFlag;
-        assign(f^,fn);
+        assign(f,fn);
         fm_ro;
-        reset(f^,1);
+        reset(f,1);
         fm_rw;
-        fn2:=TempS(filesize(f^)+2000);
-        assign(f2^,fn2);
-        rewrite(f2^,1);
+        fn2:=TempS(filesize(f)+2000);
+        assign(f2,fn2);
+        rewrite(f2,1);
         passpos:=1;
         case docode of
-          1 : encode_file(false,f^,f2^);
+          1 : encode_file(false,f,f2);
           2 : begin
                 DES_PW(passwd);
-                encode_file(true,f^,f2^);
+                encode_file(true,f,f2);
               end;
         end; { case }
-        close(f^); close(f2^);
-        assign(f^,fn2);
+        close(f); close(f2);
+        assign(f,fn2);
         end { if docode }
       else
-        assign(f^,fn);
+        assign(f,fn);
 
       fm_ro;
-      reset(f^,1);
+      reset(f,1);
       fm_rw;
-      fn3:=TempS(filesize(f^)+4000);
-      assign(f2^,fn3);
-      rewrite(f2^,1);
+      fn3:=TempS(filesize(f)+4000);
+      assign(f2,fn3);
+      rewrite(f2,1);
       hdp^.archive:=false;
       hdp^.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
       b:=cpos('@',hdp^.absender);
@@ -1940,37 +1939,37 @@ fromstart:
         2 : hdp^.betreff:=left(DES_ID+hdp^.betreff,BetreffLen);
       end;
       hdp^.typ:=iifs(newbin,'B','T');
-      hdp^.groesse:=filesize(f^);
+      hdp^.groesse:=filesize(f);
       for ii:=1 to msgCPanz-1 do
         AddToEmpflist(cc^[ii]);
-      WriteHeader(hdp^,f2^,_ref6list);
-      fmove(f^,f2^);
-      close(f^); close(f2^);
+      WriteHeader(hdp^,f2,_ref6list);
+      fmove(f,f2);
+      close(f); close(f2);
       if (docode=1) or (docode=2) then
         _era(fn2);
       if pmc_code then pmCryptFile(hdp^,fn3) else
       if (docode=9) or flPGPsig then begin
         for ii:=1 to msgCPanz-1 do
           AddToEmpflist(cc^[ii]);
-        xp_pgp.PGP_EncodeFile(f^,hdp^,fn3,passwd,docode=9,flPGPsig,fo);
+        xp_pgp.PGP_EncodeFile(f,hdp^,fn3,passwd,docode=9,flPGPsig,fo);
         DisposeEmpflist(empflist);
         end;
 
       if not flCrash or not MayCrash then
-        assign(f2^,boxfile+'.pp')           { ..und ab damit ins Pollpaket }
+        assign(f2,boxfile+'.pp')           { ..und ab damit ins Pollpaket }
       else begin
-        assign(f2^,CrashFile(hdp^.empfaenger));
+        assign(f2,CrashFile(hdp^.empfaenger));
         SetCrashInfo;
         end;
-      reset(f2^,1);
-      if ioresult<>0 then rewrite(f2^,1)
-      else seek(f2^,filesize(f2^));
-      assign(f^,fn3);
+      reset(f2,1);
+      if ioresult<>0 then rewrite(f2,1)
+      else seek(f2,filesize(f2));
+      assign(f,fn3);
       fm_ro;
-      reset(f^,1);
+      reset(f,1);
       fm_rw;
-      fmove(f^,f2^);
-      close(f^); close(f2^);
+      fmove(f,f2);
+      close(f); close(f2);
       _era(fn3);
 
       if uvs_active and (aktdispmode=11) and (cc_count=0) and
@@ -2021,7 +2020,6 @@ xexit:
   dispose(hdp);
   if sigtemp then _era(sigfile);
 xexit1:
-  dispose(f); dispose(f2);
   if sdNope then dispose(sdata);
 xexit2:
   forcebox:=''; forceabs:='';
@@ -2157,6 +2155,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/15 20:02:59  mk
+  - AnsiString updates, noch nicht komplett
+
   Revision 1.49  2000/07/12 14:43:46  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

@@ -229,7 +229,7 @@ var x,y,wdt: byte;
       testbrk(brk);
       if brk then
         brk:=ReadJN(getres(iif(_del,446,447)),true);   { (Reorganisation) 'abbrechen' }
-      dbReadN(mbase,mb_brett,_mbrett);
+      _mbrett := dbReadNStr(mbase,mb_brett);
       if _mbrett=_brett then begin
         inc(n);
         dbReadN(mbase,mb_msgsize,msize);
@@ -309,12 +309,12 @@ begin
   while not brk and not dbEOF(bbase) do begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
-    dbReadN(bbase,bb_brettname,disp);
+    disp := dbReadNStr(bbase,bb_brettname);
     if left(disp,3)<>'$/T' then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(disp,2),40));
       testdel(mbrettd(disp[1],bbase));
-      end;
+    end;
     dbSkip(bbase,1);
     end;
   dbSetIndex(ubase,uiAdrBuch);
@@ -323,7 +323,7 @@ begin
     if dbReadInt(ubase,'userflags') and 4=0 then begin   { keine Verteiler }
       dbReadN(ubase,ub_haltezeit,hzeit);
       hzahl:=false;
-      dbReadN(ubase,ub_username,disp);
+      disp := dbReadNStr(ubase,ub_username);
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(disp,40));
       testdel(mbrettd('U',ubase));
@@ -712,6 +712,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/07/15 20:02:59  mk
+  - AnsiString updates, noch nicht komplett
+
   Revision 1.18  2000/07/06 08:58:45  hd
   - AnsiString
 
