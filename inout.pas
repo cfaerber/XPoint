@@ -291,16 +291,14 @@ var    ca,ce,ii,jj : byte;
 
 function ticker:longint;
 {$IFDEF Ver32 }
-const
-  Tick = 18.2064819336;
 var
   h, m, s, hund : smallword;
 {$ENDIF }
 begin
 {$IFDEF Ver32 }
   GetTime(h, m, s, hund);
-  Ticker := system.round(((longint(h*60 + m)*60 + s) * tick) +
-    (hund / (100 / Tick)));
+  Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
+    (hund / (100 / TickFreq)));
 {$ELSE }
   ticker:=meml[Seg0040:$6c];
 {$ENDIF}
@@ -1775,6 +1773,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/03/16 19:38:54  mk
+  - ticker: globale Konstante TickFreq genutzt
+
   Revision 1.16  2000/03/16 10:14:24  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
