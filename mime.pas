@@ -1145,18 +1145,19 @@ begin
 end;
 
 function TMimeSingleChartoCRLFStream.Write(const Buffer; Count: Longint): Longint;
-var start,pos: Longint;
+var start,pos,written: Longint;
 const crlf: array[0..1] of char = (#13,#10);
 
   procedure WriteTo(pos:Longint);
   begin
     if start>pos then exit;
-    Inc(FPosition,OtherStream.Write((PChar(@Buffer)+Start)^,pos-start+1));
+    Inc(written,OtherStream.Write((PChar(@Buffer)+Start)^,pos-start+1));
     start := pos+1;
   end;
 
 begin
   start := 0;
+  written := 0;
 
   for pos := 0 to Count-1 do
     if (PChar(@Buffer)+Pos)^=cc then
@@ -1164,21 +1165,23 @@ begin
       if cc=crlf[0] then
       begin
         WriteTo(pos);
-        inc(FPosition,OtherStream.Write(crlf[1],1)-1);
+        inc(written,OtherStream.Write(crlf[1],1)-1);
       end else
       if cc=crlf[1] then
       begin
         WriteTo(pos-1);
-        inc(FPosition,OtherStream.Write(crlf[0],1)-1);
+        inc(written,OtherStream.Write(crlf[0],1)-1);
       end else
       begin
         WriteTo(pos-1);
         inc(start);
-        inc(FPosition,OtherStream.Write(crlf[0],2)-1);
+        inc(written,OtherStream.Write(crlf[0],2)-1);
       end;
     end;
 
   WriteTo(Count-1);
+
+  Result:=Count;
 end;
 
 constructor TMimeCRtoCRLFStream.Create;
@@ -1198,6 +1201,9 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2001/09/10 17:24:26  cl
+// - BUGFIX: return value of TMimeSingleChartoCRLFStream.Write
+//
 // Revision 1.7  2001/09/10 15:58:01  ml
 // - Kylix-compatibility (xpdefines written small)
 // - removed div. hints and warnings
