@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 { CrossPoint - Config bearbeiten }
 
@@ -73,7 +73,9 @@ function SetTimezone(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
 function dpmstest(var s:string):boolean;
-function testfilename( var s:string):boolean;
+function testfilename(var s:string):boolean;
+function ngdispChanged(var s:string):boolean;
+function ngdispaChanged(var s:string):boolean;
 
 procedure setvorwahl(var s:string);
 procedure DispArcs;
@@ -133,21 +135,17 @@ begin
   maddstring(3,2,getres2(250,2),QuoteChar,QuoteLen,QuoteLen,range(' ',#126));   { 'Quote-Zeichen ' }
   mset3proc(testqc);
   mnotrim; mhnr(210);
-  maddint(3,3,getres2(250,3),QuoteBreak,3,5,40,119);  { 'Zeilenumbruch ' }
+  maddint(3,3,getres2(250,3),QuoteBreak,3,5,40,119);      { 'Zeilenumbruch ' }
   ua:=aufnahme_string;
-  maddstring(3,5,getres2(250,4),ua,7,7,'');           { 'User-Aufnahme ' }
-  for i:=5 to 7 do
-    mappsel(true,getres2(250,i));    { 'Alle˘Z-Netz˘PMs' }
-  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);  { 'Standard-Usergruppe' }
+  maddstring(3,5,getres2(250,4),ua,7,7,'');               { 'User-Aufnahme ' }
+  for i:=0 to 3 do
+    mappsel(true,getres2(108,i));    { 'Alle˘Z-Netz˘Keine˘PMs' }
+  maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);    { 'Standard-Usergruppe' }
   mhnr(8068);
-  {$IFNDEF BP}
-    maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
-  {$ELSE}
     maddbool(32,2,getres2(250,11),SwapToEMS); mhnr(213);  { 'Auslagern in EMS' }
-    maddbool(32,3,getres2(250,18),SwapToXMS);   { 'Auslagern in XMS' }
+    maddbool(32,3,getres2(250,18),SwapToXMS);             { 'Auslagern in XMS' }
       mhnr(213);
-    maddbool(32,4,getres2(250,10),AskQuit);
-  {$ENDIF}
+    maddbool(32,4,getres2(250,10),AskQuit);               { 'Fragen bei Quit' }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten lîschen' }
@@ -158,23 +156,16 @@ begin
   maddbool(3,15,getres2(250,20),newuseribm);              { 'Umlaute fÅr neue User zulassen' }
   maddbool(3,16,getres2(250,22),_UserSortBox);            { 'Useranzeigen nach Server sortieren' }
   maddbool(3,17,getres2(250,21),OtherQuoteChars);         { 'Farbe auf fÅr Quotezeichen : und |' }
-
-{$IFDEF UnixFS}
-  maddint(3,19,getres2(250,25),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk' }
-{$ELSE }
   maddint(3,19,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
-{$ENDIF }
   maddtext(length(getres2(250,16))+11,19,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
-    if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
-    else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
-    else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
-    { else UserAufnahme:=2;  keine - gibt's nicht mehr }
+    if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'Alle'   }
+    else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-Netz' }
+    else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3  { 'PMs'    }
+    else UserAufnahme:=2;                                       { 'Keine'  }
     Usersortbox:=_usersortbox;
-{$IFDEF BP }
     ListUseXms:=SwapToXms;
-{$ENDIF}
     GlobalModified;
     end;
   enddialog;
@@ -642,11 +633,11 @@ var brk : boolean;
     x,y : byte;
 begin
   dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
-  maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
-  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Grî·e:  ' }
-  maddtext(length(getres2(257,3))+11,5,getres(13),0);   { 'Bytes' }
-  maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
-  maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
+  maddbool(3,2,getres2(257,2),shell25); mhnr(310);      { '25 Bildzeilen bei DOS-Shell' }
+  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);      { 'Environment-Grî·e:  ' }
+  maddtext(length(getres2(257,3))+11,4,getres(13),0);   { 'Bytes' }
+  maddbool(3,6,getres2(257,4),ShellShowpar);            { 'Parameterzeile anzeigen' }
+  maddbool(3,7,getres2(257,5),ShellWaitkey);            { 'auf Tastendruck warten' }
   msetvfunc(testenv);
   freeres;
   readmask(brk);
@@ -658,6 +649,18 @@ end;
 
 
 { Brettanzeige }
+
+function ngdispChanged(var s:string):boolean;
+begin
+  if s=_jn_[1] then exit;
+  setfield(4,s);
+end;
+
+function ngdispaChanged(var s:string):boolean;
+begin
+  if s=_jn_[2] then exit;
+  setfield(3,s);
+end;
 
 procedure brett_config;
 var x,y   : byte;
@@ -677,15 +680,19 @@ var x,y   : byte;
   end;
 
 begin
-  dialog(ival(getres2(258,0)),8,getres2(258,5),x,y);   { 'Brettanzeige' }
-  maddbool(3,2,getres2(258,6),UserSlash); mhnr(270);   { '"/" bei PM-Brettern' }
-  maddbool(3,3,getres2(258,7),trennall);   { 'Trennzeilen bei "Alle"' }
-  maddbool(3,4,getres2(258,9),NewsgroupDisp); mhnr(273);
-  brett:=btyp(brettanzeige);
-  maddstring(3,6,getres2(258,8),brett,7,7,'<'); mhnr(272);   { 'Brettanzeige ' }
+  dialog(ival(getres2(258,0)),10,getres2(258,5),x,y);        { 'Brettanzeige'                 }
+  maddbool(3,2,getres2(258,6),UserSlash); mhnr(270);         { '"/" bei PM-Brettern'          }
+  maddbool(3,3,getres2(258,7),trennall);                     { 'Trennzeilen bei "Alle"'       }
+  maddbool(3,4,getres2(258,9),NewsgroupDisp); mhnr(273);     { 'Usenetgruppen mit "."'        }
+  MSet1Func(ngdispChanged);
+  maddbool(3,5,getres2(258,11),NewsgroupDispall); mhnr(275); { '... gilt fÅr alle Bretter     }
+  MSet1Func(ngdispaChanged);
+  maddbool(3,6,getres2(258,12),ShowUngelesen);
+  brett:=btyp(brettanzeige);                                 { 'kombinierter Ungelesen-Modus' }
+  maddstring(3,8,getres2(258,8),brett,7,7,'<'); mhnr(272);   { 'Brettanzeige '                }
   for i:=0 to 2 do mappsel(true,btyp(i));
   tks:=tk(trennkomm);
-  maddstring(3,7,getres2(258,10),tks,7,10,''); mhnr(274);  { 'Trennzeilenkommentar' }
+  maddstring(3,9,getres2(258,10),tks,7,10,''); mhnr(274);    { 'Trennzeilenkommentar'         }
   for i:=1 to 3 do mappsel(true,tk(i));
   freeres;
   readmask(brk);
@@ -716,7 +723,7 @@ var x,y   : byte;
   end;                         { 'Splt./klein'                         }
 
 begin
-  dialog(65,7,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
+  dialog(65,10,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
   maddbool(3,2,getres2(259,11),ShowMsgDatum); mhnr(840);   { 'Nachrichten-Datum' }
   sabs:=abstyp(sabsender);
   maddstring(35,2,getres2(259,12),sabs,11,11,'');    { 'Absendernamen ' }
@@ -724,6 +731,11 @@ begin
   maddbool(3,4,getres2(259,13),BaumAdresse);     { 'vollstÑndige Adressen im Kommentarbaum' }
   maddbool(3,5,getres2(259,14),showrealnames);   { 'Realname anzeigen, falls vorhanden' }
   maddbool(3,6,getres2(259,15),showfidoempf);    { 'EmpfÑnger von Fido-Brettnachrichten anzeigen' }
+  maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
+  { 'Feldtausch Nachrichten-Lesefenster': }
+  maddstring(3,9,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
+             '>'+MsgFeldDef+LStr(MsgFeldDef)); mhnr(1035);
+  mappsel(false,MsgFeldDef);
 { maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
   if not brk and mmodified then begin
@@ -769,12 +781,12 @@ begin
     msetvfunc(scstest);
   maddbool(3,4,getres2(260,2),softsaver);     { 'weich ausblenden' }
   maddbool(3,5,getres2(260,6),blacksaver);    { 'schwarzschalten' }
-  maddbool(3,6,getres2(260,17),ParSavePal);       { 'VGA-Palette sichern' }
+  maddbool(3,6,getres2(260,17),ParSavePal);   { 'VGA-Palette sichern' }
   maddbool(3,7,getres2(260,9),vesa_dpms);     { 'Stromsparmodus' }
     mset1func(dpmstest);
   maddbool(3,8,getres2(260,3),ss_passwort);   { 'Startpa·wort abfragen' }
   du:=dispusername;
-  maddbool(3,10,getres2(260,4),dispusername);  { 'Username anzeigen' }
+  maddbool(3,10,getres2(260,4),dispusername); { 'Username anzeigen' }
 
   maddstring(3,12,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
   maddstring(3,13,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
@@ -801,22 +813,21 @@ procedure AccessibilityOptions;
 var x,y,i,j : byte;
     brk : boolean;
 begin
-  dialog(41,11,getres2(260,11),x,y);
+  dialog(length(getres2(260,15))+14,10,getres2(260,11),x,y);
   maddbool(3,2,getres2(260,5),auswahlcursor);{ 'Auswahlcursor in MenÅs/Listen' }
     mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
-  { 'Feldtausch in Nachrichten-Liste': }
-  maddstring(3,5,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
+  maddbool(3,4,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
+  maddbool(3,5,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
+  maddbool(3,6,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
+  { 'Feldtausch Nachrichten-Lesefenster': }
+  maddstring(3,8,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
              '>'+MsgFeldDef+LStr(MsgFeldDef));
   mappsel(false,MsgFeldDef);
-  { 'Feldtausch in Userliste': }
-  maddstring(3,6,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
+  { 'Feldtausch User-öbersicht': }
+  maddstring(3,9,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
              '>'+UsrFeldDef+LStr(UsrFeldDef));
   mappsel(false,UsrFeldDef);
-
-  maddbool(3,8,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
-  maddbool(3,9,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
-  maddbool(3,10,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -832,26 +843,18 @@ begin
       EdSelcursor:=false;
     end;
     aufbau:=true;
-    GlobalModified;
-    { Alle Buchstaben fÅr den MsgFeldTausch vorhanden? }
-    j:=0;
+(*
+    if cpos('D',MsgFeldTausch)=0 then MsgFeldTausch:='D'+MsgFeldTausch;
+    if cpos('G',MsgFeldTausch)=0 then MsgFeldTausch:='G'+MsgFeldTausch;
+    if cpos('F',MsgFeldTausch)=0 then MsgFeldTausch:='F'+MsgFeldTausch;
+
     { (F)lags mÅssen immer vorne stehen }
-    i:=cpos('F',MsgFeldTausch); if (i>1) then begin
-      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
-    end;
-    for i := 1 to length(MsgFeldDef) do
-      if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
-    if (j<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-    { Alle Buchstaben fÅr den UsrFeldTausch vorhanden? }
-    j:=0;
-    { (F)lags mÅssen immer vorne stehen }
-    i:=cpos('F',UsrFeldTausch); if (i>1) then begin
+    i:=pos('F',UsrFeldTausch); if (i<>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
-    for i := 1 to length(UsrFeldDef) do
-     if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
-    if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
+*)
     GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
+    GlobalModified;
     end;
   enddialog;
   menurestart:=brk;
@@ -1245,7 +1248,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,19,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(58,iif(deutsch,20,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1261,22 +1264,23 @@ begin
     add:=5;
   end else
     add:=0;
-  maddtext(3,5+add,'RFC/UUCP',col.coldiahigh);
+  maddtext(3,5+add,'RFC',col.coldiahigh);
   maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,8+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
+  maddbool(14,9+add,getres2(253,16),RFC_AddOldBetreff); mhnr(7990); { 'Alten Betreff anhÑngen' }
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,10+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,11+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,10+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
   end;
-  maddtext(3,10+add,'Fido',col.coldiahigh);
-  maddbool(14,10+add,getres2(253,17),Magics); mhnr(8103);
-  maddbool(14,11+add,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
+  maddtext(3,11+add,'Fido',col.coldiahigh);
+  maddbool(14,11+add,getres2(253,17),Magics); mhnr(8103);
+  maddbool(14,12+add,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1297,7 +1301,7 @@ var x,y   : byte;
     case nr of
       1 : sname:='Z-Netz';
       2 : sname:='Fido';
-      3 : sname:='RFC/UUCP';
+      3 : sname:='RFC';
       4 : sname:='MausTausch';
       5 : sname:='MagicNET';
       6 : sname:='QM/GS';
@@ -1500,6 +1504,36 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.27  2001/09/16 20:22:27  my
+  JG+MY:- Neuer Men¸punkt "kombinierter Ungelesen-Modus" unter
+          Config/Anzeige/Bretter, bisherige Taste "U" f¸r diese Funktion
+          ist jetzt Brett-Markiersuche. Ge‰nderte Anzeigelogik (siehe
+          Hilfe).
+
+  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
+          unten)
+
+  JG+MY:- Feldtausch ge‰ndert/verbessert: Default bei Usern jetzt FHBGAK,
+          jedes Feld kann weggelassen werden, bei Weglassen groﬂer Felder
+          werden die ¸brigen Felder verbreitert. Option f¸r Nachrichten-
+          Feldtausch jetzt zus‰tzlich ¸ber /Config/Anzeige/Nachrichten
+          erreichbar. /Config/Anzeige/Hilfen ¸bersichtlicher gestaltet.
+
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh‰ngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei ƒnderung des
+          Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
+          automatisch angeh‰ngt.
+
+  JG+MY:- Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
+          verf¸gbar
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.39.2.26  2001/08/11 22:17:56  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
@@ -1606,7 +1640,7 @@ end.
   - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
   - clip.pas und xp1o.pas: Strings "Windows-Clipboard" und
     "Win-Clipboard" durch "Clipboard" ersetzt (wegen Unter-
-    st¸tzung internes Clipboard / JG).
+    stÅtzung internes Clipboard / JG).
 
   Revision 1.39.2.3  2000/09/07 14:21:51  jg
   - Kleine Layoutkorrektur in C/O/V
