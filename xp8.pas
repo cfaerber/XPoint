@@ -421,10 +421,6 @@ begin
 end;
 
 
-
-
-
-
 { RFC/Client: Aus Brettlisten-Datei (Format: "Zeile faengt mit Brettnamen an") }
 { wird anhand des RC-Files im Client-Verzeichnis der Box ein BL-File erstellt: }
 
@@ -432,8 +428,9 @@ procedure MakeBL(box:string);
 const
     MaxStr = 64;
 var t1,t2         : text;
-    rcfile,blfile : string;
-    Line,Line2    : string;
+    bfile         : string[8];
+    rcfile,blfile : pathstr;
+    Line,Line2    : pathstr;
     Count,
     LineCount     : integer;
     marked        : boolean;
@@ -445,8 +442,9 @@ var t1,t2         : text;
 
 begin
   moment;
-  ReadBox(0,box,boxpar);
-  rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
+  bfile:=ustr(boxfilename(box));
+  ReadBox(0,bfile,boxpar);
+  rcfile:=BoxPar^.PPPClientPath + bfile +'.RC';
   Assign(t1,rcfile);       { BOX.RC }
   if not (exist(rcfile)) then
   begin
@@ -454,7 +452,7 @@ begin
     Close(t1);
   end;
 
-    blfile:={BoxPar^.PPPClientPath + }ustr(boxfilename(box))+'.BL';
+    blfile:=bfile +'.BL';
     if not exist(rcfile) or not exist(blfile) then exit;
     Assign(t2,blfile);
     Reset(t2);
@@ -508,10 +506,10 @@ end;
 
 function Get_BL_Name(box:string):string;
 var
-  s1 : string;
+  s1 : pathstr;
 begin
-  ReadBox(0,box,boxpar);
   s1:=ustr(boxfilename(box));
+  ReadBox(0,s1,boxpar);
   if not exist(s1+'.BL')                               { Brettliste im XP-Verzeichnis }
     then s1:=Boxpar^.PPPClientPath+s1;
   Get_BL_Name:=s1+iifs(exist(s1+'.BL'),'.BL','.GR');   { oder .BL/.GR im Client-Verz. }
@@ -524,7 +522,8 @@ end;
 function MakeRC(bestellen: boolean; const box: string):boolean;
 var t1,t2         : text;
     f1            : file of char;
-    rcfile,blfile : string;
+    bfile         : string[8];
+    rcfile,blfile : pathstr;
     line          : string;
     Line2         : string[Brettlen];
     Articles      : String[6];
@@ -537,8 +536,9 @@ label makercend;
 begin
   moment;
   MakeRc:=true;
-  ReadBox(0,box,boxpar);
-  rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
+  bfile:=ustr(boxfilename(box));
+  ReadBox(0,bfile,boxpar);
+  rcfile:=BoxPar^.PPPClientPath + bfile +'.RC';
   blfile:=Get_BL_Name(box);
   if not exist(blfile) then
   begin
@@ -747,16 +747,16 @@ end;
 
 
 Procedure ClientBl_Abgleich(const box:string);
-var t1    : text;
-    f1    : file of char;
-    c     : char;
-    s1,s2 : string;
-    brk   : boolean;
+var t1      : text;
+    f1      : file of char;
+    c       : char;
+    s1,s2   : string;
+    brk     : boolean;
     fileofs : longint;
 begin
 
-  ReadBox(0,box,boxpar);
-  s1:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
+  ReadBox(0,ustr(boxfilename(box)),boxpar);
+  s1:=BoxPar^.PPPClientPath + ustr(boxfilename(box)) + '.RC';
   Assign(t1,s1);       { BOX.RC }
   if not (exist(s1)) then
   begin
@@ -1221,7 +1221,7 @@ begin
       pushkey('N');
       pushkey('M');
       pushkey('D');
-      end
+    end
     else begin
       pushkey('M');
       pushkey('M');
@@ -1275,30 +1275,30 @@ var box     : string[BoxNameLen];
     d       : DB;
     maggi   : boolean;
     promaf  : boolean;
+    client  : boolean;
     bfile   : string[8];
-    nt      : byte;
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
   dbRead(d,'dateiname',bfile);
-  dbRead(d,'netztyp',nt);
   dbClose(d);
   ReadBox(0,bfile,boxpar);
-  if not nt=nt_Client then fn:='*.*' else
+  client:=(mapstype(box)=16);
+  if not client then fn:='*.*' else
   begin
     fn:=BoxPar^.PPPClientPath + ustr(boxfilename(box));
     fn:=fn+iifs(exist(fn+'.BL'),'.BL',iifs(exist(fn+'.GR'),'.GR','.BL'));
     end;
   useclip:=true;
-  if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
+  if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen' }
   if not exist(fn) then
   begin
     hinweis(getres2(10800,23)); { Datei nicht gefunden }
     exit;
     end;
-  maggi:=(mapstype(box)=2);    { MagicNet }
+  maggi:=(mapstype(box)=2);     { MagicNet }
   promaf:=(mapstype(box)=8);
 (*
   dbOpen(d,BoxenFile,1);
@@ -1317,7 +1317,7 @@ begin
     ExpandTabs(fn,bfile+'.BL');
     closebox;
     end;
-  if nt=nt_Client then makebl(box);
+  if client then makebl(box);
   (*else*) if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
     _era(fn);
 end;
@@ -1602,14 +1602,16 @@ begin
     Exit;
   end;
 
-  if (art=1) and exist(fn+'.BBL') and changesys and not client then
+  if (art=1) and exist(fn+'.BBL') and changesys and (not client) then
     lfile:=fn+'.BBL' else
 
-  if client then begin
+  if client then
+  begin
+    ReadBoxpar(netztyp,box);
     if not exist(fn+'.BL')
       then fn:=Boxpar^.PPPClientPath+fn;
     lfile:=fn+iifs(exist(fn+'.BL'),'.BL','.GR');
-    end
+  end
   else lfile:=fn+'.BL';
 
   if not exist(lfile) or (_fileSize(lfile) = 0) then
@@ -2192,6 +2194,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.35  2002/03/08 23:10:05  my
+  MY:- Bugfix RFC/Client: Mehrere Fehler im Brettmanager behoben. An vier
+       Stellen wurde bei Boxnamen lÑnger als 8 Zeichen nicht der korrekte
+       Dateiname der Brettliste bzw. RC-Datei Åbergeben, beim Bestellen/
+       Abbestellen von Newsgroups konnte es vorkommen, da· XP die
+       Brettliste nicht finden konnte, weil das Client-Verzeichnis nicht
+       Åbergeben wurde (Nachwehe der Umstellung von RFC/Client auf einen
+       eigenen Netztyp).
+
   Revision 1.10.2.34  2001/12/20 15:22:14  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
