@@ -774,7 +774,8 @@ again:
     exit;   { Erneut: Binaer-Versandmeldung }
     end;
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
-  assign(t,fn); assign(f,fn);
+  assign(t,fn);
+  assign(f,fn);
   rec:=dbRecno(mbase);
   if typ in [5,6] then
   begin
@@ -1030,7 +1031,7 @@ again:
                    end
                  else begin
                    pm:=(FirstChar(_brett)='U');
-                   empf:=iifs(FirstChar(_brett)='U','',FirstChar(_brett)+hdp.FirstEmpfaenger);
+                   empf:=iifs(pm,'',_brett[1])+hdp.FirstEmpfaenger;
                    end;
                  end
                else begin
@@ -1345,6 +1346,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2002/09/01 09:53:40  mk
+  - Nachricht/Weiterleiten/Erneut: do not kill Recipient
+
   Revision 1.26  2002/07/29 07:17:22  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
