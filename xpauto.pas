@@ -253,14 +253,14 @@ begin
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:= TSendUUData.Create;
-      if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData.ersetzt);
+      if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
       if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
-        dbWrite(auto,'lastmsgid',sData.msgid);
+        dbWriteStr(auto,'lastmsgid',sData.msgid);
         fh:= FileOpen(datei,fmOpenRead);
         tt:= FileGetDate(fh);
         FileClose(fh);
@@ -275,7 +275,7 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) then
+          if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg')) then
             SafeDeleteFile(datei);
           dbDelete(auto);
           aufbau:=true;
@@ -526,7 +526,7 @@ var sr    : tsearchrec;
 
   function SendPuffer:boolean;
   var
-      box : string[BoxNameLen];
+    box: String;
   begin
     SendPuffer:=false;
     box:=NamePollbox;
@@ -652,7 +652,7 @@ var ar   : autorec;
     dir:= ExtractFilePath(s);
     name:= ExtractFileName(s);
     if dir='' then s:=name
-    else if dir[2]=':' then
+    else if (Length(dir) >= 2) and (dir[2]=':') then
       s:=LeftStr(dir,2)+name
     else s:=LeftStr(GetCurrentDir,2)+name;
 {$ENDIF }
@@ -675,6 +675,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.6  2002/07/26 10:13:43  mk
+  - fixed dbWrite with AnsiStrings
+
   Revision 1.48.2.5  2002/07/26 07:59:35  mk
   - fixed Edit/AutoVersand for Screenwidth > 80 chars
 
