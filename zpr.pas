@@ -21,6 +21,15 @@ uses
 {$IFDEF NCRT }
   xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
   sysutils, dos, typeform, xpglobal;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
@@ -443,7 +452,7 @@ begin
     ww:='wÅrde '; wwn:='wÅrden '; wwnn:='wÅrde(n) '; end
   else begin
     ww:=''; wwn:=''; wwnn:=''; end;
-  prozent:=not outputredirected;
+  prozent:=not Sysoutputredirected;
   kchar:=['A'..'Z','a'..'z','0'..'9','-','_'];
   brchar:=kchar + ['/','!','+'];
   brchar:=brchar + ['.','-'];     { eigentlich nicht erlaubt, aber Åblich }
@@ -1278,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/10/20 08:00:38  mk
+  - outputredirected auf SysOutputRedirected umgestellt
+
   Revision 1.28  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 
