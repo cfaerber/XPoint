@@ -242,9 +242,9 @@ richten und Bretteinstellungen.
        > Brett enh„lt ungelesene, aber keine auf den
          aktiven Lesemodus passenden Nachrichten.
          (Anmerkung: das Zeichen ">" symbolisiert
-         einen nach rechts gerichteten dnnen Pfeil,
-         der sich in dieser Hilfe aber leider nicht
-         darstellen l„át.)
+         einen nach rechts gerichteten dnnen Pfeil
+         (auch als Ctrl-Z bekannt), der sich hier
+         aber leider nicht darstellen l„át.)
 
    +   springt zum n„chsten zutreffenden Brett.
 
