@@ -672,7 +672,7 @@ var mfm   : byte;
     isize : word;
     sbrk  : boolean;
     root  : absatzp;
-{    endcr : boolean;   }       { CR am Dateiende }
+    endcr : boolean;          { CR am Dateiende }
     endlf : boolean;          { LF am Zeilenende }
     srest : boolean;
     pp    : byte;
@@ -704,7 +704,7 @@ begin
     p:=ptr(1,1);
 {$ENDIF }
     tail:=nil;
-{    endcr:=false; }
+    endcr:=false;
     srest:=false;
     while (srest or not eof(t)) and assigned(p) do
     begin
@@ -739,8 +739,9 @@ begin
           inc(isize,length(s));
         end;
       end;
-      if eoln(t) and not srest then begin
-{        endcr:=not eof(t); }
+      if eoln(t) and not srest then
+      begin
+        endcr:=not eof(t);
         readln(t);
       end;
       p:=AllocAbsatz(isize);
@@ -755,11 +756,12 @@ begin
     close(t);
     freemem(tbuf);
     freemem(ibuf);
-{    if endcr then begin
+    if endcr then
+    begin
       p:=AllocAbsatz(0);
       p^.umbruch:=(umbruch<>0);
       AppP;
-      end; }
+    end;
     if ioresult<>0 then error(3);
     end;
   LoadBlock:=root;
@@ -1854,6 +1856,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/10/25 06:24:09  mk
+  - fixes Bug #116197, last CRLF in LoadBlock
+
   Revision 1.42  2000/10/17 10:05:39  mk
   - Left->LeftStr, Right->RightStr
 
