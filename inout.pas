@@ -1,11 +1,13 @@
-{ --------------------------------------------------------------- }
+{ ----------------------------------------------------------------}
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von: Peter Mandrella.     }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 (***********************************************************)
@@ -140,11 +142,11 @@ var    chml : Array[1..5] of string[230];
        timex,timey  : shortint;
        fndef        : array[1..20] of string[fndeflen];
        fnproc       : array[0..3,1..10] of nproc;
-       altproc      : array[1..maxalt] of record
-                                            schluessel : taste;
-                                            funktion   : procedure;
-                                            aktiv      : boolean;
-                                          end;
+       altproc      : array[1..maxalt+2] of record
+                                              schluessel : taste;
+                                              funktion   : procedure;
+                                              aktiv      : boolean;
+                                            end;
 
        base         : word;            { Screenbase                        }
        scsaveadr    : procedure;       { Screen-Saver Proc (muss alle Ak-  }
@@ -281,7 +283,7 @@ var    ca,ce,ii,jj : byte;
        mx,my       : integer;      { Maus-Koordinaten }
        st1         : byte;
        fnpactive   : array[0..3,1..10] of boolean;
-       istack      : array[1..maxalt] of byte;
+       istack      : array[1..maxalt+2] of byte;
        istackp     : integer;
        autolast    : longint;   { Get: Tick des letzten AutoUp/Down }
 
@@ -493,6 +495,7 @@ Procedure Get(VAR z:taste; cur:curtype);
 VAR c       : Char;
     i       : byte;
     mox,moy : integer;
+    CheckNodelistBrowser : boolean;
 const euro = #238;
 
   procedure dofunc(state,nr:byte);
@@ -552,7 +555,7 @@ const euro = #238;
         mov ah,$11     { $02 Alt           $02 Shift-L             }
         int 16h        { $01 Ctrl-L        $01 Shift-R             }
 
-        cmp ah,$12     { "E" }
+  @00:  cmp ah,$12     { "E" }
         jne @01
         mov dl,euro
         test bl,3      { Not (Shift-L or Shift-R) ?}
@@ -564,7 +567,25 @@ const euro = #238;
         test bl,4
         jne @ok
 
-  @01:  mov dl,0
+  @01:  cmp ah,$31     { "N" }
+        jne @02
+        mov dl,78
+        test bl,3      { Not (Shift-L or Shift-R) ?}
+        jne @02
+        test bh,8      { AltGr ?}
+        jne @ok
+        test bh,2      { or (Alt and AnyCtrl) ? }
+        je @02
+        test bl,4
+        jne @ok
+
+  @02:  cmp ah,$2B     { "#" }
+        jne @03
+        mov dl,$1c     { ^\ }
+        test bl,4      { AnyCtrl }
+        jne @ok
+
+  @03:  mov dl,0
         jmp @end
 
   @ok:  mov ah,0
@@ -647,6 +668,7 @@ begin
     else
       key_pressed:=true;
     c:=specialchar;
+    AltGr_N_pressed:=(c=chr(78));
     if c=#0 then c:=readkey;
     if c=#31 then
       z:='!!'   { s. MAUS2.mint }
@@ -662,16 +684,26 @@ begin
       end;
     if KB_Shift and (z=#$F5) then z:=#$15;  { -Zeichen unter CP850 auf Hex 15 umbiegen }
     cursor(curoff);
+    if AltGr_N_pressed then z:='';           { Taste bei <AltGr-N> resetten }
     lastkey:=z;
     if hotkeys then
       if (z>=keyf1)  and (z<=keyf10)  then dofunc(0,ord(z[2])-58) else
       if (z>=keysf1) and (z<=keyaf10) then
         dofunc((ord(z[2])-74) div 10,(ord(z[2])-84)mod 10+1)
-      else
-        for i:=1 to maxalt do
-          if (@altproc[i].funktion<>@dummyFN) and (z=altproc[i].schluessel)
+      else begin
+        CheckNodelistBrowser:=
+         not (((z=altproc[5].schluessel) or AltGr_N_pressed) and
+              (altproc[5].aktiv or altproc[maxalt+1].aktiv) and
+              (IsNodelistBrowserMsg or IsNodelistBrowserReq));
+        if not CheckNodelistBrowser then
+          doaltfunc(maxalt+2)
+        else for i:=1 to maxalt+1 do
+          if (@altproc[i].funktion<>@dummyFN) and
+             (((i<maxalt+1) and (z=altproc[i].schluessel)) or
+              ((i=maxalt+1) and (AltGr_N_pressed)))
             and (not altproc[i].aktiv) then
               doaltfunc(i);
+      end;
   until z<>'!!';
 end;
 
@@ -1693,6 +1725,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.10  2003/03/17 22:53:38  my
+  MY:- Hotkey <AltGr-N> fÅr Nodeliste durchsuchen implementiert.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.38.2.9  2002/04/28 17:38:33  my
   JG:- Vorbereitung fÅr Euro-UnterstÅtzung: Routine 'Specialchar'
        implementiert, die auch bei neueren Tastaturen zwischen <Alt-E>
