@@ -1035,11 +1035,11 @@ begin
     begin
       new(p);
       if dbReadInt(d,'netztyp')=nt_UUCP then begin
-        dom:=dbReadStr(d,'fqdn');
+        dom:=lstr(dbReadStr(d,'fqdn'));
         if dom='' then dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
       else begin
-        dom:=dbReadStr(d,'fqdn');
+        dom:=lstr(dbReadStr(d,'fqdn'));
         if dom='' then dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
                                  dbReadStr(d,'domain'));
       end;
@@ -1095,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.17  2001/01/09 14:36:56  sv
+  - reply-detection improved
+
   Revision 1.45.2.16  2001/01/03 22:46:48  mk
   - Parameter /Pal hinzugefuegt
 
