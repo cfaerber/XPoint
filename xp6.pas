@@ -43,13 +43,29 @@ const sendIntern = 1;     { force Intern              }
 
       pgdown    : boolean = false;
       _sendmaps : boolean = false;
+{$ifdef hasHugeString}
+      forcebox  : string = '';
+      forceabs  : string = '';       { 'SYSOP' fÅr ProNet-System }
+      _bezug    : string = '';
+      _orgref   : string = '';
+      _replypath: string = '';        { Box, Åber die die Bezugsnachr. kam }
+      sendfilename   : string = '';
+      sendfiledate   : string = '';
+      force_quotemsk : string = '';
+      CrosspostBox   : string = '';
+{$else}
       forcebox  : string[BoxNameLen] = '';
       forceabs  : string[10] = '';       { 'SYSOP' fÅr ProNet-System }
       _bezug    : string[120] = '';
       _orgref   : string[120] = '';
+      _replypath: string[8] = '';        { Box, Åber die die Bezugsnachr. kam }
+      sendfilename   : string[12] = '';
+      sendfiledate   : string[14] = '';
+      force_quotemsk : string[12] = '';
+      CrosspostBox   : string[BoxNameLen] = '';
+{$endif}
       _ref6list : refnodep = nil;
       _beznet   : shortint = -1;         { Netztyp der Bezugsnachricht }
-      _replypath: string[8] = '';        { Box, Åber die die Bezugsnachr. kam }
       _pmReply  : boolean = false;
       IsEbest   : boolean = false;
       NoCrash   : boolean = false;
@@ -67,12 +83,26 @@ const sendIntern = 1;     { force Intern              }
       OldMsgSize: longint = 0;{ s. XP3.XWrite }
       OldMsgPos : longint = 0;
 
-      sendfilename   : string[12] = '';
-      sendfiledate   : string[14] = '';
-      force_quotemsk : string[12] = '';
       sendempflist   : empfnodep = nil;
-      CrosspostBox   : string[BoxNameLen] = '';
 
+{$ifdef hasHugeString}
+type  SendUUdata = record
+                     AmReplyTo  : string;
+                     PmReplyTo  : string;
+                     keywords   : string;
+                     summary    : string;
+                     distribute : string;
+                     ReplyGroup : string;     { Maus-QuoteTo }
+                     oab,oem,wab: string;
+                     oar,war    : string;
+                     onetztyp   : byte;
+                     orghdp     : headerp;
+                     quotestr   : string;
+                     UV_edit    : boolean;        { <Esc> -> "J" }
+                     empfrealname : string;
+                     ersetzt    : string;
+                   end;
+{$else}
 type  SendUUdata = record
                      AmReplyTo  : string[AdrLen];
                      PmReplyTo  : string[AdrLen];
@@ -89,9 +119,15 @@ type  SendUUdata = record
                      empfrealname : string[40];
                      ersetzt    : string[MidLen];
                    end;
+{$endif}
       SendUUptr   = ^SendUUdata;
 
-var   InternBox : string[BoxNameLen];  { Boxname bei /Netzanruf }
+var
+{$ifdef hasHugeString}
+      InternBox : string;  { Boxname bei /Netzanruf }
+{$else}
+      InternBox : string[BoxNameLen];  { Boxname bei /Netzanruf }
+{$endif}
       msgMarkEmpf: byte;   { fÅr sendMark }
 
 
@@ -336,7 +372,7 @@ end;
 { datei, header und signat sind nur aus Stack-Platz-GrÅnden VARs!            }
 { header wird verÑndert!!                                                    }
 
-function DoSend(pm:boolean; var datei:pathstr; empfaenger,betreff:string;
+function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
                 var header,signat:string; sendFlags:word):boolean;
 
@@ -344,35 +380,79 @@ var f,f2     : ^file;
     edis     : byte;
     x,y      : byte;
     brk      : boolean;
+{$ifdef hasHugeString}
+    typ      : string;   { Kopf fÅr Betreff/Sende-Box          }
+    wbox     : string;
+    ch       : string;    { '*'-Zeichen fÅr abweichende Adresse }
+    box      : string; { EmpfÑnger-Pollbox             }
+    adresse  : string;
+    newbox   : string;  { Zwischensp. fÅr geÑnderte Pollbox   }
+    boxfile  : string;
+    username : string;  { eigener Username                    }
+    pointname: string;
+    XP_ID    : string;
+    XID      : string;  { CrossPoint-ID                       }
+    _brett   : string;
+    mapsname : string;
+    senddate : string;  { mit 'D' zeitversetzt absenden       }
+    shortmid : string;
+    realname : string;
+    domain   : string;
+    fqdn     : string;  { 16.01.00: HS}
+    fidoname : string;  { Origin-Systemname                   }
+    OrigBox  : string;    { Box aus Pfad  }
+    AltAdr   : string;  { Gruppen / Fido-Absender }
+    sendbutt : string;
+    kopkey   : string;   { (K)opien }
+    fidokey  : string;   { (A)n     }
+    pgpkey   : string;
+    oldbetr  : string;
+{$else}
     typ      : string[50];   { Kopf fÅr Betreff/Sende-Box          }
     wbox     : string[BoxNameLen];
     ch       : string[1];    { '*'-Zeichen fÅr abweichende Adresse }
     box      : string[BoxNameLen]; { EmpfÑnger-Pollbox             }
+    adresse  : string[AdrLen];
+    newbox   : string[20];  { Zwischensp. fÅr geÑnderte Pollbox   }
+    boxfile  : string[12];
+    username : string[30];  { eigener Username                    }
+    pointname: string[25];
+    XP_ID    : string[40];
+    XID      : string[40];  { CrossPoint-ID                       }
+    _brett   : string[5];
+    mapsname : string[20];
+    senddate : datetimest;  { mit 'D' zeitversetzt absenden       }
+    shortmid : string[19];
+    realname : string[40];
+    domain   : string[60];
+    fqdn     : string[60];  { 16.01.00: HS}
+    fidoname : string[60];  { Origin-Systemname                   }
+    OrigBox  : string[BoxNameLen];    { Box aus Pfad  }
+    AltAdr   : string[20];  { Gruppen / Fido-Absender }
+    sendbutt : string[80];
+    kopkey   : string[1];   { (K)opien }
+    fidokey  : string[1];   { (A)n     }
+    pgpkey   : string[1];
+    oldbetr  : string[20];
+{$endif}
     d        : DB;
     fs,l     : longint;
     t        : taste;
     n,p      : shortint;
     fn,fn2,
-    fn3      : ^pathstr;
+    fn3      : ^string;
     b        : byte;
     si0      : smallword;
     hdp      : headerp;
 
-    adresse  : string[AdrLen];
     size     : smallword;
     empfneu  : boolean;
     cancode  : shortint;    { -1=Rot13, 0=kein PW, 1=QPC, 2=DES, 9=PGP }
     docode   : shortint;    { gewÑhlte Codierung                  }
     pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
-    newbox   : string[20];  { Zwischensp. fÅr geÑnderte Pollbox   }
     halten   : integer16;   { Haltezeit fÅr neuen User            }
-    boxfile  : string[12];
-    username : string[30];  { eigener Username                    }
-    pointname: string[25];
     sendedat : longint;     { Empfangsdatum                       }
-    XP_ID    : string[40];
-    XID      : string[40];  { CrossPoint-ID                       }
     passwd   : ^string;     { Pa·wort des empfangenden Users      }
     passpos  : smallword;   { PW-Position fÅr QPC                 }
     newbin   : boolean;     { Typ nach Codierung                  }
@@ -380,35 +460,23 @@ var f,f2     : ^file;
     lokalPM  : boolean;     { lokale PM                           }
     maxsize  : longint;     { ab hier mu· gesplittet werden       }
     grnr     : longint;     { Brettgruppen-Nr.                    }
-    _brett   : string[5];
     addsize  : longint;     { Header + Signatur                   }
 {    hdsize   : word; }
-    mapsname : string[20];
     oversize : longint;     { Nachrichtenlimit Åberschritten      }
     parken   : boolean;     { Nachricht nach /ØUnversandt         }
-    senddate : datetimest;  { mit 'D' zeitversetzt absenden       }
     bin_msg  : boolean;     { BinÑr-Versandmeldung                }
     SendDefault : byte;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
     netztyp  : byte;        { Netztyp                             }
-    shortmid : string[19];
-
-    realname : string[40];
     aliaspt  : boolean;     { Alias-Point (USER@BOX)              }
-    domain   : string[60];
-    fqdn     : string[60];  { 16.01.00: HS}
     nomids   : boolean;     { keine Message-ID's erzeugen         }
     nobox    : boolean;     { Absender-Name im PP ohne Boxname    }
-    fidoname : string[60];  { Origin-Systemname                   }
     echomail : boolean;
     fadd     : shortint;
     oldnt    : byte;        { alter Netztyp bei Pollbox-Wechsel   }
     fidoam   : boolean;
-    OrigBox  : string[BoxNameLen];    { Box aus Pfad  }
-    AltAdr   : string[20];  { Gruppen / Fido-Absender }
     old_cca  : integer;     { vor (K)opien            }
-    sendbutt : string[80];
     FidoBin  : boolean;     { File Attach }
     cc_count : integer;
     betrlen  : byte;        { max. BetrefflÑnge }
@@ -417,13 +485,9 @@ var f,f2     : ^file;
     spezial  : boolean;
     flOhnesig: boolean;
     flLoesch : boolean;
-    kopkey   : string[1];   { (K)opien }
-    fidokey  : string[1];   { (A)n     }
-    pgpkey   : string[1];
     sdnope   : boolean;     { sData = nil }
-    oldbetr  : string[20];
     orgftime : longint;
-    sigfile  : pathstr;
+    sigfile  : string;
     sigtemp  : boolean;
     iso      : boolean;
     flPGPkey : boolean;     { eigenen Key mitschicken }
@@ -536,7 +600,7 @@ var i,first : integer;
             end;
           end;
         end;
-      UpString(server);
+      server:= UpperCase(server);
       end;
   end;
 
@@ -2031,14 +2095,21 @@ end; {------ of DoSend -------}
 
 procedure send_file(pm,binary:boolean);
 const xp_support = 'A/T-NETZ/SUPPORT/XPOINT';
-var empf,repto : string[AdrLen];
-    reptoanz   : integer;
+var
+{$ifdef hasHugeString}
+    empf,repto : string;
+    betr,dummy : string;
+    hf         : string;
+{$else}
+    empf,repto : string[AdrLen];
     betr,dummy : string[BetreffLen];
-    fn         : pathstr;
     hf         : string[12];
-    dir        : dirstr;
-    name       : namestr;
-    ext        : extstr;
+{$endif}
+    reptoanz   : integer;
+    fn         : string;
+    dir        : string;
+    name       : string;
+    ext        : string;
     useclip    : boolean;
     sData      : SendUUptr;
 
@@ -2064,25 +2135,29 @@ begin
            end;
   end;
   empf:=left(empf,79);
-  fn:=sendpath+'*.*';
+  fn:=sendpath+Wildcard;
   useclip:=true;
   if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'BinÑrdatei' / 'Textdatei' versenden }
   then
     if binary and (left(empf,length(xp_support))=xp_support) and
-       ((left(getfilename(fn),4)='PDZM') or
-        (left(getfilename(fn),3)='ZPR')) and not developer then
+       ((left(extractfilename(fn),4)='PDZM') or
+        (left(extractfilename(fn),3)='ZPR')) and not developer then
       fehler('Bitte Åberlassen Sie das Versenden dieses Programms dem Programmautor!')
     else begin
+{$ifdef UnixFS}
+      if cpos(DirSepa,fn)=0 then fn:=sendpath+fn else
+{$else}
       if not multipos('\:',fn) then fn:=sendpath+fn else
+{$endif}
       fn:=FExpand(fn);
-      if not exist(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
+      if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
       else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
       else (* if _filesize(fn)+MaxHdsize>TempFree then
         rfehler(617)   { 'zu wenig Platz auf TemporÑr-Laufwerk' }
       else *) begin
-        fsplit(fn,dir,name,ext);
-        if betr='' then betr:=name+ext
-        else betr:=left(name+ext+' ('+betr,39)+')';
+        {fsplit(fn,dir,name,ext);}
+        if betr='' then betr:=ExtractFileName(fn)
+        else betr:=left(ExtractFilename(fn)+' ('+betr,39)+')';
         new(sData);
         fillchar(sData^,sizeof(sData^),0);
         if aktdispmode in [10..19] then begin
@@ -2090,7 +2165,7 @@ begin
           if repto<>'' then empf:=repto;
           end;
         hf:='';
-        sendfilename:=UpperCase(name+ext);
+        sendfilename:=UpperCase(ExtractFilename(fn));
         sendfiledate:=zcfiletime(fn);
         if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
         dispose(sData);
@@ -2102,8 +2177,13 @@ end;
 
 function SendPMmessage(betreff,fn:string; var box:string):boolean;
 var d    : DB;
+{$ifdef hasHugeString}
+    empf : string;
+    s    : string;
+{$else}
     empf : string[80];
     s    : string[10];
+{$endif}
     l    : longint;
 begin
   SendPMmessage:=false;
@@ -2129,6 +2209,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/07/05 14:46:47  hd
+  - AnsiString
+
   Revision 1.44  2000/07/05 12:47:27  hd
   - AnsiString
 
