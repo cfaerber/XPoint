@@ -454,7 +454,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # XP2C
 + 250
 1    Miscellaneous Options
-2    Quote String ~
+2    Quote string ~
 3    Line break   ~
 4    User base    ~
 5    All
@@ -464,14 +464,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Swap to EMS
 12   Archive prefix~
 13   Delete archived messages
-14   Append new newsgroups at end
-15   Server name in PM-newsgroups
+14   Append new message areas at end
+15   Full name/address in Private mail areas
 16   Minimum disk space on drive %s~
 17   MBytes
 18   Use XMS
 19   Use descriptions from newsgroup list
-20   Enables umlauts for new Users
-21   Enable alternate quote characters
+20   Enable umlauts for new Users
+21   Enable alternative quote characters
 22   Sort User-window by Server name
 23   Default Usergroup
 24   Create an archive-note
