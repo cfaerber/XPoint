@@ -13,8 +13,8 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.21.022';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';      { '' oder ' beta' }
+  verstr      = 'v3.20 RC2';  { Versionnr. - steht nur an dieser Stelle }
+  betastr     = '';           { '' oder ' beta' }
 
 {$IFDEF VER32 }
   {$IFDEF Win32 }
@@ -98,22 +98,11 @@ type
 
 implementation
 
-begin
-  {$IFDEF Debug }
-    {$IFDEF FPC }
-       Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
-        ' by ', {$I %USER%}, ' with Compiler ', {$I %FPCVERSION%},
-        ' for ', {$I %FPCTARGET%});
-    {$ENDIF }
-  {$ENDIF }
 end.
 {
   $Log$
-  Revision 1.9  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.8  2000/03/04 11:53:20  mk
-  Version auf 3.21.022 beta geaendert und Debug eingeschaltet
+  Revision 1.7.2.1  2000/04/12 09:27:12  mk
+  - Versionsaenderung auf 3.20 RC2
 
   Revision 1.7  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
