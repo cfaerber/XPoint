@@ -779,23 +779,29 @@
     add:=iif(fido,0,1);
     dialog(ival(getres2(921,0)),9+add,kompname,x,y);
     with boxpar^ do begin
-      maddint(3,2,getres2(921,1),connwait,5,4,1,1000); mhnr(160);   { 'Warten auf Verbindung' }
+      maddint(3,2,getres2(921,1),connwait,5,4,1,1000);       { 'Warten auf Verbindung' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30120) else mhnr(160);
       if not fido then
         maddint(3,3,getres2(921,2),loginwait,5,4,1,1000);    { 'Warten auf Login     ' }
-      maddint(3,4+add,getres2(921,3),redialwait,5,4,         { 'W„hl-Pause           ' }
-                      2,1000); mhnr(162);
+        if (nt=nt_UUCP) and pppMode then mhnr(30121) else mhnr(161);
+      maddint(3,4+add,getres2(921,3),redialwait,5,4,2,1000); { 'W„hlpause           ' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30122) else mhnr(162);
       maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale W„hlversuche' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30123) else mhnr(163);
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
+        if (nt=nt_UUCP) and pppMode then mhnr(30124) else mhnr(164);
         if (nt<>nt_UUCP) then
           maddint(35,3,getres2(921,6),packwait,5,4,1,9999);  { 'Warten auf Daten' }
         end;
-      maddint(35,4+add,getres2(921,7),connectmax,5,4,1,10); mhnr(166);  { 'max. Connects  ' }
+      maddint(35,4+add,getres2(921,7),connectmax,5,4,1,10);  { 'max. Connects  ' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30125) else mhnr(166);
       maddint(35,5+add,getres2(921,8),mincps,5,4,0,9999);    { 'min. cps-Rate   ' }
       if (nt=nt_UUCP) or not (fido or stricmp(uploader,'ZMODEM') or
                                       stricmp(downloader,'ZMODEM')) then
         mdisable;
       maddstring(3,7+add,getres2(921,9),modeminit,41,60,''); { 'Modem-Init ' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30126) else mhnr(168);
 {$IFDEF CAPI }
       if bport=5 then
         schnitte:='ISDN'
@@ -803,11 +809,13 @@
 {$ENDIF }
       schnitte:='COM'+strs(bport);
       maddstring(3,9+add,getres2(921,10),schnitte,4,4,'');   { 'Schnittstelle ' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30127) else mhnr(169);
       mappsel(true,'COM1ùCOM2ùCOM3ùCOM4');
 {$IFDEF CAPI }
       if ntISDN(nt) then mappsel(true,'ISDN');
 {$ENDIF }
       maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'šbertragungsrate:' }
+      if (nt=nt_UUCP) and pppMode then mhnr(30128) else mhnr(170);
       mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
       msetvfunc(testbaud);
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
@@ -823,7 +831,7 @@
       end;
   end;
 
-  procedure Editgebuehren(var brk:boolean);
+  procedure Editgebuehren(nt:byte; var brk:boolean);
   var x,y   : byte;
       crash : boolean;
   begin
@@ -832,10 +840,11 @@
     with boxpar^ do begin
       if not crash then begin
         maddstring(3,2,getres2(922,1),gebzone,20,20,'');   { 'Tarifzone      ' }
-        AppPhoneZones; mhnr(180);
+        AppPhoneZones;
+        if (nt=nt_UUCP) and pppMode then mhnr(30130) else mhnr(180);
         end;
       maddint(3,iif(crash,2,4),getres2(922,5),conn_time,2,2,0,99);    { 'Connect-Dauer: ' }
-        mhnr(181);
+      if (nt=nt_UUCP) and pppMode then mhnr(30131) else mhnr(181);
       maddtext(length(getres2(922,5))+9,iif(crash,2,4),getres2(922,6),0);   { 'Sek.' }
       freeres;
       readmask(brk);
@@ -994,10 +1003,16 @@
       if (nt=nt_Fido) or (nt=nt_UUCP) then begin
         fl:=3; el:=35;
         maddstring(3,2,getres2(923,3),sysopinp,el,MaxLenPathname,ValidDirCh);   { 'Eingangsverzeichnis  ' }
-        if nt=nt_UUCP then mhnr(8036) else mhnr(183);
+        if nt=nt_UUCP then begin
+          if pppMode then mhnr(30140) else mhnr(8036);
+          end
+        else mhnr(183);
         msetvfunc(testfidodir);
         maddstring(3,4,getres2(923,4),sysopout,el,MaxLenPathname,ValidDirCh);   { 'Ausgangsverzeichnis  ' }
-        if nt=nt_UUCP then mhnr(8036) else mhnr(183);
+        if nt=nt_UUCP then begin
+          if pppMode then mhnr(30140) else mhnr(8036);
+          end
+        else mhnr(183);
         msetvfunc(testfidodir);
         end
       else if nt=nt_QWK then begin
@@ -1571,7 +1586,7 @@
         case n of
           1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
           2 : EditModemdaten(nt,brk);       
-          3 : EditGebuehren(brk);
+          3 : EditGebuehren(nt,brk);
           4 : EditDiverses(nt,brk);
           5 : EditSysopdaten(nt,brk);
           end;
@@ -1582,7 +1597,7 @@
         case n of
           1 : EditPointdaten(nt,brk);
           2 : EditModemdaten(nt,brk);
-          3 : EditGebuehren(brk);
+          3 : EditGebuehren(nt,brk);
           4 : EditName(brk);
           5 : case nt of
                 nt_Fido : EditFido(brk);
@@ -1692,6 +1707,10 @@
 
 {
   $Log$
+  Revision 1.10.2.31  2001/06/24 21:24:38  my
+  - added RFC/client specific items for Edit/Servers/Edit...
+    Modem, Charges and SysopMode
+
   Revision 1.10.2.30  2001/06/22 18:14:00  my
   - optimized code a little bit
 
