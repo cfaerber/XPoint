@@ -3107,6 +3107,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2  Dateierweiterung mu· .XPS sein!
 3  UngÅltiger Pfad- oder Dateiname!
 4  Kann %s nicht lîschen!?
+24  Kann %s nicht umbenennen.
 5  ungÅltiges Verzeichnis: %s
 6  zu wenig freier Speicher
 7  Zu wenig freier Speicher fÅr externen Programmaufruf!
@@ -3893,6 +3894,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.45  2001/12/26 00:45:18  cl
+# - added error string "Kann %s nicht umbenennen."
+#
 # Revision 1.44  2001/11/22 10:39:57  mk
 # - NDIFF is intern, removed test for ndiff.exe
 #
