@@ -1089,11 +1089,23 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _jn_        : string[2];      { 'JN' }
 
 
+{ Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
+{ in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
+
+{$IFDEF Ver32}
+       charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
+       attrbuf     : array [1..82] of smallword;  {82 Attribute}
+{$ENDIF}
+ 
 implementation
 
 end.
 {
   $Log$
+  Revision 1.21  2000/04/09 06:51:56  jg
+  - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
+  - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
+
   Revision 1.20  2000/04/04 21:01:22  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

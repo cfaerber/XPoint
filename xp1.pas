@@ -365,10 +365,6 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 end;
 {$ENDIF }
 
-procedure ListDisplay(x,y:word; var s:string);
-begin
-  FWrt(x, y, s);
-end;
 
 {$ELSE}
 
@@ -433,412 +429,569 @@ asm
          loop  @isolp
 end;
 
-var
-  dispbuf: array[1..164] of byte;
+{$ENDIF}
 
-procedure ListDisplay(x,y:word; var s:string); far; assembler;
-asm
-            jmp  @start
 
+
+{ Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
 { 2 = nach Startzeichen erlaubt }
 { 4 = vor  Endzeichen erlaubt }
 { 8 = nach Endzeichen erlaubt }
-@delimiters:db    0                       { ^@ }
-            db    0                       { ^A }
-            db    0                       { ^B }
-            db    0                       { ^C }
-            db    0                       { ^D }
-            db    0                       { ^E }
-            db    0                       { ^F }
-            db    0                       { ^G }
-            db    0                       { ^H }
-            db    0                       { ^I }
-            db    0                       { ^J }
-            db    0                       { ^K }
-            db    0                       { ^L }
-            db    0                       { ^M }
-            db    0                       { ^N }
-            db    0                       { ^O }
-            db    0                       { ^P }
-            db    0                       { ^Q }
-            db    0                       { ^R }
-            db    0                       { ^S }
-            db    0                       { ^T }
-            db    0                       { ^U }
-            db    0                       { ^V }
-            db    0                       { ^W }
-            db    0                       { ^X }
-            db    0                       { ^Y }
-            db    0                       { ^Z }
-            db    0                       { ^[ }
-            db    0                       { ^\ }
-            db    0                       { ^] }
-            db    0                       { ^^ }
-            db    0                       { ^_ }
 
-            db    1 +         8           { Space }
-            db            4 + 8           { ! }
-            db    1 + 2 + 4 + 8           { " }
-            db    0                       { # }
-            db    0                       { $ }
-            db    0                       { % }
-            db    0                       { & }
-            db    1 + 2 + 4 + 8           { ' }
-            db    1                       { ( }
-            db                8           { ) }
-            db    0                       { * }
-            db    0                       { + }
-            db            4 + 8           { , }
-            db                8           { - }
-            db            4 + 8           { . }
-            db    0                       { / }
-            db        2 + 4               { 0 }
-            db        2 + 4               { 1 }
-            db        2 + 4               { 2 }
-            db        2 + 4               { 3 }
-            db        2 + 4               { 4 }
-            db        2 + 4               { 5 }
-            db        2 + 4               { 6 }
-            db        2 + 4               { 7 }
-            db        2 + 4               { 8 }
-            db        2 + 4               { 9 }
-            db            4 + 8           { : }
-            db            4 + 8           { ; }
-            db    0                       { < }
-            db    0                       { = }
-            db    1                       { > }
-            db            4 + 8           { ? }
-            db        2 + 4               { @ }
-            db        2 + 4               { A }
-            db        2 + 4               { B }
-            db        2 + 4               { C }
-            db        2 + 4               { D }
-            db        2 + 4               { E }
-            db        2 + 4               { F }
-            db        2 + 4               { G }
-            db        2 + 4               { H }
-            db        2 + 4               { I }
-            db        2 + 4               { J }
-            db        2 + 4               { K }
-            db        2 + 4               { L }
-            db        2 + 4               { M }
-            db        2 + 4               { N }
-            db        2 + 4               { O }
-            db        2 + 4               { P }
-            db        2 + 4               { Q }
-            db        2 + 4               { R }
-            db        2 + 4               { S }
-            db        2 + 4               { T }
-            db        2 + 4               { U }
-            db        2 + 4               { V }
-            db        2 + 4               { W }
-            db        2 + 4               { X }
-            db        2 + 4               { Y }
-            db        2 + 4               { Z }
-            db    1                       { [ }
-            db    0                       { \ }
-            db                8           { ] }
-            db    0                       { ^ }
-            db    0                       { _ }
-            db    1 + 2 + 4 + 8           { ` }
-            db        2 + 4               { a }
-            db        2 + 4               { b }
-            db        2 + 4               { c }
-            db        2 + 4               { d }
-            db        2 + 4               { e }
-            db        2 + 4               { f }
-            db        2 + 4               { g }
-            db        2 + 4               { h }
-            db        2 + 4               { i }
-            db        2 + 4               { j }
-            db        2 + 4               { k }
-            db        2 + 4               { l }
-            db        2 + 4               { m }
-            db        2 + 4               { n }
-            db        2 + 4               { o }
-            db        2 + 4               { p }
-            db        2 + 4               { q }
-            db        2 + 4               { r }
-            db        2 + 4               { s }
-            db        2 + 4               { t }
-            db        2 + 4               { u }
-            db        2 + 4               { v }
-            db        2 + 4               { w }
-            db        2 + 4               { x }
-            db        2 + 4               { y }
-            db        2 + 4               { z }
-            db    1                       { { }
-            db    0                       { | }
-            db                8           {   }
-            db    0                       { ~ }
-            db    0                       { DEL }
+const
+  delimiters : array[0..255] of byte = (
+            0                            ,{ ^@ }
+            0                            ,{ ^A }
+            0                            ,{ ^B }
+            0                            ,{ ^C }
+            0                            ,{ ^D }
+            0                            ,{ ^E }
+            0                            ,{ ^F }
+            0                            ,{ ^G }
+            0                            ,{ ^H }
+            0                            ,{ ^I }
+            0                            ,{ ^J }
+            0                            ,{ ^K }
+            0                            ,{ ^L }
+            0                            ,{ ^M }
+            0                            ,{ ^N }
+            0                            ,{ ^O }
+            0                            ,{ ^P }
+            0                            ,{ ^Q }
+            0                            ,{ ^R }
+            0                            ,{ ^S }
+            0                            ,{ ^T }
+            0                            ,{ ^U }
+            0                            ,{ ^V }
+            0                            ,{ ^W }
+            0                            ,{ ^X }
+            0                            ,{ ^Y }
+            0                            ,{ ^Z }
+            0                            ,{ ^[ }
+            0                            ,{ ^\ }
+            0                            ,{ ^] }
+            0                            ,{ ^^ }
+            0                            ,{ ^_ }
 
-            db        2 + 4               { Ä }
-            db        2 + 4               { Å }
-            db        2 + 4               { Ç }
-            db        2 + 4               { É }
-            db        2 + 4               { Ñ }
-            db        2 + 4               { Ö }
-            db        2 + 4               { Ü }
-            db        2 + 4               { á }
-            db        2 + 4               { à }
-            db        2 + 4               { â }
-            db        2 + 4               { ä }
-            db        2 + 4               { ã }
-            db        2 + 4               { å }
-            db        2 + 4               { ç }
-            db        2 + 4               { é }
-            db        2 + 4               { è }
-            db        2 + 4               { ê }
-            db        2 + 4               { ë }
-            db        2 + 4               { í }
-            db        2 + 4               { ì }
-            db        2 + 4               { î }
-            db        2 + 4               { ï }
-            db        2 + 4               { ñ }
-            db        2 + 4               { ó }
-            db        2 + 4               { ò }
-            db        2 + 4               { ô }
-            db        2 + 4               { ö }
-            db            4               { õ }
-            db            4               { ú }
-            db            4               { ù }
-            db            4               { û }
-            db    0                       { ü }
-            db        2 + 4               { † }
-            db        2 + 4               { ° }
-            db        2 + 4               { ¢ }
-            db        2 + 4               { £ }
-            db        2 + 4               { § }
-            db        2 + 4               { • }
-            db            4               { ¶ }
-            db            4               { ß }
-            db    1 +         8           { ® }
-            db    0                       { © }
-            db    0                       { ™ }
-            db    0                       { ´ }
-            db    0                       { ¨ }
-            db    1 +         8           { ≠ }
-            db    1                       { Æ }
-            db                8           { Ø }
-            db    0                       { ∞ }
-            db    0                       { ± }
-            db    0                       { ≤ }
-            db    0                       { ≥ }
-            db    0                       { ¥ }
-            db    0                       { µ }
-            db    0                       { ∂ }
-            db    0                       { ∑ }
-            db    0                       { ∏ }
-            db    0                       { π }
-            db    0                       { ∫ }
-            db    0                       { ª }
-            db    0                       { º }
-            db    0                       { Ω }
-            db    0                       { æ }
-            db    0                       { ø }
-            db    0                       { ¿ }
-            db    0                       { ¡ }
-            db    0                       { ¬ }
-            db    0                       { √ }
-            db    0                       { ƒ }
-            db    0                       { ≈ }
-            db    0                       { ∆ }
-            db    0                       { « }
-            db    0                       { » }
-            db    0                       { … }
-            db    0                       {   }
-            db    0                       { À }
-            db    0                       { Ã }
-            db    0                       { Õ }
-            db    0                       { Œ }
-            db    0                       { œ }
-            db    0                       { – }
-            db    0                       { — }
-            db    0                       { “ }
-            db    0                       { ” }
-            db    0                       { ‘ }
-            db    0                       { ’ }
-            db    0                       { ÷ }
-            db    0                       { ◊ }
-            db    0                       { ÿ }
-            db    0                       { Ÿ }
-            db    0                       { ⁄ }
-            db    0                       { € }
-            db    0                       { ‹ }
-            db    0                       { › }
-            db    0                       { ﬁ }
-            db    0                       { ﬂ }
-            db        2 + 4               { ‡ }
-            db        2 + 4               { · }
-            db        2 + 4               { ‚ }
-            db        2 + 4               { „ }
-            db        2 + 4               { ‰ }
-            db        2 + 4               { Â }
-            db        2 + 4               { Ê }
-            db        2 + 4               { Á }
-            db        2 + 4               { Ë }
-            db        2 + 4               { È }
-            db        2 + 4               { Í }
-            db        2 + 4               { Î }
-            db    0                       { Ï }
-            db    0                       { Ì }
-            db    0                       { Ó }
-            db    0                       { Ô }
-            db    0                       {  }
-            db    0                       { Ò }
-            db    0                       { Ú }
-            db    0                       { Û }
-            db    0                       { Ù }
-            db    0                       { ı }
-            db    0                       { ˆ }
-            db    0                       { ˜ }
-            db    0                       { ¯ }
-            db    0                       { ˘ }
-            db    0                       { ˙ }
-            db    0                       { ˚ }
-            db            4               { ¸ }
-            db            4               { ˝ }
-            db    0                       { ˛ }
-            db    1 +         8           { #255 }
+            0  +  1 +         8          ,{ Space }
+            0  +          4 + 8          ,{ ! }
+            0  +  1 + 2 + 4 + 8          ,{ " }
+            0                            ,{ # }
+            0                            ,{ $ }
+            0                            ,{ % }
+            0                            ,{ & }
+            0  +  1 + 2 + 4 + 8          ,{ ' }
+            0  +  1                      ,{ ( }
+            0  +              8          ,{ ) }
+            0                            ,{ * }
+            0                            ,{ + }
+            0  +          4 + 8          ,{ , }
+            0  +              8          ,{ - }
+            0  +          4 + 8          ,{ . }
+            0                            ,{ / }
+            0  +      2 + 4              ,{ 0 }
+            0  +      2 + 4              ,{ 1 }
+            0  +      2 + 4              ,{ 2 }
+            0  +      2 + 4              ,{ 3 }
+            0  +      2 + 4              ,{ 4 }
+            0  +      2 + 4              ,{ 5 }
+            0  +      2 + 4              ,{ 6 }
+            0  +      2 + 4              ,{ 7 }
+            0  +      2 + 4              ,{ 8 }
+            0  +      2 + 4              ,{ 9 }
+            0  +          4 + 8          ,{ : }
+            0  +          4 + 8          ,{ ; }
+            0                            ,{ < }
+            0                            ,{ = }
+            0  +  1                      ,{ > }
+            0  +          4 + 8          ,{ ? }
+            0  +      2 + 4              ,{ @ }
+            0  +      2 + 4              ,{ A }
+            0  +      2 + 4              ,{ B }
+            0  +      2 + 4              ,{ C }
+            0  +      2 + 4              ,{ D }
+            0  +      2 + 4              ,{ E }
+            0  +      2 + 4              ,{ F }
+            0  +      2 + 4              ,{ G }
+            0  +      2 + 4              ,{ H }
+            0  +      2 + 4              ,{ I }
+            0  +      2 + 4              ,{ J }
+            0  +      2 + 4              ,{ K }
+            0  +      2 + 4              ,{ L }
+            0  +      2 + 4              ,{ M }
+            0  +      2 + 4              ,{ N }
+            0  +      2 + 4              ,{ O }
+            0  +      2 + 4              ,{ P }
+            0  +      2 + 4              ,{ Q }
+            0  +      2 + 4              ,{ R }
+            0  +      2 + 4              ,{ S }
+            0  +      2 + 4              ,{ T }
+            0  +      2 + 4              ,{ U }
+            0  +      2 + 4              ,{ V }
+            0  +      2 + 4              ,{ W }
+            0  +      2 + 4              ,{ X }
+            0  +      2 + 4              ,{ Y }
+            0  +      2 + 4              ,{ Z }
+            0  +  1                      ,{ [ }
+            0                            ,{ \ }
+            0  +              8          ,{ ] }
+            0                            ,{ ^ }
+            0                            ,{ _ }
+            0  +  1 + 2 + 4 + 8          ,{ ` }
+            0  +      2 + 4              ,{ a }
+            0  +      2 + 4              ,{ b }
+            0  +      2 + 4              ,{ c }
+            0  +      2 + 4              ,{ d }
+            0  +      2 + 4              ,{ e }
+            0  +      2 + 4              ,{ f }
+            0  +      2 + 4              ,{ g }
+            0  +      2 + 4              ,{ h }
+            0  +      2 + 4              ,{ i }
+            0  +      2 + 4              ,{ j }
+            0  +      2 + 4              ,{ k }
+            0  +      2 + 4              ,{ l }
+            0  +      2 + 4              ,{ m }
+            0  +      2 + 4              ,{ n }
+            0  +      2 + 4              ,{ o }
+            0  +      2 + 4              ,{ p }
+            0  +      2 + 4              ,{ q }
+            0  +      2 + 4              ,{ r }
+            0  +      2 + 4              ,{ s }
+            0  +      2 + 4              ,{ t }
+            0  +      2 + 4              ,{ u }
+            0  +      2 + 4              ,{ v }
+            0  +      2 + 4              ,{ w }
+            0  +      2 + 4              ,{ x }
+            0  +      2 + 4              ,{ y }
+            0  +      2 + 4              ,{ z }
+            0  +  1                      ,{ { }
+            0                            ,{ | }
+            0  +              8          ,{   }
+            0                            ,{ ~ }
+            0                            ,{ DEL }
 
-@testattr:  mov   dx,cx
-@ta1:       push  ax
-            mov   cx,dx
-            mov   si,offset dispbuf[2]
-@talp1:     cmp  al,[si]
-            jnz   @tanext1
-            mov   ah,[si-2]
+            0  +      2 + 4              ,{ Ä }
+            0  +      2 + 4              ,{ Å }
+            0  +      2 + 4              ,{ Ç }
+            0  +      2 + 4              ,{ É }
+            0  +      2 + 4              ,{ Ñ }
+            0  +      2 + 4              ,{ Ö }
+            0  +      2 + 4              ,{ Ü }
+            0  +      2 + 4              ,{ á }
+            0  +      2 + 4              ,{ à }
+            0  +      2 + 4              ,{ â }
+            0  +      2 + 4              ,{ ä }
+            0  +      2 + 4              ,{ ã }
+            0  +      2 + 4              ,{ å }
+            0  +      2 + 4              ,{ ç }
+            0  +      2 + 4              ,{ é }
+            0  +      2 + 4              ,{ è }
+            0  +      2 + 4              ,{ ê }
+            0  +      2 + 4              ,{ ë }
+            0  +      2 + 4              ,{ í }
+            0  +      2 + 4              ,{ ì }
+            0  +      2 + 4              ,{ î }
+            0  +      2 + 4              ,{ ï }
+            0  +      2 + 4              ,{ ñ }
+            0  +      2 + 4              ,{ ó }
+            0  +      2 + 4              ,{ ò }
+            0  +      2 + 4              ,{ ô }
+            0  +      2 + 4              ,{ ö }
+            0  +          4              ,{ õ }
+            0  +          4              ,{ ú }
+            0  +          4              ,{ ù }
+            0  +          4              ,{ û }
+            0                            ,{ ü }
+            0  +      2 + 4              ,{ † }
+            0  +      2 + 4              ,{ ° }
+            0  +      2 + 4              ,{ ¢ }
+            0  +      2 + 4              ,{ £ }
+            0  +      2 + 4              ,{ § }
+            0  +      2 + 4              ,{ • }
+            0  +          4              ,{ ¶ }
+            0  +          4              ,{ ß }
+            0  +  1 +         8          ,{ ® }
+            0                            ,{ © }
+            0                            ,{ ™ }
+            0                            ,{ ´ }
+            0                            ,{ ¨ }
+            0  +  1 +         8          ,{ ≠ }
+            0  +  1                      ,{ Æ }
+            0  +              8          ,{ Ø }
+            0                            ,{ ∞ }
+            0                            ,{ ± }
+            0                            ,{ ≤ }
+            0                            ,{ ≥ }
+            0                            ,{ ¥ }
+            0                            ,{ µ }
+            0                            ,{ ∂ }
+            0                            ,{ ∑ }
+            0                            ,{ ∏ }
+            0                            ,{ π }
+            0                            ,{ ∫ }
+            0                            ,{ ª }
+            0                            ,{ º }
+            0                            ,{ Ω }
+            0                            ,{ æ }
+            0                            ,{ ø }
+            0                            ,{ ¿ }
+            0                            ,{ ¡ }
+            0                            ,{ ¬ }
+            0                            ,{ √ }
+            0                            ,{ ƒ }
+            0                            ,{ ≈ }
+            0                            ,{ ∆ }
+            0                            ,{ « }
+            0                            ,{ » }
+            0                            ,{ … }
+            0                            ,{   }
+            0                            ,{ À }
+            0                            ,{ Ã }
+            0                            ,{ Õ }
+            0                            ,{ Œ }
+            0                            ,{ œ }
+            0                            ,{ – }
+            0                            ,{ — }
+            0                            ,{ “ }
+            0                            ,{ ” }
+            0                            ,{ ‘ }
+            0                            ,{ ’ }
+            0                            ,{ ÷ }
+            0                            ,{ ◊ }
+            0                            ,{ ÿ }
+            0                            ,{ Ÿ }
+            0                            ,{ ⁄ }
+            0                            ,{ € }
+            0                            ,{ ‹ }
+            0                            ,{ › }
+            0                            ,{ ﬁ }
+            0                            ,{ ﬂ }
+            0  +      2 + 4              ,{ ‡ }
+            0  +      2 + 4              ,{ · }
+            0  +      2 + 4              ,{ ‚ }
+            0  +      2 + 4              ,{ „ }
+            0  +      2 + 4              ,{ ‰ }
+            0  +      2 + 4              ,{ Â }
+            0  +      2 + 4              ,{ Ê }
+            0  +      2 + 4              ,{ Á }
+            0  +      2 + 4              ,{ Ë }
+            0  +      2 + 4              ,{ È }
+            0  +      2 + 4              ,{ Í }
+            0  +      2 + 4              ,{ Î }
+            0                            ,{ Ï }
+            0                            ,{ Ì }
+            0                            ,{ Ó }
+            0                            ,{ Ô }
+            0                            ,{  }
+            0                            ,{ Ò }
+            0                            ,{ Ú }
+            0                            ,{ Û }
+            0                            ,{ Ù }
+            0                            ,{ ı }
+            0                            ,{ ˆ }
+            0                            ,{ ˜ }
+            0                            ,{ ¯ }
+            0                            ,{ ˘ }
+            0                            ,{ ˙ }
+            0                            ,{ ˚ }
+            0  +          4              ,{ ¸ }
+            0  +          4              ,{ ˝ }
+            0                            ,{ ˛ }
+            0  +  1 +         8          ){ #255 };
 
-            push  bx
-            mov   bl,ah
-            mov   bh,0
-            test  byte ptr cs:@delimiters[bx],1     { Byte vor Startzeichen ok? }
-            pop   bx
+{$IFDEF BP}
 
-            jz    @tanext1
-            mov   ah,[si+2]
+var
+  dispbuf: array[1..164] of byte;  {82 Zeichen und 82 Attribute}
 
-            push  bx
-            mov   bl,ah
-            mov   bh,0
-            test  byte ptr cs:@delimiters[bx],2     { Byte vor Startzeichen ok? }
-            pop   bx
+procedure ListDisplay(x,y:word; var s:string); far; assembler;
 
-            jnz   @tastart                 { Startzeichen gefunden }
-@tanext1:   add   si,2
-            loop  @talp1
-            jmp   @taende
+asm
+            les di,s
+            cld
+            xor cx,cx
+            mov cl,es:[di]
+            inc di
+            push cx
+            mov bx,offset dispbuf          { s + color -> dispbuf }
+            mov ah,textattr
+            mov al,' '                     { Abgrenzung links }
+            mov [bx],ax
+            add bx,2
+            
+@dcopylp:   mov al,es:[di]
+            inc di
+            mov [bx],ax
+            add bx,2
+            loop @dcopylp
+            mov al,' '                     { Abgrenzung rechts }
+            mov [bx],ax
+            pop cx
 
-@tastart:   mov   bx,si
-            dec   cx
-            jcxz  @taende
-            dec   cx                      { min. ein Zeichen Abstand }
-            jcxz  @taende
-            add   si,4
-@talp2:     cmp   al,[si]
-            jnz   @tanext2
-            mov   ah,[si-2]
+            cmp ListXhighlight,0           { keine Hervorhebungen? }
+            jz @nodh
+            mov al,'*'
+            call @testattr                 { sichert cx }
+            mov al,'_'
+            call @testattr
+{            mov   al,'/' 
+             call  @testattr 
+}
 
-            push  bx
-            mov   bl,ah
-            mov   bh,0
-            test  byte ptr cs:@delimiters[bx],4     { Byte vor Endzeichen ok? }
-            pop   bx
+@nodh:      mov ax,base                   { dispbuffer -> Bildschirm }
+            mov es,ax
+            mov ax,y
+            dec ax
+            mov si,zpz
+            add si,si                     { si <- 160 }
+            mul si
+            mov di,x
+            dec di
+            add di,di
+            add di,ax                     { es:di <- Bildschirmadresse }
+            mov si,offset dispbuf[2]
+            rep movsw
 
-            jz    @tanext2
-            mov   ah,[si+2]
+            jmp @ende 
 
-            push  bx
-            mov   bl,ah
-            mov   bh,0
-            test  byte ptr cs:@delimiters[bx],8     { Byte vor Endzeichen ok? }
-            pop   bx
 
-            jnz   @tafound2                { Endzeichen gefunden }
-@tanext2:    add   si,2
-            loop  @talp2
-            jmp   @taende
+{-----------------------}
 
-@tafound2:  push  cx
-            mov   cx,si
-            sub   cx,bx
-            shr   cx,1
-            dec   cx                      { cx <- Anzahl hervorgeh. Zeichen }
-            mov   di,bx
-            mov   ah,listhicol
-@tacopy1:   mov   al,[di+2]              { hervorgehobenen Text eins nach }
-            mov   [di],ax                 { vorne kopieren; Farbe tauschen }
-            add   di,2
-            loop  @tacopy1
-            pop   cx
-            dec   cx                      { restliche Zeichen }
-            jcxz  @addspace
-@tacopy2:   mov   ax,[di+4]
-            mov   [di],ax
-            add   di,2
-            loop  @tacopy2
-@addspace:  mov   byte ptr [di],' '       { 2 Leerzeichen anhÑngen }
-            mov   byte ptr [di+2],' '
+@testattr:  mov dx,cx
+            xor bx,bx 
 
-            pop   ax
-            jmp   @ta1                     { ... und das Ganze nochmal }
+            {-----------}
+@ta1:       push ax 
+            mov cx,dx
+            xor si,si 
 
-@taende:    pop   ax
-            mov   cx,dx
+@talp1:     cmp al,byte ptr dispbuf[si]            { Startzeichen checken }                                 
+            jne @tanext1
+
+             mov bl,byte ptr dispbuf[si-2] 
+             test byte ptr delimiters[bx],1        { Byte vor Startzeichen ok? }
+             jz @tanext1
+             mov bl,byte ptr dispbuf[si+2]
+             test byte ptr delimiters[bx],2        { Byte vor Startzeichen ok? }
+             jnz @tastart                          { Startzeichen gefunden }
+
+@tanext1:   add si,2
+            loop @talp1
+            jmp @taende
+
+            {-----------}
+
+@tastart:   mov di,si                              { Di = Byte nach Startzeichen }                           
+            dec cx
+            jz @taende
+            dec cx                                 { min. ein Zeichen Abstand }
+            jz @taende
+            add si,4                               { dann Endzeichen Checken }
+
+@talp2:     cmp al,byte ptr dispbuf[si]
+            jne @tanext2
+
+             mov bl,byte ptr dispbuf[si-2]
+             test byte ptr delimiters[bx],4        { Byte vor Endzeichen ok? }
+             jz @tanext2
+             mov bl,byte ptr dispbuf[si+2] 
+             test byte ptr delimiters[bx],8       { Byte nach Endzeichen ok? }
+             jnz @tafound2                        { Endzeichen gefunden }
+
+@tanext2:   add si,2
+            loop @talp2                            
+            jmp @taende
+
+            {------------}
+             
+@tafound2:  push cx
+            mov cx,si
+            sub cx,di
+            shr cx,1
+            dec cx                                 { cx <- Anzahl hervorgeh. Zeichen }
+            mov ah,listhicol
+
+@tacopy1:   mov al,byte ptr dispbuf[di+2]          { hervorgehobenen Text eins nach }
+            mov word ptr dispbuf[di],ax            { vorne kopieren; Farbe tauschen }
+            add di,2
+            loop @tacopy1
+
+            pop cx
+            dec cx                                 { restliche Zeichen }
+            jz @addspace
+
+@tacopy2:   mov ax,word ptr dispbuf[di+4]
+            mov word ptr dispbuf[di],ax
+            add di,2
+            loop @tacopy2
+
+@addspace:  mov byte ptr dispbuf[di],' '           { 2 Leerzeichen anhÑngen }
+            mov byte ptr dispbuf[di+2],' '
+            pop ax
+            jmp @ta1                               { ... und das Ganze nochmal }
+
+
+@taende:    pop ax
+            mov cx,dx
             retn
 
-@start:     push  ds
-            les   di,s
-            cld
-            mov   cl,es:[di]
-            inc   di
-            mov   ch,0
-            push  cx
-            mov   bx,offset dispbuf       { s + color -> dispbuf }
-            mov   ah,textattr
-            mov   al,' '                  { Abgrenzung links }
-            mov   [bx],ax
-            inc   bx
-            inc   bx
-@dcopylp:   mov   al,es:[di]
-            inc   di
-            mov   [bx],ax
-            inc   bx
-            inc   bx
-            loop  @dcopylp
-            mov   al,' '                  { Abgrenzung rechts }
-            mov   [bx],ax
-            pop   cx
-
-            cmp   ListXhighlight,0        { keine Hervorhebungen? }
-            jz    @nodh
-            mov   al,'*'
-            call  @testattr                { sichert cx }
-            mov   al,'_'
-            call  @testattr
-{;           mov   al,'/' }
-{;           call  testattr }
-
-@nodh:      mov   ax,base                 { dispbuffer -> Bildschirm }
-            mov   es,ax
-            mov   ax,y
-            dec   ax
-            mov   si,zpz
-            add   si,si                   { si <- 160 }
-            mul   si
-            mov   di,x
-            dec   di
-            add   di,di
-            add   di,ax                   { es:di <- Bildschirmadresse }
-            mov   si,offset dispbuf[2]
-            rep   movsw
-            pop ds
+{-------------------------}
 @ende:
+end; { of Listdisplay }
+
+
+
+{$ELSE}  
+
+{ --- 32-Bit --- }           
+
+{ Variable in XP0.PAS: }
+{ charbuf     : string[82];                  {82 Zeichen}
+{ attrbuf     : array [1..82] of smallword;  {82 Attribute}
+
+{ Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
+{ mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
+
+procedure MakeListDisplay(const s:string); assembler;
+
+asm
+            mov edi,s
+            cld
+            xor ecx,ecx 
+            mov cl,[edi]
+            inc edi            
+            push ecx
+
+            xor ebx,ebx                    { s + color -> dispbuf }
+
+            mov dh,0
+            mov dl,textattr
+            mov al,' '                     { Abgrenzung links }
+            mov byte ptr charbuf[ebx],al
+            mov byte ptr attrbuf[ebx*2],dx
+            inc ebx 
+            
+@dcopylp:   mov al,[edi]
+            mov byte ptr charbuf[ebx],al             
+            mov word ptr attrbuf[ebx*2],dx
+            inc edi
+            inc ebx            
+            loop @dcopylp
+
+            mov al,' '                     { Abgrenzung rechts }    
+            mov byte ptr charbuf[ebx],al
+            mov word ptr attrbuf[ebx*2],dx
+            pop ecx
+
+            cmp ListXhighlight,0           { keine Hervorhebungen? }
+            je @nodh
+            mov al,'*'
+            call @testattr                 { sichert cx }
+            mov al,'_'
+            call @testattr
+{            mov   al,'/'          
+             call  @testattr
+}
+@nodh:      mov byte ptr charbuf[0],cl
+            add ecx,ecx
+            mov byte ptr attrbuf[0],cx
+            jmp @ende 
+
+
+{-----------------------}
+
+@testattr:  mov edx,ecx
+            xor ebx,ebx 
+
+            {-----------}
+@ta1:       push eax 
+            mov ecx,edx
+            xor esi,esi   
+
+@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }                                 
+            jne @tanext1
+
+             mov bl,byte ptr charbuf[esi-1] 
+             test byte ptr delimiters[ebx],1      { Byte vor Startzeichen ok? }
+             jz @tanext1
+             mov bl,byte ptr charbuf[esi+1]
+             test byte ptr delimiters[ebx],2      { Byte vor Startzeichen ok? }
+             jnz @tastart                          { Startzeichen gefunden }
+
+@tanext1:   inc esi
+            loop @talp1
+            jmp @taende
+
+            {-----------}
+
+@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }                           
+            dec ecx                                
+            jz @taende                             { Mindestens 1 Zeichen abstand }
+            inc si                                 { dann Endzeichen Checken }
+
+@talp2:     cmp al,byte ptr charbuf[esi]
+            jne @tanext2
+
+             mov bl,byte ptr charbuf[esi-1]
+             test byte ptr delimiters[ebx],4     { Byte vor Endzeichen ok? }
+             jz @tanext2
+             mov bl,byte ptr charbuf[esi+1] 
+             test byte ptr delimiters[ebx],8     { Byte nach Endzeichen ok? }
+             jnz @tafound2                        { Endzeichen gefunden }
+
+@tanext2:   inc esi
+            loop @talp2                            
+            jmp @taende
+
+            {------------}
+             
+@tafound2:  push ecx
+            mov ecx,esi
+            sub ecx,edi
+            dec ecx                                { cx <- Anzahl hervorgeh. Zeichen }
+            mov ah,listhicol
+
+@tacopy1:   mov al,byte ptr charbuf[edi+1]        { hervorgehobenen Text eins nach }
+            mov byte ptr charbuf[edi],al          { vorne kopieren; Farbe tauschen }
+            mov byte ptr attrbuf[edi*2],ah
+            inc edi
+            loop @tacopy1
+
+            pop ecx
+            dec ecx                                { restliche Zeichen }
+            jz @addspace             
+            
+@tacopy2:   mov al,byte ptr charbuf[edi+2]
+            mov byte ptr charbuf[edi],al
+            inc edi
+            loop @tacopy2
+
+@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anhÑngen }
+            pop eax
+            jmp @ta1                               { ... und das Ganze nochmal }
+
+@taende:    pop eax
+            mov ecx,edx
+            ret
+
+{-------------------------}
+@ende:
+end; { of MakeListdisplay }
+
+
+procedure ListDisplay(x,y:word; var s:string);
+
+begin
+  makelistdisplay(s);
+  Consolewrite(x,y,length(s));
 end;
 
+
 {$ENDIF}
+
+
+
 
 procedure interr(txt:string);
 begin
@@ -2164,6 +2317,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/04/09 06:51:56  jg
+  - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
+  - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
+
   Revision 1.24  2000/04/04 21:01:23  mk
   - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
 

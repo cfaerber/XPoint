@@ -79,6 +79,7 @@ procedure FWrt(const x,y:word; const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht ver„ndert }
 procedure SDisp(const x,y:word; const s:string);
+procedure consolewrite(x,y:word; num:dword);
 {$ENDIF }
 
 {$IFDEF Ver32 }
@@ -118,6 +119,8 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
 { ========================= Implementation-Teil =========================  }
 
 IMPLEMENTATION
+
+uses xp0;
 
 const rchar : array[1..3,1..6] of char =
               ('ÚÄ¿³ÀÙ','ÉÍ»ºÈ¼','ÕÍ¸³Ô¾');
@@ -448,6 +451,24 @@ begin
 {$ENDIF }
 end;
 {$ENDIF }
+
+{$IFDEF Ver32}
+procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
+var                                           { Attribute in xp0.attrbuf (Array of smallword)}
+  WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
+  OutRes: LongInt;                            { Auf Konsole ausgeben....}
+begin 
+  WritePos.X := x-1; WritePos.Y := y-1;
+{$IFDEF FPC }
+  WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, @OutRes);
+  writeConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, @OutRes);   
+{$ELSE }
+  WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
+  WriteConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, OutRes);
+{$ENDIF} 
+end;
+{$Endif}
+
 
 {$IFDEF Ver32 }
 procedure SDisp(const x,y:word; const s:string);
@@ -1096,6 +1117,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/04/09 06:51:56  jg
+  - XP/32 Listdisplay (Hervorhebungsroutine fuer Lister) portiert.
+  - XP/16 Listdisplay etwas umgebaut und optimiert (Tabelle in DS)
+
   Revision 1.18  2000/04/04 21:01:22  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
