@@ -206,10 +206,14 @@ function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
   der tatsÑchlich allocierte Speicher }
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 procedure UTF82IBM(var s: String);
+Function RenameDir(Const OldName, NewName : String) : Boolean;
 
 { ================= Implementation-Teil ==================  }
 
 implementation
+
+uses
+  Strings;
 
 type psplit = record              { FÅr Pointer-Type-Cast }
                 o,s : smallword;
@@ -2195,6 +2199,25 @@ begin
   GetMaxMem := Size;
 end;
 
+Function RenameDir(Const OldName, NewName : String) : Boolean;
+var
+  Regs: registers;
+  Puffer: array[0..511] of Char;
+begin
+  StrPCopy(Puffer, OldName + #0 + NewName);
+  Regs.dx := Ofs(Puffer);
+  Regs.Ds := Seg(Puffer);
+  Regs.di := Ofs(Puffer) + Length(OldName) + 1;
+  Regs.Es := Seg(Puffer);
+{  if LFNSupport then
+    Regs.Eax := $7156
+  else }
+    Regs.ax := $5600;
+  Regs.cx := $ff;
+  Intr($21, Regs);
+  RenameDir := (Regs.Flags and fCarry = 0);
+end;
+
 procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
   var i,j,k:integer;
       sc:record case integer of
@@ -2224,6 +2247,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.14  2001/04/20 17:28:48  mk
+  - misc updates
+
   Revision 1.37.2.13  2001/04/09 16:47:16  mk
   - arbeiten am Client-Modus
 

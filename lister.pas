@@ -424,8 +424,8 @@ begin
     @colfunc:=nil;
     @displproc:=nil;
     startpos:=1;
-    if emspages>0 then memflag:=1 else memflag := 0;
   end;
+  memflag := 0;
   mmm:=0;
   EmsBSeg:=$ffff;
 end;
@@ -1505,6 +1505,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.7  2001/04/20 17:28:48  mk
+  - misc updates
+
   Revision 1.19.2.6  2001/04/19 14:28:40  mk
   - save some memory
 

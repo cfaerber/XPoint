@@ -797,7 +797,8 @@
             renbox2('.RC');
             renbox2('.CFG');
             renbox2(BfgExt);
-            RmDir(OwnPath + XFerDir + Dname);
+            { RmDir(OwnPath + XFerDir + Dname); }
+            RenameDir(BoxPar^.PPPClientpath+old_dname, BoxPar^.PPPClientpath+dname);
             end;
           end;
         end;
@@ -1401,6 +1402,9 @@
 
 {
   $Log$
+  Revision 1.10.2.21  2001/04/20 17:28:50  mk
+  - misc updates
+
   Revision 1.10.2.20  2001/04/19 15:03:06  mk
   - -client
 

@@ -380,7 +380,7 @@ begin
           MakeQP:=true else
         if switch='1522' then
           RFC1522:=true else
-        if switch='client' then
+        if (switch='client') or (switch='ppp') then
           client:=true else
         if switch='lfn' then
           EnableLFN else
@@ -3472,6 +3472,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.38  2001/04/20 17:28:49  mk
+  - misc updates
+
   Revision 1.35.2.37  2001/04/19 15:03:04  mk
   - -client
 
