@@ -529,7 +529,7 @@ begin
   end;
 
   assign(f,fn);
-  resetfm(f,0);
+  resetfm(f, fmOpenRead + fmShareDenyNone);
   IOExcept(EUUCProtFile);
 end;
 
@@ -723,7 +723,7 @@ var cin : text;
       if IOResult<>0 then ;
     { send execution file }
     try
-      resetfm(f2,0);
+      resetfm(f2, fmOpenRead + fmShareDenyNone);
       seek(f2,0);
       s:=Format('S %s %s %s - %s 0666',
         ['X.'+Mid(fs,3),'X.'+Mid(c.dest,3),c.user,'X.'+Mid(fs,3)]);
@@ -1122,6 +1122,11 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.4  2003/08/24 21:35:37  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.24.2.3  2002/07/31 17:08:41  ma
   - CL: fixed UUCP-over-IP crash
     see <8Qc1W4n1bTB@dirk.deimeke.net> and <8Qk7IATmbTB@dirk.deimeke.net>

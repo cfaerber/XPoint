@@ -64,14 +64,6 @@ const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
 
       logfilename = 'ZPR.LOG';
 
-    {$ifdef os2}
-      ReadFilemode  = $40;
-      WriteFilemode = $12;
-    {$else}
-      ReadFilemode  = 2;
-      WriteFilemode = 2;
-    {$endif}
-
 type
   PathStr = string;          { Full file path string }
 
@@ -358,12 +350,12 @@ begin
     ValidFileName:=false
   else begin
     assign(f,name);
-    filemode:=ReadFilemode;
+    filemode:= fmOpenRead + fmShareDenyNone;
     reset(f,1);
     if ioresult=0 then
       ValidFilename:=true
     else begin
-      filemode:=WriteFilemode;
+      filemode:= fmOpenWrite + fmShareDenyNone;
       rewrite(f);
       close(f);
       erase(f);
@@ -375,7 +367,7 @@ end;
 procedure checkpar;
 begin
   if fi='' then error('keine Quelldatei angegeben');
-  filemode:=ReadFilemode;
+  filemode:= fmOpenRead + fmShareDenyNone;
   assign(f1,fi); reset(f1,1); close(f1);
   if ioresult<>0 then
     error('Datei "'+fi+'" nicht vorhanden oder nicht lesbar.');
@@ -399,11 +391,11 @@ begin
       fo := ChangeFileExt(fi, '$$$')
     else
       makebak(fo, ExtBak);
-    filemode:=WriteFilemode;
+    filemode:=fmOpenWrite + fmShareDenyNone;
     assign(f2,fo); rewrite(f2,1);
     if ioresult<>0 then error('Kann Tempor„rdatei "'+fo+'" nicht ”ffnen.');
     end;
-  filemode:=ReadFilemode;
+  filemode:= fmOpenRead + fmShareDenyNone;
   assign(f1,fi); reset(f1,1);
   fsize:=filesize(f1);
   writeln('Eingabedatei: ',fi);
@@ -419,7 +411,7 @@ begin
   writeln;
   if ParLogfile then begin
     assign(logfile,logfilename);
-    filemode:=WriteFilemode;
+    filemode:=fmOpenWrite + fmShareDenyNone;
     append(logfile);
     if ioresult<>0 then rewrite(logfile);
     if ioresult<>0 then error('Kann '+logfilename+' nicht ”ffnen.');
@@ -428,7 +420,7 @@ begin
     writeln(logfile);
     end;
   if errfile then begin
-    filemode:=WriteFilemode;
+    filemode:= fmOpenWrite + fmShareDenyNone;
     assign(f3,ferr); rewrite(f3,1);
     if ioresult<>0 then
       error('Kann Fehlerausgabedatei "'+ferr+'" nicht ”ffnen.');
@@ -1274,6 +1266,11 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.4  2003/08/24 21:35:36  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.48.2.3  2002/07/21 20:14:42  ma
   - changed copyright from 2001 to 2002
 

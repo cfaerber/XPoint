@@ -390,7 +390,7 @@ label ende;
 begin
   assign(f,fn);
   fm:=filemode;
-  filemode:=0;
+  filemode:= fmOpenRead + fmShareDenyWrite;
   reset(f,1);
   filemode:=fm;
   if ioresult<>0 then
@@ -510,7 +510,7 @@ begin
     opened:=false; ende:=false;
     assign(f,fn);
     fm:=filemode;
-    filemode:=0;
+    filemode:= fmOpenRead + fmShareDenyWrite;
     reset(f,1);
     filemode:=fm;
     if ioresult<>0 then ende:=true
@@ -939,6 +939,11 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.2  2003/08/24 21:35:32  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.32.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 

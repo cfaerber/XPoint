@@ -701,7 +701,7 @@ begin
   root:=nil;
   if Fileexists(fn) then
   begin
-    mfm:=filemode; filemode:=0;
+    mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn); reset(t);
     filemode:=mfm;
 {$IFDEF FPC }
@@ -803,7 +803,7 @@ begin
   if Fileexists(fn) then
   begin
     getmem(ibuf,sizeof(tbytestream));
-    mfm:=filemode; filemode:=0;
+    mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn);  reset(t,1);
     filemode:=mfm;
 {$IFDEF VP }
@@ -1836,6 +1836,11 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.82.2.5  2003/08/24 21:35:33  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.82.2.4  2003/04/25 20:05:39  mk
   - added FormatBlock (<Ctrl-B>)
 

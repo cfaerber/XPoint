@@ -120,13 +120,13 @@ function _deutsch:boolean;
 var t : text;
     s : string;
 begin
-  filemode:=0;
+  filemode:= fmOpenRead + fmShareDenyWrite;
   assign(t,'xp.res');
   reset(t);
   readln(t,s);
   close(t);
   _deutsch:=(ioresult=0) and (UpperCase(s)='OPENXP-D.RES');
-  filemode:=2;
+  filemode:= fmOpenReadWrite + fmShareDenyWrite;
 end;
 
 var
@@ -175,6 +175,11 @@ end;
 
 {
   $Log$
+  Revision 1.50.2.2  2003/08/24 21:35:36  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.50.2.1  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 

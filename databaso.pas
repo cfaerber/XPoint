@@ -357,7 +357,7 @@ begin
         end;
       end;
     close(f1);
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     filemode:=mfm;
     dbClose(d);
@@ -439,6 +439,11 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.3  2003/08/24 21:35:32  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.17.2.2  2002/07/26 08:05:02  mk
   - simplyfied deletion of Index files
 

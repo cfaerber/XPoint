@@ -619,7 +619,7 @@ begin
     fname:=FileUpperCase(name);
     hdupdate:=true;
     assign(f1,name+dbExt);
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     filemode:=mfm;
     if inoutres<>0 then begin
@@ -655,7 +655,7 @@ begin
       if dl then dbLog('   .EB1 ”ffnen..');
 {$ENDIF }
       assign(fe,name+dbExtExt);
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
       reset(fe,1);
       filemode:=mfm;
       if not iohandler then exit;
@@ -748,7 +748,7 @@ procedure dbTempOpen(var dbp:DB);
 var mfm : byte;
 begin
   with dp(dbp)^ do begin
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     if flindex then reset(fi,1);
     if xflag then reset(fe,1);
@@ -1618,6 +1618,11 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.5  2003/08/24 21:35:32  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.52.2.4  2002/09/30 12:09:19  cl
   - BUGFIX <8Wv6b4jJcDB@3247.org>: off-by-one error
 

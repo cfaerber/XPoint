@@ -885,8 +885,7 @@ begin
     if not eof(t) then readln(t);
     if not eof(t) then readln(t,s0);
     close(t);
-    FileMode := fmOpenReadWrite;
-    fm_rw;
+    FileMode := fmOpenReadWrite + fmShareDenyNone;
     if s0<>'' then begin
       inc(sn);
       sa[sn]:=FileUpperCase(sr.name);
@@ -927,6 +926,11 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.6  2003/08/24 21:35:34  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.52.2.5  2003/08/24 21:01:38  mk
   - fixed #557886: Sprachumschaltung geht nicht (Linux)
   - fixed Filemode after language selection

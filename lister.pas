@@ -381,7 +381,7 @@ var
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
   assign(f, FileName);
-  fm := filemode; filemode := 0;
+  fm := filemode; filemode := fmOpenRead + fmShareDenyWrite;
   reset(f, 1);
   filemode := fm;
   ps := ListerBufferCount;
@@ -1153,6 +1153,11 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.5  2003/08/24 21:35:33  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.69.2.4  2003/08/24 14:37:27  cl
   - merged fixes from main branch:
 

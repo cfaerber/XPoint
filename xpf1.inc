@@ -93,7 +93,7 @@ begin
   ni.found:=false;                                             
   if nfile>NodeList.Count-1 then exit;
   assign(nodelf,FidoDir+NodeList.GetFilename(nfile));    //es kann ein nodelisten index von
-  resetfm(nodelf,fmRead);
+  resetfm(nodelf, fmOpenRead + fmShareDenyNone);
   if ioresult=0 then
   begin
     { reset(nodelf^,1);  !?!? }
@@ -899,6 +899,11 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
+  Revision 1.40.2.4  2003/08/24 21:35:35  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.40.2.3  2002/07/21 20:14:39  ma
   - changed copyright from 2001 to 2002
 

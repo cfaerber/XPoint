@@ -659,12 +659,16 @@ var t     : text;
     lines : Integer;
     a     : taste;
     p     : byte;
+    OldFileMode: Byte;
 begin
   QuoteOK:=true;
   assign(t,datei);
   settextbuf(t,buf);
   if not existf(t) or (trim(QChar)='') then exit;
-  fm_ro; reset(t); fm_rw;
+  OldFileMode := FileMode;
+  FileMode := fmOpenRead + fmShareDenyNone;
+  Reset(t);
+  FileMode := OldFileMode;
   n:=0; nq:=0;
   while not eof(t) do
   begin
@@ -699,12 +703,15 @@ function SizeOK:boolean;
 var t     : text;
     buf   : array[0..2047] of char;
     lines : longint;
+  OldFileMode: Byte;
 begin
   SizeOK:=true;
   assign(t,datei);
   settextbuf(t,buf);
   if not existf(t) then exit;
-  fm_ro; reset(t); fm_rw;
+  FileMode := fmOpenRead + fmShareDenyNone;
+  Reset(t);
+  FileMode := OldFileMode;
   lines:=0;
   while not eof(t) do begin
     inc(lines);
@@ -1153,6 +1160,11 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.12  2003/08/24 21:35:35  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.17.2.11  2003/05/01 19:05:22  mk
   - fixed #643453: parken funktioniert nicht
 

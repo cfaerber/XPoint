@@ -355,7 +355,7 @@ begin
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+iif(encode,data.Size div 2,0)+iif(sign,2000,0)+2000);
 
-  fis:=TFileStream.Create(fi,fmCreate or fmDenyWrite);
+  fis:=TFileStream.Create(fi, fmCreate); 
 
   if (hd.typ='T') and MimeContentTypeNeedCharset(hd.MIME.ctype) and
     (hd.x_charset<>'US-ASCII') and (hd.x_charset<>'') then
@@ -1190,6 +1190,11 @@ end;
 
 {
   $Log$
+  Revision 1.67.2.3  2003/08/24 21:35:34  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.67.2.2  2002/09/14 11:53:44  cl
   - Fixed some problems with PGP cleartext signing
   - Added DebugLog Output

@@ -40,7 +40,8 @@ var icr : dbIndexCRec;
   begin
     dbDisableIndexCache;
     with dp(dbp)^ do begin
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode;
+      filemode:= fmOpenReadWrite + fmShareDenyNone;
       rewrite(fi,1);
 {$IFDEF UnixFS }
       close(fi);
@@ -134,7 +135,7 @@ begin
       CreateIndex(dbp)
     else
     begin
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
       reset(fi,1);
       blockread(fi,ixhd,sizeof(ixhd));
       filemode:=mfm;
@@ -260,6 +261,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.12.2.3  2003/08/24 21:35:32  mk
+  - simplified and corrected FileMode Handling (now uses OS dependend
+    constants instead of hard coded values, this may prevent problems
+    with linux and other OS)
+
   Revision 1.12.2.2  2002/07/26 08:03:58  mk
   - if there is no database index, do not try to open anymore, instead
     create new index
