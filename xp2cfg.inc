@@ -426,7 +426,6 @@ begin
   new(unpacker);
 
   domainlist:=nil;
-  exzconfig:=exist('zconfig.exe') and exist('zm.exe');
 end;
 
 
@@ -483,9 +482,7 @@ begin
   stduhaltezeit:=0;
   QuoteBreak:=79;
   QuoteChar:='> '; qchar:=QuoteChar;
-  { 01/2000 oh }
   OtherQuoteChars:=false;
-  { /oh }
   Screenlines:=25;
 {$IFDEF UnixFS }
   temppath:='/tmp/';                        {alt: temppath:=ownpath;}
@@ -864,10 +861,8 @@ begin
   writeln(t,'StdUserHaltezeit=',stduhaltezeit);
   writeln(t,'QuoteBreak=',quotebreak);
   writeln(t,'Quote=','"',quotechar,'"');
-  { 01/2000 oh }
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
   otherqcback:=otherquotechars;
-  { /oh }
   writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
@@ -1439,10 +1434,8 @@ begin
           geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
-          { 01/2000 oh}
           getx(su,  'otherquotechars',otherquotechars) or
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
-          { /oh }
           getb(su,  'screenlines',screenlines) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
@@ -1666,10 +1659,11 @@ begin
     GetUsrFeldPos;
 
     extrakttyp:=defextrakttyp;
-    if ParZeilen>0 then begin
+    if ParZeilen>0 then
+    begin
       cfgscrlines:=screenlines;
       screenlines:=ParZeilen;
-      end;
+    end;
 
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
@@ -1789,6 +1783,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.66  2000/06/29 13:00:54  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.65  2000/06/24 14:10:27  mk
   - 32 Bit Teile entfernt
 

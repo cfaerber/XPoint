@@ -18,25 +18,69 @@ unit xpwin32;
 
 interface
 
-{ Anzahl der aktuellen Bildschirmzeilen }
-function Win32GetScreenLines: Integer;
+{ Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
+function SysGetScreenLines: Integer;
+function SysGetScreenCols: Integer;
+{ Ermittelt die grî·te Ausdehnung des Screens, die in AbhÑngigkeit
+  von Font und Fontgrî·e im Moment mîglich ist }
+procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
+{ éndert die Bildschirmgrî·e auf die angegeben Werte }
+procedure SysSetScreenSize(const Lines, Cols: Integer);
 
 implementation
 
 uses
   typeform, windows, winxp;
 
-function Win32GetScreenLines: Integer;
+function SysGetScreenLines: Integer;
 var
   csbi: TConsoleScreenBufferInfo;
 begin
   GetConsoleScreenbufferInfo(OutHandle, csbi);
-  Win32GetScreenLines := Max(csbi.srwindow.bottom+1, 25);
+  SysGetScreenLines := Max(csbi.srwindow.bottom+1, 25);
+end;
+
+function SysGetScreenCols: Integer;
+var
+  csbi: TConsoleScreenBufferInfo;
+begin
+  GetConsoleScreenbufferInfo(OutHandle, csbi);
+  SysGetScreenCols:= Max(csbi.srwindow.right+1, 80);
+end;
+
+procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
+begin
+  // !! ToDo, dynamisch holen
+  Lines := 120;
+  Cols := 160;
+end;
+
+procedure SysSetScreenSize(const Lines, Cols: Integer);
+var
+  Size: TCoord;
+  R: TSmallRect;
+begin
+  Size.X := Cols;
+  Size.Y := Lines;
+  SetConsoleScreenBufferSize(OutHandle, Size);
+  R.Left := 0;
+  R.Top := 0;
+  R.Right := Size.X - 1;
+  R.Bottom := Size.Y - 1;
+  SetConsoleWindowInfo(OutHandle, True, R);
 end;
 
 end.
 {
   $Log$
+  Revision 1.4  2000/06/29 13:01:03  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version l‰uft wieder
+  - Jochens 'B' Fixes ¸bernommen
+  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.3  2000/05/14 22:06:30  mk
   - Zeilenzahl mindestens 25
 

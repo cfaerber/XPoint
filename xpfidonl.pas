@@ -12,9 +12,6 @@
 { Nodelisten-Konfiguration; Diffs verarbeiten }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpfidonl;
 
@@ -744,6 +741,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/06/29 13:01:01  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.8  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

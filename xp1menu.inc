@@ -21,10 +21,6 @@ begin
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
       $015 : MenuHidden:=true; { Terminal }
-{$IFNDEF Win32 }
-      $095 : MenuHidden:=true; { Zeilen }
-{$ENDIF }
-      $097 : MenuHidden:=not exzconfig;              { Config/Anz./Pd-Zmodem }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
 {$IFDEF CAPI }
@@ -604,6 +600,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/06/29 13:00:53  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.12  2000/06/23 15:59:16  mk
   - 16 Bit Teile entfernt
 

@@ -12,9 +12,6 @@
 { Registrierung }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpreg;
 
@@ -1577,6 +1574,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/06/29 13:01:02  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

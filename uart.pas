@@ -184,19 +184,6 @@ const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
        intmask    : array[1..coms] of byte = ($10,$08,0,0);
        intcom2    : array[1..coms] of boolean = (false,false,false,false);
        trigger    : byte = $80;
-{$IFDEF BP }
-       datainout  = 0;     { UART-Register-Offsets }
-       intenable  = 1;
-       intids     = 2;     { Read  }
-       fifoctrl   = 2;     { Write }
-       linectrl   = 3;
-       modemctrl  = 4;
-       linestat   = 5;
-       modemstat  = 6;
-       scratch    = 7;
-       MC_DTR     = $01;       { Modem Control Register }
-       MC_RTS     = $02;
-{$ENDIF }
        MS_RI      = $40;       { Ring Indicator: Klingelsignal }
        MS_DCD     = $80;       { Data Carrier Detect           }
 
@@ -896,6 +883,14 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/06/29 13:00:50  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version l‰uft wieder
+  - Jochens 'B' Fixes ¸bernommen
+  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.9  2000/06/23 15:59:13  mk
   - 16 Bit Teile entfernt
 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { Netcall-Teil }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit  xp7;
 
@@ -718,46 +716,6 @@ begin                  { of Netcall }
 
     ComNr:=bport;
     in7e1:=false; out7e1:=false;
-    netcall:=false;
-    display:=ParDebug;
-    ende:=false;
-    wahlcnt:=0; connects:=0;
-    showkeys(17);
-
-    if net and _fido then begin       { --- FIDO - Mailer --------------- }
-      fillchar(nc^,sizeof(nc^),0);
-      inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      cursor(curoff);
-      inc(wahlcnt);
-      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
-                       uparcer<>'',crash,alias,addpkts,domain) of
-        EL_ok     : begin
-                      Netcall_connect:=true;
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-        EL_noconn : begin
-                      Netcall_connect:=false;
-                      goto ende0;
-                    end;
-        EL_recerr,
-        EL_senderr,
-        EL_nologin: begin
-                      Netcall_connect:=true;
-                      inc(connects);
-                      goto ende0;
-                    end;
-        EL_break  : begin
-                      Netcall:=false;
-                      goto ende0;
-                    end;
-      else          begin              { Parameter-Fehler }
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-      end;
-      end;
-
     fossiltest;
     if not ISDN then begin
       SetComParams(bport,fossil,Cport,Cirq);
@@ -792,6 +750,47 @@ begin                  { of Netcall }
         goto abbruch;
         end;
       end;
+
+    netcall:=false;
+    display:=ParDebug;
+    ende:=false;
+    wahlcnt:=0; connects:=0;
+    showkeys(17);
+
+    if net and _fido then begin       { --- FIDO - Mailer --------------- }
+      fillchar(nc^,sizeof(nc^),0);
+      inmsgs:=0; outmsgs:=0; outemsgs:=0;
+      ReleaseC;
+      cursor(curoff);
+      inc(wahlcnt);
+      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
+                       uparcer<>'',crash,alias,addpkts,domain) of
+        EL_ok     : begin
+                      Netcall_connect:=true;
+                      Netcall:=true;
+                      goto ende0;
+                    end;
+        EL_noconn : begin
+                      Netcall_connect:=false;
+                      goto ende0;
+                    end;
+        EL_recerr,
+        EL_senderr,
+        EL_nologin: begin
+                      Netcall_connect:=true;
+                      inc(connects);
+                      goto ende0;
+                    end;
+        EL_break  : begin
+                      Netcall:=false;
+                      goto ende0;
+                    end;
+      else          begin              { Parameter-Fehler }
+                      Netcall:=true;
+                      goto ende0;
+                    end;
+      end;
+    end;
 
     recs:=''; lrec:='';
     showconn:=false;
@@ -1558,6 +1557,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/06/29 13:00:57  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.16  2000/06/20 18:22:27  hd
   - Kleine Aenderungen
 

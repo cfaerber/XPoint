@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -31,40 +32,6 @@ procedure CfgColors;
 
 
 implementation  { -------------------------------------------------- }
-
-{ wie windows.fwrt(), allerdings bleibt der TextBackground unver„ndert }
-{$IFDEF BP }
-procedure sdisp(x,y:word; var s:string); assembler;
-asm
-         cld
-         mov    es,base
-         mov    ax,y
-         dec    ax
-         mov    cl,5
-         shl    ax,cl
-         mov    di,ax
-         shl    ax,1
-         shl    ax,1
-         add    di,ax
-         add    di,x
-         add    di,x
-         sub    di,2
-         mov    ah,textattr
-         and    ah,15
-         lds    si,s
-         mov    ch,0
-         lodsb
-         mov    cl,al
-         jcxz   @nowrt
-@lp:     lodsb
-         stosb
-         and    byte ptr es:[di],0f0h
-         or     es:[di],ah
-         inc    di
-         loop   @lp
-@nowrt:
-end;
-{$ENDIF }
 
 procedure EditFkeys(typ:byte);
 { const n_typ : array[0..3] of string[9] =
@@ -924,8 +891,10 @@ end;
 procedure CfgColors;
 var i     : integer;
     n,m,l : shortint;
+    p: ScrPtr;
 begin
-  wpushs(1,ScreenWidth,1,ScreenLines,'-'); { Ganzen Screen sichern, ohne Rahmen }
+  // wpushs(1,ScreenWidth,1,ScreenLines,'-'); { Ganzen Screen sichern, ohne Rahmen }
+  sichern(p);
   m2t:=false;
   attrtxt(7);
   moff;
@@ -1161,13 +1130,22 @@ begin
   showscreen(false);
   aufbau:=true;
   menurestart:=(n=0);
-  wpop;
+  // wpop;
+  holen(p);
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.15  2000/06/29 13:00:55  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.14  2000/06/23 15:59:18  mk
   - 16 Bit Teile entfernt
 

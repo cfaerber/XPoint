@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfhrliche Map-Datei erstellt werden. ndert den
@@ -132,6 +132,14 @@
 
 {
   $Log$
+  Revision 1.34  2000/06/29 13:00:59  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.33  2000/06/23 15:59:26  mk
   - 16 Bit Teile entfernt
 

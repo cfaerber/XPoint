@@ -10,9 +10,6 @@
 { Boxname.ITI laden. Wird von XPMAUS, XP8 und MAGGI verwendet. }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit  xp_iti;
 

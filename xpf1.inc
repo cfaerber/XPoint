@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -734,9 +735,6 @@ again:
   mwrt(x+28,y+14,getres2(2131,22));  { 'Eintr„ge:' }
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
   openlist(2,78,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
-{$IFDEF BP }
-  ListInitEMS(2048);   { 2 MB EMS reservieren }
-{$ENDIF}
   found:=0; n:=0;
   for i:=1 to NL_anz do
     with Nodelist^[i],NB_Data^ do
@@ -884,6 +882,14 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.8  2000/06/29 13:01:00  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.7  2000/04/25 21:19:20  mk
   - 32 Bit: Potentieller Fix fuer Suche nach Points in der Pointliste
 

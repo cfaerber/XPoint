@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -12,15 +13,12 @@
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp9;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -232,25 +230,25 @@ var ok   : boolean;
 {$ENDIF}
     path : string[127];
 begin
-  progtest:=true;				{ Warum immer TRUE? (hd/22.5.2000) }
+  progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
   path:=getenv('PATH');
   if ustr(left(s+' ',7))='ZMODEM ' then
 {$IFDEF UnixFS}
     begin
       if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
-        rfehler(933); 			{ '"rz" und "sz" muessen installiert....' }
+        rfehler(933);                   { '"rz" und "sz" muessen installiert....' }
       { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
       exit;
     end
 {$ELSE}
     fn:='ZM.EXE'
 {$ENDIF}
-  else 
+  else
     fn:=trim(s);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+ustr(fn)+'*','*COPY*DIR*PATH*')=0) then begin
 {$IFDEF UnixFS}
-    ok:=fsearch(fn,path)<>'';		{ Extension ist unbedeutend }
+    ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
 {$ELSE}
     fsplit(fn,dir,name,ext);
     if ext<>'' then
@@ -510,12 +508,12 @@ begin
   if s='' then
     testlogfile:=true
   else begin
-    if lstr(s)='logfile' then		{ Diese Pruefung ist nun wirklich der Hit (hd) }
+    if lstr(s)='logfile' then           { Diese Pruefung ist nun wirklich der Hit (hd) }
       if s[1]='l' then s:=s+'.log'
       else s:=s+'.LOG';
     if not multipos(_MPMask,s) then
       fn:=logpath+s
-    else 
+    else
       fn:=s;
     if validfilename(fn) then
       testlogfile:=true
@@ -1763,6 +1761,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/06/29 13:00:58  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.19  2000/05/22 18:07:07  hd
   - Progtest angepasst (Linux)
 

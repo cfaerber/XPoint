@@ -11,9 +11,6 @@
 { CrossPoint - Hotkey-Anzeige und Online-Hilfe }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp1help;
 
@@ -414,6 +411,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/29 13:00:53  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.7  2000/05/08 13:05:45  hd
   Anpassung an variable Screen-Breite
 

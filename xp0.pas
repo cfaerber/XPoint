@@ -743,8 +743,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        DisableAltN: boolean = false;   { Alt-N deaktiviert      }
        automessaging: boolean = false; { Nachrichten werden nicht-manuell }
        actscreenlines: integer = 25;
-       exzconfig  : boolean = false;   { exist('zconfig.exe') -> /C/A/P }
-                                       { verarbeitet (w„hren P.-Einlesen  }
        lockopen   : boolean = false;   { LOCKFILE ge”ffnet }
 
        XPhilite   : byte    = 20;
@@ -782,12 +780,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string[10] = '';   { Paáwort }
        ParZeilen  : byte = 0;          { Bildzeilen }
-{$IFDEF BP }
-       ParWintime : byte    = 0;       { Rechenleistungs-Freigabe:
-                                         0=aus, 1=Timeslice, 2=konservativ }
-{$ELSE }
        ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
-{$ENDIF }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
@@ -1181,6 +1174,14 @@ implementation
 end.
 {
   $Log$
+  Revision 1.58  2000/06/29 13:00:52  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.57  2000/06/24 14:10:27  mk
   - 32 Bit Teile entfernt
 

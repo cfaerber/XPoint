@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -487,11 +488,7 @@ var x,y,yy  : byte;
     if domove then begin
       dbWriteN(mbase,mb_adresse,newadr);
       seek(f1,adr);
-      {$IFDEF BP }
-        if (size>min(bsize,maxavail-15000)) then
-      {$ELSE }
-        if size>bsize then
-      {$ENDIF }
+      if size>bsize then
       begin
         flushbufs;
         while size>0 do begin
@@ -598,11 +595,7 @@ var x,y,yy  : byte;
 
 begin
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
-  {$IFDEF BP }
-    bsize:=min(maxavail-10000,50000);
-  {$ELSE }
-    bsize:=65536;
-  {$ENDIF }
+  bsize:=65536;
   getmem(p,bsize);
   test_killed;
   break:=false;
@@ -719,6 +712,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/06/29 13:00:56  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/23 15:59:21  mk
   - 16 Bit Teile entfernt
 

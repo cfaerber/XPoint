@@ -29,10 +29,9 @@ K (c) '93-98 Peter Mandrella
 6   Config,061^Optionenù28,062E^Xternù24,063^Pfade,064^Anzeigeù9,065^Modemù18,066^Drucker,067^Tastenù23,068^Zusatz-Men,069^Sichern
 7   Wartung,071^Reorganisation,072^Packen,073^BrettReorg,074^UserReorg,075^Adreábuch,076Dupes ^l”schen,-,078^Server-Wechsel,079S^onstigesù33
 8   Schablonen,081!^Kopf,082!^PrivKopf,083!^BrettQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Weiterleit,088!^Erneut,-,08a!^Signatur,08b!Pr^ivSignatur,08c!Emp^fBest.,08d!^L”schnachr.,08e!S^onstige
-9   Anzeige,091^Farben,092^Bretter,093^Nachrichten,094^Kopf,095^Zeilenù11,096^Diverses,098^Hilfen,097^PD-Zmodem
+9   Anzeige,091^Farben,092^Bretter,093^Nachrichten,094^Kopf,095^Zeilen,096^Diverses,098^Hilfen
 10  Import,0a1^Puffer einlesen,0a2^Fremdformat,0a3^Userliste,0a4^Brettliste,-,0a6^Yuppie-Nachrichten
 # Dummy fr XPME:
-11  Zeilen,0b125
 12  Extrakt,0c1^Nachricht,0c2^UUdecode,0c7M^IME-Decode,0c3^Brett,0c4^Kommentarbaum,0c5^Markiert,0c6!^Als..     T.o.Kopfù13
 13  Als,0d1Text ^ohne Kopf,0d2Text ^mit Kopf,0d3^Puffer,0d4^Quote
 14  Alle,0e1^Halten,0e2^L”schen,0e3^Markieren,0e4^Normal,0e5L^esen,0e6Ent^fernen,0e7^Drucken

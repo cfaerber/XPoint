@@ -546,11 +546,8 @@ var i  : integer;
     ml : shortint;
     ss : Hugestring;
 
-  procedure wrs(s:Hugestring);
+  procedure wrs(s: AnsiString);
   begin
-    {$IFDEF BP }
-    TruncStr(s,253);
-    {$ENDIF }
     s:=s+#13#10;
     wrfs(s);
   end;
@@ -3125,6 +3122,14 @@ end.
 
 {
   $Log$
+  Revision 1.37  2000/06/29 13:00:50  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.36  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

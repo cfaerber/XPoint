@@ -30,10 +30,9 @@ K (c) '93-96 Peter Mandrella
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
-9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-Zmodem
+9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines,096M^isc,098^Accessibility
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
-11  Zeilen,0b125
 12  Extrakt,0c1^Message,0c2^UUdecode,0c7M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Headerù13
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
 14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Kill,0e7^Print

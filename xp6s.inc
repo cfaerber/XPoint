@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -450,11 +451,7 @@ var p     : ^barr;
     rr: word;
     rr0   : word;
 begin
-  {$IFDEF BP }
-  siz:=min(maxavail-10000,32768);
-  {$ELSE }
   size := 32768;
-  {$ENDIF }
   getmem(p,siz);
   fm_ro; reset(f^,1); fm_rw;
   seek(f^,ofs);
@@ -1131,6 +1128,14 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.19  2000/06/29 13:00:57  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.18  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

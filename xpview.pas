@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { CrossPoint - Bin„rfile-Viewer }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpview;
 
@@ -203,7 +201,7 @@ end;
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : byte;
-    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)} 
+    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)}
     orgfn,fn1,
     parfn     : pathstr;
 begin
@@ -213,24 +211,24 @@ begin
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
 
-  if not fileattach then 
+  if not fileattach then
   begin
   if stricmp(fn,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
-    then orgfn:=TempS(_filesize(fn)+5000);                              
+    then orgfn:=TempS(_filesize(fn)+5000);
     if copyfile(fn,orgfn) then fn1:=orgfn;
     end;
- 
+
   prog:=viewer.prog;
   orgfn:=iifs(fn1<>'',fn1,fn);
 
                              {Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen }
   if not fileattach and delviewtmp then
   Begin
-    parfn:=TempS(_filesize(fn)+5000);      
+    parfn:=TempS(_filesize(fn)+5000);
     parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8);
     end
-  else parfn:=orgfn; 
-                              {Korrekte File-extension verwenden}  
+  else parfn:=orgfn;
+                              {Korrekte File-extension verwenden}
   parfn:=left(parfn,rightpos('.',parfn))+
     iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
@@ -247,6 +245,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/06/29 13:01:03  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.16  2000/05/04 10:43:01  mk
   - Unbenutze Units aus uses entnommen
 

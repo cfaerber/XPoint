@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { Nodelist }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpfido;
 
@@ -474,11 +472,7 @@ var x,y        : byte;
       end;
 
     begin
-      {$IFDEF BP }
-        bufsize:=min(ubufmax*sizeof(userrec),(maxavail-10000)div 3);
-      {$ELSE }
-        bufsize:=ubufmax*sizeof(userrec);
-      {$ENDIF }
+      bufsize:=ubufmax*sizeof(userrec);
       bufanz:=bufsize div sizeof(userrec);
       bufsize:=bufanz*sizeof(userrec);     { Gr”áe abrunden }
       getmem(buf[1],bufsize);
@@ -2116,11 +2110,7 @@ begin       { FidoSeekfile:string;************************ }
     new(pOutput);
     new(pFileListe);
     new(ni);
-    {$IFDEF BP }
-      tbs:=min(maxavail-5000,16384);
-    {$ELSE }
-      tbs:=16384;
-    {$ENDIF }
+    tbs:=16384;
     getmem(tb,tbs);
     assign(pOutput^,seekfile);
     rewrite(pOutput^);
@@ -2259,6 +2249,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/29 13:01:00  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

@@ -108,9 +108,8 @@ procedure setmenus;
 var i : integer;
 begin
   for i:=0 to menus do
-    if (i<>11) then setmenu(i,getres2(10,i));
+    setmenu(i,getres2(10,i));
   zusatz_menue;
-  setmenu(11,'Zeilen,0b125,0b226,0b328,0b430,0b533,0b636,0b740,0b844,0b950');
   FreeRes;
 end;
 
@@ -1073,6 +1072,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/06/29 13:00:54  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.47  2000/06/23 15:59:17  mk
   - 16 Bit Teile entfernt
 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { Datumsroutinen fÅr XP, MAGGI, ZFIDO }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F+,O+}
-{$ENDIF }
 
 unit xpdatum;
 
@@ -23,7 +21,7 @@ uses
 {$IFDEF Linux }
   linux,
   sysutils,
-{$ENDIF } 
+{$ENDIF }
   typeform,
   montage,
   xpglobal;
@@ -135,7 +133,7 @@ begin
   tzMinutes:= tzBase mod 60;
   { Stunde hat 60 Minuten }
   tzHours:= tzBase div 60;
-  
+
   if (tzdaylight) then
     s:= 'S'
   else
@@ -149,7 +147,7 @@ begin
   { Minuten? }
   if (tzMinutes <> 0) then begin
     s:= s + ':';
-    if (tzMinutes < 10) then		{ Kenne zwar keine solche Zone, aber wer weiss }
+    if (tzMinutes < 10) then            { Kenne zwar keine solche Zone, aber wer weiss }
       s:= s + '0';
     s:= s + IntToStr(tzMinutes);
   end;
@@ -160,6 +158,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/29 13:00:59  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version l‰uft wieder
+  - Jochens 'B' Fixes ¸bernommen
+  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.7  2000/05/03 20:34:35  hd
   Noch ein Fluechtigkeitsfehler
 

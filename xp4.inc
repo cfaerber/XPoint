@@ -16,7 +16,6 @@ const Nachricht = 3;     { /Nachricht }
       Unvers    = 4;     { Nachricht / Unversandt }
       Suchen    = 5;     { Nachricht / Suchen }
       Wartung   = 7;     { /Wartung }
-      Anzeige   = 9;     { Config / Anzeige }
       Export    = 36;    { XPoint / Export }
       Extrakt   = 12;    { Nachricht / Extrakt }
       Alle      = 14;    { Nachricht / Alle }
@@ -61,8 +60,6 @@ begin
   setenable(Unvers,5,dispmode<>11);
   setenable(Wartung,1,dispmode<>11);
   setenable(Wartung,9,dispmode<>12);
-  setenable(Anzeige,5,not ParLCD);    { Config/Anzeige/Zeilen }
-
   setenable(Extrakt,1,nachrichten);
   setenable(Extrakt,2,nachrichten);
   setenable(Extrakt,3,dispmode<>11);
@@ -113,13 +110,25 @@ begin
 end;
 *)
 
+procedure MenuConfigAnzeigeZeilen;
+var
+  oldlines : byte;
+begin
+  ParZeilen:=0;
+  lines(screenlines,fnkeylines);
+  showscreen(false);
+  XPhilite:=0;
+  showlastkeys;
+  aufbau:=true;
+  GlobalModified;
+end;
+
 procedure menuopt(t:taste);
 const
   lastmenusel : integer = 0;
 var m,m1     : integer;
     nix      : string[20];
     adr      : string[20];
-    oldlines : byte;
 begin
   menurestart:=false;
   repeat
@@ -178,7 +187,7 @@ begin
                   markanz:=0;
                   aufbau:=true;
                 end;
- 	    8 : if Suche(getres(437),'MsgID','') then select(11); { 'MessageID' }
+            8 : if Suche(getres(437),'MsgID','') then select(11); { 'MessageID' }
           end;
 
       6 : case m1 of           { Config }
@@ -203,6 +212,7 @@ begin
             2 : brett_config;  { Bretter }
             3 : NachrichtenanzeigeCfg;
             4 : begin UniEdit(4); menurestart:=true; end;
+            5 : MenuConfigAnzeigeZeilen;
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
                   shell('zconfig.exe',200,1);
@@ -219,18 +229,6 @@ begin
             3 : ImportUserliste;
             4 : ImportBrettliste;
             6 : ImportYuppiebase;
-          end;
-
-     11 : begin                { Anzeige/Zeilen }
-            ParZeilen:=0;
-            oldlines:=screenlines;
-            newscreenlines(m1);
-            showscreen(false);
-            XPhilite:=0;
-            showlastkeys;
-            aufbau:=true;
-            if screenlines<>oldlines then
-              GlobalModified;
           end;
 
      12 : case m1 of
@@ -369,7 +367,7 @@ begin
             2 : UI_options;
             3 : ListOptions;
            13 : Editor_options;
-           14 : ViewerOptions;   
+           14 : ViewerOptions;
             4 : msgoptions;
            12 : adroptions;
             6 : netcalloptions;
@@ -517,15 +515,12 @@ var x,y : integer;
         end;
       ofs:=155+2*keypos;
       moff;
-      for x:=1 to keylen+2 do
+(*    for x:=1 to keylen+2 do
         if (x>ks1) and (x-1<=ks2) then
-{$IFDEF BP }
           mem[base:ofs+2*x]:=c2
         else
           mem[base:ofs+2*x]:=c1;
-{$ELSE }
- ; { Hier wird von den Menpunkten das Attribut ge„ndert }
-{$ENDIF}
+       Hier wird von den Menpunkten das Attribut ge„ndert *)
       mon;
       end;
   end;
@@ -577,8 +572,16 @@ begin
   lasty:=y;
   mauskey:=(t<mausfirstkey) or (t>mauslastkey);
 end;
-{ 
+{
   $Log$
+  Revision 1.16  2000/06/29 13:00:56  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/23 15:59:20  mk
   - 16 Bit Teile entfernt
 

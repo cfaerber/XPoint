@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,15 +12,12 @@
 { CrossPoint - Editor }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpe;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -128,9 +126,9 @@ begin
   { /robo }
                   ,fn,true,useclip) then begin
 {$IFDEF UNIXFS}
-    if not multipos('/',fn) 
+    if not multipos('/',fn)
 {$ELSE}
-    if not multipos('\:',fn) 
+    if not multipos('\:',fn)
 {$ENDIF}
       then fn:=sendpath+fn;
     end
@@ -447,7 +445,7 @@ begin
       readln(t,s);
       LoString(s);
       p:=cpos('=',s);
-      with config do       
+      with config do
         if p>0 then
           if left(s,p-1)='rechterrand' then
             config.rechter_rand:=ival(mid(s,p+1))
@@ -482,6 +480,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/06/29 13:00:59  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.16  2000/05/22 16:12:11  hd
   - Anpassung an UnixFS (Filesystem)
   - screenwidth statt 80 (Screen)

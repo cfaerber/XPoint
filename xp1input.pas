@@ -11,9 +11,6 @@
 { CrossPoint - Eingaberoutinen }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp1input;
 
@@ -424,6 +421,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/06/29 13:00:53  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.7  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

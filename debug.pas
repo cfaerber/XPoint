@@ -1,11 +1,15 @@
-UNIT Debug;
-
 { $Id$ }
+
+unit Debug;
+
+
 
 {Debug logfile unit for development issues}
 
 INTERFACE
 
+uses
+  xpglobal;
 {Messages will be logged only if environment variable DEBUG exists
  pointing to a file. If file starts with *, the logfile will be
  overwritten each time.}
@@ -37,7 +41,9 @@ VAR
  Logfile: Text;
 
 FUNCTION FindBadge(Badge: String): Integer;
-VAR I,Temp: Integer;
+VAR
+  I: Integer;
+  Temp: LongInt;
 BEGIN
   I:=0; REPEAT Inc(I)UNTIL(Logfiles[I].Badge='')OR((Logfiles[I].Badge=Badge)OR(I=qLogfiles));
   IF(Logfiles[I].Badge='')AND(I<=qLogfiles)THEN {Open new entry}
@@ -48,7 +54,8 @@ BEGIN
 END;
 
 PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
-VAR H,M,S,S100,C: Integer;
+VAR
+  H,M,S,S100,C: RTLWord;
 BEGIN
   IF NOT Logging THEN Exit;
   C:=FindBadge(Badge);
@@ -98,6 +105,14 @@ END.
 
 {
   $Log$
+  Revision 1.2  2000/06/29 13:00:49  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.1  2000/06/19 20:15:34  ma
   - wird erstmal nur fuer den neuen XP-FM benoetigt
 

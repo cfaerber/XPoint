@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.70.1';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.70.2';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -119,6 +119,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/06/29 13:01:02  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.31  2000/06/22 19:53:32  mk
   - 16 Bit Teile ausgebaut
 

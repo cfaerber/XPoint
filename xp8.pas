@@ -1129,7 +1129,9 @@ begin
             end;
           if fido then writeln(t,'---');
           close(t);
-          closelist; { Lister schlie·en um Speicher frei zu haben }
+          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+            BretterAnlegen;
+          Closelist;
           if art=3 then
             verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
           case art of
@@ -1139,13 +1141,14 @@ begin
             4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
           end;
           erase(t);
-          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
-            BretterAnlegen;
           end
         else
+        begin
           BretterAnlegen;
-        end else
-          closelist; { Lister hier nur noch bei BRK schlie·en }
+          CloseList;
+        end
+      end
+      else closelist;
       freeres;
       aufbau:=true;
       end;
@@ -1584,6 +1587,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/06/29 13:00:58  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version l‰uft wieder
+  - Jochens 'B' Fixes ¸bernommen
+  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.11  2000/06/24 14:10:29  mk
   - 32 Bit Teile entfernt
 

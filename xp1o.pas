@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { Overlay-Teil zu xp1 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp1o;
 
@@ -74,11 +72,11 @@ implementation
 uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
 
 
-function getline:string;                          { Eine Zeile vom Lister uebernehmen } 
+function getline:string;                          { Eine Zeile vom Lister uebernehmen }
 begin
-  if list_markanz<>0 
+  if list_markanz<>0
     then getline:=first_marked                    { erste markierte Zeile }
-    else if list_selbar 
+    else if list_selbar
       then getline:=get_selection                 { oder Zeile unter Markierbalken }
       else getline:='';                           { oder eben nichts }
 end;
@@ -145,7 +143,7 @@ begin
     end;
     if (trim(s)='') or
 {$IFNDEF UnixFS }
-       ((length(s)=2) and (s[2]=':')) or 
+       ((length(s)=2) and (s[2]=':')) or
 {$ENDIF }
        (right(s,1)=DirSepa) then
       s:=s+WildCard
@@ -331,7 +329,7 @@ begin
     if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
          Exitcode -2. Weiter bei xp4w.inc/read_msg }
-                            
+
     if upcase(c) = k2_O then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
@@ -350,7 +348,7 @@ begin
 
   if t = keyaltv then                                        { ALT+V = Suche text }
   begin
-    s:=getline; 
+    s:=getline;
     if Suche(getres(414),'',s) then Showfromlister;
     end;
 
@@ -364,7 +362,7 @@ begin
   if t = keyaltu then                                        { Alt+U = User }
   begin
     s:=mailstring(getline,false);
-    if s='' then s:=dbreadstr(mbase,'Absender');    
+    if s='' then s:=dbreadstr(mbase,'Absender');
     if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
 
@@ -377,7 +375,7 @@ begin
     if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
       b:=2;
       dbWriteN(mbase,mb_halteflags,b);
-      listhalten:=b;  
+      listhalten:=b;
       if t=k4_cL then begin
         rmessage(121);   { 'Nachricht ist auf ''l”schen'' gesetzt.' }
         wkey(1,false);
@@ -990,6 +988,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/06/29 13:00:54  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.40  2000/06/19 20:19:12  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

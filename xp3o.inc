@@ -55,11 +55,7 @@ function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 
 const
-{$IFDEF BP }
-  bufsize  = 32768;
-{$ELSE }
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
-{$ENDIF }
   maxll    = 64;
 
 var x,y      : byte;
@@ -1153,6 +1149,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/06/29 13:00:55  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.21  2000/06/17 13:09:09  hd
   - Fix: Puffer ko[emailadresse]
 

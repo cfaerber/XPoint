@@ -126,16 +126,9 @@ begin
       coldiamarked:=$2f;
       coldiasel:=$30; coldiaselbar:=7;
       colselbox:=$70; colselrahmen:=$70; colselhigh:=$7f; colselbar:=$1e;
-      if videotype<=1 then begin
-        colsel2box:=$70; colsel2rahmen:=$70; colsel2high:=$7f; colsel2bar:=$1e;
-        colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
-        coldiabuttons:=$7f;
-        end
-      else begin
-        colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
-        colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
-        coldiabuttons:=$8f;
-        end;
+      colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
+      colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
+      coldiabuttons:=$8f;
       colbutton:=$17; colbuttonhigh:=$1f; colbuttonarr:=$1b;
       colutility:=$30; colutihigh:=$3e; colutiinv:=11;
       collisttext:=7; collistselbar:=$30; collistmarked:=green;
@@ -215,7 +208,7 @@ begin
   defaultcolors;
   assign(t,colcfgfile);
   if not existf(t) then exit;
-  msk:=iif(getvideomode<=2,$7f,$ff);
+  msk:=$ff;
   settextbuf(t,buf);
   reset(t);
   while not eof(t) do with col do begin
@@ -449,6 +442,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/06/29 13:01:02  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.4  2000/04/29 16:10:41  hd
   Linux-Anpassung
 

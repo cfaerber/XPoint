@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -413,9 +414,6 @@ begin
     error('CrossPoint-MPUFFER-Dateien dÅrfen nicht direkt modifiziert werden!');
 end;
 
-{$IFDEF BP }
-  {$F+}
-{$ENDIF}
 procedure newexit;
 begin
   if (right(fo,3)='$$$') then begin     { evtl. Tempfile lîschen }
@@ -425,9 +423,6 @@ begin
     end;
   exitproc:=oldexit;
 end;
-{$IFDEF BP }
-  {$F-}
-{$ENDIF}
 
 procedure openfiles;
 var dir  : dirstr;
@@ -1321,6 +1316,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/06/29 13:01:03  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version l‰uft wieder
+  - Jochens 'B' Fixes ¸bernommen
+  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/23 15:59:27  mk
   - 16 Bit Teile entfernt
 

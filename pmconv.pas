@@ -121,11 +121,7 @@ var p      : charrp;
   end;
 
 begin
-  {$IFDEF BP }
-    ps:=min(maxavail-5000,60000);
-  {$ELSE }
-    ps:=65536;
-  {$ENDIF }
+  ps:=65536;
   getmem(p,ps);
   reset(f,1);
   if ioresult<>0 then error('Puffer nicht vorhanden!'#7);
@@ -219,6 +215,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/06/29 13:00:49  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.3  2000/06/05 16:16:21  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

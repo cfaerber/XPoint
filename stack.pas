@@ -51,12 +51,6 @@ end;
 procedure spush(var x; size:word);
 var p : stp;
 begin
-{$IFDEF BP }
-  {$IFDEF Debug }
-  if maxavail<size+128 then
-    error('Memory Overflow');
-  {$ENDIF }
-{$ENDIF }
   new(p);
   if tail=nil then begin
     tail:=p;
@@ -94,6 +88,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/06/29 13:00:49  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.5  2000/04/30 16:07:09  mk
   - xpglobal in den Interface-Teil vorgezogen
 

@@ -131,7 +131,6 @@ procedure SetExtraktMenu;
 function  getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
 procedure setscreensize(newmode:boolean);
 procedure lines(screen,fnkey:byte);   { setzt gl usw. }
-procedure newscreenlines(m:integer);
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer16);
 procedure SetMausEmu;
@@ -1141,21 +1140,6 @@ begin
   gl:=screenlines-4-fnkeylines;
 end;
 
-
-{ screenlines gem„á 25/26/...-Men-Position neu setzen }
-
-procedure newscreenlines(m:integer);
-var ma : map;
-    n  : integer;
-begin
-  new(ma);
-  splitmenu(ZeilenMenue,ma,n,true);
-  screenlines:=ival(ma^[m].mstr);
-  dispose(ma);
-  lines(screenlines,fnkeylines);
-end;
-
-
 { --- Dialog- und sonstige Boxen ------------------------------- }
 
 procedure getpos(width,height:byte; var x,y:byte);
@@ -2045,6 +2029,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/06/29 13:00:52  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.50  2000/06/23 15:59:15  mk
   - 16 Bit Teile entfernt
 

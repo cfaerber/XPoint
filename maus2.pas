@@ -176,7 +176,9 @@ end;
 procedure maus_tasten_an;
 begin
 {$IFDEF VP }
-  InitMouseThread;
+  {$IFDEF Win32 }
+    InitMouseThread;
+  {$ENDIF }
 {$ENDIF }
   tan:=true;
   lx:=255; ly:=255;
@@ -186,7 +188,9 @@ end;
 procedure maus_tasten_aus;
 begin
 {$IFDEF VP }
-  DoneMouseThread;
+  {$IFDEF Win32 }
+    DoneMouseThread;
+  {$ENDIF }
 {$ENDIF }
   tan:=false;
 end;
@@ -327,6 +331,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/29 13:00:49  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/22 19:53:27  mk
   - 16 Bit Teile ausgebaut
 

@@ -88,7 +88,7 @@ end;
 function getscreenlines:byte;
 begin
 {$IFDEF Win32 }
-    vlines := Win32GetScreenLines;
+    vlines := SysGetScreenLines;
     GetScreenLines := vlines;
 {$ELSE }
     GetScreenLines := 25;
@@ -96,10 +96,6 @@ begin
 end;
 
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
-{ untersttzte Werte:                                   }
-{ Herc/CGA:  25                                         }
-{ EGA:       25,26,29,31,35,38,43,50                    }
-{ VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
 begin
@@ -111,6 +107,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/06/29 13:00:50  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.23  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 

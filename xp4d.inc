@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -125,7 +126,7 @@ begin  { __ Suchmarke }
                   0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
                   1 : c:=markc+iifs(flags and 2<>0,#16' ','  ');
                 else
-                  if showungelesen and (flags and 2<>0) 
+                  if showungelesen and (flags and 2<>0)
                     then c:=markc+iifs(not smdl(dat,readdate),#$af' ',#$1a' ')
                     else c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
                 end;
@@ -247,7 +248,7 @@ begin  { __ Suchmarke }
             { Felder zusammenkopieren }
             tausc:=0; dispbuf[y]^:='';
             while (tausc<UsrFelderMax) do begin
-              inc(tausc); 
+              inc(tausc);
               if (taus[tausc]='') then continue; { Leere Felder bergehen }
               if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
               dispbuf[y]^:=dispbuf[y]^+taus[tausc];
@@ -345,17 +346,17 @@ begin  { __ Suchmarke }
             dbReadN(mbase,mb_flags,flags);
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
-            
-            if (wvl=0) and (mnt and $4000<>0) then begin 
+
+            if (wvl=0) and (mnt and $4000<>0) then begin
               wvl:=5;
               { Diese Info gibt's bei unversandten Nachrichten gar nicht,
                 daher auskommentiert: }
-              
+
               { if (flags and 1<>0) then wvl:=5; }  { 'S' - 'good' signierte Nachricht }
               { if (flags and 2<>0) then wvl:=4; }  { 's' - 'bad' signierte Nachricht }
-            
+
             end;
-            
+
             dbReadN(mbase,mb_Halteflags,hflags);
             dbReadN(mbase,mb_gelesen,gelesen);
             if unvers and 32<>0 then
@@ -381,19 +382,19 @@ begin  { __ Suchmarke }
 
               { (F)lags }
               taus[pos('F',MsgFeldTausch)] := dflags;
-              
+
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-              
+
               { (A)bsender }
               taus[pos('A',MsgFeldTausch)] := forms(s,19);
-              
+
               { (E)mpfaenger }
               taus[pos('E',MsgFeldTausch)] := forms(s0,19);
-              
+
               { (B)etreff }
               taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
 
@@ -410,36 +411,36 @@ begin  { __ Suchmarke }
 
               { (F)lags }
               taus[pos('F',MsgFeldTausch)] := dflags;
-              
+
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
               taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-              
+
               { (A)bsender }
               taus[pos('A',MsgFeldTausch)] := forms(s,ulen);
-              
+
               { (B)etreff }
               taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
-                                              
+
               end;
 
-              userflag[y]:=0;                              { Man muss Prioritaeten setzen... }              
-              if flags and 56=32 then userflag[y]:=5        { niedrigste }                                   
+              userflag[y]:=0;                              { Man muss Prioritaeten setzen... }
+              if flags and 56=32 then userflag[y]:=5        { niedrigste }
               else if flags and 56=24 then userflag[y]:=4   { niedrige   }
               else if flags and 56=16 then userflag[y]:=3   { hohe       }
-              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }          
+              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name')))
-                 then userflag[y]:=1              
+                 then userflag[y]:=1
               else
                 if (cpos('@',dispspec)>0) and
                    (ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0)))))
                    then Userflag[y]:=1
                 else
-                  if mnt and $1000<>0 then userflag[y]:=1;                         
+                  if mnt and $1000<>0 then userflag[y]:=1;
             end;
 
             { Kommentarbaum-Ausgabe schon fertig, fuer andere dispmodes

@@ -35,9 +35,11 @@ const  mausLinks  = 0;     { linke Taste    }
        intMid0    = 64;    { .. Mitte losgelassen        }
 
 {$IFDEF VP }
+  {$IFDEF Win32 }
        MouseButtonbkup: byte = 0;
        DoExitMouseThread: Boolean = false;
 var    MouseThreadID: LongInt;
+  {$ENDIF }
 {$ENDIF }
 
 type   mausstat   = record
@@ -63,9 +65,11 @@ function mausy:word;      { Maus-Y-Koordinate holen }
 function maust:word;      { Maustastenzustand holen }
 
 {$IFDEF VP }
+  {$IFDEF WIn32 }
 procedure InitMouseThread;
 procedure DoneMouseThread;
 procedure UpdateMouseStatus;
+  {$ENDIF }
 {$ENDIF }
 
 implementation
@@ -98,7 +102,9 @@ end;
 procedure mausan;
 begin
   {$IFDEF VP }
-    SysTVShowMouse;
+    {$IFDEF Win32 }
+      SysTVShowMouse;
+    {$ENDIF }
   {$ENDIF }
   mausda := true;
 end;
@@ -106,7 +112,9 @@ end;
 procedure mausaus;
 begin
   {$IFDEF VP }
-    SysTVHideMouse;
+    {$IFDEF Win32 }
+      SysTVHideMouse;
+    {$ENDIF }
   {$ENDIF }
   mausda := false;
 end;
@@ -226,6 +234,7 @@ begin
 end;
 
 {$IFDEF VP }
+ {$IFDEF Win32 }
 procedure UpdateMouseStatus;   { ML: emulate a Mouse-Interrupt-Handler }
 var
   MouseEvent : TSysMouseEvent;
@@ -271,7 +280,7 @@ procedure DoneMouseThread;
 begin
   DoExitMouseThread := true;
 end;
-
+  {$ENDIF }
 {$ENDIF }
 
 
@@ -280,6 +289,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/06/29 13:00:49  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/06/23 15:59:13  mk
   - 16 Bit Teile entfernt
 

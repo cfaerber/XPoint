@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,6 @@
 { Verteiler }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpcc;
 
@@ -42,7 +40,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, 
+uses xp3,xp3o2,xp3o,xp4e,xpnt,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
@@ -162,7 +160,7 @@ begin
       else
         if (p>0) and not testmailstring(s) then
         begin
-          cc_testempf:=false; 
+          cc_testempf:=false;
           if left(s,1)=vert_char
             then s:=copy(s,2,length(s)-3);
           exit;
@@ -255,12 +253,12 @@ begin
         inc(cc_anz);
         cc^[cc_anz]:=cc^[i];
         end;
-    
+
     if cc_anz>0 then                 { wenn CCs da sind Verteilernamen suchen und aufloesen }
-    begin 
+    begin
       i:=0;
       repeat
-      inc(i);      
+      inc(i);
       if is_vname(cc^[i]) then
       begin                                                    { nach Verteilernamen suchen }
         assign(t,CCfile);
@@ -270,25 +268,25 @@ begin
           repeat
             readln(t,s)
           until eof(t) or (ustr(s)=ustr(cc^[i]));
-          if not eof(t) then                                   { wenn gefunden... }                            
-          begin                      
+          if not eof(t) then                                   { wenn gefunden... }
+          begin
             repeat
               readln(t,s);                                     { auslesen und anhaengen }
               if (trim(s)<>'') and not is_vname(s) then
-              begin       
+              begin
                 inc(cc_anz);
                 cc^[cc_anz]:=left(s,79);
                 end;
             until eof(t) or is_vname(s) or (cc_anz>=maxcc-1);
             cc^[i]:=cc^[cc_anz];                               { Verteilernamen durch }
             dec(cc_anz);                                       { letzten Eintrag ersetzen }
-            end; 
+            end;
           close(t);
           end;
         end;
       until i=cc_anz;
       end;
- 
+
     for i:=cc_anz+1 to maxcc do
       cc^[i]:='';
     SortCCs(cc,cc_anz);
@@ -390,6 +388,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/29 13:00:59  mk
+  - 16 Bit Teile entfernt
+  - OS/2 Version läuft wieder
+  - Jochens 'B' Fixes übernommen
+  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - Modeminitialisierung wieder an alten Platz gelegt
+  - verschiedene weitere fixes
+
   Revision 1.15  2000/05/13 09:14:41  jg
   - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
 
