@@ -245,7 +245,18 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'FQDN' in Boxendatei einfÅgen }  {16.01.00 HS: fÅr Message-IDs}
+  { Feld 'Email' in Boxendatei einfÅgen }
+  procedure NewFieldemail;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Email'; ftyp:=dbTypeString;
+      fsize:=80;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'FQDN' in Boxendatei einfÅgen }  { fÅr Message-IDs}
   procedure NewFieldFQDN;
   var fld : dbFeldTyp;
   begin
@@ -738,7 +749,7 @@ begin
     end;
 
   if not FileExists(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
-    initflp(16);  {16.01.00 HS: Erweitert um 1 fÅr neues Feld}
+    initflp(16);
     AppS('Boxname',20);
     AppS('Username',30);
     AppS('Kommentar',30);
@@ -749,7 +760,8 @@ begin
     AppS('Realname',40);
     AppS('Pointname',25);
     AppS('Domain',60);
-    AppS('FQDN',60);  {16.01.00 HS: fÅr Message-IDs}
+    AppS('FQDN',60);
+    AppS('EMail',80);
     AppS('Fidoname',40);
     AppS('ReplyTo',80);
     AppS('AVertreter',20);
@@ -767,8 +779,10 @@ begin
       NewFieldPointname;
     if not dbHasField(BoxenFile,'Domain') then
       NewFieldDomain;
-    if not dbHasField(BoxenFile,'FQDN') then  {16.01.00 HS: fÅr Message-IDs}
+    if not dbHasField(BoxenFile,'FQDN') then  { fÅr Message-IDs }
       NewFieldFQDN;
+    if not dbHasField(BoxenFile,'Email') then { fÅr schnelle EMail-Adresse }
+      NewFieldEmail;
     if not dbHasField(BoxenFile,'Fidoname') then
       NewFieldFidoname;
     if not dbHasField(BoxenFile,'ReplyTo') then
@@ -944,6 +958,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/07/22 21:43:47  mk
+  - added new database field eMail
+
   Revision 1.29  2001/06/04 17:31:37  ma
   - implemented role feature
 
