@@ -364,7 +364,6 @@ begin
       onetztyp:=hdp^.netztyp;
       quotestr:=hdp^.quotestring;
       UV_edit:=true;
-      ersetzt:=hdp^.ersetzt;
       end;
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
@@ -1021,7 +1020,6 @@ again:
                  wab:=hdp^.wab;
                  onetztyp:=hdp^.netztyp;
                  quotestr:=hdp^.quotestring;
-                 ersetzt:=hdp^.ersetzt;
                  end;
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
@@ -1266,6 +1264,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.4  2000/10/16 09:03:39  sv
+  - Ersetzt-Header wird nun beim Weiterleiten geloescht
+
   Revision 1.20.2.3  2000/10/06 20:28:54  mk
   MH: - Weiterleiten bei Brettern mit Vertretern und Schreibsperre wird beachtet
 
