@@ -1986,9 +1986,10 @@ fromstart:
             hdp.real_box:=box;  { Test: 'X-XP-BOX' auch bei ZConnect }
           end;
       6 : begin
-            hdp.absender:=iifs(sData.SenderMail='',
-                               username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
-                               sData.SenderMail);
+            if eMail <> '' then Hdp.Absender := eMail else
+              hdp.absender:=iifs(sData.SenderMail='',
+                username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
+                sData.SenderMail);
             hdp.real_box:=box;
           end;
       7 : begin
@@ -2509,6 +2510,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.14  2003/03/30 23:07:21  mk
+  - corrected hdp.absender with uucp boxes
+
   Revision 1.48.2.13  2002/08/28 18:47:45  mk
   JG:- fixed: Alt-B in editor sometimes doesn't work
     see <8Vf7E22S6pB.3.219@jochen.gehring.dialin.t-online.de>
