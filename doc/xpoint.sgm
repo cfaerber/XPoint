@@ -4917,7 +4917,7 @@ rechts |          |  |  |  +--Kai Henningsen
 
           <listitem>
 
-            <para>Der Kommentarbaum kann maximal bis zu 30 Ebenen tief
+            <para>Der Kommentarbaum kann maximal bis zu 65 Ebenen tief
               verschachtelt sein. In der Praxis kommt dies extrem
               selten vor. Tiefer verschachtelte Nachrichten werden
               nicht mehr angezeigt, sind aber weiterhin durch direktes
@@ -4941,7 +4941,7 @@ rechts |          |  |  |  +--Kai Henningsen
 
           <listitem>
 
-            <para>Innerhalb eines Baumes k&ouml;nnen maximal 5000
+            <para>Innerhalb eines Baumes k&ouml;nnen maximal 4680
               Nachrichten gleichzeitig angezeigt werden. Diese
               Einschr&auml;nkung betrifft nur die Anzeige, nicht die
               Verkettung der Nachrichten - Sie k&ouml;nnen in jedem
