@@ -132,7 +132,7 @@
           or (cpos('.',mid(email,b+1))=0)
           or (email<>mailstring(email,false))
         then begin
-          fehler(Getres2(10900,8));
+          rfehler(908);
           enddialog;
           goto restart;
           end;
@@ -1801,6 +1801,9 @@
 
 {
   $Log$
+  Revision 1.10.2.37  2001/07/23 17:05:36  my
+  - changed "fehler(getres2(10900,8))" to "rfehler(908)"
+
   Revision 1.10.2.36  2001/07/23 16:52:48  my
   JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
           under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
