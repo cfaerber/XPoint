@@ -785,7 +785,7 @@ begin
   x:=x+length(txt);
   IF art=editread then s:='' ELSE s:=Copy(s,1,ml);
   if art<>edittabelle then
-    s := TrimRight(s);
+    s := RTrim(s);
   p:=min(px,length(s));
   if not canf then
     IF art<>edittabelle THEN p:=p+length(s);
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.3  2000/08/08 09:25:38  mk
+  - TrimRight in RTrim umgewandelt
+
   Revision 1.38.2.2  2000/08/07 23:59:08  mk
   - AnsiString-Bug beseitigt
 
