@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -38,7 +38,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{.$DEFINE Snapshot}
+{$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -261,6 +261,9 @@
 
 {
   $Log$
+  Revision 1.78.2.20  2004/10/04 07:02:10  mk
+  - move to snapshot state
+
   Revision 1.78.2.19  2004/10/02 13:20:15  mk
   - Beta 3.8.15-90
 

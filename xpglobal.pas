@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.8.15';       { Versionnr. - steht nur an dieser Stelle }
+  mainver     = '3.8.16';       { Versionnr. - steht nur an dieser Stelle }
 
 {$I version.inc }
 
@@ -196,6 +196,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.39  2004/10/04 07:02:10  mk
+  - move to snapshot state
+
   Revision 1.63.2.38  2004/10/02 13:20:15  mk
   - Beta 3.8.15-90
 
