@@ -12,21 +12,14 @@
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp9;
 
 interface
 
 uses 
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+  crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
      maus2,mouse,resource,xpglobal,
      xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
@@ -75,9 +68,6 @@ function  JanusSwitch(var s:string):boolean;
 implementation  {---------------------------------------------------}
 
 uses
-{$IFDEF Linux}
-  xplinux,
-{$ENDIF}
   xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
 
 const umtyp : array[0..5] of string[5] =
@@ -1693,7 +1683,7 @@ var x,y  : byte;
     user : string[30];
     maps : string[30];
     dom  : string[60];
-    fqdom: string[60];  {16.01.00 HS}
+    fqdom: string[60];
     ntyp : string[20];
     nt   : byte;
     i    : integer;
@@ -1717,11 +1707,11 @@ begin
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
-  closemask;
-  closebox;
   for i:=0 to enetztypen-1 do
     if lstr(ntyp)=lstr(ntName(ntnr[i])) then
       nt:=ntnr[i];
+  closemask;
+  closebox;
   if not ntNameSpace(nt) then
     for i:=1 to length(user) do    { Leerzeichen aus Username -> "_" }
       if user[i]=' ' then user[i]:='_';
@@ -1763,6 +1753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.1  2000/07/15 18:42:19  mk
+  ML: - Nilpointerzugriff gefixt
+
   Revision 1.19  2000/05/22 18:07:07  hd
   - Progtest angepasst (Linux)
 
