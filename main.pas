@@ -55,7 +55,8 @@ uses
 {$IFDEF Win32}
      windows,
 {$ENDIF}
-      xpme,    { menu editor }
+     xpme,     { menu editor }
+     pmconv,   { Tool PMConv } 
      zcrfc;    { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
@@ -75,6 +76,9 @@ begin
   else
   if Prog = 'ZFIDO' then
     StartCommandLineZFIDO
+  else
+  if Prog = 'PMCONV' then
+    StartCommandLinePMConv
   else
   if Prog = 'XPME' then
     StartCommandLineXPME
@@ -234,6 +238,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2003/04/23 21:54:23  mk
+  - made PMConv internal
+
   Revision 1.24  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To
