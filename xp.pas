@@ -24,11 +24,11 @@
 
 {$IFDEF BP }
   {$F+}
-  {$M 32768,150000,655360}
+  {$M 32768,131072,655360}
 {$ENDIF}
 
 {$IFDEF OS2 }
-  {$M 32768,150000}
+  {$M 131072,524288}
 {$ENDIF }
 
 program xp;
@@ -216,6 +216,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.22  2000/05/01 08:47:05  mk
+  - Stackspace unter OS/2 vergroessert, wegen QSort
+
   Revision 1.21  2000/04/30 23:22:10  mk
   - Stackgroesse wird jetzt auch unter OS/2 gesetzt
 
