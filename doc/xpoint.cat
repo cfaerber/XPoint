@@ -27,6 +27,126 @@ PUBLIC "-//OASIS//ENTITIES DocBook Notations V4.1//EN"
 PUBLIC "-//OASIS//ENTITIES DocBook Character Entities V4.1//EN"
 "@DBDIR@dbcent.mod"
 
+-- ISO 8879 entities --
+
+-- ISO general entities --
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN" 
+"@ENTDIR@ISOamsa"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN" 
+"@ENTDIR@ISOamsb"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Delimiters//EN" 
+"@ENTDIR@ISOamsc"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN"
+"@ENTDIR@ISOamsn"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Ordinary//EN" 
+"@ENTDIR@ISOamso"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Math Symbols: Relations//EN" 
+"@ENTDIR@ISOamsr"
+
+PUBLIC "ISO 8879:1986//ENTITIES Box and Line Drawing//EN" 
+"@ENTDIR@ISObox"
+
+PUBLIC "ISO 8879:1986//ENTITIES Russian Cyrillic//EN" 
+"@ENTDIR@ISOcyr1"
+
+PUBLIC "ISO 8879:1986//ENTITIES Non-Russian Cyrillic//EN" 
+"@ENTDIR@ISOcyr2"
+
+PUBLIC "ISO 8879:1986//ENTITIES Diacritical Marks//EN" 
+"@ENTDIR@ISOdia"
+
+PUBLIC "ISO 8879:1986//ENTITIES Greek Letters//EN" 
+"@ENTDIR@ISOgrk1"
+
+PUBLIC "ISO 8879:1986//ENTITIES Monotoniko Greek//EN" 
+"@ENTDIR@ISOgrk2"
+
+PUBLIC "ISO 8879:1986//ENTITIES Greek Symbols//EN" 
+"@ENTDIR@ISOgrk3"
+
+PUBLIC "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN" 
+"@ENTDIR@ISOgrk4"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN" 
+"@ENTDIR@ISOlat1"
+
+PUBLIC "ISO 8879:1986//ENTITIES Added Latin 2//EN" 
+"@ENTDIR@ISOlat2"
+
+PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN" 
+"@ENTDIR@ISOnum"
+
+PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN" 
+"@ENTDIR@ISOpub"
+
+PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN" 
+"@ENTDIR@ISOtech"
+
+-- Alternate names sometimes used --
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Arrow Relations//EN" 
+"@ENTDIR@ISOamsa"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Binary Operators//EN" 
+"@ENTDIR@ISOamsb"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Delimiters//EN" 
+"@ENTDIR@ISOamsc"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Negated Relations//EN"
+"@ENTDIR@ISOamsn"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Ordinary//EN" 
+"@ENTDIR@ISOamso"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Math Symbols: Relations//EN" 
+"@ENTDIR@ISOamsr"
+
+PUBLIC "ISO 8879-1986//ENTITIES Box and Line Drawing//EN" 
+"@ENTDIR@ISObox"
+
+PUBLIC "ISO 8879-1986//ENTITIES Russian Cyrillic//EN" 
+"@ENTDIR@ISOcyr1"
+
+PUBLIC "ISO 8879-1986//ENTITIES Non-Russian Cyrillic//EN" 
+"@ENTDIR@ISOcyr2"
+
+PUBLIC "ISO 8879-1986//ENTITIES Diacritical Marks//EN" 
+"@ENTDIR@ISOdia"
+
+PUBLIC "ISO 8879-1986//ENTITIES Greek Letters//EN" 
+"@ENTDIR@ISOgrk1"
+
+PUBLIC "ISO 8879-1986//ENTITIES Monotoniko Greek//EN" 
+"@ENTDIR@ISOgrk2"
+
+PUBLIC "ISO 8879-1986//ENTITIES Greek Symbols//EN" 
+"@ENTDIR@ISOgrk3"
+
+PUBLIC "ISO 8879-1986//ENTITIES Alternative Greek Symbols//EN" 
+"@ENTDIR@ISOgrk4"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Latin 1//EN" 
+"@ENTDIR@ISOlat1"
+
+PUBLIC "ISO 8879-1986//ENTITIES Added Latin 2//EN" 
+"@ENTDIR@ISOlat2"
+
+PUBLIC "ISO 8879-1986//ENTITIES Numeric and Special Graphic//EN" 
+"@ENTDIR@ISOnum"
+
+PUBLIC "ISO 8879-1986//ENTITIES Publishing//EN" 
+"@ENTDIR@ISOpub"
+
+PUBLIC "ISO 8879-1986//ENTITIES General Technical//EN" 
+"@ENTDIR@ISOtech"
+
 -- OpenJade catalog --
 
 CATALOG
