@@ -1,21 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ XP-ZConnect <-> FTS-0001 - Konvertierer }
-{ (c) PM 06/92         FTS-0001, FSC-0039 }
-{                                         }
-{ Errorlevel:  0=ok, 1=Fehler             }
+    OpenXP ZC<->FTS-0001 converter unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
+{ OpenXP ZC<->FTS-0001 converter unit }
 unit ZFTools;
 
 interface
@@ -343,7 +349,7 @@ var i    : integer;
   end;
 
 begin
-  warn:=false;
+  warn:=false; adr3d:=false;
   for i:=1 to paramcount do begin
     so:= ParamStr(i);
     s:=UpperCase(so);
@@ -1738,7 +1744,7 @@ begin
   if fnet <> -1 then begin
     fakenet:= fnet;
     adr3d:= true;
-  end;
+  end else adr3d:=false;
   if altPC <> '' then
     prodcode:= hexval(altPC);
   ppassword:= pwd;
@@ -1802,6 +1808,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.14  2001/02/26 00:03:04  ma
+        - adr3d was not initialized correctly (an annoying bug: zc->fido conversion
+          failed if and only if fido->zc conversion [=netcall] was done before)
+        - added GPL header
+
         Revision 1.13  2001/01/04 21:22:54  ma
         - added/refined debug logs
 
