@@ -92,12 +92,16 @@ type TUnicodeLineBreaker = class
 
 { ------------------------} implementation { ------------------------- }
 
-uses xpstreams, strutils, sysutils;
+uses xpstreams, 
+  {$IFDEF Delphi}
+    strutils,
+  {$ENDIF}
+    sysutils;
 
 {$IFDEF UnixFS}
-{$I 'unicode/LineBreak.inc' }
+{$I unicode/linebreak.inc }
 {$ELSE}
-{$I 'unicode\LineBreak.inc' }
+{$I unicode\linebreak.inc }
 {$ENDIF}
 
 function UnicodeCharacterLineBreakType(AUnicodeChar: TUnicodeChar): TUnicodeLineBreakType;
@@ -541,6 +545,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/02/15 21:47:39  cl
+// - FPC/Linux compile fixes (FPC has problems with mixed-case filenames)
+//
 // Revision 1.1  2003/02/13 14:27:11  cl
 // - Unicode support library:
 //   . character width
