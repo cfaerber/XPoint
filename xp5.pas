@@ -19,7 +19,7 @@ unit xp5;
 
 interface
 
-uses  xpglobal,
+uses  
       {$IFDEF virtualpascal}
         sysutils,vpsyslow,
       {$endif}
@@ -28,7 +28,10 @@ uses  xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
+{$IFDEF Linux}
+  linux,
+{$ENDIF}
+      dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
 {$IFDEF BP }
       ems,xms,
@@ -346,7 +349,7 @@ var sr  : searchrec;
 begin
   mon;
   sum:=0;
-  findfirst(dir+'*.*',ffAnyFile,sr);
+  findfirst(dir+WildCard,ffAnyFile,sr);
   while doserror=0 do begin
     inc(sum,sr.size);
     findnext(sr);
@@ -509,14 +512,31 @@ procedure memstat;
 const rnr = 500;
 var
     x,y  : byte;
+{$IFDEF Linux}
+    info : TSysInfo;
+begin
+  sysinfo(info);
+  msgbox(45,15, getres2(rnr,1),x,y);
+{$ELSE}
 begin
   msgbox(45,11, getres2(rnr,1),x,y);
+{$ENDIF}
   attrtxt(col.colmboxhigh);
   moff;
+{$IFDEF Linux}
+  wrt(x+21,y+2,'RAM         '+right('     ~/openxp',8));
+{$ELSE }
   wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
+{$ENDIF}
   wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
+{$IFDEF Linux}
+  wrt(x+4,y+7,getres2(rnr,12));
+  wrt(x+4,y+8,getres2(rnr,13));
+  wrt(x+4,y+9,getres2(rnr,14));
+  wrt(x+4,y+10,getres2(rnr,15));
+{$ENDIF}
 {$IFDEF Win32 }
   wrt(x+4,y+8,'Win/32' + getres2(rnr,7));
 {$ENDIF }
@@ -524,7 +544,9 @@ begin
   wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
 {$ENDIF }
 {$IFDEF Linux }
-  wrt(x+4,y+8,'Linux' + getres2(rnr,7));
+  wrt(x+4,y+12,'Linux-Kernel' + getres2(rnr,7)+' '
+      +strs((DosVersion and $ff00) shr 8)+'.'
+      +strs((DosVersion and $ff)));
 {$ENDIF }
   attrtxt(col.colmbox);
 {$IFDEF VP }
@@ -532,13 +554,28 @@ begin
   gotoxy(x+31,y+4); write(SysDiskSizeLong(0) / 1024 / 1024:8:0,' MB');
   gotoxy(x+31,y+6); write(SysDiskFreeLong(0) / 1024 / 1024:8:0,' MB');
 {$ELSE }
-  gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-  gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
-  gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+  {$IFDEF Linux}
+    gotoxy(x+19,y+4); write(info.totalram div 1024 div 1024:5,' MB');
+    gotoxy(x+19,y+6); write(info.freeram div 1024 div 1024:5,' MB');
+    gotoxy(x+19,y+7); write(info.totalswap div 1024 div 1024:5,' MB');
+    gotoxy(x+19,y+8); write(info.freeswap div 1024 div 1024:5,' MB');
+    gotoxy(x+19,y+9); write(info.sharedram div 1024 div 1024:5,' MB');
+    gotoxy(x+19,y+10); write(info.bufferram div 1024 div 1024:5,' MB');
+    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
+    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+  {$ELSE }
+    gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
+    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
+    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
+  {$ENDIF}
 {$ENDIF }
   gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
     xpspace(XferDir)) div 1024 div 1024:8,' MB');
+{$IFDEF Linux}
+  wrt(x+30,y+13,right('     '+getres2(rnr,10),7)+'...');
+{$ELSE}
   wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
+{$ENDIF}
   mon;
   freeres;
   wait(curon);
@@ -1105,6 +1142,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/05/13 13:31:51  hd
+  - XPoint/Statistik/Speicher angepasst (Linux)
+
   Revision 1.23  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 
