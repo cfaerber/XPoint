@@ -1846,11 +1846,15 @@ end;
 
 initialization
   AktEd := nil;
+  Defaults := nil;
 finalization
-  Dispose(Defaults);
+  if assigned(Defaults) then Dispose(Defaults);
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.79  2002/02/22 08:25:10  mk
+  - fixed crash with external tools
+
   Revision 1.78  2002/02/21 13:52:30  mk
   - removed 21 hints and 28 warnings
 
