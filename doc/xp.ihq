@@ -1,4 +1,4 @@
-CrossPoint v3.3
+CrossPoint v3.30
 15 6
 53 19
 2 1
@@ -476,22 +476,6 @@ nur die jeweils letzte Option ausgefhrt:
          allen anderen Parametern angegeben werden.
 
 
-Statt die Optionen als Parameter bei Programmstart
-anzugeben, k”nnen Sie sie auch in einer Datei mit
-Erweiterung .OPT im AUTOEXEC-Unterverzeichnis able-
-gen; jede Zeile der Datei muá genau eine Option ent-
-halten. Mehrere .OPT-Dateien sind m”glich.
-
-
-Weitere Optionen und Parameter siehe:
-[Diagnose- und Environment-Parameter, Errorlevel]@8
-
-@
-8
-<<CrossPoint - Diagnose-Optionen, Environment-Parameter
-<<             und Errorlevel
-
-
 Die folgenden Optionen sind nur zu Diagnosezwecken
 gedacht:
 
@@ -514,6 +498,20 @@ gedacht:
          auf einen Tastendruck. Entspricht dem Schal-
          ter [auf Tastendruck warten] bei /Config/@313
          Extern/Shell.
+
+
+Statt die Optionen als Parameter bei Programmstart
+anzugeben, k”nnen Sie sie auch in einer Datei mit
+Erweiterung .OPT im AUTOEXEC-Unterverzeichnis able-
+gen; jede Zeile der Datei muá genau eine Option ent-
+halten. Mehrere .OPT-Dateien sind m”glich.
+
+
+Siehe auch: [Environment-Parameter und Errorlevel]@8
+
+@
+8
+<<CrossPoint - Environment-Parameter und Errorlevel
 
 
 <<Environment-Parameter
@@ -4375,11 +4373,6 @@ Das Standard-Quotezeichen ist "<<> >>". Bei nderungen
 sollten Sie m”glichst darauf achten, daá ein <<> >>im
 Quotezeichen vorhanden ist, weil dies vielen Program-
 men zum Erkennen von Quote-Zeilen dient.
-
-Durch zus„tzliche Angabe eines <<%>> an beliebiger
-Stelle im Quotezeichen-String wird auch Leerzeilen
-ein Quotezeichen vorangestellt (ansonsten bleiben
-sie Leerzeilen).
 
 @
 211
@@ -11090,6 +11083,19 @@ sofort wirksam.
 
 Falls sie mit dem Parameter /f: eine eigene Schrift
 geladen haben, ist diese Einstellung wirkungslos.
+
+<<Hinweis:>> Bei modernen Grafikkarten, die den VESA-
+Standard 2.0 untersttzen, fehlt m”glicherweise der
+EGA-Zeichensatz 8x14, der fr die Darstellung der
+Zeilenmodi 28, 30, 33 und 36 notwendig ist. In diesen
+F„llen wrden Sie daher u.U. unleserliches "Pixel-
+chaos" auf Ihrem XP-Bildschirm sehen.
+
+Um dies zu vermeiden, l„dt XP bei den genannten
+Zeilenmodi einen internen Font, so daá eine einheit-
+liche und funktionierende Darstellung auf allen
+Grafikkarten gew„hrleistet ist.
+
 @
 10906
 <<Config / Anzeige / Diverses
