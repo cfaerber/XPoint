@@ -29,7 +29,11 @@ uses
   windows,
 {$ELSE}
 {$IFDEF NCRT}
+{$IFDEF Kylix}
+  ncursix,
+{$ELSE}
   ncurses,
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
   xpglobal,
@@ -90,7 +94,11 @@ var LastEvent: MOUSE_EVENT_RECORD;
 {$ELSE}
 {$IFDEF NCRT}
 uses xpcurses,maus2;
+{$IFDEF Kylix}
+var MouseEvent: NCursix.MEVENT;
+{$ELSE}
 var MouseEvent: NCurses.MEVENT;
+{$ENDIF}
     MouseButtons: Cardinal;
 {$ENDIF}
 {$ENDIF}
@@ -218,7 +226,11 @@ function UpdateMouseStatus: Taste;
 begin
   mausda:=false;
 
+{$IFDEF Kylix}
+  if (ncursix.GetMouse(MouseEvent)<>0 {OK}) then
+{$ELSE}
   if (NCurses.GetMouse(MouseEvent)<>0 {OK}) then
+{$ENDIF}
   begin
     Debug.DebugLog('maus2', 'no valid mouse event', DLTrace);
     result:='';
@@ -262,6 +274,9 @@ initialization
 
 {
   $Log$
+  Revision 1.30  2001/09/27 21:22:25  ml
+  - Kylix compatibility stage IV
+
   Revision 1.29  2001/09/21 13:11:09  mk
   - made compilable with FPC
 

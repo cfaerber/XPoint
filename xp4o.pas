@@ -83,7 +83,12 @@ procedure seek_cutspace(var s:string);
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp, viewer, RegExpr;
+     xp_pgp,
+     viewer,
+{$IFDEF Kylix}
+     xplinux,
+{$ENDIF}
+     RegExpr;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
       suchlen = 255;
@@ -1032,7 +1037,7 @@ begin
 end;
 
 
-{$I XP4O.INC}     { Reorg }
+{$I xp4o.inc}     { Reorg }
 
 
 procedure ModiEmpfDatum;
@@ -2512,6 +2517,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.115  2001/09/26 23:34:20  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

@@ -32,6 +32,7 @@ uses
 {$ENDIF }
   UTFTools,
 {$IFDEF Kylix}
+  libc,
   ncursix,
 {$ELSE}
   ncurses,
@@ -897,7 +898,11 @@ var
   i: integer;
 begin
   if not __isInit then InitXPCurses;
+{$IFDEF Kylix}
+  F.BufEnd:=__Read(F.Handle, PChar(F.BufPtr), F.BufSize);
+{$ELSE}
   F.BufEnd:=fdRead(F.Handle, F.BufPtr^, F.BufSize);
+{$ENDIF}
 { fix #13 only's -> #10 to overcome terminal setting }
   for i:=1 to F.BufEnd do begin
     if (F.BufPtr^[i-1]=#13) and (F.BufPtr^[i]<>#10) then
@@ -940,7 +945,9 @@ end;
 procedure AssignCrt(var F: Text);
 begin
   Assign(F,'');
+{$IFNDEF Kylix}  {TODO1: how get this working with Kylix??!!!}
   TextRec(F).OpenFunc:=@CrtOpen;
+{$ENDIF}
 end;
 
 {==========================================================================
@@ -993,7 +1000,11 @@ end;
 function Keypressed: boolean;
 var
   l : longint;
+{$IFDEF Kylix}
+  fd : TfdSet;
+{$ELSE}
   fd : fdSet;
+{$ENDIF}
 begin
   if not __isInit then InitXPCurses;
   keypressed := false;
@@ -1449,7 +1460,11 @@ begin
       [ESCDELAY,baudrate,iifs(has_colors<>0,'yes','no')]),dlDebug);
 
     { initialize mouse }
+{$IFDEF Kylix}
+    m:=NCursix.MouseMask(
+{$ELSE}
     m:=NCurses.MouseMask(
+{$ENDIF}
       ALL_MOUSE_EVENTS       or
       REPORT_MOUSE_POSITION,nil);
     Debug.DebugLog('xpcurses',Format('MouseMask=%s',[Hex(m,8)]),dlDebug);
@@ -1519,6 +1534,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.53  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

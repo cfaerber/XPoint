@@ -31,7 +31,10 @@ uses
   xpcurses,
 {$ENDIF }
 {$IFDEF linux }
-{$IFDEF fpc}
+{$IFDEF Kylix}
+  libc,
+  xplinux,
+{$ELSE}
   linux,
 {$ENDIF}  
 {$ENDIF }
@@ -2062,6 +2065,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.123  2001/09/21 16:16:47  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 

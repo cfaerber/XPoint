@@ -30,7 +30,11 @@ uses
 {$ifdef NCRT}
   xplinux,
   xpcurses,
+{$IFDEF Kylix}
+  ncursix,
+{$ELSE}
   ncurses,
+{$ENDIF}
 {$endif}
 {$IFDEF Win32}
   Windows,
@@ -563,6 +567,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/09/27 21:22:25  ml
+  - Kylix compatibility stage IV
+
   Revision 1.37  2001/09/21 13:11:09  mk
   - made compilable with FPC
 

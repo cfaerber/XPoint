@@ -188,7 +188,16 @@ end;
 procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
 {$IFDEF unix}
 var tzBase:Longint;
+  {$IFDEF Kylix }
+  tzseconds: LongInt;
+  tzdaylight: Boolean;
+  {$ENDIF}
 begin
+  {$IFDEF Kylix }
+  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
+  tzseconds := 0;
+  tzdaylight := False;
+  {$ENDIF}
   if (tzseconds < 0) then begin
     isNegative:= true;
     tzBase:= tzseconds div -60;
@@ -258,6 +267,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.20  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

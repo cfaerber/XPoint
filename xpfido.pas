@@ -29,6 +29,9 @@ interface
 uses  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
+{$IFDEF Kylix}
+  libc,
+{$ENDIF}
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
@@ -121,9 +124,10 @@ implementation
 uses  xpnt,xp2,xp3,xp4e,
 {$IFDEF Kylix}
   xplinux,
-{$ENDIF}   
+{$ELSE}
 {$IFDEF Linux}
   linux, // for stat & fsstat
+{$ENDIF}
 {$ENDIF}
 xpfidonl;
 
@@ -1685,11 +1689,18 @@ label ende;
   var
     p       : Integer;
 {$IFDEF Linux}
+{$IFDEF Kylix}
+    fs : TStatFs;
+  begin
+    statfs(PChar(path),fs);
+    if ((int64(fs.f_bavail)*int64(fs.f_bsize))<=size)
+{$ELSE}
     fs : statfs;
   begin
     fsstat(path,fs);
-    
     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
+{$ENDIF}
+
 {$ELSE}
     driveNr : Integer;
   begin
@@ -2262,6 +2273,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.61  2001/09/20 18:29:52  cl
   - changed var to const for TLister.OnMarkTest
 

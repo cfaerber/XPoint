@@ -1129,12 +1129,12 @@ var t       : text;
       dec(p,5);
       ports:='';
       getcommpar := getx(su,'fossil',fossil) or
-                    gets(s,su,'Port',ports) or
+                    xp1.gets(s,su,'Port',ports) or
                     getb(su,'IRQ',Cirq) or
-                    gets(s,su,'Init',MInit) or
-                    gets(s,su,'Exit',MExit) or
-                    gets(s,su,'Dial',MDial) or
-                    gets(s,su,'CommInit',MCommInit) or
+                    xp1.gets(s,su,'Init',MInit) or
+                    xp1.gets(s,su,'Exit',MExit) or
+                    xp1.gets(s,su,'Dial',MDial) or
+                    xp1.gets(s,su,'CommInit',MCommInit) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
                     getx(su,'IgnoreCTS',igcts) or
@@ -1286,10 +1286,10 @@ var t       : text;
 
   function getRTAAdressen :boolean;
   begin
-    if gets (s, su, 'RTA-OwnAddresses', RTAOwnAddresses) then
+    if xp1.gets (s, su, 'RTA-OwnAddresses', RTAOwnAddresses) then
       getRTAAdressen := true
     else
-    if gets (s, su, 'RTA-NoOwnAddresses', RTANoOwnAddresses) then
+    if xp1.gets (s, su, 'RTA-NoOwnAddresses', RTANoOwnAddresses) then
       getRTAAdressen := true
     else
       getRTAAdressen := false;
@@ -1326,39 +1326,39 @@ begin
           getb(su,  'Brettanzeige',brettanzeige) or
           getx(su,  'ShowUngelesen',showungelesen) or
           getx(su,  'ShowMsgdatum',showmsgdatum) or
-          gets(s,su,'lister',varlister) or
-          getw(su,  'listerkb',dummyi) or
+          xp1.gets(s,su,'lister',varlister) or
+          xp1.getw(su,  'listerkb',dummyi) or
           getx(su,  'listwrap',listwrap) or
-          gets(s,su,'ViewerSave',viewer_save) or
-          gets(s,su,'ViewerLister',viewer_lister) or
-          gets(s,su,'ViewerVirscan',viewer_scanner) or
-          gets(s,su,'editor',vareditor) or
-          getw(su,  'editorkb', dummyi) or
+          xp1.gets(s,su,'ViewerSave',viewer_save) or
+          xp1.gets(s,su,'ViewerLister',viewer_lister) or
+          xp1.gets(s,su,'ViewerVirscan',viewer_scanner) or
+          xp1.gets(s,su,'editor',vareditor) or
+          xp1.getw(su,  'editorkb', dummyi) or
           getx(su,  'autocpgdn',autocpgd) or
-          gets(s,su,'gifviewer',viewers^[1].prog) or
-          gets(s,su,'lbmviewer',viewers^[2].prog) or
-          gets(s,su,'pcxviewer',viewers^[3].prog) or
+          xp1.gets(s,su,'gifviewer',viewers^[1].prog) or
+          xp1.gets(s,su,'lbmviewer',viewers^[2].prog) or
+          xp1.gets(s,su,'pcxviewer',viewers^[3].prog) or
           geti16(su,  'stdhaltezeit',stdhaltezeit) or
           geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
-          gets(s,su,'quote',quotechar) or
+          xp1.gets(s,su,'quote',quotechar) or
           getx(su,  'otherquotechars',otherquotechars) or
           getb(su,  'screenlines',ConfigScreenlines) or
           getb(su,  'screencols', ConfigScreenWidth) or
-          gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }
-          gets(s,su,'extractdir',extractpath) or
-          gets(s,su,'sendfiledir',sendpath) or
-          gets(s,su,'logdir',logpath) or
-          gets(s,su,'filedir',filepath) or
-          gets(s,su,'defaultbox',defaultbox) or   { -> Config2 }
+          xp1.gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }
+          xp1.gets(s,su,'extractdir',extractpath) or
+          xp1.gets(s,su,'sendfiledir',sendpath) or
+          xp1.gets(s,su,'logdir',logpath) or
+          xp1.gets(s,su,'filedir',filepath) or
+          xp1.gets(s,su,'defaultbox',defaultbox) or   { -> Config2 }
           getx(su,  'MessageIDs',dummyb) or
-          getw(su,  'ScreenSaver',scrsaver) or
+          xp1.getw(su,  'ScreenSaver',scrsaver) or
           getx(su,  'SoftSaver',softsaver) or
           getx(su,  'blacksaver',blacksaver) or
           getx(su,  'Kleinschreibung',smallnames) or
-          gets(s,su,'UserAufnahme',userauf) or
+          xp1.gets(s,su,'UserAufnahme',userauf) or
           geti16(su,  'NeuUsergruppe', Neuusergruppe) or
-          gets(s,su,'Name_O''Maps',dummys) or
+          xp1.gets(s,su,'Name_O''Maps',dummys) or
           getl(su,  'MaxBinarySave',maxbinsave) or
           getl(su,  'MaxNetMsgs',maxnetmsgs) or
           getpmlimits('MAXNETPM=',1) or
@@ -1367,47 +1367,47 @@ begin
           getx(su,  'LongNames',longnames) or
           getx(su,  'ShowLogin',showlogin) or
           getx(su,  'InterruptLogin',BreakLogin) or
-          gets(s,su,'ArchivBretter',archivbretter) or
+          xp1.gets(s,su,'ArchivBretter',archivbretter) or
           getx(su,  'ArchivLoeschen',archivloesch) or
           getx(su,  'ArchivVermerk',archivtext) or
           getx(su,  'Shell25',shell25) or
           getx(su,  'Edit25',edit25) or
-          getw(su,  'MinMB',minmb) or
+          xp1.getw(su,  'MinMB',minmb) or
           getx(su,  'AskQuit',askquit) or
           getx(su,  'ListVollbild',listvollbild) or
           getx(su,  'ListUhr',listuhr) or
           getx(su,  'ListEndCR',listendcr) or
-          gets(s,su,'UnARC',unpacker^.unarc) or
-          gets(s,su,'UnLZH',unpacker^.unlzh) or
-          gets(s,su,'UnZOO',unpacker^.unzoo) or
-          gets(s,su,'UnZIP',unpacker^.unzip) or
-          gets(s,su,'UnARJ',unpacker^.unarj) or
-          gets(s,su,'UnPAK',unpacker^.unpak) or
-          gets(s,su,'UnDWC',unpacker^.undwc) or
-          gets(s,su,'UnHYP',unpacker^.unhyp) or
-          gets(s,su,'UnSQZ',unpacker^.unsqz) or
-          gets(s,su,'UnRAR',unpacker^.unrar) or
+          xp1.gets(s,su,'UnARC',unpacker^.unarc) or
+          xp1.gets(s,su,'UnLZH',unpacker^.unlzh) or
+          xp1.gets(s,su,'UnZOO',unpacker^.unzoo) or
+          xp1.gets(s,su,'UnZIP',unpacker^.unzip) or
+          xp1.gets(s,su,'UnARJ',unpacker^.unarj) or
+          xp1.gets(s,su,'UnPAK',unpacker^.unpak) or
+          xp1.gets(s,su,'UnDWC',unpacker^.undwc) or
+          xp1.gets(s,su,'UnHYP',unpacker^.unhyp) or
+          xp1.gets(s,su,'UnSQZ',unpacker^.unsqz) or
+          xp1.gets(s,su,'UnRAR',unpacker^.unrar) or
           getx(su,  'EditVollbild',editvollbild) or
           getb(su,  'ExtEditor',exteditor) or
           getx(su,  'ShowMsgPath',showmsgpath) or
           getx(su,  'ShowMsgID',showmsgid) or
           getx(su,  'ShowMsgSize',showmsgsize) or
-          getw(su,  'LPT',DruckLPT) or
-          gets(s,su,'DruckerInit',druckinit) or
-          gets(s,su,'DruckerExit',druckexit) or
+          xp1.getw(su,  'LPT',DruckLPT) or
+          xp1.gets(s,su,'DruckerInit',druckinit) or
+          xp1.gets(s,su,'DruckerExit',druckexit) or
           getb(su,  'Seitenlaenge',druckformlen) or
-          gets(s,su,'FormFeed',druckff) or
+          xp1.gets(s,su,'FormFeed',druckff) or
           getb(su,  'DruckRand',drucklira) or
           getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
-          gets(s,su,'EditBackup',BAKext) or
+          xp1.gets(s,su,'EditBackup',BAKext) or
           getx(su,  'KeepEDName',keepedname) or
           getb(su,  'EinhProZeile',dummybb) or         { -> Config2 }
           getb(su,  'AbsenderAnzeige',sabsender) or
-          getw(su,  'Environment',envspace) or
+          xp1.getw(su,  'Environment',envspace) or
           getx(su,  'RenameCALLED',dummyb) or
           geti(su,  'ReadMode',defreadmode) or
-          gets(s,su,'AutoAdvance',aaa) or
+          xp1.gets(s,su,'AutoAdvance',aaa) or
           getx(su,  'ScrollLock',scrolllock) or
           getx(su,  'HayesBefehle',hayescomm) or
           getx(su,  'GrossWandeln',grosswandeln) or
@@ -1416,15 +1416,15 @@ begin
           getx(su,  'ShowUsername',dispusername) or
           getx(su,  'SaveUnversandt',SaveUVS) or
           getx(su,  'EmpfangsBestaetigung',EmpfBest) or
-          gets(s,su,'EmpfBestKennung',empfbkennung) or   { -> Config2 }
-          gets(su,su,'UnEscape',unescape) or
+          xp1.gets(s,su,'EmpfBestKennung',empfbkennung) or   { -> Config2 }
+          xp1.gets(su,su,'UnEscape',unescape) or
           getx(su,  '12:00',replaceetime) or
-          gets(s,su,'Trennzeichen',trennchar) or
+          xp1.gets(s,su,'Trennzeichen',trennchar) or
           getx(su,  'AutoArchiv',autoarchiv) or
           getx(su,  'NeueBrEnde',newbrettende) or
-          gets(s,su,'Vorwahl',vorwahl) or
-          gets(s,su,'IntVorwahl',intvorwahl) or
-          gets(s,su,'NatVorwahl',natvorwahl) or
+          xp1.gets(s,su,'Vorwahl',vorwahl) or
+          xp1.gets(s,su,'IntVorwahl',intvorwahl) or
+          xp1.gets(s,su,'NatVorwahl',natvorwahl) or
           getx(su,  'TrennzeilenAlle',trennall) or
           getx(su,  'BezugsBaumAdr',BaumAdresse) or
           getx(su,  'Maus',_maus) or
@@ -1436,17 +1436,17 @@ begin
           getx(su,  'KommPfeile',KomArrows) or
           getx(su,  'ListScroller',listscroller) or
           getx(su,  'ListAutoScroll',listautoscroll) or
-          gets(s,su,'Pointliste',pointlistn) or
-          gets(s,su,'Pointdiff',pointdiffn) or
+          xp1.gets(s,su,'Pointliste',pointlistn) or
+          xp1.gets(s,su,'Pointdiff',pointdiffn) or
           getx(su,  'AutoDiff',AutoDiff) or
           getx(su,  'UserbrettBox',UserBoxname) or
-          gets(s,su,'AKAs',dummys) or
-          gets(s,su,'Organisation',orga) or
-          gets(s,su,'Post',postadresse) or
-          gets(s,su,'Telefon',telefonnr) or
-          gets(s,su,'Homepage',wwwHomepage) or
+          xp1.gets(s,su,'AKAs',dummys) or
+          xp1.gets(s,su,'Organisation',orga) or
+          xp1.gets(s,su,'Post',postadresse) or
+          xp1.gets(s,su,'Telefon',telefonnr) or
+          xp1.gets(s,su,'Homepage',wwwHomepage) or
           getx(su,  'PufferLoeschen',nDelPuffer) or
-          gets(s,su,'BrettEmpfaenger',brettalle) or
+          xp1.gets(s,su,'BrettEmpfaenger',brettalle) or
           getx(su,  'MausLimit',maxmaus) or
           getx(su,  'Auswahlcursor',auswahlcursor) or
           getx(su,  'SoundFlash',soundflash) or
@@ -1472,27 +1472,27 @@ begin
           getx(su,  'ListHighlight',listhighlight) or
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
-          gets(su,su,'Header',mheader) or
-          gets(s,su,'HeaderCustom1',mheadercustom[1]) or
-          gets(s,su,'HeaderCustom2',mheadercustom[2]) or
+          xp1.gets(su,su,'Header',mheader) or
+          xp1.gets(s,su,'HeaderCustom1',mheadercustom[1]) or
+          xp1.gets(s,su,'HeaderCustom2',mheadercustom[2]) or
 {$IFDEF unix}
-          gets(su,su,'timezone',dummytz) or
+          xp1.gets(su,su,'timezone',dummytz) or
 {$ELSE }
-          gets(su,su,'timezone',TimeZone) or
+          xp1.gets(su,su,'timezone',TimeZone) or
 {$ENDIF }
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
-          getc(su,  'isdn1-eaz',ISDN_EAZ) or
+          xp1.getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
-          gets(s,su,'ISDN1-MSN-Incoming', ISDN_incoming) or
-          gets(s,su,'ISDN1-MSN-Outgoing', ISDN_outgoing) or
+          xp1.gets(s,su,'ISDN1-MSN-Incoming', ISDN_incoming) or
+          xp1.gets(s,su,'ISDN1-MSN-Outgoing', ISDN_outgoing) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
           getx(su,  'maildelxpost',maildelxpost) or
           getx(su,  'keeprequests',keeprequests) or
           getx(su,  'zc-iso',zc_iso) or
           getx(su,  'zc-mime',zc_mime) or
-          gets(s,su,'waehrung',waehrung) or
+          xp1.gets(s,su,'waehrung',waehrung) or
           getl(su,  'gebnoconn',GebNoconn) or
           getx(su,  'gebcfos',GebCfos) or
           getx(su,  'feiertage',autofeier) or
@@ -1501,21 +1501,21 @@ begin
           getb(su,  'termport',TermCOM) or
           getl(su,  'termbaud',TermBaud) or
           getx(su,  'termstatus',TermStatus) or
-          gets(s,su,'terminit',TermInit) or
+          xp1.gets(s,su,'terminit',TermInit) or
           getx(su,  'shell-showpar',ShellShowpar) or
           getx(su,  'shell-waitkey',ShellWaitkey) or
           getx(su,  'usepgp',UsePGP) or
           getx(su,  'pgp-batchmode',PGPbatchmode) or
           getx(su,  'uucp-pgp',PGP_UUCP) or
           getx(su,  'fido-pgp',PGP_Fido) or
-          gets(s,su,'pgp-userid',PGP_UserID) or
+          xp1.gets(s,su,'pgp-userid',PGP_UserID) or
           getx(su,  'pgp-autoam',PGP_AutoAM) or
           getx(su,  'pgp-autopm',PGP_AutoPM) or
           getx(su,  'pgp-waitkey',PGP_WaitKey) or
           getx(su,  'pgp-logfile',PGP_log) or
           getx(su,  'pgp-signall',PGP_signall) or
-          gets(s,su,'pgp-version',PGPVersion) or
-          gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions) or
+          xp1.gets(s,su,'pgp-version',PGPVersion) or
+          xp1.gets(s,su,'pgp-gpgencodingoptions',PGP_GPGEncodingOptions) or
           getx(s,   'pgp-mime',PGP_MIME) or
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
@@ -1526,8 +1526,8 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
-          gets(s,su,'msgfeldtausch',MsgFeldTausch) or
-          gets(s,su,'usrfeldtausch',UsrFeldTausch) or
+          xp1.gets(s,su,'msgfeldtausch',MsgFeldTausch) or
+          xp1.gets(s,su,'usrfeldtausch',UsrFeldTausch) or
           getx(su,  'magics',magics) or
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
@@ -1649,16 +1649,16 @@ begin
       begin
         p:=cPos('=',s);
         if (p=0) or not (
-          gets(s,su,'defaultbox',defaultbox) or
-          gets(s,su,'defaultfidobox',deffidobox) or
+          xp1.gets(s,su,'defaultbox',defaultbox) or
+          xp1.gets(s,su,'defaultfidobox',deffidobox) or
           getb(su,  'EinhProZeile',dummybb) or
           getl(su,  'betragprozeile',wpz) or
-          gets(s,su,'EmpfBestKennung',empfbkennung) or
-          gets(s,su,'ShrinkNodelist',ShrinkNodes) or
+          xp1.gets(s,su,'EmpfBestKennung',empfbkennung) or
+          xp1.gets(s,su,'ShrinkNodelist',ShrinkNodes) or
           geti(su,  'Nstat-MinFlags',NS_minflags) or
           geti(su,  'Nstat-AnzahlNetze',LargestNets) or
           getx(su,  'CountDown',countdown) or
-          gets(s,su,'FileSuche',fidolastseek) or
+          xp1.gets(s,su,'FileSuche',fidolastseek) or
           getx(su,  'tl-netcallalle',XSA_NetAlle)
         )
         then
@@ -1703,6 +1703,9 @@ begin
 
 {
   $Log$
+  Revision 1.127  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.126  2001/09/20 18:26:27  cl
   - configuration option for mouswheel stepwidth (no UI yet)
 

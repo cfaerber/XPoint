@@ -775,7 +775,7 @@ begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,tmpS);
   if not dbFound then begin
-    Debug.DebugLog('XP2','Default system <'+tmpS+'> not found!',DLError);
+    Debug.DebugLog('XP2','Default system <'+tmpS+'> not found!',debug.DLError);
     if dbRecCount(d)=0 then begin
       xpconfigedit.get_first_box(d);
       dName := dbReadStr(d,'dateiname');
@@ -1093,6 +1093,9 @@ finalization
   FreeMem(Boxpar);
 {
   $Log$
+  Revision 1.124  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.123  2001/09/21 16:16:48  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 

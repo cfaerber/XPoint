@@ -50,7 +50,11 @@ procedure shell(const prog:string; space:word; cls:shortint);
   {$ifdef Unix}
   begin
     Debug.TempCloseLog(False);
+{$IFDEF Kylix}
+    Result:=libc.system(PChar(command));
+{$ELSE}
     Result:=linux.shell(command);
+{$ENDIF}
     Debug.TempCloseLog(True);
     Debug.DebugLog('xp1s','called program "'+command+'": result '+
                    strs(Result),iif(Result=0,DLInform,DLError));
@@ -499,6 +503,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.64  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.63  2001/09/08 16:29:32  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

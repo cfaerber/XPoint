@@ -100,6 +100,8 @@ procedure SetAccess(p: string; ta: TTestAccess);
 {$IFDEF Kylix }
 function Diskfree(drive: byte): LongInt;
 function DiskSize(drive: byte): LongInt;
+function FileGetAttr(filename: string): Integer;
+procedure FileSetAttr(filename: string; Attr: Integer);
 {$ENDIF}
 
 { Zugriffe ueber /proc/* ----------------------------------------------- }
@@ -448,7 +450,7 @@ end;
 function SysExec(const Path, CmdLine: String): Integer;
 begin
   result:= Linux.Shell(AddDirSepa(path)+CmdLine);
-end;
+end;             
 
 {$IFDEF Kylix }
 function Diskfree(drive: byte): LongInt;
@@ -462,6 +464,18 @@ begin
   {Todo1: get diskspace in Kylix !!!!!!!!!}
   Result := 1000000000;
 end;
+
+function FileGetAttr(filename: string): Integer;
+begin
+  {Todo1: get FileGetAttr in Kylix !!!!!!!!!}
+  Result := 0
+end;
+
+procedure FileSetAttr(filename: string; Attr: Integer);
+begin
+  {Todo1: get FileSetAttr in Kylix !!!!!!!!!}
+end;
+
 {$ENDIF}
 {$ifdef UseSysLog}
 
@@ -471,6 +485,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.27  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

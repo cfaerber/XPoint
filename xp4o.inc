@@ -595,7 +595,7 @@ begin
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,0);     { ohne Indexreihenfolge! }
   repeat
-    hdfree:=diskfree(0);
+    hdfree:=DiskFree(0);
     clw;
     abl:=0;
     bufs:=0;
@@ -705,6 +705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.43  2001/09/12 20:31:57  cl
   - fixed last commit
 

@@ -2058,7 +2058,7 @@ begin
   if ParG2 then gtest2;
 end;
 
-{$I XP10.INC}    { Timinglisten-Interpreter }
+{$I xp10.inc}    { Timinglisten-Interpreter }
 
 initialization
   e := TStringList.Create;
@@ -2067,6 +2067,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.64  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.63  2001/09/26 23:34:19  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

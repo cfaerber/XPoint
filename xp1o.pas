@@ -30,7 +30,10 @@ uses
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$IFDEF fpc}
+{$IFDEF Kylix}
+  xplinux,
+  libc,
+{$ELSE}
   linux,
 {$ENDIF}  
 {$ENDIF }
@@ -521,9 +524,13 @@ begin
   FMove(f1,f2);
   close(f1); close(f2);
   
+{$IFDEF Kylix}         // kylix handles the opening for itselfs
+  FileSetDate(fn2, FileAge(fn1));
+{$ELSE}
   fh1 := FileOpen(fn2,  fmOpenReadWrite);
   FileSetDate(fh1, FileAge(fn1));
   FileClose(fh1);
+{$ENDIF}
 
   filecopy:=(inoutres=0);
   if inoutres<>0 then begin
@@ -757,12 +764,16 @@ var
   fh: Integer;
 begin
   Date := ZCDateTimeToDateTime(ddatum);
+{$IFDEF Kylix}
+  FileSetDate(fn, DateTimeToFileDate(Date));
+{$ELSE}
   fh := FileOpen(fn, fmOpenRead OR fmShareDenyNone);
   if fh > 0 then
   begin
     FileSetDate(fh, DateTimeToFileDate(Date));
     FileClose(fh);
   end;
+{$ENDIF}
 end;
 
 procedure KorrBoxname(var box:string);
@@ -1026,6 +1037,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2001/09/27 21:22:26  ml
+  - Kylix compatibility stage IV
+
   Revision 1.98  2001/09/26 23:34:19  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

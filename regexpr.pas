@@ -1,6 +1,6 @@
 {$I xpdefine.inc }
 
-unit RegExpr;
+unit regexpr;
 
 {
  *  Copyright (c) 1986 by University of Toronto.
