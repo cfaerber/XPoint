@@ -916,7 +916,7 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: XP '+mid(programm,cpos(' ',programm)+2));
+        wrs(^A'PID: XP/OXP '+mid(programm,cpos(' ',programm)+2));
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1814,6 +1814,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.2  2000/07/08 18:22:39  mk
+  - /OXP in PID hinzugefuegt
+
   Revision 1.21.2.1  2000/07/02 10:43:01  mk
   - pformstr entfernt
 
