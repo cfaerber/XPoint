@@ -3320,7 +3320,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 26 This newsgroup cannot be subsribed.
 27 This newsgroup cannot be unsubscribed.
 30 %s cannot be subscribed
-31 %s is subscribed already
+31 Newsgroup %s is subscribed already
 # The string in the following four lines must not exceed 57 characters:
 32 Net type RFC/Client: To get a new newsgroup list, the
 33 appropriate function of the external client must be acti-
@@ -3986,6 +3986,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.6  2002/08/01 17:50:01  mk
+# - fixed
+#   589620: 3.8: NNTP:Bestellung einer bestellten NG
+#   589622: 3.8: NNTP: Alle NGs abbestellen -> Crash
+#   589621: 3.8: NNTP: Mehrere NGs abbestellen
+#
 # Revision 1.49.2.5  2002/07/31 19:30:35  ma
 # - new feature: kill/prevent dupes when sorting in messages
 #   (in fact a replaceown variant)

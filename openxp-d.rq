@@ -3423,7 +3423,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 26 Dieses Brett kann nicht bestellt werden.
 27 Dieses Brett kann nicht abbestellt werden.
 30 %s kann nicht bestellt werden
-31 %s wurde bereits bestellt
+31 Newsgroup %s wurde bereits bestellt
 # Der String in den folgenden vier Zeilen darf max. 57 Zeichen lang sein:
 32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
 33 Liste muá die entsprechende Funktion beim externen Client
@@ -3996,6 +3996,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.7  2002/08/01 17:50:01  mk
+# - fixed
+#   589620: 3.8: NNTP:Bestellung einer bestellten NG
+#   589622: 3.8: NNTP: Alle NGs abbestellen -> Crash
+#   589621: 3.8: NNTP: Mehrere NGs abbestellen
+#
 # Revision 1.57.2.6  2002/07/31 19:30:35  ma
 # - new feature: kill/prevent dupes when sorting in messages
 #   (in fact a replaceown variant)
