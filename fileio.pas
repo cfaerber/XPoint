@@ -568,7 +568,7 @@ end;
 
 function TempFile(const path: string): string;
 begin
-  TempExtFile(Path, '', '.tmp');
+  Result := TempExtFile(Path, '', '.tmp');
 end;
 
 function TempExtFile(path: String; const startnamewith,ext:string):string;
@@ -712,6 +712,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2002/04/09 08:51:51  mk
+  - fixed last commit (TempFile result was not set)
+
   Revision 1.115  2002/04/09 08:09:36  mk
   - fixed TempFile
 
