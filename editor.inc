@@ -2359,7 +2359,8 @@ sok:  case p of
        12 : LocalMenu:=EditfWrapOff;
        13 : LocalMenu:=EditfWrapOn;
        15 : LocalMenu:=EditfSetup;
-       17 : LocalMenu:=EditfBreak;
+       17 : LocalMenu:=EditfAddMime;
+       19 : LocalMenu:=EditfBreak;
        { 12 : LocalMenu:=EditfSaveSetup; }
       else  LocalMenu:=0;
       end;
@@ -2417,6 +2418,24 @@ end;
 
 {
   $Log$
+  Revision 1.19.2.24  2002/04/19 16:38:05  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es k”nnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Gr”áe an die aktuelle Nachricht angeh„ngt werden.
+           Die nderung der Reihenfolge bereits angeh„ngter Nachrichten-
+           teile ist m”glich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls untersttzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Anstoá und Vorlage fr die aktuelle XP-Implementation
+           diente, sowie an JM fr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-Konformit„t.
+
   Revision 1.19.2.23  2001/09/16 20:34:46  my
   JG+MY:- Editor-Menü (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
           und "Beenden" hinzugefügt

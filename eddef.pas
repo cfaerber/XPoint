@@ -110,10 +110,11 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfSave        = 123;        { Speichern                      }
        EditfBreak       = 124;        { Abbruch                        }
        EditfSaveQuit    = 125;        { Speichern + Ende               }
-       EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
+       EditfGlossary    = 126;        { KÅrzelmakros mit <Ctrl-Enter>  }
+       EditfAddMime     = 127;        { MIME-Datei anhÑngen            }
 
        MaxFindLen       = 30;
-       EditMenuMps      = 17;
+       EditMenuMps      = 19;
        
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
@@ -132,7 +133,7 @@ type   EdColrec = record
        LangData = record
                     zeile,spalte : string[8];
                     ja,nein      : char;
-                    errors       : array[1..6] of string[30];
+                    errors       : array[1..7] of string[70];
                     askquit      : string[30]; { 'GeÑnderten Text speichern' }
                     askoverwrite : string[50]; { 'Datei existiert schon - Åberschreiben' }
                     askreplace   : string[40]; { 'Text ersetzen (Ja/Nein/Alle/Esc)' }
@@ -176,9 +177,27 @@ end.
 
 {
   $Log$
+  Revision 1.5.2.6  2002/04/19 16:38:05  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es kînnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Grî·e an die aktuelle Nachricht angehÑngt werden.
+           Die énderung der Reihenfolge bereits angehÑngter Nachrichten-
+           teile ist mîglich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls unterstÅtzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fÅr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fÅr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Ansto· und Vorlage fÅr die aktuelle XP-Implementation
+           diente, sowie an JM fÅr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
+
   Revision 1.5.2.5  2001/09/16 20:35:49  my
-  JG+MY:- Editor-Men¸ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
-          und "Beenden" hinzugef¸gt
+  JG+MY:- Editor-MenÅ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugefÅgt
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 

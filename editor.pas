@@ -92,7 +92,7 @@ procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister,xpovl,xpe;
+uses  typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,xp6,lister,xpovl,xpe;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -459,7 +459,7 @@ begin
     menue[5]:='La^den UUE    ^KU';
     menue[6]:='^Speichern    ^KW';
     menue[7]:='-';
-    menue[8]:='S^uchen       ^QF';
+    menue[8]:='Su^chen       ^QF';
     menue[9]:='E^rsetzen     ^QL';
     menue[10]:='Weitersuchen   ^L';
     menue[11]:='-';
@@ -468,7 +468,9 @@ begin
     menue[14]:='-';
     menue[15]:='^Optionen';
     menue[16]:='-';
-    menue[17]:='Beenden       ESC'; 
+    menue[17]:='M^IME-Anhang   @A';
+    menue[18]:='-';
+    menue[19]:='Beenden       Esc';
     { menue[12]:='.. s^ichern'; }
     end;
   delroot:=nil;
@@ -1494,6 +1496,9 @@ var  dl         : displp;
                             end;
 
         editfGlossary     : Glossary;
+        editfAddMime      : if XP6.Mime_Allowed
+                              then XP6.Mime_Attach:=XP6.MimeSendMenu
+                              else error(7);
       end;
 
       if tk in [editfBOL, editfPgUp, editfUp, editfLeft, editfPageTop,
@@ -1629,7 +1634,10 @@ var  dl         : displp;
     if t=^O      then case GetPrefixChar('O',true) of
                         'R' : b:=EditfSetup;
                       { 'S' : b:=EditfSaveSetup; }
-                      end;
+                      end else
+
+    if t=keyaltA then b:=EditfAddMime;
+
     if b<>0 then EdAddToken(ed,b);
   end;
 
@@ -1836,6 +1844,24 @@ end.
 
 {
   $Log$
+  Revision 1.25.2.21  2002/04/19 16:38:05  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es kînnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Grî·e an die aktuelle Nachricht angehÑngt werden.
+           Die énderung der Reihenfolge bereits angehÑngter Nachrichten-
+           teile ist mîglich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls unterstÅtzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fÅr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fÅr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Ansto· und Vorlage fÅr die aktuelle XP-Implementation
+           diente, sowie an JM fÅr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
+
   Revision 1.25.2.20  2002/03/17 21:48:17  my
   MY:- Fix: Wenn wÑhrend des Editierens einer Nachricht mit <Alt-E> eine
        externe Datei editiert wurde, dann wurde beim Verlassen der

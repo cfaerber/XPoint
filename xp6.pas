@@ -72,6 +72,12 @@ const sendIntern = 1;     { force Intern              }
       force_quotemsk : string[12] = '';
       sendempflist   : empfnodep = nil;
       CrosspostBox   : string[BoxNameLen] = '';
+                                        {------------- MIME-Multipart-Versand --------------}
+      MimeBoundary   : string[70] ='';  { Weiterleiten/Reedit: Original Boundary  <- XP6O   }
+      WasMime        : boolean = false; { Nacheditieren, Nachricht WAR Multipart  <- XP6O   }
+      Mime_Allowed   : boolean = false; { externer Mime-Menue Aufruf erlaubt      -> EDITOR }
+      Mime_Attach    : boolean = false; { Versand: Nachricht IST Multipart        <- EDITOR }
+      MimePos        : byte = 61;       { Position '(A)nhang' im Sendefenster               }
 
 type  SendUUdata = record
                      AmReplyTo  : string[AdrLen];
@@ -110,11 +116,12 @@ function testreplyto(var s:string):boolean;
 function pgpo_sigtest(var s:string):boolean;
 function pgpo_keytest(var s:string):boolean;
 
+function MimeSendMenu:boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp2,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
-     xp_pgp,xp6l,xms,xpovl;
+uses xp1o,xp2,xp2b,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+     xp_pgp,xp6l,xms,xpovl,encoder;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
@@ -316,6 +323,8 @@ begin
   pgpo_keytest:=true;
 end;
 
+{$I xp6m.inc}
+
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
 { empfaenger: der Empfaenger (User oder x/Brett)                             }
@@ -407,8 +416,9 @@ var f,f2     : ^file;
     spezial  : boolean;
     flOhnesig: boolean;
     flLoesch : boolean;
-    kopkey   : string[1];   { (K)opien }
-    fidokey  : string[1];   { (A)n     }
+    kopkey   : string[1];   { (K)opien / (C)opies }
+    mimekey  : string[1];   { (A)nhang / (A)ttach }
+    fidokey  : string[1];   { (A)n / (R)ecipient  }
     pgpkey   : string[1];
     sdnope   : boolean;     { sData = nil }
     oldbetr  : string[20];
@@ -541,9 +551,11 @@ begin
   if pushpgdn then pushkey(keycpgd);
   if exteditor<3 then EditSetBetreff(betreff,betrlen);
   store_arrays;
+  mime_allowed:=(netztyp in [nt_ZConnect, nt_UUCP, nt_Client]);
   editfile(datei,true,
            (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
            true,iif(editvollbild,0,2),umlaute=1);
+  mime_allowed:=false;
   get_arrays;
   if exteditor<3 then betreff:=EditGetbetreff;
   if edpush then begin
@@ -553,7 +565,7 @@ begin
     get(t,curoff);
     if t<>keycpgd then _keyboard(t);
     end;
-  otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
+  otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltete Quotechars resetten }
 end;
 
 
@@ -655,7 +667,6 @@ var i,first : integer;
     function IndexStr(i:integer):string;
     begin
       with ccm^[i] do
-        { !! Char(Byte(x)) ist eine gro·e Schweinerei, evtl. mal Ñndern }
         IndexStr:=char(byte(encode))+forms(server,BoxNameLen)+char(byte(ccpm));
     end;
   begin
@@ -965,13 +976,15 @@ end;
 
 procedure DisplaySendbox;
 var
-  ToStr: String;
-  ToPos: Integer;
+  ToStr   : String[10];
+  ToPos   : Byte;
+const
+  Width = 78;
 begin
   checkTimeZone(false);
   echomail:=ntEditBrettempf(netztyp) and not pm;
   fadd:=iif(echomail,2,0);
-  diabox(78,15+fadd,typ,x,y);
+  diabox(width,15+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(441,6)+ch);    { 'Absender ' }
   wrt(x+3,y+4,getres2(611,10)+ch);   { 'EmpfÑnger ' }
@@ -988,14 +1001,24 @@ begin
   wrt(x+3,y+6,getres2(611,12));      { 'Betreff' }
   wrt(x+3,y+8,getres2(611,13));      { 'Server'  }
   wrt(x+3,y+10,getres2(611,14));     { 'Grî·e'   }
-  wrt(x+42,y+8,getres2(611,15));     { 'Code:'   }
+  wrt(x+39,y+8,getres2(611,15));     { 'Code:'   }
   showcode;
   attrtxt(col.coldialog);
-  wrt(x+43,y+10,mid(getres2(611,16),2));    { 'opien:' }
+  wrt(x+40,y+10,mid(getres2(611,16),2));         { 'opien:' }
+  mimepos:=x+(width-5-(length(getres2(611,17))+
+             max(length(getres(602)),4)));
+  if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
+  begin
+    wrt(mimepos+1,y+10,mid(getres2(611,17),2));  { 'nhÑnge:' }
+    showmp;
+  end;
   showcc;
   attrtxt(col.coldiahigh);
   kopkey:=left(getres2(611,16),1);
-  wrt(x+42,y+10,kopkey);
+  mimekey:=left(getres2(611,17),1);
+  wrt(x+39,y+10,kopkey);             { 'K' / 'C' }
+  if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
+    wrt(mimepos,y+10,mimekey);       { 'A' }
   if empfaenger[1]=vert_char then
     wrt(x+14,y+4-fadd,vert_name(copy(empfaenger,edis,52)))
   else
@@ -1006,7 +1029,7 @@ begin
 
   if echomail then
   begin
-    wrt(x+2+ToPos,y+4,fidokey);            { 'A' }
+    wrt(x+2+ToPos,y+4,fidokey);      { 'A' }
     wrt(x+14,y+4,fidoto);
   end;
   showbetreff;
@@ -1015,7 +1038,7 @@ begin
   showabsender;
   mon;
   senden:=-1;
-  n:=1;                                { SendBox-Abfrage }
+  n:=1;                              { SendBox-Abfrage }
   pushhp(68);
   spezial:=false;
 end;
@@ -1110,6 +1133,11 @@ end;
 
 procedure DoSendInit1;
 begin
+  force_absender:='';
+  Mime_Temppath:=iifs(_filesize(datei)+1024*1024>tempfree,ownpath,temppath);
+  Max_Mime_Parts:=0;
+  If Not WasMime then Mime_Attach:=false
+    else mime_Attach:=Split_Mime_Parts(datei);
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
@@ -1316,7 +1344,6 @@ begin
 end;
 
 begin      {-------- of DoSend ---------}
-  force_absender:='';
   DoSendInit1;
   {$IFDEF BP }
   if memavail<20000 then
@@ -1507,10 +1534,10 @@ fromstart:
           closebox;
           goto fromstart;
           end
-        else if n>5 then dec(n); { Ansonsten eins zurueckzaehlen fuer alte Keys}
+        else if n>5 then dec(n); { Ansonsten eins zurueckzaehlen fuer alte Keys }
 
         if n<0 then begin
-          p:=pos(UpCase(t[1]),getres2(611,30));   { PDEHôRMLG }
+          p:=pos(UpCase(t[1]),getres2(611,30));   { PDEHôRMLUG }
           case p of
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
@@ -1600,6 +1627,7 @@ fromstart:
                   closebox; goto xexit; end;    { -> Nachrichtengrî·e 0 }
                 showbetreff;
                 showsize;
+                showmp;
                 n:=1;
               end;
        11   : if binary then rfehler(612)   { 'Bei BinÑrnachrichten nicht mîglich.' }
@@ -1663,6 +1691,13 @@ fromstart:
                 n:=abs(n);
 
                 if t=keyaltA then changeabs; { Absender aendern }
+
+                if (ustr(t)=mimekey) and (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) then
+                begin
+                  mime_Attach:=MimeSendMenu;
+                  showmp;
+                  attrtxt(col.coldialog);
+                end;
 
                 if ustr(t)=kopkey then begin
                   old_cca:=cc_anz;
@@ -1790,17 +1825,22 @@ fromstart:
     if binary then
       fn^:=datei
     else
-      fn^:=TempS(system.round((_filesize(datei)+addsize+2000)*1.5));
+      fn^:=TempS(system.round((_filesize(datei)+addsize+2000+mime_size)*1.5));
     assign(f2^,datei);
-    iso:=not binary and ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe);
+    iso:=not binary and (mime_attach or 
+     (ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe)));
     if not binary then begin
       assign(f2^,fn^);
       rewrite(f2^,1);
+      if Mime_Attach then begin          { MIME-Textpart-Header }
+        assign(f^,temppath+Mime_Head);
+        AppendFile(docode,0,iso);
+        end;
       if header<>'' then begin           { Header }
         assign(f^,header);
         AppendFile(docode,0,iso);
         end;
-      assign(f^,datei);                   { Text }
+      assign(f^,datei);                  { Text }
       AppendFile(docode,0,iso);
       if not flOhnesig and (sigfile<>'') then begin       { Signatur }
         assign(f^,sigfile);
@@ -1810,8 +1850,20 @@ fromstart:
       if fo^<>'' then
         wrs(fo^)
       else
-        if XpID then                       { ID }
+        if XpID then                     { ID }
           blockwrite(f2^,XID[1],length(XID));
+
+      if Mime_Attach then begin
+        for ii:=1 to max_mime_parts do
+          if exist(mimename(ii)) then    { MIME-Parts }
+          begin
+            assign(f^,mimename(ii));
+            AppendFile(docode,0,iso and iso_charset(used_Charset(mimename(ii))));
+            end;
+        assign(f^,temppath+Mime_End);                     { Mime-EndeZeile }
+        Appendfile(docode,0,iso);
+        end;
+
       close(f2^);
       end;
 
@@ -1832,6 +1884,11 @@ fromstart:
       assign(f^,TempPath+'binmsg');
       end;
     fillchar(hdp^,sizeof(hdp^),0);
+    if Mime_Attach then
+    begin
+      hdp^.mimetyp:='multipart/mixed';
+      hdp^.boundary:=Mimeboundary;
+    end;
     hdp^.netztyp:=netztyp;
     if ntZConnect(netztyp) then begin
       if pm then
@@ -1997,12 +2054,12 @@ fromstart:
     hdp^.nokop:=flNokop;
     case netztyp of
       nt_UUCP,
-      nt_Client : if FileContainsUmlaut then
+      nt_Client : if FileContainsUmlaut and not mime_attach then
                     hdp^.x_charset:='ISO-8859-1';
       nt_Fido   : if umlaute=0 then
                     hdp^.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
     end;
-    if iso then
+    if iso and not (mime_attach and (netztyp in [nt_UUCP,nt_Client])) then
       hdp^.charset:='ISO1';
     if assigned(sData^.orghdp) then
       with sData^.orghdp^ do begin
@@ -2045,7 +2102,7 @@ fromstart:
       if FileAttach then inc(l,$200);
       if hdp^.pm_reply then inc(l,$400);
       if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(l,$800);
-      if iso then inc(l,$2000);
+      if iso and not mime_attach then inc(l,$2000);
       if flPGPsig then inc(l,$4000);
       if msgCPanz>0 then begin
         inc(l,longint(msgCPanz) shl 16);
@@ -2080,6 +2137,9 @@ fromstart:
       dbWriteN(mbase,mb_unversandt,b);
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
+      
+      if Mime_Attach then flags:=flags or 4          { MIME-Versand...}
+        else Flags:=flags and not 4;
 
       flags:=flags and not 56;
       if netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
@@ -2314,6 +2374,10 @@ xexit2:
   DisposeReflist(_ref6list);
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
+  if Mime_Attach then                               { MIME-Versand: Tempfiles loeschen }
+    xp2b.DelTmpFiles(mime_temppath+'MIME????.TMP'); { Erst jetzt wegen CC-Empfaengern... }
+  ExErase(Temppath+mime_Head);
+  ExErase(Temppath+Mime_End);
 end; {------ of DoSend -------}
 
 
@@ -2417,6 +2481,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.53  2002/04/19 16:38:05  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es kînnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Grî·e an die aktuelle Nachricht angehÑngt werden.
+           Die énderung der Reihenfolge bereits angehÑngter Nachrichten-
+           teile ist mîglich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls unterstÅtzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fÅr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fÅr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Ansto· und Vorlage fÅr die aktuelle XP-Implementation
+           diente, sowie an JM fÅr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
+
   Revision 1.39.2.52  2002/03/24 13:29:47  my
   JG:- Fix fÅr Uralt-Bug: Das Eintragen eines KopienempfÑngers ("k" im
        Sendefenster) mit einer anderen Serverbox als der des EmpfÑngers
@@ -2702,9 +2784,9 @@ end.
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
 
   Revision 1.39.2.9  2000/09/30 14:17:26  my
-  JG:- Fix: Aufnahme von Usern ins Adreﬂbuch, wenn diese schon
+  JG:- Fix: Aufnahme von Usern ins Adre·buch, wenn diese schon
        in der Datenbank sind, auch bei CCs
-       (bitte noch f¸r 3.70 nachholen)
+       (bitte noch fÅr 3.70 nachholen)
 
   Revision 1.39.2.8  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der

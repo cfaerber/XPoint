@@ -256,9 +256,9 @@ procedure showcode;
   end;
 begin
   attrtxt(col.coldialog);
-  moff; (* 05.02.2000 MH: x+45 -> x+51 *)
-  wrt(x+51,y+8,sp(22));
-  gotoxy(x+51,y+8);
+  moff;
+  wrt(x+39+length(getres2(611,16)),y+8,sp(22));
+  gotoxy(x+41+length(getres2(611,16)),y+8);
   if docode=0 then
     case cancode of
       -1 : Wrt2(getreps2(601,1,'Rot13'));       { '%s mîglich' }
@@ -287,12 +287,27 @@ end;
 procedure showcc;
 begin
   attrtxt(col.coldialog);
-  mwrt(x+51,y+10,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *)
+  mwrt(x+41+length(getres2(611,16)),y+10,
+    sp(max(length(getres(602)),3)));
   if cc_anz=0 then
-    mwrt(x+51,y+10,getres(602))   { 'keine' }
+    mwrt(x+41+length(getres2(611,16)),y+10,getres(602))   { 'keine' }
   else begin
     attrtxt(col.coldiahigh);
-    mwrt(x+51,y+10,strs(cc_anz));
+    mwrt(x+41+length(getres2(611,16)),y+10,strs(cc_anz));
+    end;
+end;
+
+procedure showmp;
+var pos : byte;
+begin
+  pos:=mimepos+2+length(getres2(611,17));
+  attrtxt(col.coldialog);
+  mwrt(pos,y+10,sp(max(length(getres(602)),4)));
+  if max_mime_parts=0 then
+    mwrt(pos,y+10,getres(602))   { 'keine' }
+  else begin
+    attrtxt(col.coldiahigh);
+    mwrt(pos,y+10,strs(max_mime_parts-1));
     end;
 end;
 
@@ -345,9 +360,10 @@ begin
      5 : Flags := Flags + GetRes2(604, 18);    { 'Niedrigste '}
   end;
 
-  if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
-  if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
-  if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
+  if Mime_Attach then flags:=flags+getres2(604,19); { 'MIME '    }
+  if flPGPkey then flags:=flags+getres2(604,10);    { 'PGP-Key ' }
+  if flPGPsig then flags:=flags+getres2(604,11);    { 'PGP-Sig ' }
+  if flPGPreq then flags:=flags+getres2(604,12);    { 'PGP-Req ' }
   attrtxt(col.coldiarahmen);
   if trim(flags)='' then
     mwrt(x+35,y-iif(echomail,2,0),dup(41,'ƒ'))
@@ -703,12 +719,12 @@ begin
     for i:=1 to cc_anz do
       wrs(getres(600)+' '+cc^[i]);
     wrs('');
-    assign(f2^,datei);
+    assign(f2^,iifs(Mime_Attach,temppath+mime_Head,datei));
     reset(f2^,1);
     fmove(f2^,f);
     close(f2^); close(f);
     erase(f2^);
-    rename(f,datei);
+    rename(f,iifs(Mime_Attach,temppath+mime_Head,datei));
     if ioresult<>0 then begin
       rewrite(f2^,1); reset(f,1);
       fmove(f,f2^);
@@ -1154,6 +1170,24 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.18.2.15  2002/04/19 16:38:06  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es kînnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Grî·e an die aktuelle Nachricht angehÑngt werden.
+           Die énderung der Reihenfolge bereits angehÑngter Nachrichten-
+           teile ist mîglich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls unterstÅtzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fÅr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fÅr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Ansto· und Vorlage fÅr die aktuelle XP-Implementation
+           diente, sowie an JM fÅr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
+
   Revision 1.18.2.14  2002/03/31 15:52:31  my
   MY:- In der Fido-Tearline wird jetzt hinter der Versionsnummer wieder
        der Registrierungsvermerk "R" angezeigt (User-Request).

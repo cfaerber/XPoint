@@ -222,7 +222,7 @@ begin
     nein:=_jn_[2];
     zeile:=getres2(2503,1);
     spalte:=getres2(2503,2);
-    for i:=1 to 6 do
+    for i:=1 to 7 do
       errors[i]:=getres2(2503,10+i);
     askreplace:=getres2(2503,20);
     replacechr:=getres2(2503,21);
@@ -474,6 +474,24 @@ end.
 
 {
   $Log$
+  Revision 1.16.2.8  2002/04/19 16:38:06  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es k”nnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Gr”áe an die aktuelle Nachricht angeh„ngt werden.
+           Die nderung der Reihenfolge bereits angeh„ngter Nachrichten-
+           teile ist m”glich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls untersttzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Anstoá und Vorlage fr die aktuelle XP-Implementation
+           diente, sowie an JM fr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-Konformit„t.
+
   Revision 1.16.2.7  2002/04/19 15:51:30  my
   MY:- Taste fr "Parken" im Editor wird jetzt aus Ressource ausgelesen
 
@@ -489,7 +507,7 @@ end.
        nicht bei N//T)
 
   Revision 1.16.2.4  2001/09/16 20:35:22  my
-  JG+MY:- Beim Editieren von Nachrichten gibt es im "Änderungen
+  JG+MY:- Beim Editieren von Nachrichten gibt es im "nderungen
           speichern?"-Dialog die Option "Parken", die direkt ein "P" ans
           Sendefenster weiterleitet.
 

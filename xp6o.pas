@@ -360,6 +360,8 @@ begin
     xp6.msgprio:=hdp0^.prio;
     xp6.rfcprio:=hdp0^.priority;
     xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
+    xp6.WasMime:=dbreadint(mbase,'flags') and 4 =4;
+    xp6.MimeBoundary:=hdp^.boundary;
     sendfilename:=hdp0^.datei;
     sendfiledate:=hdp0^.ddatum;
     sendflags:=0;
@@ -423,6 +425,8 @@ begin
         until not found;
       dbGo(mbase,rec2);
       end;
+    xp6.WasMime:=false; 
+    xp6.MimeBoundary:='';
     dispose(sData);
     _era(tmp);
     xaufbau:=true;
@@ -815,11 +819,18 @@ begin
 again:
   dbReadN(mbase,mb_typ,ntyp);
   dbReadN(mbase,mb_brett,_brett);
-  if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
+  if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then
+  begin
     rfehler(620);    { 'Nicht mîglich - bitte Nachricht erneut versenden.' }
     dispose(hdp);
     exit;   { Erneut: BinÑr-Versandmeldung }
-    end;
+  end;
+  if (typ = 3) and (dbreadint(mbase,'flags') and 4=4) then
+  begin
+    rfehler(639);    { 'Bei MIME-Multipart-Nachrichten nicht mîglich.' }
+    dispose(hdp);
+    exit;
+  end;
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
   assign(t,fn); assign(f,fn);
   rec:=dbRecno(mbase);
@@ -1042,10 +1053,14 @@ again:
                  if nextwl>=0 then begin
                    ua:=uvs_active; uvs_active:=false;
                    end;
+                 xp6.WasMime:=dbreadint(mbase,'flags') and 4=4;
+                 xp6.MimeBoundary:=hdp^.boundary;
                  if DoSend(pm,fn,empf,betr,typ in [2,3],binaermail,sendbox,
                            (typ=3) and SelWeiter,typ=3,sData,leer,sigfile,
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
+                 xp6.WasMime:=false;
+                 xp6.MimeBoundary:='';
                  if nextwl>=0 then uvs_active:=ua;
                  dispose(sData);
                  end;
@@ -1118,8 +1133,12 @@ again:
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
                  inc(SendFlags,SendPGPsig);
+                 xp6.WasMime:=dbreadint(mbase,'flags') and 4=4;
+                 xp6.MimeBoundary:=hdp^.boundary;
                if DoSend(pm,fn,empf,betr,false,hdp^.typ='B',sendbox,
                          false,false,sData,leer,leer,sendflags) and unpark then SetDel;
+               xp6.WasMime:=false;
+               xp6.MimeBoundary:='';
                dispose(sData);
              end;
          6 : begin
@@ -1408,6 +1427,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.25  2002/04/19 16:38:06  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es kînnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Grî·e an die aktuelle Nachricht angehÑngt werden.
+           Die énderung der Reihenfolge bereits angehÑngter Nachrichten-
+           teile ist mîglich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls unterstÅtzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fÅr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fÅr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Ansto· und Vorlage fÅr die aktuelle XP-Implementation
+           diente, sowie an JM fÅr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
+
   Revision 1.20.2.24  2002/03/31 15:51:41  my
   JG:- Variable 'msgflags' von integer in longint geÑndert.
 

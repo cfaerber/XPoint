@@ -652,27 +652,37 @@ begin
     at(coleditendmark);
     wrt(31,14,#4);
     at(coleditmenu);
-    wrt(57,7, 'Ú Men ÄÄÄÄÄÄÄÄÄÄÄÄ¿');
-    wrt(57,8, '³ Kopieren       * ³');
-    wrt(57,9, '³ Ausschneiden   - ³');
-    wrt(57,10,'³ Einfgen       + ³');
-    wrt(57,11,'³ Laden        ^KR ³');
-    wrt(57,12,'³ Speichern    ^KW ³');
-    wrt(57,13,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
-    wrt(57,14,'³ Umbruch aus   F3 ³');
-    wrt(57,15,'³ Umbruch ein   F4 ³');
-    wrt(57,16,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
-    wrt(57,17,'³ Optionen         ³');
-    wrt(57,18,'³ .. sichern       ³');
-    wrt(57,19,'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ');
-    wshadow(58,77,8,20);
+    wrt(57,4, 'ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿');
+    wrt(57,5, '³ Kopieren       * ³');
+    wrt(57,6, '³ Ausschneiden   - ³');
+    wrt(57,7, '³ Einfgen       + ³');
+    wrt(57,8, '³ Laden        ^KR ³');
+    wrt(57,9, '³ Laden UUE    ^KU ³');
+    wrt(57,10,'³ Speichern    ^KW ³');
+    wrt(57,11,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
+    wrt(57,12,'³ Suchen       ^QF ³');
+    wrt(57,13,'³ Ersetzen     ^QA ³');
+    wrt(57,14,'³ Weitersuchen  ^L ³');
+    wrt(57,15,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
+    wrt(57,16,'³ Umbruch aus   F3 ³');
+    wrt(57,17,'³ Umbruch ein   F4 ³');
+    wrt(57,18,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
+    wrt(57,19,'³ Optionen     ^OR ³');
+    wrt(57,20,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
+    wrt(57,21,'³ MIME-Anhang   @A ³');
+    wrt(57,22,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
+    wrt(57,23,'³ Beenden      Esc ³');
+    wrt(57,24,'ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ');
+    wshadow(58,77,5,25);
     at(coleditmenuhi);
-    wrt(59,9,'A'); wrt(59,10,'E'); wrt(59,11,'L'); wrt(59,12,'S');
-    wrt(59,14,'U'); wrt(60,15,'m'); wrt(59,17,'O'); wrt(62,18,'s');
+    wrt(59,6,'A'); wrt(59,7,'E'); wrt(59,8,'L'); wrt(61,9,'d'); wrt(59,10,'S');
+    wrt(61,12,'c'); wrt(60,13,'r'); wrt(59,14,'W');
+    wrt(59,16,'U'); wrt(60,17,'m');
+    wrt(59,19,'O'); wrt(60,21,'I'); wrt(59,23,'B');
     at(coleditmenuinv);
-    wrt(58,8,' Kopieren       * ');
+    wrt(58,5,' Kopieren       * ');
     at(coledithiinv);
-    wrt(59,8,'K');
+    wrt(59,5,'K');
     mon;
     end;
 end;
@@ -1190,6 +1200,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.6  2002/04/19 16:38:05  my
+  JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
+           OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
+           ten erzeugen und versenden. Es k”nnen sowohl im Sendefenster
+           als auch direkt im Editor (!) Dateien und Textteile beliebiger
+           Anzahl und Gr”áe an die aktuelle Nachricht angeh„ngt werden.
+           Die nderung der Reihenfolge bereits angeh„ngter Nachrichten-
+           teile ist m”glich, das Weiterleiten von MIME-Multipart-
+           Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+           ebenfalls untersttzt. Weitere Details siehe Hilfe (?/S/A).
+           Kompletter Sourcecode fr XP entwickelt von JG, Anpassungen
+           an und Einbau in OpenXP/16 durch MY.
+           Spezieller Dank an HH fr die Vorarbeit im Rahmen der
+           Entwicklung des XP-Tools XPBMIME, dessen Arbeitsweise teilweise
+           als Anstoá und Vorlage fr die aktuelle XP-Implementation
+           diente, sowie an JM fr seine Mitarbeit daran, speziell im
+           Bereich Zeichensatzbehandlung und ZConnect-Konformit„t.
+
   Revision 1.12.2.5  2002/03/08 22:59:01  my
   MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
        kompatibel und gleichzeitig komplett berarbeitet und erweitert:
@@ -1216,8 +1244,8 @@ end.
        "xp_xp='CrossPoint'" auskommentiert.
 
   Revision 1.12.2.3  2001/09/16 20:23:49  my
-  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
-          zeilen stehen nur die ersten 19 zur Verfügung).
+  JG+MY:- Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfgung).
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
