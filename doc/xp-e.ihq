@@ -1185,10 +1185,10 @@ sent.
         the message text.
         (Not with binary messages).
 
-<<Copies>>  Up to 50 recipients (Users and
-        Newsgroups) can be set to receive copies.
-        Note however, it is frowned upon to send
-        the same message to several Newsgroups
+<<Copies>>  Up to 125 Users and Newsgroups can be set
+        to receive copies (but max. 15 Newsgroups per
+        Server). Note however, it is frowned upon to
+        send the same message to several Newsgroups
         in the same net!
 
 <<Special-Functions:

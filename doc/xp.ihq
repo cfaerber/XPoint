@@ -2326,12 +2326,13 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 <<Text>>     Zurck zum Editor. Das geht natrlich nur
          bei Textnachrichten.
 
-<<Kopien>>   Hier k”nnen Sie bis zu 50 weitere Empf„nger
-         (Bretter und User) angeben, an die eine Ko-
-         pie der Nachricht verschickt werden soll.
-         Achtung: Das Versenden der gleichen Nach-
-         richt an mehrere Bretter im gleichen Netz
-         ist allgemein unerwnscht!
+<<Kopien>>   Hier k”nnen Sie bis zu 125 weitere User
+         oder Bretter (aber nur bis zu 15 Bretter je
+         Server) angeben, an die eine Kopie der Nach-
+         richt verschickt werden soll. Achtung: Das
+         Versenden der gleichen Nachricht an mehrere
+         Bretter im gleichen Netz ist allgemein
+         unerwnscht!
 
 
 <<Spezial-Funktionen:
