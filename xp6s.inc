@@ -199,7 +199,10 @@ begin
     fido_origin:=''
   else begin
     if not pm then
-      s:=#13#10+'---'
+      if XP_Tearline then
+        s:=#13#10+xp_origin + ' ' + verstr + betastr
+      else
+        s:=#13#10+'---'
     else
       s:='';
     if not pm then begin
@@ -1124,6 +1127,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.4  2000/12/31 14:46:13  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.18.2.3  2000/11/10 19:39:48  mk
   - Tearline gekuertzt
 

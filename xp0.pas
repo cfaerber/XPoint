@@ -900,6 +900,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_ID_PMs    : boolean;
        XP_ID_AMs    : boolean;
+       XP_Tearline  : boolean;
        UserSlash    : boolean;
        BAKext       : string[3];
        keepedname   : boolean;
@@ -1148,6 +1149,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.25  2000/12/31 14:46:12  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.54.2.24  2000/12/28 19:15:37  mk
   - falsche Pfade konnten nicht editiert werden
 

@@ -526,7 +526,8 @@ begin
   Die Sharewareeinschr‰nkung das das unregistrierte
   Xp unter PMs immer die XP-Zeile setzt bleibt davon
   unberÅhrt. Dies wird an anderer Stelle geprÅft und
-  gesetzt.   MW 04/2000}
+  gesetzt. }
+  XP_Tearline := true;
   UserSlash:=true;
   BAKext:='BAK';
   keepedname:=false;
@@ -848,6 +849,7 @@ begin
   writeln(t,'DruckRand=',DruckLira);
   writeln(t,'XPoint-PM-ID=',jnf(XP_ID_PMs));
   writeln(t,'XPoint-AM-ID=',jnf(XP_ID_AMs));
+  writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
   writeln(t,'UserSlash=',jnf(UserSlash));
   writeln(t,'EditBackup=',BAKext);
   writeln(t,'KeepEdName=',jnf(keepedname));
@@ -1407,6 +1409,7 @@ begin
           getb(su,  'DruckRand',drucklira) or
           getx(su,  'XPoint-PM-ID',XP_ID_PMs) or
           getx(su,  'XPoint-AM-ID',XP_ID_AMs) or
+          getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
           gets(s,su,'EditBackup',BAKext,3) or
           getx(su,  'KeepEDName',keepedname) or
@@ -1695,6 +1698,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.15  2000/12/31 14:46:13  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.62.2.14  2000/12/29 02:44:42  mk
   - fixed another bug with temppath and logpath
 
