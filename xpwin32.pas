@@ -172,35 +172,46 @@ var
   PI: TProcessInformation;
   Proc : THandle;
   l    : DWORD;
-  AppPath,
+  CommandLine : array[0..511] of char;
   AppParam : array[0..255] of char;
+  pathlocal : string;
 begin
   FillChar(SI, SizeOf(SI), 0);
   SI.cb:=SizeOf(SI);
   SI.wShowWindow:=1;
-  Move(Path[1],AppPath,length(Path));
-  AppPath[Length(Path)]:=#0;
-  AppParam[0]:='-';
+  { always surroound the name of the application by quotes
+    so that long filenames will always be accepted. But don't
+    do it if there are already double quotes, since Win32 does not
+    like double quotes which are duplicated!
+  }
+  if pos('"',path) = 0 then
+    pathlocal:='"'+path+'"'
+  else
+    pathlocal := path;
+  Move(Pathlocal[1],CommandLine,length(Pathlocal));
+
+  AppParam[0]:=' ';
   AppParam[1]:=' ';
   if ComLine <> '' then  // when ComLine is empty, ComLine[1] gives AV
     Move(ComLine[1],AppParam[2],length(Comline));
   AppParam[Length(ComLine)+2]:=#0;
-  if not CreateProcess(PChar(@AppPath), PChar(@AppParam),
+  { concatenate both pathnames }
+  Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
+  if not CreateProcess(nil, PChar(@CommandLine),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
-   begin
-     Result := GetLastError;
-     exit;
-   end
-  else
+  begin
+    Result := GetLastError;
+    exit;
+  end else
     Result := 0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-  if WaitForSingleObject(Proc, Infinite) <> WAIT_FAILED then
+  if WaitForSingleObject(Proc, dword(Infinite)) <> $ffffffff then
     GetExitCodeProcess(Proc,l)
   else
-    l:=DWord(-1);
+    l := DWord(-1);
   CloseHandle(Proc);
-  DosExitCode:=l and $FFFF;
+  DosExitCode := l and $FFFF;
 end;
 
 function SysExec(const Path, CmdLine: String): Integer;
@@ -244,6 +255,9 @@ finalization
 
 {
   $Log$
+  Revision 1.26.2.1  2003/09/07 18:42:44  mk
+  - updated RTLExec to the current state of code from FPC
+
   Revision 1.26  2002/02/21 13:52:34  mk
   - removed 21 hints and 28 warnings
 
