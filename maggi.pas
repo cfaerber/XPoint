@@ -52,26 +52,7 @@ const nt_ZConnect  = 2;
       readempflist = false;
       readkoplist  = false;
 
-      direction : byte = 0;
-      infile    : string = '';
-      outfile   : string = '';
-      brettfile : string = '';
-      netzname  : string[8] = '';
       maxbrett  = 2000;
-      halferror : boolean = false;   { Teilkonvertierung }
-      bretth    : string[25] = '';
-      boxname   : string[20] = '';
-      msgids    : boolean = false;   { MagicNET - MsgID's }
-      mausinfos : boolean = false;   { Infofiles bestellen / BOX.INF }
-      g_und_s   : boolean = false;   { keine Brettslashs aendern }
-      maxmaus   : Int64 = 0;         { vorgegebene Maximalgroesse }
-      mkoutfile : boolean = false;   { OUTFILE statt INFILE erzeugen }
-      mausOE    : boolean = true;
-      mausPSA   : boolean = true;
-      mausON    : boolean = true;    { oeffentl. Nachrichten anfordern }
-      mausKF    : boolean = true;    { fb: Filter fuer Kommentare }
-      MausIT_files : boolean = false;{ ITI/ITG -> Box.IT* }
-
       attrMPbin   = $0040;            { Multipart-Binary           }
       attrReqEB   = $1000;            { EB anfordern               }
       attrIsEB    = $2000;            { EB                         }
@@ -93,6 +74,24 @@ type  charr       = array[0..65530] of char;
 var   f1,f2     : file;
       bretter   : integer;
       brettp    : array[1..maxbrett] of ^brett;
+      direction : Integer;
+      infile    : string;
+      outfile   : string;
+      brettfile : string;
+      netzname  : string[8];
+      bretth    : string[25];
+      boxname   : string[20];
+      halferror : boolean;   { Teilkonvertierung }
+      msgids    : boolean;   { MagicNET - MsgID's }
+      mausinfos : boolean;   { Infofiles bestellen / BOX.INF }
+      g_und_s   : boolean;   { keine Brettslashs aendern }
+      maxmaus   : Int64;             { vorgegebene Maximalgroesse }
+      mkoutfile : boolean;   { OUTFILE statt INFILE erzeugen }
+      mausOE    : boolean;
+      mausPSA   : boolean;
+      mausON    : boolean;    { oeffentl. Nachrichten anfordern }
+      mausKF    : boolean;    { fb: Filter fuer Kommentare }
+      MausIT_files: boolean;{ ITI/ITG -> Box.IT* }
 
 const
   { wird zum Einlesen der Customizable Headerlines benoetigt }
@@ -145,7 +144,26 @@ var i : integer;
   end;
 
 begin
-  for i:=2 to paramcount do begin
+  Direction := 0;
+  infile := '';
+  outfile := '';
+  brettfile := '';
+  netzname := '';
+  bretth := '';
+  boxname := '';
+  halferror := false;
+  msgids    := false;
+  mausinfos := false;
+  g_und_s   := false;
+  maxmaus   := 0;
+  mkoutfile := false;
+  mausOE    := true;
+  mausPSA   := true;
+  mausON    := true;
+  mausKF    := true;
+  MausIT_files := false;
+  for i:=2 to paramcount do
+  begin
     s:=LowerCase(paramstr(i));
     if _is('mz') then direction:=1
     else if _is('zm') then direction:=2
@@ -332,8 +350,7 @@ var hd   : THeader;
     i    : integer;
     nn   : longint;
     bp   : ^buf;
-    bpos : word;
-    bsize: word;
+    bpos, bsize: Integer;
     ef1  : boolean;
     adds : longint;
 
@@ -601,7 +618,7 @@ var hd    : THeader;
     ok,pm : boolean;
     berr  : boolean;
     adr   : longint;
-    rr    : word;
+    rr    : Integer;
     node  : string[15];
     fs    : longint;
     nn    : longint;
@@ -980,7 +997,7 @@ var hd     : THeader;
   var line : array[0..llen-1] of byte;
       s    : string[61];
       i,j  : integer;
-      rr   : word;
+      rr   : Integer;
   begin
     writeln(t,':Content-Type: UU1');
     if hd.ddatum<>'' then
@@ -1066,7 +1083,7 @@ var hd     : THeader;
   var line : array[0..llen-1] of byte;
       s    : string[61];
       i,j  : integer;
-      rr   : word;
+      rr   : Integer;
   begin
     writeln(t,':-');
     writeln(t,':---');
@@ -1612,6 +1629,9 @@ end;
 
 {
   $Log$
+  Revision 1.35.2.3  2003/10/21 14:19:59  mk
+  - more 32 bit porting
+
   Revision 1.35.2.2  2003/10/21 14:03:15  mk
   - ported maggi to 32 bit, tested only with one puffer
   - start maggi with "openxp maggi <parameters>
