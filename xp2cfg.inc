@@ -255,7 +255,7 @@ var {i    : integer;}
 begin
   checkbreak:=false;
 {$IFNDEF VP }
-  getcbreak(orgcbreak);
+  orgcbreak:= getcbreak;
   setcbreak(false);
 {$ENDIF }
   {$IFDEF unix }
@@ -1697,6 +1697,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.93  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.92  2000/11/15 23:00:40  mk
   - updated for sysutils and removed dos a little bit
 

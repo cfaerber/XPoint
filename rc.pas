@@ -14,7 +14,7 @@
 
 uses
   sysutils,
-  dos,typeform,fileio, xpglobal;
+  typeform,fileio, xpglobal;
 
 const open   : boolean = false;
       maxblk = 4;                  { max. 4 Resourcen-Segmente }
@@ -327,6 +327,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.20  2000/11/18 16:55:36  hd
+        - Unit DOS entfernt
+
         Revision 1.19  2000/11/15 23:37:34  fe
         Corrected some string things.
 

@@ -17,7 +17,7 @@ unit xpfidonl;
 
 interface
 
-uses  classes, sysutils,dos,typeform,montage,fileio,maske,resource,archive,
+uses  classes,sysutils,typeform,montage,fileio,maske,resource,archive,
       xp0,xp1,xp1o,xp3, xpglobal;
 
 
@@ -242,7 +242,7 @@ var
 
   procedure NL_Datecheck;      { testen, ob neue Liste dazugekommen }
   var
-      dt      : datetime;
+      dt      : tdatetime;
       dummy   : rtlword;
       ActTime : longint;
       fh: Integer;
@@ -741,6 +741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.23  2000/11/15 23:00:43  mk
   - updated for sysutils and removed dos a little bit
 

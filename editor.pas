@@ -25,10 +25,10 @@ uses
   crt,
 {$ENDIF }
   sysutils,
-  dos,keys,clip,mouse,eddef, encoder;
+  keys,clip,mouse,eddef, encoder;
 
 
-const EdTempFile  : pathstr = 'TED.TMP';
+const EdTempFile  : string = 'TED.TMP';
       EdConfigFile: string[14] = 'EDITOR.CFG';
       EdSelcursor : boolean = false;    { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
@@ -106,7 +106,7 @@ type  charr    = array[0..65500] of char;
       EdData   = record                       { je aktivem Editorobjekt }
                    lastakted  : edp;
                    x,y,w,h,gl : byte;         { --- Startup }
-                   edfile     : pathstr;
+                   edfile     : string;
                    showfile   : string[40];
                    savesoftbreak : boolean;      { beim Speichern }
                    tproc      : EdTProc;
@@ -661,7 +661,7 @@ end;
 {           1 = nur lange Zeilen ohne Softbreak ohne Umbruch laden  }
 {           2 = alles mit Umbruch laden                             }
 
-function LoadBlock(fn:pathstr; sbreaks:boolean; umbruch,rrand:byte):absatzp;
+function LoadBlock(fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
 var mfm   : byte;
     s     : string;
     t     : text;
@@ -767,7 +767,7 @@ begin
   LoadBlock:=root;
 end;
 
-function LoadUUeBlock(fn:pathstr):absatzp;
+function LoadUUeBlock(fn:string):absatzp;
 const blen = 45;
 var mfm   : byte;
     s     : str90;
@@ -845,7 +845,7 @@ end;
 function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 begin
   with edp(ed)^ do begin
-    edfile:=FExpand(fn);
+    edfile:=ExpandFilename(fn);
     showfile:='  '+fitpath(edfile,max(14,w-40));
     if assigned(root) then FreeBlock(root);
     EdLoadFile:=false;
@@ -919,7 +919,7 @@ end;
 
 { Block von pstart bis pende in Datei schreiben }
 
-function SaveBlock(pstart,pende:position; fn:pathstr; rand:integer;
+function SaveBlock(pstart,pende:position; fn:string; rand:integer;
                    softbreak,overwrite,forcecr:boolean):boolean;
 const crlf : string[2] = #13#10;
       spc  : string[3] = ' '#13#10;
@@ -1857,6 +1857,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.47  2000/11/14 15:51:26  mk
   - replaced Exist() with FileExists()
 

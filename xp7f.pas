@@ -27,9 +27,9 @@ uses
 {$ifdef Unix}
   ZFTools,      { ZFido }
 {$endif}
-      dos,typeform,montage,fileio,keys,maus2,
-      inout,lister,resource,maske, xpglobal,debug,
-      xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
+  typeform,montage,fileio,keys,maus2,
+  inout,lister,resource,maske, xpglobal,debug,
+  xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
@@ -72,7 +72,7 @@ begin
   if not f then
     writeln(t2,box,'=',name);
   close(t2);
-  if FileExists(arcmaildat) then _era(arcmaildat);
+  if FileExists(arcmaildat) then DeleteFile(arcmaildat);
   rename(t2,arcmaildat);
 end;
 
@@ -219,7 +219,8 @@ end;
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
 const fpuffer = 'FPUFFER';
 var p       : byte;
-    sr      : searchrec;
+    sr      : tsearchrec;
+    rc      : integer;
     clrflag : boolean;
     via     : string;
 begin
@@ -229,14 +230,14 @@ begin
     p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
-    Dos.findfirst(ImportDir+'*.*',ffAnyFile,sr);
-    clrflag:=(doserror=0);
+    rc:= findfirst(ImportDir+WildCard,faAnyFile,sr);
+    clrflag:=(rc=0);
     if clrflag then begin
       window(1,1,screenwidth,screenlines); attrtxt(7);
       end;
-    while doserror=0 do begin
+    while rc=0 do begin
       if isPacket(sr.name) then begin
-        ImportDir:=FExpand(ImportDir);
+        ImportDir:=ExpandFilename(ImportDir);
         SetCurrentDir(OwnPath+XFerDir);
         shell(LeftStr(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
               500,1);
@@ -244,7 +245,7 @@ begin
         if errorlevel<>0 then
           MoveToBad(ImportDir+sr.name);
         end;
-      Dos.findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
     if clrflag then ttwin;
@@ -261,14 +262,14 @@ begin
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
         if nDelPuffer then
-          Dos.findfirst(XFerDir+'*.*',ffAnyFile,sr)
+          rc:= findfirst(XFerDir+WildCard,faAnyFile,sr)
         else begin
-          Dos.findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l"schen  }
-          if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
+          rc:= findfirst(XFerDir+'*.pkt',faAnyFile,sr);    { .PKT - Dateien l"schen  }
+          if rc=0 then rc:= findnext(sr);    { erstes PKT stehenlassen }
           end;
-        while doserror=0 do begin
-          _era(XFerDir+sr.name);
-          Dos.findnext(sr);
+        while rc=0 do begin
+          DeleteFile(XFerDir+sr.name);
+          rc:= findnext(sr);
         end;
         FindClose(sr);
       end;
@@ -286,12 +287,12 @@ begin
                           pe_ForcePfadbox or pe_Bad,pe_Bad))
         { /robo }
         then begin
-          _era(fpuffer);
+          DeleteFile(fpuffer);
           FidoImport:=true;
           end;
       end
     else begin
-      if FileExists(fpuffer) then _era(fpuffer);
+      if FileExists(fpuffer) then DeleteFile(fpuffer);
       CallFilter(true,fpuffer);
       end;
     end;
@@ -313,7 +314,8 @@ type rfnodep     = ^reqfilenode;
                    end;
 
 var t        : text;
-    sr       : searchrec;
+    sr       : tsearchrec;
+    rc       : integer;
     aresult   : integer;
     i      : byte;
     request  : string;
@@ -612,18 +614,18 @@ begin
 
   WriteFidoCFG;                             { FIDO.CFG erzeugen }
   if packmail then begin
-    _era(upuffer);
+    DeleteFile(upuffer);
     for i:=1 to addpkts^.anzahl do
-      _era(addpkts^.addpkt[i]);
+      DeleteFile(addpkts^.addpkt[i]);
     end;
 
   window(1,1,screenwidth,screenlines);
-  Dos.findfirst(XFerDir+WildCard,AnyFile-Directory,sr);            { SPOOL leeren }
-  while doserror=0 do begin
-    sr.name:= UpperCase(sr.name);
-    if isPacket(sr.name) or (RightStr(sr.name,4)='.PKT') then
-      _era(XFerDir+sr.name);
-    Dos.findnext(sr);
+  rc:= findfirst(XFerDir+WildCard,faAnyFile-faDirectory,sr);            { SPOOL leeren }
+  while rc=0 do begin
+    sr.name:= FileUpperCase(sr.name);
+    if isPacket(sr.name) or (RightStr(sr.name,4)=FileUpperCase('.pkt')) then
+      DeleteFile(XFerDir+sr.name);
+    rc:= findnext(sr);
   end;
   FindClose(sr);
 
@@ -644,11 +646,11 @@ begin
   FidoNetcall:=aresult;
   { writeln(result); }
   if packmail then
-    _era(sendfile)
+    DeleteFile(sendfile)
   else begin
-    _era(upuffer);
+    DeleteFile(upuffer);
     for i:=1 to addpkts^.anzahl do
-      _era(addpkts^.addpkt[i]);
+      DeleteFile(addpkts^.addpkt[i]);
     end;
   case aresult of
     EL_ok    : if not crash then wrtiming('NETCALL '+boxpar^.boxname);
@@ -678,12 +680,12 @@ begin
     outmsgs:=0;
     if FileExists(ppfile) then begin
       ClearUnversandt(ppfile,box);    { Pollbox ist der BossNode! }
-      _era(ppfile);
+      DeleteFile(ppfile);
       end;
-    if FileExists(eppfile) then _era(eppfile);
+    if FileExists(eppfile) then DeleteFile(eppfile);
     for i:=1 to addpkts^.anzahl do begin
       ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
-      _era(addpkts^.abfile[i]+BoxFileExt);
+      DeleteFile(addpkts^.abfile[i]+BoxFileExt);
       end;
     closebox;
     end;
@@ -702,14 +704,14 @@ begin
       end;
 
   fn_ende:
-    if request<>'' then _era(request);
+    if request<>'' then DeleteFile(request);
     with addpkts^ do
       for i:=1 to akanz do
         if (reqfile[i]<>'') and FileExists(reqfile[i]) then
-          _era(reqfile[i]);
+          DeleteFile(reqfile[i]);
     if FileExists(ppfile) and (_filesize(ppfile)=0) then
-      _era(ppfile);
-    if FileExists(fidologfile) then _era(fidologfile);
+      DeleteFile(ppfile);
+    if FileExists(fidologfile) then DeleteFile(fidologfile);
 end;
 
 
@@ -950,6 +952,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.36  2000/11/15 23:00:43  mk
   - updated for sysutils and removed dos a little bit
 

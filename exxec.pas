@@ -17,7 +17,7 @@ unit exxec;
 interface
 
 uses
-  xpglobal, dos, typeform, fileio, debug;
+  xpglobal,typeform,fileio,debug;
 
 const
   ExecDeutsch : boolean = true;
@@ -45,7 +45,7 @@ begin
 {$ifdef UnixFS}
 {$ifdef unix}
   { ToDo: Prompt Modifizieren (vielleicht) }
-  Result := Shell(prog);
+  Result := Linux.Shell(prog);
 {$else}
   {$error Please implement this function for your OS }
 {$endif}
@@ -85,6 +85,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.31  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

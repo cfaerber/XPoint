@@ -33,7 +33,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,winxp,keys,typeform,inout,maus2;
+  winxp,keys,typeform,inout,maus2;
 
 const drlength = 20;
       dnlength = 30;
@@ -169,6 +169,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.13  2000/08/19 09:41:36  mk
   - Code aufgeraeumt
 

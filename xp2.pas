@@ -34,7 +34,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils,xpcfg,dos,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
+  sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
   xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,
@@ -315,7 +315,7 @@ procedure readpar;
 var i  : integer;
     s  : string;
     t  : text;
-    sr : searchrec;
+    sr : tsearchrec;
 
   function _is(ss:string):boolean;
   begin
@@ -489,34 +489,24 @@ var i  : integer;
 begin
   { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
   extended:=FileExists('xtended.15');
-{$IFDEF UnixFS }
-  findfirst(AutoxDir+'*.opt',0,sr);
-{$ELSE }
-  Dos.findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
-{$ENDIF }
-  while doserror=0 do begin
+  { permanente Parameter-Datei }
+  if findfirst(AutoxDir+'*.opt',faAnyFile,sr)=0 then repeat
     assign(t,AutoxDir+sr.name);
     ReadParfile;
-    dos.findnext(sr);
-  end;
+  until findnext(sr)<>0;
   FindClose(sr);
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
-    end;
-{$IFDEF UnixFS }
-  findfirst(AutoxDir+'*.par',0,sr);
-{$ELSE }
-  Dos.findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
-{$ENDIF }
-  while doserror=0 do begin
+  end;
+  { tempor„re Parameter-Datei }
+  if findfirst(AutoxDir+'*.par',faAnyFile,sr)=0 then repeat
     assign(t,AutoxDir+sr.name);
     ReadParfile;
     erase(t);
     if ioresult<>0 then
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
-    dos.findnext(sr);
-  end;
+  until findnext(sr)<>0;
   FindClose(sr);
   if ParDDebug then dbOpenLog('database.log');
   ListDebug:=ParDebug;
@@ -609,7 +599,8 @@ end;
 procedure loadresource;             { Sprachmodul laden }
 var lf : string;
     lf2: string;
-    sr : searchrec;
+    sr : tsearchrec;
+    rc : integer;
     t  : text;
     s  : string;
     ca : char;
@@ -624,7 +615,7 @@ var lf : string;
   begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst(LibDir + 'xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
+  rc:= findfirst(LibDir + 'xp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
   assign(t,OwnPath + 'xp.res');
   reset(t);
   if ioresult<>0 then
@@ -675,7 +666,7 @@ var lf : string;
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
-    if FileExists(OwnPath + 'xp.res') then _era(OwnPath + 'xp.res');
+    if FileExists(OwnPath + 'xp.res') then DeleteFile(OwnPath + 'xp.res');
     interr(iifs(deutsch,'falsche Version von ','wrong version of ')+lf);
     end;
   GetResdata;
@@ -689,7 +680,7 @@ end;
 procedure test_pfade;
 var   res  : integer;
 
-  procedure TestDir(d:dirstr);
+  procedure TestDir(d:string);
   begin
     if not IsPath(ownpath+d) then begin
       mkdir(ownpath+LeftStr(d,length(d)-1));
@@ -698,7 +689,7 @@ var   res  : integer;
       end;
   end;
 
-  procedure TestDir2(d:dirstr);
+  procedure TestDir2(d:string);
   begin
     if not IsPath(d) then begin
       mkdir(LeftStr(d,length(d)-1));
@@ -1024,14 +1015,8 @@ end;
 
 
 procedure DelTmpfiles(fn:string);
-var sr : searchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
-  while doserror=0 do begin
-    _era(sr.name);
-    dos.findnext(sr);
-  end;
-  FindClose(sr);
+  erase_mask(fn);
 end;
 
 
@@ -1212,6 +1197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.85  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.84  2000/11/16 13:46:27  hd
   - Unit Linux wird nicht benötigt
 

@@ -33,7 +33,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
+  typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
       maxqvw   = 200;
@@ -47,7 +47,7 @@ const maxpages = 1200;
       HHeadNotHigh   = false;
 
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
-function  inithelp(name:pathstr; xh,yh:byte;
+function  inithelp(name:string; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
 procedure sethelppos(_x,_y,height:byte);
 procedure help_printable(printchar:taste; pinit,pexit:string);
@@ -163,7 +163,7 @@ begin
 end;
 
 
-function inithelp(name:pathstr; xh,yh:byte;
+function inithelp(name:string; xh,yh:byte;
                   invers,blocksatz,headline:boolean):boolean;
 
 var ixadr : longint;
@@ -756,6 +756,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.29  2000/11/14 11:14:31  mk
   - removed unit dos from fileio and others as far as possible
 

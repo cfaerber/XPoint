@@ -62,7 +62,7 @@ uses
 {$IFDEF Win32 }
   Windows,
 {$ENDIF }
-  xpglobal, dos, typeform, inout;
+  sysutils,xpglobal,typeform,inout,fileio;
 
 const  coms       = 4;     { Anzahl der unterstÅtzten Schnittstellen }
        fcoms      = 50;    { Anzahl unterstÅtzter FOSSIL-Schnittstellen }
@@ -884,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.12  2000/10/19 20:52:21  mk
   - removed Unit dosx.pas
 

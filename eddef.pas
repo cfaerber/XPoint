@@ -16,7 +16,7 @@ unit eddef;
 
 interface
 
-uses xpglobal, dos,keys;
+uses xpglobal,keys;
 
 type   ECB     = pointer;
 
@@ -169,6 +169,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.9  2000/11/18 16:55:36  hd
+  - Unit DOS entfernt
+
   Revision 1.8  2000/10/15 15:20:17  mk
   JG:- Editor Funktion Glossary implementiert
 
