@@ -21,7 +21,14 @@ unit keys;
 
 interface
 
-uses   xpglobal, crt;
+uses
+  xpglobal,
+{$ifdef NCRT}
+  oCrt,
+{$else}
+  crt,
+{$endif}
+  typeform;
 
 type   taste   = string[2];
 
@@ -149,14 +156,10 @@ function  kb_alt:boolean;            { Alt gedrÅckt   }
 
 implementation  { ---------------------------------------------------------- }
 
-uses
 {$IFDEF Win32 }
-  Windows,
+uses
+  Windows;
 {$ENDIF }
-{$IFDEF VP }
-  vpsyslow,
-{$ENDIF }
-  typeform;
 
 const
 {$IFDEF BP }
@@ -201,7 +204,11 @@ begin
   else key_pressed:=crt.keypressed;
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
 {$ELSE }
+  {$ifdef NCRT}
+  keypressed:=(forwardkeys<>'') or (highbyte<>0) or oCrt.keypressed;
+  {$else}
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
+  {$endif}
 {$ENDIF }
 end;
 
@@ -248,7 +255,11 @@ begin
           mov lastscancode,ah
       end;
 {$ELSE }
+      {$ifdef NCRT}
+      readkey:=ocrt.readkey;
+      {$else}
       readkey:=crt.readkey;
+      {$endif}
 {$ENDIF }
     end;
 end;
@@ -256,8 +267,13 @@ end;
 
 procedure flushtoforward;
 begin
+{$ifdef NCRT}
+  while ocrt.keypressed and (length(forwardkeys)<250) do
+    forwardkeys:=forwardkeys+ocrt.readkey;
+{$else}
   while crt.keypressed and (length(forwardkeys)<250) do
     forwardkeys:=forwardkeys+crt.readkey;
+{$endif}
 end;
 
 
@@ -407,11 +423,7 @@ begin
   {$IFDEF Win32 }
     kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
   {$ELSE }
-    {$IFDEF VP }
-      kb_shift := SysTVGetShiftState and 3 <> 0;
-    {$ELSE }
-      kb_shift := false; { !! }
-    {$ENDIF }
+    kb_shift := false; { !! }
   {$ENDIF }
 {$ENDIF }
 end;
@@ -424,11 +436,7 @@ begin
   {$IFDEF Win32 }
     kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
   {$ELSE }
-    {$IFDEF VP }
-      kb_ctrl := SysTVGetShiftState and 4 <> 0;
-    {$ELSE }
-      kb_ctrl := false; { !! }
-    {$ENDIF }
+    kb_ctrl := false; { !! }
   {$ENDIF }
 {$ENDIF }
 end;
@@ -441,11 +449,7 @@ begin
   {$IFDEF Win32 }
     kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
   {$ELSE }
-    {$IFDEF VP }
-      kb_alt := SysTVGetShiftState and 8 <> 0;
-    {$ELSE }
-      kb_alt := false; { !! }
-    {$ENDIF }
+    kb_alt := false; { !! }
   {$ENDIF }
 {$ENDIF }
 end;
@@ -481,8 +485,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.17  2000/04/29 15:36:56  mk
-  - kb_shift/ctrl/alt fuer OS/2 portiert
+  Revision 1.18  2000/04/29 16:18:58  hd
+  Linux-Anpassung
 
   Revision 1.16  2000/04/13 13:54:45  mk
   - 32 Bit: Fehlerhafte Prozentanzeigen behoben

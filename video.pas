@@ -72,6 +72,10 @@ uses
   WinAPI,
   {$ENDIF}
 {$ENDIF }
+{$IFDEF NCRT }
+  oCrt,
+  winxp,
+{$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
 {$ENDIF }
@@ -509,8 +513,13 @@ begin
     vlines := Win32GetScreenLines;
     GetScreenLines := vlines;
 {$ELSE }
-begin
-  GetScreenLines := 25;
+{$IFDEF NCRT }
+  begin
+    GetScreenLines:= nRows(StdScr);
+{$ELSE }
+  begin
+    GetScreenLines := 25;
+{$ENDIF }
 {$ENDIF }
 {$ENDIF }
 end;
@@ -534,6 +543,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/04/29 16:10:41  hd
+  Linux-Anpassung
+
   Revision 1.14  2000/04/18 11:23:48  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

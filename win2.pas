@@ -28,7 +28,14 @@ UNIT win2;
 
 INTERFACE
 
-uses  xpglobal, crt,dos,dosx,keys,inout,maus2,typeform,winxp;
+uses
+  xpglobal, 
+{$ifdef NCRT}
+  oCrt,
+{$else}
+  crt,
+{$endif}
+  dos,dosx,keys,inout,maus2,typeform,winxp;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategr”áe/Datum anzeigen }
@@ -1080,6 +1087,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/29 16:10:41  hd
+  Linux-Anpassung
+
   Revision 1.9  2000/04/18 11:23:48  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

@@ -25,12 +25,18 @@ uses
   windows, strings,
 {$ENDIF }
 {$IFDEF Linux }
-  xplinux, ncurses, strings,
+  xplinux, strings,
 {$ENDIF }
 {$IFDEF VP }
   vpsyslow,
 {$ENDIF }
-  crt,dos,keys,inout,maus2,typeform, xpglobal;
+{$ifdef NCRT}
+  nCurses,
+  oCrt,
+{$else}
+  crt,
+{$endif}
+  dos,keys,inout,maus2,typeform, xpglobal;
 
 const maxpull = 30;
       maxpush = 20;
@@ -57,6 +63,12 @@ procedure rahmen1d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ≥ zeichen }
 procedure rahmen2d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ∫ zeichnen}
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
 procedure wshadow(li,re,ob,un:word);                { 8-Schatten }
+
+{$IFDEF NCRT }
+{ Erzeugt eine horizontale Linie, die links und rechts an den Rahmen passt,
+  so wie die Trenner in den Menues }
+procedure HLine1(li,re,y,attr: byte);
+{$ENDIF }
 
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
@@ -129,6 +141,11 @@ var
     OutHandle     : THandle;
 {$ENDIF }
 
+{$ifdef NCRT}
+var
+  StdScr          : pWin;           { Standard-Bildschirm }
+{$endif}
+
 { ========================= Implementation-Teil =========================  }
 
 implementation
@@ -137,7 +154,15 @@ uses xp0;
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');
-
+{$ifdef NCRT }
+      { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
+        an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
+      CharSize = 	1;		{ Groesse eines Zeichens }
+      AttrSize =	1;		{ Groesse eines Attributs }
+      LSSize = 		$7fff;    	{ Sollte fuer 160 x 100 reichen }
+{$else }
+      LSSize = $1fff;
+{$endif }
       shad  : byte = 0;  { Zusatz-Fensterbreite/hîhe }
 
 type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
@@ -147,7 +172,8 @@ type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
   { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
     des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
     Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
-  TLocalScreen = array[0..$1fff] of char;
+  TLocalScreen = array[0..LSSize] of char;
+
 var
   LocalScreen: ^TLocalScreen;
 {$ENDIF }
@@ -231,19 +257,6 @@ asm
          stosw
 end;
 {$ELSE }
-{$IFDEF Linux }
-procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
-var
-  win : pWINDOW;
-begin
-  win:= newwin (u-o+1,r-l+1,o-1,l);
-//  wbkgd(win, COLOR_PAIR(1));
-  init_pair(1,(attr and $8f),(attr and $7f) shr 4);
-  wattr_set(win, COLOR_PAIR(1));
-  box(win, ACS_VLINE, ACS_HLINE);
-  wrefresh(win);
-end;
-{$ELSE }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
 var
   i: integer;
@@ -263,7 +276,6 @@ begin
   end;
   TextAttr := SaveAttr;
 end;
-{$ENDIF }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -320,9 +332,10 @@ asm
 @nors:   call  mon
 end;
 {$ELSE }
-{$IFDEF Linux }
+{$IFDEF NCRT }
 procedure wshadow(li,re,ob,un:word);
 begin
+  { Vorlaeufig kein Schatten unter Linux }
 end;
 {$ELSE }
 procedure wshadow(li,re,ob,un:word);
@@ -389,45 +402,28 @@ asm
 end;
 {$ELSE }
 procedure clwin(l,r,o,u:word);
-{$IFDEF Linux }
-var
-  win : pWINDOW;
-begin
-   win:= newwin (u-o+1,r-l+1,o-1,l);
-   init_pair(1,(Textattr and $8f),(Textattr and $7f) shr 4);
-   wattr_set(win, COLOR_PAIR(1));
-   wclear(win);
-{$ELSE }
 var
   i: Integer;
 begin
   for i := o to u do
     FillScreenLine(l, i, ' ', r-l+1);
-{$ENDIF }
 end;
 {$ENDIF }
 
 procedure Wrt(const x,y:word; const s:string);
-{$IFDEF Linux }
-var
-  p : PChar;
 begin
-  p := StrAlloc(length(s)+1);
-  StrPCopy (p, StrDosToLinux(s));
-  mvaddstr(y-1, x, p);
-  refresh;
-  StrDispose(p);
+{$IFDEF BP }
+  gotoxy(x,y);
+  write(s);
 {$ELSE }
-  {$IFDEF BP }
-  begin
-    gotoxy(x,y);
-    write(s);
+  {$IFDEF NCRT }
+    GotoXY(x, y);
+    Wrt2(s);
   {$ELSE }
-    begin
-      FWrt(x, y, s);
-      GotoXY(x+Length(s), y);
-  {$ENDIF BP }
-{$ENDIF Linux }
+    FWrt(x, y, s);
+    GotoXY(x+Length(s), y);
+  {$ENDIF }
+{$ENDIF BP }
 end; { Wrt }
 
 
@@ -457,32 +453,14 @@ asm
 @nowrt:  pop ds
 end;
 {$ELSE }
-
-  {$IFDEF Linux }
-    procedure FWrt(const x,y:word; const s:string);
-    //  GotoXY(x, y);
-    //  Write(s);
-    var p : PChar;
-    begin
-    //  GotoXY(x, y);
-    //  Write(s);
-    //   exit;
-       p := StrAlloc(length(s)+1);
-       StrPCopy (p, StrDosToLinux(s));
-       mvaddstr(y-1, x, p);
-       setsyx(y-1,x);
-       refresh;
-       StrDispose(p);
-    end;
-  {$ELSE}
-  procedure FWrt(const x,y:word; const s:string);
-  var
-    i, Count: Integer;
-    {$IFDEF Win32 }
-      WritePos: TCoord;                       { Upper-left cell to write from }
-      OutRes: DWord;
-    {$ENDIF }
-  begin
+procedure FWrt(const x,y:word; const s:string);
+var
+  i, Count: Integer;
+  {$IFDEF Win32 }
+    WritePos: TCoord;                       { Upper-left cell to write from }
+    OutRes: DWord;
+  {$ENDIF }
+begin
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
@@ -498,14 +476,23 @@ end;
      {$R-}
       SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
     {$ELSE }
-      GotoXY(x, y);
-      Write(s); { Cursor zurÅcksetzen! }
+      {$IFDEF NCRT }
+        {$IFDEF Linux }
+          nWriteScr(StdScr, x, y, TextAttr, StrDosToLinux(s));
+	{$ELSE }
+          nWriteScr(StdScr, x, y, TextAttr, s);
+	{$ENDIF }
+	GotoXY(x, y);
+      {$ELSE }
+        GotoXY(x, y);
+        Write(s); { Cursor zurÅcksetzen! }
+      {$ENDIF }
     {$ENDIF }
   {$ENDIF Win32 }
 
-    {$IFDEF Localscreen }
-      { LocalScreen Åbernimmt die énderungen }
-      if s <> '' then
+  {$IFDEF Localscreen }
+  { LocalScreen Åbernimmt die énderungen }
+    if s <> '' then
       begin
         Count := ((x-1)+(y-1)*zpz)*2;
         FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
@@ -515,9 +502,8 @@ end;
           Inc(Count, 2);
         end;
        end;
-    {$ENDIF LocalScreen }
+  {$ENDIF LocalScreen }
   end;
-  {$ENDIF Linux }
 {$ENDIF BP }
 
 {$IFDEF Ver32}
@@ -610,7 +596,13 @@ begin
     {$ENDIF }
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2]);
-      Attr := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]);
+      {$ifdef FPC }
+        { Workaround, da anders der FPC 0.99.14 die Daten nicht nimmt }
+        Attr:= 0;
+	FastMove(LocalScreen^[((x-1)+(y-1)*zpz)*2+1], Attr, 1);
+      {$else }
+        Attr := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]);
+      {$endif }
     {$ENDIF }
 {$ENDIF }
 end;
@@ -648,21 +640,29 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
       TLocalScreen(Buffer)[i*2+1] := Char(SysReadAttributesAt(x+i, y));
     end;
   {$ELSE }
-  begin
+    {$IFDEF NCRT }
+    var i: integer;
+    begin
+      for i:= 0 to Count - 1 do
+      begin
+        TLocalScreen(Buffer)[i*2]:= LocalScreen^[((x-1)+(y-1)*zpz)*2];
+        TLocalScreen(Buffer)[i*2+1]:= LocalScreen^[((x-1)+(y-1)*zpz)*2+1];
+      end;
+    {$ELSE }
+    begin
+    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 end;
 
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$IFDEF Linux }
-var
-   p : PChar;
+{$IFDEF NCRT }
 begin
-   p := StrAlloc(Count+1);
-   StrPCopy (p, Dup(Count, Chr));
-   mvaddstr(y-1, x, p);
-   refresh;
-   StrDispose(p);
+  {$IFDEF Linux }
+    Wrt(x, y, dup(Count, CharDosToLinux(Chr)));
+  {$ELSE }
+    Wrt(x, y, dup(Count, Chr));
+  {$ENDIF }
 end;
 {$ELSE }
 {$IFDEF Win32 }
@@ -762,21 +762,6 @@ end;
 {$ENDIF Ver32 }
 
 procedure Wrt2(const s:string);
-{$IFDEF Linux }
-var
-   p : PChar;
-   x, y: longint;
-begin
-//Write(s);
-// exit;
-// bkgdset(TextAttr);
-   p := StrAlloc(length(s)+1);
-   StrPCopy (p, StrDosToLinux(s));
-   addstr(p);
-   refresh;
-   StrDispose(p);
-end;
-{$ELSE }
 {$IFDEF Localscreen }
 var
   i, Count: Integer;
@@ -786,21 +771,29 @@ begin
   FWrt(WhereX, WhereY, s);
   GotoXY(WhereX+Length(s), WhereY);
 {$ELSE Win32 }
-  Write(s);
+  {$ifdef NCRT }
+    { Wuerde ich hier FWrt nehmen (wie bei Win32), so fuehrt
+      das imho zu einem doppelten Speichern im Buffer, wenn
+      LocalScreen definiert ist. Die Sub-Routine unter
+      LocalScreen ist bei FWrt nochmals definiert. 
+      Deshalb ist unten 'xLocalScreen'. }
+    FWrt(WhereX, WhereY, s);
+    GotoXY(WhereX+Length(s), WhereY);
+  {$else }
+    Write(s);
+  {$endif NCRT }
 
-  {$IFDEF LocalScreen }  { LocalScreen Åbernimmt die énderungen }
+  {$IFDEF xLocalScreen }  { LocalScreen Åbernimmt die énderungen }
     Count := ((Wherex-1)+(Wherey-1)*zpz)*2;
     if s <> '' then
       for i := 0 to Length(s)-1 do
-      begin
-        LocalScreen^[Count+i*2] := s[i+1];
-        LocalScreen^[Count+i*2+1] := Char(TextAttr);
-      end;
-  {$ENDIF LocalScreen }
+        begin
+          LocalScreen^[Count+i*2] := s[i+1];
+          LocalScreen^[Count+i*2+1] := Char(TextAttr);
+        end;
+  {$ENDIF xLocalScreen }
 {$ENDIF Win32 }
 end;
-{$ENDIF Linux }
-
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
@@ -948,7 +941,11 @@ begin
   {$IFDEF BP }
         Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
   {$ELSE BP }
+    {$IFDEF FPC }
+        Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
+    {$ELSE }
         GetScreenLine(l-1, j, savemem^[(1+j-o)*wi], wi div 2);
+    {$ENDIF }
         { Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi); }
   {$ENDIF BP }
 {$ENDIF Win32 }
@@ -1258,17 +1255,74 @@ begin
     end;
 end;
 
+{$IFDEF NCRT }
+{ Erzeugt eine horizontale Linie, die links und rechts an den Rahmen passt,
+  so wie die Trenner in den Menues }
+procedure HLine1(li,re,y,attr: byte);
+var
+  i: byte;
+begin
+  nWriteAC(StdScr,li,y,attr,nLT);
+  for i:= 1 to re-li-1 do
+    nWriteAC(StdScr,li+i,y,attr,nHL);
+  nWriteAC(StdScr,re,y,attr,nRT);
+end;
+{$ENDIF }
+
+
 procedure DoneVar;
 begin
   exitproc:=oldexit;
 {$IFDEF Ver32 }
   FreeMem(LocalScreen);
 {$ENDIF }
+{$ifdef NCRT}
+  nEcho(true);
+{$endif}
 end;
+
+{$IFDEF NCRT }
+{ TestTTY - Prueft die Mindestaufloesung der Konsole. Unter
+  X wird versucht, die Konsole notfalls zu vergroessern.
+  Weiterhin wird anhand der Aufloesung geprueft, ob der
+  Puffer fuer LocalScreen ausreichend ist. }
+procedure TestTTY;
+var
+  x, y: Integer;
+begin
+  x:= nCols(StdScr); y:= nRows(StdScr);
+  if (x < 80) or (y < 25) then
+    begin
+      WriteLn('Can''t use your terminal. This program needs at least');
+      WriteLn('a screen size of 80 x 25 characters.');
+      WriteLn;
+      WriteLn('Your current settings are: ', nCols(StdScr), ' characters in ', nRows(StdScr), ' lines.');
+      Halt(2);
+    end;
+{$IFDEF LocalScreen }
+  { Pruefe, ob der Puffer fuer LocalScreen gross genug ist }
+  if (LSSize < x*y*(CharSize+AttrSize) ) then 
+    begin
+      WriteLn('Panic: LocalScreen is to small for your console.');
+      WriteLn('Please contact the development team to fix this');
+      WriteLn('problem.');
+      WriteLn('With your console the LocalScreen must have at');
+      WriteLn('least a size of ', x*y*(CharSize+AttrSize), ' bytes.');
+      halt(2);
+    end;
+{$ENDIF }
+end;
+{$ENDIF }
 
 var
   i: byte;
 begin
+{$ifdef NCRT}
+  StdScr:= oCrt.nScreen;
+  nEcho(false);
+  nCurses.meta(StdScr, 1);
+  TestTTY;
+{$endif}
   oldexit:=exitproc;
   exitproc:=@DoneVar;
   for i:=1 to maxpull do
@@ -1288,6 +1342,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/04/29 16:10:41  hd
+  Linux-Anpassung
+
   Revision 1.24  2000/04/23 16:18:41  mk
   - Source wieder unter Linux compilierbar
 

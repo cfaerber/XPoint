@@ -340,23 +340,23 @@ var p,n,p1,i : byte;
         gotoxy(wherex+buttsp[i],wherey);
       if i=p then begin
         attrtxt(col.colbuttonarr);
-        write(#16);
+        wrt2(#16);
         end
       else
-        write(' ');
+        wrt2(' ');
       attrtxt(col.colbutton);
-      write(left(butt[i],butthigh[i]-1));
+      wrt2(left(butt[i],butthigh[i]-1));
       attrtxt(col.colbuttonhigh);
-      write(hot[i]);
+      wrt2(hot[i]);
       attrtxt(col.colbutton);
-      write(copy(butt[i],butthigh[i]+1,40));
+      wrt2(copy(butt[i],butthigh[i]+1,40));
       if i=p then begin
         attrtxt(col.colbuttonarr);
-        write(#17);
+        wrt2(#17);
         attrtxt(col.colbutton);
         end
       else
-        write(' ');
+        wrt2(' ');
       gotoxy(wherex+abs,wherey);
       end;
     mon;
@@ -449,6 +449,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/04/29 16:10:41  hd
+  Linux-Anpassung
+
   Revision 1.3  2000/03/04 10:42:25  mk
   Versionsinfos hinzugefuegt und weiter portiert
 

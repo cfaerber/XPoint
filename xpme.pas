@@ -14,9 +14,16 @@
 
 uses
 {$IFDEF Linux }
-  xplinux, ncurses,
+  xplinux, 
 {$ENDIF }
-  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
+  winxp,
+{$IFDEF NCRT }
+  oCrt,
+  xp0, { Fuer ScreenLines und ScreenWidth }
+{$ELSE } 
+  crt,
+{$ENDIF }
+  typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -63,7 +70,7 @@ procedure wrlogo;
 begin
   writeln;
 {$IFDEF Linux }
-    writeln(StrDosToLinux('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware'));
+  writeln(StrDosToLinux('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware'));
 {$ELSE }
   writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
 {$ENDIF }
@@ -76,11 +83,13 @@ end;
 procedure error(txt:string);
 begin
   wrlogo;
+   writeln('Fehler: ',
 {$IFDEF Linux }
-   writeln('Fehler: ',StrDosToLinux(txt),#7);
+       StrDosToLinux(txt),
 {$ELSE }
-   writeln('Fehler: ',txt,#7);
+       txt,
 {$ENDIF }
+       #7);
   if ropen then CloseResource;
   halt;
 end;
@@ -93,7 +102,7 @@ var t  : text;
 begin
   if not exist('xp.res') and not exist('xp-d.res') then begin
     wrlogo;
-    writeln('Fehler: XP-D.RES nicht gefunden.'#7);
+    writeln('Fehler: ''xp-d.res'' nicht gefunden.'#7);
     writeln;
     writeln('Starten Sie dieses Programm bitte in einem Verzeichnis, in dem');
 {$IFDEF Linux }
@@ -109,7 +118,9 @@ begin
     reset(t);
     readln(t,s);
 {$IFDEF Linux }
-    LoString(s);                   { ML Linux braucht Lowcase }
+    { LoString(s); }                  { ML Linux braucht Lowcase }
+    { Widerspruch. Ueblich ist LoCase, aber es muss nicht. Der
+      Anwender wird schon wissen, was er tut. }
 {$ENDIF }
     close(t);
     end
@@ -120,7 +131,11 @@ begin
   OpenResource(s,10000);
   ropen:=true;
   if ival(getres(6))<11 then
+{$IFDEF Linux }
+  error(StrDosToLinux('Es wird CrossPoint Version 3.11 oder hîher benîtigt!'));
+{$ELSE }
   error('Es wird CrossPoint Version 3.11 oder hîher benîtigt!');
+{$ENDIF }
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
     getmem(menu[i],length(s)+1);
@@ -161,10 +176,17 @@ begin
   inc(windmax,$100);
   setbackintensity(true);
   attrtxt(col.colmenu[0]);
+  {$IFDEF NCRT }
+  wrt2(sp(ScreenWidth));
+  attrtxt(col.colback);
+  for i:=1 to ScreenLines do
+    wrt(1,i,dup(ScreenWidth, #177));
+  {$ELSE }
   wrt2(sp(80));
   attrtxt(col.colback);
   for i:=1 to 24 do
     wrt2(dup(80,'±'));
+  {$ENDIF }
   attrtxt(col.colutility);
   forcecolor:=true;
   rahmen1(38,78,18,23,'');
@@ -351,9 +373,6 @@ procedure showmain(nr:shortint);
 var i      : integer;
     s      : string[20];
 begin
-{$IFDEF Linux }
-  setsyx(0,1);
-{$ENDIF }
   if mainmenu=nil then begin
     new(mainmenu);
     splitmenu(0,mainmenu,main_n);
@@ -361,11 +380,7 @@ begin
   gotoxy(2,1);
   for i:=1 to main_n do
     with mainmenu^[i] do begin
-{$IFDEF Linux }
-      hmpos[i]:=ncurses.getcurx(stdscr)+1;
-{$ELSE }
       hmpos[i]:=wherex+1;
-{$ENDIF }
       if enabled then begin
         if nr=i then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
@@ -706,15 +721,9 @@ var x,y : byte;
     t   : taste;
 begin
   msgbox(34,4,'',x,y);
-{$IFDEF Linux }
-  wrt(x+3,y+1,'énderungen sichern?');
-  t:='';
- case readbutton(x+3,y+3,2,StrDosToLinux(' ^Ja , ^Nein , ^ZurÅck '),1,true,t) of
-{$ELSE }
   wrt(x+3,y+1,'énderungen sichern?');
   t:='';
  case readbutton(x+3,y+3,2,' ^Ja , ^Nein , ^ZurÅck ',1,true,t) of
-{$ENDIF }
     1 : begin
           writemdata;
           askquit:=true;
@@ -739,12 +748,12 @@ begin
   clrscr;
   wrlogo;
   if saved then writeln('énderungen wurden gesichert.'#10);
-{$IFDEF Linux }
-   DoneNCurses;
-{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.14  2000/04/29 16:13:29  hd
+  Linux-Anpassung
+
   Revision 1.13  2000/04/15 10:58:32  mk
   - 1001x .DOC in .TXT geandert
 

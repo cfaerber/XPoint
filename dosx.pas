@@ -25,7 +25,15 @@ UNIT dosx;
 
 INTERFACE
 
-uses xpglobal, crt, dos, typeform;
+uses 
+  xpglobal, 
+{$ifdef NCRT}
+  oCrt,
+{$else}
+  crt,
+{$endif}
+  dos, 
+  typeform;
 
 function  GetDrive:char;
 function  dospath(d:byte):pathstr;
@@ -56,6 +64,9 @@ implementation
 uses
   {$ifdef vp }
   vpsyslow,
+  {$endif}
+  {$ifdef Linux }
+  xplinux,
   {$endif}
   {$IFDEF Win32 }
   windows,
@@ -429,6 +440,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/29 16:19:45  hd
+  Linux-Anpassung
+
   Revision 1.13  2000/04/23 07:58:52  mk
   - OS/2-Portierung
 
