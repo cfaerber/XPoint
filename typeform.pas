@@ -77,7 +77,10 @@ function CreditCardOk(s:string):boolean;     { Kreditkartennummer berprfen }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
-function FirstChar(const s:string):char;           { s[1]                         }
+// Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
+function FirstChar(const s:string):char;
+// Letztes Zeichen eines Strings, wenn nicht vorhanden dann #0
+function LastChar(const s:string):char;
 function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkrzen    }
 function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mit 0 auff.  }
 function FormR(const r:real; const vk,nk:integer):string;   { r-->str.; vk+nk mit 0 auff.  }
@@ -94,7 +97,6 @@ function iifs(b:boolean; s1,s2:string):string;  { IIF String                }
 function IntQSum(const l:longint):longint;         { Quersumme                    }
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
-function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
 function Left(const s: string; Count: integer): string;
 function Right(const s: string; Count: integer): string;
 function LoCase(const c:char):char;                { LowerCase                    }
@@ -935,21 +937,21 @@ begin
     until p=0;
 end;
 
-function Lastchar(const s:string):char;           { letztes Zeichen eines Str.   }
+function FirstChar(const s:string):char;
 begin
-  if Length(s) > 0 then
-   lastchar:=s[length(s)]
+  if s = '' then
+    FirstChar := #0
   else
-    LastChar := ' ';
+    FirstChar := s[1];
 end;
 
-
-function FirstChar(const s:string):char;           { UpCase(s[1]) }
+function Lastchar(const s:string):char;
 begin
-  if s='' then firstchar:=#0
-  else firstchar:=s[1];
+  if s = '' then
+    LastChar := #0
+  else
+    LastChar := s[Length(s)];
 end;
-
 
 function Blankpos(var s:string):integer;        { Position von ' ' oder #9     }
 var p1,p2 : integer;
@@ -966,8 +968,10 @@ function BlankposX(var s:string):integer;       { length(s)+1, falls bp=0      }
 var p : integer;
 begin
   p:=blankpos(s);
-  if p>0 then BlankposX:=p
-  else BlankposX:=min(255,length(s)+1);
+  if p>0 then
+    BlankposX:=p
+  else
+    BlankposX:=length(s)+1;
 end;
 
 
@@ -1281,6 +1285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/08/08 12:05:40  mk
+  - fix fuer BlankPosX und FirstChar liefert jetzt #0 bei Length(s)=0
+
   Revision 1.63  2000/08/04 14:52:53  mk
   - Einige Verbesserung durch Nutzung von Result
 
