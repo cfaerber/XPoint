@@ -185,8 +185,7 @@ const maxmask   = 10;                { max. gleichzeitig offene Masken }
       help_page   : word = 0;        { Helpnr des Eingabefeldes }
       yesno       : string[2] = 'JN';
 
-type  stringp  = ^string;
-
+type
       { Achtung! Pointer in MaskStat mÅssen in OpenMask }
       {          gesondert behandelt werden!            }
 
@@ -201,7 +200,7 @@ type  stringp  = ^string;
                    fillchar    : char;     { FÅllzeichen bei Eingabe }
                    selboxkey   : taste;    { '' -> keine SelBox; Def: F2 }
                    fnix,fniy   : byte;     { Position der FNKey-Info }
-                   fnkeyinfo   : stringp;
+                   fnkeyinfo   : string;
                    fnkeyfill   : char;
                    wrapmode    : wrapmodes;
                    autojump    : byte;    { Zeilensprung bei verl.d.Fensters }
@@ -224,27 +223,27 @@ type  stringp  = ^string;
       selnodep = ^selnode;
       selnode  = record                    { Knoten fÅr Select-Liste }
                    next        : selnodep;
-                   el          : stringp;
+                   el          : string;
                  end;
 
       textnodep= ^textnode;
       textnode = record                    { Knoten fÅr Anzeigetext-Liste }
                    next        : textnodep;
-                   txt         : stringp;
+                   txt         : string;
                    xx,yy,attr  : byte;
                  end;
 
       feldrec  = record
                    enabled     : boolean;
                    disnodisp   : boolean;
-                   txt         : stringp;  { Feld-Text }
+                   txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
                    variable    : pointer;  { Adresse der Variablen }
                    xx,yy,len   : byte;     { Position, AnzeigelÑnge }
                    yy0,xx2     : byte;     { Position des Inhalts }
                    maxlen      : byte;     { maximale LÑnge des Inhalts }
-                   cont        : stringp;  { Feldinhalt }
-                   allowed     : stringp;  { erlaubte Zeichen }
+                   cont        : string;   { Feldinhalt }
+                   allowed     : string;   { erlaubte Zeichen }
                    mask        : string[20];  { Masken-String }
                    autoup,
                    autodown,
@@ -257,7 +256,7 @@ type  stringp  = ^string;
                    test1       : testfunc;   { bei jeder Ñndernden Eingabe }
                    test2       : testfunc;   { vor Verlassen des Feldes    }
                    test3       : testproc;   { bei Verlassen des Feldes    }
-                   hpline      : stringp;
+                   hpline      : string;
                    helpnr      : word;       { Hilfsseiten-Nr. }
                    selhelpnr   : word;       { Hilfsseite bei <F2> }
                    selliste    : selnodep;
@@ -353,17 +352,6 @@ end;
 
 procedure testfield(nr:integer); forward;
 
-
-procedure spcopy(p1:stringp; var p2:stringp);
-begin
-  if p1=nil then p2:=nil
-  else begin
-    getmem(p2,length(p1^)+1);
-    p2^:=p1^;
-    end;
-end;
-
-
 { neue Maske îffnen, falls noch Handles frei   }
 { der Maskenstatus wird von mask[0] Åbernommen }
 
@@ -374,9 +362,10 @@ begin
   amask:=masks;
   new(mask[amask]);
   amaskp:=mask[amask];
-  with amaskp^ do begin
+  with amaskp^ do
+  begin
     stat:=mask[0]^.stat;
-    spcopy(mask[0]^.stat.fnkeyinfo,stat.fnkeyinfo);
+    stat.fnkeyinfo := mask[0]^.stat.fnkeyinfo;
     uda:=mask[0]^.uda;
     li:=l; re:=r; ob:=o; un:=u;
     felder:=0; maxyy0:=0;
@@ -394,14 +383,14 @@ begin
   testfield(nr);
   with amaskp^.fld[nr]^ do begin
     p1:=selliste;
-    while p1<>nil do begin       { Selliste freigeben }
+    while p1<>nil do
+    begin       { Selliste freigeben }
       p2:=p1^.next;
-      freemem(p1^.el,length(p1^.el^)+1);
       dispose(p1);
       p1:=p2;
-      end;
-    selliste:=nil;
     end;
+    selliste:=nil;
+  end;
 end;
 
 
@@ -415,20 +404,13 @@ begin
   with amaskp^ do begin
     for i:=1 to felder do begin
       with fld[i]^ do begin
-        freemem(txt,length(txt^)+1);
-        freemem(cont,maxlen+1);
-        if allowed<>nil then freemem(allowed,length(allowed^)+1);
-        if hpline<>nil then  freemem(hpline,length(hpline^)+1);
         mclearsel(i);
-        end;
+      end;
       dispose(fld[i]);
       end;
-    with stat do
-      if fnkeyinfo<>nil then freemem(fnkeyinfo,length(fnkeyinfo^)+1);
     t1:=mtxt;
     while t1<>nil do begin           { Textliste freigeben }
       t2:=t1^.next;
-      freemem(t1^.txt,length(t1^.txt^)+1);
       dispose(t1);
       t1:=t2;
       end;
@@ -505,8 +487,7 @@ procedure masksetfninfo(x,y:byte; text:string; fillc:char);
 begin
   with amaskp^.stat do begin
     fnix:=x; fniy:=y;
-    getmem(fnkeyinfo,length(text)+1);
-    fnkeyinfo^:=text;
+    fnkeyinfo:=text;
     fnkeyfill:=fillc;
     end;
 end;
@@ -610,8 +591,7 @@ begin
     with p^ do begin
       xx:=x+li-1;
       yy:=y;
-      getmem(txt,length(text)+1);
-      txt^:=text;
+      txt:=text;
       if att=0 then attr:=stat.col.colfeldname
       else attr:=att;
       next:=mtxt;
@@ -658,8 +638,7 @@ begin
       with lastfld^ do begin
         enabled:=true;
         if text='' then addblank:=false;
-        getmem(txt,length(text)+iif(addblank,2,1));
-        txt^:=text+iifs(addblank,' ','');
+        txt:=text+iifs(addblank,' ','');
         yy0:=y;
         maxyy0:=max(maxyy0,yy0);
         xx:=li+x-1; yy:=ob+y-1;
@@ -697,13 +676,12 @@ begin
     variable:=@s;
     len:=displ; maxlen:=maxl;
     if maxlen=1 then autohigh:=false;
-    getmem(cont,maxl+1);
     repeat
       p:=cpos(#7,s);
       if p=0 then p:=cpos(#8,s);
       if p>0 then s[p]:=' ';
     until p=0;
-    cont^:=left(s,maxl);
+    cont:=left(s,maxl);
     set_chml(amaskp^.felder,chml);
     end;
 end;
@@ -736,10 +714,8 @@ begin
     _min:=imin; _max:=imax;
    { l:=min(max(l,imin),imax); }
     str(l:displ,s);
-    getmem(cont,len+1);
-    cont^:=s{+' '};
-    getmem(allowed,length(digits)+1);
-    allowed^:=digits;
+    cont:=s{+' '};
+    allowed:=digits;
     end;
 end;
 
@@ -759,11 +735,9 @@ begin
   { r:=minr(maxr(r,rmin),rmax); }
     str(r:displ:rnk,s);
     nk:=rnk;
-    getmem(cont,len+1);
-    cont^:=s;
+    cont:=s;
     convcolon:=true;
-    getmem(allowed,length(digits)+2);
-    allowed^:=digits+'.';
+    allowed:=digits+'.';
     end;
 end;
 
@@ -786,11 +760,9 @@ begin
     typ:=10;
     variable:=@b;
     len:=1; maxlen:=1;
-    getmem(cont,2);
-    cont^:=iifc(b,yesno[1],yesno[2]);
+    cont:=iifc(b,yesno[1],yesno[2]);
     autoup:=true;
-    getmem(allowed,4);
-    allowed^:='>'+yesno;
+    allowed:='>'+yesno;
     autohigh:=false;
     end;
 end;
@@ -927,10 +899,8 @@ end;
 procedure MH(text:string);
 begin
   if testlast then
-    with lastfld^ do begin
-      getmem(hpline,length(text)+1);
-      hpline^:=text;
-      end;
+    with lastfld^ do
+      hpline:=text;
 end;
 
 
@@ -987,8 +957,7 @@ var s1 : string[80];
     begin
       new(p);
       p^.next:=nil;
-      getmem(p^.el,length(s1)+1);
-      p^.el^:=s1;
+      p^.el:=s1;
     end;
   begin
     if p<>nil then app(p^.next)
@@ -1130,7 +1099,7 @@ begin
   testfield(nr);
   with amaskp^ do begin
     with fld[nr]^ do
-      cont^:=left(newcont,maxlen);
+      cont:=left(newcont,maxlen);
     redispfields:=true;
     modified:=true;
     end;
@@ -1149,14 +1118,8 @@ begin
     else begin
       autoup:=false; autodown:=false; topcase:=false;
       end;
-    if allowed<>nil then begin
-      freemem(allowed,length(allowed^)+1);
-      allowed:=nil;
-      end;
-    if chml<>'' then begin
-      getmem(allowed,length(chml)+1);
-      allowed^:=chml;
-      end;
+    if chml<>'' then
+      allowed:=chml;
     end;
 end;
 
@@ -1166,7 +1129,7 @@ end;
 function getfield(nr:word):string;
 begin
   testfield(nr);
-  getfield:=amaskp^.fld[nr]^.cont^;
+  getfield:=amaskp^.fld[nr]^.cont;
 end;
 
 
@@ -1202,11 +1165,9 @@ procedure setfieldtext(nr:word; newtxt:string);
 begin
   testfield(nr);
   with amaskp^.fld[nr]^ do begin
-    freemem(txt,length(txt^)+1);
-    getmem(txt,length(newtxt)+1);
-    txt^:=newtxt;
+    txt:=newtxt;
     redispfields:=true;
-    end;
+  end;
 end;
 
 
@@ -1215,9 +1176,7 @@ end;
 procedure settexttext(p:pointer; newtxt:string);
 begin
   with textnodep(p)^ do begin
-    freemem(txt,length(txt^)+1);
-    getmem(txt,length(newtxt)+1);
-    txt^:=newtxt;
+    txt:=newtxt;
     redisptext:=true;
     end;
 end;
@@ -1294,6 +1253,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2000/07/13 10:23:44  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.12  2000/07/12 14:55:03  hd
   - Ansistring
 

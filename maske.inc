@@ -21,7 +21,7 @@ var ax,p,myp  : integer;
     redisplay : boolean;
     replace   : boolean;
     doreplace : boolean;
-    s         : ^string;
+    s         : string;
     valchar   : boolean;
     i,x       : integer;
     mzu,mzo   : boolean;
@@ -44,7 +44,7 @@ var ax,p,myp  : integer;
       for i:=1 to felder do
         with fld[i]^ do
           if enabled or (not disnodisp) then begin
-            s:=txt^;
+            s:=txt;
             if enabled then
               if owncol then attrtxt(ownattr)
               else attrtxt(stat.col.ColFeldName)
@@ -54,7 +54,7 @@ var ax,p,myp  : integer;
                 s:=sp(length(s));  { einige Herc-Bildschirme k”nnen gleiches }
               end;                 { Vorder- und Hintergrundattribut nicht   }
             if (yy0>=a+1) and (yy<=a+un) then                  { darstellen  }
-              wrt(xx,yy-a,txt^);
+              wrt(xx,yy-a,txt);
             end;
       mon;
       end;
@@ -85,13 +85,13 @@ var ax,p,myp  : integer;
                 end
               else if checkbutt then begin
                 attrtxt(stat.col.colbuttons);
-                wrt(xx2,yy-a,' ['+iifc(cont^=yesno[1],'x',' ')+'] ');
+                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1],'x',' ')+'] ');
                 end
               else begin
                 attrtxt(stat.col.colfeldinput);
-                wrt(xx2,yy-a,l+forms(cont^,len));
+                wrt(xx2,yy-a,l+forms(cont,len));
                 if stat.arrowspace and enabled then begin
-                  if length(cont^)>len then begin
+                  if length(cont)>len then begin
                     attrtxt(stat.col.ColArrows);
                     Wrt2(#16);
                     end
@@ -131,7 +131,7 @@ var ax,p,myp  : integer;
             moretext:=true
           else if yy>=a+1 then begin
             attrtxt(attr);
-            wrt(xx,yy+ob-1-a,txt^);
+            wrt(xx,yy+ob-1-a,txt);
             end;
           end;
         p:=p^.next;
@@ -160,19 +160,19 @@ var ax,p,myp  : integer;
     var t,m,j : word;
     begin
       with feld^ do
-        if pempty and (cont^=mask) then
+        if pempty and (cont=mask) then
           testdate:=true
         else begin
           if len=8 then
           begin
             { MK 13.02.2000 Y2K Fix }
-            j :=ival(copy(cont^,7,2));
+            j :=ival(copy(cont,7,2));
             if j < 70 then inc(j, 2000) else inc(j, 1900);
           end else
-            j:=ival(copy(cont^,7,4));
+            j:=ival(copy(cont,7,4));
           schalt(j);
-          t:=ival(copy(cont^,1,2));
-          m:=ival(copy(cont^,4,2));
+          t:=ival(copy(cont,1,2));
+          m:=ival(copy(cont,4,2));
           testdate:=(m>=1) and (m<=12) and
                     (t>=1) and (t<=monat[m].zahl);
           end;
@@ -193,11 +193,11 @@ var ax,p,myp  : integer;
     with feld^ do begin
       if typ=1 then
         case autotrim of
-          1 : cont^:=trimright(cont^);
-          2 : cont^:=trim(cont^);
+          1 : cont:=trimright(cont);
+          2 : cont:=trim(cont);
         end;
       if (typ>=2) and (typ<=7) then begin
-        s:=trim(cont^);
+        s:=trim(cont);
         if pos(' ',s)>0 then s:=copy(s,1,pos(' ',s)-1);
         if typ<7 then begin
           val(s,l,res);
@@ -210,7 +210,7 @@ var ax,p,myp  : integer;
               l:=min(l,_max);
               amaskp^.modified:=true;
               end;
-          str(l:maxlen,cont^);
+          str(l:maxlen,cont);
           end
         else begin
           val(s,r,res);
@@ -223,20 +223,20 @@ var ax,p,myp  : integer;
               r:=minr(r,_rmax);
               amaskp^.modified:=true;
               end;
-          str(r:maxlen:nk,cont^);
+          str(r:maxlen:nk,cont);
           end;
-        {cont^:=cont^+' ';}
+        {cont:=cont+' ';}
         end;
       if (selliste<>nil) and forcesll then begin
         p:=selliste;
-        while (p<>nil) and (UpperCase(cont^)<>UpperCase(p^.el^)) do
+        while (p<>nil) and (UpperCase(cont)<>UpperCase(p^.el)) do
           p:=p^.next;
-        if (p=nil) and (cont^<>'') then begin    { „hnlichen Eintrag suchen }
+        if (p=nil) and (cont<>'') then begin    { „hnlichen Eintrag suchen }
           p:=selliste;
-          while (p<>nil) and (left(UpperCase(p^.el^),length(cont^))<>UpperCase(cont^)) do
+          while (p<>nil) and (left(UpperCase(p^.el),length(cont))<>UpperCase(cont)) do
             p:=p^.next;
           if p<>nil then begin
-            cont^:=p^.el^;
+            cont:=p^.el;
             amaskp^.modified:=true;
             end;
           end;
@@ -244,9 +244,9 @@ var ax,p,myp  : integer;
         end;
       case typ of
         8 : v:=v and testdate;
-        9 : v:=v and testtime(len,cont^);
+        9 : v:=v and testtime(len,cont);
       end;
-      valid:=v and test2(cont^);
+      valid:=v and test2(cont);
       end;
   end;
 
@@ -258,7 +258,7 @@ var ax,p,myp  : integer;
         moff;
         if checkbutt then begin
           attrtxt(stat.col.colbuttons);
-          Wrt2(' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
+          Wrt2(' [' + iifc(cont=yesno[1],'x',' ') + '] ');
           end
         else begin
           if stat.arrowspace then begin
@@ -267,12 +267,12 @@ var ax,p,myp  : integer;
             end;
           attrtxt(stat.col.ColFeldActive);
           if replace then attrtxt(stat.col.ColFeldMarked);
-          Wrt2(copy(cont^,ax+1,len));
+          Wrt2(copy(cont,ax+1,len));
           attrtxt(stat.col.ColFeldActive);
-          Wrt2(dup(len-length(cont^)+ax,stat.fillchar));
+          Wrt2(dup(len-length(cont)+ax,stat.fillchar));
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            Wrt2(iifc(length(cont^)-ax>len,#16,' '));
+            Wrt2(iifc(length(cont)-ax>len,#16,' '));
             end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
@@ -304,7 +304,7 @@ var ax,p,myp  : integer;
         for i:=1 to sll do begin
           if i=p then attrtxt(stat.col.ColSelBar);
           if p1=nil then wrt(slx+1,sly+i,sp(width+2))
-          else wrt(slx+1,sly+i,' '+forms(p1^.el^,width+1));
+          else wrt(slx+1,sly+i,' '+forms(p1^.el,width+1));
           normtxt;
           if p1<>nil then p1:=p1^.next;
           end;
@@ -358,8 +358,8 @@ var ax,p,myp  : integer;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
-        width:=max(width,length(p1^.el^));
-        if UpperCase(cont^)=UpperCase(p1^.el^) then p:=lines;
+        width:=max(width,length(p1^.el));
+        if UpperCase(cont)=UpperCase(p1^.el) then p:=lines;
         p1:=p1^.next;
         end;
 
@@ -417,9 +417,9 @@ var ax,p,myp  : integer;
       if t<>keyesc then begin
         p1:=selliste;
         for i:=1 to p+sa-1 do p1:=p1^.next;
-        if length(p1^.el^)>maxlen then
+        if length(p1^.el)>maxlen then
           error('Eingabefeld zu kurz!');
-        cont^:=p1^.el^;
+        cont:=p1^.el;
         modified:=true;
         end;
       end;
@@ -429,7 +429,7 @@ var ax,p,myp  : integer;
     maussel:=false;
   end;
 
-  { Achtung! vor jeder Modifikation an cont^ muá xtest1() aufgerufen werden! }
+  { Achtung! vor jeder Modifikation an cont muá xtest1() aufgerufen werden! }
 
   function xtest1(var s:string):boolean;
   var x1 : boolean;
@@ -456,18 +456,18 @@ var ax,p,myp  : integer;
       p:=1; ax:=0;
       with afld^ do begin
         if autotrim<>0 then begin               { altes Feld verlassen ... }
-          s:=cont^;
+          s:=cont;
           if autotrim=1 then
-	    s:= TrimRight(s)
+            s:= TrimRight(s)
             { while s[length(s)]=' ' do
               dec(byte(s[0])) }
           else
             s:=trim(s);
-          if (s<>cont^) and (xtest1(s)) then;
-          cont^:=s;
+          if (s<>cont) and (xtest1(s)) then;
+          cont:=s;
           end;
         if (offs=0) or valid(afld,true) then begin
-          afld^.test3(afld^.cont^);
+          afld^.test3(afld^.cont);
           FldDisplay;
 
           newyp:=max(1,min(felder,yp+offs));    { neues Feld suchen ... }
@@ -519,8 +519,8 @@ var ax,p,myp  : integer;
   procedure rechts;
   begin
     with afld^ do begin
-      if (p+ax<=length(cont^)) and
-         not ((p=len) and (len=maxlen) and (p+ax=length(cont^))) then
+      if (p+ax<=length(cont)) and
+         not ((p=len) and (len=maxlen) and (p+ax=length(cont))) then
         repeat
           if p<len then inc(p)
           else inc(ax);
@@ -544,18 +544,18 @@ var ax,p,myp  : integer;
       for i:=1 to felder do
         with fld[i]^ do
           if variable<>nil then begin
-            if (typ>=2) and (typ<=6) then l:=ival(cont^);
+            if (typ>=2) and (typ<=6) then l:=ival(cont);
             case typ of
-              1,8,9 : Move(cont^,variable^,length(cont^)+1);
+              1,8,9 : Move(cont,variable^,length(cont)+1);
               2,3   : Move(l,variable^,1);
               4,5   : Move(l,variable^,2);
               6     : Move(l,variable^,4);
               7     : begin
-                        r:=rval(cont^);
+                        r:=rval(cont);
                         Move(r,variable^,6);
                       end;
               10    : begin
-                        b:=(cont^=yesno[1]);
+                        b:=(cont=yesno[1]);
                         Move(b,variable^,1);
                       end;
             end;
@@ -566,7 +566,7 @@ var ax,p,myp  : integer;
   begin
     with amaskp^.stat,afld^ do begin
       attrtxt(col.ColFnFill);
-      mwrt(fnix,fniy,dup(length(fnkeyinfo^),fnkeyfill));
+      mwrt(fnix,fniy,dup(length(fnkeyinfo),fnkeyfill));
       end;
   end;
 
@@ -574,7 +574,7 @@ var ax,p,myp  : integer;
   begin
     if not newfld then
       with amaskp^.stat,afld^ do begin
-        test3(cont^);
+        test3(cont);
         replace:=false;
         showfield;
         if hpline<>nil then begin
@@ -593,7 +593,7 @@ var ax,p,myp  : integer;
       h,m : byte;
   begin
     with afld^ do begin
-      s:=cont^;
+      s:=cont;
       if cpos(' ',s)>0 then exit;
       if counter=1 then begin
         dat.t:=ival(left(s,2));
@@ -607,7 +607,7 @@ var ax,p,myp  : integer;
           dat.j:=ival(right(s,4));
         if t='+' then incd(dat)
         else decd(dat);
-        cont^:=formi(dat.t,2)+'.'+formi(dat.m,2)+'.'+
+        cont:=formi(dat.t,2)+'.'+formi(dat.m,2)+'.'+
                iifs(length(s)=8,formi(dat.j mod 100,2),formi(dat.j,4));
         end
       else begin
@@ -627,7 +627,7 @@ var ax,p,myp  : integer;
             if h>0 then dec(h)
             else h:=23;
             end;
-        cont^:=formi(h,2)+':'+formi(m,2);
+        cont:=formi(h,2)+':'+formi(m,2);
         end;
       end;
   end;
@@ -677,7 +677,7 @@ var ax,p,myp  : integer;
             while (i<=felder) and not ok do begin
               with fld[i]^ do
                 ok:=(mx>=min(xx,xx2)-1) and
-                    (mx<=max(xx2+len+arrows+iif(hassel,1,0),xx+length(txt^))) and
+                    (mx<=max(xx2+len+arrows+iif(hassel,1,0),xx+length(txt))) and
                     (my=yy-a) and enabled;
               if not ok then inc(i);
               end;
@@ -690,16 +690,16 @@ var ax,p,myp  : integer;
                   _keyboard(stat.selboxkey)
                 else begin
                   if infield then
-                    if stat.arrowspace and (length(cont^)-ax>len) and (mx=xx2+len+1)
+                    if stat.arrowspace and (length(cont)-ax>len) and (mx=xx2+len+1)
                     then begin
-                      ax:=length(cont^)-len+1;
-                      p:=length(cont^)-ax+1;
+                      ax:=length(cont)-len+1;
+                      p:=length(cont)-ax+1;
                       replace:=false;
                       doreplace:=false;
                       end
                     else if t<>mausldouble then begin
                       p:=minmax(mx-xx2-iif(stat.arrowspace,0,1),1,
-                                min(length(cont^)+1,len));
+                                min(length(cont)+1,len));
                       replace:=false;
                       doreplace:=false;
                       end
@@ -707,9 +707,9 @@ var ax,p,myp  : integer;
                       p:=1; ax:=0;
                       end;
                   if checkbutt and ((t=mausleft) or (t=mausldouble)) then begin
-                    if cont^=yesno[1] then s:=yesno[2]
+                    if cont=yesno[1] then s:=yesno[2]
                     else s:=yesno[1];
-                    if xtest1(s) then cont^:=s;
+                    if xtest1(s) then cont:=s;
                     end;
                   if t=mausright then
                     if infield and hassel then
@@ -800,24 +800,24 @@ begin   { readmask }
         if newfld then begin
           replace:=autohigh and doreplace;
           doreplace:=true;
-          test0(cont^);
-          if autoup then UpString(cont^)
-          else if autodown then LoString(cont^);
+          test0(cont);
+          if autoup then UpString(cont)
+          else if autodown then LoString(cont);
           showfield;
           newfld:=false;
           if hpx<>0 then begin           { Hilfszeile anzeigen }
-            if hpline=nil then s^:=''
-            else s^:=hpline^;
-            if hcenter then s^:=center(s^,hpl)
-            else s^:=forms(s^,hpl);
+            if hpline=nil then s:=''
+            else s:=hpline;
+            if hcenter then s:=center(s,hpl)
+            else s:=forms(s,hpl);
             attrtxt(col.ColHelpTxt);
-            mwrt(hpx,hpy,s^);
+            mwrt(hpx,hpy,s);
             normtxt;
             end;
           if fnix<>0 then begin          { SelKey-Info anzeigen }
             if (selliste<>nil) or (@custom<>nil) then begin
               attrtxt(col.ColFnInfo);
-              mwrt(fnix,fniy,fnkeyinfo^);
+              mwrt(fnix,fniy,fnkeyinfo);
               end
             else
               fillfnhelp;
@@ -857,22 +857,22 @@ begin   { readmask }
         if (t=keyclft) and (ax+p>1) then
           repeat
             links
-          until (ax+p=1) or ((cont^[ax+p]<>' ') and (cont^[ax+p-1]=' '));
-        if (t=keycrgt) and (ax+p<=length(cont^)) then
+          until (ax+p=1) or ((cont[ax+p]<>' ') and (cont[ax+p-1]=' '));
+        if (t=keycrgt) and (ax+p<=length(cont)) then
           repeat
             rechts
-          until (ax+p>length(cont^)) or
-                ((ax+p=length(cont^)) and (length(cont^)=maxlen)) or
-                ((cont^[ax+p]<>' ') and (cont^[ax+p-1]=' '));
+          until (ax+p>length(cont)) or
+                ((ax+p=length(cont)) and (length(cont)=maxlen)) or
+                ((cont[ax+p]<>' ') and (cont[ax+p-1]=' '));
         if t=keyhome then begin
           p:=1; ax:=0;
           replace:=false;
           end;
         if t=keyend then begin
-          if len=maxlen then p:=min(length(cont^)+1,len)
+          if len=maxlen then p:=min(length(cont)+1,len)
           else begin
-            ax:=max(0,length(cont^)-len+1);
-            p:=length(cont^)-ax+1;
+            ax:=max(0,length(cont)-len+1);
+            p:=length(cont)-ax+1;
             end;
           replace:=false;
           end;
@@ -882,56 +882,56 @@ begin   { readmask }
             if replace then
               t:=^Y
             else begin
-              s^:=cont^;
-              delete(s^,p+ax-1,1);
-              if xtest1(s^) then cont^:=s^;
+              s:=cont;
+              delete(s,p+ax-1,1);
+              if xtest1(s) then cont:=s;
               links;
               end;
-        if (t=keydel) and (p+ax<=length(cont^)) and (mask='') then
+        if (t=keydel) and (p+ax<=length(cont)) and (mask='') then
           if replace then t:=^Y
           else begin
-            s^:=cont^;
-            delete(s^,p+ax,1);
-            if xtest1(s^) then cont^:=s^;
+            s:=cont;
+            delete(s,p+ax,1);
+            if xtest1(s) then cont:=s;
             end;
         if ((t=^T) or (t=#127)) and (mask='') then begin
           i:=p+ax;
           if t=^T then begin
-            while (i<=length(cont^)) and (cont^[i]<>' ') do inc(i);
-            while (i<=length(cont^)) and (cont^[i]=' ') do inc(i);
+            while (i<=length(cont)) and (cont[i]<>' ') do inc(i);
+            while (i<=length(cont)) and (cont[i]=' ') do inc(i);
             end
           else begin
-            while (p+ax>1) and (cont^[p+ax-1]<>' ') do links;
-            while (p+ax>1) and (cont^[p+ax-1]=' ') do links;
+            while (p+ax>1) and (cont[p+ax-1]<>' ') do links;
+            while (p+ax>1) and (cont[p+ax-1]=' ') do links;
             end;
-          s^:=cont^;
-          delete(s^,p+ax,i-(p+ax));
-          if xtest1(s^) then cont^:=s^;
+          s:=cont;
+          delete(s,p+ax,i-(p+ax));
+          if xtest1(s) then cont:=s;
           replace:=false;
           end;
         if typ=1 then
           if (t=^G) and not (autodown or topcase) then begin
-            UpString(cont^); replace:=false; end
+            UpString(cont); replace:=false; end
             else
           if (t=^K) and not (autoup or topcase) then begin
-            cont^:=LowerCase(cont^); replace:=false; end
+            cont:=LowerCase(cont); replace:=false; end
             else
           if (t=^X) and not (autoup or autodown) then begin
-            cont^:=TopAllStr(UpperCase(cont^)); replace:=false; end
+            cont:=TopAllStr(UpperCase(cont)); replace:=false; end
             else
                                                               { JG: Clipboard fuer Menues }
 
-          if (t=^C) or (t=keycins) then string2clip(cont^);   { STRG+C / STRG+INS = kopieren }
+          if (t=^C) or (t=keycins) then string2clip(cont);   { STRG+C / STRG+INS = kopieren }
 
           if (t=^V) or ((t=keyins) and kb_shift) then
           begin   { STRG+V / SHIFT+INS }
-            s^:= Clip2String;
-            i := length(s^);
+            s:= Clip2String;
+            i := length(s);
             if replace then
             begin                                             { Ersetzen }
               p:=1; ax:=0; replace:=false;
             end else
-              s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
+              s:=left(cont,p+ax-1)+s+mid(cont,p+ax);
 
             p:=p+i;                                           {Cursorposition aktualisieren}
             if p>=len then
@@ -939,7 +939,7 @@ begin   { readmask }
               ax:=ax+p-len;
               p:=len;
               end;
-            if xtest1(s^) then cont^:=s^;
+            if xtest1(s) then cont:=s;
             end;
 
         if (t=keypgup) then
@@ -978,7 +978,7 @@ begin   { readmask }
           if selliste<>nil then begin
             select(brk,fwd);
             if not brk then begin
-              if xtest1(cont^) then;   { Select-Strings sind immer ok! }
+              if xtest1(cont) then;   { Select-Strings sind immer ok! }
               movefield(iif(fwd,+1,0));
               end;
             end
@@ -988,12 +988,12 @@ begin   { readmask }
               acol:=col;
               x:=xx2; y:=yy;
               fpos:=yp;
-              s:=cont^;
+              s:=cont;
               brk:=false;
               custom(crec^);
               if not brk then begin
-                cont^:=s;
-                if xtest1(cont^) then;
+                cont:=s;
+                if xtest1(cont) then;
                 movefield(+1);
                 end;
               end;
@@ -1009,28 +1009,28 @@ begin   { readmask }
           _count_
         else if t>=' ' then begin
           if replace then
-            s^:=mask
+            s:=mask
           else
-            s^:=cont^;
+            s:=cont;
           if autoup then t[1]:=UpCase(t[1]);
           if autodown then t[1]:=LoCase(t[1]);
           if convcolon and (t[1]=',') then t[1]:='.';
           if checkbutt and (t=' ') then begin
-            if cont^=yesno[1] then s^:=yesno[2]
-            else s^:=yesno[1];
-            if xtest1(s^) then cont^:=s^;
+            if cont=yesno[1] then s:=yesno[2]
+            else s:=yesno[1];
+            if xtest1(s) then cont:=s;
             end
           else begin
             if allowed=nil then valchar:=(pos(t,allchar)>0)
-            else valchar:=(pos(t,allowed^)>0);
+            else valchar:=(pos(t,allowed)>0);
             if valchar then begin
-              if (mask='') and (insert_mode or (p+ax>length(s^))) then begin
-                insert(t,s^,p+ax);
-                s^:=copy(s^,1,maxlen);
+              if (mask='') and (insert_mode or (p+ax>length(s))) then begin
+                insert(t,s,p+ax);
+                s:=copy(s,1,maxlen);
                 end
-              else s^[p+ax]:=t[1];
-              if xtest1(s^) then begin
-                cont^:=s^;
+              else s[p+ax]:=t[1];
+              if xtest1(s) then begin
+                cont:=s;
                 rechts;
                 end;
               if replace then replace:=false;
@@ -1039,8 +1039,8 @@ begin   { readmask }
           end;
 
         if (t=^Y) and not nonedit then begin
-          cont^:=mask;
-          if xtest1(cont^) then;      { leer ist immer zul„ssig! }
+          cont:=mask;
+          if xtest1(cont) then;      { leer ist immer zul„ssig! }
           p:=1; ax:=0;
           replace:=false;
           end;
@@ -1073,6 +1073,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.20  2000/07/13 10:23:44  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.19  2000/07/05 09:27:08  hd
   - AnsiString-Anpassung
 

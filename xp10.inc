@@ -94,7 +94,7 @@ var brk     : boolean;
     dat:=tf(date); tim:=left(time,5);
     lastbox:='';
     while (i<=anzahl) and (anz<maxentries-1) do begin   { -1 wegen Splitting }
-      Str2Time(e[i]^,tr);
+      Str2Time(e[i],tr);
       with tr do
         if active and (tf(vond)<=dat) and (tf(bisd)>=dat) and ((bis>=tim) or (von>bis))
            and wotag[dow(date)]
@@ -231,9 +231,9 @@ var brk     : boolean;
   begin
     i:=1;
     while (i<=anzahl) do
-      if (copy(e[i]^,37,6)='CRASHS') or (copy(e[i]^,37,8)='REQUESTS') then begin
-        crash:=(copy(e[i]^,37,6)='CRASHS');
-        ss:=left(e[i]^,36);
+      if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin
+        crash:=(copy(e[i],37,6)='CRASHS');
+        ss:=left(e[i],36);
         freemem(e[i],filewidth+1);
         if i<anzahl then Move(e[i+1],e[i],(anzahl-i)*4);
         dec(anzahl);
@@ -258,8 +258,7 @@ var brk     : boolean;
                 inc(anzahl);
                 if anzahl>i then Move(e[i],e[i+1],(anzahl-i)*4);
                 sc:=ss+'CRASH '+adr;
-                getmem(e[i],filewidth+1);
-                e[i]^:=sc;
+                e[i]:=sc;
                 inc(i);
                 end;
               end;
@@ -644,6 +643,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/13 10:23:45  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.6  2000/07/05 17:58:26  hd
   - Ansistring
 

@@ -137,7 +137,7 @@ type  TimeRec   = record
       tarifap  = ^tarifarr;
 
 const anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
-var   e         : array[1..maxentries] of ^string;
+var   e         : array[1..maxentries] of string;
       filewidth : integer;
       _bunla    : string{[mtypes]};     { 'BUNLAET' }
 
@@ -354,12 +354,12 @@ begin
       if trim(s)<>'' then
         if (typ=2) and (left(s,1)='!') then
           if anzahl>0 then
-            e[anzahl]^:=forms(e[anzahl]^,225)+copy(s,2,24)
+            e[anzahl]:=forms(e[anzahl],225)+copy(s,2,24)
           else
         else begin
           inc(anzahl);
           getmem(e[anzahl],filewidth+1);
-          e[anzahl]^:=left(s,filewidth);
+          e[anzahl]:=left(s,filewidth);
           end;
       end;
     close(t);
@@ -374,21 +374,18 @@ begin
   rewrite(t);
   case typ of
     1 : for i:=1 to anzahl do
-          writeln(t,e[i]^);
+          writeln(t,e[i]);
     2 : for i:=1 to anzahl do begin
-          writeln(t,trim(left(e[i]^,225)));
-          if mid(e[i]^,226)<>'' then
-            writeln(t,'!',mid(e[i]^,226));
+          writeln(t,trim(left(e[i],225)));
+          if mid(e[i],226)<>'' then
+            writeln(t,'!',mid(e[i],226));
           end;
   end;
   close(t);
 end;
 
 procedure releaseliste;
-var i : integer;
 begin
-  for i:=1 to anzahl do
-    freemem(e[i],filewidth+1);
   anzahl:=0;
 end;
 
@@ -543,7 +540,7 @@ var brk      : boolean;
     modi     : boolean;
     reindex  : boolean;
     boxsel1,
-    boxsel2  : stringp;
+    boxsel2  : string;
     poutside : boolean;
     xhd      : extheadertype;
     movefrom : integer;
@@ -601,23 +598,23 @@ var brk      : boolean;
       else begin
         case typ of
           1 : begin                           { Timingliste }
-                str2time(e[i+a]^,tr);
+                str2time(e[i+a],tr);
                 with tr do begin
                   write(' ',iifc(active,'+',' '),' ',von,'-',bis,'  ',vond,'-',
-                  bisd,'  ',copy(e[i+a]^,29,8),'  ',forms(action,33));
+                  bisd,'  ',copy(e[i+a],29,8),'  ',forms(action,33));
                   end;
               end;
           2 : begin                           { Tastenmakros }
-                tt:=left(e[i+a]^,13);
+                tt:=left(e[i+a],13);
                 case tt[1] of
                   '_' : tt:=copy(tt,2,12)+' ';
                   '^' : tt:='<Ctrl '+tt[2]+'>     ';
                 end;
-                komm:=mid(e[i+a]^,226);
+                komm:=mid(e[i+a],226);
                 Setlength(bunla, mtypes-1); {bunla[0]:=chr(mtypes-1);}
                 for j:=2 to mtypes do
-                  bunla[j-1]:=iifc(e[i+a]^[14+j]=' ',' ',_bunla[j]);
-                write(' ',tt,bunla,' ',forms(mid(e[i+a]^,26),51-length(komm)),
+                  bunla[j-1]:=iifc(e[i+a][14+j]=' ',' ',_bunla[j]);
+                write(' ',tt,bunla,' ',forms(mid(e[i+a],26),51-length(komm)),
                       ' ',komm,' ');
               end;
           3 : with phones^[i+a] do begin      { GebÅhrenliste }
@@ -654,13 +651,13 @@ var brk      : boolean;
   var i : integer;
   begin
     i:=1;
-    while (i<=anzahl) and (copy(e[i]^,from,len)<copy(s,from,len)) do
+    while (i<=anzahl) and (copy(e[i],from,len)<copy(s,from,len)) do
       inc(i);
     inc(anzahl);
+    // !!
     if i<anzahl then
       Move(e[i],e[i+1],(anzahl-i)*4);
-    getmem(e[i],filewidth+1);
-    e[i]^:=s;
+    e[i]:=s;
   end;
 
   procedure sort_e;
@@ -672,7 +669,7 @@ var brk      : boolean;
     repeat
       xch:=false;
       for i:=1 to j do
-        if e[i]^>e[i+1]^ then begin
+        if e[i]>e[i+1] then begin
           p:=e[i]; e[i]:=e[i+1]; e[i+1]:=p;
           xch:=true;
           end;
@@ -717,9 +714,9 @@ var brk      : boolean;
       mappsel(false,getres2(1004,1));
       for i:=1 to 7 do mappsel(false,wtage[i]);
       maddstring(3,8,getres2(1004,9),action,30,80,'');   { 'Aktion     ' }
-      mappsel(false,boxsel1^);
-      if boxsel2^<>'' then
-        mappsel(false,boxsel2^);
+      mappsel(false,boxsel1);
+      if boxsel2<>'' then
+        mappsel(false,boxsel2);
       for i:=2 to comms do mappsel(false,comstr[i]);
       msetvfunc(testaction);
       readmask(brk);
@@ -748,23 +745,23 @@ var brk      : boolean;
 
   procedure DelEntry;
   begin
-    if ReadJN(getres(1005),true) then begin    { 'Eintrag lîschen' }
-      freemem(e[a+p],filewidth+1);
+    if ReadJN(getres(1005),true) then
+    begin    { 'Eintrag lîschen' }
       if a+p<anzahl then
         Move(e[a+p+1],e[a+p],(anzahl-a-p)*4);
       dec(anzahl);
       modi:=true;
-      end;
+    end;
   end;
 
   procedure EditTiming;
   var s   : string;
       brk : boolean;
   begin
-    s:=e[a+p]^;
+    s:=e[a+p];
     ReadTiming(true,s,brk);
     if not brk then begin
-      e[a+p]^:=s;
+      e[a+p]:=s;
       modi:=true;
       end;
   end;
@@ -772,9 +769,9 @@ var brk      : boolean;
   procedure ChangeActive;
   var tr : TimeRec;
   begin
-    Str2Time(e[a+p]^,tr);
+    Str2Time(e[a+p],tr);
     tr.active:=not tr.active;
-    e[a+p]^:=Time2Str(tr);
+    e[a+p]:=Time2Str(tr);
     modi:=true;
   end;
 
@@ -955,8 +952,8 @@ var brk      : boolean;
       komm : string;
       brk  : boolean;
   begin
-    s:=trim(copy(e[a+p]^,26,200));
-    komm:=copy(e[a+p]^,226,24);
+    s:=trim(copy(e[a+p],26,200));
+    komm:=copy(e[a+p],226,24);
     dialog(60,5,getres2(1007,1),x,y);   { 'Tastenmakro bearbeiten' }
     maddstring(3,2,getres2(1007,2),s,42,200,range(' ',#255)); mhnr(548);
     Mnotrim;                                         { 'Makro     ' }
@@ -964,9 +961,9 @@ var brk      : boolean;
     readmask(brk);
     enddialog;
     if not brk then begin
-      e[a+p]^:=left(e[a+p]^,25)+s;
+      e[a+p]:=left(e[a+p],25)+s;
       if komm<>'' then
-        e[a+p]^:=forms(e[a+p]^,225)+komm;
+        e[a+p]:=forms(e[a+p],225)+komm;
       modi:=true;
       end;
     freeres;
@@ -977,7 +974,7 @@ var brk      : boolean;
       tt,ttt : string;
       ta     : tap;
   begin
-    tt:=left(e[a+p]^,15);
+    tt:=left(e[a+p],15);
     diabox(35,5,'',x,y);
     mwrt(x+20,y,' <Shift Esc> ');
     mwrt(x+3,y+2,getres(1008));   { 'neue Taste' }
@@ -990,7 +987,7 @@ var brk      : boolean;
     dispose(ta);
     closebox;
     if tt<>ttt then begin
-      e[a+p]^:=forms(tt,15)+mid(e[a+p]^,16);
+      e[a+p]:=forms(tt,15)+mid(e[a+p],16);
       sort_e;
       modi:=true;
       end;
@@ -1002,7 +999,7 @@ var brk      : boolean;
       enable : array[1..mtypes-1] of boolean;
   begin
     for i:=1 to mtypes-1 do
-      enable[i]:=(e[a+p]^[15+i]<>' ');
+      enable[i]:=(e[a+p][15+i]<>' ');
     dialog(24,mtypes+1,getres2(1009,0),x,y);    { 'Makro gÅltig im..' }
     for i:=1 to mtypes-1 do begin
       maddbool(3,1+i,getres2(1009,i),enable[i]); mhnr(589+i);
@@ -1012,7 +1009,7 @@ var brk      : boolean;
     enddialog;
     if not brk then begin
       for i:=1 to mtypes-1 do
-        e[a+p]^[15+i]:=iifc(enable[i],'*',' ');
+        e[a+p][15+i]:=iifc(enable[i],'*',' ');
       modi:=true;
       end;
   end;
@@ -1498,21 +1495,20 @@ var brk      : boolean;
   var d   : DB;
       box : string[40];
   begin
-    boxsel1^:='';
-    boxsel2^:='';
+    boxsel1:='';
+    boxsel2:='';
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
       box:='˘NETCALL '+dbReadStr(d,'boxname');
-      if length(boxsel1^)<220 then
-        boxsel1^:=boxsel1^+box
-      else if length(boxsel2^)<220 then
-        boxsel2^:=boxsel2^+box;
+      if length(boxsel1)<220 then
+        boxsel1:=boxsel1+box
+      else if length(boxsel2)<220 then
+        boxsel2:=boxsel2+box;
       dbNext(d);
       end;
     dbClose(d);
-    delfirst(boxsel1^);
-    if boxsel2^<>'' then
-      delfirst(boxsel2^);
+    delfirst(boxsel1);
+    delfirst(boxsel2);
   end;
 
   procedure readbutt;
@@ -2033,6 +2029,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/13 10:23:46  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.18  2000/07/12 15:27:01  hd
   - Ansistring
 

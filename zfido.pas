@@ -145,7 +145,7 @@ var   _from,_to : FidoAdr;
                     bh  : string[25];
                   end;
 
-      avia      : array[1..maxvia] of ^string;
+      avia      : array[1..maxvia] of string;
       viaanz    : integer;
 
 const
@@ -600,7 +600,7 @@ begin
     if pgpencode    then wrs('CRYPT: PGP');
     if pgpsigned    then wrs('SIGNED: PGPCLEAR');
     for i:=1 to viaanz do
-      wrs('F-Via: '+avia[i]^);
+      wrs('F-Via: '+avia[i]);
     wrs('X_C:');
     wrs('X-XP-NTP: '+strs(netztyp));
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
@@ -1251,10 +1251,9 @@ label abbr;
   function getvia(s:string):string;
   var p : byte;
   begin
-    if KeepVIA and (viaanz<maxvia) and (memavail>1000) then begin
+    if KeepVIA and (viaanz<maxvia) then begin
       inc(viaanz);
-      getmem(avia[viaanz],length(s)+1);
-      avia[viaanz]^:=s;
+      avia[viaanz]:=s;
       end;
     p:=cpos(':',s);
     if p=0 then getvia:='?'
@@ -1603,8 +1602,6 @@ begin
         if hd.groesse>0 then blockwrite(f2,msgbuf^,hd.groesse-oversize);
         CopyMsg(oversize);
         end;
-      for i:=1 to viaanz do
-        freemem(avia[i],length(avia[i]^)+1);
       seek(f1,adr+1);
       end
     else     { pktver <> 2 }
@@ -1674,6 +1671,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/07/13 10:23:48  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.28  2000/07/11 21:39:23  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

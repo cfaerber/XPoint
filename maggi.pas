@@ -326,7 +326,7 @@ var hd   : header;
     adds : longint;
 
     mlanz : integer;
-    mline : array[1..maxmlines] of ^string;
+    mline : array[1..maxmlines] of string;
 
   procedure bread;
   begin
@@ -484,8 +484,7 @@ begin
             end
           else if (s<>'') and (mlanz<maxmlines) then begin   { unbekannte Zeile bernehmen }
             inc(mlanz);
-            getmem(mline[mlanz],length(s)+1);
-            mline[mlanz]^:=mid(s,3);
+            mline[mlanz]:=mid(s,3);
             end;
           end;
         end;
@@ -520,7 +519,7 @@ begin
           if attrib and attrReqEB<>0 then
             wrs('EB:');
           for i:=1 to mlanz do
-            wrml(mline[i]^);
+            wrml(mline[i]);
           wrs('X-XP-NTP: '+iifs(pronet,'4','3'));
           if fido_to<>'' then
             wrs('X-XP-FTO: '+fido_to);
@@ -542,8 +541,6 @@ begin
         seek(f1,adr1);
         fmove(groesse);
         end;
-      for i:=1 to mlanz do
-        freemem(mline[i],length(mline[i]^)+1);
       end;
     seek(f1,adr2);
     end;
@@ -1251,7 +1248,7 @@ const maxilines = 5000;
       bufsize   = 8192;
 type  tb        = array[0..bufsize-1] of byte;
       tbufa     = array[1..maxilines] of record
-                                           s  : ^string;
+                                           s  : string;
                                            lf : boolean;
                                          end;
 var t1,log     : text;
@@ -1271,7 +1268,7 @@ var t1,log     : text;
     infos      : integer;
     mime       : boolean;
     parname    : string[20];
-    xline      : array[1..maxxlines] of ^string;
+    xline      : array[1..maxxlines] of string;
     xlines     : integer;
 
   function mausform(s:string):string;
@@ -1290,8 +1287,7 @@ var t1,log     : text;
       s := ISOToIBM(s);
     begin
       inc(lines);
-      getmem(tbuf^[lines].s,length(s)+1);
-      tbuf^[lines].s^:=s;
+      tbuf^[lines].s:=s;
       tbuf^[lines].lf:=crlf;
       inc(hd.groesse,length(s)+iif(crlf,2,0));
     end
@@ -1319,9 +1315,9 @@ var t1,log     : text;
   var i : integer;
   begin
     i:=1;
-    while (i<=lines) and (pos('begin ',tbuf^[i].s^)<>1) do inc(i);
-    while (i<=lines) and (pos('end',tbuf^[i].s^)<>1) do inc(i);
-    while (i<=lines) and (pos('size ',tbuf^[i].s^)<>1) do inc(i);
+    while (i<=lines) and (pos('begin ',tbuf^[i].s)<>1) do inc(i);
+    while (i<=lines) and (pos('end',tbuf^[i].s)<>1) do inc(i);
+    while (i<=lines) and (pos('size ',tbuf^[i].s)<>1) do inc(i);
     if i>lines then hd.typ:='T';
   end;
 
@@ -1339,8 +1335,8 @@ var t1,log     : text;
     getmem(buf,bufs);
     bufp:=0;
     i:=1;
-    while (i<=lines) and (pos('begin ',tbuf^[i].s^)<>1) do inc(i);
-    s:=tbuf^[i].s^;
+    while (i<=lines) and (pos('begin ',tbuf^[i].s)<>1) do inc(i);
+    s:=tbuf^[i].s;
     delete(s,1,6);
     s:=trim(mid(s,blankpos(s)));   { Unix-Filemode wegschneiden }
     if blankpos(s)>0 then truncstr(s,blankpos(s)-1);
@@ -1348,8 +1344,8 @@ var t1,log     : text;
     if hd.ddatum<>'' then wrs('DDA: '+hd.ddatum+'W+0');
     inc(i);
     { R-}
-    while pos('end',tbuf^[i].s^)=0 do begin
-      s:=tbuf^[i].s^;
+    while pos('end',tbuf^[i].s)=0 do begin
+      s:=tbuf^[i].s;
       n:=(((ord(s[1])-32) and $3f + 2)div 3)*4;   { anzahl Original-Bytes }
       p:=2;
       while p<n do begin
@@ -1364,8 +1360,8 @@ var t1,log     : text;
       inc(i);
       end;
     { R+}
-    while (pos('size ',tbuf^[i].s^)<>1) do inc(i);
-    s:=trim(mid(tbuf^[i].s^,5));
+    while (pos('size ',tbuf^[i].s)<>1) do inc(i);
+    s:=trim(mid(tbuf^[i].s,5));
     bufp:=min(bufp,ival(s));   { echte Gr”áe }
     wrs('LEN: '+strs(bufp));
     wrs('');
@@ -1381,9 +1377,9 @@ var t1,log     : text;
     if ioresult=0 then begin
       for i:=1 to lines do             { Nachrichtentext schreiben }
         if tbuf^[i].lf then
-          writeln(t,tbuf^[i].s^)
+          writeln(t,tbuf^[i].s)
         else
-          write(t,tbuf^[i].s^);
+          write(t,tbuf^[i].s);
       close(t);
       end;
   end;
@@ -1392,7 +1388,7 @@ var t1,log     : text;
   begin
     if xlines<maxxlines then begin
       inc(xlines);
-      xline[xlines]^:=s;
+      xline[xlines]:=s;
       end;
   end;
 
@@ -1625,6 +1621,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/07/13 10:23:44  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.19  2000/07/09 08:35:12  mk
   - AnsiStrings Updates
 

@@ -1946,7 +1946,7 @@ function FidoSeekfile:string;
     scp              : scrptr;
     tbs              : word;
     ni               : ^nodeinfo;
-    files            : ^string;
+    files            : string;
     len              : byte;
     anz_searchStr    : integer;    { Anzahl der besetzten Suchstrings }
     label
@@ -2207,8 +2207,7 @@ begin       { FidoSeekfile:string;************************ }
     list(brk);
     pophp;
     holen(scp);
-    new(files);
-    files^:='';
+    files:='';
     sNodInf:= mid(first_marked,81);;
     sZeile:=first_marked;
     while (sZeile<>#0) do
@@ -2220,17 +2219,16 @@ begin       { FidoSeekfile:string;************************ }
       end
       else
       begin
-       files^:=files^+' '+trim(left(sZeile,12));
+       files:=files+' '+trim(left(sZeile,12));
        sZeile:=next_marked;
       end;
     end;
-    files^:=trim(files^);
-    if files^<>'' then
+    files:=trim(files);
+    if files<>'' then
     begin
       keyboard(keycr);
-      FidoSeekfile:=FidoRequest(sNodInf,files^);
+      FidoSeekfile:=FidoRequest(sNodInf,files);
     end;
-    dispose(files);
     closelist;
   end;
 ende:
@@ -2292,6 +2290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/13 10:23:47  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.21  2000/07/05 13:55:02  hd
   - AnsiString
 

@@ -55,10 +55,11 @@ implementation  {--------------------------------------------------------}
 
 uses  xp1,xp6;
 
-const edbetreff : ^string = nil;
+const
       doautosave: boolean = false;
 
 var
+      edbetreff : string;
       edbmaxlen : byte;      { maximale Betreffl„nge }
       EdCfg     : EdConfig;
 
@@ -303,9 +304,8 @@ end;
 
 procedure EditSetbetreff(betr:string; maxlen:byte);
 begin
-  getmem(edbetreff,maxlen+1);
   edbmaxlen:=maxlen;
-  edbetreff^:=betr;
+  edbetreff:=betr;
 end;
 
 function EditGetBetreff:string;
@@ -313,8 +313,7 @@ begin
   if edbetreff=nil then
     EditGetbetreff:=''
   else begin
-    EditGetbetreff:=edbetreff^;
-    freemem(edbetreff,edbmaxlen+1);
+    EditGetbetreff:=edbetreff;
     edbetreff:=nil;
     end;
 end;
@@ -325,13 +324,13 @@ var x,y : byte;
 begin
   if edbetreff=nil then exit;
   dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
-  maddstring(3,2,getres(2507),edbetreff^,min(edbmaxlen,48),edbmaxlen,'');
+  maddstring(3,2,getres(2507),edbetreff,min(edbmaxlen,48),edbmaxlen,'');
   msetvfunc(xp6.umlauttest); mhnr(88);
   readmask(brk);
   enddialog;
   if not brk then begin
     attrtxt(col.coledithead);
-    mwrt(2,2,forms(getres2(611,42)+edbetreff^,79));
+    mwrt(2,2,forms(getres2(611,42)+edbetreff,79));
     freeres;
     end;
 end;
@@ -480,6 +479,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/13 10:23:46  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.18  2000/07/05 14:49:29  hd
   - AnsiString
 

@@ -799,7 +799,8 @@ procedure blindon(total:boolean);
 var mf : boolean;
     mt : byte;
 begin
-  if blind and (winstp<maxwinst) and (memavail>160*50*2) then begin
+  if blind and (winstp<maxwinst) then
+  begin
     inc(winstp);
     if winstp=1 then begin
       mst:=m2t; m2t:=false;
@@ -2032,6 +2033,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.64  2000/07/13 10:23:45  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.63  2000/07/12 14:55:03  hd
   - Ansistring
 

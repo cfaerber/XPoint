@@ -56,7 +56,7 @@ type  mprec     = record
       map       = ^menuarray;
 const mainmenu  : map = nil;
 
-var   menu      : array[0..menus] of ^string;
+var   menu      : array[0..menus] of string;
       menulevel : byte;
       main_n    : integer;
       hmpos     : array[1..10] of byte;  { HauptmenÅ-XPos }
@@ -113,7 +113,6 @@ begin
   error('Es wird CrossPoint Version 3.11 oder hîher benîtigt!');
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
-    getmem(menu[i],length(s)+1);
     menu[i]^:=s;
     end;
   specials:=getres2(10,200);
@@ -754,6 +753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/07/13 10:23:48  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.22  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

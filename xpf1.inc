@@ -13,7 +13,7 @@
 
 
 procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
-var s  : ^string;
+var s  : string;
     rr : word;
 
   procedure SetInfo;
@@ -22,34 +22,34 @@ var s  : ^string;
     function getstr:string;
     var b: byte;
     begin
-      p:=cpos(',',s^);
+      p:=cpos(',',s);
       if p=0 then getstr:=''
       else begin
 
       for b:=1 to p-1 do
-        if s^[b]='_' then s^[b]:=' ';
+        if s[b]='_' then s[b]:=' ';
 
-        getstr:=copy(s^,1,p-1);
-        delete(s^,1,p);
+        getstr:=copy(s,1,p-1);
+        delete(s,1,p);
         end;
     end;
   begin
     with ni do begin
-      if s^[length(s^)]<>',' then s^:=s^+',';
+      if s[length(s)]<>',' then s:=s+',';
      { for p:=1 to length(s^) do       nach GetStr verschoben, damit im
         if s^[p]='_' then s^[p]:=' ';  String FFlags '_' erhalten bleibt }
       status:=getstr;
-      p:=cpos(',',s^);
+      p:=cpos(',',s);
       if p>0 then begin
         if status='' then
           status:=iifs(ispoint,'Point','Node');
-        delete(s^,1,p);    { Nodenummer }
+        delete(s,1,p);    { Nodenummer }
         boxname:=getstr;
         standort:=getstr;
         sysop:=getstr;
         telefon:=getstr;
         baud:=minmax(ival(getstr),110,65535);
-        fflags:=s^;
+        fflags:=s;
         dellast(fflags);    { Komma entfernen }
         repeat
           x:=getstr;
@@ -90,10 +90,10 @@ begin
     { reset(nodelf^,1);  !?!? }
     seek(nodelf^,adr);
 {$ifdef hasHugeString}
-    SetLength(s^,255);
-    blockread(nodelf^,s^[1],255,rr);
-    SetLength(s^,rr);
-    SetLength(s^,cpos(#13,s^)-1);
+    SetLength(s,255);
+    blockread(nodelf^,s[1],255,rr);
+    SetLength(s,rr);
+    SetLength(s,cpos(#13,s)-1);
 {$else}
     blockread(nodelf^,s^[1],255,rr);
     s^[0]:=chr(rr);
@@ -538,7 +538,7 @@ type NodeBrec = record
                   boxname : string;
                   standort: string;
                   telefon : string;
-                  flags   : string; 
+                  flags   : string;
 {$else}
                   nodeadr : string[20];
                   sysop   : string[30];
@@ -911,6 +911,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.12  2000/07/13 10:23:47  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.11  2000/07/05 13:55:02  hd
   - AnsiString
 

@@ -269,7 +269,7 @@ function MiniSel(x,y:byte; txt,auswahl:string; startpos:shortint):shortint;
 const maxsel = 20;
 var width,height : byte;
     n,p,p1,ml : shortint;
-    sel       : array[1..maxsel] of ^string;
+    sel       : array[1..maxsel] of string;
     slen      : array[1..maxsel] of word;
     selhigh   : array[1..maxsel] of byte;
     hot       : string[maxsel];
@@ -289,15 +289,15 @@ var width,height : byte;
       if (hot[i]=#0) or (i=p) then begin
         if i=p then attrtxt(col.colselbar)
         else attrtxt(col.colselbox);
-        wrt(x+1,y+i,ch+forms(sel[i]^,ml+1));
+        wrt(x+1,y+i,ch+forms(sel[i],ml+1));
         end
       else begin
         attrtxt(col.colselbox);
-        wrt(x+1,y+i,ch+left(sel[i]^,selhigh[i]-1));
+        wrt(x+1,y+i,ch+left(sel[i],selhigh[i]-1));
         attrtxt(col.colselhigh);
-        Wrt2(sel[i]^[selhigh[i]]);
+        Wrt2(sel[i][selhigh[i]]);
         attrtxt(col.colselbox);
-        Wrt2(forms(copy(sel[i]^,selhigh[i]+1,255),ml-selhigh[i]+1));
+        Wrt2(forms(copy(sel[i],selhigh[i]+1,255),ml-selhigh[i]+1));
         end;
       end;
     mon;
@@ -334,20 +334,19 @@ begin
     if p>0 then begin
       inc(n);
       slen[n]:=p;
-      getmem(sel[n],p);
-      sel[n]^:=left(auswahl,p-1);
+      sel[n]:=left(auswahl,p-1);
       auswahl:=copy(auswahl,p+1,255);
-      p:=pos('^',sel[n]^);
+      p:=pos('^',sel[n]);
       if p=0 then begin
         selhigh[n]:=0; hot[n]:=#0;
         p:=1;
         end
       else begin
-        delete(sel[n]^,p,1);
+        delete(sel[n],p,1);
         selhigh[n]:=p;
-        hot[n]:=sel[n]^[p];
+        hot[n]:=sel[n][p];
         end;
-      ml:=max(ml,length(sel[n]^));
+      ml:=max(ml,length(sel[n]));
       end;
   until p=0;
   hot[0]:=chr(n);
@@ -385,8 +384,6 @@ begin
     if p1>0 then begin
       p:=p1; t:=keycr; end;
   until (t=keycr) or (t=keyesc);
-  for i:=1 to n do
-    freemem(sel[i],slen[i]);
   mauszuo:=true; mauszuu:=true;
   if (t=keyesc) then MiniSel:=-p
   else MiniSel:=p;
@@ -421,6 +418,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/13 10:23:46  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.10  2000/07/05 10:59:52  hd
   - Weitere AnsiString-Anpassungen
 

@@ -83,7 +83,7 @@ type  NL_Rec  = record
                   number     : integer;       { akt. Nummer           }
                   updatefile : string[12];    { Diff/Update-Datei     }
                   updatearc  : string[12];    { gepackte Update-Datei }
-                  processor  : ^string;       { externer Bearbeiter   }
+                  processor  : string;       { externer Bearbeiter   }
                   DoDiff     : boolean;
                   DelUpdate  : boolean;       { Diff l”schen }
                   format     : byte;     { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
@@ -293,10 +293,7 @@ begin
             if ss='updatefile'     then updatefile:=s else
             if ss='delupdate'      then delupdate:=(ustr(s)='J') else
             if ss='updatearchive'  then updatearc:=s else
-            if ss='process-by'     then begin
-              getmem(processor,length(s)+1);
-              processor^:=s;
-              end else
+            if ss='process-by'     then processor:=s;
             if ss='dodiff'         then dodiff:=(ustr(s)='J') else
             if ss='format'         then format:=minmax(ival(s),0,6) else
             if ss='zone'           then zone:=minmax(ival(s),0,32767) else
@@ -336,7 +333,7 @@ end;
 
 
 procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
-var s      : ^string;
+var s      : string;
     nodelf : ^file;
     rr     : word;
     mfm    : byte;
@@ -417,7 +414,7 @@ var fa     : fidoadr;
     nadr,l : longint;
     nfile  : byte;
     np     : ^nodea;
-    s      : ^string;
+    s      : string;
     found  : boolean;
     _adr   : longint;
     points : integer;
@@ -503,6 +500,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/13 10:23:48  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.9  2000/07/04 10:21:36  mk
   - doppelte Routinen rausgenommen
 

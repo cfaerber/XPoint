@@ -413,7 +413,7 @@ var   daten    : FILE;
       rr       : word;
 
       textzeile,idzeile,gruppe,
-      betreff,absender,empfaenger,vonzeile : ^string;
+      betreff,absender,empfaenger,vonzeile : string;
       seek_daten_merk,seek_index_merk      : longint;
 
   procedure ReadBuf;
@@ -462,8 +462,6 @@ BEGIN
   msgbox(37,5,'MauTau-Daten konvertieren',mx,my);
   wrt(mx+3,my+2,'bearbeitete Nachrichten:');
   n:=0;
-  new(textzeile); new(idzeile); new(gruppe);
-  new(betreff); new(absender); new(empfaenger); new(vonzeile);
   new(buf);
   bufpos:=0; bufend:=0;
 
@@ -475,24 +473,24 @@ BEGIN
     Seek(daten,x.DIndex);
     ReadBuf;
 
-    idzeile^   := zeile_auslesen(was);
-    gruppe^    := zeile_auslesen(was);
-    betreff^   := zeile_auslesen(was);
-    absender^  := zeile_auslesen(was);
-    if cpos('@',absender^)=0 then
-      absender^:=absender^+' @ '+box;
-    empfaenger^:= zeile_auslesen(was);
-    if (empfaenger^<>'') and (cpos('@',empfaenger^)=0) then
-      empfaenger^:=empfaenger^+' @ '+box;
-    vonzeile^  := zeile_auslesen(was);
+    idzeile   := zeile_auslesen(was);
+    gruppe    := zeile_auslesen(was);
+    betreff   := zeile_auslesen(was);
+    absender  := zeile_auslesen(was);
+    if cpos('@',absender)=0 then
+      absender:=absender+' @ '+box;
+    empfaenger:= zeile_auslesen(was);
+    if (empfaenger<>'') and (cpos('@',empfaenger)=0) then
+      empfaenger:=empfaenger+' @ '+box;
+    vonzeile  := zeile_auslesen(was);
     inc(n);
     attrtxt(col.colmboxhigh);
     mwrt(mx+29,my+2,strs(n));
 
-    writeln(outfile,'#',idzeile^);
-    writeln(outfile,'V',absender^);
-    IF gruppe^='PRIVAT' then writeln(outfile,'A',empfaenger^);
-    writeln(outfile,'W',betreff^);
+    writeln(outfile,'#',idzeile);
+    writeln(outfile,'V',absender);
+    IF gruppe='PRIVAT' then writeln(outfile,'A',empfaenger);
+    writeln(outfile,'W',betreff);
     UnPackTime(x.datum,tempdatum);
     write(outfile,'E');
     datum_ins_outfile(tempdatum);
@@ -500,26 +498,26 @@ BEGIN
     write(outfile,'B',upcase(x.status));
     datum_ins_outfile(tempdatum);
 
-    if gruppe^<>'PRIVAT' then writeln(outfile,'G',gruppe^);
+    if gruppe<>'PRIVAT' then writeln(outfile,'G',gruppe);
     if x.KommentarZu<>0 then begin
       seek_index_merk:=FilePos(index);
       seek_daten_merk:=FilePos(daten);
       Seek(index,x.KommentarZu);
       read(index,tempx);
       Seek(daten,tempx.DIndex);
-      SetLength(idzeile^, 40);                  { Init }
-      blockread(daten,idzeile^[1],40,rr);
-      SetLength(idzeile^, rr);                  { Korrekt }
-      writeln(outfile,'-',left(idzeile^,cpos(#13,idzeile^)-1));
+      SetLength(idzeile, 40);                  { Init }
+      blockread(daten,idzeile[1],40,rr);
+      SetLength(idzeile, rr);                  { Korrekt }
+      writeln(outfile,'-',left(idzeile,cpos(#13,idzeile)-1));
       Seek(daten,Seek_daten_merk);
       Seek(index,seek_index_merk);
       end;
 
-    writeln(outfile,'>',vonzeile^);
+    writeln(outfile,'>',vonzeile);
     was:=0;
     while (bufpos<bufend) and (was<>EndOfMsg) do begin
-      textzeile^:=zeile_auslesen(was);
-      if was<>EndOfMsg then writeln(outfile,':',textzeile^);
+      textzeile:=zeile_auslesen(was);
+      if was<>EndOfMsg then writeln(outfile,':',textzeile);
       end;
     end;   { while not eof(index) }
 
@@ -527,9 +525,6 @@ BEGIN
   close(daten);
   close(outfile);
   dispose(buf);
-  dispose(textzeile); dispose(idzeile); dispose(gruppe);
-  dispose(betreff); dispose(absender); dispose(empfaenger);
-  dispose(vonzeile);
   closebox;
 end;
 
@@ -702,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/13 10:23:47  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.19  2000/07/06 09:12:09  mk
   - AnsiString Updates
 

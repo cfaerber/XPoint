@@ -46,7 +46,6 @@ type  liste   = pointer;
                   colhigh,            { *hervorgehoben*         }
                   colqhigh   : byte;  { Quote / *hervorgehoben* }
                 end;
-      stringp = ^string;
 
       markfunc   = function(var s:string; block:boolean):boolean;
       listCRproc = procedure(var s:string);
@@ -1390,6 +1389,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/13 10:23:43  mk
+  - Zeiger auf Strings entfernt
+
   Revision 1.24  2000/07/05 09:27:08  hd
   - AnsiString-Anpassung
 
