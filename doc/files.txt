@@ -189,27 +189,8 @@ Verzeichnis "ObjCOM"
 --------------------
 
 Makefile        Makefile fuer GNU make
-developer.txt   ???
-example.pas     ???
-license.txt     ???
-objcom.pas      ???
-ocdeffpc.inc    ???
-ocfdos.inc      ???
-ocfdosh.inc     ???
-ocsdos.inc      ???
-ocsdosh.inc     ???
-ocslin.inc      ???
-ocslinh.inc     ???
-ocsos2.inc      ???
-ocsos2h.inc     ???
-ocswin.inc      ???
-ocswinh.inc     ???
-octhread.pas    ???
-octwin.inc      ???
-octwinh.inc     ???
-ringbuff.pas    ???
-serial.pp       ???
-todo.txt        ???
+
+ansonsten: siehe: ObjCOM/developer.txt
 
 Verzeichnis .\LINUX
 -------------------
