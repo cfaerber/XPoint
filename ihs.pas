@@ -1,6 +1,6 @@
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { Intelligent Help System }
 { Rel. 1.01 (c) 11/89 PM  }
 {      1.02 (c) 03/90     }
@@ -43,7 +43,7 @@ var  fname,
      obufp    : smallword;
 
      no_lastnext : boolean;
-     leermode : boolean;  { vor jeder Seite eine Leerzeile einfÅgen }
+     leermode : boolean;  { vor jeder Seite eine Leerzeile einfuegen }
      docode   : boolean;  { Text codieren }
 
 
@@ -89,10 +89,11 @@ var  fname,
    var s        : string;
        x,y      : integer;
        ixp,illp : word;
-       flags    : string[80];
+       flags    : string;
        b        : byte;
        dummy    : longint;
    begin
+     dummy:=0;
      readln(t,s);     { Name }
      blockwf(#13#10+'Intelligent Help System Rel. '+version+#13#10);
      blockwf('(c) '+date+' by Peter Mandrella'+#13#10);
@@ -121,7 +122,7 @@ var  fname,
    end;
 
    function create_page:boolean;
-   type za = array[1..500] of string[127];
+   type za = array[1..500] of string;
    var pnr,last,next,
        size          : word;
        i,lines,p,
@@ -135,7 +136,7 @@ var  fname,
                                         end;
 
      function nextqvref:word;
-     var s : string[10];
+     var s : string;
          p : integer;
          w : word;
          r : integer;
@@ -343,9 +344,7 @@ var  fname,
      seek(f,138); blockwfl(adrix);
    end;
 
-var dir:dirstr;
-    name:namestr;
-    ext:extstr;
+var dir, name, ext : string;
 
 begin
   writeln('Intelligent Help System '+version+' (c) '+date+' Peter Mandrella (C) OpenXP Team');
@@ -400,8 +399,8 @@ end.
 
 
 { Aufbau des Help-Files:
-  128   Beschreibung mit abschlie·endem cr/lf/eof
-  4     x,y,breite,hîhe
+  128   Beschreibung mit abschliessendem cr/lf/eof
+  4     x,y,breite,hoehe
   2     Anzahl Seiten (pg)
   2     Index-Seitennr.
   2     NoHelp-Seitennr.
@@ -409,7 +408,7 @@ end.
   1     NoHead-Flag
   1     TabMode-Flag
 
-  je Seite:  2 Bytes SeitenlÑnge (Bytes)
+  je Seite:  2 Bytes Seitenlaenge (Bytes)
              n Bytes Daten (codiert)
   ....
   pg*6  Index-Liste:
@@ -419,6 +418,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2000/11/15 23:37:34  fe
+  Corrected some string things.
+
   Revision 1.19  2000/11/13 18:57:56  mk
   - Limit der maximalen Zeilen auf 500 gesetzt
 

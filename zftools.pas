@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -37,13 +37,13 @@ const XPrequest = 'File Request';
 
       infile    : pathstr = '';       { kann Wildcard enthalten }
       outfile   : pathstr = '';
-      fromadr   : string[20] = '';
-      toadr     : string[20] = '';
+      fromadr   : string = '';
+      toadr     : string = '';
       direction : byte = 0;           { 1 = Z->F, 2 = F->Z }
-      bretter   : string[40] = '';
+      bretter   : string = '';
       fakenet   : word = 0;
       adr3d     : boolean = false;
-      ppassword : string[8] = '';
+      ppassword : string = '';
       xpwindow  : byte = 0;
       LocalINTL : boolean = true;
       _result   : integer = 0;
@@ -80,7 +80,7 @@ type  FidoAdr  = record
                    org_xref   : string;         { ^aORIGREF }
                    typ        : string;         { T / B }
                    groesse    : longint;
-                   komlen     : longint;        { Kommentar-LÑnge }
+                   komlen     : longint;        { Kommentar-Laenge }
                    programm   : string;         { Mailer-Name }
                    datei      : string;         { Dateiname }
                    prio       : byte;           { 10=direkt, 20=Eilmail }
@@ -113,7 +113,7 @@ type  FidoAdr  = record
                    PrdCodL    : byte;           { Lo(ProductCode) }
                    HiVersion  : byte;           { Haupt-Versionsnummer }
                    Password   : array[0..7] of char;   { -> = 0 }
-                   QOrgZone   : smallword;      { fÅr einige Fido-Mailer.. }
+                   QOrgZone   : smallword;      { fuer einige Fido-Mailer.. }
                    QDestZone  : smallword;
                    fill       : smallword;      { = 0 }
                    CapValid   : smallword;      { = $100 }
@@ -142,11 +142,11 @@ type  FidoAdr  = record
       charrp   = ^charr;
 
 var   _from,_to : FidoAdr;
-      bh_anz    : shortint;     { Anzahl BretteintrÑge in ZFIDO.CFG }
+      bh_anz    : shortint;     { Anzahl Bretteintraege in ZFIDO.CFG }
 
       bretths   : array[1..maxbretth] of record
-                    box : string[20];
-                    bh  : string[25];
+                    box : string;
+                    bh  : string;
                   end;
 
       avia      : array[1..maxvia] of string;
@@ -197,10 +197,10 @@ procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; 
 asm
        mov    edi,data          { es:di -> msgbuf^[0] }
        mov    esi,data          { es:si -> msgbuf^[bpos] }
-       mov    ebx,bpos          { max. Anzahl einfÅgbarer LFs }
+       mov    ebx,bpos          { max. Anzahl einfuegbarer LFs }
        add    esi,ebx
        mov    ecx,size          { cx <- mbufsize-bpos }
-       xor    edx,edx           { ZÑhler fÅr eingefÅgte LF's }
+       xor    edx,edx           { Zaehler fuer eingefuegte LF's }
        cld
 @lp1:  lodsb
        stosb
@@ -209,7 +209,7 @@ asm
        loop   @lp1
        jmp    @ende
 @isCR: dec    ecx
-       jecxz  @noLF            { Nachricht endet auf CR -> LF anhÑngen }
+       jecxz  @noLF            { Nachricht endet auf CR -> LF anhaengen }
        lodsb                   { Test auf CR ohne LF }
        cmp    al,10
        jnz    @noLF
@@ -217,7 +217,7 @@ asm
        loop   @lp1
        jmp    @ende
 @noLF: xchg   ah,al
-       mov    al,10            { LF einfÅgen }
+       mov    al,10            { LF einfuegen }
        stosb
        xchg   al,ah
        stosb
@@ -476,9 +476,7 @@ const BadDir = 'bad/';
 const BadDir = 'BAD\';
 {$endif}
 var
-    dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
+    dir, name, ext : string;
     f    : file;
 begin
   fsplit(fn,dir,name,ext);
@@ -515,8 +513,6 @@ var b       : charr absolute buf;
     id      : string;
 
   procedure getZline;
-  var
-    l : byte;
   begin
     line := '';
     while (o<ReadFirst) and (b[o]<>#13) do
@@ -663,9 +659,9 @@ end;
 
 { --- Konvertierung ------------------------------------------------- }
 
-{ Im Packet-Header mÅssen die Adressen verwendet werden, die als      }
-{ Parameter Åbergeben wurden (_from/_to). In den Nachrichten-Headern  }
-{ mÅssen die Adressen aus den Feldern ABS, EMP und F-TO verwendet     }
+{ Im Packet-Header muessen die Adressen verwendet werden, die als     }
+{ Parameter uebergeben wurden (_from/_to). In den Nachrichten-Headern }
+{ muessen die Adressen aus den Feldern ABS, EMP und F-TO verwendet    }
 { werden.                                                             }
 
 procedure ZFidoProc;          { ZCONNECT -> FTS-0001 }
@@ -682,7 +678,7 @@ var f1,f2   : file;
     fa1,fa2 : FidoAdr;
     reqfile : text;
     reqopen : boolean;
-    reqnode : string[30];
+    reqnode : string;
 
   procedure wrw(w:word);
   begin
@@ -817,7 +813,7 @@ var f1,f2   : file;
         SplitFido(empfaenger,fa2);
         end;
 
-      while cpos('˛',fa2.username)>0 do    { KlammeraffenrÅckwandlung }
+      while cpos('˛',fa2.username)>0 do    { Klammeraffenrueckwandlung }
         fa2.username[cpos('˛',fa2.username)]:='@';
 
       with mhd do begin
@@ -905,7 +901,7 @@ var f1,f2   : file;
         lastchar:=charrp(buf)^[rr-1];
       dec(size,rr);
       end;
-    if lastchar<>#10 then begin      { ggf. CR/LF anhÑngen }
+    if lastchar<>#10 then begin      { ggf. CR/LF anhaengen }
       wrb(13);
       wrb(10);
       end;
@@ -928,7 +924,7 @@ var f1,f2   : file;
 
   procedure WriteRequest;
   var p,p2  : byte;
-      _file : string[30];
+      _file : string;
   begin
     if not reqopen then begin
       rewrite(reqfile);
@@ -1029,9 +1025,9 @@ var f1,f2  : file;
     tear_2 : longint;
     buf    : array[0..170] of byte;
     rr     : word;
-    fromu  : string[70];    { verlÑngert wegen Internet-Adressen }
-    tou    : string[36];
-    subj   : string[72];
+    fromu  : string;    { verlaengert wegen Internet-Adressen }
+    tou    : string;
+    subj   : string;
     tt     : packed record case integer of
                0 : (ctrla : char;
                     kenn  : longint);
@@ -1048,19 +1044,19 @@ var f1,f2  : file;
     madr   : longint;
     via : boolean;
     lfs    : byte;        { LF's am Zeilenende bei GetString }
-    prog2  : string[60];
-    brt2   : string[25];  { <- bretter }
+    prog2  : string;
+    brt2   : string;  { <- bretter }
     zone   : word;
-    box    : string[20];
+    box    : string;
     pok    : boolean;
-    msgbuf : charrp;      { Puffer fÅr kompletten Nachrichteninhalt }
-    mbufsize : word;      { Puffergrî·e                       }
+    msgbuf : charrp;      { Puffer fuer kompletten Nachrichteninhalt }
+    mbufsize : word;      { Puffergroesse                       }
     oversize: longint;    { abgeschnittener Nachrichtenteil >48k }
     cxlate  : byte;        { 0=ASCII/IBMPC, 1=LATIN-1, 2=MAC }
-    fromline: string[250];
+    fromline: string;
     fllen   : integer;
     inetadr : boolean;
-    defbox  : string[20];
+    defbox  : string;
     ml      : integer;
 
 label abbr;
@@ -1106,7 +1102,7 @@ label abbr;
       if (p>1) then begin
         if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
         while (p<rr) and (s[p+1]=#10) do begin
-          inc(p);                                 { LFs Åberlesen }
+          inc(p);                                 { LFs ueberlesen }
           inc(lfs);
           end;
         end;
@@ -1137,7 +1133,7 @@ label abbr;
   end;
 
   function fzdate(var s:string):string;   { Fido-Datum -> Netcall-Datum }
-  var mon : string[2];
+  var mon : string;
 
     function monster(s:string):string;
     begin
@@ -1413,7 +1409,7 @@ begin
     while (i<=bh_anz) and (bretths[i].box<>box) do
       inc(i);
     if i>bh_anz then begin
-      i:=1;                  { Box mit bester öbereinstimmung suchen }
+      i:=1;                  { Box mit bester Uebereinstimmung suchen }
       ml:=cpos(':',box)-1;
       for j:=1 to bh_anz do
         if smatch(box,bretths[i].box)>ml then begin
@@ -1537,7 +1533,7 @@ begin
           betreff:=ExtractFileName(betreff);   { Pfad aus Betreff entfernen }
         end;
 
-      adr0:=adr;              { wird unten geÑndert, falls Origin vorhanden }
+      adr0:=adr;              { wird unten geaendert, falls Origin vorhanden }
       seekEOM;                { Nachrichtentext bearbeiten }
       hd.groesse:=adr-adr0;
       hd.pfad:=iifs(phd.orgZone=0,'',strs(phd.orgZone)+':')+
@@ -1558,7 +1554,7 @@ begin
       if adr0+tearadr<=adr then begin     { Tearline vorhanden? }
         adr:=adr0+tearadr;
         seek(f1,adr);               { Footer bearbeiten }
-        getrestofline;              { Tearline Åberlesen }
+        getrestofline;              { Tearline ueberlesen }
         if trim(LeftStr(s,4))='---' then begin
           prog2:=trim(mid(s,5));
           if prog2<>'' then
@@ -1683,9 +1679,7 @@ end;
 
 procedure FidoZ;
 var sr  : searchrec;
-    d   : dirstr;
-    n   : namestr;
-    e   : extstr;
+    d, n, e : string;
     fst : boolean;
 begin
   FSplit(infile,d,n,e);
@@ -1799,12 +1793,15 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/11/15 23:37:34  fe
+        Corrected some string things.
+
         Revision 1.2  2000/11/14 22:19:16  hd
         - Fido-Modul: Anpassungen an Linux
 
         Revision 1.1  2000/11/14 20:24:03  hd
         - Funktionen in Unit ZFTools ausgelagert
         - exist->FileExists
-        - ZFido enth‰lt keine Konvertierungen mehr
+        - ZFido enthaelt keine Konvertierungen mehr
 
 }

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 { --------------------------------------------------------------- }
 { Ressourcen-Compiler }
@@ -25,15 +25,15 @@ const open   : boolean = false;
 type  rblock = packed record
                  anzahl   : smallword;    { Anzahl Strings in diesem Block  }
                  fileadr  : longint;      { Startadresse in RES-Datei       }
-                 contsize : smallword;    { Gr”áe des Inhalts (Texte)       }
+                 contsize : smallword;    { Groesse des Inhalts (Texte)     }
                  lastnr   : smallword;    { letzte Res.-Nr. in diesem Block }
                  flags    : smallword;    { 1 = preload                     }
                  dummy    : longint;
                end;
       restype= packed record
-                 nummer : smallword; { Bit 15 = aufgeteilte Resource   }
-                 collect: smallword; { die folgenden n Strings geh”ren }
-               end;                  { zu dieser Resource              }
+                 nummer : smallword; { Bit 15 = aufgeteilte Resource    }
+                 collect: smallword; { die folgenden n Strings gehoeren }
+               end;                  { zu dieser Resource               }
 
 type  barr   = array[0..65300] of byte;
       barrp  = ^barr;
@@ -67,9 +67,7 @@ end;
 
 
 procedure InitVar;
-var outpath,dir : pathstr;
-    name : namestr;
-    ext : extstr;
+var outpath, dir, name, ext : string;
 
 begin
   assign(t,infile);
@@ -180,7 +178,7 @@ begin                   { procedure make }
   fillchar(block,sizeof(block),0);
   collnr:=0;
   repeat                { until eof(t); }
-    inc(blocks);        { n„chsten block; rblocl( anzahl :smallword, fileadr :longint, contsize :smallword, flags :smallword, dummy :lomgint  }
+    inc(blocks);        { naechsten block; rblocl( anzahl :smallword, fileadr :longint, contsize :smallword, flags :smallword, dummy :lomgint  }
     writeln('Block ',blocks);
     block[blocks].fileadr:=filepos(f);  {.res datei}
     block[blocks].flags:=flPreload;     { Startwert = 1 }
@@ -224,7 +222,7 @@ begin                   { procedure make }
                          inc(block[blocks].contsize,4);
                          end
                        else begin
-                         inc(block[blocks].anzahl);     { erh”he res Z„hler in einem der Bl”cke }
+                         inc(block[blocks].anzahl);     { erhoehe res Zaehler in einem der Bloecke }
                          last:=nr;
                          end;
                        s:=trim(mid(s,p));
@@ -236,7 +234,7 @@ begin                   { procedure make }
                          s[i]:=' '; dec(i); end;
                        {getmem(rptr[anzahl],length(s)+1);}
                        rptr[anzahl]:=s;                         { res Stringspeichern }
-                       inc(block[blocks].contsize,length(s));   { +L„nge des res-Stringes }
+                       inc(block[blocks].contsize,length(s));   { +Laenge des res-Stringes }
                      end;
         end;
     until eof(t) or ((collnr=0) and ((anzahl>3900) or (block[blocks].contsize>50000)));
@@ -329,6 +327,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.19  2000/11/15 23:37:34  fe
+        Corrected some string things.
+
         Revision 1.18  2000/11/14 22:35:05  fe
         Replaced "exist()" by "fileexists()".
 

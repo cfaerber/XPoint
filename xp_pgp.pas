@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -38,7 +38,7 @@ procedure PGP_ImportKey(auto:boolean);
 procedure PGP_EditKey;
 procedure PGP_RemoveID;
 
-procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporÑr sichern }
+procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporaer sichern }
 procedure PGP_EndSavekey;
 
 
@@ -57,7 +57,7 @@ asm
          mov   esi,bdata
          cld
 @tbloop: lodsb
-         cmp   al,9                     { BinÑrzeichen 0..8, ja: c=1 }
+         cmp   al,9                     { Binaerzeichen 0..8, ja: c=1 }
          jb    @tbend                  { JB = JC }
          loop  @tbloop
 @tbend:  mov eax, 0
@@ -121,9 +121,7 @@ procedure RunPGP5(exe,par:string);
 var path : string;
     pass,batch : string;
     {$ifdef unix}
-    dir:dirstr;
-    name:namestr;
-    ext:extstr;
+    dir, name, ext: string;
     {$endif}
 begin
   {$ifdef unix}
@@ -158,7 +156,7 @@ begin
 end;
 { /oh }
 
-{ User-ID fÅr Command-Line-Aufruf in AnfÅhrungszeichen setzen }
+{ User-ID fuer Command-Line-Aufruf in Anfuehrungszeichen setzen }
 
 function IDform(s:string):string;
 begin
@@ -192,7 +190,7 @@ var kf  : file;
     dat : array[0..29] of byte;
     rr  : word;
     i,j : integer;
-    s   : string[40];
+    s   : string;
     b64 : array[0..63] of char;
 
   procedure wrs(s:string);
@@ -224,7 +222,7 @@ begin
         inc(i,3);
         inc(j,4);
       end;
-      s[0]:=chr(j);
+      setlength(s,j);
       wrs(s);
     end;
     close(kf);
@@ -244,7 +242,7 @@ begin
   assign(t,tmp);
   rewrite(t);
   writeln(t);
-  writeln(t,getres2(3000,2));   { 'Der Header dieser Nachricht enthÑlt den angeforderten PGP-Public-Key.' }
+  writeln(t,getres2(3000,2));   { 'Der Header dieser Nachricht enthaelt den angeforderten PGP-Public-Key.' }
   writeln(t,getres2(3000,3));   { 'Diese Nachricht wurde von CrossPoint automatisch erzeugt.' }
   writeln(t);
   close(t);
@@ -261,7 +259,7 @@ end;
 { Text aus 'source' codieren bzw. signieren und zusammen mit }
 { Header 'hd' in Datei 'fn' ablegen.                         }
 { Bei Fido-Nachrichten Origin abschneiden und nach Codierung }
-{ / Signierung wieder anhÑngen.                              }
+{ / Signierung wieder anhaengen.                             }
 
 procedure PGP_EncodeFile(var source:file; var hd: xp0.header;
                          fn,UserID:string; encode,sign:boolean;
@@ -270,8 +268,8 @@ var tmp  : string;
     f,f2 : file;
     b    : byte;
     nt   : longint;
-    t    : string[20];
-    uid  : string[80];
+    t    : string;
+    uid  : string;
     _source: string;
 
   procedure StripOrigin;
@@ -344,7 +342,7 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-s -a '+t+' '+_source+' '+IDform(UserID)+uid);
-      if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { TemporÑrdatei lîschen }
+      if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Temporaerdatei loeschen }
       if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
@@ -369,7 +367,7 @@ begin
   if fido_origin<>'' then AddOrigin;
 
   if FileExists(tmp) then begin
-    hd.groesse:=_filesize(tmp);               { Grî·e anpassen }
+    hd.groesse:=_filesize(tmp);               { Groesse anpassen }
     hd.crypttyp:=hd.typ; hd.typ:='T';         { Typ anpassen   }
     hd.ccharset:=hd.charset; hd.charset:='';  { Charset anpassen }
     hd.ckomlen:=hd.komlen; hd.komlen:=0;      { KOM anpassen   }
@@ -380,10 +378,10 @@ begin
     WriteHeader(hd,f,_ref6list);          { neuen Header erzeugen }
     assign(f2,tmp);
     reset(f2,1);
-    fmove(f2,f);                          { ... und codierte Datei dranhÑngen }
+    fmove(f2,f);                          { ... und codierte Datei dranhaengen }
     close(f2);
     close(f);
-    if FileExists(tmp) then _era(tmp);         { TemporÑrdatei lîschen }
+    if FileExists(tmp) then _era(tmp);         { Temporaerdatei loeschen }
     if encode then begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                            { 'c'-Kennzeichnung }
@@ -433,7 +431,7 @@ begin
       nt:=ntBoxNetztyp(dbReadStr(ubase,'pollbox'));
       ok:=not dbFound or ntPGP(nt);
       if not ok then
-        rfehler1(3003,ntname(nt));   { 'Beim Netztyp %s wird PGP nicht unterstÅtzt.' }
+        rfehler1(3003,ntname(nt));   { 'Beim Netztyp %s wird PGP nicht unterstuetzt.' }
       end;
   until brk or ok;
   ccte_nobrett:=false;
@@ -444,7 +442,7 @@ begin
     assign(t,tmp);
     rewrite(t);
     writeln(t);
-    writeln(t,getres2(3001,3));  { 'Falls Ihre Software PGP nach dem ZCONNECT-Standard unterstÅtzt,' }
+    writeln(t,getres2(3001,3));  { 'Falls Ihre Software PGP nach dem ZCONNECT-Standard unterstuetzt,' }
     writeln(t,getres2(3001,4));  { 'sollte sie auf diese Nachricht mit dem Verschicken Ihres PGP' }
     writeln(t,getres2(3001,5));  { 'Public Key antworten.' }
     writeln(t);
@@ -520,7 +518,7 @@ begin
     end;
     { Passphrase nur bei PGP 2.x uebergeben... }
     RunPGP(tmp+' '+pass+' -o '+tmp2)
-    { ... RUNPGP5 hÑngt sie selbst mit an, falls nîtig. }
+    { ... RUNPGP5 haengt sie selbst mit an, falls noetig. }
   end else if PGPVersion=PGP5 then
     RunPGP5('PGPV.EXE',tmp+' -o '+tmp2)
   else begin
@@ -542,10 +540,10 @@ begin
     { Signaturtest-Fehler }
     if sigtest then begin
       if errorlevel=18 then begin
-        trfehler(3007,7);  { 'PGP meldet ungÅltige Signatur!' }
+        trfehler(3007,7);  { 'PGP meldet ungueltige Signatur!' }
         WrSigflag(flag_PGPSigErr);      { Signatur fehlerhaft }
       end else
-        trfehler(3007,6)   { 'öberprÅfung der PGP-Signatur ist fehlgeschlagen' }
+        trfehler(3007,6)   { 'Ueberpruefung der PGP-Signatur ist fehlgeschlagen' }
     { Dekodierungs-Fehler }
     end else
       trfehler(3004,5);     { 'PGP-Decodierung ist fehlgeschlagen.' }
@@ -577,10 +575,10 @@ begin
 
     if sigtest then begin
       dbReadN(mbase,mb_netztyp,l);
-      l:=l or $4000;                      { Flag fÅr 'Signatur vorhanden' }
+      l:=l or $4000;                      { Flag fuer 'Signatur vorhanden' }
       dbWriteN(mbase,mb_netztyp,l);
     end else begin
-      rewrite(f,1);          { alte Datei Åberschreiben }
+      rewrite(f,1);          { alte Datei ueberschreiben }
       WriteHeader(hdp^,f,reflist);
       assign(f2,tmp2);
       reset(f2,1);
@@ -599,7 +597,7 @@ begin
       PGP_EndSavekey;
     end;
   end;
-  { AufrÑumen: }
+  { Aufraeumen: }
   if FileExists(tmp) then _era(tmp);
   if FileExists(tmp) then _era(tmp2);
 end;
@@ -617,7 +615,7 @@ begin
 end;
 
 
-{ Key aus ZCONNECT-Header auslesen und in BinÑrdatei speichern }
+{ Key aus ZCONNECT-Header auslesen und in Binaerdatei speichern }
 
 procedure PGP_DecodeKey(source,dest:string);
 const b64tab : array[43..122] of byte =         (63, 0, 0, 0,64,
@@ -751,7 +749,7 @@ begin
 end;
 
 
-procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporÑr sichern }
+procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporaer sichern }
 var hdp : headerp;
     hds : longint;
     tmp : string;
@@ -780,6 +778,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/15 23:37:34  fe
+  Corrected some string things.
+
   Revision 1.30  2000/11/14 15:51:35  mk
   - replaced Exist() with FileExists()
 
@@ -833,7 +834,7 @@ end.
   - PGP 2.6.3, 5.x und 6.5.x-Unterstuetzung komplett funktionstuechtig!
 
   Revision 1.13  2000/04/04 21:01:24  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.12  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
@@ -843,7 +844,7 @@ end.
 
   Revision 1.10  2000/03/19 12:05:42  mk
   + Flags c und s werden korrekt gesetzt
-  + 2.6.x/5.x: Signatur pr¸fen/Nachricht dekodieren ¸ber N/G/(S/d).
+  + 2.6.x/5.x: Signatur pruefen/Nachricht dekodieren ueber N/G/(S/d).
   + Bug behoben: es wurde kodiert/signiert statt signiert und umgekehrt.
 
   Revision 1.9  2000/03/17 11:16:34  mk

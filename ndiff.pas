@@ -66,7 +66,7 @@ end;
 procedure getpar;
 var
   i: integer;
-  s: string[20];
+  s: string;
   p: byte;
 
   procedure TestEx(fn: TFileName);
@@ -143,9 +143,7 @@ var
   s: string;
   n, i, adr, fs: longint;
   pp, ppn: shortint;
-  dir: Dirstr;
-  name: NameStr;
-  ext: ExtStr;
+  dir, name, ext: string;
 
   procedure pfehler(txt: string);
   begin
@@ -235,16 +233,14 @@ const
   temp = 'nodelist.$$$';
   bs = 32768;
 var
-  dir: dirstr;
-  name: NameStr;
-  ext: extstr;
+  dir, name, ext: string;
   t1, t2: text;
   zone: longint;
   region: longint;
   s: string;
   p, p2: byte;
   buf: pointer;
-  ss: string[20];
+  ss: string;
   keep: boolean;
   nr: longint;
 
@@ -330,6 +326,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/11/15 23:37:34  fe
+  Corrected some string things.
+
   Revision 1.11  2000/10/17 10:05:42  mk
   - Left->LeftStr, Right->RightStr
 

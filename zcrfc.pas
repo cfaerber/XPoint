@@ -850,13 +850,13 @@ end;
                   audio       basic
                   video       mpeg
 
-  MIMEdata      : mversion : string[10];     MIME-Version
+  MIMEdata      : mversion : string;         MIME-Version
                   encoding : byte;           Content-Transfer-Encoding
                   ctype    : byte;           Content-Type
-                  subtype  : string[20];     Content-Subtype
-                  charset  : string[20];     text/*; charset=...
-                  filetype : string[20];     application/o-s; type=...
-                  boundary : string[100];    multipart; boundary=...   }
+                  subtype  : string;         Content-Subtype
+                  charset  : string;         text/*; charset=...
+                  filetype : string;         application/o-s; type=...
+                  boundary : string;         multipart; boundary=...   }
 
 procedure UnQuote(var s: string);       { RFC-822-quoting entfernen }
 var
@@ -2660,14 +2660,14 @@ var
   function FileType: shortint;
   var
     f: file;
-    s: string[12];
+    s: string;
     rr: word;
   begin
     assign(f, spath + sr.name);
     reset(f, 1);
     blockread(f, s[1], 12, rr);
     close(f);
-    s[0] := chr(rr);
+    setlength(s,rr);
     if LeftStr(s, 8) = '#! rnews' then
       FileType := 1
     else
@@ -2756,8 +2756,8 @@ end;
 function Unix2DOSfile(fn,destdir: String): String;
 var p,i     : byte;
     allowed : set of char;
-    name    : namestr;
-    ext     : extstr;
+    name    : string;
+    ext     : string;
     n       : word;
 begin
   UpString(fn);
@@ -3564,6 +3564,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2000/11/15 23:37:34  fe
+  Corrected some string things.
+
   Revision 1.2  2000/11/15 23:00:44  mk
   - updated for sysutils and removed dos a little bit
 
@@ -3614,9 +3617,9 @@ end.
   - fehlendes Findclose hinzugefuegt
 
   Revision 1.62  2000/09/21 16:19:10  mk
-  RB:- (X-)-Envelope-To-Unterstützung
+  RB:- (X-)-Envelope-To-Unterstuetzung
      - QP Decode fuer verschiedene Header
-     - Zeilen länger als 255 Zeichen werden nicht mehr abgeschnitten
+     - Zeilen laenger als 255 Zeichen werden nicht mehr abgeschnitten
 
   Revision 1.61  2000/09/11 23:19:15  fe
   Fido-To-Verarbeitung unter RFC korrigiert.
@@ -3693,9 +3696,9 @@ end.
 
   Revision 1.37  2000/06/29 13:00:50  mk
   - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - OS/2 Version laeuft wieder
+  - Jochens 'B' Fixes uebernommen
+  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
   - Modeminitialisierung wieder an alten Platz gelegt
   - verschiedene weitere fixes
 
@@ -3723,7 +3726,7 @@ end.
   - Anzeige beim Puffereinlesen leicht ueberarbeitet
 
   Revision 1.31  2000/06/03 17:53:03  mk
-  CL: - Verbesserte Kompatibilität mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
+  CL: - Verbesserte Kompatibilitaet mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
   - Erkennung von User-Agent
   - Content-Disposition (RFC 2183) wird erzeugt.
 
@@ -3734,7 +3737,7 @@ end.
   - Crashes wegen Hugestring beseitigt
 
   Revision 1.28  2000/05/11 17:01:04  ml
-  Für linux: uppercase für Parameter rausgenommen (Groß/Kleinschreibung
+  Fuer linux: uppercase fuer Parameter rausgenommen (Gross/Kleinschreibung
   nicht mehr ignoriert) + string-Access-Violation beseitigt.
 
   Revision 1.27  2000/05/10 07:47:15  mk
@@ -3744,7 +3747,7 @@ end.
   - einige Limits beseitigt
 
   Revision 1.25  2000/05/05 15:27:58  ml
-  zpr und uuz wieder unter linux lauffähig (ncrt)
+  zpr und uuz wieder unter linux lauffaehig (ncrt)
 
   Revision 1.24  2000/05/04 10:26:03  mk
   - UUZ teils auf HugeString umgestellt
@@ -3779,10 +3782,10 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
   Revision 1.16  2000/04/04 21:01:22  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.15  2000/03/25 18:46:59  ml
-  uuz lauffähig unter linux
+  uuz lauffaehig unter linux
 
   Revision 1.14  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
@@ -3795,11 +3798,11 @@ end.
 
   Revision 1.11  2000/03/16 10:14:24  mk
   - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+  - Ver32: Buffergroessen fuer Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Aenderung wieder
 
   Revision 1.10  2000/03/14 18:47:13  rb
-  'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verl„ngert
+  'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
 
   Revision 1.9  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
