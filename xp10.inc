@@ -142,15 +142,18 @@ var brk     : boolean;
             if bis<von then tr2.bis:='23.59';
             if not (intime(date,tr2.von,tr2.bis,tr) or
                     ((bis<von) and intime(prevd(date),von,'23:59',tr)))
-            then begin
+            then
+            begin
               inc(anz);
               new(tl[anz]);
+              fillchar(tl[anz], SizeOf(tl[anz]), 0);
               tl[anz]^:=tr2;
-              end;
+            end;
             if (bis<von) and (bis>=tim) then
               if not intime(date,'00:00',bis,tr) then begin
                 inc(anz);
                 new(tl[anz]);
+              fillchar(tl[anz], SizeOf(tl[anz]), 0);
                 tr.von:='00:00';
                 tl[anz]^:=tr;
                 end;
@@ -234,7 +237,7 @@ var brk     : boolean;
       if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin
         crash:=(copy(e[i],37,6)='CRASHS');
         ss:=left(e[i],36);
-        if i<anzahl then Move(e[i+1],e[i],(anzahl-i)*4);
+        if i<anzahl then e.Delete(i);
         dec(anzahl);
         assign(t,ReqDat);
         if existf(t) then begin
@@ -255,9 +258,8 @@ var brk     : boolean;
               dbSeek(d,boiName,adr);
               if not dbFound then begin     { keine eingetragene Pollbox }
                 inc(anzahl);
-                if anzahl>i then Move(e[i],e[i+1],(anzahl-i)*4);
                 sc:=ss+'CRASH '+adr;
-                e[i]:=sc;
+                e.Insert(i, sc);
                 inc(i);
                 end;
               end;
@@ -642,6 +644,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/08/03 20:08:18  mk
+  - e[] auf TStringlist umgestellt
+
   Revision 1.8  2000/07/13 17:15:15  mk
   - noch einige ^String-spezifische Probleme beseitigt
 

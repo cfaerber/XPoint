@@ -127,7 +127,7 @@ type  TimeRec   = record
       tarifap  = ^tarifarr;
 
 const anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
-var   e         : array[1..maxentries] of string;
+var   e         : TStringList;
       filewidth : integer;
       _bunla    : string{[mtypes]};     { 'BUNLAET' }
 
@@ -390,10 +390,11 @@ begin
   ReadTimingNr:=nr;
 end;
 
-procedure Str2Time(var s:string; var tr:TimeRec);
+procedure Str2Time(const s:string; var tr:TimeRec);
 var i : integer;
 begin
-  with tr do begin
+  with tr do
+  begin
     active:=s[1]='+';
     von:=copy(s,3,5);
     bis:=copy(s,9,5);
@@ -402,7 +403,7 @@ begin
     for i:=1 to 7 do
       wotag[i]:=s[28+i]<>' ';
     action:=copy(s,37,80);
-    end;
+  end;
 end;
 
 function Time2Str(var tr:TimeRec):string;
@@ -642,11 +643,8 @@ var brk      : boolean;
     i:=1;
     while (i<=anzahl) and (copy(e[i],from,len)<copy(s,from,len)) do
       inc(i);
+    e.Insert(i, s);
     inc(anzahl);
-    // !!
-    if i<anzahl then
-      Move(e[i],e[i+1],(anzahl-i)*4);
-    e[i]:=s;
   end;
 
   procedure sort_e;
@@ -737,7 +735,7 @@ var brk      : boolean;
     if ReadJN(getres(1005),true) then
     begin    { 'Eintrag l”schen' }
       if a+p<anzahl then
-        Move(e[a+p+1],e[a+p],(anzahl-a-p)*4);
+        e.Delete(a+p);
       dec(anzahl);
       modi:=true;
     end;
@@ -885,16 +883,17 @@ var brk      : boolean;
         until (t1<>keyf1) and keyok(ta,t1);
         if kb_shift and (t1=keybs) then begin
           if (ms<>'') then begin
-            if right(ms,1)='>' then begin
+            if right(ms,1)='>' then
+            begin
               setlength(ms, length(ms)-2);{dec(byte(ms[0]),2);}  { 2 wg. '>', '<' und '^' }
               while (ms<>'') and (right(ms,1)<>'<') do
-                SetLEngth(ms, length(ms)-1); {dec(byte(ms[0]),1);}
-              setlength(ms, length(ms)-1); {dec(byte(ms[0]),1);}
-              end
+                Dellast(ms);
+              Dellast(ms)
+            end
             else if (length(ms)>=2) and (ms[length(ms)-1]='^') then
               SetLength(ms, length(ms)-2) {dec(byte(ms[0]),2)}
             else
-              SetLength(ms, length(ms)-1); {dec(byte(ms[0]),1);}
+              DelLast(ms);
             a:=max(0,min(a,length(ms)-40));
             end;
           end
@@ -1535,6 +1534,7 @@ var brk      : boolean;
   end;
 
 begin
+  e := TStringList.Create;
   case typ of
     1 : begin                       { Timing-Liste }
           filewidth:=TimingWidth;
@@ -1778,6 +1778,7 @@ begin
           freeres;
         end;
   end;
+  e.free;
 end;
 
 
@@ -2016,6 +2017,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/08/03 20:08:17  mk
+  - e[] auf TStringlist umgestellt
+
   Revision 1.24  2000/08/01 16:29:56  mk
   - FPC Kompatibliltaet erhoeht
 
