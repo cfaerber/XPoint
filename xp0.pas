@@ -250,7 +250,7 @@ const  {$IFDEF DPMI}
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
-       maxkomm    = 5000;              { Kommentarbaum }
+       maxkomm    = 4680;              { Kommentarbaum }
        kflLast    = 1;
        kflBetr    = 2;
        kflPM      = 4;
@@ -632,8 +632,8 @@ type   textp  = ^text;
 
        komrec   = record
                     msgpos : longint;
-                    lines  : longint;
-                    _ebene : shortint;
+                    lines1,lines2: longint;
+                    _ebene : byte;
                     flags  : byte;
                   end;
        komliste = array[0..maxkomm-1] of komrec;   { Kommentarbaum }
@@ -1151,6 +1151,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.12  2000/11/01 10:42:15  mk
+  - Limits im Kommentarbaum erhoeht
+
   Revision 1.54.2.11  2000/10/18 08:49:39  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 

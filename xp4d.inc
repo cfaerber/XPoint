@@ -403,7 +403,7 @@ begin  { __ Suchmarke }
 
               { Kommentarbaum }
               if dispmode=12 then begin
-                s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
+                s:=BaumBlatt(ulen+blen+1,bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
               end else begin
