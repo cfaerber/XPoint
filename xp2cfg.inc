@@ -796,14 +796,12 @@ begin
   writelimits('MaxLocalPM',2);
   writeln(t,'ReHochN=',jnf(rehochn));
   if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
-    if FileUpperCase(temppath)<>FileUpperCase(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
-      writeln(t,'TempDir=',temppath);
+    writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
     if sendpath<>'' then
       writeln(t,'SendfileDir=',sendpath);
-    if FileUpperCase(logpath)<>FileUpperCase(ownpath) then
-      writeln(t,'LogDir=',logpath);
+    writeln(t,'LogDir=',logpath);
     if FileUpperCase(filepath)<>ownpath+InfileDir then
       writeln(t,'FileDir=',filepath);
   end;
@@ -1680,6 +1678,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.100  2000/12/29 02:46:19  mk
+  - fixed another bug with temppath and logpath
+
   Revision 1.99  2000/12/27 22:36:36  mo
   -new class TfidoNodeList
 
