@@ -97,6 +97,7 @@ const rx = 42;
 
       cal_active : boolean = false;
       maxfeier   = 50;
+      maxcalendar = 4000;
 
 var   nt,n,mnt,
       xjj,xmm,xtt : integer;
@@ -175,7 +176,7 @@ var   nt,n,mnt,
         {Erweiterung durch MW 01/2000}
         if (fd.t>4) and (fd.t<15) and (fd.m=10) and (fd.j=1582) then
            begin
-             j:=j+10;        {Bugfix MW 02/2000}
+             j:=j+10;        
              write(j:2);
            end
         else
@@ -302,25 +303,25 @@ begin
     if (z>=mausfirstkey) and (z<=mauslastkey) then
       maus_bearbeiten(z);
     if z=keyup then
-      jj:=min(3000,succ(jj))  {Erweiterung von 2999 auf 3000 von MW 01/2000}
+      jj:=min(maxcalendar,succ(jj))  {Erweiterung von 2999 auf 3000 von MW 01/2000}
     else if z=keydown then
       jj:=max(1,jj-1)         {Erweiterung von 1583 auf 1 von MW 01/2000}
     else if z=keypgup then    {Sprung um 10 Jahre mittels Bild hoch}
-      jj:=min(3000,jj+10)     {von MW 01/2000}
+      jj:=min(maxcalendar,jj+10)     {von MW 01/2000}
     else if z=keypgdn then    {Sprung um 10 Jahre mittels Bild runter}
       begin
       if jj<11 then jj:= 1
       else jj:=max(1,jj-10);       {von MW 01/2000}
       end
     else if z=keyhome then    {Sprung um 100 Jahre mittels Pos1}
-      jj:=min(3000,jj+100)    {von MW 01/2000}
+      jj:=min(maxcalendar,jj+100)    {von MW 01/2000}
     else if z=keyend then    {Sprung um 100 Jahre mittels Ende}
       begin
       if jj<101 then jj:= 1
       else jj:=max(1,jj-100);      {von MW 01/2000}
       end
     else if z=keyins then     {Sprung um 1000 Jahre mittels Einfg}
-      jj:=min(3000,jj+1000)   {von MW 01/2000}
+      jj:=min(maxcalendar,jj+1000)   {von MW 01/2000}
     else if z=keydel then     {Sprung um 1000 Jahre mittels Entf}
       begin
       if jj<1001 then jj:= 1
@@ -335,7 +336,7 @@ begin
     else if z=keyrght then begin
       mm:=succ(mm);
       if mm=13 then begin
-        mm:=1; jj:=min(3000,succ(jj));  {Erweiterung von 2999 auf 3000 von MW 01/2000}
+        mm:=1; jj:=min(maxcalendar,succ(jj));  {Erweiterung von 2999 auf 3000 von MW 01/2000}
         end;
       end
     else if (z=key0) or (z=key1) then begin
@@ -364,7 +365,7 @@ begin
         di:='';
         if mm>12 then mm:=12;
         if mm=0 then mm:=1;
-        if jj>3000 then jj:=3000;
+        if jj>maxcalendar then jj:=maxcalendar;
         if jj=0 then jj:=1;
         mon;
         attrtxt(col.colutility);     { }
@@ -1077,6 +1078,11 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.26  2003/04/26 06:14:11  mw
+  MW: - Kalender kann jetzt bis zum Jahr 4000 arbeiten.
+
+      - maximales Jahr ist jetzt Åber die Konstante maxcalender festgelegt.
+
   Revision 1.27.2.25  2003/04/20 12:23:08  mw
   MW: - RÅcknahme der énderungen zu XMS-Gesamt (zeigt jetzt wieder den gesamten
         freien XMS)
