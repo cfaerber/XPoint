@@ -850,9 +850,9 @@ begin
       if not kb_shift then 
       begin
         QuoteChars := GetQuote(ap);
-        if (wp>0) and (quotec<>'') and (length(quotec)>wp) then
+        if (wp>0) and (QuoteChars<>'') and (length(QuoteChars)>wp) then
         begin
-          wp:=length(quotec);
+          wp:=length(QuoteChars);
           copysize:=max(0,ap^.size-wp);
         end;
         if (QuoteChars <>'') and (wp>= Length(TrimRight(QuoteChars))) then
@@ -2222,6 +2222,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/01/16 23:48:17  cl
+  - after merge fixes
+
   Revision 1.49  2002/01/13 15:07:21  mk
   - Big 3.40 Update Part I
 

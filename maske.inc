@@ -116,11 +116,11 @@ var ax,p,myp  : integer;
               end { enabled, checkbutt }
               else begin { enabled, not checkbutt }
                 attrtxt(stat.col.colfeldinput);
-                s := l+forms(cont^,len);
+                s := l+forms(cont,len);
                 fwrt(xx2,yy-a,s);
                 if stat.arrowspace and enabled then
                 begin
-                  if length(cont^)>len then
+                  if length(cont)>len then
                   begin
                     attrtxt(stat.col.ColArrows);
                     FWrt(xx2+Length(s), yy-a, #16);
@@ -294,7 +294,7 @@ var ax,p,myp  : integer;
         if checkbutt then
         begin
           attrtxt(stat.col.colbuttons);
-          FWrt(xx2, yy-a, ' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
+          FWrt(xx2, yy-a, ' [' + iifc(cont=yesno[1],'x',' ') + '] ');
         end else
         begin
           x := xx2;
@@ -305,14 +305,14 @@ var ax,p,myp  : integer;
           end;
           attrtxt(stat.col.ColFeldActive);
           if replace then attrtxt(stat.col.ColFeldMarked);
-          s := copy(cont^,ax+1,len);
+          s := copy(cont,ax+1,len);
           FWrt(x, yy-a, s); Inc(x, Length(s));
           attrtxt(stat.col.ColFeldActive);
-          s := dup(len-length(cont^)+ax,stat.fillchar);
+          s := dup(len-length(cont)+ax,stat.fillchar);
           FWrt(x, yy-a, s); Inc(x, Length(s));
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            FWrt(x, yy-a, (iifc(length(cont^)-ax>len,#16,' '))); Inc(x);
+            FWrt(x, yy-a, (iifc(length(cont)-ax>len,#16,' '))); Inc(x);
           end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
@@ -346,7 +346,7 @@ var ax,p,myp  : integer;
         for i:=1 to sll do begin
           if i=p then attrtxt(stat.col.ColSelBar);
           if p1=nil then fwrt(slx+1,sly+i,sp(width+2))
-          else fwrt(slx+1,sly+i,' '+forms(mid(p1^.el^,x),width+1));
+          else fwrt(slx+1,sly+i,' '+forms(mid(p1^.el,x),width+1));
           normtxt;
           if p1<>nil then p1:=p1^.next;
           end;
@@ -402,7 +402,7 @@ var ax,p,myp  : integer;
       insmaus:=maussel;
       while p1<>nil do begin    { Breite und Zeilenzahl bestimmen }
         inc(lines);
-        longest:=max(longest,length(p1^.el^));
+        longest:=max(longest,length(p1^.el));
         width:=max(width,min(length(p1^.el), ScreenWidth-10));
         if UpperCase(cont)=UpperCase(p1^.el) then p:=lines;
         p1:=p1^.next;
@@ -975,8 +975,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
           if ((t=^V) or ((t=keyins) and kb_shift)             { Ctrl-V / Shift-Ins }
              or ((maskseekmenu>=yp) and (t=keySF2)))
-             and may_insert_clip then
-          begin
+            { and may_insert_clip } then
           begin   { STRG+V / SHIFT+INS }
             s:= Clip2String;
             i := length(s);
@@ -984,18 +983,18 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             begin                                             { Ersetzen }
               if (t=keySF2) then begin
                 help_page:=ShiftF2Help;
-                ShiftF2proc(s^);
+                ShiftF2proc(s);
                 end
-              else s^:=clip2string(maxlen,1);
+              else s:=clip2string;
               p:=1; ax:=0; replace:=false;
             end else
             begin
               if t=keySF2 then begin
                 help_page:=ShiftF2Help;
                 ShiftF2proc(s);
-                truncstr(s^,maxlen-length(cont));
+                truncstr(s,maxlen-length(cont));
                 end
-              else s :=clip2string(maxlen-length(cont),1);
+              else s :=clip2string(* maxlen-length(cont),1 *);
               s:=LeftStr(cont,p+ax-1)+s+mid(cont,p+ax);
             end;
 
@@ -1008,14 +1007,14 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             if xtest1(s) then cont:=s;
             end;
 
-          if (delete_on_cDel) and (t=keycdel)                 { MY: <Ctrl-Del> in MenÅs erlauben }
+          if { (delete_on_cDel) and } (t=keycdel)                 { MY: <Ctrl-Del> in MenÅs erlauben }
           then begin                                          {     (auch wenn Feld gesperrt)    }
-            cont^:=mask;
-            if xtest1(cont^) then;    { leer ist immer zulÑssig! }
+            cont:=mask;
+            if xtest1(cont) then;    { leer ist immer zulÑssig! }
             p:=1; ax:=0;
             replace:=false;
             cDel_pressed:=true;
-            if leave_on_cDel then t:=keyesc;
+//          if leave_on_cDel then t:=keyesc;
           end;
 
         if (t=keypgup) then
@@ -1163,6 +1162,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.41  2002/01/16 23:48:17  cl
+  - after merge fixes
+
   Revision 1.40  2002/01/13 15:07:23  mk
   - Big 3.40 Update Part I
 

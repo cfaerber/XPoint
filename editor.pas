@@ -100,8 +100,9 @@ const maxgl     = 60;
       message   : string[40] = '';
       ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
 
-type  charr    = array[0..65500] of char;
-      charrp   = ^charr;
+type
+//    charr    = array[0..65500] of char;
+//    charrp   = ^charr;
 
       absatzp  = ^absatzt;
       absatzt  = packed record
@@ -1842,6 +1843,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.74  2002/01/16 23:48:17  cl
+  - after merge fixes
+
   Revision 1.73  2002/01/13 15:07:22  mk
   - Big 3.40 Update Part I
 

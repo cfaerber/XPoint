@@ -81,25 +81,12 @@ begin
   until eof(t) or fnd;
   close(t);
   if fnd then
-  asm
-    xor si,si
-@1: inc si
-    cmp byte ptr s[si],'='
-    jne @1
-    les di,@result
-    mov al,10
-    stosb
-    mov ax,word ptr s[si+7]
-    stosw
-    mov ax,word ptr s[si+4]
-    stosw
-    mov ax,word ptr s[si+1]
-    stosw
-    mov ax,word ptr s[si+10]
-    stosw
-    mov ax,word ptr s[si+13]
-    stosw
-    end;
+    result := 
+      Copy(s,Length(s1)+1+7,4)+
+      Copy(s,Length(s1)+1+4,4)+
+      Copy(s,Length(s1)+1+1,4)+
+      Copy(s,Length(s1)+1+10,4)+
+      Copy(s,Length(s1)+1+13,4);
 end;
 
 
@@ -985,6 +972,9 @@ end.
 
 {
   $Log$
+  Revision 1.63  2002/01/16 23:48:17  cl
+  - after merge fixes
+
   Revision 1.62  2002/01/13 15:07:31  mk
   - Big 3.40 Update Part I
 

@@ -295,10 +295,10 @@ var   fb     : string;
     xx:=wherex; yy:=wherey;   { fr Cursor-Anzeige }
     iit;
 
-    Wrt(9,y+1,iifc(p+add>4,#30,'³'));
-    Wrt(71,y+1,iifc(p+add>4,#30,'³'));
-    Wrt(9,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
-    Wrt(71,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
+    Wrt(9,y+1,iifc(cposy+add>4,#30,'³'));
+    Wrt(71,y+1,iifc(cposy+add>4,#30,'³'));
+    Wrt(9,y-iif(fsb_info,3,1)+height,iifc(cposy+add<=pathn-4,#31,'³'));
+    Wrt(71,y-iif(fsb_info,3,1)+height,iifc(cposy+add<=pathn-4,#31,'³'));
 
     if fsb_info then begin
       s:=f[add+CposY];
@@ -403,7 +403,7 @@ var   fb     : string;
           and bl,3
           mov mausbut,bl
       end; *)
-      if mausswapped then mausbut:=mausbut shr 1;
+//    if mausswapped then mausbut:=mausbut shr 1;
       if (mausbut and 1 = 0) then begin  { Rechte Taste nicht gedrueckt: Scrollen aus }
         autoupenable:=aue;
         autodownenable:=ade;
@@ -419,7 +419,7 @@ var   fb     : string;
 
       if not mausscroll and (t=mausunright) then t:=keyesc;
 
-    p:=min(p,fn);
+    CPosY:=min(CposY,PathN);
    end;
 
 begin
@@ -1145,6 +1145,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2002/01/16 23:48:17  cl
+  - after merge fixes
+
   Revision 1.47  2002/01/13 15:07:24  mk
   - Big 3.40 Update Part I
 
