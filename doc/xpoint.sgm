@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.0beta5//EN">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
 
 <book lang="de">
 
@@ -2024,7 +2023,7 @@
 
 +------------------------------------------------------------------+
 |  XPoint  Wartung  Nachricht  NeTcall  EDit  Config  Zusatz  19:40|
-|  Brief  TextFile  BInär  Spezial  Lesen: Neues         Tab / Quit|
+|  Brief  TextFile  BIn&auml;r  Spezial  Lesen: Neues         Tab / Quit|
 |==================================================================|
 |   /Z-NETZ/BILDUNG/UNI                                            |
 |   /Z-NETZ/DATENSCHUTZ/ALLGEMEIN                                  |
@@ -7616,7 +7615,7 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
           (<computeroutput>Return-Receipt-To</computeroutput>), die
           noch von einigen Programmen unterst&uuml;tzt wird. Eine
           Garantie, da&szlig; es funktioniert, gibt es aber nicht. Der
-          Standard für Empfangsbest&auml;tigungen im Internet
+          Standard f&uuml;r Empfangsbest&auml;tigungen im Internet
           (<computeroutput>Disposition-Notification-To</computeroutput>)
           wird z.Zt. von <application>CrossPoint</application> nicht
           unterst&uuml;tzt.</para>
@@ -8338,8 +8337,8 @@ Wochentage:   Sa
 
         <para>Inzwischen gibt es auch einen freien
           <command>pgp</command>-Ersatz, den Sie innerhalb und
-          außerhalb der USA ohne jegliche Restriktionen (also z.B.
-          auch gewerblich) nutzen k&ouml;nnen:
+          au&szlig;erhalb der USA ohne jegliche Restriktionen (also
+          z.B. auch gewerblich) nutzen k&ouml;nnen:
           <command>GnuPG</command> (<acronym>GNU</acronym> Privacy
           Guard). Sie finden <command>GnuPG</command> auf <ulink
           url="http://www.gnupg.org/">http://www.gnupg.org/</ulink>.
@@ -11618,7 +11617,9 @@ Wochentage:   Sa
 
               <entry><ulink
                 url="ftp://ftp.isi.edu/in-notes/rfc822.txt">RFC
-                822</ulink> (Mail), <ulink
+                822</ulink> und <ulink
+                url="ftp://ftp.isi.edu/in-notes/rfc1123.txt">RFC
+                1123</ulink> (Mail), <ulink
                 url="ftp://ftp.isi.edu/in-notes/rfc976.txt">RFC
                 976</ulink> (Envelopes, SMTP-Batches), <ulink
                 url="ftp://ftp.isi.edu/in-notes/rfc1036.txt">RFC
@@ -11687,6 +11688,16 @@ Wochentage:   Sa
               <entry><ulink
                 url="ftp://ftp.openxp.de/openxp/devdoc/qwk11.zip">QWK-Spezifikation
                 V1.1 von 1991-08-17</ulink></entry>
+
+            </row>
+
+            <row>
+
+              <entry>QuickMail</entry>
+
+              <entry><ulink
+                url="ftp://ftp.openxp.de/openxp/devdoc/quick.txt">QuickMail
+                Polldocs von 1992-04-26</ulink></entry>
 
             </row>
 
@@ -12507,15 +12518,23 @@ Wochentage:   Sa
           <acronym>SMTP</acronym>-Batches zusammengefa&szlig;t.
           N&auml;heres zum Mailformat finden Sie in <ulink
           url="ftp://ftp.isi.edu/in-notes/rfc822.txt"><acronym>RFC</acronym>
-          822</ulink>, eine knappe Beschreibung von
+          822</ulink> (Erg&auml;nzungen in <ulink
+          url="ftp://ftp.isi.edu/in-notes/rfc1123.txt"><acronym>RFC</acronym>
+          1123</ulink>), eine knappe Beschreibung von
           Envelope-Adressierung und <acronym>SMTP</acronym>-Batching
           befindet sich in <ulink
           url="ftp://ftp.isi.edu/in-notes/rfc976.txt"><acronym>RFC</acronym>
           976</ulink>. Eine Erweiterung des Mailformats f&uuml;r
           bin&auml;re Daten und verschiedene Nachrichtentypen und
           Zeichens&auml;tze ist in <ulink
-          url="ftp://ftp.isi.edu/in-notes/rfc1341.txt"><acronym>RFC</acronym>
-          1341</ulink> beschrieben. Eine genauere Beschreibung
+          url="ftp://ftp.isi.edu/in-notes/rfc2045.txt"><acronym>RFC</acronym>
+          2045</ulink>, <ulink
+          url="ftp://ftp.isi.edu/in-notes/rfc2046.txt"><acronym>RFC</acronym>
+          2046</ulink>, <ulink
+          url="ftp://ftp.isi.edu/in-notes/rfc2047.txt"><acronym>RFC</acronym>
+          2047</ulink> und <ulink
+          url="ftp://ftp.isi.edu/in-notes/rfc2049.txt"><acronym>RFC</acronym>
+          2049</ulink> beschrieben. Eine genauere Beschreibung
           befindet sich auch in <filename>uucp.txt</filename>.</para>
 
       </sect2>
