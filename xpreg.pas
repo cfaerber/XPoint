@@ -995,7 +995,7 @@ var brk,modi : boolean;
       WriteFormular:=true;
     with regdata do begin
       writeln(t);
-      writeln(t,lr,right(dup(50,'-')+' CrossPoint-Registrierung ['+verstr+']',62));
+      writeln(t,lr,right(dup(33,'-')+' CrossPoint-Registrierung ['xp_xp+' '+verstr+']',62));
       writeln(t);
 
       if regweghin in [1,2] then begin   { Formular ausdrucken / speichern }
@@ -1566,6 +1566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.3  2000/12/14 17:53:38  mk
+  - Programmnamen in Regformular schreiben
+
   Revision 1.6.2.2  2000/12/06 09:44:08  mk
   - OpenXp vor dem (c)
 
