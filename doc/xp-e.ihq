@@ -467,7 +467,8 @@ Bar and the Menu under "Other")
 <<Ctrl-N>>  Toggles between RealNames and User-Names
         (ZCONNECT, RFC & MagicNET only)
 
-   <<V>>    Toggles the "pending" status of a message.
+   <<V>>    Marks/Unmarks a message(s) that you would
+        like to reply to later.
 
 <<Ctrl-T>>  Prints the current selected message.
         see also [/Config/Printer].@10606
@@ -7257,18 +7258,19 @@ The combined search is a combination of Text, Sender
 and Subject search, with extra options.
 @
 10505
-<<Message / Search / Pending
+<<Message / Search / Marked(for reply)
 
 CrossPoint searches out and displays all messages
-marked as "pending" .
+that have been marked for replying to later.
 
-Note: Messages on pending in PM Archive newsgroups
-will not be found!
+Note: Marked messages in PM Archive newsgroups will
+      NOT be found!
 
-Messages on "pending" (indicated by a "w" in the
-[message window]) can be toggled on/off by putting@4014
-the cursor on them to make them the current message
-and pressing "W" repeatedly.
+Messages which have been marked for replying to later
+(indicated by a "w" in the [message window]) can be@4014
+unmarked by placing the cursor over them and pressing
+"V". By pressing "V" again, the message(s) may be
+re-marked.
 @
 10506
 <<Message / Search / Marked
@@ -11033,7 +11035,7 @@ messages every time.
 ³³³³³³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Size in Bytes or KBytes
 ³³³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ B = Binary Message
 ³³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ c = Encoded Message
-³³³³                     w = Message "pending"
+³³³³                     w = Marked(for reply)
 ³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ ! = Outgoing Messages
 ³³³                      # = Pending Fido-Crash
 ³³³                      * = Sent Fido-Crash(*)
