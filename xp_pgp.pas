@@ -610,7 +610,7 @@ const PGP_HashAlgos: array[1..7] of string = (
   'MD5','SHA1','RIPEMD160','','MD2','TIGER192','HAVAL-5-160' );
 
 procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
-var b: byte;
+var nt: longint;
     OwnUserID  : string;
     fi,fo: string;
     fis,fie: TStream;
@@ -751,9 +751,9 @@ begin
     fie.Free;
 
     inc(hd.pgpflags,fPGP_encoded);
-    dbReadN(mbase,mb_unversandt,b);
-    b:=b or $4000;                         { 'c'-Kennzeichnung }
-    dbWriteN(mbase,mb_unversandt,b);
+    dbReadN(mbase,mb_netztyp,nt);
+    nt:=nt or $4000;                         { 's'-Kennzeichnung }
+    dbWriteN(mbase,mb_netztyp,nt);
   end else
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
 
@@ -1162,6 +1162,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/10/21 19:31:45  ma
+  - fixed range check error
+
   Revision 1.57  2001/10/20 17:26:41  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
