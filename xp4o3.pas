@@ -54,8 +54,12 @@ begin
   fn:='';
   with fkeys[nr]^[nn] do begin
     if bname then begin
-      dbReadN(mbase,mb_betreff,betr);
-      UpString(betr);
+      betr:= UpperCase(dbReadNStr(mbase,mb_betreff));
+{$ifdef FPC}
+{$ifdef UnixFS}
+{$hint Anpassung an Schreibweise des Dateinamen erforderlich }
+{$endif}
+{$endif}
       i:=1;
       while (i<=length(betr)) and
             (betr[i] in ['A'..'Z','_','-','Ž','™','š','#','@','$','!','0'..'9','\']) do
@@ -78,12 +82,12 @@ begin
   if not dbBOF(bbase) and not dbEOF(bbase) then begin
     ok:=false;
     repeat
-      dbRead(bbase,'brettname',brett);
-      if brett[1]='1' then begin
+      brett:= dbReadStr(bbase,'brettname');
+      if (length(brett)>0) and (brett[1]='1') then begin
         dbSkip(bbase,-1);    { Index auf Brettindex-Feld }
         ok:=true;
         end;
-    until dbBOF(bbase) or (brett[1]<>'1');
+    until dbBOF(bbase) or ((length(brett)>0) and (brett[1]<>'1'));
     if dbBOF(bbase) then dbGoTop(bbase)
     else dbNext(bbase);
     go_pm:=ok;
@@ -140,11 +144,11 @@ var fn  : string;
     hdp : headerp;
     hds : longint;
 begin
-  new(hdp);
+  hdp:= AllocHeaderMem; {new(hdp);}
   ReadHeader(hdp^,hds,false);
   fn:=hdp^.betreff;
-  dispose(hdp);
-  if not multipos('\:',fn) then fn:=FilePath+fn;
+  FreeHeaderMem(hdp); {dispose(hdp);}
+  if not multipos(_MPMask,fn) then fn:=FilePath+fn;
   readmsg_getfilename:=fn;
 end;
 
@@ -158,7 +162,7 @@ var hdp : headerp;
     nr  : shortint;
     wabok: boolean;
     anz : integer;
-    adra: array[1..maxadr] of ^adrstr;
+    adra: array[1..maxadr] of string;
     resn: array[1..maxadr] of integer;
     i   : integer;
 {    size: word; }
@@ -167,14 +171,14 @@ var hdp : headerp;
   begin
     if anz<maxadr then begin
       inc(anz);
-      new(adra[anz]);
-      adra[anz]^:=adr;
+      {new(adra[anz]);}
+      adra[anz]:=adr;
       resn[anz]:=nr;
       end;
    end;
 
 begin
-  new(hdp);
+  hdp:= AllocHeaderMem; {new(hdp);0
   ReadHeader(hdp^,hds,false);
   { 03.02.2000 robo }
   if (hdp^.PmReplyTo<>'') and not askreplyto then
@@ -188,7 +192,7 @@ begin
                   (not wabok and (hdp^.oem='') and (hdp^.PmReplyTo=''))
     { /robo }
     then begin
-      dbReadN(mbase,mb_absender,abs);
+      abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp^.realname;
       end
     else begin
@@ -211,20 +215,18 @@ begin
         appadr(s,6);                                 { 'Vertreter          :' }
         end;
     *)
-      s:=getres2(476,resn[1])+' '+left(adra[1]^,50);
+      s:=getres2(476,resn[1])+' '+left(adra[1],50);
       for i:=2 to anz do
-        s:=s+','+getres2(476,resn[i])+' '+left(adra[i]^,50);
+        s:=s+','+getres2(476,resn[i])+' '+left(adra[i],50);
       nr:=minisel(0,0,getres2(476,4),s,1);           { 'Empf„nger w„hlen ...' }
       freeres;
       if (nr>=1) and (nr<=anz) then
-        abs:=adra[nr]^
+        abs:=adra[nr]
       else
         abs:='';
-      for i:=1 to anz do
-        dispose(adra[i]);
       end;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   GetWABreplyEmpfaenger:=abs;
 end;
 
@@ -235,7 +237,7 @@ var i,n    : integer;
     server : string;
     d      : DB;
     ok     : boolean;
-    e      : AdrStr;
+    e      : string;
     p      : empfnodep;
 
   procedure TestServer;   { Crossposting bei diesem Server erlaubt? }
@@ -259,20 +261,20 @@ begin
   for i:=0 to bmarkanz-1 do begin
     if pm then begin
       dbGo(ubase,bmarked^[i]);
-      dbReadN(ubase,ub_username,e);
+      e:= dbReadNStr(ubase,ub_username);
       if dbReadInt(ubase,'userflags') and 4<>0 then begin
         rfehler1(483,vert_name(e));   { 'Crossposting an Verteiler ist nicht m”glich.' }
         ok:=false;
         end
       else begin
-        dbReadN(ubase,ub_pollbox,server);
+        server:= dbReadNStr(ubase,ub_pollbox);
         TestServer;
         end;
       end
     else begin
       dbGo(bbase,bmarked^[i]);
-      dbReadN(bbase,bb_brettname,e);
-      dbReadN(bbase,bb_pollbox,server);
+      e:= dbReadNStr(bbase,bb_brettname);
+      server:= dbReadNStr(bbase,bb_pollbox);
       if (e[1]<>'A') or (server='') or (dbReadInt(bbase,'flags')and 8<>0) then
       begin
         rfehler1(482,copy(e,2,40));     { '%s: Schreibzugriff gesperrt!' }
@@ -301,6 +303,7 @@ begin
   if not brk then begin
     empf:=iifs(pm,'','A')+empflist^.empf;
     p:=empflist^.next;
+    {$hint Schutzverletzung moeglich ! }
     dispose(empflist); empflist:=nil;
     sendempflist:=p;
     xp6.forcebox:=s0;
@@ -313,6 +316,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/10 14:41:59  hd
+  - Ansistring
+
   Revision 1.9  2000/07/06 08:58:46  hd
   - AnsiString
 

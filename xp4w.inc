@@ -322,7 +322,7 @@ procedure wiedervorlage; forward;
 procedure to_window;           { Nachrichten-Fenster -> TO-Brett }
 var s      : string;
     d1     : longint;
-    oldds  : specstr;
+    oldds  : string;
     _oldds : string;
     mhd    : longint;
     halten : integer16;
@@ -1269,8 +1269,9 @@ var dat    : longint;
 
   procedure mw1;   { Aufteilung zum Stack-Platz-sparen }
   begin
-    dbReadN(bbase,bb_brettname,dispspec);
-    _brett:=mbrettd(dispspec[1],bbase);
+    dispspec:= dbReadNStr(bbase,bb_brettname);
+    if (length(dispspec)>0) then _brett:=mbrettd(dispspec[1],bbase)
+    else _brett:= ''; { eventuell Fehler-Dialog notwendig }
     _dispspec:=_brett;
     mhd:=abhdatum;
     if odd(dbReadInt(bbase,'flags')) then
@@ -1367,11 +1368,11 @@ var brett          : string;
     _brett,_brett2 : string;
 begin
   GoP;
-  dbRead(bbase,'Brettname',brett);
+  brett:= dbReadStr(bbase,'Brettname');
   _brett:=mbrettd(brett[1],bbase);
   dbSeek(mbase,miBrett,_brett);
   if not dbEOF(mbase) then
-    dbRead(mbase,'Brett',_brett2);
+    _brett2:= dbReadStr(mbase,'Brett');
   if not dbEOF(mbase) and (_brett=_brett2) then
     rfehler(419)    { 'Brett ist nicht leer' }
   else begin
@@ -1501,6 +1502,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/07/10 14:42:00  hd
+  - Ansistring
+
   Revision 1.32  2000/07/09 16:41:00  hd
   - Ansistring
     - Bis xp4w - Bretter bearbeiten

@@ -60,12 +60,11 @@ const suchch    = #254;
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
       DispStrSize       = 255;
 
-type  specstr   = string;
-      dispra    = array[1..maxgl] of longint;
+type  dispra    = array[1..maxgl] of longint;
 
 var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
-      dispspec  : specstr;      { Filter/Bereich fÅr Anzeige }
+      dispspec  : string;      { Filter/Bereich fÅr Anzeige }
       _dispspec : string;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
@@ -2037,6 +2036,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/10 14:41:59  hd
+  - Ansistring
+
   Revision 1.33  2000/07/09 15:35:50  hd
   - AnsiString-Update
 

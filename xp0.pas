@@ -702,8 +702,8 @@ type   textp  = ^text;
        NL_ap   = ^NL_array;
 
        fkeyt  = array[1..10] of record
-                                  menue    : string[20];
-                                  prog     : string[60];
+                                  menue    : shortstring;
+                                  prog     : shortstring;
                                   warten   : boolean;
                                   bname    : boolean;  { $FILE aus Betreff }
                                   ntyp     : byte;   { xp3.extract_msg.typ }
@@ -1410,6 +1410,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.71  2000/07/10 14:41:59  hd
+  - Ansistring
+
   Revision 1.70  2000/07/09 09:09:55  mk
   - Newexit in Initialization/Finalization umgewandelt
 
