@@ -1645,7 +1645,11 @@ begin      { --- select --- }
       AktDisprec:=iif(p=0,0,disprec[p]);
       if suchen then begin
         if dispmode<1 then
-          gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
+        begin
+          GoP;   
+          gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall or (not userslash and
+           (firstchar(dbreadstr(bbase,'brettname'))='1')),1,0)+length(suchst),p+ya+3);
+          end
         else
           gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
       { Do_XPhilite(true); }
@@ -2240,6 +2244,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.58  2002/03/16 00:21:50  my
+  JG:- Fix: Bei der Brett-Schnellsuche mit "." oder "/" stand der Cursor
+       bei gefundenen PM-Brettern um eine Stelle zu weit rechts, wenn
+       gleichzeitig C/A/B/"/"_bei_PM-Brettern deaktiviert war.
+
   Revision 1.26.2.57  2002/03/08 23:01:53  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
