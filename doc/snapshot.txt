@@ -1719,9 +1719,8 @@ SV:
 - Fix: Speicherleck bei Laufwerks-/Verzeichniswechsel in Dateiauswahl-
   Fenster (fsbox) beseitigt: Bisher wurde nur der fr das jeweils
   zuletzt angezeigte Verzeichnis ben”tigte Speicher wieder freigegeben,
-  und XP konnte aufgrund des dadurch hervorgerufenen Speichermangels
-  ohne Vorwarnung mit einem RTE 203 abstrzen (Bug existent seit dem
-  26.11.2000).
+  und XP konnte aufgrund des dadurch verursachten Speichermangels mit
+  einem RTE 203 abstrzen (Bug existent seit dem 26.11.2000).
   WIN2.PAS
 
 JG[+MY]:
@@ -1784,7 +1783,8 @@ MY:
 MY:
 - Fix: Das Erzwingen des internen XP-Listers statt des eingetragenen
   MIME-Viewers mit <Ctrl-Enter> oder <Space> im MIME-Auswahlmen
-  funktionierte nicht, wenn eine Dateierweiterung eingetragen war.
+  funktionierte nicht, wenn unter /Edit/Viewer eine Dateierweiterung fr
+  den jeweiligen MIME-Typ eingetragen war.
   XP4W.INC
 
 MY:
@@ -1841,9 +1841,9 @@ SV:
 - Bisherige Routine (qsort) zum Sortieren von Dateien in Dateiauswahl-
   Box ersetzt durch stackschonendere Routine (shellsort). Damit Problem
   behoben, daá XP bei der Dateiauswahl unter bestimmten Umst„nden
-  (wenig Stackplatz (z.B. Sendefenster), Verzeichnis mit vielen Dateien,
-  h„ufiger rekursiver Aufruf von qsort) abstrzen und den Rechner
-  einfrieren konnte.
+  (wenig Stackplatz z.B. bei Aufruf aus Sendefenster, Verzeichnis mit
+  vielen Dateien, h„ufiger rekursiver Aufruf von qsort) abstrzen und
+  den Rechner einfrieren konnte.
   WIN2.PAS
 
 SV:
@@ -1889,10 +1889,10 @@ JG[+MY]:
   erzeugen und versenden. Es k”nnen sowohl im Sendefenster als auch
   direkt im Editor (!) Dateien und Textteile beliebiger Anzahl und Gr”áe
   an die aktuelle Nachricht angeh„ngt werden. Die nderung der Reihen-
-  folge bereits angeh„ngter Nachrichtenteile ist m”glich, das Weiter-
-  leiten von MIME-Multipart-Nachrichten mittels N/W/K, N/W/O, N/W/E und
-  N/W/R wird jetzt ebenfalls untersttzt. Weitere Details siehe Hilfe
-  (?/S/A).
+  folge bereits angeh„ngter Nachrichtenteile sowie die Nachbearbeitung
+  des Nachrichtentextes ist m”glich, das Weiterleiten von MIME-
+  Multipart-Nachrichten mittels N/W/K, N/W/O, N/W/E und N/W/R wird jetzt
+  ebenfalls untersttzt. Weitere Details siehe Hilfe (?/S/A).
   Kompletter Sourcecode fr XP entwickelt von JG, Anpassungen an und
   Einbau in OpenXP/16 durch MY.
   Spezieller Dank an HH fr die Vorarbeit im Rahmen der Entwicklung des
