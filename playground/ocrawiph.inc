@@ -28,16 +28,16 @@ type tRawIPObj = Object(TCommObj)
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
         function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
-        procedure PurgeInBuffer; virtual;
-        procedure PurgeOutBuffer; virtual;
-
-        procedure PauseCom(CloseCom: Boolean); virtual;
-        procedure ResumeCom(OpenCom: Boolean); virtual;
+	function  GetDriverInfo: String;
         private
         procedure SetErrorStr(prefix: string);
+        procedure _ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
+        function  _CharCount: Integer; virtual;
         private
-        SHandle: LongInt; SOpened: Boolean;
-         {$IFDEF Win32} WSAData: tWSAData; {$ENDIF}
+        SHandle: LongInt; 
+	SOpened: Boolean;
+	SBuffer: packed array[1..8192] of char;
+	SBufBeg,SBufEnd: Longint;
      end; { object tRawIPObj }
 
 Type tpRawIPObj = ^tRawIPObj;
@@ -59,6 +59,9 @@ Type tpRawIPObj = ^tRawIPObj;
 
 {
   $Log$
+  Revision 1.3  2001/03/28 17:31:05  cl
+  - improved TCP/IP performance
+
   Revision 1.2  2001/02/10 22:18:16  cl
   - fixed bug that made option negotiation fail
 
