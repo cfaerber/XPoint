@@ -201,7 +201,7 @@ begin
 end;
 
 
-Function IsPath(fname:PathStr):boolean;         { Pfad vorhanden ? }
+Function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
 var sr : searchrec;
 begin
   fname:=trim(fname);
@@ -270,7 +270,7 @@ end;
 
 { path: Pfad mit '\' bzw. '/' am Ende! }
 
-procedure erase_all(path:PathStr);
+procedure erase_all(path:string);
 var sr : searchrec;
     f  : file;
     er : integer;
@@ -494,7 +494,7 @@ end;
 
 { Extension anhÑngen, falls noch nicht vorhanden }
 
-procedure addext(var fn:PathStr; ext:extstr);
+procedure addext(var fn:string; ext:string);
 var dir  : dirstr;
     name : namestr;
     _ext : extstr;
@@ -505,7 +505,7 @@ end;
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
-procedure adddir(var fn: Pathstr; dir:dirstr);
+procedure adddir(var fn: string; dir:string);
 var _dir : dirstr;
     name : namestr;
     ext  : extstr;
@@ -517,7 +517,7 @@ begin
   end;
 end;
 
-procedure WildForm(var s: PathStr);
+procedure WildForm(var s: string);
 var dir : dirstr;
     name: namestr;
     ext : extstr;
@@ -596,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/05 17:10:53  mk
+  - AnsiString Updates
+
   Revision 1.49  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records

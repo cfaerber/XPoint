@@ -43,7 +43,7 @@ procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 procedure MoveRequestFiles(var packetsize:longint);
 procedure MoveLastFileIfBad;
 
-procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
+procedure ZtoFido(source,dest:string; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
 procedure FidoGetCrashboxdata(box:string);
 procedure AponetNews;
@@ -78,7 +78,7 @@ end;
 
 procedure CallFilter(input:boolean; fn:pathstr);
 var nope : boolean;
-    fp   : pathstr;
+    fp   : string;
 begin
   if input then fp:=BoxPar^.eFilter
   else fp:=BoxPar^.aFilter;
@@ -244,17 +244,17 @@ end;
 
 procedure SendNetzanruf(once,crash:boolean);
 var t,log         : text;
-    fn            : pathstr;
+    fn            : string;
     sum           : word;
-    hd            : string[12];
+    hd            : string;
     inwin         : boolean;
     rate          : word;
-    sz            : string[15];
-    txt           : string[30];
+    sz            : string;
+    txt           : string;
     s             : string;
     betreff       : string[BetreffLen];
-    bytes         : string[15];
-    cps,cfos      : string[10];
+    bytes         : string;
+    cps,cfos      : string;
 
   function sec(zeit:longint):string;
   begin
@@ -387,7 +387,7 @@ begin
       SaveCursor;
       cursor(curoff);
       window(1,1,80,25);
-      end;
+    end;
     hd:='';
     InternBox:=box;
     if crash then betreff:=ftime(datum)+' - '+getres2(700,37)+boxpar^.boxname   { 'Direktanruf bei ' }
@@ -406,7 +406,7 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
-  { 01/2000 oh: Nach dem Netcall DatumsbezÅge setzen, damit
+  { Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
   if AutoDatumsBezuege then begin
     window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
@@ -416,10 +416,10 @@ begin
 end;
 
 
-procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
+procedure ZtoFido(source,dest:string; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
 var d         : DB;
-    akas      : string[AKAlen];
+    akas      : string;
     p,i       : byte;
     box  : string[BoxNameLen];
     orgdest   : string[12];
@@ -562,10 +562,10 @@ var t1,t2  : text;
     fn     : pathstr;
     n      : longint;
     nofiles: longint;
-    s      : string[120];
+    s      : string;
     p      : byte;
-    source : string[100];
-    dest   : string[100];
+    source : string;
+    dest   : string;
     size   : longint;
     total  : longint;
 
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 17:10:54  mk
+  - AnsiString Updates
+
   Revision 1.17  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

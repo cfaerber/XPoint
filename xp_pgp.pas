@@ -234,7 +234,7 @@ end;
 procedure PGP_SendKey(empfaenger:string);   { Antwort auf Key-Request senden }
 var t   : text;
     tmp : string;
-    hd  : string[12];
+    hd  : string;
 begin
   UpdateKeyfile;
   if not exist('pgp-key.bin') then exit;
@@ -398,12 +398,12 @@ end;
 
 
 procedure PGP_RequestKey;
-var user : string[AdrLen];
+var user : string;
     x,y  : byte;
     brk  : boolean;
     tmp  : string;
     t    : text;
-    hd   : string[12];
+    hd   : string;
     ok   : boolean;
     nt   : byte;
 begin
@@ -778,6 +778,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/05 17:10:54  mk
+  - AnsiString Updates
+
   Revision 1.22  2000/07/04 12:04:28  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

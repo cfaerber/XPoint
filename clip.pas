@@ -21,15 +21,15 @@ uses
 
 const
 {$ifdef Win32}
-  ClipAvailable		= true;
+  ClipAvailable         = true;
 {$else}
   {$ifdef Linux}
-  ClipAvailAble		= true;		{ Simuliertes Clipboard a la MC }
+  ClipAvailAble         = true;         { Simuliertes Clipboard a la MC }
   {$else}
    {$IFDEF VP }
-  ClipAvailable 	= false; { !! Funktioniert noch nicht sauber }
+  ClipAvailable         = false; { !! Funktioniert noch nicht sauber }
    {$ELSE }
-  ClipAvailable 	= false;
+  ClipAvailable         = false;
    {$ENDIF }
   {$endif}
 {$endif}
@@ -98,8 +98,9 @@ begin
     P := GlobalLock(MemHandle);
     if Assigned(P) then
     begin
+      // !! Das kann vereinfacht werden
       Size := StrLen(P);
-      Str[0] := Char(Size);
+      SetLength(Str, Size);
       Move(P^, Str[1], Size);
     end;
     Clip2String := Str;
@@ -311,6 +312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/05 17:10:53  mk
+  - AnsiString Updates
+
   Revision 1.23  2000/07/04 18:34:53  hd
   - Clipboard fuer Linux simuliert
 

@@ -110,11 +110,11 @@ end;
 procedure bezuege_suchen(var brk:boolean);
 var _brett,
     _mbrett : string[5];
-    bezug   : string[BetreffLen];
-    betreff : string[BetreffLen];
+    bezug   : string;
+    betreff : string;
     recnt   : integer;
-    user    : string[AdrLen];   { Bezugs-User }
-    ref     : string[midlen];   { Bezugs-MesssageID }
+    user    : string;   { Bezugs-User }
+    ref     : string;   { Bezugs-MesssageID }
     ml      : byte;
     hdp     : ^header;
     hds     : longint;
@@ -393,7 +393,7 @@ var hdp    : headerp;
     hds    : longint;
     bez    : longint;
     mi,n   : shortint;
-    brett  : string[5];
+    brett  : string;
     nullid : longint;
     realmaxkom : word;
     kb2    : komlistp;
@@ -414,7 +414,7 @@ var hdp    : headerp;
       more   : boolean;
       mmore  : boolean;
       newbetr: ^string;
-      _brett : string[5];
+      _brett : string;
       r      : brec;
       mid    : longint;
 
@@ -739,7 +739,7 @@ begin
   with kombaum^[bezpos] do begin
     if not KomShowAdr then begin
       p:=cpos('@',s);
-      if p>0 then s[0]:=chr(p-1);
+      if p>0 then SetLength(s, p-1);
       end;
     if flags and kflPM<>0 then
       s:=s+' (PM)';
@@ -886,6 +886,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/05 17:10:54  mk
+  - AnsiString Updates
+
   Revision 1.14  2000/07/04 12:04:24  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

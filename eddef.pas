@@ -10,14 +10,13 @@
 
 { Deklarationen fÅr Unit EDITOR }
 
+{$I XPDEFINE.INC }
+
 unit eddef;
 
 interface
 
-{$I XPDEFINE.INC }
-
 uses xpglobal, dos,keys;
-
 
 type   ECB     = pointer;
 
@@ -111,7 +110,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
 
        MaxFindLen       = 30;
        EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - geÑndert auf 11 }
-       
+
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
 
@@ -146,9 +145,9 @@ type   EdColrec = record
                   end;
 
        EdAskQuit   = function(ed:ECB):taste;  { J/N/Esc }
-       EdAskOverwrite = function(ed:ECB; fn:pathstr):taste;
+       EdAskOverwrite = function(ed:ECB; fn:string):taste;
        EdMessage   = procedure(txt:string; error:boolean);   { Meldung anzeigen }
-       EdAskFile   = procedure(ed:ECB; var fn:pathstr; save,uuenc:boolean);  { Dateinameneingabe }
+       EdAskFile   = procedure(ed:ECB; var fn:string; save,uuenc:boolean);  { Dateinameneingabe }
        EdFindPanel = function(ed:ECB; var txt:string; var igcase:boolean):boolean;
        EdReplPanel = function(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
        EdConfigPanel = procedure(var cfg:EdConfig; var brk:boolean);
@@ -169,6 +168,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7  2000/07/05 17:10:53  mk
+  - AnsiString Updates
+
   Revision 1.6  2000/06/23 15:59:09  mk
   - 16 Bit Teile entfernt
 

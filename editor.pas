@@ -67,10 +67,7 @@ procedure EdAddToken(ed:ECB; t:EdToken);
 function  EddefQuitfunc(ed:ECB):taste;
 function  EddefOverwrite(ed:ECB; fn:string):taste;
 procedure EddefMsgproc(txt:string; error:boolean);
-{ 04.02.2000 robo }
-{ procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
-{ /robo }
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 
@@ -371,10 +368,7 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
-{ 04.02.2000 robo }
-{ procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
-{ /robo }
 var brk : boolean;
     mf  : char;
 begin
@@ -1194,7 +1188,7 @@ var  dl         : displp;
               end;
             if length(s)<w then begin           { mit Space auffllen }
               SetLength(s,w);
-	      fillchar(s[length(s)+1],w-length(s),32);
+              fillchar(s[length(s)+1],w-length(s),32);
               {s[0]:=chr(w);}
               end;
             end;
@@ -1885,6 +1879,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/07/05 17:10:53  mk
+  - AnsiString Updates
+
   Revision 1.31  2000/07/05 09:50:12  hd
   - AnsiString-Anpassung
 

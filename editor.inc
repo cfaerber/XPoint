@@ -1720,11 +1720,11 @@ end;
 
 
 procedure BlockEinlesen;
-var fn : pathstr;
+var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
-    Procs.FileProc(e,fn,false,false); { 04.02.2000 robo }
+    Procs.FileProc(e,fn,false,false);
     if fn<>'' then
       if not exist(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
@@ -1735,13 +1735,12 @@ begin
   end;
 end;
 
-{ 31.01.2000 robo }
 procedure BlockUUeEinlesen;
-var fn : pathstr;
+var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
-    Procs.FileProc(e,fn,false,true); { 04.02.2000 robo }
+    Procs.FileProc(e,fn,false,true);
     if fn<>'' then
       if not exist(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
@@ -1751,16 +1750,15 @@ begin
       end;
   end;
 end;
-{ /robo }
 
 procedure BlockSpeichern;
-var fn : pathstr;
+var fn : string;
 begin
   with e^ do
     if blockinverse or blockhidden then
       errsound
     else begin
-      Procs.FileProc(e,fn,true,false); { 04.02.2000 robo }
+      Procs.FileProc(e,fn,true,false);
       if fn<>'' then begin
         if not exist(fn) then t:='J'
         else t:=Procs.Overwrite(e,fn);
@@ -2302,6 +2300,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/07/05 17:10:53  mk
+  - AnsiString Updates
+
   Revision 1.23  2000/07/05 09:50:12  hd
   - AnsiString-Anpassung
 

@@ -41,7 +41,7 @@
 {$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
   {$DEFINE VP }
   {$DEFINE Ver32 }
-  {$B-,D-,H-,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
+  {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
@@ -115,6 +115,9 @@
 
 {
   $Log$
+  Revision 1.42  2000/07/05 17:10:54  mk
+  - AnsiString Updates
+
   Revision 1.41  2000/07/05 09:09:29  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
