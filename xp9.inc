@@ -1261,7 +1261,8 @@
       box : string[BoxNameLen];
 
     procedure SetBrettNetztyp;
-    var i,n  : integer;
+    var n    : integer;
+        i    : LongInt;
         x,y  : byte;
         flags: byte;
         uucp : byte;
