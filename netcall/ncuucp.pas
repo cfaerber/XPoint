@@ -346,7 +346,6 @@ begin
     begin
       ip := TIP.Create;
       ip.Raw := TRawIPStream(CommObj).RemoteIP;
-      ip.Resolve;
       TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+
 	ip.AsString+':'+StrS(TRawIPStream(CommObj).RemotePort)+')';
       Log('=','Connected with: '+
@@ -1121,6 +1120,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/08/12 20:05:23  cl
+  - FIX: delay at UUCICO start
+
   Revision 1.13  2001/08/10 19:13:01  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling
