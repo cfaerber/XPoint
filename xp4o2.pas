@@ -404,7 +404,7 @@ var hdp    : headerp;
         blist = array[1..bmax] of brec;
   var id     : longint;
       ida    : array[0..3] of char absolute id;
-      ba     : ^blist;
+      ba,ba2 : ^blist;
       anz    : longint;
       i,j    : integer;
       more   : boolean;
@@ -505,13 +505,13 @@ var hdp    : headerp;
         Memfull := true;
         RFehler(448);
       end;
-      new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
       wr;
       GetSeekID;
       if dbFound then
         repeat
+          getmem(ba,sizeof(brec)*bmax);
           anz:=0;
           while not _last and (anz<bmax) do begin
             dbReadN(bezbase,bezb_msgid,mid);
@@ -519,7 +519,11 @@ var hdp    : headerp;
               AddD0
             else
               if not AddDx then AddD0;
-            end;
+          end;
+          getmem(ba2,sizeof(brec)*anz);
+          fastmove(ba^,ba2^,sizeof(brec)*anz);
+          freemem(ba,sizeof(brec)*bmax);
+          ba:=ba2;
           more:=not _last;
           for i:=1 to anz-1 do           { Bubble-Sort nach Datum }
             for j:=anz downto i+1 do
@@ -541,9 +545,9 @@ var hdp    : headerp;
                 spuren2+iif(mmore,1 shl longint(ebene-32),0),
                 not mmore,newbetr^,_brett);
             end;
+          freemem(ba,sizeof(brec)*anz);
           if more then dbGo(bezbase,rec);
         until not more;
-      dispose(ba);
       freemem(newbetr, length(newbetr^)+1);
       end;
   end;
@@ -929,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.4  2000/11/11 09:48:07  mk
+  - Speicher sparen im Kommentarbaum
+
   Revision 1.6.2.3  2000/11/04 22:52:46  mk
   - Memory-Protection fuer den Kommentarbaum
 
