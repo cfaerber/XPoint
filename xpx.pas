@@ -306,6 +306,8 @@ begin
 
     {Overlaycache anlegen in EMS oder XMS}
     { Size_OVR enthaelt die Groesse des OVR-Files }
+    ovrmemsize:=0;
+    { Erstmal Variable initialisieren }
     if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then
     begin
       OvrInitEMS;
@@ -347,6 +349,10 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.28  2003/04/16 13:48:20  mw
+  MW: - Neue Berechnungsmethode fÅr XMS-Belegung durch Openxp/16
+        (In overxms.asm wird die Grî·e des XMS-Blocks gesichert).
+
   Revision 1.18.2.27  2003/04/13 21:06:58  my
   MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anhÑngen
   MY:- Fix: Abfrage auf 'xmsovrbuf' beim Anlegen des Overlaycache

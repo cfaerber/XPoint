@@ -22,7 +22,7 @@ interface
 uses
   crt, dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
   video,datadef,database,maus2,maske,clip,resource,
-  ems,xms, xp0,xp1,xp1input,xp1o,xp1o2, lfn;
+  ems,xms,overxms, xp0,xp1,xp1input,xp1o,xp1o2, lfn;
 
 procedure kalender;
 procedure memstat;
@@ -437,6 +437,7 @@ type so = record
 var regs : registers;
     x,y  : byte;
     ems  : longint;
+    xms  : word;
     os2  : boolean;
     win  : boolean;
     lnx  : boolean;
@@ -477,7 +478,11 @@ begin
   end;
   if xmstest then begin
     gotoxy(x+44,y+4); write(xmst:5,' KB');
-    gotoxy(x+44,y+5); write(xmst-xmstotal:5,' KB');
+    {Alte Speicheranzeige Openxp/16 XMS}
+    {gotoxy(x+44,y+5); write(xmst-xmstotal:5,' KB');}
+    {Neue Speicheranzeige Openxp/16 XMS}
+    xms:=ovrmemsize;
+    gotoxy(x+44,y+5); write(xms:5,' KB');
     gotoxy(x+44,y+6); write(xmsavail:5,' KB');
     end;
   gotoxy(x+57,y+4);
@@ -1071,6 +1076,10 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.22  2003/04/16 13:48:20  mw
+  MW: - Neue Berechnungsmethode fÅr XMS-Belegung durch Openxp/16
+        (In overxms.asm wird die Grî·e des XMS-Blocks gesichert).
+
   Revision 1.27.2.21  2003/04/15 14:07:00  mw
   MW: - Korrektur der Hîhenberechnung der Ausgabe von X/S/S
 

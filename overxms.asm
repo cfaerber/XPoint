@@ -43,6 +43,7 @@ OvrXmsHandle DW    ?                   ; Returned by XMS driver
            Extrn   OvrDosHandle : Word
            Extrn   OvrHeapOrg : Word
            Extrn   OvrReadBuf : DWord
+           Extrn   ovrmemsize : Word
 Data       ENDS
 
 Code       SEGMENT Byte Public
@@ -97,6 +98,7 @@ AllocateXms PROC
 ;  Allocate the block
 
         MOV    AH, 9
+        MOV    [ovrmemsize], DX
         CALL   [XmsDriver]
         OR     AX, AX
         JZ     @@2
@@ -326,7 +328,9 @@ Code       ENDS
 
 ;~~~~~~~~~~~~~~~~~~~
 ; 08.03.03  JM  wegen des EMM386 von NovelDos 7.0, der das Register BX
-                bei der šBergabe einer 32-Bit Adresse in BX:DI
-                beim Kopieren von Units aus der Overlaydatei ins XMS nullt,
-                wird in Zeile 174/176 das Register BX gesichert
-
+;               bei der šBergabe einer 32-Bit Adresse in BX:DI
+;               beim Kopieren von Units aus der Overlaydatei ins XMS nullt,
+;               wird in Zeile 174/176 das Register BX gesichert
+;
+; 16.03.03  MW  Neue Variable ovrmemsize zeigt die Groesse des Overlay
+;               im XMS an.
