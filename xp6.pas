@@ -1807,7 +1807,6 @@ fromstart:
         if msgCPpos<msgCPanz then
           dbAppend(mbase);
         end;
-      SendFlags:=SendFlags and not SendHalt;
     until msgCPpos>=msgCPanz;
 
   { if not pm then dbFlushClose(bbase); }
@@ -2060,6 +2059,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.12  2001/01/01 11:32:48  mk
+  - letzten Fix in dieser Version entfernt, da nicht noetig
+
   Revision 1.7.2.11  2000/12/31 11:54:40  mk
   JG:- eigene PMs halten fix
 
