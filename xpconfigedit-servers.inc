@@ -1881,95 +1881,156 @@
       brk : boolean;
       nt  : byte;
       nts : string;
-      nts0: string;
-      nts2: string;
   begin
     dbGo(d,drec[p]);
     fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    nts:=''; nts2:=getres2(927,4)+getres2(927,5);   { ',^SysopMode' }
-    if (nt=nt_uucp) and boxpar^.ClientMode then
-    begin
-      Pushhp(132);
-      nts0:='^Client,'+getres2(927,7)+getres2(927,8)+getres2(927,2);
-      nts2:=getres2(927,4)+getres2(927,5);
-      if not lastclient then edb_pos:=clientpos[edb_pos];
-      lastclient:=true;
-      end 
-    else begin
-      Pushhp(131);
-      if lastclient then
-      begin
-        if (edb_pos=2) or (edb_pos=3) then
-          edb_pos:=1
-        else if (edb_pos=4) or (edb_pos=5) then
-          dec(edb_pos,2);
-        end;
-      lastclient:=false;
-      nts0:=getres2(927,1)+getres2(927,2)+getres2(927,3);
-      case nt of
-        nt_Netcall : nts:='^Z-Netz,';
-        nt_ZConnect: nts:='^ZConnect,';
-        nt_Maus    : nts:='M^aus,';
-        nt_Magic   : nts:='M^agicNET,';
-        nt_Pronet  : nts:='P^ronet,';
-        nt_Fido    : nts:='^Fido,';
-        nt_UUCP    : begin nts:='^RFC/UUCP,'; { nts2:=''; } end;
-        nt_QWK     : begin
-                       nts:=getres2(927,3)+'^QWK,'; nts0:='';
-                       nts2:=getres2(927,4)+getres2(927,6);  { ',^Transfer' }
-                       end;
-        nt_Pop3    : begin
-                       nts:=getres2(927,3)+getres2(927,11)+getres2(927,12);  nts0:=''; 
-                       nts2:=getres2(927,4);
-                     end;
-        nt_NNTP    : begin
-                       nts:=getres2(927,3)+getres2(927,13);  nts0:='';
-                       nts2:=getres2(927,4);
-                     end;
-      end;
-    end; 
-    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts0+nts+nts2,edb_pos);
-                 { '^Point,^Modem,^GebÅhren,^Namen,'+nts+'^Diverses'+nts2 }
+    ReadBox(nt,fn,boxpar);
+
+    nts:='';
+    case nt of
+      nt_Netcall : begin
+                     pushhp(131);
+                     nts:=getres2(927,5)        { ^Point, }
+                         +getres2(927,7)        { ^Modem, }
+//                         +getres2(927,8)        { ^Gebuehren, }
+                         +getres2(927,9)        { ^Namen, }
+                         +getres2(927,20)       { Netcall ^3.8, }
+                         +getres2(927,10)       { ^Diverse }
+                         +getres2(927,11);      { ,^Sysop-Mode }
+                   end;
+      nt_ZConnect: begin
+                     pushhp(131);
+                     nts:=getres2(927,5)        { ^Point, }
+                         +getres2(927,7)        { ^Modem, }
+//                         +getres2(927,8)        { ^Gebuehren, }
+                         +getres2(927,9)        { ^Namen, }
+                         +getres2(927,21)       { ^ZConnect, }
+                         +getres2(927,10)       { ^Diverse }
+                         +getres2(927,11);      { ,^Sysop-Mode }
+                   end;
+      nt_Fido:     begin
+                     pushhp(131);
+                     nts:=getres2(927,5)        { ^Point, }
+                         +getres2(927,7)        { ^Modem, }
+//                         +getres2(927,8)        { ^Gebuehren, }
+                         +getres2(927,9)        { ^Namen, }
+                         +getres2(927,25)       { ^FTS, }
+                         +getres2(927,10)       { ^Diverse }
+                         +getres2(927,11);      { ,^Sysop-Mode }
+                   end;
+      nt_QWK:      begin
+                     pushhp(131);
+                     nts:=
+//                       +getres2(927,8)        { ^Gebuehren, }
+                         +getres2(927,9)        { ^Namen, }
+                         +getres2(927,29)       { ^QWK, }
+                         +getres2(927,10)       { ^Diverse }
+                         +getres2(927,4);       { ,^Transfer }
+                   end;
+      nt_UUCP:     if not BoxPar^.ClientMode then begin
+                     pushhp(131);
+                     nts:=getres2(927,5)        { ^Point, }
+                         +getres2(927,7)        { ^Modem, }
+//                       +getres2(927,8)        { ^Gebuehren, }
+                         +getres2(927,9)        { ^Namen, }
+                         +getres2(927,28)       { ^UUCP, }
+                         +getres2(927,10)       { ^Diverse }
+                         +getres2(927,11);      { ,^Sysop-Mode }
+                   end else begin
+                     pushhp(131);
+                     nts:='^Client,'
+                         +getres2(927,40)       { Mail-/^News-Server, }
+                         +getres2(927,41)       { E^xterne Einstellungen, }
+                         +getres2(927,7)        { ^Modem }
+                         +getres2(927,10)       { ^Diverses }
+                         +getres2(927,11);      { ^SysopMode }
+                   end;
+      nt_NNTP:     begin
+                     pushhp(132);
+                     nts:=getres2(927,9)        { ^Namen, }
+                         +getres2(927,26)       { NNT^P, }
+                         +getres2(927,10);      { ^Diverses }
+                   end;
+      nt_POP3:     begin
+                     pushhp(133);
+                     nts:=getres2(927,9)        { ^Namen, }
+                         +getres2(927,27)       { ^POP3, }
+                         +getres2(927,30)       { ^SMTP, }
+                         +getres2(927,10);      { ^Diverses }
+                   end;
+    end; { case nt }
+    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
     freeres;
+
     if n<>0 then edb_pos:=abs(n);
     if n>0 then begin
-      if (nt=nt_uucp) and boxpar^.ClientMode then 
-      begin
-        case n of
-          1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
-          2 : EditTransport(nt,brk);
-          3 : EditExtern(fn,brk);
-          4 : EditModemdaten(nt,brk);
-//          5 : EditGebuehren(nt,brk);
-          5 : EditDiverses(nt,brk);
-          6 : EditSysopdaten(nt,brk);
-          end;
-        end
-      else begin 
-        if (nts='') and (n>=5) then inc(n);
-        if nts0='' then inc(n,3);
-        case n of
-          1 : EditPointdaten(nt,brk);
-          2 : EditModemdaten(nt,brk);
-//          3 : EditGebuehren(nt,brk);
-          3 : EditName(brk);
-          4 : case nt of
-                nt_Fido : EditFido(brk);
-                nt_QWK  : EditQWK(fn,brk);
-                nt_UUCP : EditUUCP(brk);
-                nt_POP3 : EditPOP3(brk);
-                nt_NNTP : EditNNTP(brk);
-                else      EditNet(brk);
-              end;
-          5 : if nt = nt_POP3 then EditSMTP(brk) else EditDiverses(nt,brk);
-          6 : if nt = nt_POP3 then EditDiverses(nt, brk) else EditSysopdaten(nt,brk);
-          end;
-        end;
-      if not brk then
-        WriteBox(fn,boxpar);
-      ReadDomainList;
+      case nt of
+        nt_Netcall  : case n of
+                        1: EditPointdaten(nt,brk);
+                        2: EditModemdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
+                      end;
+        nt_ZConnect : case n of
+                        1: EditPointdaten(nt,brk);
+                        2: EditModemdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
+                      end;
+        nt_Fido     : case n of
+                        1: EditPointdaten(nt,brk);
+                        2: EditModemdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditFido(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
+                      end;
+        nt_QWK      : case n of
+//                      1: EditGebuehren(brk);
+                        1: EditName(brk);
+                        2: EditQWK(fn,brk);
+                        3: EditDiverses(nt,brk);
+                        4: EditSysopdaten(nt,brk);
+                      end;
+        nt_UUCP     : if not BoxPar^.ClientMode then case n of
+                        1: EditPointdaten(nt,brk);
+                        2: EditModemdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditUUCP(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
+                      end else case n of
+                        1 : begin dbGo(d,drec[p]); EditPPP(brk); end;
+                        2 : EditTransport(nt,brk);
+                        3 : EditExtern(fn,brk);
+                        4 : EditModemdaten(nt,brk);
+//                      5 : EditGebuehren(nt,brk);
+                        5 : EditDiverses(nt,brk);
+                        6 : EditSysopdaten(nt,brk);
+                      end;
+        nt_NNTP     : case n of
+                        1: EditInetName(brk);
+                        2: EditNNTP(brk);
+                        3: EditNNTPMisc(nt,brk);
+                      end;
+        nt_POP3     : case n of
+                        1: EditInetName(brk);
+                        2: EditPOP3(brk);
+                        3: EditSMTP(brk);
+                        4: EditNNTPMisc(nt,brk);
+                      end;
+      end; { case nt }
+
     end;
     pophp;
   end;
@@ -2059,6 +2120,10 @@
 
 {
   $Log$
+  Revision 1.28  2001/09/13 13:30:50  ma
+  - reverted to cleaner code
+  - added client mode configuration
+
   Revision 1.27  2001/09/09 17:40:47  cl
   - moved common code between alle en-/decoding streams to a base class
   - all en-/decoding streams can now destruct the other stream
@@ -2075,100 +2140,4 @@
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
   - added/changed some FileUpperCase
-
-  Revision 1.23  2001/09/06 22:01:14  mk
-  - client mode updates
-
-  Revision 1.22  2001/09/06 19:13:55  mk
-  - fixed use of not initialized variable nt in NewBox
-
-  Revision 1.21  2001/08/28 13:01:39  mk
-  - removed RenameDir
-  - renamed RenameDir to RenameFile
-
-  Revision 1.20  2001/08/27 09:13:43  ma
-  - changes in net type handling (1)
-
-  Revision 1.19  2001/08/12 11:50:44  mk
-  - replaced dbRead/dbWrite with dbReadN/dbWriteN
-
-  Revision 1.18  2001/08/11 23:06:36  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.17  2001/08/10 20:58:00  mk
-  - removed some hints and warnings
-  - fixed some minior bugs
-
-  Revision 1.16  2001/08/03 07:52:42  mk
-  EditExtern:
-  - added UpperCase
-  - fixed Comment
-  - Changed some Copy to MID
-
-  Revision 1.15  2001/08/02 22:22:43  mk
-  - EditExtern: filename of a non-existing file is written to
-    <server>.BFG only if the user confirmed file creation *and*
-    indeed created the file
-  JG:- EditExtern: optimized suboptimal (but working) code;
-  - Changed some UpperCase to FileUpperCase
-
-  Revision 1.14  2001/08/01 01:00:30  mk
-  - added IncludeTrailingPathDelimiter and fixed compile problems
-
-  Revision 1.13  2001/07/31 18:05:39  mk
-  - implemented is_emailaddress in NameRead
-  - RFC/Client: implemented "External Settings" under
-    Edit/Servers/Edit/... (load external config file)
-  MY+JG:- new function is_mailaddress, also implemented in all
-          functions and procedures involved (multi_Mailstring and
-          xp9_setclientFQDN in xp9sel.pas, NameRead in xp9.inc and
-          get_first_box in xp9.pas)
-  - RFC/Client: implemented "External Settings" under
-    Edit/Servers/Edit/... (load external config file)
-
-  Revision 1.12  2001/07/31 13:10:34  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.11  2001/07/29 13:58:23  ma
-  - removed nt_UUCP_U, some fixes
-
-  Revision 1.10  2001/07/29 12:59:02  ma
-  - cleaned up server config dialog
-  - removed ntAllowed variable
-
-  Revision 1.9  2001/07/27 18:35:11  mk
-  JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
-          under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
-  JG+MY:- RFC/Client: removed unnecessary mask test in _EditPPP
-  JG+MY:- RFC/UUCP: improved check for valid eMail address under
-          Edit/Servers/Edit/Names/eMail_address
-  VS: ----------------------------------------------------------------------
-
-  Revision 1.8  2001/07/23 16:05:23  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.7  2001/07/22 21:05:18  mk
-  - fixed double RFC/UUCP in Edit/Boxen/Neu
-  - renamed ntnr to NetTypes and removed eNetztypen
-
-  Revision 1.6  2001/07/22 13:46:40  ma
-  - fixed: NNTP/POP3 box name was automatically altered if previously
-    editing a Fido box
-
-  Revision 1.5  2001/07/21 18:06:54  mk
-  - modified duplicate help topics
-
-  Revision 1.4  2001/07/21 16:02:11  mk
-  - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
-
-  Revision 1.3  2001/06/23 14:24:17  ma
-  - added/refined online help for new netcall types
-
-  Revision 1.2  2001/06/09 10:58:53  ma
-  - added ForceOneArea feature (for POP3 server type)
-
-  Revision 1.1  2001/06/04 17:41:12  ma
-  - renamed, was xp9
-
 }

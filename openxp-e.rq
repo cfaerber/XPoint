@@ -2068,20 +2068,43 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Password  ~
 12   d'Bridge Areafix
 + 927
-1    ^Point,
-2    ^Modem,
-3    ^Names,
-4    M^isc.
-5    ,^SysopMode
-# QWK
-6    ,^Transfer
+1    ^Point,^Modem,^Charges,
+2    ^Names,%sM^isc.
+3    ,^Sysop Mode
+4    ,^Transfer
+5    ^Point,
+6    A^ccess,
+7    ^Modem,
+8    C^harges,
+9    ^Names,
+10   ^Misc
+11   ,^Sysop Mode
+12   ,^Local Mode
+13   empty
+14   empty
+15   empty
+16   empty
+17   empty
+18   empty
+19   empty
+20   Netcall ^3.8,
+21   ^ZConnect,
+22   M^aus,
+23   M^agicNET,
+24   P^ronet,
+25   ^FTS,
+26   NNT^P,
+27   ^POP3/SMTP,
+28   ^UUCP,
+29   ^QWK,
+30   ^SMTP,
 # RFC/Client
-7    Mail/^News Servers,
-8    E^xternal Settings,
-10   Load external configuration file
-11   ^POP3,
-12   ^SMTP,
-13   ^NNTP,
+40   Mail/^News Servers,
+41   E^xternal Settings,
+42   Load external configuration file
+43   ^POP3,
+44   ^SMTP,
+45   ^NNTP,
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3854,6 +3877,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.35  2001/09/13 13:30:50  ma
+# - reverted to cleaner code
+# - added client mode configuration
+#
 # Revision 1.34  2001/09/12 22:13:25  cl
 # - English ressources for MIME support
 #

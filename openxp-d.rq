@@ -2118,20 +2118,43 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   Pa·wort   ~
 12   d'Bridge-Areafix
 + 927
-1    ^Point,
-2    ^Modem,
-3    ^Namen,
-4    ^Diverses
-5    ,^SysopMode
-# QWK
-6    ,^Transfer
+1    ^Point,^Modem,^GebÅhren,
+2    ^Namen,%s^Diverses
+3    ,^SysopMode
+4    ,^Transfer
+5    ^Point,
+6    ^Zugang,
+7    ^Modem,
+8    ^GebÅhren,
+9    ^Namen,
+10   ^Diverses
+11   ,^SysopMode
+12   ,^Lokaler Modus
+13   empty
+14   empty
+15   empty
+16   empty
+17   empty
+18   empty
+19   empty
+20   Netcall ^3.8,
+21   ^ZConnect,
+22   M^ausTausch,
+23   M^agicNET,
+24   P^ronet,
+25   ^FTS,
+26   NNT^P,
+27   ^POP3,
+28   ^UUCP,
+29   ^QWK,
+30   ^SMTP,
 # RFC/Client
-7    Mail-/^News-Server,
-8    E^xterne Einstellungen,
-10   Externe Konfigurationsdatei laden
-11   ^POP3,
-12   ^SMTP,
-13   ^NNTP,
+40   Mail-/^News-Server,
+41   E^xterne Einstellungen,
+42   Externe Konfigurationsdatei laden
+43   ^POP3,
+44   ^SMTP,
+45   ^NNTP,
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3824,6 +3847,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.37  2001/09/13 13:30:50  ma
+# - reverted to cleaner code
+# - added client mode configuration
+#
 # Revision 1.36  2001/09/12 22:14:22  cl
 # - resorted buttons in attach box
 #
