@@ -1172,7 +1172,7 @@ begin
   if left(dbReadStr(mbase,'brett'),1)<>'U' then
     RereadBrettdatum(dbReadStr(mbase,'brett'));
   aufbau:=true;
-  if (dispmode<>11) and (dispmode<>12) and (p=1) and (disprec[2]<>0) then
+  if (dispmode<>11) and (dispmode<>12) and (p=1) then
     disprec[1]:=disprec[2];
 end;
 
@@ -1421,6 +1421,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.4  2000/05/18 22:38:12  mk
+  JG: - Fix: Anzeige-Refresh beim entfernen des Wiedervorlage-Fags (1.21)
+
   Revision 1.3.2.3  2000/04/27 06:44:42  mk
   JG: - Externe Viewer: Dateiendung hat jetzt Vorrang vor Mimetyp
 
