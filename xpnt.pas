@@ -375,7 +375,7 @@ begin
   case nt of
     nt_Pronet   : ntDefaultDomain:='.pro';
     nt_ZConnect : ntDefaultDomain:='.invalid';
-    nt_Fido     : ntDefaultDomain:='';
+    nt_Fido     : ntDefaultDomain:='fidonet';
   else
     ntDefaultDomain:='';
   end;
@@ -748,6 +748,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43.2.2  2002/05/08 09:10:11  ma
+  - added Fido default domain
+
   Revision 1.43.2.1  2002/04/22 10:02:44  mk
   - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
 
