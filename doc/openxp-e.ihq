@@ -8,7 +8,6 @@ Sorry, no help available!
 @
 2
 <<   같같같같같 = Online Help Contents = 같같같같같
-                  (Rev.1.70)
 
                     [Help on Help]@3
 
@@ -2819,11 +2818,11 @@ permitted.
 This setting has no effect on the Sysop-Mode.
 @
 198
-<<[x]>> ->  This box will be included when calling
-        [/Netcall/All]@11502
+<<[x]>> ->  This Server will be included when doing a
+        ["/Netcall/All"]@11502
 
-<<[ ]>> ->  This box will *not* be included when calling
-       [/Netcall/All]@11502
+<<[ ]>> ->  This Server will <<NOT>> be included when doing a
+       ["/Netcall/All"]@11502
 @
 199
 A programme that CrossPoint will call after receiving
@@ -8627,13 +8626,13 @@ properly defined and that CrossPoint can find them.
 11502
 <<Netcall / All
 
-This makes a netcall to all of the servers for which
-under /Edit/Servers/Edit/Misc. The box marked
-Netcall All is switched on.
+This makes a Netcall to all of the Servers for which
+the box under /Edit/Servers/Edit/Misc/Netcall All is 
+switched on.
 
-A command line showing all the boxes to be called
-will be shown, and can be edited if you don't want to
-call them all.
+A command line showing all the Servers to be called
+will be shown, which may be edited if you don't want 
+to call them all.
 
 The [command line parameter] "/n:*" does the@4020
 same thing.
@@ -11908,7 +11907,7 @@ Order of events at CrossPoint start-up.
 
 @
 4020
-<< Command Line Parameters for starting CrossPoint
+<<Command Line Parameters for starting CrossPoint
 
 CrossPoint is started thus:
 
