@@ -1747,8 +1747,14 @@ begin
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end
                   else begin
-                    s:=Unix2DOSfile(s,FilePath);
-                    if s='' then s:=Unix2DOSfile(source,FilePath);
+                    if Uselfn then begin
+                        s:=Unix2LFNfile(s,FilePath);
+                        if s='' then s:=Unix2LFNfile(source,FilePath);
+                    end;
+                    if not Uselfn then begin
+                        s:=Unix2DOSfile(s,FilePath);
+                        if s='' then s:=Unix2DOSfile(source,FilePath);
+                    end;
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
                     wrlog('S','receiving '+s+' as '+ustr(fn));
@@ -1926,6 +1932,11 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.8  2001/03/15 07:48:53  mw
+
+
+  - UUCP-Filerequest: LFNs eingebaut.
+
   Revision 1.1.2.7  2001/01/07 15:40:59  mk
   - removed last patches (LFN)
 

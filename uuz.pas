@@ -3244,7 +3244,8 @@ var hds,adr : longint;
           p:=blankpos(s);
           if p=0 then begin
             fromfile:=s;
-            tofile:=Unix2DOSfile(s,'');
+            if Uselfn then tofile:=Unix2LFNfile(s,'');
+            if not Uselfn then tofile:=Unix2DOSfile(s,'');
             end
           else begin
             fromfile:=left(s,p-1);
@@ -3471,6 +3472,11 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.35  2001/03/15 07:48:52  mw
+
+
+  - UUCP-Filerequest: LFNs eingebaut.
+
   Revision 1.35.2.34  2001/01/30 10:01:20  mk
   - weitere arbeiten am Client-Modus
 

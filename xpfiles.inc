@@ -60,3 +60,34 @@ begin
   Unix2DOSfile:=name+ext;
 end;
 
+function Unix2LFNfile(fn,destdir:pathstr):pathstr;
+var p,i     : byte;
+    allowed : set of char;
+    name    : namestr;
+    ext     : extstr;
+    n       : word;
+begin
+  UpString(fn);
+  p:=length(fn);
+  while (fn[p]<>'/') and (p>0) do dec(p);
+  if p>0 then delete(fn,1,p);
+  if fn='~' then fn:='';
+  if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
+    fn:=left(fn,length(fn)-5)+'TAZ';
+  p:=pos(':',fn);
+  if (p>0) and (p<length(fn)) then        { device: entfernen }
+    delete(fn,1,p);
+  p:=length(fn);
+  allowed:=['A'..'Z','_','-','Ž','™','š','„','”','','#','@','$','!','0'..'9'];
+  allowed:=allowed+['.'];
+  for i:=1 to p do
+    if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }
+      fn[i]:='-';
+  n:=1;
+  ext:='';
+  while (destdir<>'') and (n<999) and exist(destdir+fn+ext) do begin
+    ext:='.'+strs(n);
+    inc(n);
+    end;
+  Unix2LFNfile:=fn+ext;
+end;
