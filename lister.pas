@@ -883,7 +883,7 @@ begin
       // goto last line of text
       if (t = keyend) or (t = keycpgd) then
       begin
-        FirstLine := Max(Lines.Count - 1 - DispLines, 0);
+        FirstLine := Max(Lines.Count - DispLines, 0);
         FSelLine := Lines.Count - 1;
       end;
 
@@ -1087,6 +1087,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.46  2000/12/26 12:10:00  mk
+  - fixed a litte bug in pgend
+
   Revision 1.45  2000/12/26 09:44:48  mk
   - fixed some more bugs
 
