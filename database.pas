@@ -1266,9 +1266,9 @@ procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 var
   s0: shortstring;
 begin
-  if Length(s)>255 then 
-    SetLength(s0, 255)
-  else 
+  if Length(s)>254 then // 254 for dbWriteN does an inc(byte(len))
+    s0:= LeftStr(s, 254)
+  else
     s0:= s;
   dbWriteN(dbp,feldnr,s0);
 end;
@@ -1584,6 +1584,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/06/13 19:05:09  ma
+  - fixed writing of long strings to db
+
   Revision 1.54  2002/05/26 12:16:22  ma
   - replaced dbLog by standard log routines
 
