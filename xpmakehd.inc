@@ -21,21 +21,12 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      PM2AMconv:boolean);
 var i,res : integer;
     o: word; { Offset im Lesepuffer }
-{$ifdef hasHugeString}
     s       : string;
     dummy   : string;
     id      : string;
 {$ifdef ulines}
     id0     : string;
 {$endif }
-{$else}
-    s       : string[20];
-    dummy   : string[realnlen];
-    id   : String[30];
-{$ifdef ulines}
-    id0  : string[30];
-{$endif }
-{$endif} { hasHugeString }
     p    : byte;
     buf     : charrp;
     bufsize : word;
@@ -48,8 +39,7 @@ var i,res : integer;
     o:=0;
   end;
 
-  procedure getline(var s:string; maxlen:byte);
-  var l : byte;
+  procedure getline(var s:string);
 
     procedure IncO;
     begin
@@ -60,48 +50,17 @@ var i,res : integer;
         else begin
           inc(size,bufsize);
           ReadBuf;
-          end;
-    end;
-
-  begin
-    l:=0;
-    while (o<bufanz) and (buf^[o]<>#13) do begin
-      if l<maxlen then begin
-        inc(l);
-        s[l]:=buf^[o];
         end;
-      incO;
-      end;
-    SetLength(s, l);
-    IncO;
-    if ok and (buf^[o]=#10) then IncO;
-  end;
-
-  { wie getline fr HugeString }
-  procedure getlineHuge(var s:Hugestring);
-  var l : byte;
-
-    procedure IncO;
-    begin
-      inc(o);
-      if o=bufanz then
-        if eof(f) then
-          ok:=false
-        else begin
-          inc(size,bufsize);
-          ReadBuf;
-          end;
     end;
 
   begin
-    l:=0;
+    s := '';
     while (o<bufanz) and (buf^[o]<>#13) do
     begin
-      inc(l);
-      s[l]:=buf^[o];
+      // !! Das sollte noch optimiert werden
+      s := s + buf^[o];
       incO;
     end;
-    SetLength(s, l);
     IncO;
     if ok and (buf^[o]=#10) then IncO;
   end;
@@ -110,10 +69,11 @@ var i,res : integer;
   var p : byte;
   begin
     p:=pos(' (',line);
-    if (p=0) or (p<cpos('@',line)) then p:= realnlen
+    if (p=0) or (p<cpos('@',line)) then
+      p := Length(line)
     else
-      realname:=trim(copy(line,p+2,min(length(line)-p-2,realnlen)));
-    name:=left(line,min(realnlen-1,p-1));
+      realname:=trim(copy(line,p+2,min(length(line)-p-2,Length(Line))));
+    name:=left(line,p-1);
   end;
 
   procedure LRead(var s:string; maxlen:byte);
@@ -182,10 +142,8 @@ var i,res : integer;
         if addrefs<maxrefs then inc(addrefs)
         else Move(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
 
-{ /robo }
-
         LRead(addref[addrefs],120);
-        end;
+      end;
   end;
 
   {$else}
@@ -203,7 +161,7 @@ var i,res : integer;
     begin
       if node=nil then begin
         new(node);
-        LRead(node^.empf,AdrLen);
+        LRead2(node^.empf);
         node^.next:=nil;
         end
       else
@@ -426,7 +384,7 @@ begin
       archive:=false;
       typ:='T';
       repeat
-        getline(line,255);
+        getline(line);
         if length(line)>2 then begin
           if line[1]<' ' then delfirst(line);    { gegen LF's o.„. }
           p:=cpos(':',line);
@@ -444,7 +402,7 @@ begin
             while (i<length(line)) and ((line[i+1]=' ') or (line[i+1]=#9)) do
               inc(i);
             delete(line,1,i);
-	    line:= TrimRight(line);
+            line:= TrimRight(line);
             { while line[length(line)]=' ' do }   { rtrim }
             {  dec(byte(line[0])); }
 
@@ -457,7 +415,7 @@ begin
             if id = 'U-X-MAILER'     then LRead2(Programm) else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
-            if id = 'U-X-HOMEPAGE'   then LRead(homepage,HomepageLen) else
+            if id = 'U-X-HOMEPAGE'   then LRead2(homepage) else
 
             { X-No-Archive Konvertierung }
             if id = 'U-X-NO-ARCHIVE' then begin
@@ -485,7 +443,7 @@ begin
 
             if id = 'EMP' then GetEmpf else             { ZConnect 3.0 }
             if id = 'ABS' then GetName(absender,realname) else
-            if id = 'BET' then LRead(betreff,BetreffLen) else
+            if id = 'BET' then LRead2(betreff) else
             if id = 'ROT' then pfad:=line else
             if id = 'O-ROT' then if pfad='' then pfad:=line
                                  else pfad:=pfad+'!'+line else
@@ -500,7 +458,7 @@ begin
             if id = 'KOP'    then GetKop else
             if id = 'BEZ'    then GetRef else
             if id = 'MAILER' then LRead2(programm) else
-            if id = 'ORG'    then LRead(organisation,orgLen) else
+            if id = 'ORG'    then LRead2(organisation) else
             if id = 'OEM'    then GetName(oem,dummy) else
             if id = 'OAB'    then GetName(oab,oar) else
             if id = 'WAB'    then GetName(wab,war) else
@@ -514,15 +472,15 @@ begin
                                   end else
             if id = 'STAT'   then GetStat else
             if id = 'CHARSET'then GetCharset(hd.charset) else
-            if id = 'ERR'    then LRead(error,hdErrLen) else
+            if id = 'ERR'    then LRead2(error) else
             if id = 'ANTWORT-AN' then GetName(PmReplyTo,dummy) else
             if id = 'DISKUSSION-IN' then GetFollowup else
             if id = 'STICHWORT' then GetStichwort else
             if id = 'ZUSAMMENFASSUNG' then LRead(Summary,200) else
             if id = 'QUOTE-STRING' then GetQStr else
-            if id = 'POST'   then LRead(postanschrift,PostadrLen) else
-            if id = 'TELEFON' then LRead(telefon,TeleLen) else
-            if id = 'HOMEPAGE' then LRead(homepage,HomepageLen) else
+            if id = 'POST'   then LRead2(postanschrift) else
+            if id = 'TELEFON' then LRead2(telefon) else
+            if id = 'HOMEPAGE' then LRead2(homepage) else
 {            if id = 'X_C'    then xpmail:=true else }
             if id = 'F-TO'   then LRead(fido_to,36) else
             if id = 'VER'    then GetName(vertreter,dummy) else
@@ -573,15 +531,14 @@ begin
               else
             {$ENDIF}
 
-            if id = 'ABR' then LRead(realname,realnlen) else { ZConnect 1.9 }
+            if id = 'ABR' then LRead2(realname) else { ZConnect 1.9 }
             if id = 'BIN' then typ:='B' else
             if id = 'MAL' then LRead2(programm);
 
-            { 01/2000 oh - Customizable Headerlines }
-            if id = UpperCase(mheadercustom[1]) then LRead(Cust1,CustHeadLen)
+            { Customizable Headerlines }
+            if id = UpperCase(mheadercustom[1]) then LRead2(Cust1)
             else
-            if id = UpperCase(mheadercustom[2]) then LRead(Cust2,CustHeadLen);
-            { /oh }
+            if id = UpperCase(mheadercustom[2]) then LRead2(Cust2);
 
             line:='*';
             end;
@@ -594,20 +551,20 @@ begin
         betreff:='QPC:'+betreff;
       end
     else begin
-      getline(empfaenger,79);
+      getline(empfaenger);
       empfaenger:= TrimRight(empfaenger);
       { while empfaenger[length(empfaenger)]=' ' do
         dec(byte(empfaenger[0])); }
       empfanz:=1;
-      getline(betreff,BetreffLen);
+      getline(betreff);
       while (betreff<>'') and (betreff[1]<=' ') do
         delete(betreff,1,1);
-      getline(absender,79);
-      getline(datum,10);
-      getlineHuge(pfad);
-      getline(msgid,120);
-      getline(typ,1);
-      getline(s,20);
+      getline(absender);
+      getline(datum);
+      getline(pfad);
+      getline(msgid);
+      getline(typ);
+      getline(s);
       val(trim(s),groesse,res);
     end;
   freemem(buf,bufsize);
@@ -620,6 +577,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/07/06 16:04:18  mk
+  - AnsiString Updates
+
   Revision 1.19  2000/07/05 15:46:47  hd
   - AnsiString
 
