@@ -737,9 +737,8 @@ asm
             call @testattr                 { sichert cx }
             mov al,'_'
             call @testattr
-{            mov   al,'/'
-             call  @testattr
-}
+            mov   al,'/'
+            call  @testattr
 
 @nodh:      mov ax,base                   { dispbuffer -> Bildschirm }
             mov es,ax
@@ -892,9 +891,9 @@ asm
             call @testattr                 { sichert cx }
             mov al,'_'
             call @testattr
-{            mov   al,'/'
-             call  @testattr
-}
+            mov   al,'/'
+            call  @testattr
+
 @nodh:      mov byte ptr charbuf[0],cl
             add ecx,ecx
             mov word ptr attrbuf[0],cx
@@ -2342,6 +2341,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/04/27 09:06:56  jg
+  - Editor: Pgdn in der letzten Textseite springt ohne scrollen zum Textende
+            beim Quote-Reflow wird der Cursor an den Zeilenanfang gesetzt,
+            und nicht mehr hinter das Quotezeichen
+
+  - Lister: "/" als Hervorhebezeichen erlaubt.
+
   Revision 1.31  2000/04/21 15:32:34  jg
   - XP32 Bugfix: Hervorhebung im Lister,
     "_" und "*" in einer Zeile gab Probleme

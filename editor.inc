@@ -223,18 +223,24 @@ begin
       end;
 end;
 
+procedure Seitenende; forward;
 procedure SeiteUnten;
 var i : integer;
 begin
   TruncAbs(ActAbs);
   with e^ do begin
-    i:=gl;
-    while dl^[i].absatz=nil do dec(i);
-    inc(startline,i-1);
-    firstpar:=dl^[i].absatz;
-    firstline:=dl^[i].zeile;
-    KorrBlockScrolled(true);
-    aufbau:=true;
+    if (dl^[gl].absatz=nil) or
+       ((dl^[gl].absatz^.next=nil) and (dl^[gl].zeile=alines(dl^[gl].absatz)))
+    then Seitenende  { Wenn Ende des Textes bereits auf dem Bildschirm ist... }
+    else begin 
+      i:=gl;
+      while dl^[i].absatz=nil do dec(i);
+      inc(startline,i-1);
+      firstpar:=dl^[i].absatz;
+      firstline:=dl^[i].zeile;
+      KorrBlockScrolled(true);
+      aufbau:=true;
+      end;
     end;
 end;
 
@@ -848,8 +854,8 @@ begin
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
         { 14.02.2000 robo - Quote-Reflow }
-        { moveworkpos(spaces,actabs); }
-        moveworkpos(spaces+quotes,actabs);
+         moveworkpos(spaces,actabs);          { JG: 27.04.00 Cursor an Zeilenanfang }
+        {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
         { /robo }
         modified:=true;
         aufbau:=true;
@@ -2280,6 +2286,13 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/04/27 09:06:55  jg
+  - Editor: Pgdn in der letzten Textseite springt ohne scrollen zum Textende
+            beim Quote-Reflow wird der Cursor an den Zeilenanfang gesetzt,
+            und nicht mehr hinter das Quotezeichen
+
+  - Lister: "/" als Hervorhebezeichen erlaubt.
+
   Revision 1.17  2000/04/06 20:55:52  rb
   Bugfixes; ich wills schliesslich keinen Murks hinterlassen
 
