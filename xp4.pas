@@ -1797,7 +1797,7 @@ begin      { --- select --- }
         1,2  : begin                        { Userliste }
                  if dispmode=1 then begin
                    if c='#'then Jump_Adressbuch;
-                   if c=^\ then Next_Adrbuch;                         { Ctrl-# }
+                   if (c=^\) or (t=keyaltg) then Next_Adrbuch;        { Ctrl-# }
                    end;
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
@@ -2238,6 +2238,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.52  2001/10/17 02:12:54  my
+  MY:- Fix: <Ctrl-#> funktionierte nicht mit Win-Tastaturen. Neuer
+       Key daher <Alt-G>, <Ctrl-#> ist aber noch aktiv.
+
   Revision 1.26.2.51  2001/09/20 15:47:07  my
   JG+MY:- Ein paar Optimierungen (GoP, dBGotop etc.)
   JG+MY:- Bei <Alt-P> in PM-Brettern wurde Brettdatum nicht korrigiert
