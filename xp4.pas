@@ -1168,7 +1168,7 @@ var t,lastt: taste;
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp,hds,false);
-      if (hdp.replyto.count=0) or ((hdp.empfanz=1) and
+      if ((DispMode <> 12) and (hdp.replyto.count=0)) or ((hdp.empfanz=1) and
         (hdp.replyto.count > 0) and (hdp.empfaenger=hdp.replyto[0])) then
       begin
         if c=k2_b  then c:=k2_p;
@@ -2168,6 +2168,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.87  2001/06/06 18:40:41  mk
+  JG:- Fix: When using <Ctrl-B> in a reference tree on a public
+    message, XP created a private message if the reference
+    tree contained both public and private messages and if
+    the reference tree was activated from a private message.
+
   Revision 1.86  2001/06/05 21:23:35  ma
   - fixed: crashed when replying to a mail in user mail lister
 
