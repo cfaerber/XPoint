@@ -115,42 +115,43 @@ var uucp : boolean;
   end;
 
 begin
+  BoxParOk := '';
   uucp:=(logintyp=ltUUCP);
   with BoxPar^ do
   begin
-    TempPPPMode := PPPMode;
-    if SysopInp+SysopOut<>'' then TempPPPMode := false;
-    SysopMode:=(SysopInp+SysopOut<>'') or TempPPPMode;
-    if SysopMode then
+    if do_SysopMode then
     begin
-      if TempPPPMode then
+      if client then                      { Beginn client-spezifische Tests }
       begin
 
-        if (PPPClientPath = '') then
-          BoxParOk := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
-        else if not ChkPPPClientPath then
-          BoxParOk := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
-        else if (PPPClient = '') then
-          BoxParOk := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
-        else if not ChkPPPClient then
-          BoxParOk := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
-        else if not ChkAddServers then
-          BoxParOk := getres2(706,11)   { 'ZusÑtzliche Server nicht OK' }
-        else if (PPPMailInServer <> '') and (PPPMailInEnv = '') then
-          BoxParOk := getres2(706,12)   { 'Envelope-Adresse fehlt' }
-        else
-          BoxParOk := '';
-      end else
-      begin
+        if not ChkAddServers then         { immer testen (Netcall+SysopMode) }
+          BoxParOk := getres2(706,11)     { 'ZusÑtzliche Server nicht OK' }
+
+        else if not SysopMode then        { nur bei Client-Netcall testen }
+        begin
+          if (PPPClientPath = '') then
+            BoxParOk := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
+          else if not ChkPPPClientPath then
+            BoxParOk := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
+          else if (PPPClient = '') then
+            BoxParOk := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
+          else if not ChkPPPClient then
+            BoxParOk := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
+          else if (PPPMailInServer <> '') and (PPPMailInEnv = '') then
+            BoxParOk := getres2(706,12);  { 'Envelope-Adresse fehlt' }
+        end;
+      end;                                { Ende client-spezifische Tests }
+
+      if SysopMode then                   { Test SysopMode alle Netztypen }
+      begin                               { *inkl.* RFC/Client            }
         if sysopinp='' then
-          BoxParOk:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
+          BoxParOk:=getres2(706,1)        { 'kein Eingangspuffer-Name' }
         else if sysopout='' then
-          BoxParOk:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
-        else
-          BoxParOk:='';
+          BoxParOk:=getres2(706,2);       { 'kein Ausgangspuffer-Name' }
       end;
     end
-    else
+
+    else                                  { Netcall non-RFC/Client }
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
          (telefon='') or (telefon='08-15') then
         BoxParOk:=getres2(706,3)    { 'unvollstÑndige Pointdaten' }
@@ -162,10 +163,8 @@ begin
       else if ntDownarcPath(netztyp) and not FindDownarcer then
         BoxparOk:=getres2(706,6)
       else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
-        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
-      else
-        BoxParOk:='';
-    end;
+        BoxParOk:=getres2(706,5);   { 'fehlende UpLoader-Angabe' }
+  end;
   freeres;
 end;
 
@@ -1542,6 +1541,16 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.16  2001/12/20 15:07:18  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MY:- Sysop-Mode RFC/Client funktioniert jetzt.
+
   Revision 1.24.2.15  2001/12/11 17:48:30  my
   MY:- Netcall RFC/Client: Fehlende Envelope-Adresse (Mail-in) fÅhrt zu
        Fehler und bricht Netcall ab.

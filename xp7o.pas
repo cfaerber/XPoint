@@ -132,16 +132,16 @@ var f      : file;
     InMsgID: String;
 
   procedure ClrUVS;
-  var pbox : string[20];
+  var pbox : string[BoxNameLen];
       uvl  : boolean;
       uvs  : byte;
-      IDFile: text;
-      HaveIDFile: boolean;
+      IDFile     : text;
+      HaveIDFile : boolean;
       MsgIDFound : boolean;
       Outmsgid   : string[MidLen];
-      CCs: Byte;
+      CCs        : byte;
   begin
-    HaveIDFile := Exist('UNSENT.ID') and TempPPPMode;
+    HaveIDFile := Exist('UNSENT.ID') and client;
     if HaveIDFile then
       Assign(IDFile, 'UNSENT.ID');
 
@@ -325,11 +325,11 @@ begin
   rewrite(t);
   with NC^ do begin
     writeln(t);
-    txt:=getres2(700,iif(sysopmode and not TempPPPMode,3,4));   { 'Netztransfer' / 'Netzanruf' }
+    txt:=getres2(700,iif(boxpar^.sysopmode,3,4));  { 'Netztransfer' / 'Netzanruf' }
     write(t,txt,getres2(700,5),fdat(datum),getres2(700,6),ftime(datum),  { ' vom ' / ' um ' }
-            getres2(700,iif(sysopmode and not TempPPPMode,7,8)),boxpar^.boxname);  { ' zur ' / ' bei ' }
+            getres2(700,iif(boxpar^.sysopmode,7,8)),boxpar^.boxname);  { ' zur ' / ' bei ' }
     if NC^.telefon='' then NC^.telefon:=boxpar^.telefon;
-    if sysopmode or (NC^.telefon='') then writeln(t)
+    if do_sysopmode or (NC^.telefon='') then writeln(t)
     else writeln(t,', ',NC^.telefon);
 {     p:=cpos(' ',boxpar^.telefon);
       if p=0 then writeln(t,', ',boxpar^.telefon)
@@ -338,17 +338,17 @@ begin
     writeln(t);
     bytes:=getres(13);
     cps:=getres2(700,28);
-    if TempPPPMode then
-    begin
-      abbruch:=false;
-      writeln(t,getreps2(700,43,strsn(sendbuf,7)));  { 'Sendepuffer:    %s Bytes' }
-      writeln(t,getreps2(700,44,strsn(recbuf,7)));   { 'Empfangspuffer: %s Bytes' }
-    end else
-    if sysopmode then
+    if boxpar^.sysopmode then
     begin
       abbruch:=false;
       writeln(t,getreps2(700,9,strsn(sendbuf,7)));   { 'Ausgangspuffer: %s Bytes' }
       writeln(t,getreps2(700,10,strsn(recbuf,7)));   { 'Eingangspuffer: %s Bytes' }
+    end
+    else if client then
+    begin
+      abbruch:=false;
+      writeln(t,getreps2(700,43,strsn(sendbuf,7)));  { 'Sendepuffer   : %s Bytes' }
+      writeln(t,getreps2(700,44,strsn(recbuf,7)));   { 'Empfangspuffer: %s Bytes' }
     end
     else begin
       if not (_fido or _turbo or _uucp) then
@@ -422,25 +422,23 @@ begin
       close(netlog^);
       logopen:=false;
     end;
-{    if TempPPPMode and exist(LogPath + ClientLog) then
-      ClientLogFile := LogPath + ClientLog; }
     if (_maus and exist(mauslogfile)) or
        ((_fido or _uucp) and exist(fidologfile)) or
-       (TempPPPMode and exist(ClientLogFile)) then
+       (client and (not boxpar^.SysopMode) and exist(ClientLogFile)) then
     begin
       writeln(t);
       if _maus then
         writeln(t,getres2(700,35))   { MausTausch-Logfile }
       else if _fido then
         writeln(t,getres2(700,36))   { Fido-Logfile }
-      else if TempPPPMode then
+      else if client then
         writeln(t,getres2(700,45))   { Client-Logfile }
       else
         writeln(t,getres2(700,40));  { UUCP-Logfile }
       writeln(t);
-      assign(log,iifs(_maus,mauslogfile,iifs(TempPPPMode,ClientLogFile,fidologfile)));
+      assign(log,iifs(_maus,mauslogfile,iifs(client,ClientLogFile,fidologfile)));
       fm_ro; reset(log); fm_rw;
-      if _fido or (_uucp and not TempPPPMode) then
+      if _fido or _uucp then
         repeat
           readln(log,s);
         until (left(s,2)='--') or eof(log);
@@ -449,7 +447,7 @@ begin
         writeln(t,s);
         end;
       close(log);
-      end;
+    end;
     close(t);
     inwin:=windmin>0;
     if inwin then begin
@@ -851,11 +849,21 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.26  2001/12/20 15:07:18  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MY:- Sysop-Mode RFC/Client funktioniert jetzt.
+
   Revision 1.13.2.25  2001/10/18 17:24:34  mk
-  - letzten checkin wieder r¸ckg‰ngig gemacht
+  - letzten checkin wieder rÅckgÑngig gemacht
 
   Revision 1.13.2.24  2001/09/29 10:11:49  mk
-  - ClientLog wird jetzt zus‰tzlich auch im Logpfad beachtet
+  - ClientLog wird jetzt zusÑtzlich auch im Logpfad beachtet
 
   Revision 1.13.2.23  2001/09/16 10:29:20  mk
   - reset IOResult at end of CallFilter, avoids possible error chain

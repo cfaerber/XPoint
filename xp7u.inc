@@ -173,7 +173,7 @@ begin
   with boxpar^ do
   begin
     opt := '';
-    if not TempPPPMode then
+    if not client then
     begin
       if SizeNego then opt:='-s ';
       if UUSmtp or ClientSmtp then
@@ -186,21 +186,21 @@ begin
     begin
       opt := opt + '-SMTP '
     end;
-    if ClientSmtp or TempPPPMode then opt := opt+'-client ';
+    if ClientSmtp or client then opt := opt+'-client ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
     f:=OutFilter(source);
-    if TempPPPMode then
+    if client then
       shell(UUZBin+' -zu '+opt+OwnPath+source+' '+DestDir+' '+boxpar^.pointname+' '+
-          boxpar^.boxname,400,0)
+          boxpar^.boxname,400,3)
     else
       shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
-          boxpar^.boxname+' '+copy(caller,3,4),400,0);
+          boxpar^.boxname+' '+copy(caller,3,4),400,3);
     if f then _era(source);
   end;
   if errorlevel<>0 then exit;
-  if (BoxPar^.uparcer='') or TempPPPMode then
+  if (BoxPar^.uparcer='') or client then
   begin             { Mail/News nicht packen }
     spufsize:=filesum(DestDir+'D*.OUT');
     spacksize:=spufsize;
@@ -367,7 +367,7 @@ end;
 function UUCPnetcall: Boolean;
 var
     res  : integer;
-    f       : file;
+    f    : file;
 begin
   recs:='';
   netcall_connect:=true;
@@ -408,7 +408,7 @@ begin
       _era(eppfile);
     if res=uu_ok then
       wrtiming('NETCALL '+ustr(boxpar^.boxname));
-    if res=uu_recerr then begin    { doppeltes Senden verhindern }
+    if res=uu_recerr then begin      { doppeltes Senden verhindern }
       assign(f,XFerDir+caller);
       rewrite(f,1);                   { Inhalt des C-Files lîschen }
       close(f);
@@ -429,9 +429,11 @@ end;
 
 procedure UUCPSysopTransfer;
 var
-  dummy : longint;
-  s: String;
-  Error: Boolean;
+  dummy    : longint;
+  s        : string;
+  error    : boolean;
+  inbound  : pathstr;
+  outbound : pathstr;
 
   procedure EmptyDir(const Dir, Mask: String);
   var
@@ -447,8 +449,8 @@ var
     FindClose(sr);
   end;
 
-  { ermitteln, welche Nachrichten nicht versand wurden }
-  procedure GetUnversandMessages;
+  { ermitteln, welche Nachrichten nicht versandt wurden }
+  procedure GetUnversandtMessages;
   var
     MsgFile: file;
     IDFile: text;
@@ -496,13 +498,12 @@ var
 
   procedure RenameFiles;
   var
-    sr  : searchrec;
-    f: File;
+    sr : searchrec;
   begin
-    findfirst(BoxPar^.PPPSpool + '*.MSG',ffAnyFile,sr);
+    findfirst(inbound + '*.MSG',ffAnyFile,sr);
     while doserror=0 do
     begin
-      _rename(BoxPar^.PPPSpool + sr.name, BoxPar^.PPPSpool + GetBareFileName(sr.name) + '.IN');
+      _rename(inbound + sr.name, inbound + GetBareFileName(sr.name) + '.IN');
       findnext(sr);
     end;
     FindClose(sr);
@@ -510,26 +511,32 @@ var
 
   var
    res: integer;
+
 begin
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do
   begin
-    if not TempPPPMode then
+    inbound:=iifs(SysopMode,SysopInp,PPPSpool);
+    outbound:=iifs(SysopMode,SysopOut,PPPSpool);
+    if SysopMode then
     begin
-      if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
+      if not IsPath(SysopInp) then     { Verzeichnisse testen }
+      begin
         trfehler(727,30);   { 'ungÅltiges Eingabeverzeichnis' }
         exit;
       end;
-      if not IsPath(SysopOut) then begin
+      if not IsPath(SysopOut) then
+      begin
         trfehler(728,30);   { 'ungÅltiges Ausgabeverzeichnis' }
         exit;
       end;
-    end else
+    end else if client then
     begin
       MkLongDir(PPPSpool, res);
       if IOResult = 0 then ;
-      if not IsPath(PPPSpool) then begin
-        trfehler(728,44);   { 'ungÅltiges Spoolverzeichnis' }
+      if not IsPath(PPPSpool) then
+      begin
+        trfehler(728,44);     { 'ungÅltiges Spoolverzeichnis' }
         exit;
       end;
       EmptyDir(PPPSpool, '*.IN');
@@ -539,16 +546,16 @@ begin
     NC^.Sendbuf := _filesize(ppfile);
     if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
     begin
-      outmsgs:=testpuffer(ppfile,false,dummy);
+      testpuffer(ppfile,false,dummy);
       twin;
       cursor(curoff);
 
-      ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
+      ZtoRFC(false,ppfile,outbound);
     end;
 
-    if TempPPPMode then
+    if client and (not SysopMode) then        { Client-Aufruf }
     begin
-      NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
+      NC^.Sendbuf:= filesum(outbound+'*.OUT');
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
       exchange(s, '$CLPATH+', PPPClientpath);
@@ -557,51 +564,45 @@ begin
       exchange(s, '$CLSPOOL', PPPSpool);
       attrtxt(col.colkeys);
       if XPdisplayed then
-        FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
+        FWrt(64,Screenlines,xp_client);      { '       CrossPoint' }
       shell(s,600,3);
-{      XPWinshell(OwnPath + s,'', 600,3, false); }
-{      dispfunctionkeys(false); }
       showscreen(false);
     end;
 
     if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
     begin
       window(1,1,80,25);
-      WriteUUnummer(uunum);
+      if not client then WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
-      if TempPPPMode then
-      begin
-        OutMsgs := 0;
-        GetUnversandMessages;
-      end;
+      if client and (not SysopMode) then
+        GetUnversandtMessages;
       ClearUnversandt(ppfile,box);
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
-      if TempPPPMode then
+      if client and (not SysopMode) then
       begin
         if Exist('UNSENT.PP') then
          if filecopy('UNSENT.PP', ownpath+ppfile) then
            _era('UNSENT.PP');
         _era('UNSENT.ID');
         EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. lîschen }
-        if Error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
+        if error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       end;
       Closebox;
     end;
 
-    if TempPPPMode then
+    if client then                         { -- Eingangspaket RFC/Client -- }
     begin
-      if exist(PPPSpool+'*.MSG') then
+      if exist(inbound+'*.MSG') then
       begin
-        NC^.Recbuf := filesum(PPPSpool+'*.MSG');
+        NC^.Recbuf := filesum(inbound+'*.MSG');
         if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
         shell(UUZBin+' -uz -w:'+strs(screenlines)+
-          ' '+PPPSpool+'*.MSG '+OwnPath + dpuffer,600,3);
+          ' '+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
         if nDelPuffer and (errorlevel=0) and
           (testpuffer(dpuffer,false,dummy)>=0) then
-            EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien lîschen }
-
+            EmptyDir(inbound, '*.MSG'); { entpackte Dateien lîschen }
         CallFilter(true,dpuffer);
       end;
       if _filesize(dpuffer)>0 then
@@ -609,19 +610,30 @@ begin
         if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
         begin
           _era(dpuffer);
-          RenameFiles;
+          if not SysopMode then RenameFiles
+          else EmptyDir(inbound, Wildcard);
         end;
       end;
     end else
-      if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
+      if exist(SysopInp+WildCard) then       { -- Eingangspaket RFC/UUCP -- }
         if ImportUUCPfromSpool(SysopInp) then
-          EmptyDir(BoxPar^.SysopInp, Wildcard);
+          EmptyDir(SysopInp, Wildcard);
 
     Netcall_connect:=true;
   end;
 end;
 {
   $Log$
+  Revision 1.13.2.22  2001/12/20 15:07:18  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MY:- Sysop-Mode RFC/Client funktioniert jetzt.
+
   Revision 1.13.2.21  2001/08/26 16:04:50  my
   - String "CrossPoint" instead of "CrossPoint/OpenXP" is displayed upon
     RFC/Client netcalls only then if "CrossPoint/OpenXP" was displayed

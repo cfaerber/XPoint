@@ -21,7 +21,7 @@ uses  typeform,xp0;
 const esec        = 30;    { Sekunden warten bei Fehler }
       MaggiFehler = 1;
       IdleTimeout = 5;
-      nlfile      = 'netlog.tmp';
+      nlfile      = 'NETLOG.TMP';
 
       forcepoll   : boolean = false;   { Ausschlu·zeiten ignorieren }
 
@@ -45,23 +45,23 @@ type NCstat = record
               end;
      NCSptr = ^NCstat;
 
-var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
-     NC        : NCSptr;
-     ConnTicks : longint;
-     outmsgs   : longint;  { Anzahl versandter Nachrichten }
-     outemsgs  : longint;  { Anzahl mitgeschickter EPP-Nachrichten }
-     wahlcnt   : integer;  { Anwahlversuche }
-     bimodem   : boolean;
-     SysopMode : boolean;
-     komment   : string[35];
-     fidologfile: string[12];
+var  comnr        : byte;       { COM-Nummer; wg. Geschwindigkeit im Datensegment }
+     NC           : NCSptr;
+     ConnTicks    : longint;
+     outmsgs      : longint;    { Anzahl versandter Nachrichten }
+     outemsgs     : longint;    { Anzahl mitgeschickter EPP-Nachrichten }
+     wahlcnt      : integer;    { Anwahlversuche }
+     bimodem      : boolean;
+     do_SysopMode : boolean;    { true if SysopMode or Client }
+     komment      : string[35];
+     fidologfile  : string[12];
      ClientLogFile: string[79];
-     ExtLogFile: string[79];
-    _turbo     : boolean;
-    _uucp      : boolean;
-    netlog     : textp;
-    logopen    : boolean;
-    in7e1,out7e1 : boolean;   { UUCP: Parity-Bit strippen/erzeugen }
+     ExtLogFile   : string[79];
+    _turbo        : boolean;
+    _uucp         : boolean;
+    netlog        : textp;
+    logopen       : boolean;
+    in7e1,out7e1  : boolean;    { UUCP: Parity-Bit strippen/erzeugen }
 
 
 implementation
@@ -69,6 +69,16 @@ implementation
 end.
 { 
   $Log$
+  Revision 1.3.2.3  2001/12/20 15:07:18  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MY:- Sysop-Mode RFC/Client funktioniert jetzt.
+
   Revision 1.3.2.2  2001/06/27 15:36:15  my
   - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
 
