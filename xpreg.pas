@@ -1445,8 +1445,8 @@ begin
   msglines:=ival(getres2(520,0));
   msgbox(70,msglines+8+iif(wait,3,0),'',x,y);
   moff;
-  wrt(x+5,y+1,'Cross \\//    '+
-              Right('           ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
+  wrt(x+3,y+1,'Cross \\//    '+
+              Right('               ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
   s:='OpenXP ' + x_copyright + ' by ' + author_name;
   wrt(x+67-length(s),y+2,s);
@@ -1577,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2000/12/28 14:46:34  mk
+  - nochmal optische korrektur fuer Copyright-Dialog
+
   Revision 1.10.2.5  2000/12/26 21:44:59  mk
   - optische korrektur
 
