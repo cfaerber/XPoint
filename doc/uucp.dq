@@ -179,7 +179,7 @@ treffen.
 >>|
 Allen Netzen, mit denen wir uns im folgenden besch„ftigen werden, ist eines
 gemeinsam: Sie begrnden sich auf einer Reihe von technischen Standards, die
-witzigerweise die Bezeichnung in der Internet-Dokumenten-Reihe "Request for Comments" (Aufforderung zu Kommentaren)
+witzigerweise in der Internet-Dokumenten-Reihe "Request for Comments" (Aufforderung zu Kommentaren)
 enthalten sind; man spricht daher von "RFC-basierten Netzen". Die verschiedenen RFC-Texte
 sind bzw. werden fortlaufend durchnumeriert und in den Netzen ver”ffentlicht.
 Falls Sie sich n„her fr diese Dokumente interessieren, so finden Sie in
@@ -1533,7 +1533,7 @@ selbstverst„ndlich angesehene Leistungsmerkmale *nicht*:
 
 o  Protokoll i (bidirektionale šbertragung)
 o  Poll ber IP
->>|
+<<|
 
 Die Aufrufsyntax ist
 
