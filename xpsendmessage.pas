@@ -1321,8 +1321,13 @@ fromstart:
  end;
 
  except 
-   on E:Exception do 
+   on E:Exception do
+   begin
      fehler(E.Message);
+   {$IFDEF Debug }
+      raise; // raise error to write debug output with line info
+   {$ENDIF }
+   end;
  end;
 
 end; {------ of DoSend -------}
@@ -1422,6 +1427,9 @@ finalization
 
 {
   $Log$
+  Revision 1.54  2002/06/13 17:09:23  mk
+  - reraise exceptions in DoSend to give debug info with line information
+
   Revision 1.53  2002/06/12 09:14:53  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
