@@ -206,8 +206,8 @@ label selende;
       if _brett[1]='1' then
       begin
         dbGo(mbase,disprec[1]);
-{!!        if left(dbReadStr(mbase,'brett'),1)<>'1' then
-          disprec[1]:=0; }
+        if left(dbReadStr(mbase,'brett'),1)<>'1' then
+          disprec[1]:=0;
       end else
         GoP;
       end;
@@ -2127,6 +2127,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.21  2000/12/06 21:34:06  mk
+  - removed false fix for Bug #117117
+
   Revision 1.26.2.20  2000/11/22 09:47:23  mk
   MH:- Kommentarbaum wurde unnoetigerweise neu aufgebaut
 
