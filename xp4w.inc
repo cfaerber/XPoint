@@ -113,7 +113,8 @@ begin
   selcall(10,gl-1);
   brettgruppe:=bgr;
   abhdatum:=mhd;
-  if not kb_ctrl and userweiter and not dbDeleted(ubase,rec) then begin
+  if not (kb_ctrl or kb_shift) and userweiter and not dbDeleted(ubase,rec) then
+  begin
     dbGo(ubase,rec);
     if Forth then begin
       p2:=p;
@@ -1029,9 +1030,10 @@ begin
 
 (*  exit codes Lister:
 
-    -128 bis  -5 = Keine Aktion, Fehlerton und Lister mit aktueller
+    -128 bis  -6 = Keine Aktion, Fehlerton und Lister mit aktueller
        8 bis 127 = Nachricht neu starten (Kommentarbaumbewegungen beachten)
 
+    -5  = <Ctrl-W> aus xp1o evtl. rckg„ngig machen
     -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
     -3  = Kommentarbaum anzeigen
     -2  = Wiedervorlageflag umschalten
@@ -1771,6 +1773,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.45  2002/05/30 22:19:19  my
+  JG:- Das Verhindern des Weiterschaltens zum n„chsten User beim Verlassen
+       eines User-Bretts mit <Shift-Esc> funktioniert jetzt.
+
+  MY:- Ein paar Kommentare korrigiert/aktualisiert.
+
   Revision 1.25.2.44  2002/04/27 02:32:14  my
   MY:- Kleine, aber entscheidende nderung des Commit-Textes zu
        Revision 1.25.2.39 ("deaktiviert" => "aktiviert")
