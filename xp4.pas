@@ -843,7 +843,6 @@ var t,lastt: taste;
            10=Textdatei, 11=Binaerdatei
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte); }
   begin
-    sData := nil;
     OrgHDP:= nil;
 
     QuoteMask  := '';
@@ -851,10 +850,10 @@ var t,lastt: taste;
 
     gflags := 0;
     news := false;
-    
+
+    sData := TSendUUData.Create;
     try
       GoP;
-      sData := TSendUUData.Create;
 
       // -- Reply or Followup ------------------------------------------
       if reply then
@@ -2876,6 +2875,9 @@ end;
 
 {
   $Log$
+  Revision 1.145  2003/08/28 05:41:40  mk
+  - create sData on correct place in brief_senden
+
   Revision 1.144  2003/08/23 17:40:29  mk
   - use extMid instead of '.MID'
 
