@@ -106,11 +106,12 @@ implementation  { ------------------------------------------------------- }
   {$i linux/fileio.inc}
 {$endif}
 
+uses
+  xp0;
+
 {$i fileio.inc}
 
 {$ifndef Linux}
-uses
-  xp0;
 
 const
   PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
@@ -595,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/06/30 19:11:31  mk
+  - wieder compilierbar
+
   Revision 1.44  2000/06/30 13:48:10  hd
   - Linux extrahiert
   - fileio.inc fuer systemunabhaengige Routinen
