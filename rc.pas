@@ -72,16 +72,18 @@ begin
   settextbuf(t,tbuf,sizeof(tbuf));
   reset(t);
   
+  fsplit(infile,dir,name,ext);
+  infile:=name;
+  
   outpath:='';
   if (paramcount=2) then begin
     outpath:=paramstr(2);
     if outpath<>'' then begin
       if outpath[length(outpath)]<>'\' then 
         outpath:=outpath+'\';
-      fsplit(infile,dir,name,ext);
-      infile:=name
     end
   end;
+  if (outpath='') then outpath:=dir;
   
   assign(f,outpath+infile+'.RES');
   rewrite(f,1);
