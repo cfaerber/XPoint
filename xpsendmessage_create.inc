@@ -43,7 +43,7 @@ var Count: Integer;
 
     NewMidType : byte;
     s      : string;
-    
+
   begin
     { --- 0. Schritt: Ein paar vorarbeiten ---------------------------- }
   
@@ -165,15 +165,21 @@ var Count: Integer;
 
     { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
 
-    hdp.Empfaenger.Assign(EMP);
-    hdp.Kopien    .Assign(KOP);
+    if intern then
+    begin
+      hdp.Empfaenger.Add(Mid(empfaddr,2));    
+    end else
+    begin
+      hdp.Empfaenger.Assign(EMP);
+      hdp.Kopien    .Assign(KOP);
 
-    hdp.UTo := RFCWriteAddressList(sData.EmpfList,nil,[atTo]);
-    hdp.CC  := RFCWriteAddressList(sData.EmpfList,nil,[atCC]);
-    hdp.BCC := RFCWriteAddressList(sData.EmpfList,nil,[atBCC]);
+      hdp.UTo := RFCWriteAddressList(sData.EmpfList,nil,[atTo]);
+      hdp.CC  := RFCWriteAddressList(sData.EmpfList,nil,[atCC]);
+      hdp.BCC := RFCWriteAddressList(sData.EmpfList,nil,[atBCC]);
 
-    hdp.archive := PM;
-    hdp.betreff:=betreff;
+      hdp.archive := PM;
+      hdp.betreff:=betreff;
+    end;
     
     case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
       0 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
@@ -379,35 +385,45 @@ var Count: Integer;
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
     // 3a) Bretter/User suchen, evt. anlegen oder löschen
-    for i:=EMP.Count-1 downto 0 do
-      if PM then 
-      begin
-        Emp[i]:=Addr2DB(EMP[i]);
-      
-        dbSeek(ubase,uiName,UpperCase(Emp[i]));
-        if not dbFound then             { kein bekannter B. Nutzer => anlegen }
-          AddNewUser(Emp[i],Box);
-        EMP[i] := mbrettd('U',ubase);
-        if dbreadint(ubase,'adrbuch')=0 then { Empfaenger ins Adressbuch aufnehmen }
-          dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-      end else
-      begin
-        dbSeek(bbase,biBrett,'A'+UpperCase(EMP[i]));
-        if dbFound then begin
-          EMP[i] := mbrettd('A',Bbase);
-          dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
-        end
-        else
-          EMP.Delete(i);
-      end;
-      
-    if (not PM) and (EMP.Count<=0) then    { kein bekanntes Brett *** GRMPF ***       }
-    begin                                  { => einfach das erste nehmen und anlegen! }
-      dbSeek(bbase,biBrett,UpperCase('$/¯Nix'));
+    if Intern then
+    begin
+      dbSeek(bbase,biBrett,UpperCase(empfaddr));
       if not dbFound then
-        AddNewBrett('$/¯Nix','','',StdHalteZeit,IntGruppe,0);
+        AddNewBrett(empfaddr,'','',StdHalteZeit,IntGruppe,0);
       EMP.Add(mbrettd('$',BBase));
       dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
+    end else
+    begin
+      for i:=EMP.Count-1 downto 0 do
+        if PM then 
+        begin
+          Emp[i]:=Addr2DB(EMP[i]);
+      
+          dbSeek(ubase,uiName,UpperCase(Emp[i]));
+          if not dbFound then             { kein bekannter B. Nutzer => anlegen }
+            AddNewUser(Emp[i],Box);
+          EMP[i] := mbrettd('U',ubase);
+          if dbreadint(ubase,'adrbuch')=0 then { Empfaenger ins Adressbuch aufnehmen }
+            dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
+        end else
+        begin
+          dbSeek(bbase,biBrett,'A'+UpperCase(EMP[i]));
+          if dbFound then begin
+            EMP[i] := mbrettd('A',Bbase);
+            dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
+          end
+          else
+            EMP.Delete(i);
+        end;
+      
+      if (not PM) and (EMP.Count<=0) then    { kein bekanntes Brett *** GRMPF ***       }
+      begin                                  { => "$/>>Nix" nehmennehmen und ggf. anlegen! }
+        dbSeek(bbase,biBrett,UpperCase('$/¯Nix'));
+        if not dbFound then
+          AddNewBrett('$/¯Nix','','',StdHalteZeit,IntGruppe,0);
+        EMP.Add(mbrettd('$',BBase));
+        dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
+      end;
     end;
 
     // 3b) Einträge erzeugen
@@ -464,6 +480,7 @@ var Count: Integer;
       b:=1;
       dbWriteN(mbase,mb_gelesen,b);
       if sendFlags and sendHalt<>0 then b:=1
+      else if Intern then b:=0
       else if flLoesch then b:=2
       else if (pm and not HaltOwnPM) then b:=0 { Eigene Nachrichten Halten gilt nicht fuer Mails }
       else b:=1;
@@ -612,9 +629,12 @@ var Count: Integer;
       exit; // nothing to do for this box!
 
      dbOpen(d,BoxenFile,1);
-     dbSeek(d,boiName,Uppercase(Box));
-     LoadBoxData(d);
-     dbClose(d);
+     try
+       dbSeek(d,boiName,Uppercase(Box));
+       LoadBoxData(d);
+     finally
+       dbClose(d);
+     end;
    
   // -- Je nach Boxtyp unterschiedliche Behandlung ---------------------
 
@@ -680,6 +700,30 @@ var Count: Integer;
    end;
   end;
 
+  procedure CreateInternalMessage(const Box: string);
+  var       d: db;
+      EMP,KOP: TStringList;
+  begin
+    EMP := nil;
+    KOP := nil;
+    try
+      EMP := TStringList.Create;
+      KOP := TStringList.Create;
+    
+      dbOpen(d,BoxenFile,1);
+      try
+        dbSeek(d,boiName,Uppercase(Box));
+        LoadBoxData(d);
+      finally
+        dbClose(d);
+      end;
+      CreateSingleMessage(Box,netztyp,EMP,KOP,false,false);
+    finally
+      EMP.Free;
+      KOP.Free;
+    end;    
+  end;
+
   procedure BoxSort(l,r:integer);
   var p: byte;
       l2,r2: integer;
@@ -689,8 +733,8 @@ var Count: Integer;
     l2 := l;
     r2 := r;
     while l2<r2 do begin
-      while (ntMessageID(Ord(FirstChar(sData.Boxen[l2]))) < p) and (l2<=r) do inc(l2);
-      while (ntMessageID(Ord(FirstChar(sData.Boxen[r2]))) > p) and (r2>=l) do dec(r2);
+      while (ntMessageID(Ord(FirstChar(sData.Boxen[l2])))<= p) and (l2<r) do inc(l2);
+      while (ntMessageID(Ord(FirstChar(sData.Boxen[r2]))) > p) and (r2>l) do dec(r2);
       if l2<r2 then sData.Boxen.Exchange(l2,r2);
     end;
     BoxSort(l,r2-1);
@@ -708,24 +752,34 @@ begin
   dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
   Count := 0;
 
-// RFC- und ZConnect-Boxen müssen nach vorn sortiert werden, damit wir
-// eine Message-ID erzeugen können, die einen FQDN enthält.
-// FTN erhält ggf. die MSGID nach Gatebau-MSGID.DOC.
-// Maus muss nach hinten, damit wir ggf. eine Fremd-ID mittransportieren
-// können.
-  BoxSort(0,sData.Boxen.Count-1);
-  MidType := midNone;
+  if intern then 
+  begin
+    CreateInternalMessage(DefaultBox);
+  end else
+  begin
 
-  for i:=0 to sData.Boxen.Count-1 do begin
-    if sData.has_pm then CreateBoxMessages(Mid(sData.Boxen[i],2),true);
-    if sData.has_am then CreateBoxMessages(Mid(sData.Boxen[i],2),false);
+  // RFC- und ZConnect-Boxen müssen nach vorn sortiert werden, damit wir
+  // eine Message-ID erzeugen können, die einen FQDN enthält.
+  // FTN erhält ggf. die MSGID nach Gatebau-MSGID.DOC.
+  // Maus muss nach hinten, damit wir ggf. eine Fremd-ID mittransportieren
+  // können.
+    BoxSort(0,sData.Boxen.Count-1);
+    MidType := midNone;
+
+    for i:=0 to sData.Boxen.Count-1 do begin
+      if sData.has_pm then CreateBoxMessages(Mid(sData.Boxen[i],2),true);
+      if sData.has_am then CreateBoxMessages(Mid(sData.Boxen[i],2),false);
+    end;
   end;
 
   closebox;
 end;
-
+                                                      
 //
 // $Log$
+// Revision 1.2  2002/05/09 15:18:06  cl
+// - fixed internal messages
+//
 // Revision 1.1  2002/04/14 22:33:10  cl
 // - New address handling, supports To, CC, and BCC
 // - Nearly complete rewrite of DoSend's message creation

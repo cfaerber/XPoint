@@ -308,6 +308,7 @@ var f,f2     : file;
     edis     : byte;
     x,y,y2   : Integer;
     brk      : boolean;
+
     typ      : string;  { Kopf fuer Betreff/Sende-Box          }
     wbox     : string;
     ch       : string;  { '*'-Zeichen fuer abweichende Adresse }
@@ -357,7 +358,7 @@ var f,f2     : file;
     SDNope   : boolean;
     dbshown  : boolean;
     intern,                 { interne Nachricht                   }
-    
+   
     lokalPM  : boolean;     { lokale PM                           }
 
     grnr     : longint;     { Brettgruppen-Nr.                    }
@@ -412,7 +413,7 @@ var f,f2     : file;
     Boundary : String;
     i        : Integer;
 
-  label xexit,xexit1,xexit2,fromstart,ReadAgain;
+  label fromstart,ReadAgain;
 
 {$I xpsendmessage_subs.inc}
 {$I xpsendmessage_subs_mime.inc}
@@ -837,6 +838,7 @@ end;
 {$I xpsendmessage_create.inc}
 
 begin      //-------- of DoSend ---------
+ try
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
@@ -844,7 +846,8 @@ begin      //-------- of DoSend ---------
   dbshown := false;
 
   s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
- try  
+  
+ try 
   assign(f,datei);
   parts := TList.Create;
   partsex := false;
@@ -881,16 +884,17 @@ begin      //-------- of DoSend ---------
     OrigBox:='';
   end;
 
+ try // xexit1;
   if not pm and betreffbox and (empfaddr<>'') and (FirstChar(empfaddr)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
     SendEmpfList.Clear; { clear list of CC recipients }
-    goto xexit1;
+    exit;
   end;
 
-  hdp := THeader.Create;
-
   MakeSignature(signat,sigfile,sigtemp);
+
+  hdp := THeader.Create;
 
   SendDefault:=1;
   verteiler:=false;
@@ -898,9 +902,13 @@ begin      //-------- of DoSend ---------
   flPGPsig:=(sendflags and SendPGPsig<>0) or PGP_signall;
   flPGPreq:=(sendflags and SendPGPreq<>0);
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
-  if empfaddr<>'' then sData.EmpfList.AddNewXP(pm,empfaddr,'');
-  fo:='';
 
+  if empfaddr<>'' then sData.EmpfList.AddNewXP(pm,empfaddr,'');
+  intern := LeftStr(empfaddr,3)='$/'#$AF;
+  
+  fo:='';
+  
+ try //xexit
 { Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
 fromstart:
 
@@ -911,13 +919,15 @@ fromstart:
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
 
   { -- Empfaenger -- }
-  CheckEmpfaengerList(sData.EmpfList, false, false, sData);
+
+  if not intern then
+    CheckEmpfaengerList(sData.EmpfList, false, false, sData);
 
   betreff:=LeftStr(betreff,betrlen);
 
   if betreffbox then begin
     editbetreff;
-    if brk then goto xexit;
+    if brk then exit;
   end;
 
   orgftime:=filetime(datei);
@@ -925,7 +935,7 @@ fromstart:
     WriteHeaderHdr;
     EditNachricht(pgdown);              //Editor aufrufen
   end;
-  if not getsize then goto xexit;        { --> Nachrichten-Groesse 0 }
+  if not getsize then exit;        { --> Nachrichten-Groesse 0 }
   calc_hdsize;
 
   echomail:=ntEditBrettempf(netztyp) and not pm;
@@ -1121,7 +1131,7 @@ fromstart:
         9   : if not binary and (sendflags and sendWAB=0) then begin
                 editnachricht(false);              { zurueck zum Editor }
                 if not getsize then begin
-                  closebox; goto xexit; end;    { -> Nachrichtengroesse 0 }
+                  closebox; exit; end;    { -> Nachrichtengroesse 0 }
                 showbetreff;
                 showsize;
 //              n:=1;
@@ -1216,7 +1226,7 @@ fromstart:
     closebox;
 
     case senden of
-      0 : goto xexit;              { Abbruch }
+      0 : exit;              { Abbruch }
       2 : intern:=true;            { nicht in Puffer + kein unversandt }
       3 : begin                    { Nachricht nach />>Unversandt }
             ParkMsg;               { ## Originalempfaenger einfuegen }
@@ -1234,7 +1244,7 @@ fromstart:
           end;
       4 : begin
             DateSendIt;
-            goto xexit;
+            exit;
           end;
     end;
     if sendFlags and sendIntern<>0 then intern:=true;
@@ -1274,14 +1284,16 @@ fromstart:
 
   aufbau:=true; xaufbau:=true;
   { es muss jetzt der korrekte Satz in mbase aktuell sein! }
-xexit:
+ finally // xexit:
   freeres;
 //dispose(cc); dispose(ccm);
   Hdp.Free;
   if sigtemp then _era(sigfile);
-xexit1:
+ end;
+ 
+ finally //xexit1
   if sdNope then sData.Free;
-xexit2:
+
   forcebox:=''; forceabs:='';
   sendfilename:=''; sendfiledate:='';
   _bezug:=''; _orgref:=''; _beznet:=-1; _replypath:='';
@@ -1299,15 +1311,19 @@ xexit2:
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
   sendEmpfList.Clear;
+ end;
+
+ finally
+  for ii:=0 to parts.count-1 do
+    TObject(parts[ii]).Free;
+  parts.Free;
+ end;
 
  except 
    on E:Exception do 
      fehler(E.Message);
  end;
-  
-  for ii:=0 to parts.count-1 do
-    TObject(parts[ii]).Free;
-  parts.Free;
+
 end; {------ of DoSend -------}
 
 
@@ -1405,6 +1421,9 @@ finalization
 
 {
   $Log$
+  Revision 1.50  2002/05/09 15:18:06  cl
+  - fixed internal messages
+
   Revision 1.49  2002/04/14 22:33:10  cl
   - New address handling, supports To, CC, and BCC
   - Nearly complete rewrite of DoSend's message creation
