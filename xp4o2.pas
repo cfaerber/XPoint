@@ -11,9 +11,7 @@
 { CrossPoint: DBs packen, Kommentarbaum u.a. }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp4o2;
 
@@ -394,6 +392,7 @@ var hdp    : headerp;
     nullid : longint;
     realmaxkom : word;
     kb2    : komlistp;
+    MemFull: boolean;
 
   procedure RecurBez(ebene:byte; rec,spuren1,spuren2:longint; last:boolean;
                      var betr,brett:string);
@@ -416,26 +415,32 @@ var hdp    : headerp;
       mid    : longint;
 
     procedure wr;
+    var
+      TempS: String[40];
     begin
-      dbReadN(mbase,mb_betreff, NewBetr^);
+      dbReadN(mbase,mb_betreff, TempS);
+      Recount(TempS);
+      GetMem(NewBetr, Length(TempS)+1);
+      FastMove(TempS, NewBetr^, Length(TempS)+1);
       dbReadN(mbase,mb_brett,_brett);
-      if nullid=0 then begin
-        with kombaum^[komanz] do begin
+      if nullid=0 then
+      begin
+        with kombaum^[komanz] do
+        begin
           MsgPos:=dbRecno(mbase);
           lines1 := spuren1;
           lines2 := spuren2;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
-          if recount(newbetr^)=0 then;
           if left(newbetr^,35)<>left(betr,35) then
             inc(flags,kflBetr);
           if (_brett[1]='U') or (_brett[1]='1') then
             inc(flags,kflPM)
           else if _brett<>brett then
             inc(flags,kflBrett);
-          end;
-        inc(komanz);
         end;
+        inc(komanz);
+      end;
     end;
 
     procedure GetSeekID;
@@ -494,10 +499,14 @@ var hdp    : headerp;
 
   begin
     if (ebene<emax) and (komanz<realmaxkom) and
-       (rec<>0) and not dbDeleted(mbase,rec) then
+       (rec<>0) and not dbDeleted(mbase,rec) and not MemFull then
     begin
       if ebene>maxebene then inc(maxebene);
-      getmem(newbetr, 41); { Das Feld in der Datenbank ist 40 Zeichen groá }
+      if MemAvail < 12000 then
+      begin
+        Memfull := true;
+        RFehler(448);
+      end;
       new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
@@ -520,7 +529,8 @@ var hdp    : headerp;
                 r:=ba^[j-1]; ba^[j-1]:=ba^[j]; ba^[j]:=r;
                 end;
           if more then dbReadN(bezbase,bezb_msgpos,rec);
-          for i:=1 to anz do begin
+          for i:=1 to anz do
+          begin
             mmore:=more or (i<anz);
             if ebene < 32 then
               RecurBez(ebene+1,ba^[i].pos,
@@ -536,7 +546,7 @@ var hdp    : headerp;
           if more then dbGo(bezbase,rec);
         until not more;
       dispose(ba);
-      freemem(newbetr, 41);
+      freemem(newbetr, length(newbetr^)+1);
     end;
   end;
 
@@ -571,10 +581,9 @@ begin
   dbDisableIndexCache;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
+  MemFull := false;
   RecurBez(0,dbRecno(mbase),0,0,true,betr,brett);
-  dbEnableIndexCache;
   kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
-  dbSetIndex(bezbase,mi);
   FSize := Komanz * sizeof(komrec);
   if MaxAvail < (FSize+2048) then
   begin
@@ -595,6 +604,8 @@ begin
   end;
   kombaum:=kb2;
   closebox;
+  dbEnableIndexCache;
+  dbSetIndex(bezbase,mi);
   if maxebene<10 then komwidth:=3
   else if maxebene<23 then komwidth:=2
   else komwidth:=1;
@@ -892,9 +903,6 @@ begin
       end;
     findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
   delfirst(s);
   if s='' then
     fehler('No language files found !?')
@@ -922,6 +930,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.3  2000/11/04 22:51:30  mk
+  - Memory-Protection fuer den Kommentarbaum
+
   Revision 1.11.2.2  2000/11/01 10:42:15  mk
   - Limits im Kommentarbaum erhoeht
 
