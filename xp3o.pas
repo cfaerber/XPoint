@@ -61,6 +61,7 @@ procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 procedure NeuerEmpfaenger(name:string);
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:xpWord):boolean;
+                         
 procedure AppPuffer(const Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
 procedure CancelMessage;
@@ -92,8 +93,8 @@ uses
   datadef,database,typeform,fileio,inout,keys,maus2,xpheader,osdepend,resource,
   printerx,xp0,xp1,xp1o2,xp1input,
   xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+  xprope,xpspam,xpstreams,crc,
   xpmakeheader,xpsendmessage,xpsendmessage_rta;
-
 
 { Customselectroutinen fuer Brett/User }
 
@@ -1559,6 +1560,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.101  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

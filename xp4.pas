@@ -73,6 +73,8 @@ uses
   mime,debug,
   addresses, addresslist, xpstreams,
   xpsendmessage_rta,
+  xpspam,
+  xprope,
   xpglobal;
 
 const suchch    = #254;
@@ -2419,6 +2421,8 @@ begin      { --- select --- }
                    if t=keycr then
                      if kb_shift then read_msg(rmNormal, mpMulti)   { Shift-Enter }
                      else read_msg(rmNormal, mpAuto) else          { Enter }
+                   if t=',' then register_spam(false) else
+                   if t='.' then register_spam(true) else
                    if t=^J then read_msg(rmNormal, mpNone) else    { Ctrl-Enter }
                    if t=k2_cR then read_msg(rmRot13, mpNone) else { 'R' - Rot13 }
                    if t=k2_cH then read_msg(rmHexDump, mpNone) else { ^H }
@@ -2784,6 +2788,9 @@ end;
 
 {
   $Log$
+  Revision 1.137  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.136  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

@@ -365,7 +365,7 @@ begin
         count:=xpWord(inr and $ffff);
         rand:=random($1000);
         csum:=crc16strXP(username);
-     
+
         case netztyp of
           nt_ZConnect : if fqdn='' then _domain:=rev+'@'+LowerCase(pointname+'.'+Name)+Domain
                           else _domain:=rev+'@'+fqdn;
@@ -402,6 +402,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.6  2003/01/28 10:42:25  cl
+// - Added statistical SPAM filter
+//
 // Revision 1.5  2003/01/07 00:27:04  cl
 // - moved some functions from xpnt.pas to TXPServer
 //

@@ -1200,6 +1200,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 66   ~(Netz)
 67   ~(User)
 
+70   SPAM
+71   SPAM-Status
+
+72   SPAM-Wahrscheinlichkeit:%5.1f%%
+73   %-7s:   %4d : %-4d  %5.1f%%
+
 -
 460  Nachrichten-Header
 461  %s existiert schon. šberschreiben
@@ -4087,6 +4093,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.69  2003/01/28 10:42:25  cl
+# - Added statistical SPAM filter
+#
 # Revision 1.68  2003/01/07 00:56:46  cl
 # - send window rewrite -- part II:
 #   . added support for Reply-To/(Mail-)Followup-To

@@ -30,6 +30,7 @@ interface
 
 uses
   keys, //taste
+  classes,
   lister; //TLister
 
 
@@ -122,6 +123,8 @@ uses
   xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp3,xp3o,xp3o2,xp3ex,xp4,xp4o2,
   xpkeys,xpnt,xpfido,xpmaus,xpheader, xpmakeheader,
   xp_pgp,debug,viewer, MarkedList, regexpr,
+  xprope,
+  xpspam,
   xpglobal;
 
 type arcbuf = record
@@ -2685,6 +2688,7 @@ var hdp   : Theader;
     p     : byte;
     elist : boolean;    { mehrere Empfaenger }
     rlist : boolean;    { mehrere References }
+    spami : boolean;    { hat SPAM-Informationen }
     t     : taste;
     s     : atext;
 
@@ -2757,6 +2761,59 @@ var hdp   : Theader;
       closebox;
       end;
   end;
+
+  procedure spam_info;
+  var ml   : byte;
+      i,j  : integer;
+      x,y  : Integer;
+      s    : TRopeStream;
+      stat : TSpamStats;
+  begin
+    msgbox(34,5+
+      (High(stat.MostInteresting) - Low(stat.MostInteresting))+1+
+      (High(stat.LeastInteresting) - Low(stat.LeastInteresting))+1,
+      GetRes2(459,70),x,y);
+    
+    s := TRopeStream.Create;
+    try
+      XReadS(0,s);
+      s.Seek(0,soFromBeginning);
+      calc_message_spamicity(s,stat);      
+    finally
+      s.Free;
+    end;
+
+    inc(x,2);
+    inc(y);
+    
+    wrt(x,y,Format(GetRes2(459,72),[Stat.Spamicity*100]));
+    
+    inc(y,2);
+    for i:=Low(stat.MostInteresting) to High(stat.MostInteresting) do
+    begin
+      wrt(x,y,Format(GetRes2(459,73),[
+        stat.MostInteresting[i].Word,
+        stat.MostInteresting[i].GoodCount,
+        stat.MostInteresting[i].BadCount,
+        (1-stat.MostInteresting[i].Prob)*100]));
+      inc(y);
+    end;
+
+    inc(y,1);
+    for i:=Low(stat.LeastInteresting) to High(stat.LeastInteresting) do
+    begin
+      wrt(x,y,Format(GetRes2(459,73),[
+        stat.LeastInteresting[i].Word,
+        stat.LeastInteresting[i].GoodCount,
+        stat.LeastInteresting[i].BadCount,
+        (1-stat.LeastInteresting[i].Prob)*100]));
+      inc(y);
+    end;
+
+    wait(curoff);
+    closebox;
+  end;
+  
 
 {$IFDEF Debug}
   procedure msgs_tuple;   { Fenster mit Datenbankinfo }
@@ -2896,6 +2953,8 @@ begin
                                   FileUpperCase('mpuffer.')+IntToStr(dbReadInt(mbase,'ablage')));
     elist:=(Empfaenger.Count>1);
     rlist:=(References.Count>1);
+    spami:=(FirstChar(dbReadStrN(mbase,mb_brett)) in ['1']) or
+      (dbReadStrN(bbase,bb_brettname) = '$/¯Spam');
     if elist then s:=' (E='+getres2(459,30)
     else s:='';
     if rlist then begin
@@ -2903,6 +2962,13 @@ begin
       else s:=' (';
       s:=s+'R='+getres2(459,31);
       end;
+
+    if spami then begin
+      if s<>'' then s:=s+', '
+      else s:=' (';
+      s:=s+'S='+GetRes2(459,70);
+      end;
+      
 {$IFDEF Debug}
     if s<>'' then s:=s+', '
     else s:=' (';
@@ -2919,6 +2985,7 @@ begin
       until (t<mausfirstkey) or (t>mauslastkey) or (t=mausleft) or (t=mausright);
       if elist and (UpperCase(t)='E') then empfliste;
       if rlist and (UpperCase(t)='R') then refliste;
+      if spami and (UpperCase(t)='S') then spam_info;
 {$IFDEF Debug}
       if (UpperCase(t)='D') then msgs_tuple;
 {$ENDIF}
@@ -3738,6 +3805,9 @@ end;
 
 {
   $Log$
+  Revision 1.155  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.154  2003/01/07 00:56:46  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

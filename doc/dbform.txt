@@ -6,26 +6,28 @@ MSGS:  Nachrichtendatei
  1. Brett       String(5)   i    $/1/A/U + Int-Nr. aus BRETTER oder USER
                                  $ = Intern
                                  1 = PM 
-                                 A = îffentlich
+                                 A = oeffentlich
                                  U = User  
  2. Betreff     String(40)
  3. Absender    String(80)  i
  4. OrigDatum   Longint
  5. EmpfDatum   Longint     i
- 6. Groesse     LongInt          Nachrichtengrî·e ohne Header
+ 6. Groesse     LongInt          Nachrichtengroesse ohne Header
  7. Typ         Char             'T' / 'B'
- 8. HalteFlags  Byte             0=normal, 1=halten, 2=lîschen
+ 8. HalteFlags  Byte             0=normal, 1=halten, 2=loeschen
  9. gelesen     Byte        i    1=gelesen
-10. unversandt  Byte             Flags: 1=unversandt, 2=BinÑrmeldung, 4=pmCrypt
-                                        8=Wiedervorlage, 16=Crash, 32=zurÅckgest.
+10. unversandt  Byte             Flags: 1=unversandt, 2=Binaermeldung, 4=pmCrypt
+                                        8=Wiedervorlage, 16=Crash, 32=zurueckgest.
                                         64=interne Nachricht - keine Statusabfrage
                                         128=gecancelt
-11. Ablage      Byte             0..9 / 10..19 MPUFFER Datei
+11. Ablage      Byte             MPUFFER-Ablage:
+				 0..9   = Z-Netz-Format (alt)
+				 10..19 = ZConnect-Format
 12. Adresse     Longint          Offset in der Ablage (MPUFFER)
-13. MsgSize     Longint          Gesamtgrî·e incl. Header
+13. MsgSize     Longint          Gesamtgroesse incl. Header
 14. WVdatum     Longint          ab 0.9g: Original-Empfangsdatum bei Wiedervlg.
 15. MsgID       String(19)       ab 1.01
-16. Netztyp     Longint          ab 2.0:  LSB=Netztyp, $100=rÅckwÑrts-verkettet
+16. Netztyp     Longint          ab 2.0:  LSB=Netztyp, $100=rueckwaerts-verkettet
                                           $200=File Attached, $400=pm_reply
                                           $800=WAB vorhanden, $1000=highlight
                                           $2000=ISO-Zeichensatz
@@ -37,11 +39,15 @@ MSGS:  Nachrichtendatei
 18. Flags       Longint          ab 3.1:  1=PGP-Signatur ok
                                           2=PGP-Signatur fehlerhaft
                                           4=Multipart-MIME Nachricht (ab 3.2)
-                                          8+16+32=Priority (ab 3.21)
+                                 ab 3.21: 8+16+32=Priority:
                                            000=normal / 001=hoechste / 010=hoch               
                                            011=niedrig / 100=niedrigste
-                                          256 = Eigene Nachricht (f¸r Replaceown)
-
+				 XP/2:    64=HeaderOnly, 128=HDO-Request
+                                 ab 3.30: 256 = Eigene Nachricht (fuer Replaceown)
+				 ab OpenXP/32 3.9.5: 512+1024=SPAM-Status:
+					   00=nichts / 01=potentiell SPAM /
+					   10=manuell als HAM markiert /
+					   11=manuell als SPAM markiert
 19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
 
 Indizes:
@@ -69,7 +75,7 @@ BRETTER:   Brettdatei
  3. Pollbox     String(20)       '' == internes Brett
  4. HalteZeit   Integer
  5. Flags       Byte             1=Haltezahl, 2=ungelesene Msgs, 4=kein Filter
-                                 8=Schreibsperre, 16=UUCP-Brett
+                                 8=Schreibsperre, 16=RFC-Brett
                                  32: Adresse = Fido-Origin
  6. LDatum      Longint          Datum der letzten Nachricht
  7. Gruppe      Longint     i    Verkettung in Gruppendatei
@@ -93,11 +99,11 @@ USER:   User(U)/Verteiler
  2. Adresse     Extern           U
  3. Kommentar   String(30)
  4. Pollbox     String(20)  i
- 5. Haltezeit   Integer             (Verteiler: Anzahl EmpfÑnger)
+ 5. Haltezeit   Integer             (Verteiler: Anzahl Empfaenger)
  6. AdrBuch     Byte        i       Adressbuchgruppe, 0:User steht nicht im Adressbuch
  7. Passwort    Extern           U
  8. UserFlags   Byte                ~1=DummUser, 2=Default:codieren, 4=Verteiler
-                                    8=keine Umlaute, 16=EBs, 32+64+128=PrioritÑt
+                                    8=keine Umlaute, 16=EBs, 32+64+128=Prioritaet
  9. Codierer    Byte             U  0=Nix, 1=QPC, 2=DES, 3-5=pmc1-3, 9=PGP
 
 Indizes:
@@ -129,8 +135,8 @@ BOXEN:  Boxendatei
 10. Domain      String(60)       ab 1.2
 11. Fidoname    String(40)       ab 1.93: eigener Systemname
 12. ReplyTo     String(80)       ab 1.97: Vertreteradresse
-13. AVertreter  String(20)       ab 2.15: Vertreterbox fÅr AMs
-14. PVertreter  String(20)       ab 2.15: Vertreterbox fÅr PMs
+13. AVertreter  String(20)       ab 2.15: Vertreterbox fuer AMs
+14. PVertreter  String(20)       ab 2.15: Vertreterbox fuer PMs
 15. Boxdomain   String(60)       ab 2.15: Domain des Servers
 16. FQDN        String(60)       ab 3.20: FQDN (MsgID)
 17. Email       String(80)       ab 3.40: eMail-Adresse 
@@ -147,7 +153,7 @@ GRUPPEN:  Brettgruppendatei
  1. Name        String(30)  i
  2. Haltezeit   Integer
  3. MsgLimit    Longint
- 4. Flags       Byte             1=Standard-Gruppe (nicht lîschbar)
+ 4. Flags       Byte             1=Standard-Gruppe (nicht loeschbar)
                                  0=Default, 2=Re^n, 4=Re:, 6=nix
  5. Umlaute     Byte             0=IBM, 1=ASCII, 2=ISO, 3-5=eigene
  6. Kopf        String(8)        Kopfschablone; Extension .XPS
@@ -168,14 +174,14 @@ GRUPPEN:  Brettgruppendatei
 19. QuoteChar   String(5)        ab OpenXP/32 3.9.4: Quote-Zeichen
 
 20. QuoteToMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
-				 f≥r Nachrichten an neue GABEL;
+				 fuer Nachrichten an neue GABEL;
 				 Extension .XPS
 21. PMKopf      String(8)        ab OpenXP/32 3.9.4: Kopf-Schablone
-				 f≥r private Nachrichten; Extension .XPS
+				 fuer private Nachrichten; Extension .XPS
 22. PMSignatur  String(8)	 ab OpenXP/32 3.9.4: Signatur-Schablone
-				 f≥r private Nachrichten; Extension .XPS
+				 fuer private Nachrichten; Extension .XPS
 23. PMQuoteMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
-				 f≥r private Nachrichten; Extension .XPS
+				 fuer private Nachrichten; Extension .XPS
 
 Indizes:
 
@@ -190,7 +196,7 @@ SYSTEME:  Fileserver u.a.
  2. Kommentar   String(30)
  3. Flags       Word             1=Fileserver
  4. FS-Name     String(20)       Username des Fileservers
- 5. FS-Passwd   String(20)       Fileserver-SERVICE-Pa·wort, oder Indexdatei
+ 5. FS-Passwd   String(20)       Fileserver-SERVICE-Passwort, oder Indexdatei
  6. FS-Typ      Byte             0=SendZMsg, 1=iMLS, 2=NCBmail, 3=UUCP
  7. ZBV1        String(60)       ab 2.15: UUCP: Listen-Konvertierer
  8. ZBV2        String(60)       ab 2.15
@@ -213,7 +219,7 @@ AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
  8. Monate      Word             Bit 0=Jan, 1=Feb, ... 11=Dez
  9. Datum1      Longint          einzelnes Datum
 10. Datum2      Longint          dito
-11. Flags       Word             1=aktiv, 2=AutoLîschen, 4=nur geÑnderte Dat.
+11. Flags       Word             1=aktiv, 2=AutoLoeschen, 4=nur geaenderte Dat.
                                  ab 3.30: 8=ersetzen (Supersedes)
 12. LastDate    Longint          letztes Sendedatum
 13. LastFdate   Longint          Dateidatum beim letzten Absenden
@@ -221,11 +227,11 @@ AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
 
 Indizes:
 
- 1. +Betreff/EmpfÑnger   aiBetreff
+ 1. +Betreff/Empfaenger   aiBetreff
 
 -----------------------------------------------------------------------
 
-PSEUDOS:  EmpfÑnger-Pseudonyme
+PSEUDOS:  Empfaenger-Pseudonyme
 
  1. Kurzname    String(15)  i
  2. Langname    String(80)
@@ -242,8 +248,8 @@ BEZUEGE:  Bezugsverkettung
 
  1. MsgPos      Longint          RecNo() in MSGS
  2. MsgID       Longint     i    CRC32
- 3. Ref         Longint     i    Bezug (0, falls keiner)
- 4. Datum       Longint          Erstellungsdatum, au·er Bit 0-3:
+ 3. Ref         Longint     i  	 Bezug (0, falls keiner)
+ 4. Datum       Longint          Erstellungsdatum, ausser Bit 0-3:
                                  1=erste Kopie eines CrossPostings
                                  2=weitere Kopie eines CrossPostings
 
@@ -267,3 +273,14 @@ Indizes:
 
 -----------------------------------------------------------------------
 
+SPAMFLT: Wortliste fuer statistischen Spamfilter (ab OpenXP/32 3.9.5)
+
+ 1. WORD        String(7)   i    Wort (Grossbuchstaben, max. 7 Zeichen)
+ 2. GOODCNT	Longint		 Anzahl in "guten" Nachrichten (Ham)
+ 3. BADCNT	Longint		 Anzahl in "schlechten" Nachrichten (Spam)
+
+Indizes:
+
+ 1. spamiWord   WORD
+
+-----------------------------------------------------------------------

@@ -232,6 +232,15 @@ const
     (fname:'Programm';  ftyp:dbTypeString;  fsize:ViewprogLen)
   );
 
+{ SPAMFLT: Spamfilter }
+  SpamDbFieldCount = 3;
+  SpamDbFields: array[0..SpamDbFieldCount] of dbFeldTyp = (
+    (fname:'INT_NR';    ftyp:dbTypeInt;     fsize:4; fnlen:11),
+    (fname:'Word';      ftyp:dbTypeString;  fsize:7),
+    (fname:'GoodCnt';   ftyp:dbTypeInt;     fsize:4; fnlen:10),
+    (fname:'BadCnt';    ftyp:dbTypeInt;     fsize:4; fnlen:10)
+  );
+
 procedure GetFieldNumbers;
 begin
   bb_brettname  := dbGetFeldNr(bbase,'brettname');
@@ -1057,6 +1066,10 @@ begin
       UserEbError;
 end;
 
+procedure UpdateSpamDb(AppendedFields: TdbFieldSet);
+begin
+end;
+
 // ---------------- all databases ------------------
 
 const
@@ -1130,6 +1143,14 @@ const
     AppendProc: UpdateMimeDb;
   );
 
+  SpamDbTemplate: RDBTemplate = (
+    FileName:   SpamfltFile;
+    FieldCount: SpamDbFieldCount;
+    Field0:     @SpamDbFields[0];
+    AppendProc: UpdateSpamDb;
+  );
+
+  
 procedure initdatabase;
 var //flp : dbFLP;
     //fnr : byte; // : xpWord;
@@ -1487,6 +1508,8 @@ begin
   end;
 {$ENDIF}
 
+  CreateDB(SpamDbTemplate);
+
 //what's this good for?
   dbOpen(dd,AutoFile,1);
   dbClose(dd);
@@ -1539,6 +1562,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.52  2003/01/01 16:19:45  mk
   - changes to made FreeBSD-Version compilable
 

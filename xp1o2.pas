@@ -125,6 +125,7 @@ begin
                      else if df=PseudoFile then indexnr:=1
                      else if df=BezugFile then indexnr:=2
                      else if df=MimetFile then indexnr:=2
+                     else if df=SpamfltFile then indexnr := 1
                      else interr('icIndexNum: falsche Datei: '+df);
 
       icIndex:       if df=MsgFile then
@@ -174,6 +175,10 @@ begin
                          mtiTyp     : indexstr:='+TYP/+EXTENSION';
                          mtiExt     : indexstr:='+EXTENSION';
                        end
+                     else if df=SpamfltFile then
+                       case indexnr of
+                         spamiWord  : indexstr:='+WORD';
+                       end
                      else interr('icIndex: falsche Datei: '+df);
 
       icOpenWindow:  begin
@@ -217,6 +222,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.28  2002/12/28 20:11:04  dodi
   - start keyboard input redesign
 

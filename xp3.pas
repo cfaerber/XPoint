@@ -35,7 +35,6 @@ var   XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
 
-
 function  msgmarked:boolean;                 { Nachricht markiert? }
 procedure MsgAddmark;
 procedure MsgUnmark;
@@ -523,7 +522,7 @@ begin
   dbReadN(mbase,mb_ablage,ablage);
  try
   OpenAblage(ablage);
-  writeln(ioresult);
+// writeln(ioresult);
   if ioresult<>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     exit;
@@ -1180,6 +1179,9 @@ end;
 
 {
   $Log$
+  Revision 1.92  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.91  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

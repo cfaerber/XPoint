@@ -54,14 +54,12 @@ begin
   freeres;
 end;
 
-
 { Pollbox='' -> Pollbox wird aus Pfad uebernommen, falls vor-  }
 {               handen, sonst aus DefaultBox                  }
 { Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
 
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:xpWord):boolean;
-
 const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
   maxll    = 64;
@@ -91,6 +89,7 @@ var x,y      : Integer;
     mapsname : string;
     seekbr   : string;
     msgid2   : string;    { gekuerzte MsgID (FormMsgid) fuer mbase }
+    msgid3   : string;    { generierte MsgID fuer Nachrichten ohne }
     amvertreter,
     pmvertreter : string;
     sysbetreff  : string;  { Betreff von Changesys/getsys }
@@ -132,6 +131,7 @@ var x,y      : Integer;
     MsgIdsRead: TStringList;
     dummy    : integer;
     cust_header : custheadstr;
+    BrettKommentar : string;
 
   function puffer_ok:boolean;
   var ok : boolean; lastsubj,lastmid: string;
@@ -688,20 +688,50 @@ var x,y      : Integer;
     dbClose(d);
   end;
 
+  function dummyid(inr: integer): string;
+  var t,m,j   : smallword;
+      h,mm,s,ss: smallword;
+      dat     : integer;
+      count   : integer;
+      rand    : integer;
+      csum    : integer;
+  begin
+    decodedate(now,j,m,t);
+    decodetime(now,h,mm,s,ss);
+    dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
+    
+    count:=Integer(inr and $ffff);
+    rand:=random($1000);
+    csum:=crc16strXP(hdp.Absender);
+
+    Result := FormMsgID(b30(crc32Str(hdp.FirstEmpfaenger))+
+      b30(longint(dat) shl 14+count shr 2)+
+      b30(longint(count and 3) shl 28+longint(rand) shl 16 +csum));
+  end;
+
 var
   OwnMessageReplaced: Boolean;
   s: String;
   nt: eNetz;
+  f_str: TPASCALFileStream;     // current message buffer as a TStream (nil until first use)
+  data:  TPartialStream;        // temporary: current message
+  spam:  TSpamicityCalculator;  // spamicity calculator (nil until first use)
+  spam_ok: boolean;             // whether spamicity has been calculated for current message
+  is_spam: boolean;             // whether current message is spam
+  is_ham:  boolean;
+  
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
-  inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
+  inmsgs:=0; ReplaceOwnHoldFlag:=255; result:=false;
   MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
+
   if (zconnect) then
     msgbox(47,10,getres(333),x,y)        { 'Puffer einlesen' }
   else
     msgbox(47,11,getres(333),x,y);
+
   attrtxt(col.colmbox);
   fm := FileMode;
   assign(f,puffer);
@@ -719,7 +749,7 @@ begin
     closebox;
     closebox;
     freeres;
-    puffereinlesen:=true;
+    result:=true;
     exit;
     end;
   check:=(fs*1.3<diskfree(0));
@@ -810,6 +840,7 @@ begin
     num_cmessages:=0;
 
     adr:=0;
+
     dat:=Zdate;
     today:=ixDat(dat);
     dbStopHU(mbase);
@@ -817,23 +848,65 @@ begin
     cust_header:=mheadercustom[1];
     mheadercustom[1]:='U-Sender';  { 'U-Sender'-Header erkennen }
 
+    f_str := nil;
+    spam := nil;
+
     repeat
       empfnr:=1;
       junk:=false;
-      msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
+      msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert
+                                      oder soll weggeworfen werden
+                              false -> Nachricht muss in />>Junk gespeichert werden }
+
+      spam_ok := false;
+      is_spam := false;
+      is_ham  := false;
+
+      msgid3  := '';
+      
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
+        Debug.DebugLog('xp3o','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
+
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.FirstEmpfaenger;
-        Debug.DebugLog('xp3o','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
-
+        BrettKommentar := '';
+                              
         { Schalter maildelxpost beachten }
         if (hdp.Empfaenger.Count > maxcrosspost)
         and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then begin
           empfnr:=hdp.Empfaenger.Count +1;                { Crossposting-Filter }
           continue;
           end;
+          
+        if (cpos('@',hdp.FirstEmpfaenger)<>0) and (not spam_ok) then 
+//      if not spam_ok then
+        begin
+          if not assigned(spam) then
+            spam := TSpamicityCalculator.Create;
+          if not assigned(f_str) then
+            f_str := TPASCALFileStream.Create(f);
+
+          data := TPartialStream.Create(adr,adr+hdsize+hdp.groesse);
+          data.OtherStream := f_str;          // use message buffer
+          data.DestroyOtherStream := false;   // but don't kill it
+          data.Seek(0,soFromBeginning);
+          spam.CalculateMessageSpamicity(data);
+          data.Free;
+          
+          is_spam := spam.IsSpam;
+          is_ham  := spam.IsHam;
+          spam_ok := true;
+
+          if is_spam then
+          begin
+            hdp.Empfaenger.Clear;
+            hdp.Empfaenger.Add('/¯Spam'); // Unterscheidung von der Pseudo-Newsgroup junk
+            BrettKommentar := 'SPAM, SPAM, wonderful SPAM!' // nicht uebersetzen (Zitat aus Monty Phyton).
+          end;
+        end;
+
         if junk then
         begin
           hdp.Empfaenger.Clear;
@@ -894,7 +967,7 @@ begin
                   pm:=true;
                   end;
 
-          if ForceRecipient<>'' then Firstempfaenger:= ForceRecipient;
+          if (ForceRecipient<>'') and (not is_spam) then Firstempfaenger:= ForceRecipient;
 
           multi2; initscs;
 
@@ -962,7 +1035,7 @@ begin
                   else dbRead(d,'haltezeit',haltezeit);
                   dbClose(d);
                 end;
-                AddNewBrett(FirstEmpfaenger,  '', pollbox_str(zconnect,false),
+                AddNewBrett(FirstEmpfaenger, BrettKommentar, pollbox_str(zconnect,false),
                   Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
                 if newbrettende then
                   SetBrettindexEnde
@@ -1007,7 +1080,7 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
-          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))then begin
+          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))and(hdp.MsgId<>'')then begin
             OwnMessageReplaced:= KillSameMsgId;
             if BoxPar^.ReplaceDupes and MsgIdsRead.Find(msgid,dummy)then begin
               // this msg already showed up in this buffer
@@ -1077,7 +1150,14 @@ begin
             dbWriteN(mbase,mb_adresse,padr);
             size:=groesse+hdsize;
             dbWriteN(mbase,mb_msgsize,size);
-            msgid2:=FormMsgid(msgid);
+
+            if msgid<>'' then
+              msgid2:=FormMsgid(msgid)
+            else begin
+              if msgid3 = '' then
+                msgid3 := dummyid(dbRecno(mbase));
+              msgid2 := msgid3;
+            end;
             dbWriteNStr(mbase,mb_msgid,msgid2);
             if ntEditBrettempf(netztyp) then   { Fido, QWK }
               dbWriteNStr(mbase,mb_name,fido_to)
@@ -1116,6 +1196,12 @@ begin
             { this message replaces an old own message; mark it as an own }
             { message again. Necessary for cancels. }
             if OwnMessageReplaced then mbflags:= mbflags or 256;
+
+            { this message could not be identified as SPAM or HAM, set
+              ``potentially SPAM'' flag }
+            if (not is_spam)and(not is_ham)and spam_ok  then 
+              mbflags:= mbflags or 64;
+            
             dbWriteN(mbase,mb_flags,mbflags);
 
 	    if ntKomKette(hdp.netztyp) then 
@@ -1162,8 +1248,10 @@ begin
           { Nachricht nach /Junk }
           junk:=true;
           empfnr:=1;            { kein passendes Brett fuer Crossposting }
+(*
           FlushLL;
-          seek(pfile,filesize(pfile)-8);
+          seek(pfile,filesize(pfile)-8); 
+*)
         { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
         { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
           llanz:=max(0,llanz-2*hdp.empfanz); }
@@ -1187,8 +1275,11 @@ begin
         FWrt(x+3+length(mstr),y+4,strs((inmsgs * 100) div MsgCount)+'%');
         mon;
       end;
+      
     until adr>=fs-3;     { 3 Byte Toleranz }
     MsgIdsRead.Destroy;
+    f_str.Free;
+    spam.Free;
 
     Debug.DebugLog('xp3o','index built',DLInform);
     moff;
@@ -1216,7 +1307,7 @@ begin
     FlushClose;
     close(brettlog);
     close(userlog);
-    puffereinlesen:=true;
+    result:=true;
 
 (*    Wrt(x+2,y+7,getres(320)); { 'Datumsbezuege werden ueberarbeitet...     %' }
     GotoXY(WhereX-5, WhereY);
@@ -1272,7 +1363,6 @@ begin
   Debug.DebugLog('xp3o','finished message import',DLInform);
 end;
 
-
 { Datei fn ins Unterverzeichnis BAD\ verschieben; ggf. umbenennen }
 { Die Datei befindet sich normalerweise im XP- oder im SPOOL-     }
 { Verzeichnis.                                                    }
@@ -1304,6 +1394,9 @@ end;
 
 {
   $Log$
+  Revision 1.104  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.103  2003/01/26 09:20:08  cl
   - fixed problem with inc(empfnr)
 

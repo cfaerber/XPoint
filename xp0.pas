@@ -250,6 +250,7 @@ const  QPC_ID      = 'QPC:';
        PseudoFile  = 'PSEUDOS';
        BezugFile   = 'BEZUEGE';
        MimetFile   = 'MIMETYP';
+       SpamfltFile = 'SPAMFLT';
        CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
        Cfg2File    = 'XPOINT2.CFG';
        Cfg3File    = 'OPENXP.CFG';      { NEue cfg mit Sektionen }
@@ -332,6 +333,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fuer Batchauswertung bei
        beiRef      = 2;                {          Ref                       }
        mtiTyp      = 1;                { MimeType: +TYP                     }
        mtiExt      = 2;                {           +EXTENSION               }
+       spamiWord   = 1;                { SpamFlt: +WORD                     }
 
        rmUngelesen = 1;                { ReadMode: Lesen/Ungelesen  }
        rmNeues     = 2;                { ReadMode: Lesen/Neues      }
@@ -1213,6 +1215,9 @@ implementation
 
 {
   $Log$
+  Revision 1.172  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.171  2002/12/21 05:37:52  dodi
   - removed questionable references to Word type
 

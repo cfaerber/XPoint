@@ -72,7 +72,8 @@ var
     pbox    : string;
     komm    : string;
     dadr,pw : char;
-    ab,flags: byte;
+    ab      : byte;
+    flags   : Longint;
     abc     : string;
     grnr    : longint;
     uflags  : byte;
@@ -445,7 +446,10 @@ begin  { __ Suchmarke }
             else
               markflag[y]:=iif(msgmarked,1,0);
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
-                    uv[unvers]+wv[wvl]+typ;
+                    iifc(unvers<>0,uv[unvers],
+                      iifc(flags and 1024<>0,iifc(flags and 512<>0,'S','H'),
+                                             iifc(flags and 512<>0,'s',' ')))
+                      +wv[wvl]+typ;
 
             if fidoqwk and (dispmode=10) and
                dispfto and (FirstChar(_brett)='A') then
@@ -470,7 +474,7 @@ begin  { __ Suchmarke }
               end
               else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
-
+(*
               asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
                   mov al,flags     { 000=normal   -> 0     100=niedrigste -> 5       }
                   shr al,3         { 001=hoechste -> 2     101=    ?      -> 6       }
@@ -479,7 +483,8 @@ begin  { __ Suchmarke }
                   inc al
               @1: mov helpbyte,al
               end;
-              userflag[y]:=helpbyte;
+*)              
+              userflag[y]:=(flags and (8+16+32)) + iif(flags and (8+16+32)<>0,1,0);
 
               if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
@@ -627,6 +632,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
   Revision 1.60  2002/12/14 07:31:33  dodi
   - using new types
 
