@@ -119,7 +119,7 @@ asm
          mov   bp,seg @data            { Turbo-Datensegment setzen }
          mov   ds,bp
 
-(*         cmp   stsize,0                { kein eigener Stack? }
+         cmp   stsize,0                { kein eigener Stack? }
          jz    @nost1
          mov   ssave1,sp       { Stack sichern }
          mov   ssave2,ss
@@ -130,7 +130,7 @@ asm
          add   bp,stsize
          sub   bp,16
          and   bp,0fffeh
-         mov   sp,bp *)
+         mov   sp,bp
 
 @nost1:  push  ax
          push  bx
@@ -156,10 +156,10 @@ asm
          pop   bx
          pop   ax
 
-(*         cmp   stsize,0
+         cmp   stsize,0
          jz    @nost2
          mov   sp,ssave1       { Stack wiederherstellen }
-         mov   ss,ssave2 *)
+         mov   ss,ssave2
 @nost2:  pop   bp
          pop   ds
          popf
@@ -240,19 +240,26 @@ asm
 {$ENDIF }
 end;
 
-procedure getmaus(var stat:mausstat); assembler;
-asm
-{$IFNDEF Ver32 }
-  cmp maus,false
-  je @1
-  mov ax,3
-  int mausint
-  les di,stat
-  mov es:[di],bx
-  mov es:[di+2],cx
-  mov es:[di+4],dx
-@1:
-{$ENDIF }
+procedure getmaus(var stat:mausstat);
+begin
+  if maus then
+  asm
+    cmp maus,false
+    je @1
+    mov ax,3
+    int mausint
+    les di,stat
+    mov es:[di],bx
+    mov es:[di+2],cx
+    mov es:[di+4],dx
+  @1:
+  end else
+  with stat do
+  begin
+    x := 0;
+    y := 0;
+    tasten := 0;
+  end;
 end;
 
 function mausx:word; assembler;
@@ -512,6 +519,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/04/15 18:07:50  mk
+  - Getmaus sicherer gemacht
+
   Revision 1.7  2000/04/06 20:55:52  rb
   Bugfixes; ich wills schliesslich keinen Murks hinterlassen
 
