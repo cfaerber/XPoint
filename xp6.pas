@@ -1807,6 +1807,7 @@ fromstart:
         if msgCPpos<msgCPanz then
           dbAppend(mbase);
         end;
+      SendFlags:=SendFlags and not SendHalt;
     until msgCPpos>=msgCPanz;
 
   { if not pm then dbFlushClose(bbase); }
@@ -2059,6 +2060,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.11  2000/12/31 11:54:40  mk
+  JG:- eigene PMs halten fix
+
   Revision 1.7.2.10  2000/12/25 18:13:37  mk
   - falsche Adressbuchgruppe bei neuen Usern benutzt
 
