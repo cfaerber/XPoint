@@ -229,7 +229,6 @@ begin
   begin
     if Parts.Count=1 then
     case cancode of
-      -1 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
        0 : Wrt2(getres2(601,iif(pm,2,3)));      { 'kein Paáwort' / 'nicht m”glich' }
        1 : if binary then Wrt2(getres2(601,4))  { 'evtl. QPC m”glich' }
            else Wrt2(getreps2(601,1,'QPC'));    { 'QPC m”glich' }
@@ -237,6 +236,7 @@ begin
        3..2+maxpmc : Wrt2(getreps2(601,1,pmcode(cancode)));
        8 : Wrt2(getreps2(601,1,'PGP/MIME'));    { 'PGP/MIME moeglich' }
        9 : Wrt2(getreps2(601,1,'PGP'));         { 'PGP m”glich' }
+      10 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
     end else
     if (cancode in [8,9]) and ntMIME(netztyp) then
       Wrt2(getreps2(601,1,'PGP/MIME'))          { 'PGP/MIME moeglich' }
@@ -244,13 +244,13 @@ begin
   else begin
     attrtxt(col.coldiahigh);
     case docode of
-      -1 : Wrt2('Rot13');
        0 : Wrt2(getres2(601,3));
        1 : Wrt2('QPC');
        2 : Wrt2('DES');
        3..2+maxpmc: Wrt2(pmcode(docode));
        8 : Wrt2('PGP/MIME');
        9 : Wrt2('PGP');
+      10 : Wrt2('Rot13');
     end;
   end;
   mon;
@@ -1104,6 +1104,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/10/17 10:19:52  mk
+  - decode/docode byte instead of ShortInt
+
   Revision 1.10  2001/09/16 23:01:20  cl
   - BUGFIX: Fido tearline now added
 

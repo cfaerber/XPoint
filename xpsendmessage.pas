@@ -292,7 +292,14 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0))));
+  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0))))
+  {$IFDEF Delphi }
+    + 'd'
+  {$ENDIF }
+  {$IFDEF Kylix }
+    + 'k'
+  {$ENDIF }
+  ;
 end;
 {$ENDIF}
 
@@ -352,8 +359,8 @@ var f,f2     : file;
 
     size     : integer;
     empfneu  : boolean;
-    cancode  : shortint;    { -1=Rot13, 0=kein PW, 1=QPC, 2=DES, 9=PGP }
-    docode   : shortint;    { gewaehlte Codierung                 }
+    cancode  : Byte;        { 0=kein PW, 1=QPC, 2=DES, 9=PGP, 10=Rot13 }
+    docode   : Byte;        { gewaehlte Codierung                 }
     pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     halten   : integer16;   { Haltezeit fuer neuen User           }
@@ -1105,7 +1112,7 @@ fromstart:
     dbClose(d);
 
     edis:=2;
-    if not binary then cancode:=-1;  { Rot13 moeglich }
+    if not binary then cancode:=10;  { Rot13 moeglich }
   end;   { of not pm }
 
   { -- Boxdaten -- }
@@ -2316,6 +2323,9 @@ finalization
 
 {
   $Log$
+  Revision 1.25  2001/10/17 10:19:52  mk
+  - decode/docode byte instead of ShortInt
+
   Revision 1.24  2001/10/14 11:40:42  ma
   - changed user agent header (now "OpenXP/32 vVERSTR (PFORM) BETASTR")
 
