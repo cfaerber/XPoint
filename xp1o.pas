@@ -327,7 +327,7 @@ begin
     if upcase(c) = k2_O then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
-      ex(5);
+      ex(-4);
       end;
 
     if upcase(c) = 'Q' then                                   {'Q' Quotechars |: aktivieren}
@@ -980,6 +980,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.20  2001/08/29 21:45:29  my
+  JG:- Fix: Showing message header with 'O' in message reader after
+       <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
+       bar had been moved to with the message the lister was started with
+       (new exit code -4)
+
   Revision 1.40.2.19  2001/08/12 11:20:28  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
