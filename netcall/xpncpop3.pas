@@ -54,6 +54,8 @@ uses
   res_smtpinit          = '%s Mails verschicken';
   res_pop3init          = '%s Mails holen';
   res_mailstat          = '%d Mails in %d Bytes';
+  res_nomail            = 'Keine neuen Mails';
+  res_newmail           = '%d neue Mails';
   res_getmail           = 'Hole Mail Nr. %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
 
@@ -166,6 +168,8 @@ var
   POP           : TPOP3;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   FirstMail     : Integer;
+  UIDLFile      : Text;
+  UIDLFileName  : String;
 begin
   if bp^.pop3_ip='' then exit; // exit immediately if no server specified
   { POWindow erstellen }
@@ -181,6 +185,17 @@ begin
     POP.User:= bp^.pop3_id;
     POP.Password:= bp^.pop3_pwd;
   end;
+
+  { Get last retrieved UIDL from file }
+  GetServerFileName(BoxName,UIDLFileName);
+  UIDLFileName:=FileUpperCase(OwnPath+UIDLFileName+'.udl');
+  if FileExists(UIDLFileName)then begin
+    Assign(UIDLFile,UIDLFileName);
+    Reset(UIDLFile);
+    ReadLn(UIDLFile,POP.LastUIDL);
+    Close(UIDLFile);
+    end;
+
   { Verbinden }
   try
     result:= true;
@@ -191,8 +206,13 @@ begin
     POWindow.WriteFmt(mcInfo,res_mailstat,[POP.MailCount,POP.MailSize]);
 
     FirstMail := 1;
-    if POP.OnlyNew then
+    if POP.OnlyNew then begin
       FirstMail := POP.GetLast;
+      if FirstMail = POP.MailCount then
+        POWindow.WriteFmt(mcInfo,res_nomail,[0])
+      else
+        POWindow.WriteFmt(mcInfo,res_newmail,[POP.MailCount-FirstMail]);
+      end;
 
     for i := FirstMail + 1 to POP.MailCount do
     begin
@@ -210,6 +230,12 @@ begin
     POWindow.WriteFmt(mcError,res_noconnect,[0]);
     result:= false;
   end;
+  if POP.LastUIDL<>'' then begin
+    Assign(UIDLFile,UIDLFileName);
+    ReWrite(UIDLFile);
+    WriteLn(UIDLFile,POP.LastUIDL);
+    Close(UIDLFile);
+    end;
   List.Free;
   POP.Free;
   ProcessIncomingFiles(IncomingFiles);
@@ -219,6 +245,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/05/20 12:21:45  ma
+  - added UIDL support
+
   Revision 1.14  2001/04/20 22:07:10  ma
   - SMTP/POP3 server entries can now be left empty
 

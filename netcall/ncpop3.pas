@@ -43,22 +43,27 @@ type
 
   protected
 
-    FServer             : string;               { Server-Software }
-    FTimestamp          : string;               { Timestamp for APOP }
-    FUseAPOP            : Boolean;              { APOP = encrypted passwords }
-    FOnlyNew            : Boolean;              { nur neue Mails holen }
-    FUser, FPassword    : string;               { Identifikation }
+    FServer             : string;    { Server-Software }
+    FTimestamp          : string;    { Timestamp for APOP }
+    FUseAPOP            : Boolean;   { APOP = encrypted passwords }
+    FOnlyNew            : Boolean;   { nur neue Mails holen }
+    FUser, FPassword    : string;    { Identifikation }
+    FLastUIDL           : string;    { UIDL of last retrieved message,
+                                         used/updated if LAST not implemented }
     FMailCount, FMailSize: Integer;
+    FUIDLs              : TStringList;
 
   public
     constructor Create;
     constructor CreateWithHost(s: string);
+    destructor Destroy; override;
 
     property Server: string read FServer;
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
     property UseAPOP: Boolean read FUseAPOP write FUseAPOP;
     property OnlyNew: Boolean read FOnlyNew write FOnlyNew;
+    property LastUIDL: string read FLastUIDL write FLastUIDL;
     property MailCount: Integer read FMailCount;
     property MailSize: Integer read FMailSize;
 
@@ -75,7 +80,7 @@ type
 
     // FÅllt MailCount und MailSize mit Daten
     function Stat: boolean;
-    // Holt die letzte ungelesene Nachricht
+    // Holt die Nummer der letzten ungelesenen Nachricht
     function GetLast: Integer;
     // EmpfÑngt eine Nachricht
     function Retr(ID: Integer; List: TStringList): boolean;
@@ -120,6 +125,8 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
+  FLastUIDL:='';
+  FUIDLs:=TStringList.Create;
 end;
 
 constructor TPOP3.CreateWithHost(s: string);
@@ -132,6 +139,14 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
+  FLastUIDL:='';
+  FUIDLs:=TStringList.Create;
+end;
+
+destructor TPOP3.Destroy;
+begin
+  FUIDLs.Destroy;
+  inherited Destroy;
 end;
 
 function TPOP3.Login: boolean;
@@ -265,7 +280,9 @@ begin
 end;
 
 function TPOP3.Retr(ID: Integer; List: TStringList): boolean;
-var s: string;
+var
+  s: string;
+  i: integer;
 begin
   Result := false;
   if Connected then
@@ -282,6 +299,13 @@ begin
     end else
       exit;
     Result := true;
+    for i := 0 to FUIDLs.Count - 1 do begin
+      s := FUIDLs[i];
+      if Copy(s, 1, Pos(' ', s)) = (strs(ID) + ' ') then begin
+        LastUIDL := Mid(s, Pos(' ', s) + 1);
+        break;
+        end;
+      end;
   end;
 end;
 
@@ -304,17 +328,29 @@ function TPOP3.GetLast: Integer;
 var
   s: String;
 begin
-  Result := 1;
+  Result := 0;
   SWriteln('LAST');
   SReadln(s);
-  if ParseError(s) then
-  begin
-    Result := 1;
-    exit;
-  end;
-  s := Copy(s, 5, Length(s));
-  s := Copy(s, 1, Pos(' ', s) - 1);
-  Result := StrToIntDef(s, Result);
+  case ParseError(s) of
+    true: begin // LAST not implemented on server side
+      SWriteln('UIDL');
+      SReadln(s);
+      if not ParseError(s)then begin
+        SReadln(s);
+        while s<>'.' do begin
+          FUIDLs.Add(s);
+          if LastUIDL=Mid(s, Pos(' ', s) + 1) then
+            result := StrToIntDef(LeftStr(s, Pos(' ', s) - 1), 0);
+          SReadln(s);
+          end;
+        end;
+      end;
+    false: begin // LAST working
+      s := Copy(s, 5, Length(s));
+      s := Copy(s, 1, Pos(' ', s) - 1);
+      Result := StrToIntDef(s, Result);
+      end;
+    end;
 end;
 
 function TPOP3.RetrAll(List: TStringList): boolean;
@@ -350,6 +386,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2001/05/20 12:21:45  ma
+  - added UIDL support
+
   Revision 1.12  2001/04/16 18:07:40  ma
   - added error msg if APOP chosen but server does not support it
 
