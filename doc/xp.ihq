@@ -5225,12 +5225,12 @@ Aktionen sind:
 530
 Geben Sie den Suchbegriff ein.
 
-Mit <<STRG V>> oder <<SHIFT Einfg>> wird das Windows-
+Mit <<STRG V>> oder <<SHIFT + Einfg>> wird das Windows-
 Clipboard In den Suchstring kopiert. Ein Fehlerton
 bedeutet dass der Clipboard-Inhalt entweder zu gross 
 oder nicht existent ist.
 
-<<STRG R>> funktioniert wie oben, versucht allerdings
+<<STRG A>> funktioniert wie oben, versucht allerdings
 zusaetzlich aus dem Clipboard-Text eine Mailadresse
 auszuschneiden und diesen als Suchstring zu benutzen. 
 

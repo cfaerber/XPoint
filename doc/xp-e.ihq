@@ -4716,7 +4716,7 @@ type <<CTRL V>> or <<Shift+Ins>> to use the Windows-
 Clipboard. A acustic signal indicates, that the clipboard
 contains either no or to much text.  
 
-<<CRTL U>> tries to extract a Mail-Adress from
+<<CRTL A>> tries to extract a Mail-Adress from
 the clipboard-text.
 
 @

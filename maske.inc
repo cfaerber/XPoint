@@ -921,7 +921,7 @@ begin   { readmask }
             if xtest1(s^) then cont^:=s^;
 	    end;
 
-          if (t=^U) then begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
+          if (t=^A) then begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
              s^:=mailstring(clip2string(maxlen,1),false);        {JG:06.02.00}
              if xtest1(s^) then cont^:=s^;
              end;
@@ -1057,6 +1057,12 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.7  2000/02/24 20:27:53  jg
+  -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen
+   Eintraege am Anfang der Liste werden sofort angezeigt
+  -MiniBugfix: STRG+U in Eingabeboxen umgelegt auf STRG+A
+   (STRG+U entsprach SHIFT+3)
+
   Revision 1.6  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
 

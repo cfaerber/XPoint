@@ -800,6 +800,7 @@ var d         : DB;
         dbWrite(d,'flags',flags);
         dbFlushClose(d);
         dbGo(d,drec[1]);
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
         aufbau:=true;
         end;
       end;
@@ -956,6 +957,7 @@ var d         : DB;
         dbWrite(d,'fs-typ',b);
         dbFlushClose(d);
         dbGo(d,drec[1]);
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
         aufbau:=true;
         end;
       end;
@@ -1050,8 +1052,9 @@ var d         : DB;
         dbWrite(d,'Langname',lang);
         dbWrite(d,'pollbox',pollbox);
         dbFlushClose(d);
-        dbGo(d,drec[1]);
-        aufbau:=true;
+        dbGo(d,drec[1]);       
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+        aufbau:=true; 
         end;
       end;
   end;
@@ -1113,7 +1116,7 @@ var d         : DB;
       end
     else begin
       maddstring(3,2,getres2(935,3),typ,33,40,         { 'MIME-Typ         ' }
-                 without(range('!','~'),'()<>@,;:\"[]?=')); { MK 12/99 Zeichen "/" zugelassen }
+           '"!'+without(range('#','~'),'()<>@,;:\"[]?=')); { MK 12/99 Zeichen "/" zugelassen }
         mhnr(821); {JG: 1051->821}
       maddstring(3,4,getres2(935,4),ext,5,5,'<');              { 'Dateierweiterung ' }
       mhnr(822); {JG}
@@ -1148,8 +1151,9 @@ var d         : DB;
       dbWriteN(d,mimeb_extension,ext);
       dbWriteN(d,mimeb_programm,prog);
       dbFlushClose(d);
-      dbGo(d,drec[1]);
-      aufbau:=true;
+      dbGo(d,drec[1]);       
+      dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+      aufbau:=true; 
       end;
   end;
 
@@ -1721,6 +1725,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/24 20:27:54  jg
+  -Schoenheitsfix: neuerstellte Eintrae in xp9.unisel-Boxen
+   Eintraege am Anfang der Liste werden sofort angezeigt
+  -MiniBugfix: STRG+U in Eingabeboxen umgelegt auf STRG+A
+   (STRG+U entsprach SHIFT+3)
+
   Revision 1.8  2000/02/21 22:48:02  mk
   MK: * Code weiter gesaeubert
 

@@ -255,6 +255,7 @@
         dbFlushClose(d);
         inc(ntused[nt]);
         dbGo(d,drec[1]);
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
         aufbau:=true;
         end;
       end;
