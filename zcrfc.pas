@@ -53,9 +53,6 @@ uses xpglobal,
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-{$IFDEF Delphi }
-  Dos,
-{$ENDIF }
   sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
 
 type
@@ -2066,7 +2063,7 @@ var
   i: integer;
   c: char;
   binaer,multi,recode,LastLineWasBlank,FirstLineHasBeenRead: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 begin
   if CommandLine then write('mail: ', fn);
   OpenFile(fn);
@@ -2228,7 +2225,7 @@ var
   binaer,multi,recode: boolean;
   nofrom: boolean;
   smtpende: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 
   function GetAdr: string;
   var
@@ -2363,7 +2360,7 @@ var
   fp, bp, n: longint;
   p: integer;
   binaer,multi,recode: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 label
   ende;
 begin
@@ -3715,6 +3712,10 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.23  2003/01/25 18:22:39  mk
+  - removed DOs-Unit
+  - fileRec->TFileRec
+
   Revision 1.97.2.22  2002/12/08 12:38:13  mk
   - removed line-header detection for mails again
 
