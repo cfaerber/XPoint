@@ -339,32 +339,35 @@ begin
       otherquotechars:=not otherquotechars;
     end;
 
+  if (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv)   {!}
+     or (t=keyaltb) or (t=keyaltu)) then errsound       {!}
+  else begin                                            {!}
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
-  begin
-    s:=mailstring(getline,false);
-    if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
+    begin
+      s:=mailstring(getline,false);
+      if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
+      end;
+
+    if t = keyaltv then                                        { ALT+V = Suche text }
+    begin
+      s:=getline;
+      if Suche(getres(414),'',s) then Showfromlister;
     end;
 
-  if t = keyaltv then                                        { ALT+V = Suche text }
-  begin
-    s:=getline;
-    if Suche(getres(414),'',s) then Showfromlister;
+    if t = keyaltb then                                        { Alt+B = Betreff }
+    begin
+      s:=getline;
+      if s='' then s:=dbreadstr(mbase,'Betreff');
+      if Suche(getres(415),'Betreff',s) then Showfromlister;
     end;
 
-  if t = keyaltb then                                        { Alt+B = Betreff }
-  begin
-    s:=getline;
-    if s='' then s:=dbreadstr(mbase,'Betreff');
-    if Suche(getres(415),'Betreff',s) then Showfromlister;
+    if t = keyaltu then                                        { Alt+U = User }
+    begin
+      s:=mailstring(getline,false);
+      if s='' then s:=dbreadstr(mbase,'Absender');
+      if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
-
-  if t = keyaltu then                                        { Alt+U = User }
-  begin
-    s:=mailstring(getline,false);
-    if s='' then s:=dbreadstr(mbase,'Absender');
-    if Suche(getres(416),'Absender',s) then Showfromlister;
-    end;
-
+  end;
 
   if listmakros=16 then   { Archiv-Viewer }
     if t=mausldouble then
@@ -983,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/10/09 16:26:04  mk
+  JG:- Verschiedene Tasten im Kommentarbaum abgeschaltet
+
   Revision 1.57  2000/09/25 20:07:53  my
   - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
   - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
