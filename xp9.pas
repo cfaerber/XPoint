@@ -8,6 +8,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
+
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
 {$I XPDEFINE.INC}
@@ -21,7 +22,7 @@ interface
 
 uses crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
      maus2,mouse,resource,xpglobal,
-     xp0,xp1,xp1o,xp1o2,xp1input,xp2c,{MW 04/2000}xpeasy;
+     xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
 
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -1668,13 +1669,7 @@ var x,y  : byte;
     ntyp : string[20];
     nt   : byte;
     i    : integer;
-    noeasy : boolean;
 begin
-  {$IFDEF EASY}
-  Noeasy:=NeuBenutzergruss;
-  if not Noeasy then
-     EasyMainDialog;
-  {$ENDIF}
   dialog(ival(getres2(911,0)),10,'',x,y);
   maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie den Namen Ihrer Stammbox, den' }
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'Netztyp der Box und Ihren Usernamen ein:' }
@@ -1744,24 +1739,11 @@ begin
 end.
 {
   $Log$
-  Revision 1.14  2000/04/22 20:08:15  mw
+  Revision 1.15  2000/04/29 11:54:09  mw
 
-  - EASY-Modus per Compilerschalter abschaltbar (damit in office-Beta
-    noch nicht drin !!!)
-  - Elegantere Programmierung des Aufrufs
-  - Umbennenung der neuen Procedure und Function
-  - Fehler durch unvollst„ndiges Init beseitigt (FirstBox wurde noch nicht
-    angelegt
-  - Organisation wird nicht mehr im EASY-Mode abgefragt, Rest der Adressconfig
-    aber weiterhin
-  - Beseitigung unn”tiger MW-Verweise
-
-  Revision 1.13  2000/04/22 18:24:05  mw
-
-  - Erste Dialoge des Easy-Mode
-  Achtung: Easy-Mode ist noch unvollst„ndig
-           Man kann sich aber schon die ersten Dialoge ansehen
-           Derzeit aber nur in der deutschen Version !!!
+  - MIME in News voreingestellt
+  - Triggerlevel 2 voreingestellt
+  - EASY-Mode Aufruf ver„ndert
 
   Revision 1.12  2000/04/15 21:44:48  mk
   - Datenbankfelder von Integer auf Integer16 gaendert

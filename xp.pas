@@ -102,7 +102,7 @@ uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
-{$O xpnt}    {$O xpdatum} {$O XP3}
+{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}
 {$IFDEF CAPI }
 {$O capi }
 {$ENDIF }
@@ -212,6 +212,12 @@ ende:
 end.
 {
   $Log$
+  Revision 1.19  2000/04/29 11:54:09  mw
+
+  - MIME in News voreingestellt
+  - Triggerlevel 2 voreingestellt
+  - EASY-Mode Aufruf ver„ndert
+
   Revision 1.18  2000/04/04 21:01:22  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

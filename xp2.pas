@@ -23,7 +23,7 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
      crt,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
-     xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum;
+     xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
 
 
 procedure zusatz_menue;
@@ -628,6 +628,15 @@ begin
   dbSeek(d,boiName,ustr(DefaultBox));
   if not dbFound then begin
     if dbRecCount(d)=0 then begin
+      {$IFDEF EASY}
+      if not NeuBenutzergruss then
+         begin
+           EasyMainDialog;
+           {Provisorium zur Fehlervermeidung}
+           xp9.get_first_box(d);
+         end
+      else
+      {$ENDIF}
       xp9.get_first_box(d);
       dbRead(d,'dateiname',dname);
       end
@@ -1103,6 +1112,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/04/29 11:54:09  mw
+
+  - MIME in News voreingestellt
+  - Triggerlevel 2 voreingestellt
+  - EASY-Mode Aufruf ver„ndert
+
   Revision 1.29  2000/04/22 13:54:08  mw
 
   - TermInit Default angepasst

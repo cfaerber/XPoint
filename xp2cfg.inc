@@ -582,7 +582,7 @@ begin
       ring:=true;
       postsperre:=true;
       UseRTS:=true;
-      tlevel:=8;
+      tlevel:=2; {alt:=8}
     end;
   COMn[5].IgCTS:=true;    { Dummy-COM fÅr ISDN }
   COmn[5].UseRTS:=true;
@@ -652,7 +652,7 @@ begin
   ShowFidoEmpf:=true;
   ShowRealnames:=false;
   ss_passwort:=false;
-  NewsMIME:=false;
+  NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=false;
   NoArchive:=true; {!MH:}
@@ -1666,6 +1666,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2000/04/29 11:54:09  mw
+
+  - MIME in News voreingestellt
+  - Triggerlevel 2 voreingestellt
+  - EASY-Mode Aufruf verÑndert
+
   Revision 1.37  2000/04/28 14:52:52  jg
   - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
     Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !

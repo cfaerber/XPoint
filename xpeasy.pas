@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team (Urversion von Martin Wodrich ,            }
-{ http://www.openxp.de                                            }
+{ (c) 2000 OpenXP Team (Urversion von Martin Wodrich )            }
+{ , http://www.openxp.de                                          }
 {                                                                 }
 { Xp-Easy-Konfigurationsmodus (OpenXP)                            }
 { --------------------------------------------------------------- }
@@ -82,6 +82,12 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.4  2000/04/29 11:54:09  mw
+
+  - MIME in News voreingestellt
+  - Triggerlevel 2 voreingestellt
+  - EASY-Mode Aufruf ver„ndert
+
   Revision 1.3  2000/04/22 20:08:15  mw
 
   - EASY-Modus per Compilerschalter abschaltbar (damit in office-Beta
