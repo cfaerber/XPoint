@@ -8406,7 +8406,7 @@ zimalen PGP-Schlssel-ID.
 Stellen Sie hier das Codierverfahren ein, das Sie mit
 dem gew„hlten User vereinbart haben:
 
-<<QPC:>>  Ein einfaches, sehr schnelles Verfahren, das
+<<QPC:>> Ein einfaches, sehr schnelles Verfahren, das
       frher von vielen Z-Netz-Pointprogrammen
       untersttzt wurde.  Das Verfahren galt bis Mitte
       des 19. Jahrhunderts als sicher; heute bietet es
@@ -8424,6 +8424,11 @@ dem gew„hlten User vereinbart haben:
 <<PGP/MIME:>> Wie <<PGP>>, verwendet jedoch die MIME-
       Codierung nach RFC 2015, falls m”glich.
 
+      <<HINWEIS:>> Wenn Sie fr einen Benutzer PGP oder
+      PGP/MIME einstellen, gilt diese Einstellung auch
+      fr Signaturen, unabh„ngig davon, was sie unter
+      Config/Extern/PGP eingestellt haben.
+
 <<pmCrypt>>  (pmc-1 bis pmc-3): Ein von Christian Mock
       entwickeltes Verfahren zum Einbinden beliebiger
       externer Codierprogramme. Das entsprechende
@@ -8438,12 +8443,12 @@ dem gew„hlten User vereinbart haben:
 <<[ ]>> -> Vorgabe im Sendefenster ist "nicht codieren".
 @
 483
-ROT13 ist ein simples Codierverfahren, das einfach jeden
-Buchstaben um 13 Stellen im Alphabet verschiebt.
+ROT13 ist ein simples Codierverfahren, das einfach
+jeden Buchstaben um 13 Stellen im Alphabet verschiebt.
 
 Das Verfahren dient dazu, ein versehentliches Lesen
-von Nachrichten zu verhindern, z.B. bei Aufl”sungen von
-R„tseln.
+von Nachrichten zu verhindern, z.B. bei Aufl”sungen
+von R„tseln.
 @
 490
 Hier k”nnen Sie bis zu drei externe Codierprogramme
