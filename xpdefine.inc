@@ -97,7 +97,7 @@
   {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$H+,I-,M-,P-,T-,V-,X+}
+  {$C-,H+,I-,M-,P-,T-,V-,X+}  
   {$DEFINE Int64 }
   {$DEFINE i386 }
 {$ENDIF }
@@ -110,7 +110,7 @@
   {$ENDIF }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
-  {$DEFINE i386}
+  {$DEFINE i386}                 
   {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
@@ -257,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.9  2002/12/14 21:07:21  mk
+  - $C- for FPC in non debug mode
+
   Revision 1.78.2.8  2002/11/23 23:49:35  mk
   - added Delphi 7 support
 
