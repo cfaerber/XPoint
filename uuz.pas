@@ -2416,7 +2416,7 @@ begin
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
       binaer:=(hd.typ='B');
-      if (mempf<>'') and (mempf<>hd.xempf[1]) then
+      if (mailuser<>'') and ((hd.empfanz = 0) or ((hd.empfanz > 0) and (mailuser<>hd.xempf[1]))) then
       begin
         hd.xoem:=hd.xempf;
         hd.oemanz:=hd.empfanz;
@@ -3466,6 +3466,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.31  2001/01/05 09:31:33  mk
+  - fehler in WAB-Handling behoben (teil 2)
+
   Revision 1.35.2.30  2001/01/05 09:25:28  mk
   - fehler in WAB-Handling behoben
 
