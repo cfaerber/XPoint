@@ -106,11 +106,18 @@ function isnum(const s:string):boolean;            { s besteht aus [0..9]       
 function IVal(s:string):longint;             { Value Integer                }
 function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
 function Lead(s:string):string;              { Anf.-u. End-0en abschneiden  }
+{$ifdef FPC}
+function Left(s: string; n: integer): string;
+function Right(s: string; n: integer): string;
+{$else}
 {$IFDEF NOASM }
 function Left(s:string; n:byte):string;      { LeftString                   }
+function Right(s:string; n:byte):string;     { RightString                  }
 {$ELSE}
 function Left(const s:string; n:byte):string;      { LeftString                   }
+function Right(const s:string; n:byte):string;     { RightString                  }
 {$ENDIF}
+{$endif} { FPC }
 function Long(const l:longint):longint;            { Type-Cast nach Longint       }
 function LoCase(const c:char):char;                { LowerCase                    }
 function Log(const b,r:real):real;           { allg. Logarithmus            }
@@ -141,11 +148,6 @@ function QSum(const s:string):longint;             { Quersumme                  
 function Range(const c1,c2:char):string;           { z.B. ('1','5') = '12345'     }
 function Reverse(s:string):string;           { String umkehren              }
 function rforms(const s:string; const n:byte):string;    { String links mit ' ' auff.   }
-{$IFDEF NOASM }
-function Right(s:string; n:byte):string;     { RightString                  }
-{$ELSE }
-function Right(const s:string; n:byte):string;     { RightString                  }
-{$ENDIF }
 function RightPos(c:char; s:string):byte;    { Pos von rechts               }
 function Round(const r:real; const nk:integer):real;     { Real --> Real auf nk runden  }
 function RVal(const s:string):real;                { Value Real                   }
@@ -450,15 +452,12 @@ end;
 function Time:DateTimeSt;
 VAR stu,min,sec,du :rtlword;
 begin
-  gettime(stu,min,sec,du);
-  time:=formi(stu,2)+':'+formi(min,2)+':'+formi(sec,2);
+  Time:= FormatDateTime('hh:nn:ss', Now);
 end;
 
 function Date:DateTimeSt;
-VAR  ta,mo,ja,wt: rtlword;
 begin
-  getdate(ja,mo,ta,wt);
-  date:=formi(ta,2)+'.'+formi(mo,2)+'.'+strs(ja);
+  Date:= FormatDateTime('dd.mm.yyyy', Now);
 end;
 
 Procedure SetSysTime(const t:DateTimeSt);
@@ -1150,12 +1149,37 @@ begin
     UStrHuge[i]:=UpCase(s[i]);
 end;
 
+
+{$ifdef FPC}
+function Left(s: string; n: integer): string;
+begin
+  Left:= LeftStr(s, n);
+end;
+
+function Right(s: string; n: integer): string;
+begin
+  Right:= RightStr(s,n);
+end;
+
+{$else} { FPC }
+
 {$IFDEF NOASM }
+
 function Left(s:string; n:byte):string;
 begin
-  if n<length(s) then SetLength(s,n);
+  if n<length(s) then
+    SetLength(s,n);
   left:=s;
 end;
+
+function Right(s:string; n:byte):string;
+begin
+  if n>=length(s) then
+    Right:=s
+  else
+    Right:=copy(s,length(s)-n+1,255);
+end;
+
 {$ELSE }
 
 function Left(const s: String; n: byte): string; {&uses esi,edi} assembler;
@@ -1171,22 +1195,8 @@ asm
 @1:     mov     ecx, eax
         stosb
         rep     movsb
-{$ifdef FPC }
-end ['EAX', 'ECX', 'ESI', 'EDI'];
-{$else}
 end;
-{$endif}
-{$ENDIF }
 
-{$IFDEF NOASM }
-function Right(s:string; n:byte):string;
-begin
-  if n>=length(s) then
-    Right:=s
-  else
-    Right:=copy(s,length(s)-n+1,255);
-end;
-{$ELSE }
 function Right(const s: string; n: byte):string; {&uses esi,edi} assembler;
 asm
         cld
@@ -1208,12 +1218,12 @@ asm
         inc     edi
         add     esi, eax
         rep     movsb
-{$ifdef FPC }
-end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$else}
 end;
-{$endif}
-{$ENDIF }
+
+{$ENDIF } { NOASM }
+
+{$endif} { FPC }
+
 
 {$IFDEF NOASM }
 function Mid(const s:string; const n:byte):string;
@@ -2004,6 +2014,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/07/03 17:28:54  hd
+  - Date/Time geaendert
+  - Left/Right angepasst (nur FPC, da die Funktionen bei VPC fehlen)
+
   Revision 1.44  2000/07/03 16:20:03  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 
