@@ -73,7 +73,8 @@ type
   {$ENDIF } 
 
 const
-        dbFlagIndexed = 1;  //or True?    { Flag fuer dbOpen }
+        dbFlagIndexed = 1;  //or True?  { Flag fuer dbOpen }
+        dbFlagNoExt   = 2;    { Flag fuer dbOpen }
 
         icIndexNum    = 1;    { <- Anzahl Indizes   (indexnr)     }
         icIndex       = 2;    { <- indexstr [ / indexproc]        }
@@ -138,6 +139,9 @@ implementation
 
 {
   $Log$
+  Revision 1.16  2003/09/07 16:14:15  cl
+  - dbHasField/dbAppendField now work with missing *.EB1
+
   Revision 1.15  2003/01/22 21:33:11  mk
   - packenums = 1 and packrecords = 8 for FPC, Delphi and Kylix
 

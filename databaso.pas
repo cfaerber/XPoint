@@ -255,7 +255,7 @@ var d       : DB;
     newsize : integer;
     irec    : dbIndexCRec;
 begin
-  dbOpen(d,filename,0);
+  dbOpen(d,filename,dbFlagNoExt);
   irec.df:=filename;
   with dp(d)^ do begin
     irec.command:=icOpenCWindow; ICP(irec);
@@ -479,6 +479,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2003/09/07 16:14:15  cl
+  - dbHasField/dbAppendField now work with missing *.EB1
+
   Revision 1.26  2003/08/24 21:43:36  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

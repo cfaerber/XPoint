@@ -1532,9 +1532,9 @@ end;
 {===== Datenbank bearbeiten =========================================}
 
 { Datenbank oeffnen.  flags:  Bit 0:  1 = Inidziert             }
-{                                                              }
+{                             Bit 1:  2 = EB1 ignorieren        }
 { xflag und ixflag werden erst *nach* erfolgreichem Oeffnen der }
-{ Dateien gesetzt, um bei IOErrors Folgefehler zu vermeiden.   }
+{ Dateien gesetzt, um bei IOErrors Folgefehler zu vermeiden.    }
 
 procedure dbOpen(var dbp:DB; name:dbFileName; flags:xpWord);
 var i,o   : integer;
@@ -1645,6 +1645,10 @@ begin
           if ftyp=dbUntypedExt then xxflag:=true;
         end;
       end;
+
+    if flags and dbFlagNoExt<>0 then
+      xxflag := false;
+
     if xxflag then begin
       {$ifdef debug} Debug.DebugLog('database','dbOpen - .eb1', dlTrace); {$endif}
       assign(fe,name+dbExtExt);
@@ -1755,7 +1759,7 @@ end;
 function dbHasField(const filename:string; const feldname:dbFeldStr):boolean;
 var d : db;
 begin
-  dbOpen(d,filename,0);
+  dbOpen(d,filename,2);
   dbHasField:=(dbGetFeldNr(d,feldname)>=0);
   dbClose(d);
 end;
@@ -2607,6 +2611,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2003/09/07 16:14:15  cl
+  - dbHasField/dbAppendField now work with missing *.EB1
+
   Revision 1.67  2003/08/30 21:21:00  cl
   - added dbReadXStr that does not require a var size: integer parameter
   - simplified code of dbReadXStr
