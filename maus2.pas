@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Maus -> Tasten -> Steuerung }
@@ -22,13 +22,7 @@ unit  maus2;
 interface
 
 uses
-{$ifdef NCRT}
-  xplinux,
-  xpcurses,
-{$else}
-  crt,
-{$endif}
-  mouse,keys, xpglobal;
+  crt, mouse,keys, xpglobal;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -73,11 +67,7 @@ procedure mint(intsource,tasten,x,y,mx,my:word); {$IFDEF BP } far; {$ENDIF }
 
 implementation
 
-uses inout,
-{$IFDEF VP}
-     vpSysLow,
-{$ENDIF}
-     winxp;
+uses inout,winxp;
 
 const  maxinside = 25;
 
@@ -111,11 +101,7 @@ var
     forwardkeys[length(forwardkeys)+1]:=#0;
     forwardkeys[length(forwardkeys)+2]:=char(b);
     inc(byte(forwardkeys[0]),2);
-{$ifdef NCRT}
-    if not usemulti2 and not keypressed then begin
-{$else}
     if not usemulti2 and not crt.keypressed then begin
-{$endif}
       t[0]:=#1; t[1]:=#31;
       pushkeyv(t);
       end;
@@ -141,6 +127,15 @@ begin
     tasten:=(tasten and 1) shl 1 + (tasten and 2) shr 1 + tasten and 4;
     end;
   kx:=x; ky:=y;
+
+  if intsource and intMid0<>0 then begin
+    put(247);
+    if (istack>0) then begin
+      maus_gettext(xx,yy);
+      was_inside:=(xx>=inside[istack,0]) and (xx<=inside[istack,1]) and
+                  (yy>=inside[istack,2]) and (yy<=inside[istack,3]);
+      end;
+    end else 
   if intsource and intLeft1<>0 then begin
     if (tick=0) or (ticker-tick>dbcl) then begin
       put(240); tick:=ticker;
@@ -179,14 +174,8 @@ end;
 
 procedure maus_tasten_an;
 begin
-{$IFDEF BP }
   if not tan then
-    setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1,mint,2048);
-{$ENDIF }
-{$IFDEF VP }
-  InitMouseThread;
-{$ENDIF }
-
+    setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1+intMid0,mint,2048);
   tan:=true;
   lx:=255; ly:=255;
 end;
@@ -194,13 +183,8 @@ end;
 
 procedure maus_tasten_aus;
 begin
-{$IFDEF BP }
   if tan then
     clearmausint;
-{$ENDIF }
-{$IFDEF VP }
-  DoneMouseThread;
-{$ENDIF }
   tan:=false;
 end;
 
@@ -351,6 +335,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.2  2001/09/16 20:39:05  my
+  JG+MY:- Mittlere Maustaste lˆst Doppelklick aus
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.14.2.1  2001/08/10 16:54:11  mk
   - const parameter saves some space in .exe
 
