@@ -78,9 +78,9 @@ type archd = record
                method   : byte;
                name     : array[0..12] of char;
                compsize : longint;
-               dosdate  : word;
-               dostime  : word;
-               crc16    : word;
+               dosdate  : smallword;
+               dostime  : smallword;
+               crc16    : smallword;
                orgsize  : longint;
              end;
 
@@ -90,25 +90,25 @@ type archd = record
                method   : array[0..4] of char;
                compsize : longint;
                orgsize  : longint;
-               dostime  : word;
-               dosdate  : word;
-               attrib   : word;
+               dostime  : smallword;
+               dosdate  : smallword;
+               attrib   : smallword;
                namelen  : byte;
                path     : shortstring;
              end;
 
      ziphd = record
                id       : longint;   { $04034b50 }
-               extver   : word;
-               flags    : word;
-               method   : word;
-               dostime  : word;
-               dosdate  : word;
+               extver   : smallword;
+               flags    : smallword;
+               method   : smallword;
+               dostime  : smallword;
+               dosdate  : smallword;
                crc32    : longint;
                compsize : longint;
                orgsize  : longint;
-               namelen  : word;
-               eflen    : word;
+               namelen  : smallword;
+               eflen    : smallword;
                path     : shortstring;
              end;
 
@@ -118,22 +118,22 @@ type archd = record
                  method   : byte;
                  next     : longint;
                  header   : longint;
-                 dosdate  : word;
-                 dostime  : word;
-                 crc16    : word;
+                 dosdate  : smallword;
+                 dostime  : smallword;
+                 crc16    : smallword;
                  orgsize  : longint;
                  compsize : longint;
                  version  : byte;
                  xver     : byte;
                  deleted  : boolean;
                  commadr  : longint;
-                 commlen  : word;
+                 commlen  : smallword;
                  name     : shortstring;
                end;
 
      arjrec  = record
-                 HeaderID : word;    { $ea60 }
-                 hdsize   : word;    { ab hdsize1 }
+                 HeaderID : smallword;    { $ea60 }
+                 hdsize   : smallword;    { ab hdsize1 }
                  hdsize1  : byte;
                  version  : byte;
                  extver   : byte;
@@ -142,20 +142,20 @@ type archd = record
                  method   : byte;
                  ftype    : byte;
                  res      : byte;
-                 dostime  : word;
-                 dosdate  : word;
+                 dostime  : smallword;
+                 dosdate  : smallword;
                  compsize : longint;
                  orgsize  : longint;
                  orgcrc   : longint;
-                 nameadr  : word;
-                 attrib   : word;
-                 hostdata : word;
+                 nameadr  : smallword;
+                 attrib   : smallword;
+                 hostdata : smallword;
                  name     : shortstring;   { evtl. 4 Bytes Ext-FilePos }
                end;
 
      dwchd   = record
-                 hdsize   : word;
-                 recsize  : word;
+                 hdsize   : smallword;
+                 recsize  : smallword;
                  unknown  : array[1..16] of byte;
                  entries  : longint;
                  id       : array[0..2] of char;
@@ -177,8 +177,8 @@ type archd = record
                  version  : byte;
                  compsize : longint;
                  orgsize  : longint;
-                 dostime  : word;
-                 dosdate  : word;
+                 dostime  : smallword;
+                 dosdate  : smallword;
                  chksum   : longint;
                  attrib   : byte;
                  name     : shortstring;
@@ -186,17 +186,17 @@ type archd = record
 
      sqzrec = record
                 case hdtype : byte of   { 0=Ende, 1=Comment, 2=PW, 18..=File }
-                  1 : (ComSize  : word;     { Comment }
-                       ComComp  : word;
+                  1 : (ComSize  : smallword;     { Comment }
+                       ComComp  : smallword;
                        ComMeth  : byte;
                        ComCRC   : longint);
-                  2 : (BlkSize  : word);    { Password u.a. }
+                  2 : (BlkSize  : smallword);    { Password u.a. }
                  18 : (HdChksum : byte;
                        Method   : byte;     { + Flags }
                        compsize : longint;
                        orgsize  : longint;
-                       dostime  : word;
-                       dosdate  : word;
+                       dostime  : smallword;
+                       dosdate  : smallword;
                        attrib   : byte;
                        crc32    : longint;
                        name     : shortstring);
@@ -296,7 +296,7 @@ var f    : file;
     idr  : record
              case integer of
                0 : (l : longint);
-               1 : (w,w2 : word);
+               1 : (w,w2 : smallword);
                2 : (b : byte;
                     zipID : longint);
                3 : (txt : array[0..19] of char;
@@ -324,8 +324,9 @@ label ende;
   var lbuf  : array[0..255] of byte;
       rr    : word;
 {      chk,i : byte; }
-      meth  : string[5];
-  begin
+      meth  : string;
+  begin                                { Funktion arc Type }
+    setlength(meth,5);
     seek(f,sadr);
     blockread(f,lbuf,256,rr);
 {    chk:=0;         MK 06.02.00 Programmteil abgesch., da im Original
@@ -460,7 +461,7 @@ end;
 { ARJ-extended-Header Åberlesen }
 
 procedure ArjSkipExt(var ar:ArchRec);
-var w : word;
+var w : smallword;
 begin
   with ar do
     repeat
@@ -485,8 +486,8 @@ var zoohd : record
               xver    : byte;
             end;
     arjhd : record
-              id     : word;  { $EA60 }
-              hdsize : word;  { + 8   }
+              id     : smallword;  { $EA60 }
+              hdsize : smallword;  { + 8   }
             end;
     fs    : record
               ofs  : word;   { LÑnge MOD 512 }
@@ -985,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/08/09 13:19:09  mk
+  MO: weitere Anpassungen fuer ARJ, ZIP, LZH
+
   Revision 1.17  2000/08/09 08:56:55  mk
   MO:- AnsiString-Fixes fuer Rar-Archive
 
