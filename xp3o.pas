@@ -1214,6 +1214,7 @@ var
     empf   : string;
     hdp    : Theader;
     hds    : longint;
+    flags  : longint;
     d      : DB;
     fn     : string;
     sData  : SendUUptr;
@@ -1244,16 +1245,18 @@ begin
     if not dbFound then exit;
     box := dbReadNStr(ubase,ub_pollbox);
   end;
+
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then
-    case mbNetztyp of
+  if dbFound then begin
+    case ntBoxNetztyp(box) of
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
                        dbReadStr(d,'domain');
+      nt_NNTP   : adr:=dbReadStr(d,'username');
       nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
       nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-    end
-  else begin
+      end;
+    end else begin
     rfehler1(109,box);
     adr:='';
     end;
@@ -1264,8 +1267,9 @@ begin
   ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
-  if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
-      not stricmp(adr,hdp.wab)) or (hds<=1) then begin
+  dbReadN(mbase,mb_flags,flags);
+  if (((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
+      not stricmp(adr,hdp.wab)) or (hds<=1)) and (flags and 256 = 0) then begin
     if hds>1 then
       rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
     Hdp.Free;
@@ -1380,6 +1384,7 @@ var t1,t2 : text;
     ww    : boolean;
     ts    : string[80];
 begin
+  s:=uppercase(s);
   ts:=trim(s)+'='+LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5);
   assign(t1,TimingDat);
   if not existf(t1) then begin
@@ -1515,6 +1520,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/06/08 21:09:15  ma
+  - fixed: Supersedes did not work with NNTP
+
   Revision 1.56  2001/06/04 22:01:41  ma
   - messages replaced by ReplaceOwn feature are flagged as own again.
     This flag is used for deciding whether cancelling is valid
