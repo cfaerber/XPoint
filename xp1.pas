@@ -55,10 +55,14 @@ type mprec     = record
                  end;
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
+{$IFDEF NCRT }
+     scrptr    = word;	{ Handle }
+{$ELSE }
      scrptr    = record
                    scsize  : word;
                    p       : pointer;
                  end;
+{$ENDIF }
      ahidden   = array[1..maxhidden] of integer;
 
 Type TStartData = record
@@ -1133,7 +1137,17 @@ end;
 
 
 procedure sichern(var sp:scrptr);
+{$IFDEF NCRT}
+var
+  r: integer;
+{$ENDIF}
 begin
+{$IFDEF NCRT }
+  r:= getrahmen;
+  setrahmen(0);
+  wpull(1,screenwidth,1,screenlines,'',sp);
+  setrahmen(r);
+{$ELSE}
   with sp do
   begin
 {$IFDEF Win32 }
@@ -1152,10 +1166,14 @@ begin
 {$ENDIF }
     mon;
   end;
+{$ENDIF}
 end;
 
 procedure holen(var sp:scrptr);
 begin
+{$IFDEF NCRT}
+  wrest(sp);
+{$ELSE}
   with sp do
   begin
     moff;
@@ -1170,6 +1188,7 @@ begin
     disp_DT;
     freemem(p,scsize);               { Bild wiederherstellen }
   end;
+{$ENDIF}
 end;
 
 
@@ -2382,6 +2401,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/05/10 10:31:01  hd
+  - Linux: sichern/holen angepasst
+
   Revision 1.41  2000/05/08 13:12:23  hd
   - "Rote Linien" simuliert
   - Usernamen-Darstellung an screenwidth ausgerichtet
