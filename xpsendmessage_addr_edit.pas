@@ -145,7 +145,7 @@ var
   begin
     if (h<max_h) and (h<List.Count) then
     begin
-      new_h := Min(max_h,h+3);
+      new_h := Min(max_h,Max(List.Count,h+3));
       done := false;
       MQuit(false);
       exit;
@@ -235,7 +235,7 @@ var
     if inhalt='' then
     begin
       G := List[ii].Group;
-      while (List[ii].Group=G) and (ii<List.Count) do
+      while (List[ii].Group=G) and (ii<List.Count-1) do
         if List[ii].Empty then
           List.Delete(ii) 
         else begin
@@ -326,6 +326,7 @@ var
               dbClose(d);
             end;
           end;
+          
         end;
 
         dbOpen(d,PseudoFile,1);
@@ -356,7 +357,7 @@ var
           BoxName := bb;
           NewUser := nu;
         end;
-
+        J := I+1;
       end; (* procedure AddAddr *)
         
     begin
@@ -400,6 +401,11 @@ var
     ii := IndexPos;
 
     Inhalt := Trim(Inhalt);
+
+    if Inhalt = List[ii].DisplayString then begin
+      result := true;
+      exit;
+    end;    
 
 //  Wrt(1,1,'<<FieldPos='+StrS(FieldPos)+', IndexPos='+StrS(ii)+
 //    ', List.Count='+StrS(List.Count)+', List.GroupNames.Count='+StrS(List.GroupNames.count)+'>>');
@@ -446,7 +452,7 @@ var
     j := ii;
     lp := j;
 
-    while (j<List.Count) and ((j<nl.Count+ii) or (List[j].Group>=0)) do
+    while (j<List.Count-1) and ((j<nl.Count+ii) or (List[j].Group>=0)) do
     begin
     // -- Gruppe wieder setzen, ggf. nach vorne schieben ---------------
       if (j<nl.Count+ii) then begin
@@ -504,7 +510,7 @@ var
     end;
 
     inhalt := List[ii].DisplayString;
-
+    
     if (nl.Count<>1) or ch then 
       ScrollDone
     else
@@ -794,7 +800,7 @@ var Index: integer;
        else 
        begin
          dbAppend(ubase);
-         dbWriteNStr(ubase,ub_username,user);
+         dbWriteNStr(ubase,ub_username,LeftStr(user,80));
          if UpperCase(adresse)=UpperCase(user) then adresse:='';
          dbWriteXStr(ubase,'adresse',iif(adresse='',0,length(adresse)+1),adresse);
          dbWriteNStr(ubase,ub_kommentar,komm);
@@ -813,7 +819,7 @@ var Index: integer;
 
   begin
   
-    UName := UpperCase(email.XPAddress);
+    UName := UpperCase(LeftStr(email.XPAddress,80));
 
     dbSeek(ubase,uiName,UName);
     if dbFound then
@@ -825,7 +831,8 @@ var Index: integer;
       if (dbXsize(ubase,'adresse')<>0) then 
       begin
         List[Index].ZCAddress := dbReadXStr(ubase,'adresse',size);
-        exit;                                // Gleiche Addresse nochmal
+        if UpperCase(LeftStr(List[Index].XPAddress,80))<>UName then
+          exit;                                // Gleiche Addresse nochmal
       end;
       
 //    dbReadN(ubase,ub_codierer,cancode);
@@ -1076,6 +1083,9 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2002/08/10 00:29:27  cl
+// - various address editor fixes
+//
 // Revision 1.7  2002/07/25 21:23:18  mk
 // - removed unused variables
 // - i is now a local variable
