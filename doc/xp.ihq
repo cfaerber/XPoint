@@ -875,7 +875,7 @@ unter /Config/Anzeige/Bretter ge„ndert werden.
 <<User-šbersicht
 
 Im User-Fenster haben Sie Zugriff auf alle erfaáten
-User und deren PM-Bretter. Je nach Anzeigemodus
+User und deren PM-Bretter. Je nach Anzeige-Modus
 werden alle oder nur die im Adreábuch erfaáten User
 angezeigt.
 
@@ -3935,11 +3935,6 @@ sollten Sie m”glichst darauf achten, daá ein <<> >>im
 Quotezeichen vorhanden ist, weil dies vielen Program-
 men zum Erkennen von Quote-Zeilen dient.
 
-Durch zus„tzliche Angabe eines <<%>> an beliebiger
-Stelle im Quotezeichen-String wird auch Leerzeilen
-ein Quotezeichen vorangestellt (ansonsten bleiben
-sie Leerzeilen).
-
 @
 211
 Ab dieser Spalte erfolgt beim Zitieren ("quoten")
@@ -4783,7 +4778,7 @@ gesucht und der Text dahinter angezeigt.
 1035
 <<[x]>> -> Das Ende von l„nger dauernden Funktionen wie
        z.B. dem Packen von Nachrichten oder Such-
-       funktionen wird durch ein Tonsignal angzeigt.
+       funktionen wird durch ein Tonsignal angezeigt.
 @
 1036
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
