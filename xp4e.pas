@@ -685,7 +685,10 @@ begin
          getres2(2708,iif(edit,3,4)),x,y);   { 'Brett bearbeiten' / 'neues Brett anlegen' }
   userfld:=-1;
   adrfieldpos:=-1;
-  brtyp:=brett[1];
+  if Edit then
+    brtyp:=brett[1]
+  else
+    brtyp := ' ';
   if not trenn then begin
     if askloc or ParXX then begin
       maddstring(3,2,getres2(2708,5),box,BoxRealLen,BoxRealLen,'>'); mhnr(402);
@@ -793,10 +796,10 @@ end;
 function testnoverteiler(var s:string):boolean;
 begin
   testnoverteiler:=true;
-  if (s[1]='[') and (s[length(s)]=']') then 
+  if (s[1]='[') and (s[length(s)]=']') then
   begin
     rfehler(313);      { 'Verteiler sind hier nicht erlaubt!' }
-    testnoverteiler:=false;  
+    testnoverteiler:=false;
     end;
 end;
 
@@ -1438,7 +1441,7 @@ begin
   maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'Empf„nger ' }
     iifs(ntGrossUser(ntBoxNetztyp(box)),'>',''));
 {JG:05.02.00}
-  mappcustomsel(seluser,false);          
+  mappcustomsel(seluser,false);
 {/JG}
   msetvfunc(empftest);
   maddstring(3,4+pba,getres2(2718,3),betr,40,BetreffLen,'');  { 'Betreff   ' }
@@ -2002,7 +2005,7 @@ begin
   oldtc:=trennchar;
   dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfgen' }
   komm:='';
-  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);  
+  maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);
   mappsel(false,'ÄùÍùğù°ù±ù¯ù®ùúùş');              { 'Trennzeichen ' }
   mnotrim;
   msetvfunc(tnotempty);
@@ -2197,6 +2200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.3  2000/07/21 18:47:06  mk
+  - Zugriff auf nicht initialisierten String beseitigt
+
   Revision 1.9.2.2  2000/04/30 19:16:47  mk
   - Y2K-Fix fuer Info in Autoversand, nur optisch
 
