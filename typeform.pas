@@ -1142,15 +1142,15 @@ begin
   i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
-    while (s[i] > ' ') and (s[i] < chr(128)) and
-     not (s[i] in forbiddenChar) and ( i > 0) do dec(i);   { Anfang suchen... }
+    while (i > 0) and (s[i] > ' ') and (s[i] < chr(128)) and
+     not (s[i] in forbiddenChar) do dec(i);   { Anfang suchen... }
     repeat
       inc(i);
     until not (s[i] in WrongChar);            { '.-_' sind am Anfang ungueltig }
 
     j := i;
-    while (s[j] > ' ') and (s[j] < chr(128)) and
-     not (s[j] in forbiddenChar) and (j <= length(s)) do Inc(j);  {Ende suchen...}
+    while (j <= Length(s)) and (s[j] > ' ') and (s[j] < chr(128)) and
+     not (s[j] in forbiddenChar) do Inc(j);  {Ende suchen...}
     repeat
       dec(j);
     until not (s[j] in WrongChar);                    {.-_ sind am Ende ungueltig}
@@ -1290,6 +1290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/08/14 21:05:53  mk
+  - Bugfix fuer Mailstring
+
   Revision 1.66  2000/08/08 23:14:26  mk
   - Bugfix fuer Hex() unter VP
 
