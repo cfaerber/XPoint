@@ -552,22 +552,25 @@ begin { FidoNetcall }
   if crash then crash:=ProcessCrash;
   if not crash then ProcessAKABoxes(boxpar,ConvertedFiles,OutgoingFiles);
 
-  if ConvertedFiles.Count>0 then begin
-    // Compress outgoing buffers
-    UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetPointAdr(boxname,false),boxname);
-    ShellCommandUparcer:=boxpar^.uparcer;
-    exchange(ShellCommandUparcer,'$PUFFER',StringListToString(ConvertedFiles));
-    exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
-    result:=ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles);
-    for i:=0 to ConvertedFiles.Count-1 do  // erase converted fido PKTs in every case
-      _era(ConvertedFiles[i]);
-    ConvertedFiles.Destroy;
-    if result<>0 then begin
-      trfehler(713,30);  { 'Fehler beim Packen!' }
-      OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
-      exit;
-      end;
-    end;
+  if (ConvertedFiles.Count>0)and(boxpar^.uparcer<>'')then
+    if (not Diskpoll)or boxpar^.SysopPack then begin
+      // Compress outgoing buffers
+      UpArcFilename:=GetArcFilename(GetPointAdr(boxname,false),boxname);
+      ShellCommandUparcer:=boxpar^.uparcer;
+      exchange(ShellCommandUparcer,'$PUFFER',StringListToString(ConvertedFiles));
+      exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
+      result:=ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles);
+      for i:=0 to ConvertedFiles.Count-1 do  // erase converted fido PKTs in every case
+        _era(ConvertedFiles[i]);
+      if result<>0 then begin
+        trfehler(713,30);  { 'Fehler beim Packen!' }
+        OutgoingFiles.Destroy; AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy; ConvertedFiles.Destroy;
+        exit;
+        end;
+      end
+    else
+      OutgoingFiles.AddStrings(ConvertedFiles);
+  ConvertedFiles.Destroy;
 
   if crash then begin
     getNodeInfo(boxpar^.boxname,ni,2);
@@ -593,7 +596,10 @@ begin { FidoNetcall }
       Fidomailer.Destroy;
       end;
     true: begin  // diskpoll, call appropriate programs
+      Debug.DebugLog('xpncfido','Diskpoll: OutDir '+boxpar^.sysopout+', InDir '+boxpar^.sysopinp+', Start '+boxpar^.sysopstart+', End '+boxpar^.sysopend,dlInform);
       result:=el_ok;
+      for i:=0 to OutgoingFiles.Count-1 do
+        CopyFile(OutgoingFiles[i],boxpar^.sysopout+ExtractFileName(OutgoingFiles[i]));
       if boxpar^.sysopstart<>'' then begin
         SetCurrentDir(boxpar^.sysopinp);
         if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
@@ -856,6 +862,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/05/08 17:43:04  ma
+  - added support for uncompressed outgoing diskpoll packets
+
   Revision 1.10  2001/04/21 12:59:11  ma
   - fixed: both sysop start and end program had to be specified
   - sysop in is blindly processed now
