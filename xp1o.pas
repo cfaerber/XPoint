@@ -66,6 +66,17 @@ implementation
 
 uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
 
+
+function getline:string;                          { Eine Zeile vom Lister uebernehmen } 
+begin
+  if list_markanz<>0 
+    then getline:=first_marked                    { erste markierte Zeile }
+    else if list_selbar 
+      then getline:=get_selection                 { oder Zeile unter Markierbalken }
+      else getline:='';                           { oder eben nichts }
+end;
+
+
 { Dateinamen abfragen. Wenn Esc gedrÅckt wird, ist s undefiniert! }
 
 function ReadFilename(txt:atext; var s:pathstr; subs:boolean;
@@ -94,16 +105,15 @@ begin
       ClipToFile(s);
       end
     else
-{JG:11.02.00}
     if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
-      s:=mailstring(first_marked,false);
+      s:=mailstring(getline,false);
       string2clip(s);                                        { ins Clipboard }
       ReadFilename:=false;
       exit;
       end
     else
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
-      s:=first_marked;
+      s:=getline;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
@@ -121,7 +131,6 @@ begin
       exit;
       end
     else
-{/JG}
       useclip:=false;
     if (trim(s)='') or ((length(s)=2) and (s[2]=':')) or (right(s,1)='\') then
       s:=s+'*.*'
@@ -315,32 +324,30 @@ begin
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
   begin
-    if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
-    else s:=mailstring(first_marked,false);
+    s:=mailstring(getline,false);
     if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
     ex(5)                                                   { Weiter im Lister }
     end ;
 
   if t = keyaltv then                                        { ALT+V = Suche text }
   begin
-    if list_markanz=0 then s:=''
-    else s:=first_marked;
+    s:=getline; 
     if Suche(getres(414),'',s) then Showfromlister;
     ex(5)
     end;
 
   if t = keyaltb then                                        { Alt+B = Betreff }
   begin
-    if list_markanz=0 then s:=dbreadstr(mbase,'Betreff')
-    else s:=first_marked;
+    s:=getline;
+    if s='' then s:=dbreadstr(mbase,'Betreff');
     if Suche(getres(415),'Betreff',s) then Showfromlister;
     ex(5)
     end;
 
   if t = keyaltu then                                        { Alt+U = User }
   begin
-    if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
-    else s:=mailstring(first_marked,false);
+    s:=mailstring(getline,false);
+    if s='' then s:=dbreadstr(mbase,'Absender');    
     if Suche(getres(416),'Absender',s) then Showfromlister;
     ex(5)
     end;
@@ -964,6 +971,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/04/21 14:45:08  jg
+  - Lister: Auswertung von markierten Zeilen / Markierbalken
+    bei Suchfunktionen und Stringuebergabe verbessert.
+
   Revision 1.32  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 
