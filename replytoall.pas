@@ -477,6 +477,9 @@ var RTAEmpfList : TRTAEmpfaengerList;
     auswahl :byte;
 
     procedure getPollBox;
+    var 
+      hdp2: THeader;
+      hds2 :longint;
     begin
       box := '';
       brett := dbReadStr (mbase, 'brett');
@@ -485,6 +488,14 @@ var RTAEmpfList : TRTAEmpfaengerList;
         dbSeek (bbase, biIntNr, copy (brett, 2, 4));
         if dbBOF (bbase) or dbEOF (bbase) then box := ''
         else Box := dbReadStr (bbase, 'pollbox');
+      end else
+      if brett[1] = 'U' then                 { User }
+      begin
+        hdp := THeader.Create;
+        readHeader (hdp2, hds2, false);
+        dbseek (ubase, uiname, UpperCase(hdp2.empfaenger));
+        if dbFound then dbRead (ubase, 'pollbox', box);
+        hdp.Free;
       end;
       if not isBox (box) then box := DefaultBox;
     end;
@@ -969,6 +980,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2001/11/01 17:45:40  mk
+  -SV: Statt der Stammbox wird nun der richtige Server angeboten (Dank an
+    Jochen Gehring fuer die Codevorlage)
+
   Revision 1.22  2001/11/01 14:43:42  mk
   - do askRTA when client and pop3, nntp and imap-boxes are available
 
