@@ -1143,8 +1143,8 @@ begin
               pmCryptDecode;
 
             msgsent:=true;
-            end
-          else (* begin   { nicht aufnehmen }
+            end;
+          (* else begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
             end; *)
@@ -1304,6 +1304,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2003/01/26 09:20:08  cl
+  - fixed problem with inc(empfnr)
+
   Revision 1.102  2003/01/24 19:29:05  cl
   - merged commit from stable branch:
 
