@@ -145,7 +145,6 @@ var   _from,_to : FidoAdr;
       avia      : array[1..maxvia] of ^string;
       viaanz    : integer;
 
-{$IFDEF BP }
 const ISO2IBMtab : array[128..255] of byte =
       (128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
        144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
@@ -171,11 +170,10 @@ const ISO2IBMtab : array[128..255] of byte =
         45, 45, 44, 32, 96, 39,246,254,152, 89, 47,120, 60, 62, 32, 32,
         43,250, 44, 32, 32, 65, 69, 65, 69, 69, 73, 73, 73, 73, 79, 79,
         32, 79, 85, 85, 85,105, 94,126, 45, 32,250,248, 44, 34, 44, 32);
-{$ENDIF }
 
-procedure ExpandCR(var data; bpos:smallword; size:smallword; var addlfs:smallword); assembler;
+procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; {&uses ebx, esi, edi}
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
        push ds
        les    di,data          { es:di -> msgbuf^[0] }
        lds    si,data          { es:si -> msgbuf^[bpos] }
@@ -210,12 +208,49 @@ asm
 @ende: les    di,addlfs
        mov    es:[di],dx
        pop ds
+{$ELSE }
+       mov    edi,data          { es:di -> msgbuf^[0] }
+       mov    esi,data          { es:si -> msgbuf^[bpos] }
+       mov    ebx,bpos          { max. Anzahl einfÅgbarer LFs }
+       add    esi,ebx
+       mov    ecx,size          { cx <- mbufsize-bpos }
+       xor    edx,edx            { ZÑhler fÅr eingefÅgte LF's }
+       cld
+@lp1:  lodsb
+       stosb
+       cmp    al,13
+       jz     @isCR
+       loop   @lp1
+       jmp    @ende
+@isCR: dec    ecx
+       jcxz   @noLF            { Nachricht endet auf CR -> LF anhÑngen }
+       lodsb                   { Test auf CR ohne LF }
+       cmp    al,10
+       jnz    @noLF
+       stosb                   { ok: CR/LF }
+       loop   @lp1
+       jmp    @ende
+@noLF: xchg   ah,al
+       mov    al,10            { LF einfÅgen }
+       stosb
+       xchg   al,ah
+       stosb
+       inc    edx
+       jcxz   @ende
+       cmp    edx,ebx
+       loopne @lp1
+@ende: mov edi, addlfs
+       mov [edi], edx
 {$ENDIF}
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
 end;
+{$ENDIF }
 
-procedure Remove0(var data; size:smallword); assembler;
+procedure Remove0(var data; size:word); assembler; {&uses edi}
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
         les    di,data
         mov    cx,size
         jcxz   @rende
@@ -226,12 +261,27 @@ asm
         mov    byte ptr es:[di-1],' '    { #0 -> ' ' }
         jmp    @rlp
 @rende:
+{$ELSE }
+        mov    edi,data
+        mov    ecx,size
+        jcxz   @rende
+        mov    al,0
+        cld
+@rlp:   repnz  scasb
+        jcxz   @rende
+        mov    byte ptr [edi-1],' '    { #0 -> ' ' }
+        jmp    @rlp
+@rende:
 {$ENDIF}
+{$IFDEF FPC }
+end ['EAX', 'ECX', 'EDI'];
+{$ELSE }
 end;
+{$ENDIF }
 
-procedure ISO2IBM(var data; size:smallword); assembler;
+procedure ISO2IBM(var data; size:word); assembler; {&uses ebx, esi}
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
           mov    bx,offset ISO2IBMtab - 128
           les    si,data
           mov    cx,size
@@ -246,12 +296,31 @@ asm
           mov    es:[si-1],al
           loop   @xloop
 @xende:
+{$ELSE }
+          mov    ebx,offset ISO2IBMtab - 128
+          mov    esi,data
+          mov    ecx,size
+          jcxz   @xende
+@xloop:   mov    al,[esi]
+          inc    esi
+          cmp    al,127
+          ja     @trans
+          loop   @xloop
+          jmp    @xende
+@trans:   xlat
+          mov    [esi-1],al
+          loop   @xloop
+@xende:
 {$ENDIF}
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'ESI'];
+{$ELSE }
 end;
+{$ENDIF }
 
-procedure Mac2IBM(var data; size:smallword); assembler;
+procedure Mac2IBM(var data; size:word); assembler; {&uses ebx, esi}
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
           mov    bx,offset Mac2IBMtab - 128
           les    si,data
           mov    cx,size
@@ -267,8 +336,28 @@ asm
           mov    es:[si-1],al
           loop   @xloop
 @xende:
+{$ELSE }
+          mov    ebx,offset Mac2IBMtab - 128
+          mov    esi,data
+          mov    ecx,size
+          jcxz   @xende
+          jmp    @xloop
+@xloop:   mov    al,[esi]
+          inc    esi
+          cmp    al,127
+          ja     @trans
+          loop   @xloop
+          jmp    @xende
+@trans:   xlat
+          mov    [esi-1],al
+          loop   @xloop
+@xende:
 {$ENDIF}
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ECX', 'ESI'];
+{$ELSE }
 end;
+{$ENDIF }
 
 
 { --- Allgemeines --------------------------------------------------- }
@@ -1244,7 +1333,7 @@ label abbr;
   procedure ReadMsgToBuf(var hdgroesse:longint);
   var bpos  : word;
       size  : word;
-      addlf : smallword;
+      addlf : word;
   begin
     bpos:=mbufsize div 4;
     size:=min(hdgroesse,mbufsize-bpos);
@@ -1703,6 +1792,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/04/15 14:45:16  mk
+  - Ops, noch ein paar ASM-Routinen portiert
+
   Revision 1.10  2000/04/15 14:26:04  mk
   - Assemblerroutinen portiert
 
