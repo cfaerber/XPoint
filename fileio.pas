@@ -575,7 +575,6 @@ begin
   begin
     ax:=$1000;
     intr($2f, regs);
-    writeln(shareda);
     if al <> $ff then ShareDa := false;
   end;
 end;
@@ -718,6 +717,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/04/04 10:13:38  mk
+  - Debugcode entfernt
+
   Revision 1.7.2.1  2000/03/26 09:41:59  mk
   - erweiterte Share-Erkennung
 
