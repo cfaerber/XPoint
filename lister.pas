@@ -307,6 +307,7 @@ end;
 
 destructor TLister.Destroy;
 begin
+  LastLister := nil;
   Lines.Free;
   inherited destroy;
 end;
@@ -1133,6 +1134,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.66  2002/01/29 11:47:38  mk
+  - fixed crash in getline (xp1o.pas)
+
   Revision 1.65  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

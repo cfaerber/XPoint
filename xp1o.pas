@@ -95,14 +95,17 @@ uses
 // get one line from lister, check for marked lines
 function getline: string;
 begin
-  with LastLister do
-    if SelCount <> 0
-    then Result := FirstMarked    { erste markierte Zeile }
-    else
-      if Selbar then
-        Result := GetSelection                 { oder Zeile unter Markierbalken }
+  if Assigned(LastLister) then
+  begin
+    with LastLister do
+      if SelCount <> 0 then Result := FirstMarked    { erste markierte Zeile }
       else
-        Result :='';                           { oder eben nichts }
+        if Selbar then
+          Result := GetSelection                 { oder Zeile unter Markierbalken }
+        else
+          Result :='';                           { oder eben nichts }
+  end else
+    Result := '';
 end;
 
 
@@ -1054,6 +1057,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2002/01/29 11:47:39  mk
+  - fixed crash in getline (xp1o.pas)
+
   Revision 1.106  2002/01/09 02:16:59  mk
   MY: - Ctrl-W toggles word wrap in message lister
 
