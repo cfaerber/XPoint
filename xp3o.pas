@@ -736,6 +736,8 @@ var i,ii     : longint;
   end;
 
 begin
+  { falls im aktuellen Brett keine Nachricht selektiert ist, rausgehen }
+  if dbBOF(mbase) then Exit;
   if not (aktdispmode in [10..19]) then begin
     rfehler(315);      { 'Nur in der NachrichtenÅbersicht mîglich.' }
     exit;
@@ -1375,6 +1377,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/06 17:48:02  mk
+  - Fix fuer msgall, wenn keine Nachricht im Brett ist
+
   Revision 1.16  2000/05/06 17:29:22  mk
   - DOS DPMI32 Portierung
 
