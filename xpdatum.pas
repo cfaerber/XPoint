@@ -116,7 +116,7 @@ begin
   if (XpTimeZone <> '') and (XpTimezone[2]='-') then
     addh:=-addh;
   AddD(dat,-addh);
-  zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+dat+'00'+XpTimezone;
+  zdatum:=iifs(ival(LeftStr(dat,2))<70,'20','19')+dat+'00'+XpTimezone;
 end;
 
 procedure ZCtoZdatum(var zdatum, datum:string);
@@ -213,6 +213,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.7  2004/10/04 20:33:16  mk
+  - fixed incorrect date conversion (found by MY)
+
   Revision 1.21.2.6  2003/10/01 10:07:06  mk
   - fixed range check error in ZtoZCdatum when XPTimezone is empty
 
