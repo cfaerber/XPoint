@@ -345,9 +345,9 @@ begin
     begin
       readln(t,s);
       if trim(s)<>'' then
-        if (typ=2) and (left(s,1)='!') then
+        if (typ=2) and (FirstChar(s)='!') then
           if anzahl>0 then
-            e[anzahl]:=forms(e[anzahl],225)+copy(s,2,24)
+            e[anzahl-1]:=forms(e[anzahl-1],225)+copy(s,2,24)
           else
         else begin
           inc(anzahl);
@@ -651,20 +651,8 @@ var brk      : boolean;
   end;
 
   procedure sort_e;
-  var i,j : integer;
-      xch : boolean;
-      p   : String;
   begin
-    j:=anzahl-1;
-    repeat
-      xch:=false;
-      for i:=1 to j do
-        if e[i]>e[i+1] then begin
-          p:=e[i]; e[i]:=e[i+1]; e[i+1]:=p;
-          xch:=true;
-          end;
-      dec(j);
-    until not xch;
+    E.Sort;
   end;
 
 
@@ -2036,6 +2024,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.31  2000/08/13 10:39:44  mk
+  - Fixes fuer Variable e
+
   Revision 1.30  2000/08/09 19:51:34  mk
   - verschiedene Fixes fuer Timeingliste
   - Netcall/Alle funktioniert jetzt
