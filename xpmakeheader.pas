@@ -54,7 +54,7 @@ procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient:integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
-    o: word; { Offset im Lesepuffer }
+    o: integer; { Offset im Lesepuffer }
     s       : string;
     dummy   : string;
     id      : string;
@@ -64,12 +64,44 @@ var i,res : integer;
     bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
 
-  procedure ReadBuf;
+  procedure getline(var s:string);
+  var l,p:integer;
+  label again;
   begin
-    blockread(f,buf^,bufsize,bufanz);
-    o:=0;
+    SetLength(s,0);
+   
+  again:
+    if o>=BufAnz then
+      if eof(f) then begin
+        ok := false;
+        exit;
+      end else
+      begin
+        blockread(f,buf^,bufsize,bufanz);
+        o:=0;
+      end;
+
+    l := o + BufferScan(Buf^[o], BufAnz-o, #10);    
+
+    if l>o then 
+    begin
+      p := Length(s);
+      SetLength(s,p+l-o);
+      Move(Buf^[o],s[p+1],l-o);
+    end;
+    
+    o := l+1;
+
+    if (l<BufAnz) and (Length(s)>0) and (s[Length(s)]=#13) then 
+    begin
+      SetLength(s,Length(s)-1);
+      exit;
+    end;
+  
+    goto again;
   end;
 
+(*  
   procedure getline(var s:string);
 
     procedure IncO;
@@ -109,10 +141,9 @@ var i,res : integer;
       o := l-1;
       IncO; IncO;
     end;
-    while (o<0) or (o>bufanz-1) do begin end;
     if ok and (buf^[o]=#10) then IncO;
   end;
-
+*)
   procedure LRead(var s:string);
   begin
     s:=line;
@@ -324,7 +355,7 @@ begin
   ok:=true;
   hd.Clear;
   getmem(buf,bufsize);
-  size:=0; Readbuf;
+  size:=0; o:=1; BufAnz:=0;
 
   with hd do
     if ZConnect then
@@ -338,7 +369,8 @@ begin
         begin
           if line[1]<' ' then DeleteFirstChar(line);    { gegen LF's o.ae. }
           p:=cpos(':',line);
-          if p<2 then ok:=false // Die ID muss mindestens ein Zeichen sein
+          if p<2 then 
+            ok:=false // Die ID muss mindestens ein Zeichen sein
           else begin
             id:=LeftStr(line,p-1);
             id0:=id;
@@ -567,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/11/14 20:11:42  cl
+  - some bugfixes after optimisation
+
   Revision 1.30  2002/10/01 15:38:48  cl
   - BUGFIX <m3elba8iwo.fsf@stell.crashmail.de>: "Doppelte Headerzeilen"
     (Duplicate header fields)
