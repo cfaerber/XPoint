@@ -1255,7 +1255,39 @@ MY:
 
 MY:
 - Auf die Schnelle ein paar Anpassungen an OpenXP/16.
-README.TXT
+  README.TXT
+
+
+09.03.2002
+----------
+
+MY:
+- Versionsstrings korrigiert/gendert:
+  - Snapshot-Versionsstrings werden jetzt nach dem Muster
+    "CrossPoint [OpenXP/16] v3.40 RC3 @ 0903022151 R/C816" gebildet
+    (zustzliche Leerzeichen vor Beta-String und vor/nach "@").
+  - Bei ausgehenden Fido-Nachrichten wird jetzt derselbe Versionsstring
+    erzeugt wie bei allen anderen Netztypen.
+  - Bei eingehenden Fido-Nachrichten wird in der MAILER-Zeile die
+    Tearline jetzt nur noch dann mit " / " an die PID angehngt, wenn
+    PID und Tearline nicht gleich sind und die PID keinen der Strings
+    "crosspoint", "openxp", "xp2" oder "xp " enthlt.
+  XP6.PAS, XPGLOBAL.PAS, ZFIDO.PAS
+
+
+JG:
+- Fix: Wenn unter /Edit/Viewer der MIME-Typ "text/plain" angelegt und
+  kein externer Viewer eingetragen war, fhrte dies beim ffnen einer
+  Nachricht, die keinen U-Content-Type-Header trug, zu der (falschen und
+  harmlosen) Fehlermeldung "Fehler beim Dateizugriff :-(".
+  XP4W.INC
+
+
+JG:
+- Einige kleinere Korrekturen bei der Anzeige von LFN-Dateinamen in
+  Archiven vorgenommen und die Anzeige von Dateien, die sich in einem
+  Unterverzeichnis des Archivs befinden, implementiert.
+  XP4O.PAS, ARCHIVE.PAS
 
 
 ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
