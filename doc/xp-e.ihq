@@ -8,13 +8,13 @@ Sorry, no help available!
 @
 2
 <<   같같같같같 = Online Help Contents = 같같같같같
-
+                  (Rev.1.70)
 
                     [Help on Help]@3
 
                       [Hotkeys]@4
 
-            [CrossPoint start parameters]@4020
+               [Command line parameters]@4020
 
                       [Support]@5
 
@@ -2549,13 +2549,13 @@ These are settings if you do not want XP to transfer
 the data by modem, but to put or take the prepared
 files to or from some place on your hard disk.
 
-<<Input directory>>
+<<Inbound directory>>
 This is the directory from which CrossPoint will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
-<<Output directory>>
+<<Outbound directory>>
 CrossPoint puts all outgoing PKT files in this
 directory. If you set the "pack output data" switch
 the packets will be packed (amazing!). You can
@@ -2564,18 +2564,16 @@ method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
-See also the chapter in FIDO.DOC, "Sysop Mode"
-
 @
 8035
-<<Input Packets>>
+<<Inbound Packets>>
 Enter the path and name for the QWK packets, which
 XP should import for a /Netcall/Single operation.
 eg.
    C:\INBOUND\*.QWK
 
 
-<<Output directory>>
+<<Outbound directory>>
 This is the directory where XP will put the REP files
 with the reply messages.
 @
