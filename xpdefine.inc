@@ -28,15 +28,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{$DEFINE Snapshot}
-
-{ Wenn dieser Schalter nicht gesetzt ist, benîtigt XP eine 386er mit
-  CoProzessor, ansonsten ist es auch auf XT aufwÑrts lauffÑhig }
-{.$DEFINE NO386 }
-
-{ Wenn dieser Schalter definiert ist, wird eine Version mit CAPI-
-  UnterstÅzung compiliert }
-{.$DEFINE CAPI }
+{.$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -48,25 +40,8 @@
   prozedur enthalten sein }
 {$DEFINE NeedReg }
 
-{$IFDEF VER70 }
-  {$DEFINE BP }           { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
-  {$IFDEF DPMI }
-    {$DEFINE DPMI16 }
-  {$ENDIF }
-{$ENDIF }
-
-{$IFDEF VER80 }
-  {$DEFINE BP }           { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
-  {$IFDEF DPMI }
-    {$DEFINE DPMI16 }
-  {$ENDIF }
-{$ENDIF }
-
-{$IFDEF BP }              { Nur fÅr Borland Pascal 7 und 8 }
-  {$A+,B-,D-,E-,F-,I-,G+,L-,N-,O-,P-,Q-,R-,S-,T-,V-,X+,Y-}
-  {$IFDEF NO386 }
-    {$G-,E+,N+} { keine 286er Befehle, kein CoPro nîtig }
-  {$ENDIF }
+{$IFDEF BP }
+  !!! 32 Bit Compiler wird benîtigt
 {$ENDIF }
 
 {$IFDEF VER130 }          { Delphi 5 }
@@ -100,25 +75,15 @@
 {$ENDIF }
 
 {$IFDEF DebugInfo }
-  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
-    {$D+,L+,Y+}
-  {$ENDIF }
   {$IFDEF VirtualPascal }
     {$D+,LocInfo+}
   {$ENDIF }
 {$ENDIF }
 
 {$IFDEF Debug }
-  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
-    {$R+,S+,Q+}
-  {$ENDIF }
   {$IFDEF VirtualPascal }
     {$R+,S+,Q+,W+,Optimize-}
   {$ENDIF }
-{$ENDIF }
-
-{$IFDEF Ver32 }
-  {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
 {$ENDIF }
 
 {$IFDEF DOS32 }
@@ -129,7 +94,6 @@
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$UNDEF CAPI }         { Nichts dergleichen }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
@@ -166,6 +130,9 @@
 
 {
   $Log$
+  Revision 1.31  2000/06/22 17:14:12  mk
+  - 16 Bit Teile entfernt
+
   Revision 1.30  2000/05/27 08:42:33  mk
   - Debugmodus wieder standardmaessig aus
 
