@@ -429,6 +429,7 @@ var dummy : longint;
   procedure EmptySysin;
   var sr : searchrec;
   begin
+    if not IsPath(BoxPar^.SysopInp) then exit;
     findfirst(BoxPar^.sysopinp+'*.*',ffAnyFile,sr);
     while doserror=0 do begin
       _era(BoxPar^.sysopinp+sr.name);
@@ -476,6 +477,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/05/30 17:17:06  jg
+  - UUCP Sysoptransfer mehr Sicherheit bei DEL *.*
+
   Revision 1.11  2000/05/29 20:21:42  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 
