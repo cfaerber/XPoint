@@ -108,6 +108,9 @@ procedure list_dummydp(s:string);
 
 implementation  { ------------------------------------------------ }
 
+uses
+  GPLTools;
+
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       ListerBufferCount = 16383;   { L„nge des Eingangspuffers }
 
@@ -760,7 +763,7 @@ var gl,p,y    : shortint;
   begin
     p:=alist^.first;
     while p<>nil do begin
-      Rot13(p^.cont[1],length(p^.cont));
+      DecodeRot13String(p^.cont);
       p:=p^.next;
       end;
   end;
@@ -1311,6 +1314,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/10/08 12:53:35  mk
+  - Rot13 fuer Strings portiert
+
   Revision 1.34  2000/09/28 16:44:43  mk
   - make_list deutlich optimiert
 
