@@ -98,7 +98,7 @@ var regs  : registers;
     envir : array[0..1023+18] of byte;    { neues Environment }
     newenv: pointer;
     dpath : pathstr;
-    para  : string[130];
+    para  : string;
     pp    : byte;
 
     swapfile : file;
@@ -314,7 +314,7 @@ begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
-    para:=' '+trim(copy(prog,pp+1,127));
+    para:=' '+trim(copy(prog,pp+1,255));
     prog:=left(prog,pp-1);
     end;
   prog:=ustr(prog);
@@ -430,6 +430,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/05/04 18:58:24  mk
+  - String Para auf 255 Zeichen vergroessert
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
