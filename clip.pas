@@ -210,9 +210,11 @@ function Clip2String(maxlen,oneline:byte):String; assembler;  {JG:06.02.00 Jetzt
 { JG: 3.2.00   Text aus Clipboard direkt als Pascal String uebergeben                    }
 {              Maximallaenge, Einzeilig ( <>0: CR/LF wird in Space umgewandelt)  }
 
-asm
-              les bx,@result
+asm           les bx,@result
               mov word ptr es:[bx],0              { leerstring bei Fehler }
+              inc bx
+              push bx                             { Stringstart sichern}
+              push es
 
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
@@ -224,7 +226,7 @@ asm
               mov di,ax                           { Aktuellen Clipboardstatus merken }
 
               mov ax,1704h                        { Datengroesse Ermitteln }
-              mov dx,7
+              mov dx,cf_Oemtext
               int multiplex                       { DX:AX }
 
               cmp al,0                            { Abbruch bei }
@@ -233,12 +235,13 @@ asm
               cmp dx,0                            { oder mehr als 256 Zeichen }
               jne @nope
  
-              inc bx
+              pop es  
+              pop bx                              
               push ax                             { Textlaenge und start sichern }
               push bx
 
               mov ax,1705h                        { Text aus Clipboard anhaengen }
-              mov dx,7
+              mov dx,cf_Oemtext
               int multiplex
 
               pop si                              { SI= Textstart }
@@ -536,8 +539,11 @@ end;
 end.
 {
   $Log$
-  Revision 1.7  2000/02/24 16:21:52  jg
+  Revision 1.8  2000/02/25 07:55:35  jg
   -Clip2string konservativer geschrieben
+
+  Revision 1.7  2000/02/24 16:21:52  jg
+  -String2Clip konservativer geschrieben
 
   Revision 1.6  2000/02/18 18:39:03  jg
   Speichermannagementbugs in Clip.pas entschaerft
