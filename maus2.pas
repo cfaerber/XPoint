@@ -21,7 +21,13 @@ unit  maus2;
 
 interface
 
-uses  crt,mouse,keys, xpglobal;
+uses
+{$ifdef NCRT}
+  oCrt,
+{$else}
+  crt,
+{$endif}
+  mouse,keys, xpglobal;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
@@ -101,7 +107,11 @@ var
     forwardkeys[length(forwardkeys)+1]:=#0;
     forwardkeys[length(forwardkeys)+2]:=char(b);
     inc(byte(forwardkeys[0]),2);
+{$ifdef NCRT}
+    if not usemulti2 and not ocrt.keypressed then begin
+{$else}
     if not usemulti2 and not crt.keypressed then begin
+{$endif}
       t[0]:=#1; t[1]:=#31;
       pushkeyv(t);
       end;
@@ -329,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/29 16:10:41  hd
+  Linux-Anpassung
+
   Revision 1.10  2000/04/24 14:35:09  mk
   - Mausroutinen aufgeraeumt und teils portiert
 

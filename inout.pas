@@ -30,16 +30,19 @@ UNIT inout;
 INTERFACE
 
 uses
-{$IFDEF Linux }
-  ncurses,
-{$ENDIF }
 {$IFDEF Win32 }
   windows,
 {$ENDIF  }
 {$ifdef vp }
   vpsyslow,
 {$endif}
-  dos, crt, keys, typeform, mouse, xp0, xpglobal;
+  dos, 
+{$ifdef NCRT }
+  oCrt,
+{$else }
+  crt, 
+{$endif }
+  keys, typeform, mouse, xp0, xpglobal;
 
 const  lastkey   : taste = '';
 
@@ -326,11 +329,19 @@ Procedure window(l,o,r,u:byte);
 begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
+{$ifdef NCRT}
+  ocrt.window(l,o,r,min(u,25));
+  if (l=1) and (o=1) and (r=80) and (u=25) then
+    ocrt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
+  else
+    ocrt.windmax:=ocrt.windmax and $ff + 256*(u-1);
+{$else}
   crt.window(l,o,r,min(u,25));
   if (l=1) and (o=1) and (r=80) and (u=25) then
     crt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
   else
     crt.windmax:=crt.windmax and $ff + 256*(u-1);
+{$endif}
 end;
 
 
@@ -375,11 +386,15 @@ begin
     SetConsoleCursorInfo(Outhandle, Info);
   {$ELSE }
     {$IFDEF FPC }
-      case t of
-        curnorm : Cursoron;
-        cureinf : CursorBig;
-        curoff  : CursorOff;
-      end;
+      {$ifdef NCRT}
+        { Nichts }
+      {$else}
+        case t of
+          curnorm : Cursoron;
+          cureinf : CursorBig;
+          curoff  : CursorOff;
+        end;
+      {$endif }
     {$ENDIF }
     {$IFDEF VP }
       case t of
@@ -398,13 +413,11 @@ end;
 {$ENDIF }
 
 Procedure GetCur(var a,e,x,y:byte);
-{$IFDEF Linux }
-var sx, sy : LongInt;
 begin
-   getsyx(sy,sx);
-   x := sx; y := sy;
+{$IFDEF NCRT }
+  x:= nWherex(StdScr);
+  y:= nWherey(StdScr);
 {$ELSE }
-begin
 {$IFDEF BP }
   asm
         mov ah, 3
@@ -441,8 +454,8 @@ Procedure RestCursor;
 begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
-{$IFDEF Linux }
-   setsyx(sy[cursp],sx[cursp]);
+{$IFDEF NCRT }
+   nGotoXY(StdScr, sy[cursp],sx[cursp]);
 {$ELSE }
    gotoxy(sx[cursp],sy[cursp]);
 {$ENDIF }   
@@ -781,9 +794,10 @@ end;
 Procedure AttrTxt(attr:byte);
 begin
   if forcecolor then exit;
-{$IFDEF Linux }
-  init_pair(1,(attr and $8f),(attr and $7f) shr 4);
-  wattr_set(stdscr, COLOR_PAIR(1));
+{$IFDEF NCRT }
+  SetColorPair(attr);
+  TextAttr:= attr;
+  lastattr:= attr;
 {$ENDIF }   
   textcolor(attr and $8f);
   textbackground((attr and $7f) shr 4);
@@ -824,7 +838,11 @@ begin
   regs.ax:=$500;      { Video-Seite 0 setzen }
   intr($10,regs);
   {$endif}
+  {$ifdef NCRT}
+  oCrt.ClrScr;
+  {$else}
   crt.clrscr;
+  {$endif}
 end;
 
 (* schon in win definiert - falls gebraucht, unit winxp einbinden!
@@ -1816,8 +1834,10 @@ begin
   chml[2]:=chml[3]+'.,';
   getcur(ca,ce,sx[1],sy[1]);
   sa[1]:=ca; se[1]:=ce;
+{$ifndef NCRT}
   oldexit:=exitproc;
   exitproc:=@cursoron;
+{$endif}
   sec:=99;
   fillchar(fndef,sizeof(fndef),0);
   fillchar(fnproc,sizeof(fnproc),0);
@@ -1840,9 +1860,15 @@ begin
   fillchar(zaehler,sizeof(zaehler),0);
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
+{$IFDEF NCRT }
+  zpz:= nCols(nScreen);
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.28  2000/04/29 16:06:59  hd
+  Linux-Anpassung
+
   Revision 1.27  2000/04/24 14:54:49  ml
   Linux-Anpassungen
 
