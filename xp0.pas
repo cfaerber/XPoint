@@ -963,7 +963,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ShowMsgPath  : boolean;
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
-       DruckLPT     : Integer;     { 1-5: LPT1-3, COM1-2 }
+       DruckLPT     : Integer;       { 1-4: LPT1-4 }
        PrinterName  : string;        { for Unix: name of the printing port }
        DruckInit    : string;
        DruckExit    : string;
@@ -1232,6 +1232,9 @@ implementation
 
 {
   $Log$
+  Revision 1.185  2003/09/05 18:22:49  mk
+  - fixed for printing support under linux
+
   Revision 1.184  2003/09/03 00:54:55  mk
   - added multiserver netcall
 

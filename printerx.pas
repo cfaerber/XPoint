@@ -176,14 +176,14 @@ begin
     inc(i);
     end;
   SetLength(r, j);
-  {$IFDEF Unix }
-    r := IBMToISO(r);
-  {$ENDIF }
   PrintString:= r;
 end;
 
 {
   $Log$
+  Revision 1.28  2003/09/05 18:22:49  mk
+  - fixed for printing support under linux
+
   Revision 1.27  2003/09/01 16:17:12  mk
   - added printing support for linux
 
