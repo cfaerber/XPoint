@@ -40,14 +40,51 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 
 implementation
 
-function SysGetScreenLines: Integer;
+uses
+  vpsyslow,
+  os2base;
+
+function Invalid16Parm(const p: Pointer; const Length: Longint): Boolean;
 begin
-  SysGetScreenLines := 25;
+  Result := (Longint(p) and $0000ffff) + Length >= $00010000;
+end;
+
+function Fix_64k(const _Memory: Pointer; const _Length: Longint): pointer;
+begin
+  // Test if memory crosses segment boundary
+  if Invalid16Parm(_Memory, _Length) then
+    // It does: Choose address in next segment
+    Fix_64k := Ptr((Ofs(_memory) and $ffff0000) + $00010000)
+  else
+    // It doesn't: return original pointer
+    Fix_64k := _Memory;
+end;
+
+
+function SysGetScreenLines: Integer;
+var
+  VioMode  : ^VioModeInfo;
+  LVioMode : Array[1..2] of VioModeInfo;
+begin
+  VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
+  VioMode^.cb := SizeOf(VioMode^);
+  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+    SysGetScreenLines := VioMode.Row
+  else
+    SysGetScreenLines := 25;
 end;
 
 function SysGetScreenCols: Integer;
+var
+  VioMode  : ^VioModeInfo;
+  LVioMode : Array[1..2] of VioModeInfo;
 begin
-  SysGetScreenCols:= 80;
+  VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
+  VioMode^.cb := SizeOf(VioMode^);
+  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+    SysGetScreenCols := VioMode.Col
+  else
+    SysGetScreenCols := 80;
 end;
 
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
@@ -58,13 +95,32 @@ begin
 end;
 
 procedure SysSetScreenSize(const Lines, Cols: Integer);
+var
+  VioMode  : ^VioModeInfo;
+  LVioMode : Array[1..2] of VioModeInfo;
 begin
-  // todo
+  VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
+  VioMode^.cb := SizeOf(VioMode^);
+  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+  with VioMode^ do
+  begin
+    // Indicate that we only filled important Entrys
+    // the Video handler will find the best values itself
+    cb := Ofs(HRes) - Ofs(cb); // 8
+    fbType := 1; // Text Modus
+    Col := Cols;
+    Row := Lines;
+    Color := 4; // 16 Farben
+    VioSetMode(VioMode^, TVVioHandle);
+  end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.3  2000/08/02 16:33:08  mk
+  - Unit auf OS/2 portiert
+
   Revision 1.2  2000/07/27 10:13:05  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
