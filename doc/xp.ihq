@@ -177,7 +177,7 @@ Mîglichkeiten:
               werden in die Liste "gegated", umge-
               kehrt werden alle eMails von der Liste
               in das Echo gegated. <<XPDEV.GER>> ist kein
-              "offizielles" Fido-Echo - bitten Sie
+              offizielles Fido-Echo - bitten Sie
               Ihren Bossnode, es fÅr Sie zu beschaf-
               fen, falls er es noch nicht fÅhrt, oder
               wenden Sie sich an Christian von Busse
@@ -317,18 +317,25 @@ Mîgliche Optionen sind:
       - vorausgesetzt, sie haben das DOS-Programm
       SHARE.EXE geladen. Ist das nicht der Fall,
       versucht XP quasi als letzte Rettung, am DOS-
-      Prompt (genauer: am "[XP]" am Anfang des DOS-
+      Prompt (genauer: am <<[XP]>> am Anfang des DOS-
       Prompts) zu erkennen, ob es bereits aktiv ist.
 
-      Daraus folgt aber auch: Wenn Sie SHARE.EXE
-      *nicht* laden *und* wenn Sie aus einer XP-DOS-
-      Shell heraus XP Åber eine Batchdatei starten,
-      die die Umgebungsvariable PROMPT verÑndert, hat
-      CrossPoint unter reinem DOS keine Mîglichkeit
-      mehr, sich erfolgreich gegen einen Mehrfach-
-      start zur Wehr zu setzen und wird ein weiteres
-      Mal starten - selbst wenn der <</nolock>>-Schalter
-      nicht gesetzt ist.
+      Daraus folgt: Wenn Sie SHARE.EXE *nicht* laden
+      *und* wenn Sie aus einer XP-DOS-Shell heraus
+      XP Åber eine Batchdatei starten, die die Umge-
+      bungsvariable PROMPT verÑndert, hat CrossPoint
+      unter reinem DOS keine Mîglichkeit mehr, sich
+      erfolgreich gegen einen Mehrfachstart zur Wehr
+      zu setzen und wird ein weiteres Mal starten -
+      auch ohne aktivierten <</nolock>>-Schalter.
+
+      Umgekehrt hei·t das aber auch: wenn Sie (warum
+      auch immer, vielleicht sind Ihre Initialen zu-
+      fÑllig "XP") Ihren Standard-DOS-Prompt so ver-
+      Ñndern, da· er mit <<[XP]>> beginnt, werden Sie
+      CrossPoint nicht starten kînnen. Vermeiden Sie
+      also, Ihren DOS-Prompt mit <<[XP]>> beginnen zu
+      lassen.
 
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
       mentierten OS/2-Funktionen zur Rechenzeit-
