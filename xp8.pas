@@ -928,6 +928,7 @@ var d      : DB;
     postmaster : boolean;
     qwk    : boolean;
     verbose: boolean;
+    List: TLister;
 
 label again;
 
@@ -1011,7 +1012,7 @@ label again;
     msgbox(30,5,'',x,y);
     mwrt(x+3,y+2,getres2(807,10));   { 'Bretter anlegen ...' }
     n:=0;
-    s:=first_marked;
+    s:=List.FirstMarked;
     while s<>#0 do begin
       if quick then
         for i:=1 to length(s) do
@@ -1035,7 +1036,7 @@ label again;
       moff;
       gotoxy(x+22,y+2); write(n:5);
       mon;
-      s:=next_marked;
+      s:=List.NextMarked;
       end;
     closebox;
     dbFlushClose(bbase);
@@ -1088,9 +1089,9 @@ begin
     else begin
       if fido or maus or qwk then
         ReadBoxpar(netztyp,box);
-      OpenList(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+      List := TLister.CreateWithOptions(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
                  'APGD/'+iifs(_maus,'VSC:080/',''));
-      list_readfile(lfile,0);
+      List.ReadFromFile(lfile,0);
       case art of
         0 : showkeys(9);
         1 : showkeys(-9);
@@ -1099,23 +1100,24 @@ begin
         4 : showkeys(12);
       end;
     again:
-      listVmark(BrettMark); mapsnt:=netztyp; mapsart:=art;
+      List.OnTestMark := BrettMark;
+      mapsnt:=netztyp; mapsart:=art;
       if maus then LColType:=2 else
       if fido then lcoltype:=4 else
       if maf or quick then LColType:=0 else
       if promaf then lcoltype:=3
       else LColType:=1;
-      ListCFunc(MapsListcolor);
-      list(brk);
+      List.OnColor := MapsListcolor;
+      brk := List.Show;
       if not brk then begin
-        anz:=list_markanz;
+        anz:=List.SelCount;
         if anz=0 then anz:=1;
         if (mapsnt=nt_ZConnect) and (anz=1) then begin
-          if (art=0) and (firstchar(first_marked)='-') then begin
+          if (art=0) and (firstchar(List.FirstMarked)='-') then begin
             rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
             goto again;
             end;
-          if (art=1) and (firstchar(first_marked)='!') then begin
+          if (art=1) and (firstchar(List.FirstMarked)='!') then begin
             rfehler(827);   { 'Dieses Brett kann nicht abbestellt werden.' }
             goto again;
             end;
@@ -1135,18 +1137,18 @@ begin
           rewrite(t);
           if quick or (uucp and postmaster) then
             wr_btext(t,art<>0,uucp);
-          s:=first_marked;
+          s:=List.FirstMarked;
           if fido and (art=4) and not Boxpar^.areabetreff then
             writeln(t,'%Rescan');
           while s<>#0 do begin
             writeform;
-            s:=next_marked;
+            s:=List.NextMarked;
             end;
           if fido then writeln(t,'---');
           close(t);
           if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
             BretterAnlegen;
-          Closelist;
+          List.Free;
           if art=3 then
             verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
           case art of
@@ -1160,10 +1162,10 @@ begin
         else
         begin
           BretterAnlegen;
-          CloseList;
+          List.Free;
         end
       end
-      else closelist;
+      else List.Free;
       freeres;
       aufbau:=true;
       end;
@@ -1196,10 +1198,11 @@ var brk     : boolean;
     promaf  : boolean;
     lines   : byte;
     i       : integer;
+    List: TLister;
 
   procedure app(s1,s2:string);
   begin
-    app_l(' '+forms(s1,iif(maus,8,iif(fido or (uucp and not gup),15,20)))+s2);
+    List.AddLine(' '+forms(s1,iif(maus,8,iif(fido or (uucp and not gup),15,20)))+s2);
   end;
 
   procedure rdsystem;
@@ -1451,10 +1454,10 @@ begin
       app('DEL',getres2(810,17));        { 'Bretter abbestellen' }
       end;
     freeres;
-    list(brk);
+    brk := List.Show;
     closebox;
     if not brk then
-      comm:=trim(LeftStr(first_marked,iif(maus,9,iif(fido or uucp,16,21))));
+      comm:=trim(LeftStr(List.FirstMarked,iif(maus,9,iif(fido or uucp,16,21))));
     end;
   if not brk then begin
     if comm='BRETT +' then comm:='ADD'
@@ -1541,7 +1544,7 @@ begin
   if maus then
     dispose(info);
   if defcom=0 then
-    closelist;
+    List.Free;
 end;
 
 
@@ -1612,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/12/25 14:02:44  mk
+  - converted Lister to class TLister
+
   Revision 1.30  2000/11/22 18:54:31  mk
   - Probleme mit Fileservern und langen Dateinamen behoben
 

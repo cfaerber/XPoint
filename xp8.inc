@@ -70,8 +70,10 @@ var
     fn  : string;
     anz : longint;
     brk : boolean;
-label again;
+  List: TLister;
 
+label
+  again;
 begin
   GetFilescanBox(box);
   if box='' then exit;
@@ -79,21 +81,21 @@ begin
   if not FileExists(fl) then begin
     rfehler1(853,box); exit;
     end;
-  OpenList(1,iif(_maus,screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+  List := TLister.CreateWithOptions(1,iif(_maus,screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
              'APGD/'+iifs(_maus,'VSC:080/',''));
-  list_readfile(fl,0);
+  List.ReadFromFile(fl,0);
   case art of
     1 : showkeys(12);
     2 : showkeys(11);
   end;
 again:
-  ListVmark(FileechoMarkfunc);
-  ListCFunc(FileechoColfunc);
-  list(brk);
+  List.OnTestMark := FileechoMarkfunc;
+  List.OnColor := FileechoColfunc;
+  brk := List.Show;
   if not brk then begin
-    anz:=list_markanz;
+    anz:=List.SelCount;
     if anz=0 then anz:=1;
-    if (anz=1) and (echoname(first_marked)='') then begin
+    if (anz=1) and (echoname(List.FirstMarked)='') then begin
       errsound;
       goto again;
       end;
@@ -101,24 +103,24 @@ again:
       1 : ask:=getres2(852,iif(anz=1,1,2));
       2 : ask:=getres2(852,iif(anz=1,3,4));
     end;
-    if anz=1 then ask:=reps(ask,echoname(first_marked))
+    if anz=1 then ask:=reps(ask,echoname(List.FirstMarked))
     else ask:=reps(ask,strs(anz));
     if not ReadJN(ask,true) then
       goto again;
     fn:=TempS(20000);
     assign(t,fn);
     rewrite(t);
-    s:=first_marked;
+    s:=List.FirstMarked;
     while s<>#0 do begin
       writeln(t,iifc(art=1,'+','-'),echoname(s));
-      s:=next_marked;
+      s:=List.NextMarked;
       end;
     close(t);
     SendFilescan(fn);
     _era(fn);
     end;
   freeres;
-  closelist;
+  List.Free;
   aufbau:=true;
 end;
 
@@ -280,6 +282,7 @@ end;
 
 procedure FilescanCommands(cmd:shortint);
 var
+  List: TLister;
     box  : string;
     comm : string;
     s    : string;
@@ -296,17 +299,18 @@ begin
     comm:='LIST'
   else begin
     n:=ival(getres2(851,2));                          { 'Nachricht an %s' }
-    listbox(ival(getres2(851,0)),n,getreps2(851,1,boxpar^.filescanner+' @ '+box));
+    List := listbox(ival(getres2(851,0)),n,getreps2(851,1,boxpar^.filescanner+' @ '+box));
     for i:=1 to n do
-      app_l(' '+getres2(851,i+2));
-    list(brk);
+      List.AddLine(' '+getres2(851,i+2));
+    brk := List.Show;
     closebox;
-    if not brk then begin
-      comm:=trim(get_selection);
+    if not brk then
+    begin
+      comm:=trim(List.GetSelection);
       TruncStr(comm,pos('  ',comm)-1);
-      end;
-    closelist;
     end;
+    List.Free;
+  end;
   if comm='PWD' then begin
     dialog(43,3,'',x,y);
     s:=boxpar^.FilescanPW;
@@ -328,6 +332,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/12/25 14:02:44  mk
+  - converted Lister to class TLister
+
   Revision 1.9  2000/11/14 15:51:34  mk
   - replaced Exist() with FileExists()
 

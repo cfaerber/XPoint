@@ -1208,9 +1208,10 @@ var t   : text;
     fn  : string;
     sr  : tsearchrec;
     rc  : integer;
+    List: TLister;
 
 begin
-  listbox(73,15,getres(iif(delfilelist,2105,2106)));
+  List := listbox(73,15,getres(iif(delfilelist,2105,2106)));
   assign(t,FileLists);          { 'Fileliste l”schen','File Request' }
   reset(t);
   anz:=0;
@@ -1227,7 +1228,7 @@ begin
         inc(anz);
         if cpos('.',fn)>0 then
           fn:=LeftStr(fn,cpos('.',fn)-1);
-        app_l(' '+forms(node,14)+' '+
+          List.AddLine(' '+forms(node,14)+' '+
               forms(iifs(ni.found,ni.boxname+', '+ni.standort,'???'),32)+
               '  '+FormatDateTime('mm/yy', FileDateToDateTime(sr.time))+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
       end; // if rc...
@@ -1237,16 +1238,16 @@ begin
   KeepNodeindexClosed;
   close(t);
   if anz>0 then begin
-    list(cr.brk);
+    cr.brk := List.Show;
     if not cr.brk then begin
-      cr.s:=trim(LeftStr(get_selection,15));
-      if not delfilelist and (copy(get_selection,17,4)<>'??? ') then
+      cr.s:=trim(LeftStr(List.GetSelection,15));
+      if not delfilelist and (copy(List.GetSelection,17,4)<>'??? ') then
         keyboard(keycr+keyf2);
       end;
     end
   else
     cr.brk:=true;
-  closelist;
+  List.Free;
   closebox;
 end;
 
@@ -1450,30 +1451,31 @@ end;
 procedure FileSelProc(var cr:customrec);
 var s   : string;
     p   : scrptr;
+  List: TLister;
 begin
-  OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
+  List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
   rmessage(2110);   { 'Lade Fileliste ...' }
-  list_readfile(FreqLst,0);
+  List.ReadFromFile(FreqLst,0);
   closebox;
-  listVmark(fstestmark);
+  List.OnTestMark := fstestmark;
   sichern(p);
   repeat
-    list(cr.brk);
-  until not cr.brk or (list_markanz=0) or ReadJN(getres(2123),true);   { 'Auswahl verwerfen' }
+    cr.brk := List.Show;
+  until not cr.brk or (List.SelCount=0) or ReadJN(getres(2123),true);   { 'Auswahl verwerfen' }
   holen(p);
   if not cr.brk then begin
-    s:=first_marked;
+    s:= List.FirstMarked;
     while s<>#0 do begin
       s:=trim(s);
       if s[1]>='³' then s:=trim(mid(s,2));
       if blankpos(s)>0 then
         s:=LeftStr(s,blankpos(s)-1);
       cr.s:=cr.s+' '+s;
-      s:=next_marked;
+      s:= List.NextMarked;
       end;
     cr.s:=trim(cr.s);
     end;
-  closelist;
+  List.Free;
 end;
 
 function GetFilelist(var fa:fidoadr):string;
@@ -1906,6 +1908,7 @@ function FidoSeekfile:string;
     files            : string;
     len              : byte;
     anz_searchStr    : integer;    { Anzahl der besetzten Suchstrings }
+    List: TLister;
     label
        ende;
 
@@ -2130,7 +2133,6 @@ begin       { FidoSeekfile:string;************************ }
     end;
     saveconfig2;
     signal;
-{I-}
     close(pFileListCfg^);
     close(pOutput^);
     if brk then
@@ -2139,7 +2141,6 @@ begin       { FidoSeekfile:string;************************ }
       fidolastseek:=fidolastseek+#27;
     end;
     if IoResult<>0 then;
-{I+}
     closebox;
     freemem(tb,tbs);
     dispose(ni);
@@ -2149,19 +2150,19 @@ begin       { FidoSeekfile:string;************************ }
   end;               { fidolastseek<>oldseek }
   if not brk then    { gefundene Dateien Listen und ggf. requesten }
   begin
-    OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
-    list_readfile(seekfile,0);
-    listVmark(fstestmark);
-    listTp(listext);                { 'D' + 'W' }
+    List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
+    List.ReadFromFile(seekfile,0);
+    List.OnTestMark := fstestmark;
+    List.OnKeypressed := listext;                { 'D' + 'W' }
     llh:=false; listmakros:=0;
     sichern(scp);
     pushhp(83);
-    list(brk);
+    brk := List.Show;
     pophp;
     holen(scp);
     files:='';
-    sNodInf:= mid(first_marked,81);;
-    sZeile:=first_marked;
+    sNodInf:= mid(List.FirstMarked,81);;
+    sZeile:=List.FirstMarked;
     while (sZeile<>#0) do
     begin
       if mid(sZeile,81)<>sNodInf then  { Request bei zwei Boxen! }
@@ -2172,7 +2173,7 @@ begin       { FidoSeekfile:string;************************ }
       else
       begin
        files:=files+' '+trim(LeftStr(sZeile,12));
-       sZeile:=next_marked;
+       sZeile:=List.NextMarked;
       end;
     end;
     files:=trim(files);
@@ -2181,7 +2182,7 @@ begin       { FidoSeekfile:string;************************ }
       keyboard(keycr);
       FidoSeekfile:=FidoRequest(sNodInf,files);
     end;
-    closelist;
+    List.Free;
   end;
 ende:
   freeres;
@@ -2242,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/12/25 14:02:44  mk
+  - converted Lister to class TLister
+
   Revision 1.37  2000/12/09 16:00:29  mo
   - string[1] nach FirstChar
 

@@ -57,9 +57,9 @@ procedure zeige_unversandt;
 function  ViewArchive(var fn:string; typ:shortint):shortint;
 procedure FileArcViewer(fn:string);
 
-procedure ShowArch(var fn:string);
+procedure ShowArch(const fn:string);
 function  a_getfilename(nr,nn:byte):string;
-procedure ArcSpecial(var t:taste);
+procedure ArcSpecial(Self: TLister; var t:taste);
 
 procedure DupeKill(autodupekill:boolean);
 procedure print_msg(initpr:boolean);
@@ -1738,7 +1738,7 @@ end;
 { exdir='' -> Lister/ArcViewer;  exdir<>'' -> Xtrakt          }
 { Fehler -> exdir:=''                                         }
 
-procedure ShowArch(var fn:string);   { 'var' wegen Stackplatz }
+procedure ShowArch(const fn:string);
 var decomp : string;
     p      : byte;
     datei  : string;
@@ -1825,7 +1825,7 @@ function a_getfilename(nr,nn:byte):string;
 var fn   : string;
     sex  : string;
 begin
-  fn:=trim(copy(get_selection,2,12));
+//!!  fn:=trim(copy(get_selection,2,12));
   sex:=exdir; exdir:=TempPath;
   ShowArch(fn);
   exdir:=sex;
@@ -1833,7 +1833,7 @@ begin
 end;
 
 
-procedure ArcSpecial(var t:taste);
+procedure ArcSpecial(Self: TLister; var t:taste);
 var s   : string;
     dp  : string;
     x,y : byte;
@@ -1858,10 +1858,10 @@ begin
     else begin
       sex:=exdir;
       exdir:=dp;
-      s:=first_marked;
+      s:=Self.FirstMarked;
       while (s<>#0) and (exdir<>'') do begin
         ShowArch(s);
-        s:=next_marked;
+        s:=Self.NextMarked;
         end;
       exdir:=sex;
       end;
@@ -1871,7 +1871,7 @@ begin
     fk:=forwardkeys; forwardkeys:='';
     if test_fkeys(t) then;
     keyboard(fk);
-    xp1o.listext(t);
+    xp1o.listext(Self, t);
     end;
 end;
 
@@ -1879,9 +1879,10 @@ end;
 { 0=Esc, 1=minus, 2=plus }
 
 function ViewArchive(var fn:string; typ:shortint):shortint;
-var ar   : ArchRec;
-    brk  : boolean;
-    lm   : byte;
+var
+  List: TLister;
+  ar   : ArchRec;
+  lm   : byte;
 
   function dt(d,t:word):string;
   begin
@@ -1910,10 +1911,10 @@ var ar   : ArchRec;
 begin
   if abs(typ)=ArcDWC then
     renameDWC;
-  OpenList(1,ScreenWidth,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
+  List := TLister.CreateWithOptions(1,ScreenWidth,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
   OpenArchive(fn,typ,ar);
-  listcrp(ShowArch);
-  listtp(ArcSpecial);
+  List.OnEnter := ShowArch;
+  List.OnKeypressed := ArcSpecial;
   showkeys(11);
   attrtxt(col.colarcstat);
   mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
@@ -1925,11 +1926,11 @@ begin
     mwrt(77,4,arcname[arctyp]);
     while not ende do begin
       if (name<>'') or (path='') then
-        app_l(iifc(path<>'','*',' ')+forms(name,12)+strsn(orgsize,11)+
+        List.AddLine(iifc(path<>'','*',' ')+forms(name,12)+strsn(orgsize,11)+
               strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
               dt(datum,uhrzeit)+'       ' + name)
       else
-        app_l(forms('*'+path+name,80)+path+name);
+        List.AddLine(forms('*'+path+name,80)+path+name);
       ArcNext(ar);
       end;
     end;
@@ -1939,11 +1940,11 @@ begin
   llh:=true; listexit:=0;
   lm:=ListMakros; ListMakros:=16;
   pushhp(67);
-  list(brk);
+  List.Show;
   pophp;
   ListMakros:=lm;
   dec(arcbufp);
-  CloseList;
+  List.Free;
   attrtxt(col.colkeys);
   mwrt(1,2,sp(ScreenWidth));
   showlastkeys;
@@ -2230,10 +2231,11 @@ var files    : string;
     mark,
     lMagics  : boolean;
     dir, name, ext: string;
-
+  List: TLister;
 begin
+  //!!!! List muá noch irgendwo her geholt werden, ist jetzt nicht initalisiert!!
   nnode := '';
-  if not list_selbar and (list_markanz=0) then begin
+  if not List.Selbar and (List.SelCount=0) then begin
     rfehler(438);   { 'keine Dateien markiert' }
     exit
   end;
@@ -2246,13 +2248,13 @@ begin
   u := ''; t := '';
   lMagics := Magics;
   secondtry:=false;
-  s := first_marked;
+  s := List.FirstMarked;
   repeat
     { Von Anfang an leer oder Liste komplett durchlaufen und nichts gefunden,
       dann probieren wir's nochmal mit MAGICS }
     if (s=#0) then begin
       secondtry:=true;
-      s := first_marked;
+      s := List.FirstMarked;
       lMagics:=true;
     end;
     while (s<>#0) do begin
@@ -2377,7 +2379,7 @@ begin
         continue
       end; { while (k<byte(s[0])) }
       { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
-      s:=next_marked;
+      s:=List.NextMarked;
     end; { while (s<>#0) do begin }
     files:=trim(files);
     { Abbrechen, wenn was gefunden, oder zweiter Durchlauf oder schon beim
@@ -2419,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2000/12/25 14:02:42  mk
+  - converted Lister to class TLister
+
   Revision 1.83  2000/12/05 14:58:10  mk
   - AddNewUser
 

@@ -227,6 +227,7 @@ var  f     : file;
      anz   : longint;
      brk   : boolean;
      height: word;
+     List: TLister;
 
 label ende;
 
@@ -339,13 +340,15 @@ begin
       ReadBlock(l);
       end;
   until last or (LeftStr(user.name,length(name))>=name);
-  if (LeftStr(user.name,length(name))=name) then begin
-    openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/APGD/');
+  if (LeftStr(user.name,length(name))=name) then
+  begin
+    List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/APGD/');
     anz:=0;
     repeat
-      with user do begin
+      with user do
+      begin
         ReadNdata(fnr,fadr,ni);
-       app_l(' '+forms(TopAllStr(user.name),22)+'  '+
+        List.AddLine(' '+forms(TopAllStr(user.name),22)+'  '+
               forms(strs(adr[0])+':'+strs(adr[1])+'/'+strs(adr[2])+
               iifs(adr[3]=0,'','.'+strs(adr[3])),15)+' '+
               forms(iifs(adr[3]=0,ni.boxname+', '+ni.standort,ni.standort),32));
@@ -361,19 +364,19 @@ begin
     until (LeftStr(user.name,length(name))<>name) or (l>userblocks);
     if anz>0 then begin
       if anz=1 then
-        s:=first_line
+        s:=List.FirstLine
       else begin
         selbox(76,min(anz+2,screenlines-6),'',x,y,true);
         height:=min(anz+2,screenlines-6)-2;
-        SetListsize(x+1,x+74,y+1,y+height);
-        listarrows(x,y+1,y+height,col.colselbox,col.colselbox,'≥');
-        listboxcol;
+        List.SetSize(x+1,x+74,y+1,y+height);
+        List.SetArrows(x,y+1,y+height,col.colselbox,col.colselbox,'≥');
+        listboxcol(list);
         pushhp(80);
-        list(brk);
+        brk := List.Show;
         pophp;
         closebox;
         if brk then s:=''
-        else s:=get_selection;
+        else s:=List.GetSelection;
         end;
       if s<>'' then begin
         SplitFido(trim(copy(s,26,15)),fa,DefaultZone);
@@ -382,7 +385,7 @@ begin
       else
         ni.found:=false;
       end;
-    closelist;
+    List.Free;
   end;
 
 ende:
@@ -562,6 +565,7 @@ var   x,y,h   : byte;
       skip    : boolean;
       ni      : nodeinfo;
       d       : DB;
+      List: TLister;
 
 label again, NewStart;
 
@@ -740,7 +744,7 @@ again:
   mwrt(x+2,y+15,getres2(2131,21));   { 'Netz:'  }
   mwrt(x+28,y+14,getres2(2131,22));  { 'EintrÑge:' }
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
-  openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
+  List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
   for i:=0 to NodeList.Count - 1 do
     with PNodeListItem(Nodelist[i])^,NB_Data^ do
@@ -798,7 +802,7 @@ again:
               ni.boxname:=gets; ni.standort:=gets;
               ni.sysop:=gets; ni.telefon:=gets;
               with ni do
-                app_l(' '+forms(iifs(apoint<>0,sysop,boxname)+', '+standort,35)+
+                List.AddLine(' '+forms(iifs(apoint<>0,sysop,boxname)+', '+standort,35)+
                       '  '+forms(node_str,17)+' '+FormFidoPhone(telefon));
               end;
             end;
@@ -811,7 +815,7 @@ again:
 
   if found=0 then
   begin
-    closelist;
+    List.Free;
     if not brk then
     begin
       rfehler(2126);        { 'Es wurden keine passenden EintrÑge gefunden.' }
@@ -826,24 +830,25 @@ again:
     dec(h,5);
     rdispx:=x+2; rdispy:=y+h+2;
     attrtxt(col.colselrahmen);
-    mwrt(x,rdispy-2,hbar(76));       { MH: rdispy-1 -> rdispy-2 }
-    SetListsize(x+1,x+74,y+1,y+h-1); { MH: h -> h-1             }
-    listboxcol;                      { MH: Liste angepasst      }
-    listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
-    listDp(ShowRQ);
-    listTp(listext); listmakros:=0;
+    mwrt(x,rdispy-2,hbar(76));
+    List.SetSize(x+1,x+74,y+1,y+h-1);
+    listboxcol(list);
+    List.SetArrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'≥');
+    List.OnShowLines := ShowRQ;
+    List.OnKeyPressed := listext;
+    listmakros:=0;
     repeat
 NewStart:                  { nach Break im AltN-Screen hier einspringen }
       pushhp(958);
-      list(brk);
+      brk := List.Show;
       pophp;
       n:=0;
       if not brk then begin
-        GetNodeInfo(copy(get_selection,39,18),ni,2);
+        GetNodeInfo(copy(List.GetSelection,39,18),ni,2);
         if not ni.found then
           errsound
         else begin
-          adr:=ni.sysop + ' @ ' +trim(copy(get_selection,39,18));
+          adr:=ni.sysop + ' @ ' +trim(copy(List.GetSelection,39,18));
           if ni.ispoint then s:=adr
           else s:=ni.boxname + ', ' +adr;
           pushhp(959);
@@ -857,7 +862,7 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
     until brk or (n=1) or (n=2) or (n=3);
 
       if n<>3 then begin  { Break aus AltN-Screen hier nicht zulassen }
-        closelist;
+        List.Free;
         closebox;
       end;
 
@@ -876,7 +881,7 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
             end;
 
         3 : begin   { AltN-Screen aufrufen und Aka Åbergeben }
-              _keyboard(trim(copy(get_selection,39,18))+keycr);
+              _keyboard(trim(copy(List.GetSelection,39,18))+keycr);
                 NodeListSeek;          { AltN-Screen starten }
               goto newstart;           { ZurÅck zur Liste    }
             end;
@@ -888,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.24  2000/12/25 14:02:44  mk
+  - converted Lister to class TLister
+
   Revision 1.23  2000/12/10 10:54:56  mo
   -TNodelistItem in eine Klasse umgewandelt
 

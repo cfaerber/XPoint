@@ -505,6 +505,7 @@ var fn     : string;
     MimeType: string;
     MultiPartType: TMultiPartType;
     MimeViewer: TMessageViewer;
+  List: TLister;
                                            { Mailviren-Schutz }
 
   function fnform(fname:string; len:integer):string;
@@ -796,20 +797,20 @@ begin
       mpSingle:
         begin
           pushhp(94);
-          listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
-          app_l(forms(' '
+          List := Listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
+          List.AddLine(forms(' '
             + typname(LeftStr(MimeType,cpos('/', MimeType)-1),mid(Mimetype,cpos('/',MimeType)+1)),30)
             + '  ' + fnform(mpdata.fname,23) + ' 1');
-          app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
-          ListTp(SSP_Keys);
-          ListSetStartpos(1);
-          List(brk);
-          Closelist;
+          List.AddLine(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '}
+          List.OnKeypressed := SSP_Keys;
+          List.Startpos := 1;
+          brk := List.Show;
+          List.Free;
           Closebox;
           pophp;
           if brk then goto nextmsg;
           // test if user has selected 'gesamte Nachricht'
-          if Copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
+          if Copy(List.GetSelection,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
         end;
       mpMulti:
         begin
@@ -1563,6 +1564,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62  2000/12/25 14:02:42  mk
+  - converted Lister to class TLister
+
   Revision 1.61  2000/12/10 03:00:36  mk
   - fix fuer Anzeige nach User aendern
 

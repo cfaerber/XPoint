@@ -38,7 +38,7 @@ var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
 function  ReadFilename(txt:atext; var s:string; subs:boolean;
                        var useclip:boolean):boolean;
 function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
-procedure listExt(var t:taste);
+procedure listExt(Self: TLister; var t:taste);
 procedure ExtListKeys;
 function  filecopy(fn1,fn2:string):boolean;
 procedure ExpandTabs(fn1,fn2:string);
@@ -71,13 +71,17 @@ implementation
 uses StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
 
 
-function getline:string;                          { Eine Zeile vom Lister uebernehmen }
+// get one line from lister, check for marked lines
+function getline: string;
 begin
-  if list_markanz<>0
-    then getline:=first_marked                    { erste markierte Zeile }
-    else if list_selbar
-      then getline:=get_selection                 { oder Zeile unter Markierbalken }
-      else getline:='';                           { oder eben nichts }
+  with LastLister do
+    if SelCount <> 0
+    then Result := FirstMarked    { erste markierte Zeile }
+    else
+      if Selbar then
+        Result := GetSelection                 { oder Zeile unter Markierbalken }
+      else
+        Result :='';                           { oder eben nichts }
 end;
 
 
@@ -193,7 +197,7 @@ begin
   brk:=(nr=0) or (nr=3);
 end;
 
-procedure listExt(var t:taste);
+procedure listExt(Self: TLister; var t:taste);
 var s     : string;
     all   : boolean;
     b     : byte;
@@ -256,13 +260,13 @@ begin
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
     rmessage(119);   { 'Ausdruck l„uft...' }
     InitPrinter;
-    all:=(list_markanz=0);
-    if all then s:=first_line
-    else s:=first_marked;
+    all:=(Self.SelCount=0);
+    if all then s:= Self.FirstLine
+    else s:= Self.FirstMarked;
     while checklst and (s<>#0) do begin
       PrintLine(s);
-      if all then s:=next_line
-      else s:=next_marked;
+      if all then s:= Self.NextLine
+      else s:= Self.NextMarked;
       end;
     ExitPrinter;
     closebox;
@@ -292,13 +296,13 @@ begin
         assign(tt,fname);
         if append then system.append(tt)
         else rewrite(tt);
-        all:=(list_markanz=0);
-        if all then s:=first_line
-        else s:=first_marked;
+        all:=(Self.SelCount=0);
+        if all then s:= Self.FirstLine
+        else s:= Self.FirstMarked;
         while s<>#0 do begin
           writeln(tt,s);
-          if all then s:=next_line
-          else s:=next_marked;
+          if all then s:= Self.NextLine
+          else s:= Self.NextMarked;
           end;
         close(tt);
         if useclip then WriteClipfile(fname);
@@ -402,7 +406,7 @@ begin
        ((listmakros<>16) and ((c=k2_cB) or (c=k2_cP) or (c=k2_cQ))) then
     begin
       ListKey:=t;
-      if ((c=k2_cB) or (c=k2_cQ) or (c=k2_cP)) and (list_markanz>0) then begin
+      if ((c=k2_cB) or (c=k2_cQ) or (c=k2_cP)) and (Self.SelCount>0) then begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
@@ -421,13 +425,13 @@ begin
         else
           for i:=1 to 8 do writeln(tt);
 
-        s:=first_marked;
-        nr:=current_linenr;
+        s:= Self.FirstMarked;
+        nr:= Self.LinePos;
         while s<>#0 do begin
           writeln(tt,s);
-          s:=next_marked;
-          if current_linenr>nr+1 then writeln(tt,#3);
-          nr:=current_linenr;
+          s:= Self.NextMarked;
+          if Self.LinePos>nr+1 then writeln(tt,#3);
+          nr:= Self.LinePos;
           end;
         close(tt);
         end;
@@ -1005,6 +1009,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/12/25 14:02:41  mk
+  - converted Lister to class TLister
+
   Revision 1.74  2000/12/10 09:12:23  mo
   -filecopy, kleine Ergänzug mit FileUpperCase
 

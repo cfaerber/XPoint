@@ -812,7 +812,7 @@ end;
 procedure WriteHeaderHdr;
 var f:text;
 begin
-  assign(f,temppath+'header.hdr');
+  assign(f,temppath+FileUpperCase('header.hdr'));
   rewrite(f);
   writeln(f,'TYP: ',typ);
   writeln(f,'BOX: ',box);
@@ -2100,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.84  2000/12/25 14:02:43  mk
+  - converted Lister to class TLister
+
   Revision 1.83  2000/12/05 14:58:11  mk
   - AddNewUser
 

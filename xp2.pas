@@ -542,7 +542,6 @@ begin
   until findnext(sr)<>0;
   FindClose(sr);
   if ParDDebug then dbOpenLog('database.log');
-  ListDebug:=ParDebug;
   if (LeftStr(ParAutost,4)<='0001') and (RightStr(ParAutost,4)>='2359') then
     ParAutost:='';
 end;
@@ -1200,6 +1199,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.96  2000/12/25 14:02:41  mk
+  - converted Lister to class TLister
+
   Revision 1.95  2000/12/23 08:26:52  ml
   - calls now Testpath for some more dirs if started the first time
 

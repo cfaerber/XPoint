@@ -153,8 +153,8 @@ procedure openbox(width,height:byte; var txt:string; var x,y:byte; c1,c2:byte);
 procedure msgbox(width,height:byte; txt:string; var x,y:byte);
 procedure diabox(width,height:byte; txt:string; var x,y:byte);
 procedure selbox(width,height:byte; txt:string; var x,y:byte; hell:boolean);
-procedure listbox(width,height:byte; txt:string);
-procedure listboxcol;
+function listbox(width,height:byte; txt:string): TLister;
+procedure ListboxCol(List: TLister);
 procedure utilbox(l,r,o,u:byte; txt:string);
 procedure dialog(width,height:byte; txt:string; var x,y:byte);
 procedure enddialog;
@@ -1162,26 +1162,27 @@ begin
           iif(hell,col.colselbox,col.colsel2box));
 end;
 
-procedure ListboxCol;
+procedure ListboxCol(List: TLister);
 var lc : listcol;
 begin
-  with lc do begin
+  with lc do
+  begin
     coltext:=col.colselbox;
     colselbar:=col.colselbar;
     colmarkline:=col.colselhigh;
     colmarkbar:=col.colselbar and $f0 + col.colselhigh and $f;
     { colscroll:=col.colselscroll; }
-    setlistcol(lc);
-    end;
+    List.col := lc;
+  end;
 end;
 
-procedure listbox(width,height:byte; txt:string);
+function listbox(width,height:byte; txt:string): TLister;
 var x,y : byte;
 begin
   selbox(width+2,height+2,txt,x,y,true);
-  openlist(x+1,x+width,y+1,y+height,0,'/NS/SB/NLR/DM/');
-  ListboxCol;
-  listarrows(x,y+1,y+height,col.colselrahmen,col.colselrahmen,'³');
+  Result := TLister.CreateWithOptions(x+1,x+width,y+1,y+height,0,'/NS/SB/NLR/DM/');
+  ListboxCol(result);
+  Result.SetArrows(x,y+1,y+height,col.colselrahmen,col.colselrahmen,'³');
 end;
 
 
@@ -2074,6 +2075,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.97  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
   Revision 1.96  2000/12/03 22:23:08  mk
   - Improved Printing Support
 

@@ -1149,6 +1149,7 @@ var x,y    : byte;
     diff   : longint;
     ds     : string;
     oldXSA : boolean;
+    List: TLister;
 
   procedure dats2fd(ds:datetimest; var dat:fdate);
   begin
@@ -1224,11 +1225,11 @@ begin
         else if diff>=100 then
           ds:=getreps2(2614,5,strs(system.round(diff/30.44)))  { 'vor %s Monaten' }
         else ds:=getreps2(2614,4,strs(diff));       { 'vor %s Tagen' }
-        app_l(' '+forms(dbReadStr(d,'boxname'),16)+'  '+date+', '+time+'   '+
+        List.AddLine(' '+forms(dbReadStr(d,'boxname'),16)+'  '+date+', '+time+'   '+
               ds);
         end
       else
-        app_l(' '+forms(dbReadStr(d,'boxname'),16)+'  --');
+        List.AddLine(' '+forms(dbReadStr(d,'boxname'),16)+'  --');
       close(t);
       end;
     dbNext(d);
@@ -1236,11 +1237,11 @@ begin
   dbClose(d);
   freeres;
   pushhp(925);
-  list(brk);
+  brk := List.Show;
   pophp;
   if not brk then
-    AutoCrash:='*'+copy(get_selection,2,pos(' ',mid(get_selection,2))-1);
-  closelist;
+    AutoCrash:='*'+copy(List.GetSelection,2,pos(' ',mid(List.GetSelection,2))-1);
+  List.Free;
   closebox;
 end;
 
@@ -1248,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/12/25 14:02:45  mk
+  - converted Lister to class TLister
+
   Revision 1.29  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 

@@ -45,7 +45,7 @@ function __dateok(var s:string):boolean;
 function __timeok(var s:string):boolean;
 function testaction(var s:string):boolean;
 
-procedure MakSelKeys(var t:taste);
+procedure MakSelKeys(Self: TLister; var t:taste);
 function checkday(var s:string):boolean;
 function _getmacro(s:string):string;
 
@@ -1320,7 +1320,9 @@ var
   { --- Nachrichtenheader ----------------------------------------- }
 
   procedure InsertHeaderLine;
-  var anz  : integer;
+  var
+    List: TLister;
+      anz  : integer;
       used : set of byte;
       i    : integer;
       brk  : boolean;
@@ -1336,15 +1338,15 @@ var
     anz:=1;
     for i:=1 to res2anz(222)-1 do
       if not (i in used) then inc(anz);
-    listbox(30,min(anz,screenlines-5),getres2(1018,3));
+    List := Listbox(30,min(anz,screenlines-5),getres2(1018,3));
     for i:=1 to res2anz(222)-1 do
       if not (i in used) then
-        app_l(' '+mid(getres2(222,i),pos(' ',getres2(222,i))));
-    app_l('  ------------- '+getres2(1018,4));
-    list(brk);
+        List.AddLine(' '+mid(getres2(222,i),pos(' ',getres2(222,i))));
+    List.AddLine('  ------------- '+getres2(1018,4));
+    brk := List.Show;
     closebox;
     if not brk then begin
-      s:=trim(get_selection);
+      s:=trim(List.GetSelection);
       i:=res2anz(222);
       while (i>0) and ((pos(s,getres2(222,i))=0) or (pos(s,getres2(222,i))>10) or
         (pos(s,getres2(222,i))+length(s)<length(getres2(222,i))-1)) do
@@ -1354,8 +1356,8 @@ var
       xhd.v[CurRow+a-1]:=i;
       inc(xhd.anz);
       modi:=true;
-      end;
-    closelist;
+    end;
+    List.Free;
   end;
 
   procedure MoveHeaderLine;
@@ -2051,6 +2053,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.47  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
   Revision 1.46  2000/12/10 10:54:56  mo
   -TNodelistItem in eine Klasse umgewandelt
 

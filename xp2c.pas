@@ -791,12 +791,12 @@ begin
   if not brk and mmodified then begin
     if auswahlcursor then begin
       MaskSelcursor(curon);
-      SetListCursor(curon);
+      Lister.MCursor := true;
       SetWinSelCursor(curon);
       EdSelcursor:=true;
     end else begin
       MaskSelcursor(curoff);
-      SetListCursor(curoff);
+      Lister.MCursor := false;
       SetWinSelCursor(curoff);
       EdSelcursor:=false;
     end;
@@ -1482,6 +1482,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/12/25 14:02:41  mk
+  - converted Lister to class TLister
+
   Revision 1.73  2000/12/17 00:35:13  mk
   - optische Korrektur in AccessibilityOptions
 

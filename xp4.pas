@@ -747,9 +747,10 @@ var t,lastt: taste;
     end;
 
     procedure SikMsg;
-    const sikmsg = 'lastmsg';
+    const sikmsg: String = 'lastmsg';
     var f : file;
     begin
+      SikMsg := FileUpperCase(SikMsg);
       assign(f,fn);
       if existf(f) then begin
         if FileExists(TempPath+sikmsg) then _era(TempPath+sikmsg);
@@ -2129,6 +2130,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/12/25 14:02:42  mk
+  - converted Lister to class TLister
+
   Revision 1.75  2000/12/19 19:48:13  mk
   - groesse bei Fillchar(mpdata) korrigiert
 

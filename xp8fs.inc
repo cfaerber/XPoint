@@ -294,8 +294,8 @@ var d     : DB;
     brk   : boolean;
     s     : string;
     p     : byte;
-
     enterfiles : boolean;
+    List: TLister;
 
   procedure GetFilelist;
   var dateien : string;
@@ -304,14 +304,15 @@ var d     : DB;
   label again;
   begin
     showkeys(10);
-    OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
-    list_readfile(MangleBoxName(fs)+'.fl',0);
-    listVmark(testmark);
+    List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
+    List.ReadFromFile(MangleBoxName(fs)+'.fl',0);
+    List.OnTestMark := testmark;
   again:
-    list(brk);
-    if not brk then begin
-      anz:=list_markanz;
-      s:=first_marked;
+    brk := List.Show;
+    if not brk then
+    begin
+      anz:= List.SelCount;
+      s:= List.FirstMarked;
       if (anz=0) and not (testmark(s,false)) then
         goto again;
       if anz=0 then anz:=1;
@@ -411,9 +412,9 @@ var d     : DB;
   var s : string;
       p : byte;
   begin
-    s:=prev_line;
+    s:= List.PrevLine;
     while (s<>#0) and (LeftStr(LowerCase(s),10)<>'directory ') do
-      s:=prev_line;
+      s:=List.PrevLine;
     if s=#0 then s:=''
     else begin
       s:=trim(mid(s,11));
@@ -488,22 +489,22 @@ begin
               end
             else begin
               FlushClose;
-              s:=trim(first_marked);
+              s:=trim(List.FirstMarked);
               while s<>#0 do begin
                 p:=blankpos(s);
                 if p>0 then truncstr(s,p-1);
                 if multipos(_MPMask,s) then writeln(t,s)
                 else writeln(t,UU_directory+s);
-                s:=next_marked;
+                s:=List.NextMarked;
                 end;
-              closelist;
+              List.Free;
               end;
             close(t);
             uucomm('Request');
             AskStart;   { sofort anrufen? }
             end
           else
-            if not enterfiles then closelist;
+            if not enterfiles then List.Free;
           end
         else if comm='SENDEN' then
           UUSendfile
@@ -526,19 +527,19 @@ begin
               if request=2 then    { Transfer }
                 GetTransCeiver;
               if not brk then begin
-                s:=first_marked;
+                s:=List.FirstMarked;
                 while s<>#0 do begin
                   if fstyp=0 then
                     s:=trim(Mid(s,2));
                   s:=LeftStr(s,pos(' ',s)-1);
                   fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
-                  s:=next_marked;
+                  s:=List.NextMarked;
                   end;
                 AskStart;   { sofort anrufen? }
-                end;
               end;
-            closelist;
             end;
+            List.Free;
+          end;
         end;
       if existf(t) then
         erase(t);
@@ -547,6 +548,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/12/25 14:02:44  mk
+  - converted Lister to class TLister
+
   Revision 1.17  2000/11/22 18:54:31  mk
   - Probleme mit Fileservern und langen Dateinamen behoben
 

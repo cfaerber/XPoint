@@ -1,15 +1,23 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{  $Id$
 
-{ Lister - PM 11/91 }
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
 
 {$I XPDEFINE.INC}
 
@@ -30,10 +38,13 @@ uses
 
 const
   ListHelpStr: string[8] = 'Hilfe';
-  ListDebug: boolean = false;
   Listunvers: byte = 0;
   Listhalten: byte = 0;
   Listflags: longint = 0;
+  ListerBufferCount = 16383;            { LÑnge des Eingangspuffers }
+
+const
+  mcursor: boolean = false;             { Auswahlcursor fÅr Blinde }
 
 type
   listcol = packed record
@@ -48,16 +59,17 @@ type
     colqhigh: byte;                     { Quote / *hervorgehoben* }
   end;
 
-  markfunc = function(var s: string; block: boolean): boolean;
-  listCRproc = procedure(var s: string);
-  listTproc = procedure(var t: taste);
-  listDproc = procedure(s: string);
-  listColFunc = function(var s: string; line: longint): byte;
-  { Zeilenfarbe, 0=Default }
-  listDisplProc = procedure(x, y: word; var s: string);
-  listConvert = procedure(var buf; size: word); { fÅr Zeichensatzkonvert. }
+  TLister = class;
 
-  { mîgliche Optionen fÅr openlist():                            }
+  TListerConvertEvent = procedure(var buf; Size: word) of object; { fÅr Zeichensatzkonvert. }
+  TListerTestMarkEvent = function(var s: string; block: boolean): boolean;
+  TListerEnterEvent = procedure(const s: string);
+  TListerKeyPressedEvent = procedure(Self: TLister; var t: taste);
+  TListerShowLinesEvent = procedure(s: string);
+  TListerDisplayLineEvent = procedure(x, y: word; var s: string);
+  TListerColorEvent = function(var s: string; line: longint): byte;
+
+  { mîgliche Optionen fÅr den Lister                             }
   {                                                              }
   { SB  =  SelBar                  M   =  markable               }
   { F1  =  "F1-Hilfe"              S   =  Suchen mîglich         }
@@ -67,53 +79,6 @@ type
   {                                DM  =  direkte Mausauswahl    }
   { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
-procedure openlist(_l, _r, _o, _u: byte; statpos: shortint; options: string);
-procedure SetListsize(_l, _r, _o, _u: byte);
-procedure app_l(ltxt: string);          { Zeile anhÑngen }
-procedure list_convert(cp: listConvert);
-procedure list_readfile(fn: string; ofs: word);
-procedure ListSetStartpos(sp: longint);
-procedure list(var brk: boolean);
-procedure closelist;
-
-procedure setlistcol(lcol: listcol);
-procedure setlistcursor(cur: curtype);
-procedure listheader(s: string);
-procedure listwrap(spalte: byte);
-procedure listVmark(mp: markfunc);
-procedure listCRp(crp: listCRproc);
-procedure listTp(tp: listTproc);        { nach jedem Tastendruck }
-procedure listDp(dp: listDproc);        { nach jedem Display     }
-procedure listCFunc(cf: listColFunc);
-procedure ListDLProc(dp: listDisplProc);
-procedure listarrows(x, y1, y2, acol, bcol: byte; backchr: char);
-procedure listNoAutoscroll;
-
-function get_selection: string;
-function get_SelLine: Integer;
-function first_marked: string;
-function next_marked: string;
-function list_markanz: longint;
-function first_line: string;
-function next_line: string;
-function prev_line: string;
-function current_linenr: longint;
-function list_selbar: boolean;
-
-function list_markdummy(var p: string; block: boolean): boolean;
-procedure list_dummycrp(var s: string);
-procedure list_dummytp(var t: taste);
-procedure list_dummydp(s: string);
-
-implementation { ------------------------------------------------ }
-
-uses
-  GPLTools;
-
-const
-  ListerBufferCount = 16383;            { LÑnge des Eingangspuffers }
-
-type
   liststat = packed record
     statline: boolean;
     wrapmode: boolean;
@@ -141,52 +106,82 @@ type
     backchr: char;
   end;
 
-  listrec = record
-    col: listcol;
-    stat: liststat;
-    arrows: listarr;
-    selbar: boolean;
-    txt: string[40];
-    l, o, w,
-      Height: Integer;                  // Height including status line
-    Lines: TStringList;
-    SelCount: longint;                  // Number of selected lines
-    testmark: markfunc;
-    crproc: listCRproc;
-    tproc: listTproc;
-    dproc: listDproc;
-    colfunc: listColFunc;
-    displproc: listDisplProc;
-    ConvProc: listConvert;
-    startpos: Integer;
-    (*        constructor Create;
-            destructor Destroy; override; *)
-  end;
-  lrp = ^listrec;
-
   ListerCharArray = array[0..ListerBufferCount] of Char;
 
-const
-  inited: boolean = false;
-var
-  alist: lrp;
-const
-  mcursor: boolean = false;             { Auswahlcursor fÅr Blinde }
+  TLister = class
+  protected
+    FOnConvert: TListerConvertEvent;
+    FOnTestMark: TListerTestMarkEvent;
+    FOnEnter: TListerEnterEvent;
+    FOnKeypressed: TListerKeyPressedEvent;
+    FOnShowLines: TListerShowLinesEvent;
+    FOnDisplayLine: TListerDisplayLineEvent;
+    FOnColor: TListerColorEvent;
+
+    FStartPos: Integer;                 // first position of select bar
+    FHeaderText: string;                // text of header, max 40 chars
+    FSelBar: boolean;                   // display select bar
+    FSelLine: Integer;                  // actual selected line
+    FSelCount: Integer;                 // Number of selected lines
+    FLinePos: integer;
+
+    arrows: listarr;
+    l, o, w,
+    Height: Integer;                    // Height including status line
+    Lines: TStringList;
+    markpos: integer;
+    // test if line Index is marked
+    function Marked(Index: Integer): boolean;
+    procedure SetHeaderText(s: String);
+    function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte): Integer;
+  public
+    col: listcol;
+    stat: liststat;
+    constructor Create;
+    constructor CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
+    destructor Destroy; override;
+    // should modified to uses properties
+    procedure SetSize(_l, _r, _o, _u: byte);
+    // append one line
+    procedure AddLine(Line: String);
+    // read file from Ofs into Lines of Lister
+    procedure ReadFromFile(const Filename: string; ofs: Integer);
+    // Show Lister, Result is true if ESC was pressed
+    function Show: Boolean;
+    procedure SetArrows(x, y1, y2, acol, bcol: byte; backchr: char);
+    function FirstMarked: string;
+    function NextMarked: string;
+    function GetSelection: string;
+    function FirstLine: string;
+    function NextLine: string;
+    function PrevLine: string;
+    property StartPos: Integer read FStartPos write FStartPos;
+    property HeaderText: String read FHeaderText write SetHeaderText;
+    property SelCount: Integer read FSelCount;
+    property SelLine: Integer read FSelLine;
+    property SelBar: Boolean read FSelBar;
+    property LinePos: Integer read FLinePos;
+    property OnConvert: TListerConvertEvent read FOnConvert write FOnConvert;
+    property OnTestMark: TListerTestMarkEvent read FOnTestMark write FOnTestMark;
+    property OnEnter: TListerEnterEvent read FOnEnter write FOnEnter;
+    property OnKeyPressed: TListerKeyPressedEvent read FOnKeyPressed write FOnKeyPressed;
+    property OnShowLines: TListerShowLinesEvent read FOnShowLines write FOnShowLines;
+    property OnDisplayLine: TListerDisplayLineEvent read FOnDisplayline write FOnDisplayLine;
+    property OnColor: TListerColorEvent read FOnColor write FOnColor;
+  end;
 
 var
-  Listers: TList;                       // List of Lister Objects
-  markpos: integer;
-  linepos: integer;
-  SelLine: Integer;                     // actual selected line
+  ListColors: ListCol;
+  LastLister: TLister; // points to the last opened lister (for historical reasons)
 
-function Marked(Index: Integer): boolean;
-begin
-  Result := alist^.Lines.Objects[Index] <> Pointer(0);
-end;
+implementation { ------------------------------------------------ }
+
+uses
+  GPLTools;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
-function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte):
+function TLister.make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte):
   Integer;
 var
   i, j: Integer;
@@ -239,7 +234,7 @@ begin
       SetLength(s, i);
       if i > 0 then
         Move(Buf[j], S[1], i);
-      App_l(s);
+      AddLine(s);
     end;
     // CRLF Åberlesen
     if Buf[i + j] = #13 then inc(i);
@@ -248,172 +243,89 @@ begin
   end;
 end;
 
-{$IFDEF FPC }
-{$HINTS OFF }
-{$ENDIF }
-
-function list_markdummy(var p: string; block: boolean): boolean;
+constructor TLister.Create;
 begin
-  list_markdummy := true;
+  LastLister := Self;
+  col := ListColors;
+  fillchar(stat, sizeof(stat), 0);
+  with stat do
+  begin
+    {: txt:='';
+       wrapmode:=false; markable:=false;
+       endoncr:=false;
+       wrappos:=0;       :}
+    statline := true;
+    helpinfo := true;
+  end;
+  FOnConvert := nil;
+  FOnTestMark := nil;
+  FOnEnter := nil;
+  FOnKeypressed := nil;
+  FOnShowLines := nil;
+  FOnDisplayLine := nil;
+  FOnColor := nil;
+
+  Lines := TStringList.Create;
 end;
 
-procedure list_dummycrp(var s: string);
+constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
 begin
-end;
-
-procedure list_dummytp(var t: taste);
-begin
-end;
-
-procedure list_dummydp(s: string);
-begin
-end;
-
-{$IFDEF FPC }
-{$HINTS ON }
-{$ENDIF }
-
-(*constructor TLister.Create;
-begin
-
+  Create;
+  SetSize(_l, _r, _o, _u);
+  options := UpperCase(options);
+  Fselbar := pos('/SB/', options) > 0;
+  stat.markable := pos('/M/', options) > 0;
+  stat.endoncr := pos('/CR/', options) > 0;
+  stat.helpinfo := pos('/F1/', options) > 0;
+  stat.statline := (statpos > 0) and (pos('/NS/', options) = 0);
+  stat.noshift := pos('/NLR/', options) > 0;
+  stat.markswitch := pos('/MS/', options) > 0;
+  stat.maysearch := pos('/S/', options) > 0;
+  stat.noctrla := pos('/NA', options) > 0;
+  stat.allpgdn := pos('/APGD/', options) > 0;
+  stat.directmaus := pos('/DM/', options) > 0;
+  stat.vscroll := pos('/VSC:', options) > 0;
+  stat.rot13enable := pos('/ROT/', options) > 0;
+  if stat.vscroll then
+    stat.scrollx := ival(copy(options, pos('/VSC:', options) + 5, 3));
+  stat.autoscroll := true;
+  startpos := 0;
 end;
 
 destructor TLister.Destroy;
 begin
-
-end; *)
-
-procedure init;
-begin
-  Listers := TList.Create;
-  GetMem(aList, SizeOf(AList^));
-  Fillchar(alist^, sizeof(alist^), 0);
-  Listers.Add(aList);
-  with alist^ do
-  begin
-    Lines := TStringList.Create;
-    with col do
-      if color then
-      begin
-        coltext := 7;
-        colselbar := $30;
-        colmarkline := green;
-        colmarkbar := $30 + green;
-        colfound := $71;
-        colstatus := 3;
-      end
-      else
-      begin
-        coltext := 7;
-        colselbar := $70;
-        colmarkline := $F;
-        colmarkbar := $70;
-        colfound := 1;
-        colstatus := $F;
-      end;
-    fillchar(stat, sizeof(stat), 0);
-    with stat do
-    begin
-      {: txt:='';
-         wrapmode:=false; markable:=false;
-         endoncr:=false;
-         wrappos:=0;       :}
-      statline := true;
-      helpinfo := true;
-    end;
-  end;
-  inited := true;
+  Lines.Free;
+  inherited destroy;
 end;
 
-procedure SetListsize(_l, _r, _o, _u: byte);
+function TLister.Marked(Index: Integer): boolean;
 begin
-  with alist^ do
-  begin
-    l := _l; o := _o;
-    w := _r - _l + 1; Height := _u - _o + 1;
-  end;
+  Result := Lines.Objects[Index] <> Pointer(0);
 end;
 
-procedure openlist(_l, _r, _o, _u: byte; statpos: shortint; options: string);
+procedure TLister.SetSize(_l, _r, _o, _u: byte);
 begin
-  if not inited then init;
-  GetMem(aList, SizeOf(AList^));
-  Listers.Add(aList);
-  fillchar(alist^, sizeof(alist^), 0);
-  with alist^ do
-  begin
-    Lines := TStringList.Create;
-    col := Listrec(Listers[0]^).col;
-    stat := ListRec(Listers[0]^).stat;
-    SetListsize(_l, _r, _o, _u);
-    options := UpperCase(options);
-    selbar := pos('/SB/', options) > 0;
-    stat.markable := pos('/M/', options) > 0;
-    stat.endoncr := pos('/CR/', options) > 0;
-    stat.helpinfo := pos('/F1/', options) > 0;
-    stat.statline := (statpos > 0) and (pos('/NS/', options) = 0);
-    stat.noshift := pos('/NLR/', options) > 0;
-    stat.markswitch := pos('/MS/', options) > 0;
-    stat.maysearch := pos('/S/', options) > 0;
-    stat.noctrla := pos('/NA', options) > 0;
-    stat.allpgdn := pos('/APGD/', options) > 0;
-    stat.directmaus := pos('/DM/', options) > 0;
-    stat.vscroll := pos('/VSC:', options) > 0;
-    stat.rot13enable := pos('/ROT/', options) > 0;
-    if stat.vscroll then
-      stat.scrollx := ival(copy(options, pos('/VSC:', options) + 5, 3));
-    stat.autoscroll := true;
-    testmark := list_markdummy;
-    crproc := list_dummycrp;
-    tproc := list_dummytp;
-    dproc := list_dummydp;
-    @colfunc := nil;
-    @displproc := nil;
-    startpos := 0;
-  end;
+  l := _l; o := _o;
+  w := _r - _l + 1; Height := _u - _o + 1;
 end;
 
-procedure closelist;
-var
-  p: Pointer;
-begin
-  alist^.Lines.Free;
-  p := Lrp(Listers[Listers.Count - 1]);
-  FreeMem(p);
-  Listers.Delete(Listers.Count - 1);
-  alist := Listers[Listers.Count - 1];
-end;
-
-{ Zeile anhÑngen }
-
-procedure app_l(ltxt: string);
-const
-  TAB = #9;
+procedure TLister.AddLine(Line: String);
 var
   p: integer;
 begin
-  if ltxt = #13 then exit;              { einzelnes CR ignorieren }
-  p := pos(TAB, ltxt);
+  if Line = #13 then exit;             // ignore one CR
+  p := pos(#9, Line);
   while p > 0 do
   begin
-    delete(ltxt, p, 1);
-    insert(sp(8 - (p - 1) mod 8), ltxt, p);
-    p := pos(TAB, ltxt);
+    delete(Line, p, 1);
+    insert(sp(8 - (p - 1) mod 8), Line, p);
+    p := pos(#9, Line);
   end;
-  alist^.lines.addobject(ltxt, pointer(0));
+  // add one line, not marked
+  Lines.AddObject(Line, pointer(0));
 end;
 
-procedure list_convert(cp: listConvert);
-begin
-  alist^.ConvProc := cp;
-end;
-
-procedure ListSetStartpos(sp: longint);
-begin
-  alist^.startpos := sp;
-end;
-
-procedure list_readfile(fn: string; ofs: word);
+procedure TLister.ReadFromFile(const Filename: string; ofs: Integer);
 var
   f: file;
   s: string;
@@ -423,40 +335,37 @@ var
   rr: word;
   fm: byte;
 begin
-  with alist^ do
+  FHeaderText := fitpath(FileUpperCase(FileName), 40);
+  assign(f, FileName);
+  fm := filemode; filemode := 0;
+  reset(f, 1);
+  filemode := fm;
+  ps := ListerBufferCount;
+  getmem(p, ps);
+  rp := 0; rr := 0;
+  if ioresult = 0 then
   begin
-    txt := fitpath(FileUpperCase(fn), 40);
-    assign(f, fn);
-    fm := filemode; filemode := 0;
-    reset(f, 1);
-    filemode := fm;
-    ps := ListerBufferCount;
-    getmem(p, ps);
-    rp := 0; rr := 0;
-    if ioresult = 0 then
-    begin
-      seek(f, ofs);
-      repeat
-        blockread(f, p^[rp], ps - rp, rr);
-        if (@ConvProc <> nil) and (rr > 0) then ConvProc(p^[rp], rr);
-        TempRP := rp;
-        rp := make_list(p^, rr + rp, stat.wrappos);
-      until eof(f);
-      close(f);
-      if rp > 0 then
-      begin { den Rest der letzten Zeile noch anhÑngen.. }
-        SetLength(s, rp);
-        Move(p^[0], s[1], rp);
-        app_l(s);
-      end;
-      // Sonderbehandlung fÅr die letzte Leerzeile
-      if p^[rr + TempRP - 1] = #10 then App_l('');
+    seek(f, ofs);
+    repeat
+      blockread(f, p^[rp], ps - rp, rr);
+      if Assigned(FOnConvert) and (rr > 0) then FOnConvert(p^[rp], rr);
+      TempRP := rp;
+      rp := make_list(p^, rr + rp, stat.wrappos);
+    until eof(f);
+    close(f);
+    if rp > 0 then
+    begin { den Rest der letzten Zeile noch anhÑngen.. }
+      SetLength(s, rp);
+      Move(p^[0], s[1], rp);
+      AddLine(s);
     end;
-    freemem(p, ps);
+    // Sonderbehandlung fÅr die letzte Leerzeile
+    if p^[rr + TempRP - 1] = #10 then AddLine('');
   end;
+  freemem(p, ps);
 end;
 
-procedure list(var brk: boolean);
+function TLister.Show: Boolean;
 const
   suchstr: string = '';
   suchcase: boolean = false;            { true -> Case-sensitiv }
@@ -485,37 +394,36 @@ var
 
   procedure showstat;
   begin
-    with alist^ do
-      if stat.statline then
-      begin
-        moff;
-        attrtxt(col.colstatus);
-        gotoxy(l, o);
-        Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
-          FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);
-        (*
-        Write(a+p+1:5,lines.count-1:6);
-        if xa=1 then write('     ')
-        else write(RightStr('     +'+strs(xa-1),5));
-        write('  ');
+    if stat.statline then
+    begin
+      moff;
+      attrtxt(col.colstatus);
+      gotoxy(l, o);
+(*      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
+        FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3); *)
+
+      Write(FirstLine+1:5,lines.count-1:6);
+      if xa=1 then write('     ')
+      else write(RightStr('     +'+strs(xa-1),5));
+      write('  ');
 {    if (a=0) and more then write(#31)
-        else if (a+gl>=lines.count) and (a>0) then write(#30)
-        else write(' '); }
-        write (' ');
-        write (iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
-        if (listunvers=0) and (listflags=0) then write('  ')
-        else begin
-          if listunvers and 16 = 0
-            then write (iifs(listunvers and 1 = 0,' ','!'))
-            else write (iifs(listunvers and 1 = 0,'*',''));
-          if listflags and 3=1 then write('S')
-          else if listflags and 3=2 then Write('s')
-          else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
-          end;
-        if markanz>0 then write('  ['+forms(strs(markanz)+']',7))
-        else if stat.helpinfo then write(' F1-',ListHelpStr);*)
-        mon;
-      end;
+      else if (a+gl>=lines.count) and (a>0) then write(#30)
+      else write(' '); }
+      write (' ');
+      write (iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
+      if (listunvers=0) and (listflags=0) then write('  ')
+      else begin
+        if listunvers and 16 = 0
+          then write (iifs(listunvers and 1 = 0,' ','!'))
+          else write (iifs(listunvers and 1 = 0,'*',''));
+        if listflags and 3=1 then write('S')
+        else if listflags and 3=2 then Write('s')
+        else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
+        end;
+      if SelCount>0 then write('  ['+forms(strs(SelCount)+']',7))
+      else if stat.helpinfo then write(' F1-',ListHelpStr);
+      mon;
+    end;
     disp_DT;
   end;
 
@@ -525,25 +433,23 @@ var
     s: string;
     b: byte;
   begin
-    with alist^ do
+    i := 0;
+    moff;
+    while (i < DispLines) and (FirstLine + i < Lines.Count) do
     begin
-      i := 0;
-      moff;
-      while (i < DispLines) and (FirstLine + i < Lines.Count) do
-      begin
-        s := Lines[FirstLine + i];
-        if selbar and (FirstLine + i = SelLine) then
-          if marked(FirstLine + i) then
-            attrtxt(col.colmarkbar)
-          else
-            attrtxt(col.colselbar)
+      s := Lines[FirstLine + i];
+      if selbar and (FirstLine + i = FSelLine) then
+        if marked(FirstLine + i) then
+          attrtxt(col.colmarkbar)
         else
-          if marked(FirstLine + i) then
-          attrtxt(col.colmarkline)
-        else
-          if @colfunc <> nil then
+          attrtxt(col.colselbar)
+      else
+        if marked(FirstLine + i) then
+        attrtxt(col.colmarkline)
+      else
+        if Assigned(FOnColor) then
         begin
-          b := colfunc(s, FirstLine + i);
+          b := FOnColor(s, FirstLine + i);
           if b = 0 then
             b := col.coltext
           else
@@ -554,73 +460,68 @@ var
         else
           attrtxt(col.coltext);
 
-        if xa = 1 then
-          s := forms(s, w)
-        else
-          s := forms(Mid(s, xa), w);
-        if @displproc = nil then
-          fwrt(l, y + i, s)
-        else
-          displproc(l, y + i, s);
-        if (i + FirstLine = suchline) and (slen > 0) and (spos >= xa) and (spos
-          <= xa + w - slen) then
-        begin
-          attrtxt(col.colfound);
-          wrt(l + spos - xa, y + i, copy(s, spos - xa + 1, slen));
-        end;
-        inc(i);
-      end;
-      attrtxt(col.coltext);
-
-      // clear rest of screen if not enough lines to display
-      if i < DispLines then clwin(l, l + w - 1, y + i - 1, y + DispLines - 1);
-      mon;
-
-      if stat.vscroll then
+      if xa = 1 then
+        s := forms(s, w)
+      else
+        s := forms(Mid(s, xa), w);
+      if Assigned(FOnDisplayLine) then
+        FOnDisplayLine(l, y + i, s)
+      else
+        FWrt(l, y + i, s);
+      if (i + FirstLine = suchline) and (slen > 0) and (spos >= xa) and (spos
+        <= xa + w - slen) then
       begin
-        attrtxt(col.colscroll);
-        maus_showVscroller(true, false, stat.scrollx, y, y + DispLines - 1,
-          lines.count + 1, FirstLine + 1, DispLines,
-          vstart, vstop, _unit);
+        attrtxt(col.colfound);
+        wrt(l + spos - xa, y + i, copy(s, spos - xa + 1, slen));
       end;
-      with arrows do
-        if usearrows then
-        begin
-          if FirstLine = 0 then
-          begin
-            attrtxt(backattr);
-            mwrt(x, y1, backchr);
-          end
-          else
-          begin
-            attrtxt(arrowattr);
-            mwrt(x, y1, #30);
-          end;
-          if FirstLine + DispLines >= lines.count then
-          begin
-            attrtxt(backattr);
-            mwrt(x, y2, backchr);
-          end
-          else
-          begin
-            attrtxt(arrowattr);
-            mwrt(x, y2, #31);
-          end;
-        end;
-
+      inc(i);
     end;
+    attrtxt(col.coltext);
+
+    // clear rest of screen if not enough lines to display
+    if i < DispLines then clwin(l, l + w - 1, y + i - 1, y + DispLines - 1);
+    mon;
+
+    if stat.vscroll then
+    begin
+      attrtxt(col.colscroll);
+      maus_showVscroller(true, false, stat.scrollx, y, y + DispLines - 1,
+        lines.count + 1, FirstLine + 1, DispLines,
+        vstart, vstop, _unit);
+    end;
+    with arrows do
+      if usearrows then
+      begin
+        if FirstLine = 0 then
+        begin
+          attrtxt(backattr);
+          mwrt(x, y1, backchr);
+        end
+        else
+        begin
+          attrtxt(arrowattr);
+          mwrt(x, y1, #30);
+        end;
+        if FirstLine + DispLines >= lines.count then
+        begin
+          attrtxt(backattr);
+          mwrt(x, y2, backchr);
+        end
+        else
+        begin
+          attrtxt(arrowattr);
+          mwrt(x, y2, #31);
+        end;
+      end;
   end;
 
   procedure clearmark;
   var
     i: Integer;
   begin
-    with alist^ do
-    begin
-      for i := 0 to Lines.Count - 1 do
-        Lines.Objects[i] := Pointer(0);
-      SelCount := 0;
-    end;
+    for i := 0 to Lines.Count - 1 do
+      Lines.Objects[i] := Pointer(0);
+    FSelCount := 0;
   end;
 
   procedure setmark;
@@ -628,17 +529,17 @@ var
     n: Integer;
     s: string;
   begin
-    with alist^ do
+    Clearmark;
+    for n := f7p to f8p do
     begin
-      Clearmark;
-      for n := f7p to f8p do
-      begin
-        s := Lines[n];
-        if testmark(s, true) then
-          Lines.Objects[n] := Pointer(1);
-      end;
-      SelCount := f8p - f7p;
+      s := Lines[n];
+      if Assigned(FOnTestMark) then
+        if FOnTestMark(s, true) then
+          Lines.Objects[n] := Pointer(1)
+      else
+        Lines.Objects[n] := Pointer(1)
     end;
+    FSelCount := f8p - f7p;
   end;
 
   procedure suchen(rep: boolean);
@@ -739,9 +640,8 @@ var
     i: Integer;
     s: string;
   begin
-    with alist^ do
-      for i := 0 to Lines.Count - 1 do
-        Lines[i] := DecodeRot13String(Lines[i]);
+    for i := 0 to Lines.Count - 1 do
+      Lines[i] := DecodeRot13String(Lines[i]);
   end;
 
   (*  procedure Maus_bearbeiten;
@@ -867,398 +767,325 @@ var
           end;
     end; *)
 
-  procedure ShowMem;
-  begin
-    with alist^ do
-    begin
-      moff;
-      attrtxt(col.colstatus);
-      gotoxy(l, o);
-      (* write(forms('EMS: '+strs(EmsPages*16)+' KB    '+
-                  'XMS: '+strs(XmsPages*XmsPageKB)+' KB',w)); *)
-      mon;
-      get(t, curoff);
-      showstat;
-    end;
-  end;
-
 begin
-  with alist^ do
+  startpos := minmax(startpos, 0, Lines.Count - 1);
+  DispLines := Height - iif(stat.statline, 1, 0);
+  if startpos > DispLines then
   begin
-    startpos := minmax(startpos, 0, Lines.Count - 1);
-    DispLines := Height - iif(stat.statline, 1, 0);
-    if startpos > DispLines then
+    FirstLine := startpos; FSelLine := StartPos;
+  end
+  else
+  begin
+    FirstLine := 0; FSelLine := Startpos;
+  end;
+  xa := 1;
+  y := o + iif(stat.statline, 1, 0);
+  if stat.statline then
+  begin
+    attrtxt(col.colstatus);
+    mwrt(l, o, sp(w));
+    mwrt(l + w - length(HeaderText), o, HeaderText);
+  end;
+  attrtxt(col.coltext);
+  clwin(l, l + w - 1, y, y + DispLines - 1);
+
+  suchline := 0; slen := 0;
+  f7p := 1; f8p := 0;
+  mzo := mauszuo; mzu := mauszuu;
+  mzl := mauszul; mzr := mauszur;
+  mausdown := false;
+  maus_pushinside(l, l + w - 2, y + 1, y + DispLines - 2);
+  mb := InOut.AutoBremse; AutoBremse := true;
+  scrolling := false;
+  repeat
+    display;
+    showstat;
+    if Assigned (FOnShowLines) then FOnShowLines(GetSelection);
+    (*      mauszuo:=(pl<>nil) and (pl^.prev<>nil);
+          mauszuu:=(pl<>nil) and (pl^.next<>nil); *)
+    mauszul := false; mauszur := false;
+    if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
+    if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
+      1) then AutoDown := false;
+    if mcursor and selbar then
     begin
-      FirstLine := startpos; SelLine := StartPos;
+      gotoxy(l, y + FSelLine - FirstLine);
+      get(t, curon);
     end
     else
-    begin
-      FirstLine := 0; SelLine := Startpos;
-    end;
-    xa := 1;
-    y := o + iif(stat.statline, 1, 0);
-    if stat.statline then
-    begin
-      attrtxt(col.colstatus);
-      mwrt(l, o, sp(w));
-      mwrt(l + w - length(txt), o, txt);
-    end;
-    attrtxt(col.coltext);
-    clwin(l, l + w - 1, y, y + DispLines - 1);
+      get(t, curoff);
+    mauszuo := mzo; mauszuu := mzu;
+    mauszul := mzl; mauszur := mzr;
 
-    suchline := 0; slen := 0;
-    f7p := 1; f8p := 0;
-    mzo := mauszuo; mzu := mauszuu;
-    mzl := mauszul; mzr := mauszur;
-    mausdown := false;
-    maus_pushinside(l, l + w - 2, y + 1, y + DispLines - 2);
-    mb := InOut.AutoBremse; AutoBremse := true;
-    scrolling := false;
-    repeat
-      display;
-      showstat;
-      dproc(get_selection);
-      (*      mauszuo:=(pl<>nil) and (pl^.prev<>nil);
-            mauszuu:=(pl<>nil) and (pl^.next<>nil); *)
-      mauszul := false; mauszur := false;
-      if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
-      if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
-        1) then AutoDown := false;
-      if mcursor and selbar then
+    (*      if (t>=mausfirstkey) and (t<=mauslastkey) then
+             Maus_bearbeiten; *)
+    FOnKeyPressed(Self, t);
+
+    if Lines.Count > 0 then
+    begin                             { Liste nicht leer }
+      s := Lines[FSelLine];
+      if stat.markable and (t = ' ') and Assigned(FOnTestMark) and FOnTestMark(s, false) then
       begin
-        gotoxy(l, y + SelLine - FirstLine);
-        get(t, curon);
-      end
-      else
-        get(t, curoff);
-      mauszuo := mzo; mauszuu := mzu;
-      mauszul := mzl; mauszur := mzr;
-
-      (*      if (t>=mausfirstkey) and (t<=mauslastkey) then
-               Maus_bearbeiten; *)
-      tproc(t);
-
-      if Lines.Count > 0 then
-      begin                             { Liste nicht leer }
-        s := Lines[SelLine];
-        if stat.markable and (t = ' ') and testmark(s, false) then
+        if Marked(FSelLine) then
         begin
-          if Marked(SelLine) then
-          begin
-            alist^.Lines.Objects[SelLine] := Pointer(0);
-            Dec(SelCount)
-          end else
-          begin
-            alist^.Lines.Objects[SelLine] := Pointer(1);
-            Inc(SelCount);
-          end;
-          t := keydown;
+          Lines.Objects[FSelLine] := Pointer(0);
+          Dec(FSelCount)
+        end else
+        begin
+          Lines.Objects[FSelLine] := Pointer(1);
+          Inc(FSelCount);
         end;
+        t := keydown;
+      end;
 
-        if (t = ' ') and not stat.markable and not selbar then
-          t := keypgdn;
+      if (t = ' ') and not stat.markable and not selbar then
+        t := keypgdn;
 
-        if stat.maysearch and ((UpperCase(t) = 'S') or (t = '/') or (t = '\'))
-          then
+      if stat.maysearch and ((UpperCase(t) = 'S') or (t = '/') or (t = '\'))
+        then
+      begin
+        suchcase := (t = 'S') or (t = '\');
+        suchen(false);
+      end;
+      if stat.maysearch and (t = keytab) then
+        suchen(true);
+
+      // key up
+      if t = keyup then
+        if SelBar then
         begin
-          suchcase := (t = 'S') or (t = '\');
-          suchen(false);
-        end;
-        if stat.maysearch and (t = keytab) then
-          suchen(true);
+          if FSelLine > 0 then Dec(FSelLine);
+          FirstLine := Min(FirstLine, FSelLine);
+        end
+        else
+          if FirstLine > 0 then
+            Dec(FirstLine);
 
-        // key up
-        if t = keyup then
-          if SelBar then
-          begin
-            if SelLine > 0 then Dec(SelLine);
-            FirstLine := Min(FirstLine, SelLine);
-          end
-          else
-            if FirstLine > 0 then
-              Dec(FirstLine);
-
-        // key down
-        if t = keydown then
-          if selbar then
-          begin
-            if SelLine < Lines.Count - 1 then Inc(SelLine);
-            if FirstLine + DispLines - 1 < SelLine then Inc(FirstLine);
-          end
-          else
-            if FirstLine + DispLines < Lines.Count - 1 then
-              Inc(FirstLine);
-
-        // goto first line of text
-        if (t = keyhome) or (t = keycpgu) then
+      // key down
+      if t = keydown then
+        if selbar then
         begin
-          FirstLine := 0;
-          SelLine := 0;
-          slen := 0;
-        end;
+          if FSelLine < Lines.Count - 1 then Inc(FSelLine);
+          if FirstLine + DispLines - 1 < FSelLine then Inc(FirstLine);
+        end
+        else
+          if FirstLine + DispLines < Lines.Count - 1 then
+            Inc(FirstLine);
 
-        // goto last line of text
-        if (t = keyend) or (t = keycpgd) then
+      // goto first line of text
+      if (t = keyhome) or (t = keycpgu) then
+      begin
+        FirstLine := 0;
+        FSelLine := 0;
+        slen := 0;
+      end;
+
+      // goto last line of text
+      if (t = keyend) or (t = keycpgd) then
+      begin
+        FirstLine := Max(Lines.Count - 1 - DispLines, 0);
+        FSelLine := Lines.Count - 1;
+      end;
+
+      if t = keypgup then
+      begin
+        FirstLine := Max(0, FirstLine - DispLines);
+        FSelLine := Max(FirstLine, FSelLine - DispLines);
+      end;
+
+      if t = keypgdn then
+      begin
+        FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - 1 -
+          DispLines, 0));
+        FSelLine := Min(FSelLine + DispLines, Max(Lines.Count - 1, 0));
+      end;
+
+      if t = keychom then
+        FirstLine := 0;
+
+      if (t = keycend) and selbar then
+      begin
+        FirstLine := 0;
+        while (FirstLine < lines.count) and (FirstLine < DispLines) do
         begin
-          FirstLine := Max(Lines.Count - 1 - DispLines, 0);
-          SelLine := Lines.Count - 1;
-        end;
-
-        if t = keypgup then
-        begin
-          FirstLine := Max(0, FirstLine - DispLines);
-          SelLine := Max(FirstLine, SelLine - DispLines);
-        end;
-
-        if t = keypgdn then
-        begin
-          FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - 1 -
-            DispLines, 0));
-          SelLine := Min(SelLine + DispLines, Max(Lines.Count - 1, 0));
-        end;
-
-        if t = keychom then
-          FirstLine := 0;
-
-        if (t = keycend) and selbar then
-        begin
-          FirstLine := 0;
-          while (FirstLine < lines.count) and (FirstLine < DispLines) do
-          begin
-            inc(Firstline);
-          end;
-        end;
-
-        if not stat.noshift then
-        begin
-          if ((t = keyrght) or (t = keycrgt)) and (xa < 180) then inc(xa, 10);
-          if ((t = keyleft) or (t = keyclft)) and (xa > 1) then dec(xa, 10);
-          { if t=keyclft then xa:=1;
-            if t=keycrgt then xa:=181; }
-        end;
-
-        if t = ^E then
-        begin
-          clearmark;
-          slen := 0;
-        end;
-        if stat.markable then
-        begin
-          if t = keyf7 then
-          begin
-            f7p := SelLine;
-            setmark;
-          end;
-          if t = keyf8 then
-          begin
-            f8p := SelLine;
-            setmark;
-          end;
-        end;
-        if (stat.markable or stat.markswitch) and (t = ^A)
-          and not stat.noctrla then
-        begin
-          f7p := 0; f8p := lines.count - 1;
-          setmark;
-        end;
-
-        if (UpperCase(t) = 'M') and stat.markswitch then
-        begin
-          selbar := not selbar;
-          stat.markable := selbar;
-          // move Selbar between first and last line in Screen
-          SelLine := MinMax(SelLine, FirstLine, FirstLine + DispLines);
-        end;
-
-        if stat.rot13enable and (t = ^R) then
-          ListRot13;
-
-        if ListDebug and (t = KeyAlt0) then ShowMem;
-
-        if (t = keycr) and not stat.endoncr and (@crproc <> @list_dummycrp) then
-        begin
-          s := Lines[SelLine];
-          crproc(s);
-          Lines[SelLine] := s;
-          t := '';
+          inc(Firstline);
         end;
       end;
-    until (t = keyesc) or
-      ((t = keycr) and ((selbar) or stat.endoncr));
-    maus_popinside;
-    AutoBremse := mb;
-    brk := (t = keyesc);
-    if brk then
-      SelLine := -1;
-  end;
+
+      if not stat.noshift then
+      begin
+        if ((t = keyrght) or (t = keycrgt)) and (xa < 180) then inc(xa, 10);
+        if ((t = keyleft) or (t = keyclft)) and (xa > 1) then dec(xa, 10);
+        { if t=keyclft then xa:=1;
+          if t=keycrgt then xa:=181; }
+      end;
+
+      if t = ^E then
+      begin
+        clearmark;
+        slen := 0;
+      end;
+      if stat.markable then
+      begin
+        if t = keyf7 then
+        begin
+          f7p := FSelLine;
+          setmark;
+        end;
+        if t = keyf8 then
+        begin
+          f8p := FSelLine;
+          setmark;
+        end;
+      end;
+      if (stat.markable or stat.markswitch) and (t = ^A)
+        and not stat.noctrla then
+      begin
+        f7p := 0; f8p := lines.count - 1;
+        setmark;
+      end;
+
+      if (UpperCase(t) = 'M') and stat.markswitch then
+      begin
+        Fselbar := not FSelbar;
+        stat.markable := Selbar;
+        // move Selbar between first and last line in Screen
+        FSelLine := MinMax(FSelLine, FirstLine, FirstLine + DispLines);
+      end;
+
+      if stat.rot13enable and (t = ^R) then
+        ListRot13;
+
+      if (t = keycr) and not stat.endoncr and Assigned(FOnEnter) then
+      begin
+        FOnEnter(Lines[FSelLine]);
+        t := '';
+      end;
+    end;
+  until (t = keyesc) or
+    ((t = keycr) and ((selbar) or stat.endoncr));
+  maus_popinside;
+  AutoBremse := mb;
+  Result := (t = keyesc);
+  if Result then
+    FSelLine := - 1;
 end;
 
-procedure setlistcol(lcol: listcol);
+procedure TLister.SetHeaderText(s: string);
 begin
-  if not inited then init;
-  alist^.col := lcol;
+  FHeaderText := LeftStr(s, 40);
 end;
 
-procedure listheader(s: string);
+procedure TLister.SetArrows(x, y1, y2, acol, bcol: byte; backchr: char);
 begin
-  alist^.txt := LeftStr(s, 40);
+  arrows.x := x;
+  arrows.y1 := y1; arrows.y2 := y2;
+  arrows.arrowattr := acol;
+  arrows.backattr := bcol;
+  arrows.backchr := backchr;
+  arrows.usearrows := true;
 end;
 
-procedure listwrap(spalte: byte);
-begin
-  alist^.stat.wrappos := spalte;
-end;
-
-procedure listVmark(mp: markfunc);
-begin
-  alist^.testmark := mp;
-end;
-
-procedure listCRp(crp: listCRproc);
-begin
-  alist^.crproc := crp;
-end;
-
-procedure listTp(tp: listTproc);
-begin
-  alist^.tproc := tp;
-end;
-
-procedure listDp(dp: listDproc);
-begin
-  alist^.dproc := dp;
-end;
-
-procedure listCFunc(cf: listColFunc);
-begin
-  alist^.colfunc := cf;
-end;
-
-procedure listDLProc(dp: listDisplProc);
-begin
-  alist^.displproc := dp;
-end;
-
-procedure listarrows(x, y1, y2, acol, bcol: byte; backchr: char);
-begin
-  with alist^ do
-  begin
-    arrows.x := x;
-    arrows.y1 := y1; arrows.y2 := y2;
-    arrows.arrowattr := acol;
-    arrows.backattr := bcol;
-    arrows.backchr := backchr;
-    arrows.usearrows := true;
-  end;
-end;
-
-procedure listNoAutoscroll;
-begin
-  alist^.stat.autoscroll := false;
-end;
-
-function first_marked: string;
+function TLister.FirstMarked: string;
 begin
   MarkPos := 0;
-  while (MarkPos < aList^.Lines.Count) and (not Marked(MarkPos)) do
+  while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
     Inc(MarkPos);
-  if MarkPos = aList^.Lines.Count then
+  if MarkPos = Lines.Count then
     Result := #0
   else
-    Result := aList^.Lines[MarkPos];
+    Result := Lines[MarkPos];
   Inc(MarkPos);
-  linepos := MarkPos;
+  FLinePos := MarkPos;
 end;
 
-function next_marked: string;
+function TLister.NextMarked: string;
 begin
-  while (MarkPos < aList^.Lines.Count) and (not Marked(MarkPos)) do
+  while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
     Inc(MarkPos);
-  if MarkPos = aList^.Lines.Count then
+  if MarkPos = Lines.Count then
     Result := #0
   else
-    Result := aList^.Lines[MarkPos];
+    Result := Lines[MarkPos];
   Inc(MarkPos);
-  linepos := MarkPos;
+  FLinePos := MarkPos;
 end;
 
-function get_selection: string;
+function TLister.GetSelection: string;
 begin
-  if SelLine <> -1 then
-    Result := aList^.Lines[SelLine]
+  if FSelLine <> -1 then
+    Result := Lines[FSelLine]
   else
     Result := '';
 end;
 
-function get_SelLine: Integer;
+function TLister.FirstLine: string;
 begin
-  Result := SelLine;
-end;
-
-function list_markanz: longint;
-begin
-  Result := alist^.SelCount;
-end;
-
-function first_line: string;
-begin
-  if alist^.lines.count = 0 then
+  if lines.count = 0 then
   begin
-    first_line := #0;
-    linepos := -1;
-  end
-  else
+    Result := #0;
+    FLinePos := -1;
+  end else
   begin
-    linepos := 1;
-    Result := aList.Lines[0];
+    FLinePos := 1;
+    Result := Lines[0];
   end;
 end;
 
-function next_line: string;
+function TLister.NextLine: string;
 begin
   if linepos = -1 then
-    next_line := #0
+    Result := #0
   else
   begin
-    Result := aList.Lines[LinePos];
-    Inc(Linepos);
-    if Linepos = aList.Lines.Count then
+    Result := Lines[LinePos];
+    Inc(FLinepos);
+    if FLinepos = Lines.Count then
     begin
-      LinePos := -1;
+      FLinePos := -1;
       Result := #0;
     end;
   end;
 end;
 
-function prev_line: string;
+function TLister.PrevLine: string;
 begin
-  if linepos >= aList.Lines.Count then
-    prev_line := #0
+  if linepos >= Lines.Count then
+    Result := #0
   else
   begin
-    Result := aList.Lines[LinePos];
-    Dec(LinePos);
+    Result := Lines[LinePos];
+    Dec(FLinePos);
   end;
 end;
 
-function current_linenr: longint;
-begin
-  Result := LinePos;
-end;
-
-procedure setlistcursor(cur: curtype);
-begin
-  mcursor := (cur = curon);
-end;
-
-function list_selbar: boolean;
-begin
-  list_selbar := alist^.selbar;
-end;
-
+initialization
+  with ListColors do
+    if color then
+    begin
+      coltext := 7;
+      colselbar := $30;
+      colmarkline := green;
+      colmarkbar := $30 + green;
+      colfound := $71;
+      colstatus := 3;
+    end
+    else
+    begin
+      coltext := 7;
+      colselbar := $70;
+      colmarkline := $F;
+      colmarkbar := $70;
+      colfound := 1;
+      colstatus := $F;
+    end;
+finalization
 end.
 {
   $Log$
+  Revision 1.41  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
   Revision 1.40  2000/12/22 10:09:04  mk
   - compatiblity update for fpc
 

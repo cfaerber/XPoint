@@ -44,7 +44,7 @@ procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
-procedure SSP_Keys(var t:taste);
+procedure SSP_Keys(Self: TLister; var t:taste);
 function typname(typ,subtyp:string):string;
 
 implementation  { --------------------------------------------------- }
@@ -129,15 +129,15 @@ begin
 end;
 
 
-procedure SMP_Keys(var t:taste);
+procedure SMP_Keys(Self: TLister; var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if UpperCase(t)='X' then
-    m_extrakt(mf[ival(mid(get_selection,57))]);
+    m_extrakt(mf[ival(mid(Self.getselection,57))]);
 end;
 
-                                                      { Select-Tasten fuer SINGLE-PART MIME }
-procedure SSP_Keys(var t:taste);          { Select-Tasten fuer SINGLE-PART MIME }
+// select keys for SINGLE-PART MIME
+procedure SSP_Keys(Self: TLister; var t:taste);
 var OldET : byte;
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
@@ -263,6 +263,7 @@ var   hdp      : THeader;
       anzahl   : integer;     { Anzahl der Nachrichtenteile }
       anzahl0  : integer;     { Anzahl Nachrichtenteile ohne Gesamtnachricht }
       alter    : boolean;
+      List: TLister;
 
   procedure MakePartlist;
   const maxlevel = 25;    { max. verschachtelte Multiparts }
@@ -572,17 +573,17 @@ begin                         { SelectMultiPart }
         end
       end
     else begin
-      listbox(56,min(screenlines-4,anzahl),getres2(2440,9));   { 'mehrteilige Nachricht' }
+      List := listbox(56,min(screenlines-4,anzahl),getres2(2440,9));   { 'mehrteilige Nachricht' }
       for i:=1 to anzahl do
         with mf[i] do
-          app_l(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
+          List.AddLine(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
                 ' ' + fnform(fname,23) + ' ' + strs(i));
-      listTp(SMP_Keys);
-      ListSetStartpos(index-1);
-      list(brk);
+      List.OnKeypressed := SMP_Keys;
+      List.Startpos := index-1;
+      brk := List.Show;
       if not brk then
       begin
-        mpdata:=mf[get_selline+1];
+        mpdata:=mf[List.SelLine+1];
         if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
            (mpdata.typ=getres2(2440,10)) then begin
           mpdata.typ:='text';
@@ -591,7 +592,7 @@ begin                         { SelectMultiPart }
         mpdata.parts:=anzahl0;
         mpdata.alternative:=false;
         end;
-      closelist;
+      List.Free;
       closebox;
     end;
   Hdp.Free;
@@ -771,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/12/25 14:02:45  mk
+  - converted Lister to class TLister
+
   Revision 1.41  2000/12/22 10:04:07  mk
   - minimal modification for new lister
 

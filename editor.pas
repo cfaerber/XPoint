@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
   sysutils,
-  keys,clip,mouse,eddef, encoder;
+  keys,clip,mouse,eddef, encoder, Lister;
 
 
 const EdTempFile  : string = 'TED.TMP';
@@ -70,12 +70,12 @@ procedure EddefMsgproc(txt:string; error:boolean);
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+procedure Glossary_ed(Self: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, lister, xp2;
+uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -1854,7 +1854,7 @@ begin
     end;
 end;
 
-procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+procedure Glossary_ed(Self: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 const locked:boolean=false;
 begin
   if (UpperCase(t)='E') and not locked then begin
@@ -1869,6 +1869,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
   Revision 1.49  2000/12/04 17:55:57  hd
   - Workaround for FPC 1.1
 

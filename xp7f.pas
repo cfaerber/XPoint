@@ -40,7 +40,7 @@ function GetCrashbox:string;
 function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
 
 
-procedure EditRequest(var t:taste);
+procedure EditRequest(Self: TLister; var t:taste);
 procedure ShowRQ(s:string);
 
 
@@ -962,12 +962,12 @@ begin
       SetRequest(adr,'');
 end;
 
-procedure EditRequest(var t:taste);
+procedure EditRequest(Self: TLister; var t:taste);
 var adr : string[20];
 begin
   if UpperCase(t)='E' then
-    if UpperCase(copy(get_selection,3,1))='R' then begin
-      adr:=trim(copy(get_selection,5,18));
+    if UpperCase(copy(Self.GetSelection,3,1))='R' then begin
+      adr:=trim(copy(Self.GetSelection,5,18));
       closebox;
       if IsFidoNode(adr) then begin
         _keyboard(keycr);
@@ -1054,6 +1054,7 @@ var x,y : byte;
     old : boolean;    { zurckgestellter Request }
     fa  : FidoAdr;
     h   : word;
+    List: TLister;
 
 label again;
 
@@ -1063,7 +1064,7 @@ begin
   if _filesize(ReqDat)>0 then begin    { s. auch XP10.ResolveCrashs! }
     assign(t,ReqDat);
     reset(t);
-    openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
+    List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
     KeepNodeindexOpen;
     while not eof(t) do begin
       readln(t,adr);
@@ -1078,7 +1079,7 @@ begin
           end;
       until s='';
       inc(anz);
-      app_l(' '+iifc(c,'C',' ')+iifc(f,iifc(old,'r','R'),' ')+'  '+
+      List.AddLine(' '+iifc(c,'C',' ')+iifc(f,iifc(old,'r','R'),' ')+'  '+
             forms(adr,18)+
             iifs(ni.found,forms(ni.boxname+', '+ni.standort,40),'???'));
       end;
@@ -1086,47 +1087,47 @@ begin
     close(t);
     if anz>0 then begin
       if anz>1 then
-        app_l(' --  '+getres2(705,5));    { 'markierte' }
-      app_l(' --  '+getres2(705,1));    { 'andere' }
-      app_l(' --  '+getres2(705,2));    { 'alle'   }
+        List.AddLine(' --  '+getres2(705,5));    { 'markierte' }
+      List.AddLine(' --  '+getres2(705,1));    { 'andere' }
+      List.AddLine(' --  '+getres2(705,2));    { 'alle'   }
       h:=min(anz+iif(anz>1,8,7),screenlines-6);
       selbox(65,h,getres2(705,3),x,y,true);  { 'Anruf bei...' }
       dec(h,5);
       rdispx:=x+2; rdispy:=y+h+2;
       attrtxt(col.colselrahmen);
       mwrt(x,rdispy-1,hbar(65));
-      SetListsize(x+1,x+63,y+1,y+h);
-      listboxcol;
-      listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'³');
-      listTp(EditRequest);
-      listDp(ShowRQ);
+      List.SetSize(x+1,x+63,y+1,y+h);
+      listboxcol(list);
+      List.SetArrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'³');
+      List.OnKeypressed := EditRequest;
+      List.OnShowLines := ShowRQ;
     again:
       pushhp(79);
-      list(brk);
+      brk := List.Show;
       pophp;
       if not brk then begin
-        adr:=trim(copy(get_selection,5,18));
+        adr:=trim(copy(List.GetSelection,5,18));
         if adr=getres2(705,1) then adr:=''
         else if adr=getres2(705,2) then adr:=' alle '
         else if adr=getres2(705,5) then   { 'markiert' }
-          if list_markanz=0 then begin
+          if List.SelCount=0 then begin
             rfehler(743);   { 'Keine Eintr„ge markiert!' }
             goto again;
             end
           else begin
             assign(t,CrashTemp);   { markierte Nodes -> Temp-Datei }
             rewrite(t);
-            s:=first_marked;
+            s:=List.FirstMarked;
             repeat
               if Pos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
                 writeln(t,trim(copy(s,5,18)));
-              s:=next_marked;
+              s:=List.NextMarked;
             until s=#0;
             close(t);
             adr:=CrashTemp;
             end;
         end;
-      closelist;
+      List.Free;
       closebox;
       if brk then exit;
       end;
@@ -1188,6 +1189,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/12/25 14:02:43  mk
+  - converted Lister to class TLister
+
   Revision 1.44  2000/12/22 10:20:53  mk
   - fixed range check error (var i is integer now)
 

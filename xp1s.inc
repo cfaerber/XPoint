@@ -187,7 +187,9 @@ end;
 
 function listfile(name,header:string; savescr,listmsg:boolean;
                   cols:shortint):shortint; { Lister }
-var brk    : boolean;
+var
+  List: TLister;
+brk    : boolean;
     p      : scrptr;
     oldm   : byte;
     msg    : boolean;
@@ -255,27 +257,30 @@ begin
       end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
-    openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
+    List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,MakeVSC,'')+
              iifs(listmsg,'ROT/',''));
     if listwrap {or listkommentar} then
-      lister.listwrap(iif(_maus and listscroller,78,80)+ScreenWidth-80);
-    if listmsg and ConvIso then list_convert(ISO_conv);
-    if not ListAutoscroll then listNoAutoscroll;
+      list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
+//!!    if listmsg and ConvIso then List.OnConvert := ISO_conv;
+    if not ListAutoscroll then List.Stat.Autoscroll := false;
     msg:=(_filesize(name)>1024*100);
     if msg then rmessage(130);    { 'Lade Datei ...' }
-    list_readfile(name,lofs);
+    List.ReadFromFile(name,lofs);
     if msg then closebox;
-    listheader(header);
-    listTp(listExt);   llh:=listmsg;
+    List.HeaderText := header;
+    List.OnKeypressed := listExt;
+    llh:=listmsg;
     oldm:=ListMakros;
     if listmsg then ListMakros:=8;
-    if cols<>0 then begin
-      listCFunc(listColor);
-      if cols and 2<>0 then begin
-        listDLproc(listDisplay);
+    if cols<>0 then
+    begin
+      List.OnColor := listColor;
+      if cols and 2<>0 then
+      begin
+        List.OnDisplayLine := Listdisplay;
         xp1o.ListXHighlight:=ListHighlight;
         end;
       end;
@@ -295,7 +300,7 @@ begin
       Listunvers:=0; Listhalten:=0; Listflags:=0;
       end;
 
-    list(brk);
+    brk := List.Show;
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
@@ -305,8 +310,8 @@ begin
      end;
    m2t:=true;
     if savescr then holen(p);
-    closelist;
-    end;
+    List.Free;
+  end;
   exthdlines:=0;
   llh:=false;
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
@@ -409,6 +414,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2000/12/25 14:02:41  mk
+  - converted Lister to class TLister
+
   Revision 1.43  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 

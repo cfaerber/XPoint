@@ -580,21 +580,24 @@ end;
 { nr:  1 = Bretter, 2 = User, 3 = Msgs, 4=Lister, 5=ArcViewer, 6=Editor,
        7 = Terminal }
 
-procedure MakSelKeys(var t:taste);
+procedure MakSelKeys(Self: TLister; var t:taste);
 begin
   if t=keyf6 then t:=keyesc;
 end;
 
 procedure Makroliste(nr:byte);
-var x,y  : byte;
+var
+  List: TLister;
+  x,y  : byte;
     brk  : boolean;
     anz  : integer;
     t    : text;
     s,s2 : string;
     ta   : tap;
 begin
-  if _filesize(keydeffile)>0 then begin
-    openlist(15,65,10,11,-1,'/NS/SB/NLR/DM/');   { Koordinaten beliebig }
+  if _filesize(keydeffile)>0 then
+  begin
+    List := TLister.CreateWithOptions(15,65,10,11,-1,'/NS/SB/NLR/DM/');   { Koordinaten beliebig }
     assign(t,KeydefFile);
     reset(t);
     s:=''; anz:=0;
@@ -604,7 +607,7 @@ begin
         s:=forms(s,13)+mid(s2,2);
       if (s2<>'') and (LeftStr(s2,1)<>'!') then begin
         if s<>'' then begin
-          app_l(' '+s); s:=''; inc(anz);
+          List.AddLine(' '+s); s:=''; inc(anz);
           end;
         if s2[15+nr]='*' then
           case s2[1] of
@@ -615,34 +618,37 @@ begin
         end;
       end;
     if s<>'' then begin
-      app_l(' '+s); inc(anz);
+      List.AddLine(' '+s); inc(anz);
     end;
     close(t);
     if anz=0 then
       hinweis(getres2(1017,1))   { 'keine Tastenmakros fr dieses Fenster definiert' }
     else begin
       selbox(41,min(anz+2,screenlines-6),getres2(1017,2),x,y,true);   { 'Makro w„hlen ...' }
-      SetListSize(x+1,x+39,y+1,y+min(anz+2,screenlines-6)-2);
-      ListTp(MakSelKeys);
-      listboxcol;
+      List.SetSize(x+1,x+39,y+1,y+min(anz+2,screenlines-6)-2);
+      List.OnKeypressed := MakSelKeys;
+      listboxcol(list);
       pushhp(84);
-      list(brk);
+      brk := List.Show;
       pophp;
       closebox;
       if not brk then begin
         settap(ta);
-        keyboard(getmacro(trim(LeftStr(get_selection,12)),ta));
+        keyboard(getmacro(trim(LeftStr(List.GetSelection,12)),ta));
         dispose(ta);
         end;
       end;
-    closelist;
-    end
+    List.Free;
+  end
   else
     hinweis(getres2(1017,3));   { 'keine Tastenmakros definiert' }
   freeres;
 end;
 {
   $Log$
+  Revision 1.14  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
   Revision 1.13  2000/10/17 10:05:45  mk
   - Left->LeftStr, Right->RightStr
 

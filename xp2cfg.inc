@@ -224,7 +224,7 @@ begin
     colstatus:=col.colliststatus; colscroll:=col.collistscroll;
     colhigh:=col.collisthigh; colqhigh:=col.collistqhigh[1];
     end;
-  setlistcol(lc);
+  ListColors := lc;
   fsb_rcolor:=col.colselrahmen;
 end;
 
@@ -1599,11 +1599,12 @@ begin
       XP_ID_PMs:=true; { XP_ID_AMs:=true; }
       end;
     FidoTo:=brettalle;
-    if auswahlcursor then begin
-      SetListCursor(curon);
+    if auswahlcursor then
+    begin
+      Lister.MCursor := true;
       SetWinSelCursor(curon);
       MaskSelcursor(curon);
-      end;
+    end;
     if mheader='' then SetDefaultHeader
     else SetHeader(mheader);
     EditVollbild:=false;
@@ -1680,6 +1681,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.98  2000/12/25 14:02:41  mk
+  - converted Lister to class TLister
+
   Revision 1.97  2000/12/15 19:03:38  mk
   - do not uppercase Custom Headers
 

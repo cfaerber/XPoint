@@ -2035,6 +2035,7 @@ var ap : absatzp;
       s,s2 : String;
       lsi  : byte;
       brk  : boolean;
+      List: TLister;
   begin
     ScanGlossary:=false;
     assign(t,FileUpperCase('glossary.cfg'));
@@ -2051,8 +2052,8 @@ var ap : absatzp;
       begin                           { Wort nicht gefunden - Kuerzelliste als Auswahlmenue }
         pushhp(64);
         reset(t);
-        listbox(50,8,'Glossary');
-        app_l(' >- ESC -<');
+        List := Listbox(50,8,'Glossary');
+        List.AddLine(' >- ESC -<');
         repeat
          readln(t,s);
           if (FirstChar(s)='>') and (cpos('<',s)>0) then
@@ -2060,17 +2061,17 @@ var ap : absatzp;
             repeat
               readln(t,s2);
             until eof(t) or (s2<>'');
-            if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,31))
+            if s2[1]<>'>' then List.AddLine(' '+forms(s,15)+'  '+forms(s2,31))
             end;
         until eof(t);
-        listtp(glossary_ed); {Taste E Abfragen}
-        list(brk);
-        s2:=get_selection;
+        List.OnKeyPressed := glossary_ed; {Taste E Abfragen}
+        Brk := List.Show;
+        s2:= List.GetSelection;
         lsi:=cpos('<',s2)-1;
         if lsi > 15 then lsi:=15;
         s2:=copy(s2,2,lsi);
         if s2='>- ESC -<' then brk:=true;
-        closelist;
+        List.Free;
         closebox;
         if not brk then begin
           reset(t);
@@ -2413,6 +2414,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/12/25 14:02:39  mk
+  - converted Lister to class TLister
+
   Revision 1.38  2000/12/07 13:44:40  mk
   RB:- move cursor to end of block after block insert functions
 
