@@ -97,13 +97,11 @@ var s    : string;
     n    : byte;
 begin
   s:=''; ml:=14;
-  n:=0;
   for i:=1 to 10 do
     with fkeys[0]^[i] do
       if menue<>'' then begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
-        inc(n);
         end;
   if s<>'' then s:=',-'+s;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
@@ -771,15 +769,6 @@ begin
   if not dbFound then begin
     Debug.DebugLog('XP2','Default system <'+tmpS+'> not found!',DLError);
     if dbRecCount(d)=0 then begin
-      {$IFDEF EASY}
-      if not NeuBenutzergruss then
-         begin
-           EasyMainDialog;
-           {Provisorium zur Fehlervermeidung}
-           xpconfigedit.get_first_box(d);
-         end
-      else
-      {$ENDIF}
       xpconfigedit.get_first_box(d);
       dName := dbReadStr(d,'dateiname');
       end
@@ -977,7 +966,8 @@ var
 begin
   // diff in days
   ddiff:=system.Round(Now - FileDateToDateTime(FileAge(NewDateFile)));
-  if (ddiff<0) or (ddiff>maxdays) then begin
+  if (ddiff<0) or (ddiff>maxdays) then 
+  begin
     wdt:=4+max(max(length(getres2(225,1)),length(getres2(225,2))),
                    length(getres2(225,3))+10);
     dialog(wdt,5,'',x,y);
@@ -1003,7 +993,7 @@ begin
       if j<80 then inc(j,2000) else inc(j,1900);
 // !! not portable
 //      setdate(j,m,t);
-    end;
+    end;                          
     enddialog;
     end;
 end;
@@ -1086,10 +1076,13 @@ Begin
    if UsrfeldPos2=33 Then UsrFeldpos2:=32;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.118  2001/09/06 18:50:22  mk
+  - removed XPEasy-Define
+  - removed unused variable n from zusatz_menu
+
   Revision 1.117  2001/08/11 23:06:30  mk
   - changed Pos() to cPos() when possible
 
@@ -1175,3 +1168,5 @@ end.
   Revision 1.91  2000/12/03 14:20:33  mk
   - mdkir -> CreateDir
 }
+end.
+
