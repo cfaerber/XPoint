@@ -227,7 +227,7 @@ begin
   crash:=(dbReadInt(mbase,'unversandt') and 16<>0);
   empfnr:=(dbReadInt(mbase,'netztyp') shr 24);
 
-  findfirst(ownpath+iifs(crash,'*.cp','*.pp'),AnyFile,sr);
+  findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
   found:=false;
   rmessage(640);             { 'Puffer Åberarbeiten...' }
   while (doserror=0) and not found do begin
@@ -1023,7 +1023,7 @@ again:
                dbWriteN(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
                dbWriteN(mbase,mb_typ,ntyp);
-               dbReadN(mbase,mb_unversandt,b);   
+               dbReadN(mbase,mb_unversandt,b);
                if (b and 8<>0) then begin        { WV-Flag entfernen }
                  dbReadN(mbase,mb_wvdatum,l);
                  dbWriteN(mbase,mb_empfdatum,l);
@@ -1227,6 +1227,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/16 19:50:38  mk
+  - Fixes fuer FindFirst
+
   Revision 1.7  2000/04/15 09:58:00  jg
   - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User

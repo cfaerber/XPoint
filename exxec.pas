@@ -344,7 +344,7 @@ var regs  : registers;
   function exist(s:string):boolean;
   var sr : searchrec;
   begin
-    findfirst(s,Anyfile,sr);
+    findfirst(s,ffAnyfile,sr);
     exist:=doserror=0;
     {$IFDEF Ver32 }
       findclose(sr);
@@ -481,6 +481,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/16 19:50:38  mk
+  - Fixes fuer FindFirst
+
   Revision 1.9  2000/04/13 12:48:31  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -902,7 +902,7 @@ end;
 procedure DelTmpfiles(fn:string);
 var sr : searchrec;
 begin
-  findfirst(fn,AnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   while doserror=0 do begin
     _era(sr.name);
     findnext(sr);
@@ -1103,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/04/16 19:50:38  mk
+  - Fixes fuer FindFirst
+
   Revision 1.26  2000/04/15 21:44:46  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

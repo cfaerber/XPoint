@@ -51,6 +51,10 @@ const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMCompatible = $00;
 {$endif}
 
+const
+  { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
+  ffAnyFile = $20;
+
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32);
 
@@ -795,6 +799,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/04/16 19:50:38  mk
+  - Fixes fuer FindFirst
+
   Revision 1.21  2000/04/15 14:18:21  mk
   - Fix fuer FindFirst mit Diretories
 

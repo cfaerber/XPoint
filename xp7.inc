@@ -974,7 +974,7 @@ end;
 procedure EmptySpool(filemask:string);
 var sr : searchrec;
 begin
-  findfirst(XFerDir+filemask,AnyFile-Directory,sr);
+  findfirst(XFerDir+filemask,ffAnyFile,sr);
   while doserror=0 do begin
     _era(XFerDir+sr.name);
     findnext(sr);
@@ -1447,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/04/16 19:50:38  mk
+  - Fixes fuer FindFirst
+
   Revision 1.14  2000/04/15 14:18:21  mk
   - Fix fuer FindFirst mit Diretories
 
