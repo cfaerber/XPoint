@@ -7437,16 +7437,11 @@ another person or to another newsgroup. See the
 online help for the individual menu items.
 @
 10308
-<<Message / News manager
-The News manager is the function for administering
-your newsgroups with respect to your server,
-subscribing and unsubscribing newsgroups, ordering
-lists of newsgroups and so on.
-
-In MausNet CrossPoint sends a control message to the
-internal Pseudo-User MAUS. In all other nets
-CrossPoint sends the message to the address entered
-as news manager under /Edit/Servers/Edit/Names.
+<<Message / News/Echo Manager
+The News/Echo manager is used for maintaining your
+Newsgroups/Echomail-areas on your Server/BossNode.
+You can subscribe/link-in, unsubscribe/link-out and
+retrieve a list of newsgroups/echo-areas.
 @
 10309
 <<Message / Fileserver  (Z-Netz only)
