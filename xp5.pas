@@ -910,7 +910,7 @@ begin
   msgbox(62,anz+6,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+3,y+2,reps(getreps2(511,1,xp_xp),'3.2'{mid(verstr,2)}));  { 'Willkommen bei %s Version %s!' }
+  wrt(x+3,y+2,reps(getreps2(511,1,xp_xp),Verstr+BetaStr));  { 'Willkommen bei %s Version %s!' }
   attrtxt(col.colmbox);
   for i:=2 to anz do
     wrt(x+3,y+2+i,getres2(511,i));
@@ -923,6 +923,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/24 16:08:03  mk
+  - konstanten Versionsstring ausgebaut
+
   Revision 1.33  2000/07/12 14:43:46  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank
