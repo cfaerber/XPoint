@@ -7830,10 +7830,11 @@ Use <<~>> as NOT-Operator
 @
 634
 Enter the time period in which the message to be
-found was written.
+found has been written.
 @
 635
-^^634
+Enter the minimum and maximum size in KBytes of the
+messages to be found. 99999 means "no limit".
 @
 636
 <<All>>     The Entry field has no effect.
@@ -7887,6 +7888,10 @@ Only for text-searching:
 
 
 (delete entries with the space key or Ctrl-Y.)
+@
+643
+Enter the time period in which the message to be
+found has been received.
 @
 650
 Normally, every message you send is given a unique
