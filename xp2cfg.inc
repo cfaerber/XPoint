@@ -581,7 +581,7 @@ begin
   largestnets:=10;
   countdown:=false;
   AutoDiff:=true;
-  UserBoxname:=false;
+  UserBoxname:=true;
   nDelPuffer:=false;
   BrettAlle:=iifs(deutsch,'Alle','All');
   viewers^[1].ext:='GIF'; viewers^[1].prog:='VPIC.EXE $FILE';
@@ -1709,6 +1709,9 @@ begin
 
 {
   $Log$
+  Revision 1.130  2001/11/04 15:20:20  my
+  MY: - Default fÅr "Systemname in PM-Brettern" (userboxname) true
+
   Revision 1.129  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option
