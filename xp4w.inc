@@ -692,8 +692,12 @@ begin
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
-      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }  
-      GetMimeViewer(mimetyp,viewer);
+      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
+
+      mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+      if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+        GetMimeViewer(mimetyp,viewer);
 
       multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (left(mimetyp,10)='multipart/') or
@@ -1421,6 +1425,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.6  2000/10/18 23:36:11  mk
+  - Bugfix fuer MIME-Viewer-Auswahl bei Singlepart MIME
+
   Revision 1.3.2.5  2000/06/12 19:53:26  mk
   - Pgd Down/Up-Bug gefixt
 
