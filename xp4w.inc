@@ -352,13 +352,13 @@ begin
   else begin
     hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
-    s:='';
+(*    s:='';
     { suboptimal }
     if hdp^.replyto.count>0 then begin
       dbSeek(ubase,uiName,UpperCase(hdp^.replyto[0]));
       if dbFound then s:=hdp^.replyto[0];
     end;
-    if s='' then
+    if s='' then *)
       s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
     FreeHeaderMem(hdp);
     dbSeek(ubase,uiName,UpperCase(s));
@@ -1562,6 +1562,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.58  2000/11/20 09:53:29  mk
+  - fixed Bug #116162: U in Nachrichtenuebersicht
+
   Revision 1.57  2000/11/19 00:05:34  mk
   - new MIME Viewer part 1 and a half
 
