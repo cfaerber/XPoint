@@ -3093,23 +3093,24 @@ Valid numbers are in the range 1 - 99
 @
 214
 <<[+]>>     Set this if you occasionally like to
-        test the Quit function, but not actually quit
+        test the Quit function but not actually quit
         the program. Confirmation will be requested
-        before quitting, and you can confirm or
+        before quitting and you can either confirm or
         abort.
 
-<<[ ]>>     For real men. Just quits the program
-        right off when you select quit, no questions
-        asked.
+<<[ ]>>     For real men! :-)
+
+        Quits the program immediately with no
+        questions asked.
 @
 217
-<< Config / Options / Miscellaneous
-<< Archive Grps
-Which archive newsgroups should be displayed for
-selection when a message should be archived, with
-/Message/Forward/[Archive] or <Alt-A>.@12109
+<<Archive prefix
 
-You need only enter the first part of the name, and
+Which archive newsgroups should be displayed for
+selection when a message is selected for archiving
+with either /Message/Forward/[Archive] or <Alt-A>.@12109
+
+You need only enter the first part of the name and
 all matching names will be shown.
 
 If left empty, you may select from ALL newsgroups
@@ -3122,8 +3123,8 @@ If your <<internal>> archive newsgroups are called:
        /A/Programs
        /A/Texts
 
-then entering <</A/>> here will cause these news-
-groups only to be displayed for selection.
+then entering <</A/>> here will cause these
+newsgroups only to be displayed for selection.
 
 @
 218
@@ -3184,6 +3185,59 @@ put into the same NG.
 
 Note: This does not work in the old Z-Netz format,
 since the box name does not appear in the address.
+
+@
+221
+<<[x]>> -> When configuring new areas with Ctrl-H,
+       with [/XPoint/Import/Newsgroup list] or with@11004
+       [/Message/News manager/Subscribe] (only ZCON-@11901
+       NECT and RFC/UUCP), area descriptions will be
+       taken from the arealist and written to XP's
+       Newsgroup (Areas) window.
+
+<<[ ]>> -> Area descriptions will NOT be added!
+
+You can manually add an area description
+with /Special/Edit.
+
+@
+222
+<<Fido, QWK, RFC/UUCP:
+
+<<[x]>> -> Activates umlauts for new Users in the
+       User-list.
+
+<<[ ]>> -> Umlauts are NOT activated and will be
+       converted to ae, oe, ue.
+
+This option can be manually edited by pressing the
+<Tab> key from the newsgroup (areas) window and then
+selecting <<S>>pecial/<<E>>dit.
+
+Note: For all other Networks, umlauts are displayed.
+
+@
+223
+This option determines how the User-window will be
+sorted:
+
+<<[x]>> -> It will be sorted initially by Server, then
+       by User-name.
+
+<<[ ]>> -> Sorted by User-name.
+
+This option may be manually toggled in the
+User-window by pressing "O".
+
+@
+224
+Some users use the "|" and ":" characters as a quote
+character instead of the more commonly used ">"
+character. When either of these other characters are
+used, they may be recognised (or not) as valid quote
+characters here and "colour quotes" will be used,
+just as they would for the ">" character.
+
 @
 225
 You can set a level for minimum free hard disk space
@@ -5079,19 +5133,19 @@ Be careful to enter characters correctly!
   Enter any comment (text) or leave empty.
 @
 550
-<<[x]>>  The cursor will spring automatically to the
+<<[x]>>  The cursor will jump automatically to the
      next message when exiting the previous one,
      ready for it to be read.
 
-<<[ ]>>  Does not do the above, but stays on the
+<<[ ]>>  Does not do the above but stays on the
      currently selected message.
 
-The setting only affects the start-up. The setting
-can be changed any time during the program with
+This setting only affects the start-up. The setting
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 551
-<<[x]>>  The cursor springs automatically to the next
+<<[x]>>  The cursor jumps automatically to the next
      newsgroup showing something according to [View]@50
      mode, when you return to the newsgroup view from
      reading in the message view.
@@ -5099,45 +5153,46 @@ can be changed any time during the program with
 <<[ ]>> The cursor remains on the currently selected
     newsgroup.
 
-The setting only affects the start-up. The setting
-can be changed any time during the program with
+This setting only affects the start-up. The setting
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 552
 <<[x]>>   When returning to the User view from
       user-message view, the cursor jumps to the next
-      user.
+      User.
 
 <<[ ]>>   The cursor stays on the currently selected
-      user.
+      User.
 
-The setting only affects the start-up. The setting
-can be changed any time during the program with
+This setting only affects the start-up. The setting
+can be changed at any time during the program with
 <<<Ctrl-W> >>
 @
 554
 This sets the default [View-mode] for program@50
-start-up. During the program it can be changed any
-time *in the newsgroup view* by pressing <<V>> (View)
-and selecting. The default remains as set here.
+start-up. During the program, it can be changed at
+any time *in the newsgroup view* by pressing <<V>>
+(View) and selecting. The default remains as set
+here.
 
 <<All>>       all messages in the data base.
 
 <<Unread>> only messages you have never read(or
           rather, never opened for reading).
 
-<<New>>       Messages new at the last net call.
+<<New>>       Messages new at the last Netcall.
 
-<<Today>>     Messages from all netcalls on the
+<<Today>>     Messages from all Netcalls on the
           current date.
 
 A "Puffer-Import" will be treated the same as a
-netcall and messages will be shown as "new".
+Netcall and messages will be shown as "new".
 @
 555
 Sets the default kind of [message/extract/as] at@11204
 program start. It can be changed using the menu
-there, but the default is set here.
+there but the default is set here.
 @
 556
 Activates the mouse. Requirement is a Microsoft(r)
@@ -7650,18 +7705,18 @@ text file and import them into the User database.
 11004
 <<XPoint / Import / Newsgroup list (Z-Netz)
 
-Normally, a new newsgroup is listed automatically if
-it occurs in a news packet. If you want to have all
-newsgroups to which you can subscribe listed, you can
-read in a list of them here (you can get this list
-from your news server) and CrossPoint enters all the
-listed Newsgroups in the list. The main Server, as
-configured under /Edit/Servers, will be used as the
-Server for these new newsgroups.
+Normally, a new newsgroup is listed automatically.
+If you want to have all newsgroups to which you can
+subscribe listed, you can read in a list of them
+here (you can get this list from your news server)
+and CrossPoint enters all the listed Newsgroups in
+the list. The main Server, as configured under
+/Edit/Servers, will be used as the Server for these
+new newsgroups.
 
 Note! This function is not designed to give you a
 newsgroup list from which you can select to subscribe
-to. For that, you use /Message/Newsmanager/read file.
+to. For that, you use /Message/News manager/read file.
 
 @
 11005
@@ -8248,18 +8303,18 @@ about it, darling :-).
 
 Order newsgroups you wish to receive.
 
-Presents you with a list servers and then a list of
-the newsgroups in that server (assuming that you have
-[ordered a list] of the newsgroups under@11903
-/Message/News manager/Get List and [read it in]@11906
+Presents you with a list of Servers and then a list
+of newsgroups available from that Server (assuming
+that you have [ordered a list] of the newsgroups@11903
+under /Message/News manager/Get List and [read it in]@11906
 under /Message/News manager/import list.
 
 (If no list is available, you will get an error
 message to this effect)
 
 Selecting from this list by marking with the <space>
-key, and then pressing <Enter> will automatically
-send a message to the server ordering the newsgroups
+key and then pressing <Enter> will automatically
+send a message to the Server ordering the newsgroups
 you wish to subscribe to.
 @
 11902
@@ -8511,9 +8566,9 @@ header). The [template "forward"] is used.@10807
 A copy of the current message is forwarded to a
 User or Newsgroup. You can select from a list.
 
-No template is used, the text is presented to you
-in the editor, so can edit the text before forwarding
-it.
+No template is used. The text is presented to you
+in the editor so you can edit the text before
+forwarding it.
 @
 12104
 <<Message / Forward / QuoteTo
@@ -8521,10 +8576,10 @@ it.
 A copy of the current message is forwarded to a
 User or Newsgroup. You can select from a list.
 
-The ["Quote to" template] is used, and the text is
+The ["Quote to" template] is used and the text is
 presented to you with quote signs (like the normal
-<Ctrl-R> reply) in the editor, so can edit the text
-before forwarding it.
+<Ctrl-R> reply) in the editor, so you can edit the
+text before forwarding it.
 @
 12106
 <<Message / Forward / Confirmation
@@ -8571,13 +8626,13 @@ Also use this for sending messages you have "parked"
 in your newsgroup /¯Unsent
 @
 12109
-<< Message/Forward/Archive
-<< or <Alt-A>
+<<Message / Forward / Archive
+<<or <Alt-A>
 
-Use this menu point or key combination to send the
+Use this menu option or key combination to send the
 selected message to one of your [archive newsgroups].@217
 You will be allowed to select which one.
-The message is also given an archive tag.
+An archive-note is also added to the message text.
 @
 12110
 <<Message / Forward / User-PM
