@@ -287,6 +287,18 @@ label laden;
          if (x>=x1) and (y=y1) then inc(xout,add);
    end;
 
+   procedure checkASCIIs (var s :string);
+   var p :integer;
+   begin
+     if (pos ('{', s) = 0) or (pos ('}', s) = 0) then exit;
+     for p:=1 to length(s)-4 do
+       if (s[p]='{') and (s[p+4]='}') and (ival(copy(s,p+1,3)) in [0..255])
+       then begin
+         s[p]:=chr(ival(copy(s,p+1,3)));
+         delete(s,p+1,4);
+       end;
+   end;
+
 begin
   if ap<>nr then begin
     if loaded then
@@ -398,6 +410,7 @@ laden:
       delete(s,ps,1);
       insqvw(i,ps,-1);
       end;
+    checkASCIIs (s); (* '{xxx}' in den ASCII-Wert umsetzen *)
     z^[i]^:=s;
     end;
   freemem(buf,size);
@@ -777,6 +790,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.5  2001/07/11 20:00:33  mk
+  SV:- All ASCII characters can be displayed in the online help now {xxx}
+
   Revision 1.5.2.4  2000/12/01 10:27:12  mk
   - fix wegen Querverweisen in Zeilen ab 255
 
