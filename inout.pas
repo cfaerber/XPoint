@@ -698,7 +698,8 @@ var
   c: Char;
 begin
   brk := false;
-  if Keypressed then
+  // to not use macro keys at this point
+  if (forwardkeys = '') and keypressed then
   begin
     c := ReadKey;
     if c = #27 then 
@@ -1668,6 +1669,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.3  2003/04/02 17:01:46  mk
+  - do not process
+
   Revision 1.89.2.2  2002/07/29 19:53:15  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
