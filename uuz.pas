@@ -2384,6 +2384,9 @@ begin
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
+    MimeIsoDecode(postanschrift,PostAdrLen);
+    MimeIsoDecode(Telefon,TeleLen);
+    MimeIsoDecode(Homepage,HomepageLen);
 
     for i := 1 to hd.ulines do MimeIsoDecode (uline^ [i], 255);
 
@@ -3599,6 +3602,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.11  2000/09/21 16:17:37  mk
+  RB:- QP Decode fuer verschiedene Header
+
   Revision 1.8.2.10  2000/07/24 11:06:59  mk
   SV: - Cancelbearbeitung funktioniert wieder
 
