@@ -2231,11 +2231,9 @@ var files    : string;
     mark,
     lMagics  : boolean;
     dir, name, ext: string;
-  List: TLister;
 begin
-  //!!!! List muá noch irgendwo her geholt werden, ist jetzt nicht initalisiert!!
   nnode := '';
-  if not List.Selbar and (List.SelCount=0) then begin
+  if not LastLister.Selbar and (LastLister.SelCount=0) then begin
     rfehler(438);   { 'keine Dateien markiert' }
     exit
   end;
@@ -2248,13 +2246,13 @@ begin
   u := ''; t := '';
   lMagics := Magics;
   secondtry:=false;
-  s := List.FirstMarked;
+  s := LastLister.FirstMarked;
   repeat
     { Von Anfang an leer oder Liste komplett durchlaufen und nichts gefunden,
       dann probieren wir's nochmal mit MAGICS }
     if (s=#0) then begin
       secondtry:=true;
-      s := List.FirstMarked;
+      s := LastLister.FirstMarked;
       lMagics:=true;
     end;
     while (s<>#0) do begin
@@ -2379,7 +2377,7 @@ begin
         continue
       end; { while (k<byte(s[0])) }
       { <<--- komplett neu:oh (aus MultiReq uebernommen) --- }
-      s:=List.NextMarked;
+      s:=LastLister.NextMarked;
     end; { while (s<>#0) do begin }
     files:=trim(files);
     { Abbrechen, wenn was gefunden, oder zweiter Durchlauf oder schon beim
@@ -2421,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.85  2000/12/26 16:40:14  mk
+  - fixed fido request detection
+
   Revision 1.84  2000/12/25 14:02:42  mk
   - converted Lister to class TLister
 
