@@ -770,8 +770,8 @@ begin
           if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
             GetMimeViewer(mimetyp,viewer);
 
-          if viewer.ext='' then                        { Schutz vor Mail-Viren }
-            if ViralExtension then viewer.Prog:='';    { Bei Multiformat-Mimetyp }
+          if (viewer.ext='') and (viewer.prog<>'') then { Schutz vor Mail-Viren }
+            if ViralExtension then viewer.Prog:='';     { Bei Multiformat-Mimetyp }
             
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
