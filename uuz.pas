@@ -2130,11 +2130,11 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
       { nur Zahl am Anfang beachten: }
       while (s0 [p] in ['0'..'9']) and (p <= length (s0)) do inc (p);
       if p = 1 then begin
-        { keine Zahl: auf high, normal, low prÅfen }
+        { keine Zahl: auf urgent/high, normal, low prÅfen }
         s0 := lstr (left (s0, 3));
         { laufzeitoptimierte Abfrage: das Wahrscheinlichste zuerst }
         if s0 = 'nor' then hd.priority := 3
-        else if s0 = 'hig' then hd.priority := 1
+        else if (s0 = 'hig') or (s0 = 'urg') then hd.priority := 1
         else if s0 = 'low' then hd.priority := 5;
       end
       else begin
@@ -2259,6 +2259,7 @@ begin
              if zz='newsreader'   then programm:=s0 else
              if zz='supersedes'   then ersetzt:=s0 else
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
+             if zz='priority'     then GetPriority else
              if zz<>'lines'       then AppUline('U-'+s1);
         end; { case }
         end;
@@ -3493,6 +3494,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/02/25 19:07:08  rb
+  UnterstÅtzung von 'Priority:' und 'urgent' (incoming)
+
   Revision 1.6  2000/02/21 00:36:56  rb
   X-Priority Konvertierung verbessert
 
