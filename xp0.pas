@@ -724,6 +724,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParPasswd  : string[10] = '';   { Paáwort }
        ParZeilen  : byte = 0;          { Bildzeilen }
        ParWintime : boolean = false;   { Rechenleistungs-Freigabe }
+       Partrywin  : boolean = true;    { 0: Rechenleistungs-Freigabe zwingend aus } 
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
@@ -1073,6 +1074,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 14:46:39  jg
+  Automatische Rechenzeitfreigabe unter Win (/W Default an)
+  Parameter /W0 um Rechenzeitfreigabe auszuschalten
+  Bugfix fuer allerersten Start: Parameter /L wird ausgewertet
+
   Revision 1.5  2000/02/18 17:28:08  mk
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 

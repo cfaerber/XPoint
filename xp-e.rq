@@ -290,7 +290,7 @@ K (c) '93-96 Peter Mandrella
 7    ~          /sd     prevents automatic Smartdrive cache flushing
 8    ~          /ss     start screen saver at once
 9    ~          /trace  enable script protocol (see XPOINT.DOC, 8.1)
-10   ~          /w      free unused system resources (time) under Windows
+10   ~          /w[0]   free unused system resources (time) for Win (/w=on /w0=off) 
 11   ~          /os2x   free unused system resources (time) under OS/2
 12   ~                  (x ranges from a to d)
 13

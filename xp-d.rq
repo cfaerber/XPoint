@@ -294,7 +294,7 @@ K (c) '93-98 Peter Mandrella
 8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
 9    ~          /ss      Screensaver aktivieren
 10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.DOC, Kap. 8.1)
-11   ~          /w       Rechenzeit-Freigabe unter Windows
+11   ~          /w[0]    Windows-Rechenzeit-Freigabe (/w an /w0 aus)
 12   ~          /os2x    Rechenzeit-Freigabe unter OS/2 (x = a bis d)
 13   ~          /nolock  keine öberprÅfung auf mehrfachen Programmstart
 14

@@ -287,6 +287,7 @@ var i  : integer;
     if isl('pa:') then ParPass:=mid(s,5) else
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
+    if _is('w0')   then Partrywin:=false else                       {/w0 = /w zwingend aus}
     if _is('w')    then ParWintime:=true else
     if _is('os2a') then begin ParWintime:=true; ParOS2:=1; end else
     if _is('os2b') then begin ParWintime:=true; ParOS2:=2; end else
@@ -360,7 +361,10 @@ begin
   ListDebug:=ParDebug;
   if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
     ParAutost:='';
-end;
+                           { Unter Win: Default "/w" Rechenzeitfreigabe abschalten mit "/w0" } 
+  Parwintime:=((Winversion>0) or Parwintime) and Partrywin;
+end;                 
+
 
 
 procedure GetResdata;
@@ -461,10 +465,11 @@ begin
   findfirst('XP-*.RES',0,sr);
   assign(t,'XP.RES');
   reset(t);
-  if ioresult<>0 then begin
+  if ioresult<>0 then begin                               {Wenn XP.RES nicht existiert}
     if doserror<>0 then interr('.RES file not found');
-    lf:=sr.name;
-    WrLf;
+    if parlanguage='' then lf:=sr.name                    {/L Parameter beruecksichtigen}
+    else lf:='XP-'+ParLanguage+'.RES';                    
+    WrLf;                                                 {und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
@@ -1072,6 +1077,11 @@ end;
 end.
 { 
   $Log$
+  Revision 1.7  2000/02/19 14:46:39  jg
+  Automatische Rechenzeitfreigabe unter Win (/W Default an)
+  Parameter /W0 um Rechenzeitfreigabe auszuschalten
+  Bugfix fuer allerersten Start: Parameter /L wird ausgewertet
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
