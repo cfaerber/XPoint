@@ -79,7 +79,8 @@ const
 
 var
   Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer end;
-  Logfile: Text; Logfilename,Logfiledir: string;
+  Logfile: Text; Logfilename: string;
+  LogCount:integer;LogLast: string;
 
 function FindBadge(Badge: string): Integer;
 var
@@ -109,13 +110,28 @@ var
   H, M, S, S100, C: RTLWord;
 begin
   if not Logging then Exit;
+
   C := FindBadge(Badge);
   if (C <> 0) and (Logbadges[C].Level >= Level) then
   begin
     GetTime(H, M, S, S100);
-    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' ', Badge, ': ',
-      Message);
-    Flush(Logfile);
+
+    if LogLast=Badge+#0+Message then
+      LogCount:=LogCount+1
+    else
+    begin
+      if LogCount>0 then
+      begin
+        WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message occurred ',LogCount,' times');
+        LogCount:=0;
+      end;
+      LogLast:=Badge+#0+Message;
+
+
+      WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' ', Badge, ': ',
+        Message);
+      Flush(Logfile);
+    end;
     If IOResult <> 0 then;; (* clear io error *)
   end;
 end;
@@ -134,13 +150,9 @@ var
   SR: TSearchRec;
   Rew: Boolean;
   err: integer;
-  cd:  string;
 
 begin
   if Logging then Exit;
-
-  cd := GetCurrentDir;
-  if Logfiledir<>'' then SetCurrentDir(Logfiledir) else Logfiledir:=cd;
 
   {$IFDEF Debug} if Filename = '' then Filename := '*debuglog.txt'; {$ENDIF}
   Logfilename := Filename;
@@ -154,6 +166,7 @@ begin
       Rew := True;
     end;
     {$I-}
+    Filename:=ExpandFilename(Filename);
     if Rew and (not App) then
     begin
       Assign(Logfile, Filename);
@@ -174,13 +187,24 @@ begin
   end
   else
     Logging := False;
-
-  SetCurrentDir(cd);
 end;
 
 procedure CloseLogfile;
+var
+  H, M, S, S100, C: RTLWord;
 begin
-  if Logging then Close(Logfile); Logging := False
+  if not Logging then exit;
+
+  if LogCount>0 then
+  begin
+    GetTime(H, M, S, S100);
+    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' --------> last message occurred ',LogCount,' times');
+    LogLast:='';
+    LogCount:=0;
+  end;
+
+  Close(Logfile);
+  Logging := False
 end;
 
 procedure TempCloseLog(Reactivate: Boolean);
@@ -192,7 +216,7 @@ begin
 end;
 
 initialization
-  Logfiledir:='';
+  LogCount:=0;LogLast:='';
   OpenLogfile(False, GetEnv('DEBUG'));
   FindBadge('DEFAULT');
 
@@ -203,6 +227,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/03/20 14:35:51  cl
+  - repeated identical messages are only printed once w/ count
+  - changed code to prevent logfile wandering to a cleaner solution
+
   Revision 1.13  2001/03/20 12:15:38  ma
   - implemented debug badge DEFAULT
 
