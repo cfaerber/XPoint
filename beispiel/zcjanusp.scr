@@ -4,11 +4,17 @@
 #
 # $Id$
 #
-# zcjanusp.scr: Z-Netz JanusPlus-Login-Script (Standard)
+# zcjanusp.scr: Z-Netz Login-Script (Standard)
 
          WRITE "Login..."
          WAITFOR "ername"
+
+# fuer JanusPlus-Boxen
          SEND "JANUS2" cr
+
+# fuer Janus-Boxen
+#         SEND "JANUS" cr
+
          WRITE "Login...."
          WAITFOR "stemname:"
          SEND $POINT cr
