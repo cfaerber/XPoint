@@ -203,6 +203,7 @@ const  QPC_ID      = 'QPC:';
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
        MimetFile   = 'mimetyp';
+       SpamfltFile = 'spamflt';
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
        Cfg3File    = 'openxp.cfg';      { NEue cfg mit Sektionen }
@@ -1215,6 +1216,9 @@ implementation
 
 {
   $Log$
+  Revision 1.173  2003/01/28 10:46:35  cl
+  - fixed last commit for UnixFS
+
   Revision 1.172  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 
