@@ -501,7 +501,7 @@ K (c) '93-96 Peter Mandrella
 24   Double click
 25   Leave config menu on <Esc>
 26   Save       ~
-27   Accoustic signal in message/newsgroup/user list
+27   Audible warning in message, newsgroup and user list
 # save config
 40   automatic
 41   manual
@@ -780,7 +780,7 @@ K (c) '93-96 Peter Mandrella
 1    Viewer-Options
 2    Safety for multiformat-mime-types
 3    Safe file-extensions (use external Viewer)
-4    Use internal viewer for this extensions
+4    Use internal viewer for these extensions
 5    Viewer-program for suspicious file extensions
 6    Miscellaneous
 7    No waiting-batch for windows-viewers
