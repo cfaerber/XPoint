@@ -22,6 +22,7 @@ uses
   sysutils,
 {$ENDIF }
 {$ifdef Linux }
+  linux,
   xplinux,
 {$endif }
 {$ifdef vp }
@@ -110,9 +111,6 @@ procedure WriteBatch(s:string);                 { Batchfile erstellen     }
 implementation  { ------------------------------------------------------- }
 
 uses
-{$ifdef linux}
-  linux,
-{$endif}
   xp0;
 
 const
@@ -164,7 +162,8 @@ end;
 }
 function  existBin(fn: pathstr): boolean;
 var
-  envpath, filename, path: PathStr;
+  envpath: string;			{ Opps, bug in brain. PATH kann > 256 sein }
+  filename, path: PathStr;
   i, j, k: integer;
 begin
   filename:= GetFileName(fn);		{ Evtl. Pfad ignorieren }
@@ -179,7 +178,11 @@ begin
       exit;
     end;
   end;
+{$ifdef linux}
+  envpath:= strpas(linux.getenv('PATH'));
+{$else}
   envpath:= dos.getenv('PATH');
+{$endif}
   j:= CountChar(PathSepaChar,envpath);
   for i:= 1 to j do begin
     k:= CPos(PathSepaChar, envpath);
@@ -964,6 +967,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/06/20 18:22:27  hd
+  - Kleine Aenderungen
+
   Revision 1.40  2000/06/17 13:14:02  hd
   - Laesst sich jetzt auch wieder unter Linux compilieren :-)
 

@@ -548,18 +548,18 @@ begin                  { of Netcall }
         tfehler(box+': '+BoxParOk+getres(702),esec);   { ' - bitte korrigieren!' }
         exit;
         end;
-      if (logintyp in [ltMagic,ltQuick,ltGS,ltMaus]) and not exist('MAGGI.EXE')
+      if (logintyp in [ltMagic,ltQuick,ltGS,ltMaus]) and not existBin(MaggiBin)
       then begin
         trfehler(102,esec);                 { 'MAGGI.EXE fehlt!' }
         exit;
         end;
       if _fido then begin
-        if not exist('ZFIDO.EXE') then begin
+        if not existBin(ZFidoBin) then begin
           trfehler(101,esec); exit; end;    { 'ZFIDO.EXE fehlt! }
         if not exist('XP-FM.EXE') then begin
           trfehler(104,esec); exit; end;    { 'XP-FM.EXE fehlt!' }
         end;
-      if (logintyp=ltQWK) and not exist('ZQWK.EXE') then begin
+      if (logintyp=ltQWK) and not existBin(ZQWKBin) then begin
         trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
       New(NC);
       fillchar(NC^,sizeof(nc^),0);
@@ -1558,6 +1558,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/06/20 18:22:27  hd
+  - Kleine Aenderungen
+
   Revision 1.15  2000/06/19 20:21:17  ma
   - Modeminitialisierung hinter XP-FM-Aufruf gelegt, bringt sonst
     Konflikte mit neuem Fidomailer

@@ -6,6 +6,16 @@
 	         als Alpha- denn als Beta-Version zu verstehen.
 		 Wer aber die hier aufgefuehrten Hinweise beachtet,
 		 kann gerne die Tools ausprobieren.
+
+	Install	Voraussetzung: FreePascal Compiler ab 0.99.15 (am besten den
+		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
+		die Sources kompilieren:
+		
+		ppc386 -dLinux [-...] xp
+		
+		Gleiches mit xpme, rc usw.
+		
+		Dann diese Datei bis zum Ende lesen!
 	
 	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
 		einen ISO-8859-1-konfomren Zeichensatz.
@@ -61,7 +71,7 @@
 		funktionieren.
 		
 	----------------------------------------------------------------------
-	$RCSFile$
+	$RCSfile$
 	$Revision$
 	$Date$
 	End of File
