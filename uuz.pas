@@ -1786,7 +1786,8 @@ var p,i   : integer; { byte -> integer }
   function GetMsgid:string;
   begin
     s0 := Trim(s0);
-    RFCRemoveComment(s0);
+ (* RFCRemoveComment(s0);
+    s0 := Trim(s0); *)
     if firstchar(s0)='<' then delfirst(s0);
     if lastchar(s0)='>' then dellast(s0);
     GetMsgid:=s0;
@@ -3399,6 +3400,13 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.74  2002/04/26 22:44:59  my
+  MY:- Fix: Beim Entfernen von Kommentaren aus der Message-ID wurde die
+       schlie·ende spitze Klammer nicht entfernt. Der Fix besteht darin,
+       den Kommentar Åberhaupt nicht mehr zu entfernen, da es ansonsten
+       Probleme bei der Zusammenarbeit mit externen Clients (ReplaceOwn,
+       Mail auf dem Server lîschen, Message-ID-Request) geben kann.
+
   Revision 1.35.2.73  2002/04/18 22:16:49  my
   JG+MY:- UnterstÅtzung aller derzeit bei der IANA registrierten Alias-
           Namen fÅr die von XP bei eingehenden Nachrichten unterstÅtzten
