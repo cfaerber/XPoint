@@ -646,13 +646,15 @@ var x,y      : byte;
     if BoxPar^.ReplaceOwn and Aufnehmen then
     begin
       dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
-      if dbFound then
+      if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
       begin { RÅcklÑufer gefunden }
         msgpos := dbReadInt(bezbase,'msgpos');
         if not dbDeleted(mbase, msgpos) then
         begin
           dbGo(mbase, msgpos);
-          dbReadN(mbase,mb_flags,flags); { Flags holen }
+          flags := 0;
+          if not dbBOF(mBase) and not dbEOF(mbase) then
+            dbReadN(mbase,mb_flags,flags); { get message flags }
           if flags and 256 <> 0 then
           begin
             dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
@@ -1230,6 +1232,10 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/06/19 06:47:16  mk
+  JG:- fixed possible Crash in replace own when searching for messages without
+       a valid message id.
+
   Revision 1.54  2001/06/09 10:58:53  ma
   - added ForceOneArea feature (for POP3 server type)
 
