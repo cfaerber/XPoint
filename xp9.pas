@@ -258,6 +258,7 @@ begin
     if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
     if ustr(s1) =  ustr(Dir) then Ok := true;
     if Dir = '$CLPATH+' then ok := true;
+    if Pos('start /w', lstr(s)) = 1 then exit;
     if not ok then
     begin
       rfehler1(936, UStr(fn)); { 'Dieser Eintrag darf keinen Pfad enthalten!' }
@@ -1878,6 +1879,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.21  2001/04/14 21:10:42  mk
+  - Client-Modus verbessern
+
   Revision 1.19.2.20  2001/04/14 10:07:01  mk
   - Anpassungen Client-Modus
 

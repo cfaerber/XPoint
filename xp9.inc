@@ -563,7 +563,7 @@
             msetvfunc(PPPClientpathTest);
             maddstring(3,18,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
             mappsel(false,'UKAD.BAT /M $CLPATH $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
-              'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+XPNEWS.EXE $CONFIG');
+              'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+XPNEWS.EXE $CONFIGùSTART /W $CLPATH+XPNEWS.EXE $CONFIG');
             msetvfunc(pppclienttest);
             maddstring(3,19,getres2(920,63),PPPAddServers,40,60,ValidDirCh);   { 'Zus„tzliche Boxen' }
             uparcnr:=0; downarcnr:=0;
@@ -1401,6 +1401,9 @@
 
 {
   $Log$
+  Revision 1.10.2.19  2001/04/14 21:10:41  mk
+  - Client-Modus verbessern
+
   Revision 1.10.2.18  2001/04/14 10:07:01  mk
   - Anpassungen Client-Modus
 

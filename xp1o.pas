@@ -941,8 +941,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
         writeln(t,'del '+batfile);
         close(t);
         if winnt then
-{          prog:='cmd /c start cmd /c '+batfile }
-          prog:='start command.com /c '+batfile
+          prog:='cmd /c start cmd /c '+batfile
           else prog:='start command /c '+batfile
         end;
       PrepareExe:=1;
@@ -981,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.13  2001/04/14 21:10:41  mk
+  - Client-Modus verbessern
+
   Revision 1.40.2.12  2001/04/11 07:54:24  mk
   - weitere Arbeiten am Client-Modus
 
