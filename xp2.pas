@@ -2299,8 +2299,7 @@ begin
     if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
-      if (length(mheadercustom[i])>0) and (LastChar(mheadercustom[i])=':') then
-        delete(mheadercustom[i],length(mheadercustom[i]),1);
+      TrimLastChar(mheadercustom[i], ':'); 
 
     GetUsrFeldPos;
 
@@ -2784,6 +2783,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.164  2003/08/25 22:43:29  mk
+  - simplyfied cutting of ':' from mcustomheader
+
   Revision 1.163  2003/08/04 22:48:13  mk
   - removed Edit/netze/verschiedens/mime in news
 
