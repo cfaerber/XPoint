@@ -34,6 +34,8 @@ procedure Iso1ToIBM(var data; size:word);
 procedure Mac2IBM(var data; size:word);
 procedure UTF8ToIBM(var s:string);
 procedure UTF7ToIBM(var s:string);
+function  ascii_charset(s:string):boolean;
+function  iso_charset(s:string):boolean;
 procedure CharsetToIBM(charset:string; var s:string);
 
 procedure DecodeBase64(var s:string);
@@ -287,10 +289,45 @@ begin
 end;
 
 
+function ascii_charset(s:string):boolean;
+begin
+  ascii_charset:=(s='us-ascii') or (s='us') or (s='ascii') or (s='csascii')
+    or (s='iso646-us') or (s='iso-ir-6') or (s='iso_646.irv:1991')
+    or (s='ansi_x3.4-1968') or (s='ansi_x3.4-1986')
+    or (s='cp367') or (s='ibm367');
+end;
+
+function iso_charset(s:string):boolean;
+begin
+  iso_charset:=(left(s,9)='iso-8859-') or
+               (left(s,9)='iso_8859-') or
+               (left(s,9)='csiso8859') or
+               (left(s,10)='csisolatin') or
+               ((length(s)=6) and (left(s,5)='latin') and (s[6] in ['1'..'6','8'])) or
+               ((length(s)=2) and (s[1]='l') and (s[2] in ['1'..'6','8'])) or
+               ((left(s,7)='iso-ir-') and
+                (ival(mid(s,8)) in [100,101,109,110,126,127,
+                                    138,144,148,154,157,199])) or
+               (s='ibm819') or
+               (s='cp819') or
+               (s='cyrillic') or
+               (s='ecma-114') or
+               (s='asmo-708') or
+               (s='arabic') or
+               (s='elot_928') or
+               (s='ecma-118') or
+               (s='greek') or
+               (s='greek8') or
+               (s='hebrew') or
+               (s='iso-celtic');
+end;
+
 procedure CharsetToIBM(charset:string; var s:string);
 begin
-  if charset='iso-8859-15' then ISO2IBM(s,cs_iso8859_15)
-  else if left(charset,9)='iso-8859-' then ISO2IBM(s,cs_iso8859_1)
+  lostring(charset);
+  if (charset='iso-8859-15') or (charset='iso_8859-15')
+    then ISO2IBM(s,cs_iso8859_15)
+  else if iso_charset(charset) then ISO2IBM(s,cs_iso8859_1)
   else if charset='utf-8' then UTF8ToIBM(s)
   else if charset='utf-7' then UTF7ToIBM(s)
   else if charset='windows-1252' then ISO2IBM(s,cs_win1252)
@@ -479,6 +516,12 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.10  2002/04/18 22:16:49  my
+  JG+MY:- UnterstÅtzung aller derzeit bei der IANA registrierten Alias-
+          Namen fÅr die von XP bei eingehenden Nachrichten unterstÅtzten
+          ZeichensÑtze (US-ASCII, ISO-8859-x und Windows-1252)
+          implementiert.
+
   Revision 1.1.2.9  2002/04/13 21:27:39  my
   MY:- Letzten Commit wegen IBM-Umlauten erstmal wieder rÅckgÑngig gemacht.
 

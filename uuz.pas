@@ -1140,8 +1140,8 @@ begin
                         ((encoding=encBinary) and (ctype<>tText)));
     hd.typ:=iifc((binary or b64) and (ctype<>tText),'B','T');
     charset:=LStr(charset);    
-    if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
-       (left(charset,9)<>'iso-8859-') and (charset<>'windows-1252') and
+    if (ctype=tText) and (charset<>'') and (not ascii_charset(charset)) and
+       (not iso_charset(charset)) and (charset<>'windows-1252') and
        (charset<>'utf-8') and (charset<>'utf-7') then
       hd.error:='Unsupported character set: '+charset;
     end;
@@ -3399,6 +3399,12 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.73  2002/04/18 22:16:49  my
+  JG+MY:- Untersttzung aller derzeit bei der IANA registrierten Alias-
+          Namen fr die von XP bei eingehenden Nachrichten untersttzten
+          Zeichens„tze (US-ASCII, ISO-8859-x und Windows-1252)
+          implementiert.
+
   Revision 1.35.2.72  2002/04/13 12:43:00  sv
   - Spitze Klammern wurden bei eingehenden Cancels nicht korrekt entfernt
 
