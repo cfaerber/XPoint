@@ -196,8 +196,6 @@ begin
 end;
 
 procedure TNNTP.DisConnect;
-var
-  s: string;
 begin
   WriteIPC(mcInfo,res_disconnect,[0]);
   if Connected then
@@ -402,6 +400,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.11  2000/08/15 19:41:22  ml
   - Messies holen implementiert
 

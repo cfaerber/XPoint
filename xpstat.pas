@@ -131,7 +131,7 @@ var brk       : boolean;
 
   procedure count(sys:string; size:longint; hz:integer);
   var
-      p, i, l,r,m : integer;
+      p, l,r,m : integer;
       found : boolean;
       usys  : string;
   begin
@@ -217,7 +217,6 @@ var brk       : boolean;
   end;
 
   procedure free;
-  var i : word;
   begin
     freemem(st,smax*sizeof(statrec));
   end;
@@ -1255,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.24  2000/08/08 20:08:18  mk
   - Nodeliststatistik funktioniert jetzt auch
 

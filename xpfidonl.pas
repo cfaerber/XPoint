@@ -41,7 +41,7 @@ uses xpfido;
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
 
-procedure ReadOldNodeCFG(nlp: TList);      { alte NODELIST.CFG laden }
+procedure ReadOldNodeCFG;      { alte NODELIST.CFG laden }
 var t  : text;
     s  : string;
     p  : byte;
@@ -260,7 +260,7 @@ begin
   NodeList := TList.Create;
   if (_filesize(OldNLcfg)>0) and (_filesize(NodelistCfg)=0) then
   begin
-    ReadOldNodeCFG(NodeList);      { Nodelist-Konfiguration im alten  }
+    ReadOldNodeCFG;                { Nodelist-Konfiguration im alten  }
     SortNodelists(NodeList);       { Format laden und im neuen Format }
     saveflag:=true;                { abspeichern                      }
     _era(OldNLcfg);
@@ -738,6 +738,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.17  2000/08/04 09:02:49  mk
   - Bug in NLFilename nach Stringlistumestellung behoben
 

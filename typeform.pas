@@ -719,8 +719,6 @@ end;
 
 
 function Hex(const l:integer; const n:integer):string;
-var
-  s: String;
 begin
   Hex:= IntToHex(l, n);
   {$IFDEF VP }
@@ -1290,6 +1288,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.67  2000/08/14 21:05:53  mk
   - Bugfix fuer Mailstring
 

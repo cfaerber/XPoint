@@ -115,7 +115,6 @@
     var brk:boolean);
   var x,y  : byte;
       blen : byte;
-      s    : string;
   begin
     DomainNt:=nt;
     dialog(ival(getres2(912,0)),11,name,x,y);
@@ -701,7 +700,6 @@
 
   procedure EditPOP3(var brk:boolean);
   var x,y   : byte;
-      s     : string;
   begin
     dialog(ival(getres2(951,0)),9,'POP3-Einstellungen',x,y);
     with boxpar^ do
@@ -719,7 +717,6 @@
 
   procedure EditSMTP(var brk:boolean);
   var x,y   : byte;
-      s     : string;
   begin
     dialog(ival(getres2(952,0)),9,'SMTP-Einstellungen',x,y);
     with boxpar^ do
@@ -1419,7 +1416,6 @@
       brk : boolean;
       nt  : byte;
       nts : string;
-      nts0: string;
       nts2: string;
   begin
     dbGo(d,drec[p]);
@@ -1427,7 +1423,7 @@
     if fn='' then fn:=left(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
     pushhp(131);
-    nts:=''; nts2:=getres2(927,3);   { ',^SysopMode' }
+    nts:=''; // nts2:=getres2(927,3);   { ',^SysopMode' }
 
 
     case nt of

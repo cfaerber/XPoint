@@ -96,19 +96,6 @@ implementation
 
 
 type textbuf = array[0..126] of char;
-     textrec = record
-                 handle,mode,bufsize,
-                 private,bufpos,bufend : word;
-                 bufptr                : ^textbuf;
-                 openfunc,inoutfunc,
-                 flushfunc,closefunc   : pointer;
-                 prport                : word;
-                 userdata              : array[1..14] of byte;
-                 name                  : array[0..79] of char;
-                 case integer of
-                   0 : (size : byte; buffer : textbuf);
-                   1 : (ostr : string[127]);
-               end;
 
 
 function prtorgerror:boolean;
@@ -182,6 +169,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.12  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records

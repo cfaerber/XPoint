@@ -24,9 +24,6 @@ procedure spop(var x);
 
 implementation
 
-uses
-  TypeForm;
-
 type  stp = ^ste;
       ste = record
               inhalt : pointer;
@@ -88,6 +85,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/08/19 09:41:36  mk
+  - Code aufgeraeumt
+
   Revision 1.7  2000/07/02 14:24:49  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
