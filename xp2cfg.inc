@@ -466,7 +466,7 @@ begin
   XP_Tearline := true;
   UserSlash:=true;
 {$IFDEF UnixFS }
-  BAKext:= 'bak';
+  EditorBakExt:= 'bak';
   EditCharset:='ISO-8859-1';
 {$ELSE }
   EditorBakExt:='BAK';
@@ -1706,6 +1706,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.2  2002/05/21 06:51:32  mk
+  - fixed EditorBakExt for Linux
+
   Revision 1.144.2.1  2002/05/20 07:55:41  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 
