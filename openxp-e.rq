@@ -578,7 +578,6 @@ N English
 6    Lower case names are not allowed in Z-Netz. Do you really want to
 7    activate this option?
 8    ~^Yes ,  ^No ~
-9    Use MIME for news
 10   ZCONNECT: ISO charset
 11   MIME: quoted-printable
 12   Use MIME for header contents
@@ -4067,6 +4066,9 @@ N English
 -
 
 # $Log$
+# Revision 1.65  2003/08/04 22:48:11  mk
+# - removed Edit/netze/verschiedens/mime in news
+#
 # Revision 1.64  2003/04/25 21:11:14  mk
 # - added Headeronly and MessageID request
 #   toggle with "m" in message view

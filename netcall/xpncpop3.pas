@@ -75,7 +75,6 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; EMail, PPFile: Strin
       uu := TUUZ.Create;
       uu.SMTP := true;
       uu.PPP := true;
-      if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
       uu.MailUser := BoxPar^.UserName;
@@ -286,6 +285,9 @@ end;
                       
 {
   $Log$
+  Revision 1.42  2003/08/04 22:48:18  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.41  2003/05/02 11:26:10  mk
   - more debug info added
 

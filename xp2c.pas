@@ -1220,12 +1220,11 @@ var x,y   : Integer;
   function yi:integer; begin result:=y; inc(y); end;
 
 begin
-  dialog(57,iif(deutsch,22,15),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,21,14),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   y:=2;
 
   maddtext(3,y,GetRes2(253,25),col.coldiahigh);
   maddtext(3,y+1,GetRes2(253,26),col.coldiahigh);
-  maddbool(14,yi,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
   maddbool(14,yi,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,yi,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,yi,getres2(253,15),multipartbin);  { 'Keine einteiligen Binaernachrichten' }
@@ -1551,6 +1550,9 @@ end;
 
 {
   $Log$
+  Revision 1.138  2003/08/04 22:48:14  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.137  2003/01/26 14:23:15  mk
   - fixed COA/Useraufnahme
 

@@ -7727,17 +7727,6 @@ See XPOINT.DOC; "Crosspostings".
      for prolific writers can be several KB, and the
      time taken to analyse and update the status.
 @
-796
-<<[x]>>  OpenXP also uses the MIME standard (RFC
-     1341 for public messages (news), to signal the
-     use of umlauts and other special characters.
-
-
-<<[ ]>>  MIME is only used for PMs, as its
-     specification actually defines. For news
-     OpenXP uses the non standardised lines
-     "X-Charset:".
-@
 797
 <<[x]>>  OpenXP uses a special system called
      "quoted printable" to code umlauts and other

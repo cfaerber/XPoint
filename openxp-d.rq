@@ -590,7 +590,6 @@ N Deutsch
 6    Im Z-Netz sind z.Zt. keine kleingeschriebenen Adressen erlaubt!
 7    Mîchten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
-9    MIME auch fÅr News verwenden
 10   ISO-8859-1-Zeichensatz
 11   MIME: Quoted-Printable voreinstellen
 12   MIME: Sonderzeichen in Headerzeilen
@@ -4118,6 +4117,9 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.74  2003/08/04 22:48:11  mk
+# - removed Edit/netze/verschiedens/mime in news
+#
 # Revision 1.73  2003/05/01 09:52:27  mk
 # - added IMAP support
 #

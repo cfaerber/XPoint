@@ -1016,7 +1016,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        MausPSA      : boolean;       { Stati anfordern }
        ShowRealnames: boolean;       { Realnames anzeigen, falls vorhanden }
        ss_passwort  : boolean;       { Startpasswort nach Screensaver }
-       NewsMIME     : boolean;       { MIME auch in News verwenden }
        MIMEqp       : boolean;       { quoted-printable }
        RFC1522      : boolean;       { RFC-1522-Header erzeugen }
        NoArchive    : boolean;       { NoArchive-Headerz. erzeugen } {!MMH}
@@ -1225,6 +1224,9 @@ implementation
 
 {
   $Log$
+  Revision 1.180  2003/08/04 22:48:12  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.179  2003/06/14 09:27:08  mk
   -attrbuf starts now with 1 again, this fixes last committ
 

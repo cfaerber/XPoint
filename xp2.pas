@@ -1326,7 +1326,6 @@ begin
   ShowRealnames:=true;
   MsgNewFirst:=false;
   ss_passwort:=false;
-  NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true;
   multipartbin:=true;
@@ -1662,7 +1661,6 @@ begin
   writeln(t,'MausStatus=',jnf(MausPSA));
   writeln(t,'BinMIME=',jnf(mausmpbin));
   wrhd(6);                                             { RFC/UUCP }
-  writeln(t,'NewsMIME=',jnf(NewsMIME));
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
   writeln(t,'NoArchive=',jnf(NoArchive));
@@ -2170,7 +2168,7 @@ begin
                     getx(su,  'NeueBrEnde',newbrettende) or
                     xp1.gets(s,su,'NatVorwahl',natvorwahl) or
                     getx(su,  'NurZNetz',dummyb) or
-                    getx(su,  'NewsMIME',NewsMIME) or
+                    getx(su,  'NewsMIME',dummyb) or
                     getx(su,  'NoArchive',NoArchive) or
                     getx(su,  'NewsgroupAnzeige',newsgroupdisp) or
                     getx(su,  'NewsgroupAnzeigeAlle',newsgroupdispall) or
@@ -2786,6 +2784,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.163  2003/08/04 22:48:13  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.162  2003/04/25 21:11:15  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

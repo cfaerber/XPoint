@@ -118,7 +118,6 @@ var
       uu.uparcer_smtp := BoxPar^.UpArcer;
       uu.uparcer_news := BoxPar^.UpArcer;
 
-      uu.NewsMime := NewsMIME;
       uu.MakeQP   := MIMEqp;
       uu.RFC1522  := RFC1522;
 
@@ -501,6 +500,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.23  2003/08/04 22:48:18  mk
+  - removed Edit/netze/verschiedens/mime in news
+
   Revision 1.22  2002/12/21 05:38:07  dodi
   - removed questionable references to Word type
 
