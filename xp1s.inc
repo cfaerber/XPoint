@@ -55,7 +55,11 @@ var sm2t     : boolean;
     savecursor;
     cursor(curoff);
     w1:=windmin; w2:=windmax;
+{$IFDEF NCRT }
+    window(1,1,ScreenWidth,ScreenLines);
+{$ELSE }
     window(1,1,80,25);
+{$ENDIF }
     if length(prog)<=74 then
       message(prog)
     else begin
@@ -308,6 +312,18 @@ var brk    : boolean;
     lfirst:=min(lfirst,screenlines-5);
   end;
 
+{$IFDEF NCRT }
+  function MakeVSC: string;
+  var s: string;
+  begin
+    Str(screenwidth,s);
+    if (screenwidth<100) then
+      MakeVSC:= 'VSC:0'+s+'/'
+    else
+      MakeVSC:= 'VSC:'+s+'/';
+  end;
+{$ENDIF }
+
 begin
   listexit:=0;
   if varlister<>'' then begin
@@ -337,11 +353,19 @@ begin
       end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
+{$IFDEF NCRT }
+    openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
+             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
+             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
+             iifs(_maus and ListScroller,MakeVSC,'')+
+             iifs(listmsg,'ROT/',''));
+{$ELSE }
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC:080/','')+
              iifs(listmsg,'ROT/',''));
+{$ENDIF }
     if listwrap {or listkommentar} then
       lister.listwrap(iif(_maus and listscroller,78,80));
     if listmsg and ConvIso then list_convert(ISO_conv);
@@ -492,6 +516,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/05/10 10:31:26  hd
+  - Fixe Verdrahtung 80x25 unter Curses aufgehoben
+
   Revision 1.22  2000/05/07 18:00:45  mk
   - Fix in ShowPar fuer extrem lange Kommaondozeilen
 
