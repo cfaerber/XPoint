@@ -53,7 +53,11 @@ type
 
   private
 
+{$IFDEF Win32}
     FAddr       : TSockAddr;            { Socket-Parameter-Block }
+{$ELSE}
+    FAddr        : TInetSockAddr;
+{$ENDIF}
     FHandle     : longint;              { Socket-Handle }
     FConnected  : boolean;              { Flag }
     FInBuf: TSocketBuffer;              { In-Buffer des Sockets }
@@ -142,8 +146,10 @@ begin
 end;
 
 procedure TSocketNetcall.InitVars;
+{$IFDEF Win32}
 var
   wsadata: Twsadata;
+{$ENDIF}
 begin
   Host:= TIP.Create;
   Host.AutoResolve:= false;
@@ -151,7 +157,9 @@ begin
   FConnected:= false;
   FInPos := 0; FInCount := 0;
 
+{$IFDEF Win32}
   WSAStartup(2, wsadata);
+{$ENDIF}
 end;
 
 destructor TSocketNetcall.Destroy;
@@ -175,18 +183,28 @@ function TSocketNetcall.Connect: boolean;
 begin
   if FConnected then
     DisConnect;
-  FAddr.sin_Family:= AF_INET;
-  { Hi-/Lo-Word vertauschen }
-  FAddr.sin_Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
   { IP jetzt aufloesen }
   if not Host.Resolved then
     Host.Resolve;
+{$IFDEF Win32}
+  FAddr.sin_Family:= AF_INET;
+  { Hi-/Lo-Word vertauschen }
+  FAddr.sin_Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
   { Adresse uebernehmen }
   FAddr.sin_Addr.s_addr:= Host.Raw;
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
   if WinSock.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
+{$ELSE}
+  FAddr.Family:= AF_INET;
+  { Hi-/Lo-Word vertauschen }
+  FAddr.Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
+  { Adresse uebernehmen }
+  FAddr.Addr:= Host.Raw;
+  { Verbinden }
+  FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
+  if not Sockets.Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
+{$ENDIF}
   begin
     FConnected:= false;
     RaiseSocketError;
@@ -239,22 +257,34 @@ var
   Size: DWord;
   Count: Integer;
 begin
-  if IOCTLSocket(FHandle, FIONREAD, @Size) = SOCKET_ERROR then
+{$IFDEF Win32}
+  if IOCTLSocket(FHandle, FIONREAD, @Size) < 0 then
     RaiseSocketError;
   if Size > 0 then
   begin
-    Move(FinBuf[FInPos], FInBuf, FInCount-FInPos);
-    FInCount := FInCount - FInPos; FInPos := 0;
+{$ENDIF }
+    // Validen Puffer an Startposition schieben und damit alte Daten aus Buffer entfernen 
+    if FInPos > 0 then
+    begin
+      FInCount := FInCount - FInPos;
+      Move(FinBuf[FInPos], FInBuf[0], FInCount);
+      FInPos := 0;
+    end;
 
-    // Nur so viel lesen, wie in den Buffer reingeht
-    if Size > (MaxSocketBuffer-FInCount) then
-      Size := MaxSocketBuffer - FInCount;
+    {$IFDEF Win32  }
+      // Nur so viel lesen, wie in den Buffer reingeht
+      if Size > (MaxSocketBuffer-FInCount) then
+    {$ENDIF }
+        Size := MaxSocketBuffer - FInCount;
+  
     Count := recv(FHandle, FInBuf[FInCount], Size, 0);
-    if Count = SOCKET_ERROR then
+    if Count < 0 then
       RaiseSocketError
     else
       Inc(FInCount, Count);
+{$IFDEF Win32 }
   end;
+{$ENDIF}
 end;
 
 procedure TSocketNetcall.WriteBuffer(var Buffer; Size: Integer);
@@ -262,13 +292,17 @@ var
   count: Integer;
 begin
   Count := send(FHandle, Buffer, Size, 0);
-  if Count = SOCKET_ERROR then
+  if Count < 0 then
     RaiseSocketError;
 end;
 
 procedure TSocketNetcall.RaiseSocketError;
 begin
+{$IFDEF Win32}   
   raise ESocketError.CreateFMT('WSASocketError %d', [WSAGetLastError]);
+{$ELSE}   
+  raise ESocketError.CreateFMT('SocketError %d', [SocketError]);
+{$ENDIF}   
 end;
 
 procedure TSocketNetcall.SWriteln(s: String);
@@ -281,20 +315,24 @@ procedure TSocketNetcall.SReadln(var s: String);
 var
   c: Char;
 begin
-  s := ''; ReadBuffer;
-  while FInPos < FInCount do
-  begin
+  s := ''; 
+  repeat
+    while FInPos = FInCount do ReadBuffer;
     c := FInBuf[FinPos]; Inc(FinPos);
-    if not (c in [#10,#13]) then
-      s := s + c
+    if c = #10 then
+      break
     else
-      break;
-  end;
+      if c <> #13 then
+	s := s + c;
+  until true;
 end;
 
 end.
 {
   $Log$
+  Revision 1.7  2000/08/01 17:45:26  ml
+  - Socketanpassungen fuer Linux
+
   Revision 1.6  2000/08/01 16:34:35  mk
   - Sockets laufen unter Win32 !!!
 
