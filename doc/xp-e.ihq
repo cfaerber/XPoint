@@ -7285,24 +7285,26 @@ effect.
 
 Some Usenet-articles refer to others by their
 Message-ID. This option searches for the MIDs
-@10601
+@
+10601
 <<Config / Options
-In the sub-menus here are various configuration
+
+These sub-menus are for various configuration
 options. See the on-line help for the individual
 sub-menus for details.
 @
 10602
 <<Config / External
 
-Options for the Editor and Lister, also
-for entering settings for CrossPoint to use when it
+Options for the Editor, message reader and for
+entering settings for CrossPoint to use when it
 starts external programs and tools (Editor, Lister,
 Packers etc.).
 @
 10603
 <<Config / Paths
 
-By default CrossPoint puts files in the
+By default, CrossPoint puts files in the
 CrossPoint program directory. For some types of files
 you can define here different directories where they
 should be kept.
@@ -8951,12 +8953,17 @@ CrossPoint. Changes here are only effective after
 storing the configuration and at the next start.
 @
 12803
+<<Config / Options / Lister
+
+Settings concerning the internal message reader.
+@
+12804
 <<Config / Options / Messages
 
 Here are various options to do with writing
 messages.
 @
-12804
+12805
 <<Config / Options / Nets
 
 Note: The English Language version of CrossPoint
@@ -8968,13 +8975,13 @@ These are Settings/Options which are net-specific,
 only apply to specific nets (except FIDO).
 <<Fido-specific>> settings are under /Fido/Options.
 @
-12805
+12806
 <<Config / Options / Netcall
 
 Netcall-Options decide the way XP makes netcalls.
 (strange but true).
 @
-12806
+12809
 <<Config / Options / Password
 
 CrossPoint can be protected with <<2 Passwords>>.
@@ -8992,7 +8999,7 @@ setting a start password and locking you out!
 If you forget a password, you will have to call me
 under the number listed in LICENCE.DOC
 @
-12807
+12810
 <<Config / Options / Language
 
 Select a language for CrossPoint. The user interface,
