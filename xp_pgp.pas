@@ -548,16 +548,9 @@ procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
 var b    : byte;
     fi,fo: string;
     fis: TStream;
-    t: string;
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
     RemoteUserID:=hd.empfaenger;
-
-  // no textmode for MIME!
-  if PGPVersion=PGP2 then
-    t:=' +textmode=off'
-  else
-    t:='';
 
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+(data.Size div 2)+2000);
@@ -569,13 +562,13 @@ begin
   fis.Free;
 
   if PGPVersion=PGP2 then
-    RunPGP('-ea'+t+' '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
+    RunPGP('-ea +textmode=off '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
   else if PGPVersion=PGP5 then
-    RunPGP5('PGPE.EXE','-a '+t+' '+fi+' -r '+IDform(RemoteUserID)+' -o '+fo)
+    RunPGP5('PGPE.EXE','-a  '+fi+' -r '+IDform(RemoteUserID)+' -o '+fo)
   else if PGPVersion=GPG then
-    RunGPG('-e'+t+' -o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
+    RunGPG('-e -a -o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
   else begin
-    RunPGP('-e -a '+t+' '+fi+' '+IDform(RemoteUserID));
+    RunPGP('-e -a '+fi+' '+IDform(RemoteUserID));
     fo:=fi+'.asc';
   end;
 
@@ -600,6 +593,7 @@ begin
     fis:=TTemporaryFileStream.Create(fo,fmOpenRead);
     CopyStream(fis,data);
     fis.Free;
+    writeln_s(data,'');
     writeln_s(data,'--'+hd.boundary+'--');
 
     inc(hd.pgpflags,fPGP_encoded);
@@ -1080,6 +1074,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/09/09 23:08:40  cl
+  - BUGFIX: GnuPG was not called with -a switch for multipart/encrypted
+
   Revision 1.49  2001/09/09 17:40:47  cl
   - moved common code between alle en-/decoding streams to a base class
   - all en-/decoding streams can now destruct the other stream
