@@ -277,6 +277,8 @@ function FExpand(Path : PathStr) : PathStr;
      dazugehîrigen Suchpfad.}
 {$ENDIF}
 
+(* DiskFree/DiskSize deaktiviert, um sicherzustellen, da· immer die
+   Routinen in fileio.pas verwendet werden.  02/2002  my
 function DiskFree(Drive : Byte) :
   {$IFDEF DFSReturnComp} Comp ; {$ELSE} LongInt; {$ENDIF}
   {-Liefert die Grî·e des freien Speicherplatzes auf einem Laufwerk zurÅck.}
@@ -291,7 +293,9 @@ function DiskSize(Drive : Byte) :
   bei mir nur nach dem ersten Run das korrekte Ergebnis. Warum entzieht sich
   meiner Kenntnis.
 ---}
-
+   /DiskFree/DiskSize deaktiviert, um sicherzustellen, da· immer die
+    Routinen in fileio.pas verwendet werden.  02/2002  my *)
+ 
   {============================== Abschnitt 2: =============================}
   {==== Erweiterte Funktionen, auch unter DOS lauffÑhig (siehe LFN.GER): ===}
   {=========================================================================}
@@ -2222,6 +2226,8 @@ type
     end;
   end;
 
+(* DiskFree/DiskSize deaktiviert, um sicherzustellen, da· immer die
+   Routinen in fileio.pas verwendet werden.  02/2002  my
   function DiskFree(Drive : Byte) :
     {$IFDEF DFSReturnComp} Comp ; {$ELSE} LongInt; {$ENDIF}
     {-Liefert die Grî·e des freien Speicherplatzes auf einem Laufwerk zurÅck.}
@@ -2283,6 +2289,8 @@ type
     {$ENDIF}
     end;
   end;
+   /DiskFree/DiskSize deaktiviert, um sicherzustellen, da· immer die
+    Routinen in fileio.pas verwendet werden.  02/2002  my *)
 
   function FileSearchPrim(Dest : PChar; DestLen : Word;
                           Name, List : PChar) : Boolean; Assembler;    {!!.08}
