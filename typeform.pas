@@ -19,12 +19,12 @@
 
 {$I XPDEFINE.INC }
 
-UNIT typeform;
+unit typeform;
 
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses
   xpglobal, dos;
@@ -170,7 +170,8 @@ function TopStr(const s:string):string;            { erste Buchstabe groá       
 Function TopAllStr(s:string):string;         { alle ersten Buchstaben groá  }
 Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
 Function UpCase(const c:char):char;                { int. UpCase                  }
-Function UStr(const s:string):string;              { UpperString                  }
+function UStr(const s:String):String;              { UpperString                  }
+function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
 { Lo/Upcase-String fr Files, abh„ngig von UnixFS }
 Function FUStr(const s:string):string;
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
@@ -603,10 +604,6 @@ begin
   strsrnp:=s;
 end;
 
-
-
-{JG: 25.01.00 Funktionen nach ASM mit Lookup Tables umgeschrieben}
-
 {$IFDEF NOASM }
 {$IFNDEF Windows }
 
@@ -671,9 +668,6 @@ end;
 {$ELSE} { NOASM }
 
 {$ifdef ver32}
-
-{ 01.02.2000 robo - 32 Bit }
-{ 08.02.2000 MK Tabellen als Konstanten, wegen FPC }
 
 function Upcase(const c:char): char; {&uses ebx} assembler;
 const
@@ -742,8 +736,6 @@ end ['EAX', 'EBX'];
 {$else}
 end;
 {$endif}
-
-{ /robo }
 
 {$else}
 
@@ -821,7 +813,7 @@ end;
 function FUStr(const s:string):string;
 begin
 {$IFDEF UnixFS }
-  FUStr := LStr(s);
+  FUStr := s;
 {$ELSE }
   FUStr := UStr(s);
 {$ENDIF }
@@ -845,7 +837,7 @@ begin
 end;
 
 
-Function UStr(const s:string):string;
+Function UStr(const s: AnsiString): AnsiString;
 var i : integer;
 begin
   Ustr[0]:=s[0];
@@ -1164,10 +1156,15 @@ Function LStr(const s:string):string;
 
 {$endif}
 
-{ /robo }
+function UStrHuge(const s: AnsiString):AnsiString;
+var
+  i : integer;
+begin
+  UStrHuge := s;
+  for i:=1 to Length(s) do
+    UStrHuge[i]:=UpCase(s[i]);
+end;
 
-
-{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
 {$IFDEF NOASM }
 function Left(s:string; n:byte):string;
 begin
@@ -2226,6 +2223,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/05/01 08:44:47  mk
+  - Function UStrHuge fuer AnsiStrings eingefuegt
+
   Revision 1.30  2000/04/29 20:54:07  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 
