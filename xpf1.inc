@@ -863,7 +863,7 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
         1 : begin
               _keyboard(adr+keycr);
               dbOpen(d,BoxenFile,0);
-              if dbRecCount(d)>1 then _keyboard(DefFidoBox+keycr);
+              if dbRecCount(d)>1 then _keyboard(keyup+DefFidoBox+keycr);
               dbClose(d);
               msgdirect;
             end;
@@ -885,6 +885,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.20  2000/08/10 08:49:43  mk
+  - Fix: Fido...Nodelisten abfragen
+    Direkte Nachricht an Suchergebnis schicken funktioniert wieder
+
   Revision 1.19  2000/08/09 22:46:19  mk
   - zweidimensionalen Record in zwei eindimensionale Records geaendert wegen
     einem RTTI Bug in Virtual Pascal
