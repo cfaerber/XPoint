@@ -26,13 +26,21 @@ procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);
 procedure PmArchiv(einzel:boolean);
 
+function umlauttest(var s:string):boolean;
+function test_senddate(var s:string):boolean;
+procedure firstslash(var s:string);
+function testreplyto(var s:string):boolean;
+
+function pgpo_sigtest(var s:string):boolean;
+function pgpo_keytest(var s:string):boolean;
+
 function testmausempf(var s:string):boolean;
 
 
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
-     xp6,xp6l,editor,xpcc;
+     xp6,xp6l,editor,xpcc,xpovl;
 
 
 const mauswlbox : string[BoxNameLen] = '';
@@ -438,6 +446,84 @@ ende:
   aufbau:=true;
 end;
 
+
+function umlauttest(var s:string):boolean;
+var i : integer;
+{    p : byte; }
+begin
+  umlauttest:=true;
+  case umlaute of
+    1 : for i:=1 to 7 do
+          if pos(um[i],s)>0 then ukonvstr(s,betrefflen);
+
+  { 2 : for i:=1 to 7 do begin
+          p:=pos(um[i],s);
+          if p>0 then s[p]:=iso[i];
+          end; }
+  end;
+end;
+
+function test_senddate(var s:string):boolean;
+begin
+  if smdl(ixdispdat(s),min_send) then begin
+    rfehler(601);    { 'RÅckdatieren nicht mîglich.' }
+    s:=fdat(longdat(min_send));
+    test_senddate:=false;
+    end
+  else
+    test_senddate:=true;
+end;
+
+procedure firstslash(var s:string);
+begin
+  if (s<>'') and (s[1]<>'/') then
+    s:='/'+s;
+end;
+
+function testreplyto(var s:string):boolean;
+var p : byte;
+    d : DB;
+begin
+  p:=cpos('@',s);
+  if (s<>'') and ((p=0) or (cpos('.',mid(s,p))=0)) then
+  begin
+      dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
+      dbSeek(d,piKurzname,ustr(s));
+      if dbFound then
+      begin
+        dbRead(d,'Langname',s);
+        dbclose(d);                     { ist's ein Kurzname ? }
+        testreplyto:=true;
+        if cpos(' ',s)<>0 then          { Langname jetzt gueltig ? }
+          begin
+            rfehler(908);               { 'UngÅltige Adresse' }
+            testreplyto:=false;
+            end;
+        end
+      else begin
+        rfehler(908);                   { 'UngÅltige Adresse' }
+        dbclose(d);
+        testreplyto:=false;
+        end;
+      end
+  else
+    testreplyto:=true;
+end;
+
+
+function pgpo_sigtest(var s:string):boolean;
+begin
+  if (s=_jn_[1]) and (getfield(3)=_jn_[1]) then
+    setfield(3,_jn_[2]);
+  pgpo_sigtest:=true;
+end;
+
+function pgpo_keytest(var s:string):boolean;
+begin
+  if (s=_jn_[1]) and (getfield(1)=_jn_[1]) then
+    setfield(1,_jn_[2]);
+  pgpo_keytest:=true;
+end;
 
 function testmausempf(var s:string):boolean;
 var p : byte;
@@ -1430,6 +1516,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.27  2002/04/21 20:10:13  my
+  MY:- Einige Funktionen von xp6 nach xp6o verlagert, um etwas Platz
+       im Codesegment fÅr die kommenden forcebox-Fixes zu schaffen.
+
   Revision 1.20.2.26  2002/04/20 13:45:42  my
   JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
        (PrioritÑt, PGP-signiert, MIME-Multipart usw.) jetzt auch dann

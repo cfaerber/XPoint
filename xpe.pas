@@ -50,7 +50,7 @@ procedure Editor_options;
 
 implementation  {--------------------------------------------------------}
 
-uses  xp1,xp6;
+uses  xp1,xp6o;
 
 const edbetreff     : ^string = nil;
       doautosave    : boolean = false;
@@ -322,7 +322,7 @@ begin
   if edbetreff=nil then exit;
   dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
   maddstring(3,2,getres(2507),edbetreff^,min(edbmaxlen,48),edbmaxlen,'');
-  msetvfunc(xp6.umlauttest); mhnr(88);
+  msetvfunc(xp6o.umlauttest); mhnr(88);
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -474,6 +474,10 @@ end.
 
 {
   $Log$
+  Revision 1.16.2.9  2002/04/21 20:10:13  my
+  MY:- Einige Funktionen von xp6 nach xp6o verlagert, um etwas Platz
+       im Codesegment fÅr die kommenden forcebox-Fixes zu schaffen.
+
   Revision 1.16.2.8  2002/04/19 16:38:06  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
