@@ -1682,16 +1682,16 @@ fromstart:
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
                      +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
-    hdp^.organisation:=orga^;
+    hdp^.organisation:=orga;
     if sdata^.ersetzt<>''then hdp^.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
     then begin
-      hdp^.postanschrift:=postadresse^;
-      hdp^.telefon:=telefonnr^;
-      hdp^.homepage:=wwwHomepage^;
+      hdp^.postanschrift:=postadresse;
+      hdp^.telefon:=telefonnr;
+      hdp^.homepage:=wwwHomepage;
       end
     else if (netztyp=nt_UUCP) and not adrpmonly then
-      hdp^.homepage:=wwwHomepage^;
+      hdp^.homepage:=wwwHomepage;
     hdp^.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: }
     hdp^.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }
     hdp^.datei:=sendfilename;
@@ -2157,6 +2157,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/07/12 14:43:46  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.48  2000/07/09 08:35:18  mk
   - AnsiStrings Updates
 

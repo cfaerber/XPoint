@@ -159,7 +159,7 @@ begin
       test_defaultgruppen;
       test_systeme;
       ReadDefaultViewers;
-      testtelefon(telefonnr^);
+      testtelefon(telefonnr);
 {$ifndef Linux}
       check_date;
 {$endif}
@@ -186,6 +186,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.34  2000/07/12 14:43:43  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.33  2000/07/11 21:39:20  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

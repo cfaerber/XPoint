@@ -158,16 +158,16 @@ begin
     else
 {$ifdef hasHugeString}
       begin
-        l:= length(recs);	{ Die ewige Zaehlerei frisst Zeit }
-	if l<255 then begin
-	  Inc(l);    
+        l:= length(recs);       { Die ewige Zaehlerei frisst Zeit }
+        if l<255 then begin
+          Inc(l);
           SetLength(recs,l);
-	  recs[l]:= chr(b);
-	  l:= length(lrec);
-	  Inc(l);
-	  SetLength(lrec,l);
-	  lrec[l]:= LoCase(chr(b));
-	end;
+          recs[l]:= chr(b);
+          l:= length(lrec);
+          Inc(l);
+          SetLength(lrec,l);
+          lrec[l]:= LoCase(chr(b));
+        end;
       end;
 {$else}
       if length(recs)<255 then begin
@@ -375,8 +375,8 @@ begin
       NC^.endtime:=zdate;
       sendstr(#13); mdelay(300);
       flushin;
-      if Comn[comnr].MExit^<>'' then begin
-        SendmStr(Comn[comnr].MExit^);
+      if Comn[comnr].MExit<>'' then begin
+        SendmStr(Comn[comnr].MExit);
         mdelay(500);
         flushin;
         end;
@@ -1440,6 +1440,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/07/12 14:43:46  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.28  2000/07/05 17:35:36  hd
   - AnsiString
 

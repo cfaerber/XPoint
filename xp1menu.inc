@@ -55,7 +55,7 @@ begin
       inc(n);
       with ma^[n] do begin
         mstr:='';
-        s:=copy(s,p+1,255);
+        s:=Mid(s, p+1);
         if nummern and (left(s,2)<>'-,') then begin
           mpnr:=hexval(left(s,3));
           delete(s,1,3);
@@ -601,6 +601,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/07/12 14:43:44  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.17  2000/07/07 14:38:36  hd
   - AnsiString
   - Kleine Fixes nebenbei

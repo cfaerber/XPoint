@@ -532,8 +532,8 @@ begin
     setdtr(comnr);
     sendstr(#13); mdelay(300,true);
     flushin;
-    if Comn[comnr].MExit^<>'' then begin
-      SendStr(Comn[comnr].MExit^+#13);
+    if Comn[comnr].MExit<>'' then begin
+      SendStr(Comn[comnr].MExit+#13);
       mdelay(500,true);
       end;
     end;
@@ -1610,6 +1610,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/12 14:43:48  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.17  2000/07/12 13:15:02  hd
   - Ansistring
 

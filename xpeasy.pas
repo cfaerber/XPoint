@@ -68,11 +68,11 @@ function NeuBenutzergruss:boolean;
     begin
       maddtext(3,i+1,getres2(14001,i),col.coldialog);
     end;
-    maddstring(3,3+msglines,getres2(252,103),postadresse^,47,PostadrLen,'');   { 'Postanschrift ' }
+    maddstring(3,3+msglines,getres2(252,103),postadresse,47,PostadrLen,'');   { 'Postanschrift ' }
     msetvfunc(TestPostanschrift);
-    maddstring(3,4+msglines,getres2(252,104),telefonnr^,47,TeleLen,'>VFBQP +-0123456789');
+    maddstring(3,4+msglines,getres2(252,104),telefonnr,47,TeleLen,'>VFBQP +-0123456789');
     msetvfunc(TestTelefon);                                 { 'Telefon       ' }
-    maddstring(3,5+msglines,getres2(252,105),wwwHomepage^,47,Homepagelen,range(' ','~'));
+    maddstring(3,5+msglines,getres2(252,105),wwwHomepage,47,Homepagelen,range(' ','~'));
     msetvfunc(TestUrl);
     maddbool(3,7+msglines,getres2(252,109),adrpmonly);   { 'Adresse, Telefon und Homepage nur in PMs' }
     readmask(brk);
@@ -83,6 +83,10 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.8  2000/07/12 14:43:47  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.7  2000/07/11 21:39:22  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

@@ -555,13 +555,6 @@ var   res  : integer;
       end;
   end;
 
-  procedure SetPath(var pathp:pathptr; var oldpath:string);
-  begin
-    getmem(pathp,length(oldpath)+1);
-    pathp^:=oldpath;
-    oldpath:=OwnPath;
-  end;
-
 begin
   EditLogpath:=nil;
   TestDir2(logpath);
@@ -572,29 +565,30 @@ begin
   else
     if not IsPath(logpath) then begin
       trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
-       SetPath(EditLogpath,logpath);
+       EditLogPath := logpath;
       end;
   EditTemppath:=nil;
   if temppath='' then temppath:=ownpath
   else
     if not IsPath(temppath) then begin
       trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
-      SetPath(EditTemppath,temppath);
+      EditTemppath := temppath;
       end;
   EditExtpath:=nil;
   if extractpath='' then extractpath:=OwnPath
   else
-    if not IsPath(extractpath) then begin
+    if not IsPath(extractpath) then
+    begin
       trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
-      SetPath(EditExtpath,extractpath);
-      end;
+      EditExtpath := extractpath;
+    end;
   EditSendpath:=nil;
   if sendpath='' then sendpath:=ownpath
   else
     if not IsPath(sendpath) then begin
       trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
-      SetPath(EditSendpath,sendpath);
-      end;
+      EditSendpath := sendpath;
+    end;
   editname:=sendpath+WildCard;
   TestDir(XFerDir);
   TestDir(JanusDir);
@@ -1077,6 +1071,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/07/12 14:43:45  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.57  2000/07/12 12:57:39  hd
   - Ansistring
 

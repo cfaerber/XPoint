@@ -306,7 +306,7 @@ const
 
 {$I XPHEADER.INC }
 
-type   sstringp		= ^shortstring;	  { Zeiger auf einen ShortString }
+type   sstringp         = ^shortstring;   { Zeiger auf einen ShortString }
 
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
@@ -402,10 +402,7 @@ type   textp  = ^text;
        { Netztypen: 0=Netcall, 1=Pointcall, 2=ZConnect, 3=MagicNET }
        {            10=QM, 11=GS, 20=Maus, 30=Fido, 40=RFC         }
 
-       OrgStr      = string;
        AdrStr      = string;
-       TeleStr     = string;
-       HomepageStr = string;
        CustHeadStr = string;
 
        refnodep= ^refnode;             { Datentyp fÅr Reference-Liste }
@@ -429,9 +426,9 @@ type   textp  = ^text;
                   Fossil : boolean;
                   Cport  : word;        { UART-Adresse   }
                   Cirq   : byte;        { 0..7           }
-                  MInit  : ^string;
-                  MExit  : ^string;
-                  MDial  : ^string;     { WÑhlbefehl     }
+                  MInit  : string;
+                  MExit  : string;
+                  MDial  : string;     { WÑhlbefehl     }
                   Warten : byte;        { Warten auf Modem-Antwort }
                   IgCD   : boolean;     { CD ignorieren  }
                   IgCTS  : boolean;     { CTS ignorieren }
@@ -557,7 +554,7 @@ type   textp  = ^text;
                    number     : integer;       { akt. Nummer           }
                    updatefile : string;    { Diff/Update-Datei     }
                    updatearc  : string;    { gepackte Update-Datei }
-                   processor  : ^string;       { externer Bearbeiter   }
+                   processor  : string;       { externer Bearbeiter   }
                    DoDiff     : boolean;
                    DelUpdate  : boolean;       { Diff lîschen }
                    format     : byte;     { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
@@ -693,7 +690,7 @@ type   textp  = ^text;
                    number     : integer;       { akt. Nummer           }
                    updatefile : string[12];    { Diff/Update-Datei     }
                    updatearc  : string[12];    { gepackte Update-Datei }
-                   processor  : ^string;       { externer Bearbeiter   }
+                   processor  : string;        { externer Bearbeiter   }
                    DoDiff     : boolean;
                    DelUpdate  : boolean;       { Diff lîschen }
                    format     : byte;     { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
@@ -749,7 +746,6 @@ type   textp  = ^text;
                      UnRAR                : string;
                    end;
 
-       PathPtr   = ^string;
 {$else}
        viewert  = array[1..maxviewers] of record
                                             ext : string[3];
@@ -1004,10 +1000,10 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        FilePath     : pathstr;
        FidoPath     : pathstr;       { OwnPath+FidoDir }
 {$endif}
-       EditLogpath  : pathptr;
-       EditTemppath : pathptr;
-       EditExtpath  : pathptr;
-       EditSendpath : pathptr;
+       EditLogpath  : String;
+       EditTemppath : String;
+       EditExtpath  : String;
+       EditSendpath : String;
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
@@ -1316,7 +1312,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        keymacros   : integer;        { Anzahl geladene Tastenmakros }
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
-       macrodef    : array[1..maxkeys] of ^string;
+       macrodef    : array[1..maxkeys] of string;
        shortkey    : array[1..maxskeys] of KeyRec;
        shortkeys   : shortint;
        registriert : record r1,r2:boolean; nr:longint;
@@ -1364,11 +1360,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 {$endif}
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
        KomShowadr  : boolean;        { <-> BaumAdresse }
-       gAKAs       : ^string;        { globale AKA-Adressliste }
-       Orga        : ^OrgStr;
-       Postadresse : ^string;
-       TelefonNr   : ^TeleStr;
-       wwwHomepage : ^HomepageStr;
+       gAKAs       : string;        { globale AKA-Adressliste }
+       Orga        : String;
+       Postadresse : String;
+       TelefonNr   : String;
+       wwwHomepage : String;
 {$ifdef hasHugeString}
        BrettAlle   : string;     { StandardempfÑnger fÅr Brettnachrichten }
        fidoto      : string;     { XP6: EmpfÑngername bei Brettnachr.     }
@@ -1412,6 +1408,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.74  2000/07/12 14:43:43  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.73  2000/07/12 12:57:39  hd
   - Ansistring
 

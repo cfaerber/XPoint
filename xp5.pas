@@ -631,7 +631,7 @@ var x,y : byte;
       if dbPhysRecs(d)=0 then
         prozent:=100.0
       else
-        prozent:=real(dbRecCount(d)) * 100.0 / real(dbPhysRecs(d));
+        prozent:=dbRecCount(d) * 100.0 / dbPhysRecs(d);
     end;
 
   begin
@@ -923,6 +923,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/12 14:43:46  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.32  2000/07/12 10:13:27  hd
   - AnsiString
 

@@ -49,6 +49,7 @@ var i,j : byte;
     s   : string;
     r   : real;
     rb  : barrp;
+    s2: ShortString;
 begin
   with dp(dbp)^ do
     with index^[indnr] do
@@ -68,27 +69,22 @@ begin
           with feldp^.feld[ifeldnr[i] and $fff] do
             case ftyp of
               1 : begin
-                    Move(rb^[fofs],s,rb^[fofs]+1);
-                    if length(s)+1>fsize then SetLength(s, fsize-1); {s[0]:=chr(fsize-1);}
+                    Move(rb^[fofs],s2,rb^[fofs]+1);
+                    if length(s2)+1>fsize then SetLength(s2, fsize-1);
+                    s := s2;
                     if ifeldnr[i] and $8000<>0 then s:=UpperCase(s);
                     if feldanz=i then key:=key+s
                     else key:=key+forms(s,fsize-1);
                   end;
-              2 : for j:=1 to fsize do begin
-                    SetLength(key, length(key)+1); {inc(byte(key[0]));}
-                    key[length(key)]:=char(rb^[fofs+fsize-j]);
-                  end;
+              2 : for j:=1 to fsize do
+                    key := Key + char(rb^[fofs+fsize-j]);
               3 : begin
                     Move(rb^[fofs],r,6);
                     str(r:20:3,s);
                     key:=key+s;
                   end;
-              4 : begin
-	            SetLength(key, length(key)+4);
-                    for j:=1 to 4 do
-                      key[length(key)+j]:=char(rb^[fofs+4-j]);
-                    {inc(byte(key[0]),4);}
-                  end;
+              4 : for j:=1 to 4 do
+                    key := key + char(rb^[fofs+4-j]);
             end;
         end;
 end;
@@ -494,6 +490,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/12 14:43:43  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.6  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records

@@ -363,7 +363,7 @@ label fn_ende,fn_ende0;
     var aka : string;
         p   : byte;
     begin
-      aka:=without(trim(gAKAs^+' '+boxpar^.AKAs),'*');
+      aka:=without(trim(gAKAs+' '+boxpar^.AKAs),'*');
       p:=pos(OwnAddr,aka);
       if p>0 then begin
         while (p<=length(aka)) and (aka[p]<>' ') do
@@ -404,16 +404,16 @@ label fn_ende,fn_ende0;
       if domain<>'' then writeln(t,'Domain=',domain);
       writeln(t,'Called=',boxname);
       writeln(t,'Password=',passwort);
-      if orga^<>'' then writeln(t,'SysName=',orga^);
+      if orga<>'' then writeln(t,'SysName=',orga);
       if ParDebug then writeln(t,'Debug=Y');
       if registriert.r2 then writeln(t,'SN=R/'+strs(registriert.nr))
       else writeln(t,'SN=unregistered');
-      if hayescomm and (ModemInit+minit^<>'') then begin
+      if hayescomm and (ModemInit+minit<>'') then begin
         write(t,'ModemInit=');
-        if (ModemInit<>'') and (minit^<>'') then
-          writeln(t,minit^+'\\'+ModemInit)
+        if (ModemInit<>'') and (minit<>'') then
+          writeln(t,minit+'\\'+ModemInit)
         else
-          writeln(t,minit^+ModemInit);
+          writeln(t,minit+ModemInit);
         end;
       if IgCTS then writeln(t,'CTS=N');
       writeln(t,'RTS=',iifc(UseRTS,'Y','N'));
@@ -426,7 +426,7 @@ label fn_ende,fn_ende0;
         end;
       writeln(t,'Baud=',baud);
       if hayescomm then begin
-        writeln(t,'DialCommand=',MDial^);
+        writeln(t,'DialCommand=',MDial);
         writeln(t,'Phone=',telefon);
         end;
       writeln(t,'ConnWait=',connwait);
@@ -944,6 +944,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/12 14:43:47  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.20  2000/07/09 08:35:18  mk
   - AnsiStrings Updates
 

@@ -840,7 +840,7 @@ begin                  { of Netcall }
         sendcomm('AT');
         end;
       if not relogin then begin
-        if not timeout(false) then sendmstr(minit^);
+        if not timeout(false) then sendmstr(minit);
         if not timeout(false) then begin
           sendmstr(modeminit);
           if HayesComm and not relogin then begin
@@ -900,7 +900,7 @@ begin                  { of Netcall }
         if display then begin
           mwriteln; mwriteln; end;
         if hayescomm and not relogin then begin                  { Anwahl }
-          s:=comn[bport].MDial^;
+          s:=comn[bport].MDial;
           while pos('\\',s)>0 do begin
             sendcomm(left(s,pos('\\',s)-1));
             delete(s,1,pos('\\',s)+1);
@@ -1589,6 +1589,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/12 14:43:47  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.21  2000/07/05 17:35:36  hd
   - AnsiString
 

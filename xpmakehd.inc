@@ -97,9 +97,11 @@ var i,res : integer;
       else AddToEmpflist(s);
       end
     else
-      if (empfnr=0) or (hd.empfanz<empfnr) then begin
+      if (empfnr=0) or (hd.empfanz<empfnr) then
+      begin
         LRead(hd.empfaenger);
-        if (cpos('@',s)>0) or (s[1]<>'/') then begin
+        if (cpos('@',s)>0) or ((Length(s) > 0) and (s[1]<>'/')) then
+        begin
           p:=pos(' (',hd.empfaenger);
           if p>0 then SetLength(hd.empfaenger, p-1); {byte(hd.empfaenger[0]):=p-1;}
           end;
@@ -554,6 +556,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/07/12 14:43:48  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.22  2000/07/11 21:39:23  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

@@ -622,7 +622,7 @@ var brk,modi : boolean;
       dbSeek(d,boiName,UpperCase(DefaultBox));
       if dbFound then
         email:=GetAbsAddress(d);
-      telefon:=xp0.telefonnr^;
+      telefon:=xp0.telefonnr;
       dbClose(d);
       end;
   end;
@@ -1173,15 +1173,15 @@ var brk,modi : boolean;
         writeln(t,'Called=2:31/11')
       else
         writeln(t,'Called=2000:20/99');
-      if orga^<>'' then writeln(t,'SysName=',orga^);
+      if orga<>'' then writeln(t,'SysName=',orga);
       if ParDebug then writeln(t,'Debug=Y');
       with boxpar^,comn[boxpar^.bport] do begin
-        if ModemInit+minit^<>'' then begin
+        if ModemInit+minit<>'' then begin
           write(t,'ModemInit=');
-          if (ModemInit<>'') and (minit^<>'') then
-            writeln(t,minit^+'\\'+ModemInit)
+          if (ModemInit<>'') and (minit<>'') then
+            writeln(t,minit+'\\'+ModemInit)
           else
-            writeln(t,minit^+ModemInit);
+            writeln(t,minit+ModemInit);
           end;
         if IgCTS then writeln(t,'CTS=N');
         writeln(t,'RTS=',iifc(UseRTS,'Y','N'));
@@ -1193,7 +1193,7 @@ var brk,modi : boolean;
           writeln(t,'TriggerLevel=',tlevel);
           end;
         writeln(t,'Baud=',baud);
-        writeln(t,'DialCommand=',MDial^);
+        writeln(t,'DialCommand=',MDial);
         writeln(t,'ConnWait=',connwait);
         writeln(t,'RedialWait=',redialwait);
         if postsperre then
@@ -1575,6 +1575,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/12 14:43:48  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.14  2000/07/05 18:03:53  hd
   - Ansistring
 

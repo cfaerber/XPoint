@@ -392,13 +392,13 @@ var x,y : byte;
     brk : boolean;
 begin
   dialog(ival(getres2(252,100)),8,getres2(252,101),x,y);  { 'Adreáeinstellungen (ZCONNECT / RFC)' }
-  maddstring(3,2,getres2(252,102),orga^,47,OrgLen,'');    { 'Organisation  ' }
+  maddstring(3,2,getres2(252,102),orga,47,OrgLen,'');    { 'Organisation  ' }
     mhnr(1040);
-  maddstring(3,3,getres2(252,103),postadresse^,47,PostadrLen,'');   { 'Postanschrift ' }
+  maddstring(3,3,getres2(252,103),postadresse,47,PostadrLen,'');   { 'Postanschrift ' }
   msetvfunc(TestPostanschrift);
-  maddstring(3,4,getres2(252,104),telefonnr^,47,TeleLen,'>VFBQP +-0123456789');
+  maddstring(3,4,getres2(252,104),telefonnr,47,TeleLen,'>VFBQP +-0123456789');
   msetvfunc(TestTelefon);                                 { 'Telefon       ' }
-  maddstring(3,5,getres2(252,105),wwwHomepage^,47,Homepagelen,range(' ','~'));
+  maddstring(3,5,getres2(252,105),wwwHomepage,47,Homepagelen,range(' ','~'));
   msetvfunc(TestUrl);
   maddbool(3,7,getres2(252,109),adrpmonly);   { 'Adresse, Telefon und Homepage nur in PMs' }
   readmask(brk);
@@ -869,8 +869,6 @@ procedure ModemConfig(nr:byte);
 var brk  : boolean;
     x,y  : byte;
     pstr : string;
-    mi,me: string;
-    md   : string;
 begin
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
@@ -878,7 +876,6 @@ begin
       pstr:=LowerCase(hex(Cport,3))
     else
       pstr:=LowerCase(hex(Cport,4));
-    mi:=minit^; me:=mexit^; md:=mdial^;
     if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
     oldfossil:=iifc(fossil,_jn_[1],_jn_[2]);
@@ -888,11 +885,11 @@ begin
     if fossil then MDisable;
     maddint  (33,4,getres2(261,3),Cirq,3,2,0,15);    { 'IRQ-Nummer ' }
     if fossil then MDisable;
-    maddstring(3,6,getres2(261,4),mi,32,200,'');     { 'Modem-Init ' }
+    maddstring(3,6,getres2(261,4),MInit,32,200,'');     { 'Modem-Init ' }
     mappsel(false,'ATZùATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1ùATZ\\ATX3');
     {Weitere Optionen eingefuegt MW 04/2000}
-    maddstring(3,7,getres2(261,5),me,32,200,'');     { 'Modem-Exit ' }
-    maddstring(3,8,getres2(261,15),md,32,100,'');    { 'W„hlbefehl ' }
+    maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
+    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'W„hlbefehl ' }
     mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
     {Weitere Dialstrings eingefuegt (Telefonanlagen) MW 04/2000}
     maddbool (3,10,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
@@ -910,20 +907,12 @@ begin
     mappsel(true,'2ù4ù8ù14');
     if fossil or not u16550 then MDisable;
     readmask(brk);
-    if not brk and mmodified then begin
+    if not brk and mmodified then
+    begin
       Cport:=hexval(pstr);
       { if fossil then IgCTS := not foscts; ??? }
-      freemem(MInit,length(MInit^)+1);
-      getmem(MInit,length(mi)+1);
-      MInit^:=mi;
-      freemem(MExit,length(MExit^)+1);
-      getmem(MExit,length(me)+1);
-      MExit^:=me;
-      freemem(MDial,length(MDial^)+1);
-      getmem(MDial,length(md)+1);
-      MDial^:=md;
       GlobalModified;
-      end;
+    end;
     enddialog;
     freeres;
     end;
@@ -1001,44 +990,26 @@ end;
 procedure path_config;
 var brk : boolean;
     x,y : byte;
-
-  procedure freepath(var pp:pathptr);
-  begin
-    if assigned(pp) then begin
-      freemem(pp,length(pp^)+1);
-      pp:=nil;
-      end;
-  end;
-
 begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
   maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'Tempor„r-Verzeichnis ' }
-  if Assigned(EditTemppath) then
-    setfield(fieldpos,EditTemppath^);
+  setfield(fieldpos,EditTemppath);
   msetVfunc(formpath);
   maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
-  if Assigned(EditExtpath) then
-    setfield(fieldpos,EditExtpath^);
+  setfield(fieldpos,EditExtpath);
   msetVfunc(formpath);
   maddstring(3,6,getres2(262,4),sendpath,31,MaxLenPathname,'');   { 'Sende-Verzeichnis    ' }
-  if Assigned(EditSendpath) then
-    setfield(fieldpos,EditSendpath^);
+  setfield(fieldpos,EditSendpath);
   msetVfunc(formpath);
   maddstring(3,8,getres2(262,5),logpath,31,MAxLenPathname,'');    { 'Logfile-Verzeichnis  ' }
-  if Assigned(EditLogpath) then
-    setfield(fieldpos,EditLogpath^);
+  setfield(fieldpos,EditLogpath);
   msetVfunc(formpath);
   maddstring(3,10,getres2(262,6),filepath,31,MaxLenPathname,'');  { 'FileReq-Verzeichnis  ' }
   msetVfunc(formpath);
   readmask(brk);
-  if not brk and mmodified then begin
+  if not brk and mmodified then
     GlobalModified;
-    freepath(EditTemppath);
-    freepath(EditExtpath);
-    freepath(EditSendpath);
-    freepath(EditLogpath);
-    end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1519,6 +1490,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/07/12 14:43:45  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.44  2000/07/06 08:58:44  hd
   - AnsiString
 

@@ -305,7 +305,7 @@ begin
   maxmark:=2000+min(3000,max(0,memavail-250000) div sizeof(markrec));
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
-  new(boxpar);
+  GetMem(boxpar, SizeOf(BoxPar^));
   new(fkeys[0]);
   new(fkeys[1]);
   new(fkeys[2]);
@@ -342,15 +342,14 @@ begin
   DefaultNet:=248;   {alt: 243}
   DefaultNode:=2004; {alt: 97}
   {Node 2:243/97 existiert nicht mehr}
-  {Abänderung durch MW 04/2000}
   nodeopen:=false;
   kludges:=true;
-  getmem(gAKAs,AKAlen+1); gAKAs^:='';
+  gAKAs:='';
   AutoCrash:='';
-  new(orga); orga^:='';
-  new(postadresse); postadresse^:='';
-  new(telefonnr); telefonnr^:='';
-  new(wwwHomepage); wwwHomepage^:='';
+  orga:='';
+  postadresse:='';
+  telefonnr:='';
+  wwwHomepage:='';
   SetNtAllowed;
   fidobin:=exist('fido-bin');
   Clipboard:=ClipAvailable;
@@ -534,15 +533,11 @@ begin
   COMn[3].cPort:=$3e8; COMn[3].cIRQ:=4;
   COMn[4].cPort:=$2e8; COMn[4].cIRQ:=3;
   for i:=1 to 5 do
-    with COMn[i] do begin
-      { ACHTUNG: Hier muá bei Getmem die L„nge des Strings + 1 angegeben
-        werden. }
-      getmem(Minit,4);
-      Minit^:='ATZ';
-      getmem(Mexit,1);
-      Mexit^:='';
-      getmem(MDial,5);
-      MDial^:='ATDT';
+    with COMn[i] do
+    begin
+      Minit:='ATZ';
+      Mexit:='';
+      MDial:='ATDT';
       Warten:=5;
       ring:=true;
       postsperre:=true;
@@ -879,7 +874,7 @@ begin
   writeln(t,'ListScroller=',jnf(listscroller));
   writeln(t,'ListAutoScroll=',jnf(listautoscroll));
   writeln(t,'UserbrettBox=',jnf(UserBoxname));
-  writeln(t,'Organisation=',orga^);
+  writeln(t,'Organisation=',orga);
   writeln(t,'PufferLoeschen=',jnf(nDelPuffer));
   writeln(t,'Auswahlcursor=',jnf(auswahlcursor));
   writeln(t,'SoundFlash=',jnf(soundflash));
@@ -939,9 +934,9 @@ begin
   writeln(t,'Kleinschreibung=',jnf(smallnames));
   writeln(t,'InterruptLogin=',jnf(BreakLogin));
   writeln(t,'ZC-ISO=',jnf(zc_iso));
-  writeln(t,'Post=',postadresse^);
-  writeln(t,'Telefon=',telefonnr^);
-  writeln(t,'Homepage=',wwwHomepage^);
+  writeln(t,'Post=',postadresse);
+  writeln(t,'Telefon=',telefonnr);
+  writeln(t,'Homepage=',wwwHomepage);
   writeln(t,'AdrPMonly=',jnf(adrpmonly));
   for i:=1 to maxpmc do
     with pmcrypt[i] do
@@ -990,9 +985,9 @@ begin
       else
         writeln(t,'COM',i,'-Port=',hex(Cport,4));
       writeln(t,'COM',i,'-IRQ=',Cirq);
-      writeln(t,'COM',i,'-Init=',MInit^);
-      writeln(t,'COM',i,'-Exit=',MExit^);
-      writeln(t,'COM',i,'-Dial=',MDial^);
+      writeln(t,'COM',i,'-Init=',MInit);
+      writeln(t,'COM',i,'-Exit=',MExit);
+      writeln(t,'COM',i,'-Dial=',MDial);
       writeln(t,'COM',i,'-Warten=',Warten);
       writeln(t,'COM',i,'-IgnoreCD=',jnf(IgCD));
       writeln(t,'COM',i,'-IgnoreCTS=',jnf(IgCTS));
@@ -1124,8 +1119,6 @@ var t       : text;
 
   function getcommpar:boolean;
   var nr    : integer;
-      bs,es : string;
-      ds    : string;
       ports : string;
       comnr : string;
 
@@ -1145,15 +1138,12 @@ var t       : text;
       su:=copy(su,6,80);
       dec(p,5);
       ports:='';
-      bs:=MInit^;
-      es:=MExit^;
-      ds:=MDial^;
       getcommpar := getx(su,'fossil',fossil) or
                     gets(s,su,'Port',ports,4) or
                     getb(su,'IRQ',Cirq) or
-                    gets(s,su,'Init',bs,200) or
-                    gets(s,su,'Exit',es,200) or
-                    gets(s,su,'Dial',ds,100) or
+                    gets(s,su,'Init',MInit,200) or
+                    gets(s,su,'Exit',MExit,200) or
+                    gets(s,su,'Dial',MDial,100) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
                     getx(su,'IgnoreCTS',igcts) or
@@ -1164,22 +1154,7 @@ var t       : text;
                     getx(su,'Waehlsperre',postsperre) or
                     AddComnr;
       if ports<>'' then Cport:=hexval(ports);
-      if bs<>MInit^ then begin
-        freemem(MInit,length(MInit^)+1);
-        getmem(MInit,length(bs)+1);
-        MInit^:=bs;
-        end;
-      if es<>MExit^ then begin
-        freemem(MExit,length(MExit^)+1);
-        getmem(MExit,length(es)+1);
-        MExit^:=es;
-        end;
-      if ds<>MDial^ then begin
-        freemem(MDial,length(MDial^)+1);
-        getmem(MDial,length(ds)+1);
-        MDial^:=ds;
-        end;
-      end;
+    end;
   end;
 
   function getfkeys:boolean;
@@ -1464,10 +1439,10 @@ begin
           getx(su,  'AutoDiff',AutoDiff) or
           getx(su,  'UserbrettBox',UserBoxname) or
           gets(s,su,'AKAs',dummys,AKAlen) or
-          gets(s,su,'Organisation',orga^,OrgLen) or
-          gets(s,su,'Post',postadresse^,postadrlen) or
-          gets(s,su,'Telefon',telefonnr^,telelen) or
-          gets(s,su,'Homepage',wwwHomepage^,homepagelen) or
+          gets(s,su,'Organisation',orga,OrgLen) or
+          gets(s,su,'Post',postadresse,postadrlen) or
+          gets(s,su,'Telefon',telefonnr,telelen) or
+          gets(s,su,'Homepage',wwwHomepage,homepagelen) or
           getx(su,  'PufferLoeschen',nDelPuffer) or
           gets(s,su,'BrettEmpfaenger',brettalle,20) or
           getx(su,  'MausLimit',maxmaus) or
@@ -1715,6 +1690,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.74  2000/07/12 14:43:45  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.73  2000/07/11 21:39:21  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

@@ -142,7 +142,7 @@ begin
     if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
     if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
     if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
-    if processor<>nil then writeln(t,'process-by=',processor^);
+    if processor<>nil then writeln(t,'process-by=',processor);
     writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
     writeln(t,'Format=',format);
     case format of
@@ -197,10 +197,7 @@ begin
             if ss='updatefile'     then updatefile:=s else
             if ss='delupdate'      then delupdate:=(UpperCase(s)='J') else
             if ss='updatearchive'  then updatearc:=s else
-            if ss='process-by'     then begin
-              getmem(processor,length(s)+1);
-              processor^:=s;
-              end else
+            if ss='process-by'     then Processor :=s else
             if ss='dodiff'         then dodiff:=(UpperCase(s)='J') else
             if ss='format'         then format:=minmax(ival(s),0,6) else
             if ss='zone'           then zone:=minmax(ival(s),0,32767) else
@@ -302,17 +299,9 @@ end;
 
 procedure EditNLentry(var nlrec:NL_rec; var brk:boolean);
 var x,y,i    : byte;
-{$ifdef hasHugeString}
     filechar : string;
-    procstr  : string;
     lform    : string;
     adresse  : string;
-{$else}
-    filechar : string[200];
-    procstr  : string[40];
-    lform    : string[20];
-    adresse  : string[15];
-{$endif}
     fa       : fidoadr;
 begin
   dialog(ival(getres2(2127,0)),14,getres2(2127,2),x,y);
@@ -339,9 +328,7 @@ begin
     maddstring(3,7,getres2(2127,9),updatefile,12,12,filechar); { 'Update-Datei   ' }
     mset1func(setfnlenable);
     maddstring(3,8,getres2(2127,10),updatearc,12,12,filechar);  { 'Update-Archiv  ' }
-    if processor=nil then procstr:=''
-    else procstr:=processor^;
-    maddstring(3,10,getres2(2127,11),procstr,28,40,'');  { 'bearbeiten durch' }
+    maddstring(3,10,getres2(2127,11),processor,28,40,'');  { 'bearbeiten durch' }
       if updatefile='' then mdisable;
       fne_first:=fieldpos;
     maddbool(3,12,getres2(2127,12),dodiff);    { 'Update als Diff einbinden' }
@@ -349,14 +336,8 @@ begin
     maddbool(3,13,getres2(2127,13),delupdate); { 'Update nach Einbinden l”schen' }
       if updatefile='' then mdisable;
     readmask(brk);
-    if not brk then begin
-      if processor<>nil then
-        freemem(processor,length(processor^)+1);
-      if procstr='' then processor:=nil
-      else begin
-        getmem(processor,length(procstr)+1);
-        processor^:=procstr;
-        end;
+    if not brk then
+    begin
       for i:=1 to res2anz(2128) do
         if UpperCase(lform)=UpperCase(getres2(2128,i)) then
           format:=i;
@@ -687,7 +668,7 @@ begin
         end;
       ExpandFilePath(ufile);
       if exist(ufile) and passend(ufile) then begin
-        if assigned(processor) then ExecProcessor(processor^);
+        if assigned(processor) then ExecProcessor(processor);
         if DoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
           SaveNodeCFG;
@@ -748,6 +729,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/12 14:43:47  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.13  2000/07/05 13:55:02  hd
   - AnsiString
 

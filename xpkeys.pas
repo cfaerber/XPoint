@@ -229,7 +229,7 @@ begin
   while (i<=keymacros) and ((macroflags[i] and flags=0) or (t<>macrokey[i])) do
     inc(i);
   if i<=keymacros then begin
-    s:=macrodef[i]^;
+    s:=macrodef[i];
     if s[1]=#0 then t:=left(s,2)
     else t:=s[1];
     insert(mid(s,length(t)+1),forwardkeys,1);
@@ -239,6 +239,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/12 14:43:47  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.10  2000/07/11 21:39:22  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

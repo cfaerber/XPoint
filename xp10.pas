@@ -325,7 +325,7 @@ begin
         if m<>'' then begin
           inc(keymacros);
           getmem(macrodef[keymacros],length(m)+1);
-          macrodef[keymacros]^:=m;
+          macrodef[keymacros]:=m;
           macrokey[keymacros]:=tt;
           macroflags[keymacros]:=getflags(copy(s,16,8));
           end;
@@ -1414,8 +1414,6 @@ var brk      : boolean;
     var nlp : NL_ap;
     begin
       with nodelist^[a+p] do
-        if processor<>nil then
-          freemem(processor,length(processor^)+1);
       if a+p<anzahl then
         Move(nodelist^[a+p+1],nodelist^[a+p],(anzahl-a-p)*sizeof(NL_rec));
       dec(anzahl);
@@ -1770,7 +1768,7 @@ begin
     2 : begin
           releaseliste;
           for ii:=keymacros downto 1 do
-            freemem(macrodef[ii],length(macrodef[ii]^)+1);
+            freemem(macrodef[ii],length(macrodef[ii])+1);
           readkeydefs;
         end;
     3 : FreePhoneZones;
@@ -2035,6 +2033,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/12 14:43:44  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.16  2000/07/06 09:23:08  mk
   - _days_ in String umgewandelt
 

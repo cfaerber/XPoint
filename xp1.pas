@@ -41,7 +41,7 @@ const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
       menurestart: boolean = false;     { fÅr Config-MenÅ            }
 
 type mprec     = record
-                   mstr    : string;
+                   mstr    : string[30];
                    hpos    : byte;
                    hkey    : char;
                    enabled : boolean;
@@ -2032,6 +2032,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.62  2000/07/12 14:43:44  mk
+  - einige ^AnsiString in einen normalen String umgewandelt
+  - AnsiString-Fixes fuer die Datenbank
+
   Revision 1.61  2000/07/10 14:28:12  hd
   neu: AllocHeaderMem/FreeHEaderMem
 
