@@ -90,7 +90,7 @@ begin
 { Init the units }
   InitInOutUnit;                { InOut }
   InitKeysUnit;                 { Keys }
-  InitMouseUnit;                { Mouse }
+//InitMouseUnit;                { Mouse }
   InitResourceUnit;             { Resource }
   InitWinXPUnit;                { WinXP }
   InitMaskeUnit;                { Maske }
@@ -191,6 +191,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.2  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -281,7 +281,8 @@ uses
 {$ifndef NCRT }
   winxp,
 {$endif}
-  maus2;
+  maus2,
+  debug;
 
 const  maxsave     = 50;  { max. fr savecursor }
 
@@ -597,12 +598,19 @@ begin
     if autoup and autoupenable then z:=keyup
     else if autodown and autodownenable then z:=keydown
     else z:=#0#0;
+{$IFDEF Win32}
+    autoup:=false;
+    autodown:=false;
+{$ENDIF}
     autolast:=ticker;
     exit;
     end;
+
   repeat
     cursor(cur);
     initscs;
+
+{$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
     if UseMulti2 then begin
       repeat
         st1:=kbstat;
@@ -664,21 +672,18 @@ begin
         end;
       end
     else
+{$ENDIF Win32}
+    begin
       key_pressed:=true;
-    c:=readkey;
-    if c=#31 then
-      z:='!!'   { s. MAUS2.mint }
-    else begin
-      SetLength(z,1);
-      z[1]:=c;
-      if c=#0 then begin
-        c:=readkey;
-        SetLength(z,2);
-        z[2]:=c;
-      end;
+
     end;
+
+    z := ReadKey;
+    if z=#0 then z:=z+ReadKey;
+
     cursor(curoff);
     lastkey:=z;
+
     if hotkeys then
       if (z>=keyf1)  and (z<=keyf10)  then dofunc(0,ord(z[2])-58) else
       if (z>=keysf1) and (z<=keyaf10) then
@@ -689,6 +694,9 @@ begin
             and (not altproc[i].aktiv) then
               doaltfunc(i);
   until z<>'!!';
+
+  Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d','#%d'),
+    [Integer(ord(z[1])),Integer(ord(z[2]))]), DLNone);
 end;
 
 Procedure testbrk(var brk:boolean);
@@ -1495,7 +1503,6 @@ end;
 
 procedure mausiniti;
 begin
-  mausunit_init;
   if maus and iomaus then begin
     setmaus(320,96);
     mx:=320;
@@ -1657,6 +1664,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.76  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

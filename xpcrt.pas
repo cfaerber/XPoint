@@ -37,6 +37,9 @@ function readkey: char;
 var
   ShiftKeyState: boolean;
   CtrlKeyState: boolean;
+  {$IFNDEF FPC }
+  StdInputHandle: THandle;
+  {$ENDIF }
 
 implementation
 
@@ -49,7 +52,7 @@ implementation
 {$ENDIF}
 
 uses
-  Debug, Windows, SysUtils;
+  Debug, Windows, SysUtils, Mouse;
 
 //function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
 //function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
@@ -82,11 +85,6 @@ var
   SpecialKey : boolean;
   DoingNumChars: Boolean;
   DoingNumCode: Byte;
-  {$IFNDEF FPC }
-  StdInputHandle: THandle;
-  {$ENDIF }
-
-
 
 Function RemapScanCode (ScanCode: byte; CtrlKeyState: byte; keycode:longint): byte;
   { Several remappings of scancodes are necessary to comply with what
@@ -194,6 +192,10 @@ begin
          {$ELSE}
           ReadConsoleInputA(StdInputHandle,buf,1,nread);
          {$ENDIF}
+          if buf.EventType = 2 {MOUSE_EVENT} then
+          begin
+            Result := UpdateMouseStatus(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}MouseEvent,ScanCode,SpecialKey);
+          end else
           if buf.EventType = KEY_EVENT then
             if buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.bKeyDown then
               begin
@@ -265,13 +267,15 @@ begin
     WaitForMultipleObjects(1,{$IFNDEF FPC}@{$ENDIF}StdInputHandle,true,INFINITE);
 
   if SpecialKey then begin
-    ReadKey := #0;
+    Result := #0;
     SpecialKey := FALSE;
   end
   else begin
-    ReadKey := ScanCode;
+    Result := ScanCode;
     ScanCode := #0;
   end;
+
+  Debug.DebugLog('xpcrt', Format('ReadKey: %d', [Integer(Result)]), DLTrace);
 end;
 
 initialization
@@ -287,6 +291,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.10  2001/09/14 11:45:22  cl
   - FPC 1.0.0..1.0.4 and VirtualPascal compile fixes
 

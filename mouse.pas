@@ -25,7 +25,7 @@ unit mouse;
 interface
 
 uses
-  xpglobal;
+  xpglobal {$IFDEF Win32},windows{$ENDIF};
 
 const  mausLinks  = 0;     { linke Taste    }
        mausRechts = 1;     { rechte Taste   }
@@ -43,14 +43,6 @@ const  mausLinks  = 0;     { linke Taste    }
        intMid1    = 32;    { .. Mitte gedrÅckt           }
        intMid0    = 64;    { .. Mitte losgelassen        }
 
-{$IFDEF VP }
-  {$IFDEF Win32 }
-       MouseButtonbkup: byte = 0;
-       DoExitMouseThread: Boolean = false;
-var    MouseThreadID: LongInt;
-  {$ENDIF }
-{$ENDIF }
-
 type   mausstat   = record
                       tasten : integer;
                       x,y    : integer;
@@ -60,8 +52,6 @@ type   mausstat   = record
 
 var    maus,mausda : boolean;
        mausswapped : boolean;            { Tasten vertauscht }
-
-procedure mausunit_init;
 
 procedure mausinit;                      { Maustreiber zurÅcksetzen }
 procedure mausan;                        { Mauscursor einschalten   }
@@ -73,229 +63,140 @@ function mausx:word;      { Maus-X-Koordinate holen }
 function mausy:word;      { Maus-Y-Koordinate holen }
 function maust:word;      { Maustastenzustand holen }
 
-{$IFDEF VP }
-  {$IFDEF WIn32 }
-procedure InitMouseThread;
-procedure DoneMouseThread;
-procedure UpdateMouseStatus;
-  {$ENDIF }
-{$ENDIF }
-
-procedure InitMouseUnit;
+{$IFDEF Win32}
+function UpdateMouseStatus(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
+{$ENDIF}
 
 implementation
 
-{$IFDEF VP }
-uses
-  vpsyslow, maus2;
-{$ENDIF }
+{$IFDEF Win32}
+uses xpcrt,maus2;
+var LastEvent: MOUSE_EVENT_RECORD;
+{$ENDIF}
 
 const
  intset  : boolean = false;
 
 procedure mausinit;
 begin
-{$IFDEF VP}
-  {$IFDEF Win32 }
-    mausda := false;
-  {$ELSE }
-    mausda := false;
-   {$ENDIF }
-{$ELSE}
   mausda := false;
-{$ENDIF }
 end;
 
 procedure mausan;
+{$IFDEF Win32}
+var stat: Windows.DWORD;
+{$ENDIF}
 begin
-  {$IFDEF VP }
-    {$IFDEF Win32 }
-      SysTVShowMouse;
-    {$ENDIF }
-  {$ENDIF }
+{$IFDEF Win32}
+  if Windows.GetConsoleMode(StdInputHandle,stat) then
+    if (stat and ENABLE_MOUSE_INPUT)=0 then
+      Windows.SetConsoleMode(StdInputHandle,stat or ENABLE_MOUSE_INPUT);
+{$ENDIF}
   mausda := false;
 end;
 
 procedure mausaus;
+{$IFDEF Win32}
+var stat: Windows.DWORD;
+{$ENDIF}
 begin
-  {$IFDEF VP }
-    {$IFDEF Win32 }
-      SysTVHideMouse;
-    {$ENDIF }
-  {$ENDIF }
+{$IFDEF Win32}
+  if Windows.GetConsoleMode(StdInputHandle,stat) then
+    if (stat and ENABLE_MOUSE_INPUT)<>0 then
+      Windows.SetConsoleMode(StdInputHandle,stat and (not DWORD(ENABLE_MOUSE_INPUT)));
+{$ENDIF}
   mausda := false;
 end;
 
 procedure getmaus(var stat:mausstat);
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
 begin
-  if maus then
+{$IFDEF Win32}
+  if mausda then
   begin
-    {$IFDEF VP }
-      SysTVGetMouseEvent(Event);
-      with Stat do
-      begin
-        x := event.smepos.x * 8;
-        y := event.smepos.y * 8;
-        tasten := event.smebuttons;
-      end;
-    {$ENDIF }
+    stat.x := LastEvent.dwMousePosition.X * 8;
+    stat.Y := LastEvent.dwMousePosition.Y * 8;
+    stat.tasten := LastEvent.dwButtonState;
   end else
-  with stat do
+{$ENDIF}
   begin
-    x := 0;
-    y := 0;
-    tasten := 0;
+    stat.x := 0;
+    stat.y := 0;
+    stat.tasten := 0;
   end;
 end;
 
 function mausx:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
 begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     mausx := event.smepos.x * 8;
-  {$ELSE }
-    Mausx := 0;
-  {$ENDIF }
+{$IFDEF Win32}
+  if Mausda then
+    MausX := LastEvent.dwMousePosition.X * 8
+  else
+{$ELSE}
+  MausX := 0;
+{$ENDIF}
 end;
 
 function mausy:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
 begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     mausy := event.smepos.y * 8;
-  {$ELSE }
-    Mausy := 0;
-  {$ENDIF }
+{$IFDEF Win32}
+  if Mausda then
+    MausY := LastEvent.dwMousePosition.Y * 8
+  else
+{$ELSE}
+  MausY := 0;
+{$ENDIF}
 end;
 
 function maust:word;
-{$IFDEF VP }
-var
-  event: TSysMouseEvent;
-{$ENDIF }
 begin
-  {$IFDEF VP }
-     SysTVGetMouseEvent(Event);
-     maust := event.smebuttons;
-  {$ELSE }
-    Maust := 0;
-  {$ENDIF }
+{$IFDEF Win32}
+  if Mausda then
+    Result := LastEvent.dwButtonState
+  else
+{$ELSE }
+  Result := 0;
+{$ENDIF }
 end;
 
 procedure setmaus(x,y: integer);
-begin
-end;
-
-procedure mausunit_init;
-const
-  minit : boolean = false;
-{$IFDEF VP }
-var
-  x, y: Integer;
+{$IFDEF Win32}
+var c:COORD;
 {$ENDIF }
 begin
-  if not minit then
-  begin
-    {$IFDEF VP }
-      if SysTVDetectMouse <> 0 then
-      begin
-        SysTVInitMouse(x, y);
-        Maus := true;
-      end else
-        Maus := false;
-    {$ENDIF }
+{$IFDEF Win32}
+  c.x:=x;
+  c.y:=y;
+  Windows.SetConsoleCursorPosition(StdInputHandle,c);
+{$ENDIF }
+end;
+
+{$IFDEF Win32}
+function UpdateMouseStatus(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
+begin
+  Move(Event,LastEvent,Sizeof(LastEvent));
+  MausDa:=True;
+
+  if maus_tasten then
+    Result := maus_set_keys(Event,Scancode,SpecialKey)
+  else
+    Result := false;
+end;
+{$ENDIF}
+
+initialization
+{$IFDEF Win32}
+    maus:=true;
+{$ELSE}
+    maus:=false;
+{$ENDIF}
     mausda:=false;
     mausswapped:=false;
-    minit:=true;
-  end;
-end;
-
-{$IFDEF VP }
- {$IFDEF Win32 }
-procedure UpdateMouseStatus;   { ML: emulate a Mouse-Interrupt-Handler }
-var
-  MouseEvent : TSysMouseEvent;
-  intsource  : word;
-
-begin
- if SysTVGetMouseEvent(MouseEvent) then
- with MouseEvent do
- begin
-   intsource := intmove;
-   if ((smebuttons and mmLinks) <> 0) and ((mousebuttonbkup and mmLinks) = 0) then
-     inc(intsource, intLeft1);   {first Mousekey now pressed}
-   if ((smebuttons and mmRechts) <> 0) and ((mousebuttonbkup and mmRechts) = 0) then
-     inc(intsource, intRight1);   {second Mousekey now pressed}
-   if ((smebuttons and mmLinks) = 0) and ((mousebuttonbkup and mmLinks) <> 0) then
-     inc(intsource, intLeft0);   {first Mousekey now released}
-   if ((smebuttons and mmRechts) = 0) and ((mousebuttonbkup and mmRechts) <> 0) then
-     inc(intsource, intRight0);   {second Mousekey now released}
-   mint(intsource,smebuttons,smePos.x * 8,smePos.y * 8,0,0);
- end;
-end;
-
-procedure ThreadFunc;
-begin
-  while not DoExitMouseThread do
-    UpdateMouseStatus;
-  DoExitMouseThread := false;
-end;
-
-procedure InitMouseThread;     {ML: MouseInt-Emulation}
-begin
-  DoExitMouseThread := false;
-  if SysCtrlCreateThread(nil,     { no special security (win32) }
-                      4096,    { StackSize                   }
-                      @ThreadFunc,
-                      nil,     { no parameters               }
-                      0,       { start immediately           }
-                      MouseThreadID) <> 0 then
-   Maus := false;
-end;
-
-procedure DoneMouseThread;
-begin
-  DoExitMouseThread := true;
-end;
-  {$ENDIF }
-{$ENDIF }
-
-var
-  SavedExitProc: pointer;
-
-procedure ExitMouseUnit;
-begin
-  ExitProc:= SavedExitProc;
-  if intset then
-  begin
-  {$IFDEF VP }
-    SysTVDoneMouse(true);
-  {$ENDIF }
-  end;
-  if mausda then mausaus;
-end;
-
-procedure InitMouseUnit;
-begin
-  maus:=false;
-  SavedExitProc:= ExitProc;
-  ExitProc:= @ExitMouseUnit;
-end;
 
 {
   $Log$
+  Revision 1.26  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.25  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

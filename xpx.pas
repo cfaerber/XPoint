@@ -164,8 +164,6 @@ begin
   if (Shellpath+DirSepa<>progpath) then
     SetCurrentDir(progpath);
 
-  mausunit_init;
-
   logo;
 
   initdirs;
@@ -181,6 +179,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.46  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

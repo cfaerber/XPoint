@@ -617,6 +617,12 @@ var
       Lines[i] := DecodeRot13String(Lines[i]);
   end;
 
+  procedure Maus_bearbeiten;
+  begin
+    if t=mausunright then
+      t:=keyesc;
+  end;
+
   (*  procedure Maus_bearbeiten;
     const plm : boolean = true;
     var xx,yy,i : integer;
@@ -774,8 +780,8 @@ begin
     display;
     showstat;
     if Assigned(FOnShowLines) then FOnShowLines(GetSelection);
-    (*      mauszuo:=(pl<>nil) and (pl^.prev<>nil);
-          mauszuu:=(pl<>nil) and (pl^.next<>nil); *)
+    mauszuo:=false; // (pl<>nil) and (pl^.prev<>nil);
+    mauszuu:=false; // (pl<>nil) and (pl^.next<>nil);
     mauszul := false; mauszur := false;
     if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
     if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
@@ -790,8 +796,8 @@ begin
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
-    (*      if (t>=mausfirstkey) and (t<=mauslastkey) then
-             Maus_bearbeiten; *)
+    if (t>=mausfirstkey) and (t<=mauslastkey) then
+             Maus_bearbeiten;
     if Assigned(FonKeyPressed) then FOnKeyPressed(Self, t);
 
     if Lines.Count > 0 then
@@ -1066,6 +1072,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.57  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.56  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

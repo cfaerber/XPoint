@@ -33,6 +33,9 @@ uses
 {$ELSE }
 {$IFNDEF Delphi }  crt,{$ENDIF }
 {$endif}
+{$IFDEF Win32}
+  Windows,
+{$ENDIF}
   typeform,mouse,keys,xpglobal,debug;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
@@ -43,15 +46,19 @@ const mausleft    = #0#240;       { links gedrÅckt  }
       mauslmoved  = #0#245;       { Bewegung mit linker Taste }
       mausrmoved  = #0#246;       { Bewegung mit rechter Taste }
       mausldouble = #0#247;       { Doppelklick links }
+      mauswheelup = #0#248;       { Mausrad hoch }
+      mauswheeldn = #0#249;       { Mausrad runter }
 
       mausdbl_fast = 4;           { Doppelklick-Geschwindigkeit }
       mausdbl_norm = 7;
       mausdbl_slow = 11;
 
       mausfirstkey = mausleft;
-      mauslastkey  = mausldouble;
+      mauslastkey  = mauswheeldn;
 
       maus_cursor  : boolean = false;
+      maus_tasten  : boolean = false;
+      maus_wheel   : boolean = false; { false: Cursortasten, true: Mauswheelup/dn }
 
 procedure maus_tasten_an;
 procedure maus_tasten_aus;
@@ -72,35 +79,158 @@ function  _mausy:integer;
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
                              var _unit:longint);
+{$IFDEF Win32}
+function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
+{$ELSE}
 procedure mint(intsource,tasten,x,y,mx,my:word);
+{$ENDIF}
 
 { -------------------------------------------------------------------- }
 
 implementation
 
 uses
-{$IFDEF VP}
-     vpSysLow,
-{$ENDIF}
 {$ifndef NCRT}
      winxp,
 {$endif}
-     inout;
+     inout,
+     xp0,
+     SysUtils;
 
 const  maxinside = 25;
 
        koo_da : boolean = false;   { Koordinaten abholbereit }
-       tan    : boolean = false;
        lx     : byte    = 255;     { letzte Maus-Textcursor-Positionen }
        ly     : byte    = 255;
        dbcl   : byte    = mausdbl_norm;
        istack : byte    = 0;
+{$IFDEF Win32}
+       lmb    : DWORD   = 0;
+{$ENDIF Win32}
 
 var    kx,ky  : integer;           { Koordinaten der letzten Aktion }
        inside : array[1..maxinside,0..3] of byte;
        insen  : array[1..maxinside,0..2] of boolean;
 
+function has_moved(x,y:byte): boolean;
+begin
+  result:=not(lx in [x,255]) and (ly in [y,255]);
+  lx:=x; ly:=y;
+end;
 
+function auto_move: boolean;
+var nn:boolean;
+    xx,yy:word;
+begin
+  yy:=_mausy;
+  
+  nn:=autoup or autodown;
+  inout.autoup:=(yy<inside[istack,2]);
+  inout.autodown:=(yy>inside[istack,3]);
+
+  result := not (not (autodown or autoup) or not nn);
+end;
+
+{$IFDEF Win32}
+function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
+var keyout: boolean;
+    i: integer;
+    moved: boolean;
+    xx,yy: word;
+const
+    was_inside:boolean=false;
+
+  procedure put(NewKey:taste);
+    procedure make_room;
+    begin
+      if length(forwardkeys)>20 then
+        if forwardkeys[length(forwardkeys)-1]=#0 then
+          SetLength(forwardkeys, Length(forwardkeys)-2)
+        else
+          DeleteLastChar(forwardkeys);
+    end;
+  begin
+    if KeyOut then
+    begin
+      make_room;
+      forwardkeys := forwardkeys + NewKey;
+    end else
+    begin
+      ScanCode:=NewKey[2];
+      KeyOut:=true;
+      SpecialKey:=true;
+    end;
+  end;
+
+begin
+  keyout:=false;
+
+  with Event do
+  begin
+    if dwEventFlags=0 then                              // single click
+    begin
+      Debug.DebugLog('maus2', Format('mouse button (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      if ((dwButtonState and 2)<>0) and ((lmb and 2)=0) then put(mausright) else
+      if ((dwButtonState and 2)=0) and ((lmb and 2)<>0) then put(mausunright);
+
+      if ((dwButtonState and 1)<>0) and ((lmb and 1)=0) then begin
+        put(mausleft);
+        if (istack>0) then
+        begin
+          maus_gettext(xx,yy);
+          was_inside:=(xx>=inside[istack,0]) and (xx<=inside[istack,1]) and
+                      (yy>=inside[istack,2]) and (yy<=inside[istack,3]);
+        end else
+          was_inside:=false;
+      end else
+      if ((dwButtonState and 1)=0) and ((lmb and 1)<>0) then
+      begin
+        put(mausunleft);
+        was_inside:=false; autoup:=false; autodown:=false;
+      end;
+
+      lmb:=dwButtonState;
+    end else
+    if (dwEventFlags and DOUBLE_CLICK)<>0 then          // double click
+    begin
+      Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      if ((dwButtonState and 1)<>0) and ((lmb and 1)=0) then put(mausldouble);
+      lmb:=dwButtonState;
+    end else
+    if (dwEventFlags and MOUSE_MOVED)<>0 then // mouse moved
+    begin
+      Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      if has_moved(mausx,mausy) then
+      else
+        if ((dwButtonState and 1)<>0) then
+        begin
+          if (istack>0) and was_inside then
+            auto_move
+          else
+            put(mauslmoved);
+        end else
+        if ((dwButtonState and 2)<>0) then
+          put(mausrmoved)
+        else
+          put(mausmoved);
+    end else
+    if (dwEventFlags and 4 {MOUSE_WHEELED} )<>0 then         // mouse wheel
+    begin
+      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+
+      if Integer16(dwButtonState shr 16)>0 then
+        for i:=0 to Min(Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
+          put(mauswheelup)
+      else
+        for i:=0 to Min(-Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
+          put(mauswheeldn);
+    end else
+      Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(dwButtonState,8)]), DLNone);
+  end;
+  result:=keyout;
+end;
+
+{$ELSE}
 procedure mint(intsource,tasten,x,y,mx,my:word);
 
 const tick       : longint = 0;
@@ -184,48 +314,32 @@ begin
         end;
       end;
 end;
-
+{$ENDIF}
 
 procedure maus_tasten_an;
 begin
-{$IFDEF VP }
-  {$IFDEF Win32 }
-    InitMouseThread;
-  {$ENDIF }
-{$ENDIF }
-  tan:=true;
+  maus_tasten:=true;
   lx:=255; ly:=255;
 end;
 
-
 procedure maus_tasten_aus;
 begin
-{$IFDEF VP }
-  {$IFDEF Win32 }
-    DoneMouseThread;
-  {$ENDIF }
-{$ENDIF }
-  tan:=false;
+  maus_tasten:=false;
 end;
-
 
 procedure maus_setdblspeed(b:byte);    { 0 -> abschalten }
 begin
   dbcl:=b;
 end;
 
-
 procedure maus_gettext(var x,y:integer);
 begin
-  if koo_da then
-  begin
-    x:=kx div 8+1;
-    y:=ky div 8+1;
-  end else
-  begin
-    x:=mausx div 8+1;
-    y:=mausy div 8+1;
-  end;
+{$IFDEF Win32}
+  x:=mausx div 8+1;
+  y:=mausy div 8+1;
+{$ELSE}
+  x:=255;y:=255;
+{$ENDIF}
 end;
 
 procedure mon;
@@ -249,15 +363,6 @@ begin
     Wrt(x, y, txt);
 end;
 
-procedure interr(const txt:string);
-begin
-  moff;
-  writeln('<MAUS> ',txt);
-  Debug.DebugLog('maus2','Internal error: '+txt,DLError);
-  halt(1);
-end;
-
-
 { Wenn die Maus aus dem Fenster (l,r,o,u) "herausgezogen" wird, }
 { erzeugt INOUT.Get automatisch KeyUp/KeyDown-TastendrÅcke      }
 
@@ -272,7 +377,7 @@ end;
 procedure maus_pushinside(l,r,o,u:byte);
 begin
   if istack=maxinside then
-    interr('Stack-öberlauf')
+    raise Exception.Create('Mouse stack overflow')
   else begin
     inc(istack);
     maus_setinside(l,r,o,u);
@@ -284,13 +389,13 @@ end;
 
 procedure maus_noinside;
 begin
-  maus_pushinside(80,0,50,0);
+  maus_pushinside(screenwidth,0,screenlines,0);
 end;
 
 procedure maus_popinside;
 begin
   if istack=0 then
-    interr('Stack-Unterlauf')
+    raise Exception.Create('Mouse stack overflow')
   else begin
     autoupenable:=insen[istack,0];
     autodownenable:=insen[istack,1];
@@ -298,7 +403,6 @@ begin
     dec(istack);
     end;
 end;
-
 
 function _mausx:integer;
 begin
@@ -343,6 +447,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
   Revision 1.30  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
