@@ -138,6 +138,7 @@ var
   addhd: TStringList;
   RawNews: Boolean;
   eol: Integer;
+  TempS: ShortString;
 
   envemp: string;                       { Envelope-Empf„nger }
 
@@ -1317,10 +1318,10 @@ begin
       mov   esi,offset buffer
       add   esi,bufpos
       mov   edx,18                { 18 byte-Tripel konvertieren }
+      mov   ecx, 0
       mov   cl,2
       mov   ebx,offset b64chr
-      mov   edi,offset s
-      inc   edi                   { s[1] }
+      mov   edi,offset TempS[1]
 @@1:  lodsb                       { Byte 1 }
       mov   ah,al
       lodsb                       { Byte 2 }
@@ -1349,7 +1350,7 @@ begin
       stosb                      { Bit 5..0/3 }
       dec   edx
       jnz   @@1
-      mov   byte ptr s[0],72
+      mov   byte ptr TempS[0],72
       add   bufpos,54
     end
   else
@@ -1357,19 +1358,19 @@ begin
     p := 0;
     repeat
       b1 := getbyte; b2 := getbyte; b3 := getbyte;
-      s[p + 1] := b64chr[b1 shr 2];
-      s[p + 2] := b64chr[(b1 and 3) shl 4 + b2 shr 4];
-      s[p + 3] := b64chr[(b2 and 15) shl 2 + b3 shr 6];
-      s[p + 4] := b64chr[b3 and 63];
+      Temps[p + 1] := b64chr[b1 shr 2];
+      Temps[p + 2] := b64chr[(b1 and 3) shl 4 + b2 shr 4];
+      Temps[p + 3] := b64chr[(b2 and 15) shl 2 + b3 shr 6];
+      Temps[p + 4] := b64chr[b3 and 63];
       inc(p, 4); dec(bytesleft, 3);
       if bytesleft < 0 then
       begin
-        s[p] := '=';
-        if bytesleft < -1 then s[p - 1] := '=';
+        Temps[p] := '=';
+        if bytesleft < -1 then Temps[p - 1] := '=';
       end;
     until (p > 70) or (bytesleft <= 0);
-    SetLength(s, p);
   end;
+  s := TempS;
 end;
 
 procedure ReadRFCheader(mail: boolean; s0: string);
@@ -2012,7 +2013,9 @@ begin
             if zz = 'priority' then
             GetPriority
           else
-            if zz <> 'lines' then
+            if zz = 'lines' then
+            Lines := IVal(s0)
+          else
             Uline.Add('U-' + s1);
         end;                          { case }
       end;
@@ -2072,107 +2075,119 @@ var
   fp, bp: longint;
   c: char;
   binaer: boolean;
+  TempLines: Integer;
 begin
   write('mail: ', fn);
   inc(mails);
   OpenFile(fn);
-  ClearHeader;
-  repeat                                { Envelope einlesen }
-    ReadString;
-    p := cpos(' ', s);
-    if p = 0 then p := cpos(#9, s);
-    if p = 0 then p := length(s) + 1;
-    c := s[1];
-    for i := 1 to p - 1 do
-      s[i] := LoCase(s[i]);
-    if s[p - 1] <> ':' then
-    begin
-      if (left(s, p - 1) = 'from') or (left(s, p - 1) = '>from') then
-      begin
-        s := trim(mid(s, p));           { Envelope-Absender }
-        p := cpos(' ', s);
-        if p > 0 then
-        begin
-          hd.wab := left(s, p - 1);
-          delete(s, 1, p);
-          p := cpos('!', hd.wab);
-          if cpos('!', hd.wab) > 0 then
-          begin
-            p2 := length(hd.wab);
-            while hd.wab[p2] <> '!' do
-              dec(p2);                  { rechtes "!" suchen }
-            p := p2 - 1;
-            while (p > 0) and (hd.wab[p] <> '!') do
-              dec(p);                   { n„chstes "!" suchen }
-            p3 := pos('@', mid(hd.wab, p2 + 1));
-            if p3 > 0 then
-              if stricmp(copy(hd.wab, p2 + 1, p3 - 1) + '@' + copy(hd.wab, p +
-                1, p2 - p - 1),
-                hd.absender) then
-                hd.wab := ''
-              else
-                hd.wab := copy(hd.wab, p2 + 1, p3 - 1) + '%' + copy(hd.wab, p +
-                  1, p2 - p - 1) +
-                  mid(hd.wab, p2 + p3)
-            else
-              hd.wab := mid(hd.wab, p2 + 1) + '@' + copy(hd.wab, p + 1, p2 - p -
-                1);
-          end
-          else
-            if cpos('@', hd.wab) = 0 then
-          begin
-            p := pos('remote from', s);
-            if p > 0 then
-              hd.wab := hd.wab + '@' + mid(s, p + 12)
-            else
-              hd.wab := '';             { war wohl nix }
-          end;
-        end;
-      end;
-      p := 0;
-    end;
-  until ((p > 0) and (s[p - 1] = ':')) or (bufpos = bufanz);
-  if bufpos < bufanz then
-  begin
-    writeln(' from ', hd.wab);
-    s[1] := c;
-    ReadRFCheader(true, s);
-    binaer := (hd.typ = 'B');
-
-    if getrecenvemp and (mailuser = '') and (envemp <> '') then
-    begin
-      if cpos('<', envemp) = 1 then delete(envemp, 1, 1);
-      if (cpos('>', envemp) = length(envemp))
-        and (length(envemp) > 0) then dellast(envemp);
-      mailuser := SetMailuser(envemp);
-    end;
-
-    if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
-    begin
-      // Envelope-Empf„nger einsetzen
-      hd.xoem.Assign(hd.xempf);
-      hd.xempf.Clear;
-      hd.xempf.Add(mailuser);
-    end;
-    fp := fpos; bp := bufpos;
-    hd.groesse := 0;
-    while bufpos < bufanz do
-    begin
-      ReadString;
-      UnQuotePrintable;
-      inc(hd.groesse, length(s));
-    end;
-    seek(f1, fp); ReadBuf; bufpos := bp;
-    WriteHeader;
-  end
-  else
-    writeln;
   while bufpos < bufanz do
   begin
-    ReadString;
-    UnQuotePrintable;
-    if not binaer then ISO2IBM(s);
-    wrfs(s);
+    ClearHeader;
+    repeat                                { Envelope einlesen }
+      p := 0;
+      ReadString;
+      if s <> '' then
+      begin
+        p := cpos(' ', s);
+        if p = 0 then p := cpos(#9, s);
+        if p = 0 then p := length(s) + 1;
+        c := s[1];
+        for i := 1 to p - 1 do
+          s[i] := LoCase(s[i]);
+        if s[p - 1] <> ':' then
+        begin
+          if (left(s, p - 1) = 'from') or (left(s, p - 1) = '>from') then
+          begin
+            s := trim(mid(s, p));           { Envelope-Absender }
+            p := cpos(' ', s);
+            if p > 0 then
+            begin
+              hd.wab := left(s, p - 1);
+              delete(s, 1, p);
+              p := cpos('!', hd.wab);
+              if cpos('!', hd.wab) > 0 then
+              begin
+                p2 := length(hd.wab);
+                while hd.wab[p2] <> '!' do
+                  dec(p2);                  { rechtes "!" suchen }
+                p := p2 - 1;
+                while (p > 0) and (hd.wab[p] <> '!') do
+                  dec(p);                   { n„chstes "!" suchen }
+                p3 := pos('@', mid(hd.wab, p2 + 1));
+                if p3 > 0 then
+                  if stricmp(copy(hd.wab, p2 + 1, p3 - 1) + '@' + copy(hd.wab, p +
+                    1, p2 - p - 1),
+                    hd.absender) then
+                    hd.wab := ''
+                  else
+                    hd.wab := copy(hd.wab, p2 + 1, p3 - 1) + '%' + copy(hd.wab, p +
+                      1, p2 - p - 1) +
+                      mid(hd.wab, p2 + p3)
+                else
+                  hd.wab := mid(hd.wab, p2 + 1) + '@' + copy(hd.wab, p + 1, p2 - p -
+                    1);
+              end
+              else
+                if cpos('@', hd.wab) = 0 then
+              begin
+                p := pos('remote from', s);
+                if p > 0 then
+                  hd.wab := hd.wab + '@' + mid(s, p + 12)
+                else
+                  hd.wab := '';             { war wohl nix }
+              end;
+            end;
+          end;
+          p := 0;
+        end;
+      end;
+    until ((p > 0) and (s[p - 1] = ':')) or (bufpos = bufanz);
+    if bufpos < bufanz then
+    begin
+      writeln(' from ', hd.wab);
+      s[1] := c;
+      ReadRFCheader(true, s);
+      binaer := (hd.typ = 'B');
+
+      if getrecenvemp and (mailuser = '') and (envemp <> '') then
+      begin
+        if cpos('<', envemp) = 1 then delete(envemp, 1, 1);
+        if (cpos('>', envemp) = length(envemp))
+          and (length(envemp) > 0) then dellast(envemp);
+        mailuser := SetMailuser(envemp);
+      end;
+
+      if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
+      begin
+        // Envelope-Empf„nger einsetzen
+        hd.xoem.Assign(hd.xempf);
+        hd.xempf.Clear;
+        hd.xempf.Add(mailuser);
+      end;
+      fp := fpos; bp := bufpos;
+      hd.groesse := 0;
+      if hd.Lines = 0 then
+        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
+      TempLines := hd.Lines;
+      while (bufpos < bufanz) and (TempLines > 0) do
+      begin
+        ReadString; Dec(TempLines);
+        UnQuotePrintable;
+        inc(hd.groesse, length(s));
+      end;
+      seek(f1, fp); ReadBuf; bufpos := bp;
+      WriteHeader;
+    end
+    else
+      writeln;
+    TempLines := hd.Lines;
+    while (bufpos < bufanz) and (TempLines > 0) do
+    begin
+      ReadString; Dec(TempLines);
+      UnQuotePrintable;
+      if not binaer then ISO2IBM(s);
+      wrfs(s);
+    end;
   end;
   close(f1);
   setfattr(f1, 0);                      { Archivbit abschalten }
@@ -2575,7 +2590,6 @@ var
       FileType := 4
     else
       if left(LowerCase(s), 6) = '>from ' then
-
       FileType := 4
     else
       FileType := 0;
@@ -3353,7 +3367,7 @@ begin
         end;
       if SMTP then copycount := hd.XEmpf.Count;
       inc(copycount);
-    until copycount > hd.XEmpf.Count;
+    until copycount > hd.empfanz;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
   if n > 0 then writeln;
@@ -3398,6 +3412,10 @@ end.
 
 {
   $Log$
+  Revision 1.50  2000/07/23 14:40:16  mk
+  - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
+  - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen
+
   Revision 1.49  2000/07/23 10:38:49  mk
   - Kompatiblilitaet mit FPC erhoeht (AddObject)
 

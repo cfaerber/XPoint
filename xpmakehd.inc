@@ -16,7 +16,7 @@
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
+procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
                      var size:longint; var hd:header; var ok:boolean;
                      PM2AMconv:boolean);
 var i,res : integer;
@@ -90,13 +90,15 @@ var i,res : integer;
   begin
     if readempflist then begin
       LRead(s);
-      if (cpos('@',s)>0) or (s[1]<>'/') then begin
+      if (cpos('@',s)>0) or (s[1]<>'/') then
+      begin
         p:=pos(' (',s); if p>0 then SetLength(s, p-1);
-        end;
-      if hd.empfanz+1=empfnr then hd.empfaenger:=s
-      else Empflist.Add(s);
-      end
-    else
+      end;
+      if hd.empfanz+1=empfnr then
+        hd.empfaenger:=s
+      else
+        Empflist.Add(s);
+    end else
       if (empfnr=0) or (hd.empfanz<empfnr) then
       begin
         LRead(hd.empfaenger);
@@ -106,8 +108,7 @@ var i,res : integer;
           if p>0 then SetLength(hd.empfaenger, p-1);
         end;
       end;
-    if hd.empfanz<127 then
-      inc(hd.empfanz);
+    inc(hd.empfanz);
   end;
 
   {$ifdef allrefs}
@@ -520,8 +521,6 @@ begin
     else begin
       getline(empfaenger);
       empfaenger:= TrimRight(empfaenger);
-      { while empfaenger[length(empfaenger)]=' ' do
-        dec(byte(empfaenger[0])); }
       empfanz:=1;
       getline(betreff);
       while (betreff<>'') and (betreff[1]<=' ') do
@@ -544,6 +543,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/07/23 14:40:17  mk
+  - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
+  - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen
+
   Revision 1.27  2000/07/22 14:41:27  mk
   - UUZ geht jetzt endlich wieder komplett :-)
 
