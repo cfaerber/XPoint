@@ -310,8 +310,7 @@ end;
 
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 begin
-  ntMapsOthers:=(nt<>nt_Quick) and (nt<>nt_Pronet) and
-                (nt<>nt_QWK);
+  ntMapsOthers:=not (nt in [nt_Quick,nt_Pronet,nt_QWK,nt_NNTP,nt_POP3]);
 end;
 
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
@@ -760,6 +759,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/07/25 12:54:02  hd
+  - Kleine Anpassung an NNTP
+
   Revision 1.13  2000/07/23 13:24:12  hd
   - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
 
