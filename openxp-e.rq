@@ -1850,7 +1850,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 47   TosScan
 48   Set system clock
 49   Packet password
-50   Use node address
+50   Use Node address
 51   Send dummy packet
 52   Ext. packet names
 53   additional servers
@@ -3445,7 +3445,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 +30003
 1  Searching packets (%s)
 2  Unpack %s
-10 Converting FTS -> ZConnect
+10 Converting FTS --> ZConnect
 11 File.......:
 12 Number.....:
 13 From.......:
@@ -3697,6 +3697,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.14  2001/05/13 14:36:31  mf
+# Minor cosmetic changes.
+#
 # Revision 1.13  2001/05/13 06:08:33  mf
 # Minor cosmetic change to "Add new user"
 #
