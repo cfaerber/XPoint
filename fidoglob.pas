@@ -85,14 +85,16 @@ type
                 end;
 
         ///////////////////////////////////////////////////////////////////////
+        //Nodelisten Verwaltung
         TNodeList  = class
         public
-                mEntrys         :TList;
+                mEntrys         :TList;                 //die einzelnen Listen
                 mOpen           :boolean;
                 ///////////////////////////////////////////
                 constructor     Create;
                 procedure       LoadConfigFromFile;
                 procedure       SaveConfigToFile;               // NODELST.CFG speichern
+                procedure       AddEntry( PNLItem :PNodeListItem);
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
                 end;
@@ -104,8 +106,6 @@ var
         DefaultZone : word;           { Fido - eigene Zone }
         DefaultNet  : word;           {      - eigenes Net }
         DefaultNode : word;           {      - eigener Node}
-
-
 
 
 implementation
@@ -220,6 +220,20 @@ begin
     end;
 end;
 
+procedure TNodeList.AddEntry(PNLItem : PNodeListItem);       //
+var
+  i,j : integer;
+begin
+
+  mEntrys.Add(PNLItem);                         // merge entry
+
+  for i:=0 to mEntrys.Count - 1 do              // and sort Dateigr”áe sortieren
+    PNodeListItem(mEntrys[i])^.sort:=_filesize(FidoDir+ GetFilename(i));
+  for i:=0 to mEntrys.Count - 1 do
+    for j:=mEntrys.Count - 1 downto 1 do
+      if PNodeListItem(mEntrys[j])^.sort>PNodeListItem(mEntrys[j-1])^.sort then
+        mEntrys.Exchange(j, j-1);
+end;
 
 //end TNodeList
 ///////////////////////////////////////////////////////////////////////////////
@@ -279,6 +293,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/12/29 16:44:25  mo
+  - class TNodeList, new procedure AddEntry
+
   Revision 1.6  2000/12/29 11:08:17  mo
   -nodelist.cfg rerenamed in nodlst.cfg
 

@@ -1704,7 +1704,6 @@ begin   {procedure UniEdit(typ:byte); }
               1 : if NewNodeentry then
                   begin
                     Anzahl := NodeList.mEntrys.Count;
-                    SortNodelists;
                     modi:=true;
                     reindex:=true;
                   end;
@@ -2053,6 +2052,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.49  2000/12/29 16:44:25  mo
+  - class TNodeList, new procedure AddEntry
+
   Revision 1.48  2000/12/27 22:36:36  mo
   -new class TfidoNodeList
 

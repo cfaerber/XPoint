@@ -24,7 +24,6 @@ uses  classes,sysutils,typeform,montage,fileio,maske,resource,archive,
 procedure InitNodelist;
 procedure EditNLentry(var NLItem: TNodeListItem; var brk:boolean);
 function  NewNodeEntry:boolean;
-procedure SortNodelists;  { nach Dateigr”áe sortieren }
 
 function  DoDiffs(files:string; auto:boolean):byte;
 procedure ManualDiff;
@@ -276,7 +275,7 @@ begin   //function NewNodeEntry:boolean;
             begin
               New(PNLItem);
               PNLItem^ := NLItem;
-              NodeList.mEntrys.Add(PNLItem);
+              NodeList.AddEntry(PNLItem);
               if listfile='NODELIST.###' then
                 ShrinkNodelist(false);
               NewNodeEntry:=true;
@@ -286,19 +285,6 @@ begin   //function NewNodeEntry:boolean;
   pophp;
   freeres;
 end;    //function NewNodeEntry:boolean;
-
-
-procedure SortNodelists;       { nach Dateigr”áe sortieren }
-var
-  i,j : integer;
-begin
-  for i:=0 to NodeList.mEntrys.Count - 1 do
-    PNodeListItem(NodeList.mEntrys[i])^.sort:=_filesize(FidoDir+NodeList.GetFilename(i));
-  for i:=0 to NodeList.mEntrys.Count - 1 do
-    for j:=NodeList.mEntrys.Count - 1 downto 1 do
-      if PNodeListItem(Nodelist.mEntrys[j])^.sort>PNodeListItem(Nodelist.mEntrys[j-1])^.sort then
-        NodeList.mEntrys.Exchange(j, j-1);
-end;
 
 
 function ReplNr(fn:string; number:integer):string;
@@ -535,6 +521,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/12/29 16:44:25  mo
+  - class TNodeList, new procedure AddEntry
+
   Revision 1.28  2000/12/28 06:23:17  mo
   -Support für alte Nodelisteneonfiguration entfernt
 
