@@ -961,7 +961,7 @@ begin                  { function Netcall }
 
       ltUUCP: begin
         Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
-        case UUCPNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+        case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1223,6 +1223,9 @@ end.
 
 {
   $Log$
+  Revision 1.23  2001/06/10 18:08:27  cl
+  - UUCP now uses an own spool directory for each box.
+
   Revision 1.22  2001/06/09 11:02:20  ma
   - added ForceOneArea feature (for POP3 server type)
   - fixed: "last netcall" mark

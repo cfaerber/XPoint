@@ -34,6 +34,7 @@ uses
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
+		     boxfile: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
@@ -47,6 +48,7 @@ uses
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
+		     boxfile: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
@@ -85,9 +87,9 @@ var
 
     procedure CleanSpool;
     begin
-      if not DiskPoll then 
       erase_mask(AddDirSepa(DestDir)+'*.OUT'); (* delete old output files *)
       erase_mask(AddDirSepa(DestDir)+'*.BAK'); (* delete old input files  *)
+      CreateMultipleDirectories(AddDirSepa(DestDir));
     end;
 
     function RunoutFilter:boolean;
@@ -286,9 +288,10 @@ var
     delsource := false;
 
     source    := ppfile;
-    destdir   := iifs(diskpoll,boxpar^.sysopout,XFerDir);
+    destdir   := iifs(diskpoll,boxpar^.sysopout,AddDirSepa(XFerDir+BoxFile+'.SPL'));
 
-    CleanSpool;
+    if not Diskpoll then
+      CleanSpool;
 
     if _filesize(source) <=0 then
       result:=true      { doing nothing will hopefully succeed ;-)   }
@@ -352,7 +355,7 @@ var
 
   begin { ProcessIncomingFiles: boolean }
     result    := false;
-    source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir))+'X-*';
+    source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir+BoxFile+'.SPL'))+'X-*';
 
     dest      := 'UUbuffer.zer';
 
@@ -408,7 +411,7 @@ var
 
     UUCICO.FilePath      := InFileDir;
     UUCICO.CommandFile   := CmdFile;
-    UUCICO.DownSpool     := XFerDir;
+    UUCICO.DownSpool     := AddDirSepa(XFerDir+BoxFile+'.SPL');
 
     UUCICO.MaxWinSize    := BoxPar^.MaxWinSize;
     UUCICO.MaxPacketSize := BoxPar^.MaxPacketSize;
@@ -494,6 +497,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/06/10 18:08:27  cl
+  - UUCP now uses an own spool directory for each box.
+
   Revision 1.5  2001/04/22 21:02:05  ma
   - fixed: timeout was initialized incorrectly
 
