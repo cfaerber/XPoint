@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -249,6 +249,9 @@
 
 {
   $Log$
+  Revision 1.78.2.1  2002/04/21 13:48:00  mk
+  - switched off debug mode
+
   Revision 1.78  2002/01/12 11:10:13  mk
   - Win32 GUI Part I
 
