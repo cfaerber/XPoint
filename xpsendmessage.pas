@@ -937,8 +937,8 @@ begin
       _orgref:='';
       sData.References.Clear;
     end else 
-      if RFCAppendOldSubject and (netztyp in [nt_UUCP,nt_Client]) then
-        betreff:=betreff+' (was: '+oldbetr+')';
+      if RFCAppendOldSubject and (netztyp in netsRFC) then
+        betreff:=betreff+' ('+getres(619)+': '+oldbetr+')';
     pophp;
     if brk then exit;
   end;
@@ -2336,6 +2336,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48  2002/04/13 19:01:13  ms
+  Changed the RFCAppendOldSubject to that it works for all RFC net types now.
+
   Revision 1.47  2002/04/07 10:08:33  mk
   - fixed crash when sending messages with 0 byte length
 
