@@ -1414,10 +1414,10 @@
       else if nt=nt_QWK then
       begin
         fl:=12; el:=33;
-        maddstring(3,4,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
+        maddstring(3,4,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh+'?*'); mhnr(8035);  { 'Eingangspakete       ' }
           msetvfunc(testqwkinfiles);
           if not SysopMode then mdisable;
-        maddstring(3,6,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
+        maddstring(3,6,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh+'?*'); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
           msetvfunc(testfidodir);
           if not SysopMode then mdisable;
       end
@@ -2162,6 +2162,12 @@
 
 {
   $Log$
+  Revision 1.10.2.55  2002/05/26 16:56:52  my
+  JG:- Fix: Wildcardzeichen ("?", "*") sind bei Verzeichnisangaben keine
+       erlaubten Zeichen mehr. Im einzigen Fall, wo sie tatsÑchlich
+       gestattet sind (Eingangspakete und Ausgangsverzeichnis bei QWK),
+       werden sie jetzt explizit zugelassen.
+
   Revision 1.10.2.54  2002/03/08 23:11:08  my
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse

@@ -99,7 +99,7 @@ const  {$IFDEF DPMI}
        MausinfoBrett= '$/¯Mausinfo';
        uuserver    = 'UUCP-Fileserver';
 
-       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
 
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -1230,6 +1230,12 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.53  2002/05/26 16:56:52  my
+  JG:- Fix: Wildcardzeichen ("?", "*") sind bei Verzeichnisangaben keine
+       erlaubten Zeichen mehr. Im einzigen Fall, wo sie tats„chlich
+       gestattet sind (Eingangspakete und Ausgangsverzeichnis bei QWK),
+       werden sie jetzt explizit zugelassen.
+
   Revision 1.54.2.52  2002/04/12 14:34:15  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
