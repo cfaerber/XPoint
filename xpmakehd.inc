@@ -56,17 +56,29 @@ var i,res : integer;
     end;
 
   begin
-    s := ''; Setlength(s, 256); l := 0;
-    while (o<bufanz) and (buf^[o]<>#13) do
+    l := o;
+    while l < BufAnz do
     begin
+      if Buf^[l] = #13 then break;
       inc(l);
-      if l <= 256 then
-        s[l] := buf^[o]
-      else
-        s := s + buf^[o];
-      incO;
     end;
-    IncO; Setlength(s, l);
+
+    if l = BufAnz then // das letze Byte war noch kein #13, dann neue Daten holen
+    begin
+      s := '';
+      while (o<bufanz) and (buf^[o]<>#13) do
+      begin
+        s := s + buf^[o];
+        incO;
+      end;
+      IncO;
+    end else
+    begin
+      SetLength(s, l-o);
+      Move(Buf^[o], s[1], l-o);
+      o := l-1;
+      IncO; IncO;
+    end;
     if ok and (buf^[o]=#10) then IncO;
   end;
 
@@ -548,6 +560,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/08/22 01:00:17  mk
+  - Getline deutlich beschleunigt
+
   Revision 1.33  2000/08/20 10:44:34  mk
   - Performance-Verbesserungen
 
