@@ -245,21 +245,12 @@ procedure SendNetzanruf(once,crash:boolean);
 var t,log         : text;
     fn            : string;
     sum           : word;
-{$ifdef hasHugeString}
     hd            : string;
     sz            : string;
     txt           : string;
     betreff       : string;
     bytes         : string;
     cps,cfos      : string;
-{$else}
-    hd            : string[12];
-    sz            : string[15];
-    txt           : string[30];
-    betreff       : string[BetreffLen];
-    bytes         : string[15];
-    cps,cfos      : string[10];
-{$endif}
     inwin         : boolean;
     rate          : word;
     s             : string;
@@ -427,17 +418,10 @@ end;
 procedure ZtoFido(source,dest:string; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
 var d         : DB;
-{$ifdef hasHugeString}
     akas      : string;
     box       : string;
     orgdest   : string;
     bfile     : string;
-{$else}
-    akas      : string[AKAlen];
-    box  : string[BoxNameLen];
-    orgdest   : string[12];
-    bfile     : string[12];
-{$endif}
     p,i       : byte;
     t         : text;
     bpsave    : BoxPtr;
@@ -795,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/21 21:17:47  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.22  2000/07/21 20:56:28  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

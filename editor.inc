@@ -1993,21 +1993,12 @@ end;
 
 procedure Suchen(again,ersetzen:boolean);
 const
-{$ifdef hasHugeString}
       txt   : string = '';
       repby : string = '';
-{$else}
-      txt   : string[MaxFindLen] = '';
-      repby : string[MaxFindLen] = '';
-{$endif}
       igcase: boolean = true;
       lastop: byte    = 0;         { 1=suchen, 2=suchen/ersetzen }
 var
-{$ifdef hasHugeString}
       stxt  : string;
-{$else}
-      stxt  : string[MaxFindLen];
-{$endif}
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
@@ -2063,7 +2054,7 @@ begin
             wrt(x,y,forms(' '+askreplace,w));
             gotoxy(x+scx-1,y+scy);
             repeat
-              get(t,curon); UpString(t);
+              get(t,curon); t := UpperCase(t);
             until (cpos(t[1],replacechr)>0) or (t=keyesc);
             if t[1]=replacechr[3] then begin
               repall:=true; t:=replacechr[1];
@@ -2209,7 +2200,7 @@ begin
           if t=keyhome then p:=1;
           if t=keyend then p:=editmenumps;
           if (t=keyesc) or (t=keyf10) then p:=0;
-          UpString(t);
+          t := UpperCase(t);
           if (t[1]>='A') and (t[1]<='Z') then
             for i:=1 to editmenumps do
               if t[1]=UpCase(menue[i,highp[i]]) then begin
@@ -2224,7 +2215,6 @@ sok:  case p of
         2 : LocalMenu:=EditfCutBlock;
         3 : LocalMenu:=EditfPasteBlock;
         4 : LocalMenu:=EditfReadBlock;
-        { 03.02.2000 robo }
         5 : LocalMenu:=EditfReadUUeBlock;
         6 : LocalMenu:=EditfWriteBlock;
         8 : LocalMenu:=EditfWrapOff;
@@ -2291,6 +2281,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/07/21 21:17:42  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.25  2000/07/14 11:35:41  mk
   - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
 

@@ -25,7 +25,6 @@ const esec        = 30;    { Sekunden warten bei Fehler }
 
       forcepoll   : boolean = false;   { Ausschluázeiten ignorieren }
 
-{$ifdef hasHugeString}
 type NCstat = record
                 datum              : string;
                 box                : string;
@@ -44,26 +43,6 @@ type NCstat = record
                 abbruch            : boolean;
                 telefon            : string;
               end;
-{$else}
-type NCstat = record
-                datum              : string[DateLen];
-                box                : string[BoxNameLen];
-                starttime,conntime : DateTimeSt;
-                conndate           : DateTimeSt;
-                connsecs           : integer;
-                connstr            : string[60];
-                addconnects        : word;      { bei mehreren Fido- }
-                logtime,waittime   : integer;   {    Anwahlversuchen }
-                hanguptime         : integer;
-                sendtime,rectime   : longint;
-                sendbuf,sendpack   : longint;
-                recbuf,recpack     : longint;
-                endtime            : DateTimeSt;
-                kosten             : real;
-                abbruch            : boolean;
-                telefon            : string[40];
-              end;
-{$endif}
      NCSptr = ^NCstat;
 
 var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
@@ -88,6 +67,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6  2000/07/21 21:17:47  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.5  2000/07/05 18:57:54  mk
   - AnsiString Updates
 

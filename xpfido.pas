@@ -54,7 +54,6 @@ const nfComp   = $0001;
       nl4DPointlist = 4;  { 4D-Pointliste }
       nlFDpointlist = 5;  { FrontDoor-Pointliste }
 
-{$ifdef hasHugeString}
 type  nodeinfo = record
                    found    : boolean;
                    ispoint  : boolean;
@@ -69,22 +68,6 @@ type  nodeinfo = record
                    request  : word;
                    datei    : byte;     { Nummer der Nodeliste }
                  end;
-{$else}
-type  nodeinfo = record
-                   found    : boolean;
-                   ispoint  : boolean;
-                   status   : string[20];
-                   boxname  : string[40];
-                   standort : string[65]; { 03.02.2000 MH: 40 -> 65 }
-                   sysop    : string[40];
-                   telefon  : string[30];
-                   baud     : word;
-                   fflags   : string[80]; { MH: 40 -> 80 }
-                   flags    : word;
-                   request  : word;
-                   datei    : byte;     { Nummer der Nodeliste }
-                 end;
-{$endif}
 
 procedure MakeNodelistIndex;
 procedure OpenNodeindex(fn:string);
@@ -222,13 +205,8 @@ var x,y        : byte;
     idf,tf     : file;
     p          : byte;
     s          : string;
-{$ifdef hasHugeString}
     k          : string;
     ss         : string;
-{$else}
-    k          : string[20];
-    ss         : string[15];
-{$endif}
     zone,net   : word;
     node,nodes : word;
     l          : longint;
@@ -1112,13 +1090,8 @@ end;
 procedure SetShrinkNodelist;
 var x,y   : byte;
     brk   : boolean;
-{$ifdef hasHugeString}
     s,s2  : string;
     ss    : string;
-{$else}
-    s,s2  : string[101];
-    ss    : string[20];
-{$endif}
     p     : byte;
     l     : longint;
     res   : integer;
@@ -1692,13 +1665,8 @@ procedure ReadFidolist;
 var fn     : string;
     brk    : boolean;
     x,y    : byte;
-{$ifdef hasHugeString}
     node   : string;
     fi,fi2 : string;
-{$else}
-    node   : string[20];
-    fi,fi2 : string[12];
-{$endif}
     ni     : nodeinfo;
     p      : byte;
     ar     : archrec;
@@ -1923,19 +1891,11 @@ function FidoSeekfile:string;
     _sep             = '/&';                { der Seperator 2-Beyte }
 
   var
-{$ifdef hasHugeString}
     seek, oldseek    : string;
     sNodInf,sZeile   : string;
     sFlistName       : string;
     sa               : array[0..maxbuf] of string;
     searchStr        : array[0..SearchStr_maxIdx] of string;
-{$else}
-    seek, oldseek    : string[40];
-    sNodInf,sZeile   : string[100];
-    sFlistName       : string[12];
-    sa               : array[0..maxbuf] of string[80];
-    searchStr        : array[0..SearchStr_maxIdx] of string[40];
-{$endif}
     x,y              : byte;
     brk              : boolean;
     pFileListCfg     : ^text;
@@ -2020,13 +1980,8 @@ function FidoSeekfile:string;
     var
       n, nn, n2, _pos  : integer;
       test : boolean;
-{$ifdef hasHugeString}
       sZeile           : string;
       sSub             : string;
-{$else}
-      sZeile           : string[80];
-      sSub             : string [40];
-{$endif}
   begin
     for n2:=0 to anz_searchStr - 1 Do     { nach alle Begriffen durchsuchen }
     begin
@@ -2290,6 +2245,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/21 21:17:48  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.22  2000/07/13 10:23:47  mk
   - Zeiger auf Strings entfernt
 

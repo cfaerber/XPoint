@@ -40,19 +40,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
 
   procedure wrs(s:string);
   begin
-{$ifdef hasHugeString}
     s:= s+#13+#10;
-{$else}
-    if length(s)<253 then begin           { s:=left(s,253)+#13#10; }
-      s[length(s)+1]:=#13;
-      s[length(s)+2]:=#10;
-      inc(byte(s[0]),2);
-      end
-    else begin
-      s[254]:=#13; s[255]:=#10;
-      s[0]:=#255;
-      end;
-{$endif}
     blockwrite(f,s[1],length(s));
   end;
 
@@ -446,6 +434,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 21:17:45  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.18  2000/07/21 20:56:24  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

@@ -70,11 +70,7 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
                     enctrly,enctrln,enctrld,enchome,encend,enpgdn);
 
        slcttyp  = record
-{$IFDEF hasHugeString}
-                    el : string;
-{$ELSE}
-                    el : string[60];             { Auswahl-Position         }
-{$ENDIF}
+                    el : string;                 { Auswahl-Position         }
                     zu : boolean;                { zugelassen ?             }
                     nu : longint;                { Benutzer                 }
                   end;
@@ -88,11 +84,7 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
        edits    = record
                     x,y,px,
                     len,art : shortint;
-{$ifdef hasHugeString}
                     s       : string;
-{$else}
-                    s       : string[78];
-{$endif}
                     tproc   : testproc;
                     edproc  : editproc;
                   end;
@@ -152,11 +144,7 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
 
 
 var
-{$ifdef hasHugeString}
        chml : array[1..5] of string;
-{$else}
-       chml : Array[1..5] of string[230];
-{$endif}
 
        datex,datey,                    { Koordinaten fÅr Datum und Uhrzeit }
        timex,timey  : shortint;
@@ -1657,6 +1645,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.48  2000/07/21 21:17:43  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.47  2000/07/20 16:49:56  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

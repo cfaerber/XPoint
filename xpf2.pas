@@ -70,13 +70,8 @@ end; *)
 
 procedure TestTICfiles(var logfile:string);
 var t    : text;
-{$ifdef hasHugeString}
     s    : string;
     name1: string;
-{$else}
-    s    : string[80];
-    name1: string[14];
-{$endif}
     at   : shortint;
     ar   : ArchRec;
     sr   : searchrec;

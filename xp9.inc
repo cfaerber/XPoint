@@ -579,11 +579,7 @@
 
   procedure EditModemdaten(nt:byte; var brk:boolean);
   var x,y,add  : byte;
-{$ifdef hasHugeString}
       schnitte : string;
-{$else}
-      schnitte : string[4];
-{$endif}
       fido     : boolean;
   begin
     fido:=(nt=nt_Fido);
@@ -1100,31 +1096,17 @@
   var   x,y    : byte;
         eqfg   : boolean;
         qfg    : QfgRec;
-{$ifdef hasHugeString}
         nmta   : array[1..maxnmt] of record
                                        nr   : byte;
                                        name : string;
                                      end;
         nmtn,i : integer;
         nmtyp  : string;
-{$else}
-        nmta   : array[1..maxnmt] of record
-                                       nr   : byte;
-                                       name : string[30];
-                                     end;
-        nmtn,i : integer;
-        nmtyp  : string[30];
-{$endif}
 
     procedure ReadNmta;
     var t   : text;
-{$ifdef hasHugeString}
         tmp : string;
         s   : string;
-{$else}
-        tmp : pathstr;
-        s   : string[50];
-{$endif}
     begin
       tmp:=TempS(4096);
       shell('zqwk.exe -nmt >'+tmp,350,3);

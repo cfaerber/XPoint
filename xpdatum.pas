@@ -27,11 +27,7 @@ uses
   xpglobal;
 
 {$IFNDEF Linux }
-{$ifdef hasHugeString}
 const timezone      : string = 'W+1';
-{$else}
-const timezone      : string[7] = 'W+1';
-{$endif}
 {$ELSE }
 { Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
   Diese wird hier verwendet. Es sollte auch klappen, dass ein Zeitzonen-
@@ -162,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/21 21:17:48  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.9  2000/07/05 10:59:53  hd
   - Weitere AnsiString-Anpassungen
 

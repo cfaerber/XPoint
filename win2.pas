@@ -745,21 +745,13 @@ const dsfiles : longint = 0;
 var   i,j     : integer;
       econt   : set of byte;
       glc     : char;
-{$ifdef hasHugeString}
       sn      : string;
-{$else}
-      sn      : string[12];
-{$endif}
       memerr  : boolean;
       gl,wdt  : byte;
       t,t2    : taste;
       p,a,am  : integer;
       xp      : integer;
-{$ifdef hasHugeString}
       vn      : string;
-{$else}
-      vn      : string[12];
-{$endif}
       s,s2    : string;
       stat    : diskstat;
 
@@ -1107,6 +1099,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/21 21:17:44  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.21  2000/07/06 09:12:08  mk
   - AnsiString Updates
 

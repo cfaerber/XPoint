@@ -298,11 +298,7 @@ end;
 procedure do_help(n:word);
 var
       x,y  : byte;
-{$ifdef hasHugeString}
       hlp  : string;
-{$else}
-      hlp  : string[10];
-{$endif}
       mh   : boolean;
 begin
   if not inithlp then
@@ -415,6 +411,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/21 21:17:45  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.9  2000/07/05 10:59:52  hd
   - Weitere AnsiString-Anpassungen
 

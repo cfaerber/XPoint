@@ -83,7 +83,6 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
 
 type  TimeRec   = record
                     active    : boolean;
-{$ifdef hasHugeString}
                     von,bis   : string;  { Uhrzeit }
                     vond,bisd : string;  { Datum   }
                     wotag     : array[1..7] of boolean;
@@ -91,15 +90,6 @@ type  TimeRec   = record
                     comm      : byte;       { 1=NC, 2=Reorg, 3=Pack, 5=Exec }
                                             { 5=Quit, 6=Quit_Once }
                     box       : string;
-{$else}
-                    von,bis   : string[5];  { Uhrzeit }
-                    vond,bisd : string[6];  { Datum   }
-                    wotag     : array[1..7] of boolean;
-                    action    : string[80];
-                    comm      : byte;       { 1=NC, 2=Reorg, 3=Pack, 5=Exec }
-                                            { 5=Quit, 6=Quit_Once }
-                    box       : string[BoxNameLen];
-{$endif}
                     crash     : boolean;
                     crashtime : boolean;    { Crash - TimeSync }
                     qerrlevel : byte;
@@ -2023,6 +2013,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/21 21:17:44  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.21  2000/07/20 13:36:39  hd
   - ExErase entfernt (DeleteFile ist in SysUtils)
   - AnsiString und 32-Bit

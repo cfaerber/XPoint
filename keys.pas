@@ -32,11 +32,7 @@ uses
 {$ENDIF }
   typeform;
 
-{$ifdef hasHugeString}
-type   taste   = string;
-{$else}
 type   taste   = string[2];
-{$endif}
 
 const  keyf1   = #0#59;             { Funktionstasten }
        keyf2   = #0#60;
@@ -350,6 +346,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/07/21 21:17:43  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.26  2000/07/05 09:50:12  hd
   - AnsiString-Anpassung
 

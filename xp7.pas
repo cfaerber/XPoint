@@ -47,7 +47,6 @@ const CrashGettime : boolean = false;  { wird nicht automatisch zurÅckgesetzt }
       { (anzahl StÅck), in akabox alle eingetragenen Mitsende-Boxen    }
       { (akanz StÅck).                                                 }
 
-{$ifdef hasHugeString}
 type  addpktrec    = record
                        anzahl : shortint;
                        akanz  : shortint;
@@ -57,17 +56,6 @@ type  addpktrec    = record
                        akabox : array[1..maxaddpkts] of string;
                        reqfile: array[1..maxaddpkts] of string;
                      end;
-{$else}
-type  addpktrec    = record
-                       anzahl : shortint;
-                       akanz  : shortint;
-                       addpkt : array[1..maxaddpkts] of string[12];
-                       abfile : array[1..maxaddpkts] of string[8];
-                       abox,
-                       akabox : array[1..maxaddpkts] of string[BoxNameLen];
-                       reqfile: array[1..maxaddpkts] of string[12];
-                     end;
-{$endif}
       addpktpnt    = ^addpktrec;
 
 
@@ -125,7 +113,6 @@ const crlf : array[0..1] of char = #13#10;
       back7= #8#8#8#8#8#8#8;
 
 var
-{$ifdef hasHugeString}
     bfile      : string;
     ppfile     : string;
     eppfile    : string;
@@ -141,23 +128,6 @@ var
     upuffer,dpuffer,
     olddpuffer : string;
     nulltime   : string;      { Uhrzeit der ersten Anwahl }
-{$else}
-    bfile      : string[14];
-    ppfile     : string[14];
-    eppfile    : string[14];
-    user       : string[30];
-    noconnstr  : string[30];
-    rz         : string[5];
-    prodir     : string[8];
-    OwnFidoAdr : string[20];    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
-    CrashPhone : string[30];
-    scrfile    : string[50];
-    domain     : string[60];
-    caller,called,
-    upuffer,dpuffer,
-    olddpuffer : string[14];
-    nulltime   : DateTimeSt;      { Uhrzeit der ersten Anwahl }
-{$endif}
     ende   : boolean;
     d          : DB;
     f          : file;
@@ -1589,6 +1559,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/21 21:17:46  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.23  2000/07/21 20:56:28  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

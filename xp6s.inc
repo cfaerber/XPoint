@@ -873,11 +873,9 @@ begin
   if existf(f) then begin
     fm_ro; reset(f,1); fm_rw;
     seek(f,max(0,filesize(f)-length(XP_ID)-100));
-{$ifdef hasHugeString}
     SetLength(s,length(XP_ID)+100);
-{$endif}
     blockread(f,s[1],length(XP_ID)+100,rr);
-    SetLength(s, rr); { s[0]:=chr(rr); }
+    SetLength(s, rr);
     close(f);
     TestXPointID:=(pos(XP_ID,s)>0);
     end;
@@ -1144,6 +1142,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.27  2000/07/21 21:17:46  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.26  2000/07/21 20:56:28  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

@@ -47,17 +47,7 @@ uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
 var t,t2 : text;
-{$ifdef hasHugeString}
     fn, tfn, s, anew, old, msgid, empf : string;
-{$else}
-    fn,
-    tfn  : pathstr;
-    s    : string[80];
-    anew  : string[80];
-    old  : string[4];
-    msgid: string[20];
-    empf : string[AdrLen];
-{$endif}
     stop : boolean;
     l    : longint;
     hdp  : headerp;
@@ -367,13 +357,8 @@ end;
 
 function MausBestPM:boolean;     { gelesene Maus-PM best„tigen }
 var t   : text;
-{$ifdef hasHugeString}
     fn  : string;
     leer: string;
-{$else}
-    fn  : pathstr;
-    leer: string[12];
-{$endif}
     hdp : headerp;
     hds : longint;
     nr  : shortint;
@@ -552,11 +537,7 @@ var  box    : string[BoxNameLen];
 
   procedure ReadINF;
   var t   : text;
-{$ifdef hasHugeString}
       s   : string;
-{$else}
-      s   : string[80];
-{$endif}
       p,i : integer;
   begin
     assign(t,box+'.inf');
@@ -680,13 +661,8 @@ end;
 
 procedure MausPMs_bestaetigen(box:string);
 var t1,t2 : text;
-{$ifdef hasHugeString}
     fn    : string;
     leer  : string;
-{$else}
-    fn    : pathstr;
-    leer  : string[12];
-{$endif}
     s     : string;
 begin
   if exist(mauspmlog) then begin
@@ -837,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/21 21:17:49  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.14  2000/07/21 20:56:30  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

@@ -216,11 +216,7 @@ const fpuffer = 'FPUFFER';
 var p       : byte;
     sr      : searchrec;
     clrflag : boolean;
-{$ifdef hasHugeString}
     via     : string;
-{$else}
-    via     : string[5];
-{$endif}
 begin
   FidoImport:=false;
   with BoxPar^ do begin
@@ -799,13 +795,8 @@ var x,y : byte;
     brk : boolean;
     anz : word;
     t   : text;
-{$ifdef hasHugeString}
     s   : string;
     adr : string;
-{$else}
-    s   : string[80];
-    adr : string[25];
-{$endif}
     ni  : nodeinfo;
     c,f : boolean;
     old : boolean;    { zurÅckgestellter Request }
@@ -945,6 +936,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/21 21:17:47  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.23  2000/07/21 17:39:56  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

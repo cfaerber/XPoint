@@ -187,7 +187,7 @@ initialization
     if left(ownpath,1)<>'\' then ownpath:='\'+ownpath;
     ownpath:=getdrive+':'+ownpath;
     end;
-  UpString(ownpath);
+  OwnPath := UpperCase(ownpath);
 {$ENDIF }
   TestCD;
   starting:=false;
@@ -203,6 +203,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.26  2000/07/21 21:17:49  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.25  2000/07/09 09:09:56  mk
   - Newexit in Initialization/Finalization umgewandelt
 

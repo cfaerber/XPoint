@@ -656,11 +656,7 @@ var ax,p,myp  : integer;
       arrows  : integer;
       ok      : boolean;
       infield : boolean;
-{$ifdef hasHugeString}
       s       : string;
-{$else}
-      s       : string[1];
-{$endif}
   begin
     with amaskp^ do begin
       maus_gettext(mx,my);
@@ -982,8 +978,8 @@ begin   { readmask }
               end;
             end
           else if @custom<>nil then begin
-            getmem(crec,sizeof(customrec)); 
-	    system.fillchar(crec^,sizeof(customrec),0);
+            getmem(crec,sizeof(customrec));
+            system.fillchar(crec^,sizeof(customrec),0);
             with crec^ do begin
               acol:=col;
               x:=xx2; y:=yy;
@@ -1072,6 +1068,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.24  2000/07/21 21:17:43  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.23  2000/07/21 13:14:09  hd
   - Fix: Strings in der Maske
   - Fix: Einige Datenbankzugriffe wegen AnsiString

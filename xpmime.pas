@@ -23,7 +23,6 @@ uses  xpglobal,sysutils,dos,typeform,montage,fileio,keys,lister,database,resourc
 
 type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
 
-{$ifdef hasHugeString}
       multi_part = record                   { Teil einer Multipart-Nachricht }
                      startline  : longint;  { 0 = kein Multipart }
                      lines      : longint;
@@ -35,29 +34,12 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
                      part,parts : integer;
                      alternative: boolean;
                    end;
-{$else}
-      multi_part = record                   { Teil einer Multipart-Nachricht }
-                     startline  : longint;  { 0 = kein Multipart }
-                     lines      : longint;
-                     code       : mpcode;
-                     typ,subtyp : string[20];   { fÅr ext. Viewer }
-                     level      : integer;      { Verschachtelungsebene 1..n }
-                     fname      : string[40];   { fÅr Extrakt + ext. Viewer }
-                     ddatum     : string[14];   { Dateidatum fÅr extrakt }
-                     part,parts : integer;
-                     alternative: boolean;
-                   end;
-{$endif}
       pmpdata    = ^multi_part;
 
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
-{$H+}
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
-{$ifndef hasHugeString}
-{$H-}
-{$endif}
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
@@ -139,13 +121,8 @@ function RFC2Zdate(var s0:string):string;
 var p,p2  : byte;
     t,m,j : word;
     h,min,s : integer;
-{$ifdef hasHugeString}
     ti    : string;
     zone  : string;
-{$else}
-    ti    : datetimest;
-    zone  : string[10];
-{$endif}
 
   function getstr:string;
   var p : byte;
@@ -261,7 +238,6 @@ var   hdp      : headerp;
         bufline   : string;
         s2        : string;
         folded    : boolean;
-{$ifdef hasHugeString}
         firstline : string;
         _encoding   : string;
         filename    : string;
@@ -272,18 +248,6 @@ var   hdp      : headerp;
         bound    : string;
         parname  : string;
         parvalue : string;
-{$else}
-        firstline : string[80];
-        _encoding   : string[20];
-        filename    : string[40];
-        filedate    : string[14];
-        subboundary : string[72];
-        hdline      : string[30];
-        ctype,subtype: string[15];    { content type }
-        bound    : string[72];
-        parname  : string[30];
-        parvalue : string[100];
-{$endif}
         vorspann : boolean;
         n,_start : longint;
         isbound  : boolean;
@@ -751,6 +715,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/21 21:17:49  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.20  2000/07/21 17:39:58  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 

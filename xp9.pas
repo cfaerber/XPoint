@@ -758,15 +758,9 @@ var d         : DB;
     end;
 
   var x,y,i : byte;
-{$ifdef hasHugeString}
       ums   : string;
       ss    : string;
       retyp : string;  { Re^n / Re / Default / nein }
-{$else}
-      ums   : string[5];
-      ss    : string;
-      retyp : string[10];  { Re^n / Re / Default / nein }
-{$endif}
   begin
     dialog(ival(getres2(901,0)),10,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
     if not odd(flags) then begin
@@ -1757,6 +1751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/07/21 21:17:47  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.31  2000/07/21 20:56:29  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

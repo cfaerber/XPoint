@@ -607,15 +607,9 @@ label ende,again;
   procedure MausWeiterleiten;   { Maus-BK }
   var x,y  : byte;
       brk  : boolean;
-{$ifdef hasHugeString}
       empf : string;
       fn   : string;
       leer : string;
-{$else}
-      empf : string[AdrLen];
-      fn   : pathstr;
-      leer : string[12];
-{$endif}
       komm : string;
       hdp  : headerp;
       hds  : longint;
@@ -1258,6 +1252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/21 21:17:46  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.30  2000/07/21 20:56:27  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

@@ -166,11 +166,7 @@ var t      : text;
     s,su   : string;
     p      : byte;
     dummyb : byte;
-{$ifdef hasHugeString}
     dummys : string;
-{$else}
-    dummys : string[10];
-{$endif}
     dummyl : boolean;
     dummyw : smallword;
     dummyr : real;
@@ -528,6 +524,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/21 21:17:48  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.16  2000/07/21 20:56:29  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

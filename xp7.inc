@@ -123,9 +123,7 @@ end;
 
 procedure testbyte;
 var b : byte;
-{$ifdef hasHugeString}
     l : integer;
-{$endif}
 begin
 {$IFDEF CAPI }
    if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
@@ -156,7 +154,6 @@ begin
       recs:=''; lrec:='';
       end
     else
-{$ifdef hasHugeString}
       begin
         l:= length(recs);       { Die ewige Zaehlerei frisst Zeit }
         if l<255 then begin
@@ -169,14 +166,6 @@ begin
           lrec[l]:= LoCase(chr(b));
         end;
       end;
-{$else}
-      if length(recs)<255 then begin
-        inc(byte(recs[0]));
-        recs[length(recs)]:=chr(b);
-        inc(byte(lrec[0]));
-        lrec[length(lrec)]:=LoCase(chr(b));
-        end;
-{$endif}
     zaehler[4]:=IdleTimeout;
     end;
 end;
@@ -1440,6 +1429,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2000/07/21 21:17:46  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.29  2000/07/12 14:43:46  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

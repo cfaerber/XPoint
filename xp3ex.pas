@@ -363,14 +363,9 @@ var size   : longint;
   begin
     l:=max(0,filesize(f)-200);
     seek(f,l);
-{$ifdef hasHugeString}
     SetLength(s, 200);
     blockread(f,s[1],200,rr);
     if rr<>200 then SetLength(s,rr);
-{$else}
-    blockread(f,s[1],200,rr);
-    s[0]:=chr(rr);
-{$endif}
     p:=pos(#13#10+XP_origin,s);
     if p>0 then begin
       seek(f,l+p-1);
@@ -1063,6 +1058,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/21 21:17:45  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.33  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

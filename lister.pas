@@ -555,12 +555,8 @@ end;
 
 procedure list(var brk:boolean);
 const
-{$ifdef hasHugeString}
-      suchstr : string = '';
-{$else}
-      suchstr : string[40] = '';
-{$endif}
-      suchcase: boolean = false;    { true -> Case-sensitiv }
+    suchstr : string = '';
+    suchcase: boolean = false;    { true -> Case-sensitiv }
 var gl,p,y    : shortint;
     dispa     : shortint;
     xa        : byte;
@@ -1376,6 +1372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/21 21:17:43  mk
+  - hasHugeStrings entfernt, weil nicht mehr noetig
+
   Revision 1.28  2000/07/20 16:49:56  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
