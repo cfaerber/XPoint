@@ -192,11 +192,13 @@ begin
       end
     else begin
       anz:=0;
+{TAINTED}      
       { 03.02.2000 robo }
       { suboptimal }
       if hdp.replyto.count>0 then
         appadr(hdp.replyto[0],7);                   {'Reply-To-Empfaenger :' }
       { /robo }
+{/TAINTED}      
       if hdp.wab<>'' then appadr(hdp.absender,1)   { 'Original-Absender  :' }
       else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
@@ -310,6 +312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.21  2001/01/14 10:13:35  mk
   - MakeHeader() integreated in new unit
 

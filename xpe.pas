@@ -41,7 +41,7 @@ function  EditKeyFunc(var t:taste):boolean;
 function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 function  EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
-{ 04.02.2000 robo }
+{ 04.02.2000 robo } { unbedenklich }
 { procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
@@ -113,7 +113,7 @@ begin
   else hinweis(txt);
 end;
 
-{ 04.02.2000 robo }
+{ 04.02.2000 robo } { unbedenklich }
 { procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
@@ -122,7 +122,7 @@ begin
   if save then fn:='' else fn:=SendPath+WildCard;
   useclip:=false;          { 'Block speichern' / 'Block laden' }
   if readfilename(getres(iif(save,2504,2505))
-  { 04.02.2000 robo }
+  { 04.02.2000 robo } { unbedenklich }
                   +iifs(uuenc,' '+getres(2509),'')
   { /robo }
                   ,fn,true,useclip) then begin
@@ -186,7 +186,7 @@ begin
     { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bl”cke' }
     { /oh }
-    { 10.02.2000 robo }
+    { 10.02.2000 robo }{ unbedenklich }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
     { /robo }
     readmask(brk);
@@ -477,6 +477,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.25  2000/11/24 15:23:56  mk
   - Edit/Config uebernimmt Optionen jetzt immer
 

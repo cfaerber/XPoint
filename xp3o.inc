@@ -786,11 +786,14 @@ begin
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true, true);
-        orgempf:=hdp.empfaenger;
+        orgempf:=hdp.empfaenger;	
         { Schalter maildelxpost beachten }
         if (hdp.empfanz>maxcrosspost)
         and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
+{TAINTED}	
+  { ??? -- was ist hier passiert }
         { /robo }
+{/TAINTED}	
           empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
@@ -980,9 +983,7 @@ begin
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(GetLastReference)) or
-              (filterattr and fattrHilite<>0) {or}
-              { Nachricht mit Priority High und Highest hevorheben }
-              {(hdp.Priority in [1..2])}
+              (filterattr and fattrHilite<>0)
             then
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
             if charset='iso1' then inc(mnt,$2000);
@@ -1219,6 +1220,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.47  2001/01/22 16:15:15  mk
   - added ReplaceOwn-Feature (merge from 3.40 branch)
 

@@ -231,6 +231,7 @@ begin
   UTFDecoder.Free;
 end;
 
+{TAINTED}
 procedure UTF7ToIBM(var s: String); { by robo; nach RFC 2152 }
 const b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 var i,j:integer;
@@ -269,6 +270,7 @@ begin
     j:=posn('+',s,i+length(s1));
   end;
 end;
+{/TAINTED}
 
 function RecodeString(s: String; TransTable: T8BitTable): String;
 var
@@ -642,7 +644,9 @@ begin
         LeftStr(LowerCase(xempf[0]), ml)) then
         wrs('OEM: ' + xoem[i]);
     end;
+{TAINTED}
     if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
+{/TAINTED}
     wrs('ABS: ' + absender + iifs(realname = '', '', ' (' + realname + ')'));
     if wab <> '' then wrs('WAB: ' + wab);
     wrs('BET: ' + betreff);
@@ -1288,9 +1292,11 @@ procedure TUUz.SetMimeData;
 var
   i: Integer;
 begin
+{TAINTED}
   xpboundary := '----=_NextPart_';
   for i := 1 to 10 + random (20) do
     xpboundary := xpboundary + char (random (25) + byte ('A'));
+{/TAINTED}    
   with hd, hd.mime do
   begin
     mversion := '1.0';
@@ -1849,8 +1855,10 @@ var
     s0:=RFCRemoveComment(s0);
     by := GetRec('by ');
     from := GetRec('from ');
+{TAINTED}    
     { Envelope-Empfaenger ermitteln }
     if (hd.envemp='') and getrecenvemp then hd.envemp:=GetRec('for ');
+{/TAINTED}    
     if (by <> '') and (LowerCase(by) <> LowerCase(RightStr(hd.pfad, length(by))))
       then
     begin
@@ -1952,6 +1960,7 @@ var
     p(s0);
   end;
 
+{TAINTED}
   procedure GetPriority;                { X-Priority konvertieren }
   var
     p: integer;
@@ -1985,6 +1994,7 @@ var
       end;
     end;
   end;
+{/TAINTED}  
 
   { read a variable and remove comments }
 
@@ -3037,13 +3047,17 @@ begin
       else
         wrs(f, 'From ' + LeftStr(s, p - 1) + ' ' + dat + ' remote from ' + mid(s, p
           + 1));
+{TAINTED}	  
       if (wab <> '') and (cpos('@', oem) > 0) and not smtp { (*1) - s.u. } then
         rfor := empfaenger
       else
         rfor := '';
+{/TAINTED}	
       wrs(f, 'Received: by ' + mid(s, cpos('@', s) + 1) +
         iifs(programm <> '', ' (' + programm + ')', '') +
+{TAINTED}	
         iifs(rfor <> '', #10#9'  for ' + rfor + ';', ';'));
+{/TAINTED}	
       wrs(f, #9'  ' + LeftStr(date, 2) + ' ' + month(copy(date, 4, 2)) +
         RightStr(date, 4) + ' ' +
         time + ' ' + RightStr(dat, 5));    { akt. Datum/Uhrzeit }
@@ -3710,6 +3724,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.27  2001/01/28 08:50:59  mk
   - fixed bug in envelope handling
 

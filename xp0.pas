@@ -345,8 +345,8 @@ const
        hdf_MID    = 6;        hdf_ERR     = 16;     hdf_PGPSTAT  = 26;
        hdf_LEN    = 7;        hdf_ANTW    = 17;     hdf_Homepage = 27;
        hdf_BEZ    = 8;        hdf_DISK    = 18;     hdf_Part     = 28;
-       hdf_MAILER = 9;        hdf_STW     = 19;     hdf_Priority = 31; {!MH:}
-       hdf_FILE   = 10;       hdf_ZUSF    = 20;     hdf_xNoArchive = 32; {!MH:}
+       hdf_MAILER = 9;        hdf_STW     = 19;     hdf_Priority = 31; {!MH:}{ unbedenklich }
+       hdf_FILE   = 10;       hdf_ZUSF    = 20;     hdf_xNoArchive = 32; {!MH:}{ unbedenklich }
        hdf_STAT   = 11;       hdf_DIST    = 21;
        hdf_ORG    = 12;       hdf_POST    = 22;
        hdf_Cust1  = 29;
@@ -955,7 +955,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=Rueckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
        maxcrosspost : byte;          { Filter fuer Massen-Crosspostings }
-       maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? }
+       maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? } { unbedenklich }
        KeepRequests : boolean;       { Requests zurueckstellen }
        waehrung     : string;
        gebnoconn    : longint;       { Gebuehren fuer nicht zustandegek. Verb. }
@@ -988,7 +988,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _Usersortbox : boolean;       {Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-Binaernachrichten als Multipart }
        mausmpbin    : boolean;       { dto. fuer MausTausch }
-       askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN }
+       askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN } { unbedenklich }
 
        UsePGP       : boolean;       { PGP verwenden }
        PGPbatchmode : boolean;       { PGP-Schalter +batchmode verwenden }
@@ -1122,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.119  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.118  2001/02/11 20:59:22  mk
   - added isdn1-msn-incoming/outing to cfg
 

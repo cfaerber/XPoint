@@ -454,6 +454,7 @@ var i  : integer;
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
 
+{TAINTED}
     { Achtung! Folgende Reihenfolge muss bleiben! robo }
     if _is('w0')   then ParWintime:=0 else
     if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
@@ -464,6 +465,7 @@ var i  : integer;
     if _is('w1')   then ParWintime:=1 else
     if _is('w2')   then ParWintime:=2 else
     { Reihenfolge bis hier }
+{/TAINTED}    
 
     if _is('ss')   then ParSsaver:=true else
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
@@ -502,7 +504,6 @@ var i  : integer;
   end;
 
 begin
-  { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
   extended:=FileExists('xtended.15');
   { permanente Parameter-Datei }
   if findfirst(AutoxDir+'*.opt',faAnyFile,sr)=0 then repeat
@@ -1164,6 +1165,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.101  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.100  2001/01/10 19:09:02  sv
   - reply-detection improved
 

@@ -20,18 +20,19 @@ var s  : string;
   var p : byte;
       x : string[10];
     function getstr:string;
-    var b: byte;
+    var i: byte;
     begin
       p:=cpos(',',s);
-      if p=0 then getstr:=''
-      else begin
-
-      for b:=1 to p-1 do
-        if s[b]='_' then s[b]:=' ';
+      if p=0 then 
+        getstr:=''
+      else 
+      begin
+        for i:=p-1 downto 1 do
+          if s[i]='_' then s[i]:=' ';
 
         getstr:=copy(s,1,p-1);
         delete(s,1,p);
-        end;
+      end;
     end;
   begin
     with ni do begin
@@ -407,7 +408,7 @@ begin
   if active or not TestNodelist or DisableAltN then exit;
   new(ni);
   active:=true;
-{ MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
+{ MH: AltN-Screen zur besseren Lesbarkeit verbreitert }{ unbedenklich }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if NodeList.GetMainNodelist>0 then begin
     NlItem:=nodelist.Items[NodeList.GetMainNodelist];
@@ -415,7 +416,9 @@ begin
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
     attrtxt(col.coldialog);
-    end; { MH: Aufbau geÑndert, damit mîglichst viel angezeigt werden kann }
+    end; 
+{TAINTED}    
+  { MH: Aufbau geÑndert, damit mîglichst viel angezeigt werden kann }
   mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }          { MH 03.02.2000 }
   mwrt(x+3, y+3, GetRes2( 2100, 4));     { Sysop }
   mwrt(x+3, y+4, GetRes2( 2100, 5));     { TelNr }
@@ -424,6 +427,7 @@ begin
   mwrt(x+35, y+7, GetRes2( 2100, 10));   { eMAiL }
   mwrt(x+35, y+8, GetRes2( 2100, 9));    { Status }
   mwrt(x+55, y+8, GetRes2( 2100, 8));    { Datei }
+{/TAINTED}  
   adr:='';
   first:=true;
   TempOpen;
@@ -454,14 +458,17 @@ begin
         end;
       attrtxt(col.coldialog);
       moff;
+{TAINTED}      
     { MH: Fenster putzen }
     clwin(x+10, x+75, y+2, y+5); { Oberer Block }
      clwin(x+43, x+51, y+8, y+8); { Status      }
       clwin(x+62, x+73, y+8, y+8); { Datei      }
        clwin(x+11, x+30, y+7, y+7); { AKA [ ]   }
         clwin(x+43, x+75, y+7, y+7); { eMAiL    }
+{/TAINTED}	
       if ni^.found then with ni^ do begin
-        attrtxt(col.coldiahigh);    { MH: 42 -> 65 }
+        attrtxt(col.coldiahigh);
+{TAINTED}	
         wrt(x+10, y+2, LeftStr(BoxName + ', ' + Standort,65));
         wrt(x+10, y+3, Sysop);
         wrt(x+10, y+4, Telefon);
@@ -472,6 +479,7 @@ begin
         wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
         wrt(x+43, y+8, Status);
         wrt(x+62, y+8, NodeList.GetFilename(datei));
+{/TAINTED}	
         end;
       mon;
       end;
@@ -487,7 +495,7 @@ end;
 
 var  rdispx,rdispy : byte;
 
-procedure ShowRQ(s:string); { MH: Liste angepasst }
+procedure ShowRQ(s:string); {TAINTED}{ unklar }{ MH: Liste angepasst }{/TAINTED}
 var ni  : NodeInfo;
     add : byte;
 begin
@@ -716,7 +724,7 @@ again:
       mnotrim;
     maddstring(3,6,getres2(2131,5),nodeadr,20,20,'0123456789:/.'); { 'Nodeadresse' }
     maddstring(3,7,getres2(2131,6),telefon,20,20,'0123456789-');   { 'Telefon' }
-    maddstring(3,9,getres2(2131,8),flags,30,65,'>');  {MH: 40>65}  { 'Flags' }
+    maddstring(3,9,getres2(2131,8),flags,30,65,'>');  {MH: 40>65}{ unbedenklich } { 'Flags' }
     maddbool (3,11,getres2(2131,9),fnl);   { 'FidoNet-Nodeliste durchsuchen' }
     maddbool (3,12,getres2(2131,10),snl);  { 'sonstige Nodelisten durchsuchen' }
       mhnr(956);
@@ -838,7 +846,9 @@ again:
     List.OnKeyPressed := listext;
     listmakros:=0;
     repeat
+{TAINTED}    
 NewStart:                  { nach Break im AltN-Screen hier einspringen }
+{TAINTED}
       pushhp(958);
       brk := List.Show;
       pophp;
@@ -854,17 +864,19 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
           pushhp(959);
           n:=ReadIt(max(length(s)-4,length(getres(2132)))+11,s,
              getres(2132),    { ' ^Nachricht , ^Request , ^Info , ^ZurÅck ' }
-             1,brk);          { ^Info Taste hinzugefÅgt                     }
+             1,brk);    {TAINTED}{ ^Info Taste hinzugefÅgt }{/TAINTED}
           pophp;
           brk:=false;
           end;
         end;
     until brk or (n=1) or (n=2) or (n=3);
 
+{TAINTED}
       if n<>3 then begin  { Break aus AltN-Screen hier nicht zulassen }
         List.Free;
         closebox;
       end;
+{/TAINTED}      
 
     if not brk then
       case n of
@@ -880,11 +892,13 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
               AutoCrash:=FidoRequest(trim(mid(adr,cpos('@',adr)+1)),'');
             end;
 
+{TAINTED}
         3 : begin   { AltN-Screen aufrufen und Aka Åbergeben }
               _keyboard(trim(copy(List.GetSelection,39,18))+keycr);
                 NodeListSeek;          { AltN-Screen starten }
               goto newstart;           { ZurÅck zur Liste    }
             end;
+{/TAINTED}	    
 
       end;
     end;
@@ -893,6 +907,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.30  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.29  2001/01/07 12:34:36  mo
   - einig  ƒnderungen an TNodeList
 

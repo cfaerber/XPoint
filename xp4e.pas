@@ -1869,7 +1869,7 @@ var x,y    : byte;
     bin    : boolean;
     loesch : boolean;
     modif  : boolean;
-    ersetz : boolean;
+    supers : boolean;
     nt     : byte;
     pm     : boolean;
 
@@ -1891,7 +1891,7 @@ begin
     bin:=(UpCase(typ)='B');
     loesch:=(flags and 2<>0);
     modif:=(flags and 4<>0);
-    ersetz:=(flags and 8<>0);
+    supers:=(flags and 8<>0);
     tg:=tagstring(tage);
     mon:=monstring(monate);
     dialog(59,13,getres2(2726,iif(kopie,2,1)),x,y);   { 'AutoVersand-Nachricht (kopieren) }
@@ -1918,7 +1918,7 @@ begin
     maddbool  (39,6,getres2(2726,11),bin);          { 'bin„r' }
     maddbool  (39,7,getres2(2726,12),loesch);       { 'l”schen' }
     maddbool  (39,8,getres2(2726,13),modif);        { 'bei Žnderung' }
-    maddbool  (39,9,getres2(2726,16),ersetz);       { 'ersetzen' }
+    maddbool  (39,9,getres2(2726,16),supers);       { 'ersetzen' }
     madddate  (39,11,getres2(2726,14),dat1,false,true);   { 'Datum 1 ' }
     mset3proc(atestdate);
     madddate  (39,12,getres2(2726,15),dat2,false,true);   { 'Datum 2 ' }
@@ -1934,7 +1934,7 @@ begin
       datum1:=dl(dat1);
       datum2:=dl(dat2);
       flags:=flags and (not (2+4+8))
-             + iif(loesch,2,0) + iif(modif,4,0) + iif(ersetz,8,0);
+             + iif(loesch,2,0) + iif(modif,4,0) + iif(supers,8,0);
       pm:=multipos('@',empf);
       nt:=0;
       if box<>'' then
@@ -2423,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.56  2001/01/06 21:13:35  mo
   - Änderung an TnodeListItem
 

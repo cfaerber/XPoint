@@ -107,10 +107,11 @@ procedure WriteHeader(var hd:theader; var f:file);
       wrs('BET: '+betreff);
       wrs('EDA: '+zdatum);
       wrs('MID: '+msgid);
-      if ersetzt<>'' then wrs('ersetzt: '+ersetzt);
 
       for i := 0 to References.Count - 1 do
         wrs('BEZ: '+ References[i]);
+
+      if ersetzt<>'' then wrs('ERSETZT: '+ersetzt);
 
       if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then
       begin
@@ -446,6 +447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.36  2001/01/14 10:13:34  mk
   - MakeHeader() integreated in new unit
 

@@ -36,14 +36,17 @@ begin
     end;
 end;
 
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
 function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
          forward;
+{/TAINTED}	 
 
-procedure TruncAbs(ap:absatzp);
+procedure TruncAbs(aptr:absatzp);
 var
   p: smallword;
 begin
-  with ap^ do
+  with aptr^ do
   begin
     p:=size;
     { Signaturtrenner nicht erfassen }
@@ -54,7 +57,10 @@ begin
         dec(p);
       if p<size then
       begin
-        if AbsDelete(ap,p,size-p,false,true)<>nil then; { .robo }
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
+        if AbsDelete(aptr,p,size-p,false,true)<>nil then; { .robo }
+{/TAINTED}	
         aufbau:=true;
       end;
     end;
@@ -118,7 +124,7 @@ begin
         if oldabs=pos.absatz then begin
           if assigned(newabs) then pos.absatz:=newabs
           else pos.absatz:=nxt;
-          if from<=pos.offset then begin
+          if (from-1)<pos.offset then begin
             pos.offset:=max(from,pos.offset-len);
             if (i=1) or (i=2) then BlockAbsCut:=true;
             if from>{=}oldabs^.size{-len} then
@@ -149,7 +155,7 @@ end;
 
 { Korrektur nach Aufspalten eines Absatzes }
 
-procedure BlockAbsSplit(old,new1,new2:absatzp; split,insert_:integer);
+procedure BlockAbsSplit(old,new1,new2:absatzp; split,ins:integer);
 var i : integer;
 begin
   with e^ do
@@ -160,8 +166,7 @@ begin
             pos.absatz:=new1
           else begin
             pos.absatz:=new2;
-            dec(pos.offset,split);
-            inc(pos.offset,insert_);
+	    pos.offset:=pos.offset-split+ins;
           end;
 end;
 
@@ -714,7 +719,10 @@ begin
     end;
 end;
 
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
 function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp; { .robo }
+{/TAINTED}
 var apnew : absatzp;
 begin
   AbsDelete:=ap;
@@ -771,6 +779,8 @@ begin
     end;
 end;
 
+{TAINTED}
+{ unklar -- nicht im CVS-Log: muss ueberprueft werden, inwiefern 'leicht' veraendert. }
 { 10.02.2000 robo - aus xp3ex.pas entnommen und leicht ver„ndert }
 function GetQuote(ap:absatzp):string;
 var p,q : byte;
@@ -795,6 +805,7 @@ begin
   GetQuote:=s;
 end;
 { /robo }
+{/TAINTED}
 
 procedure NewLine;              { Enter - Absatz einfgen }
 var ap,ap2   : absatzp;
@@ -821,6 +832,7 @@ begin
       copysize:=max(0,ap^.size-wp);
       spaces:=0;
       delsp:=0;
+{TAINTED}
       { Quote-Reflow }
       if config.QuoteReflow xor kb_shift then begin
         quotec:=GetQuote(ap);
@@ -831,6 +843,7 @@ begin
         end;
       end
       else quotec:='';
+{/TAINTED}    
       quotes:=length(quotec);
       if wp>=ap^.size
         then quotes:=0; { kein Reflow bei Zeilenende }
@@ -889,13 +902,16 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
+{TAINTED}
         if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
           then if not (ap^.cont[ap^.size-1] in ['-','/'])
                   and (ap^.next^.cont[0]<>' ') then addspaces:=1;
+{/TAINTED}		  
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
         else begin   { Abs„tze zusammenh„ngen }
+{TAINTED}	
           { Quote-Reflow }
           if config.QuoteReflow then begin
             quotec1:=getquote(ap);
@@ -908,6 +924,7 @@ begin
             end;
           end;
           { /robo }
+{/TAINTED}	  
           apnew:=AllocAbsatz(ss);
           wpa:=apnew;
           copyflags(ap,apnew);
@@ -956,7 +973,7 @@ end;
 
 procedure WortRechtsLoeschen;   { Wort rechts l”schen }
 var wp,wpnew,size : integer;
-    wpa,ap        : absatzp; { .robo }
+    wpa,ap        : absatzp; { .robo } { unbedenklich }
 begin
   size:=ActAbs^.size;
   if workpos>=size then
@@ -969,8 +986,11 @@ begin
       inc(wpnew);
     while (wpnew<size) and ADWhitespace(wpnew) do inc(wpnew);
     if wpnew=workpos then inc(wpnew);
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
     ap:=ActAbs; { .robo }
     wpa:=AbsDelete(ap,wp,wpnew-wp,true,true); { .robo }
+{/TAINTED}    
     MoveWorkpos(wp,wpa);
     aufbau:=true;
   end;
@@ -978,7 +998,7 @@ end;
 
 procedure WortLinksLoeschen;    { Wort links l”schen }
 var wp,wpnew{,size }: word;
-    wpa,ap        : absatzp; { .robo }
+    wpa,ap        : absatzp; { .robo } { unbedenklich }
 begin
   if workpos=0 then
     BackSpace
@@ -992,21 +1012,27 @@ begin
     while (wpnew>0) and not (ActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
     while (wpnew>0) and ADWhiteSpace(wpnew-1) do dec(wpnew);
     if wpnew=workpos then dec(wpnew);
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
     ap:=ActAbs; { .robo }
     wpa:=AbsDelete(ap,wpnew,wp-wpnew,true,true); { .robo }
+{/TAINTED}   
     MoveWorkPos(wpnew,wpa);
     aufbau:=true;
   end;
 end;
 
 procedure ZeileLoeschen;        { akt. Zeile l”schen }
-var apd,ap : absatzp; { .robo }
+var apd,ap : absatzp; { .robo } { unbedenklich }
     bc     : boolean;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
     if (ActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
       ap:=ActAbs; { .robo }
       AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+{/TAINTED}      
     end
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz l”schen }
       absatzwechsel(ActAbs,ActAbs^.next,false);
@@ -1022,16 +1048,22 @@ begin
         AddDelEntry(ActAbs);
       end
       else begin
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
         ap:=ActAbs; { .robo }
         FreeAbsatz(ap); { .robo }
+{/TAINTED}	
       end;
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
     end
     else begin                     { 3. Fall: Zeile aus Absatz l”schen }
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
       ap:=ActAbs; { .robo }
       AbsDelete(ap,dl^[scy].offset,LineLength,true,true); { .robo }
+{/TAINTED}      
     end;
   aufbau:=true;
 end;
@@ -1039,13 +1071,16 @@ end;
 procedure AbsatzRechtsLoeschen;
 var
   wp,size : integer;
-  ap      : absatzp; { .robo }
+  ap      : absatzp; { .robo } { unbedenklich }
 begin
   size:=ActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
+{TAINTED}
+{ unklar -- nicht im CVS-Log }
     ap:=ActAbs; { .robo }
     AbsDelete(ap,wp,size-wp,true,true); { .robo }
+{/TAINTED}    
     aufbau:=true;
   end;
 end;
@@ -1057,6 +1092,8 @@ begin
   if wp>=6 then begin
     s[0]:=#6;
     Move(ap^.cont[wp-6],s[1],6);
+    { Sollen wir das bei Gelegenheit nicht mal
+      von Yuppie auf XP2 aendern?! } 
     if s='Yuppie' then begin
       s:='Oops!';
       Move(s[1],ap^.cont[wp-6],5);
@@ -1131,7 +1168,7 @@ begin
   ZeichenEinfuegen(false);
 end;
 
-procedure Insert(var blk:absatzp; var endpos:position); forward; { .robo }
+procedure Insert(var blk:absatzp; var endpos:position); forward; { .robo } { unbedenklich }
 
 procedure tabulator;
 var n,i   : byte;
@@ -1297,13 +1334,13 @@ end;
 { Block an Cursorposition einfgen; Blockzeiger auf Ende zurckliefern }
 { blk^ wird freigegeben!                                               }
 
-procedure Insert(var blk:absatzp; var endpos:position); { .robo }
+procedure Insert(var blk:absatzp; var endpos:position); { .robo } { unbedenklich }
 var ap,ap2,ap3,apn : absatzp;
     ss             : word;
     wp             : integer;
     spaces         : integer;
 begin
-  endpos.absatz:=nil; { .robo }
+  endpos.absatz:=nil; { .robo } { unbedenklich }
   if blk=nil then exit;
   ap:=ActAbs;
   spaces:=EndSpaces;
@@ -1312,7 +1349,9 @@ begin
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu groá }
+{TAINTED} { unklar -- nicht im CVS-Log }
     else if assigned(blk) { .robo }
+{/TAINTED}    
     then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
@@ -1340,7 +1379,9 @@ begin
       error(2);     { 'Absatz zu groá }
       FreeBlock(blk);
     end
+{TAINTED} { unklar -- nicht im CVS-Log }
     else if assigned(blk) { .robo }
+{/TAINTED}    
     then begin
       ap2:=AllocAbsatz(blk^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
@@ -1378,12 +1419,14 @@ begin
   aufbau:=true;
 end;
 
-procedure InsertWithMark(var ap:absatzp); { .robo }
+procedure InsertWithMark(var ap:absatzp); { .robo }{ unbedenklich }
 var pos : position;
 begin
   if assigned(ap) then begin
     Insert(ap,pos);
+{TAINTED} { unklar -- nicht im CVS-Log }
     if assigned(pos.absatz) then begin { .robo }
+{/TAINTED}    
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
@@ -1510,7 +1553,7 @@ function CutBlock:absatzp;      { markierten Block ausschneiden }
 var ap1,ap2,ap    : absatzp;
     apnew,apl,apn : absatzp;
     ofs1,ofs2     : integer;
-    ss,i,spaces   : integer;
+    ss,i,sp       : integer;
     inblk,aflag   : boolean;
     wp            : position;
     recount       : boolean;    { startline neu berechnen }
@@ -1536,7 +1579,7 @@ begin
     ofs2:=block[2].pos.offset;
     wp.absatz:=nil;
     wp.offset:=workpos;
-    spaces:=EndSpaces;
+    sp:=EndSpaces;
     inblk:=InBlock;
     recount:=false;
     CutBlock := nil; { MK 12/99 Sicherheitshalber immer ersteinmal nil }
@@ -1554,7 +1597,7 @@ begin
         ap:=AbsDelete(ap1,ofs1,ss,false,true);
         if aflag then begin
           wp.absatz:=ap;
-          if ofs1<wp.offset then wp.offset:=max(ofs1,wp.offset-ss-spaces);
+          if ofs1<wp.offset then wp.offset:=max(ofs1,wp.offset-ss-sp);
           end
         else wp.absatz:=ActAbs;
         RestoreWorkpos;
@@ -1605,7 +1648,7 @@ begin
       absatzwechsel(ap2,apn,false);
       if wp.absatz=ap2 then begin
         wp.absatz:=apn;
-        inc(wp.offset,ofs1-ofs2-spaces);
+        inc(wp.offset,ofs1-ofs2-sp);
         end;
       firstline:=min(firstline,alines(firstpar));
 
@@ -1714,8 +1757,11 @@ begin
   with e^ do
     if Clipavailable then begin
       ClipToFile(EdTempFile);
+{TAINTED}
+  { unklar -- nicht im CVS-Log }
       ap :=LoadBlock(EdTempFile,false,0,rrand); { .robo }
       InsertWithMark(ap); { .robo }
+{/TAINTED}      
       { if FileExists(EdTempFile) then era(EdTempFile); }
     end
     else begin
@@ -1810,6 +1856,7 @@ begin
     end;
 end;
 
+{TAINTED}
 
 { Block reformatieren }
 
@@ -2006,6 +2053,7 @@ begin
   end;
 end;
 
+{/TAINTED}
 
 { Markierten Block als String zurueckgeben }
 
@@ -2199,8 +2247,11 @@ begin
             if insap=nil then brk:=true
             else begin
               Move(repby[1],insap^.cont,length(repby));
+{TAINTED}
+  { unklar -- nicht im CVS-Log }
               apd:=ActAbs; { .robo }
               AbsDelete(apd,workpos,length(txt),false,true); { .robo }
+{/TAINTED}	      
               Insert(insap,pos);
               MoveWorkpos(workpos+length(repby),ActAbs);
             end;
@@ -2372,12 +2423,15 @@ begin
     writeln(t,'RechterRand=',rechter_rand);
     writeln(t,'AbsatzEnde=',absatzendezeichen);
     writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
+
     { 01/2000 oh }
     writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
     { /oh }
+{TAINTED}
     { 10.02.2000 robo }
     writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
     { /robo }
+{/TAINTED}
     end;
   close(t);
 end;
@@ -2415,6 +2469,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.41  2001/01/11 13:19:31  mk
   - fixed variable size in TruncAbs
 

@@ -110,7 +110,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
 
        MaxFindLen       = 30;
-       EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - ge„ndert auf 11 }
+       EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - ge„ndert auf 11 } { trivial - cl }
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
@@ -169,6 +169,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.9  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

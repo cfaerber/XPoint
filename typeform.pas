@@ -1282,6 +1282,7 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
+{TAINTED}
 procedure DecodeBase64(var s: String);
 const
   b64tab: array[0..127] of byte =
@@ -1335,11 +1336,14 @@ begin
     SetLength(s, p2 - 1 - pad);
   end;
 end;
-
+{/TAINTED}
 
 end.
 {
   $Log$
+  Revision 1.79  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.78  2001/01/04 17:27:36  mk
   - iifs now uses const parameters
 

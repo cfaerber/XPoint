@@ -515,6 +515,7 @@ begin
   result:=AddDirSepa(path)+n;
 end;
 
+{TAINTED}
 function TempExtFile(path,ld,ext:string):string;
 var n : string[MaxLenFilename];
 begin
@@ -525,6 +526,7 @@ begin
   until not FileExists(path+n);
   result:=path+n;
 end;
+{/TAINTED}
 
 function _filesize(const fn:string):longint;
 var sr : TSearchrec;
@@ -643,6 +645,9 @@ end.
 
 {
   $Log$
+  Revision 1.90  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.89  2001/01/21 16:56:25  mk
   - fix for VP compatiblity in FileCreate/FileOpen results
 

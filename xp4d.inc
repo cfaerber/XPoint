@@ -83,12 +83,12 @@ var
     if size<10000 then siz:=strsn(size,5)
     else
       if size<1024*1024 then
-        siz:=strsn(size div 1024,4)+'K'
+        siz:=strsn(size div 1024,4)+'k'
       else
         if size<1024*1024*1024 then
-          siz:=strsn(size div (1024*1024),3)+'MB'
+          siz:=strsn(size div (1024*1024),4)+'M'
         else
-          siz:=strsn(size div (1024*1024*1024),3)+'GB';
+          siz:=strsn(size div (1024*1024*1024),4)+'G';
   end;
 
   function hz(i:integer):string;
@@ -602,6 +602,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.43  2000/12/03 12:38:22  mk
   - Header-Record is no an Object
 

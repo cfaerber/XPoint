@@ -53,11 +53,11 @@ type  nodeinfo = record
                    ispoint  : boolean;
                    status   : string;
                    boxname  : string;
-                   standort : string; { 03.02.2000 MH: 40 -> 65 }
+                   standort : string; { 03.02.2000 MH: 40 -> 65 }{ unbedenklich }
                    sysop    : string;
                    telefon  : string;
                    baud     : word;
-                   fflags   : string; { MH: 40 -> 80 }
+                   fflags   : string; { MH: 40 -> 80 } { unbedenklich }
                    flags    : word;
                    request  : word;
                    datei    : byte;     { Nummer der Nodeliste }
@@ -1331,7 +1331,7 @@ begin
 
 
       { Fix: Flagzeile zu lang: gekürzt und E-Mail rausschneiden }
-      maddtext(12, 4, copy(MailString(FFlags, True), 1, 50), col.coldiahigh);
+      maddtext(12, 4, {TAINTED}copy(MailString(FFlags, True), 1, 50){/TAINTED}, col.coldiahigh);
       maddtext(12, 5, status, col.coldiahigh);
 
       end;
@@ -2225,6 +2225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.44  2001/01/15 23:01:39  mk
   - diskfree with in64
 

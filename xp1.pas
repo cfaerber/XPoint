@@ -68,6 +68,7 @@ type mprec     = record
 {$ENDIF }
      ahidden   = array[1..maxhidden] of integer;
 
+{TAINTED}
 Type TStartData = record
                     Length:        Word; { Must be 0x18,0x1E,0x20,0x32, or 0x3C }
                     Related:       Word; { 00 independent, 01 child }
@@ -96,7 +97,7 @@ Type TStartData = record
                     ObjectBuffer:  PChar; { reserved, must be 00000000 }
                     ObjectBuffLen: LongInt; { reserved, must be 00000000 }
   End;
-
+{/TAINTED}  
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -2079,6 +2080,9 @@ end.
 
 {
   $Log$
+  Revision 1.101  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.100  2001/01/22 16:12:22  mk
   - added special handling for gets with maxlen = 0
 

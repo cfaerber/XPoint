@@ -31,10 +31,10 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : word; { 1=aktiv, 2=l”schen, 4=Žnderung, 8=ersetzt }
+                  flags   : word; 	{ 1=aktiv, 2=l”schen, 4=Žnderung, 8=supersede }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
-                  lastmid : string;
+                  lastmid : string;	{ letzte verwendete mid }
                 end;
 
 procedure AutoRead(var ar:AutoRec);
@@ -68,7 +68,7 @@ begin
     dbRead(auto,'flags',flags);
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
-    LastMID := dbReadStr(auto,'lastmsgid');
+    lastmid := dbReadStr(auto,'lastmsgid');
   end;
 end;
 
@@ -243,14 +243,18 @@ begin
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:=allocsenduudatamem;
+{TAINTED}      
       if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
+{/TAINTED}      
       if DoSend(pm,datei,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
+{TAINTED}	
         dbWrite(auto,'lastmsgid',sData^.msgid);
+{/TAINTED}	
         fh:= FileOpen(datei,fmOpenRead);
         tt:= FileGetDate(fh);
         FileClose(fh);
@@ -666,6 +670,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.33  2000/12/28 13:29:57  hd
   - Fix: packets now sorted in after netcall
   - Adjusted: Open window once during sorting in

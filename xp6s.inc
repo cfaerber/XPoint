@@ -253,7 +253,7 @@ procedure showcode;
   end;
 begin
   attrtxt(col.coldialog);
-  moff; (* 05.02.2000 MH: x+45 -> x+51 *)
+  moff; (* 05.02.2000 MH: x+45 -> x+51 *) { unbedenklich }
   wrt(x+51,y+6,sp(22));
   gotoxy(x+51,y+6);
   if docode=0 then
@@ -284,7 +284,7 @@ end;
 procedure showcc;
 begin
   attrtxt(col.coldialog);
-  mwrt(x+51,y+8,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *)
+  mwrt(x+51,y+8,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *) { unbedenklich }
   if cc_anz=0 then
     mwrt(x+51,y+8,getres(602))   { 'keine' }
   else begin
@@ -299,7 +299,7 @@ begin
   if spezial then begin
     mwrt(x+3,y+10,getres2(603,1));   { 'Spezial..  ' }
     mwrt(x+39,y+10,'               ');
-    end (* 05.02.2000 MH: x+38 -> x+42 *)
+    end (* 05.02.2000 MH: x+38 -> x+42 *) { unbedenklich }
   else begin
     mwrt(x+3,y+10,getres2(603,2));   { 'Absenden..' }
     mwrt(x+39,y+10,getres2(603,3));  { 'ndern..' }
@@ -333,6 +333,7 @@ begin
     20 : flags:=flags+getres2(604,iif(length(flags)<20,8,9));  { 'Eilmail ' / 'Eilmail ' }
   end;
 
+{TAINTED}
   { RFC: Gew„hlten X-Priority-Flag im Sendefenster anzeigen   }
   case RFCPrio of
      1 : Flags := Flags + GetRes2(604, 14);       { 'H”chste '}
@@ -341,6 +342,7 @@ begin
      4 : Flags := Flags + GetRes2(604, 17);       { 'Niedrig '}
      5 : Flags := Flags + GetRes2(604, 18);    { 'Niedrigste '}
   end;
+{/TAINTED}  
 
   if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
   if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
@@ -1123,6 +1125,8 @@ begin
       end;
 end;
 
+{TAINTED}
+
 { Dialog: Priorit„t ermitteln und in glob. Variable RFCPrio schreiben }
 { RFC: X-Priority: 1, 2, 3, 4, 5 }
 procedure GetPrio;
@@ -1159,8 +1163,13 @@ begin                                                  { 'Sende-Priorit„t' }
   end;
   EndDialog;
 end;
+{/TAINTED}
+
 {
   $Log$
+  Revision 1.48  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.47  2001/01/14 10:13:36  mk
   - MakeHeader() integreated in new unit
 

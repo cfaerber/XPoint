@@ -377,6 +377,7 @@ begin
             if id = 'U-X-MAILER'     then Programm := line else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
+{TAINTED}
             if id = 'U-X-HOMEPAGE'   then homepage := Line else
 
             { X-No-Archive Konvertierung }
@@ -388,6 +389,7 @@ begin
               i:=ival(line);
               if i<>0 then priority:=minmax(i,1,5)
             end else
+{/TAINTED}	    
 
             { suboptimal, eigentlich sollten alle Mail-Copies-To-
               Zeilen eingelesen werden, damit es auch hinter
@@ -560,6 +562,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.1  2001/01/14 10:13:36  mk
   - MakeHeader() integreated in new unit
 

@@ -876,12 +876,11 @@ var t,lastt: taste;
       if (quote=2) and (markanz>0) and not MsgMarked then
         dbGo(mbase,marked^[0].recno);
       if pm then begin
-        { 04.02.2000 robo }
-(*        if dbReadInt(mbase,'netztyp') and $800=0 then begin  { kein WAB/OEM } *)
         if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
+        { 04.02.2000 robo } { unbedenklich }
         and not askreplyto
-        then begin
         { /robo }
+        then begin
           empf:= dbReadStr(dispdat,'absender');
           if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
           end
@@ -2131,6 +2130,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.80  2001/02/16 21:42:14  mk
   - fixed bug in AddMultibleFollowups
 

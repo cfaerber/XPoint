@@ -33,7 +33,9 @@ const xTractMsg   = 0;
       xTractDump  = 4;
 
       ExtCliptearline : boolean = true;
+{TAINTED}      
       ExtChgtearline  : boolean = false;
+{/TAINTED}      
 
 procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
@@ -306,6 +308,7 @@ var size   : longint;
   begin
     qchar:=QuoteChar;
 
+{TAINTED}
     { 31.01.2000 robo }
     p:=cpos('&',qchar);
     p2:=cpos('#',hdp.absender);
@@ -314,6 +317,7 @@ var size   : longint;
 {    if netztyp=nt_UUCP then begin }
     if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
     { /robo}
+{/TAINTED}    
 
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
@@ -379,6 +383,7 @@ var size   : longint;
       end;
   end;
 
+{TAINTED}
   procedure Chg_Tearline;   { Fido - Tearline + Origin verfremden }
   const splus : string [1] = '+';
   var s  : string;
@@ -409,6 +414,7 @@ var size   : longint;
       end;
     end;
   end;
+{/TAINTED}
 
   function mausstat(s:string):string;
   var dat: string[20];
@@ -489,7 +495,7 @@ var size   : longint;
       blanklines : longint;
       i          : longint;
       endspace   : boolean;
-      { 03.02.2000 robo }
+      { 03.02.2000 robo } { unbedenklich }
       qc         : char;
       { /robo }
       QuoteOffset: byte;
@@ -546,7 +552,9 @@ var size   : longint;
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=LeftStr(reads,p);
+{TAINTED}      
       if (leftStr(s,11)=' * Origin: ') or (leftStr(s,4)='--- ') or (s='---') then s[2]:='+';
+{/TAINTED}      
       if not iso1 and ConvIso and (s<>'') then begin
         convstr:= s;
         ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
@@ -592,6 +600,7 @@ var size   : longint;
           end;
           insert(qspaces,s,1); inc(p,length(qspaces));
         end;
+{TAINTED}	
         q:=1;
         while (s[q] in [' ','A'..'Z','a'..'z','0'..'9','Ñ','î','Å','·','é','ô','ö'])
           and (q<p) do inc(q);
@@ -603,6 +612,7 @@ var size   : longint;
           end
           else inc(q);
         end;
+{/TAINTED}	
         p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if LeftStr(s,length(lastqc))=lastqc then
@@ -721,7 +731,9 @@ begin
       close(f);
       Hdp.Free;
       ExtCliptearline:=true;
+{TAINTED}      
       ExtChgtearline:=false;
+{/TAINTED}      
       exit;
     end;
     if append then begin
@@ -963,11 +975,16 @@ begin
                   end;
     { /oh }
 
+{TAINTED}
   { Prioritaet im Listenkopf anzeigen:                                    }
   { Rueckgabewert hinter dem PriorityFlag extrahieren und zuordnen        }
 
   hdf_Priority: if hdp.Priority <> 0 then
        case hdp.Priority of
+
+     { an manchen ist die Erfindung der Addition und des +-Operators scheinbar
+     spurlos vor¸bergegangen ;-) } 
+
          { Wert aus Header uebernehmen                                     }
          1: wrs(gr(35) + GetRes2(272, 1));     { 'Prioritaet  : Hoechste'  }
          2: wrs(gr(35) + GetRes2(272, 2));     { 'Prioritaet  : Hoch'      }
@@ -980,6 +997,7 @@ begin
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
 
   { /Prioritaet im Listenkopf anzeigen                                     }
+{/TAINTED}
 
   end;
 
@@ -1071,20 +1089,27 @@ begin
     if (hdp.netztyp=nt_Fido) and (art=xTractMsg) then
       if ExtCliptearline then
         Clip_Tearline
+{TAINTED}	
       else
         if ExtChgTearline then Chg_Tearline;
+{/TAINTED}	
     close(f);
     Hdp.Free;
   end;
   freeres;
   ExtCliptearline:=true;
+{TAINTED}  
   ExtChgtearline:=false;
+{/TAINTED}  
   TempKopien.Free;
 end;
 
 end.
 {
   $Log$
+  Revision 1.63  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.62  2001/01/14 10:13:33  mk
   - MakeHeader() integreated in new unit
 

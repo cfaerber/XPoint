@@ -89,9 +89,11 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
+{TAINTED}		      
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
     '-','_','#','=','&','%','@','$',','];
+{/TAINTED}    
 var x,y : byte;
   brk : boolean;
   fn  : string;
@@ -133,7 +135,9 @@ begin
       begin
         s:=mid(s,y);
         y:=1;
+{TAINTED}	
         while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+{/TAINTED}	
         s:=leftStr(s,y-1);
       end;
       string2clip(s);
@@ -419,7 +423,7 @@ begin
   acht Leerzeilen sind ein Dummy-Header im alten Z-Netz-Format ("Z2.8"). }
 
         if ntZConnect(mbNetztyp) then begin  { Dummy-ZC-Header erzeugen }
-          writeln(tt,'Dummy: das ist ein Dummy-Header');
+          writeln(tt,'Dummy: Dumm-die-dumm...');
           writeln(tt);
           end
         else
@@ -858,6 +862,12 @@ end;
 { Bei Windows-Programmen wird direkt ber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
+{TAINTED}
+{ Hier bin ich nicht ganz sicher, ob wirklich nichts mehr
+von rb stammt. Ich habe aber eine Idee, das ganz neu zu
+implementieren - cl. }
+{/TAINTED}
+
 function XPWinShell(prog:string; parfn:string; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
@@ -919,12 +929,10 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
   end;
 
   function PrepareExe:integer;    { Stack sparen }
-  {
-  Rckgabewert: -1 Fehler
-                 0 DOS-Programm
-                 1 Windows-Programm
-                 2 OS/2-Programm
-  }
+  { Programmtyp:
+    0 DOS
+    1 Windows
+    2 OS/2 	}
   var
       exepath,
       batfile : string;
@@ -1011,6 +1019,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.77  2001/02/11 21:02:00  mk
   - , is now valid char for URLs
 

@@ -54,7 +54,7 @@ uses xp1;
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
                     homeend:boolean; var retkey:taste):shortint;
-const maxbutt = 9; (* 05.02.2000 MH: 9 Buttons im Sendefenster zulassen *)
+const maxbutt = 9; (* 05.02.2000 MH: 9 Buttons im Sendefenster zulassen *){ unbedenklich }
 var p,n,p1,i : byte;
     butt     : array[1..maxbutt] of string[30];
     butthigh : array[1..maxbutt] of byte;
@@ -415,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/02/19 15:27:18  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.16  2000/10/17 10:05:46  mk
   - Left->LeftStr, Right->RightStr
 

@@ -61,7 +61,7 @@ const sendIntern = 1;     { force Intern              }
       FileAttach: boolean = false;
       EditAttach: boolean = true;
       msgprio   : byte    = 0;           { ZConnect-Prio }
-      rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: }
+      rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: } { unbedenklich }
       ControlMsg: boolean = false;
       newbrettgr: longint = 0;           { Gruppe fuer neues Brett }
       flCrash   : boolean = false;
@@ -764,7 +764,7 @@ var f,f2     : file;
   var
     ToStr: String;
     ToPos: Integer;
-  begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }
+  begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }{ unbedenklich }
     diabox(78,13+fadd,typ,x,y);
     moff;
     wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
@@ -782,13 +782,13 @@ var f,f2     : file;
     wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
     wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
     wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
-    showcode; { 05.02.2000 MH: 38 > 42 }
+    showcode; { 05.02.2000 MH: 38 > 42 } { unbedenklich }
     attrtxt(col.coldialog);
     wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
-    showcc; { 05.02.2000 MH: x+39 -> x+43 }
+    showcc; { 05.02.2000 MH: x+39 -> x+43 } { unbedenklich }
     attrtxt(col.coldiahigh);
     kopkey:=LeftStr(getres2(611,16),1);
-    wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' }
+    wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' } { unbedenklich }
     if empfaenger[1]=vert_char then
       wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
     else
@@ -929,8 +929,10 @@ fromstart:
         end;
       end
     else begin                                                 { Empfaenger unbekannt }
+{TAINTED}{ unklar }
     { 14.02.2000 MH: IBM=0, ASCII=1, ISO=2 }
     if newuseribm then umlaute:=0 { MH: NewUserIBM beruecksichtigen }
+{/TAINTED}    
      else umlaute:=1;
       empfneu:=true;
       verteiler:=false;
@@ -1170,7 +1172,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if spezial then begin
         spezial:=false;
         attrtxt(col.coldialog);
-        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. Zurueck }
+        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. Zurueck } { unbedenklich }
       end;
     ReadAgain:
       n:=1;
@@ -1196,13 +1198,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           nt_ZConnect :  if n=6 then n:=9    { Prio        }
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
-                    else if n=9 then n:=0;   { MH: Zurueck }
-          nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio}
+                    else if n=9 then n:=0;   { MH: Zurueck } 
+          nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio} { unbedenklich }
                       else if n=7 then n:=10 { Zusatz      }
-                      else if n=8 then n:=11 { MH: PGP-Sig }
+                      else if n=8 then n:=11 { MH: PGP-Sig } { unbedenklich }
                       else if n=9 then n:=0; { Zurueck     }
           else      if n=6 then n:=0;        { Zurueck     }
-        end; { 05.02.2000 MH: Zurueck-Button in allen Netztypen }
+        end; {TAINTED} { unklar }{ 05.02.2000 MH: Zurueck-Button in allen Netztypen } {/TAINTED}
         if n=0 then n:=-1;
         if n>0 then
           inc(n,10)
@@ -1221,7 +1223,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         if n=4 then begin
           spezial:=true;
           attrtxt(col.coldialog);
-          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. Zurueck }
+          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. Zurueck } { unbedenklich }
           goto ReadAgain;
           end;
 
@@ -1647,8 +1649,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       end
     else if (netztyp=nt_UUCP) and not adrpmonly then
       hdp.homepage:=wwwHomepage;
-    hdp.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: }
-    hdp.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }
+    hdp.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: } { unbedenklich }
+    hdp.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }     { unbedenklich }
     hdp.datei:=sendfilename;
     hdp.ddatum:=sendfiledate;
     if FidoTo<>'' then
@@ -2098,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.98  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.97  2001/02/16 21:25:32  mk
   - fixed count bug in mf_bretta
 

@@ -770,15 +770,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 272
 # 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
 0    30
-1    Highest
+1    Very High
 2    High
 3    Normal
 4    Low
-5    Lowest
+5    Very Low
 6    None
 7    Send-Priority
 8    Priority ~
-9    HighestùHighùNormalùLowùLowestùNone
+9    Very HighùHighùNormalùLowùVery LowùNone
 + 273
 # 09.05.00 JG: Neue Viewer-Optionen
 0    55
@@ -3621,6 +3621,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.123  2001/02/19 15:27:18  cl
+# - marked/modified non-GPL code by RB and MH
+#
 # Revision 1.122  2001/01/22 16:15:14  mk
 # - added ReplaceOwn-Feature (merge from 3.40 branch)
 #

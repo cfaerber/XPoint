@@ -32,7 +32,12 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_senderr = 3;
       uu_recerr  = 4;
 
-function uucico(CommandFile:string; start:longint; var ende:boolean;
+(*
+function uucico(var modem: CommObj;start:longint; var ende:boolean;
+                var waittime:integer; var sendtime,rectime:longint;
+                var uulogfile:string):integer;
+*)
+function uucico_alt(CommandFile:string; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 
@@ -43,7 +48,7 @@ const  ConfigFile = 'uucico.cfg';
        ResultFIle = 'UUCICOR.TMP';
 
 
-function uucico(CommandFile:string; start:longint; var ende:boolean;
+function uucico_alt(CommandFile:string; start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint;
                 var uulogfile:string):integer;
 var t        : text;
@@ -96,9 +101,9 @@ begin
   {$endif}
   shell('UUCICO.EXE '+ConfigFile,500,4);            { --- uucico.exe }
   if not FileExists(ResultFile) then
-    uucico:=uu_parerr
+    uucico_alt:=uu_parerr
   else begin
-    uucico:=uu_recerr;
+    uucico_alt:=uu_recerr;
     assign(t,ResultFile);
     reset(t);
     while not eof(t) do begin
@@ -108,7 +113,7 @@ begin
       if (s<>'') and (LeftStr(s,1)<>';') and (LeftStr(s,1)<>'#') then begin
         id:=LowerCase(trim(LeftStr(s,p-1)));
         s:=trim(mid(s,p+1));
-        if id='result'      then uucico:=ival(s) else
+        if id='result'      then uucico_alt:=ival(s) else
         if id='stopdialing' then ende:=(UpperCase(s)<>'N') else
         if id='waittime'    then waittime:=minmax(ival(s),0,maxlongint) else
         if id='sendtime'    then sendtime:=minmax(ival(s),0,maxlongint) else
@@ -123,6 +128,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.14  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 

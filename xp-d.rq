@@ -779,15 +779,15 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 272
 # 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
 0    30
-1    H”chste
+1    Sehr hoch
 2    Hoch
 3    Normal
 4    Niedrig
-5    Niedrigste
+5    Sehr niedrig
 6    Keine
 7    Sende-Priorit„t
 8    Priorit„t ~
-9    H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine
+9    Sehr HochùHochùNormalùNiedrigùSehr NiedrigùKeine
 + 273
 # 09.05.00 JG: Neue Viewer-Optionen
 0    55
@@ -3598,6 +3598,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.98  2001/02/19 15:27:18  cl
+# - marked/modified non-GPL code by RB and MH
+#
 # Revision 1.97  2001/02/16 21:25:31  mk
 # - fixed count bug in mf_bretta
 #

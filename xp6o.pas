@@ -779,15 +779,19 @@ again:
     end;
   case typ of
       1 : begin
+{TAINTED}      
             ExtCliptearline:=false;
             ExtChgtearline:=true;
             extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+{/TAINTED}	  
           end;
       7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
       2 : begin
+{TAINTED}      
             ExtCliptearline:=false;
             ExtChgtearline:=true;
             extract_msg(0,WeiterMsk,fn,false,1);
+{/TAINTED}	  
           end;
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
@@ -868,6 +872,8 @@ again:
                    else begin
                      Am_ReplyTo:='';
                      dbGo(bbase,selpos);
+{TAINTED} 
+
 { Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
                      zg_flags:=dbReadInt(bbase,'flags');
 { Schreibsperre   }  if zg_flags and 8<>0 then
@@ -885,7 +891,9 @@ again:
                          end else empf:='A'+empf;
                        end;
                      end else
+{/TAINTED}		     
                         Empf := dbReadNStr(bbase,bb_brettname);
+			
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
                        goto ende;
@@ -1279,6 +1287,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
   Revision 1.55  2001/01/14 10:13:35  mk
   - MakeHeader() integreated in new unit
 
