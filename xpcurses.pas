@@ -1520,10 +1520,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-  Linux.SigNal(SIGWINCH, @SigHandler);
-  Linux.SigNal(SIGHUP, @SigHandler);
-  Linux.SigNal(SIGQUIT, @SigHandler);
-  Linux.SigNal(SIGKILL, @SigHandler);
+  Linux.SigNal(SIGWINCH, SigHandler);
+  Linux.SigNal(SIGHUP, SigHandler);
+  Linux.SigNal(SIGQUIT, SigHandler);
+  Linux.SigNal(SIGKILL, SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1542,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.2  2002/12/28 20:11:54  mk
+  - changed call to Signal for fpc compatibility
+
   Revision 1.64.2.1  2002/07/21 20:14:39  ma
   - changed copyright from 2001 to 2002
 
