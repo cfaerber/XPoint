@@ -92,7 +92,7 @@ function  PrintString(const s:string):string;
 implementation
 
 uses
-{$IFDEF Linux }
+{$IFDEF Unix }
  {$IFNDEF Kylix}
   printer,
  {$ELSE}
@@ -174,6 +174,9 @@ end;
 
 {
   $Log$
+  Revision 1.23.2.2  2003/01/11 22:33:11  mk
+  - made FreeBSD version ready
+
   Revision 1.23.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 

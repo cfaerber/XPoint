@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-{$IFDEF linux }
+{$IFDEF Unix }
 {$IFDEF Kylix}
   libc,
   xplinux,
@@ -262,7 +262,7 @@ implementation  {-------------------------------------------------------}
 
 uses
   xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,
-{$IFDEF Linux }
+{$IFDEF Unix }
   {$IFDEF Kylix}
     ncursix,
   {$ELSE}
@@ -2114,6 +2114,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.15  2003/01/11 22:33:11  mk
+  - made FreeBSD version ready
+
   Revision 1.147.2.14  2003/01/08 00:11:18  mk
   - fixed last checkin
 

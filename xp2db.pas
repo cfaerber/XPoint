@@ -27,7 +27,7 @@ unit xp2db;
 interface
 
 uses
-{$IFDEF Linux }
+{$IFDEF Unix }
 {$IFDEF Kylix }
   xplinux,
 {$ENDIF }
@@ -945,6 +945,9 @@ end;
 
 {
   $Log$
+  Revision 1.41.2.2  2003/01/11 22:33:12  mk
+  - made FreeBSD version ready
+
   Revision 1.41.2.1  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 

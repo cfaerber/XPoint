@@ -37,7 +37,7 @@ uses
 {$ELSE}
   ncurses,
 {$ENDIF}
-{$IFDEF Linux}
+{$IFDEF Unix}
   mime,
 {$ENDIF}
   xplinux;
@@ -1542,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.5  2003/01/11 22:33:12  mk
+  - made FreeBSD version ready
+
   Revision 1.64.2.4  2003/01/07 09:55:26  mk
   - temporary fixed compile problem
 
