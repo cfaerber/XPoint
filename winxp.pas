@@ -1084,6 +1084,7 @@ begin
     csCP857:      result := 857;
     csCP858:      result := 858;
     csCP866:      result := 866;
+    csCP1250:     result := 1250;
     csCP1251:     result := 1251;
     csCP1252:     result := 1252;
     csCP1255:     result := 1255;
@@ -1110,6 +1111,7 @@ begin
     857:   result := csCP857;
     858:   result := csCP858;
     866:   result := csCP866;
+    1250:  result := csCP1250;
     1251:  result := csCP1251;
     1252:  result := csCP1252;
     1255:  result := csCP1255;
@@ -1489,6 +1491,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/02/22 18:29:59  cl
+  - added windows-1250
+
   Revision 1.82  2002/02/21 13:52:31  mk
   - removed 21 hints and 28 warnings
 

@@ -32,6 +32,7 @@ uses Unicode,mime;
 {$I charsets/cp857.inc }
 {$I charsets/cp858.inc }
 {$I charsets/cp866.inc }
+{$I charsets/cp1250.inc }
 {$I charsets/cp1251.inc }
 {$I charsets/cp1252.inc }
 {$I charsets/cp1255.inc }
@@ -55,6 +56,7 @@ uses Unicode,mime;
 {$I charsets\cp850.inc }
 {$I charsets\cp857.inc }
 {$I charsets\cp858.inc }
+{$I charsets\cp1250.inc }
 {$I charsets\cp1251.inc }
 {$I charsets\cp1252.inc }
 {$I charsets\cp1255.inc }
@@ -86,6 +88,7 @@ begin
     csCP857: Result := CP857Transtable;
     csCP858: Result := CP858Transtable;
     csCP866: Result := CP866Transtable;
+    csCP1250: Result := CP1250Transtable;
     csCP1251: Result := CP1251Transtable;
     csCP1252: Result := CP1252Transtable;
     csCP1255: Result := CP1255Transtable;
@@ -110,6 +113,9 @@ end.
 
 //
 // $Log$
+// Revision 1.6  2002/02/22 18:29:59  cl
+// - added windows-1250
+//
 // Revision 1.5  2002/01/12 14:13:17  cl
 // - Kylix 2 compile fix
 //

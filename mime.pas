@@ -187,7 +187,7 @@ type
   // DOS/IBM codepages
     csCP437, 	  csCP850,      csCP857,      csCP858,      csCP866, 
   // Windows codepages    
-    csCP1251, 	  csCP1252, 	csCP1255,
+    csCP1250,	  csCP1251, 	csCP1252,     csCP1255,
   // ISO/ANSI charsets
     csISO8859_1,  csISO8859_2,  csISO8859_3,  csISO8859_4,  csISO8859_5,
     csISO8859_6,  csISO8859_7,  csISO8859_8,  csISO8859_9,  csISO8859_10,
@@ -201,6 +201,7 @@ const
   MimeCharsetNames: array[TMIMECharsets] of String = (
     'UTF-8',      'UTF-7',
     'IBM437',     'IBM850',     'IBM857',     'IBM858',     'IBM866', 
+    'windows-1250',
     'windows-1251', 'windows-1252', 'windows-1255',
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
     'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
@@ -1234,6 +1235,9 @@ end;
 
 //
 // $Log$
+// Revision 1.16  2002/02/22 18:29:59  cl
+// - added windows-1250
+//
 // Revision 1.15  2002/02/18 16:56:26  cl
 // - added TMIMEContenttype.IsComposed and MimeTypeIsComposed
 //
