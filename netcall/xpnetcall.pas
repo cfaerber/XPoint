@@ -723,7 +723,7 @@ begin
 //        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
 //      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
 //        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
-      else if ((logintyp=ltZConnect)and NoScript(script)) then
+      else if ((logintyp IN [ltZConnect,ltUUCP])and NoScript(script)) then
         BoxParOk:=getres2(10700,8)
       else
         BoxParOk:='';
@@ -1237,6 +1237,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/05/12 09:53:58  ma
+  - added: error message if no login script is specified with UUCP
+
   Revision 1.17  2001/04/27 10:17:32  ma
   - NNTP: first send, then get new articles
     (immediate replacement of own articles - as soon as ReplaceOwn works)
