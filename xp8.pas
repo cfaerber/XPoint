@@ -933,6 +933,7 @@ var d      : DB;
     fido   : boolean;
     gs     : boolean;
     uucp   : boolean;
+    nntp: boolean;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
@@ -1059,10 +1060,18 @@ label again;
     RCFilename: String;
     Index: Integer;
   begin
+    Moment;
     RCList := TStringList.Create;
-    RCFilename := fn + '.RC';
+    if Art = 0 then
+      RCFilename := fn + '.RC'
+    else
+      RCFilename := fn + '.BL';
     try
-      if FileExists(RCFilename) then RCList.LoadFromFile(RCFilename);
+      if FileExists(RCFilename) then
+      begin
+        RCList.Capacity := _FileSize(RCFilename) div 25;
+        RCList.LoadFromFile(RCFilename);
+      end;
 
       s:=List.FirstMarked;
       while s<>#0 do
@@ -1072,7 +1081,7 @@ label again;
         try
           case Art of
             0: begin // connect
-                 if RCList.IndexOf(s) <> -1 then
+                 if RCList.IndexOf(s1) <> -1 then
                    rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
                  else
                  begin
@@ -1081,13 +1090,8 @@ label again;
                  end;
                end;
             1: begin // disconnect
-                 if RCList.IndexOf(s) = -1 then
-                   rFehler1(833,s1)
-                 else
-                 begin
-                   RCList.Delete(RCList.IndexOf(s));
-                   List.Lines[List.Lines.IndexOf(s + ' *')] := s1;
-                 end;
+                 List.Lines.Delete(List.Lines.IndexOf(s));
+                 RCList[RCList.IndexOf(s + ' *')] := s1;
                end;
           end;
         except
@@ -1099,10 +1103,14 @@ label again;
 
       RCList.Sort;
       RCList.SaveToFile(RCFilename);
-      List.Lines.SaveToFile(fn + '.BL');
+      if art = 0 then
+        List.Lines.SaveToFile(fn + '.BL')
+      else
+        List.Lines.SaveToFile(fn + '.RC');
     finally
       RCList.Free;
     end;
+    CloseBox;
   end;
 
 begin
@@ -1126,6 +1134,7 @@ begin
     fido:=ntAreamgr(netztyp);
     gs:=(netztyp=nt_GS);
     uucp:=(netztyp=nt_UUCP);
+    nntp := (netztyp=nt_NNTP);
     if uucp then begin
       ReadBoxpar(netztyp,box);
       changesys:=(boxpar^.BMtyp=bm_changesys);
@@ -1144,7 +1153,9 @@ begin
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
   else begin
     if (art=1) and FileExists(fn+'.bbl') and changesys then
-      lfile:=fn+'.bbl'
+      lfile:=fn+'.bbl' else
+    if (art=1) and nntp and FileExists(fn+'.rc') then
+      lfile:=fn+'.rc'
     else lfile:=fn+'.bl';
     if not FileExists(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
@@ -1153,9 +1164,9 @@ begin
         ReadBoxpar(netztyp,box);
       List := TLister.CreateWithOptions(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
                  'APGD/'+iifs(_maus,'VSC:080/',''));
-      // List.ReadFromFile(lfile,0);
+      // preallocate ram for stringlist do speed up loading
+      List.Lines.Capacity := _FileSize(lfile) div 25;
       List.Lines.LoadFromFile(lfile);
-      List.Lines.Sort;
       case art of
         0 : showkeys(9);
         1 : showkeys(-9);
@@ -1685,6 +1696,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/03/27 16:01:46  mk
+  - fixed and speedup new brettmanager
+
   Revision 1.36  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
