@@ -328,7 +328,8 @@ begin
                            iifs(KeepVia,'-via ','')+
                            fn+' PUFFER -w:'+strs(screenlines),300,3);
         nt_QWK   : if not existBin(ZQWKBin) then
-                     rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt! (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
+                     rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt!
+                      (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
                    else begin
                      shell(ZQWKBin+' -qz -c'+BoxFilename(box)+' -b'+box+
                            ' -i'+fn+' -o'+GetFileDir(fn)+' -h'+BoxPar^.MagicBrett+
@@ -705,6 +706,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/06/16 19:56:24  mk
+  - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
+
   Revision 1.14  2000/06/16 14:50:13  hd
   - exist an einigen Stellen durch existBin ersetzt
   - Hart codierte Dateinamen (ZQWK.EXE etc.) durch Konstanten ersetzt

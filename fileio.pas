@@ -143,13 +143,14 @@ begin
       AddDirSepa:= p+DirSepa
 {$ELSE}
     begin
-      if length(p)=2 and p[2]=':' then begin	{ Nur C: ? }
+      if (length(p)=2) and (p[2]=':') then
+      begin	{ Nur C: ? }
         p:= UStr(p);
         getdir(Ord(p[1])-64,cwd);		{ -> Akt. Verz. ermitteln }
 	AddDirSepa:= AddDirSepa(cwd);
       end else
         AddDirSepa:= p+DirSepa;
-    end;
+    end
 {$ENDIF}
     else
       AddDirSepa:= p;
@@ -178,11 +179,7 @@ begin
       exit;
     end;
   end;
-{$IFDEF Ver32}
-  envpath:= StrPas(getenv('PATH'));	{ -> Pfad abarbeiten }
-{$ELSE}
   envpath:= getenv('PATH');
-{$ENDIF}
   j:= CountChar(PathSepaChar,envpath);
   for i:= 1 to j do begin
     k:= CPos(PathSepaChar, envpath);
@@ -967,6 +964,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/06/16 19:56:24  mk
+  - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
+
   Revision 1.38  2000/06/16 14:50:43  hd
   - Neue Funktion: existBin: Sucht eine Datei auch in PATH
   - Neue Funktion: AddDirSepa: Haengt Slash/Backslash an, wenn er fehlt
