@@ -153,6 +153,7 @@ Function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
   der tats„chlich allocierte Speicher }
 Function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 Procedure UTF82IBM(var s: String);
+Procedure UTF72IBM(var s: String);
 Function DecodeBase64(const s: String):String;
 Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 
@@ -2097,6 +2098,7 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
     end;
   end;
 
+
 { RFC 1521, see www.rfc.net }
 function DecodeBase64(const s: String):String;
 const
@@ -2163,10 +2165,54 @@ begin
   Decodebase64 := Res;
 end;
 
-end.
 
+procedure UTF72IBM(var s:string); { by robo; nach RFC 2152 }
+  const b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  var i,j:integer;
+      s1:string;
+      S2:string[11];
+      ucs:smallword;
+  begin
+    i:=1;
+    j:=posn('+',s,i);
+    while j<>0 do begin
+      i:=j;
+      inc(j);
+      while (j<=length(s)) and (pos(s[j],b64alphabet)<>0) do inc(j);
+      if (j<=length(s)) and (s[j]='-') then inc(j);
+      s1:=copy(s,i,j-i);
+      delete(s,i,j-i);
+      if s1='+-' then s1:='+'
+      else begin
+        if firstchar(s1)='+' then delfirst(s1);
+        if lastchar(s1)='-' then dellast(s1);
+        while (length(s1) mod 4<>0) do s1:=s1+'=';
+        s2:=DecodeBase64(s1);
+        if odd(length(s2)) then dellast(s2);
+        j:=1;
+        while length(s2)>j do begin
+          ucs:=word(s2[j]) shl 8+word(s2[j+1]);
+          if (ucs<$00000080)
+            then s2[j]:=char(ucs)
+            else if (ucs>$000000ff) { nur Latin-1 }
+              then s2[j]:='?'
+              else s2[j]:=char(iso2ibmtab[byte(ucs)]);
+          inc(j);
+          delete(s2,j,1);
+        end;
+      end;
+      insert(s2,s,i);
+      j:=posn('+',s,i+length(s2));
+    end;
+  end;
+
+
+  end.
 {
   $Log$
+  Revision 1.37.2.24  2001/11/04 22:01:50  mk
+  RB:- UTF-7 Support (dif from Andreas D. Bauer)
+
   Revision 1.37.2.23  2001/08/12 11:44:33  mk
   - added log2int again, function is used in uucico
 

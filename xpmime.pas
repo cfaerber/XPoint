@@ -630,6 +630,7 @@ var   input,t : text;
   begin
      if charset='iso-8859-1' then Iso1ToIBM(s[1],length(s))
      else if charset='utf-8' then UTF82IBM(s)
+     else if charset='utf-7' then UTF72IBM(s)
      else Iso1ToIBM(s[1],length(s));
   end;
 
@@ -721,6 +722,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.22  2001/11/04 22:01:51  mk
+  RB:- UTF-7 Support (dif from Andreas D. Bauer)
+
   Revision 1.12.2.21  2001/09/21 16:18:18  cl
   - typ is now #0'keyword' instead of GetRes2(2440,xxx),
   - the ressources are read in typname only,

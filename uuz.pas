@@ -289,6 +289,7 @@ procedure Charset2IBM;
     with hd.mime do
     if charset='iso-8859-1' then ISO2IBM
     else if charset='utf-8' then UTF82IBM(s)
+    else if charset='utf-7' then UTF72IBM(s)
     else if hd.mime.ctype <> tMultipart then ISO2IBM;
   end;
 
@@ -1161,7 +1162,7 @@ begin
     hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
     charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
-       (charset<>'iso-8859-1') and (charset<>'utf-8') then
+       (charset<>'iso-8859-1') and (charset<>'utf-8') and (charset<>'utf-7') then
       hd.error:='Unsupported character set: '+charset;
     end;
 end;
@@ -3464,6 +3465,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.55  2001/11/04 22:01:50  mk
+  RB:- UTF-7 Support (dif from Andreas D. Bauer)
+
   Revision 1.35.2.54  2001/10/20 17:07:59  mk
   - support fuer CC-Header mit mehr als 255 Zeichen
 
