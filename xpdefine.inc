@@ -50,6 +50,7 @@
   {$DEFINE Ver32 }
   {$IFDEF GO32V2 }
     {$DEFINE DOS32 }
+    {$UNDEF DPMI }
   {$ENDIF }
   {$MODE TP }
   {$C-,H-,I-,M-,P-,T-,V-,X+}
@@ -113,6 +114,9 @@
 
 {
   $Log$
+  Revision 1.40  2000/07/04 09:58:18  mk
+  - NODPMI wieder eingefuegt
+
   Revision 1.39  2000/07/03 18:15:47  mk
   - Left/Right deutlich vereinfacht
 
