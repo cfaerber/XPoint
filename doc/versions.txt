@@ -66,7 +66,7 @@ Original 3.12d -> OpenXP 3.20 (ausgehend von Peter Mandrella's 3.20 Source
   - /Nachricht/Extrakt/MIME-Decode, /Config/Extern/Viewer,
     /Edit/Viewer, /Config/Anzeige/Kopf: Nachrichtenteil
   - /Nachricht/Suchen/Spezial: Typ "Multipart"
-  - /C/O/N/Verschiedenes: BinÑrmails als Attachments
+  - /C/O/E/Verschiedenes: BinÑrmails als Attachments
 - /Config/Optionen/Allgemein: Kommentare aus Brettliste Åbernehmen,
   Umlaute fÅr neue User zulassen,
   Option ':' und '|' als Quotezeichen behandeln
