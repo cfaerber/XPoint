@@ -45,7 +45,7 @@ procedure TED(const fn:string; reedit:boolean; keeplines:byte;
 procedure SigEdit(datei:string);
 procedure EditText;
 procedure Notepad;
-procedure EditSetbetreff(betr:string; maxlen:byte);
+procedure EditSetbetreff(betr:string; maxlen: Integer);
 function  EditGetBetreff:string;
 
 function  EditKeyFunc(var t:taste):boolean;
@@ -70,7 +70,7 @@ const
 
 var
       edbetreff : string;
-      edbmaxlen : byte;      { maximale Betreffl„nge }
+      edbmaxlen : Integer;      { maximale Betreffl„nge }
       EdCfg     : EdConfig;
 
 
@@ -328,7 +328,7 @@ end;
 
 { --- Nachrichteneditor ------------------------------------------- }
 
-procedure EditSetbetreff(betr:string; maxlen:byte);
+procedure EditSetbetreff(betr:string; maxlen: Integer);
 begin
   edbmaxlen:=maxlen;
   edbetreff:=betr;
@@ -502,6 +502,9 @@ end;
 
 {
   $Log$
+  Revision 1.35.2.1  2002/06/20 23:24:34  mk
+  - fixed EditSetBetreff for maxlen > byte
+
   Revision 1.35  2002/02/21 13:52:33  mk
   - removed 21 hints and 28 warnings
 
