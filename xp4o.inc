@@ -21,7 +21,7 @@
 { XP4O - Reorganisation }
 
 
-procedure BU_reorg(user,adrbuch,auto:boolean);
+procedure BU_reorg(user,adrbuch:boolean);
 var x,y,xx  : Integer;
     brk,ask : boolean;
     typ     : string;
@@ -48,10 +48,6 @@ var x,y,xx  : Integer;
 
 begin
   typ:=getres2(445,iif(user,1,2));     { 'User' / 'Bretter' }
-
-  if auto then 
-    brk := false
-  else  
   if not adrbuch then
     ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)   { 'Beim L”schen von '+typ+'n nachfragen' }
   else
@@ -309,7 +305,8 @@ begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
     disp := dbReadNStr(bbase,bb_brettname);
-    if LeftStr(disp,3)<>'$/T' then begin
+    if (disp <> '') and (LeftStr(disp,3)<>'$/T') then
+    begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(disp,2),40));
       testdel(mbrettd(disp[1],bbase));
@@ -714,8 +711,8 @@ begin
 end;
 {
   $Log$
-  Revision 1.48  2002/04/14 22:25:09  cl
-  - added Wartung/Komplett
+  Revision 1.47.2.1  2002/07/17 02:53:03  mk
+  - fixed range check error (see <8SzX+ZICkZB@doebe.li>)
 
   Revision 1.47  2002/02/18 16:59:40  cl
   - TYP: MIME no longer used for RFC and not written into database
