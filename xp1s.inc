@@ -495,9 +495,6 @@ end;
 { Achtung! ShellPath kann mit oder ohne '\' am Ende sein! }
 
 procedure dosshell;
-{$IFDEF DPMI }
-const ShellBatch = 'DPMISHELL.BAT';
-{$ENDIF }
 
   {$IFNDEF DPMI}
   function environment:string;
@@ -514,21 +511,18 @@ begin
     SetCurrentDir(ShellPath);
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
-    {$IFDEF DPMI}
-      assign(t,TempPath+ShellBatch);
-      rewrite(t);
-      writeln(t,'@set prompt=[XP] '+getenv('PROMPT'));
-      writeln(t,'@',getenv('COMSPEC'));
-      close(t);
-      shell(TempPath+ShellBatch,620,2);
-      _era(TempPath+ShellBatch);
-    {$ELSE}
+    {$IFDEF Unix }
+      shell(getenv('SHELL',0, 2);
+    {$ELSE }
       shell(getenv('COMSPEC')+environment,640,2);
-    {$ENDIF}
+    {$ENDIF }
     trackpath:=false;
     end;
 {
   $Log$
+  Revision 1.77  2002/04/18 21:21:12  mk
+  - fixed Bug #502625, shell with linux
+
   Revision 1.76  2002/03/25 22:03:08  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
