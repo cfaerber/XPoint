@@ -2687,7 +2687,7 @@ begin
   begin
     FSplit(dest, dir, name, ext);
     new := dir + name + '.bak';
-    era(dest); if ioresult = 0 then ;
+    era(new); if ioresult = 0 then ;
     _rename(dest, new);
   end;
   assign(f2,dest);
@@ -3460,6 +3460,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.26  2001/01/01 01:09:11  mk
+  - umbenennen des Zielfiles geht jetzt
+
   Revision 1.35.2.25  2000/12/31 15:02:05  mk
   - Backup von Zieldatei statt anhaengen
 
