@@ -160,13 +160,13 @@ end;
 function ntBinary(nt:byte):boolean;
 begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
-                    nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP]) or
+                    nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP, nt_Client]) or
             (fidobin and (nt=nt_Fido));
 end;
 
 function ntMIME(nt:byte):boolean;
 begin
-  ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP])  or
+  ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP, nt_Client])  or
             (zc_mime and (nt in [nt_ZConnect]));
 end;
 
@@ -197,7 +197,8 @@ begin
     nt_Fido     : ntMessageID:=4;     { net:zone/node.point[@domain] xxxxxxxx }
     nt_UUCP,
     nt_NNTP,
-    nt_POP3     : ntMessageID:=5;     { @point.do.main }
+    nt_POP3,
+    nt_Client   : ntMessageID:=5;     { @point.do.main }
   else  { QWK }
     ntMessageID:=1;
   end;
@@ -393,7 +394,7 @@ end;
 
 function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
 begin
-  ntKleinBrett:=(nt in [nt_UUCP, nt_NNTP]);
+  ntKleinBrett:=(nt in [nt_UUCP, nt_NNTP, nt_Client]);
 end;
 
 
@@ -445,7 +446,7 @@ end;
 function ntOnline(nt:byte):boolean;   { false -> Script erforderlich }
 begin
   {ntOnline:=(nt<>nt_Fido) and (nt<>nt_GS) and (nt<>nt_UUCP) and (nt<>nt_QWK);}
-  ntOnline:=not (nt in [nt_Fido, nt_GS, nt_UUCP, nt_QWK, nt_NNTP, nt_POP3]);
+  ntOnline:=not (nt in [nt_Fido, nt_GS, nt_UUCP, nt_QWK, nt_NNTP, nt_POP3, nt_Client]);
 end;
 
 function ntNetcall(nt:byte):boolean;          { Netcall m”glich }
@@ -462,14 +463,14 @@ end;
 function ntKomkette(nt:byte):boolean;
 begin
   ntKomkette:=
-    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet,nt_NNTP, nt_POP3])
+    (nt in [nt_Maus,nt_Fido,nt_ZConnect,nt_UUCP,nt_QWK,nt_Pronet,nt_NNTP, nt_POP3, nt_Client])
     or ((nt=nt_Magic) and MaggiVerkettung);
 end;
 
 
 function ntRfcCompatibleID(nt:byte):boolean;
 begin
-  ntRfcCompatibleID:=nt in [nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3];
+  ntRfcCompatibleID:=nt in [nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 function ntMIDCompatible(n1,n2:byte):boolean;  { austauschbare MsgIDs  }
@@ -493,7 +494,7 @@ end;
 
 function ntEmpfBest(nt:byte):boolean;
 begin
-  ntEmpfBest:= nt in [nt_Fido,nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3];
+  ntEmpfBest:= nt in [nt_Fido,nt_ZConnect,nt_Magic,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
@@ -533,24 +534,24 @@ end;
 
 function ntRealname(nt:byte):boolean;         { Realnames m”glich }
 begin
-  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3];
+  ntRealname:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
 function ntRealUmlaut(nt:byte):boolean;       { Umlaute im Realname }
 begin
-  ntRealUmlaut:=nt in [nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3];
+  ntRealUmlaut:=nt in [nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
 function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
 begin
-  ntHeaderUmlaut:=nt in [nt_ZCONNECT,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3];
+  ntHeaderUmlaut:=nt in [nt_ZCONNECT,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 function ntCancel(nt:byte):boolean;           { Cancel-Messages m”glich }
 begin
-  ntCancel:=nt in [nt_UUCP,nt_Maus,nt_ZConnect,NT_NNTP];
+  ntCancel:=nt in [nt_UUCP,nt_Maus,nt_ZConnect,NT_NNTP, nt_Client];
 end;
 
 function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM m”glich }
@@ -560,7 +561,7 @@ end;
 
 function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt m”glich }
 begin
-  ntErsetzen:=nt in [nt_UUCP,nt_ZConnect,nt_NNTP,nt_POP3];
+  ntErsetzen:=nt in [nt_UUCP,nt_ZConnect,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 function ntBetreffLen(nt:byte):byte;          { max. Betreffl„nge }
@@ -579,7 +580,7 @@ end;
 
 function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
 begin
-  ntPmReply:=nt in [nt_Maus,nt_UUCP,nt_NNTP,nt_POP3];
+  ntPmReply:=nt in [nt_Maus, nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
 end;
 
 
@@ -591,7 +592,7 @@ end;
 
 function ntCrossAM(nt:byte):boolean;          { AM-Crosspostings m”glich }
 begin
-  ntCrossAM:=(nt in [nt_UUCP,nt_NNTP]) or ((nt=nt_ZConnect) and zc_xposts);
+  ntCrossAM:=(nt in [nt_UUCP,nt_NNTP, nt_Client]) or ((nt=nt_ZConnect) and zc_xposts);
 end;
 
 function ntCrossPM(nt:byte):boolean;          { PM-Crosspostings m”glich }
@@ -608,7 +609,7 @@ end;
 
 function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
 begin
-  ntOrigWeiter:=nt in [nt_ZConnect,nt_UUCP,nt_Maus,nt_NNTP,nt_POP3];
+  ntOrigWeiter:=nt in [nt_ZConnect,nt_UUCP,nt_Maus,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 
@@ -634,7 +635,7 @@ end;
 
 function ntPMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
 begin
-  ntPMTeleData:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3];
+  ntPMTeleData:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3, nt_Client];
 end;
 
 function ntAMTeleData(nt:byte):boolean;        { Telefon + Postanschrift }
@@ -645,7 +646,7 @@ end;
 
 function ntSec(nt:byte):boolean;              { sekundengenaue Uhrzeit }
 begin
-  ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet,nt_NNTP,nt_POP3]);
+  ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet,nt_NNTP,nt_POP3, nt_Client]);
 end;
 
 
@@ -698,7 +699,7 @@ end;
 
 function ntXPctl(nt:byte):boolean;
 begin
-  ntXPctl:=(nt in [nt_ZConnect,nt_UUCP,nt_Fido,nt_NNTP,nt_POP3]);
+  ntXPctl:=(nt in [nt_ZConnect,nt_UUCP,nt_Fido,nt_NNTP,nt_POP3, nt_Client]);
 end;
 
 
@@ -722,7 +723,7 @@ end;
 function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All allowed? }
 begin
   // only LSB contains net type
-  ntReplyToAll := ((nt and $FF) in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP]);
+  ntReplyToAll := ((nt and $FF) in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP, nt_CLient]);
 end;
 
 function ntValidAddress(nt:byte;const addr:string):boolean;
@@ -742,6 +743,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.40  2001/12/23 12:00:32  mk
+  - added some nt_Client
+
   Revision 1.39  2001/12/02 12:11:21  cl
   - got two range check errors
 
