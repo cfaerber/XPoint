@@ -1018,7 +1018,13 @@ begin
   mimekey:=left(getres2(611,17),1);
   wrt(x+39,y+10,kopkey);             { 'K' / 'C' }
   if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then
-    wrt(mimepos,y+10,mimekey);       { 'A' }
+    if SendFlags and SendWAB<>0 then
+    begin
+      attrtxt(col.coldialog);
+      wrt(mimepos,y+10,mimekey);       { 'A' }
+      attrtxt(col.coldiahigh);
+    end
+    else wrt(mimepos,y+10,mimekey);    { 'A' }
   if empfaenger[1]=vert_char then
     wrt(x+14,y+4-fadd,vert_name(copy(empfaenger,edis,52)))
   else
@@ -1692,7 +1698,8 @@ fromstart:
 
                 if t=keyaltA then changeabs; { Absender aendern }
 
-                if (ustr(t)=mimekey) and (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) then
+                if (ustr(t)=mimekey) and (netztyp in [nt_ZConnect,nt_UUCP,nt_Client]) and
+                 not (SendFlags and SendWAB<>0) then
                 begin
                   mime_Attach:=MimeSendMenu;
                   showmp;
@@ -2481,6 +2488,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.54  2002/04/21 14:24:17  my
+  MY:- Bei N/W/O k”nnen MIME-Multipart-Anh„nge nicht mehr ver„ndert werden.
+
   Revision 1.39.2.53  2002/04/19 16:38:05  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
