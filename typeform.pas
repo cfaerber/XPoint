@@ -1254,8 +1254,6 @@ end;
 { 01.02.2000 robo - 32 Bit}
 function Mid(const s:string; const n:byte): string; assembler;
 asm
-        push    esi
-        push    edi
         cld
         mov     edi, @result
         mov     esi, s
@@ -1280,9 +1278,8 @@ asm
         sub     edx, ecx
         add     esi, edx
         rep     movsb
-@2:     pop     edi
-        pop     esi
-end;
+@2:
+end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 { /robo }
 {$else}
 function Mid(const s:string; const n:byte): string; assembler;
@@ -2180,6 +2177,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.18  2000/03/05 12:14:51  mk
   ML: DOSEmuVersion nutzt jetzt den offiziellen Weg
 

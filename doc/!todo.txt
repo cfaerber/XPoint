@@ -493,57 +493,7 @@ Baumdarstellung durch # oder durch "G" sich diese ansehen kann.
 MFG
 Lüko Willms
 
-##########################################################################
-From stefan.vinke@gmx.de Sun Feb 27 21:05:00 2000
-Moin, moin!
-
-XP stuerzt u.U. beim Umstellen der Sprache im Configmenue mit dieser  
-Fehlermeldung ab:
-
---- CUT ---
-[------------------ grauer "Balken" ------------------]
-wwqeqweqwe
-icIndexNum: falsche Datei:     BOX
-Runtime error 204 at 101C:454F.
---- CUT ---
-
-(DATABASE.PAS, Zeile 798, Beta 21 vom CVS-Server)
-
-Zuerst wird nur der Balken angezeigt und XP wartet auf eine Eingabe,  
-wenn man etwas eintippt, dann wird das in der zweiten Zeile ausgegeben.
-
-Mit folgender Vorgehensweise laesst sich bei mir der Fehler  
-reproduzierem:
-
-1. Man startet XP und waehlt im Menue die Sprache Englisch
-2. XP beenden
-3. XP starten, Deutsch auswaehlen und <bumm>.
-
-Das Ergebnis ist, dass man XP nur noch mit dem Kommandozeilenparameter  
-auf Deutsch umstellen kann.
-
-BTW: Ich bin der Meinung, dass man "abort" nur mit einem "b" schreibt.  
-(englische Betameldung)
-
-MfG
-  Stefan
-
-
-##########################################################
 From ROBINTON@AMTRASH.comlink.de Mon Feb 28 11:50:00 2000
-Subject: beta21 - mime/msgid-suche
-Message-ID: <7ZikQN$6VSB@robinton.amtrash.comlink.de>
-X-Mailer: CrossPoint v3.12d R/A9564
-X-ZC-PGP-KEY-AVAIL: 
-X-NO-ARCHIVE: yes
-X-NO-ARCHIVE: yes
-Newsgroups: de.comm.software.crosspoint
-Path: uni-berlin.de!fu-berlin.de!newsfeed.ision.net!ision!news.shlink.de!nshift.de!amtrash.comlink.de
-From: ROBINTON@AMTRASH.comlink.de (Soeren Ziehe)
-Date: Mon, 28 Feb 2000 11:50:00 +0100
-X-Gateway: ZCONNECT NSHIFT.de [UUWORLD RFC/ZC V2.2 SER#B4583517]
-Lines: 21
-Xref: uni-berlin.de de.comm.software.crosspoint:39444
 
 Hallo,
 
@@ -555,5 +505,4 @@ wuenschen.
 BTW die Optionen bewirken ja nichts, kann/sollte man sie ausblenden?
 
 Robinton
-
 

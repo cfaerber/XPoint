@@ -80,7 +80,7 @@ type
       { Borland Pascal ab Version 9, 32 Bit }
       integer8 =   shortint;
       integer16 =  smallint;
-      integer32 =  integer;
+      integer32 =  longint;
       word =       longint; { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
@@ -109,6 +109,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.9  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

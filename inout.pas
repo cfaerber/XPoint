@@ -168,7 +168,6 @@ Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
-Procedure CurLen(a,e:byte);               { Cursorbereich festlegen  }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
 Procedure GetCur(var a,e,x,y:byte);          { Cursorbereich abfragen   }
 Procedure SaveCursor;                        { Cursor retten            }
@@ -317,15 +316,15 @@ begin
 end;
 
 
+{$IFDEF BP }
 Procedure CurLen(a,e:byte); assembler;
 asm
-{$IFDEF BP }
   mov ah, 1
   mov ch, a
   mov cl, e
   int $10
-{$ENDIF }
 end;
+{$ENDIF }
 
 Procedure Cursor(t:curtype);
 begin
@@ -383,7 +382,9 @@ begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
   gotoxy(sx[cursp],sy[cursp]);
+{$IFDEF BP }
   curlen(sa[cursp],se[cursp]);
+{$ENDIF }
   dec(cursp);
   if cursp<1 then cursp:=maxsave;
 end;
@@ -1738,6 +1739,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.11  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

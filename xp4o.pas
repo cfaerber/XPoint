@@ -10,8 +10,9 @@
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
-
-{$DEFINE Debugsuche }   { Checkfenster vor dem Start von Suchen anzeigen }
+{$IFDEF Debug }
+  {$DEFINE Debugsuche }   { Checkfenster vor dem Start von Suchen anzeigen }
+{$ENDIF }
 
 {$DEFINE History}       { Such-History fuer RC hier erstmal ausklammern } 
 
@@ -300,8 +301,6 @@ label ende;
   end;            
 
 
-
-{ R-}
   function InText(var key:string):boolean;
   var size : longint;
       ofs  : longint;
@@ -397,7 +396,7 @@ label ende;
 
 {   Volltextcheck:
 
-    Seekstart und Seeklen sind Zeiger auf Anfang und Ende der Teilsuchstrings   
+    Seekstart und Seeklen sind Zeiger auf Anfang und Ende der Teilsuchstrings
     innerhalb des Gesamtsuchstrings SST. Suchand ist "true" bei UND-Suche,
     und "false" bei ODER-Suche Der Textinhalt wird mit den  Teilsuchstrings verglichen,
     solange Suchand=1 (UND) und Found=0, bzw bis Suchand=0 (OR) und Found=1,
@@ -493,7 +492,7 @@ label ende;
       j:=0;
       repeat
         seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }    
-        found:=((igcase and (pos(seek,UStr(such))>0)) or      
+        found:=((igcase and (pos(seek,UStr(such))>0)) or
          (not igcase and (pos(seek,such)>0)));
         found_not:=found and seeknot[j];
         if suchand and not found and seeknot[j] then found:=true;      
@@ -569,7 +568,7 @@ begin
       suchopt:='ai„'
     else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
       suchopt:='ai';
-  end;                            
+  end;
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -1162,7 +1161,7 @@ procedure ModiGelesen;                    {Nachricht-Gelesen status aendern}
 var b     : byte;
     brett : string[5];
 begin
-  if not dbBOF(mbase) then 
+  if not dbBOF(mbase) then
   begin                                   {Nur Wenn ueberhaupt ne Nachricht gewaehlt ist...}  
     dbReadN(mbase,mb_gelesen,b);
     if b=1 then b:=0 else b:=1;
@@ -2417,6 +2416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.22  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

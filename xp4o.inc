@@ -391,7 +391,8 @@ var x,y,yy  : byte;
     if existf(f) then begin
       reset(f);
       i:=0;
-      while not eof(f) and (i<ablagen) do begin
+      while not eof(f) and (i<ablagen) do
+      begin
         read(f,b);
         if b then reobuf[i]:=true;
         inc(i);
@@ -540,7 +541,7 @@ var x,y,yy  : byte;
         b:=false;
         seek(f,filesize(f));
         write(f,b);
-        end;
+      end;
       seek(f,ablage);
       b:=false;
       write(f,b);
@@ -706,6 +707,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.4  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -513,7 +513,7 @@ var x,y : integer;
       ofs:=155+2*keypos;
       moff;
       for x:=1 to keylen+2 do
-{$IFNDEF WIN32}
+{$IFDEF BP }
         if (x>ks1) and (x-1<=ks2) then
           mem[base:ofs+2*x]:=c2
         else
@@ -572,6 +572,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.8  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.7  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert
   - Sprachabfrage bei allererstem Start eingebaut

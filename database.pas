@@ -1,4 +1,3 @@
-
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
@@ -150,9 +149,8 @@ asm
          dec   ax
          jnz   @exlp
 @nokeys: pop ds
+end;
 {$ELSE }
-         push  edi
-         push  esi
          mov   edi, nodep
          mov   esi, rbuf
          xor   edx, edx
@@ -176,10 +174,9 @@ asm
          add   edi, ebx
          dec   eax
          jnz   @exlp
-@nokeys: pop   esi
-         pop   edi
+@nokeys:
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ENDIF }
-end;
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
 asm
@@ -205,10 +202,10 @@ asm
          inc   cx
          cmp   cx,cacheanz
          jb    @sc_lp
-@cfound:  les   di,i
+@cfound: les   di,i
          mov   es:[di],cx
+end;
 {$ELSE }
-         push  edi
          xor   ecx,ecx
          mov   edi, cache
          mov   ebx, dbp
@@ -224,10 +221,9 @@ asm
          inc   ecx
          cmp   ecx,cacheanz
          jb    @sc_lp
-@cfound:  mov   i,ecx
-         pop   edi
+@cfound: mov   [i], ecx
+end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ENDIF }
-end;
 
 procedure seek_cache2(var _sp:integer); assembler;
 asm
@@ -238,25 +234,26 @@ asm
          mov   bx,0                    { sp:=0 }
          mov   cx,0                    { i:=0 }
 
-@clp:     cmp   byte ptr es:[di],0      { not used ? }
+@clp:    cmp   byte ptr es:[di],0      { not used ? }
          jz    @sc2ok
          cmp   es:[di+11],dx           { cache^[i].lasttick < s ? }
          ja    @nexti
          jb    @smaller
          cmp   es:[di+9],ax
          jae   @nexti
-@smaller: mov   ax,es:[di+9]            { s:=cache^[i].lasttick }
+@smaller:mov   ax,es:[di+9]            { s:=cache^[i].lasttick }
          mov   dx,es:[di+11]
          mov   bx,cx                   { sp:=i; }
-@nexti:   add   di,1080
+@nexti:  add   di,1080
          inc   cx
          cmp   cx,cacheanz
          jb    @clp
          jmp   @nofree
 
-@sc2ok:   mov   bx,cx                   { sp:=i }
-@nofree:  les   di,_sp
+@sc2ok:  mov   bx,cx                   { sp:=i }
+@nofree: les   di,_sp
          mov   es:[di],bx
+end;
 {$ELSE }
          push  edi
          mov   edi, cache
@@ -282,11 +279,10 @@ asm
          jb    @clp
          jmp   @nofree
 
-@sc2ok:   mov   ebx,ecx                   { sp:=i }
-@nofree:  mov  _sp,ebx
-          pop  edi
+@sc2ok:  mov   ebx,ecx                   { sp:=i }
+@nofree: mov   [_sp], ebx
+end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ENDIF }
-end;
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
@@ -1712,6 +1708,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/08 22:36:32  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.9  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

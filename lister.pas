@@ -211,9 +211,114 @@ var   lstack  : array[0..maxlst] of record
 
 
 {$IFDEF ver32}
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); begin end;
-{ procedure Rot13(var data; size:word); begin end; }
+procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler;
+var
+  bxsave,cxsave : dword;
+asm
+         mov    esi, buf
+         inc    esi
+         mov    ecx,rr
+         jcxz   @ende
+         mov    ebx,1
+         mov    dh,0
+         mov    ah,wrap                { Wrap-Spalte }
+         or     ah,ah
+         jnz    @llp
+         mov    ah,255
 
+@llp:    mov    edx,0                   { StringlÑngen-ZÑhler }
+         mov    ebx,0
+@llp2:   mov    edi,0
+         cmp    byte ptr [esi+ebx],13 { CR ? }
+         jz     @crlf
+         cmp    byte ptr [esi+ebx],10 { LF ? }
+         jnz    @nocr
+         mov    edi,1                   { Kennung fÅr LF -> nÑchstes Zeichen }
+                                       { NICHT Åberlesen }
+@crlf:   or     edi,edi
+         jnz    @islf
+         cmp    ecx,1                   { CR ist letztes Byte         }
+         jz     @noapp                 { -> keine Leerzeile erzeugen }
+@islf:   mov    [esi-1],dl           { LÑngenbyte davorschreiben   }
+         call   @appcall
+@noapp:  inc    edx
+         dec    ecx
+         jz     @nocrlf                { Block endete mit CR oder LF }
+         add    esi,edx
+         cmp    edi,1
+         jz     @llp
+         cmp    byte ptr [esi],10    { LF ? }
+         jnz    @llp                   { nein, dann nÑchste Zeile lesen }
+         inc    esi                     { LF Åberlesen }
+         dec    ecx
+         jnz    @llp                   { endet Zeile nicht auf LF ? }
+
+@ende:   mov    [rp],1
+         jmp @the_end
+
+@nocr:   inc    edx                     { ein Zeichen weiter }
+         inc    ebx
+         dec    ecx
+         jnz    @no0
+@nocrlf: cmp    edi,1                   { endete Block auf LF ? }
+         jz     @ende
+         mov    ecx,edx                 { unvollstÑndige Zeile kopieren }
+         jcxz   @norest
+         mov    edi, buf
+         inc    edi
+@cloop:  mov    al, [esi]
+         mov    [edi],al
+         inc    esi
+         inc    edi
+         loop   @cloop
+@norest: inc    edx
+         mov    [rp],edx               { Offset fÅr nÑchsten Block }
+         jmp @the_end
+
+@no0:    cmp    dl,ah                  { max. LÑnge erreicht? }
+         jb     @llp2
+         cmp    byte ptr [esi+ebx],13 { folgt ein CR? }
+         jz     @llp2
+
+         mov    dh,dl
+         mov    bxsave,ebx
+         mov    cxsave,ecx
+@cutlp:  cmp    byte ptr [esi+ebx-1],' '   { Trennzeichen? }
+         jz     @clok
+         dec    dl
+         dec    ebx
+         inc    ecx
+         cmp    dl,20
+         ja     @cutlp
+         mov    dl,dh
+         mov    ebx,bxsave
+         mov    ecx,cxsave
+
+@clok:   mov    dh,0
+         mov    [esi-1],dl           { LÑngenbyte = wrap }
+         call   @appcall
+         add    esi,edx
+         jmp    @llp
+
+@appcall:
+         push   eax
+         push   ebx
+         push   ecx
+         push   edx
+         push   esi
+         push   edi
+         dec    esi                    { Adresse des Strings auf den Stack }
+         push   esi
+         call   app_l                  { Zeile an Liste anhÑngen }
+         pop    edi
+         pop    esi
+         pop    edx
+         pop    ecx
+         pop    ebx
+         pop    eax
+         retn
+@the_end:
+end;
 
 {$ELSE}
 
@@ -223,9 +328,8 @@ procedure make_list(var buf; var rp:word; rr:word; wrap:byte); begin end;
 
 { Externes File (z.b Fileliste) fuer Anzeige mit Lister vorbereiten }
 procedure make_list(var buf; var rp:word; rr:word; wrap:byte); near; assembler;
-
-var   bxsave,cxsave : word;
-
+var
+  bxsave,cxsave : word;
 asm
          les    si,buf
          inc    si
@@ -551,7 +655,6 @@ var p  : byte;
             halt(1);
           end;
     end;
-{$IFDEF BP }
     with EmsPtr(lnp)^ do begin
       next:=nil;
       prev:=back;
@@ -559,7 +662,6 @@ var p  : byte;
       marked:=false;
       FastMove(ltxt,cont,lt+1);
       end;
-{$ENDIF }
   end;
 
   procedure apptxt;
@@ -1104,7 +1206,6 @@ var gl,p,y    : shortint;
   end;
 
   procedure ShowMem;
-  var t : taste;
   begin
     with alist^ do begin
       moff;
@@ -1533,6 +1634,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.7  2000/03/08 22:36:33  mk
+  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

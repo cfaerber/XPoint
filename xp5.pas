@@ -600,13 +600,13 @@ var c       : char;
   begin
     if SoftSaver then
       for i:=vlines-1 downto 0 do begin
-{$IFNDEF ver32}
+{$IFDEF BP }
         Move(p^,mem[base:i*160],(vlines-i)*160);
 {$ENDIF}
           delay(5);
         end
     else
-{$IFNDEF ver32}
+{$IFDEF BP }
       Move(p^,mem[base:0],vlines*160);
 {$ENDIF}
   end;
@@ -685,7 +685,7 @@ begin
     savecursor;
     getmem(p,vrows2*vlines);
     moff;
-{$IFNDEF ver32}
+{$IFDEF BP }
     Move(mem[base:0],p^,vrows2*vlines);
     mattr:=textattr;
     textbackground(black);
@@ -697,7 +697,7 @@ begin
     fillchar(star,sizeof(star),0);
     endflag:=false;
     repeat
-{$IFNDEF ver32}
+{$IFDEF BP }
       kstat:=memw[$40:$17];
 {$ENDIF}
       showstars;
@@ -1033,6 +1033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.11  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

@@ -683,7 +683,6 @@ begin
   freemem(buf,bufsize);
 end;
 
-
 procedure mimedecode;    { Nachricht/Extract/MIME-Decode }
 var mpdata : multi_part;
     brk    : boolean;
@@ -701,6 +700,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.7  2000/03/01 23:41:48  mk
   - ExtractMultiPart decodiert jetzt eine Zeile weniger
 

@@ -17,7 +17,10 @@ begin
   mono:=ParMono or (mem[Seg0040:$49]=7);
 {$ENDIF}
   with col do
-    if not mono then begin
+{$IFDEF BP }
+    if not mono then
+{$ENDIF }
+    begin
       colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
       colmenuhigh[0]:=$74; colmenuhigh[1]:=$74; colmenuhigh[2]:=$74; colmenuhigh[3]:=$74;
       colmenuinv[0]:=$17; colmenuinv[1]:=$17; colmenuinv[2]:=$17; colmenuinv[3]:=$17;
@@ -37,16 +40,20 @@ begin
       coldiasel:=$30; coldiaselbar:=7;
       colselbox:=$70; colselrahmen:=$70; colselhigh:=$7f; colselbar:=$1e;
       colselbarhigh:=$1f;
+{$IFDEF BP }
       if videotype<=1 then begin
         colsel2box:=$70; colsel2rahmen:=$70; colsel2high:=$7f; colsel2bar:=$1e;
         colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
         coldiabuttons:=$7f;
         end
       else begin
+{$ENDIF }
         colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
         colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
         coldiabuttons:=$8f;
+{$IFDEF BP }
         end;
+{$ENDIF }
       colbutton:=$17; colbuttonhigh:=$1f; colbuttonarr:=$1b;
       colutility:=$30; colutihigh:=$3e; colutiinv:=11;
       collisttext:=7; collistselbar:=$30; collistmarked:=green;
@@ -65,6 +72,7 @@ begin
       colmailer:=$70; colmailerhigh:=$7f; colmailerhi2:=$7e;
       colborder:=0;
       end
+{$IFDEF BP }
     else begin
       colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
       colmenuhigh[0]:=$0f; colmenuhigh[1]:=$0f; colmenuhigh[2]:=$0f; colmenuhigh[3]:=$0f;
@@ -103,6 +111,7 @@ begin
       colmailer:=$70; colmailerhigh:=$70; colmailerhi2:=$70;
       colborder:=0;
       end;
+{$ENDIF }
 end;
 
 
@@ -1589,6 +1598,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.16  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

@@ -209,7 +209,7 @@ function  aFile(nr:byte):pathstr;
 
 function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
-function  ixdat(dat:string):longint;              { Z-Date -> Long  }
+function  ixdat(s:string):longint;              { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
 function  ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
@@ -296,13 +296,126 @@ var  menulevel : byte;                  { MenÅebene }
      mst       : boolean;
 
 
-{$IFDEF ver32}
-function  ixdat(dat:string):longint; begin end;
-procedure iso_conv(var buf; size:word); begin end;
-procedure ListDisplay(x,y:word; var s:string); begin end;
+{$IFDEF Ver32 }
+{ Achtung: noch Fehlerhaft! }
+function  ixdat(s:string):longint; assembler;
+asm
+         mov   esi,s
+         inc   esi                      { LÑnge ist z.Zt. immer 10 }
+         call  @getbyte                 { Jahr }
+         cmp   al,70
+         jae   @neunzehn
+         add   al,100
+@neunzehn:mov   dh,al
+         call  @getbyte                 { Monat }
+         mov   cl,4
+         shl   al,cl
+         mov   dl,al
+         mov   cx,0
+         call  @getbyte                 { Tag }
+         shr   al,1
+         rcr   ch,1
+         add   dl,al
+         call  @getbyte                 { Stunde }
+         shl   al,1
+         shl   al,1
+         add   ch,al
+         call  @getbyte                 { Minute }
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         add   ch,al
+         mov   ax, dx
+         shr   ax, 16
+         mov   ax,cx
+         jmp   @ende
+
+@getbyte:mov   al, [esi]
+         inc   esi
+         sub   al,'0'
+         mov   ah,10
+         mul   ah
+         add   al, [esi]
+         sub   al,'0'
+         inc   esi
+         ret
+@ende:
+end;
+
+procedure iso_conv(var buf; bufsize:word); assembler;
+asm
+         cld
+         mov    edi, buf
+         mov    ecx, bufsize
+         mov    ebx, offset isotab1 - 0c0h
+@isolp:  mov    al, [edi]
+         cmp    al, 0c0h
+         jb     @noconv
+         xlat
+@noconv: stosb
+         loop   @isolp
+end ['EAX', 'EBX', 'ECX', 'EDI'];
+
+procedure ListDisplay(x,y:word; var s:string);
+begin
+  FWrt(x, y, s);
+end;
+
 {$ELSE}
 {$L xp1.obj}
-function  ixdat(dat:string):longint; external;
+function  ixdat(s:string):longint; external;
+(*
+asm
+         les   si,s
+         inc   si                      { LÑnge ist z.Zt. immer 10 }
+         call  @getbyte                 { Jahr }
+         cmp   al,70
+         jae   @neunzehn
+         add   al,100
+@neunzehn:mov   dh,al
+         call  @getbyte                 { Monat }
+         mov   cl,4
+         shl   al,cl
+         mov   dl,al
+         mov   cx,0
+         call  @getbyte                 { Tag }
+         shr   al,1
+         rcr   ch,1
+         add   dl,al
+         call  @getbyte                 { Stunde }
+         shl   al,1
+         shl   al,1
+         add   ch,al
+         call  @getbyte                 { Minute }
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         shr   al,1
+         rcr   cl,1
+         add   ch,al
+         mov   ax,cx
+         jmp   @ende
+
+@getbyte:mov   al,es:[si]
+         inc   si
+         sub   al,'0'
+         mov   ah,10
+         mul   ah
+         add   al,es:[si]
+         sub   al,'0'
+         inc   si
+         ret
+@ende:
+end; *)
+
 procedure iso_conv(var buf; size:word); external;
 procedure ListDisplay(x,y:word; var s:string); far; external;
 
@@ -337,9 +450,7 @@ begin
     mf:=forcecolor; forcecolor:=false; mt:=lastattr;
     attrtxt(7);
     moff;
-{$IFNDEF ver32}
     clwin(1,80,iif(total,1,2),screenlines);
-{$ENDIF}
     mon;
     attrtxt(mt);
     forcecolor:=mf;
@@ -435,29 +546,40 @@ end;
 
 procedure sichern(var sp:scrptr);
 begin
-  with sp do begin
+  with sp do
+  begin
+{$IFDEF Win32 }
+    { Das Attribut belegt hier 2 Byte }
+    scsize:=screenlines*screenwidth*4;
+{$ELSE }
     scsize:=screenlines*2*screenwidth;
+{$ENDIF }
     if maxavail<scsize+500 then interr('Speicher-öberlauf');
     getmem(p,scsize);               { Bild sichern }
     moff;
-{$IFNDEF ver32}
+{$IFDEF Win32 }
+    ReadScreenRect(1, screenwidth, 1, screenlines, p^);
+{$ELSE }
     FastMove(mem[base:0],p^,scsize);
-{$ENDIF}
+{$ENDIF }
     mon;
-    end;
+  end;
 end;
 
 procedure holen(var sp:scrptr);
 begin
-{$IFNDEF ver32}
-  with sp do begin
+  with sp do
+  begin
     moff;
+{$IFDEF Win32 }
+    WriteScreenRect(1, screenwidth, 1, screenlines, p^);
+{$ELSE }
     FastMove(p^,mem[base:0],scsize);
+{$ENDIF }
     mon;
     disp_DT;
     freemem(p,scsize);               { Bild wiederherstellen }
-    end;
-{$ENDIF}
+  end;
 end;
 
 
@@ -634,8 +756,8 @@ begin
         setmauswindow(0,639,0,screenlines*8-1);
         end;
     end;
-  if (videotype>1) and not ParMono then setbackintensity(true);
 {$IFDEF BP }
+  if (videotype>1) and not ParMono then setbackintensity(true);
   SetXPborder;
 {$ENDIF }
 end;
@@ -1608,6 +1730,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/03/08 22:36:33  mk
+  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.13  2000/03/08 22:13:31  rb
   nicht mehr benîtigte Routinen fÅr OS/2 Programmaufruf entfernt
 

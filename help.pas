@@ -70,14 +70,14 @@ const maxpst  = 20;
       _pexit  : stringp = nil;
 
 
-type pageadr = array[1..maxpages] of record
-                                       nr  : word;
+type pageadr = array[1..maxpages] of packed record
+                                       nr  : smallword;
                                        adr : longint;
                                      end;
-     qvt     = array[1..maxqvw] of record
+     qvt     = array[1..maxqvw] of packed record
                                      y,x,l : byte;
                                      xout  : byte;  { Anzeige-Position }
-                                     nn    : word;
+                                     nn    : smallword;
                                    end;
      zt      = array[1..maxlines] of stringp;
 
@@ -141,8 +141,8 @@ begin
 end;
 
 
-function blockrw:word;
-var w : word;
+function blockrw:smallword;
+var w : smallword;
 begin
   blockread(f,w,2);
   testio;
@@ -247,14 +247,6 @@ asm
         inc bx
         loop @lp;
 {$ENDIF }
-(* inline($59/          {      pop  cx         }
-       $5b/          {      pop  bx         }
-       $07/          {      pop  es         }
-       $b0/$07/      {      mov  al,7       }
-       $26/$30/$07/  { lp:  xor  es:[bx],al }
-       $04/$7d/      {      add  al,125     }
-       $43/          {      inc  bx         }
-       $e2/$f8);     {      loop lp         } *)
 end;
 
 procedure loadpage(nr:word; pstentry:boolean);
@@ -771,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/08 22:36:33  mk
+  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

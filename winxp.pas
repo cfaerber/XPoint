@@ -15,8 +15,6 @@
 {$ENDIF }
 
 unit winxp;
-{.$undef bp}
-{.$define ver32}
 
 {  ==========================  Interface-Teil  ==========================  }
 
@@ -67,29 +65,41 @@ procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
+{ Diese Routine aktualisiert wenn nîtig den LocalScreen }
 procedure Wrt(const x,y:word; const s:string);
-{ Schreiben eines Strings, wie Writeln }
+{ Schreiben eines Strings, wie Write, CursorPosition
+  wird aktualisiert }
 procedure Wrt2(const s:string);
-{ Schreiben eines Strings ohne Update der Cursor-Position }
+{ Schreiben eines Strings ohne Update der Cursor-Position
+  Der LocalScreen wird wenn nîtig aktualisiert }
 procedure FWrt(const x,y:word; const s:string);
 
 {$IFDEF Win32 }
-{ Liest ein Zeichen direkt von der Konsole aus }
+{ Liest ein Zeichen direkt von der Konsole aus
+  x und y beginnen mit 1 }
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
 
 { Liest direkt von der Console eine Zeile (nicht Åber Zeilenende) aus
-  und Speichert das Ergebnis in Buffer. Buffer enthÑlt ein array
+  und speichert das Ergebnis in Buffer. Buffer enthÑlt ein array
   aus Zeichen + Attribut mit je einem Byte. Count gibt die Zeichenzahl an
   Achtung: X und Y beginnen hier bei Koodinate 0 ! }
 procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
 
 { Diese Routinen kopieren rechteckige Bildschirmbereiche aus
   der Console heraus und wieder hinein. Der Buffer mu· dabei
-  die vierfache Grî·e der Zeichenzahl besitzen  }
+  die dreifache Grî·e (Win32) der Zeichenzahl besitzen. Die Koordinaten
+  beginnen bei 1/1.
+
+  Unter Win32 enthÑlt der Buffer ein Byte Zeichen und zwei Byte
+  fÅr das Attribut. Unter anderen Betriebssystemen darf das
+  anders gemacht werden. }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 {$ENDIF }
-{ FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut }
+{ FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
+  Die Koordinaten beginnen bei 1/1.
+  Die Routine ist bis jetzt unter Win32 mit API und fÅr den
+  Rest mit FWrt implementiert }
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 
 procedure w_copyrght;
@@ -488,32 +498,32 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
 {$IFDEF Win32 }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 var
-  ReadPos, Coord: TCoord;
+  BSize, Coord: TCoord;
   SourceRect: TSmallRect;
 begin
-  ReadPos.X := r-l; ReadPos.Y := u-o;
+  BSize.X := r-l+1; BSize.Y := u-o+1;
   Coord.X := 0; Coord.Y := 0;
   with SourceRect do
   begin
-    Left := l-1; Right := r;
-    Top := o-1; Bottom := u;
+    Left := l-1; Right := r-1;
+    Top := o-1; Bottom := u-1;
   end;
-  ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), ReadPos, Coord, @SourceRect);
+  ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
 end;
 
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 var
-  WritePos, Coord: TCoord;
+  BSize, Coord: TCoord;
   DestRect: TSmallRect;
 begin
-  WritePos.X := r-l; WritePos.Y := u-o;
+  BSize.X := r-l+1; BSize.Y := u-o+1;
   Coord.X := 0; Coord.Y := 0;
   with DestRect do
   begin
-    Left := l-1; Right := r;
-    Top := o-1; Bottom := u;
+    Left := l-1; Right := r-1;
+    Top := o-1; Bottom := u-1;
   end;
-  WriteConsoleOutput(OutHandle, Char_Info(Buffer), WritePos, Coord, @DestRect);
+  WriteConsoleOutput(OutHandle, Char_Info(Buffer), BSize, Coord, @DestRect);
 end;
 {$ENDIF }
 
@@ -524,6 +534,7 @@ begin
 {$IFDEF Ver32 }
   {$IFDEF Win32 }
     FWrt(WhereX, WhereY, s);
+    GotoXY(WhereX+Length(s), WhereY);
   {$ELSE }
   { LocalScreen Åbernimmt die énderungen }
   Write(s);
@@ -679,7 +690,7 @@ begin
     moff;
 {$IFDEF Win32 }
     getmem(savemem,wi*(u-o+ashad+1)*2);
-    ReadScreenRect(l, r+1+ashad, o, u+1+ashad, SaveMem^);
+    ReadScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
 {$ELSE }
     getmem(savemem,wi*(u-o+ashad+1));
     for j:=o-1 to u-1+ashad do
@@ -711,7 +722,7 @@ begin
     moff;
 
 {$IFDEF Win32 }
-    WriteScreenRect(l, r+1+ashad, o, u+1+ashad, SaveMem^);
+    WriteScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
 {$ELSE }
     for i:=o-1 to u-1+ashad do
 {$IFDEF BP }
@@ -1003,6 +1014,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/08 22:36:33  mk
+  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+
   Revision 1.10  2000/03/08 01:33:15  mk
   - Kopieren von rechteckigen Bildschirmbereichen hinzugefuegt
 
