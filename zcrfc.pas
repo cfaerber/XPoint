@@ -178,6 +178,7 @@ uses
   xpstreams_codec,
   xpcharset,
   xpcharset_streams,
+  osdepend,
   xpheader, xpmakeheader, resource, Debug, addresslist;
 
 const
@@ -3624,6 +3625,12 @@ begin
     ' by ', author_name, ' <', author_mail, '>');
   writeln;
   Randomize;
+
+  if AutomaticTimeZone then
+    XpTimeZone := GetTimeZone
+  else
+    XpTimeZone := iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
+
   UUZc := TUUZ.Create;
   with uuzc do
   try
@@ -3770,6 +3777,9 @@ end;
 
 {
   $Log$
+  Revision 1.144  2003/10/01 10:09:56  mk
+  - added initialization of XPTimzeone for command line uuz
+
   Revision 1.143  2003/09/29 20:47:14  cl
   - moved charset handling/conversion code to xplib
 
