@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 11.12.2001 (letzter Update)
+DÅsseldorf, den 20.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -89,10 +89,11 @@ Lister
   XP0.PAS, XP1O.PAS, XP1S.INC, XP2C.PAS, XP2CFG.INC, XP4O.PAS,
   XPKEYS.PAS, XP.IHQ, XP-E.IHQ
 
-- Der Lister zeigt den KOM-Header jetzt korrekt an, wenn die Nachricht 
-  keine Bin‰rnachricht ist. Vorher wurde in diesem Fall der Header garnicht
-  beachtet. (MK)
+- Der Lister zeigt den KOM-Header jetzt korrekt an, wenn die Nachricht
+  keine BinÑrnachricht ist (vorher wurde der Header in diesem Fall gar
+  nicht beachtet).
   XP3EX.PAS, XP4W.INC
+
 
 
 Editor
@@ -470,6 +471,29 @@ Allgemeine Bedienung und Sonstiges
   XP9.PAS, XP9.INC, XP9SEL.PAS, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ,
   XP.IHQ, XP-E.IHQ
 
+- RFC/Client ist jetzt ein eigener Netztyp (41) statt einer Einstellung
+  in der Boxkonfiguration ("Client-Mode="). Alte RFC/Client-Boxen mÅssen
+  einmal manuell von RFC/UUCP wieder auf RFC/Client umgeschaltet werden.
+  Beim Wechsel des Netztyps von ZConnect oder RFC/UUCP auf RFC/Client
+  wird das Feld "eMail-Adresse" automatisch aus den Boxdaten (Username,
+  Pointname, Domain, Alias-Schalter) korrekt ermittelt.
+  XP2CFG.INC, XP3EX.PAS, XP3O.PAS, XP3O.INC, XP3O2.PAS, XP4.PAS,
+  XP4E.PAS, XP4O.PAS, XP4RTA.PAS, XP6.PAS, XP6O.PAS, XP6S.INC, XP7.PAS,
+  XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP8.PAS, XP9.PAS, XP9.INC,
+  XP9BP.PAS, XP9SEL.PAS, XP10.INC, XPNT.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ,
+  XP-E.IHQ, DBFORM.TXT
+
+- Registrierroutine fÅr RFC/Client gemÑ· Vereinbarung mit Peter
+  Mandrella (Mail vom 21.11.2001) angepa·t => kein UUCP-Key fÅr
+  RFC/Client mehr erforderlich. :-)
+  XP0.PAS, XP2.PAS, XP2DB.PAS, XP6.PAS, XP.IHQ
+
+- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+  Dadurch kein Lîschen bzw. Neueintragen der Verzeichnisdaten beim
+  Umschalten mehr erforderlich.
+  XP0.PAS, XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP9.INC,
+  XP9BP.PAS, XP9SEL.PAS, XP.IHQ, XP-E.IHQ
+
 
 
 Bugfixes
@@ -573,6 +597,17 @@ Bugfixes
 - Breite des englischen SysopMode-Dialogs bei RFC-Boxen korrigiert.
   XP-E.RQ
 
+- Sysop-Mode RFC/Client funktioniert jetzt.
+  XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC
+
+- Ausschlu·zeiten werden bei SysopMode und RFC/Client nicht mehr
+  berÅcksichtigt (war zwar so dokumentiert, funktionierte aber nicht).
+  XP7.PAS
+
+- Cancel/Supersedes berÅcksichtigt jetzt Alias-Adressierung (ZConnect
+  und RFC/UUCP) sowie eMail-Adresse (RFC/UUCP und RFC/Client).
+  XP3O.PAS
+
 
 
 Interne énderungen
@@ -604,3 +639,8 @@ Interne énderungen
 
 - PrÅfung auf gÅltigen .BFG-Dateinamen vereinfacht ('IsDevice').
   XP9SEL.PAS
+
+- Etliche Displayroutinen deutlich beschleunigt, speziell fÅr den
+  Bildaufbau in DOS-Boxen von Windows 2000/XP.
+  XP1INPUT.PAS, XP1MENU.INC, XP9SEL.PAS, XP10.PAS, MASKE.INC, MAUS2.PAS,
+  WINXP.PAS
