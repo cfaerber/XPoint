@@ -698,12 +698,14 @@ end;
 
 function ngdispChanged(var s:string):boolean;
 begin
+  Result := True;
   if s=_jn_[1] then exit;
   setfield(4,s);
 end;
 
 function ngdispaChanged(var s:string):boolean;
 begin
+  Result := True;
   if s=_jn_[2] then exit;
   setfield(3,s);
 end;
@@ -1549,6 +1551,10 @@ end;
 
 {
   $Log$
+  Revision 1.132  2002/07/22 17:55:32  mk
+  - fixed result values for ngdispChanged and ngdispaChanged,
+    fixeing problems selecting in config/anzeige/bretter
+
   Revision 1.131  2002/06/12 09:14:50  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
