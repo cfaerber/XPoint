@@ -250,6 +250,7 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       addhd         : array[1..maxaddhds] of string;
       addhdmail     : array[1..maxaddhds] of boolean;
       addhds        : integer;
+      convibm: boolean;
 
 { 28.01.2000 robo - Envelope-Empf„nger }
       envemp        : string [adrlen];
@@ -854,7 +855,7 @@ begin
     for i:=1 to addrefs do wrs('BEZ: '  +addref[i]);
     if ersetzt<>''    then wrs('ERSETZT: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
-    if programm<>''   then wrs('Mailer: '+programm);
+    if programm<>''   then wrs('MAILER: '+programm);
 
     { X-No-Archive Konvertierung }
     if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
@@ -1292,7 +1293,7 @@ end;
 
 
 procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
-var p : byte;
+var p : word;
 begin
   if not MakeQP or (hd.mime.encoding<>encQP) then exit;
   p:=1;
@@ -1423,6 +1424,7 @@ begin
 { /robo }
 
       charset:=iifs(x_charset='','us-ascii',x_charset);
+      if convibm = false then charset:='iso-8859-1';
       end
     else if attrib and AttrMPbin <> 0 then begin
       ctype:=tMultipart;
@@ -2915,7 +2917,7 @@ var dat    : string[30];
   var p,r,ml : byte;
   begin
     uuz.s:=ss;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     ss:=uuz.s;
     ml:=iif(rfc1522,60,78);
     r:=ml+1-length(txt);
@@ -3011,7 +3013,9 @@ var dat    : string[30];
 
 
 begin
-  with hd do begin
+  with hd do
+  begin
+    convibm := lstr(hd.charset) <> 'iso1';
     dat:=ZtoRFCdate(datum,zdatum);
     if mail then begin
       if wab='' then s:=absender          { Envelope erzeugen }
@@ -3046,12 +3050,12 @@ begin
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
     uuz.s:=realname;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     RFC1522form;
     wrs(f,'From: '+absender+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     if wab<>'' then begin
       uuz.s:=war;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     end;
@@ -3111,12 +3115,12 @@ begin
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
-    IBM2ISO;
+    if convibm then IBM2ISO;
     RFC1522form;
     wrs(f,'Subject: '+uuz.s);
     if keywords<>'' then begin
       uuz.s:=keywords;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
     end;
@@ -3172,7 +3176,7 @@ begin
       wrs(f,'Distribution: '+distribution);
     if organisation<>'' then begin
       uuz.s:=organisation;
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
     end;
@@ -3194,7 +3198,7 @@ begin
       wrs(f,'X-XP-Ctl: '+strs(XPointCtl));
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
-      IBM2ISO;
+      if convibm then IBM2ISO;
       RFC1522form;
       wrs(f,uuz.s);
     end;
@@ -3444,7 +3448,7 @@ begin
           while fpos+bufpos<gs do begin
             ReadString(true);
             if fpos+bufpos>gs then ShortS;
-            IBM2ISO;
+            if convibm then IBM2ISO;
             if NewsMIME then MakeQuotedPrintable;
             wrbuf(f);
             end;
@@ -3500,7 +3504,7 @@ begin
               ReadString(true);
               if fpos+bufpos>gs then ShortS;
               if SMTP and (s<>'') and (s[1]='.') then s:='.'+s;
-              IBM2ISO;
+              if convibm then IBM2ISO;
               MakeQuotedPrintable;
               wrbuf(f2);
               end;
@@ -3558,6 +3562,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.16  2001/08/05 10:46:26  mk
+  - fixed der 3.40 uebernommen
+
   Revision 1.8.2.15  2001/07/09 16:48:06  my
   JG:- Fix: if sender<>'' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender)
        (prevents creation of wrong ABS headers when doing N/W/O with News)
