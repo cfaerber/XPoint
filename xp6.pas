@@ -1626,6 +1626,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
     begin
+      hdp.ref:=_bezug;                          //bitte diesen Abschnit ÅberprÅfen :MO
       sData^.References.Add(_bezug);
       if ntOrigID(netztyp) then
         hdp.org_xref:=_orgref;
@@ -2100,6 +2101,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.88  2001/01/03 16:44:31  mo
+  -Bezugsverkettung auf
+  -neue selbstgeschriebene mail repariert
+
   Revision 1.87  2001/01/02 10:05:25  mk
   - implemented Header.References
 
