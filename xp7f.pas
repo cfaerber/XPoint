@@ -25,10 +25,10 @@ uses
   crt,
 {$ENDIF }
   ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,maske,xpglobal,
-  debug,xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl,fidoglob;
+  debug,xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl,fidoglob, classes;
 
 
-function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
+function FidoImport(ImportDir:string; var box:string):boolean;
 function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
                      packmail,crash,alias:boolean;
                      addpkts:addpktpnt; var domain:string):shortint;
@@ -214,7 +214,7 @@ end;
 
 { gepackte Daten aus ImportDir + PKT-Files aus SpoolDir einlesen }
 
-function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
+function FidoImport(ImportDir:string; var box:string):boolean;
 const fpuffer = 'FPUFFER';
 var p       : byte;
     i,rc    : integer;
@@ -229,7 +229,7 @@ begin
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
     { using wildcard does not require case sensetive }
-    dir:= TDirectory.Create(OwnPath+ImportDir+WildCard,faAnyFile-faDirectory,false);
+    dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
     for i:= 0 to dir.Count-1 do begin
       if isPacket(dir.name[i]) then begin
         MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
@@ -238,7 +238,9 @@ begin
         shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
         { ^^ setzt Verzeichnis zurÅck! }
         if errorlevel<>0 then
-          MoveToBad(OwnPath+ImportDir+dir.name[i]);
+          MoveToBad(OwnPath+ImportDir+dir.name[i])
+        else
+          _era(dir.LongName[i]);                        //arcmailpaket lîschen
         end;
     end;
     dir.Free;
@@ -312,7 +314,6 @@ var sr       : tsearchrec;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
     dir      : TDirectory;
-
 label fn_ende,fn_ende0;
 
   procedure WriteFidoCfg;
@@ -677,8 +678,7 @@ begin { FidoNetcall }
     closebox;
     end;
 
-  if FidoImport(XFerDir,box,addpkts^.akanz>0) then;   { Mails konvertieren + einlesen }
-
+  if FidoImport(XFerDir,box) then;   { Mails konvertieren + einlesen }
   fn_ende0:
     WriteFidoNC(fidologfile,iifs(crash,DefFidoBox,Boxpar^.boxname),crash);
     if true {!! (result=EL_ok) or (result=EL_recerr)} then begin
@@ -940,6 +940,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/01/01 16:18:17  mo
+  -Sysoppoll: arcmail wird wieder entpackt,
+  -aus dem Indir werden nur noch die pkts und die arc gelˆscht
+
   Revision 1.51  2000/12/28 17:47:41  mo
   -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
 

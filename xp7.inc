@@ -913,7 +913,6 @@ procedure FidoSysopTransfer;
 var dummy : longint;
     i     : integer;
     dir   : TDirectory;
-
   procedure ferror(nr:word);
   begin
     trfehler(nr,30);
@@ -1021,19 +1020,28 @@ begin { FidoSysopTransfer }
           if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
       end;
 
-      dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
-      if dir.Count>0 then
-      begin                                     //Pollpakete im SysopIn Verzeichnisvorhanden
-        erase_mask(xp0.XFerDir+'*.pkt');        //L”sche alle alten pakete
-        for i:=0 to dir.Count-1 do                              //Was ist mit den Arcmails?
-          if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then //kopiere vonSysOpIn -> Spool und l”sche die *.pkt
-            _era(dir.LongName[i]);
-        if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
-          for i:=0 to dir.Count-1 do
+
+
+
+      if not isEmptyDir(BoxPar^.sysopinp) then
+      begin
+        erase_mask(xp0.XFerDir+'*.pkt');                        //L”sche alle alten pakete
+
+        dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
+        if dir.Count>0 then begin                               // *.pkt im SysopIn Verzeichnisvorhanden
+          for i:=0 to dir.Count-1 do begin                              //
+            if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then // move *.pkt vonSysOpIn -> Spool
+              _era(dir.LongName[i]);
+            end; //for
+          end;   //Dir.Count
+        if FidoImport(SysopInp,box) then
+          for i:=0 to dir.Count-1 do                            //alles aus dem Sysopin l”schen
             if FileExists(BoxPar^.sysopinp+dir.Name[i]) then
               _era(BoxPar^.sysopinp+dir.Name[i]);
-      end;
-      dir.Free;
+        dir.Free;
+
+        end; //if  FileExists(BoxPar^.sysopinp+'*.*') then
+
 
 //    if not isEmptyDir(SysopInp) then begin   { -- Eingangspaket -- }
 //      erase_mask(xp0.XFerDir+WildCard);
@@ -1340,6 +1348,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.52  2001/01/01 16:18:17  mo
+  -Sysoppoll: arcmail wird wieder entpackt,
+  -aus dem Indir werden nur noch die pkts und die arc gelöscht
+
   Revision 1.51  2000/12/28 17:47:41  mo
   -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
 

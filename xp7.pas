@@ -25,7 +25,7 @@ uses
 {$ENDIF }
   sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
   maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
-  xp1input,xp2c,xpterm,xpdiff,xpuu,fidoglob;
+  xp1input,xp2c,xpterm,xpdiff,xpuu,fidoglob,classes;
 
 
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
@@ -1528,6 +1528,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/01/01 16:18:17  mo
+  -Sysoppoll: arcmail wird wieder entpackt,
+  -aus dem Indir werden nur noch die pkts und die arc gelöscht
+
   Revision 1.55  2000/12/27 22:36:33  mo
   -new class TfidoNodeList
 
