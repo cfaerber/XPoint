@@ -380,23 +380,28 @@ var
   Echo: String;
 begin
   if ExpectEcho then PurgeInBuffer;
+  DebugLog('ObjCOM','SendString: ' + Temp,3);
   SendBlock(Temp[1], Length(Temp), Written);
   if (ExpectEcho) and (Written>0) then
   begin
-    i:=0; while(CharCount<Written)and(i<CommandTimeout)do
+    i:=0;
+    DebugLog('ObjCOM','begin waiting',3);
+    while(CharCount<Written)and(i<CommandTimeout)do
     begin
       SysDelay(100);
       inc(i,100);
-      Str(CharCount,Echo);
-      DebugLog('ObjCOM','Waiting '+Echo,3)
+      if CharCount > 0 then
+        DebugLog('ObjCOM', Format('SendString: got CharCount %d', [CharCount]),4)
     end;
-    if CharCount<Written then Written:=CharCount;
+    if CharCount<Written then
+      Written:=CharCount;
     SetLength(Echo,Written);
     if Written >= 1 then
       ReadBlock(Echo[1], Written, ReadBytes)
     else
       ReadBytes := 0;
     SetLength(Echo,ReadBytes);
+    DebugLog('ObjCOM', Format('end waiting CharCount: %d, Written: %d, CommandTimeout: %d Echo: %s', [CharCount, Written, CommandTimeout, Echo]),3);
     ErrorStr:=Echo;
     SendString:=(ReadBytes=Length(Temp))and(Echo=Temp);
   end;
@@ -488,6 +493,9 @@ end.
 
 {
   $Log$
+  Revision 1.29.2.2  2003/05/10 15:45:06  mk
+  - improved debuglog
+
   Revision 1.29.2.1  2003/01/01 16:18:38  mk
   - changes to made FreeBSD version compilable
 

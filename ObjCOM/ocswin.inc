@@ -56,16 +56,16 @@ procedure TSerialStream.ProcIncoming;
 var BytesRead: DWord;
 begin
   if not DataRequested then begin
-    DebugLog('ObjCOM','Requesting incoming.',DLDebug);
+//    DebugLog('ObjCOM','Requesting incoming.',DLDebug);
     while ReadFile(SaveHandle,InBuffer.TmpBuf^,InBufSize,BytesRead,@ReadOL)and(BytesRead>0)do
       begin InBuffer.Put(InBuffer.TmpBuf^,BytesRead); DebugLog('ObjCOM','ReadFile True',DLDebug)end;
     if GetLastError=ERROR_IO_PENDING then DataRequested:=True;
     OLDataProcessed:=0;
   end;
   if DataRequested then begin
-    DebugLog('ObjCOM','Incoming pending...',DLDebug);
+//    DebugLog('ObjCOM','Incoming pending...',DLDebug);
     if GetOverlappedResult(SaveHandle,ReadOL,BytesRead,False)then
-      begin DebugLog('ObjCOM','Overlapped IO finished.',DLDebug); DataRequested:=False end;
+      begin {DebugLog('ObjCOM','Overlapped IO finished.',DLDebug); }DataRequested:=False end;
   end;
   if(BytesRead-OLDataProcessed)>0 then begin
     InBuffer.Put(InBuffer.TmpBuf^[OLDataProcessed],BytesRead-OLDataProcessed);
@@ -269,7 +269,7 @@ end; { proc. TSerialStream.ReadBlock }
 
 function TSerialStream.CharAvail: Boolean;
 begin
-  DebugLog('ObjCOM','CharAvail',DLDebug);
+//  DebugLog('ObjCOM','CharAvail',DLDebug);
   ProcIncoming; Result := (InBuffer.BufUsed > 0);
 end; { func. TSerialStream.CharAvail }
 
@@ -412,6 +412,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.8.2.1  2003/05/10 15:45:06  mk
+  - improved debuglog
+
   Revision 1.8  2001/09/08 18:46:44  cl
   - small bug/compiler warning fixes
 

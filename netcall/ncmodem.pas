@@ -362,7 +362,7 @@ begin
     FConnected:=true; result:=true; exit
     end;
   FGotUserBreak := false;
-  DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
+  DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxD  ialAttempts '+
                    Strs(MaxDialAttempts)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWaitTime),DLInform);
   StateDialup:=SDInitialize; iDial:=0; result:=False;
 
@@ -526,6 +526,9 @@ end.
 
 {
   $Log$
+  Revision 1.11.2.3  2003/05/10 15:45:37  mk
+  - improved debuglog
+
   Revision 1.11.2.2  2002/07/21 20:14:47  ma
   - changed copyright from 2001 to 2002
 
