@@ -35,6 +35,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines,096M^isc,098^Accessibility
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
+11
 # Dummy for XPME:
 12  Extrakt,0c1^Message,0c2^UUdecode,0c7M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Header˘13
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
@@ -42,6 +43,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
 16  Edit,101^Templates˘8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone charges˘26
+18
 #18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
 20  Fileserver,141^Request,142^Send,143^List˘27,144^Help,145^Transfer,146S^ervice
@@ -49,6 +51,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
+25
 26  GebÅhren,1a1^All,1a2^Single
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Networks˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
@@ -58,6 +61,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 32  Fidoliste,201^Read,202^Delete,203^Search
 33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..˘29
 34  Pointlist,221^Activate,222^Read diff
+35
 36  Export,241^User list,242^Newsgroup list,243^Message list,244^Screenshot    @I
 37  Netze,251^Miscellaneous,252^PM limits
 38  Filescan,261^Subscribe,262^Unsubscribe,263^Get list,264^Import list,265Import ^File,266^Others
@@ -3790,6 +3794,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.30  2001/09/05 23:26:57  mk
+# - added empty resources for Menu, avoids false error in debuglog.txt
+#
 # Revision 1.29  2001/08/23 11:15:00  mk
 # - RTA: fixed some bugs (only 32 bit releated) and converted all records
 #   to classes and use TList/TStringList for storage management instead of
