@@ -16,17 +16,10 @@ unit xp1help;
 
 interface
 
-
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx, sysutils,
-  maske, xp0;
-
+  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
+  typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
+  maske,xp0,xpglobal;
 
 const inithlp : boolean = false;
       maxhelpst = 20;
@@ -120,7 +113,7 @@ const kss : byte = 2;
   procedure tabkey;
   begin
     attrtxt(col.colkeys);
-    Wrt2(sp(69-wherex));
+    Wrt2(sp(ScreenWidth-11-wherex));
     addsk(wherex,3,-3,keytab);
     attrtxt(col.colkeyshigh);
     Wrt2('Tab');
@@ -409,61 +402,16 @@ end;
 
 
 end.
+
 {
   $Log$
+  Revision 1.18  2001/01/09 20:31:04  ma
+  - ' Tab / Quit' now justified correctly in all screen modes
+  - shortened CVS logs
+
   Revision 1.17  2000/12/08 01:24:04  mk
   MH:- Usersuche bei Auswahl ueber F2 moeglich
 
   Revision 1.16  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
-
-  Revision 1.15  2000/10/17 10:13:23  mk
-  - Unit Sysutils hinzugefuegt
-
-  Revision 1.14  2000/10/17 10:05:46  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.13  2000/10/09 22:14:45  ml
-  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
-
-  Revision 1.12  2000/08/04 17:45:31  mk
-  - Hilfe erscheint jetzt auch bei mehr als 80 Spalten richtig
-
-  Revision 1.11  2000/07/27 10:13:00  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.10  2000/07/21 21:17:45  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.9  2000/07/05 10:59:52  hd
-  - Weitere AnsiString-Anpassungen
-
-  Revision 1.8  2000/06/29 13:00:53  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.7  2000/05/08 13:05:45  hd
-  Anpassung an variable Screen-Breite
-
-  Revision 1.6  2000/05/02 19:13:59  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.5  2000/04/13 12:48:35  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
 }
