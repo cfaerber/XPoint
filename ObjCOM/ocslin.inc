@@ -63,7 +63,7 @@ end; { func. OpenKeep }
 
 procedure tSerialObj.ProcIncoming;
 var
-  Buf: Array[1..8192]of Byte;
+  Buf: Array[1..8192]of Char;
   R  : Longint;
 begin
   fd_zero(fds);
@@ -71,8 +71,7 @@ begin
   If Select(SHandle+1,@fds,nil,nil,0) > 0
   Then Begin
     R:=fdRead(SHandle,Buf,8192);
-    If r > 0 Then
-      InBuffer.Put(Buf,R);
+    If r > 0 Then InBuffer.Put(Buf,R);
   End;
 end;
 
@@ -83,9 +82,8 @@ function tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: 
 var
   tios: TermIOS;
 begin
-  { Aktuellen TermIOS-Record holen }
-  tcGetAttr(SHandle, tios);
-  { Bausrate setzen }
+  FillChar(tios,SizeOf(tios),0);
+  { Baudrate setzen }
   case BpsRate of
     0           : tios.c_cflag:= CLOCAL or B0;
     300         : tios.c_cflag:= B300;
@@ -129,8 +127,7 @@ begin
   tios.c_cc[VTIME]:= 1; { Kurz warten, wozu gibt es Buffer }
   tios.c_cc[VMIN]:= 0; { Mindestens nichts }
   { Setzen }
-  tios.c_iflag:= tios.c_iflag or IGNPAR         { Ignore parity errors }
-        or IGNCR;                               { Ignore CR }
+  tios.c_iflag:= tios.c_iflag or IGNPAR; { Ignore parity errors }
   tios.c_cflag:= tios.c_cflag or CREAD; { Lesen erlaubt }
   tcFlush(SHandle,TCIOFLUSH);
   fdFlush(SHandle);
@@ -240,26 +237,26 @@ var
   tios: TermIOS;
 begin
   tcGetAttr(SHandle, tios);
-  if ((tios.c_cflag and B0)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B50)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B75)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B110)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B150)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B200)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B300)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B600)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B1200)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B1800)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B2400)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B4800)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B9600)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B19200)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B38400)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B57600)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B115200)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B230400)<>0) then GetBpsRate:= 0
-  else if ((tios.c_cflag and B460800)<>0) then GetBpsRate:= 0
-  else GetBpsRate:= 0;
+  if ((tios.c_cflag and B0)<>0) then GetBpsRate:= 1
+  else if ((tios.c_cflag and B50)<>0) then GetBpsRate:= 50
+  else if ((tios.c_cflag and B75)<>0) then GetBpsRate:= 75
+  else if ((tios.c_cflag and B110)<>0) then GetBpsRate:= 110
+  else if ((tios.c_cflag and B150)<>0) then GetBpsRate:= 150
+  else if ((tios.c_cflag and B200)<>0) then GetBpsRate:= 200
+  else if ((tios.c_cflag and B300)<>0) then GetBpsRate:= 300
+  else if ((tios.c_cflag and B600)<>0) then GetBpsRate:= 600
+  else if ((tios.c_cflag and B1200)<>0) then GetBpsRate:= 1200
+  else if ((tios.c_cflag and B1800)<>0) then GetBpsRate:= 1800
+  else if ((tios.c_cflag and B2400)<>0) then GetBpsRate:= 2400
+  else if ((tios.c_cflag and B4800)<>0) then GetBpsRate:= 4800
+  else if ((tios.c_cflag and B9600)<>0) then GetBpsRate:= 9600
+  else if ((tios.c_cflag and B19200)<>0) then GetBpsRate:= 19200
+  else if ((tios.c_cflag and B38400)<>0) then GetBpsRate:= 38400
+  else if ((tios.c_cflag and B57600)<>0) then GetBpsRate:= 57600
+  else if ((tios.c_cflag and B115200)<>0) then GetBpsRate:= 115200
+  else if ((tios.c_cflag and B230400)<>0) then GetBpsRate:= 230400
+  else if ((tios.c_cflag and B460800)<>0) then GetBpsRate:= 460800
+  else GetBpsRate:= 1;
 end; { func. tSerialObj.GetBpsRate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -269,7 +266,7 @@ begin
   ProcIncoming;
   InFree:=InBuffer.BufRoom;
   OutFree:=65000;
-  InUsed:=InBuffer.BufRoom;
+  InUsed:=InBuffer.BufUsed;
   OutUsed:=0;
 end; { proc. tSerialObj.GetBufferStatus }
 
@@ -277,14 +274,14 @@ end; { proc. tSerialObj.GetBufferStatus }
 
 procedure tSerialObj.PurgeInBuffer;
 begin
-  InBuffer.Clear;
+  ProcIncoming; InBuffer.Clear;
 end; { proc. tSerialObj.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.PurgeOutBuffer;
 begin
-end; { proc. tSerialObj.PurgeInBuffer }
+end; { proc. tSerialObj.PurgeOutBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -312,6 +309,10 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.5  2000/12/18 00:06:17  ma
+  - fixed GetBpsrate (reported 0 all the time)
+  - fixed SetLine (ignored CR, tios not zero-filled on beginning)
+
   Revision 1.4  2000/11/12 16:31:21  hd
   - Serielle Unterstützung hergestellt
 
