@@ -2991,44 +2991,44 @@ Choose a newsgroup group, or abort with <Esc>.
 @
 210
 
-Enter here the sign you wish to use as [quote sign]@4013
+Enter here the character you wish to use as the
+[quote character]@4013
 
-Usual and recommended is << > >>.
+The usual and recommended character is << > >>
 
-When you reply to a message, quoting its contents
-with  <Ctrl B> or <Ctrl P> or when you use
-/Message/Forward/QuoteTo or
-/Message/Extract/As_Quote
-XP prepares the reply with the contents of the
-reference message as quote, with this sign at the
-beginning of each line, to show it's quoted.
+When you quote-reply to a message with <Ctrl R> or
+<Ctrl P>, or when you use /Message/Forward/QuoteTo
+or /Message/Extract/As_Quote, the message you are
+replying to is inserted in the editor with the quote
+character at the beginning of each line, to show that
+it's quoted.
 
 You may use any combination of characters you wish
-(but see info [quote sign])@4013
+(but see info [quote character])@4013
 
 Note: spaces inserted after the character count as
-part of the sign, to enable it to be separated from
-the text (or not) as you wish.
+part of the character, to allow it to be separated
+from the text (or not) as you wish.
 
 If you wish, CrossPoint will insert the initials of
-the person being quoted in the quote sign.
+the person being quoted in the quote character.
 To achieve this use <<\@>>.
 
 P.MANDRELLA    gives  PM>
 FRANK_MUELLER  gives  FM>
 GHOSTWRITER    gives   G>
 
-You can also use <<$>> instead of "\@", and then no
+You can also use <<$>> instead of "\@" and then no
 initials are produced for names with no divider.
 
 @
 211
-At this column a new line will be started for quoted
-text. This is necessary, because the quote sign in-
-creases the line length, and lines which were pre-
-viously visible become too long and unreadable if
-the same lines are kept with the quote sign at the
-beginning.
+At this column, a new line will be started for
+quoted text. This is necessary because the quote
+sign increases the line length and lines which
+were previously readable become too long and
+unreadable if the same lines are kept with the
+quote sign at the beginning.
 @
 212
 When messages are imported into the data base at each
@@ -3059,6 +3059,23 @@ messages to are put in anyway.
 You can put any user specially into your list while
 looking at their message in the message window, with
 Ctrl-U.
+
+@
+8068
+New Users will be placed in this
+[Addressbook group]@8069
+
+@
+8069
+Addressbook groups:
+
+This allows the User-window to be sorted
+alphabetically into Groups. Groups with lower
+numbers will not be sorted, whilst Groups with
+higher numbers will be placed at the end of the
+User-list.
+
+Valid numbers are in the range 1 - 99
 
 @
 213
@@ -3111,10 +3128,33 @@ groups only to be displayed for selection.
 @
 218
 <<[x]>>     Messages sent to [Archive] will be set to@12109
-        "delete" to avoid storing them double.
+        "delete" to avoid storing them twice.
 
 
 <<[ ]>>     Message will be left as it is.
+
+@
+8070
+<<[x]>> -> Insert a note at the beginning of the
+       archived message text.
+
+<<[ ]>> -> Do NOT insert a note at the beginning of
+       the archived message text.
+
+<<Explanation:>>
+            If enabled, a note will be inserted at
+            the beginning of the archived message
+            with details of the date and the original
+            message area.
+
+<<Example:>>
+        You decide to archive a message in /FIDO/TEST
+        A note will be placed at the beginning of the
+        archived message text, thus:
+
+        ### Archived message on <date>
+        ### Origin : /FIDO/TEST
+
 @
 219
 <<[x]>>     New newsgroups which are automatically
@@ -3145,7 +3185,7 @@ put into the same NG.
 Note: This does not work in the old Z-Netz format,
 since the box name does not appear in the address.
 @
-221
+225
 You can set a level for minimum free hard disk space
 which must be available when XP <<starts>> (what
 happens cannot be controlled). If the space available
@@ -10782,25 +10822,25 @@ There are 2 places this can be set:
 
 @
 4013
-<<Quote sign:
+<<Quote character:
 
 It is usual to mark text that you have quoted from
 a previous message with a special character at the
 beginning of each line, to show that it's quoted.
 
-This is usually the ">". Many programs recognise
-this and can treat quoted text specially, as XP
-can: it can highlight it in a different colour
-for clarity, and even count the quantity.
+This is usually the ">" character. Many programmes
+recognise this and can treat quoted text specially,
+just as XP can: it can highlight it in a different
+colour for clarity and even count the quantity.
 
 Bearing this in mind, in CrossPoint you can use
-what you like, but remember you may be quoting text
-that is already itself quoted, and if it is compli-
-cated other readers will not be able to follow who
-quoted what. Remember that people simply do not read
-what they cannot easily follow.
+what you like but remember, you may be quoting text
+that is already itself quoted and if it is
+complicated, other readers will not be able to follow
+who quoted what. Remember that people simply do not
+read what they cannot easily follow.
 
-Stick to the ">".
+Stick to the ">" character.
 
 @
 4014
