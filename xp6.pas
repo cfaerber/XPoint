@@ -1093,11 +1093,11 @@ begin
   closemask;
   closebox;
   betreff:=trim(betreff);
-  if brk then exit;                  { --> Abbruch bei Betreffmaske }
+  if brk then exit;               { --> Abbruch bei Betreffmaske }
   if betreff='' then begin
     brk:=true;
     if not pm then rfehler(635);  { 'Nachricht mu· einen Betreff haben' }
-    if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
+    if (pm and not ReadJN(getres(618),false)) or   { 'Nachricht ohne Betreff absenden' }
        not pm then exit;
     brk:=false;
   end;
@@ -2565,6 +2565,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.60  2002/04/28 17:40:05  my
+  MY:- Fix: Beim Versuch, eine beantwortete PM ohne Betreff abzusenden,
+       wurde der Editor auch dann aufgerufen, wenn die entsprechende
+       RÅckfrage mit "Nein" beantwortet wurde (der Abbruch mit <Esc>
+       funktionierte).
+
   Revision 1.39.2.59  2002/04/27 14:05:23  my
   MY:- Eigene Hilfe-Items fÅr forcebox-Hinweise und -Fehlermeldungen
        implementiert.
@@ -3029,7 +3035,8 @@ end.
 
   Revision 1.20  2000/04/18 16:17:33  jg
   - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
-  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
+  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt
+    Hauptmenue dar)
   - Ein paar erledigte Sachen aus !Todo.tst geloescht.
 
   Revision 1.19  2000/04/17 17:24:09  jg
@@ -3040,17 +3047,19 @@ end.
   - Datenbankfelder von Integer auf Integer16 gaendert
 
   Revision 1.17  2000/04/15 09:58:00  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+  - User-Adressbuch: Moeglichkeit zur Erstellung von Usergruppen im
+    Spezialmenue
+  - Config/Optionen/Allgemeines "Standard-Adressbuchgruppe" fuer neue User
 
   Revision 1.16  2000/04/11 19:34:01  oh
   - [tempdir]\header.hdr fuer Mailnachbearbeitung
 
   Revision 1.15  2000/04/09 08:01:26  jg
-  - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
+  - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch
+  konvertiert
 
   Revision 1.14  2000/04/04 21:01:24  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fÅr VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.13  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
