@@ -112,6 +112,7 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        lastcur    : curtype  = curoff;    { letzte Cursorform              }
        edm_str    : s20      = 'Monat: '; { Prompt-Text bei edmonth        }
        hotkeys    : boolean  = true;      { Hotkeys aktiviert              }
+       hotkey_f1  : boolean  = false;     { F1 aktiv (wenn hotkeys==false) }
        retonfn    : taste    = '';        { liefert Get bei FN-Taste zur.  }
        readendeny : boolean  = false;     { RdEd-Ende mit ^N/^Y m”gl.      }
        einfueg    : boolean  = false;     { Einfge-Mode bei RdEd          }
@@ -684,7 +685,7 @@ begin
     cursor(curoff);
     lastkey:=z;
 
-    if hotkeys then
+    if hotkeys or ((z=keyf1) and hotkey_f1) then
       if (z>=keyf1)  and (z<=keyf10)  then dofunc(0,ord(z[2])-58) else
       if (z>=keysf1) and (z<=keyaf10) then
         dofunc((ord(z[2])-74) div 10,(ord(z[2])-84)mod 10+1)
@@ -1673,6 +1674,9 @@ end;
 
 {
   $Log$
+  Revision 1.96  2002/11/14 20:04:20  cl
+  - Added button controls
+
   Revision 1.95  2002/10/06 17:52:53  mk
   - made compilable for DOS
 

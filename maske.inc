@@ -44,7 +44,7 @@ var ax,p,myp  : integer;
     lasttexty : byte;
     gl        : byte;
     old_hotky : boolean;
-    
+    old_hotkyf1:boolean;    
 
   procedure ClearFields;
   var i : integer;
@@ -745,6 +745,14 @@ var ax,p,myp  : integer;
       end;
   end;
 
+  procedure button_bearbeiten(fld: feldp);
+  begin
+    fld.test0(fld.cont); 
+    if fld.test1(fld.cont) and fld.btnquit then
+      if fld.maxlen<0 then t := keyESC 
+      else                 t := ^J;
+  end;
+
   procedure maus_bearbeiten;
   var inside  : boolean;
       mx,my,i : integer;
@@ -773,7 +781,9 @@ var ax,p,myp  : integer;
                     (my=yy-a) and enabled;
               if not ok then inc(i);
               end;
-            if ok then with fld[i]^ do begin
+            if ok then with fld[i]^ do if (typ=120) then
+              button_bearbeiten(fld[i])
+            else begin
               movefield(i-yp);
               if yp=i then begin
                 afld:=fld[yp];
@@ -824,9 +834,12 @@ var ax,p,myp  : integer;
 
 begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   old_hotky := inout.hotkeys;
+  old_hotkyf1 := inout.hotkey_f1;
+  
   helpsave:=help_page;
  try
   inout.hotkeys := false;
+  inout.hotkey_f1 := true;
 
   amaskp^.newfld:=true;
   amaskp^.redisplay:=true;
@@ -912,7 +925,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           replace:=autohigh and doreplace;
           doreplace:=true;
           newfld := false;
-          test0(cont);
+          if not typ=120 then test0(cont);
           if newfld then continue;
           
           if autoup then UpString(cont)
@@ -1012,30 +1025,15 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             begin
               SetFieldPos(i);
               t := ''; 
-            
-              if fld[i].typ = 120 then 
-              begin
-                fld[i].test0(fld[i].cont); 
-                if fld[i].test1(fld[i].cont) and fld[i].btnquit then
-                  if fld[i].maxlen<0 then t := keyESC 
-                  else                    t := ^J;
-              end;
-              
+              if fld[i].typ = 120 then button_bearbeiten(fld[i]);
               break; // found, don't continue search
             end;
 
         if t='' then Continue;
 
         if (typ=120) and ((t=' ') or (t=keycr)) then
-        begin
-          test0(cont); if test1(cont) then 
-          begin
-            if btnquit then if maxlen<0 then t := keyESC 
-                            else             t := ^J;
-            Integer(variable^) := maxlen;
-          end;
-        end 
-          else
+          button_bearbeiten(afld)
+        else
            
         if (t=keydown) or (t=keytab) or (t=keycr) or ((t=keyrght)and(typ in [120])) then
           if yp<felder then movefield(+1)
@@ -1310,11 +1308,15 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
  finally
   help_page:=helpsave;
   inout.hotkeys := old_hotky;
+  inout.hotkey_f1 := old_hotkyf1;
  end;   
 
 end;   { readHmask }
 {
   $Log$
+  Revision 1.51  2002/11/14 20:04:20  cl
+  - Added button controls
+
   Revision 1.50  2002/08/31 22:10:04  cl
     - Schaltflaechen und Hotkeys in Masken (Teil II)
 

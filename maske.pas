@@ -646,8 +646,7 @@ end;
 
 procedure maddhline(x,y:integer);
 begin
-  with amaskp^ do
-    maddtext(0,y,#$C3+dup(re-li+1,#$C4)+#$B4,stat.col.colback);
+  maddtext(0,y,#$C3+dup(amaskp^.re-amaskp^.li+1,#$C4)+#$B4,amaskp^.stat.col.colback);
 end;
 
 function mtextpos:pointer;
@@ -875,9 +874,15 @@ begin
   lastfld^.counter:=2;
 end;
 
-{ Schaltfläche anfügen }
-{ ret,retval: retval wird in ret gespeichert, wenn Knopf gedrückt }
-{ quit: Dialogfeld verlassen }
+{ Schaltfläche anfügen ----------------------------------------------- }
+
+{ Wenn ein Knopf gedrückt wird, passiert folgendes:                    }
+{ - test0proc wird aufgeruden                                          }
+{ - test1func wird aufgerufen, wenn diese true zurückgibt, wird:       }
+{   - der Wert retval in ret gespeichert                               }
+{   - falls quit true ist, wird außerdem:                              }
+{     - das dialogfeld verlassen                                       }
+{     - read(h)mask gibt in brk true zurück, falls ret<0, sonst false  }
 
 procedure Maddbutton(x,y:integer; const text:string; var ret:integer; retval:integer; quit:boolean);
 begin
@@ -1395,6 +1400,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.42  2002/11/14 20:04:20  cl
+  - Added button controls
+
   Revision 1.41  2002/08/19 23:03:13  cl
   - Schaltflaechen in Masken (Teil I)
 
