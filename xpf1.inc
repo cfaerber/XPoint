@@ -113,7 +113,7 @@ var fa     : fidoadr;
     np     : ^nodea;
     found  : boolean;
     _adr   : longint;
-    points : integer;
+    points : integer16;
     pp     : ^pointa;
 
 label again;
@@ -884,6 +884,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.7  2000/04/25 21:19:20  mk
+  - 32 Bit: Potentieller Fix fuer Suche nach Points in der Pointliste
+
   Revision 1.6  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
 
