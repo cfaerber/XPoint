@@ -1132,14 +1132,6 @@ var d         : DB;
   procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
                         var brk:boolean);
   var x,y,add : byte;
-
-    procedure SetV(var viewer:pviewer);
-    begin
-      if viewer<>nil then freemem(viewer,length(viewer^)+1);
-      getmem(viewer,length(prog)+1);   { auch bei prog=''! }
-      viewer^:=prog;
-    end;
-
   begin
     typ:=extmimetyp(typ);
     add:=iif(typ='*/*',0,2);
@@ -1164,10 +1156,6 @@ var d         : DB;
         rfehler(932);    { 'Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!' }
     until brk or (typ+ext<>'');
     enddialog;
-    if not brk then
-      if typ='text/plain' then SetV(PTextViewer) else
-      if typ='text/*' then SetV(DefTextViewer) else
-      if typ='*/*' then SetV(DefaultViewer);
     typ:=compmimetyp(typ);
   end;
 
@@ -1220,6 +1208,7 @@ var d         : DB;
         dbWriteN(d,mimeb_typ,typ);
         dbWriteN(d,mimeb_extension,ext);
         dbWriteN(d,mimeb_programm,prog);
+        ReadDefaultViewers;
       end else
         RFehler(934); { Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt! }
       dbFlushClose(d);
@@ -1248,6 +1237,7 @@ var d         : DB;
         aufbau:=true;
         end;
       end;
+    ReadDefaultViewers;
   end;
 
 
@@ -1771,6 +1761,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.9  2000/11/17 12:18:58  mk
+  - Probleme beim aktualisieren der Defautviewer behoben
+
   Revision 1.19.2.8  2000/11/09 12:00:53  mk
   - Eintrag */* nicht mehr editierbar
 

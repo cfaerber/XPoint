@@ -91,11 +91,13 @@ procedure ReadDefaultViewers;
   begin
     dbSeek(mimebase,mtiTyp,ustr(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
-       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
+       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then
+    begin
       dbReadN(mimebase,mimeb_programm,prog);
+      if viewer<>nil then freemem(viewer,length(viewer^)+1);
       getmem(viewer,length(prog)+1);   { auch bei prog=''! }
       viewer^:=prog;
-      end
+    end
     else
       viewer:=nil;
   end;

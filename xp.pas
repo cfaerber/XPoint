@@ -165,6 +165,9 @@ begin
 {$ENDIF }
       test_defaultgruppen;
       test_systeme;
+      DefaultViewer := nil;
+      DefTextViewer := nil;
+      PTextViewer := nil;
       ReadDefaultViewers;
       testtelefon(telefonnr^);
       check_date;
@@ -192,6 +195,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.7  2000/11/17 12:18:58  mk
+  - Probleme beim aktualisieren der Defautviewer behoben
+
   Revision 1.29.2.6  2000/10/15 08:52:00  mk
   - misc fixes
 
