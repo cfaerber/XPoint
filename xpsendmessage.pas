@@ -1462,7 +1462,7 @@ fromstart:
       end else begin
         repeat
           t:='*';
-          n:=readbutton(x+3,y+11,1,getres2(611,28)+
+          n:=readbutton(x+3,y+11,1,getres2(611,iif(netztyp=nt_fido,49,28))+
                iifs((not CanEdit) or (sendflags and sendWAB<>0),'',getres2(611,29)),
                         abs(n),true,t);
            { ' ^Ja ,^Nein,^Intern,^Spezial,ù2^Betreff,B^ox,^Code' ',^Text' }
@@ -2514,6 +2514,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.21  2003/09/16 13:06:58  mk
+  - fixed #801901: Sendefenster öffentl. Nachricht FIDO
+
   Revision 1.48.2.20  2003/08/25 20:48:04  mk
   - 794074: Kein Binary Versand beim Autoversand
 
