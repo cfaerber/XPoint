@@ -191,11 +191,14 @@ var f                 : file;
                 if not CC then
                 begin
                   Reset(ClientIDFile);        { von vorn starten }
-                  repeat
-                    Readln(ClientIDFile, OutMsgID);
-                    IsUnsentClientMsg:=FormMsgid(OutMsgID)=InMsgID;
-                  until eof(ClientIDFile) or IsUnsentClientMsg;
-                  Close(ClientIDFile);
+                  if IOResult=0 then
+                  begin
+                    repeat
+                      Readln(ClientIDFile, OutMsgID);
+                      IsUnsentClientMsg:=FormMsgid(OutMsgID)=InMsgID;
+                    until eof(ClientIDFile) or IsUnsentClientMsg;
+                    Close(ClientIDFile);
+                  end;
                 end;
               end
               { ----------------------------------------------------------- }
@@ -831,6 +834,9 @@ end.
 
 {
   $Log$
+  Revision 1.13.2.33  2003/04/20 15:34:32  my
+  MY:- Zur Sicherheit auf IOResult von reset(ClientIDFile) testen
+
   Revision 1.13.2.32  2003/04/13 15:09:06  mw
   MY:- Vorletzten Commit optimiert (dieselbe Logik kommt auch mit einer
        Variablen weniger aus). Variablen eindeutiger benannt.
