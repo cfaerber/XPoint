@@ -7,13 +7,18 @@
 		 Wer aber die hier aufgefuehrten Hinweise beachtet,
 		 kann gerne die Tools ausprobieren.
 
-	Install	Voraussetzung: FreePascal Compiler ab 0.99.15 (am besten den
+	Install	Voraussetzung: FreePascal Compiler ab 1.00 (am besten den
 		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
 		die Sources kompilieren:
+
+		su root
+		make xp
+		make install
+		exit
 		
-		ppc386 -dLinux [-...] xp
-		
-		Gleiches mit xpme, rc usw.
+		Sie koennen auf 'su root' verzichten, wenn Sie als User das
+		Recht haben, in /usr/bin Links und in /usr/local Verzeichnisse
+		anzulegen.
 		
 		Dann diese Datei bis zum Ende lesen!
 	
