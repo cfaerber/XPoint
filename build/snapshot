@@ -1,22 +1,59 @@
 #/bin/bash
 echo "Starting $0 $*"
+#
+mainversion=$1
+subversion=0
+buildnr=1
+# example: version = 3.8.12-1
+# mainversion has to be 3.8 in this example
+# subversion has to be 12 in this example
+# buildnr has to be 1 in this example
+version="$mainversion"."$subversion"-"$buildnr"
 scriptdir=/home/boettger/openxp/script/
-versiondir=/home/boettger/openxp/"$1"/
+versiondir=/home/boettger/openxp/"$mainversion"/
+sourcedir=$versiondir'openxp/'
+#subversion="$1".0
+#cd "$sourcedir"
+#
 #cd ~/openxp/$1/openxp
-cd "$versiondir"openxp
+cd "$sourcedir"
+cd build
+./inc_build_nr.pl
+eval $(get_build_nr.pl)
+mainversion=$OPENXP_MAINVER
+subversion=$OPENXP_SUBVER
+buildnr=$OPENXP_BUILD
+version="$mainversion"."$subversion"-"$buildnr"
+scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$mainversion"/
+sourcedir=$versiondir'openxp/'
+#cvs ci -F /tmp/openxp_ver.txt version.inc
+cvs ci -m "- new version: $version" version.inc
+cd "$sourcedir"
 pwd
 #echo $1
 #echo $scriptdir
 #echo $versiondir
 #sleep 5
-echo "building OXP"
-"$scriptdir"buildxp $1
-test -f "openxp" || echo "Ooops, no OXP-Binary"; exit
-"$scriptdir"make-rpm.sh $1 
+echo $version
+pwd
+exit 1
+echo "building OXP" $version
+"$scriptdir"buildxp $mainversion
+test -f "openxp" || echo "Ooops, no OXP-Binary"
+test -f "openxp" || exit
+"$scriptdir"make-rpm.sh $mainversion 
 # auf den ftp Server schieben
-ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$1".0-1.i386.rpm /usr/src/packages/SRPMS/openxp-"$1".0-1.src.rpm /"$versiondir"openxp-"$1".0-linux-`date -I`.tar.bz2 
-
+ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux-`date -I`.tar.bz2 "$versiondir"openxp/fpc-linux-"$version"-logs.zip "$versiondir"openxp/kylix-"$version"-logs.zip
+## Cross-Compilate
+#test -f "$versiondir"openxp-"$version"-dos-`date -I`.zip && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-dos-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-os2-`date -I`.zip && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-os2-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-win32-`date -I`.zip && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-win32-`date -I`.zip
+#test -f "$versiondir"openxp-"$version"-netbsd-`date -I`.tar.bz2 && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-netbsd-`date -I`.tar.bz2
+#test -f "$versiondir"openxp-"$version"-freebsd-`date -I`.tar.bz2 && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-freebsd-`date -I`.tar.bz2
+##
 ncftpls -u christianb -p linsnap5 -l ftp://ftp.openxp.de/
 #ncftpget -u christianb -p linsnap5 -z -r 5 -v ftp.openxp.de . OPENXP-D.zip
 
+chown -R boettger.users /home/boettger/openxp/
 echo "Finished $0"
