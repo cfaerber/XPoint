@@ -40,8 +40,9 @@ type
     FPosX,FPosY,FWidth,FHeight: Byte;
     FHeadline: String;
     FLines: TStringList;
-    procedure Display(RefreshContent: Boolean);
-    procedure SVisible(nVisible: Boolean);
+    procedure Display(RefreshContent: Boolean); virtual;
+    procedure SVisible(nVisible: Boolean);      virtual;
+    procedure SHeadline(strHeadline: String);   virtual;
 
   public
     { Timer displayed in right top of window, initialized upon class creation }
@@ -53,13 +54,34 @@ type
 
     { True if visible, used also for hiding/restoring window }
     property IsVisible: Boolean read FVisible write SVisible;
+    property Headline: string read FHeadline write SHeadline;
 
     constructor CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+    destructor Destroy; override;
 
     { Displays a new message in window }
     procedure WriteFmt(mc: TMsgClass; fmt: string; args: array of const); override;
 
-    destructor Destroy; override;
+    { Resizes and the window _and_ _makes_ _it_ _visible_ }
+    procedure Resize(Width,Height:integer); virtual;
+  end;
+
+  TXPMessageWindowDialog = class(TXPMessageWindow)
+  protected
+    FPosY2:   Byte;
+//  procedure SVisible(nVisible: Boolean);      override;
+    procedure Display(RefreshContent: Boolean); override;
+  public
+    constructor CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+
+    { Write status texts }
+    procedure WrtText(x,y:integer;txt:string);
+    procedure WrtData(x,y:integer;txt:string;len:integer;ralign:boolean);
+
+    { Resizes and the window _and_ _makes_ _it_ _visible_ }
+    procedure Resize(Width,Height:integer); override;
+    { Resize window and split it into several regions }
+    procedure ResizeSplit(Width:Integer;Heights:Array of Integer);
   end;
 
 implementation  { ------------------------------------------------- }
@@ -83,7 +105,7 @@ begin
   if nVisible<>FVisible then begin
     FVisible:=nVisible;
     if nVisible then begin
-      diabox(FWidth+3,FHeight+2,FHeadline,FPosX,FPosY);
+      diabox(FWidth+3,FHeight+2,LeftStr(FHeadline,FWidth-11),FPosX,FPosY);
       Display(true);
       end
     else
@@ -108,7 +130,7 @@ begin
       if iLine>=FLines.Count then
         FWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth))
       else begin
-        if iLine=(FLines.Count-1)then TextAttr:=col.colmailerhigh else TextAttr:=col.colmailer;
+        if iLine=(FLines.Count-1)then TextAttr:=col.colmailerhi2 else TextAttr:=col.colmailer;
         FWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine],FWidth));
         TextAttr:=col.colmailer;
         end
@@ -125,12 +147,35 @@ begin
     // if last message was "not important", it may be overwritten
     if LastMsgUnimportant then
       FLines.Delete(FLines.Count-1)
-    else
-      if FLines.Count>=FHeight then FLines.Delete(0);
+    else if FLines.Count > FHeight then
+      FLines.Delete(0);
     LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
     FLines.Add(s);
     end;
   Display(fmt<>'');
+end;
+
+procedure TXPMessageWindow.SHeadline(strHeadline:string);
+begin
+//  Start bei: FPosX+3
+//  Stop bei:  FPosX+2+FWidth-9 -1
+//  => maximale Länge: FWidth-11
+
+  if IsVisible then begin
+    FWrt(FPosX+3,FPosY,LeftStr(strHeadline,FWidth-11)+' ');
+    if Min(FWidth-11,Length(strHeadline)) < Min(FWidth-11,Length(FHeadline)) then
+      FWrt(FPosX+3+Length(strHeadline)+1,FPosY,Dup(FWidth-11-Length(strHeadline),#$C4));
+  end;
+  FHeadline:=strHeadLine;
+end;
+
+procedure TXPMessageWindow.Resize(Width,Height:Integer);
+var i,j:Integer;
+begin
+  IsVisible:=false; (* hide window *)
+  FWidth:=Width;
+  FHeight:=Height;
+  IsVisible:=true;  (* will display window *)
 end;
 
 destructor TXPMessageWindow.Destroy;
@@ -140,10 +185,97 @@ begin
   Timer.Done;
 end;
 
+{-----------------------------------------------------------------------------}
+
+constructor TXPMessageWindowDialog.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+begin
+  FPosY2:=0;
+  inherited CreateWithSize(iw,ih,headline,visible);
+end;
+
+
+procedure TXPMessageWindowDialog.Resize(Width,Height:integer);
+begin
+  FPosY2:=0;
+  inherited Resize(Width,Height);
+end;
+
+procedure TXPMessageWindowDialog.ResizeSplit(Width:Integer;Heights:Array of Integer);
+var i,j:Integer;
+begin
+  IsVisible:=false;  (* hide window *)
+
+  (* set size variables *)
+  FWidth:=Width;
+  FHeight:=0; for i:=Low(Heights) to High(Heights) do
+    FHeight:=FHeight+Heights[i]+1;
+
+  (* create dialogue *)
+  DiaBox(FWidth+3,FHeight+2,FHeadline,FPosX,FPosY);
+  FVisible:=true;
+
+  (* show split lines *)
+  FPosY2:=FPosY; for i:=Low(Heights) to (High(Heights)-1) do begin
+    FPosY2:=FPosY2+Heights[i]+1;
+    FWrt(FPosX,FPosY2,HBar(FWidth+3));
+  end;
+
+  Display(true);
+end;
+
+procedure TXPMessageWindowDialog.Display(RefreshContent: Boolean);
+var ILine: Integer;
+    SPos:  Integer;
+begin
+  if not IsVisible then exit;
+  if FPosY2<FPosY then FPosY2:=FPosY;
+  inherited Display(false);
+  if not RefreshContent then exit;
+
+  SPos:=min(FHeight-FLines.Count,FPosY2-FPosY);
+				
+  for iLine:= FPosY2-FPosY to FHeight-1 do
+    if iLine-spos >= FLines.Count then
+      FWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth) )
+    else begin
+      if (iLine-spos)=(FLines.Count-1) then
+        TextAttr:=col.colmailerhi2 else
+        TextAttr:=col.colmailer;
+      FWrt(FPosX+2,FPosY+iLine+1,FormS(FLines[iLine-spos],FWidth));
+      TextAttr:=col.colmailer;
+    end;
+end;
+
+procedure TXPMessageWindowDialog.WrtText(x,y:integer;txt:string);
+begin
+  if not IsVisible then exit;
+  FWrt(FPosX+x,FPosY+y,txt);
+end;
+
+procedure TXPMessageWindowDialog.WrtData(x,y:integer;txt:string;len:integer;ralign:boolean);
+begin
+  if not IsVisible then exit;
+  if Length(txt)<(len-2) then txt:=LeftStr(txt,len-2);
+  if ralign then txt:=sp(len-length(txt)-1)+txt+' '
+  else   txt:=' '+txt+sp(len-length(txt)-1);
+  TextAttr:=col.colmailerhigh;
+  FWrt(FPosX+x,FPosY+y,txt);
+  TextAttr:=col.colmailer;
+end;
+
+{-----------------------------------------------------------------------------}
+
 end.
 
 {
   $Log$
+  Revision 1.7  2001/03/16 17:17:04  cl
+  - TXPMessageWindow can be resized
+  - TXPMessageWindow's title can be changed
+  - TXPMessageWindowDialog:
+    - can be split into several regions
+    - allows writes at arbitrary positions
+
   Revision 1.6  2001/02/19 12:18:28  ma
   - simplified ncmodem usage
   - some small improvements
