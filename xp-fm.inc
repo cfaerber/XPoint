@@ -783,13 +783,13 @@ end;
 procedure WaZOOsession;
 var FileToSend : String;
     ErrorFlag: Boolean;
-    ErrorWord: System.Word;
+    ErrorWord: word;
 
 begin
   log('+','starting mail transfer');
   mailing:=true;
   if hello.h.capabilities and MyCap=0 then begin
-    DisplayStatus(getres(185),True);    { 'keine šbertragung m"glich :-(' }
+    DisplayStatus(getres(185),True);    { 'keine Uebertragung m"glich :-(' }
     log(ErrChar,'no common transfer protocol');
     mdelay(1000);
     aresult:=EL_nologin;
@@ -818,7 +818,7 @@ begin
     end;
 
   if ErrorWord<>0 then begin
-    DisplayStatus(getres(191)+' '+Char(ErrorWord+48),True);            { 'šbertragung abgebrochen' }
+    DisplayStatus(getres(191)+' '+Char(ErrorWord+48),True);            { 'Uebertragung abgebrochen' }
     if not CommObj^.Carrier then begin
       DisplayStatus(nocarrier,True);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
@@ -832,7 +832,7 @@ begin
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(CommObj,MailPath,ErrorFlag);
     if (ErrorFlag) then begin
-      DisplayStatus(getres(191),True);            { 'šbertragung abgebrochen' }
+      DisplayStatus(getres(191),True);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
   end;
@@ -869,6 +869,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/10/29 16:18:25  fe
+  Mit VPC uebersetzbar gemacht.
+
   Revision 1.18  2000/10/17 10:05:45  mk
   - Left->LeftStr, Right->RightStr
 

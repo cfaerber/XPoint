@@ -8,7 +8,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ CrossPoint-MenÅeditor }
+{ CrossPoint-Menueeditor }
 
 {$I XPDEFINE.INC }
 
@@ -22,12 +22,21 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
   sysutils, typeform,fileio,keys,maus2,inout,resource,xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
       menufile   = 'xpmenu.dat';
-      meversion  = 1;     { Versionsnummer MenÅdatenformat }
+      meversion  = 1;     { Versionsnummer Menuedatenformat }
 
       menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -48,9 +57,9 @@ type  mprec     = record
                     hpos    : byte;
                     hkey    : char;
                     enabled : boolean;
-                    chain   : byte;      { UntermenÅ-Nr. }
-                    keep    : boolean;   { MenÅ nicht verlassen }
-                    mpnr    : integer;   { Nummer des MenÅpunkts }
+                    chain   : byte;      { Untermenue-Nr. }
+                    keep    : boolean;   { Menue nicht verlassen }
+                    mpnr    : integer;   { Nummer des Menuepunkts }
                   end;
       menuarray = array[1..22] of mprec;
       map       = ^menuarray;
@@ -59,7 +68,7 @@ const mainmenu  : map = nil;
 var   menu      : array[0..menus] of string;
       menulevel : byte;
       main_n    : integer;
-      hmpos     : array[1..10] of byte;  { HauptmenÅ-XPos }
+      hmpos     : array[1..10] of byte;  { Hauptmenue-XPos }
       hidden    : array[1..maxhidden] of integer;
       anzhidden : integer;
       specials  : string;
@@ -152,7 +161,7 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
-  setbackintensity;
+  syssetbackintensity;
   attrtxt(col.colmenu[0]);
   {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
   wrt2(sp(SysGetScreenLines));
@@ -235,7 +244,7 @@ begin
 end;
 
 
-{ --- MenÅsystem -------------------------------------------------------- }
+{ --- Menuesystem -------------------------------------------------------- }
 
 function special(nr:integer):boolean;
 var x,y : byte;
@@ -244,7 +253,7 @@ begin
   if pos('$'+hex(nr,3),UpperCase(specials))>0 then begin
     msgbox(60,6,'',x,y);
     wrt(x+3,y+2,'Dieser MenÅpunkt wird von XP automatisch aktiviert bzw.');
-    wrt(x+3,y+3,'deaktiviert (s. XPME.TXT).');
+    wrt(x+3,y+3,'deaktiviert (s. XP-Handbuch).');
     wrt(x+3,y+5,'Taste drÅcken ...');
     errsound;
     get(t,curon);
@@ -333,7 +342,7 @@ begin
         else
           mpnr:=0;
         enabled:=not ishidden(mpnr);
-        if s[1]='!' then begin      { MenÅ nicht verlassen? }
+        if s[1]='!' then begin      { Menue nicht verlassen? }
           keep:=true;
           delete(s,1,1);
           end
@@ -401,13 +410,13 @@ begin
 end;
 
 
-{ nr       : MenÅnummer                                    }
+{ nr       : Menuenummer                                    }
 { enterkey : erster Tastendruck                            }
-{ x,y      : Koordinaten fÅr UntermenÅ-Anzeige             }
-{ Return   : xxy (Hex!) : Punkt y in MenÅ xx wurde gewÑhlt }
-{             0: MenÅ mit Esc oder sonstwie abgebrochen    }
-{            -1: UntermenÅ nach links verlassen            }
-{            -2: UntermenÅ nach rechts verlassen           }
+{ x,y      : Koordinaten fuer Untermenue-Anzeige             }
+{ Return   : xxy (Hex!) : Punkt y in Menue xx wurde gewaehlt }
+{             0: Menue mit Esc oder sonstwie abgebrochen    }
+{            -1: Untermenue nach links verlassen            }
+{            -2: Untermenue nach rechts verlassen           }
 
 function getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
 const EnableUpper : boolean = true;
@@ -574,7 +583,7 @@ begin
 
       if nr=0 then begin
         if t=keyf10 then t:=keyesc;
-        { In der MenÅzeile îffnet Cursor Down das MenÅ }
+        { In der Menuezeile oeffnet Cursor Down das Menue }
         if t=keydown then t:=keycr;
       end;
 
@@ -750,6 +759,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/10/29 16:18:25  fe
+  Mit VPC uebersetzbar gemacht.
+
   Revision 1.27  2000/10/17 10:06:00  mk
   - Left->LeftStr, Right->RightStr
 
@@ -821,10 +833,10 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
   Revision 1.11  2000/04/09 13:27:07  ml
-  Diverse ƒnderungen zu Bildschirmausgabe unter linux (XPME)
+  Diverse -nderungen zu Bildschirmausgabe unter linux (XPME)
 
   Revision 1.10  2000/03/27 16:34:23  ml
-  lauff‰hig unter linux
+  lauffShig unter linux
 
   Revision 1.9  2000/03/24 20:38:12  mk
   - xdelay entfernt

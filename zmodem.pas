@@ -24,7 +24,7 @@ UNIT ZModem;
 {$i xpdefine.inc}
 
 INTERFACE
-  USES ObjCOM;
+  USES xpglobal,ObjCOM;
 
   VAR
     MakeCRC32,               (* TRUE, wenn 32-Bit-CRC benutzt werden darf  *)
@@ -2448,6 +2448,9 @@ END.
 
 {
   $Log$
+  Revision 1.4  2000/10/29 16:18:25  fe
+  Mit VPC uebersetzbar gemacht.
+
   Revision 1.3  2000/10/29 13:32:31  fe
   Mit VPC und FPC uebersetzbar gemacht.
 
