@@ -8,11 +8,15 @@ const
 {$IFDEF UnixFS }
         FidoDir_    = 'fido';
         FidoDir     = FidoDir_+DirSepa;         { Nodelists }
+        FileLists   = FidoDir+'filelist.cfg';
+        NodelistCfg = FidoDir+'nodelist.cfg';
+        NodeindexF  = FidoDir+'nodelist.idx';
+        UserindexF  = FidoDir+'nodeuser.idx';
 {$ELSE}
         FidoDir_    = 'FIDO';
         FidoDir     = FidoDir_+DirSepa;         { Nodelists }
         FileLists   = FidoDir+'FILELIST.CFG';
-        NodelistCfg = FidoDir+'NODELST.CFG';
+        NodelistCfg = FidoDir+'NODELIST.CFG';
         NodeindexF  = FidoDir+'NODELIST.IDX';
         UserindexF  = FidoDir+'NODEUSER.IDX';
 {$ENDIF}
