@@ -1317,8 +1317,12 @@ angezeigt.
          n„chsth”here Gruppe angesprungen (nur in der
          Adreábuch-Ansicht).
 
-<<<Ctrl-##> >>springt die n„chsth”here Adreábuchgruppe an
-         (nur in der Adreábuch-Ansicht).
+<<<Alt-G> >> springt die n„chsth”here Adreábuchgruppe an
+<<<Ctrl-##> >>(nur in der Adreábuch-Ansicht).
+<<<Ctrl-á> >>Hinweis: <<<Ctrl-##> >>funktioniert nicht mit
+         vielen neueren (Windows-)Tastaturen. Statt-
+         dessen muá <<<Alt-G> >>oder <<<Ctrl-á> >>verwendet
+         werden.
 
 <<<Ctrl-Y> >>springt zur n„chsten Trennzeile (nur in der
          Adreábuch-Ansicht).
@@ -14728,6 +14732,7 @@ derlich, eine lfd. Nummer voranzustellen.
 <<Hinweis:>>  Bei /Netcall/Spezial werden ebenso wie bei
 [/Netcall/Alle] die Steuerdateien <<NETCALL.ALL>> und@11502
 <<NETCALL.END>> erzeugt - N„heres siehe dort.
+
 
 Der Menpunkt /Netcall/Spezial entspricht dem
 [Kommandozeilen-Parameter] <</nsp:1..20>>.@7
