@@ -150,7 +150,7 @@ var
       assign(t2,tn); rewrite(t2);
       while not eof(t1) do begin
         readln(t1,s);
-        writeln(t2,bef,' ',s);
+        write(t2,bef,' ',s,#13#10);
         end;
       close(t1); erase(t1);
       close(t2); rename(t2,datei);
@@ -158,7 +158,7 @@ var
     else begin
       assign(t1,datei);
       rewrite(t1);
-      writeln(t1,bef);
+      write(t1,bef,#13#10);
       close(t1);
       end;
     bef:='AREAFIX';
@@ -175,13 +175,13 @@ var
       assign(t1,datei); reset(t1);
       assign(t2,tn); rewrite(t2);
       if maf then
-        writeln(t2,'%',boxpar^.passwort);
+        write(t2,'%',boxpar^.passwort,#13#10);
       while not eof(t1) do begin
         readln(t1,s);
         if trim(s)<>'' then begin
           if not (maf or promaf) then write(t2,'G');    { Maus-Gruppe }
-          if bef='ADD' then writeln(t2,iifs(promaf,'','+'),s)
-          else writeln(t2,'-',s);
+          if bef='ADD' then write(t2,iifs(promaf,'','+'),s,#13#10)
+          else write(t2,'-',s,#13#10);
           end;
         end;
       close(t1); erase(t1);
@@ -192,11 +192,11 @@ var
       assign(t1,datei);
       rewrite(t1);
       if maf then begin
-        writeln(t1,'%',boxpar^.passwort);
-        writeln(t1,'%',bef);
+        write(t1,'%',boxpar^.passwort,#13#10);
+        write(t1,'%',bef,#13#10);
         end
       else
-        writeln(t1,bef);
+        write(t1,bef,#13#10);
       close(t1);
       end;
     if maf then bef:='BRETTER'
@@ -254,12 +254,12 @@ var
       if bn<>nil then begin
         syswrite(bn^.l);
         if not bn^.del then
-          if syspos=0 then writeln(t,bn^.c)
+          if syspos=0 then write(t,bn^.c,#13#10)
           else begin
             if not first then write(t,',')
             else first:=false;
             if syspos+length(bn^.c)>77 then begin
-              writeln(t,'\'); syspos:=1; end;
+              write(t,'\',#13#10); syspos:=1; end;
             write(t,bn^.c);
             inc(syspos,length(bn^.c)+1);
             end;
@@ -306,13 +306,13 @@ var
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,UpperCase(box));
     rewrite(t);
-    writeln(t,'system: ',boxpar^.pointname,
-                         iifs(boxpar^.BMdomain,dbReadStr(d,'domain'),''));
-    writeln(t,'passwd: ',boxpar^.AreaPW);
+    write(t,'system: ',boxpar^.pointname,
+                       iifs(boxpar^.BMdomain,dbReadStr(d,'domain'),''),#13#10);
+    write(t,'passwd: ',boxpar^.AreaPW,#13#10);
     write(t,'sysentry: '); syspos:=30; first:=true;
     dbClose(d);
     syswrite(root);
-    writeln(t);
+    write(t,#13#10);
     close(t);
     freelist(root);
     bef:='setsys';
@@ -348,35 +348,35 @@ var
     if boxpar^.BMdomain then domain:=dbReadStr(d,'domain')
     else domain:='';
     case typ of
-      1 : writeln(t2,'site ',boxpar^.pointname,domain,' ',boxpar^.AreaPW);
-      2 : writeln(t2,'host ',boxpar^.pointname,domain,' ',boxpar^.AreaPW);
-      3 : writeln(t2,'@id ',boxpar^.pointname,domain,' ',boxpar^.AreaPW);
+      1 : write(t2,'site ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
+      2 : write(t2,'host ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
+      3 : write(t2,'@id ',boxpar^.pointname,domain,' ',boxpar^.AreaPW,#13#10);
     end;
     dbClose(d);
-    writeln(t2);
+    write(t2,#13#10);
     if (bef='ADD') or (bef='DEL') then begin
-      if typ=3 then writeln(t2,'@append');
+      if typ=3 then write(t2,'@append',#13#10);
       while not eof(t1) do begin
         readln(t1,s);
         if (trim(s)<>'') and (s[1]<>'#') and (s[1]<>'-') then
           if (bef='ADD') then
             case typ of
-              1 : writeln(t2,'include ',s);
-              2 : writeln(t2,'add ',s);
-              3 : writeln(t2,s);
+              1 : write(t2,'include ',s,#13#10);
+              2 : write(t2,'add ',s,#13#10);
+              3 : write(t2,s,#13#10);
             end
           else
             case typ of
-              1 : writeln(t2,'delete ',s);
-              2 : writeln(t2,'rem ',s);
-              3 : writeln(t2,'!',s);
+              1 : write(t2,'delete ',s,#13#10);
+              2 : write(t2,'rem ',s,#13#10);
+              3 : write(t2,'!',s,#13#10);
             end;
         end;
-      if typ=3 then writeln(t2,'@end');
+      if typ=3 then write(t2,'@end',#13#10);
       end
     else
-      writeln(t2,bef);
-    if (bef<>'help') and (typ<>3) then writeln(t2,'quit');
+      write(t2,bef,#13#10);
+    if (bef<>'help') and (typ<>3) then write(t2,'quit',#13#10);
     close(t1); erase(t1);
     close(t2); rename(t2,datei);
   end;
@@ -426,16 +426,16 @@ end;
 procedure wr_btext(var t:text; del,news:boolean);
 var bretter : string;
 begin
-  writeln(t,'##  ',getres2(800,1));   { 'Lieber Systemverwalter,' }
-  writeln(t,'##');
+  write(t,'##  ',getres2(800,1),#13#10);   { 'Lieber Systemverwalter,' }
+  write(t,'##',#13#10);
   bretter:=getres2(800,iif(news,2,3));
-  writeln(t,'##  ',getreps2(800,iif(del,4,5),bretter));
-  writeln(t,'##');
-  writeln(t,'##  ',getres2(800,6));   { 'mit virtuellen GrÅ·en' }
-  writeln(t,'##     '+xp_xp+' ',verstr);
-  writeln(t);
-  writeln(t,dup(40,'-'));
-  writeln(t);
+  write(t,'##  ',getreps2(800,iif(del,4,5),bretter),#13#10);
+  write(t,'##',#13#10);
+  write(t,'##  ',getres2(800,6),#13#10);   { 'mit virtuellen GrÅ·en' }
+  write(t,'##     '+xp_xp+' ',verstr,#13#10);
+  write(t,#13#10);
+  write(t,dup(40,'-'),#13#10);
+  write(t,#13#10);
   freeres;
 end;
 
@@ -954,36 +954,36 @@ begin
         then
           if qwk then begin
             bfile:=GetServerFilename(box, '');
-            writeln(t,'DROP ',qwkbrett(brett));
+            write(t,'DROP ',qwkbrett(brett),#13#10);
             end
           else begin
             if fido then write(t,'-');
-            writeln(t,mid(brett,length(boxpar^.magicbrett)+2));
+            write(t,mid(brett,length(boxpar^.magicbrett)+2),#13#10);
             end;
         end
       else if not maf then
-        if gs then writeln(t,copy(brett,3,brettlen))
-        else if uucp then writeln(t,newsgroup(brett))
-        else writeln(t,copy(brett,2,brettlen))
+        if gs then write(t,copy(brett,3,brettlen),#13#10)
+        else if uucp then write(t,newsgroup(brett),#13#10)
+        else write(t,copy(brett,2,brettlen),#13#10)
       else begin
         dbOpen(d,OwnPath+BoxenFile,1);
         dbSeek(d,boiName,UpperCase(box));
         if dbFound then begin
           bfile:= dbReadStr(d,'dateiname');
           ReadBrettliste;
-          writeln(t,brettcode(copy(brett,2,40)));
+          write(t,brettcode(copy(brett,2,40)),#13#10);
           end;
         dbClose(d);
         end;
       if fido then
-        writeln(t,'---');
+        write(t,'---',#13#10);
       close(t);
       if not Client then 
         SendMaps('DEL',box,fn)
       else 
       begin
         rewrite(t);
-        writeln(t,newsgroup(brett));
+        write(t,newsgroup(brett),#13#10);
         close(t);
         File_Abbestellen(box,fn);
       end;
@@ -1018,24 +1018,24 @@ begin
               if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=
                  UpperCase(boxpar^.magicbrett)
               then
-                if qwk then writeln(t,'DROP ',qwkbrett(brett))
+                if qwk then write(t,'DROP ',qwkbrett(brett),#13#10)
                 else begin
                   if fido then write(t,'-');
-                  writeln(t,mid(brett,length(boxpar^.magicbrett)+2));
+                  write(t,mid(brett,length(boxpar^.magicbrett)+2),#13#10);
                   end;
               end
             else
               if not (maf or pronet) then
-                if gs then writeln(t,copy(brett,3,brettlen))
-                else if uucp then writeln(t,newsgroup(brett))
-                else writeln(t,copy(brett,2,BrettLen))
-              else writeln(t,brettcode(mid(brett,2)));
+                if gs then write(t,copy(brett,3,brettlen),#13#10)
+                else if uucp then write(t,newsgroup(brett),#13#10)
+                else write(t,copy(brett,2,BrettLen),#13#10)
+              else write(t,brettcode(mid(brett,2)),#13#10);
             topen:=true;
             end;
           end;
         if topen then begin
           if fido then
-            writeln(t,'---');
+            write(t,'---',#13#10);
           close(t);
           if not client then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
@@ -1643,12 +1643,12 @@ begin
               wr_btext(t,art<>0,uucp);
             s:=List.FirstMarked;
             if fido and (art=4) and not Boxpar^.areabetreff then
-              writeln(t,'%Rescan');
+              write(t,'%Rescan',#13#10);
             while s<>#0 do begin
               writeform;
               s:=List.NextMarked;
               end;
-            if fido then writeln(t,'---');
+            if fido then write(t,'---',#13#10);
             close(t);
             if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
               BretterAnlegen;
@@ -2031,22 +2031,22 @@ begin
         assign(t,fn);
         rewrite(t);
         if fido then begin
-          if not boxpar^.AreaBetreff then writeln(t,'%',comm);
-          writeln(t,'---');
+          if not boxpar^.AreaBetreff then write(t,'%',comm,#13#10);
+          write(t,'---',#13#10);
           end
         else if uucp then begin
-          writeln(t,'system: ',boxpar^.pointname,
-                    iifs(boxpar^.BMdomain,domain,''));
-          writeln(t,'passwd: ',boxpar^.areapw);
-          writeln(t,comm);
+          write(t,'system: ',boxpar^.pointname,
+                  iifs(boxpar^.BMdomain,domain,''),#13#10);
+          write(t,'passwd: ',boxpar^.areapw,#13#10);
+          write(t,comm,#13#10);
           end
         else if promaf then begin
-          writeln(t);
-          writeln(t);
-          writeln(t,'BRETTER');
+          write(t,#13#10);
+          write(t,#13#10);
+          write(t,'BRETTER',#13#10);
           end
         else
-          writeln(t);
+          write(t,#13#10);
         close(t);
         end
       else begin
@@ -2120,7 +2120,7 @@ begin
       assign(t2, GetServerFilename(boxpar^.boxname, extBbl));
       rewrite(t2);
       delete(s,1,p);
-      while LastChar(s)='\' do 
+      while LastChar(s)='\' do
       begin
         DeleteLastChar(s);
         WriteStr;
@@ -2146,6 +2146,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2002/02/26 11:30:24  ma
+  - fixed: Misc area requests (wrong line endings with Linux)
+
   Revision 1.67  2002/01/22 19:15:31  mk
   - after 3.40 merge fixes
 
