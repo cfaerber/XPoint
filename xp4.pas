@@ -2076,9 +2076,11 @@ begin      { --- select --- }
   until ende or quit;
   maus_popinside;
 
-  if not quit and ((dispmode>=1) and (dispmode<=4)) then begin
+  if not quit and ((dispmode>=1) and (dispmode<=4)) then 
+  begin
     _unmark_;
-    if dispmode=2 then UserSwitch;
+    if (dispmode=2) or ((dispmode=4) and (lastdm=1))
+      or ((dispmode=3) and (lastdm=2)) then UserSwitch;
 
     ubpos:=disprec[1];
     if ubpos<>0 then ub_p:=p;
@@ -2175,6 +2177,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.49  2001/08/23 12:06:06  mk
+  JG:- Fixed bug in select routine: Switching to the user window with <F2>
+       from a Message/Direct dialogue and activating the "all user" view
+       with the "a" key lead to a garbled display of the user window if
+       the user switched to it again with <Tab> after sending the message.
+
   Revision 1.26.2.48  2001/08/13 16:53:02  my
   SV:- Fixed previous commit, as it fixed the small memory leak but also
        re-activated the bug the original commit was supposed to fix:
