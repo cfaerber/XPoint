@@ -170,7 +170,8 @@ begin
     MemHandle := GlobalAlloc(gmem_Moveable or gmem_DDEShare, Length(Str)+1);
     Q := GlobalLock(MemHandle);
     // Copy clipboard data across
-    Move(Str[1], Q^, Length(Str));
+    if Str <> '' then
+      Move(Str[1], Q^, Length(Str));
     Q[Length(Str)]:=#0;
     GlobalUnlock(MemHandle);
     // Insert data into clipboard
@@ -320,6 +321,9 @@ end;
 
 {
   $Log$
+  Revision 1.38.2.2  2003/10/05 14:38:52  mk
+  - fixed # 818085: 3.8.12.xx Totalabsturz im Lister
+
   Revision 1.38.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 
