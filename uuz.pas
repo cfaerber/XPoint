@@ -65,6 +65,7 @@ const
 
       nt_ZConnect = 2;
       nt_RFC      = 40;
+      nt_Client   = 41;
       uncompress  = 'compress.exe -df ';
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
@@ -277,8 +278,10 @@ begin
   writeln('UUZ -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
   writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
-  writeln('uz switches:  -graberec  =  grab envelope recipient from "Received" header');
-  writeln('              -UseEnvTo  =  Use (X-)Envelope-To instead of "RCPT TO"');
+  writeln('uz switches:  -UseEnvTo  =  Use Envelope header instead of "RCPT TO" (SMTP)');
+  writeln('                            (Envelope-To, X-Envelope-To, U-Delivered-To)');
+  writeln('              -graberec  =  Grab envelope recipient from "Received" header');
+  writeln('              -client    =  Mode for net type RFC/Client');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
@@ -287,7 +290,8 @@ begin
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
-  writeln('              -client =  create one SMTP file per outgoing message');
+  writeln('              -client =  Mode for net type RFC/Client:');
+  writeln('                         Create one SMTP file per outgoing message');
   writeln;
   writeln('zu/uz:        -LFN    =  Support Long Filenames');
   halt(1);
@@ -310,7 +314,8 @@ begin
     u2z:=true;
     source:=''; dest:=''; OwnSite:='';
     for i:=2 to paramcount do
-      if left(paramstr(i),1)='-' then begin
+      if left(paramstr(i),1)='-' then
+      begin
         switch:=lstr(mid(paramstr(i),2));
         if left(switch,2)='w:' then
           XpWindow:=minmax(ival(mid(switch,3)),15,60) else
@@ -325,8 +330,10 @@ begin
           UseLFN := true;
         end else
         if switch='r' then
-          shrinkheader:=true
-        end
+          shrinkheader:=true else
+        if (switch='client') or (switch='ppp') then
+          client:=true;
+      end
       else
         if source=''  then source:=ustr(paramstr(i)) else
         if dest=''    then dest:=ustr(paramstr(i)) else
@@ -1949,15 +1956,15 @@ var p,i   : integer; { byte -> integer }
       cmp   al,'Z'
       ja    @@2
       add   byte ptr [si-1],32
-@@2:  loop  @@1
+ @@2: loop  @@1
   end;
 
-{ read a variable and remove comments }
-procedure GetVar(var r0,s0:string);
-begin
-  RfcRemoveComment(s0);
-  r0:=s0;
-end;
+  { read a variable and remove comments }
+  procedure GetVar(var r0,s0:string);
+  begin
+    RfcRemoveComment(s0);
+    r0:=s0;
+  end;
 
 begin
   manz:=0;
@@ -2121,7 +2128,10 @@ begin
   OpenFile(fn);
 {  ok:=true; }
   fillchar(hd,sizeof(hd),0);
-  hd.netztyp:=nt_RFC;
+  if client then
+    hd.netztyp:=nt_Client
+  else
+    hd.netztyp:=nt_RFC;
   repeat             { Envelope einlesen }
     ReadString(true);
     p:=cpos(' ',s);
@@ -2265,7 +2275,10 @@ begin
   OpenFile(fn);
   repeat
     fillchar(hd,sizeof(hd),0);
-    hd.netztyp:=nt_RFC;
+    if client then
+      hd.netztyp:=nt_Client
+    else
+      hd.netztyp:=nt_RFC;
     ende:=false;
     repeat
       ReadString(false);
@@ -2442,7 +2455,10 @@ begin
           size:=minmax(ival(mid(s,10)),0,maxlongint);
           fp:=fpos; bp:=bufpos;
           fillchar(hd,sizeof(hd),0);
-          hd.netztyp:=nt_RFC;
+          if client then
+            hd.netztyp:=nt_Client
+          else
+            hd.netztyp:=nt_RFC;
           ReadString(true);
           ReadRFCheader(false,s);
           binaer := (hd.typ = 'B');
@@ -2733,7 +2749,7 @@ var dat    : string[30];
 { 03.09.1999 robo - bei Netztyp RFC Gruppennamen nicht nach }
 { lowercase wandeln wegen Macrosuff-Schrottnewsservern }
 
-    if hd.netztyp=nt_RFC
+    if hd.netztyp in [nt_RFC, nt_Client]
       then formnews:=s
       else
 
@@ -3363,6 +3379,11 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.67  2002/03/29 22:46:10  my
+  MY:- UUZ-Schalter "-client" fÅr eingehende Nachrichten implementiert
+       (damit der korrekte Header "X-XP-NTP: 41" geschrieben wird).
+       UUZ-Hilfeausgabe angepa·t.
+
   Revision 1.35.2.66  2002/03/29 16:37:31  my
   MY:- Text des letzten Commits vervollstÑndigt.
 

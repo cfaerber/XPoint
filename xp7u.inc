@@ -734,8 +734,9 @@ begin
           inbound:=iifs(_SysopMode,_SysopInp,PPPSpool);
           if exist(inbound+'*.MSG') then
           begin
-            shell(UUZBin+' -uz -w:'+strs(screenlines)+iifs(PPPMailInUseEnvTo,
-              ' -UseEnvTo ',' ')+inbound+'*.MSG '+OwnPath + dpuffer,600,3);
+            shell(UUZBin+' -uz -client -w:'+strs(screenlines)+
+                          iifs(PPPMailInUseEnvTo,' -UseEnvTo ',' ')+
+                          inbound+'*.MSG '+OwnPath + dpuffer,600,3);
             if _SysopMode then
               NC^.Recbuf := _filesize(dpuffer)
             else
@@ -783,6 +784,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.26  2002/03/29 22:46:10  my
+  MY:- UUZ-Schalter "-client" fÅr eingehende Nachrichten implementiert
+       (damit der korrekte Header "X-XP-NTP: 41" geschrieben wird).
+       UUZ-Hilfeausgabe angepa·t.
+
   Revision 1.13.2.25  2002/03/08 23:09:16  my
   MY:- RFC/Client: Multiserver-Netcall implementiert. Die aus- und
        eingehenden Nachrichten der unter "D/B/E/C/ZusÑtzliche_Server"
