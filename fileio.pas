@@ -118,28 +118,24 @@ var
   ShareDa : boolean;
 {$ENDIF }
 
+{ !!UnixFS noch bearbeiten einfÅgen !! }
 function exist(n:string):boolean;
-{$IFDEF Ver32  }
+var
+  sr : searchrec;
+  ex : boolean;
 begin
-{$IFDEF UnixFS}
-  Exist:= FileExists(ResolvePathName(n));
-{$ELSE }
-  Exist := FileExists(n);
-{$ENDIF }
-end;
-{$ELSE }
-var sr : searchrec;
-    ex : boolean;
-begin
-  findfirst(n,anyfile-volumeid-directory,sr);
+  Dos.FindFirst(n,anyfile-volumeid-directory,sr);
   ex:=(doserror=0);
-  while not ex and (doserror=0) do begin
-    findnext(sr);
+  while not ex and (doserror=0) do
+  begin
+    Dos.FindNext(sr);
     ex:=(doserror=0);
   end;
+  {$IFDEF Ver32 }
+    Dos.FindClose(sr);
+  {$ENDIF }
   exist:=ex;
 end;
-{$ENDIF }
 
 Function existf(var f):Boolean;
 var
@@ -208,12 +204,12 @@ begin
       IsPath:= true
     else if (name[length(name)]=DirSepa) then
       dellast(name);
-    findfirst(name,Directory,sr);
+    Dos.findfirst(name,Directory,sr);
     IsPath:=(doserror=0) and (sr.attr and directory<>0);
 {$ELSE }
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
-      findfirst(name+'*.*',ffAnyFile,sr);
+      Dos.findfirst(name+'*.*',ffAnyFile,sr);
       if doserror=0 then
         IsPath:=true
       else
@@ -222,7 +218,7 @@ begin
     else begin
       if name[length(name)]='\' then
         dellast(name);
-      findfirst(name,Directory,sr);
+      Dos.findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
 {$ENDIF }
@@ -278,11 +274,11 @@ begin
 {$IFDEF UnixFS}
   findfirst(ResolvePathName(s),ffAnyFile,sr);
 {$ELSE}
-  findfirst(s,ffAnyfile,sr);
+  Dos.findfirst(s,ffAnyfile,sr);
 {$ENDIF}
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF Ver32 }
   FindClose(sr);
@@ -298,7 +294,7 @@ begin
 {$IFDEF UnixFS}
   path:= ResolvePathName(path);
 {$ENDIF}
-  findfirst(path+WildCard,anyfile-VolumeID,sr);
+  Dos.findfirst(path+WildCard,anyfile-VolumeID,sr);
   while doserror=0 do begin
     with sr do
       if (name[1]<>'.') then
@@ -309,7 +305,7 @@ begin
           if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
           erase(f);
         end;
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF Ver32}
   FindClose(sr);
@@ -479,7 +475,7 @@ begin
 {$IFDEF UnixFS}
   findfirst(ResolvePathName(fn),ffAnyFile,sr);
 {$ELSE}
-  findfirst(fn,ffAnyFile,sr);
+  dos.findfirst(fn,ffAnyFile,sr);
 {$ENDIF}
   if doserror<>0 then
     _filesize:=0
@@ -511,7 +507,7 @@ begin
 {$IFDEF UnixFS}
   findfirst(ResolvePathName(fn),ffAnyFile,sr);
 {$ELSE}
-  findfirst(fn,ffAnyFile,sr);
+  dos.findfirst(fn,ffAnyFile,sr);
 {$ENDIF}
   if doserror=0 then
     filetime:=sr.time
@@ -867,6 +863,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.33  2000/05/17 18:45:33  mk
   - Wieder unter allen Platformen compilierbar
 

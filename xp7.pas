@@ -1,4 +1,4 @@
-{ --------------------------------------------------------------- }
+        { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -1561,6 +1561,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.12  2000/05/14 15:04:51  hd
   - Anpassungen Linux
 

@@ -755,7 +755,7 @@ var sr       : searchrec;
     w        : pprec;
 begin
   ppanz:=0;
-  findfirst('*.pp',ffAnyFile,sr);
+  dos.findfirst('*.pp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .PP-Files }
     if sr.size>0 then begin
 
@@ -764,12 +764,12 @@ begin
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
       end;
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
   {$ENDIF}
-  findfirst('*.epp',ffAnyFile,sr);
+  dos.findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
       truncstr(sr.name,cpos('.',sr.name)-1);
@@ -781,7 +781,7 @@ begin
         end;
       pp_epp[ppanz].esize:=sr.size;
       end;
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -824,12 +824,12 @@ begin
     end;
   dbClose(d);
   if crashs then begin
-    findfirst('*.cp',ffAnyFile,sr);
+    dos.findfirst('*.cp',ffAnyFile,sr);
     sumbytes:=0; summsgs:=0;
     while doserror=0 do begin
       inc(summsgs,testpuffer(sr.name,false,attsize));
       inc(sumbytes,sr.size+attsize);
-      findnext(sr);
+      dos.findnext(sr);
     end;
     {$IFDEF virtualpascal}
     FindClose(sr);
@@ -1262,6 +1262,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.11  2000/05/04 10:43:00  mk
   - Unbenutze Units aus uses entnommen
 

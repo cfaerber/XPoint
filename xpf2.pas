@@ -170,11 +170,11 @@ begin
             if UniExtract(s,FilePath+'TICK\','*.*') and
                exist(FilePath+'TICK\'+name1) then begin
               _era(s);
-              FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
+              Dos.FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
               while doserror=0 do begin       { .TIC-Files verarbeiten }
                 if ProcessTICfile(FilePath+'TICK\'+sr.name) then;
                 _era(FilePath+'TICK\'+sr.name);
-                findnext(sr);
+                Dos.findnext(sr);
               end;
               {$IFDEF virtualpascal}
               FindClose(sr);
@@ -188,11 +188,11 @@ begin
 ende:
   close(t);
 
-  findfirst(FilePath+'*.TIC',ffAnyFile,sr);    { ungepackte TIC-Files }
+  Dos.findfirst(FilePath+'*.TIC',ffAnyFile,sr);    { ungepackte TIC-Files }
   while doserror=0 do begin
     if ProcessTICfile(FilePath+sr.name) then
       _era(FilePath+sr.name);
-    findnext(sr);
+    Dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);

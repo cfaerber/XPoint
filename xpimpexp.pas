@@ -605,10 +605,10 @@ var ypath : pathstr;
       sum : longint;
   begin
     sum:=0;
-    findfirst(ypath+'*.DBT',ffAnyFile,sr);
+    Dos.findfirst(ypath+'*.DBT',ffAnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
-      findnext(sr);
+      Dos.findnext(sr);
     end;
     {$IFDEF virtualpascal}
     FindClose(sr);
@@ -705,6 +705,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.11  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

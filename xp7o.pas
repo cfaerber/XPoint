@@ -57,7 +57,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  {window(1,4,80,screenlines-2);}	{ Fenster-Problem beim Netcall (hd) }
+  {window(1,4,80,screenlines-2);}       { Fenster-Problem beim Netcall (hd) }
 end;
 
 procedure twin;
@@ -404,10 +404,10 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { 01/2000 oh: Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then begin 
+  if AutoDatumsBezuege then begin
     window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
     bd_setzen(true);
-    end; 
+    end;
   { /oh }
 end;
 
@@ -664,7 +664,7 @@ begin
   mon;
   assign(f1,dest);
   if existf(f1) then _era(dest);
-  findfirst(fmask,ffAnyFile,sr);
+  Dos.findfirst(fmask,ffAnyFile,sr);
   if doserror=0 then begin
     rewrite(f1,1);
     cursor(curon);
@@ -689,7 +689,7 @@ begin
           end;
         erase(f2);
         end;
-      findnext(sr);
+      Dos.findnext(sr);
     end;
     {$IFDEF virtualpascal}
     FindClose(sr);
@@ -709,10 +709,10 @@ var sr : searchrec;
 begin
   { ToDo }
   packetsize:=0;
-  findfirst(XferDir+'*.*',ffAnyFile,sr);
+  Dos.findfirst(XferDir+'*.*',ffAnyFile,sr);
   while doserror=0 do begin
     inc(packetsize,sr.size);
-    findnext(sr);
+    Dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -728,11 +728,11 @@ var sr   : searchrec;
     last : string[12];
     arc  : shortint;
 begin
-  findfirst(XferDir+'*.*',ffAnyFile,sr);
+  dos.findfirst(XferDir+'*.*',ffAnyFile,sr);
   if doserror=0 then begin
     while doserror=0 do begin
       last:=sr.name;
-      findnext(sr);
+      Dos.findnext(sr);
     end;
     {$IFDEF virtualpascal}
     FindClose(sr);
@@ -782,6 +782,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.10  2000/05/16 12:53:53  hd
   - Bildschirm beim Netcall (Fix-Versuch, bitte testen)
 

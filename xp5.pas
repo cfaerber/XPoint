@@ -19,7 +19,7 @@ unit xp5;
 
 interface
 
-uses  
+uses
       {$IFDEF virtualpascal}
         sysutils,vpsyslow,
       {$endif}
@@ -350,10 +350,10 @@ var sr  : searchrec;
 begin
   mon;
   sum:=0;
-  findfirst(dir+WildCard,ffAnyFile,sr);
+  dos.findfirst(dir+WildCard,ffAnyFile,sr);
   while doserror=0 do begin
     inc(sum,sr.size);
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -1141,6 +1141,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.25  2000/05/14 15:04:51  hd
   - Anpassungen Linux
 

@@ -239,7 +239,7 @@ begin
   crash:=(dbReadInt(mbase,'unversandt') and 16<>0);
   empfnr:=(dbReadInt(mbase,'netztyp') shr 24);
 
-  findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
+  dos.findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
   found:=false;
   rmessage(640);             { 'Puffer Åberarbeiten...' }
   while (doserror=0) and not found do begin
@@ -273,7 +273,7 @@ begin
       end;
   nextpp:
     if found then ShrinkPuffer
-    else findnext(sr);
+    else dos.findnext(sr);
     fs:=filesize(f);
     close(f);
     if found and (fs=0) then begin
@@ -1248,6 +1248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.14  2000/05/17 14:17:33  sv
   - Mit N/W/O weitergeleitete Nachrichten koennen nun nachtraeglich
     nicht mehr geaendert werden

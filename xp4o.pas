@@ -1392,12 +1392,12 @@ var _brett   : string[5];
 begin
   if uvs_active then exit;
   crashs:=false;
-  findfirst('*.pp',dos.Archive,sr);
+  dos.findfirst('*.pp',dos.Archive,sr);
   if doserror<>0 then begin
     {$IFDEF Ver32 }
       FindClose(sr);
     {$ENDIF}
-    findfirst('*.cp',dos.Archive,sr);
+    dos.findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
     end;
   markanz:=0;
@@ -1475,7 +1475,7 @@ begin
       {$IFDEF Ver32 }
       FindClose(sr);
       {$ENDIF}
-      findfirst('*.cp',dos.Archive,sr);
+      dos.findfirst('*.cp',dos.Archive,sr);
       crashs:=true;
     end;
   end;
@@ -2407,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.41  2000/05/14 10:00:43  hd
   - Fix: SysUtils doppelt
 

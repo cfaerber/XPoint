@@ -481,7 +481,7 @@ begin
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
-  findfirst('BAD',Directory,sr);
+  dos.findfirst('BAD',Directory,sr);
   baddir:=(doserror=0) and (sr.attr and Directory<>0);
 end;
 
@@ -1752,12 +1752,12 @@ var sr  : searchrec;
     fst : boolean;
 begin
   FSplit(infile,d,n,e);
-  findfirst(infile,ffAnyFile,sr);
+  dos.findfirst(infile,ffAnyFile,sr);
   fst:=true;
   while doserror=0 do begin
     FidoZfile(d+sr.name,not fst);
     fst:=false;
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -1788,6 +1788,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.15  2000/05/03 00:21:24  mk
   - unbenutzte Units aus uses entfernt
 

@@ -73,7 +73,7 @@ procedure testlock;
 procedure ReadDefaultViewers;
 
 procedure ShowDateZaehler;
-Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche } 
+Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 
 implementation  {-----------------------------------------------------}
@@ -331,7 +331,7 @@ var i  : integer;
                          delay(500);
                        end
   end;
-  
+
 
   procedure ReadParFile;
   begin
@@ -354,12 +354,12 @@ begin
 {$IFDEF UnixFS }
   findfirst(AutoxDir+'*.opt',0,sr);
 {$ELSE }
-  findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
+  Dos.findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
 {$ENDIF }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF Ver32 }
   FindClose(sr);
@@ -371,7 +371,7 @@ begin
 {$IFDEF UnixFS }
   findfirst(AutoxDir+'*.par',0,sr);
 {$ELSE }
-  findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
+  Dos.findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
 {$ENDIF }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
@@ -379,7 +379,7 @@ begin
     erase(t);
     if ioresult<>0 then
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF Ver32 }
   FindClose(sr);
@@ -497,7 +497,7 @@ var lf : string[12];
 begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('xp-*.res', ffAnyFile, sr);		{ Hier duerfte es keine Probleme geben }
+  findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
   assign(t,'xp.res');
   reset(t);
   if ioresult<>0 then
@@ -913,10 +913,10 @@ end;
 procedure DelTmpfiles(fn:string);
 var sr : searchrec;
 begin
-  findfirst(fn,ffAnyFile,sr);
+  dos.findfirst(fn,ffAnyFile,sr);
   while doserror=0 do begin
     _era(sr.name);
-    findnext(sr);
+    dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -1114,8 +1114,8 @@ begin
   SeekViewer('text/plain',PTextViewer);
 end;
 
-Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche } 
-Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }  
+Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
+Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }
 Begin
   UsrFeldPos1:=1;
   UsrFeldPos2:=2;
@@ -1132,12 +1132,15 @@ Begin
       end;
     inc(i);
     end;
-   if UsrfeldPos2=33 Then UsrFeldpos2:=32;   
+   if UsrfeldPos2=33 Then UsrFeldpos2:=32;
 end;
 
 end.
 {
   $Log$
+  Revision 1.41  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.40  2000/05/19 13:48:00  ml
   Hilfedatei wird jetzt gefunden (xp.hlp)
 

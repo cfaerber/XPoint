@@ -345,10 +345,10 @@ var regs  : registers;
   function exist(s:string):boolean;
   var sr : searchrec;
   begin
-    findfirst(s,ffAnyfile,sr);
+    Dos.FindFirst(s,ffAnyfile,sr);
     exist:=doserror=0;
     {$IFDEF Ver32 }
-      findclose(sr);
+      FindClose(sr);
     {$ENDIF }
   end;
 
@@ -388,7 +388,7 @@ begin
 
   {$ifndef usebatch}
     if dpath='' then begin
-      para:=environment+' /c '+prog+para;  
+      para:=environment+' /c '+prog+para;
       dpath:=getenv('comspec');
     end;
   {$else}
@@ -396,7 +396,7 @@ begin
     WriteBatch(prog+para);
     para:=environment+' /c tmp.bat';
   {$endif}
-  
+
   {$IFNDEF DPMI}
     paras:=memw[prefixseg:2]-prefixseg+1;
     space:=(space+1)*64;   { KB -> Paragraphs, + 1 extra-KB }
@@ -495,6 +495,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.18  2000/05/18 05:52:38  mk
   - UseBatch ausgeschaltet
 

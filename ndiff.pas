@@ -22,12 +22,7 @@
 {$ENDIF }
 
 uses
-{$IFNDEF Delphi }
-  dos,
-{$ELSE }
-  sysutils,
-{$ENDIF }
-  typeform,fileio, xpglobal;
+  dos, typeform,fileio, xpglobal;
 
 const shrink : boolean = false;
       regs   : integer = 0;
@@ -345,6 +340,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

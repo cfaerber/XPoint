@@ -338,10 +338,10 @@ Function exist(n:string):boolean;
 var sr : searchrec;
     ex : boolean;
 begin
-  findfirst(n,anyfile-volumeid-directory,sr);
+  Dos.findfirst(n,anyfile-volumeid-directory,sr);
   ex:=(doserror=0);
   while not ex and (doserror=0) do begin
-    findnext(sr);
+    Dos.findnext(sr);
     ex:=(doserror=0);
   end;
   {$IFDEF virtualpascal}
@@ -595,6 +595,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.5  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

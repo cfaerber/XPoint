@@ -142,8 +142,8 @@ begin
                        case indexnr of
                          uiName       : indexstr:='+USERNAME';
                          uiAdrbuch    : indexstr:='ADRBUCH/+USERNAME';
-                         uiBoxName    : indexstr:='POLLBOX/+USERNAME'; 
-                         uiBoxAdrbuch : indexstr:='ADRBUCH/POLLBOX/+USERNAME';   
+                         uiBoxName    : indexstr:='POLLBOX/+USERNAME';
+                         uiBoxAdrbuch : indexstr:='ADRBUCH/POLLBOX/+USERNAME';
                        end
                      else if df=BoxenFile then
                        case indexnr of
@@ -220,6 +220,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/20 02:07:39  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.9  2000/05/10 11:51:32  ml
   wkey benutzt jetzt fwrt statt write - downcounter im Fehlerfenster
   positioniert Text nun richtig...

@@ -314,8 +314,8 @@ var sr    : searchrec;
 
   function find(ext:string):boolean;
   begin
-    if first then findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
-    else findnext(sr);
+    if first then dos.findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
+    else dos.findnext(sr);
     first:=(doserror<>0);
     find:=not first;
   end;
@@ -388,10 +388,10 @@ var sr    : searchrec;
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
-          findfirst(AutoxDir+'*.PKT',ffAnyFile,sr);
+          dos.findfirst(AutoxDir+'*.PKT',ffAnyFile,sr);
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
-            findnext(sr);
+            dos.findnext(sr);
           end;
           {$IFDEF virtualpascal}
           FindClose(sr);
@@ -659,6 +659,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.10  2000/05/09 13:14:06  hd
   - UnixFS: getdrive entfernt
 

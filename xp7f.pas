@@ -225,7 +225,7 @@ begin
     p:=pos('$PUFFER',ustr(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',ustr(downarcer));       { immer > 0 ! }
-    findfirst(ImportDir+'*.*',ffAnyFile,sr);
+    Dos.findfirst(ImportDir+'*.*',ffAnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
       window(1,1,80,25); attrtxt(7);
@@ -240,7 +240,7 @@ begin
         if errorlevel<>0 then
           MoveToBad(ImportDir+sr.name);
         end;
-      findnext(sr);
+      Dos.findnext(sr);
     end;
     {$IFDEF virtualpascal}
     FindClose(sr);
@@ -259,14 +259,14 @@ begin
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
         if nDelPuffer then
-          findfirst(XFerDir+'*.*',ffAnyFile,sr)
+          Dos.findfirst(XFerDir+'*.*',ffAnyFile,sr)
         else begin
-          findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
+          Dos.findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
           if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
           end;
         while doserror=0 do begin
           _era(XFerDir+sr.name);
-          findnext(sr);
+          Dos.findnext(sr);
         end;
         {$IFDEF virtualpascal}
         FindClose(sr);
@@ -276,11 +276,11 @@ begin
       CallFilter(true,fpuffer);
       if _filesize(fpuffer)>0 then
         { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
-{      
+{
         if PufferEinlesen(fpuffer,box,false,false,true,
                           iif(multipos('*',boxpar^.akas),pe_ForcePfadbox,
                           pe_Bad))
-}                          
+}
         if PufferEinlesen(fpuffer,box,false,false,true,
                           iif(length(trim(boxpar^.akas))>0,
                           pe_ForcePfadbox or pe_Bad,pe_Bad))
@@ -606,12 +606,12 @@ begin
     end;
 
   window(1,1,80,25);
-  findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
+  Dos.findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
     UpString(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
       _era(XFerDir+sr.name);
-    findnext(sr);
+    Dos.findnext(sr);
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -942,6 +942,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/20 02:07:40  mk
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+
   Revision 1.10  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 
