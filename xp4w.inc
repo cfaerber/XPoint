@@ -829,7 +829,7 @@ begin
     else begin
       fn:=TempS(dbReadInt(mbase,'msgsize')+5000);
       dbReadN(mbase,mb_typ,typ);
-      if (typ='B') and (art<>2) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
+      if (art<>2) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
          ReadJN(getres(433),false) then begin     { 'Kommentar anzeigen' }
         ExtractKom(fn);
         if listfile(fn,'Kommentar',true,false,0)=0 then;
@@ -1705,6 +1705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.31  2001/12/20 18:17:51  mk
+  - KOM-Header auch in Nicht-Binaer-Nachrichten auswerten
+
   Revision 1.25.2.30  2001/12/05 23:14:57  my
   MY:- ÅberflÅssige Abfrage auf Lister exit code -4 entfernt
 

@@ -1097,7 +1097,7 @@ begin
         end
       else begin
         XReadIsoDecode:=true;
-        XreadF(hds+iif(hdp^.typ='B',hdp^.komlen,0),f);
+        XreadF(hds+hdp^.komlen,f);
         end;
       if decode<>0 then begin
         FastMove(f,decf,sizeof(f));
@@ -1173,6 +1173,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.23  2001/12/20 18:17:51  mk
+  - KOM-Header auch in Nicht-Binaer-Nachrichten auswerten
+
   Revision 1.17.2.22  2001/12/20 15:22:13  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
