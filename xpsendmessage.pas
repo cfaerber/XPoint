@@ -1132,7 +1132,7 @@ begin      //-------- of DoSend ---------
       if not is_file then
         AddMessagePart(datei,is_temp,true)
       else
-        { if netztyp=nt_Fido then } AddFilePart(datei,is_temp);
+        AddFilePart(datei,is_temp);
     end;
     partsex:=true;
     OrigBox:='';
@@ -1344,6 +1344,11 @@ fromstart:
       rfehler(608);   { 'zu langer Datei-Pfad' }
       goto xexit;
     end;
+
+    if(parts.count>0)and(TSendAttach_Part(parts[0]).isfile)then
+      // Fido binary messages are not multi-part so delete the file part
+      parts.Delete(0);
+
     betreffbox:=false;
     binary:=false;
     FileAttach:=true;
@@ -2510,6 +2515,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.15  2003/05/10 10:08:36  ma
+  - fixed Fido file "attachments"
+
   Revision 1.48.2.14  2003/03/30 23:07:21  mk
   - corrected hdp.absender with uucp boxes
 
