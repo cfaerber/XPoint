@@ -86,7 +86,6 @@ const
        ViewprogLen = 70;             { Kommandozeile fuer ext. Viewer }
        ResMinmem   = 340000;
        realnlen = 120;               { Laenge der Realnames }
-       AutoDatumsBezuege : boolean = false;
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -1183,6 +1182,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.134  2001/08/04 19:40:49  mk
+  - Autodatumsbezuege removed
+
   Revision 1.133  2001/07/31 16:59:33  mk
   - RFC/Client: implemented "External Settings" under
     Edit/Servers/Edit/... (load external config file)

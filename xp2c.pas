@@ -480,7 +480,7 @@ procedure netcalloptions;
 var x,y : Integer;
     brk : boolean;
 begin
-  dialog(59,11,getres2(254,1),x,y);     { 'Netcall-Optionen' }
+  dialog(59,10, getres2(254,1),x,y);     { 'Netcall-Optionen' }
   maddbool(3,2,getres2(254,2),ShowLogin); mhnr(560);   { 'Login-Bild zeigen' }
   maddbool(3,3,getres2(254,3),BreakLogin);   { 'Login-Bild abbrechen' }
   hayes:=hayescomm;
@@ -492,7 +492,6 @@ begin
   maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Gro·schreibung umwandeln' }
   maddbool(3,7,getres2(254,14),netcalllogfile); { 'vollstÑndiges Netcall-Logfile (NETCALL.LOG)' }
   maddbool(3,9,getres2(254,15),netcallunmark);  { 'Nachrichtenmarkierungen nach Netcall aufheben' }
-  maddbool(3,10,getres2(254,16),AutoDatumsBezuege);  { 'DatumsbezÅge nach Netcall anpassen' }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -1442,6 +1441,9 @@ end.
 
 {
   $Log$
+  Revision 1.96  2001/08/04 19:40:49  mk
+  - Autodatumsbezuege removed
+
   Revision 1.95  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

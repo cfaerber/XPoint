@@ -887,7 +887,6 @@ begin
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
   writeln(t,'PGP-GPGEncodingOptions=',PGP_GPGEncodingOptions);
-  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1339,7 +1338,6 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege', autodatumsbezuege) or
           getb(su,  'screenlines',ConfigScreenlines) or
           getb(su,  'screencols', ConfigScreenWidth) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
@@ -1697,6 +1695,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2001/08/04 19:40:49  mk
+  - Autodatumsbezuege removed
+
   Revision 1.117  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 
