@@ -441,7 +441,7 @@ begin
         end
       else
         if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      disphard(timex,timey,' '+__st+' ');
+      disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
       end;
     end;
 {$ENDIF }
@@ -1656,6 +1656,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.54  2000/08/17 12:11:13  mk
+  MO: Anzeige der Uhr fuer Screen > 80 Zeichen angepasst
+
   Revision 1.53  2000/08/08 13:18:13  mk
   - s[Length(s)] durch Lastchar ersetzt
 
