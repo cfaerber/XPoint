@@ -333,7 +333,7 @@ begin
 {$ENDIF NCRT }
 
 {$IFDEF Win32 }
-  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:word; num: Integer);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
     OutRes: ULong;                            { Auf Konsole ausgeben....}
@@ -1030,6 +1030,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2001/10/21 13:33:14  mk
+  - compile fix for windows
+
   Revision 1.66  2001/10/21 12:49:57  ml
   - removed some warnings
 
