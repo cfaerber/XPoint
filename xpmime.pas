@@ -578,10 +578,11 @@ begin                         { SelectMultiPart }
           app_l(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
                 ' ' + fnform(fname,23) + ' ' + strs(i));
       listTp(SMP_Keys);
-      ListSetStartpos(index);
+      ListSetStartpos(index-1);
       list(brk);
-      if not brk then begin
-        mpdata:=mf[ival(mid(get_selection,57))];
+      if not brk then
+      begin
+        mpdata:=mf[get_selline+1];
         if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
            (mpdata.typ=getres2(2440,10)) then begin
           mpdata.typ:='text';
@@ -770,6 +771,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/12/22 10:04:07  mk
+  - minimal modification for new lister
+
   Revision 1.40  2000/12/15 21:26:05  mk
   - fix fuer letzen Commit
 
