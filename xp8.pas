@@ -1880,8 +1880,8 @@ begin
           end;
     1 : if ppp then
         begin
-          msgbox(63,10,_hinweis_,x,y);
-          for j := 2 to 7 do
+          msgbox(63,8,_hinweis_,x,y);
+          for j := 2 to 5 do
             { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
             { 'Liste muá die entsprechende Funktion beim externen Client' }
             { 'aktiviert sein (siehe auch "Newsgroup-Liste pflegen" bei'  }
@@ -2191,6 +2191,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.13  2003/08/28 21:59:24  mk
+  - fixed display of ressource 10800
+
   Revision 1.70.2.12  2003/08/28 21:46:41  mk
   - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
 

@@ -3430,7 +3430,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 32 Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-
 33 Liste mu· die entsprechende Funktion beim externen Client
 34 aktiviert sein und die bisherige Newsgroup-Liste gelîscht
-35 werden (siehe Nachricht/Brettmanager/Sonstiges).
+35 werden.
 36 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
 # NNTP
 40 Gruppenliste konnte nicht Åbertragen werden.
@@ -3998,6 +3998,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.15  2003/08/28 21:59:24  mk
+# - fixed display of ressource 10800
+#
 # Revision 1.57.2.14  2003/08/26 22:44:56  mk
 # - fixed shortcut for /OpenXP/Telnet
 #
