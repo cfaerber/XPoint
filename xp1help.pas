@@ -36,7 +36,6 @@ var   helpst  : array[1..maxhelpst] of word;
 
 procedure showkeys(nr:integer);
 procedure showlastkeys;
-procedure set_helppos;
 procedure hilfe;
 procedure hilfealt;
 procedure dispfunctionkeys(editor:boolean);
@@ -288,13 +287,6 @@ begin
   showkeys(lastkeys);
 end;
 
-
-procedure set_helppos;
-begin
-  sethelppos(15,6+(screenlines-24)div 4,16+(screenlines-25)div 2);
-end;
-
-
 procedure do_help(n:word);
 var
       x,y  : byte;
@@ -307,21 +299,22 @@ begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
       if ioresult<>0 then;
       end
-    else begin
+    else
       inithlp:=true;
-      set_helppos;
-      end;
-  if inithlp then begin
+
+  if inithlp then
+  begin
     hlp:='';
     setrahmen(2);
     openbox(58,18+(ScreenLines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
+    sethelppos(x+3,6+(screenlines-24)div 4,16+(screenlines-25)div 2);
     setrahmen(1);
     mh:=hotkeys;
     hotkeys:=false;
     IHS(n);
     hotkeys:=mh;
     closebox;
-    end;
+  end;
 end;
 
 
@@ -411,6 +404,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/08/04 17:45:31  mk
+  - Hilfe erscheint jetzt auch bei mehr als 80 Spalten richtig
+
   Revision 1.11  2000/07/27 10:13:00  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

@@ -1017,7 +1017,6 @@ begin
   for i:=1 to n do
     if screenlines=ival(ma^[i].mstr) then menupos[ZeilenMenue]:=i;
   freemem(ma,sizeof(menuarray));
-  set_helppos;
 end;
 
 
@@ -2005,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.76  2000/08/04 17:45:31  mk
+  - Hilfe erscheint jetzt auch bei mehr als 80 Spalten richtig
+
   Revision 1.75  2000/08/03 21:27:08  mk
   - Variablengroessen angepasst (xp_maus_an)
 
