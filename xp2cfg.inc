@@ -13,13 +13,9 @@ const cfs : array[0..3] of string[5] = ('Z','Shift','Ctrl','Alt');
 procedure defaultcolors;
 var i : integer;
 begin
-{$IFDEF BP}
   mono:=ParMono or (mem[Seg0040:$49]=7);
-{$ENDIF}
   with col do
-{$IFDEF BP }
     if not mono then
-{$ENDIF }
     begin
       colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
       colmenuhigh[0]:=$74; colmenuhigh[1]:=$74; colmenuhigh[2]:=$74; colmenuhigh[3]:=$74;
@@ -41,20 +37,16 @@ begin
       coldiasel:=$30; coldiaselbar:=7;
       colselbox:=$70; colselrahmen:=$70; colselhigh:=$7f; colselbar:=$1e;
       colselbarhigh:=$1f;
-{$IFDEF BP }
       if videotype<=1 then begin
         colsel2box:=$70; colsel2rahmen:=$70; colsel2high:=$7f; colsel2bar:=$1e;
         colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
         coldiabuttons:=$7f;
         end
       else begin
-{$ENDIF }
         colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
         colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
         coldiabuttons:=$8f;
-{$IFDEF BP }
         end;
-{$ENDIF }
       colbutton:=$17; colbuttonhigh:=$1f; colbuttonarr:=$1b;
       colutility:=$30; colutihigh:=$3e; colutiinv:=11;
       collisttext:=7; collistselbar:=$30; collistmarked:=green;
@@ -73,7 +65,6 @@ begin
       colmailer:=$70; colmailerhigh:=$7f; colmailerhi2:=$7e;
       colborder:=0;
       end
-{$IFDEF BP }
     else begin
       colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
       colmenuhigh[0]:=$0f; colmenuhigh[1]:=$0f; colmenuhigh[2]:=$0f; colmenuhigh[3]:=$0f;
@@ -113,7 +104,6 @@ begin
       colmailer:=$70; colmailerhigh:=$70; colmailerhi2:=$70;
       colborder:=0;
       end;
-{$ENDIF }
 end;
 
 
@@ -312,14 +302,11 @@ var i    : integer;
     rp   : ^boolean;
 begin
   checkbreak:=false;
-{$IFNDEF VP }
   getcbreak(orgcbreak);
   setcbreak(false);
-{$ENDIF }
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
-{$IFDEF BP }
   if (ParWintime=1) and (ParOS2=0)
     then Int15delay:=4
     else Int15delay:=ParOS2;
@@ -327,17 +314,6 @@ begin
   else if DOSEMuVersion <> '' then OStype:=os_linux
   else if Winversion>0 then OStype:=os_windows
   else OStype:=os_dos;
-{$ELSE }
-  {$IFDEF Linux }
-    OSType := os_Linux;
-  {$ENDIF }
-  {$IFDEF OS2 }
-    OSType := os_2;
-  {$ENDIF }
-  {$IFDEF OS2 }
-    OSType := os_windows;
-  {$ENDIF }
-{$ENDIF }
 
   { Standard-Sektion fuer die neue Cfg-Datei vorbereiten }
   case OSType of
@@ -361,11 +337,7 @@ begin
   maskcheckbuttons;
 
   randomize;
-{$IFDEF NCRT }
-  ScreenWidth:= GetScreenCols;
-{$ELSE }
   screenwidth:=80;
-{$ENDIF }
   iomaus:=ParMaus;
   mausfx:=8;
   UseMulti2:=ParWintime<2;
@@ -385,6 +357,9 @@ begin
   rp:=@registriert;         { regrec.r2:=false - noch nicht registriert }
   inc(longint(rp));
   rp^:=false;
+
+  GetMem(BadConfigLines, SizeOf(BadConfigLines^));
+  BadConfigLinesCount := 0;
 
   fnproc[0,1]:=hilfe;
   fnproc[3,1]:=hilfealt;
@@ -410,8 +385,6 @@ begin
   DefaultZone:=2;    {alt: 2}
   DefaultNet:=248;   {alt: 243}
   DefaultNode:=2004; {alt: 97}
-  {Node 2:243/97 existiert nicht mehr}
-  {Ab‰nderung durch MW 04/2000}
   nodeopen:=false;
   kludges:=true;
   getmem(gAKAs,AKAlen+1); gAKAs^:='';
@@ -483,33 +456,18 @@ begin
   defextrakttyp:=1;
   brettanzeige:=0;
   showmsgdatum:=true;
-{$IFDEF Linux }
-  { VI kann es wohl nicht sein, aber mancher sieht das anders... }
-  VarEditor:= 'pico'; EditorKB:=300;
-{$ELSE }
   VarEditor:='Q.EXE'; EditorKB:=300;
-{$ENDIF }
   VarLister:=''; ListerKB:=250;
   stdhaltezeit:=14;
   stduhaltezeit:=0;
   QuoteBreak:=79;
   QuoteChar:='> '; qchar:=QuoteChar;
-  { 01/2000 oh }
   OtherQuoteChars:=false;
-  { /oh }
   Screenlines:=25;
-{$IFDEF UnixFS }
-  temppath:='/tmp/';                        {alt: temppath:=ownpath;}
-  extractpath:=ownpath+'files/';            {alt: extractpath:='';}
-  sendpath:=ownpath+'send/';                {alt: sendpath:='';}
-  logpath:=ownPath+'log/';                  {alt: logpath:=OwnPath;}
-{$ELSE }
   temppath:=ownpath+'TEMP\';                {alt: temppath:=ownpath;}
   extractpath:=ownpath+'FILES\';            {alt: extractpath:='';}
   sendpath:=ownpath+'SEND\';                {alt: sendpath:='';}
   logpath:=ownPath+'LOG\';                  {alt: logpath:=OwnPath;}
-{$ENDIF }
-  {énderungen durch MW 04/2000}
   filepath:=ownpath+InFileDir;
   fidopath:=ownPath+FidoDir;   { fest }
   DefaultBox:='';
@@ -540,18 +498,6 @@ begin
   ListEndCR:=false;
   ListWrap:=true;
   with unpacker^ do begin
-{$IFDEF Linux }
-    UnARC:='arc e $ARCHIV $DATEI';
-    UnLZH:='lha e $ARCHIV $DATEI';
-    UnZOO:='zoo -e $ARCHIV $DATEI';
-    UnZIP:='unzip $ARCHIV $DATEI';
-    UnARJ:='unarj e $ARCHIV $DATEI';
-    UnPAK:='pak e $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnDWC:='dwc e $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnHYP:='hyper -x $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnSQZ:='sqz e $ARCHIV $DATEI';	{ Nicht geprueft }
-    UnRAR:='unrar e $ARCHIV $DATEI';
-{$ELSE }
     UnARC:='pkxarc $ARCHIV $DATEI';
     UnLZH:='lha e $ARCHIV $DATEI';
     UnZOO:='zoo -e $ARCHIV $DATEI';
@@ -562,8 +508,7 @@ begin
     UnHYP:='hyper -x $ARCHIV $DATEI';
     UnSQZ:='sqz e $ARCHIV $DATEI';
     UnRAR:='rar e $ARCHIV $DATEI';
-{$ENDIF }
-    end;
+  end;
   EditVollbild:=false;
   ExtEditor:=1;
   ShowMsgPath:=false;
@@ -584,27 +529,19 @@ begin
   unberÅhrt. Dies wird an anderer Stelle geprÅft und
   gesetzt.   MW 04/2000}
   UserSlash:=true;
-{$IFDEF UnixFS }
-  BAKext:= 'bak';
-{$ELSE }
   BAKext:='BAK';
-{$ENDIF }
   keepedname:=false;
   listscroller:=false; listautoscroll:=true;
   SaveType:=0;          { sofort sichern }
   XSA_NetAlle:=true;
   maxcrosspost:=10;
-  { 20.01.2000 robo }
   maildelxpost:=false;
-  { /robo}
   KeepRequests:=true;
   waehrung:='DM';
   gebnoconn:=0;
   gebCfos:=false;
   autofeier:=true;
-  { 03.02.2000 robo }
   askreplyto:=false;
-  { /robo}
 
   for i:=0 to 3 do begin
     fillchar(fkeys[i]^,sizeof(fkeys[0]^),0);
@@ -642,17 +579,10 @@ begin
 
   fillchar(pmcrypt,sizeof(pmcrypt),0);
   with pmcrypt[1] do begin
-{$IFDEF Linux }
-    { Fuer SunOS-Keys muss -e/-d statt -E/-D verwendet werden! }
-    name:='DES';
-    encode:='des -E -k $KEY $INFILE';
-    decode:='des -D -k $KEY $INFILE';
-{$ELSE }
     name:='PC-DES';
     encode:='echo $KEY|pc-des $INFILE';
     decode:=encode;
-{$ENDIF }
-    end;
+  end;
   for i:=1 to maxpmc do
     pmcrypt[i].binary:=true;
   wpz:=120;
@@ -685,13 +615,8 @@ begin
   ConvISO:=false;
   KomArrows:=true;
   ShrinkNodes:='';
-{$IFDEF UnixFS }
-  PointListn:='points24';
-  PointDiffn:='pr24diff';
-{$ELSE }
   PointListn:='POINTS24';
   PointDiffn:='PR24DIFF';
-{$ENDIF }
   NS_minflags:=2;
   largestnets:=10;
   countdown:=false;
@@ -736,9 +661,7 @@ begin
   ListFixedhead:=false;
   MaggiVerkettung:=false;
   HeaderLines:=0;
-{$IFNDEF Linux }
   timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
-{$ENDIF }
   AutoTIC:=true;
   shellshowpar:=false;
   shellwaitkey:=false;
@@ -756,7 +679,6 @@ begin
   TermDevice:='modem';
   TermBaud:=0;
   TermStatus:=true;
-  {Modeminit angepasst MW 04/2000}
   TermInit:='ATZ';
   msgbeep:=false;
   Netcallunmark:=true;
@@ -806,9 +728,6 @@ end;
 procedure saveconfig;
 var t   : text;
     i,j : integer;
-{$IFDEF UnixFS}
-    oldf: boolean;
-{$ENDIF }
 
   procedure writelimits(txt:string; nr:byte);
   var i : integer;
@@ -842,9 +761,6 @@ begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration sichern');
 {$ENDIF }
-{$IFDEF UnixFS}
-  oldf:= exist(ownpath+cfgfile);	{ Merken, ob die Datei existierte }
-{$ENDIF }
   assign(t,ownpath+cfgfile);
   rewrite(t);
   if ioresult<>0 then begin
@@ -877,10 +793,8 @@ begin
   writeln(t,'StdUserHaltezeit=',stduhaltezeit);
   writeln(t,'QuoteBreak=',quotebreak);
   writeln(t,'Quote=','"',quotechar,'"');
-  { 01/2000 oh }
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
   otherqcback:=otherquotechars;
-  { /oh }
   writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
@@ -978,26 +892,22 @@ begin
   writeln(t,'ListHighlight=',jnf(listhighlight));
   writeln(t,'ListFixedHead=',jnf(listfixedhead));
   writeln(t,'MaggiVerkettung=',jnf(MaggiVerkettung));
+  for i := 1 to BadConfigLinesCount do
+    Writeln(t, BadConfigLines^[i]);
   writeheaderlines;
-  { 01/2000 oh }
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
-  { /oh }
   writeln(t,'TimeZone=',timezone);
   writeln(t,'SaveType=',savetype);
   writeln(t,'Maxcrosspost=',maxcrosspost);
-  { 20.01.2000 robo }
   writeln(t,'MailDelXPost=',jnf(maildelxpost));
-  { /robo }
   writeln(t,'Waehrung=',waehrung);
   writeln(t,'GebNoconn=',gebnoconn);
   writeln(t,'GebCfos=',jnf(GebCfos));
   writeln(t,'Feiertage=',jnf(autofeier));
   writeln(t,'Shell-Showpar=',jnf(ShellShowpar));
   writeln(t,'Shell-Waitkey=',jnf(ShellWaitkey));
-  { 03.02.2000 robo }
   writeln(t,'AskReplyTo=',jnf(askreplyto));
-  { /robo }
   writeln(t,'UsePGP=',jnf(UsePGP));
   writeln(t,'PGP-Batchmode=',jnf(PGPbatchmode));
   writeln(t,'PGP-UserID=',PGP_UserID);
@@ -1006,10 +916,8 @@ begin
   writeln(t,'PGP-WaitKey=',jnf(PGP_WaitKey));
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
-  { 01/2000 oh }
   writeln(t,'PGP-Version=',PGPVersion);
   writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
-  { /oh }
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1105,18 +1013,13 @@ begin
 
   close(t);
 
-{$IFDEF UnixFS}
-  if not (oldf) then				{ chmod nur, wenn die Datei neu }
-    SetAccess(ownpath+cfgfile, taUserRW);	{ ansonsten nicht }
-{$ENDIF }
-
   if (UseNewCfg) then begin
     if not (OpenCfg(ownpath+cfg3file)) then begin
       writeln('Interer Fehler');
       halt(2);
     end;
-    PutCfg('TempDir',temppath,MySection,31013);		
-    PutCfg('ExtractDir',extractpath,MySection,31014);	
+    PutCfg('TempDir',temppath,MySection,31013);
+    PutCfg('ExtractDir',extractpath,MySection,31014);
     PutCfg('SendfileDir',sendpath,MySection,31015);
     PutCfg('LogDir',logpath,MySection,31016);
     PutCfg('FileDir',filepath,MySection,31017);
@@ -1130,16 +1033,10 @@ end;
 
 procedure saveconfig2;
 var t   : text;
-{$IFDEF UnixFS}
-    oldf: boolean;
-{$ENDIF }
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration #2 sichern');
 {$ENDIF }
-{$IFDEF UnixFS}
-  oldf:= exist(ownpath+cfg2file);
-{$ENDIF}
   assign(t,ownpath+cfg2file);
   rewrite(t);
   if ioresult<>0 then begin
@@ -1160,10 +1057,6 @@ begin
   writeln(t,'FileSuche=',fidolastseek);
   writeln(t,'TL-NetcallAlle=',jnf(XSA_NetAlle));
   close(t);
-{$IFDEF UnixFS}
-  if not (oldf) then
-    SetAccess(ownpath+cfg2file,taUserRW);
-{$ENDIF}
 end;
 
 
@@ -1408,10 +1301,6 @@ var t       : text;
     fsplit(tf,dir,name,ext);
     SwapFileName:=name+SwapExt;
   end;
-{$IFDEF Linux }
-var
-  dummytz: string;
-{$ENDIF }
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration einlesen');
@@ -1454,10 +1343,8 @@ begin
           geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
-          { 01/2000 oh}
           getx(su,  'otherquotechars',otherquotechars) or
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
-          { /oh }
           getb(su,  'screenlines',screenlines) or
           gets(s,su,'tempdir',temppath,79) or		{ Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
@@ -1588,24 +1475,16 @@ begin
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
           gets(su,su,'Header',mheader,255) or
-          { 01/2000 oh }
           gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
           gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
-          { /oh }
-{$IFDEF Linux }
-          gets(su,su,'timezone',dummytz,7) or
-{$ELSE }
           gets(su,su,'timezone',TimeZone,7) or
-{$ENDIF }
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
-          { 20.01.2000 robo }
           getx(su,  'maildelxpost',maildelxpost) or
-          { /robo }
           getx(su,  'keeprequests',keeprequests) or
           getx(su,  'zc-iso',zc_iso) or
           gets(s,su,'waehrung',waehrung,5) or
@@ -1620,9 +1499,7 @@ begin
           gets(s,su,'terminit',TermInit,40) or
           getx(su,  'shell-showpar',ShellShowpar) or
           getx(su,  'shell-waitkey',ShellWaitkey) or
-          { 03.02.2000 robo }
           getx(su,  'askreplyto',askreplyto) or
-          { /robo }
           getx(su,  'usepgp',UsePGP) or
           getx(su,  'pgp-batchmode',PGPbatchmode) or
           getx(su,  'uucp-pgp',PGP_UUCP) or
@@ -1633,9 +1510,7 @@ begin
           getx(su,  'pgp-waitkey',PGP_WaitKey) or
           getx(su,  'pgp-logfile',PGP_log) or
           getx(su,  'pgp-signall',PGP_signall) or
-          { 01/2000 oh }
           gets(s,su,'pgp-version',PGPVersion,5) or
-          { /oh }
           getx(su,  'messagebeep',msgbeep) or
           getx(su,  'netcallunmark',netcallunmark) or
           getx(su,  'defaultnokop',defaultnokop) or
@@ -1657,7 +1532,13 @@ begin
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel))
         then
-          tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
+          if BadConfigLinesCount < MaxBadConfigLines
+          then
+          begin
+            Inc(BadConfigLinesCount);
+            BadConfigLines^[BadConfigLinesCount] := s;
+          end else
+           tfehler(getres(219)+left(s,30),30);   { 'ungÅltige Konfigurationszeile:  ' }
         end;
       end;
     close(t);
@@ -1707,18 +1588,10 @@ begin
     else if ustr(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
-{$IFDEF BP }
-    { In 32 Bit Versionen ist lst am Anfang nicht geîffnet, das
-      schlie·en wÅrde zu einem IOResult 103 fÅhren }
     close(lst);                           { Drucker-Schnitte }
-{$ENDIF }
     DruckLPT:=min(5,max(DruckLpt,1));
-{$IFNDEF FPC }
-  { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
-    bis jetzt kein bekannter WorkArround }
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
-{$ENDIF }
     if aaa<>'' then begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
@@ -1746,9 +1619,7 @@ begin
     SetDefaultHeader;
     SaveConfig;
     end;
-  {$IFDEF BP }
   ListUseXms:=SwapToXms;
-  {$ENDIF}
   trennkomm:=minmax(trennkomm,1,3);
 
   assign(t,ownpath+Cfg2File);         { Config2 einlesen }
@@ -1816,6 +1687,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.1  2000/07/08 15:07:46  mk
+  - BadConfigLines implementiert
+
   Revision 1.62  2000/06/20 18:19:36  hd
   - TermDevice Auswerten (Section: Linux)
 

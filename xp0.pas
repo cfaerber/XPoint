@@ -56,6 +56,7 @@ const  {$IFDEF DPMI}
        mausdefy    = 28;
        MaxNodelists = 100;
        MaxAKAs     = 10;
+       MaxBadConfigLines = 50;       { Maximale Zahl der unbekannten Config-Zeilen }
        maxviewers  = 7;
        defviewers  = 3;
        maxpmlimits = 6;              { Z/Maus/Fido/UUCP/Magic/QMGS     }
@@ -205,28 +206,15 @@ const  {$IFDEF DPMI}
        ScerrLog    = 'scerrors.log';   { Script-Fehler   }
        NetcallLog  = 'netcall.log';    { Netcall-Logfile }
 
-{$IFDEF UnixFS }
-       TempBatchFN = 'tmpbatch';
-{$ELSE }
        TempBatchFN = 'tmp.bat';	       { Temp. Batchdatei (siehe fileio) }
-{$ENDIF }
 
 				       { Namen der Exe-Dateien }
-{$IFDEF UnixFS}
-       MaggiBin		: pathstr	= 'maggi';
-       UUCICOBin	: pathstr	= 'uucico';
-       UUZBin		: pathstr	= 'uuz';
-       Yup2PktBin	: pathstr	= 'yup2pkt';
-       ZFidoBin		: pathstr	= 'zfido';
-       ZQWKBin		: pathstr	= 'zqwk';
-{$ELSE}
        MaggiBin		= 'MAGGI.EXE';
        UUCICOBin	= 'UUCICO.EXE';
        UUZBin		= 'UUZ.EXE';
        Yup2PktBin	= 'YUP2PKT.EXE';
        ZFidoBin		= 'ZFIDO.EXE';
        ZQWKBin		= 'ZQWK.EXE';
-{$ENDIF}
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
@@ -696,8 +684,15 @@ type   textp  = ^text;
                       domain     : ^string;
                     end;
 
+       { Speichert die Zeilen in der Konfiguration, die nicht
+         bekannt sind, wichtig fÅr KompatibilitÑt mit anderen
+         Programmen }
+       PBadConfigLines = ^TBadConfigLines;
+       TBadConfigLines = array[1..MaxBadConfigLines] of String;
 
-const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+
+const
+       menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1);
        menable : array[0..menus] of word = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -855,6 +850,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        IntGruppe,LocGruppe,NetzGruppe : longint;   { INT_NRs der Std.-Gruppen }
 
+       BadConfigLines: PBadConfigLines;
+       BadConfigLinesCount: Integer;
        menu         : array[0..menus] of ^string;
        SwapFileName : string[12];
        helpfile     : string[12];     { XP.HLP     }
@@ -1181,6 +1178,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.3  2000/07/08 15:07:45  mk
+  - BadConfigLines implementiert
+
   Revision 1.54.2.2  2000/07/01 09:22:56  mk
   - Mailerstringanpassungen
 
