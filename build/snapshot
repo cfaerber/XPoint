@@ -36,7 +36,7 @@ version="$mainversion"."$subversion"-"$buildnr"
 echo $version
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
-echo $versiiondir
+echo $versiondir
 sourcedir="$versiondir"'openxp/'
 echo $sourcedir
 scriptdir="$sourcedir"'build/'
