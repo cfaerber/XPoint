@@ -2512,19 +2512,19 @@ Note: many Modems also have such a setting, often
 set to 60 seconds as default. That is probably what
 is happening if the call is aborted sooner than you
 expect. Check your modem handbook about increasing
-this value if you need to (often "S Registers")
+this value if you need to (often "S Registers").
 @
 161
 CrossPoint waits this many seconds after the
-"connect" message, to obtain a successful Log-In.
+"connect" message, to obtain a successful Login.
 
 If this time expires, XP hangs up and waits for the
 next try.
 
-Note: These cost money, since the other side
+Note: This will cost money, since the other side
 answered the phone! You can set the number of
 these attempts separately in another box here,
-[Max. Connects],to limit costs@166
+[Max. Connects], to limit costs.@166
 @
 162
 CrossPoint waits this many seconds after an aborted
@@ -2650,7 +2650,7 @@ specific settings <<additionally>>.
 
 Note: like the dialling command, you have to prefix
 this command line with "AT" (or whatever your modem
-needs, but they are nearly all AT
+needs, but they are nearly all AT modems).
 
 If you wish to send a <Enter> to the modem, you can
 put a "\\" in the line. After this a new AT will be
@@ -2726,13 +2726,15 @@ Stick to the standard ones, though.
 
 @
 180
-Enter here the number of seconds a telephone unit
-gives when calling this server (depends whether it
-is local or long distance) both for cheap rate
-and normal rate, and how much 100 units costs.
-Get these values from your phone book.
+Select the phone fee zone for this server by pressing
+<F2>.
 
-Also enter the time it usually takes for this server
+You can create and edit your phone fee zones under
+/Config/Options/Phone_Fees/Zones.
+
+@
+181
+Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
 CrossPoint cannot know when the phone is picked up,
@@ -2808,7 +2810,6 @@ This is the directory where XP will put the REP files
 with the reply messages.
 @
 8036
-
 These are settings if you do not want XP to transfer
 the data by modem, but to put or take the prepared
 files to or from some place on your hard disk.
@@ -3145,6 +3146,12 @@ Enter your 'Fully Qualified Domain Name' here.
 \@30002).
 @
 30100
+<<Net type RFC/Client - General
+
+See also: [Net type RFC/Client - Netcall procedure]@30200
+--------- [Net type RFC/Client - Message Area Manager]@30201
+          [Net type RFC/Client - Multiserver operation]@30109
+
 (ToDo: General introduction to RFC/Client, \@30100)
 @
 30101
@@ -3205,6 +3212,12 @@ upon executing an RFC/Client netcall.
 (ToDo: comprehensive explanation, \@30108).
 @
 30109
+<<Net type RFC/Client - Multiserver operation
+
+See also: [Net type RFC/Client - General]@30100
+--------- [Net type RFC/Client - Netcall procedure]@30200
+          [Net type RFC/Client - Message Area Manager]@30201
+
 ("Additional servers" not implemented yet)
 
 (ToDo: comprehensive explanation, \@30109).
@@ -3264,9 +3277,327 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-Password=>>" in your
 server configuration file <server>.BFG.
 @
+30120
+CrossPoint waits this many seconds after sending the
+command to dial to receive a "connect" answer. After
+this time CrossPoint breaks off, and starts waiting
+for the next try.
+
+Many Modems also have such a setting, often set to
+60 seconds as default. That is probably what is
+happening if the call is aborted sooner than you
+expect. Check your modem handbook about increasing
+this value if you need to (often "S Registers").
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<ConnWait=>>" in your server
+configuration file <server>.BFG.
+
+@
+30121
+CrossPoint waits this many seconds after the
+"connect" message, to obtain a successful Login.
+
+If this time expires, XP hangs up and waits for the
+next try.
+
+This might cost money, since the other side answered
+the phone! You can set the number of these attempts
+separately in another box here, [Max. Connects], to@30125
+limit costs.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<LoginWait=>>" in your server
+configuration file <server>.BFG.
+
+@
+30122
+CrossPoint waits this many seconds after an aborted
+netcall attempt, before trying again.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<RedialWait=>>" in your
+server configuration file <server>.BFG.
+@
+30123
+This sets the number of times CrossPoint will try to
+call a number if it does not achieve a successful
+netcall, at intervals set by Dial Pause.
+
+Since some providers are often engaged (busy), it may
+be necessary to set 20 or 30 attempts here, set at
+perhaps 90 seconds intervals (too frequently is
+not recommended).
+
+You can protect against disaster if the other side
+should answer every time and you get billed for 30
+useless call, by setting "max. connects" separately.
+
+If the number of tries has been made without
+success, CrossPoint stops trying and carries on
+with the next programmed activity, if any, or
+returns to the CrossPoint screen.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<RedialMax=>>" in your server
+configuration file <server>.BFG.
+
+@
+30124
+This limits the number of attempts <<during one connect>>
+that CrossPoint will make to log on. Not to be con-
+fused with the setting for "max. connects".
+
+After this number of tries, CrossPoint gives up, and
+waits for the next dialling attempt.
+
+If the Login does not work with 2 or 3 attempts
+(repeat, when the phone gets answered, not engaged
+tones or no answer) there is something wrong.
+
+If you do not know exactly that your side is working
+correctly, check that your Login data and password
+are entered correctly.
+
+Otherwise, maybe the provider has a problem, wait a
+while, maybe it gets fixed, or call your provider
+for help.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<RetryLogin=>>" in your
+server configuration file <server>.BFG.
+
+@
+30125
+Limits the number of tries where a connect happens
+but goes wrong.
+
+There are 2 types of failed netcall attempt:
+
+o  There was no connection; the provider was busy
+   or didn't answer. This is annoying, but doesn't
+   cost anything.
+
+o  There was a connection, the provider answered the
+   phone, but something went wrong after that. This
+   might cost money, so you don't want CrossPoint
+   making one of these for every one of a possibly
+   large number of attempts you have allowed for when
+   the provider is busy.
+
+Here you can limit separately the number of attempts
+when a connect happens. Obviously CrossPoint must
+then break off attempts to reach this provider this
+session, so as not to risk another failed connect.
+
+For example, if you set "max Connects" to 3, and
+"max. dialling attempts" to 50, CrossPoint will try
+up to 50 times as long as the phone is not answered,
+but will give up directly after the third time that
+a connect happened without a successful netcall.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<ConnectMax=>>" in your
+server configuration file <server>.BFG.
+
+@
+30126
+You can enter a default setting for resetting
+your modem (see modem handbook about resetting,
+or initialising) under the menu /Config/Modem.
+
+If you need different settings for different
+servers, you can enter them here.
+
+The default reset will sent first, then the box
+specific settings <<additionally>>.
+
+Note: like the dialling command, you have to prefix
+this command line with "AT" (or whatever your modem
+needs, but they are nearly all AT modems).
+
+If you wish to send a <Enter> to the modem, you can
+put a "\\" in the line. After this a new AT will be
+necessary before carrying on. eg. ATE1\\ATS13=32.
+This is usually not necessary, all the commands can
+strung together after one AT, but occasionally a
+modem will prefer a <Enter> after certain commands
+before it accepts it properly.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<ModemInit=>>" in your server
+configuration file <server>.BFG.
+
+@
+30127
+The COM Port number to which the modem to be used
+for dialling the selected box is connected.
+Ports COM1 to COM4 are supported.
+
+This selects the COM Port to be used, whereas under
+/Config/Modem/COMx the ports in general are set up.
+
+Also make sure that the port settings, to be found
+under menu /Config/Modem/Com(x), are correct.
+Especially using COM3 and COM4 can be tricky, and
+proper IRQ numbers and port addresses are essential
+(see online help there).
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Port=>>" in your server
+configuration file <server>.BFG.
+
+@
+30128
+This is for setting the port speed, "baud rate"
+"DTE speed" or "DTE rate", the bit rate for data
+transfer between modem and computer. This speed can,
+but must not be the same as the bit rate, as
+achieved by the connect, the "link rate", across
+the telephone line.
+
+This setting can be tricky, because it is must also
+be set at the modem end of this cable. Most modems
+do this automatically, but if they are set to adjust
+it later automatically to the "link rate", it may
+become different, leading to problems.
+It is best to set the modem to "hold DTE rate"
+and not adjust (see modem handbook).
+
+Modems which can compress data (MNP5, V.42) send
+less data out over the telephone than they get from
+the computer, so the link computer<->modem (DTE rate)
+must be faster than the modem "connect" (link rate).
+
+As a rule,
+pure 2400bps modem, DTE rate also 2400.
+2400 modem with MNP5 or V.42, DTE rate 9600.
+9600-14400 modem, DTE rate 19200
+above 14400 modem, DTE rate 38800.
+
+Note 1: your modem may report at Connect
+either the link rate or the DTE rate (or both).
+You can often adjust this, see modem handbook.
+
+Note 2: Older and slower PC, XT and AT will
+almost certainly have difficulty with settings
+above 19200 without a [FIFO 16550 UART].@4011
+Also faster but multitasking 386 and up will have
+problems above 19200 without a 16550.
+
+In general, except for the most basic system,
+a [16550 Chip] is to be recommended, and the@4011
+switch to activate it can be found under
+/Config/Modem.
+
+A selection can be made from a list of the usual
+port settings by pressing <F2>, but any sensible
+value can be entered manually, eg. 4800.
+Any value is allowed, that the serial interface
+supports.
+Stick to the standard ones, though.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Baud=>>" in your server
+configuration file <server>.BFG.
+
+@
+30130
+Select the phone fee zone for this server by pressing
+<F2>.
+
+You can create and edit phone fee zones under
+/Config/Options/Phone_Fees/Zones.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Tarifzone=>>" in your
+server configuration file <server>.BFG.
+
+@
+30131
+Enter the time it usually takes for this server
+between answering the phone and the "connect"
+message.  This is to calculate charges correctly.
+CrossPoint cannot know when the phone is picked up,
+and you start paying. It can only start timing from
+the "connect", so it adds this time to connect when
+calculating the phone charges.
+
+Time it by turning on the modem's loudspeaker and
+timing between the click when the other side picks up
+and when the "CD" (Carrier Detect) lamp on the modem
+lights up.
+The time is between 5 and about 15 seconds usually.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<ConnectTime=>>" in your
+server configuration file <server>.BFG.
+
+@
+30140
+These are settings if you do not want XP to transfer
+the data via your client, but to put or take the
+prepared files to or from some place on your hard
+disk.
+
+Note that XP expects and issues RFC message file
+names in a particular form. In some cases it will
+be necessary to rename them. See also "Net type
+RFC/Client - [Netcall procedure]".@30200
+
+<<Input directory>>
+This is the directory from which CrossPoint will
+read incoming message files. It imports all messages
+from here and deletes *all* the contents of this
+directory afterwards.
+
+<<Output directory>>
+CrossPoint puts all outgoing message files in this
+directory. You can transfer these files to any server
+by some other method, or do anything else you want.
+<<Note:>> CrossPoint will not delete these files
+so make sure they are deleted as necessary!
+
+@
 30200
-(ToDo: RFC/Client - netcall procedure and further
-details, \@30200)
+<<Net type RFC/Client - Netcall procedure
+
+See also: [Net type RFC/Client - General]@30100
+--------- [Net type RFC/Client - Message Area Manager]@30201
+          [Net type RFC/Client - Multiserver operation]@30109
+
+(ToDo: RFC/Client - Netcall procedure, \@30200)
+@
+30201
+<<Net type RFC/Client - Message Area Manager
+
+See also: [Net type RFC/Client - General]@30100
+--------- [Net type RFC/Client - Netcall procedure]@30200
+          [Net type RFC/Client - Multiserver operation]@30109
+
+(ToDo: RFC/Client - Message Area Manager, \@30201)
 @
 196
 You can enter anything short and sharp here:
