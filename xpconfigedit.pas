@@ -729,7 +729,7 @@ var d         : DB;
       1 : begin     { Boxen }
             dbRead(d,'Netztyp',nt);
             if nt in netsRFC then
-              s2 := dbReadStr(d,'email')
+              s2 := ComputeUserAddress(d)
             else
               s2 := dbReadStr(d,'Username');
             s3 := dbReadStr(d,'Kommentar');
@@ -1628,7 +1628,7 @@ begin
     begin
       inc(sel_anz);
       komm:=dbReadStr(d,'Kommentar');
-      if nt=nt_Client then user:=dbReadStr(d,'Email')
+      if nt in netsRFC then user:=dbReadStr(d,'Email')
       else user:=dbReadStr(d,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
@@ -2541,6 +2541,11 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/07/31 19:26:21  ma
+  - user=>email db field code synchronized with v3.8
+    (does not need re-entering email address when upgrading from old
+     versions now)
+
   Revision 1.49  2002/07/25 20:43:56  ma
   - updated copyright notices
 

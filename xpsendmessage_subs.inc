@@ -867,12 +867,12 @@ end;
 procedure LoadBoxData(d:DB);
 var flags : byte;
 begin
+  EMail := ComputeUserAddress(d);
   if forceabs='' then
     UserName := dbReadStr(d,'username')
   else
     username:=forceabs;
   PointName := dbReadStr(d,'pointname');
-  EMail := dbReadStr(d,'email');
   BoxFile := dbReadStr(d,'dateiname');
   Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
@@ -1159,6 +1159,11 @@ end;
 
 {
   $Log$
+  Revision 1.29  2002/07/31 19:26:21  ma
+  - user=>email db field code synchronized with v3.8
+    (does not need re-entering email address when upgrading from old
+     versions now)
+
   Revision 1.28  2002/07/29 07:17:21  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
