@@ -1518,7 +1518,9 @@ begin
           gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
           gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
           { /oh }
+{$IFNDEF Linux }
           gets(su,su,'timezone',TimeZone,7) or
+{$ENDIF }
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
@@ -1699,6 +1701,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2000/05/02 20:51:49  hd
+  - Dynamische ZEitzone angepasst
+
   Revision 1.42  2000/05/02 20:31:40  hd
   Kein Default-Wert mehr fuer Timezone unter Linux
 

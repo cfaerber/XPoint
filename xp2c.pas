@@ -301,7 +301,9 @@ begin
   maddbool(3,8,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
   maddbool(3,9,getres2(252,16),rehochn);        { 'Re^n verwenden' }
+{$IFNDEF Linux }
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+{$ENDIF }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
@@ -1368,6 +1370,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/05/02 20:51:49  hd
+  - Dynamische ZEitzone angepasst
+
   Revision 1.27  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
