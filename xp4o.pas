@@ -83,7 +83,7 @@ type arcbuf = record
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
+      suchopt : string[8] = 'au';
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Grî·e nach Reorg }
@@ -582,13 +582,6 @@ begin
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
 
-  if suchopt[1]='*' then
-  begin                                       {Erste Suche seit Programmstart ?}
-    if ustr(getres(1))='XP.HLP' then
-      suchopt:='aiÑ'
-    else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
-      suchopt:='ai';
-  end;
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -735,7 +728,7 @@ begin
   if not brk then with srec^ do begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
-    umlaut:=multipos('ÑîÅ',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
+    umlaut:=multipos('ÑîÅu',lstr(suchopt));
     bereich:=0;
     for i:=1 to 4 do
       if ustr(bretter)=ustr(bera[i]) then bereich:=i;
@@ -2455,6 +2448,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.24  2001/07/10 07:59:16  mk
+  JG:- added search Option "u"
+
   Revision 1.47.2.23  2001/01/12 07:42:49  mk
   JG:- Suche aus einem Brett heraus in vorher markierten Nachrichten (MK)
 
