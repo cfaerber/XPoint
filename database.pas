@@ -104,7 +104,8 @@ procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 
 { NEue Funktionen wg. AnsiString }
 
-function dbReadNStr(dbp:DB; feldnr: integer): string;
+function  dbReadNStr(dbp:DB; feldnr: integer): string;
+function  dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
 
 {--------------------------------------------- interne Routinen --------}
 
@@ -1287,6 +1288,14 @@ begin
     end;
 end;
 
+function dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
+var
+  s: shortstring;
+begin
+  if (size <> 0) and (size > 255) then size:= 255; { An ShortString anpassen }
+  dbReadX(dbp, feld, size, s);
+  dbReadXStr:= s;
+end;
 
 { Aus externer Datei in Datei einlesen }
 
@@ -1541,6 +1550,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.31  2000/07/09 16:26:19  hd
+  - neu: dbReadXStr
+
   Revision 1.30  2000/07/09 14:52:41  hd
   - neu: dbReadNStr
 
