@@ -575,11 +575,11 @@ label ende, restart;
 
   begin
     inc(n);
-    if (n mod 10)=0 then
+    if (n mod 30)=0 then
     begin
       moff;
-      Wrt(x+9, WhereY, Format('%7d', [n]));
-      Wrt(x+26, WhereY, Format('%5d', [nf]));
+      FWrt(x+9, WhereY, Format('%7d', [n]));
+      FWrt(x+26, WhereY, Format('%5d', [nf]));
       mon;
     end;
 
@@ -654,16 +654,17 @@ msg_ok: MsgAddmark;
           end;
         end;
                                                 { Headereintrag-Suche }
-      if suchfeld<>'' then begin
-        dbRead(mbase,suchfeld,such);
+      if suchfeld<>'' then
+      begin
+        such := dbReadStr(mbase,suchfeld);
  
         if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp)
         then begin
-          dbReadN(mbase,mb_name,seek);          { Bei Usersuche auch Realname ansehen... }
+          seek := dbReadNStr(mbase,mb_name);          { Bei Usersuche auch Realname ansehen... }
           such:=such+seek;
-          end;
- 
-        if stricmp(suchfeld,'betreff') and (length(such)=40) 
+        end;
+
+        if stricmp(suchfeld,'betreff') and (length(such)=40)
         then begin
           ReadHeader(hdp,hds,false);
           if length(hdp.betreff)>40 then
@@ -1208,11 +1209,9 @@ end;
 procedure betreffsuche;
 var betr,betr2   : string;
     brett,_Brett : string;
- (*       ll     : integer; *)
-
 begin
   moment;
-  dbReadN(mbase,mb_betreff,betr);
+  betr := dbReadNStr(mbase,mb_betreff);
   ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
   UkonvStr(betr, Length(betr));
@@ -1221,7 +1220,7 @@ begin
   dbSeek(mbase,miBrett,brett);
   markanz:=0;
   repeat
-    dbReadN(mbase,mb_betreff,betr2);
+    betr2 := dbReadNStr(mbase,mb_betreff);
     ReCount(betr2);
     betr2:=trim(betr2);
     UkonvStr(betr2, Length(betr2));
@@ -1264,10 +1263,11 @@ var x,y,xx : Integer;
 
     brk:=false;
     dbSetIndex(mbase,miBrett);
-    while not dbEOF(xbase) and not brk do begin
+    while not dbEOF(xbase) and not brk do
+    begin
       inc(n);
-      gotoxy(xx,y+2); attrtxt(col.colmboxhigh);
-      write(n*100 div nn:3);
+      attrtxt(col.colmboxhigh);
+      FWrt(xx, y+2, Format('%3d', [n*100 div nn]));
       if (xbase=ubase) or (not smdl(dbReadInt(xbase,'ldatum'),ixDat('2712310000')))
       then begin
         if xbase=ubase then _brett:='U' else
@@ -1329,7 +1329,7 @@ begin
 end;
 
 
-function testuvs(txt:atext):boolean;
+function testuvs(const txt:atext):boolean;
 var uvs : byte;
 begin
   dbReadN(mbase,mb_unversandt,uvs);
@@ -2205,7 +2205,7 @@ begin
     close(f);
     lm:=listmakros;                                   { Aktuelle Makros merken,       }
     listmakros:=16;                                   { Archivviewermakros aktivieren }
-    if ListFile(fn,getres(460),true,false,false,0)=0 then;  { 'Nachrichten-Header' }
+    ListFile(fn,getres(460),true,false,false,0);      { 'Nachrichten-Header' }
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
@@ -2599,16 +2599,16 @@ end;
 
 
 Procedure Brettmarksuche;
-const suchst  : string[40] = '';
 var   x,y     : Integer;
       brk     : boolean;
       nn,n,nf : longint;
-      bname   : string[BrettLen];
+      suchst, bname   : string;
       spos    : longint;
       rec     : longint;
       m1,m2,j : longint;
       found, found_not : boolean;
 begin
+  SuchSt := '';
   rec:=dbRecno(bbase);
   if not Suche(getres2(467,5),'#','') then exit;
   diabox(52,7,getres2(467,5),x,y);   { 'Brett-(markier)-Suche' }
@@ -2622,9 +2622,9 @@ begin
   while not dbEOF(bbase) and not brk do
   begin
     inc(n);
-    gotoxy(x+13,y+4); write(n*100 div nn:3);
-    gotoxy(x+35,y+4); write(nf:4);
-    dbReadN(bbase,bb_brettname,bname);
+    FWrt(x+13, y+4, Format('%3d', [n*100 div nn]));
+    FWrt(x+35, y+4, Format('%4d', [nf]));
+    bname := dbReadNStr(bbase,bb_brettname);
     j:=0;
     repeat
       suchst:= LeftStr(copy(sst,seekstart[j],seeklen[j]),40);
@@ -2691,8 +2691,8 @@ begin
   while not dbEOF(ubase) and not brk do
   begin
     inc(n);
-    Wrt(x+13, y+4, Format('%3d', [n*100 div nn]));
-    Wrt(x+35, y+4, Format('%4d', [nf]));
+    FWrt(x+13, y+4, Format('%3d', [n*100 div nn]));
+    FWrt(x+35, y+4, Format('%4d', [nf]));
     UName := dbReadNStr(ubase,ub_username);
     j:=0;
     repeat
@@ -2971,6 +2971,9 @@ end;
 
 {
   $Log$
+  Revision 1.134  2002/02/10 18:49:50  mk
+  - fixes misc bugs in Suche()
+
   Revision 1.133  2002/02/10 13:10:25  mk
   - fixed several ANSIString dbReadN
 
