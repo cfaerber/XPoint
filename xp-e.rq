@@ -1235,7 +1235,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    13
+0    12
 1    This is a *beta* version of CrossPoint, created by the OpenXP
 2    Development Team. Please note that there may still be bugs in
 3    this beta version, which could corrupt your database or cause
@@ -1243,12 +1243,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    use this version, you are solely responsible for all damage you
 6    may cause with it. If you can't agree to these terms, please use
 7    an official release version of CrossPoint. If you have questions
-8    about the project or wish to make suggestions, please use the
-9    CrossPoint support forum, viz. the usenet newsgroup
-10   de.comm.software.crosspoint, or the official OpenXP Homepage
-11   *http://www.openxp.de/*, or write eMail to *dev@openxp.de*.
-12
-13  Choose "Continue", to use this beta version.
+8    about the OpenXP project or wish to make suggestions, please
+9    feel free to send a message to one of the addresses listed
+10   in the online help (press <F1>, <F1>, S, <Enter> within XP).
+11
+12   Choose "Continue", to use this beta version.
 30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------

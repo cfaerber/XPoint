@@ -698,7 +698,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 13   FOSSIL-Treiber verwenden
 14   Kein FOSSIL-Treiber geladen!
 15   WÑhlbefehl~
-16   postkompatible WÑhlpause
+16   Telekom-kompatible WÑhlpause
 17   RTS verwenden
 18   ... Triggerlevel
 + 262
@@ -1218,7 +1218,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 520
 # Zeilenanzahl
-0    11
+0    12
 1    Vielen Dank, da·  Sie sich zum Arbeiten mit CrossPoint entschie-
 2    den haben.  Bitte beachten Sie, da· CrossPoint ein Sharewarepro-
 3    gramm ist. Als nicht-gewerblicher Anwender dÅrfen Sie CrossPoint
@@ -1228,8 +1228,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    formationen zur Registrierung finden Sie in *LIZENZ.DOC*.
 8
 9    Bei Fragen, Problemen oder  Anregungen wenden  Sie sich bitte an
-10   den CrossPoint-Support - entsprechende Netzadressen und eine Li-
-11   ste der CrossPoint-Supportbretter finden Sie in *XPOINT.TXT*.
+10   den CrossPoint-Support  -  die entsprechenden  Adressen und eine
+11   Liste der  CrossPoint-Supportbretter  finden Sie  in der Online-
+12   Hilfe (drÅcken Sie *<F1>*, *<F1>*, *S*, *<Enter>* innerhalb XP).
 19   Lizenznummer:~
 #
 20   WÑhlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
@@ -1261,21 +1262,20 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    14
+0    13
 1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
-2    des OpenXP-Projekts erstellt wurde. Bitte beachten Sie, da· diese
-3    Betaversion mit einiger Sicherheit Fehler enthÑlt, die manchen
-4    érger in îffentlichen Netzen nach sich ziehen oder Ihre komplette
-5    Datenbank beschÑdigen kînnen. Wenn Sie diese Version nutzen, sind
-6    Sie fÅr alle Folgen selbst verantwortlich. Sollten Sie nicht damit
-7    einverstanden sein, nutzen Sie die offiziellen Release-Versionen
-8    von CrossPoint. Bei Fragen, Problemen oder Anregungen wenden Sie
-9    sich bitte an den OpenXP-Support in den entsprechenden Support-
-10   Foren der jeweiligen Netze, insbesondere an die Newsgroup
-11   de.comm.software.crosspoint (Usenet), an die Area CROSSPOINT.GER
-12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de/.
-13
-14   WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+2    des OpenXP-Projekts erstellt wurde.  Bitte beachten Sie, da· diese
+3    Betaversion mîglicherweise Fehler enthÑlt, die Probleme in îffent-
+4    lichen Netzen  nach sich  ziehen oder  Ihre  Datenbank beschÑdigen
+5    kînnen.  Wenn Sie diese Version nutzen,  sind Sie fÅr alle  Folgen
+6    selbst verantwortlich. Sollten Sie nicht damit einverstanden sein,
+7    nutzen Sie eine der offiziellen  Release-Versionen von CrossPoint.
+8    Bei Fragen zum  OpenXP-Projekt,  Problemen oder  Anregungen wenden
+9    Sie sich bitte an  das OpenXP-Team in den  entsprechenden Support-
+10   Foren der jeweiligen Netze. Eine Liste der aktuellen Adressen fin-
+11   den Sie in der Online-Hilfe  (drÅcken Sie <F1>, <F1>, S, <Enter>).
+12
+13   WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
 -
 
