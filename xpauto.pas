@@ -216,8 +216,8 @@ var tmp  : boolean;
     sData: TSendUUData;
 begin
   postfile:=false;
-  sData := nil;
-  with ar do begin
+  with ar do
+  begin
     if datei<>'' then
       adddir(datei,SendPath);
     if (datei<>'') and not FileExists(datei) then
@@ -239,62 +239,66 @@ begin
       pm:= IsMailAddr(empf);
       if not pm then insert('A',empf,1);
       leer:='';
-      if UpperCase(box)='*CRASH*' then begin
-        box:='';
-        sData.flCrash:=true;
-        sData.flCrashAtOnce:=true;    { keine Rueckfrage 'sofort versenden' }
-      end;
-      sData.forcebox:=box;
-      if not tmp then begin
-        sData.sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
-        sData.sendfiledate:=ZCfiletime(datei);
-      end;
-      if sData.forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
-//    sData.EditAttach:=false;
-      muvs:=SaveUVS; SaveUVS:=false;
-      sdata:= TSendUUData.Create;
-      if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
+      sData := TSendUUData.Create;
+      try
+        if UpperCase(box)='*CRASH*' then begin
+          box:='';
+          sData.flCrash:=true;
+          sData.flCrashAtOnce:=true;    { keine Rueckfrage 'sofort versenden' }
+        end;
+        sData.forcebox:=box;
+        if not tmp then begin
+          sData.sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
+          sData.sendfiledate:=ZCfiletime(datei);
+        end;
+        if sData.forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
+  //    sData.EditAttach:=false;
+        muvs:=SaveUVS; SaveUVS:=false;
+        sdata:= TSendUUData.Create;
+        if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
 
-      if PM then
-        sData.EmpfList.AddNew.ZCAddress := Empf
-      else
-        sData.EmpfList.AddNew.XPAddress := Empf;
+        if PM then
+          sData.EmpfList.AddNew.ZCAddress := Empf
+        else
+          sData.EmpfList.AddNew.XPAddress := Empf;
 
-      sData.Subject := betreff;
-      sData.flShow := true;
-      if typ='B' then
-        sData.AddFile(datei,tmp,'')
-      else
-        sData.AddText(datei,tmp);
+        sData.Subject := betreff;
+        sData.flShow := true;
+        if typ='B' then
+          sData.AddFile(datei,tmp,'')
+        else
+          sData.AddText(datei,tmp);
 
-      if sData.DoIt(GetRes2(610,120),false,false,sendbox) then
-      begin
-        b:=0;
-        dbWriteN(mbase,mb_gelesen,b);
-        dat:=ixdat(zdate);
-        dbWrite(auto,'lastdate',dat);
-        dbWriteStr(auto,'lastmsgid',sData.msgid);
-        tt := FileAge(Datei);
-        dbWrite(auto,'lastfdate', tt);
-        if dat>=datum1 then begin
-          datum1:=0;
-          dbWrite(auto,'datum1',datum1);
+        if sData.DoIt(GetRes2(610,120),false,false,sendbox) then
+        begin
+          b:=0;
+          dbWriteN(mbase,mb_gelesen,b);
+          dat:=ixdat(zdate);
+          dbWrite(auto,'lastdate',dat);
+          dbWriteStr(auto,'lastmsgid',sData.msgid);
+          tt := FileAge(Datei);
+          dbWrite(auto,'lastfdate', tt);
+          if dat>=datum1 then begin
+            datum1:=0;
+            dbWrite(auto,'datum1',datum1);
+            end;
+          if dat>=datum2 then begin
+            datum2:=0;
+            dbWrite(auto,'datum2',datum2);
           end;
-        if dat>=datum2 then begin
-          datum2:=0;
-          dbWrite(auto,'datum2',datum2);
+          if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0) then begin
+            if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg') then
+              SafeDeleteFile(datei);
+            dbDelete(auto);
+            aufbau:=true;
+          end;
         end;
-        if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0) then begin
-          if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg') then
-            SafeDeleteFile(datei);
-          dbDelete(auto);
-          aufbau:=true;
-        end;
+        SaveUVS:=muvs;
+        if tmp then
+          SafeDeleteFile(datei);
+      finally
+        sData.Free;
       end;
-      SaveUVS:=muvs;
-      if tmp then
-        SafeDeleteFile(datei);
-      sData.Free
     end;
   end;
 end;
@@ -317,7 +321,7 @@ begin
       dbSkip(auto,1);
       r2:=dbRecno(auto);
       dbGo(auto,r1);
-      if PostFile(ar,false) then;
+      PostFile(ar,false);
       dbGo(auto,r2);
       end
     else
@@ -687,6 +691,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2003/08/28 05:37:53  mk
+  - create sData in PostFile
+
   Revision 1.67  2003/08/23 23:02:35  mk
   - removed hints and warnings
 
