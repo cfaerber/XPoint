@@ -11,22 +11,15 @@
 { === Datenbank ==================================================== }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit  xp2db;
 
 interface
 
 uses  
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,databaso,
-      resource,maus2,xpglobal,
+  crt, dos,typeform,fileio,inout,keys,datadef,database,databaso,
+      resource,maus2,xpglobal, ems, datadef1,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
 procedure InitDatabase;
@@ -95,25 +88,6 @@ var flp : dbFLP;
     t   : text;
     dd  : DB;
 
-
-{ 3.21 Beta 23 -> Beta 24 Userfenster-Trennzeilen beim Start korrigieren }
-
-  procedure FixBeta23Trennzeilen;
-  var s : String[BrettLen];
-  Begin
-    dbSetindex(ubase,1);
-    dbGoTop(ubase);
-    while not dbeof(ubase) do  
-    begin
-      dbReadN(ubase,ub_username,s);
-      if left(s,3)='$/T' then
-      begin
-        s:=#0+s;
-        dbwriteN(ubase,ub_username,s);
-        end;
-      dbnext(ubase); 
-      end;
-  end;
 
   procedure initflp(nr:word);
   begin
@@ -613,8 +587,8 @@ begin
 {$ENDIF }
   dbSetICP(ICP);
   dbSetIndexVersion(3);
-{  if (emsavail>=4) or (memavail>180000) then
-    dbSetIndexCache(50,true); }
+  if (emsavail>=4) or (memavail>180000) then
+    dbSetIndexCache(MaxCache);
 
   if not exist(MsgFile+dbext) then begin   { XPOINT: Nachrichtendatei }
     initflp(19);
@@ -890,12 +864,14 @@ begin
       writeln(t,getres2(243,i));
     close(t);
     end;
-  FixBeta23Trennzeilen;
 end;
 
 end.
 {
   $Log$
+  Revision 1.12.2.1  2000/08/25 22:28:46  mk
+  - IndexCache aktiviert
+
   Revision 1.12  2000/05/06 17:50:06  hd
   - Div-0-Fehler entfernt
 

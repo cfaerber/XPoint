@@ -29,7 +29,7 @@ const   db_magic  = 'DB1'^Z;
         maxifelder= 7;        { maximale Anzahl Felder in einem Ind.-Key }
                               { fÅr mehr ist SchlÅssel-Funktion nîtig    }
         dbdMaxSize= 51;
-        maxcache  = 60;       { maximale Index-Cacheseiten }
+        maxcache  = 50;       { maximale Index-Cacheseiten }
 
 
 type    proctype  = procedure;
@@ -218,6 +218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/08/25 22:28:46  mk
+  - IndexCache aktiviert
+
   Revision 1.7  2000/05/03 00:21:19  mk
   - unbenutzte Units aus uses entfernt
 

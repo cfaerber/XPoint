@@ -38,17 +38,17 @@ end;
 procedure dbReleasecache;
 begin
   if cacheanz>0 then
-{$IFDEF BP }
     if dbEMShandle<>0 then
       EmsFree(dbEMShandle)
     else
-{$ENDIF }
       freemem(cache,cacheanz*sizeof(cachepage));
   cacheanz:=0;
 end;
 
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
-var i,sp : integer;
+var
+  i,sp : integer;
+  s: longint;
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -57,9 +57,7 @@ begin
       end
     else
     begin
-{$IFDEF BP }
       setemscache;
-{$ENDIF }
       seek_cache(dbp,offs,i);
 
 {      i:=0;
@@ -75,8 +73,8 @@ begin
         seek(fi,offs);
         blockread(fi,data,irsize);
         seek_cache2(sp);
-{
-        s:=maxlongint;
+
+{        s:=maxlongint;
         sp:=0;
         i:=0;
         while (i<cacheanz) and (cache^[i].used) do begin
@@ -86,8 +84,7 @@ begin
             end;
           inc(i);
           end;
-        if i<cacheanz then sp:=i;
-}
+        if i<cacheanz then sp:=i; }
 
         cache^[sp].used:=true;
         cache^[sp].lasttick:=ticker;
@@ -264,6 +261,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.2  2000/08/25 22:28:45  mk
+  - IndexCache aktiviert
+
   Revision 1.10.2.1  2000/08/23 13:53:49  mk
   - const-Parameter genutzt wo moeglich
 

@@ -226,9 +226,7 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler; {&uses ebx, esi, edi }
-{$IFDEF BP }
- {$IFDEF NO386 }
+procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
 asm
          xor   cx,cx
          les   di,cache
@@ -255,64 +253,7 @@ asm
          mov   es:[di],cx
 end;
 
- {$ELSE }  {Seek_cache BP + 386 }
-asm
-         push ds
-         mov cx,0
-         db 66h
-         mov bx,word ptr dbp
-         db 66h
-         mov dx,word ptr ofs
-         lds di,cache
-
-@sc_lp:  cmp byte ptr [di],0           { not used? }
-         je @nextc
-         db 66h
-         cmp [di+1],bx                 { dbp gleich? }
-         jne @nextc
-         db 66h
-         cmp [di+5],dx                 { ofs gleich? }
-         je @cfound
-@nextc:  add di,1080                   { sizeof(cachepage) }
-         inc cx
-         cmp cx,cacheanz
-         jb @sc_lp
-
-@cfound: les di,i
-         mov es:[di],cx
-         pop ds
-end;
- {$ENDIF }
-
-{$ELSE }  { Seek_cache Ver32 }
-asm
-         xor   ecx, ecx
-         mov   edi, cache
-         mov   ebx, dbp
-         mov   esi, ofs
-
-@sc_lp:  cmp   byte ptr [edi],0       { not used? }
-         jz    @nextc
-         cmp   [edi+1],ebx            { dbp gleich? }
-         jnz   @nextc
-         cmp   [edi+5],esi            { ofs gleich? }
-         jz    @cfound
-@nextc:  add   edi,1080               { sizeof(cachepage) }
-         inc   ecx
-         cmp   ecx,cacheanz
-         jb    @sc_lp
-@cfound: mov   edi, i
-         mov   [edi], ecx
-{$IFDEF FPC }
-end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-{$ENDIF }
-
-procedure seek_cache2(var _sp:integer); assembler; {&uses ebx, edi}
-{$IFDEF BP }
- {$IFDEF NO386}
+procedure seek_cache2(var _sp:integer); assembler;
 asm
          les   di,cache
          mov   ax,0ffffh               { s := maxlongint }
@@ -340,74 +281,6 @@ asm
 @nofree: les   di,_sp
          mov   es:[di],bx
 end;
-
- {$ELSE}  { Seek_cache2 BP + 386 }
-asm
-         push ds
-         lds di,cache
-         db 66h
-         xor ax,ax
-         mov bx,ax                     { sp:=0 }
-         mov cx,ax                     { i:=0 }
-         db 66h
-         dec ax                        { EAX = -1 / s := maxlongint }
-
-@clp:    cmp byte ptr [di],0          { not used ? }
-         je @sc2ok
-
-         db 66h
-         mov dx,[di+9]
-         db 66h
-         cmp dx,ax                    { cache^[i].lasttick < s ? }
-         jae @nexti
-         db 66h
-         mov ax,dx                    { s:=cache^[i].lasttick }
-         mov bx,cx                    { sp:=i; }
-
-@nexti:  add di,1080
-         inc cx
-         cmp cx,cacheanz
-         jb @clp
-         jmp @nofree
-
-@sc2ok:  mov bx,cx                     { sp:=i }
-@nofree: les di,_sp
-         mov es:[di],bx
-         pop ds
-end;
- {$ENDIF}
-
-{$ELSE }  { Seek_cache2 Ver32 }
-asm
-         mov   edi, cache
-         xor   eax, eax                { EAX = 0 }
-         mov   ebx, eax                { EBX = 0, sp := 0 }
-         mov   ecx, eax                { ECX = 0, i := 0 }
-         dec   eax                     { EAX = FFFFFFFF, s := maxlongint }
-
-@clp:    cmp   byte ptr [edi],0        { not used ? }
-         jz    @sc2ok
-         mov   edx,[edi+9]
-         cmp   edx,eax                 { cache^[i].lasttick < s ? }
-         jae   @nexti
-         mov   eax,edx                 { s:=cache^[i].lasttick }
-         mov   ebx,ecx                 { sp:=i; }
-@nexti:  add   edi,1080
-
-         inc   ecx
-         cmp   ecx,cacheanz
-         jb    @clp
-         jmp   @nofree
-
-@sc2ok:  mov   ebx,ecx                   { sp:=i }
-@nofree: mov   edi,_sp
-         mov   [edi],ebx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-{$ENDIF }
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
@@ -1839,6 +1712,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.3  2000/08/25 22:28:45  mk
+  - IndexCache aktiviert
+
   Revision 1.22.2.2  2000/08/23 13:53:49  mk
   - const-Parameter genutzt wo moeglich
 
