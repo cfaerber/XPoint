@@ -56,6 +56,22 @@ uses
   datadef,
   xp1input;                     { JN }
 
+function GetServerFilename(boxname: string; var bfile: string): boolean;
+var d: DB;
+begin
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,UpperCase(BoxName));
+  if not dbFound then begin
+    dbClose(d);
+    trfehler1(709,BoxName,60);
+    result:=false;
+    exit;
+    end;
+  bfile := dbReadStr(d,'dateiname');
+  dbClose(d);
+  result:=true;
+end;
+
 function GetAllGroups(box: string; bp: BoxPtr): boolean;
 var
   NNTP          : TNNTP;                { Socket }
@@ -64,6 +80,7 @@ var
   x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
   i             : integer;              { -----"------- }
+  bfile         : string;               { Server file name (without extension) }
 begin
   if not ReadJN(getres2(30010,2),false) then begin { ' Kann dauern, wirklich? '}
     result:= true;
@@ -105,11 +122,11 @@ begin
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
-    if NNTP.List(List,false) then begin
+    if GetServerFilename(box,bfile) and NNTP.List(List,false) then begin
       MWrt(x+15,y+2,Format(getres2(30010,11),[List.Count])); { Liste speichern (%d Gruppen) }
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
-      assign(f,FileUppercase(box+'.bl'));
+      assign(f,FileUppercase(bfile+'.bl'));
       rewrite(f);
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
@@ -287,12 +304,12 @@ var
 var
   NNTP           : TNNTP;                { Socket }
   ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
-  d: DB;
   x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
   p, i          : integer;              { -----"------- }
   RCList        : TStringList;          { .rc-File }
   RCFilename    : String;
+  oArticle      : integer;
 begin
   { ProgressOutputXY erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
@@ -316,10 +333,8 @@ begin
   MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
   MWrt(x+15,y+6,bp^.NNTP_ip);
 
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then
-    RCFilename := ChangeFileExt(dbReadStr(d,'dateiname'), '.rc');
+  GetServerFilename(box,RCFilename); // add error handling
+  RCFilename:=FileUpperCase(RCFilename+'.rc');
 
   { ProgressOutputXY einrichten }
   ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
@@ -336,15 +351,15 @@ begin
 
     for RCIndex := 0 to RCList.Count - 1 do
     begin
-      Group := RCLIst[RCIndex];
+      Group := RCList[RCIndex];
       // skip Lines special lines in .rc
       if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
 
       p := Pos(' ', Group);
       if p > 0  then
       begin
-        ArticleIndex := StrToIntDef(Copy(Group, p + 1, MaxInt), 0);
-        Group := Copy(Group, p-1, MaxInt);
+        ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
+        Group := LeftStr(Group, p-1);
       end else
        ArticleIndex := 0;
 
@@ -352,11 +367,13 @@ begin
 
       if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
       if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
+      oArticle:=ArticleIndex;
 
       while ArticleIndex < NNTP.LastMessage do
       begin
         Inc(ArticleIndex);
-        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex) + '             ');
+        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex-oArticle+1) + '/' +
+                      IntToStr(NNTP.LastMessage-oArticle+1) + '             ');
 
         NNTP.GetMessage(ArticleIndex, List);
         if List.Count > 10000 then
@@ -383,6 +400,11 @@ end.
 
 {
         $Log$
+        Revision 1.9  2001/04/07 09:54:39  ma
+        - fixed BL file name
+        - fixed RC file parsing
+        - improved message download counter
+
         Revision 1.8  2001/04/06 21:12:44  ml
         - nntpsend only if unsend mails available
 
