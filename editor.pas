@@ -3383,8 +3383,8 @@ var  dl         : displp;
       writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
 
       writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
-      writeln(t,'QuoteReflow=N');
-      end;
+      writeln(t,'QuoteReflow=', iifc(QuoteReflow, 'J', 'N'));
+    end;
     close(t);
   end;
 
@@ -4016,6 +4016,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.92  2003/03/28 23:55:34  mk
+  - fixed Bug #65208: 3.8: Quote Reflow-Einstellung flüchtig
+
   Revision 1.91  2002/12/21 05:37:49  dodi
   - removed questionable references to Word type
 
