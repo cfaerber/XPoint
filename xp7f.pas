@@ -24,10 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-{$ifdef Develop}
-  ZFTools,      { ZFido }
-{$endif}
-  typeform,montage,fileio,keys,maus2,
+  ZFTools,typeform,montage,fileio,keys,maus2,
   inout,lister,resource,maske, xpglobal,debug,
   xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
@@ -47,11 +44,7 @@ procedure ShowRQ(s:string);
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,
-{$ifdef Develop}
-  xpfm,
-{$endif}
-  xpheader,xp3,xp3o;
+  direct,xpfm, xpheader,xp3,xp3o;
 
 
 procedure SaveArcname(var box,name:string);
@@ -223,7 +216,6 @@ end;
 { gepackte Daten aus ImportDir + PKT-Files aus SpoolDir einlesen }
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
-{$ifdef Develop}
 const fpuffer = 'FPUFFER';
 var p       : byte;
     i,rc    : integer;
@@ -278,16 +270,9 @@ begin
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
       if _filesize(fpuffer)>0 then
-        { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
-{
-        if PufferEinlesen(fpuffer,box,false,false,true,
-                          iif(multipos('*',boxpar^.akas),pe_ForcePfadbox,
-                          pe_Bad))
-}
         if PufferEinlesen(fpuffer,box,false,false,true,
                           iif(length(trim(boxpar^.akas))>0,
                           pe_ForcePfadbox or pe_Bad,pe_Bad))
-        { /robo }
         then begin
           _era(fpuffer);
           FidoImport:=true;
@@ -299,91 +284,6 @@ begin
   end; { with }
   freeres;
 end;
-{$else}
-const fpuffer = 'FPUFFER';
-var p       : byte;
-    sr      : tsearchrec;
-    rc      : integer;
-    clrflag : boolean;
-    via     : string;
-begin
-  FidoImport:=false;
-  with BoxPar^ do begin
-    ttwin; attrtxt(7); moff; clrscr; mon;
-    p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
-    if p>0 then delete(downarcer,p,7);
-    p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
-    rc:= findfirst(ImportDir+WildCard,faAnyFile,sr);
-    { Was fuer ein Quatsch: rc ist immer 0, wenn es ein
-      gueltiges Unterverzeichnis ist (wegen ".."). Und
-      die Verzeichnisse wurden beim Start geprueft. }
-    clrflag:=(rc=0);
-    if clrflag then begin
-    window(1,1,screenwidth,screenlines); attrtxt(7);
-      end;
-    while rc=0 do begin
-      if isPacket(sr.name) then begin
-        ImportDir:=ExpandFilename(ImportDir);
-        SetCurrentDir(OwnPath+XFerDir);
-        shell(LeftStr(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
-              500,1);
-        { ^^ setzt Verzeichnis zurÅck! }
-        if errorlevel<>0 then
-          MoveToBad(ImportDir+sr.name);
-        end;
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    if clrflag then ttwin;
-
-    if FileExists(XFerDir+'*.PKT') then begin
-      if KeepVia then via:='-via '
-      else via:='';
-      with BoxPar^ do
-        shell('ZFIDO.EXE -fz '+iifs(FidoDelEmpty,'-d ','')+via+
-              iifs(addpkts,'','-h'+MagicBrett)+' '+
-              XFerDir+'*.PKT '+fpuffer+' -w:'+strs(screenlines),300,1);
-      window(1,1,screenwidth,screenlines);
-      if errorlevel<>0 then
-        trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
-      else begin
-        if nDelPuffer then
-          rc:= findfirst(XFerDir+WildCard,faAnyFile,sr)
-        else begin
-          rc:= findfirst(XFerDir+'*.pkt',faAnyFile,sr);    { .PKT - Dateien l"schen  }
-          if rc=0 then rc:= findnext(sr);    { erstes PKT stehenlassen }
-          end;
-        while rc=0 do begin
-          DeleteFile(XFerDir+sr.name);
-          rc:= findnext(sr);
-        end;
-        FindClose(sr);
-      end;
-      NC^.recbuf:=_filesize(fpuffer);
-      CallFilter(true,fpuffer);
-      if _filesize(fpuffer)>0 then
-        { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
-{
-        if PufferEinlesen(fpuffer,box,false,false,true,
-                          iif(multipos('*',boxpar^.akas),pe_ForcePfadbox,
-                          pe_Bad))
-}
-        if PufferEinlesen(fpuffer,box,false,false,true,
-                          iif(length(trim(boxpar^.akas))>0,
-                          pe_ForcePfadbox or pe_Bad,pe_Bad))
-        { /robo }
-        then begin
-          DeleteFile(fpuffer);
-          FidoImport:=true;
-          end;
-      end
-    else begin
-      if FileExists(fpuffer) then DeleteFile(fpuffer);
-      CallFilter(true,fpuffer);
-      end;
-    end;
-end;
-{$endif} { Develop }
 
 { bei Crashs steht in BOX der eigene BossNode, und in BoxPar^.BOXNAME  }
 { der angerufene Node                                                  }
@@ -401,9 +301,6 @@ type rfnodep     = ^reqfilenode;
 
 var sr       : tsearchrec;
     rc       : integer;
-{$ifndef Develop}
-    t        : text;
-{$endif}
     aresult   : integer;
     i      : integer;
     request  : string;
@@ -419,7 +316,6 @@ label fn_ende,fn_ende0;
   procedure WriteFidoCfg;
   var i : integer;
 
-{$ifdef Develop}
     procedure AddFile(const s: string);
     begin
       if xpfm.FilesToSend='' then
@@ -457,39 +353,6 @@ label fn_ende,fn_ende0;
         Hd.Free;
       end;
     end;
-{$else}
-    procedure WriteAttach(var t:text; puffer:string);
-    var hd  : THeader;
-        hds : longint;
-        adr : longint;
-        f   : file;
-        ok  : boolean;
-    begin
-      if _filesize(puffer)>0 then begin
-        hd:=THeader.Create;
-        assign(f,puffer);
-        reset(f,1);
-        adr:=0; ok:=true;
-        while ok and (adr<filesize(f)) do begin
-          seek(f,adr);
-          MakeHeader(true,f,0,0,hds,hd,ok,false);
-          if (hd.attrib and attrFile<>0) then
-            if not FileExists(hd.betreff) then begin
-              window(1,1,screenwidth,screenlines);
-              tfehler(hd.betreff+' fehlt!',15);
-              twin;
-              end
-            else begin
-              writeln(t,'Send=',hd.betreff);
-              inc(fileatts);
-              end;
-          inc(adr,hds+hd.groesse);
-          end;
-        close(f);
-        Hd.Free;
-        end;
-    end;
-{$endif} { Develop }
 
     procedure WrAKAs;
     var aka : string;
@@ -503,11 +366,7 @@ label fn_ende,fn_ende0;
         delete(aka,p,1);
         end;
       if aka<>'' then
-{$ifdef Develop}
         xpfm.AKAs:= aka;
-{$else}
-        writeln(t,'AKA=',aka);
-{$endif}
     end;
 
     function EmptyPKTs:boolean;
@@ -521,7 +380,6 @@ label fn_ende,fn_ende0;
 
   begin   { WriteFidoCFG - vgl. auch XPREG.OnlineReg()! }
     with BoxPar^,ComN[comnr] do begin
-{$ifdef Develop}
       { set up unit's parameter }
       if fidologfile<>'' then begin
         xpfm.logfile:= fidologfile;
@@ -607,96 +465,7 @@ label fn_ende,fn_ende0;
       if crash then
         xpfm.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
       WrAKAs;
-{$else}
-      assign(t,FidoCfg);
-      rewrite(t);
-      writeln(t,'# ',getres(717));
-      writeln(t);
-      writeln(t,'Language=',ParLanguage);
-      if filetime('xp-fm.exe')>$1a990000 then with col do  { XP-FM >= v2.13 }
-        writeln(t,'Colors=$',hex(colmailer,2),' $',hex(colmailerhigh,2),
-                  ' $',hex(colmailerhi2,2));
-      writeln(t,'LogNew=',fidologfile);
-      writeln(t,'Name=',username);
-      if alias then
-        OwnAddr:=LeftStr(box,cpos('/',box))+pointname
-      else
-        if f4d then OwnAddr:=box+'.'+pointname
-        else OwnAddr:=strs(fa.zone)+':'+strs(fpointnet)+'/'+pointname;
-      writeln(t,'Address=',ownAddr);
-      if domain<>'' then writeln(t,'Domain=',domain);
-      writeln(t,'Called=',boxname);
-      writeln(t,'Password=',passwort);
-      if orga<>'' then writeln(t,'SysName=',orga);
-      if ParDebug then writeln(t,'Debug=Y');
-      if registriert.r2 then writeln(t,'SN=R/'+strs(registriert.nr))
-      else writeln(t,'SN=unregistered');
-      writeln(t,'CommInit=',MCommInit);
-      if hayescomm and (ModemInit+MInit<>'') then begin
-        write(t,'ModemInit=');
-        if (ModemInit<>'') and (minit<>'') then
-          writeln(t,minit+'\\'+ModemInit)
-        else
-          writeln(t,minit+ModemInit);
-        end;
-      if IgCTS then writeln(t,'CTS=N');
-      writeln(t,'RTS=',iifc(UseRTS,'Y','N'));
-      writeln(t,'Line=',comnr);
-      writeln(t,'FOSSIL=',iifc(fossil,'Y','N'));
-      if not fossil then begin
-        writeln(t,'Port=',hex(Cport,4));
-        writeln(t,'IRQ=',Cirq);
-        writeln(t,'TriggerLevel=',tlevel);
-        end;
-      writeln(t,'Baud=',baud);
-      if hayescomm then begin
-        writeln(t,'DialCommand=',MDial);
-        writeln(t,'Phone=',telefon);
-        end;
-      writeln(t,'ConnWait=',connwait);
-      writeln(t,'RedialWait=',redialwait);
-      if postsperre then
-        writeln(t,'RedialWait2=',redialwait);
-      writeln(t,'RedialMax=',redialmax);
-      writeln(t,'MaxConn=',connectmax);
-      writeln(t,'InPath=',FilePath);
-      writeln(t,'MailPath=',ownpath+XFerDir);
-      writeln(t,'ExtendedFilenames=',iifc(ExtPFiles,'Y','N'));
-      fileatts:=0;
-      WriteAttach(t,ppfile);
-      for i:=1 to addpkts^.anzahl do
-        WriteAttach(t,addpkts^.abfile[i]+BoxFileExt);
-      if (request='') and (FileAtts=0) and (_filesize(upuffer)<=60) and
-         (addpkts^.anzahl=0) and not NotSEmpty then
-        writeln(t,'SendEmpty=Y');
-      if ((request='') and (FileAtts=0)) or not EmptyPKTs then
-        if packmail then
-          writeln(t,'Send=',sendfile)
-        else begin
-          writeln(t,'Send=',upuffer);
-          for i:=1 to addpkts^.anzahl do
-            writeln(t,'Send=',addpkts^.addpkt[i]);
-          end;
-      if request<>'' then
-        writeln(t,'Send=',request);
-      for i:=1 to addpkts^.akanz do
-        if addpkts^.reqfile[i]<>'' then
-          writeln(t,'Send=',addpkts^.reqfile[i]);
-      if ZMoptions<>'' then writeln(t,'ZMOptions=',ZMoptions);
-      write(t,'Text=');
-      if komment='' then writeln(t,'Netcall  -  '+boxname)
-    { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
-      else writeln(t,komment);
-      writeln(t,'EMSI=',iifc(EMSIenable,'Y','N'));
-      writeln(t,'SetTime=',iifc(gettime,'Y','N'));
-      if SendTrx then writeln(t,'SendTrx=Y');
-      if MinCPS>0 then writeln(t,'cpsMin=',MinCPS);
-      if crash then
-        writeln(t,'Show=',getres(727),boxpar^.gebzone);   { 'Tarifzone' }
-      WrAKAs;
-      close(t);
-{$endif} { Develop }
-      end; { while }
+    end; { while }
   end;
 
   procedure BuildIncomingFilelist(logfile:string);
@@ -839,10 +608,6 @@ begin { FidoNetcall }
       DeleteFile(addpkts^.addpkt[i]);
     end;
 
-{$ifndef Develop}
-  window(1,1,screenwidth,screenlines);
-{$endif}
-
   { Spool/ leeren }
   dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
   for i:= 0 to dir.Count-1 do
@@ -850,25 +615,12 @@ begin { FidoNetcall }
       DeleteFile(dir.LongName[i]);
   dir.Free;
 
-{$ifndef Develop}
   ttwin;
-{$endif}
 
   FidoNetcall:=EL_noconn;
 
-{$ifdef Develop}
-
   aresult:= DoXPFM;
 
-{$else}
-
-  shell(XPFMBin+' '+FidoCfg,300,4);         { --- Anruf --- }
-  aresult:=errorlevel;
-{  if carrier(comnr) and not comn[comnr].IgCD then
-    aufhaengen; }
-  window(1,1,screenwidth,screenlines);
-
-{$endif} { Develop }
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
     // DropAllCarrier;
@@ -1186,6 +938,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/12/25 23:21:04  mk
+  - removed develop label
+
   Revision 1.47  2000/12/25 22:50:45  mk
   - MarkPos in FirstMarked should be 0
 
