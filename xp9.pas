@@ -1670,15 +1670,11 @@ var x,y  : byte;
     i    : integer;
     noeasy : boolean;
 begin
-  {MW 04/2000}
-  {Easy-Modus}
-  Neumessage(Noeasy);
+  {$IFDEF EASY}
+  Noeasy:=NeuBenutzergruss;
   if not Noeasy then
-   begin
-     Easy;
-   end;
-  if Noeasy then begin
-  {/Easy-Modus}
+     EasyMainDialog;
+  {$ENDIF}
   dialog(ival(getres2(911,0)),10,'',x,y);
   maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie den Namen Ihrer Stammbox, den' }
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'Netztyp der Box und Ihren Usernamen ein:' }
@@ -1744,13 +1740,22 @@ begin
     XP_ID_AMs:=false;
     SaveConfig;
     end;
-    {Easy-Modus}
   end;
-  {Easy-Modus}
-end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/22 20:08:15  mw
+
+  - EASY-Modus per Compilerschalter abschaltbar (damit in office-Beta
+    noch nicht drin !!!)
+  - Elegantere Programmierung des Aufrufs
+  - Umbennenung der neuen Procedure und Function
+  - Fehler durch unvollst„ndiges Init beseitigt (FirstBox wurde noch nicht
+    angelegt
+  - Organisation wird nicht mehr im EASY-Mode abgefragt, Rest der Adressconfig
+    aber weiterhin
+  - Beseitigung unn”tiger MW-Verweise
+
   Revision 1.13  2000/04/22 18:24:05  mw
 
   - Erste Dialoge des Easy-Mode

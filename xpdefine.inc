@@ -35,6 +35,10 @@
   UnterstÅzung compiliert }
 {.$DEFINE CAPI }
 
+{ EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
+  Konfiguration mittels EASY-Mode verfÅgbar }
+{.$DEFINE EASY }
+
 { --- ab hier sind keine énderungen nîtig --- }
 
 { GrundsÑtzlich mu· ersteinmal in jeder Version die Registrierungs-
@@ -125,6 +129,18 @@
 
 {
   $Log$
+  Revision 1.18  2000/04/22 20:08:15  mw
+
+  - EASY-Modus per Compilerschalter abschaltbar (damit in office-Beta
+    noch nicht drin !!!)
+  - Elegantere Programmierung des Aufrufs
+  - Umbennenung der neuen Procedure und Function
+  - Fehler durch unvollstÑndiges Init beseitigt (FirstBox wurde noch nicht
+    angelegt
+  - Organisation wird nicht mehr im EASY-Mode abgefragt, Rest der Adressconfig
+    aber weiterhin
+  - Beseitigung unnîtiger MW-Verweise
+
   Revision 1.17  2000/04/20 17:39:08  mk
   - jetzt wieder ohne Debug-Infos
 
