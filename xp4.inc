@@ -243,7 +243,7 @@ begin
             2 : brett_config;  { Bretter }
             3 : NachrichtenanzeigeCfg;
             4 : begin UniEdit(4); menurestart:=true; end;
-            5 : MenuConfigAnzeigeZeilen;
+            5 : begin MenuConfigAnzeigeZeilen; menurestart := true; end;
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
                   shell('zconfig.exe',200,1); // !! Fehler abfangen
@@ -604,6 +604,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2001/10/10 20:20:23  mk
+  - go back to config menu after number of col/row dialog
+
   Revision 1.34  2001/08/23 11:15:02  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
