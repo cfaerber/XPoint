@@ -328,7 +328,7 @@ begin
 
   if fido_origin<>'' then StripOrigin;
   if PGPVersion=PGP2 then
-    t:=iifs(hd.typ='T','t',' +textmode=off')
+    t:=iifs(hd.typ='T','-t',' +textmode=off')
   else
     t:=iifs(hd.typ='T','-t','');
 
@@ -801,6 +801,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/07 17:30:12  oh
+  - PGP 2.6.3 nutzte t statt -t als Parameter
+
   Revision 1.16  2000/05/07 10:20:27  oh
   -PGP: Flags s und S fuer die Signatur, PGP-Verbesserungen
 
