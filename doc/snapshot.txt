@@ -226,8 +226,9 @@ User-šbersicht
   XP4O.PAS, XP.IHQ
 
 - Mit '#' kann in der User-šbersicht eine Adreábuchgruppe angegeben
-  werden, die angesprungen werden soll. Mit <Ctrl-#> wird die n„chste
-  Adreábuchgruppe angesprungen.
+  werden, die angesprungen werden soll. Mit <Alt-G> (bei „lteren
+  Tastaturen auch <Ctrl-#>) wird die n„chste Adreábuchgruppe
+  angesprungen.
   XP4.PAS, XP4W.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
 
 - Adreábuch: <Alt-A> schaltet Zugang zu Adreábuchgruppe 0 frei.
