@@ -1147,14 +1147,22 @@ end;
 procedure ModiTyp;
 var c   : char;
     uvs : byte;
+    flags:longint;    
 begin
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1<>0 then
     rfehler(425)   { 'Bei unversandten Nachrichten leider nicht m”glich.' }
   else begin
     dbReadN(mbase,mb_typ,c);
-    if c='T' then c:='B'
-    else c:='T';
+    dbReadN(mbase,mb_flags,flags);
+    if c='T' then 
+      if flags and 4=0 then c:='B'  { Text -> Bin  }
+      else flags:=flags and not 4   { Mime -> Text }      
+    else begin
+      flags:=flags or 4;            { Bin -> Mime }
+      c:='T';
+      end;
+    dbWriteN(mbase,mb_flags,flags);
     dbWriteN(mbase,mb_typ,c);
     aufbau:=true;
     end;
@@ -2394,6 +2402,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/04/27 16:36:09  jg
+  - Nachricht/Aendern/Typ schaltet jetzt um zwischen Text,Bin und Mime
+
   Revision 1.34  2000/04/23 07:58:53  mk
   - OS/2-Portierung
 

@@ -10338,14 +10338,18 @@ richt[/Unversandt/Edit] zu verwenden ist.@10401
 12205
 <<Nachricht / Žndern / Typ
 
-Diese Funktion macht aus einer Textnachricht eine
-Bin„rnachricht und umgekehrt.
+Diese Funktion „ndert den Typ einer Nachricht.
+aus einer Textnachricht wird eine Bin„rnachricht (B)
+aus einer Bin„rnachricht wird Multipart-Mime (M)
+und aus Multipart-Mime wird wieder eine Textnachricht.
 
 Diese Žnderung betrifft NUR die XP-Datenbank; der
 Puffer-Kopf der Nachricht bleibt also unver„ndert.
 Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
 die als Textnachrichten verschickt wurden und daher
-nicht vom Archiv-Viewer erkannt werden.
+nicht vom Archiv-Viewer erkannt werden, bzw. fr
+Multipart-Mime-Nachrichten, die wegen fehlerhaften 
+Headerzeilen nicht als MIME erkannt wurden.
 @
 12206
 <<Nachricht / Žndern / gelesen
