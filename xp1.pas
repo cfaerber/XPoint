@@ -1413,7 +1413,9 @@ begin
     colselbar:=col.colselbar;
     colmarkline:=col.colselhigh;
     colmarkbar:=col.colselbar and $f0 + col.colselhigh and $f;
-    { colscroll:=col.colselscroll; }
+    colstatus:=HexVal(reverse(hex(colselbar,2)));
+    colfound:=colstatus;
+  { colscroll:=col.colselscroll; }
     setlistcol(lc);
     end;
 end;
@@ -1426,6 +1428,8 @@ begin
     colselbar:=col.colsel2bar;
     colmarkline:=col.colsel2high;
     colmarkbar:=col.colsel2bar and $f0 + col.colsel2high and $f;
+    colstatus:=HexVal(reverse(hex(coltext,2)));
+    colfound:=colstatus;
     setlistcol(lc);
     end;
 end;
@@ -2298,6 +2302,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.30  2001/12/07 17:53:02  my
+  MY:- Fix: Farben fr Statuszeile und Suchergebnis in Select-Box
+       initialisiert (relevant fr Suchbegriffs-Bibliothek).
+
   Revision 1.48.2.29  2001/11/20 23:14:05  my
   MY:- Konfiguration Multiserverbetrieb (D/B/E/C/Zus„tzliche_Server und
        D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert, Details
