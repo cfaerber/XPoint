@@ -23,7 +23,11 @@ interface
 {$IFDEF FPC}
   //???
 {$packrecords C}
+{$ifdef OpenBSD}		// openbsd curses=ncurses. Openbsd ocurses=old curses.
+{$linklib curses}
+{$else}
 {$linklib ncurses}
+{$endif}
 {$linklib c}
 {$ENDIF}
 
@@ -52,8 +56,8 @@ type
   CXX_TYPE_OF_BOOL = char;
 
 Var
-    COLORS : longint;external name 'COLORS';
-    COLOR_PAIRS : longint;external name 'COLOR_PAIRS';
+    COLORS : longint; cvar; external;
+    COLOR_PAIRS : longint; cvar; external;
 
     const
        COLOR_BLACK = 0;
@@ -70,7 +74,7 @@ Type
     pacs_map = ^tacs_map;
 
 Var
-    acs_map : tacs_map;external name 'acs_map';
+    acs_map : tacs_map; cvar; external;
 
     function ACS_ULCORNER : chtype;
     function ACS_LLCORNER : chtype;
@@ -200,13 +204,13 @@ Var
        PSCREEN = PWINDOW;
 
       var
-       stdscr  : PWINDOW;external name 'stdscr';
-       curscr  : PWINDOW;external name 'curscr';
-       newscr  : PWINDOW;external name 'newscr';
-       LINES   : longint;external name 'LINES';
-       COLS    : longint;external name 'COLS';
-       TABSIZE : longint;external name 'TABSIZE';
-       ESCDELAY: longint;external name 'ESCDELAY';
+       stdscr  : PWINDOW; cvar; external;
+       curscr  : PWINDOW; cvar; external;
+       newscr  : PWINDOW; cvar; external;
+       LINES   : longint; cvar; external; 
+       COLS    : longint; cvar; external; 
+       TABSIZE : longint; cvar; external;
+       ESCDELAY: longint; cvar; external;
 
     function curses_version:pchar; cdecl; external;
     Function define_key(_para1:pchar; _para2:longint):longint; cdecl;external;
@@ -1737,6 +1741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2003/09/06 02:36:43  mk
+  - update to FPC version 1.5
+
   Revision 1.6  2002/12/02 14:04:29  dodi
   made xpmenu internal tool
 
