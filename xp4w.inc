@@ -1121,7 +1121,7 @@ procedure suchchar(ch:char);
 var s       : string[90];
     adrb,pp : byte;
     newsuch : string[maxsuch];
-
+      indx  : word;
   procedure suchok;
   begin
     suchst:=newsuch;
@@ -1173,18 +1173,26 @@ begin
     end
   else begin
 
-(*   if (dispmode=1) or (dispmode=3) then      { JG: 27.04.00 War doppelt gemoppelt, }
-      dbSeek(ubase,uiAdrbuch,#1+ustr(newsuch)) { unten wird nochmal auf Adrbuch=0 getestet }
-    else                                       { Und so funkioniert die "/" schnellsuche wieder}
-*)
-    dbSeek(ubase,uiName,ustr(newsuch));
+   dbSeek(ubase,uiName,ustr(newsuch));
     if not dbEOF(ubase) then begin
-      dbReadN(ubase,ub_username,s);
-      dbReadN(ubase,ub_adrbuch,adrb);
-      if (((dispmode=1) or (dispmode=3)) and (adrb=0)) or
-         (left(ustr(s),length(newsuch))<>ustr(newsuch)) then
+
+      if (dispmode=1) or (dispmode=3) then     { Adressbuch: } 
+      begin  
+        indx:=dbgetindex(ubase);
+        dbsetindex(ubase,uiname);              { Nach Namen sortieren }
+        repeat
+          dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
+          if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
+          if dbEOF(ubase) then Exit;        
+          dbReadN(ubase,ub_username,s);      
+        until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));  
+        dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
+        end      
+      else dbReadN(ubase,ub_username,s);
+
+      if left(ustr(s),length(newsuch))<>ustr(newsuch) then
         errsound
-      else
+      else         
         suchok;
       end;
     end;
