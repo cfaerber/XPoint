@@ -106,7 +106,7 @@ function  FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
 procedure NodelistBrowser;
 
 procedure SetCrash(adr:string; insert:boolean);
-procedure SetRequest(adr,files:string);  { '' -> Request l”schen }
+procedure SetRequest(const adr,files:string);  { '' -> Request l”schen }
 
 procedure NodelistIndex;
 procedure NodelistSeek;
@@ -1603,7 +1603,7 @@ begin
 end;
 
 
-procedure SetRequest(adr,files:string);   { '' -> Request l”schen }
+procedure SetRequest(const adr,files:string);   { '' -> Request l”schen }
 var t1,t2   : text;
     s       : string;
     crash   : boolean;
@@ -2264,6 +2264,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2002/04/07 16:57:53  mk
+  - added some const parameters
+
   Revision 1.67  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
