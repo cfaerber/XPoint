@@ -226,8 +226,9 @@ end;
 
 
 function UUsendTestSourcefile(var s:string):boolean;
-var f    : file;
-    sr   : searchrec;
+var{ f    : file;
+    sr   : tsearchrec;
+    rc   : integer;}
     name : string;
 
    procedure SetDestfile;
@@ -237,24 +238,22 @@ var f    : file;
    end;
 
 begin
-  s:=FExpand(s);
-  assign(f,s);
-  reset(f,1); close(f);
-  if ioresult=0 then begin
+  s:=ExpandFileName(s);
+  {assign(f,s); reset(f,1); close(f);
+  if ioresult=0 then begin // Na toll }
+  if FileExists(s) and not isPath(s) then begin
     SetDestfile;
     UUSendTestSourcefile:=true;
-    end
-  else begin
+  end else begin                        { Datei fehlt }
     if not multipos('*?',s) then begin
-      findfirst(s,ffAnyFile,sr);
-      if (LastChar(s)<>'\') and (doserror<>0) then begin
+      { rc:= findfirst(s,faAnyFile,sr); } { Sie wird wohl kaum jetzt da sein! }
+      if (LastChar(s)<>DirSepa) {and (rc<>0)} then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
         exit;
-        end;
-      if LastChar(s)<>'\' then s:=s+'\';
-      s:=s+'*.*';
       end;
+      s:= AddDirSepa(s)+WildCard;
+    end;
     selcol;
     name:=fsbox(screenlines div 2 - 5,s,'','',true,false,false);
     if name='' then
@@ -379,7 +378,8 @@ var d     : DB;
       close(t);
       xp6.EditAttach:=false; xp6.noCrash:=true;
       KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
-      if DoSend(true,fn,fname+'@'+fs+ntServerDomain(fs),fexpand(source),
+      if DoSend(true,fn,fname+'@'+fs+ntServerDomain(fs),
+                expandfilename(source),
                 false,true,false,false,false,nil,hd,hd,0) then;
       end;
   end;
@@ -535,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/11/16 22:51:56  hd
+  - DOS Unit entfernt
+
   Revision 1.15  2000/11/14 15:51:34  mk
   - replaced Exist() with FileExists()
 
