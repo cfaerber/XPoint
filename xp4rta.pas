@@ -588,6 +588,8 @@ var RTAEmpfList :RTAEmpfaengerP;
       auswahl :byte;
 
     procedure getPollBox;
+    var hdp2 :headerp;
+        hds2 :longint;
     begin
       box := '';
       dbRead (mbase, 'brett', brett);
@@ -596,6 +598,14 @@ var RTAEmpfList :RTAEmpfaengerP;
         dbSeek (bbase, biIntNr, copy (brett, 2, 4));
         if dbBOF (bbase) or dbEOF (bbase) then box := ''
         else dbRead (bbase, 'pollbox', box);
+      end else
+      if brett[1] = 'U' then                 { User }
+      begin
+        new (hdp2);
+        readHeader (hdp2^, hds2, false);
+        dbseek (ubase, uiname, uStr (hdp2^.empfaenger));
+        if dbFound then dbRead (ubase, 'pollbox', box);
+        dispose (hdp2);
       end;
       if not isBox (box) then box := DefaultBox;
     end;
@@ -1038,6 +1048,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.10  2001/11/01 17:16:59  sv
+  - Statt der Stammbox wird nun der richtige Server angeboten (Dank an
+    Jochen Gehring fuer die Codevorlage)
+
   Revision 1.1.2.9  2001/09/07 02:22:44  mk
   - Useranlegen durch makeuser ersetzt
 
