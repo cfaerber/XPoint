@@ -385,6 +385,7 @@ function iifr(b:boolean; r1,r2:real):real;      { IIF Real                  }
 function iifs(b:boolean; const s1,s2:string):string;  { IIF String                }
 function IsNaN(d:double):boolean;
 function IntQSum(const l:longint):longint;         { Quersumme                    }
+function IsIntVal(const s: string): boolean;       { test for valid signed number }
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
 {$IFNDEF FPC }
@@ -1454,6 +1455,18 @@ begin
     TimeDiff:=TimeSecs(t1)-TimeSecs(t2);
 end;
 
+{ IsIntVal uses Val to check the format of the string.
+  Usage: eliminate compiler hints about unused assignments.
+}
+{$HINTS OFF}  //compatibility with FPC unknown ;-)
+function  IsIntVal(const s: string): boolean;
+var
+  l, res: integer;
+begin
+  Val(s,l,res); //non-zero res indicates an error
+  Result := res = 0;
+end;
+{$HINTS ON}
 
 function isnum(const s:string):boolean;            { s besteht aus [0..9] }
 var i : integer;
@@ -1865,6 +1878,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2002/12/13 14:31:35  dodi
+  - added IsIntVal function
+
   Revision 1.123  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 
