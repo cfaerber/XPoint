@@ -250,13 +250,14 @@ var d         : DB;
     end;
     if not setdefault and (i=p) then attrtxt(col.colsel2bar)
     else attrtxt(col.colsel2box);
-    mwrt(x+1,y+i,s);
+    fwrt(x+1,y+i,s);
   end;
 
   procedure display;
   var i : integer;
       b : boolean;
   begin
+    moff;
     if drec[1]=0 then begin
       dbGoTop(d); b:=true; end
     else begin
@@ -273,20 +274,18 @@ var d         : DB;
       inc(i);
       end;
     attrtxt(col.colsel2box);
-    if i<=gl then begin
-      moff;
+    if i<=gl then
       clwin(x+1,x+width,y+i,y+gl);
-      mon;
-      end;
     attrtxt(col.colsel2rahmen);
-    mwrt(x,y+1,iifc(b,'³',#30));
-    mwrt(x,y+gl,iifc(dbEOF(d),'³',#31));
+    fwrt(x,y+1,iifc(b,'³',#30));
+    fwrt(x,y+gl,iifc(dbEOF(d),'³',#31));
     if i=1 then begin
       attrtxt(col.colsel2bar);
-      mwrt(x+1,y+1,sp(width));
+      fwrt(x+1,y+1,sp(width));
       end;
     aufbau:=false;
     p0:=p;
+    mon;
   end;
 
 
@@ -1224,6 +1223,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.40  2001/12/20 17:47:07  mk
+  - ein paar fWrt statt Wrt bzw. MWrt benutzt
+
   Revision 1.19.2.39  2001/12/20 15:22:15  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
