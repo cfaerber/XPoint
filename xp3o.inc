@@ -823,7 +823,7 @@ begin
               pb:=pollbox_str(zconnect,true);
               dbWriteStr(ubase,'pollbox',pb);
               dbWrite(ubase,'haltezeit',stduhaltezeit);
-              flags:=1+iif(newuseribm},0,8);  { aufnehmen / Umlaute }
+              flags:=1+iif(newuseribm,0,8);  { aufnehmen / Umlaute }
               dbWrite(ubase,'userflags',flags);
               writeln(userlog,logstr(absender));
               end;        { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
@@ -902,7 +902,7 @@ begin
               dbWriteNStr(ubase,ub_username,name);
               dbWriteNStr(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-              flags:=1+iif(newuseribm},0,8);  { aufnehmen / Umlaute }
+              flags:=1+iif(newuseribm,0,8);  { aufnehmen / Umlaute }
               dbWrite(ubase,'userflags',flags);
               adrbuch:=NeuUserGruppe;
               dbWriteN(ubase,ub_adrbuch,adrbuch);
@@ -1164,6 +1164,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2000/11/30 16:59:38  hd
+  - Fix: illegal character
+
   Revision 1.37  2000/11/30 14:38:09  mk
   - fixed NewUserIBM when adding new uesers
 
