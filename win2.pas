@@ -328,12 +328,13 @@ var   fb     : string;
   var i : integer;
   begin
     i:=CposY+add+1;
-    while (i<=f.Count) and (UpCase(f[i][1])<>ab) do inc(i);
-    if i>f.Count then begin
+    while (i<f.Count) and (UpCase(f[i][1])<>ab) do inc(i);
+    if i>=f.Count then
+    begin
       i:=1;
       while (i<=CposY+add) and (UpCase(f[i][1])<>ab) do inc(i);
-      end;
-    if (f[i] <> '') and (UpCase(f[i][1])=ab) then begin
+    end;
+    if (i<f.count) and (f[i] <> '') and (UpCase(f[i][1])=ab) then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -1102,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/06/29 10:40:53  mk
+  - fixed crash in file selector box when using shortkeys
+
   Revision 1.36  2001/04/18 11:01:13  ml
   - fixed FileSelectDialog in Linux (it shows files now! ;-)
 
