@@ -3072,24 +3072,24 @@ the packets will be compressed. These mail packets
 may then be transferred to this Server by whatever
 method you choose.
 
-<<Note:>> CrossPoint will not delete these files, so 
+<<Note:>> CrossPoint will not delete these files, so
 make sure they are manually deleted as necessary!
 @
 8035
-<<[x]>> ->  Enables QWK Transfer. Afterwards please
-        enter the following data (or check the
-        existent values):
+<<[x]>> ->  Enables QWK transfers.
+        Enter the following data or check any
+        existing entries:
 
 <<Inbound Packets>>
-Enter the path and name for the QWK packets, which
+Enter the path and name for the QWK packets which
 XP should import for a /Netcall/Single operation.
-eg.
-   C:\INBOUND\*.QWK
+e.g.
+    C:\INBOUND\*.QWK
 
 
 <<Outbound directory>>
 This is the directory where XP will put the REP files
-with the reply messages.
+which contain the reply messages.
 @
 8036
 These are settings if you do not want XP to transfer
@@ -10584,16 +10584,16 @@ properly defined and that CrossPoint can find them.
 11502
 <<Netcall / All
 
-This makes a netcall to all of the servers for which
-under /Edit/Servers/Edit/Misc. The box marked
-Netcall All is switched on.
+This makes a netcall to all the Servers for which
+the "Netcall/All" option has been turned on, under
+/Edit/Servers/Edit/Misc.
 
-A command line showing all the boxes to be called
-will be shown, and can be edited if you don't want to
-call them all.
+A command line listing all the Servers to be called
+will be shown, which can be edited if you don't want 
+to call them all.
 
-The [command line parameter] "/n:*" does the@4020
-same thing.
+The [command line parameter] "/n:*" does the same@4020
+thing.
 @
 11503
 <<Netcall / Last calls
@@ -11811,25 +11811,26 @@ systems (but not all) will accept File Requests
 from anyone. To make File Requests you will need:
 
 - An active NodeList.
-- A main Fido Server entered under /Edit/Servers.
+- A main Fido Server configured under /Edit/Servers.
 
 You can enter the Node address direct if you want.
 CrossPoint checks to see if it is in the NodeList.
 If it is, you may then enter the name(s) of the
-file(s) you wish to request or, you can press <F2>
-and browse the filelists that you have configured.
+file(s) you wish to request or you can press <F2>
+and browse the filelists that you have already
+configured.
 
 By checking the tick box (with <Space>) you can have
-the request start immediately, or let it be stored
-for later, maybe under a timing program.
+the request start immediately or allow it to be
+stored for later, maybe under a timing program.
 
-Stored requests are to be found under
-[/Fido/Crash] and can be started from there.@13104
+Stored requests are to be found under [/Fido/Crash]@13104
+and can be started from there.
 @
 13102
 <<Fido / File lists
 
-Fido sytems offer lists of files they have available
+Fido systems offer lists of files they have available
 for request and are obtainable from most systems by
 requesting "FILES". You may request such lists and
 then use them for selecting files to request. These
@@ -12267,9 +12268,10 @@ For UUCP netcalls, the transfer program UUCICO.EXE
 is required. This file is in the XP-UUCP packet.
 @
 20111
-For handling QWK messages the conversion program
-ZQWK.EXE is required. This file is in the XP-FIDO
-packet.
+For handling QWK messages, the conversion program
+ZQWK.EXE is required. This file can be found in the
+QWK module, XP312Q.EXE, which is a self-expanding
+archive.
 @
 20201
 Please correct the setting for the directory for
@@ -12851,9 +12853,9 @@ of a server entered in the field "send packets for"
 which no longer exists.
 @
 20736
-CrossPoint needs certain data about a QWK server
-before it can send QWK messages. To achieve this
-simply import any message packet from this server.
+CrossPoint needs certain data about a QWK Server
+before it can send QWK messages. To achieve this,
+simply import any message packet from this Server.
 @
 20738
 
