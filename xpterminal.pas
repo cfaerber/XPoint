@@ -83,7 +83,7 @@ procedure ShowTermStatus;
 begin
   moff;
   attrtxt(col.colmenu[0]);
-  Wrt2(forms(iifs(is_telnet,' OpenXP-Telnet',' OpenXP-Term'),80));
+  Wrt2(forms(iifs(is_telnet,' OpenXP-Telnet',' OpenXP-Term'), ScreenWidth));
   gotoxy(17,1);
   attrtxt(col.ColMenuHigh[0]);
   Wrt2('F1');
@@ -262,12 +262,12 @@ begin
                   end;
         'C'     : begin
                     set1;
-                    gotoxy(min(80,wherex+ansipar[1]),wherey);
+                    gotoxy(min(ScreenWidth,wherex+ansipar[1]),wherey);
                    end;
 
         'H','f' : begin
                     set1; set2;
-                    gotoxy(minmax(ansipar[2],1,80),minmax(ansipar[1],1,termlines));
+                    gotoxy(minmax(ansipar[2],1,ScreenWidth),minmax(ansipar[1],1,termlines));
                   end;
 
         'J'     : case ansipar[1] of
@@ -276,7 +276,7 @@ begin
                           clreol;
 //                          inc(windmax,$100);
                           for i:=wherey+1 to termlines do
-                            wrt(1,i,sp(80));
+                            wrt(1,i,sp(ScreenWidth));
 //                          dec(windmax,$100);
                           restcur;
                         end;
@@ -284,7 +284,7 @@ begin
                           savecur;
                           wrt(1,wherey,sp(wherex));
                           for i:=1 to wherey-1 do
-                            wrt(1,i,sp(80));
+                            wrt(1,i,sp(ScreenWidth));
                           restcur;
                         end;
                     2 : clrscr;
@@ -296,7 +296,7 @@ begin
                     2 : begin                     { Zeile l”schen }
                           savecur;
 //                          inc(windmax,$100);
-                          wrt(1,wherey,sp(80));
+                          wrt(1,wherey,sp(ScreenWidth));
 //                          dec(windmax,$100);
                           restcur;
                         end;
@@ -747,6 +747,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/10/10 20:56:44  mk
+  - misc fixes for screenwidth <> 80
+
   Revision 1.11  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 
