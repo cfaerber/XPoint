@@ -310,7 +310,7 @@ begin
 
   if fido_origin<>'' then StripOrigin;
   if PGPVersion=PGP2 then
-    t:=iifs(hd.typ='T','-t',' +textmode=off')
+    t:=iifs(hd.typ='T','t',' +textmode=off')
   else
     t:=iifs(hd.typ='T','-t','');
 
@@ -783,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.9  2000/05/18 22:33:59  mk
+  - PGP Fix fuer zweimal t (1.19)
+
   Revision 1.6.2.8  2000/05/07 17:45:44  mk
   - Noch einmal ein 80 Zeichen Limit gefunden
 
