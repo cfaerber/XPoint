@@ -115,95 +115,6 @@ uses
 {$ENDIF }
   datadef1;
 
-procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
-{!!! Hier mu· noch mal ÅberprÅft werden } {Expand_node }
-asm
-         mov   edi, nodep
-         mov   esi, rbuf
-         xor   edx, edx
-         mov   dl, [edi+2]             { Keysize }
-         add   edx,9                   { plus LÑngenbyte plus Ref/Data }
-         mov   ebx,136                 { (264) sizeof(inodekey); }
-         sub   ebx,edx
-         add   edi,14
-         xor   eax, eax
-         cld
-         lodsw                         { Anzahl SchlÅssel im Node }
-         stosw                         { Anzahl speichern }
-@noerr:  mov   ecx,2                   { Ref+Data von key[0] Åbertragen }
-         rep   movsd
-         mov   ecx,eax
-         jecxz @nokeys
-         add   edi,128                 { (256) key[0].keystr Åberspringen }
-         mov   eax, ecx
-@exlp:   mov   ecx, edx
-         rep   movsb                   { Ref, Data und Key Åbertragen }
-         add   edi, ebx
-         dec   eax
-         jnz   @exlp
-@nokeys:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler; {&uses ebx, esi, edi }
-asm
-         xor   ecx, ecx
-         mov   edi, cache
-         mov   ebx, dbp
-         mov   esi, ofs
-
-@sc_lp:  cmp   byte ptr [edi],0       { not used? }
-         jz    @nextc
-         cmp   [edi+1],ebx            { dbp gleich? }
-         jnz   @nextc
-         cmp   [edi+5],esi            { ofs gleich? }
-         jz    @cfound
-@nextc:  add   edi,1080               { sizeof(cachepage) }
-         inc   ecx
-         cmp   ecx,cacheanz
-         jb    @sc_lp
-@cfound: mov   edi, i
-         mov   [edi], ecx
-{$IFDEF FPC }
-end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure seek_cache2(var _sp:integer); assembler; {&uses ebx, edi}
-asm
-         mov   edi, cache
-         xor   eax, eax                { EAX = 0 }
-         mov   ebx, eax                { EBX = 0, sp := 0 }
-         mov   ecx, eax                { ECX = 0, i := 0 }
-         dec   eax                     { EAX = FFFFFFFF, s := maxlongint }
-
-@clp:    cmp   byte ptr [edi],0        { not used ? }
-         jz    @sc2ok
-         mov   edx,[edi+9]
-         cmp   edx,eax                 { cache^[i].lasttick < s ? }
-         jae   @nexti
-         mov   eax,edx                 { s:=cache^[i].lasttick }
-         mov   ebx,ecx                 { sp:=i; }
-@nexti:  add   edi,1080
-
-         inc   ecx
-         cmp   ecx,cacheanz
-         jb    @clp
-         jmp   @nofree
-
-@sc2ok:  mov   ebx,ecx                   { sp:=i }
-@nofree: mov   edi,_sp
-         mov   [edi],ebx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
 procedure dbSetICP(p:dbIndexCProc);
 begin
   ICP:=p;
@@ -1629,6 +1540,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/07/07 10:18:40  mk
+  - Assembler-Routinen entfernt
+
   Revision 1.26  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records

@@ -16,7 +16,8 @@ begin
 end;
 
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
-var i,sp : integer;
+var
+  s, i,sp : integer;
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -25,13 +26,13 @@ begin
       end
     else
     begin
-      seek_cache(dbp,offs,i);
+//      seek_cache(dbp,offs,i);
 
-{      i:=0;
+      i:=0;
       while (i<cacheanz) and
-            (not cache^[i].used or (cache^[i].dbp<>dbp) or (cache^[i].ofs<>offs))
-        do inc(i);
-}
+        (not cache^[i].used or (cache^[i].dbp<>dbp) or (cache^[i].ofs<>offs))
+      do inc(i);
+
       if i<cacheanz then begin
         Move(cache^[i].page,data,irsize);
         cache^[i].lasttick:=ticker;
@@ -39,8 +40,8 @@ begin
       else begin
         seek(fi,offs);
         blockread(fi,data,irsize);
-        seek_cache2(sp);
-{
+//         seek_cache2(sp);
+
         s:=maxlongint;
         sp:=0;
         i:=0;
@@ -52,7 +53,6 @@ begin
           inc(i);
           end;
         if i<cacheanz then sp:=i;
-}
 
         cache^[sp].used:=true;
         cache^[sp].lasttick:=ticker;
@@ -140,12 +140,11 @@ begin
       getmem(rbuf,irsize);
       filepos:=offs;
       cache_read(db_p,irsize,offs,rbuf^);
-      { Hier muá noch was getan werden, denn so klappt das unter
+      { !!      Hier muá noch was getan werden, denn so klappt das unter
         32 Bit einfach nicht... }
-      if wp^>nk then
-        error('fehlerhafte Indexseite in '+fname+dbIxExt);
+//      if wp^>nk then
+//        error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
-      { Expand-Node Pascal Version }
       anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
       o:=10;
@@ -153,7 +152,7 @@ begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
       end;
-      {  expand_node(rbuf,np); }
+
       freemem(rbuf,irsize);
      end;
 end;
@@ -225,6 +224,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/07/07 10:18:40  mk
+  - Assembler-Routinen entfernt
+
   Revision 1.13  2000/07/02 14:24:44  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
