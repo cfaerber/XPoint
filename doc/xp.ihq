@@ -5245,8 +5245,8 @@ Clipboard eingefuegt. Ein Fehlerton bedeutet,
 dass der Clipboard-Inhalt zu gross ist, 
 oder nicht existiert.
 
-<<Ctrl C>> kopiert den Inhalt des Textfelds
-in das Windows Clipboard.
+<<Ctrl C>> oder <<Ctrl + Ins>> kopiert den Inhalt 
+des Textfelds in das Windows Clipboard.
 
 Mit <<Ctrl G>> wird die Eingabe in Grossbuchstaben 
 umgewandelt. <<Crtl K>> wandelt in Kleinbuchstaben um.

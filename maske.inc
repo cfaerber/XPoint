@@ -917,7 +917,7 @@ begin   { readmask }
             else
                                                               { JG: Clipboard fuer Menues }
 
-	  if t=^C then string2clip(cont^);                    { STRG+C = kopieren }
+	  if (t=^C) or (t=keycins) then string2clip(cont^);   { STRG+C / STRG+INS = kopieren }
           
 	  if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
             if replace then
@@ -1071,6 +1071,10 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.10  2000/03/01 13:17:41  jg
+  - Ukonv Aufrufe benutzen jetzt High() fuer Maxlaenge
+  - STRG + INS funktioniert in Texteingabefeldern wie STRG+C
+
   Revision 1.9  2000/02/26 11:00:24  jg
   - Strg+C (Kopieren ins Clipboard) in Texteingabefenstern
   - OLH aktualisiert.

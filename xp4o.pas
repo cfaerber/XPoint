@@ -123,8 +123,8 @@ end;
 
 function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
-                     betr,user,txt : string[SuchLen];  { Wird nicht mehr Suchlen verwendet }
-                     fidoempf,mid  : string[SuchLen];  { Auch die Ukonv-Maximallaengen aendern! }
+                     betr,user,txt : string[SuchLen];
+                     fidoempf,mid  : string[SuchLen];
                      vondat,bisdat : datetimest;
                      vonkb,biskb   : longint;
                      status        : string[10];
@@ -332,8 +332,8 @@ label ende,happyend;
   procedure TestMsg;
   var betr2 : string[BetreffLen];
       user2 : string[AdrLen];
-      realn : string[40];          { Bei Aenderung der Stringlaengen }
-      such  : string[81];          { Auch die Maximallaengen bei ukonv anpassen !!! } 
+      realn : string[40];
+      such  : string[81];
       found : boolean; 
           j : byte;
 
@@ -388,10 +388,10 @@ label ende,happyend;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-          ukonv(betr2,betrefflen);
-          ukonv(user2,adrlen);  
-          ukonv(realn,40); 
-          ukonv(hdp^.fido_to,length(hdp^.fido_to));
+          ukonv(betr2,high(betr2));
+          ukonv(user2,high(user2));  
+          ukonv(realn,high(realn)); 
+          ukonv(hdp^.fido_to,high(hdp^.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
@@ -426,7 +426,7 @@ label ende,happyend;
         such:=hdp^.msgid;
         end;
 *)
-      if umlaut then ukonv(such,81);
+      if umlaut then ukonv(such,high(such));
       j:=0;
       repeat
         seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }    
@@ -442,7 +442,7 @@ label ende,happyend;
       if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
-        if umlaut then ukonv(such,81);    
+        if umlaut then ukonv(such,high(such));    
         j:=0;
         repeat
           seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }    
@@ -635,8 +635,8 @@ begin
     if spez then with srec^ do begin
       user:=userform(user);
       if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
-        Ukonv(betr,suchlen); Ukonv(user,suchlen);
-        Ukonv(txt,suchlen); Ukonv(fidoempf,suchlen);
+        Ukonv(betr,high(betr)); Ukonv(user,high(user));
+        Ukonv(txt,high(txt)); Ukonv(fidoempf,high(fidoempf));
         end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); UpString(txt); UpString(fidoempf);
@@ -653,7 +653,7 @@ begin
       maxsize:=biskb*1024+1023;
       end
     else begin
-      if umlaut then ukonv(sst,suchlen);                        {JG:15.02.00} 
+      if umlaut then ukonv(sst,high(sst));                        {JG:15.02.00} 
       if igcase then UpString(sst);
       end;
 
@@ -783,18 +783,16 @@ end;
 { Betreff-Direktsuche }
 
 procedure betreffsuche;
-var betr,betr2   : string;       {Bei Laengenänderung ukonv-Maxlaenge anpassen! }
+var betr,betr2   : string;
     brett,_Brett : string[5];
     dummy,ll     : integer;
-
- {procedure ukonv(var s:string);}   {JG:15.02.00 nach Typeform.pas Verlagert}
 
 begin
   moment;
   dbReadN(mbase,mb_betreff,betr);
   dummy:=ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
-  ukonv(betr,255);
+  ukonv(betr,high(betr));
   dbReadN(mbase,mb_brett,brett);
   dbSetIndex(mbase,miBrett);
   dbSeek(mbase,miBrett,brett);
@@ -803,7 +801,7 @@ begin
     dbReadN(mbase,mb_betreff,betr2);
     dummy:=ReCount(betr2);
     betr2:=trim(betr2);
-    ukonv(betr2,255);
+    ukonv(betr2,high(betr2));
     ll:=min(length(betr),length(betr2));
     if (ll>0) and (ustr(left(betr,ll))=ustr(left(betr2,ll))) then
       MsgAddmark;
@@ -2316,6 +2314,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/03/01 13:17:41  jg
+  - Ukonv Aufrufe benutzen jetzt High() fuer Maxlaenge
+  - STRG + INS funktioniert in Texteingabefeldern wie STRG+C
+
   Revision 1.18  2000/03/01 08:04:23  jg
   - UND/ODER Suche mit Suchoptionen "o" + "u"
     Debug-Checkfenster mit Suchoption "c"
