@@ -605,9 +605,12 @@ begin
       seek:=suchstring;
       maddstring(3,2,getres2(441,2),suchstring,32,SuchLen,range(' ',#255));
       mnotrim;
-      mappsel(false,history0);
-      mappsel(false,history1);
-      mappsel(false,history2);
+      if history0 <> '' then  { Bei Leerer Suchhistory kein Auswahlpfeil... }
+      begin
+        mappsel(false,history0);
+        mappsel(false,history1);
+        mappsel(false,history2);
+        end;
       mset3proc(seek_cutspace);
       mhnr(530);                                       { 'Suchbegriff ' }
       maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
@@ -2389,6 +2392,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/03/21 15:22:10  jg
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+
   Revision 1.27  2000/03/18 10:39:06  jg
   - Suche-MessageID Wahlmoeglichkeit:  schnelle Bezugs-DB Suche
     oder langsamere Msg-Base Suche mit Teilstrings und Suchoptionen
