@@ -43,192 +43,16 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xp4, xp4e, xpnt,xpdatum,xp_pgp, xpmakeheader;
-
+uses xp3,xp3o,xp4, xp4e, xpnt,xpdatum,xp_pgp, xpmakeheader, mime;
 
 procedure WriteHeader(var hd:theader; var f:file);
-
-  procedure wrs(s:string);
-  begin
-    s:= s+#13+#10;
-    blockwrite(f,s[1],length(s));
-  end;
-
-  procedure WriteStichworte(keywords:string);
-  var p  : byte;
-      stw: string[60];
-  begin
-    while keywords<>'' do begin
-      p:=cpos(',',keywords);
-      if p=0 then p:=length(keywords)+1;
-      stw:=trim(LeftStr(keywords,p-1));
-      if stw<>'' then wrs('Stichwort: '+stw);
-      delete(keywords,1,p);
-      end;
-  end;
-
-  function PMEmpfAnz: Integer;
-  var
-    i: Integer;
-  begin
-    Result:=iif(cpos('@',hd.empfaenger)>0,1,0);
-    for i := 0 to EmpfList.Count - 1 do
-      if cpos('@', EmpfList[i])>0 then
-        Inc(Result);
-  end;
-
-  procedure WriteZheader;
-  var
-    p1 : byte;
-    i: Integer;
-    s: String;
-    gb : boolean;
-  begin
-    with hd do begin
-      if not orgdate then
-        if replaceetime then
-          zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+datum+'00W+0'
-        else
-                  ZtoZCdatum(datum,zdatum);
-      gb:=ntGrossBrett(netztyp) or (netztyp=nt_ZConnect);
-      if gb and (cpos('@',empfaenger)=0) and (LeftStr(empfaenger,2)<>'/¯') then
-        UpString(empfaenger);
-      if nokop and (pmempfanz>1) then
-        wrs('STAT: NOKOP');
-      wrs('EMP: '+empfaenger);
-
-      for i := 0 to EmpfList.Count - 1 do
-      begin
-        s :=  EmpfList[i];
-        if gb and (cpos('@', s)=0) then
-          UpString(s);
-        wrs('EMP: '+ s);
-      end;
-      EmpfList.Clear;
-
-{      if gb and (cpos('@',AmReplyTo)=0) then
-        UpString(AmReplyTo);}
-      for i:=0 to followup.count-1 do
-        wrs('DISKUSSION-IN: '+followup[i]);
-      for i := 0 to OEM.Count - 1 do
-        wrs('OEM: '+ OEM[i]);
-      for i := 0 to Kopien.Count - 1 do
-        wrs('KOP: '+ Kopien[i]);
-      wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
-      if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
-      if wab<>'' then wrs('WAB: '+wab+iifs(war='','',' ('+war+')'));
-      wrs('BET: '+betreff);
-      wrs('EDA: '+zdatum);
-      wrs('MID: '+msgid);
-
-      for i := 0 to References.Count - 1 do
-        wrs('BEZ: '+ References[i]);
-
-      if ersetzt<>'' then wrs('ERSETZT: '+ersetzt);
-
-      if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then
-      begin
-        wrs('STAT: CTL');
-        wrs('CONTROL: cancel <' + GetLastReference + '>');
-      end;
-      wrs('ROT: '+pfad);
-
-      p1:=cpos(' ', ReplyTo);
-      if p1>0 then
-        ReplyTo := LeftStr(s, p1-1) + ' ' + trim(mid(s,p1+1));
-      if (ReplyTo <> '') and (LeftStr(ReplyTo,Length(absender)) <> absender) then
-        wrs('ANTWORT-AN: '+ ReplyTo);
-      if typ='B'       then wrs('TYP: BIN');
-      if datei<>''     then wrs('FILE: ' +LowerCase(datei));
-      if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
-      if error<>''     then wrs('ERR: '  +error);
-      if programm<>''  then wrs('MAILER: '+programm);
-      if prio<>0       then wrs('PRIO: '  +strs(prio));
-      if organisation<>'' then wrs('ORG: '+organisation);
-      if attrib and attrReqEB<>0 then
-        if wab <> ''     then wrs('EB: ' + wab) else
-        if ReplyTo <> '' then wrs('EB: ' + replyto)
-        else
-          wrs('EB:');
-      if attrib and attrIsEB<>0  then wrs('STAT: EB');
-      if pm_reply                then wrs('STAT: PM-REPLY');
-      if attrib and AttrQPC<>0   then wrs('CRYPT: QPC');
-      if charset<>''             then wrs('CHARSET: '+charset);
-      if attrib and AttrPmcrypt<>0 then wrs('CRYPT: PM-CRYPT');
-      if postanschrift<>''       then wrs('POST: '+postanschrift);
-      if telefon<>''   then wrs('TELEFON: '+telefon);
-      if homepage<>''  then wrs('U-X-Homepage: '+homepage);
-      if priority<>0   then wrs('U-X-Priority: '+strs(priority));
-      if noarchive and (pmempfanz=0) and
-          (netztyp in (netsRFC + [nt_ZConnect])) then
-        wrs('U-X-No-Archive: Yes');
-      if keywords<>''  then WriteStichworte(keywords);
-      if summary<>''   then wrs('Zusammenfassung: '+summary);
-      if distribution<>'' then wrs('U-Distribution: '+distribution);
-      if ersetzt<>''   then wrs('ERSETZT: '+ersetzt);
-
-      if pgpflags<>0 then begin
-        if pgpflags and fPGP_avail<>0    then wrs('PGP-Key-Avail:');
-        if pgpflags and fPGP_encoded<>0  then wrs('CRYPT: PGP');
-        if pgpflags and fPGP_signed<>0   then wrs('SIGNED: PGP');
-        if pgpflags and fPGP_clearsig<>0 then wrs('SIGNED: PGPCLEAR');
-        if pgpflags and fPGP_please<>0   then wrs('PGP: PLEASE');
-        if pgpflags and fPGP_request<>0  then wrs('PGP: REQUEST');
-        if pgpflags and fPGP_haskey<>0   then WritePGPkey_header(f);
-        if pgpflags and fPGP_sigok<>0    then wrs('X-XP-PGP: SigOk');
-        if pgpflags and fPGP_sigerr<>0   then wrs('X-XP-PGP: SigError');
-        { ToDo: fPGP_comprom }
-        if crypttyp='B' then wrs('Crypt-Content-TYP: BIN');
-        if ccharset<>'' then wrs('Crypt-Content-Charset: '+ccharset);
-        if ckomlen>0    then wrs('Crypt-Content-KOM: '+strs(ckomlen));
-        end;
-
-      if ntConv(netztyp) then begin
-        wrs('X_C:');
-        wrs('X-XP-NTP: '+strs(netztyp));
-        if x_charset<>'' then wrs('X-Charset: '+x_charset);
-        if real_box<>''  then wrs('X-XP-BOX: '+real_box);
-        if hd_point<>''  then wrs('X-XP-PNT: '+hd_point);
-        if pm_bstat<>''  then wrs('X-XP-BST: '+pm_bstat);
-        if attrib<>0     then wrs('X-XP-ATT: '+hex(attrib,4));
-        if ReplyPath<>'' then wrs('X-XP-MRP: '+replypath);
-        if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
-        if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
-        end;
-      if fido_to<>''   then wrs('F-TO: '+fido_to);
-      if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
-      if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
-                                iifs(boundary<>'','; boundary="'+boundary+'"','')+
-                                iifs(x_charset<>'','; charset='+x_charset,'')+
-                                iifs(datei<>'','; name="'+datei+'"',''));
-      if archive then wrs('X-XP-ARC:');
-      if xpointctl<>0  then wrs('X-XP-CTL: '+strs(XpointCtl));
-      wrs('LEN: '+strs(groesse));
-      if komlen>0 then wrs('KOM: '+strs(komlen));
-      for i := 1 to ULine.Count -1 do
-        wrs(Uline[i]);
-      for i := 1 to xLine.Count -1 do
-        wrs(xline[i]);
-
-      wrs('');
-      end;
-  end;
-
+var s:TMemoryStream;
 begin
-  if ntZConnect(hd.netztyp) then
-    WriteZheader
-  else begin
-    wrs(hd.empfaenger);
-    wrs(LeftStr(hd.betreff,40));
-    wrs(hd.absender);
-    wrs(hd.datum);
-    wrs(hd.pfad);
-    wrs(hd.msgid);
-    wrs(hd.typ);
-    wrs(strs(hd.groesse));
-    end;
+  s:=TMemoryStream.Create;
+  hd.WriteToStream(s);
+  blockwrite(f,PChar(s.Memory)^,s.Size);
+  s.Free;
 end;
-
 
 { aufrufen nach jedem dbAppend(bbase): }
 
@@ -444,6 +268,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/09/08 14:29:08  cl
+  - THeader can now write itsself to streams
+
   Revision 1.49  2001/09/07 09:17:56  mk
   - added AddNewBrett procedure
 
