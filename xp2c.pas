@@ -278,13 +278,9 @@ end;
 procedure msgoptions;
 var x,y : byte;
     brk : boolean;
-    xid : string;
     i   : byte;
     xnr : byte;
-    xids: array[0..3] of string;
 begin
-  for i:=0 to 3 do
-    xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
   dialog(57,21,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
@@ -305,11 +301,6 @@ begin
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
 {$ENDIF }
-  xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
-  maddstring(36,9,'## XP ## ',xid,7,7,'');
-  mhnr(248);
-  for i:=3 downto 0 do
-    mappsel(true,xids[i]);   { 'immer˘AMs˘PMs˘nie' }
   maddbool(3,12,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /ØUnversandt' }
   maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
@@ -322,14 +313,8 @@ begin
   maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
-  if not brk and mmodified then begin
-    xnr:=0;
-    for i:=0 to 3 do
-      if LowerCase(xid)=LowerCase(xids[i]) then xnr:=i;
-    XP_ID_PMs:=(xnr=1) or (xnr=3);
-    XP_ID_AMs:=(xnr=2) or (xnr=3);
+  if not brk and mmodified then
     GlobalModified;
-    end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1390,6 +1375,9 @@ end.
 
 {
   $Log$
+  Revision 1.88  2001/05/19 16:12:53  ma
+  - removed XP_ID (shareware notice)
+
   Revision 1.87  2001/04/18 11:48:49  ml
   - fix external Editor under linux (You can now use YOUR Editor for all Mails)
 

@@ -522,10 +522,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 41   manuell
 42   RÅckfrage
 + 252
-0    nie
-1    PMs
-2    AMs
-3    immer
 5    Nachrichten-Optionen
 6    max. Speichergrî·e fÅr BinÑrnachrichten:~
 7    KB
@@ -3657,6 +3653,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.12  2001/05/19 16:12:53  ma
+# - removed XP_ID (shareware notice)
+#
 # Revision 1.11  2001/04/29 22:58:03  ma
 # - added GPL infos
 #

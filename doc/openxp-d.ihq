@@ -4934,25 +4934,6 @@ Einstellung ohne Bedeutung.
 
 @
 248
-Hier wird festgelegt, bei welchen Nachrichten Cross-
-Point mit seinem Namen unterschreibt:
-
-<<immer>>   bei allen Nachrichten
-
-<<AMs>>     nur bei ”ffentlichen ("allgemeinen") Nachr.
-
-<<PMs>>     nur bei privaten Nachrichten
-
-<<nie>>     gar nicht :-(
-
-Die Einstellung fr private Nachrichten gilt nur fr
-registrierte CrossPoint-Versionen. Die Einstellung
-fr ”ffentliche Nachrichten gilt nicht frs MausNet,
-fr FidoNet finden Sie eine gesonderte Einstellung
-unter [/Config/Optionen/Netze].@8104
-
-@
-249
 <<[x]>> -> Nicht abgeschickte Nachrichten (<<<Esc> >>im Sen-
        defenster) werden im Brett /¯Unversandt ge-
        parkt und k”nnen dann mit /Nachricht/Weiter-
@@ -4968,7 +4949,7 @@ nicht mit unversandten Nachrichten verwechseln, die
 mit einem <<!>> markiert sind und zum Netcall-Versand
 bereitliegen.
 @
-250
+249
 <<[x]>> -> CrossPoint sendet beim Erhalt einer Nachricht,
        deren Betreff mit "\##" beginnt, automatisch
        eine Empfangsbest„tigung zurck. Das Gleiche
@@ -4981,12 +4962,12 @@ bereitliegen.
 Der Empfang einer Nachricht kann auch manuell mit
 [/Nachricht/Weiterleiten/Best„tigung] best„tigt werden.@12106
 @
-251
+250
 <<[x]>> -> Nach dem Beantworten jeder PM erfolgt eine
        Abfrage, ob die Nachricht archiviert werden
        soll.
 @
-252
+251
 <<ZConnect / RFC:
 
 Wenn Sie hier <<[x]>> einstellen, versieht XP standard-
@@ -5015,7 +4996,7 @@ denn, Sie schreiben sie ausdrcklich in den Nach-
 richtentext.
 
 @
-253
+252
 <<ZConnect / RFC:
 
 Manche Absender setzen einen Antwort-an-Header in
@@ -5034,7 +5015,7 @@ an-Headerzeile vorhanden ist.
 Ist der Schalter deaktiviert, wird grunds„tzlich die
 Antwort-an-Adresse verwendet, wenn vorhanden.
 @
-254
+253
 <<ZConnect / RFC:
 
 <<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
@@ -5047,7 +5028,7 @@ keine Garantie dafr, daá Ihre Nachrichten nicht
 doch gespeichert werden. "Das Usenet vergiát nicht!"
 
 @
-255
+254
 <<ZConnect / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
@@ -5066,7 +5047,7 @@ doch gespeichert werden. "Das Usenet vergiát nicht!"
 Ohne guten Grund sollte dieser Schalter nicht akti-
 viert werden.
 @
-256
+255
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -5077,7 +5058,7 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-257
+256
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.

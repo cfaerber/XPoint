@@ -151,14 +151,6 @@ begin
       FidoAbsAdr:=box+'.'+pointname;
 end;
 
-procedure Set_XP_ID;
-begin
-  case netztyp of
-    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+' ##'+#13#10;
-    else      XP_ID:='## '+xp_xp+' '+verstr+' ##'+#13#10;
-  end;
-end;
-
 function orishuffle(fn:string):string;
 var t     : text;
     s     : string;
@@ -215,7 +207,6 @@ end;
 procedure calc_hdsize;
 var f : file;
 begin
-  Set_XP_ID;
   addsize:=0;
   if header<>'' then begin           { Kopf-File testen }
     assign(f,header);
@@ -227,12 +218,6 @@ begin
     end;
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
-  if (netztyp=nt_Maus) and not pm and (Developer or
-     ((RightStr(LowerCase(empfaenger),11)<>'/maustausch') and
-       (RightStr(LowerCase(empfaenger),6)<>'/mt.xp'))) then
-    XpID:=false;
-  XID:=iifs(XpID and (netztyp<>nt_Fido),XP_ID,'');
-  inc(addsize,length(XID));
   inc(addsize,length(fido_origin(true)));
 { if flMnet then inc(addsize,length(MausNet)+2);
   if flMloc then inc(addsize,length(MausLoc)+2); }
@@ -860,24 +845,6 @@ begin
       betreff:=trim(mid(betreff,length(empfbkennung)+1));
 end;
 
-function TestXPointID:boolean;
-var s  : string;
-    rr : word;
-begin
-  Set_XP_ID;
-  TestXPointID:=true;
-  assign(f,datei);
-  if existf(f) then begin
-    fm_ro; reset(f,1); fm_rw;
-    seek(f,max(0,filesize(f)-length(XP_ID)-100));
-    SetLength(s,length(XP_ID)+100);
-    blockread(f,s[1],length(XP_ID)+100,rr);
-    SetLength(s, rr);
-    close(f);
-    TestXPointID:=(pos(XP_ID,s)>0);
-    end;
-end;
-
 procedure SetLocalPM;
 var l : byte;
 begin
@@ -1148,6 +1115,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/05/19 16:12:53  ma
+  - removed XP_ID (shareware notice)
+
   Revision 1.52  2001/04/17 01:03:03  ma
   - enabled FQDN with NNTP/... server type
 

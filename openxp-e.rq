@@ -510,10 +510,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 41   manual
 42   ask on quit
 + 252
-0    never
-1    PMs
-2    AMs
-3    always
 5    Message options
 6    Save binary messages up to:~
 7    KB
@@ -3697,6 +3693,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.15  2001/05/19 16:12:52  ma
+# - removed XP_ID (shareware notice)
+#
 # Revision 1.14  2001/05/13 14:36:31  mf
 # Minor cosmetic changes.
 #

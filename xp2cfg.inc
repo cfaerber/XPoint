@@ -485,13 +485,6 @@ begin
   DruckFF:='^L';
   DruckLira:=0;
   autocpgd:=true;
-  XP_ID_PMs:=false;  {alt: XP_ID_PMs:=true;}
-  XP_ID_AMs:=false;  {alt: XP_ID_AMs:=true;}
-  {Keine Xp-Zeile unter AMs und PMs setzen.
-  Die Sharewareeinschr‰nkung das das unregistrierte
-  Xp unter PMs immer die XP-Zeile setzt bleibt davon
-  unberÅhrt. Dies wird an anderer Stelle geprÅft und
-  gesetzt. }
   XP_Tearline := true;
   UserSlash:=true;
 {$IFDEF UnixFS }
@@ -830,8 +823,6 @@ begin
   writeln(t,'Seitenlaenge=',druckformlen);
   writeln(t,'FormFeed=',DruckFF);
   writeln(t,'DruckRand=',DruckLira);
-  writeln(t,'XPoint-PM-ID=',jnf(XP_ID_PMs));
-  writeln(t,'XPoint-AM-ID=',jnf(XP_ID_AMs));
   writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
   writeln(t,'UserSlash=',jnf(UserSlash));
   writeln(t,'EditBackup=',BAKext);
@@ -1391,8 +1382,6 @@ begin
           getb(su,  'Seitenlaenge',druckformlen) or
           gets(s,su,'FormFeed',druckff,80) or
           getb(su,  'DruckRand',drucklira) or
-          getx(su,  'XPoint-PM-ID',XP_ID_PMs) or
-          getx(su,  'XPoint-AM-ID',XP_ID_AMs) or
           getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
           gets(s,su,'EditBackup',BAKext,3) or
@@ -1685,6 +1674,9 @@ end;
 
 {
   $Log$
+  Revision 1.113  2001/05/19 16:12:53  ma
+  - removed XP_ID (shareware notice)
+
   Revision 1.112  2001/04/15 19:32:24  ma
   - TCP/IP netcalls disabled in DOS32
 

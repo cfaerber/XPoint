@@ -3668,9 +3668,9 @@ newsgroup, when a new user is entered through "new'
 in the User Editing mode.
 @
 243
-Decides whether messages written by yourself should
-be put on "hold" (ie. with "+" sign) when you have
-written them (see [message display]).@4015
+Decides whether public messages written by yourself
+should be put on "hold" (ie. with "+" sign) when you
+have written them (see [message display]).@4015
 
 <<[x]>>     Are put on hold directly after writing,
         the so-called Ego-Archive.
@@ -3679,6 +3679,21 @@ written them (see [message display]).@4015
         and are deleted when their time comes.
 @
 244
+Decides whether private messages written by yourself
+should be put on "hold" (ie. with "+" sign) when you
+have written them (see [message display]).@4015
+
+<<[x]>>     Are put on hold directly after writing.
+
+        If you want to archive mails that have been
+        sent to a certain user only you should leave
+        this switch disabled and set hold time for
+        this user to zero.
+
+<<[ ]>>     They are handled like all other messages
+        and are deleted when their time comes.
+@
+245
 Normally the exact date and time of you writing the
 message is stored and displayed publicly with the
 message. However you may not want people to know
@@ -3693,7 +3708,7 @@ The correct date of writing, (assuming your
 computer's date is set correctly), will always be
 recorded.
 @
-245
+246
 CrossPoint will, by default, put one of the forms
 of [Re:] for you onto the subject of messages you@4012
 are replying to.
@@ -3715,7 +3730,7 @@ In Mausnet nothing is added to the subject, in
 UseNet always only a simple single "Re:" is used.
 
 @
-246
+247
 <<ZCONNECT, UUCP/RFC:
 
 You have to set the correct Time Zone here.
@@ -3739,25 +3754,6 @@ behind.
 
 Note: if you have the 00:00 switch set, not only does
 this setting have no effect, you don't even see it!
-
-@
-247
-Which types of messages allow CrossPoint to advertise
-itself as the point programme used:
-
-<<always>>  on all messages.
-
-<<AMs>>     only public messages.
-
-<<PMs>>     only private messages.
-
-<<never>>   well, never :-(
-
-Note: the "PM" and "never" settings may only be
-changed in the registered version of CrossPoint.
-In MausNet, you can switch it off for PMs only,
-and for FidoNet you find a special setting under
-[Config/Options/Nets].@8104
 
 @
 248

@@ -1793,7 +1793,7 @@ begin
     end;
   SaveConfig2;
   if nt=nt_UUCP then begin
-    XP_ID_AMs:=false;
+//    XP_ID_AMs:=false;
     SaveConfig;
     end;
   end;
@@ -1801,6 +1801,9 @@ end.
 
 {
   $Log$
+  Revision 1.61  2001/05/19 16:12:53  ma
+  - removed XP_ID (shareware notice)
+
   Revision 1.60  2001/04/17 00:19:37  ma
   - fixed crash occurring with screen lines > 50+-c
 
