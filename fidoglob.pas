@@ -68,7 +68,6 @@ type
                 ispoint    : boolean;
                 end;
 
-        PNodeListItem = ^TNodeListItem;
         ///////////////////////////////////////////////////////////////////////
         TNodeListItem  = class
         public
@@ -82,7 +81,7 @@ type
                 format     : byte; { NL, P24, 3=PVT, 4=4D, 5=FD }
                 zone,net,node : word;
                 sort       : longint;   { Temporaerfeld }
-                end;
+              end;
 
         ///////////////////////////////////////////////////////////////////////
         //Nodelisten Verwaltung
@@ -90,14 +89,13 @@ type
         public
                 mEntrys         :TList;                 //die einzelnen Listen
                 mOpen           :boolean;
-                ///////////////////////////////////////////
                 constructor     Create;
                 procedure       LoadConfigFromFile;
                 procedure       SaveConfigToFile;               // NODELST.CFG speichern
-                procedure       AddEntry( PNLItem :PNodeListItem);
+                procedure       AddEntry(NLItem :TNodeListItem);
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
-                end;
+              end;
         ///////////////////////////////////////////////////////////////////////
 
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
@@ -124,7 +122,7 @@ var t  : text;
     ss : string[20];
     p  : byte;
     fa : fidoadr;
-    Item: PNodeListItem;
+    Item: TNodeListItem;
 begin
   create;                               // call first constructor
   assign(t,NodelistCfg);
@@ -132,10 +130,10 @@ begin
     reset(t);
     while not eof(t) do
     begin
-      new(Item);
-      item^:=TNodeListItem.Create;
+      item := TNodeListItem.Create;
       mEntrys.Add(Item);
-      with Item^ do begin
+      with Item do
+      begin
         repeat
           readln(t,s);
           p:=cpos('=',s);
@@ -160,7 +158,7 @@ begin
         if (format<1) or (format>5) then
         begin
           mEntrys.Remove(Item);
-          Dispose(Item);
+          Item.Free;
         end;
       end;  { with }
     end;  { while }
@@ -175,7 +173,7 @@ begin
   assign(t,NodelistCfg);
   rewrite(t);
   for i:=0 to mEntrys.Count - 1 do
-  with PNodeListItem(mEntrys[i])^ do
+  with TNodeListItem(mEntrys[i]) do
   begin
     writeln(t,'Listfile=',listfile);
     if pos('###',listfile)>0 then
@@ -200,7 +198,7 @@ end;
 function TNodeList.GetMainNodelist: integer;
 begin
   Result:=mEntrys.Count-1;
-  while (Result>=0) and (PNodeListItem(mEntrys[Result])^.listfile <>'NODELIST.###') do
+  while (Result>=0) and (TNodeListItem(mEntrys[Result]).listfile <>'NODELIST.###') do
     dec(Result);
 end;
 
@@ -210,7 +208,7 @@ begin
   if n>=mEntrys.Count then
     result:=''
   else
-    with PNodeListItem(mEntrys[n])^ do
+    with TNodeListItem(mEntrys[n]) do
     begin
       p:=pos('###',listfile);
       if p=0 then
@@ -220,18 +218,18 @@ begin
     end;
 end;
 
-procedure TNodeList.AddEntry(PNLItem : PNodeListItem);       //
+procedure TNodeList.AddEntry(NLItem : TNodeListItem);       //
 var
   i,j : integer;
 begin
 
-  mEntrys.Add(PNLItem);                         // merge entry
+  mEntrys.Add(NLItem);                         // merge entry
 
   for i:=0 to mEntrys.Count - 1 do              // and sort Dateigr”áe sortieren
-    PNodeListItem(mEntrys[i])^.sort:=_filesize(FidoDir+ GetFilename(i));
+    TNodeListItem(mEntrys[i]).sort:=_filesize(FidoDir+ GetFilename(i));
   for i:=0 to mEntrys.Count - 1 do
     for j:=mEntrys.Count - 1 downto 1 do
-      if PNodeListItem(mEntrys[j])^.sort>PNodeListItem(mEntrys[j-1])^.sort then
+      if TNodeListItem(mEntrys[j]).sort>TNodeListItem(mEntrys[j-1]).sort then
         mEntrys.Exchange(j, j-1);
 end;
 
@@ -293,6 +291,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/01/06 17:18:07  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.7  2000/12/29 16:44:25  mo
   - class TNodeList, new procedure AddEntry
 

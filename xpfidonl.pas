@@ -170,7 +170,6 @@ var fn      : string;
     useclip : boolean;
     i       : integer;
     NLItem  : TNodeListItem;
-    PNLItem : PNodeListItem;
     p       : byte;
     detect  : boolean;
     arc     : integer;
@@ -273,9 +272,7 @@ begin   //function NewNodeEntry:boolean;
             if (ExtractFilePath(fn)=OwnPath+FidoDir) or
                filecopy(fn,FidoDir+Extractfilename(fn)) then
             begin
-              New(PNLItem);
-              PNLItem^ := NLItem;
-              NodeList.AddEntry(PNLItem);
+              NodeList.AddEntry(NLItem);
               if listfile='NODELIST.###' then
                 ShrinkNodelist(false);
               NewNodeEntry:=true;
@@ -438,7 +435,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   diffnames:=extractfilename(files);
 
   for i:=0 to NodeList.mEntrys.Count - 1 do
-  with PNodeListItem(Nodelist.mEntrys[i])^ do
+  with TNodeListItem(Nodelist.mEntrys[i]) do
   begin
     ucount:=5;
     nextnr:=number;
@@ -521,6 +518,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2001/01/06 17:18:08  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.30  2000/12/29 22:46:57  mo
   - kein crash wenn bei Programmstart 'FIDO\NODELIST.IDX nicht vorhanden
 

@@ -740,18 +740,18 @@ begin
 
   for liste:=0 to NodeList.mEntrys.Count - 1 do
   begin
-    zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
+    zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
     if zone=0 then zone:=DefaultZone;
     net:=0; node:=0;
     assign(nf,FidoDir+NodeList.GetFilename(liste));
-    ltyp:=PNodeListItem(Nodelist.mEntrys[liste])^.format;
+    ltyp:=TNodeListItem(Nodelist.mEntrys[liste]).format;
     case ltyp of
       nlPoints24,
       nl4DPointlist,
-      nlFDpointlist : zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
+      nlFDpointlist : zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
       nlNode        : begin
-                         zone:=PNodeListItem(Nodelist.mEntrys[liste])^.zone;
-                         net :=PNodeListItem(Nodelist.mEntrys[liste])^.net;
+                         zone:=TNodeListItem(Nodelist.mEntrys[liste]).zone;
+                         net :=TNodeListItem(Nodelist.mEntrys[liste]).net;
                       end;
     end;
 
@@ -840,7 +840,7 @@ begin
 
               nlNode:
                 if not newnet then
-                  AppPoint(PNodeListItem(Nodelist.mEntrys[liste])^.node);
+                  AppPoint(TNodeListItem(Nodelist.mEntrys[liste]).node);
 
               nlPoints24:
                 if not newnet then
@@ -874,7 +874,7 @@ begin
 
         if points>0 then begin
           if nodes=0 then begin       { ntNode }
-            np^[0].node:=PNodeListItem(Nodelist.mEntrys[liste])^.node;
+            np^[0].node:=TNodeListItem(Nodelist.mEntrys[liste]).node;
             inc(nodes);
             end;
           np^[nodes-1].adr:=filepos(idf);
@@ -2225,6 +2225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/01/06 17:18:08  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.40  2000/12/28 23:12:03  mo
   - class TNodeList ergänzt
 

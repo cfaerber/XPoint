@@ -747,7 +747,7 @@ again:
   List := TLister.CreateWithOptions(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
   for i:=0 to NodeList.mEntrys.Count - 1 do
-    with PNodeListItem(Nodelist.mEntrys[i])^,NB_Data^ do
+    with TNodeListItem(Nodelist.mEntrys[i]),NB_Data^ do
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
           (pl and (format<>nlNodelist))) and
@@ -893,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.27  2001/01/06 17:18:07  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.26  2000/12/28 23:12:03  mo
   - class TNodeList ergänzt
 

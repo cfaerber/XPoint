@@ -914,7 +914,7 @@ var   zone     : ^zonea;
     assign(nl,FidoDir+NodeList.GetFilename(nls)); settextbuf(nl,buf^,bufs);
     reset(nl);
     ende:=false;
-    _z:=PNodeListItem(Nodelist.mEntrys[nls])^.zone; _n:=0; _nodes:=0;
+    _z:=TNodeListItem(Nodelist.mEntrys[nls]).zone; _n:=0; _nodes:=0;
     hostname:='';
     newfile:=true;
     brk:=false;
@@ -1106,7 +1106,7 @@ begin
 
   brk:=false;
   for nls:=0 to NodeList.mEntrys.Count - 1 do
-    if PNodeListItem(Nodelist.mEntrys[nls])^.format=1 then
+    if TNodeListItem(Nodelist.mEntrys[nls]).format=1 then
     begin   { Nodeliste }
       attrtxt(col.colmboxhigh);
       mwrt(x+5+length(getres2(2612,25)),y+2,forms(NodeList.GetFilename(nls),12));
@@ -1249,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/01/06 17:18:08  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.32  2000/12/27 22:36:31  mo
   -new class TfidoNodeList
 

@@ -643,7 +643,7 @@ var
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
-          5 : with PNodeListItem(Nodelist.mEntrys[a+i-1])^ do
+          5 : with TNodeListItem(Nodelist.mEntrys[a+i-1]) do
                 Wrt2(' '+forms(listfile,14)+                                    // NL-Dateiname
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+   //Nodelistennummer
                       forms(updatefile,14)+forms(updatearc,14)+
@@ -1397,18 +1397,17 @@ var
   var nlr : TNodeListItem;
       brk : boolean;
   begin
-    nlr:=TNodeListItem.Create;
-    nlr:=PNodeListItem(Nodelist.mEntrys[strIdx])^;
+    nlr:=TNodeListItem(Nodelist.mEntrys[strIdx]);
     EditNLentry(nlr,brk);
     if not brk then
     begin
       reindex:=reindex or
-               (nlr.format<>PNodeListItem(nodelist.mEntrys[strIdx])^.format) or
-               (nlr.zone<>PNodeListItem(nodelist.mEntrys[strIdx])^.zone) or
+               (nlr.format<>TNodeListItem(nodelist.mEntrys[strIdx]).format) or
+               (nlr.zone<>TNodeListItem(nodelist.mEntrys[strIdx]).zone) or
                ((nlr.format=3) and
-                ((nlr.net<> PNodeListItem(nodelist.mEntrys[strIdx])^.net) or
-                 (nlr.node<> PNodeListItem(nodelist.mEntrys[strIdx])^.node)));
-      PNodeListItem(Nodelist.mEntrys[strIdx])^:=nlr;
+                ((nlr.net<> TNodeListItem(nodelist.mEntrys[strIdx]).net) or
+                 (nlr.node<> TNodeListItem(nodelist.mEntrys[strIdx]).node)));
+      Nodelist.mEntrys[strIdx] :=nlr;
       modi:=true;
     end;
   end;
@@ -1429,12 +1428,12 @@ var
 
     procedure del_it;
     var
-      Item: PNodeListItem;
+      Item: TNodeListItem;
     begin
       if a+CurRow-1<anzahl then
       begin
         Item := NodeList.mEntrys[strIdx];
-        Dispose(Item);
+        Item.Free;
         NodeList.mEntrys.Delete(strIdx);
         dec(anzahl);
         modi:=true;
@@ -2052,6 +2051,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.51  2001/01/06 17:18:07  mk
+  - fixed some TNodeListItem-Bugs
+
   Revision 1.50  2001/01/04 16:10:45  ma
   - adjusted unit names in "uses" statement
 
