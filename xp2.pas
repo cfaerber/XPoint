@@ -1043,7 +1043,6 @@ end;
 procedure testlock;
 var i : integer;
 begin
-{$IFDEF BP } { !! Diese Routine mu· noch portiert werden }
   if ParNolock then exit;
   assign(lockfile, 'lockfile');
   filemode:=FMRW + FMDenyWrite;
@@ -1062,7 +1061,6 @@ begin
   lockopen:=true;
   { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
   FileMode := FMRW;
-{$ENDIF }
 end;
 
 
@@ -1092,6 +1090,10 @@ end;
 end.
 { 
   $Log$
+  Revision 1.21  2000/03/16 19:25:10  mk
+  - fileio.lock/unlock nach Win32 portiert
+  - Bug in unlockfile behoben
+
   Revision 1.20  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

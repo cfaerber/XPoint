@@ -1505,13 +1505,13 @@ begin
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-{$IFDEF BP }
   if lockopen then begin
     unlockfile(lockfile);
     close(lockfile);
     erase(lockfile);
     if ioresult<>0 then ;
   end;
+{$IFDEF BP }
   if videotype>1 then setbackintensity(false);
   setcbreak(orgcbreak);
   exitproc:=oldexit;
@@ -1737,6 +1737,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/03/16 19:25:10  mk
+  - fileio.lock/unlock nach Win32 portiert
+  - Bug in unlockfile behoben
+
   Revision 1.16  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

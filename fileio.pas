@@ -21,6 +21,9 @@ uses
 {$IFDEF Ver32 }
   sysutils,
 {$ENDIF }
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
   dos, xpglobal, typeform;
 
 const FMRead       = $00;     { Konstanten fÅr Filemode }
@@ -514,8 +517,17 @@ begin
   ShareLoaded:=shareda;
 end;
 
+{$IFDEF FPC }
+  { Wir wissen, was Hi/Lo bei Longint zurÅckliefert }
+  {$WARNINGS OFF }
+{$ENDIF }
 
 function lock(var datei:file; from,size:longint):boolean;
+{$IFDEF Win32 }
+begin
+  Lock := Windows.LockFile(FileRec(Datei).Handle,
+    Lo(From), Hi(From), Lo(Size), Hi(Size));
+{$ELSE }
 var regs : registers;
 begin
   if Shareda then with regs do begin
@@ -528,9 +540,15 @@ begin
     end
   else
     lock:=true;
+{$ENDIF }
 end;
 
 procedure unlock(var datei:file; from,size:longint);
+{$IFDEF Win32 }
+begin
+  Windows.UnLockFile(FileRec(Datei).Handle,
+    Lo(From), Hi(From), Lo(Size), Hi(Size));
+{$ELSE }
 var regs : registers;
 begin
   if shareda then with regs do begin
@@ -540,7 +558,13 @@ begin
     si:=size shr 16; di:=size and $ffff;
     msdos(regs);
     end;
+{$ENDIF }
 end;
+
+{$IFDEF FPC }
+  { Wir wissen, was Hi/Lo bei Longint zurÅckliefert }
+  {$WARNINGS ON }
+{$ENDIF }
 
 function lockfile(var datei:file):boolean;
 begin
@@ -549,7 +573,7 @@ end;
 
 procedure unlockfile(var datei:file);
 begin
-  unlock(datei,9,maxlongint);
+  unlock(datei,0,maxlongint);
 end;
 
 
@@ -697,6 +721,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/16 19:25:10  mk
+  - fileio.lock/unlock nach Win32 portiert
+  - Bug in unlockfile behoben
+
   Revision 1.10  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
