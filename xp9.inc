@@ -20,15 +20,9 @@
       bdom : boolean;
       map  : boolean;
       blen : byte;
-{$ifdef hasHugeString}
       btxt : string;
       fido : boolean;
       s    : string;
-{$else}
-      btxt : string[15];
-      fido : boolean;
-      s    : string[20];
-{$endif}
       yy   : byte;
   begin
     DomainNt:=nt;
@@ -119,11 +113,7 @@
 
   procedure ReadNetztyp(box:string; var nt:byte; var brk:boolean);
   var x,y  : byte;
-{$ifdef hasHugeString}
       ntyp : string;
-{$else}
-      ntyp : string[10];
-{$endif}
       i    : integer;
   begin
     ntyp:=Netz_Typ(nt);
@@ -154,7 +144,6 @@
   end;
 
   procedure NewBox;
-{$ifdef hasHugeString}
   var name : string;
       dname: string;
       user : string;
@@ -167,20 +156,6 @@
       fido : string;
       brk  : boolean;
       fn   : string;
-{$else}
-  var name : string[BoxNameLen];
-      dname: string[8];
-      user : string[30];
-      komm : string[30];
-      maps : string[20];
-      real : string[40];
-      dom  : string[60];
-      fqdom: string[60];  {16.01.00 HS}
-      bdom : string[60];
-      fido : string[40];
-      brk  : boolean;
-      fn   : string[12];
-{$endif}
       nt,i : byte;
       b    : byte;
   begin
@@ -203,7 +178,7 @@
       if dbFound then rfehler(921)   { 'Box ist bereits vorhanden' }
       else begin
         dbGo(d,drec[p]);
-        dbRead(d,'dateiname',fn);
+        fn:= dbReadStr(d,'dateiname');
         ReadBox(nt,fn,boxpar);
         boxpar^.boxname:=name;
         boxpar^.username:=user;
@@ -259,17 +234,17 @@
         WriteBox(dname,boxpar);
         dbAppend(d);
         dbWrite(d,'netztyp',nt);
-        dbWrite(d,'boxname',name);
-        dbWrite(d,'username',user);
-        dbWrite(d,'pointname',boxpar^.pointname);
-        dbWrite(d,'dateiname',dname);
-        dbWrite(d,'kommentar',komm);
-        dbWrite(d,'nameomaps',maps);
-        dbWrite(d,'realname',real);
-        dbWrite(d,'domain',dom);
-        dbWrite(d,'fqdn',fqdom);  {16.01.00 HS}
-        dbWrite(d,'boxdomain',bdom);
-        dbWrite(d,'fidoname',fido);
+        dbWriteStr(d,'boxname',name);
+        dbWriteStr(d,'username',user);
+        dbWriteStr(d,'pointname',boxpar^.pointname);
+        dbWriteStr(d,'dateiname',dname);
+        dbWriteStr(d,'kommentar',komm);
+        dbWriteStr(d,'nameomaps',maps);
+        dbWriteStr(d,'realname',real);
+        dbWriteStr(d,'domain',dom);
+        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
+        dbWriteStr(d,'boxdomain',bdom);
+        dbWriteStr(d,'fidoname',fido);
         if (name='99:99/99') or (name='99:99/98') then begin  { Fido-Crashbox }
           b:=2;   { kein /Netcall/Alle }
           dbWrite(d,'script',b);
@@ -284,19 +259,19 @@
   end;
 
   procedure DelBox;
-  var name  : string[20];
-      dname : string[20];
+  var name  : string;
+      dname : string;
       pp    : boolean;
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'boxname',name);
+    name:= dbReadStr(d,'boxname');
     if name=DefaultBox then
       rfehler(922)            { 'Stammbox kann nicht gelîscht werden!' }
     else begin
-      dbRead(d,'dateiname',dname);
+      dname:= dbReadStr(d,'dateiname');
       if (dname='') or (length(dname)>8) then begin
         write(#7);
-        dbRead(d,'boxname',dname);
+        dname:= dbReadStr(d,'boxname');
         end;
       pp:=_filesize(ownpath+dname+'.pp')>0;
       if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich lîschen' }
@@ -327,7 +302,7 @@
 
   procedure SetDefaultBox;
   const nn : shortint = 1;
-  var name : string[20];
+  var name : string;
       n    : shortint;
   begin
     dbGo(d,drec[p]);
@@ -336,7 +311,7 @@
     pophp;
     if n<>0 then nn:=abs(n);
     if n>0 then begin
-      dbRead(d,'boxname',name);
+      name:= dbReadStr(d,'boxname');
       if n=1 then DefaultBox:=name
       else begin
         if dbReadInt(d,'netztyp')<>nt_Fido then begin
@@ -368,13 +343,8 @@
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
   var x,y,br : byte;
-{$ifdef hasHugeString}
       pname  : string;
       lhapar : string;
-{$else}
-      pname  : string[25];
-      lhapar : string[5];
-{$endif}
       add    : shortint;
       fido   : boolean;
       uucp   : boolean;
@@ -390,7 +360,7 @@
       pp     : byte;
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'pointname',pname);
+    pname:= dbReadStr(d,'pointname');
     dbRead(d,'script',flags);
     fido:=(nt=nt_Fido);
     uucp:=(nt=nt_UUCP);
@@ -410,7 +380,7 @@
     with boxpar^ do begin
       case nt of
         nt_Maus : begin
-                    dbRead(d,'boxname',pname);
+                    pname:= dbReadStr(d,'boxname');
                     maddstring(3,2,getres2(920,1),passwort,20,20,''); mhnr(141);
                   end;                                        { 'Pa·wort  ' }
         nt_Fido : begin
@@ -601,7 +571,7 @@
         if (pp=1) or ((pp>0) and (SendAKAs[pp-1]=' ')) then
           delete(SendAKAs,pp,length(boxname)+1);
         end;
-      dbWrite(d,'pointname',pname);
+      dbWriteStr(d,'pointname',pname);
       boxpar^.pointname:=pname;
       if ntOnePW(nt) then boxpar^.o_passwort:=boxpar^.passwort;
       if uucp then with boxpar^ do begin
@@ -694,7 +664,6 @@
   end;
 
   procedure EditName(var brk:boolean);
-{$ifdef hasHugeString}
   var name,user,komm  : string;
       dname,old_dname : string;
       realname        : string;
@@ -703,16 +672,6 @@
       nt              : byte;
       newbox,newibox  : boolean;
       fidoname        : string;
-{$else}
-  var name,user,komm  : string[40];
-      dname,old_dname : string[8];
-      realname        : string[40];
-      dom,bdom,fqdom  : string[60];  {16.01.00 HS}
-      maps            : string[20];
-      nt              : byte;
-      newbox,newibox  : boolean;
-      fidoname        : string[40];
-{$endif}
 
     procedure renbox(ext:string);
     var f : file;
@@ -728,16 +687,16 @@
   begin
     dbGo(d,drec[p]);
     dbRead(d,'netztyp',nt);
-    dbRead(d,'boxname',name);
-    dbRead(d,'dateiname',dname);
-    dbRead(d,'username',user);
-    dbRead(d,'kommentar',komm);
-    dbRead(d,'nameomaps',maps);
-    dbRead(d,'realname',realname);
-    dbRead(d,'domain',dom);
-    dbRead(d,'fqdn',fqdom);  {16.01.00 HS}
-    dbRead(d,'boxdomain',bdom);
-    dbRead(d,'fidoname',fidoname);
+    name:= dbReadStr(d,'boxname');
+    dnAme:= dbReadStr(d,'dateiname');
+    user:= dbReadStr(d,'username');
+    komm:= dbReadStr(d,'kommentar');
+    maps:= dbReadStr(d,'nameomaps');
+    realname:= dbReadStr(d,'realname');
+    dom:= dbReadStr(d,'domain');
+    fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
+    bdom:= dbReadStr(d,'boxdomain');
+    fidoname:= dbReadStr(d,'fidoname');
     {16.01.00 HS}
     NameRead(nt,name,user,komm,maps,realname,dom,fqdom,bdom,fidoname,kompname,brk);
     if not brk then begin
@@ -759,11 +718,11 @@
             DefFidoBox:=name; SaveConfig2; end;
           old_dname:=dname;
           dname:='';
-          dbWrite(d,'dateiname',dname);   { ! }
+          dbWriteStr(d,'dateiname',dname);   { ! }
           dname:=getdname(nt,name);
           unique(dname);        { verÑndert pos(d)! }
           dbGo(d,drec[p]);
-          dbWrite(d,'dateiname',dname);
+          dbWriteStr(d,'dateiname',dname);
           { evtl. User&Bretter Åberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
@@ -785,16 +744,16 @@
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;  {16.01.00 HS}
         WriteBox(dname,boxpar);
-        dbWrite(d,'boxname',name);
-        dbWrite(d,'username',user);
-        dbWrite(d,'dateiname',dname);
-        dbWrite(d,'kommentar',komm);
-        dbWrite(d,'nameomaps',maps);
-        dbWrite(d,'realname',realname);
-        dbWrite(d,'domain',dom);
-        dbWrite(d,'fqdn',fqdom);  {16.01.00 HS}
-        dbWrite(d,'boxdomain',bdom);
-        dbWrite(d,'fidoname',fidoname);
+        dbWriteStr(d,'boxname',name);
+        dbWriteStr(d,'username',user);
+        dbWriteStr(d,'dateiname',dname);
+        dbWriteStr(d,'kommentar',komm);
+        dbWriteStr(d,'nameomaps',maps);
+        dbWriteStr(d,'realname',realname);
+        dbWriteStr(d,'domain',dom);
+        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
+        dbWriteStr(d,'boxdomain',bdom);
+        dbWriteStr(d,'fidoname',fidoname);
         dbFlushClose(d);
         dbGo(d,drec[1]); aufbau:=true;
         end;
@@ -870,18 +829,14 @@
       nall  : boolean;
       x2    : byte;
       add   : shortint;
-{$ifdef hasHugeString}
       av,pv : string;
-{$else}
-      av,pv : string[20];
-{$endif}
   begin
     add:=0;
     dialog(ival(getres2(924,0)),
            13+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
-    dbRead(d,'AVertreter',av);
-    dbRead(d,'PVertreter',pv);
+    av:= dbReadStr(d,'AVertreter');
+    pv:= dbReadStr(d,'PVertreter');
     nall:=(flags and 2=0);
     with boxpar^ do begin
       maddtext(3,2,getres2(924,2),col.coldiahigh);    { 'Online-Anruf' }
@@ -928,8 +883,8 @@
       if not brk then begin
         flags:=flags and $fd+iif(nall,0,2);
         dbWrite(d,'script',flags);
-        dbWrite(d,'AVertreter',av);
-        dbWrite(d,'PVertreter',pv);
+        dbWriteStr(d,'AVertreter',av);
+        dbWriteStr(d,'PVertreter',pv);
         for i:=1 to excludes do
           if pos(' ',exclude[i,1]+exclude[i,2])>0 then begin
             exclude[i,1]:='  :  '; exclude[i,2]:='  :  ';
@@ -944,13 +899,8 @@
       width  : byte;
       alias  : boolean;
       mids   : boolean;
-{$ifdef hasHugeString}
       replyto: string;
       maps   : string;
-{$else}
-      replyto: string[AdrLen];
-      maps   : string[20];
-{$endif}
       nt     : byte;
       _nname : boolean;   { Netzname }
       _alias : boolean;
@@ -1003,8 +953,8 @@
       dbRead(d,'script',a);
       alias:=(a and 4<>0);
       mids:=(a and 8=0);
-      dbRead(d,'replyto',replyto);
-      dbRead(d,'nameomaps',maps);
+      replyto:= dbReadStr(d,'replyto');
+      maps:= dbReadStr(d,'nameomaps');
       y:=0;
       if _mids then begin
         inc(y,2);
@@ -1055,8 +1005,8 @@
         if alias then inc(a,4);
         if not mids then inc(a,8);
         dbWrite(d,'script',a);
-        dbWrite(d,'replyto',replyto);
-        dbWrite(d,'nameomaps',maps);
+        dbWriteStr(d,'replyto',replyto);
+        dbWriteStr(d,'nameomaps',maps);
         dbFlushClose(d);
         end;
       end;
@@ -1065,17 +1015,13 @@
 
   procedure EditFido(var brk:boolean);
   var x,y : byte;
-{$ifdef hasHugeString}
       maps: string;
-{$else}
-      maps: string[20];
-{$endif}
       nli : boolean;
   begin
     dbGo(d,drec[p]);
     pp_da:=exist(dbReadStr(d,'dateiname')+'.PP');
     with boxpar^ do begin
-      dbRead(d,'nameomaps',maps);
+      maps:= dbReadStr(d,'nameomaps');
       dialog(ival(getres2(926,0)),13,getres2(926,1),x,y);  { 'Fido-Einstellungen' }
       maddtext(3,2,getres2(926,2),col.coldiahigh);        { 'Areafix' }
       maddstring(14,2,getres2(926,3),maps,12,20,''); mhnr(700);  { 'Name       ' }
@@ -1088,7 +1034,7 @@
       maddbool(14,7,getres2(926,12),nli);    { 'd''Bridge-Areafix' }
       maddtext(3,9,getres2(926,9),col.coldiahigh);       { 'FileScan' }
       maddstring(14,9,getres2(926,10),Filescanner,12,15,''); { 'Name       ' }
-      mappsel(false,'FileScan˘FileMgr˘FileFix˘AllFix');
+      mappsel(false,'Allfix˘FileFix˘FileMgr˘FileScan˘JunkTick');
       maddstring(14,10,getres2(926,11),FilescanPW,12,12,'');  { 'Pa·wort    ' }
       maddtext(3,12,getres2(926,7),col.coldiahigh); { 'Diverses' }
       maddstring(14,12,getres2(926,8),MagicBrett,12,25,'A'+without(AllChar,' '));  { 'Brettebene ' }
@@ -1099,28 +1045,22 @@
       enddialog;
       end;
     if not brk then begin
-      dbWrite(d,'nameomaps',maps);
+      dbWriteStr(d,'nameomaps',maps);
       BoxPar^.LocalINTL:=not nli;
       end;
   end;
 
   procedure EditUUCP(var brk:boolean);
   var x,y,bl   : byte;
-{$ifdef hasHugeString}
       bmname,
       _bmtyp   : string;
       replyto  : string;
-{$else}
-      bmname,
-      _bmtyp   : string[20];
-      replyto  : string[AdrLen];
-{$endif}
       alias    : boolean;
       a        : byte;
   begin
     with BoxPar^ do begin
       dialog(53,13,getres2(928,1),x,y);   { 'UUCP-Einstellungen' }
-      dbRead(d,'replyto',replyto);
+      replyto:= dbReadStr(d,'replyto');
       bl:=length(getres2(928,3));
       maddtext(3,2,getres2(928,2),col.coldiahigh);     { 'Vertreter' }
       maddstring(3+bl,2,'',replyto,30,eAdrLen,''); mhnr(656);
@@ -1135,7 +1075,7 @@
       end;
       maddstring(3+bl,4,getres2(928,4),_bmtyp,15,15,'');   { 'Typ     ' }
       mappsel(true,'Changesys˘GUP˘Feeder˘AutoSys˘manuell'); mhnr(658);
-      dbRead(d,'nameomaps',bmname);
+      bmname:= dbReadStr(d,'nameomaps');
       maddstring(3+bl,5,getres2(928,5),bmname,15,15,'');   { 'Name    ' }
       mappsel   (false,'changesys˘GUP˘feeder˘autosys˘postmaster'); mhnr(658);
       maddstring(3+bl,6,getres2(928,6),AreaPW,12,12,'');   { 'Pa·wort ' }
@@ -1150,8 +1090,8 @@
       readmask(brk);
       enddialog;
       if not brk then begin
-        dbWrite(d,'nameomaps',bmname);
-        dbWrite(d,'replyto',replyto);
+        dbWriteStr(d,'nameomaps',bmname);
+        dbWriteStr(d,'replyto',replyto);
         a:=dbReadInt(d,'script') and not 4;
         if alias then inc(a,4);
         dbWrite(d,'script',a);
@@ -1271,15 +1211,15 @@
   procedure EditBox;
   const edb_pos : shortint = 1;
   var n   : shortint;
-      fn  : string[12];
+      fn  : string;
       brk : boolean;
       nt  : byte;
-      nts : string[20];
-      nts0: string[30];
-      nts2: string[20];
+      nts : string;
+      nts0: string;
+      nts2: string;
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'dateiname',fn);
+    fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=left(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
     pushhp(131);
@@ -1374,7 +1314,7 @@
     if exist(dbReadStr(d,'dateiname')+'.pp') then begin
       msgbox(60,9,_fehler_,x,y);
       mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fÅr diese Box vorhanden (%s.PP)' }
-                   UpperCase(dbReadStr(d,'dateiname'))));
+                   FileUpperCase(dbReadStr(d,'dateiname'))));
       mwrt(x+3,y+3,getres2(929,2));   { '- Netztyp kann nicht geÑndert werden.  Versenden oder' }
       mwrt(x+3,y+4,getres2(929,3));   { 'lîschen Sie bitte zuerst die unversandten Nachrichten' }
       mwrt(x+3,y+5,getres2(929,4));   { 'fÅr diese Box!' }
@@ -1385,7 +1325,7 @@
       end
     else begin
       dbRead(d,'netztyp',nt); nt1:=nt;
-      dbRead(d,'boxname',box);
+      box:= dbReadStr(d,'boxname');
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
          ReadJN(getreps2(929,5,box),true) then begin
@@ -1395,7 +1335,7 @@
         inc(ntused[nt]);
         if nt=nt_Maus then begin
           maps:='MAUS';
-          dbWrite(d,'nameomaps',maps);
+          dbWriteStr(d,'nameomaps',maps);
           end;
         dbFlushClose(d);
         SetBrettNetztyp;
