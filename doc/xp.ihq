@@ -7040,14 +7040,14 @@ Sie sollten nur dann die Einstellung "J" w„hlen,
 wenn die angerufene Box aus irgendeinem Grund den
 Pointnamen in der Useradresse ben”tigt.
 
-<<UUCP/RFC
+<<RFC/UUCP
 
 <<[ ]>> -> Ihre Nachrichten erhalten die bliche Absen-
        deradresse Username\@Pointname.domain
 
 <<[x]>> -> Ihre Nachrichten haben den Absender
-       Username\@Servername.Domain. Diese Form der
-       Adressierung wird in sehr seltenen F„llen
+       Username\@Servername.Serverdomain. Diese Form
+       der Adressierung wird in sehr seltenen F„llen
        verwendet; die Verwendung dieses Schalters
        erspart Ihnen die Angabe einer Vertreter-
        adresse.
