@@ -347,11 +347,13 @@ end;
 { f1 -> mit Assign zugewiesene Eingabedatei }
 { fn <- Dateiname aus der 'begin'-Zeile     }
 
-function openinfile(var f1:file; var fn:pathstr):boolean;
+function openinfile(var f1:file; var fn:pathstr; goon:boolean):boolean;
 var found: boolean;
     p    : byte;
 begin
-  reset(f1,1); ibufp:=1; ibufend:=0; EOFinput:=false;
+  if not goon then begin
+    reset(f1,1); ibufp:=1; ibufend:=0; EOFinput:=false;
+    end;
   repeat
     ReadInputLine;
     found:=(left(s,5)='begin');
@@ -489,6 +491,7 @@ var tmp,fn   : pathstr;
     hdp      : headerp;
     hds      : longint;
     o        : boolean;
+    Filenr   : byte;
 
   procedure SortFor(fld:integer);
   var i,j : integer;
@@ -596,12 +599,17 @@ begin
   assign(f1^,tmp);
   getmem(inbuf,ibufsize);
   getmem(outbuf,obufsize);
-  if not openinfile(f1^,fn) then
+  if not openinfile(f1^,fn,false) then
     rfehler(2402)    { 'Nachricht enth„lt keine UUcodierte Datei' }
   else begin
+    Filenr:=0;
+    repeat
+
+    inc(Filenr);
     pushhp(75);
     useclip:=false;
-    if ReadFilename(getres(2402),fn,true,useclip) then begin   { 'Zieldatei' }
+    if ReadFilename(getres(2402)+iifs(filenr>1,' '+strs(filenr),''),fn,true,useclip) 
+    then begin                                            { 'Zieldatei' }
       if not multipos(_MPMask,fn) then fn:=ExtractPath+fn;
       if exist(fn) then o:=overwrite(fn,true,brk)
       else o:=true;
@@ -626,6 +634,8 @@ begin
         end;
       end;
     pophp;
+
+    until (mlanz>1) or not openinfile(f1^,fn,true); 
     end;
   close(f1^);
   dispose(f1);
@@ -643,7 +653,7 @@ begin
   assign(f1^,infile);
   getmem(inbuf,ibufsize);
   getmem(outbuf,obufsize);
-  if not openinfile(f1^,fn) then
+  if not openinfile(f1^,fn,false) then
     trfehler(2403,20)    { 'Kann Datei nicht decodieren.' }
   else begin
     uudecit(f1^,outpath+fn,wait,1,1,true);
@@ -658,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.1  2000/07/16 15:55:22  jg
+  - UUE-Decoding auch bei mehreren Files in einer Nachricht moeglich
+
   Revision 1.13  2000/05/22 17:05:40  hd
   - FUStr statt UStr
   - multipos angepasst
