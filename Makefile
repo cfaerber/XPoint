@@ -399,7 +399,7 @@ BIN = maggi ndiff pmconv uucp-fl1 uucico uuzext xp xp-fm xpme yup2pkt \
 	zfido zpr
 COMPBIN = $(BIN) docform ihs rc
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
-	debug dosx eddef editor encoder exxec feiertag fileio gpltools \
+	debug eddef editor encoder exxec feiertag fileio gpltools \
 	help inout ipaddr ipcclass keys lister maske maus2 modem \
 	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
 	printerx regexpr resource stack timer typeform uart unicode \
@@ -659,15 +659,13 @@ endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-zpr$(EXEEXT): zpr.pas dosx$(UNITEXT) typeform$(UNITEXT) \
-	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xplinux$(UNITEXT)
+zpr$(EXEEXT): zpr.pas typeform$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-zpr$(EXEEXT): zpr.pas dosx$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+zpr$(EXEEXT): zpr.pas typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -742,19 +740,6 @@ dbase$(UNITEXT): dbase.pas typeform$(UNITEXT) xpdefine.inc \
 
 debug$(UNITEXT): debug.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
-
-ifneq (,$(findstring $(OS),freebsd linux))
-
-dosx$(UNITEXT): dosx.pas linux/dosx.inc linux/dosxh.inc xpdefine.inc \
-	xpglobal$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-else
-
-dosx$(UNITEXT): dosx.pas xpdefine.inc xpglobal$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-endif
 
 eddef$(UNITEXT): eddef.pas keys$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
@@ -983,8 +968,8 @@ timer$(UNITEXT): timer.pas debug$(UNITEXT)
 typeform$(UNITEXT): typeform.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-uart$(UNITEXT): uart.pas dosx$(UNITEXT) inout$(UNITEXT) \
-	typeform$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+uart$(UNITEXT): uart.pas inout$(UNITEXT) typeform$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 unicode$(UNITEXT): unicode.pas xpdefine.inc xpglobal$(UNITEXT)
@@ -1023,18 +1008,17 @@ endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-win2$(UNITEXT): win2.pas dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xpcurses$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+win2$(UNITEXT): win2.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) maus2$(UNITEXT) typeform$(UNITEXT) \
+	winxp$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-win2$(UNITEXT): win2.pas dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
-	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+win2$(UNITEXT): win2.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) maus2$(UNITEXT) typeform$(UNITEXT) \
+	winxp$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -1063,15 +1047,15 @@ xp0$(UNITEXT): xp0.pas keys$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
 ifeq ($(OS),dos32)
 
 xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) debug$(UNITEXT) dosx$(UNITEXT) \
-	exxec$(UNITEXT) fileio$(UNITEXT) help$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	mouse$(UNITEXT) printerx$(UNITEXT) resource$(UNITEXT) \
-	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xp1cm.inc xp1help$(UNITEXT) xp1input$(UNITEXT) \
-	xp1menu.inc xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc \
-	xp2$(UNITEXT) xpdefine.inc xpdos32$(UNITEXT) xpe$(UNITEXT) \
+	datadef$(UNITEXT) debug$(UNITEXT) exxec$(UNITEXT) \
+	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1cm.inc \
+	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1menu.inc \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc xp2$(UNITEXT) \
+	xpdefine.inc xpdos32$(UNITEXT) xpe$(UNITEXT) \
 	xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -1079,15 +1063,15 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) debug$(UNITEXT) dosx$(UNITEXT) \
-	exxec$(UNITEXT) fileio$(UNITEXT) help$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	mouse$(UNITEXT) printerx$(UNITEXT) resource$(UNITEXT) \
-	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xp1cm.inc xp1help$(UNITEXT) xp1input$(UNITEXT) \
-	xp1menu.inc xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc \
-	xp2$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc xpe$(UNITEXT) \
+	datadef$(UNITEXT) debug$(UNITEXT) exxec$(UNITEXT) \
+	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1cm.inc \
+	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1menu.inc \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc xp2$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdefine.inc xpe$(UNITEXT) \
 	xpglobal$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -1095,15 +1079,15 @@ endif
 ifeq ($(OS),os2)
 
 xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) debug$(UNITEXT) dosx$(UNITEXT) \
-	exxec$(UNITEXT) fileio$(UNITEXT) help$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	mouse$(UNITEXT) printerx$(UNITEXT) resource$(UNITEXT) \
-	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xp1cm.inc xp1help$(UNITEXT) xp1input$(UNITEXT) \
-	xp1menu.inc xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc \
-	xp2$(UNITEXT) xpdefine.inc xpe$(UNITEXT) xpglobal$(UNITEXT) \
+	datadef$(UNITEXT) debug$(UNITEXT) exxec$(UNITEXT) \
+	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1cm.inc \
+	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1menu.inc \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc xp2$(UNITEXT) \
+	xpdefine.inc xpe$(UNITEXT) xpglobal$(UNITEXT) \
 	xpnt$(UNITEXT) xpos2$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -1111,15 +1095,15 @@ endif
 ifeq ($(OS),win32)
 
 xp1$(UNITEXT): xp1.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) debug$(UNITEXT) dosx$(UNITEXT) \
-	exxec$(UNITEXT) fileio$(UNITEXT) help$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	mouse$(UNITEXT) printerx$(UNITEXT) resource$(UNITEXT) \
-	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xp1cm.inc xp1help$(UNITEXT) xp1input$(UNITEXT) \
-	xp1menu.inc xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc \
-	xp2$(UNITEXT) xpdefine.inc xpe$(UNITEXT) xpglobal$(UNITEXT) \
+	datadef$(UNITEXT) debug$(UNITEXT) exxec$(UNITEXT) \
+	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1cm.inc \
+	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1menu.inc \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp1s.inc xp2$(UNITEXT) \
+	xpdefine.inc xpe$(UNITEXT) xpglobal$(UNITEXT) \
 	xpnt$(UNITEXT) xpwin32$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -1199,7 +1183,7 @@ ifneq (,$(findstring $(OS),freebsd linux))
 
 xp1o$(UNITEXT): xp1o.pas archive$(UNITEXT) clip$(UNITEXT) \
 	crc$(UNITEXT) database$(UNITEXT) datadef$(UNITEXT) \
-	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
@@ -1212,7 +1196,7 @@ else
 
 xp1o$(UNITEXT): xp1o.pas archive$(UNITEXT) clip$(UNITEXT) \
 	crc$(UNITEXT) database$(UNITEXT) datadef$(UNITEXT) \
-	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1input$(UNITEXT) \
@@ -1247,8 +1231,8 @@ endif
 ifeq ($(OS),dos32)
 
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	databaso$(UNITEXT) datadef$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
+	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
@@ -1265,15 +1249,15 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	databaso$(UNITEXT) datadef$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
+	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
-	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
-	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
-	xp1o2$(UNITEXT) xp2cfg.inc xp3$(UNITEXT) xp5$(UNITEXT) \
-	xp9$(UNITEXT) xp9bp$(UNITEXT) xpcfg$(UNITEXT) \
+	resource$(UNITEXT) serialunit typeform$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
+	xp10$(UNITEXT) xp1help$(UNITEXT) xp1input$(UNITEXT) \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2cfg.inc xp3$(UNITEXT) \
+	xp5$(UNITEXT) xp9$(UNITEXT) xp9bp$(UNITEXT) xpcfg$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
 	xpe$(UNITEXT) xpeasy$(UNITEXT) xpfido$(UNITEXT) \
 	xpglobal$(UNITEXT) xpkeys$(UNITEXT) xplinux$(UNITEXT) \
@@ -1284,8 +1268,8 @@ endif
 ifeq ($(OS),os2)
 
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	databaso$(UNITEXT) datadef$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
+	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
@@ -1302,8 +1286,8 @@ endif
 ifeq ($(OS),win32)
 
 xp2$(UNITEXT): xp2.pas clip$(UNITEXT) crc$(UNITEXT) database$(UNITEXT) \
-	databaso$(UNITEXT) datadef$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	databaso$(UNITEXT) datadef$(UNITEXT) fileio$(UNITEXT) \
+	help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
 	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
@@ -1478,13 +1462,13 @@ xp3o2$(UNITEXT): xp3o2.pas database$(UNITEXT) datadef$(UNITEXT) \
 ifeq ($(OS),dos32)
 
 xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
-	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
-	xp2$(UNITEXT) xp2c$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) xp1help$(UNITEXT) \
+	xp1input$(UNITEXT) xp1o$(UNITEXT) xp2$(UNITEXT) \
+	xp2c$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) \
 	xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4.inc \
 	xp4d.inc xp4e$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) \
 	xp4o3$(UNITEXT) xp4w.inc xp5$(UNITEXT) xp6$(UNITEXT) \
@@ -1501,11 +1485,11 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
 	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
 	xp2$(UNITEXT) xp2c$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) \
 	xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4.inc \
@@ -1524,11 +1508,11 @@ endif
 ifeq ($(OS),os2)
 
 xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
 	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
 	xp2$(UNITEXT) xp2c$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) \
 	xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4.inc \
@@ -1547,11 +1531,11 @@ endif
 ifeq ($(OS),win32)
 
 xp4$(UNITEXT): xp4.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp10$(UNITEXT) \
 	xp1help$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
 	xp2$(UNITEXT) xp2c$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) \
 	xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4.inc \
@@ -1571,7 +1555,7 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4e$(UNITEXT): xp4e.pas database$(UNITEXT) datadef$(UNITEXT) \
-	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
@@ -1585,7 +1569,7 @@ xp4e$(UNITEXT): xp4e.pas database$(UNITEXT) datadef$(UNITEXT) \
 else
 
 xp4e$(UNITEXT): xp4e.pas database$(UNITEXT) datadef$(UNITEXT) \
-	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
+	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) \
 	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) xp1o$(UNITEXT) \
@@ -1600,11 +1584,11 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp4o$(UNITEXT): xp4o.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) printerx$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) \
 	xp4$(UNITEXT) xp4o.inc xp_pgp$(UNITEXT) xpcurses$(UNITEXT) \
@@ -1616,11 +1600,11 @@ xp4o$(UNITEXT): xp4o.pas archive$(UNITEXT) database$(UNITEXT) \
 else
 
 xp4o$(UNITEXT): xp4o.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	printerx$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) printerx$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) \
 	xp4$(UNITEXT) xp4o.inc xp_pgp$(UNITEXT) xpdefine.inc \
@@ -1756,11 +1740,11 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xp7$(UNITEXT): xp7.pas database$(UNITEXT) datadef$(UNITEXT) \
-	debug$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) uuz$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
+	debug$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) \
+	uuz$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
 	xp1$(UNITEXT) xp10$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp2c$(UNITEXT) xp3$(UNITEXT) \
 	xp3o$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) xp5$(UNITEXT) \
@@ -1774,11 +1758,11 @@ xp7$(UNITEXT): xp7.pas database$(UNITEXT) datadef$(UNITEXT) \
 else
 
 xp7$(UNITEXT): xp7.pas database$(UNITEXT) datadef$(UNITEXT) \
-	debug$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) uuz$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
+	debug$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) \
+	uuz$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
 	xp1$(UNITEXT) xp10$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp2c$(UNITEXT) xp3$(UNITEXT) \
 	xp3o$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) xp5$(UNITEXT) \
@@ -1793,11 +1777,11 @@ endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	montage$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) xp3$(UNITEXT) \
+xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) fileio$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
+	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xp1$(UNITEXT) xp1input$(UNITEXT) xp3$(UNITEXT) \
 	xp3o$(UNITEXT) xp7$(UNITEXT) xp7l$(UNITEXT) xp7o$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
 	xpf2$(UNITEXT) xpfido$(UNITEXT) xpfidonl$(UNITEXT) \
@@ -1806,11 +1790,11 @@ xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) dosx$(UNITEXT) \
 
 else
 
-xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	montage$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) xp3$(UNITEXT) \
+xp7f$(UNITEXT): xp7f.pas debug$(UNITEXT) fileio$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
+	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xp1$(UNITEXT) xp1input$(UNITEXT) xp3$(UNITEXT) \
 	xp3o$(UNITEXT) xp7$(UNITEXT) xp7l$(UNITEXT) xp7o$(UNITEXT) \
 	xpdefine.inc xpdiff$(UNITEXT) xpf2$(UNITEXT) xpfido$(UNITEXT) \
 	xpfidonl$(UNITEXT) xpglobal$(UNITEXT) 
@@ -1979,10 +1963,10 @@ xp_uue$(UNITEXT): xp_uue.pas database$(UNITEXT) fileio$(UNITEXT) \
 endif
 
 xpauto$(UNITEXT): xpauto.pas database$(UNITEXT) datadef$(UNITEXT) \
-	dosx$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
-	montage$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1o$(UNITEXT) xp3$(UNITEXT) \
-	xp3o$(UNITEXT) xp6$(UNITEXT) xp9bp$(UNITEXT) xpdefine.inc \
+	fileio$(UNITEXT) inout$(UNITEXT) montage$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xp1$(UNITEXT) xp1o$(UNITEXT) xp3$(UNITEXT) xp3o$(UNITEXT) \
+	xp6$(UNITEXT) xp9bp$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT) xpmaus$(UNITEXT) xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
@@ -2041,7 +2025,7 @@ xpdos32$(UNITEXT): xpdos32.pas utftools$(UNITEXT) xpdefine.inc
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-xpe$(UNITEXT): xpe.pas dosx$(UNITEXT) eddef$(UNITEXT) editor$(UNITEXT) \
+xpe$(UNITEXT): xpe.pas eddef$(UNITEXT) editor$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
@@ -2052,7 +2036,7 @@ xpe$(UNITEXT): xpe.pas dosx$(UNITEXT) eddef$(UNITEXT) editor$(UNITEXT) \
 
 else
 
-xpe$(UNITEXT): xpe.pas dosx$(UNITEXT) eddef$(UNITEXT) editor$(UNITEXT) \
+xpe$(UNITEXT): xpe.pas eddef$(UNITEXT) editor$(UNITEXT) \
 	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	maske$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
@@ -2109,11 +2093,11 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xpfido$(UNITEXT): xpfido.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) \
 	xp1o$(UNITEXT) xp2$(UNITEXT) xp3$(UNITEXT) xp4e$(UNITEXT) \
 	xpcurses$(UNITEXT) xpdefine.inc xpf1.inc xpfidonl$(UNITEXT) \
 	xpglobal$(UNITEXT) xpnt$(UNITEXT)
@@ -2122,11 +2106,11 @@ xpfido$(UNITEXT): xpfido.pas archive$(UNITEXT) database$(UNITEXT) \
 else
 
 xpfido$(UNITEXT): xpfido.pas archive$(UNITEXT) database$(UNITEXT) \
-	datadef$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
-	inout$(UNITEXT) keys$(UNITEXT) lister$(UNITEXT) \
-	maske$(UNITEXT) maus2$(UNITEXT) montage$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) montage$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
+	xp0$(UNITEXT) xp1$(UNITEXT) xp1input$(UNITEXT) \
 	xp1o$(UNITEXT) xp2$(UNITEXT) xp3$(UNITEXT) xp4e$(UNITEXT) \
 	xpdefine.inc xpf1.inc xpfidonl$(UNITEXT) xpglobal$(UNITEXT) \
 	xpnt$(UNITEXT)
@@ -2358,10 +2342,10 @@ xpuu$(UNITEXT): xpuu.pas fileio$(UNITEXT) resource$(UNITEXT) \
 
 endif
 
-xpview$(UNITEXT): xpview.pas database$(UNITEXT) dosx$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1o$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpnt$(UNITEXT)
+xpview$(UNITEXT): xpview.pas database$(UNITEXT) fileio$(UNITEXT) \
+	inout$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xp1$(UNITEXT) xp1o$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
+	xpnt$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 xpwin32$(UNITEXT): xpwin32.pas utftools$(UNITEXT) winxp$(UNITEXT) \
@@ -2370,7 +2354,7 @@ xpwin32$(UNITEXT): xpwin32.pas utftools$(UNITEXT) winxp$(UNITEXT) \
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
+xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) mouse$(UNITEXT) typeform$(UNITEXT) \
 	xp0$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT) xplinux$(UNITEXT)
@@ -2378,7 +2362,7 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
 
 else
 
-xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
+xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
 	inout$(UNITEXT) mouse$(UNITEXT) typeform$(UNITEXT) \
 	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
@@ -2389,10 +2373,13 @@ zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
 	objcomunit timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
-# ObjCOM-Unit
+# ObjCOM-Units
 
 objcomunit: debug$(UNITEXT) timer$(UNITEXT)
-	$(MAKE) -C ObjCOM
+	$(MAKE) -C ObjCOM objcom$(UNITEXT)
+
+serialunit:
+	$(MAKE) -C ObjCOM serial$(UNITEXT)
 
 # Sprachmodule
 
@@ -2625,6 +2612,10 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.37  2000/11/04 23:02:01  fe
+# Removed dosx.
+# Added serialunit.
+#
 # Revision 1.36  2000/11/02 21:27:04  fe
 # bzip2 support added.
 #
