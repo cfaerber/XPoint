@@ -2898,23 +2898,25 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 # --- WIN2 ------------------------------------------------------------
 
 + 2800
-1    Hard Disk/Diskette
+1    Hard Disk
 2    RAM Disk
 3    Subst Drive
 4    Device driven
 5    Network Drive
 6    CD-ROM Drive
-7    Drive %s
-8    too many files
-9    no files
-10   File doesn't exist
-11   one moment please ...
-12   Name:
-13   Error
-14   Not enough memory! Max. available: %s
-15   invalid name - press key
-16   Can't create - press key
-17   Can't delete - press key
+7    Diskette Drive
+8    Drive %s
+9    too many files
+10   no files
+11   File doesn't exist
+12   one moment please ...
+13   Name:
+14   Error
+15   Not enough memory! Max. available: %s
+16   invalid name - press key
+17   Can't create - press key
+18   Can't delete - press key
+19   free
 -
 
 # --- XPREG -----------------------------------------------------------

@@ -134,8 +134,8 @@ begin
 
   if lnum=0 then
     if errdisp then begin
-      wpull(25,55,10,14,getres2(2800,13),handle);  { 'Fehler' }
-      mwrt(28,12,getres2(2800,10));                { 'Datei existiert nicht' }
+      wpull(25,55,10,14,getres2(2800,14),handle);  { 'Fehler' }
+      mwrt(28,12,getres2(2800,11));                { 'Datei existiert nicht' }
       delay(1500);
       wrest(handle);
       brk:=true;
@@ -207,7 +207,7 @@ var   fb     : pathstr;
     AddFnItem:=false;
     if maxavail<length(s) then
     begin
-      hinweis(getreps2(2800,14,strs(maxavail)));  { 'Speichermangel! Max. verfgbar: %s' }
+      hinweis(getreps2(2800,15,strs(maxavail)));  { 'Speichermangel! Max. verfgbar: %s' }
       freeres;
       exit;
     end;
@@ -334,6 +334,29 @@ var   fb     : pathstr;
       sr    : searchrec;
       t     : datetime;
       xx,yy : byte;
+      drive : byte;
+
+    function freesize(lw:char):string;
+    var size : longint;
+        s    : string[10];
+    begin
+      if drive in [1,2,3,5] then
+      begin
+        size:=diskfree(ord(lw)-64);
+        if size<10000 then s:=strs(size)+' Bytes'
+        else
+          if size<1024*1024 then
+            s:=strs(size div 1024)+' KB'
+          else
+            if size<1024*1024*1024 then
+              s:=strs(size div (1024*1024))+' MB'
+            else
+              s:=strs(size div (1024*1024*1024))+' GB';
+        freesize:=' ('+s+' '+getres2(2800,19)+')';
+      end
+      else freesize:='';
+    end;
+
   begin
     if invers then normtxt else invtxt;
     dispfile(p);
@@ -350,15 +373,14 @@ var   fb     : pathstr;
       gotoxy(12,y+height-1);
       moff;
       if s[1]='[' then
-        case drivetype(s[2]) of
-          1 : Wrt2(forms(getres2(2800,1),59));  { 'Festplatte/Diskette' }
-          2 : Wrt2(forms(getres2(2800,2),59));  { 'RAM-Disk'            }
-          3 : Wrt2(forms(getres2(2800,3),59));  { 'Subst-Laufwerk'      }
-          4 : Wrt2(forms(getres2(2800,4),59));  { 'Ger„tetreiber'       }
-          5 : Wrt2(forms(getres2(2800,5),59));  { 'Netz-Laufwerk'       }
-          6 : Wrt2(forms(getres2(2800,6),59));  { 'CD-ROM-Laufwerk'     }
+      begin
+        drive:=drivetype(s[2]);
+        if drive in [1..7] then
+          Wrt2(forms(getres2(2800,drive)+freesize(s[2]),59))
+          { 'Festplatte' / 'RAM-Disk' / 'Subst-Laufwerk' / 'Ger„tetreiber' }
+          { 'Netz-Laufwerk' / 'CD-ROM-Laufwerk' / 'Disketten-Laufwerk'     }
         else
-          Wrt2(sp(59));
+          Wrt2(sp(59))
         end
       else
       if right(s,1)=DirSepa then
@@ -548,7 +570,7 @@ begin
       end;
       Findclose(sr);
     end;
-    if fn=maxf then xtext:=getres2(2800,8)  { 'zu viele Dateien' }
+    if fn=maxf then xtext:=getres2(2800,9)  { 'zu viele Dateien' }
     else xtext:='';
 
     if not wpushed then begin
@@ -577,7 +599,7 @@ begin
       fb:='';
       iit;
       clfswin;
-      mwrt(11,y+1,getres2(2800,9));         { 'keine Dateien' }
+      mwrt(11,y+1,getres2(2800,10));        { 'keine Dateien' }
       get(t,curoff);
       chgdrive:=xdir and (t>=^A) and (t<=^Z) and
                 (cpos(chr(ord(t[1])+64),drives)>0);
@@ -959,12 +981,12 @@ begin
   if pa=nil then path:='*mem*'
   else begin
     econt:=[]; memerr:=false;
-    if fenster then wpush(x1,x2,y1,y2,getreps2(2800,7,drive));  { 'Laufwerk %s' }
+    if fenster then wpush(x1,x2,y1,y2,getreps2(2800,8,drive));  { 'Laufwerk %s' }
     gl:=y2-y1-1; wdt:=x2-x1-4; xp:=1;
     if pdrive<>drive then begin
       pn:=0;
       dsfiles:=0; dsb:=0;
-      pmsg(getres2(2800,11));   { 'einen Moment bitte ...' }
+      pmsg(getres2(2800,12));   { 'einen Moment bitte ...' }
       papp(' \');
       psearch(drive+':\',1);
       i:=ioresult;
@@ -1027,7 +1049,7 @@ begin
               if p=gl then inc(a)
               else inc(p);
         if modify and (t=keyins) then begin
-          pmsg(getres2(2800,12)+sp(13));  { 'Name:' }
+          pmsg(getres2(2800,13)+sp(13));  { 'Name:' }
           vn:='';
           bd(x1+9,y2,'',vn,12,1,brk);
           if not brk then begin
@@ -1037,9 +1059,9 @@ begin
             mkdir(drive+':'+path+vn);
             if inoutres<>0 then begin
               if ioresult=3 then
-                pmsg(getres2(2800,15))    { 'ungltiger Name - Taste drcken' }
+                pmsg(getres2(2800,16))    { 'ungltiger Name - Taste drcken' }
               else
-                pmsg(getres2(2800,16));   { 'Anlegen nicht m”glich - Taste drcken' }
+                pmsg(getres2(2800,17));   { 'Anlegen nicht m”glich - Taste drcken' }
               errproc;
               get(t2,curoff);
               end
@@ -1077,7 +1099,7 @@ begin
           delete(path,length(path),1);
           rmdir(drive+':'+path);
           if ioresult<>0 then begin
-            pmsg(getres2(2800,17));       { 'L”schen nicht m”glich - Taste drcken' }
+            pmsg(getres2(2800,18));       { 'L”schen nicht m”glich - Taste drcken' }
             errproc;
             get(t2,curoff);
             end
@@ -1194,6 +1216,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.21  2002/05/01 16:46:08  my
+  JG+MY:- Fixes und nderungen Dateiauswahl-Fenster: Erkennung fr
+          Disketten-Laufwerke implementiert und Erkennung von RAM-Disks
+          optimiert (RAM-Disks, die von einem anderen Treiber wie
+          LOADHI.SYS geladen wurden, wurden bisher fr Festplatten
+          gehalten). Bei Festplatten, RAM-Disks, Subst- und Netz-
+          Laufwerken wird jetzt in Kurzform ("300 MB") die freie
+          Restkapazit„t angezeigt.
+
   Revision 1.16.2.20  2002/04/28 16:01:19  my
   JG[+MY]:- Letzten Commit optimiert und Tonsignal bei Auswahl eines nicht
             existierenden Laufwerks mit <Ctrl>-[LW] eingebaut.

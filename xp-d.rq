@@ -2947,23 +2947,25 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 # --- WIN2 ------------------------------------------------------------
 
 + 2800
-1    Festplatte/Diskette
+1    Festplatte
 2    RAM-Disk
 3    Subst-Laufwerk
 4    Ger„tetreiber
 5    Netz-Laufwerk
 6    CD-ROM-Laufwerk
-7    Laufwerk %s
-8    zu viele Dateien
-9    keine Dateien
-10   Datei existiert nicht
-11   einen Moment bitte ...
-12   Name:
-13   Fehler
-14   Speichermangel! Max. verfgbar: %s
-15   ungltiger Name - Taste drcken
-16   Anlegen nicht m”glich - Taste drcken
-17   L”schen nicht m”glich - Taste drcken
+7    Disketten-Laufwerk
+8    Laufwerk %s
+9    zu viele Dateien
+10   keine Dateien
+11   Datei existiert nicht
+12   einen Moment bitte ...
+13   Name:
+14   Fehler
+15   Speichermangel! Max. verfgbar: %s
+16   ungltiger Name - Taste drcken
+17   Anlegen nicht m”glich - Taste drcken
+18   L”schen nicht m”glich - Taste drcken
+19   frei
 -
 
 # --- XPREG -----------------------------------------------------------

@@ -108,8 +108,9 @@ end;
 { ben”tigt DOS ab Version 3.0       }
 { pro Handle wird 1 Byte ben”tigt   }
 
-{ 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
+{ 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM, 7=Diskette }
 function DriveType(drive:char):byte;
+var regs : registers;
 
   function laufwerke:byte;
   var regs : registers;
@@ -129,7 +130,7 @@ function DriveType(drive:char):byte;
       xor bx,bx
       mov ax,$150C      { Version-Check }
       int 2fh
-      cmp bx,0          {>0 Installiert und 150D erlaubt }
+      cmp bx,0          { >0 Installiert und 150D erlaubt }
       je @e
       mov ax,$150D      { Liste der CD-Laufwerke nach ES:BX }
       lea bx,[si+1]
@@ -137,7 +138,7 @@ function DriveType(drive:char):byte;
       mov bx,si
   @1: inc bx
       mov al,[es:bx]
-      add al,'A'        { Und Umrechnen von C:=2 zu C:='C' }
+      add al,'A'        { und umrechnen von C:=2 zu C:='C' }
       mov [es:bx],al
       jne @1
       dec bx
@@ -145,11 +146,46 @@ function DriveType(drive:char):byte;
   @e: mov es:[si],bl
   end;
 
-var regs : registers;
+  function Is_Ramdrive(c:char):boolean;assembler;
+  var
+    Sektor : array[0..511] of Byte;
+  asm
+      push ds
+      push ss                   { Sektorpuffer loeschen }
+      pop es
+      lea di,sektor[0]
+      xor ax,ax
+      mov cx,256
+      rep stosw
+      mov ax,$4408              { Medium wechselbar ? }
+      mov bl,c
+      sub bl,64
+      int 21h
+      jc @1
+      cmp al,0
+      je @1
+      mov al,bl                 { Bootsektor laden }
+      dec ax
+      mov cx,$FFFF
+      push ss
+      pop ds
+      lea bx,sektor[0]
+      mov byte ptr [bx+4],1
+      mov [bx+6],bx
+      mov [bx+8],ds
+      int 25h
+      popf
+  @1: mov al,0
+      cmp byte ptr [bx+$10],1   { 1 Fat ? }
+      jne @2
+      cmp byte ptr [bx+$1A],1   { 1 Kopf ? }
+      jne @2
+      inc ax
+  @2: pop ds
+  end;
+
 begin
-  if (drive='B') and (laufwerke=1) then
-    drivetype:=0
-  else if pos(drive,CDDrives)>0 then drivetype:=6
+  if pos(drive,CDDrives)>0 then drivetype:=6
   else
     with regs do begin
       ax:=$4409;
@@ -160,8 +196,11 @@ begin
       else
         if dx and $8000<>0 then drivetype:=3 else
         if dx and $1000<>0 then drivetype:=5 else
-        if dx and $8ff=$800 then drivetype:=2 else
+        if (dx and $8ff=$800) then drivetype:=2 else
         if dx and $4000<>0 then drivetype:=4 else
+        if ord(drive)-64 <= Laufwerke then drivetype:=7 else
+        if drive<='B' then drivetype:=0 else
+        if is_Ramdrive(drive) then drivetype:=2 else
         drivetype:=1;
     end;
 end;
@@ -329,6 +368,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.4  2002/05/01 16:46:08  my
+  JG+MY:- Fixes und Žnderungen Dateiauswahl-Fenster: Erkennung fr
+          Disketten-Laufwerke implementiert und Erkennung von RAM-Disks
+          optimiert (RAM-Disks, die von einem anderen Treiber wie
+          LOADHI.SYS geladen wurden, wurden bisher fr Festplatten
+          gehalten). Bei Festplatten, RAM-Disks, Subst- und Netz-
+          Laufwerken wird jetzt in Kurzform ("300 MB") die freie
+          Restkapazit„t angezeigt.
+
   Revision 1.17.2.3  2002/04/28 16:01:58  my
   JG:- Erkennung von CD-ROM-Laufwerken im Datei-Auswahlfenster
        implementiert (bisher wurden CD-ROM-Laufwerke als "Netz-Laufwerke"
