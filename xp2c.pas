@@ -697,7 +697,7 @@ end;
 { Untersttzung fr seh-/h”rbehinderte Anwender }
 
 procedure AccessibilityOptions;
-var x,y : byte;
+var x,y,i,j : byte;
     brk : boolean;
 begin
   dialog(41,10,getres2(260,11),x,y);
@@ -705,9 +705,11 @@ begin
     mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   { 'Feldtausch in Nachrichten-Liste': }
-  maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,'FGDAEB');
+  maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
+             MsgFeldDef+LStr(MsgFeldDef));
   { 'Feldtausch in Userliste': }
-  maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,'FHBAK');
+  maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,
+             UsrFeldDef+LStr(UsrFeldDef));
   maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
   maddbool(3,7,getres2(260,12),tonsignal);   { 'zus„tzliches Tonsignal' }
   maddbool(3,9,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
@@ -727,6 +729,16 @@ begin
     end;
     aufbau:=true;
     GlobalModified;
+    { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
+    MsgFeldTausch:=UStr(MsgFeldTausch);
+    j:=0;
+    for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
+    if (j<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
+    { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
+    UsrFeldTausch:=UStr(UsrFeldTausch);
+    j:=0;
+    for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
+    if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
   end;
   enddialog;
   menurestart:=brk;

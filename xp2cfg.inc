@@ -677,8 +677,8 @@ begin
   termbios:=false;
   tonsignal:=false;
   
-  MsgFeldTausch:='FHDAEB'; { Flags/Haltezeit/Datum/Abs/Empf/Betreff }
-  UsrFeldTausch:='FHBAK';  { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
+  MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
+  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
 
   UsePGP:=false;
   PGPbatchmode:=true;
@@ -1517,6 +1517,17 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
+    { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
+    MsgFeldTausch:=UStr(MsgFeldTausch);
+    p:=0;
+    for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
+    if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
+    { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
+    UsrFeldTausch:=UStr(UsrFeldTausch);
+    p:=0;
+    for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
+    if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
+    
     {$IFDEF Ver32 }
       ScreenLines := 25; { !! Keine Žnderungsm”glichkeit bis jetzt }
     {$ENDIF }
@@ -1619,6 +1630,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/04/02 11:33:54  oh
+  - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
+
   Revision 1.23  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
     neue Einstellung wird dann auch beim Quoten verwendet

@@ -771,6 +771,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
        
        AutoDatumsBezuege : boolean = false;
+       MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
+       UsrFeldDef = 'FHBAK'; { Standardreihenfolge: Feldtausch Userliste }
        
        { /oh }
 
@@ -1092,6 +1094,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.19  2000/04/02 11:33:54  oh
+  - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
+
   Revision 1.18  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
     neue Einstellung wird dann auch beim Quoten verwendet

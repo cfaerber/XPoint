@@ -261,6 +261,7 @@ begin  { __ Suchmarke }
               dbReadN(mbase,mb_EmpfDatum,edat)
             else
               edat:=ixdat('6912310000');
+            { Datum anzeigen }  
             if showmsgdatum then begin
               s2:=fdat(longdat(dat));
               getdate(j,m,t,d);
@@ -273,6 +274,7 @@ begin  { __ Suchmarke }
               else
                 sdat:=left(s2,5);
               ulen:=25; blen:=36;
+            { kein Datum anzeigen }  
             end else begin
               sdat:=''; ulen:=27; blen:=40;
             end;
@@ -348,7 +350,7 @@ begin  { __ Suchmarke }
               { Kommentarbaum }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
-                dispbuf[y]^:=dflags+siz+' '+sdat+' '+s;
+                dispbuf[y]^:=forms(dflags+siz+' '+sdat+' '+s,80);
               end else begin
                 { Flags }
                 taus[pos('F',MsgFeldTausch)] := dflags;

@@ -4086,9 +4086,10 @@ gesucht und der Text dahinter angezeigt.
        Bildschirmhintergrund ausgeblendet.
 @
 1032
-<<[x]>> -> Die Sortierung der Buchstaben legt die
-       Sortierung der Felder in der Nachrichten-
-       liste fest.
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder in der Nachrichtenliste fest. Jeder
+Buchstabe muá <<genau einmal>> vorkommen, ansonsten
+wird auf die Standardeinstellung zurckgesetzt.
        
        Die Buchstaben stehen fr
        
@@ -4100,8 +4101,10 @@ gesucht und der Text dahinter angezeigt.
        B  Betreff
 @
 1033
-<<[x]>> -> Die Sortierung der Buchstaben legt die
-       Sortierung der Felder in der Userliste fest.
+Die Sortierung der Buchstaben legt die Sortierung
+der Felder in der Userliste fest. Jeder Buchstabe
+muá <<genau einmal>> vorkommen, ansonsten wird auf
+die Standardeinstellung zurckgesetzt.
        
        Die Buchstaben stehen fr
        
