@@ -1,0 +1,96 @@
+Lizenz-FAQ
+
+Was ist an der Lizenzgeschichte für mich als User im Zusammenhang mit OpenXP wichtig?
+Eigentlich nur, daß die Registrierungsgebühr bei OpenXP/GPL entfällt. Nebenbei
+haben die Programmierer bei der GPL "freiere Hand" als bei der alten Lizenz - und dürften
+auch motivierter sein :-).
+<br /><b>Die weiteren Ausführungen sind eher für Programmierer und andere Interessierte
+gedacht.</b>
+
+Warum wurde für OpenXP/32 die GPL statt der SLizenz gewählt?
+<ul>
+<li>Die Registrierungsgebühr entfällt.</li>
+<li>Man kann auch GPL-Code in OpenXP nutzen, bisher ging nur
+Public Domain. Dadurch kann das OpenXP-Team auf einen wesentlich
+größeren Fundus bestehenden Codes zurückgreifen.</li>
+<li>Code, der im Rahmen von OpenXP entsteht, kann nicht nur für
+CrossPoint und verwandte Programme genutzt werden.</li>
+<li>Die GPL ist unter Programmierern bekannt und anerkannt.</li>
+</ul>
+
+Was ist das Besondere an der GPL?
+Die GPL räumt dem Lizenznehmer Rechte ein und nimmt sie ihm
+nicht weg (im Gegensatz zu anderen Lizenzen, die z.B. bestimmen,
+daß der Lizenznehmer das Programm/die Quelltexte nicht
+weiterverbreiten darf etc.). Sie stellt sicher, daß bestimmte
+Rechte bei der Weitergabe gewährt werden müssen. Zu diesen
+Rechten gehört das Recht auf den Quelltext zum Programm oder
+auch das Recht, die Quelltexte ändern und weiterverbreiten zu
+dürfen.
+<br />Allerdings beziehen sich diese Rechte alleine auf die
+<i>Weitergabe</i> eines Programms. Solange ein Programm nicht
+weitergegeben wird, gibt es keine Unterschiede zu anderer  
+Software.
+<br />Im Gegensatz zu anderen Lizenzen (z.B. BSD-ähnliche, Public  
+Domain etc.) verhindert die GPL auch, daß ein einmal  
+freigegebenes Programm unfrei wird ("<i>strong</i> copyleft").
+
+Was bedeutet Mehrfachlizensierung <small>(wie kann Peter CrossPoint 3.20ß unter der SLizenz <i>und</i> der GPL verfügbar machen)</small>?
+Mit der Freigabe eines Programms/eines Quelltextes verliert ein  
+Autor sein Urheberrecht nicht; er räumt nur der Allgemeinheit ein  
+nicht-ausschließliches Nutzungsrecht ein. Daher ist es für die  
+Urheber jederzeit möglich, den Code unter beliebig vielen Lizenzen  
+verfügbar zu machen.
+<br />Nur wenn Code anderer Autoren integriert wird, müssen diese ebenfalls
+damit einverstanden sein (oder den Code bereits vorher unter  
+einer kompatiblen Lizenz freigegeben haben).
+
+Was bedeutet, daß eine Lizenz "kompatibel" zur GPL ist?
+Eine Lizenz ist kompatibel, wenn sie durch eine Integration in ein  
+GPL-Programm nicht verletzt wird.
+<br />Die SLizenz z.B. ist also GPL-inkompatibel (da z.B. keine
+kostenlose Weiterlizensierung möglich ist); Public Domain ist
+GPL-kompatibel (da bei Public Domain im Wortsinn keinerlei Auflagen
+gemacht werden).
+<br />Quelltexte unter kompatiblen Lizenzen können problemlos in
+GPL-Software benutzt werden.
+
+Gibt es nicht ein Durcheinander, wenn in einem Programm verschiedene Codeteile verschiedene Lizenzen benutzen (die kompatibel sind)?
+Nein, für das Programm als solches gelten die Bedingungen der  
+"weitestgehenden" Lizenz; damit werden bei der Weitergabe  
+automatisch die Bedingungen der anderen Lizenzen erfüllt.
+<br />Werden nur einzelne Teile benutzt, die unter einer kompatiblen  
+Lizenz stehen, so reicht es, wenn man sich an die Bedingungen  
+dieses Teils hält. So kann das in OpenXP verwendete ObjCOM auch  
+schon unter den Bedingungen seiner BSD-ähnlichen Lizenz  
+benutzt und weitergegeben werden.
+<br />Die jeweils benutzte Lizenz ist im Kopf des jeweiligen Quelltextes aufgeführt.
+
+Kann man für GPL-Programme Geld verlangen?
+Man darf bei der Weitergabe des Programms an sich Geld verlangen - aber
+man muß in jedem Fall die Quelltexte auch verfügbar
+machen und dem Lizenznehmer alle wesentlichen Rechte daran
+einräumen, insbesondere das Recht, die "nächste Lizensierung"
+(=Weitergabe des Programms und der Quelltexte) kostenpflichtig
+oder auch nicht machen zu dürfen.
+<br />So kann z.B. eine Firma ein Programm unter der GPL im Auftrag
+entwickeln und es dem Auftraggeber für teures Geld verkaufen.
+Im Gegensatz zu normalen Lizenzen darf jetzt aber der Auftraggeber
+das Programm weiterverkaufen, selbst weiterentwickeln oder auch
+kostenlos weitergeben.
+<br />Die GPL kann also in kleinem Kundenkreis eine Lizenz
+darstellen, an der auch kräftig verdient werden kann.
+<br />Für "Massensoftware", bei der eine Firma alleine durch das
+Bereitstellen des Programms und nicht etwa mit weiteren
+Serviceleistungen Geld verdienen will, ist sie nicht tauglich,
+da sie das kostenlose Kopieren nicht verhindert.
+<br />Dieses Thema ist hier nur der Vollständigkeit halber
+aufgeführt. Im konkreten Fall OpenXP werden wir natürlich
+<i>keine</i> irgendwie geartete Gebühr erheben - wäre auch
+sinnlos, wie aus dem obigen Absatz hervorgeht :-).
+
+Ich habe weitere Fragen.
+Siehe <a href="http://www.fsf.org/philosophy/license-list.html">Lizenzliste</a>
+der Free Software Foundation. Dort werden allerhand Lizenzen
+in ihren Grundzügen beschrieben und nach GPL-Kompatibilität und
+anderen Kriterien klassifiziert.
