@@ -242,6 +242,10 @@ K (c) '93-96 Peter Mandrella
 133  Menu
 134  %s is being copied
 
+# XP1O
+135  waiting for end of external viewer ...
+136  POSTSEM.EXE not found or corrupted ...
+
 # XPKEYS
 150  No files in AUTOEXEC directory
 

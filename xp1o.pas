@@ -859,16 +859,22 @@ end;
 
 {$IFNDEF Delphi5}
 procedure XPWinShell(prog:string; space:word; cls:shortint);
+var w1,w2: word;
 
-  function PrepareExe:boolean;    { Stack sparen }
-  { gibt true zurÅck, wenn das zu startende Programm KEIN OS/2 Programm ist }
+  function PrepareExe:integer;    { Stack sparen }
+  { 
+  RÅckgabewert: -1 Fehler
+                 0 DOS-Programm
+                 1 Windows-Programm
+                 2 OS/2-Programm
+  }                 
   var ext     : string[3];
       exepath : pathstr;
       et      : TExeType;
       win,os2 : boolean;
       t       : text;
   begin
-    PrepareExe:=true;
+    PrepareExe:=0;
     exepath:=left(prog,blankposx(prog)-1);
     ext:=GetFileExt(exepath);
     if ext='' then exepath:=exepath+'.exe';
@@ -896,8 +902,10 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
         close(t);
       end;
       prog:='winrun.bat '+prog;
+      PrepareExe:=1;
     end
     else if os2 then begin
+      PrepareExe:=-1;
       if not exist('postsem.exe') then write(#7)
       else if exetype('postsem.exe')<>ET_OS2_32 then write(#7)
       else begin
@@ -913,17 +921,51 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
         writeln(t,ownpath,'postsem.exe XPOS2SEM32');
         writeln(t,'echo.');
         close(t);
-        PrepareExe:=false;
+        PrepareExe:=2;
       end;
     end;  
   end;
 
+  procedure ShowWait;
+  begin
+    savecursor;
+    cursor(curoff);
+    w1:=windmin; w2:=windmax;
+    window(1,1,80,25);
+    message(getres(135));
+    windmin:=w1; windmax:=w2;
+  end;
+
+  procedure doneShowWait;
+  begin
+    closebox;
+    restcursor;
+  end;
+
+  procedure ShowOS2Err;
+  begin
+    savecursor;
+    cursor(curoff);
+    w1:=windmin; w2:=windmax;
+    window(1,1,80,25);
+    message(getres(136));
+    wkey(15,false);
+    windmin:=w1; windmax:=w2;
+    closebox;
+    restcursor;
+  end;
+
 begin
-  if PrepareExe
-  then shell(prog,space,cls)
-  else begin
-    Start_OS2(ownpath+'os2run.cmd','','XP-View OS/2');
-    OS2_WaitForEnd('\SEM32\XPOS2SEM32');
+  case PrepareExe of
+    -1 : ShowOS2Err;
+     0 : shell(prog,space,cls);
+     1 : shell(prog,space,cls);
+     2 : begin
+           ShowWait;
+           Start_OS2(ownpath+'os2run.cmd','','XP-View OS/2');
+           OS2_WaitForEnd('\SEM32\XPOS2SEM32');
+           doneShowWait;
+         end;
   end;  
 end;
 {$ENDIF}
@@ -931,6 +973,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/02/25 22:19:52  rb
+  Einbindung ext. Viewer (OS/2) verbessert
+
   Revision 1.12  2000/02/24 23:50:11  rb
   Aufruf externer Viewer bei OS/2 einigermassen sauber implementiert
 
