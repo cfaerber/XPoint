@@ -1,12 +1,13 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-
+{ $Id$ }
 
   { --- Bearbeitungs-Routinen fÅr Boxen-Liste -----------------------}
 
@@ -1695,3 +1696,9 @@
     freeres;
   end;
 
+{
+  $Log$
+  Revision 1.23  2000/09/25 03:44:32  mk
+  - Loginfo hinzugefuegt
+
+}
