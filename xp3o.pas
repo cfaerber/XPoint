@@ -1128,14 +1128,18 @@ begin
     if not dbFound then exit;
     Box := dbReadNStr(ubase,ub_pollbox);
     end;
-    if dbFound then
-    case mbNetztyp of
+
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,UpperCase(box));
+  if dbFound then begin
+    case ntBoxNetztyp(box) of
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
                        dbReadStr(d,'domain');
+      nt_NNTP   : adr:=dbReadStr(d,'username');
       nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
       nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-    end
-  else begin
+      end;
+    end else begin
     rfehler1(109,box);
     adr:='';
     end;
@@ -1508,6 +1512,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/04/19 00:06:11  ma
+  - fixed: cancelling did not work
+  - please check cancelling in non-NNTP networks
+
   Revision 1.53  2001/04/13 20:23:30  ml
   - correct output of status in reorg
 
