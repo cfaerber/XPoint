@@ -90,7 +90,7 @@ var x,y : byte;
 const
     lastpath : pathstr = '';
     urlchars : set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-               '-','_','#','=','&','%','@','$','+'];
+               '-','_','#','=','&','%','@','$','+',','];
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
@@ -347,7 +347,7 @@ begin
 
   if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
-  if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
+  if Listmakros=8 then   { Diese Funktionen NUR im Nachrichten-Lister ausfÅhren, nicht im Archivviewer... }
   begin
 
     if upcase(c) = k2_I then msg_info;                        { 'I' fuer Lister }
@@ -362,14 +362,20 @@ begin
     begin
       ShowHeader;
       ex(-4);
-      end;
+    end;
 
     if upcase(c) = 'Q' then                                   { 'Q' Quotechars |: aktivieren }
       otherquotechars:=not otherquotechars;
 
-    if c='#' then ex(-3);                                     { '#' = Kommentarbaum }
+    if c = '#' then ex(-3);                                   { '#' = Kommentarbaum }
 
+    if c = ^W then                                            { '^W' = Umbruch togglen }
+    begin
+      listwrap:=not listwrap;
+      ex(4);
     end;
+
+  end;
 
   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
@@ -1020,6 +1026,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.23  2001/12/02 15:53:20  my
+  MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+       <Ctrl-W> nicht-permanent umgeschaltet werden.
+  MY:- Komma zu 'urlchars' hinzugefÅgt.
+
   Revision 1.40.2.22  2001/11/10 16:22:28  my
   MY:- "+" zu urlchars hinzugefÅgt (vorher wurden URLs mit "+" abgeschnitten)
 
