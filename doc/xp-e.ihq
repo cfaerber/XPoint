@@ -3356,13 +3356,15 @@ your server configuration file <server>.BFG.
 Port number (on the Server) for incoming mail. The
 standard ports are:
 
-POP3: 110
-SMTP:  25
-IMAP: 143
+POP3     : 110
+SMTP     :  25
+IMAP4    : 143
+IMAP4-SSL: 585
+IMAPS    : 993 (= IMAP4 over TLS/SSL)
 
 Please consult your provider for information about
-which port to use. Usually the standard ports should
-work fine.
+which protocol and port to use. Usually the standard
+ports should work fine.
 
 Your client may support multiple entries here. In
 this case you can specify more than one port, each
