@@ -19,7 +19,7 @@ unit xp2c;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -98,7 +98,7 @@ uses
   xp4o2,
   xp9bp;
 
-const 
+const
   MaxProtocols = 2;
   Protocols: array[1..MaxProtocols] of string = (
     'http://',
@@ -368,6 +368,7 @@ begin
       mappsel (true, getres2 (252, 50));         { 'benutzerdefiniert' }
     mhnr (258);
   end;
+
   maddbool(3,7 + j,getres2(252,14),haltown); mhnr (243); { 'Eigene Nachrichten halten' }
   maddbool(3,8 + j,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
   maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
@@ -385,7 +386,7 @@ begin
   maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. Empfangsbest„tigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-{  maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
+{  maddbool(3,16,getres2(252,28),askreplyto); }  { 'fragen bei Antwort-an' }
   maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
 
@@ -430,8 +431,8 @@ function testurl(var s:string):boolean;
       protocol:= '';
     for i:= 1 to MaxProtocols do
       if (protocol=protocols[i]) then begin
-	NoProtocol:= false;
-	exit;
+        NoProtocol:= false;
+        exit;
       end;
     NoProtocol:= true;
   end;
@@ -853,7 +854,7 @@ begin
     i:=pos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
-    for i := 1 to length(UsrFeldDef) do 
+    for i := 1 to length(UsrFeldDef) do
      if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
     if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
     GetUsrFeldPos;  { Position des Usernamenfelds bestimmen }
@@ -1459,14 +1460,14 @@ end;
 function testfilename(var s:string):boolean;
 var i : byte;
     c : char;
-begin 
+begin
   testfilename:=true;
   for i:=1 to length(s) do
   begin
-    c:=s[i];    
+    c:=s[i];
     if not ((c='.') or (c in ['A'..'Z']) or (c in ['0'..'9']))
       then testfilename:=false;
-    end;  
+    end;
  end;
 
 procedure ViewerOptions;
@@ -1474,7 +1475,7 @@ var x,y : byte;
     brk : boolean;
 begin
   if right(viewer_save,1)='.' then viewer_save:=left(viewer_save,length(viewer_save)-1);
-  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1); 
+  if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1);
 
   dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
   maddtext(3,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
@@ -1483,21 +1484,21 @@ begin
   maddtext(3,7,getres2(273,2),col.coldiahigh);    { 'Sicherheit bei Multiformat Mime-Viewern:'}
   maddtext(3,9,getres2(273,3),0);          { Sichere Dateiendungen (externen Viewer benutzen):}
   maddstring(3,10,'',viewer_save,50,255,'>');
-  mset1func(testfilename); 
-  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF'); 
+  mset1func(testfilename);
+  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF');
   maddtext(3,12,getres2(273,4),0);          {Internen Lister benutzen bei diesen Dateiendungen:}
   maddstring(3,13,'',viewer_lister,50,255,'>');
-  mset1func(testfilename); 
+  mset1func(testfilename);
   mappsel(false,'.TXT.ASC');
   maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verd„chtige Dateiformate}
-  maddstring(3,16,'',viewer_scanner,50,viewproglen,'');  
+  maddstring(3,16,'',viewer_scanner,50,viewproglen,'');
   msetvfunc(testexist);
   readmask(brk);
   if not brk and mmodified then
     GlobalModified;
   enddialog;
   freeres;
-  menurestart:=brk;  
+  menurestart:=brk;
   viewer_save:=Viewer_save+'.';
   viewer_lister:=Viewer_Lister+'.';
 end;
@@ -1505,6 +1506,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.20  2001/07/23 18:40:09  mk
+  - removed nested comments
+
   Revision 1.39.2.19  2001/07/20 15:51:10  my
   - corrected height of English Config/Options/Nets dialogue
 

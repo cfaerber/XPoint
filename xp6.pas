@@ -459,7 +459,7 @@ end;
 procedure EditNachricht(pushpgdn:boolean);
 var p      : byte;
     edpush : boolean;
- 
+
     cc_hand,  cc_size : word;
     ccm_hand,ccm_size : word;
   (*  ma_hand,  ma_size : word; *)
@@ -467,9 +467,9 @@ var p      : byte;
 
   procedure store_arrays;     { Arrays ins XMS sichern und Speicher freigeben }
   var i : longint;
-      n : byte; {*} 
+      n : byte; {*}
 
-    function xms_ok:boolean;    {*} { Debugcode evtl. spaeter entfernen oder ausklammern.} 
+    function xms_ok:boolean;    {*} { Debugcode evtl. spaeter entfernen oder ausklammern.}
     begin
       xms_ok:=true;
       inc(n);
@@ -481,7 +481,7 @@ var p      : byte;
           strs(((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3) +'K');
         if n=2 then XmsFree(ccm_hand);
         XmsFree(cc_hand);
-        end;  
+        end;
     end;
 
   begin
@@ -493,7 +493,7 @@ var p      : byte;
       cc_hand:=XmsAlloc(sizeof(cc^) div 1024 +1);
       if xmsresult=0 then XmsWrite(cc_hand,cc^,0,sizeof(cc^));
  {*}  if not xms_ok then exit;
-      ccm_size:=sizeof(ccm^); 
+      ccm_size:=sizeof(ccm^);
       ccm_hand:=XmsAlloc(sizeof(ccm^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ccm_hand,ccm^,0,sizeof(ccm^));
  {*}  if not xms_ok then exit;
@@ -503,13 +503,13 @@ var p      : byte;
  {*}  if not xms_ok then exit; *)
       XmsStored:=true;
       dispose(ccm); dispose(cc); (* dispose(marked); *)
-      end; 
+      end;
   end;
 
   procedure get_arrays;       { Arrays neu Anlegen und aus XMS einlesen }
   begin
     if XmsStored then begin
-      (* new(marked); *) new(cc); new(ccm); 
+      (* new(marked); *) new(cc); new(ccm);
       XmsRead(cc_hand,cc^,0,cc_size);
       XmsRead(ccm_hand,ccm^,0,ccm_size);
       (* XmsRead(ma_hand,marked^,0,ma_size);
@@ -549,7 +549,7 @@ begin
   editfile(datei,true,
            (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
            iif(editvollbild,0,2),umlaute=1);
-  get_arrays; 
+  get_arrays;
   if exteditor<3 then betreff:=EditGetbetreff;
   if edpush then begin
     moff; wpop; mon;
@@ -582,7 +582,7 @@ var i,first : integer;
             dbSeek (ubase, uiName, ustr (temp));
             if dbFound then
             begin
-{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{              if dbreadint(ubase,'adrbuch')=0 then   }   { CC-Empfaenger ins Adressbuch aufnehmen }
 {                dbwrite(ubase,'adrbuch',NeuUserGruppe);}
               dbReadN(ubase,ub_pollbox,server);
               if (dbReadInt(ubase,'userflags') and 2<>0) and
@@ -591,7 +591,7 @@ var i,first : integer;
             end;
           end else
           begin
-{            if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+{            if dbreadint(ubase,'adrbuch')=0 then    }  { CC-Empfaenger ins Adressbuch aufnehmen }
 {              dbwrite(ubase,'adrbuch',NeuUserGruppe);}
             dbReadN(ubase,ub_pollbox,server);
             if (dbReadInt(ubase,'userflags') and 2<>0) and
@@ -846,7 +846,7 @@ end;
     if (adresse<>'') and (cc_testempf(adresse)) then begin
       if (adresse[1]='[') and (adresse[length(adresse)]=']')
         then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
-      else if not kb_s then 
+      else if not kb_s then
       begin
         cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
         fillchar(cc^,sizeof(cc^),0);
@@ -874,7 +874,7 @@ end;
                iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
       7 : absender:=username+'@'+box+';'+pointname;
       end;
-    if realname <>'' then absender:=absender+'  ('+realname+')'; 
+    if realname <>'' then absender:=absender+'  ('+realname+')';
   end;
 
   function Samebox:boolean;
@@ -901,18 +901,18 @@ end;
       orgNT:=netztyp;
       dbOpen(d,BoxenFile,1);
       repeat
-        dbread(d,'boxname',box); 
+        dbread(d,'boxname',box);
         loadboxdata;
         if ntAdrCompatible(orgnt,netztyp)
-        then begin 
+        then begin
           set_name(s1);
-          mappsel(false,s1);          
+          mappsel(false,s1);
           end;
         dbnext(d);
       until dbeof(d);
       box:=orgbox;
       dbSeek(d,boiName,ustr(orgbox));
-      loadBoxData; 
+      loadBoxData;
       dbclose(d);
     end;
 
@@ -924,17 +924,17 @@ end;
       end;
     yy:=y;
     if not pm and (Netztyp=nt_fido) then yy:=yy-2;   {Zeile fuer Fidoempf beachten}
-  again:    
+  again:
     s:=force_absender;
     openmask(x+13,x+13+51+2,yy+2,yy+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',force_absender,52,adrlen,'');
     set_box_selection;
     readmask(brk);
-    closemask; 
+    closemask;
     if brk then force_absender:=s
-    else begin 
-      if force_absender='' then goto again;  
+    else begin
+      if force_absender='' then goto again;
       testmailstring_nt:=netztyp;
       if (netztyp<>nt_fido) and (netztyp<>nt_maus)
         then s:=(left(force_absender,cposx(' ',force_absender)-1))
@@ -1832,7 +1832,7 @@ fromstart:
       4 : hdp^.absender:=username+'@'+FidoAbsAdr;
       5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            if email<>'' then hdp^.absender:=email else 
+            if email<>'' then hdp^.absender:=email else
               hdp^.absender:=username+'@'+
                iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
             hdp^.real_box:=box;
@@ -1844,7 +1844,7 @@ fromstart:
     end;
     if (force_absender='') or (hdp^.absender=force_absender)
       then hdp^.realname:=realname
-    else begin 
+    else begin
        hdp^.absender:=(left(force_absender,cposx(' ',force_absender)-1));
        n:=cpos('(',force_absender);
        if n>0 then begin
@@ -2377,6 +2377,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.33  2001/07/23 18:40:09  mk
+  - removed nested comments
+
   Revision 1.39.2.32  2001/07/08 21:32:28  my
   JG:- Fix: <F2> selection of Fido AKAs now works when changing
        the sender with <Alt-A> in the send window
