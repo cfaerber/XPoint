@@ -180,9 +180,6 @@ begin
   New(InBuffer, Init(InBufSize));
   New(OutBuffer, Init(OutBufSize));
 
-  if (InBuffer^.TxtArr=nil) OR (InBuffer^.TmpBuf=nil) then EXIT;
-  if (OutBuffer^.TxtArr=nil) OR (OutBuffer^.TmpBuf=nil) then EXIT;
-
   {-------------------- Startup a seperate write thread ---------------------}
   New(CriticalTx, Init);
   CriticalTx.CreateExclusive;
@@ -674,6 +671,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.4  2001/03/02 15:45:54  ma
+  - main buffer of ring buffer obj is private now
+
   Revision 1.3  2000/10/28 09:40:28  ma
   - introduced credits.txt
 
