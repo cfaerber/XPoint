@@ -36,7 +36,7 @@
     Public License.
 }
 
-{$DEFINE DEBUG}
+{$I xpdefine.inc }
 
 {$IFDEF FPC}
   {$MODE Delphi}
@@ -638,6 +638,10 @@ end;
 end.
 
 // $Log$
+// Revision 1.3  2003/01/13 23:53:11  mk
+// - added xpdefine.inc
+// <CVS: ----------------------------------------------------------------------
+//
 // Revision 1.2  2003/01/13 23:31:34  cl
 // - FPC compile fix
 //
@@ -648,3 +652,5 @@ end.
 // - new class TRopeStream to replace TMemoryStream
 //
 //
+
+
