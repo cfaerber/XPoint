@@ -34,6 +34,7 @@ pop.worldonline.de
 pop3.planetinternet.de
 pop.kundenserver.de
 mail.komtel.net
+mail.ping.de
 
 
 [SMTP (Mail ausgehend/outgoing)]
@@ -53,6 +54,7 @@ smtp.worldonline.de
 mailhost.planetinternet.de
 smtp.kundenserver.de
 mail.komtel.net
+mail.ping.de
 
 
 [NNTP (News)]
@@ -69,3 +71,4 @@ news.tiscali.de
 news.worldonline.de
 news.planetinternet.de
 news.komtel.net
+news.ping.de
