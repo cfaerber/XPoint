@@ -77,10 +77,7 @@ type mprec     = record
 {$IFDEF NCRT }
      scrptr    = word;  { Handle }
 {$ELSE }
-     scrptr    = record
-                   scsize  : word;
-                   p       : pointer;
-                 end;
+     scrptr    = Pointer; 
 {$ENDIF }
      ahidden   = array[1..maxhidden] of SmallInt;
 
@@ -906,10 +903,12 @@ end;
 
 
 procedure sichern(var sp:scrptr);
-{$IFDEF NCRT}
 var
+{$IFDEF NCRT }
   r: integer;
-{$ENDIF}
+{$ELSE }
+  scSize: Integer;
+{$ENDIF }
 begin
 {$IFDEF NCRT }
   r:= getrahmen;
@@ -917,19 +916,16 @@ begin
   wpull(1,screenwidth,1,screenlines,'',sp);
   setrahmen(r);
 {$ELSE}
-  with sp do
-  begin
 {$IFDEF Win32 }
-    { Das Attribut belegt hier 2 Byte }
-    scsize:=screenlines*screenwidth*4;
+  { Das Attribut belegt hier 2 Byte }
+  scsize:=screenlines*screenwidth*4;
 {$ELSE }
-    scsize:=screenlines*2*screenwidth;
+  scsize:=screenlines*2*screenwidth;
 {$ENDIF }
-    getmem(p,scsize);               { Bild sichern }
-    moff;
-    ReadScreenRect(1, screenwidth, 1, screenlines, p^);
-    mon;
-  end;
+  GetMem(sp, scsize);               { Bild sichern }
+  moff;
+  ReadScreenRect(1, screenwidth, 1, screenlines, sp^);
+  mon;
 {$ENDIF}
 end;
 
@@ -938,16 +934,13 @@ begin
 {$IFDEF NCRT}
   wrest(sp);
 {$ELSE}
-  with sp do
-  begin
-    moff;
-    {$IFNDEF NCRT }
-      WriteScreenRect(1, screenwidth, 1, screenlines, p^);
-    {$ENDIF }
-    mon;
-    disp_DT;
-    freemem(p,scsize);               { Bild wiederherstellen }
-  end;
+  moff;
+  {$IFNDEF NCRT }
+    WriteScreenRect(1, screenwidth, 1, screenlines, sp^);
+  {$ENDIF }
+  mon;
+  disp_DT;
+  freemem(sp);               { Bild wiederherstellen }
 {$ENDIF}
 end;
 
@@ -2128,6 +2121,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.18  2003/04/12 07:43:09  mk
+  - scrptr is now a pointer instead of record
+
   Revision 1.147.2.17  2003/01/25 14:24:07  mk
   - GetLastError only for Win32
 
