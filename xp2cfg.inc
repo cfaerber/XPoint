@@ -1,4 +1,4 @@
-{ --------------------------------------------------------------- }
+ÿ{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -624,10 +624,10 @@ begin
   ShowFidoEmpf:=true;
   ShowRealnames:=false;
   ss_passwort:=false;
-  NewsMIME:=false;
+  NewsMIME:=true;
   MIMEqp:=false;
-  RFC1522:=false;
-  NoArchive:=true; {!MH:}
+  RFC1522:=true;
+  NoArchive:=false; {!MH:}
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -1607,6 +1607,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.5  2000/11/17 10:29:09  mk
+  - defaults angepasst
+
   Revision 1.13.2.4  2000/06/01 15:10:12  mk
   - cvs-join-konflikt beseitigt
 
