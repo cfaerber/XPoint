@@ -1103,7 +1103,7 @@ fromstart:
                 rfehler(610)   { 'Betreff kann nicht geaendert werden' }
               else begin
                 { neuer Betreff }
-                readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
+                readstring(x+13,y+4,'',betreff,min(betrlen,52),60,'',brk);
                 betreff:=trim(betreff);
                 if umlauttest(betreff) then;
                 showbetreff;
@@ -1453,6 +1453,9 @@ finalization
 
 {
   $Log$
+  Revision 1.59  2002/07/20 15:35:51  cl
+  - BUGFIX: Betrefffeld beim Editieren zu kurz.
+
   Revision 1.58  2002/07/09 13:37:20  mk
   - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
 
