@@ -873,7 +873,7 @@
       { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if Copy(Uppercase(cfgfile), 1, 5) = ('<XP>' + DirSepa) then
+      if LeftStr(cfgfile, 5) = ('<XP>' + DirSepa) then
         cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
       pushhp(30129);
       { 'Externe Konfigurationsdatei laden' }
@@ -886,9 +886,9 @@
         if UpperCase(dir) = Uppercase(fullClientDir) then
           cfgfile := name + ext
         else
-        if UpperCase(Copy(dir, 1, Length(ownpath))) = Uppercase(ownpath) then
+        if FileUpperCase(LeftStr(dir, Length(ownpath))) = FileUpperCase(ownpath) then
           cfgfile := '<XP>' + Copy(cfgfile, Length(ownpath), Length(cfgfile)-Length(ownpath)+1);
-        if not (Uppercase(cfgfile) = Uppercase(ClientExternalConfig)) then
+        if not (FileUppercase(cfgfile) = Uppercase(ClientExternalConfig)) then
         begin
           ClientExternalConfig := cfgfile;
           WriteBox(bfg,boxpar);
@@ -2077,6 +2077,13 @@
 
 {
   $Log$
+  Revision 1.15  2001/08/02 22:22:43  mk
+  - EditExtern: filename of a non-existing file is written to
+    <server>.BFG only if the user confirmed file creation *and*
+    indeed created the file
+  JG:- EditExtern: optimized suboptimal (but working) code;
+  - Changed some UpperCase to FileUpperCase
+
   Revision 1.14  2001/08/01 01:00:30  mk
   - added IncludeTrailingPathDelimiter and fixed compile problems
 
