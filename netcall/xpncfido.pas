@@ -165,9 +165,9 @@ begin { ProcessAKABoxes }
       Debug.DebugLog('xpncfido','Processing sendaka '+aboxname,DLDebug);
       OutgoingServers:=trim(mid(OutgoingServers,p));
       if GetBoxData(aboxname,alias,domain,bfile)then begin
-        Debug.DebugLog('xpncfido','server file name is '+bfile,DLDebug);
         AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
         ReadBox(nt_Fido,bfile,@tempboxpar);
+        Debug.DebugLog('xpncfido','server file name is '+bfile+', boxname '+TempBoxPar.boxname,DLDebug);
         if Crash then begin
           bfile:=CrashOutBuffer;
           tempboxpar.boxname:=boxpar^.boxname;
@@ -414,12 +414,13 @@ var i        : integer;
       p, i : integer;
       dir, name, ext : string;
     begin
+      Debug.DebugLog('xpncfido','match('+wfn+','+fn+')',dlDebug);
       p:=cpos('.',fn);
       if p=0 then
-        match:=false
+        result:=false
       else
       begin
-        match:=true;
+        result:=true;
         fsplit(wfn,dir,name,ext);
         p:=cpos('*',name);
         if p>0 then name:=LeftStr(name,p-1)+typeform.dup(9-p,'?');
@@ -432,8 +433,9 @@ var i        : integer;
         p := Min(Length(fn), Length(wfn)); // check this!
         for i:=1 to p do
           if (wfn[i]<>'?') and (UpCase(fn[i])<>UpCase(wfn[i])) then
-            match:=false;
+            result:=false;
       end;
+      Debug.DebugLog('xpncfido',iifs(result,'files match','files do not match'),dlDebug);
     end;
 
   var files,
@@ -444,7 +446,9 @@ var i        : integer;
       iFile  : integer;
 
   begin
+    Debug.DebugLog('xpncfido','ProcessRequestResult '+fa,dlDebug);
     files:=''; GetReqFiles(fa,files);
+    Debug.DebugLog('xpncfido','GetReqFiles '+files+', keeprequests '+inttostr(ord(keeprequests)),dlDebug);
     if files<>'' then
       if keeprequests then begin
         TrimFirstChar(Files, '>');
@@ -467,6 +471,7 @@ var i        : integer;
         nfiles:=trim(nfiles);
         if nfiles<>'' then nfiles:='>'+nfiles;   { Requests zurÅckstellen }
         SetRequest(fa,nfiles);
+        Debug.DebugLog('xpncfido','nfiles '+nfiles,dlDebug);
         end
       else
         SetRequest(fa,'');
@@ -896,6 +901,9 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.1  2002/06/07 16:25:15  ma
+  - added debug logs (f'reqs)
+
   Revision 1.32  2002/04/14 12:00:55  mk
   - use SafeDeleteFile
 
