@@ -1030,8 +1030,8 @@
             ServersList[i]:=s;
             inc(i);
           end;
-        end;
         close(t);
+        end;
       end;
     end;
 
@@ -2162,6 +2162,9 @@
 
 {
   $Log$
+  Revision 1.10.2.56  2002/06/07 22:45:31  my
+  MY:- Fix: IOResult/close() in 'ReadServersDat' sauberer gestaltet.
+
   Revision 1.10.2.55  2002/05/26 16:56:52  my
   JG:- Fix: Wildcardzeichen ("?", "*") sind bei Verzeichnisangaben keine
        erlaubten Zeichen mehr. Im einzigen Fall, wo sie tats„chlich
