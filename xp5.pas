@@ -547,7 +547,7 @@ var c       : char;
         end
         else if not ss then begin
           ss:=true;
-          x:=random(78)+2;
+          x:=random(screenwidth-2)+2;
           y:=random(screenlines)+1;
           wrt(x,y,'ú');
           state:=random(40)+8;
@@ -923,6 +923,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/08/03 00:05:50  mk
+  - Sternhimmel geht jetzt auch bei groesser 80 Zeichen ;-)
+
   Revision 1.35  2000/07/27 10:13:03  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
