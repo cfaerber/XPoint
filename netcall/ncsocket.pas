@@ -33,28 +33,36 @@ uses
   IPAddr,               { TIP }
 {$IFDEF Win32 }
   winsock,
+{$ELSE }
+  sockets,
 {$ENDIF }
-  Sockets,              { Socket-Interface }
   sysutils;
 
 
 type
   ESocketNetcall                = class(ENetcall);              { Allgemein (und Vorfahr) }
   ESNInvalidPort                = class(ESocketNetcall);        { Ungueltiger Port }
+  ESocketError                  = Class(ESocketNetcall);        { WSAGetLastError }
 
+const
+  MaxSocketBuffer = 32767;
 type
+  TSocketBuffer = array[0..MaxSocketBuffer] of Char;
+
   TSocketNetcall = class(TNetcall)
 
   private
 
-    FAddr       : TInetSockAddr;        { Socket-Parameter-Block }
+    FAddr       : TSockAddr;            { Socket-Parameter-Block }
     FHandle     : longint;              { Socket-Handle }
     FConnected  : boolean;              { Flag }
+    FInBuf: TSocketBuffer;              { In-Buffer des Sockets }
+    FInPos, FInCount: Integer;          { Position und Anzahl der Zeichen im Buffer }
 
+    FTimeOut: Boolean;                  { True, wenn ein Timeout aufgetreten ist }
   protected
 
     FPort               : integer;              { Portnummer }
-    tin, tout           : text;                 { Pseudo-Text-Dateien }
     FErrorMsg   : string;               { Fehlertext }
 
     procedure SActive(b: boolean);
@@ -62,6 +70,15 @@ type
 
     { Ermittelt den Result-Code }
     function ParseResult(s: string): integer;
+
+    { Liest so viel Daten in den Buffer, wie Platz ist und Daten da sind }
+    procedure ReadBuffer;
+
+    { Achtung, das geht nur mit Blocking Sockets, sonst muss gepuffert werden }
+    procedure WriteBuffer(Buffer: Pointer; Size: Integer);
+
+    { Erzeugt eine Exception mit dem Fehlercode }
+    procedure RaiseSocketError;
 
   public
 
@@ -77,6 +94,7 @@ type
     { Verbindung }
     property Active: boolean read FConnected write SActive;
     property Connected: boolean read FConnected;
+    property TimeOut: boolean read FTimeout write FTimeout;
 
     property ErrorMsg: string read FErrorMsg;
 
@@ -85,13 +103,16 @@ type
     constructor CreateWithHost(s: string);
     constructor CreateWithIP(ip: TIP);
 
+    { Strukturen freigeben }
+    destructor Destroy; override;
+
     { Verbindungsauf-/-abbau }
     function Connect: boolean; virtual;
     procedure DisConnect; virtual;
 
-    { Strukturen freigeben }
-    destructor Destroy; override;
-
+    { Beide Routinen sind blocking }
+    procedure SWriteln(s: String);
+    procedure SReadln(var s: String);
   end;
 
 implementation
@@ -103,6 +124,7 @@ begin
   Host.AutoResolve:= false;
   FPort:= 0;
   FConnected:= false;
+  FInPos := 0; FInCount := 0;
 end;
 
 constructor TSocketNetcall.CreateWithHost(s: string);
@@ -113,6 +135,7 @@ begin
   Host.Name:= s;
   FPort:= 0;
   FConnected:= false;
+  FInPos := 0; FInCount := 0;
 end;
 
 constructor TSocketNetcall.CreateWithIP(ip: TIP);
@@ -126,6 +149,7 @@ begin
     Host.Name:= ip.Name;
   FPort:= 0;
   FConnected:= False;
+  FInPos := 0; FInCount := 0;
 end;
 
 destructor TSocketNetcall.Destroy;
@@ -149,26 +173,24 @@ function TSocketNetcall.Connect: boolean;
 begin
   if FConnected then
     DisConnect;
-  FAddr.Family:= AF_INET;
+  FAddr.sin_Family:= AF_INET;
   { Hi-/Lo-Word vertauschen }
-  FAddr.Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
+  FAddr.sin_Port:= ((FPort and $00ff) shl 8) or ((FPort and $ff00) shr 8);
   { IP jetzt aufloesen }
   if not Host.Resolved then
     Host.Resolve;
   { Adresse uebernehmen }
-  FAddr.Addr:= Host.Raw;
+  FAddr.sin_Addr.s_addr:= Host.Raw;
   { Verbinden }
-{$IFDEF Win32 }
   FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-{$ELSE }
-  FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
-{$ENDIF }
-  if Sockets.Connect(FHandle, FAddr, tin, tout) then begin
-    reset(tin);
-    rewrite(tout);
-    FConnected:= true;
-  end else
+
+  if WinSock.Connect(FHandle, FAddr, SizeOf(TSockAddr)) = SOCKET_ERROR then
+  begin
     FConnected:= false;
+    RaiseSocketError;
+  end
+  else
+    FConnected:= true;
   Result:= FConnected;
 end;
 
@@ -176,8 +198,6 @@ procedure TSocketNetcall.DisConnect;
 begin
   if FConnected then begin
     ShutDown(FHandle, 2);
-    close(tin);
-    close(tout);
   end;
 end;
 
@@ -212,9 +232,68 @@ begin
     FErrorMsg:= s;
 end;
 
+procedure TSocketNetcall.ReadBuffer;
+var
+  Size: DWord;
+  Count: Integer;
+begin
+  if IOCTLSocket(FHandle, FIONREAD, Size) = SOCKET_ERROR then
+    RaiseSocketError
+  else
+  if Size > 0 then
+  begin
+    // Nur so viel lesen, wie in den Buffer reingeht
+    if Size > (MaxSocketBuffer-FInCount) then
+      Size := MaxSocketBuffer - FInCount;
+    Count := recv(FHandle, FInBuf[FInCount], Size, 0);
+    if Count = SOCKET_ERROR then
+      RaiseSocketError
+    else
+      Inc(FInCount, Count);
+  end;
+end;
+
+procedure TSocketNetcall.WriteBuffer(Buffer: Pointer; Size: Integer);
+var
+  count: Integer;
+begin
+  Count := send(FHandle, Buffer, Size, 0); Writeln('Count: ', Count);
+  if Count = SOCKET_ERROR then
+    RaiseSocketError;
+end;
+
+procedure TSocketNetcall.RaiseSocketError;
+begin
+  raise ESocketError.CreateFMT('WSASocketError %d', [WSAGetLastError]);
+end;
+
+procedure TSocketNetcall.SWriteln(s: String);
+begin
+  s := s + #13#10;
+  WriteBuffer(@s[1], Length(s));
+end;
+
+procedure TSocketNetcall.SReadln(var s: String);
+var
+  c: Char;
+begin
+  s := ''; ReadBuffer;
+  while FInPos < FInCount do
+  begin
+    c := FInBuf[FinPos]; Inc(FinPos);
+    if not (c in [#10,#13]) then
+      s := s + c
+    else
+      break;
+  end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.5  2000/08/01 11:07:32  mk
+  - von Sockets.pp auf WinSock umgestellt
+
   Revision 1.4  2000/07/27 10:27:28  mk
   - Commitfehler beseitigt
 
