@@ -2652,6 +2652,7 @@ begin
   finally
     BoxList.Free;
   end;
+  s := s1;
 end;
 
 
@@ -2911,6 +2912,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2003/10/03 11:35:06  mk
+  - fixed addServersTest
+
   Revision 1.69  2003/10/01 18:37:11  mk
   - simplyfied seeknextbox
 
