@@ -60,7 +60,9 @@ procedure test_systeme;
 procedure testdiskspace;
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
+{$ifndef Linux}
 procedure check_date;
+{$endif}
 procedure ReadDomainlist;
 procedure ReadDefaultViewers;
 
@@ -913,6 +915,7 @@ begin
     end;
 end;
 
+{$ifndef Linux}
 procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
 var dt   : DateTime;
@@ -959,7 +962,7 @@ begin
     enddialog;
     end;
 end;
-
+{$endif}
 
 procedure ReadDomainlist;
 var d   : DB;
@@ -1071,6 +1074,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/03 15:54:15  hd
+  - Linux: Check_Date entfernt
+
   Revision 1.49  2000/07/03 15:16:22  mk
   - Trim entfernt und Sysutils eingefuegt
 

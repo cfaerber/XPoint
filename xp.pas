@@ -163,7 +163,9 @@ begin
       test_systeme;
       ReadDefaultViewers;
       testtelefon(telefonnr^);
+{$ifndef Linux}
       check_date;
+{$endif}
       InitNodelist;
       startup:=false;
       showusername;
@@ -187,6 +189,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.32  2000/07/03 15:54:14  hd
+  - Linux: Check_Date entfernt
+
   Revision 1.31  2000/06/23 15:59:15  mk
   - 16 Bit Teile entfernt
 
