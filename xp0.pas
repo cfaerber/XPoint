@@ -625,6 +625,7 @@ type   textp  = ^text;
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
+                  smtp_secureloginmandatory: boolean;
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
                   // Client Mode
@@ -1226,6 +1227,9 @@ implementation
 
 {
   $Log$
+  Revision 1.159  2002/05/07 15:27:39  ma
+  - implemented SMTP AUTH PLAIN and LOGIN
+
   Revision 1.158  2002/02/01 10:31:54  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList

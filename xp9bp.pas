@@ -194,6 +194,7 @@ begin
     SMTP_ip := 'mail.domain.de';        { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
     SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
+    SMTP_secureloginmandatory := true;
     SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
 
     // Client Mode
@@ -397,6 +398,7 @@ begin
             gets(s,su,'SMTP-IP', smtp_ip) or
             gets(s,su,'SMTP-ID', smtp_id) or
             gets(s,su,'SMTP-Password', smtp_pwd) or
+            getx(su,  'SMTP-SecureLoginMandatory', smtp_secureloginmandatory) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',double(LastCall)) or
 
@@ -593,6 +595,7 @@ begin
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
+    writeln(t,'SMTP-SecureLoginMandatory=',jnf(SMTP_secureloginmandatory));
     writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
     ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
@@ -739,6 +742,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2002/05/07 15:27:39  ma
+  - implemented SMTP AUTH PLAIN and LOGIN
+
   Revision 1.61  2002/04/06 17:07:48  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux

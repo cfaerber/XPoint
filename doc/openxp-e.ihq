@@ -3163,6 +3163,13 @@ supports SMTP Auth. If this is not the case leave
 these fields blank.
 @
 40042
+If login data is entered and this option is selected
+login data will be transmitted encrypted only
+(AUTH CRAM-MD5).
+
+Not all servers support this option.
+@
+40043
 If activated CrossPoint will first check for incoming
 mails and then send outgoing mails.
 

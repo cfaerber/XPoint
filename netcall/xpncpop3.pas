@@ -111,6 +111,7 @@ begin
   if (bp^.smtp_id<>'') and (bp^.smtp_pwd<>'') then begin
     SMTP.User:= bp^.smtp_id;
     SMTP.Password:= bp^.smtp_pwd;
+    SMTP.SecureLoginMandatory := bp^.smtp_secureloginmandatory;
   end;
 
   List := TStringList.Create;
@@ -275,6 +276,9 @@ end;
                       
 {
   $Log$
+  Revision 1.34  2002/05/07 15:27:40  ma
+  - implemented SMTP AUTH PLAIN and LOGIN
+
   Revision 1.33  2002/05/03 20:43:53  mk
   - code cleanup and added comment
 

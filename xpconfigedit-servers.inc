@@ -1262,7 +1262,7 @@
   procedure EditSMTP(var brk:boolean);
   var x, y: Integer;
   begin
-    dialog(ival(getres2(952,0)),9,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
+    dialog(ival(getres2(952,0)),10,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(952,2),smtp_ip,25,255,             { 'Server    ~' }
@@ -1271,7 +1271,8 @@
       maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
         mhnr(40041);
-      maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'SMTP-after-POP' }
+      maddbool(3,8,GetRes2(952,5), smtp_secureloginmandatory);  { 'Sicheren Login erzwingen' }
+      maddbool(3,9,GetRes2(952,6), smtpafterpop);               { 'SMTP-after-POP' }
       freeres;
       readmask(brk);
       enddialog;
@@ -2360,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.49  2002/05/07 15:27:39  ma
+  - implemented SMTP AUTH PLAIN and LOGIN
+
   Revision 1.48  2002/04/10 20:42:54  mk
   - little client-mode fixes
 

@@ -2349,7 +2349,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Server    ~
 3    Loginname ~
 4    Paáwort   ~
-5    SMTP-after-POP
+5    Sicheren Login erzwingen
+6    SMTP-after-POP
 
 -
 # --- XP10 ------------------------------------------------------------
@@ -4018,6 +4019,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.59  2002/05/07 15:27:38  ma
+# - implemented SMTP AUTH PLAIN and LOGIN
+#
 # Revision 1.58  2002/04/14 22:19:09  cl
 # - added Ressources for new address handling
 #

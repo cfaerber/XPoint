@@ -45,6 +45,7 @@ type
 
     FServer             : string;               { Server-Software }
     FUser, FPassword    : string;               { Identifikation }
+    FSecureLoginMandatory: Boolean;
     FFQDomain           : string;
     FromLine, ToLine    : Integer;
 
@@ -60,6 +61,7 @@ type
     property Server: string read FServer;
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
+    property SecureLoginMandatory: boolean read FSecureLoginMandatory write FSecureLoginMandatory;
 
     { Verbindung herstellen }
     function Connect(AFQDomain: String): boolean;
@@ -86,7 +88,7 @@ const
   SMTPFROMSIGN    = 'MAIL FROM:';
   SMTPTOSIGN      = 'RCPT TO:';
   SMTPDATASIGN    = 'DATA';
-  SMTPHELOSIGN    = 'HELO';
+  SMTPHELOSIGN    = 'EHLO';
   SMTPQUITSIGN    = 'QUIT';
 
 {$IFDEF VP }
@@ -98,7 +100,10 @@ resourcestring
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
   res_connect4          = 'Verbunden mit %s';
+  res_connect5          = 'Kein gemeinsamer sicherer Login-Mechanismus';
   res_connect6          = 'Absenderfeld wurde abgelehnt';
+  res_connect7          = 'Unsicherer Login';
+  res_connect8          = 'Sicherer Login';
   res_disconnect        = 'Trenne Verbindung...';
   res_error             = 'Fehler: %s';
   res_postmsg           = 'Verschicke Mail %d (gesamt %.0f%%)';
@@ -113,6 +118,7 @@ begin
   FFQDomain := '';
   FromLine := -1;
   ToLine := -1;
+  FSecureLoginMandatory := True;
 end;
 
 constructor TSMTP.CreateWithHost(s: string);
@@ -122,11 +128,12 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
+  FSecureLoginMandatory := True;
 end;
 
 function TSMTP.Login: boolean;
 var
-  s: string;
+  s, AuthCaps, AuthStr: string;
 begin
   Result := false;
   if not Connected then exit;
@@ -135,22 +142,53 @@ begin
     FFQDomain := 'localhost';
 
   SWriteln(SMTPHELOSIGN + ' ' + FFQDomain);
-  SReadln(s);
-  if ParseResult(s) <> 250 then
-    raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+  AuthCaps := '';
+  repeat // read capabilities
+    SReadln(s);
+    if (copy(s,4,1)<>'-')and(ParseResult(s) <> 250) then
+      raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    if pos('250-AUTH',s)=1 then
+      AuthCaps := s;
+  until copy(s,4,1)<>'-';
 
-  if FUser <> '' then begin // SMTP Auth, currently only CRAM-MD5 implemented
-    SWriteln('AUTH CRAM-MD5');
-    SReadln(s);
-    if ParseResult(s) <> 334 then
-      raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    Delete(s, 1, cPos(' ', s));
-    s:= User + ' ' + LowerCase(CRAM_MD5(Password, DecodeBase64(s)));
-    SWriteln(EncodeBase64(s[1], length(s)));
-    SReadln(s);
-    if ParseResult(s) <> 235 then
-      raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+  if (FUser <> '')and(FPassword <> '') then begin // SMTP Auth
+    if pos('CRAM-MD5', AuthCaps)<>0 then begin // AUTH CRAM-MD5
+      Output(mcInfo,res_connect8, [0]); // Sicherer Login
+      SWriteln('AUTH CRAM-MD5');
+      SReadln(s);
+      if ParseResult(s) <> 334 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      Delete(s, 1, cPos(' ', s));
+      s:= User + ' ' + LowerCase(CRAM_MD5(Password, DecodeBase64(s)));
+      SWriteln(EncodeBase64(s[1], length(s)));
+      SReadln(s);
+      if ParseResult(s) <> 235 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      end
+    else if SecureLoginMandatory then raise ESMTP.Create(res_connect5) // Kein gemeinsamer sicherer Login-Mechanismus
+    else if pos('PLAIN', AuthCaps)<>0 then begin // AUTH PLAIN
+      Output(mcInfo,res_connect7, [0]); // Unsicherer Login
+      AuthStr := #0 + User + #0 + Password;
+      SWriteLn('AUTH PLAIN ' + EncodeBase64(AuthStr[1], length(AuthStr)));
+      SReadln(s);
+      if ParseResult(s) <> 235 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    end else if pos('LOGIN', AuthCaps)<>0 then begin // AUTH LOGIN
+      Output(mcInfo,res_connect7, [0]); // Unsicherer Login
+      SWriteLn('AUTH LOGIN');
+      SReadln(s);
+      if ParseResult(s) <> 334 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      SWriteLn(EncodeBase64(FUser[1], length(User)));
+      SReadln(s);
+      if ParseResult(s) <> 334 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      SWriteLn(EncodeBase64(FPassword[1], length(Password)));
+      SReadln(s);
+      if ParseResult(s) <> 235 then
+        raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
     end;
+  end;
 
   Result := true;
 end;
@@ -295,6 +333,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/05/07 15:27:40  ma
+  - implemented SMTP AUTH PLAIN and LOGIN
+
   Revision 1.18  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 
