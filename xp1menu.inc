@@ -188,7 +188,7 @@ end;
 procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
-  LoString(mnu);
+  mnu := LowerCase(mnu);
   while LowerCase(left(menu[n],length(mnu)))<>mnu do inc(n);
   p:=pos(','+LowerCase(typeform.hex(n,2)+typeform.hex(nr,1)),LowerCase(menu[n]))+1;
 end;
@@ -601,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/07/31 09:24:58  mk
+  - Bug in Findmnu beseitigt
+
   Revision 1.19  2000/07/20 16:49:57  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
