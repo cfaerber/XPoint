@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen }
@@ -1128,6 +1129,7 @@ end;
 procedure DoSendInit1;
 begin
   firststart := true;
+  NodelistBrowserButtonsDisabled:=true;
   force_absender:='';
   Mime_Temppath:=iifs(_filesize(datei)+1024*1024>tempfree,ownpath,temppath);
   Max_Mime_Parts:=0;
@@ -2463,6 +2465,7 @@ xexit2:
     xp2b.DelTmpFiles(mime_temppath+'MIME????.TMP'); { Erst jetzt wegen CC-Empfaengern... }
   ExErase(Temppath+mime_Head);
   ExErase(Temppath+Mime_End);
+  NodelistBrowserButtonsDisabled:=false;
 end; {------ of DoSend -------}
 
 
@@ -2566,6 +2569,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.63  2003/03/17 23:01:04  my
+  MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
+       DoSend deaktiviert.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.39.2.62  2003/01/16 23:30:33  my
   MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
       - betastr an einigen Stellen ergÑnzt
