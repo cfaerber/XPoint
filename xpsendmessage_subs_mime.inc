@@ -229,6 +229,9 @@ begin
   if pa.FileEOL in [MimeEOLCR,MimeEOLLF] then
     ConnectStream(outs,MimeCreateEolConverter(pa.FileEOL));
 
+
+  // presize the output stream to improve speed (reduces memory allocations)
+  (TNullCodecStream(outs).otherstream as TMemoryStream).Size := Trunc(Ins.Size * 1.4);
   CopyStream(ins,outs);
 
   ins.Free;
@@ -304,6 +307,10 @@ end;
 
 //
 // $Log$
+// Revision 1.7.2.1  2002/06/05 17:49:39  mk
+// - presize TMemoryStream to avoid heavy reallocation and improve speed
+// - increased block size for stream copy
+//
 // Revision 1.7  2002/01/05 16:01:11  mk
 // - changed TSendUUData from record to class
 //
