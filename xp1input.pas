@@ -74,36 +74,37 @@ var p,n,p1,i : Integer;
     spenter  : boolean;
 
   procedure display;
-  var i : byte;
+  var
+    i, bx: Integer;
   begin
-    gotoxy(x,y);
+    bx := x;
     attrtxt(col.colbutton);
     moff;
     for i:=1 to n do begin
       if buttsp[i]>0 then
-        gotoxy(wherex+buttsp[i],wherey);
-      bpx[i]:=wherex;
+        bx := bx+buttsp[i];
+      bpx[i]:= bx;
       if i=p then begin
         attrtxt(col.colbuttonarr);
-        Wrt2(#16);
+        FWrt(bx, y, #16);
         end
       else
-        Wrt2(' ');
+        FWrt(bx, y, ' ');
       attrtxt(col.colbutton);
-      Wrt2(LeftStr(butt[i],butthigh[i]-1));
+      FWrt(bx+1, y, butt[i]);
       attrtxt(col.colbuttonhigh);
-      Wrt2(hot[i]);
-      attrtxt(col.colbutton);
-      Wrt2(copy(butt[i],butthigh[i]+1,40));
-      if i=p then begin
+      FWrt(bx+ButtHigh[i], y, hot[i]);
+      bx := bx + 1 + Length(butt[i]);
+      if i=p then
+      begin
         attrtxt(col.colbuttonarr);
-        Wrt2(#17);
+        FWrt(bx, y, #17);
         attrtxt(col.colbutton);
-        end
+      end
       else
-        Wrt2(' ');
-      gotoxy(wherex+abs,wherey);
-      end;
+        FWrt(bx, y, ' ');
+      bx := bx+abs+1;
+    end;
     mon;
   end;
 
@@ -292,17 +293,15 @@ var width,height : Integer;
       if (hot[i]=#0) or (i=p) then begin
         if i=p then attrtxt(col.colselbar)
         else attrtxt(col.colselbox);
-        wrt(x+1,y+i,ch+forms(sel[i],ml+1));
+        FWrt(x+1,y+i,ch+forms(sel[i],ml+1));
         end
       else begin
         attrtxt(col.colselbox);
-        wrt(x+1,y+i,ch+LeftStr(sel[i],selhigh[i]-1));
+        FWrt(x+1,y+i,forms(ch+sel[i], ml+2));
         attrtxt(col.colselhigh);
-        Wrt2(sel[i][selhigh[i]]);
-        attrtxt(col.colselbox);
-        Wrt2(forms(Mid(sel[i],selhigh[i]+1),ml-selhigh[i]+1));
-        end;
+        FWrt(x+1+selhigh[i], y+i, sel[i][selhigh[i]]);
       end;
+    end;
     mon;
   end;
 
@@ -418,6 +417,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2001/12/18 13:51:05  mk
+  - Speed up screen drawing routines
+
   Revision 1.24  2001/10/17 10:07:38  ml
   - use integer for cursorpos to prevent range errors
 

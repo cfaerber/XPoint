@@ -132,41 +132,31 @@ begin
     end;
   mainmenu^[3].enabled:=(aktdispmode<>20);
   setenable(0,3,aktdispmode<>20);
-  gotoxy(2,1);
+  x := 2;
   moff;
   for i:=1 to main_n do
     with mainmenu^[i] do begin
-      hmpos[i]:=wherex+1;
+      hmpos[i]:= x+1;
       if enabled then begin
         if nr=i then
           attrtxt(col.colmenuinv[0])
         else
           attrtxt(col.colmenu[0]);
         s:=mstr;
-        Wrt2(' ' + s + ' ');
+        FWrt(x, 1, ' ' + s + ' ');
         if i=nr then
           attrtxt(col.colmenuinvhi[0])
         else
           attrtxt(col.colmenuhigh[0]);
-        x := WhereX;
-        Wrt(x-Length(s)+hpos-2, 1, s[hpos]);
-        GotoXY(x,1);
-
-{        Wrt2(' ');
-        if hpos>1 then
-          Wrt2(LeftStr(s,hpos-1));
-        if i=nr then attrtxt(col.colmenuinvhi[0])
-        else attrtxt(col.colmenuhigh[0]);
-        Wrt2(s[hpos]);
-        if i=nr then attrtxt(col.colmenuinv[0])
-        else attrtxt(col.colmenu[0]);
-        Wrt2(copy(s,hpos+1,20) + ' '); }
-        end
+        FWrt(x+hpos, 1, s[hpos]);
+        x := x + Length(s) + 2;
+      end
       else begin
         attrtxt(col.colmenudis[0]);
-        Wrt2(' ' + mstr + ' ');
-        end;
+        FWrt(x, 1, ' ' + mstr + ' ');
+        x := x + Length(mstr) + 2;
       end;
+    end;
   mon;
 end;
 
@@ -288,7 +278,7 @@ begin
             attrtxt(col.coledithead);
             moff;
             wpush(1,80,1,2,'-');
-            wrt(1,1,forms(' '+getres2(132,m1),80));
+            Fwrt(1,1,forms(' '+getres2(132,m1),80));
             mon;
             end;
           case m1 of           { Schablonen }
@@ -357,19 +347,19 @@ var ma    : map;
           else attrtxt(col.colmenuseldis[menulevel]);
         check:=iifc(checker[nr]=i,'û',' ');
         if s='-' then
-          wrt(x,y+i,'Ã'+dup(ml,'Ä')+'´')
+          Fwrt(x,y+i,'Ã'+dup(ml,'Ä')+'´')
         else if hp=0 then
-          wrt(x+1,y+i,check+forms(s,ml-1))
+          Fwrt(x+1,y+i,check+forms(s,ml-1))
         else if not ma^[i].enabled then
-          wrt(x+1,y+i,' '+forms(s,ml-1))
+          Fwrt(x+1,y+i,' '+forms(s,ml-1))
         else
         begin
-          Wrt(x+1,y+i, forms(check+s,ml));
+          FWrt(x+1,y+i, forms(check+s,ml));
           if i<>p then
             attrtxt(col.colmenuhigh[menulevel])
           else
             attrtxt(col.colmenuinvhi[menulevel]);
-          Wrt(x+1+hp, y+i, s[hp]);
+          FWrt(x+1+hp, y+i, s[hp]);
 {          wrt(x+1,y+i,check+LeftStr(s,hp-1));
           if i<>p then
             attrtxt(col.colmenuhigh[menulevel])
@@ -611,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2001/12/18 13:51:05  mk
+  - Speed up screen drawing routines
+
   Revision 1.36  2001/10/20 21:35:48  ml
   - saving/restoring terminal for calling external programs works now
 
