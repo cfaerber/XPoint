@@ -2,10 +2,10 @@ UNIT ZModem;
 
 { $Id$ }
 
-(*                           ZMODEM fÅr Turbo-Pascal                           *)
+(*                           ZMODEM fuer Turbo-Pascal                           *)
 (*                       Copywrite (c) by Stefan Graf 1990                     *)
 (* Als Grundlage diente der Sourcecode TPZ.PAS von Philip R. Burn's PIPTERM.   *)
-(* Die Transferroutinen erzeugen selber keinerlei Statusmeldungen. Diese Åber- *)
+(* Die Transferroutinen erzeugen selber keinerlei Statusmeldungen. Diese ueber- *)
 (* nehmen zwei, vom Benutzter zu erstellende parameterlose PROCEDUREN, die     *)
 (* den aktuellen Status des Transfer's ausgeben.                               *)
 
@@ -21,6 +21,8 @@ UNIT ZModem;
 {a$DEFINE Log}  {ermoeglicht Loglevel 4, verbraucht viel Rechenzeit}
 {$IFDEF FPC}{$HINTS OFF}{$NOTES OFF}{$ENDIF}
 
+{$i xpdefine.inc}
+
 INTERFACE
   USES ObjCOM;
 
@@ -33,7 +35,7 @@ INTERFACE
 (* Empfangen eines File mit dem ZMODEM-Protokoll *)
 
 PROCEDURE ZmodemReceive (    vCommObj    : tpCommObj;  (* ObjCOM communication object            *)
-                             path       : STRING;     (* Path fÅr das File                      *)
+                             path       : STRING;     (* Path fuer das File                      *)
                          VAR fehlerflag : BOOLEAN);   (* TRUE, wenn ein Fehler aufgetreten ist  *)
 
 (* Senden eines Files mit dem ZMODEM-Protokoll *)
@@ -41,24 +43,24 @@ PROCEDURE ZmodemReceive (    vCommObj    : tpCommObj;  (* ObjCOM communication o
 PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication object            *)
                              pathname   : STRING;     (* Path und Filename                      *)
                              lastfile   : Boolean;
-                         VAR fehler     : WORD);      (* Bei Fehler in der öbertragung <> 0     *)
+                         VAR fehler     : WORD);      (* Bei Fehler in der Uebertragung <> 0     *)
 
 {Variablen mit Infos fuer die Ausgaberoutine}
 
   VAR
-    TransferTime,                  (* Startzeitpunkt der öbertragung in Tick's           *)
-    TransferSize,                  (* Gr"sse des zu Åbertragenden Files                 S*)
-    TransferCount,                 (* Anzahl der schon Åbertragenen Zeichen (recover)   S*)
-    TransferBytes      : LONGINT;  (* aktuelle Anzahl Åbertragene Zeichen (session)      *)
+    TransferTime,                  (* Startzeitpunkt der Uebertragung in Tick's           *)
+    TransferSize,                  (* Gr"sse des zu uebertragenden Files                 S*)
+    TransferCount,                 (* Anzahl der schon uebertragenen Zeichen (recover)   S*)
+    TransferBytes      : LONGINT;  (* aktuelle Anzahl uebertragene Zeichen (session)      *)
 
-    TransferName,                  (* Name des zu Åbertragenen Files                    S*)
+    TransferName,                  (* Name des zu uebertragenen Files                    S*)
     TransferPath,                  (* Pfad zum File, ggf. mit abschliessendem Backslash S*)
     TransferCheck,                 (* Bezeichnung des Checksummen-Verfahrens             *)
     TransferMessage    : STRING;   (* Meldungen der Transferroutine                      *)
 
-    TransferTotalTime,             (* Voraussichtliche öbertragungsdauer in Sek.         *)
+    TransferTotalTime,             (* Voraussichtliche Uebertragungsdauer in Sek.         *)
     TransferBlockSize,             (* Gr"sse des letzen Datenblockes                     *)
-    TransferError      : WORD;     (* Anzahl der erkannten öbertragungsfehler            *)
+    TransferError      : WORD;     (* Anzahl der erkannten Uebertragungsfehler            *)
                                                                                       (*S: Bei Startproc gesetzt*)
 
     FileAddition       : (NewFile,RecoverFile,ReplaceFile);
@@ -173,8 +175,8 @@ begin {GregorianToJulianDN}
                                     + XYear + Century;
 end; {GregorianToJulianDN}
 
-Procedure JulianDNToGregorian(JulianDN : LongInt;
-                  var Year, Month, Day : Integer);
+Procedure JulianDNToGregorian(JulianDN : word;
+                  var Year, Month, Day : word);
 var
   Temp,
   XYear   : LongInt;
@@ -231,7 +233,7 @@ BEGIN
    FOR n := 1 TO Length(s) DO
       secspast := (secspast SHL 3) + Ord(s[n]) - $30;
    datenum := (secspast DIV 86400) + c1970;
-   JulianDNToGregorian(datenum,INTEGER(dt.year),INTEGER(dt.month),INTEGER(dt.day));
+   JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
    secspast := secspast MOD 86400;
    dt.hour := secspast DIV 3600;
    secspast := secspast MOD 3600;
@@ -1091,7 +1093,7 @@ VAR
 
 (*************************************************************************)
 
-(* Empfangen von Datenblîcken mit 16 o. 32-Bit-CRC *)
+(* Empfangen von Datenbloecken mit 16 o. 32-Bit-CRC *)
 
 FUNCTION RZ_ReceiveData (VAR buf : buftype ; blength : INTEGER) : INTEGER;
 
@@ -1429,7 +1431,7 @@ BEGIN
         ELSE IF (fsize > tsize) THEN BEGIN
            filestart:=tsize;
            TransferCount:=tsize;
-           IF startproc<>NIL THEN startproc;
+           IF @startproc<>NIL THEN startproc;
 
            IF (NOT Z_OpenFile (outfile,TransferPath+TransferName)) THEN BEGIN
               TransferMessage:='Error opening ' + TransferName;
@@ -1461,7 +1463,7 @@ BEGIN
    IF makefile THEN BEGIN
      filestart:=0;
      TransferCount:=0;
-     IF startproc<>NIL THEN startproc;
+     {IF startproc<>NIL THEN startproc;}
      IF (NOT Z_MakeFile(outfile,TransferPath+TransferName)) THEN BEGIN
        TransferMessage:='Unable to create ' + TransferName;
        returncode := ZERROR;
@@ -1568,7 +1570,7 @@ nxthdr:
                    END  (* of IF THEN *)
                    ELSE BEGIN
 moredata:
-                      AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+                      AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 
                       c := RZ_ReceiveData (secbuf,ZBUFSIZE);
                       TransferBlockSize:=rxcount;
@@ -1647,13 +1649,13 @@ moredata:
                   END
       END; {case}
 
-      AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+      AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 
    UNTIL (NOT done);
 
 err:
 
-   AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+   AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 
    RZ_ReceiveFile := ZERROR
 END;
@@ -1679,7 +1681,7 @@ BEGIN
       END;
 
       c := RZ_ReceiveFile;
-      IF endproc<>NIL THEN endproc;
+      IF @endproc<>NIL THEN endproc;
 
       Z_CloseFile (outfile);
       Reset (outfile);
@@ -1721,7 +1723,7 @@ BEGIN
                   END
       END;  {case}
 
-      AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+      AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 
    END;  {while}
 END;
@@ -1730,7 +1732,7 @@ END;
 (*************************************************************************)
 
 PROCEDURE ZmodemReceive (    vCommObj    : tpCommObj;  (* ObjCOM communication object            *)
-                             path       : STRING;     (* Path fÅr das File                      *)
+                             path       : STRING;     (* Path fuer das File                      *)
                          VAR fehlerflag : BOOLEAN);   (* TRUE, wenn ein Fehler aufgetreten ist  *)
 
 VAR
@@ -1745,8 +1747,8 @@ BEGIN
    TransferCheck:='';
    TransferMessage:='';
 
-   zstartproc:=startproc;
-   zdispproc:=dispproc;
+   zstartproc:=@startproc;
+   zdispproc:=@dispproc;
 
      zbaud:=CommObj^.GetBPSrate;
 
@@ -1768,7 +1770,7 @@ BEGIN
        fehlerflag := TRUE;
      END;
 
-   AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+   AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 END;
 
 
@@ -2193,7 +2195,7 @@ WaitAck:
       TransferBlockSize:=blklen;
       TransferBytes:=txpos - TransferCount;
 
-      AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+      AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
 
       IF (e = ZCRCW) THEN GOTO waitack;
 
@@ -2238,7 +2240,7 @@ WaitAck:
                   END
       END; {case}
 
-      AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+      AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
    UNTIL (c <> ZACK)
 END;
 
@@ -2307,7 +2309,7 @@ BEGIN
                        IF (rxpos = 0) THEN FileAddition:=NewFile ELSE FileAddition:=RecoverFile;
 
                        TransferCount:=rxpos;
-                       IF (startproc <> NIL) THEN startproc;
+                       IF (@startproc <> NIL) THEN startproc;
                        strtpos := rxpos;
                        txpos := rxpos;
                        SZ_SendFile := SZ_SendFileData;
@@ -2324,7 +2326,7 @@ END;
 PROCEDURE ZmodemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication object            *)
                              pathname   : STRING;     (* Path und Filename                      *)
                              lastfile   : Boolean;
-                         VAR fehler     : WORD);      (* Bei Fehler in der öbertragung <> 0     *)
+                         VAR fehler     : WORD);      (* Bei Fehler in der Uebertragung <> 0     *)
 
 VAR
    s: STRING;
@@ -2344,14 +2346,14 @@ BEGIN
    TransferMessage:='';
    FileAddition:=NewFile;
 
-   zstartproc:=startproc;
-   zdispproc:=dispproc;
+   zstartproc:=@startproc;
+   zdispproc:=@dispproc;
 
      zbaud:=CommObj^.GetBPSRate;
 
      IF NOT CommObj^.Carrier THEN BEGIN
        TransferMessage:='Lost carrier';
-       AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+       AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
        fehler:=103;
        Exit
      END;
@@ -2359,7 +2361,7 @@ BEGIN
      IF pathname<>'' THEN BEGIN {if no file specified just terminate session}
        IF (NOT Z_FindFile(pathname,fname,fsize,ftime)) THEN BEGIN
          TransferMessage:='Unable to find/open file';
-         AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
+         AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
          fehler:=10;
          Exit
        END;
@@ -2429,10 +2431,10 @@ BEGIN
 
        END;  (* of ELSE *)
 
-     END;  (* of ELSE *)
+     END;  (* of ELSE *)         
 
-   AddLogMessage(TransferMessage,2); IF dispproc <> NIL THEN dispproc;
-   IF endproc<>NIL THEN endproc;
+   AddLogMessage(TransferMessage,2); IF @dispproc <> NIL THEN dispproc;
+   IF @endproc<>NIL THEN endproc;
 END;
 
 
@@ -2446,6 +2448,9 @@ END.
 
 {
   $Log$
+  Revision 1.3  2000/10/29 13:32:31  fe
+  Mit VPC und FPC uebersetzbar gemacht.
+
   Revision 1.2  2000/07/13 23:59:30  ma
   - mehr Debuglogs
   - leeres Send funktioniert jetzt richtig
