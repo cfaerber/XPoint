@@ -189,6 +189,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.7  2000/02/20 17:22:09  ml
+  Kommentare in MsgAddMark hinzugefuegt
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
@@ -198,6 +201,9 @@ end.
 }
 {
   $Log$
+  Revision 1.7  2000/02/20 17:22:09  ml
+  Kommentare in MsgAddMark hinzugefuegt
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

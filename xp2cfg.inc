@@ -321,8 +321,8 @@ begin
   fsb_shadow:=true;
   fsb_info:=true;
   new(bmarked);
-  maxmark:=2000+min(3000,max(0,memavail-250000) div 20);
-  getmem(marked,12*maxmark);
+  maxmark:=2000+min(3000,max(0,memavail-250000) div sizeof(markrec));
+  getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
   new(boxpar);
   for i:=0 to 3 do
@@ -1587,6 +1587,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/02/20 17:22:10  ml
+  Kommentare in MsgAddMark hinzugefuegt
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -60,7 +60,7 @@ procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
                          var realname:string);
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      var size:longint; var hd:header; var ok:boolean;
-                     PM2AMconv:boolean);
+		     PM2AMconv:boolean);
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 { procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas } 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
@@ -174,7 +174,7 @@ asm
          lds   si,passwd
          mov   ch,[si]                 { Pa·wort-LÑnge }
          mov   cl,4                    { zum Nibble-Tauschen }
-         mov   ah,decode
+	 mov   ah,decode
          cld
 
 @QPClp:  mov   al,es:[di]              { Original-Byte holen }
@@ -193,7 +193,7 @@ asm
          dec   dx                      { nÑchstes Byte }
          jnz   @QPClp
 
-         les   di,passpos              { neuen PW-Index speichern }
+	 les   di,passpos              { neuen PW-Index speichern }
          mov   es:[di],bx
          pop ds
 end;
@@ -212,7 +212,7 @@ asm
          cld
          lds   si,adr
          mov   cx,size
-         mov   dh,umlaut
+	 mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
          cmp   igcase,0               { ignore case? }
@@ -231,7 +231,7 @@ asm
          mov   al,'ô'
          jmp   @xl
 @no_oe:  cmp   al,'Å'
-         jnz   @no_ue
+	 jnz   @no_ue
          mov   al,'ö'
          jmp   @xl
 
@@ -250,7 +250,7 @@ asm
 @xl:     mov   [si-1],al
 @noc:    loop  @cloop
          pop   si
-         pop   cx
+	 pop   cx
 
 
 @case:   les   di,key
@@ -269,7 +269,7 @@ asm
          inc   bp
          dec   dl
          jz    @found
-         jmp   @sblp2
+	 jmp   @sblp2
 
                                         {--------------}
 @testul: cmp dh,0                       { UMLAUTSUCHE }
@@ -288,7 +288,7 @@ asm
 
 @@1:     cmp al,'ô'
          jne @@2
-         mov al,'O'                     { "OE"... }
+	 mov al,'O'                     { "OE"... }
          jmp @ultest
 
 @@2:     cmp al,'ö'
@@ -326,7 +326,7 @@ asm
           jns    @ii1
           xlat
 @ii1:     stosb
-          loop   @isolp1
+	  loop   @isolp1
 @noconv1:
 end;
 
@@ -685,17 +685,19 @@ begin
       x:=markanz
     else begin
       inc(x);
-        if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
-          { ACHTUNG: Hier kein FastMove wegen Åberlappenden Speicherbereichen! }
-           Move(marked^[x],marked^[x+1],Word(sizeof(markrec))*Word((markanz-x)));  
+	if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
+	  { ACHTUNG: Hier kein FastMove wegen Åberlappenden Speicherbereichen! }
+	  { SizeOf(MarkRec) ist 12, die MarkAnz kann bis 5000 sein. Um
+	    einen Integer-Ueberlauf nach Multiplikation zu verhindern muss
+	    mit Word gerechnet werden, so das mehr als 32kb verschoben werden
+	    koennen. Das tritt bei 2731 Nachrichten auf (65536 div 12 div 2) }
+	  Move(marked^[x],marked^[x+1],word(sizeof(markrec))*word(markanz-x));
       end;
-    { MK 01.02.00: Maximale Listengrî·e beachten }
-    { if (markanz < maxmarklist) then }
-      inc(markanz);
+    inc(markanz);
     marked^[x].recno:=dbRecno(mbase);
     marked^[x].datum:=dat;
     marked^[x].intnr:=intnr;
-    end;
+  end;
 end;
 
 
@@ -727,11 +729,11 @@ procedure SortMark;
       while smdl(marked^[i].datum,x) or
             ((marked^[i].datum=x) and (marked^[i].intnr<y)) do inc(i);
       while smdl(x,marked^[j].datum) or
-            ((marked^[j].datum=x) and (marked^[j].intnr>y)) do dec(j);
+	    ((marked^[j].datum=x) and (marked^[j].intnr>y)) do dec(j);
       if i<=j then begin
-        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-        inc(i); dec(j);
-        end;
+	w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
+	inc(i); dec(j);
+	end;
     until i>j;
     if l<j then sort(l,j);
     if r>i then sort(i,r);
@@ -757,9 +759,9 @@ procedure UnsortMark;
       while marked^[i].recno>x do inc(i);
       while marked^[j].recno<x do dec(j);
       if i<=j then begin
-        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-        inc(i); dec(j);
-        end;
+	w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
+	inc(i); dec(j);
+	end;
     until i>j;
     if l<j then sort(l,j);
     if r>i then sort(i,r);
@@ -1259,6 +1261,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/02/20 17:22:10  ml
+  Kommentare in MsgAddMark hinzugefuegt
+
   Revision 1.10  2000/02/20 14:48:21  jg
   -Bugfix: Nachrichten entmarkieren, wenn viele
    Nachrichten markiert waren (Msgunmark)
