@@ -855,7 +855,7 @@
         pushkey('e'); pushkey('c');
         exit;
       end;
-      fullClientDir := IncludeTrailingBackslash(fullClientDir);
+      fullClientDir := IncludeTrailingPathDelimiter(fullClientDir);
       cfgfile := trim(ClientExternalConfig);
 
       { Hier wird nur der Wert ClientExternalCnofig aus <Boxname>.BFG string-  }
@@ -1805,7 +1805,7 @@
     fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    nts:=''; nts2:=getres2(927,3);   { ',^SysopMode' }
+    nts:=''; {nts2:=getres2(927,3);}   { ',^SysopMode' }
 
     case nt of
       nt_Netcall : begin
@@ -2077,6 +2077,9 @@
 
 {
   $Log$
+  Revision 1.14  2001/08/01 01:00:30  mk
+  - added IncludeTrailingPathDelimiter and fixed compile problems
+
   Revision 1.13  2001/07/31 18:05:39  mk
   - implemented is_emailaddress in NameRead
   - RFC/Client: implemented "External Settings" under

@@ -89,6 +89,11 @@ procedure FSplit(const path: string; var dir, name, ext: string);
 { Append directory separator; resolve DRIVE: if necessary }
 function  AddDirSepa(const p: string): string;
 
+{$IFNDEF Delphi }
+{ Append directory separator }
+function IncludeTrailingPathDelimiter(const S: string): string;
+{$ENDIF }
+
 { Checks whether file exists - note f has to be a file type, NOT a string.
   Use SysUtils.FileExists to check using a filename. }
 function  existf(var f):boolean;
@@ -387,6 +392,16 @@ begin
     result:= p;
 end;
 
+{$IFNDEF Delphi }
+function IncludeTrailingPathDelimiter(const S: string): string;
+begin
+  if LastChar(s) <> DirSepa then
+    Result := s + DirSepa
+  else
+    Result := s;
+end;
+{$ENDIF }
+
 function FindFile(fn: string): string;
 begin
   result:='';
@@ -664,6 +679,9 @@ end.
 
 {
   $Log$
+  Revision 1.99  2001/08/01 01:00:30  mk
+  - added IncludeTrailingPathDelimiter and fixed compile problems
+
   Revision 1.98  2001/07/31 13:10:31  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
