@@ -20,7 +20,7 @@ const
   author_mail = 'dev@openxp.de';
 
   xp_xp       : string[17] = 'CrossPoint/OpenXP';
-  xp_client   : string[17] = 'CrossPoint/Client';
+  xp_client   : string[17] = '       CrossPoint';
   xp_origin   : string[21] = '--- CrossPoint/OpenXP';
   x_copyright = '(c) 2000-01';
 
@@ -98,6 +98,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29.2.17  2001/06/27 15:35:06  my
+  - changed string for RFC/Client netcalls
+
   Revision 1.29.2.16  2001/06/09 17:46:24  mk
   - Copyright auf 2000-01 geaendert
 

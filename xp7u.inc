@@ -555,7 +555,7 @@ begin
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLSPOOL', PPPSpool);
       attrtxt(col.colkeys);
-      FWrt(64, Screenlines, xp_client);   { 'CrossPoint/Client' }
+      FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
       shell(s,600,3);
 {      XPWinshell(OwnPath + s,'', 600,3, false); }
 {      dispfunctionkeys(false); }
@@ -620,6 +620,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.17  2001/06/27 15:35:06  my
+  - changed string for RFC/Client netcalls
+
   Revision 1.13.2.16  2001/04/23 18:43:24  mk
   - Spoolverzeichnis auch in versch. Unterverzeichnissen anlegen
 
