@@ -959,8 +959,10 @@ begin
       skeydisp:=keydisp; keydisp:=false;
       rec:=dbRecno(mbase);
       spush(disprec,sizeof(disprec));
-      qMimePart:=@MimePart;
+      qMimePart := TMimePart.Create;
+      qMimePart.Assign(MimePart);
       _brief_senden(listkey[1]);
+      qMimePart.Free;
       qMimePart:=nil; lastmpsel := false;
       if disprec[p]=0 then      { s. xp4.pm_archiv (auto-Archiv) }
         d1_0:=true;
@@ -1609,6 +1611,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.85  2001/12/09 13:20:06  mk
+  - fixed crashing bug with new TMimePart
+
   Revision 1.84  2001/12/08 09:23:02  mk
   - create list of MIME parts dynamically
 
