@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { CrossPoint - allg. Routinen }
@@ -1450,7 +1451,8 @@ end;
 procedure ListboxCol;
 var lc : listcol;
 begin
-  with lc do begin
+  with lc do
+  begin
     coltext:=col.colselbox;
     colselbar:=col.colselbar;
     colmarkline:=col.colselhigh;
@@ -1459,13 +1461,15 @@ begin
     colfound:=colstatus;
   { colscroll:=col.colselscroll; }
     setlistcol(lc);
-    end;
+    listseekcol:=colstatus;  { fÅr Markiersuche! }
+  end;
 end;
 
 procedure Listbox2Col;
 var lc : listcol;
 begin
-  with lc do begin
+  with lc do
+  begin
     coltext:=col.colsel2box;
     colselbar:=col.colsel2bar;
     colmarkline:=col.colsel2high;
@@ -1473,7 +1477,8 @@ begin
     colstatus:=HexVal(reverse(hex(coltext,2)));
     colfound:=colstatus;
     setlistcol(lc);
-    end;
+    listseekcol:=colstatus;  { fÅr Markiersuche! }
+  end;
 end;
 
 procedure listbox(width,height:byte; const txt:string);
@@ -2344,6 +2349,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.34  2003/03/17 22:56:00  my
+  MY:- Anzeige-Fix: Farbe fÅr Fundstellen bei der Markiersuche mit "s"
+       im Nodelist-Browser sinnvoll initialisiert (invertierte Farben des
+       Cursorbalkens, bisher: schwarze Schrift auf schwarzem Grund, grmpf).
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.48.2.33  2002/03/31 15:47:35  my
   JG:- Zeilenanzahl (C/A/Z) wird nur noch dann neu gesetzt, wenn
        notwendig.
