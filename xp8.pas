@@ -1898,7 +1898,7 @@ begin
   end;
   promaf:=ntProMaf(nt);
   case defcom of
-    0 : if (not ppp) and (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
+    0 : if (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
           rfehler(818);     { 'Bei dieser Box nicht moeglich.' }
           exit;
           end;
@@ -3128,6 +3128,9 @@ end;
 
 {
   $Log$
+  Revision 1.91  2003/08/28 21:49:41  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.90  2003/08/28 14:13:01  mk
   - TUniSelType for UniSel instead of numeric constants
 
