@@ -526,8 +526,16 @@ begin
       end;
 end;
 
+initialization
+  NodeList := nil;
+finalization
+  if Assigned(NodeList) then NodeList.Free;
+
 {
   $Log$
+  Revision 1.44  2002/01/30 22:59:02  mk
+  - free Nodelist at end of OpenXP
+
   Revision 1.43  2002/01/19 13:15:08  ma
   - fixed fido diff bug
 

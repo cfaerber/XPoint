@@ -1088,6 +1088,7 @@ begin
       p^.left:=nil;
       p^.right:=nil;
       insertintolist(DomainList);
+      Dispose(p);
     end;
     dbNext(d);
   end;
@@ -1120,14 +1121,18 @@ initialization
   BadConfigLinesList := TStringList.Create;
   New(bmarked);
   GetMem(boxpar, SizeOf(BoxPar^));
+  marked := nil;
 finalization
   ReplyTree.Free;
   BadConfigLinesList.Free;
   Dispose(bmarked);
-  FreeMem(Boxpar); 
-//!!  FreeMem(marked);
+  FreeMem(Boxpar);
+  if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.135  2002/01/30 22:59:02  mk
+  - free Nodelist at end of OpenXP
+
   Revision 1.134  2002/01/30 22:28:58  mk
   - corrected dir handling (progpath is not availble at call time in xpx.pas)
 
