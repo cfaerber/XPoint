@@ -416,24 +416,6 @@ end;
 
 
 Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
-{$IFDEF NCRT }
-const
-  i: word = 1;
-begin
-  while (pullw[i].win.wHnd <> nil) do
-    Inc(i);
-  handle:= i;
-  with pullw[i] do begin
-    if (rahmen > 0) then
-      MakeWindow(win, x1, y1, x2, y2, text, true)
-    else
-      MakeWindow(win, x1, y1, x2, y2, text, false);
-    l:=x1; r:=x2; o:=y1; u:=y2;
-    ashad:=shad;
-    wi:=(r-l+1+shad)*2;
-  end;
-end;
-{$ELSE }
 var
   i : byte;
   j: Integer;
@@ -455,20 +437,12 @@ begin
     ashad:=shad;
     wi:=(r-l+1+shad)*2;
     moff;
-{$IFDEF BP }
     MemSize := wi*(u-o+ashad+1);
-{$ELSE }
-    MemSize := wi*(u-o+ashad+1)*2;
-{$ENDIF }
 
     getmem(savemem, MemSize);
 
-{$IFDEF BP }
     for j:=o-1 to u-1+ashad do
       Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
-{$ELSE }
-    ReadScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
-{$ENDIF }
 
     mon;
     if rahmen=1 then rahmen1(l,r,o,u,text);
@@ -478,15 +452,8 @@ begin
     end;
   restcursor;
 end;
-{$ENDIF } { NCRT }
 
 Procedure wrest(handle:word);
-{$IFDEF NCRT }
-begin
-  RestoreWindow(pullw[handle].win);
-  pullw[handle].win.wHnd:= nil;
-end;
-{$ELSE }
 var
   i : byte;
   j, Offset: integer;
@@ -495,18 +462,13 @@ begin
   with pullw[handle] do
   begin
     moff;
-{$IFDEF BP }
     for i:=o-1 to u-1+ashad do
       Fastmove(savemem^[(i-o+1)*wi],mem[base:i*zpz*2+(l-1)*2],wi);
-{$ELSE }
-    WriteScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
-{$ENDIF }
     mon;
     freemem(savemem, MemSize);
     free:=true;
   end;
 end;
-{$ENDIF }
 
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 var i,j : word;
@@ -766,6 +728,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36.2.2  2001/05/24 18:53:09  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.36.2.1  2000/06/22 17:13:45  mk
   - 32 Bit Teile entfernt
 
