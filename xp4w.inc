@@ -791,7 +791,7 @@ begin
     FileAttach:=(dbReadInt(mbase,'netztyp')and $200)<>0;
     if FileAttach then begin
       fn:=Readmsg_GetFilename;
-      if not exist(fn) then
+      if not FileExists(fn) then
         FileAttach:=false
       else if dbReadInt(mbase,'groesse')>4 then begin
         pushhp(81);
@@ -984,7 +984,7 @@ begin
 
     if not FileAttach then begin
       if fn2<>'' then _era(fn2);    { Temp-Dateien l”schen }
-      if exist(fn) then _era(fn);
+      if FileExists(fn) then _era(fn);
       end;
     lastmpsel:=mpselect;
     mpselect:=false;
@@ -1008,7 +1008,7 @@ begin
       spop(disprec);
       dbGo(mbase,rec);
       if ListQuoteMsg<>'' then begin
-        if exist(ListQuoteMsg) then _era(ListQuoteMsg);
+        if FileExists(ListQuoteMsg) then _era(ListQuoteMsg);
         ListQuoteMsg:='';
         end;
       keydisp:=skeydisp;
@@ -1621,6 +1621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.52  2000/11/14 15:51:31  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.51  2000/11/12 11:34:06  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

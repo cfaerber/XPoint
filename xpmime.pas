@@ -111,12 +111,12 @@ begin
   if ReadFilename(getres(2441),fn,true,useclip) then
   begin
     if not multipos(':\',fn) then fn:=ExtractPath+fn;
-    if exist(fn) then begin
+    if FileExists(fn) then begin
       if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
       o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
       end
     else o:=true;
-    if not exist(fn) or not brk then
+    if not FileExists(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
   end;
 end;
@@ -763,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.34  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

@@ -53,7 +53,7 @@ begin
   while not eof(t) do begin
     readln(t,s);
     UpString(s);
-    if (LeftStr(s,18)='NODELIST=NODELIST.') and exist(FidoDir+mid(s,10))
+    if (LeftStr(s,18)='NODELIST=NODELIST.') and FileExists(FidoDir+mid(s,10))
     then
     begin
       New(Item); NodeList.Add(Item);
@@ -67,7 +67,7 @@ begin
         format:=1;
         end;
       end
-    else if (LeftStr(s,10)='POINTLIST=') and exist(FidoDir+mid(s,11)) then begin
+    else if (LeftStr(s,10)='POINTLIST=') and FileExists(FidoDir+mid(s,11)) then begin
       p:=cpos('.',s);
       if p>0 then
       begin
@@ -93,7 +93,7 @@ begin
     begin
       s:=trim(mid(s,10));
       p:=cpos(',',s);
-      if (p>0) and exist(FidoDir+LeftStr(s,p-1)) then
+      if (p>0) and FileExists(FidoDir+LeftStr(s,p-1)) then
       begin
         New(Item); NodeList.Add(Item);
         with Item^ do
@@ -279,16 +279,16 @@ begin
   if saveflag then
     SaveNodeCFG;
   for i:=0 to NodeList.Count - 1 do
-    if not exist(FidoDir+NLfilename(i)) then
+    if not FileExists(FidoDir+NLfilename(i)) then
       trfehler1(214,FidoDir+NLfilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
   if NodeList.Count > 0 then
   begin
     NL_Datecheck;
-    xni:=exist(NodeIndexF);
-    if indexflag or not xni or not exist (UserIndexF) then
+    xni:=FileExists(NodeIndexF);
+    if indexflag or not xni or not FileExists (UserIndexF) then
       MakeNodelistIndex;
     OpenNodeindex(NodeIndexF);
-    if xni and not exist(NodeIndexF) then begin  { gel”scht durch OpenNodeindex }
+    if xni and not FileExists(NodeIndexF) then begin  { gel”scht durch OpenNodeindex }
       MakeNodelistIndex;
       OpenNodeindex(NodeIndexF);
       end;
@@ -416,7 +416,7 @@ begin
   useclip:=false;        { 'Neue Node-/Pointliste einbinden' }
   pushhp(931);
   if ReadFilename(getres2(1019,10),fn,true,useclip) then
-    if not exist(fn) then
+    if not FileExists(fn) then
       rfehler(22)        { 'Datei ist nicht vorhanden! }
     else begin
       arc:=ArcType(fn);
@@ -574,9 +574,9 @@ var diffdir  : string;
   procedure ExpandFilePath(var s:string);
   begin
     if s<>'' then
-      if exist(diffdir+s) then
+      if FileExists(diffdir+s) then
         s:=diffdir+s
-      else if (diffdir=FilePath) and exist(FilePath+'TICK\'+s) then
+      else if (diffdir=FilePath) and FileExists(FilePath+'TICK\'+s) then
         s:=FilePath+'TICK\'+s
       else
         s:='';
@@ -603,11 +603,11 @@ var diffdir  : string;
       fm    : byte;
   begin
     UDiff:=false;
-    if not exist('NDIFF.EXE') then begin
+    if not FileExists('NDIFF.EXE') then begin
       rfehler(103);    { 'NDIFF.EXE fehlt!' }
       exit;
       end;
-    if not exist(FidoDir+NLfilename(i)) then exit;
+    if not FileExists(FidoDir+NLfilename(i)) then exit;
     fm:=filemode; filemode:=0;
     assign(t,FidoDir+NLfilename(i));          { 1. Zeile vergleichen }
     reset(t); readln(t,s1); close(t);
@@ -641,7 +641,7 @@ var diffdir  : string;
         log(getreps2(2130,5,extractfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
       else begin
-        if exist(newlist) then _era(newlist);
+        if FileExists(newlist) then _era(newlist);
         log(ufile+' -> '+newlist);
         if filecopy(ufile,newlist) then
           CopyUpdateFile:=true
@@ -673,7 +673,7 @@ begin
       ExpandFilePath(uarchive);
       unarcflag:=false;                           { Update-Archiv auspacken }
       if (uarchive<>'') and passend(uarchive) then begin
-        if exist(diffdir+ufile) then _era(diffdir+ufile);
+        if FileExists(diffdir+ufile) then _era(diffdir+ufile);
         log(getreps2(2130,1,uarchive));      { 'entpacke %s' }
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
         if not unarcflag then
@@ -681,7 +681,7 @@ begin
         diffnames:=WildCard;
         end;
       ExpandFilePath(ufile);
-      if exist(ufile) and passend(ufile) then begin
+      if FileExists(ufile) and passend(ufile) then begin
         if processor<>'' then ExecProcessor(processor);
         if DoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
@@ -704,8 +704,8 @@ begin
         end;
       if done then begin
         if auto and DelUpdate then begin    { evtl. Update-Files l”schen }
-          if exist(uarchive) then _era(uarchive);
-          if exist(ufile) then _era(ufile);
+          if FileExists(uarchive) then _era(uarchive);
+          if FileExists(ufile) then _era(ufile);
           end;
         reindex:=true;
         end;
@@ -731,7 +731,7 @@ begin
   fn:=FilePath+'*.*';
   useclip:=false;
   if ReadFilename(getres(1020),fn,true,useclip) then   { 'Node-/Pointlist-Update einbinden' }
-    if not exist(fn) then
+    if not FileExists(fn) then
       rfehler(22)     { 'Datei ist nicht vorhanden!' }
     else
       case DoDiffs(fn,false) of
@@ -743,6 +743,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/11/14 15:51:36  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.21  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

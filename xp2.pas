@@ -473,7 +473,7 @@ var i  : integer;
 
 begin
   { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
-  extended:=exist('xtended.15');
+  extended:=FileExists('xtended.15');
 {$IFDEF UnixFS }
   findfirst(AutoxDir+'*.opt',0,sr);
 {$ELSE }
@@ -631,7 +631,7 @@ var lf : string;
     close(t);
     if (ParLanguage<>'') then begin
       lf2:=LibDir + 'xp-'+ParLanguage+'.res';
-      if not exist(lf2) then writeln('language file '+ParLanguage+' not found')
+      if not FileExists(lf2) then writeln('language file '+ParLanguage+' not found')
       else if (UpperCase(lf)<>lf2) then begin
         lf:=lf2;
         WrLf;
@@ -648,7 +648,7 @@ var lf : string;
 *)
 
   FindClose(sr);
-  if not Exist(lf) then
+  if not FileExists(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
   assign(t,lf);
@@ -660,7 +660,7 @@ var lf : string;
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
-    if exist(OwnPath + 'xp.res') then _era(OwnPath + 'xp.res');
+    if FileExists(OwnPath + 'xp.res') then _era(OwnPath + 'xp.res');
     interr(iifs(deutsch,'falsche Version von ','wrong version of ')+lf);
     end;
   GetResdata;
@@ -784,7 +784,7 @@ begin
   dbLog('-- Defaultbox: "'+tmpS+'"');
   dbLog('-- Dateiname : "'+dname+'"');
   {$endif}
-  if not exist(OwnPath+dname+BfgExt) then begin
+  if not FileExists(OwnPath+dname+BfgExt) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(dname,boxpar);
   end;
@@ -1200,6 +1200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.80  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 

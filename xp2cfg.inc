@@ -244,7 +244,7 @@ begin
     ntAllowed:=[0..255]
   else
     ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP];
-  developer:=exist('developer');
+  developer:=FileExists('developer');
   exclude(ntAllowed,nt_Pronet);
 end;
 
@@ -349,7 +349,7 @@ begin
   telefonnr:='';
   wwwHomepage:='';
   SetNtAllowed;
-  fidobin:=exist('fido-bin');
+  fidobin:=FileExists('fido-bin');
   Clipboard:=ClipAvailable;
   new(viewers);
   new(unpacker);
@@ -754,7 +754,7 @@ begin
   dbLog('-- Konfiguration sichern');
 {$ENDIF }
 {$IFDEF UnixFS}
-  oldf:= exist(ownpath+cfgfile);        { Merken, ob die Datei existierte }
+  oldf:= FileExists(ownpath+cfgfile);        { Merken, ob die Datei existierte }
 {$ENDIF }
   assign(t,ownpath+cfgfile);
   rewrite(t);
@@ -1044,7 +1044,7 @@ begin
   dbLog('-- Konfiguration #2 sichern');
 {$ENDIF }
 {$IFDEF UnixFS}
-  oldf:= exist(ownpath+cfg2file);
+  oldf:= FileExists(ownpath+cfg2file);
 {$ENDIF}
   assign(t,ownpath+cfg2file);
   rewrite(t);
@@ -1700,6 +1700,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.91  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.90  2000/11/12 11:34:05  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

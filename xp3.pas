@@ -522,7 +522,7 @@ procedure Xread(fn:string; append:boolean);
 var f : file;
 begin
   assign(f,fn);
-  if exist(fn) and append then begin
+  if FileExists(fn) and append then begin
     reset(f,1);
     seek(f,filesize(f));
     end
@@ -917,7 +917,7 @@ procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
 var t1,t2 : text;
     s     : string;
 begin
-  if exist(schab) then begin
+  if FileExists(schab) then begin
     assign(t1,schab); reset(t1);
     assign(t2,fn); rewrite(t2);
     while not eof(t1) do begin
@@ -1220,6 +1220,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.48  2000/11/14 15:51:29  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.47  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 

@@ -74,7 +74,7 @@ begin
     getsize:=false;
     end
   else begin
-    if (fs=0) and not exist(datei) then
+    if (fs=0) and not FileExists(datei) then
       MakeFile(datei);
     getsize:=true;
     end;
@@ -584,7 +584,7 @@ begin
   rps(s,'$USER',oemp);
   FreeHeaderMem(hdp);
   shell(s,500,3);                     { Nachricht codieren }
-  if exist(temppath+uncryptedfile) then
+  if FileExists(temppath+uncryptedfile) then
     _era(temppath+uncryptedfile);
   assign(f,temppath+cryptedfile);
   if not existf(f) then
@@ -702,7 +702,7 @@ var f : file;
     blockwrite(f,s[1],length(s));
   end;
 begin
-  if exist(datei) then begin
+  if FileExists(datei) then begin
     assign(f,TempS(_filesize(fn)+200));
     rewrite(f,1);
     wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
@@ -758,7 +758,7 @@ begin
   rmessage(608);    { 'Nachricht speichern...' }
   repeat
     fn:=SendPath+strs(random(10000))+'.MSG';
-  until not exist(fn);
+  until not FileExists(fn);
   if filecopy(datei,fn) then;
   dbOpen(auto,AutoFile,1);
   dbAppend(auto);
@@ -1093,7 +1093,7 @@ var sum : longint;
     i   : integer;
 begin
   with hdp^ do
-    if exist(LeftStr(datum,6)+'.345') and stricmp(datei,SupportCfg) then begin
+    if FileExists(LeftStr(datum,6)+'.345') and stricmp(datei,SupportCfg) then begin
       sum:=0;
       for i:=1 to length(datum) do
         inc(sum,ord(datum[i])*7);
@@ -1141,6 +1141,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.35  2000/11/14 15:51:33  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.34  2000/11/10 19:41:27  mk
   - Tearline gekuertz
 

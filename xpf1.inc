@@ -744,7 +744,7 @@ again:
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
           (pl and (format<>nlNodelist))) and
-         exist(FidoDir+NLfilename(i))
+         FileExists(FidoDir+NLfilename(i))
       then begin
         attrtxt(col.coldiahigh);
         mwrt(x+10,y+14,forms(NLfilename(i),12));
@@ -885,6 +885,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.22  2000/11/14 15:51:36  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.21  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

@@ -746,7 +746,7 @@ var t,lastt: taste;
     begin
       assign(f,fn);
       if existf(f) then begin
-        if exist(TempPath+sikmsg) then _era(TempPath+sikmsg);
+        if FileExists(TempPath+sikmsg) then _era(TempPath+sikmsg);
         rename(f,TempPath+sikmsg);
         if ioresult<>0 then;     { falls LASTMSG Read-Only war.. }
         end;
@@ -1108,7 +1108,7 @@ var t,lastt: taste;
     pgdown:=false;
   ende:
     force_quotemsk:='';
-    if exist(fn) then _era(fn);
+    if FileExists(fn) then _era(fn);
     setall;
     freemem(sData, sizeof(SendUUdata)); {dispose(sData);}
     qmpdata := nil;
@@ -1238,7 +1238,7 @@ var t,lastt: taste;
   begin
     GoP;
     fn:= GetAutoFN;
-    if not exist(fn) then
+    if not FileExists(fn) then
       rfehler(411)    { 'Datei nicht vorhanden' }
     else begin
       arc:=ArcType(fn);
@@ -2125,6 +2125,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/11/14 15:51:30  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.58  2000/11/12 11:34:05  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

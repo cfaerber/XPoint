@@ -698,7 +698,7 @@ begin
   if ReadFilename(getres(503),fn,true,useclip) then begin   { 'Bildschirm-Auszug' }
     if not useclip and not multipos(_MPMask,fn) then
       fn:=ExtractPath+fn;
-    if not exist(fn) or useclip then app:=false
+    if not FileExists(fn) or useclip then app:=false
     else begin
       ffn:=UpperCase(fitpath(fn,50));
       app:=not overwrite(ffn,false,brk);
@@ -941,6 +941,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/11/14 15:51:32  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.41  2000/11/14 11:14:33  mk
   - removed unit dos from fileio and others as far as possible
 

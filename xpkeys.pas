@@ -151,7 +151,7 @@ begin
         SetUsername(mid(trim(prog),10))    { in XP9 }
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
-        if exist(fn) then
+        if FileExists(fn) then
           if listfile(fn,fn,true,false,0)<>0 then
           else
         else
@@ -159,7 +159,7 @@ begin
         end
       else if copy(s,2,4)='EDIT' then begin
         fn:=trim(mid(s,7));
-        if exist(fn) then
+        if FileExists(fn) then
           editfile(fn,false,false,0,false)
         else
           rfehler(23)    { '*EDIT: Datei nicht vorhanden!' }
@@ -173,7 +173,7 @@ begin
       p0:=pos('$FILE',UpperCase(s));
       if p0>0 then begin
         fn:=getfilename(nr,nn);
-        if (fn='') or not exist(fn) then exit;
+        if (fn='') or not FileExists(fn) then exit;
         s:=copy(s,1,p0-1)+fn+copy(s,p0+5,120);
         end;
       if @preextproc<>nil then begin
@@ -185,15 +185,15 @@ begin
         fn2:=TempFile(TempPath);
         shell(s+'>'+fn2,speicher,0);
         if listfile(fn2,'',true,false,0)<>0 then;
-        if exist(fn2) then DeleteFile(fn2);
+        if FileExists(fn2) then DeleteFile(fn2);
         end
       else
         shell(s,speicher,iif(vollbild,1,3));
-      if (p0>0) and not bname and (exist(fn)) then
+      if (p0>0) and not bname and (FileExists(fn)) then
         DeleteFile(fn);
       end;
     if auto then
-      if (s='') and not exist(AutoxDir+'\*.*') then
+      if (s='') and not FileExists(AutoxDir+'\*.*') then
         hinweis(getres(150))   { 'keine Dateien im AUTOEXEC-Verzeichnis vorhanden' }
       else
         xpauto.AutoExec(false);
@@ -239,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.13  2000/11/14 11:14:35  mk
   - removed unit dos from fileio and others as far as possible
 

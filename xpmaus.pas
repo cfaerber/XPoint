@@ -320,7 +320,7 @@ begin
       rec:=dbRecno(mbase);
       abs := dbReadNStr(mbase,mb_absender);
       maus:=trim(mid(abs,cpos('@',abs)+1));
-      if (info=nil) and exist(maus+'.iti') then begin
+      if (info=nil) and FileExists(maus+'.iti') then begin
         new(info);
         MausReadITI(maus,info,infos);
         end;
@@ -432,7 +432,7 @@ var t,t2  : text;
     buf   : pointer;
     b,wf  : byte;
 begin
-  if exist(box+'.ITG') then begin
+  if Fileexists(box+'.ITG') then begin
     message('Maus-Gruppenliste wird eingelesen ...');
     getmem(buf,bufs);
     assign(t,box+'.ITG');
@@ -665,7 +665,7 @@ var t1,t2 : text;
     leer  : string;
     s     : string;
 begin
-  if exist(mauspmlog) then begin
+  if FileExists(mauspmlog) then begin
     fn:=TempS(_filesize(mauspmlog)*3);
     assign(t1,mauspmlog); reset(t1);
     assign(t2,fn); rewrite(t2);
@@ -796,7 +796,7 @@ var   info   : ^ia;
   end;
 
 begin
-  if exist(logfile) then begin
+  if FileExists(logfile) then begin
     new(info);
     new(_info);
     MausReadITI(box,_info,_infos);   { Maus.ITI -> _info^ }
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.19  2000/11/03 09:55:41  mk
   - removed illegal character
 

@@ -865,7 +865,7 @@ begin      {-------- of DoSend ---------}
     get_xref;
   end else
   begin
-    if not exist(datei) then
+    if not FileExists(datei) then
     begin       { leere Datei anlegen }
       rewrite(f); close(f);
     end;
@@ -1713,8 +1713,8 @@ fromstart:
     if flPGPreq then
       inc(hdp^.pgpflags,fPGP_request);
     if UsePGP and not flPGPkey and ntPGP(netztyp) then begin
-      if not exist(PGPkeyfile) then UpdateKeyfile;
-      if exist(PGPkeyfile) then
+      if not FileExists(PGPkeyfile) then UpdateKeyfile;
+      if FileExists(PGPkeyfile) then
         inc(hdp^.pgpflags,fPGP_avail);
       end;
     hdp^.prio:=msgprio;
@@ -1992,7 +1992,7 @@ fromstart:
     goto fromstart;
     end;
 
-  if FidoBin and exist(datei) and EditAttach then begin
+  if FidoBin and FileExists(datei) and EditAttach then begin
     _era(datei);
     datei:=betreff;
     end;
@@ -2132,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.72  2000/11/14 15:51:32  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.71  2000/10/28 22:53:13  mk
   - Workaround for VP Bug
 

@@ -290,7 +290,7 @@ begin
         rfehler(316);   { 'Ungltiger Pfad- oder Dateiname!' }
         exit;
         end;
-      if exist(fname) and not useclip then
+      if FileExists(fname) and not useclip then
         append:=not Overwrite(fname,false,brk)
       else begin
         append:=false; brk:=false;
@@ -481,7 +481,7 @@ var f1,f2 : file;
     time  : longint;
     res   : integer;
 begin
-  if (fexpand(fn1)=fexpand(fn2)) and exist(fn1) then
+  if (fexpand(fn1)=fexpand(fn2)) and FileExists(fn1) then
   begin
     filecopy:=true;
     exit;
@@ -491,7 +491,7 @@ begin
     vermeidet die Fehlermeldung 'Fehler %s beim Kopieren von %s'
     beim Sysop-Poll ohne vorhandenen Ausgangspuffer:
   }
-  if not exist(fn1) then { Datei fehlt! }
+  if not FileExists(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
     { Datei ist Ausgangspuffer: }
     if UpperCase(copy(fn1,length(fn1)-2,3))='.PP' then
@@ -562,7 +562,7 @@ begin
   decomp:=LeftStr(decomp,p-1)+_from+mid(decomp,p+7);
   p:=pos('$DATEI',UpperCase(decomp));
   shell(LeftStr(decomp,p-1)+dateien+mid(decomp,p+6),400,3);
-  if not exist(_to+dateien) then
+  if not FileExists(_to+dateien) then
     tfehler('Datei(en) wurde(n) nicht korrekt entpackt!',30)
   else
     UniExtract:=true;
@@ -1048,6 +1048,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.68  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 

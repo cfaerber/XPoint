@@ -209,7 +209,8 @@ begin
   with ar do begin
     if datei<>'' then
       adddir(datei,SendPath);
-    if (datei<>'') and not exist(datei) then
+    if (datei<>'') and not FileExists(datei)
+    then
       trfehler1(2201,fitpath(datei,42),30)    { 'AutoVersand - Datei "%s" fehlt!' }
     else if (datei<>'') and (_filesize(datei)=0) then
       trfehler(2202,30)   { 'AutoVersand - 0-Byte-Datei wurde nicht verschickt' }
@@ -264,14 +265,14 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) and exist(datei) then
+          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) and FileExists(datei) then
             _era(datei);
           dbDelete(auto);
           aufbau:=true;
           end;
         end;
       SaveUVS:=muvs;
-      if tmp and exist(datei) then
+      if tmp and FileExists(datei) then
         _era(datei);
       end;
     end;
@@ -348,7 +349,7 @@ var sr    : searchrec;
   var box : string;
   begin
     MausImport:=false;
-    if not exist(MaggiBin) then
+    if not FileExists(MaggiBin) then
       trfehler(102,tfs)    { 'MAGGI.EXE fehlt' }
     else begin
       box:=NamePollbox;
@@ -374,7 +375,7 @@ var sr    : searchrec;
   procedure FidoImport;
   var sr : searchrec;
   begin
-    if not exist(ZFidoBin) then
+    if not FileExists(ZFidoBin) then
       trfehler(101,tfs)     { 'Netcallkonvertierer ZFIDO.EXE fehlt!' }
     else if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
@@ -465,7 +466,7 @@ var sr    : searchrec;
     if datei<>'' then begin
       if not multipos(_MPMask,datei) then
         datei:=SendPath+datei;
-      if not exist(datei) then
+      if not FileExists(datei) then
         axerr(5,UpperCase(datei)) else       { 'Datei "%s" fehlt' }
       if attach and (cpos('@',empf)=0) then
         axerr(6,'') else   { 'File Attaches kînnen nur als PM verschicht werden!' }
@@ -553,7 +554,7 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoExec');
 {$ENDIF }
-  if exist(AutoxDir+WildCard) then begin
+  if FileExists(AutoxDir+WildCard) then begin
     first:=true;
     ctlEbest:=false; ctlErstDat:=false;
     mgel:=ParGelesen; ParGelesen:=false;
@@ -572,7 +573,7 @@ begin
     while find('out') do     { Maus-OUTFILE einlesen + lîschen }
       if MausImport then
         delfile;
-    if exist(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
+    if FileExists(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
       FidoImport;
 
     while find('ips') do     { Puffer versenden }
@@ -595,10 +596,10 @@ begin
         end;
     if startbatch then begin
       fnstart:=AutoxDir+FileUpperCase('start'+BatchExt);        { START.BAT }
-      if exist(fnstart) then
+      if FileExists(fnstart) then
         shell(fnstart,500,1);
       fnstart:=AutoxDir+FileUpperCase('start1'+BatchExt);       { START1.BAT, lîschen }
-      if exist(fnstart) then begin
+      if FileExists(fnstart) then begin
         shell(fnstart,500,1);
         _era(fnstart);
         end;
@@ -616,10 +617,10 @@ begin
   dbLog('-- AutoStop');
 {$ENDIF }
   fnstop:= AutoxDir+FileUpperCase('stop'+BatchExt);     { STOP.BAT }
-  if exist(fnstop) then
+  if FileExists(fnstop) then
     shell(fnstop,500,1);
   fnstop:= AutoxDir+FileUpperCase('stop1'+BatchExt);    { STOP1.BAT, lîschen }
-  if exist(fnstop) then begin
+  if FileExists(fnstop) then begin
     shell(fnstop,500,1);
     _era(fnstop);
     end;
@@ -667,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/14 15:51:35  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.26  2000/11/05 09:34:03  mk
   - Ansistring-Fix
 

@@ -540,7 +540,7 @@ var x,y,yy  : byte;
   var f   : file of boolean;
       b: boolean;
   begin
-    if exist(KilledDat) then begin
+    if FileExists(KilledDat) then begin
       assign(f,KilledDat);
       reset(f);
       while filesize(f)<ablage do begin
@@ -625,7 +625,7 @@ begin
           end
         else begin
           assign(f1,aFile(abl));
-          if not exist(aFile(abl)) then begin
+          if not FileExists(aFile(abl)) then begin
             savecursor;
             trfehler1(421,UpperCase(aFile(abl)),30);   { 'Warnung: Ablagendatei %s fehlt!' }
             restcursor;
@@ -713,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/11/14 15:51:30  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.25  2000/10/17 20:36:50  mk
   - Diskfree/Disksize von Longint auf Int64 umgestellt
 

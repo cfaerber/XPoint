@@ -69,7 +69,7 @@ begin
   if not f then
     writeln(t2,box,'=',name);
   close(t2);
-  if exist(arcmaildat) then _era(arcmaildat);
+  if FileExists(arcmaildat) then _era(arcmaildat);
   rename(t2,arcmaildat);
 end;
 
@@ -138,7 +138,7 @@ var t    : text;
 
 begin
   DebugLog('XP7','xp7f: WriteFidoNC '+logfile+' '+_box,4);
-  if not exist(logfile) then exit;
+  if not FileExists(logfile) then exit;
   wahlcnt:=0;
   with NC^ do begin
     datum:=ZDate;
@@ -246,7 +246,7 @@ begin
     FindClose(sr);
     if clrflag then ttwin;
 
-    if exist(XFerDir+'*.PKT') then begin
+    if FileExists(XFerDir+'*.PKT') then begin
       if KeepVia then via:='-via '
       else via:='';
       with BoxPar^ do
@@ -288,7 +288,7 @@ begin
           end;
       end
     else begin
-      if exist(fpuffer) then _era(fpuffer);
+      if FileExists(fpuffer) then _era(fpuffer);
       CallFilter(true,fpuffer);
       end;
     end;
@@ -341,7 +341,7 @@ label fn_ende,fn_ende0;
           seek(f,adr);
           MakeHeader(true,f,0,0,hds,hd^,ok,false);
           if (hd^.attrib and attrFile<>0) then
-            if not exist(hd^.betreff) then begin
+            if not FileExists(hd^.betreff) then begin
               window(1,1,screenwidth,screenlines);
               tfehler(hd^.betreff+' fehlt!',15);
               twin;
@@ -675,11 +675,11 @@ begin
     ReleaseIncomingFilelist;
     if crash then SetCrash(MakeFidoAdr(fa,true),false);
     outmsgs:=0;
-    if exist(ppfile) then begin
+    if FileExists(ppfile) then begin
       ClearUnversandt(ppfile,box);    { Pollbox ist der BossNode! }
       _era(ppfile);
       end;
-    if exist(eppfile) then _era(eppfile);
+    if FileExists(eppfile) then _era(eppfile);
     for i:=1 to addpkts^.anzahl do begin
       ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
       _era(addpkts^.abfile[i]+BoxFileExt);
@@ -704,11 +704,11 @@ begin
     if request<>'' then _era(request);
     with addpkts^ do
       for i:=1 to akanz do
-        if (reqfile[i]<>'') and exist(reqfile[i]) then
+        if (reqfile[i]<>'') and FileExists(reqfile[i]) then
           _era(reqfile[i]);
-    if exist(ppfile) and (_filesize(ppfile)=0) then
+    if FileExists(ppfile) and (_filesize(ppfile)=0) then
       _era(ppfile);
-    if exist(fidologfile) then _era(fidologfile);
+    if FileExists(fidologfile) then _era(fidologfile);
 end;
 
 
@@ -949,6 +949,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/11/14 15:51:33  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.33  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

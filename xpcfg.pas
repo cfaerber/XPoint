@@ -4,12 +4,12 @@
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
    later version.
-  
+
    The software is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -467,7 +467,7 @@ begin
   if (isOpen) then Exit;                        { Das weiss einer nicht, was er tut }
   InitData(fn);
   ee:= e;
-  if not (exist(fn)) then begin                 { Nur anlegen }
+  if not (FileExists(fn)) then begin                 { Nur anlegen }
     isOpen:=true;
     SavedExit:= ExitProc;
     ExitProc:= @CloseCfg;
@@ -499,6 +499,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/11/14 15:51:36  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.7  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

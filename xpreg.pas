@@ -1226,11 +1226,11 @@ var brk,modi : boolean;
 
   begin
     OnlineReg:=true;   { nicht wieder in die Maske zurÅckspringen }
-    if not exist('xp-fm.exe') then begin
+    if not FileExists('xp-fm.exe') then begin
       rfehler(2901);  { 'FÅr die Online-Registrierung wird das XP-Fido-Paket benîtigt.' }
       exit;
       end;
-    if not exist('zm.exe') then begin
+    if not FileExists('zm.exe') then begin
       fehler('ZM.EXE fehlt!');
       exit;
       end;
@@ -1255,10 +1255,10 @@ var brk,modi : boolean;
     ReadBoxPar(nt_Fido {Netztyp egal} ,DefaultBox);
     logf:=TempS(8192);
     MakeFidoCfg;
-    if exist(AutoxDir+'*.PKT') then
+    if FileExists(AutoxDir+'*.PKT') then
       AutoExec(false);
     shell('xp-fm.exe fido.cfg',400,3);
-    if not exist(AutoxDir+'*.PKT') then
+    if not FileExists(AutoxDir+'*.PKT') then
       fehler('Anruf wurde abgebrochen.')
     else begin
       message('Anruf war erfolgreich.');
@@ -1266,8 +1266,8 @@ var brk,modi : boolean;
       closebox;
       if errorlevel=0 then AutoExec(false);
       end;
-    if exist(logf) then _era(logf);
-    if exist(DummyReq) then _era(DummyReq);
+    if FileExists(logf) then _era(logf);
+    if FileExists(DummyReq) then _era(DummyReq);
   end;
 
 
@@ -1497,7 +1497,7 @@ again:
 {$ENDIF }
   case n of
     1 : begin
-          if not exist(s) then           { 'LIZENZ.DOC' }
+          if not FileExists(s) then           { 'LIZENZ.DOC' }
             fehler(getreps2(520,41,s))   { '%s fehlt!' }
           else
             if listfile(s,getres2(520,42),true,false,0)=0 then;    { 'D=Drucken    <Esc>=Ende' }
@@ -1576,6 +1576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.21  2000/11/13 09:32:36  ml
   - lizenz.doc will now be found in doc-dir
 

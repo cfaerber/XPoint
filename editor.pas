@@ -691,7 +691,7 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  if exist(fn) then
+  if Fileexists(fn) then
   begin
     getmem(ibuf,maxabslen);
     getmem(tbuf,4096);
@@ -792,7 +792,7 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  if exist(fn) then
+  if Fileexists(fn) then
   begin
     getmem(ibuf,sizeof(tbytestream));
     mfm:=filemode; filemode:=0;
@@ -1857,6 +1857,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/11/14 15:51:26  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.46  2000/11/10 05:20:25  mk
   RB:- Umbruch Fix
 

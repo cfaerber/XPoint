@@ -553,7 +553,7 @@ label ende,again;
       end;
     dbReadN(mbase,mb_flags,flags);
     extract_msg(0,'',fn,true,1);
-    if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
+    if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
     tmp:=TempS(_filesize(fn)+2000);
     assign(tf,tmp);
     rewrite(tf,1);
@@ -662,7 +662,7 @@ label ende,again;
   procedure shortmsg(cut:integer);
   var f1,f2 : file;
   begin
-    if exist(fn) then begin
+    if FileExists(fn) then begin
       assign(f1,fn); reset(f1,1);
       assign(f2,TempS(filesize(f1))); rewrite(f2,1);
       seek(f1,cut);
@@ -1098,7 +1098,7 @@ again:
   if nextwl>-1 then begin
     inc(nextwl);
     if nextwl<markanz then begin
-      if exist(fn) then _era(fn);
+      if FileExists(fn) then _era(fn);
       dbGo(mbase,marked^[nextwl].recno);
       goto again;    { n„chste Nachricht wl/arch. }
       end;
@@ -1111,7 +1111,7 @@ ende:
   SendEmpfList.Clear;
   FreeHeaderMem(hdp);
   archivweiterleiten:=false;
-  if exist(fn) then _era(fn);
+  if FileExists(fn) then _era(fn);
 end;
 
 
@@ -1151,7 +1151,7 @@ begin
     close(t);
     end;
   extract_msg(0,'',fn,true,1);
-  if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
+  if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
 
   dbSeek(ubase,uiName,UpperCase(hdp^.absender));
   if not dbFound then begin                        { Userbrett neu anlegen }
@@ -1283,6 +1283,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/11/14 15:51:32  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.41  2000/11/09 18:15:12  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 

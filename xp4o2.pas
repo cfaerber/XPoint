@@ -96,7 +96,7 @@ procedure PackOne(fn:string);
 begin
   if cpos('.',fn)>0 then
     fn:=LeftStr(fn,cpos('.',fn)-1);
-  if not exist(fn+dbExt) then
+  if not FileExists(fn+dbExt) then
     trfehler1(440,fn+dbExt,30)    { 'XPack - unbekannte Datei: %s' }
   else begin
     closedatabases;
@@ -927,6 +927,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/14 15:51:31  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.26  2000/11/12 14:25:26  hd
   - Workaround für FPC (ClearReplyTree)
 

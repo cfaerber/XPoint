@@ -223,7 +223,7 @@
             uploader:='Zmodem';
             downloader:='Zmodem';
             end;
-          if (nt=nt_UUCP) and exist('UUCP.SCR') then
+          if (nt=nt_UUCP) and FileExists('UUCP.SCR') then
             script:='UUCP.SCR';
           if nt=nt_Fido then begin
             case ival(LeftStr(name,cpos(':',name)-1)) of
@@ -302,15 +302,15 @@
         dec(ntused[dbReadInt(d,'netztyp')]);
         dbDelete(d);
         dbFlushClose(d);
-        if exist(ownpath+dname+bfgext) then     { .BFG loeschen }
+        if FileExists(ownpath+dname+bfgext) then     { .BFG loeschen }
           _era(ownpath+dname+bfgext);
-        if exist(ownpath+dname+'.bl') then      { Brettliste loeschen }
+        if FileExists(ownpath+dname+'.bl') then      { Brettliste loeschen }
           _era(ownpath+dname+'.bl');
-        if exist(ownpath+dname+'.fl') then      { Fileliste loeschen }
+        if FileExists(ownpath+dname+'.fl') then      { Fileliste loeschen }
           _era(ownpath+dname+'.fl');
-        if exist(ownpath+dname+'.fbl') then     { Fileare-Liste loeschen }
+        if FileExists(ownpath+dname+'.fbl') then     { Fileare-Liste loeschen }
           _era(ownpath+dname+'.fbl');
-        if exist(ownpath+dname+'.inf') then     { Maus-Infofileliste loeschen }
+        if FileExists(ownpath+dname+'.inf') then     { Maus-Infofileliste loeschen }
           _era(ownpath+dname+'.inf');
         if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket loeschen }
         if p=1 then dbGoTop(d)
@@ -756,7 +756,7 @@
     begin
       assign(f,ownpath+old_dname+ext);
       if existf(f) then begin
-        if exist(ownpath+dname+ext) then
+        if FileExists(ownpath+dname+ext) then
           _era(ownpath+dname+ext);
         rename(f,ownpath+dname+ext);
         end;
@@ -852,7 +852,7 @@
     begin
       assign(f,ownpath+old_dname+ext);
       if existf(f) then begin
-        if exist(ownpath+dname+ext) then
+        if FileExists(ownpath+dname+ext) then
           _era(ownpath+dname+ext);
         rename(f,ownpath+dname+ext);
         end;
@@ -1136,7 +1136,7 @@
   begin
     with boxpar^ do begin
       dbRead(d,'netztyp',nt);
-      pp_da:=exist(dbReadStr(d,'dateiname')+BoxFileExt);
+      pp_da:=FileExists(dbReadStr(d,'dateiname')+BoxFileExt);
       _nname:=false; _alias:=false; _mids:=false; _brett:=false;
       _atp:=false; _repto:=false; _light:=false; _brettm:=false;
       width:=34;
@@ -1242,7 +1242,7 @@
       nli : boolean;
   begin
     dbGo(d,drec[p]);
-    pp_da:=exist(dbReadStr(d,'dateiname')+BoxFileExt);
+    pp_da:=FileExists(dbReadStr(d,'dateiname')+BoxFileExt);
     with boxpar^ do begin
       maps:= dbReadStr(d,'nameomaps');
       dialog(ival(getres2(926,0)),13,getres2(926,1),x,y);  { 'Fido-Einstellungen' }
@@ -1380,7 +1380,7 @@
     end;
 
   begin
-    eqfg:=exist(dateiname+QfgExt) and exist('zqwk.exe');
+    eqfg:=FileExists(dateiname+QfgExt) and FileExists('zqwk.exe');
     if eqfg then begin
       ReadQfg(dateiname,qfg);
       ReadNmta;
@@ -1662,7 +1662,7 @@
 
   begin
     dbGo(d,drec[p]);
-    if exist(dbReadStr(d,'dateiname')+BoxFileExt) then begin
+    if FileExists(dbReadStr(d,'dateiname')+BoxFileExt) then begin
       msgbox(60,9,_fehler_,x,y);
       mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fuer diese Box vorhanden (%s.PP)' }
                    FileUpperCase(dbReadStr(d,'dateiname'))));
@@ -1699,6 +1699,9 @@
 
 {
   $Log$
+  Revision 1.32  2000/11/14 15:51:35  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.31  2000/11/12 14:39:09  mk
   - disabled menu Gebuehren
 

@@ -81,7 +81,7 @@ begin
   else fp:=BoxPar^.aFilter;
   if fp='' then exit;
   exchange(fp,'$PUFFER',fn);
-  nope:=not exist(fn);
+  nope:=not FileExists(fn);
   if nope then MakeFile(fn);
   shell(fp,600,3);
   if nope then _era(fn);
@@ -356,8 +356,8 @@ begin
       close(netlog^);
       logopen:=false;
       end;
-    if (_maus and exist(mauslogfile)) or
-       ((_fido or _uucp) and exist(fidologfile)) then
+    if (_maus and FileExists(mauslogfile)) or
+       ((_fido or _uucp) and FileExists(fidologfile)) then
     begin
       writeln(t);
       if _maus then
@@ -474,7 +474,7 @@ begin
             addpkts^.reqfile[addpkts^.akanz]:='';
             end;
           bfile:=dbReadStr(d,'dateiname');
-          if exist(bfile+BoxFileExt) then begin
+          if FileExists(bfile+BoxFileExt) then begin
             alias:=(dbReadInt(d,'script') and 4<>0);
             with BoxPar^ do
               if alias then
@@ -484,7 +484,7 @@ begin
             source:=bfile+BoxFileExt;
             dest:=formi(ival(LeftStr(dest,8))+1,8)+'.PKT';
             Convert;
-            if exist(sout+dest) then begin
+            if FileExists(sout+dest) then begin
               inc(addpkts^.anzahl);
               addpkts^.addpkt[addpkts^.anzahl]:=dest;
               addpkts^.abfile[addpkts^.anzahl]:=bfile;
@@ -772,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/11/14 15:51:34  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.36  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

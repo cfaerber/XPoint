@@ -345,7 +345,7 @@ var t   :text;
     lastIdx :integer;
 begin
   e.Clear;
-  if exist(fn) then
+  if FileExists(fn) then
   begin
     assign(t,fn);
     reset(t);
@@ -1447,7 +1447,7 @@ var
                 1,brk) of
       1 : del_it;
       3 : begin
-            if exist(FidoDir+NLfilename(strIdx)) then
+            if FileExists(FidoDir+NLfilename(strIdx)) then
               _era(FidoDir+NLfilename(strIdx));
             del_it;
           end;
@@ -1475,12 +1475,12 @@ var
     attrtxt(col.colmbox);
     fn:=NLfilename(a+CurRow-1);
     wrt(x+14,y+2,fn);
-    if not exist(FidoDir+fn) then
+    if not FileExists(FidoDir+fn) then
       wrt(x+14,y+3,' - fehlt -')
     else
       wrt(x+14,y+3,trim(strsrnp(_filesize(FidoDir+fn),15,0)));
     mon;
-    if exist(FidoDir+fn) then begin
+    if FileExists(FidoDir+fn) then begin
       getmem(buf,bs);
       assign(t,FidoDir+fn);
       settextbuf(t,buf^,bs);
@@ -2050,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.42  2000/11/14 15:51:27  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.41  2000/10/17 10:05:45  mk
   - Left->LeftStr, Right->RightStr
 

@@ -84,7 +84,6 @@ procedure XPRewrite(var F: text; cm: TCreateMode);
 procedure XPRewrite(var F: file; cm: TCreateMode);
 
 function  AddDirSepa(p: string): string;      { Verz.-Trenner anhaengen }
-Function  exist(const n:string):boolean;              { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 function  existBin(fn: string): boolean;       { Datei vorhanden (PATH)  }
 Function  ValidFileName(name:string):boolean;  { gÅltiger Dateiname ?    }
@@ -114,74 +113,6 @@ function  alldrives:string;
 {$ENDIF }
 
 implementation  { ------------------------------------------------------- }
-
-uses
-  xp0;
-
-function exist(const n:string):boolean;
-begin
-  result:= FileExists(n);
-end;
-
-Function existf(var f):Boolean;
-var
-  fm : byte;
-begin
-  fm:=filemode;
-  filemode:=FMDenyNone;
-  reset(file(f));
-  existf:=(ioresult=0);
-  close(file(f));
-  filemode:=fm;
-  if ioresult = 0 then ;
-end;
-
-function ioerror(i:integer; otxt:string):string;
-begin
-  case i of
-      2 : ioerror:='Datei nicht gefunden';
-      3 : ioerror:='ungÅltiges Verzeichnis';
-      4 : ioerror:='zu viele Dateien geîffnet (bitte FILES erhîhen!)';
-      5 : ioerror:='Zugriff verweigert';
-      7 : ioerror:='Speicherverwaltung zerstîrt';
-      8 : ioerror:='ungenÅgend Speicher';
-     10 : ioerror:='ungÅltiges Environment';
-     11 : ioerror:='ungÅltiges Aufruf-Format';
-     15 : ioerror:='ungÅltige Laufwerksbezeichnung';
-     16 : ioerror:='Verzeichnis kann nicht gelîscht werden';
-     18 : ioerror:='Fehler bei Dateisuche';
-    101 : ioerror:='Diskette/Platte voll';
-    150 : ioerror:='Diskette ist schreibgeschÅtzt';
-    152 : ioerror:='keine Diskette eingelegt';
-154,156 : ioerror:='Lesefehler (Diskette/Platte defekt)';
-157,158 : ioerror:='Diskette ist nicht korrekt formatiert';
-    159 : ioerror:='Drucker ist nicht betriebsbereit';
-    162 : ioerror:='Hardware-Fehler';
-    209 : ioerror:='Fehler in .OVR-Datei';
-  else
-    ioerror:=otxt;
-  end;
-end;
-
-procedure fm_ro;      { Filemode ReadOnly }
-begin
-  filemode:=fmRead;
-end;
-
-procedure fm_rw;      { Filemode Read/Write }
-begin
-  filemode:=fmRW;
-end;
-
-
-procedure resetfm(var f:file; fm:byte);
-var fm0 : byte;
-begin
-  fm0:=filemode;
-  filemode:=fm;
-  reset(f,1);
-  filemode:=fm0;
-end;
 
 {$ifdef unix}
 
@@ -270,365 +201,76 @@ begin
 end;
 
 
-{ Sucht die Datei 'fn' in folgender Reihenfolge:
-  - Aktuelle Verzeichnis
-  - Startverzeichnis der aktuellen Programmdatei
-  - Environment-Var PATH
-}
-function  existBin(fn: string): boolean;
-var
-  envpath: string;                      { Opps, bug in brain. PATH kann > 256 sein }
-  filename, path: string;
-  i, j, k: integer;
-begin
-  filename:= ExtractFilename(fn);           { Evtl. Pfad ignorieren }
-  if exist(fn) then begin               { -> Aktuelles Verzeichnis }
-    existBin:= true;
-    exit;
-  end;
-  path:= ProgPath;                      { -> Startverzeichnis }
-  if path<>'' then begin
-    if exist(AddDirSepa(path)+filename) then begin
-      existBin:= true;
-      exit;
-    end;
-  end;
-  envpath:= strpas(linux.getenv('PATH'));
-  j:= CountChar(PathSepaChar,envpath);
-  for i:= 1 to j do begin
-    k:= CPos(PathSepaChar, envpath);
-    path:= copy(envpath,1,k-1);
-    delete(envpath,1,k);
-    if path<>'' then
-      if exist(AddDirSepa(path)+filename) then begin
-        existBin:= true;
-        exit;
-      end;
-  end;
-  if envpath<>'' then begin             { Noch was ueber ? }
-    if exist(AddDirSepa(envpath)+filename) then
-      existBin:= true
-    else
-      existBin:= false;
-  end else
-    existBin:= false;
-end;
-
-function ValidFileName(name:string):boolean;
-var f : file;
-begin
-  if (name='') or multipos('*?&',name) then
-    ValidFileName:=false
-  else begin
-    assign(f, ResolvePathName(name));           { ~/ aufloesen }
-    if existf(f) then ValidFileName:=true
-    else begin
-      rewrite(f);
-      close(f);
-      erase(f);
-      ValidFileName:=(ioresult=0);
-    end;
-  end;
-end;
-
-
-function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
-var
-  curdir: string;
-begin
-  curdir:= GetCurrentDir;
-  IsPath:= SetCurrentDir(fname);
-  SetCurrentDir(curdir);
-end;
-
-function dospath(d:byte):pathstr;
-var s : string;
-begin
-  getdir(0, s);
-  dospath:=s;
-end;
-
-
-function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
-{ keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
-var bufs,rr:word;
-    buf:pointer;
-    f1,f2:file;
-begin
-  bufs:=65536;
-  getmem(buf,bufs);
-  assign(f1,ResolvePathName(srcfn));
-  assign(f2,ResolvePathName(destfn));
-  reset(f1,1);
-  rewrite(f2,1);
-  while not eof(f1) and (inoutres=0) do begin
-    blockread(f1,buf^,bufs,rr);
-    blockwrite(f2,buf^,rr);
-  end;
-  close(f2);
-  close(f1);
-  copyfile:=(inoutres=0);
-  if ioresult<>0 then ;
-  freemem(buf,bufs);
-end;
-
-procedure era(s:string);
-begin
-  DeleteFile(ResolvePathName(s));
-end;
-
-
-procedure erase_mask(s:string);                 { Datei(en) lîschen }
-var sr : searchrec;
-begin
-  findfirst(ResolvePathName(s),ffAnyFile,sr);
-  while doserror=0 do begin
-    DeleteFile(ExtractFileDir(s)+sr.name);
-    findnext(sr);
-  end;
-  FindClose(sr);
-end;
-
-procedure MakeBak(n,newext:string);
-var bakname : string;
-    f       : file;
-    dir     : dirstr;
-    name    : namestr;
-    ext     : extstr;
-begin
-  n:= ResolvePathName(n);
-  assign(f,n);
-  if not existf(f) then exit;
-  fsplit(n,dir,name,ext);
-  bakname:=dir+name+'.'+newext;
-  assign(f,bakname);
-  if existf(f) then begin
-    setfattr(f,archive);
-    erase(f);
-  end;
-  assign(f,n);
-  setfattr(f,archive);
-  rename(f,bakname);
-  if ioresult<>0 then;
-end;
-
-procedure WriteBatch(s:string);
-var
-  f:text;
-  io:integer;
-begin
-  assign(f, TempBatchFN);
-  rewrite(f);
-  io:=ioresult;
-  if (io=0) then begin
-    writeln(f,'#!',getenv('SHELL'));
-    writeln(f,'#');
-    writeln(f,'# This script was generated by ',xp_xp,'.');
-    writeln(f,'# Feel free to delete it!');
-    writeln(f,'#');
-    writeln(f,s);
-    close(f);
-    SetAccess(TempBatchFN, taUserRWX);          { Ausfuehrbar machen }
-  end;
-  io:=ioresult;
-end;
-
-{ res:  0 = Pfad bereits vorhanden }
-{       1 = Pfad angelegt          }
-{     < 0 = IO-Fehler              }
-
-procedure mklongdir(path:string; var res:integer);
-const testfile = 'test0000.$$$';
-var p : byte;
-begin
-  path:=ResolvePathName(trim(path));
-  if path='' then begin
-    res:=0;
-    exit;
-  end;
-  if rightstr(path,1)<>DirSepa then path:=path+DirSepa;
-  if validfilename(path+testfile) then
-    res:=0
-  else
-    if pos(DirSepa,path)<=1 then begin
-      mkdir(path);
-      res:=-ioresult;
-    end
-    else begin
-      p:=iif(path[1]=DirSepa,2,1);
-      res:=0;
-      while (p<=length(path)) do begin
-        while (p<=length(path)) and (path[p]<>DirSepa) do inc(p);
-        if not IsPath(leftstr(path,p)) then begin
-          mkdir(leftstr(path,p-1));
-          if inoutres<>0 then begin
-            res:=-ioresult;
-            exit;
-          end;
-        end
-        else
-          res:=1;
-        inc(p);
-      end;
-    end;
-end;
-
-function TempFile(path:string):string;       { TMP-Namen erzeugen }
-var n : string[12];
-begin
-  repeat
-    n:=formi(random(10000),4)+'.tmp'
-  until not exist(path+n);
-  TempFile:=ResolvePathName(path+n);
-end;
-
-function TempExtFile(path,ld,ext:string):string;  { Ext-Namen erzeugen }
-{ ld max. 4 Zeichen, ext mit Punkt '.bat' }
-var n : string[MaxLenFilename];
-begin
-  repeat
-    n:=ld+formi(random(10000),4)+ext
-  until not exist(path+n);
-  TempExtFile:=ResolvePathName(path+n);
-end;
-
-
-function _filesize(const fn:string):longint;
-var sr : searchrec;
-begin
-  findfirst(ResolvePathName(fn),ffAnyFile,sr);
-  if doserror<>0 then
-    _filesize:=0
-  else
-    _filesize:=sr.size;
-  findclose(sr);
-end;
-
-procedure MakeFile(fn:string);
-var t : text;
-begin
-  assign(t,ResolvePathName(fn));
-  rewrite(t);
-  if ioresult=5 then
-    setfattr(t,0)
-  else
-    close(t);
-end;
-
-function filetime(fn:string):longint;
-var sr : searchrec;
-begin
-  findfirst(ResolvePathName(fn),ffAnyFile,sr);
-  if doserror=0 then
-    filetime:=sr.time
-  else
-    filetime:=0;
-  findclose(sr);
-end;
-
-procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen }
-var f : file;
-begin
-  assign(f,ResolvePathName(fn));
-  reset(f,1);
-  setftime(f,newtime);
-  close(f);
-  if ioresult<>0 then;
-end;
-
-function GetFileDir(p:string):dirstr;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(ResolvePathName(p),d,n,e);
-  GetFileDir:=d;
-end;
-
-function Gestring(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(ResolvePathName(p),d,n,e);
-  Gestring:=n+e;
-end;
-
-function GetBareFileName(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(ResolvePathName(p),d,n,e);
-  GetBareFileName:=n;
-end;
-
-function GetFileExt(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(ResolvePathName(p),d,n,e);
-  GetFileExt:=mid(e,2);
-end;
-
-function _rename(n1,n2:string):boolean;
-var f : file;
-begin
-  assign(f,ResolvePathName(n1));
-  rename(f,ResolvePathName(n2));
-  _rename:=(ioresult=0);
-end;
-
-{ Extension anhÑngen, falls noch nicht vorhanden }
-
-procedure addext(var fn:string; ext:string);
-var s : string;
-    l : integer;
-begin
-  fn:=ResolvePathName(fn);
-  s:= ExtractFileExt(fn);
-  l:= Length(s);
-  if l>0 then
-    Delete(fn, Length(fn)-l, l);
-  fn:= fn + ext;
-end;
-
-{ Verzeichnis einfÅgen, falls noch nicht vorhanden }
-
-procedure adddir(var fn: string; dir: string);
-var s: string;
-begin
-  fn:=ResolvePathName(fn);
-  s:= ExtractFilePath(fn);
-  if s='' then
-    fn:= AddDirSepa(dir)+fn;
-end;
-
-procedure WildForm(var s: string);
-begin
-end;
-
-function IsDevice(fn:pathstr):boolean;
-begin
-  { COMs sind Devices, der Rest nicht }
-
-  { Noch nicht implementiert !!!! }
-  IsDevice := false;
-end;
-
-
 {$else}
+uses
+  xp0;
 
-const
-  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
+Function existf(var f):Boolean;
+var
+  fm : byte;
+begin
+  fm:=filemode;
+  filemode:=FMDenyNone;
+  reset(file(f));
+  existf:=(ioresult=0);
+  close(file(f));
+  filemode:=fm;
+  if ioresult = 0 then ;
+end;
+
+function ioerror(i:integer; otxt:string):string;
+begin
+  case i of
+      2 : ioerror:='Datei nicht gefunden';
+      3 : ioerror:='ungÅltiges Verzeichnis';
+      4 : ioerror:='zu viele Dateien geîffnet (bitte FILES erhîhen!)';
+      5 : ioerror:='Zugriff verweigert';
+      7 : ioerror:='Speicherverwaltung zerstîrt';
+      8 : ioerror:='ungenÅgend Speicher';
+     10 : ioerror:='ungÅltiges Environment';
+     11 : ioerror:='ungÅltiges Aufruf-Format';
+     15 : ioerror:='ungÅltige Laufwerksbezeichnung';
+     16 : ioerror:='Verzeichnis kann nicht gelîscht werden';
+     18 : ioerror:='Fehler bei Dateisuche';
+    101 : ioerror:='Diskette/Platte voll';
+    150 : ioerror:='Diskette ist schreibgeschÅtzt';
+    152 : ioerror:='keine Diskette eingelegt';
+154,156 : ioerror:='Lesefehler (Diskette/Platte defekt)';
+157,158 : ioerror:='Diskette ist nicht korrekt formatiert';
+    159 : ioerror:='Drucker ist nicht betriebsbereit';
+    162 : ioerror:='Hardware-Fehler';
+    209 : ioerror:='Fehler in .OVR-Datei';
+  else
+    ioerror:=otxt;
+  end;
+end;
+
+procedure fm_ro;      { Filemode ReadOnly }
+begin
+  filemode:=fmRead;
+end;
+
+procedure fm_rw;      { Filemode Read/Write }
+begin
+  filemode:=fmRW;
+end;
 
 
+procedure resetfm(var f:file; fm:byte);
+var fm0 : byte;
+begin
+  fm0:=filemode;
+  filemode:=fm;
+  reset(f,1);
+  filemode:=fm0;
+end;
 
 {$endif}
 
 {$ifndef unix}
 
+const
+  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
 
 {$IFDEF FPC }
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
@@ -681,13 +323,13 @@ var
   i, j, k: integer;
 begin
   filename:= ExtractFilename(fn);           { Evtl. Pfad ignorieren }
-  if exist(fn) then begin               { -> Aktuelles Verzeichnis }
+  if FileExists(fn) then begin               { -> Aktuelles Verzeichnis }
     existBin:= true;
     exit;
   end;
   path:= ProgPath;                      { -> Startverzeichnis }
   if path<>'' then begin
-    if exist(AddDirSepa(path)+filename) then begin
+    if FileExists(AddDirSepa(path)+filename) then begin
       existBin:= true;
       exit;
     end;
@@ -699,13 +341,13 @@ begin
     path:= copy(envpath,1,k-1);
     delete(envpath,1,k);
     if path<>'' then
-      if exist(AddDirSepa(path)+filename) then begin
+      if FileExists(AddDirSepa(path)+filename) then begin
         existBin:= true;
         exit;
       end;
   end;
   if envpath<>'' then begin             { Noch was ueber ? }
-    if exist(AddDirSepa(envpath)+filename) then
+    if FileExists(AddDirSepa(envpath)+filename) then
       existBin:= true
     else
       existBin:= false;
@@ -847,7 +489,7 @@ var n : string[12];
 begin
   repeat
     n:=formi(random(10000),4)+'.tmp'
-  until not exist(path+n);
+  until not FileExists(path+n);
   TempFile:=path+n;
 end;
 
@@ -857,7 +499,7 @@ var n : string[MaxLenFilename];
 begin
   repeat
     n:=ld+formi(random(10000),4)+ext
-  until not exist(path+n);
+  until not Fileexists(path+n);
   TempExtFile:=path+n;
 end;
 
@@ -963,8 +605,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.64  2000/11/14 14:47:07  hd
-  - Linux-Anpassung
+  Revision 1.65  2000/11/14 15:51:26  mk
+  - replaced Exist() with FileExists()
 
   Revision 1.63  2000/11/14 11:14:31  mk
   - removed unit dos from fileio and others as far as possible

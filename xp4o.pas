@@ -1232,7 +1232,7 @@ begin
   fn:='*.*';
   useclip:=true;
   if ReadFilename(getres2(456,1),fn,true,useclip) then   { 'Brettliste einlesen' }
-    if not exist(fn) then
+    if not FileExists(fn) then
       fehler(getres2(456,2))   { 'Datei nicht vorhanden!' }
     else begin
       msgbox(30,5,'',x,y);
@@ -1271,7 +1271,7 @@ begin
   fn:='*.*';
   useclip:=true;
   if ReadFilename(getres2(456,11),fn,true,useclip) then   { 'Userliste einlesen' }
-    if not exist(fn) then
+    if not FileExists(fn) then
       fehler(getres2(456,2))   { 'Datei nicht vorhanden!' }
     else begin
       dialog(38,3,'',x,y);
@@ -1760,12 +1760,12 @@ begin
     p:=pos('$DATEI',UpperCase(decomp));
     datei:=trim(mid(fn, 80));
     if (exdir='') and ((temppath='') or (UpperCase(temppath)=ownpath))
-      and exist(datei) then begin
+      and FileExists(datei) then begin
         rfehler(428);   { 'extrahieren nicht mîglich - bitte Temp-Verzeichnis angeben!' }
         exit;
         end
-    else if ((exdir<>'') and exist(exdir+datei)) or
-            ((exdir='') and exist(temppath+datei)) then
+    else if ((exdir<>'') and FileExists(exdir+datei)) or
+            ((exdir='') and FileExists(temppath+datei)) then
       if exdir=ownpath then begin
         rfehler(429);  { 'Datei schon vorhanden - bitte Extrakt-Verzeichnis angeben!' }
         exit;
@@ -1784,7 +1784,7 @@ begin
     shell(decomp,400,3);
     if exdir='' then begin
       { !?! GoDir(temppath); }    { wurde durch Shell zurÅckgesetzt }
-      if not exist(temppath+datei) then
+      if not FileExists(temppath+datei) then
         rfehler(430)       { 'Datei wurde nicht korrekt entpackt.' }
       else begin
         newarc:=ArcType(TempPath+datei);
@@ -1807,7 +1807,7 @@ begin
             decomp:=TempPath+datei;  { Stack sparen ... }
             if ViewArchive(decomp,newarc)<>0 then;
             end;
-        if exist(temppath+datei) then
+        if FileExists(temppath+datei) then
           _era(temppath+datei);
         end;
       { GoDir(OwnPath); }
@@ -1969,7 +1969,7 @@ begin
       exit;
     fn:=FExpand(fn);
     end;
-  if exist(fn) then begin
+  if FileExists(fn) then begin
     arc:=ArcType(fn);
     if ArcRestricted(arc) then arc:=0;
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
@@ -2030,7 +2030,7 @@ begin
   fmove(f1,f2);
   close(f1);
   close(f2);
-  if exist(DupeFile+dbIxExt) then
+  if FileExists(DupeFile+dbIxExt) then
     _era(DupeFile+dbIxExt);
   closebox;
   dbOpen(d,DupeFile,1);   { indizieren }
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/11/14 15:51:31  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.75  2000/11/14 11:14:33  mk
   - removed unit dos from fileio and others as far as possible
 

@@ -366,7 +366,7 @@ begin
     p:=pos('.',name);
     if p=0 then name:=name+'.'+bak
     else name:=LeftStr(name,p)+bak;
-    if exist(name) then _era(name);      { .BAK l”schen }
+    if FileExists(name) then _era(name);      { .BAK l”schen }
     end;
 end;
 
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.42  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 

@@ -482,9 +482,9 @@ begin
     if ReadFilename(getres(2402)+iifs(filenr>1,' '+strs(filenr),''),fn,true,useclip)
     then begin                                            { 'Zieldatei' }
       if not multipos(_MPMask,fn) then fn:=ExtractPath+fn;
-      if exist(fn) then o:=overwrite(fn,true,brk)
+      if FileExists(fn) then o:=overwrite(fn,true,brk)
       else o:=true;
-      if not exist(fn) or not brk then begin
+      if not FileExists(fn) or not brk then begin
         bytes:=0;
         IO_error:=false;
         uudecIt(f1^,fn,true,1,mlanz,o);
@@ -539,6 +539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/11/14 15:51:35  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.21  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

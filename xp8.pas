@@ -270,7 +270,7 @@ var
   begin
     sysfile:=BoxFilename(box)+'.BBL';
     root:=nil;
-    if exist(sysfile) then begin         { alte .BBL-Datei einlesen }
+    if FileExists(sysfile) then begin         { alte .BBL-Datei einlesen }
       assign(t,sysfile);
       reset(t);
       while not eof(t) do begin
@@ -405,10 +405,10 @@ begin
    14 : ;   { Postmaster }
    15 : begin
           writeln('bef   = ',bef);
-	  writeln('box   = ',box);
-	  writeln('datei = ', datei);
-	  writeln('<Enter>');
-	  readln;
+          writeln('box   = ',box);
+          writeln('datei = ', datei);
+          writeln('<Enter>');
+          readln;
         end;
   end;
   hf:='';
@@ -1080,10 +1080,10 @@ begin
   if fn='' then
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
   else begin
-    if (art=1) and exist(fn+'.bbl') and changesys then
+    if (art=1) and FileExists(fn+'.bbl') and changesys then
       lfile:=fn+'.bbl'
     else lfile:=fn+'.bl';
-    if not exist(lfile) then
+    if not FileExists(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
     else begin
       if fido or maus or qwk then
@@ -1522,7 +1522,7 @@ begin
           comm:='';
           end;
         end;
-      if exist(fn) and (comm<>'') then
+      if FileExists(fn) and (comm<>'') then
         if fido then begin
           if boxpar^.AreaBetreff then
             if comm='Query' then comm:='-q'
@@ -1535,7 +1535,7 @@ begin
           end
         else
           SendMaps(comm,box,fn);
-      if exist(fn) then _era(fn);
+      if FileExists(fn) then _era(fn);
       end;
     end;
   if maus then
@@ -1612,6 +1612,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/14 15:51:34  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.27  2000/10/17 10:05:55  mk
   - Left->LeftStr, Right->RightStr
 

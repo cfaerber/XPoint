@@ -95,7 +95,7 @@ var fn   : string;
   end;
 
 begin
-  if exist('userbase.dat') then         { Name bestimmen }
+  if FileExists('userbase.dat') then         { Name bestimmen }
     fn:='userbase.dat'
   else begin
     dialog(51,7,'',x,y);
@@ -111,7 +111,7 @@ begin
     if (RightStr(fn,1)<>'\') and (RightStr(fn,1)<>':') then
       fn:=fn+'\';
     fn:=fn+'userbase.dat';
-    if not exist(fn) then begin
+    if not FileExists(fn) then begin
       fehler('Ungltiges Verzeichnis oder keine USERBASE.DAT vorhanden!');
       exit;
       end;
@@ -249,7 +249,7 @@ begin
   useclip:=false;
   if ReadFilename(getres(2420),fn,true,useclip)   { 'Nachrichtenpaket konvertieren/einlesen' }
   then
-    if not exist(fn) then rfehler(106)
+    if not FileExists(fn) then rfehler(106)
     else begin
       UpString(fn);
       if pos(UpperCase(MausLogfile),fn)>0 then begin
@@ -567,10 +567,10 @@ begin
     mtpath:= AddDirSepa(mtpath);
     if not mfehler(ntBoxNetztyp(box)=nt_Maus,box+' ist keine MausNet-Box') and
        not mfehler(IsPath(mtpath),'ungltiges Verzeichnis') then begin
-      if not exist(mtpath+mdaten) and IsPath(mtpath+'daten') then
+      if not FileExists(mtpath+mdaten) and IsPath(mtpath+'daten') then
         mtpath:=mtpath+FileUpperCase('daten')+DirSepa;
-      if not mfehler(exist(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
-         not mfehler(exist(mtpath+mindex),mtpath+mindex+' fehlt') and
+      if not mfehler(FileExists(mtpath+mdaten),'In diesem Verzeichnis befindet sich keine MauTau-Datenbank.') and
+         not mfehler(FileExists(mtpath+mindex),mtpath+mindex+' fehlt') and
          not mfehler(diskfree(0)>2.5*_filesize(mtpath+mdaten),
              'zu wenig freier Speicherplatz zum Einlesen der Daten') then
       begin
@@ -639,12 +639,12 @@ begin
     if brk or (ypath='') then exit;
     ypath:=AddDirSepa(ypath);
     if not mfehler(IsPath(ypath),'ungltiges Verzeichnis') then begin
-      if not exist(ypath+'AREABASE.DBF') and IsPath(ypath+FileUpperCase('mailbase')) then
+      if not FileExists(ypath+'AREABASE.DBF') and IsPath(ypath+FileUpperCase('mailbase')) then
         ypath:=ypath+FileUpperCase('mailbase')+DirSepa;
       { Gibt es Yuppi unter Linux? Wenn ja, sind die Dateinamen
         klein oder gross geschrieben? }
-      if not mfehler(exist(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
-         not mfehler(exist(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
+      if not mfehler(FileExists(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
+         not mfehler(FileExists(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
          not mfehler(diskfree(0)>2.5*YupMailsize,
                 'zu wenig freier Speicherplatz zum Einlesen der Daten')
       then
@@ -681,7 +681,7 @@ begin
         shell(ZQWKBin+' -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fsplit(fn,dir,name,ext);
         fn:=name+'.ZER';
-        if not exist(fn) then
+        if not FileExists(fn) then
           fehler(getres2(2422,4))
         else begin
           if PufferEinlesen(fn,DefFidoBox,true,false,false,0) then
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.27  2000/11/14 11:14:35  mk
   - removed unit dos from fileio and others as far as possible
 

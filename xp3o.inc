@@ -22,7 +22,7 @@ begin
   s:=WildCard;
   useclip:=true;
   if ReadFilename(getres2(330,1),s,true,useclip) then   { 'Puffer einlesen' }
-    if not exist(s) then
+    if not FileExists(s) then
       rfehler(304)   { 'Datei nicht vorhanden!' }
     else if pos(UpperCase(AblagenFile),UpperCase(s))>0 then
       rfehler(305)   { 'Interne Ablage - bitte erst umbenennen!' }
@@ -467,12 +467,12 @@ var x,y      : byte;
     rps(s,'$INFILE',temppath+cryptedfile);
     rps(s,'$OUTFILE',uncfile);
     rps(s,'$USER',hdp^.absender);
-    if exist(uncfile) then _era(uncfile);
+    if FileExists(uncfile) then _era(uncfile);
     savecursor;
     sichern(sp);
     shell(s,600,3);                     { Nachricht decodieren }
     if existf(f) then erase(f);       { codierte Msg l”schen, falls noch da }
-    if not exist(uncfile) then
+    if not FileExists(uncfile) then
       trfehler(306,5)         { 'Fehler beim Decodieren' }
     else begin
       assign(f,uncfile);
@@ -1152,11 +1152,11 @@ begin
   if ext='' then
     ext:='.001'
   else
-    while exist(BadDir+name+ext) and (ext<>'.999') do
+    while FileExists(BadDir+name+ext) and (ext<>'.999') do
       ext:='.'+formi(ival(mid(ext,2))+1,3);
-  if exist(BadDir+name+ext) then
+  if FileExists(BadDir+name+ext) then
     _era(BadDir+name+ext);
-  if not exist(BadDir+name+ext) then begin
+  if not FileExists(BadDir+name+ext) then begin
     assign(f,fn);
     rename(f,BadDir+name+ext);
     if ioresult<>0 then;
@@ -1164,6 +1164,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/11/14 15:51:29  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.34  2000/11/05 15:23:10  mk
   - Ansicht der Datumsbezuege korrigiert
 

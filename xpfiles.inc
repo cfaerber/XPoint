@@ -53,7 +53,7 @@ begin
     end;
   if length(ext)=2 then n:=10
   else n:=1;
-  while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
+  while (destdir<>'') and (n<999) and FileExists(destdir+name+ext) do begin
     ext:=LeftStr(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
     inc(n);
     end;

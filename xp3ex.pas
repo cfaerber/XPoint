@@ -732,7 +732,7 @@ begin
     if smdl(IxDat('2712300000'),edat) then
       dbReadN(mbase,mb_wvdatum,edat);
     iso1:=(dbReadInt(mbase,'netztyp') and $2000)<>0;
-    if (schablone<>'') and (exist(schablone)) then begin
+    if (schablone<>'') and (FileExists(schablone)) then begin
       assign(t,ownpath+schablone);
       reset(t);
       while not eof(t) do with hdp^ do begin
@@ -1096,6 +1096,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/11/14 15:51:29  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.49  2000/11/01 11:37:28  mk
   RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
 

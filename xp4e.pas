@@ -1630,7 +1630,7 @@ begin
   then;
   freemem(sdata,sizeof(SendUUdata)); {dispose(sdata);}
   pgdown:=false;
-  if exist(fn) then DeleteFile(fn);
+  if FileExists(fn) then DeleteFile(fn);
 end;
 
 
@@ -1824,10 +1824,10 @@ begin
   if s<>'' then begin
     fn:=s;
     adddir(fn,sendpath);
-    if not exist(fn) then begin
+    if not FileExists(fn) then begin
       if ReadJN(getres(2725),true) then    { 'Datei nicht vorhanden - neu anlegen' }
         EditFile(fn,false,false,0,false);
-      AutoExistfile:=exist(fn);
+      AutoExistfile:=FileExists(fn);
       end
     else
       AutoExistfile:=true;
@@ -2004,7 +2004,7 @@ begin
     if nr=3 then begin
       fn:=ar.datei;
       adddir(fn,sendpath);
-      if not exist(fn) then begin
+      if not FileExists(fn) then begin
         rfehler(106);    { 'Datei nicht vorhanden!' }
         exit;
         end;
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/11/14 15:51:30  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.48  2000/11/14 11:14:32  mk
   - removed unit dos from fileio and others as far as possible
 

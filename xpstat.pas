@@ -586,7 +586,7 @@ var box     : string;
     ewpz    : real;
     oldwpz  : real;
 begin
-  if not exist(logpath+Logfile) then begin
+  if not FileExists(logpath+Logfile) then begin
     rfehler(2604);     { 'Kein Logfile (XPOINT.LOG) vorhanden'}
     exit;
     end;
@@ -786,7 +786,7 @@ begin
         w:=pp_epp[j]; pp_epp[j]:=pp_epp[j+1]; pp_epp[j+1]:=w;
         end;
 
-  crashs:=exist('*.cp');
+  crashs:=FileExists('*.cp');
   if (ppanz=0) and not crashs then begin
     hinweis(getres(2610));   { 'Keine unversandten Nachrichten vorhanden!' }
     exit;
@@ -1203,7 +1203,7 @@ begin
     dbNext(d);
     end;
   dbGoTop(d);
-  if (anz=0) or not exist(TimingDat) then begin
+  if (anz=0) or not FileExists(TimingDat) then begin
     rfehler(2608);          { 'keine Eintr„ge vorhanden' }
     dbClose(d);
     exit;
@@ -1254,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/14 15:51:37  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.27  2000/10/22 21:59:01  mk
   - case of .pp and .epp is now UnixFS dependent
 

@@ -76,7 +76,7 @@ begin
   GetFilescanBox(box);
   if box='' then exit;
   fl:=BoxFilename(box)+'.FBL';
-  if not exist(fl) then begin
+  if not FileExists(fl) then begin
     rfehler1(853,box); exit;
     end;
   OpenList(1,iif(_maus,screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
@@ -220,7 +220,7 @@ begin
       dbNext(d);
       end;
     dbClose(d);
-    if exist(fn) then _era(fn);
+    if FileExists(fn) then _era(fn);
     end;
 end;
 
@@ -328,6 +328,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/11/14 15:51:34  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.8  2000/10/17 10:05:55  mk
   - Left->LeftStr, Right->RightStr
 

@@ -89,7 +89,7 @@ begin
     fn:=FilePath+WildCard;
     useclip:=false;
     if not readfilename(getres(812),fn,true,useclip) then exit;   { 'Fileserver-Liste' }
-    if not exist(fn) then begin
+    if not FileExists(fn) then begin
       rfehler(811);   { 'Datei ist nicht vorhanden.' }
       exit;
       end;
@@ -373,7 +373,7 @@ var d     : DB;
     maddstring(3,4,getres2(818,3),dest,41,79,'');
     readmask(brk);
     enddialog;
-    if exist(source) and (dest<>'') then begin
+    if FileExists(source) and (dest<>'') then begin
       rewrite(t);
       writeln(t,dest);
       close(t);
@@ -436,7 +436,7 @@ begin
     dbRead(d,'flags',w);
     dbRead(d,'fs-typ',fstyp);
     dbClose(d);
-    enterfiles:=not exist(fs+'.fl');
+    enterfiles:=not FileExists(fs+'.fl');
     if w and 1=0 then
       rfehler(815)      { 'Das gew„hlte System ist kein Fileserver!' }
     else if (request>0) and (fstyp<>3) and enterfiles then
@@ -535,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/11/14 15:51:34  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.14  2000/10/17 10:05:56  mk
   - Left->LeftStr, Right->RightStr
 

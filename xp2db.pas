@@ -188,7 +188,7 @@ var flp : dbFLP;
       fsize:=4; fnlen:=10;
       end;
     dbAppendField(BrettFile,fld);
-    if exist(BrettFile+dbIxExt) then
+    if FileExists(BrettFile+dbIxExt) then
       _era(BrettFile+dbIxExt);
     AlphaBrettindex;
   end;
@@ -605,7 +605,7 @@ begin
   dbSetIndexVersion(3);
   dbSetIndexCache(MaxCache);
 
-  if not exist(MsgFile+dbext) then
+  if not FileExists(MsgFile+dbext) then
   begin   { XPOINT: Nachrichtendatei }
     initflp(19);
     AppS('Brett',5);
@@ -646,7 +646,7 @@ begin
       NewFieldMsgMimetyp;
     end;
 
-  if not exist(BrettFile+dbExt) then begin       { BRETTER: Brettdatei }
+  if not FileExists(BrettFile+dbExt) then begin       { BRETTER: Brettdatei }
     initflp(9);
     AppS('Brettname',81);
     AppS('Kommentar',30);
@@ -669,7 +669,7 @@ begin
       NewFieldBrettadresse;
     end;
 
-  if not exist(UserFile+dbExt) then begin        { USER: Userdatei }
+  if not FileExists(UserFile+dbExt) then begin        { USER: Userdatei }
     initflp(9);
     AppS('Username',80);
     AppX('Adresse',dbUntypedExt,0,0);
@@ -686,11 +686,11 @@ begin
   else begin
     if dbGetIndexVersion(UserFile+dbIxExt)<3 then
       _era(UserFile+dbIxExt);
-    if not exist(UserFile+dbExtExt) then
+    if not FileExists(UserFile+dbExtExt) then
       UserEbError;
     end;
 
-  if not exist(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
+  if not FileExists(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
     initflp(16);  {16.01.00 HS: Erweitert um 1 fr neues Feld}
     AppS('Boxname',20);
     AppS('Username',30);
@@ -737,7 +737,7 @@ begin
       _era(BoxenFile+dbIxExt);
     end;
 
-  if not exist(GruppenFile+dbExt) then begin     { GRUPPEN: Brettgruppen }
+  if not FileExists(GruppenFile+dbExt) then begin     { GRUPPEN: Brettgruppen }
     initflp(10);
     AppS('name',30);
     AppX('haltezeit',dbTypeInt,2,4);
@@ -759,7 +759,7 @@ begin
       NewFieldAdresse;
     end;
 
-  if not exist(SystemFile+dbExt) then begin      { SYSTEME: Fileserver u.a. }
+  if not FileExists(SystemFile+dbExt) then begin      { SYSTEME: Fileserver u.a. }
     initflp(8);
     AppS('name',20);
     AppS('kommentar',30);
@@ -779,7 +779,7 @@ begin
       NewFieldZBV('2');
       end;
 
-  if not exist(AutoFile+dbExt) then begin        { AUTOMSG: autom. Versand }
+  if not FileExists(AutoFile+dbExt) then begin        { AUTOMSG: autom. Versand }
     initflp(14);
     AppS('Dateiname',80);
     AppS('Betreff',40);
@@ -803,7 +803,7 @@ begin
       NewFieldLastMsgID;
   end;
 
-  if not exist(PseudoFile+dbExt) then begin      { PSEUDOS: Empf„nger-Krzel }
+  if not FileExists(PseudoFile+dbExt) then begin      { PSEUDOS: Empf„nger-Krzel }
     initflp(4);
     AppS('Kurzname',15);
     AppS('Langname',80);
@@ -813,7 +813,7 @@ begin
     dbReleaseFL(flp);
     end;
 
-  if not exist(BezugFile+dbExt) then begin       { BEZUEGE: Kommentarbaum }
+  if not FileExists(BezugFile+dbExt) then begin       { BEZUEGE: Kommentarbaum }
     initflp(4);
     AppX('MsgPos',dbTypeInt,4,10);
     AppX('MsgID',dbTypeInt,4,10);
@@ -823,7 +823,7 @@ begin
     dbReleaseFL(flp);
     end;
 
-  if not exist(MimetFile+dbExt) then begin      { MIMETYPE: Nachrichtentypen }
+  if not FileExists(MimetFile+dbExt) then begin      { MIMETYPE: Nachrichtentypen }
     initflp(3);
     AppS('Typ',30);
     AppS('Extension',5);
@@ -848,7 +848,7 @@ begin
     dbWriteUserflag(mbase,4,4);
   end;
 
-  if not exist(OwnPath+NewDateFile) then
+  if not FileExists(OwnPath+NewDateFile) then
     write_lastcall(ZDate);
 
   getablsizes;
@@ -865,7 +865,7 @@ begin
   dbClose(dd);
 {$ENDIF }
 
-  if not exist(WeiterMsk) then
+  if not FileExists(WeiterMsk) then
   begin
     assign(t,WeiterMsk);
     rewrite(t);
@@ -877,9 +877,9 @@ begin
     close(t);
   end;
 
-  if exist(QuotePriv) and not exist(QuotePMpriv) then
+  if FileExists(QuotePriv) and not FileExists(QuotePMpriv) then
     if filecopy(QuotePriv,QuotePMpriv) then;
-  if not exist(CancelMsk) then
+  if not FileExists(CancelMsk) then
   begin
     assign(t,CancelMsk);
     rewrite(t);
@@ -903,6 +903,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.21  2000/11/13 08:57:59  mk
   - NeedReg partitally implemented
 

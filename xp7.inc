@@ -735,8 +735,8 @@ end;
 procedure DelPronetfiles;
 begin
   with boxpar^ do begin
-    if exist(boxname+'.REQ') then _era(boxname+'.REQ');
-    if exist(boxname+'.UPD') then _era(boxname+'.UPD');
+    if FileExists(boxname+'.REQ') then _era(boxname+'.REQ');
+    if FileExists(boxname+'.UPD') then _era(boxname+'.UPD');
     end;
 end;
 
@@ -894,7 +894,7 @@ begin
         if errorlevel=MaggiFehler then
         begin
           trfehler(724,30);   { 'Fehler bei der MAGGI-Konvertierung' }
-          if exist(fn) then _era(fn);
+          if FileExists(fn) then _era(fn);
           close(f2);
           exit;
         end;
@@ -923,7 +923,7 @@ begin
 
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltZConnect] then erase(f1);
       _era(ppfile);
-      if exist(eppfile) then _era(eppfile);
+      if FileExists(eppfile) then _era(eppfile);
       end
     else begin
       close(f2);
@@ -963,7 +963,7 @@ begin
         MausPMs_bestaetigen(box);   - abgeschafft, da im MausNet unerwÅnscht }
       end;
     if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then
-      if exist(fn) then _era(fn);
+      if FileExists(fn) then _era(fn);
     Netcall_connect:=true;
     end;
 end;
@@ -987,7 +987,7 @@ var dummy : longint;
   procedure ferror(nr:word);
   begin
     trfehler(nr,30);
-    if exist(upuffer) then _era(upuffer);
+    if FileExists(upuffer) then _era(upuffer);
     nc^.sendbuf:=0;
     outmsgs:=0; outemsgs:=0;
   end;
@@ -1031,7 +1031,7 @@ var dummy : longint;
         seek(f,adr);
         MakeHeader(true,f,0,0,hds,hd^,ok,false);
         if (hd^.attrib and attrFile<>0) then
-          if not exist(hd^.betreff) then
+          if not FileExists(hd^.betreff) then
             trfehler1(725,hd^.betreff,15)   { '%s fehlt!' }
           else
             if not filecopy(hd^.betreff,boxpar^.SysopOut+extractFileName(hd^.betreff)) then
@@ -1064,7 +1064,7 @@ begin
         inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
       if SysopPack then begin
         ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);    { ZFIDO }
-        if (errorlevel=MaggiFehler) and exist(ppfile) then begin
+        if (errorlevel=MaggiFehler) and FileExists(ppfile) then begin
           ferror(729);   { 'Fehler bei der ZFIDO-Konvertierung' }
           exit;
           end;
@@ -1073,15 +1073,15 @@ begin
           SetCurrentDir(SysopOut);
           shell(uparcer,500,3);                         { packen }
           end;
-        if exist(SysopOut+upuffer) then _era(SysopOut+upuffer);
+        if FileExists(SysopOut+upuffer) then _era(SysopOut+upuffer);
         with addpkts^ do
           for i:=1 to anzahl do
-            if exist(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
+            if FileExists(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
         end
       else
         ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);  { ZFIDO }
 
-      if (errorlevel<>0) and exist(ppfile) then begin
+      if (errorlevel<>0) and FileExists(ppfile) then begin
         ferror(729);     { 'Fehler bei ZFIDO-Konvertierung' }
         exit;
         end;
@@ -1095,14 +1095,14 @@ begin
       for i:=1 to addpkts^.anzahl do
         ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
       closebox;
-      if exist(ppfile) then _era(ppfile);
-      if exist(eppfile) then _era(eppfile);
+      if FileExists(ppfile) then _era(ppfile);
+      if FileExists(eppfile) then _era(eppfile);
       with addpkts^ do
         for i:=1 to anzahl do
-          if exist(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
+          if FileExists(abfile[i]+BoxFileExt) then _era(abfile[i]+BoxFileExt);
       end;
 
-    if exist(SysopInp+'*.*') then begin             { -- Eingangspaket -- }
+    if FileExists(SysopInp+'*.*') then begin             { -- Eingangspaket -- }
       EmptySpool('*.*');
       CopyPKTs;
       if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
@@ -1185,7 +1185,7 @@ begin
       exit;
       end;
 
-    if exist(SysopInp) then begin                { 1. Import }
+    if FileExists(SysopInp) then begin                { 1. Import }
       NC^.recpack:=totalsize(SysopInp);
 {      SysDir:=GetFileDir(SysopInp); }
       EraFiles(XFerDir+'*.ZER');
@@ -1195,7 +1195,7 @@ begin
 {      qwkext:=GetFileext(sysopinp); }
       if errorlevel<>100 then
         ZQWKfehler;
-      if exist(XferDir+'*.ZER') then begin
+      if FileExists(XferDir+'*.ZER') then begin
         findfirst(XferDir+'*.ZER',ffAnyFile,sr);
         while doserror=0 do begin
           inc(NC^.recbuf,sr.size);
@@ -1213,13 +1213,13 @@ begin
 
     NC^.sendbuf:=_filesize(ppfile);              { 2. Export }
     if (NC^.sendbuf>0) then begin
-      if not exist(bfile+'.QFG') then begin
+      if not FileExists(bfile+'.QFG') then begin
         trfehler(736,esec);  {'Bitte zuerst Nachrichtenpaket einlesen, um Serverdaten zu ermitteln!' }
         exit;
         end;
       ReadQfg(bfile,qfg);
       ex:=RepExtension;
-      if not exist(ExtractFilePath(SysopOut)+qfg.repfile+'.'+ex) then
+      if not FileExists(ExtractFilePath(SysopOut)+qfg.repfile+'.'+ex) then
         replace:=1
       else begin
         replace:=ReadIt(ival(getres2(726,0)),
@@ -1244,7 +1244,7 @@ begin
         ClearUnversandt(ppfile,box);
         closebox;
         _era(ppfile);
-        if exist(eppfile) then _era(eppfile);
+        if FileExists(eppfile) then _era(eppfile);
         end;
       end;
     end;
@@ -1319,7 +1319,7 @@ begin
   if (logintyp in [ltMagic,ltQuick,ltGS]) and (netztyp<>nt_Pronet) then begin
     assign(f,caller);
     if existf(f) then begin
-      if exist('$caller.tmp') then _era('$caller.tmp');
+      if FileExists('$caller.tmp') then _era('$caller.tmp');
       rename(f,'$caller.tmp');
       end;
     end;
@@ -1329,7 +1329,7 @@ procedure TempToCaller;
 var f : file;
 begin
   if (logintyp=ltQuick) or (logintyp=ltGS) or
-     ((logintyp=ltMagic) and (netztyp<>nt_Pronet) and not exist(caller)) then
+     ((logintyp=ltMagic) and (netztyp<>nt_Pronet) and not FileExists(caller)) then
   begin
     assign(f,'$caller.tmp');
     rename(f,caller);
@@ -1375,7 +1375,7 @@ end;
 procedure testBL;
 var f : file;
 begin
-  if not exist(bfile+'.bl') then begin
+  if not FileExists(bfile+'.bl') then begin
     assign(f,bfile+'.bl');
     rewrite(f,1);
     close(f);
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/11/14 15:51:33  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.38  2000/11/14 11:14:33  mk
   - removed unit dos from fileio and others as far as possible
 

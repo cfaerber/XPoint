@@ -1694,7 +1694,7 @@ begin
         if SaveBlock(block[1].pos,block[2].pos,EdTempFile,rrand,false,true,false) then
         begin
           FileToClip(EdTempFile);
-          { if exist(EdTempFile) then DeleteFile(EdTempFile); }
+          { if FileExists(EdTempFile) then DeleteFile(EdTempFile); }
           if cut then begin
             ap:=CutBlock; Freeblock(ap); end;
           end;
@@ -1715,7 +1715,7 @@ begin
       ClipToFile(EdTempFile);
       ap :=LoadBlock(EdTempFile,false,0,rrand); { .robo }
       InsertWithMark(ap); { .robo }
-      { if exist(EdTempFile) then era(EdTempFile); }
+      { if FileExists(EdTempFile) then era(EdTempFile); }
     end
     else begin
       InsertWithMark(Clipboard);
@@ -1731,7 +1731,7 @@ begin
   with e^ do begin
     Procs.FileProc(e,fn,false,false);
     if fn<>'' then
-      if not exist(fn) then
+      if not FileExists(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
       else begin
         ap:=LoadBlock(fn,false,0,rrand);
@@ -1747,7 +1747,7 @@ begin
   with e^ do begin
     Procs.FileProc(e,fn,false,true);
     if fn<>'' then
-      if not exist(fn) then
+      if not FileExists(fn) then
         error(5)     { 'Fehler: Datei nicht vorhanden' }
       else begin
         ap:=LoadUUeBlock(fn);
@@ -1765,7 +1765,7 @@ begin
     else begin
       Procs.FileProc(e,fn,true,false);
       if fn<>'' then begin
-        if not exist(fn) then t:='J'
+        if not FileExists(fn) then t:='J'
         else t:=Procs.Overwrite(e,fn);
         if (t='J') or (t='N') then
           if SaveBlock(block[1].pos,block[2].pos,fn,rrand,false,t='J',false) then;
@@ -2412,6 +2412,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/11/14 15:51:26  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.35  2000/11/14 11:14:31  mk
   - removed unit dos from fileio and others as far as possible
 

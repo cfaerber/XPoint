@@ -214,7 +214,7 @@ begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
 
-  if (not ValidFileName(orgfn) or exist(orgfn)) and (viewer.ext<>'') and
+  if (not ValidFileName(orgfn) or FileExists(orgfn)) and (viewer.ext<>'') and
      (cpos('.',fn)>0) then
     orgfn:=ChangeFileExt(fn, '.' + viewer.ext);
 
@@ -252,6 +252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/14 15:51:38  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.26  2000/11/14 11:14:35  mk
   - removed unit dos from fileio and others as far as possible
 

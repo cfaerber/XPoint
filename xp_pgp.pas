@@ -93,7 +93,7 @@ const
 var
   path : string;
 begin
-  if exist(PGPBAT) then
+  if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
     path:=getenv('PGPPATH');
@@ -176,7 +176,7 @@ begin
   if UsePGP and (PGP_UserID<>'') then begin
     secring:=fsearch('PUBRING.PGP',getenv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
-      if exist(PGPkeyfile) then _era(PGPkeyfile);
+      if FileExists(PGPkeyfile) then _era(PGPkeyfile);
       if PGPVersion=PGP2 then
         RunPGP('-kx +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile)
       else
@@ -202,7 +202,7 @@ var kf  : file;
 
 begin
   UpdateKeyfile;
-  if (savekey<>'') and exist(savekey) then
+  if (savekey<>'') and FileExists(savekey) then
     assign(kf,savekey)
   else
     assign(kf,PGPkeyfile);
@@ -239,7 +239,7 @@ var t   : text;
     hd  : string;
 begin
   UpdateKeyfile;
-  if not exist('pgp-key.bin') then exit;
+  if not FileExists('pgp-key.bin') then exit;
   tmp:=TempS(4096);
   assign(t,tmp);
   rewrite(t);
@@ -253,7 +253,7 @@ begin
             false,false,false,false,true,nil,
             hd,hd,SendPGPkey) then
     LogPGP(getreps2(3002,1,empfaenger));   { 'sende Public Key an %s' }
-  if exist(tmp) then _era(tmp);
+  if FileExists(tmp) then _era(tmp);
   freeres;
 end;
 
@@ -328,7 +328,7 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -a '+t+' '+_source+' '+IDform(UserID));
-      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
@@ -344,8 +344,8 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-s -a '+t+' '+_source+' '+IDform(UserID)+uid);
-      if exist(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Tempor„rdatei l”schen }
-      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Tempor„rdatei l”schen }
+      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
@@ -361,14 +361,14 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -s -a '+t+' '+_source+' '+IDform(UserID)+uid);
-      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
   end;
 
   if fido_origin<>'' then AddOrigin;
 
-  if exist(tmp) then begin
+  if FileExists(tmp) then begin
     hd.groesse:=_filesize(tmp);               { Gr”áe anpassen }
     hd.crypttyp:=hd.typ; hd.typ:='T';         { Typ anpassen   }
     hd.ccharset:=hd.charset; hd.charset:='';  { Charset anpassen }
@@ -383,7 +383,7 @@ begin
     fmove(f2,f);                          { ... und codierte Datei dranh„ngen }
     close(f2);
     close(f);
-    if exist(tmp) then _era(tmp);         { Tempor„rdatei l”schen }
+    if FileExists(tmp) then _era(tmp);         { Tempor„rdatei l”schen }
     if encode then begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                            { 'c'-Kennzeichnung }
@@ -455,7 +455,7 @@ begin
     if DoSend(true,tmp,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
               hd,hd,SendPGPreq) then;
-    if exist(tmp) then _era(tmp);
+    if FileExists(tmp) then _era(tmp);
     end;
   freeres;
 end;
@@ -534,11 +534,11 @@ begin
 
   if sigtest then begin
     PGP_WaitKey:=false;
-    if exist(tmp) then _era(tmp);
-    if exist(_source) then _era(_source);
+    if FileExists(tmp) then _era(tmp);
+    if FileExists(_source) then _era(_source);
   end;
   { Oops, keine Ausgabedatei: }
-  if not exist(tmp2) then begin
+  if not FileExists(tmp2) then begin
     { Signaturtest-Fehler }
     if sigtest then begin
       if errorlevel=18 then begin
@@ -587,7 +587,7 @@ begin
       fmove(f2,f);
       close(f2);
       close(f);
-      if exist(tmp2) then _era(tmp2);
+      if FileExists(tmp2) then _era(tmp2);
       Xwrite(tmp);
       wrkilled;
       dbWriteN(mbase,mb_typ,hdp^.typ[1]);
@@ -600,8 +600,8 @@ begin
     end;
   end;
   { Aufr„umen: }
-  if exist(tmp) then _era(tmp);
-  if exist(tmp) then _era(tmp2);
+  if FileExists(tmp) then _era(tmp);
+  if FileExists(tmp) then _era(tmp2);
 end;
 
 
@@ -702,9 +702,9 @@ begin
     tmp2:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(xTractPuf,'',tmp2,false,0);
     PGP_DecodeKey(tmp2,tmp);
-    if exist(tmp2) then _era(tmp2);
+    if FileExists(tmp2) then _era(tmp2);
     end;
-  if not exist(tmp) then
+  if not FileExists(tmp) then
     rfehler(3005)         { 'Fehler beim Auslesen des PGP-Keys' }
   else begin
     if auto then          { 'lese Key aus Nachricht %s von %s ein' }
@@ -717,7 +717,7 @@ begin
       RunPGP5('PGPK.EXE','-a '+tmp);
 
     PGP_WaitKey:=mk;
-    if exist(tmp) then _era(tmp);
+    if FileExists(tmp) then _era(tmp);
   end;
   FreeHeaderMem(hdp);
 end;
@@ -763,7 +763,7 @@ begin
     extract_msg(xTractPuf,'',tmp,false,0);
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
-    if exist(tmp) then _era(tmp);
+    if FileExists(tmp) then _era(tmp);
   end;
   FreeHeaderMem(hdp);
 end;
@@ -771,7 +771,7 @@ end;
 
 procedure PGP_EndSavekey;
 begin
-  if (savekey<>'') and exist(savekey) then
+  if (savekey<>'') and FileExists(savekey) then
     _era(savekey);
   savekey:='';
 end;
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/14 15:51:35  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.29  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

@@ -33,7 +33,7 @@ var t : text;
     w : word;
 begin
   w:=uu_nummer;
-  if exist(XFerDir+caller) and (_filesize(XFerDir+caller)>0) then begin
+  if FileExists(XFerDir+caller) and (_filesize(XFerDir+caller)>0) then begin
     assign(t,XFerDir+caller);
     reset(t);
     while not eof(t) do begin
@@ -280,7 +280,7 @@ var sr      : searchrec;
       clrscr;
       uncompy:=2;
       end;
-    if not exist(XFerDir+fn) then
+    if not FileExists(XFerDir+fn) then
       if RenameFile(XFerDir+fn+'.Z',XFerDir+fn) then
         MoveToBad(XFerDir+fn);
   end;
@@ -399,9 +399,9 @@ begin
     moment;
     outmsgs:=0;
     ClearUnversandt(ppfile,box);
-    if exist(ppfile) then
+    if FileExists(ppfile) then
       _era(ppfile);
-    if exist(eppfile) then
+    if FileExists(eppfile) then
       _era(eppfile);
     if res=uu_ok then
       wrtiming('NETCALL '+boxpar^.boxname);
@@ -419,7 +419,7 @@ begin
   SendNetzanruf(once,false);
   SendFilereqReport;    { ... falls vorhanden }
   AppLog(fidologfile,UUCPlog);
-  if exist(fidologfile) then _era(fidologfile);
+  if FileExists(fidologfile) then _era(fidologfile);
   twin;
 end;
 
@@ -465,10 +465,10 @@ begin
       ClearUnversandt(ppfile,box);
       closebox;
       _era(ppfile);
-      if exist(eppfile) then _era(eppfile);
+      if FileExists(eppfile) then _era(eppfile);
       end;
 
-    if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
+    if FileExists(SysopInp+WildCard) then                   { -- Eingangspaket -- }
       if ImportUUCPfromSpool(SysopInp) then
         EmptySysin;
     Netcall_connect:=true;
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/11/14 15:51:34  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.23  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

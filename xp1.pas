@@ -987,11 +987,11 @@ end;
 
 procedure delete_tempfiles;
 begin
-  if exist(TempPath+swapfilename) then
+  if FileExists(TempPath+swapfilename) then
     _era(TempPath+swapfilename);
-  if exist(TempPath+MsgTempFile) then
+  if FileExists(TempPath+MsgTempFile) then
     _era(TempPath+MsgTempFile);
-  if exist(TempPath+'header.hdr') then
+  if FileExists(TempPath+'header.hdr') then
     _era(TempPath+'header.hdr');
 end;
 
@@ -1244,7 +1244,7 @@ end;
 
 procedure WriteClipFile(fn:string);
 begin
-  if exist(fn) then begin
+  if FileExists(fn) then begin
     FileToClip(fn);
     _era(fn);
     end;
@@ -2017,6 +2017,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.86  2000/11/14 15:51:27  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.85  2000/11/09 18:15:11  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 

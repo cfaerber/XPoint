@@ -574,7 +574,7 @@ abbruch:
     close(f);
     if cpos('.',s)=0 then begin
       i:=1;
-      while exist(s+'.'+formi(i,3)) do inc(i);
+      while FileExists(s+'.'+formi(i,3)) do inc(i);
       rename(f,s+'.'+formi(i,3));
       end;
     s:='';
@@ -602,6 +602,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3  2000/11/14 15:51:26  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.2  2000/10/27 16:14:29  fe
   uucico notduerftig uebersetzbar gemacht.
 

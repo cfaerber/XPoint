@@ -90,12 +90,12 @@ begin
       writeln(t,'MaxFileSize=',maxfsize);
     close(t);
     end;
-  if exist(ResultFile) then _era(ResultFile);
+  if FileExists(ResultFile) then _era(ResultFile);
   {$ifdef unix}
   {$hint Muss noch angepasst werden }
   {$endif}
   shell('UUCICO.EXE '+ConfigFile,500,4);            { --- uucico.exe }
-  if not exist(ResultFile) then
+  if not FileExists(ResultFile) then
     uucico:=uu_parerr
   else begin
     uucico:=uu_recerr;
@@ -123,6 +123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/11/14 15:51:38  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.12  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

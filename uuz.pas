@@ -297,7 +297,7 @@ var
   var
     s: string;
   begin
-    if exist(fn) then
+    if FileExists(fn) then
     begin
       assign(t, fn);
       reset(t);
@@ -484,14 +484,14 @@ begin
       else
         uunumber := hexval(paramstr(i));
   end;
-  if exist('nomime.uuz') then NoMIME := true;
-  if exist('igate.exe') then nomailer := true;
+  if FileExists('nomime.uuz') then NoMIME := true;
+  if FileExists('igate.exe') then nomailer := true;
 end;
 
 
 procedure tuuz.testfiles;
 begin
-  if not exist(source) then raise Exception.Create('Quelldatei fehlt');
+  if not FileExists(source) then raise Exception.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z then
@@ -2519,7 +2519,7 @@ begin
       shell(uncompress + newfn);
     end;
     reset(f2, 1); seek(f2, filesize(f2));
-    if exist(newfn) then
+    if FileExists(newfn) then
     begin
       writeln(' - Fehler beim Entpacken');
       writeln(uncompress + newfn); halt;
@@ -2711,7 +2711,7 @@ begin
     begin
       ReadXFile;                        { X.-file interpretieren }
       LoString(typ);
-      if exist(spath + dfile) then
+      if FileExists(spath + dfile) then
       begin
         inc(n);
         if (typ = 'rnews') or (typ = 'crnews') or
@@ -2795,7 +2795,7 @@ begin
     end;
   if length(ext)=2 then n:=10
   else n:=1;
-  while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
+  while (destdir<>'') and (n<999) and FileExists(destdir+name+ext) do begin
     ext:=LeftStr(ext,4-length(strs(n)))+strs(n);   { '.' mitrechnen! }
     inc(n);
     end;
@@ -3344,7 +3344,7 @@ var
     if transfer then
     begin
       fromfile := hd.betreff;
-      if not exist(fromfile) then
+      if not FileExists(fromfile) then
       begin
         writeln(' warning: ', fromfile, ' not found!');
         exit;
@@ -3566,6 +3566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2000/11/14 15:51:26  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.76  2000/11/14 11:02:16  mk
   - AnsiString-Fixes
 

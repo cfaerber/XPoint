@@ -421,7 +421,7 @@ begin
   else begin
     fsplit(s,dir,name,ext);
     if ext='' then s:=dir+name+'.scr';
-    if exist(s) then
+    if Fileexists(s) then
       testscript:=true
     else begin
       rfehler(22);     { 'Datei ist nicht vorhanden!' }
@@ -432,7 +432,7 @@ end;
 
 procedure scripterrors(var s:string);
 begin
-  if (s<>'') and exist(s) and (RunScript(true,s,false,false,nil)<>0) then begin
+  if (s<>'') and Fileexists(s) and (RunScript(true,s,false,false,nil)<>0) then begin
     rfehler(925);    { 'Syntaxfehler in Script' }
     if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
     end;
@@ -1815,7 +1815,7 @@ begin
   dbFlushClose(d);
   boxpar^.boxname:=name;
   boxpar^.username:=user;
-  if (nt=nt_UUCP) and exist('UUCP.SCR') then
+  if (nt=nt_UUCP) and FileExists('UUCP.SCR') then
     boxpar^.script:='UUCP.SCR';
   WriteBox(dname,boxpar);
   DefaultBox:=name;
@@ -1832,6 +1832,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.44  2000/11/14 15:51:35  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.43  2000/11/14 10:24:08  mk
   - display message box in Edit/Viewer when modify */*
 

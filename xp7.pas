@@ -189,7 +189,7 @@ label abbruch,ende0;
   procedure RemoveEPP;
   var f : file;
   begin
-    if (epp_apppos>-1) and exist(ppfile) then begin
+    if (epp_apppos>-1) and FileExists(ppfile) then begin
       assign(f,ppfile); reset(f,1);
       seek(f,epp_apppos);                 { epp aus pp l”schen }
       truncate(f);
@@ -391,19 +391,19 @@ label abbruch,ende0;
 
   function NoScript(script:string):boolean;
   begin
-    NoScript:=((script='') or not exist(script));
+    NoScript:=((script='') or not FileExists(script));
   end;
 
   procedure Del_PP_and_UV;
   begin
-    if exist(ppfile) then begin
+    if FileExists(ppfile) then begin
       Moment;
       outmsgs:=0;
       ClearUnversandt(ppfile,box);
       closebox;
       _era(ppfile);
       end;
-    if exist(eppfile) then _era(eppfile);
+    if FileExists(eppfile) then _era(eppfile);
   end;
 
 begin                  { of Netcall }
@@ -481,9 +481,9 @@ begin                  { of Netcall }
   pronet:=(logintyp=ltMagic) and (netztyp=nt_Pronet);
   janusp:=(logintyp=ltZConnect) and BoxPar^.JanusPlus;
   if _maus then begin
-    if exist(mauslogfile) then _era(mauslogfile);
-    if exist(mauspmlog) then _era(mauspmlog);
-    if exist(mausstlog) then _era(mausstlog);
+    if FileExists(mauslogfile) then _era(mauslogfile);
+    if FileExists(mauspmlog) then _era(mauspmlog);
+    if FileExists(mausstlog) then _era(mausstlog);
     end;
 
   with BoxPar^ do
@@ -514,11 +514,11 @@ begin                  { of Netcall }
     end;
   orgfossil:=comn[boxpar^.bport].fossil;
 
-  if exist(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
+  if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
     trfehler1(710,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
-  if exist(eppfile) and (testpuffer(eppfile,false,ldummy)<0) then begin
+  if FileExists(eppfile) and (testpuffer(eppfile,false,ldummy)<0) then begin
     trfehler1(710,eppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
@@ -600,9 +600,9 @@ begin                  { of Netcall }
 
       SetFilenames;
 
-      if exist(upuffer) then _era(upuffer);  { evtl. alte PUFFER l”schen }
-      if exist(dpuffer) then _era(dpuffer);
-      if exist(caller) then _era(caller);
+      if FileExists(upuffer) then _era(upuffer);  { evtl. alte PUFFER l”schen }
+      if FileExists(dpuffer) then _era(dpuffer);
+      if FileExists(caller) then _era(caller);
       end
     else begin   { not net }
       new(NC);
@@ -695,7 +695,7 @@ begin                  { of Netcall }
         end;
 
       if (uparcer<>'') and (not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]))
-        and not exist(caller) then begin
+        and not FileExists(caller) then begin
         {window(1,1,screenwidth,screenlines);}
         trfehler(713,30);   { 'Fehler beim Packen!' }
         goto ende0;
@@ -818,7 +818,7 @@ begin                  { of Netcall }
       repeat
         in7e1:=false; out7e1:=false;
         showkeys(15);
-        if net and exist(called) and (caller<>called) then _era(called);
+        if net and FileExists(called) and (caller<>called) then _era(called);
         if net then TempToCaller;
         display:=ParDebug;
         inmsgs:=0; outmsgs:=0; outemsgs:=0;
@@ -924,7 +924,7 @@ begin                  { of Netcall }
           error:=false;
           time(loginwait);
           scrfile:=iifs(net,script,o_script);
-          if (scrfile<>'') and exist(scrfile) then begin   { Script-Login }
+          if (scrfile<>'') and FileExists(scrfile) then begin   { Script-Login }
             if net then wrscript(3,2,col.colkeys,'*Script*')
             else if TermStatus then wrscript(55,1,col.colmenu[0],'*Script*');
             case RunScript(false,scrfile,not net,relogin,netlog) of
@@ -994,7 +994,7 @@ begin                  { of Netcall }
               end;
             end;    { of Z-Netz-Packen & Seriennr. }
 
-          if exist(bilogfile) then _era(bilogfile);   { DEL BiModem-Logfile }
+          if FileExists(bilogfile) then _era(bilogfile);   { DEL BiModem-Logfile }
 
           ticks:=ticker;
           if logintyp=ltMagic then begin
@@ -1057,7 +1057,7 @@ begin                  { of Netcall }
                 LogExternal(downloader);
                 shell(downloader,500,1);
                 LogErrorlevel;
-                if exist(boxname+'.REQ') or exist(boxname+'.UPD') then begin
+                if FileExists(boxname+'.REQ') or FileExists(boxname+'.UPD') then begin
                   mdelay(1000);
                   chdir(XFerDir_);      { File-Download }
                   LogExternal(downloader);
@@ -1087,7 +1087,7 @@ begin                  { of Netcall }
             aufhaengen;
 
           prodir:=iifs(ProNet,XFerDir,'');
-          if exist(prodir+called) or (JanusP and not jperror) then
+          if FileExists(prodir+called) or (JanusP and not jperror) then
             if ((errorlevel=0) and not (bimodem and BimodemFehler)) or JanusP
             then begin
               jperror:=(JanusP and (errorlevel<>0));
@@ -1095,9 +1095,9 @@ begin                  { of Netcall }
               moff;
               clrscr;
               mon;
-              if (pronet or (caller<>called)) and exist(caller) then
+              if (pronet or (caller<>called)) and FileExists(caller) then
                 _era(caller);
-              if exist(dpuffer) then _era(dpuffer);
+              if FileExists(dpuffer) then _era(dpuffer);
               if not jperror then begin
                 ende:=true;                     { <-- Ende:=true }
                 netcall:=true;
@@ -1114,7 +1114,7 @@ begin                  { of Netcall }
               NC^.recpack:=size;
               assign(f,iifs(JanusP,XferDir,'')+called);
               if (size<=16) and (called<>dpuffer) then begin
-                if not exist(prodir+dpuffer) then
+                if not FileExists(prodir+dpuffer) then
                   if existf(f) then
                     rename(f,prodir+dpuffer)
                   else
@@ -1153,14 +1153,14 @@ begin                  { of Netcall }
               {window(1,1,screenwidth,screenlines);}
               if pronet then begin
                 SetCurrentDir(ownpath);
-                if exist(XFerDir+'BRETTER.LST') then begin
+                if FileExists(XFerDir+'BRETTER.LST') then begin
                   message('Brettliste fr '+UpperCase(box)+' wird eingelesen ...');
                   Readpromaflist(XFerDir+'BRETTER.LST',bfile);
                   end;
                 end;
-              if (logintyp=ltGS) and not exist(dpuffer) then
+              if (logintyp=ltGS) and not FileExists(dpuffer) then
                 makefile(dpuffer);
-              if not exist(prodir+dpuffer) then begin
+              if not FileExists(prodir+dpuffer) then begin
                 trfehler(715,esec);  { 'Puffer fehlt! (Fehler beim Entpacken?)' }
                 MoveToBad(called);   { fehlerhaftes Paket -> BAD\ }
                 TempToCaller;
@@ -1169,7 +1169,7 @@ begin                  { of Netcall }
                 ReleaseC;
                 NC^.recbuf:=_filesize(prodir+dpuffer);
                 Del_PP_and_UV;   { .PP/.EPP und unversandte Nachrichten l”schen }
-                if exist(prodir+called) then
+                if FileExists(prodir+called) then
                   _era(prodir+called);            { Platz schaffen.. }
                 case logintyp of
                   ltMagic : begin
@@ -1207,20 +1207,20 @@ begin                  { of Netcall }
                   end;
                 CallFilter(true,dpuffer);
                 Activate;
-                if exist(dpuffer) then
+                if FileExists(dpuffer) then
                   if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad)
                   then begin
                   { if _maus and not MausLeseBest then  - abgeschafft; s. XP7.INC
                       MausPMs_bestaetigen(box); }
                     if nDelPuffer then begin
-                      if (olddpuffer<>'') and exist(olddpuffer) and (_filesize(dpuffer)>0) then
+                      if (olddpuffer<>'') and FileExists(olddpuffer) and (_filesize(dpuffer)>0) then
                         _era(olddpuffer);
-                      if exist(dpuffer) then
+                      if FileExists(dpuffer) then
                         _era(dpuffer);
                       end;
                     end;
                 TempToCaller;
-                if exist(caller) then _era(caller);
+                if FileExists(caller) then _era(caller);
                 if jperror then twin;
                 end;
               end
@@ -1280,7 +1280,7 @@ begin                  { of Netcall }
           end;
       until ende;
       if not _fido then begin
-        if exist(caller) and ((logintyp<>ltMagic) or ndelpuffer) then
+        if FileExists(caller) and ((logintyp<>ltMagic) or ndelpuffer) then
           _era(caller);
         if not ISDN and (net or not carrier(bport)) and ComActive(comnr)
         then begin
@@ -1318,13 +1318,13 @@ begin                  { of Netcall }
 
     if net then begin
       if ltVarBuffers(logintyp) then begin
-        if (upuffer<>'') and exist(upuffer) then _era(upuffer);
-        if (caller<>'') and exist(caller) then _era(caller);
+        if (upuffer<>'') and FileExists(upuffer) then _era(upuffer);
+        if (caller<>'') and FileExists(caller) then _era(caller);
         end;
       RemoveEPP;    { Falls ein TurboBox-Netcall abgebrochen wurde; }
                     { in allen anderen F„llen ist das EPP bereits   }
                     { entfernt.                                     }
-      if exist(ppfile) and (_filesize(ppfile)=0) then
+      if FileExists(ppfile) and (_filesize(ppfile)=0) then
         _era(ppfile);
       DelPronetfiles;
       end;
@@ -1465,7 +1465,7 @@ begin
       trfehler1(709,box,30)    { 'unbekannte Box: %s }
     else begin
       s:=mid(s,p+1);
-      if exist(s) then
+      if FileExists(s) then
         if PufferEinlesen(s,box,false,true,ParEmpfbest,0) then begin
           AppPuffer(box,s);
           _era(s);
@@ -1485,7 +1485,7 @@ begin
   if ParSetuser<>'' then
     SetUsername(ParSetuser);
   if ParPuffer<>'' then
-    if exist(ParPuffer) then
+    if FileExists(ParPuffer) then
       if PufferEinlesen(ParPuffer,DefaultBox,ParPufED,false,ParEmpfbest,0) then;
   if ParSendbuf<>'' then
     AutoSend(ParSendbuf);
@@ -1519,7 +1519,7 @@ begin
       if RightStr(shellpath,1)<>'\' then ParAV:='\'+ParAV;
       ParAV:=ShellPath+ParAV;
       end;
-    if not exist(ParAV) then
+    if not FileExists(ParAV) then
       rfehler(718)   { 'Datei nicht vorhanden' }
     else
       FileArcViewer(ParAV);
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/11/14 15:51:33  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.40  2000/11/09 18:51:42  hd
   - Anpassungen an Linux
 

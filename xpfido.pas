@@ -1150,7 +1150,7 @@ var i : integer;
 begin
   i:=MainNodelist;
   if (i>0) and nodeopen and (trim(ShrinkNodes)<>'') then
-    if not exist('NDIFF.EXE') then
+    if not FileExists('NDIFF.EXE') then
       rfehler(103)   { 'NDIFF.EXE fehlt!' }
     else begin
       shell('NDIFF.EXE -s '+FidoDir+NLfilename(i)+' '+ShrinkNodes,250,3);
@@ -1283,7 +1283,7 @@ begin
   else
     node:=MakeFidoAdr(fa,true);
   maddstring(3,2,getres(2107),node,20,25,''); mhnr(730);  { 'Node/Name ' }
-  if request and exist(FileLists) and exist(FidoDir+'*.FL') then begin
+  if request and FileExists(FileLists) and FileExists(FidoDir+'*.FL') then begin
     mappcustomsel(NodeSelproc,false); mselhnr(85);
     DelFilelist:=false;
     end;
@@ -1406,7 +1406,7 @@ begin
     until p=0;
     close(t);
     end;
-  if exist(ff) then FidoAppendRequestfile:=ff
+  if FileExists(ff) then FidoAppendRequestfile:=ff
   else FidoAppendRequestfile:='';
 end;
 
@@ -1531,7 +1531,7 @@ begin
   atonce:=false;
   maddstring(3,7,getres2(2112,1),files,50,254,'>'); mhnr(735);  { 'Dateien ' }
   freqlst:=GetFilelist(fa);
-  if exist(freqlst) then
+  if Fileexists(freqlst) then
     MappCustomsel(FileSelProc,false);
   maddbool(4,9,getres2(2112,2),atonce);   { ' sofort starten' }
   readmask(brk);
@@ -1571,7 +1571,7 @@ begin
   files:='';
   assign(t2,TempFile(''));
   rewrite(t2);
-  if exist(ReqDat) then begin
+  if Fileexists(ReqDat) then begin
     assign(t1,ReqDat);
     reset(t1);
     while not eof(t1) do begin
@@ -1612,7 +1612,7 @@ begin
   crash:=false;
   assign(t2,TempFile(''));
   rewrite(t2);
-  if exist(ReqDat) then begin
+  if FileExists(ReqDat) then begin
     assign(t1,ReqDat);
     reset(t1);
     while not eof(t1) do begin
@@ -1690,7 +1690,7 @@ label ende;
   begin
     if (diskfree(ord(path[1])-64)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
-    else if docopy and exist(path+fi) and not overwrite(path+fi) then
+    else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
     else if RightStr(fi,3)='.FL' then
       filetest:=true
@@ -1698,7 +1698,7 @@ label ende;
       p:=cpos('.',fi);
       if p=0 then fi:=fi+'.FL'
       else fi:=LeftStr(fi,p)+'FL';
-      filetest:=(not exist(path+fi) or overwrite(path+fi));
+      filetest:=(not FileExists(path+fi) or overwrite(path+fi));
       end;
   end;
 
@@ -1721,7 +1721,7 @@ label ende;
         if (s<>'') and (s[1]<>'#') and (s[1]<>';') then begin
           p:=cpos('=',s);
           if (p>0) and (LeftStr(s,p-1)<>node) and (mid(s,p+1)<>fi2) and
-             exist(FidoDir+mid(s,p+1)) then   { falsche Eintr„ge killen }
+             FileExists(FidoDir+mid(s,p+1)) then   { falsche Eintr„ge killen }
             writeln(t2,s);
           end;
         end;
@@ -1739,7 +1739,7 @@ begin
   fn:=FilePath+WildCard;
   useclip:=false;
   if not ReadFilename(getres2(2117,1),fn,true,useclip) or  { 'Fileliste einlesen' }
-     (not exist(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
+     (not FileExists(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
     goto ende;
   fn:=UpperCase(FExpand(fn));
   fi:=ExtractFilename(fn);
@@ -1785,7 +1785,7 @@ begin
     closearchive(ar);
     if (ar.name='') and fehlfunc(getres2(2117,5)) then goto ende;  { 'Fehler in Archivdatei' }
     if not FileTest(true,ar.orgsize,FidoPath,ar.name) then     goto ende;
-    if exist(FidoPath+ar.name) then
+    if FileExists(FidoPath+ar.name) then
       _era(FidoPath+ar.name);
     if not UniExtract(fn,FidoPath,ar.name) then                goto ende;
     fi:=ar.name;
@@ -1812,7 +1812,7 @@ begin
     p:=cpos('.',fi);
     if p=0 then fi2:=fi+'.FL'
     else fi2:=LeftStr(fi,p)+'FL';
-    if exist(FidoPath+fi2) then
+    if FileExists(FidoPath+fi2) then
       _era(FidoPath+fi2);
     if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
@@ -1841,7 +1841,7 @@ var cr    : CustomRec;
     nn    : longint;
     comment: boolean;
 begin
-  if not exist(FileLists) or not exist(FidoDir+'*.FL') then
+  if not FileExists(FileLists) or not FileExists(FidoDir+'*.FL') then
     rfehler(2119)   { 'keine Filelisten vorhanden' }
   else begin
     cr.s:='';
@@ -1865,7 +1865,7 @@ begin
           if not comment then inc(nn);
           end
         else
-          if exist(FidoDir+mid(s,p+1)) then
+          if FileExists(FidoDir+mid(s,p+1)) then
             _era(FidoDir+mid(s,p+1));
         end;
       close(t1); close(t2);
@@ -2075,7 +2075,7 @@ begin       { FidoSeekfile:string;************************ }
 
   FidoSeekfile:='';
   anz_FileFound:=0;                     { Anzahl der gefunden Dateien =0 }
-  if not exist(FileLists) or not exist(FidoDir+'*.FL') then
+  if not FileExists(FileLists) or not FileExists(FidoDir+'*.FL') then
   begin
     fehler(getres2(2120,2));            { 'keine Filelisten vorhanden' }
     goto ende;
@@ -2248,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/11/14 15:51:36  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.33  2000/11/14 11:14:34  mk
   - removed unit dos from fileio and others as far as possible
 

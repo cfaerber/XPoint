@@ -118,7 +118,7 @@ label ende;
     close(t2);
     with hdp^ do begin
       dellast(pfad);
-      if (empfaenger<>'') and (betreff<>'') and exist(betreff) then begin
+      if (empfaenger<>'') and (betreff<>'') and FileExists(betreff) then begin
         netztyp:=nt_Fido;
         inc(attrib,AttrFile);
         if absender='' then absender:='???';
@@ -165,7 +165,7 @@ begin
                 end;
               end;
             if UniExtract(s,FilePath+'TICK\','*.*') and
-               exist(FilePath+'TICK\'+name1) then begin
+               FileExists(FilePath+'TICK\'+name1) then begin
               _era(s);
               Dos.FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
               while doserror=0 do begin       { .TIC-Files verarbeiten }

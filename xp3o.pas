@@ -654,7 +654,7 @@ begin
         if useclip then begin
           append:=false; brk:=false;
           end
-        else if exist(fname) then
+        else if FileExists(fname) then
           append:=not Overwrite(fname,false,brk)
         else begin
           append:=true; brk:=false;
@@ -1032,7 +1032,7 @@ begin
     delete(s,1,p);
   until s='';
 
-  if auto and exist(EB_msk) then begin    { nur bei autom. EB }
+  if auto and FileExists(EB_msk) then begin    { nur bei autom. EB }
     writeln(t);
     writeln(t,'--');
     assign(t2,EB_msk);     { EB-Signatur anh„ngen }
@@ -1316,7 +1316,7 @@ var ok       : boolean;
 begin
   hdp := AllocHeaderMem;
   fattaches:=0;
-  if not exist(fn) then
+  if not FileExists(fn) then
     testpuffer:=0
   else begin
     if show then
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/11/14 15:51:29  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.40  2000/11/12 11:34:05  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)

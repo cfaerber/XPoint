@@ -188,10 +188,10 @@ begin
       end;
     close(t);
     freemem(pa);
-    loadt:=exist(ParGebdat2);
+    loadt:=FileExists(ParGebdat2);
     end
 
-  else begin   { not exist(GebuehrDat) }
+  else begin   { not FileExists(GebuehrDat) }
     AddP('Fernzone',0);
     AddP('Welt 4',0);
     AddP('City',0);
@@ -320,6 +320,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
   Revision 1.12  2000/10/17 10:05:46  mk
   - Left->LeftStr, Right->RightStr
 
