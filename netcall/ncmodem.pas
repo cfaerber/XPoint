@@ -275,12 +275,13 @@ begin
   if keys.keypressed then begin
     c:=keys.readkey;
 
-    if c=#0 then case keys.readkey of
+    if c=#0 then
+      case keys.readkey of
       #243 {mausunright}: c:=#27;
       #241 {mausunleft}:  c:=' ';
       #248 {mauswheelup}: c:='+';
       #249 {mauswheeldn}: c:='-';
-    end;
+      end;
 
     case c of
       #27 : begin
@@ -508,8 +509,7 @@ begin
     raise ENetcallHangup.Create('carrier lost');
 
   if not FGotUserBreak then
-    if keypressed and (readkey=#27) then
-    begin
+    if keypressed and (ReadTaste=keyesc) then begin
       FGotUserBreak:=true;
       Log(lcExit,'User break.');
       Output(mcInfo,'User break - aborting...',[0]);
@@ -528,6 +528,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/12/28 20:11:08  dodi
+  - start keyboard input redesign
+
   Revision 1.15  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

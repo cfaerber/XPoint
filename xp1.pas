@@ -91,7 +91,6 @@ procedure showmain(nr:shortint);      { Hauptmenue anzeigen: nr=Position  }
 function  mainkey(p:byte):taste;
 procedure freemain;
 procedure wait(cur:curtype);
-procedure CondClearKeybuf;
 
 procedure sichern(var sp:scrptr);
 procedure holen(var sp:scrptr);
@@ -2435,7 +2434,7 @@ end;
 procedure rfehler(nr:xpWord);
 var s : string;
 begin
-  if lastchar(forwardkeys)=#13 then forwardkeys:=copy(forwardkeys,1,length(forwardkeys)-1);
+  StripKey(KeyCr);
   s:=getres2(10000+100*(nr div 100),nr mod 100);
   freeres;
   pushhp(20000+nr);
@@ -2661,14 +2660,6 @@ end;
 function Zdate:string;
 begin
   result:= FormatDateTime('yymmddhhnn',Now);
-end;
-
-
-{ Tastaturpuffer loeschen, falls kein Makro aktiv }
-
-procedure CondClearKeybuf;
-begin
-  if forwardkeys='' then ClearKeybuf;
 end;
 
 
@@ -3267,6 +3258,9 @@ end;
 
 {
   $Log$
+  Revision 1.170  2002/12/28 20:11:04  dodi
+  - start keyboard input redesign
+
   Revision 1.169  2002/12/28 20:04:30  mk
   - made TXpHandle an integer
   - scrptr is now TXpHandle with ncrt

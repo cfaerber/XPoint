@@ -2864,44 +2864,39 @@ function FidoSeekfile:string;
       sSub             : string;
   begin
     test := false;
-    for n2:=0 to anz_searchStr - 1 Do     { nach alle Begriffen durchsuchen }
-    begin
+    for n2:=0 to anz_searchStr - 1 Do begin    { nach alle Begriffen durchsuchen }
+
       n:=0;
       test:=false;
       if  icase  then  sSub:=UpperCase(searchStr[n2])
       else             sSub:=searchStr[n2];
       { alle Zeilen auf ein Suchbegriff durchsuchen durchtesten }
-      while ( n < BlockLength ) and (test=false)  do
-      begin
+      while ( n < BlockLength ) and (test=false)  do begin
         if  icase then sZeile:=UpperCase(sa[n])
         else           sZeile:=sa[n];
         _pos:=pos( sSub, sZeile );
-        if _pos  > 0 then   { SubSting in der Beschreibung vorhanden}
-        begin
-          if wCase = false then  test:=true         { ignore, Ganzes Wort}
+        if _pos  > 0 then begin  { SubSting in der Beschreibung vorhanden}
+          if not wCase then  test:=true         { ignore, Ganzes Wort}
           else test:=fInStr( sSub, sZeile, _pos );  { noch auf ganzes Wort testen }
         end;
         inc(n);                                     { naechste Zeile }
       end; { while ( n < apos)   do } { alle Zeilen durchtesten }
-      {Begriff im Bolck nicht gefunden, dann raus }
-      if test =false then exit;
+      {Begriff im Block nicht gefunden, dann raus }
+      if not test then exit;
     end;    { for n2:=0 to anz_searchStr - 1 Do }
 
-    if test = true then
-    begin
+    if test then begin
       { schreibe 1. Zeile und die node Nummer }
       pTestWriteln(forms(sa[0],80)+LeftStr(sNodInf,p-1));
       nn:=1;
-      while ( nn < BlockLength) and ( brk = false )   do
-      begin
+      while (nn < BlockLength) and not brk do begin
         pTestWriteln(sa[nn] ); {Zeile des Blockes speichern }
         inc(nn);
       end;
       inc(anz_FileFound);      {Erhoehe Anzahl der gefunden  }
       mwrt(x+13,y+3,strsn(anz_FileFound,5));
     end;
-    if KeyPressed then
-       brk:= ReadKey = #27;
+    testbrk(brk);
   end;      { function testBlock :boolean;}
 
   procedure pBearbeiteFileListe;
@@ -2961,7 +2956,7 @@ begin       { FidoSeekfile:string;************************ }
   fidolastseek:=mid(fidolastseek,3);    { icase extrahieren }
   iCase:=(FirstChar(oldseek)='J');         { icase     }
   wCase:=(copy(oldseek,2,1)='J');       { Wcase     }
-  {Anzeige initilisieren }
+  {Anzeige initialisieren }
   dialog(57,6,getres2(2120,3),x,y);     { 'Dateien suchen' }
   if LastChar(fidolastseek)=#27 then
      fidolastseek:=LeftStr(fidolastseek, length(fidolastseek)-1);
@@ -2996,8 +2991,7 @@ begin       { FidoSeekfile:string;************************ }
     writeln(pOutput);
     assign(pFileListCfg,FileLists);
     reset(pFileListCfg);
-    while ( not eof(pFileListCfg)) and (not brk) do       {noch Eintraege in der cfg.datei}
-    begin
+    while ( not eof(pFileListCfg)) and (not brk) do begin {noch Eintraege in der cfg.datei}
       readln(pFileListCfg,sNodInf); sNodInf:=trim(sNodInf);
       p:=cpos('=',sNodInf);
       if (sNodInf<>'') and (FirstChar(sNodInf)<>'#') and (FirstChar(sNodInf) <>';') and (p>0) then
@@ -3012,8 +3006,7 @@ begin       { FidoSeekfile:string;************************ }
     xp1.signal;
     close(pFileListCfg);
     close(pOutput);
-    if brk then
-    begin
+    if brk then begin
       erase(pOutput);
       fidolastseek:=fidolastseek+#27;
     end;
@@ -3022,8 +3015,7 @@ begin       { FidoSeekfile:string;************************ }
     freemem(tb,tbs);
     dispose(ni);
   end;               { fidolastseek<>oldseek }
-  if not brk then    { gefundene Dateien Listen und ggf. requesten }
-  begin
+  if not brk then begin   { gefundene Dateien Listen und ggf. requesten }
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
     List.ReadFromFile(seekfile,0);
     List.OnTestMark := fstestmark;
@@ -3037,22 +3029,17 @@ begin       { FidoSeekfile:string;************************ }
     files:='';
     sNodInf:= mid(List.FirstMarked,81);;
     sZeile:=List.FirstMarked;
-    while (sZeile<>#0) do
-    begin
-      if mid(sZeile,81)<>sNodInf then  { Request bei zwei Boxen! }
-      begin
+    while (sZeile<>#0) do begin
+      if mid(sZeile,81)<>sNodInf then begin { Request bei zwei Boxen! }
         fehler(getres2(2120,10));      { 'kein gleichzeitiger Request bei mehreren Boxen moeglich' }
         sZeile:=#0;                    { Schleife abbrechen }
-      end
-      else
-      begin
-       files:=files+' '+trim(LeftStr(sZeile,12));
-       sZeile:=List.NextMarked;
+      end else begin
+        files:=files+' '+trim(LeftStr(sZeile,12));
+        sZeile:=List.NextMarked;
       end;
     end;
     files:=trim(files);
-    if files<>'' then
-    begin
+    if files<>'' then begin
       keyboard(keycr);
       FidoSeekfile:=FidoRequest(sNodInf,files);
     end;
@@ -3126,6 +3113,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2002/12/28 20:11:06  dodi
+  - start keyboard input redesign
+
   Revision 1.74  2002/12/21 05:38:01  dodi
   - removed questionable references to Word type
 

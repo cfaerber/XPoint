@@ -153,12 +153,10 @@ var keyout: boolean;
 //          DeleteLastChar(forwardkeys);
 //    end;
   begin
-    if KeyOut then
-    begin
+    if KeyOut then begin
 //      make_room;
-      forwardkeys := forwardkeys + NewKey;
-    end else
-    begin
+      PushKey(NewKey);  //forwardkeys := forwardkeys + NewKey;
+    end else begin
       ScanCode:=NewKey[2];
       KeyOut:=true;
       SpecialKey:=true;
@@ -329,25 +327,8 @@ var
     xx,yy  : integer;
 
   procedure put(b:byte);
-  var t : taste;
   begin
-    if length(forwardkeys)>20 then
-      if forwardkeys[length(forwardkeys)-1]=#0 then
-        SetLength(forwardkeys, Length(forwardkeys)-2)
-      else
-        DeleteLastChar(forwardkeys);
-      forwardkeys := forwardkeys + #0 + Char(b);
-      {$ifdef NCRT}
-        if not usemulti2 and not keypressed then begin
-      {$else}
-        {$IFNDEF Delphi }
-        if not usemulti2 and not keypressed then
-        {$ENDIF }
-      begin
-      {$endif}
-      t := #31;
-      pushkeyv(t);
-      end;
+    PushMouseKey(b);
     koo_da:=true;
   end;
 
@@ -558,6 +539,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/12/28 20:11:03  dodi
+  - start keyboard input redesign
+
   Revision 1.52  2002/12/21 05:37:51  dodi
   - removed questionable references to Word type
 

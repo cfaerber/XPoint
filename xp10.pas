@@ -3155,7 +3155,7 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
         end;
       ende:=ende or (callall and (anz=0));
       while keypressed do                                 { wurde Taste gedrueckt }
-        case readkey of
+        case ReadTaste[1] of
           #27 : ende:=true;                               { esc   = timing abbrechen }
           ' ' : endtime:=time;                            { space = sofort ausfuehren }
           '+' : if endtime<'23:59:59' then addendtime(1); { +     = Zeitspanne erhoehen }
@@ -3261,6 +3261,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.80  2002/12/28 20:11:04  dodi
+  - start keyboard input redesign
+
   Revision 1.79  2002/12/21 05:37:53  dodi
   - removed questionable references to Word type
 

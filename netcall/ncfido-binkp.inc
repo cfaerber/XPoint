@@ -283,11 +283,11 @@ begin
         end;
       end;
     Output(mcVerbose,'',[0]);
-    BBreak:=Keypressed and (ReadKey=#27);
+    BBreak:= ReadBreak;
   until(State=Done) or BBreak or Timer.Timeout;
   if Timer.Timeout then begin Output(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
   if BBreak then begin Output(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
-  while KeyPressed do ReadKey;
+  while KeyPressed do ReadTaste;
   BpF.Destroy; Timer.Done;
 end;
 
@@ -517,7 +517,7 @@ var
   end;
 
 begin
-  while KeyPressed do ReadKey;
+  while KeyPressed do ReadTaste;
   State:=WaitConn; LastRxState:=RxWaitF; LastTxState:=TxGNF;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
@@ -575,7 +575,7 @@ begin
       Debug.DebugLog('ncfido','binkp rxstate '+sRxState[LastRxState]+' => '+sRxState[RxState],DLDebug);
       LastRxState:=RxState;
     end;
-    if (KeyPressed and(ReadKey=#27))then begin
+    if ReadBreak then begin
       Output(mcError,'User break',[0]);
       Log(lcError,'User break');
       result:=BreakTransfer;
@@ -587,6 +587,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/12/28 20:11:08  dodi
+  - start keyboard input redesign
+
   Revision 1.14  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

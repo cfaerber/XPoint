@@ -235,18 +235,23 @@ var i : integer;
     s : string;
 begin
   i:=1;
-  while (i<=keymacros) and ((macroflags[i] and flags=0) or (t<>macrokey[i])) do
+  while (i<=keymacros) and (((macroflags[i] and flags)=0) or (t<>macrokey[i])) do
     inc(i);
   if i<=keymacros then begin
     s:=macrodef[i];
+  //extract first key
     if s[1]=#0 then t:=LeftStr(s,2)
     else t:=s[1];
-    insert(mid(s,length(t)+1),forwardkeys,1);
-    end;
+    //insert(mid(s,length(t)+1),forwardkeys,1);
+    _keyboard(mid(s,length(t)+1));
+  end;
 end;
 
 {
   $Log$
+  Revision 1.30  2002/12/28 20:11:07  dodi
+  - start keyboard input redesign
+
   Revision 1.29  2002/12/14 07:31:38  dodi
   - using new types
 

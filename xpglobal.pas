@@ -218,6 +218,9 @@ begin
 
 {
   $Log$
+  Revision 1.74  2002/12/28 20:11:06  dodi
+  - start keyboard input redesign
+
   Revision 1.73  2002/12/21 05:38:01  dodi
   - removed questionable references to Word type
 
@@ -306,6 +309,16 @@ begin
   - Grundstruktur des Loggings eingebaut
 }
 end.
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -173,6 +173,7 @@ Procedure SaveCursor;                        { Cursor retten            }
 Procedure RestCursor;                        { Cursor wiederherstellen  }
 Procedure Get(var z:taste; cur:curtype);     { Taste einlesen           }
 Procedure testbrk(var brk:boolean);          { Test auf ESC             }
+  //todo: retain old value of "brk" if no key pressed?
 Procedure waitkey(x,y:byte);                 { Taste druecken            }
 Procedure HighTxt;                           { Textfarbe hell           }
 Procedure InvTxt;                            { Textfarbe invers         }
@@ -665,8 +666,7 @@ begin
               end;
             end
           end;
-        if (kbstat<>st1) and (statposx<>0) then
-        begin
+        if (kbstat<>st1) and (statposx<>0) then begin
           // showstatus(true);
           z:=#0#0;
           exit;
@@ -685,8 +685,7 @@ begin
       key_pressed:=true;
     end;
 
-    z := Keys.ReadKey;
-    if z=#0 then z:=z+Keys.ReadKey;
+    z := ReadTaste;
 
     cursor(curoff);
     lastkey:=z;
@@ -709,18 +708,8 @@ begin
 end;
 
 Procedure testbrk(var brk:boolean);
-var
-  c: Char;
 begin
-  brk := false;
-  if Keypressed then
-  begin
-    c := ReadKey;
-    if c = #27 then 
-      brk := true 
-    else // clear keyboard buffer if special key pressed
-      if c = #0 then ReadKey;
-  end;
+  brk := ReadBreak;
 end;
 
 
@@ -1682,6 +1671,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2002/12/28 20:11:03  dodi
+  - start keyboard input redesign
+
   Revision 1.101  2002/12/21 05:37:50  dodi
   - removed questionable references to Word type
 

@@ -508,17 +508,11 @@ var ip   : integer;
   end;
 
   procedure ProcessKeypresses;
-  var c : char;
   begin
-    if keypressed then begin
-      c:=readkey;
-      if c=#27 then begin
-        ende:=true;
-        ExecuteScriptRes:=pUserBreak;
-        end
-      else
-        if c=#0 then readkey;
-      end;
+    if keypressed and (ReadTaste = keyesc) then begin
+      ende:=true;
+      ExecuteScriptRes:=pUserBreak;
+    end;
   end;
 
   procedure ProcessIncoming;
@@ -670,6 +664,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/12/28 20:11:08  dodi
+  - start keyboard input redesign
+
   Revision 1.12  2002/12/21 05:38:06  dodi
   - removed questionable references to Word type
 

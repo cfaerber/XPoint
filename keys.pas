@@ -129,6 +129,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        key4 = #52;       key5 = #53;       key6 = #54;
        key7 = #55;       key8 = #56;       key9 = #57;
 
+{$IFDEF func_proc}
 { Es kann eine Prozedur zur Behandlung von Funktionstasten definiert werden. }
 { Diese wird nach jedem Tastendruck durch 'func_proc(t)' aufgerufen. Falls   }
 { die Taste ausgewertet wurde, ist t:='' zu setzen.                          }
@@ -136,10 +137,14 @@ const  keyf1   = #0#59;             { Funktionstasten }
 type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
-       forwardkeys  : string;        { Auszufuehrende Tastendruecke            }
+procedure InitKeysUnit;
+{$ENDIF}
 
 function  keypressed:boolean;
 function  readkey:char;
+function  ReadTaste: taste;         //read 1 or 2 byte key
+function  ReadBreak: boolean;       //check for break (esc) pressed
+function  IsKeyAvailable: boolean;  //Tasten im Puffer?
 
 {$IFNDEF NCRT}
 var lastscancode : byte;
@@ -147,9 +152,12 @@ var lastscancode : byte;
 
 procedure keyboard(const s:string);  { s and forwardkeys anhaengen           }
 procedure _keyboard(const s:string); { s vorne an forwardkeys anhaengen      }
-procedure clearkeybuf;               { Tastaturpuffer loeschen               }
+function  clearkeybuf: string;       // Tastaturpuffer loeschen, Result = alter Inhalt
+procedure CondClearKeybuf;          // Tastaturpuffer loeschen und neu fuellen
+procedure StripKey(t: taste);       //remove t from buffer tail
 Procedure pushkey(t:taste);          { Taste direkt in Tastaturpuffer schr.  }
-procedure pushkeyv(var t:taste);
+//procedure pushkeyv(var t:taste);
+procedure PushMausKey(fn: byte);      //push fn as function key, limit buffer size
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
@@ -158,8 +166,6 @@ function  kb_shift:boolean;          { Shift gedrueckt }
 function  kb_ctrl:boolean;           { Ctrl gedrueckt  }
 function  kb_alt:boolean;            { Alt gedrueckt   }
 function  ScrollMode:boolean;
-
-procedure InitKeysUnit;
 
 implementation  { ---------------------------------------------------------- }
 
@@ -170,6 +176,9 @@ uses
   {$IFDEF VP} vpsyslow, {$ENDIF}
   typeform; //not really
 
+
+var    forwardkeys  : string;        { Auszufuehrende Tastendruecke            }
+
 const
   lshift = 2;
   rshift = 1;
@@ -177,17 +186,10 @@ const
   alt    = 8;
 
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
-procedure func_dummy(var t:taste);
+function  IsKeyAvailable: boolean;  //Tasten im Puffer?
 begin
+  Result := forwardkeys <> '';
 end;
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 { keypressed ist in xpcurses definiert. }
 
@@ -195,7 +197,7 @@ function keypressed:boolean;
 begin
   keypressed:=(forwardkeys<>'') or
   {$IFDEF Win32}
-    xpcrt.keypressed;
+    xpcrt._keypressed;
   {$ELSE}
   {$IFDEF NCRT}
     xpcurses.keypressed;
@@ -212,7 +214,7 @@ begin
     forwardkeys:=Mid(forwardkeys,2);
   end else
   {$IFDEF Win32}
-    Result := xpcrt.readkey;
+    Result := xpcrt._readkey;
   {$ELSE}
   {$IFDEF NCRT}
     Result := xpcurses.readkey;
@@ -221,8 +223,7 @@ begin
   {$ENDIF}
   {$ENDIF}
 {$IFDEF Win32 }
-  if (Result = #9) and (GetAsyncKeyState(VK_SHIFT) < 0) then
-  begin
+  if (Result = #9) and (GetAsyncKeyState(VK_SHIFT) < 0) then begin
     Result := #0;
     {$IFDEF FPC }
       _Keyboard(#148);
@@ -241,6 +242,28 @@ begin
 {$ENDIF }
 end;
 
+function  ReadTaste: taste; //read 1 or 2 byte key
+begin
+  SetLength(Result, 2);
+  Result[1] := readkey;
+  if Result[1] = #0 then
+    Result[2] := readkey
+  else
+    SetLength(Result, 1);
+end;
+
+//see also: inout.testbrk
+function  ReadBreak: boolean; //check for break (esc) pressed
+begin
+  Result := False;
+  if KeyPressed then begin
+    case ReadKey of
+    #0:   ReadKey;
+    #27:  Result := True;
+    end;
+  end;
+end;
+
 procedure keyboard(const s:string);
 begin
   forwardkeys:=forwardkeys+s;
@@ -251,10 +274,37 @@ begin
   forwardkeys:=s+forwardkeys;
 end;
 
-procedure clearkeybuf;
+function clearkeybuf: string;       // Tastaturpuffer loeschen, Result = alter Inhalt
 begin
+  Result := forwardkeys;
   forwardkeys:='';
   while keypressed do readkey;
+end;
+
+procedure StripKey(t: taste); //remove t from buffer tail
+var
+  n: integer;
+begin
+  n := Length(t);
+//if n = 0 then strip unconditionally
+  if (n = 0) and (forwardkeys <> '') then begin
+    if (Length(forwardkeys) > 1) and (forwardkeys[Length(forwardkeys) - 2] = #0) then
+      n := 2
+    else
+      n := 1;
+  end else if (Length(forwardkeys) < n)
+  or (Copy(forwardkeys, length(forwardkeys) - n, n) <> t) then
+  //last key doesn't match t
+    exit;
+//really strip last key
+  SetLength(forwardkeys, Length(forwardkeys) - n);  //forwardkeys:=copy(forwardkeys,1,length(forwardkeys)-1);
+end;
+
+{ Tastaturpuffer loeschen, falls kein Makro aktiv }
+
+procedure CondClearKeybuf;
+begin
+  if forwardkeys='' then ClearKeybuf;
 end;
 
 {$IFDEF FPC }
@@ -266,7 +316,9 @@ begin
   t := readkey;
   if t[1]=#0 then
     t := t + readkey;
+{$IFDEF func_proc}
   func_proc(t);
+{$ENDIF}
 end;
 
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
@@ -309,6 +361,29 @@ end;
 procedure pushkey(t:taste);
 begin
   pushkeyv(t);
+end;
+
+procedure PushMausKey(fn: byte);      //push fn as function key
+var t : taste;
+begin
+//LimitKeybuf;
+  if length(forwardkeys)>20 then
+    if forwardkeys[length(forwardkeys)-1]=#0 then
+      SetLength(forwardkeys, Length(forwardkeys)-2)
+    else
+      SetLength(forwardkeys, Length(forwardkeys)-1);
+  forwardkeys := forwardkeys + #0 + Char(fn);
+{$ifdef NCRT}
+  if not usemulti2 and not keypressed then
+{$else}
+  {$IFNDEF Delphi }
+  if not usemulti2 and not keypressed then
+  {$ENDIF }
+{$endif}
+  begin
+    t := #31;
+    pushkeyv(t);
+  end;
 end;
 
 function ScrollMode:boolean;
@@ -368,24 +443,37 @@ begin
 {$ENDIF }
 end;
 
-var
-  SavedExitProc: pointer;
 
-procedure ExitKeysUnit;
+{$IFDEF func_proc}
+
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+procedure func_dummy(var t:taste);
 begin
-  ExitProc:= SavedExitProc;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 procedure InitKeysUnit;
 begin
-  forwardkeys:='';
+  //forwardkeys:='';
   func_proc:=func_dummy;
-  SavedExitProc:= ExitProc;
-  ExitProc:= @ExitKeysUnit;
 end;
+
+initialization
+  InitKeysUnit;
+
+{$ENDIF}  //func_proc
 
 {
   $Log$
+  Revision 1.52  2002/12/28 20:11:03  dodi
+  - start keyboard input redesign
+
   Revision 1.51  2002/12/04 16:56:58  dodi
   - updated uses, comments and todos
 

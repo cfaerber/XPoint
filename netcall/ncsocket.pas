@@ -417,13 +417,9 @@ begin
   s := '';
   Time := Now + FTimeOut; // Zu diesem Zeitpunkt muessen wir abbrechen
   repeat
-    if KeyPressed then
-      case ReadKey of
-        #27: raise EUserBreakError.Create('User break');
-        #0: ReadKey;
-      end;
-    while FInPos >= FInCount do
-    begin
+    if KeyPressed and (ReadTaste = keyesc) then
+      raise EUserBreakError.Create('User break');
+    while FInPos >= FInCount do begin
       ReadBuffer;
       if Time < Now then
         raise ETimeoutError.Create('Socket Timeout Error');
@@ -431,15 +427,17 @@ begin
     c := FInBuf[FinPos]; Inc(FinPos);
     if c = #10 then
       break
-    else
-      if c <> #13 then
-        s := s + c;
+    else if c <> #13 then
+      s := s + c;
   until false;
   Debug.DebugLog('ncsocket','SReadln '+s,DLTrace);
 end;
 
 {
   $Log$
+  Revision 1.37  2002/12/28 20:11:08  dodi
+  - start keyboard input redesign
+
   Revision 1.36  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 

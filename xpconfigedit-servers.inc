@@ -2218,6 +2218,15 @@
                          +getres2(927,30)       { ^SMTP, }
                          +getres2(927,10);      { ^Diverses }
                    end;
+      nt_Maus:    begin
+                     pushhp(131); //help id???
+                     nts:=
+                          getres2(927,7)        // ^Modem EditModemdaten
+                         +getres2(927,9)        // ^Namen EditName
+                         +getres2(927,22)       // M^ausTausch EditNet
+                         +getres2(927,10)       // ^Diverses EditDiverses
+                         +getres2(927,11);      // ^Sysop-Mode EditSysopdaten
+                  end;
     end; { case nt }
     n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
     freeres;
@@ -2287,6 +2296,13 @@
                         2: EditPOP3(brk);
                         3: EditSMTP(brk);
                         4: EditNNTPMisc(nt,brk);
+                      end;
+        nt_Maus:      case n of
+                      1:  EditModemdaten(nt, brk);
+                      2:  EditName(brk);
+                      3:  EditNet(brk);
+                      4:  EditDiverses(nt, brk);
+                      5:  EditSysopdaten(nt, brk);
                       end;
       end; { case nt }
       if not brk then
@@ -2375,6 +2391,9 @@
 
 {
   $Log$
+  Revision 1.67  2002/12/28 20:11:06  dodi
+  - start keyboard input redesign
+
   Revision 1.66  2002/12/21 05:38:00  dodi
   - removed questionable references to Word type
 

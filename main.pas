@@ -100,7 +100,9 @@ begin
 
 { Init the units }
   InitInOutUnit;                { InOut }
+{$IFDEF func_proc}
   InitKeysUnit;                 { Keys }
+{$ENDIF}
 //InitMouseUnit;                { Mouse }
   InitResourceUnit;             { Resource }
   InitWinXPUnit;                { WinXP }
@@ -233,6 +235,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/12/28 20:11:03  dodi
+  - start keyboard input redesign
+
   Revision 1.22  2002/12/04 16:56:59  dodi
   - updated uses, comments and todos
 

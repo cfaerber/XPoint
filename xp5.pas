@@ -651,10 +651,7 @@ begin
       sdelay(200);
     until endflag;
 
-    if keypressed then
-    begin
-      if readkey =#0 then readkey;
-    end;
+    if keypressed then ReadTaste;
     initscs;
     Holen(p);
     restcursor;
@@ -982,6 +979,9 @@ end;
 
 {
   $Log$
+  Revision 1.71  2002/12/28 20:11:05  dodi
+  - start keyboard input redesign
+
   Revision 1.70  2002/12/21 05:37:59  dodi
   - removed questionable references to Word type
 

@@ -126,10 +126,11 @@ var
 implementation
 
 uses
+  SysUtils,
   {$IFDEF Unix} xpcurses, xplinux, {$ENDIF}
   {$IFDEF Win32} xpcrt, {$ENDIF}
   {$IFDEF DOS32} crt, {$ENDIF}
-  SysUtils, Debug, CRC, fileio;
+  Debug, CRC, fileio, keys;
 
 var TimerObj: tTimer;
 
@@ -1062,16 +1063,12 @@ begin
 
   again:
 
-  if (KeyPressed) then
-  begin                                 {check for operator panic}
-    if (ReadKey = #27) then
-    begin                               {in the form of ESCape   }
-      Z_SendCan;                        {tell the other end,     }
-      TransferMessage := 'Cancelled from keyboard'; {the operator,           }
-      Z_GetHeader := ZCAN;              {and the rest of the     }
-      Exit                              {routines to forget it.  }
-    end;                                (* of IF *)
-  end;                                  (* of IF *)
+  if ReadBreak then begin {check for operator panic in the form of ESCape   }
+    Z_SendCan;                        {tell the other end,     }
+    TransferMessage := 'Cancelled from keyboard'; {the operator,           }
+    Z_GetHeader := ZCAN;              {and the rest of the     }
+    Exit                              {routines to forget it.  }
+  end;
 
   rxframeind := 0;
   rxtype := 0;
@@ -1225,14 +1222,12 @@ begin
     c := Z_GetZDL;
 
     if (Hi(c) <> 0) then begin
-      if KeyPressed then begin
-        if (ReadKey = #27) then begin
-          Z_SendCan;
-          TransferMessage := 'Cancelled from keyboard';
-          Result := ZCAN;
-          Exit;
-        end;                            (* of IF *)
-      end;                              (* of IF *)
+      if ReadBreak then begin
+        Z_SendCan;
+        TransferMessage := 'Cancelled from keyboard';
+        Result := ZCAN;
+        Exit;
+      end;
 
       done := TRUE;
 crcfoo:
@@ -2199,12 +2194,10 @@ begin
   SZ_SendBinaryHeader(ZDATA, txhdr);
 
   repeat
-    if (KeyPressed) then begin
-      if (ReadKey = #27) then begin
-        TransferMessage := 'Aborted from keyboard';
-        Result := ZERROR;
-        Exit
-      end;
+    if KeyPressed and (ReadTaste = keyesc) then begin
+      TransferMessage := 'Aborted from keyboard';
+      Result := ZERROR;
+      Exit
     end;                                (* of IF *)
 
     if not FCommObj.Carrier then begin
@@ -2305,12 +2298,10 @@ begin
   TransferBytes := 0;
 
   while True do begin
-    if (KeyPressed) then begin
-      if (ReadKey = #27) then begin
-        TransferMessage := 'Aborted from keyboard';
-        Result := ZERROR;
-        Exit
-      end;
+    if KeyPressed and (ReadTaste = keyesc) then begin
+      TransferMessage := 'Aborted from keyboard';
+      Result := ZERROR;
+      Exit
     end;                                (* of IF *)
 
     if not FCommObj.Carrier then begin
@@ -2498,6 +2489,9 @@ begin
 
 {
   $Log$
+  Revision 1.32  2002/12/28 20:11:08  dodi
+  - start keyboard input redesign
+
   Revision 1.31  2002/12/21 05:38:07  dodi
   - removed questionable references to Word type
 

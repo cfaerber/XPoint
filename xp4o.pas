@@ -3087,7 +3087,7 @@ begin
     end
   else begin
     getfilename:=a_getfilename;
-    fk:=forwardkeys; forwardkeys:='';
+    fk:=clearkeybuf;  //forwardkeys; forwardkeys:='';
     if test_fkeys(t) then;
     keyboard(fk);
     xp1o.listext(LSelf, t);
@@ -3738,6 +3738,9 @@ end;
 
 {
   $Log$
+  Revision 1.153  2002/12/28 20:11:05  dodi
+  - start keyboard input redesign
+
   Revision 1.152  2002/12/21 05:37:57  dodi
   - removed questionable references to Word type
 

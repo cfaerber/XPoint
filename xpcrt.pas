@@ -17,12 +17,12 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    Keyboard handling - based on Freepascal RTL
 }
 
 
 {$I xpdefine.inc }
+
+{ Keyboard handling - based on Freepascal RTL }
 
 unit xpcrt;
 
@@ -30,10 +30,12 @@ interface
 
 uses
   SysUtils, //before xpglobal
-  Windows, XPGlobal;
+  Windows,
+  keys, XPGlobal;
 
-function keypressed: boolean;
-function readkey: char;
+function  _KeyPressed: boolean;
+function  _ReadKey: char;
+function  _ReadTaste: taste;
 
 var
   ShiftKeyState: boolean;
@@ -53,32 +55,6 @@ implementation
 uses
   Debug,
   Mouse;
-
-//function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
-//function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
-
-const
-  TextRecNameLength = 256;
-  TextRecBufSize    = 256;
-
-type
-  TextBuf = array[0..TextRecBufSize-1] of char;
-  TextRec = Packed Record
-    Handle,
-    Mode,
-    bufsize,
-    _private,
-    bufpos,
-    bufend    : longint;
-    bufptr    : ^textbuf;
-    openfunc,
-    inoutfunc,
-    flushfunc,
-    closefunc : pointer;
-    UserData  : array[1..16] of byte;
-    name      : array[0..textrecnamelength-1] of char;
-    buffer    : textbuf;
-  End;
 
 var
   ScanCode : char;
@@ -124,13 +100,12 @@ begin
   ShiftKey := ((CtrlKeyState AND SHIFT_PRESSED) > 0);
   if AltKey then begin
     Case KeyCode of
-      VK_NUMPAD0 ..
-      VK_NUMPAD9    : begin
-                       DoingNumChars := true;
-                       DoingNumCode := Byte((DoingNumCode * 10) + (KeyCode - VK_NUMPAD0));
-                      end;
+    VK_NUMPAD0 .. VK_NUMPAD9:
+      begin
+        DoingNumChars := true;
+        DoingNumCode := Byte((DoingNumCode * 10) + (KeyCode - VK_NUMPAD0));
+      end;
     end; { case }
-
 
     case ScanCode of
     // Digits, -, =
@@ -145,8 +120,7 @@ begin
     $1C:      Scancode := $A6;   // Enter
     $35:      Scancode := $A4;   // / (keypad and normal!)
     end
-   end
-  else if CtrlKey then
+  end else if CtrlKey then
     case Scancode of
     // Tab key
     $0F:      Scancode := $94;
@@ -169,116 +143,113 @@ begin
     // Function keys
     $57..$58: inc(Scancode, $2E); // F11 and F12
     28: ScanCode := 13;
-  end;
+    end;
   Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), DLTrace);
   Result := ScanCode;
 end;
 
-function KeyPressed : boolean;
+function _KeyPressed : boolean;
 var
   nevents, nread: dword;
   buf : TINPUTRECORD;
   AltKey: Boolean;
 begin
-  KeyPressed := FALSE;
   if ScanCode <> #0 then
-    KeyPressed := TRUE
-  else
-   begin
-     GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
-     while nevents>0 do
-       begin
-         {$IFDEF VirtualPascal}
-          ReadConsoleInput(StdInputHandle,buf,1,nread);
-         {$ELSE}
-          ReadConsoleInputA(StdInputHandle,buf,1,nread);
-         {$ENDIF}
-          if buf.EventType = 2 {MOUSE_EVENT} then
-          begin
-            Result := UpdateMouseStatus(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}MouseEvent,ScanCode,SpecialKey);
-          end else
-          if buf.EventType = KEY_EVENT then
-            if buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.bKeyDown then
-              begin
-                 { Alt key is VK_MENU }
-                 { Capslock key is VK_CAPITAL }
-                 AltKey := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND
-                            (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
-                 ShiftKeyState := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND SHIFT_PRESSED) > 0);
-                 CtrlKeyState := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND (RIGHT_CTRL_PRESSED OR LEFT_CTRL_PRESSED)) > 0);
+    Result := TRUE
+  else begin
+    Result := FALSE;
+    GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
+    while nevents>0 do begin
+       {$IFDEF VirtualPascal}
+        ReadConsoleInput(StdInputHandle,buf,1,nread);
+       {$ELSE}
+        ReadConsoleInputA(StdInputHandle,buf,1,nread);
+       {$ENDIF}
+        if buf.EventType = 2 {MOUSE_EVENT} then
+          Result := UpdateMouseStatus(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}MouseEvent,ScanCode,SpecialKey)
+        else if buf.EventType = KEY_EVENT then begin
+          if buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.bKeyDown then begin
+          { Alt key is VK_MENU }
+          { Capslock key is VK_CAPITAL }
+            AltKey := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND
+                      (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
+            ShiftKeyState := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND SHIFT_PRESSED) > 0);
+            CtrlKeyState := ((Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState AND (RIGHT_CTRL_PRESSED OR LEFT_CTRL_PRESSED)) > 0);
 
-                 if not(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode in [VK_SHIFT, VK_MENU, VK_CONTROL,
-                                                      VK_CAPITAL, VK_NUMLOCK,
-                                                      VK_SCROLL]) then
-                   begin
-                      keypressed:=true;
-  with Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent do 
-    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLTrace);
+            if not(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode
+            in [VK_SHIFT, VK_MENU, VK_CONTROL, VK_CAPITAL, VK_NUMLOCK, VK_SCROLL]) then begin
+              Result := true;
+              with Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent do
+                Debug.DebugLog('xpcrt', Format('_KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLTrace);
 
-                      if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0) or
-                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
-                      then
-                        begin
-                          if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode = $1C then // Num-Block-Enter
-                            ScanCode := #13
-                          else
-                          begin
-                           SpecialKey := TRUE;
-                           ScanCode := Chr(RemapScanCode(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode, Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState,
-                                           Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode));
-                          end;             
-                        end
-                      else
-                        begin
-                           SpecialKey := FALSE;
-                           ScanCode := Chr(Ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar));
-                        end;
+              if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0)
+              or (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0) then begin
+                if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode = $1C then // Num-Block-Enter
+                  ScanCode := #13
+                else begin
+                  SpecialKey := TRUE;
+                  ScanCode := Chr(RemapScanCode(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode, Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState,
+                                 Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode));
+                end;
+              end else begin
+                SpecialKey := FALSE;
+                ScanCode := Chr(Ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar));
+              end;
 
-                      if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode in [VK_NUMPAD0..VK_NUMPAD9] then
-                        if AltKey then
-                          begin
-                             Keypressed := false;
-                             Specialkey := false;
-                             ScanCode := #0;
-                          end
-                        else break;
-                   end
+              if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode in [VK_NUMPAD0..VK_NUMPAD9] then begin
+                if AltKey then begin
+                   Result := false;
+                   Specialkey := false;
+                   ScanCode := #0;
+                end else
+                  break;
               end
-             else if (Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode in [VK_MENU]) then
-               if DoingNumChars then
-                 if DoingNumCode > 0 then
-                   begin
-                      ScanCode := Chr(DoingNumCode);
-                      Keypressed := true;
+            end
+          end else if (Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode in [VK_MENU])
+          and DoingNumChars and (DoingNumCode > 0) then begin
+            ScanCode := Chr(DoingNumCode);
+            Result := true;
 
-                      DoingNumChars := false;
-                      DoingNumCode := 0;
-                      break
-                   end; { if }
-          { if we got a key then we can exit }
-          if Result then
-            exit;
-          GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
-       end;
-   end;
+            DoingNumChars := false;
+            DoingNumCode := 0;
+            break
+          end; { if }
+        end;
+        { if we got a key then we can exit }
+        if Result then
+          exit;
+        GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
+    end;  //while
+  end;
 end;
 
 
-function ReadKey: char;
+function _ReadKey: char;
 begin
-  while not KeyPressed do
+  while not _KeyPressed do
     WaitForMultipleObjects(1,{$IFNDEF FPC_OLD}@{$ENDIF}StdInputHandle,true,INFINITE);
 
   if SpecialKey then begin
+  //return first half
     Result := #0;
     SpecialKey := FALSE;
-  end
-  else begin
+  end else begin
+  //return key
     Result := ScanCode;
     ScanCode := #0;
   end;
 
   Debug.DebugLog('xpcrt', Format('ReadKey: %d', [Integer(Result)]), DLTrace);
+end;
+
+function  _ReadTaste: taste;
+begin
+  SetLength(Result, 2);
+  Result[1] := _ReadKey;
+  if Result [1] = #0 then
+    Result[2] := _ReadKey
+  else
+    SetLength(Result, 1);
 end;
 
 procedure do_initialization;
@@ -299,6 +270,9 @@ initialization
 
 {
   $Log$
+  Revision 1.25  2002/12/28 20:11:06  dodi
+  - start keyboard input redesign
+
   Revision 1.24  2002/12/21 05:38:00  dodi
   - removed questionable references to Word type
 

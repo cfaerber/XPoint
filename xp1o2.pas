@@ -69,23 +69,20 @@ again:
       last:=rest mod 60;
       end;
     end;
-  if keypressed {and (forwardkeys='')} then begin
-    forward:=(forwardkeys<>'');
+  if keypressed then begin
+    forward:=IsKeyAvailable;  //(forwardkeys<>'');
     c:=lastcur;
     if ParWintime>1 then begin
-      waitkey:=readkey;
-      if waitkey=#0 then waitkey:=waitkey+readkey;
-      end
-    else
+      waitkey:=ReadTaste;
+    end else
       get(waitkey,lastcur);
     cursor(c);
     if (waitkey>=mausfirstkey) and (waitkey<=mauslastkey) and
        (waitkey<>mausunleft) and (waitkey<>mausunright) then
       goto again
-    else
-      if forward then
-        _keyboard(waitkey);
-    end;
+    else if forward then
+      _keyboard(waitkey);
+  end;
   { CondClearKeybuf; }
 end;
 
@@ -220,6 +217,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2002/12/28 20:11:04  dodi
+  - start keyboard input redesign
+
   Revision 1.27  2002/12/22 10:24:33  dodi
   - redesigned database initialization
 
