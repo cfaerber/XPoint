@@ -14,9 +14,9 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF NCRT}
-  {$UNDEF NCRT}
-{$ENDIF}
+//{$IFDEF NCRT}
+//  {$UNDEF NCRT}
+//{$ENDIF}
 
 unit uuz;
 
@@ -3414,6 +3414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/09/08 16:12:06  hd
+  - Init-Reihenfolge
+
   Revision 1.59  2000/09/06 21:31:01  fe
   /home/fe/foo
 

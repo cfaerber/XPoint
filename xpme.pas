@@ -730,9 +730,6 @@ end;
 
 
 begin
-{$IFDEF NCRT}
-  InitXPCurses;
-{$ENDIF}
   readmenus;
   readconfig;
   readcol;
@@ -753,6 +750,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/09/08 16:12:06  hd
+  - Init-Reihenfolge
+
   Revision 1.24  2000/07/20 16:50:00  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

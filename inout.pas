@@ -1620,6 +1620,9 @@ end;
 
 
 initialization
+{$IFDEF NCRT}
+  InitXPCurses;
+{$ENDIF}
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
   normtxt;
   chml[1]:=range(#32,#126)+range(#128,#255);
@@ -1656,6 +1659,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.57  2000/09/08 16:12:06  hd
+  - Init-Reihenfolge
+
   Revision 1.56  2000/09/05 16:12:53  mo
   -  Rechenzeitfreigabe: wieder auf sleep(1) geaendert
 

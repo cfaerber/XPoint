@@ -140,9 +140,6 @@ initialization
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
     SetCurrentDir(progpath);
-{$IFDEF NCRT}
-  InitXPCurses;
-{$ENDIF}
   mausunit_init;
   logo;
 
@@ -203,6 +200,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.27  2000/09/08 16:12:07  hd
+  - Init-Reihenfolge
+
   Revision 1.26  2000/07/21 21:17:49  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
