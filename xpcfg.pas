@@ -388,6 +388,7 @@ function AddKeyInSection(start: PCfgEntry): PCfgEntry;
 var
   last: PCfgEntry;
 begin
+  last:= start;
   while (start^.next<>nil) and (length(start^.key)>0) and (start^.key<>'[') do 
   begin
     last:= start;
@@ -498,9 +499,11 @@ begin
   OpenCfg:= isOpen;
 end;
 
-end.
 {
   $Log$
+  Revision 1.10  2001/09/06 18:52:35  mk
+  - fixed uninitialized variable last
+
   Revision 1.9  2001/08/10 20:58:00  mk
   - removed some hints and warnings
   - fixed some minior bugs
@@ -531,5 +534,6 @@ end.
   Revision 1.1  2000/05/14 09:54:58  hd
   - 3. Cfg-Datei
 
-
 }
+end.
+
