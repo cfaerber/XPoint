@@ -421,6 +421,7 @@ begin
       disprec[1]:=dbRecno(mbase);
       SetKomOfs1;
       p:=2;
+      if rdmode = 1 then dec(p);
       aufbau:=true;
       end;
 end;
@@ -1607,6 +1608,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.21  2001/02/11 20:57:49  mk
+  JG:- weiterer Ueberspringen-Bugfix
+
   Revision 1.25.2.20  2001/02/11 12:32:03  mk
   - Client-Modus Updates
 
