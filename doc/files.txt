@@ -3,7 +3,29 @@
 # $Id$
 #
 Makefile	Makefile fuer GNU make
-Makefile.lnx	???
+ObjCOM/Makefile	Makefile fuer GNU make
+ObjCOM/developer.txt	???
+ObjCOM/example.pas	???
+ObjCOM/license.txt	???
+ObjCOM/objcom.pas	???
+ObjCOM/ocdeffpc.inc	???
+ObjCOM/ocdefine.inc	???
+ObjCOM/ocfdos.inc	???
+ObjCOM/ocfdosh.inc	???
+ObjCOM/ocsdos.inc	???
+ObjCOM/ocsdosh.inc	???
+ObjCOM/ocslin.inc	???
+ObjCOM/ocslinh.inc	???
+ObjCOM/ocsos2.inc	???
+ObjCOM/ocsos2h.inc	???
+ObjCOM/ocswin.inc	???
+ObjCOM/ocswinh.inc	???
+ObjCOM/octhread.pas	???
+ObjCOM/octwin.inc	???
+ObjCOM/octwinh.inc	???
+ObjCOM/ringbuff.pas	???
+ObjCOM/serial.pas	???
+ObjCOM/todo.txt	???
 archive.pas	Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
 beispiel/glossary.cfg	Beispieldatei fuer Glossary-Funktion (Editor)
 beispiel/gsbox.scr	Login-Script fuer GSMail
@@ -13,16 +35,34 @@ beispiel/maus.scr	Login-Script fuer MAUS-Boxen
 beispiel/o-magic.scr	Login-Script fuer MagicNET (Online)
 beispiel/oz-netz.scr	Login-Script fuer Z-Netz (Online)
 beispiel/pcsysop.scr	Login-Script fuer NetLand und PCNet
-beispiel/privhead.xps	Schablone fuer ???
-beispiel/qbrett.xps	Schablone fuer ???
-beispiel/qpmpriv.xps	Schablone fuer ???
-beispiel/qpriv.xps	Schablone fuer ???
+beispiel/privhead.xps	Schablone fuer nicht zitierte Mails
+beispiel/qbrett.xps	Schablone fuer zitierte, oeff. Nachricht
+beispiel/qpmpriv.xps	Schablone fuer zitierte Mails
+beispiel/qpriv.xps	Schablone fuer als Mail zit. oeff. Nachrichten
 beispiel/quark.scr	Login-Script fuer QUARK-Boxen
-beispiel/quoteto.xps	Schablone fuer ???
+beispiel/quoteto.xps	Schablone fuer /Nachr./Weiterl./QuoteTo
 beispiel/uucp.scr	Login-Script fuer UUCP
 beispiel/xpmailto.reg	???
 beispiel/z-netz.scr	Login-Script fuer Z-Netz
 build.bat	DOS-Batchdatei zum Compilieren von OpenXP
+charsets/8859_1.inc	???
+charsets/8859_10.inc	???
+charsets/8859_13.inc	???
+charsets/8859_14.inc	???
+charsets/8859_15.inc	???
+charsets/8859_2.inc	???
+charsets/8859_3.inc	???
+charsets/8859_4.inc	???
+charsets/8859_5.inc	???
+charsets/8859_6.inc	???
+charsets/8859_7.inc	???
+charsets/8859_8.inc	???
+charsets/8859_9.inc	???
+charsets/cp1251.inc	???
+charsets/cp1252.inc	???
+charsets/cp1255.inc	???
+charsets/cp437.inc	???
+charsets/cp866.inc	???
 clip.pas	Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
 crc.pas	CRC16/32-Routinen
 databas1.inc	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
@@ -34,13 +74,16 @@ datadef.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
 datadef1.pas	Datenbankfunktionen fuer *.DB1/*.IX1/*.EB1
 dbase.pas	dBASE-Dateien auslesen (fuer YUP2PKT)
 debug.pas	Debug-Unit. Per Environment steuerbare Logmessages.
+doc/Makefile	Makefile fuer GNU make
 doc/authors.txt	Namen und E-Mail-Adressen der OpenXP-Autoren
 doc/dbform.txt	Beschreibung der Datenbankfelder
 doc/devtodo.txt	zu erledigende Aufgaben
 doc/fido.dq	Fido-Dokumentation im Quelltext
 doc/files.txt	Liste der Dateien im OpenXP-Quellcode (diese Datei)
 doc/gpl.txt	GNU General Public License
+doc/linux.txt	Hinweise zur Nutzung unter Linux
 doc/make.txt	Anleitung zum Compilieren von OpenXP
+doc/planung.txt	Strategieplanung fuer die weiteren OpenXP-Versionen
 doc/readme.txt	wichtige Hinweise
 doc/slizenz.txt	Lizenz des OpenXP-Quellcode
 doc/tools.txt	Tabelle von externen XP-Tools
@@ -53,19 +96,16 @@ doc/xpoint.cat	Katalogdatei fuer Handbuch
 doc/xpoint.dsl	Stylesheet fuer Handbuch
 doc/xpoint.sgm	Handbuch im DocBook-Format
 docform.pas	Quelltext zu DOCFORM.EXE
-dosx.pas	DOS- und BIOS-Funktionen
 eddef.pas	Editor
 editor.inc	Editor
 editor.pas	Editor
-ems.pas	EMS-Speicherverwaltung
 encoder.pas	???
-exxex.asm	externe Programme aufrufen; Swapping
-exxex.obj	externe Programme aufrufen; Swapping
 exxec.pas	externe Programme aufrufen; Swapping
 feiertag.pas	Feiertage ermitteln
 file_id.diz	???
 fileio.inc	???
 fileio.pas	Dateien, Pfade, Laufwerke
+gpltools.pas	???
 help.pas	Online-Hilfe: *.HLP auslesen und anzeigen
 icons.res	Icons fuer OpenXP im Windows-Format
 ihs.pas	Quelltext zu IHS.EXE (Helpfile-Compiler)
@@ -73,7 +113,8 @@ inout.pas	Diverse Funktionen fuer Tastatureingabe und Bildschirmausgabe
 ipaddr.pas	Klasse TIP zur Verwaltung einer IP-Adresse (GPL)
 ipcclass.pas	Klasse TIPC (Inter Process Communication) (GPL)
 keys.pas	Tastatureingabe
-lfn.pas	???
+linux/fileio.inc	???
+linux/fileioh1.inc	???
 lister.pas	Lister
 maggi.pas	Multiformat-Konvertierer (MAGGI.EXE)
 maske.inc	Dialoge / Eingabemasken
@@ -86,6 +127,7 @@ ncnntp.pas	???
 ncpop3.pas	???
 ncsmtp.pas	???
 ncsocket.pas	???
+ncurses.pas	???
 ndiff.pas	Nodelist-Differ (NDIFF.EXE)
 netcall.pas	Abstrakte Klasse TNetcall (GPL)
 pmconv.pas	PM-Puffer-Konvertierer (PMCONV.EXE)
@@ -97,12 +139,13 @@ stack.pas	ein primitiver Stack
 timer.pas	Timer-Routinen
 typeform.pas	Typumwandlungen, Stringformatierungen etc.
 uart.pas	Ein-/Ausgabe via serieller Schnittstelle oder FOSSIL
+unicode.pas	???
+utftools.pas	???
 uucico.pas	???
 uucp-fl1.pas	Beispiel fuer UUCP-Filelisten-Konvertierer
 uucp-g.inc	???
 uuz.pas	UUCP/RFC-Konvertierer
 uuzext.pas	externer UUCP/RFC-Konvertierer
-video.pas	Video-BIOS-Funktionen
 win2.pas	Auswahlfenster
 winxp.pas	???
 xp-d.rq	deutsches Sprachmodul fuer XP
@@ -123,7 +166,6 @@ xp1o.pas	Diverses: Lister-Tastenabfrage
 xp1o2.pas	Diverses
 xp1s.inc	externe Programme aufrufen
 xp2.pas	Initialisierungen bei Programmstart
-xp2b.pas	???
 xp2c.pas	Konfiguration aendern /XPoint/Config
 xp2cfg.inc	Konfiguration laden
 xp2db.pas	Initialisierungen bei Programmstart
@@ -166,6 +208,7 @@ xp_uue.pas	UUDecode
 xpauto.pas	AutoVersandt, Autoexec-Verzeichnis
 xpcc.pas	Verteiler
 xpcfg.pas	3. Cfg-Datei
+xpcurses.pas	XP-spezifisches Interface zur Ansteuerung der Curses-Lib (wird nur unter Unix-Derivaten benoetigt)
 xpdatum.pas	Datumsumwandlungen
 xpdefine.inc	???
 xpdiff.pas	Definitionen fuer XP, XP-FM und ZFIDO
@@ -179,17 +222,13 @@ xpfidonl.pas	Fido-Nodelisten-Funktionen
 xpfiles.inc	Dateinamenskonvertierung fuer UUZ
 xpfm-d.rq	deutsches Sprachmodul fuer Fido-Mailer
 xpfm-e.rq	englisches Sprachmodul fuer Fido-Mailer
-xpfnt1.obj	Bildschirmfonts
-xpfnt2.obj	Bildschirmfonts
-xpfnt3.obj	Bildschirmfonts
-xpfonts.inc	Bildschirmfonts
-xpfonts.pas	Bildschirmfonts
 xpftnadr.pas	???
 xpglobal.pas	???
 xpheader.inc	???
 xpimpexp.pas	Import/Export-Funktionen
 xpipc.pas	???
 xpkeys.pas	Funktionstasten und Makros
+xplinux.pas	XP-spezifisches Interface unter Linux
 xpmakehd.inc	ZCONNECT- und Z3.8-Header parsen
 xpmaus.pas	MausTausch-Funktionen
 xpme.pas	Menueeditor (XPME.EXE)
