@@ -2122,6 +2122,29 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     else hd.pfad2:='';
   end;
 
+  procedure GetPriority;  { robo: X-Priority konvertieren }
+  var p: integer;
+  begin
+    if hd.priority = 0 then begin  { nur ersten X-Priority Header beachten }
+      p := 1;
+      { nur Zahl am Anfang beachten: }
+      while (s0 [p] in ['0'..'9']) and (p <= length (s0)) do inc (p);
+      if p = 1 then begin
+        { keine Zahl: auf high, normal, low prfen }
+        s0 := lstr (left (s0, 3));
+        { laufzeitoptimierte Abfrage: das Wahrscheinlichste zuerst }
+        if s0 = 'nor' then hd.priority := 3
+        else if s0 = 'hig' then hd.priority := 1
+        else if s0 = 'low' then hd.priority := 5;
+      end
+      else begin
+        { Zahl 1:1 konvertieren und auf 1..5 begrenzen }
+        s0 := left (s0, p - 1);
+        hd.priority := minmax (ival (s0), 1, 5);
+      end;
+    end;
+  end;
+
   procedure LoZZ;      { LoString(zz);  -  zz<>'' }
   begin
 {$IFNDEF Ver32}
@@ -2220,15 +2243,7 @@ begin
              end else
              { /robo }
 
-             { 07.02.2000 robo - X-Priority Konvertierung }
-             if zz='x-priority'   then begin
-               p:=1;
-               while (s0[p] in ['0'..'9']) and (p<=length(s0)) do inc(p);
-               if p<=length(s) then s0:=left(s0,p-1);
-               priority:=minmax(ival(s0),1,5);
-             end
-             else
-             { /robo }
+             if zz='x-priority'   then GetPriority else
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -3478,6 +3493,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 00:36:56  rb
+  X-Priority Konvertierung verbessert
+
   Revision 1.5  2000/02/16 22:49:36  mk
   RB: * Verbesserte X-Priority Konvertierung
 

@@ -486,11 +486,12 @@ begin
                 if LStr(line)='yes' then xnoarchive:=true;
               end else
               { /robo }
-              
-              { 07.02.2000 robo - X-Priority Konvertierung }
-              if id = 'X-PRIORITY' then priority:=minmax(ival(line),1,5) else
-              { /robo }
-              
+
+              if id = 'X-PRIORITY' then begin
+                i:=ival(line);
+                if i<>0 then priority:=minmax(i,1,5)
+              end else
+
               if tc=' ' then
                 if id = 'X-XP_F'   then filterattr:=minmax(ival(line),0,65535);
 
