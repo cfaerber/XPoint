@@ -3501,18 +3501,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 #
 53 Keine (weiteren) hinzuzufgenden Serverboxen vorhanden!
 54 Maximal %s Serverbox-Eintr„ge m”glich!
-55 Maximale Eingabel„nge (%s) fr Serverbox-Namen erreicht!
-56 Maximale Eingabel„nge (%s) fr Dateinamen (.BFG) erreicht!
 57 Serverbox "%s" bereits vorhanden - trotzdem hinzufgen
-58 Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfgbar.
-59 Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfgbar.
 60 Serverbox "%s"
 61 ist %s mal vorhanden!
 62 Serverbox "%s" existiert nicht!
 63 Serverbox "%s" ist identisch mit editierter Serverbox!
 64 ist nicht vom Netztyp %s!
-65 Maximale Gesamtl„nge (%s) der Dateinamen (.BFG) berschritten!
-66 Maximale Gesamtl„nge (%s) der Serverbox-Namen berschritten!
 67 Ungltiger Name fr Serverbox-Konfigurationsdatei: "%s.BFG"
 68 Serverbox zu Dateiname "%s.BFG" nicht gefunden!
 69 Ungltiger Serverbox-Name: "%s"
@@ -3998,6 +3992,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.17  2003/09/15 15:42:23  mk
+# - cleaned up mutiserver code
+# - removed some limits
+# - fixed old FreeXP bugs
+#
 # Revision 1.57.2.16  2003/09/11 22:28:54  mk
 # - added special color for signatures
 #
