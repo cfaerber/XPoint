@@ -133,9 +133,9 @@ English Language package.
 (Stichwortverzeichnis - fehlt noch)
 @
 19
-Please move the cursor to the Newsgroup where this
-message should be forwarded or archived to. Confirm
-the selection <Enter> or abort <Esc>.
+Please move the cursor to the position where you want
+the Newsgroup moved to. Confirm the selection with
+<Enter> or abort with <Esc>.
 @
 20
 <<Newsgroup (NG) Overview
@@ -1051,10 +1051,10 @@ several copies of the message will be sent over
         to the request.
 @
 70
-Give the name of the target Newsgroup, or you can
-select if you press <F2>. All messages in the source
-Newsgroup will be moved into the target, EXCEPT
-outgoing messages
+You can either type in the name of the target 
+Newsgroup or you can select it by pressing <F2>. 
+All messages in the source Newsgroup will be moved 
+into the target Newsgroup, EXCEPT unsent messages.
 @
 71
 <<[x]>> ->  Toggle the "x" on and off with <space>.
@@ -4217,9 +4217,9 @@ reasons, to indicate messages exceeding the number
 count (if set) in this way.
 @
 405
-<<[x]>>     Messages from Users, who have been set to
-        filter, will be automatically erased from the
-        newsgroup.
+<<[x]>>     Messages, from Users who are in your
+        "Twit" filter, will <<NOT>> be imported into
+        the newsgroup.
 
 <<[ ]>>     Messages in this newsgroup are not filtered.
 @
@@ -5560,11 +5560,15 @@ individual messages will be handled as such and sent
 to the default servers for each user in the list.
 @
 620
-Enter the character here which is then put all in a
-a line and makes a separator line.
+Enter the character you would like to use to make up 
+the dividing line or press <F2> to select from a 
+list.
 @
 621
-Any text (or none) as comment to help you.
+This would normally be a description, as dividing
+lines are usually used to seperate different groups
+of message areas. You can, however, put whatever you 
+want in here.
 @
 630
 Messages will be searched for by sender. Enter the
