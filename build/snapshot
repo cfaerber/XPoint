@@ -67,8 +67,16 @@ echo "building OXP" $version
 test -f "openxp" || echo "Ooops, no OXP-Binary"
 test -f "openxp" || exit
 "$scriptdir"make-rpm.sh $mainversion 
-# auf den ftp Server schieben
-ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux-`date -I`.tar.bz2 "$versiondir"openxp/fpc-linux-"$version"-logs.zip "$versiondir"openxp/kylix-"$version"-logs.zip
+# Source tarball als .bz2 packen
+cd /tmp
+mkdir -p openxp-tmp
+mkdir -p openxp-tmp/openxp
+cd openxp-tmp/openxp
+tar xvzf /usr/src/packages/SOURCES/openxp-"$version".tar.gz
+cd ..
+tar cvjf openxp-"$version"-src.tar.bz2 openxp/
+# auf den ftp server schieben
+ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packages/RPMS/i386/openxp-"$version".i386.rpm /usr/src/packages/SRPMS/openxp-"$version".src.rpm /"$versiondir"openxp-"$version"-linux-`date -I`.tar.bz2 /tmp/openxp-tmp/openxp-"$version"-src.tar.bz2 "$versiondir"openxp/fpc-linux-"$version"-logs.zip "$versiondir"openxp/kylix-"$version"-logs.zip
 ## Cross-Compilate
 #test -f "$versiondir"openxp-"$version"-dos-`date -I`.zip && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-dos-`date -I`.zip
 #test -f "$versiondir"openxp-"$version"-os2-`date -I`.zip && ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /"$versiondir"openxp-"$version"-os2-`date -I`.zip
@@ -78,6 +86,7 @@ ncftpput -u christianb -p linsnap5 -v -Z -y -r 5 ftp.openxp.de / /usr/src/packag
 ##
 ncftpls -u christianb -p linsnap5 -l ftp://ftp.openxp.de/
 #ncftpget -u christianb -p linsnap5 -z -r 5 -v ftp.openxp.de . OPENXP-D.zip
-
+cd 
+rm -rf /tmp/openxp-tmp/
 chown -R boettger.users /home/boettger/openxp/
 echo "Finished $0"
