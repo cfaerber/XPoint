@@ -10003,13 +10003,16 @@ Die folgenden Makros gelten nur fÅr ZConnect und
 Magic-kompatible Netze:
 
   $RNAME     -  der Realname des Absenders der
-                Bezugsnachricht
+                Bezugsnachricht mit Space am Ende
+  $RNAME2    -  der Realname des Absenders der
+                Bezugsnachricht ohne Space am Ende
   $(RNAME)   -  wie $RNAME, aber in Klammern
+  $(RNAME2)  -  wie $RNAME2, aber in Klammern
 
 Falls kein Realname angegeben ist, ist der Inhalt
 der Makros $RNAME und $(RNAME) leer. Ist ein
 Realname vorhanden, wird der Name eingesetzt und
-ein Leerzeichen angehÑngt.
+ein Leerzeichen angehÑngt (nur bei $RNAME und $(RNAME).
 
 @
 11701

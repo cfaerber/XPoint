@@ -721,8 +721,10 @@ begin
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
-          rps(s,'$RNAME',iifs(realname='','',realname+' '));
+          rps(s,'$RNAME', iifs(realname='','',realname+' '));
+          rps(s,'$RNAME2', realname);
           rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
+          rps(s,'$(RNAME2)',iifs(realname='','','('+realname+')'));
           rps(s,'$FIDOEMPF',fido_to);
           rps(s,'$BETREFF',betreff);
           rps(s,'$ERSTELLT',fdat(datum));
@@ -1055,6 +1057,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/09 13:22:50  mk
+  - $RNAME2 und $(RNAME2) eingebaut
+
   Revision 1.25  2000/07/09 08:35:15  mk
   - AnsiStrings Updates
 
