@@ -11,9 +11,7 @@
 { Nachricht extrahieren }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp3ex;
 
@@ -58,7 +56,7 @@ begin
   repeat
     p:=pos(s1,ustr(s));
     if p>0 then
-      s:=copy(s,1,p-1)+s2+copy(s,p+length(s1),255);
+      s:=Left(s,p-1)+Trim(s2)+Mid(s,p+length(s1));
   until p=0;
 end;
 
@@ -710,8 +708,8 @@ begin
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
-          rps(s,'$RNAME',iifs(realname='','',realname+' '));
-          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
+          rps(s,'$RNAME', realname);
+          rps(s,'$(RNAME)',iifs(realname='','','('+realname+')'));
           rps(s,'$FIDOEMPF',fido_to);
           rps(s,'$BETREFF',betreff);
           rps(s,'$ERSTELLT',fdat(datum));
@@ -1044,6 +1042,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.2  2000/07/07 18:37:58  mk
+  - Trim fuer Textmakros eingefuegt und Space bei $RNAME entfernt
+
   Revision 1.17.2.1  2000/07/06 21:29:36  mk
   JG: - Bei FIDO-Nachrichten mit mehreren Brettempfaengern wird der FIDO-Empfaenger jetzt in Klammern mit angezeigt
 
