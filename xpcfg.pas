@@ -75,7 +75,7 @@ uses
 {$IFDEF unix}
   xplinux,
 {$ENDIF}
-  typeform,resource, 
+  typeform,resource,
   xpglobal;
 
 type
@@ -88,11 +88,11 @@ type
                 next   : PCfgEntry;             { Nachster Eintrag }
               end;
 
-const
+var
   isOpen: boolean = false;
   modified: boolean = false;
-  SavedExit: pointer = nil;
 
+const
   ResMain       = 31000;                        { Resourcen-Offsets }
 
 
@@ -205,10 +205,6 @@ procedure CloseCfg;
 var
   r: PCfgEntry;
 begin
-  if (SavedExit <> nil) then begin              { Exit-Verkettung }
-    ExitProc:= SavedExit;
-    SavedExit:= nil;
-  end;
   if (modified) then begin                      { Aenderungen sichern }
     assign(f, filename);
     rewrite(f);
@@ -455,9 +451,10 @@ begin
   modified:= true;
 end;
 
+var
+  current_section: TCfgSection = csNone;
+
 function OpenCfg(fn: string): boolean;
-const
-  cs: TCfgSection = csNone;
 var
   s: string;
   ee: PCfgEntry;
@@ -469,8 +466,6 @@ begin
   ee:= e;
   if not (FileExists(fn)) then begin                 { Nur anlegen }
     isOpen:=true;
-    SavedExit:= ExitProc;
-    ExitProc:= @CloseCfg;
                                                 { Defaults erzeugen }
     MakeMainHEader;                             { Dateikopf erzeugen }
   end else begin                                { -> Einlesen }
@@ -479,25 +474,31 @@ begin
     if (ioresult<>0) then exit;                 { Zugriffsfehler }
     while not eof(f) do begin
       readln(f,s);
-      SetSection(s, cs);                        { Testen auf Sektionswechsel }
+      SetSection(s, current_section);           { Testen auf Sektionswechsel }
       ParseValue(s, k, v);                      { Aufsplitten }
       ee^.next:= Alloc;
       ee:= ee^.next;
       ee^.key:= k;
       ee^.value:= v;
-      ee^.sect:= cs;
+      ee^.sect:= current_section;
       ee^.fn:= fn;
     end;
     isOpen:= true;
     close(f);
-    SavedExit:= ExitProc;
-    ExitProc:= @CloseCfg;
   end;
   OpenCfg:= isOpen;
 end;
 
+initialization
+  //OpenCfg?
+finalization
+  CloseCfg;
+
 {
   $Log$
+  Revision 1.16  2002/12/12 11:51:05  dodi
+  - set $WRITEABLECONT OFF, updated finalization
+
   Revision 1.15  2002/12/07 04:41:48  dodi
   remove merged include files
 
