@@ -101,6 +101,10 @@ type
     ParSize: boolean ;             { Size negotiation }
     ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
+    uncompress : string;
+    unfreeze : string;
+    ungzip : string;
+    unbzip : string;
     constructor create;
     destructor Destroy; override;
     procedure testfiles;
@@ -108,10 +112,6 @@ type
     function NextUunumber: word;
     procedure ZtoU;
     procedure UtoZ;
-    uncompress : string;
-    unfreeze : string;
-    ungzip : string;
-    unbzip : string;
   end;
 
 procedure StartCommandlineUUZ;
@@ -166,17 +166,6 @@ const
 
   nt_ZConnect = 2;
   nt_RFC = 40;
-  {$IFDEF unix}
-  uncompress = 'compress -dvf ';
-  unfreeze = 'freeze -dif ';
-  ungzip = 'gzip -df ';
-  unbzip = 'bzip2 -df ';
-  {$ELSE}
-  uncompress = 'compress.exe -df ';
-  unfreeze = 'freeze.exe -dif ';
-  ungzip = 'gzip.exe -df ';
-  unbzip = 'bzip2.exe -df ';
-  {$ENDIF}
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
   tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
@@ -368,6 +357,18 @@ begin
   _from := '';
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
+
+  {$IFDEF unix}
+  uncompress := 'compress -dvf ';
+  unfreeze := 'freeze -dif ';
+  ungzip := 'gzip -df ';
+  unbzip := 'bzip2 -df ';
+  {$ELSE}
+  uncompress := 'compress.exe -df ';
+  unfreeze := 'freeze.exe -dif ';
+  ungzip := 'gzip.exe -df ';
+  unbzip := 'bzip2.exe -df ';
+  {$ENDIF}
 
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
@@ -2794,7 +2795,7 @@ begin
         end else begin
           RenameFile(spath+sr.name,spath+sr.name+'.BAK');
           RenameFile(spath+dfile,  spath+dfile  +'.BAK');
-	end;
+        end;
       end;
     end
     else
@@ -3687,6 +3688,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/03/25 11:43:00  mk
+  - fixed VP compile problem and bug with new properties
+
   Revision 1.38  2001/03/25 11:30:28  cl
   - uncompressors are now properties of TUUZ
 
