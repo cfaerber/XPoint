@@ -37,6 +37,7 @@ uses
 
 type
   ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
+  ENNTP_Group_not_found = ENNTP;
 
 const
   // returnErrors of GetMessage
@@ -411,7 +412,7 @@ begin
     case i of
       nntpMsg_GroupnotFound : begin
         Output(mcError,res_groupnotfound, [AGroupName]);
-        raise ENNTP.create(Format(res_groupnotfound, [AGroupName]));
+        raise ENNTP_Group_not_found.create(Format(res_groupnotfound, [AGroupName]));
       end;
       nntp_AuthRequired : begin
         Output(mcError, res_auth, [0]);
@@ -545,6 +546,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.4  2003/08/15 19:56:04  mk
+  - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
+
   Revision 1.37.2.3  2003/04/25 20:52:29  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

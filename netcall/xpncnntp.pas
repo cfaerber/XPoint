@@ -205,7 +205,6 @@ begin
   { Verbinden }
   List := TStringList.Create;
   try
-    result:= true;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
     result:= NNTP.PostPlainRFCMessages(List)=0;
@@ -334,7 +333,12 @@ begin
          ArticleIndex := -bp^.nntp_initialnewscount;
 
         POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
-        NNTP.SelectGroup(Group);
+        try
+          NNTP.SelectGroup(Group);
+        except
+          on E: ENNTP_Group_not_found do
+            Continue;
+        end;
 
         if ArticleIndex<0 then // "-n": fetch n articles
           Inc(ArticleIndex,NNTP.LastMessage)
@@ -413,6 +417,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.6  2003/08/15 19:56:04  mk
+        - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
+
         Revision 1.39.2.5  2003/08/11 22:28:26  mk
         - removed Edit/netze/verschiedens/mime in news
 
