@@ -134,6 +134,9 @@ begin
     rfehler(416);  { 'Im Brett dieses Users sind noch Nachrichten vorhanden!' }
     exit;
     end;
+  { Beseitigt Probleme, wenn Adrbuchgruppe aus 3.40
+    uebernommen wird }
+  if ab > 1 then ab := 1;
   ab:=1-ab;
   dbWrite(ubase,'adrbuch',ab);
   dbFlushClose(ubase);
@@ -1447,6 +1450,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.12  2000/12/25 18:27:05  mk
+  - Addressbuchgruppen > 1 werden automatisch auf 0/1 gaendert
+
   Revision 1.3.2.11  2000/12/10 02:59:17  mk
   - fix fuer Anzeige nach User aendern
 
