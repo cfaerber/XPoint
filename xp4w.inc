@@ -1524,8 +1524,9 @@ var dat    : longint;
         end;
       end;
 
-   if (readmode=0) or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
-   then begin                      { und Brett passt nicht mehr: kein weiterschalten}
+   if ((readmode=0) and not (nobrettweiter or kb_ctrl or kb_Shift))
+     or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
+   then begin                         { und Brett passt nicht mehr: kein Weiterschalten }
       s:=' ';
       p2:=p; 
       helprec:=disprec[1];
@@ -1542,7 +1543,7 @@ var dat    : longint;
         if not wrongline then inc(p2);
         if not (dbBOF(bbase) or dbEOF(bbase)) then dbReadN(bbase,bb_brettname,s);
       until dbBOF(bbase) or dbEOF(bbase) or (not wrongline and (left(s,3)<>'$/T'));
-                                              {keine Trennzeile anspringen }
+                                              { keine Trennzeile anspringen }
       if readmode<>0 then dec(p2);
 
       if (dbBOF(bbase) or dbEOF(bbase))
@@ -1725,8 +1726,15 @@ end;
 procedure switch_weiterschalt;
 begin
   NachWeiter:=not NachWeiter;
-  attrtxt(col.colmenu[0]);
-  mwrt(71,1,iifc(NachWeiter,'W','w'));
+  if NachWeiter then
+  begin
+    attrtxt(col.colmenu[0]);
+    mwrt(71,1,'W')
+  end
+  else begin
+    attrtxt(col.colmenudis[0]);
+    mwrt(71,1,'w');
+  end;
 end;
 
 procedure seek_brett(fwd:boolean);
@@ -1763,6 +1771,17 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.42  2002/04/25 22:16:50  my
+  JG:- Fix: Die UnterdrÅckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
+       <Shift-Esc> funktionierte nicht im Lesemodus "Alles".
+
+  MY:- Anzeige des manuell mit <Ctrl-W> betÑtigten Nachrichten-Weiter-
+       schalters zur besseren Unterscheidung nochmals geÑndert: Gro·es "W"
+       (Farbe: MenÅtext) steht fÅr "Weiterschalter aktiviert", kleines "w"
+       (Farbe: deaktivierter MenÅtext) steht fÅr "Weiterschalter
+       deaktiviert". Bei BestÑtigung des Config-MenÅs C/O/B wird die
+       Anzeige entfernt, da dann wieder die MenÅoptionen gelten.
+
   Revision 1.25.2.41  2002/04/20 17:27:25  my
   MY:- Fix: Im Ungelesen-Modus wurde bei MIME-Multipart-Nachrichten trotz
        aktiviertem Nachrichten-Weiterschalter nicht zur nÑchsten Nachricht
