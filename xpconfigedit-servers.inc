@@ -131,10 +131,7 @@
     begin
       if (email<>'') then
       begin
-        p :=cpos('@',email);
-        if (p<=1) or (cpos('@',mid(email,p+1))<>0)
-          or (cpos('.',mid(email,p+1))=0)
-          or (email<>mailstring(email,false))
+        if not IsMailaddress(email)
         then begin
           rfehler(908);
           enddialog;
@@ -842,6 +839,64 @@
       boxpar^.pointname:=pname;
     end; { not brk }
     enddialog;
+  end;
+
+  procedure EditExtern(const bfg:string; var brk:boolean);
+  var cfgfile       : String;
+      fullClientDir : String;
+      Dir, Name, Ext: String;
+  begin
+    with boxpar^ do
+    begin
+      fullClientDir := ExpandFileName(ClientPath);
+      if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
+      begin
+        rfehler1(948, fullClientDir);  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
+        pushkey('e'); pushkey('c');
+        exit;
+      end;
+      fullClientDir := IncludeTrailingBackslash(fullClientDir);
+      cfgfile := trim(ClientExternalConfig);
+
+      { Hier wird nur der Wert ClientExternalCnofig aus <Boxname>.BFG string-  }
+      { technisch aufbereitet und an ReadExtCfgFilename in xp9sel.pas  }
+      { Åbergeben. Die eigentlichen PrÅfungen finden dann dort statt.  }
+
+      { Dateinamen im oder unterhalb des XP-Verzeichnisses werden in   }
+      { der <Boxname>.BFG mit dem vorangestellten String "<XP>\",      }
+      { Dateinamen im Client-Verzeichnis ohne Pfad abgelegt. Dies hat  }
+      { den Zweck, die Datei auch dann finden zu kînnen, wenn sich das }
+      { XP-Verzeichnis und/oder -Laufwerk geÑndert haben sollte. Die   }
+      { gesamte Routine verhÑlt sich so, als sei das Client-Verzeich-  }
+      { nis das aktuelle Verzeichnis, d.h. auch (hÑndisch in die .BFG  }
+      { hinter "Client-ExternConfig=" eingeflickte) Angaben ohne voll- }
+      { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
+      { relativ zum Client-Verzeichnis betrachtet.                     }
+
+      if Copy(Uppercase(cfgfile), 1, 5) = ('<XP>' + DirSepa) then
+        cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
+      pushhp(30129);
+      { 'Externe Konfigurationsdatei laden' }
+      if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
+      begin
+        if not FileExists(cfgfile) then
+          if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
+        EditFile(cfgfile,false,false,0,false);
+        fsplit(cfgfile,dir,name,ext);
+        if UpperCase(dir) = Uppercase(fullClientDir) then
+          cfgfile := name + ext
+        else
+        if UpperCase(Copy(dir, 1, Length(ownpath))) = Uppercase(ownpath) then
+          cfgfile := '<XP>' + Copy(cfgfile, Length(ownpath), Length(cfgfile)-Length(ownpath)+1);
+        if not (Uppercase(cfgfile) = Uppercase(ClientExternalConfig)) then
+        begin
+          ClientExternalConfig := cfgfile;
+          WriteBox(bfg,boxpar);
+        end;
+      end;
+      freeres;
+      pophp;
+    end;
   end;
 
   procedure EditTransport(nt:byte; var brk:boolean);
@@ -1737,7 +1792,8 @@
   end;
 
   procedure EditBox;
-  const edb_pos : shortint = 1;
+  const
+    edb_pos : shortint = 1;
   var n   : shortint;
       fn  : string;
       brk : boolean;
@@ -1749,7 +1805,7 @@
     fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    nts:=''; // nts2:=getres2(927,3);   { ',^SysopMode' }
+    nts:=''; nts2:=getres2(927,3);   { ',^SysopMode' }
 
     case nt of
       nt_Netcall : begin
@@ -2021,6 +2077,17 @@
 
 {
   $Log$
+  Revision 1.13  2001/07/31 18:05:39  mk
+  - implemented is_emailaddress in NameRead
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+  MY+JG:- new function is_mailaddress, also implemented in all
+          functions and procedures involved (multi_Mailstring and
+          xp9_setclientFQDN in xp9sel.pas, NameRead in xp9.inc and
+          get_first_box in xp9.pas)
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.12  2001/07/31 13:10:34  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

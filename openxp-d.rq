@@ -3263,6 +3263,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 45 weitere Einstellungen, die Sie in einer externen Konfigu-
 46 rationsdatei im Client-Verzeichnis vornehmen mÅssen.
 47 NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.
+48 Client-Verzeichnis "%s" ist nicht vorhanden!
+49 Verzeichnis "%s" ist nicht vorhanden!
 
 +  11000
 1  unbekannter Befehl
@@ -3739,6 +3741,17 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.23  2001/07/31 18:05:38  mk
+# - implemented is_emailaddress in NameRead
+# - RFC/Client: implemented "External Settings" under
+#   Edit/Servers/Edit/... (load external config file)
+# MY+JG:- new function is_mailaddress, also implemented in all
+#         functions and procedures involved (multi_Mailstring and
+#         xp9_setclientFQDN in xp9sel.pas, NameRead in xp9.inc and
+#         get_first_box in xp9.pas)
+# - RFC/Client: implemented "External Settings" under
+#   Edit/Servers/Edit/... (load external config file)
+#
 # Revision 1.22  2001/07/30 12:43:41  cl
 # - ZCRFC: more helpful error messages
 #

@@ -80,6 +80,8 @@ function  JanusSwitch(var s:string):boolean;
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
+function  IsMailAddress(const s:string):boolean;
+function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir: String; subs:boolean):boolean;
 
 implementation  {---------------------------------------------------}
 
@@ -1286,7 +1288,7 @@ restart:
   dom:=ntDefaultDomain(nt);
   if pppm then begin
     email:=user;
-    if not is_mailaddress(email) then
+    if not IsMailaddress(email) then
     begin
       rfehler(908);
       goto restart;
@@ -1510,10 +1512,117 @@ begin
   until n=0;
 end;
 
+function isMailAddress(const s: String): boolean;
+var b: Integer;
+begin
+  Result := true;
+  b:=cpos('@',s);
+  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
+    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+    or (s<>mailstring(s,false)) then
+    Result :=false;
+end;
+
+function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir: String; subs:boolean):boolean;
+var   x,y,n   : Integer;
+      brk     : boolean;
+      fn      : string[20];
+      cconfig : TSearchrec;
+      seldir  : String;
+      s2      : string;
+      dir, name, ext: String;
+      FindRes: Integer;
+const
+  cfgext  : array [1..4] of string = ('*.CFG','*.BFG','*.BFE','*.$CF');
+label restart;
+begin
+restart:
+  s2 := '';
+  if (cpos(':',s1) = 2) or (cpos(DirSepa, s1) = 1) then
+  begin
+    fsplit(ExpandFileName(s1),dir,name,ext);
+    seldir := dir;
+  end
+  else seldir := cdir;
+  fn:=getres(106);
+  dialog(45+length(fn),3,txt,x,y);
+  maddstring(3,2,fn,s1,37,60,'');   { Dateiname: }
+  for n:= 1 to 4 do
+  begin
+    FindRes := FindFirst(seldir+cfgext[n],ffAnyfile,cconfig);
+    while FindRes = 0 do
+    begin
+      if seldir = cdir then
+        mappsel(false,cconfig.name)
+      else
+        mappsel(false,seldir+cconfig.name);
+      FindRes := FindNext(cconfig);
+    end;
+    FindClose(CConfig);
+  end;
+  readmask(brk);
+  enddialog;
+  if not brk then
+  begin
+    if (trim(s1) = '') then s2 := WildCard else s2 := s1;
+    if (cpos(':',s2) = 2) or (cpos(DirSepa, s2) = 1) then
+      s2 := ExpandFileName(s2)
+    else
+      s2 := ExpandFileName(cdir + s2);
+    if ((length(s2) = 2) and (cpos(':',s2) = 2)) or
+       (RightStr(s2,1) = DirSepa) then
+      s2 := ExpandFileName(s2 + WildCard)
+    else
+    if IsPath(s2) then
+      s2 := ExpandFileName(s2 + DirSepa + WildCard);
+    fsplit(s2,dir,name,ext);
+    if not IsPath(dir) then
+    begin
+      rfehler1(949,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
+      goto restart;
+    end;
+    if (pos('*',s2)>0) or (pos('?',s2)>0) then
+    begin
+      selcol;
+      pushhp(89);
+      s2:=fsbox(Screenlines div 2 - 5,s2,'','',subs,false,false);
+      pophp;
+      if s2 <> '' then   { <Esc> gedrÅckt? }
+      begin
+        fsplit(s2,dir,name,ext);
+        if dir = cdir then s1 := name + ext else s1 := s2;
+      end;
+      goto restart;
+    end;
+    if (s2<>'') and ({IsDevice(s2) or }not ValidFilename(s2)) then
+    begin
+      rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
+      goto restart;
+    end;
+    s1 := s2;
+    ReadExtCfgFilename := (s1<>'');
+  end else
+    ReadExtCfgFilename := false;
+end;
+
+
+
+
 end.
 
 {
   $Log$
+  Revision 1.14  2001/07/31 18:05:39  mk
+  - implemented is_emailaddress in NameRead
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+  MY+JG:- new function is_mailaddress, also implemented in all
+          functions and procedures involved (multi_Mailstring and
+          xp9_setclientFQDN in xp9sel.pas, NameRead in xp9.inc and
+          get_first_box in xp9.pas)
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.13  2001/07/31 17:12:20  mk
   - implemented is_emailaddress in get_first_box
 
