@@ -105,7 +105,7 @@ begin
   EMSIData:=EMSIData2+'}'+EMSIData;
 
   Debug.DebugLog('ncfido','EMSIData: "'+EMSIData+'"',DLDebug);
-  count:=5; ercount:=0; ok:=false; more:=false;
+  count:=5; ercount:=0; more:=false;
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
     if not more then begin
@@ -205,6 +205,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.5  2002/07/25 20:44:01  ma
   - updated copyright notices
 

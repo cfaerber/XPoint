@@ -399,62 +399,51 @@ var n,i   : integer;
     pkts  : integer;
     CtlHeader: CP_Header;
 begin
-//Result:=false;
   n:=20; pkts:=0;
 
   repeat
-  try
-    DebugLog('uucp-g','Waiting for ACK',dlInform);
-    RecControlPacket(CtlHeader,AckTimeout);    { Ctrl-Paket holen }
     resend:=false;
+    try
+      DebugLog('uucp-g','Waiting for ACK',dlInform);
+      RecControlPacket(CtlHeader,AckTimeout);    { Ctrl-Paket holen }
 
-    if cp_type(CtlHeader) in [cp_ACK,cp_NAK] then
-    begin
-      inc(pkts);
-      seqnr:=CtlHeader[4] and 7;
+      if cp_type(CtlHeader) in [cp_ACK,cp_NAK] then begin
+        inc(pkts);
+        seqnr:=CtlHeader[4] and 7;
 
-      if ((seqnr>=BufFirst) and (seqnr<BufFirst+BufAnz)) or
-         (seqnr<(BufFirst+BufAnz-8)) or
-         ((cp_type(CtlHEADER)=cp_NAK) and (succ(seqnr) mod 8=BufFirst)) then
-      begin    { ACK/NAK fuer eines der gesendeten Pakete }
+        if ((seqnr>=BufFirst) and (seqnr<BufFirst+BufAnz)) or
+           (seqnr<(BufFirst+BufAnz-8)) or
+           ((cp_type(CtlHEADER)=cp_NAK) and (succ(seqnr) mod 8=BufFirst)) then
+        begin    { ACK/NAK fuer eines der gesendeten Pakete }
+          while succ(seqnr) mod 8<>BufFirst do begin
+            DebugLog('uucp-g','Processing ACK #'+Strs(seqnr),dlInform);
 
-        while succ(seqnr) mod 8<>BufFirst do
-        begin
-          DebugLog('uucp-g','Processing ACK #'+Strs(seqnr),dlInform);
+            BufFirst:=succ(BufFirst) mod 8;  { alles, was dazwischenliegt, }
+            dec(BufAnz);                     { sehen wir als bestaetigt an  }
+          end;                               { (s. Taylor -Implementation)}
 
-          BufFirst:=succ(BufFirst) mod 8;  { alles, was dazwischenliegt, }
-          dec(BufAnz);                     { sehen wir als bestaetigt an  }
-        end;                               { (s. Taylor -Implementation)}
-
-        if cp_type(CtlHEADER)=cp_NAK then
-        begin
-          resend :=true;
-          resends:='Got NAK: '+StrS(seqnr);
-        end else
-        begin
-          if (BufAnz=0) or (Not all and not CommObj.CharAvail) then
-          begin
-            Result:=true;            { fertig }
-            exit;
+          if cp_type(CtlHEADER)=cp_NAK then begin
+            resend :=true;
+            resends:='Got NAK: '+StrS(seqnr);
+          end else begin
+            if (BufAnz=0) or (Not all and not CommObj.CharAvail) then begin
+              Result:=true;            { fertig }
+              exit;
+            end;
+            pkts:=0;
           end;
-          pkts:=0;
         end;
-
       end;
-
+    except
+      on E:ENetcallTimeout do begin
+        resend:=true;
+        resends:=E.Message;
+      end;
     end;
-  except
-    on E:ENetcallTimeout do begin
-      resend:=true;
-      resends:=E.Message;
-    end;
-  end;
 
-    if Resend then                  { Fehler/Timeout -> neu senden }
-    begin
+    if Resend then begin                 { Fehler/Timeout -> neu senden }
       File_Errors:=File_Errors+1;
-      for i:=0 to BufAnz-1 do
-      begin
+      for i:=0 to BufAnz-1 do begin
         Netcall.Output(mcVerbose,'%s - resending packet %d',[ResendS,(BufFirst+i)mod 8]);
         SendDataPacket((BufFirst+i) mod 8);
       end;
@@ -677,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.1  2002/12/10 09:28:44  dodi
   - converted included files into units
 

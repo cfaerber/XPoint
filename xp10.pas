@@ -361,29 +361,46 @@ end;
 
 { -------------------------------------------------------------------- }
 
+type
+  eLoadFileType = (
+    //lfNone,   //dummy=0
+    lfTiming, //1=Timing;
+    lfMakros  //2=Makros,
+    //lfZone,   //3=Gebuehrenzonen,
+    //lfKopf,   //4=Nachrichtenkopf,
+    //lfNodeList  //5=Nodelisten
+  );
 
-{ typ: 1=Timing; 2=Makros, 3=Gebuehrenzonen, 4=Nachrichtenkopf, 5=Nodelisten }
+{DoDi: ein sehr seltsames Verfahren.
+  Beim Anhaengen von Zeilen wird zuerst der vorhandene String mit Blanks
+    auf 225 Zeichen aufgefüllt, und dann wird eine Zeile drangehängt,
+    maximal die ersten 24 Zeichen.
+  Beim nächsten Dranhängen wird damit immer nur die zuvor dangehängte Zeile überschrieben.
 
-procedure loadfile(typ:byte; fn:string);
+  Sollte stattdessen nicht einfach nur die Gesamtlänge begrenzt werden?
+  Oder kommt die Begrenzung nur von den alten ShortStrings,
+    die nicht mehr als 255 Zeichen fassen konnten?
+
+  todo: filename case!?
+}
+procedure loadfile(typ:eLoadFileType; const fn:string);
 var t   :text;
     s   :string;
-    lastIdx :integer;
+    lastIdx :integer; //last string added to 'e'. == e.Count-1?
 begin
   e.Clear;
-  if FileExists(fn) then
-  begin
+  lastIdx := -1;
+  if FileExists(fn) then begin
     assign(t,fn);
     reset(t);
-    while not eof(t) do
-    begin
+    while not eof(t) do begin
       readln(t,s);
       if trim(s)<>'' then
-        if (typ=2) and (FirstChar(s)='!') then         //ein kommentar?
+        if (typ=lfMakros) and (FirstChar(s)='!') then begin   //ein kommentar?
           if e.count > 0 then
-          //Kommentar anhaengen
-            e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24)
-          else
-        else begin
+          //Fortsetzungszeile anhaengen - an e[e.Count-1]?
+            e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24);
+        end else begin
           lastIdx:=e.Add(LeftStr(s,filewidth));
         end;
     end;
@@ -393,20 +410,23 @@ begin
 end;
 
 
-procedure savefile(typ:byte; fn:string);
+procedure savefile(typ:eLoadFileType; fn:string);
 var t : text;
     i : integer;
 begin
   assign(t,fn);
   rewrite(t);
   case typ of
-    1 : for i:=0 to e.Count-1 do
-          writeln(t,e[i]);
-    2 : for i:=0 to e.Count-1 do begin
-          writeln(t,trim(LeftStr(e.Strings[i],225)));
-          if mid(e.Strings[i],226)<>'' then
-            writeln(t,'!',mid(e.Strings[i],226));
-          end;
+    lfTiming :
+      for i:=0 to e.Count-1 do
+        writeln(t,e[i]);
+    lfMakros :
+      for i:=0 to e.Count-1 do begin
+        writeln(t,trim(LeftStr(e.Strings[i],225)));
+        if mid(e.Strings[i],226)<>'' then
+          writeln(t,'!',mid(e.Strings[i],226));
+      end;
+    //else?
   end;
   close(t);
 end;
@@ -627,8 +647,10 @@ begin
                 if eof(t) then s:=''
                 else readln(t,s);
                 end;
+{$IFNDEF Delphi}  //todo: why ever check for available memory???
             if memavail<sizeof(pa^)+anz*sizeof(phone1) then
               anz:=0;
+{$ENDIF}
             if anz>0 then begin
               getmem(ph,anz*sizeof(phone1));
               Move(pa^,ph^,anz*sizeof(phone1));
@@ -792,7 +814,6 @@ function testaction(var s:string):boolean;
 var p   : byte;
     box : string;
     x   : string;
-    d   : DB;
     ni  : nodeinfo;
   function IsCommand(von,bis:byte):boolean;
   var i : byte;
@@ -860,7 +881,7 @@ end;
 
 procedure UniEdit(typ:byte);
 var
-    brk, eList : boolean;
+    brk : boolean;
     x,y        : Integer;
     tnr        : integer;
     t          : taste;
@@ -1198,13 +1219,18 @@ var
       attrtxt(col.coldiahigh);
       mwrt(x+13,y+1,' '+forms(mt,12));
       mwrt(x+13,y+3,' '+forms(komm,25));
+      nr := 0;  //or what?
+    //find command. todo: cmd-ID as argument, instead of string?
+      mt := LowerCase(mt);
       for i:=1 to mtypes do
-        if LowerCase(mt)=LowerCase(mtyp(i)) then nr:=i;
+        if mt=LowerCase(mtyp(i)) then
+          nr:=i; //and break?
       freeres;
-      case nr of
+      case nr of  //todo: use cont array
         1:mt:='***'; 2:mt:='*  '; 3:mt:=' * '; 4:mt:='  *';
         5:mt:='   *'; 6:mt:='    *'; 7:mt:='     *';
         8:mt:='      *';
+      else  assert(false, 'bug');
       end;
 
       spush(hotkeys,1);
@@ -1905,30 +1931,28 @@ var
   end;
 
 begin   {procedure UniEdit(typ:byte); }
-  eList := false;                   //kein 0 basierende  TStringList (e)
+  tnr := 0;
   case typ of
     1 : begin                       { Timing-Liste }
           filewidth:=TimingWidth;
           tnr:=ReadTimingNr(brk);
           if brk then exit;
-          loadfile(1,TimingFile+strs(tnr));
+          loadfile(lfTiming,TimingFile+strs(tnr));
           width:=74;
           buttons:=getres(1011);   { ' ^Neu , ^Loeschen , ^Edit , ^Aktiv , ^Sichern , ^OK ' }
           okb:=6; edb:=3;
           getboxsel;
           pushhp(510);
-          eList := true;
         end;
     2 : begin                       { Tastenmakros }
           filewidth:=KeymacWidth;
-          loadfile(2,keydeffile);
+          loadfile(lfMakros,keydeffile);
           sort_e;
           width:=66+mtypes;
           buttons:=getres(1012);   { ' ^Neu , ^Loeschen , ^Edit , ^Taste , ^*** , ^Sichern , ^OK ' }
           okb:=7; edb:=3;
           _bunla:='ù'+getres2(1000,0); freeres;
           pushhp(540);
-          eList := true;
         end;
     3,
     6 : begin                       { Gebuehrenzonen; Tarifgruppen }
@@ -2005,7 +2029,7 @@ begin   {procedure UniEdit(typ:byte); }
               3 : if CurRow+a<=anzahl then EditTiming(a+CurRow-1);
               4 : if CurRow+a<=anzahl then ChangeActive(a+CurRow-1);
               5 : begin
-                    savefile(1,TimingFile+strs(tnr));
+                    savefile(lfTiming,TimingFile+strs(tnr));
                     modi:=false;
                     keyboard(keyrght);
                   end;
@@ -2017,7 +2041,7 @@ begin   {procedure UniEdit(typ:byte); }
               4 : if CurRow+a<=anzahl then MacroKey(a+CurRow-1);  //
               5 : if CurRow+a<=anzahl then MacroScope(a+CurRow-1);
               6 : begin
-                    savefile(2,KeydefFile);
+                    savefile(lfMakros,KeydefFile);
                     modi:=false;
                     keyboard(keyrght);
                   end;
@@ -2188,10 +2212,11 @@ var pfound: integer;
 
 begin
   manz:=anzahl;
+  mfwdt := 0;
   if manz>0 then begin    { Reentrance ... }
     mfwdt:=filewidth;
     spush(e,manz*4);
-    end;
+  end;
   LoadPhonezones;
   lvw:=LeftStr(vorwahl,cpos('-',vorwahl));   { eigene Landesvorwahl incl. "-" }
   if LeftStr(telefon,cpos('-',vorwahl))=lvw then
@@ -2218,7 +2243,7 @@ begin
     anzahl:=manz;
     filewidth:=mfwdt;
     spop(e);
-    end;
+  end;
 end;
 
 
@@ -2540,7 +2565,6 @@ var brk     : boolean;
     lastbusy: array[1..MaxCom] of string;
     _anz    : integer;
     lsec    : string;
-    f       : file;
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefuehrt wurde.                                    }
@@ -2682,14 +2706,10 @@ var brk     : boolean;
       nt         : eNetz;
 
     procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
-    var i          : Integer;
-        netcalldat : text;
     begin
-      if not FileExists(ownpath+NetcallSpecialDat) then
-      begin
+      if not FileExists(ownpath+NetcallSpecialDat) then begin
         datDa:=false;
-        if auto then
-        begin
+        if auto then begin
           trfehler(1016,60);   { 'Datei NETCALL.DAT nicht vorhanden' }
           exit;
         end;
@@ -2796,7 +2816,7 @@ var brk     : boolean;
           p:=cpos(' ',all);
           end;
         close(t);
-        loadfile(1,fn);
+        loadfile(lfTiming,fn);
         erase(t);
         end;
       end;
@@ -2876,7 +2896,7 @@ var brk     : boolean;
       _era(CrashTemp);
       end;
     close(t);
-    loadfile(1,fn);
+    loadfile(lfTiming,fn);
     resolvecrashs;
     erase(t);
   end;
@@ -3076,7 +3096,7 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
     if tnr=0 then tnr:=ReadTimingNr(brk)     { hole nr der Timingliste }
     else brk:=false;
     if brk then exit;
-    loadfile(1,TimingFile+strs(tnr));
+    loadfile(lfTiming,TimingFile+strs(tnr));
     _anz:=anzahl;
     resolvecrashs;
     end
@@ -3241,6 +3261,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.78  2002/12/14 22:43:37  dodi
+  - fixed some hints and warnings
+
   Revision 1.77  2002/12/14 07:31:29  dodi
   - using new types
 

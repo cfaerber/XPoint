@@ -29,7 +29,7 @@ uses
   ncuucp;
 
 type TUUCProtocolE = class(TUUCProtocolSimple)
-  private
+  protected
     procedure SendCommand(s:string);                override;
     function  GetCommand: string;                   override;
     procedure SendFile(var f:file; offset:longint); override;
@@ -132,6 +132,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.2  2002/12/12 11:11:46  mk
   - added missing SysUtils unit (needed for LeftStr with FPC)
 

@@ -462,42 +462,35 @@ function UUCPNetcall(boxname: string;
 }
 begin {function UUCPNetcall}
   Debug.DebugLog('xpncuucp','uucp netcall starting',DLInform);
-  result:=el_noconn;
 
   ReadUU;
 
-  if diskpoll then
-  begin
-    if (boxpar^.sysopstart<>'') and (not TempPPPMode)  then
-    begin
+  if diskpoll then begin
+    if (boxpar^.sysopstart<>'') and (not TempPPPMode)  then begin
       SetCurrentDir(boxpar^.sysopinp);
       Shell(boxpar^.sysopstart,500,1);
       SetCurrentDir(OwnPath);
     end;
     if ((errorlevel=0) or (boxpar^.sysopstart<>''))
-    and ProcessIncomingFiles then
+    and ProcessIncomingFiles then begin
       if ProcessOutgoingFiles then begin
-        if (boxpar^.sysopend<>'') and (not TempPPPMode) then
-        begin
+        if (boxpar^.sysopend<>'') and (not TempPPPMode) then begin
           SetCurrentDir(boxpar^.sysopout);
           Shell(boxpar^.sysopend,500,1);
           SetCurrentDir(OwnPath);
           if errorlevel=0 then result:=el_ok else result:=el_recerr;
         end else
           result:=el_ok;
-      end
-      else {!ProcessOutgoingFiles}
+      end else {!ProcessOutgoingFiles}
         result:=el_senderr
-    else {errorlevel<>0 or !ProcessIncomingFiles}
+    end else {errorlevel<>0 or !ProcessIncomingFiles}
       result:=el_recerr;
-  end {!diskpoll}
-  else begin
-    if ProcessOutgoingFiles then begin
-      result:=RunUUCICO;
-      ProcessIncomingFiles; (* always read in files we've got *)
-    end else
-      result:=el_noconn;
-  end; {!diskpoll}
+  end {!diskpoll} else  if ProcessOutgoingFiles then begin
+    result:=RunUUCICO;
+    ProcessIncomingFiles; (* always read in files we've got *)
+  end else
+    result:=el_noconn;
+  {!diskpoll}
 
   if result IN [el_recerr,el_ok] then begin
     Debug.DebugLog('xpncuucp','sending upbuffer was successful, clearing unsent flags',DLInform);
@@ -508,6 +501,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.21  2002/12/14 22:43:41  dodi
+  - fixed some hints and warnings
+
   Revision 1.20  2002/08/03 16:31:41  mk
   - fixed unsendt-handling in client-mode
 

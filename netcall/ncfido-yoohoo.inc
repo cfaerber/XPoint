@@ -121,6 +121,7 @@ var NAKcount : byte;
 begin
   fmSS:=0; LastState:=State;
   NAKtimer:=false;
+  NAKcount := 0;  //or what?
   repeat
     if State<>LastState then begin
 //      DebugLog('ncfido','fmSS state: '+Char(state+48),DLDebug);
@@ -428,6 +429,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.6  2002/07/25 20:44:02  ma
   - updated copyright notices
 

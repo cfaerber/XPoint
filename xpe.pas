@@ -287,22 +287,21 @@ begin
   FlushClose;
   if not inited then begin
     InitEditor; inited:=true;
-    end
-  else begin
+  end else begin
     SetColors;
     EdSetConfig(EdCfg);
-    end;
+  end;
   EditSetLangData;
   EditNachricht:=Nachricht;
   SendNachricht:=Senden;
   mt:=m2t;
+  m2t:=false;
+  mb := 0;
   if keeplines>0 then begin
     mb:=dphback; if Nachricht then dphback:=col.coledithead;
     m2t:=true;
     Disp_DT;
-    end
-  else
-    m2t:=false;
+  end;
   { screenwidth/screenlines (hd) }
   ed:=EdInit(1,screenwidth,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
   if EdLoadFile(ed,fn,reedit,{iif(reedit,}1{,0)}) then;
@@ -507,6 +506,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2002/12/14 22:43:38  dodi
+  - fixed some hints and warnings
+
   Revision 1.40  2002/12/12 11:58:50  dodi
   - set $WRITEABLECONT OFF
 

@@ -147,7 +147,7 @@ var
 
   procedure SendSerialNr;
   const ACK= #6; NACK= #21;
-  var zsum,i: integer; Timer: TTimer; ch: char; Pass: boolean;
+  var zsum,i: integer; Timer: TTimer; Pass: boolean;
   begin
     Debug.DebugLog('xpnczconnect','Sending serial number',DLInform);
     zsum:=0;
@@ -251,10 +251,11 @@ begin { ZConnectNetcall }
   OutgoingFiles.Destroy;
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.15  2002/12/14 22:43:41  dodi
+  - fixed some hints and warnings
+
   Revision 1.14  2002/11/01 14:17:06  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers
@@ -305,3 +306,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

@@ -55,9 +55,9 @@ type
     txhdr: hdrtype;
     lastsent: BYTE;
     infile: file;
-    rxbuflen: integer16;
+    rxbuflen: cardinal; //integer16;
     txbuf: buftype;
-    fheaderlen: smallword;
+    fheaderlen: cardinal; //smallword;
 
     TransferTime, (* Startzeitpunkt der Uebertragung in Tick's           *)
     TransferSize, (* Gr"sse des zu uebertragenden Files                 S*)
@@ -319,15 +319,14 @@ var
 begin
   secs := OctVal(s);
   year:=1970;
+  month:=1;
   while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
     dec(secs,iif(schaltj(year),366,365)*tagsec);
     inc(year);
-    end;
+  end;
   if year>2099 then
     secs:=0
-  else
-  begin
-    month:=1;
+  else begin
     while (secs>=tagsec*monthlen(year,month)) do begin
       dec(secs,tagsec*monthlen(year,month));
       inc(month);
@@ -590,43 +589,30 @@ function TZModemObj.Z_qk_read: integer16;
 
 var
   stop: BOOLEAN;
-
   ch: CHAR;
-
-  c: integer16;
-
   time: LONGINT;
 
 begin
-  if FCommObj.CharAvail then
-  begin
-    c := ORD(FCommObj.GetChar);
-    {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
-    Z_qk_read := c;
-  end                                   (* of IF THEN *)
-  else
-  begin
+  if FCommObj.CharAvail then begin
+    Result := ORD(FCommObj.GetChar);
+    {$IFDEF VerbDebug}AddLogChar(Char(Result), False); {$ENDIF}
+  end else begin
     time := TimeCounter + rxtimeout;
     stop := FALSE;
     repeat
-      if FCommObj.CharAvail then
-      begin
+      if FCommObj.CharAvail then begin
         ch := FCommObj.GetChar;
         {$IFDEF VerbDebug}AddLogChar(Char(Ch), False); {$ENDIF}
         stop := TRUE;
       end;                              (* of IF *)
     until stop or (TimeCounter > time) or not FCommObj.Carrier;
 
-    if (TimeCounter > time) then
-    begin
-      c := ZTIMEOUT; DebugLog('zmodem', 'qk_read timeout', DLWarning)
-    end
+    if (TimeCounter > time) then begin
+      Result := ZTIMEOUT; DebugLog('zmodem', 'qk_read timeout', DLWarning)
+    end else if not FCommObj.Carrier then
+      Result := RCDO
     else
-      if not FCommObj.Carrier then
-      c := RCDO
-    else
-      c := ORD(ch);
-    Z_qk_read := c;
+      Result := ORD(ch);
   end;                                  (* of ELSE *)
 end;
 
@@ -645,23 +631,23 @@ var
 begin
   time := TimeCounter + rxtimeout;
   stop := FALSE;
+  Result := ZERROR;
+
   repeat
-    if FCommObj.CharAvail then
-    begin
+    if FCommObj.CharAvail then begin
       ch := FCommObj.GetChar;
       {$IFDEF VerbDebug}AddLogChar(Ch, False); {$ENDIF}
-      if (ch <> CHR(XON)) and (ch <> CHR(XOFF)) then stop := TRUE;
+      if (ch <> CHR(XON)) and (ch <> CHR(XOFF)) then begin
+        stop := TRUE;
+        Result := Ord(Ch);
+      end;
     end;                                (* of IF *)
   until stop or (TimeCounter > time) or not FCommObj.Carrier;
 
-  Z_TimedRead := Ord(Ch);
-  if (TimeCounter > time) then
-  begin
-    Z_TimedRead := ZTIMEOUT; DebugLog('zmodem', 'timedread timeout', DLWarning)
-  end
-  else
-    if not FCommObj.Carrier then
-    Z_TimedRead := RCDO;
+  if (TimeCounter > time) then begin
+    Result := ZTIMEOUT; DebugLog('zmodem', 'timedread timeout', DLWarning)
+  end else if not FCommObj.Carrier then
+    Result := RCDO;
 end;
 
 (*************************************************************************)
@@ -901,13 +887,11 @@ function TZModemObj.Z_GetHexHeader(var hdr: hdrtype): integer16;
 
 var
   crc: smallword;
-  c,
-    n: integer16;
+  c, n: integer16;
 
 begin
   c := Z_GetHex;
-  if (c < 0) then
-  begin
+  if (c < 0) then begin
     Z_GetHexHeader := c;
     Exit
   end;
@@ -915,11 +899,9 @@ begin
   rxtype := c;                          {get the type of header}
   crc := UpdCRC16(rxtype, 0);
 
-  for n := 0 to 3 do
-  begin                                 {get the 4 bytes}
+  for n := 0 to 3 do begin              {get the 4 bytes}
     c := Z_GetHex;
-    if (c < 0) then
-    begin
+    if (c < 0) then begin
       Z_GetHexHeader := c;
       Exit
     end;
@@ -928,30 +910,27 @@ begin
   end;
 
   c := Z_GetHex;
-  if (c < 0) then
-  begin
+  if (c < 0) then begin
     Z_GetHexHeader := c;
     Exit
   end;
   crc := UpdCRC16(Lo(c), crc);
 
   c := Z_GetHex;
-  if (c < 0) then
-  begin
+  if (c < 0) then begin
     Z_GetHexHeader := c;
     Exit
   end;
   crc := UpdCRC16(Lo(c), crc);          {check the CRC}
 
-  if (crc <> 0) then
-  begin
+  if (crc <> 0) then begin
     INC(TransferError);
     Z_GetHexHeader := ZERROR;
     Exit
   end;
 
   if (Z_GetByte(2) = 13) then           {throw away CR/LF}
-    c := Z_GetByte(2);
+    Z_GetByte(2);
   Z_GetHexHeader := rxtype
 end;
 
@@ -968,21 +947,17 @@ var
 
 begin
   c := Z_GetZDL;
+  Result := c;
   if (c < 0) then
-  begin
-    Z_GetBinaryHeader := c;
-    Exit
-  end;
+    Exit;
 
   rxtype := c;
   crc := UpdCRC16(rxtype, 0);
 
-  for n := 0 to 3 do
-  begin
+  for n := 0 to 3 do begin
     c := Z_GetZDL;
-    if (Hi(c) <> 0) then
-    begin
-      Z_GetBinaryHeader := c;
+    if (Hi(c) <> 0) then begin
+      Result := c;
       Exit
     end;
     hdr[n] := Lo(c);
@@ -990,27 +965,24 @@ begin
   end;
 
   c := Z_GetZDL;
-  if (Hi(c) <> 0) then
-  begin
-    Z_GetBinaryHeader := c;
+  if (Hi(c) <> 0) then begin
+    Result := c;
     Exit
   end;
   crc := UpdCRC16(Lo(c), crc);
 
   c := Z_GetZDL;
-  if (Hi(c) <> 0) then
-  begin
-    Z_GetBinaryHeader := c;
+  if (Hi(c) <> 0) then begin
+    Result := c;
     Exit
   end;
   crc := UpdCRC16(Lo(c), crc);
 
-  if (crc <> 0) then
-  begin
+  if (crc <> 0) then begin
     INC(TransferError);
     Exit
   end;
-  Z_GetBinaryHeader := rxtype
+  Result := rxtype
 end;
 
 (*************************************************************************)
@@ -1230,31 +1202,20 @@ label
   crcfoo;
 
 var
-  c,
-    d: integer16;
-
-  n,
-    crc: smallword;
-
+  c, d: integer16;
+  n, crc: smallword;
   crc32: DWord;
-
-  done,
-    badcrc,
-    uses32crc: boolean;
+  done, badcrc, uses32crc: boolean;
 
 begin
-  if (rxframeind = ZBIN32) then
-  begin
-    crc32 := DWord($FFFFFFFF);
-    uses32crc := TRUE;
-    TransferCheck := 'CRC-32';
-  end                                   (* of IF THEN *)
+  Result := ZERROR;
+  crc32 := DWord($FFFFFFFF);
+  crc := 0;
+  uses32crc :=  rxframeind = ZBIN32;
+  if uses32crc then
+    TransferCheck := 'CRC-32'
   else
-  begin
-    crc := 0;
-    uses32crc := FALSE;
     TransferCheck := 'CRC-16';
-  end;                                  (* of ELSE *)
 
   rxcount := 0;
   done := FALSE;
@@ -1262,41 +1223,31 @@ begin
   repeat
     c := Z_GetZDL;
 
-    if (Hi(c) <> 0) then
-    begin
-      if KeyPressed then
-      begin
-        if (ReadKey = #27) then
-        begin
+    if (Hi(c) <> 0) then begin
+      if KeyPressed then begin
+        if (ReadKey = #27) then begin
           Z_SendCan;
           TransferMessage := 'Cancelled from keyboard';
-          RZ_ReceiveData := ZCAN;
+          Result := ZCAN;
           Exit;
         end;                            (* of IF *)
       end;                              (* of IF *)
 
       done := TRUE;
-      crcfoo:
+crcfoo:
       case c of
-        GOTCRCE,
-          GOTCRCG,
-          GOTCRCQ,
-          GOTCRCW:
+        GOTCRCE, GOTCRCG, GOTCRCQ, GOTCRCW:
           begin
             d := c;
-            if uses32crc then
-            begin
+            if uses32crc then begin
               crc32 := UpdCRC32(Lo(c), crc32);
-              for n := 0 to 3 do
-              begin
+              for n := 0 to 3 do begin
                 c := Z_GetZDL;
                 if (Hi(c) <> 0) then goto crcfoo;
                 crc32 := UpdCRC32(Lo(c), crc32)
               end;
               badcrc := (DWord(crc32) <> DWord($DEBB20E3));
-            end                         (* of IF THEN *)
-            else
-            begin
+            end else begin
               crc := UpdCRC16(Lo(c), crc);
               c := Z_GetZDL;
               if (Hi(c) <> 0) then goto crcfoo;
@@ -1308,48 +1259,41 @@ begin
               badcrc := (crc <> 0);
             end;                        (* of ELSE *)
 
-            if badcrc then
-            begin
+            if badcrc then begin
               INC(TransferError);
-              RZ_ReceiveData := ZERROR;
-            end                         (* of IF THEN *)
-            else
-              RZ_ReceiveData := d;
+              Result := ZERROR;
+            end else
+              Result := d;
           end;
         GOTCAN:
           begin
             TransferMessage := 'Got CANned';
-            RZ_ReceiveData := ZCAN;
+            Result := ZCAN;
           end;
         ZTIMEOUT:
           begin
             TransferMessage := 'Timeout';
-            RZ_ReceiveData := c;
+            Result := c;
           end;
         RCDO:
           begin
             TransferMessage := 'Lost carrier';
-            RZ_ReceiveData := c;
+            Result := c;
           end
       else
         begin
           TransferMessage := 'Debris';
           FCommObj.PurgeInBuffer;
-          RZ_ReceiveData := c;
+          Result := c;
         end
-      end;                              (* of CASE *)
-    end                                 (* of IF THEN *)
-    else
-    begin
+      end; (* of CASE *)
+    end else begin
       DEC(blength);
-      if (blength < 0) then
-      begin
+      if (blength < 0) then begin
         TransferMessage := 'Long packet';
-        RZ_ReceiveData := ZERROR;
+        Result := ZERROR;
         done := TRUE;
-      end                               (* of IF THEN *)
-      else
-      begin
+      end else begin
         buf[rxcount] := Lo(c);
         Inc(rxcount);
         if uses32crc then
@@ -1410,21 +1354,18 @@ begin
 
   n := 10;
   stop := FALSE;
+  RZ_InitReceiver := ZERROR;
 
-  while (n > 0) and not (stop) do
-  begin
-    if not FCommObj.Carrier then
-    begin
+  while (n > 0) and not (stop) do begin
+    if not FCommObj.Carrier then begin
       TransferMessage := 'Lost carrier';
-      RZ_InitReceiver := ZERROR;
       Exit
     end;
 
     Z_PutLongIntoHeader(0);
 
     txhdr[ZF0] := CANFDX or CANOVIO or CANBRK; (* Full dplx, overlay I/O *)
-    if MakeCRC32 then
-    begin                               (* 32-Bit-CRC zulassen    *)
+    if MakeCRC32 then begin                    (* 32-Bit-CRC zulassen    *)
       txhdr[ZF0] := txhdr[ZF0] or CANFC32;
     end;                                (* of IF *)
 
@@ -1444,13 +1385,10 @@ begin
 
             c := RZ_ReceiveData(secbuf, ZBUFSIZE);
 
-            if (c = GOTCRCW) then
-            begin
+            if (c = GOTCRCW) then begin
               RZ_InitReceiver := ZFILE;
               stop := TRUE;
-            end                         (* of IF THEN *)
-            else
-            begin
+            end else begin
               Z_SendHexHeader(ZNAK, txhdr);
               again := TRUE;
             end;                        (* of ELSE *)
@@ -1473,8 +1411,7 @@ begin
         ZCOMMAND:
           begin
             c := RZ_ReceiveData(secbuf, ZBUFSIZE);
-            if (c = GOTCRCW) then
-            begin
+            if (c = GOTCRCW) then begin
               Z_PutLongIntoHeader(0);
               errors := 0;
               repeat
@@ -1484,21 +1421,17 @@ begin
               RZ_AckBibi;
               RZ_InitReceiver := ZCOMPL;
               stop := TRUE;
-            end                         (* of IF THEN *)
-            else
-            begin
+            end else begin
               Z_SendHexHeader(ZNAK, txhdr);
               again := TRUE;
             end;                        (* of ELSE *)
           end;
-        ZCOMPL,
-          ZFIN:
+        ZCOMPL, ZFIN:
           begin
             RZ_InitReceiver := ZCOMPL;
             stop := TRUE;
           end;
-        ZCAN,
-          RCDO:
+        ZCAN, RCDO:
           begin
             RZ_InitReceiver := c;
             stop := TRUE;
@@ -1509,8 +1442,7 @@ begin
     DEC(n);
   end;                                  (* of WHILE *)
 
-  if not (stop) then
-  begin
+  if not (stop) then begin
     TransferMessage := 'Timeout';
     RZ_InitReceiver := ZERROR;
   end;                                  (* of IF *)
@@ -1656,12 +1588,10 @@ function TZModemObj.RZ_SaveToDisk(var rxbytes: LONGINT): integer16;
 
 begin
   {$IFDEF Final}ModemStop(modemkanal); {$ENDIF}
-  if (not Z_WriteFile(outfile, secbuf, rxcount)) then
-  begin
+  if (not Z_WriteFile(outfile, secbuf, rxcount)) then begin
     TransferMessage := 'Disk write error';
     RZ_SaveToDisk := ZERROR
-  end
-  else
+  end else
     RZ_SaveToDisk := ZOK;
   {$IFDEF Final}ModemRun(modemkanal); {$ENDIF}
   INC(rxbytes, rxcount);
@@ -1675,44 +1605,29 @@ label
   err, nxthdr, moredata;
 
 var
-  c,
-    n: integer16;
-
+  n: integer16;
   rxbytes: LONGINT;
-
-  done: BOOLEAN;
-
   numstr: string[10];
 
   (***********************************************************************)
 
   function SaveDataBlock: integer16;
-
-  var
-    c: integer16;
-
   begin
     n := 10;
-    c := RZ_SaveToDisk(rxbytes);
+    Result := RZ_SaveToDisk(rxbytes);
     TransferBytes := rxbytes - TransferCount;
-    SaveDataBlock := c;
   end;                                  (* of SaveDataBlock *)
 
   (***********************************************************************)
 
 begin
-  done := TRUE;
+  Result := RZ_GetHeader;
 
-  c := RZ_GetHeader;
-
-  if (c <> ZOK) then
-  begin
-    if (c = ZSKIP) then tryzhdrtype := ZSKIP;
-    RZ_ReceiveFile := c;
+  if (Result <> ZOK) then begin
+    if (Result = ZSKIP) then tryzhdrtype := Result;
     Exit
   end;
 
-  c := ZOK;
   n := 10;
   rxbytes := filestart;
   rxpos := filestart;
@@ -1722,37 +1637,33 @@ begin
   TransferTotalTime := (TransferSize - filestart) div (zbaud div 10);
   TransferMessage := 'receive data';
 
-  repeat
+  while True do begin
     Z_PutLongIntoHeader(rxbytes);
     Z_SendHexHeader(ZRPOS, txhdr);
 
-    nxthdr:
+nxthdr:
 
-    c := Z_GetHeader(rxhdr);
+    Result := Z_GetHeader(rxhdr);
 
-    case c of
+    case Result of
       ZDATA:
         begin
-          if (rxpos <> rxbytes) then
-          begin
+          if (rxpos <> rxbytes) then begin
             DEC(n);
             INC(TransferError);
             if (n < 0) then goto err;
             TransferMessage := 'Bad position';
             Z_PutString(attn)
-          end                           (* of IF THEN *)
-          else
-          begin
-            moredata:
+          end else begin
+moredata:
             AddLogMessage(TransferMessage, DLDebug);
             dispproc;
 
-            c := RZ_ReceiveData(secbuf, ZBUFSIZE);
+            Result := RZ_ReceiveData(secbuf, ZBUFSIZE);
             TransferBlockSize := rxcount;
 
-            case c of
-              ZCAN,
-                RCDO: goto err;
+            case Result of
+              ZCAN, RCDO: goto err;
               ZERROR:
                 begin
                   DEC(n);
@@ -1767,13 +1678,12 @@ begin
                   INC(TransferError);
                   Str(TransferCount + TransferBytes, numstr);
                   TransferMessage := numstr + ' : Timeout';
-                  if (n < 0) then
-                    goto err
+                  if (n < 0) then goto err
                 end;
               GOTCRCW:
                 begin
-                  c := SaveDataBlock;
-                  if (c <> 0) then Exit;
+                  Result := SaveDataBlock;
+                  if (Result <> ZOK) then Exit;
 
                   Z_PutLongIntoHeader(rxbytes);
                   Z_SendHexHeader(ZACK, txhdr);
@@ -1782,8 +1692,8 @@ begin
                 end;
               GOTCRCQ:
                 begin
-                  c := SaveDataBlock;
-                  if (c <> 0) then Exit;
+                  Result := SaveDataBlock;
+                  if (Result <> ZOK) then Exit;
 
                   Z_PutLongIntoHeader(rxbytes);
                   Z_SendHexHeader(ZACK, txhdr);
@@ -1792,36 +1702,32 @@ begin
                 end;
               GOTCRCG:
                 begin
-                  c := SaveDataBlock;
-                  if (c <> 0) then Exit;
+                  Result := SaveDataBlock;
+                  if (Result <> ZOK) then Exit;
 
                   goto moredata;
                 end;
               GOTCRCE:
                 begin
-                  c := SaveDataBlock;
-                  if (c <> 0) then Exit;
+                  Result := SaveDataBlock;
+                  if (Result <> ZOK) then Exit;
 
                   goto nxthdr;
                 end;
             end                         {case}
           end;                          (* of IF *)
         end;                            {case of ZDATA}
-      ZNAK,
-        ZTIMEOUT:
+      ZNAK, ZTIMEOUT:
         begin
           DEC(n);
           if (n < 0) then goto err;
           TransferBytes := rxbytes - TransferCount;
         end;
-      ZFILE: c := RZ_ReceiveData(secbuf, ZBUFSIZE);
+      ZFILE: Result := RZ_ReceiveData(secbuf, ZBUFSIZE);
       ZEOF:
-        if (rxpos = rxbytes) then
-        begin
-          RZ_ReceiveFile := c;
+        if (rxpos = rxbytes) then begin
           Exit
-        end
-        else
+        end else
           goto nxthdr;
       ZERROR:
         begin
@@ -1831,23 +1737,17 @@ begin
           Z_PutString(attn)
         end
     else
-      begin
-        c := ZERROR;
-        goto err
-      end
-    end;                                {case}
+      goto err
+    end; {case}
 
     AddLogMessage(TransferMessage, DLDebug);
     dispproc;
+  end;  //loop
 
-  until (not done);
-
-  err:
-
+err:
   AddLogMessage(TransferMessage, DLDebug);
   dispproc;
-
-  RZ_ReceiveFile := ZERROR
+  Result := ZERROR;
 end;
 
 (*************************************************************************)
@@ -1855,23 +1755,17 @@ end;
 function TZModemObj.RZ_ReceiveBatch(Filelist: TStringList): integer16;
 
 var
-  c: integer16;
-  done: BOOLEAN;
   pfrec: ^filerec;
   fh: longint;
 begin
-  done := FALSE;
+  Result := ZERROR;
 
-  while not (done) do
-  begin
+  while True do begin
 
     if not FCommObj.Carrier then
-    begin
-      RZ_ReceiveBatch := ZERROR;
-      Exit
-    end;
+      Exit;
 
-    c := RZ_ReceiveFile;
+    Result := RZ_ReceiveFile;
     endproc;
 
     Z_CloseFile(outfile);
@@ -1880,26 +1774,18 @@ begin
     FileSetDate(pfrec^.name, ftime);
 {$ELSE}
     fh := FileOpen(pfrec^.name, fmOpenWrite);
-    if fh >= 0 then
-    begin
+    if fh >= 0 then begin
       FileSetDate(fh, ftime);
       FileClose(fh);
     end;
 {$ENDIF}
 
-    {Reset (outfile);
-    IF (IOResult = 0) THEN BEGIN
-      SetFTime (outfile,ftime);
-      Close (outfile);
-    END;}(* of IF *)
-
-    case c of
-      ZEOF,
-        ZSKIP:
+    case Result of
+      ZEOF, ZSKIP:
         begin
           Filelist.Add(TransferPath+TransferName);
-          c := RZ_InitReceiver;
-          case c of
+          Result := RZ_InitReceiver;
+          case Result of
             ZFILE:
               begin
                 TransferCount := 0;
@@ -1914,27 +1800,21 @@ begin
             ZCOMPL:
               begin
                 RZ_AckBibi;
-                RZ_ReceiveBatch := ZOK;
                 TransferMessage := 'Transfer complete';
+                Result := ZOK;
                 Exit
               end;
           else
-            begin
-              RZ_ReceiveBatch := ZERROR;
-              Exit
-            end
+              Exit;
           end;                          (* of CASE *)
         end
     else
-      begin
-        RZ_ReceiveBatch := c;
-        Exit
-      end
+        Exit;
     end;                                {case}
 
     AddLogMessage(TransferMessage, DLDebug);
     dispproc;
-  end;                                  {while}
+  end; {while done}
 end;
 
 (*************************************************************************)
@@ -1961,15 +1841,9 @@ begin
 
   TransferTime := TimeCounter; TransferPath := zrxpath;
 
-  if (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch(Filelist) = ZOK)) then
-  begin
-    result := true
-  end
-  else
-  begin
+  Result := (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch(Filelist) = ZOK));
+  if not Result then
     Z_SendCan;
-    result := false;
-  end;
 
   AddLogMessage(TransferMessage, DLDebug);
   dispproc;
@@ -2121,13 +1995,8 @@ end;                                    (* of SZ_SendData *)
 (*************************************************************************)
 
 procedure TZModemObj.SZ_EndSend;
-
-var
-  done: BOOLEAN;
-
 begin
-  done := FALSE;
-  repeat
+  while True do begin
     Z_PutLongIntoHeader(txpos);
     SZ_SendBinaryHeader(ZFIN, txhdr);
     case Z_GetHeader(rxhdr) of
@@ -2138,13 +2007,10 @@ begin
           SysDelay(500);
           Exit
         end;
-      ZCAN,
-        RCDO,
-        ZFERR,
-        ZTIMEOUT:
+      ZCAN, RCDO, ZFERR, ZTIMEOUT:
         Exit
-    end                                 {case}
-  until (done);
+    end {case}
+  end;
 end;
 
 (*************************************************************************)
@@ -2156,8 +2022,8 @@ var
     c: integer16;
 
 begin
-  for n := 1 to 10 do
-  begin
+  Result := ZERROR;
+  for n := 1 to 10 do begin
     c := Z_GetHeader(rxhdr);
     case c of
       ZCHALLENGE:
@@ -2178,22 +2044,16 @@ begin
             TransferCheck := 'CRC-32'
           else
             TransferCheck := 'CRC-16';
-          SZ_GetReceiverInfo := ZOK;
+          Result := ZOK;
           Exit
         end;
-      ZCAN,
-        RCDO,
-        ZTIMEOUT:
-        begin
-          SZ_GetReceiverInfo := ZERROR;
-          Exit
-        end
+      ZCAN, RCDO, ZTIMEOUT:
+          Exit;
     else
       if (c <> ZRQINIT) or (rxhdr[ZF0] <> ZCOMMAND) then
         Z_SendHexHeader(ZNAK, txhdr)
     end                                 {case}
   end;                                  {for}
-  SZ_GetReceiverInfo := ZERROR
 end;
 
 (*************************************************************************)
@@ -2201,18 +2061,14 @@ end;
 function TZModemObj.SZ_SyncWithReceiver: integer16;
 
 var
-  c,
-    num_errs: integer16;
-
+  c, num_errs: integer16;
   numstr: string[10];
-
-  done: BOOLEAN;
 
 begin
   num_errs := 7;
-  done := FALSE;
+  Result := ZERROR;
 
-  repeat
+  while True do begin
     c := Z_GetHeader(rxhdr);
     FCommObj.PurgeInBuffer;
     case c of
@@ -2222,41 +2078,30 @@ begin
           if (num_errs < 0) then
           begin
             TransferMessage := 'Timeout';
-            SZ_SyncWithReceiver := ZERROR;
             Exit
           end
         end;
-      ZCAN,
-        ZABORT,
-        ZFIN,
-        RCDO:
+      ZCAN, ZABORT, ZFIN, RCDO:
         begin
           TransferMessage := 'Abort';
-          SZ_SyncWithReceiver := ZERROR;
           Exit
         end;
       ZRPOS:
         begin
-          if not (Z_SeekFile(infile, rxpos)) then
-          begin
+          if not (Z_SeekFile(infile, rxpos)) then begin
             TransferMessage := 'File seek error';
-            SZ_SyncWithReceiver := ZERROR;
-          end                           (* of IF THEN *)
-          else
-          begin
+          end else begin
             Str(rxpos, numstr);
             TransferMessage := numstr + ' : Bad CRC';
             txpos := rxpos;
-            SZ_SyncWithReceiver := c;
+            Result := c;
           end;                          (* of ELSE *)
           Exit
         end;
-      ZSKIP,
-        ZRINIT,
-        ZACK:
+      ZSKIP, ZRINIT, ZACK:
         begin
           TransferMessage := 'Wait for file';
-          SZ_SyncWithReceiver := c;
+          Result := c;
           Exit
         end
     else
@@ -2264,8 +2109,8 @@ begin
         TransferMessage := 'I dunno what happened';
         SZ_SendBinaryHeader(ZNAK, txhdr)
       end
-    end                                 {case}
-  until (done)
+    end {case}
+  end;
 end;
 
 (*************************************************************************)
@@ -2288,6 +2133,8 @@ var
 
 begin
   goodneeded := 1;
+  goodblks := 0;
+  Result := ZERROR;
 
   if (zbaud < 300) then
     maxblklen := 128                    {* Naja...}
@@ -2303,25 +2150,22 @@ begin
 
   somemore:
 
-  {$IFDEF Final}Evtl.dem Header folgende XON / XOFFs uebergehen
+{$IFDEF Final}  Evtl.dem Header folgende XON / XOFFs uebergehen
   stop := FALSE;
   repeat
     SeriellCheckRead(modemkanal, ch, chflag);
     if chflag then
     begin
-      if (ch = CHR(XOFF)) or (ch = CHR(XON)) then
-      begin
+      if (ch = CHR(XOFF)) or (ch = CHR(XON)) then begin
         ch := FCommObj.GetChar;
-      end
-      else
+      end else
         stop := TRUE;
-    end
-    else
+    end else
       stop := TRUE;
   until stop;
 
   if chflag then
-    {$ENDIF}
+{$ENDIF}  //Final
     if FCommObj.CharCount > 1 then // Workaround!!! wg. fehlendem GetLastChar
     begin
 
@@ -2332,7 +2176,7 @@ begin
       case c of
         ZSKIP:
           begin
-            SZ_SendFileData := ZSKIP;
+            Result := ZSKIP;
             Exit
           end;
         ZACK:                           {null}
@@ -2350,12 +2194,12 @@ begin
           end;
         ZRINIT:
           begin
-            SZ_SendFileData := ZOK;
+            Result := ZOK;
             Exit
           end
       else
         begin
-          SZ_SendFileData := ZERROR;
+          Result := ZERROR;
           Exit
         end
       end {case};
@@ -2363,11 +2207,10 @@ begin
       while FCommObj.CharAvail do
       begin
         case Z_GetByte(2) of
-          CAN,
-            ZPAD: goto waitack;
+          CAN, ZPAD: goto waitack;
           RCDO:
             begin
-              SZ_SendFileData := ZERROR;
+              Result := ZERROR;
               Exit
             end
         end                             {case}
@@ -2379,47 +2222,39 @@ begin
   SZ_SendBinaryHeader(ZDATA, txhdr);
 
   repeat
-    if (KeyPressed) then
-    begin
-      if (ReadKey = #27) then
-      begin
+    if (KeyPressed) then begin
+      if (ReadKey = #27) then begin
         TransferMessage := 'Aborted from keyboard';
-        SZ_SendFileData := ZERROR;
+        Result := ZERROR;
         Exit
       end;
     end;                                (* of IF *)
 
-    if not FCommObj.Carrier then
-    begin
+    if not FCommObj.Carrier then begin
       TransferMessage := 'Carrier lost';
-      SZ_SendFileData := ZERROR;
+      Result := ZERROR;
       Exit;
     end;                                (* of IF *)
 
-    if not (Z_ReadFile(infile, txbuf, blklen, blkred)) then
-    begin
+    if not (Z_ReadFile(infile, txbuf, blklen, blkred)) then begin
       TransferMessage := 'Error reading disk';
-      SZ_SendFileData := ZERROR;
+      Result := ZERROR;
       Exit
     end;
 
     if (blkred < blklen) then
       e := ZCRCE
-    else
-      if (rxbuflen <> 0) and ((newcnt - blkred) <= 0) then
-    begin
+    else if (rxbuflen <> 0) and ((newcnt - blkred) <= 0) then begin
       newcnt := (newcnt - blkred);
       e := ZCRCW
-    end
-    else
+    end else
       e := ZCRCG;
 
     SZ_SendData(txbuf, blkred, e);
     INC(txpos, blkred);
 
     INC(goodblks);
-    if (blklen < maxblklen) and (goodblks > goodneeded) then
-    begin
+    if (blklen < maxblklen) and (goodblks > goodneeded) then begin
       if ((blklen shl 1) < maxblklen) then
         blklen := (blklen shl 1)
       else
@@ -2435,11 +2270,9 @@ begin
 
     if (e = ZCRCW) then goto waitack;
 
-    while FCommObj.CharAvail do
-    begin
+    while FCommObj.CharAvail do begin
       case Z_GetByte(2) of
-        CAN,
-          ZPAD:
+        CAN, ZPAD:
           begin
             TransferMessage := 'Trouble';
             SZ_SendData(txbuf, 0, ZCRCE);
@@ -2447,7 +2280,7 @@ begin
           end;
         RCDO:
           begin
-            SZ_SendFileData := ZERROR;
+            Result := ZERROR;
             Exit
           end
       end;                              {case}
@@ -2455,7 +2288,6 @@ begin
 
   until (e <> ZCRCG);
 
-//  stop := FALSE;
   repeat
     Z_PutLongIntoHeader(txpos);
     SZ_SendBinaryHeader(ZEOF, txhdr);
@@ -2465,20 +2297,17 @@ begin
       ZRPOS: goto somemore;
       ZRINIT:
         begin
-          SZ_SendFileData := ZOK;
+          Result := ZOK;
           TransferMessage := 'Transfer complete';
-//          stop := TRUE;
         end;
       ZSKIP:
         begin
-          SZ_SendFileData := c;
+          Result := c;
           TransferMessage := 'Skip file';
-//          stop := TRUE;
         end
     else
       begin
-        SZ_SendFileData := ZERROR;
-//        stop := TRUE;
+        Result := ZERROR;
       end
     end;                                {case}
 
@@ -2493,29 +2322,24 @@ function TZModemObj.SZ_SendFile: integer16;
 
 var
   c: integer16;
-  done: BOOLEAN;
 
 begin
   TransferError := 0;
   TransferBytes := 0;
+  Result := ZERROR;
 
-  done := FALSE;
-
-  repeat
-    if (KeyPressed) then
-    begin
-      if (ReadKey = #27) then
-      begin
+  while True do begin
+    if (KeyPressed) then begin
+      if (ReadKey = #27) then begin
         TransferMessage := 'Aborted from keyboard';
-        SZ_SendFile := ZERROR;
+        Result := ZERROR;
         Exit
       end;
     end;                                (* of IF *)
 
-    if not FCommObj.Carrier then
-    begin
+    if not FCommObj.Carrier then begin
       TransferMessage := 'Lost carrier';
-      SZ_SendFile := ZERROR;
+      Result := ZERROR;
       Exit
     end;
 
@@ -2529,13 +2353,9 @@ begin
     repeat
       c := Z_GetHeader(rxhdr);
       case c of
-        ZCAN,
-          RCDO,
-          ZTIMEOUT,
-          ZFIN,
-          ZABORT:
+        ZCAN, RCDO, ZTIMEOUT, ZFIN, ZABORT:
           begin
-            SZ_SendFile := ZERROR; Exit
+            Result := ZERROR; Exit
           end;
         ZRINIT:                         {null - this will cause a loopback}
           ;
@@ -2546,16 +2366,15 @@ begin
           end;
         ZSKIP:
           begin
-            SZ_SendFile := c;
+            Result := c;
             Exit
           end;
         ZRPOS:
           begin
-            if (not Z_SeekFile(infile, rxpos)) then
-            begin
+            if (not Z_SeekFile(infile, rxpos)) then begin
               TransferMessage := 'File positioning error';
               Z_SendHexHeader(ZFERR, txhdr);
-              SZ_SendFile := ZERROR;
+              Result := ZERROR;
               Exit
             end;
 
@@ -2567,12 +2386,12 @@ begin
             TransferCount := rxpos;
             startproc;
             txpos := rxpos;
-            SZ_SendFile := SZ_SendFileData;
+            Result := SZ_SendFileData;
             Exit;
           end
-      end                               {case}
+      end {case}
     until (c <> ZRINIT);
-  until (done);
+  end;
 end;
 
 (*************************************************************************)
@@ -2595,24 +2414,20 @@ begin
   TransferBlockSize := 0;
   TransferMessage := '';
   FileAddition := NewFile;
+  result := false;
 
-  if not FCommObj.Carrier then
-  begin
+  if not FCommObj.Carrier then begin
     TransferMessage := 'Lost carrier';
     AddLogMessage(TransferMessage, DLError);
     dispproc;
-    result := false;
     Exit
   end;
 
-  if pathname <> '' then
-  begin {if no file specified just terminate session}
-    if (not Z_FindFile(pathname, fname, fsize, ftime)) then
-    begin
+  if pathname <> '' then begin {if no file specified just terminate session}
+    if (not Z_FindFile(pathname, fname, fsize, ftime)) then begin
       TransferMessage := 'Unable to find/open file';
       AddLogMessage(TransferMessage, DLError);
       dispproc;
-      result := false;
       Exit
     end;
 
@@ -2629,11 +2444,9 @@ begin
     FillChar(txbuf, ZBUFSIZE, 0);
     Move(s[1], txbuf[0], Length(s));
     fheaderlen := Length(s);
-  end
-  else
-  begin
-    TransferName := ''; TransferSize := 0; TransferTotalTime := 1; TransferPath
-      := '';
+  end else begin
+    TransferName := ''; TransferSize := 0; TransferTotalTime := 1;
+    TransferPath := '';
   end;
 
   if (zbaud > 0) then
@@ -2656,43 +2469,29 @@ begin
 
   Z_SendHexHeader(ZRQINIT, txhdr);
 
-  if (SZ_GetReceiverInfo = ZERROR) then
-  begin
-    result := false;
-  end                                   (* of IF THEN *)
-  else
-  begin
-    if (pathname <> '') and not (Z_OpenFile(infile, pathname)) then
-    begin
-      if (IOresult <> 0) then
-      begin
+  if SZ_GetReceiverInfo <> ZERROR then begin
+    if (pathname <> '') and not (Z_OpenFile(infile, pathname)) then begin
+      if (IOresult <> 0) then begin
         TransferMessage := 'Failure to open file';
         Z_SendCan;
-        result := false;
       end;                              (* of IF *)
-    end                                 (* of IF THEN *)
-    else
-    begin
-      if pathname <> '' then
-      begin
+    end else begin
+      if pathname <> '' then begin
         n := SZ_SendFile;
         Z_CloseFile(infile);
-      end
-      else
-      begin
+      end else begin
         n := ZOK; lastfile := True;
       end;
 
       case n of
-        ZSKIP: result := false;
+        //ZSKIP: result := false;
         ZOK: result := true;
-        ZCAN: result := false;
+        //ZCAN: result := false;
       end;                              (* of CASE *)
 
       if (n = ZERROR) then
         Z_SendCan
-      else
-        if lastfile then
+      else if lastfile then
         SZ_EndSend;
 
     end;                                (* of ELSE *)
@@ -2723,6 +2522,9 @@ begin
 
 {
   $Log$
+  Revision 1.29  2002/12/14 22:43:42  dodi
+  - fixed some hints and warnings
+
   Revision 1.28  2001/11/11 12:06:44  ma
   - fixed some potential range check errors
 

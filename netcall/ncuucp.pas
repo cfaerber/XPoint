@@ -411,7 +411,6 @@ var n,i : integer;                            { --- uucp - Init-Handshake }
   end;
 
 begin
-  result:=#0;
   mdelay(500);
 
   Output(mcVerbose,'UUCP Initial Handshake',[0]);
@@ -1073,7 +1072,7 @@ procedure TUUCProtocolSimple.FileAdvance(var buf;addsize:longint);
 var T:Double;
     b:boolean;
 begin
-  T := (GetTicks/100.0);
+  //T := (GetTicks/100.0);  Entwicklungsleiche? sollte wohl mal die Startzeit sein?
   b := File_Pos=0;
   File_Pos := File_Pos+AddSize;
 
@@ -1132,6 +1131,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.29  2002/12/10 09:28:44  dodi
   - converted included files into units
 

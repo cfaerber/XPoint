@@ -526,10 +526,11 @@ begin
   TestBreak;
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.15  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.14  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 
@@ -583,3 +584,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

@@ -205,7 +205,6 @@ begin
   { Verbinden }
   List := TStringList.Create;
   try
-    result:= true;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
     result := NNTP.PostPlainRFCMessages(List)=0;
@@ -367,6 +366,9 @@ end;
 
 {
         $Log$
+        Revision 1.44  2002/12/14 22:43:41  dodi
+        - fixed some hints and warnings
+
         Revision 1.43  2002/08/03 16:31:41  mk
         - fixed unsendt-handling in client-mode
 

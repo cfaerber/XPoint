@@ -91,13 +91,14 @@ begin
     ProgressOutput.Destroy;
 end;
 
-end.
-
 {
 	$Log$
+	Revision 1.8  2002/12/14 22:43:41  dodi
+	- fixed some hints and warnings
+
 	Revision 1.7  2002/12/06 14:27:31  dodi
 	- updated uses, comments and todos
-
+	
 	Revision 1.6  2001/10/15 13:12:25  mk
 	/bin/bash: ?: command not found
 	/bin/bash: q: command not found
@@ -121,3 +122,5 @@ end.
 	- Init
 	
 }
+end.
+

@@ -193,6 +193,7 @@ function SeekStr(var data; len: LongWord;
 {$IFDEF ANALYSE}
 begin
   //no asm
+  Result := 0;
 end;
 {$ELSE}
 asm
@@ -4015,6 +4016,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.90  2002/12/14 22:43:36  dodi
+  - fixed some hints and warnings
+
   Revision 1.89  2002/12/14 09:25:16  dodi
   - removed gpltools and encoder units
 

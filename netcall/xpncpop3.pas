@@ -246,11 +246,12 @@ begin
       end;
     on E: Exception do begin
       POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
-      result:= false;
-      {$IFDEF DEBUG } 
+      {$IFDEF DEBUG }
         // crash in Debug-Versions to give line information
-        raise; 
-      {$ENDIF }        
+        raise;
+      {$ELSE}
+        result:= false;
+      {$ENDIF }
       end; 
   end;
   POP.Disconnect;
@@ -276,6 +277,9 @@ end;
                       
 {
   $Log$
+  Revision 1.37  2002/12/14 22:43:41  dodi
+  - fixed some hints and warnings
+
   Revision 1.36  2002/08/12 12:14:21  ma
   - fix: SMTP Envelope from was not set correctly (causing some servers
     to refuse mails)

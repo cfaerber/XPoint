@@ -59,7 +59,7 @@ const bsize = 512;
 var   block: packed array [0..(bsize-1)] of char;
       len  : longint;
 begin
-  block[bsize-1]:=#0;
+  block[high(block)]:=#0;
   result:='';
   repeat
     TimerObj.SetTimeout(DataTimeout);
@@ -70,9 +70,14 @@ begin
     end;
 
     CommObj.ReadBlock(block[low(block)],bsize,len);
-    AppendStr(result,block);
-  until block[high(block)]=#0;
-  
+    Result := Result + block; //AppendStr(result,block);
+  until block[high(block)]=#0;  //???
+{DoDi: ist diese Pruefung in until wirklich korrekt?
+  Sollte da nicht len oder block[len-1] abgefragt werden?
+  Schliesslich könnte block[high(block)] schon beim ersten ReadBlock mit etwas
+  anderem als #0 überschrieben werden, und spaeter nie wieder #0 werden?
+}
+
   DebugLog('uucp-t','Got Command: '+result,dlInform);
 end;
 
@@ -85,7 +90,7 @@ var   rd   : LongInt;
       end;
 begin
   DebugLog('uucp-t','Sending File',dlInform);
- 
+
   while not eof(f) do begin
     Netcall.TestBreak;
     BlockRead(f,buf.dat,1024,rd);
@@ -142,6 +147,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2002/12/14 22:43:41  dodi
+  - fixed some hints and warnings
+
   Revision 1.1  2002/12/10 09:28:44  dodi
   - converted included files into units
 

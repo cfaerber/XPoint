@@ -2909,7 +2909,6 @@ var
   procedure WriteRecipients;
   var
     UTo,UCC,UBCC,UNewsgroups: string;
-    i: integer;
   begin
     UTo         := hd.UTo;
     UCC         := hd.CC;
@@ -3422,21 +3421,24 @@ type rcommand = (rmail,rsmtp,rnews);
   end;
 
 begin
-  Debug.DebugLog('uuz', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s', 
+  adr := 0; n := 0;
+  smtpfirst := true;
+  f := nil;
+  f0 := nil;
+  f2 := nil;
+  f3 := nil;
+
+  Debug.DebugLog('uuz', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s',
     [Source, Dest, _From, _To]), DLDebug);
   assign(f1, source);
   reset(f1, 1);
-  adr := 0; n := 0;
-  smtpfirst := true;
 
-  if not ppp  then
-  begin
+  if not ppp  then begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + '.OUT');
     assign(fc, CommandFile); { "C."-File }
     rewrite(fc);
   end;
-  if filesize(f1) < 10 then
-  begin
+  if filesize(f1) < 10 then begin
     close(f1); if not ppp then close(fc);
     exit;
   end;
@@ -3450,8 +3452,7 @@ begin
     seek(f1, adr);
     Clearheader;
     makeheader(true, f1, 1, hds, hd, ok, false, false);
-    if not ok then
-    begin
+    if not ok then begin
       close(f1);
       raise Exception.Create('fehlerhafter Eingabepuffer!');
     end;
@@ -3461,54 +3462,54 @@ begin
 //      begin
 //        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
 //      end else
-      begin                             { AM }
-        inc(n);if CommandLine then  write(#13'News: ', n);
-        if client then CreateNewFile(false);
-        seek(f1, adr + hds);
+    begin                             { AM }
+      inc(n);if CommandLine then  write(#13'News: ', n);
+      if client then CreateNewFile(false);
+      seek(f1, adr + hds);
 
-        f := TMemoryStream.Create;
-        f0 := TMemoryStream.Create;
+      f := TMemoryStream.Create;
+      f0 := TMemoryStream.Create;
 
-        SetMimeData;
+      SetMimeData;
 
-        f3 := TCRLFtoLFStream.Create(f0);
-        WriteRFCheader(f3, false,true);
-        seek(f1, adr + hds);            { Text kopieren }
-        CopyEncodeMail(f3,hd.groesse);
-        WriteRfcTrailer(f3);
-        f3.Free;
+      f3 := TCRLFtoLFStream.Create(f0);
+      WriteRFCheader(f3, false,true);
+      seek(f1, adr + hds);            { Text kopieren }
+      CopyEncodeMail(f3,hd.groesse);
+      WriteRfcTrailer(f3);
+      f3.Free; f3 := nil;
 
-        hd.lines:=0;
-        for i:=0 to (f0.Size-1) do
-          if (PChar(f0.Memory)+i)^=#10 then
-            Inc(hd.lines);
+      hd.lines:=0;
+      for i:=0 to (f0.Size-1) do
+        if (PChar(f0.Memory)+i)^=#10 then
+          Inc(hd.lines);
 
-        f3 := TCRLFtoLFStream.Create(f);
-        WriteRfcHeader(f3,false,false);
-        f3.Free;
+      f3 := TCRLFtoLFStream.Create(f);
+      WriteRfcHeader(f3,false,false);
+      f3.Free; f3 := nil;
 
-        if not ppp then wr(f2,'#! rnews ' + strs(f.Size+f0.Size)+#10);
+      if not ppp then wr(f2,'#! rnews ' + strs(f.Size+f0.Size)+#10);
 
-        f.seek(0,soFromBeginning);
-        f0.seek(0,soFromBeginning);
+      f.seek(0,soFromBeginning);
+      f0.seek(0,soFromBeginning);
 
-        CopyStream(f,f2);
-        CopyStream(f0,f2);
+      CopyStream(f,f2);
+      CopyStream(f0,f2);
 
-        f.Free;
-        f0.Free;
-        if client then F2.Free;
-      end;
+      f.Free; f := nil;
+      f0.Free; f0 := nil;
+      if client then begin F2.Free; f2 := nil; end;
+    end;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  if not Client then
-    f2.Free;
-  f2:=nil;
+
+  if not Client then begin
+    f2.Free; f2:=nil;
+  end;
 
   if n = 0 then begin
     if not client then _era(iifs(ppp and not client,dest,dest+fn+'.OUT'))
-  end else
-  begin
+  end else begin
     if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
   end;
@@ -3522,11 +3523,9 @@ begin
       ClearHeader;
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
       if cpos('@', hd.Empfaenger[copycount]) > 0 then
-        if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then
-        begin
+        if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then begin
           if not Client then WrFileserver
-        end else
-        begin
+        end else begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
           if not SMTP or Client then
             CreateNewfile(true);
@@ -3544,18 +3543,16 @@ begin
           CopyEncodeMail(f,hd.groesse);
           WriteRfcTrailer(f);
 
-          f.Free;
+          f.Free; f := nil;
 
-          if SMTP then
-          begin
+          if SMTP then begin
             if Client then begin
               Wrs(f2, 'QUIT');
-              f2.Free;
+              f2.Free; f2 := nil;
             end;
-            f3.Free
-          end
-          else begin
-            f2.Free;
+            f3.Free; f3 := nil;
+          end else begin
+            f2.Free; f2 := nil;
             if not client then QueueCompressfile(rmail);
           end;
         end;
@@ -3564,26 +3561,27 @@ begin
     until SMTP or (copycount >= hd.Empfaenger.Count);
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  if CommandLine then
-  begin
+  if CommandLine then begin
    if n > 0 then writeln;
    if files > 0 then
      writeln('Files: ', files);
   end;
-  if SMTP and not client then
-  begin
+  if SMTP and not client then begin
     if n <> 0 then
       wr(f2, 'QUIT'#10);
-    if SMTP then
-      f2.Free;
     if n = 0 then
       _era(iifs(ppp,dest,dest+fn+'.OUT'))
-    else
-      if not ppp then QueueCompressFile(rsmtp);
+    else if not ppp then
+      QueueCompressFile(rsmtp);
   end;
   close(f1);
   if not ppp then
     Close(fc);
+//cleanup
+  f.Free;
+  f0.Free;
+  f2.Free;
+  f3.Free;
 end;
 
 procedure HelpPage;
@@ -3763,6 +3761,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2002/12/14 22:43:39  dodi
+  - fixed some hints and warnings
+
   Revision 1.123  2002/12/14 07:31:41  dodi
   - using new types
 

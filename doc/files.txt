@@ -99,20 +99,18 @@ docform.pas		source code of DOCFORM.EXE
 eddef.pas		Editor
 editor.inc		Editor
 editor.pas		Editor
-encoder.pas		???
 exxec.pas		call external programs; swapping
 feiertag.pas		calculate/compute public holidays
 file_id.diz		???
 fileio.inc		low level funktions
-fileio.pas		files, paths, drives 
-gpltools.pas		tools not under SLizenz (license)
-help.pas		Online help: read and display *.HLP 
+fileio.pas		files, paths, drives
+help.pas		Online help: read and display *.HLP
 icons.res		Icons for OpenXP in Windows format
 ihs.pas			source code of IHS.EXE (Helpfile-Compiler)
 inout.pas		misc funktions for keyboard input and screen display
 ipaddr.pas		class TIP for handling an IP address (GPL)
 ipcclass.pas		class TIPC (Inter Process Communication) (GPL)
-keys.pas		keyboard input 
+keys.pas		keyboard input
 linux/fileio.inc	Linux functions (low level)
 linux/fileioh1.inc	Interface Linux functions (low level)
 lister.pas		Lister
@@ -121,7 +119,7 @@ maske.inc		Dialogue / user input masks
 maske.pas		Dialogue / user input masks
 maus2.pas		processing of mouse input
 modem.pas		modem routines
-montage.pas		date functions 
+montage.pas		date functions
 mouse.pas		processing of mouse interrupts (INT 33)
 ncnntp.pas		NNTP
 ncpop3.pas		POP3
@@ -131,10 +129,10 @@ ncurses.pas		interface to Curses lib (mostly Unix)
 ndiff.pas		Nodelist-Differ (NDIFF.EXE)
 netcall.pas		abstract class TNetcall (GPL)
 pmconv.pas		PM buffer (Puffer) converter (PMCONV.EXE)
-printerx.pas		printing 
+printerx.pas		printing
 rc.pas			source code of RC.EXE (resource compiler)
 regexpr.pas		???
-resource.pas		string resources: read *.RES 
+resource.pas		string resources: read *.RES
 stack.pas		a primitive stack
 timer.pas		timer routines
 typeform.pas		type conversions, string formating etc.

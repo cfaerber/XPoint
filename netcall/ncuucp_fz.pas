@@ -69,18 +69,17 @@ begin
   result:='';
   Netcall.Timer.SetTimeout(ProtTimeout);
 
+  b := #0;
   repeat
-    if CommObj.CharAvail then
-    begin
+    if CommObj.CharAvail then begin
       b:=CommObj.GetChar;
       if ord(b) in [32..255] then
         result:=result+b;
       Netcall.Timer.SetTimeout(ProtTimeout);
-    end else
-    begin
+    end else begin
       Multi2;
       Netcall.TestTimeout;
-      continue;
+      continue; //warum? wo?
     end;
   until ord(b)=13;
 end;
@@ -288,6 +287,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.1  2002/12/10 09:28:44  dodi
   - converted included files into units
 

@@ -193,6 +193,7 @@ begin
   CRAM_MD5_Challenge:=''; MultipleBatchCapability:=false;
   Timer.Init; Timer.SetTimeout(60);
   Output(mcVerbose,'Authenticating...',[0]);
+  Result := 2;  //or what?
   repeat
     if LastState<>State then begin
       Debug.DebugLog('ncfido','binkp session setup state '+Strs(Ord(State)),DLDebug);
@@ -521,30 +522,30 @@ begin
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
   InBpF.ReadFromStream(False);
+  result:=2;  //or what?
   repeat
     case State of
       WaitConn: begin
-        SeenCommandPacket:=false; RxState:=RxWaitF; TxState:=TxGNF;
-        State:=Switch; //** set timer
+          SeenCommandPacket:=false; RxState:=RxWaitF; TxState:=TxGNF;
+          State:=Switch; //** set timer
         end;
       Switch: begin
-        if (RxState=RxDone)and(TxState=TxDone)and(PendingFiles.Count=0)then begin
-          if MultipleBatchCapability and SeenCommandPacket then
-            State:=WaitConn
-          else begin
-            Output(mcInfo,'File transfer complete',[0]);
-            result:=0; State:=Done;
+          if (RxState=RxDone)and(TxState=TxDone)and(PendingFiles.Count=0)then begin
+            if MultipleBatchCapability and SeenCommandPacket then
+              State:=WaitConn
+            else begin
+              Output(mcInfo,'File transfer complete',[0]);
+              result:=0; State:=Done;
             end;
-          end else
-        if FCommObj.CharAvail then
-          State:=Receive
-        else if FCommObj.ReadyToSend(1024) or
-                // Ensure transmit routine calls ProcessTheQueue - even if connection already down
-                ((TxState>=TxWLA)and(TheQueue.Count>0))then
-          State:=Transmit
-        else if not FCommObj.Carrier then
-          State:=ConnLost;
-        //** if timeout...
+          end else if FCommObj.CharAvail then
+            State:=Receive
+          else if FCommObj.ReadyToSend(1024) or
+                  // Ensure transmit routine calls ProcessTheQueue - even if connection already down
+                  ((TxState>=TxWLA)and(TheQueue.Count>0))then
+            State:=Transmit
+          else if not FCommObj.Carrier then
+            State:=ConnLost;
+          //** if timeout...
         end;
       Receive: begin
           case BpReceive of
@@ -561,24 +562,24 @@ begin
           end;
         end;
       ConnLost: begin
-        Output(mcError,'Connection lost',[0]);
-        Log(lcError,'Connection lost');
-        State:=Done; result:=BreakTransfer;
+          Output(mcError,'Connection lost',[0]);
+          Log(lcError,'Connection lost');
+          State:=Done; result:=BreakTransfer;
         end;
     end;
     if LastTxState<>TxState then begin
       Debug.DebugLog('ncfido','binkp txstate '+sTxState[LastTxState]+' => '+sTxState[TxState],DLDebug);
       LastTxState:=TxState;
-      end;
+    end;
     if LastRxState<>RxState then begin
       Debug.DebugLog('ncfido','binkp rxstate '+sRxState[LastRxState]+' => '+sRxState[RxState],DLDebug);
       LastRxState:=RxState;
-      end;
+    end;
     if (KeyPressed and(ReadKey=#27))then begin
       Output(mcError,'User break',[0]);
       Log(lcError,'User break');
       result:=BreakTransfer;
-      end;
+    end;
   until State=Done;
   InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy; PendingFilesWithPath.Destroy;
 end;
@@ -586,6 +587,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/12/14 22:43:40  dodi
+  - fixed some hints and warnings
+
   Revision 1.13  2002/07/21 19:11:25  ma
   - fixed Argus again (difference in "trim" behaviour: Delphi treats #0 as
     whitespace, FPC does not)

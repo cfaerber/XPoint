@@ -180,10 +180,9 @@ var f      : file;
       uvl  : boolean;
       uvs  : byte;
       MsgIDFound : boolean;
-      CCs, i: Integer;
+      CCs  : Integer;
   begin
-    with Header do
-    begin
+    with Header do begin
       pbox:='!?!';
       if (cpos('@', aRecipient)=0) and
          ((netztyp<>nt_Netcall) or (FirstChar(aRecipient)='/'))
@@ -192,81 +191,70 @@ var f      : file;
         if not dbFound then begin
           if Header.Empfaenger.Count = 1 then
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
-          end
-        else begin
+        end else begin
           _brett:=mbrettd('A',bbase);
           pbox := dbReadNStr(bbase,bb_pollbox);
-          end;
-        end
-      else begin
+        end;
+      end else begin
         dbSeek(ubase,uiName,UpperCase(aRecipient+iifs(cPos('@', aRecipient)=0,'@'+BoxName+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
           _brett:=mbrettd('U',ubase);
           pbox := dbReadNStr(ubase,ub_pollbox);
-          end;
         end;
-      if pbox<>'!?!' then
-      begin
+      end;
+      if pbox<>'!?!' then begin
         dbSeek(mbase,miBrett,_brett+#255);
         uvl:=false;
         if dbEOF(mbase) then
           dbGoEnd(mbase)
         else
           dbSkip(mbase,-1);
-        if not dbEOF(mbase) and not dbBOF(mbase) then
-        repeat
-          _MBrett := dbReadNStr(mbase,mb_brett);
-          if _mbrett=_brett then
-          begin
-            dbReadN(mbase,mb_unversandt,uvs);
-            InMsgID := dbReadStr(mbase,'msgid');
-            if (uvs and 1=1) and EQ_betreff(Header.Betreff) and
-               (Header.BinaryMsgId = InMsgId) then
-            begin
-              MsgIDFound := false;
-              CCs := 0;
-              { Check, ob MsgID in unversandten Nachrichten enthalten ist }
-              if Assigned(IDList) and (IDList.IndexOf(InMsgID) <> - 1) then
-              begin
-                MsgIDFound := true;
-                if Header.Empfaenger.Count > 1 then
-                begin
-                  CCList.Add(InMsgId);
-                  CCList.Sort;
-                  if CCList.IndexOf(FormMsgId(InMsgID)) <> -1 then
-                    Inc(CCs);
+        if not dbEOF(mbase) and not dbBOF(mbase) then begin
+          repeat
+            _MBrett := dbReadNStr(mbase,mb_brett);
+            if _mbrett=_brett then begin
+              dbReadN(mbase,mb_unversandt,uvs);
+              InMsgID := dbReadStr(mbase,'msgid');
+              if (uvs and 1=1) and EQ_betreff(Header.Betreff)
+              and(Header.BinaryMsgId = InMsgId) then begin
+                MsgIDFound := false;
+                CCs := 0;
+                { Check, ob MsgID in unversandten Nachrichten enthalten ist }
+                if Assigned(IDList) and (IDList.IndexOf(InMsgID) <> - 1) then begin
+                  MsgIDFound := true;
+                  if Header.Empfaenger.Count > 1 then begin
+                    CCList.Add(InMsgId);
+                    CCList.Sort;
+                    if CCList.IndexOf(FormMsgId(InMsgID)) <> -1 then
+                      Inc(CCs);
+                  end;
                 end;
-              end;
-              if not MsgIDFound then
-              begin
-                uvs:=uvs and $fe;
-                dbWriteN(mbase, mb_unversandt, uvs);
-              end else
-              if CCs <= 1 then
-              begin
-                if not ((Header.typ='B') and (maxbinsave>0) and
-                  (Header.groesse > maxbinsave*1024)) then
-                begin
-                  if FileExists('UNSENT.PP') then
-                    extract_msg(2,'','UNSENT.PP',true,1)
-                  else
-                    extract_msg(2,'','UNSENT.PP',false,1);
-                  Dec(OutMsgs);
-                end else
-                begin
-                  { String noch in die Resource Åbernehmen }
-                  tFehler('Die Datei ' + Header.datei + ' an ' + aRecipient + ' bitte erneut versenden!',30);
+                if not MsgIDFound then begin
                   uvs:=uvs and $fe;
-                  dbWriteN(mbase,mb_unversandt,uvs);
-                end;
-              end; { MsgIDFound }
-              uvl:=true;
+                  dbWriteN(mbase, mb_unversandt, uvs);
+                end else if CCs <= 1 then begin
+                  if not ((Header.typ='B') and (maxbinsave>0)
+                  and    (Header.groesse > maxbinsave*1024)) then begin
+                    if FileExists('UNSENT.PP') then
+                      extract_msg(2,'','UNSENT.PP',true,1)
+                    else
+                      extract_msg(2,'','UNSENT.PP',false,1);
+                    Dec(OutMsgs);
+                  end else begin
+                    { String noch in die Resource uebernehmen }
+                    tFehler('Die Datei ' + Header.datei + ' an ' + aRecipient + ' bitte erneut versenden!',30);
+                    uvs:=uvs and $fe;
+                    dbWriteN(mbase,mb_unversandt,uvs);
+                  end;
+                end; { MsgIDFound }
+                uvl:=true;
+              end;
             end;
-          end;
-          dbSkip(mbase,-1);
-        until uvl or dbBOF(mbase) or (_brett<>_mbrett);
+            dbSkip(mbase,-1);
+          until uvl or dbBOF(mbase) or (_brett<>_mbrett);
+        end;
         if not uvl then
           trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
       end;
@@ -1135,10 +1123,10 @@ begin                  { function Netcall }
 //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
     SafeDeleteFile(NetcallLogfile);
-    end; {if PerformDial}
+  end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
-  
+
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
@@ -1150,25 +1138,21 @@ begin                  { function Netcall }
   end else
     ImportOK := true;
 
-  if ImportOK and (DeleteSpoolFiles.Count>0) then 
-    if boxpar^.SysopMode or nDelPuffer then
-    begin
+  if ImportOK and (DeleteSpoolFiles.Count>0) then
+    if boxpar^.SysopMode or nDelPuffer then begin
       Debug.DebugLog('xpnetcall','deleting incoming spool files',DLInform);
-      for i := 0 to (DeleteSpoolFiles.Count-1) do
-      begin
+      for i := 0 to (DeleteSpoolFiles.Count-1) do begin
         SafeDeleteFile(DeleteSpoolFiles[i]);
         Debug.DebugLog('xpnetcall','deleted '+(DeleteSpoolFiles[i]),DLInform);
       end;
-    end else
-    begin
+    end else begin
       Debug.DebugLog('xpnetcall','renaming incoming spool files',DLInform);
-      for i := 0 to (DeleteSpoolFiles.Count-1) do
-      begin
+      for i := 0 to (DeleteSpoolFiles.Count-1) do begin
         SafeMakeBak(DeleteSpoolFiles[i], ExtBak);
         Debug.DebugLog('xpnetcall','renamed '+(DeleteSpoolFiles[i]),DLInform);
       end;
     end;
-    
+
   xp3o.ForceRecipient:= '';
   IncomingFiles.Free;
   DeleteSpoolFiles.Free;
@@ -1180,8 +1164,9 @@ begin                  { function Netcall }
   if Result and Netcall_connect and not FidoCrash then begin
     WrTiming('NETCALL '+BoxName);
     AponetNews;
-    end;
+  end;
   Debug.DebugLog('xpnetcall','finished netcall',DLInform);
+{$IFDEF ANALYSE}assert(connects>=0);{$ENDIF}  //otherwise unused!
 end;
 
 
@@ -1386,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2002/12/14 22:43:41  dodi
+  - fixed some hints and warnings
+
   Revision 1.64  2002/12/14 07:31:45  dodi
   - using new types
 

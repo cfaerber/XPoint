@@ -1873,7 +1873,8 @@ var t       : text;
       if nr>-1 then begin
         p0:=6+length(cfs[nr]);
         j:=ival(copy(su,p0,p-p0));
-        end;
+      end else
+        j := 0; //or what?
       if (nr<0) or (j<1) or (j>10) then
         tfehler(getres(218)+LeftStr(s,45),60)   { 'ungueltige FKey-Config-Zeile:  ' }
       else begin
@@ -2773,6 +2774,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.153  2002/12/14 22:43:37  dodi
+  - fixed some hints and warnings
+
   Revision 1.152  2002/12/14 07:31:30  dodi
   - using new types
 
