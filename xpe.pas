@@ -416,6 +416,7 @@ var config : Edconfig;
 
 begin
     assign(t,editor.EdConfigFile);
+    brk:=true;
     if not existf(t) then errsound
     else begin
       reset(t);
@@ -449,7 +450,8 @@ begin
           end;
         close(t);
         end;
-      end
+      end;
+    menurestart:=brk;
 end;
 
 end.
