@@ -168,6 +168,7 @@ var Count: Integer;
     if intern then
     begin
       hdp.Empfaenger.Add(Mid(empfaddr,2));    
+      hdp.archive := false;
     end else
     begin
       hdp.Empfaenger.Assign(EMP);
@@ -178,8 +179,9 @@ var Count: Integer;
       hdp.BCC := RFCWriteAddressList(sData.EmpfList,nil,[atBCC]);
 
       hdp.archive := PM;
-      hdp.betreff:=betreff;
     end;
+
+    hdp.betreff:=betreff;
     
     case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
       0 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
@@ -777,6 +779,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.6  2002/08/09 22:47:09  cl
+// - Fixed [ 587379 ] 3.9: Netzanrufbericht ohne Subject
+//
 // Revision 1.5  2002/08/09 22:17:39  cl
 // - Fixed #588187 3.9: keine UseNet Postings
 //
