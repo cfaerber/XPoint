@@ -6,8 +6,8 @@
 Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
       ReadTimeOut    = 20000;                   { General event, 20 secs max }
 
-{$IFDEF WIN32} 
-WSAInits: Integer= 0; 
+{$IFDEF WIN32}
+WSAInits: Integer= 0;
 var
 WSAData:  tWSAData;
 {$ENDIF}
@@ -16,10 +16,10 @@ WSAData:  tWSAData;
 
 constructor tRawIPObj.Init;
 begin
-  {$IFDEF WIN32} 
-  if WSAInits<=0 then 
-    WSAStartup($0101,WSAData); 
-  inc(WSAInits); 
+  {$IFDEF WIN32}
+  if WSAInits<=0 then
+    WSAStartup($0101,WSAData);
+  inc(WSAInits);
   {$ENDIF}
   SBufBeg:=Low(SBuffer);
   SBufEnd:=Low(SBuffer);
@@ -31,10 +31,10 @@ end; { constructor Init }
 
 destructor tRawIPObj.Done;
 begin
-  {$IFDEF WIN32} 
-  dec(WSAInits); 
-  if WSAInits=0 then 
-    WSACleanup; 
+  {$IFDEF WIN32}
+  dec(WSAInits);
+  if WSAInits=0 then
+    WSACleanup;
   {$ENDIF}
   if not dontclose then close;
   inherited done;
@@ -82,7 +82,7 @@ end; { func. OpenKeep }
 
   const INADDR_NONE    = $FFFFFFFF;
         SOCKET_ERROR   = -1;
-	INVALID_SOCKET = -1;
+        INVALID_SOCKET = -1;
 
   {$LINKLIB c}
   function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
@@ -133,10 +133,10 @@ begin
   end;
 
   SHandle:={$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.Socket(AF_INET,SOCK_STREAM,0);
-  if {$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF} <>0 then 
-  begin 
-    SetErrorStr('Error obtaining socket'); 
-    exit; 
+  if {$IFDEF WIN32}WinSock.WSAGetLastError{$ELSE}sockets.SocketError{$ENDIF} <>0 then
+  begin
+    SetErrorStr('Error obtaining socket');
+    exit;
   end;
 
   addr.{$IFDEF WIN32}sin_family{$ELSE}family{$ENDIF} := AF_INET;
@@ -190,7 +190,7 @@ begin
   if GetHandle <> INVALID_SOCKET then
   begin
     {$IFDEF WIN32}WinSock{$ELSE}sockets{$ENDIF}.ShutDown(SHandle,2);
-    {$IFDEF WIN32}WinSock.CloseSocket(SHandle){$ENDIF}
+    {$IFDEF WIN32}WinSock.CloseSocket(SHandle);{$ENDIF}
     SHandle := INVALID_SOCKET;
   end;
   SOpened:=False;
@@ -236,13 +236,13 @@ begin
   case reads of
     0:            begin
                     SOpened:=false;
-		    reads:=0;
-		  end;
+                    reads:=0;
+                  end;
     SOCKET_ERROR: begin
                     SetErrorStr('SendBlock');
                     DebugLog('ObjCOM','ReadBlock error',1);
                     SOpened:=false;
-		    reads:=0;
+                    reads:=0;
                   end;
   end;
 end;
@@ -252,11 +252,11 @@ var rr: Longint;
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
   reads:=0;
-  
-  while (reads<blocklen) and SOpened do 
+
+  while (reads<blocklen) and (SOpened or (SBufBeg<SBufEnd)) do
   begin
 
-    if SBufBeg<SBufEnd then 		{ get chars in buffer }
+    if SBufBeg<SBufEnd then             { get chars in buffer }
     begin
       rr := SBufEnd-SBufBeg; { >0 }
       if rr > (Blocklen-Reads) then rr := Blocklen-Reads;
@@ -264,25 +264,25 @@ begin
       SBufBeg := SBufBeg + rr;
       Reads := Reads+ rr;
     end else
-    if (Blocklen-Reads) < 512 then	{ small block size    }
+    if (Blocklen-Reads) < 512 then      { small block size    }
     begin
-      rr := _CharCount;			{ chars available     }
-      
+      rr := _CharCount;                 { chars available     }
+
       if rr <= (Blocklen-Reads) then    { smaller than block => directly }
       begin
          _ReadBlock((PChar(@Block)+Reads)^,Blocklen-Reads,rr);
          Reads := Reads + rr;
       end else
-      begin				{ more available      }
-        SBufBeg := Low(SBuffer);	{ => into buffer      }
+      begin                             { more available      }
+        SBufBeg := Low(SBuffer);        { => into buffer      }
         SBufEnd := Low(SBuffer);
         if rr > Sizeof(SBuffer) then
-	   rr := Sizeof(SBuffer);
-	_ReadBlock(SBuffer,rr,rr);
-	SBufEnd := SBufEnd + rr;
+           rr := Sizeof(SBuffer);
+        _ReadBlock(SBuffer,rr,rr);
+        SBufEnd := SBufEnd + rr;
       end;
     end else
-    begin				{ large blocks => directly }
+    begin                               { large blocks => directly }
       _ReadBlock((PChar(@Block)+Reads)^,Blocklen-Reads,rr);
       Reads := Reads + rr;
     end;
@@ -327,27 +327,77 @@ var rr,rd: Longint;
 begin
   rr := _CharCount;
 
-  if (rr > 0) and 				{ data is pending and   }
-    ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) then	{ room in buffer	}
-  begin 
-    if(SBufBeg > Low(SBuffer)) and 		{ data not at start and	}
-      ((SBufEnd+rr)>(High(SBuffer)+1)) then 	{ not enough room at end}
+  while (rr > 0) and                            { data is pending and   }
+    ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) do    { room in buffer        }
+  begin
+    if(SBufBeg > Low(SBuffer)) and              { data not at start and }
+      ((SBufEnd+rr)>(High(SBuffer)+1)) then     { not enough room at end}
     begin
-      Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data	}
+      Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data       }
       SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
       SBufBeg :=                     Low(SBuffer);
     end;
-      
-    rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then 
+
+    rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
       rd := (Sizeof(SBuffer)-(SBufEnd-SBufBeg));
-    _ReadBlock(SBuffer[SBufEnd],rd,rd);	        { read data into buffer }
-    SBufEnd := SBufEnd + rd;			{ adjust buffer size    }
-    rr := rr-rd;				{ and pending data amnt.}
+    _ReadBlock(SBuffer[SBufEnd],rd,rd);         { read data into buffer }
+    SBufEnd := SBufEnd + rd;                    { adjust buffer size    }
+    rr := _CharCount;                           { and pending data amnt.}
   end;
-  
+
   result := SBufEnd-SBufBeg + rr;
   DebugLog('ObjCOM','CharCount: '+IntToStr(result)+' bytes',dlInform);
 end; { func. TTelnetObj.CharAvail }
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+{$IFDEF undefined}
+function tRawIPObj.ReadyToRead(BlockLen: Longint): Boolean;
+var rr,rd: Longint;
+begin
+  if (SBufEnd-SBufBeg)<=BlockLen then begin     { enough in buffer      }
+    DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+    result:=true; exit;                         { => just return        }
+  end;
+
+  repeat
+    if (rr+(SBufEnd-SBufBeg)>=Blocklen) then begin { enough data        }
+      DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+      result:=true; exit;
+    end
+
+    rr := _CharCount;
+
+    if(rr>0) and                                { data pending          }
+      ((SBufEnd-SBufBeg) < Sizeof(SBuffer)) do  { room in buffer        }
+    begin
+      if(SBufBeg > Low(SBuffer)) and            { data not at start and }
+        ((SBufEnd+rr)>(High(SBuffer)+1)) then   { not enough room at end}
+      begin
+        rd := BlockLen-(SBufEnd-SBufBeg)-rr;    { minimum read          }
+
+        if ((SBufEnd+rd)>(High(SBuffer)+1)) then{ still not enough room }
+        begin
+          Move(SBuffer[SBufBeg],SBuffer,SBufEnd-SBufBeg); { move data   }
+          SBufEnd := SBufEnd - SBufBeg + Low(SBuffer);
+          SBufBeg :=                     Low(SBuffer);
+        end else
+          rr := rd;                             { only read as much data}
+      end;
+
+      rd := rr; if rd > (Sizeof(SBuffer)-(SBufEnd-SBufBeg)) then
+        rd := (Sizeof(SBuffer)-(SBufEnd-SBufBeg));
+      _ReadBlock(SBuffer[SBufEnd],rd,rd);       { read data into buffer }
+      SBufEnd := SBufEnd + rd;                  { adjust buffer size    }
+    end else
+      break;
+  until false;
+
+  DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes but only '+
+    IntToStr(SBufEnd-SBufBeg + rr)+' bytes available' ,dlInform);
+  result := false;
+end;
+{$ENDIF}
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -370,7 +420,7 @@ end; { proc. tRawIPObj.GetModemStatus }
 
 procedure tRawIPObj.SetDtr(State: Boolean);
 begin
-  if (not State) and SOpened then Close;
+// if (not State) and SOpened then Close;
 end; { proc. tRawIPObj.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -389,6 +439,7 @@ begin
   OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
   if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFDEF VP}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
   if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  InFree :=InFree+Sizeof(SBuffer)-(SBufEnd-SBufBeg)
 end; { proc. TTelnetObj.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -396,7 +447,7 @@ end; { proc. TTelnetObj.GetBufferStatus }
 function tRawIPObj.GetDriverInfo: String;
 begin
   {$IFDEF WIN32}
-  result:='Winsock: '+PChar(@(WSAData.szDescription));
+  result:='Winsock: '+String(PChar(@(WSAData.szDescription)));
   {$ELSE}
   result:='Generic TCP/IP';
   {$ENDIF}
@@ -413,6 +464,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.8  2001/05/08 22:19:39  cl
+  - fixed bug with closed connections
+
   Revision 1.7  2001/03/28 22:24:55  cl
   - Linux compatibility
 
