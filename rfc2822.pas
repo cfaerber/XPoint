@@ -57,7 +57,11 @@ function RFCRemoveComments(const source: string): string;
 uses
   Typeform,
 {$IFDEF Delphi}
-  StrUtils,
+  {$IFDEF Kylix}
+  IdGlobal,
+  {$ELSE}
+  strutils,
+  {$ENDIF}
 {$ENDIF}
   SysUtils;
 

@@ -36,9 +36,12 @@ function  GuessContentTypeFromFileName(FileName:String):String;
 uses
 {$IFDEF unix}
   xpcurses,
+{$ELSE}
+  windows,
 {$ENDIF}
   classes, database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
-  sysutils, windows, xpstreams;
+  sysutils,
+  xpstreams;
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;

@@ -1236,7 +1236,7 @@ var  dl         : displp;
   end;
 
 
-  {$I EDITOR.INC}
+  {$I editor.inc}
 
   function PosCoord(pos:position; disp:byte):longint; forward;
 
@@ -1771,6 +1771,10 @@ finalization
 
 {
   $Log$
+  Revision 1.64  2001/09/09 10:23:20  ml
+  - Kylix compatibility stage III
+  - compilable in linux
+
   Revision 1.63  2001/09/08 16:29:28  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

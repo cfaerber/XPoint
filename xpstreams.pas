@@ -67,7 +67,15 @@ procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
 { ------------------------} implementation { ------------------------- }
 
 uses
-  xp1,fileio,sysutils{$IFDEF Delphi},strutils{$ENDIF};
+  xp1,fileio,sysutils
+  {$IFDEF Delphi}
+  {$IFDEF Kylix}
+  ,IdGlobal
+  {$ELSE}
+  ,strutils
+  {$ENDIF}
+  {$ENDIF}
+  ;
 
 constructor TTemporaryFileStream.Create;
 begin

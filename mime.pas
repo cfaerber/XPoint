@@ -259,8 +259,8 @@ function MimeCreateEOLConverter(Eol:TMimeEol; OutputStream:TStream):TStream;
 uses
   SysUtils,
   CRC,
-  MIME_Base64,
-  MIME_QP,
+  mime_base64,
+  mime_qp,
   UTFTools,
   typeform;
 
@@ -904,7 +904,11 @@ end;
 //          raise EStreamError.Create('Invalid stream operation');
 //      end;
 
+{$IFDEF Kylix}
+{$I charsets/aliases.inc}
+{$ELSE}
 {$I charsets\aliases.inc}
+{$ENDIF}
 // Contains:
 // function MimeCharsetCanonicalName(charset:string):string;
 
@@ -1276,6 +1280,10 @@ end;
 
 //
 // $Log$
+// Revision 1.5  2001/09/09 10:23:20  ml
+// - Kylix compatibility stage III
+// - compilable in linux
+//
 // Revision 1.4  2001/09/08 20:57:27  cl
 // - unencoded 8bit chars in RFC header lines now treted as Windows-1252 (=Windows Quirks)
 //

@@ -26,7 +26,7 @@ unit utftools;
 interface
 
 uses
-  Unicode,Mime;
+  Unicode,mime;
 
 
 function IsKnownCharset(Charset: String): Boolean;
@@ -261,6 +261,10 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.8  2001/09/09 10:23:20  ml
+// - Kylix compatibility stage III
+// - compilable in linux
+//
 // Revision 1.7  2001/09/08 20:17:12  cl
 // - fixes for US-ASCII support...
 //

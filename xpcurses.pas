@@ -36,6 +36,9 @@ uses
 {$ELSE}
   ncurses,
 {$ENDIF}
+{$IFDEF Linux}
+  mime,
+{$ENDIF}
   xplinux;
 
 {$IFDEF fpc }
@@ -273,7 +276,7 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 { Schaltet hellen Hintergrund statt blinkenden Hintergrund ein }
 procedure SysSetBackIntensity;
 // Returns the used Codepage in form of the Unicode charset
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
@@ -1359,7 +1362,7 @@ procedure SysSetBackIntensity;
 begin
 end;
 
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 begin
   Result := csCP437;
 end;
@@ -1575,6 +1578,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2001/09/09 10:23:20  ml
+  - Kylix compatibility stage III
+  - compilable in linux
+
   Revision 1.50  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

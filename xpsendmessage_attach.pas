@@ -93,7 +93,7 @@ uses
   windows,
 {$ENDIF}
 {$IFDEF Delphi}
-  dateutils,
+  DateUtils,
 {$ENDIF}
   fileio, inout, keys, lister, maus2, resource, typeform, winxp, xp0, xp1,
   xp1input, xp1o, xp4e, xpglobal, xpnt, xpsendmessage_attach_analyze, maske,

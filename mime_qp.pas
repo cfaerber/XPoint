@@ -66,7 +66,15 @@ type
 
 { ------------------------} implementation { ------------------------- }
 
-uses SysUtils{$IFDEF Delphi},StrUtils{$ENDIF};
+uses SysUtils
+  {$IFDEF Delphi}
+  {$IFDEF Kylix}
+  ,IdGlobal
+  {$ELSE}
+  ,StrUtils
+  {$ENDIF}
+  {$ENDIF}
+  ;
 
 constructor TQuotedPrintableEncodingStream.Create(AOutputStream: TStream; FIsText:Boolean);
 begin
@@ -303,6 +311,10 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2001/09/09 10:23:20  ml
+// - Kylix compatibility stage III
+// - compilable in linux
+//
 // Revision 1.2  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //

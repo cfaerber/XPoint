@@ -33,7 +33,7 @@ uses
   linux,
 {$ENDIF}  
 {$ENDIF}
-  xp0,xp1,XPStreams,Classes;
+  xp0,xp1,xpstreams,Classes;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
@@ -1083,6 +1083,10 @@ end;
 
 {
   $Log$
+  Revision 1.48  2001/09/09 10:23:20  ml
+  - Kylix compatibility stage III
+  - compilable in linux
+
   Revision 1.47  2001/09/08 18:46:43  cl
   - small bug/compiler warning fixes
 
