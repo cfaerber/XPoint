@@ -26,7 +26,7 @@ unit typeform;
 interface
 
 uses
-  xpglobal, sysutils;
+  xpglobal, sysutils, classes;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -184,6 +184,8 @@ function HostToBigEndian16(host:smallword):smallword;
 function BigEndianToHost16(host:smallword):smallword; 
 function HostToBigEndian32(host:    dword):    dword; 
 function BigEndianToHost32(host:    dword):    dword; 
+
+function StringListToString(SL: TStringList): String;
 
 { ================= Implementation-Teil ==================  }
 
@@ -1339,7 +1341,7 @@ const
     41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
 var
   b1, b2, b3, b4: byte;
-  p1, p2, pad: integer;
+  p1, pad: integer;
 
   function nextbyte: byte;
   var p: integer;
@@ -1417,9 +1419,21 @@ function LittleEndianToHost32(host:    dword):    dword; begin result:=swap32(ho
 {$ENDIF}
 {$ENDIF}
 
+function StringListToString(SL: TStringList): String;
+var i: Integer;
+begin
+  result:='';
+  for i:=0 to SL.Count-1 do
+    result:=result+SL[i]+' ';
+  DelLast(result);
+end;
+
 end.
 {
   $Log$
+  Revision 1.86  2001/05/20 12:16:12  ma
+  - added StrgListToString
+
   Revision 1.85  2001/04/19 13:06:14  ml
     - keyboardtranslation extended   (Pos1/Home etc.)
     - ISO2IBM - Codetabletranslation (äöüß - this was shitty hard work)
