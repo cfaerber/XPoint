@@ -1047,7 +1047,7 @@ var t,lastt: taste;
       if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
-        fillchar(mpdata,sizeof(qmpdata),0);
+        fillchar(mpdata,sizeof(mpdata),0);
         mpdata.fname := fn;
         SelectMultiPart(true,1,false,mpdata,brk);
 
@@ -1084,6 +1084,7 @@ var t,lastt: taste;
     if exist(fn) then _era(fn);
     setall;
     dispose(sData);
+    qmpdata := nil;
   end;
 
   procedure _brief_senden(c:char);
@@ -2020,6 +2021,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.14  2000/12/19 19:46:00  mk
+  - qmpdata auf nil setzen
+
   Revision 1.6.2.13  2000/12/18 09:22:20  mk
   - fehlendes pophp ergaenzt
 
