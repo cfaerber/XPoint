@@ -94,7 +94,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}  {$O xpglobal }
 {$O xpnt}    {$O xpdatum} {$O xp3}      {$O xpeasy}   {$O crc }
 {$O xp_des}  {$O xpkeys}  {$O xpdiff}   {$O eddef}    {$O stack}
-{$O montage} {$O xpovl}
+{$O montage} {$O xpovl}   {$O xp9sel }  {$O xp1 }
 
 {$IFDEF CAPI }
 {$O capi }
@@ -203,6 +203,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.18  2001/08/11 16:38:00  mk
+  - XP1.pas is now overlay
+  - resized Overlaybuffer
+
   Revision 1.29.2.17  2001/08/11 10:58:34  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

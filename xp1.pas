@@ -12,7 +12,7 @@
 { CrossPoint - allg. Routinen }
 
 {$I XPDEFINE.INC }
-{$F+}
+{$O+,F+}
 
 unit xp1;
 
@@ -2057,6 +2057,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.20  2001/08/11 16:38:00  mk
+  - XP1.pas is now overlay
+  - resized Overlaybuffer
+
   Revision 1.48.2.19  2001/08/11 10:58:34  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

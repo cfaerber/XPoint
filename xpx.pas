@@ -275,7 +275,7 @@ begin
     OvrInit('xp.ovr');
     if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
       OvrInitEMS;
-    OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
+    OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
 
@@ -299,6 +299,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.10  2001/08/11 16:38:00  mk
+  - XP1.pas is now overlay
+  - resized Overlaybuffer
+
   Revision 1.18.2.9  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 
