@@ -1079,11 +1079,15 @@ end;
 { fÅr maske.CustomSel }
 
 procedure BoxSelProc(var cr:customrec);
+var
+  TempBoxPar: BoxRec;
 begin
+  TempBoxPar := BoxPar^;
   with cr do begin
     s:=UniSel(1,false,s);
     brk:=(s='');
     end;
+  BoxPar^ := TempBoxPar;
 end;
 
 
@@ -1301,6 +1305,10 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/07/20 21:29:22  mk
+  - Vertreterauswahl doesn't change System settings anymore,
+    TempRec saves global BoxPar in procedure BoxSelProc
+
   Revision 1.1  2001/06/04 17:42:03  ma
   - renamed, was xp9
   - implemented role feature
