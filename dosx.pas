@@ -25,7 +25,7 @@ UNIT dosx;
 
 INTERFACE
 
-uses xpglobal, crt,dos, typeform;
+uses xpglobal, dos, typeform;
 
 var  readfail,writefail : boolean;
 
@@ -330,6 +330,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/04/30 15:38:51  mk
+  - crt-Unit aus uses entfernt
+
   Revision 1.6  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 
