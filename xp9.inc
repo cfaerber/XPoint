@@ -231,7 +231,7 @@
             boxpar^.exclude[1,2]:='06:00';
             end;
           end;
-        dname:=getdname(nt,name);      { eindeutigen Dateinamen bestimmen }
+        dname:=ustr(getdname(nt,name));      { eindeutigen Dateinamen bestimmen }
         unique(dname);
         WriteBox(dname,boxpar);
         dbAppend(d);
@@ -546,12 +546,14 @@
             maddtext(0,14,getres2(920,66), 0); { Linie }
             maddbool(3,15,getres2(920,57), PPPMode); { 'PPP-Modus (externe Clients)' }
             mhnr(8026);
-            maddstring(3,17,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
-            msetvfunc(pppclienttest);
-            maddstring(3,18,getres2(920,63),PPPSpool,40,60,ValidDirCh);   { 'Spool-Verzeichnis' }
-            msetvfunc(PPPSpoolTest);
-            maddstring(3,19,getres2(920,67),PPPClientPath,40,60,ValidDirCh);   { 'Client-Verzeichnis' }
+            maddstring(3,17,getres2(920,67),PPPClientPath,40,60,ValidDirCh);   { 'Client-Verzeichnis' }
+            mappsel(false,'XPNEWS\');
             msetvfunc(PPPClientpathTest);
+            maddstring(3,18,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
+            mappsel(false,'UKAD.BAT /M $CLPATH $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
+              'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+\XPNEWS $CONFIG');
+            msetvfunc(pppclienttest);
+            maddstring(3,19,getres2(920,63),PPPAddServers,40,60,ValidDirCh);   { 'Zus„tzliche Boxen' }
             uparcnr:=0; downarcnr:=0;
           end
           else begin
@@ -777,8 +779,13 @@
             renbox('.BL');
             renbox('.FBL');
             renbox('.INF');
+            renbox('.CFG');
+            renbox('.BL');
             renbox2('.BL');
             renbox2('.RC');
+            renbox2('.CFG');
+            renbox2(BfgExt);
+            RmDir(OwnPath + XFerDir + Dname);
             end;
           end;
         end;
@@ -1382,6 +1389,9 @@
 
 {
   $Log$
+  Revision 1.10.2.16  2001/04/09 16:47:18  mk
+  - arbeiten am Client-Modus
+
   Revision 1.10.2.15  2001/04/03 17:19:45  mk
   - fixes fuer Client-Modus
 

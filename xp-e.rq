@@ -1846,7 +1846,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 58   Batched SMTP (PPP-Style)
 57   Client Mode (for external Mail/News Clients)
 59   Client call       ~
-63   Spool directory   ~
+63   Additional Server ~
 67   Client directory  ~
 37   z protocol
 38   f protocol
@@ -3036,6 +3036,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 36 This entry must not contain any path name!
 37 Directory must not be equal to the XP spool directory!
 38 This path must contain ONE relative directory level!
+39 Dieser Pfad darf nicht leer sein!
 
 +  11000
 1  unknown command

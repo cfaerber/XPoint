@@ -148,6 +148,7 @@ begin
     PPPClient := '';
     PPPSpool := '';
     PPPClientPath := '';
+    PPPAddServers := '';
     ReplaceOwn := false;
     UUprotos:='Ggz';
     efilter:='';
@@ -286,6 +287,7 @@ begin
             gets(s,su,'Client-Exec', PPPClient, 60) or
             gets(s,su,'Client-Spool', PPPSpool, 60) or
             gets(s,su,'Client-Path', PPPClientPath, 60) or
+            gets(s,su,'Client-AddServers', PPPAddServers, 60) or
             getx(su,  'ReplaceOwn', ReplaceOwn) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
@@ -423,9 +425,10 @@ begin
     writeln(t,'UU-SMTP=',jnf(uusmtp));
     writeln(t,'UU-SMTP-PPP=', jnf(PPPSmtp));
     writeln(t,'Client-Mode=', Jnf(PPPMode));
-    writeln(t,'Client-Exec=', PPPClient);
-    writeln(t,'Client-Spool=', PPPSpool);
     writeln(t,'Client-Path=', PPPClientPath);
+    writeln(t,'Client-Exec=', PPPClient);
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname);
+    writeln(t,'Client-AddServers=', PPPAddServers);
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
@@ -547,6 +550,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.8  2001/04/09 16:47:19  mk
+  - arbeiten am Client-Modus
+
   Revision 1.10.2.7  2001/01/30 10:01:24  mk
   - weitere arbeiten am Client-Modus
 

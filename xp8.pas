@@ -512,7 +512,7 @@ begin
     Articles := '10';
     dialog(30,3,'Newsgroups bestellen',x,y);
     maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
-    mhnr(11901);
+    mhnr(11910);
     readmask(brk);
     enddialog;
     if brk then
@@ -1538,7 +1538,7 @@ begin
           end;
     1 : if ppp then
         begin
-          rfehler(828); { 'Client-Modus - Newsgroupliste bitte Åber externen Client anfordern!' }
+          hinweis(getres2(10800,28)); { 'Client-Modus - Newsgroup-Liste bitte Åber externen Client anfordern!' }
           exit;
         end else
        if not ntMapsBrettliste(nt) then begin
@@ -1828,6 +1828,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.11  2001/04/09 16:47:18  mk
+  - arbeiten am Client-Modus
+
   Revision 1.10.2.10  2001/04/03 17:19:45  mk
   - fixes fuer Client-Modus
 

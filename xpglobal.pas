@@ -20,6 +20,7 @@ const
   author_mail = 'dev@openxp.de';
 
        xp_xp       : string[17] = 'CrossPoint/OpenXP';
+       xp_client   : string[17] = 'CrossPoint/Client';
        xp_origin   : string[21] = '--- CrossPoint/OpenXP';
   x_copyright = '(c) 2000';
 
@@ -97,6 +98,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29.2.14  2001/04/09 16:47:19  mk
+  - arbeiten am Client-Modus
+
   Revision 1.29.2.13  2001/01/10 17:39:07  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

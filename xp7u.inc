@@ -546,8 +546,12 @@ begin
       NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
+      exchange(s, '$CLPATH+\', PPPClientpath);
+      exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLSPOOL', PPPSpool);
+      Wrt2(sp(screenwidth+1-length(xp_client)-wherex) + xp_client);   { 'CrossPoint/Client' }
+      MkDir(PPPSpool);
       shell(s,600,3);
     end;
 
@@ -599,6 +603,9 @@ begin
           RenameFiles;
         end;
       end;
+
+      AppLog(fidologfile,'client.log');
+      if exist('client.log') then _era('client.log');
     end else
       if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
         if ImportUUCPfromSpool(SysopInp) then
@@ -609,6 +616,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.11  2001/04/09 16:47:18  mk
+  - arbeiten am Client-Modus
+
   Revision 1.13.2.10  2001/02/28 13:57:41  mk
   - grossschreibung Boxname
 

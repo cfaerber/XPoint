@@ -100,7 +100,7 @@ var fa : fidoadr;
 begin
   if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(_MPMask,boxname)) then begin
     splitfido(boxname,fa,0);
-    getdname:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
+    getdname:=ustr(formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4));
     end
   else
     if validfilename(left(boxname,8)+BfgExt) then
@@ -245,6 +245,7 @@ var ok   : boolean;
     dir  : dirstr;
     name : namestr;
     ext  : extstr;
+    s1: String;
 begin
   PPPClientTest:=true;
   fn:=trim(s);
@@ -253,12 +254,17 @@ begin
   begin
     fsplit(fn,dir,name,ext);
     ok := dir = '';
+    s1 := GetField(23);
+    if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+    if ustr(s1) =  ustr(Dir) then Ok := true;
+    if Dir = '$CLPATH+\' then ok := true;
     if not ok then
     begin
       rfehler1(936, UStr(fn)); { 'Dieser Eintrag darf keinen Pfad enthalten!' }
       PPPClientTest := false;
     end else
     begin
+      exchange(fn, '$CLPATH+\', s1);
       if ext<>'' then
         ok:=fsearch(fn,ownpath)<>''
       else
@@ -328,6 +334,13 @@ begin
         end;
       end else
         PPPClientPathTest:=false;
+  end else
+  begin
+    if GetField(22) = 'J' then
+    begin
+      PPPClientPathTest:=false;
+      rfehler(939)           { 'Dieser Pfad darf nicht leer sein!' }
+    end;
   end;
 end;
 
@@ -1856,6 +1869,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.18  2001/04/09 16:47:19  mk
+  - arbeiten am Client-Modus
+
   Revision 1.19.2.17  2001/02/11 12:32:04  mk
   - Client-Modus Updates
 

@@ -1253,7 +1253,7 @@ end;
 
 { MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
 {$IFDEF NOASM }
-Function Right(s:string; n:byte):string;
+Function Right<(s:string; n:byte):string;
 begin
   if n>=length(s) then
     Right:=s
@@ -2224,6 +2224,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.13  2001/04/09 16:47:16  mk
+  - arbeiten am Client-Modus
+
   Revision 1.37.2.12  2001/01/04 17:06:45  mk
   - iifs now uses const parameters
 

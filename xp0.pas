@@ -560,6 +560,7 @@ type   textp  = ^text;
                   PPPClient : string[60];  { PPP Client                }
                   PPPSpool  : string[60];  { PPP Spool                 }
                   PPPClientPath: string[60]; { PPP Client Path         }
+                  PPPAddServers: string[200]; { Pakete mitsenden }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -1150,6 +1151,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.29  2001/04/09 16:47:17  mk
+  - arbeiten am Client-Modus
+
   Revision 1.54.2.28  2001/01/30 10:01:21  mk
   - weitere arbeiten am Client-Modus
 
