@@ -1046,7 +1046,7 @@ var t,lastt: taste;
           force_quotemsk:=force_quotemsk+ extXps;
         getren;
         end;
-      if quote=0 then BriefSchablone(pm,headf,fn,empf,realname);
+        BriefSchablone(pm,headf,fn,empf,realname);
       end;
     if netztyp in (netsRFC + [nt_ZCONNECT]) then begin
       re_n:=false; kein_re:=false;
@@ -2283,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.113  2001/12/31 13:53:39  mk
+  - fixed bug #490572 (template with Ctrl-B is missing)
+
   Revision 1.112  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
