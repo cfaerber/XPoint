@@ -919,6 +919,7 @@ begin                  { function Netcall }
   netcall:=false;
   connects:=0;
   IncomingFiles:=TStringList.Create;
+  xp3o.ForceRecipient:= '';
 
   {------------------------- call appropriate mailer ------------------------}
   Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
@@ -976,19 +977,20 @@ begin                  { function Netcall }
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
         if Boxpar^.SMTPAfterPop then
         begin
-          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
-          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile) or netcall_connect;
+                            
         end
         else begin
-          SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
+          netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
+          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles) or netcall_connect;
         end;
       end; {case ltPOP3}
 
       ltNNTP: begin
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
-        SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
-        GetNNTPMails(BoxName,Boxpar,IncomingFiles);
+        netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
+        netcall_connect:= GetNNTPMails(BoxName,Boxpar,IncomingFiles) or netcall_connect;
       end;
 
       else
@@ -1007,13 +1009,17 @@ begin                  { function Netcall }
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
       if FileExists(IncomingFiles[0])then _era(IncomingFiles[0]);
     end;
+  xp3o.ForceRecipient:= '';
   IncomingFiles.Destroy;
   freeres;
   netcalling:=false;
   cursor(curoff);
   Holen(ScreenPtr);
   aufbau:=true;
-  if Netcall_connect and not FidoCrash then AponetNews;
+  if Netcall_connect and not FidoCrash then begin
+    WrTiming('NETCALL '+BoxName);
+    AponetNews;
+    end;
   Debug.DebugLog('xpnetcall','finished netcall',DLInform);
 end;
 
@@ -1217,6 +1223,10 @@ end.
 
 {
   $Log$
+  Revision 1.22  2001/06/09 11:02:20  ma
+  - added ForceOneArea feature (for POP3 server type)
+  - fixed: "last netcall" mark
+
   Revision 1.21  2001/06/05 16:44:49  ma
   - Fido crash netcalls should be working again
   - cleaned up a bit
