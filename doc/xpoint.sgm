@@ -360,8 +360,8 @@
         <email>mh@openxp.de</email> (Programmierung), <ulink
         url="http://www.westfalen.de/private/khms/">Kai
         Henningsen</ulink> <email>kh@openxp.de</email>, Michael
-        Heydekamp <email>my@openxp.de</email> (Dokumentation und
-        Design), Helmut Hullen <email>hh@openxp.de</email>
+        Heydekamp <email>my@openxp.de</email> (Online-Hilfe, Dokumentation
+        und Design), Helmut Hullen <email>hh@openxp.de</email>
         (ToDo-Liste), Malte Kiesel <email>ma@openxp.de</email>, Klaus
         P. Kleinsimon <email>kp@openxp.de</email>, Michael Koppel
         <email>mo@openxp.de</email> (Programmierung), <ulink
@@ -25022,6 +25022,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.3.4.7  2000/11/23 22:07:36  my
+- task description of MY completed
+
 Revision 1.3.4.6  2000/11/19 17:23:07  fe
 XP-Namen und Binaerdateinamen konfigurierbar gemacht.
 
