@@ -576,7 +576,12 @@ begin
   if edpush then begin
     attrtxt(col.coledithead);
     moff;
+{$IFDEF NCRT }
+    { Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden }
+    wpush(1,GetScreenCols,1,GetScreenLines,'-');
+{$ELSE }
     wpush(1,80,1,2,'-');         { 'Nachricht an  ' / 'Nachricht in  ' }
+{$ENDIF }
     p:=cpos('@',empfaenger);
     wrt(1,1,' ');
     if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
@@ -2210,6 +2215,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/05/07 10:41:27  hd
+  - Linux: Variable Fensterbreite
+
   Revision 1.27  2000/05/06 17:29:23  mk
   - DOS DPMI32 Portierung
 

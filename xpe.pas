@@ -275,7 +275,11 @@ begin
     end
   else
     m2t:=false;
+{$IFDEF NCRT }
+  ed:=EdInit(1,GetScreenCols,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
+{$ELSE }
   ed:=EdInit(1,80,1+keeplines,screenlines-iif(EditFusszeile,1,0),{74}0,true,2,OtherQuoteChars);
+{$ENDIF }
   if EdLoadFile(ed,fn,reedit,{iif(reedit,}1{,0)}) then;
   sichern(p);
   if EditFusszeile then DispFunctionkeys(true);
@@ -471,6 +475,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/07 10:42:04  hd
+  - Linux: Variable Fensterbreite
+
   Revision 1.13  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 
