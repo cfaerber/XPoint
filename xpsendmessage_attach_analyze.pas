@@ -173,6 +173,7 @@ begin
     if(pa.FileCharset='IBM437') or 
       (pa.FileCharset='') then 
     begin
+(*    
       if ntIBM(netztyp) then
       begin
         if not pa.Analyzed.Is8Bit then
@@ -182,6 +183,7 @@ begin
         else
           pa.ContentCharset := 'IBM437';
       end else
+*)      
       begin
         if not pa.Analyzed.Is8Bit then
           pa.ContentCharset := 'US-ASCII'
@@ -193,6 +195,7 @@ begin
     end else
     if pa.FileCharset='ISO-8859-1' then 
     begin
+(*    
       if ntIBM(netztyp) then
       begin
         if not pa.Analyzed.Is8Bit then
@@ -202,6 +205,7 @@ begin
         else
           pa.ContentCharset := 'IBM437';
       end else
+*)      
       begin
         if not pa.Analyzed.Is8Bit then
           pa.ContentCharset := 'US-ASCII'
@@ -211,6 +215,7 @@ begin
     end else
     if pa.FileCharset='UTF-8' then 
     begin
+(*    
       if ntIBM(netztyp) then
       begin
         if not pa.Analyzed.Is8Bit then
@@ -218,6 +223,7 @@ begin
         else
           pa.ContentCharset := 'IBM437';
       end else
+*)      
       begin
         if not pa.Analyzed.Is8Bit then
           pa.ContentCharset := 'US-ASCII'
@@ -226,10 +232,12 @@ begin
       end;
     end else
     begin
+(*    
       if ntIBM(netztyp) and 
         not (ZC_MIME and ntOptISO(netztyp)) then
           pa.ContentCharset := 'IBM437'
         else
+*)        
           pa.ContentCharset := pa.FileCharset
     end;
 
