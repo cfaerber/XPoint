@@ -96,13 +96,6 @@ procedure IsdnConfig;
 implementation  {----------------------------------------------------}
 
 uses
-{$IFDEF unix}
-  {$IFDEF FPC}
-  serial,
-  {$ELSE}
-  {$FATALERROR Check if you have an unit called 'serial' }
-  {$ENDIF}
-{$ENDIF}
   xp1o,
   xp2,
   xp4o2,
@@ -1520,6 +1513,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/11/13 11:09:29  ml
+  - uses serial kill - doesseems to be needed
+
   Revision 1.62  2000/11/12 17:28:45  hd
   - Terminal funktioniert (aber nur im Direkten Modus)
 
