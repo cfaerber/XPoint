@@ -1047,7 +1047,7 @@ begin   { readmask }
 
         if (counter>0) and ((t='-') or (t='+')) then
           _count_
-        else if t>=' ' then begin
+        else if (t>=' ') or (t=#$15) {''} then begin
           if replace then
             s^:=mask
           else
@@ -1114,6 +1114,10 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.9  2002/03/27 19:50:39  my
+  MY+JG:- Das Paragraphenzeichen (#21) kann jetzt in allen Eingabefeldern,
+          in denen alle Zeichen zugelassen sind, eingegeben werden.
+
   Revision 1.13.2.8  2002/03/08 23:35:00  my
   MY:- CVS-Logs korrigiert
 

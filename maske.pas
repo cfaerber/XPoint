@@ -25,7 +25,7 @@ uses
 
 const digits       : string[12] = '-0123456789 ';
       MaskSeekMenu : Byte = 0;
-      allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
+      allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
                 'Z[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡‰‹‘’“”•–'+
                 '—™› ΅Ά£¤¥¦§¨©ª«¬­®―ΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ';
       hexchar = '<0123456789abcdef';
@@ -1309,6 +1309,10 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.9  2002/03/27 19:50:39  my
+  MY+JG:- Das Paragraphenzeichen (#21) kann jetzt in allen Eingabefeldern,
+          in denen alle Zeichen zugelassen sind, eingegeben werden.
+
   Revision 1.8.2.8  2001/12/11 17:52:37  my
   MY:- Neue Variable 'delete_on_cDel' in xp9.pas: Mit <Ctrl-Del> kann der
        Inhalt auch von Feldern gel”scht werden, die gegen Eingaben
