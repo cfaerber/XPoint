@@ -1798,11 +1798,11 @@ begin
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
-  closemask;
-  closebox;
   for i:=0 to enetztypen-1 do
     if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
       nt:=ntnr[i];
+  closemask;
+  closebox;
   if not ntNameSpace(nt) then
     for i:=1 to length(user) do    { Leerzeichen aus Username -> "_" }
       if user[i]=' ' then user[i]:='_';
@@ -1844,6 +1844,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/07/15 18:29:55  ml
+  - Ansistring + NilStringzugriffBug
+
   Revision 1.26  2000/07/12 12:57:40  hd
   - Ansistring
 

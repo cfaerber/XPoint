@@ -360,8 +360,9 @@ begin
   if masks=maxmask then error('Overflow');
   inc(masks);
   amask:=masks;
-  new(mask[amask]);
-  amaskp:=mask[amask];
+{  new(mask[amask]);}
+  new(amaskp);
+  mask[amask] := amaskp;
   with amaskp^ do
   begin
     stat:=mask[0]^.stat;
@@ -608,13 +609,17 @@ end;
 
 
 procedure setall(var text:string; x,y:byte; addblank:boolean);
+var
+   newfld : feldp;
 begin
   with amaskp^ do
     if felder=maxfields then
       error('no more fields')
     else begin
       inc(felder);
-      new(fld[felder]);
+      new(newfld);
+{      new(fld[felder]);}
+       fld[felder] := newfld;
       lastfld:=fld[felder];
       fillchar(lastfld^,sizeof(feldrec),0);
       {:  autoup:=false; autodown:=false; topcase:=false;
@@ -1253,6 +1258,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2000/07/15 18:29:55  ml
+  - Ansistring + NilStringzugriffBug
+
   Revision 1.13  2000/07/13 10:23:44  mk
   - Zeiger auf Strings entfernt
 
