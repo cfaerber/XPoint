@@ -304,18 +304,19 @@ begin
   begin
     empf:=iifs(pm,'','A')+Empflist[0];
     EmpfList.Delete(0);
-    // Achtung, das ist bestimmt falsch :-(
-    sendempflist.Add(EmpfList[0]);
+    sendempflist.AddStrings(EmpfList);
     xpsendmessage.forcebox:='';
-  end
-  else
-    EmpfList.Clear;
+  end;
+  EmpfList.Clear;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.33  2001/12/23 10:59:03  mk
+  - fixed ReadXPostEmpfaenger, EmpfList was not correctly assigned to SendEmpfList
+
   Revision 1.32  2001/10/17 22:11:48  ml
   - removed some circular unit-defs
 
