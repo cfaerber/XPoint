@@ -895,16 +895,23 @@ begin
                           (pos('news@dfki.uni-sb.de',absender)=0)) }
             else begin
               dbReadN(ubase,ub_userflags,uflags);
-              aufnehmen:=odd(uflags);
+              aufnehmen:=odd(uflags); // Filter AMs (Twit filter)
+              if not aufnehmen then
+                // AM is filtered, don't put it in /Junk
+                msgsent:=true;
               end;
+
           if FirstChar(Firstempfaenger)<>'U' then begin
+            // AM
             dbSeek(bbase,biBrett,UpperCase(Firstempfaenger));
             if not dbFound then
             begin
+              // AM for a group not yet existing
               if (Empfaenger.Count>1) or (attrib and AttrControl<>0) then
+                // crossposting or cancel msg, drop
                 aufnehmen:=false
-              else if aufnehmen then begin          { neues Brett anlegen }
-
+              else if aufnehmen then begin
+                // create new group
                 if FirstChar(Firstempfaenger)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=Firstempfaenger;
@@ -940,7 +947,10 @@ begin
                 end;   { aufnehmen }
               end    { not dbFound }
             else
-              if dbReadInt(bbase,'flags') and 4<>0 then aufnehmen:=true;
+              // AM for an existing group
+              if dbReadInt(bbase,'flags') and 4<>0 then
+                // twit filter disabled for this group
+                aufnehmen:=true;
             if aufnehmen then
               _brett:=mbrettd(FirstChar(FirstEmpfaenger),bbase);
             end;
@@ -1091,12 +1101,14 @@ begin
             wrll(0);
             end;
 
-          inc(empfnr);
+          inc(empfnr); // iterate through recipients
           end;           { with hdp }
         if msgsent then
           TestControlMessage;
 
-        if (hdp.Empfaenger.Count>1) and (empfnr>hdp.Empfaenger.Count) and not msgsent and
+        if (hdp.Empfaenger.Count>1) and
+           (empfnr>hdp.Empfaenger.Count) and
+           not msgsent and
            not IsCancelMsg then
         begin
           { Nachricht nach /Junk }
@@ -1241,6 +1253,10 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.4  2002/05/27 16:05:19  ma
+  - fixed: Crosspostings from filtered users were put in /Junk
+  - added comments
+
   Revision 1.83.2.3  2002/05/23 22:54:54  mk
   - added debug logs for 'Bezugsverkettung' and 'bearbeite_cancels_supersedes'
   - fixed record size bug in Bezugsverkettung
