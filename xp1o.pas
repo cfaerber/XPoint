@@ -311,13 +311,13 @@ begin
   if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
   begin
 
-    if upcase(c) = k1_I {'I'} then msg_info;                         { 'I' fuer Lister }
+    if upcase(c) = k2_I then msg_info;                         { 'I' fuer Lister }
 
-    if upcase(c) = k1_V {'V'} then ex(-2);                           { 'V' fuer Lister }
+    if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
          Exitcode -2. Weiter bei xp4w.inc/read_msg }
                             
-    if upcase(c) = k1_O {'O'} then                                   { 'O' fuer Lister }
+    if upcase(c) = k2_O then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
       ex(5);
@@ -975,6 +975,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/04/25 08:43:14  jg
+  - fuer "O","I" und "V" im Lister die korrekten Config-Tasten verwendet
+
   Revision 1.35  2000/04/24 13:17:39  jg
   - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
   - "H" im Lister kann jetzt das Halteflag auch ausschalten
