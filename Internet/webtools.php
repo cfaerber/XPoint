@@ -19,7 +19,7 @@ function ShowHeader($title) {
 	global $language, $Menu;
 
 	header ("Content-Type: text/html; charset=iso-8859-1");
-	header ("Content-Language ".$language);
+	header ("Content-Language: ".$language);
 	
 	// now we use XHTML 1.0
 	echo("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">\n");
