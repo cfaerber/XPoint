@@ -831,6 +831,7 @@ begin
   f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
   CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
   if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
+  errorlevel:=0; 
 end;
 
 procedure SysopTransfer;
@@ -1447,6 +1448,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/04/23 13:35:00  jg
+  - Fix?: beim Zconnect-Ausgangsfilter-Aufruf wird Errorlevel=0 gesetzt.
+
   Revision 1.16  2000/04/23 07:58:53  mk
   - OS/2-Portierung
 
