@@ -117,7 +117,6 @@ end; { destructor Done }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function TSysEventObj.CreateEvent(InitialState: Boolean): Boolean;
-var Returncode: longint;
 begin
   CreateEvent := true;
 
@@ -127,15 +126,13 @@ begin
   {$ENDIF}
 
   {$IFDEF OS2}
-    returncode := DosCreateEventSem(nil, SemHandle, 0, InitialState);
-    CreateEvent := (returncode=0);
+    CreateEvent :=DosCreateEventSem(nil, SemHandle, 0, InitialState)=0;
   {$ENDIF}
 end; { func. CreateEvent }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure TSysEventObj.SignalEvent;
-var RC: Longint;
 begin
   {$IFDEF WIN32}
     if SemHandle <> -1 then
@@ -144,15 +141,14 @@ begin
 
   {$IFDEF OS2}
     if SemHandle <> -1 then
-      RC := DosPostEventSem(SemHandle);
+      DosPostEventSem(SemHandle);
   {$ENDIF}
 end; { proc. SignalEvent }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure TSysEventObj.ResetEvent;
-var Flag: Longint;
-    RC  : Longint;
+{$IFDEF OS2}var Flag: Longint;{$ENDIF}
 begin
   {$IFDEF WIN32}
     if SemHandle <> -1 then
@@ -162,7 +158,7 @@ begin
   {$IFDEF OS2}
     Flag := 0;
     if SemHandle <> -1 then
-      RC := DosResetEventSem(SemHandle, Flag);
+      DosResetEventSem(SemHandle, Flag);
   {$ENDIF}
 end; { proc. ResetEvent }
 
@@ -170,7 +166,7 @@ end; { proc. ResetEvent }
 
 function TSysEventObj.WaitForEvent(TimeOut: Longint): Boolean;
 var ReturnCode: Longint;
-    Flag      : Longint;
+{$IFDEF OS2}    Flag      : Longint;{$ENDIF}
 begin
   {$IFDEF WIN32}
     if SemHandle <> -1 then
@@ -191,7 +187,6 @@ end; { func. WaitForEvent }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure TSysEventObj.DisposeEvent;
-var Flag: Longint;
 begin
   {$IFDEF WIN32}
     if SemHandle <> -1 then CloseHandle(SemHandle);
@@ -199,7 +194,6 @@ begin
   {$ENDIF}
 
   {$IFDEF OS2}
-    Flag := 0;
     if SemHandle <> -1 then DosCloseEventSem(SemHandle);
     SemHandle := -1;
   {$ENDIF}
@@ -308,7 +302,7 @@ function TThreadsObj.CreateThread(StackSize    : Longint;
                                   CallProc,
                                   Parameters   : Pointer;
                                   CreationFlags: Longint): Boolean;
-var ReturnCode: Longint;
+{$IFDEF OS2}var ReturnCode: Longint;{$ENDIF}
 begin
  {$IFNDEF VirtualPascal}
   {$IFDEF WIN32}
@@ -396,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2000/09/11 22:58:37  ma
+  - Kosmetik
+
   Revision 1.1  2000/06/22 17:30:02  mk
   - initial release
   - please keep comments in English

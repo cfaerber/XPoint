@@ -8,7 +8,7 @@
 ** See history at end of file
 *)
 
-{$IFDEF FPC} {$I OCDefFPC.inc} {$ENDIF}
+{$IFDEF FPC} {$I OCDefFPC.inc} {$NOTES OFF} {$ENDIF}
 
 const
   dcb_Binary              = $00000001;
@@ -677,6 +677,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.2  2000/09/11 22:58:37  ma
+  - Kosmetik
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English
