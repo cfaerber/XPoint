@@ -618,7 +618,7 @@ var fn     : pathstr;
   procedure SetKK;
   begin
     if kk then
-      disprec[p]:=dp;
+      disprec[p]:=dpp;
     kk:=false;
     GoP;
   end;
@@ -1450,6 +1450,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.13  2001/05/30 21:16:00  mk
+  JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn> and +/-
+       the message that has been entered with the last <Ctrl-Pg*> was replaced in
+       the message window with the message the message reader had entered first.
+
   Revision 1.3.2.12  2000/12/25 18:27:05  mk
   - Addressbuchgruppen > 1 werden automatisch auf 0/1 gaendert
 
