@@ -91,9 +91,13 @@ uses
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      NetTypes: array[0..10] of byte = (nt_UUCP, nt_ZConnect,
-        nt_Fido, nt_QWK, nt_Maus, nt_Netcall, nt_Magic, nt_Pronet, nt_Quick,
-        nt_POP3, nt_NNTP);
+{$IFNDEF DOS32}
+      SupportedNetTypes: array[0..5] of byte =
+        (nt_UUCP_C, nt_POP3, nt_NNTP, nt_UUCP_U, nt_Fido, nt_ZConnect);
+{$ELSE}
+      SupportedNetTypes: array[0..3] of byte =
+        (nt_UUCP_C, nt_UUCP_U, nt_Fido, nt_ZConnect);
+{$ENDIF}
 
 var   UpArcnr   : integer;    { fr EditPointdaten }
       DownArcNr : integer;
@@ -650,10 +654,8 @@ var d         : DB;
     i: Integer;
   begin
     Netz_Typ:=ntName(nt_Netcall);
-    if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
-    else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U);
-    for i:=0 to High(NetTypes) do
-      if nt=NetTypes[i] then Netz_Typ:=ntName(NetTypes[i]);
+    for i:=0 to High(SupportedNetTypes) do
+      if nt=SupportedNetTypes[i] then Netz_Typ:=ntName(SupportedNetTypes[i]);
   end;
 
   procedure displine(i:integer);
@@ -1257,11 +1259,8 @@ restart:
   name:=''; user:='';
   ntyp:=ntName(nt_UUCP_C); nt:=nt_UUCP_C;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
-  mappsel(true,ntname(41));
-  mappsel(true,ntname(42));
-  for i:=1 to High(NetTypes) do
-    if (NetTypes[i] in ntAllowed) then
-      mappsel(true,ntName(NetTypes[i]));
+  for i:=0 to High(SupportedNetTypes) do
+    mappsel(true,ntName(SupportedNetTypes[i]));
   mset3proc(gf_getntyp);
   maddstring(3,10,getres2(912,13),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
     mhnr(680);                                       { 'Server' bzw. 'Boxname' }
@@ -1273,14 +1272,14 @@ restart:
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
   pppm:=false;
-  if LowerCase(ntyp)=LowerCase(ntName(41)) then
+  if LowerCase(ntyp)=LowerCase(ntName(nt_UUCP_C)) then
   begin
-    ntyp:=ntName(40);
+    ntyp:=ntName(nt_UUCP);
     pppm:=true;
   end;
-  for i:=0 to High(NetTypes) do
-    if LowerCase(ntyp)=LowerCase(ntName(NetTypes[i])) then
-      nt:= NetTypes[i];
+  for i:=0 to High(SupportedNetTypes) do
+    if LowerCase(ntyp)=LowerCase(ntName(SupportedNetTypes[i])) then
+      nt:= SupportedNetTypes[i];
   closemask;
   closebox;
   email:='';
@@ -1404,7 +1403,6 @@ end;
 function PPPClientPathTest(var s:string):boolean;
 var ok   : boolean;
     fn   : String;
-    path : string;
     x,y  : Integer;
 begin
   PPPClientPathTest:=true;
@@ -1517,6 +1515,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/07/29 12:59:02  ma
+  - cleaned up server config dialog
+  - removed ntAllowed variable
+
   Revision 1.10  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 

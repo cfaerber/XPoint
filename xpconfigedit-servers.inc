@@ -19,7 +19,7 @@
 }
 
   procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn, email,
-                     bdomain,fidoname:string; txt:atext; var brk:boolean);
+                     bdomain,fidoname:string; WindowHeadline:atext; var brk:boolean);
   var x,y  : Integer;
       real : boolean;
       dom  : boolean;
@@ -43,7 +43,7 @@
     map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_QWK]);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
-           iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),txt,x,y);
+           iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),WindowHeadline,x,y);
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
     { Kleinschreibung fuer Boxname zulassen}
@@ -159,11 +159,11 @@
 
   // 'Namen' fuer die Internet-Boxentypen
   procedure InetNameRead(nt:byte; var name,user,komm,realname,fqdn:string;
-    var brk:boolean);
+    const WindowHeadline: string; var brk:boolean);
   var x,y, bLen  : Integer;
   begin
     DomainNt:=nt;
-    dialog(ival(getres2(912,0)),11,name,x,y);
+    dialog(ival(getres2(912,0)),11,WindowHeadline,x,y);
     blen:=ntBoxnameLen(nt);
     maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š'); { 'Boxname' }
       gf_fido:=false; msetvfunc(xp9_testbox);
@@ -196,17 +196,14 @@
     dialog(ival(getres2(913,0)),3,box,x,y);
     maddstring(3,2,getres2(913,1),ntyp,10,10,''); mhnr(660);   { 'Netztyp ' }
     freeres;
-    mappsel(true,ntname(nt_uucp_c));  { RFC/Client }
-    mappsel(true,ntname(nt_uucp_u));  { RFC/UUCP   }
-    for i:=1 to High(Nettypes) do
-      if (Nettypes[i] in ntAllowed) then
-        mappsel(true,ntName(NetTypes[i]));
+    for i:=0 to High(SupportedNetTypes) do
+      mappsel(true,ntName(SupportedNetTypes[i]));
     readmask(brk);
     enddialog;
     if not brk then
-      for i:=0 to High(NetTypes) do
-        if LowerCase(ntyp)=LowerCase(ntName(NetTypes[i])) then
-          nt:= NetTypes[i];
+      for i:=0 to High(SupportedNetTypes) do
+        if LowerCase(ntyp)=LowerCase(ntName(SupportedNetTypes[i])) then
+          nt:= SupportedNetTypes[i];
   end;
 
   procedure unique(var dname:string);    { eindeutigen Dateinamen erzeugen }
@@ -224,7 +221,7 @@
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
                      PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; Titel:String);
   var
-    x,y, b: Integer ;
+    x,y: Integer ;
   label restart;
   begin
   restart:
@@ -293,10 +290,10 @@
       nt:=nt_Netcall
     else begin
       dbRead(d,'netztyp',nt);
-      if (nt=40) and pppm then nt:=41;
+      if (nt=nt_UUCP) and pppm then nt:=nt_UUCP_C;
     end;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
-    if nt<>41 then
+    if nt<>nt_UUCP_C then
     begin
       pppM:=false;
       pp:='';
@@ -315,7 +312,7 @@
       end
     else begin
       pppM:=true;
-      nt:=40;
+      nt:=nt_UUCP;
       pp:=boxpar^.ClientPath;
       pc:=boxpar^.ClientExec;
       ps:=boxpar^.ClientAddServers;
@@ -345,7 +342,7 @@
       _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_UUCP_C)))
     else
       if nt in [nt_NNTP, nt_POP3] then
-        INetNameRead(nt,name,user,komm,real,fqdom,brk)
+        INetNameRead(nt,name,user,komm,real,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
         NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
@@ -1179,7 +1176,7 @@
     komm:= dbReadStr(d,'kommentar');
     realname:= dbReadStr(d,'realname');
     fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
-    INetNameRead(nt,name,user,komm,realname,fqdom,brk);
+    INetNameRead(nt,name,user,komm,realname,fqdom,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
       newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
@@ -1960,7 +1957,6 @@
     var i,n  : integer;
         x,y  : Integer;
         flags: byte;
-        uucp : byte;
         mi   : byte;
     begin
       msgbox(38,3,'',x,y);
@@ -1969,13 +1965,12 @@
       dbSetIndex(bbase,0);
       dbGoTop(bbase);
       n:=dbRecCount(bbase);
-      uucp:=iif(nt=nt_UUCP,16,0);
       i:=1;
       while not dbEOF(bbase) do begin
         gotoxy(x+31,y+1); moff;
         write(i*100 div n); mon;
         if UpperCase(dbReadStr(bbase,'pollbox'))=UpperCase(box) then begin
-          flags:=dbReadInt(bbase,'flags') and not 16 + uucp;
+          flags:=dbReadInt(bbase,'flags') and not 16 + iif(nt IN [nt_UUCP,nt_NNTP],16,0);
           dbWriteN(bbase,bb_flags,flags);
           end;
         dbNext(bbase);
@@ -2026,6 +2021,10 @@
 
 {
   $Log$
+  Revision 1.10  2001/07/29 12:59:02  ma
+  - cleaned up server config dialog
+  - removed ntAllowed variable
+
   Revision 1.9  2001/07/27 18:35:11  mk
   JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
           under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
