@@ -379,6 +379,7 @@ var   hdp      : headerp;
     reset_var;
     last:=0;
     bufline:='';
+    firstline := '';
 
     while not eof(t) and (anzahl<maxparts) do begin
       _start:=n+1;
@@ -392,7 +393,7 @@ var   hdp      : headerp;
         else begin
           readln(t,s);
           inc(n);
-          if n=1 then firstline:=s;
+          if (n>=1) and (Firstline = '') then firstline:=s;
           end;
         endbound:=(s=bound+'--');
         isbound:=endbound or (s=bound);
@@ -763,6 +764,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/11/18 23:31:41  mk
+  - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
+
   Revision 1.36  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 
