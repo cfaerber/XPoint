@@ -32,6 +32,7 @@ uses
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
   xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,xpmime,
   addresslist,xpnt,
+  xprope,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
@@ -900,6 +901,9 @@ finalization
 
 {
   $Log$
+  Revision 1.71  2003/01/13 22:48:51  cl
+  - enabled TRopeStream
+
   Revision 1.70  2003/01/13 22:14:28  cl
   - send window rewrite IIa - cleanups
 

@@ -631,6 +631,9 @@ end;
 end.
 
 // $Log$
+// Revision 1.1  2003/01/13 22:48:51  cl
+// - enabled TRopeStream
+//
 // Revision 1.1  2003/01/11 19:48:39  cl
 // - new class TRopeStream to replace TMemoryStream
 //

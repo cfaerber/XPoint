@@ -154,7 +154,7 @@ var FidoOriginSav: string;
         d2:= TMemoryStream(data)             // use as is
       else begin
         d2:= TMemoryStream.Create;           // make a copy in memory
-        try d2.Size:=data.Size except end;
+        try d2.Size:=data.Size except end;   // if data.Size does not work
         data.Seek(0,soFromBeginning);
         CopyStream(data,d2);
         data.Free;
@@ -356,7 +356,7 @@ var FidoOriginSav: string;
               ((IsMessage) and not flOhnesig and (SigData<>'')) or
               (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) then
            begin
-             s1 := TMemoryStream.Create;
+             s1 := TRopeStream.Create;
              MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
                SigData,FidoOrigin);
              if ContentType.NeedCharset then begin
@@ -389,7 +389,7 @@ var FidoOriginSav: string;
               if not Analyzed.EncodingSafeForSigned[ContentEncoding] then
                 ContentEncoding := MimeEncodingQuotedPrintable;
 
-        s1 := TMemoryStream.Create;
+        s1 := TRopeStream.Create;
 
         for i:=0 to parts.Count-1 do
         begin
@@ -790,7 +790,7 @@ var FidoOriginSav: string;
           // encode the single part NOW for MIME
           assert(parts.count=1);
 
-          s1.Free; s1:=TMemoryStream.Create;
+          s1.Free; s1:=TRopeStream.Create;
           with TSendAttach_Part(parts[0]) do
             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
               iifs((IsMessage),sigData,''),
@@ -1034,6 +1034,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.11  2003/01/13 22:48:51  cl
+// - enabled TRopeStream
+//
 // Revision 1.10  2003/01/13 22:05:19  cl
 // - send window rewrite - Fido adaptions
 // - new address handling - Fido adaptions and cleanups
