@@ -303,6 +303,7 @@ begin
   exitproc:=@newexit;
   Int15delay:=ParOS2;
   if lo(DosVersion)>=20 then OStype:=os_2
+  else if lnxversion>0 then OStype:=os_linux
   else if Winversion>0 then OStype:=os_windows
   else OStype:=os_dos;
 
@@ -1587,6 +1588,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/03/01 22:30:21  rb
+  Dosemu-Erkennung eingebaut
+
   Revision 1.9  2000/02/20 22:09:30  mk
   MO: * Fidolastseek von 28 auf 40 erweitert
 

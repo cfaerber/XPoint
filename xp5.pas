@@ -314,10 +314,11 @@ begin
   moff;
 end;
 
-procedure writever(os2,win:boolean; x,y:byte);
+procedure writever(os2,win,lnx:boolean; x,y:byte);
 begin
   gotoxy(x,y);
   if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
+  else if lnx then write(lo(lnxversion),'.',hi(lnxversion))
   else begin
     write(lo(dosversion):2,'.',formi(hi(dosversion),2));
     if win then begin
@@ -339,6 +340,7 @@ var
 {$ENDIF }
     os2  : boolean;
     win  : boolean;
+    lnx  : boolean;
     free : longint;
 begin
   win:=(WinVersion>0);
@@ -350,7 +352,8 @@ begin
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
   os2:=lo(dosversion)>=10;
-  wrt(x+4,y+8,iifs(os2,'OS/2','DOS')+getres2(rnr,7));
+  lnx:=lnxversion>0;
+  wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
   if win then
     wrt(x+4,y+9,'Windows'+getres2(rnr,7));
   attrtxt(col.colmbox);
@@ -370,7 +373,7 @@ begin
   if free>=0 then write((free / $100000):6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
 {$ENDIF }
-  WriteVer(os2,win,x+22,y+8);
+  WriteVer(os2,win,lnx,x+22,y+8);
   wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
   mon;
   freeres;
@@ -391,6 +394,7 @@ var regs : registers;
     ems  : longint;
     os2  : boolean;
     win  : boolean;
+    lnx  : boolean;
     free : longint;
 begin
   win:=(WinVersion>0);
@@ -404,7 +408,8 @@ begin
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfÅgbar }
   os2:=lo(dosversion)>=10;
-  wrt(x+4,y+9,iifs(os2,'OS/2','DOS')+getres2(rnr,7));   { -Version }
+  lnx:=lnxversion>0;
+  wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
   attrtxt(col.colmbox);
@@ -447,7 +452,7 @@ begin
   gotoxy(x+57,y+6);
   if free>=0 then write(free / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,x+21,y+9);
+  WriteVer(os2,win,lnx,x+21,y+9);
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,10,9),getres2(rnr,9)+'...');
   mon;
   freeres;
@@ -997,6 +1002,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/01 22:30:21  rb
+  Dosemu-Erkennung eingebaut
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

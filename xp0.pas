@@ -653,7 +653,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                                             0,0,0,0,0,0,0);
 
-       OStype : (os_dos,os_windows,os_2) = os_dos;
+       OStype : (os_dos,os_linux,os_windows,os_2) = os_dos;
 
        Quit       : boolean = false;
        mbase      : pointer = nil;     { Nachrichten.Datenbank  }
@@ -1074,6 +1074,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.9  2000/03/01 22:30:21  rb
+  Dosemu-Erkennung eingebaut
+
   Revision 1.8  2000/02/27 22:28:51  mk
   - Kleinere Aenderung zum Sprachenwechseln-Bug
 

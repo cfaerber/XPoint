@@ -171,6 +171,7 @@ procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr)
 {$ENDIF }
 procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
+function lnxversion:word;                      { Dosemu-Version (analog zu dosversion), sonst 0 }
 { ================= Implementation-Teil ==================  }
 
 IMPLEMENTATION
@@ -2154,9 +2155,34 @@ asm
   @ende:
 end;
 
+function lnxversion:word;
+var biosdate:string[8];
+    vseg:word;
+begin
+  lnxversion:=0;
+  fastmove(ptr($f000,$fff5)^,biosdate[1],8);
+  biosdate[0]:=char(8);
+  vseg:=memw[0:$e6*4+2];
+  if (vseg=$f000) and (biosdate='02/25/93') then begin
+    asm
+      xor ax,ax
+      mov vseg,ax
+      int 0e6h
+      cmp ax,0aa55h
+      jne @nodosemu
+      mov vseg,bx
+    @nodosemu:
+    end;
+    lnxversion:=vseg;
+  end;  
+end;
+
 end.
 { 
   $Log$
+  Revision 1.15  2000/03/01 22:30:20  rb
+  Dosemu-Erkennung eingebaut
+
   Revision 1.14  2000/03/01 08:04:23  jg
   - UND/ODER Suche mit Suchoptionen "o" + "u"
     Debug-Checkfenster mit Suchoption "c"
