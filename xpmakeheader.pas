@@ -78,7 +78,7 @@ var i,res : integer;
       end else
       begin
         blockread(f,buf^,bufsize,bufanz);
-        Inc(size,o);
+//      Inc(size,o);
         o:=0;
       end;
 
@@ -96,55 +96,13 @@ var i,res : integer;
     if (l<BufAnz) and (Length(s)>0) and (s[Length(s)]=#13) then 
     begin
       SetLength(s,Length(s)-1);
+      Inc(Size, Length(s)+2);
       exit;
     end;
   
     goto again;
   end;
 
-(*  
-  procedure getline(var s:string);
-
-    procedure IncO;
-    begin
-      inc(o);
-      if o=bufanz then
-        if eof(f) then
-          ok:=false
-        else begin
-          inc(size,bufsize);
-          ReadBuf;
-        end;
-    end;
-
-  var
-    l: Integer;
-  begin
-    l := o + BufferScan(Buf^[o], BufAnz-o, #13);
-{   l := o;
-    while (Buf^[l] <> #13) and (l < BufAnz) do
-      inc(l); } 
-
-    if l = BufAnz then // das letze Byte war noch kein #13, dann neue Daten holen
-    begin
-      s := '';
-      while (buf^[o]<>#13) and (o< bufanz) do
-      begin
-        s := s + buf^[o];
-        incO;
-      end;
-      IncO;                                            
-    end else
-    begin
-      SetLength(s, l-o);
-      if l-o > 0 then
-        Move(Buf^[o], s[1], l-o);
-      o := l-1;
-      IncO; IncO;
-    end;
-    if ok and (buf^[o]=#10) then IncO;
-  end;
-*)
   procedure LRead(var s:string);
   begin
     s:=line;
@@ -600,12 +558,16 @@ begin
   CheckBetreff;
   if ConvBrettEmpf then
     CheckEmpfs;                      { /Brett@Box.domain -> /Brett }
-  inc(size,o);
+//inc(size,o);
   if res<>0 then ok:=false;
 end;
 
 {
   $Log$
+  Revision 1.37  2003/07/12 18:36:13  cl
+  - BUXFIX: byte count problem in makeheader::getline with rare messages
+    ("Fehlerhafter Puffer nicht eingelesen")
+
   Revision 1.36  2003/05/11 11:12:19  mk
   - use IsMailAddr when possible
 
