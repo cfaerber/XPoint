@@ -229,6 +229,9 @@ begin
     raise ESMTP.CreateFmt(res_error, [ErrorMsg]);
 end;
 
+{ Parses plain RFC mail buffer. Header should be from StartLine to StopLine.
+  Returns end of mail line number. Stores mail body start and end line number
+  in globals FromLine and ToLine. }
 function TSMTP.ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
                            Var From, Recip: String): Integer;
 var
@@ -245,13 +248,16 @@ begin
       Recip := Copy(Mail[I], Length(SMTPTOSIGN) + 1, Length(Mail[I]));
     if Pos(SMTPDATASIGN, Mail[I]) = 1 then
       FromLine := I + 1;
+    if Pos(SMTPQUITSIGN, Mail[I]) = 1 then begin
+      result := 0;
+      exit;
+    end;
   end;
   for I := StopLine to Mail.Count - 1 do
   begin
     ToLine := I;
     if (length(Mail[I]) = 1) then
       if Mail[I][1] = '.' then break;
-    if Pos(SMTPQUITSIGN, Mail[I]) = 1 then break;
   end;
   Result := ToLine;
   Dec(ToLine);
@@ -262,19 +268,18 @@ const
   SMTPHeaderLines = 4;
 var
   From, Recip: String;
-  iMail,I: Integer;
+  iMail,currLine: Integer;
 begin
   if Mail.Count < SMTPHeaderLines then exit;
-  I := 0; iMail := 1;
-  while I < Mail.Count - 1 do
+  currLine := 0; iMail := 1;
+  while currLine < Mail.Count - 1 do
   begin
-    I := ParseHeader(Mail, I, I + SMTPHeaderLines, From, Recip);
-    Output(mcInfo, res_postmsg, [iMail, ((I + 2) / Mail.Count * 100)]);
+    currLine := ParseHeader(Mail, currLine, currLine + SMTPHeaderLines, From, Recip);
+    if currLine = 0 then break;
+    Output(mcInfo, res_postmsg, [iMail, ((currLine + 2) / Mail.Count * 100)]);
     PostMail(Mail, iifs(EnvelopeFrom <> '', EnvelopeFrom, From), Recip);
-    Inc(I); Inc(iMail);
+    Inc(currLine); Inc(iMail);
   end;
-  if Pos(SMTPQUITSIGN, Mail[Mail.Count - 1]) <> 0 then
-    ToLine := Mail.Count - 2; {prevent disconnect for every Mail }
 end;
 
 
@@ -291,6 +296,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/10/24 10:06:15  ma
+  - fixed message end recognition
+    ("QUIT" line was misinterpreted as body end)
+
   Revision 1.16  2001/10/21 10:58:53  ma
   - fixed message boundary recognition
 
