@@ -121,6 +121,7 @@ type
 //  fSMTP: boolean ;               { frozen SMTP      }
 //  bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
+    ParECmd: boolean ;
     ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
 //  uncompress : string;
@@ -285,6 +286,7 @@ begin
   RFC1522 := false;             { Headerzeilen gem. RFC1522 codieren }
   getrecenvemp := false; { Envelope-Empfaenger aus Received auslesen? }
   ParSize := false;             { Size negotiation }
+  ParECmd := false;
   SMTP:= false;
 //cSMTP:= false;               { compressed SMTP  }
 //fSMTP:= false;               { frozen SMTP      }
@@ -3478,31 +3480,39 @@ type rcommand = (rmail,rsmtp,rnews);
       else   command := 'rnews';
     end;
 
-    (* TODO: don't write X- file, but E command *)
-    nr := hex(NextUunumber, 4);
-    assign(f2, dest + 'X-' + nr + '.OUT');
-    rewrite(f2, 1);
-    wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
     name := FirstChar(fn)+'.'+LeftStr(_from,7)+iifc(t in [rmail,rsmtp],'C','d')+RightStr(fn, 4);
-
-    wrs(f2, 'F ' + name);
-    wrs(f2, 'I ' + name);
-    wrs(f2, 'C ' + command);
-
-    fs := filesize(f2);
-    close(f2);
-
-    { queue command file }
     name2 := FirstChar(fn) + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
-    write(fc, 'S ', name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
-      NewsUser), ' - ', name2, ' 0666');
-    if ParSize then writeln(fc, ' "" ', _filesize(dest + fn + '.OUT')) else writeln(fc);
 
     { queue data file }
-    name2 := 'D.' + LeftStr(_to, 7) + 'X' + nr;
-    write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
-      nr, ' ', iifs(t in [rmail,rsmtp], MailUser, NewsUser), ' - ', name2, ' 0666');
-    if ParSize then writeln(fc, ' "" ', fs) else writeln(fc);
+    write(fc,iifs(ParECmd,'E ','S '), name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
+      NewsUser), ' - ', name2, ' 0666');
+    if ParECmd then 
+      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'),' ',command) 
+    else if ParSize then 
+      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT')) 
+    else 
+      writeln(fc);
+
+    if not ParECmd then 
+    begin
+      { queue execution file }
+      nr := hex(NextUunumber, 4);
+      assign(f2, dest + 'X-' + nr + '.OUT');
+      rewrite(f2, 1);
+      wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
+  
+      wrs(f2, 'F ' + name);
+      wrs(f2, 'I ' + name);
+      wrs(f2, 'C ' + command);
+  
+      fs := filesize(f2);
+      close(f2);
+  
+      name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
+      write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
+        nr, ' ', iifs(t in [rmail,rsmtp], MailUser, NewsUser), ' - ', name2, ' 0666');
+      if ParSize then writeln(fc, ' "" ', fs) else writeln(fc);
+    end;
   end;
 
   procedure WrFileserver;
@@ -3821,6 +3831,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2001/07/30 19:07:44  cl
+  - support of UUCP E command for outgoing messages
+
   Revision 1.62  2001/07/30 12:43:41  cl
   - ZCRFC: more helpful error messages
 

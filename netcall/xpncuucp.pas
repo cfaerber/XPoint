@@ -104,6 +104,7 @@ var
       if uu=nil then begin result:=false; exit; end;
 
       if boxpar^.SizeNego then uu.parsize := true;
+      uu.ParECmd := true;
 
       uu.SMTP     := BoxPar^.UUsmtp;
 
@@ -419,6 +420,7 @@ var
     UUCICO.ForcePktSize  := BoxPar^.ForcePacketSize;
 
     UUCICO.SizeNego      := BoxPar^.SizeNego;
+    UUCICO.ECommand	 := true; (* !! not yet configurable !! *)
     UUCICO.MaxFSize      := BoxPar^.MaxFSize;
 
     UUCICO.LogFileName   := LogFile;
@@ -498,6 +500,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/07/30 19:07:44  cl
+  - support of UUCP E command for outgoing messages
+
   Revision 1.10  2001/07/29 17:16:38  cl
   - FIX: unsent messages marked as sent although login failed II
 

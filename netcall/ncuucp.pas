@@ -26,7 +26,7 @@ unit ncuucp;
 
 { ------------------------------ } INTERFACE { ------------------------------- }
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,xpprogressoutputwindow;
+uses ncmodem,timer,fidoglob,xpglobal,classes,xpprogressoutputwindow,xp1;
 
 type
   TUUCPNetcall = class(TModemNetcall)
@@ -55,6 +55,7 @@ type
     ForcePktSize  : boolean; (* use forced packet size          *)
 
     SizeNego      : boolean; (* use size negotiation            *)
+    ECommand	  : boolean; (* use UUCP E command		*)
     MaxFSize      : LongInt; (* size limit for incoming packets *)
   end;
 
@@ -210,6 +211,14 @@ begin
     result:=iVal(s); { wrong number format }
 end;
 
+function ModeStr(i:integer):string;
+begin
+  result:='0XXX';
+  result[2]:=chr($30+((i div 64) mod 8));
+  result[3]:=chr($30+((i div  8) mod 8));
+  result[4]:=chr($30+( i         mod 8));
+end;
+
 function FPosVal(s:string):LongInt;
 begin
   if s<>'' then result:=CVal(s)
@@ -273,7 +282,7 @@ begin
     size := FPosVal(NextToken);
 
     if cmd='E' then
-      exec := NextToken;
+      exec := s
   end;
 end;
 
@@ -386,7 +395,9 @@ begin
   Output(mcVerbose,'UUCP Initial Handshake',[0]);
 
   CommObj.PurgeInBuffer;
-  CommObj.SendString(^P'S'+UUName+' -N0'+iifs(SizeNego,'15','14')+#0,false);
+  CommObj.SendString(^P'S'+UUName+
+    iifs(ECommand,iifs(SizeNego,' -N05',' -N04'),
+                  iifs(SizeNego,' -N',   ''      ))+#0,false);
 
   for n := 1 to 5 do begin
     s:=GetUUStr;
@@ -400,14 +411,31 @@ begin
     else
       raise EUUCProtocol.Create('got '''+s+''' - aborting');
 
-  Log(lcInfo,'UUCP connection established');
+  Log(lcInfo,'UUCP connection established: '+s);
 
-  SizeNego:=(s='ROKN');         { size negotiation }
-  if SizeNego then begin
+  if s[4]='N' then
+  begin
+    n:=CVal(Mid(s,5));
+    if n=0 then begin
+      SizeNego:=true;		{ size negotiation 	}
+      ECommand:=false;		{ E command		}
+    end else begin
+      SizeNego:=0<>(n and 1);	{ size negotiation 	}
+      ECommand:=0<>(n and 4);	{ E command		}
+    end;
+  end else begin
+    SizeNego:=false;		{ size negotiation 	}
+    ECommand:=false;		{ E command		}
+  end;
+  
+  if SizeNego then 
     log(lcInfo,'using size negotiation');
-    Output(mcInfo,'UUCP connection established w/ size negitiation',[0]);
-  end else
-    Output(mcInfo,'UUCP connection established',[0]);
+  if ECommand then 
+    log(lcInfo,'using UUCP E command');
+
+  Output(mcInfo,'UUCP connection established'+
+    iifs(ECommand,iifs(SizeNego,' w/ size neg. and E command',' w/ E command'),
+                  iifs(SizeNego,' w/ size negotiation',       ''             )),[0]);
 
   for n := 1 to 5 do begin
     s:=GetUUStr; dec(n);
@@ -614,33 +642,86 @@ var cin : text;
 
   (* Handle S/E command as master *)
 
-  procedure Do_SE;
-  var f:file;
+  procedure Do_SE(var f:file;s,src,dest:string;size:Longint);
   begin
-    AssignUp(f,c.src,file_type);
-  try
-    FileStart(c.src,true,c.size);
-    Netcall.Log('+','sending '+c.src+' as '+c.dest);
-    Netcall.Output(mcVerbose,'Sending %s as %s (%d bytes)',[c.src,c.dest,c.size]);
+    FileStart(src,true,size);
+    Netcall.Log('+','sending '+src+' as '+dest);
+    Netcall.Output(mcVerbose,'Sending %s as %s (%d bytes)',[src,dest,size]);
 
     SendCommand(s);
 
-    if not r.Parse(RepeatGetCommand(c.cmd[1])) { SY/SN or EY/EN } then
-      raise EUUCProtFile.Create('Remote refused to accept '+c.src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
+    if not r.Parse(RepeatGetCommand(s[1])) { SY/SN or EY/EN } then
+      raise EUUCProtFile.Create('Remote refused to accept '+src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
 
     RepeatSendFile(f,r.restart);
 
     if not r.Parse(RepeatGetcommand('C')) then
-      raise EUUCProtFile.Create('Remote error '+c.src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
+      raise EUUCProtFile.Create('Remote error '+src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
 
     Netcall.Log('*','sent file - '+File_Str);
-    Netcall.Output(mcInfo,'Sent %s as %s (%s)',[c.src,c.dest,file_str]);
+    Netcall.Output(mcInfo,'Sent %s as %s (%s)',[src,dest,file_str]);
+  end;
+
+  procedure Do_S;
+  var f:file;
+  begin
+  try
+    AssignUp(f,c.src,file_type);
+    Do_SE(f,s,c.src,c.dest,c.size);
   finally
     close(f);
   end;
     erase(f);
   end;
-
+    
+  procedure Do_E;
+  var fd,fx,fs: string;
+      f,f2: file;
+  begin
+    if Netcall.ECommand then
+      Do_S		{ just do it }
+    else begin
+    { create eXexution file }
+      fd:='C '+c.exec+#10
+         +'U '+c.user+' '+Netcall.UUName+#10
+         +'I '+c.dest+#10
+         +'F '+c.dest+#10;
+      fx:=TempS(length(fd));
+      fs:=c.src;
+      assign(f2,fx);
+      rewrite(f2,1);
+      blockwrite(f2,fd[1],length(fd));
+      close(f2);
+      IOExcept(EUUCProtFile);
+    { send data file }
+      s:=Format('S %s %s %s -%s %s %s',
+        [c.src,c.dest,c.user,c.opts,c.temp,ModeStr(c.mode)]);
+      if c.ntfy <> '' then begin s:=s+' '+c.ntfy;
+        if c.size > 0 then s:=s+' '+StrS(c.size); end;
+    try
+      AssignUp(f,c.src,file_type);
+      Do_SE(f,s,c.src,c.dest,c.size);
+    finally
+      close(f);
+    end;
+      if IOResult<>0 then ;
+    { send execution file }
+    try
+      resetfm(f2,0);
+      seek(f2,0);
+      s:=Format('S %s %s %s - %s 0666',
+        ['X.'+Mid(fs,3),'X.'+Mid(c.dest,3),c.user,'X.'+Mid(fs,3)]);
+      if c.ntfy <> '' then begin s:=s+' '+c.ntfy;
+        if FileSize(F2) > 0 then s:=s+' '+StrS(FileSize(f2)); end;
+      Do_SE(f2,s,fx,'X.'+Mid(c.dest,3),FileSize(f2)); 
+    finally
+      close(f2);
+      erase(f2);
+    end; // try
+      erase(f);
+    end;
+  end;
+  
   (* handle R command as master *)
 
   procedure Do_R;
@@ -687,16 +768,11 @@ begin { TUUCProtocolSimple.Master:Boolean; }
     begin
       readln(cin,s);
       c.Parse(s);
-    try
-      if (c.cmd='S') or (c.cmd='E') then Do_SE else
-      if (c.cmd='R')                then Do_R  else
+      if (c.cmd='S') then Do_S else
+      if (c.cmd='E') then Do_E else
+      if (c.cmd='R') then Do_R else
         raise EUUCProtFile.Create('Unknown/unsupported UUCP command: '+s);
-    except
-      on e:EUUCProtFile do begin
-        Netcall.Log(lcError,e.message);
-        Netcall.Output(mcError,'%s',[e.message]);
-      end;
-    end;
+
       Netcall.TestBreak;
       if IOResult<>0 then ;
     end; { while !eof }
@@ -768,6 +844,7 @@ var c   : TUUCPCommand; { parsed incoming command }
 	assignExec(t,se);
 	write(t,'C ',c.exec,#10);
 	write(t,'F ',c.dest,#10);
+	write(t,'I ',c.dest,#10);
         close(t);
         if IOResult<>0 then ;
         Netcall.Log('*','created execution file '+se);
@@ -1031,6 +1108,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/07/30 19:07:44  cl
+  - support of UUCP E command for outgoing messages
+
   Revision 1.8  2001/07/30 12:42:26  cl
   - support for UUCP E command as slave
 
