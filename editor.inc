@@ -2057,6 +2057,7 @@ var ap : absatzp;
             if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,31))
             end;
         until eof(t);
+        listtp(glossary_ed); {Taste E Abfragen}
         list(brk);
         s2:=get_selection;
         lsi:=cpos('<',s2)-1;
@@ -2402,6 +2403,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.5  2000/07/25 18:12:37  jg
+  - Glossary: "E" im Glossary-Popup erlaubt es die GLOSSARY.CFG zu Editieren
+
   Revision 1.19.2.4  2000/07/24 14:52:31  jg
   - Glossary: am Ende der Funktion wird auf jeden Fall entmarkiert.
 

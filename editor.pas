@@ -75,7 +75,7 @@ procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
 { /robo }
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-
+procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 
 implementation  { ------------------------------------------------ }
 
@@ -2026,9 +2026,21 @@ begin
     end;
 end;
 
+procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+begin
+  if ustr(t)='E' then begin
+    EditFile('glossary.cfg',false,false,0,false);
+    t:=keyesc;
+    pushkey(keyctcr); 
+    end; 
+end;
+
 end.
 {
   $Log$
+  Revision 1.25.2.3  2000/07/25 18:12:37  jg
+  - Glossary: "E" im Glossary-Popup erlaubt es die GLOSSARY.CFG zu Editieren
+
   Revision 1.25.2.2  2000/07/21 20:30:57  jg
   * Glossary:
     - Bugfix: Endlosschleife bei Menueauswahl wenn in der Glossary.cfg

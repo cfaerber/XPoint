@@ -1141,8 +1141,12 @@ Alle folgenden Zeilen geh”ren dann zum Entsprechenden
 Textbaustein, bis wieder eine Zeile gefunden wird,
 die mit ">" beginnt. Diese Ende-Kennung kann das
 n„chste Krzel sein, oder nur das Ende des Blocks
-kennzeichnen (damit zur šbersicht Leerzeilen
-eingefgt werden k”nnen)
+oder einen Kommentar kennzeichnen.
+
+Mit Den Cursortasten wird ein Textbaustein ausgew„hlt
+Mit <<E>> im Glossary-Men kann die Datei GLOSSARY.CFG
+Editiert werden.
+
 
 Beispieldatei:
 
@@ -1174,7 +1178,7 @@ Dies ist eine tolle
 >
 ___________________________
 
-Am besten Sie experimentieren einfach etwas
+Am Besten, Sie experimentieren einfach etwas
 mit den M”glichkeiten dieses Features.
 @
 8063
