@@ -265,7 +265,7 @@ var s     : string;
     attrtxt(col.ColKeys);
     mwrt(screenwidth-9,screenlines,' Lister ! ');
     attrtxt(col.ColMenu[0]);
-    mwrt(1,1,dup(Screenwidth,' '));
+    mwrt(1,1,typeform.dup(Screenwidth,' '));
     normtxt;
 
     select(11);            {Suchergebnis zeigen}
@@ -1065,6 +1065,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2002/12/28 17:17:37  mk
+  - dup -> typeform.dup
+
   Revision 1.117  2002/12/21 05:37:54  dodi
   - removed questionable references to Word type
 
