@@ -1520,10 +1520,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-  Linux.SigNal(SIGWINCH, SigHandler);
-  Linux.SigNal(SIGHUP, SigHandler);
-  Linux.SigNal(SIGQUIT, SigHandler);
-  Linux.SigNal(SIGKILL, SigHandler);
+//  Linux.SigNal(SIGWINCH, SigHandler);
+//  Linux.SigNal(SIGHUP, SigHandler);
+//  Linux.SigNal(SIGQUIT, SigHandler);
+//  Linux.SigNal(SIGKILL, SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1542,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.4  2003/01/07 09:55:26  mk
+  - temporary fixed compile problem
+
   Revision 1.64.2.3  2002/12/29 11:27:10  mk
   - SigHandler has now exactly same declaration as SignalHandler from linux.pp,
     should help to solve fpc compile problems
