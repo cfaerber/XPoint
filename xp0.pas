@@ -41,7 +41,7 @@ const  {$IFDEF DPMI}
        IsDPMI      = false;
        {$ENDIF}
 
-       LangVersion = '13';           { Version des Sprachmoduls }
+       LangVersion = '14';           { Version des Sprachmoduls }
        menus       = 43;             { Anzahl der Menus (+1 wegen Zusatzmenueerweiterung) }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
@@ -1241,6 +1241,10 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.61  2003/01/19 09:08:24  mw
+  MW: - Sprachmodulversion ist jetzt 14 (wegen neuer Headergrî·e)
+        (keine Auswirkungen fÅr Benutzer)
+
   Revision 1.54.2.60  2003/01/14 21:47:09  mw
   MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
         (Wenn Compilerschalter gesetzt und kein EMS vorhanden)
