@@ -718,7 +718,8 @@ begin
               end;
             end;
          end;
-        end;
+        end else
+         WriteChar(i);
       end else
         WriteChar(i);
     end;
@@ -3215,6 +3216,10 @@ end;
 
 {
   $Log$
+  Revision 1.191  2003/09/26 11:46:30  mk
+  - fixed listdisplay: if no valid highlight characters are found, the
+    character is not deleted anymore
+
   Revision 1.190  2003/09/22 21:24:23  mk
   - fixes for new highlight handling
     - resolves not correct position of highlighting with URLs
