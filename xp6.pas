@@ -1171,7 +1171,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           nt_Fido     : sendbutt:=getres2(611,20);  { 'C^rash,P^GP'     }
           nt_Maus     : sendbutt:=getres2(611,21);  { '^MausNet,^Lokal' }
           nt_ZConnect : sendbutt:=getres2(611,22);  { 'P^rio,P^GP'      }
-          nt_UUCP     : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
+          nt_UUCP,
+          nt_NNTP,
+          nt_POP3,
+          nt_IMAP     : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
           else          sendbutt:=getres2(611,24);  { '^Zurueck'        }
         end;
         repeat
@@ -1188,7 +1191,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
                     else if n=9 then n:=0;   { MH: Zurueck }
-          nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio} { unbedenklich }
+          nt_UUCP,
+          nt_NNTP,
+          nt_POP3,
+          nt_IMAP : if n=6 then n:=12        { MH: RFC-Prio} { unbedenklich }
                       else if n=7 then n:=10 { Zusatz      }
                       else if n=8 then n:=11 { MH: PGP-Sig } { unbedenklich }
                       else if n=9 then n:=0; { Zurueck     }
@@ -1234,11 +1240,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
                    if netztyp=nt_ZConnect then n:=19 else
-                   if netztyp=nt_uucp then n:=22;
+                   if netztyp in [nt_uucp,nt_NNTP,nt_POP3,nt_IMAP] then n:=22;
             7    : if netztyp=nt_Maus then n:=17;
             8    : if netztyp=nt_Maus then n:=18;
-            9    : if netztyp in [nt_ZConnect,nt_UUCP] then n:=20;
-            10   : if netztyp in [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP] then
+            9    : if netztyp in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then n:=20;
+            10   : if netztyp in [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then
                      n:=21;  { PGP }
             else   if ntBCC(netztyp) and (t=^K) then
                      flNokop:=not flNokop;
@@ -1367,7 +1373,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
        20   : EditSdata;
        21   : SendPgpOptions;
        22   : begin                    { RFC-Priority }
-               if netztyp<>nt_uucp then rfehler(622);
+               if not(netztyp in [nt_uucp,nt_NNTP,nt_POP3,nt_IMAP])then rfehler(622);
                 getprio;
                showflags;
               end
@@ -1683,7 +1689,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.nokop:=flNokop;
     if umlaute=0 then
       case netztyp of
-        nt_UUCP   : if FileContainsUmlaut then
+        nt_UUCP,
+        nt_NNTP,
+        nt_POP3,
+        nt_IMAP   : if FileContainsUmlaut then
                       hdp.x_charset:='ISO-8859-1';
         nt_Fido   : hdp.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
       end;
@@ -2090,6 +2099,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.113  2001/05/27 09:31:19  ma
+  - enabled PGP and some other things for NNTP/POP3/IMAP
+
   Revision 1.112  2001/05/19 16:17:51  ma
   - removed XP_ID (shareware notice)
   - changed program id:

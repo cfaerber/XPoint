@@ -969,7 +969,10 @@ var x,y : byte;
 begin
   case netztyp of
     nt_ZConnect : y:=iif(pm,5,9);
-    nt_UUCP     : y:=iif(pm,5,11);
+    nt_UUCP,
+    nt_NNTP,
+    nt_POP3,
+    nt_IMAP     : y:=iif(pm,5,11);
   end;
   dialog(ival(getres2(616,0)),y,getres2(616,6),x,y);   { 'Zus„tzliche Informationen' }
   y:=2;
@@ -1005,7 +1008,7 @@ begin
       maddstring(3,y,getres2(616,3),summary,40,200,  { 'Zusammenfassung' }
                iifs(ntHeaderUmlaut(netztyp),'',asc));   { max. L„nge: 200! }
       inc(y,2);                                 { (wg. RFC-1522-Codierung) }
-      if netztyp=nt_UUCP then begin
+      if netztyp in [nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then begin
         maddstring(3,y,getres2(616,4),distribute,40,40,asc); { 'Verbreitung' }
         inc(y,2);
         end;
@@ -1115,6 +1118,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2001/05/27 09:31:19  ma
+  - enabled PGP and some other things for NNTP/POP3/IMAP
+
   Revision 1.53  2001/05/19 16:12:53  ma
   - removed XP_ID (shareware notice)
 
