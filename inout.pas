@@ -276,7 +276,7 @@ procedure mdelay(msec:word);
 implementation
 
 uses
-  maus2, winxp;
+  maus2;
 
 const  maxsave     = 50;  { max. fr savecursor }
 
@@ -1640,6 +1640,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.61  2000/10/24 20:19:26  fe
+  Zirkulaere Abhaenhigkeiten entfernt.
+
   Revision 1.60  2000/10/17 10:05:40  mk
   - Left->LeftStr, Right->RightStr
 

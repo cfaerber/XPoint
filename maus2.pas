@@ -69,11 +69,11 @@ procedure mint(intsource,tasten,x,y,mx,my:word);
 
 implementation
 
-uses inout,
+uses
 {$IFDEF VP}
      vpSysLow,
 {$ENDIF}
-     winxp;
+     inout;
 
 const  maxinside = 25;
 
@@ -329,6 +329,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/24 20:19:27  fe
+  Zirkulaere Abhaenhigkeiten entfernt.
+
   Revision 1.20  2000/07/31 20:28:32  mk
   - Bugfix fuer AnsiStrings in Forwardkeys
 

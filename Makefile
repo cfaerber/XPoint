@@ -785,16 +785,15 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 inout$(UNITEXT): inout.pas keys$(UNITEXT) maus2$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 inout$(UNITEXT): inout.pas keys$(UNITEXT) maus2$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
-	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) xp0$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -858,16 +857,15 @@ endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
-	xpcurses$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xplinux$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
 maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
-	mouse$(UNITEXT) typeform$(UNITEXT) winxp$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+	mouse$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2578,6 +2576,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.30  2000/10/24 20:19:26  fe
+# Zirkulaere Abhaenhigkeiten entfernt.
+#
 # Revision 1.29  2000/10/24 17:37:24  fe
 # Zirkulaere Abhaengigkeiten beseitigt.
 #
