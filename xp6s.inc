@@ -28,8 +28,8 @@ begin
     sigfile:=''
   else begin
     assign(t,signat);
-    reset(t);
     SetTextBuf(t, buf);
+    reset(t);
     readln(t,s);
     if s=sigsep then begin
       num:=0;
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.30  2000/08/05 17:17:49  mk
+  - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
+
   Revision 1.29  2000/08/05 17:13:20  mk
   - Crash nach B behoben, Dank an Michael Koppel
 
