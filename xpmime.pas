@@ -27,9 +27,9 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
                      startline  : longint;  { 0 = kein Multipart }
                      lines      : longint;
                      code       : mpcode;
-                     typ,subtyp : string;   { fr ext. Viewer }
+                     typ,subtyp : string[20];   { fr ext. Viewer }
                      level      : integer;      { Verschachtelungsebene 1..n }
-                     fname      : string;   { fr Extrakt + ext. Viewer }
+                     fname      : string[255];   { fr Extrakt + ext. Viewer }
                      ddatum     : string;   { Dateidatum fr extrakt }
                      part,parts : integer;
                      alternative: boolean;
@@ -762,6 +762,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/10/19 12:56:38  mk
+  - Ansistring Fix
+
   Revision 1.29  2000/10/17 10:06:00  mk
   - Left->LeftStr, Right->RightStr
 
