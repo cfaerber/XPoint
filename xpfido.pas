@@ -1363,7 +1363,7 @@ end;
 
 function FidoFilename(var fa:FidoAdr):string;
 begin
-  FidoFilename:=hex(fa.net,4)+hex(fa.node,4);
+  FidoFilename:=FileUpperCase(hex(fa.net,4)+hex(fa.node,4));
 end;
 
 function FidoAppendRequestfile(var fa:FidoAdr):string;
@@ -1402,7 +1402,7 @@ function CrashFile(adr:string):string;
 var fa : FidoAdr;
 begin
   splitfido(adr,fa,DefaultZone);
-  CrashFile:=FidoFilename(fa)+'.CP';
+  CrashFile:=FileUpperCase(FidoFilename(fa)+'.cp');
 end;
 
 procedure GetReqFiles(adr:string; var files:string);
@@ -2241,6 +2241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/06/04 16:12:52  ma
+  - fixed: file name case
+
   Revision 1.49  2001/04/28 15:20:56  ml
   - final fix for Diskfree (patch for sysutils needed)
 
