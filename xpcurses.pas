@@ -615,7 +615,7 @@ begin
     wmove(ActWin.wHnd, y-1, x-1)
   else
     wmove(ActWin.wHnd, y-ActWin.y-1, x-ActWin.x-1);
-  touchwin(ActWin.wHnd);
+  wrefresh(ActWin.wHnd);
 end;
 
 { find cursor position }
@@ -1189,6 +1189,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/05/07 10:42:37  hd
+  - Fix: refresh nach gotoxy
+
   Revision 1.8  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog
