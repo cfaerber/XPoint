@@ -44,7 +44,7 @@ function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
-function  BoxFilename(var box:string):string;
+function  BoxFilename(const box:string):string;
 
 procedure AddBezug(var hd:header; dateadd:byte);
 procedure DelBezug;
@@ -776,7 +776,7 @@ begin
 end;
 
 
-function BoxFilename(var box:string):string;
+function BoxFilename(const box:string):string;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
@@ -980,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.14  2001/07/21 13:24:00  mk
+  - added some const parameters
+
   Revision 1.40.2.13  2001/04/14 21:10:41  mk
   - Client-Modus verbessern
 

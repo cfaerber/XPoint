@@ -451,7 +451,7 @@ begin
     Rewrite(t1);
     Close(t1);
   end;
- 
+
     blfile:={BoxPar^.PPPClientPath + }ustr(boxfilename(box))+'.BL';
     if not exist(rcfile) or not exist(blfile) then exit;
     Assign(t2,blfile);
@@ -472,7 +472,7 @@ begin
         if line2[1]<>'!' then begin
           line2:='  '+left(line2,min(cposx('û',line2),
             min(cposx(' ',line2),cposx('*',line2)))-1);
-  
+
           line := first_line;
           while line <> #0 do
           begin
@@ -519,10 +519,10 @@ end;
 { RFC/Client: RC-File anhand der im Lister markierten Bretter manipulieren }
 { Im Lister muss ein durch Read_RC_File erzeugtes BL-File sein.            }
 
-function MakeRC(bestellen: boolean; box: string):boolean;
+function MakeRC(bestellen: boolean; const box: string):boolean;
 var t1,t2         : text;
     f1            : file of char;
-    rcfile,blfile : string; 
+    rcfile,blfile : string;
     line          : string;
     Line2         : string[Brettlen];
     Articles      : String[6];
@@ -575,14 +575,14 @@ begin
       else begin
         writeln(t1,rtrim(copy(Line,3,78)),Articles);    { ansonsten an .RC anhaengen }
         fileofs:=ival(mid(line,80));
-        seek(f1,fileofs);                  { Offset ins BL-File wurde von READ_BL_FILE }  
+        seek(f1,fileofs);                  { Offset ins BL-File wurde von READ_BL_FILE }
         write(f1,c);                       { an die Listerzeile angehaengt. Jetzt wird }
         end;                               { an den Zeilenanfang ein "*" geschrieben,  }
-      line := next_marked;                 { der ab jetzt das Bestellt-Flag darstellt  } 
+      line := next_marked;                 { der ab jetzt das Bestellt-Flag darstellt  }
       end;
     Close(t1);
     close(f1);
-    end 
+    end
 
   else begin                               { Bestellte Bretter aus RC entfernen }
     line:=first_line;
@@ -590,16 +590,16 @@ begin
     MakeRc:=false;
     Assign(t2,TempFile(''));
     ReWrite(t2);                           { T2 = Temp-File: RC-Kopie (text) }
-    reset(t1); 
+    reset(t1);
     while not eof(t1) do
     begin
       readln(t1,line2);                    { Zeile aus RC lesen }
-      brk:=true;      
+      brk:=true;
       line := first_marked;                { Im Lister sind Bretter zum  }
       while line<>#0 do                    { Abbestellen markiert...     }
-      begin   
+      begin
         fileofs:=ival(mid(line,80));       { Offset aus READ_BL_FILE (s.o.) }
-        line:=rtrim(copy(Line,3,78)); 
+        line:=rtrim(copy(Line,3,78));
         if line=left(line2,cposx(' ',line2)-1)
         then begin
           seek(f1,fileofs);                { Abzubestellendes Brett gefunden... }
@@ -632,47 +632,47 @@ procedure Read_BL_File(s:string;bestellen:boolean);
 var t1,t2    : text;
     s1,tname : string;
     i        : longint;
-    n,m      : byte;    
+    n,m      : byte;
 
   Function Reformat_UKA_Brett(Var s:string):byte; Assembler;
   asm
- 	push ds                  { Brettlisten-Zeilen im UKA* Format vor der        }
-        lds si,s                 { Uebergabe an den Lister ins XP-Format bringen    } 
+        push ds                  { Brettlisten-Zeilen im UKA* Format vor der        }
+        lds si,s                 { Uebergabe an den Lister ins XP-Format bringen    }
         xor ax,ax                { und Offsetanpassung fuer Bestellt-Flag ermitteln }
-	cmp byte ptr [si+2],' '
+        cmp byte ptr [si+2],' '
         je @end                  { Abbruch wenn's eine Liste im XP-Format ist... }
-	push si
-       	lodsb 
- 	mov cx,ax
-	mov bl,0
-	mov dx,' *'
+        push si
+        lodsb
+        mov cx,ax
+        mov bl,0
+        mov dx,' *'
   @1:   lodsb                    { Brettnamenende suchen }
-	cmp al,dh
-	je @2
+        cmp al,dh
+        je @2
         cmp al,'û'               { û und * werden als Bestellt-Flag akzeptiert }
-	je @3
- 	cmp al,dl
-	je @3
- 	inc bx
-	loop @1
-  @2:	mov dl,' '
-  @3:	push ds
-	pop es
-	pop si
- 	mov cl,bl
+        je @3
+        cmp al,dl
+        je @3
+        inc bx
+        loop @1
+  @2:   mov dl,' '
+  @3:   push ds
+        pop es
+        pop si
+        mov cl,bl
         add bl,2
-        push bx                  { Offset zum Flag in UKA-Brettliste sichern } 
-	mov byte ptr [si],bl
+        push bx                  { Offset zum Flag in UKA-Brettliste sichern }
+        mov byte ptr [si],bl
         add si,cx
         lea di,[si+2]
         std
         rep movsb                { s:='* '+s }
         dec di
         mov ax,dx
-        stosw        
+        stosw
         cld
-	pop ax
-  @end:	pop ds
+        pop ax
+  @end: pop ds
   end;
 
 begin
@@ -706,7 +706,7 @@ end;
 
 { RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
 
-procedure File_abbestellen(box,f:string);
+procedure File_abbestellen(const box,f:string);
 var t1,t2 : text;
     s1,s2 : string;
     brk   : boolean;
@@ -716,23 +716,23 @@ begin
   begin
     rfehler(807);
     exit;
-    end;      
-  OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister } 
+    end;
+  OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
   read_BL_File(s1,false);                  { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
-  list(brk);                               { Dummy-Lister starten      } 
+  list(brk);                               { Dummy-Lister starten      }
 
   assign(t1,f);
   s1:=first_marked;                        { Liste der bestellten Bretter     }
   while s1<>#0 do                          { Mit Abbestell-File vergleichen   }
-  begin 
+  begin
     brk:=true;
     reset(t1);
     while not eof(t1) do
     begin
       readln(t1,s2);
-      if s2=rtrim(copy(s1,3,78)) 
+      if s2=rtrim(copy(s1,3,78))
         then brk:=false;                   { Bretter, die abzubestellen sind }
       end;
     close(t1);
@@ -744,7 +744,7 @@ begin
 end;
 
 
-Procedure ClientBl_Abgleich(box:string);
+Procedure ClientBl_Abgleich(const box:string);
 var t1    : text;
     f1    : file of char;
     c     : char;
@@ -762,36 +762,36 @@ begin
     Close(t1);
     end;
   s1:=get_BL_Name(box);
-  if not exist(s1) then 
+  if not exist(s1) then
   begin
     rfehler(807);
     exit;
-    end;   
+    end;
   if not ReadJN(getreps2(810,92,ustr(s1)),true) then exit;  { 'Abgleich RC-Datei mit %s' }
 
-  moment;   
+  moment;
   OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
   read_BL_File(s1,true);                   { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
-  list(brk);                               { Dummy-Lister starten      } 
+  list(brk);                               { Dummy-Lister starten      }
   assign(f1,s1);
   reset(f1);
   s1:=first_marked;                        { Brettliste mit .RC vergleichen }
   while s1<>#0 do
-  begin 
+  begin
     brk:=false;
     reset(t1);
     while not eof(t1) do
     begin
       readln(t1,s2);
-      if left(s2,cposx(' ',s2)-1)=rtrim(copy(s1,3,78)) 
+      if left(s2,cposx(' ',s2)-1)=rtrim(copy(s1,3,78))
         then brk:=true;
       end;
     close(t1);
     if (s1[1]='*') xor brk
-    then begin    
-      fileofs:=ival(mid(s1,80)); 
+    then begin
+      fileofs:=ival(mid(s1,80));
       c:=iifc(brk,'*',' ');
       seek(f1,fileofs);
       write(f1,c);
@@ -804,7 +804,7 @@ begin
   aufbau:=true;
 end;
 
-Procedure ClientBL_Sort(box:string);
+Procedure ClientBL_Sort(const box:string);
 var   blfile : pathstr;
       tempBl : pathstr;
 const sorter : string[12] = 'RPSORT.COM';
@@ -831,7 +831,7 @@ begin
   closebox;
 end;
 
-Procedure ClientBL_Del(box:string);
+Procedure ClientBL_Del(const box:string);
 var s1: string;
 begin
   s1:=get_BL_Name(Box);
@@ -1039,7 +1039,7 @@ begin
         rewrite(t);
         writeln(t,newsgroup(brett));
         close(t);
-        File_Abbestellen(box,fn); 
+        File_Abbestellen(box,fn);
         end;
       end
     else begin   { mehrere markierte Bretter }
@@ -1212,7 +1212,7 @@ begin
     if deutsch then
     begin
       pushkey('N');
-      pushkey('M'); 
+      pushkey('M');
       pushkey('D');
       end
     else begin
@@ -1355,7 +1355,7 @@ begin
     ListShowSeek:=true;
     pushkey(keyctab);
     end;}
-  if t[1]=^H then begin 
+  if t[1]=^H then begin
     pushkey('S');
     pushkey('* ');
     pushkey(keycr);
@@ -1616,10 +1616,10 @@ again:
   if fido then lcoltype:=4 else
   if maf or quick then LColType:=0 else
   if promaf then lcoltype:=3 else
-  if ppp and (art=0) then lcoltype:=5 else 
+  if ppp and (art=0) then lcoltype:=5 else
     LColType:=1;
   ListCFunc(MapsListcolor);
-  listTp(Mapskeys); 
+  listTp(Mapskeys);
   {listseekcol:=col.collistfound;}
   listNoAutoscroll;
   list(brk);
@@ -2167,6 +2167,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.26  2001/07/21 13:24:00  mk
+  - added some const parameters
+
   Revision 1.10.2.25  2001/07/14 01:12:44  my
   - Fix RFC/Client: Newsgroup list in XP directory is sorted by column 3
     now rather than by column 2 (RPSORT switch '/+2' => '/+3')
