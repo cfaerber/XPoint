@@ -457,8 +457,7 @@ label ende, restart;
         if RegEx then
         begin
           RegExpr.Expression := key;
-          SetLength(s, wsize);
-          Move(p^, s[1], wsize);
+          SetString(s, PChar(p), WSize);
           InText := RegExpr.Exec(s);
         end else
         begin
@@ -968,6 +967,7 @@ restart:
     sst:=suchstring;
     igcase:=multipos('iu', LowerCase(suchopt));
     umlaut:=multipos('„”u', LowerCase(suchopt)); { Umlautschalter}
+    regex := pos('r', LowerCase(suchopt)) > 0 ;
     if umlaut and not igcase then 
     begin
       suchopt:=suchopt+'i';
@@ -1092,8 +1092,8 @@ restart:
       getmem(p,psize);
       brk:=false;
 
-      if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
-        markanzback:=0; 
+      if aktdispmode=11 then
+      begin                       {-- Suche markiert (Weiter suchen) --}
         getmem(markedback,maxmark * sizeof(markrec));
         for i:=0 to markanz do markedback^[i]:=marked^[i];
         markanzback:=markanz;
@@ -2978,6 +2978,9 @@ end;
 
 {
   $Log$
+  Revision 1.137  2002/03/02 14:29:53  mk
+  - fixed regex search
+
   Revision 1.136  2002/02/21 13:52:32  mk
   - removed 21 hints and 28 warnings
 
