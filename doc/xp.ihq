@@ -921,6 +921,7 @@ markiert.
 <Ctrl K><U> : Block aus Datei lesen und UU-kodieren
 <Ctrl K><O> : Block Rot13-codieren
 <Ctrl K><S> : Schreibweise (gro·/klein) wechseln
+<Ctrl K><F> : Block reformatieren
 <Ctrl Q><B> : Cursor an Blockanfang bewegen
 <Ctrl Q><K> : Cursor an Blockende bewegen
 
@@ -962,7 +963,8 @@ Zum Lîschen von Text stehen neben der Åblichen <Back-
 space>- und <Del>-Taste noch folgende Funktionen zur
 VerfÅgung:
 
-    <Ctrl T>         : Wort nach rechts lîschen
+    <Ctrl T>,         
+    <Ctrl Del>       : Wort nach rechts lîschen
     <Ctrl Backspace> : Wort nach links lîschen
     <Ctrl Y>         : Zeile lîschen
     <Ctrl K><Y>      : Block lîschen

@@ -319,7 +319,7 @@ begin
   gotoxy(x,y);
 {$IFDEF BP }
   if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
-  else if lnx then write(lo(lnxversion),'.',hi(lnxversion))
+  else if lnx then write(DOSEmuVersion)
   else begin
     write(lo(dosversion):2,'.',formi(hi(dosversion),2));
     if win then begin
@@ -355,7 +355,7 @@ begin
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
   os2:=lo(dosversion)>=10;
-  lnx:=lnxversion>0;
+  lnx:=DOSEMuVersion <> '';
   wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
   if win then
     wrt(x+4,y+9,'Windows'+getres2(rnr,7));
@@ -412,7 +412,7 @@ begin
   wrt(x+4,y+7,getres2(rnr,6));   { verfgbar }
   os2:=lo(dosversion)>=10;
 {$IFDEF BP }
-  lnx:=lnxversion>0;
+  lnx:=DOSEmuVersion <> '';
 {$ENDIF }
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
@@ -1014,6 +1014,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.2  2000/03/25 21:47:47  mk
+  - Statistik/Systeme: Nummer auf 4 Stellen angepasst
+  - Funktion zur DOSEmu-Erkennung gefixt
+  - <Ctrl Del>: Wort rechts löschen
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
+
   Revision 1.9.2.1  2000/03/25 10:43:08  mk
   - Flagzeile kuerzen
   - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert

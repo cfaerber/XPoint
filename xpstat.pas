@@ -36,7 +36,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xp10,xpnt,xpfidonl, winxp;
+uses xp3,xp3o,xp3o2,xp6,xp9bp,xp9,xp10,xpnt,xpfidonl;
 
 var  statbrett : boolean;
 
@@ -378,7 +378,7 @@ begin
       writeln(t,dup(57,'-'));
       for i:=1 to snum do
         with st^[i] do begin
-          write(t,i:3,'  ',forms(name^,20),msgs:8,bytes:14);
+          write(t,i:4,'  ',forms(name^,20),msgs:8,bytes:14);
           wrsum(i,9);
           writeln(t);
           end;
@@ -1257,8 +1257,14 @@ end;
 end.
 {
   $Log$
-  Revision 1.6  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.5.2.1  2000/03/25 21:47:47  mk
+  - Statistik/Systeme: Nummer auf 4 Stellen angepasst
+  - Funktion zur DOSEmu-Erkennung gefixt
+  - <Ctrl Del>: Wort rechts löschen
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
 
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert

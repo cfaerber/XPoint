@@ -1101,6 +1101,15 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.1  2000/03/25 21:47:46  mk
+  - Statistik/Systeme: Nummer auf 4 Stellen angepasst
+  - Funktion zur DOSEmu-Erkennung gefixt
+  - <Ctrl Del>: Wort rechts löschen
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
+
   Revision 1.16  2000/03/04 15:54:43  mk
   Funktion zur DOSEmu-Erkennung gefixt
 

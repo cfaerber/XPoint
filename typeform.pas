@@ -172,7 +172,9 @@ procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr)
 procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 {$IFDEF BP }
-function lnxversion:word;                      { Dosemu-Version (analog zu dosversion), sonst 0 }
+{ Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
+  dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
+function DOSEmuVersion: String;
 {$ENDIF }
 { ================= Implementation-Teil ==================  }
 
@@ -2160,33 +2162,35 @@ asm
 end;
 
 {$IFDEF BP }
-{ Erkennt die Version des DOSEmu, wenn XP darin gestartet wird }
-function lnxversion:word;
-var biosdate:string[8];
-    vseg:word;
+function DOSEmuVersion: String;
+const
+  DOSEMU_MAGIC_STRING       = '$DOSEMU$';
+var
+  DOSEMU_MAGIC: array[1..8] of char absolute $F000:$FFE0;
+  DOSEMU_VersionPos: array[1..4] of byte absolute $F000:$FFE8;
+  Dosemu_Dummy: String[8];
 begin
-  lnxversion:=0;
-  fastmove(ptr($f000,$fff5)^,biosdate[1],8);
-  biosdate[0]:=char(8);
-  vseg:=memw[0:$e6*4+2];
-  if (vseg=$f000) and (biosdate='02/25/93') then begin
-    asm
-      xor ax,ax
-      mov vseg,ax
-      int 0e6h
-      cmp ax,0aa55h
-      jne @nodosemu
-      mov vseg,bx
-    @nodosemu:
-    end;
-    lnxversion:=vseg;
-  end;
+  DOSEmuVersion:= '';
+  Move(DOSEMU_MAGIC, DOSEMU_DUMMY[1], sizeof(DOSEMU_DUMMY) - 1);
+  Dosemu_Dummy[0] := chr(sizeof(Dosemu_Dummy) - 1);
+  if Dosemu_Dummy = DOSEMU_MAGIC_STRING then
+    DOSEmuVersion:= StrS(DOSEMU_VersionPos[4]) + '.' +
+      StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
 end;
 {$ENDIF }
 
 end.
 {
   $Log$
+  Revision 1.16.2.2  2000/03/25 21:47:46  mk
+  - Statistik/Systeme: Nummer auf 4 Stellen angepasst
+  - Funktion zur DOSEmu-Erkennung gefixt
+  - <Ctrl Del>: Wort rechts lˆschen
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
+
   Revision 1.16.2.1  2000/03/25 10:43:07  mk
   - Flagzeile kuerzen
   - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert

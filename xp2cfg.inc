@@ -236,9 +236,12 @@ end;
 
 
 procedure setcolors;
+    {$IFNDEF WIN32}
 var c  : maske.colrec;
     lc : ListCol;
+  {$ENDIF}
 begin
+    {$IFNDEF WIN32}
   sethelpcol(col.colhelp,col.colhelphigh,col.colhelpqvw,col.colhelpslqvw);
   with c do begin    { Masken-Farben }
     colback:=col.coldialog; colfeldname:=col.coldialog;
@@ -261,6 +264,7 @@ begin
     end;
   setlistcol(lc);
   fsb_rcolor:=col.colselrahmen;
+  {$ENDIF}
 end;
 
 
@@ -289,9 +293,11 @@ procedure initvar;
 var i    : integer;
     rp   : ^boolean;
 begin
+  {$IFNDEF WIN32}
   checkbreak:=false;
   getcbreak(orgcbreak);
   setcbreak(false);
+  {$ENDIF}
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
@@ -1053,7 +1059,7 @@ end;
 procedure readconfig;
 var t       : text;
     s,su    : string;
-    p       : byte;
+    i, p    : byte;
     userauf : string[10];
     dummys  : string;
     dummyb  : boolean;
@@ -1085,14 +1091,18 @@ var t       : text;
       su:=copy(su,6,80);
       dec(p,5);
       ports:='';
+    {$IFNDEF WIN32}
       bs:=MInit^;
       es:=MExit^;
       ds:=MDial^;
+  {$ENDIF}
       getcommpar := getx(su,'fossil',fossil) or
                     gets(s,su,'Port',ports,4) or
                     getb(su,'IRQ',Cirq) or
+    {$IFNDEF WIN32}
                     gets(s,su,'Init',bs,200) or
                     gets(s,su,'Exit',es,200) or
+  {$ENDIF}
                     gets(s,su,'Dial',ds,100) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
@@ -1104,6 +1114,7 @@ var t       : text;
                     getx(su,'Waehlsperre',postsperre) or
                     AddComnr;
       if ports<>'' then Cport:=hexval(ports);
+    {$IFNDEF WIN32}
       if bs<>MInit^ then begin
         freemem(MInit,length(MInit^)+1);
         getmem(MInit,length(bs)+1);
@@ -1114,6 +1125,7 @@ var t       : text;
         getmem(MExit,length(es)+1);
         MExit^:=es;
         end;
+  {$ENDIF}
       if ds<>MDial^ then begin
         freemem(MDial,length(MDial^)+1);
         getmem(MDial,length(ds)+1);
@@ -1493,6 +1505,10 @@ begin
       end;
     close(t);
 
+    for i:=1 to 2 do
+      if mheadercustom[i][length(mheadercustom[i])]=':' then
+        delete(mheadercustom[i],length(mheadercustom[i]),1);
+
     extrakttyp:=defextrakttyp;
     if ParZeilen>0 then begin
       cfgscrlines:=screenlines;
@@ -1507,12 +1523,10 @@ begin
     else if ustr(userauf)='PMS' then UserAufnahme:=3
     else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
     scsavetime:=scrsaver;                { Screen-Saver     }
-{$IFDEF BP }
-    close(lst);                           { Drucker-Schnitte }
+    close(lst);                          { Drucker-Schnitte }
     DruckLPT:=min(5,max(DruckLpt,1));
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
-{$ENDIF }
     if aaa<>'' then begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
@@ -1527,9 +1541,11 @@ begin
       end;
     FidoTo:=brettalle;
     if auswahlcursor then begin
+    {$IFNDEF WIN32}
       SetListCursor(curon);
       SetWinSelCursor(curon);
       MaskSelcursor(curon);
+  {$ENDIF}
       end;
     if mheader='' then SetDefaultHeader
     else SetHeader(mheader);
@@ -1540,7 +1556,7 @@ begin
     SetDefaultHeader;
     SaveConfig;
     end;
-  {$IFDEF BP }
+    {$IFNDEF WIN32}
   ListUseXms:=SwapToXms;
   {$ENDIF}
   trennkomm:=minmax(trennkomm,1,3);
@@ -1589,14 +1605,14 @@ begin
 end;
 {
   $Log$
-  Revision 1.16  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.15  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.14  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.13.2.1  2000/03/25 21:47:47  mk
+  - Statistik/Systeme: Nummer auf 4 Stellen angepasst
+  - Funktion zur DOSEmu-Erkennung gefixt
+  - <Ctrl Del>: Wort rechts löschen
+  - Benutzerdefinierbare Headerzeilen:
+    Nach Config/Anzeige/Diverses sowie beim Einlesen der
+    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
+    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
 
   Revision 1.13  2000/03/03 08:37:19  mk
   OH: Autodatumsbezuege werden nicht mehr doppelt geschrieben
