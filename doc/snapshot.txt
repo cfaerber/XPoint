@@ -452,7 +452,7 @@ Allgemeine Bedienung und Sonstiges
   die Datei in NETCALL.END umbenannt.
   XP.PAS, XP10.INC, XP.IHQ
 
-- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
+- Die Headerzeile "X-XP-BOX" wird jetzt auch bei ZConnect-Nachrichten
   erzeugt.
   XP3O2.PAS, XP6.PAS
 
@@ -1347,7 +1347,8 @@ JG+MY+RB:
 JG:
 - Tonsignal beim Einfgen eines nicht vorhandenen oder zu groáen
   Clipboard-Inhalts wird jetzt (wie alle anderen akustischen Meldungen
-  von XP auch) immer ber den PC-Lautsprecher ausgegeben.
+  von XP auch) immer ber den PC-Lautsprecher (statt unter Windows ber
+  die Soundkarte) ausgegeben.
   CLIP.PAS
 
 
@@ -1772,7 +1773,7 @@ MY:
 - Anzahl der erforderlichen UUZ-Parameter bei ausgehenden Nachrichten
   auf 3 (vorher 4) reduziert. Routine erfllt ohnehin nicht ihren
   vermutlichen Zweck (n„mlich die Angabe von <fromSite> und <toSite> zu
-  erzwingen) und máte mal komplett erneuert werden.
+  erzwingen) und máte mal komplett berarbeitet werden.
   UUZ.PAS
 
 
@@ -1788,9 +1789,14 @@ MY:
   XP4W.INC
 
 MY:
-- Logik bei der Anzeige des manuell mit <Ctrl-W> bet„tigten Nachrichten-
-  Weiterschalters ge„ndert: Groáes "W" steht fr "Weiterschalter
-  aktiviert", kleines "w" steht fr "Weiterschalter deaktiviert".
+- Logik der Anzeige des mit <Ctrl-W> manipulierten Nachrichten-Weiter-
+  schalters ge„ndert: Groáes "W" steht fr "Weiterschalter manuell
+  aktiviert", kleines "w" steht fr "Weiterschalter manuell
+  deaktiviert"; keine Anzeige bedeutet, daá die Einstellung unter C/O/B
+  aktiv ist. Vorher stand ein groáes "W" fr "Weiterschalter manuell
+  deaktiviert" (Grmpf), keine Anzeige konnte entweder bedeuten, daá die
+  Einstellung unter C/O/B aktiv ist, oder daá der Weiterschalter manuell
+  aktiviert wurde (Grmpf).
   XP4W.INC
 
 JG+MY:
@@ -1921,6 +1927,163 @@ MY:
   weitergeschaltet (f„lschlicherweise von JG bernommenen Codeteil
   entfernt).
   XP4W.INC
+
+
++--------------+        +----------------------------------------------+
+|  24.04.2002  |        |  ab hier Snapshot vom 28.04.2002, 20:00 Uhr  |
++--------------+        +----------------------------------------------+
+
+SV+MY:
+- Umfangreiche Bugfixes bei der Auswahl einer anderen bzw. gemeinsamen
+  Serverbox mit "o" im Sendefenster (sog. "forcebox"), speziell fr RFC
+  und ZConnect. Zuviele Bugs, um alle beschreiben zu k”nnen, unvoll-
+  st„ndige Auswahl:
+  - Wenn fr zwei RFC- oder ZConnect-Empf„nger mit unterschiedlicher
+    Serverbox eine gemeinsame Serverbox erzwungen wurde und die Nach-
+    richt noch ein zweites Mal (z.B. durch N/U/) durch das Sendefenster
+    lief, wurden die Nachrichten "gesplittet" (= zwei physikalische
+    Nachrichten erstellt).
+  - Beim ndern des Empf„ngers mit "m" wurde eine erzwungene gemeinsame
+    Serverbox zurckgesetzt.
+  - Bei der Best„tigung des Kopien-Dialogs wurde eine erzwungene
+    Serverbox zurckgesetzt.
+  - Es war m”glich, eine Serverbox mit inkompatiblem Netztyp auszuw„hlen
+    (Mail an RFC-User und Fido-Box).
+  - Bei "Mischbetrieb" (Mail an User, Kopie an User und an Newsgroup)
+    wurden Mails manchmal gesplittet (speziell ZConnect).
+  - Bei N/W/R aus Unversandt-Brett wurde eine erzwungene Box nicht
+    beachtet.
+  Generell gilt jetzt: Nachrichten an RFC- und ZConnect-User, die ber
+  dieselbe Serverbox versendet werden, werden immer "zusammengehalten".
+  RFC und ZConnect werden durchg„ngig als kompatible Netztypen
+  behandelt. Sobald ein inkompatibler Netztyp in der Empf„ngerliste
+  vorkommt, werden alle Serverbox-nderungen rckg„ngig gemacht und die
+  Nachricht wird ber die Serverboxen versendet, die den jeweiligen
+  Empf„ngern zugewiesen sind. Ein manuelles Rcksetzen einer erzwungenen
+  Serverbox kann mittels "o" und anschlieáendem <Esc> in der Serverbox-
+  Auswahl erfolgen. Wenn eine Serverbox erzwungen wurde, wird dies jetzt
+  durch ein "(*)" hinter dem Boxnamen kenntlich gemacht. Wird eine Nach-
+  richt ber mehrere Serverboxen versandt, wird der Boxname wie bisher
+  eingeklammert (bei leicht verbesserter Darstellung).
+  XP6.PAS, XP6O.PAS, XP6S.INC, XPCC.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
+
++------------------+
+|  25./26.04.2002  |
++------------------+
+
+MY:
+- Fix: Bei N/W/R aus Unversandt-Brett wird eine ge„nderte Serverbox
+  jetzt auch bei Fido-Nachrichten korrekt bercksichtigt (Headerzeile
+  "X-XP-BOX" wird jetzt auch bei Fido-Nachrichten erzeugt).
+  XP6.PAS
+
+MY:
+- Fix MIME-Multipart-Versand: Beim Netztyp ZConnect wird jetzt der
+  Header "U-MIME-Version 1.0" erzeugt, damit von ZConnect nach RFC
+  gegatete Nachrichten als Multipart-Nachrichten erkannt werden.
+  XP3O2.PAS
+
+MY:
+- Fix: Bei Bin„rnachrichten ("i" auf User-Brett) MIME-Multipart-Versand
+  im Sendefenster deaktiviert.
+  XP6.PAS
+
+JG:
+- Fix: Beim Weiterleiten von MIME-Multipart-Nachrichten wurden Text-
+  Anh„nge nach ISO-8859-1 konvertiert, aber mit dem ursprnglichen
+  Zeichensatz deklariert.
+  XP6M.INC
+
+JG:
+- Fix: Die Unterdrckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
+  <Shift-Esc> funktionierte nicht im Lesemodus "Alles". Nebeneffekt: "B"
+  in einem leeren Brett erzeugte eine Nachricht fr das nachfolgende
+  Brett.
+  XP4W.INC
+
+MY:
+- Anzeige des mit <Ctrl-W> manipulierten Nachrichten-Weiterschalters
+  zur besseren Unterscheidung nochmals ge„ndert: Groáes "W" (= Weiter-
+  schalter aktiviert) wird in der Farbe fr den Mentext, kleines "w"
+  (= Weiterschalter deaktiviert) wird in der Farbe fr deaktivierten
+  Mentext dargestellt. Bei Best„tigung des Config-Mens C/O/B wird die
+  Anzeige entfernt, da dann wieder die Menoptionen gelten.
+  XP2C.PAS, XP4W.INC
+
+
++------------------+
+|  27./28.04.2002  |
++------------------+
+
+MY:
+- Fix: Beim Message-IDs mit Kommentaren ("added by ...") wurde nach dem
+  Entfernen des Kommentars die schlieáende spitze Klammer nicht
+  entfernt, weil die Message-ID mit einem Leerzeichen statt mit ">"
+  endete.
+  UUZ.PAS
+
+MY+JG:
+- Fix: Ein Laufwerkswechsel auf Laufwerk [M:] mit <Ctrl-M> im Datei-
+  Auswahlfenster funktionierte nicht, weil XP dies als <Enter> inter-
+  pretierte und die entsprechende Aktion (Verzeichniswechsel, Datei
+  ”ffnen) ausfhrte. Ein <Enter> auf Laufwerk [M:] fhrte zu der
+  (falschen) Fehlermeldung "Ungltiger Pfad-oder Dateiname!". Tonsignal
+  bei Auswahl eines nicht existierenden Laufwerks mit <Ctrl>-[LW]
+  eingebaut.
+  WIN2.PAS
+
+SV+MY:
+- Fix: Bei automatisch angelegten Usern/Brettern wird der Serverbox-Name
+  jetzt in der Schreibweise abgelegt, in der er in der Datenbank steht
+  (statt wie bisher in Groáschreibung). Beim Editieren wird der Name im
+  Eingabefeld "Server" jetzt ebenfalls in der Datenbank-Schreibweise
+  dargestellt.
+  XP3O.INC, XP4E.PAS
+
+MY+JM:
+- Umfangreiche nderungen/Erg„nzungen/Korrekturen der Online-Hilfe zu
+  MIME-Multipart-Versand und der Auswahl einer anderen/gemeinsamen
+  Serverbox im Sendefenster.
+  XP.IHQ, XP-E.IHQ
+
+JG:
+- Erkennung von CD-ROM-Laufwerken im Datei-Auswahlfenster implementiert
+  (bisher wurden CD-ROM-Laufwerke als "Netz-Laufwerke" angezeigt).
+  DOSX.PAS
+
+MY:
+- S„mtliche Textausgaben des Datei-Auswahlfensters ("zu viele Dateien",
+  "Netz-Laufwerk" usw.) vom Sourcecode in deutsche und englische
+  Ressource verlagert.
+  WIN2.PAS, XP-D.RQ, XP-E.RQ
+
+OG:
+- Semikolon zur Liste der fr URLs zul„ssigen Zeichen hinzugefgt.
+  XP1O.PAS
+
+JG:
+- Vorbereitung fr Euro-Untersttzung: Routine 'Specialchar' implemen-
+  tiert, die auch bei neueren Tastaturen zwischen <Alt-E> (Editor
+  starten) und <AltGr-E> (Euro-Zeichen) unterscheiden kann. Da beide
+  Tastenkombinationen denselben Scancode liefern, wurde bisher auch bei
+  <AltGr-E> der Editor gestartet. Bis zur endgltigen Fertigstellung der
+  Euro-Untersttzung liefert <AltGr-E> im Editor zu Testzwecken das
+  Zeichen #238 ("î").
+  INOUT.PAS
+
+MY:
+- Fix: Beim Versuch, eine beantwortete PM ohne Betreff abzusenden, wurde
+  der Editor auch dann aufgerufen, wenn die entsprechende Rckfrage mit
+  "Nein" beantwortet wurde (der Abbruch mit <Esc> funktionierte jedoch).
+  XP6.PAS
+
+MY:
+- Fix: Bei Verwendung des Schalters "-UseEnvTo" wird nicht mehr u.a. auf
+  "U-Delivered-To", sondern auf "Delivered-To" geprft (Delivered-To-
+  Untersttzung ist damit aber noch noch nicht komplett erledigt).
+  UUZ.PAS
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
