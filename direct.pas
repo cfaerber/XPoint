@@ -134,6 +134,9 @@ type
 
 implementation
 
+uses
+  xpglobal;
+
 { --- TDirEntry --------------------------------------------- }
 
 constructor TDirEntry.Create(const item: TSearchRec);
@@ -309,6 +312,9 @@ end;
 
 {
         $Log$
+        Revision 1.6.2.2  2004/01/18 15:21:09  mk
+        - added uses xpglobal
+
         Revision 1.6.2.1  2004/01/18 15:07:07  mk
         - use WildCard instead of * or *.*
 
