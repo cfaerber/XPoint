@@ -1054,6 +1054,33 @@ durch halten der rechten Maustaste.
   Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
 
 @
+8063
+  Geben Sie hier die Spalte ein, in der der Text
+  automatisch umgebrochen werden soll.
+@
+8064
+  Mit diesem Zeichen wird intern im Editor
+  das Absatzende markiert. 
+   
+@
+8065
+<<[x]>> -> Beim Drcken von <Return> wird die 
+       nachfolgende Zeile automatisch um die 
+       gleiche Anzahl von Leerzeichen eingerckt,
+       wie die vorhergehende. (Auto-Indent)  
+@
+8066
+<<[x]>> -> Markierte Bl”cke werden durch Tasten-
+       druck nicht entmarkiert oder berschrieben. 
+       Sinnvoll, wenn man die Wordstartasten fr
+       Blockoperationen verwenden m”chte.
+@
+8067
+<<[x]>> -> Beim Umbrechen oder Zusammenfgen von
+       gequoteten Zeilen werden die Quotezeichen 
+       mit bercksichtigt. Siehe auch 
+       ['Block reformatieren'] (<Ctrl B>).@61     
+@
 65
 Mit den Cursortasten kann zwischen verschiedenen
 Jahren und Monaten gebl„ttert werden. Das aktuelle

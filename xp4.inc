@@ -368,6 +368,7 @@ begin
             1 : options;
             2 : UI_options;
             3 : ListOptions;
+           13 : Editoptions;   
             4 : msgoptions;
            12 : adroptions;
             6 : netcalloptions;
@@ -577,6 +578,10 @@ begin
 end;
 { 
   $Log$
+  Revision 1.11  2000/04/11 16:38:42  jg
+  - Config/Optionen/Editor
+  - Hilfe der Editoroptionen jetzt kontextsensitiv
+
   Revision 1.10  2000/03/14 15:15:39  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -43,6 +43,7 @@ procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
+procedure Editoptions;
 
 
 implementation  {--------------------------------------------------------}
@@ -166,15 +167,20 @@ begin
   with cfg do begin
     dialog(ival(getres2(2508,0)),9,getres2(2508,1),x,y);  { 30 / 'Editor-Einstellungen' }
     maddint(3,2,getres2(2508,2),rechter_rand,5,2,60,77);  { 'rechter Rand  ' }
+    mhnr(8063);
     ec:=absatzendezeichen;
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
+    mhnr(8064);
     mappsel(false,'úù'#20'ùþù®ù'#17'ù ');
     maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrcken' }
+    mhnr(8065);
     { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bl”cke' }
+    mhnr(8066);
     { /oh }
     { 10.02.2000 robo }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
+    mhnr(8067);
     { /robo }
     readmask(brk);
     enddialog;
@@ -400,6 +406,51 @@ begin
   attrtxt(ma);
 end;
 
+
+procedure Editoptions;  { EditorOptionen Extern aendern }
+var config : Edconfig;
+    brk    : boolean;
+    t      : text;
+    s      : string;
+    p      : byte;
+
+begin
+    assign(t,editor.EdConfigFile);
+    if not existf(t) then errsound
+    else begin
+      reset(t);
+      while not eof(t) do begin
+        readln(t,s);
+        LoString(s);
+        p:=cpos('=',s);
+        with config do       
+        if p>0 then
+          if left(s,p-1)='rechterrand' then
+            config.rechter_rand:=ival(mid(s,p+1))
+          else if left(s,p-1)='absatzende' then
+            config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
+          else if left(s,p-1)='autoindent' then
+            config.AutoIndent:=(mid(s,p+1)<>'n')
+          else if left(s,p-1)='persistentblocks' then
+            config.PersistentBlocks:=(mid(s,p+1)<>'n')
+          else if left(s,p-1)='quotereflow' then
+            config.QuoteReflow:=(mid(s,p+1)<>'n');
+        end;
+      close(t);
+      EditCfgFunc(config,brk);
+      if not brk then begin
+        rewrite(t);
+        with Config do begin
+          writeln(t,'RechterRand=',rechter_rand);
+          writeln(t,'AbsatzEnde=',absatzendezeichen);
+          writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
+          writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
+          writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
+          end;
+        close(t);
+        end;
+      end
+end;
 
 end.
 

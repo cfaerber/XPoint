@@ -1290,9 +1290,9 @@ begin
   setscreensize(newmode);
   lines(screenlines,1);
   clrscr;
+{$IFDEF BP }
   if (videotype>1) and not ParMono then
     setbackintensity(true);
-{$IFDEF BP }
   SetXPborder;
 {$ENDIF }
   with col do begin
@@ -2318,6 +2318,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/04/11 16:38:42  jg
+  - Config/Optionen/Editor
+  - Hilfe der Editoroptionen jetzt kontextsensitiv
+
   Revision 1.26  2000/04/09 19:47:22  mk
   - Benutze Register fuer ListDisplay und VP angegeben
 
