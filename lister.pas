@@ -562,7 +562,7 @@ var
        ld(l,y+DispLines-1, GetRes2(11,23),suchstr,sw,1,true,brk);
        rdedtrunc:=true;
        invattr:=mi;
-       SuchLine := 0;
+       SuchLine := iif(selbar,FSelLine,iif(slen>0,SuchLine,0));
        Slen := 0;
      end
      else
@@ -606,6 +606,7 @@ var
        begin
          if FirstLine + DispLines - 1 < SuchLine then Inc(FirstLine);
          if SuchLine > FirstLine + DispLines then FirstLine := SuchLine;
+         if selbar then FSelLine := SuchLine;
          while spos<xa do dec(xa,10);
          while spos+slen>xa+w-1 do inc(xa,10);
        end;
@@ -1065,6 +1066,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.50  2001/04/07 11:37:25  ma
+  - "search" function now working as usual
+
   Revision 1.49  2001/02/03 08:45:07  mk
   - published lines property
 
