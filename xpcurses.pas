@@ -45,6 +45,7 @@ uses
 {$IFDEF fpc }
 {$packrecords 4}
 {$linklib panel}
+{$j+}
 {$ENDIF}
 
 const
@@ -1542,6 +1543,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2002/12/22 13:33:06  mk
+  - writable const on for this unit only
+
   Revision 1.65  2002/07/25 20:43:56  ma
   - updated copyright notices
 
