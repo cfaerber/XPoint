@@ -386,15 +386,12 @@ begin
     SetConsoleCursorInfo(Outhandle, Info);
   {$ELSE }
     {$IFDEF FPC }
-      {$ifdef NCRT}
-        { Nichts }
-      {$else}
         case t of
           curnorm : Cursoron;
           cureinf : CursorBig;
+	  curnone,
           curoff  : CursorOff;
         end;
-      {$endif }
     {$ENDIF }
     {$IFDEF VP }
       case t of
@@ -1861,6 +1858,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/05/02 15:48:40  hd
+  Cursor unter Linux an-/ausschalten
+
   Revision 1.30  2000/05/02 11:49:34  hd
   Anpassung an Curses (Linux)
 

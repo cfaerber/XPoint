@@ -178,6 +178,10 @@ procedure GotoXY(x,y : integer);
 function WhereX : integer;
 function WhereY : integer;
 procedure WhereXY(var x, y: integer);
+procedure CursorOn;
+procedure CursorBig;
+procedure CursorOff;
+
 
 { Echo legt fest, ob Tastatureingaben gezeigt werden. Per Default wird 
   dieses immer auf false gesetzt }
@@ -938,6 +942,8 @@ function panel_hidden(_para1:pPANEL):longint;cdecl; external;
 procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
+  { Cursor an }
+  CursorOn;
   { Eventuell nicht ausgefuehrte Aenderungen darstellen }
   wrefresh(ActWin.wHnd);
   { tty restaurieren }
@@ -990,8 +996,22 @@ begin
    end;
 end;
 
+procedure CursorOn;
+begin
+  curs_set(1);
+end;
 
-Begin
+procedure CursorBig;
+begin
+  curs_set(2);
+end;
+
+procedure CursorOff;
+begin
+  curs_set(0);
+end;
+
+begin
   { load the color pairs array with color pair indices (0..63) }
   for bg := 0 to 7 do 
     for fg := 0 to 7 do cp[bg,fg]:= (bg*8)+fg;
@@ -1022,6 +1042,9 @@ Begin
 end.
 {
   $Log$
+  Revision 1.6  2000/05/02 15:48:40  hd
+  Cursor unter Linux an-/ausschalten
+
   Revision 1.5  2000/05/02 14:22:05  hd
   Zeichenkonvertierung eingebaut
 
