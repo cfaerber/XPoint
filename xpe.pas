@@ -157,6 +157,7 @@ begin
   with cfg do begin
     dialog(ival(getres2(2508,0)),9,getres2(2508,1),x,y);  { 30 / 'Editor-Einstellungen' }
     maddint(3,2,getres2(2508,2),rechter_rand,5,2,60,77);  { 'rechter Rand  ' }
+    mhnr(8063);
     ec:=absatzendezeichen;
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
     mappsel(false,'תש'#20'ש‏ש®ש'#17'ש ');
