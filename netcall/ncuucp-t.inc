@@ -99,23 +99,34 @@ begin
       exit else
     if (len<1) or (len>1024) then
       raise EUUCProtocol.Create('UUCP-t: Illegal block size: '+StrS(Len));
+  
+    DebugLog('uucp-t','Block: '+StrS(len)+' byte(s)',dlInform);
 
-    Netcall.Timer.SetTimeout(DataTimeout);
-    while len>=CommObj.CharCount do
-      Netcall.TestTimeout;
-
-//  repeat
-      CommObj.ReadBlock(dat[low(dat)],len,rd);
+    repeat
+      Netcall.Timer.SetTimeout(DataTimeout);
+      
+      rd:=CommObj.CharCount;
+      while(rd<=0) do begin
+        multi2;
+ 	Netcall.TestTimeout;
+	rd:=CommObj.CharCount; 
+      end;
+    
+      CommObj.ReadBlock(dat[low(dat)],min(len,rd),rd);
       BlockWrite(f,dat,rd);
       FileAdvance(dat,rd);
-//    len:=len-rd;
-//  until len<=0;
+      len:=len-rd;
+
+    until len<=0;
 
   until false;
 end;
 
 {
   $Log$
+  Revision 1.3  2001/03/26 22:21:08  cl
+  - minor fixes and cleanups
+
   Revision 1.2  2001/03/25 18:44:04  cl
   - moved ncuucp-fz.inc from playground to main
   - enabled UUCP-f/z in ncuucp.pas

@@ -498,7 +498,7 @@ begin
       while CommObj.CharCount < size do
       begin
         Netcall.TestTimeout;
-        mdelay(10);
+        multi2;
       end;
       CommObj.ReadBlock(Buffer[j,0],size,i);
 
@@ -644,6 +644,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/03/26 22:21:08  cl
+  - minor fixes and cleanups
+
   Revision 1.2  2001/03/25 18:44:04  cl
   - moved ncuucp-fz.inc from playground to main
   - enabled UUCP-f/z in ncuucp.pas

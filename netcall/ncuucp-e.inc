@@ -95,18 +95,31 @@ begin
 
   len:=IVal(s);
 
-  while len>0 do
+  while len>0 do 
   begin
-    CommObj.ReadBlock(buf,min(len,sizeof(buf)),rd);
+    Netcall.Timer.SetTimeout(DataTimeout);
+      
+    rd:=CommObj.CharCount;
+    while(rd<=0) do begin
+      multi2;
+      Netcall.TestTimeout;
+      rd:=CommObj.CharCount; 
+    end;
+    
+    CommObj.ReadBlock(buf[low(buf)],min(sizeof(buf),rd),rd);
     BlockWrite(f,buf,rd);
-    len:=len-rd;
     FileAdvance(buf,rd);
-    Netcall.TestBreak;
+
+    len:=len-rd;
   end;
+
 end;
 
 {
   $Log$
+  Revision 1.3  2001/03/26 22:21:08  cl
+  - minor fixes and cleanups
+
   Revision 1.2  2001/03/25 18:44:04  cl
   - moved ncuucp-fz.inc from playground to main
   - enabled UUCP-f/z in ncuucp.pas
