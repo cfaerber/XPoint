@@ -115,6 +115,7 @@ begin
     csISO8859_13: Result := ISO8859_13TransTable;
     csISO8859_14: Result := ISO8859_14TransTable;
     csISO8859_15: Result := ISO8859_15TransTable;
+    csISO8859_16: Result := ISO8859_16TransTable;
   end;
 end;
 
@@ -227,6 +228,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.14  2002/01/03 20:53:54  cl
+// - added ISO-8859-16
+//
 // Revision 1.13  2002/01/03 18:59:12  cl
 // - moved character set maps to own units (allows including them from several
 //   other units without duplication)

@@ -45,6 +45,7 @@ uses Unicode;
 {$I charsets/8859_13.inc }
 {$I charsets/8859_14.inc }
 {$I charsets/8859_15.inc }
+{$I charsets/8859_16.inc }
 {$ELSE }
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -64,6 +65,7 @@ uses Unicode;
 {$I charsets\8859_13.inc }
 {$I charsets\8859_14.inc }
 {$I charsets\8859_15.inc }
+{$I charsets\8859_16.inc }
 {$ENDIF }
 
 implementation
@@ -71,6 +73,9 @@ end.
 
 //
 // $Log$
+// Revision 1.2  2002/01/03 20:53:54  cl
+// - added ISO-8859-16
+//
 // Revision 1.1  2002/01/03 18:59:12  cl
 // - moved character set maps to own units (allows including them from several
 //   other units without duplication)

@@ -177,17 +177,32 @@ function MimeGetEncodingFromName(const s:string):TMimeEncoding;
 { ----------------------------- Charsets ----------------------------- }
 
 type
-  TMimeCharsets = (csUTF8, csCP437, csCP866, csCP1251, csCP1252, csCP1255,
-    csISO8859_1, csISO8859_2, csISO8859_3, csISO8859_4, csISO8859_5,
-    csISO8859_6, csISO8859_7, csISO8859_8, csISO8859_9, csISO8859_10,
-    csISO8859_13, csISO8859_14, csISO8859_15, csUTF7, csASCII, csUnknown);
+  TMimeCharsets = (
+  // Unicode transformations
+    csUTF8, 	  csUTF7, 
+  // DOS/IBM codepages
+    csCP437, 	  csCP866, 
+  // Windows codepages    
+    csCP1251, 	  csCP1252, 	csCP1255,
+  // ISO/ANSI charsets
+    csISO8859_1,  csISO8859_2,  csISO8859_3,  csISO8859_4,  csISO8859_5,
+    csISO8859_6,  csISO8859_7,  csISO8859_8,  csISO8859_9,  csISO8859_10,
+    csISO8859_13, csISO8859_14, csISO8859_15, csISO8859_16, 
+  // US-ASCII
+    csASCII, 
+  // unknown charset
+    csUnknown);
 
 const
   MimeCharsetNames: array[TMIMECharsets] of String = (
-    'UTF-8', 'IBM437', 'IBM866', 'windows-1251',  'windows-1252',  'windows-1255',
+    'UTF-8', 'UTF-7',
+    'IBM437', 'IBM866', 
+    'windows-1251', 'windows-1252', 'windows-1255',
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
     'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
-    'ISO-8859-13', 'ISO-8859-14', 'ISO-8859-15', 'UTF-7', 'US-ASCII', 'x-unknown');
+    'ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16', 
+    'US-ASCII', 
+    'x-unknown');
 
 type
   TCharsetCodecStream = class(TCodecStream)
@@ -858,7 +873,7 @@ begin
   if result='ISO-8859-10' then result:='ISO10' else
   if result='ISO-8859-13' then result:='ISO13' else
   if result='ISO-8859-14' then result:='ISO14' else
-  if result='ISO-8859-15' then result:='ISO15' else
+  if result='ISO-8859-16' then result:='ISO16' else
   if result='UTF-16' then result:='UNICODE';
 end;
 
@@ -878,6 +893,7 @@ begin
   if result='ISO13' then result:='ISO-8859-13' else
   if result='ISO14' then result:='ISO-8859-14' else
   if result='ISO15' then result:='ISO-8859-15' else
+  if result='ISO16' then result:='ISO-8859-16' else
   if result='UNICODE' then result:='UTF-16' else
   result := MimeCharsetCanonicalName(Name);
 end;
@@ -1199,6 +1215,9 @@ end;
 
 //
 // $Log$
+// Revision 1.12  2002/01/03 20:53:54  cl
+// - added ISO-8859-16
+//
 // Revision 1.11  2001/12/30 19:56:48  cl
 // - Kylix 2 compile fixes
 //
