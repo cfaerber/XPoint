@@ -34,7 +34,7 @@
 {              6=Maus->Z, 7=Z->Maus                     }
 {              8=ProNet-Z, 9=Z->ProNet                  }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 uses dos, sysutils, classes,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
@@ -1655,6 +1655,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.33  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 

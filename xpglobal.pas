@@ -25,7 +25,7 @@ unit xpglobal;
 
 interface
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 // format the following strings in a way that
 // verstr+pformstr+betastr is readable
@@ -198,6 +198,10 @@ begin
 
 {
   $Log$
+  Revision 1.57  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.56  2001/09/08 16:29:39  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

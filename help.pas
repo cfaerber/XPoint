@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit help;
 
@@ -767,6 +767,10 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.37  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

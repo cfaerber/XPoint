@@ -19,7 +19,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit main;
 
@@ -191,6 +191,10 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.1  2001/09/07 14:32:14  mk
   - main.pas is now main function, openxp.pas/dpr are only wrapper for FPC/Delphi
 

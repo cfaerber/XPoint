@@ -21,7 +21,7 @@
 
 unit utftools;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 interface
 
@@ -261,6 +261,10 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.9  2001/09/10 15:58:01  ml
+// - Kylix-compatibility (xpdefines written small)
+// - removed div. hints and warnings
+//
 // Revision 1.8  2001/09/09 10:23:20  ml
 // - Kylix compatibility stage III
 // - compilable in linux

@@ -20,7 +20,7 @@
 
 { Nachricht extrahieren }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xp3ex;
 
@@ -214,6 +214,7 @@ var size   : longint;
       _off  : longint;
       total : longint;
   begin
+    y := 0;
     if size>0 then begin
       if (dtyp>=1) then begin
         if FirstChar(_brett)<>'U' then
@@ -1099,9 +1100,12 @@ begin
   TempKopien.Free;
 end;
 
-end.
 {
   $Log$
+  Revision 1.79  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.78  2001/09/08 16:29:33  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
@@ -1344,3 +1348,5 @@ end.
   RB: * Bug mit zurueckbleibenden Dummy-Header bei Quoten von Multipart beseitigt
 
 }
+end.
+

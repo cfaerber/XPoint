@@ -2,7 +2,7 @@ unit crc;
 
 { $Id$ }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 {$R-}
 
 interface
@@ -207,9 +207,12 @@ begin
   CRC32block := CRC_Reg;
 end;
 
-end.
 {
   $Log$
+  Revision 1.8  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.7  2001/09/07 23:24:53  ml
   - Kylix compatibility stage II
 
@@ -236,3 +239,5 @@ end.
   - Umbenennung CRC32 aus XPCRC32 in CRC32Str
 
 }
+end.
+

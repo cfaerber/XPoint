@@ -20,7 +20,7 @@
 
 { Fido-Modul, Teil 2 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpf2;
 

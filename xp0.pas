@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP declarations unit }
 unit xp0;
@@ -1197,6 +1197,10 @@ implementation
 
 {
   $Log$
+  Revision 1.140  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.139  2001/09/08 14:24:17  cl
   - added PGP_MIME configuration option
   - added ZC_MIME configuration option

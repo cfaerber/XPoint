@@ -20,7 +20,7 @@
 
 { CrossPoint - 'maps & Fileserver }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp8;
 
@@ -2102,6 +2102,10 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.59  2001/09/10 10:16:00  mk
   - added client-mode handling for mapsdelbrett
 

@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 {$R-,S-}
 
 uses
@@ -428,6 +428,10 @@ end.
 
 {
   $Log$
+  Revision 1.28  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.27  2001/09/07 23:38:32  ml
   - extHlp -> extHelp  (wrong spelled constant-name)
 

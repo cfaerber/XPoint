@@ -20,7 +20,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit databaso;
 
@@ -442,6 +442,10 @@ end;
 
 {
   $Log$
+  Revision 1.17  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.16  2001/08/10 20:57:56  mk
   - removed some hints and warnings
   - fixed some minior bugs

@@ -20,7 +20,7 @@
 
 { Overlay-Unit mit Editierroutinen u.a. }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp4e;
 
@@ -2438,6 +2438,10 @@ end;
 
 {
   $Log$
+  Revision 1.80  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.79  2001/09/08 16:29:34  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

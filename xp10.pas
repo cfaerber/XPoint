@@ -21,7 +21,7 @@
 { CrossPoint - Timing-Listen, Tastenmakros, GebÅhrenzonen, Header,  }
 {              Nodelisten, Tarifgruppen                             }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp10;
 
@@ -2067,6 +2067,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.62  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.61  2001/09/08 16:29:31  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

@@ -22,7 +22,7 @@
 
 unit xpx;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 interface
 
@@ -181,6 +181,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.45  2001/09/07 23:24:55  ml
   - Kylix compatibility stage II
 

@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp1o2;
 
@@ -215,9 +215,12 @@ begin
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.22  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.21  2001/08/10 16:56:33  mk
   - changed Write() to MWrt()
 
@@ -284,3 +287,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

@@ -18,7 +18,7 @@
 }
 
 { XP - Linux - Supportroutinen }
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xplinux;
 
@@ -471,6 +471,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.26  2001/09/07 23:24:55  ml
   - Kylix compatibility stage II
 

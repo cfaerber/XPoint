@@ -21,7 +21,7 @@
 
 { FidoAdresse }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit XPFTNAdr;
 
@@ -239,6 +239,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.2  2001/08/11 23:06:37  mk
   - changed Pos() to cPos() when possible
 

@@ -20,7 +20,7 @@
 
 { CrossPoint - MausNet }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpmaus;
 
@@ -819,6 +819,10 @@ end;
 
 {
   $Log$
+  Revision 1.34  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.33  2001/09/08 16:29:40  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

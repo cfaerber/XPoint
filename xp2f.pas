@@ -20,7 +20,7 @@
 
 { CrossPoint Config - Farben, F-Tasten, Feiertage }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xp2f;
 
@@ -1166,6 +1166,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.28  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

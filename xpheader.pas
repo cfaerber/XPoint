@@ -20,7 +20,7 @@
    Copyright (c) 2000 by the OpenXP Team.
 
 }
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 { Contains class THeader }
 
@@ -581,6 +581,10 @@ end;
 
 {
   $Log$
+  Revision 1.17  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.16  2001/09/08 23:30:26  cl
   - 'CHARSET:' only written if not in ['IBM437','US-ASCII'] (backwards compatibility fix)
 

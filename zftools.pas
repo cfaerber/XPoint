@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 { OpenXP ZC<->FTS-0001 converter unit }
 unit zftools;
@@ -1804,6 +1804,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.26  2001/09/10 15:58:04  ml
+        - Kylix-compatibility (xpdefines written small)
+        - removed div. hints and warnings
+
         Revision 1.25  2001/09/08 20:59:50  cl
         - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
           is still recognized for backwards compatibility).

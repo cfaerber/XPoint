@@ -20,7 +20,7 @@
 
 unit encoder;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 interface
 
@@ -90,6 +90,10 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
 
 {
   $Log$
+  Revision 1.8  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.7  2001/09/08 16:29:28  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

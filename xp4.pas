@@ -20,7 +20,7 @@
 
 { CrossPoint - Hauptmodul }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xp4;
 
@@ -2243,6 +2243,10 @@ end;
 
 {
   $Log$
+  Revision 1.107  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.106  2001/09/08 16:29:33  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

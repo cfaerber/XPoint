@@ -22,7 +22,7 @@
 
 UNIT printerx;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {  ==================  Interface-Teil  ===================  }
 
@@ -144,6 +144,10 @@ end;
 
 {
   $Log$
+  Revision 1.20  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.19  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 

@@ -21,7 +21,7 @@
 
 unit xpdos32;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {$IFNDEF DOS32 }
   {$FATAL Die Unit DOS32 kann nur unter DOS32 compiliert werden }
@@ -725,6 +725,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.13  2001/08/04 20:19:13  mk
   - added some dos compatibility functions
 

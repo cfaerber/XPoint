@@ -20,7 +20,7 @@
 
 { PMs mit TO-ID versehen }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {$IFDEF Delphi }
   {$APPTYPE CONSOLE }
@@ -220,6 +220,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.9  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

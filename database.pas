@@ -20,7 +20,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 {$R-}
 
 unit database;
@@ -1620,6 +1620,10 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.48  2001/09/06 16:22:42  mk
   - optimized some functions (Result is now a real variable and temp variables
     are not needed anymore)

@@ -21,7 +21,7 @@
 { Product Code / Versionsnummer / Diverses }
 { fÅr ZFIDO, XP-FM, XP7 und XP7T           }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit  xpdiff;
 
@@ -55,6 +55,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.8  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.7  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

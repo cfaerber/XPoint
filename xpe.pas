@@ -20,7 +20,7 @@
 
 { CrossPoint - Editor }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpe;
 
@@ -472,6 +472,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.30  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

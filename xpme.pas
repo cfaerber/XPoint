@@ -20,7 +20,7 @@
 
 { CrossPoint-Menueeditor }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 uses
 {$IFDEF unix}
@@ -767,6 +767,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.37  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.36  2001/08/11 23:06:38  mk
   - changed Pos() to cPos() when possible
 

@@ -18,7 +18,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP terminal unit }
 unit xpterminal;
@@ -736,6 +736,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.9  2001/09/07 10:56:02  mk
   - added GetServerFilename
 

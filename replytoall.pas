@@ -21,7 +21,7 @@
 
 { Reply-To-All- (RTA) Routinen }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit replytoall;
 
@@ -967,6 +967,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.19  2001/09/09 09:25:53  mk
   - completed last fix
 

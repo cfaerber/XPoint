@@ -21,7 +21,7 @@
    Global definitions, types and constants
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 
 unit fidoglob;
@@ -309,6 +309,10 @@ end;
 
 {
   $Log$
+  Revision 1.16  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.15  2001/08/10 20:57:56  mk
   - removed some hints and warnings
   - fixed some minior bugs

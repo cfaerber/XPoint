@@ -20,7 +20,7 @@
 
 { (Funktions)tasten & Makros }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpkeys;
 
@@ -249,6 +249,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.18  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 

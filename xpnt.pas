@@ -21,7 +21,7 @@
 { Netztypen   PM 04/92 }
 { s. auch NETZTYP.DOC  }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpnt;
 
@@ -708,6 +708,10 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.33  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.32  2001/09/08 14:39:57  cl
   - added ZC_MIME configuration option
 

@@ -506,6 +506,7 @@ end;
 
 function TMimeAnalyzer.GEncodingSafeForSigned(Enc:TMimeEncoding):Boolean;
 begin
+  Result := false;
   case Enc of
     MimeEncodingBase64,MimeEncodingQuotedPrintable: result:=true;
     MimeEncoding7Bit: result :=
@@ -552,6 +553,10 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2001/09/10 15:58:01  ml
+// - Kylix-compatibility (xpdefines written small)
+// - removed div. hints and warnings
+//
 // Revision 1.5  2001/09/09 20:30:59  cl
 // - corrected property TMimeAnalyzer.EncodingSafeForSigned
 //
@@ -571,4 +576,4 @@ end;
 // - Moved MIME functions/types/consts to mime.pas
 //
 
-{ ----------------------------- } end. { ----------------------------- }
+{ ----------------------------- } end.

@@ -20,7 +20,7 @@
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xp4o;
 
@@ -2441,6 +2441,10 @@ end;
 
 {
   $Log$
+  Revision 1.113  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.112  2001/09/08 16:29:34  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

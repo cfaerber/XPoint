@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP editor unit }
 unit editor;
@@ -1771,6 +1771,10 @@ finalization
 
 {
   $Log$
+  Revision 1.65  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.64  2001/09/09 10:23:20  ml
   - Kylix compatibility stage III
   - compilable in linux

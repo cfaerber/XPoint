@@ -21,7 +21,7 @@
 }
 
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpcrt;
 

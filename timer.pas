@@ -147,6 +147,10 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.19  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
@@ -175,7 +179,7 @@ end.
   - Compilierfaehigkeit wiederhergestellt
 
   Revision 1.11  2000/11/08 19:18:56  hd
-  - Fix: XPDEFINE.INC vergessen :-(
+  - Fix: xpdefine.inc vergessen :-(
 
   Revision 1.10  2000/10/20 14:54:28  hd
   - xpcurses hinzugefuegt

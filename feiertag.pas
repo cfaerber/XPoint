@@ -20,7 +20,7 @@
 
 UNIT feiertag;
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 {  ==================  Interface-Teil  ===================  }
 
@@ -142,6 +142,10 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.7  2001/09/06 18:51:10  mk
   - optimized and removed warning in InitFeiertage
 

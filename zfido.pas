@@ -23,7 +23,7 @@
 {                                         }
 { Errorlevel:  0=ok, 1=Fehler             }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 program ZFido;
 
@@ -50,6 +50,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.48  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.47  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

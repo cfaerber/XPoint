@@ -20,7 +20,7 @@
 
 { lokale Deklarationen fÅr XP6 und XP6O }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpsendmessage_internal;
 
@@ -62,6 +62,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.2  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
   - shortened CVS logs

@@ -20,7 +20,7 @@
 
 { === Datenbank ==================================================== }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp2db;
 
@@ -942,6 +942,10 @@ end;
 
 {
   $Log$
+  Revision 1.38  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.37  2001/09/08 14:26:50  cl
   - cleaned up MIME-related fields in THeader
 

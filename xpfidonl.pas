@@ -20,7 +20,7 @@
 
 { Nodelisten-Konfiguration; Diffs verarbeiten }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpfidonl;
 
@@ -530,6 +530,10 @@ end;
 
 {
   $Log$
+  Revision 1.39  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.38  2001/09/07 23:24:55  ml
   - Kylix compatibility stage II
 

@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 { OpenXP PGP handling unit }
 unit  xp_pgp;
@@ -1074,6 +1074,10 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.50  2001/09/09 23:08:40  cl
   - BUGFIX: GnuPG was not called with -a switch for multipart/encrypted
 

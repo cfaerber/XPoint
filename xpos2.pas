@@ -21,7 +21,7 @@
 
 unit xpos2;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {$IFNDEF OS2 }
   {$FATAL Die Unit XPOS2 kann nur unter OS2 compiliert werden }
@@ -189,6 +189,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.8  2001/01/01 20:16:06  mk
   - changes for os2 and freepascal
 

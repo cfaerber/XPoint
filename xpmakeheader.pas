@@ -21,7 +21,7 @@
 { beliebig grossen Netcall- oder ZConnect-Header auswerten }
 { wird in XP3, MAGGI und XPCHECK included                 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpmakeheader;
 
@@ -581,10 +581,12 @@ begin
   if res<>0 then ok:=false;
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.17  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.16  2001/09/08 20:59:50  cl
   - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
     is still recognized for backwards compatibility).
@@ -642,3 +644,5 @@ end.
   - MakeHeader() integreated in new unit
 
 }
+end.
+

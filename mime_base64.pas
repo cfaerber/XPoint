@@ -22,7 +22,7 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit mime_base64;
 
@@ -214,6 +214,10 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2001/09/10 15:58:01  ml
+// - Kylix-compatibility (xpdefines written small)
+// - removed div. hints and warnings
+//
 // Revision 1.3  2001/09/09 17:40:47  cl
 // - moved common code between alle en-/decoding streams to a base class
 // - all en-/decoding streams can now destruct the other stream
@@ -226,4 +230,4 @@ end;
 // - Moved MIME functions/types/consts to mime*.pas
 //
 
-{ ------------------------------} end. { ------------------------------}
+{ ------------------------------} end.

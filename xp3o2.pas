@@ -20,7 +20,7 @@
 
 { Overlay-Teile zu XP3 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xp3o2;
 
@@ -264,10 +264,12 @@ begin
     UserNetztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.51  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.50  2001/09/08 14:29:08  cl
   - THeader can now write itsself to streams
 
@@ -432,3 +434,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

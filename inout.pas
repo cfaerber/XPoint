@@ -20,7 +20,7 @@
 
 unit inout;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {  ==================  Interface-Teil  ===================  }
 
@@ -1657,6 +1657,10 @@ end;
 
 {
   $Log$
+  Revision 1.76  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.75  2001/09/08 16:29:28  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

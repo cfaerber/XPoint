@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 { Yuppie Mailbase -> Fido-PKT }
 
@@ -370,6 +370,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.13  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

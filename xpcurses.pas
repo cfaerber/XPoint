@@ -17,7 +17,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpcurses;
 
@@ -1578,6 +1578,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.51  2001/09/09 10:23:20  ml
   - Kylix compatibility stage III
   - compilable in linux

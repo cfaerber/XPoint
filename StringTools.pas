@@ -19,7 +19,7 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit stringtools;
 
@@ -51,6 +51,10 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.5  2001/09/08 16:29:30  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

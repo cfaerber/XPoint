@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 { OpenXP multipart messages handling unit }
 
@@ -724,11 +724,12 @@ begin
   Freeres;
 end;
 
-
-end.
-
 {
   $Log$
+  Revision 1.50  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.49  2001/09/08 16:29:40  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
@@ -776,3 +777,5 @@ end.
   Revision 1.38  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 }
+end.
+

@@ -21,7 +21,7 @@
 
 { Registrierung }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpreg;
 
@@ -118,6 +118,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.29  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

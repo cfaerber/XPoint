@@ -21,7 +21,7 @@
 { ZPR - ZCONNECT-Pufferreparierer }
 { PM 08/93, 10/93                 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit zpr;
 
@@ -1281,6 +1281,10 @@ end;
 
 {
   $Log$
+  Revision 1.42  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.41  2001/09/08 16:29:43  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

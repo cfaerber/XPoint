@@ -13,7 +13,7 @@
 { $Id$ }
 
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 uses
   typeform,
@@ -203,6 +203,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.11  2000/11/15 18:09:32  hd
   - Unit DOS entfernt
 

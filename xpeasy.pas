@@ -7,7 +7,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit XpEasy;
 
@@ -82,6 +82,10 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.15  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.14  2001/07/31 13:10:35  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

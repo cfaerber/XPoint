@@ -20,7 +20,7 @@
 
 { Nachrichten versenden, weiterleiten, unversandt-bearbeiten }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpsendmessage;
 
@@ -2298,6 +2298,10 @@ finalization
 
 {
   $Log$
+  Revision 1.13  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.12  2001/09/09 17:40:47  cl
   - moved common code between alle en-/decoding streams to a base class
   - all en-/decoding streams can now destruct the other stream

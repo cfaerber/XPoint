@@ -21,7 +21,7 @@
 
 { Abstrakte Klasse TProgressOutput }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit progressoutput;
 
@@ -60,9 +60,13 @@ end.
 
 {
 	$Log$
+	Revision 1.3  2001/09/10 15:58:01  ml
+	- Kylix-compatibility (xpdefines written small)
+	- removed div. hints and warnings
+
 	Revision 1.2  2001/09/07 23:24:54  ml
 	- Kylix compatibility stage II
-
+	
 	Revision 1.1  2001/03/21 19:17:07  ma
 	- using new netcall routines now
 	- renamed IPC to Progr.Output

@@ -17,7 +17,7 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit xpcfg;
 
@@ -500,6 +500,10 @@ end;
 
 {
   $Log$
+  Revision 1.13  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.12  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

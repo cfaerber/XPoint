@@ -20,7 +20,7 @@
 
 { Nodelist }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpfido;
 
@@ -1986,6 +1986,7 @@ function FidoSeekfile:string;
       sZeile           : string;
       sSub             : string;
   begin
+    test := false;
     for n2:=0 to anz_searchStr - 1 Do     { nach alle Begriffen durchsuchen }
     begin
       n:=0;
@@ -2219,6 +2220,7 @@ var t    : text;
     found: boolean;
     p,p2 : integer;
 begin
+  FindFidoAddress := false;
   assign(t,fn);
   if not existf(t) then exit;
   reset(t);
@@ -2251,9 +2253,13 @@ begin
   if found then SplitFido(s,fa,DefaultZone);
   FindFidoAddress:=found;
 end;
-end.
+
 {
   $Log$
+  Revision 1.59  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.58  2001/09/08 16:29:39  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
@@ -2450,3 +2456,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

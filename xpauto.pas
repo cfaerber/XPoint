@@ -20,7 +20,7 @@
 
 { Nachrichten-Autoversandt; Autoexec }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit xpauto;
 
@@ -676,6 +676,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.43  2001/09/08 16:29:37  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

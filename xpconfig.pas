@@ -21,7 +21,7 @@
 
 { OpenXP - Config-Module }
 
-{$I XPDEFINE.INC}
+{$I xpdefine.inc}
 
 unit XPConfig;
 
@@ -206,6 +206,10 @@ end;
 end.
 {
 $Log$
+Revision 1.2  2001/09/10 15:58:03  ml
+- Kylix-compatibility (xpdefines written small)
+- removed div. hints and warnings
+
 Revision 1.1  2000/12/28 16:00:44  hd
 - Init
   - will replace the used configuration. please be carefull by changing

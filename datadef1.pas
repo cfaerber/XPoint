@@ -20,7 +20,7 @@
 
 { DATABASE.PAS - lokale Deklarationen }
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 unit datadef1;
 
@@ -237,6 +237,10 @@ end;
 
 {
   $Log$
+  Revision 1.18  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.17  2001/09/06 18:46:31  mk
   - iohandler: Zuweisen eines Funktionsergebnis vor halt(1) unnoetig
 

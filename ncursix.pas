@@ -1691,10 +1691,15 @@ begin
   ACS_STERLING:=acs_map['}'];
 end;
 
-end.
 {
   $Log$
+  Revision 1.2  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.1  2001/09/07 23:30:30  ml
   - translated ncurses.pas for Kylix
 
 }
+end.
+

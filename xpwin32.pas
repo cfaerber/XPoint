@@ -21,7 +21,7 @@
 
 unit xpwin32;
 
-{$I XPDEFINE.INC }
+{$I xpdefine.inc }
 
 {$IFNDEF Win32 }
   {$FATAL Die Unit XPWIN32 kann nur unter Win32 compiliert werden }
@@ -238,6 +238,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/09/10 15:58:04  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
   Revision 1.20  2001/09/08 14:44:03  cl
   - More uniform naming of MIME functions/types/consts
 
