@@ -57,7 +57,7 @@
   {$DEFINE Ver32 }
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
-  {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
+  {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 0.99.14 }
@@ -133,6 +133,9 @@
 
 {
   $Log$
+  Revision 1.50  2000/08/07 23:29:59  mk
+  - Optimize in Vp ausgeschaltet, da Fehlerhaft
+
   Revision 1.49  2000/08/01 16:34:14  mk
   - Define Sockets wegen DOS32 wieder eingefuert :/
 
