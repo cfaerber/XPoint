@@ -12,11 +12,11 @@ type tTelnetObj = Object(TCommObj)
         constructor Init;
         destructor Done;
 
-        function  Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
-                           Parity: Char; StopBits: Byte): Boolean; virtual;
+        function  Connect(Dest: String): Boolean; virtual;
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
+        function  CharCount: Integer; virtual;
         function  Carrier: Boolean; virtual;
         function  SendChar(C: Char): Boolean; virtual;
         function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
@@ -36,12 +36,18 @@ type tTelnetObj = Object(TCommObj)
 
         procedure PauseCom(CloseCom: Boolean); virtual;
         procedure ResumeCom(OpenCom: Boolean); virtual;
+        private
+         SHandle: Longint; SIn,SOut: Text; SOpened: Boolean; InBuffer: tRingbuffer;
+         procedure ProcIncoming;
      end; { object TTelnetObj }
 
 Type tpTelnetObj = ^TTelnetObj;
 
 {
   $Log$
+  Revision 1.2  2000/09/11 23:00:13  ma
+  - provisional outgoing TCP support added
+
   Revision 1.1  2000/06/22 17:30:02  mk
   - initial release
   - please keep comments in English

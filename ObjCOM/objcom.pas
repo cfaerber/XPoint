@@ -18,6 +18,8 @@ unit ObjCOM;
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+{$IFDEF FPC}{$HINTS OFF}{$ENDIF}
+
 uses Ringbuffer
 {$IFDEF VirtualPascal},Use32{$ENDIF}
 {$IFDEF Go32v2},Ports{$ENDIF};
@@ -74,7 +76,7 @@ type tCommObj = Object
 
 Type tpCommObj = ^tCommObj;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {a$I OCWTelh.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$I OCTWinh.inc} {$ENDIF}
 {$IFNDEF Win32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF} {* not exactly correct}
 
 function CommInit(S: String; var CommObj: tpCommObj): boolean;
@@ -92,12 +94,12 @@ function FossilDetect: Boolean;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 uses Sysutils,Dos,Strings,Timer,Debug
-{$IFDEF Win32},OCThread,Windows{$ENDIF}{,SockFunc,SockDef}
+{$IFDEF Win32},OCThread,Windows,Sockets{$ENDIF}
 {$IFDEF OS2},OCThread{$ENDIF}
 {$IFDEF Go32V2},Go32{$ENDIF}
 ;
 
-{$IFDEF Win32} {$I OCSWin.inc} {a$I OCTWin.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWin.inc} {$I OCTWin.inc} {$ENDIF}
 {$IFNDEF Win32} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF} {* uh...}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
@@ -174,15 +176,19 @@ end; { proc. tCommObj.ReadBlock }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tCommObj.CharAvail: Boolean;
+var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
-  DebugLog('ObjCOM','Method CharAvail not overloaded',1)
+  GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
+  CharAvail:=InUsed<>0;
 end; { func. tCommObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tCommObj.CharCount: Integer;
+var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
-  DebugLog('ObjCOM','Method CharCount not overloaded',1)
+  GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
+  CharCount:=InUsed;
 end; { func. tCommObj.CharCount }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -209,8 +215,10 @@ end; { func. tCommObj.OpenKeep }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tCommObj.ReadyToSend(BlockLen: Longint): Boolean;
+var InFree, OutFree, InUsed, OutUsed: Longint;
 begin
-  DebugLog('ObjCOM','Method ReadyToSend not overloaded',1)
+  GetBufferStatus(InFree,OutFree,InUsed,OutUsed);
+  ReadyToSend:=OutFree>=BlockLen;
 end; { func. tCommObj.ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -363,19 +371,23 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
   function Int2Str(I: Longint): String;
   var help: String; begin Str(I,help); Int2Str:=help end;
 
+type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
+
 var
  IPort,ISpeed,IDataBits,IStopBits: LongInt;
  CParity: Char; IgnoreCD,UseFossil: Boolean;
- PTag,Res: Integer;
- SOpt: String;
+ PTag,Res: Integer; SOpt: String; ConnType: tConnType;
 
 begin
-  {$IFNDEF Win32} UseFossil:=pos('FOSSIL',UpStr(S))=1; {$ELSE} UseFossil:=False; {$ENDIF}
-  if UseFossil or(pos('SERIAL',UpStr(S))=1)then
+  ConnType:=CUnknown;
+  {$IFNDEF Win32} if pos('FOSSIL',UpStr(S))=1 then ConnType:=CFossil;
+  {$ELSE} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet; {$ENDIF}
+  if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial; 
+  if ConnType<>CUnknown then
     begin
       IPort:=1; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False;
       S:=UpStr(S); Res:=0;
-      Delete(S,1,7); {delete 'Serial'/'Fossil' from string}
+      Delete(S,1,7); {delete 'Serial'/'Fossil'/'Telnet' from string}
       while(S<>'')and(Res=0)do begin
         PTag:=Pos(' ',S); if PTag=0 then PTag:=Length(S)+1;
         SOpt:=Copy(S,1,PTag-1); Delete(S,1,PTag); {now there's the option in SOpt}
@@ -388,8 +400,13 @@ begin
       end;
       DebugLog('ObjCOM','P'+Int2Str(IPort)+' S'+Int2Str(ISpeed)+' '+Int2Str(IDataBits)+CParity+Int2Str(IStopBits),1);
       if Res=0 then
-        begin {$IFNDEF Win32} if UseFossil then CommObj:=New(tpFossilObj,Init) else {$ENDIF} CommObj:=New(tpSerialObj,Init);
-              CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits);
+        begin case ConnType of
+                {$IFDEF Win32} CTelnet: begin CommObj:=New(tpTelnetObj,Init);
+                                              CommInit:=tpTelnetObj(CommObj)^.Connect('')end;{$ENDIF}
+                {$IFNDEF Win32} CFossil: begin CommObj:=New(tpFossilObj,Init);
+                                               CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
+                CSerial: begin CommObj:=New(tpSerialObj,Init); CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
+              end;
               CommObj^.IgnoreCD:=IgnoreCD;
         end
       else CommInit:=False;
@@ -404,6 +421,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2000/09/11 23:00:13  ma
+  - provisional outgoing TCP support added
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English
