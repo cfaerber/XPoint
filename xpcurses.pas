@@ -814,23 +814,10 @@ begin
 
   if (l > 255) then
   begin
-{   if l = 27 then
-    begin
-       z := #27;
-       while keypressed do
-       begin
-          c := readkey;
-          I := Succ(Length(z));
-          SetLength(z, I);
-          z[I] := c;
-       end;
-       z := TranslateESCSeq(z);
-       c := z[2];
-    end;
-    c:= #27;
-}
-
      DosSeq := TranslateESCSeq(l);
+     
+     if Length(DosSeq) = 0 then
+       DosSeq := #27;
 
      ReadKey:= DosSeq[1];              // first char is result
      for I := 2 to Length(DosSeq) do   // other chars pushed to process later
@@ -1482,6 +1469,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/04/13 20:22:49  ml
+  - fix of accessviolation in unhandled keys
+
   Revision 1.39  2001/04/11 07:00:22  ml
   - fixed debugfilenotopen-RuntimeError
 
