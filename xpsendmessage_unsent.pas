@@ -80,6 +80,7 @@ var
     crash    : boolean;
     sdata    : TSendUUData;
     sendflags: word;
+    msgflags : integer;
     empfnr   : shortint;
     ablage   : byte;
     madr     : longint;         { Adresse in Ablage }
@@ -808,9 +809,10 @@ again:
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
-      5 : binaermail:=IsBinary;
+      5 : binaermail:=IsBinary;          { 5: In Archivbrett archivieren }
       6 : begin                          { 6: Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
+            dbReadN(mbase,mb_flags,msgflags);
             Name := dbReadNStr(mbase,mb_absender);
             dbSeek(ubase,uiName,UpperCase(name));
             if dbFound and (dbXsize(ubase,'adresse')<>0) then begin
@@ -1115,6 +1117,7 @@ again:
                dbWriteNStr(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
                dbWriteN(mbase,mb_typ,ntyp);
+               dbWriteN(mbase,mb_flags,msgflags);
                dbReadN(mbase,mb_unversandt,b);
                if (b and 8<>0) then begin        { WV-Flag entfernen }
                  dbReadN(mbase,mb_wvdatum,l);
@@ -1336,6 +1339,10 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/03/17 11:10:10  mk
+  JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+       (Priorit„t, PGP-signiert usw.) jetzt erhalten.
+
   Revision 1.19  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 
