@@ -236,8 +236,9 @@ label ende;
         seeknot[n]:=false;
         end;  
 {$Endif}
-    suchand:=cpos('o',lstr(suchopt))=0;                                  { OR }
-    if not suchand or (cpos('a',lstr(suchopt))>0) then                   { oder AND ?}
+    suchand:=cpos('o',lstr(suchopt))=0;                           { OR }
+    if not suchand or (cpos('a',lstr(suchopt))>0)                 { oder AND ?}
+     and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
     begin       
       n:=0;
       seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
@@ -270,7 +271,7 @@ label ende;
         if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
         suchanz:=n;
         end;
-     
+
       if suchanz=1 then suchand:=true;
       m:=0;
       for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }   
@@ -2392,6 +2393,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/03/22 05:06:37  jg
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+
   Revision 1.28  2000/03/21 15:22:10  jg
   - Suche: Pfeil fuer Historyauswahl kommt nur noch
     wenn auch was gewaehlt werden kann.
