@@ -10,7 +10,7 @@ version="$mainversion"."$subversion"-"$buildnr"
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir="$versiondir"'openxp/'
-scriptdir="$sourcedir"'build/
+scriptdir="$sourcedir"'build/'
 cd "$sourcedir"
 #
 # example: version = 3.8.12-1
