@@ -3318,7 +3318,8 @@ begin
   end;
   if filesize(f1) < 10 then
   begin
-    close(f1); if not ppp then close(fc);
+    close(f1);
+    if not ppp then close(fc);
     exit;
   end;
 
@@ -3452,7 +3453,7 @@ begin
       if not ppp then QueueCompressFile(rsmtp);
   end;
   close(f1);
-  close(fc);
+  if not ppp then close(fc);
 end;
 
 procedure HelpPage;
@@ -3629,6 +3630,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.5  2002/05/08 10:59:55  mk
+  - UtoZ: Close(F2) only if not ppp
+
   Revision 1.97.2.4  2002/05/06 17:58:52  mk
   - use correct file name case (.bak, .out) with linux
 
