@@ -161,7 +161,9 @@ begin
 {$ENDIF}
 {$IFDEF Debug}{$R+}{$ENDIF}
   Result := 0;
+{$IFDEF Debug }
   DebugLog('mouse',Format('MausX: %dpx',[Result]),dlTrace);
+{$ENDIF }
 end;
 
 function mausy:xpWord;
@@ -180,7 +182,9 @@ begin
 {$ENDIF}
 {$IFDEF Debug}{$R+}{$ENDIF}
     Result := 0;
+{$IFDEF Debug }
   DebugLog('mouse',Format('MausY: %dpx',[Result]),dlTrace);
+{$ENDIF }
 end;
 
 function maust:xpWord;
@@ -198,7 +202,9 @@ begin
 {$ENDIF}
 {$IFDEF Debug}{$R+}{$ENDIF}
     Result := 0;
+{$IFDEF Debug }
   DebugLog('mouse',Format('Maust: %s',[Hex(Result,2)]),dlTrace);
+{$ENDIF }
 end;
 
 procedure setmaus(x,y: integer);
@@ -278,6 +284,9 @@ initialization
 
 {
   $Log$
+  Revision 1.39  2003/01/08 12:35:08  mk
+  - call DebugLog in mausx, mausy, maust only if DEFINE DEBUG is on
+
   Revision 1.38  2002/12/21 05:37:51  dodi
   - removed questionable references to Word type
 
