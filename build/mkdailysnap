@@ -50,7 +50,7 @@ rm -rf openxp_3.8_last openxp_3.8
 
 echo Starting snapshot builds if needed
 #test -s $dailydifffile && "$oxpdir"3.9/openxp/build/snapshot 3.9
-test `ls -la $dailydifffile |cut -b 31-42` -gt 40666666 && "$oxpdir"3.9/openxp/build/snapshot 3.9
+test `ls -la $dailydifffile |cut -b 31-42` -gt 406 && "$oxpdir"3.9/openxp/build/snapshot 3.9
 test `ls -la $dailydifffile38 |cut -b 31-42` -gt 1165 && "$oxpdir"3.8/openxp/build/snapshot 3.8
 
 chown -R boettger.users /home/boettger/openxp/*
