@@ -44,7 +44,7 @@ type  diskstat = record
 procedure setwinselcursor(cur:curtype);
 procedure fslct(x,y1,y2: Integer; const txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
-function  fsbox(y: Integer; path,pathx:string; vorgabe:s20; xdir,invers,
+function  fsbox(y: Integer; path,pathx:string; vorgabe: String; xdir,invers,
                 vert:boolean):string;
 // not used
 procedure pslct(x1,x2,y1,y2: Integer; drive:char; fenster,pvorg,modify:boolean;
@@ -199,7 +199,7 @@ begin
 end;
 {$ENDIF }
 
-function fsbox(y: Integer; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
+function fsbox(y: Integer; path,pathx:string; vorgabe: String; xdir,invers,vert:boolean):string;
 
 const
   maxs   = 5;
@@ -1152,6 +1152,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2003/08/28 01:14:15  mk
+  - removed old types s20, s40, s60 and s80
+
   Revision 1.58  2002/12/21 05:37:52  dodi
   - removed questionable references to Word type
 

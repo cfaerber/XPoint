@@ -343,11 +343,7 @@ const
 {$ENDIF}
 
 type DateTimeSt = string; //todo: remove all these obsolete types
-     s20        = string;
-     s40        = string;
-     s60        = string;
-     s80        = string;
-     atext      = s80;
+     atext      = String;
 
 function Bin(l:longint; n:integer):string;      { Bin-Zahl mit n Stellen       }
 function Blankpos(const s:string):integer;        { Position von ' ' oder #9     }
@@ -1995,6 +1991,9 @@ end;
 
 {
   $Log$
+  Revision 1.133  2003/08/28 01:14:15  mk
+  - removed old types s20, s40, s60 and s80
+
   Revision 1.132  2003/08/25 22:38:09  mk
   - fixed comment for TrimLastChar
 

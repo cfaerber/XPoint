@@ -763,7 +763,7 @@ end;
 procedure Maddint(x,y:integer; const text:string; var int; ityp,displ:integer;
                   imin,imax:longint);
 var l : longint;
-    s : s40;
+    s : String;
 begin
   if (ityp<2) or (ityp>6) then
     error('illegal Int type');
@@ -794,7 +794,7 @@ end;
 
 procedure Maddreal(x,y:integer; const text:string; var r:real; displ,rnk :integer;
                    rmin,rmax : real);
-var s : s40;
+var s : String;
 begin
   setall(text,x,y,true);
   with lastfld^ do begin
@@ -1405,6 +1405,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.47  2003/08/28 01:14:15  mk
+  - removed old types s20, s40, s60 and s80
+
   Revision 1.46  2002/12/21 05:37:51  dodi
   - removed questionable references to Word type
 

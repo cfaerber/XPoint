@@ -63,7 +63,7 @@ uses
   montage,
   xp1;
 
-procedure AddD(var datum:s20; hours:shortint);
+procedure AddD(var datum: String; hours:shortint);
 var h,min  : integer;
     t,m,j  : integer;
     res    : integer;
@@ -110,7 +110,7 @@ end;
 
 procedure ZtoZCdatum(var datum,zdatum:string);
 var addh : shortint;
-    dat  : s20;
+    dat  : String;
     p    : byte;
 begin
   dat:=datum;
@@ -124,7 +124,7 @@ end;
 
 procedure ZCtoZdatum(var zdatum, datum:string);
 var addh : shortint;
-    dat  : s20;
+    dat  : String;
     p    : byte;
 begin
   dat:=copy(zdatum,3,10);
@@ -217,6 +217,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2003/08/28 01:14:15  mk
+  - removed old types s20, s40, s60 and s80
+
   Revision 1.26  2003/08/26 05:37:41  mk
   - added AutomaticTimeZone const and removed $IFDEFs
 

@@ -29,7 +29,7 @@ interface
 uses
   sysutils, //override date/time later
   xpglobal,
-  typeform, //s20
+  typeform, 
   keys; //taste
 
 var    lastkey   : taste = '';
@@ -92,7 +92,7 @@ var    fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        esfch      : char     = '>';       { Prompt fuer editsf              }
        curon      : curtype  = curnorm;   { Cursorform bei angesch. Cursor }
        lastcur    : curtype  = curoff;    { letzte Cursorform              }
-       edm_str    : s20      = 'Monat: '; { Prompt-Text bei edmonth        }
+       edm_str    : String   = 'Monat: '; { Prompt-Text bei edmonth        }
        hotkeys    : boolean  = true;      { Hotkeys aktiviert              }
        hotkey_f1  : boolean  = false;     { F1 aktiv (wenn hotkeys==false) }
        retonfn    : taste    = '';        { liefert Get bei FN-Taste zur.  }
@@ -1675,6 +1675,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2003/08/28 01:14:14  mk
+  - removed old types s20, s40, s60 and s80
+
   Revision 1.106  2003/08/23 19:15:27  mk
   - compile fixes for dos32
 
