@@ -60,7 +60,7 @@ uses
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
   res_userbreak         = 'Abbruch durch User';
 
-  res_strange           = 'Interner Fehler'; // just in case...
+  res_strange           = 'Interner Fehler: '; // just in case...
 
 function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
@@ -243,11 +243,11 @@ begin
     on E: ESocketNetcall do begin
       POWindow.WriteFmt(mcError, res_noconnect, [0]);
       result:= false;
-      end
-    else begin
-      POWindow.WriteFmt(mcError, res_strange, [0]);
-      result:= false;
       end;
+    on E: Exception do begin
+      POWindow.WriteFmt(mcError, res_strange + E.Message, [0]);
+      result:= false;
+      end; 
   end;
   POP.Disconnect;
 
@@ -272,6 +272,9 @@ end;
                       
 {
   $Log$
+  Revision 1.27  2001/10/19 00:38:52  mk
+  - display more information in case of internal error
+
   Revision 1.26  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
