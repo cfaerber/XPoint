@@ -58,8 +58,8 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$INLINE ON }
-  {$PACKRECORDS Default } { Default: 2 }
-  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$PACKRECORDS 8 }       { Default: 2 }
+  {$PACKENUM 1 }          { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
@@ -154,16 +154,30 @@
   {$DEFINE Fossil }
 {$ENDIF }
 
-{$IFDEF Linux }
+{$IFDEF Linux}
+  {$DEFINE Unix}
   {$DEFINE TCP }
+{$ENDIF}
+
+{$IFDEF FreeBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
+  {$DEFINE TCP }
+  {$UNDEF Linux }
 {$ENDIF }
 
-{$IFDEF BSD }
+{$IFDEF NetBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
   {$DEFINE TCP }
+  {$UNDEF Linux }
 {$ENDIF }
 
 {
   $Log$
+  Revision 1.12  2003/01/23 10:03:44  mk
+  - changes for Kylix and Linux
+
   Revision 1.11  2003/01/07 11:07:50  mk
   - added some fpc and kylix defines
 
