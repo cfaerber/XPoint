@@ -24,7 +24,7 @@ uses
 {$ENDIF}
 {$IFDEF DOS32}Ports,DOS,{$ENDIF}
 {$IFDEF Win32}Windows,WinSock,{$ENDIF}
-{$IFDEF Linux}
+{$IFDEF Unix}
   {$IFDEF fpc}Linux,sockets,{$ENDIF}
   {$IFDEF Kylix}libc,KernelIoctl,{$ENDIF}
 {$ENDIF}
@@ -506,6 +506,9 @@ end
 
 {
   $Log$
+  Revision 1.36  2003/01/09 22:40:42  mk
+  - changed ifdef Linux to Ifdef Unix
+
   Revision 1.35  2003/01/06 22:43:02  cl
   - made TCommStream.Write compatible with TStream.Write
 
