@@ -1532,11 +1532,13 @@ var dat    : longint;
         end;
      
       GoPos(p2);
-      repeat 
-        inc(p2);
-        dbnext(bbase); 
+      repeat
+        dbnext(bbase);
+        if not wrongline then inc(p2);
         if not (dbBOF(bbase) or dbEOF(bbase)) then dbReadN(bbase,bb_brettname,s);
-      until dbBOF(bbase) or dbEOF(bbase) or (left(s,3)<>'$/T'); {keine Trennzeile anspringen }               
+      until dbBOF(bbase) or dbEOF(bbase) or (not wrongline and (left(s,3)<>'$/T'));
+                                              {keine Trennzeile anspringen }
+      if readmode<>0 then dec(p2);
 
       if (dbBOF(bbase) or dbEOF(bbase))
       then begin
@@ -1756,13 +1758,28 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.38  2002/04/09 20:50:00  my
+  JG:- Fixes Brett-Weiterschalter:
+       1) Wenn im Anzeigemodus "Nur Bretter anzeigen, die auf den aktiven
+          Lesemodus passen" alle Nachrichten eines Bretts gelesen waren
+          und das Brett verlassen wurde, sprang der Brett-Weiterschalter
+          im Ungelesen-Modus ein Brett zu weit (weil das Brett jetzt nicht
+          mehr auf den Lesemodus paáte und daher aus der Anzeige
+          verschwand).
+       2) Wenn in derselben Konstellation auf das verlassene Brett eine
+          Trennzeile folgte, und zwischen dieser und der n„chsten
+          Trennzeile sich nur Bretter befanden, die nicht auf den aktiven
+          Lesemodus passten, landete der Cursor auf der n„chsten
+          Trennzeile (genauer: auf der Stelle, an der in der
+          Komplettanzeige ("A") das n„chste Brett liegen wrde).
+
   Revision 1.25.2.37  2002/04/07 22:32:40  my
   MY:- Der 983. Nachrichten-Weiterschalter-Fix: Wenn bei einer MIME-
        Multipart-Nachricht der Lister mit <Backspace> verlassen wurde, war
        ein aktivierter Nachrichten-Weiterschalter fr den Rest der XP-
-       Sitzung deaktiviert, wenn er nicht ausdrcklich mit <Ctrl-W> wieder
-       aktiviert wurde. Der Schalter beh„lt jetzt seinen Status fr die
-       nachfolgenden Nachrichten bei, beim Verlassen des MIME-Auswahlmens
+       Sitzung deaktiviert (wenn er nicht anschlieáend mit <Ctrl-W> wieder
+       aktiviert wurde). Der Schalter beh„lt jetzt seinen Status fr die
+       nachfolgenden Nachrichten bei, beim Verlassen eines MIME-Auswahlmens
        kommt es hinsichtlich des Weiterschaltens zur n„chsten Nachricht
        darauf an, wie der Lister beim zuletzt betrachteten Nachrichtenteil
        verlassen wurde (<Backspace> => nicht weiterschalten, <Esc> =>
