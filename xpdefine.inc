@@ -79,13 +79,14 @@
 
 {
   $Log$
-  Revision 1.30.2.7  2003/01/10 18:11:49  mw
+  Revision 1.30.2.8  2003/01/10 22:02:32  my
+  MY:- Log-Kosmetik
 
-  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
-        (Teil 1)
+  Revision 1.30.2.7  2003/01/10 18:11:49  mw
+  MW:- Overlaycache im XMS per Compilerschalter ausgeschaltet.
+       (Teil 1)
 
   Revision 1.30.2.6  2001/09/03 19:19:54  mw
-
   - Small Cleanup
 
   Revision 1.30.2.5  2001/08/11 15:03:43  my

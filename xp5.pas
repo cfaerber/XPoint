@@ -1059,21 +1059,17 @@ begin
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.27.2.16  2003/01/10 22:02:32  my
+  MY:- Log-Kosmetik
+
   Revision 1.27.2.15  2003/01/10 18:11:50  mw
-
-  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
-        (Teil 1)
-
-  Revision 1.1.1.1  2002/08/24 17:03:25  mw
-
-  - Overlaycache im XMS.
-  - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
-
-  Achtung: Diese Feature sind noch nicht auf jedem Betriebsystem stabil
-           und liegen daher hier im Playground.
-
+  MW: - Overlaycache im XMS (Default: per Compilerschalter ausgeschaltet).
+      - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
+      Achtung: Diese Features laufen noch nicht auf jedem Betriebssystem
+               stabil!
 
   Revision 1.27.2.14  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
@@ -1081,7 +1077,7 @@ end.
        aktualisiert.
 
   Revision 1.27.2.13  2002/01/04 01:15:45  mk
-  - Windows XP wurde unter CrossPoint/Statistik als WIndows 2000 angezeigt
+  - Windows XP wurde unter CrossPoint/Statistik als Windows 2000 angezeigt
 
   Revision 1.27.2.12  2001/09/16 20:31:21  my
   JG+MY:- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)

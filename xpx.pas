@@ -325,21 +325,17 @@ begin
   TestCD;
   starting:=false;
 end.
+
 {
   $Log$
+  Revision 1.18.2.15  2003/01/10 22:02:32  my
+  MY:- Log-Kosmetik
+
   Revision 1.18.2.14  2003/01/10 18:11:50  mw
-
-  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
-        (Teil 1)
-
-  Revision 1.1.1.1  2002/08/24 17:03:27  mw
-
-  - Overlaycache im XMS.
-  - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
-
-  Achtung: Diese Feature sind noch nicht auf jedem Betriebsystem stabil
-           und liegen daher hier im Playground.
-
+  MW: - Overlaycache im XMS (Default: per Compilerschalter ausgeschaltet).
+      - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
+      Achtung: Diese Features laufen noch nicht auf jedem Betriebssystem
+               stabil!
 
   Revision 1.18.2.13  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
@@ -347,11 +343,11 @@ end.
        aktualisiert.
 
   Revision 1.18.2.12  2001/09/16 20:36:58  my
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -373,7 +369,8 @@ end.
   - LFN bei Win2000 automatisch einschalten
 
   Revision 1.18.2.6  2001/01/10 17:39:07  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+  UUZ und Bugfixes
 
   Revision 1.18.2.5  2000/12/05 13:09:42  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
@@ -382,7 +379,8 @@ end.
   RB:- MCB-Test jetzt mit Groesse der Datei
 
   Revision 1.18.2.3  2000/11/21 22:40:37  mk
-  - MCB-Code von XP2 (Robert Boeck) hinzugefuegt um auf schon geladenes XP zu testen
+  - MCB-Code von XP2 (Robert Boeck) hinzugefuegt um auf schon
+    geladenes XP zu testen
 
   Revision 1.18.2.2  2000/07/01 11:17:27  mk
   - 32 Bit Teile entfernt
