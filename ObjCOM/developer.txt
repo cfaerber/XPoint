@@ -1,0 +1,31 @@
+ObjCOM naming conventions suggestions
+
+* Include file naming
+  oc<comm type><operating system>[h].inc
+  <comm type>: s for normal serial line
+               f for fossil driver
+               t for TCP/IP connection
+  Add h for definitions in interface part of unit
+
+  Example:
+  ocsdosh.inc - ObjCOM include file containing public
+                type definitions for Dos serial communication.
+
+* Variable/Type naming
+  [t][p]<name>[Obj]
+  [t] for type, [p] for pointer, [Obj] for object
+
+  Examples:
+  tCommObj - variable type, Comm object
+  tpCommObj - variable type pointer to Comm object
+  pCommObj - pointer to Comm object
+  qTimers - a quantity of Timers
+  iTimer - counting variable
+
+  const qTimers= 10;
+  var iTimer: Integer;
+  begin
+    for iTimer:=1 to qTimers do Timer[iTimer].Init;
+  end;
+
+[EoF]

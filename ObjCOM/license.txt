@@ -1,0 +1,20 @@
+ObjCOM - a portable and flexible serial communications unit
+===========================================================
+
+2000-06-20
+
+ObjCOM derived from EleCOM, a communications library for
+EleBBS (www.elebbs.com) by Maarten Bekers.
+ObjCOM is maintained by Malte Kiesel.
+
+ObjCOM is freeware. It may be used freely as long as
+comments in the source files are not changed. If ObjCOM
+is used in a commercial project and has to be modified,
+changes have to be made available to the public and the
+project must include a message like "Using ObjCOM" along
+with the copyright statement.
+
+ObjCOM has to be distributed free of charge.
+
+m.kiesel@iname.com
+[EoF]

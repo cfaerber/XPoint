@@ -1,0 +1,11 @@
+ObjCOM todo list
+
+- testing, bugfixing (lots of work... ;-)
+- finish TCP connection part
+- allow multiple instances of comm objects in ocswin and ocsos2
+- add Linux support (ocslin?)
+- use timeouts where appropriate
+- add proper error messages and error handling
+- perhaps add CAPI support?
+
+[EoF]
