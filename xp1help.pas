@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,inout,keys,resource,maus2,help,winxp,printerx,
+  typeform,inout,keys,resource,maus2,help,winxp,printerx, sysutils,
   maske, xp0;
 
 
@@ -404,6 +404,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/10/17 10:13:23  mk
+  - Unit Sysutils hinzugefuegt
+
   Revision 1.14  2000/10/17 10:05:46  mk
   - Left->LeftStr, Right->RightStr
 

@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
+     dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske, sysutils,
      eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
 
 
@@ -475,6 +475,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/17 10:13:23  mk
+  - Unit Sysutils hinzugefuegt
+
   Revision 1.21  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

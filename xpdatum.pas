@@ -20,8 +20,8 @@ interface
 uses
 {$IFDEF Linux }
   linux,
-  sysutils,
 {$ENDIF }
+  sysutils,
   typeform,
   montage,
   xpglobal;
@@ -158,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/10/17 10:13:23  mk
+  - Unit Sysutils hinzugefuegt
+
   Revision 1.12  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

@@ -24,7 +24,7 @@ UNIT montage;
 interface
 
 uses
-  typeform, xpglobal;
+  sysutils, typeform, xpglobal;
 
 const
        monat : Array[1..12] of record
@@ -189,6 +189,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/10/17 10:13:23  mk
+  - Unit Sysutils hinzugefuegt
+
   Revision 1.6  2000/10/17 10:05:42  mk
   - Left->LeftStr, Right->RightStr
 
