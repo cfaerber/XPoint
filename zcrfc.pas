@@ -3205,6 +3205,7 @@ begin
   if hd.attrib and AttrMPbin <> 0 then begin
     wrs(f, '');
     wrs(f, '--' + xpboundary + '--'); end;    
+  wrs(f,'');
 end;
 
 procedure TUUZ.ZtoU;
@@ -3769,6 +3770,10 @@ end;
 
 {
   $Log$
+  Revision 1.134  2003/05/05 09:49:35  cl
+  - FIX: Messages ending without a CRLF from ZConnect were not converted
+    correctly
+
   Revision 1.133  2003/04/25 21:11:19  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
