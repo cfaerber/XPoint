@@ -1,7 +1,7 @@
 K CrossPoint v3.40 resource file
 K Deutsch
-K (c) '93-99 Peter Mandrella
-K (c) '2000-01 OpenXP-Team, www.openxp.de
+K (c) 1993-99 Peter Mandrella
+K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 
 # Online-Hilfe, Tastenmakros
 1 XP.HLP
@@ -14,13 +14,13 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 # --- Mens -----------------------------------------------------------
 
 # Hauptmen-Hotkeys: Nachrichten / Sonstige / AutoVersand
-7 XWNTFDCZ
-8 XWNTFDCZ
-9 XWùùFDCZ
+7 XWNTFDCZ?
+8 XWNTFDCZ?
+9 XWùùFDCZ?
 
 + 10
 # Do NOT change the first word in each of the following lines!
-0   Main,001^XPointù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2
+0   Main,001^XPointù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2,009^?ù41
 1   XPoint,011^Registrierung,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,016^DOS        F9,-,018^Beenden
 # Zusatz-Men hier nur fr XPME (s.u.) :
 2   Zusatz,021^Kalender,022^Archiv-Viewer
@@ -60,6 +60,8 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 38  Filescan,261^Bestellen,262^Abbestellen,263^Liste anfordern,264Liste ^einlesen,265^Datei einlesen,266^Sonstiges
 39  Tarifzonen,271^Zonen,272^Tarife,273^Feiertage,274^Sonstiges
 40  PGP,281Key ^anfordern,282Key ^einlesen,283Nachricht ^decodieren,284^Signatur testen,-,286^Key editieren,287^User-ID entfernen
+41  ?,291^Aktuell             F1,292^Vorheriges Thema   @F1,-,293Hilfe-^Inhalt      2*F1,294^Hilfe zur Hilfe,-,295XP-^Bedienung,296Aktuelle ^Makros     F6,-,297^Spezielle Themen..ù42,-,298^šber OpenXP
+42  Spezial,2a1^PGP-Verschlsselung,2a2XP und ^Mailinglisten,2a3Netztyp ^RFC/Client,2a4XP als ^Windows-Mailer
 # max. Mennummer = 99 (s. XPME.PAS)
 # Zusatz-Men
 100 021^Kalender
@@ -106,7 +108,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 + 20
 0    markieren
 # Bretter, User, Bretter/Spezial, User/Spezial
-1    ^Alle ^Brief T^extfile B^in„r ^Spezial ^Lesen:
+1    ^Alle ^Brief T^ext B^in ^Spez. S^uche ^Lesen:
 2    ^Alle S^ort ^Brief T^ext B^in ^Spez. S^uche Ad^reábuch ^Paáwort
 3    ^Hinzuf. ^L”schen ^Edit Z^ugriff ^Verknpfen ^Pos. ~Trenn. ^Spezial
 4    ^Alle S^ort ^Hinzu. ^Vert. ^L”schen ^Edit ^Spez. Ad^reáb. ^PW
@@ -130,7 +132,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 20   Anruf starten
 # Fileserver
 21   bestellen
-22 S^uche
+22   S^uche
 
 + 22
 # Tasten im Brettfenster:
@@ -157,7 +159,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
 # multiquote reply, PM, Quote PM, Multiquote PM, Paáwort-Edit, indir. Quote
 
-3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S R ^N # A b ^B B p ^P P ^T ^Q
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q
 
 # Tasten im AutoVersand-Fenster
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
@@ -595,6 +597,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
 15   Bin„rnachrichten als "Attachments"
+16   Alten Betreff anh„ngen
 17   Magics im <F3>-Request
 18   OpenXP-Version in Tearline schreiben
 + 254
@@ -659,7 +662,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 + 258
 # Brett/Useranzeige
 # Fensterbreite
-0    37
+0    39
 1    normal
 2    spezial
 3    klein
@@ -669,6 +672,8 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 8    Brettanzeige        ~
 9    Usenet-Gruppen mit "."
 10   Trennzeilenkommentar~
+11   ... gilt fr alle Bretter
+12   kombinierter Ungelesen-Modus
 21   links
 22   Mitte
 23   rechts
@@ -686,6 +691,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 13   vollst„ndige Adressen im Kommentarbaum
 14   Realname anzeigen, falls vorhanden
 15   Empf„nger von Fido-Brettnachrichten anzeigen
+16   Neue Nachrichten oben
 + 260
 1    Screen-Saver (Sek.) ~
 2    weich ausblenden
@@ -701,8 +707,8 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 12   zus„tzliches Tonsignal
 13   Kopfzeile 1
 14   Kopfzeile 2
-15   Feldtausch Nachrichtenliste
-16   Feldtausch Userliste      ~
+15   Feldtausch Nachrichten-Lesefenster
+16   Feldtausch User-šbersicht        ~
 17   VGA-Palette sichern
 + 261
 # Fensterbreite
@@ -1015,6 +1021,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 435  keine Bretter mit neuen Nachrichten vorhanden
 436  keine Bretter mit ungelesenen Nachrichten vorhanden
 437  Message-ID
+438  Text-Markier
 
 # XP4O
 + 441
@@ -1038,6 +1045,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 18   keine passenden Nachrichten gefunden
 19   ~von~
 20   ~bis~
+21   Suchbegriffs-Bibliothek
 -
 + 442
 0    Alle
@@ -1095,7 +1103,11 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 6    Einen Moment noch...     %
 7    nix zu l”schen
 -
-452  neues Empfangsdatum:
++ 452
+# 452,1 muá mit "N" beginnen!
+1    Neues Empfangsdatum:
+2    Erstelldatum bernehmen
+-
 # 453 und 455 sind Menpunkte aus /Nachricht/Unversandt
 453  ndern
 454  neuer Betreff:
@@ -1165,10 +1177,12 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 7    ~um~
 -
 + 467
-1    User-(markier)-Suche
+1    User-(markier)
 2    Suchbegriff:
 3    Suchen...     %        gefunden:
 4    keine passenden User gefunden
+5    Brett-(markier)
+6    keine passenden Bretter gefunden
 -
 468  Brettindex-Nr.
 469  Netztyp:~
@@ -1193,6 +1207,10 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 -
 
 # XP4E: s. 2700
+
+# XP4W
++ 480
+1    Adreábuchgruppe:
 
 
 # --- XP5 -------------------------------------------------------------
@@ -1317,7 +1335,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 8    Bei Fragen zum  OpenXP-Projekt,  Problemen oder  Anregungen wenden
 9    Sie sich bitte an  das OpenXP-Team in den  entsprechenden Support-
 10   Foren der jeweiligen Netze. Eine Liste der aktuellen Adressen fin-
-11   den Sie in der Online-Hilfe  (drcken Sie <F1>, <F1>, S, <Enter>).
+11   den Sie in der Online-Hilfe  (drcken Sie *<F1>*, *<F1>*, *S*, *<Enter>*).
 12
 13   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
@@ -2508,6 +2526,8 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 + 2500
 1    Datei wurde ge„ndert.
 2    ~^Sichern , ^Nicht sichern , ^Zurck~
+3    Nachricht wurde ge„ndert.
+4    ~^Sichern , ^Nicht sichern , ^Parken , ^Zurck~
 + 2501
 0    Hinweis
 # Anzahl der Textzeilen:
@@ -2542,10 +2562,16 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 35   La^den UUE    ^KU
 36   ^Speichern    ^KW
 37   -
-38   ^Umbruch aus   F3
-39   U^mbruch ein   F4
-40   -
-41   ^Optionen     ^OR
+38   S^uchen       ^QF
+39   E^rsetzen     ^QA
+40   ^Weitersuchen  ^L
+41   -
+42   ^Umbruch aus   F3
+43   U^mbruch ein   F4
+44   -
+45   ^Optionen     ^OR
+46   -
+47   ^Beenden      Esc
 -
 2504 Block speichern
 2505 Block laden
@@ -2555,7 +2581,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 2    Text ~
 3    Schreibweise ignorieren
 10   50
-11   Suchen/ersetzen
+11   Suchen/Ersetzen
 12   suchen nach   ~
 13   ersetzen durch~
 -
@@ -2715,7 +2741,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 2713 Brettname ge„ndert - Nachrichtenk”pfe anpassen
 2714 Einen Moment bitte...
 + 2715
-1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter,^Gruppe
+1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter,^Gruppe,^Priorit„t,^Empfangsbest.,^Vertreteradr.,^L”schen
 2    ^Kommentar,^Serverbox,^Haltezeit,^Gruppe,^Filter,^Zugriff
 3    %s markierte User bearbeiten
 4    %s markierte Bretter bearbeiten
@@ -2723,7 +2749,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 6    Server  ~
 7    Nachr.
 8    Tage
-9    Haltezeit:~
+9    Haltezeit~
 10   IBM-Umlaute verwenden
 11   Gruppe ~
 12   Nachrichtenfilter
@@ -2738,10 +2764,12 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 -
 2719 private Nachricht
 + 2720
-1    ^Alles,^Ungelesen,^Neues,^Heute,^Datum,^Zeit
+1    ^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit
 2    ,^Sichern
+# 2720,3 darf nicht mit "N" beginnen!
 3    Lesen ab Datum:
-4    Lesen ab Uhrzeit:
+4    Uhrzeit:
+5    aus Nachricht bernehmen
 + 2721
 1    Empf„nger:
 2    ~^Brett , ^User~
@@ -2870,7 +2898,7 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 # --- Fehlermeldungen -------------------------------------------------
 
 +  10000
-1  Die Hilfsdatei %s fehlt!
+1  Die Hilfedatei %s fehlt!
 2  Dateierweiterung muá .XPS sein!
 3  Ungltiger Pfad- oder Dateiname!
 4  Kann %s nicht l”schen!?
