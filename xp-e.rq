@@ -3071,7 +3071,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME types or file extensions not allowed!
 35 Default entry cannot be edited.
-36 Entry must either contain nil or "CLPATH+" as path specification!
+36 Entry must either contain nil or "$CLPATH+" as path specification!
 37 Directory must not be equal to the XP spool directory!
 38 Only RELATIVE path ONE level DIRECTLY below XP directory allowed!
 39 This path must not be empty!

@@ -1436,10 +1436,10 @@ Folgende Funktionen stehen zur Verfgung:
          mehrere markierte Nachrichten. Schablone:
          [PrivQoute].@10804
 
-Bei <<P>>, <<<Ctrl-P> >>und <<Shift-P> >>steht Ihnen in ZConnect-
-und RFC-Netzen eine erweiterte Antwortfunktion zur
-Verfgung, wenn die Nachricht mehrere Empf„nger ent-
-h„lt und die Funktion ("<<Reply-To-All>>") aktiviert ist.
+Bei <<P>>, <<<Ctrl-P> >>und <<<Shift-P> >>steht Ihnen eine
+erweiterte Antwortfunktion zur Verfgung, wenn die
+Nachricht mehrere Empf„nger enth„lt und die Funktion
+("<<Reply-To-All>>") aktiviert ist (nur ZConnect/RFC).
 Siehe auch [/Config/Opt./Nachr./Empf„nger-Auswahlliste]@258
 
 <<<Ctrl-F> >>Senden einer Textdatei an den Absender der
