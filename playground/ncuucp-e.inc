@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall 'e' protocol include file
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus Färber
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -19,150 +19,95 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-function e_SendCommand(s:string):boolean;   { 0-terminierten Befehl senden }
-begin
-  SendStr(s+#0);
-  e_SendCommand:=not NoCarrier;
+type TUUCProtocolE = class(TUUCProtocolSimple)
+  private
+    procedure SendCommand(s:string);                override;
+    function  GetCommand: string;                   override;
+    procedure SendFile(var f:file; offset:longint); override;
+    procedure RecFile (var f:file);                 override;
 end;
 
-
-function e_GetCommand:string;               { 0-terminierten Befehl holen }
-var s   : string;
-    l,b : byte;
+procedure TUUCProtocolE.SendCommand(s:string);
 begin
-  l:=0;
-  time(eProtTimeout);
-  b:=255;
+  CommObj.SendString(s+#0,false);
+  Netcall.TestBreak;
+end;
+
+function TUUCProtocolE.GetCommand:string;
+var c: char;
+begin
+  result:='';
+
   repeat
-    if receive(comnr,b) then begin
-      time(eprotTimeout);
-      if (b>=32) and (l<255) then begin
-        inc(l);
-        s[l]:=chr(b);
-        end;
-      end
-    else begin
-      multi2;
-      testbrk;
-      end;
-  until (b=0) or timeout(true) or break;
-  if timeout(true) or break then l:=0;
-  setlength(s,l);
-  e_GetCommand:=s;
+    if CommObj.CharAvail then
+    begin
+      c:= CommObj.GetChar;
+      if c=#0 then exit;
+      result:=result+c;
+    end else
+    begin
+      Netcall.TestBreak;
+      mdelay(0);
+    end;
+  until false;
 end;
 
-
-procedure WreSize;
+procedure TUUCProtocolE.SendFile(var f:file; offset:longint);
+const bsiz = 8192;
+var   len,rd,sd : LongInt;
+      s    : string;
+      buf  : packed array[1..bsiz] of char;
 begin
-  if ParDebug then begin
-    write(#13,transdata.transferred,' Bytes');
-    writeln(deblog^,strs(transdata.transferred)+' Bytes');
-    end
-  else
-    WriteTransfer;
-end;
-
-
-function e_SendFile(fn:pathstr; offset:longint):shortint;   { Datei senden }
-const bufsize = 1024;
-var f   : file;
-    buf : array[0..bufsize-1] of byte;
-    rr  : word;
-    i   : integer;
-begin
-  assign(f,fn);
-  resetfm(f,0);
   seek(f,offset);
-  transdata.filesize:=filesize(f)-offset;
-  if not ParDebug then
-    WriteTransfer;         { Groesse anzeigen }
-  SendStr(LeftStr(strs(transdata.filesize)+dup(20,#0),20));   { Laenge senden }
-  if not NoCarrier then
-    repeat
-      blockread(f,buf,bufsize,rr);
-      inc(transdata.transferred,rr);
-      inc(transdata.total,rr);
-      transdata.blocksize:=rr;
-      for i:=0 to rr-1 do
-        SendByte(buf[i]);
-      WreSize;
-    until eof(f) or NoCarrier or break;
-  close(f);
-  WrdLn;
-  e_SendFile:=iif(NoCarrier,fileError,fileOK);
+  len:=Filesize(f);
+
+  s:=StrS(len);
+  s:=s+StringOfChar(#0,20-length(s));
+
+  CommObj.SendString(s,false);
+
+  while len>0 do
+  begin
+    BlockRead(f,buf,bsiz,rd);
+    CommObj.SendBlock(buf,rd,sd);
+    len:=len-sd;
+    FileAdvance(buf,rd);
+    if rd<>sd then raise EUUCProtocol.Create('send error');
+    Netcall.TestBreak;
+  end;
 end;
 
-
-function e_RecFile(fn:pathstr):shortint;
-const bufsize = 1024;
-var len   : string[20];
-    i     : integer;
-    fs    : longint;
-    b     : byte;
-    f     : file;
-    buf   : array[0..bufsize-1] of byte;
-    bp    : word;
-    ftyped: boolean;
+procedure TUUCProtocolE.RecFile(var f:file);
+const bsiz = 8192; (* MUST be >= 20 *)
+var   len,rd : LongInt;
+      s    : string;
+      buf  : packed array[1..bsiz] of char;
 begin
-  e_RecFile:=fileError;
-  time(eProtTimeout);
-  i:=0;
-  while (i<20) and not timeout(true) and not break do
-    if receive(comnr,b) then begin
-      inc(i);
-      len[i]:=chr(b);
-      time(eProtTimeout);
-      end
-    else begin
-      multi2;
-      testbrk;
-      end;
-  if timeout(true) or break then exit;
-  while (i>0) and (len[i]=#0) do dec(i);
-  setlength(len,i);
-  fs:=ival(len);        { Dateigroesse }
-  transdata.filesize:=fs;
-  WriteTransfer;      { Groesse anzeigen }
-  assign(f,fn);
-  rewrite(f,1);
-  time(eProtTimeout);
-  ftyped:=false;
-  bp:=0;
-  while (fs>0) and not timeout(true) and not break do begin
-    if receive(comnr,b) then begin
-      buf[bp]:=b; inc(bp);
-      dec(fs);
-      time(eProtTimeout);
-      end
-    else
-      testbrk;
-    if not ftyped and (bp>110) then begin
-      ShowFtype(buf,bp);
-      ftyped:=true;
-      end;
-    if (bp=bufsize) or (fs=0) then begin
-      inc(transdata.transferred,bp);
-      inc(transdata.total,bp);
-      transdata.blocksize:=bp;
-      WreSize;
-      blockwrite(f,buf,bp);
-      bp:=0;
-      end;
-    end;
-  if not timeout(true) then
-    e_Recfile:=fileOK;
-  if bp>0 then begin
-    WreSize;
-    blockwrite(f,buf,bp);
-    end;
-  close(f);
-  WrdLn;
+  seek(f,0); truncate(f);
+
+  SetLength(s,20);
+  CommObj.ReadBlock(s[1],20,rd);
+  if rd<>20 then raise EUUCProtocol.Create('receive error');
+
+  s:=LeftStr(s,max(0,cpos(#0,s)-1));
+  if (s='') or (not isnum(s)) then raise EUUCProtocol.Create('illegal file size: '''+s+'''');
+
+  len:=IVal(s);
+
+  while len>0 do
+  begin
+    CommObj.ReadBlock(buf,min(len,bsiz),rd);
+    BlockWrite(f,buf,rd);
+    len:=len-rd;
+    FileAdvance(buf,rd);
+    Netcall.TestBreak;
+  end;
 end;
 
 {
   $Log$
-  Revision 1.1  2001/01/19 18:00:00  ma
-  - added TUUCPNetcall sources (from uucico)
+  Revision 1.2  2001/03/16 23:02:34  cl
+  - transfer statistics
+  - fixes
 
-  ----- moved to playground
 }

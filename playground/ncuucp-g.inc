@@ -1,8 +1,8 @@
 {  $Id$
 
    OpenXP UUCP netcall 'g' protocol include file
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and 3247
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -637,6 +637,10 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/03/16 23:02:34  cl
+  - transfer statistics
+  - fixes
+
   Revision 1.2  2001/02/21 17:45:53  cl
   - first things for TUUCPNetcall
 

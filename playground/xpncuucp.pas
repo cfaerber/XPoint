@@ -121,6 +121,8 @@ var
       uu.Dest     := DestDir;
       uu._from    := boxpar^.pointname;
       uu._to      := boxpar^.boxname;
+
+      ReadUU;
       uu.uunumber := uunum;
 
       result:=true;
@@ -274,6 +276,7 @@ var
     begin
       uunum := uu.uunumber;
       CmdFile:=uu.CommandFile;
+      WriteUU;
       uu.Free;
       result:=true; {!! no error checking}
     end;
@@ -378,7 +381,7 @@ var
 
     UUCICO:=TUUCPNetcall.
       CreateWithCommInitAndIPC(CommInit,
-      TXPMessageWindow.CreateWithSize(50,10,'UUCICO',True));
+      TXPMessageWindowDialog.CreateWithSize(60,10,BoxName,True));
 
     if BoxPar^.conn_Mode=1 then
     begin
@@ -403,7 +406,7 @@ var
 
     UUCICO.UUremote      := BoxName;
     UUCICO.UUname        := iifs(BoxPar^.UUCPname<>'',BoxPar^.UUCPName,BoxPar^.PointName);
-    UUCICO.UUprotos      := 't'; (* BoxPar^.UUProtos; *)
+    UUCICO.UUprotos      := BoxPar^.UUProtos;
 
     UUCICO.FilePath      := InFileDir;
     UUCICO.CommandFile   := CmdFile;
@@ -421,10 +424,10 @@ var
 
     if UUCICO.Connect then
     begin
-      UUCICO.WriteIPC(mcVerbose,'Login',[0]);
+      UUCICO.WriteIPC(mcInfo,'Login',[0]);
       if RunScript(BoxPar,UUCICO.CommObj,UUCICO.IPC,false,BoxPar^.Script,false,false) = 0 then
       begin
-        UUCICO.WriteIPC(mcVerbose,'Starting UUCICO',[0]);
+        UUCICO.WriteIPC(mcInfo,'Starting UUCICO',[0]);
         result := UUCICO.PerformNetcall;
       end;
     end;
@@ -474,7 +477,6 @@ begin {function UUCPNetcall}
   if result IN [el_recerr,el_ok] then begin
     Debug.DebugLog('xpncucp','sending upbuffer was successful, clearing unsent flags',DLInform);
     if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname); _era(ppfile); end;
-    WriteUU;
   end;
 
 end; { function UUCPNetcall}
@@ -483,6 +485,10 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/03/16 23:02:34  cl
+  - transfer statistics
+  - fixes
+
   Revision 1.8  2001/03/13 00:23:05  cl
   - fixes for UUCP netcalls (first working version)
 
