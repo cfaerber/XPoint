@@ -12,7 +12,7 @@ var
 WSAData:  tWSAData;
 {$ENDIF}
 
-{$ifdef FreeBSD}
+{$ifdef BSD}
   const FIONREAD = $4004667F;
 {$endif}
 
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.2  2003/01/19 19:50:05  mk
+  - changed FreeBSD to BSD to allow compiling with NetBSD
+
   Revision 1.15.2.1  2003/01/01 16:18:38  mk
   - changes to made FreeBSD version compilable
 
