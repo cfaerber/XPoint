@@ -326,10 +326,14 @@ var b1,b2,b3,b4 : byte;
 begin
   if length(s)<4 then s:=''
   else begin
-    if s[length(s)]='=' then
+    if lastchar(s)='=' then
       if s[length(s)-1]='=' then pad:=2
       else pad:=1
-    else pad:=0;
+    else begin
+      if length(trim(s)) mod 4 <> 0 then
+        exit   { kein gltiger base64-String }
+      else pad:=0;
+    end;
     p1:=1; p2:=1;
     while p1<=length(s) do begin
       b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
@@ -473,6 +477,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.3  2002/03/15 12:39:28  my
+  MY:- Ungltige base64-Strings werden nicht mehr decodiert, dadurch
+       z.B. PktXCode-Meldungen wieder lesbar (Fix re-implementiert).
+
   Revision 1.1.2.2  2002/03/14 17:01:21  my
   RB:- Fix fr MimeIsoDecode:
        "Test =? RFC 1522 =?ISO-8859-1?Q?=E4=F6=FC?= hehe ?=" wurde nicht
