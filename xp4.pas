@@ -1129,9 +1129,8 @@ var t,lastt: taste;
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp,hds,false);
-      { suboptimal }
-      if (hdp.replyto.count>0) or ((hdp.empfanz=1) and
-        (hdp.empfaenger=hdp.replyto[0])) then
+      if (hdp.replyto.count=0) or ((hdp.empfanz=1) and
+        (hdp.replyto.count > 0) and (hdp.empfaenger=hdp.replyto[0])) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
@@ -2130,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/12/19 19:06:17  mk
+  - Crash bei Strg-Q auf Mail behoben (Bug von FE)
+
   Revision 1.73  2000/12/18 09:22:59  mk
   - fehlendes pophp ergaenzt
 
