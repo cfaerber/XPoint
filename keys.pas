@@ -174,8 +174,19 @@ end;
 {$ENDIF }
 
 function keypressed:boolean;
+var key_pressed:boolean;
 begin
-  keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
+  if enhKBsupport then
+  asm
+    mov key_pressed,false
+    mov ah,11h
+    int 16h
+    jz @@nokey
+    mov key_pressed,true
+  @@nokey:  
+  end
+  else key_pressed:=crt.keypressed;
+  keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
 end;
 
 function readkey:char;
@@ -442,6 +453,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/03/16 00:46:31  rb
+  keys.keypressed auf enhanced keyboard support umgestellt/erweitert
+
   Revision 1.11  2000/03/15 00:21:52  mk
   - Bug in kbstat beseitigt
 
