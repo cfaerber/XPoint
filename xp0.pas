@@ -633,6 +633,13 @@ type   textp  = ^text;
                   smtp_port : Integer;     { SMTP: Port, default: 25 }
                   smtp_secureloginmandatory: boolean;
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
+                  imap_ip   : string;      { IMAP: IP oder Domain }
+                  imap_id   : string;      { IMAP: User-ID, falls noetig }
+                  imap_pwd  : string;      { IMAP: Passwort, falls noetig }
+                  IMAP_Clear: boolean;     { IMAP: Nachrichten loeschen }
+                  IMAP_OnlyNew : boolean;  { IMAP: nur neue Mails holen }
+                  imap_ForceOneArea : boolean; { IMAP: put all messages into *one* group }
+                  imap_port : Integer;     { IMAP: Port, default: 110 }
                   LastCall  : TDateTime;   { Letzter Call }
                   // Client Mode
                   ClientPath: string;               { Client Client-Pfad            }
@@ -1218,6 +1225,9 @@ implementation
 
 {
   $Log$
+  Revision 1.177  2003/05/01 09:52:28  mk
+  - added IMAP support
+
   Revision 1.176  2003/04/25 21:11:15  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

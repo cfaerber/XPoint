@@ -33,7 +33,7 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.9.5';       { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.9.6';       { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -221,6 +221,9 @@ begin
 
 {
   $Log$
+  Revision 1.78  2003/05/01 09:52:29  mk
+  - added IMAP support
+
   Revision 1.77  2003/04/25 21:11:18  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

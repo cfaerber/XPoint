@@ -126,8 +126,8 @@ const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
 {$IFNDEF DOS32}
-      SupportedNetTypes: array[0..6] of eNetz =
-        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect, nt_Maus);
+      SupportedNetTypes: array[0..7] of eNetz =
+        (nt_Client, nt_POP3, nt_IMAP, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect, nt_Maus);
 {$ELSE}
       SupportedNetTypes: array[0..4] of eNetz =
         (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect, nt_Maus);
@@ -1838,7 +1838,8 @@ procedure gf_getntyp(var s:string);
 var uucp,rfc : boolean;
 begin
   rfc:=(LowerCase(s)=LowerCase(ntName(nt_Client)))or
-       (LowerCase(s)=LowerCase(ntName(nt_NNTP)))or
+       (LowerCase(s)=LowerCase(ntName(nt_NNTP))) or
+       (LowerCase(s)=LowerCase(ntName(nt_IMAP))) or
        (LowerCase(s)=LowerCase(ntName(nt_POP3)));
   gf_fido:=(LowerCase(s)=LowerCase(ntName(nt_Fido)));
   uucp:=(LowerCase(s)=LowerCase(ntName(nt_UUCP)));
@@ -3140,6 +3141,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2003/05/01 09:52:29  mk
+  - added IMAP support
+
   Revision 1.60  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

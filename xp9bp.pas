@@ -204,6 +204,14 @@ begin
     SMTP_secureloginmandatory := true;
     SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
 
+    IMAP_ip := 'imap.domain.de';        { IMAP: IP oder Domain }
+    IMAP_id := '';                      { IMAP: User-ID, falls noetig }
+    IMAP_pwd  := '';                    { IMAP: Passwort, falls noetig }
+    IMAP_clear := true;                 { IMAP: Nachrichten loeschen }
+    IMAP_OnlyNew := true;               { IMAP: nur neue Mail holen }
+    IMAP_port := 143;                   { IMAP: Port }
+
+
     // Client Mode
     ClientPath:= '';
     ClientExec := '';
@@ -407,9 +415,16 @@ begin
             gets(s,su,'SMTP-IP', smtp_ip) or
             gets(s,su,'SMTP-ID', smtp_id) or
             gets(s,su,'SMTP-Password', smtp_pwd) or
-            geti(su,  'SMTP-Port', smtp_port) or 
+            geti(su,  'SMTP-Port', smtp_port) or
             getx(su,  'SMTP-SecureLoginMandatory', smtp_secureloginmandatory) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
+            gets(s,su,'IMAP-IP', IMAP_ip) or
+            gets(s,su,'IMAP-ID', IMAP_id) or
+            gets(s,su,'IMAP-Password', IMAP_pwd) or
+            getx(su,  'IMAPClear', IMAP_clear) or
+            getx(su,  'IMAPOnlyNew', IMAP_OnlyNew) or
+            getx(su,  'IMAPForceOneArea', IMAP_ForceOneArea) or
+            geti(su,  'IMAP-Port', IMAP_port) or
             getr(su,  'Letzte Verbindung',double(LastCall)) or
 
             // Client Mode
@@ -610,6 +625,15 @@ begin
     writeln(t,'SMTP-Port=', smtp_port);
     writeln(t,'SMTP-SecureLoginMandatory=',jnf(SMTP_secureloginmandatory));
     writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
+
+    writeln(t,'IMAP-IP=',IMAP_ip);
+    if IMAP_id <>''  then writeln(t,'IMAP-ID=',IMAP_id);
+    if IMAP_pwd<>''  then writeln(t,'IMAP-Password=',IMAP_pwd);
+    writeln(t,'IMAPClear=',jnf(IMAP_clear));
+    writeln(t,'IMAPOnlyNew=',jnf(IMAP_OnlyNew));
+    writeln(t,'IMAPForceOneArea=',jnf(IMAP_ForceOneArea));
+    writeln(t,'IMAP-Port=', IMAP_port);
+
     ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
 
@@ -755,6 +779,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2003/05/01 09:52:28  mk
+  - added IMAP support
+
   Revision 1.67  2003/04/03 13:34:05  mk
   - POP3 and SMTP-Port is now configurable in *.bfg
 

@@ -523,6 +523,7 @@ begin
     nt_Client   : ntName:='RFC/Client';
     nt_NNTP     : ntName:='NNTP';
     nt_POP3     : ntName:='POP3/SMTP';
+    nt_IMAP     : ntName:='IMAP';
   else
     Debug.DebugLog('xpnt','Unknown net type: '+IntToStr(ord(nt)),DLWarning);
     ntName:='? '+IntToStr(ord(nt));
@@ -841,6 +842,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.55  2003/05/01 09:52:30  mk
+  - added IMAP support
+
   Revision 1.54  2003/01/07 00:27:04  cl
   - moved some functions from xpnt.pas to TXPServer
 

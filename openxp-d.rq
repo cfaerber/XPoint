@@ -2345,6 +2345,7 @@ N Deutsch
 28   ^UUCP,
 29   ^QWK,
 30   ^SMTP,
+31   ^IMAP,
 # RFC/Client
 40   Mail-/^News-Server,
 41   E^xterne Einstellungen,
@@ -2436,6 +2437,7 @@ N Deutsch
 7    Nur neue Mail abholen
 8    Alle Mails in ein Brett einordnen
 -
+
 + 952
 # SMTP
 0    45
@@ -2445,7 +2447,19 @@ N Deutsch
 4    Pa·wort   ~
 5    Sicheren Login erzwingen
 6    SMTP-after-POP
+-
 
++ 953
+# IMAP
+0    45
+1    IMAP-Einstellungen
+2    Server    ~
+3    Loginname ~
+4    Pa·wort   ~
+5    Abgeholte Mails auf Server lîschen
+6    Passwîrter verschlÅsseln (APOP)
+7    Nur neue Mail abholen
+8    Alle Mails in ein Brett einordnen
 -
 # --- XP10 ------------------------------------------------------------
 
@@ -4104,6 +4118,9 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.73  2003/05/01 09:52:27  mk
+# - added IMAP support
+#
 # Revision 1.72  2003/04/25 21:11:14  mk
 # - added Headeronly and MessageID request
 #   toggle with "m" in message view
