@@ -406,10 +406,7 @@ var i  : integer;
       if i=0 then s:='' else begin
         j:=Pos(',',s); if j=0 then j:=Length(s)+1;
         Badge:=Copy(s,1,i-1); Val(Copy(s,i+1,j-i-1),Level,Res);
-        if Badge<>'DEFAULT' then
-          Debug.SetLoglevel(Badge,Level)
-        else
-          Debug.DLDefaultIfInDebugMode:=Level;
+        Debug.SetLoglevel(Badge,Level);
         Delete(s,1,j);
       end;
     end;
@@ -1077,6 +1074,9 @@ end.
 
 {
   $Log$
+  Revision 1.104  2001/03/20 12:15:39  ma
+  - implemented debug badge DEFAULT
+
   Revision 1.103  2001/03/14 20:46:03  mk
   - removed registration routines
 

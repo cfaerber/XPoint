@@ -36,7 +36,7 @@ const         {Loglevels proposed are}
   DLInform = 3;
   DLDebug = 4;
 
-  DLDefaultIfInDebugMode: Integer = DLInform;
+  DLDefault: Integer = {$IFDEF Debug} DLDebug {$ELSE} DLWarning {$ENDIF};
 
   {Messages will be logged only if environment variable DEBUG exists
    pointing to a file. If file starts with *, the logfile will be
@@ -55,7 +55,10 @@ procedure SetLoglevel(Badge: string; Level: Integer);
 {Sets badge level. Messages for badge are logged only if level is
  high enough. The example above will only be logged if preceded by
  SetLogLevel('Coreroutine',1[or greater]). Default level for badges
- can also be set by environment variables: BADGE=level}
+ can also be set by environment variables: BADGE=level. If no debug
+ level for a badge is set via this routine or given in environment
+ the level of badge DEFAULT is used upon logging; if even this is
+ not given level DLDefault is used.}
 
 procedure TempCloseLog(Reactivate: Boolean);
 {Temporarily closes or reopens logfile.}
@@ -71,7 +74,7 @@ uses
   SysUtils;
 
 const
-  qLogbadges = 20;
+  qLogbadges = 50;
   Logging: Boolean = False;
 
 var
@@ -84,13 +87,14 @@ var
   Temp: LongInt;
   S: string;
 begin
-  I := 0;
+  I := 0; Badge := UpperCase(Badge);
   repeat Inc(I)until (Logbadges[I].Badge = '') or
                      ((Logbadges[I].Badge = Badge) or (I = qLogbadges));
   if (Logbadges[I].Badge = '') and (I <= qLogbadges) then {Open new entry}
   begin
     Logbadges[I].Badge := Badge; S := GetEnv(Badge);
-    {$IFDEF Debug} if S = '' then Str(DLDefaultIfInDebugMode, S); {$ENDIF}
+    if S = '' then S := GetEnv('DEFAULT');
+    if S = '' then Str(DLDefault,S);
     Val(S, Logbadges[I].Level, Temp); FindBadge := I
   end
   else
@@ -122,6 +126,7 @@ var
 begin
   C := FindBadge(Badge);
   if C <> 0 then Logbadges[C].Level := Level;
+  if UpperCase(Badge)='DEFAULT' then DLDefault := Level;
 end;
 
 procedure OpenLogfile(App: Boolean; Filename: string); {Appends if App True}
@@ -189,6 +194,7 @@ end;
 initialization
   Logfiledir:='';
   OpenLogfile(False, GetEnv('DEBUG'));
+  FindBadge('DEFAULT');
 
 finalization
   CloseLogfile;
@@ -197,6 +203,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/03/20 12:15:38  ma
+  - implemented debug badge DEFAULT
+
   Revision 1.12  2001/03/16 17:07:22  cl
   - DebugLog now clears IOResult
 
