@@ -22,39 +22,40 @@ Arbeiten abnehmen k&ouml;nnen).</li>
 Allgemeines
 <ul><li>Dateien, die man sich kurz ansehen sollte: XPDefine.inc (f&uuml;r $IFDEFs),
 Typeform (die unvermeidlichen Typumformungen, Integer to String etc.), XPGlobal
-(u.a. plattformunabh&auml;ngige Typdefinitionen), Debug.
+(u.a. plattformunabh&auml;ngige Typdefinitionen), Debug.</li>
 <li>Standardtyp f&uuml;r ganze Zahlen ist Integer. Byte, Word und DWord werden
 nur verwendet, wenn es das Programmumfeld erfordert (z.b. Records). Integer ist
 auf einer 16 Bit Platform 2 Byte, auf einer 32 Bit Platform 4 Byte groß und
-immer das <i>schnellste</i> CPU Register.
+immer das <i>schnellste</i> CPU Register.</li>
 <li>Bei dem Inline-Assembler muss darauf geachtet werden, das die Variablen SI,
 DI, ES ohne Probleme verwendet werden dürfen. Die Variable DS muss jedoch vorher
-gesichert werden.
+gesichert werden.</li>
 <li>Bei Units darauf achten, da&szlig; im Interface-Teil jede Einzelheit genau
 dokumentiert ist. Die Kommentare sollten fpDoc-kompatibel sein, also <i>vor</i>
 Prozeduren, Variablen etc. das jeweilige Element mit einem Kommentar in
-geschweiften Klammern beschreiben.
+geschweiften Klammern beschreiben.</li>
 <li>Da die Bezeichner teilweise sehr ung&uuml;nstig gew&auml;hlt sind, sind
 (sinnvolle) Umbenennungen erlaubt und erw&uuml;nscht. Eine langfristige
 Strategie, die zu sauber benannten Quelltextdateien f&uuml;hren sollte, ist
-in README.TXT (im Quelltextverzeichnis) beschrieben.
+in README.TXT (im Quelltextverzeichnis) beschrieben.</li>
 <li>Hinweise im Source: Entweder per {* xxx}-Kommentar (f&uuml;r Kleinigkeiten,
 die nicht dringend sind, aber irgendwann mal ge&auml;ndert werden sollten) oder
 per {$hint xxx} - das nervt dann aber bei jedem Kompilieren, also sparsam dosieren.
 Kommentare im Code der Art {(K&uuml;rzel) Habe das-und-das ge&auml;ndert} sind in
 jedem Fall unn&ouml;tig: Sowas bekommt jeder per cvs diff heraus, wenn es
 interessiert; bei gr&ouml;&szlig;eren &Auml;nderungen sollte man das eh' in die
-Mailinglist posten.
+Mailinglist posten.</li>
 <li>Variablen und Prozedurbezeichner: Buchstaben kosten kein Geld. Also Bezeichner
 lieber zu lang als zu kurz w&auml;hlen. Globale Bezeichner, die k&uuml;rzer als
 f&uuml;nf Buchstaben sind (und dabei m&ouml;glichst noch mit einem Underscore
-anfangen oder Zahlen beinhalten ;-), <i>k&ouml;nnen</i> gar nicht gut gew&auml;hlt sein.
+anfangen oder Zahlen beinhalten ;-), <i>k&ouml;nnen</i> gar nicht gut gew&auml;hlt sein.</li>
 <li>XP sollte nach den eigenen &Auml;nderungen noch vollst&auml;ndig kompilierbar sein.
-Das l&auml;&szlig;t sich einfach mittels der build.bat &uuml;berpr&uuml;fen.
+Das l&auml;&szlig;t sich einfach mittels der build.bat
+&uuml;berpr&uuml;fen.</li>
 <li>Bei jeder Funktion m&ouml;glichst den (schreibenden) Zugriff auf globale
 Variablen vermeiden - wenn das doch gemacht wird bzw. unvermeidlich ist,
 sollte diese Tatsache sehr deutlich in einem Kommentar beim Prozedurkopf
-hervorgehoben werden.</ul>
+hervorgehoben werden.</li></ul>
 
 Ansistrings
 Seit OpenXP 3.70 werden Ansistrings benutzt, die sich deutlich von normalen

@@ -39,7 +39,7 @@ function ShowHeader($title) {
 
 	// now the body follows
 	echo("<body bgcolor=\"white\" text=\"black\">\n");
-	echo("\n<table width=\"100%\"><tr>\n<td col width=\"75\" align=\"right\" valign=\"bottom\">&nbsp;</td>");
+	echo("\n<table width=\"100%\"><tr>\n<td width=\"75\" align=\"right\" valign=\"bottom\">&nbsp;</td>");
 	echo("\n<td align=\"center\" valign=\"middle\"><h1><a name=\"top\">OpenXP</a></h1></td>");
 	echo("\n<td width=\"75\" align=\"right\" valign=\"bottom\"><small>");
 	// link to the other language
@@ -79,7 +79,8 @@ function ShowHeader($title) {
 		// fetch next element
 	} while (next($Menu) != false);
 	// that's it. now close left cell and go to main part
-	echo("</dl>\n</td></tr>\n</table>\n</table>\n</td>\n<td align=\"left\" valign=\"top\">\n");
+	echo("</dl>\n</td></tr>\n</table>");
+	echo("</td></tr></table>\n</td>\n<td align=\"left\" valign=\"top\">\n");
 	// Document is prepared now
 }; // ShowHeader
 
@@ -194,7 +195,7 @@ function ShowNews($newsfile,$genindex) {
 	while (!feof($pnfile)) {
 	  $iarticle++;
 	  $headline=fgets($pnfile,200);
-	  echo("\n<a name=\"art".$iarticle."\"><h3>".$headline."</h3></a>\n");
+	  echo("\n<h3><a name=\"art".$iarticle."\">".$headline."</a></h3>\n");
 	  do {
 	    $headline=fgets($pnfile,1000);
 	    if($headline!="") echo($headline);
@@ -231,22 +232,31 @@ function ShowDownloadTable($downfile) {
 	    ftp_quit($fhandle);
 	}
 
+        $popen=false;
 	echo("\n");
 	while(!feof($pdfile)) {
 	  $line=fgets($pdfile,300);
 	  if(strpos(" ".$line,"*")==1) { // headline
+	    if($popen) { echo("</p>\n"); $popen=false; };
 	    if($language=="de") {
-	      echo(substr($line,1)."<p>");
+	      echo("<h3>".substr($line,1)."</h3>");
 	      fgets($pdfile,300);
 	    } else {
 	      $line=fgets($pdfile,300);
-	      echo($line."<p>");
+	      echo("<h3>".$line."</h3>");
 	    }
 	  } else {
 	    if ($fhandle)
 	      $fsize = sprintf("(%01.2f MB)", (ftp_size($fhandle, $line)/1024/1024));
 	    else
 	      $fsize = ""; // no ftp connection made
+
+            if($popen) {
+	      echo("<br />\n");
+	    } else {
+              echo("\n<p>"); $popen=true;
+	    }
+	      
 	    if($language=="de") {
 	      $fdesc=fgets($pdfile,200);
 	      fgets($pdfile,200);
@@ -256,9 +266,10 @@ function ShowDownloadTable($downfile) {
 	    }
 	    echo("\n<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">".htmlspecialchars($fdesc)."</a> ".$fsize);
 	    fgets($pdfile,20); // skip empty line
-	    echo("\n<br />");
 	  }
 	}
+
+	if($popen) { echo("</p>\n"); $popen=false; };
 
 	if ($fhandle) ftp_quit($fhandle);
 	fclose($pdfile);

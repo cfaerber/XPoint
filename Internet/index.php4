@@ -24,7 +24,7 @@ else if ($bare!="") {
     echo("<pre>"); 
     while($bare_d = fread($bare_fp,8192)) {
       set_time_limit(120);
-      echo htmlspecialchars($bare_d); }
+      echo htmlspecialchars(ereg_replace("[^\x09\x0D\x0A\x20-\x7F\xA0-\xFF]","?",$bare_d)); }
     echo("</pre>");
   }
 }
