@@ -203,9 +203,12 @@ end;
 
 procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : byte;
-    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)} 
+    prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)}
     orgfn,fn1,
     parfn     : pathstr;
+  D: DirStr;
+  N: NameStr;
+  E: ExtStr;
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
@@ -216,7 +219,7 @@ begin
   if not fileattach then 
   begin
   if stricmp(fn,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
-    then orgfn:=TempS(_filesize(fn)+5000);                              
+    then orgfn:=TempS(_filesize(fn)+5000);
     if copyfile(fn,orgfn) then fn1:=orgfn;
     end;
  
@@ -231,11 +234,12 @@ begin
     end
   else parfn:=orgfn; 
                               {Korrekte File-extension verwenden}
-  if cpos('.',parfn)>0 then
-    parfn:=left(parfn,rightpos('.',parfn))
-  else
-    parfn:=parfn+'.';
-  parfn:=parfn+iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
+  FSplit(Parfn, d, n, e);
+  Parfn := d + n;
+
+  { Extension des Originalfiles ermitteln }
+  fsplit(Orgfn, d, n, e);
+  parfn:=parfn+iifs(viewer.ext='',e,'.' + viewer.ext);
   _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
@@ -250,6 +254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.2  2000/10/16 08:29:59  mk
+  - Bugfix fuer ViewFile, wenn File ohne Extension
+
   Revision 1.16.2.1  2000/10/11 14:52:11  mk
   JG:- Bug bei Erstellung des Dateinamens behoben
 
