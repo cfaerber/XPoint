@@ -16,10 +16,7 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-{mw}
-{uses  xpglobal, dos,typeform,xpdatum;}
 uses  xpglobal, dos,typeform,xpdatum;
-{/mw}
 
 const
       readfirst = 2500;
@@ -34,7 +31,6 @@ const
       attrIsEB    = $2000;            { EB                         }
       AttrPmReply = $0100;            { PM-Reply auf AM (Maus)     }
       AttrQuoteTo = $0400;            { QuoteTo (Maus)             }
-      {mw}
       AttrControl = $0020;            { Cancel-Nachricht }
       AttrQPC     = $0001;            { QPC-codiert                }
       realnlen    = 40;
@@ -68,9 +64,8 @@ type      empfnodep=^empfnode;
                  datum      : string[11];    { Netcall-Format }
                  ddatum     : string[14];
                  zdatum     : string[22];    { ZConnect-Format; nur auslesen }
-                 pfad       : string;    { Netcall-Format }
+                 pfad       : string;        { Netcall-Format }
                  msgid,ref  : string[120];   { ohne <> }
-                 ersetzt    : string[120];   { ohne <> }
                  typ        : string[1];     { T / B }
                  crypttyp   : string[1];
                  groesse    : longint;
@@ -81,7 +76,6 @@ type      empfnodep=^empfnode;
                  datei      : string[40];    { Dateiname }
                  prio       : byte;          { 10=direkt, 20=Eilmail }
                  oem,oab,wab: string[90];
-                 oemlist    : empfnodep;
                  oar,war    : string[realnlen];
                  real_box   : string[20];    { X-XP-BOX: Absendebox }
                  hd_point   : string[25];    { X-XP-PNT: Pointname  }
@@ -121,9 +115,7 @@ type      empfnodep=^empfnode;
                  mimetyp    : string[30];
                  xnoarchive: boolean;
                  Cust1,Cust2: string[custheadlen];
-                 control    : string[150];
                end;
-         {/mw}
 
       charr   = array[0..65530] of char;
       charrp  = ^charr;
@@ -134,8 +126,6 @@ var   f,f2  : file;
       uname : string;
       zconn : boolean;
 
-{mw}
-{Procedur aus maggi uebernommen}
 {$IFDEF FPC }
   {$HINTS OFF }
 {$ENDIF FPC }
@@ -153,7 +143,6 @@ begin
   else
     compmimetyp:=lstr(typ);
 end;
-{/mw}
 
 procedure helppage;
 begin
@@ -223,10 +212,7 @@ begin
   rewrite(f2,1);
   while (adr<fs) do begin
     seek(f,adr);
-    {mw}
-    {makeheader(zconn,f,hds,hd,ok);}
     makeheader(zconn,f,0,0,hds,hd,ok,false);
-    {/mw}
     if not ok then
       error('Fehlerhafter Puffer!'#7);
     inc(n);
@@ -239,7 +225,7 @@ begin
   if adr-fs>2 then begin
     writeln;
     error('Letzte Nachricht am Pufferende ist unvollst„ndig!');
-    writeln('Bitte mit XPCHECK reparieren.');
+    writeln('Bitte mit ZPR reparieren.');
     halt(1);
     end;
 end;
@@ -310,6 +296,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.1.2.3  2001/08/24 15:52:46  mw
+
+  - Small Code-Cleanup
+
   Revision 1.1.2.2  2001/08/23 11:00:32  mk
   MW:- wieder compilierbar
 

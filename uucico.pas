@@ -65,8 +65,6 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       filetrans     : boolean = false;      { fÅr rerrmsg }
       ShowTime      : boolean = true;
       FileStarted   : boolean = false;
-      Uselfn: boolean = false;
-
 
 var   omx,omy      : byte;
       oldexit      : pointer;
@@ -1746,10 +1744,8 @@ begin
                     wrlog('+','receiving '+s+' as '+ustr(fn));
                     end
                   else begin
-                    if not Uselfn then begin
-                        s:=Unix2DOSfile(s,FilePath);
-                        if s='' then s:=Unix2DOSfile(source,FilePath);
-                    end;
+                    s:=Unix2DOSfile(s,FilePath);
+                    if s='' then s:=Unix2DOSfile(source,FilePath);
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
                     wrlog('S','receiving '+s+' as '+ustr(fn));
@@ -1927,6 +1923,10 @@ end.
 
 {
   $Log$
+  Revision 1.9.2.2  2001/08/24 15:52:47  mw
+
+  - Small Code-Cleanup
+
   Revision 1.9.2.1  2001/08/23 11:01:06  mk
   MW:- added missing files
 
