@@ -204,8 +204,6 @@ end;
 
 procedure THeader.Clear;
 begin
-
-
   netztyp := 0;
   archive := false;
   attrib := 0;
@@ -225,6 +223,7 @@ begin
   crypt.method:='';
   crypt.typ:= '';                   { '' / T / B                   }
   crypt.charset:= '';
+  charset:='';
   groesse := 0;
   realname:= '';
   programm:= '';                   { Mailer-Name }
@@ -253,7 +252,7 @@ begin
   ReplyPath:= '';
   ReplyGroup:= '';                 { Kommentar-zu-Gruppe          }
   fido_to:= '';                    { --- Fido ------------------- }
-  x_charset:= '';                  { --- RFC -------------------- }
+  x_charset:= '';                  { --- Fremdformate ----------- }
   keywords:= '';
   summary:= '';
   expiredate:= '';                 { Expires / LDA }
@@ -581,6 +580,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2001/09/15 00:08:31  cl
+  - fixed initialization of THeader.Charset in THeader.Clear
+
   Revision 1.17  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
