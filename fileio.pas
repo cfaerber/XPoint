@@ -730,10 +730,14 @@ begin
 end;
 
 begin
-  TestShare;
+  {  TestShare; }
+  shareda := false; { wegen Problemen mit Novell Client 32 }
 end.
 {
   $Log$
+  Revision 1.41.2.2  2000/08/22 17:45:37  mk
+  - Test auf Share entfernt
+
   Revision 1.41.2.1  2000/07/01 11:17:26  mk
   - 32 Bit Teile entfernt
 
