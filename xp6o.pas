@@ -756,15 +756,7 @@ again:
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
   assign(t,fn); assign(f,fn);
   rec:=dbRecno(mbase);
-  if typ in [5,6] then
-  begin
-    ReadHeadEmpf := 0;
-    ReadEmpflist:=true;
-    ReadKoplist := true;
-  end;
   ReadHeader(hdp^,hds,true);
-  if typ in [5,6] then
-    empflist := hdp^.kopien;
   if hds=1 then goto ende;
   betr:=hdp^.betreff;
   binaermail:=(ntyp='B');
@@ -1283,6 +1275,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.7  2000/11/11 10:33:59  mk
+  - removed fix for #116167 because of RTE 204
+
   Revision 1.20.2.6  2000/11/09 18:16:15  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 
