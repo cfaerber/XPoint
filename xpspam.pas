@@ -33,6 +33,8 @@
 
 {$I xpdefine.inc}
 
+{.DEFINE HAS_SQLITE}
+
 unit xpspam;
 
 interface
@@ -41,6 +43,9 @@ uses
   xpheader,
   datadef,
   classes,
+{$IFDEF HAS_SQLITE}
+  sqlite,
+{$ENDIF}  
   xpglobal;
 
 type
@@ -65,8 +70,12 @@ type
 
   TSpamicityCalculator = class
   private
+  {$IFDEF HAS_SQLITE}
+    db: TSQLite;
+  {$ELSE}
     d: DB;
     GoodFld, BadFld: Integer;
+  {$ENDIF}
     ROBX:    Double;
     ROBX_CNT:Integer;
     FStats:  TSpamStats;
@@ -119,6 +128,15 @@ uses
   hashes,
 {$ENDIF}
   database;
+
+{$IFDEF HAS_SQLITE}
+var
+  cache_db: TSQLite = nil;
+{$ELSE}
+var
+  cache_d: DB = nil;
+  cache_GoodFld, cache_BadFld: Integer;
+{$ENDIF}
 
 type xfloat = record
   mant: double;
@@ -329,23 +347,58 @@ var
   Words:   TWordList;
   Word:    string;
   Count:   integer;
+  {$IFDEF HAS_SQLITE}
+  db:      TSQLite;
+  {$ELSE}
   GoodFld,BadFld,WordFld,DatFld: integer;
   d:       DB;
+  {$ENDIF}
   GoodCount,GoodOld: integer;
   BadCount, BadOld: integer;
   Dat, DatOld: integer;
 
 var t,m,j   : smallword;
     h,mm,s,ss: smallword;
-    
+
 begin
   if OldSpamStatus=SpamStatus then exit;
-  dbOpen(d,SpamFltFile,1);
+  {$IFDEF HAS_SQLITE}
+  if assigned(cache_db) then
+  begin
+    db := cache_db;
+    cache_db := nil;
+  end else
+  begin
+    db := TSQLite.Create(SpamFltFile+'.SQT');
+    db.BeginTransaction;
+  end;
+   
+  try
+    if not db.HasTable('params') then
+      db.Execute('CREATE TABLE params (ID integer UNIQUE CHECK(id=0) DEFAULT 0,'+
+        'robx double NOT NULL, robx_cnt integer NOT NULL)');
+    
+    if not db.HasTable('wordlist') then
+      db.Execute('CREATE TABLE wordlist(ID integer UNIQUE PRIMARY KEY,'+
+        'Word VARCHAR UNIQUE NOT NULL,'+
+        'GoodCnt INTEGER NOT NULL DEFAULT 0,'+
+        'BadCnt INTEGER NOT NULL DEFAULT 0,'+
+        'Datum TIMESTAMP NOT NULL)');
+
+  {$ELSE}
+  if assigned(cache_d) then
+  begin
+    d := cache_d;
+    cache_d := nil;
+  end else
+    dbOpen(d,SpamFltFile,1);
+
   try
   GoodFld := dbGetFeldNr(d,'goodcnt');
   BadFld  := dbGetFeldNr(d,'badcnt');
   WordFld  := dbGetFeldNr(d,'word');
   DatFld  := dbGetFeldNr(d,'datum');
+  {$ENDIF}
   Words := make_wordlist(Content);
   try
     Words.Restart;
@@ -353,17 +406,32 @@ begin
     begin
       Word := Words.CurrentKey;
       Count := Min(Words[Word], MaxInt div 2);
+
+      {$IFDEF HAS_SQLITE}
+      db.QueryStart('SELECT GoodCnt,BadCnt,Datum FROM wordlist WHERE '+
+        'Word='+db.Quote(Word));
+      if db.QueryNext then
+      begin
+        GoodCount := db.QueryResult[0]; GoodOld := GoodCount;
+        BadCount  := db.QueryResult[1]; BadOld  := BadCount;
+        DatOld    := db.QueryResult[2];
+
+      {$ELSE}
       dbSeek(d,spamiword,Word);
       if dbFound then
       begin
         GoodCount := dbReadIntN(d,GoodFld); GoodOld := GoodCount;
         BadCount := dbReadIntN(d,BadFld);   BadOld  := BadCount;
+      {$ENDIF}
+
       end else
       begin
         GoodCount := 0; GoodOld := -1;
         BadCount := 0;  BadOld  := -1;
+        {$IFNDEF HAS_SQLITE}
         dbAppend(d);
         dbWriteNStr(d,WordFld,word);
+        {$ENDIF}
       end;
 
       if OldSpamStatus=stSpam then
@@ -382,28 +450,57 @@ begin
       if GoodCount > MaxInt div 2 then GoodCount := MaxInt div 2;
       if BadCount  > MaxInt div 2 then BadCount  := MaxInt div 2;
 
+      {$IFNDEF HAS_SQLITE}
       DatOld := dbReadIntN(d,DatFld);
+      {$ENDIF}
       Dat := Trunc(Double(Now) * 24); // date + hours only
       if (DatOld < Dat)and(DatOld<>0) then Dat := (DatOld + Dat +1) div 2;
 
+      {$IFDEF HAS_SQLITE}
+      db.Execute('INSERT OR REPLACE INTO wordlist (Word,GoodCnt,BadCnt,Datum) VALUES ('+
+        db.Quote(Word)+','+
+        db.Quote(GoodCount)+','+
+        db.Quote(BadCount)+','+
+        db.Quote(Dat)+')');
+      {$ELSE}
       if GoodCount<>GoodOld then dbWriteN(d,GoodFld,GoodCount);
       if BadCount <>BadOld  then dbWriteN(d,BadFld, BadCount);
       if Dat      <>DatOld  then dbWriteN(d,DatFld, Dat);
+      {$ENDIF}
     end;
 
   finally
     Words.Free;
   end;
   finally
-    dbClose(d);
+    {$IFDEF HAS_SQLITE}
+      if not assigned(cache_db) then
+        cache_db := db
+      else begin
+        db.CommitTransaction;
+        FreeAndNil(db);
+      end;
+    {$ELSE}
+      if not assigned(cache_d) then
+        cache_d := d
+      else
+        dbClose(d);
+    {$ENDIF}
   end;
 end;
 
 type PTSpamStats = ^TSpamStats;
 
-function calc_spam_stats_dowork(d: DB;
+function calc_spam_stats_dowork(
+  {$IFDEF HAS_SQLITE}
+    db: TSQLite;
+  {$ELSE}
+    d: DB;
+  {$ENDIF}
   Content: TStream;
+  {$IFNDEF HAS_SQLITE}
   GoodFld,BadFld: integer;
+  {$ENDIF}
   var ROBX:    Double;
   var ROBX_CNT:Integer;
   Status: PTSpamStats): Double;
@@ -466,11 +563,22 @@ var token:   string;
     end;
 
   begin
+
+  {$IFDEF HAS_SQLITE}
+    db.QueryStart('SELECT GoodCnt,BadCnt,Datum FROM wordlist WHERE '+
+      'Word='+db.Quote(token));
+    if db.QueryNext then
+    begin
+      GoodCount := db.QueryResult[0];
+      BadCount := db.QueryResult[1];
+  {$ELSE}
     dbSeek(d,spamiword,token);
     if dbFound then
     begin
       GoodCount := dbReadIntN(d,GoodFld);
       BadCount := dbReadIntN(d,BadFld);
+  {$ENDIF}
+
     end else
     begin
       GoodCount := 0;
@@ -622,10 +730,51 @@ end;
 *)
 
 procedure TSpamicityCalculator.OpenDatabase;
+{$IFDEF HAS_SQLITE}
+var dbTest: TSQLite;
+{$ENDIF}
 begin
+  {$IFDEF HAS_SQLITE}
+  if assigned(db) then exit;
+
+  if assigned(cache_db) then
+  begin
+    db := cache_db;
+    cache_db := nil;
+  end else
+  begin
+    db := TSQLite.Create(SpamfltFile+'.SQT');
+    db.BeginTransaction;
+  end;
+    
+  try
+    if not db.HasTable('params') then
+      db.Execute('CREATE TABLE params (ID integer UNIQUE CHECK(id=0) DEFAULT 0,'+
+        'robx double NOT NULL, robx_cnt integer NOT NULL)');
+    
+    if not db.HasTable('wordlist') then
+      db.Execute('CREATE TABLE wordlist(ID integer UNIQUE PRIMARY KEY,'+
+        'Word VARCHAR UNIQUE NOT NULL,'+
+        'GoodCnt INTEGER NOT NULL DEFAULT 0,'+
+        'BadCnt INTEGER NOT NULL DEFAULT 0,'+
+        'Datum TIMESTAMP NOT NULL)');
+    
+    db.QueryStart('SELECT robx,robx_cnt FROM params LIMIT 1;');
+
+    if db.QueryNext then
+    begin
+      ROBX     := db.QueryResult[0] / ROBX_SCALE;
+      ROBX_CNT := db.QueryResult[1];
+  {$ELSE}
   if assigned(d) then exit;
 
-  dbOpen(d,SpamfltFile,1);
+  if assigned(cache_d) then
+  begin
+    d := cache_d;
+    cache_d := nil;
+  end else
+    dbOpen(d,SpamfltFile,1);
+
   try
     GoodFld := dbGetFeldNr(d,'goodcnt');
     BadFld  := dbGetFeldNr(d,'badcnt');
@@ -634,14 +783,20 @@ begin
     if dbFound then begin
       ROBX     := dbReadIntN(d,GoodFld) / ROBX_SCALE;
       ROBX_CNT := dbReadIntN(d,BadFld);
+  {$ENDIF}
     end else
     begin
       ROBX     := ROBX_DEFAULT;
       ROBX_CNT := ROBX_CNT_START;
     end;
+
   except
+  {$IFDEF HAS_SQLITE}
+    FreeAndNil(db);
+  {$ELSE}
     dbClose(d);
     d := nil;
+  {$ENDIF}
     raise;
   end;
 end;
@@ -650,6 +805,14 @@ procedure TSpamicityCalculator.CloseDatabase;
 var i: Integer;
 begin
   try
+  {$IFDEF HAS_SQLITE}
+    if not assigned(db) then exit;
+
+//  db.Execute('INSERT OR REPLACE INTO params (robx,robx_cnt) VALUES ('+
+//    db.Quote(Trunc(ROBX*ROBX_SCALE))+','+
+//    db.Quote(ROBX_CNT)+');');
+  {$ELSE}
+    if not assigned(d) then exit;
     dbSeek(d,spamiword,'!ROBX');
     if not dbFound then begin
       dbAppend(d);
@@ -658,14 +821,34 @@ begin
     i := Trunc(ROBX*ROBX_SCALE);
     dbWriteN(d,GoodFld,i);
     dbWriteN(d,BadFld, ROBX_CNT);
+  {$ENDIF}
   finally
-    dbClose(d);
+    {$IFDEF HAS_SQLITE}
+      db.CommitTransaction;
+      if not assigned(cache_db) then
+      begin
+        db.BeginTransaction;
+        cache_db := db
+      end
+      else begin
+        FreeAndNil(db);
+      end;
+    {$ELSE}
+      if not assigned(cache_d) then
+        cache_d := d
+      else
+        dbClose(d);
+    {$ENDIF}
   end;
 end;
 
 constructor TSpamicityCalculator.Create;
 begin
+  {$IFDEF HAS_SQLITE}
+  db := nil;
+  {$ELSE}
   d := nil;
+ {$ENDIF}
 end;
 
 destructor TSpamicityCalculator.Destroy;
@@ -678,7 +861,10 @@ begin
   OpenDatabase;
   clear_spam_stats(FStats);
 
-  Result := calc_spam_stats_dowork(d,Content,GoodFld,BadFld,
+  Result := calc_spam_stats_dowork(
+    {$IFDEF HAS_SQLITE}db{$ELSE}d{$ENDIF},
+    Content,
+    {$IFNDEF HAS_SQLITE}GoodFld,BadFld,{$ENDIF}
     ROBX,ROBX_CNT,@FStats);
 end;
 
@@ -708,8 +894,29 @@ begin
   Result := (not IsSpam) and (not IsHam);
 end;
 
+initialization
+
+finalization
+{$IFDEF HAS_SQLITE}
+  if assigned(cache_db) then
+  begin
+    cache_db.CommitTransaction;
+    FreeAndNil(cache_db);
+  end;
+{$ELSE}
+  if assigned(cache_d) then
+  begin
+    dbClose(cache_d);
+    cache_d := nil;
+  end;
+{$ENDIF}
+
 //
 // $Log$
+// Revision 1.3  2003/07/12 18:45:06  cl
+// - speed improvement by caching of database connection
+// - compile-time $DEFINE to enable SQLite support (EXPERIMENTAL)
+//
 // Revision 1.2  2003/02/07 16:13:02  cl
 // - added field ``DATUM'' to SPAMFLT.DB1
 //
