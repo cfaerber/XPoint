@@ -50,6 +50,7 @@ uses Unicode,mime;
 {$I charsets/8859_14.inc }
 {$I charsets/8859_15.inc }
 {$I charsets/8859_16.inc }
+{$I charsets/iso646de.inc }
 {$ELSE }
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -74,6 +75,7 @@ uses Unicode,mime;
 {$I charsets\8859_14.inc }
 {$I charsets\8859_15.inc }
 {$I charsets\8859_16.inc }
+{$I charsets\iso646de.inc }
 {$ENDIF }
 
 function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
@@ -106,6 +108,7 @@ begin
     csISO8859_14: Result := ISO8859_14TransTable;
     csISO8859_15: Result := ISO8859_15TransTable;
     csISO8859_16: Result := ISO8859_16TransTable;
+    csISO646DE:	Result := ISO646DE_TransTable;
   end;
 end;
 
@@ -113,6 +116,9 @@ end.
 
 //
 // $Log$
+// Revision 1.8  2002/11/14 20:00:57  cl
+// - New charset: ISO-646-DE
+//
 // Revision 1.7  2002/07/25 20:43:51  ma
 // - updated copyright notices
 //

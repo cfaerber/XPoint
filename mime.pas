@@ -196,7 +196,7 @@ type
     csISO8859_6,  csISO8859_7,  csISO8859_8,  csISO8859_9,  csISO8859_10,
     csISO8859_13, csISO8859_14, csISO8859_15, csISO8859_16, 
   // US-ASCII
-    csASCII, 
+    csASCII,      csISO646DE,
   // unknown charset
     csUnknown);
 
@@ -209,7 +209,7 @@ const
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
     'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
     'ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16', 
-    'US-ASCII', 
+    'US-ASCII',   'DIN_66003',
     'x-unknown');
 
 type
@@ -1320,6 +1320,9 @@ end;
 
 //
 // $Log$
+// Revision 1.22  2002/11/14 20:04:41  cl
+// - New charset: ISO-646-DE
+//
 // Revision 1.21  2002/05/20 15:18:17  cl
 // - added/fixed functions for proper RFC 2047 encoding
 //
