@@ -122,13 +122,15 @@ begin
     try
       List := TStringList.Create;
       List.LoadFromFile(RFCFile);
-      SMTP.Connect;
+
+      SMTP.Connect(SMTP.GetFQDomain(List));
+
       { Name und IP anzeigen }
       MWrt(x+15,y+6,SMTP.Host.Name+' ['+SMTP.Host.AsString+']');
       MWrt(x+15,y+8,FormS(SMTP.Server,50));
       MWrt(x+15,y+2,'Mails senden');
 
-      SMTP.PostPlain(List);
+      SMTP.PostPlainRFCMails(List);
 
       SMTP.Disconnect;
     except
@@ -245,6 +247,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/04/06 15:21:15  ml
+  - smtpsenden komplett überarbeitet
+
   Revision 1.7  2001/04/06 13:51:23  mk
   - delete pop3 mails after recieving
 

@@ -45,6 +45,13 @@ type
 
     FServer             : string;               { Server-Software }
     FUser, FPassword    : string;               { Identifikation }
+    FFQDomain           : string;
+    FromLine, ToLine    : Integer;
+
+    { Returns MailEndLine }
+    { Parse complete SMTP-Mail }
+    function ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
+                         Var From, Recip: String): Integer;
 
   public
     constructor Create;
@@ -55,7 +62,7 @@ type
     property Password: string read FPassword write FPassword;
 
     { Verbindung herstellen }
-    function Connect: boolean; override;
+    function Connect(AFQDomain: String): boolean;
 
     { Abmelden }
     procedure DisConnect; override;
@@ -66,13 +73,19 @@ type
     { -------- SMTP-Zugriffe }
 
     procedure PostMail(Mail: TStringList; const From, ToStr: String);
-    procedure PostPlain(Mail: TStringList);
+    procedure PostPlainRFCMails(Mail: TStringList);
+    function GetFQDomain(Mail: TStringList): String;
   end;
 
 implementation
 
 const
   DefaultSMTPPort       = 25;
+  SMTPFROMSIGN    = 'MAIL FROM:';
+  SMTPTOSIGN      = 'RCPT TO:';
+  SMTPDATASIGN    = 'DATA';
+  SMTPHELOSIGN    = 'HELO';
+  SMTPQUITSIGN    = 'QUIT';
 
 {$IFDEF VP }
 const
@@ -95,6 +108,9 @@ begin
   FUser:='';
   FPassword:='';
   FServer:= '';
+  FFQDomain := '';
+  FromLine := -1;
+  ToLine := -1;
 end;
 
 constructor TSMTP.CreateWithHost(s: string);
@@ -115,7 +131,9 @@ begin
   // Eine Authorisierung muá erst noch geschrieben werden
   if Connected then
   begin
-    SWriteln('HELO localhost');
+    if FFQDomain = '' then
+      FFQDomain := 'localhost';
+    SWriteln(SMTPHELOSIGN + ' ' + FFQDomain);
     SReadln(s);
 
     if ParseResult(s) <> 250 then
@@ -128,12 +146,14 @@ begin
   end;
 end;
 
-function TSMTP.Connect: boolean;
+function TSMTP.Connect(AFQDomain: String): boolean;
 var
   s   : string;
   code: integer;
 begin
   Result := false;
+
+  FFQDomain := AFQDomain;
 
   Output(mcInfo,res_connect1, [Host.Name]);
   if not inherited Connect then
@@ -179,7 +199,7 @@ var
   s: String;
   i: Integer;
 begin
-  SWriteln('MAIL FROM:' + From);
+  SWriteln(SMTPFROMSIGN + From);
   SReadln(s);
   if ParseResult(s) <> 250 then
   begin
@@ -188,7 +208,7 @@ begin
     exit;
   end;
 
-  SWriteln('RCPT TO:' + ToStr);
+  SWriteln(SMTPTOSIGN + ToStr);
   SReadln(s);
   if ParseResult(s) <> 250 then
   begin
@@ -197,7 +217,7 @@ begin
     exit;
   end;
 
-  SWriteln('DATA');
+  SWriteln(SMTPDATASIGN);
   SReadln(s);
   if ParseResult(s) <> 354 then
   begin
@@ -206,8 +226,13 @@ begin
     exit;
   end;
 
-  for i := 0 to Mail.Count - 1 do
+  if FromLine = -1 then FromLine := 0;
+  if ToLine = -1   then ToLine := Mail.Count - 1;
+  for i := FromLine to ToLine do
     swriteln(mail[i]);
+
+  FromLine := -1;
+  ToLine := -1;
   swriteln('.');
   sreadln(s);
   if ParseResult(s) <> 250 then
@@ -218,25 +243,69 @@ begin
   end;
 end;
 
-procedure TSMTP.PostPlain(Mail: TStringList);
+function TSMTP.ParseHeader(Mail: TStringList; StartLine, StopLine: Integer;
+                           Var From, Recip: String): Integer;
 var
-  s: String;
-  i: Integer;
+  I: Integer;
 begin
-  for i := 0 to Mail.Count - 1 do
-    swriteln(mail[i]);
-(*  if ParseResult(s) <> 250 then
+  Recip := '';
+  From := '';
+  ToLine := Mail.Count - 1;
+  for I := StartLine to StopLine do
   begin
-    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    DisConnect;
-    exit;
-  end; *)
+    if Pos(SMTPFROMSIGN, Mail[I]) <> 0 then
+      From := Copy(Mail[I], Length(SMTPFROMSIGN) + 1, Length(Mail[I]));
+    if Pos(SMTPTOSIGN, Mail[I]) <> 0 then
+      Recip := Copy(Mail[I], Length(SMTPTOSIGN) + 1, Length(Mail[I]));
+    if Pos(SMTPDATASIGN, Mail[I]) <> 0 then
+      FromLine := I + 1;
+  end;
+  for I := StopLine to Mail.Count - 1 do
+  begin
+    ToLine := I;
+    if (length(Mail[I]) = 1) then
+      if Mail[I][1] = '.' then break;
+    if Pos(SMTPQUITSIGN, Mail[I]) <> 0 then break;
+  end;
+  Result := ToLine;
 end;
 
+procedure TSMTP.PostPlainRFCMails(Mail: TStringList);
+const
+  SMTPHeaderLines = 4;
+var
+  From, Recip: String;
+  I: Integer;
+begin
+  if Mail.Count < SMTPHeaderLines then exit;
+  I := 0;
+  while I < Mail.Count - 1 do
+  begin
+    I := ParseHeader(Mail, I, I + SMTPHeaderLines, From, Recip);
+    PostMail(Mail, From, Recip);
+    Inc(I);
+  end;
+  if Pos(SMTPQUITSIGN, Mail[Mail.Count - 1]) <> 0 then
+    ToLine := Mail.Count - 2; {prevent disconnect for every Mail }
+end;
+
+
+function TSMTP.GetFQDomain(Mail: TStringList): String;
+begin
+  if Mail.Count > 0 then
+  begin
+    if Pos(SMTPHELOSIGN, Mail[0]) <> 0 then
+      Result := Copy(Mail[0], Length(SMTPHELOSIGN) + 1, Length(Mail[0]));
+  end else
+    Result := '';
+end;
 
 end.
 {
   $Log$
+  Revision 1.4  2001/04/06 15:21:15  ml
+  - smtpsenden komplett überarbeitet
+
   Revision 1.3  2001/04/05 14:28:49  ml
   - SMTP is working
 
