@@ -624,6 +624,7 @@ begin
         z[0]:=#2;
         end;
       end;
+    if KB_Shift and (z=#$F5) then z:=#$15;  { -Zeichen unter CP850 auf Hex 15 umbiegen }
     cursor(curoff);
     lastkey:=z;
     if hotkeys then
@@ -1656,6 +1657,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.8  2002/03/27 19:49:39  my
+  JG+MY:- Wenn der ASCII-Wert #245 (= Paragraphen-Zeichen unter Codepage
+          850) ber die Tastatur eingegeben wird, dann wird dieser auf den
+          Wert #21 (= Paragraphenzeichen unter Codepage 437 *und* 850)
+          umgesetzt. Fix fr User, die mit XP unter Codepage 850 arbeiten
+          und bei denen ansonsten das Paragraphenzeichen nicht korrekt
+          beim Empf„nger ankommen wrde.
+
   Revision 1.38.2.7  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 
