@@ -1554,10 +1554,13 @@ begin
 end;
 
 function b30(l:longint):string;   { 30bit -> 5char }
-const bc : string[5] = '-----';
-      b64: array[0..63] of char = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz+';
-var i : byte;
+const
+  b64: array[0..63] of char = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz+';
+var
+  bc : string[5];
+  i : byte;
 begin
+  bc := '-----';
   for i:=5 downto 1 do begin
     bc[i]:=b64[l and 63];
     l:=l shr 6;
@@ -1699,6 +1702,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.6  2003/01/24 20:19:19  mk
+  - fixed FPC compile problem
+
   Revision 1.107.2.5  2002/11/14 00:30:20  mk
   dido:- fixed bug in cVal
 
