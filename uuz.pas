@@ -34,7 +34,7 @@ const
       midlen      = 120;
       orglen      = 80;
       adrlen      = 80;
-      realnlen    = 70;           { 11.10.1999 robo - Realname verl„ngert }
+      realnlen    = 70;               { L„nge Realname }
       hderrlen    = 60;
       maxemp      = 50;
       maxulines   = 60;               { max. zus„tzliche U-Zeilen }
@@ -169,9 +169,7 @@ type  OrgStr  = string[orglen];
                   groesse    : longint;
                   komlen     : longint;       { Kommentar-L„nge }
                   ckomlen    : longint;
-{                  realname   : string[40]; }
                   realname   : string[realnlen];
-                  { 11.10.1999 robo - Realname verl„ngert wg. MIME }
 
                   programm   : string[60];    { Mailer-Name }
                   datei      : string[40];    { Dateiname }
@@ -199,9 +197,7 @@ type  OrgStr  = string[orglen];
                   oem,oab    : string[AdrLen];
                   xoem       : empflistt;
                   oemanz     : integer;
-{                  oar,war    : string[40]; }      { Realnames }
                   oar,war    : string[realnlen]; { Realnames }
-                  { 11.10.1999 robo - Realname verl„ngert }
 
                   gateway    : string[80];
                   empfbestto : string[AdrLen];
@@ -225,18 +221,11 @@ type  OrgStr  = string[orglen];
                   nokop      : boolean;
                   boundary   : string[70];
                   mimetyp    : string[30];
-
-                  { 03.02.2000 robo }
                   mimereltyp : string[25];
-                  { /robo }
 
                   { 03.09.1999 robo - X-No-Archive Konvertierung }
                   xnoarchive : boolean;
-                  { /robo }
-
-                  { 01/2000 oh }
                   Cust1,Cust2: string[custheadlen];
-                  { /oh }
 
                 end;
       charr   = array[0..65530] of char;
@@ -414,10 +403,8 @@ begin
   writeln('UUZ -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
   writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
-  { 31.01.2000 robo }
   writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
   writeln;
-  { /robo }
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
   writeln('              -MIME   =  Use MIME for news');
@@ -1264,9 +1251,9 @@ procedure UnQuotePrintable;     { MIME-quoted-printable/base64 -> 8bit }
 var p,b     : byte;
     softbrk : boolean;
 
-  procedure AddCrlf; assembler;    { CR/LF an s anh„ngen }
+  procedure AddCrlf; assembler; {&uses ebx }    { CR/LF an s anh„ngen }
   asm
-{$IFNDEF Ver32 } {!!}
+{$IFDEF BP }
     mov bl,byte ptr s[0]
     mov bh,0
     cmp bx,255
@@ -1277,6 +1264,18 @@ var p,b     : byte;
     jz  @@1
     inc bx
     mov byte ptr s[bx],10
+@@1:mov byte ptr s[0],bl
+{$ELSE }
+    xor ebx, ebx
+    mov bl,byte ptr s[0]
+    cmp ebx,255
+    jz  @@1
+    inc ebx
+    mov byte ptr s[ebx],13
+    cmp ebx,255
+    jz  @@1
+    inc ebx
+    mov byte ptr s[ebx],10
 @@1:mov byte ptr s[0],bl
 {$ENDIF }
   end;
@@ -1640,8 +1639,8 @@ var   b1,b2,b3,p : byte;
 
 begin
   if (bytesleft>54) and (bufpos<bufanz-54) then
-{$IFNDEF VER32}
-    asm
+  asm
+{$IFDEF BP }
       cld
       mov   si,offset buffer
       add   si,bufpos
@@ -1681,9 +1680,47 @@ begin
       jnz   @@1
       mov   byte ptr s[0],72
       add   bufpos,54
-    end
+{$ELSE }
+      cld
+      mov   esi,offset buffer
+      add   esi,bufpos
+      mov   edx,18                { 18 byte-Tripel konvertieren }
+      mov   cl,2
+      mov   ebx,offset b64chr
+      mov   edi,offset s[1]
+ @@1: lodsb                      { Byte 1 }
+      mov   ah,al
+      lodsb                      { Byte 2 }
+      shr   ax,1
+      rcr   ch,1
+      shr   ax,1
+      rcr   ch,1
+      xchg  al,ah
+      xlat
+      stosb                      { Bit 7..2/1 }
+      mov   al,ch
+      shr   ax,cl
+      xchg  al,ah
+      xlat
+      stosb                      { Bit 1..0/1 + Bit 7..4/2 }
+      lodsb                      { Byte 3 }
+      shr   ah,cl
+      shr   ah,cl
+      shl   ax,cl
+      xchg  al,ah
+      xlat
+      stosb                      { Bit 3..0/2 + Bit 7..6/3 }
+      mov   al,ah
+      shr   al,cl
+      xlat
+      stosb                      { Bit 5..0/3 }
+      dec   edx
+      jnz   @@1
+      mov   byte ptr s[0],72
+      add   bufpos,54
 {$ENDIF}
-  else begin
+  end else
+  begin
     p:=0;
     repeat
       b1:=getbyte; b2:=getbyte; b3:=getbyte;
@@ -2057,7 +2094,6 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
   var p1,p2,p,i : byte;
       code      : char;
       qp        : boolean;
-{      cset      : string[10];  MK: Wird im Original nicht benutzt }
   begin
     for i:=1 to length(ss) do
       if ss[i]=#9 then ss[i]:=' ';
@@ -2072,6 +2108,8 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
           if ss[p2]='?' then inc(i);
           inc(p2);
         end;
+        while (p2<length(ss))
+        and ((ss[p2]<>'=') or (ss[p2-1]<>'?')) do inc(p2);
         if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
       end;
       if (p1>0) and (p2>0) then begin
@@ -2156,10 +2194,9 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     end;
   end;
 
-  procedure LoZZ;      { LoString(zz);  -  zz<>'' }
-  begin
-{$IFNDEF Ver32}
-    asm
+  procedure LoZZ; assembler; {&uses esi }     { LoString(zz);  -  zz<>'' }
+  asm
+{$IFDEF BP }
       cld
       mov   si,offset zz
       lodsb
@@ -2172,7 +2209,19 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
       ja    @@2
       add   byte ptr [si-1],32
 @@2:  loop  @@1
-    end;
+{$ELSE }
+      cld
+      mov   esi,offset zz
+      lodsb
+      mov   cl,al
+      mov   ch,0
+ @@1: lodsb
+      cmp   al,'A'
+      jb    @@2
+      cmp   al,'Z'
+      ja    @@2
+      add   byte ptr [esi-1],32
+@@2:  loop  @@1
 {$ENDIF}
   end;
 
@@ -2219,15 +2268,13 @@ begin
              if zz='control'      then GetBetreff(true)
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
+             if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
              if zz='distribution' then distribution:=s0
              else AppUline('U-'+s1);
         'r': if zz='references'   then GetReferences else
              if zz='received'     then GetReceived else
-{             if zz='reply-to'     then GetAdr(PmReplyTo,d40) else  }
-{             if zz='return-receipt-to' then GetAdr(EmpfBestTo,d40) }
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
-             { 11.10.1999 robo - Realname verl„ngert }
 
              else AppUline('U-'+s1);
         's': if zz='subject'      then GetBetreff(false) else
@@ -3509,6 +3556,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2000/04/21 18:31:43  mk
+  - Assembler-Routinen konvertiert, versch. Fixes
+
   Revision 1.18  2000/04/18 11:23:47  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
