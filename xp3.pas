@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1205,6 +1205,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
   Revision 1.82  2002/06/23 15:03:06  cl
   - Adapted Nachricht/Direkt to new address handling.
 

@@ -1,7 +1,7 @@
 {   $Id$
 
     Subprocedures and functions for xpsendmessage.DoSend: MIME
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"arber
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"arber
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -320,6 +320,9 @@ end;
 
 //
 // $Log$
+// Revision 1.13  2002/07/25 20:43:57  ma
+// - updated copyright notices
+//
 // Revision 1.12  2002/07/23 13:27:44  mk
 // - fixed Bug #476655 kein nachträgliches Edit bei attachment
 //   at the end of every mime part, the last #0d0a is not part

@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall class
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"aerber
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"aerber
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -1122,6 +1122,9 @@ end;
 
 {
   $Log$
+  Revision 1.26  2002/07/25 20:44:02  ma
+  - updated copyright notices
+
   Revision 1.25  2002/07/07 10:38:47  cl
   - Fixed "Absturz bei UUCP-over-IP"/"DEBUGLOG fuer UUCP-over-IP ..."
     see <8Qc1W4n1bTB@dirk.deimeke.net> and <8Qk7IATmbTB@dirk.deimeke.net>

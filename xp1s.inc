@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     def_prog_mode();           { save current tty modes }
     endwin();                  { restore original tty modes }
 {$IFDEF Kylix}
+
     Result:=libc.system(PChar(command));
 {$ELSE}
     Result:=linux.shell(command);
@@ -517,6 +518,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.81  2002/07/25 20:43:53  ma
+  - updated copyright notices
+
   Revision 1.80  2002/05/30 13:28:33  mk
   - added automatic UTF-8 detection to lister
 

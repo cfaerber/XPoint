@@ -3,7 +3,7 @@
     OpenXP data base unit (formerly overlay unit)
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -433,6 +433,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/07/25 20:43:51  ma
+  - updated copyright notices
+
   Revision 1.20  2002/07/22 10:21:11  mk
   - added xp1 unit to uses
 

@@ -1,6 +1,6 @@
 {   $Id$
 
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Hinrich Donner
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Hinrich Donner
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1542,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2002/07/25 20:43:56  ma
+  - updated copyright notices
+
   Revision 1.64  2002/04/05 04:48:21  mk
   - removed message in EndCurses
 

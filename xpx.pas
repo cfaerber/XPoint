@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -175,6 +175,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/07/25 20:43:57  ma
+  - updated copyright notices
+
   Revision 1.50  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 

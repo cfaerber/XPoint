@@ -2,7 +2,7 @@
 
     OpenXP multipart messages handling unit
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -885,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.63  2002/07/25 20:43:57  ma
+  - updated copyright notices
+
   Revision 1.62  2002/07/23 13:27:44  mk
   - fixed Bug #476655 kein nachträgliches Edit bei attachment
     at the end of every mime part, the last #0d0a is not part

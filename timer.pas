@@ -2,7 +2,7 @@
 
     Timer unit
 
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and M.Kiesel
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and M.Kiesel
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,6 +133,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2002/07/25 20:43:53  ma
+  - updated copyright notices
+
   Revision 1.21  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

@@ -2,7 +2,7 @@
 
    OpenXP RFC/Client netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -126,6 +126,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2002/07/25 20:44:02  ma
+  - updated copyright notices
+
   Revision 1.4  2002/07/22 10:06:27  mk
   - do not try to create existing directories (ClientSpool)
 

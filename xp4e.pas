@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -2516,6 +2516,9 @@ end;
 
 {
   $Log$
+  Revision 1.98  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
   Revision 1.97  2002/07/25 20:33:28  ma
   - fixed: AutoVersand/File names were automatically converted to uppercase,
     resulting in problems with Linux

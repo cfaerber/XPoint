@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -745,6 +745,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2002/07/25 20:43:55  ma
+  - updated copyright notices
+
   Revision 1.63  2002/07/21 11:51:01  ma
   - new feature: kill/prevent dupes when sorting in messages
     (in fact a replaceown variant)

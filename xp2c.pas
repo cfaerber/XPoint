@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1551,6 +1551,9 @@ end;
 
 {
   $Log$
+  Revision 1.133  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
   Revision 1.132  2002/07/22 17:55:32  mk
   - fixed result values for ngdispChanged and ngdispaChanged,
     fixeing problems selecting in config/anzeige/bretter

@@ -2,7 +2,7 @@
 
     OpenXP startup unit
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1090,6 +1090,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.145  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
   Revision 1.144  2002/05/26 12:16:22  ma
   - replaced dbLog by standard log routines
 

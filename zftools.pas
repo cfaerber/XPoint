@@ -2,7 +2,7 @@
 
     OpenXP ZC<->FTS-0001 converter unit
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1804,6 +1804,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.31  2002/07/25 20:43:58  ma
+        - updated copyright notices
+
         Revision 1.30  2002/07/20 12:27:19  ma
         - fixed charset issues with fido messages
 

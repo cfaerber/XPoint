@@ -1,6 +1,6 @@
 { $Id$
 
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -1276,6 +1276,9 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
   Revision 1.92  2002/07/22 17:05:28  mk
   - fixed Bug #496988: OXP-Linux: Dateirechte bei Pufferimport
 

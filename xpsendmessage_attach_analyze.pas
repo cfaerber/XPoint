@@ -1,6 +1,6 @@
 {   $Id$
 
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"arber
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"arber
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

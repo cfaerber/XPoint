@@ -1,7 +1,7 @@
 { $Id$
 
    OpenXP main source file
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
    Copyright (C) 1991-1999 Peter Mandrella (www.mandrella.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -244,6 +244,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/07/25 20:43:52  ma
+  - updated copyright notices
+
   Revision 1.19  2002/06/14 20:32:01  mk
   - write version info to error.txt
 

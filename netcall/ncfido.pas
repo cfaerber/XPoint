@@ -2,7 +2,7 @@
 
    OpenXP fido netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -239,6 +239,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/07/25 20:44:02  ma
+  - updated copyright notices
+
   Revision 1.9  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 
