@@ -1175,7 +1175,7 @@ begin
     end
   else
     add:=0;
-  maddtext(3,5+add,'UUCP/RFC',col.coldiahigh);
+  maddtext(3,5+add,'RFC/UUCP',col.coldiahigh);
   maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
@@ -1208,7 +1208,7 @@ var x,y   : byte;
     case nr of
       1 : sname:='Z-Netz';
       2 : sname:='Fido';
-      3 : sname:='UUCP/RFC';
+      3 : sname:='RFC/UUCP';
       4 : sname:='MausTausch';
       5 : sname:='MagicNET';
       6 : sname:='QM/GS';
