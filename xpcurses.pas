@@ -479,13 +479,13 @@ var
 begin
   if not __isInit then InitXPCurses;
   atts:= color_pair(SetColorPair(att));
+  atts := atts and not A_BLINK;
   if IsBold(att) then
     atts:= atts or A_BOLD;
-  atts := atts and not A_BLINK;
-{ disabled till I get it working:
+
   if (att and $80) = $80 then
     atts:= atts or A_BLINK;
-}
+
   CursesAtts:= atts;
 end;
 
@@ -1551,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/11/06 12:12:31  ml
+  - highlighted backgrounds work now with Eterm (console blinks yes but will be fixed soon)
+
   Revision 1.61  2001/10/24 09:25:17  ma
   - adjusted debug levels
 
