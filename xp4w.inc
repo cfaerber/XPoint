@@ -1284,6 +1284,7 @@ begin
   mdr:=disprec;
   GoP;
   mw1;
+  SetBrettGelesen(_brett);
   selcall(10,gl-1);
   abhdatum:=mhd;
   if quit then exit;
