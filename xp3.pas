@@ -172,7 +172,7 @@ asm
 
 	 mov   edi,passpos              { neuen PW-Index speichern }
          mov   [edi],bx
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
          boolean;assembler;
@@ -244,14 +244,14 @@ asm
 @testul: cmp dh,0                       { UMLAUTSUCHE }
          je @nextb                       { Aber nur wenn erwuenscht... }
 
-         mov ah,'E'                                        
+         mov ah,'E'
 
          cmp al,'Ž'                     { Wenn "Ž" im Puffer ist, }                           
          jne @@1
          mov al,'A'
 @ultest: cmp ax,[edi+ebp+1]            { Dann auf "AE" Testen. }
          jne @nextb
-         inc bp                         { Wenn gefunden: Zeiger im Suchbegriff }
+         inc ebp                        { Wenn gefunden: Zeiger im Suchbegriff }
          dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
          jmp @ulgood                    { und oben weitermachen. }
 
@@ -277,7 +277,7 @@ asm
          jmp   @ende
 @found:  mov   eax,1
 @ende:   pop bp
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 procedure Iso1ToIBM(var data; size:word); assembler;
 asm
@@ -293,7 +293,7 @@ asm
 @ii1:     stosb
 	  loop   @isolp1
 @noconv1:
-end;
+end ['EAX', 'EBX', 'ECX', 'EDI'];
 
 procedure IBMToIso1(var data; size:word); assembler;
 asm
@@ -307,7 +307,7 @@ asm
           stosb
           loop   @isolp2
 @noconv2:
-end;
+end ['EAX', 'EBX', 'ECX', 'EDI'];
 
 {$ELSE}
 
@@ -1414,6 +1414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.14  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -118,8 +118,8 @@ implementation  {=======================================================}
 uses datadef1;
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
-{$IFDEF BP }
 procedure expand_node(rbuf,nodep: pointer); assembler;
+{$IFDEF BP }
 asm
          push ds
                   les   di, nodep
@@ -150,8 +150,8 @@ asm
          jnz   @exlp
 @nokeys: pop ds
 end;
-(*{$ELSE } Hier mu· noch mal ÅberprÅft werden, im Moment wird es in
-  Pascal erledigt }
+{$ELSE } {!!! Hier mu· noch mal ÅberprÅft werden }
+asm
          mov   edi, nodep
          mov   esi, rbuf
          xor   edx, edx
@@ -176,12 +176,12 @@ end;
          dec   eax
          jnz   @exlp
 @nokeys:
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI']; *)
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ENDIF }
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
-asm
 {$IFDEF BP }
+asm
          xor   cx,cx
          les   di,cache
          mov   bx,word ptr dbp
@@ -207,22 +207,25 @@ asm
          mov   es:[di],cx
 end;
 {$ELSE }
-         xor   ecx,ecx
+asm
+         xor   ecx, ecx
          mov   edi, cache
          mov   ebx, dbp
          mov   esi, ofs
 
-@sc_lp:  cmp   byte ptr [edi],0      { not used? }
+@sc_lp:  cmp   byte ptr [edi],0       { not used? }
          jz    @nextc
          cmp   [edi+1],ebx            { dbp gleich? }
          jnz   @nextc
          cmp   [edi+5],esi            { ofs gleich? }
          jz    @cfound
-@nextc:  add   edi,1080    { sizeof(cachepage) }
+@nextc:  add   edi,1080               { sizeof(cachepage) }
          inc   ecx
          cmp   ecx,cacheanz
          jb    @sc_lp
-@cfound: mov   [i], ecx
+@cfound: mov   edi, i
+{!!}     mov   [edi], ecx
+         mov   [edi], cx
 end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ENDIF }
 
@@ -257,32 +260,28 @@ asm
 end;
 {$ELSE }
 asm
-         push  edi
          mov   edi, cache
          xor   eax, eax                { EAX = 0 }
          mov   ebx, eax                { EBX = 0, sp := 0 }
          mov   ecx, eax                { ECX = 0, i := 0 }
-         dec   ax                      { EAX = 0000FFFF, s := maxlongint }
-         mov   edx, eax                { EDX = 0000FFFF }
+         dec   eax                     { EAX = FFFFFFFF, s := maxlongint }
 
-@clp:    cmp   byte ptr [edi],0        { not used ? }
+@clp:    cmp   byte ptr [edi], 0       { not used ? }
          jz    @sc2ok
-         cmp   [edi+11], dx            { cache^[i].lasttick < s ? }
+         cmp   [edi+9], eax            { cache^[i].lasttick < s ? }
          ja    @nexti
-         jb    @smaller
-         cmp   [edi+9], ax
-         jae   @nexti
-@smaller: mov  ax, [edi+9]            { s:=cache^[i].lasttick }
-         mov   dx, [edi+11]
-         mov   ebx,ecx                   { sp:=i; }
-@nexti:  add   edi,1080
+@smaller:mov   eax, [edi+9]            { s:=cache^[i].lasttick }
+         mov   ebx, ecx                { sp:=i; }
+@nexti:  add   edi, 1080
          inc   ecx
          cmp   ecx,cacheanz
          jb    @clp
          jmp   @nofree
 
-@sc2ok:  mov   ebx,ecx                   { sp:=i }
-@nofree: mov   [_sp], ebx
+@sc2ok:  mov   ebx, ecx                { sp:=i }
+@nofree: mov   edi, ebx
+{!!}     mov   [edi], ebx
+         mov   [edi], bx
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ENDIF }
 
@@ -1712,6 +1711,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/17 11:16:33  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.13  2000/03/14 18:16:15  mk
   - 16 Bit Integer unter FPC auf 32 Bit Integer umgestellt
 

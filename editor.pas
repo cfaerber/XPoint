@@ -229,6 +229,7 @@ asm
          sub   ax,si  { robo }
   @sende:
          pop   ds
+end;
 {$ELSE }
          mov    esi,data
          push   esi     { robo }
@@ -284,8 +285,8 @@ asm
          pop   esi
          sub   eax,esi
   @sende:
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ENDIF }
-end;
 
 
 function FindUmbruch(var data; zlen:integer16):integer; assembler;
@@ -1993,6 +1994,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/03/17 11:16:33  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.12  2000/03/15 21:49:47  mk
   - kleiner Bugfix fuer Editor (im letzten Patch eingebaut)
 

@@ -69,7 +69,7 @@ end;
 procedure decode; assembler;
 asm
           mov esi, s              { Adresse des zu dekod. Strings }
-          mov ebx,2               { Offset innerhalb von s }
+          mov ebx, 2              { Offset innerhalb von s }
 
           mov cl,1                { Schleifenz„hler }
           mov ch,[esi+1]          { 1. Byte : L„ngeninformation }
@@ -79,14 +79,13 @@ asm
 @mloop0:  mov edi,outbuf           { Adresse des Ausgabepuffers }
           add edi,bufp
 
-@mainloop: 
+@mainloop:
           cmp cl,ch               { i<=n ? }
           jle @lp1
           inc ln
-          mov cl,ch
-          mov ch,0
-          add word ptr bytes,cx   { inc(bytes,n) }
-          adc word ptr bytes+2,0
+          xor eax, eax
+          mov al,ch
+          add dword ptr bytes, eax
           jmp @ende
 
 @lp1:     mov dx,[esi+ebx]          { 4 Bytes dekodieren }
@@ -145,7 +144,8 @@ asm
           pop esi
           jmp @mloop0
 @ende:
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
+
 
 procedure getstring; assembler;
 asm
@@ -179,7 +179,7 @@ asm
 @getende: mov ibufp,ebx
           mov edi, s
           mov [edi],ah             { Stringl„nge setzen (s[0]) }
-end;
+end ['EAX', 'EBX', 'ECX', 'ESI'];
 
 
 {$ELSE}
@@ -655,6 +655,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.7  2000/03/14 15:15:41  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

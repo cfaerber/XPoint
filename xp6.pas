@@ -116,7 +116,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
-         mov   edx,0
+         xor   edx, edx
          mov   edi,bytes
          mov   ecx,[edi]
          jcxz  @ende
@@ -174,7 +174,7 @@ asm
 
 @ende:   mov   edi,bytes
          add   [edi],edx
-end;
+end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 
 function  testbin(var bdata; rr:word):boolean; assembler;
 asm
@@ -195,7 +195,7 @@ asm
 @no_bin: loop  @tbloop
          mov   eax,ecx                  { FALSE: nix gefunden }
 @tbend:
-end;
+end ['EAX', 'ECX', 'ESI'];
 
 function  ContainsUmlaut(var s:string):boolean; assembler;
 asm
@@ -212,7 +212,7 @@ asm
          jmp   @cu_ende
 @cu_found: mov  ecx,1
 @cu_ende: mov   eax,ecx
-end;
+end ['EAX', 'ECX', 'ESI'];
 
 {$else }
 
@@ -2149,6 +2149,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.10  2000/03/14 15:15:40  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

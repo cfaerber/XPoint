@@ -125,15 +125,15 @@ asm
              mov    edi, dest
 
              mov     dh,8
-@mstl1:       mov     ch,1
+@mstl1:      mov     ch,1
              mov     cl,0
              mov     dl,8
-@mstl2:       mov     al,[esi]
+@mstl2:      mov     al,[esi]
              and     al,ch
              and     cl,cl
              jz      @nodiv
              shr     al,cl
-@nodiv:       mov     [edi],al
+@nodiv:      mov     [edi],al
              inc     edi
              shl     ch,1
              inc     cl
@@ -142,7 +142,7 @@ asm
              inc     esi
              dec     dh
              jnz     @mstl1
-end;
+end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 procedure permutate(var s, codeofs; n:longint); assembler;
 asm
@@ -165,7 +165,8 @@ asm
              inc     edi
              mov     ecx,n
              rep     movsb
-end;
+end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+
 
 procedure make_comp(var source; var dest); assembler;
 asm
@@ -189,7 +190,7 @@ asm
              inc     edi
              dec     dh
              jnz     @mkklp1
-end;
+end ['EAX', 'ECX', 'ESI', 'EDI'];
 
 procedure Xs(var s1, s2; n: longint); assembler;
 asm
@@ -203,7 +204,7 @@ asm
              xor     [edi], al
              inc     edi
              loop    @Xslp
-end;
+end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 procedure F2(var s, s2); assembler;
 asm
@@ -263,7 +264,7 @@ asm
              inc     ecx
              cmp     ecx,8
              jb      @F2lp
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 {$ELSE }
 
@@ -542,6 +543,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.4  2000/03/14 15:15:41  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

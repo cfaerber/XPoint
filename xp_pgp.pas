@@ -53,8 +53,8 @@ const savekey : pathstr = '';
   JG 08.01.00: Routine optimiert }
 
 function testbin(var bdata; rr:word):boolean; assembler;
+{$IFDEF BP }
 asm
-{$IFNDEF Ver32 }
          push ds
          mov   cx,rr
          lds   si,bdata
@@ -67,8 +67,21 @@ asm
        {  adc ax,ax }                      { C=0: false, c=1: true }
          sbb ax,ax
          pop ds
-{$ENDIF}
 end;
+{$ELSE }
+asm
+         mov   ecx,rr
+         mov   esi,bdata
+         cld
+@tbloop: lodsb
+         cmp   al,9                     { Bin„rzeichen 0..8, ja: c=1 }
+         jb    @tbend                  { JB = JC }
+         loop  @tbloop
+@tbend:  mov eax, 0
+       {  adc ax,ax }                      { C=0: false, c=1: true }
+         sbb eax,eax
+end ['EAX', 'ECX', 'ESI'];
+{$ENDIF}
 
 procedure LogPGP(s:string);
 var t : text;
@@ -698,6 +711,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.8  2000/03/14 15:15:41  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

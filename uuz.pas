@@ -45,8 +45,8 @@ const
       bufsize     = 16384;
       outbufsize  = 16384;
 {$ELSE }
-      bufsize     = 65536;
-      outbufsize  = 65536;
+      bufsize     = 32768;
+      outbufsize  = 32768;
 {$ENDIF }
       BetreffLen  = 70;
       readempflist= true;
@@ -309,7 +309,6 @@ const IBM2ISOtab : array[0..255] of byte =
 {$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
 procedure IBM2ISO; assembler;
 asm
-     push  ebx
      cld
      mov   ebx, offset IBM2ISOtab
      mov   esi, offset s
@@ -321,8 +320,8 @@ asm
      xlat
      mov   [esi-1],al
      loop  @@1
-@@2: pop  ebx
-end;
+@@2:
+end ['EAX', 'EBX', 'ECX', 'ESI'];
 
 {$ELSE }
 
@@ -347,7 +346,6 @@ end;
 {$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
 procedure ISO2IBM; assembler;
 asm
-     push ebx
      cld
      mov   ebx, offset ISO2IBMtab - 128
      mov   esi, offset s
@@ -363,8 +361,8 @@ asm
 @@3: xlat
      mov   [esi-1],al
      loop  @@1
-@@2: pop  ebx
-end;
+@@2:
+end ['EAX', 'EBX', 'ECX', 'ESI'];
 
 {$ELSE }
 
@@ -3506,6 +3504,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.12  2000/03/16 20:24:12  rb
   Bug beim Erzeugen des Received-Headers behoben
 

@@ -318,7 +318,7 @@ asm
          pop    eax
          retn
 @the_end:
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 {$ELSE}
 
@@ -1641,6 +1641,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.10  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.9  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -27,23 +27,14 @@ VAR
    CRC_reg_lo     : smallWORD;
    CRC_reg_hi     : smallWORD;
 
-{ MK 14.02.2000 Die Routine verarbeitet jetzt komplette Bl”cke, das
-  vereinfacht das komplette Handling; funktioniert auch in 32 Bit-Vers. }
-procedure CCITT_CRC32_calc_Block(var block; size: smallword); assembler;        {  CRC-32  }
+procedure CCITT_CRC32_calc_Block(var block; size: word); assembler;  {  CRC-32  }
+{$IFDEF BP }
 asm
-     xor bx, bx      { CRC mit 0 initialisieren }
-     xor dx, dx
-{$IFDEF BP }
+     xor bx, bx        { CRC mit 0 initialisieren }
+     mov dx, bx
      les di, block
-{$ELSE }
-     mov edi, block
-{$ENDIF }
      mov si, size
-{$IFDEF BP }
 @u3: mov al, byte ptr es:[di]
-{$ELSE }
-@u3: mov al, byte ptr [edi]
-{$ENDIF }
      mov cx, 8
 @u1: rcr al, 1
      rcr dx, 1
@@ -58,6 +49,28 @@ asm
      mov CRC_reg_lo, bx
      mov CRC_reg_hi, dx
 end;
+{$ELSE }
+asm
+     xor ebx, ebx      { CRC mit 0 initialisieren }
+     mov edx, ebx
+     mov edi, block
+     mov esi, size
+@u3: mov al, byte ptr [edi]
+     mov ecx, 8
+@u1: rcr al, 1
+     rcr dx, 1
+     rcr bx, 1
+     jnc @u2
+     xor bx, $8320
+     xor dx, $edb8
+@u2: loop @u1
+     inc edi
+     dec esi
+     jnz @u3
+     mov CRC_reg_lo, bx
+     mov CRC_reg_hi, dx
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ENDIF }
 
 function CRC32(st : string) : longint;
 begin
@@ -113,6 +126,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.3  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

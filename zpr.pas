@@ -167,7 +167,6 @@ var   oldexit   : pointer;
 {$IFDEF Ver32 }
 function  TestControlChar(var s:string):boolean; assembler;
 asm
-         push   esi
          mov    esi, s
          cld
          lodsb
@@ -184,8 +183,7 @@ asm
          jmp   @tcende
 @tok:    loop  @tclp
 @tcende: mov   eax,edx                   { Funktionsergebnis }
-         pop   esi
-end;
+end ['EAX', 'ECX', 'EDX', 'ESI'];
 
 {$ELSE}
 
@@ -1352,6 +1350,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/17 11:16:35  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.6  2000/02/26 16:01:09  ml
   Carriage Return in linux nicht noetig
 

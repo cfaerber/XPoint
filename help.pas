@@ -229,8 +229,8 @@ end;
 
 { MK 06.01.2000 Von Inline in ASM 16 und 32 Bit konvertiert }
 procedure decode(buf:pointer; size:word); assembler;
-asm
 {$IFDEF Ver32 }
+asm
         mov ecx, size
         mov ebx, buf
         mov al, 7
@@ -238,7 +238,9 @@ asm
         add al, 125
         inc ebx
         loop @lp;
+end ['EAX', 'EBX', 'ECX'];
 {$ELSE }
+asm
         mov cx, size
         les bx, buf
         mov al, 7
@@ -246,8 +248,8 @@ asm
         add al, 125
         inc bx
         loop @lp;
-{$ENDIF }
 end;
+{$ENDIF }
 
 procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..30000] of byte;
@@ -763,6 +765,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.6  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

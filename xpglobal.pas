@@ -83,7 +83,7 @@ type
       integer16 =  integer;
       integer32 =  longint;
       { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-{      integer =    longint;}
+{     integer =    longint; }
       word =       longint; { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
@@ -111,6 +111,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/17 11:16:35  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.13  2000/03/16 10:14:25  mk
   - Ver32: Tickerabfrage optimiert
   - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert

@@ -106,10 +106,10 @@ type    proctype  = procedure;
         { Achtung!! Žnderungen an cachepage auch in DATABASE.ASM „ndern!! }
 
         cachepage = packed record
-                      used     : boolean;
-                      dbp      : DB;
-                      ofs      : longint;
-                      lasttick : longint;
+                      used     : boolean;  { 0 }
+                      dbp      : DB;       { 1 }
+                      ofs      : longint;  { 5 }
+                      lasttick : longint;  { 9 }
                       page     : array[0..264*4+10] of byte;
                     end;
         icache    = array[0..maxcache-1] of cachepage;
@@ -221,6 +221,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/17 11:16:33  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.5  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

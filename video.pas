@@ -88,7 +88,7 @@ var
 
 { Grafikkarte ermitteln: 0=Herc, 1=CGA, 2=EGA, 3=VGA
   und in vtype speichern }
-function  GetVideotype:byte; assembler;
+procedure GetVideotype; assembler;
 asm
 {$IFDEF BP }
          push  bp
@@ -517,6 +517,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
   Revision 1.8  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 
