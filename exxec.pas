@@ -30,10 +30,7 @@ function Xec(prog:string; const prompt:string):Integer;
 implementation  { --------------------------------------------------- }
 
 uses
-{$ifdef Linux}
-  Linux,
-{$endif}
-  sysutils;
+{$ifdef Linux}Linux,{$endif}sysutils;
 
 function Xec(prog:string; const prompt:string):Integer;
 { Gibt Errorlevel des aufgerufenen Programms zurueck, falls Aufruf
@@ -43,6 +40,7 @@ var
     pp    : byte;
     para  : string;
     dpath : string;
+    TempError: Integer;
 begin
 {$ifdef UnixFS}
 {$ifdef Linux}
@@ -75,9 +73,10 @@ begin
   end;
   Debug.TempCloseLog(False);
   SwapVectors;
+  DosError :=0;
   Exec(dpath, para);
+  TempError:=DosError; if TempError=0 then Result:=DosExitCode else Result:=-TempError;
   SwapVectors;
-  if DosError<>0 then Result:=-DosError else Result:=DOSExitCode;
   Debug.TempCloseLog(True);
   DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
 {$ENDIF }
@@ -86,6 +85,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/09/05 17:20:15  ma
+  - Fix, DosError bei FPC 1.0 seltsam?
+
   Revision 1.28  2000/09/03 20:36:40  ma
   - Fix zur Errorlevel-Rueckgabe. Vorsicht: Verhalten geaendert!- Siehe
     Hinweis beim Kopf von Xec
