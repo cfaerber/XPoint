@@ -57,6 +57,13 @@
   {$ENDIF }
 {$ENDIF }
 
+{$IFDEF VER150 }          { Delphi 7.0  }
+  {$DEFINE Delphi }
+  {$IFDEF Linux }
+    {$DEFINE Kylix }
+  {$ENDIF }
+{$ENDIF }
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
      {$IFNDEF Delphi }
@@ -250,6 +257,9 @@
 
 {
   $Log$
+  Revision 1.78.2.8  2002/11/23 23:49:35  mk
+  - added Delphi 7 support
+
   Revision 1.78.2.7  2002/08/03 21:50:13  mk
   - enabled snapshot
 
