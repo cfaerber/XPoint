@@ -196,7 +196,7 @@ function FTNParse(addr: string; var z,n,f,p: integer): boolean;
 { ======================== } implementation { ======================== }
 
 uses
-  rfc2822,addresslist,typeform,
+  rfc2822,addresslist,typeform,Sysutils,
   xpglobal;
 
 // -- TAddress ---------------------------------------------------------
@@ -808,6 +808,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.7  2002/12/12 11:11:45  mk
+// - added missing SysUtils unit (needed for LeftStr with FPC)
+//
 // Revision 1.6  2002/12/10 10:03:23  dodi
 // - updated uses
 //

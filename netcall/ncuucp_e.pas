@@ -39,7 +39,7 @@ end;
 implementation
 
 uses
-  typeform, inout, debug,
+  typeform, inout, debug, sysutils,
   xpglobal;
 
 procedure TUUCProtocolE.SendCommand(s:string);
@@ -132,6 +132,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2002/12/12 11:11:46  mk
+  - added missing SysUtils unit (needed for LeftStr with FPC)
+
   Revision 1.1  2002/12/10 09:28:44  dodi
   - converted included files into units
 
