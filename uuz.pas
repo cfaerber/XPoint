@@ -338,7 +338,7 @@ begin
     Followup.Free;
   end;
 
-  ULine.Clear; XLine.Clear;
+  ULine.Clear; XLine.Clear; Mail.Clear;
   Fillchar(hd, sizeof(hd), 0);
 
   with hd do
@@ -790,8 +790,8 @@ var
   p: integer;
 begin
   if s = '' then exit;
-  if s[1] = '"' then delete(s, 1, 1);
-  if s[length(s)] = '"' then dellast(s);
+  if FirstChar(s) = '"' then DelFirst(s);
+  if LastChar(s) = '"' then DelLast(s);
   p := 1;
   while (p < length(s)) do
   begin
@@ -1028,8 +1028,8 @@ var
       s := ''
     else
     begin
-      if s[length(s)] = '=' then
-        if s[length(s) - 1] = '=' then
+      if LastChar(s) = '=' then
+        if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
           pad := 2
         else
           pad := 1
@@ -2084,7 +2084,6 @@ begin
   while bufpos < bufanz do
   begin
     ClearHeader;
-    Mail.Clear;
     repeat                                { Envelope einlesen }
       p := 0;
       ReadString;
@@ -2458,7 +2457,6 @@ begin
             ReadString;
             dec(size, length(s) + eol);
           until (s = '') or (bufpos >= bufanz);
-          Mail.Clear;
 
           if hd.Lines = 0 then
             hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
@@ -3451,6 +3449,9 @@ end.
 
 {
   $Log$
+  Revision 1.55  2000/08/08 11:56:18  mk
+  - AnsiString-Fixes
+
   Revision 1.54  2000/08/08 09:17:25  mk
   - Bug bei schreiben von ZConnect-Mails behoben
 
