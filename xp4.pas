@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - Hauptmodul }
@@ -30,6 +30,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
       wltrenn : boolean;   { Trennzeilen als Ziel mîglich        }
       mauskey : boolean;
+      empty   : boolean;
 
       ArchivWeiterleiten : boolean;  { wird bei select(-1|3|4) verwendet }
       MarkUnversandt     : boolean;  { fÅr select(11)                    }
@@ -70,6 +71,7 @@ var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
       dispspec  : specstr;      { Filter/Bereich fÅr Anzeige }
       _dispspec : string[5];
+      dispflags : byte;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
       xphltick  : longint;
@@ -135,11 +137,12 @@ end;
 procedure select(dispmode:shortint);
 
 const autokey : taste = '';
+      AdrbTop : byte = 1; {Anzeige der Adressbuchgruppe 0 Ein/Aus}
 
 var gl      : shortint;
     rdmode  : byte;        { Readmode fÅr das aktuelle Brett }
     p       : shortint;
-    empty   : boolean;
+  { empty   : boolean; }
     markpos : integer;
     bezpos  : integer;
     komofs  : integer;     { Offset vom disprec[1] im Komm-Baum (0..) }
@@ -335,7 +338,7 @@ var t,lastt: taste;
               wrongline:=dbEOF(bbase) or dbBOF(bbase) or not brettok(true);
       1,3 : begin                { User/Adre·buch }
               dbReadN(ubase,ub_adrbuch,adrb);
-              wrongline:=(adrb=0);
+              wrongline:=(adrb<AdrbTop);    {Adressbuchgruppe 0 evtl. erlauben }
             end;
       2,4 : begin                              { alle User      }
              dbReadN(ubase,ub_username,s);
@@ -363,22 +366,22 @@ var t,lastt: taste;
   { Achtung! Bei der Verwendung von Back und Forth die }
   {          Seiteneffekte beachten!!                  }
 
-  function forth:boolean;
+  function _forth:boolean;
   var
       _brett : string[5];
   begin
     case dispmode of
-      11 : if markpos>=markanz-1 then forth:=false
+      11 : if markpos>=markanz-1 then _forth:=false
            else begin
              inc(markpos);
              dbGo(mbase,marked^[markpos].recno);
-             forth:=true;
+             _forth:=true;
              end;
-      12 : if bezpos>=komanz-1 then forth:=false
+      12 : if bezpos>=komanz-1 then _forth:=false
            else begin
              inc(bezpos);
              dbGo(mbase,kombaum^[bezpos].msgpos);
-             forth:=true;
+             _forth:=true;
              end;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
@@ -394,38 +397,38 @@ var t,lastt: taste;
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
-        forth:=not dbEOF(mbase) and not wrongline;
+        _forth:=not dbEOF(mbase) and not wrongline;
         end
       else if (dispmode<>0) or brettall or dispext then begin
         dbSkip(dispdat,1);
-        if dbEOF(dispdat) then forth:=false
-        else forth:=not wrongline;
+        if dbEOF(dispdat) then _forth:=false
+        else _forth:=not wrongline;
         end
       else begin
         repeat
           dbSkip(dispdat,1);
         until dbEOF(dispdat) or not wrongline {or brettok(true)};
-        forth:=not dbEOF(dispdat);
+        _forth:=not dbEOF(dispdat);
         end;
     end;
   end;
 
-  function Back:boolean;
+  function _Back:boolean;
   var
       _brett : string[5];
   begin
     case dispmode of
-      11 : if markpos=0 then Back:=false
+      11 : if markpos=0 then _Back:=false
            else begin
              dec(markpos);
              dbGo(mbase,marked^[markpos].recno);
-             back:=true;
+             _back:=true;
              end;
-      12 : if bezpos=0 then Back:=false
+      12 : if bezpos=0 then _Back:=false
            else begin
              dec(bezpos);
              dbGo(mbase,kombaum^[bezpos].msgpos);
-             back:=true;
+             _back:=true;
              end;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
@@ -441,21 +444,34 @@ var t,lastt: taste;
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
-        Back:=not dbBOF(mbase) and not wrongline;
+        _Back:=not dbBOF(mbase) and not wrongline;
         end
       else if (dispmode<>0) or brettall or dispext then begin
         dbSkip(dispdat,-1);
-        if dbBOF(dispdat) then Back:=false
-        else Back:=not wrongline;
+        if dbBOF(dispdat) then _Back:=false
+        else _Back:=not wrongline;
         end
       else begin
         repeat
           dbSkip(dispdat,-1);
         until dbBOF(dispdat) or not wrongline{ or brettok(true)};
-        back:=not dbBOF(dispdat);
+        _back:=not dbBOF(dispdat);
         end;
     end;
   end;
+
+  function back:boolean;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11)) 
+    then back:=_forth else back:=_back;
+  end; 
+
+  function forth:boolean;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11)) 
+    then forth:=_back else forth:=_forth;
+  end; 
+
 
   procedure Do_XPhilite(wait:boolean);
   const xtxt : string[10] = 'CrossPoint';
@@ -534,7 +550,7 @@ var t,lastt: taste;
     trennzeile:=(left(dbReadStrN(bbase,bb_brettname),3)='$/T');
   end;
 
-  procedure gostart;
+  procedure _gostart;
   begin
     case dispmode of
         -1  : if not ArchivWeiterleiten or (ArchivBretter='') then
@@ -555,8 +571,8 @@ var t,lastt: taste;
                   dbSkip(dispdat,1);
               end;
 
-         1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,#1)   { Userfenster Adressbuch }
-                else dbseek(ubase,uiBoxAdrBuch,#1);
+         1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(AdrbTop)) {Adressbuch }
+                else dbseek(ubase,uiBoxAdrBuch,chr(AdrbTop));
 
          2,4  : if not usersortbox then dbSeek(ubase,uiName,#1)      { Userfenster Alle User }
                   else dbSeek(ubase,uiBoxName,#1);
@@ -584,7 +600,7 @@ var t,lastt: taste;
     aufbau:=true;
   end;
 
-  procedure goend;
+  procedure _goend;
   var mi : word;
   begin
     case dispmode of
@@ -633,7 +649,22 @@ var t,lastt: taste;
               end;
       20    : dbGoEnd(dispdat);
     end;
+    if dbBOF(dispdat) or dbEOF(dispdat) or wrongline then disprec[1]:=0
+    else disprec[1]:=dbRecNo(dispdat);
+    aufbau:=true;
   end;
+
+  Procedure GoStart;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
+    then _GoEnd else _GoStart;
+  end; 
+
+  Procedure GoEnd;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
+    then _GoStart else _GoEnd;
+  end; 
 
   procedure selcall(nr,gl:byte);
   begin
@@ -651,7 +682,7 @@ var t,lastt: taste;
 
 
   procedure _brief_senden(c:char); forward;
-
+  procedure Bezugsbaum; forward;
 
   {$I xp4w.inc}   { Bretter/User/Nachrichten bearbeiten }
 
@@ -1197,10 +1228,8 @@ var t,lastt: taste;
   begin
     if komaktiv then
       rfehler(406)   { 'Kommentarbaum ist bereits aktiv' }
-{$IFDEF BP }
     else if maxavail<20000 then
       rfehler(407)   { 'zu wenig Hauptspeicher' }
-{$ENDIF }
     else if dbRecCount(bezbase)=0 then
       rfehler(408)   { 'kein Kommentarbaum vorhanden' }
     else begin
@@ -1384,6 +1413,17 @@ var t,lastt: taste;
     aufbau:=true;
   end;
 
+  procedure brett_suche;
+  var su  : boolean;
+      rec : longint;
+  begin
+    GoPos(1);
+    BrettMarkSuche;
+    rec:=dbRecno(bbase);
+    if wrongline and not brettall then ChangeBrettall;
+    disprec[1]:=rec;
+  end;
+
   procedure set_lesemode;
   var rm : shortint;
   begin
@@ -1422,6 +1462,7 @@ var t,lastt: taste;
   end;
 
 begin      { --- select --- }
+
   if dispmode=11 then
     if markaktiv then begin
 {      rfehler(414);   { 'markier-Anzeige ist bereits aktiv' }
@@ -1443,8 +1484,10 @@ begin      { --- select --- }
   if dispmode=11 then SortMark;
   user_msgs:=(dispspec[1]='U');
   if (dispmode=10) and user_msgs then begin { User-Fenster }
-    rdmode:=0;         { immer Alles anzeigen }
-    autokey:=keyend;   { ab ans Ende          }
+    rdmode:=0;               { immer alles anzeigen }
+    if msgnewfirst 
+      then autokey:=keyhome 
+      else autokey:=keyend;  { ab ans Ende          }
     end
   else
     if set_allmode then begin
@@ -1591,6 +1634,8 @@ begin      { --- select --- }
       end;
       end;
 
+    autobremse:=true;
+
     if AutoCrash='' then begin           { Tastaturabfrage }
       zaehler[1]:=3;   { nach 3 Sekunden automatisch Dateien schlie·en }
       closeflag:=true;
@@ -1598,7 +1643,7 @@ begin      { --- select --- }
       AktDisprec:=iif(p=0,0,disprec[p]);
       if suchen then begin
         if dispmode<1 then
-          gotoxy(iif(dispext,26,4)+length(suchst),p+ya+3)
+          gotoxy(iif(dispext,26,4)-iif(NewsgroupDispall,1,0)+length(suchst),p+ya+3)
         else
           gotoxy(iif(dispext,UsrFeldPos1,UsrFeldPos2)+length(suchst),p+ya+3);
         Do_XPhilite(true);
@@ -1681,6 +1726,7 @@ begin      { --- select --- }
         0    : begin         { Brettliste }
                  if t=keyf6 then Makroliste(1);
                  if c=^Y then Trennzeilensuche;
+                 if not dispext and (c=k1_U) then Brett_suche;
                  if (t=keytab) or (t=keystab) then begin
                    _unmark_;
                    selcall(UserDispmode,gl);
@@ -1712,12 +1758,12 @@ begin      { --- select --- }
                  else begin
                    if c=k0_A then              { 'A' }
                      ChangeBrettall;
-                   if c='U' then               { 'U' }
+               {    if c='U' then 
                    begin
                      Showungelesen:=not showungelesen;
-                     GlobalModified;
+                     Globalmodified;
                      aufbau:=true;
-                     end;
+                     end; } 
                    if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
@@ -1748,24 +1794,30 @@ begin      { --- select --- }
                    end;
                end;
         1,2  : begin                        { Userliste }
+                 if dispmode=1 then begin
+                   if c='#'then Jump_Adressbuch;
+                   if c=^\ then Next_Adrbuch;                    { Ctrl-# }
+                   end;
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
-                 if c=k0_cG then _mark_group;      { ^G }
-                 if c=k1_O then begin              {'O'}
+                 if c=k0_cG then _mark_group;                    { ^G }
+                 if c=k1_O then begin                            { 'O' }
                    usersortbox:=not usersortbox;
                    setall; aufbau:=true;
                    end;
+                 if (dispmode=1) and (t=keyalta) then
+                   AdrbTop:=AdrbTop xor 1;
 
-                 if c=k1_S then begin              { 'S' }
+                 if c=k1_S then begin                            { 'S' }
                    dispext:=not dispext;
                    setall; aufbau:=true;
                    end;
-                 if c=k1_A then UserSwitch;        { 'A' }
+                 if c=k1_A then UserSwitch;                      { 'A' }
                  if dispext then begin
                    if (c=k1_H) or (t=keyins) then neuer_user;    { 'H' }
                    if c=k1_V then neuer_verteiler;               { 'V' }
                    if c=k0_cT then begin GoP; usertrennung; end; { '^T' }
-                   if c=^P  then begin                            { '^P' }
+                   if c=^P  then begin                           { '^P' }
                      GoP; MoveUser; setall; end;
                    if not empty then begin
                      if (c=k1_L) or (t=keydel) then              { 'L' }
@@ -1812,23 +1864,29 @@ begin      { --- select --- }
                    testsuche(t);
                    end;
                end;
-         3,4 : begin                              { Weiterleiten an User }
-                 if c=k1_A then UserSwitch;       {'A'}
+         3,4 : begin                                   { Weiterleiten an User }
+                 if dispmode=3 then begin
+                   if c='#'then Jump_Adressbuch;
+                   if c=^\ then Next_Adrbuch;          { Strg+# }
+                   end;
+                 if c=k1_A then UserSwitch;            { 'A' }
                  if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin
-                   usersortbox:=not usersortbox;  {'O'}
+                   usersortbox:=not usersortbox;       { 'O' }
                    setall; aufbau:=true;
                    end;
+                 if (dispmode=3) and (t=keyalta) then  { Alt-A }
+                   AdrbTop:=AdrbTop xor 1;
 
                  if not empty then
                  begin
-                   if c=k1_U then User_suche;                   { 'U' }
+                   if c=k1_U then User_suche;          { 'U' }
                    testsuche(t);
                  end;
                end;
       10..12 : begin
                  if t=keyf6 then Makroliste(3);
-                 if c=k2_S then spezialmenue;         { 'S'pezial-MenÅ }
+                 if c=k2_S then spezialmenue;          { 'S'pezial-MenÅ }
                  if empty then begin
                    if t[1]=k2_b then
                    begin
@@ -1901,13 +1959,14 @@ begin      { --- select --- }
                      end;
                    _brief_senden(t[1]);
                    if c=k2_cW  then switch_weiterschalt;            { ^W }
-                   if t=k2_cD then SwitchDatum;                     { ^D }
+                   if t=k2_cD then SwitchDatum;                     { ^S }
                    if t=keyalta then begin
                      GoP;
                      weiterleit(5,false);  { archivieren }
                      setall;
                      end;
-                   if c=k2_R then begin GoP; print_msg(true); end;  { 'R' }
+                   if (c=k2_R) or (deutsch and (c='R')) then begin 
+                   GoP; print_msg(true); end;                       { ^D / 'R' }
                    if (c=k2_cN) then begin                          { ^N }
                      ShowRealos:=not ShowRealos; aufbau:=true; end;
                    if c=k2_BB then Bezugsbaum;                      { '#' }
@@ -2094,6 +2153,7 @@ begin      { --- select --- }
                UnSortMark;
                MarkUnversandt:=false;
                markaktiv:=false;
+               suchergebnis:=false;
              end;
         20 : begin
                dbClose(auto);
@@ -2177,6 +2237,54 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.50  2001/09/16 20:24:32  my
+  JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
+          Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
+          Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
+          <Tab> springt der Cursorbalken die n‰chste Zeile mit einem
+          markierten Suchbegriff an.
+
+  JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
+          werden. Nach Beendigung des Kommentarbaums kehrt XP zur
+          aktuellen Nachricht zur¸ck.
+
+  JG+MY:- Neuer Men¸punkt "kombinierter Ungelesen-Modus" unter
+          Config/Anzeige/Bretter, bisherige Taste "U" f¸r diese Funktion
+          ist jetzt Brett-Markiersuche. Ge‰nderte Anzeigelogik (siehe
+          Hilfe).
+
+  JG+MY:- Verbesserte Brettanzeige (zus‰tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es kˆnnen jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Brett-(markier)-Suche ("U") analog zu User-Markiersuche
+          implementiert.
+
+  JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
+          unten)
+
+  JG+MY:- Mit '#' kann in der User-‹bersicht eine Adreﬂbuchgruppe
+          angegeben werden, die angesprungen werden soll. Mit <Ctrl-#>
+          wird die n‰chste Adreﬂbuchgruppe angesprungen.
+
+  JG+MY:- Adreﬂbuch: <Alt-A> schaltet Zugang zu Adreﬂbuchgruppe 0 frei.
+
+  JG+MY:- Bei Maus-Scrolling in Brett-/User-/Nachrichtenfenster
+          "Autobremse" f¸r schnellere PCs gesetzt.
+
+  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaﬂt zu Lesemodus
+          "Datum/Zeit" (kombinierte Datums-/Zeiteingabe). Steht der
+          Markierbalken auf einer Nachricht, kann direkt das Eingangsdatum
+          aus der Nachricht ¸bernommen werden.
+
+  JG+MY:- <Ctrl-D> (Drucken) in Nachrichten-‹bersicht war zwar
+          dokumentiert, funktionierte aber nicht. Drucken mit "R" geht
+          auch noch, weil in 2. Men¸zeile der User-‹bersicht so
+          dokumentiert
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.26.2.49  2001/08/23 12:06:06  mk
   JG:- Fixed bug in select routine: Switching to the user window with <F2>
        from a Message/Direct dialogue and activating the "all user" view
