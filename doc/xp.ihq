@@ -7099,7 +7099,7 @@ Usenet und bei ZConnect wird immer ein einfaches
 
 @
 247
-<<ZConnect, UUCP/RFC:
+<<ZConnect / RFC:
 
 Hier sollte immer Ihre korrekte Zeitzone eingetragen
 sein. Fr User in Deutschland ist dies:
@@ -7107,19 +7107,231 @@ sein. Fr User in Deutschland ist dies:
     <<W+1>>   fr Winterzeit
     <<S+2>>   fr Sommerzeit
 
-Denken Sie also beim Umstellen der Uhr daran, auch
-Ihre CrossPoint-Konfiguration anzupassen, damit Ihre
-Mails im Netz mit der korrekten Uhrzeit erscheinen.
+CrossPoint stellt die Zeitzone fr Sie automatisch
+um, wenn Sie eine der entsprechenden Optionen unter
+"[Umstellung]" w„hlen. Wenn Sie sich jedoch fr die@248
+Einstellung <<manuell>> entscheiden, denken Sie bitte
+beim Umstellen der Uhr daran, auch Ihre CrossPoint-
+Konfiguration anzupassen, damit Ihre Mails im Netz
+mit der korrekten Uhrzeit erscheinen.
 
 Das allgemeine Format dieses Eintrags ist ein <<W>> oder
 <<S>> gefolgt von der positiven oder negativen Differenz
 Ihrer lokalen Uhrzeit zur UTC (Universal Time Coor-
-dinated; auch als "Greenwich Mean Time" bekannt).
-Falls der 00:00-Schalter aktiviert ist, ist diese
-Einstellung ohne Bedeutung.
+dinated, in der Praxis identisch mit "Greenwich Mean
+Time", GMT). Falls der <<00:00>>-Schalter aktiviert ist,
+ist diese Einstellung ohne Bedeutung.
 
 @
 248
+Hier finden Sie verschiedene Optionen fr die auto-
+matische Umstellung der Zeitzone:
+
+<<manuell>>    Die Zeitzone wird nicht automatisch umge-
+           stellt. Bitte denken Sie daran, dies bei
+           der Sommer-/Winterzeit-Umstellung selbst
+           zu erledigen.
+
+<<Datum>>      CrossPoint stellt automatisch am letzten
+           Sonntag im M„rz (02:00 Uhr) und am letzten
+           Sonntag im Oktober (03:00 Uhr) die Zeit-
+           zone um. Bitte beachten Sie, daá XP dabei
+           nicht prfen kann, ob die "Basiszone"
+           korrekt ist, d.h. wenn Sie (f„lschlicher-
+           weise) als Sommerzeit fr Deutschland
+           "<<S+1>>" eintragen, wird XP bei der Umstel-
+           lung auf Winterzeit die Zone auf "<<W+0>>"
+           (statt auf "<<W+1>>", wie es eigentlich
+           korrekt w„re), setzen.
+
+<<TZ-Var.>>    CrossPoint wertet fr die Umstellung der
+           Zeitzone die Umgebungsvariable "<<TZ>>" aus,
+           die in einem bestimmten Format vorliegen
+           muá. Mehr darber erfahren Sie unter
+           "[Die TZ-Variable]".@2481
+
+<<TZ/Datum>>   Dies ist eine Kombination der beiden vor-
+           herigen Einstellungen: Ist die Umgebungs-
+           variable "<<TZ>>" vollst„ndig und korrekt
+           gesetzt, richtet sich CrossPoint danach.
+           Ist die Variable nicht (oder nicht voll-
+           st„ndig und korrekt) gesetzt, stellt XP
+           die Zeitzone an den bei "<<Datum>>" genannten
+           Stichtagen um.
+
+Falls der <<00:00>>-Schalter aktiviert ist, sind diese
+Einstellungen ohne Bedeutung.
+
+
+<<Technische Hinweise:>>
+
+1. Sofern nicht die Option "<<manuell>>" gew„hlt wurde,
+   prft CrossPoint an drei Stellen im Programm auf
+   die korrekte Einstellung der Zeitzone:
+
+   - bei jedem Programmstart,
+   - bei jedem Aufruf des Sendefensters, und
+   - bei jeder Best„tigung des Konfigurationsdialogs
+     /Config/Optionen/Nachrichten.
+
+   Damit ist hinreichend gew„hrleistet, daá XP immer
+   mit der richtigen Zeitzone arbeitet und Sie Ihre
+   Nachrichten mit der korrekten Uhrzeit versenden.
+
+2. Die automatische Umstellung gilt nur fr die
+   <<Zeitzone>>. Sie gilt *nicht* fr die <<Uhrzeit>> Ihres
+   Systems. Diese mssen Sie nach wie vor manuell
+   umstellen (bzw. von Ihrem Betriebssystem umstellen
+   lassen, falls dieses eine automatische Umstellung
+   der Uhrzeit untersttzt).
+
+@
+2481
+<<Die TZ-Variable
+
+Die TZ-Variable ist unter vielen Betriebssystemen zu
+einem de-facto-Standard geworden und wird von einer
+Reihe von Programmen untersttzt und ausgewertet
+(u.a. PGP ben”tigt diese Variable, um mit der korrek-
+ten Uhrzeit arbeiten zu k”nnen).
+
+Das Format der Variablen hat viele unterschiedliche
+Erscheinungsformen. Um die Steuerung der in XP ein-
+gestellten Zeitzone bernehmen zu k”nnen, muá sie
+u.a. Angaben ber die Termine zur Umstellung der
+Sommer- bzw. Winterzeit enthalten.
+
+Die TZ-Variable muá daher vor dem XP-Start gesetzt
+werden (z.B. in AUTOEXEC.BAT oder der Batchdatei, mit
+der XP gestartet wird). Mit den derzeit fr Deutsch-
+land gltigen Werten lautet der Befehl wie folgt:
+
+<<set TZ=CET-1CEST,3,-1,0,7200,10,-1,0,10800,3600
+
+Die einzelnen Felder der Variablen haben dabei
+folgende Bedeutung:
+
+    <<CET>>: Bezeichnung der Zeitzone (Winterzeit, hier
+         "Central European Time"). Es gibt eine Flle
+         unterschiedlicher und mehr oder weniger
+         offizieller Bezeichnungen - eine šbersicht
+         finden Sie unter "[Zeitzonen]".@2482
+     <<-1>>: Eine Stunde ”stlich von UTC (Universal
+         Time Coordinated, in der Praxis identisch
+         mit "Greenwich Mean Time", GMT). Zeitzonen
+         ”stlich des Null-Meridians werden mit nega-
+         tiven Zahlen dargestellt, Zeitzonen westlich
+         davon mit positiven Zahlen.
+   <<CEST>>: Bezeichnung der Zeitzone (Sommerzeit, hier
+         "Central European Summer Time"). Siehe auch
+         "[Zeitzonen]".@2482
+      <<3>>: Monat, in dem auf Sommerzeit umgestellt wird
+         (dritter Monat = M„rz).
+     <<-1>>: Woche, in der auf Sommerzeit umgestellt wird
+         (letzte Woche). Die Wochen werden vom Beginn
+         des Monats ausgehend mit positiven Zahlen
+         dargestellt, vom Ende des Monats ausgehend
+         mit negativen Zahlen.
+      <<0>>: Tag, an dem auf Sommerzeit umgestellt wird
+         (0=Sonntag bis 6=Samstag).
+   <<7200>>: Zeitspanne in Sekunden nach Tagesbeginn,
+         nach der auf Sommerzeit umgestellt wird
+         (7200 Sekunden = 02:00 Uhr).
+     <<10>>: Monat, in dem auf Winterzeit umgestellt wird
+         (zehnter Monat = Oktober).
+     <<-1>>: Woche, in der auf Winterzeit umgestellt wird
+         (letzte Woche).
+      <<0>>: Tag, an dem auf Winterzeit umgestellt wird
+         (0=Sonntag bis 6=Samstag).
+  <<10800>>: Zeitspanne in Sekunden nach Tagesbeginn,
+         nach der auf Winterzeit umgestellt wird
+         (10800 Sekunden = 03:00 Uhr).
+   <<3600>>: Differenz zwischen Winter- und Sommerzeit
+         in Sekunden (3600 Sekunden = 1 Stunde).
+
+@
+2482
+<<Zeitzonen
+
+Eine šbersicht der Zeitzonen-Bezeichnungen (nicht
+alle aufgefhrten Bezeichnungen sind offiziell). Fr
+Deutschland sollten Sie eine der hervorgehobenen
+Bezeichnungen verwenden (bzw. eine fr Winter- und
+eine fr Sommerzeit).
+
+Die Zahl hinter jeder Zone gibt das "Offset" zu UTC
+an. Bitte beachten Sie, daá hier die bliche Notation
+verwendet wurde, bei der Zonen ”stlich des Null-
+Meridians mit "<<+>>" und Zonen westlich davon mit "<<->>"
+dargestellt werden ("<<+2>>" bedeutet also, daá es zwei
+Stunden <<sp„ter>> als UTC ist). Wenn Sie den jeweiligen
+Wert fr die TZ-Variable verwenden wollen, denken Sie
+daran, daá Sie dort das Vorzeichen umkehren mssen!
+
+   ADT    Atlantic Daylight Time                 -3
+   AHST   Alaska-Hawaii Standard Time           -10
+   AKDT   Alaska Standard Daylight Saving Time   -9
+   AKST   Alaska Standard Time                  -10
+   AST    Atlantic Standard Time                 -4
+   AT     Azores Time                            -2
+   BST    British Summer Time                    +1
+   BT     Baghdad Time                           +3
+   CAT    Central Alaska Time                   -10
+   CCT    China Coast Time                       +8
+   CDT    Central Daylight Time (USA)            -5
+<<   CEST   Central European Summer Time           +2
+<<   CET    Central European Time                  +1
+   CST    Central Standard Time (USA)            -6
+   EADT   East Australian Daylight Time         +11
+   EAST   East Australian Standard Time         +10
+   EDT    Eastern Daylight Time (USA)            -4
+   EEST   Eastern European Summer Time           +3
+   EET    Eastern European Time                  +2
+   EST    Eastern Standard Time                  -5
+   FST    French Summer Time                     +2
+   FWT    French Winter Time                     +1
+   GMT    Greenwich Mean Time                     0
+   GST    Guam Standard Time                    +10
+   HDT    Hawaii Daylight Time                   -9
+   HST    Hawaii Standard Time                  -10
+   IDLE   International Date Line East
+   IDLW   International Date Line West
+   IST    Irish Summer Time                      +1
+   JST    Japan Standard Time                    +9
+   MDT    Mountain Daylight Time (USA)           -6
+<<   MEDT   Middle European Daylight Time          +2
+<<   MEST   Middle European Summer Time            +2
+<<   MESZ   Mitteleurop„ische Sommerzeit           +2
+<<   MET    Middle European Time                   +1
+<<   MEWT   Middle European Winter Time            +1
+<<   MEZ    Mitteleurop„ische Zeit                 +1
+   MSD    Moscow Summer Time                     +4
+   MSK    Moscow Time                            +3
+   MST    Mountain Standard Time (USA)           -7
+   MT     Mountain Time (USA)                    -7
+   NT     Nome Time                             -11
+   NZDT   New Zealand Daylight Time             +13
+   NZST   New Zealand Standard Time             +12
+   PDT    Pacific Daylight Time (USA)            -7
+   PST    Pacific Standard Time (USA)            -8
+   PT     Pacific Time (USA)                     -8
+   SST    Swedish Summer Time                    +2
+   SWT    Swedish Winter Time                    +1
+   TAI    Time Atomic International               0
+   UT     Universal Time                          0
+   UTC    Universal Coordinated Time              0
+   WADT   West Australian Daylight Time          +8
+   WAST   West Australien Time                   +7
+   WAT    West African Time                      -1
+   WEST   Western European Summer Time           +1
+   WET    Western European Time                   0
+   YDT    Yukon Daylight Time                    -7
+   YST    Yukon Standard Time                    -8
+   Z      Zulu Time - Null-Meridian-Zeit          0
+          (vergleichbar mit UTC und GMT)
+
+@
+249
 Hier wird festgelegt, bei welchen Nachrichten Cross-
 Point mit seinem Namen unterschreibt:
 
@@ -7138,7 +7350,7 @@ fr FidoNet finden Sie eine gesonderte Einstellung
 unter [/Config/Optionen/Netze].@8104
 
 @
-249
+250
 <<[x]>> -> Nicht abgeschickte Nachrichten (<<<Esc> >>im Sen-
        defenster) werden im Brett /¯Unversandt ge-
        parkt und k”nnen dann mit /Nachricht/Weiter-
@@ -7154,7 +7366,7 @@ nicht mit unversandten Nachrichten verwechseln, die
 mit einem <<!>> markiert sind und zum Netcall-Versand
 bereitliegen.
 @
-250
+251
 <<[x]>> -> CrossPoint sendet beim Erhalt einer Nachricht,
        deren Betreff mit "\##" beginnt, automatisch
        eine Empfangsbest„tigung zurck. Das Gleiche
@@ -7167,12 +7379,12 @@ bereitliegen.
 Der Empfang einer Nachricht kann auch manuell mit
 [/Nachricht/Weiterleiten/Best„tigung] best„tigt werden.@12106
 @
-251
+252
 <<[x]>> -> Nach dem Beantworten jeder PM erfolgt eine
        Abfrage, ob die Nachricht archiviert werden
        soll.
 @
-252
+253
 <<ZConnect / RFC:
 
 Wenn Sie hier <<[x]>> einstellen, versieht XP standard-
@@ -7201,7 +7413,7 @@ denn, Sie schreiben sie ausdrcklich in den Nach-
 richtentext.
 
 @
-253
+254
 <<ZConnect / RFC:
 
 <<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
@@ -7214,7 +7426,7 @@ keine Garantie dafr, daá Ihre Nachrichten nicht
 doch gespeichert werden. "Das Usenet vergiát nicht!"
 
 @
-254
+255
 <<ZConnect / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
@@ -7233,7 +7445,7 @@ doch gespeichert werden. "Das Usenet vergiát nicht!"
 Ohne guten Grund sollte dieser Schalter nicht akti-
 viert werden.
 @
-255
+256
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -7244,7 +7456,7 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-256
+257
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.
@@ -14186,7 +14398,7 @@ Siehe auch:  [interner Editor]@54
 
 Hier k”nnen Sie einen Text eingeben, der an jede
 automatisch erstellte Empfangsbest„tigung angeh„ngt
-wird (s. [/C/O/Nachrichten/autom.Empfangsbest.]).@250
+wird (s. [/C/O/Nachrichten/autom.Empfangsbest.]).@251
 
 Siehe auch:  [interner Editor]@54
              [Signatur-Wechsler]@2001

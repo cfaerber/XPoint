@@ -4542,32 +4542,128 @@ UseNet always only a simple single "Re:" is used.
 
 @
 247
-<<ZCONNECT, UUCP/RFC:
+<<ZConnect / RFC:
 
 You have to set the correct Time Zone here.
 
-For Germany this would be:
+For Great Britain this would be:
+    <<W+0>>   for Winter time
+    <<S+1>>   for Summer time
+
+For Germany it would be:
     <<W+1>>   for Winter time
     <<S+2>>   for Summer time
 
-For New York it would be:
+And for New York it would be:
     <<W-5>>   for Winter time
     <<S-6>>   for Summer time
 
-So when you change your system clock, don't forget
-to change this setting, to ensure your postings
-appear with the correct time stamp.
+CrossPoint changes the time zone automatically if you
+choose one of respective options under "[Changeover]".@248
+But if you should use the option <<manual>>, don't forget
+to change this setting at the same time you change
+your system clock, to ensure your postings appear
+with the correct time stamp.
 
-W or S stands for Winter time or Summer time, and the
+<<W>> or <<S>> stands for Winter time or Summer time, and the
 number is the number of hours from GMT (Greenwich
 Mean Time), the + or - showing whether in front or
 behind.
 
-Note: if you have the 00:00 switch set, not only does
+Note: if you have the <<00:00>> switch set, not only does
 this setting have no effect, you don't even see it!
 
 @
 248
+ToDo: Explanation Time Zone Changeover options (\@248).
+
+see also: [The TZ variable]@2481
+@
+2481
+<<The TZ variable
+
+ToDo: Comprehensive explanation TZ variable (\@2481).
+
+The correct TZ variable for Great Britain is:
+
+<<set TZ=WET0WEST,3,-1,0,7200,10,-1,0,10800,3600
+
+see also: [Time Zones]@2482
+@
+2482
+<<Time Zones
+
+Time zone list (not all are official). For Great
+Britain you should choose one of the highlighted
+zones (rsp. one for winter and one for summer).
+
+Please note that this is the usual notation ("<<+1>>"
+means that it is one hour later than UTC). If you use
+these zones for your TZ variable, please make sure to
+invert the plus/minus sign!
+
+   ADT    Atlantic Daylight Time                 -3
+   AHST   Alaska-Hawaii Standard Time           -10
+   AKDT   Alaska Standard Daylight Saving Time   -9
+   AKST   Alaska Standard Time                  -10
+   AST    Atlantic Standard Time                 -4
+   AT     Azores Time                            -2
+<<   BST    British Summer Time                    +1
+   BT     Baghdad Time                           +3
+   CAT    Central Alaska Time                   -10
+   CCT    China Coast Time                       +8
+   CDT    Central Daylight Time (USA)            -5
+   CEST   Central European Summer Time           +2
+   CET    Central European Time                  +1
+   CST    Central Standard Time (USA)            -6
+   EADT   East Australian Daylight Time         +11
+   EAST   East Australian Standard Time         +10
+   EDT    Eastern Daylight Time (USA)            -4
+   EEST   Eastern European Summer Time           +3
+   EET    Eastern European Time                  +2
+   EST    Eastern Standard Time                  -5
+   FST    French Summer Time                     +2
+   FWT    French Winter Time                     +1
+<<   GMT    Greenwich Mean Time                     0
+   GST    Guam Standard Time                    +10
+   HDT    Hawaii Daylight Time                   -9
+   HST    Hawaii Standard Time                  -10
+   IDLE   International Date Line East
+   IDLW   International Date Line West
+   IST    Irish Summer Time                      +1
+   JST    Japan Standard Time                    +9
+   MDT    Mountain Daylight Time (USA)           -6
+   MEDT   Middle European Daylight Time          +2
+   MEST   Middle European Summer Time            +2
+   MET    Middle European Time                   +1
+   MEWT   Middle European Winter Time            +1
+   MSD    Moscow Summer Time                     +4
+   MSK    Moscow Time                            +3
+   MST    Mountain Standard Time (USA)           -7
+   MT     Mountain Time (USA)                    -7
+   NT     Nome Time                             -11
+   NZDT   New Zealand Daylight Time             +13
+   NZST   New Zealand Standard Time             +12
+   PDT    Pacific Daylight Time (USA)            -7
+   PST    Pacific Standard Time (USA)            -8
+   PT     Pacific Time (USA)                     -8
+   SST    Swedish Summer Time                    +2
+   SWT    Swedish Winter Time                    +1
+   TAI    Time Atomic International               0
+<<   UT     Universal Time                          0
+<<   UTC    Universal Coordinated Time              0
+   WADT   West Australian Daylight Time          +8
+   WAST   West Australien Time                   +7
+   WAT    West African Time                      -1
+<<   WEST   Western European Summer Time           +1
+<<   WET    Western European Time                   0
+   YDT    Yukon Daylight Time                    -7
+   YST    Yukon Standard Time                    -8
+   Z      Zulu Time - Zero Meridian Time          0
+          (comparable with UTC and GMT)
+
+@
+249
 Which types of messages allow CrossPoint to advertise
 itself as the Point programme used:
 
@@ -4585,7 +4681,7 @@ In MausNet, you can switch it off for PMs only
 and for FidoNet you will find a special setting under
 [Config/Options/Nets].@8104
 @
-249
+250
 <<[x]>>     Messages aborted (with <Esc>) at the
         send-window stage will be sent to the news-
         group ¯Unsent (this is the same as if you had
@@ -4603,7 +4699,7 @@ Do not confuse such discarded messages with those
 "outgoing" because they have not been sent yet, but
 are waiting for the next netcall, and are marked "!".
 @
-250
+251
 <<[x]>>     If CrossPoint receives a message with a
         subject beginning with "\##", it sends a
         a confirmation message automatically to the
@@ -4616,7 +4712,7 @@ A receipt confirmation can be easily done by hand,
 with [/Message/Forward/Confirmation].@12106
 
 @
-251
+252
 You may wish to archive PMs that you have sent, for
 future reference.
 
@@ -4627,7 +4723,7 @@ future reference.
 
 <<[ ]>>     PMs are not archived, no questions asked.
 @
-252
+253
 <<ZConnect / RFC:
 
 <<[x]>> -> A "blind carbon copy" flag (BCC) is put on
@@ -4651,23 +4747,6 @@ Information about carbon copy recipients is not
 transmitted, except if you write it in the message
 text.
 
-@
-253
-<<ZConnect / RFC:
-
-Some authors use a Reply-To header (ZConnect:
-Antwort-an) because they want the reply sent to a
-different address. This is very common in mailing
-lists because it makes answering to the list very
-easy. However, it makes replying to the original
-author quite difficult.
-
-<<[x]>> -> a selection box is displayed where the
-        preferred reply-to address can be chosen
-        (only in connection with Reply-To header).
-
-<<[ ]>> -> the Reply-To address is taken as the
-        recipient.
 @
 256
 The possibility to "crosspost" a message into
@@ -9192,7 +9271,7 @@ See also:  [internal Editor]@54
 
 This is the default template for your signature to
 automatic receipt confirmations. See
-[/Config/Options/Messages/send autom. receipt conf.]@248
+[/Config/Options/Messages/send autom. receipt conf.]@249
 
 It is put automatically on the end of all messages.
 It cannot contain macros (there is no need for them).

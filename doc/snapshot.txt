@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 23.10.2001 (letzter Update)
+DÅsseldorf, den 26.10.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -397,6 +397,14 @@ Allgemeine Bedienung und Sonstiges
   Netcall fÅr die in Eintrag #3 enthaltenen Boxen durch).
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, MASKE.PAS,
   MASKE.INC, XP-D.RQ, XP-E.RQ, XP.HLP, XP-E.HLP
+
+- Automatische Zeitzonenumstellung - wahlweise nach Datum, TZ-Variable
+  oder einer Kombination aus beidem (und natÅrlich auch manuell). Die
+  PrÅfung erfolgt bei jedem XP-Start, jedem Aufruf des Sendefensters
+  sowie jeder BestÑtigung des Konfigurationsdialogs /Config/Optionen/
+  Nachrichten. Weitere Details siehe Hilfe.
+  XP.PAS, XP0.PAS, XP1.PAS, XP2.PAS, XP2C.PAS, XP2CFG.INC, XP6.PAS,
+  MONTAGE.PAS, XPDATUM.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
 
