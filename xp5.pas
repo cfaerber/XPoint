@@ -18,9 +18,10 @@ interface
 
 uses
   sysutils,
-      {$IFDEF virtualpascal}
-        vpsyslow,
-      {$endif}
+  {$IFDEF virtualpascal}
+    vpsyslow,
+    vputils,
+  {$endif}
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -395,7 +396,7 @@ begin
 {$ENDIF }
   attrtxt(col.colmbox);
 {$IFDEF VP }
-  gotoxy(x+19,y+6); write(memavail div 1024 div 1024:5,' MB');
+  gotoxy(x+19,y+5); write(memused div 1024:5,' KB');
   gotoxy(x+31,y+4); write(SysDiskSizeLong(0) / 1024 / 1024:8:0,' MB');
   gotoxy(x+31,y+6); write(SysDiskFreeLong(0) / 1024 / 1024:8:0,' MB');
 {$ELSE }
@@ -409,7 +410,7 @@ begin
     gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
     gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
   {$ELSE }
-    gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
+    gotoxy(x+17,y+5); write((heapsize -MaxAvail) div 1024:7,' KB');
     gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
     gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
   {$ENDIF}
@@ -923,6 +924,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/10/17 20:32:34  mk
+  - Speicheranzeige etwas verbessert
+
   Revision 1.37  2000/10/17 10:05:52  mk
   - Left->LeftStr, Right->RightStr
 
