@@ -1326,6 +1326,7 @@ var ok    : boolean;
 begin
   ok:=true;
   oldpb:=pbox;
+  verteiler:=false;
   brett:=(left(s,1)='/') and (cpos('@',s)=0);
   if trim(s)='' then
     exit
@@ -2331,6 +2332,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/05/01 17:49:07  jg
+  - Bugfix Verteiler. (Merken: Variablen initialisieren spart Telefonkosten)
+
   Revision 1.21  2000/05/01 17:26:33  jg
   - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
     Und Sendefenster-Empfaengeraendern erlaubt
