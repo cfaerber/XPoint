@@ -285,7 +285,7 @@ var
   fn  : TDirEntry;
 begin
   Clear;
-  if FindFirst(VMask,VAttr,sr)=0 then repeat
+  if FindFirst(VDir+VMask,VAttr,sr)=0 then repeat
     if MatchMask(sr.name) then begin
       fn:= TDirEntry.Create(sr);
       VEntries.Add(fn);
@@ -298,6 +298,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.2  2000/11/30 19:38:39  hd
+        - Fix: mask incomplete
+
         Revision 1.1  2000/11/29 15:15:31  hd
         - Class: TDirectory
           - Read all filenames into a list and give access by an integer
