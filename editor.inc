@@ -41,7 +41,7 @@ function AbsDelete(var ap:absatzp; from,len:integer; delentry,bkorr:boolean):abs
 
 procedure TruncAbs(ap:absatzp);
 var
-  p: word;
+  p: smallword;
 begin
   with ap^ do
   begin
@@ -2415,6 +2415,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2001/01/11 13:19:31  mk
+  - fixed variable size in TruncAbs
+
   Revision 1.40  2000/12/27 19:49:32  mk
   - check for mousesupport in local menu
 
