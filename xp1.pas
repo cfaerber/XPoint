@@ -2135,6 +2135,7 @@ end;
 {$S-}
 procedure newexit;               { Exit-Prozedur }
 begin
+  exitproc:=oldexit;
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
@@ -2147,7 +2148,6 @@ begin
 {$IFDEF BP }
   if videotype>1 then setbackintensity(false);
   setcbreak(orgcbreak);
-  exitproc:=oldexit;
 {$ENDIF}
 end;
 {$S+}
@@ -2374,6 +2374,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/05/07 15:57:02  mk
+  - Exitprozedure wurde unter 32 Bit nicht zurueckgesetzt
+
   Revision 1.39  2000/05/07 11:02:54  hd
   - Anpassung an Curses
 
