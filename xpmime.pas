@@ -557,7 +557,7 @@ var   hdp      : THeader;
 //      length:=filesize(t);
 //      startline:=1;
         lines:=n-1;
-        part:=0;
+        part:=PartsList.Count-1;
         end;
       end;
 
@@ -599,10 +599,10 @@ begin                         { SelectMultiPart }
   else
     alter:=false;
 
-  if (index=0) and (PartsList.Count >anzahl0) then
+  if (index=0) and (PartsList.Count >anzahl0+1) then
     index:=PartsList.Count - 1
   else
-    index:=minmax(index,0,anzahl0-1);
+    index:=minmax(index,0,PartsList.Count-1);
 
   if PartsList.Count >0 then
     if not select or (PartsList.Count =1) then begin
@@ -885,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.59.2.5  2003/08/25 20:24:33  mk
+  - fixed #589633: 3.8: Taste "v" im Lister bei Multipart
+
   Revision 1.59.2.4  2002/07/26 08:11:14  mk
   - fixed Bug #476655 kein nachträgliches Edit bei attachment
     at the end of every mime part, the last #0d0a is not part
