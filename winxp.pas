@@ -1209,6 +1209,7 @@ begin
   
     OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
       Length(s),nil,0);
+    if OutRes = 0 then Exit;
     SetLength(s2,OutRes*2);
     OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
       Length(s),@(s2[1]),Length(s2) div 2);
@@ -1395,6 +1396,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2002/01/03 23:49:48  mk
+  - fixed range check error (followed by a crash) in win32_wrt, when outres = 0
+
   Revision 1.73  2002/01/03 21:41:16  cl
   - fix for Windows NT/2k/XP full screen mode
 
