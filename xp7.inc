@@ -1063,7 +1063,7 @@ begin
       for i:=1 to addpkts^.anzahl do
         inc(outmsgs,testpuffer(addpkts^.abfile[i]+BoxFileExt,false,dummy));
       if SysopPack then begin
-        ztofido(ppfile,upuffer,ownfidoadr,3,addpkts,alias);    { ZFIDO }
+        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);    { ZFIDO }
         if (errorlevel=MaggiFehler) and exist(ppfile) then begin
           ferror(729);   { 'Fehler bei der ZFIDO-Konvertierung' }
           exit;
@@ -1079,7 +1079,7 @@ begin
             if exist(SysopOut+addpkt[i]) then _era(SysopOut+addpkt[i]);
         end
       else
-        ztofido(ppfile,upuffer,ownfidoadr,3,addpkts,alias);  { ZFIDO }
+        ztofido(ppfile,upuffer,ownfidoadr,3,pointer(addpkts),alias);  { ZFIDO }
 
       if (errorlevel<>0) and exist(ppfile) then begin
         ferror(729);     { 'Fehler bei ZFIDO-Konvertierung' }
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/10/28 15:34:17  mk
+  - Workaround for VP Bug
+
   Revision 1.35  2000/10/22 21:58:59  mk
   - case of .pp and .epp is now UnixFS dependent
 

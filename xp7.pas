@@ -642,7 +642,7 @@ begin                  { of Netcall }
           ltGS    : ZtoQuick(ppfile,upuffer,true,1);
           ltMaus  : ZtoMaus(ppfile,upuffer,1);
           ltFido  : begin
-                      ZtoFido(ppfile,upuffer,ownfidoadr,1,addpkts,alias);  { ZFIDO }
+                      ZtoFido(ppfile,upuffer,ownfidoadr,1,pointer(addpkts),alias);  { ZFIDO }
                       exchange(uparcer,'$UPFILE',caller);
                     end;
           ltUUCP  : ZtoRFC(true,ppfile,XFerDir);
@@ -726,7 +726,7 @@ begin                  { of Netcall }
         cursor(curoff);
         inc(wahlcnt);
         case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
-                         uparcer<>'',crash,alias,addpkts,domain) of
+                         uparcer<>'',crash,alias,pointer(addpkts),domain) of
           EL_ok     : begin
                         Netcall_connect:=true;
                         Netcall:=true;
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/10/28 15:34:17  mk
+  - Workaround for VP Bug
+
   Revision 1.37  2000/10/22 21:59:00  mk
   - case of .pp and .epp is now UnixFS dependent
 
