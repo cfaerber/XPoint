@@ -629,7 +629,6 @@ begin                  { of Netcall }
         exit;
       end;
 
-      hinweis('vor Aufruf SetFilenames');
       SetFilenames;
 
       if exist(upuffer) then _era(upuffer);  { evtl. alte PUFFER l”schen }
@@ -1615,6 +1614,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.23  2001/12/23 04:29:40  my
+  MY:- Oops - Debug-Meldung entfernt.
+
   Revision 1.16.2.22  2001/12/22 22:58:03  my
   MY:- Fix: ZConnect- und andere Netcalls gingen nicht ($UP/DOWNFILE und
        Konsorten wurden nicht 'exchanged').
