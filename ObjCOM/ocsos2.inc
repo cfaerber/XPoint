@@ -1,11 +1,6 @@
 (*
-**
 ** ObjCOM OS2 serial communication implementation include file
-** Untested
-**
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
-** See history at end of file
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
@@ -335,7 +330,7 @@ end; { func. tSerialObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte);
+function tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 type TBpsRec = Record
          Rate  : Longint;
          Frac  : Byte;
@@ -394,6 +389,7 @@ begin
               @BpsRec,                                        { Returned data }
               SizeOf(BpsRec),                               { Max data length }
               @RetLength);                                      { Data length }
+  SetLine:=True;
 end; { proc. tSerialObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -678,6 +674,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.3  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.2  2000/10/15 14:56:59  ma
   - OS/2 port compiles again (VP)
 

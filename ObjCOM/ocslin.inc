@@ -1,8 +1,6 @@
 (*
 ** ObjCOM linux serial communication implementation include file
-** [serial.pp wrapper]
-**
-** Written by M.Kiesel 2000
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -28,8 +26,8 @@ function tSerialObj.LOpen(Comport: String; BaudRate: Longint; DataBits: Byte;
 begin
   LOpen:=False; InitFailed:=True; SHandle:=SerOpen(Comport);
   if SHandle < 0 then begin ErrorStr:='Device not found'; exit end;
-  SetLine(Baudrate,Parity,Databits,Stopbits,Hardware);
-  LOpen:=True; InitFailed:=False;
+  LOpen:=SetLine(Baudrate,Parity,Databits,Stopbits,Hardware);
+  InitFailed:=Result;
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -68,7 +66,7 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean);
+function tSerialObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean;
 var
    Par: tParityType;
    Flow : tSerialFlags;
@@ -83,6 +81,7 @@ begin
     'O': Par:=OddParity;
   end;
   SerSetParams(SHandle,BpsRate,Databits,Par,Stopbits,Flow);
+  SetLine:=True;
 end; { proc. tSerialObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -218,6 +217,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.3  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.2  2000/10/15 14:54:41  ma
   - Ken J. Wright: Linux port now working
 

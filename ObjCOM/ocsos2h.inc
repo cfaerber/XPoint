@@ -1,9 +1,6 @@
 (*
-**
 ** ObjCOM OS2 serial communication implementation header file
-**
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 type TSerialObj = Object(TCommObj)
@@ -29,7 +26,7 @@ type TSerialObj = Object(TCommObj)
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte); virtual;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
         procedure PurgeInBuffer; virtual;
         procedure PurgeOutBuffer; virtual;
 
@@ -42,6 +39,9 @@ Type tpSerialObj = ^TSerialObj;
 
 {
   $Log$
+  Revision 1.2  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English

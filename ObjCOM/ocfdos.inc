@@ -1,11 +1,6 @@
 (*
-**
 ** ObjCOM fossil implementation include file
-** Tested with: FreePascal    v0.99.14 (DOS)
-**
-** Written 1998-1999 by Maarten Bekers (EleCOM)
-** Adapted by M.Kiesel 2000
-** See history at end of file
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 var Regs   : Registers;
@@ -70,7 +65,7 @@ begin
 
   Open := (Regs.AX = $1954);
   InitFailed := (Regs.AX <> $1954);
-  SetLine(BaudRate, Parity, DataBits, StopBits);
+  Open := SetLine(BaudRate, Parity, DataBits, StopBits);
 end; { func. TFossilObj.OpenCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -106,7 +101,7 @@ end; { proc. OpenQuick }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure TFossilObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte);
+function TFossilObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 var BPS: Byte;
 begin
   Case BpsRate of
@@ -130,6 +125,7 @@ begin
   Regs.AL := BPS;
   Regs.DX := FosPort;
   FossilIntr(Regs);
+  SetLine:=True;
 end; { proc. TFossilObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -503,6 +499,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.3  2000/09/29 23:18:10  ma
   - added fake FossilDetect function
 

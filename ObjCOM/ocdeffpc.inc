@@ -1,6 +1,7 @@
 (*
 **
-** Include file to make FPC more Delphi compatible
+** ObjCOM include file to make FPC more Delphi compatible
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 **
 *)
 
@@ -34,6 +35,9 @@ type DCB = record
 
 {
   $Log$
+  Revision 1.2  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English

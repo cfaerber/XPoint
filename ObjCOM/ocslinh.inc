@@ -1,11 +1,7 @@
-{ $Id$ }
-{
-**
+(*
 ** ObjCOM linux serial communication implementation header file
-** [serial.pp wrapper, serial.pp by Sebastian Guenther]
-**
-** Written by M.Kiesel 2000
-}
+** See files "LICENSE.TXT" and "CREDITS.TXT"
+*)
 
 type tSerialObj = Object(TCommObj)
         constructor Init;
@@ -30,7 +26,7 @@ type tSerialObj = Object(TCommObj)
         procedure GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint); virtual;
         procedure SetDtr(State: Boolean); virtual;
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
-        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean); virtual;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte; Hardware: Boolean): Boolean; virtual;
         procedure PurgeInBuffer; virtual;
         procedure PurgeOutBuffer; virtual;
 
@@ -45,6 +41,9 @@ Type tpSerialObj = ^tSerialObj;
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.3  2000/10/18 12:21:33  hd
   - Unter Linux wieder compilierbar
 

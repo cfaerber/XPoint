@@ -1,17 +1,13 @@
-{  $Id$
-
-   Created on October, 16st 2000 by Markus K„mmerer <mk@happyarts.de>
-
-   This software is part of the ObjCOM project.
-
-   Global compiler directives
+{
+** ObjCOM global compiler directives
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 }
 
-{ Include Rangecheck and other compilerdependend Debuging-Code }
+{ Include rangecheck and other compiler-dependend debugging code }
 
 {.$DEFINE Debug }
 
-{ Include Linenumbers in EXE-File }
+{ Include linenumbers in exe file }
 
 {$DEFINE DebugInfo }
 
@@ -42,6 +38,7 @@
   {$PACKRECORDS Default } { Default: 2 }
   {$C-,H+,I-,M-,P-,Q-,R-,S-,T-,V-,X+}
   {$DEFINE Int64 }
+  {$HINTS OFF}
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -56,7 +53,7 @@
   {$ENDIF }
   {$IFDEF FPC }
     {$Q+,R+,S+}
-    {$C+}                 { Assertation support }
+    {$C+}                 { Assertion support }
   {$ENDIF }
 {$ENDIF }
 
@@ -82,6 +79,9 @@
 
 {
   $Log$
+  Revision 1.2  2000/10/28 09:40:28  ma
+  - introduced credits.txt
+
   Revision 1.1  2000/10/16 12:19:06  mk
   - added ocdefine.inc
 
