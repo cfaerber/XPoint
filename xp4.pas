@@ -1088,6 +1088,7 @@ var t,lastt: taste;
       defaultbox:=origdb;
       if brk then goto ende;
     end;
+    if pm and not CC_testempf(empf) then goto ende;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
@@ -2045,6 +2046,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.19  2001/07/10 17:51:38  my
+  - implemented the "previous commit" the previous fix claimed to
+    have fixed. ;-)  Description of the original "previous commit":
+    > JG:- Fix: creation of unknown user now always shows dialogue
+    >     (prevents wrong assignment of primary server)
+    Note: This routine works just partially! Another fix is still
+          required!
+
   Revision 1.6.2.18  2001/07/10 09:05:23  mk
   JG:- Fix (of an extremely ancient and annoying behaviour): When
        creating an (e.g. Reply-To) user upon replying to a message
