@@ -42,7 +42,7 @@ implementation   { -------------------------------------------------- }
 
 uses
   xp3,xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
-  xpnt,xpnetcall,ncgeneric,objcom;
+  xpnt,xpnetcall,ncgeneric,objcom,timer,ncmodem,progressoutput;
 
 
 {Processes (decompresses and merges buffers/moves requested files
@@ -140,6 +140,33 @@ var
       end; { with }
   end;
 
+  procedure SendSerialNr;
+  const ACK= #6; NACK= #21;
+  var zsum,i: integer; Timer: TTimer; ch: char; Pass: boolean;
+  begin
+    Debug.DebugLog('xpnczconnect','Sending serial number',DLInform);
+    zsum:=0;
+    for i:=1 to 4 do Inc(zsum,ord(BoxPar^.zerbid[i]));
+    GenericMailer.CommObj^.SendString(BoxPar^.zerbid+chr(zsum and 255),False);
+    Timer.Init; Timer.SetTimeout(30); Pass:=False;
+    repeat
+      if GenericMailer.CommObj^.CharAvail then
+        case GenericMailer.CommObj^.GetChar of
+          ACK: Pass:=True;
+          NACK: begin
+                  Pass:=True;
+                  Debug.DebugLog('xpnczconnect','Remote NACKs serial number (not fatal)',DLInform);
+                  end;
+          end;
+      if KeyPressed then Pass:=True;
+    until Pass or Timer.Timeout;
+    if Timer.Timeout then begin
+      GenericMailer.ProgressOutput.WriteFmt(mcError,'Timeout sending serial number',[0]);
+      GenericMailer.Log(lcError,'Timeout sending serial number');
+      end;
+    Timer.Done;
+  end;
+
 var
   ShellCommandUparcer,UpArcFile: string;
   Proceed: Boolean;
@@ -174,8 +201,8 @@ begin { ZConnectNetcall }
         result:=el_nologin;
         Proceed:=RunScript(BoxPar,GenericMailer.CommObj,GenericMailer.ProgressOutput,false,boxpar^.script,false,false)=0;
         end;
-//** Transmit serial number
       if Proceed then begin
+        SendSerialNr;
         result:=el_senderr;
         Proceed:=GenericMailer.SendFiles(OutgoingFiles);
         end;
@@ -223,6 +250,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/04/23 11:38:40  ma
+  - implemented sending of serial number
+
   Revision 1.2  2001/04/21 13:00:59  ma
   - fixed: both sysop start and end program had to be specified
   - sysop in is blindly processed now
