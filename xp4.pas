@@ -1967,13 +1967,17 @@ again:
   end;
 
   procedure reset_lesemode;
+  var ball : boolean;
   begin
+    ball:=brettall;
+    if not ball then ChangeBrettall;
     set_lesemode;
     rdmode:=readmode;
     setall;
     gostart;
     show_info;
     aufbau:=true;
+    if not ball then Changebrettall;
   end;
 
   procedure wrm(nr:word);
@@ -2741,6 +2745,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.36  2001/06/09 16:15:08  my
+  JG:- Fix: eliminated extreme hard disk activity when changing read
+       mode in the message reading window with <Alt-L>
+
   Revision 1.26.2.35  2001/06/08 17:53:14  my
   JG:- Fixed last commit: replaced accidentally deleted line.
 
