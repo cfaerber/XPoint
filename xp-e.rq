@@ -3126,16 +3126,18 @@ K (c) '2000-01 OpenXP Team, www.openxp.de
 #
 39 This path must not be empty!
 40 User name or eMail address required!
-# The string in the following six lines must not exceed 57 characters:
+# The string in the following eight lines must not exceed 57 characters:
 41 These settings only take effect if they are interpreted
 42 by your client or client kit.
-43 Your client may support and/or require further settings,
-44 which would then have to be entered in an external confi-
-45 guration file in the client directory.
-46 Please consult the client documentation for more details.
+43
+44 Your client may support and/or require further settings,
+45 which would then have to be entered in an external confi-
+46 guration file in the client directory.
+47
+48 Please consult the client documentation for more details.
 #
-47 Client directory "%s" not found!
-48 Directory "%s" not found!
+49 Client directory "%s" not found!
+50 Directory "%s" not found!
 
 +  11000
 1  unknown command

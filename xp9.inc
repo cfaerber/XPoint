@@ -804,7 +804,7 @@
       fullClientDir := FExpand(pppClientPath);
       if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
       begin
-        rfehler1(947,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
+        rfehler1(949,ustr(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
         pushkey('e'); pushkey('c');
         exit;
       end;
@@ -858,7 +858,7 @@
 
 
   procedure EditTransport(nt:byte; var brk:boolean);
-  var x,y : byte;
+  var x,y, j: byte;
   begin
     dialog(58,20,kompname,x,y);
     with boxpar^ do begin
@@ -896,12 +896,16 @@
       if not brk then
       begin
         msgbox(63,12,_hinweis_,x,y);
-        mwrt(x+3,y+2,getres2(10900,41));         { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
-        mwrt(x+3,y+3,getres2(10900,42)+#13+#10); { 'Client oder Client-Kit ausgewertet werden.             '   }
-        mwrt(x+3,y+5,getres2(10900,43));         { 'Ihr Client unterstÅtzt und/oder erfordert mîglicherweise'  }
-        mwrt(x+3,y+6,getres2(10900,44));         { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
-        mwrt(x+3,y+7,getres2(10900,45)+#13+#10); { 'rationsdatei vornehmen mÅssen.'                            }
-        mwrt(x+3,y+9,getres2(10900,46));         { 'NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
+
+        { 'Diese Einstellungen sind nur wirksam, wenn sie von Ihrem'  }
+        { 'Client oder Client-Kit ausgewertet werden.             '   }
+        { 'Ihr Client unterstÅtzt und/oder erfordert mîglicherweise'  }
+        { 'weitere Einstellungen, die Sie in einer externen Konfigu-' }
+        { 'rationsdatei vornehmen mÅssen.'                            }
+        { 'NÑheres entnehmen Sie bitte Ihrer Client-Dokumentation.'   }
+        for j := 2 to 9 do
+          mwrt(x+3,y+j,getres2(10900,39+j));
+
         errsound;
         wait(curoff);
         closebox;
@@ -1859,6 +1863,9 @@
 
 {
   $Log$
+  Revision 1.10.2.45  2001/08/12 12:03:33  mk
+  - optimized last checkin a bit more ;)
+
   Revision 1.10.2.44  2001/08/12 11:45:57  my
   - optimized code a bit, removed unnecessary resources, adjusted resource
     numbers

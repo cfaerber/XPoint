@@ -122,7 +122,7 @@ restart:
     fsplit(s2,dir,name,ext);
     if not IsPath(dir) then
     begin
-      rfehler1(948,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
+      rfehler1(950,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
       goto restart;
     end;
     if multipos('*?',s2) then
@@ -904,6 +904,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.20  2001/08/12 12:03:34  mk
+  - optimized last checkin a bit more ;)
+
   Revision 1.1.2.19  2001/08/12 11:45:58  my
   - optimized code a bit, removed unnecessary resources, adjusted resource
     numbers

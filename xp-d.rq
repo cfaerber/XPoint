@@ -3174,16 +3174,18 @@ K (c) '2000-01 OpenXP-Team, www.openxp.de
 #
 39 Pfad darf nicht leer sein!
 40 Es muá ein Username oder eine eMail-Adresse angegeben werden!
-# Der String in den folgenden sechs Zeilen darf max. 57 Zeichen lang sein:
+# Der String in den folgenden acht Zeilen darf max. 57 Zeichen lang sein:
 41 Diese Einstellungen sind nur wirksam, wenn sie von Ihrem
 42 Client oder Client-Kit ausgewertet werden.
-43 Ihr Client untersttzt und/oder erfordert m”glicherweise
-44 weitere Einstellungen, die Sie in einer externen Konfigu-
-45 rationsdatei im Client-Verzeichnis vornehmen mssen.
-46 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
+43
+44 Ihr Client untersttzt und/oder erfordert m”glicherweise
+45 weitere Einstellungen, die Sie in einer externen Konfigu-
+46 rationsdatei im Client-Verzeichnis vornehmen mssen.
+47
+48 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
 #
-47 Client-Verzeichnis "%s" ist nicht vorhanden!
-48 Verzeichnis "%s" ist nicht vorhanden!
+49 Client-Verzeichnis "%s" ist nicht vorhanden!
+50 Verzeichnis "%s" ist nicht vorhanden!
 
 +  11000
 1  unbekannter Befehl
