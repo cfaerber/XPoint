@@ -752,7 +752,8 @@ begin
       HiChar := 0;
     end else
 
-    if (HiChar = 0) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
+    // check for c < 256 to avoid ragne check error with fpc
+    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
       (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
       UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
     begin
@@ -3332,6 +3333,9 @@ end;
 
 {
   $Log$
+  Revision 1.195  2003/10/01 20:56:39  mk
+  - fixed range check error in ListDisplay
+
   Revision 1.194  2003/09/29 23:52:02  cl
   - alternative implementation of xp1.ListDisplay, fixes several problems
     (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
