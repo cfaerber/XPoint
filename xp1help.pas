@@ -50,6 +50,7 @@ uses
   typeform,inout,
   keys, //taste
   resource,maus2,help,winxp,printerx,
+  SysUtils, // for FPC
   maske,xp0,xp1;
 
 var lastkeys : integer;
@@ -416,6 +417,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/12/08 12:34:06  mk
+  - added SysUtils (for FPC)
+
   Revision 1.34  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
