@@ -819,7 +819,7 @@ var f1,f2   : file;
       if org_xref<>'' then
         wrs(^A'ORIGREF: '+org_xref);
       if programm<>'' then
-        wrs(^A'PID: XP '+mid(programm,cpos(' ',programm)+2));
+        wrs(^A'PID: CrossPoint/OpenXP '+mid(programm,cpos(' ',programm)+2));
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }
@@ -1666,6 +1666,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.2  2000/12/11 09:58:04  mk
+  - PID auf CrossPoint/OpenXP geaendert
+
   Revision 1.6.2.1  2000/10/20 16:13:54  fe
   Versteht jetzt auch "F-TO"-Headerzeile zwecks Kompatibilitaet
   zu OpenXP 3.30 und 3.70.
