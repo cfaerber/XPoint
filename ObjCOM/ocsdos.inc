@@ -118,7 +118,7 @@ Begin
    End;
 
    {Begin main setup}
-   ppSerialObjLast^:=@Self; {Add this object at last position of comm object list}
+   ppSerialObjLast^:=@Self; Next:=nil; {Add this object at last position of comm object list}
    New(R_Buffer); New(T_Buffer); {Allocate memory for the buffers}
    IOBase:=iIOBase; IRQ:=iIRQ;
    Str(IOBase,SHelp); DebugLog('ObjCOM','SDos IOBase '+SHelp,2);
@@ -246,7 +246,7 @@ Begin
    Dispose(R_Buffer); Dispose(T_Buffer);
 
    {Remove this object from comm object list}
-   if pSerialObjAnchor=@Self then pSerialObjAnchor:=nil
+   if pSerialObjAnchor=@Self then pSerialObjAnchor:=Next
    else begin
      pSerialObj:=pSerialObjAnchor;
      while(pSerialObj<>nil)and(pSerialObj^.Next<>@Self)do pSerialObj:=pSerialObj^.Next;
@@ -409,13 +409,16 @@ begin
   {Dispose all remaining comm objects}
   while pSerialObjAnchor<>nil do begin
     p:=pSerialObjAnchor^.Next;
-    if pSerialObjAnchor^.Active then Dispose(pSerialObjAnchor,Done);
+    Dispose(pSerialObjAnchor,Done);
     pSerialObjAnchor:=p
   end;
 end;
 
 {
   $Log$
+  Revision 1.5  2000/10/28 10:08:19  ma
+  - Bugfixes
+
   Revision 1.4  2000/10/28 09:37:12  ma
   - moved ComData structure to tSerialObj
   - tSerialObj objects are now organized in a linear list
