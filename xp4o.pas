@@ -115,9 +115,9 @@ end;
 function mid_suchoption(var s:string):boolean;
 begin
   setfieldenable(mid_options,s='J');
-  setfieldenable(mid_bretter,s='J');
+  if aktdispmode <> 11 then setfieldenable(mid_bretter,s='J');
   mid_suchoption:=true;
-  end;
+end;
 
 { Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }
 
@@ -779,10 +779,15 @@ begin
       suche:=false;
       if not brk then begin
         markanz:=0;
-        n:=GetBezug(suchstring);
-        if n<>0 then begin
-          dbGo(mbase,n);
-          MsgAddmark;
+        check_seekmode;
+        for i:=0 to suchanz-1 do
+        begin
+          seek:=copy(suchstring,seekstart[i],seeklen[i]);
+          n:=GetBezug(seek);
+          if n<>0 then begin
+            dbGo(mbase,n);
+            MsgAddmark;
+            end;
           end;
         end;
       end
@@ -2450,6 +2455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.19  2000/12/31 11:53:19  mk
+  JG:- MsgId-Suche mit mehreren Strings
+
   Revision 1.47.2.18  2000/12/31 11:35:55  mk
   - fileio.disksize statt lfn.disksize benutzen
 
