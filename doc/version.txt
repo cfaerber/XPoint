@@ -692,13 +692,11 @@ v3.2b/OpenXP  (17.12.2000)
    Blockeinfgeoperationen, UUZ, Clipboard)
 !  Einstellung 'Umlaute fr neue User zulassen' wurde hin und wieder
    nicht beachtet (Bug aus v3.20)
-!  mehrere Bugs und Seiteneffekte beim Archivieren mit <Alt-P> beseitigt
-   (Kommentarbaum wurde stellenweise verlassen, es wurden "falsche"
-   Nachrichten angezeigt u.„.). (Bug aus v3.12d)
+!  Bug #117117: mehrere Bugs und Seiteneffekte beim Archivieren mit
+   <Alt-P> beseitigt (Kommentarbaum wurde stellenweise verlassen, es
+   wurden "falsche" Nachrichten angezeigt u.„.). (Bug aus v3.12d)
 !  Anzeigeproblem bei Userauswahl mit <F2> und "A" beim Eintragen einer
    User-Vertreteradresse behoben. (Bug aus v3.12d)
-!  Bug beim Archivieren mit <Alt-P> aus einem Kommentarbaum heraus
-   behoben (je nach Umst„nden wurde der Kommentarbaum verlassen)
 *  Config/Optionen/Sprache wieder aktiviert
 !  Extrahieren von MIME-Multipart-Attachments in Zwischenablage
    funktioniert jetzt
