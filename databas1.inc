@@ -193,7 +193,9 @@ end;
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
     wp   : ^smallword absolute rbuf;
-//    i,o: integer;
+{$IFDEF Delphi }
+    i,o: integer;
+{$ENDIF }
 begin
   with np^ do
     with dp(db_p)^ do begin
@@ -205,15 +207,17 @@ begin
 //      if wp^>nk then
 //        error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
+{$IFNDEF Delphi }
       expand_node(rbuf, np);
-{      anzahl:=wp^;
+{$ELSE }
+      anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
       o:=10;
       for i:=1 to anzahl do begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
-       end; }
-
+       end; 
+{$ENDIF }
       freemem(rbuf,irsize);
      end;
 end;
@@ -285,6 +289,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2001/08/10 16:27:23  mk
+  - do not use assembler version of ExpandNode with Delphi
+
   Revision 1.19  2001/07/31 16:18:38  mk
   - removed some unused variables
   - changed some LongInt to DWord
