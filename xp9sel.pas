@@ -599,7 +599,7 @@ begin
     wrt(x+3,y+1+i,getres2(932,i));
   wrt(x+3,y+3+anz,getres(12));    { 'Taste drÅcken ...' }
   errsound;
-  get(t,curon);
+  get(t,curoff);
   closebox;
 end;
 
@@ -607,6 +607,7 @@ end;
 procedure gf_getntyp(var s:string);
 var uucp : boolean;
 begin
+  setfieldtext(fieldpos+1,getres2(912,iif(lstr(s)=lstr(ntName(41)),13,2)));
   gf_fido:=(lstr(s)=lstr(ntName(nt_Fido)));
   uucp:=(lstr(s)=lstr(ntName(nt_UUCP))) OR (lstr(s)=lstr(ntName(41)));
   if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp then

@@ -1194,8 +1194,8 @@ restart:
     if (ntnr[i] in ntAllowed) then
       mappsel(true,ntName(ntnr[i]));
   mset3proc(gf_getntyp);
-  maddstring(3,10,getres2(911,6),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
-    mhnr(680);                                       { 'Boxname   ' }
+  maddstring(3,10,getres2(912,13),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
+    mhnr(680);                                       { 'Server' bzw. 'Boxname' }
   DomainNt:=-1;
   msetvfunc(xp9_testbox);
   maddstring(3,12,getres2(912,12),user,30,80,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
@@ -1284,6 +1284,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.26  2001/06/16 15:22:40  my
+  - New field description "Servername" for first_box if RFC/Client
+
   Revision 1.19.2.25  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and
