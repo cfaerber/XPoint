@@ -1240,7 +1240,7 @@ var d         : DB;
       prog:= dbReadNStr(d,mimeb_programm);
     end;
     readmimetyp(not isNew,typ,ext,prog,brk);
-    if not brk and (typ<>'*/*') then
+    if not brk then
     begin
       {  check for duplicate entries }
       isValid := true;
@@ -1260,6 +1260,7 @@ var d         : DB;
           isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(ext,dbReadStr(mimebase,'extension')));
       end;
+      if not IsNew and (typ = '*/*') then IsValid := true;
 
       if isValid then
       begin
@@ -1826,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/11/01 10:23:40  mk
+  - Edit/Viewer: Eintrag */* wird jetzt auch gespeichert
+
   Revision 1.39  2000/10/22 19:04:02  mk
   - test auf doppelte MIME-Typen jetzt fertig
 
