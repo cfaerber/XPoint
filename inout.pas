@@ -581,6 +581,8 @@ VAR c       : Char;
     if z='' then z:='!!';
   end;
 
+var
+  s: String;
 begin
   if autoup or autodown then begin
     if AutoBremse then
@@ -687,8 +689,12 @@ begin
               doaltfunc(i);
   until z<>'!!';
 
-  Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d','#%d'),
-    [Integer(ord(z[1])),Integer(ord(z[2]))]), dlTrace);
+  if Length(z) = 1 then
+    s := Format(iifs(z[1]>#32, '$%X ''%s''', '$%X'), [Integer(ord(z[1])), z[1]])
+  else
+    s := Format(iifs(z[2]>#32, '$%X $%X ''%s''', '$%X $%X'), [Integer(ord(z[1])), Integer(ord(z[2])), z[2]]);
+  Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d ','#%d '),
+    [Integer(ord(z[1])),Integer(ord(z[2]))]) + s, dlTrace);
 end;
 
 Procedure testbrk(var brk:boolean);
@@ -1667,6 +1673,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.6  2003/04/12 12:59:47  mk
+  - added more debug info for getkey
+
   Revision 1.89.2.5  2003/04/12 08:05:51  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 
