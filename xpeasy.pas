@@ -17,12 +17,7 @@ unit XpEasy;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-     dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+  crt, dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
      maus2,mouse,resource,xpglobal,
      xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
@@ -41,7 +36,7 @@ function NeuBenutzergruss:boolean;
     msgbox(73,msglines+7,'',x,y);
     moff;
     wrt(x+3,y+1,'Cross \\//    '+
-                 Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+                 Right('           ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
     wrt(x+3,y+2,'      //\\ Point');
     s:=x_copyright + ' ' + author_name;
     wrt(x+67-length(s),y+2,s);
@@ -86,6 +81,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/07/01 09:22:58  mk
+  - Mailerstringanpassungen
+
   Revision 1.6  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

@@ -11,33 +11,16 @@
 { CrossPoint - Utilities }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp5;
 
 interface
 
 uses
-      {$IFDEF virtualpascal}
-        sysutils,vpsyslow,
-      {$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-{$IFDEF Linux}
-  linux,
-  xplinux,
-{$ENDIF}
-      dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
-      video,datadef,database,maus2,maske,clip,resource,
-{$IFDEF BP }
-      ems,xms,
-{$ENDIF }
-      xp0,xp1,xp1input,xp1o,xp1o2;
+  crt, dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
+  video,datadef,database,maus2,maske,clip,resource,
+  ems,xms, xp0,xp1,xp1input,xp1o,xp1o2;
 
 procedure kalender;
 procedure memstat;
@@ -355,14 +338,9 @@ begin
     inc(sum,sr.size);
     dos.findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
   xpspace:=sum;
   moff;
 end;
-
-{$IFDEF BP }
 
 function dfree:longint;
 begin
@@ -385,56 +363,6 @@ begin
     end;
 end;
 
-{$IFDEF DPMI}
-
-procedure memstat;
-const rnr = 500;
-var
-    x,y  : byte;
-    ems  : longint;
-    os2  : boolean;
-    win  : boolean;
-    lnx  : boolean;
-    free : longint;
-begin
-  win:=(WinVersion>0);
-  win := true;
-  msgbox(45,iif(win,12,11),getres2(rnr,1),x,y);
-  attrtxt(col.colmboxhigh);
-  moff;
-  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
-  wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
-  wrt(x+4,y+5,xp_xp);             { CrossPoint }
-  wrt(x+4,y+6,getres2(rnr,4));    { frei }
-  os2:=lo(dosversion)>=10;
-  lnx:=DOSEMuVersion <> '';
-  wrt(x+4,y+8,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));
-  if win then
-    wrt(x+4,y+9,'Windows'+getres2(rnr,7));
-  attrtxt(col.colmbox);
-{  gotoxy(x+19,y+4); write(regs.ax:4,' KB');  - freier Speicher }
-{  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB'); - XP-Speicher }
-  gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-  gotoxy(x+32,y+4);
-  if dos.disksize(0)>0 then
-    write((dos.disksize(0) / $100000):6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  gotoxy(x+32,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-                          xpspace(XferDir)) / $100000:6:1,' MB');
-  gotoxy(x+32,y+6);
-  free:=dfree;
-  if free>=0 then write((free / $100000):6:1,' MB')
-  else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+22,y+8);
-  wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
-  mon;
-  freeres;
-  wait(curon);
-  closebox;
-end;
-
-{$ELSE}
-
 procedure memstat;
 const rnr = 500;
 type so = record
@@ -452,7 +380,7 @@ begin
   msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
-  wrt(x+19,y+2,'DOS-RAM        EMS          XMS        '+
+  wrt(x+22,y+2,'DOS-RAM        EMS       XMS        '+
                right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
   wrt(x+4,y+4,getres2(rnr,2));   { gesamt }
   wrt(x+4,y+5,xp_xp);            { CrossPoint }
@@ -465,15 +393,13 @@ begin
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
   attrtxt(col.colmbox);
   intr($12,regs);
-  gotoxy(x+19,y+4); write(regs.ax:4,' KB');
-  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
-  gotoxy(x+19,y+6); write(memavail div 1024:4,' KB');
-  gotoxy(x+19,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
-  { (ovrheaporg+3) div 64:4, ' KB'); }
+  gotoxy(x+22,y+4); write(regs.ax:4,' KB');
+  gotoxy(x+22,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
+  gotoxy(x+22,y+6); write(memavail div 1024:4,' KB');
+  gotoxy(x+22,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
   if emstest then
   begin
     gotoxy(x+31,y+4);
-    { 29.01.2000 Stefan Vinke, RTE 215 bei 64 MB EMS }
     write(longint(emstotal)*16:5,' KB');
     ems:=0;
     if (OvrEmshandle<>0) and (OvrEmsHandle<>$ffff) then
@@ -497,91 +423,13 @@ begin
   gotoxy(x+57,y+6);
   if free>=0 then write(free / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+21,y+9);
+  WriteVer(os2,win,lnx,x+24,y+9);
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,10,9),getres2(rnr,9)+'...');
   mon;
   freeres;
   wait(curon);
   closebox;
 end;
-
-{$ENDIF DPMI }
-
-{$ELSE BP }
-
-procedure memstat;
-const rnr = 500;
-var
-    x,y  : byte;
-{$IFDEF Linux}
-    info : TSysInfo;
-begin
-  sysinfo(info);
-  msgbox(45,15, getres2(rnr,1),x,y);
-{$ELSE}
-begin
-  msgbox(45,11, getres2(rnr,1),x,y);
-{$ENDIF}
-  attrtxt(col.colmboxhigh);
-  moff;
-{$IFDEF Linux}
-  wrt(x+21,y+2,'RAM         '+right('     ~/openxp',8));
-{$ELSE }
-  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
-{$ENDIF}
-  wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
-  wrt(x+4,y+5,xp_xp);             { CrossPoint }
-  wrt(x+4,y+6,getres2(rnr,4));    { frei }
-{$IFDEF Linux}
-  wrt(x+4,y+7,getres2(rnr,12));
-  wrt(x+4,y+8,getres2(rnr,13));
-  wrt(x+4,y+9,getres2(rnr,14));
-  wrt(x+4,y+10,getres2(rnr,15));
-{$ENDIF}
-{$IFDEF Win32 }
-  wrt(x+4,y+8,'Win/32' + getres2(rnr,7));
-{$ENDIF }
-{$IFDEF Dos32 }
-  wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
-{$ENDIF }
-{$IFDEF Linux }
-  wrt(x+4,y+12,GetShortVersion);
-{$ENDIF }
-  attrtxt(col.colmbox);
-{$IFDEF VP }
-  gotoxy(x+19,y+6); write(memavail div 1024 div 1024:5,' MB');
-  gotoxy(x+31,y+4); write(SysDiskSizeLong(0) / 1024 / 1024:8:0,' MB');
-  gotoxy(x+31,y+6); write(SysDiskFreeLong(0) / 1024 / 1024:8:0,' MB');
-{$ELSE }
-  {$IFDEF Linux}
-    gotoxy(x+19,y+4); write(info.totalram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+6); write(info.freeram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+7); write(info.totalswap div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+8); write(info.freeswap div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+9); write(info.sharedram div 1024 div 1024:5,' MB');
-    gotoxy(x+19,y+10); write(info.bufferram div 1024 div 1024:5,' MB');
-    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
-    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
-  {$ELSE }
-    gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-    gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
-    gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
-  {$ENDIF}
-{$ENDIF }
-  gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
-    xpspace(XferDir)) div 1024 div 1024:8,' MB');
-{$IFDEF Linux}
-  wrt(x+30,y+13,right('     '+getres2(rnr,10),7)+'...');
-{$ELSE}
-  wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
-{$ENDIF}
-  mon;
-  freeres;
-  wait(curon);
-  closebox;
-end;
-
-{$ENDIF}
 
 
 { USER.EB1 - Fragmentstatistik, nur deutsche Version }
@@ -1141,6 +989,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.1  2000/07/01 09:22:57  mk
+  - Mailerstringanpassungen
+
   Revision 1.27  2000/05/29 20:21:41  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 

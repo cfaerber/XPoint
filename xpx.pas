@@ -73,7 +73,7 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,pformstr,betastr,' ',x_copyright,
+  writeln(t,' ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' (',author_mail,')');
   writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
@@ -100,9 +100,7 @@ begin
     if (ioresult=0) and
        (ival(code)=sqr(CRC32Str(reverse(name)) and $ffff)) then begin
       XP_xp:=name;
-      XP_name := '## '+name+' '+verstr+betastr;
       XP_origin := '--- '+name;
-      XP_short := short;
       end;
     end;
 end;
@@ -316,6 +314,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.1  2000/07/01 09:22:59  mk
+  - Mailerstringanpassungen
+
   Revision 1.18  2000/06/19 20:23:05  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -16,12 +16,6 @@ const
   verstr      = 'v3.30.2';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
-  {$IFDEF DPMI}
-  pformstr    = ' DOS/XL';    { 16 Bit DPMI mit Borland Pascal }
-  {$ELSE}
-  pformstr    = ' DOS/16';    { 16 Bit Realmode mit Borland Pascal }
-  {$ENDIF}
-
   author_name = 'OpenXP Team';
   author_mail = 'dev@openxp.de';
   x_copyright = '(c) 2000';
@@ -89,6 +83,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.3  2000/07/01 09:22:58  mk
+  - Mailerstringanpassungen
+
   Revision 1.29.2.2  2000/06/26 17:57:21  mk
   - Versionsnummer auf 3.30.2 gesetzt
 

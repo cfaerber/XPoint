@@ -57,14 +57,10 @@ type mprec     = record
                  end;
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
-{$IFDEF NCRT }
-     scrptr    = word;  { Handle }
-{$ELSE }
      scrptr    = record
                    scsize  : word;
                    p       : pointer;
                  end;
-{$ENDIF }
      ahidden   = array[1..maxhidden] of integer;
 
 Type TStartData = record
@@ -107,11 +103,8 @@ var printlines : longint;
 
 
 procedure showstack;                  { Stack/Heap-Anzeige im Debug-Mode }
-{$IFNDEF NCRT }
 procedure sound(hz:word);
-{$ENDIF }
 procedure XpIdle;
-function  plevelstr:string;           { Patchlevel }
 
 procedure showscreen(newmode:boolean);
 procedure showusername;
@@ -143,9 +136,7 @@ procedure newscreenlines(m:integer);
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer16);
 procedure SetMausEmu;
-{$IFDEF BP }
 procedure SetXPborder;
-{$ENDIF }
 
 procedure blindon(total:boolean);
 procedure blindoff;
@@ -200,9 +191,7 @@ procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
-{$IFDEF BP }
 procedure FlushSmartdrive(show:boolean);
-{$ENDIF }
 procedure set_checkdate;
 
 procedure opendatabases;
@@ -276,10 +265,7 @@ function  cm_key:char;
 implementation  {-------------------------------------------------------}
 
 uses
-{$IFDEF BP }
-  xpfonts,
-{$ENDIF }
-  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
+  xpfonts, xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -2402,15 +2388,6 @@ begin
 end;
 
 
-function plevelstr:string;           { Patchlevel }
-begin
-  if lastchar(patchlevel)='0' then
-    plevelstr:=''
-  else
-    plevelstr:=' pl'+lastchar(patchlevel);
-end;
-
-
 { rechten Teil der ID in LowerCase umwandeln und CRC32 bilden }
 
 function MsgidIndex(mid:string):longint;
@@ -2430,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.1  2000/07/01 09:22:56  mk
+  - Mailerstringanpassungen
+
   Revision 1.48  2000/06/19 20:18:17  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -85,17 +85,8 @@ const  {$IFDEF DPMI}
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
-       patchlevel  : string[13] = '*patchlevel*0';
-{$IFDEF Ver32 }
-       xp_xp       : string[10] = 'OpenXP';
-       xp_name     : string[30] = '## OpenXP '+verstr+betastr;  { fÅr ZConnect-Header }
-       xp_origin   : string[15] = '--- OpenXP';
-{$ELSE }
-       xp_xp       : string[10] = 'CrossPoint';
-       xp_name     : string[30] = '## CrossPoint '+verstr+betastr;  { fÅr ZConnect-Header }
-       xp_origin   : string[15] = '--- CrossPoint';
-{$ENDIF }
-       xp_short    : string[2]  = 'XP';
+       xp_xp       : string[17] = 'CrossPoint/OpenXP';
+       xp_origin   : string[21] = '--- CrossPoint/OpenXP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -1190,6 +1181,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.2  2000/07/01 09:22:56  mk
+  - Mailerstringanpassungen
+
   Revision 1.54.2.1  2000/06/24 14:16:32  mk
   - 32 Bit Teile entfernt, Fixes
 

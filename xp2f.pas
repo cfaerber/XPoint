@@ -289,8 +289,8 @@ begin
   with col do begin
     at(colkeys);
     wrt(31,2,'  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ');
-    wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS             '+
-           right(sp(10)+xp_xp,10));
+    wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS      '+
+           right(sp(17)+xp_xp,17));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -1188,6 +1188,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.1  2000/07/01 09:22:57  mk
+  - Mailerstringanpassungen
+
   Revision 1.12  2000/05/19 19:48:54  mk
   - C/A/F baut jetzt den Bildschirm wieder korrekt auf
 

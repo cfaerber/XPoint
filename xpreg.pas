@@ -1446,9 +1446,9 @@ begin
   msgbox(70,msglines+8+iif(wait,3,0),'',x,y);
   moff;
   wrt(x+3,y+1,'Cross \\//    '+
-              Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+              Right('           ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
-  s:=x_copyright + ' ' + author_name;
+  s:='OpenXP ' + x_copyright + ' by ' + author_name;
   wrt(x+67-length(s),y+2,s);
 
   if registriert.r2 then begin
@@ -1556,9 +1556,9 @@ begin
   msgbox(73,msglines+7,'',x,y);
   moff;
   wrt(x+3,y+1,'Cross \\//    '+
-              Right('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+              Right('           ' + verstr+betastr+' (c) 1992-99 '+pm, 50));
   wrt(x+3,y+2,'      //\\ Point');
-  s:=x_copyright + ' ' + author_name;
+  s:='OpenXP ' + x_copyright + ' by ' + author_name;
   wrt(x+67-length(s),y+2,s);
 
   for i:=1 to msglines do
@@ -1577,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.1  2000/07/01 09:22:59  mk
+  - Mailerstringanpassungen
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

@@ -1665,7 +1665,7 @@ fromstart:
       { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
       hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
-                     +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
+                     +iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
     if sdata^.ersetzt<>''then hdp^.ersetzt:=sdata^.ersetzt;
@@ -2132,6 +2132,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.2  2000/07/01 09:22:58  mk
+  - Mailerstringanpassungen
+
   Revision 1.39.2.1  2000/06/24 14:16:34  mk
   - 32 Bit Teile entfernt, Fixes
 
