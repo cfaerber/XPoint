@@ -180,7 +180,7 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
       currentbox : string[BoxNameLen];
       box        : string[BoxNameLen];
       x,y        : byte;
-      i,p        : byte;
+      i,p,nt     : byte;
       datDa      : boolean;
 
     procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
@@ -241,12 +241,14 @@ const NetcallAlleFlag   : string[12] = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batch
       all:=iifs(i>8,'',' ')+strs(i+1)+':  '+trim(NetcallSpecialList[i]);
     end
     else
-      while not dbEOF(d) do begin
+      while not dbEOF(d) do
+      begin
         if dbReadInt(d,'script') and 2=0 then
         begin
           currentbox := dbReadStr(d,'boxname');
-          ReadBoxPar(0,currentbox);
-          if boxpar^.PPPMode then
+          dbRead(d,'Netztyp',nt);
+          ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+          if (nt=40) and (boxpar^.PPPMode) then          { RFC/Client? }
           begin
             clientbox := clientbox+' '+currentbox;
             currentbox := '';
@@ -736,6 +738,11 @@ end;
 
 {
   $Log$
+  Revision 1.4.2.6  2001/11/11 23:27:45  my
+  MY:- Fix: ReadBoxPar in 'MakeAllListe' ersetzt durch ReadBox - dadurch
+       mehrfaches dbOpen/dbClose verhindert, da· mîglicherweise zu
+       DB-Problemen an anderen Stellen gefÅhrt hat.
+
   Revision 1.4.2.5  2001/10/16 18:36:02  my
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
   ------------------------------------------------------------------------
