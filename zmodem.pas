@@ -24,7 +24,8 @@ unit ZModem;
 {$I xpdefine.inc}
 
 interface
-uses xpglobal, ObjCOM;
+
+uses xpglobal, montage, typeform, ObjCOM;
 
 var
   MakeCRC32, (* TRUE, wenn 32-Bit-CRC benutzt werden darf  *)
@@ -186,7 +187,7 @@ const
   D1 = 146097;
   D2 = 1721119;
 
-procedure GregorianToJulianDN(Year, Month, Day: integer16;
+procedure GregorianToJulianDN(Year, Month, Day: integer;
   var JulianDN: LongInt);
 var
   Century,
@@ -206,34 +207,6 @@ begin                                   {GregorianToJulianDN}
   JulianDN := ((((Month * 153) + 2) div 5) + Day) + D2
     + XYear + Century;
 end;                                    {GregorianToJulianDN}
-
-procedure JulianDNToGregorian(JulianDN: smallword;
-  var Year, Month, Day: smallword);
-var
-  Temp,
-    XYear: LongInt;
-  YYear,
-    YMonth,
-    YDay: integer16;
-begin                                   {JulianDNToGregorian}
-  Temp := (((JulianDN - D2) shl 2) - 1);
-  XYear := (Temp mod D1) or 3;
-  JulianDN := Temp div D1;
-  YYear := (XYear div D0);
-  Temp := ((((XYear mod D0) + 4) shr 2) * 5) - 3;
-  YMonth := Temp div 153;
-  if YMonth >= 10 then
-  begin
-    YYear := YYear + 1;
-    YMonth := YMonth - 12;
-  end;
-  YMonth := YMonth + 3;
-  YDay := Temp mod 153;
-  YDay := (YDay + 5) div 5;
-  Year := YYear + (JulianDN * 100);
-  Month := YMonth;
-  Day := YDay;
-end;                                    {JulianDNToGregorian}
 
 function Z_ToUnixDate(fdate: LONGINT): string;
 var
@@ -262,31 +235,51 @@ begin
   Z_ToUnixDate := s
 end;
 
-function Z_FromUnixDate(s: string): LONGINT;
-var
-  //dt: DateTime;
-  secspast, datenum: LONGINT;
-  i: smallword;
-  y, m, d, h, n, s1: smallword;
+function monthlen(j,m:word):word;
 begin
-  secspast := LONGINT(0);
-  for i := 1 to Length(s) do
-    secspast := (secspast shl 3) + Ord(s[i]) - $30;
-  datenum := (secspast div 86400) + c1970;
-  //JulianDNToGregorian(datenum,dt.year,dt.month,dt.day);
-  JulianDNToGregorian(datenum, y, m, d);
-  secspast := secspast mod 86400;
-  //dt.hour := secspast DIV 3600;
-  h := secspast div 3600;
-  secspast := secspast mod 3600;
-  //dt.min := secspast DIV 60;
-  n := secspast div 60;
-  //dt.sec := secspast MOD 60;
-  s1 := secspast mod 60;
-  //PackTime(dt,secspast);
-  Z_FromUnixDate := DateTimeToFileDate(EncodeDate(y, m, d) + EncodeTime(h, n,
-    s1, 0));
-  //Z_FromUnixDate := secspast
+  case m of
+    1 : monthlen:=31;
+    2 : if schaltj(j) then monthlen:=29
+        else monthlen:=28;
+    3 : monthlen:=31;
+    4 : monthlen:=30;
+    5 : monthlen:=31;
+    6 : monthlen:=30;
+    7 : monthlen:=31;
+  else  if odd(m) then monthlen:=30
+        else monthlen:=31;
+  end;
+end;
+
+
+function Z_FromUnixDate(s: string): LONGINT;
+const tagsec = 24*60*60;
+var
+  dt: TDateTime;
+  ts   : TTimeStamp;
+  secs: Integer;
+  year, month, day: Integer;
+begin
+  secs := OctVal(s);
+  year:=1970;
+  while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
+    dec(secs,iif(schaltj(year),366,365)*tagsec);
+    inc(year);
+    end;
+  if year>2099 then
+    secs:=0
+  else
+  begin
+    month:=1;
+    while (secs>=tagsec*monthlen(year,month)) do begin
+      dec(secs,tagsec*monthlen(year,month));
+      inc(month);
+    end;
+  end;
+  day:=secs div tagsec + 1; secs:=secs mod tagsec;
+  dt := EncodeDate(Year, Month, Day) +
+    EncodeTime(secs div 3600, secs mod 3600 div 60, secs mod 60, 0);
+  Z_FromUnixDate := DateTimeToFileDate(dt);
 end;
 
 const
@@ -2747,6 +2740,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/12/25 17:43:52  mk
+  - fixed time calculation
+
   Revision 1.10  2000/11/28 21:28:38  ma
   - StartProc call fixed
 
