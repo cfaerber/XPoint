@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 21.12.2001 (letzter Update)
+DÅsseldorf, den 31.08.2001 (letzter Update: 21.12.2001)
 
 
 ------------------------------------------------------------------------
@@ -89,9 +89,8 @@ Lister
   XP0.PAS, XP1O.PAS, XP1S.INC, XP2C.PAS, XP2CFG.INC, XP4O.PAS,
   XPKEYS.PAS, XP.IHQ, XP-E.IHQ
 
-- Der Lister zeigt den KOM-Header jetzt korrekt an, wenn die Nachricht
-  keine BinÑrnachricht ist (vorher wurde der Header in diesem Fall gar
-  nicht beachtet).
+- Der Lister zeigt den KOM-Header jetzt auch dann korrekt an, wenn die
+  Nachricht keine BinÑrnachricht ist.
   XP3EX.PAS, XP4W.INC
 
 
@@ -117,8 +116,8 @@ Editor
 - Suche im Editor markiert jetzt die aktuell gefundene Stelle.
   EDITOR.INC
 
-- Quotereflow verfeinert (<Enter> mitten in Quotezeichen entspricht
-  <Enter> am Ende von Quotezeichen).
+- Quotereflow verfeinert: <Enter> mitten in Quotezeichen entspricht
+  <Enter> am Ende von Quotezeichen.
   EDITOR.INC
 
 - Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
@@ -180,12 +179,12 @@ XP4O.PAS, XP4O.INC, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
 Brett-öbersicht
 ---------------
 
-- Neuer MenÅpunkt "kombinierter Ungelesen-Modus" unter Config/Anzeige/
+- Neuer MenÅpunkt "kombinierter Ungelesen-Modus" unter /Config/Anzeige/
   Bretter, bisherige Taste "U" fÅr diese Funktion ist jetzt Brett-
   Markiersuche (s.u.). GeÑnderte Anzeigelogik (siehe Hilfe).
   XP2C.PAS, XP4.PAS, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
 
-- Verbesserte Brettanzeige (zusÑtzlicher Schalter unter Config/Anzeige/
+- Verbesserte Brettanzeige (zusÑtzlicher Schalter unter /Config/Anzeige/
   Bretter): Es kînnen jetzt alle Bretter in Punktschreibweise
   dargestellt werden, der einleitende "/" wird entfernt, bei PM-Brettern
   wird der erste "/" durch "@" ersetzt.
@@ -217,7 +216,7 @@ Nachrichten-Lesefenster
   Zeichen verkÅrzt und der Betreff um 5 Zeichen verlÑngert.
   XP4D.INC
 
-- Verbesserung fÅr blinde XP-User: Wenn unter Config/Anzeige/Hilfen die
+- Verbesserung fÅr blinde XP-User: Wenn unter /Config/Anzeige/Hilfen die
   Optionen "Auswahlcursor" und "Fensterhintergrund ausblenden" aktiviert
   sind, ist das Zeichen fÅr "Haltezeit Åberschritten" ein normaler Punkt
   "." statt eines mittelstehenden Punkts "˘" (249d) und ist daher jetzt
@@ -290,7 +289,7 @@ Mausbedienung
 Allgemeine Bedienung und Sonstiges
 ----------------------------------
 
-- RFC: Neuer Schalter "Alten Betreff anhÑngen" unter Config/Optionen/
+- RFC: Neuer Schalter "Alten Betreff anhÑngen" unter /Config/Optionen/
   Netze.  Wenn aktiviert, wird bei énderung des Betreffs der alte
   Betreff in der Form "(was: <alter Betreff>)" automatisch angehÑngt.
   XP0.PAS, XP2C.PAS, XP2CFG.INC, XP6.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
@@ -471,12 +470,13 @@ Allgemeine Bedienung und Sonstiges
   XP9.PAS, XP9.INC, XP9SEL.PAS, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ,
   XP.IHQ, XP-E.IHQ
 
-- RFC/Client ist jetzt ein eigener Netztyp (41) statt einer Einstellung
+- RFC/Client ist jetzt ein eigener Netztyp (41) statt eines Parameters
   in der Boxkonfiguration ("Client-Mode="). Alte RFC/Client-Boxen mÅssen
   einmal manuell von RFC/UUCP wieder auf RFC/Client umgeschaltet werden.
   Beim Wechsel des Netztyps von ZConnect oder RFC/UUCP auf RFC/Client
-  wird das Feld "eMail-Adresse" automatisch aus den Boxdaten (Username,
-  Pointname, Domain, Alias-Schalter) korrekt ermittelt.
+  wird der Wert "eMail-Adresse" automatisch aus den Boxdaten (Username,
+  Pointname, Domain, Alias-Schalter) korrekt ermittelt (falls nicht
+  ohnehin bereits vorhanden).
   XP2CFG.INC, XP3EX.PAS, XP3O.PAS, XP3O.INC, XP3O2.PAS, XP4.PAS,
   XP4E.PAS, XP4O.PAS, XP4RTA.PAS, XP6.PAS, XP6O.PAS, XP6S.INC, XP7.PAS,
   XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP8.PAS, XP9.PAS, XP9.INC,
@@ -494,16 +494,16 @@ Allgemeine Bedienung und Sonstiges
   XP0.PAS, XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP9.INC,
   XP9BP.PAS, XP9SEL.PAS, XP.IHQ, XP-E.IHQ
 
-- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
-  Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+- Neuer Schalter "User bei PM-Antwort automatisch anlegen" unter
+  /Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
   unbekannter User beim Beantworten oder Archivieren angelegt werden
   soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und der
   User automatisch mit den Standardeinstellungen angelegt werden.
   XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP4E.PAS, XP6.PAS, XP6O.PAS,
   XPCC.PAS, XP_PGP.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
-- Schalter "News-Archivierung verhindern" wieder bei Config/Optionen/
-  Netze untergebracht.
+- Schalter "News-Archivierung verhindern" wieder nach /Config/Optionen/
+  Netze/Verschiedenes verlagert.
   XP2C.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
