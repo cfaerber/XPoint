@@ -369,7 +369,6 @@ var f,f2     : file;
 {    hdsize   : word; }
     oversize : longint;     { Nachrichtenlimit ueberschritten     }
     parken   : boolean;     { Nachricht nach />>Unversandt        }
-    bin_msg  : boolean;     { Binaer-Versandmeldung               }
     SendDefault : shortint;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
@@ -1967,7 +1966,6 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
-//      if bin_msg then inc(b,2);                  { 2 = Binaer-Meldung }
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWriteN(mbase,mb_unversandt,b);
 
@@ -1998,8 +1996,6 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         dbReadN(mbase,mb_adresse,m1adr);
         dbReadN(mbase,mb_msgsize,m1msgsize);
         _era(fn2);
-        if bin_msg then
-          _era(TempPath+'binmsg');
         end
       else begin
         dbWriteN(mbase,mb_adresse,m1adr);
@@ -2286,6 +2282,9 @@ finalization
 
 {
   $Log$
+  Revision 1.15  2001/09/16 18:01:40  ma
+  - removed bin_msg (seems to be some relic, caused error messages with fido)
+
   Revision 1.14  2001/09/14 18:26:35  cl
   - fixed iso flag
   - no ZConnect-MIME for single-part messages
