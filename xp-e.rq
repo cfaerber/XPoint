@@ -228,8 +228,8 @@ K (c) '93-96 Peter Mandrella
 1    Template for new public messages
 2    Template for new private messages
 3    Quote template for public messages
-4    Quote template for mail answers to public messages
-5    Quote template for mail answers
+4    Quote template for private replies to public messages
+5    Quote template for private replies
 6    Template for /Message/Forward/QuoteTo
 7    Template for /Message/Forward/Copy
 8    Template for /Message/Forward/Repost
@@ -262,7 +262,7 @@ K (c) '93-96 Peter Mandrella
 
 200  Color Setup
 + 201
-0    ^Main menu,^1st menu level,^2nd menu level,^3rd menu level,^F-Keys,M^iscellaneous,^User/Newsgr.,Messa^ges,Message ^window,^Dialog window,Selection 1,Selection 2,^Buttons,Uti^lities,Hel^p,Liste^r,^Editor,uu^cico/Mailer,¯Defaul^t®,¯^Save®,¯^OK®
+0    ^Main menu,^1st menu level,^2nd menu level,^3rd menu level,^F-Keys,M^iscellaneous,^User/Newsgr.,Messa^ges,Message ^window,^Dialog window,Selection 1,Selection 2,^Buttons,Uti^lities,Hel^p,Reade^r,^Editor,uu^cico/Mailer,¯Defaul^t®,¯^Save®,¯^OK®
 1    ^Text,^Keys,^Bar,^Selected key,^Inactive
 2    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
 3    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
@@ -2055,7 +2055,7 @@ K (c) '93-96 Peter Mandrella
 + 1019
 1  ~^New , ^Edit , ^TextEdit , ^Delete , ^Info ,  ^OK ~
 2  37
-3  Delete node/point list entry?
+3  Delete Node/Pointlist entry?
 4  ~^Yes ,  ^No  , with ^File~
 10 Add new node or point list
 -
@@ -2130,7 +2130,7 @@ K (c) '93-96 Peter Mandrella
 # --- XPFIDO ----------------------------------------------------------
 
 + 2100
-1    Get node infos (Esc to quit)
+1    Find Node info (Esc to quit)
 2    BBS
 3    AKA    [                    ]
 4    Sysop
@@ -2146,12 +2146,12 @@ K (c) '93-96 Peter Mandrella
 2    File
 3    Net
 4    User
-5    Sorting net index ...
-6    Sorting user index ...
-7    Packing user index ...      %
+5    Sorting Net index ...
+6    Sorting User index ...
+7    Packing User index ...      %
 -
 2102 Nodelist configuration - see FIDO.TXT
-2103 Copying point list
+2103 Copying Pointlist
 + 2104
 1    Shrink nodelist
 2    Zones/Regions~
@@ -2219,8 +2219,8 @@ K (c) '93-96 Peter Mandrella
 3    For more information ask the BBS' SysOp!
 + 2127
 0    51
-1    Activate node/point list
-2    Configure node/point list
+1    Activate Node/Pointlist
+2    Configure Node/Pointlist
 5    List name      ~
 6    Number~
 7    Format of list ~
@@ -2231,14 +2231,14 @@ K (c) '93-96 Peter Mandrella
 12   Diff update
 13   Delete update after processing
 + 2128
-1    Node list
+1    Nodelist
 2    Points24 list
-3    PVT point list
-4    4D point list
-5    FD point list
+3    PVT Pointlist
+4    4D Pointlist
+5    FD Pointlist
 + 2129
 0    30
-1    Node/point list info
+1    Node/Pointlist info
 2    File
 3    Bytes
 4    Entries
