@@ -10,7 +10,9 @@
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp9;
 

@@ -10,7 +10,9 @@
 { XP7 - zus„tzlicher Overlay-Teil }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp7o;
 

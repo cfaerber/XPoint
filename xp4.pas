@@ -10,7 +10,9 @@
 { CrossPoint - Hauptmodul }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp4;
 
@@ -1897,7 +1899,7 @@ selende:
 end;    { select }
 
 
-procedure TClose; far;
+procedure TClose; {$IFNDEF Ver32 } far; {$ENDIF }
 var f : file;
     r : integer;
 begin

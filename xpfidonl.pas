@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -10,7 +11,9 @@
 { Nodelisten-Konfiguration; Diffs verarbeiten }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpfidonl;
 
@@ -231,7 +234,7 @@ var nlp       : NL_ap;
     xni       : boolean;
 
   procedure NL_Datecheck;      { testen, ob neue Liste dazugekommen }
-  var i       : integer;
+  var
       dt      : datetime;
       dummy   : smallword;
       ActTime : longint;
@@ -388,7 +391,6 @@ var fn      : pathstr;
 
   procedure PL_FormatDetect(fn:pathstr; var format:byte);
   var t   : text;
-      buf : array[0..511] of byte;
       s   : string;
       n   : byte;
   begin
@@ -552,7 +554,6 @@ var diffdir  : pathstr;
     uarchive : pathstr;
     ufile    : pathstr;
     nextnr   : integer;
-    p        : byte;
     unarcflag: boolean;
     done     : boolean;
     reindex  : boolean;
@@ -731,7 +732,6 @@ end;
 
 procedure ManualDiff;
 var fn      : pathstr;
-    brk     : boolean;
     useclip : boolean;
 begin
   fn:=FilePath+'*.*';
@@ -746,6 +746,4 @@ begin
       end;
 end;
 
-
 end.
-

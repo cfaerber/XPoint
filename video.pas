@@ -18,7 +18,9 @@
 UNIT video;
 
 {$I XPDEFINE.INC}
-{$O+,F+,A+}
+{$IFDEF BP }
+  {$O+,F+,A+}
+{$ENDIF }
 
 
 {  ==================  Interface-Teil  ===================  }
@@ -427,8 +429,8 @@ begin
 end;
 
 
-{$F+,S-}
-procedure newexit;
+{$S-}
+procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   exitproc:=oldexit;
   cur1;

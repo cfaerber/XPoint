@@ -84,8 +84,8 @@ var    kx,ky  : integer;           { Koordinaten der letzten Aktion }
        insen  : array[1..maxinside,0..2] of boolean;
 
 
-{$F+}
-procedure mint(intsource,tasten,x,y,mx,my:word);
+procedure mint(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
+
 const tick       : longint = 0;
       was_inside : boolean = false;
 var
@@ -175,7 +175,6 @@ begin
         end;
       end;
 end;
-{$F-}
 
 
 procedure maus_tasten_an;

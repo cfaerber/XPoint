@@ -10,7 +10,9 @@
 { (Funktions)tasten & Makros }
 
 {$I XPDEFINE.INC }
-{$F+}
+{$IFDEF BP }
+  {$F+}
+{$ENDIF }
 
 unit xpkeys;
 

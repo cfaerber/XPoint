@@ -746,6 +746,11 @@ K (c) '93-96 Peter Mandrella
 9    Sign all messages
 10   Use PGP for RFC/UUCP
 11   Use PGP for Fido (not allowed in FidoNet!)
++ 272
+# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5 / X-MSMail-Prio.: High, Norm., Low
+0    25
+1    Send-Priority
+2    Priority ~
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -1220,6 +1225,9 @@ K (c) '93-96 Peter Mandrella
 11   PGP-Sig~
 12   PGP-Req~
 13   BCC~
+14   High~
+15   Normal~
+16   Low~
 -
 605  Crypting message...     %
 + 606
@@ -1274,7 +1282,7 @@ K (c) '93-96 Peter Mandrella
 20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,C^rash,P^GP,^Back
 21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
 22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-23   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^More,P^GP,^Back
+23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
 24   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^Back
 25   YNIùSVOT
 28   ^Yes,^No,^Internal,S^pecial,ù7^Subj.,Ser^ver,C^ode
@@ -1311,6 +1319,7 @@ K (c) '93-96 Peter Mandrella
 619  was
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
+622  No function in this net
 
 # XP6.INC
 640  Rebuilding message packet...

@@ -6,18 +6,20 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-(* 04.02.2000 MH: Im Terminal ISDN hinzugefgt *)
+{ 04.02.2000 MH: Im Terminal ISDN hinzugefgt }
 { CrossPoint - Config bearbeiten }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp2c;
 
 interface
 
 uses crt,dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
-     ems,printerx,mouse,maus2,uart,resource,lister,editor,capi,video,
+     printerx,mouse,maus2,uart,resource,lister,editor,capi,video,
      xp0,xp1,xp1input,xpdatum, xpglobal;
 
 procedure options;
@@ -621,7 +623,7 @@ begin
   maddbool(3,4,getres2(259,13),BaumAdresse);     { 'vollst„ndige Adressen im Kommentarbaum' }
   maddbool(3,5,getres2(259,14),showrealnames);   { 'Realname anzeigen, falls vorhanden' }
   maddbool(3,6,getres2(259,15),showfidoempf);    { 'Empf„nger von Fido-Brettnachrichten anzeigen' }
-(* maddstring(3,8,getres2(259,16),unescape,49,100,'>');  { 'UnEscape ' } *)
+{ maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
   if not brk and mmodified then begin
     for i:=0 to 6 do
@@ -1144,7 +1146,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,16,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,17,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1166,11 +1168,12 @@ begin
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,8+add,getres2(253,15),multipartbin);  { 'Bin„rnachrichten als "Attachments"' }
+  maddbool(14,9+add,getres2(253,16),NoArchive); mhnr(803); { 'News nicht auf DEJANEWS archivieren' }
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,10+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,11+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,10+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
     end;
@@ -1266,7 +1269,7 @@ begin
    if TermCom=5 then com:='ISDN';
   maddstring(3,2,getres2(270,2),com,6,6,'');  { 'Schnittstelle    ' }
     mhnr(990);
-  mappsel(true,'COM1ùCOM2ùCOM3ùCOM4ùISDN');      (* aus: XP9.INC    *)
+  mappsel(true,'COM1ùCOM2ùCOM3ùCOM4ùISDN');      { aus: XP9.INC    }
   maddint(3,3,getres2(270,3),TermBaud,6,6,150,115200);  { 'šbertragungsrate ' }
   mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
   maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
@@ -1276,7 +1279,7 @@ begin
   maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
   readmask(brk);
   if not brk and mmodified then begin
-    if com='ISDN' then TermCOM:=5 (* MH: hinzugefgt *)
+    if com='ISDN' then TermCOM:=5 { MH: hinzugefgt }
         else TermCOM:=ival(right(com,1));
     GlobalModified;
     end;

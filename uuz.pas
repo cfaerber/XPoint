@@ -23,7 +23,11 @@
 
 program uuz;
 
-uses  xpglobal, crt,dos,dosx,typeform,fileio,ems,xpdatum,montage,stack;
+uses  xpglobal,
+{$IFDEF BP }
+  ems,
+{$ENDIF }
+  crt,dos,dosx,typeform,fileio, xpdatum,montage,stack;
 
 const
       midlen      = 120;
@@ -196,6 +200,7 @@ type  OrgStr  = string[orglen];
                   x_charset  : string[25];
                   keywords   : string[60];
                   summary    : string[200];
+                  priority   : byte;           { Priority by MH }
                   distribution:string[40];
                   pm_reply   : boolean;
                   sender     : string[80];
@@ -597,8 +602,9 @@ var regs  : registers;
   procedure SwapOut(swapp,count:word);
   var page,spar,rr : word;
   begin
-{$IFNDEF Ver32 } { !! }
-    if EmsAvail>=count div 1024 +1 then begin
+{$IFNDEF Ver32 }
+    if EmsAvail>=count div 1024 +1 then
+    begin
       EMSAlloc(count div 1024+1,EMShandle);
       page:=0;
       repeat
@@ -904,11 +910,13 @@ begin
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+    { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive     then wrs('X-NO-ARCHIVE: yes');
+    { /robo }
 
-{ /robo }
+    { 07.02.2000 robo - X-Priority Konvertierung }
+    if priority<>0    then wrs('X-PRIORITY: '+strs(priority));
+    { /robo }
 
     if prio<>0        then wrs('Prio: '  +strs(prio));
     if organisation<>''  then wrs('ORG: '+organisation);
@@ -1114,12 +1122,12 @@ begin
 end;
 
 
-procedure GetMimeVersion(var s:string); far;
+procedure GetMimeVersion(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   hd.mime.mversion:=s;
 end;
 
-procedure GetCTencoding(var s:string); far;
+procedure GetCTencoding(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   LoString(s);
   with hd.mime do
@@ -1132,7 +1140,7 @@ begin
 end;
 
 
-procedure GetContentType(var s:string); far;
+procedure GetContentType(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
 var p     : byte;
     s1    : string[20];
     value : string;
@@ -1411,9 +1419,7 @@ begin
     if p>0 then begin
       ext:=mid(fn,p+1);
       assign(t,'mimetyp.cfg');
-      {$I-}
       reset(t);
-      {$I+}
       if ioresult=0 then begin
         while not eof(t) do begin
           readln(t,s);
@@ -1505,7 +1511,7 @@ const l : byte = 0;
       savedi : word = 0;
       savebx : word = 0;
 
-  procedure reload; far;
+  procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
   begin
     if eof(f1) then ok:=false
     else ReadBuf;
@@ -1674,7 +1680,9 @@ begin
     s[0]:=chr(p);
     end;
 end;
-{$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
 
 
 procedure ReadRFCheader(mail:boolean; s0:string);
@@ -2189,13 +2197,15 @@ begin
              if zz='x-zc-telefon' then telefon:=s0 else
              if zz='x-xp-ctl'     then XPointCtl:=ival(s0) else
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+             { 03.09.1999 robo - X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
                if LStr(s0)='yes' then xnoarchive:=true;
              end else
+             { /robo }
 
-{ /robo }
+             { 07.02.2000 robo - X-Priority Konvertierung }
+             if zz='x-priority'   then priority:=minmax(ival(s0),1,5) else
+             { /robo }
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -3023,11 +3033,13 @@ begin
       else wrs(f,'X-Newsreader: '+programm);
       end;
 
-{ 03.09.1999 robo - X-No-Archive Konvertierung }
-
+    { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive then wrs(f,'X-No-Archive: yes');
+    { /robo }
 
-{ /robo }
+    { 07.02.2000 robo - X-No-Archive Konvertierung }
+    if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
+    { /robo }
 
     if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then
     with mime do begin

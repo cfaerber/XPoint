@@ -7,15 +7,15 @@
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
 
+{$IFDEF BP }
 procedure setemscache;
 var i : integer;
 begin
-{$IFNDEF WIN32} { MK 12/99 }
   if dbEMShandle<>0 then
     for i:=0 to 3 do                { EMS einblenden }
       EmsPage(dbEMShandle,i,i);
-{$ENDIF}
 end;
+{$ENDIF }
 
 
 { Cache-Seiten allokieren }
@@ -24,7 +24,7 @@ procedure dbSetindexcache(pages:word; _ems:boolean);
 begin
   if pages>maxcache then error('Zu viele Cache-Seiten');
   cacheanz:=pages;
-{$IFNDEF WIN32} { MK 12/99 }
+{$IFDEF BP } { MK 12/99 }
   if _ems and emstest and (emsavail>=4) then begin
     EmsAlloc(4,dbEMShandle);
     cache:=ptr(emsbase,0);
@@ -34,7 +34,9 @@ begin
 {$ENDIF}
   begin
     getmem(cache,pages*sizeof(cachepage));
+{$IFDEF BP }
     dbEMShandle:=0;
+{$ENDIF }
     end;
   fillchar(cache^,pages*sizeof(cachepage),0);
 end;
@@ -42,11 +44,11 @@ end;
 procedure dbReleasecache;
 begin
   if cacheanz>0 then
+{$IFDEF BP }
     if dbEMShandle<>0 then
-{$IFNDEF WIN32} { MK 12/99 }
       EmsFree(dbEMShandle)
-{$ENDIF}
     else
+{$ENDIF }
       freemem(cache,cacheanz*sizeof(cachepage));
   cacheanz:=0;
 end;
@@ -65,11 +67,13 @@ begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
       seek(fi,offs);
-{      gotoxy(1,1); write(offs:10,' '); }
       blockread(fi,data,irsize);
       end
-    else begin
+    else
+    begin
+{$IFDEF BP }
       setemscache;
+{$ENDIF }
 {$IFNDEF WIN32}
       seek_cache(dbp,offs,i);
 {$ENDIF}
@@ -121,7 +125,9 @@ begin
     seek(fi,offs);
     blockwrite(fi,data,irsize);
     if cacheanz>0 then begin
+{$IFDEF BP }
       setemscache;
+{$ENDIF }
       i:=0;
       sp:=0; s:=maxlongint;
       while (i<cacheanz) and (not cache^[i].used or (cache^[i].dbp<>dbp) or

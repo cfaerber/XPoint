@@ -911,14 +911,14 @@ begin   { readmask }
             cont^:=TopAllStr(ustr(cont^)); replace:=false; end
             else
 {JG:02.02.00}  {Clipboard fuer Menues}
-          if (t=^V) or ((t=keyins) and kb_shift)
-             then if clip2string(s^,maxlen,1) then if xtest1(s^) then cont^:=s^;
+          if (t=^V) or ((t=keyins) and kb_shift) then begin
+            s^:=clip2string(maxlen,1);                     {JG:06.02.00 Clipstring=String...}
+            if xtest1(s^) then cont^:=s^;
+	    end;
 
-          if (t=^U) then Begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
-             if clip2string(s^,maxlen,1) then begin
-                s^:=mailstring(s^);
-                if xtest1(s^) then cont^:=s^;
-                end;
+          if (t=^U) then begin       {Dito mit Schnippelaktion fuer Mailadresse/MID}
+             s^:=mailstring(clip2string(maxlen,1));        {JG:06.02.00}
+             if xtest1(s^) then cont^:=s^;
              end;
 {/JG}
         if (t=keypgup) then

@@ -318,7 +318,9 @@ begin
 end;
 
 
-{$B+}
+{$IFNDEF FPC }
+  {$B+}
+{$ENDIF }
 procedure display(p:shortint);
 var i,j : integer;
     mi  : shortint;
@@ -342,7 +344,9 @@ begin
   if dispmode=12 then xaufbau:=false;
   mdisplay:=false;
 end;
-{$B-}
+{$IFNDEF FPC }
+  {$B-}
+{$ENDIF }
 
 procedure redisplay(p:shortint);
 var i,bp : integer;

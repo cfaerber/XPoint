@@ -10,7 +10,9 @@
 { Nodelist }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpfido;
 
@@ -151,7 +153,7 @@ type  noderec = record
 
       userrec = record
                   name : string[MaxNamelen];
-                  adr  : array[0..3] of word;  { Zone:Net/Node.Point }
+                  adr  : array[0..3] of smallword;  { Zone:Net/Node.Point }
                   fnr  : byte;                 { Nodelisten-Dateinr. }
                   fadr : longint;
                 end;

@@ -10,14 +10,19 @@
 { CrossPoint - Utilities }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp5;
 
 interface
 
 uses  xpglobal, crt,dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
-      ems,xms,video,datadef,database,maus2,maske,xdelay,clip,resource,
+      video,datadef,database,maus2,maske,xdelay,clip,resource,
+{$IFDEF BP }
+      ems,xms,
+{$ENDIF }
       xp0,xp1,xp1input,xp1o,xp1o2;
 
 procedure kalender;
@@ -327,7 +332,9 @@ procedure memstat;
 const rnr = 500;
 var regs : registers;
     x,y  : byte;
+{$IFDEF BP }
     ems  : longint;
+{$ENDIF }
     os2  : boolean;
     win  : boolean;
     free : longint;
@@ -357,8 +364,10 @@ begin
                           xpspace(XferDir)) / $100000:6:1,' MB');
   free:=dfree;
   gotoxy(x+32,y+6);
+{$IFNDEF Ver32 }
   if free>=0 then write(free div $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
+{$ENDIF }
   WriteVer(os2,win,x+22,y+8);
   wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
   mon;
@@ -376,6 +385,7 @@ type so = record
           end;
 var regs : registers;
     x,y  : byte;
+
     ems  : longint;
     os2  : boolean;
     win  : boolean;
@@ -404,25 +414,26 @@ begin
   gotoxy(x+19,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
 {$ENDIF}
   { (ovrheaporg+3) div 64:4, ' KB'); }
-  if emstest then begin
+{$IFDEF BP }
+  if emstest then
+  begin
     gotoxy(x+31,y+4);
     { 29.01.2000 Stefan Vinke, RTE 215 bei 64 MB EMS }
     write(longint(emstotal)*16:5,' KB');
     ems:=0;
-{$IFNDEF ver32}
     if (OvrEmshandle<>0) and (OvrEmsHandle<>$ffff) then
       inc(ems,EmsHandlePages(OvrEmshandle)*16);
     if dbEMShandle<>0 then inc(ems,EmsHandlePages(dbEMShandle)*16);
     inc(ems,resemspages*16);
     gotoxy(x+31,y+5); write(ems:5,' KB');
     gotoxy(x+31,y+6); write(emsavail*16:5,' KB');
-{$ENDIF}
-    end;
+  end;
   if xmstest then begin
     gotoxy(x+44,y+4); write(xmstotal:5,' KB');
     gotoxy(x+44,y+5); write(0:5,' KB');
     gotoxy(x+44,y+6); write(xmsavail:5,' KB');
     end;
+{$ENDIF }
   gotoxy(x+57,y+4);
 {$IFNDEF ver32}
   if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')

@@ -11,7 +11,9 @@
 { CrossPoint - allg. Routinen }
 
 {$I XPDEFINE.INC }
-{$F+}
+{$IFDEF BP }
+  {$F+}
+{$ENDIF }
 
 {$IFDEF DPMI}
 {$C permanent}
@@ -22,11 +24,8 @@ unit xp1;
 interface
 
 uses
-{$IFDEF OPro }
-  opexec, opxms,
-{$ENDIF}
   xpglobal, crt,dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
-  datadef,database,mouse,maus2,help,maske,ems,lister,printerx,xdelay,clip,
+  datadef,database,mouse,maus2,help,maske,lister,printerx,xdelay,clip,
   resource,xp0,xpcrc32;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }

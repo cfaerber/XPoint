@@ -20,7 +20,9 @@
 UNIT printerx;
 
 {$I XPDEFINE.INC }
-{$O-,F+}
+{$IFDEF BP }
+  {$O-,F+}
+{$ENDIF }
 
 {  ==================  Interface-Teil  ===================  }
 
@@ -105,8 +107,7 @@ type textbuf = array[0..126] of char;
                    1 : (ostr : string[127]);
                end;
 
-var oldexit,
-    oldprtsc : pointer;
+var oldexit: pointer;
 
 
 Procedure xlate(var s:string; var bufpos:word);
@@ -189,10 +190,8 @@ begin
   lstignore:=0;
 end;
 
-{ F-}
 
 procedure assignlst(var f:text; d:word);
-
 begin
 {$IFNDEF ver32}
   with textrec(f) do begin
@@ -234,9 +233,10 @@ procedure newexit;
 begin
   exitproc:=oldexit;
   close(lst);
-{  meml[0:$14]:=longint(oldprtsc); }
 end;
-{$S+}
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 
 { ^X in Steuerzeichen umsetzen;  ^0 -> ^ }
@@ -277,7 +277,6 @@ begin
   rewrite(lst);
   oldexit:=exitproc;
   exitproc:=@newexit;
-{ oldprtsc:=pointer(meml[0:$14]); meml[0:$14]:=longint(@prtsc); }
   checklst:=true;
   xlatger:=false;
   prterror:=prtorgerror;

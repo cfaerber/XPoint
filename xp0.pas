@@ -8,6 +8,7 @@
 { --------------------------------------------------------------- }
 
 { CrossPoint - Deklarationen }
+{ 06.02.2000 MH: X-Priority  }
 
 {$I XPDEFINE.INC}
 
@@ -250,8 +251,8 @@ const  {$IFDEF DPMI}
        hdf_MID    = 6;        hdf_ERR     = 16;     hdf_PGPSTAT  = 26;
        hdf_LEN    = 7;        hdf_ANTW    = 17;     hdf_Homepage = 27;
        hdf_BEZ    = 8;        hdf_DISK    = 18;     hdf_Part     = 28;
-       hdf_MAILER = 9;        hdf_STW     = 19;
-       hdf_FILE   = 10;       hdf_ZUSF    = 20;
+       hdf_MAILER = 9;        hdf_STW     = 19;     hdf_Priority = 31; {!MH:}
+       hdf_FILE   = 10;       hdf_ZUSF    = 20;     hdf_xNoArchive = 32; {!MH:}
        hdf_STAT   = 11;       hdf_DIST    = 21;
        hdf_ORG    = 12;       hdf_POST    = 22;
        { 01/2000 oh }
@@ -416,6 +417,7 @@ type   textp  = ^text;
                   x_charset  : string[25];    { --- RFC -------------------- }
                   keywords   : string[60];
                   summary    : string[200];
+{!MH:}          priority   : byte;          { Priority: 1, 3, 5 }
                   distribution:string[40];
                   pm_reply   : boolean;       { Followup-To: poster }
                   quotestring: string[20];
@@ -900,6 +902,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        NewsMIME     : boolean;       { MIME auch in News verwenden }
        MIMEqp       : boolean;       { quoted-printable }
        RFC1522      : boolean;       { RFC-1522-Header erzeugen }
+       NoArchive    : boolean;       { NoArchive-Headerz. erzeugen } {!MMH}
        pmlimits     : array[1..maxpmlimits,1..2] of longint;
        ZC_xposts    : boolean;       { ZConnect-Crosspostings }
        ZC_ISO       : boolean;       { ISO-8859-1 verwenden }

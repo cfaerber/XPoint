@@ -206,7 +206,6 @@ end;
 procedure SeiteOben(korrblock:boolean);
 var i  : integer;
     ap : absatzp;
-    o  : integer;
 begin
   TruncAbs;
   with e^ do
@@ -228,7 +227,7 @@ begin
 end;
 
 procedure SeiteUnten;
-var i,o : integer;
+var i : integer;
 begin
   TruncAbs;
   with e^ do begin
@@ -909,7 +908,7 @@ begin
 end;
 
 procedure WortLinksLoeschen;    { Wort links l”schen }
-var wp,wpnew,size : word;
+var wp,wpnew{,size }: word;
     wpa           : absatzp;
 begin
   if workpos=0 then
@@ -918,7 +917,7 @@ begin
     zeilenende
   else with e^ do begin
     wpa:=ActAbs;
-    size:=vActAbs^.size; 
+{    size:=vActAbs^.size;    MK 06.02.00 Zuweisung unn”tig  }
     wp:=workpos;
     wpnew:=workpos;
     while (wpnew>0) and not (vActAbs^.cont[wpnew-1] in trennzeich) do dec(wpnew);
@@ -933,11 +932,10 @@ end;
 procedure ZeileLoeschen;        { akt. Zeile l”schen }
 var apd   : absatzp;
     bc    : boolean;
-    dummy : absatzp;
 begin
   with e^ do                         { 1. Fall: letzte Zeile im Text }
     if (vActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then
-      dummy:=AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true)
+      AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true)
     else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz l”schen }
       absatzwechsel(ActAbs,vActAbs^.next,false);
       bc:=BlockAbsCut(ActAbs,nil,0,vActAbs^.size);
@@ -958,18 +956,18 @@ begin
       modified:=true;
       end
     else                      { 3. Fall: Zeile aus Absatz l”schen }
-      dummy:=AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
+      AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
   aufbau:=true;
 end;
 
 procedure AbsatzRechtsLoeschen;
-var wp,wpnew,size : integer;
-    wpa           : absatzp;
+var
+  wp,size : integer;
 begin
   size:=vActAbs^.size;
   if workpos<size then with e^ do begin
     wp:=workpos;
-    wpa:=AbsDelete(ActAbs,wp,size-wp,true,true);
+    AbsDelete(ActAbs,wp,size-wp,true,true);
     aufbau:=true;
     end;
 end;
@@ -1742,7 +1740,6 @@ var   stxt  : string[MaxFindLen];
       brk   : boolean;
       t     : taste;
       count : longint;
-      dummy : absatzp;
 begin
   if again and (lastop=0) then begin
     errsound;
@@ -1800,7 +1797,7 @@ begin
               if insap=nil then brk:=true
               else begin
                 FastMove(repby[1],vap(insap)^.cont,length(repby));
-                dummy:=AbsDelete(ActAbs,workpos,length(txt),false,true);
+                AbsDelete(ActAbs,workpos,length(txt),false,true);
                 Insert(insap,pos);
                 MoveWorkpos(workpos+length(repby),ActAbs);
                 end;

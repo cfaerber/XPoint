@@ -10,7 +10,9 @@
 { CrossPoint - Editor }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpe;
 

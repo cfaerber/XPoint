@@ -551,7 +551,9 @@ again:
         i:=0;
         while (i<nanz) and (np^[i].node<fa.node) do
           inc(i);
-        {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
           _adr:=np^[i].adr
         else

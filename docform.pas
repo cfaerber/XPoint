@@ -17,7 +17,7 @@
 uses dos,typeform,fileio,xpglobal;
 
 const
-        l_ver = '1.03';                            {TJ030200 - naja, der schnelleren Uebersicht wegen}
+        l_ver = '1.03'; {TJ030200 - naja, der schnelleren Uebersicht wegen}
 
 
 var infile,outfile : pathstr;
@@ -159,8 +159,9 @@ end;
 var bs : string[20];
 
 begin
-  writeln;
-  writeln('DocForm v'+l_ver+pformstr+' --> XP '+verstr+betastr+' '+author_name+' '+x_copyright); {TJ030200 - bissel der Herkunft wegen}
+  writeln;  {TJ030200 - bissel der Herkunft wegen}
+  writeln('DocForm v'+l_ver+pformstr+' --> XP '+verstr+
+            betastr+' '+author_name+' '+x_copyright); 
   writeln;
   infile:=paramstr(1);
   outfile:=paramstr(2);

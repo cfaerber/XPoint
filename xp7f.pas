@@ -10,7 +10,9 @@
 { --- Fido - Netcall ------------------------------------------------- }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp7f;
 
@@ -749,7 +751,7 @@ begin
   if s[2]='C' then begin                { Crash-Empf„ngerliste anzeigen }
     new(hdp);
     assign(f,CrashFile(copy(s,6,18)));
-    {$I-} reset(f,1);
+    reset(f,1);
     if ioresult=0 then with hdp^ do begin
       sh:=true; adr:=0;
       lastempf:=''; count:=1; n:=0;

@@ -1935,85 +1935,76 @@ end;
 
 
 
-{ JG:04.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }  
+{ JG:06.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }  
 
 function mailstring(const s: String): string; assembler;
 asm
 {$IFNDEF Ver32 }
-        mov dx,ds
-        cld
-        les di, @result
-        lds si, s
+        push ds
+        lds si,s           
 
+        mov ch,0
         mov cl,[si]
-        inc si
-        
+        inc si      
         mov bx,0        
 
 @@1:    cmp byte ptr [si+bx],'@'        { @ Suchen }                   
         je @@2
         inc bx
-        cmp bl,cl
+        cmp bx,cx
         je @end
         jmp @@1
 
+{-----------------------}
+@Chlst: db '-_.$@'
+       
+@check: mov al,[si+bx]                   { Check auf Gueltige Zeichen }
+        mov di,5
+
+@c1:    cmp byte ptr cs:[di+@chlst],al
+        je @c4 
+        dec di
+        jns @c1
+ 
+        cmp al,'0'
+        jb @c2
+        cmp al,'9'
+        jna @c4        
+
+@c2:    and al,0dfh
+        cmp al,'A'
+        jb @c3
+        cmp al,'Z'
+        jna @c4
+
+@c3:    clc
+        db 0c3h {retn}
+@c4:    stc
+        db 0c3h {retn}
+{------------------------}
+
 @@2:    dec bx                          { gueltige Zeichen links des @ suchen }
         js @@3         
-        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
-        cmp al,'_'
-        je @@2
-        cmp al,'-'
-        je @@2
-        cmp al,'.'
-        je @@2 
-        cmp al,'$'
-        je @@2 
-        cmp al,'@'
-        je @@2
-        cmp al,'0'
-        jb @@2a
-        cmp al,'9'
-        jna @@2        
-@@2a:   and al,0dfh
-        cmp al,'A'
-        jb @@3
-        cmp al,'Z'
-        jna @@2
-
+        call @check
+        jc @@2
 
 @@3:    lea si,[si+bx+1]                {SI= Start des neuen Strings}
         mov bx,0
         
 @@4:    inc bx                          { und nach rechts }
-        cmp bl,cl
-        je @@5
-        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
-        cmp al,'_'
-        je @@4
-        cmp al,'-'
-        je @@4
-        cmp al,'.'
-        je @@4 
-        cmp al,'$'
-        je @@4 
-        cmp al,'@'
-        je @@4
-        cmp al,'0'
-        jb @@4a
-        cmp al,'9'
-        jna @@4        
-@@4a:   and al,0dfh
-        cmp al,'A'
-        jb @@5
-        cmp al,'Z'
-        jna @@4
+        cmp bx,cx
+        je @end
+        call @check     
+        jc @@4 
+        mov cx,bx 
 
-@@5:    mov cx,bx
 
 @end:   mov al,bl
+        les di,@result
+        cld
         stosb
         rep movsb            
-        mov ds,dx
+        pop ds
 {$ENDIF }
 end;        
 {/JG}

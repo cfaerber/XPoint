@@ -10,12 +10,16 @@
 { Product Code / Versionsnummer / Diverses }
 { fÅr ZFIDO, XP-FM, XP7 und XP7T           }
 
+{$I XPDEFINE.INC }
+
 unit  xpdiff;
 
 interface
 
+uses xpglobal;
+
 const prodcode : byte = $e9;
-      version  = $314;   { 3.20 }
+      version: smallword  = $0314;   { 3.20 }
       prodcodef= 'FIDO.PC';
 
       EL_ok     = 0;                    { XP-FM:                    }

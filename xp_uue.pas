@@ -10,7 +10,9 @@
 { CrossPoint - UUDecode }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xp_uue;
 

@@ -19,7 +19,9 @@
 UNIT feiertag;
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 {  ==================  Interface-Teil  ===================  }
 

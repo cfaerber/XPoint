@@ -156,7 +156,9 @@ again:
         i:=0;
         while (i<nanz) and (np^[i].node<fa.node) do
           inc(i);
-        {$R+}
+{$IFDEF Debug }
+  {$R+}
+{$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
           _adr:=np^[i].adr
         else
@@ -735,8 +737,8 @@ again:
   mwrt(x+2,y+15,getres2(2131,21));   { 'Netz:'  }
   mwrt(x+28,y+14,getres2(2131,22));  { 'Eintr„ge:' }
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
-{$IFNDEF WIN32}
   openlist(2,78,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
+{$IFDEF BP }
   ListInitEMS(2048);   { 2 MB EMS reservieren }
 {$ENDIF}
   found:=0; n:=0;

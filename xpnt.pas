@@ -12,7 +12,9 @@
 { s. auch NETZTYP.DOC  }
 
 {$I XPDEFINE.INC }
-{$F+,O+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpnt;
 

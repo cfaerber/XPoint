@@ -47,7 +47,7 @@ const XPrequest = 'File Request';
       attrCrash = $0002;
       attrFile  = $0010;
       attrReqEB = $1000;            { EB anfordern }
-      attrQPC   = $0001;
+      { attrQPC   = $0001; }
       attrKillSent = $0080;
 
 type  FidoAdr  = record
@@ -994,7 +994,6 @@ var f1,f2  : file;
     origin : fidoadr;
     madr   : longint;
     pm,via : boolean;
-    zero   : boolean;
     lfs    : byte;        { LF's am Zeilenende bei GetString }
     prog2  : string[60];
     brt2   : string[25];  { <- bretter }
@@ -1203,7 +1202,6 @@ label abbr;
 
   procedure ReadMsgToBuf(var hdgroesse:longint);
   var bpos  : word;
-      rr    : word;
       size  : word;
       addlf : smallword;
   begin

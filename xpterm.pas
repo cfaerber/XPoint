@@ -10,7 +10,9 @@
 { CrossPoint - Terminal und Scripts }
 
 {$I XPDEFINE.INC}
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpterm;
 

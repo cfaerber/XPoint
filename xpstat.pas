@@ -10,7 +10,9 @@
 { CrossPoint - Statistik-Routinen }
 
 {$I XPDEFINE.INC }
-{$O+,F+}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
 unit xpstat;
 
