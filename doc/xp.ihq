@@ -296,6 +296,10 @@ M”gliche Optionen sind:
 
 <</maus>> aktiviert eine Cursor-Maus-Emulation.
 
+<</menu>> blendet mit XPME gesperrte Menpunkte
+      (s. XPOINT.TXT, Kap. C.7.) vorbergehend wieder
+      ein.
+
 <</nb>>   schaltet bei Beta-Versionen den Warnhinweis ab.
 
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
