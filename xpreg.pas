@@ -1001,7 +1001,7 @@ var brk,modi : boolean;
       WriteFormular:=true;
     with regdata do begin
       writeln(t);
-      writeln(t,lr,right(dup(50,'-')+' CrossPoint-Registrierung ['+verstr+']',62));
+      writeln(t,lr,right(dup(33,'-')+' CrossPoint-Registrierung ['+xp_xp+' '+verstr+']',62));
       writeln(t);
 
       if regweghin in [1,2] then begin   { Formular ausdrucken / speichern }
@@ -1577,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2000/12/14 17:54:10  mk
+  - Programmnamen in Regformular schreiben
+
   Revision 1.10.2.2  2000/10/05 20:29:49  fe
   RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
   Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
