@@ -347,7 +347,7 @@ begin
     else if CommObj is TRawIPStream then 
     begin
       ip := TIP.Create;
-      ip.Raw := TRawIPStream(CommObj).RemoteIP;
+      ip.Raw := LongWord(TRawIPStream(CommObj).RemoteIP);
       TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+
 	ip.AsString+':'+StrS(TRawIPStream(CommObj).RemotePort)+')';
       Log('=','Connected with: '+
@@ -1122,6 +1122,11 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.3  2002/07/31 17:08:41  ma
+  - CL: fixed UUCP-over-IP crash
+    see <8Qc1W4n1bTB@dirk.deimeke.net> and <8Qk7IATmbTB@dirk.deimeke.net>
+    "Absturz bei UUCP-over-IP"/"DEBUGLOG fuer UUCP-over-IP ..."
+
   Revision 1.24.2.2  2002/07/21 20:14:47  ma
   - changed copyright from 2001 to 2002
 
