@@ -1162,7 +1162,9 @@ begin
     {$IFDEF BP }
       FastMove(p^,mem[base:0],scsize);
     {$ELSE }
-      WriteScreenRect(1, screenwidth, 1, screenlines, p^);
+      {$IFNDEF NCRT }
+        WriteScreenRect(1, screenwidth, 1, screenlines, p^);
+      {$ENDIF }
     {$ENDIF }
     mon;
     disp_DT;
@@ -2372,6 +2374,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/05/07 11:02:54  hd
+  - Anpassung an Curses
+
   Revision 1.38  2000/05/06 17:29:21  mk
   - DOS DPMI32 Portierung
 
