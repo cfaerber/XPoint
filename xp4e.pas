@@ -193,7 +193,9 @@ begin
     p:=cpos('@',s);
     if p>0 then
       if (cpos('.',mid(s,p+1))=0) then
-        s:=s+ntAutoDomain(pbox,false);
+        { Adresse darf nicht l„nger als 79 Zeichen sein }
+        if Length(s + ntAutoDomain(pbox,false)) <= eAdrLen then
+          s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
     else if (pb_netztyp=nt_fido) and nodeopen then
@@ -2417,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.18  2001/08/26 22:17:15  mk
+  - fixed Crash with addresses longer then 80 chars, when xp try to add a domain name
+
   Revision 1.25.2.17  2001/08/12 11:20:32  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
