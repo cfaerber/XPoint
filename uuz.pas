@@ -3078,8 +3078,10 @@ begin
         if s<>'' then wrref;
       end;
     if (attrib and attrControl<>0) and (Pos ('cancel ',control)<>0) then
+    begin
       Insert ('<',control,8);
       wrs(f,'Control: '+control+'>');
+    end;
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
@@ -3536,6 +3538,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.8  2000/09/08 11:15:04  sv
+  - Fix (begin...end-Block vergessen)
+
   Revision 1.35.2.7  2000/09/07 12:56:53  sv
   - Cancelerstellung ueberarbeitet
 
