@@ -464,7 +464,7 @@ var i        : integer;
           if cpos('.',fname)=0 then
             fname:='';                 { Magic Name -> l"schen }
           for iFile:=0 to IncomingRequestedFiles.Count-1 do
-            if match(fname,IncomingRequestedFiles[iFile]) then
+            if match(fname,ExtractFileName(IncomingRequestedFiles[iFile])) then
               fname:='';
           if fname<>'' then begin
             nfiles:=nfiles+' '+fname;
@@ -904,6 +904,10 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.5  2003/11/23 13:44:41  mk
+  - call Match() only with bare Filename, not with full path,
+    this prevents false match results
+
   Revision 1.32.2.4  2003/11/22 16:59:58  mk
   - fixed 649342: Fido-Requests werden nicth geloescht
 
