@@ -3373,6 +3373,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 46 Ungltige Auswahl
 47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
 48 Sendepuffer (%s) ist fehlerhaft!
+49 /nsp: Ungültige Zeilenangabe für NETCALL.DAT: %s
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!
 
@@ -3978,6 +3979,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.55  2002/04/03 22:58:09  mk
+# - added resource 10700,49 (for /nsp)
+#
 # Revision 1.54  2002/03/25 20:49:11  mk
 # - keydeffile (keydefs.cfg and keys-e.cfg) is now lowercase
 #

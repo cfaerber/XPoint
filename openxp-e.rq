@@ -3268,6 +3268,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 46 Invalid selection
 47 Oops - all matching recipients marked/filtered!?  (press F1 for help)
 48 Sendepuffer (%s) ist fehlerhaft!
+49 /nsp: Invalid line number specified for NETCALL.DAT: %s
 # Not available
 99 Function not implemented yet!
 
@@ -3966,6 +3967,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.48  2002/04/03 22:58:09  mk
+# - added resource 10700,49 (for /nsp)
+#
 # Revision 1.47  2002/03/25 20:49:12  mk
 # - keydeffile (keydefs.cfg and keys-e.cfg) is now lowercase
 #
