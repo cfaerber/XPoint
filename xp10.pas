@@ -1678,7 +1678,7 @@ begin
               end;
         5 : case nr of
               1 : if NewNodeentry then begin
-                    inc(anzahl);
+                    Anzahl := NL_Anz;
                     SortNodelists(nodelist);
                     modi:=true;
                     reindex:=true;
@@ -1735,7 +1735,7 @@ begin
       if t=keycend then p:=minmax(gl,1,eanzahl-a);
       end;
     if (typ=4) and (nr=okb) and modi then begin
-      { if ReadJNesc(getres(1019),true,brk) then begin   { 'Žnderungen sichern' }
+      { if ReadJNesc(getres(1019),true,brk) then begin }  { 'Žnderungen sichern' }
       ExtraktHeader:=xhd;
       HeaderLines:=anzahl;
       GlobalModified;
@@ -2027,6 +2027,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.1  2000/08/01 08:42:16  mk
+  - Nodelistenanzahl falsch nach fehlerhaften Einfuegen neuer Nodeliste
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 
