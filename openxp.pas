@@ -41,7 +41,7 @@ uses
   compheap,
 {$ENDIF }  *)
 
-  Main;
+  main;
 
 begin
   StartOpenXP;
