@@ -1522,11 +1522,13 @@ begin
      je @@9
      cmp al,';'
      je @@9
+     cmp si,0           
+     je @_9                       { Abbruch, wenn kein Trenner im Puffer ist }
      inc cx
      dec si
      dec di
      jne @_8
-     add si,cx          { wenn keine Trennmîglichkeit gefunden wurde }
+@_9: add si,cx          { wenn keine Trennmîglichkeit gefunden wurde }
      add di,cx          { StringlÑnge und Bufferposition zurÅcksetzen }
 
 @@9: mov   ax,di
@@ -3495,6 +3497,10 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.41  2001/06/08 17:54:04  my
+  JG:- Fixed last commit: if no split position is in the read
+       buffer, routine aborts and splits line at current position
+
   Revision 1.35.2.40  2001/05/29 21:02:13  my
   JG:- Header longer than 255 characters are splitted correctly now
        (at the last " ", "," or ";" before pos 255 rather than exactly
