@@ -497,6 +497,7 @@ end;
 procedure tuuz.testfiles;
 begin
   if not FileExists(source) then raise Exception.Create('Quelldatei fehlt');
+  if FileExists(dest) then raise Exception.Create('Zieldatei schon vorhanden');
   if u2z and not validfilename(dest) then
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z then
@@ -3661,6 +3662,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/12/04 08:58:27  mk
+  - test destination file
+
   Revision 1.11  2000/12/03 12:38:27  mk
   - Header-Record is no an Object
 
