@@ -308,10 +308,10 @@ begin
   with col do begin
     at(colmenu[0]);
     moff;
-    wrt(31,1,'  '+iifs(xp_xp='CrossPoint','X',' ')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ');
+    wrt(31,1,'  '+iifs(xp_xp='CrossPoint','X','X')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ');
     at(colmenuhigh[0]);
-    if xp_xp='CrossPoint' then wrt(33,1,'X')
-    else wrt(34,1,'P');
+  { if xp_xp='CrossPoint' then } wrt(33,1,'X');
+  { else wrt(34,1,'P');        }
     wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
     wrkeys(false);
@@ -370,11 +370,11 @@ begin
     wrt(33,1,'X'); wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
     at(colmenuinv[0]);
-    if xp_xp='CrossPoint' then wrt(32,1,' XPoint ')
-    else wrt(33,1,' Point ');
+  { if xp_xp='CrossPoint' then } wrt(32,1,' XPoint ');
+  { else wrt(33,1,' Point ');  }
     at(colmenuinvhi[0]);
-    if xp_xp='CrossPoint' then wrt(33,1,'X')
-    else wrt(34,1,'P');
+  { if xp_xp='CrossPoint' then } wrt(33,1,'X');
+  { else wrt(34,1,'P');        }
     mon;
     end;
 end;
@@ -1179,6 +1179,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.4  2001/12/07 17:53:45  my
+  MY:- Fix Farbkonfiguration: ein paar unsinnige PrÅfungen auf
+       "xp_xp='CrossPoint'" auskommentiert.
+
   Revision 1.12.2.3  2001/09/16 20:23:49  my
   JG+MY:- Zusatzmen¸ faﬂt jetzt bis zu 20 Eintr‰ge (bei 25 Bildschirm-
           zeilen stehen nur die ersten 19 zur Verf¸gung).
