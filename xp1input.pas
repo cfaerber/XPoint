@@ -270,13 +270,11 @@ const maxsel = 20;
 var width,height : byte;
     n,p,p1,ml : shortint;
     sel       : array[1..maxsel] of string;
-    slen      : array[1..maxsel] of word;
     selhigh   : array[1..maxsel] of byte;
     hot       : string[maxsel];
     t         : taste;
     checker   : boolean;
     poutside  : boolean;
-    i         : integer;
 
   procedure display;
   var i  : integer;
@@ -333,7 +331,6 @@ begin
     p:=pos(',',auswahl);
     if p>0 then begin
       inc(n);
-      slen[n]:=p;
       sel[n]:=left(auswahl,p-1);
       auswahl:=copy(auswahl,p+1,255);
       p:=pos('^',sel[n]);
@@ -418,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/14 11:35:41  mk
+  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
+
   Revision 1.11  2000/07/13 10:23:46  mk
   - Zeiger auf Strings entfernt
 

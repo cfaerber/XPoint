@@ -833,15 +833,12 @@ begin
           inc(spaces);
         if spaces>=wp then spaces:=0;
       end;
-      if memtest(ap^.size) and createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
-      { /robo }
+      if createacopy(ap,ap2,wp-spaces-quotes,copysize+spaces+quotes)
       then begin
         if spaces>0 then
           fillchar(ap2^.cont,spaces,' ')
-        { 10.02.2000 robo - Quote-Reflow }
         else if quotes>0 then
           Move(quotec[1],ap2^.cont[0],quotes);
-        { /robo }
         if assigned(ap^.next) then
           ap^.next^.prev:=ap2;
         ap2^.next:=ap^.next;
@@ -890,8 +887,8 @@ begin
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
-        else if memtest(ss) then begin   { Abs„tze zusammenh„ngen }
-          { 15.02.2000 robo - Quote-Reflow }
+        else begin   { Abs„tze zusammenh„ngen }
+          { Quote-Reflow }
           if config.QuoteReflow then begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
@@ -1097,7 +1094,6 @@ begin
         if pointswitch and (t[1]='e') then Juppheidi(ap,wp+1);
         end
       else
-        if memtest(ap^.size+spaces+1) then
           if ap^.size+spaces>=maxabslen then
             error(2)       { 'Absatz zu groá' }
           else begin
@@ -1141,12 +1137,10 @@ begin
     end
   else begin
     wp:=workpos;
-    if memtest(asize+n) then begin
-      ap:=AllocAbsatz(n);
-      fillchar(ap^.cont,n,32);
-      Insert(ap,dummy);
-      MoveWorkpos(wp+n,nil);
-      end;
+    ap:=AllocAbsatz(n);
+    fillchar(ap^.cont,n,32);
+    Insert(ap,dummy);
+    MoveWorkpos(wp+n,nil);
   end;
 end;
 
@@ -1306,8 +1300,7 @@ begin
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
       error(2)     { 'Absatz zu groá }
-    else if memtest(ss)
-    and assigned(blk) { .robo }
+    else if assigned(blk) { .robo }
     then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
@@ -1335,8 +1328,7 @@ begin
       error(2);     { 'Absatz zu groá }
       FreeBlock(blk);
     end
-    else if memtest(ap^.size+blk^.size+apn^.size+3*asize+spaces)
-    and assigned(blk) { .robo }
+    else if assigned(blk) { .robo }
     then begin
       ap2:=AllocAbsatz(blk^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
@@ -1413,7 +1405,7 @@ begin
         inc(tsize,ap^.size+asize+16);
         ap:=ap^.next;
       until (ap=block[2].pos.absatz) or (ap=nil);
-      if assigned(ap) and memtest(tsize) then begin
+      if assigned(ap) then begin
         ap:=block[1].pos.absatz;
         ss:=ap^.size-block[1].pos.offset;
         ap0:=AllocAbsatz(ss); ap1:=ap0;             { Startabsatz }
@@ -1539,7 +1531,7 @@ begin
       end
     else if ap1=ap2 then begin    { Absatzteil ausschneiden }
       ss:=ofs2-ofs1;
-      if memtest(ss) then begin
+      begin
         recount:=(block[1].disp<2);
         apnew:=AllocAbsatz(ss);
         copyflags(ap1,apnew);
@@ -1559,7 +1551,7 @@ begin
       end
     else if longint(ofs1)+ap2^.size-ofs2>maxabslen then
       error(2)                         { mehrere Abs„tze ausschneiden }
-    else if memtest(ap1^.size+ap2^.size) then begin
+    else begin
       recount:=(block[1].disp<2);
       wp.absatz:=ActAbs;
       ss:=ap1^.size-ofs1;
@@ -1891,8 +1883,7 @@ begin
           break;
         end;
         copysize:=max(0,ap^.size-fp);
-        if memtest(ap^.size)
-        and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
+        if createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
         then begin
           if spaces>0 then
             fillchar(ap2^.cont,spaces,' ')
@@ -1925,7 +1916,7 @@ begin
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
-        else if memtest(ss) then begin
+        else if true then begin
           spaces:=0;
           if config.QuoteReflow then begin
             quotec1:=getquote(ap);
@@ -2300,6 +2291,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/07/14 11:35:41  mk
+  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
+
   Revision 1.24  2000/07/05 17:10:53  mk
   - AnsiString Updates
 

@@ -153,7 +153,6 @@ type  charr    = array[0..65500] of char;
 
 var   Defaults : edp;
       language : ldataptr;
-      memerrfl : boolean;
       akted    : edp;
       delroot  : delnodep;         { Liste gel”schter Bl”cke }
       ClipBoard: absatzp;
@@ -612,6 +611,7 @@ begin
       freelast(delroot);
 end;
 
+
 procedure FreeDellist;             { Liste gel”schter Bl”cke freigeben }
 var ap : absatzp;
 begin
@@ -620,7 +620,6 @@ begin
     freeblock(ap);
   until delroot=nil;
 end;
-
 
 { -------------------------------------------------------- Speicher }
 
@@ -631,30 +630,17 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
-function memtest(size:longint):boolean;
-begin
-(*  while assigned(delroot) and memfull do
-    FreeLastDelEntry;
-  if memfull and assigned(Clipboard) then
-    FreeBlock(Clipboard); *)
-  memtest:=true;
-end;
-
 function allocabsatz(size:integer):absatzp;
 var p  : absatzp;
     ms : integer;
 begin
-  if not memtest(size) then
-    allocabsatz:=nil
-  else begin
-    ms:=(size+15) and $fff0;        { auf 16 Bytes aufrunden }
-    getmem(p,asize+ms);
-    fillchar(p^,asize,0); { next, prev implizit auf NIL setzen, Rest auf 0 }
-    p^.size:=size;
-    p^.msize:=ms;
-    p^.umbruch:=true;
-    allocabsatz:=p;
-    end;
+  ms:=(size+15) and $fff0;        { auf 16 Bytes aufrunden }
+  getmem(p,asize+ms);
+  fillchar(p^,asize,0); { next, prev implizit auf NIL setzen, Rest auf 0 }
+  p^.size:=size;
+  p^.msize:=ms;
+  p^.umbruch:=true;
+  allocabsatz:=p;
 end;
 
 procedure freeabsatz(var p:absatzp); { .robo }
@@ -714,8 +700,7 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  memerrfl:=false;
-  if memtest(2*maxabslen) and exist(fn) then begin
+  if exist(fn) then begin
     getmem(ibuf,maxabslen);
     getmem(tbuf,4096);
     mfm:=filemode; filemode:=0;
@@ -809,8 +794,7 @@ var mfm   : byte;
 
 begin
   root:=nil;
-  memerrfl:=false;
-  if memtest(2*maxabslen) and exist(fn) then begin
+  if exist(fn) then begin
     getmem(ibuf,sizeof(tbytestream));
     mfm:=filemode; filemode:=0;
     assign(t,fn); reset(t,1);
@@ -1835,7 +1819,6 @@ begin
     cursor(curon);
     tk:=0;
     repeat
-      memerrfl:=false;
       if aufbau then display;
       showstat;
       InterpreteToken(-1);         { CorrectWorkpos }
@@ -1879,6 +1862,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/07/14 11:35:41  mk
+  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
+
   Revision 1.33  2000/07/06 09:12:08  mk
   - AnsiString Updates
 

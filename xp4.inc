@@ -102,7 +102,7 @@ begin
   aufbau:=true;
 end;
 
-{ Ausgeklammert, siehe auch xp4o2.pas und xp2.pas 
+{ Ausgeklammert, siehe auch xp4o2.pas und xp2.pas
 procedure _SetLanguage;
 begin
   SetLanguage;
@@ -111,8 +111,6 @@ end;
 }
 
 procedure MenuConfigAnzeigeZeilen;
-var
-  oldlines : byte;
 begin
   ParZeilen:=0;
   lines(screenlines,fnkeylines);
@@ -574,6 +572,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/07/14 11:35:42  mk
+  - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
+
   Revision 1.19  2000/07/09 16:41:00  hd
   - Ansistring
     - Bis xp4w - Bretter bearbeiten
