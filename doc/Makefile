@@ -132,7 +132,7 @@ MAKE ?= make.exe
 RM ?= rm
 RMDIR ?= rmdir
 SED ?= sed
-RECODE ?= recode
+CSCONV ?= recode
 JADE ?= openjade
 TIDY ?= tidy
 H2T ?= w3m
@@ -157,7 +157,7 @@ MAKE ?= gmake
 RM ?= rm
 RMDIR ?= rmdir
 SED ?= sed
-RECODE ?= recode
+CSCONV ?= recode
 JADE ?= openjade
 TIDY ?= tidy
 H2T ?= w3m
@@ -183,7 +183,7 @@ MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
 SED ?= sed
-RECODE ?= recode
+CSCONV ?= recode
 JADE ?= openjade
 TIDY ?= tidy
 H2T ?= w3m
@@ -205,6 +205,19 @@ H2TFLAGS ?= -dump -width=72
 endif
 ifeq ($(H2T),w3m)
 H2TFLAGS ?= -dump -cols 72
+endif
+
+ifeq ($(CSCONV),recode)
+IBM2LAT1 ?= $(CSCONV) -f ibmpc..latin1
+LAT12IBM ?= $(CSCONV) -f latin1..ibmpc
+endif
+ifeq ($(CSCONV),iconv)
+IBM2LAT1 ?= $(CSCONV) -f ibm850 -t latin1
+LAT12IBM ?= $(CSCONV) -f latin1 -t ibm850
+endif
+ifeq ($(CSCONV),tcs)
+IBM2LAT1 ?= $(CSCONV) -f msdos -t 8859-1
+LAT12IBM ?= $(CSCONV) -f 8859-1 -t msdos
 endif
 
 HELP = xp xp-e
@@ -249,7 +262,7 @@ ifeq ($(MAKEHB),yes)
 
 xpoint.txt: xpoint.htm
 	$(H2T) $(H2TFLAGS) xpoint.htm > xpoint.tmp
-	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+	-$(LAT12IBM) < xpoint.tmp > xpoint.txt
 
 else
 
@@ -290,7 +303,7 @@ xpoint.txt: xpoint.sgm xpoint.dsl
 	$(SED) 's/&#13;//g' xpoint.tmp > xpoint.htm
 	-$(TIDY) $(TIDYFLAGS) xpoint.htm
 	$(H2T) $(H2TFLAGS) xpoint.htm > xpoint.tmp
-	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+	-$(LAT12IBM) < xpoint.tmp > xpoint.txt
 endif
 endif
 endif
@@ -391,7 +404,7 @@ install_docdir:
 
 ifeq ($(OS),linux)
 $(patsubst %,install_%,$(TXT)): install_%: %
-	-$(RECODE) -f ibmpc..latin1 $* > tmp
+	-$(IBM2LAT1) < $* > tmp
 	$(INSTALL_DATA) tmp $(docdir)$(SEP)$*
 else
 $(patsubst %,install_%,$(TXT)): install_%: %
@@ -448,6 +461,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.18  2000/11/26 16:17:06  fe
+# Added support for two recode alternatives.  (iconv and tcs)
+#
 # Revision 1.17  2000/11/22 20:57:54  fe
 # Fixed FreeBSD install and install with "MAKEHD=no".
 #
