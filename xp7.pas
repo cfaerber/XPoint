@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -24,7 +24,7 @@ uses
   crt,
 {$ENDIF }
   sysutils,xpglobal,dos,typeform,uart,datadef,database,
-  fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,debug,
+  fileio,inout,keys,winxp,maske,maus2,montage,lister,zcrfc,debug,
   resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
@@ -35,12 +35,12 @@ procedure DropAllCarrier;
 
 function  AutoMode:boolean;
 
-const CrashGettime : boolean = false;  { wird nicht automatisch zurÅckgesetzt }
+const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
       maxaddpkts   = 8;
 
-      { In abox stehen nur die Boxen fÅr die Daten zu verschicken sind }
-      { (anzahl StÅck), in akabox alle eingetragenen Mitsende-Boxen    }
-      { (akanz StÅck).                                                 }
+      { In abox stehen nur die Boxen fuer die Daten zu verschicken sind }
+      { (anzahl Stueck), in akabox alle eingetragenen Mitsende-Boxen    }
+      { (akanz Stueck).                                                 }
 
 type  addpktrec    = record
                        anzahl : shortint;
@@ -63,7 +63,7 @@ implementation  {---------------------------------------------------}
 uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
-var  epp_apppos : longint;              { Originalgrî·e von ppfile }
+var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
 
 procedure DropAllCarrier;
@@ -98,7 +98,7 @@ end;
 { net:  FALSE -> Online-Anruf }
 { box:  '' -> UniSel(Boxen)   }
 { once: TRUE -> RedialMax:=1  }
-{ FALSE -> Netcall mu· wiederholt werden }
+{ FALSE -> Netcall muss wiederholt werden }
 
 function netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
 
@@ -115,7 +115,7 @@ var
     noconnstr  : string;
     rz         : string;
     prodir     : string;
-    OwnFidoAdr : string;    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
+    OwnFidoAdr : string;    { eigene z:n/n.p, fuer PKT-Header und ArcMail }
     CrashPhone : string;
     scrfile    : string;
     domain     : string;
@@ -144,18 +144,18 @@ var
     s          : string;
 
     ticks      : longint;
-    connects   : integer;         { ZÑhler 0..connectmax }
+    connects   : integer;         { Zaehler 0..connectmax }
     netztyp    : byte;
     logintyp   : shortint;        { ltNetcall / ltZConnect / ltMagic / }
                                   { ltQuick / ltMaus                   }
     pronet     : boolean;
     janusp     : boolean;
-    msgids     : boolean;         { fÅr MagicNET }
+    msgids     : boolean;         { fuer MagicNET }
     alias      : boolean;         { Fido: Node- statt Pointadresse     }
     CrashBox   : FidoAdr;
     ldummy     : longint;
     NumCount   : byte;            { Anzahl Telefonnummern der Box }
-    NumPos     : byte;            { gerade gewÑhlte Nummer        }
+    NumPos     : byte;            { gerade gewaehlte Nummer        }
     error      : boolean;
     ft         : longint;
 
@@ -174,7 +174,7 @@ label abbruch,ende0;
   var f,f2 : file;
   begin
     epp_apppos:=-1;
-    if _filesize(eppfile)>0 then begin      { epp an pp anhÑngen }
+    if _filesize(eppfile)>0 then begin      { epp an pp anhaengen }
       assign(f,ppfile);
       if existf(f) then reset(f,1)
       else rewrite(f,1);
@@ -231,7 +231,7 @@ label abbruch,ende0;
         end;
         end;
       end;
-    s:=s+mid(cmd,7);   { optionale Parameter anhÑngen }
+    s:=s+mid(cmd,7);   { optionale Parameter anhaengen }
     ZM:=s;
   end;
 
@@ -239,7 +239,7 @@ label abbruch,ende0;
   begin
     with BoxPar^ do begin
       case logintyp of
-        ltNetcall,             { Namen mÅssen ohne Pfade sein! }
+        ltNetcall,             { Namen muessen ohne Pfade sein! }
         ltZConnect: begin
                        caller:='CALLER.'+uparcext;
                        called:='CALLED.'+downarcext;
@@ -413,7 +413,7 @@ begin                  { of Netcall }
 
   if crash then
     if not isbox(DefFidoBox) then begin
-      rfehler(705); exit;   { 'keine Fido-Stammbox gewÑhlt' }
+      rfehler(705); exit;   { 'keine Fido-Stammbox gewaehlt' }
       end
     else if not NodeOpen then begin
       rfehler(706); exit;   { 'keine Nodeliste aktiviert' }
@@ -436,7 +436,7 @@ begin                  { of Netcall }
     if box='' then exit;
     end;
 
-  dbOpen(d,BoxenFile,1);               { zugehîrigen Dateiname holen }
+  dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound then begin
     dbClose(d);
@@ -457,21 +457,21 @@ begin                  { of Netcall }
   isdn:=(boxpar^.bport>4);
   if relogin then
     if isdn then begin
-      rfehler(739);         { 'Relogin bei ISDN nicht mîglich' }
+      rfehler(739);         { 'Relogin bei ISDN nicht moeglich' }
       exit;
       end else
     case ntRelogin(netztyp) of
       0 : begin
-            rfehler(707);   { 'Relogin-Anruf bei dieser Box nicht mîglich' }
+            rfehler(707);   { 'Relogin-Anruf bei dieser Box nicht moeglich' }
             exit;
           end;
       1 : if NoScript(boxpar^.script) then begin
-            rfehler(738);   { 'Scriptdatei fÅr Relogin-Anruf erforderlich! }
+            rfehler(738);   { 'Scriptdatei fuer Relogin-Anruf erforderlich! }
             exit;
           end;
     end;
   if not net and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
-    rfehler(708);   { 'Online-Anruf bei dieser Box nicht mîglich' }
+    rfehler(708);   { 'Online-Anruf bei dieser Box nicht moeglich' }
     exit;
     end;
   logintyp:=ntTransferType(netztyp);
@@ -591,7 +591,7 @@ begin                  { of Netcall }
         exit;
         end
       else if logintyp=ltQWK then begin
-        rfehler(735);    { 'Netzanruf QWK-Boxen ist nicht mîglich - Sysop-Mode verwenden!' }
+        rfehler(735);    { 'Netzanruf QWK-Boxen ist nicht moeglich - Sysop-Mode verwenden!' }
         dispose(NC);
         dispose(addpkts);
         aufbau:=true;
@@ -600,7 +600,7 @@ begin                  { of Netcall }
 
       SetFilenames;
 
-      if FileExists(upuffer) then _era(upuffer);  { evtl. alte PUFFER lîschen }
+      if FileExists(upuffer) then _era(upuffer);  { evtl. alte PUFFER loeschen }
       if FileExists(dpuffer) then _era(dpuffer);
       if FileExists(caller) then _era(caller);
       end
@@ -611,7 +611,7 @@ begin                  { of Netcall }
 
    if net and (IsPath(upuffer) or IsPath(dpuffer)) then begin
      if IsPath(upuffer) then
-       rfehler1(741,extractfilename(upuffer))    { 'Lîschen Sie das Unterverzeichnis "%s"!' }
+       rfehler1(741,extractfilename(upuffer))    { 'Loeschen Sie das Unterverzeichnis "%s"!' }
      else
        rfehler1(741,extractfilename(dpuffer));
      dispose(NC);
@@ -656,7 +656,7 @@ begin                  { of Netcall }
           trfehler(712,30);   { 'Fehler bei Netcall-Konvertierung' }
           goto ende0;
           end;
-        if (logintyp in [ltQuick,ltGS]) and (spufsize=0) then begin   { nîtig ? }
+        if (logintyp in [ltQuick,ltGS]) and (spufsize=0) then begin { noetig ? }
           makepuf(upuffer,false);
           end;
         if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
@@ -968,7 +968,7 @@ begin                  { of Netcall }
           if (logintyp<>ltMagic) and (logintyp<>ltMaus) then begin
             waitpack(false);
             if (logintyp<>ltQuick) and (logintyp<>ltGS) then
-              repeat                             { "Seriennr." Åbertragen }
+              repeat                             { "Seriennr." uebertragen }
                 if timeout(true) then begin
                   aufhaengen;
                   mwriteln;
@@ -1168,7 +1168,7 @@ begin                  { of Netcall }
               else begin
                 ReleaseC;
                 NC^.recbuf:=_filesize(prodir+dpuffer);
-                Del_PP_and_UV;   { .PP/.EPP und unversandte Nachrichten lîschen }
+                Del_PP_and_UV;   { .PP/.EPP und unversandte Nachrichten loeschen }
                 if FileExists(prodir+called) then
                   _era(prodir+called);            { Platz schaffen.. }
                 case logintyp of
@@ -1257,7 +1257,7 @@ begin                  { of Netcall }
             multi2;
             if rz<>restzeit then begin
               moff;
-              write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf nÑchsten (Netz)anruf... ' }
+              write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf naechsten (Netz)anruf... ' }
                     restzeit);
               mon;
               rz:=restzeit;
@@ -1322,7 +1322,7 @@ begin                  { of Netcall }
         if (caller<>'') and FileExists(caller) then _era(caller);
         end;
       RemoveEPP;    { Falls ein TurboBox-Netcall abgebrochen wurde; }
-                    { in allen anderen FÑllen ist das EPP bereits   }
+                    { in allen anderen Faellen ist das EPP bereits   }
                     { entfernt.                                     }
       if FileExists(ppfile) and (_filesize(ppfile)=0) then
         _era(ppfile);
@@ -1340,7 +1340,7 @@ begin                  { of Netcall }
 end;
 
 
-{ Achtung: BOX mu· ein gÅltiger Boxname sein! }
+{ Achtung: BOX muss ein gueltiger Boxname sein! }
 
 procedure netcall_at(zeit:datetimest; box:string);
 var brk  : boolean;
@@ -1539,6 +1539,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/11/14 21:36:53  fe
+  Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
+  So the program is called "uuz" again.
+
   Revision 1.41  2000/11/14 15:51:33  mk
   - replaced Exist() with FileExists()
 
@@ -1625,9 +1629,9 @@ end.
 
   Revision 1.17  2000/06/29 13:00:57  mk
   - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - OS/2 Version laeuft wieder
+  - Jochens 'B' Fixes uebernommen
+  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
   - Modeminitialisierung wieder an alten Platz gelegt
   - verschiedene weitere fixes
 

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -72,7 +72,7 @@ uses xpx,
      xp4,      { Hauptmodul         }
      xp4e,
      xp4o,
-     xp4o2,    { BezÅge, packen     }
+     xp4o2,    { Bezuege, packen     }
      xp4o3,
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
@@ -98,7 +98,7 @@ uses xpx,
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
      xpimpexp, { Import/Export      }
-     UUZ;      { RFC<->ZConnect     }
+     zcrfc;    { RFC<->ZConnect     }
 
 label ende;
 
@@ -115,7 +115,7 @@ begin
     cursor(curoff);
     defaultcolors; SetColors;
     read_regkey;
-    readconfig;    { setzt MenÅs }
+    readconfig;    { setzt Menues }
     if ParG1 or ParG2 then
     begin
       gtest;
@@ -196,6 +196,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.39  2000/11/14 21:36:53  fe
+  Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
+  So the program is called "uuz" again.
+
   Revision 1.38  2000/11/06 11:42:12  hd
   - Stack is global under Linux
 
@@ -269,10 +273,10 @@ end.
 
   - MIME in News voreingestellt
   - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf verÑndert
+  - EASY-Mode Aufruf veraendert
 
   Revision 1.18  2000/04/04 21:01:22  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.17  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
