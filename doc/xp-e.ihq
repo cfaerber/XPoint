@@ -3709,35 +3709,72 @@ the Parameter "/user".
         marked additionally with a blinking cursor.
         It is only an extra indicator.
 @
+1032
+The order of the letters determines in what order
+(from left to right) the columns in the Message-list
+will be arranged. Every letter <<MUST>> be present,
+otherwise, the default column display (FGDAEB) will
+be used.
+       
+       Valid letters (with their meanings) are:
+       
+       F  Flags
+       G  Size
+       D  Date
+       A  Sender
+       E  Recipient
+       B  Subject
+@
+1033
+The order of the letters determines in what order
+(from left to right) the columns in the User-list
+<<(in "Special Mode")>> will be arranged. Every
+letter <<MUST>> be present, otherwise, the default
+column display (FHGBAK) will be used.
+       
+       Valid letters (with their meanings) are:
+       
+       F  Flags
+       H  Hold-time
+       G  Addressbook group
+       B  Server
+       A  Address
+       K  Comments/Pseudonym
+@
 290
-This is hex address for the COM Port you are at
-present setting up. The usual addresses are:
-(COM3 & 4 are often not installed)
+This is the HEX address of the ComPort you are, at
+present, configuring. The standard addresses are:
 
 COM1 3f8
 COM2 2f8
 COM3 3e8
 COM4 2e8
 
-For COM1 & COM2 the addresses are nearly always
+(COM3 & COM4 are quite often not installed)
+
+For COM1 & COM2, the addresses are nearly always
 standard.
 
 Note that your hardware (serial interface) also has
-these settings. The settings must match, of course.
-They may also be adjustable.
+these settings and that the settings <<MUST>> match.
+
+The hardware settings may also be adjustable.
 @
 291
-This is the interrupt number (IRQ) for the COM Port
-you are at present setting up. The usual IRQs are:
+This is the interrupt number (IRQ) of the ComPort
+you are, at present, configuring.
+
+The standard IRQs are:
 
 COM1 IRQ4  (standard)
 COM2 IRQ3  (standard)
-COM3 (no standard)
-COM4 (no standard)
+COM3 (non-standard)
+COM4 (non-standard)
 
 Note that your hardware (serial interface) also has
-these settings. The settings must match, of course.
-They may also be adjustable.
+these settings and that the settings <<MUST>> match.
+
+The hardware settings may also be adjustable.
 
 COM3 and COM4 can be difficult. It may be necessary
 to learn more about addresses and interrupts to get
@@ -3747,18 +3784,20 @@ Note: If you choose to use non standard settings, you
 have to enter these into your [transfer protocol].@4005
 @
 292
-This command will be sent to your modem before every
-netcall, regardless which box. It is sent before the
-box specific command (/Edit/Servers/Edit/Modem). The
-preset command assumes normal AT commands for the
-modem. See also modem handbook.
+These commands will be sent to the modem <<BEFORE>> every
+Netcall, regardless of which Server you are calling.
+It is the default init string and will be sent before
+the Server-specific init string as defined in
+"/Edit/Servers/Edit/Modem". Consult your modem
+handbook if you are not sure what commands should be
+sent to initialise your modem.
 
 The preset is:
 
     ATZ\\AT S0=0 Q0 E1 M1 V1 X4
 
     AT   = Attention (starts every command)
-    Z    = Modem initialisation
+    Z    = Recall stored profile0
     S0=0 = switches Auto Answer-Mode off
     Q0   = Show result codes
     E1   = "Command echo" on
@@ -3767,77 +3806,92 @@ The preset is:
     X4   = Recognise dial and busy tones
 
 It is sensible to find the settings that suit your
-situation best, and store them in one of the modem
+situation best and store them in one of the modem
 profiles (usually AT&Wx). It can include the above
 and others, then you need only reset with: ATZx
-instead of giving it all in.
+instead of typing it all in.
 
-It gives flexibility, having this default setting,
-and a box-specific setting.
+Having this default setting and a Server-specific
+setting allows flexibility.
 
-If you wish to send a <Enter> to the modem, you can
+If you wish to send a <CR> to the modem, you can
 put a "\\" in the line. After this a new AT will be
 necessary before carrying on. eg. ATE1\\ATS13=32.
-This is usually not necessary, all the commands can
-strung together after one AT, but occasionally a
-modem will prefer a <Enter> after certain commands
-before it accepts it properly.
+This is usually not necessary as all the commands can
+be strung together after one AT but occasionally, a
+modem will need a <CR> after certain commands, before
+it is accepted properly.
 
 @
 293
-This command line will be sent to the modem
-*after* every netcall. The command should begin with
-"AT" as usual for Hayes commands.
+These commands will be sent to the modem <<AFTER>> every
+Netcall. The command should begin with "AT", as is
+usual for Hayes commands.
 
 This is for resetting the modem to some default or
-other condition after the netcall, if for example a
-special command was used at the beginning.
+other condition after the Netcall, if, for example,
+a special command was used before the Netcall.
 
-If you wish to send a <Enter> to the modem, you can
-put a "\\" in the line. After this a new AT will be
+If you wish to send a <CR> to the modem, you can
+put a "\\" in the line. After this, a new AT will be
 necessary before carrying on. eg. ATZ\\ATS0=0.
+
 @
 294
-The modem sends back an "OK" acknowledgement after
-every command, some modems take a little longer after
-certain commands. You can set here how long
-CrossPoint should wait for the "OK".
+This is the dialing command for the modem and is
+automatically inserted prior to the telephone
+number.
+
+Possibilities are:
+
+   ATDP     for Pulse dialing
+   ATDT     for Tone dialing
+
 @
 295
+If enabled, the modem will pause between dialing for
+the length of time that you have specified in
+"/Edit/Server/Edit/Modem".
+
+If disabled, the modem will pause for 5 seconds
+between dialing.
+
+@
+296
 <<[+]>>     Ignore state of CD (carrier detect).
 
 Most modems indicate a correct connect by switching
-the CD line and lighting the CD lamp on the modem.
-CrossPoint detects this and can reliably know that a
-connect has been detected.
+the CD line "high" and lighting the CD light on the
+modem. CrossPoint detects this and can reliably
+determine that a connect has been detected.
 
-If however your modem normally does *not* send this
+If, however, your modem does *not* normally send this
 signal for some reason, or maybe your modem cable is
-not so good, XP would normally break off because CD
-is missing.
+not so good, XP would normally disconnect because CD
+is "low".
 
-This switch causes XP to carry on regardless of the
+This switch causes XP to carry on, regardless of the
 state of CD.
 
-Note: CD provides information for XP, and if XP has
+Note: CD provides information for XP and if XP has
 to get by without it, errors could occur which would
 otherwise be recognised.
 You should attempt to get the CD recognition to work.
 
-<<For Fido netcalls the CD function *must* work
-correctly, anyway.
+For Fido Netcalls, the CD function <<MUST>> work
+correctly anyway.
 
 @
-296
+297
 <<[+]>>     Ignore state of CTS (Clear To Send).
 
 The modem switches the CTS line to show the local
 computer that it is ready to receive data from it
 (the modem is clear for the PC to send).
 
-If this signal is not possible, probably while the
-wire in the cable is not connected, as is the case
-with some cheap cables, setting this switch will
+If this signal is not possible, probably because the
+wire in the cable is not connected (as is the case
+with some cheap cables), setting this switch will
 bypass it and tell CrossPoint and the PC to send data
 when *it* wants to, regardless of what the modem may
 be doing.
@@ -3846,16 +3900,23 @@ Note: especially with slow rates (up to 2400bps),
 this missing signal can lead to characters sent to
 the modem getting lost, with unpredictable results.
 You should attempt to get the CTS to work.
+
 @
-297
+298
+To help eliminate CRC errors, enable this option.
+
+@
+299
+<<All Net types EXCEPT Fido
+
 <<[x]>>  Use ring signal line
 <<[ ]>>  Ignore ring signal line
 
 If an incoming call (ring signal) should occur while
-CrossPoint is pausing between netcalls, CrossPoint
-will hold off with the netcall for up to 5 minutes.
+CrossPoint is pausing between Netcalls, CrossPoint
+will delay the Netcall for up to 5 minutes.
 
-(Note, if CrossPoint tries to make a netcall when
+(Note, if CrossPoint tries to make a Netcall when
 somebody is calling, it will effectively answer the
 phone, which will probably cause difficulties all
 round!)
@@ -3865,10 +3926,33 @@ case with some cheap modem cables, CrossPoint will
 incorrectly report an incoming call, so this function
 should be set to "ignore".
 
-Tip: Get a decent modem cable.
+Tip: Get a decent modem cable :-)
 
 @
-298
+960
+A FOSSIL driver is a TSR program which, under DOS,
+takes over the job of controlling the ComPort,
+leaving an application programme less work to do.
+
+Since they take over the job of controlling the Port,
+IRQs, Addresses, [16550 UARTs] and so on, all these@4011
+options are switched out of CrossPoint if this option
+is set.
+
+For normal modems, XP has its own Port driver which
+is just as good as any Fossil, so leave this option
+off. Especially under OS/2, you should leave it off.
+
+You only need to use it if you wish XP to talk with
+something exotic, like an ISDN card, a serial port
+on another network machine or if you are experiencing
+problems with throughput and/or CRC errors.
+
+Tried and tested DOS fossil drivers include X00,
+BNU and ADF.
+
+@
+961
 <<[+]>>      Use the 16550 UART
 
 Note: there must be one if you set this switch!
@@ -3885,27 +3969,13 @@ CrossPoint does not recognise. If you have one of
 these, CrossPoint will not use it.
 
 @
-299
-<<[+]>>     Use a fossil if one is loaded.
-<<[ ]>>     Do not use fossil.
+962
+The FIFO trigger level relates to 16550A UARTS.
 
-A FOSSIL Driver is a TSR program under DOS which
-takes over the job of controlling the COM Port
-leaving an application program less work to do.
-
-Since they take over the job of administering Port,
-IRQs, Addresses, [16550 UARTs] and so on, all these@4011
-options are switched out of CrossPoint if this option
-is set.
-
-For normal Modems XP has its own Port driver which is
-just as good as any Fossil, so leave this option off.
-Especially under OS/2, you should leave it off.
-
-You only need to use it if you wish XP to talk with
-something exotic, like a ISDN card or a serial port
-on another network machine.
-The ISDN reason is of course becoming less rare.
+Possible trigger levels are 2, 4, 8 and 14. The
+default setting of 8 is normally sufficient and
+works well in most cases. However, with multi-tasking
+OS's, a higher value may be needed.
 
 @
 300
@@ -7080,14 +7150,15 @@ CrossPoint should display practically everything.
 10605
 <<Config / Modem
 
-Here under the sub-menus for each COM port you find
-the configuration parameters for the COM Ports. This
-includes some Modem settings which remain constant
-for a given COM-Port (other modem settings are found
-under /Edit/Servers/Edit/Modem).
+Here, under the sub-menus for each ComPort, you will
+find the configuration parameters for the ComPorts.
+The settings you enter here will remain constant for
+each ComPort. In other words, these are <<global>>
+settings. Server-specific settings may be defined
+under /Edit/Servers/Edit/Modem.
 
-By this means CrossPoint can operate with up to 4
-Modems on 4 COM Ports with unique modem-specific
+By this means, CrossPoint can operate with up to 4
+modems on 4 ComPorts with unique modem-specific
 settings for each one.
 @
 10606
@@ -10602,45 +10673,43 @@ other nodes cannot call them direct.
 
 @
 4011
-<< UARTs, 16550, FIFO (off topic)
+<< UARTs, 16550, FIFO
 
-The normal serial port for a PC is equipped with a
-serial I/O chip called a UART, of a slightly cheaper
-type called a 16450 (it's a large IC chip) with
-this number, or at least 450, as part of its
-inscription. This version basically gets the bits
-as they come from the modem, makes a byte, tells the
-computer CPU (by means of a so-called interrupt) that
-it is there, and holds each one for the computer CPU
-to fetch. One at a time. If the CPU for any reason
-doesn't pick it up in time, it gets written over by
-the next one, and data is lost.
+The normal serial port of a PC is equipped with a
+serial I/O chip called a UART. Older PC's may be
+fitted with a 16450 UART. This version basically gets
+the bits, as they come from the modem, makes a byte,
+tells the CPU (by means of a so-called interrupt)
+that it is there and holds each one for the CPU to
+fetch, one at a time. If the CPU, for some reason,
+doesn't pick it up in time, it gets over-written by
+the next one and data is lost.
 
-Although it's hard to believe, the CPU is so fast,
-that it mostly gets it. But older, slower computers
-do have problems near 19200bps (bits/second).
+Although it's hard to believe, the CPU is so fast
+that most of the time, it gets it. But older, slower
+computers do have problems at/over 19200bps.
 
-Faster computers, like 386, 486 manage more, but
-not infinitely more, and especially only as long
+Faster computers, like the 486 and 586 manage better
+but not infinitely better and especially so long
 as they are not doing anything else, like
 multitasking. Under Windows or OS/2 even fast
-computers can get into trouble, and "drop" bytes.
+computers can get into trouble and "drop" bytes.
 
 You observe this as drastically reduced transfer
-rates, block repeats and so on.
+rates, block re-sends and so on.
 
-Fortunately there is a simple and fairly cheap
+Fortunately, there is a simple and fairly cheap
 solution: the 16550 FIFO UART.
 
 This has quite simply a 16 byte (yes, just 16 bytes)
-buffer. Therefore the computer only needs to go get
-bytes one sixteenth (a bit sooner to be safe) so
-often. (FIFO just means First In First Out, and is
-not relevant for our explanation)
+buffer. Therefore, the computer only needs to go get
+bytes one sixteenth (a bit sooner to be safe) as
+often. (FIFO just means First In First Out and is
+not relevant to our explanation)
 
 The good part is that this thing is directly pin
 compatible to the 16450 one. You pull the old one
-out, and put the new one in. It costs about $10.
+out and put the new one in. It costs about $10.
 
 You just need a (normal) serial interface card
 (COM Port) where the 16450 chips are in sockets
@@ -10649,10 +10718,10 @@ electronics shops have them now that they are in
 demand), and plug it in <<the right way round>>.
 
 <<NOTE:>>.There are various versions with similar
-numbers, not all quite so good. Get ones from
+numbers, not all quite so good. Get one from
 National Semiconductor with 16550AN or 16550AFN
 (the N is important here!) on them. Some non-
-original versions are nor recognised properly by
+original versions are not recognised properly by
 CrossPoint.
 
 There are of course more exotic versions, special
