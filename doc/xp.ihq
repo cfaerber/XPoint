@@ -7985,9 +7985,10 @@ der Name der Datei vollst„ndig  ausgeschrieben wer-
 den, inkl. der Erweiterung ".BAT".
 
 Wenn das eingetragene Viewer-Programm eine Windows-
-Anwendung ist, startet CrossPoint das Programm
-automatisch mit einer speziellen "Warte-Batch" ber
-den Befehl <<start>>.
+Anwendung ist, startet CrossPoint das Programm auto-
+matisch mit einer speziellen "Warte-Batch", die war-
+tet, bis das Programm beendet wird und die dann die
+Tempor„rdatei und anschlieáend sich selbst l”scht.
 
 Wenn Sie einen Viewer-Eintrag nur mit MIME-Typ aber
 ohne Dateierweiterung (oder nur mit Dateierweiterung
@@ -7996,6 +7997,9 @@ Windows der Befehl <<start>> als "Universal-Viewer" an.
 Damit bergibt XP die Datei immer automatisch an den
 passenden Viewer (also das Programm, das in Windows
 fr den entsprechenden Dateityp registriert ist).
+
+Tragen Sie hier einfach "<<start $FILE>>" ein, wenn Sie
+diese Funktion unter Windows nutzen m”chten.
 
 Vereinfacht dargestellt, wrde CrossPoint also z.B.
 bei Erhalt einer MIME-Nachricht des Typs <<image/gif>>
@@ -13103,8 +13107,7 @@ Spezialmodus, dann <<E>> fr Editieren).
 Die fr das Brett eingetragene Serverbox existiert
 nicht mehr. M”glicherweise haben Sie die Box gewech-
 selt, aber den Server einiger Bretter nicht umge-
-stellt. Verwenden Sie /Wartung/Sonstiges/Server-
-Wechsel!
+stellt. Verwenden Sie /Wartung/Server-Wechsel!
 @
 20807
 Fr die gew„hlte Box ist noch keine Brettliste vor-
