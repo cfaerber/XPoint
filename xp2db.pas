@@ -41,6 +41,7 @@ uses
   typeform,fileio,inout,keys,datadef,database,databaso,
   resource,maus2,datadef1,
   xp0,xp1,xp1o,xp1input,xp3,xp3o,xp5,xp9bp,xpnt,
+  xp1o2,
   xpheader, xp4o2, winxp,debug,
   xpglobal;
 
@@ -685,7 +686,7 @@ var flp : dbFLP;
 begin
   dbInterrProc:=@xp1.xp_DB_Error;
   Debug.DebugLog('xp2db','initdatabase', dlTrace);
-  dbSetICP(ICP);
+  dbSetICP(xp1o2.ICP);
   dbSetIndexVersion(3);
   dbSetIndexCache(MaxCache);
 
@@ -997,6 +998,10 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/12/21 19:50:55  cl
+  - BUGFIX: [ 654207 ] 3.9.x: Neuaufbau *.IX1 geht nicht.
+    (see also <8cGvlMlZcDD@3247.org>)
+
   Revision 1.48  2002/12/21 05:37:55  dodi
   - removed questionable references to Word type
 
