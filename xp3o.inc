@@ -19,7 +19,7 @@ var x,y   : byte;
     read  : boolean;
     useclip: boolean;
 begin
-  s:='*.*';
+  s:=WildCard;
   useclip:=true;
   if ReadFilename(getres2(330,1),s,true,useclip) then   { 'Puffer einlesen' }
     if not exist(s) then
@@ -1180,6 +1180,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/05/14 13:58:05  hd
+  - WildCard (readpuffer)
+
   Revision 1.14  2000/05/04 10:32:58  mk
   - unbenutzer TurboBox Code entfernt
 
