@@ -512,7 +512,7 @@ end;
 
 procedure EdSetConfig(cf:EdConfig);
 begin
-  akted^.config:=cf;
+  if akted <> nil then akted^.config:=cf;
 end;
 
 procedure EdSetUkonv(umlaute_konvertieren:boolean);
@@ -1880,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.12  2001/02/23 12:39:05  mk
+  - Uhr im Lister mit /w abschalten
+
   Revision 1.25.2.11  2000/12/12 14:03:55  mk
   - weitere lfn-fixes
 

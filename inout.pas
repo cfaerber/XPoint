@@ -403,7 +403,7 @@ begin
         end
       else
         if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      disphard(timex,timey,' '+__st+' ');
+      if timey <> 0 then disphard(timex,timey,' '+__st+' ');
       end;
     end;
 end;
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.4  2001/02/23 12:39:05  mk
+  - Uhr im Lister mit /w abschalten
+
   Revision 1.38.2.3  2000/08/08 09:25:38  mk
   - TrimRight in RTrim umgewandelt
 

@@ -344,6 +344,7 @@ begin
         else begin
           dphback:=col.colliststatus;              {   bei freiem Header }
           timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
+          if ParWinTime = 1 then Timey := 0;
           end;
         end;
       end;
@@ -512,6 +513,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.4  2001/02/23 12:39:05  mk
+  - Uhr im Lister mit /w abschalten
+
   Revision 1.24.2.3  2001/01/10 17:39:03  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
