@@ -49,8 +49,12 @@ var  own_Nt    : eNetz = nt_Any; // byte = 255; ???
       leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
       may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfuegen }
 
+type
+  { Typ :  Boxen, Gruppen, Systeme, Kurznamen, MIME-Typen }
+  TUniSelType = (usBoxes, usGroups, usSystems, usShortNames, usMIMETypes);
+
 function  Netz_Typ(nt:eNetz):string;
-function  UniSel(typ:byte; edit:boolean; default:string):string;
+function  UniSel(UniSelType: TUniSelType; edit:boolean; const default:string):string;
 procedure BoxSelProc(var cr:customrec);
 procedure GruppenSelproc(var cr:customrec);
 
@@ -679,7 +683,7 @@ var //static or dynamic initialization?
     edb_pos : shortint = 1;
     lastclient : boolean = false;
 
-function UniSel(typ:byte; edit:boolean; default:string):string;
+function  UniSel(UniSelType: TUniSelType; edit:boolean; const default:string):string;
 const maxgl   = 100;
       dsellen = 20;
 var d         : DB;
@@ -714,16 +718,16 @@ var d         : DB;
       adr        : string;
   begin
     drec[i]:=dbRecno(d);
-    case typ of
-      1 : s1 := dbReadStr(d,'Boxname');
-      2 : s1 := dbReadStr(d,'Name');
+    case UniSelType of
+      usBoxes : s1 := dbReadStr(d,'Boxname');
+      usGroups : s1 := dbReadStr(d,'Name');
     end;
     if setdefault and (UpperCase(s1)=UpperCase(default)) then begin
       p:=i;
       setdefault:=false;
     end;
-    case typ of
-      1 : begin     { Boxen }
+    case UniSelType of
+      usBoxes: begin     { Boxen }
             dbRead(d,'Netztyp',nt);
             if nt in netsRFC then
               s2 := ComputeUserAddress(d)
@@ -742,7 +746,7 @@ var d         : DB;
             s:=dc+forms(s1,11)+' '+forms(Netz_Typ(nt),12)+forms(s2,17)+' '+
                forms(s3,23);
           end;
-      2 : begin     { Gruppen }
+      usGroups: begin     { Gruppen }
             dbRead(d,'msglimit',limit);
             dbRead(d,'int_nr',grnr);
             dbRead(d,'umlaute',umlaut);
@@ -754,7 +758,7 @@ var d         : DB;
                forms(umtyp[umlaut],6)+
                iifs(limit>0,strsrnp(limit,12,0),sp(11)+' ì')+' ';
           end;
-      3 : begin     { Systeme }
+      usSystems: begin     { Systeme }
             s1 := dbReadStr(d,'name');
             s2 := dbReadStr(d,'kommentar');
             s3 := dbReadStr(d,'fs-passwd');
@@ -765,13 +769,13 @@ var d         : DB;
             else dc:='  ';
             s:=dc+iifs((s3='') or (b=3),'  ','P ')+forms(s1,15)+' '+forms(s2,31);
           end;
-      4 : begin     { Kurznamen }
+      usShortNames : begin     { Kurznamen }
             s1  := dbReadStr(d,'kurzname');
             adr := dbReadStr(d,'langname');
             s2  := dbReadStr(d,'pollbox');
             s:=' '+forms(s1,12)+' '+forms(adr,36)+' '+forms(s2,12);
           end;
-      5 : begin     { MIME-Typen }
+      usMIMETypes : begin     { MIME-Typen }
             s1 := dbReadStr(d,'typ');
             s2 := dbReadStr(d,'extension');
             s3 := dbReadStr(d,'programm');
@@ -1474,11 +1478,11 @@ var d         : DB;
       errsound;
       exit;
     end;
-    case typ of
-      1 : nfeld:='boxname';
-      2 : nfeld:='name';
-      3 : nfeld:='name';
-      4 : nfeld:='kurzname';
+    case UniSelType of
+      usBoxes: nfeld:='boxname';
+      usGroups: nfeld:='name';
+      usSystems: nfeld:='name';
+      usShortNames: nfeld:='kurzname';
     end;
     if c=#8 then
       dnew:=LeftStr(directsel,length(directsel)-1)
@@ -1506,14 +1510,9 @@ var d         : DB;
 begin { --- UniSel --- }
 //really strange Delphi warning here: Result might be undefined?
   Result := ''; //should be sufficient, but the following 2 assignments also are required.
-  if typ>5 then begin
-    {$IFDEF ANALYSE}Result := '';{$ENDIF}
-    exit;
-  end;
-  {$IFDEF ANALYSE}Result := '';{$ENDIF}
 
-  case typ of
-    1 : begin     { Boxen }
+  case UniSelType of
+    usBoxes: begin     { Boxen }
           dbOpen(d,BoxenFile,1);
           if not edit and (dbRecCount(d)=1) and (lastkey<>keyf2) then begin
             unisel:=dbReadStr(d,'boxname');
@@ -1526,7 +1525,7 @@ begin { --- UniSel --- }
           pushhp(iif(edit,130,139));
           nameofs:=3;
         end;
-    2 : begin     { Gruppen }
+    usGroups: begin     { Gruppen }
           dbOpen(d,GruppenFile,1);
           width:=59;
           buttons:=getres(908);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
@@ -1534,7 +1533,7 @@ begin { --- UniSel --- }
           pushhp(iif(edit,200,209));
           nameofs:=11;
         end;
-    3 : begin     { Systeme }
+    usSystems: begin     { Systeme }
           dbOpen(d,SystemFile,1);
           width:=51;
           buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
@@ -1542,7 +1541,7 @@ begin { --- UniSel --- }
           pushhp(iif(edit,460,469));
           nameofs:=5;
         end;
-    4 : begin     { Kurznamen }
+    usShortNames: begin     { Kurznamen }
           dbOpen(d,PseudoFile,1);
           width:=63;
           buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
@@ -1550,7 +1549,7 @@ begin { --- UniSel --- }
           pushhp(iif(edit,710,719));
           nameofs:=2;
         end;
-    5 : begin     { MIME-Typen }
+    usMimeTypes: begin     { MIME-Typen }
           d:=mimebase;
           width:=65;
           buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
@@ -1558,9 +1557,8 @@ begin { --- UniSel --- }
           pushhp(820);
           nameofs:=2;
         end;
-    else  nameofs := 0; //prevent warning "nameofs not initialized"
   end;
-  if typ<>5 then miscbase:=d;
+  if UniSelType <> usMimeTypes then miscbase:=d;
   drec[1]:=0;
   gl:=screenlines-11;
   if screenlines>30 then dec(gl,2);
@@ -1620,30 +1618,30 @@ begin { --- UniSel --- }
       _DirectSel
     else
       if rb>0 then
-        case typ of
-          1 : case rb of
+        case UniSelType of
+          usBoxes: case rb of
                 1 : NewBox;
                 2 : if not empty then DelBox;
                 3 : if not empty then SetDefaultBox;
                 4 : if not empty then EditBox;
                 5 : if not empty then EditNetztyp;
               end;
-          2 : case rb of
+          usGroups: case rb of
                 1 : NeueGruppe;
                 2 : DelGruppe;
                 3 : EditGruppe;
               end;
-          3 : case rb of
+          usSystems: case rb of
                 1 : NeuesSystem;
                 2 : DelSystem;
                 3 : EditSystem;
               end;
-          4 : case rb of
+          usShortNames: case rb of
                 1 : EditPseudo(true);
                 2 : if not empty then DelPseudo;
                 3 : if not empty then EditPseudo(false);
               end;
-          5 : case rb of
+          usMimeTypes: case rb of
                 1 : EditMimetyp(true);
                 2 : if not empty then DelMimetyp;
                 3 : if not empty then EditMimetyp(false);
@@ -1702,7 +1700,7 @@ begin { --- UniSel --- }
             aufbau:=true;
             end;
           end;
-      if typ=2 then
+      if UniSelType= usGroups then
         if t='+' then addhzeit(1)
         else if t='-' then addhzeit(-1);
       end;
@@ -1718,14 +1716,14 @@ begin { --- UniSel --- }
     if empty or (t=keyesc) then UniSel:=''
     else begin
       dbGo(d,drec[p]);
-      case typ of
-        1   : UniSel:=dbReadStr(d,'boxname');
-        2,3 : UniSel:=dbReadStr(d,'name');
-        4   : UniSel:=dbReadStr(d,'kurzname');   { Dummy }
+      case UniSelType of
+        usBoxes: UniSel:=dbReadStr(d,'boxname');
+        usGroups, usSystems: UniSel:=dbReadStr(d,'name');
+        usShortNames: UniSel:=dbReadStr(d,'kurzname');   { Dummy }
       end;
     end;
 
-  if typ<>5 then begin
+  if UniSelType <> usMimeTypes then begin
     dbClose(d);
     miscbase:=nil;
     end;
@@ -1748,7 +1746,7 @@ procedure BoxSelProc(var cr:customrec);
 begin
   with cr do
   begin
-    s:=UniSel(1,false,s);
+    s:=UniSel(usBoxes,false,s);
     brk:=(s='');
   end;
 end;
@@ -1757,7 +1755,7 @@ end;
 procedure GruppenSelproc(var cr:customrec);
 begin
   with cr do begin
-    s:=UniSel(2,false,s);
+    s:=UniSel(usGroups, false,s);
     brk:=(s='');
     end;
 end;
@@ -3141,6 +3139,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2003/08/28 14:13:03  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.63  2003/08/26 22:41:25  cl
   - better compatibility with OpenXP-16/FreeXP with config files:
     - don't overwrite line number settings with incompatible values

@@ -911,7 +911,7 @@ begin                  { function Netcall }
 
   if not FidoCrash then begin
     if BoxName='' then
-      BoxName:=UniSel(1,false,DefaultBox);         { zu pollende Box abfragen }
+      BoxName:=UniSel(usBoxes,false,DefaultBox);         { zu pollende Box abfragen }
     if BoxName='' then exit;
     end
   else begin
@@ -1266,7 +1266,7 @@ var b   : byte;
     h,m : integer;
 begin
   if BoxName='' then begin
-    BoxName:=UniSel(1,false,DefaultBox);         { zu pollende BoxName abfragen }
+    BoxName:=UniSel(usBoxes,false,DefaultBox);         { zu pollende BoxName abfragen }
     if BoxName='' then exit;
     end;
   ReadBoxPar(nt_Netcall,BoxName);
@@ -1379,6 +1379,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2003/08/28 14:13:06  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.71  2003/08/24 21:43:41  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

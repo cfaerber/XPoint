@@ -618,7 +618,7 @@ begin
     end;
   if alle then box:=''
   else begin
-    box:=UniSel(1,false,DefaultBox);
+    box:=UniSel(usBoxes,false,DefaultBox);
     if box='' then exit;
     end;
   UpString(box);
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2003/08/28 14:13:05  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.54  2002/12/21 05:38:03  dodi
   - removed questionable references to Word type
 

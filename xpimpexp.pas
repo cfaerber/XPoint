@@ -257,7 +257,7 @@ begin
         exit;
       end;
       if pos(UpperCase(MausStLog),fn)>0 then begin
-        box:=UniSel(1,false,'');
+        box:=UniSel(usBoxes,false,'');
         if box<>'' then
           MausLogFiles(1,false,box);
         exit;
@@ -666,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2003/08/28 14:13:04  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.51  2002/12/21 05:38:02  dodi
   - removed questionable references to Word type
 

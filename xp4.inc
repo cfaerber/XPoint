@@ -308,13 +308,16 @@ begin
           end;
 
      16 : case m1 of                                  { Edit }
-            2..5 : if UniSel(m1-1,true,'')='' then;
+            2: UniSel(usBoxes, true, '');
+            3: UniSel(usGroups, true, '');
+            4: UniSel(usSystems, true, '');
+            5: UniSel(usShortNames, true, '');
             6    : begin
                      select(20);    { AutoVersand }
                      ShowMain(0);
                    end;
             7    : EditText;
-            8    : if UniSel(5,true,'')='' then;
+            8    : UniSel(usMIMETypes,true,'');
           end;
 
      17 : case m1 of           { Statistik }
@@ -810,6 +813,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.48  2003/08/28 14:13:00  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.47  2003/03/28 23:34:57  mk
   - fixed Bug #683675: x/e/t löscht Brettinhalt
 

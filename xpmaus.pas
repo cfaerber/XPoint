@@ -656,7 +656,7 @@ var  box    : string[BoxNameLen];
   end;
 
 begin     { MausEditInfos }
-  box:=UniSel(1,false,DefaultBox);
+  box:=UniSel(usBoxes,false,DefaultBox);
   if box='' then exit;
   if ntBoxNetztyp(box)<>nt_Maus then begin
     fehler(box+' ist keine MausNet-Box.');
@@ -829,6 +829,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2003/08/28 14:13:05  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.43  2003/05/11 11:12:19  mk
   - use IsMailAddr when possible
 

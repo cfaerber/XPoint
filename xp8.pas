@@ -42,7 +42,7 @@ procedure FilescanReadFile;
 procedure FilescanCommands(cmd:shortint);
 
 
-function  IsServer(box:string; var fstype:byte):boolean;
+function  IsServer(const box:string; var fstype:byte):boolean;
 procedure FS_ReadList(msg:boolean);
 procedure FS_command(comm:string; request:byte);
 
@@ -1172,7 +1172,7 @@ begin
       exit;
       end
     else begin
-      box:=UniSel(1,false,'');
+      box:=UniSel(usBoxes,false,'');
       if box='' then begin
         dbClose(d);
         exit;
@@ -1237,7 +1237,7 @@ var
     //maggi   : boolean;
     //promaf  : boolean;
 begin
-  box:=UniSel(1,false,DefaultBox);
+  box:=UniSel(usBoxes,false,DefaultBox);
   if box='' then exit;   { brk }
   fn:=Wildcard;
   useclip:=true;
@@ -1598,7 +1598,7 @@ label again;
 
 begin
   if mapsbox='' then begin
-    box:=UniSel(1,false,DefaultBox);
+    box:=UniSel(usBoxes,false,DefaultBox);
     if box='' then exit;   { brk }
     end
   else
@@ -1871,7 +1871,7 @@ var brk     : boolean;
 begin
   feeder := False;
   autosys := False;
-  box:=UniSel(1,false,DefaultBox);
+  box:=UniSel(usBoxes,false,DefaultBox);
   if box='' then exit;
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
@@ -2213,7 +2213,7 @@ end;
 
 {----- Fileserver --------------------------------------------------}
 
-function IsServer(box:string; var fstype:byte):boolean;
+function IsServer(const box:string; var fstype:byte):boolean;
 var d     : DB;
     flags : smallword;
 begin
@@ -2308,7 +2308,7 @@ begin
       rfehler(811);   { 'Datei ist nicht vorhanden.' }
       exit;
       end;
-    box:=UniSel(3,false,'');
+    box:=UniSel(usSystems,false,'');
     if box='' then exit;
     if not IsServer(box,fstype) then begin
       trfehler1(812,UpperCase(box),60);   { '%s ist kein Fileserver.' }
@@ -2673,7 +2673,7 @@ xpsendmessage.noCrash:=true;
   end;
 
 begin
-  fs:=UniSel(3,false,'');
+  fs:=UniSel(usSystems,false,'');
   if fs<>'' then begin
     dbOpen(d,SystemFile,1);
     dbSeek(d,siName,UpperCase(fs));
@@ -2808,7 +2808,7 @@ end;
 
 procedure GetFilescanBox(var box:string);
 begin
-  box:=UniSel(1,false,DefFidoBox);
+  box:=UniSel(usBoxes,false,DefFidoBox);
   if box='' then exit;
   if ntBoxNetztyp(box)<>nt_Fido then begin
     rfehler1(852,box);     { '%s ist keine Fido-Box!' }
@@ -3056,7 +3056,7 @@ var
     fn      : string;
     useclip : boolean;
 begin
-  box:=UniSel(1,false,DefaultBox);
+  box:=UniSel(usBoxes,false,DefaultBox);
   if box='' then exit;   { brk }
   if ntBoxNetztyp(box)<>nt_Fido then begin
     rfehler1(852,box);    { '%s ist keine Fido-Box!' }
@@ -3128,6 +3128,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2003/08/28 14:13:01  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.89  2003/08/25 20:45:56  mk
   - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
 

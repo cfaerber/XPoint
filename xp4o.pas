@@ -786,7 +786,7 @@ msg_ok: MsgAddmark;
   begin
     if ReadJN('Soll die Message-ID online gesucht werden?', true) then
     begin
-      BoxName := UniSel(1, false, DefaultBox);
+      BoxName := UniSel(usBoxes, false, DefaultBox);
       if BoxName <> '' then
       begin
         Filename := OwnPath + GetServerFileName(Boxname, extMid);
@@ -3842,6 +3842,9 @@ end;
 
 {
   $Log$
+  Revision 1.160  2003/08/28 14:13:01  mk
+  - TUniSelType for UniSel instead of numeric constants
+
   Revision 1.159  2003/08/23 23:02:35  mk
   - removed hints and warnings
 
