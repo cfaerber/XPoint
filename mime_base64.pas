@@ -83,7 +83,7 @@ const
 implementation
 
 uses
-  SysUtils, Typeform, xpglobal;
+  SysUtils, typeform, xpglobal;
 
 //todo: drop this procedure?
 function EncodeBase64(var source; len: integer): string;
@@ -252,6 +252,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2003/08/28 00:39:41  mk
+// - lowercase uses "typeform" for Kylix
+//
 // Revision 1.9  2002/12/14 09:25:17  dodi
 // - removed gpltools and encoder units
 //
