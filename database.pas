@@ -48,12 +48,6 @@ procedure dbEnableIndexCache;
 procedure dbDisableIndexCache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
-procedure dbOpenLog(const fn: string);
-{$IFDEF Debug }
-procedure dbLog(const s:string);
-{$ENDIF }
-procedure dbCloseLog;
-
 {------------------------------------------------------- Datenbanken ---}
 
 function  dbHasField(const filename:string; const feldname:dbFeldStr):boolean;
@@ -146,7 +140,8 @@ uses
 {$IFDEF unix}
   xplinux,
 {$ENDIF }
-  datadef1;
+  datadef1,
+  debug;
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
@@ -196,9 +191,7 @@ var i   : integer;      { MK 12/99 }
 begin
   with dp(dbp)^ do begin
     if flushed then exit;
-{$IFDEF Debug }
-    if dl then dbLog('   '+fname+' - Write('+strs(recno)+')');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbFlush '+fname+' - Write('+strs(recno)+')', dlTrace); {$endif}
     seek(f1,hd.hdsize+(recno-1)*hd.recsize);
     blockwrite(f1,recbuf^,hd.recsize);
 
@@ -240,9 +233,7 @@ end;
 procedure recRead(dbp:DB; testdel:boolean);
 begin
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    if dl then dbLog('   '+fname+' - Read('+strs(recno)+')');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','recRead '+fname+' - Read('+strs(recno)+')', dlTrace); {$endif}
     seek(f1,hd.hdsize+(recno-1)*hd.recsize);
     blockread(f1,recbuf^,hd.recsize);
     if inoutres<>0 then
@@ -307,9 +298,7 @@ var i   : integer;
 begin
   korr_actindex(dbp);
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    dbLog('   '+fname+' - Skip('+strs(n)+')');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbSkip '+fname+' - Skip('+strs(n)+')', dlTrace); {$endif}
     dbFlush(dbp);
     if (n<0) and dBOF then exit;
     if (n>0) and dEOF then exit;
@@ -456,9 +445,7 @@ procedure dbGo(dbp:DB; no:longint);
 begin
   dbFlush(dbp);
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    if dl then dbLog('   '+fname+' - Go('+strs(no)+')');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbGo '+fname+' - Go('+strs(no)+')', dlTrace); {$endif}
     if no>hd.recs then dEOF:=true
     else if no<1 then dBOF:=true
     else
@@ -480,9 +467,7 @@ end;
 procedure dbGoTop(dbp:DB);
 begin
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    if dl then dbLog('   '+fname+' - GoTop');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbGoTop '+fname, dlTrace); {$endif}
     if flindex and (actindex>0) then
       dbSeek(dbp,actindex,'')
     else begin
@@ -498,9 +483,7 @@ var bf : inodep;
 begin
   korr_actindex(dbp);
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    if dl then dbLog('   '+fname+' - GoEnd');
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbGoEnd '+fname, dlTrace); {$endif}
     if flindex and (actindex>0) then
     with index^[actindex] do begin
       dbflush(dbp);
@@ -614,9 +597,7 @@ var i,o   : integer;
   end;
 
 begin
-{$IFDEF Debug }
-  if dl then dbLog('DB ”ffnen: '+name);
-{$ENDIF }
+  {$ifdef debug} Debug.DebugLog('database','dbOpen '+name, dlTrace); {$endif}
   new(dp(dbp));
   fillchar(dp(dbp)^,sizeof(dbrec),0);
   with dp(dbp)^ do begin
@@ -656,9 +637,7 @@ begin
           end;
         end;
     if xxflag then begin
-{$IFDEF Debug }
-      if dl then dbLog('   .EB1 ”ffnen..');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbOpen - .eb1', dlTrace); {$endif}
       assign(fe,name+dbExtExt);
       mfm:=filemode; filemode:=$42;
       reset(fe,1);
@@ -670,9 +649,7 @@ begin
     xflag:=xxflag;
     getmem(recbuf,hd.recsize);
     if flags and dbFlagIndexed<>0 then begin
-{$IFDEF Debug }
-      if dl then dbLog('   .IX1 ”ffnen..');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbOpen - .ix1', dlTrace); {$endif}
       getmem(orecbuf,hd.recsize);
       OpenIndex(dbp);
       flindex:=true;
@@ -681,9 +658,7 @@ begin
       flindex:=false;
     dbGoTop(dbp);
     end;
-{$IFDEF Debug }
-  dbLog('   ”ffnen erfolgreich');
-{$ENDIF }
+  {$ifdef debug} Debug.DebugLog('database','dbOpen finished', dlTrace); {$endif}
 end;
 
 
@@ -693,29 +668,21 @@ begin
   if ioresult<>0 then;
   with dp(dbp)^ do
   begin
-{$IFDEF Debug }
-    if dl then dbLog('DB schlieáen: '+fname);
-{$ENDIF }
+    {$ifdef debug} Debug.DebugLog('database','dbClose '+fname, dlTrace); {$endif}
     if (dbp=nil) or tempclosed then
     begin
-{$IFDEF Debug }
-      if dl then dbLog('DB Fehler: Datei bereits geschlossen.');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - already closed', dlError); {$endif}
       exit;
     end;
     dbFlush(dbp);
     if not hdupdate then writehd(dbp);
     if xflag then begin
-{$IFDEF Debug }
-      if dl then dbLog('   .EB1 schlieáen..');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - .eb1', dlTrace); {$endif}
       close(fe);
       end;
     close(f1);
     if flindex then begin
-{$IFDEF Debug }
-      if dl then dbLog('   .IX1 schlieáen..');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - .ix1', dlTrace); {$endif}
       close(fi);
       freemem(index,sizeof(ixfeld)*ixhd.indizes);
       end;
@@ -732,9 +699,7 @@ begin
      if cache^[i].dbp=dbp then cache^[i].used:=false;
   dispose(dp(dbp));
   dbp:=nil;
-{$IFDEF Debug }
-  if dl then dbLog('   schlieáen erfolgreich');
-{$ENDIF }
+  {$ifdef debug} Debug.DebugLog('database','dbClose finished', dlTrace); {$endif}
 end;
 
 procedure dbTempClose(var dbp:DB);
@@ -1537,36 +1502,6 @@ begin
   writehd(dbp);
 end;
 
-
-{ --- Logging --------------------------------------------------------}
-
-procedure dbOpenLog(const fn: string);
-begin
-  assign(dblogfile,fn);
-  rewrite(dblogfile);
-  dl:=true;
-end;
-
-{$IFDEF Debug }
-procedure dbLog(const s:string);
-begin
-  if dl then
-  begin
-    writeln(dblogfile,s);
-    Flush(dblogfile);
-  end;
-{$ifdef UseSysLog}
-  XPDebugLog(s);
-{$ENDIF }
-end;
-{$ENDIF }
-
-procedure dbCloseLog;
-begin
-  if dl then
-    close(dblogfile);
-end;
-
 {=====================================================================}
 
 procedure dbICproc(var icr:dbIndexCRec);
@@ -1638,7 +1573,6 @@ procedure ExitDataBaseUnit;
 begin
   ExitProc:= SavedExitProc;
   if ioresult<>0 then;
-  dbCloseLog;
 end;
 
 procedure InitDataBaseUnit;
@@ -1650,6 +1584,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.53  2002/04/14 22:07:45  cl
   - added dbReadByte, dbReadByteN,
           dbReadChar, and dbReadCharN

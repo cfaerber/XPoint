@@ -794,7 +794,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        ParHelp    : boolean = false;   { Hilfsseite             }
        ParDebug   : boolean = false;   { Debugging-Mode         }
-       ParDDebug  : boolean = false;   { Database-Debug         }
        ParDebFlags: byte    = 0;       { 1 = Shell-Commands     }
        ParDupeKill: boolean = false;   { autom. DupeKill        }
        ParTrace   : boolean = false;   { Script-Tracefile       }
@@ -1230,6 +1229,9 @@ implementation
 
 {
   $Log$
+  Revision 1.162  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.161  2002/05/23 08:32:00  mk
   - added WildCardCh
 

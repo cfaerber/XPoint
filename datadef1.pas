@@ -179,7 +179,6 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
         found     : boolean;          { Ergebnis der letzten Suche }
         cache     : icachep;
         bb        : byte;             { lokal dbReadN/dbWriteN     }
-        dblogfile : text;             { DB-Logfile                 }
         oldcacheanz : integer;
 
 
@@ -237,6 +236,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.18  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

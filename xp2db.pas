@@ -41,7 +41,7 @@ procedure InitDatabase;
 
 implementation  { --------------------------------------------------- }
 
-uses xpheader, xp4o2, winxp;
+uses xpheader, xp4o2, winxp,debug;
 
 
 procedure GetFieldNumbers;
@@ -648,9 +648,7 @@ var flp : dbFLP;
 
 begin
   dbInterrProc:=@xp1.xp_DB_Error;
-{$IFDEF Debug }
-  dbLog('-- Datenbank initialisieren');
-{$ENDIF }
+  Debug.DebugLog('xp2db','initdatabase', dlTrace);
   dbSetICP(ICP);
   dbSetIndexVersion(3);
   dbSetIndexCache(MaxCache);
@@ -945,6 +943,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.41  2002/01/30 22:36:04  mk
   - made viewers and unpackers static
 

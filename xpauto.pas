@@ -295,9 +295,7 @@ var ar    : AutoRec;
     dat   : longint;
     r1,r2 : longint;
 begin
-{$IFDEF Debug }
-  dbLog('-- AutoVersand');
-{$ENDIF }
+  Debug.DebugLog('xpauto','AutoSend', dlTrace);
   dbOpen(auto,AutoFile,1);
   dbSetIndex(auto,0);
   dbGoTop(auto);
@@ -618,9 +616,7 @@ procedure AutoStop;
 var
   fnstop: string;
 begin
-{$IFDEF Debug }
-  dbLog('-- AutoStop');
-{$ENDIF }
+  Debug.DebugLog('xpauto','AutoStop', dlTrace);
   fnstop:= AutoxDir+FileUpperCase('stop' + extBatch);     { STOP.BAT }
   if FileExists(fnstop) then
     shell(fnstop,500,1);
@@ -673,6 +669,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/05/26 12:16:23  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.52  2002/05/20 07:47:57  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

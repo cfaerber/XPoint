@@ -95,9 +95,7 @@ var t       : text;
   end;
 
 begin
-{$IFDEF Debug }
-  dbLog('-- '+colcfgfile+' einlesen');
-{$ENDIF }
+  Debug.DebugLog('xp2cfg','readcolors '+colcfgfile, dlTrace);
   assign(t,colcfgfile);
   if not FileExists(colcfgfile) then exit;
   msk:=$ff;
@@ -729,9 +727,7 @@ var t   : text;
   end;
 
 begin
-{$IFDEF Debug }
-  dbLog('-- Konfiguration sichern');
-{$ENDIF }
+  Debug.DebugLog('xp2cfg','saveconfig', dlTrace);
 {$IFDEF UnixFS}
   oldf:= FileExists(ownpath+cfgfile);        { Merken, ob die Datei existierte }
 {$ENDIF }
@@ -1032,9 +1028,7 @@ var t   : text;
     oldf: boolean;
 {$ENDIF }
 begin
-{$IFDEF Debug }
-  dbLog('-- Konfiguration #2 sichern');
-{$ENDIF }
+  Debug.DebugLog('xp2cfg','saveconfig2', dlTrace);
 {$IFDEF UnixFS}
   oldf:= FileExists(ownpath+cfg2file);
 {$ENDIF}
@@ -1303,9 +1297,7 @@ var
   mheader : string;
   Lines, Cols: Integer;
 begin
-{$IFDEF Debug }
-  dbLog('-- Konfiguration einlesen');
-{$ENDIF }
+  Debug.DebugLog('xp2cfg','readconfig', dlTrace);
   SetDefault;
   aaa:=''; mheader:='';
   assign(t,ownpath+CfgFile);
@@ -1706,6 +1698,9 @@ begin
 
 {
   $Log$
+  Revision 1.147  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.146  2002/05/21 06:48:44  mk
   - fixed EditorBakExt for Linux
 

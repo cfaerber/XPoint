@@ -52,7 +52,8 @@ uses
   {$ENDIF }
 {$ENDIF }
   database,
-  datadef1;
+  datadef1,
+  debug;
 
 
 
@@ -166,18 +167,15 @@ end;
 procedure dbZAP(var dbp:DB);
 begin
   with dp(dbp)^ do begin
-{$IFDEF Debug }
-    if dl then dbLog('DB zappen: '+fname);
-{$ENDIF }
+    // use 'database' tag - databaso should be merged with database unit
+    {$ifdef debug} Debug.DebugLog('database','dbZap '+fname, dlTrace); {$endif}
     with hd do begin
       recs:=0;                      { Header zurÅcksetzen }
       nextinr:=0;
       firstfree:=0;
       reccount:=0;
       Writehd(dbp);
-{$IFDEF Debug }
-      if dl then dbLog('   .DB1 kÅrzen');
-{$ENDIF }
+      {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - .db1', dlTrace); {$endif}
       seek(f1,hdsize);
       truncate(f1);                 { Datei kÅrzen }
       if xflag then begin
@@ -186,16 +184,12 @@ begin
         fillchar(dbdhd.freelist,sizeof(dbdhd.freelist),0);
         seek(fe,0);
         blockwrite(fe,dbdhd,sizeof(dbdhd));
-{$IFDEF Debug }
-        if dl then dbLog('   .EB1 kÅrzen');
-{$ENDIF }
+        {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - .eb1', dlTrace); {$endif}
         seek(fe,dbdhd.hdsize);      { EB1 kÅrzen }
         truncate(fe);
         end;
       if flindex then begin
-{$IFDEF Debug }
-        if dl then dbLog('   .IX1 neu aufbauen');
-{$ENDIF }
+        {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - rebuild .ix1', dlTrace); {$endif}
         close(fi);
         freemem(index,sizeof(ixfeld)*ixhd.indizes);
         erase(fi);
@@ -442,6 +436,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.17  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

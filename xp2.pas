@@ -155,9 +155,7 @@ var f       : file;
 begin
   anzhidden:=0;
   if ParMenu then exit;
-{$IFDEF Debug }
-  dbLog('-- MenÅdatei einlesen');
-{$ENDIF }
+  Debug.DebugLog('xp2','readmenudat '+menufile, dlTrace);
   assign(f,menufile);
   if existf(f) then begin
     reset(f,1);
@@ -456,7 +454,6 @@ var i  : integer;
     if _is('d')    then ParDebug:=true else
     if isl('df:') then ParDebFlags:=ParDebFlags or ival(mid(s,5)) else
     if isl('dl:') then SetDebugLoglevels(mid(s,5)) else
-    if _is('dd')   then ParDDebug:=true else
     if _is('trace')then ParTrace:=true else
     if _is('j')    then ParNojoke:=true else
     if isl('n:')  then NetPar(UpperCase(mid(s,4))) else
@@ -568,7 +565,6 @@ begin
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht lîschen!');
   until findnext(sr)<>0;
   FindClose(sr);
-  if ParDDebug then dbOpenLog('database.log');
   if (LeftStr(ParAutost,4)<='0001') and (RightStr(ParAutost,4)>='2359') then
     ParAutost:='';
 end;
@@ -876,9 +872,7 @@ var d     : DB;
   end; *)
 
 begin
-{$IFDEF Debug }
-  dbLog('-- Gruppen ÅberprÅfen');
-{$ENDIF }
+  Debug.DebugLog('xp2','test_defaultgruppen', dlTrace);
   dbOpen(d,GruppenFile,1);
   if dbEOF(d) then begin
     AppGruppe('Intern',0,0,IntGruppe);
@@ -899,9 +893,7 @@ end;
 procedure test_systeme;
 var d : DB;
 begin
-{$IFDEF Debug }
-  dbLog('-- Systeme ÅberprÅfen');
-{$ENDIF }
+  Debug.DebugLog('xp2','test_systeme', dlTrace);
   dbOpen(d,SystemFile,1);
   if dbRecCount(d)=0 then begin
     dbAppend(d);
@@ -919,9 +911,7 @@ var
   x,y  : Integer;
 begin
   if ParNomem then exit;
-{$IFDEF Debug }
-  dbLog('-- Plattenplatz testen');
-{$ENDIF }
+  Debug.DebugLog('xp2','testdiskspace', dlTrace);
   free:=diskfree(0);
   if (free>=0) and (free<200000) then begin
     exitscreen(0);
@@ -1100,6 +1090,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.144  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.143  2002/05/19 10:50:35  mk
   - added "--help" to display command line help
   - added some const-parameters

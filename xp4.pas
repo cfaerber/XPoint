@@ -68,7 +68,7 @@ implementation  {----------------------------------------------------}
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
-      xpmakeheader, replytoall, mime;
+      xpmakeheader, replytoall, mime,debug;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -1530,9 +1530,7 @@ begin      { --- select --- }
       markaktiv:=true;
 
   lastt:=''; nosuccess:=false;
-{$IFDEF Debug }
-  dbLog('-- Oeffne Fenster('+strs(dispmode)+')');
-{$ENDIF }
+  Debug.DebugLog('xp4','select('+strs(dispmode)+')', dlTrace);
   savedd:=dispdat;
   lastdm:=aktdispmode;
   aktdispmode:=dispmode;
@@ -2263,9 +2261,7 @@ selende:
   aktdispmode:=lastdm;
   setmainkeys(aktdispmode);
   dispdat:=savedd;
-{$IFDEF Debug }
-  dbLog('-- Schliesse Fenster('+strs(dispmode)+')');
-{$ENDIF }
+  Debug.DebugLog('xp4','end select('+strs(dispmode)+')', dlTrace);
 end;    { select }
 
 
@@ -2295,9 +2291,7 @@ var
     i     : integer;
 begin
   dbSetIndex(bbase,biIndex);
-{$IFDEF Debug }
-  dbLog('-- Hauptfenster');
-{$ENDIF }
+  Debug.DebugLog('xp4','mainwindow', dlTrace);
   dispext:=false;
   for i:=1 to maxgl do dispbuf[i]:='';
   readmode:=DefReadmode;
@@ -2328,6 +2322,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2002/05/26 12:16:22  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.124  2002/05/20 14:19:45  mk
   - fixed crash with Ctrl-E after N/U/Z with only one unsend message
 

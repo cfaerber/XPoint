@@ -77,9 +77,7 @@ end;
 
 procedure PackAll(xpack:boolean);
 begin
-{$IFDEF Debug }
-  dbLog('-- Datenbank packen');
-{$ENDIF }
+  Debug.DebugLog('xp4o2','PackAll', dlTrace);
   closedatabases;
   packit(xpack,MsgFile);
   packit(xpack,BrettFile);
@@ -930,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/05/26 12:16:23  ma
+  - replaced dbLog by standard log routines
+
   Revision 1.54  2002/05/20 08:01:13  mk
   - added debug log for setlanguage
 
