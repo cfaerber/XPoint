@@ -1,6 +1,7 @@
 K CrossPoint v3.2 resource file
 K Deutsch
 K (c) '93-98 Peter Mandrella
+K (c) '2000 OpenXP Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
 1 xp.hlp
@@ -355,7 +356,7 @@ K (c) '93-98 Peter Mandrella
 212  Programmabbruch.
 213  ungÅltige Farbkonfiguration: ~
 + 214
-1    CrossPoint - Konfigurationsdatei
+1    CrossPoint/OpenXP - Konfigurationsdatei
 2    Benutzereinstellungen
 3    allgemeine Einstellungen
 4    Z-Netz
