@@ -139,13 +139,6 @@ var
   CheckSnow,
   DirectVideo: Boolean;
 
-{ Konstanten aus VIDEO.PAS --------------------------------------------- }
-
-const
-  vrows : word = 80;                  { Anzahl Bildspalten  }
-  vrows2: word = 160;                 { Bytes / Zeile       }
-  vlines: word = 25;                  { Anzahl Bildzeilen   }
-
 { Var's aus INOUT.PAS -------------------------------------------------- }
 
 var
@@ -179,10 +172,18 @@ procedure HorizLine(y: integer);        { horizontale Line zeichnen }
 
 { Teile aus VIDEO.PAS -------------------------------------------------- }
 
-function VideoType: byte;
-procedure SetScreenLines(lines: integer);
-function GetScreenLines: integer;
-function GetScreenCols: integer;
+//function VideoType: byte;
+
+{ Interface der XPWIN32.PAS zur Vereinheitlichung ---------------------- }
+
+{ Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
+function SysGetScreenLines: Integer;
+function SysGetScreenCols: Integer;
+{ Ermittelt die grî·te Ausdehnung des Screens, die in AbhÑngigkeit
+  von Font und Fontgrî·e im Moment mîglich ist }
+procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
+{ éndert die Bildschirmgrî·e auf die angegeben Werte }
+procedure SysSetScreenSize(const Lines, Cols: Integer);
 
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
@@ -255,6 +256,7 @@ implementation
 
 uses
   strings,
+  video,
   inout,
   typeform;
 
@@ -1080,27 +1082,6 @@ begin
     VideoType:= 3;
 end;
 
-procedure SetScreenLines(lines: integer);
-{ Soll die Anzahl der Zeilen am Bildschrim setzen, wird unter
-  Linux nicht verwendet }
-begin
-{$IFDEF DEBUG }
-  XPLog(LOG_DEBUG, 'procedure SetScreenLines(%d)', [lines]);
-{$ENDIF }
-end;
-
-function GetScreenLines: integer;
-{ Gibt die Anzahl der Zeilen beim Start von XP zurueck.
-  TODO: Dynamische Bildschirmanpassung }
-begin
-  GetScreenLines:= MaxRows;
-end;
-
-function GetScreenCols: integer;
-begin
-  GetScreenCols:= MaxCols;
-end;
-
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
 procedure Window(x1, y1, x2, y2: integer);
@@ -1162,6 +1143,35 @@ end;
 procedure mDelay(msec: word);
 begin
   napms(msec);
+end;
+
+{ XPWIN32.PAS-Plagiat -------------------------------------------------- }
+
+function SysGetScreenLines: integer;
+begin
+  SysGetScreenLines:= MaxRows;
+end;
+
+function SysGetScreenCols: integer;
+begin
+  SysGetScreenCols:= MaxCols;
+end;
+
+{ Ermittelt die grî·te Ausdehnung des Screens, die in AbhÑngigkeit
+  von Font und Fontgrî·e im Moment mîglich ist }
+procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
+begin
+  { Im Falle einer dynamischen Aenderung der Groesse muss diese
+    Funktion angepasst werden (hd 2000-06-30) }
+  Lines:= MaxRows;
+  Cols:= MaxCols;
+end;
+
+{ éndert die Bildschirmgrî·e auf die angegeben Werte }
+procedure SysSetScreenSize(const Lines, Cols: Integer);
+begin
+  resizeterm(Lines, Cols);
+  refresh;
 end;
 
 { Unit-Interna --------------------------------------------------------- }
@@ -1247,9 +1257,9 @@ begin
   if not (MinimumScreen(80, 24)) then begin
     endwin; { Curses beenden }
     writeln('This program needs a screen with 80 x 24!');
-    writeln('Your console has only ', GetScreenCols, ' x ', GetScreenLines, '.');
+    writeln('Your console has only ', SysGetScreenCols, ' x ', SysGetScreenLines, '.');
     {$IFDEF Linux }
-    XPLog(LOG_ERR, 'TTY is to small (%d x %d), need 80 x 24', [GetScreenCols, GetScreenLines]);
+    XPLog(LOG_ERR, 'TTY is to small (%d x %d), need 80 x 24', [SysGetScreenCols, SysGetScreenLines]);
     {$ENDIF }
     halt(1);
   end;
@@ -1278,6 +1288,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/30 11:38:36  hd
+  - XPWIN32-Plagiat
+  - Aenderung der eingebundenen Units
+  - Unnoetige Funktionen geloescht
+
   Revision 1.18  2000/06/23 15:59:25  mk
   - 16 Bit Teile entfernt
 
