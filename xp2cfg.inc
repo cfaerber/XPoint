@@ -253,11 +253,6 @@ procedure initvar;
 var {i    : integer;}
     rp   : ^boolean;
 begin
-  checkbreak:=false;
-{$IFNDEF VP }
-  orgcbreak:= getcbreak;
-  setcbreak(false);
-{$ENDIF }
   {$IFDEF unix }
     OSType := os_Linux;
   {$ENDIF }
@@ -1697,6 +1692,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.94  2000/11/18 21:38:41  mk
+  - removed SetCBreak
+
   Revision 1.93  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 
