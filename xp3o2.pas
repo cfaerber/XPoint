@@ -35,7 +35,7 @@ procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
                     order_ende:boolean);
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
-                    var betreff:string; sdata:SendUUptr;
+                    var betreff:string; sdata: TSendUUData;
                     indirectquote:boolean);
 procedure SetUngelesen;
 function  UserNetztyp(adr:string):byte;
@@ -182,7 +182,7 @@ end;
 
 
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
-                    var betreff:string; sdata:SendUUptr;
+                    var betreff:string; sdata: TSendUUData;
                     indirectquote:boolean);
 var hd : THeader;
     hds : longint;
@@ -201,7 +201,7 @@ begin
     if netztyp=nt_Maus then begin
       xpsendmessage._ReplyPath:=pfad;
       if cpos('@',hd.empfaenger)=0 then
-        sData^.ReplyGroup:=empfaenger;
+        sData.ReplyGroup:=empfaenger;
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
@@ -233,9 +233,9 @@ begin
            reptoanz:=followup.count;
          end;
     if not pm then
-      sData^.References.Assign(hd.References);
-    sData^.keywords:=keywords;
-    sData^.distribute:=distribution;
+      sData.References.Assign(hd.References);
+    sData.keywords:=keywords;
+    sData.distribute:=distribution;
     end;
   hd.Free;
 end;
@@ -266,6 +266,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/01/05 16:01:08  mk
+  - changed TSendUUData from record to class
+
   Revision 1.51  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

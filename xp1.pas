@@ -111,10 +111,6 @@ procedure pushhp(nr:word);
 procedure pophp;
 procedure freehelp;
 
-function  allocsenduudatamem: senduuptr;
-procedure clearsenduudata(sdata: senduuptr);
-procedure freesenduudatamem(var sdata: senduuptr);
-
 procedure setenable(mnu,nr:byte; flag:boolean);
 procedure setmenup(mnu:string; nr:byte; anew:string);
 procedure setmenupos(mnu:string; newpos:byte);
@@ -2011,40 +2007,6 @@ begin
   cursor(curon);
 end;
 
-function allocsenduudatamem: senduuptr;
-const
-  sdata: senduuptr = nil;
-begin
-  getmem(sdata, sizeof(senduudata));
-  if sdata=nil then
-    trfehler(6,30);  { 'zu wenig freier Speicher' }
-  clearsenduudata(sdata);
-  allocsenduudatamem:=sdata
-end;
-
-procedure clearsenduudata(sdata: senduuptr);
-begin
-  fillchar(sdata^, sizeof(senduudata), 0);
-  with sdata^ do begin
-    followup:=tstringlist.create;
-    References := TStringlist.Create;
-    OEM := TStringList.Create;
-  end
-end;
-
-procedure freesenduudatamem(var sdata: senduuptr);
-begin
-  if not assigned(sdata) then
-    exit;
-  with sdata^ do begin
-    followup.free;
-    References.Free;
-    OEM.Free;
-  end;
-  freemem(sdata);
-  sdata:= nil
-end;
-
 var
   SavedExitProc: pointer;
 
@@ -2067,6 +2029,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2002/01/05 16:01:08  mk
+  - changed TSendUUData from record to class
+
   Revision 1.134  2002/01/03 19:11:41  cl
   - added config option for internal preliminal UTF-8 support
 

@@ -66,7 +66,7 @@ begin
     while not eof(t) and (s<>sigsep) do begin
       readln(t,s);
       if pm then
-        rpsuser(s,empfaenger,sdata^.empfrealname);
+        rpsuser(s,empfaenger,sdata.empfrealname);
       rpsdate(s);
       if s<>sigsep then write(t2,s+#13#10);
       end;
@@ -824,7 +824,7 @@ begin
   BoxFile := dbReadStr(d,'dateiname');
   Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
-  Realname := iifs(sData^.SenderRealname='',dbReadStr(d,'realname'),sData^.SenderRealname);
+  Realname := iifs(sData.SenderRealname='',dbReadStr(d,'realname'),sData.SenderRealname);
   dbRead(d,'script',flags);
   if fidoname='' then
     FidoName := dbReadStr(d,'fidoname');
@@ -832,9 +832,9 @@ begin
   nomids:=(flags and 8<>0);
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
-  FQDN := iifs(sData^.FQDN='',dbReadStr(d,'fqdn'),sData^.FQDN);
-  if sData^.replyto <> '' then
-    sdata^.replyto := dbReadStr(d,'ReplyTo');
+  FQDN := iifs(sData.FQDN='',dbReadStr(d,'fqdn'),sData.FQDN);
+  if sData.replyto <> '' then
+    sdata.replyto := dbReadStr(d,'ReplyTo');
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp in netsRFC) and (umlaute=2) then
     umlaute:=0;
@@ -988,7 +988,8 @@ begin
   dialog(ival(getres2(616,0)),y,getres2(616,6),x,y);   { 'Zus„tzliche Informationen' }
   y:=2;
   asc:=range(' ',#126);
-  with sData^ do begin
+  with sData do
+  begin
     if not pm then begin
       if ntGrossBrett(netztyp) then sml:='>'
       else if ntKleinBrett(netztyp) then sml:='<'
@@ -1022,7 +1023,7 @@ begin
     end;
   readmask(brk);
   if not brk then
-  with sData^ do
+  with sData do
     if FollowUp.Count > 0 then FollowUp[0] := tmpFollowUp;
   enddialog;
 end;
@@ -1115,6 +1116,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/01/05 16:01:10  mk
+  - changed TSendUUData from record to class
+
   Revision 1.14  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

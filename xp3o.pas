@@ -1238,7 +1238,7 @@ var
     flags  : longint;
     d      : DB;
     fn     : string;
-    sData  : SendUUptr;
+    sData  : TSendUUData;
     sFlags : Word;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
@@ -1290,22 +1290,21 @@ begin
   _bezug:=hdp.GetLastReference;
   _beznet:=hdp.netztyp;
   _betreff:=hdp.betreff;
-  sdata:=allocsenduudatamem;
-  sData^.ersetzt:=hdp.msgid;
+  sdata:= TSendUUData.Create;
+  sData.ersetzt:=hdp.msgid;
   empf:=hdp.empfaenger;
   SendEmpfList.Assign(EmpfList);
   EmpfList.Clear;
 
   sFlags:=0;
-  sData^.orghdp:=hdp;
+  sData.orghdp:=hdp;
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
     sFlags:=sFlags or SendMPart;
 
-  if DoSend(false,fn,false,false,'A'+empf,_betreff,
-            true,false,true,false,true,sData,leer,
-            sFlags) then;
+  DoSend(false,fn,false,false,'A'+empf,_betreff,
+    true,false,true,false,true,sData,leer, sFlags);
   Hdp.Free;
-  freesenduudatamem(sData)
+  sData.Free;
 end;
 
 
@@ -1533,6 +1532,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2002/01/05 16:01:08  mk
+  - changed TSendUUData from record to class
+
   Revision 1.80  2001/12/31 14:44:24  mk
   - fixed Bug #497273, suggestes filename with N/E/N
 

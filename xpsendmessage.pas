@@ -90,7 +90,7 @@ var
 
 function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
                 empfaenger,betreff:string;
-                edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
+                edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
                 const signat:string; sendFlags:word):boolean;
 procedure send_file(pm,binary:boolean);
 function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
@@ -319,7 +319,7 @@ end;
 
 function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
                 empfaenger,betreff:string;
-                edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
+                edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
                 const signat:string; sendFlags:word):boolean;
 
 var f,f2     : file;
@@ -451,14 +451,14 @@ var f,f2     : file;
     pa.IsTemp	   := temp;
     pa.IsFile      := false;
 
-    if is_orig and assigned(sData^.OrgHdp) then
+    if is_orig and assigned(sData.OrgHdp) then
     begin
-      pa.FileCharset := sData^.OrgHdp.Charset;
+      pa.FileCharset := sData.OrgHdp.Charset;
       pa.FileEOL     := MimeEolCRLF;
-      pa.ContentDisposition.AsString := iifs(sData^.OrgHdp.Mime.Disposition<>'',sData^.OrgHdp.Mime.Disposition,'inline');
-      pa.ContentDescription := sData^.OrgHdp.Mime.Description;
-      pa.ContentType.AsString := iifs(sData^.OrgHdp.Mime.CType<>'',sData^.OrgHdp.Mime.CType,'text/plain');
-      pa.ContentEncoding := sData^.OrgHdp.Mime.Encoding;
+      pa.ContentDisposition.AsString := iifs(sData.OrgHdp.Mime.Disposition<>'',sData.OrgHdp.Mime.Disposition,'inline');
+      pa.ContentDescription := sData.OrgHdp.Mime.Description;
+      pa.ContentType.AsString := iifs(sData.OrgHdp.Mime.CType<>'',sData.OrgHdp.Mime.CType,'text/plain');
+      pa.ContentEncoding := sData.OrgHdp.Mime.Encoding;
     end else
     begin
       pa.FileCharset := 'IBM437';
@@ -905,16 +905,16 @@ begin      //-------- of DoSend ---------
   s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
 
   sdNope:=(sdata=nil);
-  if sdNope then sdata:=allocsenduudatamem;
+  if sdNope then sData := TSendUUData.Create;
 
-  netztyp:=sdata^.onetztyp;
+  netztyp:=sData.onetztyp;
 
   if sendFlags and sendQuote<>0 then
   begin
     ExtractSetMimePart(qMimePart);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
                 datei,false,1);
-    sdata^.quotestr:=qchar;
+    sData.quotestr:=qchar;
     get_xref;
     partsex:=true;
     AddMessagePart(datei,true,true);
@@ -1129,8 +1129,8 @@ fromstart:
     SetLocalPM;
   dbClose(d);
 
-  flMLoc:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'lokal');
-  flMnet:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'mausnet');
+  flMLoc:=(netztyp=nt_Maus) and stricmp(sData.distribute,'lokal');
+  flMnet:=(netztyp=nt_Maus) and stricmp(sData.distribute,'mausnet');
   FidoBin:=binary and pm and
            ((netztyp=nt_Fido) or
             ((netztyp=nt_UUCP) and (LeftStr(empfaenger,length(uuserver))=uuserver)));
@@ -1220,7 +1220,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       begin
         _bezug:='';
         _orgref:='';
-        sdata^.References.Clear;
+        sData.References.Clear;
       end else
         { betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')'} ;
       pophp;
@@ -1356,7 +1356,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         end;
       case n of
         0   : if SaveUVS and not binary then senden:=3   { Abbruch }
-              else if sdata^.uv_edit then senden:=1
+              else if sData.uv_edit then senden:=1
               else senden:=0;
         1   : if not pm or (cc_anz>0) or not EmpfError then
                 if (OverSize=0) or (msgprio>0) or
@@ -1398,7 +1398,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
-                      sData^.replyto := '';
+                      sData.replyto := '';
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -1475,13 +1475,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
        17   : begin
                 flMnet:=not flMnet;
                 flMloc:=false;
-                sData^.distribute:=iifs(flMnet,'MausNet','');
+                sData.distribute:=iifs(flMnet,'MausNet','');
                 calc_hdsize; showsize;
               end;
        18   : begin
                 flMloc:=not flMloc;
                 flMnet:=false;
-                sData^.distribute:=iifs(flMloc,'lokal','');
+                sData.distribute:=iifs(flMloc,'lokal','');
                 calc_hdsize; showsize;
               end;
        19   : if pm then begin
@@ -1630,18 +1630,18 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if ntMIME(netztyp) then
       hdp.MIME.mversion := '1.0';
 
-    if (not partsex) and assigned(sdata^.orghdp) then
+    if (not partsex) and assigned(sData.orghdp) then
     begin
       // just pass-through
       s1 := TFileStream.Create(datei,fmOpenRead);
 
-      hdp.typ           := sdata^.orghdp.typ;
-      hdp.mime.ctype    := sdata^.orghdp.mime.ctype;
-      hdp.mime.encoding := sdata^.orghdp.mime.encoding;
-      hdp.mime.disposition := sdata^.orghdp.mime.disposition;
-      hdp.mime.cid      := sdata^.orghdp.mime.cid;
-      hdp.charset       := sdata^.orghdp.charset;
-      hdp.x_charset     := sdata^.orghdp.x_charset;
+      hdp.typ           := sData.orghdp.typ;
+      hdp.mime.ctype    := sData.orghdp.mime.ctype;
+      hdp.mime.encoding := sData.orghdp.mime.encoding;
+      hdp.mime.disposition := sData.orghdp.mime.disposition;
+      hdp.mime.cid      := sData.orghdp.mime.cid;
+      hdp.charset       := sData.orghdp.charset;
+      hdp.x_charset     := sData.orghdp.x_charset;
     end
     else case parts.count of
       0: assert(false);
@@ -1800,44 +1800,44 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       4 : hdp.absender:=username+'@'+FidoAbsAdr;
       5 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            hdp.absender:=iifs(sdata^.SenderMail='',
+            hdp.absender:=iifs(sData.SenderMail='',
                                username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
-                               sdata^.SenderMail);
+                               sData.SenderMail);
             hdp.real_box:=box;
           end;
       7 : begin
             hdp.absender:=username+'@'+box+';'+pointname;
             hdp.real_box:=box;
           end;
-      8 : hdp.absender:=iifs(sdata^.SenderMail='',username,sdata^.SenderMail);
+      8 : hdp.absender:=iifs(sData.SenderMail='',username,sData.SenderMail);
     end;
     hdp.realname:=realname;
-    if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData^.onetztyp,netztyp)
+    if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData.onetztyp,netztyp)
     then begin
       hdp.wab:=hdp.absender; hdp.war:=hdp.realname;
-      hdp.absender:=sData^.oab; hdp.realname:=sData^.oar;
-      { sData^.oab:=''; }
+      hdp.absender:=sData.oab; hdp.realname:=sData.oar;
+      { sData.oab:=''; }
       end;
 
     if netztyp=nt_Magic then
       hdp.hd_point:=pointname;
-    hdp.replyto := sData^.Replyto;
-    if (not pm) and (sData^.followup.count>0) then
-      hdp.followup.assign(sData^.followup);
-    hdp.Keywords:=sData^.keywords;
-    hdp.Summary:=sData^.summary;
-    if  ntAdrCompatible(sData^.onetztyp,netztyp)
+    hdp.replyto := sData.Replyto;
+    if (not pm) and (sData.followup.count>0) then
+      hdp.followup.assign(sData.followup);
+    hdp.Keywords:=sData.keywords;
+    hdp.Summary:=sData.summary;
+    if  ntAdrCompatible(sData.onetztyp,netztyp)
     then begin
       if sendFlags and sendWAB=0 then begin
-        hdp.oab:=sData^.oab; hdp.oar:=sData^.oar;
+        hdp.oab:=sData.oab; hdp.oar:=sData.oar;
         end;
-      hdp.oem.Assign(sData^.oem);
+      hdp.oem.Assign(sData.oem);
       end;
-    if UpperCase(sData^.ReplyGroup)<>UpperCase(mid(empfaenger,2)) then
-      hdp.ReplyGroup:=sData^.ReplyGroup;
+    if UpperCase(sData.ReplyGroup)<>UpperCase(mid(empfaenger,2)) then
+      hdp.ReplyGroup:=sData.ReplyGroup;
     if not pm then
-      hdp.distribution:=sData^.distribute;
-    hdp.quotestring:=sData^.quotestr;
+      hdp.distribution:=sData.distribute;
+    hdp.quotestring:=sData.quotestr;
     sendedat:=ixdat(zdate);
     hdp.datum:=iifs(ReplaceEtime,LeftStr(zdate,6)+'0000',zdate);
     case netztyp of
@@ -1851,11 +1851,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     end;
     dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
     hdp.msgid:=MessageID;
-    sData^.msgid:=hdp.msgid;
+    sData.msgid:=hdp.msgid;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-      if sData^.References.IndexOf(_bezug)=-1 then
-        sData^.References.Add(_bezug);
+      if sData.References.IndexOf(_bezug)=-1 then
+        sData.References.Add(_bezug);
 
     if (_beznet>=0) then  // bugfix fÅr VP
       if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
@@ -1866,7 +1866,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
                   {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
     hdp.organisation:=orga;
-    if sdata^.ersetzt<>''then hdp.ersetzt:=sdata^.ersetzt;
+    if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
     then begin
       hdp.postanschrift:=postadresse;
@@ -1927,8 +1927,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 //        if FileContainsUmlaut then hdp.x_charset:='ISO-8859-1';
 //    if iso then
 //      hdp.charset:='ISO1';
-    if assigned(sData^.orghdp) then
-      with sData^.orghdp do begin
+    if assigned(sData.orghdp) then
+      with sData.orghdp do begin
         { hdp.zdatum:=zdatum; hdp.orgdate:=true;  !! Unversandt/* !! }
         hdp.organisation:=organisation;
         hdp.ReplyTo := ReplyTo;
@@ -1945,7 +1945,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     for ii:=1 to msgCPanz-1 do
       EmpfList.Add(cc^[ii]);
-    hdp.References.Assign(sData^.References);
+    hdp.References.Assign(sData.References);
 
     hdp.groesse:=s1.Size;
     s1.Seek(0,soFromBeginning);
@@ -2197,7 +2197,7 @@ xexit:
   Hdp.Free;
   if sigtemp then _era(sigfile);
 xexit1:
-  if sdNope then freesenduudatamem(sdata);
+  if sdNope then sData.Free;
 xexit2:
   forcebox:=''; forceabs:='';
   sendfilename:=''; sendfiledate:='';
@@ -2233,7 +2233,7 @@ var
     reptoanz   : integer;
     fn         : string;
     useclip    : boolean;
-    sData      : SendUUptr;
+    sData      : TSendUUData;
 
   function FileOK:boolean;
   var f : file;
@@ -2269,7 +2269,7 @@ begin
       {fsplit(fn,dir,name,ext);}
       if betr='' then betr:=ExtractFileName(fn)
       else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
-      sdata:=allocsenduudatamem;
+      sdata:= TSendUUData.Create;
       if aktdispmode in [10..19] then begin
         get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
         if repto<>'' then empf:=repto;
@@ -2278,7 +2278,7 @@ begin
       sendfilename:=UpperCase(ExtractFilename(fn));
       sendfiledate:=zcfiletime(fn);
       if DoSend(pm,fn,useclip,true,empf,betr,false,binary,true,true,false,sData,hf,0) then;
-      freesenduudatamem(sData);
+      sData.Free;
       end;
     end;
 end;
@@ -2318,6 +2318,9 @@ finalization
 
 {
   $Log$
+  Revision 1.33  2002/01/05 16:01:10  mk
+  - changed TSendUUData from record to class
+
   Revision 1.32  2001/12/25 20:28:15  cl
   - fixed RangeCheckError
 

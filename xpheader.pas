@@ -68,10 +68,7 @@ type
       komlen: Integer;
     end;
 
-//    crpyt: string;
-//    crypttyp: string;                   { '' / T / B                   }
     charset: string;
-//    ccharset: string;                   { crypt-content-charset }
     groesse: longint;
     realname: string;
     programm: string;                   { Mailer-Name }
@@ -82,7 +79,6 @@ type
     ReplyTo: String;                    { Antwort-An, "Reply-To:'    }
     followup: tstringlist;              { Diskussion-In }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
-//    ckomlen: longint;                   { Crypt-Content-KOM }
     datei: string;                      { Dateiname                  }
     ddatum: string;                     { Dateidatum, jjjjmmtthhmmss }
     prio: byte;                         { 10=direkt, 20=Eilmail      }
@@ -112,11 +108,8 @@ type
     vertreter: string;
     XPointCtl: longint;
     nokop: boolean;
-//    mimever: string;                    { MIME }
-//    mimect: string;
     boundary: string;                   { MIME-Multipart-Boundary      }
     gate: string;
-//    mimetyp: string;
     xnoarchive: boolean;
     Cust1, Cust2: string;
     control: string;
@@ -125,7 +118,6 @@ type
     zline: TStringList;
     fline: TStringList;
     References: TStringList;            // references:
-//    mimereltyp: string;
     xempf: TStringList;
     mailcopies: tstringlist;
     xoem: TStringList;
@@ -152,31 +144,34 @@ type
 
   end;
 
-  SendUUData = record
-                     Replyto    : String;
-                     followup   : TStringlist;
-                     References : TStringList;
-                     keywords   : string;
-                     summary    : string;
-                     distribute : string;
-                     ReplyGroup : string;     { Maus-QuoteTo }
-                     oab, wab: string;
-                     OEM: TStringList;
-                     oar,war    : string;
-                     onetztyp   : byte;
-                     orghdp     : THeader;
-                     quotestr   : string;
-                     UV_edit    : boolean;        { <Esc> -> "J" }
-                     empfrealname : string;
-                     msgid,
-                     ersetzt    : string;
-                     SenderRealname,
-                     SenderMail,
-                     FQDN : string;  { overriding standards in DoSend if set }
-                     RTAHasSetVertreter: Boolean;
-                     boundary   : string;
-                   end;
-   SendUUptr   = ^SendUUdata;
+  TSendUUData = class
+  public
+    Replyto    : String;
+    followup   : TStringlist;
+    References : TStringList;
+    keywords   : string;
+    summary    : string;
+    distribute : string;
+    ReplyGroup : string;     { Maus-QuoteTo }
+    oab, wab: string;
+    OEM: TStringList;
+    oar,war    : string;
+    onetztyp   : byte;
+    orghdp     : THeader;
+    quotestr   : string;
+    UV_edit    : boolean;        { <Esc> -> "J" }
+    empfrealname : string;
+    msgid,
+    ersetzt    : string;
+    SenderRealname,
+    SenderMail,
+    FQDN : string;  { overriding standards in DoSend if set }
+    RTAHasSetVertreter: Boolean;
+    boundary   : string;
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
+  end;
 
 implementation
 
@@ -220,9 +215,13 @@ begin
   msgid := '';
   ersetzt:= '';                    { ohne <>                      }
   typ:= '';                        { T / B                        }
-  crypt.method:='';
-  crypt.typ:= '';                   { '' / T / B                   }
-  crypt.charset:= '';
+  with crypt do
+  begin
+    method:='';
+    typ:= '';                   { '' / T / B                   }
+    charset:= '';
+    komlen := 0;
+  end;
   charset:='';
   groesse := 0;
   realname:= '';
@@ -234,7 +233,6 @@ begin
   ReplyTo := '';
   followup.clear;;
   komlen := 0;
-  crypt.komlen := 0;
   datei:= '';                      { Dateiname                  }
   ddatum:= '';                     { Dateidatum, jjjjmmtthhmmss }
   prio := 0;
@@ -266,11 +264,8 @@ begin
   vertreter:= '';
   XPointCtl := 0;
   nokop:= false;
-//  mimever:= '';                    { MIME }
-//  mimect:= '';
   boundary:= '';                   { MIME-Multipart-Boundary      }
   gate:= '';
-//  mimetyp:= '';
   xnoarchive:= false;;
   Cust1 := '';
   Cust2:= '';
@@ -280,7 +275,6 @@ begin
   zline.clear;
   fline.clear;
   References.Clear;
-//  mimereltyp:= '';
   xempf.clear;
   mailcopies.clear;
   xoem.clear;
@@ -579,8 +573,56 @@ begin
     WriteZ38(stream);
 end;
 
+{ TSendUUData }
+
+constructor TSendUUData.Create;
+begin
+  Followup := TStringlist.Create;
+  References := TStringList.Create;
+  OEM := TStringList.Create;
+  Clear;
+end;
+
+destructor TSendUUData.Destroy;
+begin
+  FollowUp.Free;
+  REferences.Free;
+  OEM.Free;
+  inherited;
+end;
+
+procedure TSendUUData.Clear;
+begin
+  Replyto := '';
+  followup.Clear;
+  References.Clear;
+  keywords := '';
+  summary := '';
+  distribute := '';
+  ReplyGroup := '';     { Maus-QuoteTo }
+  oab := '';
+  wab := '';
+  OEM.Clear;
+  oar := '';
+  war := '';
+  onetztyp := 0;
+  orghdp := nil;
+  quotestr := '';
+  UV_edit:= false; { <Esc> -> "J" }
+  empfrealname := '';
+  msgid := '';
+  ersetzt := '';
+  SenderRealname := '';
+  SenderMail := '';
+  FQDN := ''; { overriding standards in DoSend if set }
+  RTAHasSetVertreter := false;
+  boundary := '';
+end;
 {
   $Log$
+  Revision 1.20  2002/01/05 16:01:10  mk
+  - changed TSendUUData from record to class
+
   Revision 1.19  2001/09/25 21:12:06  cl
   - CRYPT-CONTENT-CHARSET is correctly converted to ZConnect charset names
 

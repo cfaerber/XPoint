@@ -1615,7 +1615,7 @@ var brk  : boolean;
     headf: string;
     sigf : string;
     fn   : string;
-    sdata: SendUUPtr;
+    sdata: TSendUUData;
     pm   : boolean;
     d    : DB;
     grnr : longint;
@@ -1647,11 +1647,10 @@ begin
     end;
   if autocpgd then pgdown:=true;
   forcebox:=box;
-  sdata:=allocsenduudatamem;
-  sdata^.empfrealname:=real;
-  if DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0)
-  then;
-  freesenduudatamem(sdata);
+  sdata:= TSendUUData.Create;
+  sdata.empfrealname:=real;
+  DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0);
+  sData.Free;
   pgdown:=false;
   if FileExists(fn) then DeleteFile(fn);
 end;
@@ -2438,6 +2437,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/01/05 16:01:09  mk
+  - changed TSendUUData from record to class
+
   Revision 1.82  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

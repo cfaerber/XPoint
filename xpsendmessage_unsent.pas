@@ -78,7 +78,7 @@ var
     fs       : longint;
     box      : string;
     crash    : boolean;
-    sdata    : SendUUptr;
+    sdata    : TSendUUData;
     sendflags: word;
     empfnr   : shortint;
     ablage   : byte;
@@ -346,8 +346,8 @@ begin
     sendfilename:=hdp0.datei;
     sendfiledate:=hdp0.ddatum;
     sendflags:=0;
-    sdata:=allocsenduudatamem;
-    with sData^ do
+    sdata:= TSendUUData.Create;
+    with sData do
     begin
       followup.assign(hdp.followup);
       ReplyTo := Hdp.replyto;
@@ -370,7 +370,7 @@ begin
       onetztyp:=hdp.netztyp;
       quotestr:=hdp.quotestring;
       UV_edit:=true;
-      end;
+    end;
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
     empf:=hdp.empfaenger;
@@ -393,7 +393,7 @@ begin
 
     if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
       inc(SendFlags,SendMPart);
-    sData^.OrgHdp :=hdp;
+    sData.OrgHdp :=hdp;
 
     if DoSend(pm,tmp,true,false,empf,betr,modi,typ='B',true,false,false,
               sData,headerf,sendflags+Sendreedit+
@@ -414,8 +414,8 @@ begin
               end;
         until not found;
       dbGo(mbase,rec2);
-      end;
-    freesenduudatamem(sdata);
+    end;
+    sData.Free;
 //    _era(tmp);
     end;
   xaufbau:=true;
@@ -435,7 +435,7 @@ begin
     errsound;
     testmausempf:=false;
     end
-  else 
+  else
   begin
     TestMausEmpf := true;
     dbOpen(d,PseudoFile,1);
@@ -492,7 +492,7 @@ var
     re_n    : boolean;
     kein_re : boolean;
     unpark  : boolean;
-    sData   : SendUUptr;
+    sData   : TSendUUData;
     l       : longint;
 
     binaermail : boolean;
@@ -947,38 +947,38 @@ again:
                  if (typ=3) and (sigfile='') then
                    if pm then sigfile:=PrivSignat
                    else sigfile:=SignatFile;
-                 sdata:=allocsenduudatamem;
+                 sdata:= TSendUUData.Create;
                  if typ=3 then begin
                    binaermail:=false;
                    if (hdp.netztyp=nt_Maus) and (_brett[1]='A') then
-                     sData^.ReplyGroup:=hdp.empfaenger;
+                     sData.ReplyGroup:=hdp.empfaenger;
                    fidoto:=LeftStr(hdp.absender,35);
                    p:=cpos('@',fidoto);
                    if p>0 then fidoto:=LeftStr(fidoto,p-1);
                    _bezug:=hdp.msgid;
                    _orgref:=hdp.org_msgid;
                    _beznet:=hdp.netztyp;
-                   sData^.References.Assign(Hdp.References);
+                   sData.References.Assign(Hdp.References);
                    flQto:=true;
                    end;
                  if typ in [1,7] then begin
-                   sData^.summary:=hdp.summary;
-                   sData^.keywords:=hdp.keywords;
+                   sData.summary:=hdp.summary;
+                   sData.keywords:=hdp.keywords;
                    if hdp.oab<>'' then begin
-                     sData^.oab:=hdp.oab; sData^.oar:=hdp.oar; end
+                     sData.oab:=hdp.oab; sData.oar:=hdp.oar; end
                    else begin
-                     sData^.oab:=hdp.absender; sData^.oar:=hdp.realname; end;
-                   if hdp.oem.Count > 0 then sData^.oem.Assign(hdp.oem)
-                   else sData^.oem.add(hdp.empfaenger);
-                   sData^.onetztyp:=hdp.netztyp;
+                     sData.oab:=hdp.absender; sData.oar:=hdp.realname; end;
+                   if hdp.oem.Count > 0 then sData.oem.Assign(hdp.oem)
+                   else sData.oem.add(hdp.empfaenger);
+                   sData.onetztyp:=hdp.netztyp;
                    sendfilename:=hdp.datei;
                    sendfiledate:=hdp.ddatum;
                    end;
                  { suboptimal }
                  if ((typ in [1..3,7]) and (not pm)) then
-                   sData^.followup.add (am_replyto);
-                 if typ in [1,4,7] then sdata^.quotestr:=hdp.quotestring;
-                 if typ=7 then sData^.orghdp:=hdp;
+                   sData.followup.add (am_replyto);
+                 if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
+                 if typ=7 then sData.orghdp:=hdp;
                  if typ in [1,2,7] then
                    xpsendmessage.FileAttach:=(hdp.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -989,9 +989,9 @@ again:
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
                  if nextwl>=0 then uvs_active:=ua;
-                 freesenduudatamem(sdata);
-                 end;
-              end;
+                 sData.Free;
+               end;
+             end;
          4 : begin
                add_oe_cc:=0;
                assign(t,fn);
@@ -1040,8 +1040,8 @@ again:
                xpsendmessage._replyPath:=hdp.replypath;
                xpsendmessage._pmReply:=(hdp.attrib and attrPmReply<>0);
                xpsendmessage.ControlMsg:=(hdp.attrib and attrControl<>0);
-               sdata:=allocsenduudatamem;
-               with sData^ do
+               sdata:= TSendUUData.Create;
+               with sData do
                begin
                  followup.assign(hdp.followup);
                  ReplyTo := Hdp.ReplyTo;
@@ -1063,10 +1063,10 @@ again:
                  inc(SendFlags,SendPGPsig);
                if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
                  inc(SendFlags,SendMPart);
-               sData^.OrgHdp :=hdp;
+               sData.OrgHdp :=hdp;
                if DoSend(pm,fn,true,false,empf,betr,false,hdp.typ='B',sendbox,
                          false,false,sData,leer,sendflags) and unpark then SetDel;
-               freesenduudatamem(sdata);
+               sData.Free;
              end;
          6 : begin
                dbSeek(ubase,uiName,UpperCase(name));
@@ -1321,6 +1321,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/01/05 16:01:11  mk
+  - changed TSendUUData from record to class
+
   Revision 1.12  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

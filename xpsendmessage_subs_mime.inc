@@ -166,9 +166,9 @@ begin
   try
     s := TFileStream.Create(datei,fmOpenRead);
     try
-      c := TMimeContentType.Create(sData^.OrgHdp.Mime.Ctype);
+      c := TMimeContentType.Create(sData.OrgHdp.Mime.Ctype);
       try
-        with sData^.OrgHdp do
+        with sData.OrgHdp do
         begin
           if Boundary<>'' then c.Boundary := Boundary;
           if Charset <>'' then c.Charset  := ZCCharsetToMIME(Charset);
@@ -304,6 +304,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2002/01/05 16:01:11  mk
+// - changed TSendUUData from record to class
+//
 // Revision 1.6  2001/09/19 18:02:36  cl
 // - various small fixes
 //

@@ -714,7 +714,7 @@ var t,lastt: taste;
       netztyp : byte;
       usermsg : boolean;
       gesperrt: boolean;
-      sdata   : SendUUptr;
+      sdata   : TSendUUData;
       flags   : byte;
       hdp     : Theader;
       hds     : longint;
@@ -990,9 +990,9 @@ var t,lastt: taste;
 
     if pm then sigf:=PrivSignat
     else sigf:=SignatFile;
-    sdata:=allocsenduudatamem;
-    if adresseAusgewaehlt then sdata^.RTAHasSetVertreter := true;
-    if quote=2 then sdata^.quotestr:=qchar;
+    sdata:= TSendUUData.Create;
+    if adresseAusgewaehlt then sData.RTAHasSetVertreter := true;
+    if quote=2 then sData.quotestr:=qchar;
 
     // process group settings and stuff
     if not usermsg then 
@@ -1015,12 +1015,12 @@ var t,lastt: taste;
           // creating it. Here we do initial setup; xp6o.unversandt cares
           // that these customized header entries are not overwritten
           // on editing this message once more.
-          // BTW one could substitute sdata^.sendermail with xp6.forceabs
+          // BTW one could substitute sData.sendermail with xp6.forceabs
           // but this leads to problems with other net types.
-          sdata^.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
-          sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
-          sdata^.replyto := dbReadStr(d,iifs(pm,'pmreplyto','amreplyto'));
-          sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
+          sData.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
+          sData.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
+          sData.replyto := dbReadStr(d,iifs(pm,'pmreplyto','amreplyto'));
+          sData.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
         end;
       end;
     end;
@@ -1114,16 +1114,16 @@ var t,lastt: taste;
     headf:='';
     if (quote=0) and autocpgd then pgdown:=true;
     if not pm and (rt0<>'') and not gesperrt then
-      sData^.followup.add(mid(rt0,2));
+      sData.followup.add(mid(rt0,2));
     flqto:=flqto or qtflag;
     _pmReply:=_pmReply or pmrflag;
     if (netztyp=nt_QWK) and _pmReply and (dispmode in [10..19]) then begin
       _empf:= dbReadNStr(mbase,mb_brett);
       dbSeek(bbase,biIntnr,mid(_empf,2));
       if dbFound then
-        sData^.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
+        sData.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
       end;
-    sdata^.empfrealname:=realname;
+    sData.empfrealname:=realname;
 
     if reply then
     begin
@@ -1221,7 +1221,7 @@ var t,lastt: taste;
 //    if FileExists(fn) then _era(fn);
     setall;
     SendEmpfList.Clear;
-    freesenduudatamem(sdata);
+    sData.Free;
     qMimePart.Free;
     qMimePart := nil;
   end;
@@ -2283,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2002/01/05 16:01:09  mk
+  - changed TSendUUData from record to class
+
   Revision 1.115  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

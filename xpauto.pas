@@ -213,7 +213,7 @@ var tmp  : boolean;
     fh   : longint;     // File-Handle
     b    : byte;
     muvs : boolean;
-    sData: SendUUptr;
+    sData: TSendUUData;
 begin
   postfile:=false;
   with ar do begin
@@ -252,15 +252,15 @@ begin
       if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
       EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
-      sdata:=allocsenduudatamem;
-      if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData^.ersetzt);
+      sdata:= TSendUUData.Create;
+      if (flags and 8<>0) then dbRead(auto,'lastmsgid',sData.ersetzt);
       if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,sendShow) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
-        dbWrite(auto,'lastmsgid',sData^.msgid);
+        dbWrite(auto,'lastmsgid',sData.msgid);
         fh:= FileOpen(datei,fmOpenRead);
         tt:= FileGetDate(fh);
         FileClose(fh);
@@ -284,9 +284,9 @@ begin
       SaveUVS:=muvs;
       if tmp then
         SafeDeleteFile(datei);
-      freesenduudatamem(sdata)
-      end;
+      sData.Free
     end;
+  end;
 end;
 
 
@@ -676,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2002/01/05 16:01:09  mk
+  - changed TSendUUData from record to class
+
   Revision 1.46  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 
