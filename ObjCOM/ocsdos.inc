@@ -28,7 +28,7 @@ Const
    {$IFNDEF FPC}Disable_Interrupts=$FA; Enable_Interrupts=$FB;{$ENDIF}
 
 var
-  pSerialObjAnchor: tpSerialObj; {A linear list for proper memory releasement and the irq handler}
+  SerialStreams: tList;
   IRQsInUse: Array[1..15]of Boolean; {Used to determine whether irq handler has already been installed on irq}
 
 Procedure COM_ISR; Interrupt;
@@ -41,14 +41,15 @@ Procedure COM_ISR; Interrupt;
 
 Const IIR: Byte= 0;  {Constant variables in order to avoid stack trashing}
       highirq: Boolean= False; {True if triggering IRQ was > 7}
-      pSerialObj: tpSerialObj= nil;
+
+var   iSerialStream: Integer; aSerialStream: tSerialStream;
 
 Begin
    asm cli end;
    highirq:=False;
-   pSerialObj:=pSerialObjAnchor;
-   while pSerialObj<>nil do begin {Go thru comm object list}
-      With pSerialObj^ Do Begin
+   for iSerialStream:=0 to SerialStreams.Count-1 do begin {Go thru comm object list}
+      aSerialStream:=SerialStreams[iSerialStream];
+      With aSerialStream Do Begin
          If Active Then Begin
             iir:=Port[IOBase+PO_IIR];
             While Not Odd(IIR) Do Begin
@@ -78,7 +79,6 @@ Begin
             End;
          End;
       End;
-      pSerialObj:=pSerialObj^.Next;
    End;
    {We're done processing the interrupt}
    if highirq then Port[$a0]:=$20;
@@ -103,22 +103,22 @@ end;
 function TSerialStream.HOpen(iIOBase,iIRQ: Integer; BaudRate: Longint; DataBits: Byte;
                           Parity: Char; StopBits: Byte): Boolean;
 
-Var temp : byte; shelp: String; pSerialObj: tpSerialObj; ppSerialObjLast: ^tpSerialObj;
+Var temp : byte; shelp: String;
+    iSerialStream: Integer; aSerialStream: tSerialStream;
     {$IFDEF FPC}New_ISR : TSegInfo;{$ENDIF}
 Begin
    {Set the initial state of the return code to OK}
    HOpen:=True; ErrorStr:=''; Active:=False;
 
-   {Check to see if the comport (IOPort) is already in use by another object}
-   pSerialObj:=pSerialObjAnchor; ppSerialObjLast:=@pSerialObjAnchor;
-   while pSerialObj<>nil do begin
-     if pSerialObj^.IOBase=iIOBase Then
+   {Check to see if the comport (IOPort) is already in use by another instance}
+   for iSerialStream:=0 to SerialStreams.Count-1 do begin
+     aSerialStream:=SerialStreams[iSerialStream];
+     if aSerialStream.IOBase=iIOBase Then
       Begin HOpen:=False; ErrorStr:='Comport already opened'; Exit; end;
-     ppSerialObjLast:=@pSerialObj^.Next; pSerialObj:=pSerialObj^.Next;
-   End;
+   end;
 
    {Begin main setup}
-   ppSerialObjLast^:=@Self; Next:=nil; {Add this object at last position of comm object list}
+   SerialStreams.Add(Self);
    New(R_Buffer); New(T_Buffer); {Allocate memory for the buffers}
    IOBase:=iIOBase; IRQ:=iIRQ;
    Str(IOBase,SHelp); DebugLog('ObjCOM','SDos IOBase '+SHelp,2);
@@ -146,7 +146,7 @@ Begin
       GetIntVec(8+IRQ,Org_Vector); SetIntVec(8+IRQ,@COM_ISR);
       {$ELSE}
       lock_code(@COM_ISR,longint(@ISR_endmarker)-longint(@COM_ISR));
-      lock_data(Self,SizeOf(Self));
+//**      lock_data(Self,SizeOf(Self));
       Get_PM_Interrupt(8+IRQ,Org_Vector);
       New_ISR.offset:=@COM_ISR; New_ISR.segment:=get_cs;
       Set_PM_Interrupt(8+IRQ,New_ISR);
@@ -172,7 +172,7 @@ begin
   Open:=HOpen(ComportResources[Comport].IOBase,ComportResources[Comport].IRQ,Baudrate,Databits,Parity,Stopbits);
 end;
 
-destructor TSerialStream.Done;
+destructor TSerialStream.Destroy;
 begin if Active then Close end;
 
 function TSerialStream.SetLine(Bpsrate: Longint; Parity: Char; DataBits,StopBits: Byte): Boolean;
@@ -209,13 +209,13 @@ End;
 Procedure TSerialStream.Close;
 Var
   InUse: Boolean;     {Scratch variable to test for shared interrupt}
-  pSerialObj: tpSerialObj;
+  iSerialStream: Integer; aSerialStream: tSerialStream;
 Begin
    {Check for shared interrupt usage}
-   Active:=False; InUse:=False; pSerialObj:=pSerialObjAnchor;
-   while pSerialObj<>nil do begin
-     if(pSerialObj^.Active)and(pSerialObj^.IRQ=IRQ)then InUse:=True;
-     pSerialObj:=pSerialObj^.Next;
+   Active:=False; InUse:=False;
+   for iSerialStream:=0 to SerialStreams.Count-1 do begin
+     aSerialStream:=SerialStreams[iSerialStream];
+     if(aSerialStream.Active)and(aSerialStream.IRQ=IRQ)then InUse:=True;
    end;
 
    if InUse then DebugLog('ObjCOM','SDos Close: IRQ in use, not released.',2);
@@ -236,7 +236,7 @@ Begin
       {$ELSE}
       Set_PM_Interrupt(8+IRQ,Org_Vector);
       unlock_code(@COM_ISR,longint(@ISR_endmarker)-longint(@COM_ISR));
-      unlock_data(Self,SizeOf(Self));
+//**      unlock_data(Self,SizeOf(Self));
       {$ENDIF}
    End;
 
@@ -246,12 +246,9 @@ Begin
    Dispose(R_Buffer); Dispose(T_Buffer);
 
    {Remove this object from comm object list}
-   if pSerialObjAnchor=@Self then pSerialObjAnchor:=Next
-   else begin
-     pSerialObj:=pSerialObjAnchor;
-     while(pSerialObj<>nil)and(pSerialObj^.Next<>@Self)do pSerialObj:=pSerialObj^.Next;
-     if pSerialObj<>nil then pSerialObj^.Next:=Next;
-   end;
+   for iSerialStream:=0 to SerialStreams.Count-1 do
+     if SerialStreams[iSerialStream] = Self then
+       SerialStreams.Delete(iSerialStream);
 End;
 
 Function TSerialStream.GetChar: Char;
@@ -381,7 +378,7 @@ End;
 procedure TSerialStream.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 Var I: Longint;
 Begin
-  while CharCount<BlockLen do SleepTime(1);
+  while CharCount<BlockLen do SysDelay(1);
   for I:=0 to BlockLen-1 do tCharArray(Block)[I]:=GetChar;
   Reads:=BlockLen;
 End;
@@ -401,21 +398,25 @@ Begin
 End;
 
 procedure Initserial;
-begin pSerialObjAnchor:=nil; FillChar(IRQsInUse,SizeOf(IRQsInUse),0)end;
+begin SerialStreams:=TList.Create; FillChar(IRQsInUse,SizeOf(IRQsInUse),0)end;
 
 procedure Stopserial;
-var p: tpSerialObj;
+var aSerialStream: tSerialStream;
 begin
   {Dispose all remaining comm objects}
-  while pSerialObjAnchor<>nil do begin
-    p:=pSerialObjAnchor^.Next;
-    Dispose(pSerialObjAnchor,Done);
-    pSerialObjAnchor:=p
-  end;
+  while SerialStreams.Count>0 do begin
+    aSerialStream:=SerialStreams[0];
+    aSerialStream.Destroy;
+    end;
+  SerialStreams.Destroy;
 end;
 
 {
   $Log$
+  Revision 1.7  2001/10/01 19:44:26  ma
+  - compiles again
+  - not working yet (see lock_data)
+
   Revision 1.6  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 
