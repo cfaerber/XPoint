@@ -534,9 +534,11 @@ type NodeBrec = record
 const NB_data : NodeBRP = nil;
       bufsize = 2048;
 
+type
+  tAndFlags = array[1..andflags] of String;
 var   x,y,h   : byte;
       brk     : boolean;
-      flag    : array[1..orflags,1..andflags] of string;
+      flag    : array[1..orflags] of tAndFlags;
       k       : string;
       sphone  : string;    { in Nodelistenformat konvertierte Tel.Nr. }
       adr     : string;
@@ -883,6 +885,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.19  2000/08/09 22:46:19  mk
+  - zweidimensionalen Record in zwei eindimensionale Records geaendert wegen
+    einem RTTI Bug in Virtual Pascal
+
   Revision 1.18  2000/08/08 17:18:43  mk
   MO: Dokumentation hinzugefuegt
 
