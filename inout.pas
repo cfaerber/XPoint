@@ -1564,46 +1564,35 @@ end;
 { msec = 0 -> laufende Timeslice freigeben }
 {$IFNDEF NCRT }
 procedure mdelay(msec:word);   { genaues Delay }
-{$ifdef vp }
-begin
-  SysCtrlSleep(max(1,msec));
-end;
-{$else}
 var t      : longint;
     i,n    : word;
-    regs   : registers;
 
   procedure idle;
   begin
   {$IFDEF Win32 }
     Sleep(1);
   {$ENDIF }
+  {$IFDEF OS2 }
+    DosSleep(1);
+  {$ENDIF }
   end;
 
 begin
-  if int15delay=1 then with regs do begin
-    ah:=$86;
-    cx:=(longint(msec)*1000) shr 16;
-    dx:=(longint(msec)*1000) and $ffff;
-    intr($15,regs);
-    end
-  else begin
-    n:=system.round(msec/54.925401155);
-    if n=0 then
-      idle
-    else begin
-      t:=ticker;
-      for i:=1 to n do begin
-        multi2;
-        while t=ticker do
-          idle;
-        if t<ticker then inc(t)
-        else t:=ticker;
-        end;
-      end;
+  n:=system.round(msec/54.925401155);
+  if n=0 then
+    idle
+  else
+  begin
+    t:=ticker;
+    for i:=1 to n do begin
+      multi2;
+      while t=ticker do
+        idle;
+      if t<ticker then inc(t)
+      else t:=ticker;
     end;
+  end;
 end;
-{$endif}
 {$ENDIF } { NCRT }
 
 { hellen Hintergr. akt. }
@@ -1663,6 +1652,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.51  2000/08/03 15:26:31  mk
+  - Zeitschleifenfreigabe unter OS/2 implementiert
+
   Revision 1.50  2000/07/30 08:49:52  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
