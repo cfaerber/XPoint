@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 (***********************************************************)
@@ -17,26 +18,18 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit win2;
 
 interface
 
 uses
-  xpglobal,
-{$ifdef NCRT}
-  xpcurses,
-{$else}
-  crt,
-{$endif}
-  dos,dosx,keys,inout,maus2,typeform,winxp,lfn;
+  xpglobal,crt,dos,dosx,keys,inout,maus2,typeform,winxp,lfn;
 
-const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
-      fsb_info   : boolean = false;   { fsbox: Dategr”áe/Datum anzeigen }
-      fsb_rcolor : byte    = 0;       { fsbox: eigene Rahmenfarbe       }
+const fsb_shadow : boolean = false;   { fsbox: Schatten                  }
+      fsb_info   : boolean = false;   { fsbox: Dateigr”áe/Datum anzeigen }
+      fsb_rcolor : byte    = 0;       { fsbox: eigene Rahmenfarbe        }
 
 type  diskstat = record
                    dateien,bytes : longint;
@@ -68,7 +61,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  FileIO,xpovl;
+  FileIO,xpovl,mouse;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -205,6 +198,9 @@ var   fb     : pathstr;
       drives : string[80];
       doppelpunkt : boolean;  { bei Novell liefert FF/FN kein ".." ... }
 
+ mausscroll : boolean;
+ aue,ade,au,ad,ab :boolean;
+
   procedure AddFnItem(s: String);
   begin
     Inc(fn);
@@ -321,6 +317,12 @@ var   fb     : pathstr;
     dispfile(p);
     xx:=wherex; yy:=wherey;   { fr Cursor-Anzeige }
     iit;
+
+    Wrt(9,y+1,iifc(p+add>4,#30,'³'));
+    Wrt(71,y+1,iifc(p+add>4,#30,'³'));
+    Wrt(9,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
+    Wrt(71,y-iif(fsb_info,3,1)+height,iifc(p+add<=fn-4,#31,'³'));
+
     if fsb_info then begin
       s:=f^[add+p]^;
       gotoxy(12,y+height-1);
@@ -389,9 +391,13 @@ var   fb     : pathstr;
   procedure maus_bearbeiten(var t:taste);
   var xx,yy  : integer;
       inside : boolean;
+     mausbut : byte;
+      down   : boolean;
   begin
     maus_gettext(xx,yy);
     inside:=(xx>10) and (xx<71) and (yy>y) and (yy<y+height-2);
+    down:=yy>=y+height div 2;
+ 
     if inside then begin
       if (t=mausleft) or (t=mauslmoved) then
         if vert then
@@ -401,17 +407,55 @@ var   fb     : pathstr;
       if t=mausldouble then
         t:=keycr;
       end
-    else
-      if t=mausunleft then
-        t:=keycr
-      else if t=mausunright then
-        t:=keyesc;
-     p:=min(p,fn);
+    else if (t=mausleft) and not mausscroll
+    then begin
+      mausscroll:=true;
+      aue:=autoupenable;
+      ade:=autodownenable;
+      au:=autoup;
+      ad:=autodown;
+      ab:=autobremse;
+      autobremse:=true;
+      if down then begin
+        autodownenable:=true;
+        autodown:=true;
+        end
+      else begin
+        autoupenable:=true; 
+        autoup:=true;
+        end;
+      end;
+
+    if mausscroll then begin
+      asm
+          mov ax,3                       { Beim Scrollen Maustaste abfragen }
+          int 33h
+          and bl,3
+          mov mausbut,bl
+      end;
+      if mausswapped then mausbut:=mausbut shr 1;
+      if (mausbut and 1 = 0) then begin  { Rechte Taste nicht gedrueckt: Scrollen aus }
+        autoupenable:=aue;
+        autodownenable:=ade;
+        autoup:=au;
+        autodown:=ad;
+        autobremse:=ab;
+        mausscroll:=false;
+        end 
+      else if inside then t:=''
+        else if down then t:=keydown     { Rechte Taste gedrueckt gehalten: scrollen }
+                     else t:=keyup;
+      end;    
+
+      if not mausscroll and (t=mausunright) then t:=keyesc;
+     
+    p:=min(p,fn);
    end;
 
 var
   s: String;
 begin
+  mausscroll:=false;
   new(f);
   if f=nil then begin
     fsbox:='';
@@ -442,11 +486,7 @@ begin
   t:=#0#0;
   wpushed:=false;
   height:=iif(fsb_info,12,10);
-{$IFDEF UnixFS }
-  drives:= '';
-{$ELSE }
   drives:=alldrives;
-{$ENDIF }
   maus_pushinside(10,70,y+1,y+height-3);
   repeat
     fn:=0;
@@ -1117,6 +1157,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.13  2001/09/16 20:39:33  my
+  JG+MY:- Datei-Auswahlbox zeigt Scroll-Möglichkeit durch Hinweispfeile an
+
+  JG+MY:- Scrolling in Datei-Auswahlbox jetzt auch mit Maus möglich
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.16.2.12  2001/08/12 08:59:02  mk
   - added some const parameters
 
