@@ -1119,7 +1119,6 @@ MK:     Bugfix: Crash bei Aufruf des lokalen MenÅs mit <F10> im Editor
 MK:     Bugfix: Crash im Lister bei 0-Byte-Nachrichten, feststehendem
         Nachrichtenkopf und Mausklick unterhalb des Nachrichtenkopfes
         beseitigt. (Bug aus v3.12d)
-JG:     Ein paar Ñltere kleine Bugs in der Spezial-Suche behoben.
 MK:     Bug #109282: Nachrichten/Weiterleiten/Kopie von Fido-Nachrichten
         erzeugt jetzt auch dann keine "doppelten" Tearlines und Origins
         mehr, wenn diese nur mit CRs (statt mit CR/LFs) eingeleitet
