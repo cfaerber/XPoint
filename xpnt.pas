@@ -29,7 +29,7 @@ interface
 
 uses   sysutils,xp0,typeform,datadef,database,crc;
 
-{$IFDEF ANALYSE}
+{$IFDEF ANALYSE }
 type
   eNetz = (
     nt_Netcall,   //= 0;         { Puffer-Formate       }
@@ -51,7 +51,7 @@ type
     nt_m1,        //= -1
     nt_90,        //= 90
     nt_99,        //= 99;
-    nt_Any        //=$FF/-1 or nt_All?
+    nt_Any        //= 0xFF/-1 or nt_All?
   );
 {$ELSE}
 const  nt_Netcall   = 0;         { Puffer-Formate       }
@@ -259,7 +259,7 @@ end;
 
 function  dbNetzMsg(d: DB): RNetzMsg;
 begin
-  Result := RNetzMsg(dbReadInt(d,'netztyp'));
+  Result.i := dbReadInt(d,'netztyp');
 end;
 
 function ntBinary(nt:eNetz):boolean;
@@ -866,6 +866,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.53  2002/12/21 20:06:22  cl
+  - FPC compile fixes
+
   Revision 1.52  2002/12/14 07:31:38  dodi
   - using new types
 
