@@ -75,7 +75,7 @@ begin
 end;
 
 procedure set_cce;
-var i,j  : shortint;
+var i,j  : Integer;
     used : boolean;
 begin
   used:=true;
@@ -271,7 +271,7 @@ begin
 end;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
-var i,j  : shortint;
+var i,j  : Integer;
     xchg : boolean;
     s    : string[80];
 
@@ -474,6 +474,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2003/03/28 23:21:28  mk
+  - loop variable for cc-handling changed from shortint to Integer
+
   Revision 1.41  2003/03/28 06:51:29  mk
   - maxcc is now 126 instead of 50
 
