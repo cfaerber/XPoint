@@ -75,14 +75,11 @@ type
     destructor Destroy; override;
   end;
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;
-  cancode:byte;pgpsig:boolean);
-
-procedure SendAttach_Add(parts:TList;x,y:Integer;Umlaute:Boolean;Sigfile:string;docode:Byte;pgpsig:boolean);
-procedure SendAttach_Delete(parts:TList;n:integer);
-procedure SendAttach_Edit(parts:TList;n:Integer;x,y:integer;Umlaute:Boolean;SigFile:String;docode:Byte;pgpsig:boolean);
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Sigfile:String;docode:Byte;pgpsig:boolean);
-
+procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;
+  Netztyp:Byte;cancode:byte;pgpsig:boolean);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Sigfile:String;
+  Netztyp,docode:Byte;pgpsig:boolean);
+  
 { ------------------------} implementation { ------------------------- }
 
 uses
@@ -97,7 +94,7 @@ uses
 {$ENDIF}
   fileio, inout, keys, lister, maus2, resource, typeform, winxp, xp0, xp1,
   xp1input, xp1o, xp4e, xpglobal, xpnt, xpsendmessage_attach_analyze, maske,
-  xpdatum, xpstreams;
+  xpdatum, xpstreams, utftools;
 
 constructor TSendAttach_Part.Create;
 begin
@@ -192,10 +189,521 @@ begin
     ContentDisposition.ParamValues['read-date'] := DateTimeToRFCDateTime(NFileAccess);
 end;
 
-{ SendAttach:                                                          }
-{ add/delete/remove/edit content parts                                 }
+{ --- SendAttach: ---------------------------------------------------- }
+{ --- add/delete/remove/edit content parts --------------------------- }
+
+{ --- sub procedures for dialogues ----------------------------------- }
+
+var encodings_sel: array[boolean] of string;
+    encodings_old: boolean;
+
+function on_charset_exit(var content:string):boolean;
+var content2: string;
+begin
+  result := IsKnownCharset(content);
+  if result then content:= MimeCharsetCanonicalName(content);  
+end;
+
+function on_charset_exit_fido(var content:string):boolean;
+var content2: string;
+begin
+  content2:= FidoCharsetToMIME(content);
+  result := IsKnownCharset(content2);
+  if result then content:= MimeCharsetToFido(MimeCharsetCanonicalName(content2));  
+end;
+
+function on_charset_exit_zc(var content:string):boolean;
+var content2: string;
+begin
+  content2:= ZCCharsetToMIME(content);
+  result := IsKnownCharset(content2);
+  if result then content:= MimeCharsetToZC(MimeCharsetCanonicalName(content2));  
+end;
+    
+function on_contenttype_change(var content:string):boolean;
+var IsTxt: Boolean;
+    IsEnc: Boolean;
+begin
+  IsTxt := MimeContentTypeNeedCharset(content);
+  IsEnc := MimeContentTypeIsEncodeable(content);
+  SetFieldEnable(4,IsTxt);
+  SetFieldEnable(6,IsTxt);
+
+  if IsEnc<>encodings_old then
+  begin
+    encodings_old:=isenc;
+    mclearsel(4);
+    mappendsel(4,true,encodings_sel[isenc]);
+  end;
+
+  result:=true;
+end;
+
+var PGPSign          : Boolean;
+    PGPEncr          : Boolean;
+    
+function on_fileeol_change(var content:string):boolean;
+begin
+  setfieldenable(3,(PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
+  setfieldenable(2, not(PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
+  setfieldnodisp(3, not (PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
+  setfieldnodisp(2, (PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
+
+  Result:=true;
+end;
+
+{ --- SendAttach main procedure -------------------------------------- }
 
 procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;cancode:byte;pgpsig:boolean);
+
+  function docode:byte;
+  begin
+    result:=cancode;
+    if (cancode=9) and (parts.count>1) then
+      result := 8;                // for Multipart, use PGP/MIME instead of PGP
+    if (not(cancode in [0,9])) and (parts.count>1) then
+      result := 0;                // ... and allow only PGP/MIME
+  end;
+
+  { --- add new part dialogue ---------------------------------------- }
+
+  procedure SendAttach_Add(x,y:Integer);
+  var pa: TSendAttach_Part;
+      nn: Integer;
+      uc: Boolean;
+  {$IFDEF Win32}
+      Handle: THandle;
+      FindData: TWin32FindData;
+
+    function WinFileTimeToDateTime(var utc:TFILETIME):TDateTime;
+    var local: Windows.TFileTime;
+        wsyst: Windows.TSystemTime;
+      {$IFDEF FPC}
+        systm: SysUtils.TSystemTime;
+      {$ENDIF}
+    begin
+      if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then
+      begin
+        Windows.FileTimeToLocalFileTime(utc,{$IFDEF FPC}@{$ENDIF}local);
+        Windows.FileTimeToSystemTime(local,{$IFDEF FPC}@{$ENDIF}wsyst);
+      {$IFDEF FPC}
+        systm.year        := wsyst.wYear;
+        systm.month       := wsyst.wMonth;
+        systm.day         := wsyst.wDay;
+        systm.hour        := wsyst.wHour;
+        systm.minute      := wsyst.wMinute;
+        systm.second      := wsyst.wSecond;
+        systm.millisecond := wsyst.wMilliSeconds;
+        Result:=SystemTimeToDateTime(systm);
+      {$ELSE}
+       {$IFDEF VirtualPascal}
+        Result:=EncodeDate(wsyst.wYear,wsyst.wMonth,wsyst.wDay)
+          + EncodeTime(wsyst.wHour,wsyst.wMinute,wsyst.wSecond,wsyst.wMilliseconds);
+       {$ELSE}
+        Result:=SystemTimeToDateTime(wsyst);
+       {$ENDIF}
+      {$ENDIF}
+      end else
+        Result:=NaN;
+    end;
+  {$ENDIF}
+  
+  begin
+    pa := TSendAttach_Part.Create;
+  
+    nn:=MiniSel(x+10,min(y+1,screenlines-3),'',GetRes2(624,1),1);
+  
+    case nn of
+      1: begin
+          {$ifdef UnixFS}
+            pa.FileName := '*';
+          {$else}
+            pa.FileName := '*.*';
+          {$endif}
+           uc:=false;
+           xp1o.ReadFileName(GetRes2(624,50),pa.FileName,true,uc);
+           if (pa.FileName='') or (pa.FileName=
+           {$ifdef UnixFS}
+             '*'
+           {$else}
+             '*.*'
+           {$endif}
+           ) then begin
+             pa.Free; exit;
+           end;
+           if not FileExists(pa.FileName) then begin
+             Fehler(Getres2(624,52)); pa.Free; exit;
+           end;
+  
+           pa.IsFile := true;
+           pa.IsTemp := false;
+           pa.FileEOL:= MimeEolNone;
+ 
+           pa.FileNameO:=ExtractFileName(pa.FileName);
+ 
+           {$IFDEF Win32}
+             Handle := Windows.FindFirstFile(PChar(pa.FileName), {$IFDEF FPC}@{$ENDIF}FindData);
+             if Handle <> INVALID_HANDLE_VALUE then
+             begin
+               Windows.FindClose(Handle);
+               if (FindData.dwFileAttributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
+               begin
+                 pa.FileModify := WinFileTimeToDateTime(FindData.ftLastWriteTime);
+                 pa.FileCreate := WinFileTimeToDateTime(FindData.ftCreationTime);
+                 pa.FileAccess := WinFileTimeToDateTime(FindData.ftLastAccessTime);
+               end;
+             end;
+           {$ELSE}
+             pa.FileModify := FileDateToDateTime(FileAge(pa.FileName));
+             pa.FileCreate := NaN;
+             pa.FileAccess := NaN;
+           {$ENDIF}
+  
+           SendAttach_Analyze(pa,true,'',netztyp,docode,pgpsig);
+         end;
+      2: begin
+           pa.FileName    := TempS($FFFF);
+           if pa.FileName='' then begin
+             Fehler(GetRes2(624,101)); pa.Free; exit; end;
+  
+           pa.IsTemp      := True;
+           pa.IsFile      := false;
+  
+           pa.FileCharset := 'IBM437';
+           pa.FileEOL     := MimeEolCRLF;
+ 
+           pa.ContentType.AsString := 'text/plain';
+  
+           SendAttach_EditText(pa,false,Umlaute,iifs(parts.count<=0,Sigfile,''),netztyp,docode,pgpsig);
+         end;
+       else begin pa.Free; exit; end;
+     end;
+
+     if FileExists(pa.FileName) then
+       parts.Add(pa)
+     else
+       pa.Free;
+  end;
+
+  { --- delete a part ------------------------------------------------ }
+
+  procedure SendAttach_Delete(n:Integer);
+  var pa: TSendAttach_Part;
+      dummy:Boolean;
+  begin
+    pa := TSendAttach_Part(parts[n]);
+  
+    if pa.IsTemp then
+    begin
+      if not pa.IsFile then
+        case ReadIt(60,GetRes2(624,4),GetRes2(624,5),1,dummy) of
+          0,3: exit;      { break; }
+          1: begin
+  //           fn:=pa.FileNameO;
+  //
+  //           if ReadFilename(GetRes2(624,3),fn,true,dummy) then
+  //           begin
+  //
+  //           end else
+  //             exit;
+             end;
+        end;
+  
+      _era(pa.FileName);
+    end;
+  
+    parts.Delete(n);
+    pa.Free;
+  end;
+
+  { --- edit type ---------------------------------------------------- }
+
+  procedure SendAttach_EditType(pa:TSendAttach_Part);
+  var x,y  : Integer;
+      brk  : Boolean;
+      s    : String;
+      IsTxt: Boolean;
+  
+      ContentEncoding   : string;
+      ContentEncodingPGPDummy : string;
+      ContentType       : string;
+      ContentCharset    : string;
+  
+      FileCharset       : string;
+      FileEol           : string;
+  
+  begin
+    PGPSign:=pgpsig and not PGP_MIME;
+    PGPEncr:=(docode=9);
+  
+    ContentCharset        := pa.ContentType.Charset;
+                             pa.ContentType.Charset:='';
+    ContentType           := pa.ContentType.AsString;
+                             pa.ContentType.Charset:=ContentCharset;
+  
+    if netztyp in [nt_ZConnect] then ContentCharset:=MimeCharsetToZC(ContentCharset) else
+    if netztyp in [nt_Fido] then ContentCharset:=MimeCharsetToFido(ContentCharset);
+  
+    case pa.ContentEncoding of
+      MimeEncoding7Bit:            ContentEncoding:=GetRes2(624,30);
+      MimeEncoding8Bit:            ContentEncoding:=GetRes2(624,iif(pgpsign or pgpencr,32,31));
+      MimeEncodingQuotedPrintable: ContentEncoding:=GetRes2(624,32);
+      MimeEncodingBase64:          ContentEncoding:=GetRes2(624,33);
+    else                           ContentEncoding:=''; end;
+  
+    FileCharset           := pa.FileCharset;
+  
+    case pa.FileEol of
+      MimeEolCRLF:        FileEol:=GetRes2(624,26);
+      MimeEolLF:          FileEol:=GetRes2(624,27);
+      MimeEolCR:          FileEol:=GetRes2(624,28);
+      MimeEolNone:        FileEol:=GetRes2(624,29);
+    end;
+  
+    IsTxt := pa.ContentType.NeedCharset;
+  
+    dialog(60,12,GetRes2(624,40),x,y);
+    maddtext(2,2,GetRes2(624,41),0);
+    maddtext(2,3,GetRes2(624,42),0);
+  
+    maddstring(2,5,GetRes2(624,45),ContentType,34,maxint,'');
+    mappsel(false,GetRes2(624,37));
+    mset1func(on_contenttype_change);
+    mhnr(17933);
+
+    maddstring(2,7,GetRes2(624,46),ContentEncoding,16,maxint,'');
+    begin
+      s:='';
+      if pa.Analyzed.EncodingAllowed[MimeEncoding7Bit] then s:=s+GetRes2(624,30)+'ù';
+      if pa.Analyzed.EncodingAllowed[MimeEncoding8Bit] then s:=s+GetRes2(624,31)+'ù';
+      if pa.Analyzed.EncodingAllowed[MimeEncodingQuotedPrintable] then s:=s+GetRes2(624,32)+'ù';
+      if pa.Analyzed.EncodingAllowed[MimeEncodingBase64] then s:=s+GetRes2(624,33)+'ù';
+      encodings_sel[true] := Copy(s,1,Length(s)-1);
+      encodings_sel[false]:= GetRes2(624,iif(pa.Analyzed.Is8Bit,31,30));
+      encodings_old:=pa.ContentType.IsEncodeable;
+      mappsel(true,encodings_sel[encodings_old]);
+    end;
+    mhnr(17934);
+
+    if (PGPEncr or (PGPSign and (pa.FileEOL=MimeEOLNone))) then
+      mdisablednodisplay;
+
+    ContentEncodingPGPDummy := GetRes2(624,60);
+    maddstring(2,7,GetRes2(624,46),ContentEncodingPGPDummy,16,maxint,'');
+    mappsel(true,GetRes2(624,60));
+    if not (PGPEncr or (PGPSign and (pa.FileEOL=MimeEOLNone))) then
+      mdisablednodisplay;
+
+    maddstring(2,8,GetRes2(624,47),ContentCharset,16,maxint,'');
+
+    if not (PGPSign or PGPEncr) then
+    begin
+      if ntIBM(netztyp) and not (ntMIME(netztyp) and (parts.count>1)) then
+      begin
+        if ntOptISO(netztyp) then 
+          mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,22))) // allow ISO1 or IBM437
+        else
+          mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,39))) // only IBM437
+      end else
+        mappsel(pa.Analyzed.IsASCII,GetRes2(624,iif(pa.Analyzed.IsASCII,38,36))) // allow any charset
+    end else
+    begin
+      if ntIBM(netztyp) then 
+      begin
+        if ntOptISO(netztyp) then 
+          mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,63))) // only ISO1
+        else
+          mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,39))) // only IBM437 (oh, oh)
+      end  
+      else if PGPVersion=GPG then
+        mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,61)))   // only allow PGP-known charsets
+      else // if PGPVersion=PGP2 then
+        mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,62)));  // only allow PGP-known charsets
+    end;
+
+    case netztyp of
+      nt_ZConnect: MSetVFunc(on_charset_exit_zc);
+      nt_Fido:     MSetVFunc(on_charset_exit_fido);
+      else         MSetVFunc(on_charset_exit);
+    end;
+
+    mhnr(17935);
+    If Not IsTxt then MDisable;
+  
+    maddstring(2,10,GetRes2(624,43),FileEol,16,maxint,'');
+    if not pa.IsFile then
+      mappsel(true,GetRes2(624,26))
+    else begin
+      s:='';
+      if pa.Analyzed.EOLAllowed[MimeEOLCRLF] then s:=s+GetRes2(624,26)+'ù';
+      if pa.Analyzed.EolAllowed[MimeEolLF] and not pa.IsExtract then s:=s+GetRes2(624,27)+'ù';
+      if pa.Analyzed.EolAllowed[MimeEolCR] and not pa.IsExtract then s:=s+GetRes2(624,28)+'ù';
+      if pa.Analyzed.EolAllowed[MimeEolNone] then s:=s+GetRes2(624,29)+'ù';
+      SetLength(s,Length(s)-1);
+      mappsel(true,s);
+    end;
+    mset1func(on_fileeol_change);
+    mhnr(17936);
+  
+    maddstring(2,11,GetRes2(624,44),FileCharset,16,maxint,'');
+    If not pa.IsFile then
+      mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,39)))
+    else if pa.IsExtract then
+      mappsel(true,pa.FileCharset)
+    else if Uppercase(pa.Analyzed.GuessedCharset)='UTF-16' then
+      mappsel(true,'UTF-16')
+    else
+      mappsel(false,GetRes2(624,35));
+    mhnr(17937);
+    If Not IsTxt then MDisable;
+  
+    freeres;
+    readmask(brk);
+    enddialog;
+  
+    if brk then exit;
+  
+    pa.ContentType.AsString := ContentType;
+  
+    if (ContentEncoding=GetRes2(624,30)) then
+      pa.ContentEncoding := MimeEncoding7bit else
+    if (ContentEncoding=GetRes2(624,31)) then
+      pa.ContentEncoding := MimeEncoding8bit else
+    if (ContentEncoding=GetRes2(624,32)) then
+      pa.ContentEncoding := MimeEncodingQuotedPrintable else
+    if (ContentEncoding=GetRes2(624,33)) then
+      pa.ContentEncoding := MimeEncodingBase64;
+
+    pa.ContentType.Charset := FidoCharsetToMIME(ZCCharsetToMIME(ContentCharset));
+
+    pa.FileCharset := FileCharset;
+
+    if (FileEOL=GetRes2(624,26)) then
+      pa.FileEOL := MimeEolCRLF else
+    if (FileEOL=GetRes2(624,27)) then
+      pa.FileEOL := MimeEolLF else
+    if (FileEOL=GetRes2(624,28)) then
+      pa.FileEOL := MimeEolCR else
+    if (FileEOL=GetRes2(624,29)) then
+      pa.FileEOL := MimeEolNone;
+  end;
+
+  { --- edit meta data ----------------------------------------------- }
+
+  procedure SendAttach_EditMeta(pa:TSendAttach_Part);
+  var x,y  : Integer;
+      brk  : Boolean;
+    
+      ContentDisposition: string;
+      ContentDescription: string;
+      FileName:           string;
+      DateCreate,DateModify,DateRead:string;
+ 
+    function dstr(const dt:TDateTime):String; 
+    begin 
+      if IsNaN(dt) or (dt<=0) then 
+        result:=''
+      else 
+        DateTimeToString(Result,'dd"."mm"."yyyy"'#255'"hh":"nn":"ss',dt); 
+    end;
+  
+    function strd(const dt:string):TDateTime;
+    begin
+      try
+        result := EncodeDate(
+          IVal(Copy(dt,7,4)),
+          IVal(Copy(dt,4,2)),
+          IVal(Copy(dt,1,2)) ) + 
+  	EncodeTime(
+          IVal(Copy(dt,12,2)),
+          IVal(Copy(dt,15,2)),
+          IVal(Copy(dt,17,2)),0 )
+      except
+        result := NaN;
+      end;
+    end;
+
+  begin
+    FileName := pa.FileNameO;
+    ContentDescription := pa.ContentDescription;
+  
+    DateCreate := dstr(pa.FileCreate);
+    DateModify := dstr(pa.FileModify);
+    DateRead   := dstr(pa.FileAccess);
+  
+    case pa.ContentDisposition.DispoType of
+      mimedispositioninline:              ContentDisposition:=GetRes2(624,25);
+      mimedispositionattach:              ContentDisposition:=GetRes2(624,24);
+    else                                  ContentDisposition:=''; end;
+  
+    dialog(60,11,GetRes2(624,40),x,y);
+  
+    maddstring(2,2,GetRes2(624,13),FileName,41,maxint,'');
+    if not pa.IsTemp then
+      mappsel(false,ExtractFileName(pa.FileName)+'ù'+pa.FileName);
+    maddstring(2,3,GetRes2(624,14),ContentDescription,41,maxint,'');
+ 
+    maddstring(2,5,GetRes2(624,12),ContentDisposition,16,maxint,'');
+    mappsel(true,GetRes2(624,24)+'ù'+GetRes2(624,25));
+  
+    maddform(2,7,GetRes2(624,15),DateModify,'  .  .    '#255'  :  :  ',' 0123456789');
+    maddform(2,8,GetRes2(624,16),DateCreate,'  .  .    '#255'  :  :  ',' 0123456789');
+    maddform(2,9,GetRes2(624,16),DateRead  ,'  .  .    '#255'  :  :  ',' 0123456789');
+
+    freeres;
+    readmask(brk);
+    enddialog;
+    
+    if brk then exit;
+   
+    pa.ContentDescription := ContentDescription;
+    pa.FileNameO := FileName;
+   
+    if (ContentDisposition=GetRes2(624,25)) then
+      pa.ContentDisposition.DispoType := mimedispositioninline 
+    else
+      pa.ContentDisposition.DispoType := mimedispositionattach;
+
+    pa.FileCreate := strd(DateCreate);
+    pa.FileModify := strd(DateModify);
+    pa.FileAccess := strd(DateRead);
+  end;
+
+  { --- select what to edit ------------------------------------------ }
+
+  procedure SendAttach_Edit(n:Integer;x,y:integer);
+  var pa:TSendAttach_Part;
+      s:  String;
+      nn: ShortInt;
+      t:  Boolean;
+
+  begin
+    pa:=Parts[n];
+  
+    t:=(Uppercase(pa.ContentType.MainType)='TEXT') or
+       (Uppercase(pa.ContentType.MainType)='MESSAGE');
+  
+    if t then
+      s:=GetRes2(624,7)+GetRes2(624,8)
+    else
+      s:=GetRes2(624,8);
+  
+    nn:=MiniSel(x+10,min(y+1,screenlines-iif(t,5,4)),'',s,1);
+    if not t then inc(nn);
+  
+    case nn of
+      1: SendAttach_EditText(pa,(n=0) and
+           (pa.FileNameO='') and
+           (pa.ContentDisposition.DispoType=mimedispositioninline) and
+           (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute,iifs(n=0,sigfile,''),Netztyp,docode,pgpsig);
+      2: SendAttach_EditMeta(pa);
+      3: SendAttach_EditType(pa);
+      4: (* debug *);
+    end;
+  end;
+
+{ --- SendAttach main definitions ------------------------------------ }
+
 const width = 68;
       edb   = 2;
       okb   = 6;
@@ -208,15 +716,6 @@ var p,p0      : integer;        (* current line                 *)
     bp,rb     : shortint;
     buttons   : string;
     buttons2  : string;
-
-  function docode:byte;
-  begin
-    result:=cancode;
-    if (cancode=9) and (parts.count>1) then
-      result := 8;                // for Multipart, use PGP/MIME instead of PGP
-    if (not(cancode in [0,9])) and (parts.count>1) then
-      result := 0;                // ... and allow only PGP/MIME
-  end;
 
   procedure DispLine(i:integer);
   var
@@ -342,8 +841,10 @@ var p,p0      : integer;        (* current line                 *)
         rb:=okb; t:=keyesc; end;
       end;
   end;
+  
+{ --- SendAttach main start ------------------------------------------ }
 
-begin { SendAttach }
+begin
   gl:=min(screenlines-11,16);
   selbox(width+2,gl+4,'',x,y,false);
 
@@ -402,17 +903,17 @@ begin { SendAttach }
 
     case rb of
       1: begin
-           SendAttach_Add(parts,x,y+1+p-q,umlaute,iifs(parts.count<=0,sigfile,''),docode,pgpsig);
+           SendAttach_Add(x,y+1+p-q);
            p:=parts.count-1;
            if p0=p then p0:=-1;         { if first entry }
          end;
       edb: if parts.count>0 then
          begin
-           SendAttach_Edit(parts,p,x,y+1+p-q,umlaute,iifs(p=0,sigfile,''),docode,pgpsig);
+           SendAttach_Edit(p,x,y+1+p-q);
            p0:=-1;
          end;
       3: begin
-           SendAttach_Delete(parts,p);
+           SendAttach_Delete(p);
            aufbau:=true;
            if parts.count=1 then
            begin
@@ -431,8 +932,8 @@ begin { SendAttach }
       okb: break; { repeat }
       else if (not parts.count<=0) and (rb<0) then
       begin
-        if t=mauswheelup then dec(q,3) else
-        if t=mauswheeldn then inc(q,3) else
+        if t=mauswheelup then dec(q,MausWheelStep) else
+        if t=mauswheeldn then inc(q,MausWheelStep) else
         if t=keyup   then dec(p) else
         if t=keydown then inc(p) else
         if t=keyhome then p:=0 else
@@ -456,7 +957,7 @@ begin { SendAttach }
   closebox;
 end;
 
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Sigfile:String;docode:Byte;pgpsig:boolean);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Sigfile:String;netztyp,docode:Byte;pgpsig:boolean);
 var FileName: String;
     OldTime : Longint;
     NewTime : Longint;
@@ -530,446 +1031,8 @@ begin
   end;
 
   if (NewTime<>OldTime) or (pa.Analyzed.Size<=0) then
-    SendAttach_Analyze(pa,false,Sigfile,docode,pgpsig);
+    SendAttach_Analyze(pa,false,Sigfile,netztyp,docode,pgpsig);
 end;
 
-procedure SendAttach_Add(parts:TList;x,y:Integer;Umlaute:Boolean;Sigfile:string;docode:Byte;pgpsig:boolean);
-var pa: TSendAttach_Part;
-    nn: Integer;
-    uc: Boolean;
-{$IFDEF Win32}
-    Handle: THandle;
-    FindData: TWin32FindData;
-
-  function WinFileTimeToDateTime(var utc:TFILETIME):TDateTime;
-  var local: Windows.TFileTime;
-      wsyst: Windows.TSystemTime;
-    {$IFDEF FPC}
-      systm: SysUtils.TSystemTime;
-    {$ENDIF}
-  begin
-    if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then
-    begin
-      Windows.FileTimeToLocalFileTime(utc,{$IFDEF FPC}@{$ENDIF}local);
-      Windows.FileTimeToSystemTime(local,{$IFDEF FPC}@{$ENDIF}wsyst);
-    {$IFDEF FPC}
-      systm.year        := wsyst.wYear;
-      systm.month       := wsyst.wMonth;
-      systm.day         := wsyst.wDay;
-      systm.hour        := wsyst.wHour;
-      systm.minute      := wsyst.wMinute;
-      systm.second      := wsyst.wSecond;
-      systm.millisecond := wsyst.wMilliSeconds;
-      Result:=SystemTimeToDateTime(systm);
-    {$ELSE}
-     {$IFDEF VirtualPascal}
-      Result:=EncodeDate(wsyst.wYear,wsyst.wMonth,wsyst.wDay)
-        + EncodeTime(wsyst.wHour,wsyst.wMinute,wsyst.wSecond,wsyst.wMilliseconds);
-     {$ELSE}
-      Result:=SystemTimeToDateTime(wsyst);
-     {$ENDIF}
-    {$ENDIF}
-    end else
-      Result:=NaN;
-  end;
-{$ENDIF}
-
-begin
-  pa := TSendAttach_Part.Create;
-
-  nn:=MiniSel(x+10,min(y+1,screenlines-3),'',GetRes2(624,1),1);
-
-  case nn of
-    1: begin
-        {$ifdef UnixFS}
-          pa.FileName := '*';
-        {$else}
-          pa.FileName := '*.*';
-        {$endif}
-         uc:=false;
-         xp1o.ReadFileName(GetRes2(624,50),pa.FileName,true,uc);
-         if (pa.FileName='') or (pa.FileName=
-         {$ifdef UnixFS}
-           '*'
-         {$else}
-           '*.*'
-         {$endif}
-         ) then begin
-           pa.Free; exit;
-         end;
-         if not FileExists(pa.FileName) then begin
-           Fehler(Getres2(624,52)); pa.Free; exit;
-         end;
-
-         pa.IsFile := true;
-         pa.IsTemp := false;
-         pa.FileEOL:= MimeEolNone;
-
-         pa.FileNameO:=ExtractFileName(pa.FileName);
-
-         {$IFDEF Win32}
-           Handle := Windows.FindFirstFile(PChar(pa.FileName), {$IFDEF FPC}@{$ENDIF}FindData);
-           if Handle <> INVALID_HANDLE_VALUE then
-           begin
-             Windows.FindClose(Handle);
-             if (FindData.dwFileAttributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
-             begin
-               pa.FileModify := WinFileTimeToDateTime(FindData.ftLastWriteTime);
-               pa.FileCreate := WinFileTimeToDateTime(FindData.ftCreationTime);
-               pa.FileAccess := WinFileTimeToDateTime(FindData.ftLastAccessTime);
-             end;
-           end;
-         {$ELSE}
-           pa.FileModify := FileDateToDateTime(FileAge(pa.FileName));
-           pa.FileCreate := NaN;
-           pa.FileAccess := NaN;
-         {$ENDIF}
-
-         SendAttach_Analyze(pa,true,'',docode,pgpsig);
-       end;
-    2: begin
-         pa.FileName    := TempS($FFFF);
-         if pa.FileName='' then begin
-           Fehler(GetRes2(624,101)); pa.Free; exit; end;
-
-         pa.IsTemp      := True;
-         pa.IsFile      := false;
-
-         pa.FileCharset := 'IBM437';
-         pa.FileEOL     := MimeEolCRLF;
-
-         pa.ContentType.AsString := 'text/plain';
-
-         SendAttach_EditText(pa,false,Umlaute,Sigfile,docode,pgpsig);
-//         SendAttach_Analyze(pa,true,iifs(pa.IsNachricht,Sigfile,''));
-       end;
-     else begin pa.Free; exit; end;
-   end;
-
-   if FileExists(pa.FileName) then
-     parts.Add(pa)
-   else
-     pa.Free;
-end;
-
-procedure SendAttach_Delete(parts:TList;n:Integer);
-var pa: TSendAttach_Part;
-    dummy:Boolean;
-begin
-  pa := TSendAttach_Part(parts[n]);
-
-  if pa.IsTemp then
-  begin
-    if not pa.IsFile then
-      case ReadIt(60,GetRes2(624,4),GetRes2(624,5),1,dummy) of
-        0,3: exit;      { break; }
-        1: begin
-//           fn:=pa.FileNameO;
-//
-//           if ReadFilename(GetRes2(624,3),fn,true,dummy) then
-//           begin
-//
-//           end else
-//             exit;
-           end;
-      end;
-
-    _era(pa.FileName);
-  end;
-
-  parts.Delete(n);
-  pa.Free;
-end;
-
-var encodings_sel: array[boolean] of string;
-    encodings_old: boolean;
-
-function on_contenttype_change(var content:string):boolean;
-var IsTxt: Boolean;
-    IsEnc: Boolean;
-begin
-  IsTxt := MimeContentTypeNeedCharset(content);
-  IsEnc := MimeContentTypeIsEncodeable(content);
-  SetFieldEnable(4,IsTxt);
-  SetFieldEnable(6,IsTxt);
-
-  if IsEnc<>encodings_old then
-  begin
-    encodings_old:=isenc;
-    mclearsel(4);
-    mappendsel(4,true,encodings_sel[isenc]);
-  end;
-
-  result:=true;
-end;
-
-var
-    PGPSign          : Boolean;
-    PGPEncr          : Boolean;
-
-function on_fileeol_change(var content:string):boolean;
-begin
-  setfieldenable(3,(PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
-  setfieldenable(2, not(PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
-  setfieldnodisp(3, not (PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
-  setfieldnodisp(2, (PGPEncr or (PGPSign and (content=GetRes2(624,29)))));
-
-  Result:=true;
-end;
-
-procedure SendAttach_EditType(pa:TSendAttach_Part;docode:Byte;pgpsig:boolean);
-var x,y  : Integer;
-    brk  : Boolean;
-    s    : String;
-    IsTxt: Boolean;
-
-    ContentEncoding   : string;
-    ContentEncodingPGPDummy : string;
-    ContentType       : string;
-    ContentCharset    : string;
-
-    FileCharset       : string;
-    FileEol           : string;
-
-begin
-  PGPSign:=pgpsig and not PGP_MIME;
-  PGPEncr:=(docode=9);
-
-  ContentCharset        := pa.ContentType.Charset;
-                           pa.ContentType.Charset:='';
-  ContentType           := pa.ContentType.AsString;
-                           pa.ContentType.Charset:=ContentCharset;
-
-  case pa.ContentEncoding of
-    MimeEncoding7Bit:            ContentEncoding:=GetRes2(624,30);
-    MimeEncoding8Bit:            ContentEncoding:=GetRes2(624,iif(pgpsign or pgpencr,32,31));
-    MimeEncodingQuotedPrintable: ContentEncoding:=GetRes2(624,32);
-    MimeEncodingBase64:          ContentEncoding:=GetRes2(624,33);
-  else                           ContentEncoding:=''; end;
-
-  FileCharset           := pa.FileCharset;
-
-  case pa.FileEol of
-    MimeEolCRLF:        FileEol:=GetRes2(624,26);
-    MimeEolLF:          FileEol:=GetRes2(624,27);
-    MimeEolCR:          FileEol:=GetRes2(624,28);
-    MimeEolNone:        FileEol:=GetRes2(624,29);
-  end;
-
-  IsTxt := pa.ContentType.NeedCharset;
-
-  dialog(60,12,GetRes2(624,40),x,y);
-  maddtext(2,2,GetRes2(624,41),0);
-  maddtext(2,3,GetRes2(624,42),0);
-
-  maddstring(2,5,GetRes2(624,45),ContentType,34,maxint,'');
-  mappsel(false,GetRes2(624,37));
-  mset1func(on_contenttype_change);
-  mhnr(17933);
-
-  maddstring(2,7,GetRes2(624,46),ContentEncoding,16,maxint,'');
-  begin
-    s:='';
-    if pa.Analyzed.EncodingAllowed[MimeEncoding7Bit] then s:=s+GetRes2(624,30)+'ù';
-    if pa.Analyzed.EncodingAllowed[MimeEncoding8Bit] then s:=s+GetRes2(624,31)+'ù';
-    if pa.Analyzed.EncodingAllowed[MimeEncodingQuotedPrintable] then s:=s+GetRes2(624,32)+'ù';
-    if pa.Analyzed.EncodingAllowed[MimeEncodingBase64] then s:=s+GetRes2(624,33)+'ù';
-    encodings_sel[true] := Copy(s,1,Length(s)-1);
-    encodings_sel[false]:= GetRes2(624,iif(pa.Analyzed.Is8Bit,31,30));
-    encodings_old:=pa.ContentType.IsEncodeable;
-    mappsel(true,encodings_sel[encodings_old]);
-  end;
-  mhnr(17934);
-
-  if (PGPEncr or (PGPSign and (pa.FileEOL=MimeEOLNone))) then
-    mdisablednodisplay;
-
-  ContentEncodingPGPDummy := GetRes2(624,60);
-  maddstring(2,7,GetRes2(624,46),ContentEncodingPGPDummy,16,maxint,'');
-  mappsel(true,GetRes2(624,60));
-  if not (PGPEncr or (PGPSign and (pa.FileEOL=MimeEOLNone))) then
-    mdisablednodisplay;
-
-  maddstring(2,8,GetRes2(624,47),ContentCharset,16,maxint,'');
-
-  if not (PGPSign or PGPEncr) then
-    mappsel(pa.Analyzed.IsASCII,GetRes2(624,iif(pa.Analyzed.IsASCII,38,36))) // allow any charset
-  else if PGPVersion=GPG then
-    mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,61)))   // only allow PGP-known charsets
-  else // if PGPVersion=PGP2 then
-    mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,62)));  // only allow PGP-known charsets
-
-  mhnr(17935);
-  If Not IsTxt then MDisable;
-
-  maddstring(2,10,GetRes2(624,43),FileEol,16,maxint,'');
-  if not pa.IsFile then
-    mappsel(true,GetRes2(624,26))
-  else begin
-    s:='';
-    if pa.Analyzed.EOLAllowed[MimeEOLCRLF] then s:=s+GetRes2(624,26)+'ù';
-    if pa.Analyzed.EolAllowed[MimeEolLF] and not pa.IsExtract then s:=s+GetRes2(624,27)+'ù';
-    if pa.Analyzed.EolAllowed[MimeEolCR] and not pa.IsExtract then s:=s+GetRes2(624,28)+'ù';
-    if pa.Analyzed.EolAllowed[MimeEolNone] then s:=s+GetRes2(624,29)+'ù';
-    SetLength(s,Length(s)-1);
-    mappsel(true,s);
-  end;
-  mset1func(on_fileeol_change);
-  mhnr(17936);
-
-  maddstring(2,11,GetRes2(624,44),FileCharset,16,maxint,'');
-  If not pa.IsFile then
-    mappsel(true,GetRes2(624,iif(pa.Analyzed.IsASCII,38,39)))
-  else if pa.IsExtract then
-    mappsel(true,pa.FileCharset)
-  else if Uppercase(pa.Analyzed.GuessedCharset)='UTF-16' then
-    mappsel(true,'UTF-16')
-  else
-    mappsel(false,GetRes2(624,35));
-  mhnr(17937);
-  If Not IsTxt then MDisable;
-
-  freeres;
-  readmask(brk);
-  enddialog;
-
-  if brk then exit;
-
-  pa.ContentType.AsString := ContentType;
-
-  if (ContentEncoding=GetRes2(624,30)) then
-    pa.ContentEncoding := MimeEncoding7bit else
-  if (ContentEncoding=GetRes2(624,31)) then
-    pa.ContentEncoding := MimeEncoding8bit else
-  if (ContentEncoding=GetRes2(624,32)) then
-    pa.ContentEncoding := MimeEncodingQuotedPrintable else
-  if (ContentEncoding=GetRes2(624,33)) then
-    pa.ContentEncoding := MimeEncodingBase64;
-
-  if ContentCharset<>'' then
-    pa.ContentType.Charset := ContentCharset;
-
-  pa.FileCharset := FileCharset;
-
-  if (FileEOL=GetRes2(624,26)) then
-    pa.FileEOL := MimeEolCRLF else
-  if (FileEOL=GetRes2(624,27)) then
-    pa.FileEOL := MimeEolLF else
-  if (FileEOL=GetRes2(624,28)) then
-    pa.FileEOL := MimeEolCR else
-  if (FileEOL=GetRes2(624,29)) then
-    pa.FileEOL := MimeEolNone;
-
-end;
-
-procedure SendAttach_EditMeta(pa:TSendAttach_Part);
-var x,y  : Integer;
-    brk  : Boolean;
-
-    ContentDisposition: string;
-    ContentDescription: string;
-    FileName:           string;
-    DateCreate,DateModify,DateRead:string;
-
-  function dstr(const dt:TDateTime):String; 
-  begin 
-    if IsNaN(dt) or (dt<=0) then 
-      result:=''
-    else 
-      DateTimeToString(Result,'dd"."mm"."yyyy"'#255'"hh":"nn":"ss',dt); 
-  end;
-
-  function strd(const dt:string):TDateTime;
-  begin
-    try
-      result := EncodeDate(
-        IVal(Copy(dt,7,4)),
-        IVal(Copy(dt,4,2)),
-        IVal(Copy(dt,1,2)) ) + 
-	EncodeTime(
-        IVal(Copy(dt,12,2)),
-        IVal(Copy(dt,15,2)),
-        IVal(Copy(dt,17,2)),0 )
-    except
-      result := NaN;
-    end;
-  end;
-
-begin
-  FileName := pa.FileNameO;
-  ContentDescription := pa.ContentDescription;
-
-  DateCreate := dstr(pa.FileCreate);
-  DateModify := dstr(pa.FileModify);
-  DateRead   := dstr(pa.FileAccess);
-
-  case pa.ContentDisposition.DispoType of
-    mimedispositioninline:              ContentDisposition:=GetRes2(624,25);
-    mimedispositionattach:              ContentDisposition:=GetRes2(624,24);
-  else                                  ContentDisposition:=''; end;
-
-  dialog(60,11,GetRes2(624,40),x,y);
-
-  maddstring(2,2,GetRes2(624,13),FileName,41,maxint,'');
-  if not pa.IsTemp then
-    mappsel(false,ExtractFileName(pa.FileName)+'ù'+pa.FileName);
-  maddstring(2,3,GetRes2(624,14),ContentDescription,41,maxint,'');
-
-  maddstring(2,5,GetRes2(624,12),ContentDisposition,16,maxint,'');
-  mappsel(true,GetRes2(624,24)+'ù'+GetRes2(624,25));
-
-  maddform(2,7,GetRes2(624,15),DateModify,'  .  .    '#255'  :  :  ',' 0123456789');
-  maddform(2,8,GetRes2(624,16),DateCreate,'  .  .    '#255'  :  :  ',' 0123456789');
-  maddform(2,9,GetRes2(624,16),DateRead  ,'  .  .    '#255'  :  :  ',' 0123456789');
-
-  freeres;
-  readmask(brk);
-  enddialog;
-
-  if brk then exit;
-
-  pa.ContentDescription := ContentDescription;
-  pa.FileNameO := FileName;
-
-  if (ContentDisposition=GetRes2(624,25)) then
-    pa.ContentDisposition.DispoType := mimedispositioninline else
-    pa.ContentDisposition.DispoType := mimedispositionattach;
-
-  pa.FileCreate := strd(DateCreate);
-  pa.FileModify := strd(DateModify);
-  pa.FileAccess := strd(DateRead);
-    
-end;
-
-procedure SendAttach_Edit(Parts:TList;n:Integer;x,y:integer;Umlaute:Boolean;SigFile:String;docode:Byte;pgpsig:boolean);
-var pa:TSendAttach_Part;
-    s:  String;
-    nn: ShortInt;
-    t:  Boolean;
-
-begin
-  pa:=Parts[n];
-
-  t:=(Uppercase(pa.ContentType.MainType)='TEXT') or
-     (Uppercase(pa.ContentType.MainType)='MESSAGE');
-
-  if t then
-    s:=GetRes2(624,7)+GetRes2(624,8)
-  else
-    s:=GetRes2(624,8);
-
-  nn:=MiniSel(x+10,min(y+1,screenlines-iif(t,5,4)),'',s,1);
-  if not t then inc(nn);
-
-  case nn of
-    1: SendAttach_EditText(pa,(n=0) and
-         (pa.FileNameO='') and
-         (pa.ContentDisposition.DispoType=mimedispositioninline) and
-         (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute,Sigfile,docode,pgpsig);
-    2: SendAttach_EditMeta(pa);
-    3: SendAttach_EditType(pa,docode,pgpsig);
-    4: (* debug *);
-  end;
-end;
 
 end.
