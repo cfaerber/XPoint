@@ -638,7 +638,7 @@ const
 { Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
 { mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
 
-procedure MakeListDisplay(const s:string); assembler; {&uses ebx, esi, edi}
+procedure MakeListDisplay(const s: shortstring); assembler; {&uses ebx, esi, edi}
 
 asm
             mov edi,s
@@ -770,10 +770,13 @@ end; { of MakeListdisplay }
 
 
 procedure ListDisplay(x,y:word; var s:string);
-
+var
+  s0: shortstring;
 begin
-  makelistdisplay(s);
-  Consolewrite(x,y,length(s));
+  s0:= s;
+  makelistdisplay(s0);
+  Consolewrite(x,y,length(s0));
+  s:= s0;				{ Falls var irgendeine Bedeutung hat }
 end;
 
 procedure interr(txt:string);
@@ -2033,6 +2036,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.65  2000/07/19 10:44:07  hd
+  - Fix: Offset-Fehler in MakeListDisplay
+
   Revision 1.64  2000/07/13 10:23:45  mk
   - Zeiger auf Strings entfernt
 
