@@ -79,7 +79,7 @@ type  FidoAdr  = record
                    typ        : string[1];     { T / B }
                    groesse    : longint;
                    komlen     : longint;       { Kommentar-L„nge }
-                   programm   : string[40];    { Mailer-Name }
+                   programm   : string;        { Mailer-Name }
                    datei      : string[40];    { Dateiname }
                    prio       : byte;          { 10=direkt, 20=Eilmail }
                    attrib     : word;          { Attribut-Bits }
@@ -619,7 +619,7 @@ begin
           if id='BIN' then typ:='B' else
           if id='FILE' then datei:=left(line,20) else
           if id='BEZ'  then ref:=left(line,midlen) else
-          if id='MAILER' then programm:=left(line,40) else
+          if id='MAILER' then programm:=line else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
           if id='CRYPT' then pgpencode:=true else
           if id='SIGNED' then pgpsigned:=(pos('PGP',ustr(line))>0) else
@@ -1810,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/06/03 09:21:09  mk
+  - Programm verlaengert
+
   Revision 1.19  2000/05/29 20:21:42  oh
   -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
 
