@@ -13,9 +13,7 @@
 { s. auch NETZTYP.DOC  }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpnt;
 
@@ -47,7 +45,7 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        ltQWK        = 11;
 
 
-var ntused : array[0..99] of integer;
+var ntused : array[0..42] of integer;
 
 function ntZConnect(nt:byte):boolean;         { Ablagentyp ermitteln  }
 function ntConv(nt:byte):boolean;             { konvertiertes Format  }
@@ -757,6 +755,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9.2.5  2001/11/01 08:26:50  mk
+  - save some bytes in ntUsed
+
   Revision 1.9.2.4  2001/07/11 01:49:33  my
   JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
        in Edit User and Edit Message Area dialogues
