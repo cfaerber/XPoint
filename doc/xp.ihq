@@ -430,13 +430,13 @@ M”gliche Optionen sind:
       denn berfllte Festplatten fhren ziemlich
       sicher zu Datenverlust.
 
-<</noovrbuf>> Legt keinen Overlaycache im EMS/XMS an
+<</noovrbuf>> Legt keinen Overlay-Cache im EMS/XMS an
       (sondern erzwingt den Overlay-Zugriff ber die
       Festplatte). Diese Option erh”ht den verfg-
-      baren EMS/XMS-Speicher um die Dateigr”áe der
-      XP.OVR, kann aber je nach Hardware-Ausstattung
-      die Ausfhrungsgeschwindigkeit von XP
-      verringern.
+      baren EMS/XMS-Speicher ungef„hr um die Datei-
+      gr”áe der XP.OVR, kann aber je nach Hardware-
+      Ausstattung die Ausfhrungsgeschwindigkeit von
+      XP verringern.
 
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
       mentierten OS/2-Funktionen zur Rechenzeit-
@@ -16502,7 +16502,7 @@ Speicher.
 Beim Festplattenspeicher wird die Gesamtgr”áe aller
 im XP-Verzeichnis befindlichen Dateien zusammenge-
 rechnet. Bei groáen Laufwerken kann je nach Betriebs-
-system mehr freien Platz vorhanden sein, als ange-
+system mehr freier Platz vorhanden sein als ange-
 zeigt wird.
 
 Der verfgbare Hauptspeicher errechnet sich aus dem
@@ -16511,13 +16511,17 @@ auf Festplatte bzw. in den EMS- oder XMS-Speicher
 ausgelagert werden kann. Soviel Speicher steht bei
 Bedarf externen Programmen zur Verfgung.
 
-Auáerdem zeigt XP die Betriebssystem-Versionsnummer
-an. Diese Nummer hat heutzutage allerdings keine
-groáe Aussagekraft mehr, weil die Versionsnummern
-der Programmierer zunehmend durch Phantasiezahlen
-aus der Marketingabteilung ersetzt werden ("OS/2
-Version 3 Warp" statt OS/2 2.3, "Windows 95" statt
-MS-DOS 7.0 + Windows 4.0 etc.).
+Die Angaben beim XMS-Speicher bedeuten:
+
+<<gesamt:>>    Der gesamte fr XP freie (verfgbare)
+           XMS-Speicher, max. 64 MB.
+<<OpenXP/16:>> Der von OpenXP/16 belegte XMS-Speicher
+           (hier kann nur dann ein Wert gr”áer "0"
+           stehen, wenn der Overlay-Cache im XMS
+           statt im EMS angelegt wurde, weil kein
+           EMS zur Verfgung steht).
+<<frei:>>      Der gr”áte freie (nicht fragmentierte)
+           XMS-Speicherblock.
 
 @
 11702

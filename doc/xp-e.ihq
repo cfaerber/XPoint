@@ -11027,8 +11027,8 @@ If no real name is available, these macros are empty.
 11701
 <<XPoint / Statistics / Memory
 
-Information about the usage of main, EMS and hard
-disk memory.
+Information about the usage of main, EMS and XMS
+memory as well as of the hard disk space.
 
 In the hard disk section, the size of all CrossPoint
 files in all its directories together is given.
@@ -11037,6 +11037,18 @@ The available main memory is the amount of memory
 currently free plus the amount CrossPoint could swap
 out. It is the amount CrossPoint could make available
 to start an external program.
+
+The meaning of the values for XMS memory is:
+
+<<Total:>>     The total amount of free (available) XMS
+           memory for XP, max. 64 MB.
+<<OpenXP/16:>> The amount of XMS memory used by OpenXP/16
+           (you will see a value larger than "0" here
+           only if the overlay cache has been created
+           in XMS rather than EMS because no EMS is
+           available).
+<<Free:>>      The largest free (unfragmented) XMS
+           memory block.
 
 @
 11702
@@ -14180,9 +14192,9 @@ Options are:
    /noovrbuf   prevents creation of overlay cache in
          EMS/XMS (and forces overlay access via hard
          disk). This option increases the available
-         EMS/XMS memory by the file size of XP.OVR
-         but may reduce the execution speed of XP
-         depending on the system's hardware.
+         EMS/XMS memory approx. by the file size of
+         XP.OVR but may reduce the execution speed
+         of XP depending on the system's hardware.
 
    /pw:xxx  passes the start-up password direct.
 
