@@ -421,7 +421,9 @@ begin
         end;
       close(netlog^);
       logopen:=false;
-      end;
+    end;
+    if TempPPPMode and exist(LogPath + ClientLog) then
+      ClientLogFile := LogPath + ClientLog;
     if (_maus and exist(mauslogfile)) or
        ((_fido or _uucp) and exist(fidologfile)) or
        (TempPPPMode and exist(ClientLogFile)) then
@@ -849,6 +851,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.24  2001/09/29 10:11:49  mk
+  - ClientLog wird jetzt zusätzlich auch im Logpfad beachtet
+
   Revision 1.13.2.23  2001/09/16 10:29:20  mk
   - reset IOResult at end of CallFilter, avoids possible error chain
 
