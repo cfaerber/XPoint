@@ -3008,8 +3008,8 @@ Nachrichten mit CrossPoint:
      Delimiter ersetzt und der Header entsprechend
      angepaát. In MIME-Anh„ngen, die „hnlich einem
      Verzeichnisbaum weitere geschachtelte Teile ent-
-     halten, bleiben deren Boundary-Delimiter erhal-
-     ten. XP erzeugt solche rekursiven Strukturen
+     halten, bleiben deren Sub-Boundary-Delimiter er-
+     halten. XP erzeugt solche rekursiven Strukturen
      nicht selbst, kann sie aber zur Darstellung im
      Lister auswerten und weiterleiten.
 
@@ -3057,19 +3057,19 @@ sein:
    s„tze und Codierungen, die von der vom Empf„nger
    verwendeten Software nicht unbedingt untersttzt
    werden (speziell wenn es sich um weitergeleitete
-   Nachrichten handelt). Ggf. mssen Sie selbst (z.B.
-   durch Export und Re-Import von Nachrichtenteilen)
-   dafr sorgen, daá Ihre Nachricht auf Empf„nger-
-   seite lesbar ist.
+   Nachrichten handelt). Ggf. mssen Sie (z.B. durch
+   Export und Re-Import von Nachrichtenteilen) selbst
+   dafr sorgen, daá Ihre Nachrichten auf Empf„nger-
+   seite lesbar sind.
 
 <<Hinweis:>> OpenXP/16 untersttzt <<nicht>> den nie ber das
 Entwurfsstadium hinausgekommen Vorschlag der Einfh-
 rung eines ZConnect-Headers "<<TYP: MIME>>", anhand des-
-sen eine MIME-Multipart-Nachricht als solche identi-
-fiziert werden k”nnte. Gate- oder Anwender-Software,
-die diesen Header zwingend voraussetzt, wird mit den
-von XP erzeugten MIME-Multipart-Nachrichten vermut-
-lich wenig bis nichts anfangen k”nnen.
+sen eine MIME-Nachricht als solche identifiziert wer-
+den k”nnte. Gate- oder Anwender-Software, die diesen
+Header zwingend voraussetzt, wird mit den von XP er-
+zeugten MIME-Multipart-Nachrichten vermutlich wenig
+bis nichts anfangen k”nnen.
 
 @
 8090
