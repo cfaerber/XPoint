@@ -49,7 +49,7 @@ const
        menus       = 40;             { Anzahl der Menus }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
-       maxmarklist = 5000;           { MK: Maximale Anzahl markierter Msgs }
+       maxmarklist = 20000;          { Maximale Anzahl markierter Msgs }
        QuoteLen    = 5;              { maximale QuoteChar-Laenge }
        Ablagen     = 20;             { 0..9 }
        maxpmc      = 3;              { installierbare pmCrypt-Verfahren }
@@ -481,7 +481,7 @@ type   textp  = ^text;
        AdrStr      = string;
        CustHeadStr = string;
 
-       markrec  =  record
+       markrec  =  packed record
                      recno : longint;
                      datum : longint;
                      intnr : longint;
@@ -1199,6 +1199,9 @@ implementation
 
 {
   $Log$
+  Revision 1.146  2001/11/25 20:54:35  mk
+  - maxmarklist now 20000 instead of 5000
+
   Revision 1.145  2001/11/24 20:29:24  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 
