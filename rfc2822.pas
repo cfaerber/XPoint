@@ -1,7 +1,7 @@
 {  $Id$
 
-   OpenXP: RFC 2822 Header and Address Parsing
-   Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
+   OpenXP/32: RFC2822 - Headers and Addresses
+   Copyright (C) 2002 by OpenXP/32 team <http://www.openxp.de>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ unit rfc2822;
 uses
   Classes,
   utftools,
-  unicode;
+  unicode,
+  addresslist;
 
 { ---------------------- RFC 2822 Header Parsing --------------------- }
 
@@ -48,18 +49,17 @@ type
     property Content: string read FContent;
   end;
 
-{ --------------------- RFC 2822 Comment Handling -------------------- }
+{ -------------- RFC 2822 Comment/Quoted-String Handling ------------- }
 
 function RFCRemoveComments(const source: string): string;
+
+function RFCQuotePhrase(const source: string; strict:boolean): string;
+function RFCUnQuotePhrase(const source: string): string;
 
 { ------------------------ RFC 2822 Addresses ------------------------ }
 
 function RFCIsValidAddress(const addr:string): boolean;
 function RFCNormalizeAddress(const addr,domain:string):string;
-
-{---------------------- RFC 2822 Address Lists ----------------------- }
-
-procedure RFCReadAddressList(const addr:string; addr_email, addr_name: TStringList);
 
 { ------------------------} implementation { ------------------------- }
 
@@ -73,6 +73,16 @@ uses
 //  {$ENDIF}
 {$ENDIF}
   SysUtils;
+
+{ -------------------------- Some constants  ------------------------- }
+
+const 
+  ALPHA : set of char = ['A'..'Z','a'..'z'];
+  DIGIT : set of char = ['0'..'9'];
+  NO_WS_CTL : set of char = [#1..#8,#11,#12,#14..#31,#127];
+
+  atext : set of char = [{ALPHA<<}'A'..'Z','a'..'z'{>>},{DIGIT<<}'0'..'9'{>>},'!','#','$','%','&','''','*','+','-','/','=','?','^','_','`','{','|','}','~'];
+  qtext : set of char = [{NO_WS_CTL<<}#1..#8,#11,#12,#14..#31,#127{>>},#33,#35..#91,#93..#126];
 
 { ---------------------- RFC 2822 Header Parsing --------------------- }
 
@@ -177,6 +187,75 @@ begin
     end;
     s := s + 1;
   end;
+end;
+
+function RFCQuotePhrase(const source: string; strict:boolean): string;
+var i: integer;
+    NeedQuotes: boolean;
+    
+begin
+  NeedQuotes := false;
+
+  if (FirstChar(Source) in ['.',' ']) or (LastChar(Source) in ['.',' ']) then
+    NeedQuotes:=true
+  else
+  for i := 1 to Length(source) do 
+    if not ((Source[i] in (atext+['.',' '])) or (((not strict) and (Ord(Source[i])and $80<>0)))) then begin
+      NeedQuotes:=true;
+      break;
+    end;
+    
+  if NeedQuotes then
+    result := '"' 
+  else
+    result := '';
+
+  for i := 1 to Length(source) do 
+    if (Source[i] in (qtext+[' '])) or ((not strict) and (Ord(Source[i])and $80<>0)) then
+      result := result+Source[i]
+    else
+      result := result+'\'+Source[i];
+
+  if NeedQuotes then
+    result := result + '"';
+end;
+
+function RFCUnQuotePhrase(const source: string): string;
+var
+  i,l,c: integer;
+  s: boolean;
+  q: boolean;
+
+  procedure _(NewChar: char);
+  begin
+    inc(c);
+    result[c] := NewChar;
+  end;
+  
+begin
+  SetLength(result,Length(source));
+  c := 0;
+
+  i := 1; l:=length(source); 
+  while i<=l do begin
+    case source[i] of
+      '\': if i<l-1 then 
+           begin
+             inc(c);
+             result[c] := (source[i+1]);
+             inc(i);
+             s := false;
+           end;
+      '"': begin (* noop *) end;
+      else begin
+             inc(c);
+             result[c] := (source[i]);
+           end;
+    end;
+    inc(i);
+  end;
+
+  SetLength(result,c);
 end;
 
 { ------------------------ RFC 2822 Addresses ------------------------ }
@@ -388,97 +467,16 @@ begin
         '!','#','$','%','&',#$27,'*','+','-','/','=','?',
         '^','_','`','{','|','}','~']) then begin q:=true; break; end;
   
-  if (p=0) or ('.' in [addr[1],addr[p]]) then q:=true;
+  if (p=0) or (FirstChar(addr)='.') or (addr[p]='.') then q:=true;
 
   if q then result:='"'+Copy(result,1,p)+'"'+Mid(result,p+1);
 end;
 
-{---------------------- RFC 2822 Address Lists ----------------------- }
-
-{ Parses an address-list into email addresses and real names. Group    }
-{ syntax is supported but group names are ignored as of now.           }
-
-procedure RFCReadAddressList(const addr:string; addr_email, addr_name: TStringList);
-var i,j:integer;
-    dq:boolean; // in domain quotes
-    qq:boolean; // in double quotes
-    ab:boolean; // in angle brackets
-    gg:boolean; // in group
-    g2:boolean; // after group (i.e. in group name to be ignored)
-    cl:integer; // comment level
-
-    ccount: integer; // number of comments
-    cstart: integer; // start of comment (opening bracket)
-    cend:   integer; // end of comment (closing bracket)
-    astart: integer; // start of angle brackets (opening)
-    aend:   integer; // end of angle brackets (closing)
-
-  procedure AddMe;
-  begin
-    if (astart<>0) and (aend<>0) then
-    begin
-      if assigned(addr_email) then
-        addr_email.Add(RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,astart+1,aend-astart-1))),''));
-      if assigned(addr_name) then
-        addr_name .Add(Trim             (Copy(addr,i+1,astart-1-i)+Copy(addr,aend+1,j-aend-1)));
-    end
-    else
-    begin
-      if assigned(addr_email) then
-        addr_email.Add(RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,i+1,j-i-1))),''));
-      if assigned(addr_name) then
-        if j<=cend then
-          addr_name .Add(Trim             (Copy(addr,cstart+1,cend-cstart-1)))
-        else
-          addr_name .Add('');
-    end;
-  end;    
-
-begin
-  dq:=false;
-  qq:=false;
-  gg:=false;
-  cl:=0;
-  ccount := 0;
-  cstart := 0;
-  cend   := 0;
-  astart := 0;
-  aend   := 0;
-
-  i:= Length(addr);
-  j:= i+1;
-  
-  while i>0 do
-  begin
-    if (i>1) and (addr[i-1]='\') then begin dec(i,2); continue; end;
-  
-    if not (dq or qq      ) and (addr[i]='(') and (cl>0) then begin if cl=1 then begin if ccount=0 then cstart:=i; inc(ccount) end; dec(cl) end else
-    if not (dq or qq      ) and (addr[i]=')')            then begin if cl=0 then begin if ccount=0 then cend  :=i;             end; inc(cl) end else
-    if not (dq or qq      ) and (addr[i]='<')            then begin ab := false; if astart<=0 then astart:=i end else
-    if not (dq or qq      ) and (addr[i]='>')            then begin ab := true;  if aend  <=0 then aend  :=i end else
-    if not (      qq      ) and (addr[i]='[')            then dq := false else
-    if not (      qq      ) and (addr[i]=']')            then dq := true else
-    if not (dq or qq or ab) and (addr[i]=';')            then begin j:=i; gg := true end else
-    if not (dq            ) and (addr[i]='"')            then qq := not qq else
-
-    if not (dq or qq or ab) and (i>=j-1) and (addr[i]in[#10,#13,#9,' ']) then dec(j) else
-
-    if not (dq or qq or ab) and ((addr[i]=',') or ((addr[i]=':') and gg)) then
-    begin
-      if g2 then begin gg:=false; g2:=false end else AddMe;
-      if ((addr[i]=':') and gg) then g2:=true;
-      j:=i; cl:=0;
-      ccount := 0;
-      cstart := 0;
-      cend   := 0;
-      astart := 0;
-      aend   := 0;
-    end;
-    
-    dec(i);
-  end;
-  if not g2 then AddMe;
-
-end;
+//
+// $Log$
+// Revision 1.8  2002/04/14 22:19:59  cl
+// - added RFCQuotePhrase/RFCUnquotePhrase
+// - moved RFCReadAddress[List]/RFCWriteAddressList to addresslist.pas
+//
 
 { ----------------------------------------------------------------} end.
