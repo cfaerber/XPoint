@@ -60,6 +60,7 @@ function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 {$ENDIF }
+
 {$IFNDEF NCRT }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
@@ -141,6 +142,7 @@ function  VideoType:byte;
 begin
   VideoType := vtype;
 end;
+
 {$ENDIF } {NCRT }
 
 { BIOS-Mode-Nr. setzen }
@@ -383,13 +385,49 @@ asm
 end;
 {$ENDIF }
 
+function getvideomode:byte;
+begin
+{$IFDEF BP }
+   getvideomode:=mem[Seg0040:$49];
+{$ELSE }
+   getVideoMode := 3; { VGA }
+{$ENDIF}
+end;
+
+{$IFNDEF NCRT }
+
+function getscreenlines:byte;
+{$IFDEF BP }
+  var
+    regs : registers;
+  begin
+    if vtype<2 then
+      vlines:=25
+    else with regs do
+    begin
+      ax:=$1130;
+      bh:=0;
+      intr($10,regs);
+      vlines:=dl+1;
+    end;
+    getscreenlines:=vlines;
+{$ELSE }
+  {$IFDEF Win32 }
+    begin
+      vlines := Win32GetScreenLines;
+      GetScreenLines := vlines;
+  {$ELSE }
+      GetScreenLines := 25;
+  {$ENDIF } { Win32 }
+{$ENDIF } { BP }
+end;
+
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
 { untersttzte Werte:                                   }
 { Herc/CGA:  25                                         }
 { EGA:       25,26,29,31,35,38,43,50                    }
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
-{$IFNDEF NCRT }
 procedure SetScreenLines(lines:byte);
 {$IFDEF BP }
 
@@ -509,47 +547,7 @@ begin
 {$ENDIF }
   vlines:=lines;
 end;
-{$ENDIF }
 
-function getvideomode:byte;
-begin
-{$IFDEF BP }
-   getvideomode:=mem[Seg0040:$49];
-{$ELSE }
-   getVideoMode := 3; { VGA }
-{$ENDIF}
-end;
-
-{$IFNDEF NCRT }
-function getscreenlines:byte;
-{$IFDEF BP }
-var regs : registers;
-begin
-  if vtype<2 then
-    vlines:=25
-  else with regs do begin
-    ax:=$1130;
-    bh:=0;
-    intr($10,regs);
-    vlines:=dl+1;
-    end;
-  getscreenlines:=vlines;
-{$ELSE }
-{$IFDEF Win32 }
-  begin
-    vlines := Win32GetScreenLines;
-    GetScreenLines := vlines;
-{$ELSE }
-{$IFDEF NCRT }
-  begin
-    GetScreenLines:= ScreenRows;
-{$ELSE }
-  begin
-    GetScreenLines := 25;
-{$ENDIF }
-{$ENDIF }
-{$ENDIF }
-end;
 {$ENDIF } { NCRT }
 
 {$IFDEF BP }
@@ -573,6 +571,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/06/21 20:26:33  mk
+  - ein klein wenig mehr Ordnung im Source
+
   Revision 1.19  2000/05/13 08:42:41  mk
   - Kleinere Portierungen
 
