@@ -3150,7 +3150,7 @@ begin
         time + ' ' + RightStr(dat, 5));    { akt. Datum/Uhrzeit }
     end
     else
-      wrs(f, 'Path: ' + addpath + pfad);
+      if (addpath+pfad)<>'' then wrs(f, 'Path: ' + addpath + pfad);
     wrs(f, 'Date: ' + dat);
     zcrfc.s := IbmToISO(realname);
     RFC1522form;
@@ -3814,6 +3814,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2001/04/17 00:21:54  ma
+  - fixed: "Path:" was written in RFC header if path=""
+
   Revision 1.52  2001/04/14 00:00:47  ma
   - added simple mbox format support (.mail->ZC)
 
