@@ -674,10 +674,10 @@ var fn     : string;
   var hdp : headerp;
       hds : longint;
   begin
-    new(hdp);
+    hdp:= AllocHeaderMem; {new(hdp);}
     ReadHeader(hdp^,hds,false);
     GetMsgFilename:=hdp^.datei;
-    dispose(hdp);
+    FreeHeaderMem(hdp); {dispose(hdp);}
   end;
 
 label ende0,nextmsg;
@@ -1507,6 +1507,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/07/18 14:30:28  hd
+  - Fix: Ansistring
+
   Revision 1.34  2000/07/11 16:35:56  mk
   JG: - Bugfix: Wiedervorlage-Umschalten im Lister
 

@@ -373,7 +373,7 @@ begin
             {$ifdef ulines}
             id0:=id;
             {$endif }
-            tc:=line[p+1];
+            if length(line)>p then tc:=line[p+1]; { Fix: Exception bei leeren Headern }
             for i:=1 to length(id) do         { UpperCase }
               if (id[i]>='a') and (id[i]<='z') then
                 dec(byte(id[i]),32);
@@ -556,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/07/18 14:30:28  hd
+  - Fix: Ansistring
+
   Revision 1.23  2000/07/12 14:43:48  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank
