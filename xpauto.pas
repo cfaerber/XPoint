@@ -81,7 +81,7 @@ begin
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
     lastmid := dbReadStr(auto,'lastmsgid');
-  end;
+  end;                    
 end;
 
 procedure AutoWrite(var ar:AutoRec);
@@ -145,16 +145,15 @@ var mmask     : array[1..12] of boolean;
   end;
 
   function amodi:boolean;
-  var sr : tsearchrec;
-      fn : string;
+  var
+    fn : string;
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
-    if findfirst(fn,faAnyFile,sr)<>0 then
-      amodi:=false
+    if not FileExists(fn) then
+      Result := false
     else
-      amodi:=sr.time<>ar.lastfd;
-    FindClose(sr);
+      amodi:=FileAge(fn)<>ar.lastfd;
   end;
 
 begin
@@ -212,7 +211,6 @@ var tmp  : boolean;
     leer : string;
     dat  : longint;
     tt   : longint;
-    fh   : longint;     // File-Handle
     b    : byte;
     muvs : boolean;
     sData: TSendUUData;
@@ -278,10 +276,8 @@ begin
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
         dbWriteStr(auto,'lastmsgid',sData.msgid);
-        fh:= FileOpen(datei,fmOpenRead);
-        tt:= FileGetDate(fh);
-        FileClose(fh);
-        dbWrite(auto,'lastfdate',tt);
+        tt := FileAge(Datei);
+        dbWrite(auto,'lastfdate', tt);
         if dat>=datum1 then begin
           datum1:=0;
           dbWrite(auto,'datum1',datum1);
@@ -696,6 +692,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2003/08/23 20:04:15  mk
+  - always use FileAge to get filedate, possilbe solves autosend problems
+
   Revision 1.65  2003/05/11 11:12:19  mk
   - use IsMailAddr when possible
 
