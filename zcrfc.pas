@@ -2833,6 +2833,10 @@ begin
           (typ = 'rbsmtp') or (typ = 'brsmtp') then
           ConvertSmtpFile(spath + dfile, typ <> 'rsmtp', mails);
       end;
+      if ClearSourceFiles then begin 
+        DeleteFile(spath+sr.name);
+        DeleteFile(spath+dfile);
+      end;
     end
     else
     begin
@@ -2844,8 +2848,8 @@ begin
       else
         dec(n);
       end;
+      if ClearSourceFiles then DeleteFile(spath+sr.name);
     end;
-    if ClearSourceFiles then DeleteFile(sr.name);
     sres := findnext(sr);
   end;
   findclose(sr);
@@ -3724,6 +3728,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/02/22 17:13:22  cl
+  - ClearSourceFiles works now
+
   Revision 1.28  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 
