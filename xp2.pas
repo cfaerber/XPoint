@@ -1120,11 +1120,11 @@ begin
     begin
       new(p);
       if dbReadInt(d,'netztyp')=nt_UUCP then begin
-        dom:=dbReadStr(d,'fqdn');
+        dom:=LowerCase(dbReadStr(d,'fqdn'));
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
       else begin
-        dom:=dbReadStr(d,'fqdn');
+        dom:=LowerCase(dbReadStr(d,'fqdn'));
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
                                  dbReadStr(d,'domain'));
       end;
@@ -1164,6 +1164,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.100  2001/01/10 19:09:02  sv
+  - reply-detection improved
+
   Revision 1.99  2001/01/06 16:14:10  ma
   - replaced mklongdir by CreateDir
 
