@@ -158,8 +158,8 @@ end;
 procedure Set_XP_ID;
 begin
   case netztyp of
-    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+krk(regstr2)+' ##'+#13#10;
-    else      XP_ID:='## '+xp_xp+' '+verstr+krk(regstr1)+' ##'+#13#10;
+    nt_UUCP : XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr2)+' ##'+#13#10;
+    else      XP_ID:='## '+xp_xp+' '+verstr+betastr+krk(regstr1)+' ##'+#13#10;
   end;
 end;
 
@@ -1127,6 +1127,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.5  2001/01/11 18:54:29  mk
+  - Betastring in XP_ID hinzugefuegt
+
   Revision 1.18.2.4  2000/12/31 14:46:13  mk
   - Tearlineschalter in Config/Optionen/Netze
 
