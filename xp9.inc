@@ -94,6 +94,7 @@
       bDomainNt:=nt;
       maddstring(3,yy,getres2(912,10),bdomain,30,60,        { 'Serverdomain' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(8034);
+      mset3proc(SetDomain2);
       inc(yy,2);
       end
     else
