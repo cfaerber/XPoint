@@ -1106,7 +1106,7 @@ begin
                 SetGelesen;
               nextmsg:
                 SetKK;
-//              if not aufbau then write_disp_line(p,0,true);
+                if not aufbau then write_disp_line(p,0,true);
                 if _down then
                   GoDown;
                 NachWeiter:=nw;
@@ -1981,6 +1981,10 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.111  2003/09/06 12:57:11  cl
+  - BUGFIX: display line not updated when message status changed in lister
+    See <8tEHCQ0y3TB@ferdy.wiesibox.de> "Snapshot vom 04.09."
+
   Revision 1.110  2003/08/30 22:15:06  cl
   - fixed two rare range check errors
 
