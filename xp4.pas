@@ -1005,6 +1005,7 @@ var t,lastt: taste;
 
         sData.keywords:=orghdp.keywords;
         sData.distribute:=orghdp.distribution;
+        orghdp.organisation := '';
 
         if (quote in [3,4]) then sData.fidoto := orghdp.Fido_to
         else                     sData.fidoto := orghdp.Realname;        
@@ -2788,6 +2789,9 @@ end;
 
 {
   $Log$
+  Revision 1.140  2003/04/19 07:37:11  mk
+  - clear organisation header in brief_senden
+
   Revision 1.139  2003/03/30 12:43:41  mk
   - fixed Weiterleit enum
 
