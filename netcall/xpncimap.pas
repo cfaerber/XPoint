@@ -38,7 +38,7 @@ function GetIMAPMails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles
 implementation  { ------------------------------------------------- }
 
 uses
-  Netcall,ncsocket,ncsmtp,ncIMAP,
+  Netcall,ncsocket,ncsmtp,ncimap,
   progressoutput,xpprogressoutputwindow,
 {$ifdef NCRT}
   XPCurses,
@@ -177,6 +177,9 @@ end;
                       
 {
   $Log$
+  Revision 1.2  2003/05/02 07:29:41  mk
+  - lowercase ncimap (for linux)
+
   Revision 1.1  2003/05/01 09:52:30  mk
   - added IMAP support
 
