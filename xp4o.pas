@@ -89,7 +89,7 @@ type arcbuf = record
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = 'i';
+      suchopt : string[8] = 'iÑ';              {JG:15.02.00 Umlaut ignorieren Standard} 
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Grî·e nach Reorg }
@@ -153,6 +153,7 @@ var x,y   : byte;
     _vondat,_bisdat : longint;
     minsize,maxsize : longint;
     igcase,sword    : boolean;
+    umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}    
     bereich         : shortint;
     _brett          : string[5];
     mi,add          : byte;
@@ -229,6 +230,9 @@ label ende,happyend;
     end;
   end;
 
+{JG:15.02.00 ganze Prozedur umgekrempelt fuer Umlautverarbeitung 
+             und etwas fuer uebersicht gesorgt.}
+
   procedure TestMsg;
   var betr2 : string[BetreffLen];
       user2 : string[AdrLen];
@@ -242,6 +246,8 @@ label ende,happyend;
       gotoxy(x+26,wherey); write(nf:5);
       mon;
       end;
+
+{Spezialsuche}
     if spez then with srec^ do
       if DateFit and SizeFit and TypeFit and StatOk then begin
         dbReadN(mbase,mb_betreff,betr2);
@@ -250,11 +256,9 @@ label ende,happyend;
           if length(hdp^.betreff)>40 then
             betr2:=hdp^.betreff;
           end;
-        if igcase then UpString(betr2);
         dbReadN(mbase,mb_absender,user2); if igcase then UpString(user2);
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
           dbReadN(mbase,mb_name,realn);
-          if igcase then UpString(realn);
           end
         else
           realn:=#0;
@@ -263,8 +267,17 @@ label ende,happyend;
             hdp^.fido_to:=''
           else begin
             ReadHeader(hdp^,hds,false);
-            if igcase then UpString(hdp^.fido_to);
             end;
+        if umlaut then begin                    {JG: Umlaute anpassen}
+          ukonv(betr2); 
+          ukonv(realn); 
+          ukonv(hdp^.fido_to);
+          end;
+        if igcase then begin                    {JG: Ignore Case}
+          UpString(betr2);
+          UpString(realn); 
+          UpString(hdp^.fido_to);
+          end;
         if ((betr='') or (pos(betr,betr2)>0)) and
            ((user='') or (pos(user,user2)>0) or (pos(user,realn)>0)) and
            ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0)) and
@@ -274,30 +287,33 @@ label ende,happyend;
           end;
         end
       else
-    else if suchfeld<>'' then begin
+
+{Normale Suche}
+    else if suchfeld<>'' then begin    
       dbRead(mbase,suchfeld,such);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
         ReadHeader(hdp^,hds,false);
         if length(hdp^.betreff)>40 then
           such:=hdp^.betreff;
         end;
-
-{JG: 22.01.00}
-      if suchfeld='MsgID' then begin
+(*                                         {JG: Erstmal ausgeklammert, da unbenutzt}  
+       if suchfeld='MsgID' then begin               
         ReadHeader(hdp^,hds,false);
         such:=hdp^.msgid;
         end;
-{/JG}
-
-      if (igcase and (pos(sst,UStr(such))>0)) or
-         (not igcase and (pos(sst,such)>0)) then begin
+*)
+      if umlaut then ukonv(such);                   {JG:15.02.00}
+      if (igcase and (pos(sst,UStr(such))>0)) or      
+        (not igcase and (pos(sst,such)>0)) then begin
         MsgAddmark;
         inc(nf);
         end else
-      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then begin
-        dbReadN(mbase,mb_name,such);
+      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp)
+        then begin
+        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
+        if umlaut then ukonv(such);              {JG:15.02.00}
         if (igcase and (pos(sst,Ustr(such))>0)) or
-           (not igcase and (pos(sst,such)>0)) then begin
+          (not igcase and (pos(sst,such)>0)) then begin
           MsgAddmark;
           inc(nf);
           end;
@@ -309,6 +325,7 @@ label ende,happyend;
         inc(nf);
         end;
   end;
+{/JG}
 
   procedure TestBrett(_brett:string);
   begin
@@ -352,6 +369,8 @@ begin
   i:=0;
   while (i<=4) and (bretter<>bera[i]) do inc(i);
   if i>4 then bretter:=bera[0];
+
+{Normalsuche}
   if not spez then begin
     add:=0;
 (*  if autosuche='' then begin *)
@@ -386,15 +405,18 @@ begin
       if autosuche<>'' then _keyboard(keypgdn);
       readmask(brk);
       closemask;
-      if suchfeld='Betreff' then srec^.betr:=suchstring
+
+      if suchfeld='Betreff' then begin
+        i:=ReCount(suchstring);         { JG:15.02.00 Re's wegschneiden }
+        srec^.betr:=suchstring
+        end
+     
       else if suchfeld='Absender' then begin
         suchstring:=userform(suchstring);
         srec^.user:=suchstring;
         end
 
-{JG: 22.01.00}
-      else if suchfeld='MsgID' then srec^.mid:=suchstring            
-{/JG}
+      else if suchfeld='MsgID' then srec^.mid:=suchstring   {JG: 22.01.00}         
 
       else srec^.txt:=suchstring;
       if suchstring='' then goto ende;
@@ -429,6 +451,8 @@ begin
       brk:=false;
       end; *)
     end
+
+{Spezialsuche}  
   else with srec^ do begin
     add:=iif(ntBrettEmpfUsed,1,0);
     dialog(50,12+add,getreps2(441,1,anztxt),x,y);
@@ -477,6 +501,7 @@ begin
   if not brk then with srec^ do begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
+    umlaut:=multipos('ÑîÅ',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
     sword :=pos('w',lstr(suchopt))>0;
     bereich:=0;
     for i:=1 to 4 do
@@ -489,6 +514,9 @@ begin
 
     if spez then with srec^ do begin
       user:=userform(user);
+      if umlaut then begin                              {JG:15.02.00 umlaute konvertieren}
+        Ukonv(betr); Ukonv(user); Ukonv(fidoempf);
+        end;                                            {/JG}
       if igcase then begin
         UpString(betr); UpString(user); UpString(txt); UpString(fidoempf);
         end;
@@ -504,6 +532,7 @@ begin
       maxsize:=biskb*1024+1023;
       end
     else
+      if umlaut then ukonv(sst);                        {JG:15.02.00} 
       if igcase then UpString(sst);
     mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16));  { 'Suche:         passend:' }
     if aktdispmode<>11 then markanz:=0;
@@ -608,28 +637,7 @@ var betr,betr2   : string;
     brett,_Brett : string[5];
     dummy,ll     : integer;
 
-  procedure ukonv(var s:string);
-    procedure conv(c1,c2:char);
-    var p : byte;
-    begin
-      repeat
-        p:=cpos(c1,s);
-        if p>0 then begin
-          s[p]:=c2;
-          if c2<>'s' then c2:='e';
-          insert(c2,s,p+1);
-          end;
-      until p=0;
-    end;
-  begin
-    conv('Ñ','a');
-    conv('î','o');
-    conv('Å','u');
-    conv('·','s');
-    conv('é','A');
-    conv('ô','O');
-    conv('ö','U');
-  end;
+ {procedure ukonv(var s:string);}   {JG:15.02.00 nach Typeform.pas Verlagert}
 
 begin
   moment;
@@ -2132,6 +2140,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/15 21:19:24  mk
+  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
+      * wenn man eine markierte Nachricht liest, wird beim Verlassen
+        der Headeranzeige nicht gleich auch der Lister verlasssen
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
+        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -168,7 +169,7 @@ function mailstring(const s: String): string; { JG:04.02.00 Mailadresse aus Stri
 {$IFDEF Delphi }
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
-
+procedure ukonv(var s:string);                { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 { ================= Implementation-Teil ==================  }
 
 IMPLEMENTATION
@@ -2070,4 +2071,39 @@ end;
 {$ENDIF }
 {$ENDIF }
 
+
+procedure ukonv(var s:string);
+  procedure conv(c1,c2:char);
+  var p : byte;
+   begin
+    repeat
+      p:=cpos(c1,s);
+      if p>0 then begin
+        s[p]:=c2;
+        if c2<>'s' then c2:='e';
+        insert(c2,s,p+1);
+        end;
+    until p=0;
+  end;
+begin
+  conv('ä','a');
+  conv('ö','o');
+  conv('ü','u');
+  conv('ß','s');
+   conv('Ä','A');
+  conv('Ö','O');
+  conv('Ü','U');
+end;
 end.
+
+end.
+{ 
+  $Log$
+  Revision 1.5  2000/02/15 21:19:24  mk
+  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
+      * wenn man eine markierte Nachricht liest, wird beim Verlassen
+        der Headeranzeige nicht gleich auch der Lister verlasssen
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfänger"
+        können jetzt Umlautunabhängig geschalten werden
+
+}

@@ -305,7 +305,7 @@ begin
 {JG 03.02.00}  
 
    if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
-   if upcase(c) = 'O' then begin ShowHeader; ex(5); end;     { 'O' fuer Lister }
+   if upcase(c) = 'O' then ShowHeader;                       { 'O' fuer Lister }
 
    if t = keyaltm then begin                                   { ALT+M = Suche MessageID }
          if list_markanz=0 then global_suchstring:=''          {Nullstring ohne Markierung}
@@ -322,12 +322,8 @@ begin
          end;
 
   if t = keyaltb then begin                                     { Alt+B = Betreff }
-         if list_markanz=0 then begin
-            s:=dbreadstr(mbase,'Betreff');
-            if ((ustr(left(s,4))='RE: ') or (ustr(left(s,4))='AW: '))
-                 then s:=right(s,length(s)-4);                       {RE: abschneiden}
-            global_suchstring:=s
-            end
+         if list_markanz=0 then 
+            global_suchstring:=dbreadstr(mbase,'Betreff')
          else global_suchstring:=first_marked;
          if Suche(getres(415),'Betreff@','') then Showfromlister;
          ex(5)
@@ -922,6 +918,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/15 21:19:24  mk
+  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
+      * wenn man eine markierte Nachricht liest, wird beim Verlassen
+        der Headeranzeige nicht gleich auch der Lister verlasssen
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfänger"
+        können jetzt Umlautunabhängig geschalten werden
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -5234,11 +5234,13 @@ auszuschneiden und diesen als Suchstring zu benutzen.
 @
 531
 Geben Sie hier die gewÅnschten Suchoptionen als Buch-
-stabenfolge ein. Z.Zt. ist nur eine Suchoption defi-
-niert:
+stabenfolge ein: 
 
 <<i>>  Gro·/Kleinschreibung ignorieren (statt "i"
    kann auch "u" verwendet werden).
+
+<<Ñ>>  Umlaut-sensitive Suche (ae=Ñ, oe=î, usw.) 
+   statt "Ñ" kann auch "î" oder "Å" verwendet werden.
 
 Wenn Sie keine Suchoption wÅnschen, dann lîschen Sie
 diese, z.B. mit der Leertaste oder <Ctrl Y>.
@@ -5848,8 +5850,13 @@ gesuchten Nachrichten in KByte an. 99999 steht fÅr
 639
 Bei Eingabe von <<i>> hat die Schreibweise der Suchbe-
 griffe (Absender, Betreff, Text) keine Bedeutung.
-Bei leerem Eingabefeld wird zwischen Gro·- und Klein-
-schreibung unterschieden.
+Ohne <<i>> wird zwischen Gro·- und Kleinschreibung 
+unterschieden.
+
+Bei Eingabe von <<Ñ>> wird Umlaut-Sensitiv gesucht,
+d.h. "ae" und "Ñ", "oe" und "î", usw. werden bei der
+suche als gleichwertig angesehen. 
+
 @
 650
 Normalerweise wird jede von Ihnen verschickte Nach-
