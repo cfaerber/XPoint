@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fr Nicht-Abonnenten)
 
 
-Dsseldorf, den 26.10.2001 (letzter Update)
+Dsseldorf, den 10.11.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -462,6 +462,9 @@ Bugfixes
   Suchbegriffs kam -"b*el" fand "Bier" und "Birnen", aber nicht
   "Birne").
   XP3.PAS
+
+- Das Zeichen "+" zur Liste der fr URLs zul„ssigen Zeichen hinzugefgt
+  (bisher wurden URLs, die ein "+" enthielten, abgeschnitten).
 
 
 
