@@ -235,7 +235,7 @@ end;
 
 function getflags(s:string):byte;
 var fl,i : byte;
-    f    : w/rd;
+    f    : word;
 begin
   f:=1; fl:=0;
   for i:=1 to 8 do begin
@@ -2050,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.44  2000/12/05 17:55:56  ml
+  - removed illegal character
+
   Revision 1.43  2000/11/16 19:42:57  hd
   - DOS Unit entfernt
 
