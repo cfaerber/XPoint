@@ -136,7 +136,7 @@ type  header    = record
       headerp   = ^header;
 
 
-var   oldexit   : pointer;
+var
       buf       : array[0..bufsize-1] of char;  { allg. Einlese/Kopierpuffer }
       hd0,hd1   : headerp;
       f1,f2,f3  : file;       { Ein/Ausgabedatei, Fehlerdatei }
@@ -410,16 +410,6 @@ begin
     error('CrossPoint-MPUFFER-Dateien dÅrfen nicht direkt modifiziert werden!');
 end;
 
-procedure newexit;
-begin
-  if (right(fo,3)='$$$') then begin     { evtl. Tempfile lîschen }
-    assign(f2,fo);
-    erase(f2);
-    if ioresult<>0 then;
-    end;
-  exitproc:=oldexit;
-end;
-
 procedure openfiles;
 begin
   if ParRep then begin
@@ -431,8 +421,6 @@ begin
     assign(f2,fo); rewrite(f2,1);
     if ioresult<>0 then error('Kann TemporÑrdatei "'+fo+'" nicht îffnen.');
     end;
-  oldexit:=exitproc;
-  exitproc:=@newexit;
   filemode:=ReadFilemode;
   assign(f1,fi); reset(f1,1);
   fsize:=filesize(f1);
@@ -1300,9 +1288,19 @@ begin
   statistik;
   dispose(hd0); dispose(hd1);
   halt(sgn(errmsgs));
+finalization
+  if (right(fo,3)='$$$') then
+  begin     { evtl. Tempfile lîschen }
+    assign(f2,fo);
+    erase(f2);
+    if ioresult<>0 then;
+  end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/09 09:09:56  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.20  2000/07/09 08:35:20  mk
   - AnsiStrings Updates
 

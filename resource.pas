@@ -64,7 +64,6 @@ type
 
 const f      : ^file = nil;
       clnr   : word  = $ffff;    { geladener Cluster }
-      oldexit: pointer = nil;
 
 var   block  : packed array[1..maxblocks] of rblock;
       blocks : word;
@@ -82,15 +81,6 @@ begin
   writeln('<RES> Error: ',txt);
   halt(1);
 end;
-
-{$S-}
-procedure newexit;
-begin
-  exitproc:=oldexit;
-  if f<>nil then closeresource;
-end;
-{S+}
-
 
 { preloadmem: soviel Bytes Heap soll mindestens freibleiben }
 
@@ -126,10 +116,6 @@ begin
       else
         inc(block[i].fileadr,block[i].anzahl*4);
       end;
-    end;
-  if oldexit=nil then begin
-    oldexit:=exitproc;
-    exitproc:=@newexit;
     end;
 end;
 
@@ -344,9 +330,15 @@ begin
   GetReps2:=reps(getres2(nr1,nr2),txt);
 end;
 
+initialization
+finalization
+  if f<>nil then closeresource;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/09 09:09:54  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.13  2000/07/07 14:38:35  hd
   - AnsiString
   - Kleine Fixes nebenbei

@@ -177,7 +177,6 @@ var pullw   : array[1..maxpull] of record
 {$ENDIF }
                                    end;
     rahmen  : shortint;
-    oldexit : pointer;
 
 
 {$IFNDEF NCRT }
@@ -846,7 +845,7 @@ begin
   else begin
     r:=rahmen;
     if (text='*') or (text='-') then begin
-      setrahmen(0); 
+      setrahmen(0);
       tx1:=text[1];
       text:='';
       end
@@ -883,20 +882,10 @@ begin
     end;
 end;
 
-procedure DoneVar;
-begin
-  exitproc:=oldexit;
-  {$IFDEF Localscreen }
-    FreeMem(LocalScreen);
-  {$ENDIF }
-end;
-
 
 var
   i: byte;
-begin
-  oldexit:=exitproc;
-  exitproc:=@DoneVar;
+initialization
 {$IFDEF NCRT }
   FillChar(pullw, sizeof(pullw), 0);
 {$ELSE }
@@ -918,9 +907,16 @@ begin
     { Consolenhandle holen }
     OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
   {$ENDIF }
+finalization
+  {$IFDEF Localscreen }
+    FreeMem(LocalScreen);
+  {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.44  2000/07/09 09:09:54  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.43  2000/07/07 14:38:35  hd
   - AnsiString
   - Kleine Fixes nebenbei

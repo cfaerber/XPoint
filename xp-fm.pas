@@ -105,7 +105,6 @@ type  FidoAdr   = record
 var   sendfile  : array[1..maxfiles] of pathptr;
       SendFiles : integer;
       FA        : FidoAdr;
-      oldexit   : pointer;
       bauddetect: longint;
       logf      : text;
       nocarrier : string[30];   { Carrier futsch }
@@ -710,16 +709,6 @@ end;
 
 {$I XP-FM.INC}          { YooHoo - Mailer }
 
-procedure newexit;
-begin
-  if ioresult<>0 then;
-  close(logf);
-  if ioresult<>0 then;
-  Cursor(curnorm);
-  exitproc:=oldexit;
-end;
-
-
 begin
   test8086:=0;
   logo;
@@ -729,8 +718,6 @@ begin
   InitVar;
   OpenLog;
   TimerObj.Init;
-  oldexit:=exitproc;
-  exitproc:=@newexit;
 
   if not CommInit(CommInitString,CommObj)then
     error(getres(100)+' "'+CommInitString+'"'); { 'Parameter-Fehler: ' }
@@ -761,10 +748,18 @@ begin
   PopWindow;
   CloseResource;
   halt(aresult);
+finalization
+  if ioresult<>0 then;
+  close(logf);
+  if ioresult<>0 then;
+  Cursor(curnorm);
 end.
 
 {
   $Log$
+  Revision 1.21  2000/07/09 09:09:55  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.20  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -318,17 +318,6 @@ begin
   getcbreak(orgcbreak);
   setcbreak(false);
 {$ENDIF }
-  oldexit:=exitproc;
-  exitproc:=@newexit;
-{$IFDEF BP }
-  if (ParWintime=1) and (ParOS2=0)
-    then Int15delay:=4
-    else Int15delay:=ParOS2;
-  if lo(DosVersion)>=20 then OStype:=os_2
-  else if DOSEMuVersion <> '' then OStype:=os_linux
-  else if Winversion>0 then OStype:=os_windows
-  else OStype:=os_dos;
-{$ELSE }
   {$IFDEF Linux }
     OSType := os_Linux;
   {$ENDIF }
@@ -338,7 +327,6 @@ begin
   {$IFDEF OS2 }
     OSType := os_windows;
   {$ENDIF }
-{$ENDIF }
 
   { Standard-Sektion fuer die neue Cfg-Datei vorbereiten }
   case OSType of
@@ -1787,6 +1775,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.72  2000/07/09 09:09:55  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.71  2000/07/07 11:00:32  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung

@@ -83,9 +83,6 @@ uses
 const
  intset  : boolean = false;
 
-var
-  oldexit : pointer;
-
 procedure mausinit;
 begin
 {$IFDEF VP}
@@ -191,22 +188,6 @@ procedure setmaus(x,y: integer);
 begin
 end;
 
-{$S-}
-procedure newexit;
-begin
-  exitproc:=oldexit;
-  if intset then
-  begin
-  {$IFDEF VP }
-    SysTVDoneMouse(true);
-  {$ENDIF }
-  end;
-  if mausda then mausaus;
-end;
-{$IFDEF Debug }
-  {$S+}
-{$ENDIF }
-
 procedure mausunit_init;
 const
   minit : boolean = false;
@@ -226,8 +207,6 @@ begin
         Maus := false;
     {$ENDIF }
     mausda:=false;
-    oldexit:=exitproc;
-    exitproc:=@newexit;
     mausswapped:=false;
     minit:=true;
   end;
@@ -284,11 +263,22 @@ end;
 {$ENDIF }
 
 
-begin
+initialization
   maus:=false;
+finalization
+  if intset then
+  begin
+  {$IFDEF VP }
+    SysTVDoneMouse(true);
+  {$ENDIF }
+  end;
+  if mausda then mausaus;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/09 09:09:54  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.16  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

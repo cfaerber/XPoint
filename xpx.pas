@@ -32,9 +32,6 @@ implementation
 
 const starting : boolean = true;
 
-var
-  oldexit : pointer;
-
 procedure stop(txt:string);
 begin
   writeln;
@@ -108,27 +105,6 @@ begin
   filemode:=2;
 end;
 
-{$ifndef Linux}
-  {$S-}
-{$endif}
-procedure setpath;
-begin
-  if not SetCurrentDir(shellpath) then
-    SetCurrentDir(ownpath);
-  if runerror and not starting then begin
-    attrtxt(7);
-    writeln;
-    writeln('Fehler: ',ioerror(exitcode,'<interner Fehler>'));
-    end;
-  exitproc:=oldexit;
-end;
-{$IFDEF Debug }
-  {$ifndef Linux}
-    {$S+}
-  {$endif}
-{$ENDIF }
-
-
 procedure TestCD;
 var f    : file;
     attr : rtlword;
@@ -153,7 +129,7 @@ begin
 end;
 
 
-begin
+initialization
   checkbreak:=false;
   readname;
 {$ifndef Linux}
@@ -164,8 +140,6 @@ begin
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
     SetCurrentDir(progpath);
-  oldexit:=exitproc;
-  exitproc:=@setpath;
 {$IFDEF NCRT}
   InitXPCurses;
 {$ENDIF}
@@ -217,9 +191,21 @@ begin
 {$ENDIF }
   TestCD;
   starting:=false;
+finalization
+  if not SetCurrentDir(shellpath) then
+    SetCurrentDir(ownpath);
+  if runerror and not starting then
+  begin
+    attrtxt(7);
+    writeln;
+    writeln('Fehler: ',ioerror(exitcode,'<interner Fehler>'));
+  end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/09 09:09:56  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.24  2000/07/07 08:33:14  hd
   - Linux: Startausgabe angepasst
 

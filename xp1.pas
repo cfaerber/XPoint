@@ -188,7 +188,6 @@ procedure set_checkdate;
 
 procedure opendatabases;
 procedure closedatabases;
-procedure NewExit;                       { Exit-Prozedur          }
 procedure TempClose;
 procedure TempOpen;
 procedure FlushClose;
@@ -1833,23 +1832,6 @@ begin
   TempOpen;
 end;
 
-{$ifndef Linux}
-  {$S-}
-{$endif}
-procedure newexit;               { Exit-Prozedur }
-begin
-  exitproc:=oldexit;
-  if ioresult= 0 then ;
-  dbReleaseCache;
-  if not closed then closedatabases;
-  setbackintensity;
-end;
-{$IFDEF Debug }
-{$ifndef Linux}
-  {$S+}
-{$endif}
-{$ENDIF }
-
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
 
 procedure fmove(var f1,f2:file);
@@ -2020,9 +2002,18 @@ end;
 
 {$I xp1cm.inc}
 
+initialization
+finalization
+  if ioresult= 0 then ;
+  dbReleaseCache;
+  if not closed then closedatabases;
+  SetBackIntensity;
 end.
 {
   $Log$
+  Revision 1.60  2000/07/09 09:09:55  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.59  2000/07/07 14:38:36  hd
   - AnsiString
   - Kleine Fixes nebenbei

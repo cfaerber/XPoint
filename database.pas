@@ -1458,17 +1458,6 @@ begin
     close(dblogfile);
 end;
 
-{$S-}
-procedure _closelog;
-begin
-  exitproc:=oldexit;
-  if ioresult<>0 then;
-  dbCloseLog;
-end;
-{$IFDEF Debug }
-  {$S+}
-{$ENDIF }
-
 {=====================================================================}
 
 procedure dbICproc(var icr:dbIndexCRec);
@@ -1533,13 +1522,17 @@ end;
 
 }
 
-begin
+initialization
   ICP:=dbICproc;
-  oldexit:=exitproc;
-  exitproc:=@_closelog;
+finalization
+  if ioresult<>0 then;
+  dbCloseLog;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/09 09:09:53  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.28  2000/07/07 14:38:35  hd
   - AnsiString
   - Kleine Fixes nebenbei

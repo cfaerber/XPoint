@@ -163,7 +163,6 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
         cache     : icachep;
         bb        : byte;             { lokal dbReadN/dbWriteN     }
         dblogfile : text;             { DB-Logfile                 }
-        oldexit   : pointer;
 
 
 function  iohandler:boolean;
@@ -218,6 +217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/07/09 09:09:53  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.7  2000/05/03 00:21:19  mk
   - unbenutzte Units aus uses entfernt
 

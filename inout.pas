@@ -71,7 +71,7 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
 
        slcttyp  = record
 {$IFDEF hasHugeString}
-		    el : string;
+                    el : string;
 {$ELSE}
                     el : string[60];             { Auswahl-Position         }
 {$ENDIF}
@@ -89,7 +89,7 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
                     x,y,px,
                     len,art : shortint;
 {$ifdef hasHugeString}
-		    s	    : string;
+                    s       : string;
 {$else}
                     s       : string[78];
 {$endif}
@@ -151,7 +151,7 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        Int15Delay : byte     = 0;         { 1=int15, 2=int28, 3=HLT, 4=int2F }
 
 
-var    
+var
 {$ifdef hasHugeString}
        chml : array[1..5] of string;
 {$else}
@@ -304,7 +304,6 @@ var    ca,ce,ii,jj : byte;
        mwr,mwu     : byte;
 {$ENDIF }
        cursp       : shortint;
-       oldexit     : pointer;
        sec         : word;
        mx,my       : integer;      { Maus-Koordinaten }
        st1         : byte;
@@ -418,14 +417,6 @@ begin
   dec(cursp);
   if cursp<1 then cursp:=maxsave;
 end;
-
-{$IFNDEF NCRT }
-procedure cursoron;
-begin
-  exitproc:=oldexit;
-  cursor(curon);
-end;
-{$ENDIF }
 
 procedure initscs;
 begin
@@ -678,7 +669,7 @@ begin
       z[1]:=c;
       if c=#0 then begin
         c:=readkey;
-	SetLength(z,2);
+        SetLength(z,2);
         z[2]:=c;
         end;
       end;
@@ -1625,7 +1616,8 @@ end;
 {$endif}
 {$ENDIF } { NCRT }
 
-begin
+
+initialization
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
   normtxt;
   chml[1]:=range(#32,#126)+range(#128,#255);
@@ -1633,10 +1625,6 @@ begin
   chml[2]:=chml[3]+'.,';
   getcur(ca,ce,sx[1],sy[1]);
   sa[1]:=ca; se[1]:=ce;
-{$ifndef NCRT}
-  oldexit:=exitproc;
-  exitproc:=@cursoron;
-{$endif}
   sec:=99;
   fillchar(fndef,sizeof(fndef),0);
   fillchar(fnproc,sizeof(fnproc),0);
@@ -1661,9 +1649,17 @@ begin
 {$IFDEF NCRT }
   { zpz:= nCols(nScreen); }
 {$ENDIF }
+finalization
+{$IFNDEF NCRT }
+  cursor(curon);
+{$ENDIF }
+
 end.
 {
   $Log$
+  Revision 1.46  2000/07/09 09:09:54  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.45  2000/07/05 09:50:12  hd
   - AnsiString-Anpassung
 

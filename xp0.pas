@@ -1276,7 +1276,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        lesemodepos  : byte;          { X-Position Lesemode }
 
        orgcbreak    : boolean;
-       oldexit      : pointer;       { alte Exit-Prozedur }
 
        gl,actgl     : shortint;      { Anzeige-Zeilen im Hauptfenster }
        aufbau       : boolean;       { neuer Bildschirm-Aufbau n”tig  }
@@ -1411,6 +1410,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.70  2000/07/09 09:09:55  mk
+  - Newexit in Initialization/Finalization umgewandelt
+
   Revision 1.69  2000/07/09 08:35:14  mk
   - AnsiStrings Updates
 
