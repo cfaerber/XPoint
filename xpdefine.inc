@@ -78,6 +78,7 @@
   {$MODE Delphi }
   {$ASMMODE Intel }
   {$GOTO ON }
+  {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,P-,T-,V-,X+}
@@ -199,6 +200,9 @@
 
 {
   $Log$
+  Revision 1.65  2001/03/24 12:45:33  mk
+  - added compiler define INLINE
+
   Revision 1.64  2001/03/16 16:59:06  cl
   - Little/Big-Endian conversion/macros
 
