@@ -111,11 +111,13 @@ var sr    : searchrec;
     f     : boolean;
 
  procedure DelAll(const fn:string);
+ var
+   f1: File;
  begin
     findfirst(DestDir+fn,$20,sr); { Normal und Archiv, kein Readonly }
     while doserror=0 do begin
-      assign(f1^, DestDir+sr.name);
-      if IOResult = 0 then Erase(f1^);
+      assign(f1, DestDir+sr.name);
+      if IOResult = 0 then Erase(f1);
       findnext(sr);
     end;
     FindClose(sr);
@@ -157,12 +159,11 @@ var sr    : searchrec;
   end;
 
 begin
-  new(f1);                        { Spool r„umen }
-  if cleardir then begin
+  if cleardir then
+  begin                        { Spool r„umen }
     DelAll('*.');
     DelAll('*.OUT');
-    end;
-  dispose(f1);
+  end;
   spacksize:=0;
   spufsize:=0;
   if not existBin(UUZBin) then begin
@@ -620,6 +621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.19  2001/08/11 08:54:03  mk
+  - use local file variable in DelAll instead of global file^
+
   Revision 1.13.2.18  2001/08/11 08:50:37  mk
   - check for IOResult in DelAll
   - DelAll does not try to delete ReadOnly-Files
