@@ -23,7 +23,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 10
 # Do NOT change the first word in each of the following lines!
 0   Main,001Open^XPù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2,009^?ù41
-1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016^DOS        F9,-,018^Beenden
+1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016S^hell      F9,-,018^Beenden
 # Zusatz-Men hier nur fr XPME (s.u.) :
 2   Zusatz,021^Kalender,022^Archiv-Viewer
 3   Nachricht,031^Suchenù5,032E^xtraktù12,033^Unversandtù4,034^Alleù14,035^ndernù22,036^Weiterleitenù21,-,038Brett^managerù19,039^Fileserverù20,03aP^GPù40,03b^Direkt
@@ -3991,6 +3991,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.4  2002/07/20 12:34:33  ma
+# - cosmetics
+#
 # Revision 1.57.2.3  2002/07/17 16:21:39  ma
 # - cosmetics
 #

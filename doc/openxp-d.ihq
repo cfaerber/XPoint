@@ -74,7 +74,7 @@ CrossPoint verwenden:
 
    <<<F1> >>      kontextsensitive Hilfe
    <<<Alt-F1> >>  vorheriges Hilfethema
-   <<<F9> >>      DOS-Shell
+   <<<F9> >>      Shell
    <<<F4> >>      letzte Men-Aktion wiederholen
    <<<F6> >>      aktuelle Makro-Auswahl anzeigen
    <<<Alt-F4> >>  Programm beenden
@@ -1856,7 +1856,7 @@ links nach rechts werden angezeigt:
 <<<F6> >>       : Tastenmakro-Auswahl
 <<<F7> >>       : Blockanfang setzen
 <<<F8> >>       : Blockende setzen
-<<<F9> >>       : DOS-Shell
+<<<F9> >>       : Shell
 <<<F10> >>      : [Men]@62
 
 <<<Shift-F2> >> : Text speichern und Editor verlassen
@@ -1946,7 +1946,7 @@ Gel”schte Textteile werden zwischengespeichert, so-
 lange der Hauptspeicher ausreicht, und k”nnen mit
 <<<Ctrl-U> >>wiederhergestellt werden.
 
-(*) Bei einigen deutschen DOS-Tastaturtreibern sind
+(*) Bei einigen deutschen Tastaturtreibern sind
     <<<Alt-Y> >>und <<<Alt-Z> >>vertauscht.
 
 @
@@ -2183,14 +2183,14 @@ aufrufen.
 <<<PgUp> >>     Upload
 <<<PgDn> >>     Download
 
-<<<F9> >>       DOS-Shell
+<<<F9> >>       Shell
 <<<Alt-X> >>    verl„át CrossTerm, *ohne* aufzulegen.
 @
 67
 Dies ist der Inhalt der gew„hlten Archivdatei. Es
 werden u.a. folgende Informationen angezeigt:
 
-<<Name>>       der DOS-Dateiname
+<<Name>>       der Dateiname
 
 <<OrgGr”áe>>   die Gr”áe der Datei in unkomprimiertem
            Zustand
@@ -3363,8 +3363,8 @@ zeichnis mit angegeben werden:
 <<HSLINK -P$PORT -U$DOWNPATH $UPFILE
 
 Bitte stellen Sie auch sicher, daá das Upload-Pro-
-gramm im OpenXP-Verzeichnis oder ber einen DOS-
-Pfad erreichbar ist!
+gramm im OpenXP-Verzeichnis oder ber den Pfad
+erreichbar ist!
 
 @
 145
@@ -3412,7 +3412,7 @@ erkennt OpenXP nicht, wenn ein Netcall fehlerhaft
 abgebrochen wurde!
 
 Bitte stellen Sie sicher, daá das Download-Programm
-im aktuellen Verzeichnis oder ber einen DOS-Pfad
+im aktuellen Verzeichnis oder ber den Pfad
 (Umgebungsvariable PATH) erreichbar ist, oder geben
 Sie den vollst„ndigen Zugriffspfad an!
 
@@ -3442,7 +3442,7 @@ und ARJ aus einer Liste ausw„hlen.
 Wenn Sie nicht wissen, welcher Packer fr Ihren Point
 verwendet werden soll, dann fragen Sie bitte Ihren
 Sysop. Bitte stellen Sie sicher, daá das UpPacker-
-Programm ber einen DOS-Pfad (Umgebungsvariable PATH)
+Programm ber den Pfad (Umgebungsvariable PATH)
 erreichbar ist, oder geben Sie den vollst„ndigen
 Zugriffspfad an!
 
@@ -3503,7 +3503,7 @@ Wenn Sie nicht wissen, welcher Entpacker fr Ihren
 Point verwendet werden soll, dann fragen Sie bitte
 Ihren Sysop. Bitte stellen Sie sicher, daá das Down-
 Packer-Programm im aktuellen Verzeichnis oder ber
-einen DOS-Pfad (Umgebungsvariable PATH) erreichbar
+den Pfad (Umgebungsvariable PATH) erreichbar
 ist, oder geben Sie den vollst„ndigen Zugriffspfad
 an!
 
@@ -4340,7 +4340,7 @@ Mode".
 8037
 <<Startprogramm
 
-Hier k”nnen Sie ein Programm oder einen DOS-Befehl
+Hier k”nnen Sie ein Programm oder einen Befehl
 eintragen, das/der zum Beginn jedes SysopMode-Net-
 calls ausgefhrt werden soll. Dies ist vor allem
 dann ntzlich, wenn die einzulesende Pufferdatei
@@ -5226,7 +5226,7 @@ Zweifel hilft nur Ausprobieren.
 Die Angabe von "<<start /w>>" ist *nicht* erforderlich
 fr Windows-Clients, die keine graphische Oberfl„che
 haben, sondern in der sog. "Console" laufen und des-
-halb so aussehen wie ein DOS-Programm. Solche Clients
+halb so aussehen wie ein Programm. Solche Clients
 laufen automatisch im OpenXP-Fenster und blockieren
 OpenXP solange, bis sie ihre Arbeit beendet haben.
 
@@ -5251,7 +5251,7 @@ Achten Sie bei der Eingabe darauf, genau den Namen
 zu verwenden, der der Serverbox-Konfigurationsdatei
 <Box>.BFG des jeweiligen Servers entspricht (im Zwei-
 fel drcken Sie <<<F9> >>und fhren im OpenXP-Ver-
-zeichnis den DOS-Befehl "dir *.bfg" aus, um die vor-
+zeichnis den Befehl "dir *.bfg" aus, um die vor-
 handenen BFG-Dateien sehen zu k”nnen).
 
 OpenXP wird dann zu Beginn eines RFC/Client-
@@ -8168,11 +8168,11 @@ Funktion Edit/Schablonen[/Sonstige] und nicht mit
 Edit/Textdatei bearbeiten.
 @
 310
-<<[x]>> -> beim DOS-Aufruf mit <<<F9> >>oder [/OpenXP/DOS]@10106
-       wird die Bildschirmanzeige immer auf 25 Zei-
-       len umgeschaltet.
+<<[x]>> -> beim Shell-Aufruf mit <<<F9> >>oder
+       [/OpenXP/Shell]@10106 wird die Bildschirmanzeige
+       immer auf 25 Zeilen umgeschaltet.
 
-<<[ ]>> -> beim DOS-Aufruf bleibt die unter /Config
+<<[ ]>> -> beim Shell-Aufruf bleibt die unter /Config
        [/Anzeige/Zeilen] eingestellte Zeilenzahl erhal-@10905
        ten.
 
@@ -8181,7 +8181,7 @@ Bedeutung.
 @
 311
 Hier k”nnen Sie festlegen, ob OpenXP beim Aufruf
-der DOS-Shell zus„tzlichen Environment-(Umgebungs-)
+der Shell zus„tzlichen Environment-(Umgebungs-)
 Speicher zur Verfgung stellen soll; dazu wird der
 /E-Schalter von COMMAND.COM verwendet.
 
@@ -8581,13 +8581,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
 448
 Der Speicherbedarf des externen Programms. OpenXP
 versucht, soviel Speicher wie angegeben bereitzu-
-stellen. Evtl. werden dazu XP-Daten tempor„r auf
-Festplatte oder in den EMS-Speicher ausgelagert.
-
-Wenn Ihr Rechner nicht ber EMS, XMS oder Ramdisk
-verfgt, dann ist diese Option recht ntzlich, um
-die ben”tigte Zeit zum Auslagern des Datenbereichs
-zu minimieren.
+stellen.
 @
 450
 Das Anfangsdatum der Statistik - alle Nachrichten
@@ -9434,7 +9428,7 @@ weich(R)-kompatibler Maustreiber.
        - fr Linksh„nder.
 @
 558
-<<[x]>> -> Nach jedem DOS-Aufruf (Editor, ext. Lister,
+<<[x]>> -> Nach jedem Shell-Aufruf (Editor, ext. Lister,
        <<<F9> >>etc.) wird die Maus initialisiert.
 
 <<[ ]>> -> Die Maus wird nur beim Programmstart initiali-
@@ -11272,7 +11266,7 @@ Geben Sie hier an, welches Programm OpenXP zum
 Anzeigen des angegebenen Dateityps verwenden soll.
 
 Das Programm muá sich im aktuellen Verzeichnis
-befinden, ber den DOS-Pfad erreichbar sein, oder
+befinden, ber den Pfad erreichbar sein, oder
 Sie mssen den vollst„ndigen Zugriffspfad angeben.
 
 Das Programm wird automatisch aktiviert, sobald Sie
@@ -11832,9 +11826,9 @@ z.B. "NODEDIFF.A\##" fr die Standard-FidoNet-
 Nodelistenupdates.
 
 Der passende, bei /Config/Extern/Entpacker eingetra-
-gene Entpacker muá ber einen DOS-Pfad erreichbar
-sein oder Sie mssen den vollst„ndigen Zugriffspfad
-angegeben haben.
+gene Entpacker muá ber den Pfad erreichbar sein
+oder Sie mssen den vollst„ndigen Zugriffspfad an-
+gegeben haben.
 @
 944
 Hier k”nnen Sie ein Programm oder eine Batchdatei
@@ -12121,7 +12115,7 @@ zum Modem geschickt. Es k”nnen auch mehrere, durch
        erh„lt, wird automatisch ein PD-ZModem-Down-
        load gestartet. Vorraussetzung ist, daá ZM.EXE
        sich im OpenXP-Verzeichnis befindet oder
-       ber einen DOS-Pfad erreichbar ist.
+       ber den Pfad erreichbar ist.
 
 <<[ ]>> -> Der Download muá manuell mit <<<PgDn> >>gestartet
        werden.
@@ -12155,7 +12149,7 @@ verwenden.
 1010
 Hier geben Sie an, welcher "Familie" die von Ihnen
 verwendete PGP-Version angeh”rt. PGP muá installiert
-und per DOS-Pfad (PATH oder PGPPATH) erreichbar sein.
+und per Pfad (PATH oder PGPPATH) erreichbar sein.
 
 Fr DOS-User wird <<PGP 2.6.3in>> empfohlen. Mit die-
 ser Version kann man zwar weder Nachrichten fr User
@@ -12174,10 +12168,7 @@ lit„t einige Kommandozeilenoptionen notwendig.
 
 Keine Probleme mit den neueren Schlsseln gibt es bei
 <<PGP 6.5.8>>, das allerdings fr DOS nicht zur Ver-
-fgung steht. Ferner hat diese Version eine Sicher-
-heitslcke, aufgrund derer Sie auf ihren Secret Key
-bzw. dessen Dateien trotz der Verschlsselung mittels
-des Mantras sehr genau aufpassen sollten.
+fgung steht.
 
 Vorsicht: Andere PGP-Versionen als hier aufgefhrt
 werden aufgrund von Fehlern und Inkompatibilit„ten
@@ -13228,19 +13219,11 @@ da es bereits viele hervorragende Shareware-Termi-
 nalprogramme gibt.
 @
 10106
-<<OpenXP / DOS-Shell
+<<OpenXP / Shell
 
-.. ruft die DOS-Kommandozeile auf. OpenXP macht sich
-dazu so klein wie m”glich, indem es Daten-Speicher-
-platz auf die Festplatte oder in den EMS- oder XMS-
-Speicher auslagert (die EMS- und XMS-Auslagerung
-kann unter /Config/Optionen/Allgemeines abgeschaltet
-werden. Ich wáte allerdings nicht wozu).
+.. ruft die Kommandozeile auf.
 
-Mit EXIT kommen Sie von DOS wieder zurck zu OpenXP.
-
-Beachten Sie, daá innerhalb der DOS-Shell <<keine re-
-<<sidenten Programme>> aufgerufen werden drfen!
+Mit "exit" kommen Sie wieder zurck zu OpenXP.
 @
 10107
 <<OpenXP / Telnet
@@ -13656,11 +13639,11 @@ tion zum Sichern.
 
 @
 10615
-Es k”nnen beliebige .COM- und .EXE-Programme sowie
-.BAT-Dateien in OpenXP eingebunden werden. Die
+Es k”nnen beliebige Executables sowie Batchdateien
+bzw. Shellskripte in OpenXP eingebunden werden. Die
 Programme mssen sich dazu entweder im OpenXP-Ver-
-zeichnis befinden, ber den DOS-Pfad erreichbar
-sein, oder Sie mssen den vollst„ndigen Zugriffspfad
+zeichnis befinden, ber den Pfad erreichbar sein,
+oder Sie mssen den vollst„ndigen Zugriffspfad
 angeben.
 
 Eine Besonderheit ist, daá Sie die gerade gew„hlte
@@ -14584,21 +14567,11 @@ $(RNAME)).
 11701
 <<OpenXP / Statistik / Speicher
 
-Die Speicher-Statistik gibt Auskunft ber die Aus-
-nutzung von Haupt-, EMS-, XMS- und Festplatten-
-Speicher.
-
 Beim Festplattenspeicher wird die Gesamtgr”áe aller
 im OpenXP-Verzeichnis befindlichen Dateien zusammen-
 gerechnet. Bei groáen Laufwerken kann je nach Be-
 triebssystem mehr freien Platz vorhanden sein, als
 angezeigt wird.
-
-Der verfgbare Hauptspeicher errechnet sich aus dem
-freien Hauptspeicher zuzglich der Speichermenge, die
-auf Festplatte bzw. in den EMS- oder XMS-Speicher
-ausgelagert werden kann. Soviel Speicher steht bei
-Bedarf externen Programmen zur Verfgung.
 
 Auáerdem zeigt OpenXP die Betriebssystem-Versions-
 nummer an. Diese Nummer hat heutzutage allerdings
@@ -15157,7 +15130,7 @@ treffen, finden Sie unter /Config/Optionen/Editor.
 <<Config / Extern / Shell
 
 Hier k”nnen Sie verschiedene Parameter fr den Aufruf
-der DOS-Shell (COMMAND.COM) einstellen.
+der Shell einstellen.
 @
 12404
 <<Config / Extern / Entpacker
@@ -15176,8 +15149,8 @@ Alle Einstellungen mssen zwei Makros enthalten:
 <<$DATEI>>    die zu extrahierende Datei
 
 Auáerdem sind alle zum Extrahieren n”tigen Optionen
-anzugeben. Die Programme <<mssen>> ber einen DOS-
-Pfad erreichbar sein. Ein Haken rechts neben den ein-
+anzugeben. Die Programme <<mssen>> ber den Pfad
+erreichbar sein. Ein Haken rechts neben den ein-
 zelnen Feldern zeigt an, daá das eingetragene Pro-
 gramm vorhanden ist.
 
@@ -15614,8 +15587,8 @@ FIDO\ kopiert und anschlieáend in der Datei FILE-
 LIST.CFG eingetragen.
 
 Gepackte Filelisten werden automatisch entpackt,
-vorausgesetzt, der passende Entpacker ist ber einen
-DOS-Pfad erreichbar oder der vollst„ndige Zugriffs-
+vorausgesetzt, der passende Entpacker ist ber den
+Pfad erreichbar oder der vollst„ndige Zugriffs-
 pfad des Packers wurde angegeben.
 @
 13202
@@ -16037,16 +16010,15 @@ Drcken Sie zweimal <<<Esc> >>und dann <<<F1> >>fr Hilfe.
 20004
 OpenXP konnte eine Datei nicht l”schen. Entweder
 wurde die Datei bereits gel”scht (z.B. durch ein
-externes Programm oder "von Hand" auf DOS-Ebene),
-oder die Datei ist schreibgeschtzt. Im letzteren
-Fall sollten Sie mit dem DOS-Befehl ATTRIB den
-Schreibschutz entfernen; ansonsten k”nnen Sie die
-Fehlermeldung in den meisten F„llen ignorieren.
+externes Programm oder manuell), oder die Datei
+ist schreibgeschtzt.
+Normalerweise k”nnen Sie diese Fehlermeldung in
+den meisten F„llen ignorieren.
 @
 20006
 Es ist zuwenig freier Hauptspeicher vorhanden, um
 die gew„hlte Programmfunktion auszufhren. ndern Sie
-Ihre DOS-Konfiguration, so daá mehr Speicher verfg-
+Ihre Konfiguration, so daá mehr Speicher verfg-
 bar ist! Um die Funktionen von OpenXP voll aus-
 nutzen zu k”nnen, sollten vor dem Programmstart
 wenigstens 450, besser jedoch 500 KByte an freiem
@@ -16054,7 +16026,7 @@ Speicher vorhanden sein.
 @
 20007
 Es ist zuwenig freier Hauptspeicher vorhanden, um
-das externe Programm bzw. die DOS-Shell zu starten.
+das externe Programm bzw. die Shell zu starten.
 Falls Sie gerade eine groáe Nachricht, Fileliste
 o.„. anzeigen lassen, sollten Sie den Lister verlas-
 sen, um mehr freien Speicher zu erhalten.
@@ -16067,9 +16039,9 @@ ge„nderten Einstellungen zu speichern.
 @
 20009
 Die gew„hlte Datei ist schreibgeschtzt und kann
-daher nicht berschrieben werden. Verwenden Sie ggf.
-den DOS-Befehl ATTRIB, um den Schreibschutz zu ent-
-fernen.
+daher nicht berschrieben werden.
+
+Bitte entfernen Sie den Schreibschutz.
 @
 20020
 Sie haben eine Funktionstaste verwendet, die ber
@@ -16146,7 +16118,7 @@ bei /Config/Pfade!
 20206
 OpenXP kann das eingetragene Programm nicht fin-
 den. šberprfen Sie, ob der Dateiname stimmt, und ob
-das Programm im OpenXP-Verzeichnis oder per DOS-Pfad
+das Programm im OpenXP-Verzeichnis oder per Pfad
 erreichbar ist bzw. der korrekte Zugriffspfad ange-
 geben wurde.
 @
@@ -16451,13 +16423,13 @@ niert. M”gliche Ursachen:
 
 ş  Das Archiv ist fehlerhaft.
 
-Versuchen Sie ggf., die Datei "von Hand" auf DOS-
-Ebene zu entpacken. Falls es eine Bin„rnachricht
-ist, mssen Sie sie dazu zun„chst mit /Nachricht
-/Extrakt/Nachricht in eine Datei schreiben lassen.
+Versuchen Sie ggf., die Datei manuell zu entpacken.
+Falls es eine Bin„rnachricht ist, mssen Sie sie
+dazu zun„chst mit /Nachricht/Extrakt/Nachricht in
+eine Datei schreiben lassen.
 @
 20431
-Es ist nicht gengend freier DOS-Speicher vorhanden,
+Es ist nicht gengend freier Speicher vorhanden,
 um den Inhalt der Archivdatei anzuzeigen. Eventuell
 hilft es, wenn Sie OpenXP verlassen, es neustar-
 ten und die Datei dann noch einmal aufrufen.
@@ -16558,10 +16530,10 @@ Das Codieren der Nachricht mit pmCrypt hat nicht
 funktioniert. šberprfen Sie, ob die Einstellungen
 bei /Config/Extern/pmCrypt korrekt sind und ob das
 Codierprogramm im OpenXP-Verzeichnis vorhanden oder
-ber einen DOS-Pfad erreichbar ist!
+ber den Pfad erreichbar ist!
 
-Versuchen Sie ggf., eine Datei auf DOS-Ebene "von
-Hand" zu codieren, um die Fehlerursache zu finden.
+Versuchen Sie ggf., eine Datei manuell zu codieren,
+um die Fehlerursache zu finden.
 @
 20604
 Der Empf„nger der Nachricht ist User in einer Box,
@@ -16746,8 +16718,8 @@ Das Entpacken hat nicht funktioniert. M”gliche Ursa-
 chen:
 
 ş  Der bei /Edit/Boxen/Edit/Point eingetragene Ent-
-   packer ist nicht vorhanden oder nicht ber einen
-   DOS-Pfad erreichbar. Insbesondere bei ZConnect-
+   packer ist nicht vorhanden oder nicht ber den
+   Pfad erreichbar. Insbesondere bei ZConnect-
    und Fido-Netcalls gengt es <<NICHT>>, wenn der Ent-
    packer sich im OpenXP-Verzeichnis befindet!!
 
@@ -16953,9 +16925,9 @@ Sie haben fr den Fileserver bei /Edit/Systeme ein
 Filelisten-Konvertierprogramm eingetragen, aber bei
 der Ausfhrung des Programms ist etwas schiefgelau-
 fen. šberprfen Sie, ob das Programm im OpenXP-Ver-
-zeichnis oder ber einen DOS-Pfad erreichbar ist und
-versuchen Sie ggf., die Dateiliste "von Hand" auf
-DOS-Ebene zu konvertieren.
+zeichnis oder ber den Pfad erreichbar ist und
+versuchen Sie ggf., die Dateiliste manuell zu kon-
+vertieren.
 @
 20824
 Die Parameter des Filelisten-Konvertierprogramms bei
@@ -17010,8 +16982,8 @@ an, den Sie bei /Edit/Boxen eingetragen haben!
 @
 20907
 OpenXP konnte das angegebene Programm weder im
-OpenXP-Verzeichnis noch in einem per DOS-Pfad er-
-reichbaren Verzeichnis finden. Stellen Sie bitte vor
+OpenXP-Verzeichnis noch in einem per Pfad erreich-
+baren Verzeichnis finden. Stellen Sie bitte vor
 dem n„chsten Netcall sicher, daá das Programm vor-
 handen ist!
 @
@@ -17328,9 +17300,9 @@ OS/2: Erh”hen Sie die Einstellung "DOS_FILES" in den
 ^^22808
 @
 22808
-Die Speicherverwaltung von DOS wurde zerst”rt. Dies
-k”nnte daran liegen, daá ein externes Programm einen
-gr”áeren Fehler gemacht hat.
+Die Speicherverwaltung wurde gest”rt. Dies k”nnte da-
+ran liegen, daá ein externes Programm einen gr”áeren
+Fehler gemacht hat.
 
 Verlassen Sie OpenXP umgehend und booten Sie den
 Rechner neu!
@@ -17351,7 +17323,7 @@ gebenen Bezugsquellen erh„ltlich ist.
 @
 23001
 Installieren Sie zun„chst das Programm PGP und
-stellen Sie sicher, daá es per DOS-Pfad (PATH) er-
+stellen Sie sicher, daá es per Pfad (PATH) er-
 reichbar ist, oder daá die Umgebungsvariable
 PGPPATH vorhanden und korrekt gesetzt ist.
 

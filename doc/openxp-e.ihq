@@ -1,4 +1,4 @@
-CrossPoint v3.70
+OpenXP/32 v3.70
 15 6
 53 19
 2 1
@@ -59,11 +59,11 @@ see what happens.
 @
 4
 You can use the following Keys (almost) everywhere
-in CrossPoint:
+in OpenXP:
 
    <<F1>>       Help
    <<Alt F1>>   Previous Help
-   <<F9>>       DOS-Shell
+   <<F9>>       Shell
    <<Alt F4>>   End Programme
 
    <<Alt K>>    Calendar
@@ -75,16 +75,16 @@ in CrossPoint:
    <<Alt N>>    Browse Nodelist
 @
 5
-<<CrossPoint - Support
+<<OpenXP - Support
 
 The current version (by Peter Mandrella) and
-information about CrossPoint may be found on the
+information about OpenXP may be found on the
 InterNet at:
 
-        http://www.crosspoint.de
+        http://www.OpenXP.de
 
 The newest version and information relating to
-CrossPoint development by the OpenXP Project may be
+OpenXP development by the OpenXP Project may be
 found at:
 
         http://www.openxp.de
@@ -104,7 +104,7 @@ sources:
         FidoNet: XPOINT
                  (International FidoNet support echo)
 
-        Usenet:  de.comm.software.crosspoint
+        Usenet:  de.comm.software.OpenXP
                  (German support newsgroup)
                  (Although the dominant language is
                  German, English *is* allowed)
@@ -119,12 +119,9 @@ very obliging chappie :-)
 
 @
 6
-<<CrossPoint - Licence Conditions
+<<OpenXP - Licence Conditions
 
-CrossPoint is <<NOT>> free software, it is shareware.
-You may test it without cost for up to 30 days from
-first installation but if you wish to use it after
-that, you must register the programme.
+OpenXP is subject to the General Public License.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -139,7 +136,7 @@ the Newsgroup moved to. Confirm the selection with
                <<======================
 
 The [Message Areas] window is one of the main windows@4001
-in CrossPoint. From here, you can access all messages
+in OpenXP. From here, you can access all messages
 and by means of the "Special" command, you may edit
 and/or configure the Message Area settings.
 
@@ -151,7 +148,7 @@ Message areas fall into four main categories:
 4. Newsgroups -- Public areas (RFC/UUCP(internet))
 
 In addition, internet mailing lists (although public
-in nature) fall into category "2" where CrossPoint
+in nature) fall into category "2" where OpenXP
 is concerned.
 
 If a message area has a <<>> (ASCII-16) character to
@@ -201,7 +198,7 @@ Keys in <<both>> "Read/Write" <<and>> "Special" mode:
 <<<Tab> >>       Switches between message area and
              User display.
 
-  <<Q>>          Quits CrossPoint.
+  <<Q>>          Quits OpenXP.
 
              Note: you can enable a "Quit? Yes/No"
              prompt in /Config/Options/Miscellaneous,
@@ -631,7 +628,7 @@ Replying to messages:
 
 <<ALT U>>   User-search. If a Textline is marked,
         it will be used as search-string, else
-        Crosspoint will search for the author
+        OpenXP will search for the author
         of the shown message.
 
 <<ALT B>>   Topic-search. Search-string is the first
@@ -753,7 +750,7 @@ dually as files on the disk.
 Generally, you will not want to see all messages in
 the message base. There may be too many, some you
 may have already read, others may be old, etc.
-For this reason, CrossPoint allows you to select
+For this reason, OpenXP allows you to select
 which messages to display.
 
 
@@ -856,7 +853,7 @@ From left to right:
 <F6>        : Select macro
 <F7>        : Set Block start
 <F8>        : Set Block end
-<F9>        : DOS-Shell
+<F9>        : Shell
 <F10>       : Menu
 
 <Shift F2>  : Save Text and Exit Editor
@@ -966,7 +963,7 @@ They can be <<recalled with Ctrl-U>>
 By means of a pick-list, this function allows text to
 be imported directly into the editor. For this to
 work, a file named <<GLOSSARY.CFG>> must be present in
-the CrossPoint HOME directory.
+the OpenXP HOME directory.
 
 By pressing Ctl-Enter whilst in the message editor, a
 pick-list will appear, allowing the user to import
@@ -1064,7 +1061,7 @@ The calendar can be called up anytime with <Alt K>
 
 <<Ctrl Home>> Clears the screen
 
-<<F9>>      DOS-Shell
+<<F9>>      Shell
 @
 67
 Shows the contents of the selected packed file.
@@ -1117,7 +1114,7 @@ recalled to unpack several files.
 
 @
 68
-This is the <<Send-Window>> in CrossPoint. It is
+This is the <<Send-Window>> in OpenXP. It is
 decided here, if and how a message will actually be
 sent.
 
@@ -1214,7 +1211,7 @@ several copies of the message will be sent over
 
 @
 69
-<<Yes>>  -> CrossPoint attaches the attribute VERBOSE
+<<Yes>>  -> OpenXP attaches the attribute VERBOSE
         to the request.
 @
 70
@@ -1296,7 +1293,7 @@ Extract Directory [/Config/Path/Extract].@261
 <<Datei>>-> Delete Entry and its file.
 @
 78
-<<Primary Server>> For CrossPoint a "base" server.
+<<Primary Server>> For OpenXP a "base" server.
         XP always suggests this choice first for
         new Newsgroups or when making Netcalls.
         Note: A Primary Server *must* be entered.
@@ -1344,13 +1341,13 @@ or break off with <Esc>.
 You have selected a message with a File Attach:-
 a text message to which a file is linked to be sent.
 
-<<Yes>>  -> CrossPoint lists the contents of *file*.
+<<Yes>>  -> OpenXP lists the contents of *file*.
         The "Subject" of the message is the file
         name. If no other path is defined, it is in
         the directory defined under /Config/Paths for
         [FileReq-Directory.]@264
 
-<<No>> ->   CrossPoint shows the contents of the
+<<No>> ->   OpenXP shows the contents of the
         *message*
 @
 82
@@ -1576,13 +1573,13 @@ numbers a la FIDO at the top.
         operations.
 
 <<SysopMode>>
-        CrossPoint will write mail packets to the
+        OpenXP will write mail packets to the
         local hard disk instead of sending them over
         a modem connection. They can then be read
         into some other application by hand.
 
         A typical use for this feature would be for a
-        FidoNet Node wishing to use CrossPoint as an
+        FidoNet Node wishing to use OpenXP as an
         offline message reader/writer.
 @
 132
@@ -1639,7 +1636,7 @@ good security).
 142
 The telephone number of your Server (Boss). Should
 it have several numbers you can call, you can enter
-the numbers separated by a <<space>>. CrossPoint will
+the numbers separated by a <<space>>. OpenXP will
 then try each number in turn, until it gets through.
 @
 143
@@ -1687,8 +1684,8 @@ It is also important to use BiModem version 1.24
 or higher.
 
 Make sure the transfer programme is somewhere
-(current directory, DOS PATH or give XP the
-full path), where XP can find it.
+(current directory, PATH or give XP the full
+path), where XP can find it.
 
 This field can use the following macros (variables):
 which XP provides internally (using data you have
@@ -1744,8 +1741,8 @@ It is also important to use <<BiModem version 1.24
 (or higher).
 
 Make sure the transfer programme is somewhere
-(current directory, DOS PATH or give XP the
-full path), where XP can find it. But XP even
+(current directory, PATH or give XP the full
+path), where XP can find it. But XP even
 beeps and warns you if, when you leave the
 dialog box, it cannot "see" the programme you
 entered somewhere.
@@ -1797,12 +1794,12 @@ XP gives you a simple pick-list (<F2>) and all
 the parameters are pre-entered.
 
 Just make sure that the packer .EXE file is where
-CrossPoint can find it. If in doubt, just put it in
-the CrossPoint directory but the DOS path will do
+OpenXP can find it. If in doubt, just put it in
+the OpenXP directory but the path will do
 also.
 
 The following macros are available, which are
-replaced by CrossPoint at the right time
+replaced by OpenXP at the right time
 with the correct values.
 
 
@@ -1813,13 +1810,13 @@ with the correct values.
 
 <<$PUFFER>> the file that is to be compressed.
         (the outgoing mail packet created by
-         CrossPoint).
+         OpenXP).
 
 Make sure XP can find the Packer (in the current
-directory, DOS PATH (see DOS handbook) or enter the
-full path name). All parameters are entered for
-you. XP even <<beeps>> to warn you if, when you exit the
-dialog box, it cannot find the packer.
+directory, PATH or enter the full path name). All
+parameters are entered for you. XP even <<beeps>> to
+warn you if, when you exit the dialog box, it cannot
+find the packer.
 
 If you do not know which [packer] to use, ask your@4006
 Sysop!
@@ -1877,7 +1874,7 @@ Server (Boss).
 The downloaded mail bundle must be unpacked but what
 comes out of it is governed by what went in and does
 not need to be specified. In FIDO especially, it is
-not fixed and CrossPoint will deal this for you.
+not fixed and OpenXP will deal this for you.
 
 The unpacker is an external programme which
 decompresses data after transfer.
@@ -1893,12 +1890,12 @@ the parameters are pre-entered.
 Just make sure that the unpacker .EXE file (it is
 often the same one as the packer but just with a
 different command parameter but PKUNZIP for example,
-is specially for unpacking) is where CrossPoint can
-find it. If in doubt, just put it in the CrossPoint
-directory, but the DOS path will do also.
+is specially for unpacking) is where OpenXP can
+find it. If in doubt, just put it in the OpenXP
+directory, but the path will do also.
 
 The following macros are available and are
-replaced by CrossPoint at the right time
+replaced by OpenXP at the right time
 with the correct entries.
 
 
@@ -1913,10 +1910,10 @@ with the correct entries.
         was called. <<Useful for unpacked transfers.>>
 
 Make sure XP can find the UnPacker (in the current
-directory, DOS PATH (see DOS handbook) or enter the
-full path name). All parameters are entered for
-you. XP even <<beeps>> to warn you if, when you exit the
-dialog box, it cannot find the unpacker.
+directory, PATH or enter the full path name). All
+parameters are entered for you. XP even <<beeps>> to
+warn you if, when you exit the dialog box, it cannot
+find the unpacker.
 
 If you do not know which [unpacker] to use, ask your@4006
 Sysop!
@@ -2020,7 +2017,7 @@ In general you don't have to use this field.
 @
 154
 Here you can enter a list of "AKA" [("Also Known As")]@4009
-which CrossPoint sends <<in addition>> to the main
+which OpenXP sends <<in addition>> to the main
 Server address during a netcall.
 
 If you use 4D addressing you have to specify the
@@ -2041,7 +2038,7 @@ here), then this setting is ignored.
 157
 Some "Tossers" in FIDO Box software, especially
 "TosScan", have problems dealing with mails from
-point programmes unknown to them. Since CrossPoint is
+point programmes unknown to them. Since OpenXP is
 relatively new, it is not "known".
 
 If problems should arise, this switch will deal with
@@ -2061,14 +2058,14 @@ for its own internal XP-FM Mailer (E9h).
 
 @
 158
-The FIDO Mailer in CrossPoint supports both connect
+The FIDO Mailer in OpenXP supports both connect
 protocols YooHoo and EMSI when using modem connections.
 XP will always try to use EMSI, the better of the two,
 if the other side supports it.
 
 Normally you should leave the EMSI switch ON.
 But if you should get problems with EMSI netcalls,
-you can force CrossPoint to use YooHoo by switching
+you can force OpenXP to use YooHoo by switching
 EMSI off. If problems occur, you can often find the
 cause noted in the log file XP runs on FIDO
 activities, XPFIDO.LOG. (Read it with an ordinary
@@ -2364,7 +2361,7 @@ the moment.
          any error correction
 @
 8016
-CrossPoint announces itself to the called system with
+OpenXP announces itself to the called system with
 this name. If nothing else has been agreed, this is
 the same as your System Name or Point Name.
 @
@@ -2411,42 +2408,42 @@ bzip2           ³       -         ³     ++
 
 @
 8021
-With this programme CrossPoint UNpacks messages which
+With this programme OpenXP UNpacks messages which
 have been packed with 'Compress'. These settings do
 not normally need to be changed.
 
 $DOWNFILE must be entered as a stand-in for the
-received file name, and CrossPoint replaces it at
+received file name, and OpenXP replaces it at
 the right time with the real name of the file
 to be unpacked.
 @
 8022
-With this programme CrossPoint UNpacks messages which
+With this programme OpenXP UNpacks messages which
 have been packed with 'Freeze'. These settings do
 not normally need to be changed.
 
 $DOWNFILE must be entered as a stand-in for the
-received file name, and CrossPoint replaces it at
+received file name, and OpenXP replaces it at
 the right time with the real name of the file
 to be unpacked.
 @
 8023
-With this programme CrossPoint UNpacks messages which
+With this programme OpenXP UNpacks messages which
 have been packed with 'gzip'. These settings do
 not normally need to be changed.
 
 $DOWNFILE must be entered as a stand-in for the
-received file name, and CrossPoint replaces it at
+received file name, and OpenXP replaces it at
 the right time with the real name of the file
 to be unpacked.
 @
 8026
-With this programme CrossPoint UNpacks messages which
+With this programme OpenXP UNpacks messages which
 have been packed with 'bzip2'. These settings do
 not normally need to be changed.
 
 $DOWNFILE must be entered as a stand-in for the
-received file name, and CrossPoint replaces it at
+received file name, and OpenXP replaces it at
 the right time with the real name of the file
 to be unpacked.
 @
@@ -2458,9 +2455,9 @@ or something like "7 bit with even parity", you
 should activate this switch.
 @
 160
-CrossPoint waits this many seconds after sending the
+OpenXP waits this many seconds after sending the
 command to dial to receive a "connect" answer. After
-this time CrossPoint breaks off, and starts waiting
+this time OpenXP breaks off, and starts waiting
 for the next try.
 
 Note: many Modems also have such a setting, often
@@ -2470,7 +2467,7 @@ expect. Check your modem handbook about increasing
 this value if you need to (often "S Registers")
 @
 161
-CrossPoint waits this many seconds after the
+OpenXP waits this many seconds after the
 "connect" message, to obtain a successful Log-In.
 
 If this time expires, XP hangs up and waits for the
@@ -2482,11 +2479,11 @@ these attempts separately in another box here,
 [Max. Connects],to limit costs@166
 @
 162
-CrossPoint waits this many seconds after an aborted
+OpenXP waits this many seconds after an aborted
 netcall attempt, before trying again.
 @
 163
-This sets the number of times CrossPoint will try to
+This sets the number of times OpenXP will try to
 call a number if it does not achieve a successful
 netcall, at intervals set by Dial Pause.
 
@@ -2500,17 +2497,17 @@ should answer every time and you get billed for 30
 useless call, by setting "max. connects" separately.
 
 If the number of tries has been made without
-success, CrossPoint stops trying and carries on
+success, OpenXP stops trying and carries on
 with the next programmed activity, if any, or
-returns to the CrossPoint screen.
+returns to the OpenXP screen.
 @
 164
 This limits the number of attempts <<during one
-<<connect>> that CrossPoint will make to log on.
+<<connect>> that OpenXP will make to log on.
 Not to be confused with the setting for
 "max. connects".
 
-After this number of tries, CrossPoint gives up, and
+After this number of tries, OpenXP gives up, and
 waits for the next dialling attempt.
 
 If the Log-In does not work with 2 or 3 attempts
@@ -2520,7 +2517,7 @@ tones or no answer) there is something wrong.
 If you do not know exactly that your side is working
 correctly, check that your Point Name and password
 are entered correctly.
-You may find a clue by starting CrossPoint with the
+You may find a clue by starting OpenXP with the
 /d switch (debug), which shows you more of what is
 happening at Log-In, and try looking in the file
 ERRORS.LOG, where errors are recorded.
@@ -2535,7 +2532,7 @@ After a successfully log on, the server starts to
 gather the data together to send to you, and to
 [pack it]. Especially if there is a lot, this can@4006
 take some minutes. You can set a time limit in
-seconds here, to prevent CrossPoint waiting all
+seconds here, to prevent OpenXP waiting all
 night on the phone if something does go wrong, but
 be fairly generous here; 10 minutes (600 seconds)
 should be enough for a "normal" user, but if you have
@@ -2549,8 +2546,8 @@ how long is usual.
 certain time if no data is transferred (inactivity
 timeout), again to protect the user from high phone
 bills. This must obviously be set slightly higher
-than CrossPoint's limit. If the call gets aborted
-before the CrossPoint timer reaches 00:00, this may
+than OpenXP's limit. If the call gets aborted
+before the OpenXP timer reaches 00:00, this may
 be the cause. Check your modem handbook.
 
 @
@@ -2566,18 +2563,18 @@ o  There was no connection; the box was busy
 
 o  There was a connection, the box answered the
    phone, but something went wrong after that.
-   These cost money, so you don't want CrossPoint
+   These cost money, so you don't want OpenXP
    making one of these for every one of a possibly
    large number of attempts you have allowed for
    when the box is busy.
 
 Here you can limit separately the number of attempts
-when a connect happens. Obviously CrossPoint must
+when a connect happens. Obviously OpenXP must
 then break off attempts to reach this box this
 session, so as not to risk another failed connect.
 
 For example, if you set "max Connects" to 3, and
-"max. dialling attempts" to 50, CrossPoint will try
+"max. dialling attempts" to 50, OpenXP will try
 up to 50 times as long as the phone is not answered,
 but will give up directly after the third time that
 a connect happened without a successful netcall.
@@ -2690,7 +2687,7 @@ Get these values from your phone book.
 Also enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
-CrossPoint cannot know when the phone is picked up,
+OpenXP cannot know when the phone is picked up,
 and you start paying. It can only start timing from
 the "connect", so it adds this time to connect when
 calculating the phone charges.
@@ -2705,7 +2702,7 @@ The time is between 5 and about 15 seconds usually.
 182
 If you are a Sysop, you do not send your netcall by
 modem, of course. You transfer it manually from
-CrossPoint into the Box Software on the same machine.
+OpenXP into the Box Software on the same machine.
 
 <<[x]>> ->  Enables Sysop Mode. Afterwards please enter
         the following data (or check the existent
@@ -2713,7 +2710,7 @@ CrossPoint into the Box Software on the same machine.
 
 <<Input file>>
 
-The name of the file which CrossPoint has to read
+The name of the file which OpenXP has to read
 in to "receive" a netcall. <<Note>> after being read
 in, this file will be deleted!
 
@@ -2723,7 +2720,7 @@ The name of the file where the puffer with the
 outgoing messages should be put.
 
 <<Note:>> If this file should already be present,
-CrossPoint will append the new data at the end.
+OpenXP will append the new data at the end.
 You have to make sure <<yourself>> that this file is
 deleted after the data have been transferred into the
 box!
@@ -2745,20 +2742,20 @@ files to or from some place on your hard disk.
 
 <<Inbound directory>>
 
-This is the directory from which CrossPoint will
+This is the directory from which OpenXP will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
 <<Outbound directory>>
 
-CrossPoint puts all outgoing PKT files in this
+OpenXP puts all outgoing PKT files in this
 directory. If you set the "pack output data" switch
 the packets will be packed (amazing!). You can
 transfer these packets to this mailbox by some other
 method, or do anything else you want.
 
-<<Note:>> CrossPoint will not delete these files
+<<Note:>> OpenXP will not delete these files
 so make sure they are deleted as necessary!
 
 @
@@ -2796,19 +2793,19 @@ to rename them. See also the documentation UUCP.DOC.
 
 <<Inbound directory>>
 
-This is the directory from which CrossPoint will
+This is the directory from which OpenXP will
 read incoming message packets. It imports all packed
 or unpacked packets from here and deletes *all* the
 contents of this directory afterwards.
 
 <<Outbound directory>>
 
-CrossPoint puts all outgoing PKT files in this
+OpenXP puts all outgoing PKT files in this
 directory. If you have entered a packer under
 /Edit/Servers/Edit/Point, the files will be packed.
 You can transfer these packets to this mailbox by
 some other method, or do anything else you want.
-<<Note:>> CrossPoint will not delete these files
+<<Note:>> OpenXP will not delete these files
 so make sure they are deleted as necessary!
 
 See also the chapter "Sysop Mode" in UUCP.DOC.
@@ -2818,7 +2815,7 @@ See also the chapter "Sysop Mode" in UUCP.DOC.
 
 <<Start programme>>
 You can enter here the name of a programme or
-DOS command which will be started at the beginning
+command which will be started at the beginning
 of every Sysop-Mode netcall. This is important if
 the files to be imported have to be prepared
 in some way (eg. several copied together).
@@ -2837,7 +2834,7 @@ for dealing with those cleaning up tasks.
 <<[ ]>> ->  No report will be generated.
 @
 185
-<<[x]>> ->  CrossPoint does <<not>> add details of
+<<[x]>> ->  OpenXP does <<not>> add details of
         the server to messages from you in the out-
         going packet. The sender only appears as your
         Username. This is sometimes necessary to
@@ -2897,7 +2894,7 @@ This setting has no effect on the Sysop-Mode.
        ["/Netcall/All"]@11502
 @
 199
-A programme that CrossPoint will call after receiving
+A programme that OpenXP will call after receiving
 the packet but immediately before importing the
 messages into the data base.
 Using the macro $PUFFER the name of the file about to
@@ -3129,7 +3126,7 @@ Please enter login data for the POP3 server here.
 If activated mails will be deleted on the POP3 server
 once fetched.
 
-Should be activated if CrossPoint is the only
+Should be activated if OpenXP is the only
 program you use for reading mails.
 @
 40023
@@ -3144,7 +3141,7 @@ If activated only new not yet retrieved mail will
 be fetched upon netcall. If the POP3 server supports
 UIDLs (which is standard now) this feature will work
 even if you use another program parallel to
-CrossPoint with the same server.
+OpenXP with the same server.
 @
 40025
 If activated all mails fetched will be put in the
@@ -3170,7 +3167,7 @@ login data will be transmitted encrypted only
 Not all servers support this option.
 @
 40043
-If activated CrossPoint will first check for incoming
+If activated OpenXP will first check for incoming
 mails and then send outgoing mails.
 
 This behaviour is required by some mail providers
@@ -3377,7 +3374,7 @@ box.
 
 This entry is useful (and even necessary!) if you are
 receiving CC (carbon copy) and BCC (blind carbon
-copy) mail. Normally CrossPoint would sort this mail
+copy) mail. Normally OpenXP would sort this mail
 into a 'wrong' folder as your address is not part of
 To: header. Some clients have a facility that adds
 and rewrites headers so that the mail gets sorted in
@@ -3602,9 +3599,9 @@ is written to the keyname "<<Client-NewsPort=>>" in your
 server configuration file <server>.BFG.
 @
 30130
-CrossPoint waits this many seconds after sending the
+OpenXP waits this many seconds after sending the
 command to dial to receive a "connect" answer. After
-this time CrossPoint breaks off, and starts waiting
+this time OpenXP breaks off, and starts waiting
 for the next try.
 
 Many Modems also have such a setting, often set to
@@ -3621,7 +3618,7 @@ configuration file <server>.BFG.
 
 @
 30131
-CrossPoint waits this many seconds after the
+OpenXP waits this many seconds after the
 "connect" message, to obtain a successful Login.
 
 If this time expires, XP hangs up and waits for the
@@ -3640,7 +3637,7 @@ configuration file <server>.BFG.
 
 @
 30132
-CrossPoint waits this many seconds after an aborted
+OpenXP waits this many seconds after an aborted
 netcall attempt, before trying again.
 
 <<Note:>> Your client has to make sure to interpret this
@@ -3650,7 +3647,7 @@ is written to the keyname "<<RedialWait=>>" in your
 server configuration file <server>.BFG.
 @
 30133
-This sets the number of times CrossPoint will try to
+This sets the number of times OpenXP will try to
 call a number if it does not achieve a successful
 netcall, at intervals set by Dial Pause.
 
@@ -3664,9 +3661,9 @@ should answer every time and you get billed for 30
 useless call, by setting "max. connects" separately.
 
 If the number of tries has been made without
-success, CrossPoint stops trying and carries on
+success, OpenXP stops trying and carries on
 with the next programmed activity, if any, or
-returns to the CrossPoint screen.
+returns to the OpenXP screen.
 
 <<Note:>> Your client has to make sure to interpret this
 setting. Please consult the documentation of your
@@ -3677,10 +3674,10 @@ configuration file <server>.BFG.
 @
 30134
 This limits the number of attempts <<during one connect>>
-that CrossPoint will make to log on. Not to be con-
+that OpenXP will make to log on. Not to be con-
 fused with the setting for "max. connects".
 
-After this number of tries, CrossPoint gives up, and
+After this number of tries, OpenXP gives up, and
 waits for the next dialling attempt.
 
 If the Login does not work with 2 or 3 attempts
@@ -3714,18 +3711,18 @@ o  There was no connection; the provider was busy
 
 o  There was a connection, the provider answered the
    phone, but something went wrong after that. This
-   might cost money, so you don't want CrossPoint
+   might cost money, so you don't want OpenXP
    making one of these for every one of a possibly
    large number of attempts you have allowed for when
    the provider is busy.
 
 Here you can limit separately the number of attempts
-when a connect happens. Obviously CrossPoint must
+when a connect happens. Obviously OpenXP must
 then break off attempts to reach this provider this
 session, so as not to risk another failed connect.
 
 For example, if you set "max Connects" to 3, and
-"max. dialling attempts" to 50, CrossPoint will try
+"max. dialling attempts" to 50, OpenXP will try
 up to 50 times as long as the phone is not answered,
 but will give up directly after the third time that
 a connect happened without a successful netcall.
@@ -3862,7 +3859,7 @@ server configuration file <server>.BFG.
 Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
-CrossPoint cannot know when the phone is picked up,
+OpenXP cannot know when the phone is picked up,
 and you start paying. It can only start timing from
 the "connect", so it adds this time to connect when
 calculating the phone charges.
@@ -3892,16 +3889,16 @@ be necessary to rename them. See also "Net type
 RFC/Client - [Netcall procedure]".@30200
 
 <<Input directory>>
-This is the directory from which CrossPoint will
+This is the directory from which OpenXP will
 read incoming message files. It imports all messages
 from here and deletes *all* the contents of this
 directory afterwards.
 
 <<Output directory>>
-CrossPoint puts all outgoing message files in this
+OpenXP puts all outgoing message files in this
 directory. You can transfer these files to any server
 by some other method, or do anything else you want.
-<<Note:>> CrossPoint will not delete these files
+<<Note:>> OpenXP will not delete these files
 so make sure they are deleted as necessary!
 
 @
@@ -3942,7 +3939,7 @@ to the changed server.
 200
 <<Groups>>
 
-CrossPoint can administer an unlimited number of
+OpenXP can administer an unlimited number of
 Groups of Newsgroups. Each Newsgroup belongs to
 one and <<only one>> Group. For each group, there are
 individual settings for things like maximum message
@@ -3991,7 +3988,7 @@ group.
 
 <<OK>>      Exits this function.
 
-Note: CrossPoint allocates the group numbers
+Note: OpenXP allocates the group numbers
 sequentially. If you delete a group, the number is
 NOT reallocated. A future XP version may, in the
 interest of environmental protection, allow the
@@ -4130,7 +4127,7 @@ Note: spaces inserted after the character count as
 part of the character, to allow it to be separated
 from the text (or not) as you wish.
 
-If you wish, CrossPoint will insert the initials of
+If you wish, OpenXP will insert the initials of
 the person being quoted in the quote character.
 To achieve this use <<\@>>.
 
@@ -4152,7 +4149,7 @@ quote sign at the beginning.
 @
 212
 When messages are imported into the data base at each
-netcall, the user names are read. CrossPoint can put
+netcall, the user names are read. OpenXP can put
 previously unknown names into your user list
 automatically, and this setting decides which ones.
 
@@ -4297,7 +4294,7 @@ since the box name does not appear in the address.
 @
 221
 <<[x]>> -> When configuring new areas with Ctrl-H,
-       with [/XPoint/Import/Newsgroup list] or with@11004
+       with [/OpenXP/Import/Newsgroup list] or with@11004
        [/Message/News manager/Subscribe] (only ZCON-@11901
        NECT and RFC/UUCP), area descriptions will be
        taken from the arealist and written to XP's
@@ -4364,7 +4361,7 @@ in the middle of data handling always lead to
 unrecoverable loss of data.
 @
 230
-CrossPoint does have its own built in lister, (for
+OpenXP does have its own built in lister, (for
 reading messages) which should do all you need.
 But if you really cannot part from your beloved old
 lister, then you can enter it here (incl. extension
@@ -4376,7 +4373,7 @@ name as the only parameter to the lister.
 @
 231
 Enter here how many kilobytes memory your lister
-requires as a minimum. CrossPoint then attempts to
+requires as a minimum. OpenXP then attempts to
 make this much memory available when starting the
 lister.
 @
@@ -4441,7 +4438,7 @@ used in its true IBM graphics form for lines.
 237
 It is common to indicate emphasis on words by en-
 closing them in *asterisks* or _underlines_.
-This switch causes CrossPoint to take words with
+This switch causes OpenXP to take words with
 these characters at each end and show them in a
 different colour, which you can set in:
 /Config/Display/Colors/Lister.
@@ -4477,7 +4474,7 @@ the key <<C>> (for Colour).
 @
 240
 Specify up to what size binary files that you have
-marked to send will be copied into CrossPoint.
+marked to send will be copied into OpenXP.
 
 It saves space when files above this limit are
 saved in XP simply as a "to be sent" remark with
@@ -4549,7 +4546,7 @@ computer's date is set correctly), will always be
 recorded.
 @
 246
-CrossPoint will, by default, add a [Re:] in front of@4012
+OpenXP will, by default, add a [Re:] in front of@4012
 the subject of messages you are replying to.
 
 Here, you can choose as the default, either a simple
@@ -4613,13 +4610,13 @@ Do not confuse such discarded messages with those
 are waiting for the next netcall, and are marked "!".
 @
 249
-<<[x]>>     If CrossPoint receives a message with a
+<<[x]>>     If OpenXP receives a message with a
         subject beginning with "\##", it sends a
         a confirmation message automatically to the
         sender. The same applies to Fido Messages
         having a return-receipt flag.
 
-<<[ ]>>     CrossPoint does not respond.
+<<[ ]>>     OpenXP does not respond.
 
 A receipt confirmation can be easily done by hand,
 with [/Message/Forward/Confirmation].@12106
@@ -4681,7 +4678,7 @@ author quite difficult.
 255
 The possibility to "crosspost" a message into
 different groups is sometimes abused, to spread
-advertisements. To counter this, CrossPoint can
+advertisements. To counter this, OpenXP can
 delete these copies when there are more recipients
 than specified here.
 
@@ -4696,11 +4693,11 @@ groups, it is not worth reading.
 You can enter a line here which will appear in the
 header of ZCONNECT and UseNet messages. You can use
 this line for your company name, if you use
-CrossPoint commercially, or for similar information.
+OpenXP commercially, or for similar information.
 
 In FidoNet, this line is transmitted in the EMSI
 packet as the name of your system. If this line is
-left blank, CrossPoint transmits your Username as
+left blank, OpenXP transmits your Username as
 your system name.
 @
 1041
@@ -4765,10 +4762,10 @@ message reader to display other user's Homepages.
 
 @
 260
-The directory where CrossPoint should put its
+The directory where OpenXP should put its
 temporary files.
 
-CrossPoint uses many temporary files; when writing
+OpenXP uses many temporary files; when writing
 messages in the editor, when displaying messages in
 the reader, and so on. These are all erased
 immediately after use.
@@ -4781,12 +4778,12 @@ on the drive allocated for the temporary files. It
 should be at least 200-300KB, more if you send long
 messages.
 
-If nothing is specified, CrossPoint uses the same
+If nothing is specified, OpenXP uses the same
 directory as the one the programme files are in.
 
 @
 261
-The extract-directory is where CrossPoint puts the
+The extract-directory is where OpenXP puts the
 files which are extracted with /Message/[Extract].@10302
 However, at each extract, the file name is requested,
 and another directory can be specified.
@@ -4801,14 +4798,14 @@ It is the default; in all cases you can also specify
 another directory individually if you wish.
 @
 263
-Specify here the directory where CrossPoint should
+Specify here the directory where OpenXP should
 put log files. The following files are affected:
 
    XPOINT.LOG     Log for telephone charges.
    ERRORS.LOG     Errors log (no, really?)
-   BRETTER.LOG    logs Newsgroups which CrossPoint
+   BRETTER.LOG    logs Newsgroups which OpenXP
                   automatically adds
-   USER.LOG       logs Users which CrossPoint
+   USER.LOG       logs Users which OpenXP
                   automatically adds
    DUPES.LOG      the results of /Re-Org/Dupekill
    XPFIDO.LOG     Happenings for Fido-Netcalls
@@ -4817,12 +4814,12 @@ It is also the default directory for log files for
 the integrated terminal programme CrossTerm.
 
 If you no longer wish to read the contents,
-you may delete log files; CrossPoint starts
+you may delete log files; OpenXP starts
 them again from new.
 
 @
 264
-CrossPoint puts the files here that you get through
+OpenXP puts the files here that you get through
 [Fido Requests] or [UUCP-File-requests].@13101 12001
 @
 270
@@ -5163,7 +5160,7 @@ between dialing.
 
 Most modems indicate a correct connect by switching
 the CD line "high" and lighting the CD light on the
-modem. CrossPoint detects this and can reliably
+modem. OpenXP detects this and can reliably
 determine that a connect has been detected.
 
 If, however, your modem does *not* normally send this
@@ -5193,7 +5190,7 @@ computer that it is ready to receive data from it
 If this signal is not possible, probably because the
 wire in the cable is not connected (as is the case
 with some cheap cables), setting this switch will
-bypass it and tell CrossPoint and the PC to send data
+bypass it and tell OpenXP and the PC to send data
 when *it* wants to, regardless of what the modem may
 be doing.
 
@@ -5214,7 +5211,7 @@ leaving an application programme less work to do.
 
 Since they take over the job of controlling the Port,
 IRQs, Addresses, [16550 UARTs] and so on, all these@4011
-options are switched out of CrossPoint if this option
+options are switched out of OpenXP if this option
 is set.
 
 For normal modems, XP has its own Port driver which
@@ -5237,16 +5234,16 @@ BNU and ADF.
 <<[ ]>>  Ignore ring signal line
 
 If an incoming call (ring signal) should occur while
-CrossPoint is pausing between Netcalls, CrossPoint
+OpenXP is pausing between Netcalls, OpenXP
 will delay the Netcall for up to 5 minutes.
 
-(Note, if CrossPoint tries to make a Netcall when
+(Note, if OpenXP tries to make a Netcall when
 somebody is calling, it will effectively answer the
 phone, which will probably cause difficulties all
 round!)
 
 If the ring signal line is not connected, as is the
-case with some cheap modem cables, CrossPoint will
+case with some cheap modem cables, OpenXP will
 incorrectly report an incoming call, so this function
 should be set to "ignore".
 
@@ -5260,14 +5257,14 @@ Note: there must be one if you set this switch!
 
 If the port (COMx) you are using on your serial
 adapter card has a [16550 UART], this setting will@4011
-cause CrossPoint to use it.
+cause OpenXP to use it.
 
 Make sure the modem is using it, and not the mouse!
 (the mouse has no advantage whatever from it).
 
 There are a few obscure versions of this chip which
-CrossPoint does not recognise. If you have one of
-these, CrossPoint will not use it.
+OpenXP does not recognise. If you have one of
+these, OpenXP will not use it.
 
 @
 963
@@ -5280,7 +5277,7 @@ OS's, a higher value may be needed.
 
 @
 300
-CrossPoint does have its own built in editor which
+OpenXP does have its own built in editor which
 should do all you need. But if you really cannot part
 from your beloved old editor, then you can enter it
 here (incl. extension .COM or .EXE)
@@ -5298,7 +5295,7 @@ but put a <<*>> in front of its name.
 @
 301
 Enter here how many kilobytes memory your editor
-requires as a minimum. CrossPoint then attempts to
+requires as a minimum. OpenXP then attempts to
 make this much memory available when starting the
 editor.
 @
@@ -5338,48 +5335,45 @@ them...
         editor.
 
 <<[ ]>>    The editor is displayed within the normal
-        boundaries of the CrossPoint window.
+        boundaries of the OpenXP window.
 
 This applies only to the internal editor. External
 editors are always switched to full screen.
 @
 306
 <<[x]>>     When you select /Edit/Text from the menu,
-        CrossPoint suggests passing the last used
+        OpenXP suggests passing the last used
         file name for editing.
 
-<<[ ]>>     CrossPoint suggests "*.*", and shows all
+<<[ ]>>     OpenXP suggests "*.*", and shows all
          files in the send directory.
          ([/Config/Paths/Send-Directory).@262
 @
 307
-<<[x]>>     CrossPoint starts the editor in 25 line
+<<[x]>>     OpenXP starts the editor in 25 line
         screen mode.
 This setting may be useful if you have set another
 line mode [/Config/Display/Lines] for normal display@10905
 @
 310
 <<[x]>>     The screen mode is switched to 25 lines
-        when shelling to DOS with <F9> or from the
-        menu with [/XPoint/DOS]@10105
+        when shelling with <F9> or from the
+        menu with [/OpenXP/Shell]@10105
 
 <<[ ]>>     When doing the above, the lines stay the
-        same as set for the normal CrossPoint display
+        same as set for the normal OpenXP display
        [/Config/Display/Lines].@10905
 
 This option is only functional for EGA and VGA
 display adapters.
 @
 311
-Tell CrossPoint to make extra memory for the
+Tell OpenXP to make extra memory for the
 environment available (tech. note: uses the /E switch
 when calling COMMAND.COM).
 
 You do not need to use this if you do not know that
 you need extra environment space.
-
-See your DOS handbook for more information about the
-environment.
 @
 400
 The name of the newsgroup. Each newsgroup name must
@@ -5452,7 +5446,7 @@ See /Edit/[Groups]@200
 The group must be selected by pressing <F2>.
 @
 407
-Enter here the "Origin" line that CrossPoint should
+Enter here the "Origin" line that OpenXP should
 use for each message you write in this area. If you
 leave it empty, XP will use the default Origin for
 that area group, as defined in "/Edit/Groups". If
@@ -5489,7 +5483,7 @@ Note, even for users in your server box, you must
 give the name of the box.
 
 For Fido-Users you can enter only a part address, and
-have CrossPoint get the rest from the NodeList. A
+have OpenXP get the rest from the NodeList. A
 Node List must of course be active for this.
 @
 421
@@ -5508,7 +5502,7 @@ You can enter some comment about the User for your
 own benefit or, for users (not cc groups), you can
 enter a pseudonym in the form:
       <<P:Name>>
-If, when CrossPoint is putting in a template, it
+If, when OpenXP is putting in a template, it
 finds the macro $PSEUDO, it will look to see if a
 name is defined here and put it in, if it is.
 
@@ -5615,14 +5609,13 @@ This is the command to start the programme.
 
 There are two possibilities;
 
-  a)  an external DOS programme
+  a)  an external programme
   b)  an internal XP-Function
 
-<<External Programmes>> are any .COM, .EXE or .BAT
-programme. They should be in the XP directory, in the
-DOS Path or you enter the full path to them. COM &
-EXE programmes will be started quicker if you specify
-the extension as well.
+<<External Programmes>> are any executable, batch
+file or shell script. They should be in the XP
+directory, in the path or you enter the full path
+to them.
 
 You can pass parameters (if needed) to these
 programmes in the normal way by specifying them after
@@ -5699,7 +5692,7 @@ $FILE. The same formats are available as in
         you to press a key before the programme's
         display disappears.
 
-<<[ ]>>     The CrossPoint display returns
+<<[ ]>>     The OpenXP display returns
         immediately.
 
 Note: if you expect to see something displayed by
@@ -5716,7 +5709,7 @@ display, try setting this switch.
 <<[x]>>     The output of the started programme is
         redirected to the lister for reading. This
         only works when the programme allows
-        redirection, as all DOS commands do.
+        redirection.
         If in doubt, try it out.
 
 <<[ ]>>     The output appears on the "normal"
@@ -5724,7 +5717,7 @@ display, try setting this switch.
 @
 447
 <<[x]>>     When the programme has finished,
-        CrossPoint actions the [AUTOEXEC] directory.@4019
+        OpenXP actions the [AUTOEXEC] directory.@4019
         Entering only <<*>> for the programme name
         plus this switch starts no programme but does
         action the AUTOEXEC directory.
@@ -5732,7 +5725,7 @@ display, try setting this switch.
 448
 
 Enter here how many kilobytes memory the programme
-requires as a minimum. CrossPoint then attempts to
+requires as a minimum. OpenXP then attempts to
 make this much memory available when starting the
 programme.
 
@@ -5831,7 +5824,7 @@ always) here. It is often FILESERVER. <<Ask your Sysop.>>
 
 <<UUCP:>>
 Select with <F2> "UUCP-Fileserver". In this way
-CrossPoint knows that this system supports UUCP
+OpenXP knows that this system supports UUCP
 file transfers.
 
 <<Fido:>>
@@ -5857,7 +5850,7 @@ If the UUCP site in question has a file-list file
 put the name of that file here. It is usually called
 "index" or "contents", "FILES" or something similar,
 often with "~\" in front, eg. "~\index".
-CrossPoint uses this when requesting lists with
+OpenXP uses this when requesting lists with
 /Message/Fileserver/Lists/Request
 
 @
@@ -5870,7 +5863,7 @@ This field has no meaning for Fido.
 
 <<UUCP:>>
 You can enter an external programme here which Cross-
-Point should use to convert the list to a CrossPoint
+Point should use to convert the list to a OpenXP
 conform format when reading-in file lists obtained
 from the fileserver. The name of the input and output
 file *must* be passed using the macros $INFILE and
@@ -5891,7 +5884,7 @@ Select the required printer port.
 471
 This setting causes a page-wise formatting of the
 printer output. If 65 lines are entered for example,
-CrossPoint sends a form-feed every 65 lines to the
+OpenXP sends a form-feed every 65 lines to the
 printer.
 
 If you want NO form feed at all, enter a 0 here.
@@ -5945,7 +5938,7 @@ with the selected user.
       programmes.
 
 <<DES:>>  A very safe system, but designed only for
-      exchange of messages between CrossPoint users.
+      exchange of messages between OpenXP users.
 
 <<pmCrypt>>  (pmc-1 to pmc-3): A system developed by
       Christian Mock for linking in any external
@@ -5964,7 +5957,7 @@ with the selected user.
 @
 490
 You can enter up to 3 external coding programmes,
-linked in to CrossPoint through the pmCrypt system.
+linked in to OpenXP through the pmCrypt system.
 The entries are as follows:
 
 <<Name:>>
@@ -5973,7 +5966,7 @@ description for you, it is not used.
 
 <<Encode:>>
 The name (call) of a programme (or batch file) which
-will ENcode a file (put it into code). CrossPoint
+will ENcode a file (put it into code). OpenXP
 will put the message to be encoded as the temporary
 file CRYPT.MSG (in the TEMP directory). The result of
 the actions of the called programme must leave a
@@ -5993,7 +5986,7 @@ to the programme:
 
 <<Decode:>>
 The name (call) of a programme (or batch file) which
-will DEcode a file. CrossPoint will put the message
+will DEcode a file. OpenXP will put the message
 to be decoded as the temporary file CRYPT.ENC (in the
 TEMP directory). The result of the actions of the
 called programme must leave a (decoded) file
@@ -6078,7 +6071,7 @@ be produced.
       lister (then deleted).
 @
 502
-<<[x]>>  CrossPoint produces a detailed graphical
+<<[x]>>  OpenXP produces a detailed graphical
      day by day monthly report as well as the year
      report.
 @
@@ -6129,14 +6122,14 @@ Netcalls".
 Enter here the start and end times for the period
 during which the activity will be attempted.
 For example 10:00 to 11:59 for a netcall will mean
-CrossPoint starts attempting a netcall at 10:00, and
+OpenXP starts attempting a netcall at 10:00, and
 if not successful, will give up at 11:59.
 
 If it is successful earlier, it stops anyway and does
 no more in this period.
 
 The end time may be before the start time, in which
-case CrossPoint will make 2 activities out of it.
+case OpenXP will make 2 activities out of it.
  "11:00-10:00" would be handled as:
  "00:00-10:00" and "11:00-23:59".
 @
@@ -6161,7 +6154,7 @@ be entered with any (Mo We Fr) or no separator
 (tuthsasu). "All" means every day.
 @
 525
-Enter the activity which CrossPoint should carry out.
+Enter the activity which OpenXP should carry out.
 
 <<NETCALL BOX>>  Netcall at "BOX"
 
@@ -6246,7 +6239,7 @@ Enter the type of search.
 (Delete entries with the <Del> or <Space> key.)
 @
 532
-CrossPoint searches in the groups defined here.
+OpenXP searches in the groups defined here.
 (Use <F2> for list)
 
 <<All>>      all newsgroups.
@@ -6448,8 +6441,7 @@ programme start. It can be changed using the menu
 there but the default is set here.
 @
 556
-Activates the mouse. Requirement is a Microsoft(r)
-compatible mouse driver loaded into DOS.
+Activates the mouse. A mouse driver has to be loaded.
 
 [Note]@12801
 @
@@ -6463,7 +6455,7 @@ Option is only read at programme start
 @
 558
 <<[x]>>  The mouse will be initialised anew after
-     every DOS shell (Editor, external lister, <F9>
+     every shell (Editor, external lister, <F9>
      etc.
 
 <<[ ]>>  The mouse is initialised once at programme
@@ -6472,7 +6464,7 @@ Option is only read at programme start
 Depending on hardware and mouse driver, this
 initialising can take time, so don't use it
 unnecessarily. But if you find the mouse behaves
-strangely after DOS calls, try this switch.
+strangely after shell calls, try this switch.
 
 Option is only read at programme start
 @
@@ -6514,7 +6506,7 @@ Option is only read at programme start
             /Config/Save).
 
 <<ask on Quit>> If settings have been changed and not
-            saved when you quit CrossPoint, it will
+            saved when you quit OpenXP, it will
             ask if you want to save the new settings.
 
 Option is only read at programme start
@@ -6539,14 +6531,14 @@ log-in does seem to have problems.
 It has no effect on Fido-Netcalls.
 @
 561
-<<[x]>>  CrossPoint attempts to cut short the welcome
+<<[x]>>  OpenXP attempts to cut short the welcome
      screen (by sending <Breaks>), to save time.
      Sensible if you do not see the welcome screen
      anyway! This is specially useful for servers
      with extensive welcome screens which take a long
      time.
 
-<<[ ]>>  CrossPoint does not interrupt the welcome
+<<[ ]>>  OpenXP does not interrupt the welcome
      screen.
 
 It has no effect on Fido-Netcalls.
@@ -6678,7 +6670,7 @@ With <F2> you can select from the list.
 573
 You can specify to which one of your Servers the
 message will be passed.
-Usually you leave it empty and CrossPoint uses the
+Usually you leave it empty and OpenXP uses the
 default server specified in the settings for that
 user or newsgroup, or, failing that, your main
 server.
@@ -6839,7 +6831,7 @@ that is marked with ~ the search fails.
 <<Fido:>>
 
 Enter the name of the User.
-CrossPoint will search for all public messages
+OpenXP will search for all public messages
 addressing that user (mostly replying to public
 messages from that user).
 
@@ -6878,7 +6870,7 @@ found was written.
 <<unread>>   Searches only unread messages.
 @
 638
-CrossPoint searches in the groups defined here.
+OpenXP searches in the groups defined here.
 (Use <F2> for list)
 
 <<All>>      all newsgroups.
@@ -7078,7 +7070,7 @@ only messages which you write into Areas in this
 group (unless an individual Area has a specific
 Origin defined).
 
-If there is nothing here, CrossPoint uses the default
+If there is nothing here, OpenXP uses the default
 Origin defined under /Edit/Servers/Edit/Names/origin.
 @
 691
@@ -7088,7 +7080,7 @@ form zone:net/node[.point] to be used for the Area
 group. This is a so-called [AKA]@4009
 
 This setting is only here for compatibility reasons
-to older versions of CrossPoint.
+to older versions of OpenXP.
 
 See [AKA] for further informatiom@4009
 or FIDO.DOC
@@ -7230,7 +7222,7 @@ outside. England is 44, so if you are in Bradford in
 in England ("normally" 01274), enter 44-1274.
 @
 723
-If CrossPoint is to use a point list in POINTS24 or
+If OpenXP is to use a point list in POINTS24 or
 4D format, but it's not actually the standard point
 list for region 24, then you must enter here the file
 names and the Diff file names (without extension)
@@ -7275,7 +7267,7 @@ accompanied by so-called TIC-files, with the
 extension .TIC, which contain brief information about
 the file they accompany.
 
-<<[x]>>  CrossPoint uses these files and puts the
+<<[x]>>  OpenXP uses these files and puts the
      information in a newsgroup areas created for the
      purpose, giving a good overview of files
      received. The TIC files are deleted.
@@ -7361,14 +7353,14 @@ a netcall rather than a crash.
 @
 740
 Enter the Node Number or the name of the Sysop or
-Point that CrossPoint should dial.
+Point that OpenXP should dial.
 @
 750
 Enter the Node/Point number of the Node or Point,
 in the form "Zone:Net/Node.<Point>", for whom you
 wish to look up information. Alternatively, you can
 enter the name of the SysOp or Point. If you leave
-out the Zone and even the Net, CrossPoint assumes
+out the Zone and even the Net, OpenXP assumes
 these from your main Fido Server.
 
 The line "Flags" contains various information about
@@ -7392,7 +7384,7 @@ The most important are:
 <<FileReq>>  XA   = all types of File Request
          XX   = only Requests to WaZOO-Standard
 
-(CrossPoint supports WaZOO-FileRequests).
+(OpenXP supports WaZOO-FileRequests).
 
 @
 751
@@ -7418,7 +7410,7 @@ The current Fido Nodelist flags are:
 <<FileReq>>  XA   = All types of File Request
          XX   = WaZOO file requests ONLY
 
-(CrossPoint supports WaZOO File requests).
+(OpenXP supports WaZOO File requests).
 
 @
 760
@@ -7427,7 +7419,7 @@ message packet comes, or the name of a box with the
 same net type, or select one with <F2>.
 @
 761
-<<[x]>>  CrossPoint sets the date of receipt as
+<<[x]>>  OpenXP sets the date of receipt as
      being the date the message was written. This
      is necessary to ensure that the newsgroup
      hold time works properly when larger, older
@@ -7523,9 +7515,9 @@ If you use this, switch off the address upper case
 conversion under /Config/Options/Netcall
 @
 791
-<<[x]>> when using CrossPoint exclusively in Z-Netz.
+<<[x]>> when using OpenXP exclusively in Z-Netz.
 
-<<[ ]>> using CrossPoint in other nets as well.
+<<[ ]>> using OpenXP in other nets as well.
 
 Set this switch off!
 This setting causes ".ZER" to be attached
@@ -7544,14 +7536,14 @@ domain addresses.
 See XPOINT.DOC; "Crosspostings".
 @
 793
-<<[x]>>  CrossPoint informs the Maus box when calling
+<<[x]>>  OpenXP informs the Maus box when calling
      how much free hard disk space is available.
      Space for unpacking and importing is allowed
      for. If space is tight, the server will send a
      smaller packet.
 
 
-<<[ ]>>  CrossPoint says nothing about free space,
+<<[ ]>>  OpenXP says nothing about free space,
      and the box sends the lot.
 @
 794
@@ -7562,35 +7554,35 @@ See XPOINT.DOC; "Crosspostings".
      and make a guess about what you are going to do
      with it.
 
-<<[x]>>  CrossPoint confirms "gelesen" for all
+<<[x]>>  OpenXP confirms "gelesen" for all
      messages as they are imported, and stops the
      annoying question. The sender at least knows
      that you have received his message.
 @
 795
-<<[x]>>  CrossPoint requests the "read" status of all
+<<[x]>>  OpenXP requests the "read" status of all
      your PM's at each netcall, and updates the
      status in the internal newsgroup /¯Mausstatus.
      That way you know whether your PMs have arrived.
 
-<<[ ]>>  CrossPoint does not bother. That way you
+<<[ ]>>  OpenXP does not bother. That way you
      save transporting the status information, which
      for prolific writers can be several KB, and the
      time taken to analyse and update the status.
 @
 796
-<<[x]>>  CrossPoint also uses the MIME standard (RFC
+<<[x]>>  OpenXP also uses the MIME standard (RFC
      1341 for public messages (news), to signal the
      use of umlauts and other special characters.
 
 
 <<[ ]>>  MIME is only used for PMs, as its
      specification actually defines. For news
-     CrossPoint uses the non standardised lines
+     OpenXP uses the non standardised lines
      "X-Charset:".
 @
 797
-<<[x]>>  CrossPoint uses a special system called
+<<[x]>>  OpenXP uses a special system called
      "quoted printable" to code umlauts and other
      special characters so that older systems in the
      net can transport them correctly.
@@ -7603,12 +7595,12 @@ Set this option OFF, at least at first. "Quoted
 printable" is not used by many systems, making your
 messages in all the others pretty unreadable.
 
-CrossPoint does however translate INCOMING "quoted
+OpenXP does however translate INCOMING "quoted
 printable" code correctly!
 
 @
 798
-<<[ ]>>  If CrossPoint receives a "cancel" message,
+<<[ ]>>  If OpenXP receives a "cancel" message,
      it looks for message to cancel and if it finds
      it sets it to "read" and "delete", so it will be
      cleared out at the next Re-Org. The cancel
@@ -7625,7 +7617,7 @@ See also [/Message/Forward/Delete].@12107
      XPOINT.DOC) header. A "U" is put in front of
      unrecognised lines.
 
-<<[x]>>  Lines not required by CrossPoint and
+<<[x]>>  Lines not required by OpenXP and
      ZConnect are excluded from the conversion.
      This saves several hundred Bytes per mail!
      The saving on public messages is however small.
@@ -7658,9 +7650,9 @@ Otherwise leave it OFF.
 @
 8104
 <<[x]>> ->  Echomail tear lines will show the version of
-        CrossPoint/OpenXP.
+        OpenXP/OpenXP.
 
-<<[ ]>> ->  CrossPoint creates an empty tear line (---).
+<<[ ]>> ->  OpenXP creates an empty tear line (---).
 
 @
 800
@@ -7741,7 +7733,7 @@ with <Ctrl-Enter>. It is not necessary to press
 
 @
 820
-Enter which external programme CrossPoint should call
+Enter which external programme OpenXP should call
 for viewing binary files.
 
 <<New>>      Create a new entry.
@@ -7779,16 +7771,16 @@ the temp file as a HTML file.
 
 @
 823
-Enter which programme CrossPoint should call to
+Enter which programme OpenXP should call to
 view files of this format.
 
-The programme must be in the DOS Path for XP to find
+The programme must be in the path for XP to find
 it (or you may enter the path to the programme).
 This programme is started as soon as you select a
 binary file or a MIME-Meassage, containing a File
 of the selected format.
 
-If you give the macro $FILE as parameter, CrossPoint
+If you give the macro $FILE as parameter, OpenXP
 will put the file name in at this point, otherwise it
 gives the file name to the called viewer as the first
 parameter.
@@ -7800,7 +7792,7 @@ enter the name of the batch in full, eg. VIEW.BAT.
 @
 8071
 Wenn Dateien mit externen Viewerprogrammen ge”ffnet
-sind, kann mit Crosspoint weitergearbeitet werden.
+sind, kann mit OpenXP weitergearbeitet werden.
 um die angezeigten tempor„r-Dateien zu l”schen,
 gibt es zwei Vorgehensweisen:
 
@@ -7809,7 +7801,7 @@ gibt es zwei Vorgehensweisen:
        das Viewer-Programm beendet wird und dann
        sich selbst und die Tempor„rdatei l”scht.
 
-<<[X]>> -> Crosspoint l”scht die Tempor„rdatei
+<<[X]>> -> OpenXP l”scht die Tempor„rdatei
         erst beim n„chsten Programmstart.
 @
 8072
@@ -7880,7 +7872,7 @@ later to collect the result.
 850
 You can enter here the name of a newsgroup (or select
 from a list by pressing <F2>) where all replies
-to your message will be put by CrossPoint. In UseNet
+to your message will be put by OpenXP. In UseNet
 this is called "Follow-up-To".
 
 If replies to your messages written in one newsgroup
@@ -7953,7 +7945,7 @@ is active, there are 2 possibilities:
 
 <<ZConnect, UseNet:>>
 All public replies to messages you write into *this*
-newsgroup are forwarded to the stand-in. CrossPoint
+newsgroup are forwarded to the stand-in. OpenXP
 attaches a reply address for public messages to these
 in the same way that you could enter them direct in
 the Send Window (special/more).
@@ -7977,7 +7969,7 @@ your server). Set no limit, enter "0".
 This only sets a warning. The size of mails is
 checked, and if over the limit a warning is given.
 You can override it. The "local" setting in UUCP/RFC
-is usually ineffective; CrossPoint cannot tell from
+is usually ineffective; OpenXP cannot tell from
 the address whether it is a local mail.
 
 You find the same setting for newsgroup messages
@@ -7993,9 +7985,9 @@ OS2 will be put in /FIDO/OS2.
 Enter the name of the file you wish to upload (or
 select one with <F2>.
 
-Note that CrossPoint does not make a copy of the
+Note that OpenXP does not make a copy of the
 file; it must remain where you said it was until
-after CrossPoint has sent it! (be careful with RAM
+after OpenXP has sent it! (be careful with RAM
 disks for example).
 @
 891
@@ -8074,7 +8066,7 @@ RFC-Nets (UseNet / "UUCP"):
              be received without a name or date/time.
 
 <<Error:>>     Error message from a box programme or
-           a CrossPoint message converter.
+           a OpenXP message converter.
 
 <<Software:>>  The software with which the message
            was produced (or forwarded).
@@ -8197,16 +8189,16 @@ substituted by a widcard, either "Z###" for ZIP or
 944
 You can enter here the name of either a programme or
 a batch file to process your nodediffs, instead of
-allowing CrossPoint to do it. The full path and name
+allowing OpenXP to do it. The full path and name
 of the update file may be passed to either the
 programme or batch file with the macro <<$FILE>>.
 @
 945
-<<[x]>> -> CrossPoint will call its own NDIFF.EXE to
+<<[x]>> -> OpenXP will call its own NDIFF.EXE to
        process the diff update.
 
 <<[ ]>> -> Update files will <<NOT>> be processed by
-       CrossPoint. The external programme or batch
+       OpenXP. The external programme or batch
        file, as defined in "Process by", will be used
        instead.
 @
@@ -8370,7 +8362,7 @@ it's a wonder you got this far, but do try your
 <<computer handbook>>, in the section [Keyboard].@7009
 @
 7003
-The CrossPoint [On Line help] consists of 850 pages.@3
+The OpenXP [On Line help] consists of 850 pages.@3
 Pressing the [F1] Key nearly always brings context-@7005
 sensitive help.
 @
@@ -8417,7 +8409,7 @@ cable beginning at the back of your [keyboard] back@7009
 
 @
 10001
-<<XPoint-Menu
+<<OpenXP Menu
 This menu contains everything that didn't fit into
 another menu.... :-)
 @
@@ -8449,13 +8441,13 @@ with node lists.
 <<Edit Menu
 This a menu, where various settings can be made and
 adjusted, mainly to do with network organisation
-rather than with the basic CrossPoint settings, which
+rather than with the basic OpenXP settings, which
 are to be found under the Config Menu.
 @
 10007
 <<Config Menu
 This menu contains settings mainly for the
-configuration of CrossPoint to your personal taste.
+configuration of OpenXP to your personal taste.
 @
 10008
 <<Tools Menu
@@ -8467,33 +8459,33 @@ You install the others under /Config/Tools menu.
 @
 10101
 You will be asked to enter your registration details
-into CrossPoint. If you have registered, you will
+into OpenXP. If you have registered, you will
 have received a registration key. Entering your
 registration number here, registers your version of
-CrossPoint. If you don't have a registration key,
-exit by pressing <Esc> and CrossPoint will remain
+OpenXP. If you don't have a registration key,
+exit by pressing <Esc> and OpenXP will remain
 unregistered.
 @
 10102
-<<XPoint / Import
+<<OpenXP / Import
 
 Here, you can import messages or message packets in
-various formats into CrossPoint.
+various formats into OpenXP.
 @
 10103
-<<XPoint / Export
+<<OpenXP / Export
 
 Here, you can export (write) message packets
 into various formats for use with other programmes.
 @
 10104
-<<XPoint / Statistic Menu
+<<OpenXP / Statistic Menu
 
 This menu contains various statistical functions and
-analysis of your CrossPoint message database.
+analysis of your OpenXP message database.
 @
 10105
-<<XPoint / Terminal  (CrossTerm)
+<<OpenXP / Terminal  (CrossTerm)
 
 This is (provisionally) a rather primitive terminal
 programme. Really, it is only of use for sending
@@ -8511,32 +8503,23 @@ principal server (if you don't change them on line
 with AT commands to the modem).
 @
 10106
-<<XPoint / DOS-Shell
+<<OpenXP / Shell
 
-Calls a DOS Shell (put simply, starts a sub-session
-of DOS running under CrossPoint). CrossPoint tries to
-make itself as small as possible by swapping out
-unnecessary data, either to EMS or hard disk.
-(See /Config/Options/Misc.)
+Calls a shell.
 
-To return to CrossPoint type "Exit" at the DOS Prompt
-as usual for DOS shells.
-
-Note: You may not load any TSRs in this shell. If you
-do, CrossPoint will complain and exit!
-
+To return to OpenXP type "exit" at the prompt.
 @
 10108
-<<XPoint / Quit
+<<OpenXP / Quit
 
-Exit CrossPoint. You can set a safety question under
+Exit OpenXP. You can set a safety question under
 Config/Options/Misc. that asks you to confirm your
-unbelievable intent to exit CrossPoint.
+unbelievable intent to exit OpenXP.
 
 Note that there is also a "Quit" option in the menus
 in the Newsgroup and User windows.
 
-<Alt-F4> also exits CrossPoint from any one of the
+<Alt-F4> also exits OpenXP from any one of the
 principal windows (assuming you have not re-defined
 this key combination).
 @
@@ -8708,7 +8691,7 @@ up.
            The first letter(s) of the box-name are
            sufficient.
 
-<<Addressee>>  The name of the recipient. CrossPoint
+<<Addressee>>  The name of the recipient. OpenXP
            completes the name as necessary with the
            address from the User List, or with .ZER
            (not much use now that .ZER is no longer
@@ -8772,7 +8755,7 @@ messages (ie. those waiting to be dispatched).
 
 They can be read like any other message.
 
-CrossPoint does this operation by marking all
+OpenXP does this operation by marking all
 outgoing messages waiting to be sent, then displaying
 them [/Messages/Search/Marked].@10506
 @
@@ -8780,14 +8763,14 @@ them [/Messages/Search/Marked].@10506
 <<Message / Search / Text
 
 You enter a search string (text to be searched for),
-and CrossPoint marks and displays any messages
+and OpenXP marks and displays any messages
 containing this string anywhere.
 @
 10502
 <<Message / Search / Subject
 
 You enter a search string (text to be searched for)
-for the subject line only. CrossPoint marks and
+for the subject line only. OpenXP marks and
 displays any messages containing this string in the
 subject.
 @
@@ -8796,7 +8779,7 @@ subject.
 
 You enter a search string (text to be searched for)
 in the Sender Name line only. (The string is mostly a
-name, of course). CrossPoint marks and
+name, of course). OpenXP marks and
 displays any messages containing this string in the
 Sender Name.
 @
@@ -8809,7 +8792,7 @@ and Subject search, with extra options.
 10505
 <<Message / Search / Marked(for reply)
 
-CrossPoint searches out and displays all messages
+OpenXP searches out and displays all messages
 that have been marked for replying to later.
 
 Note: Marked messages in PM Archive newsgroups will
@@ -8825,7 +8808,7 @@ re-marked.
 <<Message / Search / Marked
 
 Displays all marked messages (marked by hand or by
-CrossPoint through a search) in a list similar to a
+OpenXP through a search) in a list similar to a
 newsgroup display. They can also be operated on like
 in a newsgroup.
 @
@@ -8853,15 +8836,15 @@ sub-menus for details.
 <<Config / External
 
 Options for the Editor, message reader and for
-entering settings for CrossPoint to use when it
+entering settings for OpenXP to use when it
 starts external programmes and tools (Editor, Lister,
 Packers etc.).
 @
 10603
 <<Config / Paths
 
-By default, CrossPoint puts files in the
-CrossPoint programme directory. For some types of
+By default, OpenXP puts files in the
+OpenXP programme directory. For some types of
 files, you can define here different directories
 where they should be kept.
 @
@@ -8869,7 +8852,7 @@ where they should be kept.
 <<Config / Display
 
 In the sub-menus here are  the settings for how
-CrossPoint should display practically everything.
+OpenXP should display practically everything.
 @
 10605
 <<Config / Modem
@@ -8881,7 +8864,7 @@ each ComPort. In other words, these are <<global>>
 settings. Server-specific settings may be defined
 under /Edit/Servers/Edit/Modem.
 
-By this means, CrossPoint can operate with up to 4
+By this means, OpenXP can operate with up to 4
 modems on 4 ComPorts with unique modem-specific
 settings for each one.
 @
@@ -8929,14 +8912,14 @@ Ctrl-Enter exits immediately and saves the changes.
 If you have not set the option "save" to automatic
 (under /Config/Options/User Interface), changes made
 in the Config (and in /Fido/Options) settings are not
-permanent, but last only until CrossPoint is exited.
+permanent, but last only until OpenXP is exited.
 The old settings are "remembered" and used at the
 next start. If you want to keep the changes, you must
 save them "manually" using this menu entry <<save>>,
 or alternatively at any time by pressing <Alt-S>.
 
 If you have set the "save" option above to "ask on
-quit", CrossPoint notes that changes have been made,
+quit", OpenXP notes that changes have been made,
 and asks when exiting the programme, if you want to
 save.
 
@@ -8947,11 +8930,11 @@ saving.
 
 @
 10615
-You can link any .COM .EXE or .BAT file into Cross-
-Point, to be started and perform some function.
-CrossPoint must be able to find this programme either
-in the CrossPoint directory or in the DOS Path (see
-your DOS manual for "Path" info).
+You can link any executable, batch or script file
+into OpenXP, to be started and perform some
+function.
+OpenXP must be able to find this programme either
+in the OpenXP directory or in the path.
 
 A special feature here is the currently selected
 Message can be passed to this called programme,
@@ -8959,7 +8942,7 @@ enabling you to pass packed files to archive viewers,
 executable files to virus scanners, messages to
 printer programmes and so on.
 
-It is even possible to call up certain CrossPoint
+It is even possible to call up certain OpenXP
 internal functions with the function keys, for
 example for Netcalls (*NETCALL-Option) and
 reorganisation (*REORG)
@@ -8978,7 +8961,7 @@ the set time limit. The time is calculated from the
 
 Note that extra disk space is required during the
 reorganisation. As a general rule, about one tenth of
-the space used by CrossPoint is required. The more
+the space used by OpenXP is required. The more
 the better.
 
 The reorganisation can take a long time on a large
@@ -9050,7 +9033,7 @@ The log file <<DUPES.LOG>> logs all found dupes.
 This will re-allocate all newsgroups and or users
 from one Server to another.
 
-<<This can be important>> because CrossPoint notes
+<<This can be important>> because OpenXP notes
 from which Server messages from Users and Newsgroups
 have come, so as to send any reply out through the
 correct Server. Replying to messages received from
@@ -9241,7 +9224,7 @@ See also:  [internal Editor]@54
 <<Edit / Templates / Misc..
 
 You can write your own templates. File them under a
-.XPS file name in the CrossPoint directory, and you
+.XPS file name in the OpenXP directory, and you
 can use them as header or signature for newsgroup
 groups as you choose under /Edit/Groups
 
@@ -9252,7 +9235,7 @@ See also:  [internal Editor]@54
 
 The display colours are a matter of taste. You can
 set the colours for practically every aspect of
-CrossPoint to your own taste.
+OpenXP to your own taste.
 @
 10902
 <<Config / Display / Newsgroups
@@ -9274,12 +9257,12 @@ Sets how the message header in the lister and when
 
 This menu item replaces the corresponding individual
 settings in /Config/External/Lister in older versions
-of CrossPoint.
+of OpenXP.
 @
 10905
 <<Config / Display / Lines
 
-CrossPoint exploits the capabilities of EGA and VGA
+OpenXP exploits the capabilities of EGA and VGA
 graphics and offers various settings for the number
 of screen lines displayed. Changed settings become
 effective immediately.
@@ -9299,7 +9282,7 @@ The screen saver can be switched on <<directly>> by
 pressing <Alt 1>.
 @
 11001
-<<XPoint / Import / Z-Netz Puffer
+<<OpenXP / Import / Z-Netz Puffer
 
 This imports a Z-Netz (Zerberus(r) compatible) packet
 in either Netcall or Z-Connect format. This is useful
@@ -9313,12 +9296,12 @@ During the import, any new newsgroups or new users
 for the user list are shown highlighted as usual.
 @
 11002
-<<XPoint / Import / other format
+<<OpenXP / Import / other format
 
 Imports message packets in FIDO (.pkt), MagicNET,
 QuickMail, QWK or MausTausch (INFILE) format.
 
-CrossPoint automatically uses the correct converter
+OpenXP automatically uses the correct converter
 (MAGGI, ZFIDO or QWK) to convert the packet to
 Z-Netz format and import it.
 
@@ -9331,20 +9314,20 @@ to enable a MagicNET packet to be imported correctly.
 
 @
 11003
-<<XPoint / Import / User List
+<<OpenXP / Import / User List
 
 Here, you can read-in a list of addresses from a
 text file and import them into the User database.
 
 @
 11004
-<<XPoint / Import / Newsgroup list (Z-Netz)
+<<OpenXP / Import / Newsgroup list (Z-Netz)
 
 Normally, a new newsgroup is listed automatically.
 If you want to have all newsgroups to which you can
 subscribe listed, you can read in a list of them
 here (you can get this list from your news server)
-and CrossPoint enters all the listed Newsgroups in
+and OpenXP enters all the listed Newsgroups in
 the list. The main Server, as configured under
 /Edit/Servers, will be used as the Server for these
 new newsgroups.
@@ -9355,20 +9338,20 @@ to. For that, you use /Message/News manager/read file.
 
 @
 11005
-<<XPoint / Import / MauTau
+<<OpenXP / Import / MauTau
 If you have used the MausTausch programme "MauTau" up
 to now, you can use this function to import the
-MauTau message base into CrossPoint.
+MauTau message base into OpenXP.
 
 This programme is based on "MT2OUTF" from Peter
 Redecker \@ DO.
 @
 11006
-<<XPoint / Import / Yuppie
+<<OpenXP / Import / Yuppie
 
 If you have used the Fido Point programme "Yuppie" up
 to now, you can use this function to import the
-Yuppie message base into CrossPoint.
+Yuppie message base into OpenXP.
 @
 11101
 ^^10905
@@ -9420,7 +9403,7 @@ M^P^&XDB6YHFFZLJV[\@O'\DS7]HWG^L[W_@\,"H?$HO&(3"J7S*
 M]8K-:K?<KO<+#HO'Y++YC$ZKU^RV^PV/R^?TNOV.S^OW_+[_#Q\@
 
 You can convert these messages back into their proper
-form using the built in UUdecoder in CrossPoint. Any
+form using the built in UUdecoder in OpenXP. Any
 extra text at the beginning or the end is ignored.
 You can decode more than one marked message, to
 reassemble a split file.
@@ -9455,12 +9438,12 @@ messages can come from different newsgroups. remember
 that all marked messages remain marked until
 specifically unmarked with <Ctrl-E>, or by using the
 menu [/Message/Search/Unmark], or until you exit@10507
-CrossPoint.
+OpenXP.
 @
 11206
 <<Message / Extract / As..
 
-CrossPoint can extract messages in one of 4 forms:
+OpenXP can extract messages in one of 4 forms:
 
   o  as Text without header, ie. purely the message
      text.
@@ -9471,7 +9454,7 @@ CrossPoint can extract messages in one of 4 forms:
   o  as Puffer - in the form of a message packet, as
      it would be transferred over the net.
      In this form it can be imported with
-     /XPoint/Import/Puffer.
+     /OpenXP/Import/Puffer.
 
   o  as Quote - with your quote sign in front of each
      line using the template as when replying to
@@ -9529,7 +9512,7 @@ removed by the next [Re-Org].@10701
 
 However, if the list to be deleted should contain
 messages on ["Hold"] (see  also [message window])@30
-CrossPoint will ask if you are sure you want to
+OpenXP will ask if you are sure you want to
 delete them.
 @
 11403
@@ -9586,7 +9569,7 @@ If it doesn't work, make sure all the details
 required for a Point netcall are properly entered
 under /Edit/Servers and that all supplementary
 programmes (packers, transfer protocol etc.) are
-properly defined and that CrossPoint can find them.
+properly defined and that OpenXP can find them.
 @
 11502
 <<Netcall / All
@@ -9622,7 +9605,7 @@ command, it will do a logoff, but does not hang up
 and presents the mask again for a login.
 
 Exit your terminal programme <<(do not hang up)>> and
-start CrossPoint then Netcall/Relogin. CrossPoint
+start OpenXP then Netcall/Relogin. OpenXP
 does not reset the modem or dial, but begins by
 sending the correct entry for Login and carries
 on from there if the right responses come from the
@@ -9664,7 +9647,7 @@ Activates one of the programmed timing lists which
 you can set up under [/Netcall/Timing list].@11507
 
 You are asked to enter the number of the timing list
-you wish to activate. CrossPoint then runs this
+you wish to activate. OpenXP then runs this
 programme until you end it (with <Esc> or the special
 case, that one of the commands to be carried out ends
 the timing programme.
@@ -9673,7 +9656,7 @@ the timing programme.
 <<Netcall / Timing List
 
 You can set up to 99 [timing programmes], which allow@4022
-CrossPoint to carry out various relevant tasks,
+OpenXP to carry out various relevant tasks,
 programmed to time of day, day of the week or month,
 etc.
 
@@ -9705,7 +9688,7 @@ based on newsgroup groups.
 Variables like the date, the name of the person being
 replied to and so on can be entered by using [macros]@11650
 which are replaced with the appropriate entry by
-CrossPoint for each message.
+OpenXP for each message.
 
 Note that signatures <<cannot>> contain macros (there is
 no real necessity) and if they do, the whole macro
@@ -9842,22 +9825,22 @@ If no real name is available, these macros are empty.
 
 @
 11701
-<<XPoint / Statistics / Memory
+<<OpenXP / Statistics / Memory
 
 Information about the usage of main, EMS and hard
 disk memory.
 
-In the hard disk section, the size of all CrossPoint
+In the hard disk section, the size of all OpenXP
 files in all its directories together is given.
 
 The available main memory is the amount of memory
-currently free plus the amount CrossPoint could swap
-out. It is the amount CrossPoint could make available
+currently free plus the amount OpenXP could swap
+out. It is the amount OpenXP could make available
 to start an external programme.
 
 @
 11702
-<<XPoint / Statistics / Messagebase
+<<OpenXP / Statistics / Messagebase
 
 This statistic shows how many messages would be
 deleted if a Re-Org [(/Re-Org/Messages)] were to be@10701
@@ -9865,10 +9848,10 @@ carried out, and how much disk space this would free
 up.
 @
 11703
-<<XPoint / Statistics / Database
+<<OpenXP / Statistics / Database
 
 Displays the number of data sets and the usage of the
-individual CrossPoint data base files.
+individual OpenXP data base files.
 
 
    MSGS         Message Files
@@ -9891,7 +9874,7 @@ afterwards.
 
 @
 11705
-<<XPoint / Statistics / Groups
+<<OpenXP / Statistics / Groups
 
 Displays the proportion of the message base
 taken up by each newsgroup group.
@@ -9901,7 +9884,7 @@ entered
 
 @
 11706
-<<XPoint / Statistics / Systems
+<<OpenXP / Statistics / Systems
 
 Displays the proportion of the  message base
 that came from each server.
@@ -9910,7 +9893,7 @@ Parameters for time period and size definition can be
 entered
 @
 11707
-<<XPoint / Statistics / Newsgroups
+<<OpenXP / Statistics / Newsgroups
 
 Shows the distribution of the messages among the
 newsgroups.
@@ -9919,7 +9902,7 @@ Parameters for time period and size definition can be
 entered
 @
 11708
-<<XPoint / Statistics / Charges
+<<OpenXP / Statistics / Charges
 
 Analyses the log file XPOINT.LOG statistically and
 displays a summary of the accrued telephone charges.
@@ -10061,7 +10044,7 @@ current message and then select this menu.
 
 The contents of the message will be transferred to a
 file named XXX.BL (where XXX stands for the name of
-the Server concerned). CrossPoint calls up this file
+the Server concerned). OpenXP calls up this file
 when a list of newsgroups is to be displayed, as for
 example, under /News manager/newsgroups/subscribe.
 
@@ -10116,7 +10099,7 @@ If you do not have a list, order one first with
 If you have a list, select the fileserver you want,
 and you are shown the file list. Mark the files you
 want to order, and press <Enter>.
-CrossPoint creates the order automatically ready for
+OpenXP creates the order automatically ready for
 the next netcall.
 
 This function applies the SEND command as implemented
@@ -10332,7 +10315,7 @@ For "Outgoing" Messages, use
 12202
 <<Message / Change / Receive date
 
-All received messages are dated by CrossPoint, so
+All received messages are dated by OpenXP, so
 that they are handled (and then deleted) correctly.
 
 If for any reason you want to alter this handling for
@@ -10363,7 +10346,7 @@ Message/Outgoing/Edit
 <<Message / Change / Type
 
 Toggles the type of a message between binary and
-text. This affects only the CrossPoint data bank
+text. This affects only the OpenXP data bank
 recognition, the message header is not changed. It
 can help for messages that have been sent as the
 wrong type, and cannot be recognised by the archive
@@ -10421,12 +10404,12 @@ edit text files and messages.
 <<Config / External / Shell
 
 Under this entry are the various possible parameters
-for calling a DOS shell.
+for calling a shell.
 @
 12404
 <<Config / External / Packer
 see also [Packers]@4006
-This is actually the settings for the CrossPoint
+This is actually the settings for the OpenXP
 Archive viewer, which it uses if you want to extract.
 an archive rather than just view it.
 It needs to have access to all the necessary
@@ -10444,9 +10427,9 @@ The settings must contain 2 macros.
 
 In addition, all switches and options necessary for
 the particular Packer must be entered.
-CrossPoint <<must>> be able to find the Packer in the
-DOS Path. A Tick next to the entry in the table
-confirms that CrossPoint can "see" that packer
+OpenXP <<must>> be able to find the Packer in the
+path. A Tick next to the entry in the table
+confirms that OpenXP can "see" that packer
 programme.
 
 The packers DWC and Hyper are seldom met with.
@@ -10459,10 +10442,10 @@ direct in XPOINT.CFG.
 
 <<pmCrypt>> is a  method devised by Christian Mock
 for integrating any external cipher programme into
-Z-Net point programmes. CrossPoint expands pmCrypt to
+Z-Net point programmes. OpenXP expands pmCrypt to
 use in all other Net types.
 
-CrossPoint supports up to 3 external encoders, known
+OpenXP supports up to 3 external encoders, known
 as pmc-1 to pmc-3, and which can be selected during
 the password entry procedure ("P" in the user window)
 instead of the built in QPC and DES methods.
@@ -10472,19 +10455,19 @@ instead of the built in QPC and DES methods.
 You can define a "Viewer" for special types of binary
 type Messages (like pictures, for instance). If such
 a message is selected to be "read" by pressing <Enter>
-in the normal way, CrossPoint recognises the type and
+in the normal way, OpenXP recognises the type and
 starts the viewer.
 
 GIF and IFF/ILBM graphics are recognised from the
 data type, all others from the file name.
 @
 12601
-<<XPoint / Statistic / Phone fees / All
+<<OpenXP / Statistic / Phone fees / All
 An overview of telephone charges accrued over the
 year.
 @
 12602
-<<XPoint / Statistic / Phone fees / single
+<<OpenXP / Statistic / Phone fees / single
 
 An overview of telephone charges accrued over the
 year for a particular server.
@@ -10507,7 +10490,7 @@ Other lists (UUCP) can/have to be read in by hand.
 
 Select the message to be read-in in the message
 window, then select this function.
-The list will be transferred for CrossPoint use to a
+The list will be transferred for OpenXP use to a
 file called <server name>.FL. If a list was already
 there, the old one will be renamed to .BAK.
 [reading in a file]@12703
@@ -10538,7 +10521,7 @@ Various options, Mouse, Message extract, auto advance,
 jump out of Config. Best have a look yourself.
 
 Note, these options are only read at the start of
-CrossPoint. Changes here are only effective after
+OpenXP. Changes here are only effective after
 storing the configuration and at the next start.
 @
 12803
@@ -10555,7 +10538,7 @@ messages.
 12805
 <<Config / Options / Nets
 
-Note: The English Language version of CrossPoint
+Note: The English Language version of OpenXP
 simply "switches off" access to settings for purely
 German Nets (e.g. MausNet). Switching languages to
 German allows access (but in German).
@@ -10573,7 +10556,7 @@ Netcall-Options decide the way XP makes netcalls.
 12809
 <<Config / Options / Password
 
-CrossPoint can be protected with <<2 Passwords>>.
+OpenXP can be protected with <<2 Passwords>>.
 
 <<Start Password>> is required to start the
                programme.
@@ -10592,10 +10575,10 @@ the author.
 12810
 <<Config / Options / Language
 
-Select a language for CrossPoint. The user interface,
+Select a language for OpenXP. The user interface,
 menus and so on, appear in the chosen language.
 Which languages are available depends on which
-extra language modules you have in the CrossPoint
+extra language modules you have in the OpenXP
 directory.
 @
 12901
@@ -10613,7 +10596,7 @@ the index may help.
 <<Re-Org / Newsgroup index / Alphabetic
 
 Sorts the newsgroup list display into alphabetical
-order, first the CrossPoint internal newsgroups, then
+order, first the OpenXP internal newsgroups, then
 PMs then the Net newsgroups.
 
 Separators are all grouped at the top and must be
@@ -10626,10 +10609,10 @@ new start.
 13001
 <<Fido / Nodelists / Config
 
-Activates a chosen [Nodelist]. CrossPoint will offer@4024
+Activates a chosen [Nodelist]. OpenXP will offer@4024
 you the choice from any nodelists in the form
 NODELIST.xxx which you may have on your disk.
-Once selected, CrossPoint copies the list into the
+Once selected, OpenXP copies the list into the
 subdirectory FIDO and indexes it for use.
 
 At least once at the beginning you will have to
@@ -10652,7 +10635,7 @@ communicate with some of the FIDO world areas, you
 can cut them out of your NodeList, and save
 considerable space.
 
-Tell CrossPoint which zones and regions you wish to
+Tell OpenXP which zones and regions you wish to
 have.
 
 The zone numbers in FIDO are:
@@ -10687,7 +10670,7 @@ then reading the whole list in again.
 13004
 <<Fido / Nodelists / Rebuild Index
 
-CrossPoint normally indexes the NodeList
+OpenXP normally indexes the NodeList
 automatically. This function is just in case
 something should happen; you can force a re-index.
 
@@ -10709,7 +10692,7 @@ nodelist for matching criteria.
 You can browse the data for Fido nodes. Enter the
 node address in the usual form <Zone>:<Net>/<Node>.
 If you leave off the zone and even the net,
-CrossPoint will take the zone and net of your main
+OpenXP will take the zone and net of your main
 Fido server (Bossnode) as default.
 
 Instead of an address, you can enter the name of a
@@ -10728,7 +10711,7 @@ from anyone. To make File Requests you will need:
 - A main Fido Server entered under /Edit/Servers.
 
 You can enter the Node address direct if you want.
-CrossPoint checks to see if it is in the NodeList.
+OpenXP checks to see if it is in the NodeList.
 If it is, you may then enter the name(s) of the
 file(s) you wish to request or, you can press <F2>
 and browse the filelists that you have configured.
@@ -10784,7 +10767,7 @@ You need for this:
 You make a crash mail by pressing "R" when you in the
 send window after writing a message.
 
-You have CrossPoint deal with Crashes through
+You have OpenXP deal with Crashes through
 a [timer list].@4022
 
 @
@@ -10804,9 +10787,9 @@ Fido-specific settings.
 When you have received a Fido file-list in the
 correct format, you can read it in here. You get a
 chance to select the file you want to read in,
-CrossPoint tries to recognise from the file name
+OpenXP tries to recognise from the file name
 which Fido box it is for, but you may have to tell
-CrossPoint explicitly, and it then copies it into the
+OpenXP explicitly, and it then copies it into the
 FIDO subdirectory under a new name, and makes a note
 of its existence in FILELIST.CFG, then asks if you
 want to delete the original list.
@@ -10826,7 +10809,7 @@ deleted from FILELIST.CFG
 
 This is for browsing through your file lists
 searching for the file you want. Enter the search
-string and CrossPoint looks through *all* lists and
+string and OpenXP looks through *all* lists and
 gathers all the occurrences together in a list.
 
 If you want to search for more as one item then
@@ -10873,7 +10856,7 @@ the storage files and re-read them in.
 13304
 <<Re-Org / Misc.. / Read Dates
 
-CrossPoint notes the date of the newest message in
+OpenXP notes the date of the newest message in
 each newsgroup, and whether unread messages are
 present. Normally this data is kept up to date
 automatically. This function forces an update.
@@ -10906,7 +10889,7 @@ as extension). The list must have either the
 4D-format or the POINTS24 list format. Check that you
 have the right format installed.
 
-CrossPoint copies the point list into the FIDO sub-
+OpenXP copies the point list into the FIDO sub-
 directory.
 
 At least once at the start you will need a complete
@@ -10972,18 +10955,18 @@ special operating instructions for the databases on
 offer.
 @
 13601
-<<XPoint / Export / Userlist
+<<OpenXP / Export / Userlist
 
 The list of all recorded users is exported to a file.
 @
 13602
-<<XPoint / Export / Newsgroup List
+<<OpenXP / Export / Newsgroup List
 
-A list of all the newsgroups in CrossPoint is
+A list of all the newsgroups in OpenXP is
 exported to a file.
 @
 13603
-<<XPoint / Export / Message List
+<<OpenXP / Export / Message List
 
 Writes a list of all currently displayed messages to
 a file.
@@ -10992,7 +10975,7 @@ subject are recorded.
 
 @
 13604
-<<XPoint / Export / Screenshot
+<<OpenXP / Export / Screenshot
 
 The contents of the screen are captured to a file.
 @
@@ -11008,7 +10991,7 @@ The Fido options are under /Fido/Options.
 <<Config / Options / Nets / PM-Limits
 
 You can set a maximum limit for PMs, above which
-CrossPoint will warn you about the size when you send
+OpenXP will warn you about the size when you send
 it.
 @
 13801
@@ -11027,7 +11010,7 @@ but for File Areas (where files instead of messages
 are exchanged). You cancel the file areas you no
 longer wish to subscribe to.
 
-Note: CrossPoint does not check that marked areas
+Note: OpenXP does not check that marked areas
 from the area list really are file areas and not
 message areas, nor does it check that the file
 manager for the particular box is correctly
@@ -11082,31 +11065,29 @@ by very few file mangers.
 Press <Esc> twice and then <F1>.
 @
 20004
-CrossPoint was not able to delete a file. Either the
+OpenXP was not able to delete a file. Either the
 file is not there (perhaps already been deleted some
-other way?) or the file is read only. In the latter
-case you can use the DOS utility ATTRIB to lift the
-read only status (attrib -R FILE.EXT).
+other way?) or the file is read only.
 
-You can also ignore the message.
+Typically you can simply ignore this message.
 @
 20006
 Not enough free memory is available to carry out the
 selected function. If this happens often, you may
 have to re-configure DOS to make more memory
-available. CrossPoint should have at least 450KB,
+available. OpenXP should have at least 450KB,
 better 500KB Memory to *start* in.
 
 @
 20007
 There is not enough free memory available to start
-the chosen external programme or DOS shell. If you
+the chosen external programme or shell. If you
 are using lots of memory, maybe showing a large text
 in the lister, you can free up memory by closing it.
 
 Otherwise, if this happens often, you may
 have to re-configure DOS to make more memory
-available. CrossPoint should have at least 450KB,
+available. OpenXP should have at least 450KB,
 better 500KB Memory to *start* in.
 
 Maybe you just tried to start something too big.
@@ -11114,7 +11095,7 @@ Maybe you just tried to start something too big.
 @
 20008
 The Unpacker command line must contain the macros
-$ARCHIV and $DATEI, which CrossPoint uses to pass the
+$ARCHIV and $DATEI, which OpenXP uses to pass the
 names of the files to be handled.
 Correct the settings under /Config/External/Packer
 and don't forget to save them.
@@ -11122,9 +11103,6 @@ and don't forget to save them.
 20009
 The selected file is read only and cannot be
 overwritten.
-You can use the DOS utility ATTRIB to lift the
-read only status (attrib -R FILE.EXT), IF YOU ARE
-SURE!
 @
 20020
 You have used a function key which tried to display a
@@ -11158,8 +11136,8 @@ packet.
 For MausTausch, MagicNET and QuickMail netcalls, or
 for importing these type of messages, the mail
 converter MAGGI.EXE is required, which is in the
-CrossPoint packet.
-Please check that this file is in the CrossPoint
+OpenXP packet.
+Please check that this file is in the OpenXP
 directory.
 @
 20103
@@ -11201,24 +11179,24 @@ Please correct the setting for the directory for
 log files (under /Config/Paths).
 @
 20206
-CrossPoint cannot locate the programme entered.
+OpenXP cannot locate the programme entered.
 Please check that you have entered the name correctly
 and that the programme file is either in the
-CrossPoint directory or in the DOS Path.
+OpenXP directory or in the path.
 @
 20207
 ^^20000
 @
 20209
 All Unpacker command lines must contain the macros
-$ARCHIV and $DATEI, which CrossPoint uses to pass the
+$ARCHIV and $DATEI, which OpenXP uses to pass the
 names of the files to be handled.
 If in doubt, just accept the settings offered when
 you press <F2>.
 @
 20210
-CrossPoint does not have enough free files ("File
-Handles") to work with. Exit CrossPoint and raise the
+OpenXP does not have enough free files ("File
+Handles") to work with. Exit OpenXP and raise the
 number in your CONFIG.SYS. (See your DOS Handbook for
 Info about File Handles)
 
@@ -11258,8 +11236,8 @@ First display the [reference links] with the "#" key.@4014
 @
 20305
 The MPUFFER files make up the message base in
-CrossPoint. All messages in there are therefore
-already in CrossPoint, and it does not seem sensible
+OpenXP. All messages in there are therefore
+already in OpenXP, and it does not seem sensible
 to read them in again.
 
 If you wish to re-import the puffer files, perhaps
@@ -11273,8 +11251,7 @@ failed. Check the settings under
 /Config/External/pmCrypt.
 
 You can also try extracting the file (/Msg/Extract..)
-and check "by hand" under DOS why the decoding did
-not work.
+and check manually why the decoding did not work.
 @
 20307
 There is no point in sending receipt confirmation for
@@ -11315,7 +11292,7 @@ You can only archive public messages, or messages
 from your own PM newsgroup.
 @
 20404
-CrossPoint does not yet support commenting unsent
+OpenXP does not yet support commenting unsent
 messages in MausNet.
 @
 20405
@@ -11332,7 +11309,7 @@ There is not enough free memory to display the
 reference links.
 
 If this happens often, you may have to re-configure
-DOS to make more memory available. CrossPoint should
+DOS to make more memory available. OpenXP should
 have at least 450KB, better 500KB Memory to *start*
 in.
 @
@@ -11386,13 +11363,13 @@ Somebody has deleted one of the message base
 (MPUFFER.xxx) files. All references to messages in
 this file will be deleted.
 
-CrossPoint then carries out a Re-Org.
+OpenXP then carries out a Re-Org.
 
 If you deliberately deleted the file, ignore the
 message and carry on. Otherwise you can try to find
 the missing file (renamed, undelete, backup, there is
 hope yet..) and <<re-import>> its messages (don't just
-rename it to MPUFFER!) with /XPoint/Import/Puffer.
+rename it to MPUFFER!) with /OpenXP/Import/Puffer.
 @
 20423
 You cannot edit the text in messages labelled binary.
@@ -11437,19 +11414,19 @@ damaged. You can try to repair it with ZAP or ZPR as
 appropriate (read the advice in the instructions for
 ZAP & ZPR!). If this does not work you must delete
 the *.pp file affected, find messages that were
-outgoing (they are still in CrossPoint but no longer
+outgoing (they are still in OpenXP but no longer
 as "Outgoing") and repost them.
 @
 20428
 The selected file which you are trying to extract
-exists already in the CrossPoint directory.
+exists already in the OpenXP directory.
 
-To avoid overwriting important files, CrossPoint will
+To avoid overwriting important files, OpenXP will
 not permit this file to be unpacked into the
-CrossPoint directory.
+OpenXP directory.
 
 Go to /Config/Paths and enter a directory other than
-the CrossPoint directory as  the directory for
+the OpenXP directory as  the directory for
 temporary files needed for unpacking.
 @
 20429
@@ -11469,7 +11446,7 @@ Possible reasons:
 
 þ  The archive (packed file) is defective.
 
-You can unpacking the file "by hand' under DOS.
+You can unpack the file manually.
 If it is a binary type message, extract it first to a
 file (/Message/Extract).
 @
@@ -11516,7 +11493,7 @@ More details under "CrossPostings" in XPOINT.DOC.
 @
 20602
 Sending zero length messages is not possible with
-CrossPoint in this net. Try sending the message again
+OpenXP in this net. Try sending the message again
 with one empty line of "text", if you want to send an
 "empty" message.
 @
@@ -11525,11 +11502,10 @@ Encoding the message under pmCrypt did not work.
 Check that the settings are correct under
 /Config/External/pmCrypt, and that the required
 cipher programme can be found either in the
-CrossPoint directory or in the DOS path.
+OpenXP directory or in the path.
 
 If you still have difficulty, you could try encoding
-the text by "Hand" under DOS, to try and narrow down
-the error.
+the text manually, to try and narrow down the error.
 @
 20604
 The recipient for this message is a user in one of
@@ -11538,7 +11514,7 @@ the boxes that you have entered as a server (under
 netcall to this server.
 @
 20606
-An internal newsgroup in CrossPoint is not one that
+An internal newsgroup in OpenXP is not one that
 you can write messages into.
 @
 20607
@@ -11561,7 +11537,7 @@ the file, you have to send the whole thing again.
 ^^20427
 @
 20622
-CrossPoint is not able to find the outgoing message
+OpenXP is not able to find the outgoing message
 in the outgoing messages file (*.PP). One of these
 files has probably become damaged.
 
@@ -11578,7 +11554,7 @@ The Archive newsgroups entered under
 /Config/Miscellaneous/Options do not exist.
 @
 20701
-CrossPoint is no longer able to locate the newsgroup
+OpenXP is no longer able to locate the newsgroup
 containing the outgoing message, in order to remove
 the "outgoing" ("!") sign.
 
@@ -11591,7 +11567,7 @@ recommended.
 @
 20703
 
-CrossPoint is no longer able to locate the outgoing
+OpenXP is no longer able to locate the outgoing
 message in the message base, in order to remove the
 "outgoing" ("!") sign.
 
@@ -11618,7 +11594,7 @@ online login.
 20708
 There is no standard login procedure for this type of
 net. You must therefore prescribe the login procedure
-for CrossPoint with a Script File.
+for OpenXP with a Script File.
 
 See "Script Programming" in XPOINT.DOC
 @
@@ -11633,7 +11609,7 @@ a successful "relogin", has been lost.
 @
 20712
 An error has occurred while converting the outgoing
-message packet. Restart CrossPoint with the parameter
+message packet. Restart OpenXP with the parameter
 [df:2], which allows time after the conversion to@4020
 read the exact error message.
 @
@@ -11649,14 +11625,14 @@ modem is not ready.
 See Modem FAQ in Appendix F in XPOINT.DOC
 @
 20715
-CrossPoint was unable to unpack a file. The following
+OpenXP was unable to unpack a file. The following
 may be the cause:
 
 þ  The packer entered under Edit/Servers/Edit/Point
-   does not exist or cannot be reached in the DOS
-   Path as assumed from the entry. Especially with
+   does not exist or cannot be reached in the
+   path as assumed from the entry. Especially with
    ZCONNECT and FIDO netcalls, it is NOT sufficient
-   for the packer to lie in the CrossPoint directory.
+   for the packer to lie in the OpenXP directory.
 
 þ  You have entered a packer other than the format in
    which your packed data is arriving. Have you set
@@ -11711,7 +11687,7 @@ under /Edit/Servers/Edit/Sysop Mode.
 20729
 An error occurred when converting the outgoing
 messages with ZFIDO.EXE.
-To read the exact error message, restart CrossPoint
+To read the exact error message, restart OpenXP
 with the [parameter] /df:2 and repeat the net call.@4020
 @
 20730
@@ -11725,7 +11701,7 @@ the file SCERRORS.LOG.
 20732
 Under [/Config/Modem/...] you have set a FOSSIL@299
 driver to be active, but at present no Fossil driver
-is loaded. CrossPoint will continue to use its own
+is loaded. OpenXP will continue to use its own
 Driver.
 
 See Modem FAQ in Appendix F in XPOINT.DOC
@@ -11736,7 +11712,7 @@ of a server entered in the field "send packets for"
 which no longer exists.
 @
 20736
-CrossPoint needs certain data about a QWK server
+OpenXP needs certain data about a QWK server
 before it can send QWK messages. To achieve this
 simply import any message packet from this server.
 @
@@ -11744,7 +11720,7 @@ simply import any message packet from this server.
 
 There is no standard relogin procedure for this type
 of net. You must therefore prescribe the relogin
-procedure for CrossPoint with a Script File.
+procedure for OpenXP with a Script File.
 
 See "Script Programming" in XPOINT.DOC
 @
@@ -11755,13 +11731,13 @@ wishes to the sysop.
 @
 20802
 There is no server entered for the newsgroup to be
-unsubscribed. CrossPoint does not know which server
+unsubscribed. OpenXP does not know which server
 to send the unsubscribe message to. Enter the correct
 server (E for Edit in Special mode)
 @
 20803
 The server entered for this newsgroup is no longer a
-server in CrossPoint. You may have changed to a new
+server in OpenXP. You may have changed to a new
 server, but not reassigned the newsgroups from the
 old server to a valid new one.
 
@@ -11791,7 +11767,7 @@ Message/Fileserver/...
 ^^20810
 @
 20813
-CrossPoint supports the file-list formats for
+OpenXP supports the file-list formats for
 SendZMsg, iMLS and NCB-Mail. The list must match the
 format of one of these lists <<exactly>>. NCB-Mail
 file-lists need to have been generated in "FIDO style
@@ -11822,11 +11798,11 @@ systems.
 You have entered a file list converting programme for
 the fileserver under /Edit/Systems. An error has
 occurred using this programme. Check that the
-programme is present in the CrossPoint directory or
-in the DOS path.
+programme is present in the OpenXP directory or
+in the path.
 
-If necessary, try mimicking the operation by hand
-under DOS to observe what happens.
+If necessary, try mimicking the operation manually
+to observe what happens.
 @
 20824
 The parameters entered for the file list converter
@@ -11848,7 +11824,7 @@ Before you can subscribe File Areas, you must have
 20901
 In one of the configuration files (*.BFG) for a
 server there is an invalid entry. This can occur when
-using an OLD version of CrossPoint with Config files
+using an OLD version of OpenXP with Config files
 for a newer version. Or the file may have become
 damaged.
 
@@ -11864,9 +11840,9 @@ still correct and have not somehow become changed.
 
 @
 20907
-CrossPoint was not able to find the given programme
-either in the CrossPoint directory or in the DOS
-path. Make sure the programme is available before
+OpenXP was not able to find the given programme
+either in the OpenXP directory or in the path.
+Make sure the programme is available before
 the next netcall.
 @
 20908
@@ -11949,7 +11925,7 @@ list".
 The selected file does not seem to be a node list in
 standard FIDO format. Possibly it is a node list that
 has been prepared for another point programme with a
-so-called "NodeList Compiler". CrossPoint cannot use
+so-called "NodeList Compiler". OpenXP cannot use
 such files.
 
 Make sure you get a node list in genuine original
@@ -11990,9 +11966,9 @@ mark it as such by pressing the keys W  F.
 ^^22101
 @
 22123
-CrossPoint cannot open a subdirectory with the name
-given. This means DOS has refused it, probably
-because a file of the same name already exists.
+OpenXP cannot open a subdirectory with the name
+given probably because a file of the same name al-
+ready exists.
 @
 22201
 Under /Edit/Auto Send you have entered a file to be
@@ -12020,7 +11996,7 @@ importing it "by hand" using MAGGI.EXE to get a clue.
 22207
 Before you can import a FIDO message packet from
 the AUTOEXEC directory you must have entered the
-main FIDO Server (for CrossPoint to use as a
+main FIDO Server (for OpenXP to use as a
 reference) under /Edit/Servers.
 @
 22208
@@ -12049,7 +12025,7 @@ packet. Either the packet is damaged or does not have
 the correct format for the selected server.
 @
 22604
-CrossPoint needs the file XPOINT.LOG for calculating
+OpenXP needs the file XPOINT.LOG for calculating
 the phone fees. This file is put in the directory
 given under /Config/Paths for the log files.
 
@@ -12071,10 +12047,10 @@ by pressing S, and enter a new newsgroup
 with W (hot key for "ne<<w>>")
 @
 22808
-The memory management under DOS has crashed. Perhaps
+The memory management has crashed. Perhaps
 an external programme has made a *big* mistake.
 
-Exit CrossPoint and reboot.
+Exit OpenXP and reboot.
 @
 22818
 An internal error has occurred. Report it with as
@@ -12117,7 +12093,7 @@ Message Areas are referred to as Echomail Areas. In
 UseNet, they are referred to as Newsgroups.
 
 The Message Areas are listed in the Message Areas
-overview window in CrossPoint and their titles are a
+overview window in OpenXP and their titles are a
 good indicator as to what subject they cover.
 
 To actually have some message areas, you need to
@@ -12191,12 +12167,12 @@ necessarily the same one), the link works.
 Many terminal programmes have "built in protocols"
 and you don't notice when they are being called.
 
-CrossPoint does not have it's own protocol (except
+OpenXP does not have it's own protocol (except
 in FIDO, which is special), but calls a separate
 programme (<<which you must of course have>>, in addition
-to CrossPoint) to do the work. This is more flexible.
+to OpenXP) to do the work. This is more flexible.
 
-When CrossPoint has caused the modem to call the
+When OpenXP has caused the modem to call the
 server, it makes a Log On using the data (passwords)
 and so on which you entered, and tells the server
 which Point is calling, so the server knows to ready
@@ -12206,10 +12182,10 @@ receive a (possibly empty) packet from you.
 When this point is reached, the server hands over to
 a <<transfer programme>>, telling it to *receive* a
 file. This programme readies itself. At the same time
-(because it's an agreed system), CrossPoint knows it
+(because it's an agreed system), OpenXP knows it
 has to send a file, your mail packet. Even if you
 have no mail to send, it sends a dummy packet.
-CrossPoint also calls up an external programme and
+OpenXP also calls up an external programme and
 this indicates to the other side that it wants to
 send. They understand each other, because they
 "speak" the same protocol, the transfer is made and
@@ -12226,7 +12202,7 @@ This is why you must agree with your sysop beforehand
 which protocol is to be used.
 
 Make sure the programme you are going to use is in a
-path (PATH: see DOS handbook) where XP can find it.
+path where XP can find it.
 XP even beeps to warn you if, when you exit the
 dialog box, it cannot "see" the programme you
 entered.
@@ -12242,7 +12218,7 @@ download, where you *receive*.
 4006
 <<Packers
 
-Packers are programmes external to CrossPoint, which
+Packers are programmes external to OpenXP, which
 compress the data before transfer, or decompress it
 after transfer (the server does the same).
 
@@ -12266,7 +12242,7 @@ LHA
 PKZIP and its unpacker PKUNZIP
 
 ARJ is *free* for private use, packs well, is fast
-and well known these days for DOS. It is not used
+and well known these days. It is not used
 on other [platforms] (Amiga etc.), but agree it with@4007
 your sysop if you can.
 
@@ -12280,16 +12256,16 @@ should pay for it (other platforms have it free).
 
 These programmes are known to XP, and as long as
 XP can find them (in the current directory,
-DOS PATH (see DOS handbook), or give the enter
-the full path name), all parameters are entered
-for you. XP even beeps to warn you if, when you
-exit the dialog box, it cannot "see" the packer.
+path, or give the enter the full path name), all
+parameters are entered for you. XP even beeps to
+warn you if, when you exit the dialog box, it
+cannot "see" the packer.
 
 The packer has to be called, telling it what file
 to pack and what to name the result, or which file
 to unpack (the name of the result is already in the
 packed file). This is all entered automatically for
-the packers known to CrossPoint.
+the packers known to OpenXP.
 
 @
 4007
@@ -12343,7 +12319,7 @@ If you poll with [EMSI], you can do this. It does not@158
 work with YooHoo.
 
 If you list your AKA's in your main Fido Server entry
-in CrossPoint, CrossPoint will know that it also has
+in OpenXP, OpenXP will know that it also has
 to collect and send mail packets for these addresses.
 The packets are kept separate for the different Nets.
 
@@ -12357,7 +12333,7 @@ You do <<NOT>> need to call these Servers, they just
 serve as the correct gathering point for messages for
 these Nets.
 
-CrossPoint can then keep the Areas coming from these
+OpenXP can then keep the Areas coming from these
 Nets separate and send your replies and messages into
 the correct Net. The areas are then automatically
 allocated to the correct Net. Just be careful, if you
@@ -12369,7 +12345,7 @@ Server in the appropriate boxes "AKA" and "Send
 packets for".
 
 Remember, it only works with EMSI and when
-CrossPoint makes a Netcall to your main server, it
+OpenXP makes a Netcall to your main server, it
 includes Netcall operations for these AKAs at the
 same time.
 
@@ -12478,7 +12454,7 @@ numbers, not all quite so good. Get one from
 National Semiconductor with 16550AN or 16550AFN
 (the N is important here!) on them. Some non-
 original versions are not recognised properly by
-CrossPoint.
+OpenXP.
 
 There are of course more exotic versions, special
 adapter cards, etc., but research into these is left
@@ -12503,7 +12479,7 @@ A new subject is written without "Re:", a reply with.
 
 Not all nets like it though, so be careful. MausNet
 does not use it at all, UseNet uses only a simple,
-single "Re:". CrossPoint deals with Maus and UseNet
+single "Re:". OpenXP deals with Maus and UseNet
 for you, you do not have to set it specially.
 Fido is undecided, but it is mostly NOT used.
 Z-Netz prefers the "Re^n" form to "Re:Re:Re:".
@@ -12517,7 +12493,7 @@ gather up all the "Re:" present, count them, add 1
 and produce a summary "Re^n", eg. Re^3, indicating
 this is the third level of reply.
 
-CrossPoint offers most possibilities:
+OpenXP offers most possibilities:
 
 a) Gather up the Re:'s to Re^n
 b) Just put a Re: on the front, regardless
@@ -12546,7 +12522,7 @@ recognise this and can treat quoted text specially,
 just as XP can: it can highlight it in a different
 colour for clarity and even count the quantity.
 
-Bearing this in mind, in CrossPoint you can use
+Bearing this in mind, in OpenXP you can use
 what you like but remember, you may be quoting text
 that is already itself quoted and if it is
 complicated, other readers will not be able to follow
@@ -12587,7 +12563,7 @@ miss a branch of the thread if the subject changes).
 XP asks if you want to keep the link if you change
 the subject in a reply to a message.
 
-CrossPoint notes all these "reference links" when a
+OpenXP notes all these "reference links" when a
 netcall is imported and has them ready if you want to
 see them.
 
@@ -12715,7 +12691,7 @@ taking you with it...
 4019
 <<AUTOEXEC Directory and Operation
 
-CrossPoint actions files in the AUTOEXEC directory
+OpenXP actions files in the AUTOEXEC directory
 automatically, at every XP start-up. It also does
 this about every 5 minutes (if you are in the main
 window and have not pressed a key for 30 seconds).
@@ -12724,7 +12700,7 @@ key or tool (/Config/Keys or /Config/Tools Menu)
 with only "*" for the programme and the <<"AutoExec"
 switch ON.
 
-CrossPoint actions the file according to the file
+OpenXP actions the file according to the file
 extension.
 
  .ZER  A puffer file in ZCONNECT (Z-Netz) format, it
@@ -12756,7 +12732,7 @@ extension.
        must of course be one of your servers)
        See also parameter /ips below.
 
- .PAR  A parameter file, with each line a CrossPoint
+ .PAR  A parameter file, with each line a OpenXP
        [start parameter] which is sent to XP when it@4020
        starts up, just as though it had been entered
        on the command line.
@@ -12860,7 +12836,7 @@ routine at a fixed time.
 START batch files will not be run in this case.
 
 <<Notes
-Order of events at CrossPoint start-up.
+Order of events at OpenXP start-up.
 
  1. Read in AutoExec ".OPT" parameter files
  2. Read in command line [parameters].@4020
@@ -12878,9 +12854,9 @@ Order of events at CrossPoint start-up.
 
 @
 4020
-<<Command Line Parameters for starting CrossPoint
+<<Command Line Parameters for starting OpenXP
 
-CrossPoint is started thus:
+OpenXP is started thus:
 
             XP [/Option1 /Option2 ...]
 
@@ -12898,7 +12874,7 @@ Options are:
    /gd:  selects another phone charge file (Default:
          GEBUEHR.DAT).
 
-   /j    no dumb remark when exiting CrossPoint...
+   /j    no dumb remark when exiting OpenXP...
 
    /k:X  Passes the (single) keystroke X to the
          programme, whereby X is any character.
@@ -12921,7 +12897,7 @@ Options are:
          wake you at night..
 
    /rp   Do not check TSRs
-         CrossPoint normally checks after a
+         OpenXP normally checks after a
          DOS-Shell, whether TSRs were loaded, and
          exits if yes. (It is rarely advisable to
          load TSRs in a shell). However, if you must,
@@ -12950,7 +12926,7 @@ they are carried out in the order shown here.
 In this case the LAST given is run.
 
 
-   /autostart:hhmm-hhmm  Starts CrossPoint if the
+   /autostart:hhmm-hhmm  Starts OpenXP if the
         current time is in the given time period.
         This entry is designed for the autoexec.bat
         file and starting the PC with a time switch.
@@ -12963,7 +12939,7 @@ In this case the LAST given is run.
                    the Box name.
 
    /ip:FILE   Imports the specified file name as
-              puffer as under (/XPoint/Import
+              puffer as under (/OpenXP/Import
               /Puffer). The filename may be a full
               path; the file must have a PUFFER
               format.
@@ -12981,21 +12957,21 @@ In this case the LAST given is run.
        sets the imported messages direct to "already
        read". Not necessary for /ips
 
-   /n:BOX[:hh:mm]  starts CrossPoint making a call to
+   /n:BOX[:hh:mm]  starts OpenXP making a call to
                    the given box. If the time is
                    specified, it waits to make a
                    netcall at the given time.
                    For Fido use "_" instead of ":" in
                    the box name.
 
-   /n:*    starts CrossPoint to make a  /Netcall/All.
+   /n:*    starts OpenXP to make a  /Netcall/All.
 
    /nr:BOX  makes a relogin netcall at the given box.
             The connect must already exist, and the
             box be waiting for "Username".
             (Z-Netz only)
 
-   /t:n     starts CrossPoint running Timing List
+   /t:n     starts OpenXP running Timing List
             no. "n"
 
    /r       Does a Re-Org/Messages
@@ -13025,18 +13001,18 @@ In this case the LAST given is run.
           external programme call.
 
 Instead of specifying long parameter lines when
-calling CrossPoint, you can list your favourite
+calling OpenXP, you can list your favourite
 parameters in files for the [AUTOEXEC] directory@4019
 
 @
 4021
   þ Netcall vanished?  ERROR.LOG
 If an error occurs during a netcall or some other
-automatic function, CrossPoint shows the error
+automatic function, OpenXP shows the error
 message for a few minutes then carries on. This
 prevents a whole series of unrelated tasks being
 aborted by one error. To enable tracking down the
-errors, CrossPoint writes all error messages into a
+errors, OpenXP writes all error messages into a
 file <<ERRORS.LOG>>, and often what action it took,
 like renaming files for safety. Always look in this
 file if you think something has gone wrong.
@@ -13090,7 +13066,7 @@ carried out. Toggle active on and off with "A".
 The first entry is the start and stop <<time>> for the
 activity, ie. the period during which the activity
 will be attempted. For example 10:00 to 11:59 for a
-netcall will mean CrossPoint starts attempting a
+netcall will mean OpenXP starts attempting a
 netcall at 10:00, and if not successful, will give up
 at 11:59.
 
@@ -13098,7 +13074,7 @@ If it is successful earlier, it stops anyway and does
 no more in this period.
 
 The end time may be before the start time, in which
-case CrossPoint will make 2 activities out of it.
+case OpenXP will make 2 activities out of it.
  "11:00-10:00" would be handled as:
  "00:00-10:00" and "11:00-23:59".
 
@@ -13169,7 +13145,7 @@ umfrageerg1.txt   108122 ----rw-d 31-Mai-93  18:24:04
 umfrageerg2.txt    31326 ----rw-d 31-Mai-93  18:24:24
 4 files - 1011 blocks used
 
-If the list looks like this CrossPoint can work with
+If the list looks like this OpenXP can work with
 it directly. Read it in with
 Message/Fileserver/List/Read File
 
@@ -13185,7 +13161,7 @@ If it looks like this, then enter in the field
 "converter" under your fileserver entry under
 /Edit/Systems the programme UUCP-FL1.EXE (select it
 with <F2> from the list). When you read in the file
-as above, CrossPoint will now convert it.
+as above, OpenXP will now convert it.
 
 <<        (3) a sometimes used format
 
@@ -13224,7 +13200,7 @@ the <<Nodelist>>, and contains details of each FIDO node
 
 If you wish to communicate directly with FIDO boxes
 You must have this list available, because the FIDO
-point programme (in this case CrossPoint), must check
+point programme (in this case OpenXP), must check
 against the nodelist before it makes contact.
 
 (There are also programmes for browsing this list, to
@@ -13238,7 +13214,7 @@ This list is very large, and to save everybody having
 to get it every week, each week only the
 *differences* to the last list are transported, in a
 much smaller file called a <<NODEDIFF>>. As long as you
-get this each week without fail, CrossPoint can
+get this each week without fail, OpenXP can
 update your NodeList to the latest level. But if you
 miss one, the chain is broken and you have to get a
 complete new list.
@@ -13247,7 +13223,7 @@ You can have your FIDO node (server) send you the
 nodediff each week. They are always packed with ARC.
 
 If you check the box "import diffs automatically"
-under the menu /Fido/Options, CrossPoint will
+under the menu /Fido/Options, OpenXP will
 recognise when a nodediff comes, and unpack it (make
 sure ARC is available; see /Config/External/unpacker)
 and import it automatically.
