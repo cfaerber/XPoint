@@ -715,20 +715,16 @@ var   res  : integer;
 
   procedure TestDir(d:string);
   begin
-    if not IsPath(ownpath+d) then begin
-      mkdir(ownpath+LeftStr(d,length(d)-1));
-      if ioresult<>0 then
+    if not IsPath(ownpath+d) then
+      if CreateDir(ownpath+LeftStr(d,length(d)-1)) then
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
-      end;
   end;
 
   procedure TestDir2(d:string);
   begin
-    if not IsPath(d) then begin
-      mkdir(LeftStr(d,length(d)-1));
-      if ioresult<>0 then
+    if not IsPath(d) then
+      if CreateDir(LeftStr(d,length(d)-1)) then
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
-      end;
   end;
 
 begin
@@ -1208,6 +1204,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.91  2000/12/03 14:20:33  mk
+  - mdkir -> CreateDir
+
   Revision 1.90  2000/11/22 20:56:44  fe
   Added FreeBSD paths.
 
