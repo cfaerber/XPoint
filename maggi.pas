@@ -106,6 +106,7 @@ type  charr       = array[0..65530] of char;
                  zdatum     : string[22];    { ZConnect-Format; nur auslesen }
                  pfad       : HugeString;    { Netcall-Format }
                  msgid,ref  : string[120];   { ohne <> }
+                 ersetzt    : string[120];   { ohne <> }
                  typ        : string[1];     { T / B }
                  crypttyp   : string[1];
                  groesse    : longint;
@@ -157,6 +158,7 @@ type  charr       = array[0..65530] of char;
                  { 01/2000 oh }
                  Cust1,Cust2: string[custheadlen];
                  { /oh }
+                 control    : string[150];
                end;
 
       brett  = record
@@ -1824,6 +1826,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/06/04 16:57:23  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.12  2000/05/07 19:25:16  mk
   - Anpassung an Pfad als HugeString
 

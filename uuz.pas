@@ -189,7 +189,7 @@ type  OrgStr  = string[orglen];
                   pfad       : HugeString;        { Netcall-Format }
 {$ENDIF }
                   msgid,ref  : string[midlen];{ ohne <> }
-                  ersetzt    : string[midlen];
+                  ersetzt    : string[midlen];{ ohne <> }
                   addrefs    : integer;
                   addref     : array[1..maxrefs] of string[midlen];
                   typ        : string[1];     { T / B }
@@ -254,6 +254,7 @@ type  OrgStr  = string[orglen];
                   { X-No-Archive Konvertierung }
                   xnoarchive : boolean;
                   Cust1,Cust2: string[custheadlen];
+                  control    : string[150];
 
                 end;
       charr   = array[0..65530] of char;
@@ -897,7 +898,7 @@ begin
     if ddatum<>''     then wrs('DDA: '   +ddatum);
     if ref<>''        then wrs('BEZ: '   +ref);
     for i:=1 to addrefs do wrs('BEZ: '  +addref[i]);
-    if ersetzt<>''    then wrs('ersetzt: '+ersetzt);
+    if ersetzt<>''    then wrs('ERSETZT: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
     if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
@@ -917,6 +918,10 @@ begin
     if mime.boundary<>'' then wrs('X-XP-Boundary: '+mime.boundary);
     if gateway<>''    then wrs('X-Gateway: '+gateway);
     if sender<>''     then wrs('U-Sender: '+sender);
+    if control<>''    then begin
+      if lstr(left(control,7))='cancel ' then wrs('STAT: CTL');
+      wrs('CONTROL: '+control);
+    end;
     for i:=1 to ulines do
       wrs(uline^[i]);
     wrs('X-XP-NTP: '+strs(netztyp));
@@ -1960,13 +1965,12 @@ var p,i   : integer; { byte -> integer }
       end;
   end;
 
-  procedure GetMsgid;
+  function GetMsgid:string;
   begin
     RFCRemoveComment(s0);
-    if s0[1]='<' then delete(s0,1,1);
-    if s0[length(s0)]='>' then
-      dec(byte(s0[0]));
-    hd.msgid:=s0;
+    if firstchar(s0)='<' then delfirst(s0);
+    if lastchar(s0)='>' then dellast(s0);
+    GetMsgid:=s0;
   end;
 
   procedure GetRef(s0:string);
@@ -2071,15 +2075,6 @@ var p,i   : integer; { byte -> integer }
     RFCRemoveComment(s0);
     hd.zdatum:=RFC2Zdate(s0);
     ZCtoZdatum(hd.zdatum,hd.datum);
-  end;
-
-  procedure GetBetreff(control:boolean);
-  begin
-    with hd do
-      if control or (attrib and attrControl=0) then
-        betreff:=s0;
-    if control then
-      hd.attrib:=hd.attrib or attrControl;
   end;
 
   { vollst„ndig RFC-1522-Decodierung }
@@ -2272,7 +2267,7 @@ begin
         'c': if zz='cc'           then GetKOPs else
              if zz='content-type' then getmime(GetContentType) else
              if zz='content-transfer-encoding' then getmime(GetCTencoding) else
-             if zz='control'      then GetBetreff(true)
+             if zz='control'      then control:=s0
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
@@ -2283,9 +2278,9 @@ begin
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
              else AppUline('U-'+s1);
-        's': if zz='subject'      then GetBetreff(false) else
+        's': if zz='subject'      then betreff:=s0 else
              if zz='sender'       then GetAdr(sender,drealn) else
-             if zz='supersedes'   then GetVar(ersetzt,s0) else
+             if zz='supersedes'   then ersetzt:=GetMsgid else
              if zz='summary'      then GetVar(summary,s0)
              else AppUline('U-'+s1);
         'x': if zz='x-gateway'    then gateway:=s0 else
@@ -2312,7 +2307,7 @@ begin
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
              if zz='to'           then GetEmpf else
-             if zz='message-id'   then GetMsgid else
+             if zz='message-id'   then msgid:=GetMsgid else
              if zz='organization' then organisation:=s0 else
              if zz='newsgroups'   then getnewsgroups else
              if zz='path'         then GetPath else
@@ -3574,6 +3569,14 @@ end.
 
 {
   $Log$
+  Revision 1.32  2000/06/04 16:57:23  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.31  2000/06/03 17:53:03  mk
   CL: - Verbesserte Kompatibilität mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
   - Erkennung von User-Agent

@@ -543,7 +543,7 @@ K (c) '93-98 Peter Mandrella
 27   bei Mail ebenso
 28   fragen bei Antwort-an
 29   News nicht archivieren lassen
-30   Cancel- und Ersetzt-Mails ignorieren
+30   Cancel- und Ersetzt-Nachrichten ignorieren
 #
 100  68
 101  Adre·einstellungen (ZCONNECT / RFC)
@@ -876,7 +876,7 @@ K (c) '93-98 Peter Mandrella
 338  Puffer ÅberprÅfen...     ~
 339  Brettindex wird angelegt...     %
 340  Brettindex Åberarbeiten ...     %
-341  Cancel-/Ersetzt-Nachrichten bearbeiten ...~
+341  Steuernachrichten bearbeiten ...~
 342  Seitenvorschub nach jeder Nachricht
 343  <kein Betreff>
 344  Auch gehaltene Nachrichten lîschen

@@ -112,12 +112,13 @@ var x,y      : byte;
     forcepfadbox: boolean;
     sysbetreff  : string[50];  { Betreff von Changesys/getsys }
     IsGelesen   : boolean;
-    cancelfile  : text;
-    cancels     : integer;
+    cmessagefile:text;         { Datei fÅr Controlmessages (Cancels/Supersedes) }
+    num_cmessages : integer;   { Anzahl Controlmessages (Cancels/Supersedes) }
     orgempf  : string[AdrLen];
     mbflags  : longint;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
+    cust_header : custheadstr;
 
   function puffer_ok:boolean;
   var ok : boolean;
@@ -201,7 +202,7 @@ var x,y      : byte;
     LeftAbsender:=(left(lstr(hdp^.absender),length(s)+1+length(pollbox))=lstr(s+'@'+pollbox));
   end;
 
-  procedure CancelMsg(var id,abs:string);
+  procedure bearbeiteMsg(var id,abs,sender:string; cancel:boolean);
   var crc  : longint;
       hdp2 : headerp;
       hds  : longint;
@@ -214,62 +215,105 @@ var x,y      : byte;
       b:=1;  dbWriteN(mbase,mb_gelesen,b);
       b:=2;  dbWriteN(mbase,mb_halteflags,b);   { gelîscht }
       dbReadN(mbase,mb_unversandt,b);
-      b:=b or 128;   { gecancelt }
+      b:=b or 128;                              { gecancelt }
       dbWriteN(mbase,mb_unversandt,b);
     end;
 
+    { FÅr die Bearbeitung von Cancel-Nachrichten wurde u.a. der folgende
+      Abschnitt aus RFC 1036 zu Grunde gelegt:
+
+      "Only the author of the message or the local news administrator is
+       allowed to send this message.  The verified sender of a message is
+       the "Sender" line, or if no "Sender" line is present, the "From"
+       line.  The verified sender of the cancel message must be the same as
+       either the "Sender" or "From" field of the original message.  A
+       verified sender in the cancel message is allowed to match an
+       unverified "From" in the original message." }
+
+    function okay:boolean;
+    begin
+      okay:=false;
+      if sender<>'' then
+        okay:=((hdp2^.absender=sender) or (hdp2^.cust1=sender)) and (hdp2^.msgid=id)
+      else
+        okay:=(hdp2^.absender=abs) or (hdp2^.cust1=abs) and (hdp2^.msgid=id);
+    end;
+
   begin
-    if (pos(reverse('nolybab!'),hdp^.pfad)>0) or
-       (pos(reverse('lebabr!'),hdp^.pfad)>0) then
-      exit;
+    if cancel and ((pos(reverse('nolybab!'),hdp^.pfad)>0) or
+                   (pos(reverse('lebabr!'),hdp^.pfad)>0)) then exit;
     if left(id,1)='<' then delfirst(id);
     if right(id,1)='>' then dellast(id);
     if cpos('@',id)=0 then exit;
     crc:=MsgidIndex(id);
+    new(hdp2);
+    if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
     dbSeek(bezbase,beiMsgId,dbLongStr(crc));
-    if dbFound then begin
-      new(hdp2);
-      hdp2^.msgid:='';
-      mrec:=dbRecno(mbase);
-      repeat
-        rec:=dbReadInt(bezbase,'MsgPos');
-        if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
-          dbGo(mbase,rec);
-          Readheader(hdp2^,hds,false);
+    if dbFound then
+      while (not dbEOF(bezbase)) and (dbReadInt(bezbase,'msgid')=crc) do begin
+        repeat;
+          hdp2^.msgid:='';
+          rec:=dbReadInt(bezbase,'MsgPos');
+          if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
+            dbGo(mbase,rec);
+            Readheader(hdp2^,hds,false);
           end;
-        dbNext(bezbase);
-      until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
-      if (hdp2^.msgid=id) and (hdp2^.absender=abs) then DelMsg;
-      dbGo(mbase,mrec);
-      dispose(hdp2);
+          dbNext(bezbase);
+        until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
+        if okay then DelMsg; { zu lîschende/zu ersetzende Nachricht lîschen }
       end;
-    DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'lîschen' }
+    dispose(hdp2);
+    if cancel then begin
+      dbGo(mbase,mrec);
+      DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'lîschen' }
+    end;
   end;
 
-  procedure cancelmsgs;
+  procedure bearbeite_cancels_supersedes;
   var id : string[MidLen];
       abs: string[AdrLen];
-      n  : longint;
+      sender :custheadstr;
+      str: string[20];
       rec: longint;
+      n  : longint;
+      l  : integer;
   begin
-    reset(cancelfile);
+    reset(cmessagefile);
     n:=0;
-    while not eof(cancelfile) do begin
-      inc(n);
-      { write(#13,getres(341),n); }
-      readln(cancelfile,rec);
-      dbGo(mbase,rec);
-      readln(cancelfile,id);
-      readln(cancelfile,abs);
-      CancelMsg(id,abs);
+    FWrt(x+2,y+6,getres(341)); { 'Bearbeite Steuernachrichten...' }
+    l:=Length(getres(341));
+    while not eof(cmessagefile) do begin
+      Inc(n);
+      FWrt(x+2+l,y+6,strs((n * 100) div num_cmessages)+'%');
+      readln(cmessagefile,str);
+      if str='cancel' then begin
+        readln(cmessagefile,rec);
+        dbGo(mbase,rec);
+        readln(cmessagefile,id);
+        readln(cmessagefile,abs);
+        readln(cmessagefile,sender);
+        bearbeiteMsg(id,abs,sender,true)
+      end else begin
+        readln(cmessagefile,id);
+        readln(cmessagefile,abs);
+        readln(cmessagefile,sender);
+        bearbeiteMsg(id,abs,sender,false);
       end;
-    close(cancelfile);
+    end;
+    close(cmessagefile);
+    FWrt(x+2+l,y+6,getres2(324,7)); { 'fertig.' }
   end;
 
   function IsCancelMsg:boolean;
   begin
     with hdp^ do
-      IsCancelMsg:=(attrib and attrControl<>0) and (lstr(left(betreff,7))='cancel ');
+      IsCancelMsg:=(attrib and attrControl<>0) and
+                   (lstr(left(control,7))='cancel ');
+  end;
+
+  function isSupersedesMsg:boolean;
+  begin
+    isSupersedesMsg:=(hdp^.ersetzt<>'');
   end;
 
   function IsSupportCfg:boolean;
@@ -362,12 +406,22 @@ var x,y      : byte;
         xp6.forcebox:='';
         end;
 
-      if IsCancelMsg then begin
-        writeln(cancelfile,dbRecno(mbase));
-        writeln(cancelfile,trim(mid(betreff,8)));
-        writeln(cancelfile,absender);
-        inc(cancels);
-        end;
+      if isSupersedesMsg and (not ignoreSupCancel) then begin
+        writeln(cmessagefile,'supersedes');
+        writeln(cmessagefile,ersetzt);
+        writeln(cmessagefile,absender);
+        writeln(cmessagefile,cust1);
+        inc(num_cmessages);
+      end;
+
+      if IsCancelMsg and (not ignoreSupCancel) then begin
+        writeln(cmessagefile,'cancel');
+        writeln(cmessagefile,dbRecno(mbase));
+        writeln(cmessagefile,trim(mid(control,8)));
+        writeln(cmessagefile,absender);
+        writeln(cmessagefile,cust1);
+        inc(num_cmessages);
+      end;
 
       if IsSupportCFG then
         XRead(SupportCfg,false);
@@ -533,7 +587,7 @@ var x,y      : byte;
     dbRestartHU(bezbase);
     dbFlush(bezbase);
     close(f);
-    FWrt(x+3+length(mstr),y+5,'100%');
+    Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
   end;
 
   procedure wrll(l:longint);
@@ -576,9 +630,9 @@ begin
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
   if (zconnect) then
-    msgbox(45,8,getres(333),x,y)        { 'Puffer einlesen' }
+    msgbox(45,9,getres(333),x,y)        { 'Puffer einlesen' }
   else
-    msgbox(45,9,getres(333),x,y);
+    msgbox(45,10,getres(333),x,y);
   attrtxt(col.colmbox);
   assign(f,puffer);
   reset(f,1);
@@ -673,14 +727,19 @@ begin
     rewrite(pfile,1);
     llanz:=0;
     seek(f,0);
-    assign(cancelfile,TempS(msgcount*40+2048));
-    rewrite(cancelfile);
-    cancels:=0;
+
+    assign(cmessagefile,TempS(msgcount*40+2048));
+    rewrite(cmessagefile);
+    num_cmessages:=0;
 
     adr:=0;
     dat:=Zdate;
     today:=ixDat(dat);
     dbStopHU(mbase);
+
+    cust_header:=mheadercustom[1];
+    mheadercustom[1]:='U-Sender';  { 'U-Sender'-Header erkennen }
+
     repeat
       empfnr:=1;
       junk:=false;
@@ -1011,16 +1070,20 @@ begin
       Bezugsverkettung;
     close(pfile);
     erase(pfile);
-    close(cancelfile);
-    if cancels>0 then
-      CancelMsgs;
-    erase(cancelfile);
+
+    close(cmessagefile);
+    if not ignoreSupCancel then
+      bearbeite_cancels_supersedes;
+    erase(cmessagefile);
 
     if not replace_ed then write_lastcall(dat);
     FlushClose;
     close(brettlog);
     close(userlog);
     puffereinlesen:=true;
+
+    mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
+
     end   { if Puffer_ok }
 
   else begin
@@ -1090,6 +1153,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/06/04 16:57:25  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.19  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

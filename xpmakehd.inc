@@ -228,7 +228,8 @@ var i,res : integer;
       p:=cpos(' ',line);
       if left(line,p-1)='EB' then hd.attrib:=hd.attrib or attrIsEB else
       if left(line,p-1)='PM-REPLY' then hd.pm_reply:=true else
-      if left(line,p-1)='NOKOP' then hd.nokop:=true;
+      if left(line,p-1)='NOKOP' then hd.nokop:=true else
+      if left(line,p-1)='CTL' then hd.attrib:=hd.attrib or attrControl;
       line:=ltrim(mid(line,p+1));
     until line='';
   end;
@@ -510,6 +511,8 @@ begin
 {            if id = 'X_C'    then xpmail:=true else }
             if id = 'F-TO'   then LRead(fido_to,36) else
             if id = 'VER'    then GetName(vertreter,dummy) else
+            if id = 'CONTROL' then LRead(control,150) else
+            if id = 'ERSETZT' then LRead(ersetzt,MidLen) else
 
             if id[1]='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset,25) else
@@ -601,6 +604,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/06/04 16:57:26  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.13  2000/06/04 15:13:32  mk
   - Speichercheck in 32 Bit Version korrigiert
 

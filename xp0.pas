@@ -310,6 +310,8 @@ const  {$IFDEF DPMI}
        hdf_Cust1  = 29;
        hdf_Cust2  = 30;
        { /oh }
+       hdf_ersetzt = 33;
+       hdf_control = 34;
 
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
@@ -438,6 +440,7 @@ type   textp  = ^text;
                   orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
                   pfad       : Hugestring;    { Netcall-Format               }
                   msgid,ref  : string[midlen];{ ohne <>                      }
+                  ersetzt    : string[midlen];{ ohne <>                      }
                   refanz     : integer;       { Anzahl BEZ-Zeilen            }
                   typ        : string[1];     { T / B                        }
                   crypttyp   : string[1];     { '' / T / B                   }
@@ -488,6 +491,7 @@ type   textp  = ^text;
                   { 01/2000 oh }
                   Cust1,Cust2: CustHeadStr;
                   { /oh }
+                  control    : string[150];
                 end;
        headerp = ^header;
 
@@ -839,6 +843,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        showungelesen : boolean = false;   { Bretter mit ungel. Nachrichten auch markieren }
        { /oh }
 
+       ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
+
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
        ub_username,ub_adresse,ub_kommentar,ub_adrbuch,ub_pollbox,
@@ -1177,6 +1183,14 @@ implementation
 end.
 {
   $Log$
+  Revision 1.52  2000/06/04 16:57:24  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.51  2000/06/03 19:30:25  jg
   - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
 

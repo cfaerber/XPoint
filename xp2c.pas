@@ -329,10 +329,11 @@ begin
   maddbool(3,15,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
   { /robo }
   maddbool(3,16,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
-  maddint (3,18,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),18,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddbool(3,17,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
+  maddint (3,19,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
+  maddtext(9+length(getres2(252,24)),19,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
   { 20.01.2000 robo }
-  maddbool(3,19,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddbool(3,20,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   { /robo }
   freeres;
   readmask(brk);
@@ -1480,6 +1481,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/06/04 16:57:25  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.37  2000/05/24 09:16:47  mk
   - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
 

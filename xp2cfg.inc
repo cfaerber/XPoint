@@ -1009,6 +1009,7 @@ begin
   writeln(t,'PGP-Version=',PGPVersion);
   writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   { /oh }
+  writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
   writeln(t,'DefaultNokop=',jnf(defaultnokop));
@@ -1651,7 +1652,8 @@ begin
           getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin) or
-          getx(su,  'delviewtmp',delviewtmp))
+          getx(su,  'delviewtmp',delviewtmp) or
+          getx(su,  'ignoresupcancel',ignoreSupCancel))
         then
           tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
@@ -1810,6 +1812,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.60  2000/06/04 16:57:25  sv
+  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
+    (RFC/ZConnect)
+  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
+  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
+    macht in C/O/N eingefuehrt
+  - Anzeige beim Puffereinlesen leicht ueberarbeitet
+
   Revision 1.59  2000/06/03 19:30:25  jg
   - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
 
