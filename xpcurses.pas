@@ -80,10 +80,10 @@ const
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
-		  Sequenz : String;
-		  ncCode  : Integer;
-		  DosCode : String[2];
-	       end = (	  
+                  Sequenz : String;
+                  ncCode  : Integer;
+                  DosCode : String[2];
+               end = (
       (Sequenz: #27#91#54#94; ncCode: 512; DosCode : #0#118), { Ctrl-PgDn }
       (Sequenz: #27#91#53#94; ncCode: 513; DosCode : #0#132), { Ctrl-PgUp }
       (Sequenz: ncad; ncCode: Key_BREAK;     DosCode : #3),
@@ -327,7 +327,7 @@ uses
   keys,
   typeform;             { ISOTab }
 
-   
+
 const
    { standard file descriptors }
    STDIN  = 0;
@@ -777,26 +777,28 @@ function Readkey: char;
   begin
      Result := '';
      for I := 0 to lastESCSeq do
-	if Code = keyESCSeqs[I].ncCode then
-	begin
-	   Result := keyESCSeqs[I].DosCode;
+        if Code = keyESCSeqs[I].ncCode then
+        begin
+           Result := keyESCSeqs[I].DosCode;
 {$IFDEF Debug}
            if __isopen then
+           begin
              Write(__F,FormatDateTime('hh:nn:ss',Now),
-		     Format(' Translating KeySequence: [%d] to ', [Code]));
-	     for I := 1 to Length(Result) do
-      	       write(__F, '[', Ord(Result[I]), ']');
-  	       writeln(__F);
-{$ENDIF}	   
-	   exit;
-	end;
+                     Format(' Translating KeySequence: [%d] to ', [Code]));
+             for I := 1 to Length(Result) do
+               write(__F, '[', Ord(Result[I]), ']');
+               writeln(__F);
+           end;
+{$ENDIF}
+           exit;
+        end;
   end;
 
 
 var
-  b	 : boolean;
-  l	 : longint;
-  I	 : Integer;
+  b      : boolean;
+  l      : longint;
+  I      : Integer;
   DosSeq : String;
 begin
   if not __isInit then InitXPCurses;
@@ -807,9 +809,9 @@ begin
 {$IFDEF Debug}
            if __isopen then
              Writeln(__F,FormatDateTime('hh:nn:ss',Now),
-		     Format(' Key pressed: [%d] = ''%c''', [l, chr(l)]));
-{$ENDIF}	   
-   
+                     Format(' Key pressed: [%d] = ''%c''', [l, chr(l)]));
+{$ENDIF}
+
   if (l > 255) then
   begin
 {   if l = 27 then
@@ -817,16 +819,16 @@ begin
        z := #27;
        while keypressed do
        begin
-	  c := readkey;
-	  I := Succ(Length(z));
-	  SetLength(z, I);
-	  z[I] := c;
+          c := readkey;
+          I := Succ(Length(z));
+          SetLength(z, I);
+          z[I] := c;
        end;
        z := TranslateESCSeq(z);
        c := z[2];
     end;
     c:= #27;
-}    
+}
 
      DosSeq := TranslateESCSeq(l);
 
@@ -1350,13 +1352,13 @@ var
   procedure NCursesRegisterKeys;
   var
      RegStr : String;
-     I	    : Integer;
+     I      : Integer;
   begin
     for I := 0 to lastESCSeq do
        if (keyESCSeqs[I].Sequenz <> ncad) then
        begin
-	 RegStr := keyESCSeqs[I].Sequenz+#0;
-	 define_key(@RegStr[1], keyESCSeqs[I].nccode);
+         RegStr := keyESCSeqs[I].Sequenz+#0;
+         define_key(@RegStr[1], keyESCSeqs[I].nccode);
        end;
   end;
 begin
@@ -1392,7 +1394,7 @@ begin
     win.x:= 0; win.y:= 0;
     win.isRel:= false;
 
-    NCursesRegisterKeys; 
+    NCursesRegisterKeys;
 (*
      { define the the alt'd keysets for ncurses }
     { alt/a .. alt/z }
@@ -1411,7 +1413,7 @@ begin
     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
 *)
 {$ifdef Debug}
-    AssignFile(__F,'.curses.log');
+    AssignFile(__F,'~/.curses.log');
     Rewrite(__F);
     if ioresult=0 then begin
       __isopen:= true;
@@ -1480,6 +1482,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/04/11 07:00:22  ml
+  - fixed debugfilenotopen-RuntimeError
+
   Revision 1.38  2001/04/10 16:19:35  ml
   - disabled shitty blinking-bit till we find another solution
 
