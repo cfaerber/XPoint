@@ -71,7 +71,7 @@ procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
 procedure Iso1ToIBM(var data; size:word);
 procedure IBMToIso1(var data; size:word);
-function  TxtSeek(adr:pointer; size:word; var key:string; igcase,umlaut:boolean):boolean;
+function  TxtSeek(adr:pointer; size:word; var key:shortstring; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
@@ -152,7 +152,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
+function TxtSeek(adr:pointer; size:word; var key:shortstring;igcase,umlaut:boolean):
          boolean;assembler;
 asm
          push ebp
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.43  2000/08/08 00:02:55  mk
+  - TxtSeek auf Shortstring umgestellt
+
   Revision 1.42  2000/07/26 09:29:37  mk
   - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
 
