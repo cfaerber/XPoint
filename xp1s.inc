@@ -142,7 +142,8 @@ var p,p0,ml : byte;
     qn,pdiff: integer;
 begin
   listhicol:=col.collisthigh;
-  if line<=exthdlines then
+  // highlight header lines
+  if line<exthdlines then
     listcolor:=listheadercol
   else if s='' then
     listcolor:=0
@@ -414,6 +415,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2000/12/26 15:40:08  mk
+  - fixed highlight list header
+
   Revision 1.44  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 
