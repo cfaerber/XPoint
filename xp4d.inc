@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XP4.PAS - Anzeigeroutinen }
 
@@ -75,6 +76,8 @@ var
     hflags,gelesen,unvers : byte;
     ulen,blen             : byte;
 
+    over80  : integer;
+
   function siz:string;
   begin
     if size<10000 then siz:=strsn(size,5)
@@ -94,26 +97,27 @@ var
   end;
 
 begin  { __ Suchmarke }
+  over80:= ScreenWidth-80;                                      { Bildschirm > Spalten }
   case aktdispmode of
    -1,0 : begin
             s:= dbReadStr(bbase,'brettname');
             komm:= dbReadStr(bbase,'kommentar');
-            if left(s,3)='$/T' then begin
+            if left(s,3)='$/T' then begin                       { Trennzeile ? }
               if komm='' then
-                dispbuf[y]:='   '+dup(ScreenWidth-4,s[4])+' '
+                dispbuf[y]:='   '+dup(ScreenWidth-4,s[4])+' '   { ohne Kommentar }
               else
                 case trennkomm of
-                  1 : dispbuf[y]:='   '+komm+' '+dup(ScreenWidth-5-length(komm),s[4])+' ';
-                  2 : begin
+                  1 : dispbuf[y]:='   '+komm+' '+dup(ScreenWidth-5-length(komm),s[4])+' '; { links }
+                  2 : begin                                                                { mitte }
                         dispbuf[y]:='   '+dup((ScreenWidth-6-length(komm))div 2,s[4])+' '+
                                      komm+' ';
                         dispbuf[y]:=dispbuf[y]+dup(ScreenWidth-1-length(dispbuf[y]),s[4])+' ';
                       end;
-                  3 : dispbuf[y]:='   '+dup(ScreenWidth-5-length(komm),s[4])+' '+komm+' ';
+                  3 : dispbuf[y]:='   '+dup(ScreenWidth-5-length(komm),s[4])+' '+komm+' ';  { rechts }
                 end;
               markflag[y]:=2;
               end
-            else begin
+            else begin                                           { keine Trennzeile }
               dbReadN(bbase,bb_LDatum,dat);
               dbReadN(bbase,bb_flags,flags);
               pbox:= dbReadNStr(bbase,bb_pollbox);
@@ -121,7 +125,7 @@ begin  { __ Suchmarke }
               markc:=iifc(markflag[y]<>0,suchch,' ');
               brettform(s,flags,false);
               if not UserSlash and (s[1]<'A') then delete(s,2,1);
-              if not dispext then begin
+              if not dispext then begin                         { erweiterte Anzeige s ? }
                 case readmode of     { s. auch XP4.BRETTOK() }
                   0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
                   1 : c:=markc+iifs(flags and 2<>0,#16' ','  ');
@@ -130,28 +134,43 @@ begin  { __ Suchmarke }
                     then c:=markc+iifs(not smdl(dat,readdate),#$af' ',#$1a' ')
                     else c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
                 end;
-                if length(s)>43 then
-                  if length(s)>70 then
-                    dispbuf[y]:=c+forms(copy(s,2,76),77)
+                if length(s)>43 then                    { Brettbersicht in Normal mode }
+
+                  if ( length(komm) > 1 ) then                  { Kommentar vorhanden ?}
+                    dispbuf[y]:=c+                                                  {  3 }
+                                + forms(copy(s,2,100)+'_', 60 + over80 div 2)+' '   {+60 +1 }
+                                + forms( komm , 37 + over80 div 2)                  {+27 }
                   else
-                    dispbuf[y]:=c+copy(s,2,70)+' '+forms(komm,77-length(s))
-                else
-                  dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,ScreenWidth-80+33);
-                end
-              else begin
+                     dispbuf[y]:=c+forms(copy(s,2,76+over80),77+over80)
+
+                else                                            { length(s)>43 then }
+                             { 3             + 44                + 33 = 80 }
+                  dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,over80+33);
+
+
+                end {if not dispext then}
+
+              else begin                                        { erweiterte Anzeige }
                 dbReadN(bbase,bb_haltezeit,hzeit);
                 dbReadN(bbase,bb_gruppe,grnr);
-                dispbuf[y]:=markc+iifc(dat<>0,' ','-')+iifc(flags and 8<>0,'X',' ')+
-                             iifc(dbReadStr(bbase,'adresse')<>'',
-                                  iifc(flags and 32=0,'*','O'),' ')+
-                             iifc(odd(flags),'N',' ')+hz(hzeit)+'  '+
-                             forms(pbox,9)+strsn(grnr,4)+' '+
-                             forms(copy(s,2,37),38)+forms(komm,17);
+                dispbuf[y]:=markc+                                      {  1}
+                            iifc(dat<>0,' ','-')                        { +1}
+                            +iifc(flags and 8<>0,'X',' ')               { +1}
+                            +iifc(dbReadStr(bbase,'adresse')<>'',
+                                  iifc(flags and 32=0,'*','O'),' ')     { +1}
+                            +iifc(odd(flags),'N',' ')                   { +1}
+                            +hz(hzeit)                                  { +4}
+                            +'  '                                       { +1}
+                            +forms(pbox,9)                              { +9}
+                            +strsn(grnr,4)                              { +4}
+                            +' '                                        { +1}
+                            +forms(copy(s,2,37),38+over80 div 2)        {+38}
+                            +forms(komm,17+ over80 div 2);              {+17}
                 end;
               end;
           end;
     1,2,
-    3,4 : begin { USERLISTE }
+    3,4 : begin { USERLISTE } { mark }
 
            { L„ngen:
              FLAGS   4
@@ -399,7 +418,7 @@ begin  { __ Suchmarke }
 
               { (B)etreff }
               taus[pos('B',MsgFeldTausch)] :=
-                forms(s1,iif(showmsgdatum,21+(ScreenWidth-80),27+(ScreenWidth-80)));
+                forms(s1,iif(showmsgdatum,21+over80,27+over80));
 
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
 
@@ -576,4 +595,9 @@ begin
     end;
 end;
 
+{
+  $Log$
+  Revision 1.34  2000/08/03 10:42:30  mk
+  MO: - Anpassungen fuer mehr als 80 Spalten
 
+}
