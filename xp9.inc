@@ -224,7 +224,7 @@
 
     maddstring(3,14,getres2(920,88),PPPClient,41,60,'');    { Client-Aufruf }
     mappsel(false,'UKAD.BAT /M $CLPATH $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
-     'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+XPNEWS.EXE $CONFIGùSTART /W $CLPATH+XPNEWS.EXE $CONFIG');
+     'UKA_PPP.BAT /M $CLPATH $CONFIGùstart /w $CLPATH+XPNEWS.EXE $CONFIGù$CLPATH+XPNEWS.EXE $CONFIG');
     msetvfunc(pppclienttest);
 
     maddstring(3,16,getres2(920,89),PPPAddServers,41,60,ValidDirCh);   { 'Zus„tzliche Server' }
@@ -829,14 +829,15 @@
 
       if Copy(ustr(cfgfile), 1, 5) = ('<XP>' + DirSepa) then
         cfgfile := ownpath + Copy(cfgfile, 6, Length(cfgfile)-5);
+      if LFNEnabled then cfgfile := GetLongName(cfgfile);
       pushhp(30129);
       { 'Externe Konfigurationsdatei laden' }
       if ReadExtCfgFilename(getres2(927,10),cfgfile,fullClientDir,true) then
       begin
-        if LFNEnabled then cfgfile := GetShortName(cfgfile);
         if not exist(cfgfile) then
           if not ReadJN(getres(2725),false) then exit; { 'Datei nicht vorhanden - neu anlegen' }
         EditFile(cfgfile,false,false,0,false);
+        if LFNEnabled then cfgfile := GetShortName(cfgfile);
         fsplit(cfgfile,dir,name,ext);
         if ustr(dir) = ustr(fullClientDir) then
           cfgfile := name + ext
@@ -1859,6 +1860,11 @@
 
 {
   $Log$
+  Revision 1.10.2.39  2001/08/01 15:51:41  my
+  - EditExtern: If LFNs are enabled, LFN is displayed in input field
+    and Editor (but as before, SFN is stored in .BFG)
+  - changed order of "Client call" selection list (<F2>)
+
   Revision 1.10.2.38  2001/07/31 15:36:01  my
   - implemented is_emailaddress in NameRead
   - RFC/Client: implemented "External Settings" under
