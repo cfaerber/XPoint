@@ -276,7 +276,7 @@ end;
 { Es wird dei INT_NR des aktuellen Datensatzes der mbase verwendet }
 
 function TXPServer.CreateMessageID(inr: Longint):string;
-const rev = 'C';   { Revision des MsgID-Algorithmus }
+const rev = 'D';   { Revision des MsgID-Algorithmus }
 var t,m,j   : smallword;
     h,mm,s,ss: smallword;
     dat     : xpWord;
@@ -284,7 +284,8 @@ var t,m,j   : smallword;
     rand    : xpWord;
     csum    : xpWord;
     _domain : string;
-    local_part : string[20];
+    local_part : string;
+    i       : integer;
 
 begin
   if DontCreateMessageIDs or (MessageIdType=0) then
@@ -320,12 +321,22 @@ begin
                           else _domain:=rev+'@'+fqdn;
         else
           if netztyp in netsRFC then
+          begin
             if fqdn='' then 
-                _domain := rev+'@'+pointname+domain
-              else
-                _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
-            else
+            begin
+              _domain := rev+'%';
+              for i := 1 to Length(username) do 
+                if username[i] in ['A'..'Z','a'..'Z','0'..'9','.','-','_'] then
+                  _domain := _domain+username[i]
+                else
+                  _domain := _domain+'%'+hex(ord(username[i]),2);
+            end else
               _domain:=rev+'@'+fqdn;
+
+          end else
+          begin
+            _domain := rev+'@'+pointname+domain
+          end;
         end;
 
         local_part:=b30(longint(dat) shl 14+count shr 2)+
@@ -339,6 +350,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.4  2002/12/21 19:00:37  cl
+// - fixed Message-ID generation for Non-UUCP RFC net types
+//
 // Revision 1.3  2002/12/21 05:38:03  dodi
 // - removed questionable references to Word type
 //
