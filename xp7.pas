@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Netcall-Teil }
@@ -35,8 +36,6 @@ function  AutoMode:boolean;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurÅckgesetzt }
       maxaddpkts   = 8;
-      NetcallSpecialMax = 19;          { siehe auch xp10.inc }
-
 
       { In abox stehen nur die Boxen fÅr die Daten zu verschicken sind }
       { (anzahl StÅck), in akabox alle eingetragenen Mitsende-Boxen    }
@@ -57,7 +56,6 @@ type  addpktrec    = record
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
     TempPPPMode     : boolean;
-
 
 implementation  {---------------------------------------------------}
 
@@ -112,7 +110,7 @@ var bfile      : string[14];
     ppfile     : string[14];
     eppfile    : string[14];
     user       : string[30];
-    ende   : boolean;
+    ende       : boolean;
     d          : DB;
     f          : file;
     retries    : integer;
@@ -166,6 +164,8 @@ var bfile      : string[14];
     isdn       : boolean;
     orgfossil  : boolean;
     jperror    : boolean;
+
+    BoxFehler  : string;          { RÅckgabe von 'BoxParOk' }
 
 label abbruch,ende0;
 
@@ -427,7 +427,7 @@ begin                  { of Netcall }
   dbSeek(d,boiName,ustr(box));
   if not dbFound then begin
     dbClose(d);
-    trfehler1(709,box,60);   { 'unbekannte Box:  %s' }
+    trfehler1(709,box,60);             { 'unbekannte Box:  %s' }
     exit;
     end;
   dbRead(d,'dateiname',bfile);
@@ -535,8 +535,9 @@ begin                  { of Netcall }
     if once then
       RedialMax:=NumCount;
     if net then begin
-      if BoxParOk<>'' then begin
-        tfehler(box+': '+BoxParOk+getres(702),esec);   { ' - bitte korrigieren!' }
+      BoxFehler:=BoxParOk;
+      if BoxFehler<>'' then begin
+        tfehler(box+': '+BoxFehler+getres(702),esec);   { ' - bitte korrigieren!' }
         exit;
         end;
       if (logintyp in [ltMagic,ltQuick,ltGS,ltMaus]) and not existBin(MaggiBin)
@@ -1517,12 +1518,12 @@ begin
     AutoSend(ParSendbuf);
   if ParNetcall<>'' then
     if ParNSpecial then
-      if (ival(ParNetcall) >= 1) and (ival(ParNetcall) <= 20) then
-        AutoTiming(-1,true,false,true,ival(ParNetcall)-1)  { Netcall/Spezial }
+      if ival(ParNetcall) in [1..20] then
+        AutoTiming(-1,true,false,true,ival(ParNetcall))    { Netcall/Spezial }
       else
         trfehler1(749,ParNetcall,60) { '/nsp: UngÅltige Zeilenangabe fÅr NETCALL.DAT: %s' }
     else if ParNetcall='*' then
-      AutoTiming(-1,true,false,false,0)                    { Netcall/Alle }
+      AutoTiming(-1,true,false,false,1)                    { Netcall/Alle }
     else if not isbox(ParNetcall) then
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
     else
@@ -1531,7 +1532,7 @@ begin
       else
         Netcall_at(ParNCtime,ParNetcall);
   if ParTiming>0 then begin
-    AutoTiming(ParTiming,false,false,false,0);
+    AutoTiming(ParTiming,false,false,false,1);
     if quit then automode:=true;
     end;
   if ParDupeKill then
@@ -1570,6 +1571,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.20  2001/11/20 23:20:20  my
+  MY:- Netcall-Testroutine (BoxParOk) gefixt (wird nur noch einmal
+       durchlaufen)
+  MY:- Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt dieselben
+       Routinen wie die Multiserverbetrieb-Konfiguration; ÅberflÅssige
+       Routinen und Deklarationen entfernt.
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.16.2.19  2001/10/16 18:36:01  my
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
   ------------------------------------------------------------------------
