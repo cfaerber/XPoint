@@ -318,6 +318,7 @@ var f,f2     : file;
     boxfile  : string;
     username : string;  { eigener Username                    }
     pointname: string;
+    email    : string;
     _brett   : string;
     mapsname : string;
     senddate : string;  { mit 'D' zeitversetzt absenden       }
@@ -1421,6 +1422,11 @@ finalization
 
 {
   $Log$
+  Revision 1.52  2002/05/26 12:26:12  ma
+  - using "email" db field instead of "user" db field for email now
+    email may be longer than 30 chars now
+    EMAIL ADDRESS HAS TO BE RE-ENTERED IN SERVER SETTINGS
+
   Revision 1.51  2002/05/20 15:23:10  cl
   - BUGFIX: subject truncated (preliminiary fix)
 

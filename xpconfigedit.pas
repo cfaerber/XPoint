@@ -727,9 +727,12 @@ var d         : DB;
       end;
     case typ of
       1 : begin     { Boxen }
-            s2 := dbReadStr(d,'Username');
-            s3 := dbReadStr(d,'Kommentar');
             dbRead(d,'Netztyp',nt);
+            if nt in netsRFC then
+              s2 := dbReadStr(d,'email')
+            else
+              s2 := dbReadStr(d,'Username');
+            s3 := dbReadStr(d,'Kommentar');
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
             {$IFDEF Unix }
@@ -2536,6 +2539,11 @@ end;
 
 {
   $Log$
+  Revision 1.47  2002/05/26 12:26:11  ma
+  - using "email" db field instead of "user" db field for email now
+    email may be longer than 30 chars now
+    EMAIL ADDRESS HAS TO BE RE-ENTERED IN SERVER SETTINGS
+
   Revision 1.46  2002/05/25 07:24:44  mk
   - UserName has only 30 characters
 

@@ -205,7 +205,7 @@ var Count: Integer;
             hdp.real_box:=box;
           end;
       8 : begin
-            hdp.absender:=iifs(sData.SenderMail='',username,sData.SenderMail);
+            hdp.absender:=iifs(sData.SenderMail='',email,sData.SenderMail);
             hdp.real_box:=box;
           end;
     end;
@@ -777,6 +777,11 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.4  2002/05/26 12:26:11  ma
+// - using "email" db field instead of "user" db field for email now
+//   email may be longer than 30 chars now
+//   EMAIL ADDRESS HAS TO BE RE-ENTERED IN SERVER SETTINGS
+//
 // Revision 1.3  2002/05/20 15:22:44  cl
 // - BUGFIX: newly created messages were on hold even when they should not
 //

@@ -817,6 +817,7 @@ begin
   else
     username:=forceabs;
   PointName := dbReadStr(d,'pointname');
+  EMail := dbReadStr(d,'email');
   BoxFile := dbReadStr(d,'dateiname');
   Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
@@ -1120,6 +1121,11 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/05/26 12:26:12  ma
+  - using "email" db field instead of "user" db field for email now
+    email may be longer than 30 chars now
+    EMAIL ADDRESS HAS TO BE RE-ENTERED IN SERVER SETTINGS
+
   Revision 1.20  2002/05/05 15:10:59  ma
   - fixed: ReplyTo not correctly set with role feature (untested)
 
