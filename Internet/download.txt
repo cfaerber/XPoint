@@ -1,0 +1,33 @@
+*<h3>16 Bit Release</h3><b>3.20d (2001-01-01)</b>
+<h3>16 bit release</h3><b>3.20d (2001-01-01)</b>
+/openxp/oxp320.zip
+DOS 16 Bit komplett
+DOS 16 bit complete
+
+/openxp/oxp320up.rar
+DOS 16 Bit Update
+DOS 16 Bit update
+
+/openxp/oxp320s.rar
+Quelltexte
+Source code
+
+*<h3>16 Bit Beta Version</h3><b>3.40 RC2 (2001-01-01)</b>
+<h3>16 bit beta version</h3><b>3.40 RC2 (2001-01-01)</b>
+/openxp/oxp340.zip
+DOS 16 Bit komplett
+DOS 16 bit complete
+
+/openxp/oxp340up.rar
+DOS 16 Bit Update
+DOS 16 Bit update
+
+/openxp/oxp340s.rar
+Quelltexte
+Source code
+
+*<h3>32 Bit Beta Version</h3><b>3.70.3&szlig;</b>
+<h3>32 Bit beta version</h3><b>3.70.3&szlig;</b>
+/openxp/beta/oxp370_s.rar
+Quelltexte
+Source code

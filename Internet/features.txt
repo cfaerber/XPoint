@@ -1,0 +1,113 @@
+verbesserte MIME-Unterstützung
+improved MIME support
+x
+x
+x
+
+PGP5/6.5-Unterstützung
+Support for PGP5/6.5
+x
+x
+x
+
+FQDN-Unterstützung
+FQDN support
+x
+x
+x
+
+Quote reflow
+Quote reflow
+x
+x
+x
+
+Prioritäten in Mail/News
+Mail/news priorities
+x
+x
+x
+
+Verbesserter Support v. ext. Viewern
+Improved external viewer support
+-
+x
+x
+
+Adressbuchgruppen
+Address book groups
+-
+x
+x
+
+UUE-Dekodierung im Lister
+Lister decodes UUE internally
+-
+x
+x
+
+Lange Dateinamen
+Long file name support
+-
+x
+x
+
+Schnellere Datenbank
+Faster database
+-
+x
+x
+
+UTF-8-Dekodierung
+UTF-8 support
+-
+x
+x
+
+Vergrößerte Kommentarbaum-Limits
+Thread list limits improved
+-
+x
+x
+
+Rücklaufnachrichten ersetzen Ursprungsnachricht
+ReplaceOwn
+-
+x
+x
+
+PPP-Netztyp
+PPP netcall type
+-
+x
+x
+
+32 Bit<br><font size=-2>praktisch alle Limits entschärft</font>
+32 bit<br><font size=-2>nearly all limits removed</font>
+-
+-
+x
+
+Bildschirmgröße frei wählbar<br><font size=-2>unter Win32/Linux</font>
+Screen size configurable freely<br><font size=-2>Win32/Linux only</font>
+-
+-
+x
+
+Integrierter NNTP/SMTP/POP3-Support<br><font size=-2>in Arbeit</font>
+Integrated NNTP/SMTP/POP3 support<br><font size=-2>currently in progress</font>
+-
+-
+x
+
+Integriertes ZFido/UUZ
+Integrated ZFido/UUZ
+-
+-
+x
+
+Verbesserter Netcall-Support<br><font size=-2>Netcall-over-IP/nativer Schnittstellenzugriff</font>
+Improved netcall support<br><font size=-2>Netcall over IP/native serial port support</font>
+-
+-
+x

@@ -14,7 +14,7 @@ function GetFileSize($fn) {
 	return $result;
 };
 
-// inserts header (including nagvigation menu)
+// inserts header (including navigation menu)
 function ShowHeader($title) {
 	global $language, $Menu, $Links;
 	
@@ -41,7 +41,10 @@ function ShowHeader($title) {
 	echo("<body bgcolor='White' text='Black' leftmargin=10 topmargin=10>\n");
 	echo("<a name='top'>");
 	echo("<table width='100%'><td width=75 align='right' valign='bottom'>&nbsp;</td>\n");
-	echo("<tr><td align='center' valign='middle'><h1>OpenXP Crosspoint Projekt</h1></td>\n");
+	if ($language == "de")
+	  echo("<tr><td align='center' valign='middle'><h1>OpenXP Projekt</h1></td>\n");
+	else
+	  echo("<tr><td align='center' valign='middle'><h1>OpenXP project</h1></td>\n");
 	echo("<td width=75 align='right' valign='bottom'><small>");
 	// link to the other language
 	if ($language == "de") {
@@ -129,7 +132,7 @@ function ShowFooter() {
 function ShowContactTable($tablefile) {
 	global $language;
 	// generate table header
-	echo("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"1\">");
+	echo("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">");
 	echo("<tr><th nowrap width=\"20%\" bgcolor=\"#EEEE00\">Name/Homepage");
 	echo("<th width=\"5%\" bgcolor=\"#EEEE00\"><div align=\"center\">K&uuml;rzel</div>");
 	echo("<th nowrap width=\"75%\" bgcolor=\"#EEEE00\">Aufgabenfeld"); 
@@ -156,6 +159,38 @@ function ShowContactTable($tablefile) {
 	echo("</table>");
 }
 
+// generates a contact table from a file
+function ShowFeatureList($tablefile) {
+	global $language;
+
+	// generate table header
+	echo("<table border=\"0\" cellspacing=\"1\" cellpadding=\"2\">");
+	echo("<tr><th align=\"left\" nowrap bgcolor=\"#EEEE00\">Feature");
+	echo("<th nowrap bgcolor=\"#EEEE00\">3.20");
+	echo("<th nowrap bgcolor=\"#EEEE00\">3.40");
+	echo("<th nowrap bgcolor=\"#EEEE00\">3.70");
+
+	$ptfile = fopen($tablefile,"r");
+	if ($ptfile==false) return 0;
+	// interpret input file entries
+	while (!feof($ptfile)) {
+	  echo("<tr bgcolor=\"#e0e0e0\">");
+	  // Feature
+	  $feature=fgets($ptfile,200);
+	  if ($language=="en") { $feature=fgets($ptfile,200); } else { fgets($ptfile,200); }
+	  echo("<td nowrap>".$feature);
+	  // Supported in versions...
+	  echo("<td nowrap><div align=\"center\">".fgets($ptfile,20));
+	  echo("<td nowrap><div align=\"center\">".fgets($ptfile,20));
+	  echo("<td nowrap><div align=\"center\">".fgets($ptfile,20));
+	  fgets($ptfile,10);
+	}
+	fclose($ptfile);
+
+	// generate table end
+	echo("</table>");
+}
+
 // generates a news page from a file
 function ShowNews($newsfile,$genindex) {
 	// generate index if necessary
@@ -163,15 +198,17 @@ function ShowNews($newsfile,$genindex) {
 	  $iarticle = 0;
 	  $pnfile = fopen($newsfile,"r");
 	  if ($pnfile==false) return 0;
+	  echo("<ul>");
 	  while (!feof($pnfile)) {
 	    $iarticle++;
 	    $headline=fgets($pnfile,200);
-	    echo("<a href=\"#art".$iarticle."\"><h3>".$headline."</h3></a><p>");
+	    echo("<li><a href=\"#art".$iarticle."\">".$headline."</a>");
 	    do {
 	      $headline=fgets($pnfile,1000);
 	    } while((trim($headline)!="")and(!feof($pnfile)));
 	  }
 	  fclose($pnfile);
+	  echo("</ul>");
 	}
 	
 	// show articles
@@ -188,6 +225,49 @@ function ShowNews($newsfile,$genindex) {
 	  } while((trim($headline)!="")and(!feof($pnfile)));
 	}
 	fclose($pnfile);
+}
+
+// inserts only first entry from newsfile
+function InsertLatestNews($newsfile) {
+	$pnfile = fopen($newsfile,"r");
+	if ($pnfile==false) return 0;
+	echo("<b>".fgets($pnfile,200)."</b>&nbsp;");
+	do {
+	  $news=fgets($pnfile,1000);
+	  echo($news);
+	} while((trim($news)!="")and(!feof($pnfile)));
+	fclose($pnfile);
+}
+
+// show download table
+function ShowDownloadTable($downfile) {
+	global $language;
+	$pdfile = fopen($downfile,"r");
+	if ($pdfile==false) return 0;
+	while(!feof($pdfile)) {
+	  $line=fgets($pdfile,300);
+	  if(strpos(" ".$line,"*")==1) { // headline
+	    if($language=="de") {
+	      echo(substr($line,1)."<p>");
+	      fgets($pdfile,300);
+	    } else {
+	      $line=fgets($pdfile,300);
+	      echo($line."<p>");
+	    }
+	  } else {
+	    $fs=GetFileSize($line);
+	    if($language=="de") {
+	      echo("<a href=\"ftp://ftp.openxp.de".$line."\">".fgets($pdfile,200)."</a> ".$fs);
+	      fgets($pdfile,200);
+	    } else {
+	      fgets($pdfile,200);
+	      echo("<a href=\"ftp://ftp.openxp.de".$line."\">".fgets($pdfile,200)."</a> ".$fs);
+	    }
+	    fgets($pdfile,20); // skip empty line
+	    echo("<br>");
+	  }
+	}
+	fclose($pdfile);
 }
 
 
