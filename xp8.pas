@@ -835,8 +835,7 @@ Procedure ClientBL_Del(const box:string);
 var s1: string;
 begin
   s1:=get_BL_Name(Box);
-  truncstr(s1,60);
-  if ReadJN(getreps2(810,93,ustr(s1)),false) then _era(s1);  { '%s wirklich l”schen' }
+  if ReadJN(getreps2(810,93,Left(s1, 60)),false) then _era(s1);  { '%s wirklich l”schen' }
 end;
 
 
@@ -2167,6 +2166,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.31  2001/09/07 13:22:02  mk
+  - fixed ClientBL_Del, filenames longer 60 chars where not deleted
+
   Revision 1.10.2.30  2001/08/12 11:20:37  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
