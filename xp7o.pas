@@ -292,7 +292,7 @@ begin
   with NC^ do
     writeln(t,iifc(crash,'C','S'),iifc(not _fido and (recbuf=0),iifc(logtime=0,'!','*'),' '),
               fdat(datum),' ',ftime(datum),' ',
-              forms(boxpar^.boxname,16),sendbuf:10,recbuf:10,kosten:10:2,' ',
+              forms(boxpar^.boxname,16),sendbuf:10,recbuf:10,kosten:10:4,' ',
               formi(secs div 3600,2),':',formi((secs div 60) mod 60,2),':',
               formi(secs mod 60,2));
   close(t);
@@ -401,7 +401,7 @@ begin
           end;
         if kosten>0 then
           writeln(t,getres2(700,1),'(',boxpar^.gebzone,cfos,  { 'Telefonkosten ' }
-                    '):  ',waehrung,'  ',kosten:0:2);
+                    '):  ',waehrung,'  ',kosten:0:4);
         end;
       end;
     writeln(t);
@@ -849,6 +849,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.28  2003/01/10 14:04:19  mw
+
+  MW:
+  - Grosses Gebuehrenupdate:
+    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                              nicht mehr als Preis einer Tarifeinheit.
+                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                              Preis einer Tarifeinheit.
+    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
+
+    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
   Revision 1.13.2.27  2002/03/08 23:08:41  my
   MY:- Fix: Fehler bei Fido-Netcalls behoben. Wenn der SysopMode
        deaktiviert, im Feld "Ausgangsverzeichnis" aber noch ein

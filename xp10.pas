@@ -121,8 +121,8 @@ type  TimeRec   = record
       wt_array = array[1..maxwotage] of boolean;
       tarifrec = record
                    sekunden : real;
-                   pfennig  : integer;
-                   anwahl   : integer;  { Pfennige fr nicht erfolgreiche Anwahl }
+                   pfennig  : real;
+                   anwahl   : real;  { Pfennige fr nicht erfolgreiche Anwahl }
                  end;
       tarifarr = array[1..maxtables] of record
                    wochentag   : wt_array;
@@ -1194,10 +1194,17 @@ var brk      : boolean;
           if (sekunden=0) and (pfennig=0) and (anwahl=0) then
             tt[i,j]:=''
           else begin
-            tt[i,j]:=strs(pfennig)+'/'+strsr(sekunden,3);
+            tt[i,j]:=strsr(pfennig,2);
             while lastchar(tt[i,j])='0' do dellast(tt[i,j]);
             if lastchar(tt[i,j])='.' then dellast(tt[i,j]);
-            if anwahl>0 then tt[i,j]:=tt[i,j]+'/'+strs(anwahl);
+            tt[i,j]:=tt[i,j]+'/'+strsr(sekunden,3);
+            while lastchar(tt[i,j])='0' do dellast(tt[i,j]);
+            if lastchar(tt[i,j])='.' then dellast(tt[i,j]);
+            if anwahl>0 then begin 
+                 tt[i,j]:=tt[i,j]+'/'+strsr(anwahl,2);
+                 while lastchar(tt[i,j])='0' do dellast(tt[i,j]);
+                 if lastchar(tt[i,j])='.' then dellast(tt[i,j]);
+              end;
             end;
       s:=daytxt(nr);
       if s<>'' then s:=' ('+s+')';
@@ -1225,9 +1232,9 @@ var brk      : boolean;
               anwahl:=0;
               end
             else begin
-              pfennig:=minmax(ival(GetToken(tt[i,j],'/')),0,9999);
+              pfennig:=minmaxr(rval(GetToken(tt[i,j],'/')),0,9999);
               sekunden:=minmaxr(rval(GetToken(tt[i,j],'/')),0.1,9999);
-              anwahl:=minmax(ival(tt[i,j]),0,9999);
+              anwahl:=minmaxr(rval(tt[i,j]),0,9999);
               end;
         zeitbereiche:=maxzeitbereiche;
         while (zeitbereiche>1) and
@@ -1884,8 +1891,9 @@ function CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
 var i       : integer;
     dow,tag : integer;    { 1 = Mo }
     zone    : integer;
+    first   : boolean;    {true wenn erste Zeit}
     h,m     : word;
-    s,sum   : real;
+    s,sum,anw : real;
     manz    : integer;
 
   function IsBilligtag(d:fdate):boolean;
@@ -1924,6 +1932,8 @@ var i       : integer;
 begin
   manz:=anzahl;     { Reentrance aus Timingliste }
   sum:=0;
+  anw:=0;
+  first:=true;
   LoadPhonezones;
   zone:=anzahl;     { Nummer der Gebhrenzone ermitteln }
   while (zone>0) and not stricmp(boxpar^.gebzone,phones^[zone].komment) do
@@ -1950,7 +1960,9 @@ begin
         secs:=0
       else with zeitbereich[i].tarif[zone] do begin
         if sekunden<0.01 then break;
-        incr(sum,pfennig);
+        if not newgeb then incr(sum,pfennig) else incr(sum,((pfennig/60)*sekunden));
+        if first then anw:=anwahl;
+        first:=false;
         secs := secs-sekunden;      { berechnete Sekunden abziehen   }
         s := s + sekunden;          { Startzeitpunkt der n„chsten... }
         while (s>59) do begin       { Einheit berechnen              }
@@ -1967,6 +1979,7 @@ begin
 
   FreePhonezones;
   anzahl:=manz;
+  sum:=sum+anw;
   CalcGebuehren := sum/100;
 end;
 
@@ -2155,6 +2168,24 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.14  2003/01/10 14:04:20  mw
+
+  MW:
+  - Grosses Gebuehrenupdate:
+    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                              nicht mehr als Preis einer Tarifeinheit.
+                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                              Preis einer Tarifeinheit.
+    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
+
+    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
   Revision 1.10.2.13  2002/05/28 22:44:05  my
   MY:- Fix: IOResult/close() in 'ReadNetcallSpecialData' sauberer gestaltet.
 

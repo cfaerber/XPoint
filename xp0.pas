@@ -1029,6 +1029,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        waehrung     : string[5];
        gebnoconn    : longint;       { GebÅhren fÅr nicht zustandegek. Verb. }
        gebCfos      : boolean;       { GebÅhrenÅbernahme von cFos }
+       newgeb       : boolean;       { Neues Gebuehrenmodel verwenden ?}
        autofeier    : boolean;       { Feiertage bei GebÅhren berÅcksichtigen }
        ShellShowpar : boolean;       { Anzeige vor Shell-Aufruf }
        ShellWaitkey : boolean;       { warten nach Shell-Aufruf }
@@ -1210,6 +1211,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses :^string;
 
+      {XMS Speicheranzeige}
+
+      xmst : word;
 
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
@@ -1230,6 +1234,24 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.56  2003/01/10 14:04:21  mw
+
+  MW:
+  - Grosses Gebuehrenupdate:
+    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                              nicht mehr als Preis einer Tarifeinheit.
+                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                              Preis einer Tarifeinheit.
+    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell ber¸cksichtigt.
+
+    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
   Revision 1.54.2.55  2002/07/11 12:27:11  my
   MY:- BetrefflÑnge von 245 auf 248 Zeichen erhîht (255-CRLF-"BET: ").
        Vorgriff auf die geÑnderte Betreffbehandlung im UUZ, der zukÅnftig

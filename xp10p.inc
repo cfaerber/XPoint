@@ -52,9 +52,25 @@ begin
         if round(sekunden,2)=round(sekunden,0) then
           write(t,strsr(sekunden,0))
         else
-          write(t,strsr(sekunden,3));
-        write(t,'/',pfennig);
-        if anwahl>0 then write(t,'/',anwahl);
+          write(t,strsr(sekunden,2));
+        if round(pfennig,2)=round(pfennig,0) then begin
+           write(t,'/');
+           write(t,strsr(pfennig,0))
+          end
+        else begin
+          write(t,'/');
+          write(t,strsr(pfennig,2));
+        end;
+        if anwahl>0 then begin
+          if round(anwahl,2)=round(anwahl,0) then begin
+            write(t,'/');
+            write(t,strsr(anwahl,0));
+          end
+          else begin
+             write(t,'/');
+             write(t,strsr(anwahl,2));
+            end;
+          end;
         end;
       writeln(t);
       end;
@@ -107,22 +123,26 @@ var pa    : phoneap;
     xs('7-'+strs(nr));
   end;
 
+
   procedure bereich(tnr,bereichnr:integer; _von,_bis:string;
-                    g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11:real);
+                    g1,p1,g2,p2,g3,p3,g4,p4,g5,p5,g6,p6,g7,p7,g8,p8,g9,p9,g10,p10,g11,p11,g12,p12:real);
   var i : integer;
   begin
     with tarif^[tnr].zeitbereich[bereichnr] do begin
       von:=_von;
       bis:=_bis;
-      tarif[1].sekunden:=g4;    tarif[9].sekunden:=16.7;
-      tarif[2].sekunden:=g11;   tarif[10].sekunden:=10;
-      tarif[3].sekunden:=g1;    tarif[11].sekunden:=g5;
-      tarif[4].sekunden:=g2;    tarif[12].sekunden:=g6;
-      tarif[5].sekunden:=g3;    tarif[13].sekunden:=g7;
-      tarif[6].sekunden:=g3;    tarif[14].sekunden:=g8;
-      tarif[7].sekunden:=g3;    tarif[15].sekunden:=g9;
-      tarif[8].sekunden:=30;    tarif[16].sekunden:=g10;
-      for i:=1 to 16 do tarif[i].pfennig:=12;
+      tarif[1].sekunden:=g1; tarif[1].pfennig:=p1;
+      tarif[2].sekunden:=g2; tarif[2].pfennig:=p2;
+      tarif[3].sekunden:=g3; tarif[3].pfennig:=p3;
+      tarif[4].sekunden:=g4; tarif[4].pfennig:=p4;
+      tarif[5].sekunden:=g5; tarif[5].pfennig:=p5;
+      tarif[6].sekunden:=g6; tarif[6].pfennig:=p6;
+      tarif[7].sekunden:=g7; tarif[7].pfennig:=p7;
+      tarif[8].sekunden:=g8; tarif[8].pfennig:=p8;
+      tarif[9].sekunden:=g9; tarif[9].pfennig:=p9;
+      tarif[10].sekunden:=g10; tarif[10].pfennig:=p10;
+      tarif[11].sekunden:=g11; tarif[11].pfennig:=p11;
+      tarif[12].sekunden:=g12; tarif[12].pfennig:=p12;
       for i:=1 to 16 do tarif[i].anwahl:=0;
       end;
   end;
@@ -141,8 +161,6 @@ begin
         else p:=0;
       until eof(t) or (p>0);
       while p>0 do begin             { einmaligen Datenblock einlesen }
-      { if lstr(left(s,p-1))='waehrung' then
-          Waehrung:=trim(mid(s,p+1)); }
         if eof(t) then s:=''
         else readln(t,s);
         p:=cpos('=',s);
@@ -190,36 +208,19 @@ begin
     end
 
   else begin   { not exist(GebuehrDat) }
-    AddP('Fernzone',0);
-    AddP('Welt 4',0);
-    AddP('City',0);
-    AddP('Region 50',0);
-    AddP('Region 200',0);
-    AddP('Region 200',0);
-    AddP('Region 200',0);
-    AddP('Grenzb. Vis-…-vis 1',0);
-    AddP('Grenzb. Vis-…-vis 2',0);
-    AddP('Grenzb. Vis-…-vis 3',0);
-    AddP('Euro 1 (8-18/18-8)',17);
-    x(298); x(31); x(32); x(33); x(352); x(353); x(354); x(358);
-    x(376); x(41); x(42); x(43); x(44); x(45); x(46); x(47);
-    x(48);
-    AddP('Euro 1 (8-20/20-8)',5);
-    x(30); x(34); x(351); x(378); x(39);
-    AddP('Euro 2',41);
-    x(20); x(212); x(213); x(216); x(218); x(350); x(355); x(356);
-    x(357); x(359); x(36); x(370); x(371); x(372); x(373); x(375);
-    x(380); x(381); x(385); x(386); x(387); x(389); x(40);
-    xs('7-01'); xs('7-07'); xs('7-08'); xs('7-095'); xs('7-096');
-    x7(811); x7(812); x7(815); x7(816); x7(820); x7(861); x7(862); x7(863);
-    x(90); x(961); x(962); x(963); x(972);
-    AddP('Welt 1',1);
-    x(1);
-    AddP('Welt 2',7);
-    x(61); x(64); x(65); xs('672-3-'); x(81); x(82); x(852);
-    AddP('Welt 3',14);
-    xs('1-809'); x(27); x(54); x(55); x(56); x(57); x(599); x(63);
-    x7(31); x7(32); x(886); x(966); x(971); x(98);
+    AddP('DTAG T-NET City',0);
+    AddP('DTAG T-NET Fern',0);
+    AddP('DTAG T-NET100 City',0);
+    AddP('DTAG T-NET100 Fern',0);
+    AddP('DTAG T-ISDN City',0);
+    AddP('DTAG T-ISDN Fern',0);
+    AddP('DTAG Aktiv+ City',0);
+    AddP('DTAG Aktiv+ Fern',0);
+    AddP('DTAG XXL City',0);
+    AddP('DTAG XXL Fern',0);
+    AddP('Freecall (0800)',2);
+    xs('0800'); x(800);
+    AddP('3U Normaltarif',0);
     loadt:=false;
     end;
   new(tarif);
@@ -256,8 +257,8 @@ begin
                   inc(i);
                   ss:=GetToken(s,' ');    { Tarifeinheit parsen }
                   tarif[i].sekunden:=minmaxr(rval(GetToken(ss,'/')),0,9999);
-                  tarif[i].pfennig:=minmax(ival(GetToken(ss,'/')),0,9999);
-                  tarif[i].anwahl:=minmax(ival(GetToken(ss,'/')),0,9999);
+                  tarif[i].pfennig:=minmaxr(rval(GetToken(ss,'/')),0,9999);
+                  tarif[i].anwahl:=minmaxr(rval(GetToken(ss,'/')),0,9999);
                   end;                 { -> l„át Platz fr Erweiterungen }
                 end;
               s:='*';
@@ -273,34 +274,48 @@ begin
     tables:=3;
     for i:=1 to maxwotage do
       tarif^[1].wochentag[i]:=(i<=5);
-    tarif^[1].zeitbereiche:=10;
-    bereich(1,1,'05:00','07:59',150,45,21.5,20,9,9,5.63,5.46,3,2.6,2.31);
-    bereich(1,2,'08:00','08:59',150,45,21.5,20,7.2,7.2,5.63,5.46,3,2.6,2.31);
-    bereich(1,3,'09:00','11:59',90,26,12,11.5,7.2,7.2,5.63,5.46,3,2.6,2.31);
-    bereich(1,4,'12:00','13:59',90,30,13.5,12.5,7.2,7.2,5.63,5.46,3,2.6,2.31);
-    bereich(1,5,'14:00','17:59',90,30,13.5,12.5,7.2,7.2,5.63,5,3,2.6,2.31);
-    bereich(1,6,'18:00','19:59',150,45,21.5,20,9,7.2,5.63,5,3,2.6,2.31);
-    bereich(1,7,'20:00','20:59',150,45,21.5,20,9,9,5.63,5,3,2.6,2.31);
-    bereich(1,8,'21:00','01:59',240,60,30,25,9,9,5.63,5,3,2.6,2.31);
-    bereich(1,9,'02:00','02:59',240,120,120,120,9,9,5.63,5,3,2.6,2.31);
-    bereich(1,10,'03:00','04:59',240,120,120,120,9,9,5.63,5.46,3,2.6,2.31);
+    tarif^[1].zeitbereiche:=7;
+    if not newgeb then begin
+       bereich(1,1,'00:00','04:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(1,2,'05:00','06:59',150,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(1,3,'07:00','07:59',150,6,60,12.3,60,3.1,60,4.6,90,6,60,9.2,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(1,4,'08:00','08:59',150,6,60,12.3,60,3.1,60,4.6,90,6,60,9.2,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.08);
+       bereich(1,5,'09:00','17:59',90,6,60,12.3,60,3.1,60,4.6,90,6,60,9.2,60,3.1,60,4.6,60,3.1,60,4.6,0,0,1,0.08);
+       bereich(1,6,'18:00','20:59',150,6,60,6.2,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(1,7,'21:00','23:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+    end else begin
+       bereich(1,1,'00:00','04:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(1,2,'05:00','06:59',150,2.4,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(1,3,'07:00','07:59',150,2.4,60,12.3,60,3.1,60,4.6,90,4,60,9.2,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(1,4,'08:00','08:59',150,2.4,60,12.3,60,3.1,60,4.6,90,4,60,9.2,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,4.6);
+       bereich(1,5,'09:00','17:59',90,4,60,12.3,60,3.1,60,4.6,90,4,60,9.2,60,3.1,60,4.6,60,3.1,60,4.6,0,0,1,4.6);
+       bereich(1,6,'18:00','20:59',150,2.4,60,6.2,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(1,7,'21:00','23:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+    end;
     for i:=1 to maxwotage do
-      tarif^[2].wochentag[i]:=(i in [6,7]);
-    tarif^[2].zeitbereiche:=4;
-    bereich(2,1,'05:00','13:59',150,45,21.5,20,9,9,5.63,5.46,3,2.6,2.31);
-    bereich(2,2,'14:00','20:59',150,45,21.5,20,9,9,5.63,5,3,2.6,2.31);
-    bereich(2,3,'21:00','02:59',240,60,30,25,9,9,5.63,5,3,2.6,2.31);
-    bereich(2,4,'03:00','04:59',240,60,30,25,9,9,5.63,5.46,3,2.6,2.31);
+      tarif^[2].wochentag[i]:=(i=6);
+    tarif^[2].zeitbereiche:=3;
+    if not newgeb then begin
+       bereich(2,1,'00:00','06:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(2,2,'07:00','20:59',150,6,60,4.6,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+       bereich(2,3,'21:00','23:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,0.04);
+    end else begin
+       bereich(2,1,'00:00','06:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(2,2,'07:00','20:59',150,2.4,60,4.6,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+       bereich(2,3,'21:00','23:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,60,1.6,60,2.6,0,0,1,2.5);
+    end;
     for i:=1 to maxwotage do
-      tarif^[3].wochentag[i]:=(i=8);
-    tarif^[3].zeitbereiche:=7;
-    bereich(3,1,'05:00','07:59',150,45,21.5,20,9,9,5.63,5.46,3,2.6,2.31);
-    bereich(3,2,'08:00','13:59',150,45,21.5,20,7.2,7.2,5.63,5.46,3,2.6,2.31);
-    bereich(3,3,'14:00','17:59',150,45,21.5,20,7.2,7.2,5.63,5,3,2.6,2.31);
-    bereich(3,4,'18:00','19:59',150,45,21.5,20,9,7.2,5.63,5,3,2.6,2.31);
-    bereich(3,5,'20:00','20:59',150,45,21.5,20,9,9,5.63,5,3,2.6,2.31);
-    bereich(3,6,'21:00','02:59',240,60,30,25,9,9,5.63,5,3,2.6,2.31);
-    bereich(3,7,'03:00','04:59',240,60,30,25,9,9,5.63,5.46,3,2.6,2.31);
+      tarif^[3].wochentag[i]:=(i in [7,8]);
+    tarif^[3].zeitbereiche:=3;
+    if not newgeb then begin
+       bereich(3,1,'00:00','06:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,0.04);
+       bereich(3,2,'07:00','20:59',150,6,60,4.6,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,0.04);
+       bereich(3,3,'21:00','23:59',240,6,60,3.1,60,1.6,60,2.6,240,6,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,0.04);
+    end else begin
+       bereich(3,1,'00:00','06:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,2.5);
+       bereich(3,2,'07:00','20:59',150,2.4,60,4.6,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,2.5);
+       bereich(3,3,'21:00','23:59',240,1.5,60,3.1,60,1.6,60,2.6,240,1.5,60,3.1,60,1.6,60,2.6,0,0,0,0,0,0,1,2.5);
+    end;
     end;
   if not loadt then SavePhonezones;
 end;
@@ -318,6 +333,24 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.4.1  2003/01/10 14:04:22  mw
+
+  MW:
+  - Grosses Gebuehrenupdate:
+    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                              nicht mehr als Preis einer Tarifeinheit.
+                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                              Preis einer Tarifeinheit.
+    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
+
+    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

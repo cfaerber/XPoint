@@ -2306,12 +2306,13 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 10   25
 11   Tarifgruppe %s l”schen
 + 1023
-0    46
+0    52
 1    Telefonkosten-Einstellungen
 2    Kosten fr nicht zustandegekommene Verbindung~
 3    W„hrung~
 4    Gebhrenbernahme von cFos
 5    deutsche Feiertage bercksichtigen
+6    Neues Gebuehrenmodell
 # Netcall/Spezial
 + 1024
 1    Spezial-Netcall bei:

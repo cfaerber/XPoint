@@ -2085,6 +2085,26 @@ MY:
   Untersttzung ist damit aber noch noch nicht komplett erledigt).
   UUZ.PAS
 
++----------------------+
+|  08./09./10.01.2003  |
++----------------------+
+
+MW:
+- Grosses Gebuehrenupdate:
+  1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+  2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+  3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                            werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                            nicht mehr als Preis einer Tarifeinheit.
+                            Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                            Preis einer Tarifeinheit.
+  4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+  5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                  der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+  6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
+
+  Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
 
 ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
 

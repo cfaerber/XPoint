@@ -12582,20 +12582,59 @@ schneidung von einer Minute entstehen wrde.
 
 @
 808
-Geben Sie bier jeweils den Preis einer Tarifeinheit
+Altes Gebuehrenmodel:
+
+Geben Sie hier jeweils den Preis einer Tarifeinheit
 in 1/100 W„hrungseinheiten und die Dauer in Sekunden
 ein, getrennt durch "/". Zum Beispiel
 
-      23/120
+      6/240
 
-fr eine Tarifeinheit, die 120 Sekunden dauert und
-23 Pfennig kostet. Es sind auch Bruchteile von Sekun-
+fr eine Tarifeinheit, die 240 Sekunden dauert und
+6 Cent kostet. Es sind auch Bruchteile von Sekun-
 den m”glich, z.B.
 
       11/10.5
 
 fr eine fiktive Tarifeinheit, die zehneinhalb
-Sekunden dauert und 11 Pfennig kostet.
+Sekunden dauert und 11 Cent kostet.
+
+Ausserdem sind auch Bruchteile von 
+1/100 W„hrungseinheiten moeglich, z.B. 
+
+     3.1/60
+
+fr eine fiktive Tarifeinheit, die 1 Minute dauert
+und rechnerische 3.1 Cent kostet.
+
+Moeglich sind auch Tarife mit Verbindungsentgelt.
+Diese werden durch die Eingabe einer 3. Zahl 
+beschrieben, z.B.
+
+      1.1/10.5/10.1
+
+fr eine fiktive Tarifeinheit, die zehneinhalb
+Sekunden dauert und 11 Cent kostet und zusaetzlich
+10.1 Cent pro Verbindung kostet.
+
+Neues Gebuehrenmodel:
+
+Geben Sie hier jeweils den rechnerischen Preis
+pro Minute in 1/100 W„hrungseinheiten (wie er
+auch in vielen Tariftabellen steht) und die Dauer
+eines Abrechnungstaktes in Sekunden ein, getrennt
+durch "/". Zum Beispiel
+
+       1.5/240
+
+fr einen Tarif, der einen Abrechnungstakt von
+240 Sekunden hat und anderhalb Cent pro Minute
+kostet. Was aequivalent zu 6/240 bei Nutzung
+des alten Modells ist.
+
+Bruchteile von Sekunden sind aehnlich dem
+alten Modell moeglich. Ebenso Tarife mit
+Verbindungsentgelt.
 @
 809
 An dieser Stelle wird festgelegt, fr welche Wochen-
@@ -13628,6 +13667,15 @@ ben.
 973
 Die W„hrungseinheit, die bei der Gebhrenabsch„tzung
 angegeben wird.
+@
+974
+<<[ ]>> -> XP verwendet das alte Modell mit
+       Preis pro Tarifeinheit und Dauer einer
+       Tarifeinheit.
+
+<<[x]>> -> XP verwendet das neue Modell mit
+       rechnerischer Minutenpreis und 
+       Abrechnungstakt.
 @
 979
 In der Datei <<FEIERTAG.DAT>> k”nnen beliebig viele

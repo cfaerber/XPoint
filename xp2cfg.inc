@@ -607,9 +607,10 @@ begin
   maxcrosspost:=10;
   maildelxpost:=false;
   KeepRequests:=true;
-  waehrung:='DM';
+  waehrung:='EUR';
   gebnoconn:=0;
   gebCfos:=false;
+  newgeb:=false;
   autofeier:=true;
   askreplyto:=false;
 
@@ -1000,6 +1001,7 @@ begin
   writeln(t,'Waehrung=',waehrung);
   writeln(t,'GebNoconn=',gebnoconn);
   writeln(t,'GebCfos=',jnf(GebCfos));
+  writeln(t,'NewGeb=',jnf(newgeb));
   writeln(t,'Feiertage=',jnf(autofeier));
   writeln(t,'Shell-Showpar=',jnf(ShellShowpar));
   writeln(t,'Shell-Waitkey=',jnf(ShellWaitkey));
@@ -1637,6 +1639,7 @@ begin
           gets(s,su,'waehrung',waehrung,5) or
           getl(su,  'gebnoconn',GebNoconn) or
           getx(su,  'gebcfos',GebCfos) or
+          getx(su,  'newgeb',newgeb) or
           getx(su,  'feiertage',autofeier) or
           getx(su,  'autodownload',AutoDownload) or
           getx(su,  'autoupload',AutoUpload) or
@@ -1833,6 +1836,24 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.37  2003/01/10 14:04:19  mw
+
+  MW:
+  - Grosses Gebuehrenupdate:
+    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
+    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
+    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
+                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
+                              nicht mehr als Preis einer Tarifeinheit.
+                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
+                              Preis einer Tarifeinheit.
+    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
+    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
+                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
+    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
+
+    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+
   Revision 1.62.2.36  2002/04/12 14:34:16  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
