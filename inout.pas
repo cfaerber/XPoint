@@ -544,9 +544,14 @@ end;
 
 
 Procedure Get(VAR z:taste; cur:curtype);
-VAR c       : Char;
+VAR
     i       : byte;
+{$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
+{$IFNDEF NCRT}  {NCurses uses wgetch}
     mox,moy : integer;
+{$ENDIF }
+{$ENDIF }
+
 
   procedure dofunc(state,nr:byte);
   var p  : procedure;
@@ -678,7 +683,6 @@ begin
 {$ENDIF Win32}
     begin
       key_pressed:=true;
-      {$IFDEF ANALYSE}mox := 1; moy:=mox; c:=char(moy); assert(mox=ord(c));{$ENDIF} //dummy to prevent "unused vars"
     end;
 
     z := Keys.ReadKey;
@@ -705,7 +709,7 @@ begin
 end;
 
 Procedure testbrk(var brk:boolean);
-var 
+var
   c: Char;
 begin
   brk := false;
@@ -1678,6 +1682,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2002/12/16 14:58:35  mk
+  - fixed compiler warnings
+
   Revision 1.99  2002/12/14 07:31:26  dodi
   - using new types
 
