@@ -2273,7 +2273,7 @@ begin
       end;
     ReadString(true);
     if (s<>'') and ((s[1]=' ') or (s[1]=#9)) then
-      if length(s0)+length(s)<254 then
+      if (length(s0)+length(s)<254) and (manz=0) then
         s0:=s0+' '+trim(s)                      { fortgesetzte Zeile }
       else if manz<maxmore then begin
         if (manz=0) or (length(smore[manz])+length(s)>253) then begin
@@ -3587,6 +3587,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.8  2000/06/21 20:39:38  mk
+  RB: - Bugfix fuer fortgesetzte Headerzeilen
+
   Revision 1.8.2.7  2000/06/21 20:34:52  mk
   CL: - Verbesserte Kompatibilität mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
   - Erkennung von User-Agent
