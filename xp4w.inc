@@ -1494,5 +1494,8 @@ begin
   closebox;
 end;
 {
-  $Id$
+  $Log$
+  Revision 1.25  2000/06/12 19:52:15  mk
+  - Datei enthält jetzt Loginfos
+
 }
