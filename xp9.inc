@@ -721,6 +721,7 @@
       nt              : byte;
       newbox,newibox  : boolean;
       fidoname        : string[40];
+      newdir: String;
 
     procedure renbox(ext:string);
     var f : file;
@@ -797,11 +798,13 @@
             renbox2('.RC');
             renbox2('.CFG');
             renbox2(BfgExt);
-            RmDir(OwnPath + XFerDir + Dname);
-            { RenameDir(BoxPar^.PPPClientpath+old_dname, BoxPar^.PPPClientpath+dname); }
-            end;
+            ChDir(XFerDir_);
+            GetDir(0, NewDir);
+            RenameDir(old_dname, dname);
+            ChDir(Copy(OwnPath, 1, Length(OwnPath)-1));
           end;
         end;
+      end;
       if not brk then begin
         boxpar^.boxname:=name;
         boxpar^.username:=user;
@@ -1402,6 +1405,9 @@
 
 {
   $Log$
+  Revision 1.10.2.24  2001/04/28 13:38:55  mk
+  - Client-Boxen umbenennen implementiert
+
   Revision 1.10.2.23  2001/04/23 18:43:08  mk
   - Spoolverzeichnis bei Boxen umbenennen loeschen
 

@@ -76,6 +76,7 @@ procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 procedure WriteBatch(const s:string);                 { Batchfile erstellen     }
+function RenameDir(Const OldName, NewName : String) : Boolean;
 
 implementation  { ------------------------------------------------------- }
 
@@ -719,11 +720,23 @@ begin
   if ioresult<>0 then;
 end;
 
+function RenameDir(Const OldName, NewName : String) : Boolean;
+var
+  f: File;
+begin
+  Assign(f, Oldname);
+  rename(f, newname);
+  RenameDir := IOResult = 0;
+end;
+
 begin
   TestShare;
 end.
 {
   $Log$
+  Revision 1.41.2.10  2001/04/28 13:38:54  mk
+  - Client-Boxen umbenennen implementiert
+
   Revision 1.41.2.9  2000/12/31 11:35:53  mk
   - fileio.disksize statt lfn.disksize benutzen
 

@@ -1240,16 +1240,17 @@ label again;
   end;
 
 begin
-  if mapsbox='' then begin
+  if mapsbox='' then
+  begin
     box:=UniSel(1,false,DefaultBox);
     if box='' then exit;   { brk }
-    end
-  else
+  end else
     box:=mapsbox;
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
-  if dbFound then begin
+  if dbFound then
+  begin
     dbRead(d,'dateiname',fn);
     netztyp:=dbReadInt(d,'netztyp');
     dbRead(d,'nameomaps',mapsname);
@@ -1270,115 +1271,125 @@ begin
     end else
       ppp := false;
     qwk:=(netztyp=nt_QWK);
-    end
-  else begin
+  end else
+  begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
     uucp:=false; promaf:=false; qwk:=false; postmaster:=false;
     netztyp:=0;
-    end;
+  end;
   dbClose(d);
   if fn='' then
-    rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
-  else
   begin
-    if ppp then fn := BoxPar^.PPPClientPath + fn;
-    if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
-      lfile:=fn+'.BBL' else
-    if ppp and (art=1) then
-      lfile:=fn+'.RC'
-    else
-      lfile:=fn+'.BL';
-    if not exist(lfile) or (_fileSize(lfile) = 0) then
-      rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
-    else begin
-      if fido or maus or qwk then
-        ReadBoxpar(netztyp,box);
-      OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
-                 'APGD/'+iifs(_maus,'VSC:080/',''));
-      list_readfile(lfile,0);
-      case art of
-        0 : showkeys(9);
-        1 : showkeys(-9);
-        2 : showkeys(12);
-        3 : showkeys(9);
-        4 : showkeys(12);
+    rfehler(806);      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
+    Exit;
+  end;
+
+  if ppp then fn := BoxPar^.PPPClientPath + fn;
+  if (art=1) and exist(fn+'.BBL') and changesys and not ppp then
+    lfile:=fn+'.BBL' else
+  if ppp and (art=1) then
+    lfile:=fn+'.RC'
+  else
+    lfile:=fn+'.BL';
+  if not exist(lfile) or (_fileSize(lfile) = 0) then
+  begin
+    rfehler(807);    { 'Keine Brettliste fÅr diese Box vorhanden!' }
+    Exit;
+  end;
+  if fido or maus or qwk then
+    ReadBoxpar(netztyp,box);
+  OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+             'APGD/'+iifs(_maus,'VSC:080/',''));
+  list_readfile(lfile,0);
+  case art of
+    0 : showkeys(9);
+    1 : showkeys(-9);
+    2 : showkeys(12);
+    3 : showkeys(9);
+    4 : showkeys(12);
+  end;
+again:
+  listVmark(BrettMark); mapsnt:=netztyp; mapsart:=art;
+  if maus then LColType:=2 else
+  if fido then lcoltype:=4 else
+  if maf or quick then LColType:=0 else
+  if promaf then
+    lcoltype:=3
+  else
+    LColType:=1;
+  ListCFunc(MapsListcolor);
+  list(brk);
+  if not brk then
+  begin
+    anz:=list_markanz;
+    if anz=0 then anz:=1;
+    if (mapsnt=nt_ZConnect) and (anz=1) then
+    begin
+      if (art=0) and (firstchar(first_marked)='-') then
+      begin
+        rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
+        goto again;
       end;
-    again:
-      listVmark(BrettMark); mapsnt:=netztyp; mapsart:=art;
-      if maus then LColType:=2 else
-      if fido then lcoltype:=4 else
-      if maf or quick then LColType:=0 else
-      if promaf then lcoltype:=3
-      else LColType:=1;
-      ListCFunc(MapsListcolor);
-      list(brk);
-      if not brk then begin
-        anz:=list_markanz;
-        if anz=0 then anz:=1;
-        if (mapsnt=nt_ZConnect) and (anz=1) then begin
-          if (art=0) and (firstchar(first_marked)='-') then begin
-            rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
-            goto again;
-            end;
-          if (art=1) and (firstchar(first_marked)='!') then begin
-            rfehler(827);   { 'Dieses Brett kann nicht abbestellt werden.' }
-            goto again;
-            end;
-          end;
-        if ppp and (anz=1) and (art=0) and
-          (firstchar(first_marked)='!') then begin
-          rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
-          goto again;
-        end;
-        bretter:=getres2(807,iif(anz=1,1,2));
-        case art of
-            0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
-            1 : ask:=reps(reps(getreps2(807,4,strs(anz)),bretter),box);
-            2 : ask:=reps(getreps2(807,5,strs(anz)),bretter);
-          3,4 : ask:=getres2(807,6);   { 'Inhalt der gewÑhlten Bretter anfordern' }
-        end;
-        if not ReadJN(ask,true) then
-          goto again;
-        if art in [0,1,3,4] then begin
-          fn:=TempS(10000);
-          assign(t,fn);
-          rewrite(t);
-          if quick or (uucp and postmaster) then
-            wr_btext(t,art<>0,uucp);
-          s:=first_marked;
-          if fido and (art=4) and not Boxpar^.areabetreff then
-            writeln(t,'%Rescan');
-          while s<>#0 do begin
-            writeform;
-            s:=next_marked;
-            end;
-          if fido then writeln(t,'---');
-          close(t);
-          if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
-            BretterAnlegen;
-          if art=3 then
-            verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
-          if not ppp then
-            case art of
-              0 : sendmaps('ADD',box,fn);
-              1 : sendmaps('DEL',box,fn);
-              3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
-              4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
-            end;
-          if ppp and (art in [0,1]) then
-            if MakeRC(art=0,box) then
-              BretterAnlegen2;
-          erase(t);
-          end
-        else
-          BretterAnlegen;
-      end;
-      if not ppp then closelist; { Lister hier noch bei BRK schlie·en }
-      freeres;
-      aufbau:=true;
+      if (art=1) and (firstchar(first_marked)='!') then
+      begin
+        rfehler(827);   { 'Dieses Brett kann nicht abbestellt werden.' }
+        goto again;
       end;
     end;
+    if ppp and (anz=1) and (art=0) and
+      (firstchar(first_marked)='!') then
+    begin
+      rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
+      goto again;
+    end;
+    bretter:=getres2(807,iif(anz=1,1,2));
+    case art of
+        0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
+        1 : ask:=reps(reps(getreps2(807,4,strs(anz)),bretter),box);
+        2 : ask:=reps(getreps2(807,5,strs(anz)),bretter);
+      3,4 : ask:=getres2(807,6);   { 'Inhalt der gewÑhlten Bretter anfordern' }
+    end;
+    if not ReadJN(ask,true) then
+      goto again;
+    if art in [0,1,3,4] then
+    begin
+      fn:=TempS(10000);
+      assign(t,fn);
+      rewrite(t);
+      if quick or (uucp and postmaster) then
+        wr_btext(t,art<>0,uucp);
+      s:=first_marked;
+      if fido and (art=4) and not Boxpar^.areabetreff then
+        writeln(t,'%Rescan');
+      while s<>#0 do begin
+        writeform;
+        s:=next_marked;
+      end;
+      if fido then writeln(t,'---');
+      close(t);
+      if (not ppp) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+        BretterAnlegen;
+      if art=3 then
+        verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
+      if not ppp then
+        case art of
+          0 : sendmaps('ADD',box,fn);
+          1 : sendmaps('DEL',box,fn);
+          3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
+          4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
+        end;
+      if ppp and (art in [0,1]) then
+        if MakeRC(art=0,box) then
+          BretterAnlegen2;
+      erase(t);
+    end else
+      BretterAnlegen;
+    if not ppp then closelist; { PPP schlie·t den Lister selbst }
+  end else
+    CloseList; { Lister bei Brk schlie·en }
+  freeres;
+  aufbau:=true;
 end;
 
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
@@ -1828,6 +1839,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.16  2001/04/28 13:38:55  mk
+  - Client-Boxen umbenennen implementiert
+
   Revision 1.10.2.15  2001/04/23 18:19:41  mk
   - Lister hat Speicher nicht freigegeben
 

@@ -206,7 +206,6 @@ function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
   der tats„chlich allocierte Speicher }
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 procedure UTF82IBM(var s: String);
-Function RenameDir(Const OldName, NewName : String) : Boolean;
 
 { ================= Implementation-Teil ==================  }
 
@@ -2199,26 +2198,6 @@ begin
   GetMaxMem := Size;
 end;
 
-Function RenameDir(Const OldName, NewName : String) : Boolean;
-var
-  Regs: registers;
-  Puffer: array[0..511] of Char;
-begin
-  StrPCopy(Puffer, OldName + #0 + NewName);
-  fillchar(regs, Sizeof(regs), 0);
-  Regs.dx := Ofs(Puffer);
-  Regs.Ds := Seg(Puffer);
-  Regs.di := Ofs(Puffer) + Length(OldName) +1;
-  Regs.Es := Seg(Puffer);
-{  if LFNSupport then
-    Regs.Eax := $7156
-  else }
-    Regs.ax := $5600;
-  Regs.cx := $ff;
-  Intr($21, Regs);
-  RenameDir := (Regs.Flags and fCarry = 0);
-end;
-
 procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
   var i,j,k:integer;
       sc:record case integer of
@@ -2248,6 +2227,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.16  2001/04/28 13:38:55  mk
+  - Client-Boxen umbenennen implementiert
+
   Revision 1.37.2.15  2001/04/23 18:42:46  mk
   - Regs fuer RenameDir loeschen
 
