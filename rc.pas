@@ -13,11 +13,7 @@
 
 {$I XPDEFINE.INC }
 
-uses
-{$IFNDEF NCRT }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio, xpglobal;
+uses  crt,dos,typeform,fileio;
 
 const open   : boolean = false;
       maxblk  = 4;                  { max. 4 Ressourcen-Segmente }
@@ -28,16 +24,16 @@ const open   : boolean = false;
       flPreload = 1;
 
 type  rblock = record
-                 anzahl   : smallword;    { Anzahl Strings in diesem Block  }
-                 fileadr  : longint;      { Startadresse in RES-Datei       }
-                 contsize : smallword;    { Gr”áe des Inhalts (Texte)       }
-                 lastnr   : smallword;    { letzte Res.-Nr. in diesem Block }
-                 flags    : smallword;    { 1 = preload                     }
+                 anzahl   : word;    { Anzahl Strings in diesem Block  }
+                 fileadr  : longint; { Startadresse in RES-Datei       }
+                 contsize : word;    { Gr”áe des Inhalts (Texte)       }
+                 lastnr   : word;    { letzte Res.-Nr. in diesem Block }
+                 flags    : word;    { 1 = preload                     }
                  dummy    : longint;
                end;
       restype= record
-                 nummer : smallword; { Bit 15 = aufgeteilte Ressource  }
-                 collect: smallword; { die folgenden n Strings geh”ren }
+                 nummer : word;      { Bit 15 = aufgeteilte Ressource  }
+                 collect: word;      { die folgenden n Strings geh”ren }
                end;                  { zu dieser Ressource             }
 
 type  stringp= ^string;
@@ -54,7 +50,7 @@ var   infile : pathstr;
       buf1,
       buf2   : barrp;
       bufp1,
-      bufp2  : smallword;
+      bufp2  : word;
       line   : longint;
       tbuf   : array[0..8191] of byte;
 
@@ -76,7 +72,6 @@ procedure InitVar;
 var outpath,dir : dirstr;
            name : namestr;
             ext : extstr;
-
 begin
   fsplit(infile,dir,name,ext);
   if ustr(ext)='.RES' then ext:='';
@@ -152,7 +147,7 @@ var collnr : word;
     p      : byte;
     nr,w   : word;
     last   : word;
-    i,j    : integer16;
+    i,j    : integer;
 
   procedure wrnr;
   begin
@@ -164,7 +159,7 @@ var collnr : word;
   end;
 
   procedure SortCollect(from,count:word);
-  var i   : integer16;
+  var i   : integer;
       chg : boolean;
       r   : restype;
       p   : pointer;
@@ -297,7 +292,7 @@ end;
 
 procedure WriteBlocks;
 var d : array[1..8] of word;
-    i : integer16;
+    i : integer;
 begin
   seek(f,256);
   fillchar(d,sizeof(d),0);
@@ -332,6 +327,12 @@ end.
 
 {
   $Log$
+  Revision 1.9.2.3  2003/01/26 00:29:13  my
+  MY: - Letztes $IFNDEF entsorgt.
+      - smallword => word
+      - integer16 => integer
+      - xpglobal in 'uses' entfernt.
+
   Revision 1.9.2.2  2003/01/26 00:04:56  my
   MY: - Logik der Parameterbehandlung ge„ndert und nach 'InitVar' verlagert.
       - Bei šbergabe der Extension '.RES' wird diese ausgetauscht gegen '.RQ'.
