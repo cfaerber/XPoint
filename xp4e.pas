@@ -113,7 +113,7 @@ var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       _pmonly     : boolean;    {    "                            }
       adrfieldpos : integer;
       pb_netztyp  : byte;       { Netztyp von testpollbox() }
-      ntyp_y      : byte;       { intern EditBrett          }
+      ntyp_x, ntyp_y: Integer;  { intern EditBrett          }
       brettfld    : integer;    { intern EditBrett          }
       userfld     : integer;    { intern EditUser           }
       pb_field    : integer;
@@ -261,7 +261,7 @@ procedure pb_wrntyp(var s:string);
 begin
   attrtxt(col.coldiahigh);
   if ntyp_y>0 then begin
-    mwrt(49+length(getres2(2701,2)),ntyp_y,forms(ntName(pb_netztyp),12));
+    mwrt(ntyp_x+36+length(getres2(2701,2)),ntyp_y,forms(ntName(pb_netztyp),12));
     freeres;
     end;
 end;
@@ -328,6 +328,7 @@ begin
     msetvfunc(testpollbox);
     pb_netztyp:=ntBoxNetztyp(pollbox);
     maddtext(36,2,getres2(2701,2),0);       { 'Netztyp' }
+    ntyp_x := x;
     ntyp_y:=y+1;
     brettfld:=-1;
     if edit then begin
@@ -340,13 +341,13 @@ begin
       maddstring(3,4,getres2(2701,3),user,40,eAdrLen,'');    { 'User     ' }
       msetvfunc(usertest); mset3proc(copy_address); mhnr(420);
       userfld:=fieldpos;
-      end;
+      end;                              
     maddstring(3,6,getres2(2701,4),adresse,40,eAdrLen,'');   { 'Adresse  ' }
       mhnr(421);
     adrfieldpos:=fieldpos;
     mappcustomsel(seluser,false);
     msetvfunc(usertest);
-    msetprocs(get_address,get_address);
+    msetprocs(get_address,get_address); 
     set_ubrett;
     maddstring(3,8,getres2(2701,5),komm,30,30,''); mhnr(422);    { 'Kommentar' }
     uml:=(flags and 8=0);
@@ -775,6 +776,7 @@ begin
       msetvfunc(testpollbox);
       mset0proc(pb_wrntyp);
       maddtext(36,2,getres2(2708,6),0);      { 'Netztyp' }
+      ntyp_x := x;
       ntyp_y:=y+1;
       pba:=2;
       end
@@ -1563,6 +1565,7 @@ begin
     mset0proc(dnotepollbox);
     msetvfunc(dtestpollbox);
     brettfld:=-1; userfld:=2; adrfieldpos:=-1;
+    ntyp_x := x;
     ntyp_y:=y+1;
     pb_field:=1;
     end
@@ -2430,6 +2433,9 @@ end;
 
 {
   $Log$
+  Revision 1.71  2001/09/05 23:13:12  mk
+  - corrected position of netname in EditUser if columncount > 80
+
   Revision 1.70  2001/09/05 22:59:02  mk
   - additional fix: adr in modiuser now also byte
 
