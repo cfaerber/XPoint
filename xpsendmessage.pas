@@ -433,7 +433,7 @@ var f,f2     : file;
   function uucpbrett(s:string; edis:byte):string;
   var i : integer;
   begin
-    if (edis=1) or (not netztyp in netsRFC) or not NewsgroupDisp then
+    if (edis=1) or (not (netztyp in netsRFC)) or not NewsgroupDisp then
       uucpbrett:=mid(s,edis)
     else begin
       delete(s,1,2);
@@ -1010,7 +1010,7 @@ fromstart:
           Box := dbReadStrN(ubase,ub_pollbox);   { leider doppelt noetig :-/ }
           _brett:=mbrettd('U',ubase);
           dbReadN(ubase,ub_codierer,cancode);
-          if (not cancode in [8,9]) and (dbXsize(ubase,'passwort')=0) then
+          if (not (cancode in [8,9])) and (dbXsize(ubase,'passwort')=0) then
             cancode:=0
           else begin
             if cancode<>0 then
@@ -2325,6 +2325,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29  2001/11/06 12:48:43  ml
+  - fix for 2 range-check-errors
+
   Revision 1.28  2001/10/28 15:40:38  ma
   - Fido mailer header uses standard format
 
