@@ -88,7 +88,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 93;
+   lastESCSeq = 95;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -189,7 +189,9 @@ const
       (Sequenz: #27#91#54#59#53#126;    ncCode: 430; DosCode : #0#118), { Ctrl-PgDn }
       (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132), { Ctrl-PgUp }
       (Sequenz: #27#79#72;       ncCode: 432; DosCode : #0#71),  { Home on NetBSD }
-      (Sequenz: #27#79#70;       ncCode: 433; DosCode : #0#79)   { End on NetBSD }
+      (Sequenz: #27#79#70;       ncCode: 433; DosCode : #0#79),  { End on NetBSD }
+      (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115)   { Ctrl+Cursor left on NetBSD }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -1544,6 +1546,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.11  2003/09/03 18:48:46  mk
+  - added codes for Ctrl-Left + Ctrl-Right on NetBSD
+
   Revision 1.64.2.10  2003/09/01 23:26:16  mk
   - fixed last commit
 
