@@ -417,8 +417,8 @@ var   hdp      : headerp;
         inc(anzahl);
         with mf^[anzahl] do begin
           level:=bptr+last;
-          typ:=ctype;
-          subtyp:=subtype;
+          typ:=LStr(ctype);
+          subtyp:=LStr(subtype);
           code:=codecode(_encoding);
           fname:=filename;
           ddatum:=filedate;
@@ -719,6 +719,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.20  2001/09/21 13:37:15  my
+  MY:- Letzten Commit rÅckgÑngig gemacht. FÅhrte zu demselben Bug, der
+       mit dem vorletzten Commit gefixt wurde, obwohl die énderung an
+       einer ganz anderen Stelle vorgenommen wurde. Bitte dafÅr sorgen,
+       da· die Strings im MIME-Dialog nicht in Kleinschreibung darge-
+       stellt werden und dennoch alles funktioniert.
+
   Revision 1.12.2.19  2001/09/20 15:47:44  my
   MY:- 'LStr(ctype)' und 'LStr(subtype)' geÑndert in 'ctype' und 'subtype'
 
