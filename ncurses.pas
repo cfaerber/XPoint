@@ -203,6 +203,7 @@ Var
        TABSIZE : longint;external name 'TABSIZE';
        ESCDELAY: longint;external name 'ESCDELAY';
 
+    function curses_version:pchar; cdecl; external;
     Function define_key(_para1:pchar; _para2:longint):longint; cdecl;external;
     Function keyok(_para1:longint; _para2:bool):longint; cdecl;external;
     Function resizeterm(_para1:longint; _para2:longint):longint; cdecl;external;
@@ -1683,6 +1684,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/12/28 13:27:50  hd
+  - added curses_version
+
   Revision 1.3  2000/09/09 11:01:32  hd
   - Update aus dem FPC-Paket
 
