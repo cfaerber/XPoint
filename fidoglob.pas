@@ -113,6 +113,7 @@ type
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
                 function        GetItem(Index: integer): TNodeListItem;
+                procedure       ClearItems;
 
 
                 property        Open  : boolean read fOpen   write fOpen;
@@ -250,10 +251,21 @@ begin
       if TNodeListItem(Items[j]).fsort>TNodeListItem(Items[j-1]).fsort then
         Exchange(j, j-1);
 end;
+
 function  TNodeList.GetItem(Index: integer): TNodeListItem;
 begin
   result:=Items[index];
 end;
+
+procedure TNodeList.ClearItems;
+begin
+  while Count > 0 do
+  begin
+    TNodeListItem(Items[0]).Free;
+    Delete(0);
+  end;
+end;
+
 //end TNodeList
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -309,6 +321,9 @@ end;
 
 {
   $Log$
+  Revision 1.17  2002/04/14 11:01:54  mk
+  - fixed memory leaks
+
   Revision 1.16  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -1096,9 +1096,13 @@ finalization
   BadConfigLinesList.Free;
   Dispose(bmarked);
   FreeMem(Boxpar);
+  if AnzHidden > 0 then FreeMem(hidden);
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142  2002/04/14 11:01:54  mk
+  - fixed memory leaks
+
   Revision 1.141  2002/04/06 19:15:41  mk
   - fixed reading of xpmenu.dat from xpme
 

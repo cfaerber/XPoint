@@ -213,6 +213,7 @@ begin
       exitscreen(iif(ParNojoke,0,1));
       delete_tempfiles;
       set_checkdate;
+      CloseNodeIndex;
     end
   else
     exitscreen(2);
@@ -236,6 +237,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/04/14 11:01:54  mk
+  - fixed memory leaks
+
   Revision 1.15  2002/02/21 13:52:30  mk
   - removed 21 hints and 28 warnings
 

@@ -529,10 +529,17 @@ end;
 initialization
   NodeList := nil;
 finalization
-  if Assigned(NodeList) then NodeList.Free;
+  if Assigned(NodeList) then
+  begin
+    NodeList.ClearItems;
+    NodeList.Free;
+  end;
 
 {
   $Log$
+  Revision 1.45  2002/04/14 11:01:54  mk
+  - fixed memory leaks
+
   Revision 1.44  2002/01/30 22:59:02  mk
   - free Nodelist at end of OpenXP
 
