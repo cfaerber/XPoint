@@ -1,7 +1,8 @@
 #!/bin/bash
 echo "Starting $0"
 oxpdir=/home/boettger/openxp/
-scriptdir="$oxpdir"script/
+export oxpdir
+#scriptdir="$oxpdir"script/
 diffdir="$oxpdir"diff/
 dailydifffile=$diffdir'openxpdiff_3.9_'`date +%d.%m.%y`
 dailydifffile38=$diffdir'openxpdiff_3.8_'`date +%d.%m.%y`
@@ -18,9 +19,15 @@ cd "$oxpdir"3.9/openxp
 pwd
 #sleep 1
 #cvs up -A
-cvs up -A -d
+mv openxp.dpr openxp.dpr-old
+mv openxp.conf openxp.conf-old
+cvs up -A -d -P
+cp openxp.dpr openxp.dpr-cvs
+cp openxp.conf openxp.conf-cvs
 cvs diff -u -D "-1 day" | grep -v -w "\?" > $dailydifffile
 #test -s $dailydifffile && mailx -s dailydiff $mailtoaddr < $dailydifffile
+cp openxp.conf-cb openxp.conf
+cp openxp.dpr-cb openxp.dpr
 
 # 3.8.x
 echo Generating $dailydifffile for 3.8.x
@@ -41,8 +48,8 @@ diff openxp_3.8_last openxp_3.8 -ud > $dailydifffile38
 rm -rf openxp_3.8_last openxp_3.8
 
 echo Starting snapshot builds if needed
-test `ls -la $dailydifffile38 |cut -b 31-42` -gt 820 && "$scriptdir"snapshot 3.8
-test -s $dailydifffile && "$scriptdir"snapshot 3.9
+test -s $dailydifffile && "$oxpdir"3.9/openxp/build/snapshot 3.9
+test `ls -la $dailydifffile38 |cut -b 31-42` -gt 820 && "$oxpdir"3.8/openxp/build/snapshot 3.8
 
 chown -R boettger.users /home/boettger/openxp/*
 echo "Finished $0"

@@ -1,9 +1,8 @@
 #!/bin/bash
 echo "Starting $0 $*"
 # must be started in main source dir for desired version
-# insert call of extract script for version (from xpglobal.pas) here
 cd build
-eval $(get_build_nr.pl)
+eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
@@ -12,12 +11,14 @@ buildnr=$OPENXP_BUILD
 # subversion has to be 12 in this example
 # buildnr has to be 1 in this example
 version="$mainversion"."$subversion"-"$buildnr"
-scriptdir=/home/boettger/openxp/script/
+#scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
+scriptdir="$sourcedir"'build/'
 #subversion="$1".0
 echo $version
 echo $sourcedir
+echo $scriptdir
 #exit 1
 cd "$sourcedir"
 #sleep 5
