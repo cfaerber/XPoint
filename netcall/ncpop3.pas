@@ -44,6 +44,7 @@ type
   protected
 
     FServer             : string;               { Server-Software }
+    FTimestamp          : string;               { Timestamp for APOP }
     FUser, FPassword    : string;               { Identifikation }
     FMailCount, FMailSize: Integer;
 
@@ -82,6 +83,8 @@ type
 
 implementation
 
+uses md5,typeform;
+
 const
   DefaultPOP3Port       = 110;
 
@@ -116,9 +119,7 @@ begin
 end;
 
 function TPOP3.Login: boolean;
-var
-  s: string;
-  Error: Integer;
+var s: string;
 begin
   Result := false;
   if Connected then
@@ -131,26 +132,42 @@ begin
       exit;
     end;
 
-    SWritelnFmt('USER %s', [FUser]);
-    SReadLn(s);
+    case FTimestamp='' of
+      true: begin // no APOP login possible
+         SWritelnFmt('USER %s', [FUser]);
+         SReadLn(s);
 
-    if ParseError(s) then // R…kmeldung auswerten
-    begin
-      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-      DisConnect;
-      exit;
-    end;
+         if ParseError(s) then // R…kmeldung auswerten
+         begin
+           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+           DisConnect;
+           exit;
+         end;
 
-    SWritelnFmt('PASS %s', [FPassword]);
-    SReadLn(s);
+         SWritelnFmt('PASS %s', [FPassword]);
+         SReadLn(s);
 
-    if ParseError(s) then // R…kmeldung auswerten
-    begin
-      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-      DisConnect;
-      exit;
-    end;
-    Result := true;
+         if ParseError(s) then // R…kmeldung auswerten
+         begin
+           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+           DisConnect;
+           exit;
+         end;
+         Result := true;
+         end;
+
+      false: begin // use APOP
+         SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
+         SReadLn(s);
+
+         if ParseError(s) then begin // R…kmeldung auswerten
+           Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+           DisConnect;
+           exit;
+           end;
+         Result := true;
+         end;
+      end;
   end;
 end;
 
@@ -178,6 +195,10 @@ begin
   begin
     Output(mcError,res_connect4, [0]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
+    if (pos('<',s)<pos('@',s))and(pos('@',s)<pos('>',s)) then // APOP timestamp found
+      FTimestamp:=Trim(Mid(s,pos('<',s)))
+    else
+      FTimestamp:='';
   end;
 
   { Anmelden }
@@ -290,6 +311,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2001/04/15 13:02:25  ma
+  - implemented APOP secure login
+
   Revision 1.7  2001/04/06 13:51:22  mk
   - delete pop3 mails after recieving
 
