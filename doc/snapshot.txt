@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 16.10.2001 (letzter Update)
+DÅsseldorf, den 23.10.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -35,6 +35,7 @@ DÅsseldorf, den 16.10.2001 (letzter Update)
 
 Neue/geÑnderte Features und Funktionen
 ======================================
+
 
 
 Lister
@@ -84,13 +85,16 @@ Lister
   XP3EX.PAS
 
 
+
 Editor
 ------
 
 - Beim Editieren von Nachrichten gibt es im "énderungen speichern?"-
   Dialog die Option "Parken", die direkt ein "P" ans Sendefenster
   weiterleitet.
-  XPE.PAS, XP1S.INC, XP-D.RQ, XP-E.RQ
+  XP1.PAS, XP1S.INC, XP1MENU.INC, XP4.PAS, XP4.INC, XP4E.PAS, XP4O.PAS,
+  XP6.PAS, XP8.PAS, XP9.INC, XP10.PAS, XPE.PAS, XPKEYS.PAS, EDITOR.PAS,
+  XP-D.RQ, XP-E.RQ
 
 - <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
   EinfÅgen)
