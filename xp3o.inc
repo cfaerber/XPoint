@@ -202,19 +202,19 @@ var x,y      : Integer;
       pollbox_str:=pfadbox(zconnect,hdp.pfad);
   end;
 
-  function adrok(var s:string):boolean;
+  function adrok(const s:string):boolean;
   begin
     adrok:=(useraufnahme=0) or
            ((useraufnahme=1) and (pm or ((cPos('%',s)=0) and (cPos(':',s)=0)))) or
            ((useraufnahme=3) and pm);
   end;
 
-  function isl(s:string):boolean;
+  function isl(const s:string):boolean;
   begin
     isl:=LeftStr(hdp.betreff,length(s))=s;
   end;
 
-  function LeftAbsender(s:string):boolean;
+  function LeftAbsender(const s:string):boolean;
   begin
     LeftAbsender:=(LeftStr(LowerCase(hdp.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
   end;
@@ -1295,6 +1295,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.16  2003/10/06 11:07:17  mk
+  - added some const parameter
+
   Revision 1.83.2.15  2003/08/23 23:45:54  mk
   - corrected dectection of own puffer files
 
