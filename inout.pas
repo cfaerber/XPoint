@@ -863,7 +863,11 @@ begin
     inc(offx,2);
   end;
 {$ELSE }
+{$IFDEF NCRT }
+  StringOutXYBaseWin(x,y,s); 
+{$ELSE }
   FWrt(x, y, s);
+{$ENDIF }
   TextAttr := TempAttr;
 {$ENDIF}
   mon;
@@ -1858,6 +1862,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/05/03 20:35:02  hd
+  - disphard angepasst
+
   Revision 1.31  2000/05/02 15:48:40  hd
   Cursor unter Linux an-/ausschalten
 
