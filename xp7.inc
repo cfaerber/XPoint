@@ -111,6 +111,7 @@ begin
     begin
       if TempPPPMode then
       begin
+        WriteBox(bfile,BoxPar);
         if (PPPClientPath = '') then
           BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
         else if not ChkPPPClientPath then
@@ -1523,6 +1524,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.10  2001/07/14 18:06:06  my
+  - Upon netcall of an RFC/Client server, <Server>.BFG will be written.
+    This is to make sure that the entry "Client-Spool=" always has the
+    correct value and that the directory exists. It solves theoretical
+    problems with "wandering" XP installations.
+
   Revision 1.24.2.9  2001/06/30 01:00:33  my
   - RFC/Client: check for correct entries "Client directory" and "Client call"
     upon netcall
