@@ -926,7 +926,7 @@ begin
       spush(disprec,sizeof(disprec));
       qmpdata:=@mpdata;
       _brief_senden(listkey[1]);
-      qmpdata:=nil;
+      qmpdata:=nil; lastmpsel := false;
       if disprec[p]=0 then      { s. xp4.pm_archiv (auto-Archiv) }
         d1_0:=true;
       spop(disprec);
@@ -946,15 +946,15 @@ begin
       end
 
     else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
-    begin 
+    begin
       rec:=disprec[1];
       wiedervorlage;
       if p=1 then begin    {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
         disprec[1]:=rec;
         dpp:=rec;
-        end; 
-      ende:=false; 
-      end  
+        end;
+      ende:=false;
+      end
 
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
@@ -968,17 +968,17 @@ begin
            3 : if BezSeek(false) then ende:=false;       { rechts }
            5 : begin dbGo(mbase,dpp); ende:=false; end;
            6 : begin                                     { ^PgUp }
-                 SetKK; GoMsgBack; 
+                 SetKK; GoMsgBack;
                  GoP;
                  ende:=false;
                end;
            7 : begin                                     { ^PgDn }
-                 SetKK; GoMsgForth; 
+                 SetKK; GoMsgForth;
                  GoP;
                  ende:=false;
                end;
           end;
-        if (not ende) and (lres<=7) 
+        if (not ende) and (lres<=7)
           then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
 
         if lres<6 then
@@ -1078,7 +1078,7 @@ end;
 
 procedure _mark_group;
 var grnr,g : longint;
-    feld   : string[7];  
+    feld   : string[7];
 begin
   moment;
   GoP;
@@ -1549,6 +1549,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.11  2000/10/24 13:55:05  mk
+  - MIME-fixes
+
   Revision 1.25.2.10  2000/10/19 12:55:00  mk
   - bei Singlepart MIME und ganze Nachricht den internen Viewer nutzen
 

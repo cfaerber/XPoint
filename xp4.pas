@@ -57,9 +57,9 @@ const suchch    = #254;
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
 {$ifdef Ver32}
-      DispStrSize	= 255;
+      DispStrSize       = 255;
 {$else}
-      DispStrSize	= 81;
+      DispStrSize       = 81;
 {$endif}
 
 type  dispstr   = string[DispStrSize];
@@ -692,6 +692,7 @@ var t,lastt: taste;
       kein_re : boolean;
       netztyp : byte;
       usermsg : boolean;
+      mimetyp : string;
       gesperrt: boolean;
       sdata   : SendUUptr;
       flags   : byte;
@@ -701,6 +702,7 @@ var t,lastt: taste;
       pmrflag : boolean;   { Maus-PM-Reply auf am durch autom. Umleitung }
       gfound  : boolean;
       mqfirst : longint;
+      mpdata  : multi_part;
 
   label ende;
 
@@ -708,7 +710,8 @@ var t,lastt: taste;
     var i : word;
     begin
       if ReadJNesc(getreps(404,strs(markanz)),true,brk)   { '%s markierte Nachrichten zitieren' }
-      and not brk then begin
+      and not brk then
+      begin
         mquote:=false;
         multiquote:=true;
         SortMark;
@@ -835,8 +838,10 @@ var t,lastt: taste;
       end;
     mquote:=(quote=1); mqfirst:=0;
     if quote=2 then
-      if markanz=0 then quote:=1
-      else if not multiquote(brk) and brk then exit;
+      if markanz=0 then
+        quote:=1
+      else
+        if not multiquote(brk) and brk then exit;
       {  dbGo(mbase,marked^[0]); }
     betr:='';
     rt0:='';
@@ -1047,6 +1052,31 @@ var t,lastt: taste;
         sData^.ReplyGroup:=mid(dbReadStr(bbase,'brettname'),2);
       end;
     sdata^.empfrealname:=realname;
+
+    dbReadN(mbase,mb_mimetyp,mimetyp);
+
+    { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+      Multipart-Daten vorhanden, wir faken uns also welche, damit
+      die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+    if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+    begin
+      pushhp(94);
+      fillchar(mpdata,sizeof(qmpdata),0);
+      mpdata.fname := fn;
+      SelectMultiPart(true,1,false,mpdata,brk);
+
+      { is MIME-Typ not text/plain and quote then ask
+        if quoting binary mails is desired }
+      if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
+        and (mpdata.typ <> '') and (quote=1) and
+        not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
+        then goto ende;
+
+      qmpdata := @mpdata;
+      pophp;
+      if brk then goto ende;
+    end;
+
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
@@ -1067,6 +1097,7 @@ var t,lastt: taste;
     if exist(fn) then _era(fn);
     setall;
     dispose(sData);
+    qmpdata := nil;
   end;
 
   procedure _brief_senden(c:char);
@@ -2070,6 +2101,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.10  2000/10/24 13:55:05  mk
+  - MIME-fixes
+
   Revision 1.26.2.9  2000/10/17 00:16:44  mk
   - LFN Unit hinzugefuegt (Bug #112966)
 
