@@ -180,8 +180,8 @@ end;
 
 procedure RewritePKT;                { PKT-Header schreiben }
 var phd       : pheader;
-    y,m,d,dow : word;
-    h,s,s100  : word;
+    y,m,d,dow : rtlword;
+    h,s,s100  : rtlword;
 begin
   assign(pkt,outfile);
   rewrite(pkt,1);
@@ -362,6 +362,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/09/09 22:30:39  fe
+  rtlword-Fixes
+
   Revision 1.6  2000/07/04 12:04:32  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

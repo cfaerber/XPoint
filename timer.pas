@@ -38,7 +38,7 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-  H,M,S,S100: Integer;
+  H,M,S,S100: rtlword;
 begin
   GetTime(H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
@@ -111,6 +111,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2000/09/09 22:30:39  fe
+  rtlword-Fixes
+
   Revision 1.5  2000/07/13 23:58:49  ma
   - Kosmetik
 

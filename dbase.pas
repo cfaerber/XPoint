@@ -167,7 +167,7 @@ end;
 
 procedure DbClose(f:DbPointer);
 
-var ja,mo,ta,wt : word;
+var ja,mo,ta,wt : rtlword;
 
 begin
   with f^ do begin
@@ -313,7 +313,7 @@ var i : word;
     o : word;
     x : array[1..2] of char;
 
-    ta,mo,ja,wt : word;
+    ta,mo,ja,wt : rtlword;
 
 begin
   if pos('.',name)=0 then name:=name+'.dbf';
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/09/09 22:30:39  fe
+  rtlword-Fixes
+
   Revision 1.6  2000/07/02 14:24:45  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
