@@ -390,7 +390,7 @@ var ok     : boolean;
     empfnr : smallword;
     nopuffer: boolean;
 begin
-  ClearHeader(@hd);
+  // ClearHeader(@hd); Wird von makeheader auch ausgefÅhrt
   ok:=true;
   dbRead(mbase,'ablage',ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.44  2000/08/20 10:43:46  mk
+  - Clearheader war nicht noetig, entfernt
+
   Revision 1.43  2000/08/08 00:02:55  mk
   - TxtSeek auf Shortstring umgestellt
 
