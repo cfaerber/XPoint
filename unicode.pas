@@ -60,7 +60,6 @@ type
     function Decode(const Source: UTF8String): String; virtual; abstract;
   end;
 
-
 // -------------------------------------------------------------------
 //   Ansi (ISO8859-1) character set
 //     This is a special case because the first 256 characters of
@@ -76,7 +75,7 @@ type
   public
     function Decode(const Source: UTF8String): String; override;
   end;
-  
+
 // -------------------------------------------------------------------
 //   US-ASCII
 //     This is a special case, too, because we have to replace all
@@ -116,6 +115,20 @@ type
     function Decode(const Source: UTF8String): String; override;
   end;
 
+// -------------------------------------------------------------------
+//   Windows (windows-1252) character set
+//     This is a special case because it is a superset of ISO-8859-1
+// -------------------------------------------------------------------
+
+  TWindowsUTF8Encoder = class(TUTF8Encoder)
+  public
+    function Encode(const Source: String): UTF8String; override;
+  end;
+
+  TWindowsUTF8Decoder = class(T8BitUTF8Decoder)
+  public
+    constructor Create;
+  end;
 
 // -------------------------------------------------------------------
 //   Multi-byte character sets (MBCS)
@@ -142,7 +155,8 @@ type
 
 implementation
 
-
+uses charmaps;
+              
 // -------------------------------------------------------------------
 //   Helper functions
 // -------------------------------------------------------------------
@@ -237,7 +251,6 @@ begin
     Result := s + 3;
 end;
 
-
 // -------------------------------------------------------------------
 //   Ansi (ISO8859-1) character set
 // -------------------------------------------------------------------
@@ -248,7 +261,7 @@ var
 begin
   SetLength(Result, 0);
   for i := 1 to Length(Source) do
-    Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
+      Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
 end;
 
 function TAnsiUTF8Decoder.Decode(const Source: UTF8String): String;
@@ -411,6 +424,26 @@ begin
   end;
 end;
 
+// -------------------------------------------------------------------
+//   Windows (windows-1252) character set
+// -------------------------------------------------------------------
+
+function TWindowsUTF8Encoder.Encode(const Source: String): UTF8String;
+var
+  i: Integer;
+begin
+  SetLength(Result, 0);
+  for i := 1 to Length(Source) do
+    if Ord(Source[i]) in [$80..$9F] then
+      Result := Result + UnicodeToUTF8(CP1252TransTable[Source[i]])
+    else
+      Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
+end;
+
+constructor TWindowsUTF8Decoder.Create;
+begin
+  inherited Create(CP1252TransTable);
+end;
 
 // -------------------------------------------------------------------
 //   Multi-byte character sets (MBCS)
@@ -456,6 +489,11 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/01/03 18:59:12  cl
+  - moved character set maps to own units (allows including them from several
+    other units without duplication)
+  - added TWindowsUTF8Encoder/TWindowsUTF8Decoder for Windows-1252 codepage
+
   Revision 1.10  2002/01/01 19:34:37  cl
   - Basic support for console charset switching + initial Win32 implementation
 

@@ -43,7 +43,7 @@ function RecodeCharset(const s: String; cs_from,cs_to: TMimeCharsets): String;
 implementation
 
 uses
-  SysUtils,Typeform;
+  SysUtils,Typeform,charmaps;
 
 // -------------------------------------------------------------------
 //   UTF-8 (null encoder)
@@ -61,45 +61,8 @@ type
   end;
 
 {$IFDEF Linux }
-{$I charsets/cp437.inc }
-{$I charsets/cp866.inc }
-{$I charsets/cp1251.inc }
-{$I charsets/cp1252.inc }
-{$I charsets/cp1255.inc }
-{$I charsets/8859_1.inc }
-{$I charsets/8859_2.inc }
-{$I charsets/8859_3.inc }
-{$I charsets/8859_4.inc }
-{$I charsets/8859_5.inc }
-{$I charsets/8859_6.inc }
-{$I charsets/8859_7.inc }
-{$I charsets/8859_8.inc }
-{$I charsets/8859_9.inc }
-{$I charsets/8859_10.inc }
-{$I charsets/8859_13.inc }
-{$I charsets/8859_14.inc }
-{$I charsets/8859_15.inc }
-
 {$I charsets/aliases.inc }
 {$ELSE }
-{$I charsets\cp437.inc }
-{$I charsets\cp866.inc }
-{$I charsets\cp1251.inc }
-{$I charsets\cp1252.inc }
-{$I charsets\cp1255.inc }
-{$I charsets\8859_1.inc }
-{$I charsets\8859_2.inc }
-{$I charsets\8859_3.inc }
-{$I charsets\8859_4.inc }
-{$I charsets\8859_5.inc }
-{$I charsets\8859_6.inc }
-{$I charsets\8859_7.inc }
-{$I charsets\8859_8.inc }
-{$I charsets\8859_9.inc }
-{$I charsets\8859_10.inc }
-{$I charsets\8859_13.inc }
-{$I charsets\8859_14.inc }
-{$I charsets\8859_15.inc }
 {$I charsets\aliases.inc }
 {$ENDIF }
 
@@ -176,9 +139,11 @@ end;
 function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
 begin
   case Charset of
-    csUTF8,csUnknown: result:=TUTF8NullEncoder.Create;
-    csISO8859_1,csASCII: result:=TAnsiUTF8Encoder.Create;
-    else         result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
+    csUTF8,csUnknown:          
+          result:=TUTF8NullEncoder.Create;
+    csISO8859_1, csASCII, csCP1252:           
+          result:=TWindowsUTF8Encoder.Create;
+    else  result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
   end;
 end;
 
@@ -188,6 +153,7 @@ begin
     csUTF8,csUnknown: result:=TUTF8NullDecoder.Create;
     csISO8859_1: result:=TAnsiUTF8Decoder.Create;
     csASCII:     result:=TAsciiUTF8Decoder.Create;
+    csCP1252:    result:=TWindowsUTF8Decoder.Create;
     else         result:=T8BitUTF8Decoder.Create(GetT8BitTable(Charset));
   end;
 end;
@@ -261,6 +227,11 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.13  2002/01/03 18:59:12  cl
+// - moved character set maps to own units (allows including them from several
+//   other units without duplication)
+// - added TWindowsUTF8Encoder/TWindowsUTF8Decoder for Windows-1252 codepage
+//
 // Revision 1.12  2001/12/30 19:56:48  cl
 // - Kylix 2 compile fixes
 //
