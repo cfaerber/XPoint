@@ -1260,10 +1260,11 @@ restart:
   dialog(ival(getres2(911,0)),13,'',x,y);
   maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie Netztyp und Name Ihrer Stamm-' }
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'box sowie Username bzw. eMail-Adresse ein.' }
-  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client ben”tigen' }
-  maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
+//**  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client ben”tigen' }
+//**  maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
-  ntyp:=ntName(nt_Client); nt:=nt_Client;
+//**  ntyp:=ntName(nt_Client); nt:=nt_Client;
+  ntyp:=ntName(nt_POP3); nt:=nt_POP3;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   for i:=0 to High(SupportedNetTypes) do
     mappsel(true,ntName(SupportedNetTypes[i]));
@@ -1615,6 +1616,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2001/10/01 19:52:22  ma
+  - disabled client mode II
+
   Revision 1.24  2001/09/27 23:44:53  ma
   - disabled client mode
 
