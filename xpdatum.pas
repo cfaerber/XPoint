@@ -143,6 +143,7 @@ begin
   { Negativ-Abweichung zu UTC? }
   if (isNegative) then
     s:= s + '-';
+  s:= s + IntToStr(tzHours);
   { Minuten? }
   if (tzMinutes <> 0) then begin
     s:= s + ':';
@@ -157,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/05/03 16:53:55  hd
+  - Hours in TimeZone vergessen
+
   Revision 1.4  2000/05/02 20:27:54  hd
   - Dynamische Festlegung der Zeitzone unter Linux
 
