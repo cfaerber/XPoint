@@ -693,7 +693,12 @@ Der Lister wird mit <Esc> verlassen.
 
 <<Ctrl L>> setzte die angezeigte Nachricht auf "L”schen".
 
-<<H>> setzt die angezeigte Nachricht auf "Halten".
+<<H>> schaltet "Halten" fr die angezeigte 
+  Nachricht Ein/Aus.
+
+<<V>> schaltet "Wiedervorlage" fr die angezeigte
+  Nachricht Ein/Aus. 
+
 
 <Backspace> verl„át den Lister, ohne daá der Auswahl-
   balken auf die n„chste Nachricht springt, unabh„n-

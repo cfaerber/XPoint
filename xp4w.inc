@@ -307,6 +307,7 @@ begin
     end;
 end;
 
+procedure wiedervorlage; forward;
 
 { --- Nachrichten berabeiten --------------------------- }
 
@@ -862,6 +863,13 @@ begin
       mpselect:=lastmpsel; poppush:=false;
       ende:=false;
       end
+
+    else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
+    begin 
+      wiedervorlage;
+      ende:=false; 
+      end  
+
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
         lres:=0;  { !! ungelesen-Mode }

@@ -359,7 +359,19 @@ begin
       attrtxt(col.colliststatus);
       mwrt(1,lfirst,sp(80));
       end;
-    list(brk);
+
+    if listmsg then
+    begin
+      dbread(mbase,'halteflags',listhalten);
+      dbread(mbase,'unversandt',listunvers);
+      dbread(mbase,'flags',listflags);
+      end
+    else begin
+      Listunvers:=0; Listhalten:=0; Listflags:=0; 
+      end;      
+ 
+    list(brk); 
+    Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
     if listvollbild and listuhr and ListMsg then begin
@@ -473,6 +485,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/04/24 13:17:39  jg
+  - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
+  - "H" im Lister kann jetzt das Halteflag auch ausschalten
+  - "V" im Lister schaltet das Wiedervorlageflag Ein/Aus
+
   Revision 1.19  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -28,6 +28,9 @@ uses  xpglobal, crt,typeform,
 const ListHelpStr : string[8] = 'Hilfe';
       ListUseXms  : boolean   = false;
       ListDebug   : boolean   = false;
+      Listunvers  : byte      = 0;
+      Listhalten  : byte      = 0;
+      Listflags   : integer   = 0; 
 
 type  liste   = pointer;
 
@@ -864,8 +867,18 @@ var gl,p,y    : shortint;
         if (a=0) and more then write(#31)
         else if (a+gl>=lines) and (a>0) then write(#30)
         else write(' ');
-        if markanz>0 then write('     ['+forms(strs(markanz)+']',7))
-        else if stat.helpinfo then write('    F1-',ListHelpStr);
+        write (' ');
+        write (iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
+        if (listunvers=0) and (listflags=0) then write('  ')
+        else begin
+          if listunvers and 16 = 0
+            then write (iifs(listunvers and 1 = 0,' ','!'))
+            else write (iifs(listunvers and 1 = 0,'*',''));
+          if listflags and 3<>0 then write('s') 
+          else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
+          end;
+        if markanz>0 then write('  ['+forms(strs(markanz)+']',7))
+        else if stat.helpinfo then write(' F1-',ListHelpStr);
         mon;
         end;
     disp_DT;
@@ -1636,6 +1649,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/24 13:17:39  jg
+  - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
+  - "H" im Lister kann jetzt das Halteflag auch ausschalten
+  - "V" im Lister schaltet das Wiedervorlageflag Ein/Aus
+
   Revision 1.13  2000/04/23 15:49:23  mk
   - ret statt retn in Make_List (32 Bit)
 

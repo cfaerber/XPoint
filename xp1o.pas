@@ -311,9 +311,13 @@ begin
   if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
   begin
 
-    if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
+    if upcase(c) = k1_I {'I'} then msg_info;                         { 'I' fuer Lister }
 
-    if upcase(c) = 'O' then                                   { 'O' fuer Lister }
+    if upcase(c) = k1_V {'V'} then ex(-2);                           { 'V' fuer Lister }
+       { Wiedervorlage-Flag umschalten realisiert mit
+         Exitcode -2. Weiter bei xp4w.inc/read_msg }
+                            
+    if upcase(c) = k1_O {'O'} then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
       ex(5);
@@ -358,6 +362,7 @@ begin
     if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
       b:=2;
       dbWriteN(mbase,mb_halteflags,b);
+      listhalten:=b;  
       if t=k4_cL then begin
         rmessage(121);   { 'Nachricht ist auf ''l”schen'' gesetzt.' }
         wkey(1,false);
@@ -367,9 +372,11 @@ begin
         t:=keyesc;
       end else
     if (t=keyins) or (ustr(t)=k4_H) then begin         { 'H' }
-      b:=1;
+      dbreadN(mbase,mb_halteflags,b);
+      if b=1 then b:=0 else b:=1;
       dbWriteN(mbase,mb_halteflags,b);
-      rmessage(122);   { 'Nachricht ist auf ''halten'' gesetzt.' }
+      listhalten:=b;
+      if b=1 then rmessage(122);   { 'Nachricht ist auf ''halten'' gesetzt.' }
       wkey(1,false);
       closebox;
       end else
@@ -968,6 +975,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/04/24 13:17:39  jg
+  - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
+  - "H" im Lister kann jetzt das Halteflag auch ausschalten
+  - "V" im Lister schaltet das Wiedervorlageflag Ein/Aus
+
   Revision 1.34  2000/04/21 20:05:00  jg
   - MiniBugfixes: Suchfunktionen im Lister: Verhalten bei ESC
 
