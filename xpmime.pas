@@ -678,6 +678,8 @@ begin
 
   with mpdata do
   begin
+    // if Charset is unkown, assume ISO 8859-1 is used
+    if Charset = csUnknown then CHarset := csISO8859_1;
     for i:=1 to startline-1 do
       readln(input);
 
@@ -762,6 +764,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/10/19 13:12:40  mk
+  - if Charset is unkown assume ISO8859-1 is used
+
   Revision 1.30  2000/10/19 12:56:38  mk
   - Ansistring Fix
 
