@@ -499,7 +499,7 @@ begin
   Bufs := GetMaxMem(p, 2048, 32768);
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
-  if dbReadInt(mbase,'msgsize') and $8000<>0 then begin  { KOM vorhanden }
+  if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
     new(hdp);
     ReadHeader(hdp^,hds,false);
     if (hdp^.komlen>0) and (ofs=hds+hdp^.komlen) then
@@ -1241,6 +1241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.3  2000/07/26 09:32:35  mk
+  - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
+
   Revision 1.25.2.2  2000/07/02 13:44:14  mk
   JG: - Volltextsuche mit Wildcards implementiert
 
