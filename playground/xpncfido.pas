@@ -34,7 +34,7 @@ uses
 
 function FidoNetcall(boxname: string;
                      boxpar: boxptr;
-                     crash: boolean;
+                     crash,diskpoll: boolean;
                      domain: string;
                      Logfile: String;
                      IncomingFiles: TStringList): shortint;
@@ -121,7 +121,7 @@ var
   t         : text;
 
 begin { ProcessAKABoxes }
-  sendakas:=trim(GetFidoPointAdr(boxpar,alias)+' '+Boxpar^.AKAs);
+  sendakas:=trim(GetFidoPointAdr(boxpar,alias)+' '+Boxpar^.SendAKAs);
   assign(t,'ZFIDO.CFG');
   rewrite(t);
   writeln(t,'# ',getres(721));    { 'Temporäre Fido-Konfigurationsdatei' }
@@ -293,7 +293,7 @@ end;
 
 function FidoNetcall(boxname: string;
                      boxpar: boxptr;
-                     crash: boolean;
+                     crash,diskpoll: boolean;
                      domain: string;
                      Logfile: String;
                      IncomingFiles: TStringList): shortint;
@@ -557,7 +557,7 @@ begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
   result:=el_noconn;
 
-  alias:=false {FidoGetBoxData(boxpar,boxname,false)};
+  alias:=FidoGetBoxData(boxpar,boxname,false);
   // Some handling in case of crash netcall
   if crash then begin
     if not isbox(DefFidoBox) then begin
@@ -611,7 +611,7 @@ begin { FidoNetcall }
   ProcessAKABoxes(boxpar,UpBufferFilename,1,OutgoingFiles);
 
   // Compress outgoing buffers
-  UpArcFilename:=GetArcFilename(GetFidoPointAdr(boxpar,alias),boxpar^.boxname);
+  UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetFidoPointAdr(boxpar,alias),boxpar^.boxname);
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
@@ -637,21 +637,34 @@ begin { FidoNetcall }
          else komment:=ni.boxname+', '+ni.standort;
     end;
 
-  { Init Fidomailer obj }
-  Fidomailer:=TFidomailer.Create;
-  if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
-    trfehler1(2340,Fidomailer.ErrorMsg,30);
-    Fidomailer.Destroy;
-    _era(UpArcFilename);
-    OutgoingFiles.Destroy; AKABoxes.BoxBareFilename.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
-    exit;
+  case Diskpoll of
+    false: begin  // use mailer to transfer files
+      Fidomailer:=TFidomailer.CreateWithIPC(TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True));
+      if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
+        trfehler1(2340,Fidomailer.ErrorMsg,30);
+        Fidomailer.Destroy; // releases IPC
+        _era(UpArcFilename);
+        OutgoingFiles.Destroy; AKABoxes.BoxBareFilename.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+        exit;
+        end;
+      Fidomailer.OutgoingFiles:=OutgoingFiles; Fidomailer.IncomingFiles:=IncomingFiles;
+      InitFidomailer;
+      result:=Fidomailer.PerformNetcall;
+      Fidomailer.Destroy; // releases IPC
+      end;
+    true: begin  // diskpoll, call appropriate programs
+      result:=el_noconn;
+      SetCurrentDir(boxpar^.sysopinp);
+      if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
+      SetCurrentDir(boxpar^.sysopout);
+      if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
+        result:=el_ok
+      else
+        result:=el_recerr;
+      end;
     end;
-  Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
-  Fidomailer.FilesToSend:=OutgoingFiles; Fidomailer.FilesReceived:=IncomingFiles;
-  InitFidomailer;
-  result:=Fidomailer.PerformNetcall;
-  Fidomailer.Destroy;
 
+  _era(UpArcFilename);
   if (result IN [el_ok,el_recerr]) then begin   { Senden OK }
     Moment;
     for i:=0 to AKABoxes.ReqFile.Count-1 do
@@ -659,7 +672,6 @@ begin { FidoNetcall }
         ProcessRequestResult(AKABoxes.ReqFile[i]);
     if crash then SetCrash(MakeFidoAdr(fa,true),false);
     outmsgs:=0;
-    _era(UpArcFilename);
     for i:=0 to AKABoxes.PPFile.Count-1 do
       if AKABoxes.PPFile[i]<>'' then begin
         ClearUnversandt(AKABoxes.PPFile[i],AKABoxes.BoxBareFilename[i]);
@@ -895,6 +907,10 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/02/11 16:30:35  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.12  2001/02/11 01:01:10  ma
   - ncmodem does not dial now if no phone number specified
     (removed PerformDial property)

@@ -28,15 +28,14 @@ type
 
   TZModemObj = class
   public
-    FIPC: TIPC;
-
-    constructor Init(vCommObj: tpCommObj);
+    constructor Init(vCommObj: tpCommObj; vIPC: TIPC);
     destructor Done;
 
     function Receive(path: string; FileList: TStringList): Boolean;
     function Send(pathname: string; lastfile: Boolean): Boolean;
 
   protected
+    FIPC: TIPC;
     FCommObj: tpCommObj;
     ElapsedSec: tTimer;
     MakeCRC32: Boolean;
@@ -2710,10 +2709,10 @@ end;
 
 (*************************************************************************)
 
-constructor TZModemObj.Init(vCommObj: tpCommObj);
+constructor TZModemObj.Init(vCommObj: tpCommObj; vIPC: TIPC);
 begin
   MakeCRC32 := TRUE; RecoverAllow := TRUE; LastSent:=0; ElapsedSec.Init;
-  LastErrorCount:=0; FCommObj:=vCommObj;
+  LastErrorCount:=0; FCommObj:=vCommObj; FIPC:=vIPC;
 end;
 
 destructor TZModemObj.Done;
@@ -2728,6 +2727,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/11 16:30:35  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.3  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

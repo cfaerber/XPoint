@@ -39,17 +39,16 @@ begin
   end;
 
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
-  ZModemObj:=TZModemObj.Init(FCommObj);
-  ZModemObj.FIPC:=IPC;
+  ZModemObj:=TZModemObj.Init(FCommObj,IPC);
 
   WriteIPC(mcVerbose,getres2(30004,12),[0]);  { 'Senden' }
   ZModemOkay:=True;
-  if(sendempty and ZedZap)and(FilesToSend.Count<=0)then
+  if(sendempty and ZedZap)and(OutgoingFiles.Count<=0)then
     ZModemOkay:=ZModemObj.Send('',True)
   else
-    for i:=1 to FilesToSend.Count do
+    for i:=1 to OutgoingFiles.Count do
       if ZModemOkay then
-        ZModemOkay:=ZModemObj.Send(FilesToSend[i-1],i=FilesToSend.Count);
+        ZModemOkay:=ZModemObj.Send(OutgoingFiles[i-1],i=OutgoingFiles.Count);
 
   if not ZModemOkay then begin
     WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
@@ -64,7 +63,7 @@ begin
   begin                                        { ZModem empfangen }
     {ZModem-Ausgaberoutinen setzen}
     WriteIPC(mcVerbose,getres2(30004,13),[0]);    { 'Empfangen' }
-    ZModemOkay:=ZModemObj.Receive(MailPath,FilesReceived);
+    ZModemOkay:=ZModemObj.Receive(MailPath,IncomingFiles);
     if (not ZModemOkay) then begin
       WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
@@ -75,6 +74,10 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.6  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

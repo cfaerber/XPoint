@@ -34,6 +34,7 @@ uses
 function ZConnectNetcall(box: string;
                          boxpar: boxptr;
                          ppfile: string;
+                         diskpoll: boolean;
                          Logfile: String;
                          IncomingFiles: TStringList):shortint;
 
@@ -80,8 +81,7 @@ begin
         SetCurrentDir(DirWhereToProcess);
         ShellProg:=Downarcer;
         Exchange(ShellProg,'$DOWNFILE',aFile);
-        Exchange(ShellProg,'$PUFFER','');
-//**    ^ change...
+        Exchange(ShellProg,'$PUFFER',PufferFile);
         Res:=ShellNTrackNewFiles(ShellProg,500,1,NewFiles);
         // shell chdirs back to program directory automatically
         if Res<>0 then begin
@@ -96,7 +96,7 @@ begin
         end
       else begin
         Debug.DebugLog('xpnczconnect',aFile+' is a requested file',DLDebug);
-//**    Move to file dir
+        RenameFile(aFile,RequestedFilesDir+ExtractFilename(aFile));
         FilesToProcess.Delete(iFile);
         end;
       end;
@@ -111,6 +111,7 @@ end;
 function ZConnectNetcall(box: string;
                          boxpar: boxptr;
                          ppfile: string;
+                         diskpoll: boolean;
                          Logfile: String;
                          IncomingFiles: TStringList):shortint;
 
@@ -150,7 +151,7 @@ begin { ZConnectNetcall }
 
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
-  UpArcFile:='CALLER.'+boxpar^.uparcext;
+  UpArcFile:=boxpar^.sysopout+'CALLER.'+boxpar^.uparcext;
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFile);
@@ -162,40 +163,49 @@ begin { ZConnectNetcall }
     end
   else _era(PufferFile);
 
-  // Call mailer
-  GenericMailer:=TGenericMailer.Create;
-  if not GenericMailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
-    trfehler1(2340,GenericMailer.ErrorMsg,30);
-    GenericMailer.Destroy;
-    OutgoingFiles.Destroy;
-    _era(UpArcFile);
-    exit;
-    end;
-  GenericMailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True);
-  InitMailer;
-  Proceed:=GenericMailer.Connect;
-  if Proceed then begin
-    result:=el_nologin;
-    CommObj:=GenericMailer.CommObj;
-    Proceed:=RunScript(BoxPar,CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
-    end;
+  case Diskpoll of
+    false: begin  // use mailer to transfer files
+      GenericMailer:=TGenericMailer.CreateWithIPC(TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True));
+      Proceed:=GenericMailer.Activate(ComN[boxpar^.bport].MCommInit);
+      if not Proceed then begin
+        trfehler1(2340,GenericMailer.ErrorMsg,30);
+        end else begin
+        InitMailer;
+        Proceed:=GenericMailer.Connect;
+        end;
+      if Proceed then begin
+        result:=el_nologin;
+        CommObj:=GenericMailer.CommObj;
+        Proceed:=RunScript(BoxPar,CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
+        end;
 //** Transmit serial number
-  if Proceed then begin
-    result:=el_senderr;
-    Proceed:=GenericMailer.SendFiles(OutgoingFiles);
-    end;
-  _era(UpArcFile);
-  if Proceed then begin
-    result:=el_recerr;
-    Proceed:=GenericMailer.ReceiveFiles(ownpath+XFerDir,IncomingFiles);
-    end;
-  GenericMailer.Disconnect;
-  if Proceed then result:=el_ok;
+      if Proceed then begin
+        result:=el_senderr;
+        Proceed:=GenericMailer.SendFiles(OutgoingFiles);
+        end;
+      _era(UpArcFile);
+      if Proceed then begin
+        result:=el_recerr;
+        Proceed:=GenericMailer.ReceiveFiles(ownpath+XFerDir,IncomingFiles);
+        end;
+      GenericMailer.Disconnect;
+      if Proceed then result:=el_ok;
 
-  GenericMailer.Destroy;
-  CommObj^.Close; Dispose(CommObj,Done);
+      GenericMailer.Destroy;
+      end;
+    true: begin  // diskpoll, call appropriate programs
+      result:=el_noconn;
+      SetCurrentDir(boxpar^.sysopinp);
+      if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
+      SetCurrentDir(boxpar^.sysopout);
+      if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
+        result:=el_ok
+      else
+        result:=el_recerr;
+      end;
+    end;
 
-  ProcessIncomingFiles(IncomingFiles,ownpath+xferdir,ownpath+filepath,boxpar);
+  ProcessIncomingFiles(IncomingFiles,ownpath+xferdir,ownpath+infiledir,boxpar);
 
   if result IN [el_recerr,el_ok] then begin
     Debug.DebugLog('xpnczconnect','sending upbuffer was successful, clearing',DLInform);
@@ -212,6 +222,10 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.4  2001/02/11 01:01:10  ma
   - ncmodem does not dial now if no phone number specified
     (removed PerformDial property)

@@ -326,11 +326,11 @@ var
     result:=OK;
     case TxState of
       TxGNF: begin
-        if FilesToSend.Count<=0 then begin // no more files to send
+        if OutgoingFiles.Count<=0 then begin // no more files to send
           OutBpF.SendCommandFrame(M_EOB,'');
           TxState:=TxWLA; result:=Continue;
           end else begin // still files to send
-          TxFilename:=FilesToSend[0];
+          TxFilename:=OutgoingFiles[0];
           WriteIPC(mcInfo,'Sending %s',[TxFilename]);
           TxFileHandle:=FileOpen(TxFilename,fmOpenRead);
           if TxFileHandle>0 then begin // opened ok
@@ -394,14 +394,14 @@ begin
       Receive: begin
           case BpReceive of
             OK: State:=Switch; //** set timer
-            Failure: begin if FilesToSend.Count=0 then result:=1 else result:=2; State:=Done end;
+            Failure: begin if OutgoingFiles.Count=0 then result:=1 else result:=2; State:=Done end;
             Continue: ;
           end;
         end;
       Transmit: begin
           case BpTransmit of
             OK: State:=Switch; //** set timer
-            Failure: begin if FilesToSend.Count<=0 then result:=1 else result:=2; State:=Done end;
+            Failure: begin if OutgoingFiles.Count<=0 then result:=1 else result:=2; State:=Done end;
             Continue: ;
           end;
         end;
@@ -413,6 +413,10 @@ end;
 
 {
   $Log$
+  Revision 1.2  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.1  2001/02/11 01:01:10  ma
   - ncmodem does not dial now if no phone number specified
     (removed PerformDial property)

@@ -46,8 +46,7 @@ var
   ZModemObj: TZModemObj;
   iFile: Integer;
 begin
-  ZModemObj:=TZModemObj.Init(FCommObj);
-  ZModemObj.FIPC:=IPC;
+  ZModemObj:=TZModemObj.Init(FCommObj,IPC);
   if OutgoingFiles.Count<=0 then
     result:=ZModemObj.Send('',True)
   else begin
@@ -66,8 +65,7 @@ function TGenericMailer.ReceiveFiles(IncomingDir: String; IncomingFiles: TString
 var
   ZModemObj: TZModemObj;
 begin
-  ZModemObj:=TZModemObj.Init(FCommObj);
-  ZModemObj.FIPC:=IPC;
+  ZModemObj:=TZModemObj.Init(FCommObj,IPC);
   result:=ZModemObj.Receive(IncomingDir,IncomingFiles);
   ZModemObj.Done;
 end;
@@ -77,6 +75,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.2  2001/02/06 20:17:50  ma
   - added error handling
   - cleaning up files properly now

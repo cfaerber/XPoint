@@ -26,7 +26,7 @@ unit NCModem;
 interface
 
 uses
-  netcall,timer,objcom;
+  netcall,timer,objcom,ipcclass;
 
 const
   { Log chars used in canonical log file. }
@@ -49,7 +49,7 @@ type
   protected
     FCommObj: tpCommObj;
     FTimerObj: tTimer;
-    FConnected,FActive,FCommObjReleased: Boolean;
+    FConnected,FActive: Boolean;
     FPhonenumbers: String;
     WaitForAnswer,FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
@@ -62,7 +62,6 @@ type
     FConnectString: String;
 
     procedure SLogfileName(S: String);
-    function SCommObj: tpCommObj;
 
     {Process incoming bytes from modem: store in ReceivedUpToNow or move
      all bytes received yet to ModemAnswer and set WaitForAnswer to False
@@ -115,9 +114,7 @@ type
 
     { True if comm channel initialized }
     property Active: Boolean read FActive;
-    { Either get CommObj via this property or have it released on
-      disposing this class. }
-    property CommObj: tpCommObj read SCommObj;
+    property CommObj: tpCommObj read FCommObj;
     { True if connected to peer }
     property Connected: Boolean read FConnected;
     { Sets/reads timeout (activates on idleing of peer) }
@@ -127,21 +124,20 @@ type
     property GotUserBreak: Boolean read FGotUserBreak;
     property ErrorMsg: string read FErrorMsg;
 
-    constructor Create;
+    { Create with IPC class }
+    constructor CreateWithIPC(aIPC: TIPC);
     { Create with CommObj. Intended for online calls. Active and
       Connected return true after call. This class does not care
       for CommObj release even when disposed if created with this
       constructor. }
-    constructor CreateWithCommObj(p: tpCommObj);
+    constructor CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
     { Disconnects if phonenumbers not empty.
-      Disposes CommObj if not released via property CommObj before.
+      Disposes CommObj.
       Closes log file.
       Disposes IPC. }
     destructor Destroy; override;
 
-    { Initializes comm channel, s is ObjCOM CommInit string.
-      CommObj will be disposed with this class if not released
-      by using property CommObj before. }
+    { Initializes comm channel, s is ObjCOM CommInit string. }
     function Activate(s: String): Boolean;
     { Connects (= dials if necessary) }
     function Connect: boolean; virtual;
@@ -164,7 +160,7 @@ implementation
 
 uses
   {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
-  xpglobal,sysutils,typeform,debug,ipcclass,xpmessagewindow;
+  xpglobal,sysutils,typeform,debug,xpmessagewindow;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
@@ -190,36 +186,27 @@ begin
   result:=n;
 end;
 
-constructor TModemNetcall.Create;
+constructor TModemNetcall.CreateWithIPC(aIPC: TIPC);
 begin
   inherited Create;
-  FConnected:=False; FActive:=False; FErrorMsg:='';
+  FConnected:=False; FActive:=False; FErrorMsg:=''; IPC:=aIPC;
   WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
-  DebugBadge:='ncmodem'; FCommObjReleased:=False;
+  DebugBadge:='ncmodem';
 end;
 
-constructor TModemNetcall.CreateWithCommObj(p: tpCommObj);
+constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
 begin
-  Create;
-  FCommObj:=p; FActive:=True; FConnected:=True; FCommObjReleased:=True;
-end;
-
-function TModemNetcall.SCommObj: tpCommObj;
-begin
-  if FActive then begin
-    result:=FCommObj;
-    FCommObjReleased:=True;
-    end
-  else result:=NIL;
+  CreateWithIPC(aIPC);
+  FCommObj:=p; FActive:=True; FConnected:=True;
 end;
 
 destructor TModemNetcall.Destroy;
 begin
   if (FPhonenumber<>'')and FConnected then Disconnect;
-  if not FCommObjReleased then Dispose(FCommObj,Done);
+  if FActive then begin FCommObj^.Close; Dispose(FCommObj,Done)end;
   inherited destroy;
 end;
 
@@ -458,6 +445,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/02/11 16:30:35  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.10  2001/02/11 01:01:10  ma
   - ncmodem does not dial now if no phone number specified
     (removed PerformDial property)

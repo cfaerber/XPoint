@@ -644,8 +644,7 @@ begin
       if LoginTyp IN [ltNNTP, ltPOP3] then
         // Hier evtl. n"tige Tests der Parameter einstellen
       else
-      if (pointname='') or (not (_fido or uucp) and (passwort='')) or
-        ((not SysopMode and (telefon='') or (telefon='08-15'))) then
+      if (pointname='') or (not (_fido or uucp) and (passwort='')) then
         BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
       else if (((not (_fido or uucp) or (UpArcer<>'')) and
                 ((not uucp and (pos('$UPFILE',UpperCase(UpArcer))=0)) or
@@ -874,7 +873,7 @@ begin                  { function Netcall }
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-          case FidoNetcall(BoxName,Boxpar,crash,domain,NetcallLogfile,IncomingFiles) of
+          case FidoNetcall(BoxName,Boxpar,crash,sysopmode,domain,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -887,7 +886,7 @@ begin                  { function Netcall }
 
         ltZConnect: begin
           Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
-          case ZConnectNetcall(BoxName,Boxpar,ppfile,NetcallLogfile,IncomingFiles) of
+          case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -1137,6 +1136,10 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.7  2001/02/09 17:31:07  ma
   - added timer to xpmessagewindow
   - did some work on AKA handling in xpncfido

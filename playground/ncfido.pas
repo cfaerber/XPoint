@@ -67,7 +67,7 @@ type
 
   public
     {These HAVE to be initialized when calling PerformNetcall}
-    FilesToSend,FilesReceived: TStringList;
+    OutgoingFiles,IncomingFiles: TStringList;
     AKAs: String;
     Username: String;
     OwnAddr: String;
@@ -240,6 +240,10 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/02/11 16:30:36  ma
+  - added sysop call
+  - some changes with class constructors
+
   Revision 1.12  2001/02/11 01:01:10  ma
   - ncmodem does not dial now if no phone number specified
     (removed PerformDial property)
