@@ -17,7 +17,7 @@ procedure MakeSignature(var signat, sigfile:pathstr; var sigtemp:boolean);
 const sigsep = '-*-';
 var t,t2    : text;
     s       : string;
-    buf     : string;
+    Buf: array[0..1023] of Char;  { 4K buffer }
     num,n,i : word;
 begin
   sigtemp:=false;
@@ -1136,6 +1136,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.9.2.2  2000/08/05 17:16:10  mk
+  - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
+
   Revision 1.9.2.1  2000/04/18 20:08:06  mk
   JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt
 
