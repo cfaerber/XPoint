@@ -155,6 +155,7 @@ type
     function FirstLine: string;
     function NextLine: string;
     function PrevLine: string;
+    procedure UnmarkLine;
     property StartPos: Integer read FStartPos write FStartPos;
     property HeaderText: String read FHeaderText write SetHeaderText;
     property SelCount: Integer read FSelCount;
@@ -1043,6 +1044,12 @@ begin
   end;
 end;
 
+procedure TLister.UnmarkLine;
+begin
+  Lines.Objects[LinePos] := Pointer(0);
+  Dec(FSelCount);
+end;
+
 initialization
   with ListColors do
     if color then
@@ -1067,6 +1074,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.52  2001/07/21 13:44:36  mk
+  - Added TLister method UnmarkLine
+
   Revision 1.51  2001/05/27 18:22:46  ma
   - fixed: selection bar did not work properly
 
