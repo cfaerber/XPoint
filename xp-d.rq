@@ -3380,7 +3380,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 30010
 # Gruppenliste
-1 ^Alle Gruppen,^Neue Gruppen,^Untergruppen,A^bbrechen
+1 ^Alle Gruppen,^Neue Gruppen,^Untergruppen
 2 Das kann dauern! Wollen Sie das wirklich
 3 ~ - Gruppenliste holen
 4 Vorgang......:
@@ -3577,6 +3577,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.90  2000/12/26 12:10:24  mk
+# - removed cancel from minisel in nntp-grouplist
+#
 # Revision 1.89  2000/12/25 20:31:16  mk
 # - zfido is now completly integrated
 #
