@@ -866,11 +866,13 @@ begin // Show
 
       // key down
       if (t = keydown) and not mausdown then
+      begin
         if SelBar then
           FSelLine := FSelLine + 1
         else
+        if FirstLine + DispLines < Lines.Count then
           FirstLine := FirstLine + 1
-      else
+      end else
 
       // goto first line of text
       if (t = keyhome) or (t = keycpgu) then
@@ -893,7 +895,7 @@ begin // Show
         if SelBar then
           FSelLine := FSelLine + DispLines;
 
-        if FirstLine + DispLines < Lines.Count then
+        if FirstLine + DispLines < Lines.Count -1 then
           FirstLine := FirstLine + DispLines;
       end else
 
@@ -904,9 +906,10 @@ begin // Show
       if (t = keyend) then
       begin
         if Selbar then
-          FSelLine := Lines.Count - 1;
-        if FirstLine + DispLines < Lines.Count then
-          FirstLine := Lines.Count - DispLines;
+          FSelLine := Lines.Count - 1
+        else
+          if FirstLine + DispLines < Lines.Count -1 then
+            FirstLine := Lines.Count - DispLines;
       end else
 
       if not stat.noshift then
@@ -1096,6 +1099,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.87  2003/08/21 18:41:25  cl
+  - some fixes for last commits
+
   Revision 1.86  2003/08/20 20:39:21  cl
   - fixed one more "list index out of bounds" error
 
