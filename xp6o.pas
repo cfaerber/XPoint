@@ -756,7 +756,15 @@ again:
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
   assign(t,fn); assign(f,fn);
   rec:=dbRecno(mbase);
+  if typ in [5,6] then
+  begin
+    ReadHeadEmpf := 0;
+    ReadEmpfList := true;
+    ReadKopList := true;
+  end;
   ReadHeader(hdp^,hds,true);
+  if typ in [5,6] then
+    Empflist.Assign(Hdp^.kopien);
   if hds=1 then goto ende;
   betr:=hdp^.betreff;
   binaermail:=(ntyp='B');
@@ -1275,6 +1283,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/11/09 18:15:12  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.40  2000/11/01 11:37:28  mk
   RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
 

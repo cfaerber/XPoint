@@ -200,6 +200,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if xpointctl<>0  then wrs('X-XP-CTL: '+strs(XpointCtl));
       wrs('LEN: '+strs(groesse));
       if komlen>0 then wrs('KOM: '+strs(komlen));
+      for i := 1 to ULine.Count -1 do
+        wrs(Uline[i]);
+      for i := 1 to xLine.Count -1 do
+        wrs(xline[i]);
+
       wrs('');
       end;
   end;
@@ -433,6 +438,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/09 18:15:12  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.23  2000/10/17 10:05:50  mk
   - Left->LeftStr, Right->RightStr
 

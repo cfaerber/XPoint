@@ -1983,14 +1983,27 @@ end;
 procedure ClearHeader(hdp: headerp);
 begin
   FillChar(hdp^, SizeOf(header), 0);
-  Hdp^.Kopien := TStringList.Create;
+  with hdp^ do
+  begin
+    Kopien := TStringList.Create;
+    ULine := TStringList.Create;
+    XLIne := TStringList.Create;
+    fLine := TStringList.Create;
+    zLIne := TStringList.Create;
+  end;
 end;
 
 procedure FreeHeaderMem(var hdp: headerp);
 begin
   if hdp<>nil then
   with Hdp^ do
+  begin
     Kopien.Free;
+    ULine.Free;
+    XLine.Free;
+    fLine.Free;
+    zLine.Free;
+  end;
   freemem(hdp);
   hdp:= nil;
 end;
@@ -2004,6 +2017,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.85  2000/11/09 18:15:11  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.84  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

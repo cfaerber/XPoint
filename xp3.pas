@@ -375,6 +375,7 @@ end;
 {$define allrefs}
 {$define convbrettempf}
 {$define pgp}
+{$define ulines }
 {$I xpmakehd.inc}           { MakeHeader() }
 
 
@@ -1219,6 +1220,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.46  2000/11/09 18:15:11  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.45  2000/10/17 10:05:49  mk
   - Left->LeftStr, Right->RightStr
 

@@ -194,10 +194,6 @@ var
   Mail: TStringList;
   // Liste der Empfaenger
   empflist: TStringList;
-  uline: TStringList;
-  xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
-  zline: TStringList;                   { unbekannte ZC-Zeilen }
-  fline: TStringList;                   { unbekannte FTN-Zeilen }
   TempS: ShortString;
 
 const
@@ -217,9 +213,13 @@ begin
     XEmpf.Free;
     XOEM.Free;
     Followup.Free;
+    ULine.Free;
+    XLine.Free;
+    ZLine.Free;
+    FLine.Free;
   end;
 
-  ULine.Clear; XLine.Clear; zline.clear; fline.clear; Mail.Clear;
+  Mail.Clear;
   Fillchar(hd, sizeof(hd), 0);
 
   with hd do
@@ -229,6 +229,10 @@ begin
     XEmpf := TStringList.Create;
     XOEM := TStringList.Create;
     Followup := TStringList.Create;
+    ULine := TStringlist.Create;
+    XLine := TStringList.Create;
+    ZLine := TStringlist.Create;
+    FLine := TStringList.Create;
   end;
 end;
 
@@ -339,10 +343,6 @@ begin
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
 
-  ULine := TStringlist.Create;
-  XLine := TStringList.Create;
-  zline := tstringlist.create;
-  fline := tstringlist.create;
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
 
@@ -362,7 +362,6 @@ destructor TUUZ.Destroy;
 begin
   AddHd.Free;
   EmpfList.Free;
-  ULine.Free; XLine.Free; zline.free; fline.free;
   Mail.Free;
   freemem(outbuf, bufsize);
 end;
@@ -1575,7 +1574,7 @@ var
     s: String;
   begin
     if not mail then
-      Uline.Add('U-To: ' + s0)
+      hd.Uline.Add('U-To: ' + s0)
     else
     begin
       sto := trim(s0);
@@ -1694,7 +1693,7 @@ var
       begin
         truncstr(s0, p - 1);
         GetAdr(a, r);
-        Uline.Add('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
+        hd.Uline.Add('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
       end;
       s0 := s;
     end;
@@ -1779,7 +1778,7 @@ var
         GetRec := '';
     end;
   begin
-    Uline.Add('U-' + s1);
+    hd.Uline.Add('U-' + s1);
     { "(qmail id xxx invoked from network)" enthaelt "from " }
     RFCRemoveComment(s0);
     by := GetRec('by ');
@@ -1882,7 +1881,7 @@ var
 
   procedure GetMime(p: mimeproc);
   begin
-    Uline.Add('U-' + s1);
+    hd.Uline.Add('U-' + s1);
     RFCRemoveComment(s0);
     p(s0);
   end;
@@ -2013,7 +2012,7 @@ begin
               gateway := s0
             else
               if (zz = 'x-mailer') or (zz = 'x-newsreader') or
-	         (zz = 'x-news-reader') or (zz = 'x-software') then
+                 (zz = 'x-news-reader') or (zz = 'x-software') then
               programm := s0
             else
               if (zz = 'x-z-post') or (zz = 'x-zc-post')  then
@@ -3150,7 +3149,7 @@ begin
       wrs(f, 'Supersedes: <' + ersetzt + '>');
     if expiredate <> '' then begin
         zctozdatum(expiredate,uuz.s);
-	wrs(f, 'Expires: ' + ztorfcdate(uuz.s,expiredate));
+        wrs(f, 'Expires: ' + ztorfcdate(uuz.s,expiredate));
       end;
     if fido_to <> '' then
     begin
@@ -3567,6 +3566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/11/09 18:15:11  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.74  2000/11/06 21:10:46  fe
   LDA/Expires support completet.  (Only relaying, not application.)
 

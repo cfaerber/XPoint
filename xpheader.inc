@@ -92,6 +92,10 @@ type
     xnoarchive: boolean;
     Cust1, Cust2: string;
     control: string;
+    uline: TStringList;
+    xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
+    zline: TStringList;
+    fline: TStringList;
 
     // UUZ
     addref: TStringList;  // Referenzen
@@ -109,6 +113,9 @@ type
 
 {
   $Log$
+  Revision 1.6  2000/11/09 18:15:12  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.5  2000/11/05 20:14:13  fe
   Added LDA/Expires.
 
