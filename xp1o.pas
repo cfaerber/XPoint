@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,keys,fileio,inout,maus2,lister,
+  sysutils,dos,dosx,typeform,keys,fileio,inout,maus2,lister,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -988,6 +988,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/07/03 13:31:39  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.41  2000/06/29 13:00:54  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -24,6 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+  sysutils,
   dos,keys,clip,mouse,eddef, encoder;
 
 
@@ -1882,6 +1883,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/03 13:31:37  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.28  2000/07/02 14:24:46  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

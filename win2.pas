@@ -29,6 +29,7 @@ uses
 {$else}
   crt,
 {$endif}
+  sysutils,
   dos,dosx,keys,inout,maus2,typeform,winxp;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
@@ -1098,6 +1099,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/03 13:31:38  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.17  2000/06/22 19:53:28  mk
   - 16 Bit Teile ausgebaut
 

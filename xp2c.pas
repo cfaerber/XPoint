@@ -17,6 +17,7 @@ unit xp2c;
 interface
 
 uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -1518,6 +1519,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/07/03 13:31:39  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.41  2000/06/24 14:10:27  mk
   - 32 Bit Teile entfernt
 

@@ -20,14 +20,14 @@ unit xp3ex;
 interface
 
 uses
-  xpglobal,
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,database,resource,stack,
-  xp0,xp1;
+  xp0,xp1,xpglobal;
 
 const xTractMsg   = 0;
       xTractHead  = 1;
@@ -1043,6 +1043,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/03 13:31:40  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.18  2000/07/02 14:24:53  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

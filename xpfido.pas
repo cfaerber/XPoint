@@ -23,7 +23,7 @@ uses  xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio,inout,keys,winxp,maus2,
+  sysutils,dos,dosx,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
   xp0,xp1,xp1o,xp1input;
 
@@ -2249,6 +2249,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/03 13:31:44  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.17  2000/07/02 14:24:54  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

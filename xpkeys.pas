@@ -20,7 +20,7 @@ unit xpkeys;
 interface
 
 uses
-  xpglobal, dos,typeform,fileio,inout,keys,resource,xp0,xp1;
+  xpglobal, sysutils,dos,typeform,fileio,inout,keys,resource,xp0,xp1;
 
 
 type  getf_func   = function(nr,nn:byte):pathstr;
@@ -242,6 +242,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/07/03 13:31:45  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.6  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines

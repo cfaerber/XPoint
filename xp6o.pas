@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,keys,datadef,database,maske,
+  sysutils,dos,typeform,fileio,inout,keys,datadef,database,maske,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
@@ -1249,6 +1249,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/03 13:31:41  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.21  2000/06/23 15:59:23  mk
   - 16 Bit Teile entfernt
 

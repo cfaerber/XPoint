@@ -16,7 +16,7 @@ unit xpauto;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses  sysutils,
       dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
       xp0,xp1, xpglobal;
 
@@ -660,6 +660,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/03 13:31:43  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.14  2000/06/22 19:53:32  mk
   - 16 Bit Teile ausgebaut
 

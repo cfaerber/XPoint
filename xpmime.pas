@@ -16,7 +16,7 @@ unit xpmime;
 
 interface
 
-uses  dos,typeform,montage,fileio,keys,lister,database,resource,
+uses  sysutils,dos,typeform,montage,fileio,keys,lister,database,resource,
       xp0,xp1, xpglobal, xpkeys;
 
 
@@ -720,6 +720,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/03 13:31:45  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.14  2000/06/29 20:53:09  mk
   JG: - Mime-Auswahl erscheint nur noch, wenn wirklich noetig und sinnvoll
 

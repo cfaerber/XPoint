@@ -18,13 +18,13 @@ unit  xpuu;
 interface
 
 uses
-  xpglobal,
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,resource,xp0,xp1;
+  dos,typeform,fileio,resource,xp0,xp1,xpglobal;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_parerr  = 1;
@@ -120,6 +120,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/07/03 13:31:45  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.7  2000/06/29 13:01:03  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

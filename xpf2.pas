@@ -16,8 +16,9 @@ unit xpf2;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal,
+uses
+  sysutils,
+  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }

@@ -18,14 +18,14 @@ unit xp3;
 interface
 
 uses
-  xpglobal,
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,datadef,database,montage,resource,
-      xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum;
+      xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -1237,6 +1237,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/03 13:31:40  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.29  2000/07/02 14:24:53  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

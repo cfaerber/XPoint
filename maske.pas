@@ -23,6 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
+  sysutils,
   typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
 
 const digits : string[12] = '-0123456789 ';
@@ -1293,6 +1294,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/07/03 13:31:38  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.9  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

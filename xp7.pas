@@ -17,8 +17,9 @@ unit  xp7;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal,
+uses
+  sysutils,
+  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -1557,6 +1558,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/03 13:31:41  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.17  2000/06/29 13:00:57  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

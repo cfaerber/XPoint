@@ -15,7 +15,8 @@ unit XPCfg;
 interface
 
 uses
-  xpglobal;
+  xpglobal,
+  sysutils;
 
 { Sektionen. Im Implementationsteil wird MySection definiert. Dieses muss
   fuer die einzelnen Betriebssysteme angepasst werden }
@@ -480,6 +481,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2000/07/03 13:31:44  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.2  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

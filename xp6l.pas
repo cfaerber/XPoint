@@ -16,7 +16,7 @@ unit xp6l;
 
 interface
 
-uses  xp0,xpcc, xpglobal;
+uses  sysutils,xp0,xpcc, xpglobal;
 
 
 { Tabelle fr IBM -> ISO-Konvertierung }
@@ -53,6 +53,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6  2000/07/03 13:31:41  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.5  2000/04/15 21:44:47  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

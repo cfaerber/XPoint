@@ -17,7 +17,7 @@ unit xpfidonl;
 
 interface
 
-uses  dos,typeform,montage,fileio,maske,resource,archive,
+uses  sysutils,dos,typeform,montage,fileio,maske,resource,archive,
       xp0,xp1,xp1o,xp3, xpglobal;
 
 
@@ -741,6 +741,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/03 13:31:44  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.10  2000/07/02 14:24:54  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

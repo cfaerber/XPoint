@@ -19,14 +19,15 @@ unit xp8;
 
 interface
 
-uses xpglobal,
+uses sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,keys,datadef,database,lister,
-  maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti;
+  maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
+  xpglobal;
 
 
 procedure SendMaps(bef:string; var box,datei:string);
@@ -1587,6 +1588,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/03 13:31:42  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.12  2000/06/29 13:00:58  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

@@ -38,6 +38,7 @@ uses
 {$else }
   crt,
 {$endif }
+  sysutils,
   keys, typeform, mouse, xp0, xpglobal;
 
 const  lastkey   : taste = '';
@@ -1651,6 +1652,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.42  2000/07/03 13:31:38  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.41  2000/07/02 14:24:48  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

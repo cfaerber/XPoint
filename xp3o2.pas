@@ -16,7 +16,7 @@ unit xp3o2;
 
 interface
 
-uses typeform,datadef,database,resource,xp0,xp6, xpglobal;
+uses sysutils,typeform,datadef,database,resource,xp0,xp6, xpglobal;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -441,6 +441,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/03 13:31:40  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.10  2000/06/29 13:00:55  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

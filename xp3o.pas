@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
+      sysutils,dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
       resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
@@ -1473,6 +1473,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/03 13:31:40  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.22  2000/06/23 15:59:19  mk
   - 16 Bit Teile entfernt
 

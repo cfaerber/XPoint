@@ -18,6 +18,7 @@ unit xp1;
 interface
 
 uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -1593,8 +1594,8 @@ end;
 
 
 function getb(var su:string; v:string; var b:byte):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -1618,8 +1619,8 @@ begin
 end;
 
 function geti(var su:string; v:string; var i:integer):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -1630,8 +1631,8 @@ begin
 end;
 
 function geti16(var su:string; v:string; var i:integer16):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -1642,8 +1643,8 @@ begin
 end;
 
 function getw(var su:string; v:string; var w:smallword):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -1654,8 +1655,8 @@ begin
 end;
 
 function getl(var su:string; v:string; var l:longint):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -1666,8 +1667,8 @@ begin
 end;
 
 function getr(var su:string; v:string; var r:real):boolean;
-var res : integer;
-    p   : byte;
+const res : integer = 0;
+var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
@@ -2018,6 +2019,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/07/03 13:31:38  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.52  2000/06/30 08:21:22  mk
   - nicht benutzte Funktion plevel entfernt
 

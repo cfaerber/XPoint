@@ -25,7 +25,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
+     sysutils,dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
      xp0,xp1,xp1input,crc,xp_iti, xpglobal;
 
 
@@ -822,6 +822,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/03 13:31:45  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.8  2000/06/19 20:22:32  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

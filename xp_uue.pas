@@ -18,6 +18,7 @@ unit xp_uue;
 interface
 
 uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -520,6 +521,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/03 13:31:43  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.14  2000/06/23 15:59:25  mk
   - 16 Bit Teile entfernt
 

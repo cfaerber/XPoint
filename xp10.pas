@@ -18,6 +18,7 @@ unit xp10;
 interface
 
 uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -2024,6 +2025,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/03 13:31:39  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.12  2000/07/02 14:24:52  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

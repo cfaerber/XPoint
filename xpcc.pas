@@ -17,7 +17,7 @@ unit xpcc;
 
 interface
 
-uses  typeform,fileio,inout,maske,datadef,database,stack,resource,
+uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 50;
@@ -388,6 +388,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/03 13:31:44  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.16  2000/06/29 13:00:59  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

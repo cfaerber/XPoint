@@ -26,7 +26,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
+  sysutils,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
@@ -1617,6 +1617,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/03 13:31:45  hd
+  - SysUtils eingefuegt
+  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
+
   Revision 1.11  2000/07/02 14:24:55  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
