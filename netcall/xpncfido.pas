@@ -473,12 +473,9 @@ var i        : integer;
   begin
     splitfido(_from,a1,DefaultZone);
     splitfido(_to,a2,DefaultZone);
-    {$Q-} { ArtithmetikÅberlauf erwÅnscht }
-    fn:=hex(boxpar^.fpointnet-a2.net,4)+hex(a1.point-a2.node,4)+'.'+
+    fn:= hex((boxpar^.fpointnet-a2.net)and $ffff,4)
+        +hex((a1.point-a2.node)and $ffff,4)+'.'+
         copy('MOTUWETHFRSASU',dow(date)*2-1,2);
-    {$IFDEF DEBUG }
-    {$Q+}
-    {$ENDIF}
     if length(fn)<12 then fn:=fn+'1';
     GetArcFilename:=fn;
   end;
@@ -889,6 +886,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2001/10/17 01:04:05  ma
+  - fixed: Outgoing archive name computed wrong with Delphi
+
   Revision 1.23  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
