@@ -350,14 +350,14 @@ begin
   write('Source File: ');
   fname:=paramstr(1);
   if fname='' then readln(fname);
-  if fname='' then exit;
+  if trim(fname)='' then exit;
   fsplit(fname,dir,name,ext);
   if ustr(ext)='.HLP' then ext:='';
   fname:=ustr(name)+iifs(ext='','.IHQ',ustr(ext));
   if paramstr(1)<>'' then writeln(fname);
 
   if not exist(fname) then begin
-    writeln; writeln('Error: File not found.');
+    writeln; writeln('Error: File "'+fname+'" not found.');
     halt(1);
   end;
 
@@ -400,6 +400,10 @@ end.
 }
 {
    $Log$
+   Revision 1.2.2.6  2003/01/26 16:23:25  my
+   MY: - Eingabe des Dateinamens wird getrimmt.
+       - Nicht gefundener Dateiname wird angezeigt (wegen '.HLP' => '.IHQ')
+
    Revision 1.2.2.5  2003/01/26 16:07:33  my
    MY:- Copyrights PM korrigiert
 
