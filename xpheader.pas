@@ -231,7 +231,6 @@ begin
   MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
   References.Duplicates := dupIgnore;
-  References.CaseSensitive := false;
   XEmpf := TStringList.Create;
   OEM := TStringList.Create;
   XOEM := TStringList.Create;
@@ -820,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.26.2.4  2004/07/20 17:10:08  mk
+  - removed casesensitive because FPC does not support this
+
   Revision 1.26.2.3  2004/07/20 14:26:22  mk
   - do not add duplicate references
 
