@@ -386,7 +386,7 @@ var f,f2     : ^file;
     parken   : boolean;     { Nachricht nach /¯Unversandt         }
     senddate : datetimest;  { mit 'D' zeitversetzt absenden       }
     bin_msg  : boolean;     { Bin„r-Versandmeldung                }
-    SendDefault : byte;
+    SendDefault : shortint;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
     netztyp  : byte;        { Netztyp                             }
@@ -2193,6 +2193,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.6  2000/08/22 14:02:33  mk
+  - SendenDefault in Shortint geaendert
+
   Revision 1.39.2.5  2000/08/16 06:14:30  jg
   - Bugfix: Crashs im Zusammenhang mit dem Editorstart behoben
     (der Speicher von Marked wird nich mehr freigegeben)
