@@ -161,15 +161,15 @@ $(DOC_PDF) : $(DOC_SRC)
 
 include debian/Makefile.version
 
-debian/changelog debian/Makefile.version : debian/Makefile.PL \
+debian/Makefile.version : debian/Makefile.PL \
  debian/control debian/changelog.in \
  xpglobal.pas xpdefine.inc
 	(cd debian; make)
 
 debian: debian-is-a-directory
-	-rm debian/Makefile.version debian/changelog
 
 debian-is-a-directory: debian/changelog
+	(cd debian ; rm Makefile.version changelog ; make)
 	if [ `pwd|xargs basename` != openxp-$(DEB_UPSTREAM_VERSION) ]; then \
 	  ( ln -nfs `pwd|xargs basename` \
 	   ../openxp-$(DEB_UPSTREAM_VERSION) ) ; \
@@ -211,6 +211,9 @@ ${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.15  2003/09/04 12:52:53  cl
+# - fixed make debian
+#
 # Revision 1.14  2003/09/02 17:39:55  cl
 # - fixed recreation of debian/changelog on ``make debian''
 #
