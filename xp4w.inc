@@ -737,7 +737,11 @@ begin
             mimetyp:=compmimetyp(mpdata.typ+'/'+mpdata.subtyp)
           else
             mimetyp:='text/plain';
-          GetMimeViewer(mimetyp,viewer);
+
+          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+            GetMimeViewer(mimetyp,viewer);
+
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
       end
