@@ -80,7 +80,7 @@ function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
-function CVal(s:string):longint;	     { C Value Integer - nnnn/0nnn/0xnnn }
+function CVal(s:string):longint;             { C Value Integer - nnnn/0nnn/0xnnn }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
@@ -93,6 +93,7 @@ function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mi
 function FormR(const r:real; const vk,nk:integer):string;   { r-->str.; vk+nk mit 0 auff.  }
 function FormS(const s:string; n:integer):string;     { String auf n Stellen mit ' ' }
 function GetToken(var s:string; delimiter:string):string;
+function GetTokenC(var s:string; delim_chars:string):string;
 function HBar(const len:integer):string;              { 쳐컴컴컴컴...컴컴컴컴캑      }
 function Hex(const l:integer; const n:integer):string;      { Hex-Zahl mit n Stellen       }
 function HexVal(const s:string):longint;           { Hex-Val                      }
@@ -172,6 +173,16 @@ function ConvertFileName(const s:string): String;
 // siehe XPDTAUM !?
 procedure ZtoZCdatumNTZ(var d1,d2:string);
 procedure DecodeBase64(var s: String);
+
+function HostToLittleEndian16(host:smallword):smallword; 
+function LittleEndianToHost16(host:smallword):smallword; 
+function HostToLittleEndian32(host:    dword):    dword; 
+function LittleEndianToHost32(host:    dword):    dword; 
+
+function HostToBigEndian16(host:smallword):smallword; 
+function BigEndianToHost16(host:smallword):smallword; 
+function HostToBigEndian32(host:    dword):    dword; 
+function BigEndianToHost32(host:    dword):    dword; 
 
 { ================= Implementation-Teil ==================  }
 
@@ -700,9 +711,9 @@ end;
 function CVal(s:string):longint;
 begin
   if LeftStr(s,2)='0x' then     (* 0xnn = hex *)
-    CVal:=hexval(mid(s,3))
+    CVal:=HexVal(mid(s,3))
   else if LeftStr(s,2)='0' then (* 0nnn = oct *)
-    CVal:=OctVal(mid(s,2)) 
+    CVal:=OctVal(mid(s,2))
   else                          (* nnnn = dec *)
     CVal:=IVal(s);
 end;
@@ -1103,6 +1114,18 @@ begin
     end;
 end;
 
+function GetTokenC(var s:string; delim_chars:string):string;
+var i  : integer;
+begin
+  for i:=1 to length(s) do
+    if cpos(s[i],delim_chars)>0 then begin
+      Result:=LeftStr(s,i-1);
+      while cpos(s[i],delim_chars)>0 do i:=i+1;
+      s:=mid(s,i);
+      exit;
+    end;
+  result:=s; s:='';
+end;
 
 function PosX(const s1,s2:string):integer;            { length(s)+1, falls pos=0 }
 var p : integer;
@@ -1357,9 +1380,51 @@ begin
   end;
 end;
 
+{ functions to convert from/to MSB and LSB }
+
+Function Swap16(X : Word) : Word; inline;
+Begin
+  result:=(X and $ff) shl 8 + (X shr 8)
+End;
+
+Function Swap32(X: Longint): Longint; inline;
+Begin
+  result:=(x and $ff) shl 24 + (x and $ff00) shl 8 + (x and $ff0000) shr 8 + (x and $ff000000) shr 24;
+End;
+
+{$IFDEF LittleEndian}
+function HostToLittleEndian16(host:smallword):smallword; begin result:=host; end;
+function LittleEndianToHost16(host:smallword):smallword; begin result:=host; end;
+function HostToLittleEndian32(host:    dword):    dword; begin result:=host; end;
+function LittleEndianToHost32(host:    dword):    dword; begin result:=host; end;
+
+function HostToBigEndian16(host:smallword):smallword; begin result:=swap16(host); end;
+function BigEndianToHost16(host:smallword):smallword; begin result:=swap16(host); end;
+function HostToBigEndian32(host:    dword):    dword; begin result:=swap32(host); end;
+function BigEndianToHost32(host:    dword):    dword; begin result:=swap32(host); end;
+{$ELSE}
+{$IFDEF BigEndian}
+function HostToBigEndian16(host:smallword):smallword; begin result:=host; end;
+function BigEndianToHost16(host:smallword):smallword; begin result:=host; end;
+function HostToBigEndian32(host:    dword):    dword; begin result:=host; end;
+function BigEndianToHost32(host:    dword):    dword; begin result:=host; end;
+
+function HostToLittleEndian16(host:smallword):smallword; begin result:=swap16(host); end;
+function LittleEndianToHost16(host:smallword):smallword; begin result:=swap16(host); end;
+function HostToLittleEndian32(host:    dword):    dword; begin result:=swap32(host); end;
+function LittleEndianToHost32(host:    dword):    dword; begin result:=swap32(host); end;
+{$ELSE}
+   !! Non-supported byte order or byte order not set in xpdefine.inc
+{$ENDIF}
+{$ENDIF}
+
 end.
 {
   $Log$
+  Revision 1.82  2001/03/16 16:58:40  cl
+  - Little/Big-Endian conversion/macros
+  - GetTokenC (token terminated by on of several chars instead of string)
+
   Revision 1.81  2001/02/25 17:38:33  cl
   - moved CVal to typeform.pas, now also supports octal numbers
 
