@@ -31,7 +31,7 @@ const FMRead       = $00;     { Konstanten fÅr Filemode }
 
 const
   { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
-  ffAnyFile = $20;
+  ffAnyFile = $21; { Normal, R/O und Archiv }
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
@@ -742,6 +742,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.12  2001/08/01 17:57:49  my
+  - changed const ffAnyFile from $20 to $21 (Normal, R/O and Archive)
+
   Revision 1.41.2.11  2001/07/31 16:31:16  mk
   - added function ChangeFileExt(const Filename, Ext: String): String;
 
