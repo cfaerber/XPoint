@@ -234,8 +234,17 @@ function InsertLatestNews($newsfile) {
 // show download table
 function ShowDownloadTable($downfile) {
 	global $language;
+
 	$pdfile = fopen($downfile,"r");
 	if ($pdfile==false) return 0;
+
+	// open ftp connection for getting file sizes
+	$fhandle = ftp_connect('ftp.openxp.de');
+	if ($fhandle) {
+	  if (!ftp_login($fhandle,"anonymous","webmaster@openxp.de"))
+	    ftp_quit($fhandle);
+	}
+
 	while(!feof($pdfile)) {
 	  $line=fgets($pdfile,300);
 	  if(strpos(" ".$line,"*")==1) { // headline
@@ -247,18 +256,24 @@ function ShowDownloadTable($downfile) {
 	      echo($line."<p>");
 	    }
 	  } else {
-	    $fs=GetFileSize($line);
+	    if ($fhandle)
+	      $fsize = sprintf("(%01.2f MB)", (ftp_size($fhandle, $line)/1024/1024));
+	    else
+	      $fsize = ""; // no ftp connection made
 	    if($language=="de") {
-	      echo("<a href=\"ftp://ftp.openxp.de".$line."\">".fgets($pdfile,200)."</a> ".$fs);
+	      $fdesc=fgets($pdfile,200);
 	      fgets($pdfile,200);
 	    } else {
 	      fgets($pdfile,200);
-	      echo("<a href=\"ftp://ftp.openxp.de".$line."\">".fgets($pdfile,200)."</a> ".$fs);
+	      $fdesc=fgets($pdfile,200);
 	    }
+	    echo("<a href=\"ftp://ftp.openxp.de".$line."\">".$fdesc."</a> ".$fsize);
 	    fgets($pdfile,20); // skip empty line
 	    echo("<br>");
 	  }
 	}
+
+	if ($fhandle) ftp_quit($fhandle);
 	fclose($pdfile);
 }
 
