@@ -167,7 +167,7 @@ end;
 function ntBinary(nt:byte):boolean;
 begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
-                    nt_UUCP]) or
+                    nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP]) or
             (fidobin and (nt=nt_Fido));
 end;
 
@@ -750,6 +750,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2001/05/05 08:05:42  mk
+  - allow binaries in POP3, IMAP and NNTP
+
   Revision 1.22  2001/04/17 20:21:29  ma
   - removed "## XP ##" checking
 
