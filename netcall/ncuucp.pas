@@ -428,7 +428,7 @@ begin
 
   Log(lcInfo,'UUCP connection established: '+s);
 
-  if s[4]='N' then
+  if (Length(s)>=4) and (s[4]='N') then
   begin
     n:=CVal(Mid(s,5));
     if n=0 then begin
@@ -1123,6 +1123,10 @@ end.
 
 {
   $Log$
+  Revision 1.18  2002/02/13 12:35:35  cl
+  - fixed "Range Check Error" on UUCP startup with simple UUCP callees
+    (see also <mid:xpbm5535843@dirk.deimeke.net>)
+
   Revision 1.17  2001/10/01 19:35:02  ma
   - compiles again (DOS32)
 
