@@ -255,7 +255,7 @@ end;
 procedure TXPMessageWindowDialog.WrtData(x,y:integer;txt:string;len:integer;ralign:boolean);
 begin
   if not IsVisible then exit;
-  if Length(txt)<(len-2) then txt:=LeftStr(txt,len-2);
+  if Length(txt)>(len-2) then txt:=LeftStr(txt,len-2);
   if ralign then txt:=sp(len-length(txt)-1)+txt+' '
   else   txt:=' '+txt+sp(len-length(txt)-1);
   TextAttr:=col.colmailerhigh;
@@ -269,6 +269,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/03/16 23:01:27  cl
+  - fixed bug w/ field size in TXPMessageWindowDialog.WrtData
+
   Revision 1.7  2001/03/16 17:17:04  cl
   - TXPMessageWindow can be resized
   - TXPMessageWindow's title can be changed
