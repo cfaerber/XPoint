@@ -17,18 +17,10 @@ unit xp2c;
 interface
 
 uses
-  sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
-{$IFDEF CAPI }
-  capi,
-{$ENDIF CAPI }
-     printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
-     xpglobal;
+  {$IFDEF NCRT}xpcurses,{$ELSE }crt,{$ENDIF }
+  sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
+  printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+  xpglobal;
 
 procedure options;
 procedure UI_options;
@@ -43,11 +35,7 @@ procedure brett_config;
 procedure NachrichtenanzeigeCfg;
 procedure MiscAnzeigeCfg;
 procedure AccessibilityOptions;
-{$ifdef Unix}
 procedure ModemConfig;
-{$else}
-procedure ModemConfig;
-{$endif}
 procedure path_config;
 procedure ArcOptions;
 procedure DruckConfig;
@@ -68,17 +56,14 @@ function smalladr(var s:string):boolean;
 function testbrett(var s:string):boolean;
 function scstest(var s:string):boolean;
 function formpath(var s:string):boolean;
-function testexist(var s:string):boolean;
 function testarc(var s:string):boolean;
 function testenv(var s:string):boolean;
 function testhayes(var s:string):boolean;
-{$ifndef Unix}
-function testfossil(var s:string):boolean;
-{$endif}
 function testpostanschrift(var s:string):boolean;
 function testurl(var s:string):boolean;
 function testtimezone(var s:string):boolean;
 function SetTimezone(var s:string):boolean;
+function testexecutable(var s:string):boolean;
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
 function testfilename( var s:string):boolean;
@@ -86,19 +71,11 @@ function testfilename( var s:string):boolean;
 procedure setvorwahl(var s:string);
 procedure DispArcs;
 procedure TestQC(var s:string);
-{$IFDEF CAPI }
-procedure TestCapiInt(var s:string);
-procedure IsdnConfig;
-{$ENDIF CAPI }
-
 
 implementation  {----------------------------------------------------}
 
 uses
-  xp1o,
-  xp2,
-  xp4o2,
-  xp9bp;
+  xp1o,xp2,xp4o2,xp9bp;
 
 const
   MaxProtocols = 2;
@@ -108,12 +85,7 @@ const
 
 var hayes     : boolean;
     small     : boolean;
-    oldfossil : char;
     tzfeld    : shortint;
-{$IFDEF CAPI }
-    isdnx,isdny : byte;   { x/y bei IsdnConfig }
-{$ENDIF }
-
 
 function testbrett(var s:string):boolean;
 begin
@@ -476,20 +448,6 @@ begin
   menurestart:=brk;
 end;
 
-function testexist(var s:string):boolean;
-var s2 : string;
-begin
-  s2:=trim(s);
-  if LeftStr(s2,1)='*' then delfirst(s2);
-  if cpos(' ',s2)>0 then s2:=copy(s2,1,cpos(' ',s)-1);
-  if (s2='') or (FileSearch(s2,GetEnv('PATH'))<>'') then
-    testexist:=true
-  else begin
-    rfehler(206);   { 'Programm nicht erreichbar (Extension nicht vergessen!)' }
-    testexist:=false;
-    end;
-end;
-
 procedure listoptions;
 var brk : boolean;
     x,y : byte;
@@ -546,7 +504,7 @@ var brk : boolean;
 begin
   dialog(ival(getres2(255,20)),3,getres2(255,21),x,y);    { 'externer Lister' }
   maddstring(3,2,getres2(255,22),VarLister,21,40,''); mhnr(230);   { 'Lister ' }
-  msetvfunc(testexist);
+  msetvfunc(testexecutable);
   maddint(37,2,getres2(255,23),ListerKB,5,3,50,500);   { 'KByte:' }
   freeres;
   readmask(brk);
@@ -572,7 +530,7 @@ begin
   dialog(ival(getres2(256,0)),11,getres2(256,5),x,y);   { 'Editor' }
 {$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
-  msetvfunc(testexist);
+  msetvfunc(testexecutable);
   maddint(43,2,getres2(256,7),EditorKB,5,3,50,500);   { 'KByte:' }
   maddstring(3,4,getres2(256,8),BAKext,3,3,'>');      { 'Backup-Dateierweiterung  ' }
   eds:=edtype[exteditor];
@@ -828,12 +786,8 @@ end;
 
 function testfossil(var s:string):boolean;
 begin
-  (* !! implement this for dos32
-  SetFieldEnable(2,b);
-  SetFieldEnable(3,b);
-  SetFieldEnable(10,b);
-  SetFieldEnable(12,b);
-  SetFieldEnable(13,b and (getfield(12)=_jn_[1])); *)
+  // obsolete
+  exit(false);
 end;
 
 procedure ModemConfig;
@@ -843,11 +797,7 @@ const
   txt_nr  = 5;                  { 'Device ^1,...' }
 {$else} { Unix }
   ttl_nr  = 1;                  { 'Schnittstellen' }
-{$ifdef CAPI}
-  txt_nr  = 3;                  { txt_2 + ',^ISDN' }
-{$else} { CAPI }
   txt_nr  = 2;                  { 'Seriell ^1 (COM1), ...' }
-{$endif} { CAPI }
 {$endif} { Unix }
 var brk  : boolean;
     x,y  : byte;
@@ -885,7 +835,6 @@ begin
     if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
 //    if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
-    oldfossil:=iifc(fossil,_jn_[1],_jn_[2]);
     mset1func(testfossil);
     maddstring(3,4,getres2(261,2),pstr,4,4,hexchar); mhnr(290);   { 'Port-Adresse (Hex) ' }
     mappsel(false,'3f8ù2f8ù3e8ù2e8');
@@ -931,71 +880,20 @@ begin
   menurestart:=brk;
 end;
 
-{$IFDEF CAPI }
-procedure TestCapiInt(var s:string);
-begin
-  CAPI_setint(hexval(s));
-  attrtxt(col.coldialog);
-  if not CAPI_installed then begin
-    mwrt(isdnx+9,isdny+3,forms(getres2(269,10),40));  { 'nicht vorhanden' }
-    mwrt(isdnx+9,isdny+4,sp(40));
-    mwrt(isdnx+9,isdny+5,sp(40));
-    end
-  else begin
-    mwrt(isdnx+9,isdny+3,forms(CAPI_Manufacturer,40));
-    mwrt(isdnx+9,isdny+4,forms(CAPI_Version,40));
-    mwrt(isdnx+9,isdny+5,forms(CAPI_Serial,40));
-    end;
-end;
-
-procedure IsdnConfig;
-var brk  : boolean;
-    pstr : string;
-    ints : string;
-    eaz  : string;
-begin
-  dialog(50,6,getres2(269,1),isdnx,isdny);  { 'ISDN/CAPI-Konfiguration (1TR6/X.75)' }
-  attrtxt(col.coldiarahmen);
-  ints:=LowerCase(hex(ISDN_Int,2));
-  maddstring(3,2,getres2(269,2),ints,2,2,'<0124567899abcdef');  { 'CAPI-Interrupt ' }
-  mhnr(910);
-  mset0proc(TestCapiInt); mset3proc(testcapiint);
-  eaz:=ISDN_eaz;
-  maddstring(30,2,getres2(269,3),eaz,1,1,'0123456789');  { 'EAZ ' }
-  maddtext(3,4,'CAPI',col.coldiahigh);
-  readmask(brk);
-  if not brk and mmodified then begin
-    ISDN_Int:=hexval(ints);
-    ISDN_EAZ:=eaz[1];
-    GlobalModified;
-    end;
-  enddialog;
-  freeres;
-end;
-{$ENDIF CAPI }
-
 function formpath(var s:string):boolean;
-var
-    res : integer;
 begin
-  s:=FileUpperCase(ExpandFileName(s));
-  if (s<>'') and (RightStr(s,1)<>DirSepa) then
-    s:=s+DirSepa;
-  if not validfilename(s+'1$2$3.xxx') then
+  result:=false;
+  s:=AddDirSepa(FileUpperCase(ExpandFileName(s)));
+  if not IsPath(s) then
     if ReadJN(getres2(262,1),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
-    begin
-      mklongdir(s,res);
-      if res<0 then begin
-        rfehler(208);      { 'Verzeichnis kann nicht angelegt werden!' }
-        formpath:=false;
-        end
+      if not CreateDir(s) then
+        rfehler(208)      { 'Verzeichnis kann nicht angelegt werden!' }
       else
-        formpath:=true
-      end
+        exit(true)
     else
-      formpath:=false
+      exit(false)
   else
-    formpath:=true;
+    exit(true);
 end;
 
 
@@ -1342,14 +1240,9 @@ begin
     if TermBaud=0 then TermBaud:=boxpar^.baud;
     end;
   com:='COM'+strs(minmax(TermCOM,1,5));
-   if TermCom=5 then com:='ISDN';
   maddstring(3,2,getres2(270,2),com,6,6,'');  { 'Schnittstelle    ' }
   mhnr(990);
-{$IFDEF CAPI }
-  mappsel(true,'COM1ùCOM2ùCOM3ùCOM4ùISDN');      { aus: XP9.INC    }
-{$ELSE }
   mappsel(true,'COM1ùCOM2ùCOM3ùCOM4');           { aus: XP9.INC    }
-{$ENDIF }
   maddint(3,3,getres2(270,3),TermBaud,6,6,150,115200);  { 'šbertragungsrate ' }
   mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200');
   maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
@@ -1363,11 +1256,6 @@ begin
   readmask(brk);
   if not brk and mmodified then
   begin
-{$IFDEF CAPI }
-    if com='ISDN' then
-      TermCOM:=5 { MH: hinzugefgt }
-    else
-{$ENDIF }
     TermCOM:=ival(RightStr(com,1));
     GlobalModified;
   end;
@@ -1376,6 +1264,12 @@ begin
   menurestart:=brk;
 end;
 {$endif} { Linix }
+
+function testexecutable(var s:string):boolean;
+begin
+  result:=ExecutableExists(s);
+  if not result then rfehler(206);
+end;
 
 function testpgpexe(var s:string):boolean;
 begin
@@ -1435,13 +1329,12 @@ var i : byte;
     c : char;
 begin
   testfilename:=true;
-  for i:=1 to length(s) do
-  begin
+  for i:=1 to length(s) do begin
     c:=s[i];
     if not ((c='.') or (c in ['A'..'Z']) or (c in ['0'..'9']))
       then testfilename:=false;
     end;
- end;
+end;
 
 procedure ViewerOptions;
 var x,y : byte;
@@ -1465,7 +1358,7 @@ begin
   mappsel(false,'.TXT.ASC');
   maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verd„chtige Dateiformate}
   maddstring(3,16,'',viewer_scanner,50,viewproglen,'');
-  msetvfunc(testexist);
+  msetvfunc(testexecutable);
   readmask(brk);
   if not brk and mmodified then
     GlobalModified;
@@ -1479,6 +1372,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2001/01/06 16:14:36  ma
+  - removed obsolete CAPI code
+  - renamed testexist to textexecutable
+  - replaced mklongdir by CreateDir
+
   Revision 1.77  2000/12/31 14:49:04  mk
   - Tearlineschalter in Config/Optionen/Netze
 
