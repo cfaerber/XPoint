@@ -1,4 +1,4 @@
-{  $Id: fidoglob.pas,v 1.17.2.1 2002/07/26 08:05:29 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

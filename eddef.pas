@@ -1,4 +1,4 @@
-{   $Id: eddef.pas,v 1.17.2.1 2002/07/21 20:14:31 ma Exp $
+{   $Id$
 
     OpenXP editor defines unit
     Copyright (C) 1991-2001 Peter Mandrella

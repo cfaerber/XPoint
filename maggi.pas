@@ -1,4 +1,4 @@
-{   $Id: maggi.pas,v 1.35.2.3 2003/10/21 14:19:59 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

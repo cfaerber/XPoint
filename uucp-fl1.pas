@@ -31,7 +31,7 @@ total 193
 -r--r--r--   1 uucp     uucp         1682 Apr 24 18:38 Makefile
 
 }
-{ $Id: uucp-fl1.pas,v 1.5 2000/11/20 19:09:55 fe Exp $ }
+{ $Id$ }
 
 
 {$I xpdefine.inc }

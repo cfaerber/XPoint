@@ -1,4 +1,4 @@
-{   $Id: timer.pas,v 1.21.2.1 2002/07/21 20:14:34 ma Exp $
+{   $Id$
 
     Timer unit
 

@@ -1,4 +1,4 @@
-{   $Id: xp1.pas,v 1.147.2.25 2003/12/07 16:42:46 mk Exp $
+{   $Id$
 
     OpenXP - generic routines
     Copyright (C) 1991-2001 Peter Mandrella

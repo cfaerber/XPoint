@@ -1,4 +1,4 @@
-{  $Id: xpterminal.pas,v 1.12 2001/10/10 20:56:44 mk Exp $
+{  $Id$
 
    OpenXP terminal unit
    Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel

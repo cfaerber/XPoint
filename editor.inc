@@ -1,4 +1,4 @@
-{   $Id: editor.inc,v 1.51.2.3 2003/04/25 20:05:39 mk Exp $
+{   $Id$
 
     OpenXP editor unit include file
     Copyright (C) 1991-2001 Peter Mandrella

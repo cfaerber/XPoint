@@ -1,4 +1,4 @@
-{ $Id: mime.pas,v 1.18 2002/03/22 18:22:12 ml Exp $
+{ $Id$
 
   OpenXP: MIME Library
   Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber

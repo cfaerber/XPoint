@@ -1,4 +1,4 @@
-{   $Id: xp_des.pas,v 1.17.2.1 2002/07/21 20:14:38 ma Exp $
+{   $Id$
 
     OpenXP DES unit
 

@@ -1,4 +1,4 @@
-{  $Id: osdwin32.inc,v 1.3.2.3 2003/09/17 00:17:49 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

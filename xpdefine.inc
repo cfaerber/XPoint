@@ -1,4 +1,4 @@
-{  $Id: xpdefine.inc,v 1.78.2.20 2004/10/04 07:02:10 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -67,6 +67,10 @@
 {$ENDIF }
 
 {$IFDEF VER160 }          { Delphi 8.0 for .NET Framkework  }
+  {$DEFINE Delphi }
+{$ENDIF }
+
+{$IFDEF VER170 }          { Delphi 2005/9.0  }
   {$DEFINE Delphi }
 {$ENDIF }
 

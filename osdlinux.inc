@@ -1,4 +1,4 @@
-{  $Id: osdlinux.inc,v 1.4.2.3 2003/08/30 03:25:54 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

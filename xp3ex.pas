@@ -1,4 +1,4 @@
-{   $Id: xp3ex.pas,v 1.95.2.3 2003/12/07 12:49:32 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: ndiff.pas,v 1.17.2.4 2004/01/25 13:39:38 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: xpcrt.pas,v 1.22.2.1 2003/08/29 17:31:56 mk Exp $
+{   $Id$
 
     Copyright (C) 1997 Balazs Scheidler (bazsi@balabit.hu)
     Copyright (C) 1999 by Florian Klaempfl

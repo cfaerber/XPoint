@@ -1,4 +1,4 @@
-{   $Id: databas1.inc,v 1.21.2.1 2002/07/21 20:14:31 ma Exp $
+{   $Id$
 
     OpenXP data base include file I
 

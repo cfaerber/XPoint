@@ -1,4 +1,4 @@
-{   $Id: zcrfc.pas,v 1.97.2.35 2004/07/21 23:57:04 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -53,6 +53,7 @@ uses xpglobal,
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
+  xpx,
   osdepend, sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
 
 type
@@ -2446,7 +2447,7 @@ ende:
   pfrec:= @f1;
 {$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name, 0);            { Archivbit abschalten }
-{$ENDIF}  
+{$ENDIF}
   if CommandLine then  if n = 0 then writeln;
 end;
 
@@ -2616,7 +2617,7 @@ begin
           DeleteFiles.Add(spath+sr.name);
           DeleteFiles.Add(spath+dfile);
         end;
-      end
+        end
       else
       begin
         case FileType of
@@ -2629,7 +2630,7 @@ begin
 
         DeleteFiles.Add(spath+sr.name);
     end;
-    except 
+    except
       on Ex:Exception do
       begin
         if CommandLine then
@@ -2638,7 +2639,7 @@ begin
           tfehler(ex.message,30);
 
         if (LeftStr(sr.name, 2) = 'X-') and FileExists(spath + dfile) then
-          RenameFile(spath+dfile,BadDir+dfile);        
+          RenameFile(spath+dfile,BadDir+dfile);
         RenameFile(spath+sr.name,BadDir+sr.name);
       end;
     end; //try
@@ -3543,11 +3544,8 @@ procedure StartCommandlineUUZ;
 var
   UUZC: TUUZ;
 begin
-  writeln;
+  Logo;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
-  writeln('OpenXP-Version ', verstr, pformstr, betastr, ' ', x_copyright,
-    ' by ', author_name, ' <', author_mail, '>');
-  writeln;
   Randomize;
 
   if AutomaticTimeZone then

@@ -1,4 +1,4 @@
-{   $Id: xpcurses.pas,v 1.64.2.15 2003/09/14 19:09:58 st Exp $
+{   $Id$
 
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Hinrich Donner
 

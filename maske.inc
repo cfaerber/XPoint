@@ -1,4 +1,4 @@
-{   $Id: maske.inc,v 1.43.2.3 2002/08/26 17:42:57 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

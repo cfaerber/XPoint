@@ -1,4 +1,4 @@
-{   $Id: rc.pas,v 1.23.2.1 2002/07/21 20:14:33 ma Exp $
+{   $Id$
 
     OpenXP resource compiler
 

@@ -1,4 +1,4 @@
-{   $Id: printerx.pas,v 1.23.2.4 2003/09/05 18:22:14 mk Exp $
+{   $Id$
 
     OpenXP printer unit
 

@@ -1,4 +1,4 @@
-{   $Id: xpconfigedit.pas,v 1.45.2.12 2003/10/03 11:34:24 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -29,6 +29,21 @@
 * Copyleft Sven Knispel
 * Implements a translation of
 *" RSA Data Security, Inc. MD5 Message-Digest Algorithm" based on RFC1321...
+*
+* (korrigiert) * @version : 1.10 (29.09.2002)
+*
+* Der Fehler tritt in MD5_Digest(sPlainText: string) im besonderen Fall auf, wenn die
+* Länge von sPlainText (initial) congruent zu 448 mod 512 (z.B. 120) ist. In
+* dem Fall spezifiziert die RFC, dass die Message trotzdem einmal gepadded wird.
+*
+* Zum Test:
+* Message
+* 72617519bc8745a76385a44a93a1e8a8:(dauth-int)1033125855-57d3038ed1bdaf1e76a27fe0f2e71dd5:773bc4d512dcaece4a1eef4311d0166c
+*
+* result V1.0   : 883419ca2aad084755d6e4118c00c5c8
+*
+* expected (result v1.1) : b6e820d26f06d833266552ae71e29b1d
+*
 */}
 unit md5;
 
@@ -203,6 +218,13 @@ implementation
     }
     nMessageByteLen := Length(sPlainText);
 
+
+    { if the initial length is congruent to 448 modulo 512 (e.g. 120)
+    make sure it is extended at least of one block }
+    if ((((nMessageByteLen * 8)+ 64) mod 512) = 0) then
+    begin
+      nMessageByteLen := nMessageByteLen + 1;
+    end;
 
     { calculate how long the array of bytes should be }
     while ((((nMessageByteLen * 8)+ 64) mod 512) <> 0) do

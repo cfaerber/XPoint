@@ -1,4 +1,4 @@
-{  $Id: xpos2.pas,v 1.10.2.1 2003/08/25 06:43:52 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

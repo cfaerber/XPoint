@@ -1,4 +1,4 @@
-{   $Id: xpsendmessage_subs.inc,v 1.17.2.13 2003/09/21 16:07:17 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

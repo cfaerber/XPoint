@@ -1,4 +1,4 @@
-{   $Id: archive.pas,v 1.32.2.3 2003/09/17 15:28:49 mk Exp $
+{   $Id$
 
     OpenXP archive handling unit
 

@@ -1,4 +1,4 @@
-{   $Id: databaso.pas,v 1.17.2.3 2003/08/24 21:35:32 mk Exp $
+{   $Id$
 
     OpenXP data base unit (formerly overlay unit)
 

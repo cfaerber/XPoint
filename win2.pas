@@ -1,4 +1,4 @@
-{   $Id: win2.pas,v 1.50.2.3 2002/07/21 20:14:34 ma Exp $
+{   $Id$
 
     OpenXP window handling and file chooser unit
 

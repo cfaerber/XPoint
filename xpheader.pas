@@ -1,4 +1,4 @@
-{  $Id: xpheader.pas,v 1.26.2.4 2004/07/20 17:10:08 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

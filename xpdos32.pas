@@ -1,4 +1,4 @@
-{  $Id: xpdos32.pas,v 1.15.2.1 2003/10/26 17:09:02 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

@@ -1,4 +1,4 @@
-{   $Id: xp8.pas,v 1.70.2.13 2003/08/28 21:59:24 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: zftools.pas,v 1.29.2.5 2003/09/17 00:59:43 cl Exp $
+{   $Id$
 
     OpenXP ZC<->FTS-0001 converter unit
     Copyright (C) 1991-2001 Peter Mandrella

@@ -1,4 +1,4 @@
-{   $Id: xpx.pas,v 1.50.2.3 2003/08/25 06:43:52 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -41,6 +41,7 @@ uses
 
 function _deutsch:boolean;
 procedure stop(txt:string);
+procedure logo;
 
 procedure InitXPXUnit;
 
@@ -84,8 +85,8 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' (',author_mail,')');
+  writeln(t,' ',verstr,pformstr,betastr);
+  Writeln(t,'Copyright ', x_copyright, ' by ',author_name,' (',author_mail,')');
   writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
   writeln(t);

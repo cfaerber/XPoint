@@ -1,4 +1,4 @@
-{  $Id: xpconfig.pas,v 1.4 2002/02/21 13:52:33 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

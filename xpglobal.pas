@@ -1,4 +1,4 @@
-{  $Id: xpglobal.pas,v 1.63.2.39 2004/10/04 07:02:10 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -32,10 +32,6 @@ interface
 
 const
   mainver     = '3.8.16';       { Versionnr. - steht nur an dieser Stelle }
-
-{$I version.inc }
-
-  verstr      = mainver + '-' + buildver; 
   betastr     = ' beta';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -59,7 +55,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2003';
+  x_copyright = '(c) 2000-2005';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -182,17 +178,25 @@ type
   end;
 {$ENDIF }
 
+const
+  {$I version.inc }
+
+var
+  verstr: string;
+
 implementation
 
+begin
 {$IFDEF Beta }
 {$IFDEF FPC }
 {$ifndef Unix}
-begin
   Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
         ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
 {$endif}
 {$ENDIF }
 {$ENDIF }
+  verstr := Copy(version_Build, Pos(' ', version_build)+1, 50);
+  verstr := mainver + '.' + Copy(verstr, 1, Pos(' ', verstr)-1);
 
 {
   $Log: xpglobal.pas,v $

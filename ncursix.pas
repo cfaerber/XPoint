@@ -1,5 +1,5 @@
 {
-    $Id: ncursix.pas,v 1.7.2.1 2002/07/21 20:14:33 ma Exp $
+    $Id$
     Copyright (c) 1998 by Michael Van Canneyt
     member of the Free Pascal development team
 

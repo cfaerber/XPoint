@@ -1,4 +1,4 @@
-{   $Id: keys.pas,v 1.49.2.2 2003/08/25 06:43:50 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: xpsendmessage_internal.pas,v 1.4.2.1 2002/07/21 20:14:41 ma Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

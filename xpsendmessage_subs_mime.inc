@@ -1,4 +1,4 @@
-{   $Id: xpsendmessage_subs_mime.inc,v 1.7.2.10 2004/09/26 10:46:08 mk Exp $
+{   $Id$
 
     Subprocedures and functions for xpsendmessage.DoSend: MIME
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"arber

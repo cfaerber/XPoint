@@ -1,4 +1,4 @@
-{   $Id: xpdatum.pas,v 1.21.2.7 2004/10/04 20:33:16 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

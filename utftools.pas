@@ -1,4 +1,4 @@
-{  $Id: utftools.pas,v 1.16 2002/01/04 22:34:32 cl Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

@@ -1,4 +1,4 @@
-{   $Id: xpnt.pas,v 1.43.2.8 2003/09/21 19:37:16 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

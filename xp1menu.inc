@@ -1,4 +1,4 @@
-{   $Id: xp1menu.inc,v 1.40.2.4 2003/08/25 17:39:12 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

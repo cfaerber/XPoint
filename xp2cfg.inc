@@ -1,4 +1,4 @@
-{   $Id: xp2cfg.inc,v 1.144.2.19 2004/07/20 14:26:22 mk Exp $
+{   $Id$
 
     OpenXP startup unit include file - configuration
     Copyright (C) 1991-2001 Peter Mandrella

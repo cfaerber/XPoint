@@ -1,4 +1,4 @@
-{   $Id: maus2.pas,v 1.46.2.2 2003/01/01 16:18:37 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

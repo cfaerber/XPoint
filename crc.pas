@@ -1,6 +1,6 @@
 unit crc;
 
-{ $Id: crc.pas,v 1.9.2.1 2002/04/22 10:02:44 mk Exp $ }
+{ $Id$ }
 
 {$I xpdefine.inc }
 {$R-}

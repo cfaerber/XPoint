@@ -1,5 +1,5 @@
 {
-    $Id: unicode.pas,v 1.12 2002/03/04 01:13:49 mk Exp $
+    $Id$
 
     Free Pascal Unicode support
     Copyright (C) 2000  by Sebastian Guenther, sg@freepascal.org

@@ -1,4 +1,4 @@
-{ $Id: mime_analyze.pas,v 1.8 2001/10/19 00:57:52 mk Exp $
+{ $Id$
 
   OpenXP: MIME Library: Content Analyzer
   Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber

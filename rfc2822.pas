@@ -1,4 +1,4 @@
-{  $Id: rfc2822.pas,v 1.7.2.1 2002/06/29 13:57:15 mk Exp $
+{  $Id$
 
    OpenXP: RFC 2822 Header and Address Parsing
    Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber

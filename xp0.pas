@@ -1,4 +1,4 @@
-{   $Id: xp0.pas,v 1.158.2.20 2004/01/15 15:51:18 mk Exp $
+{   $Id$
 
     OpenXP declarations unit
     Copyright (C) 1991-2001 Peter Mandrella

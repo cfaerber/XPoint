@@ -1,4 +1,4 @@
-{   $Id: xp_uue.pas,v 1.32.2.1 2002/07/21 20:14:38 ma Exp $
+{   $Id$
 
     OpenXP UU decoding unit
     Copyright (C) 1991-2001 Peter Mandrella

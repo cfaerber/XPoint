@@ -1,4 +1,4 @@
-{   $Id: xpstat.pas,v 1.50.2.2 2003/09/16 23:19:29 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

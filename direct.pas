@@ -1,4 +1,4 @@
-{  $Id: direct.pas,v 1.6.2.2 2004/01/18 15:21:09 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

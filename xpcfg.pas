@@ -1,4 +1,4 @@
-{  $Id: xpcfg.pas,v 1.13 2001/09/10 15:58:03 ml Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

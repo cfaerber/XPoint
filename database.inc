@@ -1,4 +1,4 @@
-{   $Id: database.inc,v 1.8.2.2 2002/09/09 08:29:15 mk Exp $
+{   $Id$
 
     OpenXP data base include file (B tree routines)
 

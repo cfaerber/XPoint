@@ -1,4 +1,4 @@
-{   $Id: xpcc.pas,v 1.33.2.3 2003/03/28 06:51:08 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

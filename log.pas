@@ -1,4 +1,4 @@
-{  $Id: log.pas,v 1.11 2001/09/16 19:58:31 ma Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

@@ -1,4 +1,4 @@
-{ $Id: xpreg.pas,v 1.35.2.2 2003/10/18 17:02:38 mk Exp $
+{ $Id$
 
    OpenXP main source file
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

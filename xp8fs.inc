@@ -1,4 +1,4 @@
-{   $Id: xp8fs.inc,v 1.30.2.5 2002/07/29 19:53:17 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

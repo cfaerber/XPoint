@@ -10,7 +10,7 @@
 { --------------------------------------------------------------- }
 { Originalautor           : Peter Mandrella                       }
 { Datum                   : Nov. 1991                             }
-{ $Id: docform.pas,v 1.12 2001/09/10 15:58:01 ml Exp $ }
+{ $Id$ }
 
 
 {$I xpdefine.inc }

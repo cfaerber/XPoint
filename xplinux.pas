@@ -1,4 +1,4 @@
-{   $Id: xplinux.pas,v 1.31.2.1 2002/07/21 20:14:40 ma Exp $
+{   $Id$
 
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Markus Kaemmerer
 

@@ -1,4 +1,4 @@
-{   $Id: xp2.pas,v 1.142.2.10 2003/10/08 21:02:32 cl Exp $
+{   $Id$
 
     OpenXP startup unit
     Copyright (C) 1991-2001 Peter Mandrella

@@ -1,4 +1,4 @@
-{ $Id: xpsendmessage.pas,v 1.48.2.23 2004/01/18 19:21:48 mk Exp $
+{ $Id$
 
   Copyright (C) 1991-2001 Peter Mandrella
   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

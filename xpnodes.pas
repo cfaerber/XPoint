@@ -6,7 +6,7 @@
 
 { fÅr CrossPoint ab Version 3.1    }
 { Heapspeicherbedarf: ca. 10 KByte }
-{ $Id: xpnodes.pas,v 1.17 2002/01/09 02:40:56 mk Exp $ }
+{ $Id$ }
 
 {$I xpdefine.inc}
 

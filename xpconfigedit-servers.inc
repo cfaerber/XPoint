@@ -1,4 +1,4 @@
-{   $Id: xpconfigedit-servers.inc,v 1.48.2.16 2004/05/26 21:52:22 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

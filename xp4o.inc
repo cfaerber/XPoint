@@ -1,4 +1,4 @@
-{   $Id: xp4o.inc,v 1.47.2.5 2003/11/02 12:15:45 cl Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

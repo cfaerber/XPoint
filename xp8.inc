@@ -1,4 +1,4 @@
-{   $Id: xp8.inc,v 1.24.2.1 2002/07/21 20:14:38 ma Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: xpmime.pas,v 1.59.2.6 2003/09/02 16:42:29 mk Exp $
+{   $Id$
 
     OpenXP multipart messages handling unit
     Copyright (C) 1991-2001 Peter Mandrella

@@ -1,4 +1,4 @@
-{   $Id: xpsendmessage_attach.pas,v 1.14.2.5 2004/01/18 14:57:47 mk Exp $
+{   $Id$
 
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"arber
 

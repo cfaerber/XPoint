@@ -1,4 +1,4 @@
-{ $Id: replytoall.pas,v 1.29.2.4 2003/08/25 18:01:31 mk Exp $
+{ $Id$
 
    OpenXP main source file
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

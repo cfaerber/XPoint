@@ -1,4 +1,4 @@
-{ $Id: mime_base64.pas,v 1.11 2003/11/15 14:32:41 cl Exp $
+{ $Id$
 
   OpenXP MIME Library: Quoted-Printable en-/decoding
   Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
@@ -42,8 +42,8 @@ type
     Buf: array[0..2] of Byte;
     BufSize: Integer;    // # of bytes used in Buf
   protected
-    destructor Destroy; override;
   public
+    destructor Destroy; override;
     function Write(const Buffer; Count: Longint): Longint; override;
     procedure SetSize(NewSize:Longint); override;
   end;

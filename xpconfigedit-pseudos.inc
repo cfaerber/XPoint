@@ -1,4 +1,4 @@
-{   $Id: xpconfigedit-pseudos.inc,v 1.2.2.2 2002/07/21 20:21:08 ma Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

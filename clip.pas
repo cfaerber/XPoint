@@ -1,4 +1,4 @@
-{   $Id: clip.pas,v 1.38.2.4 2004/05/09 11:34:10 mk Exp $
+{   $Id$
 
     OpenXP clipboard handling unit
 

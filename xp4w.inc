@@ -1,4 +1,4 @@
-{   $Id: xp4w.inc,v 1.99.2.6 2003/09/06 13:53:42 cl Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

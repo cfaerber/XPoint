@@ -1,4 +1,4 @@
-{   $Id: xp3o.pas,v 1.85.2.6 2003/10/13 19:04:33 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -1111,7 +1111,6 @@ var
     leer   : string;
     box    : string;
     adr    : string;
-    empf   : string;
     hdp    : Theader;
     hds    : longint;
     fn     : string;

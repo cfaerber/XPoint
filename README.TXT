@@ -1,6 +1,6 @@
 Project: "Free the source by giving proper names!" :-)
 ------------------------------------------------------
-$Id: README.TXT,v 1.3 2001/09/08 14:15:09 cl Exp $
+$Id$
 
 First column: Old file name
 Second column: Proposed new file name

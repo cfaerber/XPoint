@@ -1,4 +1,4 @@
-{   $Id: inout.pas,v 1.89.2.8 2003/05/10 17:29:42 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -5,7 +5,7 @@
 {                                                                 }
 { Xp-Easy-Konfigurationsmodus (OpenXP)                            }
 { --------------------------------------------------------------- }
-{ $Id: xpeasy.pas,v 1.17 2002/02/21 13:52:33 mk Exp $ }
+{ $Id$ }
 
 {$I xpdefine.inc}
 

@@ -1,4 +1,4 @@
-{  $Id: xpprogressoutputwindow.pas,v 1.9 2002/02/21 13:52:34 mk Exp $
+{  $Id$
 
    OpenXP message window class
 

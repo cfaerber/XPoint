@@ -1,4 +1,4 @@
-{  $Id: xpftnadr.pas,v 1.5 2002/02/21 13:52:34 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

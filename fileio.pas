@@ -1,4 +1,4 @@
-{   $Id: fileio.pas,v 1.116.2.8 2003/10/26 17:08:34 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

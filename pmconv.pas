@@ -1,4 +1,4 @@
-{   $Id: pmconv.pas,v 1.10.2.4 2003/09/22 21:26:02 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

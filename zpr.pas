@@ -1,4 +1,4 @@
-{   $Id: zpr.pas,v 1.48.2.4 2003/08/24 21:35:36 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

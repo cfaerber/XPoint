@@ -1,4 +1,4 @@
-{   $Id: xp_pgp.pas,v 1.67.2.4 2003/08/25 06:43:51 mk Exp $
+{   $Id$
 
     OpenXP PGP handling unit
     Copyright (C) 1991-2001 Peter Mandrella

@@ -1,4 +1,4 @@
-{ $Id: main.pas,v 1.16.2.4 2003/10/21 14:03:15 mk Exp $
+{ $Id$
 
    OpenXP main source file
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

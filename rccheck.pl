@@ -1,6 +1,6 @@
 #!perl
 
-# $Id: rccheck.pl,v 1.1 2001/09/12 21:39:39 cl Exp $
+# $Id$
 # 
 # Copyright (C) 1991-2001 Peter Mandrella
 # Copyright (C) 2000-2001 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{ $Id: viewer.pas,v 1.4 2001/10/11 09:00:40 mk Exp $
+{ $Id$
 
     OpenXP Library: TMimeViewer class
     Copyright (C) 2000, Markus Kaemmerer <mk@happyarts.de>

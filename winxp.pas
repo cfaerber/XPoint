@@ -1,4 +1,4 @@
-{   $Id: winxp.pas,v 1.84.2.4 2003/08/25 06:43:51 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

@@ -1,4 +1,4 @@
-{   $Id: xp10p.inc,v 1.15.2.1 2002/07/21 20:14:35 ma Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

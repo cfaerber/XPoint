@@ -1,4 +1,4 @@
-{ $Id: xp3o.inc,v 1.83.2.18 2003/11/30 23:16:03 mk Exp $
+{ $Id$
 
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
@@ -64,17 +64,17 @@ function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
 
 const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
-  maxll    = 64;
 
-type llref = record
-   MsgPos, MsgId, MsgRef, Datum: Integer; 
+type
+  PRefItem = ^TRefItem;
+  TRefItem = record
+    MsgPos, MsgId, MsgRef, Datum: Integer;
   end;
 
 var x,y      : Integer;
-    f,pfile  : file;
+    f, pfile     : file;
     fm: Byte;
-    llbuf    : array[1..maxll] of llref;
-    llanz    : integer;
+    RefList    : TList;
     padr,size: longint;
     ablage   : byte;
     abadd    : byte;
@@ -559,77 +559,54 @@ var x,y      : Integer;
   end;
 
   procedure Bezugsverkettung;
-  var ll     : llref;
-      fs,no  : integer;
-      ok     : integer;
+  var
+    RefItem: PRefItem;
+    i: Integer;
   begin
     Debug.DebugLog('xp3o','start Bezugsverkettung',DLInform);
+
     moff;
     mstr:= getres(332);
     FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
     FWrt(x+3+length(mstr),y+5,'0%');
     mon;
+
     dbStopHU(bezbase);
-  try
-    seek(pfile,0);
-    fs := filesize(pfile) div sizeof(ll);
-    no := 0;
+    try
+      for i := 0 to RefList.count -1 do
+      begin
+        RefItem := RefList[i];
+        xp1o.AddNewBezug(RefItem.MsgPos, RefItem.MsgId, RefItem.MsgRef, RefItem.Datum);
 
-    while not eof(pfile) do begin
-      inc(no);
-      blockread(pfile,ll,sizeof(ll),ok);
-      if ok <> sizeof(llref) then exit;
-
-      xp1o.AddNewBezug(ll.MsgPos, ll.MsgId, ll.MsgRef, ll.Datum);
-
-      if ((no mod 5)=0) then begin
-        moff;
-        FWrt(x+3+length(mstr),y+5,StrS(no*100 div fs)+'%');
-        mon;
+        if ((i mod 10)=0) then
+        begin
+          moff;
+          FWrt(x+3+length(mstr),y+5,StrS(i*100 div fs)+'%');
+          mon;
+        end;
       end;
+    finally
+      dbRestartHU(bezbase);
+      dbFlush(bezbase);
+      Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
     end;
-  finally
-    dbRestartHU(bezbase);
-    dbFlush(bezbase);
-    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
-  end;
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
   end;
 
-(*
-  procedure wrll(l:longint);
-  begin
-    inc(llanz);
-    llbuf[llanz]:=l;
-    if llanz=maxll then begin
-      blockwrite(pfile,llbuf,sizeof(llbuf));
-      llanz:=0;
-      end;
-  end;
-*)
-
-  procedure FlushLL;
-  begin
-    if llanz>Low(llbuf) then begin
-      blockwrite(pfile,llbuf,llanz*sizeof(llref));
-      llanz:=Low(llbuf);
-      end;
-  end;
-
   procedure AddNewBezug(MsgNr: Longint; const MsgId, RefId: string; datum: longint);
+  var
+    RefItem: PRefItem;
   begin
     if MsgId='' then exit;
-    inc(llanz);
-    llbuf[llanz].MsgPos := MsgNr;
-    llbuf[llanz].MsgId := MsgidIndex(msgid);
+    New(RefItem);
+    RefItem^.MsgPos := MsgNr;
+    RefItem^.MsgId := MsgidIndex(msgid);
     if RefId='' then
-      llbuf[llanz].MsgRef := 0
+      RefItem^.MsgRef := 0
     else
-      llbuf[llanz].MsgRef := MsgidIndex(refid);
-    llbuf[llanz].Datum := Datum;
-
-    if llanz=High(llbuf) then 
-      FlushLL;
+      RefItem^.MsgRef := MsgidIndex(refid);
+    RefItem^.Datum := Datum;
+    RefList.Add(RefItem);
   end;
 
   function IsOwnDomain(dom:string):boolean;
@@ -684,10 +661,12 @@ var
   OwnMessageReplaced: Boolean;
   s: String;
   nt: Byte;
+  RefItem: PRefItem;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
   MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
+  RefList := TList.Create;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
   if (zconnect) then
@@ -785,6 +764,7 @@ begin
       dec(size,rr);
     until eof(f);
     close(pfile);
+    
     moff;
     Wrt2(' '+getres2(324,7));           { fertig }
     mstr:= getres2(330,6);              { Importiere Nachrichten }
@@ -792,9 +772,6 @@ begin
     mon;
 
     Debug.DebugLog('xp3o','adding messages to db index',DLInform);
-    assign(pfile,TempS(msgcount*8+2048));
-    rewrite(pfile,1);
-    llanz:=0;
     seek(f,0);
 
     assign(cmessagefile,TempS(msgcount*40+2048));
@@ -1023,16 +1000,17 @@ begin
 
           if aufnehmen then
           begin
-            if FirstChar(FirstEmpfaenger)<>'U' then begin
+            if FirstChar(FirstEmpfaenger)<>'U' then
+            begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
               begin
                 inc(flags,2);                 { ungelesene Nachricht(en) }
                 dbWriteN(bbase,bb_flags,flags);
-                end;
+              end;
               if smdl(dbReadInt(bbase,'ldatum'),_datum) then
                 dbWriteN(bbase,bb_ldatum,_datum);      { Datum der neuesten Msg }
-              end;
+            end;
             dbAppend(mbase);
             mnt:=netztyp and $FF;
             if References.Count > 0 then inc(mnt,$100); // rckw„rtsverkettet
@@ -1114,7 +1092,8 @@ begin
             if ntKomKette(hdp.netztyp) then 
             begin
               l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
-              if Empfaenger.Count >1 then inc(l,iif(msgsent,2,1));
+              if Empfaenger.Count >1 then
+                inc(l,iif(msgsent,2,1));
               AddNewBezug(dbRecno(mbase),hdp.MsgId,hdp.GetLastReference,l);
             end;
 
@@ -1127,7 +1106,7 @@ begin
               PGP_ImportKey(true);
               holen(sp);
               restcursor;
-              end;
+            end;
             if (firstchar(FirstEmpfaenger)='1') and UsePGP and
                (pgpflags and fPGP_encoded<>0) then
               DecPGP else
@@ -1155,11 +1134,12 @@ begin
         begin
           { Nachricht nach /Junk }
           junk:=true;
-          empfnr:=1;            { kein passendes Brett fr Crossposting }
-          FlushLL;
-          seek(pfile,filesize(pfile)-8);
-        { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
-        { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
+          empfnr:=1;            { kein passendes Brett fuer Crossposting }
+          if RefList.Count > 0 then
+            RefList.Delete(RefList.Count-1); // delete last made entry
+          // seek(pfile,filesize(pfile)-16);
+          { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
+          { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
           llanz:=max(0,llanz-2*hdp.empfanz); }
         end;
     (*  else
@@ -1169,7 +1149,7 @@ begin
             end;                         { tierte Xpostings berspringen  } *)
 
       until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
-
+      
       Debug.DebugLog('xp3o','ok, next message',DLDebug);
       if BoxPar^.ReplaceDupes then
         MsgIdsRead.Add(hdp.msgid);
@@ -1194,11 +1174,8 @@ begin
     inc(ablsize[ablage],fs);
     Debug.DebugLog('xp3o','db flushed',DLInform);
 
-    FlushLL;
     if zconnect then
       Bezugsverkettung;
-    close(pfile);
-    erase(pfile);
 
     close(cmessagefile);
     if not ignoreSupCancel then
@@ -1258,6 +1235,13 @@ begin
     closebox;
     end;
 
+  for i := 0 to RefList.Count - 1 do
+  begin
+    RefItem := RefList[i];
+    Dispose(RefItem);
+  end;
+  RefList.Free;
+  
   Hdp.Free;
   freeres;
   freemem(p,bufsize);
@@ -1277,7 +1261,6 @@ var
     ext  : string;
     f    : file;
 begin
-  {fsplit(fn,dir,name,ext);}
   ext:= ExtractFileExt(fn);
   name:= ExtractFilename(fn);
   if (ext<>'') then

@@ -1,4 +1,4 @@
-{   $Id: xpfido.pas,v 1.68.2.3 2003/08/23 19:12:15 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

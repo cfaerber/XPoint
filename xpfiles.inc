@@ -1,4 +1,4 @@
-{   $Id: xpfiles.inc,v 1.8.2.1 2002/07/21 20:14:40 ma Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

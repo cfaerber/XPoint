@@ -1,4 +1,4 @@
-{   $Id: stack.pas,v 1.11.2.1 2002/07/21 20:14:34 ma Exp $
+{   $Id$
 
     OpenXP generic stack unit
 

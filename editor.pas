@@ -1,5 +1,5 @@
 
-{   $Id: editor.pas,v 1.82.2.6 2003/08/25 06:43:50 mk Exp $
+{   $Id$
 
     OpenXP editor unit
     Copyright (C) 1991-2001 Peter Mandrella

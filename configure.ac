@@ -1,4 +1,4 @@
-# $Id: configure.ac,v 1.1.2.1 2003/09/06 15:22:09 cl Exp $
+# $Id$
 #  
 #  configure.in -- OpenXP autoconf build system
 #  

@@ -1,4 +1,4 @@
-{   $Id: xp2c.pas,v 1.127.2.14 2003/09/05 18:22:15 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

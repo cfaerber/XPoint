@@ -1,4 +1,4 @@
-{ $Id: mime_qp.pas,v 1.7 2001/12/30 19:56:48 cl Exp $
+{ $Id$
 
   OpenXP MIME Library: Quoted-Printable en-/decoding
   Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber

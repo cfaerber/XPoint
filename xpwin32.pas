@@ -1,4 +1,4 @@
-{  $Id: xpwin32.pas,v 1.26.2.1 2003/09/07 18:42:44 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the

@@ -1,4 +1,4 @@
-{   $Id: typeform.pas,v 1.107.2.11 2003/09/10 14:16:08 mk Exp $
+{   $Id$
 
     OpenXP typeform unit
     Copyright (C) 1991-2001 Peter Mandrella

@@ -1,4 +1,4 @@
-{   $Id: database.pas,v 1.52.2.6 2003/08/31 20:49:43 cl Exp $
+{   $Id$
 
     OpenXP data base unit
 

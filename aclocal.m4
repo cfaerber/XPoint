@@ -1,4 +1,4 @@
-# $Id: aclocal.m4,v 1.1.2.1 2003/01/13 16:15:47 cl Exp $
+# $Id$
 # This file extends Autoconf.                          -*- Autoconf -*-
 # Programming language support for the PASCAL language
 #

@@ -1,4 +1,4 @@
-{  $Id: osdbsd.inc,v 1.1.2.2 2003/08/26 04:51:02 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as

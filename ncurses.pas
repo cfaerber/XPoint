@@ -1,5 +1,5 @@
 {
-    $Id: ncurses.pas,v 1.5 2001/09/17 16:29:17 cl Exp $
+    $Id$
     Copyright (c) 1998 by Michael Van Canneyt
     member of the Free Pascal development team
 

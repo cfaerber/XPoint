@@ -1,4 +1,4 @@
-{  $Id: xpstreams.pas,v 1.13.2.1 2002/06/05 17:49:39 mk Exp $
+{  $Id$
 
    OpenXP TStream Support Library
    Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber

@@ -1,4 +1,4 @@
-{   $Id: xp4.inc,v 1.39.2.3 2003/03/28 23:34:46 mk Exp $
+{   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)

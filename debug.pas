@@ -1,4 +1,4 @@
-{ $Id: debug.pas,v 1.29.2.6 2003/11/24 18:56:14 mk Exp $
+{ $Id$
 
    Debug logfile unit
    Copyright (C) 2000-2002 by OpenXP team (www.openxp.de) and M.Kiesel
