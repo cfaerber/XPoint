@@ -870,7 +870,7 @@ var f1,f2   : file;
         wrs(^A'FLAGS '+xflags);
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
-      if charset<>'' then
+      if x_charset<>'' then
         wrs(^A'CHRS: '+MimeCharsetToFido(charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
@@ -1635,9 +1635,9 @@ begin
 
       if not DelEmpty or (hd.groesse>0) then
       begin
-        if FidoCharsetToMime(hd.x_charset)='ISO-8859-1' then
+        if LeftStr(UpperCase(hd.x_charset),10)='ISO-8859-1' then
           cxlate:=1
-        else if LeftStr(UpperCase(hd.x_charset),3)='macintosh' then
+        else if LeftStr(UpperCase(hd.x_charset),9)='MACINTOSH' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1804,6 +1804,10 @@ end;
 
 {
         $Log$
+        Revision 1.29.2.2  2002/07/20 12:26:27  ma
+        - fixed charset with outgoing fido messages
+        - better charset fix for incoming fido messages
+
         Revision 1.29.2.1  2002/07/20 09:04:05  mk
         MK+MY:- fixed FIDO Charset detection (LATIN-1 was not converted to ISO-8859-1)
 
