@@ -1066,6 +1066,11 @@ Mit Bild hoch/runter , Pos1/Home / Ende sowie
 Einf /Entf kann um mehrere Jahre (10,100,1000)
 gebl„ttert werden.
 
+Durch die Zifferntasten kann Monat und Jahr
+direkt eingestellt werden. Eingabe muá dann
+inkl. fhrender Nullen erfolgen.
+z.B. 012000 fr Januar 2000. 
+
 Insgesamt umfaát der Kalender die Jahre 1-3000.
 @
 66

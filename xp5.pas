@@ -310,6 +310,8 @@ begin
         until Length(di)=2;           {Erweiterung von MW 04/2000}
         val(di,mm,code);
         di:='';
+        gotoxy(rx+4,ry+1);
+        write(cal,' ',mm:2,'/',di,'   ');
         repeat
           get(z,curoff);
           di:=di+key2str(z);
@@ -1083,6 +1085,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/04/06 09:12:46  mk
+  MW: - weiteres Update Datumseingabe in Kalender
+
   Revision 1.18  2000/04/06 09:04:17  mk
   MW: - Datumseingabe in Kalender
 
