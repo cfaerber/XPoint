@@ -43,7 +43,7 @@ const
   nntpMsg_noArticleSelected  = 420;
   nntpMsg_wrongArticleNr     = 423;
   nntpMsg_nosuchArticle      = 430;
-  nntpMsg_EndSign            = #13#10+'.'#13#10;
+  nntpMsg_EndSign            = #13#10+'.' { #13#10 added by SWriteln };
 
   nntp_AuthRequired          = 480;
   nntp_PassRequired          = 381;
@@ -547,6 +547,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2003/07/30 11:52:42  cl
+  - BUGFIX: sending multiple messages via NNTP did not work.
+
   Revision 1.41  2003/04/25 21:11:21  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
