@@ -904,19 +904,17 @@ begin
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
 
-    { 03.09.1999 robo - X-No-Archive Konvertierung }
-    if xnoarchive     then wrs('X-NO-ARCHIVE: yes');
-    { /robo }
+    { X-No-Archive Konvertierung }
+    if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
 
-    { 07.02.2000 robo - X-Priority Konvertierung }
-    if priority<>0    then wrs('X-PRIORITY: '+strs(priority));
-    { /robo }
+    { X-Priority Konvertierung }
+    if priority<>0    then wrs('U-X-PRIORITY: '+strs(priority));
 
     if prio<>0        then wrs('Prio: '  +strs(prio));
     if organisation<>''  then wrs('ORG: '+organisation);
     if postanschrift<>'' then wrs('Post: '+postanschrift);
     if telefon<>''       then wrs('Telefon: '+telefon);
-    if homepage<>''      then wrs('Homepage: '+homepage);
+    if homepage<>''      then wrs('U-X-Homepage: '+homepage);
     if EmpfBestTo<>'' then wrs('EB: '    + iifs(empfbestto<>absender,empfbestto,''));
     if attrib and attrIsEB<>0  then wrs('STAT: EB');
     if pm_reply       then wrs('STAT: PM-REPLY');
@@ -2289,6 +2287,7 @@ begin
              { /robo }
 
              if zz='x-priority'   then GetPriority else
+             if zz='x-homepage'   then Homepage := s0 else
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -3532,6 +3531,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.5  2000/05/10 12:16:59  mk
+  - X-* -> U-X-*
+
   Revision 1.8.2.4  2000/05/04 20:50:59  mk
   - kleiner Bug bei BetreffLen gefixt
 
