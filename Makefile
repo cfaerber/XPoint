@@ -782,15 +782,14 @@ feiertag$(UNITEXT): feiertag.pas montage$(UNITEXT) typeform$(UNITEXT) \
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-fileio$(UNITEXT): fileio.pas fileio.inc linux/fileio.inc \
-	linux/fileioh1.inc typeform$(UNITEXT) xp0$(UNITEXT) \
-	xpdefine.inc xpglobal$(UNITEXT)
+fileio$(UNITEXT): fileio.pas typeform$(UNITEXT) xp0$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-fileio$(UNITEXT): fileio.pas fileio.inc typeform$(UNITEXT) \
-	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+fileio$(UNITEXT): fileio.pas typeform$(UNITEXT) xp0$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2584,7 +2583,6 @@ dist:
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.cfg beispiel$(SEP)*.reg beispiel$(SEP)*.scr beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar ObjCOM$(SEP)Makefile ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
 endif
 
@@ -2598,7 +2596,7 @@ docdist: fulldoc
 endif
 
 TAGS:
-	etags -l pascal *.inc *.pas charsets$(SEP)*.inc linux$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.inc
+	etags -l pascal *.inc *.pas charsets$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.inc
 
 install-strip: install
 
@@ -2613,6 +2611,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.39  2000/11/14 19:51:25  fe
+# Dependecies corrected.
+#
 # Revision 1.38  2000/11/14 18:46:41  fe
 # Dependencies fixed.
 #
