@@ -49,7 +49,7 @@ uses xpx,
      typeform,keys,fileio,inout,help,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,objcom,modem,
-     zmodem,
+     zmodem, Sysutils,
      xpdiff,xpdatum,xpglobal,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
@@ -101,12 +101,24 @@ uses xpx,
      xpimpexp, { Import/Export      }
      zcrfc;    { RFC<->ZConnect     }
 
+
+function StartInternalTools: Boolean;
+begin
+  Result := true;
+  if Uppercase(ParamStr(1)) = 'UUZ' then
+    StartCommandLineUUZ
+  else
+    Result := false;
+end;
+
 label ende;
 
 var pwcnt:byte;
     pwrc:boolean;
 
 begin
+  if StartInternalTools then Exit;
+
 { Init the units }
   InitInOutUnit;                { InOut }
   InitKeysUnit;                 { Keys }
@@ -212,6 +224,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.46  2000/12/27 12:42:55  mk
+  - uuz can now started with xp uuz
+
   Revision 1.45  2000/12/03 22:23:08  mk
   - Improved Printing Support
 

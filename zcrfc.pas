@@ -90,6 +90,7 @@ type
     bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
     ClearSourceFiles: boolean; // clear source files after converting
+    CommandLine: Boolean;      // uuz is started from CommandLine
     constructor create;
     destructor Destroy; override;
     procedure testfiles;
@@ -98,6 +99,8 @@ type
     procedure ZtoU;
     procedure UtoZ;
   end;
+
+procedure StartCommandlineUUZ;
 
 implementation
 
@@ -347,7 +350,7 @@ var
         s := trim(s);
         if s <> '' then
           if cpos(':', s) < 3 then
-             // writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
+             if CommandLine then writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
           else
             AddHd.AddObject(s, Pointer(longint(mail)));
       end;
@@ -376,6 +379,7 @@ begin
   OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
   ClearSourceFiles := false;
+  CommandLine := true;
   nomailer:= false;
   uunumber:= 0;
   source := '';
@@ -414,14 +418,14 @@ var
   i: integer;
   switch: string;
 begin
-  if (LowerCase(paramstr(1)) <> '-uz') and (LowerCase(paramstr(1)) <> '-zu')
+  if (LowerCase(paramstr(2)) <> '-uz') and (LowerCase(paramstr(1)) <> '-zu')
     then raise Exception.Create('Falsche Parameterzahl');
-  if LowerCase(paramstr(1)) = '-uz' then
+  if LowerCase(paramstr(2)) = '-uz' then
   begin
-    if paramcount < 3 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 4 then raise Exception.Create('Falsche Parameterzahl');
     u2z := true;
     source := ''; dest := ''; OwnSite := '';
-    for i := 2 to paramcount do
+    for i := 3 to paramcount do
       if LeftStr(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
@@ -454,9 +458,9 @@ begin
   else
   begin
     u2z := false;
-    if paramcount < 5 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 6 then raise Exception.Create('Falsche Parameterzahl');
     source := ''; dest := ''; _from := ''; _to := '';
-    for i := 2 to paramcount do
+    for i := 3 to paramcount do
       if LeftStr(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
@@ -2255,7 +2259,7 @@ var
   binaer: boolean;
   pfrec: ^filerec;
 begin
-  // write('mail: ', fn);
+  if CommandLine then write('mail: ', fn);
   inc(mails);
   OpenFile(fn);
   while bufpos < bufanz do
@@ -2323,7 +2327,7 @@ begin
     until ((p > 0) and (s[p - 1] = ':')) or (bufpos = bufanz);
     if bufpos < bufanz then
     begin
-      // writeln(' from ', hd.wab);
+      if CommandLine then writeln(' from ', hd.wab);
       s[1] := c;
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
@@ -2356,7 +2360,7 @@ begin
       WriteHeader;
     end
     else
-      ; // writeln;
+      if CommandLine then  writeln;
 
     // Die komplette Mail nach dem Header schreiben jetzt rausschieben
     for i := 0 to Mail.Count - 1 do
@@ -2397,7 +2401,7 @@ var
 
 begin
   n := 0;
-  // write('mail: ', fn);
+  if CommandLine then write('mail: ', fn);
   if compressed then
   begin
     assign(f, fn);
@@ -2412,28 +2416,28 @@ begin
       case s[2] of
         #$9D:
           begin
-            // write(' - uncompressing SMTP mail...');
+            if CommandLine then  write(' - uncompressing SMTP mail...');
             SysExec(uncompress + fn, '');
           end;
         #$9F:
           begin
-            // write(' - unfreezing SMTP mail...');
+            if CommandLine then write(' - unfreezing SMTP mail...');
             SysExec(unfreeze + fn, '');
           end;
         #$8B:
           begin
-            // write(' - unzipping SMTP mail ...');
+            if CommandLine then  write(' - unzipping SMTP mail ...');
             SysExec(ungzip + fn, '');
           end;
         #$5A:
           begin
-            // write(' - unbzip2`ing SMTP mail ...');
+            if CommandLine then write(' - unbzip2`ing SMTP mail ...');
             SysExec(unbzip + fn, '');
           end;
       end;
     end;
   end;
-  // write(sp(7));
+  if CommandLine then write(sp(7));
   OpenFile(fn);
   repeat
     ClearHeader;
@@ -2469,7 +2473,7 @@ begin
           end;
         end;
       inc(n); inc(mails);
-      // write(#8#8#8#8#8, n: 5);
+      if CommandLine then  write(#8#8#8#8#8, n: 5);
       repeat                            { UUCP-Envelope ueberlesen }
         ReadString;
         nofrom := (LowerCase(LeftStr(s, 5)) <> 'from ') and (LowerCase(LeftStr(s, 5))
@@ -2523,7 +2527,7 @@ begin
   pfrec:= @f1;
   FileSetAttr(pfrec^.name, 0);
   //setfattr(f1, 0);                      { Archivbit abschalten }
-  // writeln(' - ok');
+  if CommandLine then writeln(' - ok');
 end;
 
 function unbatch(s: string): boolean;
@@ -2551,7 +2555,7 @@ var
 label
   ende;
 begin
-  // write('news: ', fn);
+  if CommandLine then write('news: ', fn);
   OpenFile(fn);
   ReadString;
   while unbatch(s) do
@@ -2593,24 +2597,24 @@ begin
     close(f2);
     if freeze then
     begin
-      // write(' - unfreezing news...');
+      if CommandLine then write(' - unfreezing news...');
       SysExec(unfreeze + newfn, '');
     end
     else
       if gzip then
     begin
-      // write(' - unzipping news...');
+      if CommandLine then write(' - unzipping news...');
       SysExec(ungzip + newfn, '');
     end
     else
       if bzip then
     begin
-      // write(' - unbzip2`ing news...');
+      if CommandLine then write(' - unbzip2`ing news...');
       SysExec(unbzip + newfn, '');
     end
     else
     begin
-      // write(' - uncompressing news...');
+      if CommandLine then write(' - uncompressing news...');
       SysExec(uncompress + newfn, '');
     end;
     reset(f2, 1); seek(f2, filesize(f2));
@@ -2628,12 +2632,12 @@ begin
   if (LeftStr(s, 2) = '#!') or RawNews then
     if (LeftStr(s, 8) <> '#! rnews') and not RawNews then
     begin
-      // writeln(' - unbekanntes Batchformat');
+      if CommandLine then  writeln(' - unbekanntes Batchformat');
       goto ende;
     end
     else
     begin
-      // write(sp(7));
+      if CommandLine then write(sp(7));
       repeat
         if not RawNews then
         while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
@@ -2644,7 +2648,7 @@ begin
           p := pos('#! rnews', s);
           if p > 1 then delete(s, 1, p - 1);
           inc(n);
-          // write(#8#8#8#8#8, n: 5);
+          if CommandLine then write(#8#8#8#8#8, n: 5);
           inc(news);
           size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
@@ -2675,14 +2679,14 @@ begin
             wrfs(Mail[i]);
         end;
       until (bufpos >= bufanz) or (s = '');
-      // writeln(' - ok');
+      if CommandLine then writeln(' - ok');
     end;
   ende:
   close(f1);
   pfrec:= @f1;
   FileSetAttr(pfrec^.name, 0);
   //setfattr(f1, 0);                      { Archivbit abschalten }
-//  if n = 0 then writeln;
+  if CommandLine then  if n = 0 then writeln;
 end;
 
 procedure TUUZ.UtoZ;
@@ -2844,9 +2848,12 @@ begin
     sres := findnext(sr);
   end;
   findclose(sr);
-(*  if n > 0 then writeln;
-  writeln('Mails:', mails: 6);
-  writeln('News :', news: 6); *)
+  if CommandLine then
+  begin
+    if n > 0 then writeln;
+    writeln('Mails:', mails: 6);
+    writeln('News :', news: 6);
+  end;
   flushoutbuf;
   close(f2);
 end;
@@ -3438,7 +3445,7 @@ var
       fromfile := hd.betreff;
       if not FileExists(fromfile) then
       begin
-        // writeln(' warning: ', fromfile, ' not found!');
+        if CommandLine then writeln(' warning: ', fromfile, ' not found!');
         exit;
       end;
       tfiles := 0;
@@ -3526,10 +3533,10 @@ begin
     binmail := (hd.typ <> 'T');
     if cpos('@', hd.empfaenger) = 0 then { AM }
       if binmail and not NewsMIME then
-        // writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
+        if CommandLine then  writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
       else
       begin                             { AM }
-        inc(n); // write(#13'News: ', n);
+        inc(n);if CommandLine then  write(#13'News: ', n);
         seek(f1, adr + hds);
         if binmail then
           hd.lines := (hd.groesse + 53) div 54 { Anzahl Base64-Zeilen }
@@ -3579,7 +3586,7 @@ begin
   else
   begin
     if not ppp then MakeXfile('news');
-    writeln;
+    if CommandLine then writeln;
   end;
   close(f); erase(f);
 
@@ -3597,7 +3604,7 @@ begin
           WrFileserver
         else
         begin
-          inc(n); // write(#13'Mails: ', n);
+          inc(n); if CommandLine then write(#13'Mails: ', n);
           if not SMTP then
             CreateNewfile;
           if binmail then
@@ -3639,9 +3646,12 @@ begin
     until copycount > hd.empfanz;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  //  if n > 0 then writeln;
-  // if files > 0 then
-  //  writeln('Files: ', files);
+  if CommandLine then
+  begin
+   if n > 0 then writeln;
+   if files > 0 then
+     writeln('Files: ', files);
+  end;
   if SMTP then
   begin
     wrs(f2, 'QUIT');
@@ -3655,9 +3665,64 @@ begin
   close(fc);
 end;
 
+procedure HelpPage;
+begin
+  writeln('uuz -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
+  writeln('uuz -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
+  writeln;
+  writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
+  writeln;
+  writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
+  writeln('              -SMTP   =  Batched SMTP (-c/f/g/z/bSMTP = compressed)');
+  writeln('              -MIME   =  Use MIME for news');
+  writeln('              -noMIME =  Do not create any MIME headers');
+  writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
+  writeln('              -1522   =  MIME: create RFC-1522 headers');
+  writeln('              -uUser  =  User to return error messages to');
+  writeln('              -x      =  Export all unkown X-Lines');
+  halt(1);
+end;
+
+procedure StartCommandlineUUZ;
+var
+  UUZC: TUUZ;
+begin
+  writeln;
+  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
+  writeln('OpenXP-Version ', verstr, pformstr, betastr, ' ', x_copyright,
+    ' by ', author_name, ' <', author_mail, '>');
+  writeln;
+  Randomize;
+  UUZc := TUUZ.Create;
+  with uuzc do
+  try
+    Commandline := true;  // Show status lines
+    try
+      try
+        getpar;
+      except
+        HelpPage;
+        raise;
+      end;
+      testfiles;
+      if u2z then
+        UtoZ
+      else
+        ZtoU;
+    except
+      on E: Exception do Writeln(E.Message);
+    end;
+  finally
+    UUZc.Free;
+  end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.17  2000/12/27 12:42:55  mk
+  - uuz can now started with xp uuz
+
   Revision 1.16  2000/12/26 22:34:39  mk
   - removed random writes to screen
 
@@ -3666,296 +3731,5 @@ end.
 
   Revision 1.14  2000/12/07 10:35:01  mk
   - fixed three bugs
-
-  Revision 1.13  2000/12/04 14:20:56  mk
-  RB:- UTF-7 Support added
-
-  Revision 1.12  2000/12/04 08:58:27  mk
-  - test destination file
-
-  Revision 1.11  2000/12/03 12:38:27  mk
-  - Header-Record is no an Object
-
-  Revision 1.10  2000/11/27 21:41:54  mk
-  RB:- Trim in GetMsgId hinzugefuegt
-
-  Revision 1.9  2000/11/23 22:33:23  fe
-  Fixed some ugly bugs with followup and replyto.
-
-  Revision 1.8  2000/11/19 00:48:56  fe
-  Made In-Reply-To parsing a bit more liberal.
-
-  Revision 1.7  2000/11/18 21:20:24  mk
-  - changed Shell() to SysExec()
-
-  Revision 1.6  2000/11/18 15:46:05  hd
-  - Unit DOS entfernt
-
-  Revision 1.5  2000/11/17 19:35:45  fe
-  Followup-To support updated to ZC 3.1.
-  Mail-Copies-To support added.
-
-  Revision 1.4  2000/11/17 00:25:36  mk
-  - removed duplicate Unix2DOSFile()
-
-  Revision 1.3  2000/11/15 23:37:34  fe
-  Corrected some string things.
-
-  Revision 1.2  2000/11/15 23:00:44  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.1  2000/11/14 21:36:53  fe
-  Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
-  So the program is called "uuz" again.
-
-  Revision 1.77  2000/11/14 15:51:26  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.76  2000/11/14 11:02:16  mk
-  - AnsiString-Fixes
-
-  Revision 1.75  2000/11/09 18:15:11  mk
-  - fixed Bug #116187: header of forwarded mails is stripped down
-
-  Revision 1.74  2000/11/06 21:10:46  fe
-  LDA/Expires support completet.  (Only relaying, not application.)
-
-  Revision 1.73  2000/11/05 20:14:13  fe
-  Added LDA/Expires.
-
-  Revision 1.71  2000/11/04 22:04:53  fe
-  Added a few little things for Gatebau 97 and grandson-of-1036.
-
-  Revision 1.70  2000/11/02 21:27:04  fe
-  bzip2 support added.
-
-  Revision 1.69  2000/11/01 22:59:23  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.68  2000/10/17 10:05:43  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.67  2000/10/15 08:50:06  mk
-  - misc fixes
-
-  Revision 1.66  2000/10/10 12:26:16  mk
-  - support for international fonts incl. UTF-8
-
-  Revision 1.65  2000/10/06 14:21:51  mk
-  SV:- spitze Klammern werden bei eingehenden Cancels jetzt entfernt
-
-  Revision 1.64  2000/09/25 17:52:30  mk
-  - Typ wird nicht mehr auf Binaer gesetzt, wenn Msg B64 codiert ist
-
-  Revision 1.63  2000/09/22 16:49:53  mk
-  - fehlendes Findclose hinzugefuegt
-
-  Revision 1.62  2000/09/21 16:19:10  mk
-  RB:- (X-)-Envelope-To-Unterstuetzung
-     - QP Decode fuer verschiedene Header
-     - Zeilen laenger als 255 Zeichen werden nicht mehr abgeschnitten
-
-  Revision 1.61  2000/09/11 23:19:15  fe
-  Fido-To-Verarbeitung unter RFC korrigiert.
-
-  Revision 1.60  2000/09/08 16:12:06  hd
-  - Init-Reihenfolge
-
-  Revision 1.59  2000/09/06 21:31:01  fe
-  /home/fe/foo
-
-  Revision 1.58  2000/08/28 18:53:04  mk
-  - FPC-Kompatiblitaets-Fix
-
-  Revision 1.57  2000/08/27 10:37:08  mk
-  - UUZ ist jetzt intern
-
-  Revision 1.56  2000/08/15 19:40:03  mk
-  - kleinere Umbauten fuer internen UUZ und Option -ppp
-
-  Revision 1.55  2000/08/08 11:56:18  mk
-  - AnsiString-Fixes
-
-  Revision 1.54  2000/08/08 09:17:25  mk
-  - Bug bei schreiben von ZConnect-Mails behoben
-
-  Revision 1.53  2000/08/03 15:25:42  mk
-  - Schalter -X hinzugefuegt
-
-  Revision 1.52  2000/07/27 10:11:05  mk
-  - IntToStr fixes
-
-  Revision 1.51  2000/07/26 08:18:50  mk
-  - fixes und AnsiString-Updates
-
-  Revision 1.50  2000/07/23 14:40:16  mk
-  - Bugfixes (Copycount bei NOKOP wird wieder beachtet usw.)
-  - IMAP-Style-Puffer mit mehreren Mails pro Datei werden eingelesen
-
-  Revision 1.49  2000/07/23 10:38:49  mk
-  - Kompatiblilitaet mit FPC erhoeht (AddObject)
-
-  Revision 1.48  2000/07/22 17:25:46  mk
-  - misc Bugfixes
-
-  Revision 1.47  2000/07/22 14:41:26  mk
-  - UUZ geht jetzt endlich wieder komplett :-)
-
-  Revision 1.46  2000/07/21 13:23:44  mk
-  - Umstellung auf TStringList
-
-  Revision 1.45  2000/07/20 20:30:54  mk
-  - EmpfList auf StringList umgestellt
-
-  Revision 1.43  2000/07/12 07:57:05  mk
-  RB:- XPBoundary Default in SetMimeData
-
-  Revision 1.42  2000/07/09 13:21:56  mk
-  - UUZ nutzt jetzt xpheader.inc
-
-  Revision 1.41  2000/07/07 09:51:53  mk
-  - Komplette Ansistring-Umstellung und vereinfachung der Strukturen
-
-  Revision 1.40  2000/07/04 12:04:18  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.39  2000/07/04 09:59:03  mk
-  - Sysutils eingefuegt
-
-  Revision 1.38  2000/07/02 14:24:50  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.37  2000/06/29 13:00:50  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version laeuft wieder
-  - Jochens 'B' Fixes uebernommen
-  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.36  2000/06/22 19:53:27  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.35  2000/06/21 20:40:25  mk
-  RB: - Bugfix fuer fortgesetzte Headerzeilen
-
-  Revision 1.34  2000/06/10 20:15:09  sv
-  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
-    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
-  - ZConnectler koennen jetzt auch canceln :-)
-  - Fix beim Canceln von Crosspostings
-
-  Revision 1.33  2000/06/05 16:16:22  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.32  2000/06/04 16:57:23  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.31  2000/06/03 17:53:03  mk
-  CL: - Verbesserte Kompatibilitaet mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
-  - Erkennung von User-Agent
-  - Content-Disposition (RFC 2183) wird erzeugt.
-
-  Revision 1.30  2000/05/16 15:20:32  hd
-  - Kleinere, unvollstaendige Anpassungen (UnixFS)
-
-  Revision 1.29  2000/05/13 15:39:51  mk
-  - Crashes wegen Hugestring beseitigt
-
-  Revision 1.28  2000/05/11 17:01:04  ml
-  Fuer linux: uppercase fuer Parameter rausgenommen (Gross/Kleinschreibung
-  nicht mehr ignoriert) + string-Access-Violation beseitigt.
-
-  Revision 1.27  2000/05/10 07:47:15  mk
-  RB: X-* -> U-X-*
-
-  Revision 1.26  2000/05/05 18:13:00  mk
-  - einige Limits beseitigt
-
-  Revision 1.25  2000/05/05 15:27:58  ml
-  zpr und uuz wieder unter linux lauffaehig (ncrt)
-
-  Revision 1.24  2000/05/04 10:26:03  mk
-  - UUZ teils auf HugeString umgestellt
-
-  Revision 1.23  2000/05/03 07:31:02  mk
-  - unter FPC jetzt auch compilierbar
-
-  Revision 1.22  2000/05/03 00:21:19  mk
-  - unbenutzte Units aus uses entfernt
-
-  Revision 1.21  2000/05/02 19:13:58  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.20  2000/04/29 20:54:07  mk
-  - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
-
-  Revision 1.19  2000/04/21 18:31:43  mk
-  - Assembler-Routinen konvertiert, versch. Fixes
-
-  Revision 1.18  2000/04/18 11:23:47  mk
-  - AnyFile in ffAnyFile ($3F->$20) ersetzt
-
-  Revision 1.17  2000/04/13 12:48:32  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.16  2000/04/04 21:01:22  mk
-  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.15  2000/03/25 18:46:59  ml
-  uuz lauffaehig unter linux
-
-  Revision 1.14  2000/03/24 15:41:01  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.13  2000/03/17 11:16:34  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.12  2000/03/16 20:24:12  rb
-  Bug beim Erzeugen des Received-Headers behoben
-
-  Revision 1.11  2000/03/16 10:14:24  mk
-  - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen fuer Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Aenderung wieder
-
-  Revision 1.10  2000/03/14 18:47:13  rb
-  'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
-
-  Revision 1.9  2000/03/14 15:15:37  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.8  2000/02/25 20:01:46  rb
-  unbenoetigte Funktion und Variable ausgeklammert
-
-  Revision 1.7  2000/02/25 19:07:08  rb
-  Unterstuetzung von 'Priority:' und 'urgent' (incoming)
-
-  Revision 1.6  2000/02/21 00:36:56  rb
-  X-Priority Konvertierung verbessert
-
-  Revision 1.5  2000/02/16 22:49:36  mk
-  RB: * Verbesserte X-Priority Konvertierung
 
 }
