@@ -766,6 +766,7 @@ begin
                          s:=s+', ';
                        s:=s+hdp^.empfaenger;
                        end;
+                       if hdp^.fido_to<>'' then s := s + ' (' + hdp^.fido_to + ')';
                      wrs(s);
                      end;
                  end;
@@ -1043,6 +1044,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.1  2000/07/06 21:29:36  mk
+  JG: - Bei FIDO-Nachrichten mit mehreren Brettempfaengern wird der FIDO-Empfaenger jetzt in Klammern mit angezeigt
+
   Revision 1.17  2000/05/09 20:27:40  jg
   - Quoten... Bugfix Numero3
 
