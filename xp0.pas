@@ -105,11 +105,11 @@ const  {$IFDEF DPMI}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
        XFerDir     = XFerDir_+DirSepa;
-       JanusDir_   = XFerDir+'janus';
+       JanusDir_   = XFerDir+'JANUS';
        JanusDir    = JanusDir_+DirSepa;
        FidoDir_    = 'FIDO';
        FidoDir     = FidoDir_+DirSepa;{ Nodelists }
-       InfileDir   = 'files'+DirSepa; { Default: Filerequests }
+       InfileDir   = 'FILES'+DirSepa; { Default: Filerequests }
        AutoxDir    = 'AUTOEXEC'+DirSepa;    { AutoStart-Daten }
        BadDir      = 'BAD'+DirSepa;
 
@@ -451,10 +451,8 @@ type   textp  = ^text;
                   nokop      : boolean;
                   boundary   : string[70];    { MIME-Multipart-Boundary      }
                   mimetyp    : string[30];
-                  xnoarchive : boolean; { MK 01/00 fÅr UUZ Fix von Robo }
-                  { 01/2000 oh }
+                  xnoarchive : boolean;
                   Cust1,Cust2: CustHeadStr;
-                  { /oh }
                   control    : string[150];
                 end;
        headerp = ^header;
@@ -492,7 +490,7 @@ type   textp  = ^text;
                   pointname : string[25];
                   username  : string[30];
                   _domain   : string[60];   { .. BOXEN.DB1 kopiert   }
-                  _fqdn     : string[60];   {16.01.00 HS}
+                  _fqdn     : string[60];
                   passwort  : string[20];
                   telefon   : string[60];
                   zerbid    : string[4];
@@ -1154,6 +1152,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.18  2000/12/06 01:47:31  mk
+  - weitere Dateinamen gross geschrieben
+
   Revision 1.54.2.17  2000/12/05 13:09:41  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
 
