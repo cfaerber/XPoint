@@ -915,8 +915,11 @@ begin   { readmask }
           if (t=^X) and not (autoup or autodown) then begin
             cont^:=TopAllStr(ustr(cont^)); replace:=false; end
             else
+                                                              { JG: Clipboard fuer Menues }
 
-          if (t=^V) or ((t=keyins) and kb_shift) then begin   {JG: Clipboard fuer Menues}
+	  if t=^C then string2clip(cont^);                    { STRG+C = kopieren }
+          
+	  if (t=^V) or ((t=keyins) and kb_shift) then begin   { STRG+V / SHIFT+INS }
             if replace then
             begin                                             { Ersetzen }
               s^:=clip2string(maxlen,1);
@@ -1068,6 +1071,10 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.9  2000/02/26 11:00:24  jg
+  - Strg+C (Kopieren ins Clipboard) in Texteingabefenstern
+  - OLH aktualisiert.
+
   Revision 1.8  2000/02/25 18:30:20  jg
   - Clip2string sauberer gemacht
   - Menues: STRG+A entfernt, STRG+V kann jetzt auch einfuegen

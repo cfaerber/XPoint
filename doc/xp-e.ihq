@@ -4712,12 +4712,12 @@ Enter the activity which CrossPoint should carry out.
 530
 Enter the search string.
 
-type <<CTRL V>> or <<Shift+Ins>> to use the Windows-
-Clipboard. A acustic signal indicates, that the clipboard
-contains either no or to much text.  
+type <<Ctrl V>> or <<Shift Ins>> to insert the 
+Windows-Clipboard. A acustic signal indicates,
+that the clipboard contains to much (or none) text.  
 
-<<CRTL A>> tries to extract a Mail-Adress from
-the clipboard-text.
+<<Ctrl C>> copies the text of this box to 
+the Windows-Clipboard.
 
 @
 531

@@ -5225,14 +5225,20 @@ Aktionen sind:
 530
 Geben Sie den Suchbegriff ein.
 
-Mit <<STRG V>> oder <<SHIFT + Einfg>> wird das Windows-
-Clipboard In den Suchstring kopiert. Ein Fehlerton
-bedeutet dass der Clipboard-Inhalt entweder zu gross 
-oder nicht existent ist.
+Mit <<Ctrl V>> oder <<Shift + Ins>> wird das Windows-
+Clipboard eingefuegt. Ein Fehlerton bedeutet, 
+dass der Clipboard-Inhalt zu gross ist, 
+oder nicht existiert.
 
-<<STRG A>> funktioniert wie oben, versucht allerdings
-zusaetzlich aus dem Clipboard-Text eine Mailadresse
-auszuschneiden und diesen als Suchstring zu benutzen. 
+<<Ctrl C>> kopiert den Inhalt des Textfelds
+in das Windows Clipboard.
+
+Mit <<Ctrl G>> wird die Eingabe in Grossbuchstaben 
+umgewandelt. <<Crtl K>> wandelt in Kleinbuchstaben um.
+
+<<Ctrl X>> erzeugt eine gemischte Schreibweise:
+der erste Buchstaben jedes Wortes wird gross
+geschrieben, der Rest klein.       
 
 @
 531
