@@ -1585,6 +1585,29 @@ numbers a la FIDO at the top.
         FidoNet Node wishing to use CrossPoint as an
         offline message reader/writer.
 @
+132
+<<Names>>    Here you can configure your identity.
+
+<<NNTP>>     Here you can configure NNTP server
+         settings.
+
+<<Misc.>>    Here you can configure outgoing and
+         incoming filters and specify the mail server
+         to be used when replying to a news article
+         via PM.
+@
+133
+<<Names>>    Here you can configure your identity.
+
+<<POP3>>     Configure the POP3 server that is used
+         for incoming mails here.
+
+<<SMTP>>     Configure the SMTP server that is used
+         for outgoing mails here.
+
+<<Misc.>>    Here you can configure outgoing and
+         incoming filters.
+@
 139
 Dial the selected Server or abort by pressing <Esc>.
 @
@@ -3055,33 +3078,98 @@ eg. 2:345/678\@fidonet.
 Message-ID).
 
 @
-30002
-Here you have to enter the address of your NNTP host.
-This can be an IP number or a domain.
+30001
+Enter the 'fully qualified domain name' that will
+be used for creating message ids here.
 
-(Default: 127.0.0.1, example: news.shlink.de).
+The domain specified should be yours.
+
+If you do not have an own domain you may get one
+suitable for FQDNs at
+<<http://fqdn.th-h.de>> or <<http://www.myfqdn.de>>.
 @
-30003
-The NNTP server usally uses port 119. If this is not
-the case with your ISP, you can enter the correct
-port here.
+30002
+Please enter your eMail address here.
 @
-30004
-If a password is required to access your NNTP server,
-you can enter it here. If a password is not required,
-you can leave this field blank.
+30020
+Please enter the machine name or ip address of
+the POP3 server here (for example pop.gmx.de).
+
+Leave this field blank if you do not want mail
+to be fetched.
 @
-30005
-POP3
+30021
+Please enter login data for the POP3 server here.
 @
-30006
-Port SMTP
+30022
+If activated mails will be deleted on the POP3 server
+once fetched.
+
+Should be activated if CrossPoint is the only
+program you use for reading mails.
 @
-30007
-Port POP, normal: 110
+30023
+If activated login data will be encrypted upon
+transmission. You should use this function if
+the server supports it.
+
+If in doubt just try and disable only if no success.
 @
-30008
-get the last X News. 0 = get all news.
+30024
+If activated only new not yet retrieved mail will
+be fetched upon netcall. If the POP3 server supports
+UIDLs (which is standard now) this feature will work
+even if you use another program parallel to
+CrossPoint with the same server.
+@
+30025
+If activated all mails fetched will be put in the
+message area associated with your own eMail address.
+@
+30040
+Please enter the machine name or ip address of the
+SMTP server here (for example smtp.gmx.de).
+
+Leave this field blank if you do not want mail
+to be sent.
+@
+30041
+Please enter your login data here if the SMTP server
+supports SMTP Auth. If this is not the case leave
+these fields blank.
+@
+30042
+If activated CrossPoint will first check for incoming
+mails and then send outgoing mails.
+
+This behaviour is required by some mail providers
+that do not support SMTP Auth.
+
+Let this option activated if in doubt.
+@
+30060
+Please enter the machine name or ip address of the
+NNTP server here (for example news.shlink.de).
+@
+30061
+Enter the TCP/IP port of the NNTP service here.
+
+Standard is 119.
+@
+30062
+If you got login data for using the NNTP service you
+should enter them here. If you did not leave these
+fields blank.
+@
+30063
+Number of articles to be fetched at most per news-
+group.
+
+Caution: If more articles have been written in a
+newsgroup than specified here, the oldest articles
+are <<not>> retrieved.
+
+0 = fetch all new articles.
 @
 8034
 Enter the name of your UUCP Server here.

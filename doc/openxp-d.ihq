@@ -2730,6 +2730,33 @@ Reihenfolge.
         einspielen zu k”nnen.
 
 @
+132
+<<Namen>>    Hier sind die Einstellungen zu Ihrer
+         Identit„t zusammengefaát.
+
+<<NNTP>>     Konfigurieren Sie hier den zu benutzenden
+         Newsserver.
+
+<<Diverses>> Konfigurieren Sie hier Ein- und Ausgangs-
+         filter sowie die fr Replies zu benutzende
+         SMTP/POP3-Box.
+
+@
+133
+<<Namen>>    Hier sind die Einstellungen zu Ihrer
+         Identit„t zusammengefaát.
+
+<<POP3>>     Konfigurieren Sie hier den zu benutzenden
+         POP3-Mailserver, der fr eingehende Mails
+         benutzt wird.
+
+<<SMTP>>     Konfigurieren Sie hier den SMTP-Server,
+         der fr ausgehende Mails benutzt wird.
+
+<<Diverses>> Konfigurieren Sie hier Ein- und Ausgangs-
+         filter und anderes.
+
+@
 139
 W„hlen Sie die gewnschte Box oder brechen Sie die
 Auswahl mit <<<Esc> >>ab.
@@ -4214,35 +4241,101 @@ lassen, erhalten Ihre Nachrichten die Message-ID
 Diese Domain sollte ausschlieálich von Ihnen verwen-
 det werden, um so die Eindeutigkeit der Message-IDs
 gew„hrleisten zu k”nnen.
+
+Falls Sie keine eigene Domain haben, k”nnen Sie unter
+<<http://fqdn.th-h.de>> oder <<http://www.myfqdn.de>>
+eine eigene fr FQDNs benutzbare Subdomain bekommen.
 @
 30002
-Geben Sie hier die IP-Nummer oder den Domainnamen
-des NNTP-Hosts an (Vorgabe: 127.0.0.1, Beispiel:
-news.shlink.de).
+Geben Sie hier Ihre E-Mail-Adresse ein.
 @
-30003
+30020
+Geben Sie hier den Rechnernamen oder die IP-Adresse
+des POP3-Servers an (Beispiel: pop.gmx.de).
+
+Lassen Sie dieses Feld frei, falls keine Mails
+abgeholt werden sollen.
+@
+30021
+Geben Sie hier die Logindaten fr den POP3-Server
+an.
+@
+30022
+Falls aktiviert, werden die Mails auf dem POP3-Server
+nach dem Abholen gel”scht.
+@
+30023
+Falls aktiviert, wird das Paáwort verschlsselt ber-
+tragen. Falls der POP3-Server dies untersttzt,
+sollte diese Option unbedingt gew„hlt werden.
+
+Im Zweifelsfall einfach ausprobieren und nur bei
+Fehlfunktion ausstellen.
+@
+30024
+Falls aktiviert, werden nur neue, bisher noch nicht
+abgeholte Mails abgeholt. Falls der POP3-Server
+UIDLs untersttzt (wie inzwischen Standard), kommt
+dieses Feature selbst dann nicht durcheinander,
+wenn Sie mit einem anderen Programm den gleichen
+Server abfragen.
+@
+30025
+Falls aktiviert, werden die eingehenden Mails alle
+in das der eigenen E-Mail-Adresse zugeordnete Brett
+eingeordnet. Normalerweise werden die Mails in das
+Brett des jeweiligen Empf„ngers einsortiert, was
+aber angesichts der Tatsache, daá eingehende Mail
+nicht unbedingt die eigene E-Mail-Adresse als Em-
+pf„nger haben muá, unpraktisch sein kann.
+@
+30040
+Geben Sie hier den Rechnernamen oder die IP-Adresse
+des SMTP-Servers an (Beispiel: smtp.gmx.de).
+
+Lassen Sie dieses Feld frei, falls keine Mails ver-
+sendet werden sollen.
+@
+30041
+Geben Sie hier Ihre Logindaten an, falls der SMTP-
+Server SMTP Auth untersttzt. Sollte dies nicht der
+Fall sein, lassen Sie diese Felder frei.
+@
+30042
+Falls aktiviert, wird vor dem Versenden der Mails
+mittels SMTP erst per POP3 eingehende Mail abgeholt.
+Einige Freemail-Provider ben”tigen dieses Verfahren,
+im allgemeinen ist aber SMTP Auth SMTP-after-POP
+vorzuziehen.
+
+Lassen Sie diese Option im Zweifelsfall aktiviert.
+@
+30060
+Geben Sie hier den Rechnernamen oder die IP-Adresse
+des NNTP-Hosts an (Beispiel: news.shlink.de).
+@
+30061
 Hier geben Sie den Port an, ber den der NNTP-Dienst
 erreichbar ist.
 
 Im Normalfall ist dies der Port 119.
 @
-30004
+30062
 Wenn Sie Zugangsdaten fr die Nutzung des NNTP-Dienstes
 erhalten haben, so tragen Sie diese hier ein. Werden
-diese Daten nicht ben”tigt, so k”nnen Sie die Felder
+diese Daten nicht ben”tigt, so sollten Sie die Felder
 leer lassen.
 @
-30005
-POP3
-@
-30006
-Port SMTP
-@
-30007
-Port POP, normal: 110
-@
-30008
-Hole nur die letzten X News. 0 = Hole alle News.
+30063
+Anzahl der pro Newsgroup maximal abzuholenden Artikel.
+
+Vorsicht: Sind in einer Newsgroup seit dem letzten
+Netcall mehr als diese Anzahl Artikel geschrieben
+worden, werden die „ltesten dieser Artikel <<nicht>>
+abgeholt.
+
+0 = Immer alle noch nicht abgeholten Artikel
+herunterladen.
 @
 8034
 Geben Sie hier die Domain des UUCP-Servers an.

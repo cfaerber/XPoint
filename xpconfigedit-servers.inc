@@ -128,16 +128,22 @@
     DomainNt:=nt;
     dialog(ival(getres2(912,0)),11,name,x,y);
     blen:=ntBoxnameLen(nt);
-    maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š');
-    msetvfunc(xp9_testbox);
+    maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š'); { 'Boxname' }
+      msetvfunc(xp9_testbox);
+      mhnr(190);
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
-    maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/'));
-    msetvfunc(notempty);
+      mhnr(192);
+    maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/')); { 'Realname' }
+      msetvfunc(notempty);
+      mhnr(194);
     maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));
-    msetvfunc(notempty);
+      msetvfunc(notempty);
+      mhnr(30002);
+      
     maddstring(3,10,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
-           'A'+without(range('!','~'),' @<>/')); mhnr(30001);
+           'A'+without(range('!','~'),' @<>/'));
+      mhnr(30001);
     freeres;
     readmask(brk);
     enddialog;
@@ -737,14 +743,13 @@
     dialog(ival(getres2(950,0)),11,GetRes2(950,1),x,y);         { 'NNTP-Einstellungen' }
     with boxpar^ do begin
       maddstring(3,2,getres2(950,2),nntp_ip,25,255,             { 'Server    ~' }
-          range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
-      mhnr(30002);
+                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
+        mhnr(30060);
       maddint(3,4,getres2(950,3),nntp_port,4,5,0,65535);        { 'Port      ~' }
-      mhnr(30003);
       maddstring(3,6,getres2(950,4),nntp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,8,getres2(950,5),nntp_pwd,25,255,'');        { 'Passwort  ~' }
+        mhnr(30062);
       maddint(3,10,getres2(950,6),nntp_maxnews,4,5,0,1000000);  { 'letzten X Nachrichten ' }
-      mhnr(30008);
       freeres;
       readmask(brk);
       enddialog;
@@ -758,9 +763,10 @@
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(951,2),pop3_ip,25,255,             { 'Server    ~' }
-      range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
+                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-'); mhnr(30020);
       maddstring(3,4,GetRes2(951,3), pop3_id,25,255,'');        { 'Loginname ~' }
       maddstring(3,6,GetRes2(951,4), pop3_pwd,25,255,'');       { 'Passwort  ~' }
+        mhnr(30021);
       maddbool(3,8, GetRes2(951,5), pop3_clear);                { 'Abgeholte Mails loeschen' }
       maddbool(3,9, GetRes2(951,6), pop3_APOP);                 { 'APOP benutzen' }
       maddbool(3,10, GetRes2(951,7), pop3_OnlyNew);             { 'Nur neue Mails' }
@@ -778,9 +784,11 @@
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(952,2),smtp_ip,25,255,             { 'Server    ~' }
-        range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
+                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
+        mhnr(30040);
       maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
+        mhnr(30041);
       maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'Vor SMTP einen POP3 Login ausfuehren' }
       freeres;
       readmask(brk);
@@ -1125,7 +1133,8 @@
     with boxpar^ do begin
       maddtext(3,2,getres2(924,19),col.coldiahigh);             { 'Aufruf' }
       maddstring(20,2,getres2(924,4),o_logfile,25,60,'');       { 'Logfile ' }
-      msetvfunc(testlogfile);
+        mhnr(188);
+        msetvfunc(testlogfile);
       maddtext(3,4,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
       maddtext(20,4,getres2(924,14),0);               { 'Ausschluss-' }
       maddtext(20,5,getres2(924,15),0);               { 'zeiten:'    }
@@ -1480,12 +1489,11 @@
     fn:= dbReadStr(d,'dateiname');
     if fn='' then fn:=LeftStr(dbReadStr(d,'boxname'),8);
     dbRead(d,'netztyp',nt);
-    pushhp(131);
     nts:=''; // nts2:=getres2(927,3);   { ',^SysopMode' }
-
 
     case nt of
       nt_Netcall : begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1495,6 +1503,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_ZConnect: begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1504,6 +1513,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_Maus:     begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1513,6 +1523,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_Magic:    begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1522,6 +1533,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_Pronet:   begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1531,6 +1543,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_Fido:     begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                         +getres2(927,8)        { ^Gebuehren, }
@@ -1540,6 +1553,7 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_QWK:      begin
+                     pushhp(131);
                      nts:=
 //                       +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
@@ -1548,6 +1562,7 @@
                          +getres2(927,4);       { ,^Transfer }
                    end;
       nt_UUCP:     begin
+                     pushhp(131);
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
 //                       +getres2(927,8)        { ^Gebuehren, }
@@ -1557,11 +1572,13 @@
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_NNTP:     begin
+                     pushhp(132);
                      nts:=getres2(927,9)        { ^Namen, }
                          +getres2(927,26)       { NNT^P, }
                          +getres2(927,10);      { ^Diverses }
                    end;
       nt_POP3:     begin
+                     pushhp(133);
                      nts:=getres2(927,9)        { ^Namen, }
                          +getres2(927,27)       { ^POP3, }
                          +getres2(927,30)       { ^SMTP, }
@@ -1746,6 +1763,9 @@
 
 {
   $Log$
+  Revision 1.3  2001/06/23 14:24:17  ma
+  - added/refined online help for new netcall types
+
   Revision 1.2  2001/06/09 10:58:53  ma
   - added ForceOneArea feature (for POP3 server type)
 
