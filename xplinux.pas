@@ -239,19 +239,19 @@ begin
   else with info do begin
     case ta of
 {$IFDEF FPC }
-      taUserR:   TestAccess:= (uid and STAT_IRUSR) <> 0;
-      taUserW:   TestAccess:= (uid and STAT_IWUSR) <> 0;
-      taUserRW:  TestAccess:= (uid and (STAT_IRUSR or STAT_IWUSR)) <> 0;
-      taUserRWX: TestAccess:= (uid and STAT_IRWXU) <> 0;
-      taUserX:   TestAccess:= (uid and STAT_IXUSR) <> 0;
-      taUserRX:  TestAccess:= (uid and (STAT_IRUSR or STAT_IXUSR)) <> 0;
+      taUserR:   TestAccess:= (mode and STAT_IRUSR) <> 0;
+      taUserW:   TestAccess:= (mode and STAT_IWUSR) <> 0;
+      taUserRW:  TestAccess:= (mode and (STAT_IRUSR or STAT_IWUSR)) <> 0;
+      taUserRWX: TestAccess:= (mode and STAT_IRWXU) <> 0;
+      taUserX:   TestAccess:= (mode and STAT_IXUSR) <> 0;
+      taUserRX:  TestAccess:= (mode and (STAT_IRUSR or STAT_IXUSR)) <> 0;
 {$ELSE }
-      taUserR:   TestAccess:= (st_uid and S_IRUSR) <> 0;
-      taUserW:   TestAccess:= (st_uid and S_IWUSR) <> 0;
-      taUserRW:  TestAccess:= (st_uid and (S_IRUSR or S_IWUSR)) <> 0;
-      taUserRWX: TestAccess:= (st_uid and S_IRWXU) <> 0;
-      taUserX:   TestAccess:= (st_uid and S_IXUSR) <> 0;
-      taUserRX:  TestAccess:= (st_uid and (S_IRUSR or S_IXUSR)) <> 0;
+      taUserR:   TestAccess:= (st_mode and S_IRUSR) <> 0;
+      taUserW:   TestAccess:= (st_mode and S_IWUSR) <> 0;
+      taUserRW:  TestAccess:= (st_mode and (S_IRUSR or S_IWUSR)) <> 0;
+      taUserRWX: TestAccess:= (st_mode and S_IRWXU) <> 0;
+      taUserX:   TestAccess:= (st_mode and S_IXUSR) <> 0;
+      taUserRX:  TestAccess:= (st_mode and (S_IRUSR or S_IXUSR)) <> 0;
 {$ENDIF }
     end;
   end;
@@ -417,6 +417,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/11/11 19:28:13  ml
+  - bugfix TestAccess (rwx are modes, not uids
+
   Revision 1.19  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
