@@ -24,7 +24,7 @@ unit xp4o3;
 
 interface
 
-uses typeform,fileio,datadef,database,inout,keys,resource,
+uses typeform,fileio,datadef,inout,keys,resource,
      sysutils,xp0,xp1,xp1input, xpglobal;
 
 function  __getfilename(nr,nn:byte):string;
@@ -37,7 +37,8 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xpsendmessage,xpnt,xpkeys,xpcc;
+uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xpsendmessage,xpnt,xpkeys,xpcc,
+  database;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -315,6 +316,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/10/17 22:11:48  ml
+  - removed some circular unit-defs
+
   Revision 1.31  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

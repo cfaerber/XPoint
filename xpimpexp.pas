@@ -28,7 +28,7 @@ interface
 
 uses
   sysutils,typeform,fileio,inout,maske,datadef,database,maus2,resource, zftools,
-  xp0,xp1,xpglobal;
+  xp0,xpglobal;
 
 
 procedure ImportUserbase;     { X/Import/MB-Userbase }
@@ -49,7 +49,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xpconfigedit,xpnt, winxp;
+xp1o,xp1o2,xp3,xp3o,xp3o2,xpmaus,xp9bp,xpconfigedit,xpnt, winxp, xp1;
 
 const mdaten = 'MDATEN.DAT';    { fÅr ImportMautaubase }
       mindex = 'MDATEN.IND';
@@ -663,6 +663,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2001/10/17 22:11:48  ml
+  - removed some circular unit-defs
+
   Revision 1.44  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
