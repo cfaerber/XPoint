@@ -19,10 +19,6 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-// !!ToDO: Delete in einer For-Schleife f¸r Stringlisten ist nicht mˆglich,
-// entsprechend umbauen
-
-
 { Reply-To-All- (RTA) Routinen }
 
 {$I XPDEFINE.INC }
@@ -385,23 +381,25 @@ var RTAEmpfList : TRTAEmpfaengerList;
     i: Integer;
     uEmpf :string;
   begin
-    for i := 0 to List.Count - 1 do
-    with List[i] do
-    begin
-      if cpos(' ', empf) <> 0 then Empf := LeftStr(Empf, cpos(' ', Empf));
-      { ^^ Realname entfernen }
-      uEmpf := UpperCase(Empf);
-      if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', Empf) = 0)
-        or (uEmpf = UpperCase (hdp.ReplyTo))
-        or (uEmpf = UpperCase (hdp.wab))
-        or (uEmpf = UpperCase (hdp.oab))
-        or (not IsMailAddress(Empf)) then
-          List.Delete(i)
-      else begin
-        RTAEmpf := not eigeneAdresse (eigeneAdressenbaum, empf);
-        userUnbekannt := IsUserUnbekannt(Empf);
+    i := 0;
+    while i < List.Count do 
+      with List[i] do
+      begin
+        if cpos(' ', empf) <> 0 then Empf := LeftStr(Empf, cpos(' ', Empf));
+        { ^^ Realname entfernen }
+        uEmpf := UpperCase(Empf);
+        if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', Empf) = 0)
+          or (uEmpf = UpperCase (hdp.ReplyTo))
+          or (uEmpf = UpperCase (hdp.wab))
+          or (uEmpf = UpperCase (hdp.oab))
+          or (not IsMailAddress(Empf)) then
+            List.Delete(i)
+        else begin
+          Inc(i);
+          RTAEmpf := not eigeneAdresse (eigeneAdressenbaum, empf);
+          userUnbekannt := IsUserUnbekannt(Empf);
+        end;
       end;
-    end;
 
     { alphabetisch sortieren }
     List.Sort;
@@ -671,13 +669,11 @@ var RTAEmpfList : TRTAEmpfaengerList;
     { Adresse aus den vom Lister zurÅckgegeben Strings extrahieren }
 
     function getAdresse (const s :string) :String;
-    var adr: String;
     begin
-      adr := trim (copy (s, length (getres2 (476, 1)) + 3, 91)); //!!
-      if adr[1] = '*' then delete (adr, 1, 1);
-      if adr[1] = '(' then delete (adr, 1, 1);
-      if adr[length (adr)] = ')' then delete (adr, length (adr), 1);
-      getAdresse := adr;
+      Result := trim (copy (s, length (getres2 (476, 1)) + 3, 91)); //!!
+      if FirstChar(Result) = '*' then Delete(Result, 1, 1);
+      if FirstChar(Result)= '(' then Delete(Result, 1, 1);
+      if LastChar(Result) = ')' then SetLength(Result, Length(Result)-1);
     end;
 
     procedure markierteAdressenEntfernen (var userError :boolean);
@@ -712,15 +708,21 @@ var RTAEmpfList : TRTAEmpfaengerList;
       tempList := TRTAEmpfaengerList.Create; { RTA-EmpfÑngerliste sichern, um bei    }
       tempList.Assign(RTAEmpfList);          { einem Usererror wiederholen zu kînnen }
 
-      for i := 0 to tempList.Count - 1 do
+      i := 0;
+      while i < tempList.Count do
         if adresseMarkiert(UpperCase(tempList[i].empf)) then { markierte Adressen lîschen }
-          tempList.Delete(i);
+          tempList.Delete(i)
+        else 
+          Inc(i);
 
       if adresseMarkiert (UpperCase (abs)) then
       begin { Wenn der "erste" EmpfÑnger markiert ist... }
-        for i := 0 to tempList.Count - 1 do
+        i := 0;
+        while i < tempList.Count do
           if not tempList[i].RTAEmpf then
-            tempList.Delete(i);
+            tempList.Delete(i)
+          else
+            Inc(i);
 
         if tempList.Count > 0 then
         begin
@@ -798,7 +800,7 @@ again:
         end else
         begin
           auswahlMarkierte := true;
-          RTAEmpfList.Free;
+          RTAEmpfList.Clear;
           abs := getAdresse (trim (List.FirstMarked));
           if cpos ('@', abs) = 0 then abs := '';
           repeat
@@ -815,7 +817,6 @@ again:
         begin
           rfehler(746);                       { 'UngÅltige Auswahl' }
           List.StartPos := iif (RTAEmpfaengerVorhanden, 2, 1);
-          RTAEmpfList.Clear;
           RTAEmpfList.Assign(savedList);
           goto again;
         end;
@@ -823,7 +824,6 @@ again:
       if RTA then
         if not checkEmpf (abs, RTAEmpfList) then
         begin
-          RTAEmpfList.Clear;
           RTAEmpfList.Assign(savedList);
           RTA := false;
           goto again;
@@ -921,6 +921,7 @@ var
 begin
   for i := 0 to FItems.Count - 1 do
     TRTAEmpfaenger(FItems[i]).Free;
+  FItems.Clear;
 end;
 
 function TRTAEmpfaengerList.Count: Integer;
@@ -962,6 +963,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2001/09/08 12:50:38  mk
+  - numerous fixes
+
   Revision 1.15  2001/09/07 18:21:02  mk
   - fixed initialization of markierteAdressen in GetAdresse
 
