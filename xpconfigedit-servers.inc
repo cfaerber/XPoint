@@ -161,15 +161,15 @@
     freeres;
     mappsel(true,ntname(nt_uucp_c));  { RFC/Client }
     mappsel(true,ntname(nt_uucp_u));  { RFC/UUCP   }
-    for i:=0 to enetztypen-1 do
-      if (ntnr[i] in ntAllowed) then
-        mappsel(true,ntName(ntnr[i]));
+    for i:=1 to High(Nettypes) do
+      if (Nettypes[i] in ntAllowed) then
+        mappsel(true,ntName(NetTypes[i]));
     readmask(brk);
     enddialog;
     if not brk then
-      for i:=0 to enetztypen-1 do
-        if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
-          nt:=ntnr[i];
+      for i:=0 to High(NetTypes) do
+        if LowerCase(ntyp)=LowerCase(ntName(NetTypes[i])) then
+          nt:= NetTypes[i];
   end;
 
   procedure unique(var dname:string);    { eindeutigen Dateinamen erzeugen }
@@ -1989,6 +1989,10 @@
 
 {
   $Log$
+  Revision 1.7  2001/07/22 21:05:18  mk
+  - fixed double RFC/UUCP in Edit/Boxen/Neu
+  - renamed ntnr to NetTypes and removed eNetztypen
+
   Revision 1.6  2001/07/22 13:46:40  ma
   - fixed: NNTP/POP3 box name was automatically altered if previously
     editing a Fido box

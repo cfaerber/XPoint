@@ -40,7 +40,8 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_QWK       = 31;
        nt_UUCP      = 40;
        nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp }
-       nt_UUCP_U    = 42;        { dito fuer RFC/UUCP-Auswahl, nur fuer Namen-Anzeige }       nt_NNTP      = 50;        { NNTP-Stream }
+       nt_UUCP_U    = 42;        { dito fuer RFC/UUCP-Auswahl, nur fuer Namen-Anzeige }
+       nt_NNTP      = 50;        { NNTP-Stream }
        nt_POP3      = 51;        { POP3/SMTP-Stream }
        nt_IMAP      = 52;        { IMAP4 }
 
@@ -753,6 +754,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2001/07/22 21:05:19  mk
+  - fixed double RFC/UUCP in Edit/Boxen/Neu
+  - renamed ntnr to NetTypes and removed eNetztypen
+
   Revision 1.24  2001/07/21 16:02:12  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

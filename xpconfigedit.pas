@@ -91,11 +91,9 @@ uses
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
-      enetztypen = 12;
-      ntnr   : array[0..enetztypen-1] of byte = (2,0,40,20,30,31,3,4,10,11,50,51);
-    { ntypes : array[0..enetztypen-1] of string[10] = ('Z-Netz','ZConnect',
-                 'RFC/UUCP','MausTausch','Fido','QWK','MagicNET','ProNET',
-                 'QuickMail','GS-Mailbox','Turbo-Box'); }
+      NetTypes: array[0..10] of byte = (nt_UUCP, nt_ZConnect,
+        nt_Fido, nt_QWK, nt_Maus, nt_Netcall, nt_Magic, nt_Pronet, nt_Quick,
+        nt_POP3, nt_NNTP);
 
 var   UpArcnr   : integer;    { fr EditPointdaten }
       DownArcNr : integer;
@@ -649,13 +647,14 @@ var d         : DB;
     nameofs   : byte;
 
   function Netz_Typ(nt:byte):string;
-  var i : integer;
+  var
+    i: Integer;
   begin
     Netz_Typ:=ntName(nt_Netcall);
     if nt=nt_UUCP_C then Netz_Typ:=ntName(nt_UUCP_C)
     else if nt=nt_UUCP then Netz_Typ:=ntName(nt_UUCP_U);
-    for i:=0 to enetztypen-1 do
-      if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
+    for i:=0 to High(NetTypes) do
+      if nt=NetTypes[i] then Netz_Typ:=ntName(NetTypes[i]);
   end;
 
   procedure displine(i:integer);
@@ -1259,9 +1258,9 @@ restart:
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   mappsel(true,ntname(41));
   mappsel(true,ntname(42));
-  for i:=1 to enetztypen-1 do
-    if (ntnr[i] in ntAllowed) then
-      mappsel(true,ntName(ntnr[i]));
+  for i:=1 to High(NetTypes) do
+    if (NetTypes[i] in ntAllowed) then
+      mappsel(true,ntName(NetTypes[i]));
   mset3proc(gf_getntyp);
   maddstring(3,10,getres2(912,13),name,20,20,'>-_0123456789:/.'+range('A','Z')+'Ž™š');
     mhnr(680);                                       { 'Server' bzw. 'Boxname' }
@@ -1278,9 +1277,9 @@ restart:
     ntyp:=ntName(40);
     pppm:=true;
   end;
-  for i:=0 to enetztypen-1 do
-    if LowerCase(ntyp)=LowerCase(ntName(ntnr[i])) then
-      nt:=ntnr[i];
+  for i:=0 to High(NetTypes) do
+    if LowerCase(ntyp)=LowerCase(ntName(NetTypes[i])) then
+      nt:= NetTypes[i];
   closemask;
   closebox;
   email:='';
@@ -1492,6 +1491,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/22 21:05:18  mk
+  - fixed double RFC/UUCP in Edit/Boxen/Neu
+  - renamed ntnr to NetTypes and removed eNetztypen
+
   Revision 1.3  2001/07/21 16:02:11  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 
