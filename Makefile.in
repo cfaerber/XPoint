@@ -43,8 +43,8 @@ mandir		= @mandir@
 # --- flags -----------------------------------------------------------
 
 PPC	= @PPC@
-PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -dAUTOCONF
-PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux
+PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -Fuxplib -dAUTOCONF
+PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux -Fuxplib
 
 # --- files -----------------------------------------------------------
 EXEEXT 	= @EXEEXT@
@@ -146,6 +146,9 @@ ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.8  2003/01/13 23:34:25  cl
+# - autoconf update
+#
 # Revision 1.7  2003/01/13 16:17:32  cl
 # - Makfile update
 #
