@@ -867,19 +867,22 @@ begin
 end;
 
 function UTF8FormS(const s:string; n:integer):string; overload;
-var Position: Integer;
+var Position, NewPosition: Integer;
     W: Integer;
 begin
   Position := 1;
   Result := '';
   while Position <= Length(s) do
   begin
-    w := UnicodeCharacterWidth(UTF8GetCharNext(s,Position));
-    if w < 0 then w := 1;
+    NewPosition := Position;
+    w := UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition));
+    if w < 0 then w := 0;
     if w > n then break;
     dec(n,w);
+    Position := NewPosition;
   end;
-  Result := LeftStr(s,Position-1) + Sp(n);
+
+  Result := LeftStr(s,Position) + Sp(n);
 end;
 
 function StrS(const l:longint):string;
@@ -2047,6 +2050,9 @@ end;
 
 {
   $Log$
+  Revision 1.138  2003/09/22 11:25:07  cl
+  - Fixed UTF8FormS: Use of Position-1 with UTF_8 strings
+
   Revision 1.137  2003/09/21 20:11:39  mk
   - added function FindURL
 
