@@ -723,11 +723,11 @@ type   textp  = ^text;
                          anz    :integer;
                        end;
 
-       viewert  = array[1..maxviewers] of record
+       TViewer  = array[1..maxviewers] of record
                                             ext : string;
                                             prog: string;
                                           end;
-       UnpackRec = record
+       TUnpacker = record
                      UnARC, UnLZH, UnZOO,
                      UnZIP, UnARJ, UnPAK,
                      UnDWC, UnHYP, UnSQZ,
@@ -912,7 +912,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
        brettanzeige : byte;          { 0=gross, 1=top, 2=klein }
        ShowMsgDatum : boolean;       { Datum im Nachrichtenf.  }
-       viewers      : ^viewert;
+       viewers      : TViewer;
        VarEditor,
        VarLister    : string;    { externer Editor/Lister  }
        stdhaltezeit,
@@ -948,7 +948,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ListEndCR    : boolean;       { internen Lister mit <cr> beenden }
        ListWrap     : boolean;
        FKeys        : array[0..4] of TFKey;
-       Unpacker     : ^UnpackRec;
+       Unpacker     : TUnpacker;
        EditVollbild : boolean;
        ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=grosse Files }
        EditCharset  : string;
@@ -1226,6 +1226,9 @@ implementation
 
 {
   $Log$
+  Revision 1.157  2002/01/30 22:36:03  mk
+  - made viewers and unpackers static
+
   Revision 1.156  2002/01/30 17:18:12  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with

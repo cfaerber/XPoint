@@ -564,7 +564,7 @@ end;
 
 function GetDecomp(atyp:shortint; var decomp:string):boolean;
 begin
-  with unpacker^ do
+  with unpacker do
     case atyp of
       1 : decomp:=UnARC;
       2 : decomp:=UnLZH;
@@ -1057,6 +1057,9 @@ end;
 
 {
   $Log$
+  Revision 1.108  2002/01/30 22:36:03  mk
+  - made viewers and unpackers static
+
   Revision 1.107  2002/01/29 11:47:39  mk
   - fixed crash in getline (xp1o.pas)
 

@@ -328,8 +328,6 @@ begin
   wwwHomepage:='';
   fidobin:=FileExists('fido-bin');
   Clipboard:=ClipAvailable;
-  new(viewers);
-  new(unpacker);
 
   domainlist:=nil;
 end;
@@ -431,7 +429,8 @@ begin
   ListUhr:=true;
   ListEndCR:=false;
   ListWrap:=true;
-  with unpacker^ do begin
+  with unpacker do
+  begin
 {$IFDEF unix}
     UnARC:='arc e $ARCHIV $DATEI';
     UnLZH:='lha e $ARCHIV $DATEI';
@@ -584,12 +583,13 @@ begin
   UserBoxname:=true;
   nDelPuffer:=false;
   BrettAlle:=iifs(deutsch,'Alle','All');
-  viewers^[1].ext:='GIF'; viewers^[1].prog:='VPIC.EXE $FILE';
-  viewers^[2].ext:='LBM'; viewers^[2].prog:='VPIC.EXE $FILE';
-  viewers^[3].ext:='PCX'; viewers^[3].prog:='VPIC.EXE $FILE';
-  for i:=defviewers+1 to maxviewers do begin
-    viewers^[i].ext:=''; viewers^[i].prog:='';
-    end;
+  viewers[1].ext:='GIF'; viewers[1].prog:='VPIC.EXE $FILE';
+  viewers[2].ext:='LBM'; viewers[2].prog:='VPIC.EXE $FILE';
+  viewers[3].ext:='PCX'; viewers[3].prog:='VPIC.EXE $FILE';
+  for i:=defviewers+1 to maxviewers do
+  begin
+    viewers[i].ext:=''; viewers[i].prog:='';
+  end;
   maxmaus:=true;
   auswahlcursor:=false;
   soundflash:=false;
@@ -804,7 +804,8 @@ begin
   writeln(t,'Edit25=',jnf(edit25));
   writeln(t,'MinMB=',minmb);
   writeln(t,'AskQuit=',jnf(askquit));
-  with unpacker^ do begin
+  with unpacker do
+  begin
     writeln(t,'UnARC=',unarc);
     writeln(t,'UnLZH=',unlzh);
     writeln(t,'UnZOO=',unzoo);
@@ -815,7 +816,7 @@ begin
     writeln(t,'UnHYP=',unhyp);
     writeln(t,'UnSQZ=',unsqz);
     writeln(t,'UnRAR=',unrar);
-    end;
+  end;
   writeln(t,'LPT=',DruckLPT);
   writeln(t,'DruckerInit=',druckinit);
   writeln(t,'DruckerExit=',druckexit);
@@ -1251,7 +1252,7 @@ var t       : text;
       getviewers:=false
     else begin
       getviewers:=true;
-      with viewers^[ival(su[7])+defviewers] do begin
+      with viewers[ival(su[7])+defviewers] do begin
         delete(su,1,8); delete(s,1,8);
         p:=cpos(',',su);
         if p>0 then begin
@@ -1342,9 +1343,9 @@ begin
           xp1.gets(s,su,'editor',vareditor) or
           xp1.getw(su,  'editorkb', dummyi) or
           getx(su,  'autocpgdn',autocpgd) or
-          xp1.gets(s,su,'gifviewer',viewers^[1].prog) or
-          xp1.gets(s,su,'lbmviewer',viewers^[2].prog) or
-          xp1.gets(s,su,'pcxviewer',viewers^[3].prog) or
+          xp1.gets(s,su,'gifviewer',viewers[1].prog) or
+          xp1.gets(s,su,'lbmviewer',viewers[2].prog) or
+          xp1.gets(s,su,'pcxviewer',viewers[3].prog) or
           geti16(su,  'stdhaltezeit',stdhaltezeit) or
           geti16(su,  'stduserhaltezeit',stduhaltezeit) or
           getb(su,  'quotebreak',quotebreak) or
@@ -1384,16 +1385,16 @@ begin
           getx(su,  'ListVollbild',listvollbild) or
           getx(su,  'ListUhr',listuhr) or
           getx(su,  'ListEndCR',listendcr) or
-          xp1.gets(s,su,'UnARC',unpacker^.unarc) or
-          xp1.gets(s,su,'UnLZH',unpacker^.unlzh) or
-          xp1.gets(s,su,'UnZOO',unpacker^.unzoo) or
-          xp1.gets(s,su,'UnZIP',unpacker^.unzip) or
-          xp1.gets(s,su,'UnARJ',unpacker^.unarj) or
-          xp1.gets(s,su,'UnPAK',unpacker^.unpak) or
-          xp1.gets(s,su,'UnDWC',unpacker^.undwc) or
-          xp1.gets(s,su,'UnHYP',unpacker^.unhyp) or
-          xp1.gets(s,su,'UnSQZ',unpacker^.unsqz) or
-          xp1.gets(s,su,'UnRAR',unpacker^.unrar) or
+          xp1.gets(s,su,'UnARC',unpacker.unarc) or
+          xp1.gets(s,su,'UnLZH',unpacker.unlzh) or
+          xp1.gets(s,su,'UnZOO',unpacker.unzoo) or
+          xp1.gets(s,su,'UnZIP',unpacker.unzip) or
+          xp1.gets(s,su,'UnARJ',unpacker.unarj) or
+          xp1.gets(s,su,'UnPAK',unpacker.unpak) or
+          xp1.gets(s,su,'UnDWC',unpacker.undwc) or
+          xp1.gets(s,su,'UnHYP',unpacker.unhyp) or
+          xp1.gets(s,su,'UnSQZ',unpacker.unsqz) or
+          xp1.gets(s,su,'UnRAR',unpacker.unrar) or
           getx(su,  'EditVollbild',editvollbild) or
           getb(su,  'ExtEditor',exteditor) or
           getx(su,  'ShowMsgPath',showmsgpath) or
@@ -1705,6 +1706,9 @@ begin
 
 {
   $Log$
+  Revision 1.140  2002/01/30 22:36:03  mk
+  - made viewers and unpackers static
+
   Revision 1.139  2002/01/30 17:18:13  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with

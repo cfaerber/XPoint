@@ -1068,11 +1068,12 @@ procedure DispArcs;
   end;
 begin
   attrtxt(col.coldialog);
-  with unpacker^ do begin
+  with unpacker do
+  begin
     ww(1,UnARC); ww(3,UnARJ); ww(5,UnLZH);
     ww(7,UnPAK); ww(9,UnRAR); ww(11,UnSQZ);
     ww(13,UnZIP); ww(15,UnZOO);
-    end;
+  end;
 end;
 
 procedure ArcOptions;
@@ -1080,7 +1081,8 @@ var x,y : Integer;
     brk : boolean;
 begin
   dialog(53,17,getres(263),x,y); fy:=y;   { 'Archiv-Entpacker fÅr...' }
-  with unpacker^ do begin
+  with unpacker do
+  begin
     maddstring(3,2,'ARC ',UnARC,38,50,'');
       msetvfunc(testarc);
       mappsel(false,'pkxarc $ARCHIV $DATEI˘pkunpak -e $ARCHIV $DATEI˘arc e $ARCHIV $DATEI˘arce $ARCHIV $DATEI');
@@ -1555,6 +1557,9 @@ end;
 
 {
   $Log$
+  Revision 1.120  2002/01/30 22:36:03  mk
+  - made viewers and unpackers static
+
   Revision 1.119  2002/01/21 23:30:12  cl
   - post-3.40 merge fixes
 

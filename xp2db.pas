@@ -637,12 +637,12 @@ var flp : dbFLP;
   begin
     dbOpen(mimebase,MimetFile,1);
     app('*/*','','');
-    if viewers^[1].prog<>'' then app('image/gif','gif',viewers^[1].prog);
-    if viewers^[2].prog<>'' then app('','iff',viewers^[2].prog);
-    if viewers^[3].prog<>'' then app('','pcx',viewers^[3].prog);
+    if viewers[1].prog<>'' then app('image/gif','gif',viewers[1].prog);
+    if viewers[2].prog<>'' then app('','iff',viewers[2].prog);
+    if viewers[3].prog<>'' then app('','pcx',viewers[3].prog);
     for i:=4 to maxviewers do
-      if (viewers^[i].ext<>'') and (viewers^[i].prog<>'') then
-        app('',viewers^[i].ext,viewers^[i].prog);
+      if (viewers[i].ext<>'') and (viewers[i].prog<>'') then
+        app('',viewers[i].ext,viewers[i].prog);
     dbClose(mimebase);
   end;
 
@@ -945,6 +945,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2002/01/30 22:36:04  mk
+  - made viewers and unpackers static
+
   Revision 1.40  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
