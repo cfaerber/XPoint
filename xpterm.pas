@@ -681,7 +681,10 @@ begin
 
       releasecom(comnr);
       if OStype<>OS_2 then
+      begin
         RestComState(comnr,cps);
+        SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+      end;
       rfehler(2002);     { 'Modem nicht bereit.' }
       initcom:=false;
       end
