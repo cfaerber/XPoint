@@ -702,8 +702,8 @@ FcbOfs2    dw     offset FCB2
 FcbSeg2    dw     seg    FCB2
 FCB1       db     16 dup (0)              ; Exec-Zusatzparameter
 FCB2       db     16 dup (0)
-Path       db     128 dup (0)
-CmdLine    db     255 dup (0)
+Path       db     80 dup (0)
+CmdLine    db     128 dup (0)
 SwapFile   db     80 dup(0)
 resitextD  db     13,10,'Residentes Programm wurde geladen! CrossPoint wird beendet..',13,10,'$'
 resitextE  db     13,10,'Resident program was loaded! Quitting ...',13,10,'$'

@@ -314,7 +314,7 @@ begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
-    para:=' '+trim(copy(prog,pp+1,255));
+    para:=' '+trim(copy(prog,pp+1,127));
     prog:=left(prog,pp-1);
     end;
   prog:=ustr(prog);
@@ -430,6 +430,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.3  2000/08/02 16:01:30  mk
+  - 80/127 Limit wieder eingefÅgt
+
   Revision 1.5.2.2  2000/05/07 17:37:40  mk
   - Limits fuer Pfadnamen auf 255 Zeichen erhoeht
 
