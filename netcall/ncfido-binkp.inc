@@ -167,6 +167,7 @@ var
 { Binkp session setup procedure. Results are 0: OK, 1: Busy, 2: Error }
 function TFidomailer.BinkPSessionSetup: byte;
 type tState= (WaitConn,WaitAddr,SendPasswd,AuthRemote,IfSecure,WaitOk,Done);
+var BBreak: Boolean;
 var
   State,LastState: tState;
   BpF: tBinkpFrame;
@@ -276,9 +277,10 @@ begin
         end;
       end;
     Output(mcVerbose,'',[0]);
-  until(State=Done) or KeyPressed or Timer.Timeout;
+    BBreak:=Keypressed and (ReadKey=#27);
+  until(State=Done) or BBreak or Timer.Timeout;
   if Timer.Timeout then begin Output(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
-  if Keypressed then begin Output(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
+  if BBreak then begin Output(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
   while KeyPressed do ReadKey;
   BpF.Destroy; Timer.Done;
 end;
@@ -508,6 +510,7 @@ var
   end;
 
 begin
+  while KeyPressed do ReadKey;
   State:=WaitConn; LastRxState:=RxWaitF; LastTxState:=TxGNF;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
@@ -577,6 +580,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2001/10/01 19:32:51  ma
+  - abort only on ESC, not other keys
+
   Revision 1.9  2001/09/17 11:06:34  ma
   - fix: mailer reported "connection lost" if no incoming mail
 
