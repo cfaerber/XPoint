@@ -166,6 +166,8 @@ begin
   GoP;
   if modiuser(msgbrett) then
     RedispLine;
+  Setall;
+  aufbau := true;
 end;
 
 procedure udelete;
@@ -1561,6 +1563,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.61  2000/12/10 03:00:36  mk
+  - fix fuer Anzeige nach User aendern
+
   Revision 1.60  2000/12/05 14:58:10  mk
   - AddNewUser
 
