@@ -647,6 +647,7 @@ type   textp  = ^text;
 
        PNodeListItem = ^TNodeListItem;
        TNodeListItem  = class
+       public
                    listfile   : string;    { Nodelisten-Datei      }
                    number     : integer;   { akt. Nummer           }
                    updatefile : string;    { Diff/Update-Datei     }
@@ -1179,6 +1180,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.107  2000/12/10 14:09:23  hd
+  - added missing 'public'-statement
+
   Revision 1.106  2000/12/10 10:54:56  mo
   -TNodelistItem in eine Klasse umgewandelt
 
