@@ -36,6 +36,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
 
 procedure select(dispmode:shortint);
 procedure mainwindow;
+procedure SetBrettGelesen(brett:string);
 
 
 implementation  {----------------------------------------------------}
