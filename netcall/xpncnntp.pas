@@ -224,7 +224,7 @@ begin
   List.Free;
   NNTP.Free;
   if result then begin
-    ClearUnversandt(PPFile,BoxName);
+    ClearUnversandt(PPFile,BoxName, nil);
     SafeDeleteFile(PPFile);
     SafeDeleteFile(RFCFileDummy);
     RFCFileDummy := RFCFile + 'X-0002.OUT';
@@ -367,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.43  2002/08/03 16:31:41  mk
+        - fixed unsendt-handling in client-mode
+
         Revision 1.42  2002/07/22 10:06:03  mk
         - do not try to delete non existing files (RFCFileDummy)
 

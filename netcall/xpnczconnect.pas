@@ -239,7 +239,7 @@ begin { ZConnectNetcall }
   if result IN [el_recerr,el_ok] then begin
     Debug.DebugLog('xpnczconnect','sending upbuffer was successful, clearing',DLInform);
     if FileExists(ppfile) then begin
-      ClearUnversandt(ppfile,box);
+      ClearUnversandt(ppfile,box, nil);
       _era(ppfile);
       end;
     end;
@@ -251,6 +251,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2002/08/03 16:31:41  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.12  2002/05/04 18:37:12  ma
   - Janus incoming packets should be named CALLED.*
 

@@ -34,14 +34,14 @@ function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile:
 
 implementation  { ------------------------------------------------- }
 
-uses fileio,xp1, xp3o, typeform, sysutils, zcrfc, xpnetcall;
+uses fileio,xp1, xp3o, typeform, sysutils, zcrfc, xpnetcall, xpnt;
 
 function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles, DeleteSpoolFiles: TStringList): ShortInt;
 var
   dummy : longint;
   s: String;
 
-  procedure ZtoRFC(boxpar: boxptr; source: String; const dest: string);
+  procedure ZtoRFC(boxpar: boxptr; source: String; const dest: string; IDList: TStringList);
   var
     uu: TUUZ;
   begin
@@ -68,64 +68,120 @@ var
     end;
   end;
 
+  { MsgIDs unversandter Nachrichten (*.OUT) in UNSENT.ID schreiben }
+  procedure GetUnversandtMessages(IDList: TStringList);
+  var
+    MsgFile : file;
+    s       : String;
+    sr      : TSearchRec;
+    sres: Integer;
+    p       : byte;
+    found   : boolean;
+    c       : char;
+  begin
+    with BoxPar^ do
+    begin
+      sres := FindFirst(ClientSpool+'*.OUT', ffAnyFile, sr);
+      while sRes = 0 do
+      begin
+        Assign(MsgFile, ClientSpool+sr.name);
+        Reset(MsgFile, 1);
+        Found := false;
+        while (not eof(MsgFile)) and (not Found) do
+        begin
+          s := '';
+          repeat
+            BlockRead(MsgFile, c, 1);
+            if c >= ' ' then s := s + c;
+          until (c = #10) or EOF(MsgFile);
+          if pos('Message-ID:', s) <> 0 then Found := true;
+        end;
+        close(MsgFile);
+
+        if Found then
+        begin
+          p := cpos('<', s);
+          IDList.Add(FormMsgID(Copy(s, p+1, Length(s)-p-1)));
+        end;
+        sres := Findnext(sr);
+      end;
+      FindClose(sr);
+    end;
+  end;
+
+
 
 const
   ClientPuffer = 'client.pp';
 var
   uu: TUUZ;
   ExtLogFile: String;
+  IDList: TStringList;
 begin
   result:=0;
-  with boxpar^ do
-  begin
-    if not IsPath(ClientSpool) then
-      CreateDir(ClientSpool);
-    if not IsPath(ClientSpool) then begin
-      trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
-      Exit;
-    end;
-    Erase_Mask(ClientSpool + '*.IN');
-    Erase_Mask(ClientSpool + '*.OUT');    // ExtOut verwenden
-
-    if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
+  IDList := TStringList.Create;
+  try
+    with boxpar^ do
     begin
-      testpuffer(ppfile,false,dummy);
-      ZtoRFC(BoxPar,PPFile,ClientSpool);
-    end;
+      if not IsPath(ClientSpool) then
+        CreateDir(ClientSpool);
+      if not IsPath(ClientSpool) then begin
+        trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
+        Exit;
+      end;
+      Erase_Mask(ClientSpool + '*.IN');
+      Erase_Mask(ClientSpool + '*.OUT');    // ExtOut verwenden
 
-    s := ClientExec;
-    exchange(s, '$CONFIG', BoxFile);
-    exchange(s, '$CLPATH+', Clientpath);
-    exchange(s, '$CLPATH', Clientpath);
-    exchange(s, '$CLPATH', Clientpath);
-    exchange(s, '$CLSPOOL', ClientSpool); 
-    shell(s,600,3);
-    showscreen(false);
+      if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
+      begin
+        testpuffer(ppfile,false,dummy);
+        ZtoRFC(BoxPar,PPFile,ClientSpool, IDList);
+      end;
 
-    ClearUnversandt(PPFile,BoxName);
-    SafeDeleteFile(PPFile);
+      s := ClientExec;
+      exchange(s, '$CONFIG', BoxFile);
+      exchange(s, '$CLPATH+', Clientpath);
+      exchange(s, '$CLPATH', Clientpath);
+      exchange(s, '$CLPATH', Clientpath);
+      exchange(s, '$CLSPOOL', ClientSpool);
+      shell(s,600,3);
+      showscreen(false);
 
-    uu := TUUZ.Create;
-    uu.source := clientspool + FileUpperCase('*.msg');
-    uu.dest := ClientPuffer;
-    uu.utoz;
-    DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
-    uu.free;
-    if _FileSize(ClientPuffer) > 0 then
-      IncomingFiles.Add(ClientPuffer);
-    Erase_Mask(ClientSpool + '*.OUT'); { nicht verschickte N. löschen } // ExtOut verwenden
+      GetUnversandtMessages(IDList);
+      ClearUnversandt(PPFile,BoxName, IDList);
+      SafeDeleteFile(PPFile);
 
-    ExtLogFile:=LogPath+'XP-PPP.LOG';
-    if FileExists(ExtLogFile) then
-    begin
-      copyfile(ExtLogFile, ClientSpool+'XPCLIENT.LOG');
-      _era(ExtLogFile);
-    end;
-  end
+      if FileExists('UNSENT.PP') then
+       if CopyFile('UNSENT.PP', ownpath+ppfile) then
+         _era('UNSENT.PP');
+
+      uu := TUUZ.Create;
+      uu.source := clientspool + FileUpperCase('*.msg');
+      uu.dest := ClientPuffer;
+      uu.utoz;
+      DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
+      uu.free;
+      if _FileSize(ClientPuffer) > 0 then
+        IncomingFiles.Add(ClientPuffer);
+      Erase_Mask(ClientSpool + '*.OUT'); { nicht verschickte N. löschen } // ExtOut verwenden
+
+      ExtLogFile:=LogPath+'XP-PPP.LOG';
+      if FileExists(ExtLogFile) then
+      begin
+        copyfile(ExtLogFile, ClientSpool+'XPCLIENT.LOG');
+        _era(ExtLogFile);
+      end;
+    end
+  finally
+    IDList.Free;
+  end;
 end;
 
 {
   $Log$
+  Revision 1.6  2002/08/03 16:31:40  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.5  2002/07/25 20:44:02  ma
   - updated copyright notices
 
