@@ -1042,7 +1042,6 @@ begin
     end;
   oldpn:=pn;
   if pdrive<'C' then pdrive:=' ';
-  if memavail<20000 then pdel;
   if fenster then wpop;
 end;
 
@@ -1100,10 +1099,11 @@ begin
   wcursor:=(cur=curon);
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.42  2001/09/06 18:49:44  mk
+  - removed unneccessary reference to memavail
+
   Revision 1.41  2001/08/11 23:06:28  mk
   - changed Pos() to cPos() when possible
 
@@ -1223,3 +1223,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+
