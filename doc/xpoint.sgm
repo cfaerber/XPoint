@@ -12203,7 +12203,7 @@ Wochentage:   Sa
 
               <row>
 
-                <entry><computeroutput>F-To:</computeroutput></entry>
+                <entry><computeroutput>F-TO:</computeroutput></entry>
 
                 <entry>Empf&auml;nger einer
                   Fido-Brettnachricht</entry>
@@ -12216,10 +12216,8 @@ Wochentage:   Sa
 
         </table>
 
-        <para>Aus Kompatibilit&auml;tsgr&uuml;nden
-          (<application>XP</application> 1.9x) wertet XP
-          zus&auml;tzlich noch folgende Header aus der
-          ZConnect-Spezifikation V1.9 aus:</para>
+        <para>Aus Kompatibilit&auml;tsgr&uuml;nden wertet XP
+          zus&auml;tzlich noch folgende Header aus:</para>
 
         <table>
           <title>Kompatibilit&auml;ts-Headerzeilen</title>
@@ -12232,7 +12230,7 @@ Wochentage:   Sa
 
                 <entry><computeroutput>ABR:</computeroutput></entry>
 
-                <entry>Realname des Absenders</entry>
+                <entry>Realname des Absenders (ZC 1.9)</entry>
 
               </row>
 
@@ -12240,7 +12238,7 @@ Wochentage:   Sa
 
                 <entry><computeroutput>BIN:</computeroutput></entry>
 
-                <entry>Bin&auml;rnachricht</entry>
+                <entry>Bin&auml;rnachricht (ZC 1.9)</entry>
 
               </row>
 
@@ -12248,7 +12246,19 @@ Wochentage:   Sa
 
                 <entry><computeroutput>MAL:</computeroutput></entry>
 
-                <entry>= <computeroutput>MAILER:</computeroutput></entry>
+                <entry>= <computeroutput>MAILER:</computeroutput> (ZC
+                  1.9)</entry>
+
+              </row>
+
+              <row>
+
+                <entry><computeroutput>X-XP-FTO:</computeroutput></entry>
+
+                <entry>Empf&auml;nger von Fido- oder
+                  MagicNET-Brettnachrichten
+                  (<application>CrossPoint</application> &lt;=
+                  3.20)</entry>
 
               </row>
 
@@ -12258,7 +12268,7 @@ Wochentage:   Sa
 
         </table>
 
-        <para>Diese drei Zeilen werden von
+        <para>Diese vier Zeilen werden von
           <application>XP</application> ausgewertet, aber nicht selbst
           erzeugt. Alle anderen Zeilen werden sowohl ausgewertet, als
           auch - bei Bedarf - erzeugt.
@@ -12352,15 +12362,6 @@ Wochentage:   Sa
                 <entry><computeroutput>X-XP-ATT:</computeroutput></entry>
 
                 <entry>Fido / Maus / RFC: interne Flags</entry>
-
-              </row>
-
-              <row>
-
-                <entry><computeroutput>X-XP-FTO:</computeroutput></entry>
-
-                <entry>Empf&auml;nger von Fido- oder
-                  MagicNET-Brettnachrichten</entry>
 
               </row>
 
