@@ -51,7 +51,7 @@ type  TMimePart = class { Teil einer Multipart-Nachricht }
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           mpdata: TMimePart; var brk:boolean);
-procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append:boolean);
+procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append,utf8: boolean);
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
@@ -75,7 +75,9 @@ uses
   {$IFDEF OS2 }
   xpos2,
   {$ENDIF }
-  classes, xp1o,xp3,xp3o,xp3ex;
+  classes, 
+  xpstreams,
+  xp1o,xp3,xp3o,xp3ex;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }
@@ -130,7 +132,7 @@ begin
     end else
       o := true; { fÅr Clipboard immer Åberschreiben }
     if not FileExists(fn) or not brk or UseClip then
-      ExtractMultiPart(mpdata,fn,not o);
+      ExtractMultiPart(mpdata,fn,not o,false);
     if UseClip then
       WriteClipfile(fn);
   end;
@@ -615,7 +617,80 @@ end;
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
-procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append:boolean);
+procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append, utf8:boolean);
+var
+  tmp      : string;
+  ins,outs : TStream;
+  s        : string;
+  i        : integer;
+  
+begin
+  // Extract full message
+  tmp:=TempS(dbReadInt(mbase,'msgsize'));
+  extract_msg(0,'',tmp,false,0);
+
+  // Open it and read over the first lines
+  ins := TFileStream.Create(tmp,fmOpenRead);
+ try
+  for i:=1 to mpdata.startline-1 do readln_s(ins);
+
+  // Open the destination file
+  if append then
+    outs:= TFileStream.Create(fn,fmOpenReadWrite)
+  else
+    outs:= TFileStream.Create(fn,fmCreate);
+ try
+  if append then 
+    outs.Seek(0,soFromEnd);
+
+  // Now link charset recoders
+  // if Charset is unkown, assume Windows-1252 is used
+  if mpdata.Charset = csUnknown then mpdata.Charset := csCP1252;
+
+  if MimeContentTypeNeedCharset(mpdata.typ+'/'+mpdata.subtyp) then
+    case utf8 of
+      true: 
+        if mpdata.Charset <> csUTF8 then
+          ConnectStream(outs,TCharsetEncoderStream.Create(mpdata.Charset,csUTF8));
+      false:
+        if mpdata.Charset <> csCP437 then
+          ConnectStream(outs,TCharsetEncoderStream.Create(mpdata.Charset,csCP437));
+    end; // case
+
+  if mpdata.lines>500 then rmessage(2442);    { 'decodiere BinÑrdatei ...' }
+ try
+
+  // Note: We can't just connect the appropriate decoding stream
+  //   in front of ins and do a CopyStream because wee need to do
+  //   line counting.
+  for i:=1 to mpdata.lines do 
+  begin
+    s:=readln_s(ins);
+    case mpdata.code of
+      MimeEncodingQuotedPrintable: write_s(outs,DecodeQuotedPrintable(s));
+      MimeEncodingBase64:          write_s(outs,DecodeBase64(s));
+      else                         writeln_s(outs,s);
+    end; // case
+    
+  end;
+
+ finally
+  if mpdata.lines>500 then closebox;
+ end;
+ 
+ finally
+  outs.Free;
+ end;
+ 
+  if mpdata.ddatum<>'' then SetZCftime(fn,mpdata.ddatum);
+
+ finally
+  ins.Free;
+  _era(tmp);
+ end;
+end;
+
+{$IFDEF __undefined__}
 const bufsize = 2048;
 
 var   input,t : text;
@@ -725,6 +800,7 @@ begin
   _era(tmp);
   freemem(buf,bufsize);
 end;
+{$ENDIF}
 
 procedure mimedecode;    { Nachricht/Extract/MIME-Decode }
 var
@@ -792,6 +868,9 @@ finalization
 
 {
   $Log$
+  Revision 1.57  2002/01/05 00:11:46  cl
+  - fixed charset and UTF-8 support for multipart messages
+
   Revision 1.56  2001/12/26 09:27:52  cl
   - BUGFIX: charset decoded for MIME multipart messages
 

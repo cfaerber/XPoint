@@ -730,6 +730,7 @@ var size   : longint;
   end;
 
 begin // extract_msg;
+ try
   extheadersize:=0; exthdlines:=0; hdlines:=0;
 
   SourceToUTF8:= nil;
@@ -1084,7 +1085,7 @@ begin // extract_msg;
         mpsize:=filesize(f);
         close(f);
         mehdl:=exthdlines; mehds:=extheadersize;
-        ExtractMultiPart(MimePart,name,true);    { rekursiver Aufruf von }
+        ExtractMultiPart(MimePart,name,true,ExtUTF8); { rekursiver Aufruf von }
         exthdlines:=mehdl;                     { extact_msg!           }
         extheadersize:=mehds;
         reset(f,1);
@@ -1141,7 +1142,7 @@ begin // extract_msg;
           Xread(tmp,false);
         end else
         if multipart then 
-          ExtractMultipart(MimePart,tmp,false)
+          ExtractMultipart(MimePart,tmp,false,ExtUTF8)
         else  
         begin
           str := TFileStream.Create(tmp,fmCreate);
@@ -1217,6 +1218,11 @@ begin // extract_msg;
   UTF8ToDest  .Free;
   TemplateToUTF8.Free;
  end;
+
+ except on e:exception do
+  fehler(e.Message);
+ end;
+
 end;
 
 initialization 
@@ -1224,6 +1230,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.88  2002/01/05 00:11:46  cl
+  - fixed charset and UTF-8 support for multipart messages
+
   Revision 1.87  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 
