@@ -439,7 +439,15 @@ var   hdp      : headerp;
                 filename:=parvalue
               else if (parname='x-date') then
                 filedate:=RFC2Zdate(parvalue);
-              end;
+            end;
+          end else
+            { Manchmal ist der Dateiname nur im disposition-Teil enthalten }
+            if (hdline='content-disposition') and (filename = '') then
+            begin
+              parname:=lstr(GetToken(s,'='));
+              if firstchar(s)='"' then delfirst(s);
+              if lastchar(s)='"' then dellast(s);
+              if (pos('name', parname) >0) then filename:=s;
             end;
         until endhd or eof(t);
 
@@ -705,6 +713,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2000/05/05 14:21:19  mk
+  - erweiterte Filenamenerkennung bei MIME-Mails
+
   Revision 1.7.2.2  2000/04/22 23:27:52  mk
   - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
 
