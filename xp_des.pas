@@ -160,6 +160,12 @@ end;
 {$ENDIF }
 
 procedure permutate(var s; codeofs: longint; n:longint); assembler; {&uses ebx, esi, edi}
+{$IFDEF ANALYSE}
+begin
+  //no asm
+  buf[1] := buf[2]; //eliminate hint "buf never used"
+end;
+{$ELSE}
 asm
              mov     esi, codeofs
              mov     edi, offset buf
@@ -187,6 +193,7 @@ end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
+{$ENDIF}
 
 
 procedure make_comp(var source; var dest); assembler; {&uses esi, edi}
@@ -420,6 +427,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/12/14 07:31:36  dodi
+  - using new types
+
   Revision 1.18  2002/07/25 20:43:55  ma
   - updated copyright notices
 

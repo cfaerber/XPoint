@@ -82,8 +82,8 @@ var
     pp      : byte;
     wvl     : byte;
     vert    : boolean;
-    mnt     : longint;
-    netztyp : byte;
+    mnt     : RNetzMsg; //longint;
+    netztyp : eNetz;
     _brett  : string;
     t,m,j   : smallword;
     tempd: integer;
@@ -306,10 +306,10 @@ begin  { __ Suchmarke }
 
             _brett := dbReadNStr(mbase,mb_brett);
             s0:= dbReadNStr(mbase,mb_absender);
-            dbReadN(mbase,mb_netztyp,mnt);
-            fileatt:=(mnt and $200<>0);
-            netztyp:=mnt and $ff;
-            uv_anz:=(mnt shr 16) and $ff;
+            mnt := dbNetzMsg(mbase);  //dbReadN(mbase,mb_netztyp,mnt);
+            fileatt:= mf_Attachment in mnt.flags; //(mnt and $200<>0);
+            netztyp:= mnt.netztyp;
+            uv_anz:= mnt.CPanz; // (mnt shr 16) and $ff;
             pp:=cpos('@',s0);
             fidoqwk:=(netztyp=nt_Fido) or (netztyp=nt_QWK);
             Short_Realnames:=Showrealos and not ((netztyp=nt_Maus) or fidoqwk);
@@ -364,8 +364,8 @@ begin  { __ Suchmarke }
                  (LowerCase(LeftStr(s1,3))<>'re:') and (LeftStr(s1,3)<>'Re^') then
                 s1:=LeftStr('-'+s1,40);
 *)
-             if ((netztyp=nt_Maus) and (mnt and $100<>0)) or
-                (ntKomkette(netztyp) and (mnt and $100<>0) and
+             if ((netztyp=nt_Maus) and (mf_Verkettet in mnt.flags)) or
+                (ntKomkette(netztyp) and (mf_Verkettet in mnt.flags)  and
                  (LowerCase(leftStr(s1,3))<>'re:') and (LeftStr(s1,3)<>'Re^'))
                then s1:='-'+s1
              end;
@@ -426,7 +426,7 @@ begin  { __ Suchmarke }
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
 
-            if (wvl=0) and (mnt and $4000<>0) then
+            if (wvl=0) and (mf_PGPsig in mnt.flags) then
               wvl:=5;
 
             dbReadN(mbase,mb_Halteflags,hflags);
@@ -457,7 +457,7 @@ begin  { __ Suchmarke }
               msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
               msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
-              userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
+              userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mf_Reply in mnt.flags),1,0);
             end
             else { Nicht-Fido bzw. Dispmode 11,12 }
             begin
@@ -487,7 +487,7 @@ begin  { __ Suchmarke }
                  ((cpos('@',dispspec)>0) and
                   (UpperCase(leftStr(s0,40))=UpperCase(copy(dispspec,2,min(40,length(s0))))))
                 OR
-                 (mnt and $1000<>0)
+                 (mf_Reply in mnt.flags)  //(mnt and $1000<>0)
                   then userflag[y]:=1
 
             end;     {-*- Ab hier wieder alle Netze/Dispmodes -*-}
@@ -627,6 +627,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/12/14 07:31:33  dodi
+  - using new types
+
   Revision 1.59  2002/07/28 18:49:22  ma
   - fixed potential crashes when displaying area list
     (should matter only when db is corrupted)

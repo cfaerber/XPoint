@@ -590,7 +590,7 @@ label again;
       edat : longint;
       l    : longint;
       b    : byte;
-      mnt  : longint;
+      mnt  : RNetzMsg;  //longint;
       abl  : byte;
       flags: integer;
   begin
@@ -622,9 +622,11 @@ label again;
     Writeheader(hdp,tf);
     fmove(f,tf);
     dbAppend(mbase);
-    mnt:=hdp.netztyp;
-    if (hdp.wab<>'') or (hdp.oem.count > 0) then inc(mnt,$800);
-    dbWriteN(mbase,mb_netztyp,mnt);
+    mnt.i := 0; //clear whole record
+    mnt.netztyp:=hdp.netztyp;
+    if (hdp.wab<>'') or (hdp.oem.count > 0) then //inc(mnt,$800);
+      include(mnt.flags, mf_wab);
+    dbWriteN(mbase,mb_netztyp,mnt.i);
     dbWriteNStr(mbase,mb_brett,ebrett);
     dbWriteNStr(mbase,mb_betreff,betr);
     dbWriteNStr(mbase,mb_absender,hdp.absender);
@@ -638,7 +640,7 @@ label again;
     b:=ord(hdp.typChar);    
     dbWriteN(mbase,mb_typ,b);
     close(f);
-    if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
+    if mnt.netztyp=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
     else                  dbWriteNStr(mbase,mb_name,hdp.realname);
     b:=1;             dbWriteN(mbase,mb_gelesen,b);
     b:=random(9)+iif(abl<10,1,11);
@@ -903,315 +905,298 @@ again:
   leer:='';
   case typ of
     1..3,
-    5,7    : begin
-               if nextwl<1 then begin
-                 SelWeiter:=true;    { Weiterleitziel aus Liste waehlen }
-                 if typ=5 then
-                   pm:=false
-                 else
-                 begin
-                   diabox(length(getres2(644,2))+11,5,'',x,y);
-                   mwrt(x+3,y+1,getres2(644,1));   { 'Weiterleiten an ...' }
-                   ta:='';
-                   n:=readbutton(x+3,y+3,2,getres2(644,2),1,true,ta);   { ' ^Brett , ^User , ^Direkt ' }
-                   closebox;
-                   case n of
+    5,7    :  begin
+                pm := False; //default
+                SelWeiter:=true;    { Weiterleitziel aus Liste waehlen }
+                if nextwl<1 then begin
+                  if typ<>5 then begin
+                    diabox(length(getres2(644,2))+11,5,'',x,y);
+                    mwrt(x+3,y+1,getres2(644,1));   { 'Weiterleiten an ...' }
+                    ta:='';
+                    n:=readbutton(x+3,y+3,2,getres2(644,2),1,true,ta);   { ' ^Brett , ^User , ^Direkt ' }
+                    closebox;
+                    case n of
                      0 : exit; // esc
                      1 : pm:=false; // Brett
                      2 : pm:=true;  // User
                      3 : SelWeiter:=false; // Direkt
-                   end;
-                 end;
-                 // used with select(-1|3|4)
-                 ArchivWeiterleiten:=(typ=5);
+                    end;
+                  end;
+                  // used with select(-1|3|4)
+                  ArchivWeiterleiten:=(typ=5);
 
-                 sigfile:='';
-                 if SelWeiter then
-                 begin
-                   if pm then select(3)
-                   else select(-1);
-                   if selpos<=0 then exit;
-                   if pm then begin
-                     dbGo(ubase,selpos);
-                     Empf := dbReadNStr(ubase,ub_username);
-                     ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
-                     end
-                   else
-                   begin
-                     Am_ReplyTo:='';
-                     dbGo(bbase,selpos);
+                  sigfile:='';
+                  if SelWeiter then begin
+                    if pm then select(3)
+                    else select(-1);
+                    if selpos<=0 then exit;
+                    if pm then begin
+                      dbGo(ubase,selpos);
+                      Empf := dbReadNStr(ubase,ub_username);
+                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
+                    end else begin
+                      Am_ReplyTo:='';
+                      dbGo(bbase,selpos);
 
-                     if typ = 7 then
-                     begin
-  { Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
-                       zg_flags:=dbReadInt(bbase,'flags');
-  { Schreibsperre   }  if zg_flags and 8<>0 then
-                       if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
-                         rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
-                         exit;
-                       end;
-  { true=Userbrett  }  pm:=cpos('@',empf)>0;
-                       if ((empf<>'') and (zg_flags and 32=0)) and not pm then
-                       begin
-  { Brettvertreter  }    pollbox := dbReadNStr(bbase,bb_pollbox);
-                         if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
-                         begin
-                           Am_ReplyTo:=empf;
-                           Empf := dbReadNStr(bbase,bb_brettname);
-                         end else
-                           empf:='A'+empf;
-                       end else
-                         Empf := dbReadNStr(bbase,bb_brettname);
+                      if typ = 7 then begin
+  { Brett-Vertreter }   Empf := dbReadNStr(bbase,bb_adresse);
+                        zg_flags:=dbReadInt(bbase,'flags');
+  { Schreibsperre   }   if zg_flags and 8<>0 then
+                          if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
+                            rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+                            exit;
+                          end;
+  { true=Userbrett  }   pm:=cpos('@',empf)>0;
+                        if ((empf<>'') and (zg_flags and 32=0)) and not pm then begin
+  { Brettvertreter  }     pollbox := dbReadNStr(bbase,bb_pollbox);
+                          if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then begin
+                            Am_ReplyTo:=empf;
+                            Empf := dbReadNStr(bbase,bb_brettname);
+                          end else
+                            empf:='A'+empf;
+                        end else
+                          Empf := dbReadNStr(bbase,bb_brettname);
                       end else
                         Empf := dbReadNStr(bbase,bb_brettname);
- 
-                     if empf[1]<'A' then begin
-                       rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
-                       exit;
-                       end;
-                     ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
-                     end;
-                   if typ=3 then begin
-                     if FirstChar(ebrett)='A' then
-                       get_re_n(dbReadInt(bbase,'gruppe'))
-                     else begin
-                       re_n:=rehochn; kein_re:=false;
-                       end;
-                     if hdp.netztyp in netsRFC then begin
-                       re_n:=false; kein_re:=false;
-                       end;
-                     if (hdp.netztyp<>nt_Maus) and not kein_re then
-                       ReplyText(betr,re_n);
-                     end;
-                   end   { if SelWeiter }
-                 else begin
-                   empf:=''; ebrett:=''; am_replyto := '';
-                   if typ=3 then ReplyText(betr,rehochn);
-                   ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
-                   if brk then exit                     {Nachricht weiterleiten}
-                   else sdata.forcebox:=pollbox;
-                   pm:=cpos('@',empf)>0;
-                   if not pm then empf:='A'+empf;
-                   end;
-                 end;
 
-               if (typ in [1,5]) and pm and (hdp.typ='B') and
-                 not ntBinary(UserNetztyp(empf))
-               then begin
-                 rfehler(636);  { 'Binaernachrichten sind in diesem Netz nicht moeglich.' }
-                 exit;
-                 end;
+                      if empf[1]<'A' then begin
+                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
+                        exit;
+                      end;
+                      ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
+                    end;
+                    if typ=3 then begin
+                      if FirstChar(ebrett)='A' then
+                        get_re_n(dbReadInt(bbase,'gruppe'))
+                      else begin
+                        re_n:=rehochn; kein_re:=false;
+                      end;
+                      if hdp.netztyp in netsRFC then begin
+                        re_n:=false; kein_re:=false;
+                      end;
+                      if (hdp.netztyp<>nt_Maus) and not kein_re then
+                        ReplyText(betr,re_n);
+                    end;
+                  end   { if SelWeiter }
+                  else begin
+                    empf:=''; ebrett:=''; am_replyto := '';
+                    if typ=3 then ReplyText(betr,rehochn);
+                    ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
+                    if brk then exit                     {Nachricht weiterleiten}
+                    else sdata.forcebox:=pollbox;
+                    pm:=cpos('@',empf)>0;
+                    if not pm then empf:='A'+empf;
+                  end;
+                end;
 
-               if typ=5 then
-                 archivieren
-               else
-               begin
-                 if (typ=3) and (sigfile='') then
-                   if pm then sigfile:=PrivSignat
-                   else sigfile:=SignatFile;
-                 if typ=3 then begin
-                   binaermail:=false;
-                   if (hdp.netztyp=nt_Maus) and (FirstChar(_brett)='A') then
-                     sData.ReplyGroup:=hdp.FirstEmpfaenger;
-                   fidoto:=LeftStr(hdp.absender,35);
-                   p:=cpos('@',fidoto);
-                   if p>0 then fidoto:=LeftStr(fidoto,p-1);
-//                 References.Add(hdp.msgid);
-                   sData.org_ref:=hdp.org_msgid;
-//                 beznet:=hdp.netztyp;
-                   sData.References.Assign(Hdp.References);
-                   sData.flQto:=true;
-                   end;
-                 if typ in [1,7] then begin
-                   sData.summary:=hdp.summary;
-                   sData.keywords:=hdp.keywords;
-                   if hdp.oab<>'' then begin
-                     sData.oab:=hdp.oab; sData.oar:=hdp.oar; end
-                   else begin
-                     sData.oab:=hdp.absender; sData.oar:=hdp.realname; end;
-                   if hdp.oem.Count > 0 then
-                     sData.oem.Assign(hdp.oem)
-                   else
-                     sData.oem.add(hdp.FirstEmpfaenger);
-                   sData.onetztyp:=hdp.netztyp;
-                   sData.sendfilename:=hdp.datei;
-                   sData.sendfiledate:=hdp.ddatum;
-                   end;
+                if (typ in [1,5]) and pm and (hdp.typ='B')
+                and not ntBinary(UserNetztyp(empf)) then begin
+                  rfehler(636);  { 'Binaernachrichten sind in diesem Netz nicht moeglich.' }
+                  exit;
+                end;
+
+                if typ=5 then
+                  archivieren
+                else begin
+                  if (typ=3) and (sigfile='') then
+                    if pm then sigfile:=PrivSignat
+                    else sigfile:=SignatFile;
+                  if typ=3 then begin
+                    binaermail:=false;
+                    if (hdp.netztyp=nt_Maus) and (FirstChar(_brett)='A') then
+                      sData.ReplyGroup:=hdp.FirstEmpfaenger;
+                    fidoto:=LeftStr(hdp.absender,35);
+                    p:=cpos('@',fidoto);
+                    if p>0 then fidoto:=LeftStr(fidoto,p-1);
+                    //References.Add(hdp.msgid);
+                    sData.org_ref:=hdp.org_msgid;
+                    //beznet:=hdp.netztyp;
+                    sData.References.Assign(Hdp.References);
+                    sData.flQto:=true;
+                  end;
+                  if typ in [1,7] then begin
+                    sData.summary:=hdp.summary;
+                    sData.keywords:=hdp.keywords;
+                    if hdp.oab<>'' then begin
+                      sData.oab:=hdp.oab; sData.oar:=hdp.oar;
+                    end else begin
+                      sData.oab:=hdp.absender; sData.oar:=hdp.realname;
+                    end;
+                    if hdp.oem.Count > 0 then
+                      sData.oem.Assign(hdp.oem)
+                    else
+                      sData.oem.add(hdp.FirstEmpfaenger);
+                    sData.onetztyp:=hdp.netztyp;
+                    sData.sendfilename:=hdp.datei;
+                    sData.sendfiledate:=hdp.ddatum;
+                  end;
                  { suboptimal }
-                 if ((typ in [1..3,7]) and (not pm)) then
-                   sData.followup.add (am_replyto);
-                 if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
-                 if typ=7 then sData.orghdp:=hdp;
-                 if typ in [1,2,7] then
-                   sdata.flFileAttach:=(hdp.attrib and attrFile<>0);
-                 if nextwl>=0 then begin
-                   ua:=uvs_active; uvs_active:=false;
-                   end;
-(*                   
-                 if DoSend(pm,fn,true,false,empf,betr,typ in [2,3],binaermail,sendbox,
+                  if ((typ in [1..3,7]) and (not pm)) then
+                    sData.followup.add (am_replyto);
+                  if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
+                  if typ=7 then sData.orghdp:=hdp;
+                  if typ in [1,2,7] then
+                    sdata.flFileAttach:=(hdp.attrib and attrFile<>0);
+                  ua:=uvs_active;
+                  if nextwl>=0 then
+                    uvs_active:=false;
+(*
+                  if DoSend(pm,fn,true,false,empf,betr,typ in [2,3],binaermail,sendbox,
                            (typ=3) and SelWeiter,typ=3,sData,sigfile,
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
 *)
-                 if typ=4  then sData.flIntern := true;
-                 if typ=7  then sData.flWAB    := true;
-                 if typ<>3 then sData.flReedit := true;
+                  if typ=4  then sData.flIntern := true;
+                  if typ=7  then sData.flWAB    := true;
+                  if typ<>3 then sData.flReedit := true;
 
-                 sData.SigTemplate := SigFile;
+                  sData.SigTemplate := SigFile;
 
-                 sData.DoIt(
-                   GetRes2(610,100+Integer(typ)),                 
-                   (typ=3) and SelWeiter,
-                   typ in [2,3],
-                   SendBox);
-                   
-                           
-                 if nextwl>=0 then uvs_active:=ua;
-                 sData.Free;
-               end;
-             end;
-         4 : begin
-               add_oe_cc:=0;
-               assign(t,fn);
-               reset(t);
-               if eof(t) then empf:=''
-               else begin
-                 readln(t,empf);
-                 if IsOempf(empf) and not eof(t) then begin
-                   GetOEmpflist;
-                   SendEmpflist.Assign(hdp.Empfaenger);
-                   hdp.Empfaenger.Clear;
-                   end;
-                 end;
-               close(t);
-               unpark:=IsOempf(empf);
-               if not unpark then begin
-                 _Brett := dbReadNStr(mbase,mb_brett);
-                 if FirstChar(_brett)<'A' then begin
-                   rfehler(625);    { 'Schreiben in dieses Brett ist nicht moeglich.' }
-                   exit;
-                   end
-                 else begin
-                   pm:=(FirstChar(_brett)='U');
-                   empf:=iifs(FirstChar(_brett)='U','',FirstChar(_brett)+hdp.FirstEmpfaenger);
-                   end;
-                 end
-               else begin
-                 shortmsg(length(empf)+add_oe_cc+2+iif(leerz='',2,0));
-                 empf:=vert_long(trim(mid(empf,length(oempf)+1)));
-                 if length(empf)<3 then begin
-                   rfehler(626);    { 'Ungueltige Originalempfaenger-Zeile!' }
-                   exit;
-                   end;
-                 pm:=cpos('@',empf)>0;
-                 if not pm then empf:='A'+empf;
-                 end;
-               sdata:= TSendUUData.Create;
-               sData.References.Assign(hdp.References);
-               sData.org_ref:=hdp.org_xref;
-//             _beznet:=hdp.netztyp;
-               sData.fidoto:=hdp.fido_to;
-               sData.flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
-               sData.flEB:=(hdp.attrib and attrReqEB<>0);
-               sData.flFileAttach:=(hdp.attrib and attrFile<>0);
-               sData.sendfilename:=hdp.datei;
-               sData.sendfiledate:=hdp.ddatum;
-               sData.replyPath:=hdp.replypath;
-               sData.flpmReply:=(hdp.attrib and attrPmReply<>0);
-//             forcebox:=hdp.real_box;
-               with sData do
-               begin
-                 sdata.flControlMsg:=(hdp.attrib and attrControl<>0);
-                 followup.assign(hdp.followup);
-                 ReplyTo := Hdp.ReplyTo;
-                 References.Assign(Hdp.References);
-                 Keywords:=hdp.Keywords;
-                 Summary:=hdp.Summary;
-                 Distribute:=hdp.Distribution;
-                 ReplyGroup:=hdp.ReplyGroup;
-                 oab:=hdp.oab;
-                 oem.Assign(hdp.oem);
-                 wab:=hdp.wab;
-                 onetztyp:=hdp.netztyp;
-                 quotestr:=hdp.quotestring;
-                 ersetzt:=hdp.ersetzt;
-                 boundary:=hdp.boundary;
-               end;
-               sData.flReedit := true;
-               if dbReadInt(mbase,'netztyp') and $4000<>0 then
-                 sData.flPGPsig := true;
-(*                 
+                  sData.DoIt(
+                    GetRes2(610,100+Integer(typ)),
+                    (typ=3) and SelWeiter,
+                    typ in [2,3],
+                    SendBox);
+
+
+                  if nextwl>=0 then uvs_active:=ua;
+                  sData.Free;
+                end;
+              end;
+         4 :  begin
+                add_oe_cc:=0;
+                assign(t,fn);
+                reset(t);
+                if eof(t) then empf:=''
+                else begin
+                  readln(t,empf);
+                  if IsOempf(empf) and not eof(t) then begin
+                    GetOEmpflist;
+                    SendEmpflist.Assign(hdp.Empfaenger);
+                    hdp.Empfaenger.Clear;
+                  end;
+                end;
+                close(t);
+                unpark:=IsOempf(empf);
+                if not unpark then begin
+                  _Brett := dbReadNStr(mbase,mb_brett);
+                  if FirstChar(_brett)<'A' then begin
+                    rfehler(625);    { 'Schreiben in dieses Brett ist nicht moeglich.' }
+                    exit;
+                  end else begin
+                    pm:=(FirstChar(_brett)='U');
+                    empf:=iifs(FirstChar(_brett)='U','',FirstChar(_brett)+hdp.FirstEmpfaenger);
+                  end;
+                end else begin
+                  shortmsg(length(empf)+add_oe_cc+2+iif(leerz='',2,0));
+                  empf:=vert_long(trim(mid(empf,length(oempf)+1)));
+                  if length(empf)<3 then begin
+                    rfehler(626);    { 'Ungueltige Originalempfaenger-Zeile!' }
+                    exit;
+                  end;
+                  pm:=cpos('@',empf)>0;
+                  if not pm then empf:='A'+empf;
+                end;
+                sdata:= TSendUUData.Create;
+                sData.References.Assign(hdp.References);
+                sData.org_ref:=hdp.org_xref;
+                //_beznet:=hdp.netztyp;
+                sData.fidoto:=hdp.fido_to;
+                sData.flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
+                sData.flEB:=(hdp.attrib and attrReqEB<>0);
+                sData.flFileAttach:=(hdp.attrib and attrFile<>0);
+                sData.sendfilename:=hdp.datei;
+                sData.sendfiledate:=hdp.ddatum;
+                sData.replyPath:=hdp.replypath;
+                sData.flpmReply:=(hdp.attrib and attrPmReply<>0);
+                //forcebox:=hdp.real_box;
+                with sData do begin
+                  sdata.flControlMsg:=(hdp.attrib and attrControl<>0);
+                  followup.assign(hdp.followup);
+                  ReplyTo := Hdp.ReplyTo;
+                  References.Assign(Hdp.References);
+                  Keywords:=hdp.Keywords;
+                  Summary:=hdp.Summary;
+                  Distribute:=hdp.Distribution;
+                  ReplyGroup:=hdp.ReplyGroup;
+                  oab:=hdp.oab;
+                  oem.Assign(hdp.oem);
+                  wab:=hdp.wab;
+                  onetztyp:=hdp.netztyp;
+                  quotestr:=hdp.quotestring;
+                  ersetzt:=hdp.ersetzt;
+                  boundary:=hdp.boundary;
+                end;
+                sData.flReedit := true;
+                if dbReadInt(mbase,'netztyp') and $4000<>0 then
+                  sData.flPGPsig := true;
+(*
                if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
                  sData.flMPart := true;
                sData.OrgHdp :=hdp;
 *)
                sData.SetMessageContent(fn,true,hdp);
-(*               
+(*
                if DoSend(pm,fn,true,false,empf,betr,false,hdp.typ='B',sendbox,
                          false,false,sData,leer,sendflags) and unpark then SetDel;
 *)
-               sData.Subject := betr;
-               sData.EmpfList.AddNewXP(pm,empf,'');
-               
-               if sData.DoIt(GetRes2(610,100+Integer(typ)),false,false,sendbox) and UnPark then SetDel;
-             end;
-         6 : begin
-               _UserAutoCreate:=UserAutoCreate;
-               dbSeek(ubase,uiName,UpperCase(name));
-               if not dbFound then
-               begin   { User noch nicht vorhanden }
-                 pollbox:=defaultbox;
-                 defaultbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
-                 if not IsBox(defaultbox) then
-                 begin
-                   dbSeek(bbase,biIntnr,copy(_brett,2,4));
-                   DefaultBox := dbReadNStr(bbase, bb_pollbox);
-                 end;
-                 ReplaceVertreterbox(defaultbox,true);
-                 if not cc_testempf(hdp.absender)
-                 then begin
-                   defaultbox:=pollbox;
-                   exit;
-                   end;
-                 defaultbox:=pollbox;
-                 end
-               else begin
-                 dbReadN(ubase,ub_adrbuch,b);
-                 if b=0 then
-                 begin
-                   b:=1;
-                   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-                 end;
-               end;
-               _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
-               obrett := dbreadNStr(mbase,mb_brett);   { Originalbrett retten }
-               dbWriteNStr(mbase,mb_brett,_brett);
-               dbWriteNStr(mbase,mb_betreff,betr);
-               ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
-               dbWriteN(mbase,mb_typ,ntyp);
-               dbWriteN(mbase,mb_flags,msgflags);
-               dbReadN(mbase,mb_unversandt,b);
-               if (b and 8<>0) then begin        { WV-Flag entfernen }
-                 dbReadN(mbase,mb_wvdatum,l);
-                 dbWriteN(mbase,mb_empfdatum,l);
-                 b:=b and (not 8);
-                 dbWriteN(mbase,mb_unversandt,b);
-                 end;
-               dbReadN(mbase,mb_netztyp,l);
-               l:=l and (not $2000);             { ISO-Codierung abschalten }
-               dbWriteN(mbase,mb_netztyp,l);
-               Xwrite(fn);
-               dbWriteN(mbase,mb_groesse,newsize);
-               wrkilled;
-               aufbau:=true; xaufbau:=true;
-               setbrettgelesen(obrett);      { evtl. Ungelesenflag im Originalbrett loeschen }
-             end;
+                sData.Subject := betr;
+                sData.EmpfList.AddNewXP(pm,empf,'');
+
+                if sData.DoIt(GetRes2(610,100+Integer(typ)),false,false,sendbox) and UnPark then SetDel;
+              end;
+         6 :  begin
+                _UserAutoCreate:=UserAutoCreate;
+                dbSeek(ubase,uiName,UpperCase(name));
+                if not dbFound then begin   { User noch nicht vorhanden }
+                  pollbox:=defaultbox;
+                  defaultbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
+                  if not IsBox(defaultbox) then begin
+                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
+                    DefaultBox := dbReadNStr(bbase, bb_pollbox);
+                  end;
+                  ReplaceVertreterbox(defaultbox,true);
+                  if not cc_testempf(hdp.absender) then begin
+                    defaultbox:=pollbox;
+                    exit;
+                  end;
+                  defaultbox:=pollbox;
+                end else begin
+                  dbReadN(ubase,ub_adrbuch,b);
+                  if b=0 then begin
+                    b:=1;
+                    dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
+                  end;
+                end;
+                _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
+                obrett := dbreadNStr(mbase,mb_brett);   { Originalbrett retten }
+                dbWriteNStr(mbase,mb_brett,_brett);
+                dbWriteNStr(mbase,mb_betreff,betr);
+                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
+                dbWriteN(mbase,mb_typ,ntyp);
+                dbWriteN(mbase,mb_flags,msgflags);
+                dbReadN(mbase,mb_unversandt,b);
+                if (b and 8<>0) then begin        { WV-Flag entfernen }
+                  dbReadN(mbase,mb_wvdatum,l);
+                  dbWriteN(mbase,mb_empfdatum,l);
+                  b:=b and (not 8);
+                  dbWriteN(mbase,mb_unversandt,b);
+                end;
+                dbReadN(mbase,mb_netztyp,l);
+                l:=l and (not $2000);             { ISO-Codierung abschalten }
+                dbWriteN(mbase,mb_netztyp,l);
+                Xwrite(fn);
+                dbWriteN(mbase,mb_groesse,newsize);
+                wrkilled;
+                aufbau:=true; xaufbau:=true;
+                setbrettgelesen(obrett);      { evtl. Ungelesenflag im Originalbrett loeschen }
+              end;
   end;  { case }
 
   finally
   sdata.Free;
   end;
-  
+
   if nextwl>-1 then begin
     inc(nextwl);
     if nextwl < Marked.Count then
@@ -1248,7 +1233,7 @@ var
     ntyp   : char;
     l      : longint;
     b      : byte;
-    mnt    : longint;
+    mnt    : RNetzMsg;  //longint;
     abl    : byte;
     hdp    : THeader;
     hds    : longint;
@@ -1311,10 +1296,13 @@ begin
   fmove(f,tf);
   dbAppend(mbase);
   dbWriteN(mbase,mb_flags,flags);
-  mnt:=hdp.netztyp;
-  if hdp.References.Count > 0 then inc(mnt,$100);
-  if (hdp.wab<>'') or (hdp.oem.count > 0) then inc(mnt,$800);
-  dbWriteN(mbase,mb_netztyp,mnt);
+  mnt.i := 0; //clear record
+  mnt.netztyp:=hdp.netztyp;
+  if hdp.References.Count > 0 then //inc(mnt,$100);
+    include(mnt.flags, mf_Verkettet);
+  if (hdp.wab<>'') or (hdp.oem.count > 0) then //inc(mnt,$800);
+    include(mnt.flags, mf_wab);
+  dbWriteN(mbase,mb_netztyp,mnt.i);
   ebrett:=mbrettd('U',ubase);
   dbWriteNStr(mbase,mb_brett,ebrett);
   dbWriteNStr(mbase,mb_betreff,hdp.betreff);
@@ -1329,7 +1317,7 @@ begin
   dbWriteN(mbase,mb_typ,b);
   close(f);
   erase(f);
-  if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
+  if mnt.netztyp=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
   else                  dbWriteNStr(mbase,mb_name,hdp.realname);
   b:=1;             dbWriteN(mbase,mb_gelesen,b);
   b:=random(9)+iif(abl<10,1,11);
@@ -1422,6 +1410,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2002/12/14 07:31:40  dodi
+  - using new types
+
   Revision 1.2  2002/12/12 11:58:52  dodi
   - set $WRITEABLECONT OFF
 

@@ -55,9 +55,9 @@ type
     function GetCC: string;         procedure SetCC(s:string);
     function GetBCC: string;        procedure SetBCC(s:string);
     function GetNewsgroups: string; procedure SetNewsgroups(s:string);
-    
+
   public
-    netztyp: byte;                      { --- intern ----------------- }
+    netztyp: eNetz; //byte;             { --- intern ----------------- }
     archive: boolean;                   { archivierte PM               }
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
@@ -72,11 +72,11 @@ type
     property BCC: string read GetBCC write SetBCC;
     property Newsgroups: string read GetNewsgroups write SetNewsgroups;
 
-    
+
 
   { -- ReconstructEnvelope ------------------------------------------- }
     procedure ReconstructEnvelope;
-    
+
   public
     betreff: string;
     absender: string;
@@ -214,7 +214,7 @@ end;
 
 procedure THeader.Clear;
 begin
-  netztyp := 0;
+  netztyp := nt_Netcall;
   archive := false;
   attrib := 0;
   filterattr := 0;
@@ -368,6 +368,7 @@ procedure THeader.WriteZConnect(stream:TStream);
   var
     i: Integer;
   begin
+    Result := 0;  
     for i := 0 to Empfaenger.Count - 1 do
       if cpos('@', Empfaenger[i])>0 then
         Inc(Result);
@@ -494,7 +495,7 @@ procedure THeader.WriteZConnect(stream:TStream);
 
       if ntConv(netztyp) then begin
         writeln_s(stream,'X_C:');
-        writeln_s(stream,'X-XP-NTP: '+strs(netztyp));
+        writeln_s(stream,'X-XP-NTP: '+strs(ord(netztyp)));
         if x_charset<>'' then writeln_s(stream,'X-XP-Charset: '+x_charset);
         if real_box<>''  then writeln_s(stream,'X-XP-BOX: '+real_box);
         if hd_point<>''  then writeln_s(stream,'X-XP-PNT: '+hd_point);
@@ -825,6 +826,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/12/14 07:31:37  dodi
+  - using new types
+
   Revision 1.34  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

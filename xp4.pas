@@ -718,10 +718,9 @@ var t,lastt: taste;
       OrgHDP : THeader;
       hds    : Longint;
       brk    : boolean;
-      s,t    : string;
-      i,j    : integer;
+      s      : string;
+      i      : integer;
       flags  : byte;
-      grp    : longint;
       d      : DB;
       QuoteMask  : string;
       QuoteString: string;
@@ -766,11 +765,11 @@ var t,lastt: taste;
           else                      AddressType := am_typ;
         end;
     end;
-    
+
     procedure AddURIAddresses(const uris: string);
     var p,q: integer;
     begin
-      q := 0; p:=1;
+      p:=1;
       while p<Length(uris) do 
       begin
         q := CPosFrom('>',uris,p);
@@ -1108,15 +1107,15 @@ var t,lastt: taste;
         sData.DoIt(Getres(iif(quote=11,613,614)),false,false,true);        
       end else
       begin
-        sData.flOhneSig := false;          
-        sData.DoIt('',true,true,true);        
+        sData.flOhneSig := false;
+        sData.DoIt('',true,true,true);
       end;
 
     finally
       sData.Free;
       OrgHDP.Free;
     end;
-  end;  
+  end;
 
 {$ELSE}
   { quote: 0=nein, 1=ja, 2=evtl. MultiQuote }
@@ -1673,10 +1672,12 @@ var t,lastt: taste;
 {$ENDIF}
 
   procedure _brief_senden(c:char);
+(*
   var
     hdp : Theader;
     hds : longint;
     mbrett : string;
+*)
   begin
     // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
     if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
@@ -1902,8 +1903,7 @@ var t,lastt: taste;
   end;
 
   procedure brett_suche;
-  var su  : boolean;
-      rec : longint;
+  var rec : longint;
   begin
     GoPos(1);
     BrettMarkSuche;
@@ -2757,6 +2757,9 @@ end;
 
 {
   $Log$
+  Revision 1.134  2002/12/14 07:31:33  dodi
+  - using new types
+
   Revision 1.133  2002/12/12 11:58:46  dodi
   - set $WRITEABLECONT OFF
 

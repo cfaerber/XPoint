@@ -377,7 +377,7 @@ var sr    : tsearchrec;
       if box='' then
         trfehler1(2204,sr.name,tfs)   { 'Kann %s nicht einlesen - ungueltige Pollbox' }
       else begin
-        ReadBoxpar(0,box);
+        ReadBoxpar(nt_Netcall,box);
         shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
               AutoxDir+sr.name+' MPUFFER',300,3);
         if errorlevel<>0 then
@@ -399,7 +399,7 @@ var sr    : tsearchrec;
     if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gueltige Fido-Stammbox gewaehlt' }
     else begin
-      ReadBoxpar(0,DefFidoBox);
+      ReadBoxpar(nt_Netcall,DefFidoBox);
       msgbox(70,10,GetRes2(30003,10),x,y);
       DoZFido(2, BoxPar^.MagicBrett, AutoxDir+'*.pkt', 'FPUFFER', '', '', 0, '', '', true, false, false, false, x, y);
       closebox;
@@ -430,7 +430,7 @@ var sr    : tsearchrec;
       buf   : pointer;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
-      nt    : byte;
+      nt    : eNetz;
       sData : TSendUUData;
 
     procedure axerr(nr:word; txt:string);
@@ -699,6 +699,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/12/14 07:31:37  dodi
+  - using new types
+
   Revision 1.59  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

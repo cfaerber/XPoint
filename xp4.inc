@@ -166,7 +166,6 @@ procedure menuopt(t:taste);
 var m,m1     : integer;
     nix      : string;
     adr      : string;
-    oldlines  : byte;
     longmenu  : boolean;
 begin
   menurestart:=false;
@@ -811,6 +810,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2002/12/14 07:31:33  dodi
+  - using new types
+
   Revision 1.44  2002/12/12 11:58:45  dodi
   - set $WRITEABLECONT OFF
 

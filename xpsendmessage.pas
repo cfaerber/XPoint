@@ -27,7 +27,7 @@ unit xpsendmessage;
 interface
 
 uses
-  sysutils,
+  sysutils,Classes,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
   xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,xpmime,
@@ -35,7 +35,7 @@ uses
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
-Classes,fidoglob;
+  fidoglob;
 
 //      const sendIntern = 1;     { force Intern              }
 //            sendShow   = 2;     { ausfuehrliche Sendeanzeige }
@@ -220,7 +220,7 @@ type
     flPGPSig      : boolean; { PGP: Signatur erzeugen                  }
     flPGPKey      : boolean; { PGP: eigenen Key mitschicken            }
     flPGPReq      : boolean; { PGP: Key-Request                        }
-    
+
     flControlMsg  : boolean; { ist Kontrollnachricht                   }
     flEB          : boolean; { ist Empfangsbestaetigung                }
 //  flNokop       : boolean; { keine Kopien                            }
@@ -229,7 +229,7 @@ type
     flCrash       : boolean; { Fido: Crash-Nachricht                   }
     flCrashAtOnce : boolean; { Fido: keine Rückfrage, sofort versenden }
     flFileAttach  : boolean; { Fido: Datei mitsenden                   }
-    
+
     flQTo         : boolean; { ist Followup in andere Gruppe           }
                              { auch: Maus: Wildwestverkettung          }
 
@@ -253,7 +253,7 @@ type
     procedure CreateMessages;           { create & send messages }
 
     function DoIt(dlg_title: string;EditBetreff, EditText, SendWindow: Boolean): Boolean;
-    
+
   private
     FSignature: String;
 
@@ -287,7 +287,7 @@ type
     oab, wab: string;
     OEM: TStringList;
     oar,war    : string;
-    onetztyp   : byte;
+    onetztyp   : eNetz;
     orghdp     : THeader;
     orgbox     : string;
 
@@ -318,8 +318,8 @@ type
     procedure Clear;
    
   public
-    procedure MergeCharsets(nt:byte;NewCharsets:TStringList);    
-    procedure MergeMsgType(nt:byte;pm:boolean);
+    procedure MergeCharsets(nt:eNetz;NewCharsets:TStringList);
+    procedure MergeMsgType(nt:eNetz;pm:boolean);
 
   private
     function EditEmpfaengerList(
@@ -688,7 +688,7 @@ begin
 end;
 
 {$IFDEF __undefined__}
-
+???
 var f,f2     : file;
     edis     : byte;
     x,y,y2   : Integer;
@@ -720,6 +720,7 @@ var f,f2     : file;
     oldbetr  : string;
     d        : DB;
     fs,l     : longint;
+    lnt:    : RNetzMsg;
     t        : taste;
     n,p      : shortint;
     fn,fn2,
@@ -913,7 +914,7 @@ var f,f2     : file;
       end;
       ShowEmpfs := Count[atNewsgroup]+Count[atTo]+Count[atCC]+Count[atBCC];
     end;
-    
+
     diabox(78,13+fadd+Max(ShowEmpfs,1)-1,typ,x,y);
     moff;
 
@@ -1703,7 +1704,7 @@ begin
   OEM.Clear;
   oar := '';
   war := '';
-  onetztyp := 0;
+  onetztyp := nt_Netcall;
   orghdp := nil;
   quotestr := '';
   UV_edit:= false; { <Esc> -> "J" }
@@ -1820,7 +1821,7 @@ begin
 end;
 *)
 
-procedure TSendUUData.MergeCharsets(nt:byte;NewCharsets:TStringList);
+procedure TSendUUData.MergeCharsets(nt:eNetz;NewCharsets:TStringList);
 var i,i2: integer;
     n: TStringList;
     List: TStringList;    
@@ -1859,7 +1860,7 @@ begin
     List.Add('US-ASCII');
 end;
 
-procedure TSendUUData.MergeMsgType(nt:byte;pm:boolean);
+procedure TSendUUData.MergeMsgType(nt:eNetz;pm:boolean);
 begin
   FHas[ntClass(nt),pm] := true;
   FHas[ncNone,pm] := true;
@@ -2031,6 +2032,9 @@ finalization
 
 {
   $Log$
+  Revision 1.67  2002/12/14 07:31:39  dodi
+  - using new types
+
   Revision 1.66  2002/12/12 11:58:51  dodi
   - set $WRITEABLECONT OFF
 

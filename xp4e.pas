@@ -30,9 +30,10 @@ uses
   sysutils,
   typeform, //atext
   maske,  //customrec
+  xpnt,   //types
   xpglobal;
 
-var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
+var   testmailstring_nt : eNetz; { Netztyp fuer Testmailstring }
 
 function  newuser:boolean;
 function  modiuser(msgbrett:boolean):boolean;
@@ -110,7 +111,7 @@ uses
   xpcurses,
 {$ENDIF }
   fileio,inout,keys,datadef,database,winxp,xpheader,win2,maus2,resource,fidoglob,
-  xp0,xp1,xp1input,xp1o,xp1o2,xp2,xp3,xp3o,xp3o2,xpnt,xp4,xp5,xp9bp,
+  xp0,xp1,xp1input,xp1o,xp1o2,xp2,xp3,xp3o,xp3o2,xp4,xp5,xp9bp,
   xpsendmessage,xpconfigedit,xpcc,xpauto,xpfido;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
@@ -119,7 +120,7 @@ var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       empfx,empfy : byte;       { msgdirect() -> empftest()       }
       _pmonly     : boolean;    {    "                            }
       adrfieldpos : integer;
-      pb_netztyp  : byte;       { Netztyp von testpollbox() }
+      pb_netztyp  : eNetz;      { Netztyp von testpollbox() }
       ntyp_x, ntyp_y: Integer;  { intern EditBrett          }
       brettfld    : integer;    { intern EditBrett          }
       userfld     : integer;    { intern EditUser           }
@@ -219,7 +220,7 @@ var ok:boolean;
     i:byte;
 begin
   st:=s;
-  if testmailstring_nt in [nt_fido,nt_maus,255] then
+  if testmailstring_nt in [nt_fido,nt_maus,nt_Any] then
   begin
     for i:=1 to length(st) do
     begin
@@ -227,7 +228,7 @@ begin
       if upcase(st[i]) in ['Ž','™','š','á',':'] then
         if ((testmailstring_nt=nt_fido) and (st[i]=':')) or  { Fido: ':'aber keine Umlaute }
            ((testmailstring_nt=nt_maus) and (st[i]<>':')) or { Maus: Umlaute aber kein ':' }
-           (testmailstring_nt=255) then st[i]:='-';          { All:  Umlaute und ':' erlaubt. }
+           (testmailstring_nt=nt_Any) then st[i]:='-';      { All:  Umlaute und ':' erlaubt. }
       end;
     end;
   ok:=(st=mailstring(st,false));
@@ -648,7 +649,7 @@ var pw    : string;
     i     : integer;
     defcode : boolean;
     flags   : byte;
-    netztyp : byte;
+    netztyp : eNetz;
     fa      : FidoAdr;
 begin
   if msgbrett and not GetMsgBrettUser then
@@ -748,7 +749,7 @@ begin
     if (pb_netztyp<>nt_Fido) or (cpos('/',s)>0) then
       s:=LeftStr('/'+s,79)
     else begin
-      ReadBoxPar(0,pbox);
+      ReadBoxPar(nt_Netcall,pbox);
       s:=LeftStr(BoxPar^.MagicBrett+s,79);
       end;
 end;
@@ -1926,7 +1927,7 @@ var x,y: Integer;
     loesch : boolean;
     modif  : boolean;
     supers : boolean;
-    nt     : byte;
+    nt     : eNetz;
     pm     : boolean;
 
   function dl(d:datetimest):longint;
@@ -1992,7 +1993,7 @@ begin
       flags:=flags and (not (2+4+8))
              + iif(loesch,2,0) + iif(modif,4,0) + iif(supers,8,0);
       pm:=multipos('@',empf);
-      nt:=0;
+      nt:=nt_Netcall;
       if box<>'' then
         nt:=ntBoxNetztyp(box)
       else
@@ -2004,7 +2005,7 @@ begin
           dbSeek(bbase,biBrett,'A'+UpperCase(empf));
           if dbFound then nt:=ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox));
           end;
-      if nt=0 then nt:=ntBoxNetztyp(defaultbox);
+      if nt=nt_Netcall then nt:=ntBoxNetztyp(defaultbox);
       if (pm and ntGrossUser(nt)) or (not pm and ntGrossBrett(nt)) then
         UpString(empf);
       end;
@@ -2473,6 +2474,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2002/12/14 07:31:34  dodi
+  - using new types
+
   Revision 1.101  2002/12/12 11:58:46  dodi
   - set $WRITEABLECONT OFF
 

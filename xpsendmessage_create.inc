@@ -133,8 +133,8 @@ var FidoOriginSav: string;
     procedure EncryptMessage(des:Boolean;var data:TStream);
     var d2: TMemoryStream;
       _pwd: string[255];
-     b,x,y: Integer;
-       pos: smallword;
+      x,y: Integer;
+      pos: smallword;
       show: boolean;
     
     begin
@@ -283,6 +283,7 @@ var FidoOriginSav: string;
   var
     I    : integer;
     L      : Longint;
+    Lr: RNetzMsg;
     Ablage : integer;
     sendedat: longint;
 
@@ -513,7 +514,7 @@ var FidoOriginSav: string;
     NewMidType := ntMessageID(Server.Netztyp);
 
   // -- Falls noch keine generiert wurde => jetzt machen ---------------
-    
+
     if MsgID = '' then
     begin
       MidType := NewMidType;
@@ -708,19 +709,27 @@ var FidoOriginSav: string;
 
       dbWriteNStr(mbase,mb_brett,EMP[i]);
 
-      L := Server.netztyp;
-      if hdp.GetLastReference <> '' then inc(l,$100); // rÅckwÑrts-verkettet
-      if flFileAttach then inc(l,$200);
-      if hdp.pm_reply then inc(l,$400);
-      if (hdp.wab<>'') or (hdp.oem.Count > 0) then inc(l,$800);
-      if (hdp.typ='T')and(hdp.charset='ISO1')then inc(l,$2000);
-      if flPGPsig then inc(l,$4000);
+      Lr := Server.NetzMsg;
+      if hdp.GetLastReference <> '' then //inc(l,$100); // rÅckwÑrts-verkettet
+        include(Lr.flags, mf_Verkettet);
+      if flFileAttach then //inc(l,$200);
+        include(Lr.flags, mf_Attachment);
+      if hdp.pm_reply then //inc(l,$400);
+        include(Lr.flags, mf_pm_reply);
+      if (hdp.wab<>'') or (hdp.oem.Count > 0) then //inc(l,$800);
+        include(Lr.flags, mf_wab);
+      if (hdp.typ='T')and(hdp.charset='ISO1')then //inc(l,$2000);
+        include(Lr.flags, mf_ISO1);
+      if flPGPsig then //inc(l,$4000);
+        include(Lr.flags, mf_PGPsig);
       if Emp.Count>1 then begin
-        inc(l,longint(Min(255,EMP.Count)) shl 16);
-        inc(l,longint(Succ(i) mod 128)    shl 24);        { Empfaengernummer }
+        //inc(l,longint(Min(255,EMP.Count)) shl 16);
+        Lr.CPanz := Min(255,EMP.Count);
+        //inc(l,longint(Succ(i) mod 128)    shl 24);
+        Lr.CPpos := Succ(i) mod 128; { Empfaengernummer }
       end;
-      dbWriteN(mbase,mb_netztyp,l);
-      
+      dbWriteN(mbase,mb_netztyp,Lr.i);
+
       shortmid:= Hdp.BinaryMsgID;
       dbWriteNStr(mbase,mb_msgid,shortmid);
       dbWriteNStr(mbase,mb_betreff,hdp.betreff);
@@ -994,12 +1003,12 @@ var FidoOriginSav: string;
       l2,r2: integer;
   begin
     if r<=l then exit;
-    p := ntMessageID(Ord(FirstChar(Boxen[(l+r)div 2])));
+    p := ntMessageID(eNetz(Ord(FirstChar(Boxen[(l+r)div 2]))));
     l2 := l;
     r2 := r;
     while l2<r2 do begin
-      while (ntMessageID(Ord(FirstChar(Boxen[l2])))<= p) and (l2<r) do inc(l2);
-      while (ntMessageID(Ord(FirstChar(Boxen[r2]))) > p) and (r2>l) do dec(r2);
+      while (ntMessageID(eNetz(Ord(FirstChar(Boxen[l2]))))<= p) and (l2<r) do inc(l2);
+      while (ntMessageID(eNetz(Ord(FirstChar(Boxen[r2])))) > p) and (r2>l) do dec(r2);
       if l2<r2 then Boxen.Exchange(l2,r2);
     end;
     BoxSort(l,r2-1);
@@ -1047,6 +1056,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.8  2002/12/14 07:31:40  dodi
+// - using new types
+//
 // Revision 1.7  2002/11/14 21:06:13  cl
 // - DoSend/send window rewrite -- part I
 //

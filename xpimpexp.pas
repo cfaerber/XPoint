@@ -55,7 +55,7 @@ const mdaten = 'MDATEN.DAT';    { fÅr ImportMautaubase }
       mindex = 'MDATEN.IND';
       outtmp = 'OUTFILE.TXT';
 
-var   impnt  : byte;
+var   impnt  : eNetz;
 
 
 { USERBASE.DAT aus MessageBase einlesen :-) }
@@ -206,7 +206,7 @@ begin
   dbOpen(d,BoxenFile,1);
   SeekLeftBox(d,s);
   if dbFound then
-    if (impnt<>nt_QWK) or (dbReadInt(d,'netztyp') in [nt_Fido,nt_QWK]) then
+    if (impnt<>nt_QWK) or (dbNetztyp(d) in [nt_Fido,nt_QWK]) then
       imptestpollbox:=true
     else begin
       rfehler(2413);    { 'Falscher Netztyp - Netztyp mu· QWK oder Fido sein!' }
@@ -224,7 +224,7 @@ procedure readfremdpuffer;    { X/Import/Fremdformat }
 var t   : text;
     s   : string;
     fn  : string;
-    nt  : shortint;
+    nt,ntcur  : eNetz;  //shortint; - include flags?
     x,y : Integer;
     brk : boolean;
     d   : DB;
@@ -241,11 +241,12 @@ begin
   if IsPath('PUFFER') then begin
     rfehler1(741,'PUFFER');
     exit;
-    end;
+  end;
   fn:=WildCard;
+  ft := 0;
   useclip:=false;
-  if ReadFilename(getres(2420),fn,true,useclip)   { 'Nachrichtenpaket konvertieren/einlesen' }
-  then
+  if ReadFilename(getres(2420),fn,true,useclip) then begin
+  { 'Nachrichtenpaket konvertieren/einlesen' }
     if not FileExists(fn) then rfehler(106)
     else begin
       UpString(fn);
@@ -254,38 +255,37 @@ begin
         MausLogFiles(0,false,box);
         MausLogFiles(2,false,box);
         exit;
-        end;
+      end;
       if pos(UpperCase(MausStLog),fn)>0 then begin
         box:=UniSel(1,false,'');
         if box<>'' then
           MausLogFiles(1,false,box);
         exit;
-        end;
+      end;
       if RightStr(UpperCase(fn),4)='.QWK' then begin
         nt:=nt_QWK;
         if DefFidoBox<>'' then box:=DefFidoBox
         else box:='';
-        end
-      else begin
+      end else begin
         assign(t,fn);
         reset(t);
         readln(t,s);
         close(t);
         if s=^A then nt:=nt_Magic else           { Puffertyp ermitteln }
-        if cpos(#0,s)>0 then nt:=nt_Fido else
-        if LeftStr(s,1)='#' then nt:=nt_Maus else
-        if cpos('\',s)>0 then nt:=nt_Quick
+        if cpos(#0,s)>0 then nt:=nt_Fido
+        else if LeftStr(s,1)='#' then nt:=nt_Maus
+        else if cpos('\',s)>0 then nt:=nt_Quick
         else nt:=nt_Netcall;
         if nt=nt_Fido then box:=DefFidoBox       { Vorgabe-Box ermitteln }
         else box:=DefaultBox;
-        end;
+      end;
       if (box='') or ((nt<>nt_Netcall) and (nt<>nt_Fido)) then begin
         dbOpen(d,BoxenFile,1);
-        while not dbEOF(d) and (dbReadInt(d,'netztyp')<>nt) do
+        while not dbEOF(d) and (dbNetztyp(d)<>nt) do
           dbNext(d);
         if not dbEOF(d) then box:= dbReadStr(d,'boxname');
         dbClose(d);
-        end;
+      end;
 
       dialog(45,8,'',x,y);                     { Pollbox einlesen }
       maddtext(3,2,getres2(2421,1),0);         { 'Pufferdatei' }
@@ -303,7 +303,11 @@ begin
       nt:=ntBoxNetztyp(box);                   { Puffer konvertieren }
       ReadBoxpar(nt,box);
       s:='PUFFER';
-      case iif(impnt<>nt_QWK,nt,impnt) of
+      if impnt <> nt_QWK then
+        ntcur := nt
+      else
+        ntcur := impnt;
+      case ntcur of //iif(impnt<>nt_QWK,nt,impnt) of
         nt_Magic : shell(MaggiBin+' -mz -n'+boxpar^.MagicNET+' '+fn+' PUFFER '+
                          box+extBl,300,3);
         nt_Quick,
@@ -335,11 +339,11 @@ begin
                        s:=fn;
                        errorlevel:=0;
                      end;
-      else begin
-        rfehler(2410);   { 'nicht unterstÅtzter Netztyp' }
-        exit;
-        end;
-      end;
+      else  begin
+              rfehler(2410);   { 'nicht unterstuetzter Netztyp' }
+              exit;
+            end;
+      end;  //case
 
       if errorlevel<>0 then
         if impnt=nt_QWK then begin
@@ -348,8 +352,7 @@ begin
           else
             rfehler1(737,strs(errorlevel));  { 'ZQWK-Fehler Nr. %s bei Nachrichtenkonvertierung!' }
           freeres;
-          end
-        else
+        end else
           rfehler(2411)   { 'Fehler bei Nachrichtenkonvertierung' }
       else begin
         if nt=nt_Maus then begin
@@ -358,14 +361,14 @@ begin
           MausLogFiles(2,false,box);
           if filetime(box+'.itg')<>ft then
             MausImportITG(box);
-          end;
-        if PufferEinlesen(s,box,red,false,eb,iif(nt=nt_Fido,pe_ForcePfadbox,0))
-        then begin
+        end;
+        if PufferEinlesen(s,box,red,false,eb,iif(nt=nt_Fido,pe_ForcePfadbox,0)) then begin
           if s='PUFFER' then _era(s);
           signal;
-          end;
         end;
       end;
+    end;
+  end;
 end;
 
 
@@ -514,7 +517,7 @@ end;
 
 procedure ReadOutfile(var box:string);
 begin
-  ReadBoxPar(0,box);
+  ReadBoxPar(nt_Netcall,box);
   shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+outtmp+' PUFFER',
         300,3);
   if errorlevel<>0 then
@@ -582,7 +585,7 @@ var ypath : string;
   begin
     shell(Yup2PktBin+' '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
     if not mfehler(errorlevel=0,'Fehler bei Nachrichtenkonvertierung') then begin
-      ReadBoxPar(0,DefFidoBox);
+      ReadBoxPar(nt_Netcall,DefFidoBox);
       msgbox(70,10,GetRes2(30003,10),x,y);
       errorlevel:= DoZFido(2, BoxPar^.MagicBrett, TempPkt, 'FPUFFER', '', '', 0, '', '', true, false, false, false, x, y);
       closebox;
@@ -663,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.49  2002/07/25 20:43:56  ma
   - updated copyright notices
 

@@ -914,19 +914,18 @@ begin
     forcecolor:=true;
     wpushs(x,x+ml+1,y,y+n+1,'');
     forcecolor:=false;
-    end
-  else
-    if (nr=0) and (enterkey<>keyf10) then begin
-      i:=1;
-      while (i<=n) and (ma^[i].hkey<>UpperCase(enterkey)) do inc(i);
-      if i<=n then begin
-        p:=i;
-        autolr:=1;
-        end;
-      end;
+  end else if (nr=0) and (enterkey<>keyf10) then begin
+    i:=1;
+    while (i<=n) and (ma^[i].hkey<>UpperCase(enterkey)) do inc(i);
+    if i<=n then begin
+      p:=i;
+      autolr:=1;
+    end;
+  end;
 
   mausback:=false;
   pold:=99;
+  get2:=0;
   repeat
     if p<>pold then display;
     pold:=p;
@@ -940,37 +939,34 @@ begin
         if nr=0 then gotoxy(hmpos[p]-1,1)
         else gotoxy(x+1,y+p);
         get(t,curon);
-        end
-      else
+      end else
         get(t,curoff);
-    end;
+    end;  //case
     if not dead then begin
       i:=1;
       while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
       if (i<=n) and (ma^[i].enabled) then begin
         p:=i; t:=keycr;
         display;
-        end
-      else begin
+      end else begin
         if t=keyhome then begin
           p:=1;
           if nomp(p)  then t:=keytab;
-          end;
+        end;
         if t=keyend then begin
           p:=n;
           if nomp(p) then t:=keystab;
-          end;
-        if ((nr=0) and (t=keyrght)) or ((nr>0) and (t=keydown)) or
-           (t=keytab) or (not has_checker and (t=' ')) then
-            repeat
-              p:=(p mod n)+1
-            until not nomp(p);
-        if ((nr=0) and (t=keyleft)) or
-           ((nr>0) and (t=keyup)) or (t=keystab) then
-             repeat
-               if p=1 then p:=n else dec(p)
-             until not nomp(p);
         end;
+        if ((nr=0) and (t=keyrght)) or ((nr>0) and (t=keydown))
+        or (t=keytab) or (not has_checker and (t=' ')) then
+          repeat
+            p:=(p mod n)+1
+          until not nomp(p);
+        if ((nr=0) and (t=keyleft)) or ((nr>0) and (t=keyup)) or (t=keystab) then
+           repeat
+             if p=1 then p:=n else dec(p)
+           until not nomp(p);
+      end;
 
       if nr=0 then begin
         if t=keyf10 then t:=keyesc;
@@ -982,13 +978,14 @@ begin
       if t='-' then DoDisable;
 
       get2:=0;
-      if t=keycr then
-        if ma^[p].enabled then
+      if t=keycr then begin
+        if ma^[p].enabled then begin
           if ma^[p].chain>0 then begin
             if nr=0 then begin
-              xx:=hmpos[p]-1; yy:=2; end
-            else begin
-              xx:=x+2; yy:=y+1+p; end;
+              xx:=hmpos[p]-1; yy:=2;
+            end else begin
+              xx:=x+2; yy:=y+1+p;
+            end;
             menupos[nr]:=p;
             inc(menulevel);
             get2:=getmenu(ma^[p].chain,'',xx,yy);
@@ -1005,16 +1002,15 @@ begin
                      autolr:=3; t:=''; end;
              -3  : begin autolr:=4; t:=''; end;
             end  { case }
-          end
-        else
-          t:=''
-      else  { not enabled }
-        t:='';
-
+          end else
+            t:=''
+        end else  { not enabled }
+          t:='';
+      end;
       if (ma^[p].keep) and (get2>0) then
         t:='';
 
-      end;   { not dead }
+    end;   { not dead }
 
   until (t=keyesc) or ((nr>0) and ((t=keyleft) or (t=keyrght)));
 
@@ -1027,7 +1023,7 @@ begin
     while (i<=n) and (not ma^[i].enabled or (ma^[i].mstr='-')) do
       inc(i);
     EnableUpper:=(i<=n);
-    end;
+  end;
 
   Dispose(ma);
 
@@ -1157,6 +1153,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.42  2002/12/12 11:58:51  dodi
   - set $WRITEABLECONT OFF
 

@@ -368,7 +368,6 @@ end;
 function MausBestPM:boolean;     { gelesene Maus-PM bestaetigen }
 var t   : text;
     fn  : string;
-    leer: string;
     hdp : Theader;
     hds : longint;
     nr  : shortint;
@@ -376,7 +375,10 @@ var t   : text;
     gel : byte;
     ta  : taste;
     b   : byte;
+(*
+    leer: string;
     rec : longint;
+*)
 begin
   if dbReadInt(mbase,'unversandt') and 64<>0 then begin
     MausBestPM:=true;       { interne Nachricht }
@@ -418,18 +420,18 @@ begin
         if nr=1 then writeln(t,'BG')
         else writeln(t,'BZ');
         close(t);
+(*
         leer:='';
         rec:=dbRecno(mbase);
-(*        
         if DoSend(true,fn,true,false,'MAUS@'+hdp.pfad,'<Maus-Direct-Command>',
                   false,false,false,false,false,nil,leer,0) then;
         dbGo(mbase,rec);
 *)
 //      erase(t);
-        end;
-      spop(m2t);
       end;
+      spop(m2t);
     end;
+  end;
   Hdp.Free;
 end;
 
@@ -827,6 +829,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.40  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

@@ -165,7 +165,7 @@ var brk       : boolean;
       p:=cpos('.',sys);
       if RightStr(sys,4)='.ZER' then
         Delete(sys,length(sys)+1-4,4)
-      else if (dbReadInt(mbase,'netztyp') and $ff)=nt_Fido then
+      else if dbNetztyp(mbase)=nt_Fido then
         if p>0 then
           SetLength(sys, p-1);
       end;
@@ -727,7 +727,7 @@ begin
       if maxgeb=0 then
         writeln(t,getres2(2609,14))   { '- keine Gebhren in diesem Monat -' }
       else begin
-        ReadBoxPar(0,defaultbox);
+        ReadBoxPar(nt_Netcall,defaultbox);
         maxgeb:=int((maxgeb+ewpz-0.01)/ewpz)*ewpz;
         while round(maxgeb,2)>0 do begin
           write(t,forms(strsrn(maxgeb,2,2),6),'³ ');
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/12/14 07:31:41  dodi
+  - using new types
+
   Revision 1.52  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

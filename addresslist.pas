@@ -26,7 +26,7 @@ interface
 
 uses
   classes,
-  addresses;
+  addresses,xpnt;
 
 type
 
@@ -57,7 +57,7 @@ type
 
     FBoxname:   string;
     FGroup:     integer;
-    FNetztyp:   byte;
+    FNetztyp:   eNetz;
     FNewUser:   boolean;
     FAddrType:  TAddressListType;
 
@@ -80,9 +80,9 @@ type
     procedure SetAddress(NewValue: TAddress);
     
     function GetZCAddress: string;  procedure SetZCAddress(NewValue: string);
-    function GetXPAddress: string; 
+    function GetXPAddress: string;
     function GetRFCAddress: string; procedure SetRFCAddress(NewValue: string);
-   
+
     function GetPM: boolean;
     function GetEmpty: boolean;
     function GetVerteiler: boolean;
@@ -94,16 +94,16 @@ type
 
   public
     procedure Assign(otherList: TAddressListItem); virtual;
-  
+
     property Address: TAddress  read FAddress write SetAddress;
 
     property ZCAddress: string read GetZCAddress write SetZCAddress;
     property XPAddress: string read GetXPAddress;
     property RFCAddress: string read GetRFCAddress write SetRFCAddress;
-    
-    property BoxName:  string  read FBoxName   write FBoxName;    
+
+    property BoxName:  string  read FBoxName   write FBoxName;
     property Group:    Integer read FGroup     write FGroup;
-    property Netztyp:  Byte    read FNetztyp   write FNetztyp;
+    property Netztyp:  eNetz   read FNetztyp   write FNetztyp;
     property NewUser:  Boolean read FNewUser   write FNewUser;
 
     property PM:       Boolean read GetPM;
@@ -111,10 +111,10 @@ type
     property Verteiler:Boolean read GetVerteiler;
 
     property Charsets: TStringList read FCharsets;
-    
+
     property DisplayString: string read GetDisplayString;
     property AddressType: TAddressListType read FAddrType write FAddrType;
-    
+
     property OriginalType: TAddressListType read FOrigType write FOrigType;
     property OriginalSameMsg: boolean read FOrigSame write FOrigSame;
 
@@ -125,7 +125,7 @@ type
     property Signatur    : string read FSignatur     write FSignatur   ;
     property Origin      : string read FOrigin       write FOrigin     ;
     property Adresse     : string read FAdresse      write FAdresse    ;
-    
+
     property Realname  : string read FRealname   write FRealname ;
     property Mail      : string read FMail       write FMail     ;
     property ReplyTo   : string read FReplyTo    write FReplyTo  ;
@@ -191,7 +191,7 @@ function  RFCWriteAddressListFolded(List: TAddressList;Encoder: TRFCWriteAddress
 
 uses
   sysutils,
-  rfc2822,typeform,xpnt,
+  rfc2822,typeform,
   xpglobal;
 
 { ----------------------- > TAddressListItem < ----------------------- }
@@ -311,7 +311,7 @@ begin
     result := ''
   else if FAddress is TVerteiler then
     result := '['+TVerteiler(FAddress).VerteilerName+']'
-  else if Netztyp in (netsRFC+[0]) then
+  else if Netztyp in (netsRFC+[nt_Netcall]) then
     result := iifs(NewUser and (BoxName<>''),'+'+BoxName+': ','')+FAddress.RFCAddress
   else
     result := iifs(NewUser and (BoxName<>''),'+'+BoxName+': ','')+FAddress.ZCAddress;
@@ -350,7 +350,6 @@ begin
 end;
 
 procedure TAddressList.Assign(Source: TAddressList);
-var i: Integer;
 begin
   Clear; GroupNames.Clear;
   AddList(Source);
@@ -509,42 +508,41 @@ var i,j:integer;
 begin
   dq:=false;
   qq:=false;
+  ab:=false;
   cl:=0;
   ccount := 0;
   cstart := 0;
   cend   := 0;
   astart := 0;
   aend   := 0;
-  
-  if not assigned(Decoder) then 
+
+  if not assigned(Decoder) then
     Decoder := RFCUnquotePhrase;
 
   i:= Length(addr);
   j:= i+1;
-  
-  while i>0 do
-  begin
+
+  while i>0 do begin
     if (i>1) and (addr[i-1]='\') then begin dec(i,2); continue; end;
-    if not (dq or qq      ) and (addr[i]='(') and (cl>0) then begin if cl=1 then begin if ccount=0 then cstart:=i; inc(ccount) end; dec(cl) end else
-    if not (dq or qq      ) and (addr[i]=')')            then begin if cl=0 then begin if ccount=0 then cend  :=i;             end; inc(cl) end else
-    if not (dq or qq      ) and (addr[i]='<')            then begin ab := false; if astart<=0 then astart:=i end else
-    if not (dq or qq      ) and (addr[i]='>')            then begin ab := true;  if aend  <=0 then aend  :=i end else
-    if not (      qq      ) and (addr[i]='[')            then dq := false else
-    if not (      qq      ) and (addr[i]=']')            then dq := true else
-    if not (dq            ) and (addr[i]='"')            then qq := not qq else
-    if not (dq or qq or ab) and (i+1>=j) and (addr[i]in[#10,#13,#9,' ']) then dec(j);
+    if      not (dq or qq      ) and (addr[i]='(') and (cl>0) then
+      begin if cl=1 then begin if ccount=0 then cstart:=i; inc(ccount) end; dec(cl) end
+    else if not (dq or qq      ) and (addr[i]=')') then begin if cl=0 then begin if ccount=0 then cend  :=i;             end; inc(cl) end
+    else if not (dq or qq      ) and (addr[i]='<') then begin ab := false; if astart<=0 then astart:=i end
+    else if not (dq or qq      ) and (addr[i]='>') then begin ab := true;  if aend  <=0 then aend  :=i end
+    else if not (      qq      ) and (addr[i]='[') then dq := false
+    else if not (      qq      ) and (addr[i]=']') then dq := true
+    else if not (dq            ) and (addr[i]='"') then qq := not qq
+    else if not (dq or qq or ab) and (i+1>=j) and (addr[i]in[#10,#13,#9,' ']) then dec(j);
     dec(i);
   end;
 
-    if (astart<>0) and (aend<>0) then
-    begin
-      A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,astart+1,aend-astart-1))),''));
-      R := Trim(Decoder(Copy(addr,i+1,astart-i-1)+Copy(addr,aend+1,j-aend-1)));
-    end else
-    begin
-      A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,i+1,j-i-1))),''));
-      if (j<=cend+1) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
-    end;
+  if (astart<>0) and (aend<>0) then begin
+    A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,astart+1,aend-astart-1))),''));
+    R := Trim(Decoder(Copy(addr,i+1,astart-i-1)+Copy(addr,aend+1,j-aend-1)));
+  end else begin
+    A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,i+1,j-i-1))),''));
+    if (j<=cend+1) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
+  end;
 
 end;
 
@@ -808,6 +806,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.11  2002/12/14 07:31:26  dodi
+// - using new types
+//
 // Revision 1.10  2002/12/10 10:03:23  dodi
 // - updated uses
 //

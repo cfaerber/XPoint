@@ -37,7 +37,7 @@ end; { destructor Done }
 
 function TTelnetStream.ConnectIP(DestHost: String; DestPort: Integer): boolean;
 var   success: boolean;
-      dummy:   longint;
+      //dummy:   longint;
 (* const options: string = TELNET_IAC + TELNET_WILL + TELNETOPT_SUPPRESS_GA +
                         TELNET_IAC + TELNET_WILL + TELNETOPT_BINARY; *)
 begin
@@ -98,52 +98,49 @@ begin
   pos:=0;
   beg:=0;
 
-  while(beg<=InTemp) do
-  begin
-    if(pos>=InTemp)then
-    begin
-      if InTemp>beg then
+  while beg <= InTemp do begin
+  //on first iteration: InTemp must be >= zero.
+    if pos >= InTemp then begin
+    //beg <= InTemp <= pos
+    //on first iteration: only if InTemp is zero
+      if beg <= InTemp then //always true? (= loop condition!)
         InBuffer.Put(InBuffer.TmpBuf^[beg],InTemp-beg);
       InTemp:=0;
       break;
-    end
-    else
-    if InBuffer.TmpBuf^[pos] = TELNET_IAC then
-    begin
+    end else if InBuffer.TmpBuf^[pos] = TELNET_IAC then begin
+    //pos < InTemp
       if pos > beg then begin
-        InBuffer.Put(InBuffer.TmpBuf^[beg],beg-pos);
-        beg:=pos;
+        InBuffer.Put(InBuffer.TmpBuf^[beg], {negativ!!! -> } beg-pos);
       end;
 
-      if InTemp-pos>=2 then case InBuffer.TmpBuf^[pos+1] of
-
+      if InTemp-pos>=2 then begin
+      //on first iteration: when InTemp >= 2
+        case InBuffer.TmpBuf^[pos+1] of
         (* double IAC => skip *)
-
         TELNET_IAC:     begin
                           pos:=pos+2; beg:=pos+1;
                           continue;
                         end;
-
         (* option negotiation *)
-
         TELNET_WILL,TELNET_WONT,TELNET_DO,TELNET_DONT:
-                        if InTemp-pos<3 then break else begin
+                        if InTemp-pos<3 then break
+                        else begin
                           pos:=pos+3; beg:=pos;
                           handle_option(InBuffer.TmpBuf^[pos-2],InBuffer.TmpBuf^[pos-1]);
                           continue;
                         end;
-
         (* other telnet commands *)
-
         else            begin
                           pos:=pos+2; beg:=pos;
                           handle_command(InBuffer.TmpBuf^[pos-1]);
                           continue;
                         end;
-      end;
+        end;
+        //all branches continue, with updated beg
+      end;  //else breaks below
 
       (* if we got here, there is an incomplete IAC sequence *)
-
+    //InTemp - pos < 2
       Move(InBuffer.TmpBuf^[pos],InBuffer.TmpBuf^,InTemp-pos);
       InTemp:=InTemp-pos;
       break;
@@ -256,6 +253,9 @@ end;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 {
   $Log$
+  Revision 1.7  2002/12/14 07:31:45  dodi
+  - using new types
+
   Revision 1.6  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

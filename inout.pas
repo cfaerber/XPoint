@@ -611,7 +611,9 @@ begin
 
 {$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
 {$IFNDEF NCRT}  {NCurses uses wgetch}
-    if UseMulti2 then begin
+    if UseMulti2 then
+      get_without_sys
+    begin
       repeat
         st1:=kbstat;
         mox:=mausx; moy:=mausy;
@@ -676,7 +678,7 @@ begin
 {$ENDIF Win32}
     begin
       key_pressed:=true;
-
+      {$IFDEF ANALYSE}mox := 1; moy:=mox; c:=char(moy); assert(mox=ord(c));{$ENDIF} //dummy to prevent "unused vars"
     end;
 
     z := Keys.ReadKey;
@@ -1676,6 +1678,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2002/12/14 07:31:26  dodi
+  - using new types
+
   Revision 1.98  2002/12/12 11:58:39  dodi
   - set $WRITEABLECONT OFF
 

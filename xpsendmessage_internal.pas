@@ -26,10 +26,18 @@ unit xpsendmessage_internal;
 
 interface
 
-uses  sysutils,xp0,xpcc, xpglobal;
+uses  sysutils,xp0,xpcc, xpnt, xpglobal;
 
 
 { Tabelle fr IBM -> ISO-Konvertierung }
+
+{
+  todo: saemtliche Konvertierungen sollten in einer einzigen Unit gesammelt werden,
+  Das spart nicht nur jede Menge doppelter Konstanten,
+  sondern auch noch die jeweils zugehoerigen Fehler.
+  Frage: wo sollen die ganzen Konvertierungen hin,
+    in typeform oder stringtools oder xp0 oder wo?
+}
 
 {     oempf  = '## Originalempf„nger:';  - 600 }
 const maxcc  = 50;
@@ -41,7 +49,7 @@ const maxcc  = 50;
       flMnet   : boolean = false;
 type ccmore  = record
                  server : string[BoxNameLen];      { Server }
-                 ccnt   : byte;
+                 ccnt   : eNetz;
                  ccpm   : boolean;
                  cpanz  : shortint;  { n = erster von n Emf"ngern }
                  nobrett: boolean;   { Phantom-Crossposting }
@@ -59,6 +67,9 @@ implementation
 
 {
   $Log$
+  Revision 1.7  2002/12/14 07:31:40  dodi
+  - using new types
+
   Revision 1.6  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

@@ -48,7 +48,7 @@ const maxhidden  = 500;                 { max. versteckte Menuepunkte }
 var   DisableDOS : boolean = false;
       shellkey   : boolean = false;
       ListMakros : byte    = 0;         { Flag fuer XPKEYS.XMakro     }
-      Errorlevel : word    = 0;
+      Errorlevel : integer = 0;
       miscbase   : DB      = nil;       { wird bei Shell geschlossen }
       menurestart: boolean = false;     { fuer Config-Menue            }
 
@@ -359,6 +359,11 @@ end;
 {$ENDIF }
 
 procedure iso_conv(var buf; bufsize: Integer); assembler;  {&uses ebx, edi}
+{$IFDEF ANALYSE}
+begin
+  //no asm
+end;
+{$ELSE}
 asm
          cld
          mov    edi, buf
@@ -374,6 +379,7 @@ asm
 end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
+{$ENDIF }
 {$ENDIF }
 
 
@@ -1302,6 +1308,7 @@ var ma    : map;
 
 begin
   get2 := -1;
+  longmenu := False;
   if nr=0 then begin
     menulevel:=0;
     if menurestart then enterkey:=mainmenu^[menustack[0]].hkey;
@@ -1416,8 +1423,7 @@ begin
         end;
 
       get2:=0;
-      if (nr<>2) or (p<Zusatz_II+4) then longmenu:=false
-        else longmenu:=true;
+      longmenu := not ((nr<>2) or (p<Zusatz_II+4));
       if t=keycr then
         if ma^[p].enabled then
           if ma^[p].chain>0 then begin
@@ -1941,6 +1947,11 @@ begin
       OldLCS := GetLogicalOutputCharset;
       SetConsoleOutputCharset(csUTF8);
       SetLogicalOutputCharset(csCP437);
+{$IFDEF ANALYSE}  //prevent warning "not initialized"
+    end else begin
+      OldTCS := csCP437;
+      OldLCS := csCP437;
+{$ENDIF}
     end;
 
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
@@ -2131,7 +2142,7 @@ procedure showusername;
 var d    : DB;
     user : string;
     realname : string;
-    nt       : byte;
+    nt       : eNetz;
 
   procedure showtline;
   begin
@@ -2149,13 +2160,15 @@ begin
     dbSeek(d,boiName,UpperCase(DefaultBox));
     showtline;
     if dbFound then begin
-      nt:=dbReadInt(d,'netztyp');
+      nt:=dbNetztyp(d);
       realname:=iifs(ntRealname(nt),dbReadStr(d,'realname'),'');
       user:=ComputeUserAddress(d);
-      if (length(user)+length(realname)) <= screenwidth-7 then
-        user:=user + iifs(realname<>'',' ('+realname+')','')
-      else if length(user) <= screenwidth-10 then
-        user:=user + iifs(realname<>'',' ('+leftStr(realname,screenwidth-10-length(user))+'...)','');
+      if realname <> '' then begin
+        if (length(user)+length(realname)) <= screenwidth-7 then
+          user := user + ' ('+realname+')'
+        else if length(user) <= screenwidth-10 then
+          user := user + ' ('+leftStr(realname,screenwidth-10-length(user))+'...)';
+      end;
       mwrt(screenwidth-2-length(user),3,' '+user+' ');
       end;
     dbClose(d);
@@ -3179,7 +3192,7 @@ end;
 { returns user identifier (email address with RFC nets) }
 function ComputeUserAddress(d: DB):string;
 var flags     : byte;
-    netztyp   : byte;
+    netztyp   : eNetz;
     boxname   : string;
     username  : string;
     pointname : string;
@@ -3187,7 +3200,7 @@ var flags     : byte;
     email     : string;
     aliaspt   : boolean;
 begin
-  dbRead(d, 'netztyp', netztyp);
+  netztyp := dbNetztyp(d);
   boxname := dbReadStr(d, 'boxname');
   username := dbReadStr(d, 'username');
   pointname := dbReadStr(d, 'pointname');
@@ -3254,6 +3267,9 @@ end;
 
 {
   $Log$
+  Revision 1.167  2002/12/14 07:31:29  dodi
+  - using new types
+
   Revision 1.166  2002/12/12 11:58:42  dodi
   - set $WRITEABLECONT OFF
 

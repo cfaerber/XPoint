@@ -27,15 +27,15 @@ unit xp3o2;
 interface
 
 uses
-  xpheader;
+  xpheader, xpnt;
 
 procedure WriteHeader(var hd:theader; var f:file);
 procedure SetBrettindex;
 procedure SetBrettindexEnde;
-procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
+procedure makebrett(s:string; var n:longint; const box:string; netztyp:eNetz;
                     order_ende:boolean);
 procedure SetUngelesen;
-function  UserNetztyp(adr:string):byte;
+function  UserNetztyp(adr:string):eNetz;
 
 
 implementation  { ---------------------------------------------------- }
@@ -44,7 +44,7 @@ uses
   sysutils,
   classes,  //TMemoryStream
   typeform,database,
-  xp0,xp3o,xp4, xp4e, xpnt,
+  xp0,xp3o,xp4, xp4e,
   xpglobal;
 
 procedure WriteHeader(var hd:theader; var f:file);
@@ -145,7 +145,7 @@ begin
 end;
 
 
-procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
+procedure makebrett(s:string; var n:longint; const box:string; netztyp:eNetz;
                     order_ende:boolean);
 var komm  : string;
     p     : byte;
@@ -196,17 +196,20 @@ begin
 end;
 
 
-function UserNetztyp(adr:string):byte;
+function UserNetztyp(adr:string):eNetz;
 begin
   dbSeek(ubase,uiName,UpperCase(adr));
   if not dbFound then
-    UserNetztyp:=0
+    Result := nt_Netcall
   else
-    UserNetztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
+    Result := ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
 end;
 
 {
   $Log$
+  Revision 1.57  2002/12/14 07:31:32  dodi
+  - using new types
+
   Revision 1.56  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

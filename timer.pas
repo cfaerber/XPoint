@@ -133,10 +133,13 @@ end;
 
 initialization
   Calibrated := False;
-end.
+end
 
 {
   $Log$
+  Revision 1.24  2002/12/14 07:31:28  dodi
+  - using new types
+
   Revision 1.23  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
@@ -215,4 +218,4 @@ end.
   Revision 1.1  2000/06/19 20:16:03  ma
   - wird erstmal nur fuer den neuen XP-FM benoetigt
 
-}
+}.

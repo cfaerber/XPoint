@@ -216,17 +216,19 @@ begin
   IOResult;
 
   case Origin of
-    soFromBeginning:    Result:=Offset;
+    //soFromBeginning:    Result:=Offset;
     soFromCurrent:      begin Result:=System.FilePos(FPFile^)+Offset;
-                                                        IOExcept(EWriteError); end;
+                              IOExcept(EWriteError); end;
     soFromEnd:          begin Result:=System.FileSize(FPFile^)+Offset;
-                                                        IOExcept(EWriteError); end;
+                              IOExcept(EWriteError); end;
+    else                Result:=Offset; //default
   end;
 
   if (Offset=0) and (Origin=soFromCurrent) then
     exit;
 
-  System.Seek(FPFile^,Result);                          IOExcept(EWriteError);
+  System.Seek(FPFile^,Result);
+  IOExcept(EWriteError);
 end;
 
 { ------------------- Deletes file at destruction -------------------- }

@@ -82,7 +82,7 @@ uses
 {$ifdef NCRT}
   xpcurses,
 {$endif}
-  osdepend,maus2,
+  osdepend,maus2, mouse,
   keys, FileIO, xp1,winxp,
   xpglobal;
 
@@ -402,27 +402,24 @@ var   fb     : string;
       end;
 
     if mausscroll then begin
-    (*  asm
-          mov ax,3                       { Beim Scrollen Maustaste abfragen }
-          int 33h
-          and bl,3
-          mov mausbut,bl
-      end; *)
+    { Beim Scrollen Maustaste abfragen }
+      mausbut := maust; //todo: check compatibility of the undocumented bit settings
 //    if mausswapped then mausbut:=mausbut shr 1;
-      if (mausbut and 1 = 0) then begin  { Rechte Taste nicht gedrueckt: Scrollen aus }
+      if (mausbut and 1) = 0 then begin  { Rechte Taste nicht gedrueckt: Scrollen aus }
         autoupenable:=aue;
         autodownenable:=ade;
         autoup:=au;
         autodown:=ad;
         autobremse:=ab;
         mausscroll:=false;
-        end
-      else if inside then t:=''
-        else if down then t:=keydown     { Rechte Taste gedrueckt gehalten: scrollen }
-                     else t:=keyup;
-      end;
+      end else if inside then
+        t:=''
+      else if down then
+        t:=keydown     { Rechte Taste gedrueckt gehalten: scrollen }
+      else t:=keyup;
+    end;
 
-      if not mausscroll and (t=mausunright) then t:=keyesc;
+    if not mausscroll and (t=mausunright) then t:=keyesc;
 
     CPosY:=min(CposY,PathN);
    end;
@@ -1155,6 +1152,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/12/14 07:31:28  dodi
+  - using new types
+
   Revision 1.56  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

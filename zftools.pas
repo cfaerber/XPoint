@@ -264,6 +264,10 @@ end;
 {$ENDIF }
 
 procedure ISO2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
+{$IFDEF ANALYSE}
+begin
+end;
+{$ELSE}
 asm
           mov    ebx,offset ISO2IBMtab - 128
           mov    esi,data
@@ -284,8 +288,14 @@ end ['EAX', 'EBX', 'ECX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
+{$ENDIF}
 
 procedure Mac2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
+{$IFDEF ANALYSE}
+begin
+  //no asm
+end;
+{$ELSE}
 asm
           mov    ebx,offset Mac2IBMtab - 128
           mov    esi,data
@@ -307,6 +317,7 @@ end ['EAX', 'EBX', 'ECX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
+{$ENDIF}
 
 { --- Allgemeines --------------------------------------------------- }
 
@@ -1444,6 +1455,8 @@ begin
       fmzone:=0; tozone:=0;
       fromline:=''; inetadr:=false;
       viaanz:=0;
+      fmpt := 0;
+      topt := 0;
       MWrt(x+15,y+4,IntToStr(anz_msg));
       MWrt(x+15,y+5,FormS(fromu,50));
       MWrt(x+15,y+6,FormS(tou,50));
@@ -1548,9 +1561,9 @@ begin
         while (i<=bh_anz) and not pok do begin
           if bretths[i].box=hd.pfad then pok:=true;
           inc(i);
-          end;
-        if not pok then hd.pfad:=defbox;
         end;
+        if not pok then hd.pfad:=defbox;
+      end;
       hd.pfad:=hd.pfad+'!';
 
       fillchar(origin,sizeof(origin),0);
@@ -1567,9 +1580,8 @@ begin
             if hd.programm='' then hd.programm:=prog2
             else hd.programm:=hd.programm+' / '+prog2;
           tear_2:=adr;
-          end;
-        end
-      else                                { Tearline fehlt }
+        end;
+      end else                                { Tearline fehlt }
         adr:=adr0;
       via:=false;
       while (adr<madr-1) do begin         { Origin bzw. ^AVIA suchen }
@@ -1578,17 +1590,16 @@ begin
         if LeftStr(s,10)=' * Origin:' then begin
           GetOrigin;
           hd.groesse:=adr-adr0;
-          end
-        else if LeftStr(s,6)=^A'PATH:' then
+        end else if LeftStr(s,6)=^A'PATH:' then
           hd.pfad:=hd.pfad+trim(mid(s,7))+' '
         else if LeftStr(s,5)=^A'Via ' then begin
           hd.pfad:=hd.pfad+getvia(mid(s,6))+' ';
           if not via then begin
             hd.groesse:=adr-adr0-length(s)-1-lfs;
             via:=true;
-            end;
           end;
         end;
+      end;
       hd.pfad:=trim(hd.pfad);
       if lastchar(hd.pfad)='!' then DeleteLastChar(hd.pfad);
       adr:=madr;
@@ -1602,21 +1613,19 @@ begin
           ispoint:=isfmpt;
           if ispoint then point:=fmpt
           else point:=0;
-          end
-        else
-          if net+node=0 then begin   { Origin-Zeile in EchoMail fehlt! }
-            p:=cpos('!',hd.pfad);
-            if p>0 then begin        { Absendenet/node aus ^APATH holen }
-              s:=mid(hd.pfad,p+1);
-              p:=cpos(' ',s);
-              if p>0 then s:=LeftStr(s,p-1);
-              splitfido(s,origin);
-              if zone=0 then zone:=phd.OrgZone;
-              if zone=0 then zone:=phd.QOrgZone;
-              end;
-            if tear_2>0 then
-              hd.groesse:=tear_2-adr0;
-            end;
+        end else if net+node=0 then begin   { Origin-Zeile in EchoMail fehlt! }
+          p:=cpos('!',hd.pfad);
+          if p>0 then begin        { Absendenet/node aus ^APATH holen }
+            s:=mid(hd.pfad,p+1);
+            p:=cpos(' ',s);
+            if p>0 then s:=LeftStr(s,p-1);
+            splitfido(s,origin);
+            if zone=0 then zone:=phd.OrgZone;
+            if zone=0 then zone:=phd.QOrgZone;
+          end;
+          if tear_2>0 then
+            hd.groesse:=tear_2-adr0;
+        end;
 
       with origin do begin
         while cpos('@',fromu)>0 do    { Klammeraffenwandlung: @ -> þ }
@@ -1800,10 +1809,11 @@ begin
   if direction=1 then ZFidoProc
   else FidoZ(1,1);
 end;
-
-end.
 {
         $Log$
+        Revision 1.34  2002/12/14 07:31:41  dodi
+        - using new types
+
         Revision 1.33  2002/12/12 11:58:53  dodi
         - set $WRITEABLECONT OFF
 
@@ -1923,3 +1933,5 @@ end.
         - ZFido enthaelt keine Konvertierungen mehr
 
 }
+end.
+

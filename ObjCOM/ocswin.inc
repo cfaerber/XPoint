@@ -67,9 +67,9 @@ begin
     if GetOverlappedResult(SaveHandle,ReadOL,BytesRead,False)then
       begin DebugLog('ObjCOM','Overlapped IO finished.',DLDebug); DataRequested:=False end;
   end;
-  if(BytesRead-OLDataProcessed)>0 then begin
-    InBuffer.Put(InBuffer.TmpBuf^[OLDataProcessed],BytesRead-OLDataProcessed);
-    DebugLog('ObjCOM','Read '+IntToStr(BytesRead-OLDataProcessed),DLDebug);
+  if(BytesRead-DWORD(OLDataProcessed))>0 then begin
+    InBuffer.Put(InBuffer.TmpBuf^[OLDataProcessed],BytesRead-DWORD(OLDataProcessed));
+    DebugLog('ObjCOM','Read '+IntToStr(BytesRead-DWORD(OLDataProcessed)),DLDebug);
     OLDataProcessed:=BytesRead;
   end;
 end;  
@@ -412,6 +412,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.9  2002/12/14 07:31:45  dodi
+  - using new types
+
   Revision 1.8  2001/09/08 18:46:44  cl
   - small bug/compiler warning fixes
 

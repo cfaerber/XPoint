@@ -238,7 +238,7 @@ type  { Achtung: hier muss der komplette Bildschirm mit Attributen reinpassen }
 
   { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
     des Fensterinhaltes nicht auf API-Funktionen zurueckgegriffen werden muss.
-    Jede Žnderung am Bildschirm _muss_ gleichzeitig hier gemacht werden }
+    Jede Aenderung am Bildschirm _muss_ gleichzeitig hier gemacht werden }
   TLocalScreen = array[0..LSSize] of char;
 
 {$IFDEF LocalScreen }
@@ -392,41 +392,44 @@ var
   {$ELSE}
    {$IFDEF DOS32 }
     s2: String;
+    i, Count: Integer;
    {$ENDIF }
   {$ENDIF }
-  i, Count: Integer;
+  {$IFDEF LocalScreen}
+    i, Count: Integer;
+  {$ENDIF}
 begin
-  {$IFDEF Win32Console }
-    { Kompletten String an einem Stueck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;
-    Len := Win32_Wrt(WritePos,s);
-    FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
+{$IFDEF Win32Console }
+  { Kompletten String an einem Stueck auf die Console ausgeben }
+  WritePos.X := x-1; WritePos.Y := y-1;
+  Len := Win32_Wrt(WritePos,s);
+  FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
+{$ELSE }
+  {$IFDEF DOS32 }
+    s2 := Wrt_Convert(s);
+    Count := ((X-1)+(y-1)*screenwidth)*2;
+    for i := 0 to Length(s2)-1 do
+      memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s2[i+1]);
   {$ELSE }
-    {$IFDEF DOS32 }
-      s2 := Wrt_Convert(s);
-      Count := ((X-1)+(y-1)*screenwidth)*2;
-      for i := 0 to Length(s2)-1 do
-        memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s2[i+1]);
-    {$ELSE }
-      GotoXY(x, y);
-      Write(s);
-    {$ENDIF }
-  {$ENDIF Win32 }
+    GotoXY(x, y);
+    Write(s);
+  {$ENDIF }
+{$ENDIF Win32 }
 
-  {$IFDEF Localscreen }
-  { LocalScreen uebernimmt die Žnderungen }
-    if s <> '' then
+{$IFDEF Localscreen }
+{ LocalScreen uebernimmt die Aenderungen }
+  if s <> '' then
+    begin
+      Count := ((x-1)+(y-1)*ScreenWidth)*2;
+      FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
+      for i := 1 to Length(s) do
       begin
-        Count := ((x-1)+(y-1)*ScreenWidth)*2;
-        FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
-        for i := 1 to Length(s) do
-        begin
-          LocalScreen^[Count] := s[i];
-          Inc(Count, 2);
-        end;
-       end;
-  {$ENDIF LocalScreen }
-  end;
+        LocalScreen^[Count] := s[i];
+        Inc(Count, 2);
+      end;
+     end;
+{$ENDIF LocalScreen }
+end;
 {$ENDIF NCRT }
 
 {$IFDEF Win32Console }
@@ -1525,6 +1528,9 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/12/14 07:31:28  dodi
+  - using new types
+
   Revision 1.90  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 

@@ -73,11 +73,9 @@ var      d: DB;
        ftn: boolean;
       uadd: string; // Upper case address
       udom: string; // Upper case domain part of address
-      uusr: string; // Upper case local part of address
- 
-        nt: Byte;
+
+        nt: eNetz;
      alpnt: boolean;
-       scr: Byte;
    z,n,f,p: integer;
 
   function username: string; begin result := dbReadStr(d,'username'); end;
@@ -103,7 +101,7 @@ begin
     
     while not dbEOF(d) do
     begin
-      nt := dbReadByte(d,'netztyp');
+      nt := dbNetztyp(d);
 
       if (not (nt in netsFTN)) and (UpperCase(dbReadStr(d,'email')) = UAdd) then exit;
       alpnt := dbReadByte(d,'script') and 4<>0;
@@ -140,6 +138,9 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.3  2002/12/14 07:31:40  dodi
+// - using new types
+//
 // Revision 1.2  2002/11/17 12:28:36  mk
 // - added missing xpdefine.inc
 //

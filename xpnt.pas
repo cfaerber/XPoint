@@ -51,7 +51,7 @@ type
     nt_m1,        //= -1
     nt_90,        //= 90
     nt_99,        //= 99;
-    nt_None       //=$FF/-1
+    nt_Any        //=$FF/-1 or nt_All?
   );
 {$ELSE}
 const  nt_Netcall   = 0;         { Puffer-Formate       }
@@ -72,21 +72,21 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_IMAP      = 52;
         nt_90       = 90;
         nt_99       = 99;
-        nt_None     = $FF;  //or -1
+        nt_Any      = $FF;  //or -1
 type
-  eNetz = 0..99;
+  eNetz = byte; //0..99;
 {$ENDIF}
 
 type
   eMsgFlags = (
-    mf_RueckVerkettet,
-    mf_Attachment,
-    mf_pm_reply,
-    mf_wab, //?
-    mf_Reply, //mf_1000 - Antwort auf eigene Msg
-    mf_ISO1,  //standard charset?
-    mf_PGPsig,
-    mf_Kom  //if komlen>0 then //inc(mnt,$8000);
+    mf_Verkettet,   //100
+    mf_Attachment,  //200
+    mf_pm_reply,    //400
+    mf_wab,         //800
+    mf_Reply,       //mf_1000 - Antwort auf eigene Msg
+    mf_ISO1,        //2000 - standard charset?
+    mf_PGPsig,      //4000
+    mf_Kom          //8000 - if komlen>0 then //inc(mnt,$8000);
   );
   sMsgFlags = set of eMsgFlags;
 
@@ -139,7 +139,7 @@ type   TAttachMode = (
          attachFTN,         // one text part followed by several binary parts (FTN FileAttach)
          attachMIME );      // random combination of parts (MIME)
 
-var ntused : array[eNetz] of integer; //[eNetz]?
+var ntused : array[nt_Netcall..nt_99] of integer; //[eNetz]?
 
 function ntZConnect(nt:eNetz):boolean;         { Ablagentyp ermitteln  }
 function ntConv(nt:eNetz):boolean;             { konvertiertes Format  }
@@ -226,7 +226,8 @@ function ntValidAddress(nt:byte;const addr:string):boolean;
 function ntNormalizeAddress(nt:byte;var addr:string):boolean;
 *)
 
-function  dbNetztyp(d: DB):eNetz;
+function  dbNetztyp(d: DB): eNetz;
+function  dbNetzMsg(d: DB): RNetzMsg;
 
 implementation  { ---------------------------------------------------- }
 
@@ -256,6 +257,10 @@ begin
   Result := eNetz(dbReadInt(d,'netztyp'));
 end;
 
+function  dbNetzMsg(d: DB): RNetzMsg;
+begin
+  Result := RNetzMsg(dbReadInt(d,'netztyp'));
+end;
 
 function ntBinary(nt:eNetz):boolean;
 begin
@@ -861,6 +866,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.52  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.51  2002/12/13 14:31:15  dodi
   - introduced new types
 

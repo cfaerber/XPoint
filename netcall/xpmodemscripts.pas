@@ -550,6 +550,7 @@ var ip   : integer;
         3 : doit:=online;
         4 : doit:=not online;
         5 : doit:=relogin;
+        else  doit := False;
       end;
       if doit then begin
         case command of
@@ -669,6 +670,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/12/14 07:31:45  dodi
+  - using new types
+
   Revision 1.10  2002/12/07 04:41:49  dodi
   remove merged include files
 

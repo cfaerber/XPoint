@@ -1053,14 +1053,14 @@ restart:
     if suchfeld='#' then begin   {Lister-Dummysuche}
       check_seekmode; 
       CloseBox;
+      suche:=false;
       exit;
       end;
 
     if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
-      suche:=false;
       if not brk then begin
         if not holdmarked then Marked.Clear;
-        check_seekmode; 
+        check_seekmode;
         for i:=0 to suchanz-1 do
         begin
           seek:=copy(suchstring,seekstart[i],seeklen[i]);
@@ -1076,7 +1076,7 @@ restart:
     else begin
       {if spez then sst:=txt;  } { Bei Spezialsuche nur im Volltext... }
       if brk then goto ende;
-      
+
       if history_changed then begin
         history_changed:=false;
         closebox;
@@ -1087,7 +1087,7 @@ restart:
       if brk then begin
         closebox;
         goto restart;
-        end;         
+        end;
 
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
       if (aktdispmode<>11) and not holdmarked then Marked.Clear;
@@ -1344,16 +1344,21 @@ var x,y,xx  : Integer;
     mon;
   end;
 
+const
+  _user12: array[boolean] of integer = (2,1);
+  _user34: array[boolean] of integer = (4,3);
 begin
   typ:=getres2(445,iif(user,1,2));     { 'User' / 'Bretter' }
 
-  if auto then 
+  if auto then
     brk := false
-  else  
-  if not adrbuch then
-    ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)   { 'Beim Loeschen von '+typ+'n nachfragen' }
   else
-    ask:=ReadJNesc(getres2(445,5),false,brk);   { 'Beim Austragen von Usern nachfragen' }
+  if not adrbuch then
+  { 'Beim Loeschen von '+typ+'n nachfragen' }
+    n := _user34[user] //ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)
+  else
+    n := 5; { 'Beim Austragen von Usern nachfragen' }
+  ask:=ReadJNesc(getres2(445,n),not adrbuch,brk);
   if not brk then begin
     if user then begin
       d:=ubase; nfeld:=ub_username; end
@@ -1379,9 +1384,9 @@ begin
       dbSetindex(d,1);
       dbGoTop(d);
       end;
-    if user then brettc:='U';
+    brettc:='U';
     null:=0;
-    while not (dbEOF(d) or brk) do 
+    while not (dbEOF(d) or brk) do
     begin
       inc(n);
       if not user then
@@ -2342,16 +2347,21 @@ end;
 
 { User-/Brettliste exportieren }
 
+{ These "functions" are used as testfunc.
+  What should be the default result?
+}
 function Bool_BrettGruppe(var s:string):boolean;
 begin
-  if s=_jn_[2] then exit;
-  setfield(2,_jn_[2]);
+  Result := s<>_jn_[2];
+  if Result then
+    setfield(2,_jn_[2]);
 end;
 
 function Bool_Brettindex(var s:string):boolean;
 begin
-  if s=_jn_[2] then exit;
-  setfield(1,_jn_[2]);
+  Result := s<>_jn_[2];
+  if Result then
+    setfield(1,_jn_[2]);
 end;
 
 procedure ExportUB(user:boolean);
@@ -2392,7 +2402,7 @@ label ende;
     dialog(50,5,getres2(457,2),x1,y1);        { 'Brettliste erzeugen' }
     maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen sortieren'}
     MSet1Func(bool_brettgruppe);
-    maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus Bretübersicht beibehalten'}
+    maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus Brettuebersicht beibehalten'}
     MSet1Func(bool_brettindex);
     maddbool(2,5,getres2(457,4),exkom);       { 'auch Kommentare exportieren' }
     readmask(brk);
@@ -3369,7 +3379,6 @@ var   x,y     : Integer;
       brk     : boolean;
       nn,n,nf : longint;
       suchst, bname   : string;
-      spos    : longint;
       rec     : longint;
       m1,m2,j : longint;
       found, found_not : boolean;
@@ -3408,17 +3417,14 @@ begin
       if m2<m1 then
       begin
         m1:=m2;
-        spos:=dbRecno(bbase);
+        rec:=dbRecno(bbase);
       end;
       inc(nf);
     end;
     dbNext(bbase);
     if n mod 16=0 then testbrk(brk);
   end;
-  if m1=maxlongint then
-    dbGo(bbase,rec)
-  else
-    dbGo(bbase,spos);
+  dbGo(bbase,rec);
   aufbau:=true;
   closebox;
   if not brk and (nf=0) then fehler(getres2(467,6));  { 'keine passenden User gefunden' }
@@ -3437,7 +3443,6 @@ var   x,y     : Integer;
       nn,n,nf : longint;
       uname,
       sname   : string;
-      spos    : longint;
       rec     : longint;
       mi,j    : shortint;
       found, found_not : boolean;
@@ -3454,8 +3459,7 @@ begin
   mi:=dbGetIndex(ubase); dbSetIndex(ubase,0);
   dbGoTop(ubase);
   attrtxt(col.coldiahigh);
-  while not dbEOF(ubase) and not brk do
-  begin
+  while not dbEOF(ubase) and not brk do begin
     inc(n);
     FWrt(x+13, y+4, Format('%3d', [n*100 div nn]));
     FWrt(x+35, y+4, Format('%4d', [nf]));
@@ -3470,15 +3474,13 @@ begin
       inc(j);
     until (j=suchanz) or (suchand xor found) or found_not;
     if found_not then found:=false;
-    if found then
-    begin
+    if found then begin
       UBAddmark(dbRecno(ubase));
       if not allmode and (dbReadInt(ubase,'adrbuch')=0) then
         UserMarkSuche:=true;
-      if uname<sname then
-      begin
+      if uname<sname then begin
         sname:=uname;
-        spos:=dbRecno(ubase);
+        rec:=dbRecno(ubase);
       end;
       inc(nf);
     end;
@@ -3486,10 +3488,7 @@ begin
     if n mod 16=0 then testbrk(brk);
   end;
   dbSetIndex(ubase,mi);
-  if sname<>#255 then  // irgnore warning, sname is correctly initialized
-    dbGo(ubase,spos)
-  else
-    dbGo(ubase,rec);
+  dbGo(ubase,rec);
   aufbau:=true;
   closebox;
   if not brk and (nf=0) then fehler(getres2(467,4));  { 'keine passenden User gefunden' }
@@ -3520,12 +3519,12 @@ end;
 
 
 procedure NtInfo;
-var mnt : longint;
+var mnt : eNetz;  //longint;
     nts : string;
 begin
-  dbReadN(mbase,mb_netztyp,mnt);
-  nts:=' ('+ntName(mnt and $ff)+')';
-  message(getres(469)+strs(mnt and $ff)+nts);   { 'Netztyp: ' }
+  mnt := dbNetztyp(mbase);  //dbReadN(mbase,mb_netztyp,mnt);
+  nts:=' ('+ntName(mnt)+')';
+  message(getres(469)+strs(ord(mnt))+nts);   { 'Netztyp: ' }
   wait(curoff);
   closebox;
 end;
@@ -3739,6 +3738,9 @@ end;
 
 {
   $Log$
+  Revision 1.151  2002/12/14 07:31:34  dodi
+  - using new types
+
   Revision 1.150  2002/12/12 11:58:46  dodi
   - set $WRITEABLECONT OFF
 

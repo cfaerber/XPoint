@@ -693,7 +693,7 @@ end;
 
 function KK:boolean;
 begin
-  KK:=ntKomkette(dbReadInt(mbase,'netztyp')and $ff) and
+  KK:=ntKomkette(dbNetztyp(mbase)) and
      (dbReadStrN(mbase,mb_msgid)<>'');
 end;
 
@@ -988,8 +988,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
       exepath,
       batfile : string;
       et      : TExeType;
-      win,os2,
-      winnt   : boolean;
+      win,os2 : boolean;
       t       : text;
   begin
     PrepareExe:=0;
@@ -1007,7 +1006,6 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
   {$ELSE }
     os2 := false;
   {$ENDIF }
-    winnt:=win and (LowerCase(getenv('OS'))='windows_nt');
 
     if win then begin
 
@@ -1067,6 +1065,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2002/12/14 07:31:30  dodi
+  - using new types
+
   Revision 1.115  2002/12/12 11:58:43  dodi
   - set $WRITEABLECONT OFF
 

@@ -206,7 +206,7 @@ begin
   dbopen (d, BoxenFile, 0);     { eigene Adressen aus Boxenkonfigurationen auslesen }
   while not dbEof (d) do
   begin
-    if ntReplyToAll (dbReadInt (d, 'netztyp')) then { nur ZConnect und RFC/* }
+    if ntReplyToAll (dbNetztyp(d)) then { nur ZConnect und RFC/* }
     begin                                           { Boxen beruecksichtigen  }
       Username := dbReadStr (d, 'username');
       PointName := dbReadStr (d, 'pointname');
@@ -215,7 +215,7 @@ begin
       Domain := dbReadStr (d, 'domain');
       Box := dbReadStr (d, 'boxname');
       eMail := dbReadStr (d, 'email');
-      case ntDomainType (dbReadInt (d, 'netztyp')) of
+      case ntDomainType (dbNetztyp(d)) of
         5: adresse := username + '@' + iifs (aliaspt, pointname, box) + domain;
         6: if email <> '' then adresse := email
            else adresse := username + '@' +
@@ -989,6 +989,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2002/12/14 07:31:28  dodi
+  - using new types
+
   Revision 1.32  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

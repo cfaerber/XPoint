@@ -57,13 +57,16 @@ type
 implementation
 
 
-end.
+end
 
 {
 	$Log$
+	Revision 1.5  2002/12/14 07:31:28  dodi
+	- using new types
+
 	Revision 1.4  2002/12/06 14:27:27  dodi
 	- updated uses, comments and todos
-
+	
 	Revision 1.3  2001/09/10 15:58:01  ml
 	- Kylix-compatibility (xpdefines written small)
 	- removed div. hints and warnings
@@ -77,4 +80,4 @@ end.
 	
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
-}
+}.

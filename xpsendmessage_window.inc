@@ -83,6 +83,7 @@ var
       setfieldnodisp(F+3,    show_grp);
 
 //    settexttext(AddrText[2,i],iifs(show_grp_stop,';',' '));
+      {$IFDEF ANALYSE} assert(show_grp_stop);{$ENDIF} //prevent hint "never used"
     end else
     begin
       setfield(f+0,'');
@@ -527,9 +528,7 @@ var
       with List.AddNew do 
       begin
         Assign(EmpfList[i]);
-        if(EmpfList[i].Group<0) then 
-          LG := -1
-        else begin
+        if EmpfList[i].Group>=0 then begin
           if (EmpfList[i].Group<>LG) then
             LG := List.GroupNames.Add(EmpfList.GroupNames[EmpfList[i].Group]);
           Group  := LG;
@@ -537,7 +536,7 @@ var
         LG := Group;
       end;
     end;
-    
+
     List.AddNew.Group := -1;
   end;
 
@@ -906,7 +905,7 @@ var Index: integer;
   procedure PM(email: TEmailAddress);
   var UFlags:   Integer;        // User flags
       UName:    string;         // Upper case name
-      Size:     Longint;       
+      Size:     Longint;
       D:        DB;
   label
       NoDB, BoxAgain;
@@ -914,7 +913,7 @@ var Index: integer;
     function PMEdit: boolean;
     var user,adresse,komm,pollbox,real,oreal: string;
         halten: Integer16;
-        adr,flags,b: byte;        
+        adr,flags,b: byte;
         brk: boolean;
     begin
       user    := EMail.XPAddress;
@@ -946,7 +945,7 @@ var Index: integer;
        dbSeek(ubase,uiName,UpperCase(user));
        if dbFound then
          rfehler(2703)    { 'Dieser User ist bereits vorhanden!' }
-       else 
+       else
        begin
          dbAppend(ubase);
          dbWriteNStr(ubase,ub_username,LeftStr(user,80));
@@ -967,23 +966,21 @@ var Index: integer;
     end;
 
   begin
-  
+
     UName := UpperCase(LeftStr(email.XPAddress,80));
 
     dbSeek(ubase,uiName,UName);
-    if dbFound then
+    if dbFound then begin
   // -- Empfänger bekannt ----------------------------------------------
-    begin
       UFlags := dbReadInt(ubase,'userflags');
 //    if(UFlags and 16)<>0 then flEB:=true;
 
-      if (dbXsize(ubase,'adresse')<>0) then 
-      begin
+      if (dbXsize(ubase,'adresse')<>0) then begin
         List[Index].ZCAddress := dbReadXStr(ubase,'adresse',size);
         if UpperCase(LeftStr(List[Index].XPAddress,80))<>UName then
           exit;                                // Gleiche Addresse nochmal
       end;
-      
+
 //    dbReadN(ubase,ub_codierer,cancode);
 //    if (not (cancode in [8,9])) and (dbXsize(ubase,'passwort')=0) then
 //      cancode:=0
@@ -996,29 +993,24 @@ var Index: integer;
 
       List[Index].BoxName := dbReadStrN(ubase,ub_pollbox);
 
-    end else
+    end else begin
   // -- Empfänger unbekannt --------------------------------------------
-    begin
+      UFlags := 0;  //default?
     // -- Benutzer fragen ----------------------------------------------
-      if prompt and (not List[Index].NewUser) then
-      begin
+      if prompt and (not List[Index].NewUser) then begin
         if not PMEdit then
           List.Delete(Index);
         exit;                                // Gleicher Eintrag nochmal
-      end else
-
+      end else if autoadd then begin
     // -- Einfach anlegen ----------------------------------------------
-      if autoadd then    
-      begin
         if List[Index].BoxName='' then
           List[Index].BoxName := DefaultBox;
         AddNewUser(List[Index].XPAddress,List[Index].BoxName);
-      end else
-
+        //UFlags := ???
+      end else begin
     // -- Nicht in der DB ----------------------------------------------
-      begin
         List[Index].NewUser := true;
-        UFlags  := iif(NewUserIBM,0,8); { NewUserIBM beruecksichtigen }
+        if not NewUserIBM then UFlags := 8; { NewUserIBM beruecksichtigen }
         List[Index].NewUser := true;
         Goto NoDB;
       end;
@@ -1026,9 +1018,9 @@ var Index: integer;
 
     List[Index].NewUser := false;
   NoDB:
-  
+
   BoxAgain:
-    if List[Index].BoxName<>'' then 
+    if List[Index].BoxName<>'' then
     begin
       dbOpen(d,BoxenFile,1);
       dbSeek(d,boiName,Uppercase(List[Index].BoxName));
@@ -1047,11 +1039,11 @@ var Index: integer;
           goto BoxAgain;
         end else
           List[Index].BoxName := '';
-      end else 
+      end else
       begin
         List[Index].BoxName := dbReadStr(d,'boxname');       { Schreibweise korrigieren }
-        List[Index].Netztyp := dbReadInt(d,'netztyp');
-        if assigned(sData) then sData.Boxen.Add(Chr(List[Index].Netztyp)+List[Index].Boxname);
+        List[Index].Netztyp := dbNetztyp(d);
+        if assigned(sData) then sData.Boxen.Add(Chr(ord(List[Index].Netztyp))+List[Index].Boxname);
       end;
       dbClose(d);
     end else
@@ -1063,14 +1055,14 @@ var Index: integer;
 
     // -- Für alle Empfänger: Zeichensätze -----------------------------
 
-    List[Index].Kopf         := HeaderPriv; 
+    List[Index].Kopf         := HeaderPriv;
     List[Index].Signatur     := PrivSignat;
 
     if (UFlags and 8)<>0 then
       List[Index].Charsets.CommaText := ''
     else
       if List[Index].Netztyp in netsRFC then
-        List[Index].Charsets.CommaText := 'ISO-8859-1,ISO-8859-15,UTF-8' else 
+        List[Index].Charsets.CommaText := 'ISO-8859-1,ISO-8859-15,UTF-8' else
       if List[Index].Netztyp in [nt_ZConnect] then
         List[Index].Charsets.CommaText := iifs(ZC_ISO,'ISO-8859-1','IBM437') else
       if List[Index].Netztyp in netsFTN then
@@ -1147,7 +1139,7 @@ var Index: integer;
   // -- Box suchen -----------------------------------------------------
   
   BoxAgain:
-    if List[Index].BoxName<>'' then 
+    if List[Index].BoxName<>'' then
     begin
       dbOpen(d,BoxenFile,1);
       dbSeek(d,boiName,Uppercase(List[Index].BoxName));
@@ -1169,9 +1161,9 @@ var Index: integer;
       end else 
       begin
         List[Index].BoxName := dbReadStr(d,'boxname');       { Schreibweise korrigieren }
-        List[Index].Netztyp := dbReadInt(d,'netztyp');
+        List[Index].Netztyp := dbNetztyp(d);
 
-        if assigned(sData) then sData.Boxen.Add(Chr(List[Index].Netztyp)+List[Index].Boxname);
+        if assigned(sData) then sData.Boxen.Add(Chr(ord(List[Index].Netztyp))+List[Index].Boxname);
       end;
       dbClose(d);
     end;
@@ -1247,6 +1239,9 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2002/12/14 07:31:40  dodi
+// - using new types
+//
 // Revision 1.2  2002/12/12 11:58:52  dodi
 // - set $WRITEABLECONT OFF
 //

@@ -426,6 +426,11 @@ begin
   freemem(p, ps);
 end;
 
+
+var //eliminate "var not initialized" warning by using static variables
+  oldtcs: TMIMECharsets;
+  oldlcs: TMIMECharsets;
+
 function TLister.Show: Boolean;
 var
   DispLines: Integer; // Screenlines to Display (List.Height - Statusline)
@@ -450,9 +455,6 @@ var
   mausdown: boolean;                    { Maus innerhalb des Fensters gedrueckt }
   oldmark : boolean;
   oldselb : boolean;
-
-  oldtcs: TMIMECharsets;
-  oldlcs: TMIMECharsets;
 
   procedure showstat;
   begin
@@ -1148,6 +1150,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.74  2002/12/14 07:31:27  dodi
+  - using new types
+
   Revision 1.73  2002/12/12 11:58:40  dodi
   - set $WRITEABLECONT OFF
 

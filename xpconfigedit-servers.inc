@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-  procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn, email,
+  procedure NameRead(nt:eNetz; var name,user,komm,maps,realname,domain,fqdn, email,
                      bdomain,fidoname:string; WindowHeadline:atext; var brk:boolean);
   var x,y  : Integer;
       real : boolean;
@@ -106,7 +106,7 @@
       inc(yy,2);
       end
     else
-      bDomainNt:=0;
+      bDomainNt:=nt_Netcall;
     if nt=nt_uucp then               { RFC/UUCP eMail-Adresse vereinfacht }
     begin
       maddstring(3,yy,getres2(912,12),email,30,eAdrLen,''); mhnr(30001);
@@ -154,7 +154,7 @@
   end;
 
   // 'Namen' fuer die Internet-Boxentypen
-  procedure InetNameRead(nt:byte; var boxname,email,komm,realname,replyto,fqdn:string;
+  procedure InetNameRead(nt:eNetz; var boxname,email,komm,realname,replyto,fqdn:string;
     const WindowHeadline: string; var brk:boolean);
   var x,y, bLen  : Integer;
   begin
@@ -184,7 +184,7 @@
   end;
 
 
-  procedure ReadNetztyp(const box:string; var nt:byte; var brk:boolean);
+  procedure ReadNetztyp(const box:string; var nt:eNetz; var brk:boolean);
   var x,y  : Integer;
       ntyp : string;
       i    : integer;
@@ -279,7 +279,8 @@
     email, name, dname, replyto, user, komm, maps, real, dom, fqdom, bdom, fido: String;
       brk  : boolean;
       fn   : string;
-      nt,i : byte;
+      nt: eNetz;
+      i : byte;
       b    : byte;
       pc,pp,ps,cldup,clphn,cllog,clpas : string;
 
@@ -287,11 +288,11 @@
   begin
     dbGo(d,drec[p]);
     fn := dbReadStr(d,'dateiname');
-    ReadBox(0, fn, boxpar);
+    ReadBox(nt_Netcall, fn, boxpar);
     if empty then
       nt:=nt_Client
-    else 
-      dbRead(d,'netztyp',nt);
+    else
+      nt := dbNetztyp(d);
     ReadNetztyp(getres(914),nt,brk); 
     if brk then exit;   { 'neue Box' }
     
@@ -495,7 +496,7 @@
       pp:=_filesize(ownpath+dname+extBoxFile)>0;
       if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich loeschen' }
       then begin
-        dec(ntused[dbReadInt(d,'netztyp')]);
+        dec(ntused[dbNetztyp(d)]);
         dbDelete(d);
         dbFlushClose(d);
         if FileExists(ownpath + dname + extBfg) then     { .BFG loeschen }
@@ -522,21 +523,20 @@
   end;
 
   procedure SetDefaultBox;
-  var nn : shortint;  // = 1; static or dynamic initialization?
+  //var nn : shortint;  // = 1; static or dynamic initialization?
   var name : string;
       n    : shortint;
   begin
     dbGo(d,drec[p]);
     pushhp(78);
-    nn := 1;  //required?
-    n:=MiniSel(x+10,min(y+p+1,screenlines-4),'',getres(918),nn);  { '^Stammbox,^Fido-Stammbox' }
+    n:=MiniSel(x+10,min(y+p+1,screenlines-4),'',getres(918),SDB_nn);  { '^Stammbox,^Fido-Stammbox' }
     pophp;
-    if n<>0 then nn:=abs(n);
+    if n<>0 then SDB_nn:=abs(n);
     if n>0 then begin
       name:= dbReadStr(d,'boxname');
       if n=1 then DefaultBox:=name
       else begin
-        if dbReadInt(d,'netztyp')<>nt_Fido then begin
+        if dbNetztyp(d)<>nt_Fido then begin
           rfehler(923);     { 'Die gewaehlte Box ist keine Fido-Box!' }
           exit;
           end;
@@ -563,7 +563,7 @@
       kompname:=dbReadStr(d,'username')+' @ '+dbReadStr(d,'boxname')
   end;
 
-  procedure EditPointdaten(nt:byte; var brk:boolean);
+  procedure EditPointdaten(nt:eNetz; var brk:boolean);
   var x,y,FieldW : Integer;
       pname  : string;
       lhapar : string;
@@ -1008,7 +1008,7 @@
   end;
 
 
-  procedure EditTransport(nt:byte; var brk:boolean);
+  procedure EditTransport(nt:eNetz; var brk:boolean);
   const ServersMax = 20;        { max. Größe des Arrays 'ServersList' }
         ServersDat = 'SERVERS.DAT'; { Datei für POP3/SMTP/NNTP-Server }
   var   x,y,j                : integer;
@@ -1170,7 +1170,7 @@
       end;
     end;
 
-  procedure EditModemdaten(nt:byte; var brk:boolean);
+  procedure EditModemdaten(nt:eNetz; var brk:boolean);
   var x,y,add  : Integer;
       schnitte : string;
       fido     : boolean;
@@ -1326,7 +1326,7 @@
       realname, email : String;
       dom,bdom,fqdom  : string;
       maps            : string;
-      nt              : byte;
+      nt              : eNetz;
       newbox,newibox  : boolean;
       fidoname        : string;
   begin
@@ -1412,7 +1412,7 @@
       dname,old_dname : string;
       realname,replyto: string;
       fqdom,komm      : string;
-      nt              : byte;
+      nt              : eNetz;
       newbox,newibox  : boolean;
 
     procedure renbox(const ext:string);
@@ -1488,7 +1488,7 @@
   end;
 
 
-  procedure EditSysopdaten(nt:byte; var brk:boolean);
+  procedure EditSysopdaten(nt:eNetz; var brk:boolean);
   var x,y   : integer;
       flags : byte;
       nobox : boolean;
@@ -1597,7 +1597,7 @@
       end;
   end;
 
-  procedure EditDiverses(nt:byte; var brk:boolean);
+  procedure EditDiverses(nt:eNetz; var brk:boolean);
   var x,y,i : Integer;
       flags : byte;
       nall  : boolean;
@@ -1670,7 +1670,7 @@
       end;
   end;
 
-  procedure EditNNTPMisc(nt:byte; var brk:boolean);
+  procedure EditNNTPMisc(nt:eNetz; var brk:boolean);
   var x,y,i : Integer;
       flags : byte;
       nall  : boolean;
@@ -1738,7 +1738,7 @@
       mids   : boolean;
       replyto: string;
       maps   : string;
-      nt     : byte;
+      nt     : eNetz;
       _nname : boolean;   { Netzname }
       _alias : boolean;
       _mids  : boolean;
@@ -2131,7 +2131,7 @@
       fn  : string;
       bn  : string;
       brk : boolean;
-      nt  : byte;
+      nt  : eNetz;
       nts : string;
   begin
     dbGo(d,drec[p]);
@@ -2299,8 +2299,8 @@
 
   procedure EditNetztyp;
   var brk : boolean;
-      nt  : byte;
-      nt1 : byte;
+      nt  : eNetz;
+      nt1 : eNetz;
       x,y : Integer;
       box : string;
       fn: String;
@@ -2356,7 +2356,7 @@
       Box := dbReadStr(d,'boxname');
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
-         ReadJN(getreps2(929,5,box),true) then 
+         ReadJN(getreps2(929,5,box),true) then
       begin { 'Moechten Sie den Netztyp fuer %s wirklich aendern' }
         WriteBox(fn,BoxPar);
         dbWrite(d,'netztyp',nt);
@@ -2375,6 +2375,9 @@
 
 {
   $Log$
+  Revision 1.65  2002/12/14 07:31:37  dodi
+  - using new types
+
   Revision 1.64  2002/12/12 11:58:49  dodi
   - set $WRITEABLECONT OFF
 

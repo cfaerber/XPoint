@@ -676,7 +676,7 @@ var
     i          : integer;
 
     connects   : integer;         { Zaehler 0..connectmax }
-    netztyp    : byte;
+    netztyp    : eNetz;
 
     ldummy     : longint;
     NumCount   : byte;            { Anzahl Telefonnummern der Box }
@@ -1128,7 +1128,7 @@ begin                  { function Netcall }
       end;
 
       else
-        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(netztyp),DLError);
+        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(ord(netztyp)),DLError);
         trfehler(799,30); { 'Funktion nicht implementiert' }
       end; {case netztyp}
 
@@ -1276,7 +1276,7 @@ begin
     BoxName:=UniSel(1,false,DefaultBox);         { zu pollende BoxName abfragen }
     if BoxName='' then exit;
     end;
-  ReadBoxPar(0,BoxName);
+  ReadBoxPar(nt_Netcall,BoxName);
   b:=exclude_time;
   if b=0 then
     if netcall(true,BoxName,false,false,false) then
@@ -1386,6 +1386,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2002/12/14 07:31:45  dodi
+  - using new types
+
   Revision 1.63  2002/12/12 11:58:56  dodi
   - set $WRITEABLECONT OFF
 

@@ -568,15 +568,14 @@ begin
     inc(hds,bufpos);
     if hdfound[stdhdindex[1]]=0 then
       ok:=false                           { kein LEN: }
-    else
-    begin
+    else begin
       stdh:=0;
       for i:=1 to stdhdlines do
         if hdfound[stdhdindex[i]]>0 then
           inc(stdh);
-      end;
       if stdh<minstdh then ok:=false;
     end;
+  end;
 end;
 
 
@@ -736,12 +735,10 @@ var i,j  : integer;
       if (zone[1]<>'S') and (zone[1]<>'W') then zone[1]:='W';
       if (zone[2]<>'+') and (zone[2]<>'-') then zone[2]:='+';
       p:=cpos(':',zone);
-      if p=0 then
-      begin
-        val(mid(zone,3),zh,res);
-        if res<>0 then zone:=LeftStr(zone,2)+'0';
-      end
-      else begin
+      if p=0 then begin
+        if not IsIntVal(mid(zone,3)) then
+          zone:=LeftStr(zone,2)+'0';
+      end else begin
         val(copy(zone,3,p-3),zh,res);
         val(mid(zone,p+1),zm,res2);
         if res+res2<>0 then
@@ -866,11 +863,8 @@ var i,j  : integer;
   end;
 
   procedure PrioCheck;                   { PRIO ÅberprÅfen }
-  var res : integer;
-      l   : longint;
   begin
-    val(cont,l,res);
-    if res<>0 then begin
+    if not IsIntVal(cont) then begin
       wr('PRIO '+ww+'korrigiert',true);
       wrehd(i);
       with hd0 do
@@ -1275,6 +1269,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/12/14 07:31:42  dodi
+  - using new types
+
   Revision 1.52  2002/12/12 11:58:54  dodi
   - set $WRITEABLECONT OFF
 

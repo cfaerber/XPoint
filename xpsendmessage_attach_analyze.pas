@@ -26,18 +26,19 @@ unit xpsendmessage_attach_analyze;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  mime, mime_analyze, xpsendmessage_attach, classes;
+  mime, mime_analyze, xpsendmessage_attach, classes, xpnt;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:Byte;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
 function  GuessContentTypeFromFileName(FileName:String):String;
 
 { ------------------------} implementation { ------------------------- }
 
 uses
+  sysutils, //Systemunits bitte immer zuerst aufzählen!
   {$IFDEF unix} xpcurses, {$ENDIF}
   {$IFDEF Win32} windows, {$ENDIF}
-  database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
-  sysutils, xpstreams;
+  database, inout, keys, lister, typeform, xp0, xpstreams,
+  xpglobal; //sollte immer am Ende stehen
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;
@@ -88,7 +89,7 @@ begin
 {$ENDIF}
 end;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:Byte;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
 var data: TStream;
     GuessedType: String;
 begin

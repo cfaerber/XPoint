@@ -75,13 +75,13 @@ uses
 var mapsbox : string = '';
 
 var mapsname : string;
-    mapsnt   : byte;
+    mapsnt   : eNetz;
     mapsart  : byte;
 
 
 function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
 var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
-    nt : byte;                       { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
+    nt : eNetz;                      { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
 begin                                { 13=Feeder, 14=postmaster, 15=online, 16=client  }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
@@ -89,7 +89,7 @@ begin                                { 13=Feeder, 14=postmaster, 15=online, 16=c
     mapstype:=0
   else begin
     mapsname:= dbReadStr(d,'nameomaps');     { muss vor MAF-Test stehen !! }
-    dbRead(d,'netztyp',nt);
+    nt := dbNetztyp(d);
     if ntMAF(nt) then
       mapstype:=2
     else if ntNude(nt) then
@@ -138,7 +138,7 @@ procedure SendMaps(bef:string; var box,datei:string);
 var
     hf : string;
     mt : byte;
-    nt : byte;
+    nt : eNetz;
  sdata : TSendUUData;
 
   procedure AreaBef;
@@ -171,7 +171,7 @@ var
       tn    : string;
       s     : string;
   begin
-    ReadBoxpar(0,box);
+    ReadBoxpar(nt_Netcall,box);
     if (bef='ADD') or (bef='DEL') then begin
       tn:=TempS(_filesize(datei)*2);
       assign(t1,datei); reset(t1);
@@ -341,7 +341,7 @@ var
       d     : DB;
       domain: string;
   begin
-    ReadBoxpar(0,box);
+    ReadBoxpar(nt_Netcall,box);
     tn:=TempS(_filesize(datei)*2);
     assign(t1,datei); reset(t1);
     assign(t2,tn); rewrite(t2);
@@ -458,7 +458,7 @@ function Get_BL_Name(const box:string):string;
 var
   s1: string;
 begin
-  ReadBox(0,box,boxpar);
+  ReadBox(nt_Netcall,box,boxpar);
   s1:= GetServerFilename(box, '');
   if not FileExists(s1+extBl) then                     { Brettliste im XP-Verzeichnis }
     s1 := Boxpar^.ClientPath+s1;
@@ -485,7 +485,7 @@ label makercend;
 begin
   moment;
   MakeRc:=true;
-  ReadBox(0, GetServerFilename(Box, ''),boxpar);
+  ReadBox(nt_Netcall, GetServerFilename(Box, ''),boxpar);
   rcfile:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, extRc);
   blfile:=Get_BL_Name(box);
   if not FileExists(blfile) then
@@ -676,7 +676,6 @@ var fGroupsToUnsubscribe: Text;
     sBLFileName,s1,s2: string;
     brk: boolean;
     List: TLister;
-    p: Cardinal;
 begin
   sBLFileName:=Get_BL_Name(box);
   if not fileExists(sBLFileName) then
@@ -723,7 +722,7 @@ var t1    : text;
     List: TLister;
 begin
 
-  ReadBox(0,box,boxpar);
+  ReadBox(nt_Netcall,box,boxpar);
   s1:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, extRc);
   Assign(t1,s1);       { BOX.RC }
   if not (FileExists(s1)) then
@@ -927,6 +926,8 @@ var t     : text;
       end;
   end;
 
+var
+  nt: eNetz;
 begin
   if brett='' then
     if bmarkanz=0 then
@@ -945,12 +946,14 @@ begin
       box:= dbReadStrN(bbase,bb_pollbox);
       if box='' then begin
         rfehler(802);   { 'Dieses Brett hat keine Serverbox!' }
-        exit; end;
+        exit;
+      end;
       if not IsBox(box) then begin
         rfehler1(803,box);   { 'Unbekannte Serverbox: %s' }
-        exit; end;
-      if not BoxHasMaps(box) then exit;
+        exit;
       end;
+      if not BoxHasMaps(box) then exit;
+    end;
     new(map);
     fn:=TempS(10000);
     assign(t,fn);
@@ -974,21 +977,17 @@ begin
       rewrite(t);
       if quick or (uucp and postmaster) then
         wr_btext(t,true,uucp);
-      if maus or fido or qwk then
-      begin
-        ReadBoxPar(0,box);
-        if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett)
-        then
+      if maus or fido or qwk then begin
+        ReadBoxPar(nt_Netcall,box);
+        if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett) then
           if qwk then begin
             bfile:=GetServerFilename(box, '');
             write(t,'DROP ',qwkbrett(brett),#13#10);
-            end
-          else begin
+          end else begin
             if fido then write(t,'-');
             write(t,mid(brett,length(boxpar^.magicbrett)+2),#13#10);
-            end;
-        end
-      else if not maf then
+          end;
+      end else if not maf then
         if gs then write(t,copy(brett,3,brettlen),#13#10)
         else if uucp then write(t,newsgroup(brett),#13#10)
         else write(t,copy(brett,2,brettlen),#13#10)
@@ -999,48 +998,48 @@ begin
           bfile:= dbReadStr(d,'dateiname');
           ReadBrettliste;
           write(t,brettcode(copy(brett,2,40)),#13#10);
-          end;
-        dbClose(d);
         end;
+        dbClose(d);
+      end;
       if fido then
         write(t,'---',#13#10);
       close(t);
-      if not rfc then 
+      if not rfc then
         SendMaps('DEL',box,fn)
-      else 
-      begin
+      else begin
         rewrite(t);
         write(t,newsgroup(brett),#13#10);
         close(t);
         File_Abbestellen(box,fn);
       end;
-    end
-    else begin   { mehrere markierte Bretter }
+    end else begin   { mehrere markierte Bretter }
       dbOpen(d,OwnPath+BoxenFile,1);
+      topen:=false;
       while not dbEOF(d) do begin
-        topen:=false;
         box:=dbReadStr(d,'boxname');
-        maf:=ntMAF(dbReadInt(d,'netztyp'));
-        quick:=ntQuickMaps(dbReadInt(d,'netztyp'));
-        maus:=ntNude(dbReadInt(d,'netztyp'));
-        fido:=ntAreaMgr(dbReadInt(d,'netztyp'));
-        gs:=(dbReadInt(d,'netztyp')=nt_GS);
-        uucp:=(dbReadInt(d,'netztyp')=nt_UUCP);
-        rfc:=(dbReadInt(d,'netztyp') in netsRFC)and(not uucp);
-        pronet:=(dbReadInt(d,'netztyp')=nt_Pronet);
-        qwk:=(dbReadInt(d,'netztyp')=nt_QWK);
+        nt := dbNetztyp(d);
+        maf:=ntMAF(nt);
+        quick:=ntQuickMaps(nt);
+        maus:=ntNude(nt);
+        fido:=ntAreaMgr(nt);
+        gs:= nt=nt_GS;
+        uucp:= nt=nt_UUCP;
+        rfc:= (nt in netsRFC)and(not uucp);
+        pronet:= nt=nt_Pronet;
+        qwk:= nt=nt_QWK;
         bfile:= dbReadStr(d,'dateiname');
         if maus or fido or qwk or uucp then
-          ReadBox(0,bfile,boxpar);
+          ReadBox(nt_Netcall,bfile,boxpar);
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
           if UpperCase(dbReadStrN(bbase,bb_pollbox))=UpperCase(box) then begin
             if not topen then begin
               rewrite(t);
+              topen:=true;
               if quick or (uucp and (boxpar^.BMtyp=bm_postmaster)) then
                 wr_btext(t,true,uucp);
               if maf or pronet then ReadBrettliste;
-              end;
+            end;
             Brett := dbReadNStr(bbase,bb_brettname);
             if maus or fido or qwk then begin
               if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=
@@ -1050,32 +1049,29 @@ begin
                 else begin
                   if fido then write(t,'-');
                   write(t,mid(brett,length(boxpar^.magicbrett)+2),#13#10);
-                  end;
-              end
-            else
-              if not (maf or pronet) then
-                if gs then write(t,copy(brett,3,brettlen),#13#10)
-                else if uucp or rfc then write(t,newsgroup(brett),#13#10)
-                else write(t,copy(brett,2,BrettLen),#13#10)
-              else write(t,brettcode(mid(brett,2)),#13#10);
-            topen:=true;
-            end;
+                end;
+            end else if not (maf or pronet) then
+              if gs then write(t,copy(brett,3,brettlen),#13#10)
+              else if uucp or rfc then write(t,newsgroup(brett),#13#10)
+              else write(t,copy(brett,2,BrettLen),#13#10)
+            else write(t,brettcode(mid(brett,2)),#13#10);
           end;
+        end;
         if topen then begin
           if fido then
             write(t,'---',#13#10);
           close(t);
+          topen:=false;
           if not rfc then SendMaps('DEL',box,fn)
             else File_Abbestellen(box,fn);
-          topen:=false;
-          end;
-        dbSkip(d,1);
         end;
-      dbClose(d);
+        dbSkip(d,1);
       end;
+      dbClose(d);
+    end;
     if existf(t) then erase(t);
     dispose(map);
-    end;
+  end;
 end;
 
 
@@ -1181,7 +1177,7 @@ begin
   bpsik:=boxpar;
   getmem(boxpar,sizeof(BoxRec));
   fillchar(boxpar^,sizeof(BoxRec),0);
-  ReadBox(0,bfile,boxpar);
+  ReadBox(nt_Netcall,bfile,boxpar);
   if mapstype(box) in [2,8] then begin
     message('Brettliste fuer '+UpperCase(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
@@ -1240,7 +1236,7 @@ begin
   dbSeek(d,boiName,UpperCase(box));
   bfile:= dbReadStr(d,'dateiname');
   dbClose(d);
-  ReadBox(0,bfile,boxpar);
+  ReadBox(nt_Netcall,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
   if maggi then
     if not ReadMafList(fn,bfile) then exit
@@ -1333,7 +1329,7 @@ var d      : DB;
     t      : text;
     s      : string;
     anz    : longint;
-    netztyp: byte;
+    netztyp: eNetz;
     maf    : boolean;
     promaf : boolean;
     quick  : boolean;
@@ -1585,7 +1581,7 @@ begin
   if dbFound then
   begin
     fn:= dbReadStr(d,'dateiname');
-    netztyp:=dbReadInt(d,'netztyp');
+    netztyp:=dbNetztyp(d);
     mapsname:= dbReadStr(d,'nameomaps');
     maf:=ntMAF(netztyp);
     promaf:=ntProMAF(netztyp);
@@ -1606,7 +1602,7 @@ begin
     fn:='';
     maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
     uucp:=false; promaf:=false; qwk:=false; postmaster:=false; 
-    netztyp:=0;
+    netztyp:=nt_Netcall;
     end;
   dbClose(d);
   if fn='' then
@@ -1738,7 +1734,7 @@ var brk     : boolean;
     d       : DB;
     area    : boolean;
     request : boolean;
-    nt      : byte;
+    nt      : eNetz;
     maf     : boolean;
     maus    : boolean;
     nntp    : boolean;
@@ -1822,7 +1818,7 @@ var brk     : boolean;
       end;
     if gruppe<>'' then begin
       delete(gruppe,1,1);
-      ReadBoxPar(0,box);
+      ReadBoxPar(nt_Netcall,box);
       with BoxPar^ do
         if LeftStr(UpperCase(gruppe),length(MagicBrett))<>UpperCase(MagicBrett) then
           gruppe:=''
@@ -1849,13 +1845,15 @@ var brk     : boolean;
   end;
 
 begin
+  feeder := False;
+  autosys := False;
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   mapsname:= dbReadStr(d,'nameomaps');
-  dbRead(d,'netztyp',nt);
+  nt := dbNetztyp(d);
   domain:= dbReadStr(d,'domain');
   dbClose(d);
   maf:=ntMAF(nt);
@@ -2052,7 +2050,7 @@ begin
       end;
     if not brk then begin
       if Fido or uucp then begin
-        ReadBoxPar(0,box);
+        ReadBoxPar(nt_Netcall,box);
         if comm='Rescan' then begin
           mapsbox:=box;
           MapsBrettliste(4);
@@ -2766,9 +2764,9 @@ var leer : string;
     sdata: TSendUUData;
 begin
   leer:='';
-  sData.forcebox:=boxpar^.boxname;
 
   sData := TSendUUData.Create;
+  sData.forcebox:=boxpar^.boxname;
   sData.AddText(fn,false);
   sData.Subject := boxpar^.FilescanPW;
   sData.EmpfList.AddNew.ZCAddress := BoxPar^.filescanner+'@'+boxpar^.boxname;
@@ -2965,7 +2963,7 @@ begin
   else begin                            { markierte Bretter abbestellen }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
-      if dbReadInt(d,'netztyp')=nt_Fido then
+      if dbNetztyp(d)=nt_Fido then
       begin
         box:= UpperCase(dbReadStr(d,'boxname'));
         ReadBoxPar(nt_Fido,box);
@@ -3038,7 +3036,7 @@ begin
   useclip:=true;
   if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
   bfile := GetServerFilename(Box, '');
-  ReadBox(0,bfile,boxpar);
+  ReadBox(nt_Netcall,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fuer %s wird eingelesen ...' }
   Filecopy(fn, bfile + extFbl);
   Closebox;
@@ -3100,6 +3098,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2002/12/14 07:31:35  dodi
+  - using new types
+
   Revision 1.81  2002/12/12 11:58:48  dodi
   - set $WRITEABLECONT OFF
 

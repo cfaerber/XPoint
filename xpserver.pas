@@ -26,8 +26,8 @@
 
 { -------------------------- } interface { --------------------------- }
 
-uses 
-  datadef;
+uses
+  datadef, xpnt;
 
 type TXPServer = class
 
@@ -46,10 +46,10 @@ type TXPServer = class
     procedure LoadByName(const name: string);
     procedure LoadByFileName(const name: string);
 
-{ -- Properties ------------------------------------------------------ }    
+{ -- Properties ------------------------------------------------------ }
   private
   { -- Data from BOXEN.DB1 ------------------------------------------- }
-    F_Netztyp:   Byte;
+    F_Netztyp:   RNetzMsg;
   
     F_Name,     F_FileName,     F_Comment,      F_Username,
     F_Realname, F_Pointname,    F_Domain,       F_FQDN,
@@ -72,7 +72,8 @@ type TXPServer = class
     property Name:      String          read F_Name write F_Name;
     property FileName:  String  	read F_FileName write F_FileName;
     property Comment:   String  	read F_Comment write F_Comment;
-    property Netztyp:   Byte    	read F_Netztyp write F_Netztyp;
+    property Netztyp:   eNetz   	read F_Netztyp.netztyp write F_Netztyp.netztyp;
+    property NetzMsg:   RNetzMsg 	read F_Netztyp write F_Netztyp;
 
     property IsFTN:     boolean         read GetIsFTN;
     property IsRFC:     boolean         read GetIsRFC;
@@ -96,7 +97,7 @@ type TXPServer = class
     property DontCreateMessageIDs: boolean read F_DontCreateMessageIDs write F_DontCreateMessageIDs;
     property AliasPoint: boolean	read F_AliasPoint write F_AliasPoint;
     property CallOnCallAll: boolean	read F_CallOnCallAll write F_CallOnCallAll;
-    
+
     property NameOMaps: String  	read F_NameOMaps write F_NameOMaps;
     property AVertreter:String  	read F_AVertreter write F_AVertreter;
     property PVertreter:String  	read F_PVertreter write F_PVertreter;
@@ -105,12 +106,15 @@ type TXPServer = class
   { -- Message IDs --------------------------------------------------- }
     property MessageIDType: Byte        read GetMessageIDType;
     function CreateMessageID(inr:longint): string;
-    
+
 end;
 
-{ ------------------------ } implementation { ------------------------ } 
+{ ------------------------ } implementation { ------------------------ }
 
-uses database,xp0,typeform,sysutils,xpnt,xpglobal,crc;
+uses
+  sysutils,
+  database,xp0,typeform,crc,
+  xpglobal;
 
 constructor TXPServer.Create;
 begin
@@ -137,7 +141,7 @@ end;
 
 procedure TXPServer.Clear;
 begin
-  Netztyp       := 0;
+  F_Netztyp.i     := 0;
 
   UserName      := '';
   PointName     := '';
@@ -165,7 +169,7 @@ end;
 procedure TXPServer.LoadByDB(d:DB);
 var flags : byte;
 begin
-  Netztyp       := dbReadByte(d,'netztyp');
+  F_Netztyp       := dbNetzMsg(d);
 
   UserName      := dbReadStr(d,'username');
   PointName     := dbReadStr(d,'pointname');
@@ -335,6 +339,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.2  2002/12/14 07:31:41  dodi
+// - using new types
+//
 // Revision 1.1  2002/11/14 21:06:13  cl
 // - DoSend/send window rewrite -- part I
 //

@@ -180,6 +180,7 @@ uses
   Ringbuff in 'ObjCOM/ringbuff.pas',
   ncursix in 'ncursix.pas',
 {$ENDIF}
+	xpserver in 'xpserver.pas',
   xpsendmessage_rta in 'xpsendmessage_rta.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
   xpsendmessage in 'xpsendmessage.pas',

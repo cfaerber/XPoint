@@ -245,9 +245,11 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.29  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.28  2002/12/13 12:58:36  cl
   - FPC compile fix
 
@@ -334,3 +336,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

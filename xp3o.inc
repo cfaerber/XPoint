@@ -112,7 +112,7 @@ var x,y      : Integer;
     p0       : byte;
     zconnect : boolean;
     pm       : boolean;
-    mnt      : longint;       { Netztyp-Feld fuer mbase }
+    mnt      : RNetzMsg;  //longint;       { Netztyp-Feld fuer mbase }
     today    : longint;
     empfnr   : integer;
     junk     : boolean;
@@ -692,7 +692,7 @@ var x,y      : Integer;
 var
   OwnMessageReplaced: Boolean;
   s: String;
-  nt: Byte;
+  nt: eNetz;
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
@@ -762,7 +762,7 @@ begin
         dbSeek(d,boiName,UpperCase(pmvertreter));
         if not dbFound then pmvertreter:='';
         dbSeek(d,boiname,UpperCase(pollbox));
-        nt := dbReadInt(d,'netztyp');
+        nt := dbNetztyp(d);
         if nt in netsRFC then
         begin
           ReadBoxPar(nt, pollbox);
@@ -1037,21 +1037,30 @@ begin
                 dbWriteN(bbase,bb_ldatum,_datum);      { Datum der neuesten Msg }
               end;
             dbAppend(mbase);
-            mnt:=netztyp and $FF;
-            if References.Count > 0 then inc(mnt,$100); // rueckwaertsverkettet
-            if attrib and attrFile<>0 then inc(mnt,$200);
-            if pm_reply then inc(mnt,$400);
-            if (wab<>'') or (oem.Count > 0) then inc(mnt,$800);
-            if Empfaenger.Count >1 then inc(mnt,longint(empfnr) shl 24);
+            mnt.i := 0; //clear record
+            mnt.netztyp:=netztyp; // and $FF;
+            if References.Count > 0 then //inc(mnt,$100); // rueckwaertsverkettet
+              include(mnt.flags, mf_Verkettet);
+            if attrib and attrFile<>0 then //inc(mnt,$200);
+              include(mnt.flags, mf_Attachment);
+            if pm_reply then //inc(mnt,$400);
+              include(mnt.flags, mf_pm_reply);
+            if (wab<>'') or (oem.Count > 0) then //inc(mnt,$800);
+              include(mnt.flags, mf_wab);
+            if Empfaenger.Count >1 then //inc(mnt,longint(empfnr) shl 24);
+              mnt.CPpos := empfnr;
             if ((FirstChar(FirstEmpfaenger)='A') and ntDomainReply(netztyp) and
               IsOwnDomain(GetLastReference)) or
               (filterattr and fattrHilite<>0)
             then
-              inc(mnt,$1000);        { Antwort auf eigene Nachricht }
-            if UpperCase(charset)='ISO1' then inc(mnt,$2000);
-            if komlen>0 then inc(mnt,$8000);
-
-            dbWriteN(mbase,mb_netztyp,mnt);
+              //inc(mnt,$1000);        { Antwort auf eigene Nachricht }
+              include(mnt.flags, mf_Reply);
+            if UpperCase(charset)='ISO1' then //inc(mnt,$2000);
+              include(mnt.flags, mf_ISO1);
+            if komlen>0 then //inc(mnt,$8000);
+              include(mnt.flags, mf_Kom);
+            dbWriteN(mbase,mb_netztyp,mnt.i);
+            
             dbWriteNStr(mbase,mb_betreff,betreff);
             dbWriteNStr(mbase,mb_absender,absender);
             ld:=ixdat(datum);
@@ -1294,6 +1303,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2002/12/14 07:31:32  dodi
+  - using new types
+
   Revision 1.99  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

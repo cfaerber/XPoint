@@ -1049,8 +1049,6 @@ var p,q,r: longint;
     e,t:   longint;
     sd:    string;
 
-    qq:    boolean; // in quotes
-    
 label outer;
 
 begin
@@ -1062,15 +1060,6 @@ begin
 outer:
   while p<=(length(ss)-9) do { 9 = minimum length for =?c?e?t?= }
   begin
-//  if phrase and(ss[p]='\')then 
-//    inc(p)
-//  else
-//
-//  if phrase and(ss[p]='"')then begin
-//    qq := not qq;
-//    inc(p);
-//  end else
-  
     if(ss[p]='=')and(ss[p+1]='?') (* and(not(phrase and qq)) *) then // start marker
     begin
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
@@ -1124,13 +1113,6 @@ outer:
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                 ^p              ^e           ^e+2          ^t  *)
 
-//    if phrase then
-//    begin
-//      if ss[e] in ['B','b'] then { base64 }
-//        sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo)
-//      else                       { quoted-printable }
-//         sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo);
-//    end else
       begin
         if ss[e] in ['B','b'] then { base64 }
           sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo)
@@ -1335,6 +1317,9 @@ end;
 
 //
 // $Log$
+// Revision 1.24  2002/12/14 07:31:28  dodi
+// - using new types
+//
 // Revision 1.23  2002/12/04 16:56:59  dodi
 // - updated uses, comments and todos
 //

@@ -314,6 +314,11 @@ end;
 {$ENDIF }
 
 procedure Iso1ToIBM(var data; size: Integer); assembler;
+{$IFDEF ANALYSE}
+begin
+  //no asm
+end;
+{$ELSE}
 asm
           mov    ecx,size
           jecxz  @noconv1
@@ -332,8 +337,14 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
+{$ENDIF }
 
 procedure IBMToIso1(var data; size: Integer); assembler;
+{$IFDEF ANALYSE}
+begin
+  //no asm
+end;
+{$ELSE}
 asm
           mov    ecx,size
           jecxz  @noconv2
@@ -349,6 +360,7 @@ asm
 end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
+{$ENDIF }
 {$ENDIF }
 
 { Datum des letzten Puffer-Einlesens ermitteln }
@@ -381,7 +393,8 @@ begin
   ok:=true;
   dbRead(mbase,'ablage',ablg);  { KEIN 'dbReadN' VERWENDEN !!! }
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
-  if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then begin
+  //if (hds<0) or (hds>iif(ntZconnect(ablg),1000000,8000)) then begin ???
+  if (hds<0) or (hds>iif(ntZCablage(ablg),1000000,8000)) then begin
     ok:=false;
     errstr:=getres(300);  { '; falsche Gr”áenangaben' }
     end
@@ -496,7 +509,6 @@ end;
 procedure XreadS(ofs:longint; s:TStream);
 var p        : pointer;
     bufs,rr  : Integer;
-    puffer   : file;
     ablage   : byte;
     size     : longint;
     adr      : longint;
@@ -1171,6 +1183,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/12/14 07:31:31  dodi
+  - using new types
+
   Revision 1.88  2002/12/12 11:58:44  dodi
   - set $WRITEABLECONT OFF
 

@@ -533,7 +533,7 @@ var fn     : string;
     first  : boolean;
     pt     : scrptr;
     lksave : boolean;
-    netztyp: shortint;
+    netztyp: eNetz; //shortint;
     ldisp  : string;
     l,r,o,u: boolean;
     sm2t   : boolean;
@@ -610,7 +610,7 @@ var fn     : string;
   procedure SetGelesen;
   var b     : byte;
       brett : string;
-      nt    : byte;
+      nt    : eNetz;
       flags : byte;
       rflag : boolean;
       rec,
@@ -637,7 +637,7 @@ var fn     : string;
       if rflag then begin
         b:=1;
         dbWriteN(mbase,mb_gelesen,b);
-        if dbReadInt(mbase,'netztyp') shr 24<>0 then begin  { Crossposting }
+        if dbNetzMsg(mbase).CPpos <> 0 then begin  { Crossposting }
           rec:=dbRecno(mbase);
           crc:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
           mi:=dbGetIndex(bezbase); dbSetIndex(bezbase,beiMsgID);
@@ -821,7 +821,7 @@ begin
 
     { FileAttach -> Abfrage, ob Datei oder Text angezeigt werden soll }
 
-    FileAttach:=(dbReadInt(mbase,'netztyp')and $200)<>0;
+    FileAttach:= mf_Attachment in dbNetzMsg(mbase).flags;
     if FileAttach then
     begin
       fn:=Readmsg_GetFilename;
@@ -839,18 +839,18 @@ begin
 
     // caution: both fn and fn2 will be deleted on exiting viewer
     // if FileAttach=false!
+    MultiPartType := mpNone;
 
     if FileAttach then begin
       fn2:=fn;
       typ:='B';
       mpart_nr:=1;
-      end
-    else begin
+    end else begin
       fn:=TempS(dbReadInt(mbase,'msgsize')+5000);
       dbReadN(mbase,mb_typ,typ);
 
       // has message a comment?
-      if (typ='B') and (ReadMessageType <> rmHexDump) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
+      if (typ='B') and (ReadMessageType <> rmHexDump) and (mf_Kom in dbNetzMsg(mbase).flags) and
          ReadJN(getres(433),true) then  // 'Kommentar anzeigen'
       begin // show this comment
         ExtractKom(fn);
@@ -860,7 +860,6 @@ begin
       end;
 
       // identify type of the Message (not MIME, Singlepart or Multipart)
-      MultiPartType := mpNone;
       MimeType  := dbReadNStr(mbase, mb_mimetyp);
       if LeftStr(MimeType,10) = 'multipart/' then
         MultiPartType := mpMulti
@@ -920,23 +919,20 @@ begin
         typ:='B';
 
       if (typ='B') and (ForceMultiPartType <> mpMulti) and (dbReadInt(mbase,'unversandt') and 2=0)
-         and MimeViewer.IsInternal then
-      begin                        { keine Bin„r-Versandmeldung }
+         and MimeViewer.IsInternal then begin     { keine Binaer-Versandmeldung }
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
         (* !! GetExtViewer(GetMsgFilename,viewer);
         if MimeViewer.IsInternal  then
           TestGifLbmEtc(fn2,true,viewer);   { fuer Z3.8, MaggiPoll etc. } *)
-        if MimeViewer.IsInternal then
-        begin
+        if MimeViewer.IsInternal then begin
           arc:=ArcType(fn2);
           if ArcRestricted(arc) then arc:=0;
         end;
-      end
-      else begin
+      end else begin
         fn2:='';
         arc:=0;
-        end;
+      end;
     end; // not FileAttach
 
 
@@ -949,58 +945,52 @@ begin
     { Nachricht anzeigen }
 
     nw:=NachWeiter;   { kann vom Lister veraendert werden }
-    netztyp:=dbReadInt(mbase,'netztyp') and $ff;
-    if not MimeViewer.IsInternal then
-    begin                                        { externer Viewer }
-      if fn2='' then
-      begin
+    netztyp:=dbNetztyp(mbase);
+    if not MimeViewer.IsInternal then begin        { externer Viewer }
+      if fn2='' then begin
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
       end;
       MimeViewer.ViewFile(fn2, Fileattach);
       lres:=0;
-      end
-    else
-      if arc=0 then begin              { Lister }
-        if (dbReadInt(mbase,'netztyp')and $ff in [nt_Fido,nt_QWK]) then begin
-          fnproc[0,3]:=Fido_Msgrequest;
-          abs:= dbReadNStr(mbase,mb_absender);
-          FMsgReqnode:=mid(abs,cpos('@',abs)+1);
-          end;
-        if not pushed then begin
-          if first then showline(p,0);
-          first:=false;
-          sichern(pt); pushed:=true;
-          end;
-        if dispmode=10 then ldisp:=copy(dispspec,2,40)
-        else ldisp:='';
-        if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then begin
-          GetKomflags(l,r,o,u);
-          ldisp:=iifc(l,#27,' ')+iifc(o,#24,' ')+iifc(u,#25,' ')+iifc(r,#26,' ')
-                 +RightStr(sp(40)+ldisp,36);
-          end;
-        lksave:=listkommentar;
-        listkommentar:=ntKomkette(netztyp);
+    end else if arc=0 then begin              { Lister }
+      if (netztyp in [nt_Fido,nt_QWK]) then begin
+        fnproc[0,3]:=Fido_Msgrequest;
+        abs:= dbReadNStr(mbase,mb_absender);
+        FMsgReqnode:=mid(abs,cpos('@',abs)+1);
+      end;
+      if not pushed then begin
+        if first then showline(p,0);
+        first:=false;
+        sichern(pt); pushed:=true;
+      end;
+      if dispmode=10 then ldisp:=copy(dispspec,2,40)
+      else ldisp:='';
+      if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then begin
+        GetKomflags(l,r,o,u);
+        ldisp:=iifc(l,#27,' ')+iifc(o,#24,' ')+iifc(u,#25,' ')+iifc(r,#26,' ')
+               +RightStr(sp(40)+ldisp,36);
+      end;
+      lksave:=listkommentar;
+      listkommentar:=ntKomkette(netztyp);
 //      miso:=ConvIso;
 //      if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
 //        then ConvIso:=false;
-        lres:=Listfile(fn,ldisp,false,true,(ReadMessageType<>rmHexDump) and Enable_UTF8,1+iif(MultiPartType <> mpMulti,2,0));
+      lres:=Listfile(fn,ldisp,false,true,(ReadMessageType<>rmHexDump) and Enable_UTF8,1+iif(MultiPartType <> mpMulti,2,0));
 //      ConvIso:=miso;
-        listkommentar:=lksave;
-        fnproc[0,3]:=dummyFN;
-        end
-      else begin    { arc <> 0 }       { interner Archiv-Viewer }
-        if pushed then begin
-          holen(pt); pushed:=false;
-          end;
-        lres:=ViewArchive(fn2,arc);
-        setall;
-        end;
+      listkommentar:=lksave;
+      fnproc[0,3]:=dummyFN;
+    end else begin    { arc <> 0 }       { interner Archiv-Viewer }
+      if pushed then begin
+        holen(pt); pushed:=false;
+      end;
+      lres:=ViewArchive(fn2,arc);
+      setall;
+    end;
 
     { aufr„umen ... }
 
-    if not FileAttach then
-    begin
+    if not FileAttach then begin
       SafeDeleteFile(fn2);    { Temp-Dateien l”schen }
       SafeDeleteFile(fn);
     end;
@@ -1238,7 +1228,6 @@ procedure show_info;
 var s     : string;
     s1    : string;
     b     : byte;
-    flags : boolean;
 
 const len : byte = 80;
 
@@ -1787,6 +1776,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.106  2002/12/14 07:31:34  dodi
+  - using new types
+
   Revision 1.105  2002/07/29 07:17:20  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

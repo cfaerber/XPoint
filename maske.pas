@@ -975,7 +975,7 @@ begin
 end;
 
 
-{ Valid-Fnuktion setzen }
+{ Valid-Funktion setzen }
 
 procedure MSetVFunc(p2:testfunc);
 begin
@@ -1405,6 +1405,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.45  2002/12/14 07:31:27  dodi
+  - using new types
+
   Revision 1.44  2002/12/12 11:58:40  dodi
   - set $WRITEABLECONT OFF
 

@@ -1369,7 +1369,7 @@ begin
   dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
   if (TermCOM=0) or (TermBaud=0) then 
   begin
-    ReadBoxPar(0, DefaultBox);
+    ReadBoxPar(nt_Netcall, DefaultBox);
     if TermCom=0 then TermCom:=boxpar^.bport;
     if TermBaud=0 then TermBaud:=boxpar^.baud;
     end;
@@ -1550,6 +1550,9 @@ end;
 
 {
   $Log$
+  Revision 1.136  2002/12/14 07:31:31  dodi
+  - using new types
+
   Revision 1.135  2002/12/12 11:58:44  dodi
   - set $WRITEABLECONT OFF
 

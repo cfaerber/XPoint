@@ -505,7 +505,15 @@ begin
             if FirstChar(id)='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset) else
               if id = 'X-XP-CHARSET' then LRead(x_charset) else
-              if id = 'X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else {XP}
+              if id = 'X-XP-NTP' then begin //netztyp:=minmax(ival(line),0,99)
+                i := ival(line);
+                if i < 0 then
+                  netztyp := low(eNetz) //really?
+                else if i > ord(high(eNetz)) then
+                  netztyp := high(eNetz)
+                else
+                  netztyp := eNetz(i);
+              end else {XP}
               if id = 'X-XP-BOX' then LRead(real_box) else
               if id = 'X-XP-PNT' then LRead(hd_point) else
               if id = 'X-XP-BST' then LRead(pm_bstat) else
@@ -599,6 +607,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/12/14 07:31:38  dodi
+  - using new types
+
   Revision 1.31  2002/11/14 20:11:42  cl
   - some bugfixes after optimisation
 

@@ -792,7 +792,7 @@ var user : string;
     t    : text;
     hd   : string;
     ok   : boolean;
-    nt   : byte;
+    nt   : eNetz;
     sdata: TSendUUData;
 begin
   _UserAutoCreate:=false;
@@ -952,9 +952,9 @@ begin
       trfehler(3004,30);    { 'Decodierung ist fehlgeschlagen.' }
   end else
   begin { Ausgabedatei korrekt geschrieben: }
+    orgsize:=hdp.groesse;
     if not SigTest then begin
       PGP_BeginSavekey;
-      orgsize:=hdp.groesse;
       hdp.groesse:=_filesize(tmp2);
       hdp.komlen:=hdp.crypt.komlen; hdp.crypt.komlen:=0;
       hdp.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp.crypt.typ:='';
@@ -1204,6 +1204,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2002/12/14 07:31:36  dodi
+  - using new types
+
   Revision 1.73  2002/12/12 11:58:48  dodi
   - set $WRITEABLECONT OFF
 

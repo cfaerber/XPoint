@@ -163,7 +163,6 @@ var flp : dbFLP;
   // etc. during development process.
   
   procedure CheckNoField(const filename,fieldname: string);
-  var  d : DB;
   begin
     if dbHasField(filename,LowerCase(fieldname)) then
       dbDeleteField(filename,fieldname);
@@ -264,7 +263,7 @@ var flp : dbFLP;
     dbOpen(d,BoxenFile,0);
     while not dbEOF(d) do begin
       fn := dbReadStr(d,'dateiname');
-      ReadBox(0,fn,BoxPar);
+      ReadBox(nt_Netcall,fn,BoxPar);
       dbWriteStr(d,'pointname',BoxPar^.pointname);
       dbNext(d);
       end;
@@ -483,7 +482,7 @@ var flp : dbFLP;
       hdp   : Theader;
       hds,n : longint;
       x,y   : Integer;
-      nt    : byte;
+      nt    : eNetz;
       name  : string[25];
   begin
     if diskfree(0)<_filesize(MsgFile+ dbExt)*1.2 then
@@ -506,7 +505,7 @@ var flp : dbFLP;
         gotoxy(x+31,y+1);
         moff; write(n:6); mon;
         end;
-      nt:=dbReadInt(mbase,'netztyp') and $ff;
+      nt:=dbNetztyp(mbase);
       if nt in (netsRFC + [nt_Fido,nt_Magic,nt_ZConnect])
       then begin
         ReadHeader(hdp,hds,false);
@@ -998,6 +997,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2002/12/14 07:31:31  dodi
+  - using new types
+
   Revision 1.46  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

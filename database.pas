@@ -559,7 +559,7 @@ end;
 
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var
-  s,i,j,sp : integer;
+  s,i,sp : integer;
   TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
@@ -1007,7 +1007,7 @@ var z         : longint;
     underflow : boolean;
     bf        : inodep;
     delrec    : longint;     { Datensatz-Nr. }
-    n         : word;
+    n         : integer;
 
   procedure del(node:longint; var underflow:boolean);
   var x,z : integer;
@@ -2599,6 +2599,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2002/12/14 07:31:26  dodi
+  - using new types
+
   Revision 1.61  2002/12/07 04:41:48  dodi
   remove merged include files
 

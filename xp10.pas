@@ -2631,7 +2631,7 @@ var brk     : boolean;
           if ((comm=1) and IsBox(usebox)) or (comm>1) then begin
             nxtime:='';
             if (comm=1) and (usebox<>lastbox) then begin
-              ReadBoxPar(0,usebox);
+              ReadBoxPar(nt_Netcall,usebox);
               ncconn:=boxpar^.connectmax;
               lastbox:=usebox;
               comport:=boxpar^.bport;
@@ -2679,7 +2679,7 @@ var brk     : boolean;
       x,y        : Integer;
       i,p        : Integer;
       datDa      : boolean;
-      nt         : Byte;
+      nt         : eNetz;
 
     procedure InitNetcallSpecial;  { NETCALL.DAT beim Aufruf von Netcall/Spezial laden bzw. erstellen }
     var i          : Integer;
@@ -2744,7 +2744,7 @@ var brk     : boolean;
         if dbReadInt(d,'script') and 2=0 then
         begin
           currentbox := dbReadStr(d,'boxname');
-          dbRead(d,'Netztyp',nt);
+          nt := dbNetztyp(d);
           ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
           if nt=nt_Client  then          { RFC/Client? }
           begin
@@ -3241,6 +3241,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.77  2002/12/14 07:31:29  dodi
+  - using new types
+
   Revision 1.76  2002/12/12 11:58:42  dodi
   - set $WRITEABLECONT OFF
 

@@ -45,6 +45,10 @@ type TCommStream = class(TStream)
         destructor Destroy; override;
 
         function Read(var Buffer; Count: Longint): Longint; override;
+        {Wieso ist hier "override" ausgeklammert?
+          Damit wird diese Methode nicht-virtuell,
+          mit möglicherweise unerwarteten Konsequenzen!
+        }
         function Write(var Buffer; Count: Longint): Longint; {override;}
         function Seek(Offset: Longint; Origin: system.Word): Longint; override;
 
@@ -409,7 +413,8 @@ begin
     SetLength(Echo,ReadBytes);
     ErrorStr:=Echo;
     SendString:=(ReadBytes=Length(Temp))and(Echo=Temp);
-  end;
+  end else
+    Result := False;  //or what?
 end; { proc. SendString }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -482,6 +487,7 @@ begin
                                                Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
                 {$ELSE} CSerial: begin Result:=TSerialStream.Create;
                                        Success:=TSerialStream(Result).LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
+                {$IFDEF ANALYSE} else IgnoreCD := FlowHardware; {$ENDIF} //dummy, prevent hints "FlowHardware never used"
               end;
               Result.IgnoreCD:=IgnoreCD;
               if not Success then begin ErrorStr:=Result.ErrorStr; Result.Free; Result:=Nil end;
@@ -494,10 +500,13 @@ initialization Initserial;
 
 finalization Stopserial;
 
-end.
+end
 
 {
   $Log$
+  Revision 1.32  2002/12/14 07:31:44  dodi
+  - using new types
+
   Revision 1.31  2002/12/08 12:34:37  mk
   - fixed commpiler directive in comment (not allowed with FPC)
 
@@ -599,4 +608,4 @@ end.
   - initial release
   - please keep comments in English
 
-}
+}.

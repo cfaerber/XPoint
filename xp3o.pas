@@ -1124,11 +1124,13 @@ end;
 procedure CancelMessage;
 var
     _brett : string;
-    dat    : string;
     leer   : string;
     box    : string;
     adr    : string;
+(*
+    dat    : string;
     empf   : string;
+*)
     hdp    : Theader;
     hds    : longint;
     fn     : string;
@@ -1557,6 +1559,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2002/12/14 07:31:32  dodi
+  - using new types
+
   Revision 1.98  2002/12/12 11:58:45  dodi
   - set $WRITEABLECONT OFF
 

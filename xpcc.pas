@@ -29,11 +29,12 @@ interface
 uses
   sysutils, //before xpglobal
   xp0,  //adrstr
+  xpnt, //Netz-Typen
   xpglobal;
 
 const maxcc = 50;
 var   ccte_nobrett : boolean = false;
-      cc_NT :byte = 0;
+      cc_NT :eNetz = nt_Netcall;  //byte = 0; ?
       _UserAutoCreate : boolean = false;  { User ohne Rueckfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
@@ -61,7 +62,7 @@ uses
   xpcurses,
 {$ENDIF }
   typeform,fileio,maske,datadef,database,stack,resource,
-  xp1,xp1input, xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal, winxp;
+  xp1,xp1input, xp3,xp3o2,xp3o,xp4e,xpsendmessage_internal, winxp;
 
 const CCtemp = 'verteil.$$$';
 var   hinweisGegeben :boolean = true;
@@ -112,7 +113,7 @@ var p,p2 : byte;
   var res :boolean;
       server :string;
       i :integer;
-      nt :byte;
+      nt :eNetz;
   begin
     res := true; server := '';
     dbSeek(ubase, uiName, UpperCase (s));
@@ -216,7 +217,7 @@ begin
       else
         dbSeek(ubase,uiName,UpperCase(s));
 
-      testmailstring_nt:=255;  { Hier alle Netztypen erlauben }
+      testmailstring_nt:=nt_Any;  { Hier alle Netztypen erlauben }
 
       if dbFound then begin
         cc_testempf:=true;
@@ -377,7 +378,7 @@ begin
     SortCCs(cc,cc_anz);
     end;
   hinweisGegeben := true;
-  cc_NT := 0;
+  cc_NT := nt_Netcall;
 end;
 
 
@@ -473,6 +474,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/12/14 07:31:37  dodi
+  - using new types
+
   Revision 1.39  2002/12/12 11:58:49  dodi
   - set $WRITEABLECONT OFF
 

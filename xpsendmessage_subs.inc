@@ -119,11 +119,11 @@ end;
 
 function TSendUUData.GetSigData: string;
 var TmplFile: string;
-    t,t2    : text;
+    t       : text;
     s       : string;
     num,n   : word;
     Buf: array[0..4095] of Char;
-const 
+const
     sigsep = '-*-';
 
 begin
@@ -133,17 +133,17 @@ begin
 
   TmplFile := SigTemplate;
 
-  if  (not FSigDataOK) and (TmplFile<>'') and FileExists(TmplFile) then 
+  if  (not FSigDataOK) and (TmplFile<>'') and FileExists(TmplFile) then
   begin
     assign(t,TmplFile);
     SetTextBuf(t,buf);
     reset(t);
     readln(t,s);
-    
-    if s=sigsep then 
+
+    if s=sigsep then
     begin
       num:=0;
-      while not eof(t) do 
+      while not eof(t) do
       begin
         readln(t,s);
         if s=sigsep then inc(num);
@@ -186,28 +186,28 @@ end;
 
 function TSendUUData.GetHeadData: string;
 var TmplFile: string;
-    t,t2    : text;
+    t       : text;
     s       : string;
-    num,n   : word;
+(*    num,n   : word; *)
     Buf: array[0..4095] of Char;
-const 
+const
     sigsep = '-*-';
 
 begin
   TmplFile := HeadTemplate;
 
-  if  (not FHeadDataOK) and (TmplFile<>'') and FileExists(TmplFile) then 
+  if  (not FHeadDataOK) and (TmplFile<>'') and FileExists(TmplFile) then
   begin
     assign(t,TmplFile);
     SetTextBuf(t,buf);
     reset(t);
-(*    
+(*
     readln(t,s);
-    
-    if s=sigsep then 
+
+    if s=sigsep then
     begin
       num:=0;
-      while not eof(t) do 
+      while not eof(t) do
       begin
         readln(t,s);
         if s=sigsep then inc(num);
@@ -218,8 +218,8 @@ begin
       n:=0;
     close(t);
     reset(t);
-    
-    while n>0 do 
+
+    while n>0 do
     begin     { ausgew„hlte Signatur suchen }
       repeat
         readln(t,s);
@@ -231,13 +231,13 @@ begin
 
     s:='';
 *)
-    while not eof(t) (* and (s<>sigsep) *) do 
+    while not eof(t) (* and (s<>sigsep) *) do
     begin
       readln(t,s);
 (*    if (EmpfList.Count>0) and EmpfList[0].PM then rpsuser(s,Empf1Address,Empf1RealName); *)
 
       rpsdate(s);
-(*    if s<>sigsep then *) 
+(*    if s<>sigsep then *)
         FHEadData := FHeadData+s+#13#10;
     end;
     close(t);
@@ -1304,6 +1304,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/12/14 07:31:40  dodi
+  - using new types
+
   Revision 1.30  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

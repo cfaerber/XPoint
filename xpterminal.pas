@@ -41,7 +41,7 @@ function  TermGetfilename(nr,nn:byte):string;
 
 implementation
 
-uses  xp1o,xpkeys,xp9bp,xp10, winxp;
+uses  xp1o,xpkeys,xp9bp,xp10, winxp, xpnt;
 
 var   ansimode : boolean = true;
 const ansimax  = 40;       { max. L„nge von ANSI-Codes }
@@ -465,7 +465,7 @@ end;
 
 function initcom:boolean;
 begin
-  ReadBoxPar(0, DefaultBox);
+  ReadBoxPar(nt_Netcall, DefaultBox);
   if TermCOM<>0 then boxpar^.bport:=TermCOM;
   if TermBaud<>0 then boxpar^.baud:=TermBaud;
   ComNr := BoxPar^.BPort;
@@ -745,10 +745,11 @@ begin
   terminal_main(true);
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.14  2002/12/14 07:31:41  dodi
+  - using new types
+
   Revision 1.13  2002/12/12 11:58:53  dodi
   - set $WRITEABLECONT OFF
 
@@ -791,3 +792,5 @@ end.
   - renamed, was xpterm.pas (partly)
 
 }
+end.
+

@@ -341,7 +341,7 @@ var size   : longint;
     closebox;
   end;
 
-  procedure SetQC(netztyp:byte);
+  procedure SetQC(netztyp:eNetz);
   var p,p2,n  : byte;
       empty   : boolean;
       ac      : set of char;
@@ -1232,6 +1232,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.100  2002/12/14 07:31:31  dodi
+  - using new types
+
   Revision 1.99  2002/12/12 11:58:45  dodi
   - set $WRITEABLECONT OFF
 

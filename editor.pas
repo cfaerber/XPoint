@@ -189,6 +189,11 @@ function SeekStr(var data; len: LongWord;
                  var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
 
   { -1 = nicht gefunden, sonst Position }
+{$IFDEF ANALYSE}
+begin
+  //no asm
+end;
+{$ELSE}
 asm
         jmp    @start
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
@@ -254,6 +259,7 @@ asm
 end ['EBX', 'ESI', 'EDI'];
 {$ELSE }
 end;
+{$ENDIF }
 {$ENDIF }
 
 
@@ -4009,6 +4015,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.88  2002/12/14 07:31:26  dodi
+  - using new types
+
   Revision 1.87  2002/12/12 11:58:39  dodi
   - set $WRITEABLECONT OFF
 

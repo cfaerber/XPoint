@@ -2709,15 +2709,17 @@ end;
 procedure ReadDomainlist;
 var d   : DB;
     dom : string;
+    nt: eNetz;
 begin
   DomainList.Clear;
   dbOpen(d,BoxenFile,0);
   while not dbEOF(d) do
   begin
-    inc(ntused[dbReadInt(d,'netztyp')]);
-    if ntDomainReply(dbReadInt(d,'netztyp')) then
+    nt := dbNetztyp(d);
+    inc(ntused[nt]);
+    if ntDomainReply(nt) then
     begin
-      if dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client] then begin
+      if nt in [nt_UUCP,nt_Client] then begin
         dom:=LowerCase(dbReadStr(d,'fqdn'));
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
       end
@@ -2771,6 +2773,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.152  2002/12/14 07:31:30  dodi
+  - using new types
+
   Revision 1.151  2002/12/12 11:58:44  dodi
   - set $WRITEABLECONT OFF
 

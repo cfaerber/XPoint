@@ -1439,6 +1439,11 @@ var
 
 begin
   if (bytesleft > 54) and (bufpos < bufanz - 54) then
+{$IFDEF ANALYSE}
+    begin
+      //no asm
+    end
+{$ELSE}
     asm
       cld
       mov   esi,offset buffer
@@ -1480,6 +1485,7 @@ begin
       mov   byte ptr TempS[0],72
       add   bufpos,54
     end
+{$ENDIF}
   else
   begin
     p := 0;
@@ -3757,6 +3763,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2002/12/14 07:31:41  dodi
+  - using new types
+
   Revision 1.122  2002/12/12 11:58:53  dodi
   - set $WRITEABLECONT OFF
 

@@ -27,7 +27,8 @@ unit xp9bp;
 interface
 
 uses
-  xp0;  //BoxRec...
+  xp0,  //BoxRec...
+  xpnt; //Netz-Typen...
 
 const bm_changesys = 1;
       bm_GUP       = 2;
@@ -39,11 +40,11 @@ const conn_mode_modem = 1;
       conn_mode_tcpip = 2;
       conn_mode_telnet= 3;
 
-procedure nt_bpar(nt:byte; var bpar:BoxRec);
-procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
-procedure ReadBox(nt:byte; const dateiname:string; bp:BoxPtr);
+procedure nt_bpar(nt:eNetz; var bpar:BoxRec);
+procedure DefaultBoxPar(nt:eNetz; bp:BoxPtr);
+procedure ReadBox(nt:eNetz; const dateiname:string; bp:BoxPtr);
 procedure WriteBox(const dateiname:string; bp:BoxPtr);
-procedure ReadBoxPar(nt:byte; const box:string);
+procedure ReadBoxPar(nt:eNetz; const box:string);
 function  BoxBrettebene(const box:string):string;
 
 procedure ReadQFG(const dateiname:string; var qrec:QfgRec);
@@ -54,10 +55,10 @@ implementation  { ------------------------------------------------- }
 
 uses
   sysutils,
-  typeform,fileio,xp1,xp2,xp1o, debug,  xpnt,
+  typeform,fileio,xp1,xp2,xp1o, debug,
   xpglobal;
 
-procedure nt_bpar(nt:byte; var bpar:BoxRec);
+procedure nt_bpar(nt:eNetz; var bpar:BoxRec);
 var i : integer;
 begin
   with bpar do
@@ -104,7 +105,7 @@ begin
 end;
 
 
-procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
+procedure DefaultBoxPar(nt:eNetz; bp:BoxPtr);
 var i : integer;
 begin
   fillchar(bp^,sizeof(bp^),0);
@@ -250,7 +251,7 @@ end;
 { Box- Parameter aus angegebener Datei lesen }
 { bp^ muss initialisiert sein.                }
 
-procedure ReadBox(nt:byte; const dateiname:string; bp:BoxPtr);
+procedure ReadBox(nt:eNetz; const dateiname:string; bp:BoxPtr);
 var t      : text;
     s,su   : string;
     p      : byte;
@@ -651,7 +652,7 @@ begin
 end;
 
 
-procedure ReadBoxPar(nt:byte; const box:string);
+procedure ReadBoxPar(nt:eNetz; const box:string);
 begin
   ReadBox(nt, GetServerFilename(Box, ''),BoxPar);             { Pollbox-Parameter einlesen }
 end;
@@ -748,6 +749,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2002/12/14 07:31:36  dodi
+  - using new types
+
   Revision 1.65  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

@@ -26,7 +26,7 @@ unit xpsendmessage_attach;
 
 uses
   sysutils,classes,
-  mime,mime_analyze;
+  mime,mime_analyze,xpnt;
 
 type
   TSendAttach_Part = class
@@ -77,9 +77,9 @@ type
   end;
 
 procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;
-  Netztyp:Byte;cancode:byte;pgpsig:boolean);
+  Netztyp:eNetz;cancode:byte;pgpsig:boolean);
 procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature:string;
-  Netztyp,docode:Byte;pgpsig:boolean);
+  Netztyp:eNetz;docode:Byte;pgpsig:boolean);
   
 { ------------------------} implementation { ------------------------- }
 
@@ -95,7 +95,7 @@ uses
 {$ENDIF}
   fileio, inout, keys, lister, maske, maus2, resource, typeform,
   utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
-  xpnt, xpsendmessage_attach_analyze, xpstreams, xp_pgp,
+  xpsendmessage_attach_analyze, xpstreams, xp_pgp,
   xpglobal;
 
 constructor TSendAttach_Part.Create;
@@ -249,7 +249,7 @@ end;
 
 { --- SendAttach main procedure -------------------------------------- }
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:Byte;cancode:byte;pgpsig:boolean);
+procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:eNetz;cancode:byte;pgpsig:boolean);
 
   function docode:byte;
   begin
@@ -950,7 +950,7 @@ begin
   closebox;
 end;
 
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature: string;netztyp,docode:Byte;pgpsig:boolean);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature: string;netztyp:eNetz;docode:Byte;pgpsig:boolean);
 var FileName: String;
     OldTime : Longint;
     NewTime : Longint;
@@ -961,7 +961,7 @@ var FileName: String;
 
     MyEditCharset:  String;
     MyExtEdit: boolean;
-    
+
     RecodedCharset: Boolean;
     RecodedEncoding:Boolean;
 

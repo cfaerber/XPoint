@@ -110,10 +110,7 @@ var p         : Integer;
     prog,
     orgfn,
     fn1,
-    parfn,
-    Dir,
-    Name,
-    Ext       : string;
+    parfn     : string;
 begin
   fn1:='';
   orgfn:= Filename;
@@ -124,23 +121,20 @@ begin
     orgfn:= ChangeFileExt(filename, fExt);
 
 
-  if not fileattach then
-  begin
-  if stricmp(filename,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
+  if not fileattach then begin
+    if stricmp(filename,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
     then orgfn:=TempS(_filesize(filename)+5000);
     if copyfile(Filename,orgfn) then fn1:=orgfn;
-    end;
+  end;
 
   prog:=fProg;
   orgfn:=iifs(fn1<>'',fn1,Filename);
 
   // Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen
-  if not fileattach and delviewtmp then
-  Begin
+  if not fileattach and delviewtmp then Begin
     parfn:=TempS(_filesize(Filename)+5000);
     parfn:=LeftStr(parfn,length(parfn)-8)+TempFilePrefix+RightStr(parfn,8);
-    end
-  else parfn:=orgfn;
+  end else parfn:=orgfn;
 
   // Korrekte File-extension verwenden
   ParFN := ChangeFileExt(ParFN, ExtractFileExt(Orgfn));
@@ -157,6 +151,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2002/12/14 07:31:28  dodi
+  - using new types
+
   Revision 1.6  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
