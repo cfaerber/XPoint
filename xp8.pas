@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint - 'maps & Fileserver }
@@ -60,7 +61,6 @@ const mapsbox : string[BoxNameLen] = '';
 var mapsname : string[20];
     mapsnt   : byte;
     mapsart  : byte;
-
 
 function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
 var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
@@ -424,7 +424,7 @@ end;
 
 
 { RFC/Client: Aus Brettlisten-Datei (Format: "Zeile faengt mit Brettnamen an") }
-{ Wird anhand des RC-Files im Client-Verzeichnis der Box ein BL-File erstellt: }
+{ wird anhand des RC-Files im Client-Verzeichnis der Box ein BL-File erstellt: }
 
 procedure MakeBL(box:string);
 const
@@ -771,6 +771,7 @@ begin
 
   moment;
   OpenList(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
+  listTp(Mapskeys); 
   read_BL_File(s1,true);                   { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
@@ -1350,15 +1351,34 @@ end;
 
 procedure MapsKeys(var t:taste);
 begin
-  {if t=^S then if Suche(getres(438),'#','') then begin
+
+  if t=keytab then t:=keyctab
+  else if (t=keyctab) or (t=keystab) then t:=keytab;
+
+  if t=^S then t:='s'
+  else if t='s' then
+  begin
+    t:='';
+    if Suche(getres(438),'#','') then
+    begin
+      ListShowSeek:=true;
+      t:=keyctab;
+      end;
+    end;
+
+{  if t=^S then if Suche(getres(438),'#','') then begin
     ListShowSeek:=true;
     pushkey(keyctab);
-    end;}
+    end; }
+
+  if ustr(t)='E' then ListShowSeek:=not Listshowseek;
+
   if t[1]=^H then begin
     pushkey('S');
     pushkey('* ');
     pushkey(keycr);
-    end;
+  end;
+
 end;
 
 { art: 0=bestellen, 1=abbestellen, 2=Bretter anlegen, 3=Inhalt (EM), 4=Rescan }
@@ -1619,8 +1639,9 @@ again:
     LColType:=1;
   ListCFunc(MapsListcolor);
   listTp(Mapskeys);
-  {listseekcol:=col.collistfound;}
+  listseekcol:=col.collistfound;
   listNoAutoscroll;
+  ListShowSeek:=false;
   list(brk);
   if not brk then
   begin
@@ -1692,34 +1713,35 @@ again:
     CloseList; { Lister bei Brk schlieáen }
   freeres;
   aufbau:=true;
+  ListShowSeek:=false;
 end;
 
 procedure MapsCommands(defcom:byte);   { 0=Auswahl, 1=Brettliste holen }
-var brk     : boolean;
-    comm    : string;
-    box     : string[BoxNameLen];
-    t       : text;
-    fn      : pathstr;
-    d       : DB;
-    area    : boolean;
-    request : boolean;
-    nt      : byte;
-    maf     : boolean;
-    maus    : boolean;
-    info    : MausInfAP;
-    ppp     : Boolean;
-    infos   : integer;
-    fido    : boolean;
-    gs      : boolean;
-    uucp,gup: boolean;
-    autosys : boolean;
-    feeder  : boolean;
+var brk        : boolean;
+    comm       : string;
+    box        : string[BoxNameLen];
+    t          : text;
+    fn         : pathstr;
+    d          : DB;
+    area       : boolean;
+    request    : boolean;
+    nt         : byte;
+    maf        : boolean;
+    maus       : boolean;
+    info       : MausInfAP;
+    ppp        : Boolean;
+    infos      : integer;
+    fido       : boolean;
+    gs         : boolean;
+    uucp,gup   : boolean;
+    autosys    : boolean;
+    feeder     : boolean;
     postmaster : boolean;
-    promaf  : boolean;
-    lines   : byte;
-    i       : integer;
-    domain  : string[60];
-    var x,y : byte;
+    promaf     : boolean;
+    lines      : byte;
+    i          : integer;
+    domain     : string[60];
+    var x,y,j  : byte;
 
   procedure app(s1,s2:string);
   begin
@@ -1851,10 +1873,12 @@ begin
     1 : if ppp then
         begin
           msgbox(63,8,_hinweis_,x,y);
-          mwrt(x+3,y+2,getres2(10800,32));   { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
-          mwrt(x+3,y+3,getres2(10800,33));   { 'Liste muá die entsprechende Funktion beim externen Client' }
-          mwrt(x+3,y+4,getres2(10800,34));   { 'aktiviert sein und die bisherige Newsgroup-Liste gel”scht' }
-          mwrt(x+3,y+5,getres2(10800,35));   { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+          for j := 2 to 5 do
+            { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
+            { 'Liste muá die entsprechende Funktion beim externen Client' }
+            { 'aktiviert sein und die bisherige Newsgroup-Liste gel”scht' }
+            { 'werden (siehe Nachricht/Brettmanager/Sonstiges).'          }
+            mwrt(x+3,y+j,getres2(10800,30+j));
           errsound;
           wait(curoff);
           closebox;
@@ -1875,10 +1899,9 @@ begin
   else if request then lines:=6
   else if gs then lines:=4
   else if uucp then
-    if gup then lines:=3
+    if gup or ppp then lines:=3
     else if autosys then lines:=5
     else if feeder then lines:=5
-    else if ppp then lines:=3
     else lines:=4
   else lines:=18;
   if maus then begin
@@ -2166,6 +2189,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.32  2001/09/16 20:32:36  my
+  JG+MY:- Brettmanager: Text-Markiersuche mit "S" (analog zu Lister),
+          Ein-/Ausschalten der markierten Suchbegriffe mit "E", "alte"
+          Suchfunktionen jetzt über <Ctrl-S> (früher "S") bzw. wie bisher
+          über <Shift-S> erreichbar.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.10.2.31  2001/09/07 13:22:02  mk
   - fixed ClientBL_Del, filenames longer 60 chars where not deleted
 
