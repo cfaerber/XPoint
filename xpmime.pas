@@ -417,7 +417,7 @@ var   hdp      : headerp;
         inc(anzahl);
         with mf^[anzahl] do begin
           level:=bptr+last;
-          typ:=LStr(ctype);
+          typ:=lStr(ctype);
           subtyp:=LStr(subtype);
           code:=codecode(_encoding);
           fname:=filename;
@@ -558,7 +558,7 @@ begin                         { SelectMultiPart }
 
   if anzahl>0 then
     if not select or (anzahl=1) then begin
-      if (anzahl>1) or (mf^[index].typ <> getres2(2440,1)) then begin { 'Vorspann' }
+      if (anzahl>1) or (mf^[index].typ <> lstr(getres2(2440,1))) then begin { 'Vorspann' }
         mpdata:=mf^[index];
         mpdata.parts:=max(1,anzahl0);
         mpdata.alternative:=alter;
@@ -575,8 +575,8 @@ begin                         { SelectMultiPart }
       list(brk);
       if not brk then begin
         mpdata:=mf^[ival(mid(get_selection,57))];
-        if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
-           (mpdata.typ=getres2(2440,10)) then begin
+        if (mpdata.typ=lstr(getres2(2440,1))) or (mpdata.typ=lstr(getres2(2440,2))) or
+           (mpdata.typ=lstr(getres2(2440,10))) then begin
           mpdata.typ:='text';
           mpdata.subtyp:='plain';
           end;
@@ -719,6 +719,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.18  2001/09/17 23:53:03  mk
+  - fixed bug: sometimes singlepart mails where threated as binary mails
+
   Revision 1.12.2.17  2001/09/11 12:07:32  cl
   - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
 
