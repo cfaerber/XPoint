@@ -56,6 +56,7 @@ const
     96, 97, 98, 99,100,101,102,103,104,105,106,107,108,109,110,111,
    112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
 
+// translation is not yet ready
 {128}  199,252,233,226,228,224,229,231,234,235,232,239,238,236,196,197,
 {144}  201,230,198,244,246,242,251,249,255,214,220,162,163,165, 80, 32,
 {160}  225,237,243,250,241,209,170,167,191, 43,172,189,188,161,171,187,
@@ -1419,6 +1420,10 @@ function LittleEndianToHost32(host:    dword):    dword; begin result:=swap32(ho
 end.
 {
   $Log$
+  Revision 1.85  2001/04/19 13:06:14  ml
+    - keyboardtranslation extended   (Pos1/Home etc.)
+    - ISO2IBM - Codetabletranslation (дцья - this was shitty hard work)
+
   Revision 1.84  2001/04/19 12:54:26  ml
   - keyboardtranslation extended   (Pos1/Home etc.)
   - ISO2IBM - Codetabletranslation (дцья - this was shitty hard work)
