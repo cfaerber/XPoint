@@ -55,7 +55,7 @@ type  addpktrec    = record
 
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
-    TempPPPMode     : boolean;
+    client          : boolean;
 
 implementation  {---------------------------------------------------}
 
@@ -275,12 +275,18 @@ label abbruch,ende0;
                      end;
         ltUUCP     : begin
                        caller:='C-'+hex(uu_nummer,4)+'.OUT';
-                       called:='uudummy';
+                       called:='UUDUMMY';
                        upuffer:='UPUFFER';
-                       dpuffer:=iifs(TempPPPMode, 'CLPUFFER', 'UPUFFER');
+                       dpuffer:='UPUFFER';
+                     end;
+        ltClient   : begin
+                       caller:='CLDUMMY1';
+                       called:='CLDUMMY2';
+                       upuffer:='CLPUFFER';
+                       dpuffer:='CLPUFFER';
                      end;
       end;
-      if logintyp<>ltUUCP then begin
+      if not logintyp in [ltUUCP,ltClient] then begin
         {if _fido and sysopmode then
           exchange(uparcer,'$PUFFER',OwnPath+upuffer)
         else} if pronet then
@@ -441,30 +447,40 @@ begin                  { of Netcall }
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
-  if boxpar^.pppMode then
+  if netztyp = nt_Client then
   begin
     WriteBox(bfile,BoxPar);         { "Client-Spool=" aktualisieren !! }
     ReadBox(netztyp,bfile,BoxPar);  { Pollbox-Parameter neu einlesen }
   end;
   isdn:=(boxpar^.bport>4);
   if relogin then
-    if isdn then begin
-      rfehler(739);         { 'Relogin bei ISDN nicht mîglich' }
-      exit;
-      end else
     case ntRelogin(netztyp) of
       0 : begin
             rfehler(707);   { 'Relogin-Anruf bei dieser Box nicht mîglich' }
             exit;
           end;
-      1 : if NoScript(boxpar^.script) then begin
+      1 : if NoScript(boxpar^.script) then
+          begin
             rfehler(738);   { 'Scriptdatei fÅr Relogin-Anruf erforderlich! }
             exit;
           end;
+      else begin
+        if isdn then begin
+          rfehler(739);     { 'Relogin bei ISDN nicht mîglich' }
+          exit;
+        end;
+      end;
     end;
-  if not net and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
-    rfehler(708);   { 'Online-Anruf bei dieser Box nicht mîglich' }
-    exit;
+  if not net then
+    if netztyp = nt_Client then
+    begin
+      rfehler(750);   { 'Online-Anruf beim Netztyp RFC/Client Åber normalen Netcall starten' }
+      exit
+    end
+    else if not ntOnline(netztyp) and NoScript(boxpar^.o_script) then
+    begin
+      rfehler(708);   { 'Scriptdatei fÅr Online-Anruf erforderlich' }
+      exit;
     end;
   logintyp:=ntTransferType(netztyp);
   _maus:=(logintyp=ltMaus);
@@ -472,6 +488,8 @@ begin                  { of Netcall }
   _uucp:=(logintyp=ltUUCP);
   pronet:=(logintyp=ltMagic) and (netztyp=nt_Pronet);
   janusp:=(logintyp=ltZConnect) and BoxPar^.JanusPlus;
+  client:=(logintyp=ltClient);
+  do_SysopMode:=(BoxPar^.SysopMode or client);
   if _maus then begin
     if exist(mauslogfile) then _era(mauslogfile);
     if exist(mauspmlog) then _era(mauspmlog);
@@ -514,15 +532,16 @@ begin                  { of Netcall }
     trfehler1(710,eppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
-  if not relogin and ((not net) or (boxpar^.sysopinp+boxpar^.sysopout=''))
-  then begin
+  if not relogin and ((not net) or (not do_SysopMode)) then
+  begin
     i:=exclude_time;
-    if i<>0 then with boxpar^ do begin
+    if i<>0 then with boxpar^ do
+    begin
       tfehler(reps(reps(getres(701),exclude[i,1]),exclude[i,2]),30);
                    { 'Netcalls zwischen %s und %s nicht erlaubt!' }
       exit;
-      end;
     end;
+  end;
   if logintyp=ltMagic then testBL;    { evtl. Dummy-Brettliste anlegen }
   upuffer:=''; caller:='';
   NumCount:=TeleCount; NumPos:=1;
@@ -557,10 +576,11 @@ begin                  { of Netcall }
       fillchar(NC^,sizeof(nc^),0);
       new(addpkts);
       addpkts^.anzahl:=0;
-      if SysopMode then begin
+      if do_SysopMode then begin
         NC^.datum:=ZDate;
         NC^.box:=box;
-        if (SysopStart<>'') and (not TempPPPMode) then shell(SysopStart,600,1);
+        if (not (client and (not SysopMode))) and (SysopStart<>'') then
+          shell(SysopStart,600,1);
         AppendEPP;
         case netztyp of
           nt_Fido : begin
@@ -568,38 +588,44 @@ begin                  { of Netcall }
                       FidoSysopTransfer;
                     end;
           nt_QWK  : QWKSysopTransfer;
-          nt_UUCP : begin
-                      SetFilenames;
-                      UUCPSysopTransfer;
-                    end;
+          nt_UUCP,
+          nt_Client : begin
+                        SetFilenames;
+                        UUCPSysopTransfer;
+                      end;
           else      SysopTransfer;
         end;
         RemoveEPP;
-        if (SysopEnd<>'') and (not TempPPPMode) then shell(SysopEnd,600,1);
-        if SysopNetcall or TempPPPMode then   { in BoxPar }
+        if (not (client and (not SysopMode))) and (SysopEnd<>'') then
+          shell(SysopEnd,600,1);
+        if not (SysopMode and (not SysopNetcall)) then
         begin
-          ClientLogFile:=PPPClientPath+ClientLog;
-          ExtLogFile:=LogPath+'XP-PPP.LOG';
-          if TempPPPMode and exist(ExtLogFile) then
+          if client and (not SysopMode) then
           begin
-            copyfile(ExtLogFile,ClientLogFile);
-            _era(ExtLogFile);
+            ClientLogFile:=PPPClientPath+ClientLog;
+            ExtLogFile:=LogPath+'XP-PPP.LOG';
+            if exist(ExtLogFile) then
+            begin
+              copyfile(ExtLogFile,ClientLogFile);
+              _era(ExtLogFile);
             end;
-          sendnetzanruf(false,false);
           end;
-        dispose(NC);
-        dispose(addpkts);
-        if TempPPPMode and exist(ClientLogFile) then _era(ClientLogFile);
-        aufbau:=true;
-        exit;
-        end
-      else if logintyp=ltQWK then begin
-        rfehler(735);    { 'Netzanruf QWK-Boxen ist nicht mîglich - Sysop-Mode verwenden!' }
-        dispose(NC);
-        dispose(addpkts);
-        aufbau:=true;
-        exit;
+          sendnetzanruf(false,false);
+          if client and exist(ClientLogFile) then _era(ClientLogFile);
         end;
+        dispose(NC);
+        dispose(addpkts);
+        aufbau:=true;
+        exit;
+      end
+      else if logintyp=ltQWK then
+      begin
+        rfehler(735);    { 'Netzanruf QWK-Boxen ist nicht mîglich - "Transfer" verwenden!' }
+        dispose(NC);
+        dispose(addpkts);
+        aufbau:=true;
+        exit;
+      end;
 
       SetFilenames;
 
@@ -610,7 +636,7 @@ begin                  { of Netcall }
     else begin   { not net }
       new(NC);
       new(addpkts);
-      end;
+    end;
 
    if net and (IsPath(upuffer) or IsPath(dpuffer)) then begin
      if IsPath(upuffer) then
@@ -632,6 +658,7 @@ begin                  { of Netcall }
 {$ENDIF }
 
     { Ab hier kein exit mehr! }
+    { Ab hier keine PrÅfung auf ltClient mehr nîtig (weil nicht do_SysopMode) }
 
     AppendEPP;
 
@@ -707,11 +734,12 @@ begin                  { of Netcall }
           spacksize:=_filesize(caller);
         end;
 
-      if (uparcer<>'') and (logintyp<>ltUUCP) and not exist(caller) then begin
+      if (uparcer<>'') and (logintyp<>ltUUCP) and not exist(caller) then
+      begin
         window(1,1,80,25);
         trfehler(713,30);   { 'Fehler beim Packen!' }
         goto ende0;
-        end;
+      end;
       CallerToTemp;    { Maggi : OUT.ARC umbenennen }
 {$IFDEF CAPI }
       if ISDN then CAPI_resume;
@@ -755,7 +783,7 @@ begin                  { of Netcall }
         if _fido then ReleaseC;
         goto abbruch;
         end;
-      end;
+    end;
 
     display:=ParDebug;
     ende:=false;
@@ -795,7 +823,7 @@ begin                  { of Netcall }
                       goto ende0;
                     end;
       end;
-      end;
+    end;
 
     recs:=''; lrec:='';
     showconn:=false;
@@ -1451,16 +1479,29 @@ end;
 
 
 procedure EinzelNetcall(box:string);
-var b   : byte;
-    h,m : word;
+var b       : byte;
+    h,m     : word;
+    d       : DB;
+    netztyp : byte;
 begin
-  if box='' then begin
+  if box='' then
+  begin
     box:=UniSel(1,false,DefaultBox);         { zu pollende Box abfragen }
     if box='' then exit;
-    end;
+  end;
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(box));
+  if not dbFound then begin
+    dbClose(d);
+    trfehler1(709,box,60);                      { 'unbekannte Box:  %s' }
+    exit;
+  end;
+  dbRead(d,'netztyp',netztyp);
+  dbClose(d);
   ReadBoxPar(0,box);
-  b:=exclude_time;
-  if b=0 then
+  b:=exclude_time;                               { Ausschlu·zeiten bei  }
+  if ((b=0) or (netztyp=nt_Client) or            { RFC/Client und       }
+     (BoxPar^.SysopMode)) then                   { SysopMode ignorieren }
     if netcall(true,box,false,false,false) then
     else
   else with boxpar^ do begin
@@ -1571,6 +1612,20 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.21  2001/12/20 15:06:10  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MY:- Sysop-Mode RFC/Client funktioniert jetzt.
+
+  MY:- Fix: Ausschlu·zeiten werden bei SysopMode und RFC/Client nicht mehr
+       berÅcksichtigt (war zwar so dokumentiert, funktionierte aber
+       nicht).
+
   Revision 1.16.2.20  2001/11/20 23:20:20  my
   MY:- Netcall-Testroutine (BoxParOk) gefixt (wird nur noch einmal
        durchlaufen)
