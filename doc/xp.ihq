@@ -1131,8 +1131,9 @@ unter /Config/Anzeige/Bretter ge„ndert werden.
 <<User-šbersicht
 
 Im User-Fenster haben Sie Zugriff auf alle erfaáten
-User und deren PM-Bretter. Je nach Anzeigemodus
+User und deren PM-Bretter. Je nach Anzeige-Modus
 werden alle oder nur die im Adreábuch erfaáten User
+(das sind alle mit einer Adreábuchgruppe gr”áer 0)
 angezeigt.
 
 
@@ -1141,12 +1142,25 @@ angezeigt.
 <<<Enter> >> zeigt den Inhalt des gew„hlten PM-Brettes.
 
    <<A>>     wechselt den Anzeige-Modus zwischen Adreá-
-         buch und Anzeige aller User.
+         buch und Anzeige aller User (d.h., es werden
+         zus„tzlich die User mit der Adreábuchgruppe
+         0 eingeblendet). Die User sind im Anzeige-
+         Modus "Adreábuch" nach Adreábuchgruppen und
+         innerhalb jeder Adreábuchgruppe nach dem
+         Modus sortiert, den Sie mit der Taste <<O>> bzw.
+         unter /Config/Optionen/Allgemeines ("User-
+         šbersicht nach Serverbox sortieren") einge-
+         stellt haben. Im Anzeige-Modus "alle User"
+         gilt diese Sortierung fr die gesamte User-
+         liste, Adreábuchgruppen bleiben im Modus
+         "alle User" unbercksichtigt.
 
    <<O>>     wechselt die Anordnung der Userbretter.
          M”gliche Einstellungen sind:
          - sortiert nach Usernamen
          - sortiert nach Serverbox, dann Usernamen
+         Die Voreinstellung hierfr finden Sie unter
+         /Config/Optionen/Allgemeines.
 
  <<<Tab> >>  schaltet auf Brettbersicht um.
 
@@ -1160,8 +1174,13 @@ angezeigt.
 
 <<<Ctrl-E> >>hebt die Usermarkierung auf.
 
-   <<R>>     nimmt einen User ins Adreábuch auf, oder
-         tr„gt ihn aus dem Adreábuch aus.
+   <<R>>     nimmt einen User ins Adreábuch auf (Adreá-
+         buchgruppe gr”áer 0), oder tr„gt ihn aus dem
+         Adreábuch aus (Adreábuchgruppe 0). Bei Auf-
+         nahme ins Adreábuch wird die Adreábuchgruppe
+         zugewiesen, die als Standard-Adreábuchgruppe
+         unter /Config/Optionen/Allgemeines einge-
+         stellt ist.
 
    <<S>>     schaltet zwischen Schreib-/Lese- und Bear-
          beitungsmodus um.
@@ -1176,7 +1195,8 @@ angezeigt.
 <<<Ctrl-G> >>markiert alle User, die zur gleichen Gruppe
          geh”ren wie der gew„hlte User.
 
-<<<Ctrl-Y> >>springt zur n„chsten Trennzeile.
+<<<Ctrl-Y> >>springt zur n„chsten Trennzeile (nur im
+         Anzeige-Modus "Adreábuch").
 
 <<<Ctrl-W> >>schaltet die automatische Weiterschaltung
          ein bzw. aus.
@@ -1228,12 +1248,16 @@ angezeigt.
 <<<Ctrl-V> >>Userbretter verknpfen (Nachrichten in
          anderes Userbrett verschieben)
 
-<<<Ctrl-T> >>Trennzeile im Adreábuch einfgen
+<<<Ctrl-T> >>Trennzeile im Adreábuch einfgen (nur
+         m”glich im Anzeige-Modus "Adreábuch"). Die
+         Trennzeile wird automatisch vor der Adreá-
+         buchgruppe eingefgt, in der sich der
+         Markierbalken befindet.
 
 <<<Ctrl-P> >>User in andere Adreábuchgruppe verschieben
 
-Die Funktionen <<L>>, <<E>>, <<<Ctrl-T> >>und <<<Ctrl-P> >>beziehen
-sich auf alle markierten User.
+Die Funktionen <<L>>, <<E>> und <<<Ctrl-P> >>beziehen sich auf
+alle markierten User.
 
 
 <<User-Anzeige
@@ -1276,8 +1300,7 @@ V   26  1  HOT     [lokale Points]
 @
 23
 <<Schreib-/Lesemodus:>> Bitte w„hlen Sie den Empf„nger
-der Nachricht aus. Mit <<<Enter> >>wird die Auswahl
-best„tigt, mit <<<Esc> >>abgebrochen.
+der Nachricht aus.
 
 <<Spezial-Modus:>> Bitte w„hlen Sie einen User aus der
 Adreábuchgruppe aus, in die Sie den vorher gew„hlten
@@ -1285,8 +1308,11 @@ User verschieben m”chten.
 
 <<Alle Modi: A>> schaltet zwischen Komplett- und Adreá-
 buchanzeige um, <<O>> schaltet die Sortierung nach User-
-namen oder Boxen um. Mit <<<Ctrl-Y> >>wird zur n„chsten
-Trennzeile gesprungen.
+namen oder Boxen um. Mit <<<Ctrl-Y> >>wird im Anzeige-
+Modus "Adreábuch" zur n„chsten Trennzeile gesprungen.
+
+Mit <<<Enter> >>wird die Auswahl best„tigt, mit <<<Esc> >>
+abgebrochen.
 
 @
 24
@@ -4374,6 +4400,11 @@ sollten Sie m”glichst darauf achten, daá ein <<> >>im
 Quotezeichen vorhanden ist, weil dies vielen Program-
 men zum Erkennen von Quote-Zeilen dient.
 
+Durch zus„tzliche Angabe eines <<%>> an beliebiger
+Stelle im Quotezeichen-String wird auch Leerzeilen
+ein Quotezeichen vorangestellt (ansonsten bleiben
+sie Leerzeilen).
+
 @
 211
 Ab dieser Spalte erfolgt beim Zitieren ("quoten")
@@ -4407,46 +4438,64 @@ Adressen wieder aus der Datenbank entfernt.
 
 @
 8068
-Neu aufgenommene User werden dieser [Adreábuchgruppe]
-zugeordnet.@8069
+Neu ins Adreábuch aufgenommene User werden dieser
+[Adreábuchgruppe] zugeordnet.@8069
 
 @
 8069
-<<Adreábuchgruppe>>
-
-Das Userfenster wird vor dem alphabetischen Sortieren
+Die User-šbersicht ist im Anzeigemodus "Adreábuch"
 nach diesen Gruppen geordnet. Gruppen mit niedrigen
 Nummern werden ganz oben angezeigt, Gruppen mit hohen
-Nummern erscheinen am Ende der Userliste.
+Nummern erscheinen am Ende der Userliste. Zur besse-
+ren šbersicht sollten Sie zwischen den einzelnen
+Adreábuchgruppen mit <<<Ctrl-T> >>(Spezial-Modus) Trenn-
+zeilen einfgen.
+
+Innerhalb jeder Gruppe sind die User nach dem Modus
+sortiert, den Sie mit der Taste <<O>> bzw. unter
+/Config/Optionen/Allgemeines ("User-šbersicht nach
+Serverbox sortieren") eingestellt haben.
 
 Wenn man bestimmte User (oder Pseudo-User wie
-Areafix) im Userfenster zusammengruppieren will, muá
-man sie nur in dieselbe Adreábuchgruppe stecken.
+Areafix) in der User-šbersicht zusammengruppieren
+will, muá man sie nur in dieselbe Adreábuchgruppe
+stecken.
 
-Minimalwert ist 1, Maximalwert ist 99.
+Minimalwert ist <<1>>, Maximalwert ist <<99>>.
+
+Die Adreábuchgruppe <<0>> hingegen besagt nichts weiter
+als: der User ist zwar in der Datenbank vorhanden,
+aber nicht im Adreábuch eingetragen. Sie k”nnen mit
+der Taste <<A>> in den Anzeigemodus "alle User" wechseln
+und so solche nicht im Adreábuch eingetragenen User
+in der User-šbersicht sichtbar machen. Dort k”nnen
+Sie einzelnen Usern dann entweder eine andere Adreá-
+buchgruppe zuweisen (der User wird dann ins Adreábuch
+aufgenommen), oder Sie drcken einfach <<R>>: der User
+wird dann ins Adreábuch aufgenommen und erh„lt die
+Adreábuchgruppe, die unter /Config/Optionen/Allge-
+meines/Standard-Adreábuchgruppe eingestellt ist.
+
 @
 8075
-<<Priorit„t>>
-
-Diese Einstellung ist als "humane" Alternative zum
-Filter (Nachrichten dieses Users werden dunkel dar-
-gestellt) oder zum Hervorheben von Nachrichten
-wichtiger Personen gedacht.
+Diese Einstellung dient zur farblichen Hervorhebung
+(bzw. zum "Abblenden") von Nachrichten bestimmter
+User.
 
 Der hier eingestellte Wert entspricht der unter
 /Config/Anzeige/Farben/Nachrichten eingestellten
 Priorit„ts-Farbe.
 
-gltige Werte sind:
+Gltige Werte sind:
 
-0 - normaler User
-1 - h”chste Priorit„t
-2 - hohe Priorit„t
-4 - niedrige Priorit„t
-5 - niedrigste Priorit„t
+<<0>> - normaler User
+<<1>> - h”chste Priorit„t
+<<2>> - hohe Priorit„t
+<<4>> - niedrige Priorit„t
+<<5>> - niedrigste Priorit„t
 
-Diese Einstellung gilt nur fr die  ”ffentlichen
-Nachrichten des Users. PMs sind nicht betroffen.
+Diese Einstellung gilt nur fr ”ffentliche Nachrich-
+ten dieses Users. PMs sind davon nicht betroffen.
 
 @
 213
@@ -4572,8 +4621,8 @@ dardm„áig aktiviert.
 
 @
 223
-Dieser Schalter bestimmt, wie das Userfenster
-sortiert werden soll:
+Dieser Schalter bestimmt, wie die User-šbersicht
+im Anzeige-Modus "Adreábuch" sortiert werden soll:
 
 <<[x]>> -> Es wird zuerst nach dem Namen der Serverbox,
        dann innerhalb der Serverbox nach Usernamen
@@ -4581,9 +4630,9 @@ sortiert werden soll:
 
 <<[ ]>> -> Es wird nur nach Usernamen sortiert.
 
-Diese Einstellung kann im Userfenster und im
-User-Weiterleitmen jederzeit mit der Taste <<O>>
-umgeschaltet werden.
+Diese Einstellung kann in der User-šbersicht und im
+User-Weiterleitmen jederzeit mit der Taste <<O>> umge-
+schaltet werden.
 
 @
 224
@@ -5322,12 +5371,12 @@ nach vorne sortiert.
 
        Die Buchstaben stehen fr:
 
-       F  Flags           (immer erstes Zeichen!)
-       G  Gr”áe
-       D  Datum
-       A  Absender
-       E  Empf„nger
-       B  Betreff
+       <<F>>  Flags           (immer erstes Zeichen!)
+       <<G>>  Gr”áe
+       <<D>>  Datum
+       <<A>>  Absender
+       <<E>>  Empf„nger
+       <<B>>  Betreff
 @
 1033
 Die Sortierung der Buchstaben legt die Sortierung
@@ -5339,12 +5388,12 @@ sortiert.
 
        Die Buchstaben stehen fr:
 
-       F  Flags           (immer erstes Zeichen!)
-       H  Halten
-       G  Adreábuch-Gruppe
-       B  Box
-       A  Adresse/Verteiler
-       K  Kommentar
+       <<F>>  Flags           (immer erstes Zeichen!)
+       <<H>>  Halten
+       <<G>>  Adreábuch-Gruppe
+       <<B>>  Box
+       <<A>>  Adresse/Verteiler
+       <<K>>  Kommentar
 @
 1034
 <<[x]>> -> Die Ausgaben im internen Terminal werden
@@ -5357,7 +5406,7 @@ sortiert.
 1035
 <<[x]>> -> Das Ende von l„nger dauernden Funktionen wie
        z.B. dem Packen von Nachrichten oder Such-
-       funktionen wird durch ein Tonsignal angzeigt.
+       funktionen wird durch ein Tonsignal angezeigt.
 @
 1036
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
@@ -6806,9 +6855,9 @@ kann jederzeit mit <<<Ctrl-W> >>umgeschaltet werden.
 @
 554
 Hier wird festgelegt, welcher [Lesemodus] bei Pro-@50
-grammstart aktiv sein soll. Der Lesemodus kann je-
-derzeit in der Brettliste mit <<L>> umgeschaltet
-werden.
+grammstart aktiv sein soll. Der Lesemodus kann jeder-
+zeit in der Brettliste mit <<L>> und im Nachrichten-
+Lesefenster mit <<<Alt-L> >>umgeschaltet werden.
 
 <<Alles>>      alle Nachrichten
 
