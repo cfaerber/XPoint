@@ -27,7 +27,6 @@ uses
   linux,
   xplinux,
   xpglobal,
-  dos,
   typeform;
 {$else }
 uses
@@ -43,8 +42,7 @@ uses
 {$ENDIF }
   xpglobal, dos,
   typeform;
-
-{$endif} { Linux }
+{$endif} { Unix }
 
 const
   FMRead       = $00;     { Konstanten fÅr Filemode }
@@ -83,16 +81,16 @@ procedure XPRewrite(var F: text; cm: TCreateMode);
 {$ENDIF }
 procedure XPRewrite(var F: file; cm: TCreateMode);
 
-function  AddDirSepa(p: string): string;      { Verz.-Trenner anhaengen }
+function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
-function  existBin(fn: string): boolean;       { Datei vorhanden (PATH)  }
-Function  ValidFileName(name:string):boolean;  { gÅltiger Dateiname ?    }
-function  IsPath(Fname:string):boolean;         { Pfad vorhanden ?        }
-function  TempFile(path:string):string;       { TMP-Namen erzeugen      }
+function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
+Function  ValidFileName(const name:string):boolean;  { gÅltiger Dateiname ?    }
+function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
+function  TempFile(const path:string):string;       { TMP-Namen erzeugen      }
 function  TempExtFile(path,ld,ext:string):string; { Ext-Namen erzeugen }
 function  _filesize(const fn:string):longint;        { Dateigrî·e in Bytes     }
 function  filetime(fn:string):longint;         { Datei-Timestamp         }
-procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen  }
+function  setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen  }
 function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
 procedure erase_mask(s:string);                 { Datei(en) lîschen       }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
@@ -114,18 +112,27 @@ function  alldrives:string;
 
 implementation  { ------------------------------------------------------- }
 
-{$ifdef unix}
+uses
+  xp0;
 
 const
-  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
+{$ifdef unix}
   STAT_IRWUSR           = STAT_IRUSR or STAT_IWUSR;
   STAT_IRWGRP           = STAT_IRGRP or STAT_IWGRP;
   STAT_IRWOTH           = STAT_IROTH or STAT_IWOTH;
 
+  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
+{$else}
+  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
+{$endif}
+
 function SetAccessMode(const fn: string; const cm: TCreateMode): boolean;
+{$ifdef Unix}
 var
   fm: longint;
+{$endif}
 begin
+{$ifdef Unix}
   case cm of
     cmUser   : fm:= STAT_IRWUSR;
     cmUserE  : fm:= STAT_IRWXU;
@@ -140,6 +147,9 @@ begin
   end; { case }
   { Mode setzen }
   result:= chmod(fn, fm);
+{$else}
+  result:= true;
+{$endif}
 end;
 
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
@@ -186,26 +196,14 @@ begin
   System.Rewrite(F);
 end;
 
-{ Haengt einen fehlenden Verzeichnisseparator an.
-  Loest dabei C: auf (nur Nicht-Unix }
-function  AddDirSepa(p: string): string;
+function existf(var f):Boolean;
+var
+  fr: ^filerec;
 begin
-  if p='' then
-    AddDirSepa:= ''
-  else begin
-    if LastChar(p)<>DirSepa then
-      AddDirSepa:= p+DirSepa
-    else
-      AddDirSepa:= p;
-  end;
+  fr:= @f;
+  result:= FileExists(fr^.name);
 end;
-
-
-{$else}
-uses
-  xp0;
-
-Function existf(var f):Boolean;
+{
 var
   fm : byte;
 begin
@@ -217,6 +215,7 @@ begin
   filemode:=fm;
   if ioresult = 0 then ;
 end;
+}
 
 function ioerror(i:integer; otxt:string):string;
 begin
@@ -265,50 +264,31 @@ begin
   filemode:=fm0;
 end;
 
-{$endif}
-
-{$ifndef unix}
-
-const
-  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
-
-{$IFDEF FPC }
-procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
-begin
-  System.Rewrite(F,l);
-end;
-
-procedure XPRewrite(var F: text; cm: TCreateMode);
-begin
-  System.Rewrite(F);
-end;
-{$ENDIF }
-
-procedure XPRewrite(var F: file; cm: TCreateMode);
-begin
-  System.Rewrite(F);
-end;
-
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
-function  AddDirSepa(p: string): string;
+function  AddDirSepa(const p: string): string;
+{$ifndef Unix}
 var
   cwd: string;
+{$endif}
 begin
   if p='' then
     AddDirSepa:= ''
-  else begin
-    if LastChar(p)<>DirSepa then
+  else if LastChar(p)<>DirSepa then
+{$ifdef Unix}
+      result:= p + DirSepa
+{$else}
     begin
       if (length(p)=2) and (p[2]=':') then begin     { Nur C: ? }
         p:= UpperCase(p);
         getdir(Ord(p[1])-64,cwd);               { -> Akt. Verz. ermitteln }
-        AddDirSepa:= AddDirSepa(cwd);
+        result:= AddDirSepa(cwd);
       end else
-        AddDirSepa:= p+DirSepa;
-    end else
-      AddDirSepa:= p;
-  end;
+        result:= p+DirSepa;
+    end
+{$endif}
+  else
+    result:= p;
 end;
 
 { Sucht die Datei 'fn' in folgender Reihenfolge:
@@ -316,73 +296,58 @@ end;
   - Startverzeichnis der aktuellen Programmdatei
   - Environment-Var PATH sysutils
 }
-function  existBin(fn: string): boolean;
+function existBin(const fn: string): boolean;
 var
-  envpath: string;                      { Opps, bug in brain. PATH kann > 256 sein }
-  filename, path: string;
-  i, j, k: integer;
+  i      : integer;
+  fname,
+  path   : string;
 begin
-  filename:= ExtractFilename(fn);           { Evtl. Pfad ignorieren }
-  if FileExists(fn) then begin               { -> Aktuelles Verzeichnis }
-    existBin:= true;
-    exit;
-  end;
-  path:= ProgPath;                      { -> Startverzeichnis }
-  if path<>'' then begin
-    if FileExists(AddDirSepa(path)+filename) then begin
-      existBin:= true;
-      exit;
-    end;
-  end;
-  envpath:= dos.getenv('PATH');
-  j:= CountChar(PathSepaChar,envpath);
-  for i:= 1 to j do begin
-    k:= CPos(PathSepaChar, envpath);
-    path:= copy(envpath,1,k-1);
-    delete(envpath,1,k);
-    if path<>'' then
-      if FileExists(AddDirSepa(path)+filename) then begin
-        existBin:= true;
-        exit;
+  result:= false;
+  fname:= ExtractFileName(fn);
+  if FileExists(fn) then
+    result:= true
+  else if FileExists(AddDirSepa(ExtractFilePath(ParamStr(0)))+fname) then
+    result:= true
+  else begin
+    path:= getenv('PATH');
+    i:= pos(PathSepaChar, path);
+    while i>0 do begin
+      if FileExists(AddDirSepa(Copy(path,1,i-1))+fname) then begin
+        result:= true;
+        break;
       end;
+      Delete(path,1,i);
+      i:= pos(PathSepaChar, path);
+    end;
+    if Length(path)>0 then
+      result:= FileExists(AddDirSepa(path)+fname);
   end;
-  if envpath<>'' then begin             { Noch was ueber ? }
-    if FileExists(AddDirSepa(envpath)+filename) then
-      existBin:= true
-    else
-      existBin:= false;
-  end else
-    existBin:= false;
 end;
 
-
-function ValidFileName(name:string):boolean;
-var f : file;
+function ValidFileName(const name:string):boolean;
+var
+  f: file;
 begin
   if (name='') or multipos('*?&',name) then
     ValidFileName:=false
+  else if FileExists(name) then
+    ValidFileName:=true
   else begin
-{$IFDEF UnixFS }
-    assign(f, ResolvePathName(name));           { ~/ aufloesen }
-{$ELSE }
     assign(f,name);
-{$ENDIF }
-    if existf(f) then ValidFileName:=true
-    else begin
-      rewrite(f);
-      close(f);
-      erase(f);
-      ValidFileName:=(ioresult=0);
-    end;
+    rewrite(f);
+    result:= (ioresult=0);
+    close(f);
+    erase(f);
+    if ioresult<>0 then ;       { Wert zuruecksetzen }
   end;
 end;
 
-function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
+function IsPath(const fname:string):boolean;         { Pfad vorhanden ? }
 var
   curdir: string;
 begin
-  curdir := GetCurrentDir;
-  IsPath := SetCurrentDir(fname);
+  curdir:= GetCurrentDir;
+  IsPath:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
 end;
 
@@ -394,13 +359,8 @@ var bufs,rr:word;
 begin
   bufs:=65536;
   getmem(buf,bufs);
-{$IFDEF UnixFS }
-  assign(f1,ResolvePathName(srcfn));
-  assign(f2,ResolvePathName(destfn));
-{$ELSE }
   assign(f1,srcfn);
   assign(f2,destfn);
-{$ENDIF }
   reset(f1,1);
   rewrite(f2,1);
   while not eof(f1) and (inoutres=0) do begin
@@ -484,13 +444,14 @@ begin
     end;
 end;
 
-function TempFile(path:string):string;       { TMP-Namen erzeugen }
-var n : string[12];
+function TempFile(const path: string): string;       { TMP-Namen erzeugen }
+var
+  n: string;
 begin
   repeat
     n:=formi(random(10000),4)+'.tmp'
-  until not FileExists(path+n);
-  TempFile:=path+n;
+  until not FileExists(AddDirSepa(path)+n);
+  TempFile:=AddDirSepa(path)+n;
 end;
 
 function TempExtFile(path,ld,ext:string):string;  { Ext-Namen erzeugen }
@@ -536,7 +497,18 @@ begin
   SysUtils.findclose(sr);
 end;
 
-procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen }
+function setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen }
+var
+  fh: longint;
+begin
+  fh:= FileOpen(fn, fmOpenWrite);
+  if fh >= 0 then begin
+    result:= (FileSetDate(fh, newtime) = 0);
+    FileClose(fh);
+  end else
+    result:= false;
+end;
+{
 var f : file;
 begin
   assign(f,fn);
@@ -545,7 +517,7 @@ begin
   close(f);
   if ioresult<>0 then;
 end;
-
+}
 function GetBareFileName(p:string):string;
 var d : dirstr;
     n : namestr;
@@ -573,7 +545,6 @@ begin
     fn:= AddDirSepa(dir)+fn;
 end;
 
-{$endif} { Linux }
 
 {$ifndef Unix }
 function alldrives:string;
@@ -605,6 +576,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/11/14 20:13:58  hd
+  - Laeuft unter Linux wieder
+  - existBin optimiert
+  - existf umgestellt (Datei wird nicht mehr geoffnet)
+
   Revision 1.65  2000/11/14 15:51:26  mk
   - replaced Exist() with FileExists()
 
