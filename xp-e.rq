@@ -1219,9 +1219,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Choose "Continue" if you agree to these terms of license.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^BESTELL.DOC , ^Enter Key , ^Continue , ^Quit~
-32   ~^BESTELL.DOC , ^Enter Key~
-40   BESTELL.DOC
+30   ~^LIZENZ.DOC , ^Enter Key , ^Continue , ^Quit~
+32   ~^LIZENZ.DOC , ^Enter Key~
+40   LIZENZ.DOC
 41   %s not found!
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
