@@ -381,7 +381,7 @@ begin
   msgbox(70,iif(win,13,12),getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
-  wrt(x+22,y+2,'DOS-RAM        EMS       XMS        '+
+  wrt(x+22,y+2,'DOS-RAM      EMS         XMS        '+
                right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
   wrt(x+4,y+4,getres2(rnr,2));   { gesamt }
   wrt(x+4,y+5,xp_xp);            { CrossPoint }
@@ -400,15 +400,15 @@ begin
   gotoxy(x+22,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
   if emstest then
   begin
-    gotoxy(x+31,y+4);
+    gotoxy(x+32,y+4);
     write(longint(emstotal)*16:5,' KB');
     ems:=0;
     if (OvrEmshandle<>0) and (OvrEmsHandle<>$ffff) then
       inc(ems,EmsHandlePages(OvrEmshandle)*16);
     if dbEMShandle<>0 then inc(ems,EmsHandlePages(dbEMShandle)*16);
     inc(ems,resemspages*16);
-    gotoxy(x+31,y+5); write(ems:5,' KB');
-    gotoxy(x+31,y+6); write(emsavail*16:5,' KB');
+    gotoxy(x+32,y+5); write(ems:5,' KB');
+    gotoxy(x+32,y+6); write(emsavail*16:5,' KB');
   end;
   if xmstest then begin
     gotoxy(x+44,y+4); write(xmstotal:5,' KB');
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.6  2000/12/17 00:14:46  mk
+  - optische Korrekturen an der Speicherstatistik
+
   Revision 1.27.2.5  2000/12/12 11:30:29  mk
   - FindClose hinzugefuegt
 

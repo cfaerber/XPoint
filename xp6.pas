@@ -386,7 +386,7 @@ var f,f2     : ^file;
     parken   : boolean;     { Nachricht nach /¯Unversandt         }
     senddate : datetimest;  { mit 'D' zeitversetzt absenden       }
     bin_msg  : boolean;     { Bin„r-Versandmeldung                }
-    SendDefault : shortint;
+    SendDefault : byte;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
     netztyp  : byte;        { Netztyp                             }
@@ -2216,6 +2216,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.20  2000/12/17 00:14:46  mk
+  - optische Korrekturen an der Speicherstatistik
+
   Revision 1.39.2.19  2000/12/03 13:03:51  mk
   - Variable box initialisieren
 
