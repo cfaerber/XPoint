@@ -948,7 +948,7 @@ begin
   Result := s1;
   for i:=1 to length(s2) do
     repeat
-      p:=cpos(s2[i],s1);
+      p:=cpos(s2[i],Result);
       if p>0 then delete(Result,p,1);
     until p=0;
 end;
@@ -1299,6 +1299,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/08/01 23:55:29  mk
+  - Endlosschleife in Without beseitigt
+
   Revision 1.61  2000/08/01 16:32:26  mk
   - Define Windows in Win32 geaendert
 
