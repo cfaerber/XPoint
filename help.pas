@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 (***********************************************************)
@@ -18,9 +18,7 @@
 (***********************************************************)
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 
 
@@ -31,13 +29,7 @@ UNIT help;
 INTERFACE
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
+  xpglobal,crt,dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
       maxqvw   = 200;
@@ -82,8 +74,8 @@ type pageadr = array[1..maxpages] of packed record
                                        adr : longint;
                                      end;
      qvt     = array[1..maxqvw] of packed record
-                                     y: word;
-                                     x,l : byte;
+                                     y     : word;
+                                     x,l   : byte;
                                      xout  : byte;  { Anzeige-Position }
                                      nn    : smallword;
                                    end;
@@ -134,7 +126,7 @@ begin
   if ioresult<>0 then begin
     attrtxt(7);
     writeln;
-    writeln('<HELP> Fehler: Hilfsdatei '+ustr(filename(f))+' ist besch„digt.');
+    writeln('<HELP> Fehler: Hilfedatei '+ustr(filename(f))+' ist besch„digt.');
     halt(1);
     end;
 end;
@@ -174,11 +166,7 @@ var ixadr : longint;
     fm      : byte;
 
 begin
-{$IFDEF UnixFS }
-  if cpos('.',getfilename(name))=0 then name:=name+'.hlp';
-{$ELSE }
   if cpos('.',getfilename(name))=0 then name:=name+'.HLP';
-{$ENDIF }
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
@@ -297,15 +285,16 @@ label laden;
    end;
 
    procedure checkASCIIs (var s :string);
-   var p :integer;
+   var p : byte;
    begin
-     if (pos ('{', s) = 0) or (pos ('}', s) = 0) then exit;
-     for p:=1 to length(s)-4 do
-       if (s[p]='{') and (s[p+4]='}') and (ival(copy(s,p+1,3)) in [0..255])
-       then begin
-         s[p]:=chr(ival(copy(s,p+1,3)));
-         delete(s,p+1,4);
-       end;
+    repeat 
+      p:=cpos('{',s);
+      if (p>0) and (s[p+4]='}') and (ival(copy(s,p+1,3))>0)
+        then begin
+          s[p]:=chr(ival(copy(s,p+1,3)));
+          delete(s,p+1,4);
+        end; 
+    until p=0;
    end;
 
 begin
@@ -348,9 +337,7 @@ laden:
       xout:=x;
       end;
   lines:=1; fillchar(z^,sizeof(z^),0);
-  {$IFDEF BP }
-    if memavail<2*size then exit;
-  {$ENDIF }
+  if memavail<2*size then exit;
   getmem(buf,size);
   blockread(f,buf^,size);
   testio;
@@ -449,11 +436,11 @@ begin
     if (last=0) and (_a=0) then
       wrt(x-3,y-1,'É'+dup(wdt+3,'Í')+'»')
     else
-      wrt(x-3,y-1,'Ö'+dup(wdt+3,'Ä')+'·');
+      wrt(x-3,y-1,{'Ö'}#30+dup(wdt+3,'Ä')+#30{'·'});
     if (next=0) and (_a+hgh>=_lines) then
       wrt(x-3,y+hgh+iif(noheader,0,3),'È'+dup(wdt+3,'Í')+'¼')
     else
-      wrt(x-3,y+hgh+iif(noheader,0,3),'Ó'+dup(wdt+3,'Ä')+'½');
+      wrt(x-3,y+hgh+iif(noheader,0,3),{'Ó'}#31+dup(wdt+3,'Ä')+{'½'}#31);
     end
   else begin
     if (last=0) and (_a=0) then
@@ -512,6 +499,8 @@ var lp      : word;
     qvj     : string;
     ml,mo,
     mu,mr   : boolean;
+ mausscroll : boolean;
+ aue,ade,au,ad,ab : boolean;
 
   procedure goleft;
   begin
@@ -599,14 +588,72 @@ var lp      : word;
   end;
 
   procedure maus_bearbeiten;
-  var mx,my : integer;
-      inside: boolean;
+  var mx,my       : integer;
+      inside,down : boolean;
+      mausbut     : byte;
   begin
     maus_gettext(mx,my);
-    inside:=(mx>=x-1) and (mx<x+wdt+3) and
-            (my>=y-1) and (my<=y+hgh+iif(noheader,0,3));
-    if (t=mausunright) or ((t=mausunleft) and not inside) then
-      t:=keyesc;
+    inside:=(mx>=x-2) and (mx<x+wdt+1) and
+            (my>=y) and (my<=y+hgh+iif(noheader,-1,2));
+    down:=my>=y+hgh div 2;
+
+    if t=mausunright then 
+      if inside then t:=keyaf1
+      else t:=keyesc; 
+
+    if t=mausunleft then begin              { Linksklick auf Querverweis }
+      if qvws=0 then exit;
+      i:=0;
+      repeat
+        inc(i); 
+        if (qvw^[i].y-_a=my-y+1) and (qvw^[i].x<=mx-x+1) and (qvw^[i].x+qvw^[i].l>=mx-x+1)
+          then inside:=true else inside:=false;
+      until inside or (i=qvws);       
+      if not inside then exit;
+      qvp:=i; lqv:=i;
+      t:=keycr;
+      end;                               
+
+    if (t=mausleft) or (t=mauslmoved) then begin
+      if not mausscroll then begin
+        mausscroll:=true;
+        aue:=autoupenable;
+        ade:=autodownenable;
+        au:=autoup;
+        ad:=autodown;
+        ab:=autobremse;
+        end;     
+      autobremse:=true;
+      if down then begin
+        autodownenable:=true;
+        autodown:=true;
+        end
+      else begin
+        autoupenable:=true; 
+        autoup:=true;
+        end;
+      end;
+
+    if mausscroll then begin
+      asm
+        mov ax,3                            { Beim Scrollen Maustaste abfragen }
+        int 33h
+        and bl,3
+        mov mausbut,bl
+      end;
+      if mausswapped then mausbut:=mausbut shr 1;
+      if (mausbut and 1 = 0) then begin     { Rechte Taste nicht gedrueckt: Scrollen aus}
+        autoupenable:=aue;
+        autodownenable:=ade;
+        autoup:=au;
+        autodown:=ad;
+        autobremse:=ab;
+        mausscroll:=false;
+        end 
+      else if inside then t:=''
+        else if down then t:=keydown        { Rechte Taste gedrueckt gehalten: scrollen }
+                     else t:=keyup;
+      end;
   end;
 
   procedure printit;
@@ -701,7 +748,9 @@ begin     { of IHS }
       dispqvw(qvp);
       normtxt;
       end;
-    if (t>=mausfirstkey) and (t<=mauslastkey) then maus_bearbeiten;
+
+    if ((t>=mausfirstkey) and (t<=mauslastkey) )
+      or mausscroll then maus_bearbeiten;
     if t=keypgup then
       if _a>0 then _a:=max(0,_a-hgh)
       else
@@ -798,6 +847,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.10  2001/09/16 20:38:43  my
+  JG+MY:- Online-Hilfe unterstützt jetzt Maussteuerung
+
+  JG+MY:- Online-Hilfe zeigt Scroll-Möglichkeit durch Hinweispfeile an
+
+  JG+MY:- ASCII-Code-Auswertung in der Hilfe beschleunigt
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.13.2.9  2001/08/11 22:43:51  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
