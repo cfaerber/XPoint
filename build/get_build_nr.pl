@@ -1,11 +1,17 @@
 #!/usr/bin/perl -w
 
 # use with eval $(get_build_nr.pl)
+# get version number from xpglobal.pas and version.inc and build .spec-file
+ 
+  $MAINVER = "unkown";
+  $SUBVER = "unkown";
+  $BUILD = "unkown";
+  
 
   open(InFile, "../xpglobal.pas");
   while (<InFile>) {
-    if (/mainver.*=.*\'(.*)\'/ig ) { $ENV{'OPENXP_MAINVER'} = $1; }  
-    if (/subver.*=.*\'(.*)\'/ig ) { $ENV{'OPENXP_SUBVER'} = $1;  }
+    if (/mainver.*=.*\'(.*)\'/ig ) { $MAINVER = $1; }  
+    if (/subver.*=.*\'(.*)\'/ig ) { $SUBVER = $1;  }
   }
   close(InFile);
 
@@ -15,17 +21,28 @@
   }
   close(InFile);
 
-  open(OutFile, ">../version.inc");
-  $_ = "buildver = \'".++$BUILD."\'";
-  print(OutFile);
+
+  open(InFile, "openxp.spec");
+  open(OutFile, ">openxp-$MAINVER.$SUBVER-$BUILD.spec");
+
+  while (<InFile>) {
+
+    if (s/\%version\%/$MAINVER\.$SUBVER/ig) {  }
+    if (s/\%release\%/$BUILD/ig) {  }
+
+    print OutFile;
+  }
+
+  close(InFile);
   close(OutFile);
 
-#print $ENV{'OPENXP_MAINVER'}."\n";
-#print $ENV{'OPENXP_SUB'}."\n";
-#print $ENV{'OPENXP_BUILD'}."\n";
-
-print "export OPENXP_MAINVER=$ENV{'OPENXP_MAINVER'}\n";
-print "export OPENXP_SUBVER=$ENV{'OPENXP_SUBVER'}\n";
+print "export OPENXP_MAINVER=$MAINVER\n";
+print "export OPENXP_SUBVER=$SUBVER\n";
 print "export OPENXP_BUILD=$BUILD\n";
 
-# openxp_ver_hi für 3.8, openxp_ver_lo für 13 und openxp_ver_build für 17
+$VERZ = $ENV{'TEMP'};
+if (!$VERZ) { $VERZ = '/tmp' } 
+open(OutFile, ">$VERZ/openxp_ver.txt");
+$_ = "- new version $MAINVER.$SUBVER-$BUILD";
+print OutFile;
+close(OutFile);
