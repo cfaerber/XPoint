@@ -24,7 +24,7 @@ const open   : boolean = false;
 
 type  rblock = record
                  anzahl   : smallword;    { Anzahl Strings in diesem Block  }
-                 fileadr  : longint; { Startadresse in RES-Datei       }
+                 fileadr  : longint;      { Startadresse in RES-Datei       }
                  contsize : smallword;    { Gr”áe des Inhalts (Texte)       }
                  lastnr   : smallword;    { letzte Res.-Nr. in diesem Block }
                  flags    : smallword;    { 1 = preload                     }
@@ -137,7 +137,7 @@ var collnr : word;
     s      : string;
     anzahl : word;
     p      : byte;
-    nr,w   : word;
+    nr,w   : smallword;
     last   : word;
     i,j    : integer16;
 
@@ -175,17 +175,17 @@ var collnr : word;
         fehler('Double res number: '+strs(cnr)+'.'+strs(res[i].nummer));
   end;
 
-begin
+begin                   { procedure make }
   blocks:=0;
   fillchar(block,sizeof(block),0);
   collnr:=0;
-  repeat
-    inc(blocks);
+  repeat                { until eof(t); }
+    inc(blocks);        { n„chsten block; rblocl( anzahl :smallword, fileadr :longint, contsize :smallword, flags :smallword, dummy :lomgint  }
     writeln('Block ',blocks);
-    block[blocks].fileadr:=filepos(f);
-    block[blocks].flags:=flPreload;
+    block[blocks].fileadr:=filepos(f);  {.res datei}
+    block[blocks].flags:=flPreload;     { Startwert = 1 }
     anzahl:=0;
-    repeat
+    repeat      { until eof(t) or ((collnr=0) and ((anzahl>3900) or (block[blocks].contsize>50000)))}
       inc(line);
       readln(t,s);
       s:=trim(s);
@@ -211,11 +211,11 @@ begin
                 else
                   fehler('no group open');
           '0'..'9' : begin
-                       p:=cpos(' ',s);
+                       p:=cpos(' ',s);                  { space nach lfd.Nr }
                        if p=0 then p:=cpos(#9,s);
                        if p=0 then p:=length(s)+1;
                        nr:=ival(left(s,p-1));
-                       wrnr;
+                       wrnr;                            { Bildschirmaugabe }
                        inc(anzahl);
                        res[anzahl].nummer:=nr;
                        res[anzahl].collect:=0;
@@ -224,7 +224,7 @@ begin
                          inc(block[blocks].contsize,4);
                          end
                        else begin
-                         inc(block[blocks].anzahl);
+                         inc(block[blocks].anzahl);     { erh”he res Z„hler in einem der Bl”cke }
                          last:=nr;
                          end;
                        s:=trim(mid(s,p));
@@ -235,8 +235,8 @@ begin
                        while (i>=1) and (s[i]='~') do begin
                          s[i]:=' '; dec(i); end;
                        {getmem(rptr[anzahl],length(s)+1);}
-                       rptr[anzahl]:=s;
-                       inc(block[blocks].contsize,length(s));
+                       rptr[anzahl]:=s;                         { res Stringspeichern }
+                       inc(block[blocks].contsize,length(s));   { +L„nge des res-Stringes }
                      end;
         end;
     until eof(t) or ((collnr=0) and ((anzahl>3900) or (block[blocks].contsize>50000)));
@@ -245,9 +245,10 @@ begin
       block[blocks].lastnr:=last;
       bufp1:=0; bufp2:=0;
       i:=1;
-      while i<=anzahl do begin
+      while i<=anzahl do begin                          { alle res-Strings im Bolck  abarbeiten}
         w:=res[i].nummer;
-        if res[i].collect>0 then inc(w,$8000);
+        if res[i].collect>0 then
+          inc(w,$8000);
         wrbuf1(w,2);
         wrbuf1(bufp2,2);
         if res[i].collect=0 then
@@ -299,8 +300,8 @@ begin
   writeln('ok.');
 end;
 
-
-begin
+//*******************************************************************************
+begin  {programm}
   writeln;
   writeln('OpenXP Res-Compiler ', verstr, pformstr, betastr, ' ', x_copyright,
     ' by ', author_name, ' <', author_mail, '>');
@@ -318,6 +319,8 @@ begin
       infile:=infile+FileUpperCase('.rq');
     if not exist(infile) then
       fehler('"'+infile+'" not found.');
+    if (mid(infile, RightPos('.',infile)+1) <> FileUpperCase('RQ')) then
+      fehler('"'+infile+'" wrong extension');
     InitVar;
     ReadHeader;
     Make;
@@ -326,6 +329,9 @@ begin
 end.
 {
         $Log$
+        Revision 1.14  2000/08/19 20:15:36  mk
+        MO:- laeuft jetzt wieder unter 32 Bit
+
         Revision 1.13  2000/08/05 23:36:55  mk
         - Copyright-Meldung angepasst
 
