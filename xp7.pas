@@ -11,9 +11,6 @@
 { Netcall-Teil }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit  xp7;
 
@@ -716,48 +713,10 @@ begin                  { of Netcall }
 {$ENDIF }
       end;   { if net and not Turbo-Box }
 
+    netcall:=false;
+
     ComNr:=bport;
     in7e1:=false; out7e1:=false;
-    netcall:=false;
-    display:=ParDebug;
-    ende:=false;
-    wahlcnt:=0; connects:=0;
-    showkeys(17);
-
-    if net and _fido then begin       { --- FIDO - Mailer --------------- }
-      fillchar(nc^,sizeof(nc^),0);
-      inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      cursor(curoff);
-      inc(wahlcnt);
-      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
-                       uparcer<>'',crash,alias,addpkts,domain) of
-        EL_ok     : begin
-                      Netcall_connect:=true;
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-        EL_noconn : begin
-                      Netcall_connect:=false;
-                      goto ende0;
-                    end;
-        EL_recerr,
-        EL_senderr,
-        EL_nologin: begin
-                      Netcall_connect:=true;
-                      inc(connects);
-                      goto ende0;
-                    end;
-        EL_break  : begin
-                      Netcall:=false;
-                      goto ende0;
-                    end;
-      else          begin              { Parameter-Fehler }
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-      end;
-      end;
-
     fossiltest;
     if not ISDN then begin
       SetComParams(bport,fossil,Cport,Cirq);
@@ -791,6 +750,46 @@ begin                  { of Netcall }
         if _fido then ReleaseC;
         goto abbruch;
         end;
+      end;
+
+    display:=ParDebug;
+    ende:=false;
+    wahlcnt:=0; connects:=0;
+    showkeys(17);
+
+    if net and _fido then begin       { --- FIDO - Mailer --------------- }
+      fillchar(nc^,sizeof(nc^),0);
+      inmsgs:=0; outmsgs:=0; outemsgs:=0;
+      ReleaseC;
+      cursor(curoff);
+      inc(wahlcnt);
+      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
+                       uparcer<>'',crash,alias,addpkts,domain) of
+        EL_ok     : begin
+                      Netcall_connect:=true;
+                      Netcall:=true;
+                      goto ende0;
+                    end;
+        EL_noconn : begin
+                      Netcall_connect:=false;
+                      goto ende0;
+                    end;
+        EL_recerr,
+        EL_senderr,
+        EL_nologin: begin
+                      Netcall_connect:=true;
+                      inc(connects);
+                      goto ende0;
+                    end;
+        EL_break  : begin
+                      Netcall:=false;
+                      goto ende0;
+                    end;
+      else          begin              { Parameter-Fehler }
+                      Netcall:=true;
+                      goto ende0;
+                    end;
+      end;
       end;
 
     recs:=''; lrec:='';
@@ -1558,6 +1557,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.1  2000/06/26 21:20:21  mk
+  - Modeminitialisierung wieder an alten Platz geschoben, da buggy
+
   Revision 1.16  2000/06/20 18:22:27  hd
   - Kleine Aenderungen
 
