@@ -119,7 +119,7 @@ function  alldrives:string;
 implementation  { ------------------------------------------------------- }
 
 uses
-  xp0;
+  StringTools, xp0;
 
 const
 {$ifdef unix}
@@ -219,7 +219,7 @@ begin
     end;
     rc:= findnext(sr);
   end;
-  findclose(sr);
+  sysutils.findclose(sr);
 end;
 
 procedure FSplit(const path: string; var dir, name, ext: string);
@@ -616,6 +616,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/11/16 12:35:47  mk
+  - Unit Stringtools added
+
   Revision 1.74  2000/11/16 12:08:42  hd
   - Fix: Zu späte Arbeit
 

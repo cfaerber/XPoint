@@ -68,7 +68,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
 implementation
 
-uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
+uses StringTools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
 
 
 function getline:string;                          { Eine Zeile vom Lister uebernehmen }
@@ -1002,6 +1002,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/11/16 12:35:47  mk
+  - Unit Stringtools added
+
   Revision 1.71  2000/11/15 23:12:32  mk
   - implemented ZCDateTimeToDateTime and DateTimeToZCDateTime functions
 
