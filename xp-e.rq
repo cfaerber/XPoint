@@ -1,6 +1,7 @@
 K CrossPoint v3.20 resource file
 K English
 K (c) '93-96 Peter Mandrella
+K (c) '2000 OpenXP Team, www.openxp.de
 
 # Online Help File, Key Macros
 1 XP-E.HLP
@@ -351,7 +352,7 @@ K (c) '93-96 Peter Mandrella
 212  Program stopped.
 213  illegal color configuration: ~
 + 214
-1    CrossPoint - Configuration file
+1    CrossPoint/OpenXP - Configuration file
 2    User setup
 3    miscellaneous
 4    Z-Netz (German version only)
