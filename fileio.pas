@@ -280,8 +280,7 @@ begin
 {$else}
     begin
       if (length(p)=2) and (p[2]=':') then begin     { Nur C: ? }
-        p:= UpperCase(p);
-        getdir(Ord(p[1])-64,cwd);               { -> Akt. Verz. ermitteln }
+        getdir(Ord(UpCase(p[1]))-64,cwd);               { -> Akt. Verz. ermitteln }
         result:= AddDirSepa(cwd);
       end else
         result:= p+DirSepa;
@@ -576,6 +575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/11/14 20:49:22  ma
+  - geht jetzt auch unter Dos/Win wieder...
+
   Revision 1.66  2000/11/14 20:13:58  hd
   - Laeuft unter Linux wieder
   - existBin optimiert
