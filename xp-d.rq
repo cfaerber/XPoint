@@ -3077,6 +3077,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 49 Bei MIME-Multipart-Nachrichten nicht m”glich.
 50 Der Schreibzugriff auf dieses Brett ist gesperrt.
 51 Bei Nachrichten mit Kommentar nicht m”glich.
+52 Entpacken nicht m”glich - Entpacker-Aufruf l„nger als 127 Zeichen.
 # XP4O3
 80 %s: Crossposting ist hier nicht erlaubt.
 81 Crosspostings sind nur innerhalb eines Servers m”glich!

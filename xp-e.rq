@@ -3004,9 +3004,9 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 25 Not possible with unsent messages.
 26 Message not found in database!
 27 bad poll packet:  %s
-28 Decompression is not possible - use another temp directory!
-29 File already exists - please use another extract directory!
-30 File was not uncompressed correctly.
+28 Decompression not possible - please specify temp directory!
+29 File already exists - please specify extract directory!
+30 File was not decompressed correctly.
 31 Not enough memory!
 32 A maximum of 3 archives may be nested!
 33 Illegal directory.
@@ -3028,11 +3028,12 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 49 Not possible with MIME multipart messages.
 50 Writing to this newsgroup is disabled
 51 Not possible with messages containing a comment.
+52 Decompression not possible - unpacker call longer than 127 characters.
 # XP4O3
 80 %s: No Crosspostings allowed.
 81 Crosspostings are possible only within one server!
 82 %s: Writing to this newsgroup is not allowed.
-83 %s: Crosspostings are not possible here
+83 %s: Crosspostings are not possible here.
 
 +  10600
 1  Date must be same or newer than today.
