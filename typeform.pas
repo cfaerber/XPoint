@@ -2086,19 +2086,22 @@ procedure ukonv(var s:string);
     until p=0;
   end;
 begin
-  conv('‰','a');
-  conv('ˆ','o');
-  conv('¸','u');
-  conv('ﬂ','s');
-   conv('ƒ','A');
-  conv('÷','O');
-  conv('‹','U');
+  conv('Ñ','a');
+  conv('î','o');
+  conv('Å','u');
+  conv('·','s');
+  conv('é','A');
+  conv('ô','O');
+  conv('ö','U');
 end;
 end.
 
 end.
 { 
   $Log$
+  Revision 1.6  2000/02/16 23:04:06  mk
+  JG: * Windows-Umlaute aus UKonv korrigiert
+
   Revision 1.5  2000/02/15 21:19:24  mk
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
