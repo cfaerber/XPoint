@@ -757,6 +757,23 @@ function BoxParOk: string;
         end;
       end;
     end;
+
+    function ChkAddServers:boolean;
+    var s : string;
+    begin
+      ChkAddServers:=true;
+      own_Nt:=netztyp;
+      showErrors:=false;    { keine Einzel-Fehlermeldungen  }
+      with boxpar^ do
+      begin
+        s:=BfgToBox(ClientAddServers);
+        if BfgToBoxOk then
+          ChkAddServers:=addServersTest(s)
+        else
+          ChkAddServers:=false;
+      end;
+    end;
+
 var
   uucp : boolean;
 begin
@@ -769,6 +786,9 @@ begin
     begin
       if TempPPPMode then
       begin
+        if not ChkAddServers then         { immer testen (Netcall+SysopMode) }
+          BoxParOk := getres2(706,11);    { 'Zus„tzliche Server nicht OK' }
+
         if (ClientPath = '') then
           BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
         else if not ChkPPPClientPath then
@@ -1373,6 +1393,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.13  2003/08/25 19:21:21  mk
+  - added ChkAddServers
+
   Revision 1.52.2.12  2003/08/24 21:35:37  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems
