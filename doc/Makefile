@@ -107,7 +107,7 @@ HELP = xp xp-e
 OLDDOC = fido uucp
 TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
 	planung.txt readme.txt slizenz.txt tools.txt versions.txt
-CONTRIBDOC = bestell.doc lizenz.doc xpoint.log xpoint.txt
+CONTRIBDOC = bestell.txt lizenz.doc xpoint.log xpoint.txt
 
 ifeq ($(OS),linux)
 TXT += readme.lnx
@@ -166,6 +166,9 @@ $(patsubst %,clean_%,$(OLDDOCFILES)): clean_%:
 
 #
 # $Log$
+# Revision 1.5  2000/10/06 13:58:10  fe
+# bestell.doc in bestell.txt umbenannt.
+#
 # Revision 1.4  2000/10/05 19:57:20  fe
 # Korrekturen
 #
