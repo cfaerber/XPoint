@@ -21,11 +21,10 @@ unit winxp;
 INTERFACE
 
 uses
-  xpglobal,
 {$IFDEF Win32 }
   windows, strings,
 {$ENDIF }
-  crt,dos,keys,inout,maus2,typeform;
+  crt,dos,keys,inout,maus2,typeform, xpglobal;
 
 const maxpull = 30;
       maxpush = 20;
@@ -53,7 +52,7 @@ procedure rahmen2d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ∫ zeichnen}
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
 procedure wshadow(li,re,ob,un:word);                { 8-Schatten }
 
-procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull setzen }
+procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
@@ -1097,6 +1096,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/04/04 21:01:22  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.17  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

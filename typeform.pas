@@ -19,7 +19,6 @@
 
 {$I XPDEFINE.INC }
 
-
 UNIT typeform;
 
 
@@ -88,7 +87,7 @@ Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 Function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
 Function LStr(const s:string):string;              { LowerString                  }
 Function Ltrim(const s:string):string;             { linke Leerzeichen entfernen  }
-Function Max(const a,b:longint):longint;           { Maximum Integer              }
+Function Max(const a,b:longint):longint;          { Maximum Integer              }
 Function MaxR(const a,b:real):real;                { Maximum Real                 }
 Function MaxS(const a,b:string):string;            { Maximum String               }
 Function Mid(const s:string; const n:byte):string;       { Rest des Strings ab Pos. n   }
@@ -148,7 +147,7 @@ Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);     
 Procedure delfirst(var s:string);            { ersten Buchstaben lîschen    }
 Procedure dellast(var s:string);             { letzten Buchstaben lîschen   }
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
-Procedure iswap(var l1,l2:longint);          { l1 und l2 vertauschen        }
+Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
@@ -2154,6 +2153,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/04/04 21:01:21  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.25  2000/03/24 20:25:49  rb
   ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
 

@@ -119,7 +119,7 @@ var x,buf : stream;    { buf = Puffer; nur fÅr Assembler-Routinen ! }
 
 {$IFDEF ver32}
 
-procedure make_stream(var source, dest); assembler;
+procedure make_stream(var source, dest); assembler; {&uses esi, edi}
 asm
              mov    esi, source
              mov    edi, dest
@@ -148,7 +148,7 @@ end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure permutate(var s; codeofs: longint; n:longint); assembler;
+procedure permutate(var s; codeofs: longint; n:longint); assembler; {&uses ebx, esi, edi}
 asm
              mov     esi, codeofs
              mov     edi, offset buf
@@ -176,7 +176,7 @@ end;
 {$ENDIF }
 
 
-procedure make_comp(var source; var dest); assembler;
+procedure make_comp(var source; var dest); assembler; {&uses esi, edi}
 asm
              mov     esi, source
              mov     edi, dest
@@ -204,7 +204,7 @@ end ['EAX', 'ECX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure Xs(var s1, s2; n: longint); assembler;
+procedure Xs(var s1, s2; n: longint); assembler; {&uses esi, edi}
 asm
              mov     edi, s1
              mov     esi, s2
@@ -222,7 +222,7 @@ end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure F2(var s, s2); assembler;
+procedure F2(var s, s2); assembler; {&uses ebx, esi, edi}
 asm
              mov     ecx,0
 @F2lp:       push    ecx
@@ -563,6 +563,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/04 21:01:24  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.7  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

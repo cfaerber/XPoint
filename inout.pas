@@ -163,8 +163,8 @@ var    chml : Array[1..5] of string[230];
        editmsp      : integer;         { aktuelle editms-Zeile             }
 
        color,cga    : boolean;         { Grafik-detect                     }
-       zaehler      : array[1..maxzaehler] of longint;
-       zaehlproc    : array[1..maxzaehler] of procedure;
+       zaehler      : packed array[1..maxzaehler] of longint;
+       zaehlproc    : packed array[1..maxzaehler] of procedure;
 
 
 procedure Disp_DT;                              { Datum/Uhrzeit anzeigen  }
@@ -463,10 +463,10 @@ begin
     end;
 end;
 
-
+{&optimize-}
 Procedure multi2;
 var h,m,s,s100 : rtlword;
-    i          : integer;
+    i          : integer16;
     l          : longint;
 begin
   gettime(h,m,s,s100);
@@ -478,15 +478,18 @@ begin
       if (scsavecnt=0) and (@scsaveadr<>@dummyFN) then
         scsaveadr;
       end;
-    for i:=1 to maxzaehler do
-      if zaehler[i]>0 then begin
-        dec(zaehler[i]);
-        FastMove(zaehlproc[i],l,4);
-        if (zaehler[i]=0) and (l<>0) then zaehlproc[i];
-        end;
+      for i:=1 to maxzaehler do
+        if zaehler[i]>0 then
+        begin
+          dec(zaehler[i]);
+          FastMove(Zaehlproc[i],l, 4);
+          if (zaehler[i]=0) and (l <> 0) then
+            Zaehlproc[i];
+         end;
     end;
   multi3;
 end;
+{&optimize+}
 
 
 procedure showstatus(do_rest:boolean);
@@ -1758,6 +1761,8 @@ begin
 {$ENDIF}
 end;
 
+var
+ i: Integer;
 begin
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
   normtxt;
@@ -1793,6 +1798,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/04/04 21:01:21  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.22  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

@@ -66,7 +66,7 @@ end;
 
 {$IFDEF ver32}
 { !! Ungetestet und unoptimiert }
-procedure decode; assembler;
+procedure decode; assembler;  {&uses ebx, esi, edi}
 asm
           mov esi, offset s       { Adresse des zu dekod. Strings }
           mov ebx, 2              { Offset innerhalb von s }
@@ -129,29 +129,19 @@ asm
           ja @flush
           jmp @mainloop
 
-@flush:   push esi
-          push edi
-          push ebx
-          push ecx
-          push esi
-          push edi
+@flush:   pushad
           call dword ptr flushbuf            {setzt bufp auf 0   JG:FAR }
-          pop edi
-          pop esi
-          pop ecx
-          pop ebx
-          pop edi
-          pop esi
+          popad
           jmp @mloop0
 @ende:
 {$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
 
 
-procedure getstring; assembler;
+procedure getstring; assembler; {&uses ebx, esi}
 asm
           mov esi,inbuf
           mov ebx,ibufp
@@ -191,7 +181,6 @@ end;
 
 
 {$ELSE}
-{ JG:08.02.00 In inline-Asm umgesetzt... & Bugfix wegen ($F-  ---->  $F+ }
 
 procedure decode; assembler;
 asm
@@ -663,6 +652,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/04 21:01:24  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.10  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

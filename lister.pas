@@ -15,7 +15,6 @@
   {$O+,F+}
 {$ENDIF }
 
-
 unit lister;
 
 interface
@@ -211,7 +210,7 @@ var   lstack  : array[0..maxlst] of record
 
 
 {$IFDEF ver32}
-procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler;
+procedure make_list(var buf; var rp:word; rr:word; wrap:byte); assembler; {&uses all}
 var
   bxsave,cxsave : dword;
 asm
@@ -301,21 +300,13 @@ asm
          jmp    @llp
 
 @appcall:
-         push   eax
-         push   ebx
-         push   ecx
-         push   edx
-         push   esi
-         push   edi
+         pushad
+         pushfd
          dec    esi                    { Adresse des Strings auf den Stack }
          push   esi
          call   app_l                  { Zeile an Liste anh„ngen }
-         pop    edi
-         pop    esi
-         pop    edx
-         pop    ecx
-         pop    ebx
-         pop    eax
+         popfd
+         popad
          retn
 @the_end:
 {$IFDEF FPC }
@@ -1645,6 +1636,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/04 21:01:21  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.11  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

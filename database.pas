@@ -118,7 +118,7 @@ implementation  {=======================================================}
 uses datadef1;
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
-procedure expand_node(rbuf,nodep: pointer); assembler;
+procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
 {$IFDEF BP }
 asm
          push ds
@@ -183,7 +183,7 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler;
+procedure seek_cache(dbp:pointer; ofs:longint; var i:integer); assembler; {&uses ebx, esi, edi }
 {$IFDEF BP }
 asm
          xor   cx,cx
@@ -228,8 +228,7 @@ asm
          cmp   ecx,cacheanz
          jb    @sc_lp
 @cfound: mov   edi, i
-{!!}     mov   [edi], ecx
-         mov   [edi], cx
+         mov   [edi], ecx
 {$IFDEF FPC }
 end  ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$ELSE }
@@ -237,7 +236,7 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-procedure seek_cache2(var _sp:integer); assembler;
+procedure seek_cache2(var _sp:integer); assembler; {&uses ebx, edi}
 {$IFDEF BP }
 asm
          les   di,cache
@@ -274,22 +273,25 @@ asm
          mov   ecx, eax                { ECX = 0, i := 0 }
          dec   eax                     { EAX = FFFFFFFF, s := maxlongint }
 
-@clp:    cmp   byte ptr [edi], 0       { not used ? }
+@clp:    cmp   byte ptr [edi],0      { not used ? }
          jz    @sc2ok
-         cmp   [edi+9], eax            { cache^[i].lasttick < s ? }
+         cmp   [edi+11],dx           { cache^[i].lasttick < s ? }
          ja    @nexti
-@smaller:mov   eax, [edi+9]            { s:=cache^[i].lasttick }
-         mov   ebx, ecx                { sp:=i; }
-@nexti:  add   edi, 1080
+         jb    @smaller
+         cmp   [edi+9],ax
+         jae   @nexti
+@smaller:mov   ax,[edi+9]            { s:=cache^[i].lasttick }
+         mov   dx,[edi+11]
+         mov   ebx,ecx                   { sp:=i; }
+@nexti:  add   edi,1080
          inc   ecx
          cmp   ecx,cacheanz
          jb    @clp
          jmp   @nofree
 
-@sc2ok:  mov   ebx, ecx                { sp:=i }
-@nofree: mov   edi, ebx
-{!!}     mov   [edi], ebx
-         mov   [edi], bx
+@sc2ok:  mov   ebx,ecx                   { sp:=i }
+@nofree: mov   edi,_sp
+         mov   [edi],ebx
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
 {$ELSE }
@@ -1722,6 +1724,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/04/04 21:01:20  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.15  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

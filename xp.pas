@@ -18,10 +18,8 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-{$IFDEF FPC }
-  {$IFDEF Win32 }
-    {$R ICONS.RES }
-  {$ENDIF }
+{$IFDEF Win32 }
+  {$R ICONS.RES }
 {$ENDIF }
 
 {$IFDEF BP }
@@ -214,6 +212,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.18  2000/04/04 21:01:22  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.17  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

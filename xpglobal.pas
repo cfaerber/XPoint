@@ -87,7 +87,7 @@ type
       integer16 =  integer;
       integer32 =  longint;
       { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-{     integer =    longint; }
+      integer =    longint;
       word =       longint;  { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
@@ -117,6 +117,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/04/04 21:01:24  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.19  2000/03/24 20:25:50  rb
   ASM-Routinen ges„ubert, Register fr VP + FPC angegeben, Portierung FPC <-> VP
 

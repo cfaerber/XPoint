@@ -78,6 +78,9 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
 end.
 {
   $Log$
+  Revision 1.4  2000/04/04 21:01:20  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

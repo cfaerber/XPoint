@@ -114,7 +114,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
 
 {$IFDEF Ver32 }
 
-procedure ukonv(typ:byte; var data; var bytes:word); assembler;
+procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
          xor   edx, edx
          mov   edi,bytes
@@ -399,7 +399,7 @@ begin
       dbSeek(d,piKurzname,ustr(s));
       if dbFound then
       begin
-        dbRead(d,'Langname',s);  
+        dbRead(d,'Langname',s);
         dbclose(d);                     { ists ein Kurzname ? }
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
@@ -407,10 +407,10 @@ begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
             end;
-        end 
-      else begin     
+        end
+      else begin
         rfehler(908);                   { 'ungÅltige Adresse' }
-        dbclose(d); 
+        dbclose(d);
         testreplyto:=false;
         end;
       end
@@ -839,10 +839,10 @@ begin
 end;
 
   Procedure changeempf;                         {Empfaenger der Mail aendern}
-  begin                 
+  begin
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
-      else adresse:=uucpbrett(empfaenger,2);    
+      else adresse:=uucpbrett(empfaenger,2);
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
@@ -852,10 +852,10 @@ end;
     closemask;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
-    if (adresse<>'') and (cc_testempf(adresse)) then begin 
+    if (adresse<>'') and (cc_testempf(adresse)) then begin
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
-      end;  
+      end;
     pm:=cpos('@',empfaenger)>0;
     end;
 
@@ -867,8 +867,8 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
 {JG:06.02.00}
-  attrtxt(col.coldiahigh);  
-  wrt(x+75,y+2,'/');                 { * = Empfaenger aendern }   
+  attrtxt(col.coldiahigh);
+  wrt(x+75,y+2,'/');                 { * = Empfaenger aendern }
   attrtxt(col.coldialog);
 {/JG}
   if echomail then begin
@@ -958,9 +958,9 @@ begin      {-------- of DoSend ---------}
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
   new(fo); fo^:='';
 
-{ Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }          
-fromstart:   
-          
+{ Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
+fromstart:
+
   passwd^:='';         { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
   docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
@@ -968,7 +968,7 @@ fromstart:
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
   if pm then begin
     fidoto:='';
-    dbSeek(ubase,uiName,ustr(empfaenger));  
+    dbSeek(ubase,uiName,ustr(empfaenger));
     if dbFound then begin                                 {Empfaenger Bekannt}
       verteiler:=(dbReadInt(ubase,'userflags') and 4<>0);
       if verteiler then _verteiler:=true;
@@ -1463,7 +1463,7 @@ fromstart:
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
                   end;
-                                     
+
                 if t='/' then begin             { Empfaenger nachtraeglich aendern }
                    Changeempf;
                    betreffbox:=false; edit:=false; sendbox:=true;
@@ -1472,7 +1472,7 @@ fromstart:
                    closebox;
                    goto fromstart;
                    end;
-              
+
                 end;
       end;
     until senden>=0;
@@ -2075,10 +2075,10 @@ var empf,repto : string[AdrLen];
     useclip    : boolean;
     sData      : SendUUptr;
 
-  function FileOK:boolean; 
+  function FileOK:boolean;
   var f : file;
   begin
-    fileok:=true; 
+    fileok:=true;
     assign(f,fn);
     reset(f);
     if ioresult>0 then fileok:=false
@@ -2162,6 +2162,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/04/04 21:01:24  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.13  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
     neue Einstellung wird dann auch beim Quoten verwendet

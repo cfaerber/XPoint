@@ -755,10 +755,10 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MoreMode   : boolean = true;
        Developer  : boolean = false;
        SupportCfg : string[12] = 'SUPPORT.CFG';
-       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)  
-       
+       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)
+
        { 01/2000 oh }
-       
+
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
        Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
@@ -767,13 +767,13 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        PGP5 = '5.x';
        PGP6 = '6.5.x';
        PGPVersion : string[5] = PGP2;
-       
+
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
-       
+
        AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHBAK'; { Standardreihenfolge: Feldtausch Userliste }
-       
+
        { /oh }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
@@ -847,7 +847,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        MinMB        : smallword;
        AskQuit      : boolean;
        ListVollbild : boolean;       { Vollbild bei internem Lister }
-       ListUhr      : Boolean;       { Uhr bei Vollbildlister }   
+       ListUhr      : Boolean;       { Uhr bei Vollbildlister }
        ListEndCR    : boolean;       { internen Lister mit <cr> beenden }
        ListWrap     : boolean;
        FKeys        : array[0..3] of fkeyp;
@@ -1094,6 +1094,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.20  2000/04/04 21:01:22  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.19  2000/04/02 11:33:54  oh
   - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
 

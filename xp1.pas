@@ -294,7 +294,7 @@ var  menulevel : byte;                  { MenÅebene }
 
 
 {$IFDEF Ver32 }
-function  ixdat(s:string):longint; assembler;
+function  ixdat(s:string):longint; assembler;  {&uses ebx, esi}
 asm
          mov   esi,s
          inc   esi                      { LÑnge ist z.Zt. immer 10 }
@@ -347,7 +347,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
 end;
 {$ENDIF }
 
-procedure iso_conv(var buf; bufsize:word); assembler;
+procedure iso_conv(var buf; bufsize:word); assembler;  {&uses ebx, edi}
 asm
          cld
          mov    edi, buf
@@ -2164,6 +2164,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/04/04 21:01:23  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.23  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

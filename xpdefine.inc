@@ -73,7 +73,9 @@
 {$IFDEF VirtualPascal }  { Virtual Pascal ab 2.0 }
   {$DEFINE VP }
   {$DEFINE Ver32 }
-  {$AlignCode+,AlignData+,AlignRec-,B-,D-,Delphi+,H-,I-,J+,Optimize+,P+,Speed+,V-,X+}
+  {$B-,H-,I-,J+,P+,Q-,R-,T-,V-,W-,X+,Z-}
+  {&AlignCode+,AlignData+,AlignRec-,Asm-,Cdecl-,Delphi-,Frame+,G3+,LocInfo-}
+  {&Open32-,Optimise+,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 0.99.14 }
@@ -101,7 +103,7 @@
     {$R+,S+,Q+}
   {$ENDIF }
   {$IFDEF VirtualPascal }
-    {$R+,S+,Q+,Optimize-}
+    {$R+,S+,Q+,W+,Optimize-}
   {$ENDIF }
 {$ENDIF }
 
@@ -113,6 +115,9 @@
 
 {
   $Log$
+  Revision 1.15  2000/04/04 21:01:24  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.14  2000/03/24 08:35:30  mk
   - Compilerfaehigkeit unter FPC wieder hergestellt
 

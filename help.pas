@@ -228,7 +228,7 @@ begin
 end;
 
 { MK 06.01.2000 Von Inline in ASM 16 und 32 Bit konvertiert }
-procedure decode(buf:pointer; size:word); assembler;
+procedure decode(buf:pointer; size:word); assembler; {&uses ebx}
 {$IFDEF Ver32 }
 asm
         mov ecx, size
@@ -769,6 +769,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/04 21:01:20  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.8  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

@@ -52,7 +52,7 @@ const savekey : pathstr = '';
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben
   JG 08.01.00: Routine optimiert }
 
-function testbin(var bdata; rr:word):boolean; assembler;
+function testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
 {$IFDEF BP }
 asm
          push ds
@@ -308,7 +308,7 @@ begin
     then t:=iifs(hd.typ='T','t',' +textmode=off')
     else t:=iifs(hd.typ='T','t',' -t');
 
-{  
+{
   if PGP_UserID<>'' then begin
     if PGPVersion<>PGP5 then
       uid:=' -u '+IDform(PGP_UserID)
@@ -318,7 +318,7 @@ begin
 }
 
   { --- codieren --- }
-  if encode and not sign then begin                     
+  if encode and not sign then begin
     if PGPVersion=PGP2 then
       RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else if PGPVersion=PGP5 then
@@ -331,9 +331,9 @@ begin
       if exist(tmp) then _era(tmp);         { Tempor„rdatei l”schen }
       tmp:=_source+'.asc';
     end;
-  
+
   { --- signieren --- }
-  end else if not encode and sign then begin            
+  end else if not encode and sign then begin
     if PGPVersion=PGP2 then
       RunPGP('-sa'+t+' '+filename(source)+' -o '+tmp )
     else if PGPVersion=PGP5 then
@@ -346,7 +346,7 @@ begin
       if exist(tmp) then _era(tmp);         { Tempor„rdatei l”schen }
       tmp:=_source+'.asc';
     end;
-  
+
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
@@ -362,7 +362,7 @@ begin
       tmp:=_source+'.asc';
     end;
   end;
-  
+
   if fido_origin<>'' then AddOrigin;
 
   if exist(tmp) then begin
@@ -525,13 +525,13 @@ begin
     RunPGP(tmp+' '+tmp2);
     tmp2:=GetFileDir(tmp2)+GetBareFileName(tmp2);
   end;
-    
+
   if sigtest then begin
     PGP_WaitKey:=false;
     if exist(tmp) then _era(tmp);
   end;
-  
-  { Oops, keine Ausgabedatei: }  
+
+  { Oops, keine Ausgabedatei: }
   if not exist(tmp2) then begin
     if sigtest then begin
       if errorlevel=18 then begin
@@ -704,9 +704,9 @@ begin
       RunPGP('-ka '+tmp)
     else
       RunPGP5('PGPK.EXE','-a '+tmp);
-    
-    { #### PGP6 ? #### }  
-    
+
+    { #### PGP6 ? #### }
+
     PGP_WaitKey:=mk;
     if exist(tmp) then _era(tmp);
   end;
@@ -723,9 +723,9 @@ begin
     RunPGP('-ke '+IDform(PGP_UserID))
   else
     RunPGP5('PGPK.EXE','-e '+IDform(PGP_UserID));
-    
-  { #### PGP6 ? #### }  
-  
+
+  { #### PGP6 ? #### }
+
   PGPBatchMode:=bm;
 end;
 
@@ -739,9 +739,9 @@ begin
     RunPGP('-kr '+IDform(PGP_UserID))
   else
     RunPGP5('PGPK.EXE','-ru '+IDform(PGP_UserID));
-    
-  { #### PGP6 ? #### }  
-  
+
+  { #### PGP6 ? #### }
+
   PGPBatchMode:=bm;
 end;
 
@@ -775,6 +775,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/04 21:01:24  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.12  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

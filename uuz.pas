@@ -200,7 +200,7 @@ type  OrgStr  = string[orglen];
                   xoem       : empflistt;
                   oemanz     : integer;
 {                  oar,war    : string[40]; }      { Realnames }
-                  oar,war    : string[realnlen]; { Realnames } 
+                  oar,war    : string[realnlen]; { Realnames }
                   { 11.10.1999 robo - Realname verl„ngert }
 
                   gateway    : string[80];
@@ -225,7 +225,7 @@ type  OrgStr  = string[orglen];
                   nokop      : boolean;
                   boundary   : string[70];
                   mimetyp    : string[30];
-                  
+
                   { 03.02.2000 robo }
                   mimereltyp : string[25];
                   { /robo }
@@ -233,7 +233,7 @@ type  OrgStr  = string[orglen];
                   { 03.09.1999 robo - X-No-Archive Konvertierung }
                   xnoarchive : boolean;
                   { /robo }
-                  
+
                   { 01/2000 oh }
                   Cust1,Cust2: string[custheadlen];
                   { /oh }
@@ -307,7 +307,7 @@ const IBM2ISOtab : array[0..255] of byte =
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
 {$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
-procedure IBM2ISO; assembler;
+procedure IBM2ISO; assembler; {&uses ebx, esi}
 asm
      cld
      mov   ebx, offset IBM2ISOtab
@@ -348,7 +348,7 @@ end;
 
 
 {$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
-procedure ISO2IBM; assembler;
+procedure ISO2IBM; assembler; {&uses ebx, esi}
 asm
      cld
      mov   ebx, offset ISO2IBMtab - 128
@@ -401,7 +401,7 @@ begin
    {$ifndef linux}         { ML 25.03.2000  workaround für Linux - Outputumleitung mgl. }
   assign(output, '');
   rewrite(output);
-{$endif}   
+{$endif}
   writeln;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
   writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
@@ -560,7 +560,7 @@ procedure donevar;
     freemem(outbuf,outbufsize);
     dispose(uline);
   end;
-{ /robo }  
+{ /robo }
 
 procedure testfiles;
 begin
@@ -1713,7 +1713,7 @@ procedure ReadRFCheader(mail:boolean; s0:string);
 const zz  : string[40] = '';    { Datensegment-optimiert }
 var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     s1    : string;
-    
+
 {    d40   : string[40]; }
     drealn: string[realnlen]; { 11.10.1999 robo - Realname verl„ngert }
     manz  : integer;      { Anzahl zus„tzliche Strings in 'smore' }
@@ -1774,7 +1774,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
             if p=1 then realname:=trim(copy(s0,p2+1,realnlen))
             else realname:=trim(left(s0,min(p-1,realnlen)));
             { 11.10.1999 robo - Realname verl„ngert }
-            
+
           end;
       end
     else
@@ -1815,7 +1815,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
           inc(pk);
           if sto[pk]='"' then _quote:=not _quote;
         until ((sto[pk]=',') and not _quote) or (pk=length(sto));
-{ /robo }        
+{ /robo }
 
         s0:=trim(left(sto,pk-1));
         sto:=trim(mid(sto,pk+1));
@@ -2027,7 +2027,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
     appUline('U-'+s1);
     by:=GetRec('by ');
     from:=GetRec('from ');
-{ 28.01.2000 robo - Envelope-Empf„nger ermitteln }    
+{ 28.01.2000 robo - Envelope-Empf„nger ermitteln }
     if envemp='' then envemp:=GetRec('for ');
 { /robo }
     if (by<>'') and (lstr(by)<>lstr(right(hd.pfad,length(by)))) then begin
@@ -2112,11 +2112,11 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
         end;
     until (p1=0) or (p2=0);
 { /robo }
-    
+
 { 11.10.1999 robo - Fix im Zuge der Realnameverl„ngerung }
     if length(ss)>maxlen then ss[0]:=char(maxlen);
 { /robo }
-          
+
     s:=ss;
     ISO2IBM;
     ss:=s;
@@ -2232,13 +2232,13 @@ begin
              if zz='reply-to'     then GetAdr(PmReplyTo,drealn) else
              if zz='return-receipt-to' then GetAdr(EmpfBestTo,drealn)
              { 11.10.1999 robo - Realname verl„ngert }
-             
+
              else AppUline('U-'+s1);
         's': if zz='subject'      then GetBetreff(false) else
 {             if zz='sender'       then GetAdr(sender,d40) else }
              if zz='sender'       then GetAdr(sender,drealn) else
              { 11.10.1999 robo - Realname verl„ngert }
-             
+
              if zz='summary'      then summary:=s0
              else AppUline('U-'+s1);
         'x': if zz='x-gateway'    then gateway:=s0 else
@@ -2293,7 +2293,7 @@ begin
 {   MimeIsoDecode(realname,40); }
     MimeIsoDecode(realname,realnlen);
     { 11.10.1999 robo - Realname verl„ngert }
-    
+
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
@@ -2398,13 +2398,13 @@ begin
     s[1]:=c;
     ReadRFCheader(true,s);
     binaer:=(hd.typ='B');
-{ 28.01.2000 robo }  
+{ 28.01.2000 robo }
     if getrecenvemp and (mailuser='') and (envemp<>'') then begin
       if cpos('<',envemp)=1 then delete (envemp,1,1);
       if (cpos('>',envemp)=length(envemp))
        and (length(envemp)>0) then dellast(envemp);
       mailuser:=SetMailuser(envemp);
-    end;  
+    end;
 { /robo }
     if (mailuser<>'') and (mailuser<>hd.xempf[1]) then begin
       hd.xoem:=hd.xempf;
@@ -2772,7 +2772,7 @@ var sr    : searchrec;
 { 28.01.2000 robo - Bugfix }
 {    else if left(lstr(s),6)='>From ' then }
     else if left(lstr(s),6)='>from ' then
-{ /robo }    
+{ /robo }
       FileType:=4
     else
       FileType:=0;
@@ -2852,7 +2852,7 @@ procedure WriteRFCheader(var f:file; mail:boolean);
 const smtpfirst : boolean = true;
 var dat    : string[30];
     p      : byte;
-    s,      
+    s,
     rfor   : string;
     first  : boolean;
     i      : integer;
@@ -2929,8 +2929,8 @@ var dat    : string[30];
 { 03.09.1999 robo - bei Netztyp RFC Gruppennamen nicht nach }
 { lowercase wandeln wegen Macrosuff-Schrottnewsservern }
 
-    if hd.netztyp=nt_RFC 
-      then formnews:=s 
+    if hd.netztyp=nt_RFC
+      then formnews:=s
       else
 
 { /robo }
@@ -3024,7 +3024,7 @@ begin
           wrs(f,'cc: '+empflist^.empf);
         ep:=empflist^.next;
         dispose(empflist);
-	empflist:=ep;
+        empflist:=ep;
       end;
     end
     else
@@ -3045,14 +3045,14 @@ begin
 
 { 03.09.1999 robo - References einigermassen RFC-konform krzen }
 
-        repeat 
+        repeat
           j:=12+length(ref)+2;
           for i:=1 to addrefs do j:=j+length(addref[i])+3;
           if j>980 then begin
             FastMove(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
             dec(addrefs);
           end;
-        until j<=980;  
+        until j<=980;
 
 { /robo }
 
@@ -3509,11 +3509,14 @@ begin
   if u2z then UtoZ
   else ZtoU;
 { 28.01.2000 robo }
-  donevar;   
-{ /robo }  
+  donevar;
+{ /robo }
 end.
 {
   $Log$
+  Revision 1.16  2000/04/04 21:01:22  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.15  2000/03/25 18:46:59  ml
   uuz lauffähig unter linux
 

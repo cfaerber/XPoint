@@ -24,7 +24,7 @@
 uses
 {$IFDEF Linux }
    XPLinux,
-{$ENDIF }   
+{$ENDIF }
 {$IFNDEF Delphi }
   dos,
 {$ELSE }
@@ -165,10 +165,8 @@ var   oldexit   : pointer;
       kchar     : set of char;  { in Header-Bezeichnern erlaubte Zeichen }
       brchar    : set of char;  { in Brettnamen erlaubte Zeichen         }
 
-{ MK+RB 26.01.2000 Routine in Inline 16 und 32 Bit-Assembler umgeschrieben }
-
 {$IFDEF Ver32 }
-function  TestControlChar(var s:string):boolean; assembler;
+function  TestControlChar(var s:string):boolean; assembler; {&uses esi}
 asm
          mov    esi, s
          cld
@@ -243,7 +241,7 @@ begin
           '           -z   fehlerhafte Zeilen anzeigen'+crlf,
           crlf,
           '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben'
-	   );
+           );
   halt(2);
 end;
 {$ELSE}
@@ -260,7 +258,7 @@ begin
           '           -z   fehlerhafte Zeilen anzeigen'+crlf,
           crlf,
           '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben'
-	   );
+           );
   halt(2);
 end;
 {$ENDIF}
@@ -1373,6 +1371,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/04 21:01:24  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.9  2000/03/26 11:04:10  ml
   zpr-Anzeige in linux geht jetzt
 

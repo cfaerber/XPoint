@@ -816,7 +816,7 @@ var t,lastt: taste;
       if pm then begin
         { 04.02.2000 robo }
 (*        if dbReadInt(mbase,'netztyp') and $800=0 then begin  { kein WAB/OEM } *)
-        if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM } 
+        if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
         and not askreplyto
         then begin
         { /robo }

@@ -304,7 +304,7 @@ var size   : longint;
 {    if netztyp=nt_UUCP then begin }
     if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
     { /robo}
-    
+
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
       end;
@@ -641,7 +641,7 @@ var size   : longint;
     ohfill:=s;
   end;
   { /oh }
-  
+
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
   if ex_mpdata=nil then mpdata.startline:=0
@@ -1026,8 +1026,11 @@ end;
 
 
 end.
-{  
+{
   $Log$
+  Revision 1.12  2000/04/04 21:01:23  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.11  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

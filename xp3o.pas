@@ -60,9 +60,9 @@ procedure ReorgBrettindex;
 function  IsBinary:boolean;
 
 procedure selbrett(var cr:customrec);         { Brettauswahl }
-procedure seluser(var cr:customrec);          { Userauswahl }                        
+procedure seluser(var cr:customrec);          { Userauswahl }
 procedure auto_empfsel(var cr:customrec);     { Brett oder Userauswahl mit abfrage }
- 
+
 implementation  {-----------------------------------------------------}
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
@@ -70,17 +70,17 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 { Customselectroutinen fuer Brett/User }
 
-{ Verwendung...       
+{ Verwendung...
 { auto_empfsel: XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
 { selbrett:     XP3o.Bverknuepfen, XP6S.Editsdata                             }
 { seluser:      XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
-{               XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }          
+{               XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }
 
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
 var p    : scrptr;
     mt   : boolean;                             { user: 1 = Userauswahl  0 = Brettauswahl }
 begin
-  with cr do begin        
+  with cr do begin
     sichern(p);
     if autoe_showscr then showscreen(false);
     mt:=m2t;
@@ -117,7 +117,7 @@ begin
     end;
 end;
 
-procedure seluser(var cr:customrec);                 { Brettauswahl } 
+procedure seluser(var cr:customrec);                 { Brettauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
@@ -293,7 +293,7 @@ end;
 
 { Nachrichten im ein anderes Brett verschieben }
 (*
-procedure selbrett(var cr:customrec);        
+procedure selbrett(var cr:customrec);
 var p : scrptr;
 begin
   sichern(p);
@@ -1347,6 +1347,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/04 21:01:23  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.9  2000/03/14 15:15:39  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

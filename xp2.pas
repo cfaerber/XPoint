@@ -563,7 +563,7 @@ begin
   else
     if not IsPath(logpath) then begin
       trfehler(204,60);   { 'ungÅltiges Logfileverzeichnis' }
-      SetPath(EditLogpath,logpath);
+       SetPath(EditLogpath,logpath);
       end;
   EditTemppath:=nil;
   if temppath='' then temppath:=ownpath
@@ -1090,6 +1090,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/04/04 21:01:23  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.22  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

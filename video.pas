@@ -48,9 +48,9 @@ procedure SetVideoMode(mode:byte);
 {$IFDEF BP }
 procedure SetBorder64(color:byte);         { EGA-Rahmenfarbe einstellen }
 procedure SetBorder16(color:byte);         { CGA-Rahmenfarbe einstellen }
+procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
 {$ENDIF }
 function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
-procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
 
 {$IFDEF BP }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
@@ -163,7 +163,6 @@ asm
          mov    bl,color
          int    $10
 end;
-{$ENDIF }
 
 { hellen Hintergr. akt. }
 procedure SetBackIntensity(hell:boolean); assembler;
@@ -174,7 +173,6 @@ asm
          int    $10
 end;
 
-{$IFDEF BP }
 procedure LoadFont(height:byte; var data);
 var regs    : registers;
     DPMIsel : word;
@@ -526,6 +524,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/04/04 21:01:22  mk
+  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.11  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 

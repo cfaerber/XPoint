@@ -164,7 +164,8 @@ var   Defaults : edp;
 { ------------------------------------------------ externe Routinen }
 
 function SeekStr(var data; len:word;
-                 var s:string; igcase:boolean):integer; assembler;
+                 var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
+
   { -1 = nicht gefunden, sonst Position }
 asm
         jmp    @start
@@ -293,7 +294,7 @@ end;
 {$ENDIF }
 
 
-function FindUmbruch(var data; zlen:integer16):integer; assembler;
+function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi, edi}
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
 {$IFDEF BP }
@@ -394,7 +395,11 @@ asm
   @ufound:
             mov   eax,ebx
 {$ENDIF }
+{$IFDEF FPC }
+end ['EAX', 'EBX', 'ESI', 'EDI'];
+{$ELSE }
 end;
+{$ENDIF }
 
 procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
@@ -2009,6 +2014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/04/04 21:01:20  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.19  2000/04/04 10:33:55  mk
   - Compilierbar mit Virtual Pascal 2.0
 

@@ -60,9 +60,9 @@ procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
                          var realname:string);
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      var size:longint; var hd:header; var ok:boolean;
-		     PM2AMconv:boolean);
+                     PM2AMconv:boolean);
 procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
-{ procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas } 
+{ procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas }
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
 procedure Iso1ToIBM(var data; size:word);
@@ -141,7 +141,7 @@ const IBM2ISOtab : array[0..255] of byte =
 
 {$IFDEF ver32}
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:smallword); assembler;
+              var passpos:smallword); assembler; {&uses ebx, esi, edi}
 asm
          mov   edi,passpos
          xor   ebx, ebx
@@ -151,7 +151,7 @@ asm
          mov   esi,passwd
          mov   ch,[esi]                 { Pa·wort-LÑnge }
          mov   cl,4                     { zum Nibble-Tauschen }
-	 mov   ah,decode
+         mov   ah,decode
          cld
 
 @QPClp:  mov   al,[edi]                { Original-Byte holen }
@@ -170,7 +170,7 @@ asm
          dec   edx                     { nÑchstes Byte }
          jnz   @QPClp
 
-	 mov   edi,passpos              { neuen PW-Index speichern }
+         mov   edi,passpos              { neuen PW-Index speichern }
          mov   [edi],bx
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
@@ -185,7 +185,7 @@ asm
          cld
          mov   esi,adr
          mov   ecx,size
-	 mov   dh,umlaut
+         mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
          cmp   igcase,0               { ignore case? }
@@ -204,11 +204,11 @@ asm
          mov   al,'ô'
          jmp   @xl
 @no_oe:  cmp   al,'Å'
-	 jnz   @no_ue
+         jnz   @no_ue
          mov   al,'ö'
          jmp   @xl
 
-@no_ue:  cmp   al,'Ç'                 
+@no_ue:  cmp   al,'Ç'
          je    @is_eac
          cmp   al,'ê'
          jne   @no_eac
@@ -223,7 +223,7 @@ asm
 @xl:     mov   [esi-1],al
 @noc:    loop  @cloop
          pop   esi
-	 pop   ecx
+         pop   ecx
 
 @case:   mov   edi,key
          sub   cl,[edi]
@@ -241,14 +241,14 @@ asm
          inc   ebp
          dec   dl
          jz    @found
-	 jmp   @sblp2
+         jmp   @sblp2
                                         {--------------}
 @testul: cmp dh,0                       { UMLAUTSUCHE }
          je @nextb                       { Aber nur wenn erwuenscht... }
 
          mov ah,'E'
 
-         cmp al,'é'                     { Wenn "é" im Puffer ist, }                           
+         cmp al,'é'                     { Wenn "é" im Puffer ist, }
          jne @@1
          mov al,'A'
 @ultest: cmp ax,[edi+ebp+1]            { Dann auf "AE" Testen. }
@@ -259,7 +259,7 @@ asm
 
 @@1:     cmp al,'ô'
          jne @@2
-	 mov al,'O'                     { "OE"... }
+         mov al,'O'                     { "OE"... }
          jmp @ultest
 
 @@2:     cmp al,'ö'
@@ -297,7 +297,7 @@ asm
           jns    @ii1
           xlat
 @ii1:     stosb
-	  loop   @isolp1
+          loop   @isolp1
 @noconv1:
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDI'];
@@ -346,7 +346,7 @@ asm
          lds   si,passwd
          mov   ch,[si]                 { Pa·wort-LÑnge }
          mov   cl,4                    { zum Nibble-Tauschen }
-	 mov   ah,decode
+         mov   ah,decode
          cld
 
 @QPClp:  mov   al,es:[di]              { Original-Byte holen }
@@ -365,7 +365,7 @@ asm
          dec   dx                      { nÑchstes Byte }
          jnz   @QPClp
 
-	 les   di,passpos              { neuen PW-Index speichern }
+         les   di,passpos              { neuen PW-Index speichern }
          mov   es:[di],bx
          pop ds
 end;
@@ -384,7 +384,7 @@ asm
          cld
          lds   si,adr
          mov   cx,size
-	 mov   dh,umlaut
+         mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
          cmp   igcase,0               { ignore case? }
@@ -403,11 +403,11 @@ asm
          mov   al,'ô'
          jmp   @xl
 @no_oe:  cmp   al,'Å'
-	 jnz   @no_ue
+         jnz   @no_ue
          mov   al,'ö'
          jmp   @xl
 
-@no_ue:  cmp   al,'Ç'                 
+@no_ue:  cmp   al,'Ç'
          je    @is_eac
          cmp   al,'ê'
          jne   @no_eac
@@ -422,7 +422,7 @@ asm
 @xl:     mov   [si-1],al
 @noc:    loop  @cloop
          pop   si
-	 pop   cx
+         pop   cx
 
 
 @case:   les   di,key
@@ -436,20 +436,20 @@ asm
          mov   dl,es:[di]              { Key-LÑnge }
 @sblp2:  mov   al,[si+bx]
 @acctst: cmp   al,es:[di+bp+1]
-         jnz   @testul                           
+         jnz   @testul
 @ulgood: inc   bx                      { Hier gehts weiter nach Erfolgreichem Umlautvergleich }
          inc   bp
          dec   dl
          jz    @found
-	 jmp   @sblp2
+         jmp   @sblp2
 
                                         {--------------}
 @testul: cmp dh,0                       { UMLAUTSUCHE }
          je @nextb                       { Aber nur wenn erwuenscht... }
 
-         mov ah,'E'                                        
+         mov ah,'E'
 
-         cmp al,'é'                     { Wenn "é" im Puffer ist, }                           
+         cmp al,'é'                     { Wenn "é" im Puffer ist, }
          jne @@1
          mov al,'A'
 @ultest: cmp ax,es:[di+bp+1]            { Dann auf "AE" Testen. }
@@ -460,7 +460,7 @@ asm
 
 @@1:     cmp al,'ô'
          jne @@2
-	 mov al,'O'                     { "OE"... }
+         mov al,'O'                     { "OE"... }
          jmp @ultest
 
 @@2:     cmp al,'ö'
@@ -498,7 +498,7 @@ asm
           jns    @ii1
           xlat
 @ii1:     stosb
-	  loop   @isolp1
+          loop   @isolp1
 @noconv1:
 end;
 
@@ -515,7 +515,7 @@ asm
           xlat
           stosb
           loop   @isolp2
-@noconv2: 
+@noconv2:
 end;
 
 {$ENDIF}
@@ -855,13 +855,13 @@ begin
       x:=markanz
     else begin
       inc(x);
-	if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
-	  { ACHTUNG: Hier kein FastMove wegen Åberlappenden Speicherbereichen! }
-	  { SizeOf(MarkRec) ist 12, die MarkAnz kann bis 5000 sein. Um
-	    einen Integer-Ueberlauf nach Multiplikation zu verhindern muss
-	    mit Word gerechnet werden, so das mehr als 32kb verschoben werden
-	    koennen. Das tritt bei 2731 Nachrichten auf (65536 div 12 div 2) }
-	  Move(marked^[x],marked^[x+1],word(sizeof(markrec))*word(markanz-x));
+        if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
+          { ACHTUNG: Hier kein FastMove wegen Åberlappenden Speicherbereichen! }
+          { SizeOf(MarkRec) ist 12, die MarkAnz kann bis 5000 sein. Um
+            einen Integer-Ueberlauf nach Multiplikation zu verhindern muss
+            mit Word gerechnet werden, so das mehr als 32kb verschoben werden
+            koennen. Das tritt bei 2731 Nachrichten auf (65536 div 12 div 2) }
+          Move(marked^[x],marked^[x+1],word(sizeof(markrec))*word(markanz-x));
       end;
     inc(markanz);
     marked^[x].recno:=dbRecno(mbase);
@@ -899,11 +899,11 @@ procedure SortMark;
       while smdl(marked^[i].datum,x) or
             ((marked^[i].datum=x) and (marked^[i].intnr<y)) do inc(i);
       while smdl(x,marked^[j].datum) or
-	    ((marked^[j].datum=x) and (marked^[j].intnr>y)) do dec(j);
+            ((marked^[j].datum=x) and (marked^[j].intnr>y)) do dec(j);
       if i<=j then begin
-	w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-	inc(i); dec(j);
-	end;
+        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
+        inc(i); dec(j);
+        end;
     until i>j;
     if l<j then sort(l,j);
     if r>i then sort(i,r);
@@ -929,9 +929,9 @@ procedure UnsortMark;
       while marked^[i].recno>x do inc(i);
       while marked^[j].recno<x do dec(j);
       if i<=j then begin
-	w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
-	inc(i); dec(j);
-	end;
+        w:=marked^[i]; marked^[i]:=marked^[j]; marked^[j]:=w;
+        inc(i); dec(j);
+        end;
     until i>j;
     if l<j then sort(l,j);
     if r>i then sort(i,r);
@@ -1428,6 +1428,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/04/04 21:01:23  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
   Revision 1.17  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 
