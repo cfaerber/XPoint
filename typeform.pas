@@ -661,12 +661,12 @@ end;
 
 procedure LoString(var s:string);
 begin
-  s:= LowerCase(s);
+  s:= AnsiLowerCase(s);
 end;
 
 procedure UpString(var s:string);
 begin
-  s:= UpperCase(s);
+  s:= AnsiUpperCase(s);
 end;
 
 function UStrHuge(const s: HugeString): HugeString;
@@ -1357,6 +1357,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.51  2000/07/04 17:33:23  mk
   - stapelweise ungenutze Routinen entfernt
 

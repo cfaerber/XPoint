@@ -166,7 +166,7 @@ begin
         inc(b);
         s[b] := Chr(i + 65);
       end;
-  s[0]:=chr(b);
+  SetLength(s, b);
   alldrives:=s;
 end;
 
@@ -182,6 +182,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.22  2000/07/03 16:26:28  mk
   - unnoetige Compilerdirectiven entfernt bzw. vereinfacht
 

@@ -62,40 +62,40 @@ const
   { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
   ffAnyFile = $20;
 
-function  AddDirSepa(p: pathstr): pathstr;      { Verz.-Trenner anhaengen }
+function  AddDirSepa(p: TFileName): TFileName;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
-function  existBin(fn: pathstr): boolean;       { Datei vorhanden (PATH)  }
-Function  ValidFileName(name:PathStr):boolean;  { gÅltiger Dateiname ?    }
-Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
-function  TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen      }
-function  TempExtFile(path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
-function  _filesize(fn:pathstr):longint;        { Dateigrî·e in Bytes     }
-function  filetime(fn:pathstr):longint;         { Datei-Timestamp         }
-procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen  }
-function  copyfile(srcfn, destfn:pathstr):boolean; { Datei kopieren }
+function  existBin(fn: TFileName): boolean;       { Datei vorhanden (PATH)  }
+Function  ValidFileName(name:TFileName):boolean;  { gÅltiger Dateiname ?    }
+Function  IsPath(fname:PathStr):boolean;         { Pfad vorhanden ?        }
+function  TempFile(path:TFileName):TFileName;       { TMP-Namen erzeugen      }
+function  TempExtFile(path,ld,ext:TFileName):TFileName; { Ext-Namen erzeugen }
+function  _filesize(fn:TFileName):longint;        { Dateigrî·e in Bytes     }
+function  filetime(fn:TFileName):longint;         { Datei-Timestamp         }
+procedure setfiletime(fn:TFileName; newtime:longint);  { Dateidatum setzen  }
+function  copyfile(srcfn, destfn:TFileName):boolean; { Datei kopieren }
 Procedure era(s:string);                        { Datei lîschen           }
 procedure erase_mask(s:string);                 { Datei(en) lîschen       }
-Procedure erase_all(path:pathstr);              { Lîschen mit Subdirs     }
-function  _rename(n1,n2:pathstr):boolean;       { Lîschen mit $I-         }
+Procedure erase_all(path:PathStr);              { Lîschen mit Subdirs     }
+function  _rename(n1,n2:TFileName):boolean;       { Lîschen mit $I-         }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
-procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
-procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
+procedure MakeFile(fn:TFileName);                 { Leerdatei erzeugen      }
+procedure mklongdir(path:TFileName; var res:integer);  { mehrere Verz. anl. }
 
-function  exetype(fn:pathstr):TExeType;
+function  exetype(fn:TFileName):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
 
-procedure addext(var fn:pathstr; ext:extstr);
-procedure adddir(var fn:pathstr; dir:dirstr);
-function  GetFileDir(p:pathstr):dirstr;
-function  GetFileName(p:pathstr):string;
-function  GetBareFileName(p:pathstr):string;    { Filename ohne .ext }
-function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
-procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
+procedure addext(var fn:PathStr; ext:extstr);
+procedure adddir(var fn:PathStr; dir:dirstr);
+function  GetFileDir(p:TFileName):dirstr;
+function  GetFileName(p:TFileName):string;
+function  GetBareFileName(p:TFileName):string;    { Filename ohne .ext }
+function  GetFileExt(p:TFileName):string;         { Extension *ohne* "." }
+procedure WildForm(var s: PathStr);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 procedure WriteBatch(s:string);                 { Batchfile erstellen     }
@@ -118,9 +118,9 @@ const
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
-function  AddDirSepa(p: pathstr): pathstr;
+function  AddDirSepa(p: TFileName): TFileName;
 var
-  cwd: pathstr;
+  cwd: TFileName;
 begin
   if p='' then
     AddDirSepa:= ''
@@ -143,10 +143,10 @@ end;
   - Startverzeichnis der aktuellen Programmdatei
   - Environment-Var PATH
 }
-function  existBin(fn: pathstr): boolean;
+function  existBin(fn: TFileName): boolean;
 var
   envpath: string;                      { Opps, bug in brain. PATH kann > 256 sein }
-  filename, path: PathStr;
+  filename, path: TFileName;
   i, j, k: integer;
 begin
   filename:= GetFileName(fn);           { Evtl. Pfad ignorieren }
@@ -183,7 +183,7 @@ begin
 end;
 
 
-function ValidFileName(name:PathStr):boolean;
+function ValidFileName(name:TFileName):boolean;
 var f : file;
 begin
   if (name='') or multipos('*?&',name) then
@@ -201,32 +201,32 @@ begin
 end;
 
 
-Function IsPath(name:PathStr):boolean;         { Pfad vorhanden ? }
+Function IsPath(fname:PathStr):boolean;         { Pfad vorhanden ? }
 var sr : searchrec;
 begin
-  name:=trim(name);
-  if multipos('?*',name) or (trim(name)='') then
+  fname:=trim(fname);
+  if multipos('?*',fname) or (trim(fname)='') then
     IsPath:=false
   else begin
-    if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
+    if (fname='\') or (fname[length(fname)]=':') or (right(fname,2)=':\')
     then begin
-      Dos.findfirst(name+'*.*',ffAnyFile,sr);
+      Dos.findfirst(fname+'*.*',ffAnyFile,sr);
       if doserror=0 then
         IsPath:=true
       else
-        IsPath:=validfilename(name+'1$2$3.xx');
+        IsPath:=validfilename(fname+'1$2$3.xx');
     end
     else begin
-      if name[length(name)]='\' then
-        dellast(name);
-      Dos.findfirst(name,Directory,sr);
+      if fname[length(fname)]='\' then
+        dellast(fname);
+      Dos.findfirst(fname,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
   findclose(sr);
   end;
 end;
 
-function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
+function copyfile(srcfn, destfn:TFileName):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
 var bufs,rr:word;
     buf:pointer;
@@ -270,7 +270,7 @@ end;
 
 { path: Pfad mit '\' bzw. '/' am Ende! }
 
-procedure erase_all(path:pathstr);
+procedure erase_all(path:PathStr);
 var sr : searchrec;
     f  : file;
     er : integer;
@@ -349,7 +349,7 @@ end;
 {       1 = Pfad angelegt          }
 {     < 0 = IO-Fehler              }
 
-procedure mklongdir(path:pathstr; var res:integer);
+procedure mklongdir(path:TFileName; var res:integer);
 const testfile = 'test0000.$$$';
 var p : byte;
 begin
@@ -385,7 +385,7 @@ begin
     end;
 end;
 
-function TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen }
+function TempFile(path:TFileName):TFileName;       { TMP-Namen erzeugen }
 var n : string[12];
 begin
   repeat
@@ -394,7 +394,7 @@ begin
   TempFile:=path+n;
 end;
 
-function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
+function TempExtFile(path,ld,ext:TFileName):TFileName;  { Ext-Namen erzeugen }
 { ld max. 4 Zeichen, ext mit Punkt '.bat' }
 var n : string[MaxLenFilename];
 begin
@@ -405,7 +405,7 @@ begin
 end;
 
 
-function _filesize(fn:pathstr):longint;
+function _filesize(fn:TFileName):longint;
 var sr : searchrec;
 begin
   dos.findfirst(fn,ffAnyFile,sr);
@@ -416,7 +416,7 @@ begin
   findclose(sr);
 end;
 
-procedure MakeFile(fn:pathstr);
+procedure MakeFile(fn:TFileName);
 var t : text;
 begin
   assign(t,fn);
@@ -427,7 +427,7 @@ begin
     close(t);
 end;
 
-function filetime(fn:pathstr):longint;
+function filetime(fn:TFileName):longint;
 var sr : searchrec;
 begin
   dos.findfirst(fn,ffAnyFile,sr);
@@ -438,7 +438,7 @@ begin
   findclose(sr);
 end;
 
-procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
+procedure setfiletime(fn:TFileName; newtime:longint);  { Dateidatum setzen }
 var f : file;
 begin
   assign(f,fn);
@@ -448,7 +448,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:pathstr):dirstr;
+function GetFileDir(p:TFileName):dirstr;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -457,7 +457,7 @@ begin
   GetFileDir:=d;
 end;
 
-function GetFileName(p:pathstr):string;
+function GetFileName(p:TFileName):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -466,7 +466,7 @@ begin
   GetFileName:=n+e;
 end;
 
-function GetBareFileName(p:pathstr):string;
+function GetBareFileName(p:TFileName):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -475,7 +475,7 @@ begin
   GetBareFileName:=n;
 end;
 
-function GetFileExt(p:pathstr):string;
+function GetFileExt(p:TFileName):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -484,7 +484,7 @@ begin
   GetFileExt:=mid(e,2);
 end;
 
-function _rename(n1,n2:pathstr):boolean;
+function _rename(n1,n2:TFileName):boolean;
 var f : file;
 begin
   assign(f,n1);
@@ -494,7 +494,7 @@ end;
 
 { Extension anhÑngen, falls noch nicht vorhanden }
 
-procedure addext(var fn:pathstr; ext:extstr);
+procedure addext(var fn:PathStr; ext:extstr);
 var dir  : dirstr;
     name : namestr;
     _ext : extstr;
@@ -505,7 +505,7 @@ end;
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
-procedure adddir(var fn: pathstr; dir:dirstr);
+procedure adddir(var fn: Pathstr; dir:dirstr);
 var _dir : dirstr;
     name : namestr;
     ext  : extstr;
@@ -517,7 +517,7 @@ begin
   end;
 end;
 
-procedure WildForm(var s: pathstr);
+procedure WildForm(var s: PathStr);
 var dir : dirstr;
     name: namestr;
     ext : extstr;
@@ -538,7 +538,7 @@ end;
 {   liefern diskfree und disksize falsche Werte              }
 { Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
 
-function exetype(fn:pathstr):TExeType;
+function exetype(fn:TFileName):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
     magic2  : array[0..2] of char;
@@ -596,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.47  2000/07/04 12:04:16  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

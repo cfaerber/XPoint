@@ -13,7 +13,7 @@
 {$I XPDEFINE.INC }
 
 uses
-  dos, typeform,fileio, xpglobal;
+  dos, sysutils, typeform,fileio, xpglobal;
 
 const shrink : boolean = false;
       regs   : integer = 0;
@@ -24,9 +24,9 @@ type  regrec = record
                  region : word;   { 0 = ganze Zone }
                end;
 
-var  nd_file   : pathstr;
-     nl_file   : pathstr;
-     nl_new    : pathstr;
+var  nd_file   : TFileName;
+     nl_file   : TFileName;
+     nl_new    : TFileName;
      buf1,buf2,
      buf3      : array[0..8191] of byte;
      reg       : array[1..maxregs] of regrec;
@@ -66,7 +66,7 @@ var i : integer;
     s : string[20];
     p : byte;
 
-  procedure TestEx(fn:pathstr);
+  procedure TestEx(fn:TFileName);
   var t : text;
   begin
     assign(t,fn);
@@ -132,9 +132,9 @@ var t1,t2,t3   : text;
     s          : string;
     n,i,adr,fs : longint;
     pp,ppn     : shortint;
-    dir        : dirstr;
-    name       : namestr;
-    ext        : extstr;
+    dir        : TFileName;
+    name       : TFileName;
+    ext        : TFilename;
 
   procedure pfehler(txt:string);
   begin
@@ -245,7 +245,7 @@ procedure shrinklist;
 const temp = 'nodelist.$$$';
       bs   = 32768;
 var dir    : dirstr;
-    name   : namestr;
+    name   : TFileName;
     ext    : extstr;
     t1,t2  : text;
     zone   : longint;
@@ -331,6 +331,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.8  2000/07/04 12:04:17  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

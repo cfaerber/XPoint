@@ -132,7 +132,7 @@ var mmask     : array[1..12] of boolean;
   end;
 
   function amodi:boolean;
-  var fn : pathstr;
+  var fn : PathStr;
       sr : searchrec;
   begin
     fn:=ar.datei;
@@ -660,6 +660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.16  2000/07/04 12:04:29  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

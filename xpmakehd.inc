@@ -63,7 +63,7 @@ var i,res : integer;
         end;
       incO;
       end;
-    s[0]:=char(l);
+    SetLength(s, l);
     IncO;
     if ok and (buf^[o]=#10) then IncO;
   end;
@@ -88,13 +88,8 @@ var i,res : integer;
     l:=0;
     while (o<bufanz) and (buf^[o]<>#13) do
     begin
-{$IFDEF BP }
-      if l<255 then
-{$ENDIF }
-      begin
-        inc(l);
-        s[l]:=buf^[o];
-        end;
+      inc(l);
+      s[l]:=buf^[o];
       incO;
     end;
     SetLength(s, l);
@@ -115,7 +110,7 @@ var i,res : integer;
   procedure LRead(var s:string; maxlen:byte);
   begin
     if maxlen<length(line) then
-      line[0]:=chr(maxlen);
+      SetLength(line, maxlen);
     s:=line;
   end;
 
@@ -127,12 +122,12 @@ var i,res : integer;
 
   procedure GetEmpf;
   var p : byte;
-      s : string[80];
+      s : string;
   begin
     if readempflist then begin
       LRead(s,79);
       if (cpos('@',s)>0) or (s[1]<>'/') then begin
-        p:=pos(' (',s); if p>0 then byte(s[0]):=p-1;
+        p:=pos(' (',s); if p>0 then SetLength(s, p-1);
         end;
       if hd.empfanz+1=empfnr then hd.empfaenger:=s
       else AddToEmpflist(s);
@@ -604,6 +599,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/07/04 21:23:07  mk
+  - erste AnsiString-Anpassungen
+
   Revision 1.17  2000/07/04 12:04:30  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
