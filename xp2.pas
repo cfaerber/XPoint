@@ -714,14 +714,14 @@ var   res  : integer;
   procedure TestDir(d:string);
   begin
     if not IsPath(ownpath+d) then
-      if CreateDir(ownpath+LeftStr(d,length(d)-1)) then
+      if not CreateDir(ownpath+LeftStr(d,length(d)-1)) then
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
   end;
 
   procedure TestDir2(d:string);
   begin
     if not IsPath(d) then
-      if CreateDir(LeftStr(d,length(d)-1)) then
+      if not CreateDir(LeftStr(d,length(d)-1)) then
         interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
   end;
 
@@ -1202,6 +1202,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.93  2000/12/05 17:20:25  ml
+  - killed logicbug in TestDir-routine
+
   Revision 1.92  2000/12/04 10:04:33  mk
   - enabled language switching again
 
