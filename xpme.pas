@@ -14,12 +14,12 @@
 
 uses
 {$IFDEF Linux }
-  xplinux, 
+  xplinux,
 {$ENDIF }
   winxp,
 {$IFDEF NCRT }
   xpcurses,
-{$ELSE } 
+{$ELSE }
   crt,
 {$ENDIF }
   typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
@@ -142,7 +142,7 @@ end;
 
 
 procedure showscreen;
-var 
+var
   i: integer;
 {$IFDEF NCRT }
   x1, x2, y1, y2: integer;
@@ -153,7 +153,7 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
-  setbackintensity(true);
+  setbackintensity;
   attrtxt(col.colmenu[0]);
   {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
   wrt2(sp(GetScreenLines));
@@ -751,6 +751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/13 10:09:26  mk
+  - Aufruf fuer SetBackIntensity angepasst
+
   Revision 1.18  2000/05/06 17:14:22  hd
   - Rahmen angepasst
 
