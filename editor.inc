@@ -1228,12 +1228,16 @@ begin
     SetBlock(n,ActAbs,workpos,2);
 end;
 
-procedure WortMarkieren;
-var wp,sp,sp0 : integer;
+procedure WortMarkieren(alt_trenn:boolean);
+var
+  wp,sp,sp0 : integer;
+
   function IsTrennz(p:integer):boolean;
   begin
-    IsTrennz:=(ActAbs^.cont[p] in trennzeich);
+    if alt_trenn then IsTrennz:=(ActAbs^.cont[p] in [#0..#32,#255])
+    else IsTrennz:=(ActAbs^.cont[p] in trennzeich);
   end;
+
 begin
   with e^ do begin
     wp:=workpos; sp:=-1;
@@ -1996,6 +2000,119 @@ begin
   end;
 end;
 
+
+{ Markierten Block als String zurueckgeben }
+
+function Marked2String:string;
+Var len : byte;
+     s  : string;
+begin
+  with e^ do
+  begin
+    if block[2].pos.offset-block[1].pos.offset > 255 then len:=255
+    else len:=block[2].pos.offset-block[1].pos.offset;
+    SetLength(s, Len);
+    Move(block[1].pos.absatz^.cont[block[1].pos.offset],s[1],len);
+    marked2string:=s;
+  end;
+end;
+
+
+{ Glossary Funktion (Kuerzel mit STRG+Enter Uebersetzen) }
+
+Procedure Glossary;
+var ap : absatzp;
+     p : position;
+
+  function ScanGlossary(si:string):boolean;
+  var t,t1 : text;
+      s,s2 : String;
+      lsi  : byte;
+      brk  : boolean;
+  begin
+    ScanGlossary:=false;
+    assign(t,FileUpperCase('glossary.cfg'));
+    reset(t);
+    if IoResult<>0 then errsound  { Keine Glossary Datei? }
+    else begin
+      brk:=false;
+      lsi:=length(si)+2;
+      repeat
+        Readln(t,s);
+      until EOF(t) or (pos('>'+AnsiUpperCase(si)+'<',AnsiUpperCase(s))=1);
+
+      if EOF(t) then
+      begin                           { Wort nicht gefunden - Kuerzelliste als Auswahlmenue }
+        pushhp(64);
+        reset(t);
+        listbox(50,8,'Glossary');
+        app_l(' >- ESC -<');
+        repeat
+         readln(t,s);
+          if (s[1]='>') and (cpos('<',s)>0) then
+          begin
+            repeat
+              readln(t,s2);
+            until eof(t) or (s2<>'');
+            if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,31))
+            end;
+        until eof(t);
+        listtp(glossary_ed); {Taste E Abfragen}
+        list(brk);
+        s2:=get_selection;
+        lsi:=cpos('<',s2)-1;
+        if lsi > 15 then lsi:=15;
+        s2:=copy(s2,2,lsi);
+        if s2='>- ESC -<' then brk:=true;
+        closelist;
+        closebox;
+        if not brk then begin
+          reset(t);
+          repeat
+            readln(t,s);
+          until (pos(s2,s)=1) or eof(t);
+          end;
+        setcolors;
+        pophp;
+        end;
+
+      if not brk then
+      begin
+        assign(t1,FileUppercase('glossary.tmp'));     { Kuerzel gefunden, Text kopieren }
+        rewrite(t1);
+        Repeat
+          readln(t,s);
+          if (s='') or (s[1]<>'>') then Writeln(t1,s);
+        Until Eof(t) or ((s<>'') and (s[1]='>'));
+        close(t1);
+        ScanGlossary:=true;
+        end;
+      close(t);
+      end;
+    end;
+
+begin
+  with e^ do
+  begin
+    if blockinverse or blockhidden then Wortmarkieren(true);
+    display;
+    if scanglossary(marked2string) then
+    begin
+      if not (blockinverse or blockhidden)  { Markierung loeschen }
+      then begin
+        gotopos(block[1].pos,0);
+        BlockLoeschen;
+        end;
+      ap:=LoadBlock(FileUpperCase('glossary.tmp'),true,2,rrand);
+      Insert(ap,p);
+      gotopos(p,0);
+      end;
+    Blockhidden:=true;
+    Aufbau:=true;
+    end;
+end;
+
+
 { ---------------------------------------------- Suchfunktionen }
 
 procedure Suchen(again,ersetzen:boolean);
@@ -2288,6 +2405,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/10/15 15:20:17  mk
+  JG:- Editor Funktion Glossary implementiert
+
   Revision 1.30  2000/10/01 15:50:22  mk
   - AnsiString-Fixes
 

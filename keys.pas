@@ -101,6 +101,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyctn  = #14;               { Control-Sequenzen }
        keyctt  = #20;
        keycty  = #25;
+       keyctcr = #10;
 
        keyalta = #0#30;       keyaltn = #0#49;     { Alt-Sequenzen }
        keyaltb = #0#48;       keyalto = #0#24;
@@ -338,6 +339,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/10/15 15:20:17  mk
+  JG:- Editor Funktion Glossary implementiert
+
   Revision 1.28  2000/08/05 10:06:58  mk
   - Ansistring Verbesserungen
 

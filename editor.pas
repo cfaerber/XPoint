@@ -70,11 +70,12 @@ procedure EddefMsgproc(txt:string; error:boolean);
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
+procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx;
+uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, lister, xp2;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -1508,7 +1509,7 @@ var  dl         : displp;
 
         editfBlockBegin   : SetBlockMark(1);
         editfBlockEnd     : SetBlockMark(2);
-        editfMarkWord     : WortMarkieren;
+        editfMarkWord     : WortMarkieren(false);
         editfMarkLine     : ZeileMarkieren;
         editfMarkPara     : AbsatzMarkieren;
         editfMarkAll      : KomplettMarkieren;
@@ -1540,7 +1541,7 @@ var  dl         : displp;
         editfSave         : if EdSave(ed) then;
         editfSaveQuit     : SpeichernEnde;
         editfBreak        : Quit;
-
+        editfGlossary     : Glossary;
       end;
     end;
   end;
@@ -1616,6 +1617,9 @@ var  dl         : displp;
     if t=keyf2   then b:=EditfSave        else
     if t=keysf2  then b:=EditfSaveQuit    else
     if t=keyf10  then b:=EditfMenu        else
+
+    if (t=keyctcr) or (t=keyaltG)
+      then b:=EditfGlossary else
 
     if t=^Q      then case GetPrefixChar('Q',true) of
                         'P' : b:=EditfLastpos;
@@ -1717,7 +1721,7 @@ var  dl         : displp;
       if (xx>=x) and (xx<x+w) and (yy>=y) and (yy<=y+h) then
         if yy>=y then
           if t=mausldouble then
-            WortMarkieren
+            WortMarkieren(false)
           else if t=mausright then begin
             InterpreteToken(LocalMenu);
             t:='';
@@ -1835,9 +1839,24 @@ begin
     end;
 end;
 
+procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+const locked:boolean=false;
+begin
+  if (UpperCase(t)='E') and not locked then begin
+    locked:=true;
+    EditFile(FileUpperCase('glossary.cfg'),false,false,0,false);
+    locked:=false;
+    t:=keyesc;
+    pushkey(keyctcr);
+    end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.41  2000/10/15 15:20:17  mk
+  JG:- Editor Funktion Glossary implementiert
+
   Revision 1.40  2000/10/15 08:50:05  mk
   - misc fixes
 
