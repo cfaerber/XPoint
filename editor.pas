@@ -1492,11 +1492,13 @@ var  dl         : displp;
     if t=keyhome then b:=EditfBOL         else
     if t=^Z      then b:=EditfScrollUp    else
     if t=^W      then b:=EditfScrollDown  else
-    if t=keyins  then b:=EditfChangeInsert else
+    if t=keyins  then if kb_shift then b := EditfPasteBlock
+                         else b:=EditfChangeInsert else
     if t=keycins then b:=editfCCopyBlock  else
     if t=keycr   then b:=EditfNewline     else
     if t=keybs   then b:=EditfBS          else
-    if t=keydel  then b:=EditfDEL         else
+    if t=keydel  then if kb_shift then b := EditfCutBlock else
+                         b:=EditfDEL else
     if t=^G      then b:=EditfDEL         else    { WS-Zweitbelegung }
     if t=keyf5   then b:=EditfAbsatzmarke else
     if t=^T      then b:=EditfDelWordRght else
@@ -1768,6 +1770,9 @@ end.
 
 {
   $Log$
+  Revision 1.60  2001/09/06 10:37:27  mk
+  - added keys shift-ins and shift-del in Editor
+
   Revision 1.59  2001/09/03 16:09:34  ml
 
   - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
