@@ -8,9 +8,6 @@
 { $Id$ }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP}
-  {$O+,F+}
-{$ENDIF}
 
 unit XpEasy;
 
@@ -86,6 +83,11 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.7  2000/07/11 21:39:22  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.6  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

@@ -1109,16 +1109,6 @@ label abbr;
 
   function seek0(var buf; smallsize:word):word; assembler; {&uses edi} { suche #0 }
   asm
-{$IFDEF BP }
-    mov cx, smallsize
-    les di, buf
-    mov al, 0
-    mov dx, cx
-    cld
-    repnz scasb
-    mov ax, dx
-    sub ax, cx
-{$ELSE }
     mov  ecx, smallsize
     mov  edi, buf
     mov  al, 0
@@ -1127,7 +1117,6 @@ label abbr;
     repnz scasb
     mov eax, edx
     sub eax, ecx
-{$ENDIF }
   {$IFDEF FPC }
   end ['EAX', 'ECX', 'EDX', 'EDI'];
   {$ELSE }
@@ -1136,24 +1125,6 @@ label abbr;
 
   function seekt(var buf; size:word):word; assembler; {&uses edi } { suche _'---'_ }
   asm
-{$IFDEF BP }
-        mov cx, size
-        les di, buf
-        mov ax, '--'
-        mov bl, ' '
-        mov dx, cx
-        cld
-@lp:    repnz scasb
-        jcxz @ok
-        cmp es:[di], ax
-        jnz @lp
-        cmp es:[di-2],bl
-        jnb @lp
-        cmp es:[di+2],bl
-        ja  @lp
-@ok:    mov ax, dx
-        sub ax, cx
-{$ELSE }
         mov ecx, size
         mov edi, buf
         mov ax, '--'
@@ -1170,7 +1141,6 @@ label abbr;
         ja  @lp
 @ok:    mov eax, edx
         sub eax, ecx
-{$ENDIF }
   {$IFDEF FPC }
   end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
   {$ELSE }
@@ -1208,17 +1178,6 @@ label abbr;
 
   procedure exch_8d(var buf; asize:word); assembler; {&uses edi}
   asm
-{$IFDEF BP }
-        mov cx, asize
-        les di, buf
-        cld
-@l:     mov al, es:[di]
-        cmp al, $8d
-        jnz @j
-        mov al, $0d
-@j:     stosb
-        loop @l
-{$ELSE }
         mov ecx, asize
         mov edi, buf
         cld
@@ -1228,7 +1187,6 @@ label abbr;
         mov al, $0d
 @j:     stosb
         loop @l
-{$ENDIF }
   {$IFDEF FPC }
   end ['EAX', 'ECX', 'EDI'];
   {$ELSE }
@@ -1350,7 +1308,7 @@ label abbr;
   procedure TranslateStr(var s:string);
   begin
     case cxlate of
-      1 : ISO2IBM(s[1],length(s));
+      1 : s := Typeform.ISOToIBM(s);
       2 : MAC2IBM(s[1],length(s));
     end;
   end;
@@ -1386,11 +1344,7 @@ begin
   write(fn,' ¯ ',outfile,'      ');
   ok:=true;
   n:=0;
-  {$IFDEF BP }
-    mbufsize:=min(65500,maxavail-16384);
-  {$ELSE }
-    mbufsize:=65536;
-  {$ENDIF }
+  mbufsize:=65536;
   getmem(msgbuf,mbufsize);
   if filesize(f1)<sizeof(phd) then
     goto abbr;                        { leeres PKT }
@@ -1720,6 +1674,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/07/11 21:39:23  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.27  2000/07/09 08:35:20  mk
   - AnsiStrings Updates
 

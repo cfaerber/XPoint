@@ -973,21 +973,24 @@ function XPWinShell(prog:string; parfn:string; space:word;
 
 begin
   XPWinShell:=true;
+  // Hier kann noch einiges raus
   case PrepareExe of
      0 : begin                      { DOS-Programm aufrufen }
            shell(prog,space,cls);
            XPWinShell:=false;
          end;
-     1 : shell(prog,space,0);       { Windows-Programm aufrufen }
-  {$IFDEF BP }
-     2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
-  {$ENDIF }
+     1,2 : shell(prog,space,0);       { Windows-Programm aufrufen }
   end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.49  2000/07/11 21:39:20  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.48  2000/07/06 08:58:44  hd
   - AnsiString
 

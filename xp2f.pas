@@ -904,9 +904,6 @@ begin
   pushhp(52);
   repeat
     ssp:=showcol; ssp;
-    {$IFDEF BP }
-    SetXPborder;
-    {$ENDIF }
     n:=readmenu(0);
     with col do
     case n of
@@ -1136,6 +1133,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/11 21:39:21  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.18  2000/07/07 11:00:33  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung

@@ -825,7 +825,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParDebFlags: byte    = 0;       { 1 = Shell-Commands     }
        ParDupeKill: boolean = false;   { autom. DupeKill        }
        ParTrace   : boolean = false;   { Script-Tracefile       }
-       ParMono    : boolean = false;   { monochrome Anzeige     }
        ParNojoke  : boolean = false;   { Spruch am Ende abschalten }
        ParXX      : boolean = false;   { s. XP4E                }
 {$ifdef hasHugeString}
@@ -1410,6 +1409,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.72  2000/07/11 21:39:20  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.71  2000/07/10 14:41:59  hd
   - Ansistring
 

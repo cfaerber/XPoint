@@ -287,7 +287,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 202
 1    Syntax:    XP [/Opt1 /Opt2 ...]
 2
-3    Options:   /m      monochrome Display
+3    Options:
 4    ~          /LCD    fixes display problems on some laptops
 5    ~          /q      no sound signals (quiet)
 6    ~          /rp     doesn't test for TSR programs after DOS-shell
@@ -2729,7 +2729,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11 Invalid phone number format - see online help!
 12 Invalid phone number format - see online help!
 14 Nodelist/Pointlist %s not found
-16 Not possible with monochrome graphics adapter.
 17 PGP not found.
 18 First enable ZCONNECT PGP support!
 19 Your graphics adapter does not support VESA DPMS.

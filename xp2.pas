@@ -245,7 +245,6 @@ var i  : integer;
     if isl('df:') then ParDebFlags:=ParDebFlags or ival(mid(s,5)) else
     if _is('dd')   then ParDDebug:=true else
     if _is('trace')then ParTrace:=true else
-    if _is('m')    then ParMono:=true else
     if _is('j')    then ParNojoke:=true else
     if isl('n:')  then NetPar(UpperCase(mid(s,4))) else
     if isl('nr:') then begin
@@ -616,7 +615,7 @@ end;
 
 procedure test_defaultbox;
 var d    : DB;
-    tmpS,			{ Records in der DB sind shortstrings }
+    tmpS,                       { Records in der DB sind shortstrings }
     dname: shortstring;
 begin
 {$IFDEF Debug }
@@ -663,7 +662,7 @@ begin
   if deffidobox<>'' then begin
     dbSeek(d,boiName,tmpS);
     deffidobox:= tmpS;
-    if not dbFound then 
+    if not dbFound then
       deffidobox:=''
     else begin
       deffidobox:= tmpS;
@@ -1077,6 +1076,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/07/11 21:39:21  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.55  2000/07/07 14:38:36  hd
   - AnsiString
   - Kleine Fixes nebenbei

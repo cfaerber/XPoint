@@ -98,86 +98,47 @@ type  ColArr = array[0..3] of byte;
 
 
 var   col   : colrec;
-      mono  : boolean;
 
 
 procedure defaultcolors;
 begin
-{$IFDEF BP }
-  mono:=(mem[Seg0040:$49]=7);
-{$ENDIF }
   with col do
-    if not mono then begin
-      colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
-      colmenuhigh[0]:=$74; colmenuhigh[1]:=$74; colmenuhigh[2]:=$74; colmenuhigh[3]:=$74;
-      colmenuinv[0]:=$17; colmenuinv[1]:=$17; colmenuinv[2]:=$17; colmenuinv[3]:=$17;
-      colmenuinvhi:=colmenuinv;
-      colmenudis[0]:=$78; colmenudis[1]:=$78; colmenudis[2]:=$78; colmenudis[3]:=$78;
-      colmenuseldis[0]:=$13; colmenuseldis[1]:=$13; colmenuseldis[2]:=$13;
-      colmenuseldis[3]:=$13;
-      colkeys:=3; colkeyshigh:=14; colkeysact:=$13; colkeysacthi:=$1e;
-      coltline:=4;
-      colbretter:=7; colbretterinv:=$30; colbretterhi:=2; colbrettertr:=3;
-      colmsgs:=7; colmsgshigh:=2; colmsgsinv:=$30; colmsgsinfo:=2;
-      colmsgsuser:=lightred; colmsgsinvuser:=$30+red;
-      colmbox:=$70; colmboxrahmen:=$70; colmboxhigh:=$7f;
-      coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$7e;
-      coldiainp:=$1e; coldiaarrows:=$1a;
-      coldiamarked:=$2f;
-      coldiasel:=$30; coldiaselbar:=7;
-      colselbox:=$70; colselrahmen:=$70; colselhigh:=$7f; colselbar:=$1e;
-      colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
-      colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
-      coldiabuttons:=$8f;
-      colbutton:=$17; colbuttonhigh:=$1f; colbuttonarr:=$1b;
-      colutility:=$30; colutihigh:=$3e; colutiinv:=11;
-      collisttext:=7; collistselbar:=$30; collistmarked:=green;
-      collistfound:=$71; colliststatus:=lightred; collistquote:=3;
-      collistscroll:=7; collistheader:=7; collisthigh:=$f; collistqhigh:=11;
-      coledittext:=7; coleditmarked:=$17; coleditstatus:=$17; coleditmessage:=$1e;
-      coledithead:=$70; coleditquote:=3; coleditendmark:=7;
-      coleditmenu:=$70; coleditmenuhi:=$74; coleditmenuinv:=$17;
-      coledithiinv:=$17;
-      colarcstat:=3; colmapsbest:=lightred;
-      colmailer:=$70; colmailerhigh:=$7f; colmailerhi2:=$7e;
-      colborder:=0;
-      colback:=8; colhbox:=$13; colhboxhi:=$1e;
-      end
-    else begin
-      colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
-      colmenuhigh[0]:=$0f; colmenuhigh[1]:=$0f; colmenuhigh[2]:=$0f; colmenuhigh[3]:=$0f;
-      colmenuinv[0]:=$07; colmenuinv[1]:=$07; colmenuinv[2]:=$07; colmenuinv[3]:=$07;
-      colmenuinvhi[0]:=$0f; colmenuinvhi[1]:=$0f; colmenuinvhi[2]:=$0f; colmenuinvhi[3]:=$0f;
-      colmenudis[0]:=$70; colmenudis[1]:=$70; colmenudis[2]:=$70; colmenudis[3]:=$70;
-      colmenuseldis[0]:=7; colmenuseldis[1]:=7; colmenuseldis[2]:=7;
-      colmenuseldis[3]:=7;
-      colkeys:=7; colkeyshigh:=15; colkeysact:=$70; colkeysacthi:=$70;
-      coltline:=7;
-      colbretter:=7; colbretterinv:=$70; colbretterhi:=$f; colbrettertr:=7;
-      colmsgs:=7; colmsgshigh:=15; colmsgsinv:=$70; colmsgsinfo:=15;
-      colmsgsuser:=15; colmsgsinvuser:=$70;
-      colmbox:=$7; colmboxrahmen:=$7; colmboxhigh:=$f;
-      coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$70;
-      coldiainp:=$7; coldiamarked:=$f; coldiaarrows:=$f;
-      coldiasel:=$7; coldiaselbar:=$70;
-      coldiabuttons:=$f;
-      colselbox:=$7; colselrahmen:=$7; colselhigh:=$f; colselbar:=$70;
-      colsel2box:=$7; colsel2rahmen:=$7; colsel2high:=$f; colsel2bar:=$70;
-      colbutton:=$7; colbuttonhigh:=$f; colbuttonarr:=$f;
-      colutility:=$7; colutihigh:=$f; colutiinv:=$70;
-      colhelp:=7; colhelphigh:=7; colhelpqvw:=15; colhelpslqvw:=$70;
-      collisttext:=7; collistselbar:=$70; collistmarked:=$f; collistquote:=$f;
-      collistfound:=$70; colliststatus:=$f; collistscroll:=7; collistheader:=7;
-      collisthigh:=$f; collistqhigh:=$f;
-      coledittext:=7; coleditmarked:=$70; coleditstatus:=$f; coleditmessage:=$f;
-      coledithead:=$70; coleditquote:=$f; coleditendmark:=7;
-      coleditmenu:=7; coleditmenuhi:=$f; coleditmenuinv:=$70;
-      coledithiinv:=$70;
-      colarcstat:=7; colmapsbest:=$f;
-      colmailer:=$70; colmailerhigh:=$70; colmailerhi2:=$70;
-      colborder:=0;
-      colback:=7; colhbox:=$70; colhboxhi:=$f;
-      end;
+  begin
+    colmenu[0]:=$70; colmenu[1]:=$70; colmenu[2]:=$70; colmenu[3]:=$70;
+    colmenuhigh[0]:=$74; colmenuhigh[1]:=$74; colmenuhigh[2]:=$74; colmenuhigh[3]:=$74;
+    colmenuinv[0]:=$17; colmenuinv[1]:=$17; colmenuinv[2]:=$17; colmenuinv[3]:=$17;
+    colmenuinvhi:=colmenuinv;
+    colmenudis[0]:=$78; colmenudis[1]:=$78; colmenudis[2]:=$78; colmenudis[3]:=$78;
+    colmenuseldis[0]:=$13; colmenuseldis[1]:=$13; colmenuseldis[2]:=$13;
+    colmenuseldis[3]:=$13;
+    colkeys:=3; colkeyshigh:=14; colkeysact:=$13; colkeysacthi:=$1e;
+    coltline:=4;
+    colbretter:=7; colbretterinv:=$30; colbretterhi:=2; colbrettertr:=3;
+    colmsgs:=7; colmsgshigh:=2; colmsgsinv:=$30; colmsgsinfo:=2;
+    colmsgsuser:=lightred; colmsgsinvuser:=$30+red;
+    colmbox:=$70; colmboxrahmen:=$70; colmboxhigh:=$7f;
+    coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$7e;
+    coldiainp:=$1e; coldiaarrows:=$1a;
+    coldiamarked:=$2f;
+    coldiasel:=$30; coldiaselbar:=7;
+    colselbox:=$70; colselrahmen:=$70; colselhigh:=$7f; colselbar:=$1e;
+    colsel2box:=$87; colsel2rahmen:=$87; colsel2high:=$8f; colsel2bar:=$4e;
+    colhelp:=$70; colhelphigh:=$7e; colhelpqvw:=$71; colhelpslqvw:=$30;
+    coldiabuttons:=$8f;
+    colbutton:=$17; colbuttonhigh:=$1f; colbuttonarr:=$1b;
+    colutility:=$30; colutihigh:=$3e; colutiinv:=11;
+    collisttext:=7; collistselbar:=$30; collistmarked:=green;
+    collistfound:=$71; colliststatus:=lightred; collistquote:=3;
+    collistscroll:=7; collistheader:=7; collisthigh:=$f; collistqhigh:=11;
+    coledittext:=7; coleditmarked:=$17; coleditstatus:=$17; coleditmessage:=$1e;
+    coledithead:=$70; coleditquote:=3; coleditendmark:=7;
+    coleditmenu:=$70; coleditmenuhi:=$74; coleditmenuinv:=$17;
+    coledithiinv:=$17;
+    colarcstat:=3; colmapsbest:=lightred;
+    colmailer:=$70; colmailerhigh:=$7f; colmailerhi2:=$7e;
+    colborder:=0;
+    colback:=8; colhbox:=$13; colhboxhi:=$1e;
+  end
 end;
 
 
@@ -442,6 +403,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/11 21:39:23  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.6  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

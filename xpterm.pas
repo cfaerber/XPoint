@@ -11,9 +11,6 @@
 { CrossPoint - Terminal und Scripts }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpterm;
 
@@ -258,10 +255,6 @@ var parcount : byte;
       at:=(ansifg and 7) shl 4 + ansibg shr 4
     else
       at:=ansifg + 16*ansibg + ansihigh;
-    if mono then
-      if at>=$70 then at:=$70
-      else if at and $f>7 then at:=$f
-      else at:=7;
     attrtxt(at);
   end;
 
@@ -1617,6 +1610,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/11 21:39:23  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.15  2000/07/05 12:47:29  hd
   - AnsiString
 

@@ -91,8 +91,6 @@ procedure Wrt2(const s:string);
 procedure FWrt(const x,y:word; const s:string);
 {$ENDIF }
 
-{$IFDEF Ver32 }
-
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
@@ -124,7 +122,6 @@ procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
   Die Routine ist bis jetzt unter Win32 mit API und fÅr den
   Rest mit FWrt implementiert }
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-{$ENDIF }
 
 {$IFDEF Win32 }
 var
@@ -914,6 +911,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.45  2000/07/11 21:39:19  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.44  2000/07/09 09:09:54  mk
   - Newexit in Initialization/Finalization umgewandelt
 

@@ -11,9 +11,6 @@
 { CrossPoint - 'maps & Fileserver }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp8;
 
@@ -1644,6 +1641,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/11 21:39:22  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.16  2000/07/06 12:14:25  hd
   - AnsiString
 

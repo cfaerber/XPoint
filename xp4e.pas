@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team, http://www.openxp.de    		  }
+{ (c) 2000 OpenXP Team, http://www.openxp.de                      }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -99,7 +99,7 @@ implementation  { --------------------------------------------------- }
 
 uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido;
 
-var   adp         : string;	{ War ^atext (atext = s80, also shortstring) }
+var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fr writecode() }
       grnr_found  : longint;    { von Testgruppe gefundene INT_NR }
       empfx,empfy : byte;       { msgdirect() -> empftest()       }
@@ -110,9 +110,9 @@ var   adp         : string;	{ War ^atext (atext = s80, also shortstring) }
       brettfld    : integer;    { intern EditBrett          }
       userfld     : integer;    { intern EditUser           }
       pb_field    : integer;
-      pbox        : string; 	{ intern EditBrett/ReadDirect }
+      pbox        : string;     { intern EditBrett/ReadDirect }
       rdforcebox  : boolean;    { intern ReadDirect    }
-      rdorgbox    : string; 	{ intern ReadDirect    }
+      rdorgbox    : string;     { intern ReadDirect    }
       mbx,mby     : byte;       { Text fr modibrett2() }
       mblasttext  : shortint;
 
@@ -226,7 +226,7 @@ var cname : string;
 begin
   attrtxt(col.coldialog);
   if (LowerCase(left(s,3))='pmc') and
-  	((length(s)>0) and (ival(s[length(s)]) in [1..maxpmc])) then begin
+        ((length(s)>0) and (ival(s[length(s)]) in [1..maxpmc])) then begin
     cname:=pmcrypt[ival(s[length(s)])].name;
     if cname='' then cname:=getres(2700);    { 'noch nicht definiert' }
     mwrt(39,wcy,forms('('+cname+')',30));
@@ -501,7 +501,7 @@ var
     komm         : string;
     pollbox      : string;
     brk          : boolean;
-    cc           : ccp;		{ String-Array }
+    cc           : ccp;         { String-Array }
     anz,adr      : integer16;
     rec          : longint;
 begin
@@ -818,9 +818,9 @@ var newstate : shortint;
     f1,f2    : string;
 begin
   mbshowtext := true;
-  if fieldpos=1 then f1:=trim(s) 
+  if fieldpos=1 then f1:=trim(s)
   else f1:=trim(getfield(1));
-  if fieldpos=2 then f2:=s 
+  if fieldpos=2 then f2:=s
   else f2:=getfield(2);
   if f1='' then
     newstate:=iif(f2=_jn_[1],2,1)
@@ -2185,7 +2185,6 @@ begin
     rec:=dbRecno(ubase);
     dbAppend(ubase);
     rec2:=dbRecno(ubase);
-{$hint Ist es moeglich, bei AnsiString chr(0) zu nutzen? }
     s:=#0+'$/T'+trennchar;
     dbWriteNStr(ubase,ub_username,s);
     dbWriteNStr(ubase,ub_kommentar,komm);
@@ -2403,6 +2402,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/11 21:39:21  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.32  2000/07/11 14:59:30  hd
   - Ansistring
   - Ein paar Linux-Anpassungen

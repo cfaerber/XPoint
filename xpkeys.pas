@@ -11,9 +11,6 @@
 { (Funktions)tasten & Makros }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F+}
-{$ENDIF }
 
 unit xpkeys;
 
@@ -242,6 +239,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/11 21:39:22  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.9  2000/07/05 12:47:28  hd
   - AnsiString
 

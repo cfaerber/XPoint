@@ -113,11 +113,8 @@ begin
     end;
     test_pfade;
     readkeydefs;
-    if not parmono then
-    begin
-      readcolors;
-      SetColors;
-    end;
+    readcolors;
+    SetColors;
     showscreen(true);
     DelTmpfiles('*.$$$');
     if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
@@ -189,6 +186,11 @@ ende:
 end.
 {
   $Log$
+  Revision 1.33  2000/07/11 21:39:20  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.32  2000/07/03 15:54:14  hd
   - Linux: Check_Date entfernt
 

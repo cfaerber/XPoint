@@ -13,9 +13,6 @@
 { s. auch NETZTYP.DOC  }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xpnt;
 
@@ -70,8 +67,6 @@ function ntGrossUser(nt:byte):boolean;        { User-Groáschreibung   }
 function ntGrossBrett(nt:byte):boolean;       { Bretter-Groáschreibung }
 function ntKleinBrett(nt:byte):boolean;       { Bretter-Kleinschreibung }
 function ntKomkette(nt:byte):boolean;         { Kommentar-Verkettung  }
-{ 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
-(*function ntUserIBMchar(nt:byte):boolean;      { Default/User: IBM=J   }*)
 function ntRfcCompatibleID(nt:byte):boolean;  { RFC-Msgid             }
 function ntMIDCompatible(n1,n2:byte):boolean; { austauschbare MsgIDs  }
 function ntOrigID(nt:byte):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
@@ -745,6 +740,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/07/11 21:39:23  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.10  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

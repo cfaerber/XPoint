@@ -256,7 +256,7 @@ var i,n    : integer;
 begin
   dbOpen(d,BoxenFile,1);
   s0:='';
-  ok := true; { !! MK 12/99 }
+  ok := true;
   brk:=false; n:=0;
   for i:=0 to bmarkanz-1 do begin
     if pm then begin
@@ -303,7 +303,9 @@ begin
   if not brk then begin
     empf:=iifs(pm,'','A')+empflist^.empf;
     p:=empflist^.next;
+{$IFDEF FPC }
     {$hint Schutzverletzung moeglich ! }
+{$ENDIF }
     dispose(empflist); empflist:=nil;
     sendempflist:=p;
     xp6.forcebox:=s0;
@@ -316,6 +318,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/11 21:39:22  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.10  2000/07/10 14:41:59  hd
   - Ansistring
 

@@ -128,11 +128,7 @@ label ende,nextpp;
     wr:=adr;
     size:=fsize-rd;
     seek(f,adr);    { falls size=0 ist... }
-    {$IFDEF BP }
-      ps:=min(maxavail-1000,50000);
-    {$ELSE }
-      ps:=65536;
-    {$ENDIF }
+    ps:=65536;
     getmem(p,ps);
     while size>0 do begin
       seek(f,rd);
@@ -1330,6 +1326,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/11 21:39:22  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.25  2000/07/05 12:47:28  hd
   - AnsiString
 

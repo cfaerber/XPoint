@@ -352,11 +352,7 @@ begin
     DisposeReflist(reflist);
   {$endif}
   fillchar(hd,sizeof(hd),0);
-  {$IFDEF BP }
-    bufsize:=min(maxavail-500,iif(zconnect,1024,512));
-  {$ELSE }
-    bufsize := 1024;
-  {$ENDIF }
+  bufsize := 32768;
   getmem(buf,bufsize);
   size:=0; Readbuf;
   with hd do
@@ -558,6 +554,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/07/11 21:39:23  mk
+  - 16 Bit Teile entfernt
+  - AnsiStrings Updates
+  - ein paar ASM-Routinen entfernt
+
   Revision 1.21  2000/07/06 22:52:45  mk
   - Ansistring Updates
 
