@@ -83,7 +83,7 @@ USER:   User(U)/Verteiler
  3. Kommentar   String(30)
  4. Pollbox     String(20)
  5. Haltezeit   Integer             (Verteiler: Anzahl Empf„nger)
- 6. AdrBuch     Byte        i       1=User steht im Adressbuch
+ 6. AdrBuch     Byte        i       Adressbuchgruppe, 0:User steht nicht im Adressbuch
  7. Passwort    Extern           U
  8. UserFlags   Byte                ~1=DummUser, 2=Default:codieren, 4=Verteiler
                                     8=keine Umlaute, 16=EBs
@@ -91,8 +91,10 @@ USER:   User(U)/Verteiler
 
 Indizes:
 
- 1. +Username            uiName
- 2. AdrBuch/+Username    uiAdrbuch
+ 1. +Username                  uiName
+ 2. AdrBuch/+Username          uiAdrbuch
+ 3. Pollbox/+Username          uiBoxName    (ab Openxp 3.21)
+ 4. Pollbox/Adrbuch/+Username  uiBoxAdrbuch (ab Openxp 3.21) 
 
 -----------------------------------------------------------------------
 
