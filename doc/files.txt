@@ -140,7 +140,6 @@ Linux: wird zum compilieren der anderen Versionen nicht benötigt
 XPCURSES.PAS    XP-spezifisches Interface zur Ansteuerung der Curses-Lib.
                 (wird nur unter Unix-Derivaten benoetigt)
 XPLINUX.PAS	XP-spezifisches Interface unter Linux
-README.LNX      Hinweise fuer die Benutzung unter Linux
 
 Verzeichnis .\DOC
 -----------------
@@ -149,6 +148,9 @@ XPOINT.XML      XML-Docbook des Handbuches
 XPOINT.DSL      Sylesheet für Handbuch
 DBFORM          Beschreibung der Datenbankfelder
 
+Verzeichnis .\LINUX
+-------------------
+dosx?.inc	Systemabhaengige Includes
 
 Die folgenden Tools liegen nur im Source vor und können mit allen
 unterstützen Compilern aktualisiert werden:
