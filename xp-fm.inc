@@ -75,7 +75,7 @@ begin
     SetZero(my_password,password,8);
     capabilities:=MyCap;
     if OwnDomain<>'' then inc(capabilities,do_domain);
-    end;
+  end;
 end;
 
 procedure StartTimer(nr:word; secs:real);
@@ -93,7 +93,7 @@ begin
       if _timer[i]>0 then
         dec(_timer[i]);
     WrOnlineTime;
-    end;
+  end;
 end;
 
 function timeout(nr:word):boolean;
@@ -101,10 +101,12 @@ begin
   timeout:=(_timer[nr]=0);
 end;
 
-{ function gettimer(nr:word):word;
-begin
-  gettimer:=_timer[nr]
-end; }
+{  !!!!!!
+  function gettimer(nr:word):word;
+  begin
+    gettimer:=_timer[nr]
+  end;
+}
 
 function gettimersec(nr:word):word;
 begin
@@ -122,7 +124,7 @@ begin
     s:=''; p:=1;
     while not eof(t) and (hexval(left(s,p-1))<>pc) do begin
       readln(t,s); p:=max(1,pos(',',s));
-      end;
+    end;
     if hexval(left(s,p-1))=pc then begin
       delete(s,1,p);
       p:=cpos(',',s);
@@ -130,15 +132,17 @@ begin
         ProductName:=left(s,p-1)
       else
         Productname:='unknown';
-      end;
-    close(t);
     end;
+    close(t);
+  end;
 end;
 
 procedure seriellwrite(c:char);
 begin
-  if IgCTS then sendbyte(sh,byte(c))
-  else hsendbyte(sh,byte(c));
+  if IgCTS then
+    sendbyte(sh,byte(c))
+  else
+    hsendbyte(sh,byte(c));
 end;
 
 
@@ -149,8 +153,10 @@ const tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
 
 procedure setfeb(y:word);
 begin
-  if schaltj(y) then tage[2]:=29
-  else tage[2]:=28;
+  if schaltj(y) then
+    tage[2]:=29
+  else
+    tage[2]:=28;
 end;
 
 function secsfrom70:longint;
@@ -167,6 +173,7 @@ begin
   setfeb(y);
   for i:=1 to m-1 do
     inc(secs,longint(tage[i])*tagsec);          { + Monate }
+  
   inc(secs,longint(d-1)*tagsec);                { + Tage }
   inc(secs,longint(h)*3600+min*60+s);           { + hms  }
   secsfrom70:=secs;
@@ -182,12 +189,12 @@ begin
     dec(secs,iif(schaltj(y),366,365)*tagsec);
     inc(y);
     if y>2099 then exit;
-    end;
+  end;
   setfeb(y); m:=1;
   while (secs>=tagsec*tage[m]) do begin
     dec(secs,tagsec*tage[m]);
     inc(m);
-    end;
+  end;
   secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
@@ -241,7 +248,7 @@ var NAKcount : byte;
       else begin
         TE:=(ems_req=EMSI_REQ);
         ems_req:=''
-        end;
+      end;
     end;
 
   begin
@@ -254,7 +261,7 @@ var NAKcount : byte;
         TestEmsiReq := TE
       else
         TestEmsiReq:=false;
-      end;
+    end;
   end;
 
 begin
@@ -270,19 +277,21 @@ begin
           end;
       1 : begin
             if timeout(ti_All1) or not Carrier then begin
-              if not carrier then LogCarrier
-              else log(ErrChar,'login timeout');
+              if not carrier then
+                LogCarrier
+              else
+                log(ErrChar,'login timeout');
               state:=99;
               aresult:=EL_nologin;
-              end;
+            end;
             if Receive(sh,byte(c)) and (c=#13) then begin
               mdelay(1000);
               state:=2;
-              end;
+            end;
             if timeout(ti_CRs) then begin
               StartTimer(ti_CRs,2);
               sendstr(' '#13' '#13);
-              end;
+            end;
           end;
 
       2 : begin                           { FTS-006 S. 12 }
@@ -293,23 +302,25 @@ begin
           end;
       3 : begin
             if timeout(ti_Master) or not Carrier then begin
-              if not carrier then LogCarrier
-              else log(ErrChar,'login timeout');
+              if not carrier then
+                LogCarrier
+              else
+                log(ErrChar,'login timeout');
               aresult:=EL_nologin;
               state:=99;
-              end
-            else begin
+            end else begin
               if timeout(ti_Sync) then begin
                 flushinput(sh);
                 if UseEMSI then begin
-                  SendStr(EMSI_INQ+#13); mdelay(60); end; { EMSI INQ   }
+                  SendStr(EMSI_INQ+#13); mdelay(60);      { EMSI INQ   }
+                end;
                 SeriellWrite(YooHoo); mdelay(60);         { YooHoo INQ }
                 SeriellWrite(TSync);                      { FTS-1 INQ  }
                 StartTimer(ti_Sync,3);
                 ems_req:='';
-                end;
-              state:=4;
               end;
+              state:=4;
+            end;
           end;
       4 : begin
             if not received(sh) then
@@ -325,31 +336,30 @@ begin
                         inc(NAKcount);
                         state:=5;
                       end;
-              else begin
-                StartTimer(ti_NAK,0);
-                NAKtimer:=false;
-                if UseEMSI and TestEmsiReq then begin
-                  fmSS:=3; state:=99;
-                  end
-                else
-                  state:=3;
+                else begin
+                  StartTimer(ti_NAK,0);
+                  NAKtimer:=false;
+                  if UseEMSI and TestEmsiReq then begin
+                    fmSS:=3; state:=99;
+                  end else
+                    state:=3;
                 end;
               end;
-              end;
+            end;
           end;
       5 : begin
             if not timeout(ti_NAK) or not NAKtimer then begin
               NAKcount:=0;
               StartTimer(ti_NAK,0.5);
               state:=3;
-              end;
+            end;
             if timeout(ti_NAK) then
               state:=6;
           end;
       6 : begin
             if NAKcount>=2 then begin
-              fmSS:=1; state:=99; end     { assume FTS-001 }
-            else
+              fmSS:=1; state:=99;         { assume FTS-001 }
+            end else
               state:=3;
           end;
     end;  { case }
@@ -383,7 +393,7 @@ begin
     if c='?' then begin
       WrStatus(getres(180)+' #'+strs(retrycount));   { 'Hello-Sendefehler' }
       log(ErrChar,'yoohoo hello send error');
-      end;
+    end;
     mdelay(200);
   until timeout(ti_Hello) or (c=ACK) or (RetryCount=10);
   if RetryCount=10 then
@@ -417,8 +427,8 @@ begin
               else begin
                 StartTimer(ti_RH,10);
                 state:=3;
-                end;
               end;
+            end;
           end;
       3 : begin
             if timeout(ti_Hello) then
@@ -434,7 +444,7 @@ begin
               else
                 if not received(sh) then
                   state:=4;
-              end;
+            end;
           end;
       4 : begin
             flushinput(sh);
@@ -448,14 +458,13 @@ begin
             state:=6;
           end;
       6 : begin
-            if timeout(ti_RH) or not Carrier then begin
-              state:=99; end;
+            if timeout(ti_RH) or not Carrier then
+              state:=99;
             if receive(sh,b) then begin
               hellopkt[offset]:=chr(b);
               inc(offset);
               state:=7;
-              end
-            else
+            end else
               if GetTimerSec(ti_RH)<20 then
                 state:=99;
           end;
@@ -477,8 +486,7 @@ begin
               SeriellWrite('?');
               WrStatus(getres(181)+' #'+strs(errors));   { 'Hello-Empfangsfehler' }
               state:=2;
-              end
-            else
+            end else
               state:=99;
           end;
      10 : begin
@@ -515,7 +523,7 @@ begin
     log('~','Sysop: '+s);
     log('~','Capabilities: '+hex(capabilities,4));
     log('~','Using: '+ProductName(product)+' v'+strs(HiVersion)+'.'+formi(loversion,2));
-    end;
+  end;
 end;
 
 
@@ -541,11 +549,13 @@ begin
           end;
       2 : begin
             if timeout(ti_Hello) or not Carrier then begin
-              if not Carrier then LogCarrier
-              else log(ErrChar,'yoohoo hello timeout');
+              if not Carrier then
+                LogCarrier
+              else
+                log(ErrChar,'yoohoo hello timeout');
               fmYS:=0;
               state:=99;
-              end;
+            end;
             if Receive(sh,byte(c)) then
               if c=YooHoo then
                 state:=3;
@@ -554,12 +564,11 @@ begin
             if fmRH(1) then begin          { Receive Hello }
               fmYS:=2;
               LogHelloData;
-              end
-            else begin
+            end else begin
               log(ErrChar,'Error receiving hello packet');
               if not Carrier then
                 fmYS:=0;
-              end;
+            end;
             state:=99;
           end;
     end;
@@ -638,7 +647,7 @@ label ende;
         else if buflen<maxemsdat then begin
           buf^[buflen]:=c;
           inc(buflen);
-          end;
+        end;
     until (c=#13) or (c=#10) or (buflen=maxlen) or timeout(ti_EMS1) or
           not Carrier;
     if DebugMode and (s0<>'') then
@@ -662,7 +671,7 @@ label ende;
       s[0]:=chr(min(255,bufpos-bp));
       FastMove(buf^[bp],s[1],length(s));
       inc(bufpos);
-      end;
+    end;
   end;
 
   function sevenbit(s:string):string;
@@ -675,7 +684,7 @@ label ende;
       else if s[i]>#$7e then
         s:=left(s,i-1)+'\'+lstr(hex(ord(s[i]),2))+mid(s,i+1);
       inc(i);
-      end;
+    end;
     sevenbit:=s;
   end;
 
@@ -709,10 +718,12 @@ begin
     if not more then begin
       SendStr('**');                         { EMSI_DAT senden }
       SendBlock(edat^,edatlen);
-      if DebugMode then DebugFlush
-      else flushinput(sh);
+      if DebugMode then
+        DebugFlush
+      else
+        flushinput(sh);
       SendStr(hex(_CRC16Ver2(edat^,edatlen),4)+#13);
-      end;
+    end;
     repeat
       ReadEmsiString(5,length(EMSI_ACK));        { warten auf EMSI_ACK / _NAK }
       if timeout(ti_EMS1) then
@@ -720,7 +731,7 @@ begin
       else if s=EMSI_REQ then begin
         inc(ercount);
         if ercount>2 then SendStr(EMSI_INQ+#13);
-        end;
+      end;
     until (s<>EMSI_REQ) and ((s<>'') or timeout(ti_EMS1));
     ok:=(s=EMSI_ACK);
     more:=not timeout(ti_EMS1) and received(sh);
@@ -740,16 +751,15 @@ begin
       if timeout(TI_EMS1) then begin
         SendStr(EMSI_HBT+#13);
         mdelay(200);
-        end;
-      end
-    else begin
+      end;
+    end else begin
       while left(s,length(EMSI_ACK))=EMSI_ACK do begin
         delete(s,1,length(EMSI_ACK));
         inc(bufpos,length(EMSI_ACK));
-        end;
+      end;
       while (left(s,2)<>'**') and (s<>'') do begin
         delete(s,1,1); inc(bufpos);
-        end;
+      end;
       if left(s,length(EMSI_DAT))=EMSI_DAT then begin
         dl:=hexval(copy(s,length(EMSI_DAT)+1,4));    { Paketl„nge }
         FastMove(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
@@ -757,13 +767,12 @@ begin
         if not ok then begin
           SendStr(EMSI_NAK+#13);       { CRC-Fehler }
           WrLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
-          end
-        else begin
+        end else begin
           mdelay(150);
           SendStr(EMSI_ACK+#13+EMSI_ACK+#13);    { CRC ok }
-          end;
         end;
       end;
+    end;
     dec(count);
   until ok or (count=0) or not Carrier;
 
@@ -775,8 +784,10 @@ begin
     log('~','AKA: '+s);
     getbufstr;   { password }
     if trim(s)<>'' then
-      if (ustr(s)=ustr(password)) then log(' ','Password ok')
-      else log('#','Password error ('+s+')');
+      if (ustr(s)=ustr(password)) then
+        log(' ','Password ok')
+      else
+        log('#','Password error ('+s+')');
     getbufstr;   { link codes }
     getbufstr;   { compatibility codes }
     log('~','Compatibility: '+s);
@@ -795,7 +806,7 @@ begin
       getbufstr;
       if ustr(s2)='TRX#' then  { transaction number }
         trx:=hexval(copy(s,2,8));
-      end;
+    end;
     if trx<>0 then begin
       log(':','Tranx: '+hex(sec70,8)+' / '+hex(trx,8));
       l:=secsfrom70;
@@ -806,11 +817,10 @@ begin
         log('+','correcting time by '+iifs(trx>=sec70,'+','')+
             strs(trx-sec70)+' seconds');
         WrStatus(getres(182));    { 'korrigiere Uhrzeit' }
-        end;
       end;
+    end;
     EmsiDat:=2;
-    end
-  else
+  end else
     if not Carrier then LogCarrier;
 ende:
   dispose(buf);
@@ -844,13 +854,12 @@ var i       : integer;
       repeat
         esctime0(false)
       until GetCTS(sh) or _timeout(true);
-      end;
+    end;
     if not GetCTS(sh) then begin
       WrStatus(getres(116));     { 'kein CTS-Signal' }
       log('$','CTS low');
       zmresult:=255;
-      end
-    else begin
+    end else begin
       log('$','ZM.EXE '+zmpar+par+' '+zmoptions);
       ReleaseCom(sh);
       PopWindow;
@@ -864,7 +873,7 @@ var i       : integer;
       PushWindow;
       WrStatus('');
       zmresult:=lo(dosexitcode);
-      end;
+    end;
   end;
 
   procedure ProcessLogfile(send:boolean);
@@ -897,7 +906,7 @@ var i       : integer;
       if firstchar(s)=';' then begin   { Logfile wurde nicht erzeugt }
         close(t);
         exit;
-        end;
+      end;
       if UpCase(firstchar(s)) in ['Z','E','L'] then begin
         ok:=(UStr(GetToken(s,' '))='Z');   { Kennung }
         if gettoken(s,' ')='' then;        { Datum }
@@ -912,9 +921,14 @@ var i       : integer;
           LoString(ss);
           if ss='bytes' then bytes:=num else
           if ss='s'     then secs:=num else
-          if ss='cps'   then cps:=num {else
-          if ss='errors' then !? ;      }
-          end;
+          if ss='cps'   then cps:=num
+          
+          { !!!!!!!!
+          else
+          if ss='errors' then !? ;
+          }
+          
+        end;
         if rbytes=0 then      { komplett-Recovery }
           log('*','Skipped '+fn+'; '+strs(bytes)+'b')
         else begin
@@ -930,11 +944,11 @@ var i       : integer;
                 if i<sendfiles then
                   Move(sendfile[i+1],sendfile[i],4*(sendfiles-i));
                 dec(sendfiles);
-                end;
               end;
-          end;
-        end;  { firstchar <> 'T' }
-      end;  { while not eof(t) }
+            end;
+        end;
+      end;  { firstchar <> 'T' }
+    end;  { while not eof(t) }
     close(t);
     erase(t);
     if ioresult<>0 then;
@@ -949,7 +963,8 @@ begin
     mdelay(1000);
     aresult:=EL_nologin;
     exit;
-    end;
+  end;
+  
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
 
   zmpar:='-b'+strs(baud)+' -nologo ';     { nologo, quick-quit }
@@ -983,7 +998,7 @@ begin
     assign(t,zmtempfile+'.log');
     if existf(t) then
       ProcessLogfile(true);           { ZM-Logfile -> XP-FM-Logfile }
-    end;
+  end;
   if zmresult<>255 then
     log('$','errorlevel '+strs(zmresult));
 
@@ -992,14 +1007,12 @@ begin
     if not carrier then begin
       WrStatus(nocarrier);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
-      end
-    else
+    end else
       log(ErrChar,'transfer aborted');
     mdelay(1000);
     aresult:=EL_senderr
-    end
-
-  else begin                                         { ZModem empfangen }
+  
+  end else begin                                        { ZModem empfangen }
     assign(t,zmtempfile+'.par');
     rewrite(t);
     writeln(t,'; ',getres(190));    { 'tempor„re Zmodem-Parameterdatei' }
@@ -1022,8 +1035,8 @@ begin
     if (zmresult<>0) then begin
       WrStatus(getres(191));            { 'šbertragung abgebrochen' }
       aresult:=EL_recerr;
-      end;
     end;
+  end;
 end;
 
 
@@ -1056,6 +1069,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/03/23 23:59:16  oh
+  Blockstrukturen sauber formatiert
+
   Revision 1.8  2000/03/21 19:17:49  mk
   - OOps, mal wieder ein #255 zu viel
 

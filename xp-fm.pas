@@ -144,7 +144,7 @@ begin
     cx:=(longint(msec)*1000) shr 16;
     dx:=(longint(msec)*1000) and $ffff;
     intr($15,regs);
-    end
+  end
   else begin
     n:=system.round(msec/54.925401155);
     if n=0 then
@@ -154,11 +154,13 @@ begin
       for i:=1 to n do begin
         while t=ticker do
           idle;
-        if t<ticker then inc(t)
-        else t:=ticker;
-        end;
+        if t<ticker then
+          inc(t)
+        else
+          t:=ticker;
       end;
     end;
+  end;
 end;
 
 
@@ -172,7 +174,7 @@ begin
   if FOSSILdetect then begin
     writeln(t,'FOSSIL driver detected');
     writeln(t);
-    end;
+  end;
   close(t);
   starty:=wherey;
 end;
@@ -226,8 +228,8 @@ var t    : text;
       if p>0 then begin
         colxfer:=ival(left(s,p-1));
         colstatus:=ival(mid(s,p+1));
-        end;
       end;
+    end;
   end;
 
 begin
@@ -237,11 +239,11 @@ begin
   if mem[Seg0040:$49]<>7 then begin
     ColText:=$70; ColStatus:=$7e; ColXfer:=$7f;
     scrbase:=SegB800;
-    end
+  end
   else begin
     ColText:=7; ColStatus:=$f; ColXFer:=$f;
     scrbase:=SegB000;
-    end;
+  end;
 {$ENDIF }
   assign(t,paramstr(1));
   reset(t);
@@ -252,70 +254,70 @@ begin
     p:=cpos('=',s);
     if (s<>'') and (left(s,1)<>';') and (left(s,1)<>'#') then
       if p=0 then error('Unknown Command:  '+s)
-      else begin
-        id:=lstr(trim(left(s,p-1)));
-        s:=trim(mid(s,p+1));
-        if id='language'   then language:=s else
-        if id='logfile'    then logfile:=s else
-        if id='lognew'     then begin logfile:=s; lognew:=true; end else
-        if id='modeminit'  then modeminit:=s else
-        if id='dialcommand' then dialcomm:=s else
-        if id='phone'      then phone:=trim(s) else
-        if id='cts'        then IgCTS:=(ustr(s)='N') else
-        if id='cd'         then IgCD:=(ustr(s)='N') else
-        if id='rts'        then UseRTS:=(ustr(s)<>'N') else
-        if id='connwait'   then ConnWait:=minmax(ival(s),0,240) else
-        if id='redialwait' then RedialWait:=minmax(ival(s),2,1000) else
-        if id='redialwait2'then RedWait2:=minmax(ival(s),2,1000) else
-        if id='redialmax'  then RedialMax:=minmax(ival(s),0,1000) else
-        if id='maxconn'    then MaxConn:=minmax(ival(s),0,25) else
-        if id='inpath'     then FilePath:=s else
-        if id='mailpath'   then MailPath:=s else
-        if id='zmtempfile' then zmtempfile:=s else
-        if id='line'       then ModemLine:=minmax(ival(s),1,4) else
-        if id='fossil'     then Fossil:=(ustr(s)<>'N') else
-        if id='port'       then ModemPort:=hexval(s) else
-        if id='irq'        then IRQ:=minmax(ival(s),0,15) else
-        if id='triggerlevel' then tlevel:=minmax(ival(s),2,14) else
-        if id='baud'       then Baud:=ival(s) else
-        if id='name'       then UserName:=s else
-        if id='address'    then OwnAddr:=s else
-        if id='domain'     then OwnDomain:=s else
-        if id='called'     then DestAddr:=s else
-        if id='password'   then Password:=s else
-        if id='text'       then txt:=s else
-        if id='show'       then addtxt:=s else
-        if id='sendempty'  then sendempty:=(ustr(s)<>'N') else
-        if id='debug'      then DebugMode:=(ustr(s)<>'N') else
-        if id='emsi'       then UseEMSI:=(ustr(s)<>'N') else
-        if id='aka'        then AKAs:=s else
-        if id='sysname'    then SysName:=s else
-        if id='sn'         then SerNr:=s else
-        if id='settime'    then SetTime:=(ustr(s)<>'N') else
-        if id='sendtrx'    then SendTrx:=(ustr(s)<>'N') else
-        if id='colors'     then GetColors else
-        if id='releasetime'then os2time:=minmax(ival(s),0,3) else
-        if id='extendedfilenames' then ExtFNames:=(ustr(s)<>'N') else
-        if id='cpsmin'     then MinCps:=minmax(ival(s),0,9999) else
-        if id='zmoptions'  then ZMoptions:=s else
-        if id='phonezone'  then tarifzone:=s else
-        if id='send' then
-          if sendfiles<maxfiles then begin
-            inc(sendfiles);
-            getmem(sendfile[sendfiles],length(s)+1);
-            sendfile[sendfiles]^:=ustr(s);
-            end
-          else
-        else
-          writeln('Warning - unknown Option:  '+s0);
-        end;
+    else begin
+      id:=lstr(trim(left(s,p-1)));
+      s:=trim(mid(s,p+1));
+      if id='language'   then language:=s else
+      if id='logfile'    then logfile:=s else
+      if id='lognew'     then begin logfile:=s; lognew:=true; end else
+      if id='modeminit'  then modeminit:=s else
+      if id='dialcommand' then dialcomm:=s else
+      if id='phone'      then phone:=trim(s) else
+      if id='cts'        then IgCTS:=(ustr(s)='N') else
+      if id='cd'         then IgCD:=(ustr(s)='N') else
+      if id='rts'        then UseRTS:=(ustr(s)<>'N') else
+      if id='connwait'   then ConnWait:=minmax(ival(s),0,240) else
+      if id='redialwait' then RedialWait:=minmax(ival(s),2,1000) else
+      if id='redialwait2'then RedWait2:=minmax(ival(s),2,1000) else
+      if id='redialmax'  then RedialMax:=minmax(ival(s),0,1000) else
+      if id='maxconn'    then MaxConn:=minmax(ival(s),0,25) else
+      if id='inpath'     then FilePath:=s else
+      if id='mailpath'   then MailPath:=s else
+      if id='zmtempfile' then zmtempfile:=s else
+      if id='line'       then ModemLine:=minmax(ival(s),1,4) else
+      if id='fossil'     then Fossil:=(ustr(s)<>'N') else
+      if id='port'       then ModemPort:=hexval(s) else
+      if id='irq'        then IRQ:=minmax(ival(s),0,15) else
+      if id='triggerlevel' then tlevel:=minmax(ival(s),2,14) else
+      if id='baud'       then Baud:=ival(s) else
+      if id='name'       then UserName:=s else
+      if id='address'    then OwnAddr:=s else
+      if id='domain'     then OwnDomain:=s else
+      if id='called'     then DestAddr:=s else
+      if id='password'   then Password:=s else
+      if id='text'       then txt:=s else
+      if id='show'       then addtxt:=s else
+      if id='sendempty'  then sendempty:=(ustr(s)<>'N') else
+      if id='debug'      then DebugMode:=(ustr(s)<>'N') else
+      if id='emsi'       then UseEMSI:=(ustr(s)<>'N') else
+      if id='aka'        then AKAs:=s else
+      if id='sysname'    then SysName:=s else
+      if id='sn'         then SerNr:=s else
+      if id='settime'    then SetTime:=(ustr(s)<>'N') else
+      if id='sendtrx'    then SendTrx:=(ustr(s)<>'N') else
+      if id='colors'     then GetColors else
+      if id='releasetime'then os2time:=minmax(ival(s),0,3) else
+      if id='extendedfilenames' then ExtFNames:=(ustr(s)<>'N') else
+      if id='cpsmin'     then MinCps:=minmax(ival(s),0,9999) else
+      if id='zmoptions'  then ZMoptions:=s else
+      if id='phonezone'  then tarifzone:=s else
+      if id='send' then begin
+        if sendfiles<maxfiles then begin
+          inc(sendfiles);
+          getmem(sendfile[sendfiles],length(s)+1);
+          sendfile[sendfiles]^:=ustr(s);
+        end
+      { keine bekannte Option angegeben: }
+      end else
+        writeln('Warning - unknown Option:  '+s0);
     end;
+  end;
   close(t);
   if not FOSSILdetect then fossil:=false;
   if fossil then begin
     writeln('Using FOSSIL driver');
     writeln;
-    end;
+  end;
   if exist('RTS.FM') then UseRTS:=true;
 end;
 
@@ -336,8 +338,8 @@ begin
       else
         p3:=length(adr)+1;
       node:=minmax(ival(copy(adr,p2+1,p3-p2-1)),0,65535);
-      end;
     end;
+  end;
 end;
 
 procedure SetLanguage;
@@ -394,7 +396,7 @@ begin
       rerror(110);                    { 'Port address missing' }
     if IRQ=0 then
       rerror(111);                    { 'IRQ No missing' }
-    end;
+  end;
 end;
 
 function getscreenlines:byte;
@@ -409,7 +411,7 @@ begin
       getscreenlines:=25
     else
       getscreenlines:=dl+1;
-    end;
+  end;
 end;
 
 function TeleCount:integer;
@@ -421,7 +423,7 @@ begin
   while cpos(' ',s)>0 do begin
     s:=trim(mid(s,cpos(' ',s)));
     inc(n);
-    end;
+  end;
   TeleCount:=n;
 end;
 
@@ -447,7 +449,7 @@ begin
   if (redialmax=1) and (telecount>1) then begin
     redialmax:=2;
     redialwait:=redwait2;
-    end;
+  end;
   fillchar(displine,sizeof(displine),0);
   disppos:=1;
   bauddetect:=14400;   { fÅr IgCD/Nullmodem }
@@ -473,9 +475,9 @@ begin
       while (length(s)<65) and (fi.IdAdr^<>#0) do begin
         s:=s+fi.IdAdr^;
         inc(longint(fi.IdAdr));
-        end;
-      log('%',s);
       end;
+      log('%',s);
+    end;
   {$ENDIF}
 end;
 
@@ -513,7 +515,7 @@ begin
   for i:=scy+1 to scy+hgh-1 do begin
     wrt(scx,i,'≥'); wrt(scx+wdt-1,i,'≥');
     mem[scrbase:(i-1)*160+(scx+wdt)*2-1]:=8;
-    end;
+  end;
   wrt(scx,scy+hgh-1,'‘'+dup(wdt-2,'Õ')+'æ');
   wrt(scx,scy+2,'√'+dup(wdt-2,'ƒ')+'¥');
   for i:=scx+1 to scx+wdt do
@@ -549,22 +551,24 @@ procedure wrstatus(s:string);
 var i : integer;
 begin
   if s<>'' then begin
-    if disppos=gl then
+    if disppos=gl then begin
       if displine[1]='' then
         Move(displine[2],displine[1],(gl-1)*sizeof(displine[1]))
       else begin
         displine[2]:='          ...';
         Move(displine[4],displine[3],(gl-3)*sizeof(displine[1]));
-        end
-    else
+      end
+    end else
       inc(disppos);
     displine[disppos]:=time+'  '+s;
-    end;
+  end;
   for i:=1 to gl do begin
-    if i=disppos then Col(ColXFer)
-    else Col(ColText);
+    if i=disppos then
+      Col(ColXFer)
+    else
+      Col(ColText);
     wrt(scx+2,scy+2+i,forms(displine[i],width));
-    end;
+  end;
   Col(ColText);
 end;
 
@@ -604,7 +608,7 @@ var recs      : string;
 procedure InitInterface;
 begin
   sh:=ModemLine;
-  SetComParams(sh,fossil,ModemPort,IRQ{+8,1 shl IRQ});
+  SetComParams(sh,fossil,ModemPort,IRQ {+8,1 shl IRQ} );
   if lo(DosVersion)<10 then
     SaveComState(sh,cps);
   SetTriggerLevel(tlevel);
@@ -612,7 +616,7 @@ begin
   if not SetUART(sh,baud,PNone,8,1,not IgCTS) then begin
     if fossil then ReleaseCom(sh);
     error(getres(113));     { 'UngÅltige Baudrate' }
-    end;
+  end;
   if not fossil then ActivateCom(sh,8192,true);
 end;
 
@@ -653,16 +657,14 @@ begin
       if WaitConn and (recs<>'') then begin
         connstr:=recs;
         WaitConn:=false;
-        end;
+      end;
       recs:='';
-      end
-    else
-      if length(recs)<255 then begin
-        inc(byte(recs[0]));
-        recs[length(recs)]:=c;
-        end;
-    end
-  else
+    end else
+    if length(recs)<255 then begin
+      inc(byte(recs[0]));
+      recs[length(recs)]:=c;
+    end;
+  end else
     if idle then mdelay(0);
 end;
 
@@ -675,17 +677,19 @@ begin
     if s<>sec then begin
       sec:=s;
       dec(timer);
-      end;
     end;
+  end;
 end;
 
 procedure sendstr(s:string);
 var i : byte;
 begin
   for i:=1 to length(s) do begin
-    if IgCTS then SendByte(sh,byte(s[i]))
-    else hSendByte(sh,byte(s[i]));
-    end;
+    if IgCTS then
+      SendByte(sh,byte(s[i]))
+    else
+      hSendByte(sh,byte(s[i]));
+  end;
 end;
 
 procedure sendblock(var buf; len:word);
@@ -693,10 +697,12 @@ var i : integer;
     b : array[0..65000] of byte absolute buf;
 begin
   for i:=0 to len-1 do begin
-    if IgCTS then SendByte(sh,b[i])
-    else hSendByte(sh,b[i]);
+    if IgCTS then
+      SendByte(sh,b[i])
+    else
+      hSendByte(sh,b[i]);
     testbyte(false);
-    end;
+  end;
 end;
 
 procedure esctime0(space:boolean);
@@ -732,7 +738,7 @@ begin
         mdelay(150);
         while received(sh) do tb(false);
         mdelay(800);
-        end;
+      end;
     until p=0;
     sendstr(s+#13);
     time(5);
@@ -745,7 +751,7 @@ begin
       esctime0(false);
     until _timeout(false) or (recs='');   { auf CR warten }
     mdelay(500);
-    end;
+  end;
 end;
 
 procedure sendmstr(s:string);
@@ -757,7 +763,7 @@ begin
     sendcomm(trim(left(s,p-1)));
     s:=trim(mid(s,p+2));
     esctime0(false);
-    end;
+  end;
 end;
 
 procedure TestCarrier;    { Carrier bei Programmstart vorhanden? }
@@ -784,11 +790,11 @@ begin
       if timer<>lt then begin
         lt:=timer;
         write(#8#8#8,lt:3);
-        end;
       end;
+    end;
     CloseResource;
     halt(aresult);
-    end;
+  end;
 end;
 
 
@@ -800,11 +806,12 @@ var nummer   : string[40];
   var p : byte;
   begin
     p:=cpos(' ',phone);
-    if p=0 then GetTelefon:=phone
+    if p=0 then
+      GetTelefon:=phone
     else begin                         { Nummern rotieren }
       GetTelefon:=left(phone,p-1);
       phone:=trim(mid(phone,p))+' '+left(phone,p-1);
-      end;
+    end;
   end;
 
   procedure SetBauddetect;
@@ -842,13 +849,13 @@ begin
     flushinput(sh);
     sendcomm('AT');
     esctime0(false);
-    end;
+  end;
   if not _timeout(false) then
     sendmstr(ModemInit)
   else begin
     aresult:=EL_break;
     exit;
-    end;
+  end;
   TestCarrier;
   while not Carrier and (dials<RedialMax) do begin
     inc(dials);
@@ -859,7 +866,7 @@ begin
     while pos('\\',s)>0 do begin
       sendcomm(left(s,pos('\\',s)-1));
       delete(s,1,pos('\\',s)+1);
-      end;
+    end;
     if s+nummer<>'' then
       sendstr(s+ohnestrich(nummer)+#13);        { wÑhlen }
     mdelay(500);
@@ -874,7 +881,7 @@ begin
         if not DebugMode then wrstatus(connstr);
         dec(disppos);
         connstr:=''; WaitConn:=true;
-        end;
+      end;
     until _timeout(false) or (connstr<>'');
     if break then
       break:=false
@@ -892,8 +899,7 @@ begin
       if not carrier then mdelay(500);  { falls Carrier nach CONNECT kommt }
       if not carrier then mdelay(1000);
       DialUp:=true;
-      end
-    else begin
+    end else begin
       sendstr(#13);
       mdelay(1000);
       WrStatus(getres(165));   { 'warte auf nÑchsten Anruf ...' }
@@ -906,12 +912,11 @@ begin
         if break then begin
           aresult:=EL_break;
           exit;
-          end;
-        end
-      else
+        end;
+      end else
         mdelay(500);
-      end;
     end;
+  end; { while }
   if not Carrier then
     aresult:=EL_noconn;
 end;
@@ -933,9 +938,8 @@ begin
         if carrier then mdelay(500);
       if carrier and GetCTS(sh) then
         sendstr('AT H0'#13);
-      end;
-    end
-  else begin
+    end;
+  end else begin
     DropDtr(sh);
     mdelay(200);
     SetDtr(sh);
@@ -943,7 +947,7 @@ begin
     if GetCTS(sh) then sendstr(#13);
     mdelay(300);
     if GetCTS(sh) then sendstr(#13);
-    end;
+  end;
 end;
 
 
@@ -987,7 +991,7 @@ begin
       YooHooMailer;
       if aresult<>0 then brk_result:=aresult;
       inc(connects);
-      end;
+    end;
     HangUp;
     if mailing then
       log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
@@ -1009,6 +1013,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/23 23:58:49  oh
+  Blockstrukturen sauber formatiert
+
   Revision 1.10  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
