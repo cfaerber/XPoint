@@ -558,7 +558,7 @@ begin
   readmask(brk);
   if not brk then
     for i:=1 to 3 do
-      if FileUpperCase(eds)=UpperCase(edtype[i]) then
+      if UpperCase(eds)=UpperCase(edtype[i]) then
         exteditor:=i;
   if not brk and mmodified then
     GlobalModified;
@@ -1390,6 +1390,9 @@ end.
 
 {
   $Log$
+  Revision 1.87  2001/04/18 11:48:49  ml
+  - fix external Editor under linux (You can now use YOUR Editor for all Mails)
+
   Revision 1.86  2001/04/14 11:45:15  mk
   - fixed help number under linux
 
