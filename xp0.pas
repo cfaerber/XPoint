@@ -1222,10 +1222,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses :^string;
 
-      {XMS Speicheranzeige}
-
-      xmst : word;
-
       {Lightweight-Readpar}
 
       noovrbuf  : boolean;
@@ -1251,6 +1247,9 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.65  2003/04/18 10:51:46  mw
+  MW: - Variable xmst no longer needed.
+
   Revision 1.54.2.64  2003/04/13 21:08:48  my
   MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anh„ngen.
 

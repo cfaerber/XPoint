@@ -298,7 +298,6 @@ begin
     Halt(1);
   end;
   {$ENDIF }
-  xmst:=xmstotal; 
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
     OvrInit('XP.OVR'); 
@@ -356,6 +355,9 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.30  2003/04/18 10:51:46  mw
+  MW: - Variable xmst no longer needed.
+
   Revision 1.18.2.29  2003/04/18 10:47:51  mw
   MW: - Neue Funktion xpswapspace in xpx.pas eingebaut
 
