@@ -2059,8 +2059,9 @@ fromstart:
 
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
-                  {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
+    hdp.programm:=Trim(pformstr);
+    DeleteFirstChar(hdp.programm); DeleteLastChar(hdp.programm);
+    hdp.programm:=xp_xp+'/'+verstr+{$IFDEF Snapshot}  '-' + compiletime+{$ENDIF}'-'+hdp.programm;
     hdp.organisation:=orga;
     if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2516,6 +2517,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.17  2003/08/15 21:30:32  mk
+  - fixed #733047: Bad User-Agent header syntax
+
   Revision 1.48.2.16  2003/08/15 20:53:27  mk
   - fixed Bug #671059: Falscher Server bei unbek.+bek. Usern
 

@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.8.11a';     { Versionnr. - steht nur an dieser Stelle }
+  verstr      = '3.8.11b';     { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -192,6 +192,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.30  2003/08/15 21:30:32  mk
+  - fixed #733047: Bad User-Agent header syntax
+
   Revision 1.63.2.29  2003/08/03 19:46:07  mk
   - fixed typo
 

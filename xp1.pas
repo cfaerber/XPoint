@@ -2085,7 +2085,7 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('yyyy-mm-dd-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  CompileTime := FormatDateTime('yyyymmddhhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
   {$IFDEF Delphi }
     + 'd'
   {$ENDIF }
@@ -2121,6 +2121,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.19  2003/08/15 21:30:32  mk
+  - fixed #733047: Bad User-Agent header syntax
+
   Revision 1.147.2.18  2003/04/12 07:43:09  mk
   - scrptr is now a pointer instead of record
 
