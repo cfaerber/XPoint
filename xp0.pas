@@ -235,7 +235,7 @@ const  {$IFDEF DPMI}
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
-       maxkomm    = 5000;              { Kommentarbaum }
+       maxkomm    = 6550;              { Kommentarbaum }
        kflLast    = 1;
        kflBetr    = 2;
        kflPM      = 4;
@@ -1073,6 +1073,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.5  2000/10/28 09:37:01  mk
+  - Kommentarbaumlimits erhoeht
+
   Revision 1.10.2.4  2000/08/03 09:52:24  mk
   - Subjektlaenge auf 70 Zeichen angepasst
 

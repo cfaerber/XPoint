@@ -47,7 +47,7 @@ implementation  { ---------------------------------------------------- }
 
 uses xp1o,xp2,xp3,xp3o,xp3ex,xp10;
 
-const  emax = 30;   { maximale Tiefe }
+const  emax = 34;   { maximale Tiefe }
 
 
 procedure packit(xpack:boolean; fname:pathstr);
@@ -886,6 +886,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/10/28 09:37:01  mk
+  - Kommentarbaumlimits erhoeht
+
   Revision 1.6  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert
   - Sprachabfrage bei allererstem Start eingebaut
