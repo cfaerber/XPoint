@@ -270,7 +270,10 @@ begin
 end;
 
 procedure showcol;
+var
+  Len: Integer;
 begin
+  len := ScreenWidth - 80 + 50;
   with col do begin
     at(colmenu[0]);
     moff;
@@ -282,21 +285,21 @@ begin
     wrt(70,1,'F'); wrt(76,1,'E');
     wrkeys(false);
     at(colTline);
-    wrt(31,3,dup(50,'ß'));
-    wrt(31,screenlines-1,dup(50,'Ü'));
+    wrt(31,3,dup(len,'ß'));
+    wrt(31,screenlines-1,dup(len,'Ü'));
     at(colbretter);
-    wrt(31,4,forms('  /Z-NETZ/RECHNER/IBM/ALLGEMEINES',50));
-    wrt(31,5,forms('  /Z-NETZ/RECHNER/IBM/BINAER',50));
-    wrt(31,7,forms('  /Z-NETZ/RECHNER/IBM/PROGRAMMIEREN',50));
-    wrt(31,9,forms('  /Z-NETZ/RECHNER/IBM/VIREN',50));
-    wrt(31,11,forms('  /Z-NETZ/TELECOM/0130',50));
-    wrt(31,12,forms('  /Z-NETZ/TELECOM/MODEM',50));
+    wrt(31,4,forms('  /Z-NETZ/RECHNER/IBM/ALLGEMEINES',len));
+    wrt(31,5,forms('  /Z-NETZ/RECHNER/IBM/BINAER',len));
+    wrt(31,7,forms('  /Z-NETZ/RECHNER/IBM/PROGRAMMIEREN',len));
+    wrt(31,9,forms('  /Z-NETZ/RECHNER/IBM/VIREN',len));
+    wrt(31,11,forms('  /Z-NETZ/TELECOM/0130',len));
+    wrt(31,12,forms('  /Z-NETZ/TELECOM/MODEM',len));
     at(colbretterinv);
-    wrt(31,6,forms('  /Z-NETZ/RECHNER/IBM/HARDWARE       (gew„hlt)',50));
+    wrt(31,6,forms('  /Z-NETZ/RECHNER/IBM/HARDWARE       (gew„hlt)',len));
     at(colbretterhi);
-    wrt(31,8,forms('  /Z-NETZ/RECHNER/IBM/SPIELE         (markiert)',50));
+    wrt(31,8,forms('  /Z-NETZ/RECHNER/IBM/SPIELE         (markiert)',len));
     at(colbrettertr);
-    wrt(31,10,'  '+dup(37,'-')+' Trennzeile');
+    wrt(31,10,'  '+dup(ScreenWidth-80+37,'-')+' Trennzeile');
     at(colbretter);
     mon;
     clwin(31,ScreenWidth,13,screenlines-2);
@@ -1133,6 +1136,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/27 13:41:50  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.21  2000/07/27 10:13:01  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

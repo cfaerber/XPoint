@@ -301,7 +301,7 @@ begin
     WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
     WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
-  procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
+  procedure consolewrite(x,y:word; num:dword);  { Num = Chars in xp0.charpuf (String) }
   var
     s: String;
     i, j: Integer;
@@ -910,6 +910,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.47  2000/07/27 13:41:49  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.46  2000/07/27 10:12:59  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

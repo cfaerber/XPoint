@@ -246,7 +246,6 @@ var brk    : boolean;
     lfirst:=min(lfirst,screenlines-5);
   end;
 
-{$IFDEF NCRT }
   function MakeVSC: string;
   var s: string;
   begin
@@ -256,7 +255,6 @@ var brk    : boolean;
     else
       MakeVSC:= 'VSC:'+s+'/';
   end;
-{$ENDIF }
 
 begin
   listexit:=0;
@@ -287,21 +285,13 @@ begin
       end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
-{$IFDEF NCRT }
     openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,MakeVSC,'')+
              iifs(listmsg,'ROT/',''));
-{$ELSE }
-    openlist(1,iif(_maus and listscroller,79,80),lfirst,
-             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
-             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
-             iifs(_maus and ListScroller,'VSC:080/','')+
-             iifs(listmsg,'ROT/',''));
-{$ENDIF }
     if listwrap {or listkommentar} then
-      lister.listwrap(iif(_maus and listscroller,78,80));
+      lister.listwrap(iif(_maus and listscroller,78,80)+ScreenWidth-80);
     if listmsg and ConvIso then list_convert(ISO_conv);
     if not ListAutoscroll then listNoAutoscroll;
     msg:=(_filesize(name)>1024*100);
@@ -449,6 +439,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/07/27 13:41:49  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.31  2000/07/27 10:13:00  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

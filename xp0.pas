@@ -1073,13 +1073,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
-{$IFDEF NCRT}
-       charbuf     : shortstring;                 { Nicht zu klein :-) }
-       attrbuf     : array [1..sizeof(shortstring)] of smallword;
-{$ELSE }
-       charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
-       attrbuf     : array [1..82] of smallword;  {82 Attribute}
-{$ENDIF}
+  charbuf     : shortstring;                 { Nicht zu klein :-) }
+  attrbuf     : array [1..sizeof(shortstring)] of smallword;
 
   // Speichert alle Zeilen in der Konfiguration, die nicht
   // erkannt und ausgewertet wurden, siehe xp2cfg.inc
@@ -1090,6 +1085,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.82  2000/07/27 13:41:49  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.81  2000/07/27 10:12:59  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

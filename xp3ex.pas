@@ -754,7 +754,7 @@ begin
 
     hdf_Trenn :  if not lasttrenn then begin
                    if hdln=HeaderLines then TestSoftware;
-                   wrs(dup(iif(art=xTractHead,70,72),'-'));    { Trennzeile }
+                   wrs(dup(iif(art=xTractHead,70,72)+ScreenWidth-80,'-'));    { Trennzeile }
                    lasttrenn:=true;
                  end;
 
@@ -1058,6 +1058,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/07/27 13:41:50  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.37  2000/07/27 10:13:01  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

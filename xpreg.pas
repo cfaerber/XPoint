@@ -29,7 +29,6 @@ uses
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
 procedure copyright(wait:boolean);
-{ MK 19.01.2000 }
 procedure BetaMessage;
 
 procedure regbeiproc(var s:string);
@@ -1458,11 +1457,11 @@ begin
     gotoxy(x+3,y+4+i);
     repeat
       p:=cposx('*',s);
-      write(left(s,p-1));
+      Wrt2(left(s,p-1));
       delete(s,1,p);
       p:=cposx('*',s);
       attrtxt(col.colmboxhigh);
-      write(left(s,p-1));
+      Wrt2(left(s,p-1));
       attrtxt(col.colmbox);
       delete(s,1,p);
     until s='';
@@ -1575,6 +1574,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/27 13:41:51  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.17  2000/07/27 10:13:05  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

@@ -338,7 +338,7 @@ begin
       end;
   until last or (left(user.name,length(name))>=name);
   if (left(user.name,length(name))=name) then begin
-    openlist(2,78,10,11,0,'/NS/SB/NLR/DM/APGD/');
+    openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/APGD/');
     anz:=0;
     repeat
       with user do begin
@@ -733,7 +733,7 @@ again:
   mwrt(x+2,y+15,getres2(2131,21));   { 'Netz:'  }
   mwrt(x+28,y+14,getres2(2131,22));  { 'Eintr„ge:' }
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
-  openlist(2,78,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
+  openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
   for i:=1 to NL_anz do
     with Nodelist^[i],NB_Data^ do
@@ -881,6 +881,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.15  2000/07/27 13:41:50  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.14  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

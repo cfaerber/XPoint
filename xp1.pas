@@ -639,8 +639,8 @@ const
             0  +  1 +         8          ){ #255 };
 
 { Variable in XP0.PAS: }
-{ charbuf     : string[82];                  {82 Zeichen}
-{ attrbuf     : array [1..82] of smallword;  {82 Attribute}
+{ charbuf     : string[255];                  {82 Zeichen}
+{ attrbuf     : array [1..255] of smallword;  {82 Attribute}
 
 { Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
 { mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
@@ -2012,6 +2012,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.73  2000/07/27 13:41:49  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.72  2000/07/27 10:33:15  ml
   - Referenz auf getlines entfernt
 

@@ -813,7 +813,7 @@ begin
   if _filesize(ReqDat)>0 then begin    { s. auch XP10.ResolveCrashs! }
     assign(t,ReqDat);
     reset(t);
-    openlist(2,78,10,11,0,'/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
+    openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/M/');  { Koordinaten beliebig }
     KeepNodeindexOpen;
     while not eof(t) do begin
       readln(t,adr);
@@ -938,6 +938,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/27 13:41:50  mk
+  - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
+
   Revision 1.25  2000/07/23 10:01:02  mk
   - memavail wo moeglich rausgenommen
 

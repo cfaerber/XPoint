@@ -100,16 +100,16 @@ begin  { __ Suchmarke }
             komm:= dbReadStr(bbase,'kommentar');
             if left(s,3)='$/T' then begin
               if komm='' then
-                dispbuf[y]:='   '+dup(76,s[4])+' '
+                dispbuf[y]:='   '+dup(ScreenWidth-4,s[4])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]:='   '+komm+' '+dup(75-length(komm),s[4])+' ';
+                  1 : dispbuf[y]:='   '+komm+' '+dup(ScreenWidth-5-length(komm),s[4])+' ';
                   2 : begin
-                        dispbuf[y]:='   '+dup((74-length(komm))div 2,s[4])+' '+
+                        dispbuf[y]:='   '+dup((ScreenWidth-6-length(komm))div 2,s[4])+' '+
                                      komm+' ';
-                        dispbuf[y]:=dispbuf[y]+dup(79-length(dispbuf[y]),s[4])+' ';
+                        dispbuf[y]:=dispbuf[y]+dup(ScreenWidth-1-length(dispbuf[y]),s[4])+' ';
                       end;
-                  3 : dispbuf[y]:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
+                  3 : dispbuf[y]:='   '+dup(ScreenWidth-5-length(komm),s[4])+' '+komm+' ';
                 end;
               markflag[y]:=2;
               end
@@ -136,7 +136,7 @@ begin  { __ Suchmarke }
                   else
                     dispbuf[y]:=c+copy(s,2,70)+' '+forms(komm,77-length(s))
                 else
-                  dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,33);
+                  dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,ScreenWidth-80+33);
                 end
               else begin
                 dbReadN(bbase,bb_haltezeit,hzeit);
@@ -254,9 +254,9 @@ begin  { __ Suchmarke }
               dispbuf[y]:=dispbuf[y]+taus[tausc];
             end;
             { Sicherheitshalber nochmal auf x Zeichen kÅrzen }
-	    if (ScreenWidth>DispStrSize) then
+            if (ScreenWidth>DispStrSize) then
               dispbuf[y]:=forms(dispbuf[y],DispStrSize)
-	    else
+            else
               dispbuf[y]:=forms(dispbuf[y],ScreenWidth);
 
           end;
@@ -311,7 +311,6 @@ begin  { __ Suchmarke }
               s2:=fdat(longdat(dat));
               getdate(j,m,t,d);
 
-              { MK 01/00, Y2K-Bug beseitigt }
               tempd := ival(copy(s2,7,2));
               if tempd < 70 then inc(tempd, 2000) else inc(tempd, 1900);
               if abs(tempd*12+ival(copy(s2,4,2))-1-(j*12+m-1)) > 11 then
@@ -399,7 +398,8 @@ begin  { __ Suchmarke }
               taus[pos('E',MsgFeldTausch)] := forms(s0,19);
 
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
+              taus[pos('B',MsgFeldTausch)] :=
+                forms(s1,iif(showmsgdatum,21+(ScreenWidth-80),27+(ScreenWidth-80)));
 
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
 
@@ -409,7 +409,7 @@ begin  { __ Suchmarke }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
-                dispbuf[y]:=forms(dflags+siz+sdat+' '+s,80);
+                dispbuf[y]:=forms(dflags+siz+sdat+' '+s,ScreenWidth);
               end else begin
 
               { (F)lags }
@@ -457,8 +457,8 @@ begin  { __ Suchmarke }
                 if (dispbuf[y]<>'') then dispbuf[y]:=dispbuf[y]+' ';
                 dispbuf[y]:=dispbuf[y]+taus[tausc];
               end;
-              { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
-              dispbuf[y]:=forms(dispbuf[y],80);
+              // Sicherheitshalber nochmal auf ScreenWidth Zeichen kÅrzen
+              dispbuf[y]:=forms(dispbuf[y],ScreenWidth);
             end;
           end;
      20 : dispbuf[y]:=AutoShow;
@@ -531,20 +531,14 @@ end;
 
 
 procedure scrollup(show:boolean);
-var {p : pointer;}
+var
     i : integer;
     s : string;
 begin
-  { AnsiString Anpassung, funktioniert hoffentlich :-/ }
   s:=dispbuf[1];
   for i:= 2 to maxgl do
     dispbuf[i-1]:= dispbuf[i];
   dispbuf[maxgl]:= s;
-  {
-  p:=dispbuf[1];
-  Move(dispbuf[2],dispbuf[1],sizeof(dispbuf)-4);
-  dispbuf[maxgl]:=p;
-  }
   Move(disprec[2],disprec[1],sizeof(disprec)-4);
   disprec[maxgl]:=0;
   Move(markflag[2],markflag[1],sizeof(markflag)-1);
@@ -560,20 +554,15 @@ begin
 end;
 
 procedure scrolldown(show:boolean);
-var {p : pointer;}
-    i : integer;
-    s : string;
+var
+  i : integer;
+  s : string;
 begin
-  { AnsiString Anpassung, funktioniert hoffentlich :-/ }
   s:= dispbuf[maxgl];
   for i:= maxgl downto 2 do
     dispbuf[i]:= dispbuf[i-1];
   dispbuf[1]:= s;
-  {
-  p:=dispbuf[maxgl];
-  Move(dispbuf[1],dispbuf[2],sizeof(dispbuf)-4);
-  dispbuf[1]:=p;
-  }
+
   Move(disprec[1],disprec[2],sizeof(disprec)-4);
   Move(markflag[1],markflag[2],sizeof(markflag)-1);
   Move(userflag[1],userflag[2],sizeof(userflag)-1);
