@@ -695,6 +695,7 @@ begin
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
 
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      GetDefaultViewer(mimetyp, Viewer);
       GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
       if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
         GetMimeViewer(mimetyp,viewer);
@@ -1425,6 +1426,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.8  2000/11/01 10:51:57  mk
+  - verschiedene MIME-Viewer fixes
+
   Revision 1.3.2.7  2000/10/24 13:48:52  mk
   - MIME-fixes (merged from 3.30 branch)
 
