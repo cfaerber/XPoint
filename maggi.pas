@@ -40,7 +40,7 @@ uses dos,xms,typeform,xpovl,fileio,montage,xpdatum,xp_iti,xpglobal,
 const nt_ZConnect=2;
       OrgLen    = 80;
       hderrlen  = 40;
-      BetreffLen= 250;
+      BetreffLen= 245;
       readempflist = false;
       readkoplist  = false;
       readOemList  = false;
@@ -1835,6 +1835,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.13  2002/06/10 13:49:42  my
+  MY:- Fix: Wenn die max. zul„ssige Betreffl„nge von 250 Zeichen
+       ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
+       245 Zeichen gekrzt. Max. Betreffl„nge daher auf 245 Zeichen
+       reduziert (mehr passt nun mal nicht eine max. 255 Zeichen lange
+       Zeile, wenn noch die Headerbezeichnung "Subject: " und das
+       abschlieáende LF hinzukommen).
+
   Revision 1.15.2.12  2002/03/13 23:05:41  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrmpelt,
             von Redundanzen befreit, korrigiert und erweitert:

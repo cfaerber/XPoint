@@ -35,7 +35,7 @@ const
       AttrQPC     = $0001;            { QPC-codiert                }
       realnlen    = 40;
       adrlen      = 80;
-      BetreffLen  = 250;
+      BetreffLen  = 245;
       OrgLen      = 80;
       postadrlen  = 80;
       telelen     = 60;
@@ -279,6 +279,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.2.5  2002/06/10 13:49:42  my
+  MY:- Fix: Wenn die max. zulÑssige BetrefflÑnge von 250 Zeichen
+       ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
+       245 Zeichen gekÅrzt. Max. BetrefflÑnge daher auf 245 Zeichen
+       reduziert (mehr passt nun mal nicht eine max. 255 Zeichen lange
+       Zeile, wenn noch die Headerbezeichnung "Subject: " und das
+       abschlie·ende LF hinzukommen).
+
   Revision 1.3.2.4  2001/09/17 07:38:17  mw
 
   - PMCONV wieder compilierbar ( fileio eingetragen )

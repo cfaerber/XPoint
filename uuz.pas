@@ -35,7 +35,7 @@ const
       maxfollow   = 10;               { max. Followup-To-Zeilen }
       bufsize     = 16384;
       outbufsize  = 16384;
-      BetreffLen  = 250;
+      BetreffLen  = 245;
       readempflist= true;
       postadrlen  = 80;
       telelen     = 60;
@@ -3404,6 +3404,14 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.78  2002/06/10 13:49:42  my
+  MY:- Fix: Wenn die max. zulÑssige BetrefflÑnge von 250 Zeichen
+       ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
+       245 Zeichen gekÅrzt. Max. BetrefflÑnge daher auf 245 Zeichen
+       reduziert (mehr passt nun mal nicht eine max. 255 Zeichen lange
+       Zeile, wenn noch die Headerbezeichnung "Subject: " und das
+       abschlie·ende LF hinzukommen).
+
   Revision 1.35.2.77  2002/05/09 22:12:08  my
   MY:- Fix: Singlepart-Nachrichten mit einem anderen Zeichensatz als
        ISO-8859-1 (z.B. ISO-8859-15) im X-Charset-Header und ohne

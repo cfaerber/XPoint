@@ -71,7 +71,7 @@ const  {$IFDEF DPMI}
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 250;
+       BetreffLen  = 245;
        DateLen     = 11;
        midlen      = 160;
        AKAlen      = 127;
@@ -1230,6 +1230,14 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.54  2002/06/10 13:49:41  my
+  MY:- Fix: Wenn die max. zulÑssige BetrefflÑnge von 250 Zeichen
+       ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
+       245 Zeichen gekÅrzt. Max. BetrefflÑnge daher auf 245 Zeichen
+       reduziert (mehr passt nun mal nicht eine max. 255 Zeichen lange
+       Zeile, wenn noch die Headerbezeichnung "Subject: " und das
+       abschlie·ende LF hinzukommen).
+
   Revision 1.54.2.53  2002/05/26 16:56:52  my
   JG:- Fix: Wildcardzeichen ("?", "*") sind bei Verzeichnisangaben keine
        erlaubten Zeichen mehr. Im einzigen Fall, wo sie tatsÑchlich
