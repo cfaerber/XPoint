@@ -1839,7 +1839,10 @@ fromstart:
       2 : hdp^.absender:=username+'@'+pointname;
       3 : hdp^.absender:=username+'@'+box;
       4 : hdp^.absender:=username+'@'+FidoAbsAdr;
-      5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
+      5 : begin
+            hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
+            hdp^.real_box:=box;  { Test: 'X-XP-BOX' auch bei ZConnect }
+          end;
       6 : begin
             if email<>'' then hdp^.absender:=email else
               hdp^.absender:=username+'@'+
@@ -2389,30 +2392,34 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.40  2001/09/18 22:33:03  my
+  MY:- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
+       erzeugt.
+
   Revision 1.39.2.39  2001/09/16 20:31:59  my
-  JG+MY:- Verbesserte Brettanzeige (zusätzlicher Schalter unter
-          Config/Anzeige/Bretter): Es können jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zus„tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es k”nnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
-  JG+MY:- RFC: Neuer Schalter "Alten Betreff anhängen" unter
-          Config/Optionen/Netze. Wenn aktiviert, wird bei Änderung des
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh„ngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei nderung des
           Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
-          automatisch angehängt.
+          automatisch angeh„ngt.
 
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   JG+MY:- Undokumentierte Funktion <Alt-A> im Sendefenster (Absender
-          ändern) übernahm den Absender nicht korrekt, wenn bei einer
-          Fido-Nachricht mit <F2> ein anderer Fido-Absender ausgewählt
+          „ndern) bernahm den Absender nicht korrekt, wenn bei einer
+          Fido-Nachricht mit <F2> ein anderer Fido-Absender ausgew„hlt
           wurde.
 
   JG+MY:- DoSend: Betreffabfrage ausgelagert als "EditBetreff"
-          (Prozedurrumpfgröße)
+          (Prozedurrumpfgr”áe)
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
