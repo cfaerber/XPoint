@@ -1981,7 +1981,7 @@ begin
   else node:=s;
   files:='';
   u:=''; t:='';
-  Magics:=false; { auch mach Magics suchen }
+  Magics:=true; { auch mach Magics suchen }
   s:=first_marked;
   while s<>#0 do begin
     { --- komplett neu:oh (aus MultiReq uebernommen) --->> }
@@ -2140,6 +2140,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/16 15:25:32  mk
+  OH: Schalter magics in FidoMsgRequest auf true gesetzt
+
   Revision 1.6  2000/02/15 21:19:24  mk
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
