@@ -749,10 +749,7 @@ end;
 
 function Hex(const l:integer; const n:integer):string;
 begin
-  Hex:= IntToHex(l, n);
-  {$IFDEF VP }
-    Hex := RightStr(Result, n);
-  {$ENDIF }
+  Result := RightStr(IntToHex(l,n),n);
 end;
 
 function HexVal(const s:string):longint;
@@ -1435,6 +1432,9 @@ end;
 
 {
   $Log$
+  Revision 1.108  2002/04/14 22:21:31  cl
+  - Hex(): Delphi fix; changed to universally portable code
+
   Revision 1.107  2002/04/06 17:07:47  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux
