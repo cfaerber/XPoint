@@ -288,14 +288,12 @@ const
 {$IFDEF UnixFS}
        MaggiBin         : string        = 'maggi';
        UUCICOBin        : string        = 'uucico';
-       XPFMBin          : string        = 'xp-fm';
        Yup2PktBin       : string        = 'yup2pkt';
        ZFidoBin         : string        = 'zfido';
        ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
        UUCICOBin        = 'UUCICO.EXE';
-       XPFMBin          = 'XP-FM.EXE';
        Yup2PktBin       = 'YUP2PKT.EXE';
        ZFidoBin         = 'ZFIDO.EXE';
        ZQWKBin          = 'ZQWK.EXE';
@@ -1180,6 +1178,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.108  2000/12/25 14:55:49  mk
+  - removed check for xp-fm.exe
+
   Revision 1.107  2000/12/10 14:09:23  hd
   - added missing 'public'-statement
 

@@ -2834,7 +2834,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1  Netcallkonvertierer ZFIDO.EXE fehlt!
 2  Netcallkonvertierer MAGGI.EXE fehlt!
 3  NDIFF.EXE fehlt!
-4  Fido-Mailer XP-FM.EXE fehlt!
 5  RFC-Konvertierer UUZ.EXE fehlt!
 6  Datei nicht vorhanden
 7  Fehler beim Schreiben von %s
@@ -3580,6 +3579,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.88  2000/12/25 14:55:49  mk
+# - removed check for xp-fm.exe
+#
 # Revision 1.87  2000/12/16 16:10:52  my
 # - changed "ZCONNECT" -> "ZConnect"
 #

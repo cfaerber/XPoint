@@ -2767,7 +2767,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  Netcall converter ZFIDO.EXE not found!
 2  Netcall converter MAGGI.EXE not found!
 3  NDIFF.EXE not found!
-4  Where's the Fido Mailer?
 5  RFC converter UUZ.EXE not found!
 6  file not found
 7  Error writing %s
@@ -3479,6 +3478,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.114  2000/12/25 14:55:49  mk
+# - removed check for xp-fm.exe
+#
 # Revision 1.113  2000/12/14 14:11:09  hd
 # - merges some resources from XPFM-?.RQ
 #   - 12300 for errors

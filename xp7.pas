@@ -542,8 +542,6 @@ begin                  { of Netcall }
       if _fido then begin
         if not ExecutableExists(ZFidoBin) then begin
           trfehler(101,esec); exit; end;    { 'ZFIDO.EXE fehlt! }
-        if not ExecutableExists(XPFMBin) then begin
-          trfehler(104,esec); exit; end;    { 'XP-FM.EXE fehlt!' }
         end;
       if (logintyp=ltQWK) and not ExecutableExists(ZQWKBin) then begin
         trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
@@ -1526,6 +1524,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/12/25 14:55:50  mk
+  - removed check for xp-fm.exe
+
   Revision 1.48  2000/12/08 11:17:01  hd
   - Add: Sysop-Call (Incoming) on Fido Packets works propper
     (the screen output doesn't). The ZFido is integrated to
