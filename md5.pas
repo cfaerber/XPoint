@@ -33,7 +33,8 @@
 unit md5;
 
 {$i xpdefine.inc}
-{$ifdef VP}{$q-}{$endif}
+{$Q-}
+
 
 interface
   uses SysUtils,XPGlobal,Typeform;
@@ -389,6 +390,9 @@ implementation
 
 {
   $Log$
+  Revision 1.6  2001/10/19 21:30:32  mk
+  - Q- for all compilers
+
   Revision 1.5  2001/09/08 16:29:29  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
