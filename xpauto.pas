@@ -669,12 +669,15 @@ begin
     if (sdat='00.00') or (empf='') then sdat:='--.--';
     setfile(datei);
     AutoShow:=c+forms(datei,15)+typ+' '+ldat+'  '+sdat+'  '+
-              forms(empf,22)+' '+forms(betreff,24);
+              forms(empf,22)+' '+forms(betreff,24)+ dup(ScreenWidth-80, ' ');
     end;
 end;
 
 {
   $Log$
+  Revision 1.48.2.5  2002/07/26 07:59:35  mk
+  - fixed Edit/AutoVersand for Screenwidth > 80 chars
+
   Revision 1.48.2.4  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 
