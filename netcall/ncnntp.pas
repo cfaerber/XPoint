@@ -208,7 +208,7 @@ begin
 
   { Ergebnis auswerten }
   Code := ParseResult(s);
-  if Code <>200 then
+  if not(Code in [200,201]) then
   begin
     Output(mcError,res_connect2, [ErrorMsg]);
     DisConnect;
@@ -538,6 +538,10 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/08/26 21:24:40  ma
+  - fixed: posting-only server response was not recognized
+    <8VW5E5MYcIB@erspiess.myfqdn.de>
+
   Revision 1.37  2002/03/16 18:22:31  cl
   - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
     already existed.
