@@ -1,6 +1,8 @@
 Dateien im OpenXP Verzeichnis
 -----------------------------
 
+$Id$
+
 ARCHIVE.PAS     Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
 CAPI*.*         unvollendetes ISDN-CAPI-1.1-Modul
 CLIP.*          Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
@@ -157,11 +159,13 @@ XPLINUX.PAS	XP-spezifisches Interface unter Linux
 Verzeichnis .\DOC
 -----------------
 
-XPOINT.XML      Handbuch im DocBook-Format
-XPOINT.DSL      Stylesheet fuer Handbuch
-DBFORM          Beschreibung der Datenbankfelder
+xpoint.sgm      Handbuch im DocBook-Format
+xpoint.dsl      Stylesheet fuer Handbuch
+xpoint.cat      Katalogdatei fuer Handbuch
 
-README.LNX	Hinweise zur Nutzung unter Linux
+dbform          Beschreibung der Datenbankfelder
+
+readme.lnx	Hinweise zur Nutzung unter Linux
 
 xp.ihq          Quelltext der deutschen Online-Hilfe
 xp-e.ihq        Quelltext der englischen Online-Hilfe
@@ -181,8 +185,8 @@ versions.txt    ???
 
 Makefile        Makefile fuer GNU make
 
-Verzeichnis ObjCOM
-------------------
+Verzeichnis "ObjCOM"
+--------------------
 
 Makefile        Makefile fuer GNU make
 developer.txt   ???
@@ -215,6 +219,7 @@ fileioh.inc     ???
 
 Verzeichnis "beispiel"
 ----------------------
+
 glossary.cfg    Beispieldatei fuer Glossary-Funktion (Editor)
 gsbox.scr       Login-Script fuer GSMail
 madness.scr     Login-Script fuer Madness-Boxen
@@ -231,6 +236,7 @@ quark.scr       Login-Script fuer QUARK-Boxen
 quoteto.xps     Schablone fuer ???
 uucp.scr        Login-Script fuer UUCP
 z-netz.scr      Login-Script fuer Z-Netz
+
 
 Die folgenden Tools liegen nur im Source vor und koennen mit allen
 unterstuetzen Compilern aktualisiert werden:
