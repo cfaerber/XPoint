@@ -234,7 +234,15 @@ asm
          jnz   @no_ue
          mov   al,'ö'
          jmp   @xl
-@no_ue:  cmp   al,'a'                 {  UpperCase umwandeln }
+
+@no_ue:  cmp   al,'Ç'                 
+         je    @is_eac
+         cmp   al,'ê'
+         jne   @no_eac
+@is_eac: mov   al,'E'
+         jmp   @xl
+
+@no_eac: cmp   al,'a'                 {  UpperCase umwandeln }
          jb    @noc
          cmp   al,'z'
          ja    @noc
@@ -255,7 +263,7 @@ asm
          xor   bp,bp
          mov   dl,es:[di]              { Key-LÑnge }
 @sblp2:  mov   al,[si+bx]
-         cmp   al,es:[di+bp+1]
+@acctst: cmp   al,es:[di+bp+1]
          jnz   @testul                           
 @ulgood: inc   bx                      { Hier gehts weiter nach Erfolgreichem Umlautvergleich }
          inc   bp
@@ -1251,6 +1259,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/19 18:00:24  jg
+  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
+  Umlautunabhaengige Suche kennt jetzt "Ç"
+  Mailadressen mit "!" und "=" werden ebenfalls erkannt
+
   Revision 1.8  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -349,11 +349,14 @@ label ende,happyend;
 
 {Suche}
 begin
-  if (suchopt[1]='*') and (getres(1)='XP.HLP') then    {Erste Suche seit Programmstart ?}
-    suchopt:='i„'                                  
-  else                                    {Dann Suchoptionen fuer Deutsch/Englisch anpassen }
-    suchopt:='i';
-
+  if suchopt[1]='*' then
+  begin                                       {Erste Suche seit Programmstart ?}
+    if getres(1)='XP.HLP' then
+      suchopt:='i„'
+    else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
+      suchopt:='i';
+  end;                            
+ 
 
   if srec=nil then begin
     new(srec);
@@ -2154,6 +2157,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/02/19 18:00:24  jg
+  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
+  Umlautunabhaengige Suche kennt jetzt "‚"
+  Mailadressen mit "!" und "=" werden ebenfalls erkannt
+
   Revision 1.11  2000/02/19 10:12:13  jg
   Bugfix Gelesenstatus aendern per F4 im ungelesen Modus
 

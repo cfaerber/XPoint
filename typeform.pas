@@ -1939,7 +1939,7 @@ end;
 {MK 11.02.00  Ein wenig eleganter geschrieben }
 function mailstring(const s: String): string;
 const
-  MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@'];
+  MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@','=','!'];
   WrongChar: set of Char = ['.', '_', '-'];
 var
   i,j  : byte;
@@ -2073,7 +2073,7 @@ end;
 {$ENDIF }
 
 
-procedure ukonv(var s:string);
+procedure ukonv(var s:string);         
   procedure conv(c1,c2:char);
   var p : byte;
    begin
@@ -2081,9 +2081,12 @@ procedure ukonv(var s:string);
       p:=cpos(c1,s);
       if p>0 then begin
         s[p]:=c2;
-        if c2<>'s' then c2:='e';
-        insert(c2,s,p+1);
-        end;
+        if (c2<>'e') and (c2<>'E') then   {bei 'Ç' nur ein Zeichen ersetzen} 
+        begin 
+          if c2<>'s' then c2:='e';        {Ansonsten: ae,ue,oe,ss}
+          insert(c2,s,p+1);
+          end;
+        end; 
     until p=0;
   end;
 begin
@@ -2094,6 +2097,8 @@ begin
   conv('é','A');
   conv('ô','O');
   conv('ö','U');
+  conv('ê','E');
+  conv('Ç','e'); 
 end;
 
 
@@ -2142,6 +2147,11 @@ end;
 end.
 { 
   $Log$
+  Revision 1.9  2000/02/19 18:00:24  jg
+  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
+  Umlautunabhaengige Suche kennt jetzt "Ç"
+  Mailadressen mit "!" und "=" werden ebenfalls erkannt
+
   Revision 1.8  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
