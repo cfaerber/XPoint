@@ -85,8 +85,9 @@ var
 
     procedure CleanSpool;
     begin
-      erase_mask(AddDirSepa(DestDir)+'*.BAK'); (* delete old input files  *)
+      if not DiskPoll then 
       erase_mask(AddDirSepa(DestDir)+'*.OUT'); (* delete old output files *)
+      erase_mask(AddDirSepa(DestDir)+'*.BAK'); (* delete old input files  *)
     end;
 
     function RunoutFilter:boolean;
@@ -103,12 +104,9 @@ var
       if boxpar^.SizeNego then uu.parsize := true;
 
       uu.SMTP     := BoxPar^.UUsmtp;
-
-      if uu.SMTP and (BoxPar^.UParcer<>'') then
-        if      pos('freeze',LowerCase(boxpar^.uparcer))>0 then uu.fSMTP := true
-        else if pos('gzip',  LowerCase(boxpar^.uparcer))>0 then uu.zSMTP := true
-        else if pos('bzip2', LowerCase(boxpar^.uparcer))>0 then uu.bSMTP := true
-        else                                                    uu.cSMTP := true;
+      
+      uu.uparcer_smtp := BoxPar^.UpArcer;
+      uu.uparcer_news := BoxPar^.UpArcer;
 
       uu.NewsMime := NewsMIME;
       uu.MakeQP   := MIMEqp;
@@ -130,8 +128,8 @@ var
     end;
 
     function RunUUZ:boolean;
+{$IFDEF undefined}
       { this whole stuff should really be part of UUZ }
-
       function Pack: boolean;
       var compression: (none,freeze,gzip,bzip,compress);
           cunbatchcmd: string;
@@ -266,11 +264,12 @@ var
         dispose(f1);dispose(f2);
         result:=true;
       end;
+{$ENDIF}
 
     begin // RunUUZ
       MakeMimetypCfg;
       uu.ZtoU; {!! no error checking}
-      result:=Pack;
+      result:=true;
     end;
 
     procedure KillUUZ;
@@ -292,7 +291,7 @@ var
     CleanSpool;
 
     if _filesize(source) <=0 then
-      result:=true      { doing nothing will hopefully succeed ;-) }
+      result:=true      { doing nothing will hopefully succeed ;-)   }
     else
 
     if RunOutFilter then
@@ -321,16 +320,16 @@ var
       // uu.getrecenvemp := false;      { not needed for UUCP }
       // uu.shrinkheader := ShrinkUheaders; { UUZ-Schalter -r }
 
-      {!! uncompressing programmes are defined in box config but compiled into unit zcrfc}
-
-      uu.uncompress  := BoxPar^.downarcer;
-      uu.unfreeze    := BoxPar^.unfreezer;
-      uu.ungzip      := BoxPar^.ungzipper;
-      uu.unbzip      := BoxPar^.unbzipper;
+      uu.downarcers[compress_compress] := BoxPar^.downarcer;
+      uu.downarcers[compress_freeze]   := BoxPar^.unfreezer;
+      uu.downarcers[compress_gzip]     := BoxPar^.ungzipper;
+      uu.downarcers[compress_bzip2]    := BoxPar^.unbzipper;
 
       uu.OwnSite  := BoxPar^.pointname+BoxPar^._domain;
       uu.Source   := source;
       uu.Dest     := dest;
+
+//    uu.CommandLine := true;
 
       uu.ClearSourceFiles := DiskPoll or nDelPuffer;
 //    uu.DeleteFileList:=DeleteFileList;
@@ -360,7 +359,7 @@ var
 
   begin { ProcessIncomingFiles: boolean }
     result    := false;
-    source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir))+'X*';
+    source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir))+'X-*';
 
     dest      := 'UUbuffer.zer';
 
@@ -461,15 +460,23 @@ begin {function UUCPNetcall}
 
   if diskpoll then
   begin
-    SetCurrentDir(boxpar^.sysopinp);
-    Shell(boxpar^.sysopstart,500,1);
-    SetCurrentDir(OwnPath);
-    if (errorlevel=0) and ProcessIncomingFiles then
+    if boxpar^.sysopstart<>'' then 
+    begin
+      SetCurrentDir(boxpar^.sysopinp);
+      Shell(boxpar^.sysopstart,500,1);
+      SetCurrentDir(OwnPath);
+    end;
+    if ((errorlevel=0) or (boxpar^.sysopstart<>'')) 
+    and ProcessIncomingFiles then
       if ProcessOutgoingFiles then begin
-        SetCurrentDir(boxpar^.sysopout);
-        Shell(boxpar^.sysopend,500,1);
-        SetCurrentDir(OwnPath);
-        if errorlevel=0 then result:=el_ok else result:=el_recerr;
+        if boxpar^.sysopend<>'' then 
+	begin
+          SetCurrentDir(boxpar^.sysopout);
+          Shell(boxpar^.sysopend,500,1);
+          SetCurrentDir(OwnPath);
+          if errorlevel=0 then result:=el_ok else result:=el_recerr;
+	end else
+	  result:=el_ok;
       end
       else {!ProcessOutgoingFiles}
         result:=el_senderr
@@ -495,6 +502,14 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/03/26 22:57:28  cl
+  - moved compression routines from xpncuucp to zcrfc/uuz
+  - fixed decompression
+  - zcrfc/uuz now ignores *.OUT (X-* does match these on some systems!)
+  - new uuz switches: -cnews -gnews -fnews -fbnews for compressed news packages
+  - separate compressors for news and smtp (no UI yet)
+  - fixed default parameters to include $PUFFER/$DOWNFILE
+
   Revision 1.2  2001/03/25 18:44:04  cl
   - moved ncuucp-fz.inc from playground to main
   - enabled UUCP-f/z in ncuucp.pas

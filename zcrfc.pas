@@ -32,6 +32,8 @@ unit zcrfc;
 interface
 
 uses xpglobal,
+  xp0,
+  xp1,
   {$IFDEF unix}
   linux,
   XPLinux,
@@ -53,6 +55,13 @@ uses xpglobal,
   sysutils,classes,typeform,fileio,xpdatum,montage;
 
 type
+  TCompression = (
+    compress_none,        { uncompressed }
+    compress_gzip,        { gzip'ed      }
+    compress_bzip2,       { bzip2'ed     }
+    compress_compress,    { compressed   }
+    compress_freeze);     { frozen       }
+
   TUUZ = class
   protected
     f1, f2: file;                         { Quell/Zieldatei     }
@@ -74,12 +83,15 @@ type
     procedure ReadBinString(bytesleft: longint); { Base64-Codierung }
     procedure ReadRFCheader(mail: boolean; s0: string);
     procedure ConvertMailfile(fn: String; mailuser: string; var mails: Integer);
-    procedure ConvertSmtpFile(fn: String; compressed: boolean; var mails: Integer);
+    procedure ConvertSmtpFile(fn: String; (* compressed: boolean; *) var mails: Integer);
     procedure ConvertNewsfile(fn: String; var news: Integer);
     procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
     procedure RFC1522form;                  { evtl. s mit quoted-printable codieren }
     procedure SetMimeData;
     procedure WriteRFCheader(var f: file; mail: boolean);
+
+    procedure Compress  (fn: String; news:boolean; var ctype:TCompression);
+    procedure DeCompress(fn: String; batch: boolean);
   public
     u2z: boolean;                         { Richtung; mail/news }
     source, dest: String;                { Quell-/Zieldateien  }
@@ -93,18 +105,29 @@ type
     RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
     NewsMIME: boolean ;
-    SMTP: boolean ;
-    zSMTP: boolean ;               { GNU-Zipped SMTP  }
-    cSMTP: boolean ;               { compressed SMTP  }
-    fSMTP: boolean ;               { frozen SMTP      }
-    bSMTP: boolean ;               { BZIP2'ed SMTP    }
+    SMTP: boolean;
+
+    { only used in non-cmdline mode }
+    uparcer_news: string;
+    uparcer_smtp: string;
+    { only used for cmdline mode }
+    SMTP_compression: TCompression;
+    News_compression: TCompression;
+    uparcers  : array [compress_gzip..compress_freeze] of string;
+    { change from default for non-cmdline mode }
+    downarcers: array [compress_gzip..compress_freeze] of string;
+
+//  zSMTP: boolean ;               { GNU-Zipped SMTP  }
+//  cSMTP: boolean ;               { compressed SMTP  }
+//  fSMTP: boolean ;               { frozen SMTP      }
+//  bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
     ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
-    uncompress : string;
-    unfreeze : string;
-    ungzip : string;
-    unbzip : string;
+//  uncompress : string;
+//  unfreeze : string;
+//  ungzip : string;
+//  unbzip : string;
     constructor create;
     destructor Destroy; override;
     procedure testfiles;
@@ -119,7 +142,7 @@ procedure StartCommandlineUUZ;
 implementation
 
 uses
-  xpheader, unicode, UTFTools, xpmakeheader;
+  xpheader, unicode, UTFTools, xpmakeheader,resource;
 
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -184,6 +207,19 @@ const
   enc8bit = 3;
   enc7bit = 4;
   encBinary = 5;
+
+  rsmtp_command: array[TCompression] of string = (
+    'rsmtp',
+    'rgsmtp',
+    'rbsmtp',
+    'rcsmtp',
+    'rfsmtp');
+
+  rnews_shebang: array [compress_gzip..compress_freeze] of string = (
+    '#! gunbatch'#10,
+    '#! bunbatch'#10,
+    '#! cunbatch'#10,
+    '#! funbatch'#10);
 
 type
   mimeproc = procedure(var s: string);
@@ -283,6 +319,8 @@ begin
   end;
 end;
 
+function unbatch(s: string): boolean; forward;
+
 { addiert einen tstringlists an einen zweiten }
 procedure tstringlistadd(var a: tstringlist;b: tstringlist);
 var
@@ -337,10 +375,10 @@ begin
   getrecenvemp := false; { Envelope-Empfaenger aus Received auslesen? }
   ParSize := false;             { Size negotiation }
   SMTP:= false;
-  cSMTP:= false;               { compressed SMTP  }
-  fSMTP:= false;               { frozen SMTP      }
-  zSMTP:= false;               { GNU-Zipped SMTP  }
-  bSMTP:= false;               { BZIP2'ed SMTP    }
+//cSMTP:= false;               { compressed SMTP  }
+//fSMTP:= false;               { frozen SMTP      }
+//zSMTP:= false;               { GNU-Zipped SMTP  }
+//bSMTP:= false;               { BZIP2'ed SMTP    }
   NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
   MailUser:= 'mail';        { fuer U-Zeile im X-File }
@@ -359,15 +397,27 @@ begin
   eol := 0;
 
   {$IFDEF unix}
-  uncompress := 'compress -dvf ';
-  unfreeze := 'freeze -dif ';
-  ungzip := 'gzip -df ';
-  unbzip := 'bzip2 -df ';
+  downarcers[compress_compress] := 'compress -dvf $DOWNFILE';
+  downarcers[compress_freeze]   := 'freeze -dif $DOWNFILE';
+  downarcers[compress_gzip]     := 'gzip -df $DOWNFILE';
+  downarcers[compress_bzip2]    := 'bzip2 -df $DOWNFILE';
   {$ELSE}
-  uncompress := 'compress.exe -df ';
-  unfreeze := 'freeze.exe -dif ';
-  ungzip := 'gzip.exe -df ';
-  unbzip := 'bzip2.exe -df ';
+  downarcers[compress_compress] := 'compress.exe -df $DOWNFILE';
+  downarcers[compress_freeze]   := 'freeze.exe -dif $DOWNFILE';
+  downarcers[compress_gzip]     := 'gzip.exe -df $DOWNFILE';
+  downarcers[compress_bzip2]    := 'bzip2.exe -df $DOWNFILE';
+  {$ENDIF}
+
+  {$IFDEF unix}
+  uparcers[compress_compress] := 'compress -vf $PUFFER';
+  uparcers[compress_freeze]   := 'freeze -if $PUFFER';
+  uparcers[compress_gzip]     := 'gzip -f $PUFFER';
+  uparcers[compress_bzip2]    := 'bzip2 -f $PUFFER';
+  {$ELSE}
+  uparcers[compress_compress] := 'compress.exe -f $PUFFER';
+  uparcers[compress_freeze]   := 'freeze.exe -if $PUFFER';
+  uparcers[compress_gzip]     := 'gzip.exe -f $PUFFER';
+  uparcers[compress_bzip2]    := 'bzip2.exe -f $PUFFER';
   {$ENDIF}
 
   qprchar := [^L, '=', #127..#255];
@@ -450,31 +500,48 @@ begin
           ParSize := true
         else
           if switch = 'smtp' then
-          SMTP := true
+        begin
+          SMTP := true; smtp_compression:=compress_none;
+        end
         else
           if switch = 'bsmtp' then
         begin
-          SMTP := true; bSMTP := true;
+          SMTP := true; smtp_compression:=compress_bzip2;
         end
         else
           if switch = 'csmtp' then
         begin
-          SMTP := true; cSMTP := true;
+          SMTP := true; smtp_compression:=compress_compress;
         end
         else
           if switch = 'fsmtp' then
         begin
-          SMTP := true; fSMTP := true;
+          SMTP := true; smtp_compression:=compress_freeze;
         end
         else
-          if switch = 'gsmtp' then
+          if(switch = 'gsmtp')or(switch = 'zsmtp')then
         begin
-          SMTP := true; zSMTP := true;
+          SMTP := true; smtp_compression:=compress_gzip;
         end
         else
-          if switch = 'zsmtp' then
+          if switch = 'bnews' then
         begin
-          SMTP := true; zSMTP := true;
+          news_compression:=compress_bzip2;
+        end
+        else
+          if switch = 'cnews' then
+        begin
+          news_compression:=compress_compress;
+        end
+        else
+          if switch = 'fnews' then
+        begin
+          news_compression:=compress_freeze;
+        end
+        else
+          if(switch = 'gnews')or(switch = 'znews')then
+        begin
+          news_compression:=compress_gzip;
         end
         else
           if switch = 'mime' then
@@ -554,6 +621,182 @@ begin
     blockread(f1, buffer, bufsize, rr);
     blockwrite(f2, buffer, rr);
   end;
+end;
+
+{ --- Compression -------------------------------------------- 3247 - }
+
+procedure TUUZ.Compress(fn: String; news:boolean; var ctype:TCompression);
+var f1,f2 :file;
+    p     : integer;
+    rr    : word;
+    uparc : string;
+
+begin
+  if commandline then
+  begin
+    if news then ctype:=news_compression else ctype:=smtp_compression;
+    if ctype = compress_none then exit; // no compression
+    uparc := uparcers[ctype];
+  end else
+  begin
+    uparc := iifs(news,uparcer_news,uparcer_smtp);
+         if pos('freeze',  LowerCase(uparc))>0 then ctype := compress_freeze
+    else if pos('gzip',    LowerCase(uparc))>0 then ctype := compress_gzip
+    else if pos('bzip2',   LowerCase(uparc))>0 then ctype := compress_bzip2
+    else if pos('compress',LowerCase(uparc))>0 then ctype := compress_compress
+    else begin ctype:=compress_none; exit; end;
+  end;
+
+  p := pos('$PUFFER',UpperCase(uparc));
+  Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
+
+  assign(f1,Dest+fn);
+
+  if existf(f1) then                    { Datei wurde nicht gepackt }
+  begin                                 { (warum auch immer!)       }
+    ctype:=compress_none;
+    exit;
+  end;
+                                        { Datei wurde gepackt }
+{$IFDEF UnixFS} { under unix, the extension is always preserved }
+  case ctype of
+    compress_freeze: assign(f1,Dest+fn+'.F'  );
+    compress_gzip:   assign(f1,Dest+fn+'.gz' );
+    compress_bzip2:  assign(f1,Dest+fn+'.bz2');
+    else             assign(f1,Dest+fn+'.Z'  );
+  end;
+{$ELSE} { under DOS/Win32/OS.2, we don't know whether we've got a
+        LFN compressor or what it does with the extension}
+  { first, try .OUT => .XXX/.OXX/.OUX }
+  case ctype of
+      { for some strange reason, the pure DOS freeze that comes with Crosspoint
+        uses XZ as an extension }
+    compress_freeze: assign(f1,Dest+LeftStr(fn,length(fn)-2)+'XZ');
+    compress_gzip:   assign(f1,Dest+LeftStr(fn,length(fn)-2)+'GZ');
+    compress_bzip2:  assign(f1,Dest+LeftStr(fn,length(fn)-3)+'BZ2');
+    else             assign(f1,Dest+LeftStr(fn,length(fn)-1)+'Z');
+            end;
+
+  { now, try .OUT => .X/.XX }
+  if (ctype<>compress_bzip2) and (not existf(f1)) then case ctype of
+     compress_freeze: assign(f1,Dest+LeftStr(fn,length(fn)-3)+'F');
+     compress_gzip:   assign(f1,Dest+LeftStr(fn,length(fn)-3)+'GZ');
+     else             assign(f1,Dest+LeftStr(fn,length(fn)-3)+'Z');
+  end;
+
+  { finally, try .OUT => .OUT.X/.OUT.XX }
+  if {$IFDEF DOS32} System.LFNSupport and {$ENDIF} (not existf(f1)) then case ctype of
+     { Problem under DOS32: If we don't support LFN but the compressor does, we
+       won't find the compressed file (compressed file is D-XXXX~N.Z, but we
+       only look for e.g. D-XXXX.OUZ and D-XXXX.Z (and don't know N anyway). }
+     compress_freeze: assign(f1,Dest+fn+'.F');
+     compress_gzip:   assign(f1,Dest+fn+'.GZ');
+     compress_bzip2:  assign(f1,Dest+fn+'.BZ2');
+     else             assign(f1,Dest+fn+'.Z');
+  end;
+{$ENDIF}{!UnixFS}
+
+  if not existf(f1) then begin
+    trfehler(713,30);    { 'Fehler beim Packen!' }
+    ctype:=compress_none; exit;
+  end;
+
+  if news then begin                          { '#! xxunbatch' erzeugen }
+    assign(f2,Dest+fn); rewrite(f2,1); reset(f1,1);
+    blockwrite(f2,rnews_shebang[ctype][1],length(rnews_shebang[ctype]));
+    fmove(f1,f2);
+    close(f1); close(f2); erase(f1);
+  end else                                    { mail verwendet rxxsmtp  }
+    rename(f1,Dest+fn);
+end;
+
+procedure TUUZ.DeCompress(fn: String; batch: boolean);
+var f,f2  : file;
+    magic : smallword;
+    p     : integer;
+    s     : string[11];
+    rr    : Longint;
+    ctype : TCompression;
+    arcer : string;
+    newfn : string;
+    spos  : longint;
+    dest  : string;
+
+const unxxxing : array [compress_gzip..compress_freeze] of string = (
+    ' - unfreezing',
+    ' - ungzipping',
+    ' - unbzip2''ing',
+    ' - uncompressing');
+
+label again;
+
+begin
+  dest := AddDirSepa(ExtractFilePath(fn));
+  fn   := ExtractFileName(fn);
+
+again:
+  assign(f,dest+fn);
+  reset(f,1);
+
+  if batch then
+  begin
+    setlength(s,11);
+    blockread(f,s,11,rr);       { read #! xxunbatch }
+    if (rr<11) or eof(f) or (not unbatch(s)) then begin close(f); exit; end; // no batch
+    repeat
+      blockread(f,s,1,rr);
+      if (rr<1) or eof(f) then begin close(f); exit; end; // oops;
+    until s[0]=#10;
+    spos:=filepos(f);
+  end;
+
+  blockread(f,magic,sizeof(magic),rr);
+
+  case BigEndianToHost16(magic) of
+    $1F9D: ctype := compress_compress;
+    $1F9F: ctype := compress_freeze;
+    $1F8B: ctype := compress_gzip;
+    $425A: ctype := compress_bzip2;
+    else begin close(f); exit; end;
+  end;
+
+  case ctype of
+{$IFDEF UnixFS} { under unix, the extension is always preserved }
+    compress_freeze: newfn :=Dest+fn+'.F';
+    compress_gzip:   newfn :=Dest+fn+'.gz';
+    compress_bzip2:  newfn :=Dest+fn+'.bz2';
+    else             newfn :=Dest+fn+'.Z';
+{$ELSE}
+    compress_freeze: newfn :=Dest+fn+'.XZ';
+    compress_gzip:   newfn :=Dest+fn+'.GZ';
+    compress_bzip2:  newfn :=Dest+fn+'.BZ2';
+    else             newfn :=Dest+fn+'.Z';
+{$ENDIF}
+  end;
+
+  if batch then begin          { in batches: copy data after #! xxunbatch }
+    assign(f2,newfn); rewrite(f2,1);
+    seek(f,spos); fMove(f,f2);
+    close(f); close(f2); erase(f);
+  end else begin               { normal files: just rename }
+    close(f); rename(f,newfn);
+  end;
+
+  arcer:=downarcers[ctype];
+  if commandline then write(unxxxing[ctype]);
+
+  p := pos('$DOWNFILE',UpperCase(arcer));
+  Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
+
+{$IFNDEF UnixFS}  { argh }
+  if (ctype=compress_freeze) and (not existf(f1)) then
+    if FileExists(Dest+fn+'X') then
+      renamefile(Dest+fn+'X',Dest+fn) else
+    if FileExists(Dest+fn+'XZ') then
+      renamefile(Dest+fn+'XZ',Dest+fn);
+{$ENDIF}
+
+  if batch then goto again;
 end;
 
 { --- ZConnect-Header verarbeiten ----------------------------------- }
@@ -2332,7 +2575,7 @@ end;
 
 { SMTP-Mail -> ZCONNECT }
 
-procedure TUUz.ConvertSmtpFile(fn: String; compressed: boolean; var mails: Integer);
+procedure TUUz.ConvertSmtpFile(fn: String; (* compressed: boolean; *) var mails: Integer);
 var
   f: file;
   ende: boolean;
@@ -2360,42 +2603,11 @@ var
 begin
   n := 0;
   if CommandLine then write('mail: ', fn);
-  if compressed then
-  begin
-    assign(f, fn);
-    reset(f, 1);
-    setlength(s, 4);
-    blockread(f, s[1], 4, rr);
-    close(f);
-    if (LeftStr(s, 2) = #$1F#$9D) or (LeftStr(s, 2) = #$1F#$9F) or
-      (LeftStr(s, 2) = #$1F#$8B) or (LeftStr(s, 2) = #$42#$5a) then
-    begin
-      rename(f, fn + '.Z');
-      case s[2] of
-        #$9D:
-          begin
-            if CommandLine then  write(' - uncompressing SMTP mail...');
-            SysExec(uncompress + fn, '');
-          end;
-        #$9F:
-          begin
-            if CommandLine then write(' - unfreezing SMTP mail...');
-            SysExec(unfreeze + fn, '');
-          end;
-        #$8B:
-          begin
-            if CommandLine then  write(' - unzipping SMTP mail ...');
-            SysExec(ungzip + fn, '');
-          end;
-        #$5A:
-          begin
-            if CommandLine then write(' - unbzip2`ing SMTP mail ...');
-            SysExec(unbzip + fn, '');
-          end;
-      end;
-    end;
-  end;
+  DeCompress(fn,false);
+  if not fileexists(fn) then
+    raise Exception.Create(GetRes2(10700,15));
   if CommandLine then write(sp(7));
+
   OpenFile(fn);
   repeat
     ClearHeader;
@@ -2514,78 +2726,13 @@ label
   ende;
 begin
   if CommandLine then write('news: ', fn);
+  DeCompress(fn,true);
+  if not fileexists(fn) then
+    raise Exception.Create(GetRes2(10700,15));
+
   OpenFile(fn);
   ReadString;
-  while unbatch(s) do
-  begin
-    freeze := (pos('funbatch', LowerCase(s)) > 0);
-    gzip := (pos('gunbatch', LowerCase(s)) > 0) or (pos('zunbatch', LowerCase(s))
-      > 0);
-    bzip := (pos('bunbatch', LowerCase(s)) > 0);
-    seek(f1, length(s) + 1);
-    fsplit(fn, dir, name, ext);
-    {$IFDEF unix}
-    if (ext <> '.Z') or (ext <> '.gz') or (ext <> '.xz') then
-    begin
-      if (freeze) then
-        newfn := fn + '.xz'
-      else
-        if (gzip) then
-        newfn := fn + '.gz'
-      else
-        if (bzip) then
-        newfn := fn + '.bz2'
-      else
-        newfn := fn + '.Z';
-    end;
-    {$ELSE}
-    if ext = '' then
-      newfn := fn + '.Z'
-    else
-      if freeze then
-      newfn := dir + name + LeftStr(ext, 2) + 'XZ'
-    else
-      newfn := dir + name + LeftStr(ext, 3) + 'Z';
-    {$ENDIF}
-    assign(f, newfn);
-    rewrite(f, 1);
-    fMove(f1, f);
-    close(f);
-    close(f1);
-    close(f2);
-    if freeze then
-    begin
-      if CommandLine then write(' - unfreezing news...');
-      SysExec(unfreeze + newfn, '');
-    end
-    else
-      if gzip then
-    begin
-      if CommandLine then write(' - unzipping news...');
-      SysExec(ungzip + newfn, '');
-    end
-    else
-      if bzip then
-    begin
-      if CommandLine then write(' - unbzip2`ing news...');
-      SysExec(unbzip + newfn, '');
-    end
-    else
-    begin
-      if CommandLine then write(' - uncompressing news...');
-      SysExec(uncompress + newfn, '');
-    end;
-    reset(f2, 1); seek(f2, filesize(f2));
-    if FileExists(newfn) then
-    begin
-(*    !!writeln(' - Fehler beim Entpacken');
-      writeln(uncompress + newfn); halt;
-      assign(f, newfn); erase(f);
-      exit; *)
-    end;
-    OpenFile(fn);
-    ReadString;
-  end;
+
   n := 0;
   if (LeftStr(s, 2) = '#!') or RawNews then
     if (LeftStr(s, 8) <> '#! rnews') and not RawNews then
@@ -2760,6 +2907,8 @@ begin
   sres := findfirst(source, faAnyFile, sr);
   while sres = 0 do
   begin
+  try
+    if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
       ConvertMailfile(spath + sr.name, '', mails)
     else
@@ -2773,8 +2922,9 @@ begin
     begin
       ReadXFile;                        { X.-file interpretieren }
       LoString(typ);
-      if FileExists(spath + dfile) then
-      begin
+      if not FileExists(spath + dfile) then
+        raise Exception.Create(GetRes2(10700,15))
+      else begin
         inc(n);
         if (typ = 'rnews') or (typ = 'crnews') or
           (typ = 'frnews') or (typ = 'grnews') then
@@ -2788,7 +2938,10 @@ begin
           (typ = 'rzsmtp') or (typ = 'zrsmtp') or
           (typ = 'rgsmtp') or (typ = 'grsmtp') or
           (typ = 'rbsmtp') or (typ = 'brsmtp') then
-          ConvertSmtpFile(spath + dfile, typ <> 'rsmtp', mails);
+          ConvertSmtpFile(spath + dfile, mails)
+        else
+          raise Exception.Create(Format(GetRes2(10700,10),[sr.name]));
+
         if ClearSourceFiles then begin
           DeleteFile(spath+sr.name);
           DeleteFile(spath+dfile);
@@ -2800,17 +2953,26 @@ begin
     end
     else
     begin
-      inc(n);
       case FileType of
         0, 1, 2: ConvertNewsfile(spath + sr.name, news);
-        3: ConvertSmtpFile(spath + sr.name, false, mails);
+        3: ConvertSmtpFile(spath + sr.name, mails);
         4: ConvertMailfile(spath + sr.name, '', mails);
-      else
-        dec(n);
+      else raise Exception.Create(Format(GetRes2(10700,10),[sr.name]));
       end;
+      inc(n);
+
       if ClearSourceFiles then DeleteFile(spath+sr.name) else
         RenameFile(spath+sr.name,spath+sr.name+'.BAK');
     end;
+  except on Ex:Exception do
+    begin
+      if CommandLine then
+        writeln(ex.message)
+      else
+        tfehler(ex.message,30);
+      RenameFile(spath+sr.name,BadDir+sr.name);
+    end;
+  end; //try
     sres := findnext(sr);
   end;
   findclose(sr);
@@ -3307,6 +3469,8 @@ var
   binmail: boolean;
   copycount: integer;                   { fuer Mail-'CrossPostings' }
 
+type rcommand = (rmail,rsmtp,rnews);
+
   procedure FlushOutbuf(var f: file);
   begin
     if outbufpos > 0 then
@@ -3323,57 +3487,49 @@ var
     inc(outbufpos, length(s));
   end;
 
-  procedure MakeXfile(sender: string);
+  { compress file and queue it }
+  procedure QueueCompressFile(t:rcommand);
   var
     name, name2: string;
-    mail, smtp: boolean;
+    command: string;
     nr: string;
     fs: longint;
+    ct: TCompression;
   begin
-    mail := (sender = 'mail');
-    smtp := (sender = 'smtp');
+    if t in [rsmtp,rnews] then
+      Compress(fn+'.OUT',t=rnews,ct);
+
+    case t of
+      rsmtp: command := rsmtp_command[ct];
+      rmail: command := 'rmail '+hd.empfaenger;
+      else   command := 'rnews';
+    end;
+
+    (* TODO: don't write X- file, but E command *)
     nr := hex(NextUunumber, 4);
     assign(f2, dest + 'X-' + nr + '.OUT');
     rewrite(f2, 1);
-    if mail or smtp then
-      wrs(f2, 'U ' + MailUser + ' ' + _from)
-    else
-      wrs(f2, 'U ' + NewsUser + ' ' + _from);
-    name := FirstChar(fn) + '.' + LeftStr(_from, 7) + iifc(mail or smtp, 'C', 'd') +
-      RightStr(fn, 4);
+    wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
+    name := FirstChar(fn)+'.'+LeftStr(_from,7)+iifc(t in [rmail,rsmtp],'C','d')+RightStr(fn, 4);
+
     wrs(f2, 'F ' + name);
     wrs(f2, 'I ' + name);
-    if smtp and csmtp then
-      wrs(f2, 'C rcsmtp')
-    else
-      if smtp and fsmtp then
-      wrs(f2, 'C rfsmtp')
-    else
-      if smtp and zsmtp then
-      wrs(f2, 'C rgsmtp')
-    else
-      if smtp and bsmtp then
-      wrs(f2, 'C rbsmtp')
-    else
-      wrs(f2, 'C r' + sender + iifs(mail, ' ' + hd.empfaenger, ''));
+    wrs(f2, 'C ' + command);
+
     fs := filesize(f2);
     close(f2);
+
+    { queue command file }
     name2 := FirstChar(fn) + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
-    write(fc, 'S ', name2, ' ', name, ' ', iifs(mail or smtp, MailUser,
-      NewsUser),
-      ' - ', name2, ' 0666');
-    if ParSize then
-      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'))
-    else
-      writeln(fc);
+    write(fc, 'S ', name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
+      NewsUser), ' - ', name2, ' 0666');
+    if ParSize then writeln(fc, ' "" ', _filesize(dest + fn + '.OUT')) else writeln(fc);
+
+    { queue data file }
     name2 := 'D.' + LeftStr(_to, 7) + 'X' + nr;
-    write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(mail or smtp, 'C', 'd'),
-      nr, ' ',
-      iifs(mail or smtp, MailUser, NewsUser), ' - ', name2, ' 0666');
-    if ParSize then
-      writeln(fc, ' "" ', fs)
-    else
-      writeln(fc);
+    write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
+      nr, ' ', iifs(t in [rmail,rsmtp], MailUser, NewsUser), ' - ', name2, ' 0666');
+    if ParSize then writeln(fc, ' "" ', fs) else writeln(fc);
   end;
 
   procedure WrFileserver;
@@ -3553,7 +3709,7 @@ begin
     erase(f2)
   else
   begin
-    if not ppp then MakeXfile('news');
+    if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
   end;
   close(f); erase(f);
@@ -3606,7 +3762,7 @@ begin
           else
           begin
             close(f2);
-            MakeXfile('mail');
+            QueueCompressfile(rmail);
           end;
         end;
       if SMTP then copycount := hd.empfanz;
@@ -3627,7 +3783,7 @@ begin
     if n = 0 then
       erase(f2)
     else
-      if not ppp then MakeXfile('smtp');
+      if not ppp then QueueCompressFile(rsmtp);
   end;
   close(f1);
   close(fc);
@@ -3688,6 +3844,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/03/26 22:57:28  cl
+  - moved compression routines from xpncuucp to zcrfc/uuz
+  - fixed decompression
+  - zcrfc/uuz now ignores *.OUT (X-* does match these on some systems!)
+  - new uuz switches: -cnews -gnews -fnews -fbnews for compressed news packages
+  - separate compressors for news and smtp (no UI yet)
+  - fixed default parameters to include $PUFFER/$DOWNFILE
+
   Revision 1.39  2001/03/25 11:43:00  mk
   - fixed VP compile problem and bug with new properties
 
