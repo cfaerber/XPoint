@@ -464,19 +464,19 @@ var p      : byte;
 
   procedure store_arrays;     { Arrays ins XMS sichern und Speicher freigeben }
   var i : longint;
-   n,er : byte; {*} 
+      n : byte; {*} 
 
     function xms_ok:boolean;    {*} { Debugcode evtl. spaeter entfernen oder ausklammern.} 
     begin
       xms_ok:=true;
-      if er=0 then exit
+      inc(n);
+      if xmsresult=0 then exit
       else begin
         xms_ok:=false;
         hinweis('');
-        hinweis('XMS Fehler: '+strs(n)+','+strs(er)+' '+
+        hinweis('XMS Fehler: '+strs(n)+','+strs(xmsresult)+' '+strs(xmsavail)+'/'+
           strs(((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3) +'K');
-        if n=2 then XmsFree(ma_hand);
-        if n>0 then XmsFree(ccm_hand);
+        if n=2 then XmsFree(ccm_hand);
         XmsFree(cc_hand);
         end;  
     end;
@@ -485,18 +485,18 @@ var p      : byte;
     XmsStored:=false;
     if xmstest and (xmsavail > ((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3)
     then begin
+      n:=0;
       cc_size:=sizeof(cc^);
       cc_hand:=XmsAlloc(sizeof(cc^) div 1024 +1);
       if xmsresult=0 then XmsWrite(cc_hand,cc^,0,sizeof(cc^));
- {*}  n:=0; er:=xmsresult;
+ {*}  if not xms_ok then exit;
       ccm_size:=sizeof(ccm^); 
       ccm_hand:=XmsAlloc(sizeof(ccm^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ccm_hand,ccm^,0,sizeof(ccm^));
- {*}  inc(n); inc(er,xmsresult);
+ {*}  if not xms_ok then exit;
       ma_size:=sizeof(marked^); 
       ma_hand:=XmsAlloc(sizeof(marked^) div 1024 +1);
       if xmsresult=0 then XmsWrite(ma_hand,marked^,0,sizeof(marked^));
- {*}  inc(n); inc(er,xmsresult);
  {*}  if not xms_ok then exit;
       XmsStored:=true;
       dispose(ccm); dispose(cc); dispose(marked);
@@ -2193,6 +2193,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.4  2000/07/31 08:16:15  jg
+  - OOPS.. Version mit unbrauchbarem Debugcode hochgeladen...
+
   Revision 1.39.2.3  2000/07/30 12:51:07  jg
   - Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt
   - Darstellungsbug beim Crossposting an Fido Bretter behoben
