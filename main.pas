@@ -232,7 +232,7 @@ ende:
  except
   on E:Exception do begin
     Debug.DebugLogException(E);
-    Debug.LastLogMessages.Insert(0,'Last debug logs recorded before crash.');
+    Debug.LastLogMessages.Insert(0,'Last debug logs recorded before crash with ' + verstr + betastr {$IFDEF Snapshot} + 'Snapshot ' + compiletime {$ENDIF});
     Debug.LastLogMessages.Insert(1,'If failure is reproduceable, email this file to dev@openxp.de.');
     Debug.LastLogMessages.Insert(2,'Be sure to delete all passwords that may be contained herein before.');
     Debug.LastLogMessages.Insert(3,'----------------------------------------------------------------------');
@@ -244,6 +244,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/06/14 20:32:01  mk
+  - write version info to error.txt
+
   Revision 1.18  2002/05/25 09:24:01  mk
   - added xpcurses to uses
 
