@@ -1370,10 +1370,16 @@ var fn   : pathstr;
     l    : longint;
 begin
   dbReadN(mbase,mb_typ,typ);
-  if typ in ['B','M'] then begin
+  if typ='B' then
+  begin
     rfehler(423);   { 'Bei BinÑrdateien nicht mîglich' }
     exit;
-    end;
+  end
+  else if ((typ='M') or (dbReadInt(mbase,'flags') and 4<>0)) then
+  begin
+    rfehler(449);   { 'Bei MIME-Multipart-Nachrichten nicht mîglich' }
+    exit;
+  end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
   new(hdp);
   ReadHeader(hdp^,hds,true);           { Header einlesen }
@@ -1656,7 +1662,7 @@ label ende;
     dialog(50,5,getres2(457,2),x1,y1);        { 'Brettliste erzeugen' }
     maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen sortieren'}
     MSet1Func(bool_brettgruppe);
-    maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus Bret¸bersicht beibehalten'}
+    maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus BrettÅbersicht beibehalten'}
     MSet1Func(bool_brettindex);    
     maddbool(2,5,getres2(457,4),exkom);       { 'auch Kommentare exportieren' }
     readmask(brk);
@@ -2125,7 +2131,7 @@ begin
     close(f);
     lm:=listmakros;                                   { Aktuelle Makros merken,       }
     listmakros:=16;                                   { Archivviewermakros aktivieren }
-    if ListFile(fn,getres(460),true,false,0)=0 then;  { 'Nachrichten-Header' }
+    repeat until ListFile(fn,getres(460),true,false,0) <> -4;  { 'Nachrichten-Header' }
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
@@ -2191,7 +2197,7 @@ begin
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
             ViewFile(TempPath+datei,viewer,false)
           else
-            ListFile(TempPath+datei,datei,true,false,0);
+            repeat until ListFile(TempPath+datei,datei,true,false,0) <> -4;
           end
         else
           if memavail<20000 then
@@ -2335,12 +2341,13 @@ begin
     end;
   CloseArchive(ar);
   exdir:='';
-  llh:=true; listexit:=0;
+  llh:=true; no_ListWrapToggle:=true; listexit:=0;
   lm:=ListMakros; ListMakros:=16;
   pushhp(67);
   list(brk);
   pophp;
   ListMakros:=lm;
+  no_ListWrapToggle:=false;
   dispose(abuf[arcbufp]);
   dec(arcbufp);
   CloseList;
@@ -2357,7 +2364,6 @@ procedure FileArcViewer(fn:pathstr);
 var useclip : boolean;
     arc     : shortint;
     lm      : byte;
-    ende    : boolean;
 begin
   if (fn='') or multipos('?*',fn) then begin
     if fn='' then fn:='*.*';
@@ -2372,10 +2378,7 @@ begin
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
       lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
-      repeat
-        if listfile(fn,fn,true,false,0) = -4 then ende:=false
-        else ende:=true;                                { und File einfach nur anzeigen }
-      until ende;
+      repeat until listfile(fn,fn,true,false,0) <> -4;  { und File einfach nur anzeigen }
       listmakros:=lm;
       end
       { rfehler(434)   { 'keine Archivdatei' }
@@ -2895,6 +2898,19 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.36  2002/03/08 23:03:22  my
+  MK:- Kleine Codeoptimierung/Variableneinsparung.
+
+  MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
+       funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
+       in Nachrichten mit KOM-Header und bei der Anzeige von Dateien in
+       Archiven. Funktion bei der Anzeige des Archivinhalts deaktiviert
+       (weil dort vîllig ÅberflÅssig und nur hinderlich).
+
+  MY:- Fix: Nachricht/éndern/Text wird jetzt auch bei "alten" MIME-
+       Multipart-Nachrichten vom Typ 'T' verhindert. Die entsprechende
+       Fehlermeldung hat jetzt einen zutreffenden Text.
+
   Revision 1.47.2.35  2002/01/30 17:44:37  mk
   - const-parameter fuer dbReadXX verwenden
 
@@ -3015,7 +3031,8 @@ end.
   -Spezialsuche in markierten Brettern -lter Satnd wieder hergesetllt
 
   Revision 1.47.2.20  2000/12/31 14:23:56  mo
-  -Spezialsuche in markierten Brettern auch aus der Nachrichten/User ‹bersicht
+  -Spezialsuche in markierten Brettern auch aus der
+   Nachrichten-/User-öbersicht
 
   Revision 1.47.2.19  2000/12/31 11:53:19  mk
   JG:- MsgId-Suche mit mehreren Strings
@@ -3065,8 +3082,9 @@ end.
   - unnoetige Umlautkonvertierung entfernt
 
   Revision 1.47.2.4  2000/08/09 12:07:57  jg
-  - Ungelesen Bug beim (K)illen von Nachrichten aus der Markiert-Liste behoben
-    Evtl Allround-Fix fuer Ungelesen-Probleme in dieser Ecke.
+  - Ungelesen Bug beim (K)illen von Nachrichten aus der
+    Markiert-Liste behoben.
+    Evtl. Allround-Fix fuer Ungelesen-Probleme in dieser Ecke.
 
   Revision 1.47.2.3  2000/08/08 09:24:18  mk
   - Bugfixes fuer Suche
@@ -3079,7 +3097,8 @@ end.
     bleibt alte  Markierung erhalten (falls genug Speicher frei ist)
 
   Revision 1.47  2000/06/17 06:18:35  jg
-  - Bugfix: erfolglose Suche: Fensterhintergrund wurde nicht wiederhergestellt
+  - Bugfix: erfolglose Suche: Fensterhintergrund wurde nicht
+    wiederhergestellt
 
   Revision 1.46  2000/06/05 16:38:51  jg
   Fix: (Suche) Stringvariable wurden vor initialisierung verwendet.
@@ -3142,7 +3161,7 @@ end.
 
   Revision 1.29  2000/03/22 05:06:37  jg
   - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
-    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+    Vorbereitung der Such-Teilstrings fuehrte zu nem RTE 201.
 
   Revision 1.28  2000/03/21 15:22:10  jg
   - Suche: Pfeil fuer Historyauswahl kommt nur noch
@@ -3169,7 +3188,7 @@ end.
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.23  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fÅr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.22  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
@@ -3236,9 +3255,9 @@ end.
   Revision 1.6  2000/02/15 21:19:24  mk
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
-        der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
-        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
+        der Headeranzeige nicht gleich auch der Lister verlassen
+      * Die Suchfunktionen "Absender/User", "Betreff" und "FidoempfÑnger"
+        kînnen jetzt UmlautunabhÑngig geschalten werden
 
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
