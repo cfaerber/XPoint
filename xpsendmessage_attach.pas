@@ -1035,7 +1035,7 @@ begin
   end else
   begin
     if IsNachricht then pushhp(54);
-    TED(FileName,true,iif(editvollbild,0,2),Umlaute,false,false);
+    TED(FileName,true,iif(editvollbild,0,2),Umlaute,true,false);
     if IsNachricht then pophp;
     SafeDeleteFile(ChangeFileExt(FileName, '.' + ExtBak)); { .BAK löschen }
 //  EditFile(FileName,IsNachricht,true,
