@@ -1,5 +1,8 @@
 { $Id$
 
+   Debug logfile unit
+   Copyright (C) 2000-2001 by OpenXP team (www.openxp.de) and M.Kiesel
+
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as
    published by the Free Software Foundation; either version 2,
@@ -14,22 +17,19 @@
    software; see the file lgpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created 2000 by M.Kiesel <m.kiesel@iname.com>
-
    This software is part of the OpenXP project (www.openxp.de).
 }
 
 {$I XPDEFINE.INC }
 
+{ Debug logfile unit }
 unit Debug;
-
-{Debug logfile unit for development issues}
 
 interface
 
 uses xpglobal;
 
-const                                   {Loglevels proposed are}
+const         {Loglevels proposed are}
   DLNone = 0;
   DLError = 1;
   DLWarning = 2;
@@ -67,11 +67,7 @@ procedure OpenLogfile(App: Boolean; Filename: string);
 implementation
 
 uses
-  {$IFDEF Linux }
-  Linux,
-  {$ELSE }
-  Dos,
-  {$ENDIF }
+  {$IFDEF Linux}Linux,{$ELSE}Dos,{$ENDIF }
   SysUtils;
 
 const
@@ -79,8 +75,7 @@ const
   Logging: Boolean = False;
 
 var
-  Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer
-  end;
+  Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer end;
   Logfile: Text; Logfilename: string;
 
 function FindBadge(Badge: string): Integer;
@@ -89,13 +84,13 @@ var
   Temp: LongInt;
   S: string;
 begin
-  I := 0; repeat Inc(I)until (Logbadges[I].Badge = '') or ((Logbadges[I].Badge =
-    Badge) or (I = qLogbadges));
+  I := 0;
+  repeat Inc(I)until (Logbadges[I].Badge = '') or
+                     ((Logbadges[I].Badge = Badge) or (I = qLogbadges));
   if (Logbadges[I].Badge = '') and (I <= qLogbadges) then {Open new entry}
   begin
     Logbadges[I].Badge := Badge; S := GetEnv(Badge);
-    {$IFDEF Debug}
-    if S = '' then Str(DLDefaultIfInDebugMode, S); {$ENDIF}
+    {$IFDEF Debug} if S = '' then Str(DLDefaultIfInDebugMode, S); {$ENDIF}
     Val(S, Logbadges[I].Level, Temp); FindBadge := I
   end
   else
@@ -135,7 +130,7 @@ var
   err: integer;
 begin
   if Logging then Exit;
-  {$IFDEF aDebug}if Filename = '' then Filename := 'debuglog.txt'; {$ENDIF}
+  {$IFDEF Debug} if Filename = '' then Filename := '*debuglog.txt'; {$ENDIF}
   Logfilename := Filename;
   Logging := True;
   Rew := False;
@@ -192,6 +187,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/01/04 22:01:31  ma
+  - re-enabled default logging if cond variable DEBUG is set
+  - logfile will be overwritten on program start, so no problems should occur.
+
   Revision 1.9  2000/11/22 08:02:37  mk
   - made compilable
 
