@@ -56,9 +56,14 @@ type
                PPFile: TStringList;  // needed for unsend handling
                ReqFile: TStringList; // needed for request result processing
              end;
+{$IFDEF FPC }
+  {$DEFINE FPCBUG}
+{$ENDIF }
 
+{$IFNDEF FPCBUG }
   { non-fatal error exception }
   EFido= class(Exception);
+{$ENDIF }
 
 var
   AKABoxes: TAKABoxes;
@@ -570,7 +575,11 @@ begin { FidoNetcall }
   try
     if Crash then
       if not ProcessCrash(Crash,CrashOutBuffer)then
+    {$IFDEF FPCBUG }
+        raise Exception.Create('');
+    {$ELSE }
         raise EFido.Create('');
+    {$ENDIF }
 
     // Convert outgoing buffers
     ProcessAKABoxes(boxpar,boxname,Crash,CrashOutBuffer,ConvertedFiles,OutgoingFiles);
@@ -585,7 +594,11 @@ begin { FidoNetcall }
         result:=ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles);
         if result<>0 then begin
           trfehler(713,30);  { 'Fehler beim Packen!' }
-          raise EFido.Create('');
+    {$IFDEF FPCBUG }
+        raise Exception.Create('');
+    {$ELSE }
+        raise EFido.Create('');
+    {$ENDIF }
           end;
         end
       else
@@ -665,13 +678,15 @@ begin { FidoNetcall }
       end;
 
   except
+    {$IFNDEF FPCBUG }
     on E: EFido do;
     else
-      raise; 
-    end;
+      raise;
+    {$ENDIF }
+  end;
 
   // let's clean up
-  SafeDeleteFile(UpArcFilename);          
+  SafeDeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
     if AKABoxes.ReqFile[i]<>'' then
     begin
@@ -902,6 +917,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/06/02 17:39:54  mk
+  - workaround for fpc compile problem
+
   Revision 1.33  2002/05/26 12:29:07  ma
   - raise unexpected exceptions
 
