@@ -104,11 +104,6 @@ function  dbReadStrN(dbp:DB; feldnr:integer):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 function  dbReadIntN(dbp:DB; feldnr:integer):longint;
 
-function  dbReadByte(dbp:DB; const feld:dbFeldStr):byte;
-function  dbReadByteN(dbp:DB; feldnr:integer):byte;
-function  dbReadChar(dbp:DB; const feld:dbFeldStr):char;
-function  dbReadCharN(dbp:DB; feldnr:integer):char;
-
 function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
 procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:integer; var data);
 procedure dbReadXX (dbp:DB; const feld:dbFeldStr; var size:longint; const datei:string;
@@ -1252,31 +1247,6 @@ end;
 
 { 'data' in Feld mit Nr. 'feldnr' schreiben }
 
-function  dbReadByte(dbp:DB; const feld:dbFeldStr):byte;
-begin
-  Result :=0; 
-  dbRead(dbp,feld, Result);   { 1/2/4 Bytes }
-end;
-
-function  dbReadByteN(dbp:DB; feldnr:integer):byte;
-begin
-  Result :=0; 
-  dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
-end;
-
-function  dbReadChar(dbp:DB; const feld:dbFeldStr):char;
-begin
-  Result := #0; 
-  dbRead(dbp,feld, Result);   { 1/2/4 Bytes }
-end;
-
-function  dbReadCharN(dbp:DB; feldnr:integer):char;
-begin
-  Result := #0; 
-  dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
-end;
-
-
 procedure dbWriteN(dbp:DB; feldnr:integer; const data);
 begin
   with dp(dbp)^ do begin
@@ -1301,9 +1271,9 @@ procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 var
   s0: shortstring;
 begin
-  if Length(s)>255 then 
-    SetLength(s0, 255)
-  else 
+  if Length(s)>254 then // 254 for dbWriteN does an inc(byte(len))
+    s0:= LeftStr(s, 254)
+  else
     s0:= s;
   dbWriteN(dbp,feldnr,s0);
 end;
@@ -1650,9 +1620,8 @@ end;
 
 {
   $Log$
-  Revision 1.53  2002/04/14 22:07:45  cl
-  - added dbReadByte, dbReadByteN,
-          dbReadChar, and dbReadCharN
+  Revision 1.52.2.1  2002/06/13 19:04:00  ma
+  - fixed writing of long strings to db
 
   Revision 1.52  2002/02/18 16:59:40  cl
   - TYP: MIME no longer used for RFC and not written into database
