@@ -1,3 +1,4 @@
+$Id$
 
 Beim Umstieg auf eine neue Programmversion empfiehlt es sich, eine
 vollst„ndige Sicherung der alten Version incl. des Datenbestandes
@@ -13,6 +14,8 @@ Die aufgelisteten nderungen gelten jeweils fr alle nachfolgenden
 Versionen. Wenn Sie also z.B. von XP 2.1 auf 3.1 umsteigen, mssen Sie
 alle nderungen ab Version 2.15 beachten.
 
+Vorsicht mit externen Tools! Benutzen Sie nur externe Tools, die fr
+die von Ihnen benutzte XP-Version vorgesehen sind.
 
         ----------------------------------------------------------------
 
@@ -102,3 +105,19 @@ alle nderungen ab Version 2.15 beachten.
         l”schen, da umfangreiche nderungen in den Indices vorgenommen 
         werden. In keinem Fall kommt man aber um die Neuanlage letzterer
         herum.
+
+3.4     RFC/UUCP: Falls sie bei Edit/Boxen/Edit/RFC|UUCP den Schalter
+        "Absender User@Server.(Server)domain" eingeschaltet haben,
+        mssen Sie bei Edit/Boxen/Edit/Namen im Feld "Serverdom." den
+        Eintrag einstellen, den Sie bisher im Feld "Domain" verwendet
+        haben.
+
+        Fido und MagicNet: Im intern verwendeten Nachrichtenformat
+        wird der Fido-Empf„nger statt in der Headerzeile X-XP-FTO in
+        der Zeile F-TO untergebracht. Wenn Sie bisher externe Tools
+        benutzt haben, die auf diese Information zugreifen (z.B.
+        CrossSecretary, XP-Filter oder PKT2ZER), mssen Sie diese
+        Tools umkonfigurieren oder eine speziell fr OpenXP
+        vorgesehene Version dieser Tools installieren. Die Programme
+        "xp", "zfido" und "maggi" haben einen Schalter "-312", mit dem
+        das Verhalten der XP-Version 3.12 emuliert wird.
