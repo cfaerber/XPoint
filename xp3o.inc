@@ -871,9 +871,10 @@ begin
 
           multi2; initscs;
 
+          truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
           dbSeek(ubase,uiName,UpperCase(absender));
           // do not add users with names longer 80 char, our database is not large enough
-          if not dbFound and (Length(Absender) <= 80) then
+          if not dbFound then
           begin          { neuen User anlegen }
             if adrok(absender) then
             begin
@@ -1237,6 +1238,12 @@ end;
 
 {
   $Log$
+  Revision 1.63  2001/08/27 08:24:50  mk
+  JG+MY:- Fix: When auto-creating a user with an address longer than 80
+          chars the user flags (Prio, Filter, Return Receipt) of the last
+          DB entry were used (dbSeek couldn't find the address with more
+          than 80 chars). Address string is truncated to eAdrLen now.
+
   Revision 1.62  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
