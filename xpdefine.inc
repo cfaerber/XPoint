@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -125,6 +125,9 @@
 
 {
   $Log$
+  Revision 1.17  2000/04/20 17:39:08  mk
+  - jetzt wieder ohne Debug-Infos
+
   Revision 1.16  2000/04/13 12:48:39  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
