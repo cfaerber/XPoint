@@ -24,6 +24,13 @@
   {$ENDIF }
 {$ENDIF }
 
+{$IFDEF VER150 }          { Delphi 6.0 }
+  {$DEFINE Delphi }
+  {$IFDEF Linux }
+    {$DEFINE Kylix }
+  {$ENDIF }
+{$ENDIF }
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
      {$IFNDEF Delphi }
@@ -94,6 +101,9 @@
 
 {
   $Log$
+  Revision 1.8  2002/11/23 23:48:42  mk
+  - added Delphi 7 support
+
   Revision 1.7  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 

@@ -57,6 +57,13 @@
   {$ENDIF }
 {$ENDIF }
 
+{$IFDEF VER150 }          { Delphi 7.0  }
+  {$DEFINE Delphi }
+  {$IFDEF Linux }
+    {$DEFINE Kylix }
+  {$ENDIF }
+{$ENDIF }
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
      {$IFNDEF Delphi }
@@ -253,6 +260,9 @@
 
 {
   $Log$
+  Revision 1.83  2002/11/23 23:48:41  mk
+  - added Delphi 7 support
+
   Revision 1.82  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 
