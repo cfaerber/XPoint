@@ -1,6 +1,13 @@
 Die letzten News von www.openxp.de...
 
-30. April 2002: OpenXP/32 v3.8.0 Beta verfügbar
+21. Juli 2002: Zur Klärung...
+Von OpenXP/32 gibt es im Moment einen Anwenderzweig (die v3.8.x) und einen Entwicklerzweig (die v3.9.x). Beide werden gleichzeitig gepflegt.
+<br />Im Anwenderzweig werden nur noch relativ konservative Änderungen gemacht (Bugfixes etc.), während im Entwicklerzweig größere (u.U. auch wenig getestete) Änderungen vorkommen.
+<br /><b>Der Entwicklerzweig ist im Moment nicht für den täglichen Einsatz geeignet.</b> Bugreports für die Anwenderversionen sind willkommen.
+<br />Eine genauere Übersicht über die letzten Änderungen in beiden Zweigen gibt es in Form der <a href="http://www.openxp.de/index.php4?file=log32.html">Logs</a>.
+<br />Bei beiden Zweigen werden ggf. kleinere Änderungen <i>ohne</i> Erhöhung der Versionsnummer vorgenommen. Siehe Logs und Dateidatum (auf der Downloadseite angegeben).
++
+30. April 2002: OpenXP/32 v3.8.x Beta verfügbar
 <a href="index.php4?file=download32-de.html">Download</a>
 +
 27. März 2002: Umzug von OpenXP/16

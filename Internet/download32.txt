@@ -1,5 +1,5 @@
-*OpenXP/32 v3.8.x Beta<br /><small>empfohlen für Anwender; nur noch Fixes und ggf. Backports von getesteten Features aus der v3.9.x</small>
-OpenXP/32 v3.8.x Beta<br /><small>recommended for users; fixes and backports of well-tested v3.9.x features</small>
+*OpenXP/32 v3.8.x Beta (Anwenderzweig)<br /><small>nur noch Fixes und ggf. Backports von getesteten Features aus der v3.9.x</small>
+OpenXP/32 v3.8.x Beta (user branch)<br /><small>fixes and backports of well-tested v3.9.x features</small>
 /openxp/oxp32win.rar
 Win32-Version [RAR]
 Win32 version [RAR]
@@ -24,8 +24,8 @@ DOS version [RAR]
 Quelltexte
 Source code
 
-*OpenXP/32 v3.9.x Snapshot<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!</small>
-OpenXP/32 v3.9.x snapshot<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
+*OpenXP/32 v3.9.x Snapshot (Entwicklerzweig)<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!<br />26.05.2002 - E-Mail-Adressen müssen in den Boxeneinstellungen nach Update neu eingegeben werden!</small>
+OpenXP/32 v3.9.x snapshot (developer branch)<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
 /openxp/snapshot/oxp32win.rar
 Win32-Version
 Win32 version
