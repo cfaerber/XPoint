@@ -128,9 +128,14 @@ begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if ustr(t)='X' then
     m_extrakt(mf^[ival(mid(get_selection,57))]);
+  if t=keyctcr then t:=keycr;
+  if t=' ' then begin
+    t:=keycr;
+    mem[Seg0040:$17]:=mem[Seg0040:$17] or 4; 
+    end;
 end;
 
-                                                      { Select-Tasten fuer SINGLE-PART MIME }
+
 procedure SSP_Keys(var t:taste);          { Select-Tasten fuer SINGLE-PART MIME }
 var OldET : byte;
 begin
@@ -141,6 +146,11 @@ begin
     ExtraktTyp:=0;                        { Als Text ohne Kopf extrahieren... }
     extrakt(1,aktdispmode,0);
     ExtraktTyp:=OldET;
+    end;
+  if t=keyctcr then t:=keycr;
+  if t=' ' then begin
+    t:=keycr;
+    mem[Seg0040:$17]:=mem[Seg0040:$17] or 4; 
     end;
 end;
 
@@ -271,7 +281,7 @@ var   hdp      : headerp;
         folded    : boolean;
         firstline : string[80];
         _encoding   : string[20];
-        filename    : string[80];
+        filename    : string;
         filedate    : string[14];
         subboundary : string[72];
         hdline      : string[30];
@@ -424,7 +434,7 @@ var   hdp      : headerp;
           typ:=LStr(ctype);
           subtyp:=LStr(subtype);
           code:=codecode(_encoding);
-          mimeisodecode(filename,80);
+          mimeisodecode(filename,length(filename));
           fname:=filename;
           ddatum:=filedate;
           startline:=_start;
@@ -720,6 +730,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.30  2002/03/31 15:53:36  my
+  JG:- Im MIME-AuswahlmenÅ kann jetzt mit <Ctrl-Enter> oder <Space>
+       (Leertaste) die Anzeige mit dem XP-Lister statt mit dem
+       eingetragenen MIME-Viewer erzwungen werden.
+
   Revision 1.12.2.29  2002/03/29 15:01:54  my
   MY:- Text des letzten Commits prÑzisiert.
 
