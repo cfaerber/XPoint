@@ -82,6 +82,7 @@ const
   NewsMIME: boolean = false;
   NoMIME: boolean = false;              { -noMIME }
   MakeQP: boolean = false;              { -qp: MIME-quoted-printable }
+  CopyXLines: Boolean  = false;         { Alle X-Lines nach RFC zurÅckkopieren }
   RFC1522: boolean = false;             { Headerzeilen gem. RFC1522 codieren }
   getrecenvemp: boolean = false; { Envelope-EmpfÑnger aus Received auslesen? }
   MailUser: string = 'mail';        { fuer U-Zeile im X-File }
@@ -125,6 +126,7 @@ var
   // Liste der EmpfÑnger
   empflist: TStringList;
   uline: TStringList;
+  xline: TStringList;                    // X-Zeilen, die 'Åbrig' sind
   uunumber: word;                       { fortlaufende Hex-Paketnummer }
   _from, _to: string;                   { UUCP-Systemnamen }
   outbuf: charrp;
@@ -194,6 +196,7 @@ begin
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
+  writeln('              -x      =  Export all unkown X-Lines');
   halt(1);
 end;
 
@@ -291,6 +294,9 @@ begin
           if switch = 'qp' then
           MakeQP := true
         else
+          if switch = 'x' then
+          CopyXLines := true
+        else
           if switch = '1522' then
           RFC1522 := true
         else
@@ -332,7 +338,7 @@ begin
     Followup.Free;
   end;
 
-  ULine.Clear;
+  ULine.Clear; XLine.Clear;
   Fillchar(hd, sizeof(hd), 0);
 
   with hd do
@@ -375,6 +381,7 @@ begin
   mails := 0; news := 0;
   uunumber := 0;
   ULine := TStringlist.Create;
+  XLine := TStringList.Create;
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
 
@@ -406,7 +413,7 @@ procedure donevar;
 begin
   AddHd.Free;
   EmpfList.Free;
-  ULine.Free;
+  ULine.Free; XLine.Free;
   Mail.Free;
   freemem(outbuf, bufsize);
 end;
@@ -2710,7 +2717,7 @@ const
 var
   dat: string;
   p: integer;
-  s, rfor: string;
+  s,rfor: string;
   first: boolean;
   i, j: integer;
   xdate: boolean;
@@ -2964,6 +2971,11 @@ begin
 
     { X-Priority Konvertierung }
     if priority <> 0 then wrs(f, 'X-Priority: ' + strs(priority));
+
+    if CopyXLines then
+      for i := 0 to XLine.Count - 1 do
+        Wrs(f, XLine[i]);
+
 
     if not NoMIME and (mail or (NewsMIME and (x_charset <> ''))) then
       with mime do
@@ -3439,6 +3451,9 @@ end.
 
 {
   $Log$
+  Revision 1.53  2000/08/03 15:25:42  mk
+  - Schalter -X hinzugefuegt
+
   Revision 1.52  2000/07/27 10:11:05  mk
   - IntToStr fixes
 
