@@ -311,35 +311,33 @@ begin
 
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin                                                     
-      if list_markanz=0 then global_suchstring:=''            {Nullstring ohne Markierung}
-      else global_suchstring:=mailstring(first_marked,false);
-      if Suche(getres(437),'MsgID@','') then ShowfromLister;  { gefundene Nachr. zeigen }
+      if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
+      else s:=mailstring(first_marked,false);
+      if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
       ex(5)                                                   { Weiter im Lister }
       end ;
 
     if t = keyaltv then                                        { ALT+V = Suche text }
     begin                                    
-      if list_markanz=0 then global_suchstring:=''
-      else global_suchstring:=first_marked;
-      if Suche(getres(414),'@','') then Showfromlister;          
+      if list_markanz=0 then s:=''
+      else s:=first_marked;
+      if Suche(getres(414),'',s) then Showfromlister;          
       ex(5)
       end;
 
     if t = keyaltb then                                        { Alt+B = Betreff }
     begin
-      if list_markanz=0 then 
-        global_suchstring:=dbreadstr(mbase,'Betreff')
-      else global_suchstring:=first_marked;
-      if Suche(getres(415),'Betreff@','') then Showfromlister;
+      if list_markanz=0 then s:=dbreadstr(mbase,'Betreff')
+      else s:=first_marked;
+      if Suche(getres(415),'Betreff',s) then Showfromlister;
       ex(5)
       end;
 
     if t = keyaltu then                                        { Alt+U = User }
     begin                                        
-      if list_markanz=0 then
-        global_suchstring:=dbreadstr(mbase,'Absender')
-      else global_suchstring:=mailstring(first_marked,false);      
-      if Suche(getres(416),'Absender@','') then Showfromlister;
+      if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
+      else s:=mailstring(first_marked,false);      
+      if Suche(getres(416),'Absender',s) then Showfromlister;
       ex(5)
       end;
     end;
@@ -924,6 +922,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/02/23 19:11:04  jg
+  -Suchfunktionen im Lister benutzen Autosuche,
+   "Global_Suchstring" und dessen auswertung entfernt.
+  -!Todo.txt aktualisiiert
+
   Revision 1.9  2000/02/22 15:51:20  jg
   Bugfix fÅr "O" im Lister/Archivviewer
   Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv

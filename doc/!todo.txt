@@ -43,34 +43,6 @@ Gleich mal das für mich wichtige:
 
 MfG HG
 
-
------------------
-From AvataR@AvataR-DC.de Fri Dec 31 17:26:00 1999
-Newsgroups: de.comm.software.crosspoint
-Subject: [XPDEV] Bug: Anzeige von Multiparts
-From: AvataR@AvataR-DC.de (Garvin Hicking)
-Date: 31 Dec 1999 17:26:00 +0100
---------
-Hi!
-
-Ich habe mir die Escape-Taste auf die Backspace-Taste umgemappt (ist für
-mich angenehmer zu erreichen als mit der Hand nach oben links zu
-schnellen). Das Makro "Ctrl-H" => "^[" ist aktiv für das
-Nachrichtenfenster, den Lister und den Archiv-Viewer.
-
-Wenn ich auf eine Multipart-Nachricht gehe, erscheint ja das Fenster zur
-Auswahl des Multiparts - dort gilt jedoch dieses Makro nicht. Da ich
-gewohnheitsmäßig die Escape-Taste garnicht mehr verwende (nur im Editor)
-möchte ich mich ungerne wieder umgewöhnen. Es ist ja gerade angenehm, daß
-man seine individuelle Tastaturbelegung in XP zusammenbasteln kann.
-
-Gibt es eine Möglichkeit, dieses Makro auch in dem Popup gültig zu machen?
-
---
-Bye,                 --[=  AvataR@AvataR-DC.de (PGP available)  =]--
-Garvin               --[=    http://www.AvataR-DC.de/AvataR/    =]--
-
----------------
 From ksd@stad.de Sun Jan 02 13:46:00 2000
 To: mk@happyarts.de
 Subject: Re: [XPDEV] Bug in 3.2ß4 und UKAW
@@ -335,11 +307,19 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
   # wird nicht gehen, weil die Funktion dafuer komplett umgeschrieben
   # werden muss.
 
-# Anzeige der noch unversandten Mails und News
+* Anzeige der noch unversandten Mails und News
   # Nachricht Unversandt Zeigen ???
 
-- Mime-Multipart
-  - evtl. einbinden eines (DOS-)Browsers (HTML)
+* Mime-Multipart
+  * evtl. einbinden eines (DOS-)Browsers (HTML)
+    # In Edit/Viewer Realisierbar:
+    # bei Mime Typ: Text/Html folgende Batch starten:
+    #
+    # @echo off
+    # echo Zeige HTML Mail...
+    # copy %1 tempmail.htm
+    # start tempmail.htm
+    
 
 - Eine bessere PGP Schluesselverwaltung waere auch nicht schlecht.
   - alte Schluesseleintraege entfernen.
@@ -401,11 +381,12 @@ UKA_PPP eingestellten Provider automatisch nach dem Versand (aus der
 XP-internen Datenbank) geloescht werden koennten (evtl. gruppenweise
 einstellbar).
 
-Mein Vorschlag fuer eine winzigkleine Aenderung waere also, in der User-
-Uebersicht zusaetzlich der ESC-Taste die gleiche Bedeutung zu geben, wie
-der Tab-Taste. Das ist alles. Bisher hat sie an dieser Stelle gar keine
-Bedeutung. Das waere auch abwaertskompatibel. Die bisher gewohnte
-Bedienung bleibt vollstaendig erhalten. Keiner muesste sich umstellen.
+*Mein Vorschlag fuer eine winzigkleine Aenderung waere also, in der User-
+*Uebersicht zusaetzlich der ESC-Taste die gleiche Bedeutung zu geben, wie
+*der Tab-Taste. Das ist alles. Bisher hat sie an dieser Stelle gar keine
+*Bedeutung. Das waere auch abwaertskompatibel. Die bisher gewohnte
+*Bedienung bleibt vollstaendig erhalten. Keiner muesste sich umstellen.
+# Macro...
 
 Die Moeglichkeit, eine Mail aus einem persoenlichen Ordner in einen anderen
 verschieben zu koennen (so aehnlich wie das "Zusammenlegen von Ordnern/

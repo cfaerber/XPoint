@@ -30,8 +30,6 @@ uses
 
 var  such_brett  : string[5];    { fÅr Suche im gewÑhlten Brett }
      FMsgReqnode : string[BoxNameLen];    { F3 - Request - Nodenr. }
-     Global_Suchstring : String[80];      {JG:04.02.00 Suchstring Zwischenspeicher fuer Lister}
-
 
 procedure msg_info;          { interpretierten Header anzeigen }
 procedure ShowHeader;        { Original-Header anzeigen        }
@@ -117,9 +115,7 @@ begin
 end;
 
 
-{ Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender' }
-{            'MsdID',  '@',  'Betreff@', 'Absender@',  'MsgID@'    }         {JG 25.01.00 }
-{Die erweiterten Suchfelder mit "@" benutzen die Variable global_suchstring} {JG          }       
+{ Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }       
 
 function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
@@ -389,15 +385,7 @@ begin
       if autosuche<>'' then suchstring:=autosuche
       else if suchfeld='Betreff' then suchstring:=srec^.betr
       else if suchfeld='Absender' then suchstring:=srec^.user
-
-{JG: 25.01.00}
-      else if suchfeld='MsgID' then suchstring:=srec^.mid      { MID Suche aus Menue  }
-
-      else if right(Suchfeld,1)='@' then begin                 { Suchaufruf aus Lister }
-           suchstring:=global_suchstring;                    
-           suchfeld:=left(Suchfeld,length(Suchfeld)-1)        { @ abschneiden und Weiter }
-           end
-{/JG}
+      else if suchfeld='MsgID' then suchstring:=srec^.mid       { MID Suche aus Menue  }
 
       else suchstring:=srec^.txt;
       maddstring(3,2,getres2(441,2),suchstring,32,SuchLen,range(' ',#255));
@@ -2165,6 +2153,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/02/23 19:11:04  jg
+  -Suchfunktionen im Lister benutzen Autosuche,
+   "Global_Suchstring" und dessen auswertung entfernt.
+  -!Todo.txt aktualisiiert
+
   Revision 1.13  2000/02/22 15:51:20  jg
   Bugfix fÅr "O" im Lister/Archivviewer
   Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
