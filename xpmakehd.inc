@@ -32,7 +32,6 @@ var i,res : integer;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
-    test : Integer;
 
   procedure ReadBuf;
   begin
@@ -209,7 +208,6 @@ var i,res : integer;
       if node=nil then begin
         new(node);
         LRead(node^.empf,AdrLen);
-        inc(test); writeln(test);
         node^.next:=nil;
         end
       else
@@ -403,7 +401,7 @@ var i,res : integer;
   {$ENDIF}
 
 begin
-  ok:=true; test := 0;
+  ok:=true;
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
@@ -609,6 +607,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/05/04 11:02:18  mk
+  - jetzt auch noch den Debug-Code entfernt
+
   Revision 1.9  2000/05/04 11:00:17  mk
   - Memory-Leak in GetKOP beseitigt
 
