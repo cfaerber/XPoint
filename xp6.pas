@@ -812,6 +812,26 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   spezial:=false;
 end;
 
+procedure DoSendExit1;
+begin
+  forcebox:=''; forceabs:='';
+  sendfilename:=''; sendfiledate:='';
+  _bezug:=''; _orgref:=''; _beznet:=-1; _replypath:='';
+  fidoto:=BrettAlle;
+  flCrash:=false;
+  flEB:=false; IsEbest:=false;
+  flQto:=false;
+  flMloc:=false; flMnet:=false;
+  _pmReply:=false;
+  NoCrash:=false;
+  FileAttach:=false; EditAttach:=true;
+  msgprio:=0;
+  rfcprio:=0; { MH 07.02.2000 }
+  ControlMsg:=false;
+  DisposeReflist(_ref6list);
+  NewbrettGr:=0;
+  oldmsgpos:=0; oldmsgsize:=0;
+end;
 
 begin
 {$Q-,R-,I-}
@@ -1951,7 +1971,7 @@ xexit1:
   dispose(f); dispose(f2);
   dispose(fn); dispose(fn2); dispose(fn3);
 xexit2:
-  dosendexit1;
+  DoSendExit1;
 end;
 
 
@@ -2043,7 +2063,7 @@ end;
 end.
 {
   $Log$
-  Revision 1.7.2.13  2001/01/01 20:44:58  mk
+  Revision 1.7.2.14  2001/01/01 20:50:21  mk
   - Routinenteile von DoSend ausgelagert
 
   Revision 1.7.2.12  2001/01/01 11:32:48  mk
