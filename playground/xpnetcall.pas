@@ -58,6 +58,13 @@ procedure MoveLastFileIfBad;
 
 procedure AponetNews; {?!}
 
+{ Converts stringlist to comma separated string }
+function Stringlist(SL: TStringList): String;
+
+{ Executes a shell command and puts any files created while executing this
+  command in SL }
+function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
 
@@ -109,6 +116,35 @@ uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
      xpfido,xpfidonl,xpmaus,xpncfido,xpncpop3,xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
+
+function Stringlist(SL: TStringList): String;
+var i: Integer;
+begin
+  result:='';
+  for i:=1 to SL.Count do begin
+    result:=result+SL[i-1];
+    if i<SL.Count then result:=result+', ';
+    end;
+end;
+
+function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+var dir1,dir2: TDirectory; curdir: string; i,j: Integer; fileexisted: boolean;
+begin
+  curdir:=GetCurrentDir;
+  dir1:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  Shell(prog,space,cls);
+  result:=errorlevel;
+  SetCurrentDir(curdir);
+  dir2:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  for i:=0 to dir2.Count-1 do begin
+    fileexisted:=false;
+    for j:=0 to dir1.Count-1 do
+      if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
+    if not fileexisted then SL.Add(dir2.Name[i]);
+    end;
+  dir1.destroy; dir2.destroy;
+  SetCurrentDir(OwnPath);
+end;
 
 function exclude_time:byte;
 var i : integer;
@@ -752,6 +788,7 @@ var
     isdn       : boolean;
     jperror    : boolean;
     uu : TUUZ;
+    OutgoingFiles,IncomingFiles: TStringList;
 
 
 label ende0;
@@ -905,117 +942,6 @@ begin
   with BoxPar^ do
     shell('MAGGI.EXE -sz -b'+boxname+' -h'+MagicBrett+' -it '+source+' '+dest,
           600,screen);
-end;
-
-procedure ZtoFido(source,dest:string; ownfidoadr:string; screen:byte; alias:boolean);
-var d         : DB;
-    akas      : string;
-    BoxName       : string;
-    orgdest   : string;
-    bfile     : string;
-    p,i       : byte;
-    t         : text;
-    bpsave    : BoxPtr;
-    sout      : string;
-
-  procedure Convert;
-  const
-    pc: array[false..true] of string = ('', '1A');
-  var
-    fnet: integer;
-    f: boolean;
-  begin
-    with BoxPar^ do
-    begin
-      f:=OutFilter(source);
-      if (f4d or alias) then
-        fnet:= -1
-      else
-        fnet:= fPointNet;
-
-      DoZFido(1,                           { Richtung ZC->FTS }
-              MagicBrett,                       { Basisebene }
-              source,                           { Quelldatei }
-              sout+dest,                        { Zieldatei }
-              OwnFidoAdr,                       { Absender }
-              boxname,                          { Empfaenger }
-              fnet,                             { FakeNet }
-              passwort,                         { Paketpassword }
-              pc[(f4d or alias) and fTosScan],  { PC aendern wg. TosScan? }
-              LocalINTL,                        { INTL }
-              false,                            { Keep VIA }
-              true,                             { Requests }
-              false,1,1);                           { Leere loeschen? }
-    end;
-      if f then _era(source);
-  end;
-
-begin { ZtoFido }
-  Debug.DebugLog('xpnetcall','converting ZC to fido',DLInform);
-  sout:=Boxpar^.sysopout;
-  Convert;
-  orgdest:=dest;
-  akas:=Boxpar^.SendAKAs;
-  assign(t,'ZFIDO.CFG');
-  rewrite(t);
-  writeln(t,'# ',getres(721));    { 'Temporäre Fido-Konfigurationsdatei' }
-  writeln(t);
-  writeln(t,'Bretter=',BoxPar^.boxname,' ',boxpar^.MagicBrett);
-  if {** akas<>''} false then begin
-    dbOpen(d,BoxenFile,1);
-    bpsave:=boxpar;
-    new(boxpar);
-    repeat
-      p:=blankpos(akas);
-      if p=0 then p:=length(akas)+1;
-      if p>3 then begin
-        BoxName:=LeftStr(akas,p-1);
-        akas:=trim(mid(akas,p));
-        dbSeek(d,boiName,UpperCase(BoxName));
-        if not dbfound then begin
-          Debug.DebugLog('xpnetcall','box is no server BoxName: "'+BoxName+'"',DLError);
-          rfehler1(733,BoxName);         { 'Ungültiger AKA-Eintrag - %s ist keine Serverbox!' }
-          end
-        else begin
-          Debug.DebugLog('xpnetcall','reading BoxName parameters',DLInform);
-          ReadBoxPar(nt_Fido,BoxName);
-          writeln(t,'Bretter=',BoxName,' ',boxpar^.magicbrett);
-//**          AddPackets.AKABoxes.Add(BoxName);
-//**          AddPackets.ReqFiles.Add('');
-          bfile:=dbReadStr(d,'dateiname');
-          if FileExists(bfile+BoxFileExt) then begin
-            alias:=(dbReadInt(d,'script') and 4<>0);
-            with BoxPar^ do
-              if alias then
-                OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
-              else
-                OwnFidoAdr:=boxname+'.'+pointname;
-            source:=bfile+BoxFileExt;
-            dest:=formi(ival(LeftStr(dest,8))+1,8)+'.PKT';
-            Convert;
-            if FileExists(sout+dest) then begin
-//**              AddPackets.AddPackets.Add(dest);
-//**              AddPackets.ABFiles.Add(bfile);
-              
-//**              addpkts^.abox[addpkts^.anzahl]:=BoxName;
-              end;
-            end;   { exist .PP }
-          end;   { BoxName found }
-        end;
-    until (p<=3); //** or (addpkts^.anzahl=maxaddpkts);
-    dbClose(d);
-    if bpsave^.uparcer<>'' then          { falls gepackte Mail }
-      bpsave^.uparcer:=boxpar^.uparcer;
-    dispose(boxpar);
-    boxpar:=bpsave;
-    dest:=orgdest;
-//**    for i:=1 to addpkts^.anzahl do
-//**      dest:=dest+' '+addpkts^.addpkt[i];
-    exchange(boxpar^.uparcer,'$PUFFER',dest);
-    end
-  else Debug.DebugLog('xpnetcall','no akas',DLWarning);
-  Debug.DebugLog('xpnetcall','converting to fido finished',DLInform);
-  close(t);
 end;
 
 {------------- end mail conversion routines --------------}
@@ -1356,22 +1282,7 @@ begin                  { function Netcall }
 
   Debug.DebugLog('xpnetcall','get BoxName parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
-  isdn:=(boxpar^.bport>4);
-  if relogin then
-    if isdn then begin
-      rfehler(739);         { 'Relogin bei ISDN nicht moeglich' }
-      exit;
-      end else
-    case ntRelogin(netztyp) of
-      0 : begin
-            rfehler(707);   { 'Relogin-Anruf bei dieser BoxName nicht moeglich' }
-            exit;
-          end;
-      1 : if NoScript(boxpar^.script) then begin
-            rfehler(738);   { 'Scriptdatei fuer Relogin-Anruf erforderlich! }
-            exit;
-          end;
-    end;
+
   if not PerformDial and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
     rfehler(708);   { 'Online-Anruf bei dieser BoxName nicht moeglich' }
     exit;
@@ -1436,6 +1347,7 @@ begin                  { function Netcall }
       exit;
       end;
     end;
+
   upuffer:=''; caller:='';
   NumCount:=CountPhonenumbers(boxpar^.telefon); NumPos:=1;
   FlushClose;
@@ -1458,50 +1370,7 @@ begin                  { function Netcall }
         trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
       New(NC);
       fillchar(NC^,sizeof(nc^),0);
-
 //** Addpkts.create;
-
-      if SysopMode then begin
-        {-------------------------------- Diskpoll (SysopTransfer) --------------------}
-        Debug.DebugLog('xpnetcall','diskpoll',DLInform);
-        NC^.datum:=ZDate;
-        NC^.BoxName:=BoxName;
-        if SysopStart<>'' then shell(SysopStart,600,1);
-        errorlevel:=0;        //wenn hier io<>0 gesetzt wird, dann wird der call nicht
-        AppendEPP;            //ordnugsgem„ss fortgesetzt
-        case netztyp of
-          nt_Fido : begin
-                      SetFilenames;
-//**                      FidoSysopTransfer;
-                    end;
-//**          nt_QWK  : QWKSysopTransfer;
-          nt_UUCP : begin
-                      SetFilenames;
-//**                      UUCPSysopTransfer;
-                    end;
-          else      SysopTransfer;
-        end;
-        RemoveEPP;
-        if SysopEnd<>'' then shell(SysopEnd,600,1);
-        if SysopNetcall then   { in BoxPar }
-          sendnetzanruf(false,false);
-        dispose(NC);
-
-//** addpkts.destroy;
-
-        aufbau:=true;
-        exit;
-        end
-      else if logintyp=ltQWK then begin
-        rfehler(735);    { 'Netzanruf QWK-Boxen ist nicht moeglich - Sysop-Mode verwenden!' }
-        dispose(NC);
-
-//** addpkts.destroy;
-
-        aufbau:=true;
-        exit;
-        end;
-
       SetFilenames;
 
       Debug.DebugLog('xpnetcall','deleting old buffers',DLInform);
@@ -1511,9 +1380,7 @@ begin                  { function Netcall }
       end
     else begin   { not PerformDial }
       new(NC);
-
 //** addpkts.create;
-
       end;
 
     if PerformDial and (IsPath(upuffer) or IsPath(dpuffer)) then begin
@@ -1528,92 +1395,23 @@ begin                  { function Netcall }
       exit;
       end;
 
-    { Ab hier kein exit mehr! }
     Debug.DebugLog('xpnetcall','saving screen',DLInform);
     Sichern(ScreenPtr);
 
     AppendEPP;
 
     netcalling:=true;
-
     showkeys(0);
-{**********}
-    if PerformDial then
-    begin
-      assign(f,ppfile);
-      if logintyp in [ltMaus,ltFido,ltUUCP, ltNNTP, ltPOP3] then
-      begin
-        if not existf(f) then makepuf(ppfile,false);      { leeren Puffer erzeugen }
-        Debug.DebugLog('xpnetcall','converting output buffers',DLInform);
-        case logintyp of
-          ltMaus  : ZtoMaus(ppfile,upuffer,1);
-          ltFido  : begin
-                      ZtoFido(ppfile,upuffer,ownfidoadr,1,alias);  { ZFIDO }
-                      exchange(uparcer,'$UPFILE',caller);
-                    end;
-//**          ltUUCP  : ZtoRFC(true,ppfile,XFerDir);
-//**          ltNNTP, ltPOP3: ZtoRFC(true,ppfile, XFerDir);
-          end;
-        Debug.DebugLog('xpnetcall','buffers converted',DLInform);
-        RemoveEPP;
-        if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
-          spufsize:=_filesize(upuffer);
-        if errorlevel=MaggiFehler then begin
-          {window(1,1,screenwidth,screenlines);}
-          trfehler(712,30);   { 'Fehler bei Netcall-Konvertierung' }
-          goto ende0;
-          end;
-        Debug.DebugLog('xpnetcall','compressing buffers',DLInform);
-
-        if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
-        begin
-          if uparcer<>'' then      { '' -> ungepackte Fido-PKTs }
-            shell(uparcer,500,1);
-          spacksize:=_filesize(caller);
-          end;
-        end
-      else begin { ZConnect }
-        Debug.DebugLog('xpnetcall','converting buffers ii',DLInform);
-        if existf(f) then begin             { gepacktes PP erzeugen }
-          size:=_filesize(ppfile);
-          if size<=2 then erase(f)
-          else begin
-            if logintyp in [ltNetcall,ltZConnect] then begin
-              source:=ppfile;
-              ff:=OutFilter(source);
-              if ff then assign(f,source);
-              end
-            else
-              ff:=false;
-            rename(f,upuffer);
-            spufsize:=size;
-            shell(uparcer,500,1);           { Upload-Packer }
-            if ff then erase(f) else rename(f,ppfile);
-            RemoveEPP;
-            end;
-          end;
-        assign(f,caller);
-        if not existf(f) then begin
-          makepuf(caller,true);
-          spufsize:=2; spacksize:=2;
-          end
-        else spacksize:=_filesize(caller);
-        end;
-
-      Debug.DebugLog('xpnetcall','checking archive',DLInform);
-      if (uparcer<>'') and (not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]))
-        and not FileExists(caller) then begin
-        trfehler(713,30);   { 'Fehler beim Packen!' }
-        goto ende0;
-        end;
-      end;   { if PerformDial and not Turbo-BoxName }
-
     netcall:=false;
+    connects:=0;
+    OutgoingFiles:=TStringList.Create;
+    IncomingFiles:=TStringList.Create;
 
-    {****************------------------------- call appropriate mailer ------------------------}
+    {------------------------- call appropriate mailer ------------------------}
     Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
 
     if PerformDial then begin
+      if not fileexists(ppfile)then makepuf(ppfile,false);
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
@@ -1621,8 +1419,9 @@ begin                  { function Netcall }
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
-          case FidoNetcall(BoxName,ppfile,eppfile,caller,upuffer,
-                           uparcer<>'',crash,alias,domain) of
+          case FidoNetcall(BoxName,Boxpar,ppfile,eppfile,caller,upuffer,
+                           uparcer<>'',crash,alias,domain,fidologfile,
+                           OwnFidoAdr,OutgoingFiles,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -1632,6 +1431,7 @@ begin                  { function Netcall }
           else begin Netcall:=true; goto ende0; end;
             end; {case}
           end; {case ltFido}
+
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
           GetPOP3Mails(BoxName, BoxPar, 'spool'+DirSepa);
@@ -1643,8 +1443,9 @@ begin                  { function Netcall }
           uu.ClearSourceFiles := true;
           uu.utoz;
           uu.free;
-          PufferEinlesen(dpuffer,BoxName,false,false,true,pe_Bad);
+          IncomingFiles.Add(dpuffer);
           end; {case ltPOP3}
+
         else
           Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
           trfehler(799,30); { 'Funktion nicht implementiert' }
@@ -1663,6 +1464,11 @@ begin                  { function Netcall }
     end; {*if PerformDial?!}
 
 ende0:
+  Debug.DebugLog('xpnetcall','Netcall finished. Outgoing: '+Stringlist(OutgoingFiles)+
+                             ', incoming: '+Stringlist(IncomingFiles),DLDebug);
+  for i:=1 to IncomingFiles.Count do
+    if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
+      _era(IncomingFiles[i-1]);
   freeres;
   dispose(NC);
 //** addpkts.destroy;
@@ -1874,6 +1680,12 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/04 18:33:04  ma
+  - moved ZtoFido to xpncfido
+  - fido netcall tracking files with StringLists now
+  - xpnc* units now have to do buffer conversion (it is NOT done
+    in xpnetcall anymore)
+
   Revision 1.2  2001/02/01 21:20:27  ma
   - compiling!
   - only Fido: UUCP/POP3/... routines are temporarily commented out

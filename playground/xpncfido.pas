@@ -28,27 +28,36 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpnetcall,xpfido,xpf2,
-  xpfidonl,fidoglob,classes;
+  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl,
+  fidoglob,classes;
 
 
-function FidoImport(ImportDir:string; var box:string):boolean;
-function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
-                     packmail,crash,alias:boolean;var domain:string):shortint;
-//** procedure FidoSysopTransfer;
+function FidoNetcall(box: string;
+                     boxpar: boxptr;
+                     var ppfile,eppfile,sendfile,upuffer:string;
+                     packmail,crash,alias:boolean;
+                     var domain:string;
+                     var Fidologfile: String;
+                     const OwnFidoAdr: String;
+                     OutgoingFiles,IncomingFiles: TStringList):shortint;
+{Processes (decompresses and converts buffers to ZC/moves requested files
+ to file dir) files in FilesToProcess. FilesToProcess will contain
+ uncompressed ZC buffer filenames only when finished.}
+procedure ProcessFiles(FilesToProcess: TStringList;
+                       const DirWhereToProcess,RequestedFilesDir: String;
+                       const Decompressor: String;
+                       boxpar: boxptr);
 function GetCrashbox:string;
 function ARCmail(_from,_to:string):string;   { Fido-Dateiname ermitteln }
 
 procedure EditRequest(Self: TLister; var t:taste);
 procedure ShowRQ(s:string);
 
-
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,ncfido,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow;
-
-var Fidomailer: TFidomailer;
+  direct,ncfido,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,
+  datadef,database,xp9bp,xpnt,xpnetcall;
 
 procedure SaveArcname(var box,name:string);
 var t1,t2 : text;
@@ -77,112 +86,237 @@ begin
   rename(t2,arcmaildat);
 end;
 
-{ gepackte Daten aus ImportDir + PKT-Files aus SpoolDir einlesen }
+procedure ZtoFido(boxpar: boxptr;
+                  source,dest:string;
+                  ownfidoadr:string;
+                  screen:byte;
+                  alias:boolean);
 
-function FidoImport(ImportDir:string; var box:string):boolean;
+var d         : DB;
+    akas      : string;
+    BoxName   : string;
+    orgdest   : string;
+    bfile     : string;
+    p         : byte;
+    t         : text;
+    bpsave    : BoxPtr;
+    sout      : string;
+
+  procedure Convert;
+  const
+    pc: array[false..true] of string = ('', '1A');
+  var
+    fnet: integer;
+    res: integer;
+  begin
+    with BoxPar^ do
+    begin
+      if (f4d or alias) then
+        fnet:= -1
+      else
+        fnet:= fPointNet;
+
+      Res:=DoZFido(1,                                { Richtung ZC->FTS }
+                   MagicBrett,                       { Basisebene }
+                   source,                           { Quelldatei }
+                   sout+dest,                        { Zieldatei }
+                   OwnFidoAdr,                       { Absender }
+                   boxname,                          { Empfaenger }
+                   fnet,                             { FakeNet }
+                   passwort,                         { Paketpassword }
+                   pc[(f4d or alias) and fTosScan],  { PC aendern wg. TosScan? }
+                   LocalINTL,                        { INTL }
+                   false,                            { Keep VIA }
+                   true,                             { Requests }
+                   false,1,1);                       { Leere loeschen? }
+      if Res=0 then _era(source)
+    end;
+  end;
+
+begin { ZtoFido }
+  Debug.DebugLog('xpncfido','converting ZC to fido',DLInform);
+  sout:=Boxpar^.sysopout;
+  Convert;
+  orgdest:=dest;
+  akas:=Boxpar^.SendAKAs;
+  assign(t,'ZFIDO.CFG');
+  rewrite(t);
+  writeln(t,'# ',getres(721));    { 'Temporäre Fido-Konfigurationsdatei' }
+  writeln(t);
+  writeln(t,'Bretter=',BoxPar^.boxname,' ',boxpar^.MagicBrett);
+  if {** akas<>''} false then begin
+    dbOpen(d,BoxenFile,1);
+    bpsave:=boxpar;
+    new(boxpar);
+    repeat
+      p:=blankpos(akas);
+      if p=0 then p:=length(akas)+1;
+      if p>3 then begin
+        BoxName:=LeftStr(akas,p-1);
+        akas:=trim(mid(akas,p));
+        dbSeek(d,boiName,UpperCase(BoxName));
+        if not dbfound then begin
+          Debug.DebugLog('xpncfido','box is no server BoxName: '+BoxName,DLError);
+          rfehler1(733,BoxName);         { 'Ungültiger AKA-Eintrag - %s ist keine Serverbox!' }
+          end
+        else begin
+          Debug.DebugLog('xpncfido','reading BoxName parameters',DLInform);
+          ReadBoxPar(nt_Fido,BoxName);
+          writeln(t,'Bretter=',BoxName,' ',boxpar^.magicbrett);
+//**          AddPackets.AKABoxes.Add(BoxName);
+//**          AddPackets.ReqFiles.Add('');
+          bfile:=dbReadStr(d,'dateiname');
+          if FileExists(bfile+BoxFileExt) then begin
+            alias:=(dbReadInt(d,'script') and 4<>0);
+            with BoxPar^ do
+              if alias then
+                OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
+              else
+                OwnFidoAdr:=boxname+'.'+pointname;
+            source:=bfile+BoxFileExt;
+            dest:=formi(ival(LeftStr(dest,8))+1,8)+'.PKT';
+            Convert;
+            if FileExists(sout+dest) then begin
+//**              AddPackets.AddPackets.Add(dest);
+//**              AddPackets.ABFiles.Add(bfile);
+              
+//**              addpkts^.abox[addpkts^.anzahl]:=BoxName;
+              end;
+            end;   { exist .PP }
+          end;   { BoxName found }
+        end;
+    until (p<=3); //** or (addpkts^.anzahl=maxaddpkts);
+    dbClose(d);
+    if bpsave^.uparcer<>'' then          { falls gepackte Mail }
+      bpsave^.uparcer:=boxpar^.uparcer;
+    dispose(boxpar);
+    boxpar:=bpsave;
+    dest:=orgdest;
+//**    for i:=1 to addpkts^.anzahl do
+//**      dest:=dest+' '+addpkts^.addpkt[i];
+    exchange(boxpar^.uparcer,'$PUFFER',dest);
+    end
+  else Debug.DebugLog('xpncfido','no akas',DLInform);
+  Debug.DebugLog('xpncfido','converting to fido finished',DLInform);
+  close(t);
+end;
+
+{Processes (decompresses and converts buffers to ZC/moves requested files
+ to file dir) files in FilesToProcess. FilesToProcess will contain
+ uncompressed ZC buffer filenames only when finished.}
+procedure ProcessFiles(FilesToProcess: TStringList;
+                       const DirWhereToProcess,RequestedFilesDir: String;
+                       const Decompressor: String;
+                       boxpar: boxptr);
 const fpuffer = 'FPUFFER';
 var p       : byte;
-    i,rc    : integer;
-    dir     : TDirectory;
     x,y     : byte;
+    res,iFile: integer;
+    AtLeastOneConvertedOK: Boolean;
+    aFile,ShellProg: String;
+    NewFiles: TStringList;
 begin
-  // omit this and the decompression process will fail
-  ImportDir:=ExpandFileName(ImportDir);
-  Debug.DebugLog('xpncfido','importing fido messages: "'+ImportDir+'"',DLInform);
-  FidoImport:=false;
   with BoxPar^ do begin
-    msgbox(40,5,GetRepS2(30003,1,boxname),x,y);      { 'Pakete suchen (%s)' }
-    p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
-    if p>0 then delete(downarcer,p,7);
-    p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
+    msgbox(40,5,GetRepS2(30003,1,boxname),x,y);     { 'Pakete suchen (%s)' }
+    Debug.DebugLog('xpncfido','Decompressiong packets: '+Stringlist(FilesToProcess),DLDebug);
+    NewFiles:=TStringList.Create; iFile:=0;
+    while iFile<=(FilesToProcess.Count-1) do begin
+      aFile:=FilesToProcess[iFile];
+      if isCompressedFidoPacket(aFile,false) then begin
+        Debug.DebugLog('xpncfido',aFile+' is compressed packet',DLDebug);
+        MWrt(x+2,y+2,GetRepS2(30003,2,ExtractFileName(aFile)));
 
-    { using wildcard does not require case sensitive }
-    Debug.DebugLog('xpncfido','looking for compressed packets: "'+ImportDir+WildCard+'"',DLInform);
-    dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
-    for i:= 0 to dir.Count-1 do begin
-      Debug.DebugLog('xpncfido','processing file: "'+dir.LongName[i]+'"',DLDebug);
-      if isCompressedFidoPacket(dir.name[i],false) then begin
-        Debug.DebugLog('xpncfido','is compressed packet',DLDebug);
-        MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
-        ImportDir:=ExpandFilename(ImportDir);
-        Debug.DebugLog('xpncfido','chdir to "'+OwnPath+XFerDir+'"',DLDebug);
-        SetCurrentDir(OwnPath+XFerDir);
-        shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
+        Debug.DebugLog('xpncfido','chdir to '+DirWhereToProcess,DLDebug);
+        SetCurrentDir(DirWhereToProcess);
+        ShellProg:=Decompressor;
+        Exchange(ShellProg,'$DOWNFILE',aFile);
+        Exchange(ShellProg,'$PUFFER','');
+//**    ^ change...
+        Res:=ShellNTrackNewFiles(ShellProg,500,1,NewFiles);
         // shell chdirs back to program directory automatically
-        if errorlevel<>0 then begin
+        if Res<>0 then begin
           Debug.DebugLog('xpncfido','error calling downarcer',DLError);
-          MoveToBad(OwnPath+ImportDir+dir.name[i]);
+          MoveToBad(aFile);
           end
         else begin
           Debug.DebugLog('xpncfido','decompressed ok, deleting archive',DLDebug);
-          _era(dir.LongName[i]);
+          _era(aFile);
           end;
+        FilesToProcess.Delete(iFile);
         end
-      else Debug.DebugLog('xpncfido','is no compressed packet',DLDebug);
-    end;
-    dir.Free;
-    closebox;
-
-    { Read only files }
-    Debug.DebugLog('xpncfido','looking for packets: "'+OwnPath+XFerDir+'*.PKT"',DLInform);
-    dir:=TDirectory.Create(OwnPath+XFerDir+'*.PKT',faAnyFile-faDirectory,true);
-    if not(dir.isEmpty) then begin
-      msgbox(70,10,GetRes2(30003,10),x,y);
-      for i:=0 to dir.Count-1 do begin
-        Debug.DebugLog('xpncfido','processing PKT: "'+dir.LongName[i]+'"',DLDebug);
-        rc:=DoZFido(2,                  { FTS -> ZC }
-                    MagicBrett,         { root group }
-                    dir.LongName[i],    { in file }
-                    fpuffer,            { out file }
-                    '',                 { packet from }
-                    '',                 { allways for me :-) }
-                    FPointNet,          { Fakenet }
-                    passwort,           { Password }
-                    '',                 { no PC needed }
-                    true,               { INTL }
-                    KeepVia,            { VIA lines }
-                    false,              { is not a request }
-                    FidoDelEmpty,       { delete empty messages? }
-                    x,y);               { Box-Coordinates }
-
-        if rc<>0 then begin
-          Debug.DebugLog('xpncfido','packet corrupted: "'+dir.LongName[i]+'"',DLError);
-          trfehler(719,30);   { 'fehlerhaftes Fido-Paket' }
+      else begin
+        if Pos('.PKT',UpperCase(aFile))=0 then begin
+          Debug.DebugLog('xpncfido',aFile+' is a requested file',DLDebug);
+//**      Move to file dir
+          FilesToProcess.Delete(iFile);
           end
-        else if nDelPuffer then begin         // pkts nach call Loeschen? xpoint.cfg -> pufferloeschen
-          Debug.DebugLog('xpncfido','deleting PKT: "'+dir.LongName[i]+'"',DLDebug);
-          _era(dir.LongName[i]);
+        else begin
+          Debug.DebugLog('xpncfido',aFile+' is uncompressed packet',DLDebug);
+          inc(iFile);
           end;
-      end; { for }
-      closebox;
-      NC^.recbuf:=_filesize(fpuffer);
-      Debug.DebugLog('xpncfido','CallFilter',DLInform);
-      CallFilter(true,fpuffer);
-      if _filesize(fpuffer)>0 then
-        if PufferEinlesen(fpuffer,box,false,false,true,
-                          iif(length(trim(boxpar^.akas))>0,
-                          pe_ForcePfadbox or pe_Bad,pe_Bad))
-        then begin
-          Debug.DebugLog('xpncfido','buffer imported OK, deleting',DLInform);
-          _era(fpuffer);
-          FidoImport:=true;
         end;
+    end;
+    closebox;
+    Debug.DebugLog('xpncfido','Files decompressed: '+Stringlist(NewFiles),DLDebug);
+    for iFile:=0 to NewFiles.Count-1 do FilesToProcess.Add(NewFiles[iFile]);
+    NewFiles.Destroy;
+
+    Debug.DebugLog('xpncfido','Converting to fido: '+Stringlist(FilesToProcess),DLDebug);
+    if not(FilesToProcess.Count<=0) then begin
+      msgbox(70,10,GetRes2(30003,10),x,y);
+      AtLeastOneConvertedOK:=False; iFile:=0;
+      while iFile<=(FilesToProcess.Count-1) do begin
+        aFile:=FilesToProcess[iFile];
+        if Pos('.PKT',UpperCase(aFile))<>0 then begin
+          Debug.DebugLog('xpncfido','Converting PKT: '+aFile,DLDebug);
+          res:=DoZFido(2,                  { FTS -> ZC }
+                       MagicBrett,         { root group }
+                       aFile,              { infile }
+                       fpuffer,            { outfile }
+                       '',                 { packet from }
+                       '',                 { allways for me :-) }
+                       FPointNet,          { Fakenet }
+                       passwort,           { Password }
+                       '',                 { no PC needed }
+                       true,               { INTL }
+                       KeepVia,            { VIA lines }
+                       false,              { is not a request }
+                       FidoDelEmpty,       { delete empty messages? }
+                       x,y);               { Box-Coordinates }
+          if res<>0 then begin
+            Debug.DebugLog('xpncfido','packet corrupted',DLError);
+            MoveToBad(aFile);
+            trfehler(719,30);   { 'fehlerhaftes Fido-Paket' }
+            end
+          else begin
+            Debug.DebugLog('xpncfido','packet converted OK, deleting it',DLDebug);
+            _era(aFile); AtLeastOneConvertedOK:=True;
+            end;
+          FilesToProcess.Delete(iFile);
+          end; { ...of if "is packet" }
+        end; { ...of while "process all files" }
+      if AtLeastOneConvertedOK then FilesToProcess.Add(fpuffer);
+      closebox;
     end else begin
-      Debug.DebugLog('xpncfido','Xferdir was empty',DLInform);
+      Debug.DebugLog('xpncfido','no files to process',DLInform);
       if FileExists(fpuffer) then _era(fpuffer);
-      CallFilter(true,fpuffer);
     end;
   end; { with }
+  Debug.DebugLog('xpncfido','Files remaining to process: '+Stringlist(FilesToProcess),DLDebug);
   freeres;
-  Debug.DebugLog('xpncfido','fidoimport finished',DLInform);
 end;
 
 { bei Crashs steht in BOX der eigene BossNode, und in BoxPar^.BOXNAME  }
 { der angerufene Node                                                  }
 { Ergebnis: s. xpdiff                                                  }
-
-function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
-                     packmail,crash,alias:boolean;var domain:string):shortint;
+function FidoNetcall(box: string;
+                     boxpar: boxptr;
+                     var ppfile,eppfile,sendfile,upuffer:string;
+                     packmail,crash,alias:boolean;
+                     var domain:string;
+                     var Fidologfile: String;
+                     const OwnFidoAdr: String;
+                     OutgoingFiles,IncomingFiles: TStringList):shortint;
 
 type rfnodep     = ^reqfilenode;
      reqfilenode = record
@@ -190,8 +324,8 @@ type rfnodep     = ^reqfilenode;
                      next : rfnodep;
                    end;
 
-var aresult   : integer;
-    i      : integer;
+var aresult  : integer;
+    i        : integer;
     request  : string;
     ownaddr  : string;
     fa       : fidoadr;
@@ -199,7 +333,8 @@ var aresult   : integer;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
     dir      : TDirectory;
-    FilesToSend,FilesReceived: TStringList;
+    ShellCommandUparcer: String;
+    Fidomailer: TFidomailer;
 
 label fn_ende,fn_ende0;
 
@@ -226,7 +361,7 @@ label fn_ende,fn_ende0;
             if not FileExists(hd.betreff) then begin
               tfehler(hd.betreff+' fehlt!',15);
             end else begin
-              FilesToSend.Add(FileUpperCase(hd.betreff));
+              OutgoingFiles.Add(FileUpperCase(hd.betreff));
               inc(fileatts);
             end;
           inc(adr,hds+hd.groesse);
@@ -307,17 +442,17 @@ label fn_ende,fn_ende0;
         Fidomailer.sendempty:= true;
       if ((request='') and (FileAtts=0)) or not EmptyPKTs then
         if packmail then
-          FilesToSend.Add(sendfile)
+          OutgoingFiles.Add(sendfile)
         else begin
-          FilesToSend.Add(upuffer);
+          OutgoingFiles.Add(upuffer);
 //**          for i:=1 to addpkts^.anzahl do
-//**            FilesToSend.Add(addpkts^.addpkt[i]);
+//**            OutgoingFiles.Add(addpkts^.addpkt[i]);
         end;
       if request<>'' then
-        FilesToSend.Add(request);
+        OutgoingFiles.Add(request);
 //**      for i:=1 to addpkts^.akanz do
 //**        if addpkts^.reqfile[i]<>'' then
-//**          FilesToSend.Add(addpkts^.reqfile[i]);
+//**          OutgoingFiles.Add(addpkts^.reqfile[i]);
       if komment='' then
         Fidomailer.txt:= 'Netcall  -  '+boxname
     { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
@@ -401,8 +536,20 @@ label fn_ende,fn_ende0;
 
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
+
+  ZtoFido(boxpar,ppfile,upuffer,ownfidoadr,1,alias);
+
+  ShellCommandUparcer:=boxpar^.uparcer;
+  exchange(ShellCommandUparcer,'$UPFILE',sendfile);
+  exchange(ShellCommandUparcer,'$PUFFER',upuffer);
+  if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
+    trfehler(713,30);  { 'Fehler beim Packen!' }
+    result:=el_noconn; exit;
+    end
+  else _era(upuffer);
+
   Fidomailer:=TFidomailer.Create;
-  Fidonetcall:=EL_ok;
+  result:=EL_ok;
 //**  for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
 //**    splitfido(addpkts^.akabox[i],fa,DefaultZone);
 //**    addpkts^.reqfile[i]:=FidoAppendRequestfile(fa);
@@ -425,13 +572,6 @@ begin { FidoNetcall }
 //**      DeleteFile(addpkts^.addpkt[i]);
     end;
 
-  { Spool/ leeren }
-  dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
-  for i:= 0 to dir.Count-1 do
-    if UpperCase(ExtractFileExt(dir.Name[i]))='.PKT' then
-      DeleteFile(dir.LongName[i]);
-  dir.Free;
-
   { Init Fidomailer obj }
   Fidomailer:=TFidomailer.Create;
   if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
@@ -439,8 +579,7 @@ begin { FidoNetcall }
     goto fn_ende;
     end;
   Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
-  FilesToSend:=TStringList.Create; FilesReceived:=TStringList.Create;
-  Fidomailer.FilesToSend:=FilesToSend; Fidomailer.FilesReceived:=FilesReceived;
+  Fidomailer.FilesToSend:=OutgoingFiles; Fidomailer.FilesReceived:=IncomingFiles;
   InitFidomailer;
   FidoNetcall:=EL_noconn;
   aresult:=Fidomailer.PerformNetcall;
@@ -452,7 +591,6 @@ begin { FidoNetcall }
     trfehler1(720,strs(aresult),10);   { 'interner Fehler (%s) im Fido-Mailer' }
     aresult:=EL_break;
     end;
-  NC^.abbruch:=(aresult<>EL_ok);
   FidoNetcall:=aresult;
 
   if packmail then
@@ -498,10 +636,12 @@ begin { FidoNetcall }
     closebox;
     end;
 
-  if FidoImport(XFerDir,box) then;   { Mails konvertieren + einlesen }
+  ProcessFiles(IncomingFiles,XFerDir,xp0.Filepath,boxpar^.downarcer,boxpar);
+
   fn_ende0:
 //**    WriteFidoNetcallLog(fidologfile,iifs(crash,DefFidoBox,Boxpar^.boxname),crash);
-    if true {!! (result=EL_ok) or (result=EL_recerr)} then begin
+//**    if true {!! (result=EL_ok) or (result=EL_recerr)} then begin
+      if false then begin
       window(1,1,screenwidth,screenlines);
       if AutoDiff then
         if DoDiffs(FilePath+'*.*',true)=0 then;
@@ -767,6 +907,12 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/02/04 18:33:04  ma
+  - moved ZtoFido to xpncfido
+  - fido netcall tracking files with StringLists now
+  - xpnc* units now have to do buffer conversion (it is NOT done
+    in xpnetcall anymore)
+
   Revision 1.6  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now

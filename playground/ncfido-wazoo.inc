@@ -70,10 +70,17 @@ begin
       aresult:=EL_recerr;
     end;
   end;
+  ZModemObj.Done;
 end;
 
 {
   $Log$
+  Revision 1.5  2001/02/04 18:33:03  ma
+  - moved ZtoFido to xpncfido
+  - fido netcall tracking files with StringLists now
+  - xpnc* units now have to do buffer conversion (it is NOT done
+    in xpnetcall anymore)
+
   Revision 1.4  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now
