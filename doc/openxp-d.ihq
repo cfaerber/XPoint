@@ -10368,6 +10368,10 @@ Daten von und zur Box bertragen werden:
 <<POP3/SMTP>>   wird sehr h„ufig fr Email versenden
             und empfangen benutzt.
 
+<<IMAP>>        gewinnt zunehmend an Bedeutung fr die
+            moderne Verwaltung von eMails auf dem 
+            Mailserver.
+
 <<NNTP>>        Boxentyp, wenn Sie Ihre Newsgruppen
             an einem Newsserver abholen wie z.B.
             news.cis.dfn.de.

@@ -7175,6 +7175,8 @@ Enter the Network type for this Server:
 
 <<POP3/SMTP>>   Receiving/sending eMail
 
+<<IMAP>>        Reading eMails on IMAP-Server
+
 <<NNTP>>        Receiving/sending newsgroups
 
 <<RFC/UUCP>>    For UseNet, SubNet etc.
