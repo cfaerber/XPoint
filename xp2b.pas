@@ -40,7 +40,7 @@ begin
   if ParNolock then exit;
   LockDenied := false;
   assign(lockfile, 'LOCKFILE');
-  filemode:=FMRW + FMDenyWrite;
+  filemode:=FMWrite + FMDenyBoth;
   rewrite(lockfile);
   if IOResult <> 0 then
     LockDenied := true
