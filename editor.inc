@@ -824,7 +824,7 @@ begin
       { Quote-Reflow }
       if config.QuoteReflow xor kb_shift then begin
         quotec:=GetQuote(ap);
-        if quotec<>'' then begin
+        if (quotec<>'') and (wp>=length(rtrim(quotec))) then begin
           delsp:=wp;
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
           dec(delsp,wp);
@@ -2427,6 +2427,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.18  2001/08/27 23:52:57  my
+  RB:- Ancient Quote Reflow Fix: When pressing <Enter> at Pos1 of an
+       indented line, the line stays indented now.
+
   Revision 1.19.2.17  2001/08/23 22:08:54  my
   JG:- Search in Editor now *marks* the found term
   JG:- If the search term was found in the second or any subsequent line
