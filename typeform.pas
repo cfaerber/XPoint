@@ -154,7 +154,7 @@ const
   ISO #208 => IBM #84 ("T") bzw. ISO #240 => IBM #116 ("t")
   ---------------------------------------------------------
   Das ist z.B. so 'n Klopfer: Das sind die Buchstaben "Eth" (groß und  
-  klein), aber weil die so ähnlich aussehen wie ein "D" bzw. "d", wurden  
+  klein), aber weil die so ähnlich aussehen wie ein "D" bzw. "d", wurden
   sie bisher eben in ein "D" bzw. "d" konvertiert.  Ausgesprochen wird  
   "Eth" aber wie ein "Th" in "That", das wäre also z.B. auch ein Kandidat  
   für 'ne Multicharkonvertierung. Da es die noch nicht gibt, wird "Eth"  
@@ -364,6 +364,10 @@ function CVal(const s:string):longint;       { C Value Integer - nnnn/0nnn/0xnnn
 //todo: rename!!!
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
+function ExtractWord(n: Cardinal; const S: String) : String;
+function WordPosition(N : Cardinal; const S: String; Delim: Char;
+                      var Pos : Cardinal) : Boolean;
+function ExtractWordEx(n: Cardinal; const S: String; Delim: Char): String;
 function FileName(var f):string;                { Dateiname Assign             }
 // Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function FirstChar(const s:string):char;
@@ -766,6 +770,58 @@ begin
   end;
 end;
 
+function ExtractWord(n: Cardinal; const S: String) : String;
+begin
+  Result := ExtractWordEx(n, s, ' ');
+end;
+
+function WordPosition(N : Cardinal; const S: String; Delim: Char;
+                      var Pos : Cardinal) : Boolean;
+var
+  Count : Longint;
+  I     : Longint;
+begin
+  Count := 0;
+  I := 1;
+  Result := False;
+
+  while (I <= Length(S)) and (Count <> LongInt(N)) do begin
+    {skip over delimiters}
+    while (I <= Length(S)) and (Delim = S[I]) do
+      Inc(I);
+
+    {if we're not beyond end of S, we're at the start of a word}
+    if I <= Length(S) then
+      Inc(Count);
+
+    {if not finished, find the end of the current word}
+    if Count <> LongInt(N) then
+      while (I <= Length(S)) and not (Delim = S[I]) do
+        Inc(I)
+    else begin
+      Pos := I;
+      Result := True;
+    end;
+  end;
+end;
+
+function ExtractWordEx(n: Cardinal; const S: String; Delim: Char): String;
+var
+  C : Cardinal;
+  I, J   : Longint;
+begin
+  Result := s;
+  if WordPosition(N, S, Delim, C) then begin
+    I := C;
+    {find the end of the current word}
+    J := I;
+    while (I <= Length(S)) and not
+           (Delim = S[I]) do
+      Inc(I);
+    SetLength(Result, I-J);
+    Move(S[J], Result[1], I-J);
+  end;
+end;
 
 function Sp(const n:integer):string;
 begin
@@ -1942,6 +1998,9 @@ end;
 
 {
   $Log$
+  Revision 1.130  2003/05/11 11:13:56  mk
+  - added ExtractWord, ExtractWordEx and WordPosition
+
   Revision 1.129  2003/05/11 11:10:27  mk
   - added funciton IsMailAdr
 
