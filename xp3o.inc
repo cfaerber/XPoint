@@ -661,16 +661,6 @@ var x,y,fm   : byte;
       end;
   end;
 
-  procedure checkbox(var box :string);
-  var d :DB;
-  begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,ustr(box));
-    if dbFound then
-      dbRead(d,'boxname',box);  { -> korrekte Schreibweise des Systemnamens }
-    dbClose(d);
-  end;
-
 begin
   inmsgs:=0; ReplHalteFlag := 255;
   puffereinlesen:=false;
@@ -867,7 +857,7 @@ begin
               dbAppend(ubase);
               dbWriteN(ubase,ub_username,absender);
               pb:=pollbox_str(zconnect,true);
-              checkbox(pb);
+              KorrBoxname(pb);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
               flags:=1+iif(newuseribm {ntUserIBMchar(netztyp)},0,8);  { aufnehmen / Umlaute }
@@ -919,7 +909,7 @@ begin
                 dbAppend(bbase);
                 dbWriteN(bbase,bb_brettname,empfaenger);
                 pb:=pollbox_str(zconnect,false);
-                checkbox(pb);
+                KorrBoxname(pb);
                 dbWriteN(bbase,bb_pollbox,pb);
                 dbWriteN(bbase,bb_haltezeit,haltezeit);
                 dbWriteN(bbase,bb_gruppe,grnr);
@@ -947,7 +937,7 @@ begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
-              checkbox(pb);
+              KorrBoxname(pb);
               if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
@@ -1250,6 +1240,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.20  2002/07/09 13:24:54  mk
+  - KorrBoxname statt Checkbox oder Handarbeit benutzen
+
   Revision 1.21.2.19  2002/04/27 14:52:21  sv
   - Bei automatisch neu angelegten Usern/Brettern wird die Schreibweise
     der Serverbox ueberprueft

@@ -102,11 +102,7 @@ var ss : string[BoxNameLen];
        if ccm^[i].server<>ss then begin
          ss:=''; SameServer:=false;
          end;
-     dbOpen(d,BoxenFile,1);
-     dbSeek(d,boiName,ustr(ss));
-     if dbFound then
-       dbRead(d,'boxname',ss);  { -> korrekte Schreibweise des Systemnamens }
-     dbClose(d);
+     KorrBoxname(ss);  { -> korrekte Schreibweise des Systemnamens }
    end;
 
 begin
@@ -1202,6 +1198,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.18  2002/07/09 13:24:54  mk
+  - KorrBoxname statt Checkbox oder Handarbeit benutzen
+
   Revision 1.18.2.17  2002/05/09 22:42:23  my
   JG:- Fix: Bei MIME-Multipart-Nachrichten in ein Brett mit Einstellung
       "ASCII" oder an einen User mit deaktiviertem Umlaut-Schalter fand
