@@ -805,21 +805,23 @@ already defined macros.
 ^^30
 @
 40
-<<Automatic Message-Sending
+<<Automatic message sending
 
-This is the list of messages to be sent auto-
-matically. The list can have as many entries as you
-wish. Note: All auto-send messages must exist indivi-
-dually as files on the disk.
+This is the list of messages which will be sent
+automatically at pre-determined times. The list can
+contain as many entries as you like.
 
-<<<Enter> >>loads the selected message in the message
+Note: all AutoSend message files must actually exist
+on your hard drive.
+
+<<<Enter> >>Loads the selected message into the message
         reader or archive viewer.
 
   <<V>>     Activates or deactivates the selected entry.
 
   <<A>>     Inserts a new entry. At least the file name,
         the recipient and the despatch time must be
-        entered to enable the entry to save.
+        entered to enable the entry to be saved.
 
   <<L>>     Deletes the selected entry. You can select
         whether to delete the file belonging to the
@@ -827,12 +829,12 @@ dually as files on the disk.
 
   <<E>>     Edits the selected entry.
 
-  <<T>>     Loads the message file into the editor -
-        only with text messages.
+  <<T>>     Loads the message file into the editor.
+        This works for text messages only.
 
   <<O>>     Copies the selected entry.
 
-  <<I>>     Shows Info about the message file
+  <<I>>     Shows info about the message file.
 
   <<S>>     Sends the selected entry immediately.
 
