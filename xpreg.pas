@@ -60,17 +60,17 @@ const regfile  = 'regdata.cfg';
       maxphone = 4;    { max. Telefonnummern je RegSite }
 
 type  SiteRec = record
-                  name,str,ort : string[30];
-                  zusatz       : string[20];   { Land }
+                  name,str,ort : string;
+                  zusatz       : string;   { Land }
                   p1,p2,p3     : integer;      { einfach, komplett, Update }
-                  waehrung     : string[5];
+                  waehrung     : string;
                   rwege        : set of byte;  { m”gl. Reg.-Wege }
                   zahlwege     : set of byte;  { m”gl. Zahlunswege }
                   mailanz      : byte;
-                  mailadr      : array[1..maxmail] of string[60];
+                  mailadr      : array[1..maxmail] of string;
                   mailnetz     : array[1..maxmail] of byte;
                   phoneanz     : byte;
-                  rphone       : array[1..maxphone] of string[30];
+                  rphone       : array[1..maxphone] of string;
                   rcdrom       : boolean;
                 end;
       SR_Array= array[1..regsites] of SiteRec;
@@ -79,9 +79,9 @@ type  SiteRec = record
 type  RegRec = record
                  reg_bei    : byte;     { Registration site }
                  regweghin  : byte;     { Registrierungsweg }
-                 regfilename: pathstr;
-                 regmailadr : string[65];
-                 regphone   : string[27];
+                 regfilename: string;
+                 regmailadr : string;
+                 regphone   : string;
                  regwegrueck: byte;
                  regwithdisk: boolean;
                  regwithcd  : boolean;
@@ -93,13 +93,13 @@ type  RegRec = record
                  keyorder   : boolean;
                  sammelreg  : boolean;
                  name1,name2,
-                 str,ort    : string[40];  { Adresse }
-                 email      : string[79];
-                 telefon    : string[telelen];
-                 cardnr     : string[19];
-                 cardvalid  : string[5];
-                 comment1   : string[39];
-                 comment2   : string[39];
+                 str,ort    : string;  { Adresse }
+                 email      : string;
+                 telefon    : string;
+                 cardnr     : string;
+                 cardvalid  : string;
+                 comment1   : string;
+                 comment2   : string;
                end;
 
 var   pfp   : array[1..preisf] of byte;      { 1..4: Einzelpreise  }
@@ -188,7 +188,7 @@ end;
 
 
 procedure regbeiproc(var s:string);
-var ss : string[40];
+var ss : string;
     i  : integer;
 begin
   for i:=1 to regsites do
@@ -357,7 +357,7 @@ end;
 
 procedure zahlweisproc(var s:string);
 var c,ue : boolean;
-    ss   : string[80];
+    ss   : string;
 begin
   c:=stricmp(s,_zahlweg(4)) or stricmp(s,_zahlweg(5)) or stricmp(s,_zahlweg(6));
   ue:=stricmp(s,_zahlweg(3));
@@ -416,7 +416,7 @@ end;
 
 
 procedure regwegproc(var s:string);
-var ss : string[80];
+var ss : string;
 begin
   if stricmp(s,_regwegh(1)) then settexttext(regposttxt,DruckerStr)
   else settexttext(regposttxt,'');
@@ -693,7 +693,7 @@ var brk,modi : boolean;
   procedure ReadRegData;
   var t   : text;
       s   : string;
-      tag : string[35];
+      tag : string;
   begin
     assign(t,regfile);
     if existf(t) then begin
@@ -773,13 +773,13 @@ var brk,modi : boolean;
 
   procedure EditRegData(var brk,modi:boolean);
   var x,y      : byte;
-      s        : string[80];
-      xreg_bei : string[40];
+      s        : string;
+      xreg_bei : string;
       i        : integer;
-      zahl     : string[33];
+      zahl     : string;
       regpost  : boolean;
       regmail  : boolean;
-      regwegh  : string[40];
+      regwegh  : string;
   begin
     with regdata do begin
       mailregfld:=0;
@@ -970,7 +970,7 @@ var brk,modi : boolean;
   end;
 
 
-  function WriteFormular(fn:pathstr):boolean;
+  function WriteFormular(fn:string):boolean;
   const lr = '     ';
   var   t  : text;
 
@@ -1081,7 +1081,7 @@ var brk,modi : boolean;
 
 
   function PrintFormular:boolean;
-  var tmp : pathstr;
+  var tmp : string;
       t   : text;
       s   : string;
   begin
@@ -1114,9 +1114,9 @@ var brk,modi : boolean;
 
 
   function SendEmail:boolean;
-  var header : string[12];
-      tmp    : pathstr;
-      mto    : string[adrlen];
+  var header : string;
+      tmp    : string;
+      mto    : string;
       d      : DB;
       i      : integer;
   begin
@@ -1153,9 +1153,9 @@ var brk,modi : boolean;
   const FormFile  = 'xp-reg.txt';
         DummyReq  = '001F000B.req';
   var d    : DB;
-      name : string[40];
-      padr : string[25];   { Fido-Pointadresse }
-      logf : pathstr;
+      name : string;
+      padr : string;   { Fido-Pointadresse }
+      logf : string;
       lipo : boolean;
 
     procedure MakeFidoCfg;    { FIDO.CFG erzeugen - siehe auch XP7F.PAS! }
@@ -1352,7 +1352,7 @@ var x,y,i : byte;
     timeover    : boolean;
 
     sely  : byte;
-    sels  : string[80];
+    sels  : string;
     n     : shortint;
     z     : taste;
     regform : boolean;
@@ -1360,7 +1360,7 @@ var x,y,i : byte;
   procedure ReadReg;
   var x,y  : byte;
       brk  : boolean;
-      code : string[20];
+      code : string;
       t    : text;
       nr   : longint;
       z    : taste;
@@ -1575,6 +1575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/05 18:03:53  hd
+  - Ansistring
+
   Revision 1.13  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
