@@ -1644,7 +1644,7 @@ begin
            iifs(attrib and attrPmReply<>0,'PM-Reply ','')+
            iifs(attrib and attrQuoteTo<>0,'QuoteTo ','')+
            iifs(attrib and attrControl<>0,'Control ',''));
-    if netztyp=nt_UUCP then netz:=' / RFC'
+    if netztyp in netsRFC then netz:=' / RFC'
     else begin
       netz:=ntName(netztyp);
       if netz='???' then netz:=''
@@ -2414,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.104  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.103  2001/08/12 11:50:40  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -94,10 +94,10 @@ const umtyp : array[0..5] of string[5] =
 
 {$IFNDEF DOS32}
       SupportedNetTypes: array[0..5] of byte =
-        (nt_UUCP_C, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
+        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ELSE}
       SupportedNetTypes: array[0..3] of byte =
-        (nt_UUCP_C, nt_UUCP, nt_Fido, nt_ZConnect);
+        (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
@@ -1258,7 +1258,7 @@ restart:
   maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benîtigen' }
   maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
-  ntyp:=ntName(nt_UUCP_C); nt:=nt_UUCP_C;
+  ntyp:=ntName(nt_Client); nt:=nt_Client;
   maddstring(3,8,getres2(911,5),ntyp,20,20,''); mhnr(681);   { 'Netztyp   ' }
   for i:=0 to High(SupportedNetTypes) do
     mappsel(true,ntName(SupportedNetTypes[i]));
@@ -1273,7 +1273,7 @@ restart:
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
   pppm:=false;
-  if LowerCase(ntyp)=LowerCase(ntName(nt_UUCP_C)) then
+  if LowerCase(ntyp)=LowerCase(ntName(nt_Client)) then
   begin
     ntyp:=ntName(nt_UUCP);
     pppm:=true;
@@ -1334,8 +1334,8 @@ restart:
   boxpar^.username:=user;
   boxpar^.ClientMode:=pppm;
   boxpar^._Domain:=dom;
-  if (nt=nt_UUCP) and FileExists('UUCP.SCR') then
-    boxpar^.script:='UUCP.SCR';
+  if (nt=nt_UUCP) and FileExists('uucp.scr') then
+    boxpar^.script:=FileUpperCase('uucp.scr');
   WriteBox(dname,boxpar);
   DefaultBox:=name;
   if nt=nt_Fido then begin
@@ -1609,6 +1609,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.16  2001/08/11 23:06:37  mk
   - changed Pos() to cPos() when possible
 

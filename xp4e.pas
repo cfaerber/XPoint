@@ -1037,7 +1037,7 @@ begin
   if origin<>'' then
     dbWriteNStr(bbase,bb_adresse,origin);
   flags:=flags and (not 16);
-  if ntBoxNetztyp(box) IN [nt_UUCP,nt_NNTP] then inc(flags,16);
+  if ntBoxNetztyp(box) in netsRFC then inc(flags,16);
   dbWriteN(bbase,bb_flags,flags);
   SetBrettindex;
   newbrett:=true;
@@ -1080,7 +1080,7 @@ begin
     dbWriteNStr(bbase,bb_pollbox,box);
     dbWriteN(bbase,bb_haltezeit,halten);
     flags:=flags and (not 16);
-    if ntBoxNetztyp(box) IN [nt_UUCP,nt_NNTP] then inc(flags,16);
+    if ntBoxNetztyp(box) in netsRFC then inc(flags,16);
     dbWriteN(bbase,bb_flags,flags);
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
@@ -2431,6 +2431,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.66  2001/08/23 11:15:03  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of

@@ -1544,7 +1544,7 @@ begin
     again:
       List.OnTestMark := BrettMark;
       mapsnt:=netztyp; mapsart:=art;
-      if ppp then mapsnt:=nt_uucp_c;
+      if ppp then mapsnt:=nt_Client;
       if maus then LColType:=2 else
       if fido then lcoltype:=4 else
       if maf or quick then LColType:=0 else
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.53  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

@@ -38,26 +38,15 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_Maus      = 20;
        nt_Fido      = 30;
        nt_QWK       = 31;
+
        nt_UUCP      = 40;
-       nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp }
-                                 { wird nach Auswahl nt_UUCP + ClientMode true }
-       nt_NNTP      = 50;        { NNTP-Stream }
-       nt_POP3      = 51;        { POP3/SMTP-Stream }
-       nt_IMAP      = 52;        { IMAP4 }
+       nt_Client    = 41;
+       nt_NNTP      = 50;
+       nt_POP3      = 51;
+       nt_IMAP      = 52;
 
-       ltNetcall    = 0;         { Login/Transfer-Typen }
-       ltZConnect   = 2;         { XRef: XP7            }
-       ltMagic      = 3;
-       ltQuick      = 5;
-       ltGS         = 8;
-       ltMaus       = 6;
-       ltFido       = 7;
-       ltUUCP       = 10;
-       ltQWK        = 11;
-       ltNNTP       = 50;
-       ltPOP3       = 51;
-       ltIMAP       = 52;
-
+       netsRFC = [nt_NNTP,nt_POP3,nt_IMAP,nt_UUCP,nt_Client];
+       netsSupportingPGP = [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP];
 
 var ntused : array[0..99] of integer;
 
@@ -118,15 +107,12 @@ function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 function ntFilename(nt:byte):boolean;         { Dateiname im Header }
 
 function ntBoxNetztyp(box:string):byte;       { Netztyp der Box       }
-function ntTransferType(nt:byte):shortint;    { Art des Netcalls      }
 function ntRelogin(nt:byte):byte;             { Relogin-Netcall m”glich }
 function ntOnline(nt:byte):boolean;           { Online-Anruf m”glich  }
 function ntNetcall(nt:byte):boolean;          { Netcall m”glich }
 function ntOnePW(nt:byte):boolean;            { Point-PW = Online-PW  }
 function ntDownarcPath(nt:byte):boolean;      { Entpacker muá im Pfad liegen }
 function ntExtProt(nt:byte):boolean;          { externes š.-Protokoll }
-function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
-function ltMultiPuffer(lt:byte):boolean;      { Puffer zusammenkopieren }
 function ntGrossPW(nt:byte):boolean;          { Paáwort muá groágeschr. werden }
 
 function ntMAF(nt:byte):boolean;              { MAF statt MAPS        }
@@ -140,13 +126,12 @@ function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
 
 function ntReplyToAll (nt :byte) :boolean;    { Reply-To-All erlaubt }
 
-function ltVarBuffers(lt:byte):boolean;       { variable Puffernamen  }
-
 function formmsgid(msgid:string):string;
 function grosschar(b:boolean):string;
 
 implementation  { ---------------------------------------------------- }
 
+uses Debug;
 
 { X-XP-NTP:  Netztyp - optional, Default 2 (nt_ZConnect)
   X-XP-ARC:  archivierte PM - optional
@@ -271,25 +256,6 @@ begin
       end;
     formmsgid:=dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
     end;
-end;
-
-
-function ntTransferType(nt:byte):shortint;
-begin
-  case nt of
-    0,1 : ntTransferType:=ltNetcall;
-    2   : ntTransferType:=ltZConnect;
-    3,4 : ntTransferType:=ltMagic;
-    10  : ntTransferType:=ltQuick;
-    11  : ntTransferType:=ltGS;
-    20  : ntTransferType:=ltMaus;
-    30  : ntTransferType:=ltFido;
-    31  : ntTransferType:=ltQWK;
-    40  : ntTransferType:=ltUUCP;
-    50  : ntTransferType:=ltNNTP;
-  else
-    ntTransferType:=ltPOP3;
-  end;
 end;
 
 
@@ -448,10 +414,11 @@ begin
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
     nt_UUCP     : ntName:='RFC/UUCP';
-    nt_UUCP_C   : ntName:='RFC/Client';
+    nt_Client   : ntName:='RFC/Client';
     nt_NNTP     : ntName:='NNTP';
     nt_POP3     : ntName:='POP3/SMTP';
   else
+    Debug.DebugLog('xpnt','Unknown net type: '+IntToStr(nt),DLWarning);
     ntName:='? '+IntToStr(nt);
   end;
 end;
@@ -496,11 +463,6 @@ begin
     or ((nt=nt_Magic) and MaggiVerkettung);
 end;
 
-
-function ltVarBuffers(lt:byte):boolean;       { variable Puffernamen }
-begin
-  ltVarBuffers:=(lt=ltFido);   { evtl. ltUsenet }
-end;
 
 function ntRfcCompatibleID(nt:byte):boolean;
 begin
@@ -640,22 +602,6 @@ begin
   ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_QWK,nt_NNTP,nt_POP3]);
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
-begin
-{$IFDEF CAPI }
-  ntISDN:= not (nt in [nt_NNTP,nt_POP3]);
-  {ntISDN:=true;} { CAPI-Support eingeschaltet }
-{$ELSE }
-  ntISDN:=false;
-{$ENDIF }
-end;
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
-
 
 function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
 begin
@@ -699,11 +645,6 @@ begin
   ntSec:=(nt in [nt_ZCONNECT,nt_UUCP,nt_Magic,nt_Pronet,nt_NNTP,nt_POP3]);
 end;
 
-
-function ltMultiPuffer(lt:byte):boolean;      { Puffer zusammenkopieren }
-begin
-  ltMultiPuffer:=(lt in [ltZConnect,ltGS]);
-end;
 
 function ntZonly:boolean;                     { nur Z-Netz/alt }
 var i : integer;
@@ -768,6 +709,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.29  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

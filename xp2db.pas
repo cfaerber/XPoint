@@ -476,7 +476,7 @@ var flp : dbFLP;
         moff; write(n:6); mon;
         end;
       nt:=dbReadInt(mbase,'netztyp') and $ff;
-      if (nt=nt_Fido) or (nt=nt_Magic) or (nt=nt_ZConnect) or (nt=nt_UUCP)
+      if nt in (netsRFC + [nt_Fido,nt_Magic,nt_ZConnect])
       then begin
         ReadHeader(hdp,hds,false);
         if nt=nt_Fido then name:=hdp.fido_to
@@ -956,6 +956,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
   Revision 1.34  2001/08/12 11:50:36  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -315,7 +315,7 @@ var size   : longint;
     p2:=cpos('#',hdp.absender);
     if p>0 then qchar[p]:='$';
 
-    if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
+    if (netztyp in netsRFC) or ((p>0) and (p2>0)) then begin
 
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
@@ -1102,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
   Revision 1.76  2001/08/12 11:50:37  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

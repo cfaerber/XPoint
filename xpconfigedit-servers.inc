@@ -35,12 +35,12 @@
   begin
   restart:
     DomainNt:=nt;
-    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
+    real:=ntRealname(nt);
     dom:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_Fido,nt_UUCP];
     {Eingabe fuer FQDN nur bei ZC und RFC }
-    fqdom:=nt in [nt_ZConnect,nt_UUCP];
+    fqdom:=nt in (netsRFC+[nt_ZConnect]);
     bdom:=(nt=nt_UUCP);
-    map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_QWK]);
+    map:=not (nt in (netsRFC+[nt_Maus,nt_Fido,nt_QWK]));
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
            iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),WindowHeadline,x,y);
@@ -286,10 +286,10 @@
       nt:=nt_Netcall
     else begin
       dbRead(d,'netztyp',nt);
-      if (nt=nt_UUCP) and pppm then nt:=nt_UUCP_C;
+      if (nt=nt_UUCP) and pppm then nt:=nt_Client;
     end;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
-    if nt<>nt_UUCP_C then
+    if nt<>nt_Client then
     begin
       pppM:=false;
       pp:='';
@@ -335,9 +335,9 @@
     boxpar^.ClientNewsPass:='';
 
     if pppm then
-      _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_UUCP_C)))
+      _EditPPP(brk,name,komm,email,real,replyto,fqdom,pp,pc,ps,cldup,clphn,cllog,clpas,getreps(915,netz_typ(nt_Client)))
     else
-      if nt in [nt_NNTP, nt_POP3] then
+      if nt in [nt_NNTP, nt_POP3, nt_IMAP] then
         INetNameRead(nt,name,user,komm,real,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
         NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
@@ -476,6 +476,8 @@
           _era(ownpath+dname+'.fbl');
         if FileExists(ownpath+dname+'.inf') then     { Maus-Infofileliste loeschen }
           _era(ownpath+dname+'.inf');
+        if FileExists(ownpath+dname+'.udl') then     { erase UIDL list }
+          _era(ownpath+dname+'.udl');
         if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket loeschen }
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
@@ -1072,41 +1074,31 @@
   Procedure Rename_box(old_dname,dname:string);
   var newdir: String;
 
-    procedure renbox2(ext:string);
+    procedure renbox(const path,ext:string);
     var f : file;
     begin
-      assign(f,BoxPar^.ClientPath+old_dname+ext);
+      assign(f,path+old_dname+ext);
       if existf(f) then begin
-        if FileExists(BoxPar^.ClientPath+dname+ext) then
-          _era(BoxPar^.Clientpath+dname+ext);
-        rename(f,BoxPar^.Clientpath+dname+ext);
-        end;
-    end;
-
-    procedure renbox(ext:string);
-    var f : file;
-    begin
-      assign(f,ownpath+old_dname+ext);
-      if existf(f) then begin
-        if FileExists(ownpath+dname+ext) then
-          _era(ownpath+dname+ext);
-        rename(f,ownpath+dname+ext);
+        if FileExists(path+dname+ext) then
+          _era(path+dname+ext);
+        rename(f,FileUpperCase(path+dname+ext));
         end;
     end;
 
   begin
-    renbox('.PP');
-    renbox(BfgExt);
-    renbox('.FL');
-    renbox('.BL');
-    renbox('.FBL');
-    renbox('.INF');
-    renbox('.CFG');
-    renbox2('.BL');
-    renbox2('.GR');
-    renbox2('.RC');
-    renbox2('.CFG');
-    renbox2(BfgExt);
+    renbox(ownpath,'.pp');
+    renbox(ownpath,BfgExt);
+    renbox(ownpath,'.fl');
+    renbox(ownpath,'.bl');
+    renbox(ownpath,'.fbl');
+    renbox(ownpath,'.inf');
+    renbox(ownpath,'.cfg');
+    renbox(ownpath,'.udl');
+    renbox(boxpar^.ClientPath,'.bl');
+    renbox(boxpar^.ClientPath,'.gr');
+    renbox(boxpar^.ClientPath,'.rc');
+    renbox(boxpar^.ClientPath,'.cfg');
+    renbox(boxpar^.ClientPath,BfgExt);
     ChDir(XFerDir_);
     GetDir(0, NewDir);
     RenameDir(old_dname, dname);
@@ -1258,7 +1250,7 @@
           { evtl. User&Bretter ueberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
-          if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
+          if dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
             renbox(BoxFileExt);
             renbox(BfgExt);
             renbox('.fl');
@@ -2076,6 +2068,9 @@
 
 {
   $Log$
+  Revision 1.20  2001/08/27 09:13:43  ma
+  - changes in net type handling (1)
+
   Revision 1.19  2001/08/12 11:50:44  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -160,7 +160,7 @@ procedure WriteHeader(var hd:theader; var f:file);
       if homepage<>''  then wrs('U-X-Homepage: '+homepage);
       if priority<>0   then wrs('U-X-Priority: '+strs(priority));
       if noarchive and (pmempfanz=0) and
-          (netztyp in [nt_NNTP, nt_UUCP, nt_ZConnect]) then
+          (netztyp in (netsRFC + [nt_ZConnect])) then
         wrs('U-X-No-Archive: Yes');
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
@@ -349,7 +349,7 @@ begin
       dbWriteN(bbase,bb_gruppe,NetzGruppe);
       if brettkomm then
         dbWriteNStr(bbase,bb_kommentar,komm);
-      flags:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
+      flags:=iif(netztyp in netsRFC,16,0);
       dbWriteN(bbase,bb_flags,flags);
       if order_ende and NewbrettEnde then
         SetBrettindexEnde
@@ -386,7 +386,7 @@ begin
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
-    if netztyp in [nt_ZConnect,nt_UUCP,nt_NNTP] then
+    if netztyp in (netsRFC + [nt_ZConnect]) then
       if hd.fido_to<>'' then xp0.fidoto:=realname
       else xp0.fidoto:=''
     else begin
@@ -449,6 +449,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
   Revision 1.47  2001/08/23 11:15:02  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of

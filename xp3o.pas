@@ -140,7 +140,7 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
           {_pm:=cPos('@',s)>0;}
           if cPos('@',s)=0 then begin
             pollbox := dbReadNStr(bbase,bb_pollbox);
-            if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
+            if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_fido,nt_ZConnect])) then begin
               { _AmReplyTo:=s; }
               s := dbReadNStr(bbase,bb_brettname);
             end;
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
   Revision 1.65  2001/08/12 20:01:39  cl
   - rename xp6*.* => xpsendmessage*.*
 

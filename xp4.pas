@@ -1004,7 +1004,7 @@ var t,lastt: taste;
           rnetztyp:= netztyp
         else
           rnetztyp:= ntBoxNetztyp(dbReadNStr(bbase,bb_pollbox));
-        if rnetztyp IN [nt_POP3,nt_IMAP,nt_NNTP,nt_UUCP] then begin
+        if rnetztyp in netsRFC then begin
           // Roles: Sender identity overrides (RFC net type only).
           // Some notes to this feature: xp6.DoSend is obviously intended for
           // *creating* messages, not *editing* them. Problem is that DoSend
@@ -1047,7 +1047,7 @@ var t,lastt: taste;
         end;
       if quote=0 then BriefSchablone(pm,headf,fn,empf,realname);
       end;
-    if (netztyp=nt_UUCP) or (netztyp=nt_ZCONNECT) then begin
+    if netztyp in (netsRFC + [nt_ZCONNECT]) then begin
       re_n:=false; kein_re:=false;
       end;
     if not usermsg then
@@ -2242,6 +2242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.102  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
   Revision 1.101  2001/08/23 12:06:50  mk
   JG:- Fixed bug in select routine: Switching to the user window with <F2>
        from a Message/Direct dialogue and activating the "all user" view
