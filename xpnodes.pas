@@ -54,7 +54,12 @@ function OpenNodelistIndex(XP_Verzeichnis:string):boolean;
 { ni  = Record fr Ergebnisdaten                        }
 { pointtyp: s.o.                                        }
 
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+procedure GetNodeInfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+
+
+{ TS 06.08.02 adr, ni, pointtyp s. o.}
+{ TS 06.08.02 _NLID <> 0, dann nur ergebnisse dieser Nodeliste bercksichtigen! }
+procedure GetNodeInfoN(adr:string; var ni:nodeinfo; pointtyp:shortint,_nlid:Byte);
 
 
 { Nodeindex wieder schlieáen }
@@ -504,6 +509,67 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2003/03/17 22:36:58  my
+  TS [+MY]:- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
+                   ge„ndert/korrigiert/erweitert
+             ----------------------------------------------------------------------
+             - Userindex NODEUSER.IDX "entschlackt", Code kleiner und
+               bersichtlicher, dadurch Laufzeit auf langsamen Rechnern
+               schneller. Bisherige Komprimierung des Index aufgehoben,
+               dadurch diverse Probleme behoben und die M”glichkeit
+               zus„tzlicher Erweiterungen geschaffen (s.u.).
+               (ToDo: Nodelisten-Index bei Update automatisch neu
+                      schreiben)
+             - Fix: Es kam vor, daá manche Listen (z.B. die Zone21-
+               Pointliste) zwar eingebunden und indiziert wurden, bei
+               einer Nodelist-Abfrage mit <Alt-N> auf die in der
+               Auswahlliste angezeigten Eintr„ge aber trotzdem nicht
+               zugegriffen werden konnte (nach Auswahl mit <Enter> war die
+               Anzeige leer). Dies ist durch den Wegfall der Komprimierung
+               jetzt behoben.
+             - Fix: Beim Durchsuchen der Node-/Pointlisten mit F/N/D ist
+               jetzt sichergestellt, daá a) weder fehlende noch b) unzu-
+               treffende noch c) doppelte Eintr„ge in der Suchergebnis-
+               liste auftreten k”nnen. Z.B. wurden u.U. Eintr„ge gefunden,
+               die gar nicht den Suchkriterien entsprachen, und im Sucher-
+               gebnis dann mit falschem Sysop-Namen angezeigt; kam eine
+               AKA in mehreren Listen vor (z.B. POINTS24 und R24PNT),
+               wurde nach dem Zufallsprinzip nur der Eintrag aus einer der
+               Listen (der aber dafr mehrfach) angezeigt.
+             - In allen Suchergebnis-/Auswahllisten steht jetzt hinter dem
+               sichtbaren Eintrag der Dateiname sowie die interne Nummer
+               der Liste, aus der der jeweilige Eintrag stammt (sichtbar
+               zu machen durch Scrollen mit <Cursor-rechts>). Damit ist
+               bei mehreren Eintr„gen mit identischer AKA, die aus
+               unterschiedlichen Listen stammen, die Herkunft des Eintrags
+               erkennbar. Auáerdem werden diese Daten fr die weitere
+               interne Verarbeitung ben”tigt:
+             - Fix: Bei der Auswahl eines Eintrags aus der jeweiligen
+               Auswahlliste mit <Enter> ist jetzt bei mehreren Eintr„gen
+               mit identischer AKA sichergestellt, daá auch wirklich auf
+               die Daten des ausgew„hlten Eintrags in der zugeh”rigen
+               Node-/Pointliste zugegriffen wird. Bisher wurden die Daten
+               unabh„ngig vom ausgew„hlten Eintrag immer derselben
+               (zuf„lligen) Liste entnommen, und an die Daten der Eintr„ge
+               aus den brigen Listen kam man gar nicht heran. Speziell
+               bei Eintr„gen aus Listen FTN-kompatibler Netze wurde
+               stellenweise auf die Daten eines beliebigen Eintrags in der
+               Fido-Nodeliste zugegriffen.
+             - Einige (vorl„ufige) nderungen in der Detailanzeige
+               unterhalb der Auswahlliste beim Durchsuchen mit F/N/D.
+             - Fix: Bei Listen im Points24-Format werden "Region"-Eintr„ge
+               (i.d.R. sind das PLK-Eintr„ge) beim Durchsuchen mit F/N/D
+               ignoriert (Verhalten damit jetzt identisch mit der
+               Nodelisten-Abfrage bei <Alt-N> bzw. F/N/A).
+             - Listen in einem Points24-kompatiblen Format werden jetzt
+               nicht mehr nur am Dateinamen "POINTS24.###", sondern auch
+               am Format selbst erkannt. Dadurch wird beim Einbinden
+               solcher Listen (z.B. Zone21-Liste) das korrekte Listen-
+               format "Points24" (bisher: "Nodeliste") vorgeschlagen.
+             - Interne nderung: Neuer Schalter "FIDOTST" in XPDEFINE.INC,
+               mit dem der Nodelisten-Index in Textform ausgegeben werden
+               kann.
+
   Revision 1.7.2.3  2000/12/12 11:30:31  mk
   - FindClose hinzugefuegt
 

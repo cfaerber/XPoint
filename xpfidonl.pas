@@ -384,116 +384,124 @@ var fn      : pathstr;
     ar      : ArchRec;
     fa      : FidoAdr;
 
-  procedure PL_FormatDetect(fn:pathstr; var format:byte);
-  var t   : text;
-      s   : string;
-      n   : byte;
-  begin
-    assign(t,fn);
-    if existf(t) then begin
-      reset(t);
-      n:=0;
-      while (format=1) and (n<200) and not eof(t) do begin
-        readln(t,s);
-        if left(s,5)='Boss,' then
-          format:=nlFDpointlist
-        else if left(s,6)='Point,' then begin
-          format:=nl4Dpointlist;
-          nlrec.zone:=DefaultZone;
-          end;
-        inc(n);
-        end;
-      close(t);
-      end;
-  end;
+Procedure PL_FormatDetect(fn:Pathstr; var format:Byte);
+Var t     :Text;
+    s     :String;
+    n     :Byte;
+    nlhub :Boolean; {TS 06.08.02 True wenn Hub-Eintrag in Nodeliste vorh.}
+    nlreg :Boolean; {TS 06.08.02 True wenn Region-Eintrag in NL vorhand.}
 
-begin
+Begin
+  nlhub:=False;     {TS 06.08.02 erstmal davon ausgehen, das nicht vorh.}
+  nlreg:=False;     {TS 06.08.02 erstmal davon ausgehen, das nicht vorh.}
+  Assign(t,fn);
+  If existf(t) then Begin
+    reset(t);
+    n:=0;
+    While (format=1) And (n<200) And Not Eof(t) Do Begin
+      Readln(t,s);
+      If left(s,5) = 'Boss,' then  Begin
+        format:=nlFDpointlist;
+        End Else If left(s,6) = 'Point,' then Begin
+        format:=nl4Dpointlist;
+        nlrec.zone:=DefaultZone;
+        End Else If left(s,4) = 'Hub,' then Begin
+        nlhub:=True; {TS 06.08.02 Hub-Eintrag vorhanden!}
+        End Else If left(s,7) = 'Region,' Then Begin
+        nlreg:=True; {TS 06.08.02 Region-Eintrag vorhanden!}
+        End;
+      Inc(n);
+      End;
+    Close(t);
+    End;
+  {TS 06.08.02 prÅfen ob es sich um eine Points24-kompatible NL handelt}
+  {TS 06.08.02 d.h. kein Hub-Eintrag, aber Region-Eintrag vorhanden!}
+  {TS 06.08.02 z.b. Zone21-Pointlist u.a.}
+  If (format = 1) And (nlreg) And (Not nlhub) Then format:=nlPoints24;
+  End;
+
+Begin
   NewNodeEntry:=false;
   fn:='*.*';
   useclip:=false;        { 'Neue Node-/Pointliste einbinden' }
   pushhp(931);
-  if ReadFilename(getres2(1019,10),fn,true,useclip) then
-    if not exist(fn) then
+  If ReadFilename(getres2(1019,10),fn,true,useclip) Then Begin
+    If not exist(fn) Then Begin
       rfehler(22)        { 'Datei ist nicht vorhanden! }
-    else begin
+    End Else Begin
       arc:=ArcType(fn);
-      if arc>0 then begin          { gepackt -> Dateiname aus Archiv auslesen }
+      If arc > 0 then Begin          { gepackt -> Dateiname aus Archiv auslesen }
         ar.name:='';
         OpenArchive(fn,arc,ar);
-        if stricmp(ar.name,'FILE_ID.DIZ') then
-          ArcNext(ar);
+        If stricmp(ar.name,'FILE_ID.DIZ') Then ArcNext(ar);
         ffn:=ustr(ar.name);
-        if ffn='' then ffn:=getfilename(fn);
+        If ffn = '' Then ffn:=getfilename(fn);
         CloseArchive(ar);
-        end
-      else
-        ffn:=getfilename(fn);
+        End Else ffn:=getfilename(fn);
       i:=1;
-      while (i<=NL_anz) and (ffn<>NLfilename(i)) do
-        inc(i);
-      if i<=NL_anz then
+      While (i <= NL_anz) And (ffn <> NLfilename(i)) Do inc(i);
+      If i <= NL_anz Then Begin
         rfehler(1009)   { 'Diese Node-/Pointliste ist bereits eingebunden' }
-      else with nlrec do
-        if (arc=0) or UniExtract(fn,OwnPath+FidoDir,ffn) then begin
-          if arc>0 then                                { ggf. entpacken }
+      End Else With nlrec Do Begin
+        If (arc = 0) or UniExtract(fn,OwnPath+FidoDir,ffn) Then Begin
+          If arc > 0 Then Begin                           { ggf. entpacken }
             fn:=OwnPath+FidoDir+ffn;
+            End;
           fillchar(nlrec,sizeof(nlrec),0);
           listfile:=ffn;
           p:=cpos('.',listfile);
-          if (p>0) and isnum(mid(listfile,p+1)) then begin
+          If (p>0) and isnum(mid(listfile,p+1)) Then Begin
             number:=ival(mid(listfile,p+1));
             listfile:=left(listfile,p)+'###';
             DoDiff:=true;
-            end;
+            End;
           format:=1;   { Nodelist }
           detect:=false;
-          if listfile='NODELIST.###' then begin         { Typvorgabe 'Nodeliste' }
+          If listfile='NODELIST.###' Then Begin         { Typvorgabe 'Nodeliste' }
             updatefile:='NODEDIFF.###';
             updatearc:='NODEDIFF.A##';
             detect:=true;
-            end
-          else if listfile='POINTS24.###' then begin    { Typvorgabe 'Points24' }
+            End
+          Else If listfile='POINTS24.###' Then Begin    { Typvorgabe 'Points24' }
             updatefile:='PR24DIFF.###';
             updatearc:='PR24DIFF.A##';
             zone:=2;
-            format:=2;
+            format:=nlPoints24;
             detect:=true;
-            end
-          else if getfileext(listfile)='PVT' then begin { Typvorgabe 'PVT-Liste' }
+            End
+          Else If getfileext(listfile)='PVT' Then Begin { Typvorgabe 'PVT-Liste' }
             updatefile:=listfile;
             format:=3;
-            if FindFidoAddress(fn,fa) then begin
+            If FindFidoAddress(fn,fa) Then Begin
               zone:=fa.zone; net:=fa.net; node:=fa.node;
               detect:=true;
-              end;
+              End;
             DelUpdate:=true;
-            end
-          else
-            PL_FormatDetect(fn,format);
-          if not detect then
-            EditNLentry(nlrec,brk)
-          else
-            brk:=false;
-          if not brk then
-            if (getfiledir(fn)=OwnPath+FidoDir) or
-               filecopy(fn,FidoDir+getfilename(fn)) then begin
+            End
+          Else PL_FormatDetect(fn,format);
+          If not detect Then EditNLentry(nlrec,brk) Else brk:=false;
+          If not brk Then Begin
+            If (getfiledir(fn)=OwnPath+FidoDir) or
+              filecopy(fn,FidoDir+getfilename(fn)) Then Begin
               inc(NL_anz);
               getmem(nlp,NL_anz*sizeof(NL_rec));
-              if NL_anz>1 then begin
+              If NL_anz > 1 Then Begin
                 FastMove(Nodelist^,nlp^,(NL_anz-1)*sizeof(NL_rec));
                 freemem(Nodelist,(NL_anz-1)*sizeof(NL_rec));
-                end;
+                End;
               nlp^[NL_anz]:=nlrec;
               Nodelist:=nlp;
-              if listfile='NODELIST.###' then
-                ShrinkNodelist(false);
+              If listfile='NODELIST.###' Then ShrinkNodelist(false);
               NewNodeEntry:=true;
-              end;
-          end;
-        end;
+              End;
+            End;
+          End;
+        End;
+      End;
+    End;
   pophp;
   freeres;
-end;
+  End;
 
 
 procedure SortNodelists(nodelist:NL_ap);       { nach Dateigrî·e sortieren }
@@ -744,6 +752,67 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.3  2003/03/17 22:36:58  my
+  TS [+MY]:- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
+                   geÑndert/korrigiert/erweitert
+             ----------------------------------------------------------------------
+             - Userindex NODEUSER.IDX "entschlackt", Code kleiner und
+               Åbersichtlicher, dadurch Laufzeit auf langsamen Rechnern
+               schneller. Bisherige Komprimierung des Index aufgehoben,
+               dadurch diverse Probleme behoben und die Mîglichkeit
+               zusÑtzlicher Erweiterungen geschaffen (s.u.).
+               (ToDo: Nodelisten-Index bei Update automatisch neu
+                      schreiben)
+             - Fix: Es kam vor, da· manche Listen (z.B. die Zone21-
+               Pointliste) zwar eingebunden und indiziert wurden, bei
+               einer Nodelist-Abfrage mit <Alt-N> auf die in der
+               Auswahlliste angezeigten EintrÑge aber trotzdem nicht
+               zugegriffen werden konnte (nach Auswahl mit <Enter> war die
+               Anzeige leer). Dies ist durch den Wegfall der Komprimierung
+               jetzt behoben.
+             - Fix: Beim Durchsuchen der Node-/Pointlisten mit F/N/D ist
+               jetzt sichergestellt, da· a) weder fehlende noch b) unzu-
+               treffende noch c) doppelte EintrÑge in der Suchergebnis-
+               liste auftreten kînnen. Z.B. wurden u.U. EintrÑge gefunden,
+               die gar nicht den Suchkriterien entsprachen, und im Sucher-
+               gebnis dann mit falschem Sysop-Namen angezeigt; kam eine
+               AKA in mehreren Listen vor (z.B. POINTS24 und R24PNT),
+               wurde nach dem Zufallsprinzip nur der Eintrag aus einer der
+               Listen (der aber dafÅr mehrfach) angezeigt.
+             - In allen Suchergebnis-/Auswahllisten steht jetzt hinter dem
+               sichtbaren Eintrag der Dateiname sowie die interne Nummer
+               der Liste, aus der der jeweilige Eintrag stammt (sichtbar
+               zu machen durch Scrollen mit <Cursor-rechts>). Damit ist
+               bei mehreren EintrÑgen mit identischer AKA, die aus
+               unterschiedlichen Listen stammen, die Herkunft des Eintrags
+               erkennbar. Au·erdem werden diese Daten fÅr die weitere
+               interne Verarbeitung benîtigt:
+             - Fix: Bei der Auswahl eines Eintrags aus der jeweiligen
+               Auswahlliste mit <Enter> ist jetzt bei mehreren EintrÑgen
+               mit identischer AKA sichergestellt, da· auch wirklich auf
+               die Daten des ausgewÑhlten Eintrags in der zugehîrigen
+               Node-/Pointliste zugegriffen wird. Bisher wurden die Daten
+               unabhÑngig vom ausgewÑhlten Eintrag immer derselben
+               (zufÑlligen) Liste entnommen, und an die Daten der EintrÑge
+               aus den Åbrigen Listen kam man gar nicht heran. Speziell
+               bei EintrÑgen aus Listen FTN-kompatibler Netze wurde
+               stellenweise auf die Daten eines beliebigen Eintrags in der
+               Fido-Nodeliste zugegriffen.
+             - Einige (vorlÑufige) énderungen in der Detailanzeige
+               unterhalb der Auswahlliste beim Durchsuchen mit F/N/D.
+             - Fix: Bei Listen im Points24-Format werden "Region"-EintrÑge
+               (i.d.R. sind das PLK-EintrÑge) beim Durchsuchen mit F/N/D
+               ignoriert (Verhalten damit jetzt identisch mit der
+               Nodelisten-Abfrage bei <Alt-N> bzw. F/N/A).
+             - Listen in einem Points24-kompatiblen Format werden jetzt
+               nicht mehr nur am Dateinamen "POINTS24.###", sondern auch
+               am Format selbst erkannt. Dadurch wird beim Einbinden
+               solcher Listen (z.B. Zone21-Liste) das korrekte Listen-
+               format "Points24" (bisher: "Nodeliste") vorgeschlagen.
+             - Interne énderung: Neuer Schalter "FIDOTST" in XPDEFINE.INC,
+               mit dem der Nodelisten-Index in Textform ausgegeben werden
+               kann.
+
   Revision 1.8.2.2  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

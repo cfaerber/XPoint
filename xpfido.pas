@@ -75,7 +75,8 @@ type  nodeinfo = record
 procedure MakeNodelistIndex;
 procedure OpenNodeindex(fn:pathstr);
 procedure CloseNodeindex;
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+procedure GetNodeInfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+procedure GetNodeInfoN(adr:string; var ni:nodeinfo; pointtyp:shortint; _nlid:Byte);
 function  IsFidoNode(adr:string):boolean;
 function  FidoIsISDN(var fa:FidoAdr):boolean;
 procedure KeepNodeindexOpen;
@@ -198,7 +199,6 @@ var   NX_adrnetx   : longint;
       FreqLst      : pathstr;
       DelFilelist  : boolean;   { lokal NodeSelProc }
       UserBlocks   : longint;
-
 
 procedure MakeNodelistIndex;
 const tbuf     = 8192;
@@ -549,142 +549,99 @@ var x,y        : byte;
       Move(uf[1]^,uf[0]^,sizeof(file));
   end;
 
-  procedure MakeUserIndex(xx:byte);     { Userindex komprimieren }
-  const ubufanz   = 100;
-  type  block     = array[0..blocksize-1] of byte;
-        ubufa     = array[0..ubufanz-1] of userrec;
-  var   bbuf      : ^block;
-        ubuf      : ^ubufa;
-        uihd      : udxheader;
-        bufp,bufanz:word;
-        lname     : string[MaxNamelen];
-        user      : UserRec;
-        cuser     : array[0..50] of byte;  { komprimierter User-Record }
-        cuserp    : byte;
-        outp      : word;  { Position in bbuf }
-        w         : word;
-        b,adrf    : byte;
-        nn        : longint;
-        ok        : boolean;
+Procedure MakeUserIndex(xx:byte);     { Userindex komprimieren }
+Const ubufanz   = 100;
+Type  block     = array[0..blocksize-1] of byte;
+      ubufa     = array[0..ubufanz-1] of userrec;
+Var   bbuf      : ^block;
+      ubuf      : ^ubufa;
+      uihd      : udxheader;
+      bufp,bufanz:word;
+      user      : UserRec;
+      cuser     : array[0..50] of byte;  { komprimierter User-Record }
+      cuserp    : byte;
+      outp      : word;  { Position in bbuf }
+      w         : word;
+      nn        : longint;
+      ok        : boolean;
 
-    procedure ReadUbuf;
-    var rr : word;
-    begin
-      blockread(uf[0]^,ubuf^,sizeof(ubufa),rr);
-      bufanz:=rr div sizeof(userrec);
-      bufp:=0;
-    end;
+{$IFDEF FIDOTST }
+      _fidotst  :Text;
+{$ENDIF}
+  Procedure ReadUbuf;
+  var rr           : Word;
+  Begin
+    Blockread(uf[0]^,ubuf^,sizeof(ubufa),rr);
+    bufanz:=rr div sizeof(userrec);
+    bufp:=0;
+    End;
 
-    procedure FlushOut;
-    begin
-      attrtxt(col.colmboxhigh);
-      mwrt(xx,y+2,strsn(nn*100 div uihd.anzahl,3));
-      bbuf^[outp]:=$ff;
-      blockwrite(uf[1]^,bbuf^,blocksize);
-      fillchar(bbuf^,blocksize,0);
-      outp:=0;
-      lname:='';
-    end;
+  Procedure FlushOut;
+  Begin
+    attrtxt(col.colmboxhigh);
+    mwrt(xx,y+2,strsn(nn*100 div uihd.anzahl,3));
+    bbuf^[outp]:=$ff;
+    Blockwrite(uf[1]^,bbuf^,blocksize);
+    Fillchar(bbuf^,blocksize,0);
+    outp:=0;
+    End;
 
-  begin
-    fillchar(uihd,sizeof(uihd),0);
-    uihd.kennung:=nodekenn;
-    seek(uf[0]^,0);
-    blockread(uf[0]^,uihd.anzahl,4);
-    new(bbuf);
-    fillchar(bbuf^,blocksize,0);
-    seek(uf[1]^,sizeof(uihd));
-    blockwrite(uf[1]^,bbuf^,blocksize-sizeof(uihd));
-    new(ubuf);
-    ReadUbuf;
-    lname:=''; outp:=0;
-    nn:=0;
-    while bufp<bufanz do begin
-      inc(nn);
-      user:=ubuf^[bufp];
-      inc(bufp);
-      if bufp=bufanz then ReadUbuf;
-      with user do
-        repeat
-          cuserp:=0;
-          { R-}
-          b:=0; w:=min(length(name),length(lname));
-          while (b<w) and (name[b+1]=lname[b+1]) do inc(b);
-          cuser[cuserp]:=b; inc(cuserp,2);
-          w:=length(name)-b;
-          cuser[cuserp]:=w; inc(cuserp);        { Name }
-          if w>0 then
-            Move(name[b+1],cuser[cuserp],w);
-          inc(cuserp,w);
-          lname:=name;
-          adrf:=0;
-          if (adr[0]>0) and (adr[0]<16) then    { Zone }
-            inc(adrf,adr[0]*16)
-          else begin
-            cuser[cuserp]:=lo(adr[0]);
-            cuser[cuserp+1]:=hi(adr[0]);
-            inc(cuserp,2);
-            end;
-          cuser[cuserp]:=lo(adr[1]); inc(cuserp);   { Net }
-          if adr[1]<256 then
-            inc(adrf,1)
-          else begin
-            cuser[cuserp]:=hi(adr[1]); inc(cuserp);
-            end;
-          cuser[cuserp]:=lo(adr[2]); inc(cuserp);   { Node }
-          if adr[2]<256 then
-            inc(adrf,2)
-          else begin
-            cuser[cuserp]:=hi(adr[2]); inc(cuserp);
-            end;
-          if adr[3]=0 then                          { Point }
-            inc(adrf,4)
-          else begin
-            cuser[cuserp]:=lo(adr[3]); inc(cuserp);
-            if adr[3]<256 then
-              inc(adrf,8)
-            else begin
-              cuser[cuserp]:=hi(adr[3]); inc(cuserp);
-              end;
-            end;
-          cuser[1]:=adrf;                           { Adre·-Flag }
-          if fnr=1 then
-            inc(cuser[2],$40)
-          else begin
-            cuser[cuserp]:=fnr;
-            inc(cuserp);
-            end;
-          if fadr<$1000000 then begin
-            inc(cuser[2],$80);
-            FastMove(fadr,cuser[cuserp],3);
-            inc(cuserp,3);
-            end
-          else begin
-            FastMove(fadr,cuser[cuserp],4);
-            inc(cuserp,4);
-            end;
-          { R+}
-          ok:=(outp+cuserp+1)<=blocksize;
-          if not ok then
-            FlushOut
-          else begin
-            FastMove(cuser,bbuf^[outp],cuserp);
-            inc(outp,cuserp);
-            end;
-        until ok;
-      end;
+Begin
+{$IFDEF FIDOTST }
+  Assign(_fidotst,FidoDir+'$USERIDX.TXT');
+  Rewrite(_fidotst);
+  Writeln(_fidotst,' Zone: Netz/ Node.Point  Name/System                         Node-/Pointl.   Nr.    Dateipos.');
+{$ENDIF}
+  Fillchar(uihd,sizeof(uihd),0);          {header lîschen}
+  uihd.kennung:=nodekenn;
+  Seek(uf[0]^,0);
+  Blockread(uf[0]^,uihd.anzahl,4);    {unkompr. header lesen}
+  New(bbuf);
+  Fillchar(bbuf^,blocksize,0); {ausgabe-puffer lîschen}
+  Seek(uf[1]^,sizeof(uihd)); {pos. hinter den User-Index-Header}
+  Blockwrite(uf[1]^,bbuf^,blocksize-sizeof(uihd)); {Rest bis blockende lîschen}
+  New(ubuf);
+  ReadUbuf; {ersten Block lesen}
+  outp:=0; {zeiger ausgabepuffer auf 0}
+  nn:=0;
+  While bufp<bufanz Do Begin {solange was im puffer ist}
+    inc(nn);
+    user:=ubuf^[bufp]; {einen user-idx-satz kopieren (unkompr.)}
+    inc(bufp);
+    If bufp=bufanz Then ReadUbuf; {nÑchsten block holen}
+    With user Do Begin
+{$IFDEF FIDOTST }
+      Writeln(_fidotst,adr[0]:5,':',adr[1]:5,'/',adr[2]:5,'.',adr[3]:5,
+        ' ':2,Copy(name+'                                ',1,32),
+        NLFilename(fnr):16,'   [',fnr:2,']',fadr:12);
+{$ENDIF}
+      cuser[0]:=0;                        {TS 06.08.2002, LÑnge alter String}
+      cuser[1]:=0;                        {TS 06.08.2002, altes Adressflag}
+      w:=length(name);                    {TS 06.08.2002, LÑnge des Namens}
+      FastMove(name[0],cuser[2],w+1);     {TS 06.08.2002, Name+LÑngenbyte}
+      FastMove(adr[0],cuser[w+3],8);      {TS 06.08.2002, FIDO-Adresse}
+      cuser[w+11]:=fnr;                   {TS 06.08.2002, Nodelistennummer einfÅgen}
+      FastMove(fadr,cuser[w+12],4);       {TS 06.08.2002, Dateipos.}
+      cuserp:=w+16;                       {TS 06.08.2002}
+      ok:=(outp+cuserp+1)<=blocksize;     {mu· puffer geschrieben werden?}
+      End;
+    If not ok then FlushOut;              {TS 06.08.2002, Puffer schreiben }
+    FastMove(cuser,bbuf^[outp],cuserp);   {in Ausgabepuffer kopieren}
+    Inc(outp,cuserp);                     {TS 06.08.2002, Zeiger anpassen}
+    End;
+  If outp > 0 then FlushOut;              {rest-puffer schreiben}
+  Seek(uf[1]^,0);                         {auf datei-anfang gehen}
+  uihd.blocks:=filesize(uf[1]^) div blocksize - 1;
+  Blockwrite(uf[1]^,uihd,sizeof(uihd));   {Header schreiben }
+  Dispose(ubuf);
+  Dispose(bbuf);
+{$IFDEF FIDOTST }
+  Close(_fidotst);
+{$ENDIF}
+  End;
 
-    if outp>0 then
-      FlushOut;
-    seek(uf[1]^,0);
-    uihd.blocks:=filesize(uf[1]^) div blocksize - 1;
-    blockwrite(uf[1]^,uihd,sizeof(uihd));   { Header schreiben }
-    dispose(ubuf);
-    dispose(bbuf);
-  end;
-
-  procedure SortNodes(l,r:integer);
-  var i,j : integer;
+Procedure SortNodes(l,r:integer);
+Var   i,j : integer;
       x   : word;
       w   : noderec;
   begin
@@ -702,35 +659,35 @@ var x,y        : byte;
     if r>i then sortnodes(i,r);
   end;
 
-  procedure writenodes;
-  begin
-    blockwrite(idf,np^,nodes*sizeof(noderec));
-  end;
+Procedure writenodes;
+Begin
+  Blockwrite(idf,np^,nodes*sizeof(noderec));
+  End;
 
-  procedure writepoints;
-  begin
-    blockwrite(idf,points,2);
-    blockwrite(idf,pp^,points*sizeof(pointrec));
-    points:=0;
-  end;
+Procedure writepoints;
+Begin
+  Blockwrite(idf,points,2);
+  Blockwrite(idf,pp^,points*sizeof(pointrec));
+  points:=0;
+  End;
 
-  procedure flushnbuffers;
-  begin
-    blockwrite(tf,nbuffer,bufnets*sizeof(netrec));
-    bufnets:=0;
-  end;
+Procedure flushnbuffers;
+Begin
+  Blockwrite(tf,nbuffer,bufnets*sizeof(netrec));
+  bufnets:=0;
+  End;
 
-  procedure AppPoint(pnode:word);
-  begin
-    if points<maxpoints then begin
-      pp^[points].point:=node;
-      pp^[points].adr:=fpos;
-      inc(points);
-      AppUser(zone,net,pnode,node,fpos);
-      end;
-  end;
+Procedure AppPoint(pnode:word);
+Begin
+  If points<maxpoints then Begin
+    pp^[points].point:=node;
+    pp^[points].adr:=fpos;
+    inc(points);
+    AppUser(zone,net,pnode,node,fpos);
+    End;
+  End;
 
-begin
+Begin
   if not testmem($8000,true) then exit;
   getmem(tb,tbuf);
   msgbox(59,5,getres2(2101,1),x,y) ;   { 'Nodeindex anlegen' }
@@ -964,8 +921,11 @@ begin
   assign(uf[1]^,UserIndexF);
   rewrite(uf[1]^,1);
   MakeUserindex(x+length(getres2(2101,7))-2);
-  close(uf[0]^); erase(uf[0]^); dispose(uf[0]);
-  close(uf[1]^); dispose(uf[1]);
+  close(uf[0]^);
+  erase(uf[0]^);
+  dispose(uf[0]);
+  close(uf[1]^);
+  dispose(uf[1]);
 
   seek(idf,0);
   blockwrite(idf,ixh,sizeof(ixh));
@@ -2251,6 +2211,67 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.8  2003/03/17 22:36:58  my
+  TS [+MY]:- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
+                   geÑndert/korrigiert/erweitert
+             ----------------------------------------------------------------------
+             - Userindex NODEUSER.IDX "entschlackt", Code kleiner und
+               Åbersichtlicher, dadurch Laufzeit auf langsamen Rechnern
+               schneller. Bisherige Komprimierung des Index aufgehoben,
+               dadurch diverse Probleme behoben und die Mîglichkeit
+               zusÑtzlicher Erweiterungen geschaffen (s.u.).
+               (ToDo: Nodelisten-Index bei Update automatisch neu
+                      schreiben)
+             - Fix: Es kam vor, da· manche Listen (z.B. die Zone21-
+               Pointliste) zwar eingebunden und indiziert wurden, bei
+               einer Nodelist-Abfrage mit <Alt-N> auf die in der
+               Auswahlliste angezeigten EintrÑge aber trotzdem nicht
+               zugegriffen werden konnte (nach Auswahl mit <Enter> war die
+               Anzeige leer). Dies ist durch den Wegfall der Komprimierung
+               jetzt behoben.
+             - Fix: Beim Durchsuchen der Node-/Pointlisten mit F/N/D ist
+               jetzt sichergestellt, da· a) weder fehlende noch b) unzu-
+               treffende noch c) doppelte EintrÑge in der Suchergebnis-
+               liste auftreten kînnen. Z.B. wurden u.U. EintrÑge gefunden,
+               die gar nicht den Suchkriterien entsprachen, und im Sucher-
+               gebnis dann mit falschem Sysop-Namen angezeigt; kam eine
+               AKA in mehreren Listen vor (z.B. POINTS24 und R24PNT),
+               wurde nach dem Zufallsprinzip nur der Eintrag aus einer der
+               Listen (der aber dafÅr mehrfach) angezeigt.
+             - In allen Suchergebnis-/Auswahllisten steht jetzt hinter dem
+               sichtbaren Eintrag der Dateiname sowie die interne Nummer
+               der Liste, aus der der jeweilige Eintrag stammt (sichtbar
+               zu machen durch Scrollen mit <Cursor-rechts>). Damit ist
+               bei mehreren EintrÑgen mit identischer AKA, die aus
+               unterschiedlichen Listen stammen, die Herkunft des Eintrags
+               erkennbar. Au·erdem werden diese Daten fÅr die weitere
+               interne Verarbeitung benîtigt:
+             - Fix: Bei der Auswahl eines Eintrags aus der jeweiligen
+               Auswahlliste mit <Enter> ist jetzt bei mehreren EintrÑgen
+               mit identischer AKA sichergestellt, da· auch wirklich auf
+               die Daten des ausgewÑhlten Eintrags in der zugehîrigen
+               Node-/Pointliste zugegriffen wird. Bisher wurden die Daten
+               unabhÑngig vom ausgewÑhlten Eintrag immer derselben
+               (zufÑlligen) Liste entnommen, und an die Daten der EintrÑge
+               aus den Åbrigen Listen kam man gar nicht heran. Speziell
+               bei EintrÑgen aus Listen FTN-kompatibler Netze wurde
+               stellenweise auf die Daten eines beliebigen Eintrags in der
+               Fido-Nodeliste zugegriffen.
+             - Einige (vorlÑufige) énderungen in der Detailanzeige
+               unterhalb der Auswahlliste beim Durchsuchen mit F/N/D.
+             - Fix: Bei Listen im Points24-Format werden "Region"-EintrÑge
+               (i.d.R. sind das PLK-EintrÑge) beim Durchsuchen mit F/N/D
+               ignoriert (Verhalten damit jetzt identisch mit der
+               Nodelisten-Abfrage bei <Alt-N> bzw. F/N/A).
+             - Listen in einem Points24-kompatiblen Format werden jetzt
+               nicht mehr nur am Dateinamen "POINTS24.###", sondern auch
+               am Format selbst erkannt. Dadurch wird beim Einbinden
+               solcher Listen (z.B. Zone21-Liste) das korrekte Listen-
+               format "Points24" (bisher: "Nodeliste") vorgeschlagen.
+             - Interne énderung: Neuer Schalter "FIDOTST" in XPDEFINE.INC,
+               mit dem der Nodelisten-Index in Textform ausgegeben werden
+               kann.
+
   Revision 1.15.2.7  2002/08/02 22:47:38  my
   MA:- Fix: Nodelisten-Abfrage mit <Alt-N> funktionierte bei Pointlisten
        im FD-Format nicht immer (speziell nicht bei den Points des jeweils
@@ -2311,7 +2332,8 @@ end.
   MH: Flagzeile kuerzen, falls zu lang
 
   Revision 1.8  2000/03/03 18:14:46  mk
-  MO: - fileseek fidofilelist, Quelltext renoviert und Suche nach ganzen Woertern eingef¸hrt
+  MO: - fileseek fidofilelist, Quelltext renoviert und Suche nach
+        ganzen Woertern eingefÅhrt
 
   Revision 1.7  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen
