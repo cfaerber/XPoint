@@ -43,7 +43,6 @@ program openxp;
 {%File 'xpsendmessage_subs.inc'}
 
 uses
-  Forms,
   zpr in 'zpr.pas',
   clip in 'clip.pas',
   CRC in 'crc.pas',
