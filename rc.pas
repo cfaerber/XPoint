@@ -319,7 +319,7 @@ begin  {programm}
       infile:=infile+FileUpperCase('.rq');
     if not exist(infile) then
       fehler('"'+infile+'" not found.');
-    if (mid(infile, RightPos('.',infile)+1) <> FileUpperCase('RQ')) then
+    if (mid(infile, RightPos('.',infile)+1) <> FileUpperCase('rq')) then
       fehler('"'+infile+'" wrong extension');
     InitVar;
     ReadHeader;
@@ -329,6 +329,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.15  2000/09/04 12:09:24  hd
+        - Fix: Inkonsistente Dateischreibung
+
         Revision 1.14  2000/08/19 20:15:36  mk
         MO:- laeuft jetzt wieder unter 32 Bit
 
