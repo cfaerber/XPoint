@@ -24,62 +24,60 @@ Complete sources
 OpenXP-Team, http://www.openxp.de/
 
 
-ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-º  OpenXP/16 v3.40 RC3       (Update)  º
-ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 09.03.2002  º
-ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º Vorabversion des Release Candidate 3 º
-º der CrossPoint-Weiterentwicklung von º
-º OpenXP/16.  Dieser Snapshot  enth„lt º
-º nicht nur  zahlreiche,  sondern auch º
-º einige wichtige Bugfixes  kritischer º
-º Fehler, die zum Teil seit ber einem º
-º Jahr existieren. Des weiteren wurden º
-º einige Funktionen des neuen Netztyps º
-º RFC/Client implementiert bzw. beste- º
-º hende erweitert (Multiserverbetrieb, º
-º *SETUSER-Funktion).                  º
-º ------------------------------------ º
-º Ein Update auf  diesen Snapshot wird º
-º allen  XP-Usern dringend  empfohlen, º
-º die  noch  einen  OpenXP/16-Snapshot º
-º aus der RC3-Serie vor dem 09.03.2002 º
-º einsetzen!  Der Einsatz  dieses oder º
-º eines  sp„teren Snapshots  ist unbe- º
-º dingt  notwendig,  wenn ein  Umstieg º
-º von  CrossPoint v3.12  auf OpenXP/16 º
-º durchgefhrt werden soll!            º
-º ------------------------------------ º
-º                     (c) by OpenXP/16 º
-ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+º  OpenXP/16 v3.40 RC3            (Update)  º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º  Entwickler-Snapshot vom 31.03.2002       º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
+º mit  wiederum  zahlreichen und  teilweise º
+º wichtigen Bugfixes  sowie einigen kleinen º
+º aber praktischen Features.  Gr”áere Fixes º
+º im  Bereich  Zeichensatzkonvertierung und º
+º Decodierung,  im  Archiv-Viewer,  bei der º
+º Behandlung von MIME-Multipart-Nachrichten º
+º sowie bei den Brett-/User-Suchfunktionen. º
+º Neues  Makro  $ASK  zur Parameterbergabe º
+º an externe Programme, der UUZ untersttzt º
+º jetzt den Header "U-Delivered-To".        º
+º ----------------------------------------- º
+º Ein Update auf diesen Snapshot wird allen º
+º XP-Usern   dringend  empfohlen,  speziell º
+º jedoch denen,  die noch einen  OpenXP/16- º
+º Snapshot des RC3 vor dem  09.03.2002 ein- º
+º setzen!  Der Einsatz  eines Snapshots vom º
+º 09.03.2002 oder sp„ter ist unbedingt not- º
+º wendig,  wenn ein  Umstieg von CrossPoint º
+º v3.1x auf OpenXP/16 durchgefhrt wird!    º
+º ----------------------------------------- º
+º                    (c) 2002 by OpenXP/16  º
+ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
 
-ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-º  OpenXP/16 v3.40 RC3 (Komplettpaket) º
-ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 09.03.2002  º
-ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º Vorabversion des Release Candidate 3 º
-º der CrossPoint-Weiterentwicklung von º
-º OpenXP/16.  Dieser Snapshot  enth„lt º
-º nicht nur  zahlreiche,  sondern auch º
-º einige wichtige Bugfixes  kritischer º
-º Fehler, die zum Teil seit ber einem º
-º Jahr existieren. Des weiteren wurden º
-º einige Funktionen des neuen Netztyps º
-º RFC/Client implementiert bzw. beste- º
-º hende erweitert (Multiserverbetrieb, º
-º *SETUSER-Funktion).                  º
-º ------------------------------------ º
-º Ein Update auf  diesen Snapshot wird º
-º allen  XP-Usern dringend  empfohlen, º
-º die  noch  einen  OpenXP/16-Snapshot º
-º aus der RC3-Serie vor dem 09.03.2002 º
-º einsetzen!  Der Einsatz  dieses oder º
-º eines  sp„teren Snapshots  ist unbe- º
-º dingt  notwendig,  wenn ein  Umstieg º
-º von  CrossPoint v3.12  auf OpenXP/16 º
-º durchgefhrt werden soll!            º
-º ------------------------------------ º
-º                     (c) by OpenXP/16 º
-ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+º  OpenXP/16 v3.40 RC3       Komplettpaket  º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º  Entwickler-Snapshot vom 31.03.2002       º
+ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
+º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
+º mit  wiederum  zahlreichen und  teilweise º
+º wichtigen Bugfixes  sowie einigen kleinen º
+º aber praktischen Features.  Gr”áere Fixes º
+º im  Bereich  Zeichensatzkonvertierung und º
+º Decodierung,  im  Archiv-Viewer,  bei der º
+º Behandlung von MIME-Multipart-Nachrichten º
+º sowie bei den Brett-/User-Suchfunktionen. º
+º Neues  Makro  $ASK  zur Parameterbergabe º
+º an externe Programme, der UUZ untersttzt º
+º jetzt den Header "U-Delivered-To".        º
+º ----------------------------------------- º
+º Ein Update auf diesen Snapshot wird allen º
+º XP-Usern   dringend  empfohlen,  speziell º
+º jedoch denen,  die noch einen  OpenXP/16- º
+º Snapshot des RC3 vor dem  09.03.2002 ein- º
+º setzen!  Der Einsatz  eines Snapshots vom º
+º 09.03.2002 oder sp„ter ist unbedingt not- º
+º wendig,  wenn ein  Umstieg von CrossPoint º
+º v3.1x auf OpenXP/16 durchgefhrt wird!    º
+º ----------------------------------------- º
+º                    (c) 2002 by OpenXP/16  º
+ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
