@@ -156,6 +156,7 @@ function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadre
 procedure UkonvStr(var s:string;len:integer);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
+function IBMToISO(const s: String): String;
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
   Zeichensatz konvertiert }
 function ConvertFileName(const s:string): String;
@@ -1270,6 +1271,15 @@ begin
       IsoToIBM[i] := chr(iso2ibmtab[byte(s[i])])
 end;
 
+function IBMToISO(const s: String): String;
+var
+  i: Integer;
+begin
+  SetLength(Result, Length(s));
+  for i := 1 to Length(s) do
+    Result[i] := Char(IBM2ISOTab[byte(s[i])]);
+end;
+
 function ConvertFileName(const s:string): String;
 begin
   {$IFDEF Win32 }
@@ -1288,6 +1298,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/08/27 10:37:08  mk
+  - UUZ ist jetzt intern
+
   Revision 1.68  2000/08/19 09:41:36  mk
   - Code aufgeraeumt
 

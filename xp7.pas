@@ -20,7 +20,7 @@ interface
 uses
       {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
       sysutils,xpglobal,dos,dosx,typeform,uart,datadef,database,
-      fileio,inout,keys,winxp,maske,maus2,montage,lister,
+      fileio,inout,keys,winxp,maske,maus2,montage,lister,uuz,
       resource,stack,xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
 
 
@@ -1536,6 +1536,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/08/27 10:37:09  mk
+  - UUZ ist jetzt intern
+
   Revision 1.30  2000/08/15 16:51:02  mk
   - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
 

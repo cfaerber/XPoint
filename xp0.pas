@@ -210,14 +210,12 @@ const
 {$IFDEF UnixFS}
        MaggiBin         : string        = 'maggi';
        UUCICOBin        : string        = 'uucico';
-       UUZBin           : string        = 'uuz';
        Yup2PktBin       : string        = 'yup2pkt';
        ZFidoBin         : string        = 'zfido';
        ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
        UUCICOBin        = 'UUCICO.EXE';
-       UUZBin           = 'UUZ.EXE';
        Yup2PktBin       = 'YUP2PKT.EXE';
        ZFidoBin         = 'ZFIDO.EXE';
        ZQWKBin          = 'ZQWK.EXE';
@@ -1095,6 +1093,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.88  2000/08/27 10:37:09  mk
+  - UUZ ist jetzt intern
+
   Revision 1.87  2000/08/26 08:47:42  mk
   JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 

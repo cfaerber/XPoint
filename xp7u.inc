@@ -61,12 +61,13 @@ begin
 end;
 
 
+(*
 procedure NoUUZ;
 begin
   {window(1,1,screenwidth,screenlines);}
   trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
   twin;
-end;
+end; *)
 
 procedure NoUUCICO;
 begin
@@ -91,11 +92,11 @@ var sr    : searchrec;
     s     : shortstring;
     p     : byte;
     cunb  : string;
-    opt   : string;
     news  : boolean;
     freeze: boolean;
     gzip  : boolean;
     f     : boolean;
+    uu: TUUZ;
 
  procedure DelAll(fn:string);
  var sr: searchrec;
@@ -164,26 +165,30 @@ begin
   end;
   spacksize:=0;
   spufsize:=0;
-  if not existBin(UUZBin) then begin
-    NoUUZ;
-    exit;
-  end;
   MakeMimetypCfg;
   with boxpar^ do begin
-    if SizeNego then opt:='-s '
-    else opt:='';
+    uu := TUUZ.Create;
+    if SizeNego then uu.parsize := true;
     if UUsmtp then
-      if UpArcer='' then opt:=opt+'-SMTP '
-      else if pos('freeze',LowerCase(uparcer))>0 then opt:=opt+'-fSMTP '
-      else if pos('gzip',LowerCase(uparcer))>0 then opt:=opt+'-zSMTP '
-      else opt:=opt+'-cSMTP ';
-    if NewsMIME then opt:=opt+'-MIME ';
-    if MIMEqp then opt:=opt+'-qp ';
-    if RFC1522 then opt:=opt+'-1522 ';
-    opt:=opt+'-u'+BoxPar^.username+' ';
+      if UpArcer='' then uu.SMTP := true
+      else if pos('freeze',LowerCase(uparcer))>0 then uu.fSMTP := true
+      else if pos('gzip',LowerCase(uparcer))>0 then uu.zSMTP := true
+      else uu.cSMTP := true;
+    if NewsMIME then uu.NewsMime := true;
+    if MIMEqp then uu.MakeQP := true;
+    if RFC1522 then uu.RFC1522 := true;
+    uu.MailUser := BoxPar^.UserName;
+    uu.NewsUser := BoxPar^.UserName;
+    uu.FileUser := BoxPar^.UserName;
     f:=OutFilter(source);
-    shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
-          boxpar^.boxname+' '+copy(caller,3,4),400,0);
+    uu.Source := source;
+    uu.Dest := DestDir;
+    uu._from := boxpar^.pointname;
+    uu._to := boxpar^.boxname;
+    uu.uunumber := hexval(copy(caller,3,4));
+    uu.ztou;
+    uu.Free;
+
     if f then _era(source);
     end;
   if errorlevel<>0 then exit;
@@ -254,6 +259,7 @@ var sr      : searchrec;
     rr      : word;
     uncompy : byte;
     dummy   : longint;
+    uu : TUUZ;
 
   procedure uncompress(fn:string; freeze,gzip:boolean);
   var s : string;
@@ -314,8 +320,13 @@ begin
     FindClose(sr);
     dispose(f1); dispose(f2);
     clrscr;
-    shell(UUZBin+' -uz -w:'+strs(screenlines)+
-          ' '+XFerDir+'X*. '+dpuffer+' '+boxpar^.pointname+domain,600,3);
+    uu := TUUZ.Create;
+    uu.source := XFerDir+'X*.';
+    uu.dest := dpuffer;
+    uu.OwnSite := boxpar^.pointname+domain;
+    uu.utoz;
+    uu.free;
+
     findfirst(XFerDir+'*.0??',ffAnyFile,sr);
     while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
@@ -373,11 +384,8 @@ begin
     WriteUUnummer(uunum);
   UUCPnetcall:=(res=uu_ok);
   cursor(curoff);
-  if not existBin(UUZBin) then begin
-    nouuz; exit;
-    end;
-  {window(1,1,screenwidth,screenlines);}
-  if (res=uu_ok) or (res=uu_recerr) then begin
+  if (res=uu_ok) or (res=uu_recerr) then
+  begin
     NC^.sendbuf:=spufsize;
     NC^.sendpack:=spacksize;
     NC^.abbruch:=(res<>uu_ok);
@@ -461,6 +469,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/08/27 10:37:10  mk
+  - UUZ ist jetzt intern
+
   Revision 1.19  2000/08/15 16:51:02  mk
   - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
 

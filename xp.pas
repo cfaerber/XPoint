@@ -88,7 +88,8 @@ uses xpx,
      xp_iti,   { Maus-ITI-Infofile  }
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
-     xpimpexp; { Import/Export      }
+     xpimpexp, { Import/Export      }
+     UUZ;      { RFC<->ZConnect     }
 
 label ende;
 
@@ -186,6 +187,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.36  2000/08/27 10:37:09  mk
+  - UUZ ist jetzt intern
+
   Revision 1.35  2000/07/27 10:12:59  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

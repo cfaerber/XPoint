@@ -18,7 +18,9 @@
   {$UNDEF NCRT}
 {$ENDIF}
 
-program uuz;
+unit uuz;
+
+interface
 
 uses xpglobal,
   {$IFDEF Linux }
@@ -31,6 +33,63 @@ uses xpglobal,
   crt,
   {$ENDIF }
   sysutils, classes, dos, typeform, fileio, xpdatum, montage;
+
+type
+  TUUZ = class
+  protected
+    f1, f2: file;                         { Quell/Zieldatei     }
+    addpath: String;
+    ppp: boolean;
+    CopyXLines: Boolean;         { Alle X-Lines nach RFC zurÅckkopieren }
+    getrecenvemp: boolean; { Envelope-EmpfÑnger aus Received auslesen? }
+    NoMIME: boolean ;              { -noMIME }
+    shrinkheader: boolean;        { uz: r-Schalter }
+    nomailer: boolean;
+    envemp: string;                       { Envelope-EmpfÑnger }
+    eol: Integer;
+    function SetMailUser(mailuser: string): string;
+    procedure FlushOutbuf;
+    procedure wrfs(s: string);
+    procedure WriteHeader;
+    procedure ReadBuf;
+    procedure OpenFile(var fn: String);
+    procedure ReadString;
+    procedure ReadBinString(bytesleft: longint); { Base64-Codierung }
+    procedure ReadRFCheader(mail: boolean; s0: string);
+    procedure ConvertMailfile(fn: String; mailuser: string; var mails: Integer);
+    procedure ConvertSmtpFile(fn: String; compressed: boolean; var mails: Integer);
+    procedure ConvertNewsfile(fn: String; var news: Integer);
+    procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
+    procedure RFC1522form;                  { evtl. s mit quoted-printable codieren }
+    procedure SetMimeData;
+    procedure WriteRFCheader(var f: file; mail: boolean);
+  public
+     u2z: boolean;                         { Richtung; mail/news }
+    source, dest: String;                { Quell-/Zieldateien  }
+    _from, _to: string;                   { UUCP-Systemnamen }
+    OwnSite: string;             { fÅr EmpfÑngeradresse von Mails }
+    uunumber: word;                       { fortlaufende Hex-Paketnummer }
+    MailUser: string;        { fuer U-Zeile im X-File }
+    NewsUser: string;
+    FileUser: string;
+    RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
+    MakeQP: boolean;                   { -qp: MIME-quoted-printable }
+    NewsMIME: boolean ;
+    SMTP: boolean ;
+    zsmtp: boolean ;               { GNU-Zipped SMTP  }
+    cSMTP: boolean ;               { compressed SMTP  }
+    fSMTP: boolean ;               { frozen SMTP      }
+    ParSize: boolean ;             { Size negotiation }
+    constructor create;
+    destructor Destroy; override;
+    procedure testfiles;
+    procedure GetPar;
+    function NextUunumber: word;
+    procedure ZtoU;
+    procedure UtoZ;
+  end;
+
+implementation
 
 const
   bufsize = 65536;
@@ -72,27 +131,6 @@ const
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
   tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
 
-  XpWindow: byte = 0;
-
-  ParSize: boolean = false;             { Size negotiation }
-  SMTP: boolean = false;
-  cSMTP: boolean = false;               { compressed SMTP  }
-  fSMTP: boolean = false;               { frozen SMTP      }
-  zsmtp: boolean = false;               { GNU-Zipped SMTP  }
-  NewsMIME: boolean = false;
-  NoMIME: boolean = false;              { -noMIME }
-  MakeQP: boolean = false;              { -qp: MIME-quoted-printable }
-  ppp: boolean = false;
-  CopyXLines: Boolean  = false;         { Alle X-Lines nach RFC zurÅckkopieren }
-  RFC1522: boolean = false;             { Headerzeilen gem. RFC1522 codieren }
-  getrecenvemp: boolean = false; { Envelope-EmpfÑnger aus Received auslesen? }
-  MailUser: string = 'mail';        { fuer U-Zeile im X-File }
-  NewsUser: string = 'news';
-  FileUser: string = 'root';
-  OwnSite: string = '';             { fÅr EmpfÑngeradresse von Mails }
-  shrinkheader: boolean = false;        { uz: r-Schalter }
-  nomailer: boolean = false;
-
   tText = 1;                            { Content-Types: plain, richtext       }
   tMultipart = 2;                       { mixed, parallel, alternative, digest }
   tMessage = 3;                         { rfc822, partial, external-body       }
@@ -116,28 +154,10 @@ type
   charr = array[0..65530] of char;
   charrp = ^charr;
 
-  TUUZ = class
-  protected
-    addpath: String;
-  public
-    constructor create;
-    destructor Destroy; override;
-  end;
-
 var
-  source, dest: String;                { Quell-/Zieldateien  }
-  f1, f2: file;                         { Quell/Zieldatei     }
-  u2z: boolean;                         { Richtung; mail/news }
-  mails, news: longint;                 { Counter             }
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
   hd: header;
-  // Liste der EmpfÑnger
-  empflist: TStringList;
-  uline: TStringList;
-  xline: TStringList;                    // X-Zeilen, die 'Åbrig' sind
-  uunumber: word;                       { fortlaufende Hex-Paketnummer }
-  _from, _to: string;                   { UUCP-Systemnamen }
   outbuf: charrp;
   outbufpos: word;
   s: string;
@@ -147,12 +167,12 @@ var
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
   RawNews: Boolean;
-  eol: Integer;
-  TempS: ShortString;
   // EnthÑlt die eigentliche Nachricht
   Mail: TStringList;
-
-  envemp: string;                       { Envelope-EmpfÑnger }
+  // Liste der EmpfÑnger
+  empflist: TStringList;
+  uline: TStringList;
+  xline: TStringList;                    // X-Zeilen, die 'Åbrig' sind
 
 const
   { Wird zum Einlesen der Customizable Headerlines benîtigt }
@@ -161,97 +181,130 @@ const
   // S wird StandardmÑ·ig mit dieser LÑnge allociert
   MaxSLen = 4096;
 
-var
-  UUZc: TUUZ;
+// Frischen Header erzeugen
+procedure ClearHeader;
+begin
+  with hd do
+  if Assigned(AddRef) then
+  begin
+    AddRef.Free;
+    XEmpf.Free;
+    XOEM.Free;
+    Followup.Free;
+  end;
 
+  ULine.Clear; XLine.Clear; Mail.Clear;
+  Fillchar(hd, sizeof(hd), 0);
+
+  with hd do
+  begin
+    Netztyp := nt_RFC;
+    AddRef := TStringList.Create;
+    XEmpf := TStringList.Create;
+    XOEM := TStringList.Create;
+    Followup := TStringList.Create;
+  end;
+end;
 
 constructor TUUZ.create;
+var
+  t: Text;
+
+  procedure rh(fn: String; mail: boolean);
+  var
+    s: string;
+  begin
+    if exist(fn) then
+    begin
+      assign(t, fn);
+      reset(t);
+      while not eof(t) do
+      begin
+        readln(t, s);
+        s := trim(s);
+        if s <> '' then
+          if cpos(':', s) < 3 then
+            writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
+          else
+            AddHd.AddObject(s, Pointer(longint(mail)));
+      end;
+      close(t);
+    end;
+  end;
+
 begin
   addpath := '';
+  MakeQP := false;
+  ppp := false;
+  CopyXLines := false;         { Alle X-Lines nach RFC zurÅckkopieren }
+  RFC1522 := false;             { Headerzeilen gem. RFC1522 codieren }
+  getrecenvemp := false; { Envelope-EmpfÑnger aus Received auslesen? }
+  ParSize := false;             { Size negotiation }
+  SMTP:= false;
+  cSMTP:= false;               { compressed SMTP  }
+  fSMTP:= false;               { frozen SMTP      }
+  zsmtp:= false;               { GNU-Zipped SMTP  }
+  NewsMIME:= false;
+  NoMIME:= false;              { -noMIME }
+  MailUser:= 'mail';        { fuer U-Zeile im X-File }
+  NewsUser:= 'news';
+  FileUser:= 'root';
+  OwnSite:= '';             { fÅr EmpfÑngeradresse von Mails }
+  shrinkheader:= false;        { uz: r-Schalter }
+  nomailer:= false;
+  uunumber:= 0;
+  source := '';
+  dest:= '';                { Quell-/Zieldateien  }
+  _from := '';
+  _to := '';                   { UUCP-Systemnamen }
+  envemp := '';                    { Envelope-EmpfÑnger }
+  eol := 0;
+
+  ULine := TStringlist.Create;
+  XLine := TStringList.Create;
+  qprchar := [^L, '=', #127..#255];
+  getmem(outbuf, bufsize);
+
+  // zusÑtzliche Headerzeilen einlesen
+  AddHd := TStringList.Create;
+  EmpfList := TStringList.Create;
+  Mail := TStringList.Create;
+
+  Fillchar(hd, sizeof(hd), 0);
+  ClearHeader;
+
+  rh('NEWS.RFC', false);
+  rh('MAIL.RFC', true);
 end;
 
 destructor TUUZ.Destroy;
 begin
+  AddHd.Free;
+  EmpfList.Free;
+  ULine.Free; XLine.Free;
+  Mail.Free;
+  freemem(outbuf, bufsize);
 end;
 
 
-{ -------------------------------------------------------------------- }
-
-procedure IBM2ISO(var s: string);
-var
-  i: Integer;
-begin
-  for i := 1 to Length(s) do
-    s[i] := Char(IBM2ISOTab[byte(s[i])]);
-end;
-
-function ISO2IBM(const s: string): string;
-var
-  i: Integer;
-begin
-  SetLength(Result, Length(s));
-  for i := 1 to Length(s) do
-    if s[i] > #127 then
-      Result[i] := Char(ISO2IBMTab[byte(s[i])])
-    else
-      Result[i] := s[i];
-end;
-
-procedure logo;
-begin
-  writeln;
-  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
-  writeln('OpenXP-Version ', verstr, pformstr, betastr, ' ', x_copyright,
-    ' by ', author_name, ' <', author_mail, '>');
-  writeln;
-end;
-
-procedure HelpPage;
-begin
-  writeln('UUZ -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
-  writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
-  writeln;
-  writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
-  writeln;
-  writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
-  writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
-  writeln('              -MIME   =  Use MIME for news');
-  writeln('              -noMIME =  Do not create any MIME headers');
-  writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
-  writeln('              -1522   =  MIME: create RFC-1522 headers');
-  writeln('              -uUser  =  User to return error messages to');
-  writeln('              -x      =  Export all unkown X-Lines');
-  halt(1);
-end;
-
-procedure error(s: string);
-begin
-  writeln('Fehler: ', s);
-  halt(1);
-end;
-
-procedure GetPar;
+procedure TUUZ.GetPar;
 var
   i: integer;
   switch: string;
 begin
   if (LowerCase(paramstr(1)) <> '-uz') and (LowerCase(paramstr(1)) <> '-zu')
-    then
-    HelpPage;
+    then raise Exception.Create('Falsche Parameterzahl');
   if LowerCase(paramstr(1)) = '-uz' then
   begin
-    if paramcount < 3 then helppage;
+    if paramcount < 3 then raise Exception.Create('Falsche Parameterzahl');
     u2z := true;
     source := ''; dest := ''; OwnSite := '';
     for i := 2 to paramcount do
       if left(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
-        if left(switch, 2) = 'w:' then
-          XpWindow := minmax(IVal(mid(switch, 3)), 15, 60)
-        else
-          { Envelope-EmpfÑnger aus Received auslesen? }
-          if switch = 'graberec' then
+        { Envelope-EmpfÑnger aus Received auslesen? }
+        if switch = 'graberec' then
           getrecenvemp := true
         else
           if switch = 'r' then
@@ -279,16 +332,13 @@ begin
   else
   begin
     u2z := false;
-    if paramcount < 5 then helppage;
+    if paramcount < 5 then raise Exception.Create('Falsche Parameterzahl');
     source := ''; dest := ''; _from := ''; _to := '';
     for i := 2 to paramcount do
       if left(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
-        if left(switch, 2) = 'w:' then
-          XpWindow := minmax(IVal(mid(switch, 3)), 15, 60)
-        else
-          if switch = 's' then
+        if switch = 's' then
           ParSize := true
         else
           if switch = 'smtp' then
@@ -353,91 +403,12 @@ begin
   if exist('igate.exe') then nomailer := true;
 end;
 
-// Frischen Header erzeugen
-procedure ClearHeader;
+
+procedure tuuz.testfiles;
 begin
-  with hd do
-  if Assigned(AddRef) then
-  begin
-    AddRef.Free;
-    XEmpf.Free;
-    XOEM.Free;
-    Followup.Free;
-  end;
-
-  ULine.Clear; XLine.Clear; Mail.Clear;
-  Fillchar(hd, sizeof(hd), 0);
-
-  with hd do
-  begin
-    Netztyp := nt_RFC;
-    AddRef := TStringList.Create;
-    XEmpf := TStringList.Create;
-    XOEM := TStringList.Create;
-    Followup := TStringList.Create;
-  end;
-end;
-
-procedure initvar;
-var
-  t: Text;
-
-  procedure rh(fn: String; mail: boolean);
-  var
-    s: string;
-  begin
-    if exist(fn) then
-    begin
-      assign(t, fn);
-      reset(t);
-      while not eof(t) do
-      begin
-        readln(t, s);
-        s := trim(s);
-        if s <> '' then
-          if cpos(':', s) < 3 then
-            writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
-          else
-            AddHd.AddObject(s, Pointer(longint(mail)));
-      end;
-      close(t);
-    end;
-  end;
-
-begin
-  mails := 0; news := 0;
-  uunumber := 0;
-  ULine := TStringlist.Create;
-  XLine := TStringList.Create;
-  qprchar := [^L, '=', #127..#255];
-  getmem(outbuf, bufsize);
-
-  // zusÑtzliche Headerzeilen einlesen
-  AddHd := TStringList.Create;
-  EmpfList := TStringList.Create;
-  Mail := TStringList.Create;
-
-  Fillchar(hd, sizeof(hd), 0);
-  ClearHeader;
-
-  rh('NEWS.RFC', false);
-  rh('MAIL.RFC', true);
-end;
-
-procedure donevar;
-begin
-  AddHd.Free;
-  EmpfList.Free;
-  ULine.Free; XLine.Free;
-  Mail.Free;
-  freemem(outbuf, bufsize);
-end;
-
-procedure testfiles;
-begin
-  if not exist(source) then error('Quelldatei fehlt');
+  if not exist(source) then raise Exception.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
-    error('ungÅltige Zieldatei: ' + dest);
+    raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z then
   begin
     {$IFDEF UnixFS}
@@ -450,7 +421,7 @@ begin
       dest := dest + '\';
     {$ENDIF}
     if not IsPath(dest) then
-      error('ungÅltiges Zielverzeichnis: ' + dest);
+      raise Exception.Create('ungÅltiges Zielverzeichnis: ' + dest);
   end;
 end;
 
@@ -493,14 +464,14 @@ const
 
   {$I xpmakehd.inc}
 
-procedure FlushOutbuf;
+procedure TUUZ.FlushOutbuf;
 begin
   if outbufpos > 0 then
     blockwrite(f2, outbuf^, outbufpos);
   outbufpos := 0;
 end;
 
-procedure wrfs(s: string);
+procedure TUUz.wrfs(s: string);
 begin
   if outbufpos + length(s) >= bufsize then
     FlushOutbuf;
@@ -508,7 +479,7 @@ begin
   inc(outbufpos, length(s));
 end;
 
-procedure WriteHeader;
+procedure TUUz.WriteHeader;
 var
   i: integer;
   ml: integer;
@@ -1093,7 +1064,7 @@ begin
     AddCrlf;
 end;
 
-procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
+procedure TUUz.MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
 var
   p: integer;
 begin
@@ -1122,7 +1093,7 @@ begin
   end;
 end;
 
-procedure RFC1522form;                  { evtl. s mit quoted-printable codieren }
+procedure TUUz.RFC1522form;                  { evtl. s mit quoted-printable codieren }
 var
   p: integer;
   encoded: boolean;
@@ -1169,10 +1140,7 @@ begin
     else
       for p := 1 to length(s) do
         if s[p] = #255 then s[p] := '=';
-  end
-  else
-  begin
-  end;                                  { !!! IBM -> ASCII }
+  end;                                   { !!! IBM -> ASCII }
 end;
 
 procedure GetBinType(fn: String);      { vgl. MAGGI.PAS }
@@ -1207,7 +1175,7 @@ begin
   end;
 end;
 
-procedure SetMimeData;
+procedure TUUz.SetMimeData;
 var
   i: Integer;
 begin
@@ -1269,21 +1237,21 @@ end;
 var
   fpos: integer;
 
-procedure ReadBuf;
+procedure TUUz.ReadBuf;
 begin
   fpos := filepos(f1);
   blockread(f1, buffer, bufsize, bufanz);
   bufpos := 0;
 end;
 
-procedure OpenFile(var fn: String);
+procedure TUUz.OpenFile(var fn: String);
 begin
   assign(f1, fn);
   reset(f1, 1);
   ReadBuf;
 end;
 
-procedure ReadString;
+procedure TUUz.ReadString;
 var
   l: Integer;
   c: char;
@@ -1320,12 +1288,13 @@ begin
   IncPos;
 end;
 
-procedure ReadBinString(bytesleft: longint); { Base64-Codierung }
+procedure TUUz.ReadBinString(bytesleft: longint); { Base64-Codierung }
 const
   b64chr: array[0..63] of char =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 var
   b1, b2, b3, p: integer;
+  TempS: ShortString;
 
   function getbyte: byte;
   begin
@@ -1403,7 +1372,7 @@ begin
   s := TempS;
 end;
 
-procedure ReadRFCheader(mail: boolean; s0: string);
+procedure TUUz.ReadRFCheader(mail: boolean; s0: string);
 var
   p, i: integer;
   s1: string;
@@ -1819,7 +1788,7 @@ var
       end;
     until (p1 = 0) or (p2 = 0);
 
-    ss := ISO2IBM(ss);
+    ss := ISOtoIBM(ss);
     for i := 1 to length(ss) do
       if ss[i] < ' ' then ss[i] := ' ';
   end;
@@ -2067,7 +2036,7 @@ begin
   end;
 end;
 
-function SetMailUser(mailuser: string): string;
+function TUUZ.SetMailUser(mailuser: string): string;
 begin
   if (OwnSite = '') or (mailuser = '') then
     if cpos('@', mailuser) = 0 then
@@ -2086,7 +2055,7 @@ end;
 
 { UUCP-Mail -> ZCONNECT }
 
-procedure ConvertMailfile(fn: String; mailuser: string);
+procedure TUUz.ConvertMailfile(fn: String; mailuser: string; var mails: Integer);
 var
   p, p2, p3: Integer;
   i: integer;
@@ -2186,7 +2155,7 @@ begin
       begin
         ReadString; Dec(hd.Lines);
         UnQuotePrintable;
-        if not binaer then s := ISO2IBM(s);
+        if not binaer then s := ISOToIBM(s);
         Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
@@ -2205,7 +2174,7 @@ end;
 
 { SMTP-Mail -> ZCONNECT }
 
-procedure ConvertSmtpFile(fn: String; compressed: boolean);
+procedure TUUz.ConvertSmtpFile(fn: String; compressed: boolean; var mails: Integer);
 var
   f: file;
   ende: boolean;
@@ -2341,7 +2310,7 @@ begin
           if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
             delfirst(s);
           UnQuotePrintable;             { hÑngt CR/LF an, falls kein Base64 }
-          if not binaer then s := ISO2IBM(s);
+          if not binaer then s := ISOtoIBM(s);
           wrfs(s);
         end;
       end;
@@ -2360,7 +2329,7 @@ end;
 
 { Newsbatch -> ZCONNECT }
 
-procedure ConvertNewsfile(fn: String);
+procedure TUUz.ConvertNewsfile(fn: String; var news: Integer);
 var
   f: file;
   i: Integer;
@@ -2481,7 +2450,7 @@ begin
             ReadString; Dec(hd.lines);
             dec(Size, length(s) + eol);
             UnQuotePrintable;
-            if not binaer then s := ISO2IBM(s);
+            if not binaer then s := ISOtoIBM(s);
             Mail.Add(s);
             inc(hd.groesse, length(s));
           end;
@@ -2498,7 +2467,7 @@ begin
   if n = 0 then writeln;
 end;
 
-procedure UtoZ;
+procedure TUUZ.UtoZ;
 var
   sr: searchrec;
   spath: String;
@@ -2508,6 +2477,7 @@ var
   p: integer;
   n: longint;
   mailuser: string;
+  mails, news: Integer;  // Anzahl der bearbeiteten Mails/News
 
   procedure GetStr;                     { eine Textzeile aus X.-File einlesen }
   var
@@ -2602,18 +2572,19 @@ begin
   assign(f2, dest);
   rewrite(f2, 1);
   outbufpos := 0;
+  Mails := 0; News := 0;
   spath := GetFileDir(source);
   n := 0; RawNews := false;
   findfirst(source, ffAnyFile, sr);
   while doserror = 0 do
   begin
     if ExtractFileExt(sr.name) = '.mail' then
-      ConvertMailfile(spath + sr.name, '')
+      ConvertMailfile(spath + sr.name, '', mails)
     else
     if ExtractFileExt(sr.name) = '.news' then
     begin
       RawNews := true;
-      ConvertNewsfile(spath + sr.name);
+      ConvertNewsfile(spath + sr.name, news);
     end
     else
     if left(sr.name, 2) = 'X-' then
@@ -2625,25 +2596,25 @@ begin
         inc(n);
         if (typ = 'rnews') or (typ = 'crnews') or
           (typ = 'frnews') or (typ = 'grnews') then
-          ConvertNewsfile(spath + dfile)
+          ConvertNewsfile(spath + dfile, news)
         else
           if typ = 'rmail' then
-          ConvertMailfile(spath + dfile, SetMailuser(mailuser))
+          ConvertMailfile(spath + dfile, SetMailuser(mailuser), mails)
         else
           if (typ = 'rsmtp') or (typ = 'crsmtp') or (typ = 'rcsmtp') or
           (typ = 'frsmtp') or (typ = 'rfsmtp') or
           (typ = 'rzsmtp') or (typ = 'zrsmtp') or
           (typ = 'rgsmtp') or (typ = 'grsmtp') then
-          ConvertSmtpFile(spath + dfile, typ <> 'rsmtp');
+          ConvertSmtpFile(spath + dfile, typ <> 'rsmtp', mails);
       end;
     end
     else
     begin
       inc(n);
       case FileType of
-        0, 1, 2: ConvertNewsfile(spath + sr.name);
-        3: ConvertSmtpFile(spath + sr.name, false);
-        4: ConvertMailfile(spath + sr.name, '');
+        0, 1, 2: ConvertNewsfile(spath + sr.name, news);
+        3: ConvertSmtpFile(spath + sr.name, false, mails);
+        4: ConvertMailfile(spath + sr.name, '', mails);
       else
         dec(n);
       end;
@@ -2709,7 +2680,7 @@ begin
   Unix2DOSfile:=name+ext;
 end;
 
-function NextUunumber: word;
+function TUUZ.NextUunumber: word;
 begin
   NextUunumber := uunumber;
   if uunumber = 65535 then
@@ -2724,7 +2695,7 @@ begin
   blockwrite(f, s[1], length(s));
 end;
 
-procedure WriteRFCheader(var f: file; mail: boolean);
+procedure TUUZ.WriteRFCheader(var f: file; mail: boolean);
 const
   smtpfirst: boolean = true;
 var
@@ -2751,7 +2722,7 @@ var
   var
     p, r, ml: integer;
   begin
-    IBM2ISO(ss);
+    ss := IbmToIso(ss);
     ml := iif(rfc1522, 60, 78);
     r := ml + 1 - length(txt);
     while length(ss) > r do
@@ -2887,16 +2858,14 @@ begin
         time + ' ' + right(dat, 5));    { akt. Datum/Uhrzeit }
     end
     else
-      wrs(f, 'Path: ' + UUZc.addpath + pfad);
+      wrs(f, 'Path: ' + addpath + pfad);
     wrs(f, 'Date: ' + dat);
-    uuz.s := realname;
-    IBM2ISO(uuz.s);
+    uuz.s := IbmToISO(realname);
     RFC1522form;
     wrs(f, 'From: ' + absender + iifs(uuz.s <> '', ' (' + uuz.s + ')', ''));
     if wab <> '' then
     begin
-      uuz.s := war;
-      IBM2ISO(uuz.s);
+      uuz.s := IbmToISO(war);
       RFC1522form;
       wrs(f, 'Sender: ' + wab + iifs(uuz.s <> '', ' (' + uuz.s + ')', ''));
     end;
@@ -2955,14 +2924,12 @@ begin
       wrs(f, 'Control: ' + betreff);
     if mail and (LowerCase(betreff) = '<none>') then
       betreff := '';
-    uuz.s := betreff;
-    IBM2ISO(uuz.s);
+    uuz.s := IBMToISO(betreff);
     RFC1522form;
     wrs(f, 'Subject: ' + uuz.s);
     if keywords <> '' then
     begin
-      uuz.s := keywords;
-      IBM2ISO(uuz.s);
+      uuz.s := IBMToISO(keywords);
       RFC1522form;
       wrs(f, 'Keywords: ' + uuz.s);
     end;
@@ -3028,8 +2995,7 @@ begin
       wrs(f, 'Distribution: ' + distribution);
     if organisation <> '' then
     begin
-      uuz.s := organisation;
-      IBM2ISO(uuz.s);
+      uuz.s := IbmToIso(organisation);
       RFC1522form;
       wrs(f, 'Organization: ' + uuz.s);
     end;
@@ -3054,8 +3020,7 @@ begin
 
     for i := 0 to uline.Count - 1 do
     begin
-      uuz.s := uline[i];
-      IBM2ISO(uuz.s);
+      uuz.s := IbmToIso(uline[i]);
       RFC1522form;
       wrs(f, uuz.s);
     end;
@@ -3112,7 +3077,7 @@ begin
     wrs(f, '--' + xpboundary + '--');
 end;
 
-procedure ZtoU;
+procedure TUUZ.ZtoU;
 var
   hds, adr: longint;
   fs, n, gs: longint;
@@ -3307,7 +3272,7 @@ begin
     if not ok then
     begin
       close(f1);
-      error('fehlerhafter Eingabepuffer!');
+      raise Exception.Create('fehlerhafter Eingabepuffer!');
     end;
     binmail := (hd.typ <> 'T');
     if cpos('@', hd.empfaenger) = 0 then { AM }
@@ -3346,7 +3311,7 @@ begin
           begin
             ReadString;
             if fpos + bufpos > gs then ShortS;
-            IBM2ISO(uuz.s);
+            uuz.s := IbmToISO(uuz.s);
             if NewsMIME then MakeQuotedPrintable;
             wrbuf(f);
           end;
@@ -3406,7 +3371,7 @@ begin
               ReadString;
               if fpos + bufpos > gs then ShortS;
               if SMTP and (s <> '') and (s[1] = '.') then s := '.' + s;
-              IBM2ISO(uuz.s);
+              uuz.s := IBMToISO(uuz.s);
               MakeQuotedPrintable;
               wrbuf(f2);
             end;
@@ -3441,34 +3406,12 @@ begin
   close(fc);
 end;
 
-procedure SetWindow;
-var
-  y: byte;
-begin
-  y := wherey;
-  close(output); assigncrt(output); rewrite(output);
-  window(1, 4, 80, xpwindow - 2);
-  gotoxy(1, y - 3);
-end;
-
-begin
-  Randomize;
-  UUZc := TUUZ.Create;
-  logo;
-  initvar;
-  getpar;
-  testfiles;
-  if XpWindow > 0 then SetWindow;
-  if u2z then
-    UtoZ
-  else
-    ZtoU;
-  donevar;
-  UUZc.Free;
 end.
-
 {
   $Log$
+  Revision 1.57  2000/08/27 10:37:08  mk
+  - UUZ ist jetzt intern
+
   Revision 1.56  2000/08/15 19:40:03  mk
   - kleinere Umbauten fuer internen UUZ und Option -ppp
 
