@@ -218,13 +218,13 @@ end; { func. tRawIPObj.GetChar }
 
 procedure tRawIPObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 begin
-  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
+  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),dlDebug+2);
 
   Written:={$IFDEF WIN32}WinSock{$ELSE}Sockets{$ENDIF}.send(SHandle,Block,BlockLen,0);
   if not Written > 0 then
   begin
     SetErrorStr('SendBlock');
-    DebugLog('ObjCOM','SendBlock error',1);
+    DebugLog('ObjCOM','SendBlock error',dlWarning);
   end;
 end; { proc. tRawIPObj.SendBlock }
 
@@ -240,7 +240,7 @@ begin
                   end;
     SOCKET_ERROR: begin
                     SetErrorStr('SendBlock');
-                    DebugLog('ObjCOM','ReadBlock error',1);
+                    DebugLog('ObjCOM','ReadBlock error',dlWarning);
                     SOpened:=false;
                     reads:=0;
                   end;
@@ -250,7 +250,7 @@ end;
 procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 var rr: Longint;
 begin
-  DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),dlDebug+2);
   reads:=0;
 
   while (reads<blocklen) and (SOpened or (SBufBeg<SBufEnd)) do
@@ -319,7 +319,7 @@ begin
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
-  DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlInform);
+  DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlDebug+2);
 end; { func. TTelnetObj.CharAvail }
 
 function tRawIPObj.CharCount: Integer;
@@ -346,7 +346,7 @@ begin
   end;
 
   result := SBufEnd-SBufBeg + rr;
-  DebugLog('ObjCOM','CharCount: '+IntToStr(result)+' bytes',dlInform);
+  DebugLog('ObjCOM','CharCount: '+IntToStr(result)+' bytes',dlDebug+2);
 end; { func. TTelnetObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -356,13 +356,13 @@ function tRawIPObj.ReadyToRead(BlockLen: Longint): Boolean;
 var rr,rd: Longint;
 begin
   if (SBufEnd-SBufBeg)<=BlockLen then begin     { enough in buffer      }
-    DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+    DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlDebug+2);
     result:=true; exit;                         { => just return        }
   end;
 
   repeat
     if (rr+(SBufEnd-SBufBeg)>=Blocklen) then begin { enough data        }
-      DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlInform);
+      DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes available',dlDebug+2);
       result:=true; exit;
     end
 
@@ -394,7 +394,7 @@ begin
   until false;
 
   DebugLog('ObjCOM','ReadyToRead: '+IntToStr(BlockLen)+' bytes but only '+
-    IntToStr(SBufEnd-SBufBeg + rr)+' bytes available' ,dlInform);
+    IntToStr(SBufEnd-SBufBeg + rr)+' bytes available' ,dlDebug+2);
   result := false;
 end;
 {$ENDIF}
@@ -487,6 +487,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.6  2001/05/10 20:56:24  ma
+  - adjusted debug levels
+
   Revision 1.5  2001/05/09 22:10:08  cl
   - moved new TCP/IP implementation from playground to main directory
 

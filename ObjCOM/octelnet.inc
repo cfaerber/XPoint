@@ -156,7 +156,7 @@ end; {TTelnetObj.ProcIncoming}
 procedure tTelnetObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 var readc: Longint;
 begin
-  DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),dlDebug+2);
   Reads:=0;
 
   while((Reads<BlockLen) and Carrier) do
@@ -254,6 +254,9 @@ end;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 {
   $Log$
+  Revision 1.4  2001/05/10 20:56:25  ma
+  - adjusted debug levels
+
   Revision 1.3  2001/05/09 22:10:08  cl
   - moved new TCP/IP implementation from playground to main directory
 
