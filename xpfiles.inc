@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Include fÅr UUZ.PAS und UUCICO.PAS }
 
@@ -60,3 +61,12 @@ begin
   Unix2DOSfile:=name+ext;
 end;
 
+{
+  $Log$
+  Revision 1.2.2.1  2003/01/15 16:02:18  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

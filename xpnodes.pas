@@ -1,3 +1,5 @@
+{ $Id$ }
+
 { Dieser Quelltext ist Public Domain. }
 
 { Die folgende Unit erm”glicht den Zugriff auf den Nodelistenindex }
@@ -592,4 +594,12 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.4.2.1  2003/01/15 16:02:19  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
 
+}
+ 

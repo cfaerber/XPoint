@@ -1,12 +1,13 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP Team & Markus K„mmerer, http://www.openxp.de  }
+{ (c) 2002-2003 OpenXp/16, http://www.openxp16.de                    }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { UUCP/RFC <-> ZConnect }
@@ -3554,6 +3555,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.19  2003/01/15 16:02:04  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.8.2.18  2002/03/29 16:44:46  my
   MY:- Fix: Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt
        *immer* vom IBM- in den ISO1-Zeichensatz konvertiert (vorher

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -1613,6 +1614,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.11  2003/01/15 16:02:08  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.13.2.10  2001/11/04 15:18:32  my
   MY: - Default fÅr "Systemname in PM-Brettern" (userboxname) true
 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -737,6 +738,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.13  2003/01/15 16:02:19  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.7.2.12  2001/07/01 23:08:14  mk
   - Fehler in Base64 Dekodierung beseitigt
 

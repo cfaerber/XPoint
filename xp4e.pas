@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -2206,6 +2207,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.8  2003/01/15 16:02:10  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.9.2.7  2001/08/27 08:27:49  mk
   - fixed crash when addresslen > 80 chars
 

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Overlayroutinen, die von XP4 aufgerufen werden }
 
@@ -2425,3 +2426,12 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.20.2.10  2003/01/15 16:02:11  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

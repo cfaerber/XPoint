@@ -200,3 +200,12 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5.2.1  2003/01/15 16:02:17  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

@@ -1,3 +1,5 @@
+{ $Id$ }
+
 { Ressourcen-Compiler }
 { 12/92, 06/93        }
 
@@ -303,3 +305,12 @@ begin
     WriteBlocks;
     end;
 end.
+{
+  $Log$
+  Revision 1.2.2.1  2003/01/15 16:02:04  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -178,6 +179,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.4.2.2  2003/01/15 16:02:01  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.4.2.1  2000/04/06 07:50:12  mk
   - Bloecke formatieren im Editor uebernommen
 

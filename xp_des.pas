@@ -161,6 +161,7 @@ var i        : integer;
     ks,k1,k2 : stream;
 begin
   make_stream(sts(key),ks);
+{$IFNDEF Ver32}
   permutate(ks,ofs(PC1),56);
   FastMove(ks[1],k1,28);
   FastMove(ks[29],k2,28);
@@ -171,6 +172,7 @@ begin
     FastMove(k2,k[i,29],28);
     permutate(k[i],ofs(PC2),48);
     end;
+{$ENDIF }
 end;
 
 
@@ -178,11 +180,13 @@ procedure F(var s:stream; var k:stream);
 var i  : integer;
     s2 : stream;
 begin
+{$IFNDEF Ver32}
   permutate(s,ofs(E),48);
   Xs(s,k,48);
   F2(s,s2);
   permutate(s2,ofs(P),32);
   FastMove(s2,s,32);
+{$ENDIF }
 end;
 
 
@@ -190,6 +194,7 @@ procedure do_encode(var s:sts);
 var i        : integer;
     x1,x2,x3 : stream;
 begin
+{$IFNDEF Ver32}
   make_stream(s,x);
   permutate(x,ofs(IP),64);
   FastMove(x[1],x1,32);
@@ -204,6 +209,7 @@ begin
   FastMove(x1,x[33],32);
   permutate(x,ofs(PI),64);
   make_comp(x,s);
+{$ENDIF }
 end;
 
 
@@ -211,6 +217,7 @@ procedure do_decode(var s:sts);
 var i        : integer;
     x1,x2,x3 : stream;
 begin
+{$IFNDEF Ver32}
   make_stream(s,x);
   permutate(x,ofs(IP),64);
   FastMove(x[1],x1,32);
@@ -225,6 +232,7 @@ begin
   FastMove(x1,x[33],32);
   permutate(x,ofs(PI),64);
   make_comp(x,s);
+{$ENDIF }
 end;
 
 
@@ -266,7 +274,10 @@ end;
 end.
 {
   $Log$
-  Revision 1.3  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
+  Revision 1.2.2.1  2003/01/15 16:02:20  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
 
 }
+ 

@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -1483,6 +1484,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.17  2003/01/15 16:02:12  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.3.2.16  2001/08/29 21:43:14  my
   JG:- Fix: update lister position flag always
   JG:- Fix: Showing message header with 'O' in message reader after

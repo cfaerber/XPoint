@@ -1,3 +1,5 @@
+{ $Id$ }
+
 { UUCP-Dateiliste konvertieren }
 { Format: UNIX ls -lr          }
 
@@ -155,6 +157,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.2  2003/01/15 16:02:04  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.5.2.1  2001/08/23 11:01:06  mk
   MW:- added missing files
 

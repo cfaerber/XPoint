@@ -1,3 +1,5 @@
+{ $Id$ }
+
 { Intelligent Help System }
 { Rel. 1.01 (c) 11/89 PM  }
 {      1.02 (c) 03/90     }
@@ -377,3 +379,12 @@ end.
         je Seite: 2 Bytes Seitennr.
                   4 Bytes Adresse (absolutes Dateioffset)
 }
+{
+  $Log$
+  Revision 1.2.2.1  2003/01/15 16:02:02  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

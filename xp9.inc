@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 
   { --- Bearbeitungs-Routinen fÅr Boxen-Liste -----------------------}
@@ -1345,4 +1346,12 @@
       end;
     freeres;
   end;
+{
+  $Log$
+  Revision 1.6.2.4  2003/01/15 16:02:16  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
 
+}
+ 

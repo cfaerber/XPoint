@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Maskeneditor; V1.1 08/91, 05/92 PM }
 
@@ -1273,3 +1274,12 @@ begin
     fillchar(uda,sizeof(uda),0);
     end;
 end.
+{
+  $Log$
+  Revision 1.4.2.1  2003/01/15 16:02:03  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

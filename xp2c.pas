@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 { 04.02.2000 MH: Im Terminal ISDN hinzugefÅgt }
 { CrossPoint - Config bearbeiten }
 
@@ -1368,4 +1369,12 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5.2.9  2003/01/15 16:02:07  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
 
+}
+ 

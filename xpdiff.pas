@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Product Code / Versionsnummer / Diverses }
 { fÅr ZFIDO, XP-FM, XP7 und XP7T           }
@@ -42,4 +43,12 @@ const prodcode : byte = $e9;
 implementation
 
 end.
+{
+  $Log$
+  Revision 1.4.2.1  2003/01/15 16:02:17  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
 
+}
+ 

@@ -1,11 +1,12 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von: Peter Mandrella.     }
+{ CrossPoint ist eine eingetragene Marke von: Peter Mandrella.    }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -1796,3 +1797,12 @@ begin
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
 end.
+{
+  $Log$
+  Revision 1.6.2.3  2003/01/15 16:02:03  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
+}
+ 

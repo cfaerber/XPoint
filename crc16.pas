@@ -1,3 +1,5 @@
+{ $Id$ }
+
 {$I XPDEFINE.INC }
 
 UNIT CRC16;
@@ -96,6 +98,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.3.2.1  2003/01/15 16:02:01  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

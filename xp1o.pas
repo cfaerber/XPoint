@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -979,6 +980,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.12  2003/01/15 16:02:07  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.19.2.11  2001/12/03 17:44:10  my
   JG+MY:- DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
           Lister heraus behoben (<Alt-B> oder <Alt-U>)

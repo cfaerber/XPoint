@@ -1,9 +1,10 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{                                                                 }
-{ Globale Konstanten/Variablen (OpenXP) und Tools                 }
-{ --------------------------------------------------------------- }
+{ -------------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                    }
+{ (c) 2000-2001 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2002-2003 OpenXp/16, http://www.openxp16.de                      }
+{                                                                      }
+{ Globale Konstanten/Variablen (OpenXP) und Tools                      }
+{ -------------------------------------------------------------------- }
 { $Id$ }
 
 unit xpglobal;
@@ -101,6 +102,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7.2.13  2003/01/15 16:02:18  mw
+  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.7.2.12  2001/06/10 10:52:32  mk
   - Copyright auf 2000-01 geaendert
 

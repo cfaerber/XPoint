@@ -1,6 +1,8 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXp/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -2069,6 +2071,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.18  2003/01/15 16:02:13  mw
+  MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+        bei allen Quelldateien in die Dateien geschrieben.
+        Assembler-Quellen nur ID.
+
   Revision 1.7.2.17  2002/03/24 13:32:36  my
   JG:- Fix fÅr Uralt-Bug: Das Eintragen eines KopienempfÑngers ("k" im
        Sendefenster) mit einer anderen Serverbox als der des EmpfÑngers
