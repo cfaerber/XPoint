@@ -756,7 +756,8 @@ asm
             mov ah,byte ptr attrbuf[edi*2+4]       { Attribute ebenso !!! }
             mov byte ptr attrbuf[edi*2],ah
             inc edi
-            loop @tacopy2
+            dec ecx
+            jns  @tacopy2
 
 @addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anh„ngen }
             pop eax
@@ -2075,6 +2076,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2001/10/30 11:14:40  mk
+  - JG: fixed Listdisplay, see <8Bj$$d0DkpB@ralle.post.rwth-aachen.de>
+
   Revision 1.130  2001/10/21 10:24:56  mk
   - fixed last commit to allow comile with win32
 
