@@ -352,7 +352,7 @@ var regs  : registers;
     {$ENDIF }
   end;
 
-  {$define usebatch}
+  {.$define usebatch}
 
 begin
   Xec:=ExecOk;
@@ -495,6 +495,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/05/18 05:52:38  mk
+  - UseBatch ausgeschaltet
+
   Revision 1.17  2000/05/13 15:12:27  oh
   -persoenliche debug-Zeile entfernt
 
