@@ -296,6 +296,7 @@ function TNNTP.List(aList: TStringList; withDescr: boolean; onlyNew: Boolean; Fr
 var
   counter       : integer;              { Fuer die Anzeige }
   s             : string;               { group }
+  EndOfList     : boolean;
   code, i       : integer;              { NNTP-Result, Hilfsvar. }
 begin
   Result := false;
@@ -328,7 +329,8 @@ begin
       SReadln(s);                                       { Zeile lesen }
       if (counter mod 25)=0 then                        { User beruhigen }
         Output(mcVerbose,res_list4, [counter]);
-      if s<>'.' then begin                              { Gruppe }
+      EndOfList := (s='.');
+      if not EndOfList then begin                       { Gruppe }
         Inc(counter);
         s:= Trim(s);
         i:= pos(#32,s);                                 { Leerzeichen/ }
@@ -339,7 +341,7 @@ begin
         if s<>'' then
           aList.Add(s);
         end;
-    until s='.';                                        { Bis zum Ende lesen }
+    until EndOfList;                                    { Bis zum Ende lesen }
     Output(mcVerbose,res_list4, [aList.Count]);
     result:= true;
 
@@ -538,6 +540,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2002/11/14 10:14:03  ma
+  - fixed: Newsgroup list sometimes not read entirely
+
   Revision 1.38  2002/08/26 21:24:40  ma
   - fixed: posting-only server response was not recognized
     <8VW5E5MYcIB@erspiess.myfqdn.de>
