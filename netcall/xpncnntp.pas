@@ -114,7 +114,8 @@ begin
   { ProgressOutputXY einrichten }
   ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
-  if NNTP.Connect then begin
+  try
+    if not NNTP.Connect then raise Exception.Create('');
     { Name und IP anzeigen }
     MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
     MWrt(x+15,y+8,Copy(NNTP.Server,1,50));
@@ -137,7 +138,7 @@ begin
       result:= false;
     NNTP.DisConnect;
     List.Free;
-  end else begin { not Connect }
+  except
     mdelay(2000);
     trfehler(831,31);
     result:= true;
@@ -409,6 +410,9 @@ end.
 
 {
         $Log$
+        Revision 1.15  2001/04/13 22:15:46  mk
+        - catch socket errors while fetching the group list
+
         Revision 1.14  2001/04/13 00:14:40  ma
         - ClrUnversandt parameters fixed (ppfile, box*name*)
 
