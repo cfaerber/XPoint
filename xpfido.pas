@@ -1675,9 +1675,18 @@ label ende;
   end;
 
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
-  var p : integer;
+  var
+    p	     : Integer;
+    driveNr : Integer;
   begin
-    if (diskfree(ord(FirstChar(Path))-64)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
+{$IFDEF Linux}
+//     SysUtils.AddDisk(Path); wait for the fix in fpc ;-(
+//     driveNr := Drives;
+    driveNr := 0;   // its root
+{$ELSE}     
+     driveNr := ord(FirstChar(Path))-64;
+{$ENDIF}     
+    if (diskfree(driveNr)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
@@ -2234,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/04/27 10:00:40  ml
+  - bugfix Diskfree in linux (while Reading Nodelist - temporarily Root-Diskfree till fpc-developer fixes his routines)
+
   Revision 1.47  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
