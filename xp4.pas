@@ -669,6 +669,7 @@ var t,lastt: taste;
       kein_re : boolean;
       netztyp : byte;
       usermsg : boolean;
+      mimetyp : string;
       gesperrt: boolean;
       sdata   : SendUUptr;
       flags   : byte;
@@ -678,6 +679,7 @@ var t,lastt: taste;
       pmrflag : boolean;   { Maus-PM-Reply auf am durch autom. Umleitung }
       gfound  : boolean;
       mqfirst : longint;
+      mpdata  : multi_part;
 
   label ende;
 
@@ -1024,6 +1026,31 @@ var t,lastt: taste;
         sData^.ReplyGroup:=mid(dbReadStr(bbase,'brettname'),2);
       end;
     sdata^.empfrealname:=realname;
+
+    dbReadN(mbase,mb_mimetyp,mimetyp);
+
+    { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+      Multipart-Daten vorhanden, wir faken uns also welche, damit
+      die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+    if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+    begin
+      pushhp(94);
+      fillchar(mpdata,sizeof(qmpdata),0);
+      mpdata.fname := fn;
+      SelectMultiPart(true,1,false,mpdata,brk);
+
+      { is MIME-Typ not text/plain and quote then ask
+       if quoting binary mails is desired }
+      if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
+        and (mpdata.typ <> '') and (quote=1) and
+        not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
+        then goto ende;
+
+      qmpdata := @mpdata;
+      pophp;
+      if brk then goto ende;
+    end;
+
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
