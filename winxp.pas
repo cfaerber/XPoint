@@ -264,13 +264,8 @@ begin
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
-    {$IFDEF FPC }
-      WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-      FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, @OutRes);
-    {$ELSE }
-      WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-      FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
-    {$ENDIF }
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
+    FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
   {$ELSE }
     {$IFDEF VP }
      {$R-}
@@ -307,14 +302,8 @@ begin
     OutRes: LongInt;                            { Auf Konsole ausgeben....}
   begin
     WritePos.X := x-1; WritePos.Y := y-1;
-  {$IFDEF FPC }
-    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, @OutRes);
-    writeConsoleOutputAttribute(OutHandle, attrbuf[2], num, WritePos, @OutRes);
-  {$ELSE }
     WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
-    WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);
-  {$ENDIF}
-  end;
+    WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
   procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
   var
@@ -347,11 +336,7 @@ procedure SDisp(const x,y:word; const s:string);
   begin
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
-{$IFDEF FPC }
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-{$ELSE }
     WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-{$ENDIF }
     { !! Hier mÅsste noch die Textfarbe verÑndert werden,
       nicht aber der Texthintergrund }
 {$ELSE Win32 }
@@ -369,13 +354,8 @@ var
   aAttr: SmallWord;
 begin
   ReadPos.X := x-1; ReadPos.Y := y-1;
-{$IFDEF FPC }
-  ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, @OutRes);
-  ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, @OutRes);
-{$ELSE }
   ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, OutRes);
   ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, OutRes);
-{$ENDIF }
   c := aChr; Attr := aAttr;
 {$ELSE }
   begin
@@ -397,13 +377,8 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
     OutRes: LongInt;
   begin
     WritePos.x := x-1; WritePos.y := y-1;
-{$IFDEF FPC }
-    FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, @OutRes);
-    FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, @OutRes)
-{$ELSE }
     FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, OutRes);
     FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, OutRes)
-{$ENDIF }
   end;
 {$ELSE }
   begin
@@ -424,11 +399,7 @@ begin
     Left := l-1; Right := r-1;
     Top := o-1; Bottom := u-1;
   end;
-{$IFDEF FPC }
-   ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
-{$ELSE }
    ReadConsoleOutput(OutHandle, @Buffer, BSize, Coord, SourceRect);
-{$ENDIF }
 {$ELSE }
 var
   x, y, Offset: Integer;
@@ -464,11 +435,7 @@ begin
     Left := l-1; Right := r-1;
     Top := o-1; Bottom := u-1;
   end;
-{$IFDEF FPC }
-  WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, @DestRect);
-{$ELSE }
   WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, DestRect);
-{$ENDIF }
 {$ELSE }
   var
     x, y, i, j, Offset: Integer;
@@ -952,6 +919,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/07/02 15:13:51  mk
+  - Anpassungen an neue FPC-Version
+
   Revision 1.40  2000/07/02 14:24:51  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

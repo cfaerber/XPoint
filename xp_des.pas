@@ -30,8 +30,6 @@ procedure DES_code(decode:boolean; var data; ofs,total:longint;
 
 implementation  {--------------------------------------------}
 
-uses TypeForm;
-
 type stream = array[1..64] of byte;
      sts    = array[1..8] of byte;
      keytyp = array[1..8] of byte;
@@ -412,6 +410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/02 15:13:51  mk
+  - Anpassungen an neue FPC-Version
+
   Revision 1.11  2000/07/02 14:24:53  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
