@@ -86,6 +86,7 @@ procedure dbReadN (dbp:DB; feldnr:integer; var data);
 procedure dbWrite (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbWriteN(dbp:DB; feldnr:integer; var data);
 function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
+function  dbReadStrN(dbp:DB; feldnr:integer):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 
 function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
@@ -1366,6 +1367,13 @@ begin
   dbReadStr:=s;
 end;
 
+function dbReadStrN(dbp:DB; feldnr:integer):string;
+var s: string;
+begin
+  dbReadN(dbp,feldnr,s);
+  dbReadStrN:=s;
+end;
+
 function dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 var l : longint;
 begin
@@ -1718,6 +1726,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.9  2001/08/12 09:05:17  mk
+  - added dbReadStrN function
+
   Revision 1.22.2.8  2001/07/28 19:24:12  mk
   - added some const parameters
 
