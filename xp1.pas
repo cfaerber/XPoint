@@ -44,6 +44,7 @@ uses
 {$ENDIF }
 {$IFDEF DOS32 }
   xpdos32,
+  crt,
 {$ENDIF }
 {$IFDEF OS2 }
   xpos2,
@@ -2066,6 +2067,9 @@ end;
 
 {
   $Log$
+  Revision 1.126  2001/10/11 15:27:02  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.125  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option

@@ -146,7 +146,7 @@
 {$ENDIF }
 
 {$IFDEF DOS32 }
-  {$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
+  {.$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
 {$ENDIF }
 
 {$IFDEF Win32 }
@@ -215,6 +215,9 @@
 
 {
   $Log$
+  Revision 1.71  2001/10/11 15:27:02  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.70  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 

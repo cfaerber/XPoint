@@ -160,7 +160,9 @@ var { EnthÑlt das Fensterhandle fÅr die Console }
 {$IFNDEF NCRT }
 var
   WhereX, WhereY: Integer;
+{$IFNDEF DOS32 }
   TextAttr: Byte;   { Current text attribute }
+{$ENDIF }
 {$ENDIF }
 
 procedure InitWinXPUnit;
@@ -287,15 +289,11 @@ type TCoord= record x,y: integer end;
 {$IFNDEF NCRT }
 procedure FWrt(const x,y:word; const s:string);
 var
-  {$IFDEF LocalScreen }
-  i, Count: Integer;
-  {$ENDIF }
   {$IFDEF Win32 }
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
-  {$ELSE }
-    xold, yold: Integer;
   {$ENDIF }
+  i, Count: Integer;
 begin
   {$R-}
   {$IFDEF Win32 }
@@ -304,16 +302,16 @@ begin
     WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
     FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
   {$ELSE }
-    {$IFDEF VP }
-      SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
+    {$IFDEF DOS32 }
+      Count := ((X-1)+(y-1)*screenwidth)*2;
+      for i := 0 to Length(s)-1 do
+        memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s[i+1]);
     {$ELSE }
-      xold := WhereX; yold := WhereY;
       GotoXY(x, y);
       Write(s);
-      { Cursor an Originalposition zurÅcksetzen }
-      GotoXY(xold, yold);
     {$ENDIF }
   {$ENDIF Win32 }
+
   {$IFDEF Debug }
     {$R+}
   {$ENDIF }
@@ -449,6 +447,8 @@ begin
   ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, OutRes);
   c := aChr; Attr := aAttr;
 {$ELSE }
+  var
+    w: SmallWord;
   begin
     {$IFDEF VP }
       c := SysReadCharAt(x-1, y-1);
@@ -457,6 +457,11 @@ begin
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2]);
       Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2+1]));
+    {$ENDIF }
+    {$IFDEF DOS32 }
+      w :=  MemW[$B800:((x-1)+(y-1)*ScreenWidth)*2];
+      c := Char(w);
+      Attr := w and $00ff;
     {$ENDIF }
 {$ENDIF }
 end;
@@ -506,6 +511,10 @@ begin
         {$IFDEF LocalScreen }
           TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*ScreenWidth)*2];
           TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*ScreenWidth)*2+1];
+        {$ENDIF }
+        {$IFDEF DOS32 }
+          TLocalScreen(Buffer)[Offset] := Char(Mem[$B800:(x+y*ScreenWidth)*2]);
+          TLocalScreen(Buffer)[Offset+1] := Char(Mem[$B800:(x+y*ScreenWidth)*2+1]);
         {$ENDIF }
       {$ENDIF }
       Inc(Offset, 2);
@@ -1015,6 +1024,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2001/10/11 15:27:01  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.63  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 

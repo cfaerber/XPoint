@@ -31,6 +31,9 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
+{$IFDEF Dos32 }
+  crt,
+{$ENDIF }
   xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
@@ -770,6 +773,9 @@ finalization
   ReleaseHelp;
 {
   $Log$
+  Revision 1.41  2001/10/11 15:27:01  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.40  2001/09/26 23:51:28  mk
   - fixed freemem for pa variable
 

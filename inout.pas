@@ -40,6 +40,9 @@ uses
 {$ifdef NCRT }
   xpcurses,
 {$endif }
+{$IFDEF Dos32 } 
+  crt,
+{$endif }
   sysutils,
   keys,
   typeform,
@@ -1677,6 +1680,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2001/10/11 15:27:01  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.82  2001/10/01 19:43:01  ma
   - compiles again (DOS32)
   - function Cursor is not yet implemented (DOS32)

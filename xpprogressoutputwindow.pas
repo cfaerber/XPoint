@@ -28,7 +28,11 @@ unit xpprogressoutputwindow;
 
 interface
 
-uses ProgressOutput,Classes,SysUtils,Timer;
+uses 
+  {$IFDEF DOS32 }
+  crt,
+  {$ENDIF }
+  ProgressOutput,Classes,SysUtils,Timer;
 
 type
   tpTimer= ^tTimer;
@@ -276,6 +280,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/10/11 15:27:02  mk
+  - implemented direct screen writes for DOS32, no more LocalScreen
+
   Revision 1.7  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
