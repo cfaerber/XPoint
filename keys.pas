@@ -143,12 +143,11 @@ type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
        forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }
-       lastscancode : byte;
-
 
 {$IFNDEF NCRT }
 function  keypressed:boolean;
 function  readkey:char;
+lastscancode : byte;
 {$ENDIF }
 
 procedure keyboard(s:string);        { s and forwardkeys anhÑngen            }
@@ -364,6 +363,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/07/23 15:36:46  ml
+  - Editor: Numblock Copy/Paste/Insert works now in linux
+
   Revision 1.33  2001/07/23 10:21:39  mk
   - added Win32 support for numeric key block keys -, + and *
 

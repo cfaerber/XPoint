@@ -149,10 +149,10 @@ const
       (Sequenz: #27#5 ; ncCode: 315; DosCode : #0#124), { alt/5 }
       (Sequenz: #27#6 ; ncCode: 316; DosCode : #0#125), { alt/6 }
       (Sequenz: #27#7 ; ncCode: 317; DosCode : #0#126), { alt/7 }
-      (Sequenz: #27#8 ; ncCode: 318; DosCode : #0#127), { alt/8 }
-      (Sequenz: #27#9 ; ncCode: 319; DosCode : #0#128), { alt/9 }
-      (Sequenz: #27'0'; ncCode: 320; DosCode : #0#128), { alt/0 }
-      (Sequenz: #27'-'; ncCode: 321; DosCode : #0#130), { alt/- }
+      (Sequenz: #27#8 ; ncCode: 318; DosCode : #0#127), { numdiv   }
+      (Sequenz: #27#9 ; ncCode: 319; DosCode : #0#55),  { nummult  }
+      (Sequenz: #27'0'; ncCode: 320; DosCode : #0#74),  { numminus }
+      (Sequenz: #27'-'; ncCode: 321; DosCode : #0#78),  { numplus  }
       (Sequenz: #27'='; ncCode: 322; DosCode : #0#131), { alt/= }
       (Sequenz: #27#9;  ncCode: 323; DosCode : #0#15), { alt/tab }
       (Sequenz: #27#91#54#94;    ncCode: 411; DosCode : #0#118), { Ctrl-PgDn }
@@ -177,6 +177,7 @@ const
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
+   lastscancode : byte   = 0;
 
 type
   { Fuer den internen Gebrauch }
@@ -868,6 +869,7 @@ begin
        ungetch(ord(DosSeq[I]));
   end else
     Readkey:= TranslateSpecialChar(chr(ord(l)));
+  lastscancode := Ord(PrefChar);
   if (b) then echo;
 end;
 
@@ -1549,6 +1551,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/07/23 15:36:46  ml
+  - Editor: Numblock Copy/Paste/Insert works now in linux
+
   Revision 1.46  2001/04/23 20:45:40  ml
   - Sig-Int Handler for Linux (SIGKILL, SIGHUP, SIGQUIT)
   - XTerm-Resizing is now recognized by openxp - repaint works not completely yet
