@@ -1187,6 +1187,7 @@ var d         : DB;
       dbReadN(d,mimeb_extension,ext);
       dbReadN(d,mimeb_programm,prog);
     end;
+    if typ = '*/*' then exit;
     readmimetyp(not IsNew,typ,ext,prog,brk);
     if not brk then
     begin
@@ -1770,6 +1771,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.8  2000/11/09 12:00:53  mk
+  - Eintrag */* nicht mehr editierbar
+
   Revision 1.19.2.7  2000/11/06 00:43:37  mk
   - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
 
