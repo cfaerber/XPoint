@@ -705,8 +705,8 @@ begin
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     if ref <> '' then wrs('BEZ: ' + ref);
-    for i := 0 to AddRef.Count -1 do
-      wrs('BEZ: ' + addref[i]);
+    for i := 0 to References.Count -1 do
+      wrs('BEZ: ' + References[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
     if expiredate <> '' then wrs('LDA: ' + expiredate);
     if error <> '' then wrs('ERR: ' + error);
@@ -1790,7 +1790,7 @@ var
           if ref = '' then
             ref := copy(line, 2, p - 2)
           else
-            AddRef.Add(copy(line, 2, p - 2));
+            References.Add(copy(line, 2, p - 2));
           while (p <= length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
             inc(p);
           delete(line, 1, p);
@@ -1825,7 +1825,7 @@ var
       line:=copy(line,p+1,q-p-1);
       { eine Message-ID enthaelt ein @ und kein Space }
       if (cpos('@',line)>0) and (cpos(' ',line)=0) then begin
-        hd.addref.clear;
+        hd.References.clear;
         hd.ref := line
       end
     end else
@@ -3091,7 +3091,7 @@ begin
       if mail and (attrib and attrPmReply = 0) then
       // BEZ bei Strg-B Antworten in Mailinglisten
       begin
-        if AddRef.Count > 0 then Ref := AddRef[AddRef.Count-1]; { neu }
+        if References.Count > 0 then Ref := References[References.Count-1]; { neu }
         wrs(f, 'In-Reply-To: <' + ref + '>');
       end
       else
@@ -3099,23 +3099,23 @@ begin
         // References einigermassen RFC-konform kuerzen
         repeat
           j := 12 + length(ref) + 2;
-          for i := 0 to AddRef.Count - 1 do
-            j := j + length(Addref[i]) + 3;
+          for i := 0 to References.Count - 1 do
+            j := j + length(References[i]) + 3;
           if j > 980 then
             // Erste Referenz loeschen um Platz zu schaffen
-            AddRef.Delete(0);
+            References.Delete(0);
         until j <= 980;
 
         first := true;
         s := '<' + ref + '>';
-        for i := 0 to AddRef.Count -1 do
+        for i := 0 to References.Count -1 do
         begin
-          if length(s) + length(addref[i]) > iif(first, 60, 70) then
+          if length(s) + length(References[i]) > iif(first, 60, 70) then
             wrref;
           if s = '' then
-            s := '<' + addref[i] + '>'
+            s := '<' + References[i] + '>'
           else
-            s := s + ' <' + addref[i] + '>';
+            s := s + ' <' + References[i] + '>';
         end;
         if s <> '' then wrref;
       end;
@@ -3720,6 +3720,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/12/30 17:47:41  mk
+  - renamed AddRef to References
+
   Revision 1.18  2000/12/28 00:29:56  mk
   - CommandLine is default false
 

@@ -143,25 +143,14 @@ var i,res : integer;
   end;
 
   {$else}
-  {$ifdef uuzrefs}
-
   procedure GetRef;
   begin
     with hd do
       if ref='' then
         Ref := Line
       else
-        AddRef.Insert(0, Line);
+        References.Insert(0, Line);
   end;
-
-  {$else}
-
-  procedure GetRef;
-  begin
-    hd.Ref := Line;
-  end;
-
-  {$endif}
   {$endif}
 
   procedure GetKop;
@@ -585,6 +574,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.41  2000/12/30 17:47:41  mk
+  - renamed AddRef to References
+
   Revision 1.40  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 

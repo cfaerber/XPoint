@@ -113,10 +113,10 @@ type
     Cust1, Cust2: string;
     control: string;
     uline: TStringList;
-    xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
+    xline: TStringList;                 // X-Zeilen, die 'uebrig' sind
     zline: TStringList;
     fline: TStringList;
-    addref: TStringList;  // Referenzen
+    References: TStringList;            // references:
     mimereltyp: string;
     xempf: TStringList;
     mailcopies: tstringlist;
@@ -164,7 +164,7 @@ begin
   ReplyTo := TStringList.Create;
   Followup := TStringList.Create;
   MailCopies := TStringList.Create;
-  AddRef := TStringList.Create;
+  References := TStringList.Create;
   XEmpf := TStringList.Create;
   XOEM := TStringList.Create;
   Clear;
@@ -248,7 +248,7 @@ begin
   xline.clear;;                    // X-Zeilen, die 'uebrig' sind
   zline.clear;;
   fline.clear;;
-  addref.clear;;  // Referenzen
+  References.Clear;
   mimereltyp:= '';
   xempf.clear;;
   mailcopies.clear;;
@@ -277,6 +277,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/12/30 17:47:41  mk
+  - renamed AddRef to References
+
   Revision 1.2  2000/12/30 17:36:54  mk
   *** empty log message ***
 
