@@ -34,10 +34,10 @@ begin
   if (not user)
      and (cpos('/',s)>0)
      and newsgroupdisp
-     and (((s[1]='A') and (flags and 16<>0)) or newsgroupdispall)
+     and (((FirstChar(s)='A') and (flags and 16<>0)) or newsgroupdispall)
   then begin
     if newsgroupdisp and (s[2]='/') then delete(s,2,1);
-    if (s[1]='1') or (cpos(':',s)>0) then begin
+    if (FirstChar(s)='1') or (cpos(':',s)>0) then begin
       i:=cpos('/',s);
       if (i>2) and (cpos('@',s)=0) then s[i]:='@';
     end else
@@ -158,7 +158,7 @@ begin  { __ Suchmarke }
               markflag[y]:=iif(UBmarked(dbRecno(bbase)),1,0);
               markc:=iifc(markflag[y]<>0,suchch,' ');
               brettform(s,flags,false);
-              if (not NewsgroupDispall) and (not UserSlash) and (s[1]<'A') then delete(s,2,1);
+              if (not NewsgroupDispall) and (not UserSlash) and (FirstChar(s)<'A') then delete(s,2,1);
               if not dispext then begin                         { erweiterte Anzeige s ? }
                 case readmode of     { s. auch XP4.BRETTOK() }
                   0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
@@ -322,7 +322,7 @@ begin  { __ Suchmarke }
             if cpos('D',MsgFeldTausch)=0 then inc(h2,6);
             if cpos('G',MsgFeldTausch)=0 then inc(h2,6);
             if cpos('F',MsgFeldTausch)=0 then inc(h2,7);
-            if not (fidoqwk and (dispmode=10) and dispfto and (_brett[1]='A'){})
+            if not (fidoqwk and (dispmode=10) and dispfto and (FirstChar(_brett)='A'){})
             then begin
               if cpos('E',MsgFeldTausch)=0 then dec(h2,19)
               else dec(h3);
@@ -414,7 +414,7 @@ begin  { __ Suchmarke }
             end;
             _brett:= dbReadNStr(mbase,mb_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
-            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then
+            if (pp<>0) and (FirstChar(_brett)<>'$') and (blen>pp) then
             begin
               inc(ulen,blen-pp);
               blen:=pp;
@@ -481,7 +481,7 @@ begin  { __ Suchmarke }
               end;
               userflag[y]:=helpbyte;
 
-              if (fidoqwk and (_brett[1]='A') and
+              if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
                 OR
                  ((cpos('@',dispspec)>0) and
@@ -627,6 +627,10 @@ end;
 
 {
   $Log$
+  Revision 1.59  2002/07/28 18:49:22  ma
+  - fixed potential crashes when displaying area list
+    (should matter only when db is corrupted)
+
   Revision 1.58  2002/07/25 20:43:54  ma
   - updated copyright notices
 
