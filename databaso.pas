@@ -29,10 +29,13 @@ interface
 uses
   datadef;
 
-
+{$IFDEF old}
 procedure dbCreate(const filename:dbFileName; flp:dbFLP);
+{$ELSE}
+procedure dbCreate(const tpl: RDBTemplate);
+{$ENDIF}
 procedure dbZAP(var dbp:DB);
-procedure dbAppendField(const filename:string; feld:dbFeldTyp);
+procedure dbAppendField(const filename:string; const feld:dbFeldTyp);
 procedure dbDeleteField(const filename:string; const feldname:dbFeldStr);
 procedure dbKillXbase(const filename: dbFilename);
 function  dbPack(const filename: string):boolean;
@@ -54,7 +57,7 @@ uses
   datadef1,
   xp1,
   debug,
-  xpglobal; //not really
+  xpglobal;
 
 
 
@@ -62,22 +65,28 @@ uses
 
 { logischen Feld-Record in phys. Feld-Record kopieren }
 
-procedure makefeld(var lfeld:dbFeldTyp; var fld:dbfeld);
+procedure makefeld(const lfeld:dbFeldTyp; var fld:dbfeld);
 begin
   fillchar(fld,sizeof(fld),0);
   with lfeld,fld do begin
     name:=UpperCase(fname);
     feldtyp:=ftyp;
     case ftyp of
-      1,2,5 : feldsize:=fsize;
-      3     : feldsize:=6;
-      4     : feldsize:=4;
-      6     : feldsize:=8;
+    dbTypeString:
+      feldsize:=fsize+1;  //include count byte
+    dbTypeInt,dbUntyped:
+      feldsize:=fsize;
+    dbTypeReal:
+      feldsize:=6;
+    dbTypeDatum:
+      feldsize:=4;
+    dbUntypedExt:
+      feldsize:=8;
     end;
-    if (ftyp=2) or (ftyp=3) then begin
+    if (ftyp = dbTypeInt{2}) or (ftyp = dbTypeReal{3}) then begin
       nlen:=fnlen; nk:=fnk;
-      end;
     end;
+  end;
 end;
 
 
@@ -97,7 +106,7 @@ begin
 {$IFDEF UnixFS }
     SetAccess(filename+dbExtExt, taUserRW);
 {$ENDIF }
-    end;
+  end;
 end;
 
 
@@ -105,7 +114,13 @@ end;
 { INT_NR wird automatisch angelegt,   }
 { ist nicht in flp^.felder enthalten! }
 
+{$IFDEF old}
 procedure dbCreate(const filename:dbFileName; flp:dbFLP);
+{$ELSE}
+procedure dbCreate(const tpl: RDBTemplate);
+var
+  filename: dbFileName;
+{$ENDIF}
 var hd    : dbheader;
     ehd   : dbdheader;
     f     : file;
@@ -113,48 +128,76 @@ var hd    : dbheader;
     size  : integer;
     fld   : dbFeld;
     xflag : boolean;
+    pf: PdbFeldTyp;
 begin
   with hd do begin
     fillchar(hd,sizeof(hd),0);
     magic:=db_magic;
     nextinr:=0;     { der erste Satz bekommt dann Nr. 1 }
-    felder:=flp^.felder;
     size:=5;    { Flagbyte + INT_NR }
     xflag:=false;
+{$IFDEF old}
+    felder:=flp^.felder;
     for i:=1 to felder do begin
-      if flp^.feld[i].ftyp=1 then inc(flp^.feld[i].fsize);
-      case flp^.feld[i].ftyp of
-        1,2,5 : inc(size,flp^.feld[i].fsize);
-        3     : inc(size,6);  { Real }
-        4     : inc(size,4);  { Datum }
-        6     : begin
-                  inc(size,8);  { externes Feld: Zeiger + Groesse }
-                  xflag:=true;
-                end;
-      else
-        error('ungueltiger Feldtyp: '+strs(flp^.feld[i].ftyp));
+      pf := @flp^.feld[i];
+{$ELSE}
+    filename := tpl.FileName;
+    felder := tpl.FieldCount;
+    pf := tpl.Field0;
+    for i := 1 to felder do begin
+      inc(pf);
+{$ENDIF}
+      case pf^.ftyp of
+      dbTypeString:
+        begin
+          //inc(flp^.feld[i].fsize);
+          inc(size, pf^.fsize+1);
+        end;
+      dbTypeInt,dbUntyped:
+        inc(size, pf^.fsize);
+      dbTypeReal:
+        inc(size,6);  { Real, unused }
+      dbTypeDatum:
+        inc(size,4);  { Datum, unused }
+      dbUntypedExt:
+        begin
+          inc(size,8);  { externes Feld: Zeiger + Groesse }
+          xflag:=true;  //using external file for data
+        end;
+      else  //case
+        error('ungueltiger Feldtyp: '+strs(ord(pf^.ftyp)));
       end;
     end;
     recsize:=size;
-    hdsize:=sizeof(dbheader)+32*(felder+1);
+    hdsize:=sizeof(dbheader)+sizeof(fld)*(felder+1);
     assign(f,filename+dbExt);
     rewrite(f,1);
     if not iohandler then exit;
     blockwrite(f,hd,sizeof(hd));
+    //for i:=0 to felder do begin
+{$IFDEF old}
     for i:=0 to felder do begin
+      pf := @flp^.feld[i];
       if i=0 then with fld do begin
         fillchar(fld,sizeof(fld),0);
-        name:='INT_NR'; feldtyp:=2; feldsize:=4; nlen:=11;
-        end
-      else
-        makefeld(flp^.feld[i],fld);
+        name:='INT_NR'; feldtyp:=dbTypeInt{2}; feldsize:=4; nlen:=11;
+      end else
+        makefeld(pf^,fld);
       blockwrite(f,fld,sizeof(fld));
-      end;
+    end;
+{$ELSE}
+    pf := tpl.Field0;
+    for i := 0 to tpl.FieldCount do begin
+      makefeld(pf^,fld);
+      blockwrite(f,fld,sizeof(fld));
+      inc(pf);
+    end;
+{$ENDIF}
     close(f);
 {$IFDEF UnixFS }
     SetAccess(filename+dbExt, taUserRW);        { User Read/Write }
 {$ENDIF }
-    end;
+  end;
 
   if xflag then
     MakeXbase(filename,ehd,f);
@@ -186,16 +229,16 @@ begin
         {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - .eb1', dlTrace); {$endif}
         seek(fe,dbdhd.hdsize);      { EB1 kuerzen }
         truncate(fe);
-        end;
+      end;
       if flindex then begin
         {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - rebuild .ix1', dlTrace); {$endif}
         close(fi);
         freemem(index,sizeof(ixfeld)*ixhd.indizes);
         erase(fi);
         OpenIndex(dbp);
-        end;
       end;
     end;
+  end;
   dbFlushClose(dbp);
   dbGoTop(dbp);
 end;
@@ -205,7 +248,7 @@ end;
 { Datenbank muss geschlossen sein             }
 { geht noch nicht bei ext. Feldern!           }
 
-procedure dbAppendField(const filename:string; feld:dbFeldTyp);
+procedure dbAppendField(const filename:string; const feld:dbFeldTyp);
 var d       : DB;
     df      : dbfeld;
     i       : longint;
@@ -216,7 +259,10 @@ begin
   irec.df:=filename;
   with dp(d)^ do begin
     irec.command:=icOpenCWindow; ICP(irec);
-    if feld.ftyp=1 then inc(feld.fsize);
+(*
+    if feld.ftyp = dbTypeString{1} then
+      inc(feld.fsize);
+*)
     makefeld(feld,df);
     newsize:=hd.recsize+df.feldsize;
     freemem(recbuf,hd.recsize);
@@ -231,7 +277,7 @@ begin
       blockread(f1,recbuf^,hd.recsize);
       seek(f1,hd.hdsize+32+(i-1)*newsize);
       blockwrite(f1,recbuf^,newsize);
-      end;
+    end;
 
     seek(f1,hd.hdsize);                      { Feldliste erweitern }
     blockwrite(f1,df,32);
@@ -240,7 +286,7 @@ begin
     inc(hd.hdsize,32);
     hd.recsize:=newsize;
     writehd(d);
-    end;
+  end;
 
   dbClose(d);
   irec.command:=icCloseWindow;
@@ -274,7 +320,7 @@ begin
       blockread(f1,df,32);
       seek(f1,sizeof(hd)+i*32);
       blockwrite(f1,df,32);
-      end;
+    end;
 
     for i:=1 to hd.recs do begin         { Records konvertieren }
       irec.percent:=(100*i div hd.recs);
@@ -287,13 +333,13 @@ begin
              hd.recsize-feldp^.feld[fnr+1].fofs);
       seek(f1,hd.hdsize-32+(i-1)*newsize);
       blockwrite(f1,recbuf^,newsize);
-      end;
+    end;
 
     dec(hd.felder);                      { Header korrigieren }
     hd.recsize:=newsize;
     dec(hd.hdsize,32);
     writehd(d);
-    end;
+  end;
 
   dbClose(d);
   irec.command:=icCloseWindow;
@@ -346,10 +392,10 @@ begin
               seek(f1,lastpos);
               blockwrite(f1,recbuf^,hd.recsize);
               inc(c2);
-              end;
             end;
-        end;
+          end;
       end;
+    end;
     close(f1);
     mfm:=filemode; filemode:=$42;
     reset(f1,1);
@@ -357,7 +403,7 @@ begin
     dbClose(d);
     irec.command:=icCloseWindow;
     ICP(irec);
-    end;
+  end;
 end;
 
 
@@ -382,7 +428,7 @@ begin
       close(f1);
       dbPack:=false;
       exit;
-      end;
+    end;
     irec.df:=filename;
     irec.command:=icOpenPWindow; ICP(irec);
     reset(f1,1);
@@ -402,7 +448,7 @@ begin
     for i:=0 to hd.felder do begin     { incl. Int_Nr }
       blockread(f1,fld,sizeof(fld));
       blockwrite(f2,fld,sizeof(fld));
-      end;
+    end;
     getmem(p,hd.recsize);
     n:=0;
     while not eof(f1) do begin
@@ -414,8 +460,8 @@ begin
         irec.command:=icShowPack;
         ICP(irec);
         blockwrite(f2,p^,hd.recsize);
-        end;
       end;
+    end;
     freemem(p,hd.recsize);
     hd.recs:=n;
     hd.reccount:=n;    { sicherheitshalber.. kann Fehler korrigieren }
@@ -433,6 +479,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/12/22 10:24:33  dodi
+  - redesigned database initialization
+
   Revision 1.24  2002/12/21 05:37:48  dodi
   - removed questionable references to Word type
 

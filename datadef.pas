@@ -28,7 +28,7 @@ interface
 
 uses xpglobal;
 
-var     //dbEMShandle   : word = 0;
+var
         dbInterrProc  : pointer = nil;
 const
 {$IFDEF UnixFS }
@@ -43,14 +43,19 @@ const
 
         dbFeldNameLen = 10;
 
-        dbTypeString  = 1;    { String mit Laengenbyte, Freiraum 0-gefuellt }
-        dbTypeInt     = 2;    { numerisch mitVorzeichen, 1/2/4 Bytes        }
-        dbTypeReal    = 3;    { Real 6 Bytes                                }
-        dbTypeDatum   = 4;    { Datum 4 Bytes t/m/jj  ==  LongInt           }
-        dbUntyped     = 5;    { untypisiert, feste Laenge                   }
-        dbUntypedExt  = 6;    { bis 32K Laenge, 4Byte-Zeiger auf DBD-File   }
+type
+  eFieldType = (
+    dbNone, //0, dummy
+    dbTypeString, //= 1;    { String mit Laengenbyte, Freiraum 0-gefuellt }
+    dbTypeInt,    //= 2;    { numerisch mitVorzeichen, 1/2/4 Bytes        }
+    dbTypeReal,   //= 3;    { Real 6 Bytes                                }
+    dbTypeDatum,  //= 4;    { Datum 4 Bytes t/m/jj  ==  LongInt           }
+    dbUntyped,    //= 5;    { untypisiert, feste Laenge                   }
+    dbUntypedExt  //= 6;    { bis 32K Laenge, 4Byte-Zeiger auf DBD-File   }
+  );
 
-        dbFlagIndexed = 1;    { Flag fuer dbOpen }
+const
+        dbFlagIndexed = 1;  //or True?    { Flag fuer dbOpen }
 
         icIndexNum    = 1;    { <- Anzahl Indizes   (indexnr)     }
         icIndex       = 2;    { <- indexstr [ / indexproc]        }
@@ -69,9 +74,14 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
         dbFeldStr   = string[dbFeldNameLen];
         dbFileName  = string[80];
 
+        PdbFeldTyp  = ^dbFeldTyp;
+        //TdbInitProc = procedure(d: DB; pf: PdbFeldTyp);
+        TdbFieldSet = set of 1..32;
+        TdbAppendProc = procedure(AppendedFields: TdbFieldSet);
+
         dbFeldTyp   = packed record             { Felder s.u. (dbfeld)      }
                         fname     : dbFeldStr;  { Name aus A..Z,_           }
-                        ftyp      : byte;       { 1..6                      }
+                        ftyp      : eFieldType; { 1..6                      }
                         fsize     : smallword;  { phys. Feldgroesse bei 1,2,5 }
                         fnlen,fnk : byte;       { nur bei Typ 2,3           }
                         fofs      : smallword;  { intern: Offset im record  }
@@ -79,10 +89,17 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
                       end;
 
         dbFeldListe = packed record
-                        felder : smallword;
+                        felder : integer; //smallword; align better
                         feld   : array[0..1000] of dbFeldTyp;  { 0=INT_NR }
                       end;
         dbFLP       = ^dbFeldListe;
+
+  RDBTemplate = record
+    FileName: string[8];  //according to 8.3 filenames
+    FieldCount: integer;  //a byte would be sufficient
+    Field0: PdbFeldTyp;   //pointer to first (dummy) definition record
+    AppendProc: TdbAppendProc;
+  end;
 
         dbIndexFunc = function(dpb:DB):string;
         dbIndexCRec = packed record
@@ -103,6 +120,9 @@ implementation
 
 {
   $Log$
+  Revision 1.13  2002/12/22 10:24:33  dodi
+  - redesigned database initialization
+
   Revision 1.12  2002/12/12 11:58:38  dodi
   - set $WRITEABLECONT OFF
 

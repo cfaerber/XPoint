@@ -29,7 +29,7 @@ uses
 
 procedure wkey(sec:integer; count:boolean);
 function  DruckWiederholen:boolean;
-procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
+procedure XpICPproc(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 
 implementation  { --------------------------------------------------- }
@@ -112,7 +112,7 @@ var   ICP_x: Integer = 0;
       ICP_y: Integer = 0;
       ICP_lastper : byte = 101;
 
-procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
+procedure XpICPproc(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 begin
   with ICR do
     case command of
@@ -220,6 +220,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2002/12/22 10:24:33  dodi
+  - redesigned database initialization
+
   Revision 1.26  2002/12/21 05:37:54  dodi
   - removed questionable references to Word type
 

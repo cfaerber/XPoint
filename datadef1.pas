@@ -69,10 +69,10 @@ type    proctype  = procedure;
                     end;
 
         dbfeld    = packed record          { Feld, physikalisch }
-                      name      : dbFeldStr;
+                      name      : dbFeldStr;  //string[10]
                       fill1     : array[1..5] of byte;
                       feldsize  : smallword;  { physikalisch in Bytes }
-                      feldtyp   : byte;
+                      feldtyp   : eFieldType;
                       nlen,nk   : byte;  { fuer numerische Werte/Formatierung }
                       fill2     : array[1..11] of byte;
                     end;
@@ -199,8 +199,7 @@ uses
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
-  if lastioerror<>0 then
-  begin
+  if lastioerror<>0 then begin
 (*
     writeln('<DB> I/O-Fehler '+strs(lastioerror));
     halt(1);
@@ -243,11 +242,14 @@ begin
   with dp(dpb)^ do begin
     seek(f1,0);
     blockwrite(f1,hd,sizeof(hd));
-    end;
+  end;
 end;
 
 {
   $Log$
+  Revision 1.26  2002/12/22 10:24:33  dodi
+  - redesigned database initialization
+
   Revision 1.25  2002/12/21 05:37:49  dodi
   - removed questionable references to Word type
 

@@ -83,7 +83,7 @@ function  dbLongStr(l:longint):string;
 procedure dbAppend(dbp:DB);
 procedure dbDelete(dbp:DB);
 function  dbDeleted(dbp:DB; adr:longint):boolean;
-function  dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;  { -1=unbekannt }
+function  dbGetFeldNr(dbp:DB; const feldname: string):integer;  { -1=unbekannt }
 
 procedure dbRead  (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbReadN (dbp:DB; feldnr:integer; var data);
@@ -154,7 +154,7 @@ end;
 
 procedure dbAllocateFL(var flp:dbFLP; feldanz:xpWord);
 begin
-  getmem(flp,2+sizeof(dbFeldTyp)*(feldanz+1));   { +1 wg. INT_NR }
+  getmem(flp,sizeof(flp^.felder)++sizeof(dbFeldTyp)*(feldanz+1));   { +1 wg. INT_NR }
   flp^.felder:=feldanz;
 end;
 
@@ -165,7 +165,7 @@ procedure dbReleaseFL(var flp:dbFLP);
 begin
   if flp <> nil then
   begin
-    freemem(flp,2+sizeof(dbFeldTyp)*(flp^.felder+1));
+    freemem(flp,sizeof(flp^.felder)+sizeof(dbFeldTyp)*(flp^.felder+1));
     flp := nil;
   end;
 end;
@@ -861,35 +861,43 @@ begin
           rb:=recbuf; recbuf:=orecbuf;
           key:=ifunc(dbp);
           recbuf:=rb;
-          end
-        else
+        end else
           key:=ifunc(dbp)
       else begin
         key:='';
-        if old then rb:=orecbuf
-        else rb:=recbuf;
+        if old then
+          rb:=orecbuf
+        else
+          rb:=recbuf;
         for i:=1 to feldanz do
           with feldp^.feld[ifeldnr[i] and $fff] do
             case ftyp of
-              1 : begin
-                    Move(rb^[fofs],s2,rb^[fofs]+1);
-                    if length(s2)+1>fsize then SetLength(s2, fsize-1);
-                    s := s2;
-                    if ifeldnr[i] and $8000<>0 then s:=UpperCase(s);
-                    if feldanz=i then key:=key+s
-                    else key:=key+forms(s,fsize-1);
-                  end;
-              2 : for j:=1 to fsize do
-                    key := Key + char(rb^[fofs+fsize-j]);
-              3 : begin
-                    Move(rb^[fofs],r,6);
-                    str(r:20:3,s);
-                    key:=key+s;
-                  end;
-              4 : for j:=1 to 4 do
-                    key := key + char(rb^[fofs+4-j]);
+            dbTypeString:
+              begin
+                Move(rb^[fofs],s2,rb^[fofs]+1);
+                if length(s2)+1>fsize then SetLength(s2, fsize-1);
+                s := s2;
+                if ifeldnr[i] and $8000<>0 then
+                  s:=UpperCase(s);  //really ASCII???
+                if feldanz=i then
+                  key:=key+s
+                else
+                  key:=key+forms(s,fsize-1);
+              end;
+            dbTypeInt:
+                for j:=1 to fsize do
+                  key := Key + char(rb^[fofs+fsize-j]);
+            dbTypeReal:
+              begin
+                Move(rb^[fofs],r,6);
+                str(r:20:3,s);
+                key:=key+s;
+              end;
+            dbTypeDatum:
+              for j:=1 to 4 do
+                key := key + char(rb^[fofs+4-j]);
             end;
-        end;
+      end;
 end;
 
 
@@ -919,16 +927,13 @@ var bf        : inodep;
         for z:=n-1 downto x+1 do
           bf^.key[z+1]:=bf^.key[z];
         bf^.key[x+1]:=item;
-        end
-      else
-        if x>n then begin
-          splititem:=bf^.key[n+1];
-          for z:=n+2 to x do
-            bf^.key[z-1]:=bf^.key[z];
-          bf^.key[x]:=item;
-          end
-        else
-          splititem:=item;
+      end else if x>n then begin
+        splititem:=bf^.key[n+1];
+        for z:=n+2 to x do
+          bf^.key[z-1]:=bf^.key[z];
+        bf^.key[x]:=item;
+      end else
+        splititem:=item;
       splitbf^.key[0].ref:=splititem.ref;
       splititem.ref:=splitbf^.filepos;
       item:=splititem;
@@ -936,7 +941,7 @@ var bf        : inodep;
         splitbf^.key[z-n]:=bf^.key[z];
       bf^.anzahl:=n;
       splitbf^.anzahl:=nn-n;
-      end;
+    end;
     writenode(splitbf);
     freenode(splitbf);
   end;
@@ -949,8 +954,7 @@ var bf        : inodep;
       risenitem.keystr:=key;
       risenitem.data:=srecno;
       risenitem.ref:=0;
-      end
-    else begin
+    end else begin
       readnode(node,bf);
       searchpage(bf,key,srecno,x);
       risen:=false;
@@ -964,14 +968,14 @@ var bf        : inodep;
               key[z+1]:=key[z];
             key[x+1]:=risenitem;
             rise:=false;
-            end
+          end
         else begin
           split(bf,risenitem,x);
           rise:=true;
-          end;
-        writenode(bf);
         end;
+        writenode(bf);
       end;
+    end;
   end;
 
 begin   { insertkey }
@@ -991,9 +995,9 @@ begin   { insertkey }
         writenode(newroot);
         rootrec:=newroot^.filepos;
         writeindf(dbp,indnr);
-        end;
+      end;
 
-    if indnr=actindex then tiefe:=0;
+      if indnr=actindex then tiefe:=0;
     end;
   freenode(newroot);
   freenode(bf);
@@ -1049,8 +1053,7 @@ var z         : longint;
           writenode(bf2);
           writenode(bf3);
           underflow:=false
-          end
-        else begin
+        end else begin
           for z:=1 to n do
             bf1^.key[z+n]:=bf2^.key[z];
           for z:=path to numbf3-1 do
@@ -1061,9 +1064,8 @@ var z         : longint;
           writenode(bf1);
           writenode(bf3);
           releaseIrec(dbp,indnr,neighbour);
-          end
         end
-      else begin
+      end else begin
         neighbour:=bf3^.key[pred(path)].ref;
         readnode(neighbour,bf2);
         numbf2:=succ(bf2^.anzahl);
@@ -1085,8 +1087,7 @@ var z         : longint;
           writenode(bf2);
           writenode(bf3);
           underflow:=false;
-          end
-        else begin
+        end else begin
           bf2^.key[numbf2]:=bf3^.key[path];
           bf2^.key[numbf2].ref:=bf1^.key[0].ref;
           for z:=1 to n-1 do
@@ -1097,8 +1098,8 @@ var z         : longint;
           writenode(bf2);
           writenode(bf3);
           releaseIrec(dbp,indnr,node);
-          end;
         end;
+      end;
       freenode(bf3); freenode(bf2); freenode(bf1);
     end;
 
@@ -1115,8 +1116,7 @@ var z         : longint;
         findgreatest(node2,underflow);
         if underflow then
           compensate(node1,node2,numbf,underflow);
-        end
-      else begin
+      end else begin
         bf^.key[x].keystr:=bf1^.key[numbf].keystr;
         bf^.key[x].data:=bf1^.key[numbf].data;
         numbf:=pred(numbf);
@@ -1124,7 +1124,7 @@ var z         : longint;
         bf1^.anzahl:=numbf;
         writenode(bf1);
         writenode(bf);
-        end;
+      end;
       freenode(bf1);
     end;
 
@@ -1142,20 +1142,18 @@ var z         : longint;
           for z:=x to bf^.anzahl do
             bf^.key[z]:=bf^.key[z+1];
           writenode(bf);
-          end
-        else begin
+        end else begin
           findgreatest(y,underflow);
           if underflow then
             compensate(node,y,x-1,underflow);
-          end;
-        end
-      else begin
+        end;
+      end else begin
         y:=bf^.key[x].ref;
         del(y,underflow);
         if underflow then
           compensate(node,y,x,underflow);
-        end
       end
+    end
   end;
 
 begin    { deletekey }
@@ -1171,14 +1169,13 @@ begin    { deletekey }
         if bf^.key[0].ref<>0 then begin
           readnode(bf^.key[0].ref,bf);
           rootrec:=bf^.filepos;
-          end
-        else
+        end else
           rootrec:=0;
         releaseIrec(dbp,indnr,z);
-        end;
+      end;
       writeindf(dbp,indnr);
       if indnr=actindex then tiefe:=0;
-      end;
+    end;
   freenode(bf);
 end;
 
@@ -1214,8 +1211,8 @@ var bf   : inodep;
             searchbtree(bf^.key[x].ref)
           else
             data:=bf^.key[x].data;
-          end;
         end;
+      end;
   end;
 
   { Weitersuchen, ob im linken Teilbaum des gefundenen Nodes }
@@ -1241,13 +1238,13 @@ var bf   : inodep;
         if found then begin
           tmark:=tiefe;
           data:=bf^.key[x].data;
-          end;
         end;
+      end;
       if tiefe>tmark then begin
         inc(vx[tmark]);
         tiefe:=tmark;
-        end;
       end;
+    end;
   end;
 
 begin
@@ -1259,8 +1256,7 @@ begin
     rr:=dp(dbp)^.index^[indnr].rootrec;
     if rr=0 then begin
       dBOF:=true; dEOF:=true;
-      end
-    else begin
+    end else begin
       dBOF:=false; dEOF:=false;
       searchbtree(rr);
 
@@ -1277,18 +1273,17 @@ begin
           inc(vx[tiefe]);
           readnode(vpos[tiefe],bf);
           data:=bf^.key[vx[tiefe]].data;
-          end;
-        end
-      else
+        end;
+      end else
         for i:=1 to tiefe do
           vx[i]:=abs(vx[i]);
 
       if found and not rec then begin
         searchequal;
         found:=true;
-        end;
       end;
     end;
+  end;
   freenode(bf);
 end;
 
@@ -1330,7 +1325,7 @@ var icr : dbIndexCRec;
         ICP(icr);
         indizes:=icr.indexnr;
         hdsize:=32*(indizes+1);
-        end;
+      end;
       blockwrite(fi,ixhd,32);
       getmem(index,sizeof(ixfeld)*ixhd.indizes);
       fillchar(index^,sizeof(ixfeld)*ixhd.indizes,0);
@@ -1345,8 +1340,7 @@ var icr : dbIndexCRec;
             ifunc:=icr.indexfunc;
             if_flag:=true;
             delete(icr.indexstr,1,1);
-            end
-          else
+          end else
             if_flag:=false;
           icr.indexstr:=UpperCase(icr.indexstr)+'/';
           repeat
@@ -1363,18 +1357,19 @@ var icr : dbIndexCRec;
             feldp^.feld[fnr].indexed:=true;
             if not if_flag then begin
               inc(keysize,feldp^.feld[fnr].fsize);
-              if feldp^.feld[fnr].ftyp=1 then dec(keysize);
-              end;
+              if feldp^.feld[fnr].ftyp = dbTypeString{1} then
+                dec(keysize);
+            end;
           until icr.indexstr='';
           if keysize>127 then begin
             raise EXPDatabase.Create(1,'<DB> interner Fehler: zu groáer Indexschluessel');
-            end;
+          end;
           nn:=max(2,128 div (keysize+12))*2;
           irecsize:=nn*(9+keysize)+10;
           if if_flag then feldanz:=feldanz or $80;   { IFunc-Flag }
           blockwrite(fi,index^[i],32);
           feldanz:=feldanz and $7f;
-          end;
+        end;
 
       flindex:=false;
       icr.command:=icOpenWindow;
@@ -1387,9 +1382,9 @@ var icr : dbIndexCRec;
         for i:=1 to ixhd.indizes do begin
           getkey(dbp,i,false,key);
           insertkey(dbp,i,key);
-          end;
-        dbSkip(dbp,1);
         end;
+        dbSkip(dbp,1);
+      end;
       icr.command:=icCloseWindow;
       ICP(icr);
       flindex:=true;
@@ -1398,15 +1393,13 @@ var icr : dbIndexCRec;
   end;
 
 begin
-  with dp(dbp)^ do
-  begin
+  with dp(dbp)^ do begin
     fsplit(fname,_d,_n,_e);
     icr.df:=_n+_e;
     assign(fi,fname+dbIxExt);
     if not FileExists(fname +dbIxExt) then
       CreateIndex(dbp)
-    else
-    begin
+    else begin
       mfm:=filemode; filemode:=$42;
       reset(fi,1);
       blockread(fi,ixhd,sizeof(ixhd));
@@ -1428,13 +1421,13 @@ begin
               if keysize<>icr.indexsize then
               error('Index(datei?) fehlerhaft!');
               ifunc:=icr.indexfunc;
-              end;
+            end;
             for j:=1 to feldanz do
               feldp^.feld[ifeldnr[j] and $fff].indexed:=true;
-            end;
-        end;
+          end;
       end;
-      lastindex:=0; actindex:=0;
+    end;
+    lastindex:=0; actindex:=0;
   end;
   dbSetIndex(dbp,1);
 end;
@@ -1453,7 +1446,7 @@ begin
         error('falsche Index-Nr.: '+strs(indnr));
       actindex:=indnr;
       tiefe:=0;
-      end;
+    end;
 end;
 
 
@@ -1478,7 +1471,7 @@ begin
       dEOF:=true
     else
       GoRec(dbp,x);
-    end;
+  end;
 end;
 
 
@@ -1529,7 +1522,7 @@ begin
     blockread(f,ixhd,32);
     dbGetIndexVersion:=ixhd.ixversion;
     close(f);
-    end;
+  end;
 end;
 
 
@@ -1558,8 +1551,7 @@ var i,o   : integer;
           if firstfree>recs then begin
             firstfree:=0;
             mpack:=true;
-            end
-          else begin
+          end else begin
             free:=firstfree;
             while (free<>0) and not mpack do begin
               seek(f1,hdsize+(free-1)*recsize);
@@ -1569,11 +1561,10 @@ var i,o   : integer;
                 seek(f1,filepos(f1)-4);
                 blockwrite(f1,nextfree,0);
                 mpack:=true;
-                end
-              else
+              end else
                 free:=nextfree;
-              end;
             end;
+          end;
       if mpack then
         writeln('Bitte packen Sie anschliessend die Datenbank!');
     end;
@@ -1599,16 +1590,16 @@ var i,o   : integer;
           assign(fi,fname+dbIxExt);
           erase(fi);
           if ioresult=0 then ;
-(*          
+(*
           halt(1);
 *)
           raise EXPDatabase.Create(1,'<DB> interner Fehler: '+fname+dbExt+' ist fehlerhaft!');
-          end;
+        end;
         if reccount>recs then begin
           reccount:=recs;
           writehd(dbp);
-          end;
         end;
+      end;
   end;
 
 begin
@@ -1625,7 +1616,7 @@ begin
     filemode:=mfm;
     if inoutres<>0 then begin
       dispose(dp(dbp)); dbp:=nil;
-      end;
+    end;
     if not iohandler then exit;
     flushed:=true; newrec:=false;
     hd.magic:=nomagic;
@@ -1633,7 +1624,7 @@ begin
     if hd.magic<>db_magic then begin
       close(f1); dbp:=nil;
       error('Fehlerhafte Datenbank:  '+name);
-      end;
+    end;
     check_integrity;
     dbAllocateFL(feldp,hd.felder);
     o:=1;
@@ -1649,8 +1640,8 @@ begin
           fofs:=o; inc(o,fsize);
           indexed:=false;
           if ftyp=dbUntypedExt then xxflag:=true;
-          end;
         end;
+      end;
     if xxflag then begin
       {$ifdef debug} Debug.DebugLog('database','dbOpen - .eb1', dlTrace); {$endif}
       assign(fe,name+dbExtExt);
@@ -1660,7 +1651,7 @@ begin
       if not iohandler then exit;
       blockread(fe,dbdhd,sizeof(dbdhd));
       if dbdhd.magic<>eb_magic then error('fehlerhafte EB:  '+name);
-      end;
+    end;
     xflag:=xxflag;
     getmem(recbuf,hd.recsize);
     if flags and dbFlagIndexed<>0 then begin
@@ -1668,11 +1659,10 @@ begin
       getmem(orecbuf,hd.recsize);
       OpenIndex(dbp);
       flindex:=true;
-      end
-    else
+    end else
       flindex:=false;
     dbGoTop(dbp);
-    end;
+  end;
   {$ifdef debug} Debug.DebugLog('database','dbOpen finished', dlTrace); {$endif}
 end;
 
@@ -1681,11 +1671,9 @@ procedure dbClose(var dbp:DB);
 var i : integer;
 begin
   if ioresult<>0 then;
-  with dp(dbp)^ do
-  begin
+  with dp(dbp)^ do begin
     {$ifdef debug} Debug.DebugLog('database','dbClose '+fname, dlTrace); {$endif}
-    if (dbp=nil) or tempclosed then
-    begin
+    if (dbp=nil) or tempclosed then begin
       {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - already closed', dlError); {$endif}
       exit;
     end;
@@ -1694,13 +1682,13 @@ begin
     if xflag then begin
       {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - .eb1', dlTrace); {$endif}
       close(fe);
-      end;
+    end;
     close(f1);
     if flindex then begin
       {$ifdef debug} Debug.DebugLog('database','dbClose '+fname+' - .ix1', dlTrace); {$endif}
       close(fi);
       freemem(index,sizeof(ixfeld)*ixhd.indizes);
-      end;
+    end;
     if ioresult<>0 then
       writeln('<DB> interner Fehler beim Schliessen von ',fname);
     if flindex and (orecbuf<>nil) then
@@ -1708,7 +1696,7 @@ begin
     if recbuf<>nil then
       freemem(recbuf,hd.recsize);
     dbReleaseFL(feldp);
-    end;
+  end;
   if cacheanz > 0 then { MK 01/00 - Cachegroesse moeglicherweise 0, dann nicht ausfuehren!}
     for i:=0 to cacheanz-1 do
      if cache^[i].dbp=dbp then cache^[i].used:=false;
@@ -1726,7 +1714,7 @@ begin
     if flindex then close(fi);
     if xflag then close(fe);
     tempclosed:=true;
-    end;
+  end;
 end;
 
 procedure dbTempOpen(var dbp:DB);
@@ -1739,7 +1727,7 @@ begin
     if xflag then reset(fe,1);
     filemode:=mfm;
     tempclosed:=false;
-    end;
+  end;
 end;
 
 procedure dbFlushClose(var dbp:DB);
@@ -1775,7 +1763,7 @@ begin
   with dp(dbp)^ do begin
     hd.nextinr:=newnr-1;
     writehd(dbp);
-    end;
+  end;
 end;
 
 
@@ -1797,7 +1785,8 @@ function dbdtyp(size:longint):byte;
 var typ : byte;
 begin
   typ:=0;
-  while dbds[typ]<size+6 do inc(typ);
+  while dbds[typ]<size+6 do
+    inc(typ);
   dbdtyp:=typ;
 end;
 
@@ -1821,7 +1810,7 @@ var typ,i,j : integer;
       blockwrite(fe,r,5);
       seek(fe,adr+dbds[typ]-1);
       blockwrite(fe,r,1);
-      end;
+    end;
   end;
 
   procedure writedel(adr:longint; typ:byte; chain:longint);
@@ -1840,8 +1829,8 @@ var typ,i,j : integer;
       if r.nextfree<>0 then begin
         seek(fe,r.nextfree+5);
         blockwrite(fe,adr,4);       { Rueckwaertsverkettung anlegen }
-        end;
       end;
+    end;
   end;
 
 
@@ -1857,8 +1846,7 @@ begin
     if (i>dbdMaxSize) or ((typ<3) and odd(i-typ)) then begin
       adr:=filesize(fe);          { kein passender freier Satz da }
       writeinfo;                  { - am Ende anhaengen            }
-      end
-    else with dbdhd do begin
+    end else with dbdhd do begin
       l:=freelist[i];
       seek(fe,l+1);
       blockread(fe,freelist[i],4);
@@ -1866,20 +1854,18 @@ begin
         seek(fe,freelist[i]+5);
         x:=0;
         blockwrite(fe,x,4);
-        end;
+      end;
       while i>typ do begin
         { Feld von Typ i in zwei Felder von Typ i und j spalten, wobei
           i das untere Feld bleibt, und j bei Bedarf weiter gespalten wird }
         j := i; { MK 01/00 Variable j initialisieren }
         if i-typ>=2 then
-          if not odd(typ) and odd(i) and (i-typ>=3) then
-          begin
+          if not odd(typ) and odd(i) and (i-typ>=3) then begin
             j:=i-3; dec(i);
           end      { ungleich spalten / grosses Teil bleibt }
       (*    else  if not odd(i) and (i-typ>=4) then begin               { frei }
             j:=i-4; dec(i); end *)
-          else
-          begin
+          else begin
             dec(i,2); j:=i;
           end      { halbieren }
         else
@@ -1894,13 +1880,13 @@ begin
         freelist[i]:=l;
         inc(l,dbds[i]);
         i:=j;
-        end;
+      end;
       adr:=l;
       writeinfo;
       seek(fe,0);
       blockwrite(fe,dbdhd,256);
-      end;
     end;
+  end;
 end;
 
 
@@ -1929,11 +1915,11 @@ var r1,r2  : rtyp;
       else begin
         seek(fe,r.last+1);
         blockwrite(fe,r.next,4);
-        end;
+      end;
       if r.next<>0 then begin
         seek(fe,r.next+5);
         blockwrite(fe,r.last,4);
-        end;
+      end;
 
       r.typ:=newtyp + $80;              { in neue Freeliste 'einhaengen' }
       r.last:=0;
@@ -1946,8 +1932,8 @@ var r1,r2  : rtyp;
       if r.next<>0 then begin
         seek(fe,r.next+5);              { Rueckwaertsverkettung... }
         blockwrite(fe,newadr,4);
-        end;
       end;
+    end;
     merged:=true;
   end;
 
@@ -1965,7 +1951,7 @@ begin
     if ioresult<>0 then begin
       write(#7'Fehler in externer Datei!');
       exit;
-      end;
+    end;
     r1:=rr._rr;
     if r1.typ and $80<>0 then
       error('Versuch, einen geloeschten DBD-Satz zu loeschen!');
@@ -1977,9 +1963,7 @@ begin
           merge(adr-dbds[r2.typ],adr-dbds[r2.typ],r2.typ,r2.typ+2)
         else if mergable then
           merge(adr-dbds[r2.typ],adr-dbds[r2.typ],r2.typ,max(r1.typ,r2.typ)+1);
-        end
-      else
-      if adr+dbds[r1.typ]<filesize(fe) then begin
+      end else if adr+dbds[r1.typ]<filesize(fe) then begin
         seek(fe,adr+dbds[r1.typ]);
         blockread(fe,r2,1);
         if r2.typ and $80<>0 then begin
@@ -1988,9 +1972,9 @@ begin
             merge(adr+dbds[r1.typ],adr,r2.typ,r2.typ+2)
           else if mergable then
             merge(adr+dbds[r1.typ],adr,r2.typ,max(r1.typ,r2.typ)+1);
-          end;
         end;
       end;
+    end;
 
     if not merged then begin
       r1.next:=dbdhd.freelist[r1.typ];
@@ -2004,12 +1988,12 @@ begin
       if r1.next<>0 then begin
         seek(fe,r1.next+5);         { Rueckwaertsverkettung }
         blockwrite(fe,adr,4);
-        end;
       end;
+    end;
 
     seek(fe,0);
     blockwrite(fe,dbdhd,256);
-    end;
+  end;
 end;
 
 
@@ -2025,8 +2009,8 @@ begin
       inc(gsize,fsize);
       seek(fe,l+1);
       blockread(fe,l,4);
-      end;
     end;
+  end;
 end;
 
 
@@ -2041,7 +2025,7 @@ begin
     fillchar(recbuf^,hd.recsize,0);
     {$ifopt R+}
       {$R-}
-      inc(hd.nextinr);    { wg. Maxlongint-šberlauf.. }
+      inc(hd.nextinr);    { wg. Maxlongint-Ueberlauf.. }
       {$R+}
     {$else}
       inc(hd.nextinr);
@@ -2054,8 +2038,7 @@ begin
     if hd.firstfree=0 then begin     { neuer Datensatz am Dateiende }
       inc(hd.recs);
       recno:=hd.recs;
-      end
-    else begin
+    end else begin
       recno:=hd.firstfree;
       seek(f1,hd.hdsize+(hd.firstfree-1)*hd.recsize+1);
       if eof(f1) then begin     { fehlerhafter FreeList-Eintrag }
@@ -2063,14 +2046,13 @@ begin
         inc(hd.recs);
         recno:=hd.recs;
         writeln('<DB> Freelist error - cutting freelist');
-        end
-      else
+      end else
         blockread(f1,hd.firstfree,4);
-      end;
+    end;
     if hdupdate then writehd(dbp);
     tiefe:=0;
     dEOF:=false; dBOF:=false;
-    end;
+  end;
 end;
 
 
@@ -2096,14 +2078,14 @@ begin
       for i:=1 to ixhd.indizes do begin
         getkey(dbp,i,false,key);
         deletekey(dbp,i,key);
-        end;
+      end;
 
     for i:=1 to hd.felder do           { externe Felder loeschen }
       if feldp^.feld[i].ftyp=dbUntypedExt then begin
         move(recbuf^[feldp^.feld[i].fofs],ll,8);
         if ll.size>0 then
           FreeExtRec(dbp,ll.adr);
-        end;
+      end;
 
     clrec.rflag:=recbuf^[0] or rflagDeleted;
     clrec.free:=hd.firstfree;
@@ -2117,19 +2099,18 @@ begin
       dbSkip(dbp,0);   { Sonderfall: Tiefe wurde auf 0 gesetzt; neue }
                        { Tiefensuche ergibt false! }
       mustfind:=true;
-      end
-    else
-      if recno>=hd.recs then dEOF:=true
-      else begin
-        dbFlush(dbp);
-        repeat
-          inc(recno);
-          recread(dbp,false);
-        until (recno=hd.recs) or (recbuf^[0] and 1=0);
-        dEOF:=(recbuf^[0] and 1<>0);
-        dBOF:=false;
-        end;
+    end else if recno>=hd.recs then
+      dEOF:=true
+    else begin
+      dbFlush(dbp);
+      repeat
+        inc(recno);
+        recread(dbp,false);
+      until (recno=hd.recs) or (recbuf^[0] and 1=0);
+      dEOF:=(recbuf^[0] and 1<>0);
+      dBOF:=false;
     end;
+  end;
 end;
 
 
@@ -2143,25 +2124,24 @@ begin
     seek(f1,hd.hdsize+(adr-1)*hd.recsize);
     blockread(f1,b,1);
     dbDeleted:=(ioresult<>0) or ((b and rFlagDeleted)<>0);
-    end;
-end;
-
-
-function dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;   { -1=unbekannt }
-begin
-  with dp(dbp)^.feldp^ do
-  begin
-    Result :=0;
-    feldname:= UpperCase(feldname); { UpString(feldname);}
-    while (feldname<>feld[Result].fname) and (Result <=felder)  do
-      inc(Result);
-    if Result >felder then
-      Result :=-1;
   end;
 end;
 
 
-function GetFeldNr2(dbp:DB; const feldname:dbFeldStr):integer;   { -1=unbekannt }
+function dbGetFeldNr(dbp:DB; const feldname: string):integer;   { -1=unbekannt }
+var
+  fn: string;
+begin
+  fn:= UpperCase(feldname); { UpString(feldname);}
+  with dp(dbp)^.feldp^ do begin
+    Result := felder;
+    while (Result >= 0) and (fn<>feld[Result].fname) do
+      dec(Result);
+  end;
+end;
+
+
+function GetFeldNr2(dbp:DB; const feldname: string):integer;   { -1=unbekannt }
 begin
   Result :=dbgetfeldnr(dbp,feldname);
   if Result < 0 then error('unbekannter Feldname: '+feldname);
@@ -2178,13 +2158,15 @@ begin
     if (feldnr<0) or (feldnr>hd.felder) then error('ReadN: ungueltige Feldnr.');
     with feldp^.feld[feldnr] do
       case ftyp of
-        1       : begin
-                    bb:=recbuf^[fofs]+1;
-                    if bb>fsize then bb:=fsize;
-                    move(recbuf^[fofs],data,bb);
-                  end;
-        2,3,4,5 : if (fsize > 0) then
-                    move(recbuf^[fofs],data,fsize);
+      dbTypeString:
+        begin
+          bb:=recbuf^[fofs]+1;
+          if bb>fsize then bb:=fsize;
+          move(recbuf^[fofs],data,bb);
+        end;
+      dbTypeInt..dbUntyped:
+        if (fsize > 0) then
+          move(recbuf^[fofs],data,fsize);
       end;
     end;
 end;
@@ -2226,7 +2208,7 @@ end;
 
 function dbReadIntN(dbp:DB; Feldnr: Integer):longint;
 begin
-  Result :=0; 
+  Result :=0;
   dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
 end;
 
@@ -2234,25 +2216,25 @@ end;
 
 function  dbReadByte(dbp:DB; const feld:dbFeldStr):byte;
 begin
-  Result :=0; 
+  Result :=0;
   dbRead(dbp,feld, Result);   { 1/2/4 Bytes }
 end;
 
 function  dbReadByteN(dbp:DB; feldnr:integer):byte;
 begin
-  Result :=0; 
+  Result :=0;
   dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
 end;
 
 function  dbReadChar(dbp:DB; const feld:dbFeldStr):char;
 begin
-  Result := #0; 
+  Result := #0;
   dbRead(dbp,feld, Result);   { 1/2/4 Bytes }
 end;
 
 function  dbReadCharN(dbp:DB; feldnr:integer):char;
 begin
-  Result := #0; 
+  Result := #0;
   dbReadN(dbp,feldnr, Result);   { 1/2/4 Bytes }
 end;
 
@@ -2265,16 +2247,18 @@ begin
     if (feldnr<0) or (feldnr>hd.felder) then error('WriteN: ungueltige Feldnr.');
     with feldp^.feld[feldnr] do
       case ftyp of
-        1       : begin
-                    bb:=byte(data)+1;
-                    if bb>fsize then bb:=fsize;
-                    move(data,recbuf^[fofs],bb);
-                    recbuf^[fofs]:=bb-1;
-                  end;
-        2,3,4,5 : move(data,recbuf^[fofs],fsize);
+      dbTypeString:
+        begin
+          bb:=byte(data)+1;
+          if bb>fsize then bb:=fsize;
+          move(data,recbuf^[fofs],bb);
+          recbuf^[fofs]:=bb-1;
+        end;
+      dbTypeInt..dbUntyped:
+        move(data,recbuf^[fofs],fsize);
       end;
     flushed:=false;
-    end;
+  end;
 end;
 
 procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
@@ -2323,8 +2307,8 @@ begin
     if l>0 then begin
       seek(fe,rr.adr+1);
       blockread(fe,l,4);
-      end;
     end;
+  end;
 end;
 
 
@@ -2342,7 +2326,7 @@ begin
     if size=0 then size:=l
     else size:=min(size,l);
     if size>0 then blockread(fe,data,size);
-    end;
+  end;
 end;
 
 function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
@@ -2371,13 +2355,13 @@ begin
     assign(f,datei);
     if append then begin
       reset(f,1);
-      if ioresult<>0 then rewrite(f,1)
-      else seek(f,filesize(f));
-      end
-    else
+      if ioresult<>0 then
+        rewrite(f,1)
+      else
+        seek(f,filesize(f));
+    end else
       rewrite(f,1);
-    if l>0 then
-    begin
+    if l>0 then begin
       s:=min(131702, l); // maximal 128kb, aber nicht mehr als noetig
       getmem(p,s);
       repeat
@@ -2388,7 +2372,7 @@ begin
       freemem(p,s);
     end;
     close(f);
-    end;
+  end;
 end;
 
 
@@ -2406,8 +2390,7 @@ begin
     seek(fe,filepos(fe)+ofs);
     dec(l,ofs);
     size:=l;
-    if l>0 then
-    begin
+    if l>0 then begin
       s:=min(131072, l); // maximal 128kb, aber nicht mehr als noetig
       getmem(p,s);
       repeat
@@ -2416,8 +2399,8 @@ begin
         dec(l,rr);
       until l=0;
       freemem(p,s);
-      end;
     end;
+  end;
 end;
 
 
@@ -2436,17 +2419,17 @@ begin
       if (size>0) and (dbdtyp(ll.oldsize)=dbdtyp(size)) then begin
         adr:=ll.adr;
         goto ende;
-        end;
-      FreeExtRec(dbp,ll.adr)
       end;
+      FreeExtRec(dbp,ll.adr)
+    end;
     if size>0 then begin
       AllocExtRec(dbp,size,adr);
       move(adr,recbuf^[feldp^.feld[nr].fofs],4);
-      end;
+    end;
   ende:
     move(size,recbuf^[feldp^.feld[nr].fofs+4],4);
     flushed:=false;
-    end;
+  end;
 end;
 
 
@@ -2462,16 +2445,18 @@ begin
       ss:=size;
       blockwrite(fe,ss,4);
       blockwrite(fe,data,size);
-      end;
     end;
+  end;
 end;
 
 procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:xpWord; const s: string);
 var
-  s0: shortstring;
+  s0: shortstring;  //passed as untyped var!!!
 begin
-  if length(s)>255 then s0:= copy(s,1,255)
-  else s0:= s;
+  if length(s)>255 then
+    s0:= copy(s,1,255)
+  else
+    s0:= s;
   dbWriteX(dbp,feld,size,s0);
 end;
 
@@ -2500,9 +2485,9 @@ begin
         dec(size,rr);
       until size=0;
       freemem(p,s);
-      end;
-    close(f);
     end;
+    close(f);
+  end;
 end;
 
 
@@ -2599,6 +2584,9 @@ end;
 
 {
   $Log$
+  Revision 1.64  2002/12/22 10:24:32  dodi
+  - redesigned database initialization
+
   Revision 1.63  2002/12/21 05:37:48  dodi
   - removed questionable references to Word type
 
