@@ -53,7 +53,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
-30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
+30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search    ^@N,1e8^Lookup     @N
 31  Fido,1f1^Request,1f2^File listsù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
 32  Fidoliste,201^Read,202^Delete,203^Search
 33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..ù29
@@ -2328,16 +2328,8 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 # --- XPFIDO ----------------------------------------------------------
 
 + 2100
-1    Find Node info (Esc to quit)
-2    BBS
-3    AKA    [                    ]
-4    Sysop
-5    Phone
-6    Flags
-7    Search
-8    File
-9    Status
-10   E-Mail
+1    Nodelist lookup
+2    Find
 -
 + 2101
 1    Building nodelist index
@@ -2464,14 +2456,21 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 21   Net:
 22   Entries:
 23   found:
-30   Sysop
-31   ~Node list
-32   Flags
-33   Point
-34   Point list
-35   Status
+26   ~BBS/Point, Location ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ AKA ÄÄÄÄÄÄÄÄÄÄÄÄÄ Phone~
+27   ~Nodelists: < >ookup Ä < >earch ÄÄÄÄ <   >~
+28   ~Nodelists: < >ookup Ä < >earch ÄÄÄÄ <     > ÄÄÄÄ <   >~
+29   LS
+30   ~Node list
+31   Point list
+32   Status
+33   BBS name
+34   Name
+35   Location
+36   Sysop
+37   Point
+38   Flags
 -
-2132 ~^Mail , ^Request , ^Info , ^Abort~
+2132 ~^Mail , ^Request , ^Abort~
 
 
 # --- XPAUTO, XPCC ----------------------------------------------------
@@ -3358,7 +3357,10 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 23 Can't create %s!
 24 This file is already active.
 25 No FidoNet nodelist (NODELIST.###) is active.
-26 No matching nodes or points were found.
+26 --- No matching entries found ---
+27 Mail created from nodelist browser -> nodelist browser disabled.
+28 F'Request created from nodelist browser -> nodelist browser disabled.
+29 Mail and F'Request function is disabled here.
 
 +  12200
 1  AutoSend - File "%s" not found!
