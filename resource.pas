@@ -100,7 +100,7 @@ var
 begin
   if ResourceOpen then
     error('Resource file already open');
-  FH := FileOpen(fn, fmOpenRead);
+  FH := FileOpen(fn, fmOpenRead + fmShareDenyNone);
   if FH < 0 then
     error(ioerror(ioresult,'can''t open '+UpperCase(fn)));
   ResourceOpen := true;
@@ -350,6 +350,9 @@ end;
 
 {
   $Log$
+  Revision 1.26.2.2  2003/10/20 09:00:40  mk
+  - fixed 824282: Language switching (again)
+
   Revision 1.26.2.1  2002/07/21 20:14:34  ma
   - changed copyright from 2001 to 2002
 
