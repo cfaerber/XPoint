@@ -947,11 +947,6 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
-          IsGelesen:=ParGelesen or sendbuf or
-                     ((netztyp=nt_Maus) and (left(pm_bstat,1)='G')) or
-                     (filterattr and fattrGelesen<>0) or
-                     (pflags and pe_gelesen<>0) or (ReplHalteFlag < 255);
-
           { Nach Rckl„ufern suchen }
           if BoxPar^.ReplaceOwn and Aufnehmen then
           begin
@@ -966,10 +961,6 @@ begin
                 if flags and 256 <> 0 then
                 begin
                   dbReadN(mbase,mb_halteflags, ReplHalteflag);
-                  (* b := 1; { Nachricht auf gelesen setzen }
-                  dbWriteN(mbase,mb_gelesen,b);
-                  b := 2; { Nachricht auf gel”scht setzen }
-                  dbWriteN(mbase,mb_halteflags,b); *)
                   wrkilled; { Ablage auf jeden Fall reorganisieren }
                   DelBezug;
                   dbDelete(mbase);
@@ -977,6 +968,11 @@ begin
               end;
             end;
           end;
+
+          IsGelesen:=ParGelesen or sendbuf or
+                     ((netztyp=nt_Maus) and (left(pm_bstat,1)='G')) or
+                     (filterattr and fattrGelesen<>0) or
+                     (pflags and pe_gelesen<>0) or (ReplHalteFlag < 255);
 
           if aufnehmen then
           begin
@@ -1232,6 +1228,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.10  2001/01/15 22:15:53  mk
+  - fix fuer gelesen setzen der Ruecklaeufer
+
   Revision 1.21.2.9  2001/01/14 11:07:18  mk
   - Replace: Halteflags uebernehmen
 
