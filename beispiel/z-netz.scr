@@ -1,0 +1,17 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# z-netz.scr: Z-Netz-Netcall-Script
+# fuer ZCONNECT-Systeme ist "ZERBERUS" durch "JANUS" zu ersetzen
+
+         ON Relogin SEND "ZERBERUS" cr
+start:   READ
+         ON "username:" SEND "ZERBERUS" cr
+         ON "systemname:" SEND $POINT cr
+         ON "passwort:" SEND $PASSWORD cr
+         ON "running arc" END
+         GOTO start
+

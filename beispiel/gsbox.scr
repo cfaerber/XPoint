@@ -1,0 +1,42 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# GSMail Login Script (ohne Gewaehr)
+#
+# Ab der GsMail-Version 1.74 hat sich das Loginverfahren geaendert.
+# GsMail erwartet nun kein RETURN zum einloggen mehr. Binden Sie dieses
+# Script unter EDIT/BOXEN/ (GS-BOX) /DIVERSES/NETZANRUF ein, um mit XP
+# auch bei neueren GS-Box-Versionen pollen zu koennen.
+#
+# Der Befehl WAITFOR wartet auf die Einlog-Kennungen. Diese Kennungen
+# koennen allerdings je nach Box anders aussehen. Eventuell muessen Sie
+# die WAITFOR-Befehle entsprechend aendern. Ausserdem ist u.U. eine
+# Anpassung des Delay-Befehls am Scriptende notwendig.
+
+ 
+DISPLAY OFF
+ 
+         WAITFOR "Geben Sie Ihren Vor- und Zunamen ein:"
+         SEND "NET410"
+         SEND "^M"
+ 
+         Write "Systemname :"
+         WAITFOR "Systemname:"
+         SEND $POINT
+         SEND "^M"
+         Writeln $POINT
+ 
+         Write "Passwort   :"
+         WAITFOR "Passwort:"
+         SEND $PASSWORD
+         SEND "^M"
+         Write "Ok"
+         Writeln
+         Writeln
+ 
+         delay 3
+ 
+end

@@ -1,0 +1,25 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# quark.scr: kombiniertes MausTausch- und Online-Script fuer QUARK-Boxen
+
+         on relogin goto relog
+         waitfor    "druecken"
+         delay 0.5  show
+relog:   on online  send "."
+         on netcall send "TAUSCH"
+start:   read                                  # Zeichen holen
+         on "< MEHR >" send " "                # <Space> zum Fortsetzen..
+         on "Username"     send $USER cr
+         on "Passwort"     send $PASSWORD cr
+         on "(J/N/"        send "N"
+         on "Befehl :"     goto ende
+         on "uploaden"     end
+         goto start
+ende:    on online  end                        # Online-Anruf -> fertig
+         send       "TA" cr
+         waitfor    "uploaden"                 # warten auf Protokollstart
+
