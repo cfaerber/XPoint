@@ -2050,12 +2050,14 @@ begin
     assign(netcalldat,ownpath+NetcallSpecialDat);
     reset(netcalldat);
     if IOResult=0 then
+    begin
       while (not eof(netcalldat)) and (i <= NetcallSpecialMax) do
       begin
         readln(netcalldat, NetcallSpecialList[i]);
         inc(i);
       end;
     close(netcalldat);
+    end;
   end;
 end;
 
@@ -2153,6 +2155,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.13  2002/05/28 22:44:05  my
+  MY:- Fix: IOResult/close() in 'ReadNetcallSpecialData' sauberer gestaltet.
+
   Revision 1.10.2.12  2002/03/29 22:47:37  my
   JG:- Fix: Leertasten beim Anlegen von Tastaturmakros werden jetzt als
        "< >" ins Makro geschrieben.
@@ -2174,8 +2179,6 @@ end.
        nicht bei N/Ž/T)
 
   Revision 1.10.2.8  2001/10/16 18:36:01  my
-  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
-  ------------------------------------------------------------------------
   MY:- /Netcall/Spezial fertiggestellt:
        - NETCALL.DAT kann jetzt bis zu 20 Eintr„ge enthalten, die bei
          einem /Netcall/Spezial mit <F2> ausgew„hlt werden k”nnen. Je
