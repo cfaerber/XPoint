@@ -1729,10 +1729,16 @@ var ap : absatzp;
 begin
   with e^ do
   begin
-    ClipToFile(ClipFileName);
-    ap :=LoadBlock(ClipFileName,false,0,rrand);
-    InsertWithMark(ap);
-  end;
+    if ClipAvailable then (* begin *)
+      ClipToFile(ClipFileName);
+      ap :=LoadBlock(ClipFileName,false,0,rrand);
+      InsertWithMark(ap);
+    { if exist(EdTempFile) then era(EdTempFile); }
+(*  end
+    else begin
+      InsertWithMark(Clipboard);
+      Clipboard:=CopyBlock; *)
+    end; 
 end;
 
 
@@ -2418,6 +2424,14 @@ end;
 
 {
   $Log$
+  Revision 1.19.2.25  2002/05/25 21:55:12  my
+  MY:- Fix: Das interne Clipboard (Datei "CLIP.TXT") funktioniert speziell
+       im Editor jetzt auch unter Linux DOS-Emu (dort stÅrzte XP bisher
+       ab) und unter Windows NT/2000/XP (dort wurde der Clipboard-Inhalt
+       im Editor bisher nicht eingefÅgt, sondern gelîscht). Ursache: XP
+       Åberschrieb die Datei "CLIP.TXT" mit sich selbst, das scheint nur
+       unter DOS zu funktionieren und war darÅber hinaus unnîtig.
+
   Revision 1.19.2.24  2002/04/19 16:38:05  my
   JG[+MY]: MIME-Multipart-Versand (RFC/ZConnect) implementiert :-):
            OpenXP/16 kann jetzt standardkonforme MIME-Multipart-Nachrich-
@@ -2437,14 +2451,14 @@ end;
            Bereich Zeichensatzbehandlung und ZConnect-KonformitÑt.
 
   Revision 1.19.2.23  2001/09/16 20:34:46  my
-  JG+MY:- Editor-Men¸ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
-          und "Beenden" hinzugef¸gt
+  JG+MY:- Editor-MenÅ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugefÅgt
 
   JG+MY:- Quotereflow verfeinert: <Enter> mitten in Quotezeichen
           entspricht <Enter> am Ende von Quotezeichen
 
   JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
-          Windows-Clipboard nicht verf¸gbar ist. Altes Editor-RAM-
+          Windows-Clipboard nicht verfÅgbar ist. Altes Editor-RAM-
           Clipboard deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
@@ -2518,7 +2532,8 @@ end;
   * Glossary:
     - Bugfix: Endlosschleife bei Menueauswahl wenn in der Glossary.cfg
       nach dem >Kuerzel< in derselben Zeile noch Zeichen kamen.
-    - Alle Zeichen ausser ASCII 0-32 und 255 Werden jetzt als Kuerzel akzeptiert
+    - Alle Zeichen ausser ASCII 0-32 und 255 Werden jetzt als Kuerzel
+      akzeptiert
 
   Revision 1.19.2.1  2000/07/21 17:32:26  jg
   - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
@@ -2543,7 +2558,8 @@ end;
   kleiner Schînheitsbugfix fÅr 'Block reformatieren', Onlinehilfe angepasst
 
   Revision 1.14  2000/03/21 21:19:09  rb
-  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
+  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren'
+  jetzt auf <Ctrl-B>
 
   Revision 1.13  2000/03/21 01:01:55  rb
   'Block reformatieren' verbessert, weiterer kleiner Bugfix
@@ -2564,8 +2580,8 @@ end;
   RB: * RTE im Editor behoben
 
   Revision 1.7  2000/02/17 08:34:51  mk
-  RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts in die neue Zeile
-        umgebrochen wird
+  RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts
+        in die neue Zeile umgebrochen wird
 
   Revision 1.6  2000/02/15 22:22:04  mk
   RB: * Quote-Reflow jetzt vollstaendig implementiert
