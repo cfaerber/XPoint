@@ -74,8 +74,8 @@ type DateTimeSt = string;
      atext      = s80;
 
 function Bin(l:longint; n:integer):string;      { Bin-Zahl mit n Stellen       }
-function Blankpos(var s:string):integer;        { Position von ' ' oder #9     }
-function BlankposX(var s:string): integer;       { length(s)+1, falls bp=0      }
+function Blankpos(const s:string):integer;        { Position von ' ' oder #9     }
+function BlankposX(const s:string): integer;       { length(s)+1, falls bp=0      }
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
 procedure CopyStream(InStream,OutStream:TStream);
 procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
@@ -993,7 +993,7 @@ begin
     LastChar := s[Length(s)];
 end;
 
-function Blankpos(var s:string):integer;        { Position von ' ' oder #9     }
+function Blankpos(const s:string):integer;        { Position von ' ' oder #9     }
 var p1,p2 : integer;
 begin
   p1:=cpos(' ',s);
@@ -1004,7 +1004,7 @@ begin
 end;
 
 
-function BlankposX(var s:string):integer;       { length(s)+1, falls bp=0      }
+function BlankposX(const s:string):integer;       { length(s)+1, falls bp=0      }
 var p : integer;
 begin
   p:=blankpos(s);
@@ -1488,6 +1488,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.96  2001/08/28 08:15:44  mk
+  - blankpos(x) now with const parameter
+
   Revision 1.95  2001/08/12 19:59:17  cl
   - rename xp6*.* => xpsendmessage*.*
   - NaN/IsNaN added
