@@ -83,10 +83,13 @@ implementation
 
 
 end.
+
 {
   $Log$
-  Revision 1.29.2.21  2003/01/10 14:01:35  mw
+  Revision 1.29.2.22  2003/01/10 22:16:20  my
+  MY:- Log-Kosmetik
 
+  Revision 1.29.2.21  2003/01/10 14:01:35  mw
   MW: - Wir haben jetzt 2003
 
   Revision 1.29.2.20  2002/03/09 21:50:13  my
@@ -107,11 +110,11 @@ end.
        aktualisiert.
 
   Revision 1.29.2.18  2001/09/16 20:42:28  my
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -128,7 +131,8 @@ end.
   - arbeiten am Client-Modus
 
   Revision 1.29.2.13  2001/01/10 17:39:07  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.29.2.12  2001/01/02 11:43:17  mk
   - Versionnummer auf RC3 geaendert
@@ -206,7 +210,8 @@ end.
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.19  2000/03/24 20:25:50  rb
-  ASM-Routinen ges„ubert, Register fr VP + FPC angegeben, Portierung FPC <-> VP
+  ASM-Routinen ges„ubert, Register fr VP + FPC angegeben,
+  Portierung FPC <-> VP
 
   Revision 1.18  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
@@ -225,8 +230,8 @@ end.
 
   Revision 1.13  2000/03/16 10:14:25  mk
   - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+  - Ver32: Buffergroessen fr Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen nderung wieder
 
   Revision 1.12  2000/03/14 18:16:15  mk
   - 16 Bit Integer unter FPC auf 32 Bit Integer umgestellt
@@ -235,7 +240,7 @@ end.
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.10  2000/03/08 22:36:33  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.9  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
