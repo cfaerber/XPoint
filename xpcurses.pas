@@ -88,7 +88,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 95;
+   lastESCSeq = 103;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -191,7 +191,15 @@ const
       (Sequenz: #27#79#72;       ncCode: 432; DosCode : #0#71),  { Home on NetBSD }
       (Sequenz: #27#79#70;       ncCode: 433; DosCode : #0#79),  { End on NetBSD }
       (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115)   { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#91#49#59#53#67; ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 437; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#91#49#59#53#67; ncCode: 438; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 439; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
+      (Sequenz: #27#0#77;           ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#0#79;           ncCode: 437; DosCode : #0#115)   { Ctrl+Cursor left on NetBSD }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -1546,6 +1554,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.12  2003/09/05 18:19:51  mk
+  - added more codes for ctrl-left and ctrl-right
+
   Revision 1.64.2.11  2003/09/03 18:48:46  mk
   - added codes for Ctrl-Left + Ctrl-Right on NetBSD
 
