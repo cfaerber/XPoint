@@ -102,10 +102,13 @@ begin
         FCommObj^.ReadBlock(Data[DataRead+1],readthistime,readthistime);
         dec(reads,readthistime); inc(DataRead,readthistime);
         end;
-      end else if FDataSize>$7fff then
-        Debug.DebugLog('ncfido','got binkp frame '+stFrameType[Data[1]]+' '+SCommandPar,DLDebug)
-      else
-        Debug.DebugLog('ncfido','got binkp data frame, size '+Strs(FDataSize),DLDebug)
+      result:=DataRead>=(FDataSize and $7fff);
+      if result then // now it's ready
+        if FDataSize>$7fff then
+          Debug.DebugLog('ncfido','got binkp frame '+stFrameType[Data[1]]+' '+SCommandPar,DLDebug)
+        else
+          Debug.DebugLog('ncfido','got binkp data frame, size '+Strs(FDataSize),DLDebug)
+      end;
     end;
 end;
 
@@ -224,9 +227,9 @@ const
   sTxState: array[tTxState]of string= ('TxGNF','TxTryR','TxReads','TxWLA','TxDone');
 var
   State: tState; RxState,LastRxState: tRxState; TxState,LastTxState: tTxState;
-  InBpF,OutBpF: tBinkpFrame; TheQueue: TList; PendingFiles: TStringList;
+  InBpF,OutBpF: tBinkpFrame; TheQueue: TList; PendingFiles,PendingFilesWithPath: TStringList;
   RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
-  TxFilename: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
+  TxFilename,TxFilenameWithPath: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
 
   function GetPar(var s: string): string;
   var p: integer;
@@ -235,7 +238,7 @@ var
   function BpReceive: tResult;
   var s: string; RxFilePos: Cardinal;
   begin
-    result:=OK;
+    result:=OK; Debug.DebugLog('ncfido','Rx machine',DLDebug);
     if LastRxState<>RxState then begin
       Debug.DebugLog('ncfido','binkp rxstate '+sRxState[RxState],DLDebug);
       LastRxState:=RxState;
@@ -250,7 +253,7 @@ var
             TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
           M_NUL: Log(lcInfo,InBpF.CommandPar);
-          M_EOB: begin WriteIPC(mcInfo,'Finished receiving files',[0]); RxState:=RxEOB; end;
+          M_EOB: begin WriteIPC(mcInfo,'Finished receiving files',[0]); RxState:=RxDone; end; //** protocol violation
           M_FILE: begin
             s:=InBpF.CommandPar; RxFilename:=GetPar(s); RxSize:=StrToIntDef(GetPar(s),0);
             RxTime:=StrToIntDef(GetPar(s),0); RxOffset:=StrToIntDef(GetPar(s),0);
@@ -315,22 +318,18 @@ var
           end;
         if RxFilePos<RxSize then RxState:=RxReceD;
         end;
-      RxEOB: begin
-        if TxState=TxDone then
-          RxState:=RxDone
-        else
-          if InBpF.IsReady then begin
-            case InBpF.FrameType of
-              M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
-              M_GET,M_GOT,M_SKIP: begin
-                TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
-                end;
-              M_NUL: Log(lcInfo,InBpF.CommandPar);
-              end;
-            InBpF.ReadFromStream(False);
+      RxEOB,RxDone: begin // process incoming packets even if in RxDone
+        if TxState=TxDone then RxState:=RxDone;
+        if not InBpF.IsReady then exit;
+        case InBpF.FrameType of
+          M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
+          M_GET,M_GOT,M_SKIP: begin
+            TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
+          M_NUL: Log(lcInfo,InBpF.CommandPar);
+          end;
+        InBpF.ReadFromStream(False);
         end;
-      RxDone: ;
       end;
   end;
 
@@ -350,10 +349,11 @@ var
           TxState:=TxGNF;
           end else
           if PendingFiles.Find(s,iPending)then begin
+            LogTxFile(PendingFilesWithPath[iPending]);
             PendingFiles.Delete(iPending);
-            if OutgoingFiles.Count>0 then OutgoingFiles.Delete(0);
-            //** clean up file list handling
+            PendingFilesWithPath.Delete(iPending);
             WriteIPC(mcInfo,'sent %s',[s]);
+            if(PendingFiles.Count<=0)and(TxState=TxWLA)then TxState:=TxDone;
             end;
         end;
       M_SKIP: begin
@@ -372,7 +372,6 @@ var
 
   function BpTransmit: tResult;
   const BufferSize= 8192;
-  var s: string;
   begin
     result:=OK;
     if LastTxState<>TxState then begin
@@ -386,9 +385,10 @@ var
           TxState:=TxWLA; result:=Continue;
           end else begin                     // still files to send
           TxFilename:=ExtractFilename(OutgoingFiles[0]);
+          TxFilenameWithPath:=OutgoingFiles[0];
           WriteIPC(mcInfo,'Sending %s',[TxFilename]);
           TxFileHandle:=FileOpen(OutgoingFiles[0],fmOpenRead);
-          OutgoingFiles.Delete(0); //** should not be deleted here but in ProcessTheQueue
+          OutgoingFiles.Delete(0);
           if TxFileHandle>0 then begin       // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
@@ -415,27 +415,35 @@ var
           FileClose(TxFileHandle);
           TxState:=TxGNF;
           PendingFiles.Add(TxFilename);
-          LogTxFile(TxFilename);
-          TxFilename:='';
+          PendingFilesWithPath.Add(TxFilenameWithPath);
+          TxFilename:=''; TxFilenameWithPath:='';
           end else begin // still data to read
           TxState:=TxTryR;
           end;
         end;
-      TxWLA: begin
+      TxWLA,TxDone: begin // pay attention to TheQueue even if in TxDone
         if TheQueue.Count>0 then begin
           ProcessTheQueue; result:=continue;
-          end else begin
-          if RxState>=RxEOB then TxState:=TxDone else TxState:=TxWLA;
-          end;
+          end else if RxState>=RxEOB then
+          TxState:=TxDone;
         end;
-      TxDone: if RxState=RxEOB then RxState:=RxDone; //** protocol description error
       end;
+  end;
+
+  function BreakTransfer: integer;
+  begin
+    State:=Done;
+    DebugLog('ncfido','BreakTransfer: '+IntToStr(OutgoingFiles.Count)+'!'+IntToStr(Pendingfiles.Count),DLDebug);
+    if(OutgoingFiles.Count<=0)and(PendingFiles.Count<=0)then
+      result:=1
+    else
+      result:=2;
   end;
 
 begin
   State:=WaitConn;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
-  TheQueue:=TList.Create; PendingFiles:=TStringList.Create;
+  TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
   repeat
     case State of
       WaitConn: begin
@@ -446,8 +454,7 @@ begin
         InBpF.ReadFromStream(False);
         end;
       Switch: begin
-        if ((RxState=RxDone)and(TxState=TxDone))or
-           ((RxState=RxWaitF)and(TxState=TxDone)and(not FCommObj^.Carrier))then begin
+        if (RxState=RxDone)and(TxState=TxDone)then begin
           WriteIPC(mcInfo,'File transfer complete',[0]);
           result:=0; State:=Done;
           end else if FCommObj^.CharAvail then
@@ -459,14 +466,14 @@ begin
       Receive: begin
           case BpReceive of
             OK: State:=Switch; //** set timer
-            Failure: begin if OutgoingFiles.Count=0 then result:=1 else result:=2; State:=Done end;
+            Failure: result:=BreakTransfer;
             Continue: ;
           end;
         end;
       Transmit: begin
           case BpTransmit of
             OK: State:=Switch; //** set timer
-            Failure: begin if OutgoingFiles.Count<=0 then result:=1 else result:=2; State:=Done end;
+            Failure: result:=BreakTransfer;
             Continue: ;
           end;
         end;
@@ -477,15 +484,18 @@ begin
         WriteIPC(mcError,'Connection lost',[0])
       else
         WriteIPC(mcError,'User break',[0]);
-      if OutgoingFiles.Count<=0 then result:=1 else result:=2; State:=Done
+      result:=BreakTransfer;
       end;
   until State=Done;
-  InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy;
+  InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy; PendingFilesWithPath.Destroy;
 end;
 
 
 {
   $Log$
+  Revision 1.9  2001/02/23 16:09:13  ma
+  - fixed session end detection bugs
+
   Revision 1.8  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)
