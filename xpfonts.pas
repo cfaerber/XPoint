@@ -84,19 +84,9 @@ begin
     bx:=height*256;
     cx:=256;
     dx:=0;
-    {$IFDEF DPMI}
-      DPMIsel:=DPMIallocDOSmem(16*height,DOSseg);
-      if DOSseg=0 then exit;   { kein DOS-Speicher frei }
-      Move(data,mem[DPMIsel:0],256*height);
-      es:=DOSseg; bp:=0;
-    {$ELSE}
-      es:=seg(data); bp:=ofs(data);
-    {$ENDIF}
+    es:=seg(data); bp:=ofs(data);
     Xintr($10,regs);
-    {$IFDEF DPMI}
-      DPMIfreeDOSmem(DPMIsel);
-    {$ENDIF}
-    end;
+  end;
 end;
 
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
@@ -257,68 +247,85 @@ var regs  : registers;
   begin
     for i:=0 to 255 do
       skip[i]:=2;
-      skip[49]:=4;    { 1 }        skip[53]:=4;    { 5 }
-      skip[67]:=4;    { C }        skip[97]:=4;    { O }
-      skip[105]:=3;   { i }        skip[106]:=3;   { j }
-      skip[129]:=4;   { Å }        skip[132]:=2;   { Ñ }
-      skip[148]:=3;   { î }        skip[154]:=3;   { ö }
-      skip[161]:=3;   { ° }        skip[168]:=3;   { ® }
-      skip[225]:=8;   { · }
-      sp:=0; dp:=0;
-      for i:=0 to 255 do begin
-        sk:=skip[i];
-        for j:=1 to 7 do begin
-          if j=sk then inc(sp);
-          p2^[dp]:=p1^[sp];
-          inc(sp); inc(dp);
-          end;
-        end;
+    skip[49]:=4;    { 1 }        skip[53]:=4;    { 5 }
+    skip[67]:=4;    { C }        skip[97]:=4;    { O }
+    skip[105]:=3;   { i }        skip[106]:=3;   { j }
+    skip[129]:=4;   { Å }        skip[132]:=2;   { Ñ }
+    skip[148]:=3;   { î }        skip[154]:=3;   { ö }
+    skip[161]:=3;   { ° }        skip[168]:=3;   { ® }
+    skip[225]:=8;   { · }
+    sp:=0; dp:=0;
+    for i:=0 to 255 do
+    begin
+      sk:=skip[i];
+      for j:=1 to 7 do
+      begin
+        if j=sk then inc(sp);
+        p2^[dp]:=p1^[sp];
+        inc(sp); inc(dp);
+      end;
     end;
+  end;
+
+  procedure loadcharset(height:byte);
+  var regs : registers;
+  begin
+    with regs do
+    begin
+      ah:=$11;
+      case height of
+         8 : al:=$12;
+        16 : al:=$14;
+      end;
+      bl:=0;
+      intr($10,regs);
+    end;
+  end;
 
 begin
   getmem(p2,16*256);
-  with regs do begin
-    if (height <=10) or (Height >14) then { Adresse es 8*16 und 8*8 Font beim Bios erfragen }
-    Begin
-      ax:=$1130;
-      if height>14 then bh:=6        { 16er Font lesen }
-      else bh:=3;                    { 8er Font lesen  }
-      xintr($10,regs);
-      {$IFDEF DPMI }
-      sel:=allocselector(0);
-      if SetSelectorBase(sel,longint(es)*$10)=0 then;
-      if SetSelectorLimit(sel,$ffff)=0 then;
-      es:=sel;
-      {$ENDIF }
-      p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
-      end
-    else begin
-      p:=@Font8x14;               { 14er Font aktivieren }
-      inc(longint(p));
-      p1:=p^;
-      end;
-   case height of
-      15 : make15;
-      13 : make13;
-      12 : make12;
-      11 : make11;
-      10 : make10;
-       9 : make9;
-       7 : make7;
-     else fastmove(p1^,p2^,4096);
-    end;
+  if Height in [7, 9, 10, 15] then { Adresse es 8*16 und 8*8 Font beim Bios erfragen }
+  with regs do
+  begin
+    ax:=$1130;
+    if height =5 then
+      bh:=6        { 16er Font lesen }
+    else
+      bh:=3;       { 8er Font lesen  }
+    xintr($10,regs);
+    p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
+  end else
+  begin
+    p:=@Font8x14;               { 14er Font aktivieren }
+    inc(longint(p));
+    p1:=p^;
+  end;
+  case height of
+    15 : make15;
+    13 : make13;
+    12 : make12;
+    11 : make11;
+    10 : make10;
+     9 : make9;
+     7 : make7;
+  else
+    Move(p1^, p2^, 4096);
+  end;
+  case Height of
+    8: LoadCharset(8);
+    16: LoadCharset(16);
+  else
     LoadFont(height,p2^);
-    {$IFDEF DPMI }
-    if FreeSelector(sel)=0 then;
-    {$ENDIF}
-    end;
+  end;
   freemem(p2,16*256);
 end;
-
 
 end.
 {
   $Log$
+  Revision 1.5.4.3  2000/10/26 07:20:51  mk
+  - Grafikmodus mit 8 Zeilen/Zeichen wird jetzt direkt ueber das BIOS gesetzt
+
   Revision 1.5.4.2  2000/09/30 16:28:01  mk
   - VESA 80x60-Zeilenmodus
 
