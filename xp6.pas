@@ -1093,7 +1093,7 @@ fromstart:
     mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empfaenger  ' }
     attrtxt(col.coldiahigh);
     moff;
-    if empfaenger[1]=vert_char then
+    if FirstChar(empfaenger)=vert_char then
       Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
     else
       Wrt2(LeftStr(uucpbrett(empfaenger,edis),bboxwid));
@@ -2098,6 +2098,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.97  2001/02/16 21:25:32  mk
+  - fixed count bug in mf_bretta
+
   Revision 1.96  2001/01/28 08:54:26  mk
   - fixed jump out of range
 

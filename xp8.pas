@@ -62,7 +62,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
-  xp9bp,xp9,xpnt, crc;
+  xp9bp,xp9,xpnt, crc, classes;
 
 const mapsbox : string = '';
 
@@ -1043,6 +1043,59 @@ label again;
     aufbau:=true;
   end;
 
+  procedure HandleNNTP;
+  var
+    RCList: TStringList;
+    s, s1: String;
+    RCFilename: String;
+    Index: Integer;
+  begin
+    RCList := TStringList.Create;
+    RCFilename := fn + '.RC';
+    try
+      if FileExists(RCFilename) then RCList.LoadFromFile(RCFilename);
+
+      s:=List.FirstMarked;
+      while s<>#0 do
+      begin
+        if Pos(' ', s) > 0 then s1 := Copy(s, 1, Pos(' ', s)-1) else s1 := s;
+
+        try
+          case Art of
+            0: begin // connect
+                 if RCList.IndexOf(s) <> -1 then
+                   rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
+                 else
+                 begin
+                   RCList.Add(s1);
+                   List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
+                 end;
+               end;
+            1: begin // disconnect
+                 if RCList.IndexOf(s) = -1 then
+                   rFehler1(833,s1)
+                 else
+                 begin
+                   RCList.Delete(RCList.IndexOf(s));
+                   List.Lines[List.Lines.IndexOf(s + ' *')] := s1;
+                 end;
+               end;
+          end;
+        except
+          // !! Fehlermeldung
+        end;
+
+        s := List.NextMarked;
+      end;
+
+      RCList.Sort;
+      RCList.SaveToFile(RCFilename);
+      List.Lines.SaveToFile(fn + '.BL');
+    finally
+      RCList.Free;
+    end;
+  end;
+
 begin
   if mapsbox='' then begin
     box:=UniSel(1,false,DefaultBox);
@@ -1091,7 +1144,9 @@ begin
         ReadBoxpar(netztyp,box);
       List := TLister.CreateWithOptions(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
                  'APGD/'+iifs(_maus,'VSC:080/',''));
-      List.ReadFromFile(lfile,0);
+      // List.ReadFromFile(lfile,0);
+      List.Lines.LoadFromFile(lfile);
+      List.Lines.Sort;
       case art of
         0 : showkeys(9);
         1 : showkeys(-9);
@@ -1131,35 +1186,41 @@ begin
         end;
         if not ReadJN(ask,true) then
           goto again;
-        if art in [0,1,3,4] then begin
-          fn:=TempS(10000);
-          assign(t,fn);
-          rewrite(t);
-          if quick or (uucp and postmaster) then
-            wr_btext(t,art<>0,uucp);
-          s:=List.FirstMarked;
-          if fido and (art=4) and not Boxpar^.areabetreff then
-            writeln(t,'%Rescan');
-          while s<>#0 do begin
-            writeform;
-            s:=List.NextMarked;
-            end;
-          if fido then writeln(t,'---');
-          close(t);
-          if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
-            BretterAnlegen;
-          List.Free;
-          if art=3 then
-            verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
-          case art of
-            0 : sendmaps('ADD',box,fn);
-            1 : sendmaps('DEL',box,fn);
-            3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
-            4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
+        if art in [0,1,3,4] then
+        begin
+          if Netztyp = nt_NNTP then
+            HandleNNTP
+          else
+          begin
+            fn:=TempS(10000);
+            assign(t,fn);
+            rewrite(t);
+            if quick or (uucp and postmaster) then
+              wr_btext(t,art<>0,uucp);
+            s:=List.FirstMarked;
+            if fido and (art=4) and not Boxpar^.areabetreff then
+              writeln(t,'%Rescan');
+            while s<>#0 do begin
+              writeform;
+              s:=List.NextMarked;
+              end;
+            if fido then writeln(t,'---');
+            close(t);
+            if (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+              BretterAnlegen;
+            List.Free;
+            if art=3 then
+              verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
+              case art of
+                0 : sendmaps('ADD',box,fn);
+                1 : sendmaps('DEL',box,fn);
+                3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
+                4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
+              end;
+
+            erase(t);
           end;
-          erase(t);
-          end
-        else
+        end else
         begin
           BretterAnlegen;
           List.Free;
@@ -1168,8 +1229,8 @@ begin
       else List.Free;
       freeres;
       aufbau:=true;
-      end;
     end;
+  end;
 end;
 
 
@@ -1615,6 +1676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/02/16 21:25:32  mk
+  - fixed count bug in mf_bretta
+
   Revision 1.34  2001/01/04 16:10:45  ma
   - adjusted unit names in "uses" statement
 

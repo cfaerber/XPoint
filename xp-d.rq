@@ -3078,6 +3078,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # NNTP
 30 Gruppenliste konnte nicht Åbertragen werden.
 31 Kann keine Verbindung zum Server herstellen.
+32 Die Newsgroup %s ist bereits bestellt
 # XP8.INC
 50 Keine Filescan-Nachricht gewÑhlt!
 51 %s ist kein eingetragener Fido-Server!
@@ -3597,6 +3598,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.97  2001/02/16 21:25:31  mk
+# - fixed count bug in mf_bretta
+#
 # Revision 1.96  2001/01/22 16:15:14  mk
 # - added ReplaceOwn-Feature (merge from 3.40 branch)
 #

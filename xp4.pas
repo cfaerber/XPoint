@@ -809,7 +809,7 @@ var t,lastt: taste;
       pb : string;
     begin
       i := 0;
-      while (i < SendEmpfList.Count - 1) and (SendEmpfList[i][1]='+') do
+      while (i < SendEmpfList.Count) and (FirstChar(SendEmpfList[i])='+') do
         Inc(i);
       if i < SendEmpfList.Count then
       begin                       { existierendes Empfaengerbrett gefunden }
@@ -2131,6 +2131,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.79  2001/02/16 21:25:32  mk
+  - fixed count bug in mf_bretta
+
   Revision 1.78  2001/01/14 10:13:34  mk
   - MakeHeader() integreated in new unit
 
