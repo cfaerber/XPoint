@@ -1954,9 +1954,9 @@ begin
 
   ReadMode := fmOpenReadWrite;
 
-  assign(d,NewDateFile);
-  reset(d,1);
-  close(d);
+  assign(f,NewDateFile);
+  reset(f,1);
+  close(f);
 
   ReadMode := b;
 end;
@@ -2097,6 +2097,9 @@ end;
 
 {
   $Log$
+  Revision 1.149  2002/04/25 23:04:30  cl
+  - fixed last commit
+
   Revision 1.148  2002/04/25 23:01:59  cl
   - BUGFIX: #216189 - Check letzter Programmstart
     replaced (deactivated) xp1.set_checkdate with portable version.
