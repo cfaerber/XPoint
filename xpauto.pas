@@ -415,8 +415,6 @@ var sr    : tsearchrec;
       s     : string;
       err   : boolean;
       temp  : boolean;
-      bs    : word;
-      buf   : pointer;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
       nt    : byte;
@@ -431,10 +429,7 @@ var sr    : tsearchrec;
     SendMsg:=false;
     empf:=''; betr:='';
     box:=''; datei:='';
-    bs := 8192;
-    getmem(buf,bs);
     assign(t1,AutoxDir+sr.name);
-    settextbuf(t1,buf^,bs);
     reset(t1);
     s:='*';
     while not eof(t1) and (s<>'') do begin
@@ -453,7 +448,11 @@ var sr    : tsearchrec;
         end;
       end;
     err:=true;
-    if box<>'' then nt:=ntBoxNetztyp(box);
+    if box<>'' then
+      nt:=ntBoxNetztyp(box)
+    else
+      nt := 255; // nt is undefined
+
     attach:=(box<>'') and (datei<>'') and
             ((nt=nt_Fido) or
              (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
@@ -477,7 +476,6 @@ var sr    : tsearchrec;
       err:=false;
     if err then begin
       close(t1);
-      freemem(buf,bs);
       exit;
       end;
 
@@ -493,19 +491,18 @@ var sr    : tsearchrec;
       assign(t2,datei); rewrite(t2);
       while not eof(t1) do begin
         repeat
-          read(t1,s); write(t2,s);
+          readln(t1, s);
+          writeln(t2, s);
         until eoln(t1);
-        readln(t1); writeln(t2);
-        end;
+      end;
       close(t2);
-      end
+    end
     else begin
       temp:=false;
       SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
       SendFiledate:=zcfiletime(datei);
       end;
     close(t1);
-    freemem(buf,bs);
     s:='';
     forcebox:=box;
     empf:=vert_long(empf);
@@ -675,6 +672,10 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.8  2003/04/16 20:41:25  mk
+  - fixed some (possilbe) bugs in autoexec and SendMsg
+  - use Ansistrings to copy part of message in new buffer
+
   Revision 1.48.2.7  2002/07/27 08:40:18  mk
   - fixed typo
 
