@@ -402,19 +402,21 @@ BIN = maggi ndiff pmconv uucp-fl1 uucico uuz xp xp-fm xpme yup2pkt \
 	zfido zpr
 endif
 COMPBIN = $(BIN) docform ihs rc
+
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug eddef editor encoder exxec feiertag fileio gpltools \
 	help inout ipaddr ipcclass keys lister log maske maus2 modem \
 	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
-	printerx regexpr resource stack stringtools timer typeform \
-	uart unicode utftools win2 winxp xp0 xp1 xp10 xp1help \
-	xp1input xp1o xp1o2 xp2 xp2c xp2db xp2f xp3 xp3ex xp3o xp3o2 \
-	xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 xp6l xp6o xp7 xp7f xp7l \
-	xp7o xp8 xp9 xp9bp xp_des xp_iti xp_pgp xp_uue xpauto xpcc \
-	xpcfg xpcurses xpdatum xpdiff xpdos32 xpe xpeasy xpf2 xpfido \
-	xpfidonl xpftnadr xpglobal xpimpexp xpipc xpkeys xplinux \
-	xpmaus xpmime xpnntp xpnodes xpnt xpos2 xpreg xpstat xpterm \
-	xpuu xpview xpwin32 xpx zcrfc zftools zmodem
+	osdepend printerx regexpr resource stack stringtools timer \
+	typeform uart unicode utftools win2 winxp xp0 xp1 xp10 \
+	xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db xp2f xp3 xp3ex \
+	xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 xp6l xp6o xp7 \
+	xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti xp_pgp xp_uue \
+	xpauto xpcc xpcfg xpcurses xpdatum xpdiff xpdos32 xpe xpeasy \
+	xpf2 xpfido xpfidonl xpftnadr xpglobal xpimpexp xpipc xpkeys \
+	xplinux xpmaus xpmime xpnntp xpnodes xpnt xpos2 xpreg xpstat \
+	xpterm xpuu xpview xpwin32 xpx zcrfc zftools zmodem
+
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -518,7 +520,7 @@ uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
 
 endif
 
-uucp-fl1$(EXEEXT): uucp-fl1.pas xpdefine.inc
+uucp-fl1$(EXEEXT): uucp-fl1.pas xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 uuz$(EXEEXT): uuz.pas xpdefine.inc xpglobal$(UNITEXT) zcrfc$(UNITEXT)
@@ -531,25 +533,27 @@ xp$(EXEEXT): xp.pas archive$(UNITEXT) clip$(UNITEXT) crc$(UNITEXT) \
 	eddef$(UNITEXT) editor$(UNITEXT) feiertag$(UNITEXT) \
 	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
-	xp1$(UNITEXT) xp10$(UNITEXT) xp1help$(UNITEXT) \
-	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
-	xp2$(UNITEXT) xp2c$(UNITEXT) xp2db$(UNITEXT) xp2f$(UNITEXT) \
-	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) \
-	xp4$(UNITEXT) xp4e$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) \
-	xp4o3$(UNITEXT) xp5$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) \
-	xp7$(UNITEXT) xp7f$(UNITEXT) xp7o$(UNITEXT) xp8$(UNITEXT) \
-	xp9$(UNITEXT) xp_des$(UNITEXT) xp_iti$(UNITEXT) \
-	xp_pgp$(UNITEXT) xp_uue$(UNITEXT) xpauto$(UNITEXT) \
-	xpcc$(UNITEXT) xpcurses$(UNITEXT) xpdatum$(UNITEXT) \
-	xpdefine.inc xpdiff$(UNITEXT) xpe$(UNITEXT) xpf2$(UNITEXT) \
-	xpfido$(UNITEXT) xpfidonl$(UNITEXT) xpglobal$(UNITEXT) \
-	xpimpexp$(UNITEXT) xpkeys$(UNITEXT) xplinux$(UNITEXT) \
-	xpmaus$(UNITEXT) xpmime$(UNITEXT) xpnt$(UNITEXT) \
-	xpreg$(UNITEXT) xpstat$(UNITEXT) xpterm$(UNITEXT) \
-	xpuu$(UNITEXT) xpview$(UNITEXT) xpx$(UNITEXT) zcrfc$(UNITEXT)
+	modem$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	objcom-objcom printerx$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
+	xp10$(UNITEXT) xp1help$(UNITEXT) xp1input$(UNITEXT) \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
+	xp2db$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) \
+	xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4$(UNITEXT) xp4e$(UNITEXT) \
+	xp4o$(UNITEXT) xp4o2$(UNITEXT) xp4o3$(UNITEXT) xp5$(UNITEXT) \
+	xp6$(UNITEXT) xp6o$(UNITEXT) xp7$(UNITEXT) xp7f$(UNITEXT) \
+	xp7o$(UNITEXT) xp8$(UNITEXT) xp9$(UNITEXT) xp_des$(UNITEXT) \
+	xp_iti$(UNITEXT) xp_pgp$(UNITEXT) xp_uue$(UNITEXT) \
+	xpauto$(UNITEXT) xpcc$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
+	xpe$(UNITEXT) xpf2$(UNITEXT) xpfido$(UNITEXT) \
+	xpfidonl$(UNITEXT) xpglobal$(UNITEXT) xpimpexp$(UNITEXT) \
+	xpkeys$(UNITEXT) xplinux$(UNITEXT) xpmaus$(UNITEXT) \
+	xpmime$(UNITEXT) xpnt$(UNITEXT) xpreg$(UNITEXT) \
+	xpstat$(UNITEXT) xpterm$(UNITEXT) xpuu$(UNITEXT) \
+	xpview$(UNITEXT) xpx$(UNITEXT) zcrfc$(UNITEXT) \
+	zmodem$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
@@ -559,25 +563,26 @@ xp$(EXEEXT): xp.pas archive$(UNITEXT) clip$(UNITEXT) crc$(UNITEXT) \
 	eddef$(UNITEXT) editor$(UNITEXT) feiertag$(UNITEXT) \
 	fileio$(UNITEXT) help$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
 	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	montage$(UNITEXT) mouse$(UNITEXT) printerx$(UNITEXT) \
-	resource$(UNITEXT) stack$(UNITEXT) typeform$(UNITEXT) \
-	uart$(UNITEXT) win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) \
-	xp1$(UNITEXT) xp10$(UNITEXT) xp1help$(UNITEXT) \
-	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
-	xp2$(UNITEXT) xp2c$(UNITEXT) xp2db$(UNITEXT) xp2f$(UNITEXT) \
-	xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o$(UNITEXT) xp3o2$(UNITEXT) \
-	xp4$(UNITEXT) xp4e$(UNITEXT) xp4o$(UNITEXT) xp4o2$(UNITEXT) \
-	xp4o3$(UNITEXT) xp5$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) \
-	xp7$(UNITEXT) xp7f$(UNITEXT) xp7o$(UNITEXT) xp8$(UNITEXT) \
-	xp9$(UNITEXT) xp_des$(UNITEXT) xp_iti$(UNITEXT) \
-	xp_pgp$(UNITEXT) xp_uue$(UNITEXT) xpauto$(UNITEXT) \
-	xpcc$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
-	xpe$(UNITEXT) xpf2$(UNITEXT) xpfido$(UNITEXT) \
-	xpfidonl$(UNITEXT) xpglobal$(UNITEXT) xpimpexp$(UNITEXT) \
-	xpkeys$(UNITEXT) xpmaus$(UNITEXT) xpmime$(UNITEXT) \
-	xpnt$(UNITEXT) xpreg$(UNITEXT) xpstat$(UNITEXT) \
-	xpterm$(UNITEXT) xpuu$(UNITEXT) xpview$(UNITEXT) xpx$(UNITEXT) \
-	zcrfc$(UNITEXT)
+	modem$(UNITEXT) montage$(UNITEXT) mouse$(UNITEXT) \
+	objcom-objcom printerx$(UNITEXT) resource$(UNITEXT) \
+	stack$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) \
+	win2$(UNITEXT) winxp$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) \
+	xp10$(UNITEXT) xp1help$(UNITEXT) xp1input$(UNITEXT) \
+	xp1o$(UNITEXT) xp1o2$(UNITEXT) xp2$(UNITEXT) xp2c$(UNITEXT) \
+	xp2db$(UNITEXT) xp2f$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) \
+	xp3o$(UNITEXT) xp3o2$(UNITEXT) xp4$(UNITEXT) xp4e$(UNITEXT) \
+	xp4o$(UNITEXT) xp4o2$(UNITEXT) xp4o3$(UNITEXT) xp5$(UNITEXT) \
+	xp6$(UNITEXT) xp6o$(UNITEXT) xp7$(UNITEXT) xp7f$(UNITEXT) \
+	xp7o$(UNITEXT) xp8$(UNITEXT) xp9$(UNITEXT) xp_des$(UNITEXT) \
+	xp_iti$(UNITEXT) xp_pgp$(UNITEXT) xp_uue$(UNITEXT) \
+	xpauto$(UNITEXT) xpcc$(UNITEXT) xpdatum$(UNITEXT) \
+	xpdefine.inc xpdiff$(UNITEXT) xpe$(UNITEXT) xpf2$(UNITEXT) \
+	xpfido$(UNITEXT) xpfidonl$(UNITEXT) xpglobal$(UNITEXT) \
+	xpimpexp$(UNITEXT) xpkeys$(UNITEXT) xpmaus$(UNITEXT) \
+	xpmime$(UNITEXT) xpnt$(UNITEXT) xpreg$(UNITEXT) \
+	xpstat$(UNITEXT) xpterm$(UNITEXT) xpuu$(UNITEXT) \
+	xpview$(UNITEXT) xpx$(UNITEXT) zcrfc$(UNITEXT) \
+	zmodem$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -798,15 +803,16 @@ feiertag$(UNITEXT): feiertag.pas montage$(UNITEXT) typeform$(UNITEXT) \
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-fileio$(UNITEXT): fileio.pas stringtools$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT) \
-	xplinux$(UNITEXT)
+fileio$(UNITEXT): fileio.pas debug$(UNITEXT) stringtools$(UNITEXT) \
+	typeform$(UNITEXT) xp0$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xplinux$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-fileio$(UNITEXT): fileio.pas stringtools$(UNITEXT) typeform$(UNITEXT) \
-	xp0$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+fileio$(UNITEXT): fileio.pas debug$(UNITEXT) stringtools$(UNITEXT) \
+	typeform$(UNITEXT) xp0$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -924,9 +930,19 @@ maus2$(UNITEXT): maus2.pas inout$(UNITEXT) keys$(UNITEXT) \
 
 endif
 
+ifneq (,$(findstring $(OS),freebsd linux))
+
+modem$(UNITEXT): modem.pas debug$(UNITEXT) objcom-objcom \
+	timer$(UNITEXT) typeform$(UNITEXT) xpcurses xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+else
+
 modem$(UNITEXT): modem.pas debug$(UNITEXT) objcom-objcom \
 	timer$(UNITEXT) typeform$(UNITEXT) xpdefine.inc
 	$(PC) $(PFLAGS) $<
+
+endif
 
 montage$(UNITEXT): montage.pas typeform$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
@@ -958,6 +974,37 @@ ncurses$(UNITEXT): ncurses.pas
 netcall$(UNITEXT): netcall.pas ipcclass$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
+
+ifeq ($(OS),dos32)
+
+osdepend$(UNITEXT): osdepend.pas osddos32.inc xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),freebsd)
+
+osdepend$(UNITEXT): osdepend.pas osdbsd.inc osdlinux.inc xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),linux)
+
+osdepend$(UNITEXT): osdepend.pas osdlinux.inc xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),os2)
+
+osdepend$(UNITEXT): osdepend.pas osdos2.inc xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),win32)
+
+osdepend$(UNITEXT): osdepend.pas osdwin32.inc xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
+endif
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
@@ -2476,9 +2523,19 @@ zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
 
 endif
 
+ifneq (,$(findstring $(OS),freebsd linux))
+
+zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
+	objcom-objcom timer$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+else
+
 zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
 	objcom-objcom timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
+
+endif
 
 # ObjCOM-Units
 
@@ -2715,6 +2772,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.48  2000/11/20 19:09:53  fe
+# Dependencies fixed.
+#
 # Revision 1.47  2000/11/19 14:34:28  fe
 # Dependencies fixed.
 #
