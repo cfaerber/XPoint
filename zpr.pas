@@ -548,7 +548,7 @@ var bufanz,
 {$ENDIF }
 
 begin
-  hdp := AllocHeaderMem;
+  getmem(hdp, sizeof(header));
   hdp^.adr:=adr;
   seek(f1,adr);
   ReadBuf;
@@ -1288,16 +1288,20 @@ begin
   statistik;
   dispose(hd0); dispose(hd1);
   halt(sgn(errmsgs));
-finalization
+(* !! muá noch umgebaut werden
+  finalization
   if (right(fo,3)='$$$') then
   begin     { evtl. Tempfile l”schen }
     assign(f2,fo);
     erase(f2);
     if ioresult<>0 then;
-  end;
+  end; *)
 end.
 {
   $Log$
+  Revision 1.24  2000/07/23 10:00:14  mk
+  - ZPR compiliert wieder
+
   Revision 1.23  2000/07/21 17:39:58  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 
