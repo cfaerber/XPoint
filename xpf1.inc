@@ -578,8 +578,8 @@ var   x,y,h   : Integer;
 label again, NewStart;
 
   procedure ParseFlags;
-  var s,s2 : string; { HD: 80 -> 255 bzw. unendlich }
-      p    : byte;
+  var s,s2 : string; 
+      p    : Integer;
   begin
     flags:=0;
     s:=nb_data^.flags;
@@ -600,7 +600,7 @@ label again, NewStart;
   end;
 
   procedure GetAddress(format:integer; var skip:boolean);
-  var p  : byte;
+  var p  : Integer;
       fa : FidoAdr;
   begin
     skip:=false;
@@ -898,9 +898,12 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
     end;
 
   freeres;
-end;
+
 {
   $Log$
+  Revision 1.36  2001/08/28 08:16:03  mk
+  - added some const parameters
+
   Revision 1.35  2001/08/12 11:50:44  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 
@@ -1008,3 +1011,5 @@ end;
   Code aufgeraeumt und z.T. portiert
 
 }
+end;
+

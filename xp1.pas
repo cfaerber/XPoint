@@ -159,13 +159,13 @@ function  fehlfunc(txt:string):boolean;
 procedure logerror(txt:string);
 procedure tfehler(txt:string; sec:integer);
 procedure trfehler(nr:word; sec:integer);
-procedure trfehler1(nr:word; txt:string; sec:integer);
+procedure trfehler1(nr:word; const txt:string; sec:integer);
 procedure afehler(txt:string; auto:boolean);
 procedure arfehler(nr:word; auto:boolean);
 procedure interr(const txt:string);
 function  ioerror(i:integer; otxt:atext):atext;
 
-procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
+procedure shell(const prog:string; space:word; cls:shortint);  { externer Aufruf }
 
 { Execute an external program and add any files created in current dir to SL }
 function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
@@ -225,11 +225,11 @@ function IS_QPC(var betreff:string):boolean;
 function IS_DES(var betreff:string):boolean;
 function IS_PMC(var betreff:string):boolean;
 
-procedure write_lastcall(dat:String);
+procedure write_lastcall(const dat:String);
 
 procedure InitPrinter;
 procedure PrintPage;
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
@@ -947,7 +947,7 @@ begin
   printlines:=0;
 end;
 
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 begin
   writeln(lst,sp(DruckLira),s);
   inc(printlines);
@@ -1363,12 +1363,11 @@ begin
   freeres;
 end;
 
-procedure trfehler1(nr:word; txt:string; sec:integer);
+procedure trfehler1(nr:word; const txt:string; sec:integer);
 begin
-  txt:=getreps2(10000+100*(nr div 100),nr mod 100,txt);
   freeres;
   pushhp(20000+nr);
-  tfehler(txt,sec);
+  tfehler(getreps2(10000+100*(nr div 100),nr mod 100,txt),sec);
   pophp;
 end;
 
@@ -1685,7 +1684,7 @@ end;
 
 { Datum des letzten Netcalls merken }
 
-procedure write_lastcall(dat:string);
+procedure write_lastcall(const dat:string);
 var t : text;
     s : shortstring;
 begin
@@ -2044,10 +2043,12 @@ begin
   ExitProc:=@ExitXP1Unit;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.117  2001/08/28 08:16:03  mk
+  - added some const parameters
+
   Revision 1.116  2001/08/28 08:04:02  mk
   - removed GetX-Workaround in Val for FPC
   - added const-parameters to scomp and GetX
@@ -2129,3 +2130,6 @@ end.
   Revision 1.92  2000/11/19 18:22:53  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 }
+end.
+
+

@@ -40,7 +40,7 @@ const trackpath : boolean = false;
   cls:   0=nicht loeschen; 1=loeschen, 2=loeschen+Hinweis, 3=Mitte loeschen
          -1=loeschen/25 Zeilen, 4=loeschen/nicht sichern,
          5=nicht loeschen/nicht sichern }
-procedure shell(prog:string; space:word; cls:shortint);
+procedure shell(const prog:string; space:word; cls:shortint);
 
   { returned: errorlevel called program returned if call successful
     negative errorlevel if program not found }
@@ -500,10 +500,11 @@ begin
     {$ENDIF}
     trackpath:=false;
     end;
-end;
-
 {
   $Log$
+  Revision 1.61  2001/08/28 08:16:03  mk
+  - added some const parameters
+
   Revision 1.60  2001/08/12 11:50:36  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 
@@ -561,3 +562,6 @@ end;
   Revision 1.43  2000/11/14 15:51:28  mk
   - replaced Exist() with FileExists()
 }
+end;
+
+
