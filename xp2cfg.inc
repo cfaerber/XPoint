@@ -264,7 +264,7 @@ begin
   {$IFDEF OS2 }
     OSType := os_2;
   {$ENDIF }
-  {$IFDEF Windows }
+  {$IFDEF Win32 }
     OSType := os_windows;
   {$ENDIF }
 
@@ -1698,6 +1698,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.83  2000/08/01 16:32:26  mk
+  - Define Windows in Win32 geaendert
+
   Revision 1.82  2000/07/31 09:56:55  mk
   - ConfigScreenWidth und passende Logik hinzugefuegt
 

@@ -134,7 +134,7 @@ function StrSrnp(const r:real; const vk,nk:integer):string; { "echtes" Str$, Rea
 function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe groá         }
-function TopAllStr(const s:string):string;         { alle ersten Buchstaben groá  }
+function TopAllStr(s:string):string;         { alle ersten Buchstaben groá  }
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
@@ -417,7 +417,7 @@ begin
 end;
 
 {$IFDEF NOASM }
-{$IFNDEF Windows }
+{$IFNDEF WIN32 }
 
 {$ifndef FPC}
 function UpCase(const c:char):char;
@@ -489,7 +489,7 @@ end;
 function Upcase(const c:char): char; {&uses ebx} assembler;
 const
   LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
-{$IFDEF Windows}
+{$IFDEF WIN32 }
    '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
    'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß';
 {$ELSE}
@@ -523,7 +523,7 @@ asm
     jmp @Locase_end
 
 
-{$IFDEF Windows}
+{$IFDEF Win32 }
 
  @3: cmp al,192
      jb @Locase_end
@@ -568,7 +568,7 @@ asm
 
 @Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
 
-{$IFDEF Windows}
+{$IFDEF Win32 }
          db '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
          db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß'
 {$ELSE}
@@ -594,7 +594,7 @@ asm
     jmp @Locase_end
 
 
-{$IFDEF Windows}
+{$IFDEF Win32 }
 
  @3: cmp al,192
      jb @Locase_end
@@ -845,9 +845,9 @@ begin
 end;
 
 
-{$IFNDEF Windows}
+{$IFNDEF Win32}
 
-function topallstr(const s:string):string;
+function topallstr(s:string):string;
 var top : boolean;
     p   : integer;
 begin
@@ -1299,6 +1299,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/08/01 16:32:26  mk
+  - Define Windows in Win32 geaendert
+
   Revision 1.60  2000/08/01 08:40:40  mk
   - einige String-Parameter auf const geaendert
 
