@@ -782,6 +782,7 @@ From left to right:
 <Ctrl K><U> : Import Block from File and UU-encode
 <Ctrl K><O> : Encode Block Rot13
 <Ctrl K><S> : Toggle letter upper/lower case
+<Ctrl K><F> : Reformat Block
 <Ctrl Q><B> : Set Cursor at Block begin
 <Ctrl Q><K> : Set Cursor at Block end
 

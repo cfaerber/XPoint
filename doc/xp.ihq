@@ -921,6 +921,7 @@ markiert.
 <Ctrl K><U> : Block aus Datei lesen und UU-kodieren
 <Ctrl K><O> : Block Rot13-codieren
 <Ctrl K><S> : Schreibweise (groá/klein) wechseln
+<Ctrl K><F> : Block reformatieren
 <Ctrl Q><B> : Cursor an Blockanfang bewegen
 <Ctrl Q><K> : Cursor an Blockende bewegen
 

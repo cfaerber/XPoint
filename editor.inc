@@ -1806,12 +1806,16 @@ end;
 { Block reformatieren }
 
 procedure BlockFormatieren; { by Robo }
-var ap,ap2   : absatzp;
-    fp       : integer;
-    copysize : integer;
-    spaces   : integer;
-    quotes   : integer;
-    quotec   : string;
+var ap,ap2    : absatzp;
+    wpa,apnew : absatzp;
+    fp        : integer;
+    copysize  : integer;
+    ss,size1  : word;
+    addspaces : integer;
+    spaces    : integer;
+    quotes    : integer;
+    quotec1   : string;
+    quotec2   : string;
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -1831,23 +1835,27 @@ begin
         if offset>0 then offset:=0;
       bskorr(1,1);
       with block[2].pos do
-        if offset<absatz^.size then offset:=absatz^.size;
+        if offset=0
+          then SetBlock(2,absatz^.prev,absatz^.prev^.size,block[2].disp)
+          else
+            if offset<absatz^.size then offset:=absatz^.size;
       bskorr(2,3);
       { Cursor auf Blockanfang setzen }
       with block[1].pos do
         moveworkpos(offset,absatz);
       ap:=ActAbs;
+      ap^.umbruch:=true;
       repeat
-        spaces:=0;
-        if config.QuoteReflow
-          then quotec:=GetQuote(ap)
-          else quotec:='';
-        quotes:=length(quotec);
-        if config.autoindent and (quotes=0) then
-          while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
-            inc(spaces);
         fp:=advance(ap,0,rrand);
-        if fp<ap^.size then begin { Absatz umbrechen }
+        if fp<ap^.size then begin  { Absatz umbrechen }
+          spaces:=0;
+          if config.QuoteReflow
+            then quotec1:=GetQuote(ap)
+            else quotec1:='';
+          quotes:=length(quotec1);
+          if config.autoindent and (quotes=0) then
+            while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
+              inc(spaces);
           copysize:=max(0,ap^.size-fp);
           if memtest(ap^.size)
           and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
@@ -1855,7 +1863,7 @@ begin
             if spaces>0 then
               fillchar(ap2^.cont,spaces,' ')
             else if quotes>0 then
-              fastmove(quotec[1],ap2^.cont[0],quotes);
+              fastmove(quotec1[1],ap2^.cont[0],quotes);
             if assigned(ap^.next) then
               ap^.next^.prev:=ap2;
             ap2^.next:=ap^.next;
@@ -1868,6 +1876,70 @@ begin
             KorrBlockScrolled(false);
             TruncAbs(ap);
             ap:=ap2;
+          end
+          else begin
+            errsound;
+            exit;
+          end;
+        end
+        else
+        if assigned(ap^.next)
+        and (ap<>block[2].pos.absatz)
+        then begin  { Abs„tze ggf. zusammenfgen }
+          addspaces:=1;
+          ss:=ap^.size + ap^.next^.size + addspaces;
+          if ss>maxabslen then
+            error(2)    { 'Absatz zu groá' }
+          else if memtest(ss) then begin
+            if config.QuoteReflow then begin
+              quotec1:=getquote(ap);
+              quotec2:=getquote(ap^.next);
+              quotes:=length(quotec1);
+              if (quotes>0) and (length(quotec2)>quotes) then
+                while (length(quotec2)>quotes)
+                and (lastchar(quotec2)=' ') do dellast(quotec2);
+            end
+            else begin
+              quotec1:='';
+              quotec2:='';
+              quotes:=0;
+            end;
+            TruncAbs(ap);
+            TruncAbs(ap^.next);
+            if (ap^.size>length(quotec1))
+            and (ap^.next^.size>length(quotec2))  { Leerzeile belassen }
+            and (quotec1=quotec2)  { nur bei ident. QuoteCh zusammenf. }
+            then begin
+              if (quotes>0) and (quotec1=quotec2) then begin
+                ap2:=ap^.next;
+                wpa:=AbsDelete(ap2,0,quotes,false,true);
+                dec(ss,quotes);
+              end;
+              apnew:=AllocAbsatz(ss);
+              wpa:=apnew;
+              apnew^.umbruch:=true;
+              ap2:=ap^.next;
+              blockabsinsert(ap,apnew,maxint,maxint);
+              blockabsinsert(ap2,apnew,0,ap^.size);
+              if assigned(ap^.prev) then begin
+                apnew^.prev:=ap^.prev;
+                ap^.prev^.next:=apnew;
+              end;
+              if assigned(ap2^.next) then begin
+                apnew^.next:=ap2^.next;
+                ap2^.next^.prev:=apnew;
+              end;
+              size1:=ap^.size;
+              FastMove(ap^.cont,apnew^.cont,size1);
+              fillchar(apnew^.cont[size1],addspaces,32);
+              Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
+              absatzwechsel(ap,apnew,false);
+              FreeAbsatz(ap);
+              FreeAbsatz(ap2);
+              KorrBlockScrolled(true);
+              ap:=apnew;
+            end
+            else ap:=ap^.next;
           end
           else begin
             errsound;
@@ -2168,6 +2240,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/03/17 23:10:27  rb
+  'Block reformatieren' fertiggestellt
+
   Revision 1.11  2000/03/17 21:22:10  rb
   vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
 
