@@ -209,7 +209,7 @@ end; { proc. tRawIPObj.SendChar }
 function tRawIPObj.GetChar: Char;
 var R: Char;
 begin
-  repeat ProcIncoming until CharAvail or(not SOpened);
+  while (not CharAvail)and SOpened do (* ProcIncoming *);;
   if SOpened then
     InBuffer.Get(R,SizeOf(R),True)
   else begin
@@ -256,7 +256,8 @@ end; { proc. tRawIPObj.ReadBlock }
 
 function tRawIPObj.CharAvail: Boolean;
 begin
-  ProcIncoming; CharAvail:=InBuffer.BufUsed>0;
+  if InBuffer.BufUsed<=0 then ProcIncoming; 
+  CharAvail:=InBuffer.BufUsed>0;
 end; { func. tRawIPObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -348,6 +349,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.4  2001/03/25 17:30:54  cl
+  - better performance for GetChar
+
   Revision 1.3  2001/02/03 16:31:23  ma
   - reverted back mostly to rev 1.1
   - compilable again with Linux
