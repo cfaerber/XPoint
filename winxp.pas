@@ -91,8 +91,8 @@ procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle:word);
-procedure wrest(handle:word);
+procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
+procedure wrest(handle: Integer);
 procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
                 var n:word; var brk:boolean);
 procedure seldummy(var sel:slcttyp);
@@ -691,23 +691,26 @@ begin
 end;
 
 
-Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle:word);
+Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
 {$IFDEF NCRT }
-const
-  i: word = 1;
+var
+  i: Integer;
 begin
-  while (pullw[i].win.wHnd <> nil) do
-    Inc(i);
-  handle:= i;
-  with pullw[i] do begin
-    if (rahmen > 0) then
-      MakeWindow(win, x1, y1, x2, y2, text, true)
-    else
-      MakeWindow(win, x1, y1, x2, y2, text, false);
-    l:=x1; r:=x2; o:=y1; u:=y2;
-    ashad:=shad;
-    wi:=(r-l+1+shad)*2;
-  end;
+  handle := 0;
+  for I := 1 to maxpull do
+    if (pullw[i].win.wHnd = nil) then
+      with pullw[i] do
+      begin
+        handle:= i;
+        if (rahmen > 0) then
+          MakeWindow(win, x1, y1, x2, y2, text, true)
+        else
+          MakeWindow(win, x1, y1, x2, y2, text, false);
+        l:=x1; r:=x2; o:=y1; u:=y2;
+        ashad:=shad;
+        wi:=(r-l+1+shad)*2;
+        break;
+      end;
 end;
 {$ELSE }
 var
@@ -746,7 +749,7 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-Procedure wrest(handle:word);
+Procedure wrest(handle: Integer);
 {$IFDEF NCRT }
 begin
   RestoreWindow(pullw[handle].win);
@@ -1024,6 +1027,10 @@ end;
 
 {
   $Log$
+  Revision 1.65  2001/10/21 12:33:54  ml
+  - killed local constant
+  - fix for range-error
+
   Revision 1.64  2001/10/11 15:27:01  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 

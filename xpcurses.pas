@@ -358,8 +358,8 @@ procedure Scroll(w: TWinDesc; mode: boolean);
 implementation
 
 uses
-{$ifdef Debug}
   SysUtils,             { FormatDateTime etc. }
+{$ifdef Debug}
   FileIO,
 {$endif}
   debug,
@@ -1551,6 +1551,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/10/21 12:33:54  ml
+  - killed local constant
+  - fix for range-error
+
   Revision 1.59  2001/10/20 17:12:36  ml
   - range check errorfix
   - removed some hints and warnings
