@@ -51,7 +51,8 @@ type
     FAutoResolve: boolean;      { Automatisches aufloesen? }
 
     function  GAsString: string;
-    function  GAtom(Index: integer): integer;
+    function  GAtom(i: integer): integer;
+    function  GName: string;
 
     procedure SAutoResolve(b: boolean);
     procedure SName(s: string);
@@ -63,7 +64,7 @@ type
 
 
     { Atom gibt einen Teil der IP zurueck (i = 1..4) }
-    property Atom[Index: integer]: integer read GAtom;
+    property Atom[i: integer]: integer read GAtom;
 
     { Name gibt den Namen zurueck }
     property Name: string read FName write SName;
@@ -131,15 +132,15 @@ begin
   FResolved:= false;
 end;
 
-function TIP.GAtom(Index: integer): integer;
+function TIP.GAtom(i: integer): integer;
 begin
-  case Index of
+  case i of
     1: Result:= (FIP and $000000ff);
     2: Result:= (FIP and $0000ff00) shr 8;
     3: Result:= (FIP and $00ff0000) shr 16;
     4: Result:= (FIP and $ff000000) shr 24;
   else
-    raise EIPRangeError.Create(Format(res_IPRangeError, [Index]));
+    raise EIPRangeError.Create(Format(res_IPRangeError, [i]));
   end;
 end;
 
@@ -149,7 +150,7 @@ var
 begin
   Clear;
   FName:= s;
-  if FAutoResolve then begin
+  if FAutoResolve and (s<>'') then begin
     hostinfo:= gethostbyname(PChar(s));
     if hostinfo<>nil then
     with hostinfo^ do
@@ -199,11 +200,8 @@ var
 begin
   b:= AutoResolve;
   FResolved:= false;
-  AutoResolve:= true;
-  if FIP<>0 then
-    Raw:= FIP
-  else if FName<>'' then
-    Name:= FName;
+  AutoResolve:= false;
+  AutoResolve:= true; { Loest auf }
   AutoResolve:= b;
 end;
 
@@ -212,10 +210,17 @@ begin
   Result:= Format('%d.%d.%d.%d', [Atom[1], Atom[2], Atom[3], Atom[4]]);
 end;
 
+function TIP.GName: string;
+begin
+  Result:= FName;
+end;
 
 end.
 {
   $Log$
+  Revision 1.5  2000/07/25 09:12:11  hd
+  - GName
+
   Revision 1.4  2000/07/24 17:19:00  mk
   - Updated to use resourcestrings instead of hard coded strings
 
