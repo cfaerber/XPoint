@@ -169,8 +169,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 23
 # Message window, menu "other"
-2  ^EditUser         ^U,^Rot13            ^X,^Hex Dump         ^H,^Date             ^D,^Print            ^T,^Mark,M^ark(for reply)   V,^Text file        ^F,B^inary file      ^I,indir.^Quote      ^Q
-3  ,^Seek user        @U,See^k Subj.       @B
+2  ^EditUser       ^U,^Rot13          ^X,^Hex Dump       ^H,^Date           ^D,^Print          ^T,^Mark,M^ark(for reply) V,^Text file      ^F,B^inary file    ^I,indir.^Quote    ^Q
+3  ,^Seek user      @U,See^k Subj.     @B
 -
 
 
@@ -2729,6 +2729,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8  Not possible in this net.
 9  Unknown server: %s
 10 UUCICO.EXE not found!
+11 ZQWK.EXE not found!
 
 +  10200
 1  wrong temp directory setting
