@@ -25,11 +25,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-{$ifdef Unix}
-  ZFTools,      { ZFido-Unit }
-{$endif}
-  winxp,typeform,inout,fileio,datadef,database,resource,maus2, xpheader,
-      archive,xp0,xp1,xp7,xp_iti,debug;
+  ZFTools, winxp,typeform,inout,fileio,datadef,database,resource,maus2, xpheader,
+  archive,xp0,xp1,xp7,xp_iti,debug;
 
 procedure ttwin;
 procedure twin;
@@ -428,18 +425,20 @@ var d         : DB;
     sout      : string;
 
   procedure Convert;
-{$ifdef Unix}
   const
     pc: array[false..true] of string = ('', '1A');
   var
     fnet: integer;
     rc  : integer;
+    f: boolean;
   begin
-    with BoxPar^ do begin
+    with BoxPar^ do
+    begin
+      f:=OutFilter(source);
       if (f4d or alias) then
-        fnet:= fPointNet
+        fnet:= -1
       else
-        fnet:= -1;
+        fnet:= fPointNet;
 
       rc:= DoZFido(1,                           { Richtung ZC->FTS }
               MagicBrett,                       { Basisebene }
@@ -455,27 +454,8 @@ var d         : DB;
               true,                             { Requests }
               false);                           { Leere loeschen? }
     end;
-  end;
-{$else}
-  var _2d,pc,pw,nli : string[20];
-      f             : boolean;
-  begin
-    with BoxPar^ do begin
-      f:=OutFilter(source);
-      if f4d or alias then _2d:=''
-      else _2d:=' -2d:'+strs(fPointNet);
-      if (f4d or alias) and fTosScan then pc:=' -pc:1A'
-      else pc:='';
-      if PacketPW then pw:=' -p:'+LeftStr(passwort,8)
-      else pw:='';
-      if LocalINTL then nli:=''
-      else nli:=' -nli';
-      shell(ZFidoBin + ' -zf -r -h'+MagicBrett+_2d+pc+nli+pw+' '+source+' '+
-            sout+dest+' '+OwnFidoAdr+' '+boxname,300,screen);
       if f then _era(source);
-      end;
   end;
-{$endif}
 
 begin { ZtoFido }
   sout:=Boxpar^.sysopout;
@@ -813,6 +793,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/12/25 20:31:17  mk
+  - zfido is now completly integrated
+
   Revision 1.42  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 

@@ -18,7 +18,7 @@ interface
 
 uses
   sysutils,montage,typeform,fileio,inout,datadef,database,resource, xpheader,
-  xp0,xp1,xpglobal;
+  xp0,xp1,xpglobal, ZFTools;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
@@ -374,25 +374,16 @@ var sr    : tsearchrec;
 
   procedure FidoImport;
   begin
-    if not FileExists(ZFidoBin) then
-      trfehler(101,tfs)     { 'Netcallkonvertierer ZFIDO.EXE fehlt!' }
-    else if not IsBox(DefFidoBox) then
+    if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
     else begin
       ReadBoxpar(0,DefFidoBox);
-      shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+AutoxDir+'*.pkt '+
-            'FPUFFER -w:'+strs(screenlines),300,3);
+      DoZFido(2, BoxPar^.MagicBrett, AutoxDir+'*.pkt', 'FPUFFER', '', '', 0, '', '', true, false, false, false);
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
       else begin
-        { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
-{
-        if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
-                          iif(multipos('*',BoxPar^.akas),pe_ForcePfadbox,0)) then begin
-}
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
-        { /robo }
           erase_mask(AutoXDir+'*.pkt');
           erase_mask(AutoXDir+'*.PKT');
         end;
@@ -672,6 +663,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/25 20:31:18  mk
+  - zfido is now completly integrated
+
   Revision 1.31  2000/12/12 14:24:20  mk
   - fixed missing FindClose
 

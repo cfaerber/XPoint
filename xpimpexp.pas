@@ -17,7 +17,7 @@ unit xpimpexp;
 interface
 
 uses
-  sysutils,typeform,fileio,inout,maske,datadef,database,maus2,resource,
+  sysutils,typeform,fileio,inout,maske,datadef,database,maus2,resource, zftools,
   xp0,xp1,xpglobal;
 
 
@@ -315,14 +315,7 @@ begin
                      shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
                          '-it '+fn+' PUFFER',300,3);
                    end;
-        nt_Fido  : if not ExecutableExists(ZFidoBin) then begin
-                     fehler('Netcallkonvertierer "'+ZFidoBin+'" fehlt!');
-                     exit;
-                     end
-                   else
-                     shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+
-                           iifs(KeepVia,'-via ','')+
-                           fn+' PUFFER -w:'+strs(screenlines),300,3);
+        nt_Fido  : DoZFido(2, BoxPar^.MagicBrett, fn, 'PUFFER', '', '', 0, '', '', true, KeepVia, false, false);
         nt_QWK   : if not ExecutableExists(ZQWKBin) then
                      rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt!
                       (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
@@ -587,7 +580,8 @@ var ypath : string;
     shell(Yup2PktBin+' '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
     if not mfehler(errorlevel=0,'Fehler bei Nachrichtenkonvertierung') then begin
       ReadBoxPar(0,DefFidoBox);
-      shell(ZFidoBin+' -fz -h'+boxpar^.MagicBrett+' '+TempPKT+' PUFFER',300,3);
+
+      DoZFido(2, BoxPar^.MagicBrett, TempPkt, 'FPUFFER', '', '', 0, '', '', true, false, false, false);
       if errorlevel<>0 then
         fehler('Fehler bei Nachrichtenkonvertierung')
       else begin
@@ -600,7 +594,6 @@ var ypath : string;
 
 begin
   if not mfehler(ExecutableExists(Yup2PktBin),'"'+Yup2PktBin+'" fehlt!') and
-     not mfehler(ExecutableExists(ZFidoBin),'"'+ZFidoBin+'" fehlt!') and
      not FehlerFidoStammbox then
   begin
     dialog(56,5,'',x,y);
@@ -667,6 +660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/25 20:31:18  mk
+  - zfido is now completly integrated
+
   Revision 1.32  2000/12/05 14:58:12  mk
   - AddNewUser
 

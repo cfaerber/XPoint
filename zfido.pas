@@ -23,11 +23,27 @@ uses
   ZFTools,
   xpglobal;
 
+procedure logo;
 begin
+  close(output);
+  assign(output,'');
+  rewrite(output);
+  writeln;
+  writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
+  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
+  Writeln;
+end;
+
+begin
+  logo;
   halt(ZFidoMain);
 end.
 {
   $Log$
+  Revision 1.46  2000/12/25 20:31:18  mk
+  - zfido is now completly integrated
+
   Revision 1.45  2000/11/18 15:46:06  hd
   - Unit DOS entfernt
 

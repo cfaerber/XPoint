@@ -44,7 +44,6 @@ const XPrequest = 'File Request';
       fakenet   : word = 0;
       adr3d     : boolean = false;
       ppassword : string = '';
-      xpwindow  : byte = 0;
       LocalINTL : boolean = true;
       _result   : integer = 0;
       DoRequest : boolean = false;
@@ -177,7 +176,7 @@ function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
                  const _out     : string;       { Ausgangsdatei }
                  const _from    : string;       { Von }
                  const _to      : string;       { An }
-                 const fnet     : integer;      { Fakenet }
+                 const fnet     : integer;      { Fakenet (-1 to switch off!) }
                  const pwd      : string;       { Paket-Password }
                  const altPC    : string;       { Altern. Product Code }
                  const li       : boolean;      { Local INTL ? }
@@ -308,18 +307,6 @@ end;
 
 { --- Allgemeines --------------------------------------------------- }
 
-procedure logo;
-begin
-  close(output);
-  assign(output,'');
-  rewrite(output);
-  writeln;
-  writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
-  Writeln;
-end;
-
 procedure helppage;
 begin
   writeln('ZFIDO -zf -hBrettebene [-p:PW] [-2d:Fake] <Infile> <OutPKT> <FromAdr> <ToAdr>');
@@ -370,7 +357,7 @@ begin
       adr3d:=true;
       end
     else if (LeftStr(s,3)='-W:') or (LeftStr(s,3)='/W:') then
-      xpwindow:=ival(mid(s,4))
+      s := s
     else if (LeftStr(s,4)='-PC:') or (LeftStr(s,4)='/PC:') then
       prodcode:=hexval(mid(s,5))
     else if (s='-NLI') or (s='/NLI') then
@@ -1037,7 +1024,7 @@ end;
 {$ifdef Develop}
 procedure FidoZfile(const fn: string; append:boolean; const x,y: integer);
 {$else}
-procedure FidoZfile(const fn: string; append:boolean);    
+procedure FidoZfile(const fn: string; append:boolean);
 {$endif}
 const kArea = $41455241;    { AREA   }
       kFrom = $6d6f7246;    { From   }
@@ -1864,21 +1851,9 @@ end;
 
 
 function ZFidoMain: integer;
-  procedure SetWindow;
-  var y : byte;
-  begin
-    y:=wherey;
-    close(output); assigncrt(output); rewrite(output);
-    /// window(1,4,80,xpwindow-2);
-    gotoxy(1,y-3);
-  end;
-
 begin
-  test8086:=0;
-  logo;
   getpar;
   testfiles;
-  if xpwindow<>0 then SetWindow;
   if direction=1 then testadr;
   if direction=1 then ZFidoProc
   else FidoZ;
@@ -1888,6 +1863,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.10  2000/12/25 20:31:18  mk
+        - zfido is now completly integrated
+
         Revision 1.9  2000/12/13 14:14:47  hd
         - some changes on the fido-sysop-poll
           - a little state window

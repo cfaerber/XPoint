@@ -289,13 +289,11 @@ const
        MaggiBin         : string        = 'maggi';
        UUCICOBin        : string        = 'uucico';
        Yup2PktBin       : string        = 'yup2pkt';
-       ZFidoBin         : string        = 'zfido';
        ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
        UUCICOBin        = 'UUCICO.EXE';
        Yup2PktBin       = 'YUP2PKT.EXE';
-       ZFidoBin         = 'ZFIDO.EXE';
        ZQWKBin          = 'ZQWK.EXE';
 {$ENDIF}
 
@@ -1178,6 +1176,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.109  2000/12/25 20:31:17  mk
+  - zfido is now completly integrated
+
   Revision 1.108  2000/12/25 14:55:49  mk
   - removed check for xp-fm.exe
 
