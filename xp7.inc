@@ -824,6 +824,14 @@ begin
           600,screen);
 end;
 
+Procedure ZFilter(source,dest: Pathstr);
+var
+  f:boolean;
+begin
+  f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
+  CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
+  if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
+end;
 
 procedure SysopTransfer;
 var f1,f2 : file;
@@ -884,20 +892,11 @@ begin
           ltQuick : ZtoQuick(ppfile,fn,false,3);
           ltGS    : ZtoQuick(ppfile,fn,true,3);
           ltMaus  : ZtoMaus(ppfile,fn,3);
-          ltZConnect:
-          begin
-            { ppfile merken, damit der Originalpuffer nach Erfolg
-              gel”scht werden kann }
-            TempPPFileName := ppfile;
-            { Žndert ppfile! }
-            if OutFilter(ppfile) then _era(ppfile);
-            fn := ppfile; { fn muá sp„ter gel”scht werden }
-            ppfile := TempPPFileName;
-          end;
+          ltZConnect: ZFilter(ppfile,fn);
         end;
         if errorlevel=MaggiFehler then
         begin
-          trfehler(24,30);   { 'Fehler bei der MAGGI-Konvertierung' }
+          trfehler(724,30);   { 'Fehler bei der MAGGI-Konvertierung' }
           if exist(fn) then _era(fn);
           close(f2);
           exit;
@@ -1447,6 +1446,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.3  2000/04/18 19:59:13  mk
+  JG: - Fix fuer Ausgangsfilter bei ZConnect
+
   Revision 1.5.2.2  2000/03/30 14:06:12  mk
   - unnötigen Debugcode entfernt
 
