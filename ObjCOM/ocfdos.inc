@@ -496,8 +496,16 @@ begin
   FossilIntr(Regs);
 end; { proc. SetFlow }
 
+function FossilDetect: Boolean;
+begin
+  FossilDetect:=True; {* asd}
+end;
+
 {
   $Log$
+  Revision 1.3  2000/09/29 23:18:10  ma
+  - added fake FossilDetect function
+
   Revision 1.2  2000/06/25 00:31:09  ma
   - added CharCount method
 
