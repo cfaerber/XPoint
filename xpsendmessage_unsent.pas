@@ -1099,6 +1099,7 @@ again:
                if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
                  inc(SendFlags,SendMPart);
                sData.OrgHdp :=hdp;
+               sData.EditingUnsentMessage := true;
                if DoSend(pm,fn,true,false,empf,betr,false,hdp.typ='B',sendbox,
                          false,false,sData,leer,sendflags) and unpark then SetDel;
                sData.Free;
@@ -1362,6 +1363,10 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.7  2002/08/20 01:10:06  cl
+  - BUGFIX: [ 595224 ] Nachricht/Weiterleiten/Erneut (1 of 2 bugs)
+    BUGFIX: <8UvISBXKnKB@zocki.toppoint.de> Probleme mit "unversandt"
+
   Revision 1.21.2.6  2002/07/29 19:53:19  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

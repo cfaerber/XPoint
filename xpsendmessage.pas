@@ -30,7 +30,7 @@ uses
   sysutils,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze, xpmime,
+  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze, xpmime,xpdatum,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
@@ -2171,6 +2171,7 @@ fromstart:
       dbWriteNStr(mbase,mb_betreff,hdp.betreff);
       dbWriteNStr(mbase,mb_absender,hdp.absender);
       dbWriteNStr(mbase,mb_mimetyp,LowerCase(Trim(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1))));
+      if hdp.orgdate then ZCtoZDatum(hdp.zdatum,hdp.datum);
       l:=ixdat(hdp.datum);
       dbWriteN(mbase,mb_origdatum,l);
       dbWriteN(mbase,mb_empfdatum,sendedat);
@@ -2507,6 +2508,10 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.11  2002/08/20 01:10:06  cl
+  - BUGFIX: [ 595224 ] Nachricht/Weiterleiten/Erneut (1 of 2 bugs)
+    BUGFIX: <8UvISBXKnKB@zocki.toppoint.de> Probleme mit "unversandt"
+
   Revision 1.48.2.10  2002/08/19 22:54:02  cl
   - FIX: [ 497544 ] Sendefenster: Empfänger ändern (32bit):
     "M"-Taste im Sendefenster wieder aktiviert. Ausserdem wird
