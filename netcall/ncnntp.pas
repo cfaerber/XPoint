@@ -253,6 +253,7 @@ begin
     end;
 
     i:=0;
+    if withDescr then
     while true do
     begin
       SReadln(s);
@@ -285,6 +286,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/08/15 14:55:37  ml
+  - vergessene Flag-abfrage nachgebessert
+
   Revision 1.9  2000/08/15 14:51:05  ml
   - nntp-listen abholen jetzt funktionsfaehig mit Descriptions
 
