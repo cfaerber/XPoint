@@ -220,6 +220,7 @@ begin
         try
           uu.source := clientspool + '*' + extMsg;
           uu.dest := ClientPuffer;
+          uu.NoCharsetRecode := not (BoxPar^.UUZCharsetRecode);
           uu.utoz;
         finally
           uu.free;
@@ -264,6 +265,9 @@ end;
 
 {
   $Log$
+  Revision 1.2.2.11  2004/07/20 21:54:04  mk
+  - for client, too
+
   Revision 1.2.2.10  2003/09/18 18:27:28  mk
   - update NEUES.DAT only if something was received in the netcall
 
