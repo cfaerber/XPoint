@@ -1163,6 +1163,9 @@ var t,lastt: taste;
     hds : longint;
     mbrett : string;
   begin
+    // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
+    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
+
     GoP;
     mbrett := dbReadNStr(mbase,mb_brett);
     if (FirstChar(mbrett)='1') or (FirstChar(mbrett)='U')then
@@ -2169,6 +2172,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.89  2001/06/08 21:25:48  mk
+  JG:- Fixed last commit: replaced accidentally deleted line
+
   Revision 1.88  2001/06/07 21:46:32  mk
   JG:- When creating a reply, mapping "B" => "P" now checks for the
        message status (PM/AM) rather than for the message area status.
