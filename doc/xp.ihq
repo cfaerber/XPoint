@@ -112,31 +112,39 @@ Siehe auch: [Tastenfunktionen in Texteingabe-Feldern]@8076
 5
 <<CrossPoint - Support
 
-Als CrossPoint-Benutzer erhalten Sie umfangreichen
+Als Benutzer von OpenXP/16 erhalten Sie umfangreichen
 Support bei Problemen und Fragen. Dabei macht es
 keinen Unterschied, ob Sie bereits registrierter
 Anwender sind (s. [Lizenzbestimmungen]), oder Cross-@6
 Point noch testen. Wenn Sie Probleme haben, die sich
-nicht mit der Online-Hilfe oder der Dokumentation
-(Handbuch) l”sen lassen, haben Sie verschiedene
-M”glichkeiten:
+nicht mit der Online-Hilfe, der Dokumentation oder
+einer [aktuelleren Programmversion] l”sen lassen, haben@9
+Sie verschiedene M”glichkeiten:
 
 
 ş  Schildern Sie Ihr Problem in einem der Support-
-   Bretter:
+   Foren:
 
-   Z-Netz (*) /DE/COMM/SOFTWARE/CROSSPOINT  (Usenet)
-              /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
-   FidoNet    CROSSPOINT.GER,  CROSSPOINT.EXPERT.GER
-   MausNet    Maus.Tausch.CrossPoint
-   Usenet     de.comm.software.crosspoint
+   Z-Netz (<<*>>) <</DE/COMM/SOFTWARE/CROSSPOINT>>  (Usenet)
+              <</Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
 
-  (*) Z-Netz: Es ist zu empfehlen, prim„r die Usenet-
-              Gruppe zu benutzen, da Sie im Z-Netz-
+   FidoNet    <<CROSSPOINT.OPENXP16.GER
+              <<CROSSPOINT.GER
+              <<CROSSPOINT.EXPERT.GER
+
+   MausNet    <<Maus.Tausch.CrossPoint
+
+   Usenet     <<crosspoint.openxp16.pub.allgemein
+              <<de.comm.software.crosspoint
+
+   eMail      <<support\@openxp16.de>>  (Mailingliste)
+
+  (<<*>>) Z-Netz: Es ist zu empfehlen, prim„r die Usenet-
+              Gruppen zu benutzen, da Sie im Z-Netz-
               Brett kaum noch aktive CrossPoint-User
               antreffen werden.
 
-   Die Bretter werden von vielen erfahrenen XP-Usern
+   Die Foren werden von vielen erfahrenen XP-Usern
    gelesen; dadurch l„át sich fr fast jedes Problem
    eine L”sung finden. Falls das jeweilige Brett bei
    Ihrer Box nicht gefhrt wird, fragen Sie Ihren
@@ -146,53 +154,106 @@ M”glichkeiten:
 ş  <<Bugreports>> sollten bevorzugt wie folgt gemeldet
    werden (mit absteigender Priorit„t):
 
-   Internet   eMail an: <<dev\@openxp.de>>
-              Damit erreichen Sie die Entwickler des
-              OpenXP-Teams in der [Mailingliste], an@12
-              der Sie auch selbst teilnehmen k”nnen
-              (s. <<http://www.openxp.de/>>).
+   Usenet     Schreiben Sie einen Artikel in:
+              <<crosspoint.openxp16.pub.allgemein
 
-   WWW        OpenXP-Bugliste auf SourceForge:
-              <<https://sourceforge.net/projects/openxp>>
-              Das ist die Startseite von OpenXP auf
-              SourceForge. Von dort kommen Sie ber
-              die Links "<<Bugs>>" und danach "<<Submit a>>
-              <<Bug>>" direkt zur Eingabe Ihres Bugre-
-              ports. Bitte hinterlassen Sie unter
-              "<<Details>>" eine aussagekr„ftige und
-              reproduzierbare Beschreibung des Bugs
-              sowie Ihren Namen und/oder Ihre eMail-
-              Adresse.
+              Dies ist die allgemeine und ”ffentlich
+              zug„ngliche Newsgroup von OpenXP/16.
+              Sie kann bei den Newsservern
+              news.kannofant.de und news.t-online.de
+              (beide Port 119) bezogen werden.
 
-   Usenet     Artikel in: <<de.comm.software.crosspoint>>
+              Alternativ steht Ihnen die Newsgroup
+              <<de.comm.software.crosspoint>> zur Ver-
+              fgung, die bei *jedem* Newsserver zu
+              beziehen sein sollte und ein Forum fr
+              alle CrossPoint-Versionen darstellt.
 
-   Fido       Echomail in: <<XPDEV.GER>>
-              Auch hier haben Sie - ber ein Gate -
-              Verbindung zur offenen [Mailingliste]@12
-              des OpenXP-Teams: alle Fido-Echomails,
-              deren Betreff mit "[OpenXP]" beginnen,
-              werden in die Liste "gegated", umge-
-              kehrt werden alle eMails von der Liste
-              in das Echo gegated. <<XPDEV.GER>> ist kein
-              offizielles Fido-Echo - bitten Sie
-              Ihren Bossnode, es fr Sie zu beschaf-
-              fen, falls er es noch nicht fhrt, oder
+              Die OpenXP/16-Newsgroup fr Entwickler
+              (<<crosspoint.openxp16.pub.developer>>)
+              ist ebenfalls ”ffentlich zug„nglich,
+              sollte jedoch nicht fr Bugreports o.„.
+              genutzt werden. Diese Gruppe ist *nur*
+              ber den Newsserver news.kannofant.de
+              erh„ltlich.
+
+
+   Internet   eMail an: <<support\@openxp16.de
+              Damit erreichen Sie die [Mailingliste]@12
+              von OpenXP/16, die ebenfalls von den
+              Entwicklern gelesen wird und an der sie
+              auch selbst teilnehmen k”nnen: Hierzu
+              schreiben Sie eine eMail an
+              "<<listserver\@kruemel.org>>" mit dem
+              Nachrichtentext (nicht dem Betreff!)
+              "<<subscribe openxp16-list>>". Das
+              Abbestellen der Liste erfolgt auf
+              demselben Wege mit dem Nachrichtentext
+              "<<unsubscribe openxp16-list>>".
+              
+
+   WWW        <<http://www.openxp16.de/
+              (to be completed)
+
+
+   Fido       Echomail in: <<CROSSPOINT.OPENXP16.GER
+              Hier haben Sie - ber ein Gate - Ver-
+              bindung zur allgemeinen Newsgroup von
+              OpenXP/16 (siehe unter "Usenet"): Alle
+              Fido-Echomails, die Sie in diese Area
+              schreiben, werden in die Newsgroup
+              "gegated", umgekehrt werden alle Nach-
+              richten aus der Newsgroup in das Echo
+              gegated.
+
+              <<CROSSPOINT.OPENXP16.GER>> ist keine
+              offizielle Fido-Area - bitten Sie Ihren
+              Bossnode, sie fr Sie zu beschaffen,
+              falls er sie noch nicht fhrt, oder
               wenden Sie sich an Christian von Busse
-              (<<2:240/2188>>), der das Gate betreibt.
+              (<<2:240/2188>>), der das Gate betreibt
+              und die Area auf dem BBR verteilt.
+
+              Selbstverst„ndlich k”nnen Sie Ihren
+              Bugreport auch in eine der allgemeinen
+              CrossPoint-Areas <<CROSSPOINT.GER>> oder
+              <<CROSSPOINT.EXPERT.GER>> setzen; aller-
+              dings k”nnen dort die Antwortzeiten
+              l„nger sein und Ihr Bugreport wird
+              dort nicht von so vielen Entwicklern
+              gesehen wie in <<CROSSPOINT.OPENXP16.GER>>.
 
 
-<<Bei Problemen und Anfragen sollten Sie IMMER die
-<<Nummer Ihrer CrossPoint-Version angeben, bei einem
-<<Programmausstieg IMMER die genaue Fehlermeldung!
+<<WICHTIG:
+Bei Problemen und Anfragen sollten Sie IMMER die
+Nummer Ihrer CrossPoint-Version angeben, bei einem
+Programmausstieg IMMER die genaue Fehlermeldung!
+Auch Angaben ber Ihre Hardware und das verwendete
+Betriebssystem k”nnen hilfreich sein (bzw. sind
+manchmal sogar unverzichtbar).
 
 
-ş  Es gibt im Internet auch einige Homepages zum
-   Thema CrossPoint:
+ş  Homepages zum Thema CrossPoint im Internet:
+
+<<         http://www.openxp16.de/
+         (Homepage von OpenXP/16; dort finden Sie
+         Links zu weiteren Seiten ber CrossPoint
+         im World Wide Web.)
 
 <<         http://www.openxp.de/
-         (offizielle Homepage des OpenXP-Projekts;
-         dort finden Sie auch Links zu weiteren Sei-
-         ten ber CrossPoint im World Wide Web).
+         (Homepage des OpenXP-Projekts, das die
+         32-bit-Version von OpenXP entwickelt.)
+
+<<         http://www.xp2.de/
+         (Homepage des XP2-Teams, das eine eigene
+         16-bit-Version entwickelt und mit OpenXP/16
+         kooperiert.)
+
+<<         http://xpoint.da.ru/
+         (Homepage der XP-Version (16-bit) von Jochen
+         Gehring, der ebenfalls mit OpenXP/16 koope-
+         riert und seit jeher einen groáen Anteil an
+         dessen Entwicklung hat.)
 
 <<         http://www.crosspoint.de/
          (offizelle XP-Homepage von Peter Mandrella)
@@ -355,6 +416,14 @@ M”gliche Optionen sind:
       Standard-DOS-Prompt mit <<[XP]>> beginnen zu lassen
       oder ein Programm zu laden, das denselben Namen
       hat wie die ausfhrbare Datei von CrossPoint.
+
+<</nomem>> Schaltet die Prfung auf freie Festplatten-
+      kapazit„t bei Programmstart ab. Sie sollten
+      diesen Parameter a) nur mit gr”áter Vorsicht
+      und b) am besten gar nicht verwenden. In jedem
+      Fall tun sie es auf ihre eigene Verantwortung,
+      denn berfllte Festplatten fhren ziemlich
+      sicher zu Datenverlust.
 
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
       mentierten OS/2-Funktionen zur Rechenzeit-
@@ -571,25 +640,29 @@ Werte zurck:
 9
 <<CrossPoint - Bezugsquellen
 
-Die neueste Version des OpenXP-Teams und weitere
-Infos zur Weiterentwicklung von CrossPoint durch
-das OpenXP-Projekt finden Sie auf:
+Die neueste Version von OpenXP/16, den aktuellen
+"Entwickler-Snapshot" und weitere Infos zur Weiter-
+entwicklung von OpenXP/16 finden Sie auf:
 
-<<        http://www.openxp.de/
-        oder Fido File Request bei <<2:248/2004>>
+<<        http://www.openxp16.de/
 
+Downloads via FTP sind m”glich ber:
 
-Eine sehr gut sortierte Mailbox fr alles rund um
-CrossPoint und die aktuellen Versionen des OpenXP-
-Teams ist die Kruemel Boks! des Cross-Secretary-
-Programmierers Christian von Busse im FidoNet:
-
-<<        2:240/2188
+<<        ftp://ftp.openxp16.de/
 
 
-Die "klassische" Programmversion (bis v3.12d),
-Zusatztools und Informationen zu CrossPoint
-finden Sie im Internet unter:
+Fido File Requests sind (mindestens) m”glich bei:
+
+<<        2:240/2188>> (Krmel Boks!)
+
+Die "Krmel Boks!" des CrossSecretary-Programmierers
+Christian von Busse ist darber hinaus eine sehr gut
+sortierte Mailbox fr alles rund um CrossPoint.
+
+
+Die "klassische" XP-Programmversion (bis v3.12d),
+Zusatztools und Informationen zu CrossPoint finden
+Sie im Internet unter:
 
 <<        http://www.crosspoint.de/
 
@@ -689,11 +762,11 @@ wenn er Leerzeichen enth„lt. Alternativ kann auch der
 gesamte Parameter in Anfhrungszeichen eingeschlossen
 werden. Gltige <</mailto:>>-Parameter w„ren also z.B.:
 
-   <</mailto:dev\@openxp.de?subject:Bugreport\t-online
-   <</mailto:dev\@openxp.de\t-online
-   <</mailto:?subject:Bugreport\t-online
-   <</mailto:dev\@openxp.de?subject:"Bugreport #1"
-   <<"/mailto:dev\@openxp.de?subject:Bugreport #2"
+  <</mailto:dev\@openxp16.de?subject:Bugreport\t-online
+  <</mailto:dev\@openxp16.de\t-online
+  <</mailto:?subject:Bugreport\t-online
+  <</mailto:dev\@openxp16.de?subject:"Bugreport #1"
+  <<"/mailto:dev\@openxp16.de?subject:Bugreport #2"
 
 Wenn keine Box angegeben wurde, wird der Server
 verwendet, der dem jeweiligen User zugewiesen ist.
@@ -873,8 +946,8 @@ Zun„chst melden Sie sich bei der Liste an (wie das
 funktioniert, erfahren Sie vom Betreiber der Liste).
 Dabei erfahren Sie auch, an welchen Pseudo-User Sie
 schreiben mssen, um eine Nachricht an die Mailing-
-liste abzusetzen. Im Falle der OpenXP-Mailingliste
-ist dies z.B. <<openxp-dev\@lists.sourceforge.net>>.
+liste abzusetzen. Im Falle der OpenXP/16-Mailingliste
+ist dies z.B. <<openxp16-list\@kruemel.org>>.
 
 Diese Useradresse legen Sie nun wie einen ganz nor-
 malen User an (<<S>>, <<H>> in der User-šbersicht). Die
@@ -895,8 +968,8 @@ zun„chst in Ihr internes PM-Brett einsortiert.
 
 Alle Mails, die Sie ber eine Mailingliste erhalten,
 haben im Nachrichtenkopf irgendeine gemeinsame Eigen-
-schaft (im Falle der OpenXP-Mailingliste ist dies
-u.a. der Text "<<openxp-dev\@lists.sourceforge.net>>" im
+schaft (im Falle der OpenXP/16-Mailingliste ist dies
+u.a. der Text "<<openxp16-list\@kruemel.org>>" im
 Antwort-An-Header der Nachricht). Leider gibt es
 hierfr keinen einheitlichen Standard und so kann das
 Merkmal entweder eine Antwort-An-Headerzeile (Reply-
@@ -906,7 +979,7 @@ finden.
 
 Sobald Sie das geschafft haben, mssen Sie einen
 [Eingangsfilter] einrichten, den Sie anschlieáend@199
-unter /Edit/Boxen/Edit/Namen eintragen (bzw. wenn
+unter /Edit/Boxen/Edit/Diverses eintragen (bzw. wenn
 Sie bereits einen Eingangsfilter haben, mssen Sie
 den vorhandenen entsprechend erg„nzen). Sinn dieses
 Eingangsfilters ist es, alle Mails der Mailingliste
@@ -920,13 +993,16 @@ das speziell fr XP entwickelte XPFILTER von Robin
 Sommer.
 
 Ein sog. "Muster" fr XPFILTER, das alle ber die
-OpenXP-Mailingliste eingehenden Nachrichten in ein
-Netzbrett "Mailingliste OpenXP" verschiebt, k”nnte
+OpenXP/16-Mailingliste eingehenden Nachrichten in ein
+Netzbrett "Mailingliste OpenXP/16" verschiebt, k”nnte
 dann z.B. so aussehen:
 
-   NAME=Mails nach "Mailingliste OpenXP" verschieben
-   Antwort-an=openxp-dev\@lists\.sourceforge\.net
-   BRETT=/Mailingliste OpenXP
+   NAME=Mails fr "Mailingliste OpenXP/16" einlesen
+   Antwort-an=openxp16-list\@kruemel\.org
+   OEM=openxp16-list\@kruemel\.org
+   U-Received=for <openxp16-list\@kruemel\.org>
+   ODER
+   BRETT=/Mailingliste OpenXP/16
    VERSCHIEBEN
    STOP
    END
@@ -941,7 +1017,7 @@ nahme "PMs" eingestellt haben sollten).
 
 Durch dieses Filtermuster werden nun alle zuknftig
 fr diese Mailingliste eingehenden Nachrichten in
-ein Netzbrett mit dem Namen "Mailingliste OpenXP"
+ein Netzbrett mit dem Namen "Mailingliste OpenXP/16"
 einsortiert.
 
 
@@ -958,9 +1034,9 @@ den Brett stehen.
 Hierzu wechseln Sie in der Brett-šbersicht mit <<S>> in
 den Spezial-Modus, w„hlen das entsprechende Brett
 aus und drcken <<U>> (fr "Z<<u>>griff"). Im Feld "Vertre-
-ter-Adresse" geben Sie nun die Adresse des Pseudo-
-Users der Mailingliste ein (fr die OpenXP-Mailing-
-liste z.B. also <<openxp-dev\@lists.sourceforge.net>>).
+ter-Adresse" geben Sie nun die Adresse der Mailing-
+liste ein (fr die OpenXP/16-Mailingliste z.B. also
+<<openxp16-list\@kruemel.org>>).
 
 Abschlieáend aktivieren Sie noch das Feld "Schreib-
 sperre" und schlieáen die Eingabe mit <<<Enter> >>ab.
@@ -2298,11 +2374,11 @@ CrossPoint
 >
 
 >oxp<
-OpenXP
+OpenXP/16
 >
 
 >home<
-http://www.openxp.de/
+http://www.openxp16.de/
 >
 
 >pm<
@@ -4701,8 +4777,8 @@ beiten und erzeugen kann. N„heres zu Nachrichten-
 formaten siehe UUCP.TXT.
 
 M”glicherweise wertet der von Ihnen eingesetzte
-Client (und/oder ein speziell fr CrossPoint/OpenXP
-und diesen Client entwickelter "<<Client-Kit>>") auto-
+Client (und/oder ein speziell fr OpenXP/16 und
+diesen Client entwickeltes "<<Client-Kit>>") auto-
 matisch die Serverbox-Konfigurationsparameter Login,
 Paáwort, Telefon und/oder die Modem-Einstellungen
 aus. N„heres entnehmen Sie bitte der Dokumentation
@@ -4745,7 +4821,7 @@ erhalten sollen.
 Eine eMail-Adresse hat blicherweise die Form
 <<User>>\@<<Domain>>.<<TLD>> (<<TLD>>=<<T>>op <<L>>evel <<D>>omain, also ".de",
 ".com", ".net", ".org" usw.), gltige Adressen w„ren
-daher z.B. "nn\@openxp.de" oder "no.name@t-online.de".
+daher z.B. "nn\@openxp16.de" oder "alias@t-online.de".
 @
 30104
 ^^194
@@ -4799,7 +4875,7 @@ verkettung fhren.
 
 Wenn Sie dieses Feld freilassen, erhalten Ihre Nach-
 richten die Message-ID <<Zufallszahl>>\@<<Domain>>.<<TLD>>, also
-z.B. "82AWL5iACHB\@openxp.de" (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
+z.B. "82AWL5iACHB\@openxp16.de" (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
 ".de" ".com", ".net", ".org" usw.). Dies wird aller-
 dings zu Problemen im Zusammenhang mit der farblichen
 Hervorhebung von Antworten auf eigene Nachrichten in
@@ -4807,7 +4883,7 @@ XP fhren, da der Teil rechts vom "<<\@>>" der Message-ID
 dann nicht mehr eindeutig ist und XP alle Antworten
 hervorheben wrde, die sich auf Nachrichten beziehen,
 deren rechter Teil der Message-ID ebenfalls aus dem
-FQDN "openxp.de" bestehen.
+FQDN "openxp16.de" bestehen.
 
 Sie sollten daher dieses Feld *nicht* freilassen und
 einen ausschlieálich von Ihnen verwendeten, vom News-
@@ -5018,15 +5094,12 @@ Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
 ----------- [Netztyp RFC/Client - Netcall-Ablauf]@30230
             [Netztyp RFC/Client - Brettmanager]@30231
 
-(Diese Funktion ist noch nicht implementiert, aber
-man kann schon mal lesen, was es werden soll.)  :-)
-
 Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
 ten weiterer in XP eingerichteter Server mitsenden
 und/oder empfangen wollen, k”nnen Sie hier mit <<<F2> >>
-die Namen der jeweiligen Serverboxen ausw„hlen (das
+die Namen der jeweiligen Serverboxen ausw„hlen; das
 Feld ist gegen manuelle Eingaben gesperrt und kann
-mit <<<Ctrl-Del> >>gel”scht werden).
+mit <<<Ctrl-Del> >>gel”scht werden.
 
 CrossPoint wird dann zu Beginn eines RFC/Client-
 Netcalls die ausgehenden Nachrichten der hier ein-
@@ -5046,6 +5119,12 @@ zeichnis(sen) der hier eingetragenen Serverbox(en),
 konvertiert sie von dort in jeweils einen ZConnect-
 Puffer und liest sie anschlieáend ein.
 
+(Eine Ausnahme bildet der <<SysopMode>>: Hier werden die
+ein- und ausgehenden Nachrichten *aller* Serverboxen
+im Ein- bzw. Ausgangsverzeichnis der Serverbox erwar-
+tet bzw. abgelegt, fr die der Sysop-Transfer durch-
+gefhrt wird.)
+
 Was zwischen diesen beiden Schritten passiert (und
 ob berhaupt etwas passiert), ist alleine Sache des
 externen Clients bzw. Client-Kits. Wenn Sie z.B.
@@ -5054,11 +5133,11 @@ Nachrichten der zus„tzlich eingetragenen Server-
 box(en) nicht versendet, ist dies eine Fehlfunktion,
 Fehlkonfiguration oder auch eine Inkompatibilit„t
 des verwendeten Clients mit dem Client-Konzept von
-CrossPoint/OpenXP. In diesem Fall wenden Sie sich
-bitte an den Autor des jeweiligen Clients oder auch
-an den OpenXP-Support - vielleicht gibt es eine
-bekannte L”sung (oder auch die Antwort, daá es leider
-keine L”sung gibt).
+OpenXP/16. In diesem Fall wenden Sie sich bitte an
+den Autor des jeweiligen Clients oder auch an den
+[OpenXP/16-Support] - vielleicht gibt es eine bekannte@5
+L”sung (oder auch die Antwort, daá es leider keine
+L”sung gibt).
 
 Sinn und Zweck des Multiserverbetriebs ist, dem
 externen Client zu erm”glichen, die "Bandbreite"
@@ -5903,6 +5982,11 @@ Artikel begrenzen wollen, k”nnen Sie hier einen
 beliebigen Wert bis max. <<99999>> eintragen. Wenn Sie
 kein Limit wnschen, tragen Sie <<0>> ein.
 
+ACHTUNG: Da manche Clients den Wert <<0>> eben nicht als
+"kein Limit", sondern wirklich als "keine Postings
+empfangen" interpretieren, setzt XP hier einen Wert
+von <<99999>> als Standardwert ein.
+
 <<Hinweis:>> Diese Einstellung wird von CrossPoint
 *nicht* ausgewertet. Ob und wie der externe Client
 diese Angabe auswertet, entnehmen Sie bitte der Doku-
@@ -6395,13 +6479,18 @@ folgenden Einzelschritten ab:
     ten der Server, die bei einem Netcall einer Ser-
     verbox mitgesendet werden sollen, konvertiert und
     in dem der jeweiligen Serverbox zugeh”rigen
-    Spool-Verzeichnis abgelegt.
+    Spool-Verzeichnis abgelegt (auáer im SysopMode,
+    dort werden die Nachrichten *aller* Serverboxen
+    im Ausgangsverzeichnis der Serverbox abgelegt,
+    fr die der Sysop-Transfer durchgefhrt wird).
 
 Alle folgenden Schritte beziehen sich sinngem„á auch
 auf den "[Multiserverbetrieb]", wobei unter "Spool-@30109
 Verzeichnis" immer das Spool-Verzeichnis der jeweili-
-gen Serverbox zu verstehen ist und jeder beschriebene
-Schritt fr jede Serverbox gesondert ausgefhrt wird:
+gen Serverbox (bzw. im SysopMode das Ein-/Ausgangs-
+verzeichnis der "Pollbox") zu verstehen ist und jeder
+beschriebene Schritt fr jede Serverbox gesondert
+ausgefhrt wird:
 
  5. <<Aufruf des externen Clients>> (ab hier gibt XP die
     Kontrolle an das externe Programm ab). Der Client
@@ -6426,7 +6515,8 @@ Schritt fr jede Serverbox gesondert ausgefhrt wird:
     (nur, wenn eingegangene Nachrichten vorhanden und
     Eingangsfilter eingetragen).
 
- 9. <<Einlesen>> des Eingangspuffers.
+ 9. <<Einlesen>> des Eingangspuffers aus dem Spool-
+    Verzeichnis.
 
 10. <<Umbenennen>> der erfolgreich eingelesenen Nach-
     richten im Spool-Verzeichnis <XP>\SPOOL\<Box>
@@ -7359,6 +7449,11 @@ Dreifache der gr”áten bei Netcalls empfangenen Da-
 tenmenge stehen. Tragen Sie aber besser einen h”he-
 ren Wert ein - Fehler durch volle Festplatten fhren
 meistens zu Datenverlusten!
+
+Sie k”nnen diese Prfung mit dem Kommandozeilen-
+Parameter <</nomem>> abschalten - auf Ihre eigene
+Verantwortung!
+
 @
 230
 CrossPoint besitzt einen eingebauten Nachrichten-
@@ -8433,8 +8528,8 @@ steht normalerweise kein VESA-DPMS zur Verfgung.
        Startpaáwort abgefragt (falls vorhanden).
 @
 286
-<<[x]>> -> In der dritten Bildzeile wird der Username
-       bei der gew„hlten Stammbox angezeigt.
+<<[x]>> -> In der dritten Bildzeile wird die vollst„ndige
+       Adresse bei der gew„hlten Stammbox angezeigt.
 
 Dieses Feature ist ntzlich, wenn Sie mit *SETUSER
 oder dem Parameter "/user" arbeiten.
@@ -9127,22 +9222,22 @@ Sie bei Eingabe von "^PC-Tools" die Ausgabe
 
     <<P>>C-Tools
 
-Dieses Eingabefeld darf auch leer bleibem.
+Dieses Eingabefeld darf auch leer bleiben.
 @
 441
 Hier gibt es zwei Eingabem”glichkeiten:
 
-  a)  ein externes Programm
-  b)  eine interne XP-Funktion
+  a)  ein externes Programm    (max. 127 Zeichen)
+  b)  eine interne XP-Funktion (max. 200 Zeichen)
 
-<<Externe Programm>> sind beliebige .COM-, .EXE- oder
+<<Externe Programme>> sind beliebige .COM-, .EXE- oder
 .BAT-Dateien, die im XP-Verzeichnis liegen oder per
 DOS-Pfad erreichbar sind. EXE- und COM-Programme
 werden deutlich schneller ausgefhrt, wenn Sie die
 Erweiterung ".EXE" oder ".COM" mit angeben. Hinter
 dem Programmnamen k”nnen beliebige Parameter ange-
-geben werden. Auáerdem ist die Verwendung des <<$FILE>>
--Makros m”glich.
+geben werden. Auáerdem ist die Verwendung des <<$FILE>>-
+Makros m”glich.
 
 Nehmen wir z.B. an, daá Sie den Archiv-Verwalter SHEZ
 einbinden m”chten. Dann geben Sie als Programmname
@@ -9152,7 +9247,7 @@ Funktionstaste bzw. den Menpunkt w„hlen - dann
 schreibt XP die gew„hlte Nachricht in eine Datei und
 bergibt den Namen der Datei an SHEZ.
 
-<<interne Funktionen>> beginnen immer mit einem "*"; sie
+<<Interne Funktionen>> beginnen immer mit einem "<<*>>"; sie
 sind *nicht* innerhalb von CrossTerm verfgbar:
 
 <<*>>             bewirkt gar nichts, es sei denn, der
@@ -9180,12 +9275,108 @@ sind *nicht* innerhalb von CrossTerm verfgbar:
               Realnamen bei der angegebenen Box auf
               die angegebenen Namen. Dies ist ntz-
               lich, wenn Sie in einer Box unter meh-
-              reren Namen schreiben. Falls Sie den
-              NAME weglassen, wird er jeweils abge-
-              fragt. Die Angabe des Realnames (in
-              Klammern) ist optional und nur bei
-              ZConnect, RFC/UUCP und MagicNET rele-
-              vant.
+              reren Namen schreiben. Falls Sie NAME
+              weglassen, wird er (sowie etwaige wei-
+              tere Parameter) jeweils abgefragt. Die
+              Angabe des Realnames (in Klammern) ist
+              optional.
+
+              Bitte beachten Sie, daá je nach Netztyp
+              weitere Parameter gesetzt werden k”nnen
+              bzw. mssen. Details und Beispiele
+              hierzu finden Sie, nach Parametern
+              gegliedert, hier:
+
+              [*SETUSER - Parameter im Detail]@4410
+
+ <<Hinweis:>> Wenn Sie fr die einzelnen Parameter (User-
+ name bzw. eMail-Adresse, FQDN, POP3-/SMTP-Envelope-
+ Adresse und Realname) Werte bergeben, die l„nger
+ sind als in der Datenbank von XP definiert, werden
+ sie automatisch gekrzt. Die jeweiligen Maximal-
+ l„ngen sind:
+
+              Username      = 30 Zeichen
+              eMail-Adresse = 80 Zeichen
+              FQDN          = 60 Zeichen
+              POP3-Envelope = 80 Zeichen
+              SMTP-Envelope = 80 Zeichen
+
+@
+4410
+<<*SETUSER - Parameter im Detail
+
+Allgemeine Syntax: <<*SETUSER BOX NAME (Realname)
+
+
+<<Realname
+
+Die Angabe des Realnames (in Klammern) ist optional.
+Wird kein Realname angegeben, wird der bisherige
+gel”scht; soll der bisherige Realname beibehalten
+statt neu gesetzt werden, gibt man ein "<<*>>" an:
+
+ *SETUSER Box1 theo.tester (<<*>>)
+
+Die Angabe bzw. das L”schen/Beibehalten des Realnames
+ist nur bei ZConnect, RFC und MagicNET relevant.
+
+
+<<eMail-Adresse statt Username
+<<(nur RFC/UUCP und RFC/Client)
+
+Beim Netztyp RFC/Client muá statt eines Usernamens
+eine vollst„ndige, gltige eMail-Adresse angegeben
+werden. Dasselbe gilt fr den Netztyp RFC/UUCP, wenn
+bei Edit/Boxen/Edit/Namen das Feld "eMail-Adresse"
+verwendet wird (also nicht leer ist). Beispiel:
+
+ *SETUSER Box1 <<theo.tester\@test.de>>,theo.test.de (*)
+
+
+<<FQDN (nur ZConnect, RFC/UUCP und RFC/Client)
+
+Hier k”nnen (bzw. mssen!) Sie zus„tzlich zu NAME
+auch den [FQDN] setzen, indem sie ihn durch ein Komma@30002
+getrennt an den Namen anh„ngen. Beispiele:
+
+ *SETUSER Box1 theo.tester,<<theo.test.de>> (Theo Tester)
+ *SETUSER Box1 theo.tester\@test.de,<<theo.test.de>> (*)
+
+Falls Sie den bisherigen FQDN l”schen und keinen
+neuen FQDN setzen m”chten, geben Sie nur das Komma an:
+
+ *SETUSER Box1 theo.tester<<,>> (Theo Tester)
+ *SETUSER Box1 theo.tester\@test.de<<,>> (Theo Tester)
+
+Sie k”nnen auch den bisherigen FQDN beibehalten, ohne
+ihn neu zu setzen; geben Sie dann hinter dem Komma
+ein "<<*>>" an:
+
+ *SETUSER Box1 theo.tester,<<*>> (Theo Tester)
+ *SETUSER Box1 theo.tester\@test.de,<<*>> (Theo Tester)
+
+
+<<POP3- und SMTP-Envelope-Adresse (nur RFC/Client)
+
+Zus„tzlich zum [FQDN] k”nnen (mssen!) Sie die [POP3-]@30106 30133
+und die [SMTP-Envelope-Adresse] - durch Kommata@30153
+getrennt - in genau dieser Reihenfolge an den FQDN
+anh„ngen:
+
+ *SETUSER Box1 a.b\@c.de,a.b.c.de,<<a.b@c.de>>,<<a.b@c.de>>
+
+Wie beim FQDN kann auch die bisherige SMTP-Envelope-
+Adresse gel”scht oder beibehalten werden, indem man
+nur das Komma bzw. "<<*>>" angibt:
+
+ *SETUSER Box1 a.b\@c.de,a.b.c.de,*<<,>> (a b)
+ *SETUSER Box1 a.b\@c.de,a.b.c.de,*,<<*>> (a b)
+
+Eine POP3-Envelope-Adresse hingegen kann zwar beibe-
+halten ("<<*>>") oder neu gesetzt, aber nur dann gel”scht
+werden, wenn unter D/B/E/N kein POP3-Server einge-
+tragen ist. Anderenfalls meldet XP einen Fehler.
 
 @
 442
@@ -11783,8 +11974,8 @@ den.
        Fileliste einer Box.
 @
 8104
-<<[x]>> -> Bei Echomails wird die CrossPoint/OpenXP-
-       Version in die Tearline geschrieben.
+<<[x]>> -> Bei Echomails wird die OpenXP/16-Version
+       in die Tearline geschrieben.
 
 <<[ ]>> -> Bei Echomails wird eine leere Tearline (---)
        erzeugt.
@@ -13177,10 +13368,9 @@ Aussagen zum Thema PGP (Stand April 2001):
 
    <<*>> Die PGP-Versionen 2.6.3in vom 07.10.2000 bzw.
      23.03.2001 sind ein unmittelbares Resultat der
-     Recherchen zum Thema PGP im Rahmen der šber-
-     arbeitung der XP-Online-Hilfe fr das OpenXP-
-     Projekt. Dank an alle Beteiligten siehe am Ende
-     dieses Textes.
+     Recherchen zum Thema PGP im Rahmen der šberar-
+     beitung der Online-Hilfe fr OpenXP/16. Dank an
+     alle Beteiligten siehe am Ende dieses Textes.
 
    Das <<i>> in PGP-Versionsbezeichnungen weist auf eine
    internationale Version hin, die Sie bedenkenlos
@@ -13195,7 +13385,7 @@ Aussagen zum Thema PGP (Stand April 2001):
    IN-CA (Individual Network Certification Authority)
    entwickelt. Sie erhalten die jeweils aktuellen
    Kompilate der 16- und 32-bit-Variante dieser Ver-
-   sion immer auf dem <<OpenXP-FTP-Server>> (Details
+   sion immer auf dem <<OpenXP/16-FTP-Server>> (Details
    siehe Tabelle unten), so daá Sie sich nicht erst
    durch Mailboxen oder das Internet whlen mssen.
    Wenn Sie einen 80386-Prozessor oder besser einset-
@@ -13205,7 +13395,7 @@ Aussagen zum Thema PGP (Stand April 2001):
    Sie jedoch verwenden, wenn Sie einen 8086- bis
    80286-Prozessor einsetzen.
 
-   Auf <<ftp.openxp.de>> ist auch die "Originalversion"
+   Auf <<ftp.openxp16.de>> ist auch die "Originalversion"
    <<2.6.3ia>> von Stale Schumacher (siehe <<www.pgpi.org>>)
    in einer 8086- und 32-bit-Variante erh„ltlich, die
    allerdings fr den Normalanwender (neben mehreren
@@ -13237,9 +13427,10 @@ Aussagen zum Thema PGP (Stand April 2001):
    Abschlieáend eine šbersicht der Eigenschaften der
    oben besprochenen PGP-Versionen der <<2.6.3i>>-Fami-
    lie. Die ZIP-Archive liegen unter den angegebenen
-   Dateinamen auf <<ftp.openxp.de>> im Verzeichnis
-   <</openxp/pgp/>> oder sind per Fido File Request
-   bei <<2:248/2004>> erh„ltlich.
+   Dateinamen auf <<ftp.openxp16.de>> im Verzeichnis
+   <</openxp16/PGP/>> oder sind per Fido File Request
+   bei den unter [Bezugsquellen] genannten Boxen@9
+   erh„ltlich.
 
       PGP-   ³ <<2.6.3in>> ³ <<2.6.3in>> ³ <<2.6.3ia>> ³ <<2.6.3ia>>
     Version  ³  (8086) ³(32 bit)<<*>>³  (8086) ³(32 bit)<<*>>
@@ -13306,8 +13497,8 @@ Aussagen zum Thema PGP (Stand April 2001):
      den Betrieb mit CrossPoint geeignet ist: die
      Portierung <<PGP 5.0i>> fr DOS/386 von Georg Bauer
      und Tim Svenson. Diese Version ist Freeware und
-     als <<PGP50IBI.ZIP>> ebenfalls auf <<ftp.openxp.de>>
-     oder per Fido File Request bei <<2:248/2004>>
+     als <<PGP50IBI.ZIP>> ebenfalls ber <<ftp.openxp16.de>>
+     oder per Fido File Request (siehe [Bezugsquellen])@9
      erh„ltlich.
 
    - Alle brigen 5.x-Versionen sind reine Windows-
@@ -13367,8 +13558,8 @@ Aussagen zum Thema PGP (Stand April 2001):
    setzen; dort wurde zumindest die ADK-Sicherheits-
    lcke geschlossen (jedoch *nicht* die Lcke bzgl.
    des Angriffs auf den 'Secret Key') und sie unter-
-   sttzt vollst„ndig RSA-Schlssel bis 2048 bit. Auf
-   <<ftp.openxp.de>> sind folgende Freeware-Versionen
+   sttzt vollst„ndig RSA-Schlssel bis 2048 bit. Bei
+   <<ftp.openxp16.de>> sind folgende Freeware-Versionen
    von PGP 6.5.8 erh„ltlich:
 
    <<PGPFW658Win32.zip>>
@@ -13386,7 +13577,7 @@ Aussagen zum Thema PGP (Stand April 2001):
 
 
 ş  <<PGP 7.x>> ist nicht Gegenstand dieser Online-Hilfe,
-   da es von OpenXP (noch?) nicht untersttzt wird.
+   da es von OpenXP/16 nicht untersttzt wird.
 
 
 <<Fazit
@@ -13622,18 +13813,69 @@ wrden.
 1502
 Geben Sie den neuen Usernamen ein, der als Absender-
 name in Nachrichten verwendet werden soll, die Sie
-ber diese Box verschicken. Es ist der gleiche Name,
-der auch ber /Edit/Boxen/Edit/Namen eingetragen
-werden kann.
+ber diese Serverbox verschicken. Es ist derselbe
+Name, der auch ber /Edit/Boxen/Edit/Namen einge-
+tragen werden kann.
 @
 1503
-Geben Sie den neuen Realname ein, der im Absender von
-Nachrichten eingetragen werden soll, die Sie ber
-diese Box verschicken. Es ist der gleiche Realname,
-der auch bei /Edit/Boxen/Edit/Namen eingetragen
-werden kann.
+Geben Sie die neue eMail-Adresse ein, die als Absen-
+der in Nachrichten verwendet werden soll, die Sie
+ber diese Serverbox verschicken. Es ist dieselbe
+Adresse, die auch ber /Edit/Boxen/Edit/Namen
+(RFC/UUCP) bzw. /Edit/Boxen/Edit/Client (RFC/Client)
+eingetragen werden kann.
 @
 1504
+Geben Sie den neuen [FQDN] ('Fully Qualified Domain@30002
+Name') ein, der zur Erzeugung des Teils rechts vom
+"<<\@>>" der Message-ID (MID) benutzt werden soll.
+
+Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
+werden von XP automatisch durch Bindestriche ersetzt.
+Das Zeichen "<<\@>>" wird in einen Punkt umgewandelt.
+@
+1505
+Geben Sie den neuen [FQDN] ('Fully Qualified Domain@30106
+Name') ein, der zur Erzeugung des Teils rechts vom
+"<<\@>>" der Message-ID (MID) benutzt werden soll.
+
+Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
+werden von XP automatisch durch Bindestriche ersetzt.
+Das Zeichen "<<\@>>" wird in einen Punkt umgewandelt.
+@
+1506
+Geben Sie die neue [POP3-Envelope-Adresse] ein, die der@30133
+externe Client fr eingehende Nachrichten verwenden
+soll.
+
+Diese Einstellung hat keinen Einfluá auf XP selbst -
+sie wird (wenn berhaupt) ausschlieálich vom Client
+w„hrend des Netcalls ausgewertet.
+@
+1507
+Geben Sie die neue [SMTP-Envelope-Adresse] ein, die der@30153
+externe Client fr ausgehende Nachrichten verwenden
+soll.
+
+Diese Einstellung hat keinen Einfluá auf XP selbst -
+sie wird (wenn berhaupt) ausschlieálich vom Client
+w„hrend des Netcalls ausgewertet.
+@
+1508
+Geben Sie den neuen Realname ein, der im Absender von
+Nachrichten eingetragen werden soll, die Sie ber
+diese Serverbox verschicken. Es ist der gleiche Real-
+name, der auch bei /Edit/Boxen/Edit/Namen eingetragen
+werden kann.
+@
+1509
+Geben Sie den neuen Realname ein, der im Absender von
+Nachrichten eingetragen werden soll, die Sie ber
+diese Serverbox verschicken. Es ist der gleiche
+Realname, der auch bei /Edit/Boxen/Edit/Client ein-
+getragen werden kann.
+@
+1520
 W„hlen Sie <<Ja>>, um den Vorgang abzubrechen.
 @
 1550
@@ -13795,9 +14037,10 @@ Die letzte offizielle Programmversion von
 Peter Mandrella (v3.12d) ist auch auf
 <<http://www.crosspoint.de/>> erh„ltlich.
 
-Die vom OpenXP-Projekt weiterentwickelten Versionen
-(v3.20 und h”her) sind auf <<http://www.openxp.de/>>
-erh„ltlich.
+Die von OpenXP/16 weiterentwickelten Versionen (v3.20
+und h”her) sind auf <<http://www.openxp16.de/>>, bei
+<<ftp.openxp16.de>> und bei den unter [Bezugsquellen]@9
+genannten Fido-Boxen erh„ltlich.
 
 @
 1577
@@ -17260,8 +17503,8 @@ einem Menpunkt oder Eingabedialog zuzuordnen sind.
 @
 14108
 Anzeige der Versions- und Lizenznummer der aktuellen
-XP-Installation sowie der wichtigsten Kontakte des
-OpenXP-Teams.
+XP-Installation sowie der wichtigsten Kontakte von
+OpenXP/16.
 @
 14201
 Detaillierte Hintergrundinformationen und Hinweise
@@ -18041,7 +18284,7 @@ L”schen beim n„chsten Netcall zu schtzen!
 Im Fido-Mailer ist ein Fehler aufgetreten. Melden
 Sie die exakte Fehleradresse, sofern sie auf dem
 Bildschirm erkennbar ist, bitte zusammen mit Ihrer
-Fido-Point-Konfiguration an das OpenXP-Team!
+Fido-Point-Konfiguration an den [OpenXP/16-Support]!@5
 @
 20721
 Siehe Kapitel "Kleine Modemkunde" im Anhang des
@@ -18609,13 +18852,14 @@ Rechner neu!
 22818
 Es ist ein interner Fehler aufgetreten. Melden Sie
 ihn bitte mit einer m”glichst genauen Beschreibung
-der Umst„nde an das OpenXP-Team (<<dev@openxp.de>>)!
+der Umst„nde an den [OpenXP/16-Support]@5
+(<<support@openxp16.de>>)!
 @
 22901
 Fr die Online-Registrierung verwendet XP den Fido-
 Mailer (XP-FM.EXE). Sie finden diese Datei im XP-
-Fido-Paket, das bei allen im Handbuch angegebenen
-Bezugsquellen erh„ltlich ist.
+Fido-Paket, das bei allen in dieser Online-Hilfe
+angegebenen [Bezugsquellen] erh„ltlich ist.@9
 @
 23001
 Installieren Sie zun„chst das Programm PGP und
@@ -18624,9 +18868,10 @@ reichbar ist, oder daá die Umgebungsvariable
 PGPPATH vorhanden und korrekt gesetzt ist.
 
 Die fr CrossPoint geeigneten und empfehlenswerten
-PGP-Versionen erhalten Sie bei <<ftp.openxp.de>> oder
-per Fido File Request bei 2:248/2004. N„heres siehe
-unter: [PGP - Versions- und Detailinformationen]@1010
+PGP-Versionen erhalten Sie bei <<ftp.openxp16.de>> oder
+per Fido File Request bei den unter [Bezugsquellen]@9
+genannten Fido-Boxen. N„heres siehe unter:
+[PGP - Versions- und Detailinformationen]@1010
 
 Verwenden Sie PGP Version 2.6.3!
 @
