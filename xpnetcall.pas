@@ -1248,6 +1248,11 @@ begin                  { function Netcall }
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
 
+  if not(netztyp IN [nt_Fido,nt_NNTP,nt_POP3])then begin
+    tfehler('Netcalls to this server type are currently not supported.',60);
+    exit;
+    end;
+
   Debug.DebugLog('xpnetcall','get box parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
   isdn:=(boxpar^.bport>4);
@@ -2319,6 +2324,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/11 18:30:42  ma
+  - disabled menu entries "netcall/relogin" and "online"
+  - disabled unsupported netcall types
+
   Revision 1.5  2001/01/14 10:13:36  mk
   - MakeHeader() integreated in new unit
 

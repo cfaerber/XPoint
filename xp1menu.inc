@@ -20,6 +20,7 @@ begin
     case mpnr of
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
+      $0f5,$0f6 : MenuHidden:=true;                  { Netcall/Relogin, Netcall/Online }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
       $125 : MenuHidden:=true;                       // Config/Optionen/ISDN
@@ -592,6 +593,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2001/02/11 18:30:42  ma
+  - disabled menu entries "netcall/relogin" and "online"
+  - disabled unsupported netcall types
+
   Revision 1.26  2000/12/04 10:04:33  mk
   - enabled language switching again
 

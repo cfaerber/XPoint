@@ -240,10 +240,7 @@ end;
 
 procedure SetNtAllowed;
 begin
-  if deutsch then
-    ntAllowed:=[0..255]
-  else
-    ntAllowed:=[nt_Netcall,nt_ZConnect,nt_Fido,nt_QWK,nt_UUCP];
+  ntAllowed:=[nt_ZConnect,nt_Fido,nt_Maus,nt_QWK,nt_UUCP,nt_NNTP,nt_POP3];
   developer:=FileExists('developer');
   exclude(ntAllowed,nt_Pronet);
 end;
@@ -1683,6 +1680,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.104  2001/02/11 18:30:42  ma
+  - disabled menu entries "netcall/relogin" and "online"
+  - disabled unsupported netcall types
+
   Revision 1.103  2001/01/15 23:27:35  mk
   - removed Editorkb, Listerkb
 
