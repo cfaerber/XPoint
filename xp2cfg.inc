@@ -348,7 +348,7 @@ begin
       if (AutoTimeZone=54) and
        (((parTiming=0) and (not XPFirstStart)) or
         ((parTiming<>0) and (not XPStart))) then
-        fehler(getres2(252,60))
+        fehler(getres2(252,60))  { 'Umgebungsvariable "TZ" (Zeitzone) ist ungÅltig!' }
       else check_sommer;
     end
     else begin
@@ -361,7 +361,7 @@ begin
     saveconfig;
     if ((parTiming=0) and (not XPFirstStart)) or
      ((parTiming<>0) and (not XPStart)) then
-      hinweis(getreps2(252,59,timezone)
+      hinweis(getreps2(252,59,timezone)  { 'Die Zeitzone wurde auf "%s" geÑndert (Datum/TZ).' }
        +' ('+iifs(date_chg,getres2(252,53),'TZ')+').');
   end;
 end;
@@ -693,7 +693,7 @@ begin
   largestnets:=10;
   countdown:=false;
   AutoDiff:=true;
-  UserBoxname:=false;
+  UserBoxname:=true;
   nDelPuffer:=false;
   BrettAlle:=iifs(deutsch,'Alle','All');
   viewers^[1].ext:='GIF'; viewers^[1].prog:='VPIC.EXE $FILE';
@@ -1830,6 +1830,10 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.31  2001/11/04 15:16:09  my
+  MY:- Default fÅr "Systemname in PM-Brettern" (userboxname) true
+  MY:- Meldungen (Kommentare) in checkTimeZone ergÑnzt
+
   Revision 1.62.2.30  2001/10/27 15:55:03  my
   MY:- Hinweistext Zeitzonen-Umstellung prÑzisiert/korrigiert.
   MY:- Autom. Umstellung wird auch dann aktiviert, wenn ein Timing-
