@@ -616,7 +616,8 @@ begin
     else typ:=2+ival(right(cod,1));
     dbWrite(ubase,'codierer',typ);
     if pw<>'' then begin
-      adrb:=NeuUserGruppe;
+      dbread(ubase,'adrbuch',adrb);
+      if adrb=0 then adrb:=NeuUserGruppe;
       dbWrite(ubase,'adrbuch',adrb);
       end;
     flags:=flags and (not 2)+iif(defcode,2,0);
@@ -2301,6 +2302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/04/24 13:19:25  jg
+  - Bugfix: User-Passwort aendern ueberschrieb Adressbuchgruppe
+
   Revision 1.15  2000/04/18 11:23:49  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
