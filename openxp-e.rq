@@ -1809,12 +1809,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   NOTIFY OFF   Unsubscribe monthly file list
 20   New FileScan password:~
 + 852
-1    Subescibe file area %s
-2    Subscribe %s marked file areas
-3    Unsubscribe file area %s
-4    Unsubscribe %s marked file areas
-5    Unsubscribe file area %s?
-6    Unsubscribe all marked file areas?
+1    Subscribe to file area %s
+2    Subscribe to %s marked file areas
+3    Unsubscribe from file area %s
+4    Unsubscribe from %s marked file areas
+5    Unsubscribe from file area %s?
+6    Unsubscribe from all marked file areas?
 7    ~^Yes ,  ^No  , ^List~
 -
 
@@ -2118,14 +2118,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 12   Sender User@Point.domain
 + 926
 0    42
-1    Fido Options
+1    Robots Options
 2    Areafix
 3    Name      ~
 4    Password  ~
 5    "+" for area requests
-6    Commands as subject
+6    Commands in subject
 7    Misc.
-8    Newsgroups~
+8    Area prefix
 9    AllFix
 10   Name      ~
 11   Password  ~
@@ -2155,7 +2155,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 22   M^aus,
 23   M^agicNET,
 24   P^ronet,
-25   ^FTS,
+25   ^Robots,
 26   NNT^P,
 27   ^POP3/SMTP,
 28   ^UUCP,
@@ -3705,6 +3705,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7   Illegal signature!
 -
 
++ 29900
+1
+2 N
+-
 
 # --- Settings --------------------------------------------------------
 
@@ -3988,6 +3992,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.21  2004/08/29 13:08:35  mf
+# - 29900.1, 29900.2 added.
+# - 852.1, 852.2, 852.3, 852.4, 852.5, 852.6 changed.
+# - 926.1, 926.6, 926.8 changed.
+# - 927.25 changed.
+#
 # Revision 1.49.2.20  2004/08/26 17:02:01  mf
 # - Fixed "resource missing: 640" bug in debuglog.txt
 #
