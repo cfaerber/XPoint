@@ -400,6 +400,149 @@ begin
 end;
 
 
+{ vollstÑndige RFC-1522-("encoded-word")-Decodierung }
+
+Function Check_Encoded_word(s:string; p1:integer):integer;assembler;
+asm
+     les di,s         { p1: Position des zu Ueberpruefenden "=?" im String s }
+     mov ch,0
+     mov cl,es:[di]   { Rueckgabe: Position des Abschliessenden "?=" wenn OK }
+     inc cx           {            0 wenn es kein Encoded-word ist.          }
+     mov bx,p1
+     cmp bx,0
+     je @e2
+     sub cx,bx
+     js @e2
+     lea di,[bx+di+2]
+
+     mov si,di        { folgt ein "?.?" ?  }
+     mov ax,'=?'
+     repne scasb
+     cmp cx,2
+     jb @e2
+     cmp es:[di+1],al
+     jne @e2
+     inc di
+     inc di
+
+@e1: repne scasb      { "?=" suchen }
+     jne @e2
+     cmp es:[di],ah
+     jne @e1
+     inc di
+
+     lea ax,[di+bx]   { OK, wenn keine Leerzeichen zwischen '=?' und '?=' }
+     sub ax,si
+     push ax
+     push cx
+     mov cx,di
+     mov di,si
+     sub cx,si
+     mov al,' '
+     repne scasb
+     cmp cx,0
+     pop cx
+     pop ax
+
+@e2: je @e3
+     mov ax,0
+@e3: 
+end; 
+
+
+procedure process_EW_Spaces(var s:string); assembler;
+asm
+    push ds        { Leerzeichen zwischen zwei "encoded Words" (=?...?=) entfernen }
+    push bp
+    les di,s
+    push es
+    pop ds
+    mov cl,[di]
+    mov ch,0
+    mov dx,cx
+    push di
+    jcxz @end
+
+@1: mov ax,'?='
+
+@2: repne scasb        { erstes encoded-word suchen }
+    jne @end
+    cmp [di],ah
+    jne @2
+    inc di
+    call @ew
+    jne @1
+
+    mov bx,di          { wenn danach nur leerzeichen kommen }
+    mov al,' '
+    repe scasb
+    cmp cx,2
+    jb @end
+    cmp word ptr [di-1],'?='
+    jne @1
+    inc di
+
+    push cx
+    call @ew          {  und ein weiteres encoded-word folgt }
+    pop cx
+    jne @1
+
+    lea si,[bp-2]      { dann Leerzeichen loeschen }
+    mov di,bx
+    add dx,bx
+    sub dx,si
+    push cx
+    rep movsb
+    pop cx
+    mov di,bx
+    jmp @1
+{--------------}    { ist es ein encoded-word ? }    { IN:  ES=DS                     }
+                                                     {      DS:DI:  Zeichen nach "=?" }
+@ew: push cx
+     mov bp,di
+     mov ax,'=?'                                     { OUT: Flags:  Z:ist Encoded Word       }
+     repne scasb    { folgt ein "?.?" ?  }           {      BP:     altes DI                 }
+     cmp cx,2                                        {      DI:     falls EW Zeichen nach EW }
+     jb @e2                                          {              ansonsten unveraendert   }
+     cmp [di+1],al                                   {      CX:     wenn EW aktualisiert     }
+     jne @e2                                         {              ansonsten unveraendert   }
+     inc di
+     inc di                                          { Uses: AX,CX,DI,BP }
+
+@e1: repne scasb    { "?=" suchen }
+     jne @e2
+     cmp [di],ah
+     jne @e1
+     inc di
+
+     push di
+     push cx        { Weiter nur, wenn kein Leerzeichen zwischen '=?' und '?=' }
+     mov cx,di
+     mov di,bp
+     sub cx,bp
+     mov al,' '
+     repne scasb
+     cmp cx,0
+     pop cx
+     pop di
+
+@e2: je @e3
+     mov di,bp
+     pop cx
+     retn
+
+@e3: pop ax
+     retn
+{---------------}
+@end:
+    pop di
+    mov al,dl
+    stosb
+    pop bp
+    pop ds
+end;
+
+
 { vollstÑndige RFC-1522-Decodierung }
 
 procedure MimeIsoDecode(var ss:string; maxlen:integer);
@@ -410,41 +553,17 @@ var p1,p2,p,i : integer;
 begin
   for i:=1 to length(ss) do
     if ss[i]=#9 then ss[i]:=' ';
-
+  process_EW_Spaces(ss);
   cset:='';
   repeat
-    s:=ustr(ss);
-    p:=pos('?Q?',s);
-    if p=0 then p:=pos('?B?',s);
-    if p>3 then begin
-      p1:=p-1;
-      while (p1>0) and (s[p1]<>'=') do
-        if s[p1]=' ' then p1:=0 else dec(p1);
-      if (p1>0) and (s[p1+1]='?') then begin
-        p2:=p+3;
-        (* eingeklammerte Teile: fehlertolerantere Fassung fÅr VSOUP & Co.,
-           bei Leerzeichen im codierten String nicht abbrechen *)
-        while (p2<length(s)) { and (p2>0) } and (s[p2]<>'?') do
-        { if s[p2]=' ' then p2:=0 else } inc(p2);
-        if not ((p2<length(s)) and (p2>0) and (s[p2+1]='=')) then p2:=0;
-      end;
-    end
-    else p1:=0;
-{
-    p1:=pos('=?',ss);
-    if p1>0 then begin
-      p2:=p1+5;
-      i:=0;
-      while (i<3) and (p2<length(ss)) do begin
-        if ss[p2]='?' then inc(i);
-        inc(p2);
-      end;
-      while (p2<length(ss))
-      and ((ss[p2]<>'=') or (ss[p2-1]<>'?')) do inc(p2);
-      if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
-    end;
-}
-    if (p1>0) and (p2>0) then begin
+
+    p1:=-1;
+    repeat
+      p1:=posn('=?',ss,p1+2);
+      p2:=check_encoded_word(ss,p1);
+    until (p1=0) or (p2>0);
+
+    if (p1>0) then begin
       s:=copy(ss,p1+2,p2-p1-2);
       delete(ss,p1,p2-p1+2);
       p:=cpos('?',s);
@@ -483,6 +602,22 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.6  2002/04/13 10:01:20  my
+  JG[+MY]:- MIME-Decodierung nach RFC 1522 an RFC 2822/2047 (whitespace
+            zwischen "multiple 'encoded word's", auch bei Folding)
+            angepa·t und Erkennung von 'encoded word's verbessert. Korrekt
+            decodiert werden jetzt z.B.:
+
+    Subject: =?iso-8859-1?Q?=5BNoten=5D_=5BBuffy=5D_5abb18_=22Der_Zorn_der_G=F6t?=
+            =?iso-8859-1?Q?tin=22_=28Intervention=29?=
+
+    Subject: Test =? RFC 1522 =?ISO-8859-1?Q?=E4=F6=FC?= hehe ?=
+    Subject: Test ?Q? =?ISO-8859-1?Q?=E4=F6=FC?= hoho
+
+            Der hiermit committete Code ist die ASM-Variante von JG. Der
+            Commit dient momentan nur dem Zweck der Archivierung.  Siehe
+            auch nÑchster Commit.
+
   Revision 1.1.2.5  2002/03/27 19:48:28  my
   RB+MY:- Fehlertolerantere Fassung fÅr die Decodierung von nach RFC 1522
           codierten Headerzeilen: Bei Leerzeichen im codierten String wird
