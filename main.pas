@@ -139,8 +139,8 @@ begin
     readcolors;
     SetColors;
     showscreen(true);
-    DeleteFile('NETCALL.ALL');
-    DeleteFile('NETCALL.END');
+    SafeDeleteFile('NETCALL.ALL');
+    SafeDeleteFile('NETCALL.END');
     DelTmpfiles('*.$$$');
 
     // !!if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
@@ -236,6 +236,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/01/30 22:08:49  mk
+  - parameter validation for SetConsoleCursorPosition
+
   Revision 1.13  2002/01/28 20:32:24  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested

@@ -344,6 +344,7 @@ begin
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
     WhereX := x + len; WhereY := y;
     WritePos.X := WhereX - 1;
+    if WritePos.X >= ScreenWidth then WritePos.X := 0;
     SetConsoleCursorPosition(OutHandle, WritePos);
   {$ELSE }
     FWrt(x, y, s);
@@ -365,6 +366,7 @@ begin
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
     WhereX := WhereX + Len;
     WritePos.X := WhereX;
+    if WritePos.X >= ScreenWidth then WritePos.X := 0;
     SetConsoleCursorPosition(OutHandle, WritePos);
   {$ELSE }
     FWrt(WhereX, WhereY, s);
@@ -1481,6 +1483,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2002/01/30 22:08:49  mk
+  - parameter validation for SetConsoleCursorPosition
+
   Revision 1.79  2002/01/12 23:05:13  mk
   - fixed DOS32 compile
 
