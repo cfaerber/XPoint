@@ -2795,6 +2795,7 @@ procedure write_lastcall(const dat:string);
 var t : text;
     s : shortstring;
 begin
+  Debug.DebugLog('xp1',Format('Writeing %s %s as Lastcall-Date in %s', [fdat(Dat), ftime(dat), OwnPath+NewDateFile]),DLDebug);
   assign(t,ownpath+NewDateFile);
   rewrite(t);
   writeln(t,dat);
@@ -3216,6 +3217,9 @@ end;
 
 {
   $Log$
+  Revision 1.192  2003/09/28 23:22:21  mk
+  - added debug log info to write_lastcall
+
   Revision 1.191  2003/09/26 11:46:30  mk
   - fixed listdisplay: if no valid highlight characters are found, the
     character is not deleted anymore
