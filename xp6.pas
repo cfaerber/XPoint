@@ -1776,6 +1776,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWrite(mbase,'unversandt',b);
 
+      flags := flags or 256; // this mail is from yourself, needed for replaceown
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
 
       flags:=flags and not 56;
@@ -2100,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.110  2001/04/25 17:55:00  mk
+  - own mail is flagged now (needed for replaceown)
+
   Revision 1.109  2001/04/18 11:02:13  ma
   - using StrgList.IndexOf instead of Find, Find only works on sorted
     Strglists.
