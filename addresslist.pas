@@ -527,8 +527,8 @@ var i,j:integer;
         gg:=false; 
         g2:=false 
       end 
-        else Add2;
-  end;  
+        else if Trim(Addr) <> '' then Add2;
+  end;
 
 begin
   if Dest is TStringList  then ALst := Dest as TStringList  else ALst := nil; 
@@ -726,6 +726,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.8  2002/07/02 20:21:23  mk
+// - fixed EMP: "''" Bug
+//
 // Revision 1.7  2002/05/20 12:34:00  cl
 // - fixes for address handling
 //
