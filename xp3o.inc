@@ -1122,8 +1122,8 @@ begin
               pmCryptDecode;
 
             msgsent:=true;
-            end
-          else (* begin   { nicht aufnehmen }
+            end;
+          (* else begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
             end; *)
@@ -1283,6 +1283,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.13  2003/01/26 09:18:28  cl
+  - fixed problem with empfnr
+
   Revision 1.83.2.12  2003/01/24 16:37:32  cl
   - fixed last commit
 
