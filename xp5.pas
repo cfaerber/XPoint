@@ -430,6 +430,22 @@ begin
 end;
 
 procedure memstat;
+
+  function xmsbios:word;
+  var xmsinst:word;
+  begin
+    xmsinst:=word(256);
+    inline($FA);
+    Port[$70] := $18;
+    xmsinst := xmsinst*Port[$71];
+    inline($FB);
+    inline($FA);
+    Port[$70]:= $17;
+    xmsinst:= xmsinst+Port[$71];
+    inline($FB);
+    xmsbios := xmsinst;
+  end;
+
 const rnr = 500;
 type so = record
             o,s : word;
@@ -477,7 +493,10 @@ begin
     gotoxy(x+32,y+6); write(emsavail*16:5,' KB');
   end;
   if xmstest then begin
-    gotoxy(x+44,y+4); write(xmst:5,' KB');
+    {Alte Speichergesamtanzeige}
+    {gotoxy(x+44,y+4); write(xmst:5,' KB');}
+    {Neue Speichergesamtanzeige}
+    gotoxy(x+44,y+4); write(xmsbios:5,' KB'); 
     {Alte Speicheranzeige Openxp/16 XMS}
     {gotoxy(x+44,y+5); write(xmst-xmstotal:5,' KB');}
     {Neue Speicheranzeige Openxp/16 XMS}
@@ -1076,6 +1095,9 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.24  2003/04/18 10:48:40  mw
+  MW: - Neue Berechnung des XMS-Gesamtspeichers (wir fragen jetzt das CMOS)
+
   Revision 1.27.2.23  2003/04/16 22:27:23  my
   MY:- "Taste drÅcken..." bei X/S/S war unter DOS noch eine Zeile zu tief
 
