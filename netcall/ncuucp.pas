@@ -712,7 +712,6 @@ var c   : TUUCPCommand; { parsed incoming command }
     SendCommand('H');
     if r.Parse(RepeatGetCommand('H')) { HY/HN } then begin
       Netcall.Log('+','no files to receive');
-      SendCommand('HY');
     end else
       Netcall.Log('+','remote has data for you');
     result:=not r.ok;
@@ -774,6 +773,7 @@ var c   : TUUCPCommand; { parsed incoming command }
 begin
   if not BecomeSlave then
   begin
+    try SendCommand('HY'); except end;
     Netcall.Output(mcInfo,'Remote has no files to receive',[0]);
     result:=true;
     exit;
@@ -1010,6 +1010,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/03/26 22:51:04  cl
+  - proper shutdown with some protocols (ignore errors due to hangup)
+  - range check fix for VPascal
+
   Revision 1.3  2001/03/25 18:44:04  cl
   - moved ncuucp-fz.inc from playground to main
   - enabled UUCP-f/z in ncuucp.pas

@@ -351,7 +351,7 @@ begin
   Header[Send_SeqNr,4]:=iif(short,$c0,$80) + Send_SeqNr shl 3 + Recv_SeqNr;
 
   w:=DataCheckSum(Buffer[Send_SeqNr],ssize);
-  w:=$aaaa-(w xor Smallword(Header[Send_SeqNr,4]));
+  w:=($aaaa-(w xor Smallword(Header[Send_SeqNr,4]))) and $ffff;
 
   Header[Send_SeqNr,2]:=w and $ff;
   Header[Send_SeqNr,3]:=w shr 8;
@@ -525,7 +525,7 @@ begin
       Continue;
 
     w:=DataCheckSum(Buffer[j],size);
-    w:=$aaaa-(w xor SmallWord(CtlHeader[4]));
+    w:=($aaaa-(w xor SmallWord(CtlHeader[4]))) and $ffff;
 
     if (SmallWord(CtlHeader[3]) shl 8 + SmallWord(CtlHeader[2])) <> w then
     begin
@@ -644,6 +644,10 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/03/26 22:51:04  cl
+  - proper shutdown with some protocols (ignore errors due to hangup)
+  - range check fix for VPascal
+
   Revision 1.3  2001/03/26 22:21:08  cl
   - minor fixes and cleanups
 
