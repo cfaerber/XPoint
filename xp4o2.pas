@@ -764,7 +764,7 @@ var ss : string[255];
     p  : Integer;
     bs : string;
     sn,
-    sb : Integer;
+    sb : Cardinal;
 begin
   with TReplyTreeItem(ReplyTree[bezpos]^) do
   begin
@@ -793,7 +793,7 @@ begin
       begin
         sn:=i div 32;
         sb:=i and (32-1);
-        if lines[sn] and (1 shl sb)<>0 then
+        if lines[sn] and (Cardinal(1) shl sb)<>0 then
             ss[i*komwidth+1]:='³';
       end;
       if flags and kflLast<>0 then
@@ -928,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/01/12 01:06:47  mk
+  - fixed range check error
+
   Revision 1.49  2002/01/09 02:27:37  mk
   - removed debug info from last checkin
 
