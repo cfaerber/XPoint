@@ -13,7 +13,7 @@ MSGS:  Nachrichtendatei
  4. OrigDatum   Longint
  5. EmpfDatum   Longint     i
  6. Groesse     LongInt          Nachrichtengr”áe ohne Header
- 7. Typ         Char             'T' / 'B'
+ 7. Typ         Char             'T' / 'B' / 'M'
  8. HalteFlags  Byte             0=normal, 1=halten, 2=l”schen
  9. gelesen     Byte        i    1=gelesen
 10. unversandt  Byte             Flags: 1=unversandt, 2=Bin„rmeldung, 4=pmCrypt
