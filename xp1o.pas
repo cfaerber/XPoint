@@ -84,10 +84,11 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
-var x,y : byte;
-    brk : boolean;
-    fn  : string[20];
-    s2  : pathstr;
+var x,y  : byte;
+    brk  : boolean;
+    fn   : string[20];
+    s2   : pathstr;
+    isat : boolean;
 const
     lastpath : pathstr = '';
     urlchars : set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
@@ -129,17 +130,28 @@ begin
       end
     else
     if (s='CLIPBOARD (URL)') then begin        { Markierten Text als URL }
+      isat :=false;
       s:=getline;
       y:=pos('HTTP://',ustr(s));               { WWW URL?}
       if y=0 then y:=pos('HTTPS://',ustr(s));  { HTTPS URL?}
       if y=0 then y:=pos('FTP://',ustr(s));    { oder FTP?}
       if y=0 then y:=pos('WWW.',ustr(s));      { oder WWW URL ohne HTTP:? }
+      if y=0 then 
+      begin 
+        y:=cpos('@',s);                        { Domain aus Mailadresse }
+        isat:=true;
+      end;
       if y<>0 then
       begin
         s:=mid(s,y);
         y:=1;
         while (y<=length(s)) and (s[y] in urlchars) do inc(y); { Ende der URL suchen... }
         s:=left(s,y-1);
+      end;
+      if (pos('@',s)>0) and (isat) then        { Wenn es keine @-Adresse (Strato z.B.) ist }
+      begin
+        s:=mid(s,2);
+        s:='http://www.' + s;
       end;
       string2clip(s);
       ReadFilename:=false;
@@ -1031,6 +1043,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.28  2002/04/20 15:46:23  my
+  OG+MY:- Beim Kopieren eines URL aus dem Lister ins Clipboard mittels
+          <F2>-Auswahl "Clipboard (URL)" wird jetzt aus einer Mail-Adresse
+          der Homepage-URL erraten
+          ("xx@openxp16.de" => "http://www.openxp16.de").
+
   Revision 1.40.2.27  2002/04/12 14:34:15  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
