@@ -339,7 +339,7 @@ var tz_old,tzone : string[7];
   end;
 
 begin
-  if AutoTimeZone=52 then exit;
+  if (AutoTimeZone=52) or (ReplaceEtime) then exit;
   tz_old:=timezone;             { alten Wert fÅr Vergleich sichern }
   tzone:=timezone;              { tzone = RÅckgabewert von getTZ }
   if AutoTimeZone in [54,55] then
@@ -1830,6 +1830,9 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.29  2001/10/27 03:20:24  my
+  MY:- Keine ZeitzonenprÅfung wenn "Erstellungszeit 00:00"
+
   Revision 1.62.2.28  2001/10/26 17:40:03  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
