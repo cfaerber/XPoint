@@ -70,7 +70,7 @@ var   disprec   : dispra;
       dispflags : byte;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
-      xphltick  : longint;
+   (* xphltick  : longint; *)
 
       dispbuf   : array[1..maxgl] of ^dispstr;
       markflag  : array[1..maxgl] of byte;  { 0=nix, 1=mark, 2=trenn }
@@ -1655,7 +1655,7 @@ begin      { --- select --- }
       { Do_XPhilite(true); }
         get(t,curon);
         TempOpen;
-        if (t<=' ') and (t<>keybs) then
+        if (t<' ') and (t<>keybs) then
           suchen:=false
         else begin
           suchchar(t[1]); t:=#255;
@@ -1796,7 +1796,6 @@ begin      { --- select --- }
                    if c=k0_cW then brettweiter:=not brettweiter;      { ^W }
                    if ParDebug and (c=k0_cF) then begin               { ^F }
                      GoP; brettinfo; end;
-                   if c='H' then XPhilite:=0;
                    testsuche(t);
                    end;
                end;
@@ -2235,7 +2234,7 @@ begin
   MarkUnversandt:=false;
   ShowRealos:=ShowRealnames;
   fillchar(disprec,sizeof(disprec),0);
-  XPhltick:=0;
+  (* XPhltick:=0; *)
   select(0);
   for i:=1 to maxgl do dispose(dispbuf[i]);
 end;
@@ -2244,6 +2243,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.60  2002/03/31 15:49:01  my
+  JG:- Schnellsuche Brett- und User-öbersicht: Leertaste beendet die Suche
+       nicht mehr (<Esc> oder <Enter> funktionieren nach wie vor). So
+       kînnen jetzt auch Bretter gesucht werden, die Leerzeichen im Namen
+       haben.
+
+  JG+MY:- Durch den Ausbau von 'Do_XPHilite' ÅberflÅssig gewordene
+          Variablen und Anweisungen eliminiert.
+
   Revision 1.26.2.59  2002/03/16 11:22:35  my
   MY:_ Text des letzten Commits prÑzisiert.
 
