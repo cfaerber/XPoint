@@ -60,7 +60,7 @@ procedure maus_popinside;
 
 procedure mon;                         { Maus vor Textausgabe abschalten   }
 procedure moff;                        { Maus nach Textausgabe einschalten }
-procedure mwrt(x,y:byte; txt:string);  { Maus vor/nach Ausgabe umschalten  }
+procedure mwrt(x,y:byte; const txt:string);  { Maus vor/nach Ausgabe umschalten  }
 function  _mausx:integer;              { Textkoordinaten }
 function  _mausy:integer;
 
@@ -234,7 +234,7 @@ begin
   if maus_cursor then mausaus;
 end;
 
-procedure mwrt(x,y:byte; txt:string);
+procedure mwrt(x,y:byte; const txt:string);
 begin
 {$IFDEF Ver32 }
   if maus_cursor then
@@ -256,7 +256,7 @@ begin
 {$ENDIF }
 end;
 
-procedure interr(txt:string);
+procedure interr(const txt:string);
 begin
   moff;
   writeln('<MAUS> ',txt);
@@ -351,6 +351,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.1  2001/08/10 16:54:11  mk
+  - const parameter saves some space in .exe
+
   Revision 1.14  2000/05/17 18:45:33  mk
   - Wieder unter allen Platformen compilierbar
 
