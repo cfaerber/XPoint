@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -30,7 +30,6 @@ uses
   typeform;
 {$else }
 uses
-  sysutils,
 {$ifdef vp }
   vpusrlow,
 {$endif}
@@ -40,12 +39,13 @@ uses
 {$IFDEF DOS32 }
   xpdos32,
 {$ENDIF }
+  sysutils,
   xpglobal,
   typeform;
-{$endif} { Unix }
+{$endif}
 
 const
-  FMRead       = $00;     { Konstanten fÅr Filemode }
+  FMRead       = $00;     { Konstanten fuer Filemode }
   FMWrite      = $01;
   FMRW         = $02;
   FMDenyNone   = $40;
@@ -58,23 +58,23 @@ const
 
 
 const
-  { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
+  { Neue AnyFile-Konstante, da $3F oft nicht laeuft }
   ffAnyFile = $20;
 
 { Zugriffsrechte beim Erstellen einer Datei }
 type TCreateMode = (
         cmUser,                         { Nur User RW }
-        cmUserE,                        { mit Ausf¸hrung }
+        cmUserE,                        { mit Ausfuehrung }
         cmGrpR,                         { User RW, Group R }
-        cmGrpRE,                        { + Ausf¸hrung }
+        cmGrpRE,                        { + Ausfuehrung }
         cmGrpRW,                        { Beide RW }
-        cmGrpRWE,                       { + Ausf¸hrung }
+        cmGrpRWE,                       { + Ausfuehrung }
         cmAllR,                         { User RW, alle anderen R }
-        cmAllRE,                        { + Ausf¸hrung }
+        cmAllRE,                        { + Ausfuehrung }
         cmAllRW,                        { Alle RW }
         cmAllRWE);                      { Alle alles }
 
-{ Funktionen zum Erstellen der Datei unter Ber¸cksichtigung
+{ Funktionen zum Erstellen der Datei unter Beruecksichtigung
   der Zugriffsrechte. }
 
 {$IFDEF FPC }
@@ -89,23 +89,23 @@ procedure FSplit(const path: string; var dir, name, ext: string);
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
-Function  ValidFileName(const name:string):boolean;  { gÅltiger Dateiname ?    }
+Function  ValidFileName(const name:string):boolean;  { gueltiger Dateiname ?    }
 function  isEmptyDir(const path: string): boolean;
 function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
 function  TempFile(const path:string):string;       { TMP-Namen erzeugen      }
 function  TempExtFile(path,ld,ext:string):string; { Ext-Namen erzeugen }
-function  _filesize(const fn:string):longint;        { Dateigrî·e in Bytes     }
+function  _filesize(const fn:string):longint;        { Dateigroesse in Bytes     }
 function  filetime(fn:string):longint;         { Datei-Timestamp         }
 function  setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen  }
 function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
-procedure erase_mask(s:string);                 { Datei(en) lîschen       }
+procedure erase_mask(s:string);                 { Datei(en) loeschen       }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:string);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:string; var res:integer);  { mehrere Verz. anl. }
 
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
-procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
+procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode oeffn.}
 
 procedure adddir(var fn:string; dir:string);
 function  GetBareFileName(const p:string):string;
@@ -170,8 +170,8 @@ begin
     { Mode setzen }
     SetAccessMode(fn, cm);
   end; { if }
-  { Nochmaliges ˆffnen, denn bei IOResult=0 ist die Datei zu,
-    ansonsten wSre IOResult gelˆscht. }
+  { Nochmaliges oeffnen, denn bei IOResult=0 ist die Datei zu,
+    ansonsten waere IOResult geloescht. }
   System.Rewrite(F,l);
 end;
 
@@ -204,7 +204,7 @@ begin
   System.Rewrite(F);
 end;
 
-{ Liefert True zur¸ck, falls ein Verzeichnis leer ist }
+{ Liefert True zurueck, falls ein Verzeichnis leer ist }
 function isEmptyDir(const path: string): boolean;
 var
   sr: TSearchRec;
@@ -233,7 +233,7 @@ end;
 
 function existf(var f):Boolean;
 var
-  fr: ^filerec;
+  fr: ^tfilerec;
 begin
   fr:= @f;
   result:= FileExists(fr^.name);
@@ -389,7 +389,7 @@ begin
 end;
 
 function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
-{ keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
+{ keine Ueberpruefung, ob srcfn existiert oder destfn bereits existiert }
 var bufs,rr:word;
     buf:pointer;
     f1,f2:file;
@@ -411,7 +411,7 @@ begin
   freemem(buf,bufs);
 end;
 
-procedure erase_mask(s:string);                 { Datei(en) lîschen }
+procedure erase_mask(s:string);                 { Datei(en) loeschen }
 var
   sr : TSearchrec;
 begin
@@ -564,7 +564,7 @@ begin
 end;
 
 
-{ Verzeichnis einfÅgen, falls noch nicht vorhanden }
+{ Verzeichnis einfuegen, falls noch nicht vorhanden }
 
 procedure adddir(var fn: string; dir: string);
 var s: string;
@@ -610,12 +610,16 @@ begin
 {$ifdef Unix}
   result:= Linux.GetEnv(name);
 {$else}
+  result:='';
 {$endif}
 end;
 
 end.
 {
   $Log$
+  Revision 1.76  2000/11/16 12:50:27  fe
+  Made compileable with VP.
+
   Revision 1.75  2000/11/16 12:35:47  mk
   - Unit Stringtools added
 
@@ -819,19 +823,19 @@ end.
   - LockFile geht unter Win9x nicht, wohl aber unter NT. Ausgeklammert
 
   Revision 1.16  2000/03/25 18:46:59  ml
-  uuz lauff‰hig unter linux
+  uuz lauffaehig unter linux
 
   Revision 1.15  2000/03/24 23:11:17  rb
   VP Portierung
 
   Revision 1.14  2000/03/24 20:25:50  rb
-  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+  ASM-Routinen gesaeubert, Register fuer VP + FPC angegeben, Portierung FPC <-> VP
 
   Revision 1.13  2000/03/24 04:16:21  oh
   - Function GetBareFileName() (Dateiname ohne EXT) fuer PGP 6.5.x
 
   Revision 1.12  2000/03/24 00:03:39  rb
-  erste Anpassungen fÅr die portierung mit VP
+  erste Anpassungen fuer die portierung mit VP
 
   Revision 1.11  2000/03/16 19:25:10  mk
   - fileio.lock/unlock nach Win32 portiert
@@ -847,7 +851,7 @@ end.
   Zeichenausgabe geaendert und Winxp portiert
 
   Revision 1.7  2000/03/03 20:26:40  rb
-  Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
+  Aufruf externer MIME-Viewer (Win, OS/2) wieder geaendert
 
   Revision 1.6  2000/02/23 23:49:47  rb
   'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
