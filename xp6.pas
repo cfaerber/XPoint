@@ -845,7 +845,7 @@ end;
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
-    mappcustomsel(auto_empfsel,false);
+    mappcustomsel(scr_auto_empfsel,false);
     readmask(brk);
     closemask;
     attrtxt(col.coldiahigh);
@@ -2178,6 +2178,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/04/18 16:17:33  jg
+  - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
+  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
+  - Ein paar erledigte Sachen aus !Todo.tst geloescht.
+
   Revision 1.19  2000/04/17 17:24:09  jg
   - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
   - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.

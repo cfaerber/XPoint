@@ -173,10 +173,6 @@ Baumdarstellung durch # oder durch "G" sich diese ansehen kann.
 
 ##########################################################################
 
-- die MID-Suche ist rasant schnell :-)
-Ich wuerd mir aber noch alternativ eine langsame Teilstringsuche  
-wuenschen.
-BTW die Optionen bewirken ja nichts, kann/sollte man sie ausblenden?
 From lars@tecs.de Thu Mar 23 01:00:00 2000
 Path: uni-berlin.de!craze02.tecs.DE!not-for-mail
 From: Lars Becker <lars@tecs.de>
@@ -201,10 +197,6 @@ zwei *kleinere* Featurerequests:
     C/Anzeige/Kopf eingestellt ist.  Dort wird wohl nur X-Priority
     ausgewertet.  Ich denke die Anzeige der ZConnect-Prio waere fuer
     ZC-Nutzer sicherlich interessant.
-
-    2.)  Traegt man ins Subject versehentlich Umlaute ein "biept's"
-    aber nix geschieht.  Die automatische Wandlung in 7bit-ASCII
-    waere praktisch.
 
 Gruss,
 - Lars.
