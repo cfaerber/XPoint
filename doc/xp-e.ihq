@@ -2279,9 +2279,9 @@ ask your systems operator.
 8020
 With this programme, all messages going to the server
 are [packed], or compressed. You select the settings@4006
-for <<compress>>, <<freeze>>, or <<gzip>> by press-
-ing F2. If you prefer to transfer [unpacked], you can@4006
-leave this field empty.
+for <<compress>>, <<freeze>>, or <<gzip>> by pressing F2. If you
+prefer to transfer [unpacked], you can leave this@4006
+field empty.
 
 Compress is supported by nearly all UUCP-servers,
 Freeze by most; gzip (Gnu ZIP) is pretty new but
