@@ -308,10 +308,10 @@ begin
   maddbool(3,9,getres2(252,16),rehochn);        { 'Re^n verwenden' }
 {$IFNDEF Linux }
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
-{$ENDIF }
   mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
+{$ENDIF }
   xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
   maddstring(36,9,'## XP ## ',xid,7,7,'');
   for i:=3 downto 0 do
@@ -592,8 +592,8 @@ var brk : boolean;
 begin
 {$IFDEF Linux }
   dialog(ival(getres2(257,0)),4,getres2(257,1),x,y);    { 'Shell' }
-  maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
-  maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
+  maddbool(3,2,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
+  maddbool(3,3,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
 {$ELSE }
   dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
@@ -1413,6 +1413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/05/08 18:32:08  hd
+  - Fix: Display-Bug in c/o/n (florian)
+
   Revision 1.29  2000/05/08 13:53:43  hd
   - Einige Aenderungen in den Dialogen
 
