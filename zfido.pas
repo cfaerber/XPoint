@@ -533,6 +533,7 @@ begin
           if id='BEZ'  then ref:=left(line,midlen) else
           if id='MAILER' then programm:=left(line,40) else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
+          if id='F-TO' then fido_to:=left(line,36) else
           if id='CRYPT' then pgpencode:=true else
           if id='SIGNED' then pgpsigned:=(pos('PGP',ustr(line))>0) else
           if id[1]='X' then
@@ -1665,6 +1666,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/10/20 16:13:54  fe
+  Versteht jetzt auch "F-TO"-Headerzeile zwecks Kompatibilitaet
+  zu OpenXP 3.30 und 3.70.
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 
