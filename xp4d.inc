@@ -33,7 +33,7 @@ procedure write_disp_line(y,p:shortint; show:boolean);
 const hf : array[0..4] of char = ' +-Aù';
       uv : array[0..13] of char = ' !*'#19'z23456789#';
       ge : array[0..1] of char = '> ';
-      wv : array[0..5] of char = ' cwwsS';
+      wv : array[0..5] of char = ' cwwss';
 
 var
     taus    : array[1..MsgFelderMax+UsrFelderMax] of string[81];
