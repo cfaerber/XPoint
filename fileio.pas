@@ -191,8 +191,6 @@ procedure IOExcept(e: ExceptClass);
 function  alldrives: string;
 {$endif}
 
-function RenameDir(Const OldName, NewName : String) : Boolean;
-
 implementation  { ------------------------------------------------------- }
 
 uses xp0;
@@ -666,19 +664,14 @@ begin
   result:= FileMaskSize(AddDirSepa(dir)+WildCard);
 end;
 
-function RenameDir(Const OldName, NewName : String) : Boolean;
-var
-  f: File;
-begin
-  Assign(f, Oldname);
-  rename(f, newname);
-  RenameDir := IOResult = 0;
-end;
-
 end.
 
 {
   $Log$
+  Revision 1.101  2001/08/28 13:01:39  mk
+  - removed RenameDir
+  - renamed RenameDir to RenameFile
+
   Revision 1.100  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 

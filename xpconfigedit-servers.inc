@@ -1101,7 +1101,7 @@
     renbox(boxpar^.ClientPath,BfgExt);
     ChDir(XFerDir_);
     GetDir(0, NewDir);
-    RenameDir(old_dname, dname);
+    RenameFile(old_dname, dname);
     ChDir(Copy(OwnPath, 1, Length(OwnPath)-1));
   end;
 
@@ -2068,6 +2068,10 @@
 
 {
   $Log$
+  Revision 1.21  2001/08/28 13:01:39  mk
+  - removed RenameDir
+  - renamed RenameDir to RenameFile
+
   Revision 1.20  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 
