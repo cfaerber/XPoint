@@ -1480,8 +1480,8 @@ begin
           getx(su,  'listfixedhead',ListFixedHead) or
           getx(su,  'maggiverkettung',MaggiVerkettung) or
           gets(su,su,'Header',mheader,255) or
-          gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
-          gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
+          gets(s, su,'HeaderCustom1',mheadercustom[1],custheadlen) or
+          gets(s, su,'HeaderCustom2',mheadercustom[2],custheadlen) or
           gets(su,su,'timezone',TimeZone,7) or
           getb(su,  'savetype',SaveType) or
           getb(su,  'isdn1-int',ISDN_int) or
@@ -1695,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.9  2000/12/15 19:02:31  mk
+  - do not uppercase Custom Headers
+
   Revision 1.62.2.8  2000/12/07 13:10:05  mk
   - Pfade nur beim ersten Start anlegen
 
