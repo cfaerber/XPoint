@@ -835,7 +835,7 @@ var mfm   : byte;
     isize : word;
     sbrk  : boolean;
     root  : absatzp;
-{    endcr : boolean;   }       { CR am Dateiende }
+    endcr : boolean;          { CR am Dateiende }
     endlf : boolean;          { LF am Zeilenende }
     srest : boolean;
     pp    : byte;
@@ -867,7 +867,7 @@ begin
     p:=ptr(1,1);
 {$ENDIF }
     tail:=nil;
-{    endcr:=false; }
+    endcr:=false;
     srest:=false;
     while (srest or not eof(t)) and assigned(p) do begin
       isize:=0;
@@ -898,7 +898,7 @@ begin
           end;
         end;
       if eoln(t) and not srest then begin
-{        endcr:=not eof(t); }
+        endcr:=not eof(t);
         readln(t);
         end;
       p:=AllocAbsatz(isize);
@@ -913,11 +913,11 @@ begin
     close(t);
     freemem(tbuf,4096);
     freemem(ibuf,maxabslen);
-{    if endcr then begin
+    if endcr then begin
       p:=AllocAbsatz(0);
       p^.umbruch:=(umbruch<>0);
       AppP;
-      end; }
+      end;
     if ioresult<>0 then error(3);
     end;
   LoadBlock:=root;
@@ -2014,6 +2014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.5  2000/10/25 06:22:17  mk
+  - fixes Bug #116197, last CRLF in LoadBlock
+
   Revision 1.9.2.4  2000/04/30 08:38:53  mk
   - Crash Findumbruch beseitigt (edi->esi)
 
