@@ -376,13 +376,7 @@ begin
     else
       SetLength(forwardkeys, Length(forwardkeys)-1);
   forwardkeys := forwardkeys + #0 + Char(fn);
-{$ifdef NCRT}
-  if not usemulti2 and not keypressed then
-{$else}
-  {$IFNDEF Delphi }
-  if not usemulti2 and not keypressed then
-  {$ENDIF }
-{$endif}
+  if not keypressed then
   begin
     t := #31;
     pushkeyv(t);
@@ -474,6 +468,9 @@ initialization
 
 {
   $Log$
+  Revision 1.55  2003/04/12 08:03:42  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.54  2003/04/02 17:11:33  mk
   - do not process #27 in testbrk while using macros
 

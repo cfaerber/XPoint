@@ -516,15 +516,6 @@ var i  : integer;
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
 
-    if _is('w0')   then ParWintime:=0 else
-    if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
-    if _is('os2b') then begin ParWintime:=1; ParOS2:=2; end else
-    if _is('os2c') then begin ParWintime:=1; ParOS2:=3; end else
-    if _is('os2d') then begin ParWintime:=1; ParOs2:=4; end else
-    if _is('w')    then ParWintime:=1 else
-    if _is('w1')   then ParWintime:=1 else
-    if _is('w2')   then ParWintime:=2 else
-
     if _is('ss')   then ParSsaver:=true else
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
@@ -1026,7 +1017,6 @@ begin
   randomize;
   iomaus:=ParMaus;
   mausfx:=8;
-  UseMulti2:=ParWintime<2;
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
@@ -2793,6 +2783,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.160  2003/04/12 08:03:44  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.159  2003/04/02 22:07:25  mk
   MY:- Fix: Dateidatum und -uhrzeit von NEUES.DAT werden jetzt beim
        Programmstart immer auf den aktuellen Wert gesetzt (Datum und

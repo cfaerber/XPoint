@@ -123,7 +123,6 @@ var    fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        forcecolor : boolean  = false;     { Txt-Attribute blockieren       }
 
        iomaus     : boolean  = true;      { wird mit mouse.maus verknuepft  }
-       UseMulti2  : boolean  = true;      { Tastatur-Warteschleife         }
        AutoUp     : boolean  = false;     { Get: automatisches KeyUp       }
        AutoDown   : boolean  = false;     { Get: automatisches KeyDown     }
        AutoupEnable   : boolean = true;
@@ -443,23 +442,21 @@ var
   h, m, s, s100: SmallWord;
 begin
 {$IFNDEF Unix }
-  if UseMulti2 then begin
-    if m2t then
-    begin
-      DecodeTime(now, h, m, s, s100);
-      __st[1]:=chr(h div 10+48);
-      __st[2]:=chr(h mod 10+48);
-      __st[4]:=chr(m div 10+48);
-      __st[5]:=chr(m mod 10+48);
-      if length(__st)>5 then begin
-        __st[7]:=chr(s div 10+48);
-        __st[8]:=chr(s mod 10+48);
-        end
-      else
-        if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
-      end;
-    end;
+  if m2t then
+  begin
+    DecodeTime(now, h, m, s, s100);
+    __st[1]:=chr(h div 10+48);
+    __st[2]:=chr(h mod 10+48);
+    __st[4]:=chr(m div 10+48);
+    __st[5]:=chr(m mod 10+48);
+    if length(__st)>5 then begin
+      __st[7]:=chr(s div 10+48);
+      __st[8]:=chr(s mod 10+48);
+      end
+    else
+      if timeflash then __st[3]:=iifc(odd(s),':',' ');
+    disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
+  end;
 {$ENDIF }
 end;
 
@@ -617,7 +614,7 @@ begin
 
 {$IFNDEF Win32} {Win32 uses WaitForMultipleObjects in ReadKey}
 {$IFNDEF NCRT}  {NCurses uses wgetch}
-    if UseMulti2 then
+    if true {UseMulti2 }then
       get_without_sys
     begin
       repeat
@@ -1671,6 +1668,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2003/04/12 08:03:42  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.102  2002/12/28 20:11:03  dodi
   - start keyboard input redesign
 

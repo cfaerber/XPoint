@@ -820,8 +820,6 @@ var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParPass    : string  = '';      { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string  = '';      { Passwort }
        ParZeilen  : byte    = 0;       { Bildzeilen }
-       ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
-       ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string  = '';      { /autostart: }
        ParGebdat  : string  = 'gebuehr.dat';  { Gebuehrenzonenliste }
@@ -1218,6 +1216,9 @@ implementation
 
 {
   $Log$
+  Revision 1.175  2003/04/12 08:03:43  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.174  2003/04/03 13:34:05  mk
   - POP3 and SMTP-Port is now configurable in *.bfg
 

@@ -72,10 +72,7 @@ again:
   if keypressed then begin
     forward:=IsKeyAvailable;  //(forwardkeys<>'');
     c:=lastcur;
-    if ParWintime>1 then begin
-      waitkey:=ReadTaste;
-    end else
-      get(waitkey,lastcur);
+    waitkey:=ReadTaste; // get(waitkey,lastcur);
     cursor(c);
     if (waitkey>=mausfirstkey) and (waitkey<=mauslastkey) and
        (waitkey<>mausunleft) and (waitkey<>mausunright) then
@@ -222,6 +219,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2003/04/12 08:03:43  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.29  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 
