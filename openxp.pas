@@ -27,12 +27,12 @@
 program openxp;
 
 uses
-{$IFDEF Linux }
+(*{$IFDEF Linux }
   cmem,
 {$ENDIF }
 {$IFDEF Win32 }
   cmem,
-{$ENDIF }
+{$ENDIF } *)
   Main;
 
 begin
