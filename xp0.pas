@@ -765,7 +765,7 @@ const
                                        { verarbeitet (wÑhren P.-Einlesen  }
        lockopen   : boolean = false;   { LOCKFILE geîffnet }
 
-       XPhilite   : byte    = 20;
+    (* XPhilite   : byte    = 20; *)
        XPdisplayed: boolean = false;   { 'CrossPoint' rechts unten angezeigt }
 
        ParHelp    : boolean = false;   { Hilfsseite             }
@@ -1230,6 +1230,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.51  2002/03/31 15:46:57  my
+  JG+MY:- Durch den Ausbau von 'Do_XPHilite' ÅberflÅssig gewordene
+          Variablen und Anweisungen eliminiert.
+
   Revision 1.54.2.50  2002/03/17 13:15:40  sv
   - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
     nicht

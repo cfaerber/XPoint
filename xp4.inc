@@ -236,7 +236,7 @@ begin
             oldlines:=screenlines;
             newscreenlines(m1);
             showscreen(false);
-            XPhilite:=0;
+         (* XPhilite:=0; *)
             showlastkeys;
             aufbau:=true;
             if screenlines<>oldlines then
@@ -781,6 +781,10 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.10  2002/03/31 15:49:40  my
+  JG+MY:- Durch den Ausbau von 'Do_XPHilite' ÅberflÅssig gewordene
+          Variablen und Anweisungen eliminiert.
+
   Revision 1.14.2.9  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
