@@ -548,14 +548,14 @@ var fn     : string;
       t     : taste;
       s     : string;
   begin
-    if (viewer.ext='') and (viewer.prog<>'') then
+//    if (viewer.ext='') and (viewer.prog<>'') then
     begin
-      s:=UpperCase(mid(mpdata.fname,rightpos('.',mpdata.fname)))+'.';
-      if (pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0) then
+      s:=UpperCase(ExtractFileExt(mpdata.fname))+'.';
+      if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0)) and (s <> '..') then
         if pos(s,viewer_lister)>1 then Viewer.Prog:=''           { Interner Lister }
         else begin
           diabox(45,6,'',x,y);
-          mwrt(x+2,y+1,s+getres(2443));
+          mwrt(x+2,y+1,LeftStr(s, Length(s)-1)+getres(2443));
           mwrt(x+2,y+2,getres(2444));
           t:='';
           case readbutton(x+2,y+4,2,getres(107),2,true,t) of     { '  ^Ja  , ^Nein ' }
@@ -838,7 +838,7 @@ begin
         pophp;
         if brk then goto nextmsg;
         if copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) {'gesamte Na'}
-          then viewer.prog:='';
+          then viewer.prog:='*intern*';
 
       end else
         multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
@@ -1597,6 +1597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2000/10/19 12:56:21  mk
+  - bei Singlepart MIME und ganze Nachricht den internen Viewer nutzen
+
   Revision 1.44  2000/10/18 23:53:38  mk
   - misc. MIME-Viewer Bugfixes for Singlepart MIME
 
