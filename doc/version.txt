@@ -630,7 +630,7 @@ v3.2/OpenXP  (05.08.2000)
    nicht ausgefhrt
 
 
-v3.2b/OpenXP  (16.12.2000)
+v3.2b/OpenXP  (17.12.2000)
 --------------------------
 *  Komplett berarbeitete, korrigierte und erg„nzte Ressourcen und
    Online-Hilfe (Deutsch und Englisch)
