@@ -500,9 +500,9 @@ You can operate on this list just as if it were a
 normal [Newsgroup Window], with the same functions@30
 @
 39
-<<Lister - General
+<<Message Reader
 
-Use the Arrow keys, and the page-up/down Home or End
+Use the Arrow keys, Page-up/down, Home or End
 keys to move about in the text. In long lines, use
 the right/left arrow keys to move sideways.
 You can also use <space> instead of PgDn
@@ -522,21 +522,17 @@ You can also use <space> instead of PgDn
    <<W>>     Writes the marked lines (or whole text if
         nothing is marked) to a file (asks for name).
 
-
 <<Ctrl-A>>  marks all lines;
+
 <<Ctrl-E>>  unmarks everything.
 
-<<<Esc> >>  Exits the lister.
-
-<<       Message Lister (Reader)
-<<       =======================
+<<<Esc> >>  Exits the message reader.
 
  <<I>>    shows the information in the message header.
 
  <<O>>    shows the original message-header 
 
  <<G>>    jumps to the preceding message. (Like <<->>)
-
 
 <<ALT M>>  Starts the search for a MessageID.
        The first marked textline is used as
@@ -550,22 +546,17 @@ You can also use <space> instead of PgDn
        to the Main-Lister, showing the message
        where you started the search. 
 
-
 <<ALT V>>  like <<ALT M>> but searching for text
-
 
 <<ALT U>>  User-search. If a Textline is marked
        it will be used as search-string, else
        Crosspoint will search for the author
        of the shown message.  
  
-
 <<ALT B>>  Topic-search. search-string is the first
        marked textline, or the topic of the
        shown message.
  
-
-
  <<L>>      sets the displayed message to delete
         and exits.
 
@@ -574,7 +565,7 @@ You can also use <space> instead of PgDn
 
  <<H>>      sets the displayed message to permanent hold.
 
-<<<Backspace> >>exits lister without jumping to the next
+<<<Backspace> >>exits reader without jumping to the next
         message, independent of /Config/Opt/Settings.
 
 <<<F3> >>   Fido-Request. In Fido Messages, will attempt
@@ -585,9 +576,9 @@ You can also use <space> instead of PgDn
  <<C>>      toggles coloured <<bold>> Text on/off.
         (see [/Config/External/Lister])@237
 
-With <<P>>, <<Ctrl-P>>, <<B>> and <<Ctrl-B>> you can
+With <<P>>, <<Ctrl-P>>, <<R>> and <<Ctrl-R>> you can
        answer directly to messages from inside the
-       lister.
+       message reader.
 
 <<When>> [reference links] <<available@4014
 <<(Maus, Fido):
@@ -598,7 +589,6 @@ With <<P>>, <<Ctrl-P>>, <<B>> and <<Ctrl-B>> you can
 <<->>       go to the original message in the
         reference link (as long as it's still in the
         data base).
-
 
 <<Ctrl-PgUp>>  jumps to the chronologically preceding
         message in the same Newsgroup.
@@ -746,7 +736,7 @@ breaks off without changing.
 54
 
 Full details for using the editor are in the docu-
-mentation XPOINT.TXT. The on-line help gives a brief
+mentation XPOINT.DOC. The on-line help gives a brief
 overview.
 
        [Status Line]@55
@@ -975,14 +965,6 @@ decided if and how a message will actually be sent
         always select all functions by their
         hot-key letters.
 
-
-<<To:>>     Changes the recipient of the message.
-        Delete the current entry to choose (with <F2>)
-        between users and newsgroups.
-        ATTENTION! only experienced users should 
-        use this function.       
-
-
 <<Subject>> changes the subject text.
 
 <<Box>>     allows the server box to be selected,
@@ -1016,7 +998,7 @@ decided if and how a message will actually be sent
 <<RRQ>> Requests an (automatic) confirmation of
         receipt from the recipient to be sent back.
         Note advice about "Request Confirmation"
-        in XPOINT.TXT.
+        in XPOINT.DOC.
 
 <<withoutSig>> Leaves off the automatic signature.
 
@@ -1049,6 +1031,12 @@ decided if and how a message will actually be sent
         it exists in the <<TEMP directory>> under the
         name <<LASTMSG>> (only as long as no other
         message has been written!).
+
+<</>>       Changes the recipient of the message.
+        Delete the current entry to choose (with <F2>)
+        between users and newsgroups.
+        ATTENTION! only experienced users should 
+        use this function.       
 
 
 If the <<server>> is shown in <<brackets>>, it means that
@@ -1831,7 +1819,7 @@ You can enter a list of FIDO Servers here, messages
 for which will be all be sent in the same Netcall.
 This is needed to send messages into the various
 [FIDO compatible nets.]@4009
-See also FIDO.TXT.
+See also FIDO.DOC.
 @
 156
 4D Addresses are a new standard, which are by now
@@ -2486,7 +2474,7 @@ method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
-See also the chapter in FIDO.TXT, "Sysop Mode"
+See also the chapter in FIDO.DOC, "Sysop Mode"
 
 @
 8035
@@ -2509,7 +2497,7 @@ files to or from some place on your hard disk.
 
 Note that XP expects and issues UUCP file names in a
 particular form. In most cases it will be necessary
-to rename them. See also the documentation UUCP.TXT.
+to rename them. See also the documentation UUCP.DOC.
 
 <<Input directory>>
 This is the directory from which CrossPoint will
@@ -2526,7 +2514,7 @@ some other method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
-See also the chapter "Sysop Mode" in UUCP.TXT.
+See also the chapter "Sysop Mode" in UUCP.DOC.
 
 @
 8037
@@ -2646,7 +2634,7 @@ automatically for an on-line session ([Netcall/Online])@11505
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
-See also Part VIII of XPOINT.TXT
+See also Part VIII of XPOINT.DOC
 @
 8031
 Enter the name of a script file that will be started
@@ -2654,7 +2642,7 @@ automatically for a Netcall.
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
-See also Part VIII of XPOINT.TXT
+See also Part VIII of XPOINT.DOC
 @
 8032
 You can enter a box here, which XP will enter as the
@@ -2769,7 +2757,7 @@ Your real name in true life (you may leave it empty).
 Enter your full first and last name.
 @
 195
-(For more about domains: see XPOINT.TXT, Ch. 1.3).
+(For more about domains: see XPOINT.DOC, Ch. 1.3).
 
 <<ZConnect:>>
 Enter the name of the domain to which your server
@@ -4732,7 +4720,7 @@ and displayed as follows:
 � 읕컴컴컴컴컴컴컴 Time period
 읕컴컴컴컴컴컴컴컴 + = shows it is active
 
-There is more in XPOINT.TXT under "automatic
+There is more in XPOINT.DOC under "automatic
 Netcalls".
 
 @
@@ -4911,7 +4899,7 @@ The functions are as follows:
 
 <<OK>>       exit macro editor
 
-See also the documentation in XPOINT.TXT.
+See also the documentation in XPOINT.DOC.
 
 @
 545
@@ -5671,7 +5659,7 @@ This setting is only here for compatibility reasons
 to older versions of CrossPoint.
 
 See [AKA] for further informatiom@4009
-or FIDO.TXT
+or FIDO.DOC
 @
 700
 The name for the system that manages areas,
@@ -5817,7 +5805,7 @@ imported. (FileReq see /Config/Paths)
      deleted.
 
 This switch is intended for users who receive all
-message packets as File Attaches (see FIDO.TXT).
+message packets as File Attaches (see FIDO.DOC).
 
 It saves deleting the empty messages by hand.
 However, for normal use, it means in-going File
@@ -6073,7 +6061,7 @@ domain addresses.
 <<[ ]>> -> ZConnect-"Crosspostings" will only be
        generated for PMs.
 
-See XPOINT.TXT; "Crosspostings".
+See XPOINT.DOC; "Crosspostings".
 @
 793
 <<[x]>>  CrossPoint informs the Maus box when calling
@@ -6153,8 +6141,8 @@ See also [/Message/Forward/Delete].@12107
 @
 799
 <<[ ]>>  All lines from RFC message-headers (see also
-     UUCP.TXT) are included in the ZConnect (see
-     XPOINT.TXT) header. A "U" is put in front of
+     UUCP.DOC) are included in the ZConnect (see
+     XPOINT.DOC) header. A "U" is put in front of
      unrecognised lines.
 
 <<[x]>>  Lines not required by CrossPoint and
@@ -6493,7 +6481,7 @@ information of this type)
                reply is replying to.
 
 <<Maus-PM-Status:>>  the current status of a PM in
-                 MausNet; see XPOINT.TXT.
+                 MausNet; see XPOINT.DOC.
 
 
 All other lines are only valid for ZConnect and
@@ -6900,6 +6888,9 @@ item /Message/Fileserver/Help
 @
 10310
 <<Message / PGP
+
+In these menus you will find many functions for
+working with the encoding programme, PGP.
 @
 10311
 <<Message / Direct
@@ -7782,15 +7773,15 @@ Messages are printed. The printer settings under
 11501
 <<Netcall / Single
 
-Makes a <<netcall>> to one of your servers. A list of
+Makes a <<Netcall>> to one of your Servers. A list of
 those you have defined (under /Edit/Servers) is
-displayed for you to pick the one to call. Select and
-press <Enter>.
+displayed so that you can pick the one to call.
+Select the Server you wish to call and press <Enter>.
 
 Note: does not enable an on-line Login.
 
 If it doesn't work, make sure all the details
-required for a point netcall are properly entered
+required for a Point netcall are properly entered
 under /Edit/Servers/..., and that all supplementary
 programs (packers, transfer protocol etc.) are
 properly defined and that CrossPoint can find them.
@@ -7934,7 +7925,7 @@ This menu entry serves to hold various attributes and
 functions for systems (boxes). At present the
 following details can be recorded:
 * Z-Netz fileservers which work with SendMsg,
-* UUCP fileservers (see UUCP.TXT),
+* UUCP fileservers (see UUCP.DOC),
 * The entries for crash passwords for FIDO
   systems.
 
@@ -8339,7 +8330,7 @@ box, the list is ordered direct simply with
 /Message/fileserver/list/request.
 
 Otherwise you will have to [request] one by hand.@4023
-See also UUCP.TXT
+See also UUCP.DOC
 @
 12002
 <<Message / Fileserver / Send  (UUCP only)
@@ -8544,6 +8535,19 @@ viewer.
 12206
 <<Message / Change / read
 Toggles the read/unread marking for a message.
+@
+12207
+<<Message / Change / Highlight
+
+Here, you can toggle the colour-highlight of a
+message on or off.
+
+There are two exceptions where this menu option
+may not be used: Direct Fido messages and archived
+PM's will always be highlighted.
+
+The highlight colour can be configured in
+/Config/Display/Colours.
 @
 12301
 ^^10607
@@ -8787,7 +8791,7 @@ subdirectory FIDO and indexes it for use.
 
 At least once at the beginning you will have to
 activate a complete NodeList in this way. After that
-the [NODEDIFF] system (see FIDO.TXT, "NodeList")@4024
+the [NODEDIFF] system (see FIDO.DOC, "NodeList")@4024
 should keep your list up to date.
 @
 13002
@@ -8801,7 +8805,7 @@ the next nodediff in line can update a NodeList.
 [Nodediffs] must be unpacked first when handled like@4024
 this.
 
-See also FIDO.TXT, "NodeList".
+See also FIDO.DOC, "NodeList".
 @
 13003
 <<Fido / Nodelist / Index
@@ -8870,38 +8874,35 @@ surname or the full name.
 13101
 <<Fido / Request
 
-A Fido "Request" calls up a FIDO box (any box,
-whether you are known there or not) with an order for
-files, which if they are available are transferred
-during the same call.
+A Fido "Request" is more commonly referred to as a
+"File Request" or "F'req" for short. Most Fido
+systems (but not all) will accept File Requests
+from anyone. To make File Requests you will need:
 
-You need for this:
+- An active NodeList.
+- A main Fido Server entered under /Edit/Servers.
 
-- An activated NodeList.
-- A main Fido server entered under /Edit/Servers.
- (You need this because the request system demands
- that you are in Fido and have a Fido "base")
-
-You can enter the node address direct if you want.
-CrossPoint checks that it is in the NodeList, then
-you can enter the name(s) of the file(s) you wish to
-order. Or you can press <F2> and browse the file
-lists that you have.
+You can enter the Node address direct if you want.
+CrossPoint checks to see if it is in the NodeList.
+If it is, you may then enter the name(s) of the
+file(s) you wish to request or, you can press <F2>
+and browse the filelists that you have configured.
 
 By checking the tick box (with <Space>) you can have
 the request start immediately, or let it be stored
 for later, maybe under a timing program.
 
-Stored requests are to be found then under
+Stored requests are to be found under
 [/Fido/Crash] and can be started from there.@13104
 @
 13102
 <<Fido / File lists
 
-Fido boxes offer lists of the files they have on
-offer, which you can request then use for selecting
-files to request. These functions are for handling
-these lists.
+Fido sytems offer lists of files they have available
+for request and are obtainable from most systems by
+requesting "FILES". You may request such lists and
+then use them for selecting files to request. These
+functions are for handling these lists.
 @
 13103
 <<Fido / File Areas
@@ -9439,7 +9440,7 @@ to read them in again.
 
 If you wish to re-import the puffer files, perhaps
 because the Message base is defective, follow
-carefully the instructions in XPOINT.TXT in the
+carefully the instructions in XPOINT.DOC in the
 chapter under repairing data loss.
 @
 20306
@@ -9585,7 +9586,7 @@ was being written to. For example:
   before the buffers were flushed with lazy-write on.
   (A well known error with Smartdrive)
 
-See XPOINT.TXT for advice about how to proceed if the
+See XPOINT.DOC for advice about how to proceed if the
 message base becomes damaged.
 
 Note: The message base files (MPUFFER.xxx) themselves
@@ -9684,7 +9685,7 @@ Mode.
 20480
 CrossPosting, messages sent with several recipients,
 are only allowed in certain nets.
-More details under "CrossPostings" in XPOINT.TXT.
+More details under "CrossPostings" in XPOINT.DOC.
 @
 20482
 ^^20450
@@ -9783,7 +9784,7 @@ FIDO Server".
 FIDO crashes are only possible when a valid node list
 is present.
 
-See also FIDO.TXT.
+See also FIDO.DOC.
 @
 20707
 A relogin is not possible with this box; the box
@@ -9795,7 +9796,7 @@ There is no standard login procedure for this type of
 net. You must therefore prescribe the login procedure
 for CrossPoint with a Script File.
 
-See "Script Programming" in XPOINT.TXT
+See "Script Programming" in XPOINT.DOC
 @
 20710
 ^^20427
@@ -9821,7 +9822,7 @@ message packet. Check the packer settings under
 The CTS signal from the modem is indicating that the
 modem is not ready.
 
-See Modem FAQ in Appendix F in XPOINT.TXT
+See Modem FAQ in Appendix F in XPOINT.DOC
 @
 20715
 CrossPoint was unable to unpack a file. The following
@@ -9864,7 +9865,7 @@ on the screen, and send it to the programmer together
 with your FIDO point configuration.
 @
 20721
-See Modem FAQ in Appendix F in XPOINT.TXT
+See Modem FAQ in Appendix F in XPOINT.DOC
 @
 20723
 You have specified an invalid output file name under
@@ -9903,7 +9904,7 @@ driver to be active, but at present no Fossil driver
 is loaded. CrossPoint will continue to use its own
 Driver.
 
-See Modem FAQ in Appendix F in XPOINT.TXT
+See Modem FAQ in Appendix F in XPOINT.DOC
 @
 20733
 Under /Edit/Servers/Edit/Point there is the address
@@ -9921,7 +9922,7 @@ There is no standard relogin procedure for this type
 of net. You must therefore prescribe the relogin
 procedure for CrossPoint with a Script File.
 
-See "Script Programming" in XPOINT.TXT
+See "Script Programming" in XPOINT.DOC
 @
 20801
 Automatic subscribing and unsubscribing to newsgroups
@@ -9949,7 +9950,7 @@ Message/News Manager/Get List first to order the
 list.
 
 See also the section on administering newsgroups in
-XPOINT.TXT.
+XPOINT.DOC.
 @
 20808
 You have used the news manager command SCRIPT, but
@@ -9990,7 +9991,7 @@ Before you can request files by UUCP, the
 (file)server must be entered and configured under
 /Edit/Servers.
 
-See UUCP.TXT for details of setting up for UUCP
+See UUCP.DOC for details of setting up for UUCP
 systems.
 @
 20821
@@ -10058,14 +10059,14 @@ You have programmed a function key with the command
 *SETUSER, but the desired User name has been omitted.
 Correct the entry under /Config/Keys.
 
-See also XPOINT.TXT under "SETUSER"
+See also XPOINT.DOC under "SETUSER"
 @
 20925
 The given script file has an error. Exit the help now
 and press any key to get an error report. Correct the
 error (tip: <Alt-E> allows you to edit any file).
 
-See also "Script Programming" in XPOINT.TXT.
+See also "Script Programming" in XPOINT.DOC.
 @
 20927
 First send all outgoing messages for this box, before
@@ -10075,7 +10076,7 @@ rename all connected newsgroups afterwards.
 21001
 The timing list contains an invalid command. There is
 a list of valid commands in the On-Line-Help and in
-XPOINT.TXT. Note that the command PACKEN was changed
+XPOINT.DOC. Note that the command PACKEN was changed
 to PACK after Ver. 2.9.
 @
 21002
@@ -10095,7 +10096,7 @@ The modem is not sending a CTS signal, it is in some
 way not ready: maybe switched off or configured
 incorrectly.
 
-See Modem FAQ in Appendix F in XPOINT.TXT
+See Modem FAQ in Appendix F in XPOINT.DOC
 @
 22003
 You have pressed a function key which tried to use
@@ -10116,7 +10117,7 @@ get one and activate it. See On-line Help under
 /Fido/Nodelist/....
 
 You can set up a mini-NodeList just for your server,
-if you only want order files from there. See FIDO.TXT
+if you only want order files from there. See FIDO.DOC
 under "Requesting from Boss Node without a node
 list".
 @
@@ -10183,7 +10184,7 @@ the extension .OUT) in the AutoExec directory whose
 name (the first part) does not correspond to any
 entered server box.
 
-See also under AUTOEXEC in XPOINT.TXT.
+See also under AUTOEXEC in XPOINT.DOC.
 @
 22205
 An error has occurred while converting the message
@@ -10810,7 +10811,7 @@ A number in place of the "Outgoing" sign (!) shows
 the number of targets for a message with more than
 one. If more than 9, "#" is shown.
 
-(*) See FIDO.TXT for details of FIDO Crashes.
+(*) See FIDO.DOC for details of FIDO Crashes.
 
 For [details] of how to do things, press <Enter>.@30
 
@@ -11378,7 +11379,7 @@ above, but select UUCP-FL2.EXE.
 
 Either write, or get somebody to write, a converter
 for this format. For details see Chap. 4.3 in
-UUCP.TXT
+UUCP.DOC
 
 Or, send me an excerpt, best the first 5-10KB from
 the list, and I will try to find time to write a
@@ -11433,6 +11434,6 @@ shown in its filename extension.
 
 Press <Enter> to read about [Fido addresses].@4010
 
-<<See also FIDO.TXT, "nodelists"
+<<See also FIDO.DOC, "nodelists"
 
 @@
