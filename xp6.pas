@@ -284,12 +284,30 @@ end;
 
 function testreplyto(var s:string):boolean;
 var p : byte;
+    d : DB;
 begin
   p:=cpos('@',s);
-  if (s<>'') and ((p=0) or (pos('.',mid(s,p))=0)) then begin
-    rfehler(908);        { 'ungltige Adresse' }
-    testreplyto:=false;
-    end
+  if (s<>'') and ((p=0) or (pos('.',mid(s,p))=0)) then
+  begin
+      dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
+      dbSeek(d,piKurzname,ustr(s));
+      if dbFound then
+      begin
+        dbRead(d,'Langname',s);  
+        dbclose(d);                     { ists ein Kurzname ? }
+        testreplyto:=true;
+        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+          begin
+            rfehler(908);               { 'ungltige Adresse' }
+            testreplyto:=false;
+            end;             
+        end 
+      else begin     
+        rfehler(908);                   { 'ungltige Adresse' }
+        dbclose(d); 
+        testreplyto:=false;
+        end;
+      end
   else
     testreplyto:=true;
 end;
@@ -2036,6 +2054,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/18 21:54:46  jg
+  JG: Kurvnamen fuer UUCP + ZConnect Vertreteradressen
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
