@@ -2737,6 +2737,7 @@ K (c) '93-96 Peter Mandrella
 18 First enable ZCONNECT PGP support!
 19 Your graphics adapter does not support VESA DPMS.
 20 Please enter the full URL (http://do.main/...).
+21 The device '/dev/%s' does not exist!
 
 +  10300
 1  not possible with user groups
@@ -3304,4 +3305,15 @@ K (c) '93-96 Peter Mandrella
 2
 3 FileDir dient der Ablage von Dateien.
 4
+-
+
++ 31018
+# TermDevice
+0 6
+1
+2 TermDevice legt das Device fest, welches vom Terminal benutzt werden
+3 soll. Das Device muss im Verzeichnis /dev/ vorhanden sein. Als
+4 Default-Wert wird 'modem' angenommen. 'TermDevice=modem' greift also
+5 auf /dev/modem zu. Fuer ISDN-Karten kann hier 'ttyI#' angegeben werden.
+6
 -

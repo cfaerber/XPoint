@@ -225,14 +225,18 @@ const  {$IFDEF DPMI}
 				       { Namen der Exe-Dateien }
 {$IFDEF UnixFS}
        MaggiBin		: pathstr	= 'maggi';
+       UUCICOBin	: pathstr	= 'uucico';
+       UUZBin		: pathstr	= 'uuz';
+       Yup2PktBin	: pathstr	= 'yup2pkt';
        ZFidoBin		: pathstr	= 'zfido';
        ZQWKBin		: pathstr	= 'zqwk';
-       Yup2PktBin	: pathstr	= 'yup2pkt';
 {$ELSE}
        MaggiBin		= 'MAGGI.EXE';
+       UUCICOBin	= 'UUCICO.EXE';
+       UUZBin		= 'UUZ.EXE';
+       Yup2PktBin	= 'YUP2PKT.EXE';
        ZFidoBin		= 'ZFIDO.EXE';
        ZQWKBin		= 'ZQWK.EXE';
-       Yup2PktBin	= 'YUP2PKT.EXE';
 {$ENDIF}
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
@@ -1068,6 +1072,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoUpload   : boolean;       { CrossTerm - PD-Zmodem-Autoupload }
        AutoDownload : boolean;       { Autodownload }
        TermCOM      : byte;          { Schnittstelle }
+       TermDevice   : string;	     { Device fuer das Terminal }
        TermBaud     : longint;       { Baudrate }
        TermStatus   : boolean;       { Statuszeile }
        TermInit     : string[40];    { Modem-Init }
@@ -1187,6 +1192,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54  2000/06/20 18:17:48  hd
+  - Neue Konstanten: UUZBin, UUCICOBin
+  - Neue Variable: TermDevice, default: modem
+
   Revision 1.53  2000/06/16 14:51:41  hd
   - ZQWKBin, Yup2PktBin eingefuegt
 
