@@ -39,9 +39,11 @@
 
                     (c) 1993-99 Peter Mandrella
 
+                    (c) 2000 OpenXP Projekt Team
+
 
 Inhalt
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 I    Grundlagen
@@ -79,13 +81,15 @@ IV   Technische Dokumentation
 
 Anhang
 
-     A.    Dateien im CrossPoint/UUCP-Paket
+>>|
+     A.    Dateien im CrossPoint-UUCP-Modul
+<<|
      B.    Glosssar
      C.    CrossPoint/UUCP - Versionsgeschichte
 
 
 I   Grundlagen
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 Vorwort
@@ -109,9 +113,10 @@ herk”mmliche UUCP-Systeme bei weitem bertrifft.
 Haben Sie bereits mit einer anderen UUCP-Software gearbeitet und m”chten nun
 auf CrossPoint umsteigen?
 
-Dann sollten Sie zun„chst einmal XPOINT.TXT lesen, oder zumindest die ersten
+>>|
+Dann sollten Sie zun„chst einmal das CrossPoint-Handbuch lesen, oder zumindest die ersten
 Kapitel kurz berfliegen, um sich mit dem Grundkonzept von CrossPoint vertraut
-zu machen; es weicht deutlich von dem anderer Newsreader/Mailer ab. Die
+zu machen; es weicht deutlich von dem anderer Newsreader/MUA ab. Die
 Terminologie in den einzelnen Netzen ist sehr unterschiedlich, und um eine
 gr”átm”gliche Konsistenz zu erreichen, verwendet CrossPoint innerhalb des
 Programms weitgehend einheitliche Begriffe, z.B. "Point" statt "leaf-site",
@@ -119,6 +124,7 @@ Programms weitgehend einheitliche Begriffe, z.B. "Point" statt "leaf-site",
 klaren Usenet-Terminologie m”chte ich mich schonmal im voraus dafr entschuldigen.
 Innerhalb von UUCP.TXT habe ich mich bemht, die "korrekten" Bezeichnungen zu
 verwenden.
+<<|
 
 Im šbrigen k”nnen Sie gleich bei Abschnitt II dieses Textes fortfahren; Teil I
 wendet sich ausschlieálich an Usenet-Einsteiger.
@@ -152,7 +158,7 @@ Juli 1993
 
 
 1.1  Usenet, Internet und Sub-Netze
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Die verblffendste Eigenschaft der meisten UUCP-anwendenden Personen und derer,
 die es werden m”chten, ist, daá sie gar nicht wissen, an welchem Netz sie da
@@ -170,14 +176,16 @@ treffen.
 
 ş RFCs: Die technische Grundlage
 
+>>|
 Allen Netzen, mit denen wir uns im folgenden besch„ftigen werden, ist eines
 gemeinsam: Sie begrnden sich auf einer Reihe von technischen Standards, die
-witzigerweise die Bezeichnung "Request for Comments" (Aufforderung zu Kommentaren)
-haben; man spricht daher von "RFC-basierten Netzen". Die verschiedenen RFC-Texte
+witzigerweise die Bezeichnung in der Internet-Dokumenten-Reihe "Request for Comments" (Aufforderung zu Kommentaren)
+enthalten sind; man spricht daher von "RFC-basierten Netzen". Die verschiedenen RFC-Texte
 sind bzw. werden fortlaufend durchnumeriert und in den Netzen ver”ffentlicht.
 Falls Sie sich n„her fr diese Dokumente interessieren, so finden Sie in
 Abschnitt IV dieses Textes eine šbersicht derjenigen, die fr CrossPoint
 relevant sind.
+<<|
 
 Eine Ausnahme bildet das UUCP-Protokoll, auf das wir noch n„her zu sprechen
 kommen werden. Es ist nicht in den RFCs beschrieben.
@@ -185,6 +193,7 @@ kommen werden. Es ist nicht in den RFCs beschrieben.
 
 ş Was ist Usenet?
 
+>>|
 "Ein loser Zusammenschluá von allen, die meinen, daá sie dazugeh”ren". Dies
 ist eine sehr treffende Definition, aber sie ist wenig hilfreich. Besser l„át
 sich das Usenet als die Menge aller Rechner - genannt "sites" - beschreiben,
@@ -192,8 +201,9 @@ die untereinander ”ffentliche Nachrichten - genannt "news" - austauschen.
 Nach dieser allgemeinen Definition sind z.B. auch Mailboxen im Z-Netz
 Teilnehmer im Usenet; in etwas spezielleren Definitionen wird das Usenet
 dagegen auf den RFC-Bereich eingeschr„nkt. Der entsprechende RFC-Standard
-tr„gt die Nummr 1036; somit ist das Usenet also die Menge aller Rechner, die
+tr„gt die Nummer 1036; somit ist das Usenet also die Menge aller Rechner, die
 ”ffentliche Nachrichten im RFC-1036-Format austauschen.
+<<|
 
 Um es noch einmal zu verdeutlichen: Das Usenet ist *kein* geschlossenes,
 physikalisches Netz, genausowenig wie "die Autofahrer" eine geschlossene
@@ -215,109 +225,69 @@ l„át sich von jedem zu jedem beliebiebigen anderen Internet-Rechner eine
 direkte Verbindung herstellen. Jeder der Rechner hat eine weltweit eindeutige
 Internet-Adresse.
 
+>>|
 Die Aufgabe des Internet besteht darin, die Infrastruktur fr bestimmte
-Dienste zur Verfgung zu stellen. Wichtige Dienste sind z.B. der Austausch von
+Dienste zur Verfgung zu stellen. Wichtige Dienste sind z.B. das
+Bereitstellen von Informationen (WWW = World Wide Web), der Austausch von
 ”ffentlichen Nachrichten (News) und privaten Nachrichten (Mail), die šbertragung
 von Dateien (FTP = File Transfer Protocol) und das Herstellen von Online-Terminal-Verbindungen
 zu einem Internet-Rechner (Remote Login). Technische Grundlage fr diese Dienste
 bilden wiederum entsprechende RFC-Standards.
-
-Betreiber des Internet sind haupts„chlich Firmen, Universit„ten und ”ffentliche
-Einrichtungen. Als privater Anwender werden sie wegen der hohen Kosten
-normalerweise nicht direkt am Internet teilnehmen; CrossPoint ist auch gar
-nicht dafr ausgelegt.
-
-
-ş Sub-Netze
-
-Das Internet ist nicht nach auáen abgeschlossen, sondern es stellt Verbindungen
-zwischen einer Vielzahl von Sub-Netzen (logischen Teilnetzen) her. Das
-Kennzeichen der Sub-Netze ist, daá sie ebenfalls bestimmte Dienste bereitstellen
-- insbesondere Mail und News -, und daá sie einen oder mehrere šbergangspunkte
-zum Internet besitzen, d.h. Systeme, die sowohl am Sub-Netz als auch am
-Internet teilnehmen. Schickt nun ein Teilnehmer von Sub-Netz A in Deutschland
-eine Mail an jemanden im Sub-Netz B in den USA, dann tritt sie in Deutschland
-in das Internet ein, wird darin schnell in die USA transportiert und tritt dort
-wieder aus dem Internet aus. Das in den Sub-Netzen am weitesten verbreitete
-šbertragungsprotokoll - das Gegenstck zum IP im Internet - ist UUCP; wir
-werden sp„ter noch n„her darauf eingehen.
-
-Ein Beispiel fr ein solches Sub-Netz ist das gleichnamige SubNet in Deutschland
-- ein Zusammenschluss von Privatpersonen, die ihre Rechner ber Modem- und
-ISDN-Verbindungen zu einem logischen Netz verknpft haben. Der zentrale
-Rechner des SubNet verfgt ber einen InterNet-Zugang und wickelt den Verkehr
-mit der Auáenwelt ab. Daneben gibt es auch viele regionale Sub-Netze wie
-z.B. Hanse-Networking (das HanseNet) in Hamburg oder das Hannover-Net (HanNet)
-in Hannover. Diese Netze besitzen ”ffentliche Modem- und ISDN-Zug„nge, die Sie
-fr unterschiedliche Gebhren nutzen k”nnen.
-
-Halten wir also fest: Als CrossPoint-Anwender - oder allgemein: als Benutzer
-einer UUCP-Software - nehmen Sie an einem RFC-basierten Sub-Netz teil und
-nutzen dessen Mail- und News-Dienste. Da dieses Netz mit dem Internet
-verbunden ist, k”nnen Sie auch Nachrichten mit Internet-Teilnehmern (z.B.
-in Firmen oder Universit„ten) austauschen.
+<<|
 
 
 
 
 1.2  News, Mails und Mailinglisten
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 W„hrend innerhalb von CrossPoint der Unterschied zwischen einer ”ffentlichen
 und einer privaten Nachricht nur im Drcken einer anderen Taste besteht, wird
 in RFC-Netzen streng zwischen Mail (= privaten Nachrichten) und News (= ”ffentlichen
 Nachrichten) unterschieden. Traditionell werden sogar zum Versenden von Mail
 und News unterschiedliche Programme verwendet. Als CrossPoint-User merken Sie
-diesen Unterschied z.B. daran, daá fr Mail und News oft unterschiedliche
-Kostenregelungen gelten, oder daá bestimmte Features nur bei News oder nur
+diesen Unterschied z.B. daran, daá bestimmte Features nur bei News oder nur
 bei Mails (z.B. Envelope-Adressen; mehr dazu sp„ter) untersttzt werden.
+<<|
 
 
 ş Mails (PMs)
 
-Das Wichtigste an einer Mail ist die Adresse des Empf„ngers. Im Usenet gibt es
-ungef„hr ein halbes Dutzend verschiedene Arten, Mails zu adressieren. Innerhalb
-von CrossPoint wird nur *eine* Form der Adressierung verwendet; andere Formen
-werden, soweit m”glich, in diese Form umgewandelt.
+Das Wichtigste an einer Mail ist die Adresse des Empf„ngers.
 
 
 - Domainadressierung (Internet-Adressierung)
 
-Dies ist DIE Standardform der Adressierung. Sie ist einerseits leistungsf„hig
+>>|
+Dies ist die Standardform der Adressierung. Sie ist einerseits leistungsf„hig
 genug, um die ungeheure Anzahl von Teilnehmern in RFC-basierten Netzen in den
 Griff zu bekommen, andererseits aber sehr einfach zu handhaben.
+<<|
 
 Eine "domainisierte" Adresse hat immer folgende Form (die Leerzeichen geh”ren
 nicht dazu und dienen nur der bersichtlicheren Darstellung) ...
 
-        User @ Rechner . Domain . Topleveldomain
-        
+>>|
+        User @ Rechner . Domain
+<<|
+
 und wird immer von rechts nach links interpretiert. Schicken Sie z.B. eine
 Mail an "ghostwriter@hot.zer.de", dann l„uft sie folgenden Weg:
 
 
-Topleveldomain ist ".de"
-
---4 ->  Die Mail geht an den zentralen Rechner in Deutschland, der fr "de"
-zust„ndig ist. Dieser Rechner kennt alle Domains unterhalb von "de" und
-stellt die Nachricht an den zust„ndigen Rechner fr die betreffende Domain
-zu:
-
+>>|
 Domain ist ".zer.de"
 
---4 ->  Die Mail geht an den zentralen deutschen Rechner fr die Domain "zer"
-innerhalb von "de". Dieser wiederum kennt alle Rechner, die an "zer" teilnehmen
-und schickt die Mail weiter an den Zielrechner:
+--4 ->  Die Mail geht an den zentralen deutschen Rechner fr die
+Domain "zer.de". Dieser wiederum kennt alle Rechner, die an "zer.de"
+teilnehmen und schickt die Mail weiter an den Zielrechner:
+<<|
 
 Rechner ist "hot.zer.de"
 
 --4 ->  Nun wird der linke Teil der Adresse als Username interpretiert, d.h.
 die Mail landet im Postfach von "ghostwriter".
-
-Etwas anders verl„uft der Weg der Nachricht natrlich, wenn Sie sie z.B.
-innerhalb der Domain "zer.de" absenden. In diesem Fall wird sie nicht erst
-bis zum Zentralrechner fr "de" weitergeleitet, sondern direkt innerhalb der
-Domain "zer" zugestellt.
 
 An diesem Beispiel ist brigens auch sehr sch”n zu erkennen, daá die
 Domain-Adressoerung nicht auf bestimmte Netze beschr„nkt ist; "zer.de"
@@ -356,39 +326,24 @@ der Username beliebig geschrieben werden - verlassen sollten Sie sich darauf
 aber nicht.
 
 
-- UUCP-("Bang")-Adressierung
-
-Bei der UUCP-Adressierung wird der genaue Pfad angegeben, den eine Nachricht
-bis zum Zielsystem laufen soll, z.B. system1!system2 !system3!endsystem!username.
-Diese Form der Adressierung ist berholt und nicht RFC-konform und wird daher
-von CrossPoint nicht untersttzt. Wenn es denn unbedingt sein muá, k”nnen Sie
-versuchen, die Interpretation der Adresse Ihrem UUCP-Server zu berlassen;
-h„ngen Sie dazu einfach dessen Adresse in der Form "@server.domain" an. Mit
-ein wenig Glck funktioniert es.
-
-
 ş MIME
 
+>>¼
 Ursprnglich konnten RFC-Nachrichten nur aus reinen ASCII-Zeichen bestehen,
 d.h. es konnten keine nationalen Sonderzeichen und keine Bin„rdaten bertragen
-werden. Seit 1992 gibt es einen neuen Standard namens MIME, der dieses Manko
-behebt, und der von CrossPoint bereits weitgehend untersttzt wird. Es wird
-aber noch eine Weile dauern, bis MIME netzweit verwendet wird - wenn Sie innerhalb
-einer Nachricht z.B. deutsche Umlaute verwenden, kann es durchaus passieren,
-daá sie beim Empf„nger in Form von unlesbaren Hieroglyphen ankommen. Sie sollten
-also vorerst noch sparsam damit umgehen, zumindest bei Nachrichten ins Ausland.
-
-Der MIME-Standard gilt bisher brigens nur fr Mails; mit einer Adaption fr
-News ist aber in absehbarer Zeit zu rechnen.
-
+werden. Seit 1992 gibt es einen Standard namens MIME, der dieses Manko
+behebt, und der von CrossPoint weitgehend untersttzt wird.
+<<|
 
 ş News
 
+>>|
 ™ffentliche Nachrichten im Usenet, genannt Artikel, werden - wie in allen
-anderen Netzen auch - in verschiedenen Brettern verteilt, genannt Newsgroups
-oder Gruppen. Die Anzahl der Newsgroups ist schwer abzusch„tzen, da sie
+anderen Netzen auch - in verschiedenen Brettern verteilt, genannt
+Newsgroups, Gruppen oder Foren. Die Anzahl der Newsgroups ist schwer abzusch„tzen, da sie
 t„glich schwankt, und nirgendwo wirklich alle Newsgroups verfgbar sind; sie
-drfte z.Zt. in der Gr”áenordnung von ca. 5000 Stck liegen.
+drfte z.Zt. in der Gr”áenordnung von ca. 30.000 Stck liegen.
+<<|
 
 Die Gruppennamen sind hierarchisch angeordnet, und die einzelnen Ebenen werden
 durch Punkte getrennt. So steht z.B.
@@ -407,13 +362,15 @@ die Anzeige fr die Brettliste - und *nur* dafr - auf "Punktschreibweise"
 umstellen).
 
 
+>>|
 Eine Besonderheit von Usenet-News, die inzwischen auch im Z-Netz bernommen
 wurde, sind die sogenannten Crosspostings. Dies sind Nachrichten, die
 physikalisch nur einmal vorhanden sind, sich aber in mehreren Gruppen befinden,
 d.h. die mehrere Empf„nger haben. Auf diese Weise k”nnen Artikel, die thematisch
 in mehrere Gruppen geh”ren, in jede passende Gruppe geschickt werden, ohne daá
-sie mehrfach gesendet werden máten. N„heres dazu finden Sie in Kap. 4.6. von
-XPOINT.TXT.
+sie mehrfach gesendet werden máten. N„heres dazu finden Sie in Kap.
+4.6. des CrossPoint-Handbuchs.
+<<|
 
 
 ş moderierte Newsgroups
@@ -426,9 +383,12 @@ Stattdessen mssen Sie jede Nachricht an einen Moderator senden, der entscheided
 ob sie zum Thema der Gruppe paát - wenn ja, dann wird er/sie die Nachricht
 dorthin weiterleiten.
 
+>>|
 Das automatische Umleiten Ihrer Nachrichten an einen Moderator kann CrossPoint
 fr Sie bernehmen; Sie mssen dazu nur die Adresse des Moderators als
-Brettvertreter eintragen. N„heres dazu finden Sie in Kap. 4.5. von XPOINT.TXT.
+Brettvertreter eintragen. N„heres dazu finden Sie in Kap. 4.5. des
+CrossPoint-Handbuchs.
+<<|
 
 
 ş Mailinglisten
@@ -439,21 +399,21 @@ einfache Alternative zu Newsgroups, die es jedem erm”glicht, eine Konferenz zu
 einem bestimmten Thema zu er”ffnen, ohne eine neue Newsgroup einrichten zu
 mssen.
 
+>>|
 Technisch gesehen ist eine Mailingliste nichts anderes als ein irgendwo
 installierter, automatisch arbeitender Nachrichtenverteiler; in der Praxis ist
 sie eine ber den Mailweg arbeitende Newsgroup. Schicken Sie eine Nachricht an
 die Mailingliste, so wird sie automatisch an alle Listenteilnehmer weitergeleitet.
 Um an einer Mailingliste teilzunehmen, mssen Sie eine Anmeldenachricht an den
 Listenverwalter (das ist meist kein Mensch, sondern ein automatisch arbeitendes
-Programm (ein "Daemon")) senden. Gleiches gilt fr das Abmelden von der Liste.
-Eine Liste aller bekannten Mailinglisten wird regelm„áig in der Gruppe
-mail.mailing-lists ver”ffentlicht.
+Programm (ein "Daemon") senden. Gleiches gilt fr das Abmelden von der Liste.
+<<|
 
 
 
 
 1.3  UUCP - das šbertragungsprotokoll
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ş UUCP? Kann man das essen?
 
@@ -527,7 +487,7 @@ N„here technische Details zu UUCP finden Sie in Kapitel 4.2.
 
 
 1.4  Wie werde ich Usenet-Teilnehmer?
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sie mssen ein UUCP-System finden, bei dem Sie "pollen" k”nnen, d.h. ber das
 Sie Ihre Nachrichten verschicken und empfangen. Dies kann sich deutlich
@@ -545,19 +505,22 @@ http://www.individual.net
 
 ş Postmeister und Wurzeln
 
+>>|
 Von anderen Netzen kennen Sie m”glicherweise den Username SYSOP als Synonym
 fr den Systembetreiber. In RFC-basierten Netzen ist dieser Name „uáerst
-unblich; stattdessen erreichen Sie Ihren Ansprechpartner dort immer unter
-dem Namen "postmaster" (d.h. postmaster@system.do.main). Gelegentlich wird
-auch die Bezeichnung "root" verwendet, was dem Namen des Systemverwalters auf
-einem Unix-Rechner entspricht.
+unblich; stattdessen erreichen Sie Ihren Ansprechpartner unter einer
+der Namen "info" (d.h. info@system.do.main), "hostmaster",
+"postmaster" (fr Mail) oder "news" (fr News).
+<<|
 
 
 ş Wie sollte ich mich im Usenet verhalten?
 
+>>|
 Als Neuuser sollten Sie erst einmal Erfahrungen sammeln. Studieren Sie das
 Verhalten anderer Usenet-Teilnehmer und lernen Sie daraus. Lesen Sie die
-Artikel in de.newusers; dort finden Sie wertvolle Hinweise fr Einsteiger.
+Artikel in de.newusers.infos; dort finden Sie wertvolle Hinweise fr Einsteiger.
+<<|
 
 Wenn Ihnen das Verhalten eines Users nicht gef„llt, dann rufen Sie nicht
 nach der Koordination - es gibt n„mlich keine. Das Usenet ist ein streng
@@ -572,23 +535,27 @@ falls Sie mit Ihren Artikeln jemandem Grund dazu geben.
 
 
 II   Installation und Bedienung
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
+>>|
 Dieser Abschnitt enth„lt Informationen, die speziell die Installation und
 Nutzung von CrossPoint im Usenet betreffen. Ausfhrlichere Informationen zur
-Installation und Benutzung finden Sie in XPOINT.TXT.
+Installation und Benutzung finden Sie im CrossPoint-Handbuch.
+<<|
 
 
 
 
 2.1  Installation und Konfiguration
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 Zun„chst die gute Nachricht: Sie ben”tigen keinerlei Zusatzprogramme. Das
-CrossPoint/UUCP-Paket ist tats„chlich rundum komplett; es enth„lt nicht nur
-einen vollst„ndigen uucico, sondern auch alle ben”tigten Packer/Entpacker.
+CrossPoint-UUCP-Modul ist nahezu komplett; es enth„lt nicht nur
+einen vollst„ndigen uucico, sondern auch (fast) alle ben”tigten Packer/Entpacker.
 Sie k”nnen also sofort loslegen.
+<<|
 
 Nun die schlechte Nachricht: Sie mssen trotzdem damit rechnen, daá die Einrichtung
 Ihrer UUCP-site (site = Point) etwas mehr Arbeit und Nerven in Anspruch nimmt,
@@ -602,7 +569,9 @@ Als Erstes mssen Sie einige Daten ber Ihren UUCP-Server in Erfahrung bringen:
 
 -  Telefonnummer
 -  Systemname und Domain
--  m”gliche Packer (compress, freeze, gzip)
+>>|
+-  m”gliche Packer (compress, gzip, bzip2)
+<<|
 -  bevorzugtes UUCP-Protokoll; bei UUCP-g: maximale Paketgr”áe
 -  Wird "batched SMTP" (bsmtp) untersttzt?
 
@@ -612,10 +581,12 @@ Auáerdem mssen Sie noch drei Dinge mit dem Systembetreiber ausmachen:
 -  Ihren Loginnamen
 -  Ihr Paáwort
 
+>>|
 Den Sitenamen k”nnen Sie sich selbst aussuchen; er wird Bestandteil Ihrer
 Usenet-Adresse. Beispiel: bei peter@xpoint.ruessel.sub.org ist xpoint der
 Sitename. Der Loginname kann gleich dem Sitenamen sein, muá es aber nicht.
-Oft besteht er aus dem Sitenamen mit einem vorangestellten "u".
+Oft besteht er aus dem Sitenamen mit einem vorangestellten "U".
+<<|
 
 
 Beim ersten Start fragt CrossPoint folgende Eingaben ab:
@@ -666,7 +637,7 @@ haben, sollten Sie die Einstellungen zun„chst unver„ndert lassen.
 
 
 2.2  Netzanruf
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~
 
 Sind alle Daten korrekt eingetragen, so k”nnen Sie den ersten Anruf starten.
 Verwenden Sie dazu den Menpunkt /Netcall/Einzeln. Nach beendetem Anruf
@@ -687,6 +658,7 @@ Erscheint eine Login-Meldung des angerufenen Systems, und anschlieáend passiert
 nichts mehr - CrossPoint legt dann nach ca. einer Minute von alleine wieder auf
 -, so lesen Sie bitte unten im Abschnitt "Login-Scripts" weiter.
 
+>>|
 Wenn CrossPoint sich berhaupt nicht mit Ihrem Modem versteht, dann haben Sie
 vermutlich eine falsche Schnittstelle eingestellt oder etwas falsches unter
 /Config/Modem/... eingetragen. Evtl. liegt es auch daran, daá Sie ein Spar-Modemkabel
@@ -694,18 +666,21 @@ besitzen, bei dem das CD- oder das CTS-Signal nicht weitergeleitet wird. In
 diesem Fall sollten Sie "CD ignorieren" bzw. "CTS ignorieren" einschalten.
 Falls das Modem eine &C-Option besitzt, muá sie eingeschaltet sein (AT &C1).
 Eine genauere Beschreibung der wichtigsten Modem-Kommandos finden Sie in Anhang
-F von XPOINT.TXT.
+F des CrossPoint-Handbuchs.
+<<|
 
 Erscheint in der Netcall-Wartepause immer die Meldung "Anruf eingegangen",
 dann untersttzt Ihre serielle Schnittstelle oder Ihr Modemkabel kein
 RING-(Klingel-)Signal. In dem Fall mssen Sie /Config/Modem/../RING-Erkennung
 abschalten.
 
+>>|
 Erhalten Sie eine Nachricht mit einer Fehlermeldung wie "remote execution -
-rfsmtp - permission denied" oder hnliches, dann sollten Sie sich mit dem
+rgsmtp - permission denied" oder hnliches, dann sollten Sie sich mit dem
 Systembetreiber noch einmal wegen des verwendeten Packers und der Benutzung
 von Batched SMTP absprechen - es hat entweder ein Miáverst„ndnis gegeben,
 oder der Sysop hat vergessen, fr Sie den korrekten Entpacker freizugeben.
+<<|
 
 Gibt es w„hrend der UUCP-g-šbertragung regelm„áig geh„ufte Fehler, dann sollten
 Sie einmal einen Netcall im Debug-Mode durchfhren; Starten Sie XP dazu mit
@@ -735,16 +710,22 @@ unbedingt Name und Telefonnummer des Servers an!.
 
 Zur Aktivierung eines Login-Scripts sind drei Dinge n”tig:
 
---3 o  Lesen Sie Teil VIII von XPOINT.TXT; dort ist die Scriptprogram-mierung
+>>|
+--3 o  Lesen Sie Kapitel 8 des Crosspoint-Handbuchs; dort ist die Scriptprogram-mierung
 beschrieben.
+<<|
 
---3 o  Passen Sie das mitgelieferte Standard-Script UUCP.SCR entsprechend
+>>|
+--3 o  Kopieren Sie das mitgelieferte Standard-Script UUCP.SCR z.B. in
+MYUUCP.SCR und passen sie MYUUCP.SCR entsprechend
 an. Beachten Sie, daá das Login genau dann beendet ist, wenn vom Server der
 Text "^Pshere" gesendet wurde.
+<<|
 
---3 o  Tragen Sie das Script bei /Edit/Boxen/Edit/Diverses als Netzanruf-Script
-ein.
-
+>>|
+--3 o  Tragen Sie das Script (z.B. MYUUCP.SCR) bei /Edit/Boxen/Edit/Diverses
+als Netzanruf-Script ein.
+<<|
 
 ş Nachrichten von Hand einlesen
 
@@ -773,14 +754,11 @@ Sie aber vorsichtig beim Schreiben in internationalen Testgruppen - dies
 ist der beste Weg, um Ihr Postfach mit hunderten von Kilobytes unntzer Mails
 zu fllen.
 
-Das Versenden von PMs testen Sie am besten, indem Sie Empfangsbest„tigungen
-anfordern (s. XPOINT.TXT, Kap. 5.9).
-
 
 
 
 2.3  Bestellen und Verwalten von Newsgroups
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Die Brettverwaltung im Usenet ist ein ziemlich trauriges Kapitel. Es existiert
 keinerlei Standard fr das Bestellen und Abbestellen von Newsgroups (Brettern)
@@ -788,11 +766,13 @@ durch Offline-User. Dadurch ist eine Vielzahl von Newsgroup-Bestellsystemen
 entstanden, von denen jedes wieder andere Befehle erwartet und nach einem
 anderen System arbeitet.
 
+>>|
 Wenn Sie Glck haben, verfgt Ihr UUCP-Server ber eines der relativ verbreiteten
 Newsgroup-Bestellsysteme "Changesys", "GUP", "AutoSys" oder "Feeder". Diese
 Systeme werden von XP direkt untersttzt, sodaá Sie auf das komfortable
-XP-Brettbestellsystem zurckgreifen k”nnen, das in Kapitel 3.2 von XPOINT.TXT
-beschrieben ist.
+XP-Brettbestellsystem zurckgreifen k”nnen, das in Kapitel 3.2 des
+CrossPoint-Handbuchs beschrieben ist.
+<<|
 
 Wenn Sie Pech haben, besitzt Ihr Server gar kein automatisch arbeitendes
 Brettbestellsystem, sodaá Sie alle Brettwnsche als Mail den Systemverwalter
@@ -844,11 +824,14 @@ anfordern und einlesen.
 
 ş Newsgroups (ab)bestellen
 
-Siehe XPOINT.TXT, Kap. 3.2.
+>>|
+Siehe CrossPoint-Handbuch, Kap. 3.2.
+<<|
 
 
 ş Die .BBL-Datei
 
+>>|
 CrossPoint legt fr jeden Usenet-Server, bei dem mit "Changesys" gearbeitet
 wird, eine Datei mit Name <Server>.BBL an, in der sich eine Liste der gerade
 bestellten Newsgroups befindet. Nach jeder Bestellung oder Abbestellung wird
@@ -856,9 +839,11 @@ der Inhalt dieser Datei aktualisiert und mit einem 'setsys'-Befehl an Changesys
 geschickt. Wenn Sie m”chten, k”nnen Sie diese Datei auch von Hand bearbeiten.
 Auf diese Weise l„át sich ggf. der Sysfile-Eintrag drastisch verkleinern: Wenn
 Sie *alle* Newsgroups einer bestimmten Hierarchie bestellen m”chten, so gengt
-es, den Hierarchienamen anzugeben - z.B. "de" fr alle DeNet-Newsgroups, oder
+es, den Hierarchienamen anzugeben - z.B. "de" fr alle Newsgroups in
+der "de.*"-Newshierarchie, oder
 "comp.sys.next" fr alle NeXT-Newsgroups. Verwenden Sie /Nachricht/Brettmanager/Sonstiges/setsys,
 um die manuell ge„nderte .BBL-Datei absenden zu lassen.
+<<|
 
 Mit /Nachricht/Brettmanager/Sontiges/../help erhalten Sie eine Anleitung zur
 manuellen Bedienung von Changesys. Ich rate aber grunds„tzlich von deren
@@ -869,7 +854,7 @@ sondern es verhindert auch Fehleingaben.
 
 
 2.4  "Sysop-Mode" (Disk-Poll)
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Statt dem Verschicken von Nachrichtenpaketen per UUCP bietet Ihnen CrossPoint
 auch die M”glichkeit, ausgehende Pakete auf der Festplatte abzulegen und
@@ -896,7 +881,7 @@ ausgehenden D-Dateien gepackt (sowohl fr News als auch fr SMTP-Batches).
 
 
 III  Arbeiten mit UUCP
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 Dieser Abschnitt beschreibt spezielle Features und Dienste von UUCP, Usenet
 und Internet, die XP in irgendeiner Weise untersttzt. Er wird in zuknftigen
@@ -906,7 +891,7 @@ Versionen mit Sicherheit noch um einige Kapitel wachsen.
 
 
 3.1  Envelope-Adressierung
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Jede Mail, die durch das Usenet geschickt wird, besitzt nicht nur einen
 Absender und Empf„nger, sondern zwei von Jedem: die ursprnglichen Adressen
@@ -940,26 +925,32 @@ Weiterleit-Absender:  hier steht der Envelope-Absender
 Und es bedeutet, daá Sie beim Antworten auf diese Nachricht die Wahl zwischen
 drei Adressen haben: Absender, Weiterleit-Absender oder Originalempf„nger.
 
-Leider wird in Envelope-Absendern oft noch die alte UUCP-Adressierung ohne
+>>|
+Leider wird in Envelope-Absendern manchmal immer noch die alte UUCP-Adressierung ohne
 Domainangabe verwendet; dadurch entstehen teilweise recht seltsame Konstrukte.
 Gelegentlich enth„lt eine Nachricht auch ".uucp" als Domain im Envelope-Absender,
 was meist ein Zeichen fr eine falsch konfigurierte Software ist. Lassen Sie
 sich durch solch ungltigen "Weiterleit-Absender" nicht verwirren und
 antworten Sie einfach an den Originalabsender!
+<<|
 
 
 
 
 3.2  Cancel-Nachrichten
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 Ein nettes, wenn auch umstrittenes RFC-Feature sind die sogenannten Cancel-Nachrichten
 (to cancel = streichen, aufheben). Mit solchen Nachrichten k”nnen Sie einmal
 abgeschickte, ”ffentliche Nachrichten wieder l”schen. Dazu wird der betreffenden
 Nachricht eine L”schnachricht hinterhergeschickt, und berall, wo beide
 Nachrichten aufeinandertreffen, wird die Originalnachricht entfernt. B”se
 Zeitgenossen verwenden dieses Feature dazu, die Nachrichten anderer User zu
-l”schen. Mit CrossPoint ist dies natrlich nicht m”glich.
+l”schen. Mit CrossPoint ist dies natrlich nicht m”glich. Aufgrund des
+massiven Missbrauchs von Cancel-Nachrichten werden diese auf immer
+mehr Sites nicht ausgefhrt.
+<<|
 
 Zum Versenden einer Cancel-Nachricht w„hlen Sie die zu l”schende Nachricht und
 dann den Menpunkt /Nachricht/Weiterleiten/L”schen. Generell sollten Sie
@@ -982,16 +973,20 @@ entfernt werden. Auáerdem kann auf die Bezugsnachricht nicht mehr geantwortet
 werden.
 
 
-Das einzige andere Netz, bei dem sich Nachrichten nachtr„glich l”schen lassen,
-ist brigens das MausNet. Allerdings funktioniert es dort nur, wenn die Nachricht
-sich noch innerhalb der Serverbox befindet; dadurch sind Manipulationen
-ausgeschlossen.
+>>|
+Untersttzt werden Cancel-Nachrichten brigens auch von ZConnect
+(Z-Netz). Allerdings werden Cancel-Nachrichten z.Zt. von CrossPoint
+unter ZConnect noch nicht ausgewertet. Ein weiteres Netz, bei dem sich
+Nachrichten nachtr„glich l”schen lassen, ist das MausNet. Allerdings
+funktioniert es dort nur, wenn die Nachricht sich noch innerhalb der
+Serverbox befindet; dadurch sind Manipulationen ausgeschlossen.
+<<|
 
 
 
 
 3.3  Teilnahme an Mailinglisten
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Das Konzept von Mailinglisten wurde ja bereits erkl„rt (falls Sie sich nicht
 mehr genau erinnern k”nnen: bl„ttern Sie einfach nochmal zurck zu Kap. 1.2).
@@ -1010,35 +1005,30 @@ Sie also bei /Edit/Boxen/Edit/Namen Ihren Usernamen, z.B. in "tandem", senden
 Sie die Anforderung an die Mailingliste und tragen Sie anschlieáend wieder
 Ihren richtigen Namen ein.
 
-Es wird brigens empfohlen, beim Bestellen ("subscriben") einer Mailingliste
-noch einmal die vollst„ndige Adresse in den Nachrichtentext aufzunehmen, am
-besten in einer Signatur am Ende der Nachricht. Man weiá nie, wie die Absenderadresse
-aussieht, wenn die Nachricht auf dem Weg ber ein dutzend Stationen den
-Empf„nger erreicht hat...
-
 
 
 
 3.4  Dateitransfer mit UUCP
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 Daá UUCP-Systeme Nachrichten austauschen, ist allgemein bekannt. Daá viele
 [die meisten?] davon aber auch umfangreiche Dateiarchive besitzen und einen
 allgemeinen Dateiup- und download (Senden und Bestellen von Dateien) erm”glichen,
-weiá auáerhalb des Usenet wohl kaum jemand. Oft ist das Dateiarchiv offen
-zug„nglich, d.h. Sie k”nnen und drfen es - im Gegensatz zum FidoNet - auch
-dann nutzen, wenn Sie ansonsten gar kein Usenet-Teilnehmer sind.
+weiá auáerhalb des Usenet wohl kaum jemand.
+<<|
 
+>>|
 Gr”átes Problem beim UUCP-Filerequest (also beim Bestellen von Dateien) sind
 die „uáerst bescheidenen Dateilisten der UUCP-Systeme. Normalerweise handelt
 es sich dabei um simple Listen eines bestimmten Verzeichnisbaumes, wie sie
-unter DOS von DIR /s oder unter UNIX von ls -lr erzeugt werden. Dadurch gibt
+unter DOS von DIR /s oder unter UNIX von ls -lR erzeugt werden. Dadurch gibt
 es zum einen fast soviele verschiedene Listenformate wie UUCP-Systeme, und zum
 anderen enthalten die Listen keine Kommentare zu den einzelnen Dateien; Sie
 mssen also jeweils anhand der Dateinamen erraten, um was es sich handelt.
 Dies ist zum Glck meist einfacher, als es sich anh”rt, weil wesentlich l„ngere
 Dateinamen als unter DOS verwendet werden k”nnen:
-
+<<|
 
 ş Exkurs: *NIX- und „hnliche Dateisysteme
 
@@ -1055,10 +1045,7 @@ Dateierweiterung sicher, daá dabei keine zwei gleichen DOS-Dateinamen entstehen.
 Eine unangenehme Eigenschaft von Unix-Dateisystemen ist, daá sie auf einer
 korrekten Groá/Kleinschreibung der Dateinamen bestehen. Hieáe eine Datei also
 z.B. Linux-PBMplus.Bin.tar.Z, dann máten Sie den Namen exakt in dieser Form
-angeben. Etwas groázgiger ist das Amiga-Filesystem, auf das Sie im Usenet
-auch gelegentlich treffen werden. Es erlaubt zwar alle Freiheiten beim Benennen
-von Dateien, verschluckt sich aber nicht, wenn anschlieáend eine abweichende
-Schreibweise verwendet wird.
+angeben.
 
 Eine letzte Unix-Eigenschaft, die Sie kennen sollten, ist die Angabe eines
 relativen Pfadnamens mit vorangestellter Tilde (~). Falls Sie dieses Zeichen
@@ -1072,18 +1059,15 @@ bestimmten, vollst„ndigen Pfadnamen expandiert, um den Sie sich nicht weiter
 zu kmmern brauchen. Durch diesen Trick k”nnen alle Dateien jederzeit in ein
 anderes Unterverzeichnis verlagert werden, ohne daá Sie etwas davon merken.
 
-Was Sie auáerdem noch wissen sollten ist, daá Amiga-Filesysteme „hnlich wie
-DOS-Festplatten partitioniert werden k”nnen, daá die einzelnen Bereiche aber
-normalerweise nicht ber einzelne Buchstaben, sondern ber aussagekr„ftigere
-Namen wie z.B. "uupub:" oder "uucp:" angesprochen werden. Ansonsten entsprechen
-diese Namen in etwa den Laufwerksbuchstaben von DOS.
-
 
 ş Fileserver anlegen
 
+>>|
 Bevor Sie bei einem UUCP-Server Dateien bestellen k”nnen, muá er zus„tzlich
 zum Eintrag bei /Edit/Boxen noch bei /Edit/Systeme als Fileserver erfaát
-werden (vgl. auch XPOINT.TXT, Kap. 4.3). Dazu sind folgende Eingaben erforderlich:
+werden (vgl. auch CrossPoint-Handbuch, Kap. 4.3). Dazu sind folgende Eingaben
+erforderlich:
+<<|
 
 - Systemname:  Der Sitename des Systems, so wie er auch bei /Edit
                /Boxen eingetragen ist.
@@ -1092,14 +1076,16 @@ werden (vgl. auch XPOINT.TXT, Kap. 4.3). Dazu sind folgende Eingaben erforderlic
 
 - Fileserver:  W„hlen Sie "UUCP-Fileserver" aus der F2-Auswahlliste.
 
+>>|
 - Indexdatei:  Dies ist der Name der Dateiliste, die mit /Nachricht
                /Fileserver/Liste/Anfordern bestellt wird. Meistens
-               ~/index, evtl. aber auch etwas ganz anderes. Fragen
-               Sie im Zweifelsfall den Systembetreiber (postmaster).
+               ~/index, oder ~/ls-lR. Evtl. aber auch etwas ganz anderes. Fragen
+               Sie im Zweifelsfall den Systembetreiber.
                Ich weiá, daá das Eingabefeld etwas kurz bemessen
                ist.. sollte es *nicht* ausreichen, werden Sie die
                Dateiliste stattdessen wie jede andere Datei auch
                anfordern mssen (s.u.).
+<<|
 
 - Konvertierer: Dazu kommen wir gleich noch.
 
@@ -1119,26 +1105,8 @@ Nun kommt der interessante Teil. Sie mssen herausfinden, welches Format die
 Liste hat, und sie ggf. in ein XP-kompatibles Format konvertieren lassen.
 
 
-(1)  Amiga-Listenformat
-
-Directory "uupub:pic" on Freitag 09-Jul-93
-power.gif                 130915 ----rwed 11-Jun-93  22:33:54
-edbot12.gif               192118 ----rwed 07-Mai-93  15:35:16
-Amiga_logo.iff              7478 ----rwed 26-Feb-93  16:45:18
-Brauner_Riese2.iff         52320 ----rwed 01-Jun-93  19:50:14
-
-Directory "uupub:text" on Freitag 09-Jul-93
-xpoint.txt                318681 ----rwed 23-Mai-93  15:19:28
-umfragebogen.txt           50574 ----rw-d 31-Mai-93  18:23:03
-umfrageerg1.txt           108122 ----rw-d 31-Mai-93  18:24:04
-umfrageerg2.txt            31326 ----rw-d 31-Mai-93  18:24:24
-4 files - 1011 blocks used
-
-Sieht die Liste so aus, dann kann XP sie direkt verarbeiten. Lesen Sie sie
-einfach mit /N/Fileserver/Liste/Datei_einlesen ein.
-
-
-(2) UNIX-ls-Format
+>>|
+(1) UNIX-ls-Format
 
 /public/TeX/unix-tex/DVIware/lpr-viewers/crudetype/CYBER:
 total 65
@@ -1165,7 +1133,7 @@ die Liste anschlieáend einlesen lassen, konvertiert XP sie in sein eigenes
 Format.
 
 
-(3) ein weiteres, gelegentlich verwendetes Format
+(2) ein weiteres, gelegentlich verwendetes Format
 
 #CREATED        04-Aug-1993 13:00
 #
@@ -1179,16 +1147,13 @@ Sieht die Liste so aus, dann mssen Sie als Konvertierer das Programm UUCP-FL2.E
 w„hlen.
 
 
-(4) Die Liste sieht irgendwie ganz anders aus.
+(3) Die Liste sieht irgendwie ganz anders aus.
 
-Dann haben Sie zwei M”glichkeiten. Falls Sie programmieren k”nnen oder einen
+Falls Sie programmieren k”nnen oder einen
 Programmierer verfgbar haben, dann schreiben Sie ein kleines Programm (oder
 lassen Sie es schreiben :-), das die Liste in ein XP-kompatibles Format
 konvertiert. N„heres dazu finden Sie in Kapitel 4.3.
-
-Im anderen Fall schicken Sie mir die einen Auszug aus der Liste - am besten
-die ersten 5-10 KByte - zu. Ich werden dann versuchen, einen passenden
-Konvertierer zu schreiben.
+<<|
 
 
 ş Dateien bestellen
@@ -1269,9 +1234,11 @@ Auspacken erh„lt die Datei dann wieder den korrekten Datumseintrag.
 
 ş Dateien von XP versenden lassen
 
+>>|
 U.U. m”chten Sie Dateien nicht manuell, sondern durch ein externes Programm
-versenden lassen. Mit Hilfe des AUTOEXEC-Verzeichnisses (s. XPOINT.TXT, Kap.
-7.6) ist dies denkbar einfach:
+versenden lassen. Mit Hilfe des AUTOEXEC-Verzeichnisses (s.
+CrossPoint-Handbuch, Kap. 7.6) ist dies denkbar einfach:
+<<|
 
 Nehmen wir an, Sie m”chten die Datei D:\SCAN\SCANV106.ZIP so uploaden lassen,
 daá sie beim Server shlink.hanse.de im Verzeichnis ~/incoming abgelegt wird.
@@ -1310,10 +1277,11 @@ abgelegt, und Sie werden auch hier durch einen UUCP-Filerequest/Filetransfer-Rep
 
 ş Unix-Packer
 
+>>|
 Nachdem wir uns bereits mit Unix-Dateisystemen besch„ftigt haben, mssen wir
 noch ein letztes Mal auf dieses Betriebssystem zurckkommen. Unter Unix werden
 Dateien meist nicht mit LHArc, PKZIP oder gar ARJ gepackt, sondern mit
-tar+compress oder tar+gzip. Das Programm tar faát zun„chst mehrere Dateien in
+tar+compress, tar+gzip oder tar+bzip2. Das Programm tar faát zun„chst mehrere Dateien in
 einer zusammen, und compress oder gzip (GNU ZIP, nicht zu verwechseln mit und
 nicht kompatibel zu PKZIP) packen sie anschlieáend. Folgende Dateierweiterungen
 sind dabei blich:
@@ -1321,20 +1289,24 @@ sind dabei blich:
 .tar      =   tar
 .tar.Z    =   tar + compress
 .tar.gz   =   tar + gzip
+.tar.bz2  =   tar + bzip2
 
 Eine .tar.Z-Datei muá erst mit compress und dann mit tar entpackt werden,
-eine .tar.gz-Datei entsprechend mit gzip und tar. Unter DOS wird statt ".tar.z"
-blicherweise die Erweiterung ".TAZ" verwendet.
+eine .tar.gz-Datei entsprechend mit gzip und tar und eine
+.tar.bz2-Datei mit bzip2 und tar. Unter DOS wird statt ".tar.Z"
+blicherweise die Erweiterung ".TAZ" und statt ".tar.gz" ".TGZ" verwendet.
 
 Entpacken von .Z:           compress -d Archivdatei
                             oder gzip -d Archivdatei
 Entpacken von .gz:          gzip -d Archivdatei
+Entpacken von .bz2:         bzip2 -d Archivdatei
 Auspacken von .tar:         tar -xf Archivdatei [Datei(en)]
 Auflisten von .tar:         tar -tvf Archivdatei
 
 Da die Programme compress, gzip und tar nicht unbedingt zur Standardausstattung
 eines DOS-Rechners geh”ren und auch nicht in jeder Mailbox zu finden sind,
-sind sie im CrossPoint/UUCP-Paket mit enthalten.
+sind sie im CrossPoint-Paket enthalten.  bzip2 ist im CrossPoint-Paket
+z.Zt. nicht enthalten.
 
 Wenn Sie selbst eine Datei mit tar+compress packen m”chten, so verwenden Sie
 folgende Befehlsfolge:
@@ -1342,32 +1314,15 @@ folgende Befehlsfolge:
    tar -cf Archivdatei Quelldateien
    compress Archivdatei
 
-Entsprechendes gilt fr tar+gzip. Beachten Sie, daá tar immer alle Unterverzeichnisse
-mit einpackt!
-
-
-ş Anonymous UUCP (nuucp)
-
-Dies ist nicht etwa eine anonyme Gruppe von UUCP-Gesch„digten, sondern vielmehr
-die M”glichkeit, bei einem UUCP-System Dateien zu bestellen oder abzuliefern,
-ohne dort als "Point" eingetragen zu sein. 
-
-Ein Anonymous-UUCP-System muá genau wie jeder andere Fileserver zun„chst bei
-/Edit/Boxen erfaát werden. Loginname und Paáwort sind blicherweise "nuucp".
-Als Pointname und eigene Domain sollten Sie die gleichen wie bei Ihrem
-UUCP-Stammserver angeben; auf diese Weise weiá der Mensch auf der anderen Seite
-zumindest, wer anruft. Im brigen gelten die gleichen Hinweise wie in Kap. 2.1
-und 2.2.
-
-Rein theoretisch lieáen sich per nuucp auch Mails direkt abliefern - „hnlich
-Crash-Mails im FidoNet - aber in der Praxis wird dieses Features aus Sicherheitsgrnden
-meist gesperrt sein.
+Entsprechendes gilt fr tar+gzip und tar+bzip2. Beachten Sie, daá tar immer
+alle Unterverzeichnisse mit einpackt!
+<<|
 
 
 
 
 3.5  Dateitransfer per Mail
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Neben den oben beschriebenen UUCP-Systemen, bei denen Sie direkt anrufen und
 Dateien anfordern k”nnen, gibt es auch eine Reihe von Systemen, die einen
@@ -1376,64 +1331,69 @@ betreffenden Rechner ein Pseudouser eingerichtet, der auf bestimmte Befehle
 reagiert. Der wichtigste Befehl ist HELP - damit bekommen Sie eine Anleitung
 zur Bedienung des Mail Servers.
 
-M”chten Sie z.B. die Hilfe von ftp-mailer@ftp.informatik.tu-muenchen
-.de anfordern, dann senden Sie an diese Adresse eine Nachricht mit beliebigem
+>>|
+M”chten Sie z.B. die Hilfe von ftp-mailer@ftp.uni-stuttgart.de
+anfordern, dann senden Sie an diese Adresse eine Nachricht mit beliebigem
 Betreff (wird ignoriert) und nur einer Zeile Inhalt, n„mlich HELP. In diesem
 Hilfstext sind dann alle weiteren Befehle erl„utert. Mit dem Befehl INDEX
 erhalten Sie eine Liste der vorhandenen Dateien. Achtung: Diese Liste kann
 mehrere hundert KByte groá sein! Nachrichten an Mail-Server k”nnen auch
 mehrere Befehle enthalten, jeweils ein Befehl pro Zeile.
+<<|
 
 
 
 IV   Technische Dokumentation
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 In diesem Abschnitt finden Sie Dinge, die fr Normalanwender weniger von
 Interesse sind. Ich will versuchen, ein paar Informationen zu RFC, UUCP und
 deren Implementation in XP zu geben. Falls Sie sich genauer informieren
 m”chten, empfehle ich die folgenden Dokumente:
 
-RFC-822 und 976:          Nachrichtenformat von Mails
-RFC-1036                  Nachrichtenformat von News
-RFC-1521 und 1522:        MIME-Erg„nzungen
+>>|
+RFC-822 und 976:              Nachrichtenformat von Mails
+RFC-1036 und son-of-1036:     Nachrichtenformat von News
+RFC-2045, 2046 2047 und 2049: MIME-Erg„nzungen
 
-UUCP-FAQ von Ian Taylor:  exakte Beschreibung des UUCP-Protokolls;
-                          wird gelegentlich in comp.mail.uucp ver”f-
-                          fentlicht
-
-Die genannten und die meisten anderen RFC-Texte sollten bei jedem besseren
-nuucp-Server verfgbar sein, der UUCP-Text von Ian Lance Taylor eigentlich
-auch.
+UUCP-FAQ von Ian Taylor:      exakte Beschreibung des UUCP-Protokolls;
+                              wird gelegentlich in comp.mail.uucp ver”f-
+                              fentlicht
+<<|
 
 
 
 
 4.1   RFC-Daten, Packer und der Nachrichten-Konvertierer UUZ
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ş Aufbau von RFC-Nachrichten
 
+>>|
 RFC-Nachrichten bestehen aus einem Nachrichtenkopf (Header), einer Leerzeile
 und dem Nachrichteninhalt (Body), haben also den gleichen prinzipiellen Aufbau
-wie ZCONNECT-Nachrichten (s. XPOINT.TXT, Kap. 7.1). Die einzelnen Zeilen sind
+wie ZCONNECT-Nachrichten (s. CrossPoint-Handbuch, Kap. 7.1). Die einzelnen Zeilen sind
 normalerweise nur mit LFs (ASCII #10) getrennt, aber gelegentlich kann es
 auch CR/LF (#13/#10) sein.
+<<|
 
-Offiziell drfen in Header und Body nur 7bit-ASCII-Zeichen verwendet werden
-(#32 bis #126, Tab (#9), CR, LF und FF (#12)). In der Praxis sind die meisten
-Teile des Usenet inzwischen aber 8bit-durchl„ssig, zumindest in Europa, sodaá
-innerhalb des Textes auch nationale Sonderzeichen m”glich sind. Der in
-Deutschland verwendete Zeichensatz ist ISO-8859-1. Stattdessen k”nnen 8bit-Zeichen
-mit MIME auch als 7bit-Zeichen codiert werden; n„heres dazu finden Sie in RFC
-1341.
+>>|
+Die Codierung von nationalen Sonderzeichen regeln die MIME-Standards
+(s.o.). Z.Zt. wird in Deutschland berwiegend der Zeichensatz
+ISO-8859-1 verwendet. In Zukunft wird dieser nach und nach durch den
+Universalzeichensatz ISO-10646 (Unicode) mit der Kodierung UTF-8
+abgel”st werden. ISO-10646 wird aber von CrossPoint z.Zt. noch nicht
+untersttzt.
+<<|
 
+>>|
 Der Header besteht aus einer Liste von Bezeichner-Doppelpunkt-Whitespace-Inhalt-Kombinationen.
 Lange Headerzeilen k”nnen auf mehrere Zeilen aufgeteilt werden (sog. "folding");
 in diesem Fall mssen alle Zeilen auáer der ersten mit einem Whitespace
 (Leerzeichen oder Tab) beginnen. Der Empf„nger muá sie wieder zu einer Zeile
 zusammensetzen. Eine Beschreibung der einzelnen Zeilen entnehmen Sie bitte
-den genannten RFCs.
+den genannten RFCs (und dem son-of-1036).
+<<|
 
 
 ş Newspakete
@@ -1445,11 +1405,13 @@ einzusetzen ist. Bitte beachten Sie, daá dabei auch CR-Zeichen im Gegensatz
 zu der Angabe in RFC 1036 *mitgez„hlt* werden. Ein Newsbatch besteht also
 aus einer Folge von rnews, Header, Body, rnews, Header, Body, ...
 
-Newsbatches werden i.d.R. mit compress, freeze oder gzip gepackt. Nach dem
-Packen wird dem Ganzen die Zeile "#! cunbatch", "#! funbatch" oder "#! gunbatch"
+>>|
+Newsbatches werden i.d.R. mit compress, gzip oder bzip2 gepackt. Nach dem
+Packen wird dem Ganzen die Zeile "#! cunbatch", "#! gunbatch" oder "#! bunbatch"
 (m”glicherweise auch zunbatch statt gunbatch - hier streiten sich noch die
 Gelehrten) vorangestellt, gefolgt von einem LF. Daran erkennt der Empf„nger,
 welcher Entpacker verwendet werden muá.
+<<|
 
 Genaugenommen handelt es sich bei "#! rnews" etc. brigens um UNIX-Befehle,
 die von einer Shell abgearbeitet werden - daher der Name "Newsbatches": Es
@@ -1497,15 +1459,17 @@ F - Name der D-Datei
 I - nochmal der Name der D-Datei
 C - auszufhrender Befehl
 
+>>|
 Die C-Zeile in der X-Datei gibt an, was mit der D-Datei passieren soll. Es
 handelt sich dabei ursprnglich um den Namen eines Unix-Programms, das mit
 der D-Datei als Eingabe gestartet werden soll - XP verwendet dazu allerdings
 keine getrennten Programme. Das Kommando "rnews" bedeutet, daá sich in der
 D-Datei ein Newspaket befindet. "rmail" steht fr eine einzelne Mail, "rsmtp"
 fr einen SMTP-Batch aus mehreren Mails. Bei gepackten SMTP-Batches wird je
-nach Packer "rcsmtp", "rfsmtp" oder "rzsmtp" verwendet. Hinter dem Kommando
+nach Packer "rcsmtp", "rgsmtp" oder "rbsmtp" verwendet. Hinter dem Kommando
 "rmail" wird zus„tzlich der Name bzw. die Adresse des Empf„ngers der Mail
-angegeben (der Envelope-Empf„nger - s Kap. 3.1).
+angegeben (der Envelope-Empf„nger - s. Kap. 3.1).
+<<|
 
 Der in der F-Zeile angegebene Dateiname wird nach Konventionen des ursprnglichen
 Unix-Filesystems (max. 14 beliebige Zeichen) gebildet und muá von DOS-UUCP-Systemen
@@ -1547,11 +1511,13 @@ Compress von PC-Tools o.„. wiederfinden.
 
 
 4.2   Der XP-UUCICO
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~
 
-Der wichtigste Teil des XP/UUCP-Paketes neben dem Nachrichtenkonver-tierer
+>>|
+Der wichtigste Teil des XP-UUCP-Moduls neben dem Nachrichtenkonver-tierer
 UUZ ist UUCICO.EXE. Es handelt sich dabei um einen von Grund auf neuentwickelten
 uucico mit folgenden Leistungsmerkmalen:
+<<|
 
 o  Protokolle g/G, f, z und e
 o  UUCP-g:  - Packet-Sizes 32 bis 4096
@@ -1560,6 +1526,14 @@ o  UUCP-g:  - Packet-Sizes 32 bis 4096
 o  Taylor-UUCP-kompatible "size negotiation"
 o  wahlweise FOSSIL- oder direkter Schnittstellenzugriff
 o  Untersttzung von IRQ 1-15
+
+>>|
+UUCICO.EXE untersttzt folgende, heutzutage als nahezu
+selbstverst„ndlich angesehene Leistungsmerkmale *nicht*:
+
+o  Protokoll i (bidirektionale šbertragung)
+o  Poll ber IP
+>>|
 
 Die Aufrufsyntax ist
 
@@ -1634,7 +1608,7 @@ wird, wie Sie sich es wnschen.
 
 
 4.3   Dateilisten-Konvertierprogramme
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dieses Kapitel knpft an Kap. 3.4 an. Es soll dabei helfen, eigene Dateilisten-Konvertierprogramme
 zu schreiben.
@@ -1695,14 +1669,16 @@ Zeilen ist brigens beliebig; bei mehr als 80 Zeichen kann innerhalb des
 XP-Listers nach rechts und links gebl„ttert werden.
 
 
+>>|
 Als Ausgangsbasis fr eigene Listenkonvertierer k”nnen Sie die Turbo-Pascal-Quelltexte
-von UUCP-FL*.PAS verwenden, die im XP/UUCP-Paket enthalten sind.
+von UUCP-FL*.PAS verwenden, die im XP-Paket enthalten sind.
+<<|
 
 
 
 
 4.4   Definition eigener RFC-Headerzeilen
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CrossPoint sorgt in jedem Fall dafr, daá alle ausgehenden Nachrichten
 korrektes RFC-Format haben und alle notwendigen Headerzeilen enthalten.
@@ -1725,14 +1701,15 @@ eingefgt werden sollen, mssen in MAIL.RFC und NEWS.RFC stehen.
 
 
 Anhang
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 
-A.  Dateien im CrossPoint/UUCP-Paket
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+A.  Dateien des CrossPoint-UUCP-Moduls
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-uucp.TXTc       das lesen Sie gerade
+>>|
+uucp.txt       das lesen Sie gerade
 uucico.exe     uucico-Programm (s. Kap. 4.2)
 xpuu-d.res     deutsche Sprachdatei fr uucico
 uuz.exe        Nachrichtenkonvertierer (s. Kap. 4.1)
@@ -1744,12 +1721,12 @@ tar.exe        Unix-kompatibles Archivprogramm
 uucp.scr       Standard-UUCP-Loginscript
 uucp-fl*.exe   UUCP-Dateilisten-Konvertierer
 uucp-fl*.pas   Quelltexte der Dateilisten-Konvertierer
-
+<<|
 
 
 
 B.  Glossar
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~
 
 --14Account       Benutzerkennung; Postfach bei einer Mailbox, auf einem
 Unix-Rechner o.„.
@@ -1760,10 +1737,6 @@ Bang(-Pfad)   Nachrichtenroute in der Form "System1!System2!..."
 
 --14BCC           Blind Carbon Copy - Kopie einer Nachricht an weitere
 Empf„nger, die fr den Originalempf„nger nicht erkennbar ist
-
---14BITNET        auf IBM-Protokollen basierendes Netzwerk mit eigener
-Adressierungsform; kennt keine ^Newsgroups, sondern verwendet stattdessen
-^Mailing-Listen
 
 --14Body          "Benutzerteil" einer Nachricht, im Gegensatz zum ^Header
 
@@ -1793,13 +1766,14 @@ finden Sie FAQs zu allen Themen in der Gruppe news.answers.
 
 Followup      ”ffentliche Antwort auf eine ”ffentliche Nachricht
 
+>>|
+--14Forum         andere Bezeichnung fr ^Newsgroup
+<<|
+
 --14FTP           File Transfer Protocol = Dateibertragungsprotokoll, das
 zum Dateitransfer im ^Internet eingesetzt wird
 
 Gateway       šbergang zwischen zwei Netzen
-
---14Gopher        Internet-Programm/Verfahren/Standard zur Abfrage von
-Online-Datenbanken
 
 --14Header        der Teil einer Nachricht, der Steuerinformationen enth„lt
 
@@ -1809,24 +1783,29 @@ zur Verfgung stellt
 --14IN            Individual Network e.V. - Zusammenschluá von Privatpersonen
 in Deutschland, der Mail-, News- und Internetanbindung erm”glicht.
 
---14Internet      schnelles, weltweites Online-Standleitungsnetz, das
-haupts„chlich von Firmen, Bildungseinrichtung und sonstigen Organisationen
-getragen wird
+>>|
+--14Internet      schnelles, weltweites Online-Standleitungsnetz
+<<|
 
 --14IRC           Internet Relay Chat - weltweites Chatsystem (System zur
 Online-Textkommunikation per DFš) im Internet
 
+>>|
 --14ISO           International Standardisation Organisation - internationales
-Normungsgremium. Speziell: ISO-8859-1 = im europ„ischen Internet blicher
-Zeichensatz.
+Normungsgremium. Speziell: ISO-8859-1 = noch im (west-)europ„ischen Internet blicher
+Zeichensatz. ISO-10646 (Unicode) = Universalzeichensatz, der in
+Zukunft ISO-8859-1 und die vielen auáerhalb (West-)Europas eingesetzten
+Zeichens„tze abl”sen wird.
+<<|
 
 Mail          (Gesamtheit der) private(n) Nachricht(en)
 
---14Mailer        Programm zum Lesen und Schreiben von Mails (im FidoNet:
-Programm zur šbertragung von Mails)
-
 --14Mailing-Liste  Nachrichtenverteiler fr ein bestimmtes Thema; quasi eine
 Newsgroup, die per Mail abgewickelt wird
+
+>>|
+--14MUA        Mail User Agent - Programm zum Lesen und Schreiben von Mails
+<<|
 
 --14MIME          Multipurpose Internet Mail Extensions = Internet-Standard
 zur šbertragung von bin„ren Daten, internationalen Sonderzeichen, groáen
@@ -1834,26 +1813,42 @@ Dateien und Multimedia-Daten
 
 News          (Gesamtheit der) ”ffentliche(n) Nachrichten
 
-Newsreader    Programm zum Lesen/Schreiben von ^News
+>>|
+Newsreader    Programm zum Lesen/Schreiben von ^News, gelegentlich
+auch analog zu ^MUA NUA (News User Agent) genannt.
+<<|
 
---14Newsgroup     Brett/Forum, in dem ”ffentliche Nachrichten ausgetauscht
+--14Newsgroup     Brett/^Forum, in dem ”ffentliche Nachrichten ausgetauscht
 werden
 
 --14NNTP          Programm/Verfahren zur šbertragung von ^News im ^Internet
 
---14PGP           Pretty Good Privacy - Programm zur Nachrichten-verschlsselung
+>>|
+--14PGP           Pretty Good Privacy - Programm zur Nachrichten-Verschlsselung
 mit dem "RSA-Verfahren"
+<<|
 
 Posting       (Versenden einer) ”ffentliche(n) Nachricht
 
-Postmaster    Ansprechpartner einer Usenet-Site bzw. einer Domain
+>>|
+Postmaster    Ansprechpartner einer Usenet-Site bzw. einer Domain fr
+Adressierungsprobleme
+<<|
+
+>>|
+--14PPP          Point to Point Protocol - Verfahren zur Teilnahme
+am Internet per Modem oder ISDN
+<<|
 
 --14Realname      der Name im wirklichen Leben - im Gegensatz zum "Username"
 
 Rekursion     ^Rekursion
 
---14RFC           Request for Comments - Internet-Standard-Spezifikation (es
-gibt bis jetzt ca. 1500 davon)
+>>|
+--14RFC           Request for Comments - Eine Internet-Dokumenten-Reihe,
+in denen auch die Internet-Standard-Spezifikationen enthalten sind (es gibt
+bis jetzt ca. 3000 davon)
+<<|
 
 --14RfD           Request for Discussion - Aufruf zur Diskussion, insbesondere
 zur Einrichtung einer neuen ^Newsgroup im ^Usenet
@@ -1864,20 +1859,13 @@ Sendmail      kompliziertes Unix-Programm zum ^Routing von ^Mail
 
 Site          System/Knoten/"Point" im ^Usenet
 
---14SLIP          Serial Line Internet Protocol - Verfahren zur Teilnahme
-am Internet per Modem oder ISDN
-
 --14SMTP          Simple Mail Transfer Protocol - Programm/Verfahren zur
 šbertragung von ^Mail im ^Internet
-
-Smurf         Schlumpf
 
 --14Spooling      Bereitstellen versandfertiger Nachrichten/Dateien in einem
 bestimmten Festplattenverzeichnis
 
 Subject       Betreff einer Nachricht
-
-Sub-Netz      s. Kap. 1.1
 
 Summary       Zusammenfassung einer Nachricht
 
@@ -1887,17 +1875,21 @@ Usenet        Menge aller Systeme, die ^News austauschen
 
 uucico        Programm zur UUCP-Nachrichtenbertragung
 
---14UUCP          Nachrichten-Transportverfahren und -programm im ^Usenet und
-in Sub-Netzen (s. Kap. 1.1)
+>>|
+--14UUCP          Nachrichten-Transportverfahren und -programm
+<<|
 
---14UUencode      Verfahren und Unix-Programm, mit dem bin„re Dateien im
+>>|
+--14UUencode      veraltetes Verfahren und Unix-Programm, mit dem bin„re Dateien im
 ASCII-Format codiert werden k”nnen, um sie per Mail zu bertragen.
+Inzwischen durch MIME ersetzt.
+<<|
 
 
 
 
 C.  CrossPoint/UUCP - Versionsgeschichte
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 2.15 beta  (03.08.93)
 o  erste freigegebene Betaversion
