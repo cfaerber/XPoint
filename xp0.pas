@@ -1,4 +1,4 @@
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000-2001 OpenXP-Team                                       }
@@ -7,7 +7,7 @@
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { CrossPoint - Deklarationen }
@@ -869,6 +869,7 @@ const
        IsNodelistBrowserMsg : boolean = false; { Nachricht aus Nodelist-Browser heraus erzeugt }
        IsNodelistBrowserReq : boolean = false; { F'Request aus Nodelist-Browser heraus erzeugt }
                                                { => Fehlermeldung bei <Alt-N> und <AltGr-N>    }
+       ovrstr : string[10] = '';    { wird an Versionsbezeichnung angeh„ngt }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1227,7 +1228,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
       {Lightweight-Readpar}
 
-      noovrbuf : boolean;
+      noovrbuf  : boolean;
       xmsovrbuf : boolean;
       emsovrbuf : boolean;
 
@@ -1250,6 +1251,9 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.64  2003/04/13 21:08:48  my
+  MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anh„ngen.
+
   Revision 1.54.2.63  2003/04/13 16:06:39  mw
   MW: - Neue Variable emsovrbuf zeigt true, wenn das Overlay im EMS steckt
 

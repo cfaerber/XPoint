@@ -1,10 +1,12 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
 { --------------------------------------------------------------- }
 { $Id$ }
 
@@ -192,9 +194,9 @@ begin
   case netztyp of
     nt_UUCP,
     nt_Client : XP_ID:='## '+xp_xp+' '+verstr+betastr+
-                       iifs(xmsovrbuf,xmsstr,'')+krk(regstr2)+' ##'+#13#10;
+                       ovrstr+krk(regstr2)+' ##'+#13#10;
     else        XP_ID:='## '+xp_xp+' '+verstr+betastr+
-                       iifs(xmsovrbuf,xmsstr,'')+krk(regstr1)+' ##'+#13#10;
+                       ovrstr+krk(regstr1)+' ##'+#13#10;
   end;
 end;
 
@@ -235,8 +237,7 @@ begin
   else begin
     if not pm then
       if XP_Tearline then
-        s:=#13#10+xp_origin + ' ' + verstr + betastr +
-           iifs(xmsovrbuf,xmsstr,'') + krk(regstr1)
+        s:=#13#10+xp_origin + ' ' + verstr + betastr + ovrstr + krk(regstr1)
       else
         s:=#13#10+'---'
     else
@@ -1201,6 +1202,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.18.2.20  2003/04/13 21:08:49  my
+  MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anhÑngen.
+
   Revision 1.18.2.19  2003/01/16 23:30:34  my
   MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
       - betastr an einigen Stellen ergÑnzt

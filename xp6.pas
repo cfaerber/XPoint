@@ -1,4 +1,4 @@
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000-2001 OpenXP-Team                                       }
@@ -7,7 +7,7 @@
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { MH: PGP-Sig auch in RFC, ZurÅck Button f. alle Netztypen }
@@ -2082,7 +2082,7 @@ fromstart:
     hdp^.replypath:=_replypath;
     hdp^.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
-      hdp^.programm:=xp_xp+' '+verstr+betastr+iifs(xmsovrbuf,xmsstr,'')
+      hdp^.programm:=xp_xp+' '+verstr+betastr+ovrstr
                      {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
                      +iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
@@ -2569,6 +2569,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.64  2003/04/13 21:08:49  my
+  MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anhÑngen.
+
   Revision 1.39.2.63  2003/03/17 23:01:04  my
   MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
        DoSend deaktiviert.

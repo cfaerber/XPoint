@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { Nachricht extrahieren }
@@ -688,8 +689,7 @@ var size   : longint;
     if not mailerflag then
       if not registriert.r2 and ntForceMailer(hdp^.netztyp)
          and (dbReadInt(mbase,'ablage')=10) then begin
-        wrs(gr(20)+xp_xp+' '+verstr+betastr+iifs(xmsovrbuf,xmsstr,'')+
-            ' '+gr(60));   { '(unregistriert)' }
+        wrs(gr(20)+xp_xp+' '+verstr+betastr+ovrstr+' '+gr(60));   { '(unregistriert)' }
         mailerflag:=true;
         end;
   end;
@@ -1182,6 +1182,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.28  2003/04/13 21:08:49  my
+  MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anhÑngen.
+
   Revision 1.17.2.27  2003/01/16 23:30:33  my
   MY: - Schalter /xmsovr in Versionsbezeichnung berÅcksichtigt
       - betastr an einigen Stellen ergÑnzt
