@@ -1408,6 +1408,7 @@ fromstart:
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
+                      sData^.pmreplyto:='';
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -2217,6 +2218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.17  2000/11/19 11:12:25  mk
+  - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
+
   Revision 1.39.2.16  2000/10/22 21:50:02  mk
   - .PP gross geschrieben
 
