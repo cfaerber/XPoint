@@ -6,7 +6,7 @@
   $MAINVER = "unkown";
   $SUBVER = "unkown";
   $BUILD = "unkown";
-  $RELEASE = "";
+  $RELEASE = "1";
   
 
   open(InFile, "../xpglobal.pas");
@@ -24,7 +24,7 @@
 
   open(InFile, "../xpdefine.inc");
   while (<InFile>) {
-    if (/\{\$DEFINE Snapshot\}/ig ) { $RELEASE = "1" }  
+    if (/\{\$DEFINE Snapshot\}/ig ) { $RELEASE = "0" }  
   }
   close(InFile);
 
@@ -34,6 +34,14 @@
   }
   close(InFile);
 
+ 
+  if ($RELEASE eq "1") {
+    $OPTS = "-gl -CX -OG3p3r";
+  } else
+  {
+    $OPTS = "-gl -OG3p3"; 
+  }
+
 
   open(InFile, "openxp.spec");
   open(OutFile, ">openxp-$MAINVER.$SUBVER-$BUILD.spec");
@@ -42,13 +50,7 @@
 
     if (s/\%version\%/$MAINVER\.$SUBVER/ig) {  }
     s/\%release\%/$BUILD/ig;
-    
-    if ($RELEASE eq "1") {
-      s/\%compopts\%/-CX -OG3p3r/ig; 
-    } else
-    {
-      s/\%compopts\%/-gl -OG3p3/ig; 
-    }
+    s/\%compopts\%/$OPTS/ig; 
 
     print OutFile;
   }
@@ -60,6 +62,8 @@ print "export OPENXP_MAINVER=$MAINVER\n";
 print "export OPENXP_SUBVER=$SUBVER\n";
 print "export OPENXP_BUILD=$BUILD\n";
 print "export OPENXP_RELEASE=$RELEASE\n";
+print "SET OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
+print "SET OXP_OPTS=$OPTS\n";
 
 $VERZ = $ENV{'TEMP'};
 if (!$VERZ) { $VERZ = '/tmp' } 
