@@ -530,33 +530,33 @@ You can also use <space> instead of PgDn
 
  <<I>>    shows the information in the message header.
 
- <<O>>    shows the original message-header 
+ <<O>>    shows the original message-header
 
  <<G>>    jumps to the preceding message. (Like <<->>)
 
 <<ALT M>>  Starts the search for a MessageID.
        The first marked textline is used as
-       search-string. If there is a "<news:"-Tag 
+       search-string. If there is a "<news:"-Tag
        in the marked line, only the MessagID
        shows up as search-string.
 
-       If the search was successful, you see a 
-       list of the found message(s) and can read 
+       If the search was successful, you see a
+       list of the found message(s) and can read
        them. (ESC) in the message-list jumps back
        to the Main-Lister, showing the message
-       where you started the search. 
+       where you started the search.
 
 <<ALT V>>  like <<ALT M>> but searching for text
 
 <<ALT U>>  User-search. If a Textline is marked
        it will be used as search-string, else
        Crosspoint will search for the author
-       of the shown message.  
- 
+       of the shown message.
+
 <<ALT B>>  Topic-search. search-string is the first
        marked textline, or the topic of the
        shown message.
- 
+
  <<L>>      sets the displayed message to delete
         and exits.
 
@@ -1035,8 +1035,8 @@ decided if and how a message will actually be sent
 <</>>       Changes the recipient of the message.
         Delete the current entry to choose (with <F2>)
         between users and newsgroups.
-        ATTENTION! only experienced users should 
-        use this function.       
+        ATTENTION! only experienced users should
+        use this function.
 
 
 If the <<server>> is shown in <<brackets>>, it means that
@@ -1092,15 +1092,15 @@ Extract Directory [/Config/Path/Extract].@261
 
 With F2 you can copy to the Windows-Clipboard.
 
-<<Windows-Clipboard>> 
+<<Windows-Clipboard>>
 copies the marked Text to the Clipboard
 
-<<Win-Clipboard (URL)>> 
-tries to generate a Internet-URL 
+<<Win-Clipboard (URL)>>
+tries to generate a Internet-URL
 (FTP:// or HTTP:// or WWW.) from the first marked
 line and copies it to the Windows-Clipboard.
 
-<<Win-Clipboard (MAIL)>> 
+<<Win-Clipboard (MAIL)>>
 like before, but generates a Mail-Adress.
 
 @
@@ -3792,9 +3792,9 @@ The order of the letters determines in what order
 will be arranged. Every letter <<MUST>> be present,
 otherwise, the default column display (FGDAEB) will
 be used.
-       
+
        Valid letters (with their meanings) are:
-       
+
        F  Flags
        G  Size
        D  Date
@@ -3808,9 +3808,9 @@ The order of the letters determines in what order
 <<(in "Special Mode")>> will be arranged. Every
 letter <<MUST>> be present, otherwise, the default
 column display (FHGBAK) will be used.
-       
+
        Valid letters (with their meanings) are:
-       
+
        F  Flags
        H  Hold-time
        G  Addressbook group
@@ -4951,8 +4951,8 @@ With [F2] you get a history-menu
 of the last 3 search-strings.
 
 
-If you are using AND/OR combination 
-(Options "a" or "o") you may use quotes to 
+If you are using AND/OR combination
+(Options "a" or "o") you may use quotes to
 mark some words as a phrase:
 
 "i dont know" what "to write here"
@@ -4965,15 +4965,15 @@ will search for
 
 
 <<~>> works as NOT-Operator: If a word is found
-that is marked with (~) the search fails. 
+that is marked with (~) the search fails.
 
 
 
-type <<Ctrl V>> or <<Shift Ins>> to insert the 
+type <<Ctrl V>> or <<Shift Ins>> to insert the
 Windows-Clipboard. A acustic signal indicates,
-that the clipboard contains to much (or none) text.  
+that the clipboard contains to much (or none) text.
 
-<<Ctrl C>> or <<Strg Ins>> copies the text of this 
+<<Ctrl C>> or <<Strg Ins>> copies the text of this
 box to the Windows-Clipboard.
 
 @
@@ -4983,7 +4983,7 @@ Enter the type of search.
 <<i>>  Ignore case ("u" may also be used instead of
    i") when searching.
 
-<<a>>  AND-Combined: Searching is succesfull, 
+<<a>>  AND-Combined: Searching is succesfull,
    if ALL keywords are found.
 
 <<o>>  OR-Combined: Searching is successful,
@@ -5008,13 +5008,13 @@ CrossPoint searches in the groups defined here.
 @
 533
 <<[ ]>> --> Fast search in the Reference Database
-        this will only find complete message-ids. 
+        this will only find complete message-ids.
         searching for MID-Parts is impossible.
 
 <<[x]>> --> Slower search in the Message-headers.
         Similar to subject-search, the search-line
         may contain only MID-Parts to search for.
-        Options and Newsgroup-selection are allowed. 
+        Options and Newsgroup-selection are allowed.
 @
 540
 You are in the key-macro editor. You can redefine
@@ -5501,7 +5501,7 @@ it is a .MSG file. See the field [Delete]@578
 @
 594
 <<[x]>>  the macro works in the archive viewer
-     and some windows like the MIME-Popup   
+     and some windows like the MIME-Popup
 @
 595
 <<[x]>>  the macro works in the internal editor
@@ -5558,14 +5558,14 @@ Messages will be searched for by a text string in all
 messages. Enter a text string from the messages to be
 searched for. May be left empty.
 
-If you are using AND/OR combination 
-(Options "a" or "o") you may use quotes to 
+If you are using AND/OR combination
+(Options "a" or "o") you may use quotes to
 mark some words as a phrase:
 
 "i dont know" what "to write here"
 
 <<~>> works as NOT-Operator: If a word is found
-that is marked with ~ the search fails.  
+that is marked with ~ the search fails.
 
 @
 633
@@ -5632,7 +5632,7 @@ Leaving it empty makes the search case-sensitive.
 
 Only for text-searching:
 
-<<a>>  AND-Combined: Searching is succesfull, 
+<<a>>  AND-Combined: Searching is succesfull,
    if ALL keywords are found.
 
 <<o>>  OR-Combined: Searching is successful,
@@ -6408,13 +6408,13 @@ with <Ctrl-Enter>. It is not necessary to press
 
 @
 820
-Enter which external program CrossPoint should call 
+Enter which external program CrossPoint should call
 for viewing binary files.
 
 <<New>>      Create a new entry.
 
 <<Delete>>   Delete the selected entry.
-         
+
 <<Edit>>     Change an existing entry.
 
 @
@@ -6425,7 +6425,7 @@ of the Filetype (Usenet))
 
 If you select a message with this Mime-Type,
 XP will show it with the Viewer-Programm.
- 
+
 @
 822
 Enter the file extension.
@@ -6433,7 +6433,7 @@ Enter the file extension.
 If you select a Binary file or a Fido-Fileattach
 with a file of this type, XP starts the viewer-
 programm to show it.
- 
+
 Note that in Z-Netz the message subject does not
 always contain the correct file name, which makes
 recognising file types by name difficult.
@@ -6453,7 +6453,7 @@ The program must be in the DOS Path for XP to find it.
 (or you may enter the path to the programm.)
 This program is started as soon as you select a
 binary file or a MIME-Meassage, containing a File
-of the selected format. 
+of the selected format.
 
 If you give the macro $FILE as parameter, CrossPoint
 will put the file name in at this point, otherwise it
@@ -9172,11 +9172,11 @@ searching for the file you want. Enter the search
 string and CrossPoint looks through *all* lists and
 gathers all the occurrences together in a list.
 
-If you want to search for more as one item then 
+If you want to search for more as one item then
 divide the items with - /& -.
-For example:	
+For example:
 	/&terminal/&modem/&hello
-will find all files whose description includes 
+will find all files whose description includes
 the words "terminal" AND "modem" AND "hello".
 
 Marking the files you want to order from this list
