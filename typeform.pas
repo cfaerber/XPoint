@@ -719,8 +719,13 @@ end;
 
 
 function Hex(const l:integer; const n:integer):string;
+var
+  s: String;
 begin
   Hex:= IntToHex(l, n);
+  {$IFDEF VP }
+    Hex := Right(Result, n);
+  {$ENDIF }
 end;
 
 function HexVal(const s:string):longint;
@@ -1285,6 +1290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/08/08 23:14:26  mk
+  - Bugfix fuer Hex() unter VP
+
   Revision 1.65  2000/08/08 13:18:14  mk
   - s[Length(s)] durch Lastchar ersetzt
 
