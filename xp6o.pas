@@ -1043,7 +1043,7 @@ again:
                  if not cc_testempf(hdp^.absender)
                  then begin
                    defaultbox:=pollbox;
-                   exit;
+                   goto ende;
                    end;
                  defaultbox:=pollbox;
                  end
