@@ -403,7 +403,7 @@ begin
         end
       else
         if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      if timey <> 0 then disphard(timex,timey,' '+__st+' ');
+      disphard(timex,timey,' '+__st+' ');
       end;
     end;
 end;
@@ -1656,6 +1656,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.38.2.5  2001/02/24 14:37:52  mk
+  - letzetn Checkin rueckgaengig gemacht
+
   Revision 1.38.2.4  2001/02/23 12:39:05  mk
   - Uhr im Lister mit /w abschalten
 

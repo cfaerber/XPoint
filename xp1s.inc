@@ -344,7 +344,6 @@ begin
         else begin
           dphback:=col.colliststatus;              {   bei freiem Header }
           timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
-          if ParWinTime = 1 then Timey := 0;
           end;
         end;
       end;
@@ -513,6 +512,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.5  2001/02/24 14:37:53  mk
+  - letzetn Checkin rueckgaengig gemacht
+
   Revision 1.24.2.4  2001/02/23 12:39:05  mk
   - Uhr im Lister mit /w abschalten
 
