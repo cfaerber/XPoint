@@ -115,7 +115,7 @@
                             flag-parameters aren't allowed}
     {$DEFINE Unix }        { FreeBSD is a Unix Platform }
   {$ELSE}
-    !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
+    // !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
   {$ENDIF}
 {$ENDIF}
 
@@ -152,6 +152,9 @@
 
 {
   $Log$
+  Revision 1.58  2000/11/02 00:07:40  mk
+  - added // because ' is an illegal character in Virtual Pascal
+
   Revision 1.57  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
