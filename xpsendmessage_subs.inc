@@ -836,8 +836,7 @@ begin
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
   FQDN := iifs(sData.FQDN='',dbReadStr(d,'fqdn'),sData.FQDN);
-  if sData.replyto <> '' then
-    sdata.replyto := dbReadStr(d,'ReplyTo');
+  sData.replyto := iifs(sData.replyto='',dbReadStr(d,'ReplyTo'),sData.replyto);
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp in netsRFC) and (umlaute=2) then
     umlaute:=0;
@@ -1121,6 +1120,11 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.4  2002/05/12 17:30:17  ma
+  - fixed: editing Reply-To on unsent messages was broken
+  - fixed: Reply-To handling was broken if real name specified in Reply-To
+  - fixed: Reply-To changing with Roles
+
   Revision 1.17.2.3  2002/05/06 19:14:00  mk
   - removed last fix
 

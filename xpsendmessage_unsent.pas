@@ -392,7 +392,7 @@ begin
     empf:=hdp.FirstEmpfaenger;
 
     if empfnr>0 then begin
-      ReadHeadEmpf:=empfnr; 
+      ReadHeadEmpf:=empfnr;
       ReadHeader(hdp,hds,true);
       Sendempflist.Assign(Hdp.Empfaenger);
       Hdp.Empfaenger.Clear;
@@ -413,7 +413,8 @@ begin
 
     if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
       inc(SendFlags,SendMPart);
-    sData.OrgHdp :=hdp;
+    sData.OrgHdp :=hdp; // original header is needed for multipart messages
+    sData.editingUnsentMessage := true; // do not overwrite replyto etc. with original values
 
     if DoSend(pm,tmp,true,false,empf,betr,modi,typ='B',true,false,false,
               sData,headerf,sendflags+Sendreedit+
@@ -1360,6 +1361,11 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.3  2002/05/12 17:30:17  ma
+  - fixed: editing Reply-To on unsent messages was broken
+  - fixed: Reply-To handling was broken if real name specified in Reply-To
+  - fixed: Reply-To changing with Roles
+
   Revision 1.21.2.2  2002/04/21 13:31:10  cl
   - fixed first recipient duplication bug II
 
