@@ -156,11 +156,12 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if attrib and AttrPmcrypt<>0 then wrs('CRYPT: PM-CRYPT');
       if postanschrift<>''       then wrs('POST: '+postanschrift);
       if telefon<>''   then wrs('TELEFON: '+telefon);
-      if homepage<>''  then wrs('X-Homepage: '+homepage);
+      if homepage<>''  then wrs('U-X-Homepage: '+homepage);
       { 06.02.2000 MH: X-Priority, X-MSMail-Priority }
       if priority<>0   then wrs('X-Priority: '+strs(priority));
-      if noarchive and (pmempfanz=0) and (netztyp=nt_UUCP) then 
-           wrs('X-No-Archive: Yes'); { MH }
+      if noarchive and (pmempfanz=0) and
+          (netztyp in [nt_UUCP, nt_ZConnect]) then
+        wrs('U-X-No-Archive: Yes');
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
       if distribution<>'' then wrs('U-Distribution: '+distribution);
@@ -438,6 +439,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/24 08:04:21  mk
+  - X-No-Archive und X-Homepage mit jetzt mit U-
+
   Revision 1.6  2000/04/13 12:48:36  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
