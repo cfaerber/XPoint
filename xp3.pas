@@ -47,6 +47,7 @@ procedure UBAddMark(rec:longint);
 procedure UBUnmark(rec:longint);
 
 procedure XreadF(ofs:longint; var f:file);
+procedure XreadS(ofs:longint; s:TStream);
 procedure Xread(fn:string; append:boolean);
 procedure XmemRead(ofs:word; var size: Integer; var data);
 procedure Xwrite(fn:string);
@@ -411,7 +412,6 @@ begin
   buferr:=getreps(304,strs(nr))+#13#10;   { 'Ablage Nr. %s ist fehlerhaft!' }
 end;
 
-
 procedure XreadF(ofs:longint; var f:file);
 var p        : pointer;
     bufs,rr  : Integer;
@@ -481,6 +481,64 @@ ende:
   XReadIsoDecode:=false;
 end;
 
+procedure XreadS(ofs:longint; s:TStream);
+var p        : pointer;
+    bufs,rr  : Integer;
+    puffer   : file;
+    ablage   : byte;
+    size     : longint;
+    adr      : longint;
+    berr     : string[40];
+    iso      : boolean;
+    hdp      : theader;
+    hds      : longint;
+    minus    : longint;
+
+label ende;
+begin
+  bufs:=65536;
+  p:=nil;
+  dbReadN(mbase,mb_ablage,ablage);
+ try
+  assign(puffer,aFile(ablage));
+  reset(puffer,1);
+  if ioresult<>0 then begin
+    fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
+    exit;
+  end;
+  getmem(p,bufs);
+  dbReadN(mbase,mb_adresse,adr);
+  minus:=0;
+  if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,false);
+    if (hdp.komlen>0) and (ofs=hds+hdp.komlen) then
+      minus:=hdp.komlen;
+    Hdp.Free;
+    end;
+  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
+    berr:=buferr(ablage);
+    s.Write(berr[1],length(berr));
+    end
+  else begin
+    seek(puffer,adr+ofs);
+    dbReadN(mbase,mb_msgsize,size);
+    dec(size,ofs);
+    while size>0 do begin
+      blockread(puffer,p^,min(bufs,size),rr);
+      s.Write(PChar(p)^,rr);
+      dec(size,rr);
+      if (size>0) and eof(puffer) then
+        size:=0;
+      end;
+    end;
+ finally
+  close(puffer);
+  if ioresult = 0 then ;
+  if assigned(p) then freemem(p,bufs);
+ end;
+end;
+
 
 procedure Xread(fn:string; append:boolean);
 var f : file;
@@ -495,7 +553,6 @@ begin
   XreadF(0,f);
   close(f);
 end;
-
 
 procedure XmemRead(ofs:word; var size: Integer; var data);
 var puffer   : file;
@@ -1143,6 +1200,9 @@ finalization
 
 {
   $Log$
+  Revision 1.75  2002/01/03 19:15:00  cl
+  - added XreadS (similar to XReadF, but reads message from database into TStream)
+
   Revision 1.74  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
