@@ -314,7 +314,7 @@ begin
   if inithlp then begin
     hlp:='';
     setrahmen(2);
-    openbox(58,18+(actscreenlines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
+    openbox(58,18+(ScreenLines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
     setrahmen(1);
     mh:=hotkeys;
     hotkeys:=false;
@@ -411,6 +411,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/27 10:13:00  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.10  2000/07/21 21:17:45  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -24,8 +24,8 @@ uses
   crt,
 {$ENDIF }
   sysutils,
-  typinfo,
-  typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
+  typinfo, xp0,
+  typeform,keys,inout,maus2,winxp,montage, clip;
 
 const digits : string{[12]} = '-0123456789 ';
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
@@ -1270,6 +1270,12 @@ end.
 
 {
   $Log$
+  Revision 1.21  2000/07/27 10:12:59  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.20  2000/07/22 10:15:36  hd
   - Variant-Typ by Maske
 

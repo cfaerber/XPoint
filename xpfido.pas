@@ -1454,7 +1454,7 @@ procedure FileSelProc(var cr:customrec);
 var s   : string;
     p   : scrptr;
 begin
-  OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
+  OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
   rmessage(2110);   { 'Lade Fileliste ...' }
   list_readfile(FreqLst,0);
   closebox;
@@ -2152,7 +2152,7 @@ begin       { FidoSeekfile:string;************************ }
   end;               { fidolastseek<>oldseek }
   if not brk then    { gefundene Dateien Listen und ggf. requesten }
   begin
-    OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
+    OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
     list_readfile(seekfile,0);
     listVmark(fstestmark);
     listTp(listext);                { 'D' + 'W' }
@@ -2245,6 +2245,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/27 10:13:05  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.23  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

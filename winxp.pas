@@ -43,7 +43,6 @@ const
 {$ENDIF }
       maxpush = 20;
 
-      crline  : byte = 25;      { zeile fÅr Alt-F10-Copyright }
       shadowcol: byte = 8;
 
 type  selproc = procedure(var sel:slcttyp);
@@ -280,7 +279,7 @@ begin
   { LocalScreen Åbernimmt die énderungen }
     if s <> '' then
       begin
-        Count := ((x-1)+(y-1)*zpz)*2;
+        Count := ((x-1)+(y-1)*ScreenWidth)*2;
         FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
         for i := 1 to Length(s) do
         begin
@@ -361,8 +360,8 @@ begin
       Attr := SmallWord(SysReadAttributesAt(x-1, y-1));
     {$ENDIF }
     {$IFDEF LocalScreen }
-      c := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2]);
-      Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]));
+      c := Char(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2]);
+      Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2+1]));
     {$ENDIF }
 {$ENDIF }
 end;
@@ -410,8 +409,8 @@ begin
         TLocalScreen(Buffer)[Offset+1] := Char(SysReadAttributesAt(x, y));
       {$ELSE }
         {$IFDEF LocalScreen }
-          TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*zpz)*2];
-          TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*zpz)*2+1];
+          TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*ScreenWidth)*2];
+          TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*ScreenWidth)*2+1];
         {$ENDIF }
       {$ENDIF }
       Inc(Offset, 2);
@@ -443,7 +442,7 @@ begin
     begin
       {$IFDEF LocalScreen }
         { LocalScreen zeilenweise aktualisieren }
-        Move(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*zpz+l-1)*2], (r-l+1)*2);
+        Move(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*ScreenWidth+l-1)*2], (r-l+1)*2);
       {$ENDIF }
       x := l;
       while x <= r do
@@ -911,6 +910,12 @@ finalization
 end.
 {
   $Log$
+  Revision 1.46  2000/07/27 10:12:59  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.45  2000/07/11 21:39:19  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

@@ -295,7 +295,7 @@ begin
   if inithlp then begin
     hlp:='';
     setrahmen(2);
-    openbox(58,18+(actscreenlines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
+    openbox(58,18+(Screenlines-25)div 2,hlp,x,y,col.colHelp,col.colHelp);
     setrahmen(1);
     mh:=hotkeys;
     hotkeys:=false;

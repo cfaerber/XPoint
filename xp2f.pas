@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     sysutils,typeform,inout,keys,winxp,maske,video,maus2,resource,
+     sysutils,typeform,inout,keys,winxp,maske,maus2,resource,
      xp0,xp1,xp1help,xp1input,xp2, xpglobal;
 
 
@@ -299,7 +299,7 @@ begin
     wrt(31,10,'  '+dup(37,'-')+' Trennzeile');
     at(colbretter);
     mon;
-    clwin(31,80,13,screenlines-2);
+    clwin(31,ScreenWidth,13,screenlines-2);
     end;
 end;
 
@@ -322,7 +322,7 @@ begin
     wrt(31,10,'      532 10.11.91 E.PETERSEN@TRILOS.ZER   Re: U.F');
     at(colmsgs);
     mon;
-    clwin(31,80,13,screenlines-2);
+    clwin(31,ScreenWidth,13,screenlines-2);
     end;
 end;
 
@@ -558,7 +558,7 @@ begin
     wrt(31,5,'Datum      : Fr 06.11.92, 00:11                  ');
     wrt(31,6,'-------------------------------------------------');
     at(collisttext);
-    clwin(31,80,7,screenlines);
+    clwin(31,ScreenWidth,7,screenlines);
     wrt(31,18,'- normaler Text -');
     wrt(31,24,'markiertes');
     wrt(47,25,'Wort');
@@ -577,9 +577,9 @@ begin
     at(collisthigh);
     wrt(31,25,'hervorgehobenes');
     at(collistscroll);
-    for i:=2 to 5 do wrt(80,i,'°');
-    for i:=6 to 10 do wrt(80,i,'Û');
-    for i:=11 to screenlines do wrt(80,i,'°');
+    for i:=2 to 5 do wrt(ScreenWidth,i,'°');
+    for i:=6 to 10 do wrt(ScreenWidth,i,'Û');
+    for i:=11 to screenlines do wrt(ScreenWidth,i,'°');
     mon;
     end;
 end;
@@ -594,7 +594,7 @@ begin
     at(coleditstatus);
     wrt(31,3,' Z 1       S 1           155k         G:\1932.TMP ');
     at(coledittext);
-    clwin(31,80,4,screenlines);
+    clwin(31,ScreenWidth,4,screenlines);
     wrt(31,7,'- normaler Text -');
     at(coleditquote[3]);
     wrt(31,9,'>>> Quote Ebene 3');
@@ -1133,6 +1133,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/27 10:13:01  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.20  2000/07/20 16:49:57  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

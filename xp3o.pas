@@ -148,7 +148,7 @@ var
 begin
   mt:=m2t; m2t:=false;            { Uhr aus }
   kd:=keydisp; keydisp:=true;     { Funktionskeys ein }
-  wpushs(1,80,1,screenlines,'-'); { Ganzen Screen sichern, ohne Rahmen }
+  wpushs(1,ScreenWidth,1,screenlines,'-'); { Ganzen Screen sichern, ohne Rahmen }
   showscreen(false);              { Hauptmenue zeigen }
   Auto_Empfsel(cr);
   m2t:=mt;
@@ -1465,6 +1465,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/27 10:13:01  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.28  2000/07/21 20:56:24  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

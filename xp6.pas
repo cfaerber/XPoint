@@ -115,7 +115,7 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses video,xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
@@ -467,14 +467,8 @@ begin
   if edpush then begin
     attrtxt(col.coledithead);
     moff;
-    { Kommentar kann entfernt werden, wenn es in den anderen Versionen laeuft
-      hd 2000-06-30 }
-//{$IFDEF NCRT }
     { Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden }
-    wpush(1,GetScreenCols,1,GetScreenLines,'-');
-//{$ELSE }
-//    wpush(1,80,1,2,'-');         { 'Nachricht an  ' / 'Nachricht in  ' }
-//{$ENDIF }
+    wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
     p:=cpos('@',empfaenger);
     wrt(1,1,' ');
     if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
@@ -2123,6 +2117,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/07/27 10:13:03  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.55  2000/07/22 14:05:27  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

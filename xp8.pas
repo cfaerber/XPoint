@@ -1079,7 +1079,7 @@ begin
     else begin
       if fido or maus or qwk then
         ReadBoxpar(netztyp,box);
-      OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+      OpenList(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
                  'APGD/'+iifs(_maus,'VSC:080/',''));
       list_readfile(lfile,0);
       case art of
@@ -1603,6 +1603,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/27 10:13:04  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.21  2000/07/26 08:20:13  mk
   - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
 

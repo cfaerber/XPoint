@@ -111,14 +111,33 @@ end;
 }
 
 procedure MenuConfigAnzeigeZeilen;
+var
+  x, y: byte;
+  aLines, aCols: Integer;
+  MaxLines, MaxCols: Integer;
+  brk: boolean;
 begin
-  ParZeilen:=0;
-  lines(screenlines,fnkeylines);
-  showscreen(false);
-  XPhilite:=0;
-  showlastkeys;
-  aufbau:=true;
-  GlobalModified;
+  aLines := ScreenLines;
+  aCols := ScreenWidth;
+  SysGetMaxScreenSize(MaxLines, MaxCols);
+  dialog(30,4,'Bildschirmgr”áe einstellen',x,y);     // 'Bildschirmgr”áe einstellen'
+  maddint(3,2,'Zeilen  ',aLines,4,3,25, MaxLines);   // 'Zeilen'
+  maddint(3,3,'Spalten ', aCols, 4,3,80, MaxCols);   // 'Spalten'
+  readmask(brk);
+  enddialog;
+  freeres;
+  if not brk then
+  begin
+    ParZeilen:=0;
+    ScreenLines := aLines;
+    ScreenWidth := aCols;
+    lines(screenlines,fnkeylines);
+    showscreen(false);
+    XPhilite:=0;
+    showlastkeys;
+    aufbau:=true;
+    GlobalModified;
+  end;
 end;
 
 procedure menuopt(t:taste);
@@ -572,6 +591,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/07/27 10:13:02  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.20  2000/07/14 11:35:42  mk
   - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
 

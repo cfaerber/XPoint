@@ -27,8 +27,8 @@ uses
 {$IFDEF CAPI }
   capi,
 {$ENDIF CAPI }
-     printerx,mouse,maus2,uart,resource,lister,editor,video,
-     xp0,xp1,xp1input,xpdatum, xpglobal;
+     printerx,mouse,maus2,uart,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+     xpglobal;
 
 procedure options;
 procedure UI_options;
@@ -1494,6 +1494,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/07/27 10:13:00  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.48  2000/07/21 20:56:23  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 

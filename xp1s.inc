@@ -55,11 +55,7 @@ var sm2t     : boolean;
     savecursor;
     cursor(curoff);
     w1:=windmin; w2:=windmax;
-{$IFDEF NCRT }
     window(1,1,ScreenWidth,ScreenLines);
-{$ELSE }
-    window(1,1,80,25);
-{$ENDIF }
     if length(prog)<=74 then
       message(prog)
     else begin
@@ -100,7 +96,7 @@ begin
                 m2t:=false;
               end;
       3   : begin
-              clwin(1,80,4,screenlines-2);
+              clwin(1,ScreenWidth,4,screenlines-2);
               gotoxy(1,5);
             end;
     end;
@@ -241,7 +237,7 @@ var brk    : boolean;
     for i:=1 to exthdlines do begin
       readln(t,s);
       if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79))
-      else mwrt(1,lfirst,dup(80,'Ä'));
+      else mwrt(1,lfirst,dup(ScreenWidth,'Ä'));
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
@@ -453,6 +449,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/07/27 10:13:00  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.30  2000/07/23 10:01:00  mk
   - memavail wo moeglich rausgenommen
 

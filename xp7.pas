@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
       dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
-      video,maske,maus2,montage,lister,resource,stack,
+      maske,maus2,montage,lister,resource,stack,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
@@ -1559,6 +1559,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/27 10:13:03  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.25  2000/07/23 10:01:02  mk
   - memavail wo moeglich rausgenommen
 

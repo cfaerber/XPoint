@@ -26,8 +26,15 @@ uses
 {$ENDIF }
 {$IFDEF Win32 }
   windows,
+  xpwin32,
 {$ENDIF }
-  dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
+  dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,crc,xpglobal, classes;
 
@@ -133,7 +140,7 @@ procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
 procedure SetExtraktMenu;
 function  getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
-procedure setscreensize(newmode:boolean);
+procedure setscreensize;
 procedure lines(screen,fnkey:byte);   { setzt gl usw. }
 procedure xp_maus_aus;
 procedure xp_maus_an(x,y: integer16);
@@ -812,7 +819,7 @@ begin
     mf:=forcecolor; forcecolor:=false; mt:=lastattr;
     attrtxt(7);
     moff;
-    clwin(1,80,iif(total,1,2),screenlines);
+    clwin(1,ScreenWidth,iif(total,1,2),screenlines);
     mon;
     attrtxt(mt);
     forcecolor:=mf;
@@ -993,50 +1000,18 @@ end;
 
 { Zeilenzahl einstellen; evtl. Videomodus zurÅcksetzen }
 
-procedure setscreensize(newmode:boolean);
-var ma  : map;
-    n,i : integer;
-{$IFDEF Win32 }
-  procedure SetScrXY(X,Y: Integer);
-  var
-    R: TSmallRect;
-    Size: TCoord;
-  begin
-    Size.X := X;
-    Size.Y := Y;
-    SetConsoleScreenBufferSize(OutHandle, Size);
-    R.Left   := 0;
-    R.Top    := 0;
-    R.Right  := Size.X - 1;
-    R.Bottom := Size.Y - 1;
-    SetConsoleWindowInfo(OutHandle, True, R);
-  end;
-{$ENDIF }
+procedure setscreensize;
+var
+  ma  : map;
+  n,i : integer;
 begin
-{$IFDEF NCRT }
-  screenlines:= GetScreenLines;
-  iosclines:=screenlines;
-  crline:=screenlines;
-  actscreenlines:=screenlines;
-  screenwidth:=GetScreenCols;
-  zpz:= GetScreenCols;
-  cursor(curoff);
+  // Modus nochmal setzen
+  SysSetScreenSize(ScreenLines, ScreenWidth);
+  screenlines := SysGetScreenLines;
+  screenwidth := SysGetScreenCols;
   window(1,1,screenwidth,screenlines);
-{$ELSE }
-  screenlines:=GetScreenlines;
-{$IFDEF Win32 }
-  SetScrXY(screenwidth,ScreenLines);
-  ScreenLines := GetScreenLines;
-{$ENDIF }
-  if (screenlines<>25) or (screenlines<>getscreenlines) then
-     setscreenlines(screenlines);
-  iosclines:=screenlines;
-  crline:=screenlines;
-  actscreenlines:=screenlines;
-  screenwidth:=zpz;
   cursor(curoff);
-  window(1,1,80,25);
-{$ENDIF }
+
   getmem(ma,sizeof(menuarray));
   splitmenu(ZeilenMenue,ma,n,true);
   for i:=1 to n do
@@ -1080,7 +1055,7 @@ procedure showscreen(newmode:boolean);
 begin
   xp_maus_aus;
   attrtxt(7);
-  setscreensize(newmode);
+  setscreensize;
 {$IFDEF NCRT }
   { Seltsamerweise ist der Wert von Screenlines in der Prozedur
   lines trotz der neuen Festsetzung 25 -> Workaround }
@@ -1117,7 +1092,7 @@ end;
 
 procedure resetvideo;
 begin
-  setscreenlines(screenlines);
+//  setscreenlines(screenlines);
   setbackintensity;
 end;
 
@@ -1146,7 +1121,7 @@ end;
 
 procedure lines(screen,fnkey:byte);
 begin
-  screenlines:=screen; iosclines:=screen;
+  screenlines:=screen;
   fnkeylines:=fnkey;
   gl:=screenlines-4-fnkeylines;
 end;
@@ -1156,7 +1131,7 @@ end;
 procedure getpos(width,height:byte; var x,y:byte);
 begin
   x:=(screenwidth-width)div 2 +1;
-  y:=(actscreenlines-height+1) div 2 +1;
+  y:=(ScreenLines-height+1) div 2 +1;
 end;
 
 
@@ -1344,7 +1319,7 @@ begin
   truncstr(txt,screenwidth-4);
   savecursor; lcol:=textattr;
   w1:=windmin; w2:=windmax;
-  window(1,1,80,25);
+  window(1,1,ScreenWidth,ScreenLines);
   msgbox(length(txt)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
   mwrt(x+3,y+2,left(txt,screenwidth-6));
   errsound;
@@ -1483,7 +1458,7 @@ begin
   if (pos('*',name)>0) or (pos('?',name)>0) then begin
     selcol;
     pushhp(89);
-    name:=fsbox(actscreenlines div 2 - 5,name,'','',changedir,false,false);
+    name:=fsbox(ScreenLines div 2 - 5,name,'','',changedir,false,false);
     pophp;
     end;
 end;
@@ -2043,6 +2018,12 @@ finalization
 end.
 {
   $Log$
+  Revision 1.71  2000/07/27 10:12:59  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.70  2000/07/26 08:20:13  mk
   - VP kann jetzt wieder compilieren, allerdings ohne NNTP Support
 

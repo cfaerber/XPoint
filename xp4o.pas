@@ -1914,7 +1914,7 @@ var ar   : ArchRec;
 begin
   if abs(typ)=ArcDWC then
     renameDWC;
-  OpenList(1,80,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
+  OpenList(1,ScreenWidth,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
   OpenArchive(fn,typ,ar);
   listcrp(ShowArch);
   listtp(ArcSpecial);
@@ -1950,7 +1950,7 @@ begin
   dec(arcbufp);
   CloseList;
   attrtxt(col.colkeys);
-  mwrt(1,2,sp(80));
+  mwrt(1,2,sp(ScreenWidth));
   showlastkeys;
   if abs(typ)=ArcDWC then
     _era(fn);
@@ -2421,6 +2421,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/07/27 10:13:02  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.58  2000/07/23 10:01:01  mk
   - memavail wo moeglich rausgenommen
 

@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
+  sysutils,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
@@ -116,7 +116,7 @@ begin
     termlines:=screenlines;
     m2t:=false;
     window(1,1,80,termlines);
-    windmax:=zpz-1+(termlines-1)*256;
+    windmax:=ScreenWidth-1+(termlines-1)*256;
     end;
   writeln;
   disp_DT;
@@ -143,7 +143,7 @@ begin
   else
     window(1,1,80,termlines);
   restcursor;
-  windmax:=zpz-1+256*(screenlines-1);
+  windmax:=ScreenWidth-1+256*(screenlines-1);
   attrtxt(la);
 end;
 
@@ -762,15 +762,15 @@ var p     : pointer;
     mx,my : byte;
 begin
   mx:=wherex; my:=wherey;
-  getmem(p,(screenlines-1)*zpz*2);
+  getmem(p,(screenlines-1)*ScreenWidth*2);
   moff;
 {$IFNDEF ver32}
-  Move(mem[base:iif(TermStatus,0,2*zpz)],p^,(screenlines-1)*zpz*2);
+  Move(mem[base:iif(TermStatus,0,2*ScreenWidth)],p^,(screenlines-1)*ScreenWidth*2);
   termscr;
-  Move(p^,mem[base:iif(TermStatus,2*zpz,0)],(screenlines-1)*zpz*2);
+  Move(p^,mem[base:iif(TermStatus,2*ScreenWidth,0)],(screenlines-1)*ScreenWidth*2);
 {$ENDIF}
   mon;
-  freemem(p,(screenlines-1)*zpz*2);
+  freemem(p,(screenlines-1)*ScreenWidth*2);
   termlines:=iif(TermStatus,screenlines-1,screenlines);
   gotoxy(mx,min(my,termlines));
 end;
@@ -1610,6 +1610,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/27 10:13:05  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.18  2000/07/12 14:43:48  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

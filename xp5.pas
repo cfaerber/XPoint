@@ -31,7 +31,7 @@ uses
   xplinux,
 {$ENDIF}
       dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
-      video,datadef,database,maus2,maske,clip,resource,
+      datadef,database,maus2,maske,clip,resource,
       xp0,xp1,xp1input,xp1o,xp1o2;
 
 procedure kalender;
@@ -548,7 +548,7 @@ var c       : char;
         else if not ss then begin
           ss:=true;
           x:=random(78)+2;
-          y:=random(vlines)+1;
+          y:=random(screenlines)+1;
           wrt(x,y,'ú');
           state:=random(40)+8;
           if random>=0.2 then xs:=3
@@ -570,7 +570,7 @@ var c       : char;
     t:=timediff(endtime,time)+1;
     if color then attrtxt(8)
     else attrtxt(7);
-    wrt(zpz-8,1,' '+formi(t div 3600,2)+':'+formi((t div 60)mod 60,2)+':'+formi(t mod 60,2));
+    wrt(ScreenWidth-8,1,' '+formi(t div 3600,2)+':'+formi((t div 60)mod 60,2)+':'+formi(t mod 60,2));
   end;
 
 begin
@@ -697,7 +697,7 @@ begin
     if app then append(t)
     else rewrite(t);
     for y:=1 to screenlines do begin
-      for x:=1 to 80 do
+      for x:=1 to ScreenWidth do
         write(t,copychr(x,y));
       writeln(t);
       end;
@@ -923,6 +923,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/07/27 10:13:03  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.34  2000/07/24 16:08:03  mk
   - konstanten Versionsstring ausgebaut
 

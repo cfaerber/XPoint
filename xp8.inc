@@ -79,7 +79,7 @@ begin
   if not exist(fl) then begin
     rfehler1(853,box); exit;
     end;
-  OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+  OpenList(1,iif(_maus,screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
              'APGD/'+iifs(_maus,'VSC:080/',''));
   list_readfile(fl,0);
   case art of
@@ -328,6 +328,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/27 10:13:04  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.6  2000/07/21 17:14:40  hd
   - Anpassung an die Datenbank (AnsiString)
 

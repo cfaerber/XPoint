@@ -175,7 +175,7 @@ var size   : longint;
 
   procedure wrs(s:string);
   begin
-    s:=left(s,zpz)+#13#10;
+    s:=left(s,ScreenWidth)+#13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
     if left(s,5)<>'-----' then lasttrenn:=false;
@@ -1058,6 +1058,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/07/27 10:13:01  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.36  2000/07/23 10:01:01  mk
   - memavail wo moeglich rausgenommen
 

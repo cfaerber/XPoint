@@ -293,7 +293,7 @@ var d     : DB;
   label again;
   begin
     showkeys(10);
-    OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
+    OpenList(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
     list_readfile(fs+'.fl',0);
     listVmark(testmark);
   again:
@@ -535,6 +535,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/07/27 10:13:04  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.11  2000/07/21 17:14:40  hd
   - Anpassung an die Datenbank (AnsiString)
 

@@ -31,6 +31,7 @@ uses
   xpglobal,		{ Nur wegen der Typendefinition }
   NetCall,		{ TNetcall }
   IPAddr,		{ TIP }
+  winsock,
   Sockets,		{ Socket-Interface }
   sysutils;
 
@@ -155,7 +156,7 @@ begin
   { Adresse uebernehmen }
   FAddr.Addr:= Host.Raw;
   { Verbinden }
-  FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
+  FHandle:= Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if Sockets.Connect(FHandle, FAddr, tin, tout) then begin
     reset(tin);
     rewrite(tout);
@@ -208,9 +209,15 @@ end;
 end.
 {
 	$Log$
+	Revision 1.3  2000/07/27 10:12:59  mk
+	- Video.pas Unit entfernt, da nicht mehr noetig
+	- alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+	- an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+	- Dialog zur Auswahl der Zeilen/Spalten erstellt
+
 	Revision 1.2  2000/07/25 18:02:18  hd
 	- NNTP-Unterstuetzung (Anfang)
-
+	
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
 	

@@ -367,17 +367,17 @@ var ax,p,myp  : integer;
         if maussel then begin
           slx:=min(xx2,75-width);
           sly:=max(3,yy-p-a);
-          sll:=min(lines,iosclines-sly-1);
+          sll:=min(lines,ScreenLines-sly-1);
           end
         else
-          if (yy-a<=iosclines-3-slmin) or (yy-a+lines+2<=iosclines-1) then begin
-            slx:=min(xx2,75-width); sly:=yy-a+1; sll:=min(lines,iosclines-3-yy+a);
+          if (yy-a<=ScreenLines-3-slmin) or (yy-a+lines+2<=ScreenLines-1) then begin
+            slx:=min(xx2,75-width); sly:=yy-a+1; sll:=min(lines,ScreenLines-3-yy+a);
             end
           else begin
             i:=lines div 2;
             slx:=min(75-width,xx2+7);
-            sly:=max(3,min(yy-a-i+1,iosclines-2-lines));
-            sll:=min(iosclines-2-sly,lines);
+            sly:=max(3,min(yy-a-i+1,ScreenLines-2-lines));
+            sll:=min(ScreenLines-2-sly,lines);
             end;
       if p>sll then begin
         sa:=p-sll; p:=sll; end;
@@ -1068,6 +1068,12 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.25  2000/07/27 10:12:58  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.24  2000/07/21 21:17:43  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

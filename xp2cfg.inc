@@ -290,8 +290,6 @@ begin
   maskcheckbuttons;
 
   randomize;
-  ScreenWidth:= GetScreenCols;
-  { screenwidth:=80; }
   iomaus:=ParMaus;
   mausfx:=8;
   UseMulti2:=ParWintime<2;
@@ -413,7 +411,8 @@ begin
   QuoteBreak:=79;
   QuoteChar:='> '; qchar:=QuoteChar;
   OtherQuoteChars:=false;
-  Screenlines:=25;
+  Screenlines := 25;
+  ScreenWidth := 80;
 {$IFDEF UnixFS }
   temppath:='/tmp/';                        {alt: temppath:=ownpath;}
   extractpath:=ownpath+'files/';            {alt: extractpath:='';}
@@ -791,6 +790,7 @@ begin
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
   otherqcback:=otherquotechars;
   writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
+  writeln(t,'ScreenCols=', ScreenWidth);
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
   writeln(t,'BlackSaver=',jnf(blacksaver));
@@ -1343,6 +1343,7 @@ begin
           getx(su,  'otherquotechars',otherquotechars) or
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
           getb(su,  'screenlines',screenlines) or
+          getb(su,  'screencols', ScreenWidth) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
           gets(s,su,'sendfiledir',sendpath,79) or
@@ -1695,6 +1696,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.81  2000/07/27 10:13:00  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.80  2000/07/23 10:01:00  mk
   - memavail wo moeglich rausgenommen
 

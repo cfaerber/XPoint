@@ -25,8 +25,14 @@ uses
 {$IFDEF Linux}
   xplinux,
 {$ENDIF}
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
   sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-  databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
+  databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
   xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,
 {$IFDEF XPEasy }
@@ -168,7 +174,7 @@ begin
   iomaus:=false;
   n:=res2anz(202);
   writeln;
-  sclines:=getscreenlines;
+  sclines:=Screenlines;
   for i:=1 to n do begin
     writeln(getres2(202,i));
     if (i+5) mod (sclines-1)=0 then
@@ -1071,6 +1077,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/07/27 10:13:00  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.64  2000/07/22 14:05:26  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

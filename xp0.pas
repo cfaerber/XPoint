@@ -525,11 +525,11 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigr”áe / KB }
-		  nntp_ip   : string;		{ NNTP: IP oder Domain }
-		  nntp_port : integer;		{ NNTP: Port, default: 119 }
-		  nntp_id   : string;		{ NNTP: User-ID, falls noetig }
-		  nntp_pwd  : string;		{ NNTP: Password, wenn noetig }
-		  LastCall  : TDateTime;	{ Letzter Call }
+                  nntp_ip   : string;           { NNTP: IP oder Domain }
+                  nntp_port : integer;          { NNTP: Port, default: 119 }
+                  nntp_id   : string;           { NNTP: User-ID, falls noetig }
+                  nntp_pwd  : string;           { NNTP: Password, wenn noetig }
+                  LastCall  : TDateTime;        { Letzter Call }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -661,7 +661,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        cfgmodified: boolean = false;   { Einstellungen ge„ndert }
        DisableAltN: boolean = false;   { Alt-N deaktiviert      }
        automessaging: boolean = false; { Nachrichten werden nicht-manuell }
-       actscreenlines: integer = 25;
        lockopen   : boolean = false;   { LOCKFILE ge”ffnet }
 
        XPhilite   : byte    = 20;
@@ -1091,6 +1090,12 @@ implementation
 end.
 {
   $Log$
+  Revision 1.81  2000/07/27 10:12:59  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.80  2000/07/25 18:02:18  hd
   - NNTP-Unterstuetzung (Anfang)
 

@@ -23,7 +23,16 @@ uses xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
+  sysutils,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
   archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
@@ -1462,7 +1471,7 @@ begin      { --- select --- }
         end
       else
         attrtxt(col.colbretter);
-      clwin(1,80,4+ya,3+ya+gl);
+      clwin(1,ScreenWidth,4+ya,3+ya+gl);
       case dispmode of
         -1,0 : if brettall then
                  wrm(409)     { 'noch keine Bretter angelegt' }
@@ -2041,6 +2050,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/07/27 10:13:02  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.38  2000/07/26 22:58:33  mk
   -  Userfenster: Strg+G markiert gesamte Adressbuchgruppe
 

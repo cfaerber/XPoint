@@ -37,7 +37,7 @@ uses xpx,
 {$IFDEF OS2 }
      os2base,
 {$ENDIF }
-     dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+     dos,typeform,uart,keys,fileio,inout,help,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpglobal,
@@ -186,6 +186,12 @@ ende:
 end.
 {
   $Log$
+  Revision 1.35  2000/07/27 10:12:59  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.34  2000/07/12 14:43:43  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

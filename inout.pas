@@ -29,6 +29,9 @@ uses
 {$IFDEF Win32 }
   windows,
 {$ENDIF  }
+{$IFDEF os2 }
+  os2base,
+{$ENDIF }
 {$ifdef vp }
   vpsyslow,
 {$endif}
@@ -130,8 +133,6 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        lowattr    : byte     = 0;         { Screen-Attrib lowtxt           }
        forcecolor : boolean  = false;     { Txt-Attribute blockieren       }
 
-       zpz        : word     = 80;        { Zeichen pro Zeile              }
-       iosclines  : byte     = 25;        { Bildschirm-Zeilen              }
        iomaus     : boolean  = true;      { wird mit mouse.maus verknÅpft  }
        UseMulti2  : boolean  = true;      { Tastatur-Warteschleife         }
        AutoUp     : boolean  = false;     { Get: automatisches KeyUp       }
@@ -268,6 +269,7 @@ procedure dummyFN;
 {$IFNDEF NCRT }
 procedure mdelay(msec:word);
 {$ENDIF }
+procedure SetBackIntensity;
 
 { ================= Implementation-Teil ==================  }
 
@@ -326,7 +328,7 @@ begin
   mwo:=o; mwu:=u;
   crt.window(l,o,r,min(u,25));
   if (l=1) and (o=1) and (r=80) and (u=25) then
-    crt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
+    crt.windmax:=ScreenWidth-1 {crt.windmax and $ff} + 256*ScreenLines
   else
     crt.windmax:=crt.windmax and $ff + 256*(u-1);
 end;
@@ -1507,7 +1509,7 @@ end;
 
 Function memadr(x,y:byte):word;
 begin
-  memadr:=2*pred(x)+2*zpz*pred(y);
+  memadr:=2*pred(x)+2*ScreenWidth*pred(y);
 end;
 
 
@@ -1604,6 +1606,25 @@ end;
 {$endif}
 {$ENDIF } { NCRT }
 
+{ hellen Hintergr. akt. }
+
+procedure SetBackIntensity;
+{$IFDEF OS2 }
+var
+  State: VioIntensity;
+{$ENDIF }
+begin
+  {$IFDEF OS2 }
+    with State do
+    begin
+      cb := 6;
+      rType := 2;
+      fs := 1;
+    end;
+    VioSetState(State, 0);
+  {$ENDIF }
+end;
+
 
 initialization
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
@@ -1634,9 +1655,6 @@ initialization
   fillchar(zaehler,sizeof(zaehler),0);
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
-{$IFDEF NCRT }
-  { zpz:= nCols(nScreen); }
-{$ENDIF }
 finalization
 {$IFNDEF NCRT }
   cursor(curon);
@@ -1645,6 +1663,12 @@ finalization
 end.
 {
   $Log$
+  Revision 1.49  2000/07/27 10:12:58  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.48  2000/07/21 21:17:43  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
       dos,typeform,fileio,inout,keys,winxp,montage,
-      video,datadef,database,maus2,maske,clip,resource,printerx,
+      datadef,database,maus2,maske,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
 procedure copyright(wait:boolean);
@@ -1575,6 +1575,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/27 10:13:05  mk
+  - Video.pas Unit entfernt, da nicht mehr noetig
+  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
+  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
+  - Dialog zur Auswahl der Zeilen/Spalten erstellt
+
   Revision 1.16  2000/07/21 20:56:30  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
