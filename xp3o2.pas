@@ -130,13 +130,19 @@ procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
         wrs('CONTROL: cancel <'+ref+'>');
       end;
       wrs('ROT: '+pfad);
-{      p1:=cpos(' ',PmReplyTo);
-      if p1>0 then }  { evtl. ueberfluessige Leerzeichen entfernen }
-{        PmReplyTo:=LeftStr(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));}
+
+      i := replyto.count -1;
+
       for i:=0 to replyto.count-1 do
-        wrs('ANTWORT-AN: '+replyto[i]);
-{      if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
+      begin
+        s := replyto[i];
+        p1:=cpos(' ',s);
+        if p1>0 then
+          s:=LeftStr(s,p1-1)+' '+trim(mid(s,p1+1));
+{       if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
                        then wrs('Antwort-an: '+PmReplyTo);}
+        if s <> '' then wrs('ANTWORT-AN: '+s);
+      end;
       if typ='B'       then wrs('TYP: BIN');
       if datei<>''     then wrs('FILE: ' +LowerCase(datei));
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
@@ -146,8 +152,9 @@ procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
       if organisation<>'' then wrs('ORG: '+organisation);
       if attrib and attrReqEB<>0 then
         if wab<>''       then wrs('EB: '+wab) else
-        for i:=0 to replyto.count-1 do
-          wrs('EB: '+replyto[i])
+        if replyto.count > 0 then
+          for i:=0 to replyto.count-1 do
+            wrs('EB: '+replyto[i])
         else
           wrs('EB:');
       if attrib and attrIsEB<>0  then wrs('STAT: EB');
@@ -456,6 +463,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/11 11:00:48  mk
+  - fixed some of Frank Ellerts header changes
+
   Revision 1.31  2000/12/03 12:38:22  mk
   - Header-Record is no an Object
 
