@@ -318,8 +318,6 @@ function memadr(x,y:byte):word;forward;
 function ticker:longint;
 {[var
   h, m, s, millis : smallword; }
-var
-  Systime: SystemTime;
 begin
 {  DecodeTime(Now, h, m, s, millis);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
@@ -1675,6 +1673,9 @@ end;
 
 {
   $Log$
+  Revision 1.95  2002/10/06 17:52:53  mk
+  - made compilable for DOS
+
   Revision 1.94  2002/09/09 08:42:32  mk
   - misc performance improvements
 
