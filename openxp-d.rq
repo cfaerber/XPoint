@@ -1125,6 +1125,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 19   Grî·e     :
 21   Kommentar :
 22   Attribute :
+
 23   Nachrichtenkopf
 24   ZConnect-Format
 25   Netcall-Format
@@ -1134,6 +1135,34 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 29   Taste drÅcken~
 30   EmpfÑngerliste
 31   Referenzliste
+32   Datenbankinfo
+
+40   Brett-Nr. :
+41   Betreff   :
+42   Absender  :
+43   OrigDatum :
+44   EmpfDatum :
+45   Grî·e     :
+46   Typ       :
+47   HalteFlags:
+48   gelesen   :
+49   unversandt:
+50   Ablage    :
+51   Adresse   :
+52   MsgSize   :
+53   WVdatum   :
+54   MsgID     :
+55   Netztyp   :
+56   ~ Flags   :
+57   Name      :
+58   Flags     :
+59   Mimetyp   :
+
+64   ~(intern)
+65   ~(PM)
+66   ~(Netz)
+67   ~(User)
+
 -
 460  Nachrichten-Header
 461  %s existiert schon. öberschreiben
@@ -3847,6 +3876,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.38  2001/09/14 18:09:56  cl
+# - added database info to message <i>nfo screen
+#
 # Revision 1.37  2001/09/13 13:30:50  ma
 # - reverted to cleaner code
 # - added client mode configuration

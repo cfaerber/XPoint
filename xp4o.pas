@@ -545,7 +545,7 @@ label ende;
         repeat
           seek:=LeftStr(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
 
-          if RegEx then 
+          if RegEx then
           begin 
             RegExpr.Expression := Seek;
             Found := RegExpr.Exec(Such);
@@ -1598,12 +1598,15 @@ var hdp   : Theader;
         end;
       wait(curoff);
       if rlist and (UpperCase(lastkey)='R') then keyboard('R');
+{$IFDEF Debug}
+      if (UpperCase(lastkey)='D') then keyboard('D');
+{$ENDIF}
       closebox;
       end;
   end;
 
   procedure refliste;   { Fenster mit Referenzliste }
-  var 
+  var
     ml, i: integer;
     x, y: Integer;
   begin
@@ -1619,9 +1622,68 @@ var hdp   : Theader;
         wrt(x+3,y+2+i,LeftStr(References[i],72));
       wait(curoff);
       if elist and (UpperCase(lastkey)='E') then keyboard('E');
+{$IFDEF Debug}
+      if (UpperCase(lastkey)='D') then keyboard('D');
+{$ENDIF}
       closebox;
       end;
   end;
+
+{$IFDEF Debug}
+  procedure msgs_tuple;   { Fenster mit Datenbankinfo }
+  var i: integer;
+    x,y: Integer;
+
+    procedure _(id:integer;s:string);
+    begin
+      attrtxt(col.colmboxhigh); wrt(x,y,getres2(459,id));  { 'Empfangsdatum: ' }
+      attrtxt(col.colmbox);     wrt(x+12,y,LeftStr(s,70-15));
+      inc(y);
+    end;
+
+    function brett(s:string):string;
+    begin
+      case s[1] of
+        '$': result:=GetRes2(459,64);
+        '1': result:=GetRes2(459,65);
+        'A': result:=GetRes2(459,66);
+        'U': result:=GetRes2(459,66);
+        else result:=hex(Ord(s[1]),2);
+      end;
+      result:= StrS((Ord(s[2]) shl 0) or (Ord(s[3]) shl 8) or
+        (Ord(s[4]) shl 16) or (Ord(s[5]) shl 24)) + result;
+    end;
+
+  begin
+    msgbox(70,23,getres2(459,32),x,y);   { 'Empfaengerliste' }
+    inc(x,2); inc(y,2);
+
+    _(40,brett(dbReadStrN(mbase,mb_brett)));    { 'Brett-Nr. :' }
+    _(41,dbReadStrN(mbase,mb_betreff));         { 'Betreff   :' }
+    _(42,dbReadStrN(mbase,mb_absender));        { 'Absender  :' }
+    _(43,StrS(dbReadIntN(mbase,mb_origdatum))); { 'OrigDatum :' }
+    _(44,StrS(dbReadIntN(mbase,mb_empfdatum))); { 'EmpfDatum :' }
+    _(45,StrS(dbReadIntN(mbase,mb_groesse)));   { 'Gr”áe     :' }
+    _(46,Chr(dbReadIntN(mbase,mb_typ)));        { 'Typ       :' }
+    _(47,StrS(dbReadIntN(mbase,mb_HalteFlags)));{ 'HalteFlags:' }
+    _(48,StrS(dbReadIntN(mbase,mb_gelesen)));   { 'gelesen   :' }
+    _(49,hex(dbReadIntN(mbase,mb_unversandt),4));{'unversandt:' }
+    _(50,StrS(dbReadIntN(mbase,mb_ablage)));    { 'Ablage    :' }
+    _(51,StrS(dbReadIntN(mbase,mb_adresse)));   { 'Adresse   :' }
+    _(52,StrS(dbReadIntN(mbase,mb_MsgSize)));   { 'MsgSize   :' }
+    _(53,StrS(dbReadIntN(mbase,mb_WVdatum)));   { 'WVdatum   :' }
+    _(54,dbReadStrN(mbase,mb_MsgID));           { 'MsgID     :' }
+    _(55,hex(dbReadIntN(mbase,mb_netztyp),4));  { 'Netztyp   :' }
+    _(57,dbReadStrN(mbase,mb_Name));            { 'Name      :' }
+    _(49,hex(dbReadIntN(mbase,mb_flags),4));    { 'Flags     :' }
+    _(59,dbReadStrN(mbase,mb_MimeTyp));         { 'Mimetyp   :' }
+
+    wait(curoff);
+    if rlist and (UpperCase(lastkey)='R') then keyboard('R');
+    if elist and (UpperCase(lastkey)='E') then keyboard('E');
+    closebox;
+  end;
+{$ENDIF}
 
   function typstr(typ,mimetyp:string):string;
   begin
@@ -1710,6 +1772,11 @@ begin
       else s:=' (';
       s:=s+'R='+getres2(459,31);
       end;
+{$IFDEF Debug}
+    if s<>'' then s:=s+', '
+    else s:=' (';
+    s:=s+'D='+getres2(459,32);
+{$ENDIF}
     if s<>'' then s:=s+')';
     wrt(x+3,y+anz+5,getres2(459,29)+s+' ...');    { Taste druecken / E=Empfaengerliste / R=Referenzliste }
     mon;
@@ -1721,7 +1788,11 @@ begin
       until (t<mausfirstkey) or (t>mauslastkey) or (t=mausleft) or (t=mausright);
       if elist and (UpperCase(t)='E') then empfliste;
       if rlist and (UpperCase(t)='R') then refliste;
-    until (not elist or (UpperCase(t)<>'E')) and (not rlist or (UpperCase(t)<>'R'));
+{$IFDEF Debug}
+      if (UpperCase(t)='D') then msgs_tuple;
+{$ENDIF}
+    until {$IFDEF Debug} (UpperCase(t)<>'D') and {$ENDIF}
+      (not elist or (UpperCase(t)<>'E')) and (not rlist or (UpperCase(t)<>'R'));
     end;
   closebox;
   freeres;
@@ -2441,6 +2512,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2001/09/14 18:09:56  cl
+  - added database info to message <i>nfo screen
+
   Revision 1.113  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
