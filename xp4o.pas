@@ -1758,7 +1758,7 @@ begin
     exdir:=''
   else begin
     p:=pos('$DATEI',UpperCase(decomp));
-    datei:=trim(copy(fn,2,12));
+    datei:=trim(mid(fn, 80));
     if (exdir='') and ((temppath='') or (UpperCase(temppath)=ownpath))
       and exist(datei) then begin
         rfehler(428);   { 'extrahieren nicht m”glich - bitte Temp-Verzeichnis angeben!' }
@@ -1780,7 +1780,7 @@ begin
     else SetCurrentDir(temppath);
     decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
     p:=pos('$ARCHIV',UpperCase(decomp));
-    decomp:=copy(decomp,1,p-1)+abuf[arcbufp].arcname+copy(decomp,p+7,127);
+    decomp:=copy(decomp,1,p-1)+'"'+abuf[arcbufp].arcname+'" "' + copy(decomp,p+8,127)+'"';
     shell(decomp,400,3);
     if exdir='' then begin
       { !?! GoDir(temppath); }    { wurde durch Shell zurckgesetzt }
@@ -1892,10 +1892,11 @@ var ar   : ArchRec;
 
   function prozent:string;
   begin
-    if ar.OrgSize>0 then
-      prozent:=strsrn(ar.CompSize/ar.OrgSize*100,3,1)
-    else
-      prozent:='     ';
+    with ar do
+      if (OrgSize>0) and (OrgSize >= CompSize) then
+        prozent:=strsrn(ar.CompSize/ar.OrgSize*100,3,1)
+      else
+        prozent:='     ';
   end;
 
   procedure renameDWC;
@@ -1930,9 +1931,9 @@ begin
       if (name<>'') or (path='') then
         app_l(iifc(path<>'','*',' ')+forms(name,12)+strsn(orgsize,11)+
               strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
-              dt(datum,uhrzeit))
+              dt(datum,uhrzeit)+'       ' + name)
       else
-        app_l('*'+path);
+        app_l(forms('*'+path+name,80)+path+name);
       ArcNext(ar);
       end;
     end;
@@ -2424,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/10/26 12:59:57  mk
+  - Fixed Bug #112798: Lange Dateinamen in Archiven
+
   Revision 1.73  2000/10/26 12:06:33  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 

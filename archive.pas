@@ -57,7 +57,7 @@ type   arcpath = string[79];
                    orgsize  : longint;       { Gr”áe der Original-Datei }
                    compsize : longint;       { komprimierte Gr”áe       }
                    path     : arcpath;       { Pfad ohne Dateiname }
-                   name     : string[12];
+                   name     : string;
                    attrib   : word;          { DOS-Attribute }
                  end;
 
@@ -609,22 +609,22 @@ label again;
        b:=0;
       while ba(fname)[b]<>#0 do inc(b);
       SetLength(s, b);
-      Move(fname,s[1],b); {s[0]:=chr(b);}
+      Move(fname,s[1],b);
       p:=pos('/',s);
       if p=0 then p:=pos('\',s);
       if p=0 then begin
         p:=pos(':',s);
         if p=0 then begin
-          path:=''; name:=copy(s,1,12);
+          path:=''; name:=s;
           end
         else begin
-          path:=copy(s,1,p); name:=copy(s,p+1,12);
+          path:=copy(s,1,p); name:=mid(s, p+1);
           end;
         end
       else begin
         b:=length(s);
         while (s[b]<>'/') and (s[b]<>'\') do dec(b);
-        name:=copy(s,b+1,12);
+        name:=mid(s, b+1);
         path:=copy(s,1,b);
         for b:=1 to length(path) do
           if path[b]='/' then path[b]:='\';
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/26 12:59:57  mk
+  - Fixed Bug #112798: Lange Dateinamen in Archiven
+
   Revision 1.20  2000/09/28 03:06:07  mk
   - Bugfixes
 
