@@ -975,6 +975,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        SwapMausKeys : boolean;       { Maustasten vertauschen }
        MausDblclck  : byte;          { 4/7/11 }
        MausShInit   : boolean;       { Init nach Shell-Aufruf }
+       MausWheelStep: integer;       { Zeilenzahl für Mauswheel }       
        ConvISO      : boolean;       { ISO-Umlaute im Lister lesbar machen }
        KomArrows    : boolean;       { Kommentarpfeile im Lister anzeigen }
        ListScroller : boolean;       { Scrollbalken bei Mausbedienung }
@@ -1197,6 +1198,9 @@ implementation
 
 {
   $Log$
+  Revision 1.141  2001/09/20 18:27:05  cl
+  - configuration option for mouse wheel step width (no UI yet)
+
   Revision 1.140  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
