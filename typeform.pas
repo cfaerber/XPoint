@@ -359,7 +359,7 @@ function CPosFrom(c:char; const s:string; start: integer):integer;  { schnelles 
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
 function CPosXFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
-function CVal(s:string):longint;             { C Value Integer - nnnn/0nnn/0xnnn }
+function CVal(const s:string):longint;       { C Value Integer - nnnn/0nnn/0xnnn }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
@@ -1101,11 +1101,11 @@ begin
   RVal:=r;
 end;
 
-function CVal(s:string):longint;
+function CVal(const s:string):longint;
 begin
   if LeftStr(s,2)='0x' then     (* 0xnn = hex *)
     CVal:=HexVal(mid(s,3))
-  else if LeftStr(s,2)='0' then (* 0nnn = oct *)
+  else if FirstChar(s)='0' then (* 0nnn = oct *)
     CVal:=OctVal(mid(s,2))
   else                          (* nnnn = dec *)
     CVal:=IVal(s);
@@ -1189,7 +1189,7 @@ begin
   if b then iifc:=c1
   else iifc:=c2;
 end;
-
+                                                                     
 
 function iifr(b:boolean; r1,r2:real):real;
 begin
@@ -1859,6 +1859,9 @@ end;
 
 {
   $Log$
+  Revision 1.120  2002/11/14 00:29:50  mk
+  dido:- fixed bug in cVal
+
   Revision 1.119  2002/11/10 10:55:03  mk
   - fixed bug in CountChar
 
