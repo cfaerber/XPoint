@@ -1530,10 +1530,10 @@
       else if nt=nt_QWK then
       begin
         fl:=12; el:=33;
-        maddstring(3,4,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Eingangspakete       ' }
+        maddstring(3,4,getres2(923,12),sysopinp,el,MaxLenPathname,ValidDirCh + WildCardCh); mhnr(8035);  { 'Eingangspakete       ' }
           msetvfunc(testqwkinfiles);
           if not SysopMode then mdisable;
-        maddstring(3,6,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
+        maddstring(3,6,getres2(923,13),sysopout,el,MaxLenPathname,ValidDirCh + WildCardCh); mhnr(8035);  { 'Ausgangsverzeichnis  ' }
           msetvfunc(testfidodir);
           if not SysopMode then mdisable;
       end
@@ -2366,6 +2366,9 @@
 
 {
   $Log$
+  Revision 1.52  2002/05/23 08:32:01  mk
+  - added WildCardCh
+
   Revision 1.51  2002/05/20 01:12:54  ma
   - fixed uninitialized variable
 

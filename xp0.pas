@@ -105,8 +105,9 @@ const
 {$IFDEF UnixFS }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
-       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
 {$ENDIF }
+       WildCardCh  = '*?';
 
 {$IFDEF UnixFS }
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1229,6 +1230,9 @@ implementation
 
 {
   $Log$
+  Revision 1.161  2002/05/23 08:32:00  mk
+  - added WildCardCh
+
   Revision 1.160  2002/05/20 07:47:55  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 
