@@ -30,6 +30,7 @@ interface
 
 uses
   classes,
+  addresses,
   ncmodem,timer,fidoglob,xpglobal,fileio,osdepend;
 
 type
@@ -55,7 +56,7 @@ type
   TFidomailer = class(TModemNetcall)
   protected
     hello: record h: hellor; crc: xpWord end;
-    aresult: integer; fa: FidoAdr;
+    aresult: integer; FidoAddress: TFTNAddress;
 
     procedure InitHelloPacket;
     function ProductName(pc:xpWord):string;
@@ -71,6 +72,10 @@ type
     function BinkPFileTransfer: byte;
 
   public
+    constructor Create;
+    destructor Destroy;
+
+  public    
     {These HAVE to be initialized when calling PerformNetcall}
     OutgoingFiles,IncomingFiles: TStringList;
     IncomingDir: String;
@@ -198,6 +203,18 @@ begin
   dos.settime(h,min,s,0);
 end; *)
 
+constructor TFidomailer.Create;
+begin
+  inherited Create;
+  FidoAddress := TFTNAddress.Create;
+end;
+
+destructor TFidomailer.Destroy;
+begin
+  FidoAddress.Free;
+  inherited Destroy;
+end;
+
 {$I ncfido-yoohoo.inc}
 {$I ncfido-emsi.inc}
 {$I ncfido-wazoo.inc}
@@ -215,7 +232,7 @@ begin
       if BinkPFileTransfer=0 then aresult:=el_ok;
     end else begin // standard mailer
     for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
-    SplitFido(OwnAddr,FA,2);
+    FidoAddress.FidoAddr := OwnAddr;
     InitHelloPacket;
     repeat
       Ende:=true; aresult:=0;
@@ -243,6 +260,10 @@ end;
 
 {
   $Log$
+  Revision 1.14  2003/01/13 22:05:20  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.13  2002/12/21 05:38:06  dodi
   - removed questionable references to Word type
 

@@ -22,12 +22,8 @@
 
 // Local procedure in xpsendmessage.DoSend
 
-{$IFDEF IN_TSENDUUDATA}
 procedure TSendUUData.CreateMessages;
 var hdp:    THeader;
-{$ELSE}
-procedure CreateMessages;
-{$ENDIF}
 var Count:  Integer;
     MidType:byte;
 var FidoOriginSav: string;
@@ -111,13 +107,17 @@ var FidoOriginSav: string;
     end;
 
     procedure SetCrashInfo;
-    var fa : FidoAdr;
-        ni : NodeInfo;
+    var ni : nodeinfo;
+        fa : TFTNAddress;
     begin
-      GetNodeinfo(hdp.FirstEmpfaenger,ni,2);
-      splitfido(hdp.FirstEmpfaenger,fa,DefaultZone);
-      fa.ispoint:=ni.ispoint;
-      SetCrash(makeFidoAdr(fa,true),true);
+      fa := TFTNAddress.Create(hdp.FirstEmpfaenger,DefaultZone);
+      try
+        GetNodeinfo(fa,ni,2);
+        fa.ispoint:=ni.ispoint;
+        SetCrash(fa,true);
+      finally
+        fa.Free
+      end;
     end;
 
     {-- CreateSingleMessage: Encryption ------------------------------ }
@@ -151,9 +151,9 @@ var FidoOriginSav: string;
       pos:=0;
     
       if data is TMemoryStream then
-        d2:=TMemoryStream(data)             // use as is
+        d2:= TMemoryStream(data)             // use as is
       else begin
-        d2:=TMemoryStream.Create;           // make a copy in memory
+        d2:= TMemoryStream.Create;           // make a copy in memory
         try d2.Size:=data.Size except end;
         data.Seek(0,soFromBeginning);
         CopyStream(data,d2);
@@ -300,21 +300,13 @@ var FidoOriginSav: string;
   begin
     { --- 0. Schritt: Ein paar vorarbeiten ---------------------------- }
 
-{$IFDEF IN_TSENDUUDATA}
     Hdp := THeader.Create;
-{$ELSE}
-    Hdp.Clear;
-{$ENDIF}    
     Hdp.Netztyp := Server.Netztyp;          
 
     { --- 1. Schritt: Body erzeugen ----------------------------------- }
 
     if ntMIME(Server.netztyp) then
       hdp.MIME.mversion := '1.0';
-
-{$IFNDEF IN_TSENDUUDATA}
-    with sData do begin
-{$ENDIF}
 
     if (not partsex) and assigned(orghdp) then
     begin
@@ -844,10 +836,6 @@ var FidoOriginSav: string;
     end; // not intern
 
     s1.Free; s1:=nil;
-
-{$IFNDEF IN_TSENDUUDATA}
-   end // with sData do begin
-{$ENDIF}
   end;
 
   procedure CreateSingleMessage(
@@ -1046,6 +1034,10 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.10  2003/01/13 22:05:19  cl
+// - send window rewrite - Fido adaptions
+// - new address handling - Fido adaptions and cleanups
+//
 // Revision 1.9  2003/01/07 00:56:47  cl
 // - send window rewrite -- part II:
 //   . added support for Reply-To/(Mail-)Followup-To

@@ -35,6 +35,7 @@ uses  xpglobal,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
+  addresses,
   xp0,xp1,xp1o,xp1input,fidoglob;
 
 const nfComp   = $0001;
@@ -76,15 +77,18 @@ type  nodeinfo = record
 procedure MakeNodelistIndex;
 procedure OpenNodeindex(const fn:string);
 procedure CloseNodeindex;
-procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
 function  IsFidoNode(const adr:string):boolean;
-function  FidoIsISDN(const fa:FidoAdr):boolean;
+function  FidoIsISDN(fa: TFTNAddress):boolean;
 { returns node name if node supports BinkP; node name may not be a valid IP }
 { address, there seems to be no standard :-( }
-function  FidoIsBinkP(var fa:FidoAdr):string;
+function  FidoIsBinkP(fa: TFTNAddress):string;
 procedure KeepNodeindexOpen;
 procedure KeepNodeindexClosed;
-procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
+
+procedure GetNodeinfo(fa: TFTNAddress; var ni:nodeinfo; pointtyp:integer); overload;
+procedure GetNodeinfo(const adr: string; var ni:nodeinfo; pointtyp:integer); overload;
+procedure GetNodeuserInfo(fa:TFTNAddress; var ni:NodeInfo);
+function  GetNodeAddressInfo(fa: TFTNAddress; var ni:NodeInfo): boolean;
 
 function  FidoRequest(node,files:string):string;
 { procedure FidoTransfer; }
@@ -95,17 +99,17 @@ procedure DelFidolist;
 function  TestNodelist:boolean;
 function  testDefbox:boolean;
 
-function  FidoFilename(const fa:FidoAdr):string;
+function  FidoFilename(fa:TFTNAddress):string;
 function  CrashFile(adr:string):string;
 procedure GetReqFiles(adr:string; var files:string);
-function  FidoPhone(var fa:FidoAdr; var nl_phone:string):string;
-function  FidoAppendRequestfile(var fa:FidoAdr):string;
-procedure ShrinkPointToNode(var fa:FidoAdr; var ni:NodeInfo);
-function  FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
+function  FidoPhone(fa: TFTNAddress; var nl_phone:string):string;
+function  FidoAppendRequestfile(fa:TFTNAddress):string;
+procedure ShrinkPointToNode(fa:TFTNAddress; var ni:NodeInfo);
+function  FindFidoAddress(const fn:string; fa: TFTNAddress):boolean;
 
 procedure NodelistBrowser;
 
-procedure SetCrash(adr:string; insert:boolean);
+procedure SetCrash(fa: TFTNAddress; insert:boolean);
 procedure SetRequest(const adr,files:string);  { '' -> Request loeschen }
 
 procedure NodelistIndex;
@@ -237,7 +241,7 @@ var x,y        : Integer;
     ll         : byte;
     bufnets    : xpWord;
     ixh        : idxheader;
-    fa         : FidoAdr;
+    faddr      : TFTNAddress;
     points     : integer;
     pp         : ^pointa;
 
@@ -803,18 +807,23 @@ begin
               if (ltyp=nlFDpointlist) and (k='Boss') then begin
                 ss:=mid(s,p+1);
                 p:=cposx(',',ss);
-                SplitFido(LeftStr(ss,p-1),fa,zone);
-                if fa.zone<>zone then begin
+
+                faddr := TFTNAddress.Create(LeftStr(ss,p-1),zone);
+                try
+                if faddr.zone<>zone then begin
                   k:='Zone'; newnet:=true;
-                end else if fa.net<>net then begin
+                end else if faddr.net<>net then begin
                   k:='Host'; newnet:=true;
-                end else if fa.node<>node then begin
+                end else if faddr.node<>node then begin
                   k:='Node'; newnet:=false;
                 end else begin
                   k:=''; newnet:=false;
                 end;
-                node:=fa.node;
-                new_zone:=fa.zone; new_net:=fa.net;
+                node:=faddr.node;
+                new_zone:=faddr.zone; new_net:=faddr.net;
+                finally
+                  faddr.Free;
+                end;
               end else
                 newnet:=(k='Host') or (k='Region') or (k='Zone');
             end;
@@ -875,10 +884,14 @@ begin
                     newnet:=false;
                     delete(s,1,p);
                     p:=cpos(',',s);
-                    splitfido(LeftStr(s,p-1),fa,zone);
-                    np^[nodes].node:=fa.node;
-                    np^[nodes].adr:=filepos(idf);
-                    net:=fa.net;
+                    faddr := TFTNAddress.Create(LeftStr(ss,p-1),zone);
+                    try
+                      np^[nodes].node:=faddr.node;
+                      np^[nodes].adr:=filepos(idf);
+                      net:=faddr.net;
+                    finally
+                      faddr.Free;
+                    end;
                     Display;
                     inc(nodes);
                   end;
@@ -1162,9 +1175,8 @@ end;
 
 { Pointtyp: 0=nur Node, 1=Point/Node, 2=bei nicht gef. Point wiederholen }
 
-procedure GetNodeinfo(const adr:string; var ni:nodeinfo; pointtyp:integer);
-var fa     : fidoadr;
-    i,netp : integer;
+procedure GetNodeinfo(fa: TFTNAddress; var ni:nodeinfo; pointtyp:integer);
+var i,netp : integer;
     bp     : ^netrecl;
     banz   : xpWord;
     nanz   : xpWord;
@@ -1181,7 +1193,7 @@ label again;
 begin
   fillchar(ni,sizeof(ni),0);
   if not Nodelist.Open then exit;
-  splitfido(adr,fa,2);
+
   if pointtyp=0 then fa.ispoint:=false;
   if not nodelistopen then begin
     reset(nodef,1);
@@ -1262,16 +1274,32 @@ again:
     close(nodef);
 end;
 
+procedure GetNodeinfo(const adr: string; var ni:nodeinfo; pointtyp:integer); overload;
+var fa : TFTNAddress;
+begin
+  fa := TFTNAddress.Create(adr,DefaultZone);
+  try
+    GetNodeInfo(fa,ni,1);
+  finally
+    fa.Free;
+  end;
+end;
 
 function IsFidoNode(const adr:string):boolean;
 var ni : NodeInfo;
+    fa : TFTNAddress;
 begin
-  GetNodeInfo(adr,ni,1);
-  IsFidoNode:=ni.found;
+  fa := TFTNAddress.Create(adr,DefaultZone);
+  try
+    GetNodeInfo(fa,ni,1);
+  finally
+    fa.Free;
+  end;
+  Result := ni.found;
 end;
 
 
-procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
+procedure GetNodeuserInfo(fa:TFTNAddress; var ni:NodeInfo);
 type ubufa  = array[0..blocksize-1] of byte;
 var  f     : file;
      name  : string;
@@ -1438,8 +1466,8 @@ begin
         else s:=List.GetSelection;
         end;
       if s<>'' then begin
-        SplitFido(trim(copy(s,26,15)),fa,DefaultZone);
-        GetNodeinfo(trim(copy(s,26,15)),ni,1);
+        fa.FidoAddr := trim(copy(s,26,15));
+        GetNodeinfo(fa,ni,1);
         end
       else
         ni.found:=false;
@@ -1452,6 +1480,15 @@ ende:
   dispose(buf);
 end;
 
+function GetNodeAddressInfo(fa:TFTNAddress; var ni:NodeInfo): boolean;
+begin
+  if fa.Valid then
+    GetNodeinfo(fa,ni,1)
+  else
+    GetNodeUserInfo(fa,ni);
+  Result := ni.Found;  
+end;
+
 
 //static - rename?
 var   active : boolean = false;
@@ -1461,7 +1498,7 @@ var x,y,b: Integer;
     brk  : boolean;
     ni   : ^NodeInfo;
     adr  : string;
-    fa   : fidoadr;
+    faddr: TFTNAddress;
     first: boolean;
     NlItem :TNodeListItem;
 begin
@@ -1491,8 +1528,7 @@ begin
     if first and (aktdispmode in [10..19]) then begin
       dbGo(mbase,AktDisprec);
       if not dbEOF(mbase) and not dbBOF(mbase) and (mbNetztyp=nt_Fido) then begin
-        splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
-        adr:=MakeFidoAdr(fa,false);
+        adr := FTNNormaliseAddress(dbReadStrN(mbase,mb_absender),DefaultZone);
         brk:=false;
         end;
       end;
@@ -1503,6 +1539,7 @@ begin
       end;
     first:=false;
     if not brk then begin
+    (*
       if not isNodeAddress(adr) then begin
         fa.username:=adr;
         getNodeUserInfo(fa,ni^);
@@ -1512,6 +1549,10 @@ begin
         adr:=MakeFidoAdr(fa,true);
         GetNodeinfo(adr,ni^,1);
         end;
+    *)
+      faddr := TFTNAddress.Create(adr,DefaultZone);
+      try    
+      GetNodeAddressInfo(faddr,ni^);
       attrtxt(col.coldialog);
       moff;
     clwin(x+10, x+75, y+2, y+5); { Oberer Block }
@@ -1525,7 +1566,7 @@ begin
         wrt(x+10, y+3, Sysop);
         wrt(x+10, y+4, Telefon);
         wrt(x+10, y+5, copy(MailString(FFlags, True),1,65)); { eMail loeschen }
-        wrt(x+11, y+7, MakeFidoAdr(fa, True));
+        wrt(x+11, y+7, FAddr.FidoAddr);
         b := cpos('@', FFlags);
         if b = 0 then FFlags := '';
         wrt(x+43, y+7, MailString(FFlags, False)); { eMail extrahieren }
@@ -1533,6 +1574,9 @@ begin
         wrt(x+62, y+8, NodeList.GetFilename(datei));
         end;
       mon;
+      finally
+        faddr.Free;
+      end;
       end;
   until brk;
   freeres;
@@ -1652,7 +1696,8 @@ label again, NewStart;
 
   procedure GetAddress(format:integer; var skip:boolean);
   var p  : Integer;
-      fa : FidoAdr;
+      dummy: string;
+      dummi: Integer;
   begin
     skip:=false;
     case format of
@@ -1686,8 +1731,7 @@ label again, NewStart;
 
       nlFDpointlist: if k='BOSS' then begin
                        ss:=LeftStr(ss,cposx(',',ss)-1);
-                       splitfido(ss,fa,azone);
-                       azone:=fa.zone; anet:=fa.net; anode:=fa.node;
+                       FTNParse(ss,dummy,azone,anet,anode,dummi,azone);
                        skip:=true;
                        end
                      else if (k='') or (k='PVT') then
@@ -2036,10 +2080,15 @@ end;
 { --- File Request --------------------------------------------------- }
 
 function ReqTestNode(var s:string):boolean;  { s. auch XP7.getCrashBox }
-var fa : FidoAdr;
+var fa : TFTNAddress;
     ni : NodeInfo;
 begin
   ni.found := False;
+
+  fa := TFTNAddress.Create(s,DefaultZone);
+  try
+  if not GetNodeAddressInfo(fa,ni) then begin
+(*
   if not IsNodeAddress(s) then begin
     fa.username:=s;
     GetNodeuserInfo(fa,ni);
@@ -2054,12 +2103,17 @@ begin
     end;
   end;
   if not ni.found then begin
+*)  
     if multipos(':/',s) then
       rfehler(2115);   { 'unbekannte Adresse' }
   end else begin
     fa.ispoint:=ni.ispoint;
-    s:=MakeFidoAdr(fa,true);
+    s:=fa.FidoAddr;
   end;
+  finally
+    fa.Free;
+  end;
+
   Result := ni.found;
 end;
 
@@ -2116,11 +2170,11 @@ begin
   closebox;
 end;
 
-procedure ShrinkPointToNode(var fa:FidoAdr; var ni:NodeInfo);
+procedure ShrinkPointToNode(fa:TFTNAddress; var ni:NodeInfo);
 var ni2 : NodeInfo;
 begin
   if fa.ispoint then begin
-    getNodeinfo(MakeFidoadr(fa,false),ni2,1);
+    getNodeinfo(fa,ni2,1);
     if ni2.found and ((ni2.telefon=ni.telefon) or (pos('unpublished',LowerCase(ni.telefon))>0))
     then begin
       fa.ispoint:=false;
@@ -2130,17 +2184,17 @@ begin
 end;
 
 
-procedure GetFAddress(request:boolean; txt:string; var fa:FidoAdr;
+procedure GetFAddress(request:boolean; txt:string; fa:TFTNAddress;
                       var ni:NodeInfo; var brk:boolean; var x,y: Integer);
 var node    : string;
     xx,yy,i : Integer;
     t       : taste;
 begin
   dialog(38,3,txt,x,y);
-  if fa.net+fa.node=0 then
+  if not fa.Valid then
     node:=DefFidoBox
   else
-    node:=MakeFidoAdr(fa,true);
+    node:=fa.FidoAddr;
   maddstring(3,2,getres(2107),node,20,25,''); mhnr(730);  { 'Node/Name ' }
   if request and FileExists(FileLists) and FileExists(FidoDir+'*' + extFl) then 
   begin
@@ -2151,7 +2205,8 @@ begin
   readmask(brk);
   enddialog;
   if not brk then begin
-    if IsNodeaddress(node) then begin
+    if not GetNodeAddressInfo(fa,ni) then begin
+(*    
       SplitFido(node,fa,DefaultZone);
       GetNodeinfo(node,ni,1);
       end
@@ -2160,12 +2215,13 @@ begin
       getNodeUserInfo(fa,ni);
       end;
     if not ni.found then begin      { duerfte eigentlich nicht passieren.. }
+*)
       rfehler(2116);   { 'unbekannte Nodeadresse' }
       brk:=true;
       end
     else begin
       ShrinkPointToNode(fa,ni);
-      node:=MakeFidoAdr(fa,true);
+      node:=fa.FidoAddr;
       if request and (ni.request and rfWaZOO=0) then
         brk:=not ReadJN(getres(2108),true);  { 'Laut Nodelist kein Request bei dieser Box moeglich - trotzdem versuchen' }
       if not brk and (ni.flags and nfCM=0) and (pos('Kratzenberg',ni.sysop)>0)
@@ -2233,12 +2289,12 @@ begin
   testDefbox:=(DefFidobox<>'');
 end;
 
-function FidoFilename(const fa:FidoAdr):string;
+function FidoFilename(fa:TFTNAddress):string;
 begin
   FidoFilename:=FileUpperCase(hex(fa.net,4)+hex(fa.node,4));
 end;
 
-function FidoAppendRequestfile(var fa:FidoAdr):string;
+function FidoAppendRequestfile(fa:TFTNAddress):string;
 var files : string;
     _file : string[30];
     t     : text;
@@ -2246,7 +2302,7 @@ var files : string;
     ff    : string[12];
 begin
   files:='';
-  GetReqFiles(MakeFidoAdr(fa,true),files);
+  GetReqFiles(fa.FidoAddr,files);
   TrimFirstChar(files, '>');
   ff:=FidoFilename(fa)+'.REQ';
   if files<>'' then begin
@@ -2271,10 +2327,14 @@ begin
 end;
 
 function CrashFile(adr:string):string;
-var fa : FidoAdr;
+var fa : TFTNAddress;
 begin
-  splitfido(adr,fa,DefaultZone);
-  CrashFile:=FileUpperCase(FidoFilename(fa)+'.cp');
+  fa := TFTNAddress.Create(adr,DefaultZone);
+  try
+    Result := FileUpperCase(FidoFilename(fa)+'.cp');
+  finally
+    fa.Free;
+  end;  
 end;
 
 procedure GetReqFiles(adr:string; var files:string);
@@ -2343,7 +2403,7 @@ begin
   List.Free;
 end;
 
-function GetFilelist(var fa:fidoadr):string;
+function GetFilelist(fa: TFTNAddress):string;
 var t     : text;
     s     : string[80];
     p     : byte;
@@ -2353,7 +2413,7 @@ begin
   GetFilelist:='';
   assign(t,FileLists);
   if existf(t) then begin
-    node:=MakeFidoadr(fa,true);
+    node:=fa.FidoAddr;
     reset(t);
     found:=false;
     while not found and not eof(t) do begin
@@ -2375,18 +2435,22 @@ end;
 function FidoRequest(node,files:string):string;
 var brk   : boolean;
     x,y   : Integer;
-    fa    : FidoAdr;
+    fa    : TFTNAddress;
     ni    : NodeInfo;
     atonce: boolean;
     doreq : boolean;
 begin
   fidorequest:='';
   if not TestNodelist or not TestDefbox then exit;
+  fa := TFTNAddress.Create(node,DefaultZone);
+  try
+(*  
   if node='' then fillchar(fa,sizeof(fa),0)
   else SplitFido(node,FA,DefaultZone);
+*)
   getFAddress(true,getres(2111),fa,ni,brk,x,y);   { 'File-Request' }
   if brk then exit;
-  node:=MakeFidoAdr(fa,true);
+  node:=fa.FidoAddr;
   getReqFiles(node,files);
   TrimFirstChar(files, '>');
   atonce:=false;
@@ -2410,23 +2474,26 @@ begin
     if not atonce then mdelay(500);
     closebox;
     if atonce and doreq then
-      fidorequest:=makeFidoAdr(fa,true);
+      fidorequest:=fa.FidoAddr;
     end;
+  finally
+    fa.free;
+  end;
 end;
 
 
-procedure SetCrash(adr:string; insert:boolean);
+procedure SetCrash(fa: TFTNAddress; insert:boolean);
 var t1,t2   : text;
     s,files : string;
     ni      : NodeInfo;
-    fa      : FidoAdr;
 begin
-  SplitFido(adr,fa,DefaultZone);
   if fa.ispoint then begin     { evtl aus Pointadresse Nodeadresse machen }
-    GetNodeinfo(adr,ni,1);
+    GetNodeinfo(fa,ni,1);
     ShrinkPointToNode(fa,ni);
+(*    
     if not fa.ispoint then
       adr:=MakeFidoAdr(fa,false);
+*)
     end;
 
   files:='';
@@ -2437,7 +2504,7 @@ begin
     reset(t1);
     while not eof(t1) do begin
       readln(t1,s); s:=trim(s);
-      if s=adr then
+      if s=fa.FidoAddr then
         repeat
           readln(t1,s); s:=trim(s);
           if (s<>'') and (s<>CrashID) then files:=s;
@@ -2454,7 +2521,7 @@ begin
     erase(t1);   { alte ReqDat loeschen }
     end;
   if insert or (files<>'') then begin
-    writeln(t2,adr);
+    writeln(t2,fa.FidoAddr);
     if insert then
       writeln(t2,CrashID);
     if files<>'' then writeln(t2,files);
@@ -2508,10 +2575,10 @@ end;
 
 { nl_phone: Nummer im 'Originalzustand', max. 30 Zeichen }
 
-function FidoPhone(var fa:FidoAdr; var nl_phone:string):string;
+function FidoPhone(fa: TFTNAddress; var nl_phone:string):string;
 var ni : NodeInfo;
 begin
-  GetNodeinfo(MakeFidoAdr(fa,true),ni,2);
+  GetNodeinfo(fa,ni,2);
   if not ni.found then begin
     nl_phone:='0-0';
     FidoPhone:='???';
@@ -2535,11 +2602,9 @@ var fn     : string;
     p      : byte;
     ar     : archrec;
     copied : boolean;
-    fa     : FidoAdr;
+    faddr  : TFTNAddress;
     arc    : integer;
     useclip: boolean;
-
-label ende;
 
   function overwrite(fn:string):boolean;
   begin
@@ -2614,26 +2679,28 @@ label ende;
   end;
 
 begin
+  faddr := TFTNAddress.Create;
+  try
   fn:=FilePath+WildCard;
   useclip:=false;
   if not ReadFilename(getres2(2117,1),fn,true,useclip) or  { 'Fileliste einlesen' }
      (not FileExists(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
-    goto ende;
+    exit;
   fn:=FileUpperCase(ExpandFileName(fn));
   fi:=ExtractFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
   if (p>0) and (ival(LeftStr(fi,p-1))>0) then 
   begin
-    fillchar(fa,sizeof(fa),0);
+    faddr.Clear;
     if not Nodelist.Open then
       node:=''
     else begin
       node:=strs(DefaultZone)+':'+strs(ival(LeftStr(fi,4)))+'/'+strs(ival(copy(fi,5,4)));
       getNodeinfo(node,ni,1);
       if not ni.found then
-        if FindFidoAddress(fn,fa) then
-          node:=MakeFidoAdr(fa,false)
+        if FindFidoAddress(fn,faddr) then
+          node:=faddr.Fidoaddr
         else
           if ival(FirstChar(fi))>0 then
             node:=FirstChar(fi)+':'+strs(ival(copy(fi,2,3)))+'/'+strs(ival(copy(fi,5,4)))
@@ -2642,8 +2709,8 @@ begin
       end;
     end
   else
-    if FindFidoAddress(fn,fa) then
-      node:=MakeFidoAdr(fa,false)
+    if FindFidoAddress(fn,faddr) then
+      node:=faddr.FidoAddr
     else
       node:='';
   dialog(40,5,getres2(2117,1),x,y);
@@ -2652,9 +2719,10 @@ begin
   maddstring(3,4,getres2(2117,4),node,15,15,nodechar);  { 'Node  ' }
   readmask(brk);
   enddialog;
-  if brk or (node='') then goto ende;
-  splitfido(node,fa,DefaultZone);
-  node:=MakeFidoAdr(fa,true);
+  if brk or (node='') then exit;
+
+  faddr.FidoAddr := node;
+  node:=faddr.FidoAddr;
 
   arc:=ArcType(fn);
   if arc<>0 then begin          { gepackte Fileliste }
@@ -2662,25 +2730,25 @@ begin
     if stricmp(ar.name,'FILE_ID.DIZ') then
       ArcNext(ar);
     closearchive(ar);
-    if (ar.name='') and fehlfunc(getres2(2117,5)) then goto ende;  { 'Fehler in Archivdatei' }
-    if not FileTest(true,ar.orgsize,FidoPath,ar.name) then     goto ende;
+    if (ar.name='') and fehlfunc(getres2(2117,5)) then exit;  { 'Fehler in Archivdatei' }
+    if not FileTest(true,ar.orgsize,FidoPath,ar.name) then     exit;
     SafeDeleteFile(FidoPath+ar.name);
-    if not UniExtract(fn,FidoPath,ar.name) then                goto ende;
+    if not UniExtract(fn,FidoPath,ar.name) then                exit;
     fi:=ar.name;
     copied:=true;
     end
   else if ExtractFilePath(fn)=FidoPath then begin   { ungepackt, in FIDO\ }
     if RightStr(fn,3)<> extFl then
-      if not FileTest(false,0,FidoPath,fi) then goto ende;
+      if not FileTest(false,0,FidoPath,fi) then exit;
     copied:=false;
     end
   else begin                                    { ungepackt, woanders }
-    if not FileTest(true,_filesize(fn),FidoPath,fi) then goto ende;
+    if not FileTest(true,_filesize(fn),FidoPath,fi) then exit;
     message(getres2(2117,6));  { 'Kopiere Fileliste..' }
     if not filecopy(fn,FidoPath+fi) then begin
       closebox;
       fehler(getres2(2117,7));  { 'Fehler beim Kopieren' }
-      goto ende;
+      exit;
       end;
     closebox;
     copied:=true;
@@ -2692,7 +2760,7 @@ begin
     SafeDeleteFile(FidoPath+fi2);
     if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
-      goto ende;
+      exit;
     end
   else
     fi2:=fi;
@@ -2705,8 +2773,10 @@ begin
     mdelay(300);
     closebox;
     end;
-ende:
-  freeres;
+  finally
+    freeres;
+    faddr.Free;
+  end;
 end;
 
 procedure DelFidolist;
@@ -3049,18 +3119,18 @@ ende:
   freeres;
 end;
 
-function FidoIsISDN(const fa:FidoAdr):boolean;
+function FidoIsISDN(fa: TFTNAddress):boolean;
 var ni : NodeInfo;
 begin
-  GetNodeInfo(MakeFidoAdr(fa,true),ni,2);
+  GetNodeInfo(fa,ni,2);
   result:=(pos('ISDN',ni.fflags)>0) or
           (pos('X75',ni.fflags)>0);
 end;
 
-function FidoIsBinkP(var fa:FidoAdr):string;
+function FidoIsBinkP(fa: TFTNAddress):string;
 var ni : NodeInfo;
 begin
-  GetNodeInfo(MakeFidoAdr(fa,true),ni,2);
+  GetNodeInfo(fa,ni,2);
   if pos('IBN',ni.fflags)>0 then
     result:=ni.boxname
   else
@@ -3070,7 +3140,7 @@ end;
 
 { In Textfile nach erster brauchbarer Nodeadresse suchen }
 
-function FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
+function FindFidoAddress(const fn:string; fa: TFTNAddress):boolean;
 var t    : text;
     s    : string;
     n    : byte;
@@ -3107,12 +3177,16 @@ begin
     inc(n);
     end;
   close(t);
-  if found then SplitFido(s,fa,DefaultZone);
+  if found then fa.FidoAddr := s;
   FindFidoAddress:=found;
 end;
 
 {
   $Log$
+  Revision 1.76  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.75  2002/12/28 20:11:06  dodi
   - start keyboard input redesign
 

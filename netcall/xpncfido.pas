@@ -52,6 +52,7 @@ uses
   resource,
   maske,xpglobal,debug,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl, winxp,
   fidoglob,
+  addresses,
   ncfido,xpheader,xp3,xp3o,xpmakeheader,xpprogressoutputwindow,
   datadef,database,xp9bp,xpnt,xpnetcall,direct;
 
@@ -157,7 +158,7 @@ var
   bfile,rfile: string;
   upbuffer   : string;
   domain     : string;
-  fa         : FidoAdr;
+  faddr      : TFTNAddress;
   p          : byte;
   t          : text;
 
@@ -203,8 +204,13 @@ begin { ProcessAKABoxes }
           AKABoxes.BoxName.Add(TempBoxPar.boxname);
           AKABoxes.PPFile.Add('');
         end;
-        splitfido(TempBoxPar.BoxName,fa,DefaultZone);
-        rfile:=FidoAppendRequestFile(fa);
+
+        FAddr := TFTNAddress.Create(TempBoxPar.BoxName, DefaultZone);
+        try
+        rfile:=FidoAppendRequestFile(faddr);
+        finally
+          Faddr.Free;
+        end;
         AKABoxes.ReqFile.Add(rfile);
         if rfile<>'' then OutgoingFiles.Add(rfile);
         end;
@@ -337,7 +343,7 @@ function FidoNetcall(boxname: string;
                      IncomingFiles: TStringList): shortint;
 
 var i        : integer;
-    fa       : fidoadr;
+    faddr    : TFTNAddress;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
     OutgoingFiles,ConvertedFiles,IncomingRequestedFiles: TStringList;
@@ -487,15 +493,22 @@ var i        : integer;
 
   function GetArcFilename(_from,_to:string):string;   { Fido-Dateiname ermitteln }
   var fn    : string[12];
-      a1,a2 : fidoadr;
+      a1,a2 : TFTNAddress;
   begin
-    splitfido(_from,a1,DefaultZone);
-    splitfido(_to,a2,DefaultZone);
+    a1 := nil; 
+    a2 := nil;
+    try
+    a1 := TFTNAddress.Create(_from,DefaultZone);
+    a2 := TFTNAddress.Create(_to  ,DefaultZone);
     fn:= hex((boxpar^.fpointnet-a2.net)and $ffff,4)
         +hex((a1.point-a2.node)and $ffff,4)+'.'+
         copy('MOTUWETHFRSASU',dow(date)*2-1,2);
     if length(fn)<12 then fn:=fn+'1';
     GetArcFilename:=fn;
+    finally
+    a1.free;
+    a2.free;
+    end;
   end;
 
   function CrashPassword(const CrashBox:string):string;
@@ -519,7 +532,7 @@ var i        : integer;
       dbClose(d);
     end;
   var
-    CrashBox: FidoAdr;
+    CrashBox: TFTNAddress;
     CrashPhone: String;
   begin
     result:=false;
@@ -535,9 +548,10 @@ var i        : integer;
     if IsBox(BoxPar^.BoxName) then begin
       Crash:=false;     { Crash beim Bossnode - normaler Anruf }
       exit;
-    end else
-      SplitFido(BoxPar^.BoxName,CrashBox,DefaultZone);
-
+    end;
+    
+    CrashBox := TFTNAddress.Create(BoxPar^.BoxName,DefaultZone);
+    try
     CrashOutBuffer:=FidoFilename(CrashBox)+'.cp';
     if FidoIsISDN(CrashBox) and IsBox('99:99/98') then
       GetCrashBoxData('99:99/98',BoxPar)
@@ -546,7 +560,7 @@ var i        : integer;
     else if IsBox('99:99/99') then
       GetCrashBoxData('99:99/99',BoxPar);
     with boxpar^ do begin
-      boxname:=MakeFidoAdr(CrashBox,true);
+      boxname:=CrashBox.FidoAddr;
       uparcer:='';
       AdditionalServers:='';
       telefon:=FidoPhone(CrashBox,CrashPhone);
@@ -559,6 +573,9 @@ var i        : integer;
       if not IsBox(BoxPar^.BoxName) then
         Passwort:=CrashPassword(BoxPar^.BoxName);
       end;
+    finally
+    CrashBox.Free;
+    end;
   end;
 
 var
@@ -614,12 +631,16 @@ begin { FidoNetcall }
     Debug.DebugLog('xpncfido','Outgoing files: '+StringListToString(OutgoingFiles),DLInform);
 
     if Crash then begin
-      getNodeInfo(boxpar^.boxname,ni,2);
-      splitfido(boxpar^.boxname,fa,DefaultZone);
+      FAddr := TFTNAddress.Create(boxpar^.boxname,DefaultZone);
+      GetNodeInfo(FAddr,ni,2);
+      try
       if not ni.found then komment:='???'
-      else if fa.ispoint then komment:=ni.sysop
+      else if faddr.ispoint then komment:=ni.sysop
            else komment:=ni.boxname+', '+ni.standort;
+      finally
+      FAddr.Free;
       end;
+    end;
 
     case Diskpoll of
       false: begin  // use mailer to transfer files
@@ -663,7 +684,7 @@ begin { FidoNetcall }
       end;
 
     if (result IN [el_ok,el_recerr]) then begin   { Senden OK }
-      if Crash then SetCrash(MakeFidoAdr(fa,true),false);
+//    if Crash then SetCrash(MakeFidoAdr(fa,true),false);
       outmsgs:=0;
       for i:=0 to AKABoxes.PPFile.Count-1 do
         if AKABoxes.PPFile[i]<>'' then begin
@@ -813,7 +834,7 @@ var x,y : Integer;
     ni  : nodeinfo;
     c,f : boolean;
     old : boolean;    { zurÅckgestellter Request }
-    fa  : FidoAdr;
+    faddr : TFTNAddress;
     h   : xpWord;
     List: TLister;
 
@@ -901,12 +922,16 @@ begin
     enddialog;
     if brk then exit
     else begin
-      SplitFido(adr,fa,DefaultZone);
-      if fa.ispoint then begin
-        getnodeinfo(adr,ni,1);
-        ShrinkPointToNode(fa,ni);
-        adr:=MakeFidoAdr(fa,true);
+      FAddr := TFTNAddress.Create(adr,DefaultZone);
+      try
+      if faddr.ispoint then begin
+        getnodeinfo(faddr,ni,1);
+        ShrinkPointToNode(faddr,ni);
+        adr:=faddr.FidoAddr;
         end;
+      finally
+      FAddr.Free;
+      end;
       end;
     end
   else
@@ -922,6 +947,10 @@ end;
 
 {
   $Log$
+  Revision 1.40  2003/01/13 22:05:20  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.39  2002/12/21 05:38:07  dodi
   - removed questionable references to Word type
 

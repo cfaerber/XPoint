@@ -78,7 +78,7 @@ procedure getablsizes;
 function  QuoteSchab(pm:boolean):string;
 procedure ClearPGPflags(hdp:theader);
 
-function  MakeFidoAdr(const frec:fidoadr; usepoint:boolean):string;
+// function  MakeFidoAdr(const frec:fidoadr; usepoint:boolean):string;
 function  IsNodeAddress(const adr:string):boolean;
 procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
 
@@ -1098,13 +1098,6 @@ begin
 end;
 
 
-function MakeFidoAdr(const frec:fidoadr; usepoint:boolean):string;
-begin
-  with frec do
-    MakeFidoadr:=strs(zone)+':'+strs(net)+'/'+strs(node)+
-                 iifs(ispoint and usepoint,'.'+strs(point),'');
-end;
-
 function IsNodeAddress(const adr:string):boolean;
 var p : byte;
 begin
@@ -1117,12 +1110,16 @@ begin
 end;
 
 procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
-var fa : FidoAdr;
+var dd : String;
+    pp : Integer;
 begin
+  FTNParse(DefFidoBox,dd,DefaultZone,DefaultNet,DefaultNode,pp,2);
+(*
   Splitfido(DefFidoBox,fa,2);
   DefaultZone:=fa.zone;
   DefaultNet:=fa.net;
   DefaultNode:=fa.node;
+*)
 end;
 
 
@@ -1183,6 +1180,10 @@ end;
 
 {
   $Log$
+  Revision 1.91  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.90  2002/12/21 05:37:55  dodi
   - removed questionable references to Word type
 

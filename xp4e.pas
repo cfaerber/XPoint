@@ -66,8 +66,8 @@ procedure Bretttrennung;
 procedure Usertrennung;
 procedure ChangePollbox;
 
-procedure copy_address(var s:string);
-procedure get_address(var s:string);
+// procedure copy_address(var s:string);
+// procedure get_address(var s:string);
 function  test_verteiler(var s:string):boolean;
 function  usertest(var s:string):boolean;
 function  testmailstring(var s:string):boolean;
@@ -112,6 +112,7 @@ uses
 {$ENDIF }
   fileio,inout,keys,datadef,database,winxp,xpheader,win2,maus2,resource,fidoglob,
   xp0,xp1,xp1input,xp1o,xp1o2,xp2,xp3,xp3o,xp3o2,xp4,xp5,xp9bp,
+  addresses,
   xpsendmessage,xpconfigedit,xpcc,xpauto,xpfido;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
@@ -139,27 +140,13 @@ begin
   s:=LeftStr(s,eAdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
 end;
 
-procedure FormFido(var s:string);  { lokal }
-var fa   : FidoAdr;
-    user : string;
-begin
-  SplitFido(s,fa,0);
-  with fa do begin
-    user:=username;
-    if cpos('#',user)>0 then
-      user:=LeftStr(s,cposx('@',s)-1);
-    s:=user+'@'+iifs(zone<>0,strs(zone)+':','')+strs(net)+'/'+strs(node)+
-       iifs(ispoint,'.'+strs(point),'');
-    end;
-end;
-
 procedure copy_address(var s:string);
 begin
   if cpos('@',s)=0 then
     AddBox(s)
   else
     if pb_netztyp=nt_Fido then
-      FormFido(s);
+      s := FTNNormaliseAddress(s);
   adp:=s;
 end;
 
@@ -170,25 +157,25 @@ begin
     AddBox(s)
   else
     if pb_netztyp=nt_Fido then
-      FormFido(s);
+      s := FTNNormaliseAddress(s);
 end;
 
 function TestFido(var s:string):boolean;
-var fa : fidoadr;
-    ni : nodeinfo;
+var ni : nodeinfo;
+    fa : TFTNAddress;
 begin
-  if IsNodeaddress(s) then begin
-    splitfido(s,fa,DefaultZone);
-    fa.username:=MakeFidoAdr(fa,true);
-    GetNodeinfo(fa.username,ni,1);
-    end
-  else begin
-    fa.username:=s;
-    getNodeUserInfo(fa,ni);
-    end;
-  if ni.found then
-    s:=ni.sysop+'@'+MakeFidoAdr(fa,true);
-  TestFido:=ni.found;
+  fa := TFTNAddress.Create(s);
+  try
+    if GetNodeAddressInfo(fa,ni) then
+    begin
+      fa.UserName := ni.SysOp;
+      s := fa.ZCAddress;
+      result := true;
+    end else
+      result := false;
+  finally
+    fa.Free;
+  end;
 end;
 
 function usertest(var s:string):boolean;
@@ -650,14 +637,14 @@ var pw    : string;
     defcode : boolean;
     flags   : byte;
     netztyp : eNetz;
-    fa      : FidoAdr;
+{   fa      : FidoAdr; }
 begin
   if msgbrett and not GetMsgBrettUser then
     exit;
   netztyp:=ntBoxNetztyp(dbReadStrN(ubase,ub_pollbox));
   if netztyp=nt_Fido then begin
     adr:= dbReadNStr(ubase,ub_username);
-    SplitFido(adr,fa,2);
+{   SplitFido(adr,fa,2); }
 {  if fa.zone<=6 then begin
       message(getres(2737)); } { 'Warnung: Nachrichtencodierung ist im FidoNet nicht zulaessig!' }
 {     errsound;
@@ -2465,6 +2452,10 @@ end;
 
 {
   $Log$
+  Revision 1.105  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.104  2002/12/21 05:37:57  dodi
   - removed questionable references to Word type
 

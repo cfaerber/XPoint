@@ -70,6 +70,7 @@ uses
   maske,maus2,resource,win2,xp_iti,fidoglob,
   xp0,xp1,xp1o2,xp1help,xp1input,xp1o,xp3,xp3o2,xp3ex,xp4,xp9bp,
   xpsendmessage,xpsendmessage_resend,xpconfigedit,xpnt, crc,
+  addresses,
   xpglobal;
 
 var mapsbox : string = '';
@@ -3007,14 +3008,19 @@ end;
 
 
 procedure FilescanReadlist;
-var fa  : FidoAdr;
+var faddr : TFTNAddress;
     box : string;
 begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
     rfehler(850)     { 'Keine Filescan-Nachricht gewaehlt!' }
   else begin
-    splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
-    box:=MakeFidoAdr(fa,false);
+    FAddr := TFTNAddress.Create(dbReadStrN(mbase,mb_absender),DefaultZone);
+    try
+    FAddr.IsPoint := false;
+    box := FAddr.FidoAddr;
+    finally
+    FAddr.Free;
+    end;    
     if not IsBox(box) then
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
@@ -3108,6 +3114,10 @@ end;
 
 {
   $Log$
+  Revision 1.84  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.83  2002/12/14 22:41:26  dodi
   - new maps type
 

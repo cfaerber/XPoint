@@ -271,6 +271,9 @@ begin
   if Length(NewValue)<2 then 
     FAddress := nil
   else
+    if(NewValue[1] in [#4])and(NewValue[2]='[')and(RightStr(NewValue,3)=']@V')then
+      FAddress := TVerteiler.Create(Copy(NewValue,3,Length(NewValue)-5))
+    else  
     if NewValue[1] in ['$','A'] then
       FAddress := TNewsgroupAddress.Create(Mid(NewValue,2))
     else
@@ -834,6 +837,10 @@ end;
 
 //    
 // $Log$
+// Revision 1.13  2003/01/13 22:05:19  cl
+// - send window rewrite - Fido adaptions
+// - new address handling - Fido adaptions and cleanups
+//
 // Revision 1.12  2003/01/07 00:20:05  cl
 // - added new address list item types: atMailCopies/atMailFollowupto
 // - added AddrSpec property to non-TDomainEmailAddress classes

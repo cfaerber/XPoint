@@ -43,6 +43,7 @@ function testmausempf(var s:string):boolean;
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
+     addresses,
      xpsendmessage,addresslist;
 
 var  
@@ -190,13 +191,17 @@ label nextpp;
   end;
 
   procedure DelCrashInf(adr:string);
-  var fa : FidoAdr;
+  var fa : TFTNAddress;
       ni : NodeInfo;
   begin
-    GetNodeinfo(adr,ni,2);
-    SplitFido(adr,fa,DefaultZone);
-    fa.ispoint:=ni.ispoint;
-    SetCrash(makeFidoAdr(fa,true),false);
+    fa := TFTNAddress.Create(adr,DefaultZone);
+    try
+      GetNodeinfo(fa,ni,2);
+      fa.ispoint:=ni.ispoint;
+    finally
+      fa.Free;
+    end;
+    SetCrash(fa,false);
   end;
 
   procedure SetDelNoUV;
@@ -1430,6 +1435,10 @@ end;
 
 {
   $Log$
+  Revision 1.5  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.4  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

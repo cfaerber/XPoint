@@ -30,6 +30,7 @@ interface
 
 uses
   classes,
+  addresses,
   xpglobal;
 
 const
@@ -62,12 +63,12 @@ const
         nl4DPointlist=4;        //4D-Pointliste
         nlFDpointlist=5;        //FrontDoor-Pointliste
 type
-        FidoAdr = record
-                username   : string;  { darf aber nach FTS nicht > 36 sein (incl #0) }
-                zone,net   : xpWord;
-                node,point : xpWord;
-                ispoint    : boolean;
-                end;
+//      FidoAdr = record
+//              username   : string;  { darf aber nach FTS nicht > 36 sein (incl #0) }
+//              zone,net   : xpWord;
+//              node,point : xpWord;
+//              ispoint    : boolean;
+//              end;
 
         ///////////////////////////////////////////////////////////////////////
         // Nodelistenverwaltung
@@ -122,18 +123,82 @@ type
               end;
         ///////////////////////////////////////////////////////////////////////
 
-procedure splitfido(adr:string; var frec:fidoadr; defaultzone:xpWord);
+// procedure splitfido(adr:string; var frec:fidoadr; defaultzone:xpWord);
+
+function FTNParse(addr: string; var d: string; var z,n,f,p: integer): boolean; overload;
+function FTNParse(addr: string; var d: string; var z,n,f,p: integer; DefaultZone: integer): boolean; overload;
+function FTNForm(const Domain: string; Zone,Net,Node,Point: integer): string;
+function FTNNormaliseAddress(const addr: string):string; overload;
+function FTNNormaliseAddress(const addr: string; DefaultZone: Integer):string; overload;
+function FTNIsValidAddress(const addr: string): boolean;
+
+type
+  TFTNAddress = class(TEmailAddress)
+  private
+    F4DOk:      boolean;
+    FUserName:  string;
+    FDomain:    string;
+    FZone:      integer;
+    FNode:      integer;
+    FNet:       integer;
+    FPoint:     integer;
+
+    FZC:        string;
+
+  private
+    procedure _internal_Mk4d;
+    procedure _internal_MkZC;
+    
+  protected  
+    function GetZCAddress: string; override;
+    function GetXPAddress: string; override;
+    function GetRFCAddress: string; override;
+
+    function GetUsername: string; override;
+    procedure SetUsername(const NewValue: string); override;
+    function GetDomain: string; procedure SetDomain(NewValue:string);
+    function GetZone: integer; procedure SetZone(NewValue:integer);
+    function GetNode: integer; procedure SetNode(NewValue:integer);
+    function GetNet:  integer; procedure SetNet (NewValue:integer);
+    function GetPoint:integer; procedure SetPoint(NewValue:integer);
+    function GetFidoAddr:string; procedure SetFidoAddr(NewValue:string);
+
+    function GetIsPoint: boolean; procedure SetIsPoint(NewValue:boolean);
+    function GetIsValid: boolean;
+    
+  private
+    constructor _Create(const addr: string); overload;
+    constructor _Create(CopyFrom: TFTNAddress); overload;
+  public
+    constructor Create(const addr: string; DefaultZone: Integer); overload;
+    class function Create(const addr: string):TFTNAddress; overload;
+    class function Create(CopyFrom: TFTNAddress):TFTNAddress; overload;
+    constructor Create(const user,d: string; z,n,f,p: integer); overload;
+
+    procedure Clear;
+
+    property Domain: string read GetDomain write SetDomain;
+    property Zone:  integer read GetZone write SetZone;
+    property Net:   integer read GetNet  write SetNet;
+    property Node:  integer read GetNode write SetNode;
+    property Point: integer read GetPoint write SetPoint;
+
+    property FidoAddr: string read GetFidoAddr write SetFidoAddr;
+    property IsPoint: boolean read GetIsPoint write SetIsPoint;    
+    property Valid: boolean read GetIsValid;
+  end;
 
 var
-        DefaultZone : xpWord;           { Fido - eigene Zone }
-        DefaultNet  : xpWord;           {      - eigenes Net }
-        DefaultNode : xpWord;           {      - eigener Node}
+        DefaultZone : Integer;           { Fido - eigene Zone }
+        DefaultNet  : Integer;           {      - eigenes Net }
+        DefaultNode : Integer;           {      - eigener Node}
 
 
 implementation
 
 uses
   sysutils,
+  rfc2822,
   typeform,fileio,xp0;
 
 { TNodeList }
@@ -147,10 +212,11 @@ begin
 end;
 procedure TNodeList.LoadConfigFromFile;       { NODELST.CFG laden }
 var t     : text;
-    s     : string;
+    s,dd  : string;
+    dp    : integer;
     ss    : string[20];
     p     : byte;
-    fa    : fidoadr;
+    faddr : TFTNAddress;
     NlItem: TNodeListItem;
 begin
   assignFile(t, NodelistCfg);
@@ -177,8 +243,7 @@ begin
             if ss='format'         then fformat:=minmax(ival(s),0,6) else
             if ss='zone'           then fzone:=minmax(ival(s),0,32767) else
             if ss='address'        then begin
-              SplitFido(s,fa,2);
-              fzone:=fa.zone; fnet:=fa.net; fnode:=fa.node;
+              FTNParse(s,dd,fzone,fnet,fnode,dp);
               end;
             end;
         until eof(t) or (s='');
@@ -278,6 +343,7 @@ end;
 ///////////////////////////////////////////////////////////////////////////////
 //
 
+(*
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:xpWord);
 var
   p1,p2,p3 : Integer;
@@ -326,9 +392,371 @@ begin
         end;
     end;
 end;
+*)
+
+function FTNParse(addr: string; var d: string; var z,n,f,p: integer): boolean; overload;
+begin
+  Result := FTNParse(addr,d,z,n,f,p,0);
+end;
+
+function FTNParse(addr: string; var d: string; var z,n,f,p: integer; DefaultZone: integer): boolean; overload;
+var i: integer;
+    s: integer;
+    dd: string;
+    zz,nn,ff,pp: integer;
+begin
+  result := false;
+
+  s  := 9;
+
+  dd := '';
+  zz := 0;
+  nn := 0;
+  ff := 0;
+  pp := 0;
+
+  addr := Trim(addr);
+
+  if (FirstChar(addr)='[') and (FirstChar(addr)=']') then
+    addr := Copy(addr,2,length(addr)-2);
+
+  for i:=Length(addr) downto 1 do
+    case addr[i] of
+      '0'..'9': begin {noop} end;
+      'A'..'Z','a'..'z','-': if not (s in [9,4]) then exit;
+
+      '@':      if s in [9] then
+                begin
+                  dd := Trim(Mid(addr,i+1));
+                  s := 0;
+                  SetLength(addr,i-1);
+                end;
+
+      '.':      if s in [9,0] then
+                begin
+                  pp := IVal(Mid(addr,i+1));
+                  s:=1;
+                  SetLength(addr,i-1);
+                end else
+                  exit;
+                
+      '/':      if s in [9,0,1] then
+                begin
+                  ff := IVal(Mid(addr,i+1));
+                  s:=2;
+                  SetLength(addr,i-1);
+                end else
+                  exit;
+        
+      ':':      if s in [2] then
+                begin
+                  nn := IVal(Mid(addr,i+1));
+                  s:=3;
+                  SetLength(addr,i-1);
+                end else
+                  exit;
+      '#':      if(s in [3])and(dd='')then
+                begin
+                  zz := IVal(Mid(addr,i+1));
+                  s:=4;
+                  SetLength(addr,i-1);
+                end;
+      else 
+        exit;
+  end;
+
+  if s=2 then
+    nn := Ival(addr)
+  else
+  if s=3 then
+    zz := IVal(addr)
+  else
+  if s=4 then
+    dd := Trim(addr)
+  else 
+    exit;
+
+  d := dd;
+
+  z := zz;
+  n := nn;
+  f := ff;
+  p := pp;
+
+  result := true;
+end;
+
+function FTNForm(const Domain: string; Zone,Net,Node,Point: integer): string;
+begin
+  if (Net=0) and (Node=0) then
+    result := ''
+  else
+    result :=  
+      iifs(domain<>'',Domain+'#','')+
+      iifs(Zone>0,StrS(Zone)+':','')+
+      StrS(Net)+'/'+
+      StrS(Node)+
+      iifs(Point>0,'.'+StrS(Point),'');
+end;
+
+function FTNNormaliseAddress(const addr: string):string; overload;
+begin
+  Result := FTNNormaliseAddress(addr,0);
+end;
+
+function FTNNormaliseAddress(const addr: string; DefaultZone:Integer):string;
+var I:  Integer;
+    Domain: string;
+    Zone,Net,Node,Point: Integer;
+
+begin
+  I := CPos('@',Addr);
+
+  // Username@Domain#Zone:Net/Node.Point
+  // Username@Zone:Net/Node.Point@DOMAIN
+  // Username@Zone:Net/Node.Point
+  // Zone:Net/Node.Point  
+  if FTNParse(Mid(Addr,i+1),Domain,Zone,Net,Node,Point,DefaultZone) then
+    Result := LeftStr(Addr,Min(36,I))+'@'+FTNForm(Domain,Zone,Net,Node,Point)
+  else
+
+  // Zone:Net/Node.Point@DOMAIN
+  if FTNParse(Addr,Domain,Zone,Net,Node,Point,DefaultZone) then
+    Result := FTNForm(Domain,Zone,Net,Node,Point)
+  else
+
+    Result := '';
+end;
+
+function FTNIsValidAddress(const addr: string): boolean;
+var I:  Integer;
+    Domain: string;
+    Zone,Net,Node,Point: Integer;
+begin
+  I := CPos('@',Addr);
+  result := FTNParse(Mid(Addr,i+1),Domain,Zone,Net,Node,Point,DefaultZone) or
+            FTNParse(Addr,Domain,Zone,Net,Node,Point,DefaultZone);
+end;
+
+// -- TFTNAddress -------------------------------------------------
+
+procedure TFTNAddress._internal_Mk4D;
+var i: integer;
+begin
+  if F4DOk then exit;
+  i := CPos('@',FZC);
+  if not FTNParse(Mid(FZC,i+1),fdomain,fzone,fnet,fnode,fpoint) then
+  begin
+    fdomain := '';    
+    fzone := 0;
+    fnet  := 0;
+    fnode := 0;
+    fpoint:= 0;
+  end; 
+  FUsername := LeftStr(FZC,i-1);
+  F4dOk := true;
+end;
+
+procedure TFTNAddress._internal_MkZC;
+begin
+  if FZC<>'' then exit;
+  FZC := FUsername+'@'+GetFidoAddr;
+end;
+
+function TFTNAddress.GetUsername: string;
+begin
+  _internal_Mk4d;
+  result := FUserName;
+end;
+    
+procedure TFTNAddress.SetUsername(const NewValue: string);
+begin
+  _internal_Mk4d;
+  FUsername := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetDomain: string; 
+begin
+  _internal_Mk4d;
+  result := FDomain;
+end;
+
+procedure TFTNAddress.SetDomain(NewValue: string);
+begin
+  _internal_Mk4d;
+  FDomain := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetZone: integer; 
+begin
+  _internal_Mk4d;
+  result := FZone;
+end;
+
+procedure TFTNAddress.SetZone(NewValue:integer);
+begin
+  _internal_Mk4d;
+  FZone := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetNode: integer;
+begin
+  _internal_Mk4d;
+  result := FNode;
+end;
+
+procedure TFTNAddress.SetNode(NewValue:integer);
+begin
+  _internal_Mk4d;
+  FNode := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetNet:  integer;
+begin
+  _internal_Mk4d;
+  result := FNet;
+end;
+
+procedure TFTNAddress.SetNet (NewValue:integer);
+begin
+  _internal_Mk4d;
+  FNet := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetPoint:integer;
+begin
+  _internal_Mk4d;
+  result := FPoint;
+end;
+
+procedure TFTNAddress.SetPoint(NewValue:integer);
+begin
+  _internal_Mk4d;
+  FPoint := NewValue;
+  FZC := '';
+end;
+
+function TFTNAddress.GetFidoAddr:string; 
+begin
+  _internal_Mk4D;
+  Result := FTNForm(FDomain,FZone,FNet,FNode,FPoint);
+end;
+
+procedure TFTNAddress.SetFidoAddr(NewValue:string);
+begin
+  if F4DOk then
+  begin
+    FZC := FUserName+'@'+NewValue;
+    F4DOk := false;
+  end else
+  begin
+    FZC := LeftStr(FZC,CPosX('@',FZC)-1)+'@'+NewValue;
+  end;
+end;
+
+function TFTNAddress.GetIsPoint: boolean; 
+begin
+  _internal_Mk4d;
+  Result := FPoint<>0;
+end;
+
+procedure TFTNAddress.SetIsPoint(NewValue:boolean);
+begin
+  if NewValue = false then
+    SetPoint(0);
+end;
+
+function TFTNAddress.GetIsValid: boolean; 
+begin
+  if FZC<>'' then _internal_Mk4D;
+  result := F4Dok and((FNet<>0)or(FNode<>0))
+end;
+
+function TFTNAddress.GetZCAddress: string;
+begin
+  _internal_MkZC;
+  result := FZC;
+end;
+
+function TFTNAddress.GetXPAddress: string;
+begin
+  result := GetZCAddress;
+end;
+
+function TFTNAddress.GetRFCAddress: string;
+begin
+  _internal_Mk4d;
+  result := RFCNormalizeAddress('"'+FUsername+'"@['+GetFidoAddr+']','');
+end;
+
+constructor TFTNAddress.Create(const addr: string; DefaultZone: Integer);
+begin
+  FZC := addr;
+  _internal_Mk4d;
+  if FZone=0 then begin
+    FZone := DefaultZone;
+    FZC := '';
+  end;
+end;
+
+class function TFTNAddress.Create(const addr: string): TFTNAddress;
+begin 
+  result := TFTNAddress._Create(addr); 
+end;
+
+constructor TFTNAddress._Create(const addr: string);
+begin
+  FZC := addr;
+end;
+
+class function TFTNAddress.Create(CopyFrom: TFTNAddress): TFTNAddress;
+begin 
+  result := TFTNAddress._Create(CopyFrom); 
+end;
+
+constructor TFTNAddress._Create(CopyFrom: TFTNAddress);
+begin
+  FUsername:=CopyFrom.FUserName;
+  FDomain := CopyFrom.FDomain;
+  FZone := CopyFrom.FZone;
+  FNet  := CopyFrom.FNet;
+  FNode := CopyFrom.FNode;
+  FPoint:= CopyFrom.FPoint;
+  F4dOK := CopyFrom.F4dOk;
+
+  FZC   := CopyFrom.FZC;
+end;
+
+constructor TFTNAddress.Create(const user,d: string; z,n,f,p: integer);
+begin
+  FUsername := user;
+
+  FDomain := d;
+  FZone := z;
+  FNet  := n;
+  FNode := f;
+  FPoint:= p;
+
+  F4dOK := true;
+end;
+
+procedure TFTNAddress.Clear;
+begin
+  FZC := '';
+  F4DOK := false;
+end;
 
 {
   $Log$
+  Revision 1.22  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.21  2002/12/21 05:37:49  dodi
   - removed questionable references to Word type
 

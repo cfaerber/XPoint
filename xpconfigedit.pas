@@ -119,6 +119,7 @@ uses
   fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
   xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,
   xpmodemscripts,
+  addresses,
   xpglobal;
 
 const umtyp : array[0..5] of string[5] =
@@ -170,12 +171,16 @@ var   UpArcnr   : integer;    { fuer EditPointdaten }
 
 
 function CreateServerFilename(d: db; nt:eNetz; const boxname:string):string;
-var fa : fidoadr; i: integer;
+var fa : TFTNAddress; i: integer;
 begin
   if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(_MPMask,boxname)) then begin
-    splitfido(boxname,fa,0);
-    result:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
-    end
+    fa := TFTNAddress.Create(boxname,0);
+    try
+      result:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
+    finally
+      fa.free;
+    end;
+  end
   else begin
     result:='';
     for i:=1 to length(boxname)do
@@ -327,29 +332,35 @@ begin
 end;
 
 function testbossnode(var s:string):boolean;
-var fa : fidoadr;
+var fa : TFTNAddress;
 begin
-  testbossnode:=false;
+  result:=false;
   if trim(s)='' then errsound
   else begin
-    splitfido(s,fa,DefaultZone);
-    with fa do
-      if net+node=0 then errsound
+    fa := TFTNAddress.Create(s,DefaultZone);
+    try
+      if (fa.Net=0)and(fa.Node=0) then
+        ErrSound
       else begin
-        s:=strs(zone)+':'+strs(net)+'/'+strs(node);
-        testbossnode:=true;
-        end;
+        fa.Point := 0;
+        s := fa.FidoAddr;
+        result := true;
+      end;
+    finally
+      fa.Free;
     end;
+  end;
 end;
 
 procedure setfidoadr(var s:string);   { Gruppen-Adresse }
-var fa : FidoAdr;
+var fa : TFTNAddress;
 begin
-  if trim(s)<>'' then begin
-    splitfido(s,fa,2);
-    with fa do
-      s:=strs(zone)+':'+strs(net)+'/'+strs(node)+iifs(ispoint,'.'+strs(point),'');
-    end;
+  fa := TFTNAddress.Create(s,DefaultZone);
+  try
+    s := fa.FidoAddr;
+  finally
+    fa.Free;
+  end;
 end;
 
 procedure ps_setempf(var s:string);
@@ -3129,6 +3140,10 @@ end;
 
 {
   $Log$
+  Revision 1.60  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.59  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

@@ -46,7 +46,9 @@ uses
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}   
-  xpfido, ndiff;
+  xpfido,
+  addresses,
+  ndiff;
 
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
@@ -123,7 +125,14 @@ var x,y,i    : Integer;
     filechar : string;
     lform    : string;
     adresse  : string;
-    fa       : fidoadr;
+
+    dummys   : string;
+    dummy    : integer;
+    dd_zone,
+    dd_net,
+    dd_node  : integer;
+
+    
 begin
   dialog(ival(getres2(2127,0)),14,getres2(2127,2),x,y);
   with NLItem do
@@ -165,9 +174,9 @@ begin
       if format in [nlNodelist,nlPoints24,nl4DPointlist] then
         zone:=ival(adresse)
       else begin
-        Splitfido(adresse,fa,defaultzone);
-        zone:=fa.zone; net:=fa.net; node:=fa.node;
-        end;
+        FTNParse(adresse,dummys,dd_zone,dd_net,dd_node,dummy);
+        zone := dd_zone; net := dd_net; node := dd_node;
+      end;
       if fupdatefile='' then fDoDiff:=false;
       end;
     end;
@@ -187,7 +196,7 @@ var fn      : string;
     detect  : boolean;
     arc     : integer;
     ar      : ArchRec;
-    fa      : FidoAdr;
+    faddr   : TFTNAddress;
 
   procedure PL_FormatDetect(fn:string; var format:byte);
   var t   : text;
@@ -269,10 +278,16 @@ begin   //function NewNodeEntry:boolean;
           else if ExtractFileExt(listfile)='.PVT' then begin { Typvorgabe 'PVT-Liste' }
             fupdatefile:=listfile;
             format:=3;
-            if FindFidoAddress(fn,fa) then begin
-              zone:=fa.zone; net:=fa.net; node:=fa.node;
-              detect:=true;
+
+            faddr := TFTNAddress.Create;
+            try 
+              if FindFidoAddress(fn,faddr) then begin
+                zone:=faddr.zone; net:=faddr.net; node:=faddr.node;
+                detect:=true;
               end;
+            finally
+              faddr.Free;
+            end;
             fDelUpdate:=true;
             end
           else
@@ -537,6 +552,10 @@ finalization
 
 {
   $Log$
+  Revision 1.47  2003/01/13 22:05:19  cl
+  - send window rewrite - Fido adaptions
+  - new address handling - Fido adaptions and cleanups
+
   Revision 1.46  2002/07/25 20:43:56  ma
   - updated copyright notices
 

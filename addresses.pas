@@ -150,52 +150,14 @@ type
     property AddrSpec: string read GetAddrSpec write SetAddrSpec;
   end;
 
-  TFTNEmailAddress = class(TEmailAddress)
-  private
-    F4DOk:      boolean;
-    FUserName:  string;
-    FZone:      integer;
-    FNode:      integer;
-    FNet:       integer;
-    FPoint:     integer;
-
-    FZC:        string;
-
-  private
-    procedure _internal_Mk4d;
-    procedure _internal_MkZC;
-    
-  protected  
-    function GetZCAddress: string; override;
-    function GetXPAddress: string; override;
-    function GetRFCAddress: string; override;
-
-    function GetUsername: string; override;
-    procedure SetUsername(const NewValue: string); override;
-    function GetZone: integer; procedure SetZone(NewValue:integer);
-    function GetNode: integer; procedure SetNode(NewValue:integer);
-    function GetNet:  integer; procedure SetNet (NewValue:integer);
-    function GetPoint:integer; procedure SetPoint(NewValue:integer);
-  private
-    constructor _Create(const addr: string); overload;
-    constructor _Create(CopyFrom: TFTNEmailAddress); overload;
-  public
-    class function Create(const addr: string):TFTNEmailAddress; overload;
-    class function Create(CopyFrom: TFTNEmailAddress):TFTNEmailAddress; overload;
-    constructor Create(user: string; z,n,f,p: integer); overload;
-
-    property Zone:  integer read GetZone write SetZone;
-    property Node:  integer read GetNode write SetNode;
-    property Net:   integer read GetNet  write SetNet;
-    property Point: integer read GetPoint write SetPoint;
-  end;
-
-function FTNParse(addr: string; var z,n,f,p: integer): boolean;  
-
 { ======================== } implementation { ======================== }
 
 uses
-  rfc2822,addresslist,typeform,Sysutils,
+  addresslist,
+  rfc2822,
+  fidoglob,
+  typeform,
+  sysutils,
   xpglobal;
 
 // -- TAddress ---------------------------------------------------------
@@ -263,7 +225,7 @@ end;
 
 function TVerteiler.GetXPAddress: string;
 begin
-  result := #4'['+FVerteilerName+']';
+  result := #4'['+FVerteilerName+']@V';
 end;
 
 function TVerteiler.GetRFCAddress: string;
@@ -373,65 +335,6 @@ end;
 
 // -- TEmailAddress ----------------------------------------------------
 
-function FTNParse(addr: string; var z,n,f,p: integer): boolean;
-var i: integer;
-    s: integer;
-    zz,nn,ff,pp: integer;
-begin
-  result := false;
-
-  s  := 0;
-
-  zz := 0;
-  nn := 0;
-  ff := 0;
-  pp := 0;
-
-  for i:=Length(addr) downto 1 do
-    case addr[i] of
-      '0'..'9': begin {noop} end;
-      
-      '.':      if s in [0] then
-                begin
-                  pp := IVal(Mid(addr,i+1));
-                  s:=1;
-                  SetLength(addr,i-1);
-                end else
-                  exit;
-                
-      '/':      if s in [0,1] then
-                begin
-                  ff := IVal(Mid(addr,i+1));
-                  s:=2;
-                  SetLength(addr,i-1);
-                end else
-                  exit;
-        
-      ':':      if s in [2] then
-                begin
-                  nn := IVal(Mid(addr,i+1));
-                  s:=3;
-                  SetLength(addr,i-1);
-                end else
-                  exit;
-  end;
-
-  if s=2 then
-    nn := Ival(addr)
-  else
-  if s=3 then
-    zz := IVal(addr)
-  else 
-    exit;
-
-  z := zz;
-  n := nn;
-  f := ff;
-  p := pp;
-
-  result := true;
-end;
-
 constructor TEMailAddress._internal_Create;
 begin
   inherited _internal_Create;
@@ -439,36 +342,38 @@ end;
     
 class function TEmailAddress.Create(const addr: string):  TEmailAddress;
 var i,z,n,f,p: integer;
+    d: string;
    _a,_n: string;
 begin
-  RFCReadAddress(addr,_a,_n,nil);
-  i:=RightPos('@',_a);
-
-  if FTNParse(Mid(_a,i+1),z,n,f,p) then
-    result := TFTNEmailAddress.Create(LeftStr(_a,i-1),z,n,f,p)
-  else
+  i:=CPos('@',addr);
+  if FTNParse(Mid(addr,i+1),d,z,n,f,p) then
+  begin
+    result := TFTNAddress.Create(LeftStr(addr,i-1),d,z,n,f,p)
+  end else
+  begin
+    RFCReadAddress(addr,_a,_n,nil);
     result := TDomainEmailAddress.Create(_a,_n);
+  end;
 end;
 
 class function TEmailAddress.Create(const Addr, Name: string): TEmailAddress;
 var i,z,n,f,p: integer;
+    d: string;
 begin
-  i:=RightPos('@',addr);
-
-  if FTNParse(Mid(addr,i+1),z,n,f,p) then
-    result := TFTNEmailAddress.Create(LeftStr(addr,i-1),z,n,f,p)
+  i:=CPos('@',addr);
+  if FTNParse(Mid(addr,i+1),d,z,n,f,p) then
+    result := TFTNAddress.Create(LeftStr(addr,i-1),d,z,n,f,p)
   else
     result := TDomainEmailAddress.Create(addr,name);
 end;
-
 
 class function TEmailAddress.Create(CopyFrom: TEmailAddress): TEmailAddress;
 begin
   if CopyFrom is TDomainEmailAddress then
     result := TDomainEmailAddress.Create(CopyFrom as TDomainEmailAddress)
   else
-  if CopyFrom is TFTNEmailAddress then
-    result := TFTNEmailAddress.Create(CopyFrom as TFTNEmailAddress)
+  if CopyFrom is TFTNAddress then
+    result := TFTNAddress.Create(CopyFrom as TFTNAddress)
   else
     result := nil;
 end;
@@ -640,149 +545,12 @@ begin
   FRFC := addr;
 end;
 
-// -- TFTNEmailAddress -------------------------------------------------
-
-procedure TFTNEmailAddress._internal_Mk4D;
-var i: integer;
-begin
-  if F4DOk then exit;
-  i := CPos('@',FZC);
-  if not FTNParse(Mid(FZC,i+1),fzone,fnode,fnet,fpoint) then
-  begin
-    fzone := 0;
-    fnet  := 0;
-    fnode := 0;
-    fpoint:= 0;
-  end; 
-  FUsername := LeftStr(FZC,i-1);
-  F4dOk := true;
-end;
-
-procedure TFTNEmailAddress._internal_MkZC;
-begin
-  if FZC<>'' then exit;
-  FZC := FUsername+'@'+StrS(Zone)+':'+
-    StrS(Net)+'/'+StrS(Node)+iifs(Point>0,'.'+StrS(Point),'');
-end;
-
-function TFTNEmailAddress.GetUsername: string;
-begin
-  _internal_Mk4d;
-  result := FUserName;
-end;
-    
-procedure TFTNEmailAddress.SetUsername(const NewValue: string);
-begin
-  _internal_Mk4d;
-  FUsername := NewValue;
-  FZC := '';
-end;
-
-function TFTNEmailAddress.GetZone: integer; 
-begin
-  _internal_Mk4d;
-  result := FZone;
-end;
-
-procedure TFTNEmailAddress.SetZone(NewValue:integer);
-begin
-  _internal_Mk4d;
-  FZone := NewValue;
-  FZC := '';
-end;
-
-function TFTNEmailAddress.GetNode: integer;
-begin
-  _internal_Mk4d;
-  result := FNode;
-end;
-
-procedure TFTNEmailAddress.SetNode(NewValue:integer);
-begin
-  _internal_Mk4d;
-  FNode := NewValue;
-  FZC := '';
-end;
-
-function TFTNEmailAddress.GetNet:  integer;
-begin
-  _internal_Mk4d;
-  result := FNet;
-end;
-
-procedure TFTNEmailAddress.SetNet (NewValue:integer);
-begin
-  _internal_Mk4d;
-  FNet := NewValue;
-  FZC := '';
-end;
-
-function TFTNEmailAddress.GetPoint:integer;
-begin
-  _internal_Mk4d;
-  result := FPoint;
-end;
-
-procedure TFTNEmailAddress.SetPoint(NewValue:integer);
-begin
-  _internal_Mk4d;
-  FPoint := NewValue;
-  FZC := '';
-end;
-
-function TFTNEmailAddress.GetZCAddress: string;
-begin
-  _internal_MkZC;
-  result := FZC;
-end;
-
-function TFTNEmailAddress.GetXPAddress: string;
-begin
-  result := GetZCAddress;
-end;
-
-function TFTNEmailAddress.GetRFCAddress: string;
-begin
-  result := GetZCAddress;
-end;
-
-class function TFTNEmailAddress.Create(const addr: string): TFTNEMailAddress;
-begin result := TFTNEmailAddress._Create(addr); end;
-
-constructor TFTNEmailAddress._Create(const addr: string);
-begin
-  FZC := addr;
-end;
-
-class function TFTNEmailAddress.Create(CopyFrom: TFTNEmailAddress): TFTNEMailAddress;
-begin result := TFTNEmailAddress._Create(CopyFrom); end;
-
-constructor TFTNEmailAddress._Create(CopyFrom: TFTNEmailAddress);
-begin
-  FUsername:=CopyFrom.FUserName;
-  FZone := CopyFrom.FZone;
-  FNet  := CopyFrom.FNet;
-  FNode := CopyFrom.FNode;
-  FPoint:= CopyFrom.FPoint;
-  F4dOK := CopyFrom.F4dOk;
-
-  FZC   := CopyFrom.FZC;
-end;
-
-constructor TFTNEmailAddress.Create(user: string; z,n,f,p: integer);
-begin
-  FUsername := user;
-
-  FZone := z;
-  FNet  := n;
-  FNode := f;
-  FPoint:= p;
-
-  F4dOK := true;
-end;
-
 //    
 // $Log$
+// Revision 1.10  2003/01/13 22:05:19  cl
+// - send window rewrite - Fido adaptions
+// - new address handling - Fido adaptions and cleanups
+//
 // Revision 1.9  2003/01/11 19:54:07  cl
 // - fixes for FTN addresses
 //
