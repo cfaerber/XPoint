@@ -1692,7 +1692,7 @@ var
 
           s := copy(line, 2,p - 2);
           // do not add duplicates
-          if References.IndexOf(s) = 0 then
+          if References.IndexOf(s) = -1 then
             References.Add(s);
 
           while (p < length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
@@ -3700,6 +3700,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.34  2004/07/21 10:49:48  mk
+  - fixed references
+
   Revision 1.97.2.33  2004/07/20 14:26:22  mk
   - do not add duplicate references
 
