@@ -17,6 +17,7 @@ require("webtools.php");
 ShowHeader("OpenXP Online");
 
 if ($file!="") {
+  $url = ereg_replace("/|\.{2,}","",$url);
   $url = parse_url($file);
   include($url[path]);
 }
