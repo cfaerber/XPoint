@@ -2010,13 +2010,14 @@ var
   var p,q,r: longint;
       e,t:   longint;
       sd:    string;
+  label outer;
 
   begin
     p:=1;       { current scan position in ss      }
     q:=1;       { start of data not copied into sd }
     r:=1;       { last non-whitespace char in ss   }
     sd:='';
-
+outer:
     while p<=(length(ss)-9) do { 9 = minimum length for =?c?e?t?= }
     begin
       if(ss[p]='=')and(ss[p+1]='?')then // start marker
@@ -2035,7 +2036,7 @@ var
               p:=e      { maybe a new start       }
             else
               p:=e+1;   { go ahead with next char }
-            continue;   { don't decode anything   }
+            goto outer;   { don't decode anything   }
           end;
         end; // while
 
@@ -2686,6 +2687,7 @@ begin
   repeat
     case RawNews of
       false: begin
+// TODO: BUG
         while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
                (bufpos < bufanz) do
           ReadString;
@@ -3827,6 +3829,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/05/20 18:23:02  cl
+  - fixed bug in RFC2047_Decode w/ bare "=?" sequences
+
   Revision 1.55  2001/04/27 10:16:02  ma
   - added "point quoted" NNTP spool format
   - cosmetics
