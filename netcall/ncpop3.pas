@@ -45,7 +45,8 @@ type
 
     FServer             : string;               { Server-Software }
     FTimestamp          : string;               { Timestamp for APOP }
-    FUseAPOP            : Boolean;
+    FUseAPOP            : Boolean;              { APOP = encrypted passwords }
+    FOnlyNew            : Boolean;              { nur neue Mails holen }
     FUser, FPassword    : string;               { Identifikation }
     FMailCount, FMailSize: Integer;
 
@@ -57,6 +58,7 @@ type
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
     property UseAPOP: Boolean read FUseAPOP write FUseAPOP;
+    property OnlyNew: Boolean read FOnlyNew write FOnlyNew;
     property MailCount: Integer read FMailCount;
     property MailSize: Integer read FMailSize;
 
@@ -73,6 +75,8 @@ type
 
     // FÅllt MailCount und MailSize mit Daten
     function Stat: boolean;
+    // Holt die letzte ungelesene Nachricht
+    function GetLast: Integer;
     // EmpfÑngt eine Nachricht
     function Retr(ID: Integer; List: TStringList): boolean;
     // EmpfÑngt alle Nachrichten
@@ -111,6 +115,7 @@ begin
   FPort:= DefaultPOP3Port;
   FTimeStamp := '';
   FUseAPOP := True;
+  FOnlyNew := True;
   FUser:='';
   FPassword:='';
   FServer:= '';
@@ -120,6 +125,9 @@ constructor TPOP3.CreateWithHost(s: string);
 begin
   inherited CreateWithHost(s);
   FPort:= DefaultPOP3Port;
+  FTimeStamp := '';
+  FUseAPOP := True;
+  FOnlyNew := True;
   FUser:='';
   FPassword:='';
   FServer:= '';
@@ -286,12 +294,34 @@ begin
   end;
 end;
 
+function TPOP3.GetLast: Integer;
+var
+  s: String;
+begin
+  Result := 1;
+  SWriteln('LAST');
+  SReadln(s);
+  if ParseError(s) then
+  begin
+    Result := 1;
+    exit;
+  end;
+  s := Copy(s, 5, Length(s));
+  s := Copy(s, 1, Pos(' ', s) - 1);
+  Result := StrToIntDef(s, Result);
+end;
+
 function TPOP3.RetrAll(List: TStringList): boolean;
 var
   i: Integer;
+  FirstMail: Integer;
 begin
   result:=true;
-  for i := 1 to FMailCount do
+  if OnlyNew then
+    FirstMail := GetLast + 1
+  else
+    FirstMail := 1;
+  for i := FirstMail to FMailCount do
     result:=result and Retr(i, List)
 end;
 
@@ -314,6 +344,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2001/04/16 16:43:26  ml
+  - pop3 now only gets new mail
+  - added switch in pop3-boxconfig for getting only new mail
+
   Revision 1.10  2001/04/16 15:55:54  ml
   - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
 

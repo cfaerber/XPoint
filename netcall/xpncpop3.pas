@@ -164,12 +164,14 @@ var
 var
   POP           : TPOP3;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
+  FirstMail     : Integer;
 begin
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
   { Host und ... }
   POP:= TPOP3.CreateWithHost(bp^.pop3_ip);
   Pop.UseAPOP := BoxPar^.Pop3_APOP;
+  Pop.OnlyNew := BoxPar^.Pop3_Onlynew;
   { POWindow erstellen }
   POP.ProgressOutput:= POWindow;
   { ggf. Zugangsdaten uebernehmen }
@@ -186,7 +188,11 @@ begin
 
     POWindow.WriteFmt(mcInfo,res_mailstat,[POP.MailCount,POP.MailSize]);
 
-    for i := 1 to POP.MailCount do
+    FirstMail := 1;
+    if POP.OnlyNew then
+      FirstMail := POP.GetLast;
+
+    for i := FirstMail + 1 to POP.MailCount do
     begin
       POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
       POP.Retr(i, List);
@@ -196,7 +202,7 @@ begin
       SaveMail;
     end;
 
-    SaveMail;
+//    SaveMail;
     POP.Disconnect;
   except
     trfehler(831,31);
@@ -211,6 +217,10 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/04/16 16:43:26  ml
+  - pop3 now only gets new mail
+  - added switch in pop3-boxconfig for getting only new mail
+
   Revision 1.11  2001/04/16 15:55:54  ml
   - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
 

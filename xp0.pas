@@ -596,6 +596,7 @@ type   textp  = ^text;
                   pop3_pwd  : string;      { POP3: Passwort, falls noetig }
                   pop3_clear: boolean;     { POP3: Nachrichten loeschen }
                   pop3_APOP : boolean;     { POP3: APOP (encrypted passwd) verwenden }
+                  pop3_OnlyNew : boolean;  { POP3: nur neue Mails holen }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
@@ -1122,6 +1123,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.125  2001/04/16 16:43:26  ml
+  - pop3 now only gets new mail
+  - added switch in pop3-boxconfig for getting only new mail
+
   Revision 1.124  2001/04/16 15:55:54  ml
   - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
 

@@ -2081,6 +2081,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    Pa·wort   ~
 4    Abgeholte Mails auf Server lîschen
 5    Passwîrter verschlÅsselten (APOP)
+6    nur neue Mail abholen
 -
 + 952
 # SMTP
@@ -3651,6 +3652,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.5  2001/04/16 16:43:26  ml
+# - pop3 now only gets new mail
+# - added switch in pop3-boxconfig for getting only new mail
+#
 # Revision 1.4  2001/04/16 15:55:54  ml
 # - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
 #
