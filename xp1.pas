@@ -12,28 +12,14 @@
 { CrossPoint - allg. Routinen }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$F+}
-  {$IFDEF DPMI}
-    {$C permanent}
-  {$ENDIF}
-{$ENDIF }
-
+{$F+}
 
 unit xp1;
 
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-{$IFDEF Win32 }
-  windows,
-{$ENDIF }
-  dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
+  crt, dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,crc,xpglobal;
 
@@ -180,9 +166,7 @@ function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
-{$IFDEF BP }
 Procedure Start_OS2(Programm,Parameter,Title:String);
-{$ENDIF }
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
@@ -295,81 +279,6 @@ var  menulevel : byte;                  { Menebene }
      mst       : boolean;
 
 
-{$IFDEF Ver32 }
-function  ixdat(s:string):longint; assembler;  {&uses ebx, esi}
-asm
-         mov   esi,s
-         inc   esi                      { L„nge ist z.Zt. immer 10 }
-         call  @getbyte                 { Jahr }
-         cmp   al,70
-         jae   @neunzehn
-         add   al,100
-@neunzehn:mov   dh,al
-         call  @getbyte                 { Monat }
-         mov   cl,4
-         shl   al,cl
-         mov   dl,al
-         mov   ecx,0
-         call  @getbyte                 { Tag }
-         shr   al,1
-         rcr   ch,1
-         add   dl,al
-         call  @getbyte                 { Stunde }
-         shl   al,1
-         shl   al,1
-         add   ch,al
-         call  @getbyte                 { Minute }
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         add   ch,al
-         shl   edx, 16
-         mov   eax, edx
-         mov   ax,cx
-         jmp   @ende
-
-@getbyte:mov   al, [esi]
-         inc   esi
-         sub   al,'0'
-         mov   ah,10
-         mul   ah
-         add   al, [esi]
-         sub   al,'0'
-         inc   esi
-         ret
-@ende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure iso_conv(var buf; bufsize:word); assembler;  {&uses ebx, edi}
-asm
-         cld
-         mov    edi, buf
-         mov    ecx, bufsize
-         mov    ebx, offset isotab1 - 0c0h
-@isolp:  mov    al, [edi]
-         cmp    al, 0c0h
-         jb     @noconv
-         xlat
-@noconv: stosb
-         loop   @isolp
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-
-{$ELSE}
-
 function  ixdat(s:string):longint; assembler;
 asm
          les   si,s
@@ -430,10 +339,6 @@ asm
 @noconv: stosb
          loop  @isolp
 end;
-
-{$ENDIF}
-
-
 
 { Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
@@ -702,8 +607,6 @@ const
             0                            ,{ þ }
             0  +  1 +         8          ){ #255 };
 
-{$IFDEF BP}
-
 var
   dispbuf: array[1..164] of byte;  {82 Zeichen und 82 Attribute}
 
@@ -841,163 +744,6 @@ asm
 @ende:
 end; { of Listdisplay }
 
-
-
-{$ELSE}
-
-{ --- 32-Bit --- }
-
-{ Variable in XP0.PAS: }
-{ charbuf     : string[82];                  {82 Zeichen}
-{ attrbuf     : array [1..82] of smallword;  {82 Attribute}
-
-{ Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
-{ mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
-
-procedure MakeListDisplay(const s:string); assembler; {&uses ebx, esi, edi}
-
-asm
-            mov edi,s
-            cld
-            xor ecx,ecx
-            mov cl,[edi]
-            inc edi
-            push ecx
-
-            xor ebx,ebx                    { s + color -> dispbuf }
-
-            mov dh,0
-            mov dl,textattr
-            mov al,' '                     { Abgrenzung links }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc ebx
-
-@dcopylp:   mov al,[edi]
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc edi
-            inc ebx
-            loop @dcopylp
-
-            mov al,' '                     { Abgrenzung rechts }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            pop ecx
-
-            cmp ListXhighlight,0           { keine Hervorhebungen? }
-            je @nodh
-            mov al,'*'
-            call @testattr                 { sichert cx }
-            mov al,'_'
-            call @testattr
-            mov   al,'/'
-            call  @testattr
-
-@nodh:      mov byte ptr charbuf[0],cl
-            add ecx,ecx
-            mov word ptr attrbuf[0],cx
-            jmp @ende
-
-
-{-----------------------}
-
-@testattr:  pusha
-            mov edx,ecx
-            xor ebx,ebx
-
-            {-----------}
-@ta1:       push eax
-            mov ecx,edx
-            xor esi,esi
-
-@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }
-            jne @tanext1
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],1      { Byte vor Startzeichen ok? }
-             jz @tanext1
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],2      { Byte vor Startzeichen ok? }
-             jnz @tastart                          { Startzeichen gefunden }
-
-@tanext1:   inc esi
-            loop @talp1
-            jmp @taende
-
-            {-----------}
-
-@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }
-            dec ecx
-            jz @taende                             { Mindestens 1 Zeichen abstand }
-            inc si                                 { dann Endzeichen Checken }
-
-@talp2:     cmp al,byte ptr charbuf[esi]
-            jne @tanext2
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],4     { Byte vor Endzeichen ok? }
-             jz @tanext2
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],8     { Byte nach Endzeichen ok? }
-             jnz @tafound2                        { Endzeichen gefunden }
-
-@tanext2:   inc esi
-            loop @talp2
-            jmp @taende
-
-            {------------}
-
-@tafound2:  push ecx
-            mov ecx,esi
-            sub ecx,edi
-            dec ecx                                { cx <- Anzahl hervorgeh. Zeichen }
-            mov ah,listhicol
-
-@tacopy1:   mov al,byte ptr charbuf[edi+1]        { hervorgehobenen Text eins nach }
-            mov byte ptr charbuf[edi],al          { vorne kopieren; Farbe tauschen }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            loop @tacopy1
-
-            pop ecx
-            dec ecx                                { restliche Zeichen }
-            jz @addspace
-
-@tacopy2:   mov al,byte ptr charbuf[edi+2]         { Zeichen nach links schieben }
-            mov byte ptr charbuf[edi],al
-            mov ah,byte ptr attrbuf[edi*2+4]       { Attribute ebenso !!! }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            loop @tacopy2
-
-@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anh„ngen }
-            pop eax
-            jmp @ta1                               { ... und das Ganze nochmal }
-
-@taende:    pop eax
-            mov ecx,edx
-            popa
-            ret
-
-{-------------------------}
-@ende:
-end; { of MakeListdisplay }
-
-
-procedure ListDisplay(x,y:word; var s:string);
-
-begin
-  makelistdisplay(s);
-  Consolewrite(x,y,length(s));
-end;
-
-
-{$ENDIF}
-
-
-
-
 procedure interr(txt:string);
 begin
   moff;
@@ -1006,16 +752,11 @@ begin
   halt(1);
 end;
 
-{$IFNDEF NCRT }
 procedure sound(hz:word);
 begin
-{$IFNDEF VP }
   if not ParQuiet then
     crt.sound(hz);
-{$ENDIF }
 end;
-{$ENDIF } { NCRT }
-
 
 procedure blindon(total:boolean);
 var mf : boolean;
@@ -1125,60 +866,28 @@ end;
 
 
 procedure sichern(var sp:scrptr);
-{$IFDEF NCRT}
-var
-  r: integer;
-{$ENDIF}
 begin
-{$IFDEF NCRT }
-  r:= getrahmen;
-  setrahmen(0);
-  wpull(1,screenwidth,1,screenlines,'',sp);
-  setrahmen(r);
-{$ELSE}
   with sp do
   begin
-{$IFDEF Win32 }
-    { Das Attribut belegt hier 2 Byte }
-    scsize:=screenlines*screenwidth*4;
-{$ELSE }
     scsize:=screenlines*2*screenwidth;
-{$ENDIF }
-{$IFDEF BP }
     if maxavail<scsize+500 then interr('Speicher-šberlauf');
-{$ENDIF }
     getmem(p,scsize);               { Bild sichern }
     moff;
-{$IFDEF BP }
     FastMove(mem[base:0],p^,scsize);
-{$ELSE }
-    ReadScreenRect(1, screenwidth, 1, screenlines, p^);
-{$ENDIF }
     mon;
   end;
-{$ENDIF}
 end;
 
 procedure holen(var sp:scrptr);
 begin
-{$IFDEF NCRT}
-  wrest(sp);
-{$ELSE}
   with sp do
   begin
     moff;
-    {$IFDEF BP }
-      FastMove(p^,mem[base:0],scsize);
-    {$ELSE }
-      {$IFNDEF NCRT }
-        WriteScreenRect(1, screenwidth, 1, screenlines, p^);
-      {$ENDIF }
-    {$ENDIF }
+     FastMove(p^,mem[base:0],scsize);
     mon;
     disp_DT;
     freemem(p,scsize);               { Bild wiederherstellen }
   end;
-{$ENDIF}
 end;
 
 
@@ -1225,7 +934,6 @@ end;
 
 { --- Bildschirmzeilen -------------------------------------}
 
-{$IFDEF BP }
 procedure XPFont;
 begin
   if not ParLCD then
@@ -1234,9 +942,7 @@ begin
     else
       LoadFontfile(ParFontfile);
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 procedure SetXPborder;
 begin
   case videotype of
@@ -1244,55 +950,21 @@ begin
     2,3 : SetBorder64(col.colborder and $3f);
   end;
 end;
-{$ENDIF }
-
 
 { Zeilenzahl einstellen; evtl. Videomodus zurcksetzen }
 
 procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
-{$IFDEF Win32 }
-  procedure SetScrXY(X,Y: Integer);
-  var
-    R: TSmallRect;
-    Size: TCoord;
-  begin
-    Size.X := X;
-    Size.Y := Y;
-    SetConsoleScreenBufferSize(OutHandle, Size);
-    R.Left   := 0;
-    R.Top    := 0;
-    R.Right  := Size.X - 1;
-    R.Bottom := Size.Y - 1;
-    SetConsoleWindowInfo(OutHandle, True, R);
-  end;
-{$ENDIF }
 begin
-{$IFDEF NCRT }
-  screenlines:= GetScreenLines;
-  iosclines:=screenlines;
-  crline:=screenlines;
-  actscreenlines:=screenlines;
-  screenwidth:=GetScreenCols;
-  zpz:= GetScreenCols;
-  cursor(curoff);
-  window(1,1,screenwidth,screenlines);
-{$ELSE }
   if (videotype<2) or ParLCD then
     screenlines:=25
   else
     if ParFontfile<>'' then
     begin
-  {$IFDEF BP }
       XPFont;
-  {$ENDIF }
       screenlines:=GetScreenlines;
     end;
-{$IFDEF Win32 }
-  SetScrXY(screenwidth,ScreenLines);
-  ScreenLines := GetScreenLines;
-{$ENDIF }
   if (ParFontfile='') and not ParLCD then begin
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then begin
@@ -1308,7 +980,6 @@ begin
   screenwidth:=zpz;
   cursor(curoff);
   window(1,1,80,25);
-{$ENDIF }
   new(ma);
   splitmenu(ZeilenMenue,ma,n,true);
   for i:=1 to n do
@@ -1325,11 +996,7 @@ var d    : DB;
   procedure showtline;
   begin
     attrtxt(col.coltline);
-{$IFDEF NCRT }
-    HorizLine(3);
-{$ELSE }
     wrt(1,3,dup(screenwidth,'ß'));
-{$ENDIF }
   end;
 
 begin
@@ -1353,30 +1020,18 @@ begin
   xp_maus_aus;
   attrtxt(7);
   setscreensize(newmode);
-{$IFDEF NCRT }
-  { Seltsamerweise ist der Wert von Screenlines in der Prozedur
-  lines trotz der neuen Festsetzung 25 -> Workaround }
-  lines(GetScreenLines, 1);
-{$ELSE }
   lines(screenlines,1);
-{$ENDIF }
   clrscr;
   if (videotype>1) and not ParMono then
     setbackintensity;
-{$IFDEF BP }
   SetXPborder;
-{$ENDIF }
   with col do begin
     attrtxt(colmenu[0]);
     Wrt2(sp(screenwidth));
     showusername;
     dispfunctionkeys(false);
     attrtxt(coltline);
-{$IFDEF NCRT }
-    HorizLine(screenlines-fnkeylines);
-{$ELSE }
     mwrt(1,screenlines-fnkeylines,dup(screenwidth,'Ü'));
-{$ENDIF }
     normtxt;
     end;
   showmain(0);
@@ -1423,10 +1078,8 @@ var i : integer;
 begin
   moff;
   attrtxt(7);
-{$IFDEF BP }
   if col.colborder<>0 then
     setborder16(0);
-{$ENDIF }
   clrscr;
   SetVideoMode(OrgVideomode);
 { screenlines:=25;
@@ -1613,7 +1266,6 @@ procedure errsound;
 begin
   if not ParQuiet or soundflash then
   begin
-{$IFDEF BP }
     if soundflash then SetBorder16(3);
     sound(1000);
     delay(25);
@@ -1623,11 +1275,8 @@ begin
     if soundflash then
     begin
       mdelay(60);
-      {$IFDEF BP }
       SetXPborder;
-      {$ENDIF }
     end;
-{$ENDIF }
   end;
 end;
 
@@ -1641,11 +1290,6 @@ procedure signal;              { s. Config/Anzeige/Hilfen }
 begin
   if not ParQuiet and tonsignal then
   begin
-{$IFDEF VP }
-    PlaySound(1205, 60);
-    PlaySound(1000, 60);
-    PlaySound(800, 60);
-{$ELSE }
     mdelay(60);
     sound(1205);
     mdelay(60);
@@ -1654,7 +1298,6 @@ begin
     sound(800);
     mdelay(60);
     nosound;
-{$ENDIF }
   end;
 end;
 
@@ -2124,9 +1767,7 @@ begin
   if bbase<>nil then dbClose(bbase);
   if bezbase<>nil then dbClose(bezbase);
   if mimebase<>nil then dbClose(mimebase);
-{$IFDEF BP }
   FlushSmartdrive(false);
-{$ENDIF }
   opendb:=false;
 end;
 
@@ -2140,9 +1781,7 @@ begin
     dbTempClose(mimebase);
     if miscbase<>nil then
       dbTempClose(miscbase);
-{$IFDEF BP }
     FlushSmartdrive(false);
-{$ENDIF }
     closed:=true;
     end;
 end;
@@ -2182,22 +1821,17 @@ begin
     if ioresult<>0 then ;
   end;
   if videotype>1 then setbackintensity;
-{$IFDEF BP }
   setcbreak(orgcbreak);
-{$ENDIF}
 end;
 {$IFDEF Debug }
   {$S+}
 {$ENDIF }
 
 procedure showstack;
-{$IFDEF BP }
 const lastsptr : word = 0;
       lastavail: longint = 0;
 var b : byte;
-{$ENDIF }
 begin
-{$IFDEF BP }
   if (sptr<>lastsptr) or (memavail<>lastavail) then begin
     b:=dphback; dphback:=col.colkeys;
     {$IFDEF DPMI}
@@ -2209,7 +1843,6 @@ begin
     lastsptr:=sptr;
     lastavail:=memavail;
     end;
-{$ENDIF }
 end;
 
 
@@ -2231,11 +1864,7 @@ var x,y   : byte;
   end;
 
 begin
-{$IFDEF BP }
   ps:=min(maxavail-5000,60000);
-{$ELSE }
-  ps:=65536;
-{$ENDIF }
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
@@ -2299,11 +1928,7 @@ procedure _chdir(p:pathstr);
 begin
   p:=trim(p);
   if p<>'' then begin
-{$IFDEF UnixFS }
-    if (length(p)>1) and (right(p,1)='/') then
-{$ELSE }
     if (length(p)>1) and (right(p,1)='\') then
-{$ENDIF }
       dellast(p);
     chdir(p);
     if ioresult<>0 then
@@ -2336,7 +1961,6 @@ begin
   mdelay(1);
 end;
 
-{$IFDEF BP }
 procedure FlushSmartdrive(show:boolean);   { Schreibcache leeren }
 begin
   if not ParNoSmart and (SmartCache(ord(getdrive)-65)=2) then begin
@@ -2345,7 +1969,6 @@ begin
     if show then closebox;
     end;
 end;
-{$ENDIF }
 
 
 procedure set_checkdate;
@@ -2407,6 +2030,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.4  2000/10/23 22:17:02  mk
+  - Portierung entfernt
+
   Revision 1.48.2.3  2000/10/09 16:28:14  mk
   - Bildschirm in Resetvideo vor Moduswechsel sichern und restaurieren
 
