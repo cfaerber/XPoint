@@ -1820,7 +1820,7 @@ begin
   begin
     len:=block[2].pos.offset-block[1].pos.offset;
     SetLength(Result, Len);
-    Move(block[1].pos.absatz^.cont[block[1].pos.offset],Result[1],len);
+    if Len > 0 then Move(block[1].pos.absatz^.cont[block[1].pos.offset],Result[1],len);
   end;
 end;
 
@@ -2222,6 +2222,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/02/04 17:26:35  mk
+  - after merge fixes
+
   Revision 1.50  2002/01/16 23:48:17  cl
   - after merge fixes
 

@@ -1806,6 +1806,7 @@ ende:
 end;
 
 
+// N/U/Z
 procedure zeige_unversandt;
 var _brett   : string;
     _mbrett  : string;
@@ -2970,6 +2971,9 @@ end;
 
 {
   $Log$
+  Revision 1.132  2002/02/04 17:26:36  mk
+  - after merge fixes
+
   Revision 1.131  2002/01/30 17:34:14  mk
   - use absolute FieldConsts in dbReadX
 

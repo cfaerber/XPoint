@@ -24,7 +24,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
 #          darf *nicht* bersetzt werden. Es wird von OpenXP nur intern verwendet
 #          und nicht angezeigt.
-0   Main,001Open^XPù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2
+0   Main,001Open^XPù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2,009^?ù41
 1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
@@ -3940,6 +3940,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.44  2002/02/04 17:26:35  mk
+# - after merge fixes
+#
 # Revision 1.43  2002/01/13 15:07:23  mk
 # - Big 3.40 Update Part I
 #
