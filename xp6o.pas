@@ -488,7 +488,7 @@ label ende,again;
     end;
   begin
     asnum:=0;
-    if not binaermail then begin
+    if archivtext and not binaermail then begin
       wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
       dbReadN(mbase,mb_brett,_brett);
       if (_brett[1]<>'U') or (typ=5) then
@@ -502,9 +502,11 @@ label ende,again;
   procedure wrr;
   var i : byte;
   begin
-    for i:=1 to asnum do
-      writeln(t,aas[i]);
-    writeln(t);
+    if archivtext then begin
+      for i:=1 to asnum do
+        writeln(t,aas[i]);
+      writeln(t);
+      end;
     close(t);
   end;
 
@@ -515,7 +517,7 @@ label ende,again;
     dbWriteN(mbase,mb_halteflags,fl);
   end;
 
-  procedure archivieren;
+  procedure archivieren;       { 5: In Archiv-Brett archivieren }
   var tmp  : pathstr;
       f,tf : file;
       dat  : longint;
@@ -525,6 +527,7 @@ label ende,again;
       mnt  : longint;
       abl  : byte;
       mid  : string[20];
+      flags: integer;
   begin
     rmessage(642);      { 'Nachricht wird archiviert...' }
     dbReadN(mbase,mb_ablage,abl);
@@ -532,11 +535,12 @@ label ende,again;
       dbReadN(mbase,mb_wvdatum,edat)
     else
       dbReadN(mbase,mb_empfdatum,edat);
-    if not binaermail then begin
+    if archivtext and not binaermail then begin
       rewrite(t);
       write_archiv((_brett[1]='1') or (_brett[1]='U'));
       wrr;
       end;
+    dbReadN(mbase,mb_flags,flags);
     extract_msg(0,'',fn,true,1);
     if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
     tmp:=TempS(_filesize(fn)+2000);
@@ -559,6 +563,7 @@ label ende,again;
     dbWriteN(mbase,mb_brett,ebrett);
     dbWriteN(mbase,mb_betreff,betr);
     dbWriteN(mbase,mb_absender,hdp^.absender);
+    dbWriteN(mbase,mb_flags,flags);
     dat:=IxDat(hdp^.datum); dbWriteN(mbase,mb_origdatum,dat);
     dbWriteN(mbase,mb_empfdatum,edat);
     mid:=FormMsgid(hdp^.msgid);
@@ -759,7 +764,7 @@ again:
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
       5 : binaermail:=IsBinary;
-      6 : begin
+      6 : begin                          { 6: Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
             dbReadN(mbase,mb_absender,name);
             dbSeek(ubase,uiName,ustr(name));
@@ -777,7 +782,7 @@ again:
             else
               hdp^.empfaenger:=TO_ID+name;
             hdp^.betreff:=betr;
-            if binaermail then
+            if binaermail or not archivtext then
               newsize:=hdp^.groesse
             else begin
               newsize:=hdp^.groesse+2;  { Leerzeile }
@@ -1086,7 +1091,7 @@ begin
   fn:=TempS(dbReadInt(mbase,'msgsize')+2048);
   new(hdp);
   ReadHeader(hdp^,hds,false);
-  if ntyp<>'B' then begin
+  if archivtext and (ntyp<>'B') then begin
     assign(t,fn);
     rewrite(t);
     writeln(t,getreps2(641,1,date));
@@ -1227,6 +1232,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/21 12:34:47  jg
+  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
+  - Archivier-Vermerk ist jetzt abschaltbar
+
   Revision 1.8  2000/04/16 19:50:38  mk
   - Fixes fuer FindFirst
 

@@ -486,6 +486,7 @@ begin
   BreakLogin:=false;
   ArchivBretter:='';
   ArchivLoesch:=false;
+  ArchivText:=true;
   shell25:=false;
   edit25:=false;
   MinMB:=4;
@@ -831,6 +832,7 @@ begin
   writeln(t,'ShowLogin=',jnf(ShowLogin));
   writeln(t,'ArchivBretter=',archivbretter);
   writeln(t,'ArchivLoeschen=',jnf(archivloesch));
+  writeln(t,'ArchivVermerk=',jnf(archivtext));
   writeln(t,'Shell25=',jnf(shell25));
   writeln(t,'Edit25=',jnf(edit25));
   writeln(t,'MinMB=',minmb);
@@ -1368,6 +1370,7 @@ begin
           getx(su,  'InterruptLogin',BreakLogin) or
           gets(s,su,'ArchivBretter',archivbretter,BrettLen-1) or
           getx(su,  'ArchivLoeschen',archivloesch) or
+          getx(su,  'ArchivVermerk',archivtext) or
           getx(su,  'Shell25',shell25) or
           getx(su,  'Edit25',edit25) or
           getw(su,  'MinMB',minmb) or
@@ -1652,6 +1655,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/04/21 12:34:47  jg
+  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
+  - Archivier-Vermerk ist jetzt abschaltbar
+
   Revision 1.32  2000/04/15 21:44:46  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

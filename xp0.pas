@@ -845,6 +845,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        BreakLogin   : boolean;
        ArchivBretter: string[BrettLen];
        ArchivLoesch : boolean;       { Msgs nach Archivierung l”schen }
+       ArchivText   : boolean;       { Archivier-Vermerk erstellen}
        shell25      : boolean;       { 25-Zeilen-Mode bei DOS-Shell }
        edit25       : boolean;       { dito bei externem Editor }
        MinMB        : smallword;
@@ -1108,6 +1109,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.29  2000/04/21 12:34:47  jg
+  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
+  - Archivier-Vermerk ist jetzt abschaltbar
+
   Revision 1.28  2000/04/15 21:44:45  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

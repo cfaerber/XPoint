@@ -3426,6 +3426,14 @@ Stellen Sie <<[x]>> ein, wenn mit /Nachricht/Weiter-
 leiten [/Archiv] oder mit <Alt A> archivierte Nachrich-@12109
 ten anschlieáend auf "L”schen" gesetzt werden sollen.
 @
+8070
+<<[x]>> -> Vor archivierte Textnachrichten wird ein
+       Archivierungsvermerk gesetzt.
+       (Archiviert am... / Ursprung...).
+
+<<[ ]>> -> Der Text der Nachricht bleibt unveraendert.
+        
+@
 219
 <<[x]>> -> Automatisch neu angelegte Bretter werden immer
        am Ende der Brettliste angeh„ngt.
@@ -3486,18 +3494,6 @@ dardm„áig aktiviert.
 
 @
 223
-Manche User verwenden als Quote-Zeichen auch die
-Zeichen "|" und ":". Da dann aber die Farben fr die
-verschiedenen Quoteebenen nicht mehr stimmen, kann
-hier eingestellt werden, daá diese zwei Zeichen auch
-wie Quote-Zeichen behandelt werden sollen.
-
-Diese Einstellung gilt sowohl fr den Lister als auch
-den Editor. Sie l„át sich im Lister jederzeit 
-mit der Taste "Q" umschalten.
-
-@
-224
 Dieser Schalter bestimmt,
 wie das Userfenster sortiert werden soll:
 
@@ -3510,6 +3506,18 @@ wie das Userfenster sortiert werden soll:
 Diese Einstellung kann im Userfenster und 
 User-Weiterleitmenue jederzeit mit der Taste "O"
 umgestellt werden.
+
+@
+224
+Manche User verwenden als Quote-Zeichen auch die
+Zeichen "|" und ":". Da dann aber die Farben fr die
+verschiedenen Quoteebenen nicht mehr stimmen, kann
+hier eingestellt werden, daá diese zwei Zeichen auch
+wie Quote-Zeichen behandelt werden sollen.
+
+Diese Einstellung gilt sowohl fr den Lister als auch
+den Editor. Sie l„át sich im Lister jederzeit 
+mit der Taste "Q" umschalten.
 
 @
 225
