@@ -358,10 +358,15 @@ begin
   else begin
     write(lo(dosversion):2,'.',formi(hi(dosversion),2));
     if win then begin
-      gotoxy(x,y+1);
-      write(hi(winversion):2,'.',formi(lo(winversion),2));
+      gotoxy(x+1,y+1);
+      case WinVersion of
+        2: Write('3.1');
+        3: Write('95/98/ME');
+        4: Write('NT 4.0');
+        5: Write('2000/XP');
       end;
     end;
+  end;
 end;
 
 procedure memstat;
@@ -996,6 +1001,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.9  2001/06/23 19:14:29  mk
+  - erkannte Windows-Version wird als allgemeiner String angezeigt
+
   Revision 1.27.2.8  2000/12/29 21:58:55  mk
   - Datenbankstatistik ist jetzt genauer
 
