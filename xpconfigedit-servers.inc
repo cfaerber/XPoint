@@ -280,7 +280,7 @@
   begin
     dbGo(d,drec[p]);
     fn := dbReadStr(d,'dateiname');
-    ReadBox(nt, fn, boxpar);
+    ReadBox(0, fn, boxpar);
     pppm:=boxpar^.Clientmode;
     if empty then
       nt:=nt_Netcall
@@ -2068,6 +2068,9 @@
 
 {
   $Log$
+  Revision 1.22  2001/09/06 19:13:55  mk
+  - fixed use of not initialized variable nt in NewBox
+
   Revision 1.21  2001/08/28 13:01:39  mk
   - removed RenameDir
   - renamed RenameDir to RenameFile
