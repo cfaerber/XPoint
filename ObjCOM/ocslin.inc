@@ -104,7 +104,7 @@ begin
     57600       : tios.c_cflag:= B57600;
     115200      : tios.c_cflag:= B115200;
     230400      : tios.c_cflag:= B230400;
-{$ifndef FreeBSD}
+{$ifndef BSD}
     460800      : tios.c_cflag:= B460800;
 {$ENDIF}
   else
@@ -289,7 +289,7 @@ begin
   else if ((tios.c_cflag and B57600)<>0) then GetBpsRate:= 57600
   else if ((tios.c_cflag and B115200)<>0) then GetBpsRate:= 115200
   else if ((tios.c_cflag and B230400)<>0) then GetBpsRate:= 230400
-{$ifndef FreeBSD}
+{$ifndef BSD}
   else if ((tios.c_cflag and B460800)<>0) then GetBpsRate:= 460800
 {$endif}
   else GetBpsRate:= 1;
@@ -348,6 +348,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.11  2003/01/16 22:28:24  mk
+  - changed FreeBSD to BSD to allow compiling with NetBSD
+
   Revision 1.10  2003/01/06 22:43:02  cl
   - made TCommStream.Write compatible with TStream.Write
 

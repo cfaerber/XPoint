@@ -12,7 +12,7 @@ WSAInits: Integer= 0;
 WSAData:  tWSAData;
 {$ENDIF}
 
-{$ifdef FreeBSD}
+{$ifdef BSD}
   const FIONREAD = $4004667F;
 {$endif}
 
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2003/01/16 22:28:24  mk
+  - changed FreeBSD to BSD to allow compiling with NetBSD
+
   Revision 1.18  2003/01/06 22:43:02  cl
   - made TCommStream.Write compatible with TStream.Write
 
