@@ -2287,9 +2287,9 @@ begin
 (* Alias: csEUCPkdFmtJapanese                                                 *)
 (* Alias: EUC-JP  (preferred MIME name)                                       *)
 
-  if name='EXTENDED_UNIX_CODE_PACKED_FORMAT_FOR_JAPANESE' then result :='Extended_UNIX_Code_Packed_Format_for_Japanese' else
-  if name='CSEUCPKDFMTJAPANESE'     then result :='Extended_UNIX_Code_Packed_Format_for_Japanese' else
-  if name='EUC-JP'                  then result :='Extended_UNIX_Code_Packed_Format_for_Japanese' else
+  if name='EXTENDED_UNIX_CODE_PACKED_FORMAT_FOR_JAPANESE' then result :='EUC-JP' else
+  if name='CSEUCPKDFMTJAPANESE'     then result :='EUC-JP'                else
+  if name='EUC-JP'                  then result :='EUC-JP'                else
 
 (* Name: Extended_UNIX_Code_Fixed_Width_for_Japanese                          *)
 (* MIBenum: 19                                                                *)

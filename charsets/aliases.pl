@@ -55,7 +55,7 @@ $UserAgent->request($Request,sub {
   
       $name=$1;
       @alias=($name);
-    } elsif(/^Alias: *([^ ]+) \(.*preferred MIME.*\)/) {
+    } elsif(/^Alias: *([^ ]+) +\(.*preferred MIME.*\)/) {
       $name=$1;
       push @alias,$name;
     } elsif(/^Alias: *([^ ]+)/) {
@@ -77,6 +77,9 @@ $UserAgent->request($Request,sub {
 } );
 
 # $Log$
+# Revision 1.4  2002/03/25 18:42:24  cl
+# - fixed detection of preferred MIME charsets
+#
 # Revision 1.3  2001/09/10 18:48:18  cl
 # - retrieve charset list directly from iana web server
 #
