@@ -1135,10 +1135,10 @@ begin // extract_msg;
       if ListQuoteMsg<>'' then
         tmp:=ListQuoteMsg
       else begin
-        XReadIsoDecode:=(art=xTractQuote);
+//      XReadIsoDecode:=(art=xTractQuote);
         if (art<>xTractQuote) then
         begin
-          XReadIsoDecode:=false;
+//        XReadIsoDecode:=false;
           Xread(tmp,false);
         end else
         if multipart then 
@@ -1153,7 +1153,7 @@ begin // extract_msg;
               false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
                 ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
             end;
-            XReadS(hds+iif(hdp.typ='B',hdp.komlen,0),str);      
+            XReadS(iif(hdp.typ='B',hdp.komlen,0),str)
           finally
             str.Free;
           end;
@@ -1230,6 +1230,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.89  2002/01/11 16:14:06  cl
+  - fixed quoting
+
   Revision 1.88  2002/01/05 00:11:46  cl
   - fixed charset and UTF-8 support for multipart messages
 
