@@ -1,5 +1,5 @@
 
-	Hinweise fuer die Benutzung von OpenXP unter Linux
+	Hinweise fuer die Benutzung von OpenXP unter Linux       v3.70-alpha-1
 	----------------------------------------------------------------------
 
 	ACHTUNG: OpenXP ist als Linux-Portierung zur Zeit eher
@@ -19,24 +19,15 @@
 		Beta-Status
 		-----------
 
+		IHS		- Dummes Hilfesystem
 		RC		- Resource-Compiler fuer OpenXP
 		UUZ		- ZConnect-RFC-Konverter
 		XPME		- Menueeditor
-		ZFido		- ZConnect-Fido-Konverter, wird fester
-				  Bestandteil von XP.
 
 		Alpha-Status
 		------------
 
-		IHS		- Dummes Hilfesystem
 		XP		- OpenXP-Hauptprogramm
-
-		Non-Function-Development
-		------------------------
-
-		XP-FM		- Fido-Mailer fuer OpenXP, wird fester
-				  Bestandteil von XP.
-		ZM		- ZModem: wird wohl nichts: sz/gz installieren
 
 	Install	Voraussetzung: FreePascal Compiler ab 1.00 (am besten den
 		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
@@ -45,22 +36,27 @@
 		su root
 		# Da der Compiler noch einen Bug hat, vorruebergehendend:
 		ppc386 xp
-		make install
+		make OS=linux install
 		exit
 
 		Sie koennen auf 'su root' verzichten, wenn Sie als User das
 		Recht haben, in /usr/bin Links und in /usr/local Verzeichnisse
 		anzulegen.
 
+		BACKUP!!!! Machen Sie eine KOMPLETTE Datensicherung.
+
 		Dann diese Datei bis zum Ende lesen!
 
 	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
 		einen ISO-8859-1-konfomren Zeichensatz.
 
-		Es kann zwar eine Bildschirmaufloesung von mehr
-		als 80x25 verwendet werden, aber es kann zur Zeit
-		nicht garantiert werden, dass diese auch genutzt
-		wird.
+		Die Tastaturunterstuetzung ist nicht vollstaendig. Sie muessen
+		vorerst auf deutsche Umlaute und andere Spielereien verzichten.
+
+		Maus? Haben Sie eine Falle?
+
+		Die Farben funktionieren im Standard nicht so, wie man es gerne
+		moechte: Config/Anzeige/Farben loest das Problem.
 
 		Unter X darf die Groesse der Konsole nach dem
 		Programmstart nicht mehr geaendert werden.
@@ -114,8 +110,8 @@
 		nicht ISO-8859-1-kompatibel sind, sollte das Tool
 		funktionieren.
 
-	ZFido   ZFido ist vollstaendig einsatzfaehig und sollte keine
-		Probleme mehr hervorrufen.
+	ZFido   ZFido ist vollstaendig in XP integriert.
+
 
 	----------------------------------------------------------------------
 	$RCSfile$
