@@ -67,11 +67,11 @@ procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
-procedure Wrt(x,y:word; const s:string);
+procedure Wrt(const x,y:word; const s:string);
 { Schreiben eines Strings, wie Writeln }
 procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position }
-procedure FWrt(x,y:word; const s:string);
+procedure FWrt(const x,y:word; const s:string);
 
 {$IFDEF Win32 }
 { Liest ein Zeichen direkt von der Konsole aus }
@@ -81,8 +81,16 @@ procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
   und Speichert das Ergebnis in Buffer. Buffer enthÑlt ein array
   aus Zeichen + Attribut mit je einem Byte. Count gibt die Zeichenzahl an
   Achtung: X und Y beginnen hier bei Koodinate 0 ! }
-procedure GetScreenLine(x, y: Integer; var Buffer; Count: Integer);
+procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
+
+{ Diese Routinen kopieren rechteckige Bildschirmbereiche aus
+  der Console heraus und wieder hinein. Der Buffer mu· dabei
+  die vierfache Grî·e der Zeichenzahl besitzen  }
+procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
+procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 {$ENDIF }
+{ FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut }
+procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 
 procedure w_copyrght;
 
@@ -193,7 +201,6 @@ end;
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
 var
   i: integer;
-  s: String;
   SaveAttr: Byte;
 begin
   SaveAttr := TextAttr; TextAttr := Attr;
@@ -201,13 +208,12 @@ begin
   Fwrt(l, u, rchar[typ,5] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,6]);
 
   { Wird benutzt, wenn Fenster im Rahmen gefÅllt werden soll }
-  s := rchar[typ, 4] + Dup(r-l-1, ' ') + rchar[typ, 4];
   for i := o+1 to u -1 do
-  if clr then
-    FWrt(l, i, s)
-  else begin
+  begin
     FWrt(l, i, rchar[typ, 4]);
     FWrt(r, i, rchar[typ, 4]);
+    if clr then
+      FillScreenLine(l+1, i-1, ' ', r-l-2);
   end;
   TextAttr := SaveAttr;
 end;
@@ -341,15 +347,13 @@ end;
 procedure clwin(l,r,o,u:word);
 var
   i: Integer;
-  s: String;
 begin
-  s := Dup(r-l+1, ' ');
   for i := o to u do
-    FWrt(l, i, s);
+    FillScreenLine(l, i, ' ', r-l+1);
 end;
 {$ENDIF }
 
-procedure Wrt(x,y:word; const s:string);
+procedure Wrt(const x,y:word; const s:string);
 begin
 {$IFDEF BP }
   gotoxy(x,y);
@@ -361,7 +365,7 @@ begin
 end;
 
 {$IFDEF BP }
-procedure FWrt(x,y:word; const s:string); assembler;
+procedure FWrt(const x,y:word; const s:string); assembler;
 asm
          push ds
          cld
@@ -459,6 +463,57 @@ begin
     TLocalScreen(Buffer)[i*2] := CharBuffer[i];
     TLocalScreen(Buffer)[I*2+1] := Char(Lo(AttrBuffer[i]));
   end;
+end;
+{$ENDIF }
+
+procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
+{$IFDEF Win32 }
+  var
+    WritePos: TCoord;                       { Upper-left cell to write from }
+    OutRes: LongInt;
+  begin
+    WritePos.x := x-1; WritePos.y := y-1;
+    FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, @OutRes);
+    FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, @OutRes)
+  end;
+{$ELSE }
+  var
+    i: Integer;
+  begin
+    GotoXY(x, y);
+    Write(Dup(Count, Chr));
+  end;
+{$ENDIF }
+
+{$IFDEF Win32 }
+procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
+var
+  ReadPos, Coord: TCoord;
+  SourceRect: TSmallRect;
+begin
+  ReadPos.X := r-l; ReadPos.Y := u-o;
+  Coord.X := 0; Coord.Y := 0;
+  with SourceRect do
+  begin
+    Left := l-1; Right := r;
+    Top := o-1; Bottom := u;
+  end;
+  ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), ReadPos, Coord, @SourceRect);
+end;
+
+procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
+var
+  WritePos, Coord: TCoord;
+  DestRect: TSmallRect;
+begin
+  WritePos.X := r-l; WritePos.Y := u-o;
+  Coord.X := 0; Coord.Y := 0;
+  with DestRect do
+  begin
+    Left := l-1; Right := r;
+    Top := o-1; Bottom := u;
+  end;
+  WriteConsoleOutput(OutHandle, Char_Info(Buffer), WritePos, Coord, @DestRect);
 end;
 {$ENDIF }
 
@@ -621,17 +676,19 @@ begin
     l:=x1; r:=x2; o:=y1; u:=y2;
     ashad:=shad;
     wi:=(r-l+1+shad)*2;
-    getmem(savemem,wi*(u-o+ashad+1));
     moff;
+{$IFDEF Win32 }
+    getmem(savemem,wi*(u-o+ashad+1)*2);
+    ReadScreenRect(l, r+1+ashad, o, u+1+ashad, SaveMem^);
+{$ELSE }
+    getmem(savemem,wi*(u-o+ashad+1));
     for j:=o-1 to u-1+ashad do
 {$IFDEF BP }
       Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
 {$ELSE }
-  {$IFDEF Win32 }
-      GetScreenLine(l-1, j, savemem^[(1+j-o)*wi], wi div 2);
-  {$ELSE }
+      (*  GetScreenLine(l-1, j, savemem^[(1+j-o)*wi], wi div 2); *)
       Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
-  {$ENDIF }
+{$ENDIF}
 {$ENDIF}
     mon;
     if rahmen=1 then rahmen1(l,r,o,u,text);
@@ -652,6 +709,10 @@ begin
   normwin;
   with pullw[handle] do begin
     moff;
+
+{$IFDEF Win32 }
+    WriteScreenRect(l, r+1+ashad, o, u+1+ashad, SaveMem^);
+{$ELSE }
     for i:=o-1 to u-1+ashad do
 {$IFDEF BP }
       Fastmove(savemem^[(i-o+1)*wi],mem[base:i*zpz*2+(l-1)*2],wi);
@@ -661,17 +722,21 @@ begin
         Fastmove(savemem^[(i-o+1)*wi],LocalScreen^[i*zpz*2+(l-1)*2],wi);
         { Offset nur einmal berechnen, beschleunigt das ganze etwas }
         Offset := (i-o+1)*wi;
-        GotoXY(l, i+1);
         for j := 0 to wi div 2 - 1 do
         begin
           TextAttr := savemem^[Offset+1];
-          Write(Char(Savemem^[Offset]));
+          FWrt(l+j, i+1, Char(Savemem^[Offset]));
           Inc(Offset, 2);
         end;
       end;
-{$ENDIF}
+{$ENDIF }
+{$ENDIF }
     mon;
+{$IFDEF Win32 }
+    freemem(savemem,wi*(u-o+ashad+1)*2);
+{$ELSE }
     freemem(savemem,wi*(u-o+ashad+1));
+{$ENDIF }
     free:=true;
     end;
 end;
@@ -938,8 +1003,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.9  2000/03/07 23:41:07  mk
-  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
+  Revision 1.10  2000/03/08 01:33:15  mk
+  - Kopieren von rechteckigen Bildschirmbereichen hinzugefuegt
 
   Revision 1.8  2000/03/04 22:41:37  mk
   LocalScreen fuer xpme komplett implementiert
