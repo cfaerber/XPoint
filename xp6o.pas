@@ -1033,21 +1033,19 @@ again:
          6 : begin
                dbSeek(ubase,uiName,ustr(name));
                if not dbFound then begin   { User noch nicht vorhanden }
-                 dbAppend(ubase);
-                 dbWriteN(ubase,ub_username,name);
-                 pollbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
-                 if not IsBox(pollbox) then begin
+                 pollbox:=defaultbox;
+                 defaultbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
+                 if not IsBox(defaultbox) then begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
-                   dbReadN(bbase,bb_pollbox,pollbox);
-                   end
-                 else
-                   ReplaceVertreterbox(pollbox,true);
-                 dbWriteN(ubase,ub_pollbox,pollbox);
-                 dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-                 b := 1;
-                 dbWriteN(ubase,ub_adrbuch,b);    { Adreábuch }
-                 b:=1 + iif(newuseribm,0,8);
-                 dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
+                   dbReadN(bbase,bb_pollbox,defaultbox);
+                   end;
+                 ReplaceVertreterbox(defaultbox,true);
+                 if not cc_testempf(hdp^.absender)
+                 then begin
+                   defaultbox:=pollbox;
+                   exit;
+                   end;
+                 defaultbox:=pollbox;
                  end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
