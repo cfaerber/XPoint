@@ -28,10 +28,10 @@ var FileToSend : String;
     ErrorWord: system.word;
 
 begin
-  log('+','starting mail transfer');
+  log(lcStart,'starting mail transfer');
   if hello.h.capabilities and MyCap=0 then begin
     WriteIPC(mcInfo,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
-    log(ErrChar,'no common transfer protocol');
+    log(lcError,'no common transfer protocol');
     SleepTime(1000);
     aresult:=EL_nologin;
     exit;
@@ -43,7 +43,7 @@ begin
   FidomailerObj:=Self;
   ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
   LogSending:=True; ZModemTimer.Init;
-  WriteIPC(mcInfo,getres2(30004,12),[0]);
+  WriteIPC(mcVerbose,getres2(30004,12),[0]);  { 'Senden' }
   if sendempty and ZedZap then
     ZModemSend(FCommObj,'',True,ErrorWord)
   else
@@ -65,9 +65,9 @@ begin
     DebugLog('ncfido','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
     if not FCommObj^.Carrier then begin
       WriteIPC(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
-      log(ErrChar,'carrier lost');
+      log(lcError,'carrier lost');
     end else
-      log(ErrChar,'transfer aborted');
+      log(lcError,'transfer aborted');
     SleepTime(1000);
     aresult:=EL_senderr
 
@@ -76,7 +76,7 @@ begin
     {ZModem-Ausgaberoutinen setzen}
     FidomailerObj:=Self;
     ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
-    WriteIPC(mcInfo,getres2(30004,13),[0]);    { 'Empfangen' }
+    WriteIPC(mcVerbose,getres2(30004,13),[0]);    { 'Empfangen' }
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(FCommObj,MailPath,ErrorFlag);
     if (ErrorFlag) then begin
@@ -89,6 +89,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.2  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 

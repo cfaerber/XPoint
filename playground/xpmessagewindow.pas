@@ -97,15 +97,21 @@ var s: String;
 begin
   s:=Format(fmt,args);
 
-  // if last message was "not important", it may be overwritten
-  if LastMsgUnimportant then
-    FLines.Delete(FLines.Count-1)
-  else
-    if FLines.Count>=FHeight then FLines.Delete(0);
+  if copy(s,1,1)='*' then begin
+    delete(s,1,1);
+    if IsVisible then MWrt(FPosX+2+FWidth-5,FPosY,FormS(s,3));
+    end
+  else begin
+    // if last message was "not important", it may be overwritten
+    if LastMsgUnimportant then
+      FLines.Delete(FLines.Count-1)
+    else
+      if FLines.Count>=FHeight then FLines.Delete(0);
 
-  LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
-  FLines.Add(s);
-  Display;
+    LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
+    FLines.Add(s);
+    Display;
+    end;
 end;
 
 destructor TXPMessageWindow.Destroy;
@@ -118,6 +124,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.2  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 

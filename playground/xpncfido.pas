@@ -199,7 +199,7 @@ var aresult   : integer;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
     dir      : TDirectory;
-    FidoIPC  : TXPMessageWindow;
+
 label fn_ende,fn_ende0;
 
   procedure InitFidomailer;
@@ -270,10 +270,8 @@ label fn_ende,fn_ende0;
   begin   { InitFidomailer }
     with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
-      if fidologfile<>'' then begin
-        Fidomailer.logfile:= fidologfile;
-        Fidomailer.lognew:= true;
-      end;
+      if fidologfile<>'' then
+        Fidomailer.logfilename:= '*'+fidologfile;
       Fidomailer.Username:= username;
       if alias then
         Fidomailer.OwnAddr:=LeftStr(box,cpos('/',box))+pointname
@@ -290,18 +288,18 @@ label fn_ende,fn_ende0;
       Fidomailer.SerNr:= 'SN=OpenXP';
       if hayescomm and (ModemInit+MInit<>'') then begin
         if (ModemInit<>'') and (minit<>'') then
-          Fidomailer.ModemInit:= minit+'\\'+ModemInit
+          Fidomailer.CommandInit:= minit+'\\'+ModemInit
         else
-          Fidomailer.ModemInit:= minit+ModemInit;
+          Fidomailer.CommandInit:= minit+ModemInit;
       end;
       if hayescomm then begin
-        Fidomailer.ModemDial:= MDial;
+        Fidomailer.CommandDial:= MDial;
         Fidomailer.Phonenumbers:= telefon;
       end;
       Fidomailer.DialupRequired:=True;
       Fidomailer.TimeoutConnectionEstablish:= connwait;
-      Fidomailer.RedialWait:= redialwait;
-      Fidomailer.MaxDials:= redialmax;
+      Fidomailer.RedialWaitTime:= redialwait;
+      Fidomailer.MaxDialAttempts:= redialmax;
 //**      Fidomailer.MaxConn:= connectmax;
       Fidomailer.FilePath:= xp0.FilePath;
       Fidomailer.MailPath:= ownpath+XFerDir;
@@ -327,7 +325,6 @@ label fn_ende,fn_ende0;
 //**      for i:=1 to addpkts^.akanz do
 //**        if addpkts^.reqfile[i]<>'' then
 //**          AddFile(addpkts^.reqfile[i]);
-      if ZMoptions<>'' then
       if komment='' then
         Fidomailer.txt:= 'Netcall  -  '+boxname
     { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
@@ -478,13 +475,6 @@ begin { FidoNetcall }
          else komment:=ni.boxname+', '+ni.standort;
     end;
 
-  { Init Fidomailer obj }
-  FidoIPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
-  Fidomailer:=TFidomailer.Create;
-  Fidomailer.IPC:=FidoIPC;
-  if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then goto fn_ende;
-  InitFidomailer;
-
   if packmail then begin
     DeleteFile(upuffer);
 //**    for i:=1 to addpkts^.anzahl do
@@ -498,20 +488,27 @@ begin { FidoNetcall }
       DeleteFile(dir.LongName[i]);
   dir.Free;
 
+  { Init Fidomailer obj }
+  Fidomailer:=TFidomailer.Create;
+  if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
+    trfehler1(2340,Fidomailer.ErrorMsg,30);
+    goto fn_ende;
+    end;
+  Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
+  InitFidomailer;
   FidoNetcall:=EL_noconn;
-  if not Fidomailer.Connect then goto fn_ende;
   aresult:=Fidomailer.PerformNetcall;
+  Fidomailer.Destroy;
 
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
-    // DropAllCarrier;
     Debug.DebugLog('xpncfido','error in fido mailer',DLError);
     trfehler1(720,strs(aresult),10);   { 'interner Fehler (%s) im Fido-Mailer' }
     aresult:=EL_break;
     end;
   NC^.abbruch:=(aresult<>EL_ok);
   FidoNetcall:=aresult;
-  { writeln(result); }
+
   if packmail then
     DeleteFile(sendfile)
   else begin
@@ -584,7 +581,6 @@ begin { FidoNetcall }
       Debug.DebugLog('xpncfido','deleting netcall temporary log file: "'+fidologfile+'"',DLInform);
       DeleteFile(fidologfile);
       end;
-    Fidomailer.Destroy;
 end;
 
 
@@ -827,6 +823,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.4  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 

@@ -120,7 +120,7 @@ begin
   NAKtimer:=false;
   repeat
     if State<>LastState then begin
-      DebugLog('XPFM','fmSS state: '+Char(state+48),DLDebug);
+      DebugLog('ncfido','fmSS state: '+Char(state+48),DLDebug);
       LastState:=State;
     end;
     case state of
@@ -132,7 +132,7 @@ begin
       1 : begin
             if Timers[ti_ALL1].Timeout or not FCommObj^.Carrier then begin
               if not FCommObj^.Carrier then
-                LogCarrier
+                Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','login timeout',DLError);
               state:=99;
@@ -157,7 +157,7 @@ begin
       3 : begin
             if Timers[ti_Master].Timeout or not FCommObj^.Carrier then begin
               if not FCommObj^.Carrier then
-                LogCarrier
+                Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','login timeout',DLError);
               aresult:=EL_nologin;
@@ -359,10 +359,10 @@ procedure TFidomailer.LogHelloData;
 
 begin
   with hello.h do begin
-    log('~','Node: '+GetZString(MyName,59));
-    log('~','Sysop: '+GetZString(SysopName,19));
-    log('~','Capabilities: '+hex(capabilities,4));
-    log('~','Using: '+ProductName(product)+' v'+strs(HiVersion)+'.'+formi(loversion,2));
+    log(lcInfo,'Node: '+GetZString(MyName,59));
+    log(lcInfo,'Sysop: '+GetZString(SysopName,19));
+    log(lcInfo,'Capabilities: '+hex(capabilities,4));
+    log(lcInfo,'Using: '+ProductName(product)+' v'+strs(HiVersion)+'.'+formi(loversion,2));
   end;
 end;
 
@@ -371,7 +371,7 @@ function TFidomailer.fmYS(state:byte):byte;     { WaZOO: 0=Abbruch, 1=Again, 2=o
 var c : char;
 begin
   WriteIPC(mcInfo,'YooHoo',[0]);
-  log(' ','sType: FTS-0006 (YooHoo)');
+  log(lcInfo,'sType: FTS-0006 (YooHoo)');
   fmYS:=1;
   repeat
     case state of
@@ -389,7 +389,7 @@ begin
       2 : begin
             if Timers[ti_Hello].Timeout or not FCommObj^.Carrier then begin
               if not FCommObj^.Carrier then
-                LogCarrier
+                Log(lcError,'carrier lost')
               else
                 DebugLog('ncfido','yoohoo hello timeout',DLError);
               fmYS:=0;
@@ -419,12 +419,15 @@ end;
 procedure TFidomailer.fmS;          { FTS-001 / FTS-007 }
 begin
   WriteIPC(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
-  log(' ','sType: FTS-0001');
+  log(lcInfo,'sType: FTS-0001');
   SleepTime(2000);
 end;
 
 {
   $Log$
+  Revision 1.3  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.2  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 

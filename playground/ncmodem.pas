@@ -28,6 +28,17 @@ interface
 uses
   netcall,timer,objcom;
 
+const
+  { Log chars used in canonical log file. }
+  lcCalling = '+';       { 'Calling (dest), (phonenumber)' }
+  lcConnect = '=';       { '(connectstring)' }
+  lcStart = '+';         { 'starting mail transfer' }
+  lcFile = '*';          { 'Send/Rcvd (file); (length)b, (time)s, (cps) cps' }
+  lcStop = '+';          { 'mail transfer completed/aborted' }
+  lcExit = '-';          { 'exiting' }
+  lcError = '%';         { 'carrier lost' }
+  lcInfo = ' ';
+
 type
   { This is the base class for all netcall types using dialup techniques.
     As ObjCOM provides the communications channel, all comm types ObjCOM
@@ -38,8 +49,19 @@ type
   protected
     FCommObj: tpCommObj;
     FTimerObj: tTimer;
-    FConnected,FActive,FDialupRequired,WaitForAnswer,GotUserBreak: Boolean;
-    FErrorMsg,ReceivedUpToNow,ModemAnswer: String;
+    FConnected,FActive,FDialupRequired: Boolean;
+    FPhonenumbers: String;
+    WaitForAnswer,GotUserBreak: Boolean;
+    FLogfile: Text; FLogfileOpened: Boolean;
+    FErrorMsg,FLogfileName,ReceivedUpToNow,ModemAnswer: String;
+    {this badge will be used by Log method, default 'ncmodem'}
+    DebugBadge: String;
+
+    FPhonenumber: String;
+    FLineSpeed: Longint;
+    FConnectString: String;
+
+    procedure SLogfileName(S: String);
 
     {Process incoming bytes from modem: store in ReceivedUpToNow or move
      all bytes received yet to ModemAnswer and set WaitForAnswer to False
@@ -62,20 +84,30 @@ type
     function SendMultCommand(s:string; TimeoutModemAnswer: real): String;
 
   public
-    {Phone numbers to dial (space separated)}
+    {Phone numbers to dial (separated by spaces)}
     Phonenumbers: String;
     {Modem init string}
-    ModemInit: String;
+    CommandInit: String;
     {Modem dial prefix string}
-    ModemDial: String;
+    CommandDial: String;
     {Max dial attempts}
-    MaxDials: Integer;
+    MaxDialAttempts: Integer;
+    {Time to wait between dial attempts}
+    RedialWaitTime: Integer;
     {Connection establish timeout}
     TimeoutConnectionEstablish: Integer;
     {Modem init timeout}
     TimeoutModemInit: Integer;
-    {Time to wait between dial attempts}
-    RedialWait: Integer;
+
+    {Phone number connected to}
+    property Phonenumber: String read FPhonenumber;
+    {Detected line speed (bps)}
+    property LineSpeed: Longint read FLineSpeed;
+    {Modem string received upon connection}
+    property ConnectString: String read FConnectString;
+
+    {Opens log file. Overwrites if first char is '*'.}
+    property LogfileName: String read FLogfileName write SLogfileName;
 
     { True if comm channel initialized }
     property Active: Boolean read FActive;
@@ -99,6 +131,10 @@ type
     function Activate(s: String): Boolean;
     { Connects (= dials if necessary) }
     function Connect: boolean; virtual;
+
+    { Logs an event in log file. See lc* log char consts.}
+    procedure Log(c: Char; const s: String);
+
     { Disconnects (= hangs up if necessary) }
     procedure Disconnect; virtual;
   end;
@@ -143,8 +179,10 @@ begin
   inherited Create;
   FConnected:=False; FActive:=False; FDialupRequired:=False; FErrorMsg:='';
   WaitForAnswer:=False; GotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
-  Phonenumbers:=''; ModemInit:='ATZ'; ModemDial:='ATD'; MaxDials:=3;
-  TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWait:=40;
+  Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
+  TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
+  FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
+  DebugBadge:='ncmodem';
 end;
 
 constructor TModemNetcall.CreateWithCommObj(p: tpCommObj);
@@ -155,13 +193,24 @@ end;
 
 destructor TModemNetcall.Destroy;
 begin
+  if FLogfileOpened then Close(FLogfile);
   inherited destroy;
+end;
+
+procedure TModemNetcall.SLogfileName(S: String);
+var Overwrite: Boolean;
+begin
+  Overwrite:=Copy(S,1,1)='*';
+  if Overwrite then Delete(S,1,1);
+  Assign(FLogfile,S);
+  if Overwrite then ReWrite(FLogfile)else Reset(FLogfile);
+  FLogfileOpened:=True;
 end;
 
 function TModemNetcall.Activate(s: String): Boolean;
 begin
   result:=CommInit(s,FCommObj);
-  if not result then WriteIPC(mcError,'Error activating comm channel: %s',[ObjCOM.ErrorStr]);
+  if not result then FErrorMsg:='Error activating comm channel: '+ObjCOM.ErrorStr;
 end;
 
 procedure TModemNetcall.ProcessIncoming;
@@ -261,8 +310,8 @@ var
 begin
   if not FDialupRequired then begin result:=true; exit end;
   GotUserBreak := false;
-  DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
-                   Strs(MaxDials)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWait),DLInform);
+  DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
+                   Strs(MaxDialAttempts)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWaitTime),DLInform);
   StateDialup:=SDInitialize; iDial:=0; result:=False;
 
   while StateDialup<=SDWaitForNextCall do begin
@@ -270,20 +319,21 @@ begin
       SDInitialize: begin
                       WriteIPC(mcInfo,'Init modem',[0]);
                       FTimerObj.SetTimeout(TimeoutModemInit);
-                      if ModemInit='' then begin
+                      if CommandInit='' then begin
                         FCommObj^.SendString(#13,False); SleepTime(150);
                         FCommObj^.SendString(#13,False); SleepTime(300);
                         SendCommand('AT',1); ProcessKeypresses(false);
                       end;
                       if not FTimerObj.Timeout then begin
-                        SendMultCommand(ModemInit,1); StateDialup:=SDSendDial;
+                        SendMultCommand(CommandInit,1); StateDialup:=SDSendDial;
                       end;
                     end;
       SDSendDial: begin
-                    inc(iDial); CurrentPhonenumber:=GetNextPhonenumber(Phonenumbers);
-                    WriteIPC(mcInfo,'Dial %s try %d',[CurrentPhoneNumber,iDial]);
+                    inc(iDial); FPhonenumber:=GetNextPhonenumber(Phonenumbers);
+                    WriteIPC(mcInfo,'Dial %s try %d',[FPhonenumber,iDial]);
+                    CurrentPhonenumber:=FPhonenumber;
                     while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);
-                    SendMultCommand(ModemDial+CurrentPhonenumber,1); {Gegenstelle anwaehlen}
+                    SendMultCommand(CommandDial+CurrentPhonenumber,1); {Gegenstelle anwaehlen}
                     StateDialup:=SDWaitForConnect;
                   end;
       SDWaitForConnect: begin
@@ -296,32 +346,34 @@ begin
                           if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
                             if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
-                            WriteIPC(mcInfo,'Modem answer %s',[ModemAnswer]);
+                            WriteIPC(mcInfo,'%s',[ModemAnswer]);
                             SleepTime(200);
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
                                 (FCommObj^.Carrier and(not FCommObj^.IgnoreCD))then begin {Connect!}
                               StateDialup:=SDConnect; result:=True;
-                              WriteIPC(mcInfo,'Connect %d',[Bauddetect(ModemAnswer)]);
+                              FConnectString:=ModemAnswer;
+                              FLineSpeed:=Bauddetect(FConnectString);
                               if not FCommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
                               if not FCommObj^.Carrier then SleepTime(1000);
                             end
                           end;
                           if not result then begin {Timeout, Userbreak, Busy oder aehnliches}
                             WriteIPC(mcInfo,'No connect',[0]);
+                            FPhonenumber:='';
                             FCommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
                           end;
               end;
       SDWaitForNextCall: begin
-                           FTimerObj.SetTimeout(RedialWait);
+                           FTimerObj.SetTimeout(RedialWaitTime);
                            WriteIPC(mcInfo,'Wait for next dial attempt',[0]);
-                           if iDial<MaxDials then begin
+                           if iDial<MaxDialAttempts then begin
                              repeat
                                WriteIPC(mcVerbose,'*%d',[System.Round(FTimerObj.SecsToTimeout)]);
                                ProcessIncoming; ProcessKeypresses(true);
                                if Pos('RING',ModemAnswer)<>0 then begin
                                  WriteIPC(mcInfo,'Ring detected',[0]);
-                                 WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWait);
+                                 WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWaitTime);
                                end;
                              until FTimerObj.Timeout;
                              StateDialup:=SDInitialize;
@@ -333,10 +385,18 @@ begin
   end;
 end;
 
+procedure TModemNetcall.Log(c: Char; const s: String);
+begin
+  if FLogfileOpened then
+    writeln(FLogfile,c,' ',FormatDateTime('hh":"mm":"ss',Now),'  ',s);
+  DebugLog(DebugBadge,c+' '+s,dlInform);
+end;
 
 procedure TModemNetcall.Disconnect;
 var i : integer;
 begin
+  if not FDialupRequired then exit;
+  WriteIPC(mcInfo,'Hanging up',[0]);
   DebugLog('ncmodem','Hangup',DLInform);
   FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
   SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
@@ -356,6 +416,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.5  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 

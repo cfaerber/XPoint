@@ -62,14 +62,10 @@ type
     function EMSIHandshake:byte;    { 0=Abbruch, 1=Again, 2=ok->WaZOO }
     procedure fmS;          { FTS-001 / FTS-007 }
     procedure WaZOOsession;
-    procedure log(LogChar: Char; const s: String);
-    procedure logcarrier;
 
   public
     FilesToSend: String;
     AKAs: String;
-    Logfile: String;
-    LogNew: Boolean;
     Username: String;
     OwnAddr: String;
     OwnDomain: String;
@@ -107,7 +103,6 @@ const {Y_DietIfna = $0001;}   { Capability Flags }
       MyCap      = Zed_Zipper + Zed_Zapper;
 
       qTimers     = 5;
-      ErrChar     = '*';
 
 const
       EMSI_INQ   = '**EMSI_INQC816';
@@ -182,7 +177,7 @@ begin
   cps:=System.Round(TransferBytes/t);
   if TransferName<>'' then begin
     FidomailerObj.WriteIPC(mcInfo,'%db %d cps',[TransferBytes,cps]);
-//    Log('*',s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(System.Round(t))+'s, '+StrS(cps)+' cps');
+    FidomailerObj.Log(lcFile,s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(System.Round(t))+'s, '+StrS(cps)+' cps');
   end;
 end;
 
@@ -207,7 +202,7 @@ begin
   SetLength(s,Len);
   Move(Buf,s[1],Len);
   GetString:=s;
-  Debug.DebugLog('XPFM','GetString: "'+s+'"',DLDebug);
+  Debug.DebugLog('ncfido','GetString: "'+s+'"',DLDebug);
 end;
 
 procedure SetZero(var buf; s:string; ml:byte);
@@ -276,16 +271,6 @@ begin
 {$endif}
 end;
 
-procedure TFidomailer.log(LogChar: Char; const s: String);
-begin
-  DebugLog('ncfido',LogChar+' '+s,DLInform);
-end;
-
-procedure TFidomailer.logcarrier;
-begin
-  log('*','carrier lost');
-end;
-
 {$I ncfido-yoohoo.inc}
 {$I ncfido-emsi.inc}
 {$I ncfido-wazoo.inc}
@@ -293,7 +278,9 @@ end;
 function TFidomailer.PerformNetcall: Integer;
 var iTimer: Integer; Ende: Boolean;
 begin
-  TimerObj.Init;
+  result:=el_noconn; DebugBadge:='ncfido';
+  if not Connect then exit;
+  TimerObj.Init; Log(lcCalling,'calling '+txt);
   for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
   SplitFido(OwnAddr,FA,2);
   InitHelloPacket;
@@ -313,10 +300,12 @@ begin
             2 : WaZOOsession;  { Batch Up/Download }
           end;
     end;
-    if aresult=EL_nologin then log(ErrChar,'login handshake failed');
+    if aresult=EL_nologin then log(lcError,'login handshake failed');
   until ENDE;
   SleepTime(2000);
   TimerObj.Done;
+  Disconnect;
+  Log(lcExit,'exiting');
   PerformNetcall:=aresult;
 end;
 
@@ -324,6 +313,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/02/02 20:59:57  ma
+  - moved log routines to ncmodem
+
   Revision 1.7  2001/02/02 17:14:01  ma
   - new Fidomailer polls :-)
 
