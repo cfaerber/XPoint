@@ -114,7 +114,8 @@ begin
   p:=cpos(':', XpTimezone);
   if p=0 then p:=length(XpTimezone)+1;
   addh:=ival(copy(XpTimezone,3,p-3));
-  if XpTimezone[2]='-' then addh:=-addh;
+  if (XpTimeZone <> '') and (XpTimezone[2]='-') then
+    addh:=-addh;
   AddD(dat,-addh);
   zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+dat+'00'+XpTimezone;
 end;
@@ -213,6 +214,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2003/10/01 10:06:49  mk
+  - fixed range check error in ZtoZCdatum when XPTimezone is empty
+
   Revision 1.29  2003/09/16 23:53:24  mk
   - set correct standard value for XPTimeZone
 
