@@ -820,7 +820,11 @@ again:
             ExtChgtearline:=true;
             extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
           end;
-      7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
+      7 : begin
+            // we extract our message as UTF8, this prevents data loss
+            extract_msg(xtractutf8,'',fn,false,1);     { Original weiterleiten }
+            hdp.charset := 'UTF-8';
+          end;                            
       2 : begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
@@ -1363,6 +1367,13 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.11  2003/12/06 16:45:42  mk
+  - fixed Nachricht/Weiterleiten/Original:
+    messages are created (and converted) now to UTF-8, regarless of there original
+    charset (before: they where converted to IBM437 always, but declared like there
+    original charset), this prevents data loss and may be helpfull for
+    Nachricht/Weiterleiten/Kopie, too
+
   Revision 1.21.2.10  2003/08/26 00:33:45  mk
   - fixed empty followup in weiterleit()
 
