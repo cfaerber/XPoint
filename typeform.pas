@@ -228,6 +228,7 @@ begin
 end;
 
 function CPos(c: char; const s: string): integer;
+{$IFDEF NOASM }
 var
   i: Integer;
 begin
@@ -239,6 +240,31 @@ begin
     end;
   CPos := 0;
 end;
+{$ELSE }
+asm
+  TEST  EDX, EDX       {Str = NIL?}
+  JZ    @@NotFound     {Yes - Jump}
+  PUSH  EDI            {Save EDI}
+  MOV   ECX, [EDX-4]   {ECX = Length(Str) - NOTE - Assumes Null Strings are Always Passed in as NIL Pointer}
+  MOV   EDI, EDX       {EDI = addr(Str)}
+  MOV   EDX, ECX       {Copy Length(Str) in EDX}
+@@Loop:
+  CMP   AL, [EDI]      {Compare Ch with Next Character of Str}
+  JZ    @@Found        {Jump if Same}
+  INC   EDI            {Mov to Next Character of Str}
+  DEC   ECX            {Dec Character Counter}
+  JNZ   @@Loop         {Loop until all Characters Compared}
+  POP   EDI            {Restore EDI}
+@@NotFound:
+  XOR   EAX, EAX       {Set Result to 0}
+  RET                  {Finished}
+@@Found:
+  POP   EDI            {Restore EDI}
+  DEC   ECX            {Adjust Counter}
+  MOV   EAX, EDX       {EAX = Length(Str)}
+  SUB   EAX, ECX       {Set Result}
+end; {CharPos}
+{$ENDIF }
 
 procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
 asm
@@ -1455,6 +1481,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2002/05/05 22:26:33  mk
+  - added ASM version of cPos
+
   Revision 1.111  2002/04/22 10:04:22  mk
   - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
 
