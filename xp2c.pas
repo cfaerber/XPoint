@@ -1206,37 +1206,38 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,18,11),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,19,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
   maddbool(14,3,getres2(253,3),smallnames);              { 'Z-Netz alt: kleine Usernamen' }
   msetvfunc(smalladr); mhnr(792);
+  maddbool(14,4,getres2(253,15),zcmultipartbin);  { 'BinÑrnachrichten als "Attachments"' }
   if deutsch then begin
-    maddtext(3,5,'Maus',col.coldiahigh);
-    maddbool(14,5,'OUTFILE-Grî·e begrenzen',MaxMaus); mhnr(793);
-    maddbool(14,6,'RÅckfrage fÅr Nachrichtenstatus',MausLeseBest);
-    maddbool(14,7,'Bearbeitungsstatus anfordern',MausPSA);
-    maddbool(14,8,'BinÑrnachrichten als "Attachments"',mausmpbin);
+    maddtext(3,6,'Maus',col.coldiahigh);
+    maddbool(14,6,'OUTFILE-Grî·e begrenzen',MaxMaus); mhnr(793);
+    maddbool(14,7,'RÅckfrage fÅr Nachrichtenstatus',MausLeseBest);
+    maddbool(14,8,'Bearbeitungsstatus anfordern',MausPSA);
+    maddbool(14,9,'BinÑrnachrichten als "Attachments"',mausmpbin);
       mhnr(8102);
     add:=5;
   end else
     add:=0;
-  maddtext(3,5+add,'RFC/UUCP',col.coldiahigh);
-  maddbool(14,5+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
-  maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
-  maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
-  maddbool(14,8+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
+  maddtext(3,6+add,'RFC/UUCP',col.coldiahigh);
+  maddbool(14,6+add,getres2(253,9),NewsMIME); mhnr(796);   { 'MIME in News' }
+  maddbool(14,7+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
+  maddbool(14,8+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
+  maddbool(14,9+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,10+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,11+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,10+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
   end;
-  maddtext(3,10+add,'Fido',col.coldiahigh);
-  maddbool(14,10+add,getres2(253,17),Magics); mhnr(8103);
+  maddtext(3,11+add,'Fido',col.coldiahigh);
+  maddbool(14,11+add,getres2(253,17),Magics); mhnr(8103);
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1460,6 +1461,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.12  2000/12/19 21:24:04  mk
+  - Binaernachrichten als Attachments auch fuer ZConnect
+
   Revision 1.39.2.11  2000/12/19 00:23:57  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 

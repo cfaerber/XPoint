@@ -1790,6 +1790,7 @@ fromstart:
       if _pmReply then inc(hdp^.attrib,AttrPmReply);
     if ControlMsg then inc(hdp^.attrib,AttrControl);
     if (binary and (netztyp=nt_UUCP) and multipartbin) or
+       (binary and (netztyp=nt_ZConnect) and zcmultipartbin) or
        (binary and (netztyp=nt_Maus) and mausmpbin) then
       inc(hdp^.attrib,AttrMPbin);
     if flPGPkey then
@@ -2216,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.21  2000/12/19 21:24:05  mk
+  - Binaernachrichten als Attachments auch fuer ZConnect
+
   Revision 1.39.2.20  2000/12/17 00:14:46  mk
   - optische Korrekturen an der Speicherstatistik
 

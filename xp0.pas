@@ -1007,6 +1007,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Usersortbox  : boolean;       {im Userfenster nach Boxname Sortieren}
        _Usersortbox : boolean;       {Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-BinÑrnachrichten als Multipart }
+       zcmultipartbin: boolean;      { ZC-BinÑrnachrichten als Multipart }
        mausmpbin    : boolean;       { dto. fÅr MausTausch }
        askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN }
 
@@ -1152,6 +1153,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.21  2000/12/19 21:24:04  mk
+  - Binaernachrichten als Attachments auch fuer ZConnect
+
   Revision 1.54.2.20  2000/12/19 00:23:56  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 

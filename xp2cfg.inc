@@ -671,6 +671,7 @@ begin
   _usersortbox:=false;
   NeuUserGruppe:=1;
   multipartbin:=true;
+  zcmultipartbin := false;
   mausmpbin:=false;
 
   AutoUpload:=true;
@@ -957,6 +958,7 @@ begin
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
 { writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'BinMultipart=',jnf(multipartbin));
+  writeln(t,'ZcBinMultipart=',jnf(zcmultipartbin));
   wrhd(7);                                             { Fido }
   writeln(t,'Vorwahl=',vorwahl);
   writeln(t,'IntVorwahl=',intvorwahl);
@@ -1533,6 +1535,7 @@ begin
           getx(su,  'newuseribm',newuseribm) or
           getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
+          getx(su,  'zcbinmultipart',zcmultipartbin) or
           getx(su,  'binmime',mausmpbin) or
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel))
@@ -1695,6 +1698,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.12  2000/12/19 21:24:05  mk
+  - Binaernachrichten als Attachments auch fuer ZConnect
+
   Revision 1.62.2.11  2000/12/19 00:23:57  mk
   - Farbalette vor Schell/Videomodus umschalten sichern
 
