@@ -1144,7 +1144,7 @@ var
     ebrett : string;
     box    : string;
     f,tf   : file;
-    t      : text absolute tf;
+    t      : text;
     dat    : longint;
     edat   : longint;
     ntyp   : char;
@@ -1320,6 +1320,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/12/09 13:57:45  mk
+  - fixed crash/corrupted message base with Alt-P
+
   Revision 1.8  2001/10/20 17:26:43  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
