@@ -380,7 +380,7 @@ begin
     ListMakros:=oldm;
     if listvollbild and listuhr {and ListMsg}
     then begin
-      dphback:=dphb;                              { Uhrfarbe reseten   }
+      dphback:=dphb;                              { Uhrfarbe resetten  }
       if not (ListFixedhead and (exthdlines>0))
         then timey:=1;                            { und evtl. Position }
       end;
@@ -390,11 +390,11 @@ begin
     end;
   exthdlines:=0;
   llh:=false;
-  if listexit<>4 then                    { Wenn nicht Editor gestartet wird... }
-    otherquotechars:=otherqcback;        { Status der Quotechars '|' und ':' reseten }
+  if listexit<>4 then                    { Wenn nicht Editor gestartet wird...        }
+    otherquotechars:=otherqcback;        { Status der Quotechars '|' und ':' resetten }
   if (listexit<>-4) and (ListWrapToggle) then
   begin
-    ListWrap:=ListWrapBack;
+    ListWrap:=ListWrapBack;              { Status Wortumbruch resetten }
     ListWrapToggle:=false;
   end;
   listfile:=listexit;
@@ -496,6 +496,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.14  2001/12/05 19:27:36  my
+  JG+MY:- Kommentare ergÑnzt und korrigiert
+
   Revision 1.24.2.13  2001/12/04 23:01:02  my
   MY:- Fix fÅr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim AusfÅhren
        konnte es vorkommen, da· XP die Nachricht beantworten wollte,

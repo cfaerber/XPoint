@@ -756,9 +756,10 @@ var fn     : pathstr;
 
 label ende0,nextmsg;
 
-(*  Exit-Codes Lister:
+(*  exit codes Lister:
 
-    -128 bis -5 = Lister mit Fehlerton beenden
+    -128 bis  -5 = Keine Aktion, Fehlerton und Lister mit aktueller
+       8 bis 127 = Nachricht neu starten (Kommentarbaumbewegungen beachten)
 
     -4  = Keine Aktion, Lister mit der aktuellen Nachricht neu starten
     -3  = Kommentarbaum anzeigen
@@ -774,9 +775,7 @@ label ende0,nextmsg;
           bzw. mit der der Lister zuletzt ge”ffnet wurde
           (Kommentarbaumbewegungen werden rckg„ngig gemacht).
      6  = <Ctrl-PgUp>
-     7  = <Ctrl-PgDn>
-
-    8 bis 127 = Lister mit Fehlerton beenden *)
+     7  = <Ctrl-PgDn> *)
 
 begin
   pushed:=false;
@@ -1044,22 +1043,22 @@ begin
       ende:=false;
     end
 
-    else if lres = -2 then  { Wiedervorlageflag mit "V" aus Lister heraus aendern }
+    else if lres = -2 then  { Wiedervorlageflag mit "V" aus Lister heraus „ndern }
     begin
       rec:=disprec[1];
       wiedervorlage;
-      if p=1 then begin    { Bei 1. Bildschirmzeile wieder alte Msg anspringen }
+      if p=1 then begin     { Bei 1. Bildschirmzeile wieder alte Msg anspringen }
         disprec[1]:=rec;
         dpp:=rec;
       end;
       ende:=false;
     end
 
-    else if lres = -4 then ende:=false  { "O" oder <Ctrl-W> }
+    else if lres = -4 then ende:=false    { "O" oder <Ctrl-W> im Lister }
 
     else begin
 
-      if lres = -3 then  {Bezugsbaum "#" aus Lister heraus anzeigen }
+      if lres = -3 then     { Bezugsbaum "#" aus Lister heraus anzeigen }
       begin
         showscreen(true);
         Bezugsbaum;
@@ -1705,6 +1704,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.29  2001/12/05 19:27:36  my
+  JG+MY:- Kommentare erg„nzt und korrigiert
+
   Revision 1.25.2.28  2001/12/04 23:01:02  my
   MY:- Fix fr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim Ausfhren
        konnte es vorkommen, daá XP die Nachricht beantworten wollte,
