@@ -27,6 +27,7 @@ interface
 uses
   {$IFDEF Win32} windows, {$ENDIF}
   xpglobal, //todo: word
+  keys, //taste, IFDEF NCRT in interface!
   typeform;
 
 const  mausLinks  = 0;     { linke Taste    }
@@ -83,8 +84,7 @@ uses
     {$ifdef Kylix}ncursix,{$else}ncurses,{$endif}
   {$ENDIF}
   maus2,
-  debug,
-  keys;
+  debug;
 
 {$IFDEF Win32}
 var LastEvent: MOUSE_EVENT_RECORD;
@@ -278,6 +278,9 @@ initialization
 
 {
   $Log$
+  Revision 1.37  2002/12/07 17:50:23  dodi
+  updated uses for NCRT
+
   Revision 1.36  2002/12/04 16:57:00  dodi
   - updated uses, comments and todos
 
