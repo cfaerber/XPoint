@@ -429,8 +429,13 @@ begin
           shrinkheader:=true;
         end
       else
+{$IFDEF Linux}
+        if source=''  then source:=paramstr(i) else
+        if dest=''    then dest:=paramstr(i) else
+{$ELSE}
         if source=''  then source:=ustr(paramstr(i)) else
         if dest=''    then dest:=ustr(paramstr(i)) else
+{$ENDIF}	   
         if OwnSite='' then OwnSite:=paramstr(i);
     end
   else begin
@@ -1530,8 +1535,9 @@ begin
   eol:=0;
 {$IFDEF Ver32 }
   l:=0;
+  SetLength(s,MaxSLen);
   while (bufpos<bufanz) and (buffer[bufpos]<>#10) and
-        (not umbruch or (l<253)) and (l<MaxSlen) do begin
+        (not umbruch or (l<MaxSLen)) and (l<MaxSlen) do begin
     c:=buffer[bufpos];
     if c<>#13 then begin
       inc(l);
@@ -3510,6 +3516,10 @@ end.
 
 {
   $Log$
+  Revision 1.28  2000/05/11 17:01:04  ml
+  Für linux: uppercase für Parameter rausgenommen (Groß/Kleinschreibung
+  nicht mehr ignoriert) + string-Access-Violation beseitigt.
+
   Revision 1.27  2000/05/10 07:47:15  mk
   RB: X-* -> U-X-*
 
