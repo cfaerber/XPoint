@@ -2741,7 +2741,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # --- Fehlermeldungen -------------------------------------------------
 
 +  10000
-1  Die Hilfsdatei %s fehlt!
+1  Die Hilfedatei %s fehlt!
 2  Dateierweiterung muá .XPS sein!
 3  Ungltiger Pfad- oder Dateiname!
 4  Kann %s nicht l”schen!?
