@@ -308,7 +308,7 @@ var i  : integer;
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
     if isl('autostart:') then ParAutost:=mid(s,12) else
-    if isl('l:')  then ParLanguage:=ustr(mid(s,4)) else
+    if isl('l:')  then ParLanguage:=lstr(mid(s,4)) else
     if isl('f:') then ParFontfile:=ustr(mid(s,4)) else
     if _is('nomem')then ParNomem:=true else
     if _is('sd')   then ParNoSmart:=true else
@@ -327,6 +327,7 @@ var i  : integer;
                          delay(500);
                        end
   end;
+  
 
   procedure ReadParFile;
   begin
@@ -346,7 +347,11 @@ begin
     then ParWintime:=1;
 {$ENDIF }
   extended:=exist('xtended.15');
+{$IFDEF UnixFS }
+  findfirst(AutoxDir+'*.opt',0,sr);
+{$ELSE }
   findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
+{$ENDIF }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
@@ -359,7 +364,11 @@ begin
     s:=paramstr(i);
     ParAuswerten;
     end;
+{$IFDEF UnixFS }
+  findfirst(AutoxDir+'*.par',0,sr);
+{$ELSE }
   findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
+{$ENDIF }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
@@ -477,11 +486,12 @@ var lf : string[12];
     writeln(t,lf);
     close(t);
   end;
-begin
+
+begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('XP-*.RES', ffAnyFile, sr);
-  assign(t,'XP.RES');
+  findfirst('xp-*.res', ffAnyFile, sr);		{ Hier duerfte es keine Probleme geben }
+  assign(t,'xp.res');
   reset(t);
   if ioresult<>0 then
   begin                                     { Wenn XP.RES nicht existiert }
@@ -490,18 +500,18 @@ begin
       parlanguage:=sr.name[4];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
       repeat
-        ca:=upcase(readkey);                              { Und ansonsten Auswahl-Bringen }
-      until (ca='D') or (ca='E') or (ca=keycr);
+        ca:=locase(readkey);                              { Und ansonsten Auswahl-Bringen }
+      until (ca='d') or (ca='e') or (ca=keycr);
       if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }
       end;
-    lf:='XP-'+parlanguage+'.RES';
+    lf:='xp-'+parlanguage+'.res';
     WrLf;                                                {und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
     close(t);
     if (ParLanguage<>'') then begin
-      lf2:='XP-'+ParLanguage+'.RES';
+      lf2:='xp-'+ParLanguage+'.res';
       if not exist(lf2) then writeln('language file '+ParLanguage+' not found')
       else if (ustr(lf)<>lf2) then begin
         lf:=lf2;
@@ -1108,6 +1118,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/05/03 17:15:39  hd
+  - Kleinschreibung der Dateinamen (duerfte keine Probleme geben :-/) (loadresource)
+  - ustr durch lstr bei ParLanguage ersetzt (readpar)
+
   Revision 1.32  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
