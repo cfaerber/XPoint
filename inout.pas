@@ -199,9 +199,9 @@ Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 {$IFNDEF NCRT }
 Procedure clrscr;                            { statt CRT.clrscr         }
-{$ENDIF }
 Procedure DispHard(x,y:byte; s:string);      { String ohne bercksicht. }
                                              { des akt. Windows ausgeb. }
+{$ENDIF }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
 procedure DosOutput;                         { auf CON: umschalten      }
 function  ticker:longint;                    { mem[Seg0040:$6c]         }
@@ -269,8 +269,9 @@ procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
 
 Procedure mausiniti;                 { Maus nach Bildschirmmitte             }
 procedure dummyFN;
+{$IFNDEF NCRT }
 procedure mdelay(msec:word);
-
+{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
@@ -434,8 +435,7 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
-Procedure SaveCursor;
-
+procedure SaveCursor;
 begin
   inc(cursp);
   if cursp>maxsave then cursp:=1;
@@ -445,7 +445,7 @@ begin
 end;
 
 
-Procedure RestCursor;
+procedure RestCursor;
 begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
@@ -457,11 +457,13 @@ begin
   if cursp<1 then cursp:=maxsave;
 end;
 
-Procedure cursoron;
+{$IFNDEF NCRT }
+procedure cursoron;
 begin
   exitproc:=oldexit;
   cursor(curon);
 end;
+{$ENDIF }
 
 procedure initscs;
 begin
@@ -842,6 +844,7 @@ begin
 end;
 *)
 
+{$IFNDEF NCRT }
 Procedure disphard(x,y:byte; s:string);
 var
 {$IFDEF BP }
@@ -864,16 +867,12 @@ begin
     inc(offx,2);
   end;
 {$ELSE }
-{$IFDEF NCRT }
-  StringOutXYBaseWin(x,y,s);
-{$ELSE }
   FWrt(x, y, s);
-{$ENDIF }
   TextAttr := TempAttr;
 {$ENDIF}
   mon;
 end;
-
+{$ENDIF }
 
 procedure jnread(var c:char);     { lokal }
 var t : taste;
@@ -1760,7 +1759,7 @@ begin
 end;
 
 { msec = 0 -> laufende Timeslice freigeben }
-
+{$IFNDEF NCRT }
 procedure mdelay(msec:word);   { genaues Delay }
 {$ifdef vp }
 begin
@@ -1813,6 +1812,7 @@ begin
     end;
 end;
 {$endif}
+{$ENDIF } { NCRT }
 
 procedure IoVideoInit;
 begin
@@ -1863,6 +1863,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2000/05/07 15:19:49  hd
+  Interne Linux-Aenderungen
+
   Revision 1.34  2000/05/06 17:29:20  mk
   - DOS DPMI32 Portierung
 

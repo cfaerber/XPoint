@@ -92,7 +92,12 @@ end;
 
 procedure mdelay(ms:word);
 begin
-  if not ISDN then inout.mdelay(ms);
+  if not ISDN then
+{$IFDEF NCRT }
+    xpcurses.mdelay(ms);
+{$ELSE }
+    inout.mdelay(ms);
+{$ENDIF }
 end;
 
 procedure flushin;
@@ -1437,6 +1442,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/05/07 15:19:49  hd
+  Interne Linux-Aenderungen
+
   Revision 1.18  2000/05/04 10:32:59  mk
   - unbenutzer TurboBox Code entfernt
 

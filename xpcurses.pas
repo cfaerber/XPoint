@@ -193,7 +193,9 @@ function GetScreenCols: integer;
 { Teile aus INOUT.PAS -------------------------------------------------- }
 
 { Setzt ein Fenster }
-procedure Window(x1, y1, x2, y2: integer);
+procedure disphard(x, y: integer; s: string);	{ Ausgabe an X/Y }
+procedure mDelay(msec: word);			{ Warten }
+procedure Window(x1, y1, x2, y2: integer);	{ CRT-Window }
 
 
 { false, wenn der Screen kleiner als Cols/Rows }
@@ -248,6 +250,7 @@ implementation
 
 uses
   strings,
+  inout,
   typeform;
 
 const
@@ -297,31 +300,6 @@ type
 {==========================================================================}
 
 
-
-procedure Window(x1, y1, x2, y2: integer);
-begin
-{$IFDEF DEBUG }
-  XPLog(LOG_DEBUG, 'procedure window(%d, %d, %d, %d)', [x1, x2, y1, y2]);
-{$ENDIF }
-  { Aus INOUT.PAS uebernommen }
-  mwl:=x1; mwr:=x2;
-  mwo:=y1; mwu:=y2;
-  { Noch ein anderes Fenster vorhanden? }
-  if (BaseSub <> nil) then
-    delwin(BaseSub);
-  { Soll die Fenstereinstellung auf Default gesetzt werden? }
-  if (x1=1) and (x2=MaxCols) and (y1=1) and (y2=MaxCols) then begin
-    BaseSub:= nil;
-    WindMin:= 0;
-    WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
-  end else begin
-    BaseSub:= subwin(StdScr, y2-y1, x2-x1, y1, x1);
-    WindMin:= ((y1-1) shl 8) + (x1-1);		{ Wind* berechnen }
-    WindMax:= ((y2-1) shl 8) + (x2-1);
-  end;
-  LastWindMin:= WindMin;
-  LastWindMax:= WindMax;
-end;
 
 { initialize a color pair }
 function SetColorPair(att: integer): integer;
@@ -956,7 +934,7 @@ end;
 { Wait for DTime milliseconds }
 procedure Delay(DTime: Word);
 begin
-  Select(0, nil, nil, nil, DTime);
+  napms(DTime);
 end;
 
 {------------------------------------------------------
@@ -1063,6 +1041,68 @@ begin
   GetScreenCols:= MaxCols;
 end;
 
+{ Teile aus INOUT.PAS -------------------------------------------------- }
+
+procedure Window(x1, y1, x2, y2: integer);
+begin
+{$IFDEF DEBUG }
+  XPLog(LOG_DEBUG, 'procedure window(%d, %d, %d, %d)', [x1, x2, y1, y2]);
+{$ENDIF }
+  { Aus INOUT.PAS uebernommen }
+  mwl:=x1; mwr:=x2;
+  mwo:=y1; mwu:=y2;
+  { Noch ein anderes Fenster vorhanden? }
+  if (BaseSub <> nil) then
+    delwin(BaseSub);
+  { Soll die Fenstereinstellung auf Default gesetzt werden? }
+  if (x1=1) and (x2=MaxCols) and (y1=1) and (y2=MaxCols) then begin
+    BaseSub:= nil;
+    WindMin:= 0;
+    WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
+  end else begin
+    BaseSub:= subwin(StdScr, y2-y1, x2-x1, y1, x1);
+    WindMin:= ((y1-1) shl 8) + (x1-1);		{ Wind* berechnen }
+    WindMax:= ((y2-1) shl 8) + (x2-1);
+  end;
+  LastWindMin:= WindMin;
+  LastWindMax:= WindMax;
+end;
+
+procedure disphard(x, y: integer; s: string);
+var
+  x0, y0, ta: integer;
+  p: array[0..255] of char;
+begin
+  WhereXY(x0, y0);
+  ta:= TextAttr;
+  StrPCopy(p, s);
+  SetTextAttr(dphback);
+  mvwaddstr(BaseWin.wHnd, y-1, x-1, p);
+  wrefresh(BaseWin.wHnd);
+  GotoXY(x0, y0);
+  SetTextAttr(ta);
+end;
+
+procedure CursorOn;
+begin
+  curs_set(1);
+end;
+
+procedure CursorBig;
+begin
+  curs_set(2);
+end;
+
+procedure CursorOff;
+begin
+  curs_set(0);
+end;
+
+procedure mDelay(msec: word);
+begin
+  napms(msec);
+end;
+
 { Unit-Interna --------------------------------------------------------- }
 
 { exit procedure to ensure curses is closed up cleanly }
@@ -1098,7 +1138,7 @@ begin
      raw;                       { disable flow control, etc. }
      noecho;                    { do not echo keypresses }
      nonl;                      { don't process cr in newline }
-     intrflush(stdscr,bool(false));
+     intrflush(stdscr,bool(false)); 
      keypad(stdscr,bool(true));
      scrollok(stdscr,bool(true));
      win.whnd:= stdscr;		{ Handle merken }
@@ -1130,22 +1170,6 @@ begin
      s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
    end;
 end;
-
-procedure CursorOn;
-begin
-  curs_set(1);
-end;
-
-procedure CursorBig;
-begin
-  curs_set(2);
-end;
-
-procedure CursorOff;
-begin
-  curs_set(0);
-end;
-
 begin
   { load the color pairs array with color pair indices (0..63) }
   for bg := 0 to 7 do 
@@ -1189,6 +1213,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/05/07 15:19:49  hd
+  Interne Linux-Aenderungen
+
   Revision 1.9  2000/05/07 10:42:37  hd
   - Fix: refresh nach gotoxy
 
