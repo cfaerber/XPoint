@@ -590,7 +590,8 @@ Replying to messages:
    <<S>>    Asks for a word or phrase to search for,
         case is ignored. <Tab> continues the search.
 
-<<<Shift-S> >>As <<S>> but case sensitive.
+<<<Shift-S> >>
+        As <<S>> but case sensitive.
 
    <<M>>    Toggles the line-marker on or off. With
         <space> or F7/F8, whole blocks may be marked
@@ -610,7 +611,7 @@ Replying to messages:
 
    <<I>>    Shows the information in the message header.
 
-   <<O>>    Shows the hidden kludges.
+<<Ctrl-O>>  Shows the hidden kludges.
 
    <<G>>    Jumps to the preceding message. (Like <<->>)
 
@@ -645,7 +646,8 @@ Replying to messages:
 
    <<H>>    Sets the displayed message to permanent hold.
 
-<<<Backspace> >>Exits reader without jumping to the next
+<<<Backspace> >>
+        Exits reader without jumping to the next
         message, independent of /Config/Opt/Settings.
 
 <<<F3> >>   Fido-Request. In Fido Messages, will attempt
@@ -666,10 +668,12 @@ Replying to messages:
         reference link (as long as it's still in the
         data base).
 
-<<Ctrl-PgUp>>  Jumps to the chronologically preceding
+<<Ctrl-PgUp>>
+        Jumps to the chronologically preceding
         message in the same Newsgroup.
 
-<<Ctrl PgDn>>  Jumps to the chronologically following
+<<Ctrl PgDn>>
+        Jumps to the chronologically following
         message in the same Newsgroup.
 
 <<Cursor-left>> and <<Cursor-right>> Toggles between
@@ -1571,11 +1575,15 @@ numbers a la FIDO at the top.
 <<Misc.>>   Various settings, e.g. for online
         operations.
 
-<<SysopMode>> Tells CrossPoint to put the poll
-        packet onto the local hard disk, rather
-        than send it over a modem. (It can then be
-        read into some other application by hand)
+<<SysopMode>>
+        CrossPoint will write mail packets to the 
+        local hard disk instead of sending them over
+        a modem connection. They can then be read
+        into some other application by hand.
 
+        A typical use for this feature would be for a
+        FidoNet Node wishing to use CrossPoint as an
+        offline message reader/writer.
 @
 139
 Dial the selected Server or abort by pressing <Esc>.
@@ -1960,7 +1968,20 @@ used for MausTausch. The standard ones are:
        <<M>>  =  MPt (used to be "Puma")
 @
 151
-Your Point number as given to you by your Boss.
+Your Point number, as given to you by your Boss.
+
+If you are a FidoNet <<Node>> however, and you intend
+using OpenXP as an offline message reader/writer,
+things get somewhat interesting here ;-)
+
+The best way to explain this is with an example,
+using a fictitious AKA of 1:2/3
+
+By entering "0" here, your AKA would be 1:2/3.0 but
+entering "3" here <<and>> checking the "Use Node address"
+box further on, your AKA would be 1:2/3
+So what's the difference? None really! It's merely a
+matter of personal preference.
 @
 152
 Your [Point password] ("Session password"), which you@4008
@@ -2063,13 +2084,17 @@ this switch will cause that to happen.
 Your Sysop will tell you if it is necessary or not.
 @
 8001
-In some of the [Fido compatible nets] points use a@4009
-[node address] instead of a point address. If this@4010
-is the case, you must set this switch, and put the
-<<node number>> in the space for the point number.
-If your server has the number 12:345/67, and you have
-been allocated the node number 89, then your address
-is 12:345/89. Your <<node>> number is 89.
+In some [Fido compatible Nets], Points use a@4009
+[Node address] instead of a Point address. If this@4010
+is the case, you must set this switch and put the
+<<Node number>> in the space for the Point number.
+If your Server has the number 12:345/67 and you have
+been allocated the Node number 89, then your address
+is 12:345/89. Your <<Node>> number is 89.
+
+For FidoNet <<Nodes>> using OpenXP as an offline message
+reader/writer, it is <<important>> that you see the
+online help for ["Point number"]@151
 @
 8002
 Some Fido servers give problems, in that they only
