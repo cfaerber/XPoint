@@ -201,7 +201,7 @@ begin
           p:=pos('=',s);
           if (p=0) or not (
             get_exclude or
-            gets(s,su,'Boxname',boxname,BoxRealLen) or
+            gets(s,su,'Boxname',boxname,BoxNameLen) or
             gets(s,su,'Pointname',pointname,25) or
             gets(s,su,'Username',username,30) or
             gets(s,su,'Domain',dummys,1) or
