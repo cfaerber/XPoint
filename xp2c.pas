@@ -802,12 +802,20 @@ begin
     aufbau:=true;
     GlobalModified;
     { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
-    j:=0;   
+    j:=0;
+    { (F)lags mssen immer vorne stehen }
+    i:=pos('F',MsgFeldTausch); if (i>1) then begin
+      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
+    end;
     for i := 1 to length(MsgFeldDef) do
       if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(j);
     if (j<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
     { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
     j:=0;
+    { (F)lags mssen immer vorne stehen }
+    i:=pos('F',UsrFeldTausch); if (i>1) then begin
+      delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
+    end;
     for i := 1 to length(UsrFeldDef) do 
      if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(j);
     if (j<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
@@ -1469,6 +1477,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/05/15 20:56:40  oh
+  -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
+
   Revision 1.35  2000/05/14 07:22:51  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
   - Feldtausch-Config: Defaultauswahl mit F2

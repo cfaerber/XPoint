@@ -37,7 +37,7 @@ const hf : array[0..4] of char = ' +-A˘';
 
 var
     taus    : array[1..MsgFelderMax+UsrFelderMax] of string[81];
-    tausc   : 1..MsgFelderMax+UsrFelderMax;
+    tausc   : 0..MsgFelderMax+UsrFelderMax;
     kuerzen : boolean;
     s,s0    : string[81];
     dat,edat: longint;
@@ -243,10 +243,14 @@ begin  { __ Suchmarke }
                  );
 
             { Felder zusammenkopieren }
-            dispbuf[y]^:=taus[1];
-            for tausc := 2 to UsrFelderMax do if (taus[tausc]<>'') then
-              dispbuf[y]^:=dispbuf[y]^+iifs(length(taus[tausc])>0,' ','')+taus[tausc];
-            { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen und Åbergeben }
+            tausc:=0; dispbuf[y]^:='';
+            while (tausc<UsrFelderMax) do begin
+              inc(tausc); 
+              if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
+              if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
+              dispbuf[y]^:=dispbuf[y]^+taus[tausc];
+            end;
+            { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
             dispbuf[y]^:=forms(dispbuf[y]^,80);
 
           end;
@@ -339,11 +343,7 @@ begin  { __ Suchmarke }
             dbReadN(mbase,mb_flags,flags);
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
-(*          
-            if (wvl=0) and
-                ((mnt and $4000<>0) or (flags and 3<>0)) then  
-              wvl:=4;    { 's' - signierte Nachricht }
-*)
+            
             if (wvl=0) and (mnt and $4000<>0) then begin 
               if (flags and 1<>0) then wvl:=5;  { 'S' - 'good' signierte Nachricht }
               if (flags and 2<>0) then wvl:=4;  { 's' - 'bad' signierte Nachricht }
@@ -374,36 +374,23 @@ begin  { __ Suchmarke }
 
               { (F)lags }
               taus[pos('F',MsgFeldTausch)] := dflags;
-              if (pos('F',MsgFeldTausch)>1) then begin
-                if (
-                     ((pos('F',MsgFeldTausch)=pos('D',MsgFeldTausch)+1)
-                       and showmsgdatum)
-                       or
-                     (pos('F',MsgFeldTausch)<>pos('D',MsgFeldTausch)+1)
-
-                    ) then taus[pos('F',MsgFeldTausch)] := ' '+dflags;
-              end;
-
+              
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
-                                              iifs(pos('D',MsgFeldTausch)<>1,' ','')+
-                                              sdat,'');
+              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
-                                              forms(s,19);
+              taus[pos('A',MsgFeldTausch)] := forms(s,19);
+              
               { (E)mpfaenger }
-              taus[pos('E',MsgFeldTausch)] := iifs(pos('E',MsgFeldTausch)<>1,' ','')+
-                                              forms(s0,19);
+              taus[pos('E',MsgFeldTausch)] := forms(s0,19);
+              
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
-                                              forms(s1,iif(showmsgdatum,22-
-                                              iif(pos('D',MsgFeldTausch)<>1,0,1),28));
+              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
 
               userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
-               
 
             end else begin
 
@@ -415,23 +402,20 @@ begin  { __ Suchmarke }
               end else begin
 
               { (F)lags }
-              taus[pos('F',MsgFeldTausch)] := iifs(pos('F',MsgFeldTausch)<>1,' ','')+
-                                              dflags;
+              taus[pos('F',MsgFeldTausch)] := dflags;
+              
               { (G)roesse }
               taus[pos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
-                                              iifs(pos('D',MsgFeldTausch)<>1,' ','')+
-                                              sdat,'');
+              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
-                                              forms(s,ulen);
+              taus[pos('A',MsgFeldTausch)] := forms(s,ulen);
+              
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
-                                              forms(s1,iif(showmsgdatum,blen-
-                                              iif(pos('D',MsgFeldTausch)<>1,0,1),blen));
-
+              taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
+                                              
               end;
 
               userflag[y]:=0;                              { Man muss Prioritaeten setzen... }              
@@ -455,10 +439,14 @@ begin  { __ Suchmarke }
               muss sie noch zusammenkopiert werden: }
             if (dispmode<>12) then begin
               { Felder zusammenkopieren }
-              dispbuf[y]^ := taus[1];
-              for tausc := 2 to MsgFelderMax do if (taus[tausc]<>'') then
+              tausc:=0; dispbuf[y]^:='';
+              while (tausc<MsgFelderMax) do begin
+                inc(tausc);
+                if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
+                if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
                 dispbuf[y]^:=dispbuf[y]^+taus[tausc];
-              { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen und Åbergeben }
+              end;
+              { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
               dispbuf[y]^:=forms(dispbuf[y]^,80);
             end;
           end;

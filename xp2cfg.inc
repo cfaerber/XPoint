@@ -781,10 +781,8 @@ begin
   PGP_waitkey:=false;
   PGP_log:=false;
   PGP_signall:=false;
-  { 01/2000 oh }
-  PGPVersion:=PGP2;
+  PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
   AutoDatumsBezuege:=false;
-  { /oh }
 end;
 
 
@@ -1664,13 +1662,22 @@ begin
       if mheadercustom[i][length(mheadercustom[i])]=':' then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
-    { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
     MsgFeldTausch:=UStr(MsgFeldTausch);
+    { (F)lags mssen immer vorne stehen }
+    i:=pos('F',MsgFeldTausch); if (i>1) then begin
+      delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
+    end;
+    { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
     p:=0;
     for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
     if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-    { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
+    
     UsrFeldTausch:=UStr(UsrFeldTausch);
+    { (F)lags mssen immer vorne stehen }
+    i:=pos('F',UsrFeldTausch); if (i>1) then begin
+      delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
+    end;
+    { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
     p:=0;
     for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
     if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
@@ -1796,6 +1803,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.55  2000/05/15 20:56:40  oh
+  -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
+
   Revision 1.54  2000/05/15 05:24:05  mw
 
   - Default angepasst: - UUCP-Paketsize jetzt 1024
