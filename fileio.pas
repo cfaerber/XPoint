@@ -538,9 +538,12 @@ begin
 
   while path<>'' do begin
     p:=iif(Pos(PathSepa,path)>0,Pos(PathSepa,path),Length(path)+1);
-    adir:=Copy(path,1,p-1);
-    CreateDir(adir);
-    if not IsPath(adir)then begin result:=adir; exit end;
+    adir:=ExcludeTrailingPathDelimiter(Copy(path,1,p-1));
+    if not CreateDir(adir) and not IsPath(adir) then
+    begin
+      result:=adir;
+      exit
+    end;
     Delete(path,1,p);
   end;
 end;
@@ -691,6 +694,9 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.7  2003/08/25 17:38:11  mk
+  - fixed CreateMultipleDirectories
+
   Revision 1.116.2.6  2003/08/25 06:43:50  mk
   - added OS/2 support
 
