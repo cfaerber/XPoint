@@ -186,7 +186,7 @@ end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-function  testbin(var bdata; rr:word):boolean; assembler;
+function  testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
 asm
          mov   ecx,rr
          mov   esi,bdata
@@ -211,26 +211,18 @@ end ['EAX', 'ECX', 'ESI'];
 end;
 {$ENDIF }
 
-function  ContainsUmlaut(var s:string):boolean; assembler;
-asm
-         cld
-         mov   esi,s
-         lodsb
-         xor   ecx, ecx
-         mov   cl,al
-         jcxz  @cu_ende
-@cu_loop: lodsb
-         or    al,al
-         js    @cu_found
-         loop  @cu_loop
-         jmp   @cu_ende
-@cu_found: mov  ecx,1
-@cu_ende: mov   eax,ecx
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'ESI'];
-{$ELSE }
+function  ContainsUmlaut(var s:string):boolean;
+var
+  i: Integer;
+begin
+  ContainsUmlaut := false;
+  for i := 1 to Length(s) do
+    if s[i] > #127 then
+    begin
+      Containsumlaut := true;
+      break;
+    end;
 end;
-{$ENDIF }
 
 {$else }
 
@@ -439,7 +431,7 @@ end;
 
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-var                                          { Format: 1105001824 } 
+var                                          { Format: 1105001824 }
  d:datetime;
 begin
   unpacktime(filetime(ownpath+'xp.exe'),d);
@@ -1508,7 +1500,7 @@ fromstart:
                 n:=abs(n);
                 if ustr(t)=kopkey then begin
                   old_cca:=cc_anz;
-                  sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }   
+                  sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
                   edit_cc(cc,cc_anz,brk);
                   sel_verteiler:=false;
                   if (old_cca=0) and (cc_anz>0) then forcebox:='';
@@ -1759,7 +1751,7 @@ fromstart:
       { MK 01/00 VerkÅrzte Anzeige der Versionstypen/nummern }
       { MW 01/00 Korrektur der VerkÅrzten Versionsinfo }
       hdp^.programm:=xp_xp+' '+verstr+Trim(betastr)
-                     {$IFDEF Snapshot} + '@' + compiletime {$ENDIF} 
+                     {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
                      +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
@@ -2227,6 +2219,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/05/14 07:58:13  mk
+  - ContainsUmlaut gefixt
+
   Revision 1.30  2000/05/13 09:14:41  jg
   - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
 
