@@ -1862,11 +1862,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
     if (netztyp<>nt_Fido) or pm then
-      hdp.programm:=LeftStr(xp_xp,iif(cpos('/',xp_xp)<>0,cpos('/',xp_xp)-1,length(xp_xp)))
-                     +'/'+trim(verstr)
-                     +' ('+Without(Without(Trim(pformstr),'('),')')+betastr
-                     {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
-                     +')';
+      hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
+                     {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
     hdp.organisation:=orga;
     if sdata^.ersetzt<>''then hdp.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
@@ -2319,6 +2316,9 @@ finalization
 
 {
   $Log$
+  Revision 1.24  2001/10/14 11:40:42  ma
+  - changed user agent header (now "OpenXP/32 vVERSTR (PFORM) BETASTR")
+
   Revision 1.23  2001/10/12 18:55:27  cl
   - BUGFIX: new messages were also sent to copy recipients of preceding
     message (#470141)
