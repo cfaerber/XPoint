@@ -277,7 +277,7 @@ var
    end;
 
 const
-  MaxMessagecount = 15; // Maximum number of Messages in Pipeline
+  MaxMessagecount = 5; // Maximum number of Messages in Pipeline
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
@@ -362,7 +362,7 @@ begin
         oArticle:=ArticleIndex;
 
         Inc(ArticleIndex);
-        while ArticleIndex < NNTP.LastMessage do
+        while ArticleIndex <= NNTP.LastMessage do
         begin
           POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
 
@@ -424,6 +424,10 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.10  2003/09/04 23:11:22  mk
+        - minimal fix for new nnntp
+        - get only five messages at once in the pipeline
+
         Revision 1.39.2.9  2003/09/01 22:12:52  mk
         - reduced latenz time for NNTP, this speeds up NNTP to factor 10
 
