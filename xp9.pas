@@ -1224,7 +1224,6 @@ var d         : DB;
     dbFlushClose(d);
   end;
 
-  { 'NeuerMimetyp' ist hier jetzt drin hd/2000-07-21 }
   procedure EditMimetyp(isNew: boolean);
   var typ  : string;
       ext  : string;
@@ -1232,9 +1231,6 @@ var d         : DB;
       brk  : boolean;
       isValid: boolean;
   begin
-    // !! dbSetIndex(d, 0);
-    // !! SortMIMETypes;
-
     if isNew then begin
       typ:= ''; ext:= ''; prog:= '';
     end else begin
@@ -1243,40 +1239,45 @@ var d         : DB;
       ext:= dbReadNStr(d,mimeb_extension);
       prog:= dbReadNStr(d,mimeb_programm);
     end;
-    readmimetyp(true,typ,ext,prog,brk);
+    readmimetyp(not isNew,typ,ext,prog,brk);
     if not brk and (typ<>'*/*') then
     begin
-      // check for duplicate entries
+      {  check for duplicate entries }
       isValid := true;
       if typ <> '' then
       begin
         dbSeek(mimebase,mtiTyp,UpperCase(typ));
-        isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(typ,dbReadStr(mimebase,'typ')));
       end;
       if Ext <> '' then
       begin
-        dbSeek(mimebase,mtiExt,Uppercase(Ext));
-        isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+        dbSeek(mimebase,mtiExt,UpperCase(Ext));
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(ext,dbReadStr(mimebase,'extension')));
       end;
 
       if isValid then
       begin
         if isNew then
-          dbAppend(d);
+          dbAppend(d)
+        else
+          dbGo(d,drec[p]);
         dbWriteNStr(d,mimeb_typ,typ);
         dbWriteNStr(d,mimeb_extension,ext);
         dbWriteNStr(d,mimeb_programm,prog);
-        dbFlushClose(d);
-        dbGo(d,drec[1]);
-        if isNew then
-          dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-        aufbau:=true;
       end else
-        RFehler(934); //  Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
+        RFehler(934); { Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt! }
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+      aufbau:=true;
     end;
-    // !!SortMIMETypes;
   end;
 
   procedure DelMimetyp;
@@ -1825,6 +1826,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/10/22 19:04:02  mk
+  - test auf doppelte MIME-Typen jetzt fertig
+
   Revision 1.38  2000/10/19 16:12:46  mk
   - added SortMIMETypes, attention: full of bugs!
 
