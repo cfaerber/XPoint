@@ -54,6 +54,22 @@ const nfComp   = $0001;
       nl4DPointlist = 4;  { 4D-Pointliste }
       nlFDpointlist = 5;  { FrontDoor-Pointliste }
 
+{$ifdef hasHugeString}
+type  nodeinfo = record
+                   found    : boolean;
+                   ispoint  : boolean;
+                   status   : string;
+                   boxname  : string;
+                   standort : string; { 03.02.2000 MH: 40 -> 65 }
+                   sysop    : string;
+                   telefon  : string;
+                   baud     : word;
+                   fflags   : string; { MH: 40 -> 80 }
+                   flags    : word;
+                   request  : word;
+                   datei    : byte;     { Nummer der Nodeliste }
+                 end;
+{$else}
 type  nodeinfo = record
                    found    : boolean;
                    ispoint  : boolean;
@@ -68,10 +84,10 @@ type  nodeinfo = record
                    request  : word;
                    datei    : byte;     { Nummer der Nodeliste }
                  end;
-
+{$endif}
 
 procedure MakeNodelistIndex;
-procedure OpenNodeindex(fn:pathstr);
+procedure OpenNodeindex(fn:string);
 procedure CloseNodeindex;
 procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
 function  IsFidoNode(adr:string):boolean;
@@ -95,7 +111,7 @@ procedure GetReqFiles(adr:string; var files:string);
 function  FidoPhone(var fa:FidoAdr; var nl_phone:string):string;
 function  FidoAppendRequestfile(var fa:FidoAdr):string;
 procedure ShrinkPointToNode(var fa:FidoAdr; var ni:NodeInfo);
-function  FindFidoAddress(fn:pathstr; var fa:FidoAdr):boolean;
+function  FindFidoAddress(fn:string; var fa:FidoAdr):boolean;
 
 procedure NodelistBrowser;
 
@@ -193,7 +209,7 @@ var   NX_adrnetx   : longint;
       berliste     : ^bereichlst;
       nodef        : file;
       nodelf       : filep;
-      FreqLst      : pathstr;
+      FreqLst      : string;
       DelFilelist  : boolean;   { lokal NodeSelProc }
       UserBlocks   : longint;
 
@@ -206,7 +222,13 @@ var x,y        : byte;
     idf,tf     : file;
     p          : byte;
     s          : string;
+{$ifdef hasHugeString}
+    k          : string;
+    ss         : string;
+{$else}
     k          : string[20];
+    ss         : string[15];
+{$endif}
     zone,net   : word;
     node,nodes : word;
     l          : longint;
@@ -227,7 +249,6 @@ var x,y        : byte;
     fa         : FidoAdr;
     points     : integer;
     pp         : ^pointa;
-    ss         : string[15];
 
     uroot      : unodep;
     chunksize  : longint;   { User pro Spur }
@@ -373,7 +394,7 @@ var x,y        : byte;
   end;
 
   procedure AppUser(zone,net,_node,point:word; fpos:longint);
-  var name : string[MaxNamelen];
+  var name : string;
       i    : integer;
 
     procedure AppU(var node:unodep);
@@ -417,7 +438,7 @@ var x,y        : byte;
         name:=mid(name,p+1)+' '+left(name,p-1);
       for i:=1 to length(name) do
         if name[i]='_' then name[i]:=' ';
-      UpString(name);
+      name:= UpperCase(name); { UpString(name);}
       AppU(uroot);
       inc(users); inc(gusers);
       if users=chunksize then
@@ -762,7 +783,7 @@ begin
       settextbuf(nf,tb^,tbuf);
       reset(nf);
       attrtxt(col.colmboxhigh);
-      mwrt(x+10,y+2,forms(getFileName(filename(nf)),12));
+      mwrt(x+10,y+2,forms(ExtractFileName(filename(nf)),12));
       fpos:=0;
       nodes:=0;
       points:=0;
@@ -980,7 +1001,7 @@ begin
 end;
 
 
-procedure OpenNodeindex(fn:pathstr);
+procedure OpenNodeindex(fn:string);
 var hd  : idxheader;
     uhd : udxheader;
     rr  : word;
@@ -1091,9 +1112,14 @@ end;
 procedure SetShrinkNodelist;
 var x,y   : byte;
     brk   : boolean;
+{$ifdef hasHugeString}
+    s,s2  : string;
+    ss    : string;
+{$else}
     s,s2  : string[101];
-    p     : byte;
     ss    : string[20];
+{$endif}
+    p     : byte;
     l     : longint;
     res   : integer;
 begin
@@ -1270,7 +1296,7 @@ end;
 
 procedure GetFAddress(request:boolean; txt:string; var fa:FidoAdr;
                       var ni:NodeInfo; var brk:boolean; var x,y:byte);
-var node    : string[30];
+var node    : string;
 {    modem   : string[53]; }
     xx,yy,i : byte;
     t       : taste;
@@ -1480,7 +1506,7 @@ begin
   closelist;
 end;
 
-function GetFilelist(var fa:fidoadr):pathstr;
+function GetFilelist(var fa:fidoadr):string;
 var t     : text;
     s     : string[80];
     p     : byte;
@@ -1663,13 +1689,18 @@ end;
 { --- File-Listen --------------------------------------------------- }
 
 procedure ReadFidolist;
-var fn     : pathstr;
+var fn     : string;
     brk    : boolean;
     x,y    : byte;
+{$ifdef hasHugeString}
+    node   : string;
+    fi,fi2 : string;
+{$else}
     node   : string[20];
+    fi,fi2 : string[12];
+{$endif}
     ni     : nodeinfo;
     p      : byte;
-    fi,fi2 : string[12];
     ar     : archrec;
     copied : boolean;
     fa     : FidoAdr;
@@ -1678,12 +1709,12 @@ var fn     : pathstr;
 
 label ende;
 
-  function overwrite(fn:pathstr):boolean;
+  function overwrite(fn:string):boolean;
   begin
     overwrite:=ReadJN(left(fn,40)+getres(2113),true);  { ' bereits vorhanden - Åberschreiben' }
   end;
 
-  function filetest(docopy:boolean; size:longint; path:pathstr; fi:string):boolean;
+  function filetest(docopy:boolean; size:longint; path:string; fi:string):boolean;
   var p : byte;
   begin
     if (diskfree(ord(path[1])-64)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
@@ -1734,13 +1765,13 @@ label ende;
   end;
 
 begin
-  fn:=FilePath+'*.*';
+  fn:=FilePath+WildCard;
   useclip:=false;
   if not ReadFilename(getres2(2117,1),fn,true,useclip) or  { 'Fileliste einlesen' }
      (not exist(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
     goto ende;
   fn:=UpperCase(FExpand(fn));
-  fi:=GetFilename(fn);
+  fi:=ExtractFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
   if (p>0) and (ival(left(fi,p-1))>0) then begin
@@ -1892,14 +1923,24 @@ function FidoSeekfile:string;
     _sep             = '/&';                { der Seperator 2-Beyte }
 
   var
+{$ifdef hasHugeString}
+    seek, oldseek    : string;
+    sNodInf,sZeile   : string;
+    sFlistName       : string;
+    sa               : array[0..maxbuf] of string;
+    searchStr        : array[0..SearchStr_maxIdx] of string;
+{$else}
     seek, oldseek    : string[40];
+    sNodInf,sZeile   : string[100];
+    sFlistName       : string[12];
+    sa               : array[0..maxbuf] of string[80];
+    searchStr        : array[0..SearchStr_maxIdx] of string[40];
+{$endif}
     x,y              : byte;
     brk              : boolean;
     pFileListCfg     : ^text;
     pOutput          : ^text;
     pFileListe       : ^text;
-    sNodInf,sZeile   : string[100];
-
     anz_FileFound, p : longint;
     tb               : pointer;
     scp              : scrptr;
@@ -1907,9 +1948,6 @@ function FidoSeekfile:string;
     ni               : ^nodeinfo;
     files            : ^string;
     len              : byte;
-    sFlistName       : string[12];
-    sa               : array[0..maxbuf] of string[80];
-    searchStr        : array[0..SearchStr_maxIdx] of string[40];
     anz_searchStr    : integer;    { Anzahl der besetzten Suchstrings }
     label
        ende;
@@ -1982,8 +2020,13 @@ function FidoSeekfile:string;
     var
       n, nn, n2, _pos  : integer;
       test : boolean;
+{$ifdef hasHugeString}
+      sZeile           : string;
+      sSub             : string;
+{$else}
       sZeile           : string[80];
       sSub             : string [40];
+{$endif}
   begin
     for n2:=0 to anz_searchStr - 1 Do     { nach alle Begriffen durchsuchen }
     begin
@@ -2205,7 +2248,7 @@ end;
 
 { In Textfile nach erster brauchbarer Nodeadresse suchen }
 
-function FindFidoAddress(fn:pathstr; var fa:FidoAdr):boolean;
+function FindFidoAddress(fn:string; var fa:FidoAdr):boolean;
 var t    : text;
     s    : string;
     n    : byte;
@@ -2249,6 +2292,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/05 13:55:02  hd
+  - AnsiString
+
   Revision 1.20  2000/07/04 12:04:29  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

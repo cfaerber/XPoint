@@ -28,7 +28,7 @@ procedure EditNLentry(var nlrec:NL_rec; var brk:boolean);
 function  NewNodeEntry:boolean;
 procedure SortNodelists(nodelist:NL_ap);  { nach Dateigr”áe sortieren }
 
-function  DoDiffs(files:pathstr; auto:boolean):byte;
+function  DoDiffs(files:string; auto:boolean):byte;
 procedure ManualDiff;
 
 function  setfnlenable(var s:string):boolean;
@@ -302,10 +302,17 @@ end;
 
 procedure EditNLentry(var nlrec:NL_rec; var brk:boolean);
 var x,y,i    : byte;
+{$ifdef hasHugeString}
+    filechar : string;
+    procstr  : string;
+    lform    : string;
+    adresse  : string;
+{$else}
     filechar : string[200];
     procstr  : string[40];
     lform    : string[20];
     adresse  : string[15];
+{$endif}
     fa       : fidoadr;
 begin
   dialog(ival(getres2(2127,0)),14,getres2(2127,2),x,y);
@@ -368,7 +375,7 @@ end;
 
 
 function NewNodeEntry:boolean;
-var fn      : pathstr;
+var fn      : string;
     ffn     : string[12];
     brk     : boolean;
     useclip : boolean;
@@ -381,7 +388,7 @@ var fn      : pathstr;
     ar      : ArchRec;
     fa      : FidoAdr;
 
-  procedure PL_FormatDetect(fn:pathstr; var format:byte);
+  procedure PL_FormatDetect(fn:string; var format:byte);
   var t   : text;
       s   : string;
       n   : byte;
@@ -406,7 +413,7 @@ var fn      : pathstr;
 
 begin
   NewNodeEntry:=false;
-  fn:='*.*';
+  fn:=WildCard;
   useclip:=false;        { 'Neue Node-/Pointliste einbinden' }
   pushhp(931);
   if ReadFilename(getres2(1019,10),fn,true,useclip) then
@@ -420,11 +427,11 @@ begin
         if stricmp(ar.name,'FILE_ID.DIZ') then
           ArcNext(ar);
         ffn:=UpperCase(ar.name);
-        if ffn='' then ffn:=getfilename(fn);
+        if ffn='' then ffn:=ExtractFilename(fn); { getfilename(fn);}
         CloseArchive(ar);
         end
       else
-        ffn:=getfilename(fn);
+        ffn:=ExtractFileName(fn); {getfilename(fn);}
       i:=1;
       while (i<=NL_anz) and (ffn<>NLfilename(i)) do
         inc(i);
@@ -473,7 +480,7 @@ begin
             brk:=false;
           if not brk then
             if (getfiledir(fn)=OwnPath+FidoDir) or
-               filecopy(fn,FidoDir+getfilename(fn)) then begin
+               filecopy(fn,FidoDir+Extractfilename(fn)) then begin
               inc(NL_anz);
               getmem(nlp,NL_anz*sizeof(NL_rec));
               if NL_anz>1 then begin
@@ -538,13 +545,13 @@ end;
 { Bei Update-Files mit fortlaufender Nummer versucht XP, die  }
 { n„chsten vier Updates einzubinden.                          }
 
-function  DoDiffs(files:pathstr; auto:boolean):byte;
-var diffdir  : pathstr;
+function  DoDiffs(files:string; auto:boolean):byte;
+var diffdir  : string;
     diffnames: string[12];
     i        : integer;
-    newlist  : pathstr;
-    uarchive : pathstr;
-    ufile    : pathstr;
+    newlist  : string;
+    uarchive : string;
+    ufile    : string;
     nextnr   : integer;
     unarcflag: boolean;
     done     : boolean;
@@ -582,9 +589,9 @@ var diffdir  : pathstr;
         s:='';
   end;
 
-  function passend(fn:pathstr):boolean;
+  function passend(fn:string):boolean;
   begin
-    passend:=(diffnames='*.*') or (getfilename(fn)=diffnames);
+    passend:=(diffnames='*.*') or (extractfilename(fn)=diffnames);
   end;
 
   procedure ExecProcessor(processor:string);
@@ -620,7 +627,7 @@ var diffdir  : pathstr;
       exit;
       end;
     chdir(fidodir_);
-    log(NLfilename(i)+' + '+ufile+' -> '+getfilename(newlist));
+    log(NLfilename(i)+' + '+ufile+' -> '+extractfilename(newlist));
     shell(OwnPath+'NDIFF.EXE '+NLfilename(i)+' '+ufile,250,3);
     if errorlevel>0 then begin
       arfehler(2112,auto);    { 'Fehler beim Bearbeiten der Node-/Pointdiff' }
@@ -638,7 +645,7 @@ var diffdir  : pathstr;
        (_filesize(newlist)<>_filesize(ufile)) then
       if diskfree(0)+_filesize(NLfilename(i)) < _filesize(ufile)+8192 then begin
         arfehler(2113,auto);  { 'Zu wenig Plattenplatz zum Kopieren des Nodelist-Updates' }
-        log(getreps2(2130,5,getfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
+        log(getreps2(2130,5,extractfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
       else begin
         if exist(newlist) then _era(newlist);
@@ -657,7 +664,7 @@ begin
   reindex:=false;
   logopen:=false;
   diffdir:=getfiledir(files);
-  diffnames:=getfilename(files);
+  diffnames:=extractfilename(files);
 
   for i:=1 to NL_anz do with Nodelist^[i] do begin
     ucount:=5;
@@ -723,7 +730,7 @@ end;
 
 
 procedure ManualDiff;
-var fn      : pathstr;
+var fn      : string;
     useclip : boolean;
 begin
   fn:=FilePath+'*.*';
@@ -741,6 +748,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/05 13:55:02  hd
+  - AnsiString
+
   Revision 1.12  2000/07/04 12:04:29  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -16,12 +16,25 @@ unit xpmime;
 
 interface
 
-uses  sysutils,dos,typeform,montage,fileio,keys,lister,database,resource,
-      xp0,xp1, xpglobal, xpkeys;
+uses  xpglobal,sysutils,dos,typeform,montage,fileio,keys,lister,database,resource,
+      xp0,xp1,xpkeys;
 
 
 type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
 
+{$ifdef hasHugeString}
+      multi_part = record                   { Teil einer Multipart-Nachricht }
+                     startline  : longint;  { 0 = kein Multipart }
+                     lines      : longint;
+                     code       : mpcode;
+                     typ,subtyp : string;   { fr ext. Viewer }
+                     level      : integer;      { Verschachtelungsebene 1..n }
+                     fname      : string;   { fr Extrakt + ext. Viewer }
+                     ddatum     : string;   { Dateidatum fr extrakt }
+                     part,parts : integer;
+                     alternative: boolean;
+                   end;
+{$else}
       multi_part = record                   { Teil einer Multipart-Nachricht }
                      startline  : longint;  { 0 = kein Multipart }
                      lines      : longint;
@@ -33,6 +46,7 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
                      part,parts : integer;
                      alternative: boolean;
                    end;
+{$endif}
       pmpdata    = ^multi_part;
 
 
@@ -40,8 +54,9 @@ procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
 {$H+}
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
+{$ifndef hasHugeString}
 {$H-}
-
+{$endif}
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
@@ -62,7 +77,7 @@ var   mf       : mfrap;
 
 
 function typname(typ,subtyp:string):string;
-var s : string[30];
+var s : string;
 begin
   if typ='text' then s:=getres2(2440,3)         { 'Text'   }
   else if typ='image' then s:=getres2(2440,4)   { 'Grafik' }
@@ -87,7 +102,7 @@ end;
 
 
 procedure m_extrakt(var mpdata:multi_part);
-var fn      : pathstr;
+var fn      : string;
     useclip : boolean;
     brk,o   : boolean;
 begin
@@ -123,8 +138,13 @@ function RFC2Zdate(var s0:string):string;
 var p,p2  : byte;
     t,m,j : word;
     h,min,s : integer;
+{$ifdef hasHugeString}
+    ti    : string;
+    zone  : string;
+{$else}
     ti    : datetimest;
     zone  : string[10];
+{$endif}
 
   function getstr:string;
   var p : byte;
@@ -232,13 +252,26 @@ var   hdp      : headerp;
   const maxlevel = 25;    { max. verschachtelte Multiparts }
         bufsize  = 2048;
   var   t      : text;
-        tmp    : pathstr;
+        tmp    : string;
         buf    : pointer;
         bstack : array[1..maxlevel] of ^string;    { Boundaries }
         bptr   : integer;
-        s,bufline : string;
+        s         : string;
+	bufline   : string;
         s2        : string;
         folded    : boolean;
+{$ifdef hasHugeString}
+        firstline : string;
+        _encoding   : string;
+        filename    : string;
+        filedate    : string;
+        subboundary : string;
+        hdline      : string;
+        ctype,subtype: string;    { content type }
+        bound    : string;
+        parname  : string;
+        parvalue : string;
+{$else}
         firstline : string[80];
         _encoding   : string[20];
         filename    : string[40];
@@ -246,15 +279,16 @@ var   hdp      : headerp;
         subboundary : string[72];
         hdline      : string[30];
         ctype,subtype: string[15];    { content type }
+        bound    : string[72];
+        parname  : string[30];
+        parvalue : string[100];
+{$endif}
         vorspann : boolean;
         n,_start : longint;
-        bound    : string[72];
         isbound  : boolean;
         endbound : boolean;
         last     : integer;
         endhd    : boolean;
-        parname  : string[30];
-        parvalue : string[100];
         stackwarn: boolean;
 
     label ende;
@@ -567,7 +601,7 @@ procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 const bufsize = 2048;
 
 var   input,t : text;
-      tmp     : pathstr;
+      tmp     : string;
       f       : file;
       buf     : pointer;
       i       : longint; { Integer->LongInt, wegen groáen MIME-Mails }
@@ -720,6 +754,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/05 13:55:03  hd
+  - AnsiString
+
   Revision 1.16  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

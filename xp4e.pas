@@ -377,9 +377,16 @@ end;
 
 
 function newuser:boolean;
-var user,adresse : string[AdrLen];
+var
+{$ifdef hasHugeString}
+    user,adresse : string;
+    komm         : string;
+    pollbox      : string;
+{$else}
+    user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
+{$endif}
     halten,adr   : integer16;
     b            : byte;
     brk          : boolean;
@@ -466,9 +473,16 @@ end;
 
 
 function newverteiler:boolean;
-var name    : string[AdrLen];
-    komm    : string[30];
-    pollbox : string[BoxNameLen];
+var
+{$ifdef hasHugeString}
+    name         : string;
+    komm         : string;
+    pollbox      : string;
+{$else}
+    name         : string[AdrLen];
+    komm         : string[30];
+    pollbox      : string[BoxNameLen];
+{$endif}
     b       : byte;
     brk     : boolean;
     adr     : integer16;
@@ -502,9 +516,16 @@ end;
 
 
 function modiverteiler:boolean;
-var name,oldname : string[AdrLen];
+var
+{$ifdef hasHugeString}
+    name,oldname : string;
+    komm         : string;
+    pollbox      : string;
+{$else}
+    name,oldname : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
+{$endif}
     brk          : boolean;
     cc           : ccp;
     anz,adr      : integer16;
@@ -551,11 +572,11 @@ end;
 function GetMsgBrettUser:boolean;
 var hdp      : headerp;
     hds      : longint;
-    suchname : string[AdrLen];
+    suchname : string;
 
   procedure makeuser;
-  var absender : string[AdrLen];
-      pollbox  : string[BoxNameLen];
+  var absender : string;
+      pollbox  : string;
   begin
     dbReadN(mbase,mb_absender,absender);
     dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
@@ -591,8 +612,15 @@ end;
 procedure editpass(msgbrett:boolean);
 var pw    : string;
     typ   : byte;
+{$ifdef hasHugeString}
+    cod   : string;
+    name  : string;
+    adr   : string;
+{$else}
     cod   : string[5];
     name  : string[AdrLen];
+    adr   : string[AdrLen];
+{$endif}
     size  : smallword;
     x,y   : byte;
     brk   : boolean;
@@ -601,7 +629,6 @@ var pw    : string;
     defcode : boolean;
     flags   : byte;
     netztyp : byte;
-    adr     : string[AdrLen];
     fa      : FidoAdr;
 begin
   if msgbrett and not GetMsgBrettUser then
@@ -723,12 +750,18 @@ procedure editbrett(var brett,komm,box,origin:string; var gruppe:longint;
 var x,y    : byte;
     askloc : boolean;
     d      : DB;
-    grname : string[30];
+{$ifdef hasHugeString}
+    grname : string;
+    haltetyp:string;
+    na,tg  : string;
+{$else}
+    grname : string[40];
+    haltetyp:string[6];
+    na,tg  : string[10];
+{$endif}
     trenn  : boolean;
     pba    : byte;
     filter : boolean;   { Nachrichtenfilter erlaubt }
-    haltetyp:string[6];
-    na,tg  : string[10];
     brtyp  : char;
     isfido : boolean;
 begin
@@ -866,7 +899,7 @@ function modibrett2:boolean;
 var x,y,wdt  : byte;
     brk      : boolean;
     rec      : longint;
-    adresse  : string[AdrLen];
+    adresse  : string;
     gesperrt : boolean;
     b        : byte;
 begin
@@ -918,9 +951,16 @@ begin
 end;
 
 function modiuser(msgbrett:boolean):boolean; {us}
-var user,adresse : string[AdrLen];
+var
+{$ifdef hasHugeString}
+    user,adresse : string;
+    komm         : string;
+    pollbox      : string;
+{$else}
+    user,adresse : string[AdrLen];
     komm         : string[30];
     pollbox      : string[BoxNameLen];
+{$endif}
     size         : smallword;
     halten,adr   : integer16;
     flags        : byte;
@@ -964,10 +1004,18 @@ end;
 
 
 function newbrett:boolean;
-var brett : string[brettLen];
+var
+{$ifdef hasHugeString}
+    brett : string;
+    komm  : string;
+    box   : string;
+    origin: string;
+{$else}
+    brett : string[brettLen];
     komm  : string[30];
     box   : string[BoxNameLen];
     origin: string[80];
+{$endif}
     gruppe: longint;
     halten: integer16;
     flags : byte;
@@ -1015,17 +1063,27 @@ end;
 
 
 function modibrett:boolean;
-var brett  : string[BrettLen];
+var 
+{$ifdef hasHugeString}
+    brett  : string;
+    komm   : string;
+    box    : string;
+    origin : string;
+    oldorig: string;
+    _brett : string;
+{$else}
+    brett  : string[BrettLen];
     komm   : string[30];
     box    : string[BoxNameLen];
     origin : string[60];
     oldorig: string[60];
+    _brett : string[5];
+{$endif}
     halten : integer16;
     flags  : byte;
     brk    : boolean;
     gruppe : longint;
     modin  : boolean;
-    _brett : string[5];
     x,y    : byte;
     n      : longint;
     mi     : shortint;
@@ -2440,6 +2498,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/05 13:55:01  hd
+  - AnsiString
+
   Revision 1.29  2000/07/05 12:47:27  hd
   - AnsiString
 

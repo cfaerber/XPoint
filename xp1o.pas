@@ -88,7 +88,7 @@ function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 var x,y : byte;
     brk : boolean;
-    fn  : string[20];
+    fn  : string;
     s2  : string;
 begin
   fn:=getres(106);
@@ -610,7 +610,7 @@ begin
 end;
 
 procedure DelBezug;
-var crc : string[4];
+var crc : string;
     pos : longint;
     mi  : shortint;
     ok  : boolean;
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/07/05 13:55:01  hd
+  - AnsiString
+
   Revision 1.46  2000/07/05 12:47:27  hd
   - AnsiString
 

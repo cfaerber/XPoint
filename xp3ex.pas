@@ -41,7 +41,7 @@ procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
 procedure rpsdate(var s:string);
 procedure ExtractSetMpdata(mpdata:pointer);
-procedure extract_msg(art:byte; schablone:pathstr; name:pathstr;
+procedure extract_msg(art:byte; schablone:string; name:string;
                       append:boolean; decode:shortint);
 
 
@@ -105,7 +105,7 @@ begin
     rps(s,'$MUSER',left(name,p-1));
     rps(s,'$TUSER',TopAllStr(left(name,p-1)));
     if UpperCase(right(name,4))='.ZER' then
-      dec(byte(name[0]),4);
+      delete(name, length(name)-4, 4); { dec(byte(name[0]),4);} 
     rps(s,'$BOX',mid(name,p+1));
     end
   else begin
@@ -143,14 +143,14 @@ end;
 {      4=Hex-Dump                                  }
 { decode: 0=nicht, -1=Rot13, 1=Betreff analysieren }
 
-procedure extract_msg(art:byte; schablone:pathstr; name:pathstr;
+procedure extract_msg(art:byte; schablone:string; name:string;
                       append:boolean; decode:shortint);
 var size   : longint;
     f,decf : file;
     hdp    : headerp;
     hds    : longint;
     edat   : longint;
-    tmp    : pathstr;
+    tmp    : string;
     t      : text;
     s      : string;
     hs     : string[25];
@@ -362,8 +362,14 @@ var size   : longint;
   begin
     l:=max(0,filesize(f)-200);
     seek(f,l);
+{$ifdef hasHugeString}
+    SetLength(s, 200);
+    blockread(f,s[1],200,rr);
+    if rr<>200 then SetLength(s,rr);
+{$else}
     blockread(f,s[1],200,rr);
     s[0]:=chr(rr);
+{$endif}
     p:=pos(#13#10+XP_origin,s);
     if p>0 then begin
       seek(f,l+p-1);
@@ -595,7 +601,7 @@ var size   : longint;
               stmp:='';
             end;
           end;
-        while (s[length(s)]=' ') do dec(byte(s[0]));   { rtrim }
+        s:= TrimRight(s); { while (s[length(s)]=' ') do dec(byte(s[0]));}   { rtrim }
         wrslong(s);
       end;
       readln(t);
@@ -606,7 +612,11 @@ var size   : longint;
 
   function telestring(s:string):string;
   var ts    : string;
+{$ifdef hasHugeString}
+      tn,vs : string;
+{$else}
       tn,vs : string[40];
+{$endif}
   begin
     s:='ù'+s;
     if not testtelefon(s) then
@@ -1047,6 +1057,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/05 13:55:01  hd
+  - AnsiString
+
   Revision 1.21  2000/07/04 12:04:22  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -89,9 +89,16 @@ begin
   if ioresult=0 then begin
     { reset(nodelf^,1);  !?!? }
     seek(nodelf^,adr);
+{$ifdef hasHugeString}
+    SetLength(s^,255);
+    blockread(nodelf^,s^[1],255,rr);
+    SetLength(s^,rr);
+    SetLength(s^,cpos(#13,s^)-1);
+{$else}
     blockread(nodelf^,s^[1],255,rr);
     s^[0]:=chr(rr);
     s^[0]:=chr(cpos(#13,s^)-1);
+{$endif}
     SetInfo;
     ni.found:=true;
     close(nodelf^);
@@ -214,8 +221,15 @@ end;
 procedure GetNodeuserInfo(var fa:FidoAdr; var ni:NodeInfo);
 type ubufa  = array[0..blocksize-1] of byte;
 var  f     : file;
+{$ifdef hasHugeString}
+     name  : string;
+     vname : string;
+     s     : string;
+{$else}
      name  : string[MaxNamelen];
      vname : string[MaxNamelen];
+     s     : string[80];
+{$endif}
      p,x,y : byte;
      buf   : ^ubufa;
      bufp  : word;
@@ -223,7 +237,6 @@ var  f     : file;
      user  : UserRec;
      last  : boolean;
      anz   : longint;
-     s     : string[80];
      brk   : boolean;
      height: word;
 
@@ -395,7 +408,7 @@ const active : boolean = false;
 var x,y,b: byte;
     brk  : boolean;
     ni   : ^NodeInfo;
-    adr  : string[30];
+    adr  : string;
     fa   : fidoadr;
     first: boolean;
 begin
@@ -519,12 +532,21 @@ const orflags  = 10;
       andflags = 5;
 
 type NodeBrec = record
+{$ifdef hasHugeString}
+                  nodeadr : string;
+                  sysop   : string;
+                  boxname : string;
+                  standort: string;
+                  telefon : string;
+                  flags   : string; 
+{$else}
                   nodeadr : string[20];
                   sysop   : string[30];
                   boxname : string[30];
                   standort: string[30];
                   telefon : string[20];
                   flags   : string[80]; { MH: 40 -> 80 }
+{$endif}
                   fnl,snl,
                   pl      : boolean;
                 end;
@@ -535,7 +557,17 @@ const NB_data : NodeBRP = nil;
 
 var   x,y,h   : byte;
       brk     : boolean;
+{$ifdef hasHugeString}
+      flag    : array[1..orflags,1..andflags] of string;
+      k       : string;
+      sphone  : string;    { in Nodelistenformat konvertierte Tel.Nr. }
+      adr     : string;
+{$else}
       flag    : array[1..orflags,1..andflags] of string[12];
+      k       : string[10];
+      sphone  : string[30];    { in Nodelistenformat konvertierte Tel.Nr. }
+      adr     : string[adrlen];
+{$endif}
       flaganz : array[1..orflags] of byte;
       flags   : byte;     { Anzahl or-Flags }
       i       : integer;
@@ -543,7 +575,6 @@ var   x,y,h   : byte;
       s,ss    : string;
       buf     : pointer;
       found,n : longint;
-      k       : string[10];
       p       : byte;
       nn      : word;
       azone,                   { aktuelle Nodeadresse beim Suchen }
@@ -551,16 +582,14 @@ var   x,y,h   : byte;
       anode,
       apoint  : word;
       lastnet : word;
-      sphone  : string[30];    { in Nodelistenformat konvertierte Tel.Nr. }
       skip    : boolean;
       ni      : nodeinfo;
-      adr     : string[adrlen];
       d       : DB;
 
 label again, NewStart;
 
   procedure ParseFlags;
-  var s,s2 : string[80]; { MH: 40 -> 65 }
+  var s,s2 : string; { HD: 80 -> 255 bzw. unendlich }
       p    : byte;
   begin
     flags:=0;
@@ -882,6 +911,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.11  2000/07/05 13:55:02  hd
+  - AnsiString
+
   Revision 1.10  2000/07/04 12:04:29  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
