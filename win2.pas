@@ -323,12 +323,12 @@ var   fb     : string;
   var i : integer;
   begin
     i:=p+add+1;
-    while (i<=f.Count) and (f[i][1]<>ab) do inc(i);
+    while (i<=f.Count) and (UpCase(f[i][1])<>ab) do inc(i);
     if i>f.Count then begin
       i:=1;
-      while (i<=p+add) and (f[i][1]<>ab) do inc(i);
+      while (i<=p+add) and (UpCase(f[i][1])<>ab) do inc(i);
       end;
-    if (f[i] <> '') and (f[i][1]=ab) then begin
+    if (f[i] <> '') and (UpCase(f[i][1])=ab) then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -1091,6 +1091,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/14 10:39:29  mk
+  - Char-Upcase bei Suche nach Dateien in FSBox
+
   Revision 1.31  2000/11/26 13:08:30  mk
   - FPC has no TStringList.CustomSort, added a dirty temp. Workaround
 
