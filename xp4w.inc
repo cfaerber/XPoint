@@ -1351,7 +1351,8 @@ begin
       dbnext(bbase);
       if not dbeof(bbase) then begin
         dbreadN(bbase,bb_brettname,s);
-        delfirst(s);
+        if left(s,3)='$/T' then continue
+          else delfirst(s);
         end;
       end;
     if dbeof(bbase) then
@@ -1730,6 +1731,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.35  2002/03/16 00:22:49  my
+  JG:- Fix fÅr vorherigen Commit: Bei einer Schnellsuche nach
+       Brettern, die mit "T" anfangen, wurden auch Trennzeilen
+       gefunden...
+
   Revision 1.25.2.34  2002/03/14 21:07:17  my
   JG:- Fix: Bei der Brett-Schnellsuche mit "." wurden keine PM-Bretter
        mehr gefunden, wenn vorher aufgrund der Eingabe schon ein
