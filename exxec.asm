@@ -6,7 +6,7 @@
 ; Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der
 ; Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.  
 ; ---------------------------------------------------------------
-; $Id:
+; $Id$
 ; erweiterter Speicher-Swapper
 
 
