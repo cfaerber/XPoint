@@ -11,7 +11,15 @@ unit OCThread;
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$IFDEF OS2}uses OS2Base;{$ENDIF}
+{$IFDEF OS2}
+  uses
+  {$IFDEF VP }
+    OS2Base;
+  {$ELSE }
+    doscalls,
+    pmwin;
+  {$ENDIF }
+{$ENDIF}
 {$IFDEF WIN32}uses windows;{$ENDIF}
 
 {$IFDEF OS2}
@@ -373,6 +381,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/01/01 20:21:41  mk
+  - added FPC OS2 Units to uses
+
   Revision 1.6  2000/10/28 09:45:50  ma
   - introduced credits.txt
 
