@@ -134,7 +134,7 @@ var
   fm : byte;
 begin
   fm:=filemode;
-  filemode:=$40;
+  filemode:=FMDenyNone;
   reset(file(f));
   existf:=(ioresult=0);
   close(file(f));
@@ -168,8 +168,8 @@ begin
       close(f);
       erase(f);
       ValidFileName:=(ioresult=0);
-      end;
     end;
+  end;
 end;
 
 
@@ -187,14 +187,17 @@ begin
         IsPath:=true
       else
         IsPath:=validfilename(name+'1$2$3.xx');
-      end
+    end
     else begin
       if name[length(name)]='\' then
         dellast(name);
       findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
-      end;
     end;
+    {$ifdef ver32 }
+    findclose(sr);
+    {$endif}
+  end;
 end;
 
 function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
@@ -257,7 +260,7 @@ begin
           assign(f,path+name);
           if attr and (ReadOnly+Hidden+Sysfile)<>0 then setfattr(f,0);
           erase(f);
-          end;
+        end;
     findnext(sr);
   end;
   {$IFDEF Ver32}
@@ -266,7 +269,7 @@ begin
   if pos('\',path)<length(path) then begin
     dellast(path);
     rmdir(path);
-    end;
+  end;
 end;
 
 Function ReadOnlyHidden(name:PathStr):boolean;
@@ -278,7 +281,7 @@ begin
   else begin
     getfattr(f,attr);
     ReadOnlyHidden:=(attr and (ReadOnly or Hidden))<>0;
-    end;
+  end;
 end;
 
 Procedure MakeBak(n,newext:string);
@@ -296,7 +299,7 @@ begin
   if existrf(f) then begin
     setfattr(f,archive);
     erase(f);
-    end;
+  end;
   assign(f,n);
   setfattr(f,archive);
   rename(f,bakname);
@@ -341,7 +344,9 @@ var p : byte;
 begin
   path:=trim(path);
   if path='' then begin
-    res:=0; exit; end;
+    res:=0;
+    exit;
+  end;
   if right(path,1)<>'\' then path:=path+'\';
   if validfilename(path+testfile) then
     res:=0
@@ -349,7 +354,7 @@ begin
     if pos('\',path)<=1 then begin
       mkdir(path);
       res:=-ioresult;
-      end
+    end
     else begin
       p:=iif(path[1]='\',2,1);
       res:=0;
@@ -358,14 +363,15 @@ begin
         if not IsPath(left(path,p)) then begin
           mkdir(left(path,p-1));
           if inoutres<>0 then begin
-            res:=-ioresult; exit;
-            end;
-          end
+            res:=-ioresult;
+            exit;
+          end;
+        end
         else
           res:=1;
         inc(p);
-        end;
       end;
+    end;
 end;
 
 function TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen }
@@ -396,6 +402,9 @@ begin
     _filesize:=0
   else
     _filesize:=sr.size;
+  {$ifdef ver32 }
+  findclose(sr);
+  {$endif}
 end;
 
 procedure MakeFile(fn:pathstr);
@@ -417,6 +426,9 @@ begin
     filetime:=sr.time
   else
     filetime:=0;
+  {$ifdef ver32 }
+  findclose(sr);
+  {$endif}
 end;
 
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
@@ -521,7 +533,7 @@ begin
   if _dir='' then begin
     if dir[length(dir)]<>'\' then dir:=dir+'\';
     insert(dir,fn,1);
-    end;
+  end;
 end;
 
 procedure fm_ro;      { Filemode ReadOnly }
@@ -572,7 +584,7 @@ begin
     si:=size shr 16; di:=size and $ffff;
     msdos(regs);
     lock:=flags and fcarry = 0;
-    end
+  end
   else
     lock:=true;
 {$ENDIF }
@@ -599,7 +611,7 @@ begin
     cx:=from shr 16; dx:=from and $ffff;
     si:=size shr 16; di:=size and $ffff;
     msdos(regs);
-    end;
+  end;
 {$ENDIF }
 end;
 
@@ -621,7 +633,7 @@ end;
 
 procedure TestShare;
 {$IFDEF Ver32 }
-begin
+begin { muss noch portiert werden }
 end;
 {$ELSE}
 var regs : registers;
@@ -634,9 +646,9 @@ begin
     if flags and fcarry=0 then begin
       ax:=$5c01;
       msdos(regs);
-      end;
-    ShareDa:=(ax<>1);
     end;
+    ShareDa:=(ax<>1);
+  end;
 end;
 {$ENDIF}
 
@@ -711,7 +723,7 @@ begin
       ll:=(l div 1024)*regs.cx;
     if ll>=2097152 then l:=maxlongint
     else l:=l*regs.cx;
-    end;
+  end;
   diskfree:=l;
 end;
 {$ENDIF }
@@ -750,7 +762,7 @@ begin
         blockread(f,version,1);
         if version=2 then exetype:=ET_Win16
         else exetype:=ET_OS2_16;
-        end;
+      end;
     end else
       exetype := ET_DOS;
   end;
@@ -763,6 +775,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/24 23:11:17  rb
+  VP Portierung
+
   Revision 1.14  2000/03/24 20:25:50  rb
   ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
 

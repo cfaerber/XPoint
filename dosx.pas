@@ -25,7 +25,7 @@ UNIT dosx;
 
 INTERFACE
 
-uses xpglobal, crt,dos, typeform;
+uses xpglobal, crt, dos, typeform;
 
 function  GetDrive:char;
 function  dospath(d:byte):pathstr;
@@ -53,7 +53,11 @@ procedure DPMIfreeDOSmem(selector:word);
 implementation
 
 {$IFDEF Ver32 }
-uses sysutils;
+uses
+  {$ifdef vp }
+  vpsyslow,
+  {$endif}
+  sysutils;
 {$ENDIF }
 
 
@@ -69,7 +73,7 @@ begin
     ax:=$1900;
     msdos(regs);
     getdrive:=chr(al+65);
-    end;
+  end;
 {$ELSE  }
 var
   s: String;
@@ -126,7 +130,7 @@ begin
     bx:=textrec(output).handle;
     intr($21,regs);
     OutputRedirected:=(flags and fcarry=0) and (dx and 128=0);
-    end;
+  end;
 end;
 {$ENDIF}
 
@@ -136,13 +140,31 @@ end;
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz }
 
-
 function DriveType(drive:char):byte;
 {$IFDEF Ver32  }
+  {$ifdef vp }
+var dt:TDriveType;
+  {$endif}
 begin
+  {$ifdef vp }
+  dt:=SysGetDriveType(drive);
+  case dt of
+    dtFloppy,
+    dtHDFAT,
+    dtHDHPFS,
+    dtHDNTFS,
+    dtHDExt2     : DriveType:=1;
+    dtTVFS       : DriveType:=3;
+    dtCDRom,
+    dtNovellNet,
+    dtLAN        : DriveType:=5;
+    else           DriveType:=0;
+  end;
+  {$else}
   { !! Hier sollte speziell fÅr das Betriebssystem eine saubere
     Implementation gemacht werden }
   if Drive <= #26 then DriveType := 1 else DriveType := 0;
+  {$endif}
 end;
 {$ELSE }
 
@@ -171,16 +193,23 @@ begin
         if dx and $8ff=$800 then drivetype:=2 else
         if dx and $4000<>0 then drivetype:=4 else
         drivetype:=1;
-      end;
+    end;
 end;
 {$ENDIF }
 
 function alldrives:string;
 
   function GetMaxDrive:char;
-  {$ifdef ver32 }
+  {$ifdef vp }
+  var drives,count:longint;
   begin
-    GetMaxDrive:='C'; { muss noch portiert werden }
+    drives:=SysGetValidDrives;
+    count:=0;
+    while drives<>0 do begin
+      inc(count);
+      drives:=drives shr 1;
+    end;
+    GetMaxDrive:=chr(drives+64);
   end;
   {$else}
   var regs : registers;
@@ -191,7 +220,7 @@ function alldrives:string;
       ah:=$e; dl:=al;
       msdos(regs);        { aktuelles LW setzen; liefert lastdrive in al }
       GetMaxDrive:=chr(al+64);
-      end;
+    end;
   end;
   {$endif}
 
@@ -204,7 +233,7 @@ begin
     if drivetype(c)>0 then begin
       inc(b);
       s[b]:=c;
-      end;
+    end;
   s[0]:=chr(b);
   alldrives:=s;
 end;
@@ -225,10 +254,10 @@ begin
     while ofs(wp^)<>$ffff do begin
       inc(n,wp^[2]);
       wp:=ptr(wp^[1],wp^[0]);
-      end;
+    end;
     if n>255 then n:=255;
     ConfigFILES:=n;
-    end;
+  end;
 end;
 {$ENDIF }
 
@@ -254,7 +283,7 @@ begin
     close(f[i]^);
     dispose(f[i]);
     dec(i);
-    end;
+  end;
   filemode:=fm;
 end;
 {$ENDIF}
@@ -281,7 +310,7 @@ begin
       es:=regs.es; ds:=regs.ds;
       fs:=regs.es; gs:=regs.es; cs:=regs.es;
       sp:=0; ss:=0;      { neuen Real-Mode-Stack anlegen }
-      end;
+    end;
     with regs2 do begin           { Protected-Mode-Int aufrufen }
       ax:=$300;
       bx:=intno;
@@ -289,14 +318,14 @@ begin
       es:=seg(dpmistruc);
       di:=ofs(dpmistruc);
       intr(DPMI,regs2);
-      end;
+    end;
     with dpmistruc do begin       { Real-Mode-Register zurÅckkopieren }
       regs.ax:=eax and $ffff; regs.bx:=ebx and $ffff;
       regs.cx:=ecx and $ffff; regs.dx:=edx and $ffff;
       regs.bp:=ebp and $ffff;
       regs.si:=esi and $ffff; regs.di:=edi and $ffff;
       regs.ds:=ds; regs.es:=es; regs.flags:=flags;
-      end;
+    end;
   {$ENDIF}
 end;
 {$ENDIF }
@@ -312,12 +341,12 @@ begin
     if flags and fcarry<>0 then begin
       segment:=0;
       DPMIallocDOSmem:=0;
-      end
+    end
     else begin
       segment:=regs.ax;
       DPMIallocDOSmem:=dx;
-      end;
     end;
+  end;
 end;
 {$ENDIF}
 
@@ -361,6 +390,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/24 23:11:16  rb
+  VP Portierung
+
   Revision 1.9  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 
