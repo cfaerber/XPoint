@@ -20,7 +20,8 @@
  Levels: 1 - Standard-Logs
          2 - Bildschirmnachrichten
          3 - Modembefehle/antworten
-         4 - Zustaende der Statemachines}
+         4 - EMSI
+         5 - Mailer states}
 
 {$I XPDEFINE.INC }
 
@@ -34,7 +35,6 @@ uses
 const aresult    : byte = 0;
       brk_result : byte = EL_Break;
 
-      maxfiles  = 200;
       ErrChar   = '#';
       gl        = 10;
       width     = 46;
@@ -97,7 +97,6 @@ type  FidoAdr   = record
 
 var   FilesToSend  : String;
       FA        : FidoAdr;
-      bauddetect: longint;
       logf      : text;
       nocarrier : string;   { Carrier futsch }
 
@@ -148,7 +147,7 @@ end;
 
 procedure logwithtime(typ:char; time,txt:string);
 begin
-  DebugLog('XPFM',Typ+' '+Txt,1);
+  DebugLog('XPFM','Log: '+Typ+' '+Txt,1);
   writeln(logf,typ,' ',time,'  ',txt);
 end;
 
@@ -288,18 +287,14 @@ end;
 
 procedure SetLanguage;
 begin
-  if not exist('XPFM-'+language+'.RES') then
-    language:='E';
-  if not exist('XPFM-'+language+'.RES') then
-    error('XPFM-*.RES not found');
+  if not exist('XPFM-'+language+'.RES') then language:='E';
+  if not exist('XPFM-'+language+'.RES') then error('XPFM-*.RES not found');
   OpenResource('XPFM-'+language+'.RES',40000);
-  resopen:=true;
-  nocarrier:=getres(195);
+  resopen:=true; nocarrier:=getres(195);
 end;
 
 procedure TestConfig;
-var i    : integer;
-    perr : string;
+var perr : string;
 
   procedure rerror(nr:word);
   begin
@@ -327,7 +322,7 @@ begin
     rerror1(104,UpperCase(logfile));     { 'Illegal logfile name: %s' }
 {  for i:=1 to sendfiles do
     if not exist(sendfile[i]) then
-      rerror1(105,sendfile[i]);}    {* 'File missing:  %s' }
+      rerror1(105,sendfile[i]);}    {* Ueberpruefung wieder einfuegen 'File missing:  %s' }
   if username='' then rerror(106);  { 'Name missing' }
   if OwnAddr='' then rerror(107);   { 'Address missing' }
   SplitFido(OwnAddr,FA);
@@ -384,7 +379,6 @@ begin
     redialwait:=redwait2;
   end;
   lastdispline:=''; disppos:=1;
-  bauddetect:=14400;   { fÅr IgCD/Nullmodem }
 end;
 
 procedure OpenLog;
@@ -437,10 +431,9 @@ begin
 end;
 
 procedure DisplayStatus(s:string; UseNewLine: Boolean);
-var i: integer;
 begin
   DebugLog('XPFM','Display: '+S,2);
-{  if s<>'' then begin
+  if s<>'' then begin
     if UseNewLine and(lastdispline<>'')then begin
       Col(ColText); wrt(scx+2,scy+2+disppos,forms(lastdispline,width));
       disppos:=(disppos mod gl)+1;
@@ -448,7 +441,6 @@ begin
     lastdispline:=time+'  '+s;
     Col(ColXFer); wrt(scx+2,scy+2+disppos,forms(lastdispline,width)); Col(ColText);
   end;
-  DebugLog('XPFM','DisplayFin',2);}
 end;
 
 procedure DisplayAndLog(c:char; s:string);
@@ -515,6 +507,7 @@ begin
       YooHooMailer; {Im Mailer wird Mailing True gesetzt}
       if aresult<>0 then brk_result:=aresult;
     end else if DUDState=SDUserBreak then aresult:=EL_break;
+    DisplayStatus(getres(164),True); { 'Modem auflegen' }
     if not HangUp then DisplayStatus(getres(167),True); { 'Modem evtl. nicht aufgelegt?!' }
     if mailing then log('+','mail transfer '+iifs(aresult=EL_ok,'completed','aborted'));
   until(aresult=EL_ok)or(aresult=EL_break)or(connects=MaxConn);
@@ -532,6 +525,10 @@ end.
 
 {
   $Log$
+  Revision 1.23  2000/07/14 00:00:40  ma
+  - Kosmetik
+  - Debuglogs aufgeraeumt
+
   Revision 1.22  2000/07/12 16:52:10  ma
   - Modemroutinen in Unit Modem ausgelagert
   - kleinere Aenderungen fuer Ansistrings

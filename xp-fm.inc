@@ -105,7 +105,7 @@ end;
 
 function GetString(var buf; Len: Integer): String;
 {Gibt Len Zeichen aus buf als String zurueck}
-var s: String; begin SetLength(s,Len); Move(Buf,s[1],Len); GetString:=s; Debug.DebugLog('XPFM','GetString: "'+s+'"',5)end;
+var s: String; begin SetLength(s,Len); Move(Buf,s[1],Len); GetString:=s; Debug.DebugLog('XPFM','GetString: "'+s+'"',4)end;
 
 procedure SetZero(var buf; s:string; ml:byte);
 {Bewegt max. ml Zeichen aus S in Buf und haengt #0 an}
@@ -277,7 +277,7 @@ begin
   fmSS:=0;
   NAKtimer:=false;
   repeat
-    DebugLog('XPFM','fmSS state: '+Char(state+48),4);
+    DebugLog('XPFM','fmSS state: '+Char(state+48),5);
     case state of
       0 : begin                           { FTS-007 S. 8 }
             Timers[ti_ALL1].SetTimeout(30);
@@ -607,7 +607,7 @@ var OtherData: String;
             EMSIString:=EMSIString+c;
       end;
     until (c=#13) or (c=#10) or Timers[ti_EMS1].Timeout or not CommObj^.Carrier;
-    DebugLog('XPFM','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',3);
+    DebugLog('XPFM','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',4);
     ReadEMSIString:=EMSIString;
   end;
 
@@ -617,13 +617,13 @@ var OtherData: String;
   var I,J: Integer; S: String;
   begin
     I:=Pos('{',EMSIString); J:=Pos('}',EMSIString);
-    if J>I then begin S:=Copy(EMSIString,I+1,J-I); Delete(EMSIString,1,J)end
-    else if I=0 then S:=''
+    if J>I then begin S:=Copy(EMSIString,I+1,J-I-1); Delete(EMSIString,1,J)end
+    else if I=0 then begin S:=''; EMSIString:='' end
     else begin
-      DebugLog('XPFM','Strange EMSI string: "'+EMSIString+'"',3);
+      DebugLog('XPFM','Strange EMSI string: "'+EMSIString+'"',4);
       Delete(EMSIString,1,J); S:='';
     end;
-    DebugLog('XPFM','Processing EMSI data: "'+S+'"',3);
+    DebugLog('XPFM','Processing EMSI data: "'+S+'"',4);
     ExtractEMSIData:=S;
   end;
 
@@ -667,7 +667,7 @@ begin
   if akas<>'' then EMSIData2:=EMSIData2+' '+akas;
   EMSIData:=EMSIData2+'}'+EMSIData;
 
-  Debug.DebugLog('XPFM','EMSIData: "'+EMSIData+'"',5);
+  Debug.DebugLog('XPFM','EMSIData: "'+EMSIData+'"',4);
   count:=5; ercount:=0; ok:=false; more:=false;
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
@@ -707,21 +707,17 @@ begin
       while left(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
       while(left(EMSIString,2)<>'**')and(EMSIString<>'')do delete(EMSIString,1,1);
       if left(EMSIString,length(EMSI_DAT))=EMSI_DAT then begin
-        Debug.DebugLog('XPFM','Received EMSI_DAT',5);
+        Debug.DebugLog('XPFM','Received EMSI_DAT',4);
         dl:=hexval(copy(EMSIString,length(EMSI_DAT)+1,4));    { Paketlaenge }
         hex4:=Copy(EMSIString,Length(EMSI_DAT)+1+4+dl,4);     { CRC }
-        Delete(EMSIString,Length(EMSI_DAT)+1+4+dl,4);
-        Debug.DebugLog('XPFM','Read CRC: "'+hex4+'"',5);
-        Debug.DebugLog('XPFM','Expected CRC: "'+Hex(CRC16Block(EMSIString[1],Length(EMSIString)),4)+'"',5);
-        ok:=(hexval(hex4)=CRC16Block(EMSIString[1],Length(EMSIString)));
+        Delete(EMSIString,Length(EMSI_DAT)+1+4+dl,4); { CRC entfernen }
+        Debug.DebugLog('XPFM','Read CRC: "'+hex4+'"',4);
+        ok:=(hexval(hex4)=CRC16Block(EMSIString[3],Length(EMSIString)-2)); {fuehrende Sternchen von CRC aussparen}
         if not ok then begin
-          Debug.DebugLog('XPFM','CRC error',5);
-{          CommObj^.SendString(EMSI_NAK+#13,False);}       { CRC-Fehler }
+          CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
           DisplayAndLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
-        end;{ else} begin ok:=true; {* Not final}
-          Debug.DebugLog('XPFM','CRC ok',5);
-          mdelay(150);
-          CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
+        end else begin
+          mdelay(150); CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
       end;
     end;
@@ -767,8 +763,7 @@ begin
       end;
     end;
     EMSIHandshake:=2;
-  end else
-    if not CommObj^.Carrier then LogCarrier;
+  end else if not CommObj^.Carrier then LogCarrier;
 ende:
 end;
 
@@ -814,7 +809,7 @@ begin
         if Pos(#9,FilesToSend)>0 then begin
           FileToSend:=Copy(FilesToSend,1,Pos(#9,FilesToSend)-1);
           Delete(FilesToSend,1,Pos(#9,FilesToSend));
-          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',5);
+          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',3);
         end else begin
           FileToSend:=FilesToSend; FilesToSend:='';
         end;
@@ -874,6 +869,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/07/14 00:00:40  ma
+  - Kosmetik
+  - Debuglogs aufgeraeumt
+
   Revision 1.16  2000/07/12 16:52:42  ma
   - Anpassungen an Ansistrings:
     - EMSI-Handshake *deutlich* vereinfacht
