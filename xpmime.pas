@@ -28,22 +28,20 @@ unit xpmime;
 interface
 
 uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
-      xp0,xp1,xpkeys,utftools;
+      xp0,xp1,xpkeys,utftools,Mime;
 
 
-type  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
-
-      multi_part = record                   { Teil einer Multipart-Nachricht }
+type  multi_part = record                   { Teil einer Multipart-Nachricht }
                      startline  : longint;  { 0 = kein Multipart }
                      lines      : longint;
-                     code       : mpcode;
+                     code       : TMimeEncoding;
                      typ,subtyp : string[20];   { fÅr ext. Viewer }
                      level      : integer;      { Verschachtelungsebene 1..n }
                      fname      : string[255];   { fÅr Extrakt + ext. Viewer }
                      ddatum     : shortstring;   { Dateidatum fÅr extrakt }
                      part,parts : integer;
                      alternative: boolean;
-                     Charset  : TUnicodeCharsets;
+                     Charset  : TMimeCharsets;
                    end;
       pmpdata    = ^multi_part;
 
@@ -56,6 +54,8 @@ procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
 procedure SSP_Keys(Self: TLister; var t:taste);
 function typname(typ,subtyp:string):string;
+
+function RFC2Zdate(s0:string):string;
 
 implementation  { --------------------------------------------------- }
 
@@ -100,16 +100,6 @@ begin
   else
     typname:=s;
 end;
-
-
-function codecode(encoding:string):mpcode;
-begin
-  if encoding='base64' then codecode:=mcodeBase64
-  else if encoding='quoted-printable' then codecode:=mcodeQP
-  else if encoding='8bit' then codecode:=mcode8Bit
-  else codecode:=mcodeNone;
-end;
-
 
 procedure m_extrakt(var mpdata:multi_part);
 var fn      : string;
@@ -165,7 +155,7 @@ end;
                     Mon, 11 Jan 1992 01:02:03 +nnnn
                     Mon Jan 11, 1992 01:02:03 +nnnn  }
 
-function RFC2Zdate(var s0:string):string;
+function RFC2Zdate(s0:string):string;
 var p,p2  : byte;
     t,m,j : word;
     h,min,s : integer;
@@ -437,10 +427,10 @@ var   hdp      : THeader;
           level:=bptr+last;
           typ:=ctype;
           subtyp:=subtype;
-          code:=codecode(_encoding);
+          code:=MimeGetEncodingFromName(_encoding);
           fname:=filename;
           ddatum:=filedate;
-          charset := GetCharsetFromName(CharsetName);
+          charset := MimeGetCharsetFromName(CharsetName);
           startline:=_start;
           lines:=n-startline;
           part:=anzahl;
@@ -523,7 +513,7 @@ var   hdp      : THeader;
         level:=1;
         typ:=getres2(2440,10);    { 'gesamte Nachricht' }
         subtyp:='';
-        code:=mcodeNone;
+        code:=MimeEncodingBinary;
         fname:='';
         startline:=1;
         lines:=n;
@@ -558,7 +548,7 @@ begin                         { SelectMultiPart }
   MakePartlist;
   if not forceselect and (anzahl=3) and (mf[2].typ='text')
      and (mf[1].typ='text') and (mf[1].subtyp='plain')
-     and (((hdp.mimetyp='multipart/alternative')      { Text+HTML Messis }
+     and (((hdp.mime.ctype='multipart/alternative')      { Text+HTML Messis }
             and (mf[2].subtyp='html'))
          or (mf[2].subtyp='x-vcard'))                 { oder Text mit VCard }
   then begin
@@ -656,23 +646,23 @@ begin
     for i:=1 to startline-1 do
       readln(input);
 
-    if code<>mcodeBase64 then begin     { plain / quoted-printable }
+    if code<>MimeEncodingBase64 then begin     { plain / quoted-printable }
       assign(t,fn);
       if append then system.append(t)
       else rewrite(t);
       for i:=1 to lines do begin
         readln(input,s);
-        if code=mcodeQP then begin
+        if code=MimeEncodingQuotedPrintable then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
         end
         else
           softbreak:=false;
 
-        if code in [mCodeNone, mcodeQP, mcode8Bit] then
+        if code in [MimeEncodingBinary, MimeEncoding7Bit, MimeEncoding8Bit] then
         begin
           // convert s to Unicode (UTF-8)
-          if Charset <> csUnicode then
+          if Charset <> csUTF8 then
             s := Convert8BitToUTF(s, Charset);
 
           // convert s (now UTF-8) back in the used Codepage
@@ -739,6 +729,12 @@ end.
 
 {
   $Log$
+  Revision 1.48  2001/09/08 14:39:34  cl
+  - Moved MIME functions/types/consts to mime.pas
+  - More uniform naming of MIME functions/types/consts
+  - adaptions/fixes for MIME support
+  - RFC2ZDate is now in visible in interface
+
   Revision 1.47  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
