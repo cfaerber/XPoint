@@ -9595,7 +9595,7 @@ Es gibt inzwischen eine unbersehbare Flle von
 a) Informationen ber und b) Versionen von PGP, auf
 die hier nicht alle im Detail ersch”pfend eingegangen
 werden kann. Zusammenfassend mnden diese in folgende
-Aussagen zum Thema PGP (Stand November 2000):
+Aussagen zum Thema PGP (Stand April 2001):
 
 
 ş  Wenn Sie PGP ausschlieálich in Verbindung mit
@@ -9607,16 +9607,16 @@ Aussagen zum Thema PGP (Stand November 2000):
    Eigenschaften:
 
    - Untersttzung von <<8192-bit>>-RSA-Schlsseln (die
-     Verwendung gr”áerer Schlssel als 2048-bit ist
+     Verwendung gr”áerer Schlssel als 2048 bit ist
      aber derzeit aus Kompatibilit„tsgesichtspunkten
      weder ratsam noch aus kryptographischer Sicht
      sinnvoll);
 
-   - erweitertes <<Key-Management>>: Verfall von Schls-
+   - Erweitertes <<Key-Management>>: Verfall von Schls-
      seln, Unterscheidung von Schlsseln zum Signie-
-     ren und Verschlsseln, etc.;
+     ren und Verschlsseln, etc.
 
-   - im der Version vom <<07.10.2000>> (<<*>>) Behebung des
+   - Ab den Versionen vom <<07.10.2000>> (<<*>>) Behebung des
      <<batchmode-Bugs>>: PGP konnte bis dahin einige
      Archivformate wie ZIP, RAR, LHA, LZH etc. sowie
      manche Nachrichten, die ihrerseits wieder PGP-
@@ -9625,20 +9625,37 @@ Aussagen zum Thema PGP (Stand November 2000):
      dem Schalter <<+batchmode>> aufgerufen wurde -
      siehe auch: [PGP-Rckfragen bergehen].@1012
 
-   - das Archivformat ARJ wird in der Version vom
+   - Das Archivformat ARJ wird ab den Versionen vom
      07.10.2000 jetzt korrekt erkannt und unter-
      sttzt.
 
-   - die 32-bit-Variante der Version vom 07.10.2000
-     wurde mit der aktuellen Version des C-Compilers
-     <<DJGPP>> compiliert, daher optimale Rechenzeit-
-     freigabe auch unter Windows 2000/NT.
+   - Die 32-bit-Variante der Versionen vom 07.10.2000
+     und neuer wurden mit der aktuellen Version des
+     C-Compilers <<DJGPP>> compiliert, daher optimale
+     Rechenzeitfreigabe auch unter Windows 2000/NT.
 
-   <<*>> Die PGP-Version 2.6.3in vom 07.10.2000 ist ein
-     unmittelbares Resultat der Recherchen zum Thema
-     PGP im Rahmen der šberarbeitung dieses XP-Hilfe-
-     systems fr das OpenXP-Projekt. Dank an alle Be-
-     teiligten siehe am Ende dieses Textes.
+   - Die von den tschechischen Kryptologen Vlastimil
+     Klima und Tomas Rosa am 20.03.2001 publizierte
+     und in allen PGP-Versionen ab 2.3a vorhandene
+     <<Sicherheitslcke>> hinsichtlich eines Angriffs von
+     auáen auf den 'Secret Key' (secring.pgp) wurde
+     mit der Version vom <<23.03.2001>> geschlossen.
+     N„heres zu dieser Sicherheitslcke ist (wie fast
+     alles zu PGP) auf <<www.pgpi.org>> und vor allem auf
+     <<www.i.cz/en>> zu erfahren.
+
+   - Die 32-bit-Variante der Version vom <<23.03.2001>>
+     ben”tigt erstmals keinen externen DPMI-Host fr
+     den Betrieb unter DOS mehr - dieser ist jetzt
+     direkt in PGP.EXE integriert und wird bei Bedarf
+     geladen.
+
+   <<*>> Die PGP-Versionen 2.6.3in vom 07.10.2000 bzw.
+     23.03.2001 sind ein unmittelbares Resultat der
+     Recherchen zum Thema PGP im Rahmen der šber-
+     arbeitung der XP-Online-Hilfe fr das OpenXP-
+     Projekt. Dank an alle Beteiligten siehe am Ende
+     dieses Textes.
 
    Das <<i>> in PGP-Versionsbezeichnungen weist auf eine
    internationale Version hin, die Sie bedenkenlos
@@ -9667,9 +9684,9 @@ Aussagen zum Thema PGP (Stand November 2000):
    <<2.6.3ia>> von Stale Schumacher (siehe <<www.pgpi.org>>)
    in einer 8086- und 32-bit-Variante erh„ltlich, die
    allerdings fr den Normalanwender (neben mehreren
-   noch existierenden kleineren Bugs) drei entschei-
+   noch existierenden kleineren Bugs) fnf entschei-
    dende Nachteile gegenber den aktuellen <<2.6.3in>>-
-   Kompilaten (Version vom 07.10.2000) hat:
+   Kompilaten (Version vom 23.03.2001) hat:
 
    - Der <<batchmode-Bug>> verhindert die automatische
      Decodierung vieler g„ngiger Archivdateien sowie
@@ -9685,6 +9702,13 @@ Aussagen zum Thema PGP (Stand November 2000):
 
    - Das Archivformat ARJ wird nicht korrekt erkannt.
 
+   - Es besteht die am 20.03.2001 publizierte Sicher-
+     heitslcke bzgl. eines Angriffs von auáen auf
+     den 'Secret Key'.
+
+   - Fr den Betrieb unter DOS ist ein externer DPMI-
+     Host erforderlich (N„heres dazu s.u.).
+
    Abschlieáend eine šbersicht der Eigenschaften der
    oben besprochenen PGP-Versionen der <<2.6.3i>>-Fami-
    lie. Die ZIP-Archive liegen unter den angegebenen
@@ -9693,16 +9717,16 @@ Aussagen zum Thema PGP (Stand November 2000):
    bei <<2:248/2004>> erh„ltlich.
 
       PGP-   ³ <<2.6.3in>> ³ <<2.6.3in>> ³ <<2.6.3ia>> ³ <<2.6.3ia>>
-    Version  ³  (8086) ³(32-bit)<<*>>³  (8086) ³(32-bit)<<*>>
+    Version  ³  (8086) ³(32 bit)<<*>>³  (8086) ³(32 bit)<<*>>
    ÍÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍØÍÍÍÍÍÍÍÍÍ
-   Datum     ³07.10.00 ³07.10.00 ³04.03.96 ³04.03.96
+   Datum     ³23.03.01 ³23.03.01 ³04.03.96 ³04.03.96
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
    CPU 8086+ ³   ja    ³  nein   ³   ja    ³  nein
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
    CPU 80386+³   ja    ³   ja    ³   ja    ³   ja
              ³(langsam)³(schnell)³(langsam)³(schnell)
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
-   RSA-Keys  ³8192-bit ³8192-bit ³2048-bit ³2048-bit
+   RSA-Keys  ³8192 bit ³8192 bit ³2048 bit ³2048 bit
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
    erw. Keys ³   ja    ³   ja    ³  nein   ³  nein
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
@@ -9710,20 +9734,27 @@ Aussagen zum Thema PGP (Stand November 2000):
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
    Win 2K/NT ³optimiert³optimiert³n. optim.³n. optim.
    ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
+   Angriff =>³wird     ³wird     ³keine    ³keine
+   Secret Key³erkannt  ³erkannt  ³Erkennung³Erkennung
+   ÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
    Dateiname/³<<PG263INR.>>³<<PG263INP.>>³<<PG263IAR.>>³<<PG263IAP.>>
    Endung    ³<<ZIP>>      ³<<ZIP>>      ³<<ZIP>>      ³<<ZIP>>
 
    (Die Dateinamen sind natrlich als eine Zeile zu
-    lesen, d.h. die Version <<2.6.3in (32bit)>> hat
-    z.B. den Dateinamen <<PG263INP.ZIP>>.
+    lesen, d.h. die Version <<2.6.3in (32 bit)>> hat
+    z.B. den Dateinamen <<PG263INP.ZIP>>. Das Datum
+    gibt das Datum der PGP-Version, *nicht* zwingend
+    das Datum des Archivs an.)
 
-   <<*>> Die 32-bit-Versionen erfordern einen DPMI-Host
-     (QEMM, 386MAX, Windows, OS/2, o.„. - EMM386 ist
-     *kein* DPMI-Host). Der DPMI-Host <<CWSDPMI>> (Free-
-     ware) fr den Betrieb unter DOS liegt den Archi-
-     ven bei (einfach CWSDPMI.EXE ins PGP-Verzeichnis
-     oder ein anderes im Pfad liegendes Verzeichnis
-     kopieren).
+   <<*>> Die 32-bit-Variante der Version 2.6.3ia er-
+     fordert einen externen DPMI-Host (Windows, OS/2,
+     QEMM, 386MAX o.„., EMM386 ist *kein* DPMI-Host).
+     Der DPMI-Host <<CWSDPMI>> (Freeware) fr den Betrieb
+     unter DOS liegt dem Archiv bei (einfach
+     CWSDPMI.EXE ins PGP-Verzeichnis oder ein anderes
+     im Pfad liegendes Verzeichnis kopieren). Bei der
+     32-bit-Variante der Version 2.6.3in vom 23.03.01
+     ist der DPMI-Host bereits in PGP.EXE integriert.
 
    Eine Einschr„nkung der 2.6.x-Versionen soll ab-
    schlieáend nicht verschwiegen werden: sie unter-
@@ -9801,14 +9832,19 @@ Aussagen zum Thema PGP (Stand November 2000):
      che Ursache der angesprochenen Sicherheitslk-
      ken.
 
+   - Auch bei Version 5.x/6.x besteht die am
+     20.03.2001 publizierte Sicherheitslcke bzgl.
+     eines Angriffs von auáen auf den 'Secret Key'.
+
    Wer (aus welchen Grnden auch immer) eine 6.x-Ver-
    sion verwenden will oder muá, sollte unbedingt
    darauf achten, die Version <<6.5.8>> oder h”her einzu-
-   setzen; dort wurde die ADK-Sicherheitslcke ge-
-   schlossen und sie untersttzt vollst„ndig RSA-
-   Schlssel bis 2048-bit. Auf <<ftp.openxp.de>> sind
-   folgende Freeware-Versionen von PGP 6.5.8 erh„lt-
-   lich:
+   setzen; dort wurde zumindest die ADK-Sicherheits-
+   lcke geschlossen (jedoch *nicht* die Lcke bzgl.
+   des Angriffs auf den 'Secret Key') und sie unter-
+   sttzt vollst„ndig RSA-Schlssel bis 2048 bit. Auf
+   <<ftp.openxp.de>> sind folgende Freeware-Versionen
+   von PGP 6.5.8 erh„ltlich:
 
    <<PGPFW658Win32.zip>>
    Komplettversion (fast 8 MB) mit allem Drum und
@@ -9824,10 +9860,14 @@ Aussagen zum Thema PGP (Stand November 2000):
    Beide Versionen laufen *nicht* unter reinem DOS!
 
 
+ş  <<PGP 7.x>> ist nicht Gegenstand dieser Online-Hilfe,
+   da es von OpenXP (noch?) nicht untersttzt wird.
+
+
 <<Fazit
 
 Die 2.6.x-Versionen (und hier speziell die Version
-<<2.6.3in>> in der Fassung vom <<07.10.2000>>) bieten die
+<<2.6.3in>> in der Fassung vom <<23.03.2001>>) bieten die
 beste Kombination aus h”chstm”glicher Sicherheit und
 bestm”glicher Kooperation mit CrossPoint. Wer eine
 graphische Benutzeroberfl„che unter Windows ben”tigt,
@@ -9849,24 +9889,25 @@ von <<Michael Heydekamp>>. Vielen Dank fr freundliche
 und tatkr„ftige Mithilfe an:
 
 <<Lutz Donnerhacke>> - fr die Erstellung der PGP-Version
-                   2.6.3in und die jngsten Bugfixes
-                   in der Fassung vom 07.10.2000.
+                   2.6.3in und die jngsten Bug- und
+                   Sicherheitsfixes in den Fassungen
+                   vom 07.10.2000 und 23.03.2001.
 
 <<Frank Prfer>>     - fr ausfhrliche Informationen zu
                    PGP allgemein und zu den verschie-
                    denen Versionen im besonderen
                    sowie das 32-bit-Kompilat der PGP-
-                   Version 2.6.3in vom 07.10.2000.
+                   Version 2.6.3in vom 23.03.2001.
 
 <<Kai Raven>>        - fr seine PGP-Webseite (s.u.) und
                    brigen hilfreichen Informationen.
 
 <<Ralph Shnelvar>>   - fr das 8086-Kompilat der PGP-
-                   Version 2.6.3in vom 07.10.2000.
+                   Version 2.6.3in vom 23.03.2001.
 
 <<Kai Raven>> unterh„lt eine sehr informative Webseite
 zum Thema PGP:
-<<http://home.kamp.net/home/kai.raven/pgp/pgpanltg.htm>>
+<<http://home.nexgo.de/kraven/pgp/pgpindex.html>>
 
 @
 1011
