@@ -290,7 +290,7 @@ begin
   while p[0] <> #0 do
     case p[0] of
       #0..#127: begin Result := Result + p[0]; Inc(p); end;
-      #$80..#$BF: ;// ignore second..n-th byte of UTF-8 sequences
+      #$80..#$BF: Inc(p); // ignore second..n-th byte of UTF-8 sequences
       #$C0..#$FF: begin Result := Result + '?'; Inc(p); end;
     end;
 end;
@@ -457,6 +457,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/09/08 20:19:51  cl
+  - fixes for US-ASCII
+
   Revision 1.5  2001/09/08 14:20:50  cl
   - added TAsciiUTF8Decoder (for encoding, use a superset)
 
