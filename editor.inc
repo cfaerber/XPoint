@@ -1804,7 +1804,7 @@ end;
 
 procedure BlockFormatieren; { by Robo }
 var ap,ap2    : absatzp;
-    wpa,apnew : absatzp;
+    apnew     : absatzp;
     fp        : integer;
     copysize  : integer;
     ss,size1  : word;
@@ -1813,6 +1813,7 @@ var ap,ap2    : absatzp;
     quotes    : integer;
     quotec1   : string;
     quotec2   : string;
+    saveumbr  : boolean;
 
   procedure su(ap:absatzp);    { Umbruch einstellen }
   begin
@@ -1855,6 +1856,7 @@ begin
     { Cursor auf Blockanfang setzen }
     gotopos(block[1].pos,0);
     ap:=ActAbs;
+    saveumbr:=ap^.umbruch;
     ap^.umbruch:=true;
     repeat
       fp:=advance(ap,0,rrand);
@@ -1868,11 +1870,16 @@ begin
           quotec1:=rtrim(quotec1);
           quotes:=length(quotec1);
           if quotes>rrand div 2 then quotes:=0;
-        end;  
+        end;
         if config.autoindent and (quotes=0) then begin
           while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
             inc(spaces);
           if spaces>rrand div 2 then spaces:=0;
+        end;
+        if (fp<=quotes) or (fp<=spaces) then begin { Absatz kann nicht umgebrochen werden }
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
+          errsound;
+          break;
         end;
         copysize:=max(0,ap^.size-fp);
         if memtest(ap^.size)
@@ -1896,8 +1903,9 @@ begin
           ap:=ap2;
         end
         else begin
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
           errsound;
-          exit;
+          break;
         end;
       end
       else
@@ -1934,16 +1942,15 @@ begin
           then begin
             if (quotes>0) and (trim(quotec1)=trim(quotec2)) then begin
               ap2:=ap^.next;
-              wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
+              AbsDelete(ap2,0,length(quotec2),false,true);
               dec(ss,length(quotec2));
             end
             else if spaces>0 then begin
               ap2:=ap^.next;
-              wpa:=AbsDelete(ap2,0,spaces,false,true);
+              AbsDelete(ap2,0,spaces,false,true);
               dec(ss,spaces);
             end;
             apnew:=AllocAbsatz(ss);
-            wpa:=apnew;
             apnew^.umbruch:=true;
             ap2:=ap^.next;
             blockabsinsert(ap,apnew,maxint,maxint);
@@ -1969,8 +1976,9 @@ begin
           else ap:=ap^.next;
         end
         else begin
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
           errsound;
-          exit;
+          break;
         end;
       end
       else ap:=ap^.next;
@@ -2267,6 +2275,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/03/27 22:21:59  rb
+  Bugfix fÅr 'Block reformatieren'
+
   Revision 1.15  2000/03/21 22:08:20  rb
   kleiner Schînheitsbugfix fÅr 'Block reformatieren', Onlinehilfe angepasst
 
