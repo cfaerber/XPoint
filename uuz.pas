@@ -290,6 +290,40 @@ asm
 @@2:
 end;
 
+procedure UTF82IBM; { by robo; nach RFC 2279 }
+  var i,j,k:integer;
+      sc:record case integer of
+           0: (s:string[6]);
+           1: (b:array[0..6] of byte);
+         end;
+      ucs:longint;
+  begin
+    for i:=1 to length(s) do if byte(s[i]) and $80=$80 then begin
+      k:=0;
+      for j:=0 to 7 do
+        if byte(s[i]) and ($80 shr j)=($80 shr j) then inc(k) else break;
+      sc.s:=copy(s,i,k);
+      if length(sc.s)=k then begin
+        delete(s,i,k-1);
+        for j:=0 to k-1 do sc.b[1]:=sc.b[1] and not ($80 shr j);
+        for j:=2 to k do sc.b[j]:=sc.b[j] and $3f;
+        ucs:=0;
+        for j:=0 to k-1 do ucs:=ucs or (longint(sc.b[k-j]) shl (j*6));
+        if (ucs<$00000080) or (ucs>$000000ff) { nur Latin-1 }
+          then s[i]:='?'
+          else s[i]:=char(iso2ibmtab[byte(ucs)]);
+      end;
+    end;
+  end;
+
+procedure Charset2IBM;
+  begin
+    with hd.mime do
+    if charset='iso-8859-1' then ISO2IBM
+    else if charset='utf-8' then UTF82IBM
+    else ISO2IBM;
+  end;
+
 procedure logo;
 begin
   assign(output, '');
@@ -1161,7 +1195,7 @@ begin
                         ((encoding=encBinary) and (ctype<>tText)));
     hd.typ:=iifc(binary,'B','T');
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
-       (charset<>'iso-8859-1') then
+       (charset<>'iso-8859-1') and (charset<>'utf-8') then
       hd.error:='Unsupported character set: '+charset;
     end;
 end;
@@ -2387,6 +2421,7 @@ begin
     while bufpos<bufanz do begin
       ReadString(true);
       UnQuotePrintable(eol>0);
+      if not binaer then Charset2IBM;
       inc(hd.groesse,length(s));
       end;
     seek(f1,fp); ReadBuf; bufpos:=bp;
@@ -2397,7 +2432,7 @@ begin
   while bufpos<bufanz do begin
     ReadString(true);
     UnQuotePrintable(eol>0);
-    if not binaer then ISO2IBM;
+    if not binaer then Charset2IBM;
     wrfs(s);
     end;
   close(f1);
@@ -2509,6 +2544,7 @@ begin
           if (s<>'') and (s[1]='.') and LastEol then     { SMTP-'.' entfernen }
             delfirstHuge(s);
           UnquotePrintable(eol>0);    { h„ngt CR/LF an, falls kein Base64 }
+          if not binaer then Charset2IBM;
           inc(hd.groesse,length(s));
           end;
         end;
@@ -2522,7 +2558,7 @@ begin
           if (s<>'') and (s[1]='.') and LastEol then    { SMTP-'.' entfernen }
             delfirstHuge(s);
           UnQuotePrintable(eol>0);    { h„ngt CR/LF an, falls kein Base64 }
-          if not binaer then ISO2IBM;
+          if not binaer then Charset2IBM;
           wrfs(s);
           end;
         end;
@@ -2645,6 +2681,7 @@ begin
             ReadString(true);
             dec(ss,length(s)+eol);
             UnQuotePrintable(eol>0);
+            if not binaer then Charset2IBM;
             inc(hd.groesse,length(s));
             end;
           WriteHeader;                     { ZC-Header erzeugen }
@@ -2656,7 +2693,7 @@ begin
               s[0]:=chr(size-eol); }
             dec(size,length(s)+eol);
             UnQuotePrintable(eol>0);
-            if not binaer then ISO2IBM;
+            if not binaer then Charset2IBM;
             wrfs(s);
             end;
           if bufpos<bufanz then
@@ -3509,6 +3546,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.14  2000/10/11 09:09:33  mk
+  RB:- UTF-8 Unterstuetzung
+
   Revision 1.35.2.13  2000/10/06 08:37:28  sv
   - Spitze Klammern wurden bei eingehenden Cancels nicht entfernt
 
