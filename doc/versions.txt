@@ -155,7 +155,7 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
   Korrekturen, Erg„nzungen und Erweiterungen
 - Config/Optionen/Nachrichten...Eigene PMs halten
 - Kommandozeilenparameter -K verarbeitet jetzt komplette Zeichenketten
-- Interne Zwischenablage, wenn keine externe vorhanden ist
+- Interne Zwischenablage, wenn keine Windows-Zwischenablage vorhanden ist
 - hervorgehobene Nachrichten k”nnen auch im Lister durch
   „ndern der Nachrichtenkopffarbe hervorgehoben werden.
 - Taste U in der Brettansicht
