@@ -85,7 +85,7 @@ type
     function Z_ToUnixDate(fdate: LONGINT): string;
     function Z_FromUnixDate(s: string): LONGINT;
 
-    function Z_FileCRC32(var f: file): LONGINT;
+    function Z_FileCRC32(var f: file): DWord;
     function Z_GetByte(tenths: integer16): integer16;
     function Z_qk_read: integer16;
     function Z_TimedRead: integer16;
@@ -94,8 +94,8 @@ type
     procedure Z_PutString(var p: buftype);
     procedure Z_PutHex(b: BYTE);
     procedure Z_SendHexHeader(htype: BYTE; var hdr: hdrtype);
-    function Z_PullLongFromHeader(var hdr: hdrtype): LONGINT;
-    procedure Z_PutLongIntoHeader(l: LONGINT);
+    function Z_PullLongFromHeader(var hdr: hdrtype): DWord;
+    procedure Z_PutLongIntoHeader(l: DWord);
     function Z_GetZDL: integer16;
     function Z_GetHex: integer16;
     function Z_GetHexHeader(var hdr: hdrtype): integer16;
@@ -517,18 +517,18 @@ end;
 
 (* Berechnen der CRC-Summe eines Files *)
 
-function TZModemObj.Z_FileCRC32(var f: file): LONGINT;
+function TZModemObj.Z_FileCRC32(var f: file): DWord;
 
 var
   fbuf: buftype;
 
-  crc: LONGINT;
+  crc: DWord;
 
   n,
     bread: integer;
 
 begin
-  crc := Longint($FFFFFFFF);
+  crc := DWord($FFFFFFFF);
   Seek(f, 0);
   if (IOresult <> 0) then
     {null};
@@ -797,15 +797,15 @@ end;
 
 (*************************************************************************)
 
-function TZModemObj.Z_PullLongFromHeader(var hdr: hdrtype): LONGINT;
+function TZModemObj.Z_PullLongFromHeader(var hdr: hdrtype): DWord;
 begin
-  Z_PullLongFromHeader := Longint(hdr[ZP3]) shl 24 + Longint(hdr[ZP2]) shl 16 +
-    Longint(hdr[ZP1]) shl 8 + hdr[ZP0];
+  Z_PullLongFromHeader := DWord(hdr[ZP3]) shl 24 + DWord(hdr[ZP2]) shl 16 +
+    DWord(hdr[ZP1]) shl 8 + hdr[ZP0];
 end;
 
 (*************************************************************************)
 
-procedure TZModemObj.Z_PutLongIntoHeader(l: LONGINT);
+procedure TZModemObj.Z_PutLongIntoHeader(l: DWord);
 begin
   txhdr[ZP0] := l and $FF; txhdr[ZP1] := (l shr 8) and $FF;
   txhdr[ZP2] := (l shr 16) and $FF; txhdr[ZP3] := (l shr 24) and $FF;
@@ -1024,7 +1024,7 @@ end;
 function TZModemObj.Z_GetBinaryHead32(var hdr: hdrtype): integer16;
 (* Same as above but with 32 bit CRC *)
 var
-  crc: LONGINT;
+  crc: DWord;
   c, n: integer16;
 begin
   c := Z_GetZDL;
@@ -1060,7 +1060,7 @@ begin
     crc := UpdCRC32(Lo(c), crc)
   end;
 
-  if (Longint(crc) <> Longint($DEBB20E3)) then
+  if (DWord(crc) <> DWord($DEBB20E3)) then
   begin                                 {this is the polynomial value}
     INC(TransferError);
     Z_GetBinaryHead32 := ZERROR;
@@ -1242,7 +1242,7 @@ var
   n,
     crc: smallword;
 
-  crc32: LONGINT;
+  crc32: DWord;
 
   done,
     badcrc,
@@ -1251,7 +1251,7 @@ var
 begin
   if (rxframeind = ZBIN32) then
   begin
-    crc32 := Longint($FFFFFFFF);
+    crc32 := DWord($FFFFFFFF);
     uses32crc := TRUE;
     TransferCheck := 'CRC-32';
   end                                   (* of IF THEN *)
@@ -1299,7 +1299,7 @@ begin
                 if (Hi(c) <> 0) then goto crcfoo;
                 crc32 := UpdCRC32(Lo(c), crc32)
               end;
-              badcrc := (Longint(crc32) <> Longint($DEBB20E3));
+              badcrc := (DWord(crc32) <> DWord($DEBB20E3));
             end                         (* of IF THEN *)
             else
             begin
@@ -1426,7 +1426,7 @@ begin
       Exit
     end;
 
-    Z_PutLongIntoHeader(LONGINT(0));
+    Z_PutLongIntoHeader(0);
 
     txhdr[ZF0] := CANFDX or CANOVIO or CANBRK; (* Full dplx, overlay I/O *)
     if MakeCRC32 then
@@ -1481,7 +1481,7 @@ begin
             c := RZ_ReceiveData(secbuf, ZBUFSIZE);
             if (c = GOTCRCW) then
             begin
-              Z_PutLongIntoHeader(LONGINT(0));
+              Z_PutLongIntoHeader(0);
               errors := 0;
               repeat
                 Z_SendHexHeader(ZCOMPL, txhdr);
@@ -2004,7 +2004,7 @@ procedure TZModemObj.SZ_SendBinaryHeader(htype: BYTE; var hdr: hdrtype);
 var
   crc: smallword;
 
-  crc32: LONGINT;
+  crc32: DWord;
 
   n: integer16;
 
@@ -2066,14 +2066,14 @@ procedure TZModemObj.SZ_SendData(var buf: buftype; blength: integer16; frameend:
 var
   crc: smallword;
 
-  crc32: LONGINT;
+  crc32: DWord;
 
   t: integer16;
 
 begin
   if send32crc then
   begin
-    crc32 := Longint($FFFFFFFF);
+    crc32 := DWord($FFFFFFFF);
 
     for t := 0 to (blength - 1) do
     begin
@@ -2173,7 +2173,7 @@ begin
         end;
       ZCOMMAND:
         begin
-          Z_PutLongIntoHeader(LONGINT(0));
+          Z_PutLongIntoHeader(0);
           Z_SendHexHeader(ZRQINIT, txhdr)
         end;
       ZRINIT:
@@ -2656,7 +2656,7 @@ begin
 
   Z_PutString(attn);
   FillChar(attn, SizeOf(attn), 0);
-  Z_PutLongIntoHeader(LONGINT(0));
+  Z_PutLongIntoHeader(0);
 
   TransferTime := TimeCounter;
 
@@ -2729,6 +2729,9 @@ begin
 
 {
   $Log$
+  Revision 1.27  2001/10/28 23:01:43  ma
+  - fixed some range check errors
+
   Revision 1.26  2001/10/20 17:26:46  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
