@@ -291,14 +291,32 @@ end;
 
 function testreplyto(var s:string):boolean;
 var p : byte;
+    d : DB;
 begin
   if s='' then
     testreplyto:=true
-  else begin
+  else begin                            { Wenns keine gueltige Adresse ist...}
     p:=cpos('@',s);
-    if (p=0) or (pos('.',mid(s,p))=0) then begin
-      rfehler(908);     { 'ungltige Adresse' }
-      testreplyto:=false;
+    if (p=0) or (pos('.',mid(s,p))=0) then
+    begin
+      dbOpen(d,PseudoFile,1);
+      dbSeek(d,piKurzname,ustr(s));
+      if dbFound then
+      begin
+        dbRead(d,'Langname',s);         { ists ein Kurzname ? }
+        dbclose(d); 
+        testreplyto:=true;
+        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+          begin
+            rfehler(908);               { 'ungltige Adresse' }
+            testreplyto:=false;
+            end;             
+        end 
+      else begin     
+        rfehler(908);     { 'ungltige Adresse' }
+        dbclose(d); 
+        testreplyto:=false;
+        end;
       end
     else
       testreplyto:=true;
