@@ -62,25 +62,25 @@ type  FidoAdr  = record
                    ispoint    : boolean;
                  end;
 
-      zheader  = record                      { ZConnect - Header }
+      zheader  = record                         { ZConnect - Header }
                    netztyp    : byte;
-                   empfaenger : string;    { Brett / User / TO:User }
+                   empfaenger : string;         { Brett / User / TO:User }
                    betreff    : string;
                    absender   : string;
                    realname   : string;
-                   datum      : string;    { Netcall-Format }
-                   zdatum     : string;    { ZConnect-Format }
-                   pfad       : string;        { Netcall-Format }
-                   msgid,ref  : string; { ohne <> }
-                   org_msgid  : string; { ^aORIGID }
-                   org_xref   : string; { ^aORIGREF }
-                   typ        : string;     { T / B }
+                   datum      : string;         { Netcall-Format }
+                   zdatum     : string;         { ZConnect-Format }
+                   pfad       : string;         { Netcall-Format }
+                   msgid,ref  : string;         { ohne <> }
+                   org_msgid  : string;         { ^aORIGID }
+                   org_xref   : string;         { ^aORIGREF }
+                   typ        : string;         { T / B }
                    groesse    : longint;
-                   komlen     : longint;       { Kommentar-L„nge }
-                   programm   : string;        { Mailer-Name }
-                   datei      : string;    { Dateiname }
-                   prio       : byte;          { 10=direkt, 20=Eilmail }
-                   attrib     : word;          { Attribut-Bits }
+                   komlen     : longint;        { Kommentar-L„nge }
+                   programm   : string;         { Mailer-Name }
+                   datei      : string;         { Dateiname }
+                   prio       : byte;           { 10=direkt, 20=Eilmail }
+                   attrib     : word;           { Attribut-Bits }
                    filterattr : word;
                    fido_to    : string;
                    fido_flags : string;
@@ -93,34 +93,34 @@ type  FidoAdr  = record
                    XPointCtl  : longint;
                  end;
 
-      pheader =  record                       { Fido - Packet-header }
+      pheader =  packed record                  { Fido - Packet-header }
                    OrgNode    : smallword;
                    DestNode   : smallword;
-                   Year       : smallword;         { Datum der Packet-Erzeugung }
-                   Month      : smallword;         { 0..11 }
-                   Day        : smallword;         { 1..31 }
+                   Year       : smallword;      { Datum der Packet-Erzeugung }
+                   Month      : smallword;      { 0..11 }
+                   Day        : smallword;      { 1..31 }
                    Hour       : smallword;
                    Min        : smallword;
                    Sec        : smallword;
-                   Baud       : smallword;         { = 0 }
-                   PktVer     : smallword;         { = 2 }
+                   Baud       : smallword;      { = 0 }
+                   PktVer     : smallword;      { = 2 }
                    OrgNet     : smallword;
                    DestNet    : smallword;
-                   PrdCodL    : byte;         { Lo(ProductCode) }
-                   HiVersion  : byte;         { Haupt-Versionsnummer }
+                   PrdCodL    : byte;           { Lo(ProductCode) }
+                   HiVersion  : byte;           { Haupt-Versionsnummer }
                    Password   : array[0..7] of char;   { -> = 0 }
-                   QOrgZone   : smallword;         { fr einige Fido-Mailer.. }
+                   QOrgZone   : smallword;      { fr einige Fido-Mailer.. }
                    QDestZone  : smallword;
-                   fill       : smallword;         { = 0 }
-                   CapValid   : smallword;         { = $100 }
-                   PrdCodH    : byte;         { Hi(ProductCode) }
-                   LoVersion  : byte;         { Unter-Versionsnummer (.1=10) }
-                   CapWord    : smallword;         { = 1 }
+                   fill       : smallword;      { = 0 }
+                   CapValid   : smallword;      { = $100 }
+                   PrdCodH    : byte;           { Hi(ProductCode) }
+                   LoVersion  : byte;           { Unter-Versionsnummer (.1=10) }
+                   CapWord    : smallword;      { = 1 }
                    OrgZone    : smallword;
                    DestZone   : smallword;
                    OrgPoint   : smallword;
                    DestPoint  : smallword;
-                   fill2      : longint;      { -> = 0 }
+                   fill2      : longint;        { -> = 0 }
                  end;
 
       mheader  = record
@@ -908,7 +908,7 @@ var f1,f2   : file;
       end;
   end;
 
-begin
+begin                   //ZFidoProc
   with _to do begin
     assign(reqfile,hex(net,4)+hex(node,4)+'.REQ');
     reqopen:=false;
@@ -924,7 +924,8 @@ begin
   fs:=filesize(f1);
   writeln('Konvertierung ZConnect -> Fido ...');
   writeln;
-  adr:=0; n:=0;
+  adr:=0;
+  n:=0;
   ok:=true;
   while ok and (adr<fs) do begin
     seek(f1,adr);
@@ -980,7 +981,8 @@ var f1,f2  : file;
     mhd    : mheader;
     fdat   : string;
     i,j,p  : integer;
-    adr,n  : longint;
+    adr    : longint;
+    anz_msg: longint;
     adr0   : longint;
     tearadr: longint;
     tear_2 : longint;
@@ -1349,12 +1351,12 @@ begin
     rewrite(f2,1);
   write(fn,' ¯ ',outfile,'      ');
   ok:=true;
-  n:=0;
+  anz_msg:=0;
   mbufsize:=65536;
   getmem(msgbuf,mbufsize);
   if filesize(f1)<sizeof(phd) then
-    goto abbr;                        { leeres PKT }
-  blockread(f1,phd,sizeof(phd));
+    goto abbr;                                  // leeres PKT
+  blockread(f1,phd,sizeof(phd));                // packet header einlesen
   defbox:=fromadr;
   if bretter<>'' then
     brt2:=bretter
@@ -1387,8 +1389,8 @@ begin
     mhd.mpktver:=0;
     blockread(f1,mhd,14,rr);        { letzte Msg: 2 Bytes = 0 }
     if mhd.mpktver=2 then begin
-      inc(n);
-      write(#8#8#8#8#8,n:5);
+      inc(anz_msg);
+      write(#8#8#8#8#8,anz_msg:5);
       fillchar(hd,sizeof(hd),0);
       hd.netztyp:=30;   { Fido }
       adr:=filepos(f1);
@@ -1678,8 +1680,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.35  2000/10/03 16:38:55  mo
-  - kleine Kammerjagd
+  Revision 1.36  2000/10/03 17:45:22  mo
+  - noch ein aligned bug beseitigt
 
   Revision 1.34  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
