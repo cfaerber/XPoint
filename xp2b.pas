@@ -41,7 +41,7 @@ begin
   LockDenied := false;
   assign(lockfile, 'LOCKFILE');
   filemode:=FMWrite + FMDenyBoth;
-  rewrite(lockfile);
+  rewrite(lockfile, 1);
   if IOResult <> 0 then
     LockDenied := true
   else
@@ -50,8 +50,15 @@ begin
     if IOResult <> 0 then
       LockDenied := true
     else
-      if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
+    begin
+      Close(lockfile);
+      Reset(lockfile, 1);
+      if IOResult <> 0 then
+        LockDenied := true
+      else
+        if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
         (IOResult <> 0) then LockDenied := true;
+    end;
   end;
   if LockDenied then
   begin
