@@ -3667,7 +3667,7 @@ begin
           end;
         flushoutbuf(f);
         WriteRfcTrailer(f);
-        { truncate(f); }
+        truncate(f);
         if not ppp then wrs(f2, '#! rnews ' + strs(filesize(f)));
         seek(f, 0);
         fmove(f, f2);
@@ -3682,7 +3682,8 @@ begin
     if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
   end;
-  close(f); erase(f);
+  close(f);
+  erase(f);
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
   if SMTP then CreateNewfile;
@@ -3814,6 +3815,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/04/18 20:00:59  ma
+  - fixed: last lines of long postings showed up at the bottom of following
+    shorter postings
+
   Revision 1.53  2001/04/17 00:21:54  ma
   - fixed: "Path:" was written in RFC header if path=""
 
