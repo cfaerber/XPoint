@@ -1116,7 +1116,7 @@ begin
                 SetGelesen;
               nextmsg:
                 SetKK;
-                if not aufbau then write_disp_line(p,0,true);
+//              if not aufbau then write_disp_line(p,0,true);
                 if _down then
                   GoDown;
                 NachWeiter:=nw;
@@ -1774,6 +1774,12 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.99.2.5  2003/08/31 20:49:43  cl
+  - backport of small fixes from MAIN branch:
+
+  Revision 1.110  2003/08/30 22:15:06  cl
+  - fixed two rare range check errors
+
   Revision 1.99.2.4  2002/07/29 19:53:17  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
