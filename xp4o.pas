@@ -767,10 +767,15 @@ begin
       suche:=false;
       if not brk then begin
         markanz:=0;
-        n:=GetBezug(suchstring);
-        if n<>0 then begin
-          dbGo(mbase,n);
-          MsgAddmark;
+        check_seekmode;
+        for i:=0 to suchanz-1 do
+        begin
+          seek:=copy(suchstring,seekstart[i],seeklen[i]);
+          n:=GetBezug(seek);
+          if n<>0 then begin
+            dbGo(mbase,n);
+            MsgAddmark;
+            end;
           end;
         end;
       end
