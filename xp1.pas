@@ -185,7 +185,7 @@ procedure TempOpen;
 procedure FlushClose;
 procedure xp_DB_Error;    { Aufruf bei <DB> internem Fehler }
 
-procedure fmove(var f1,f2:file);
+function fmove(var f1,f2:file): boolean;
 procedure iso_conv(var buf; bufsize:word);
 
 function  aFile(nr:byte):string;
@@ -1784,7 +1784,7 @@ end;
 
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
 
-procedure fmove(var f1,f2:file);
+function fmove(var f1,f2:file): boolean;
 var x,y   : byte;
     p     : pointer;
     ps : word;
@@ -1801,6 +1801,7 @@ var x,y   : byte;
 
 begin
   ps:=65536;
+  result:=true;
   getmem(p,ps);
   fsize:=filesize(f1)-filepos(f1);
   if fsize>0 then begin
@@ -1821,8 +1822,10 @@ begin
       mdelay(300);
       closebox;
       end;
-    if inoutres<>0 then
+    if inoutres<>0 then begin
       fehler(ioerror(ioresult,getres(102)));  { Fehler beim Dateizugriff :-( }
+      result:=false;
+      end;
     end;
   freemem(p,ps);
 end;
@@ -2052,6 +2055,9 @@ end.
 
 {
   $Log$
+  Revision 1.105  2001/04/21 12:57:04  ma
+  - fmove is a function now
+
   Revision 1.104  2001/03/22 18:25:09  ma
   - FmtDateTime: "mm" means "month", *not* "minute".
 
