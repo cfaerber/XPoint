@@ -1262,7 +1262,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(58,iif(deutsch,21,14),getres2(253,1),x,y);      { 'netzspezifische Optionen' }
+  dialog(61,iif(deutsch,21,14),getres2(253,1),x,y);      { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1521,6 +1521,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.33  2002/03/08 23:40:10  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.39.2.32  2001/12/21 17:20:09  my
   MY:- Text des letzten Commits korrigiert.
 

@@ -357,8 +357,8 @@ begin
   assign(output,'');
   rewrite(output);
   writeln;
-  writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln('ZConnect <-> Fido Converter  (c) 1992-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   Writeln;
 end;
@@ -1812,6 +1812,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.11  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.21.2.10  2001/09/11 12:07:32  cl
   - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
 

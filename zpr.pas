@@ -167,10 +167,8 @@ end;
 procedure logo;
 begin
   writeln;
-  writeln('ZPR - ZCONNECT(R)-Pufferreparierer - Freeware');
-  writeln('(c) 1994-96 by Peter Mandrella <p.mandrella@ldb.han.de>');
-  Writeln;
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln('ZPR - ZConnect(R)-Pufferreparierer (Freeware)  (c) 1993-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -1287,6 +1285,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.6  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.14.2.5  2001/08/11 22:18:07  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

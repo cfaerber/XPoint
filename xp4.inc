@@ -699,12 +699,12 @@ begin
   begin
    if (t=mausunright) and (shortp=maxskeys+1) then begin         {Rechtsklick}
       dispshort(false); shortp:=0; 
-      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+      if XPdisplayed and (x>(screenwidth-length(xp_xp))) then begin
         if (shortkey[maxskeys+1].key='?') then About;
         end
      else begin
        n:=getfkeyfromscreen(x,y,0);
-       if n>83 then begin
+       if n>(screenwidth+3) then begin
          for i:=0 to ((n-4) mod 10)-1 do pushkey(keydown); 
          pushkey(keycr); 
          EditFkeys(((n-4) div 10)-7);
@@ -714,7 +714,7 @@ begin
 
    if (t=mausunleft) and (shortp=maxskeys+1) then begin          {Linksklick}
       dispshort(false); shortp:=0;
-      if (XPdisplayed) and (x>(80-length(xp_xp))) then begin
+      if (XPdisplayed) and (x>(screenwidth-length(xp_xp))) then begin
         if (shortkey[maxskeys+1].key='?') then pushkey(keyaltc);
         end
       else begin  
@@ -731,12 +731,12 @@ begin
         and ((t=mauslmoved) or (t=mausrmoved))) 
     then begin
       if (t=mauslmoved) or (t=mausrmoved) then dispshort(false);
-      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+      if XPdisplayed and (x>(screenwidth-length(xp_xp))) then begin
         shortp:=maxskeys+1;
         shortkey[maxskeys+1].key:='?'; 
-        shortkey[maxskeys+1].keylen:=length(xp_xp)+1;
+        shortkey[maxskeys+1].keylen:=length(trim(xp_display))+1;
         shortkey[maxskeys+1].keyspot:=0;
-        shortkey[maxskeys+1].keypos:=79-length(xp_xp);
+        shortkey[maxskeys+1].keypos:=(screenwidth-1)-length(trim(xp_display));
         dispshort(true);
         end
       else if getfkeyfromscreen(x,y,0)>0 then begin
@@ -781,6 +781,11 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.9  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.14.2.8  2001/11/20 23:17:00  my
   MY:- Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt dieselben
        Routinen wie die Multiserverbetrieb-Konfiguration; ÅberflÅssige

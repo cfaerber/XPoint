@@ -102,9 +102,8 @@ var t : text;
 begin
   assign(t,''); rewrite(t);
   writeln(t);
-  writeln(t,'XP UUCICO ',verstr,'  (c) ''93-99 by Peter Mandrella');
-  writeln(t);
-  writeln(t, 'OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln(t,'CrossPoint UUCICO (Freeware)  (c) 1993-1999 Peter Mandrella');
+  writeln(t, 'OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln(t);
   if FOSSILdetect then begin
@@ -1937,6 +1936,11 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.11  2002/03/08 23:40:10  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.1.2.10  2001/08/24 15:53:26  mw
 
   - Small Code-Cleanup

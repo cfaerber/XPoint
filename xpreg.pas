@@ -994,7 +994,7 @@ var brk,modi : boolean;
       WriteFormular:=true;
     with regdata do begin
       writeln(t);
-      writeln(t,lr,right(dup(33,'-')+' CrossPoint-Registrierung ['+xp_xp+' '+verstr+']',62));
+      writeln(t,lr,right(dup(33,'-')+' CrossPoint-Registrierung ['+trim(xp_display)+' '+verstr+']',62));
       writeln(t);
 
       if regweghin in [1,2] then begin   { Formular ausdrucken / speichern }
@@ -1398,7 +1398,7 @@ var x,y,i : byte;
         nr:=ival(copy(code,2,cpos('-',code)-2));
       if IsKomCode(nr) or IsOrgCode(nr) then begin
         msgbox(53,8,'',x,y);
-        mwrt(x+3,y+2,'Sie sind als nicht-privater '+xp_xp+'-Anwender');
+        mwrt(x+3,y+2,'Sie sind als nicht-privater '+trim(xp_display)+'-Anwender');
         mwrt(x+3,y+3,'registriert. Soll dies in Ihren Nachrichten er-');
         mwrt(x+3,y+4,'kennbar sein?');
         z:='';
@@ -1428,25 +1428,27 @@ label again,noclose;
 
 begin
   msglines:=ival(getres2(520,0));
-  msgbox(70,msglines+8+iif(wait,3,0),'',x,y);
+  msgbox(70,msglines+9+iif(wait,3,0),'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+9,y+1,'\\//');
-  wrt(x+9,y+2,'//\\');
+  wrt(x+9,y+2,'\\//');
+  wrt(x+9,y+3,'//\\');
   attrtxt(col.colmbox);
-  wrt(x+3,y+1,'Cross');
-  wrt(x+14,y+2,'Point');
-  s := verstr+betastr+' (c) 1992-99 '+pm;
+  wrt(x+3,y+2,'Cross');
+  wrt(x+14,y+3,'Point');
+  s := '(c) 1992-1999 ' + pm;
   wrt(x+67-length(s),y+1,s);
-  s := 'OpenXP ' + x_copyright + ' by ' + author_name;
+  s := '(c) 2000-2001' + forms(' ',5) + iifs(deutsch,'OpenXP-Team','OpenXP Team');
   wrt(x+67-length(s),y+2,s);
+  s := forms(x_copyright,14) + forms(' ',length(pm)-length(author_name)) + author_name;
+  wrt(x+67-length(s),y+3,s);
   if registriert.r2 then begin
     s:=getres2(520,19)+LizenzNummer;   { 'Lizenznummer: ' }
-    wrt(x+67-length(s),y+3,s);
+    wrt(x+67-length(s),y+4,s);
     end;
   for i:=1 to msglines do begin
     s:=getres2(520,i);
-    gotoxy(x+3,y+4+i);
+    gotoxy(x+3,y+5+i);
     repeat
       p:=cposx('*',s);
       write(left(s,p-1));
@@ -1460,9 +1462,9 @@ begin
     end;
   regform:=(getres2(520,99)='J');
   if wait then begin
-    TestUnregtime(x+3,y+6+msglines,timeover);
-    wrt(x+3,y+6+msglines,getres2(520,20));
-    wrt(x+3,y+7+msglines,getres2(520,21));
+    TestUnregtime(x+3,y+7+msglines,timeover);
+    wrt(x+3,y+7+msglines,getres2(520,20));
+    wrt(x+3,y+8+msglines,getres2(520,21));
     sels:=getres2(520,30);   { ' ^LIZENZ.DOC , ^Registrierung , ^Weiter , ^Abbruch' }
     end
   else
@@ -1472,7 +1474,7 @@ begin
       sels:=getres2(520,32);  { ' ^LIZENZ.DOC , ^Code eingeben ' }
   mon;
 again:
-  sely:=y+msglines+6+iif(wait,3,0);
+  sely:=y+msglines+7+iif(wait,3,0);
   attrtxt(col.colmbox);
   mwrt(x+3,sely,sp(65));
   z:='';
@@ -1538,7 +1540,7 @@ var x,y,i,p  : byte;
     s        : string;
 begin
   msglines:=ival(getres2(530,0));
-  msgbox(72,msglines+7,'',x,y);
+  msgbox(72,msglines+8,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
   wrt(x+9,y+1,'\\//');
@@ -1546,13 +1548,15 @@ begin
   attrtxt(col.colmbox);
   wrt(x+3,y+1,'Cross');
   wrt(x+14,y+2,'Point');
-  s := verstr+betastr+' (c) 1992-99 '+pm;
+  s := '(c) 1992-1999 ' + pm;
   wrt(x+69-length(s),y+1,s);
-  s := 'OpenXP ' + x_copyright + ' by ' + author_name;
+  s := '(c) 2000-2001' + forms(' ',5) + iifs(deutsch,'OpenXP-Team','OpenXP Team');
   wrt(x+69-length(s),y+2,s);
+  s := forms(x_copyright,14) + forms(' ',length(pm)-length(author_name)) + author_name;
+  wrt(x+69-length(s),y+3,s);
   for i:=1 to msglines do begin
     s:=getres2(530,i);
-    gotoxy(x+3,y+3+i);
+    gotoxy(x+3,y+4+i);
     repeat
       p:=cposx('*',s);
       write(left(s,p-1));
@@ -1566,7 +1570,7 @@ begin
   end;
   mon;
   pushhp(1550);
-  quit := (ReadButton(x+45,y+msglines+5,2,'*'+getres2(530,30),1,true,z) <> 1);
+  quit := (ReadButton(x+45,y+msglines+6,2,'*'+getres2(530,30),1,true,z) <> 1);
   pophp;
   closebox;
   freeres;
@@ -1587,25 +1591,25 @@ begin
     addy := addy+1;
   {$ENDIF}
   if registriert.r2 then addy := addy+1;
-  if length(ver) > 28 then  { Versionsstring lÑnger als PM-Copyright }
+  if length(ver) > 30 then  { Versionsstring lÑnger als OpenXP/16-URL }
   begin
     if odd(length(ver)) then
-      addxDia := length(ver)-27
+      addxDia := length(ver)-29
     else
-      addxDia := length(ver)-28;
+      addxDia := length(ver)-30;
     addxInf := addxDia div 2;
-  end else                  { Versionsstring gleich lang oder kÅrzer als PM-Copyright }
+  end else                  { Versionsstring gleich lang oder kÅrzer als OpenXP/16-URL }
   begin
     if odd(length(ver)) then
-      addxVer := (27-length(ver)) div 2
+      addxVer := (29-length(ver)) div 2
     else
-      addxVer := (28-length(ver)) div 2;
+      addxVer := (30-length(ver)) div 2;
   end;
-  diabox(34+addxDia,17+addy,'',x,y);
+  diabox(36+addxDia,18+addy,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+15+addxInf,y+2,'\\//');
-  wrt(x+15+addxInf,y+3,'//\\');
+  wrt(x+16+addxInf,y+2,'\\//');
+  wrt(x+16+addxInf,y+3,'//\\');
   wrt(x+3+addxVer,y+5,ver);
   {$IFDEF Snapshot}
     wrt(x+3+addxVer,y+6,'Snapshot: '+compiletime);
@@ -1613,15 +1617,16 @@ begin
   if registriert.r2 then
     wrt(x+3+addxVer,y+5+addy,getres2(520,19)+LizenzNummer);
   attrtxt(col.colmbox);
-  wrt(x+9+addxInf,y+2,'Cross');
-  wrt(x+20+addxInf,y+3,'Point');
-  wrt(x+3+addxInf,y+7+addy,'(c) 1992-99  '+pm);
-  wrt(x+3+addxInf,y+8+addy,x_copyright+'  '+author_name);
-  wrt(x+3+addxInf,y+10+addy,'Fido : '+author_fido);
-  wrt(x+3+addxInf,y+11+addy,'eMail: '+author_mail);
-  wrt(x+3+addxInf,y+12+addy,'WWW  : '+author_url);
+  wrt(x+10+addxInf,y+2,'Cross');
+  wrt(x+21+addxInf,y+3,'Point');
+  wrt(x+3+addxInf,y+7+addy,forms('(c) 1992-1999',15)+pm);
+  wrt(x+3+addxInf,y+8+addy,forms('(c) 2000-2001',15)+iifs(deutsch,'OpenXP-Team','OpenXP Team'));
+  wrt(x+3+addxInf,y+9+addy,forms(x_copyright,15)+author_name);
+  wrt(x+3+addxInf,y+11+addy,'Fido : '+author_fido);
+  wrt(x+3+addxInf,y+12+addy,'eMail: '+author_mail);
+  wrt(x+3+addxInf,y+13+addy,'WWW  : '+author_url);
   mon;
-  ReadButton(x+12+addxInf,y+14+addy,1,'*   ^OK   ',1,true,z);
+  ReadButton(x+13+addxInf,y+15+addy,1,'*   ^OK   ',1,true,z);
   closebox;
   freeres;
 end;
@@ -1637,12 +1642,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.9  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.10.2.8  2001/09/16 20:41:33  my
-  JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
-          n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermen¸ "‹ber OpenXP" zeigt Versions- und
+  JG+MY:- Neuer MenÅpunkt "?" (Hilfe) im HauptmenÅ mit UntermenÅs fÅr
+          nÅtzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. UntermenÅ "öber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaﬂt.
+          Registrierungsfenster optisch angepa·t.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 

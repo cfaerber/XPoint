@@ -67,8 +67,8 @@ var   menu      : array[0..menus] of ^string;
 procedure wrlogo;
 begin
   writeln;
-  writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln('XPME - CrossPoint Menu Editor (Freeware)  (c) 1996-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -754,6 +754,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.6  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.20.2.5  2001/08/12 11:44:50  mk
   - fixed litte typo, compiles again
 

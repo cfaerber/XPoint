@@ -92,8 +92,8 @@ var   YupDir,Outfile : pathstr;
 procedure logo;
 begin
   writeln;
-  writeln('Yuppie-Mailbase -> PKT - Konvertierer, Peter Mandrella, 12/92');
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln('Yuppie-Mailbase -> PKT Converter (Freeware)  (c) 1992-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -366,6 +366,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.3.4.2  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.3.4.1  2000/07/02 10:43:01  mk
   - pformstr entfernt
 

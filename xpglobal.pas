@@ -15,19 +15,18 @@ unit xpglobal;
 interface
 
 const
-  verstr      = 'v3.40';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.40';     { Versionsnr. - steht nur an dieser Stelle }
   betastr     = ' RC3';      { '' oder ' beta' }
-  author_fido = '2:248/2004';
-  author_mail = 'dev@openxp.de';
-  author_url  = 'http://www.openxp.de/';
+  author_name = 'OpenXP/16';
+  author_fido = '2:2433/460';
+  author_mail = 'support@openxp16.de';
+  author_url  = 'http://www.openxp16.de/';
 
-  xp_xp       : string[17] = 'CrossPoint/OpenXP';
-  xp_client   : string[17] = '       CrossPoint';
-  xp_origin   : string[21] = '--- CrossPoint/OpenXP';
-  x_copyright = '(c) 2000-01';
-
-var
-  author_name: String[11];
+  xp_xp       : string[22] = 'CrossPoint [OpenXP/16]';
+  xp_display  : string[10] = ' OpenXP/16';
+  xp_client   : string[10] = 'CrossPoint';
+  xp_origin   : string[26] = '--- CrossPoint [OpenXP/16]';
+  x_copyright = '(c) 2002';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -86,6 +85,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.29.2.19  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.29.2.18  2001/09/16 20:42:28  my
   JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
           n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare

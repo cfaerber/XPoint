@@ -102,8 +102,8 @@ begin
   if (ft<>0) and (abs(ft-filetime('xp.ovr'))>=60) then begin
     writeln;
     writeln('WARNUNG: Das Dateidatum von XP.OVR stimmt nicht mit dem von XP.EXE');
-    writeln('         Åberein. XP.OVR stammt offenbar von einer anderen '+xp_xp+'-');
-    writeln('         Version. Bitte spielen Sie das Programm aus einem '+xp_xp+'-');
+    writeln('         Åberein. XP.OVR stammt offenbar von einer anderen '+trim(xp_display)+'-');
+    writeln('         Version. Bitte spielen Sie das Programm aus einem '+trim(xp_display)+'-');
     writeln('         Originalarchiv neu auf! Wenn Sie das Programm jetzt fortsetzen,');
     writeln('         wird es wahrscheinlich abstÅrzen.');
     writeln;
@@ -164,7 +164,7 @@ begin
       end
     else begin
       writeln;
-      writeln(xp_xp+' kann nicht von einem schreibgeschÅtzten Laufwerk gestartet');
+      writeln(trim(xp_display)+' kann nicht von einem schreibgeschÅtzten Laufwerk gestartet');
       writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
       runerror:=false;
       halt(1);
@@ -252,17 +252,15 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  if _deutsch then author_name := 'OpenXP-Team'
-  else author_name := 'OpenXP Team';
   writeln(t,' ',verstr,betastr,' ',x_copyright,
             ' by ',author_name,' (',author_mail,')');
   writeln(t);
   if _deutsch then
   begin
-    writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
+    writeln(t,'basierend auf CrossPoint(R) v3.2  (c) 1992-1999 Peter Mandrella');
   end else
   begin
-    writeln(t,'based on CrossPoint(R) v3.2 (c) 1992-99 by Peter Mandrella');
+    writeln(t,'based on CrossPoint(R) v3.2  (c) 1992-1999 Peter Mandrella');
   end;
   writeln(t);
   close(t);
@@ -322,6 +320,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.13  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.18.2.12  2001/09/16 20:36:58  my
   JG+MY:- Neuer Men¸punkt "?" (Hilfe) im Hauptmen¸ mit Untermen¸s f¸r
           n¸tzliche und/oder in der Hilfe ansonsten nur schwer auffindbare

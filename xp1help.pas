@@ -396,9 +396,9 @@ begin
             if (wherex+length(menue)+3<=screenwidth+1) and (wherey=screenlines) then
               wf(fs[i]+strs(j)+'-'+menue);
   attrtxt(col.colkeys);
-  XPdisplayed:=(wherey=screenlines) and (wherex<=screenwidth-10);
+  XPdisplayed:=(wherey=screenlines) and (wherex<=screenwidth-length(xp_display));
   if XPdisplayed then
-    Wrt2(sp(screenwidth+1-length(xp_xp)-wherex) + xp_xp)   { 'CrossPoint' }
+    Wrt2(sp(screenwidth+1-length(xp_display)-wherex) + xp_display)  { 'OpenXP/16' }
   else
     if wherey=screenlines then Wrt2(sp(screenwidth+1-wherex));
   mon;
@@ -410,21 +410,26 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.7  2002/03/08 23:40:10  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.7.2.6  2001/12/18 14:10:22  mk
   - weitere const parameter hinzugefügt
 
   Revision 1.7.2.5  2001/12/18 14:06:59  mk
-  - const parameter für wf()
+  - const parameter fr wf()
 
   Revision 1.7.2.4  2001/12/18 13:06:55  mk
   - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
 
   Revision 1.7.2.3  2001/09/16 20:20:06  my
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 

@@ -179,8 +179,8 @@ const
 procedure logo;
 begin
   writeln;
-  writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
+  writeln('MAGGI - Magic/Quick/Maus/ZConnect Converter  (c) 1992-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
@@ -1834,6 +1834,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.11  2002/03/08 23:40:10  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.15.2.10  2001/08/11 22:17:51  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -102,7 +102,7 @@ begin
     fn:='userbase.dat'
   else begin
     dialog(51,7,'',x,y);
-    maddtext(3,2,'Im '+xp_xp+'-Verzeichnis befindet sich keine',col.coldialog);
+    maddtext(3,2,'Im '+trim(xp_display)+'-Verzeichnis befindet sich keine',col.coldialog);
     maddtext(3,3,'USERBASE.DAT.  Bitte geben Sie den Namen Ihres',col.coldialog);
     maddtext(3,4,'MessageBase-Verzeichnisses an:',col.coldialog);
     fn:='';
@@ -704,6 +704,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.7  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.15.2.6  2001/08/11 22:18:05  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

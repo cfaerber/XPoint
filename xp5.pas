@@ -448,7 +448,7 @@ begin
   wrt(x+22,y+2,'DOS-RAM      EMS         XMS        '+
                right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
   wrt(x+4,y+4,getres2(rnr,2));   { gesamt }
-  wrt(x+4,y+5,xp_xp);            { CrossPoint }
+  wrt(x+4,y+5,trim(xp_display)); { OpenXP/16 }
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfgbar }
   os2:=lo(dosversion)>=10;
@@ -1061,6 +1061,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.14  2002/03/08 23:40:11  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.27.2.13  2002/01/04 01:15:45  mk
   - Windows XP wurde unter CrossPoint/Statistik als WIndows 2000 angezeigt
 

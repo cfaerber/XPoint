@@ -179,7 +179,9 @@ var t : text;
 begin
   assign(t,''); rewrite(t);
   writeln(t);
-  writeln(t,'XP-FM  Fido Mailer ',verstr,betastr, ' (c) ''93-99 by Peter Mandrella');
+  writeln(t,'XP-FM - CrossPoint Fido Mailer  (c) 1993-1999 Peter Mandrella');
+  writeln(t,'OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
   writeln(t);
   if FOSSILdetect then begin
     writeln(t,'FOSSIL driver detected');
@@ -1030,6 +1032,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.3  2002/03/08 23:40:10  my
+  MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.14.2.2  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 
