@@ -916,6 +916,8 @@ end;
     if not pm and (Netztyp=nt_fido) then yy:=yy-2;   {Zeile fuer Fidoempf beachten}
   again:
     s:=force_absender;
+    attrtxt(col.coldiarahmen);
+    mwrt(x+70,y+14,' [F2] ');
     openmask(x+13,x+13+51+2,yy+2,yy+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',force_absender,52,adrlen,'');
@@ -945,6 +947,8 @@ end;
       end;
     attrtxt(col.coldiahigh);
     mwrt(x+13,yy+2,' '+forms(force_absender,53)+'   ');
+    attrtxt(col.coldiarahmen);
+    mwrt(x+70,y+14,'ÄÄÄÄÄÄ');
    end;
 
 
@@ -2392,6 +2396,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.41  2001/10/16 18:37:55  my
+  MY:- Bei <Alt-A> im Sendefenster "[F2]" reinmalen
+
   Revision 1.39.2.40  2001/09/18 22:33:03  my
   MY:- Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
        erzeugt.
