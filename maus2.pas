@@ -220,7 +220,6 @@ end;
 
 procedure mwrt(x,y:byte; const txt:string);
 begin
-{$IFDEF Ver32 }
   if maus_cursor then
   begin
     mausaus;
@@ -228,16 +227,6 @@ begin
     mausan;
   end else
     Wrt(x, y, txt);
-{$ELSE }
-  gotoxy(x,y);
-  if maus_cursor then
-  begin
-    mausaus;
-    write(txt);
-    mausan;
-  end else
-    write(txt);
-{$ENDIF }
 end;
 
 procedure interr(const txt:string);
@@ -335,6 +324,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.3  2001/12/18 18:56:57  mk
+  - Wrt() statt Write() in MWrt() nutzen
+
   Revision 1.14.2.2  2001/09/16 20:39:05  my
   JG+MY:- Mittlere Maustaste löst Doppelklick aus
 
