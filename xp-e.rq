@@ -2961,6 +2961,7 @@ K (c) '93-96 Peter Mandrella
 #
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
+33 "rz" and "sz" must be installed!
 
 +  11000
 1  unknown command

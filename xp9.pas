@@ -74,7 +74,11 @@ function  JanusSwitch(var s:string):boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
+uses
+{$IFDEF Linux}
+  xplinux,
+{$ENDIF}
+  xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -104,7 +108,7 @@ var   UpArcnr   : integer;    { fr EditPointdaten }
 function getdname(nt:byte; boxname:string):string;
 var fa : fidoadr;
 begin
-  if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(':/',boxname)) then begin
+  if (nt=nt_Fido) or ((nt=nt_QWK) and multipos(_MPMask,boxname)) then begin
     splitfido(boxname,fa,0);
     getdname:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
     end
@@ -221,26 +225,43 @@ end;
 function progtest(var s:string):boolean;
 var ok   : boolean;
     fn   : pathstr;
+{$IFNDEF UnixFS}
     dir  : dirstr;
     name : namestr;
     ext  : extstr;
+{$ENDIF}
     path : string[127];
 begin
-  progtest:=true;
-  if ustr(left(s+' ',7))='ZMODEM ' then fn:='ZM.EXE'
-  else fn:=trim(s);
+  progtest:=true;				{ Warum immer TRUE? (hd/22.5.2000) }
+  path:=getenv('PATH');
+  if ustr(left(s+' ',7))='ZMODEM ' then
+{$IFDEF UnixFS}
+    begin
+      if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
+        rfehler(933); 			{ '"rz" und "sz" muessen installiert....' }
+      { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
+      exit;
+    end
+{$ELSE}
+    fn:='ZM.EXE'
+{$ENDIF}
+  else 
+    fn:=trim(s);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+ustr(fn)+'*','*COPY*DIR*PATH*')=0) then begin
+{$IFDEF UnixFS}
+    ok:=fsearch(fn,path)<>'';		{ Extension ist unbedeutend }
+{$ELSE}
     fsplit(fn,dir,name,ext);
-    path:=getenv('PATH');
     if ext<>'' then
       ok:=fsearch(fn,path)<>''
     else
       ok:=(fsearch(fn+'.exe',path)<>'') or
           (fsearch(fn+'.com',path)<>'') or
           (fsearch(fn+'.bat',path)<>'');
+{$ENDIF}
     if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
-    end;
+  end;
 end;
 
 function testmbretter(var s:string):boolean;
@@ -492,11 +513,7 @@ begin
     if lstr(s)='logfile' then		{ Diese Pruefung ist nun wirklich der Hit (hd) }
       if s[1]='l' then s:=s+'.log'
       else s:=s+'.LOG';
-{$IFDEF UnixFS}
-    if (cpos('/',s)=0) then
-{$ELSE }
-    if not multipos('\:',s) then
-{$ENDIF }
+    if not multipos(_MPMask,s) then
       fn:=logpath+s
     else 
       fn:=s;
@@ -1746,6 +1763,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/05/22 18:07:07  hd
+  - Progtest angepasst (Linux)
+
   Revision 1.18  2000/05/14 15:04:52  hd
   - Anpassungen Linux
 
