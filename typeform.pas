@@ -100,7 +100,7 @@ Function iif(b:boolean; l1,l2:longint):longint; { IIF Integer               }
 Function iifb(b,b1,b2:boolean):boolean;         { IIF Boolean               }
 Function iifc(b:boolean; c1,c2:char):char;      { IIF Char                  }
 Function iifr(b:boolean; r1,r2:real):real;      { IIF Real                  }
-Function iifs(b:boolean; s1,s2:string):string;  { IIF String                }
+Function iifs(b:boolean; const s1,s2:string):string;  { IIF String                }
 Function IntQSum(const l:longint):longint;         { Quersumme                    }
 Function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 Function IVal(s:string):longint;             { Value Integer                }
@@ -1511,7 +1511,7 @@ begin
 end;
 
 
-Function iifs(b:boolean; s1,s2:string):string;
+Function iifs(b:boolean; const s1,s2:string):string;
 begin
   if b then iifs:=s1
   else iifs:=s2;
@@ -2224,6 +2224,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.12  2001/01/04 17:06:45  mk
+  - iifs now uses const parameters
+
   Revision 1.37.2.11  2000/11/18 22:11:27  mk
   - einige Dirname, extname, pathname in string geaendert
 
