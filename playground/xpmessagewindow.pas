@@ -38,7 +38,7 @@ type
   protected
     FVisible,LastMsgUnimportant: Boolean;
     FPosX,FPosY,FWidth,FHeight: Byte;
-    FHeadline: String;
+    FHeadline,LastTime: String;
     FLines: TStringList;
     procedure Display(RefreshContent: Boolean); virtual;
     procedure SVisible(nVisible: Boolean);      virtual;
@@ -94,7 +94,7 @@ constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Vi
 begin
   Timer.Init; TimerToUse:=@Timer;
   FWidth:=iw; FHeight:=ih;
-  FHeadline:=Headline;
+  FHeadline:=Headline; LastTime:='';
   FLines:=TStringList.Create;
   LastMsgUnimportant:=False;
   FVisible:=False; IsVisible:=Visible;
@@ -124,7 +124,10 @@ begin
                       TimerToUse^.SecsToTimeout/60/60/24);
     mwNone: s:='';
   end;
-  if s<>'' then FWrt(FPosX+2+FWidth-9,FPosY,FormS(s,8));
+  if(s<>'')and(s<>LastTime)then begin
+    FWrt(FPosX+2+FWidth-9,FPosY,FormS(s,8));
+    LastTime:=s;
+    end;
   if RefreshContent then
     for iLine:=0 to FHeight-1 do
       if iLine>=FLines.Count then
@@ -147,7 +150,7 @@ begin
     // if last message was "not important", it may be overwritten
     if LastMsgUnimportant then
       FLines.Delete(FLines.Count-1)
-    else if FLines.Count > FHeight then
+    else if FLines.Count >= FHeight then
       FLines.Delete(0);
     LastMsgUnimportant:=(mc=mcDebug)or(mc=mcVerbose);
     FLines.Add(s);
@@ -269,6 +272,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/03/20 12:07:08  ma
+  - various fixes and improvements
+
   Revision 1.8  2001/03/16 23:01:27  cl
   - fixed bug w/ field size in TXPMessageWindowDialog.WrtData
 

@@ -69,7 +69,7 @@ var x,y     : byte;
 begin
   with BoxPar^ do begin
     msgbox(40,5,GetRepS2(30003,1,boxname),x,y);     { 'Pakete suchen (%s)' }
-    Debug.DebugLog('xpnczconnect','Processing packets: '+Stringlist(FilesToProcess),DLDebug);
+    Debug.DebugLog('xpnczconnect','Processing packets: '+StringListToString(FilesToProcess),DLDebug);
     NewFiles:=TStringList.Create; iFile:=0;
     while iFile<=(FilesToProcess.Count-1) do begin
       aFile:=FilesToProcess[iFile];
@@ -104,7 +104,7 @@ begin
   closebox;
   for iFile:=0 to NewFiles.Count-1 do FilesToProcess.Add(NewFiles[iFile]);
   NewFiles.Destroy;
-  Debug.DebugLog('xpnczconnect','Files remaining to process: '+Stringlist(FilesToProcess),DLDebug);
+  Debug.DebugLog('xpnczconnect','Files remaining to process: '+StringListToString(FilesToProcess),DLDebug);
   freeres;
 end;
 
@@ -219,6 +219,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/03/20 12:07:08  ma
+  - various fixes and improvements
+
   Revision 1.7  2001/03/03 16:21:32  ma
   - removed unused variables/procedures
 

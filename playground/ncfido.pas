@@ -80,6 +80,7 @@ type
     SendEmpty: Boolean;
     TXT: String;
     UseEMSI: Boolean;
+    UseBinkP: Boolean;
     SetTime: Boolean;
     SendTrx: Boolean;
     MinCPS: Longint;
@@ -203,7 +204,7 @@ begin
   if not Connect then exit;
   TimerObj.Init;
 
-  if SetTime then begin //** BinkP mailer
+  if UseBinkP then begin // BinkP mailer
     if BinkPSessionSetup=0 then
       if BinkPFileTransfer=0 then aresult:=el_ok;
     end else begin // standard mailer
@@ -239,6 +240,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/03/20 12:07:08  ma
+  - various fixes and improvements
+
   Revision 1.20  2001/03/03 16:21:32  ma
   - removed unused variables/procedures
 

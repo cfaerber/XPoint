@@ -157,13 +157,15 @@ end;
 
 { Binkp session setup procedure. Results are 0: OK, 1: Busy, 2: Error }
 function TFidomailer.BinkPSessionSetup: byte;
-type tState= (ConnInit,WaitConn,SendPasswd,WaitAddr,AuthRemote,IfSecure,WaitOk,Done);
+type tState= (WaitConn,SendPasswd,WaitAddr,AuthRemote,IfSecure,WaitOk,Done);
 var
   State,LastState: tState;
   BpF: tBinkpFrame;
+  Timer: tTimer;
 
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  Timer.Init; Timer.SetTimeout(60);
   WriteIPC(mcVerbose,'Authenticating...',[0]);
   repeat
     if LastState<>State then begin
@@ -172,7 +174,11 @@ begin
       end;
     case State of
       WaitConn: begin
-        BpF.SendCommandFrame(M_NUL,'SYS OpenXP test system');
+        if SysName='' then
+          BpF.SendCommandFrame(M_NUL,'SYS OpenXP system')
+        else
+          BpF.SendCommandFrame(M_NUL,'SYS '+SysName);
+//        BpF.SendCommandFrame(M_NUL,'ZYZ '+Username);
         BpF.SendCommandFrame(M_ADR,AKAs);
         State:=SendPasswd;
         end;
@@ -180,15 +186,18 @@ begin
         if Password='' then Password:='-';
         BpF.SendCommandFrame(M_PWD,Password);
         State:=WaitAddr;
+        BpF.ReadFromStream(False);
         end;
       WaitAddr: begin
-        BpF.ReadFromStream(True);
-        case BpF.FrameType of
-          M_ADR: State:=AuthRemote;
+        if BpF.IsReady then begin
+          case BpF.FrameType of
+            M_ADR: State:=AuthRemote;
 //** see if answering side presented the address we've called
-          M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-          M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
-          M_NUL: Log(lcInfo,BpF.CommandPar);
+            M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+            M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+            M_NUL: Log(lcInfo,BpF.CommandPar);
+            end;
+          if State=WaitAddr then BpF.ReadFromStream(False);
           end;
         end;
       AuthRemote: begin
@@ -199,20 +208,29 @@ begin
         if Password='-' then begin
           result:=0; State:=Done;
           WriteIPC(mcInfo,'Authentication successful',[0]);
-        end else State:=WaitOk;
+        end else begin
+          BpF.ReadFromStream(False);
+          State:=WaitOk;
+          end;
         end;
       WaitOk: begin
-        BpF.ReadFromStream(True);
-        case BpF.FrameType of
-          M_OK: begin WriteIPC(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
-          M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-          M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
-          M_NUL: Log(lcInfo,BpF.CommandPar);
+        if BpF.IsReady then begin
+          case BpF.FrameType of
+            M_OK: begin WriteIPC(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
+            M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+            M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+            M_NUL: Log(lcInfo,BpF.CommandPar);
+            end;
+          if State<>Done then BpF.ReadFromStream(False);
           end;
         end;
       end;
-  until State=Done;
-  BpF.Destroy;
+    WriteIPC(mcVerbose,'',[0]);
+  until(State=Done)or KeyPressed or Timer.Timeout;
+  if Timer.Timeout then begin WriteIPC(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
+  if Keypressed then begin WriteIPC(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
+  while KeyPressed do ReadKey;
+  BpF.Destroy; Timer.Done;
 end;
 
 { Binkp file transfer procedure. Results are 0: OK, 1: at least sent all files, 2: not all files sent }
@@ -492,6 +510,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2001/03/20 12:07:08  ma
+  - various fixes and improvements
+
   Revision 1.11  2001/03/03 16:21:32  ma
   - removed unused variables/procedures
 
