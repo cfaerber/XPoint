@@ -11808,7 +11808,7 @@ Normalfall ist, wird dieses Eingabefeld ignoriert.
 942
 Dies ist der Dateiname, unter dem Sie neue Listen-
 Updates erhalten. Fr fortlaufende Tages-Nummern ist
-"\###" einzusetzen, z.B. "NODELIST.###" fr die
+"\###" einzusetzen, z.B. "NODEDIFF.###" fr die
 Standard-FidoNet-Nodeliste.
 
 Falls keine automatischen Updates fr diese Liste
