@@ -324,7 +324,6 @@ label ende;
       if (ofs>0) and (ofs<wsize+1+length(key)) then begin
         dec(wsize,ofs);
         XmemRead(ofs,wsize,p^);
-        if umlaut then upstring(key);          { Umlaut-Suche automatisch Case_insensitiv }
         Intext:=TxtSeek(p,wsize,key,igcase,umlaut);
         end
       else
@@ -2441,6 +2440,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.5  2000/08/22 19:46:09  mk
+  - unnoetige Umlautkonvertierung entfernt
+
   Revision 1.47.2.4  2000/08/09 12:07:57  jg
   - Ungelesen Bug beim (K)illen von Nachrichten aus der Markiert-Liste behoben
     Evtl Allround-Fix fuer Ungelesen-Probleme in dieser Ecke.
