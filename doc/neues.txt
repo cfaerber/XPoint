@@ -2,7 +2,7 @@
 
 Die folgende šbersicht beschreibt die wichtigsten nderungen der Version
 3.2 gegenber Version 3.12. Eine ausfhrlichere Liste finden Sie am Ende
-von XPOINT.DOC.
+von XPOINT.TXT.
 
 
 ş Fehlerkorrekturen
@@ -46,7 +46,7 @@ da die Kommandos sich mit Version 5 doch erheblich ge„ndert haben.
 Die Suchfunktionen wurden optimiert und erweitert, z.B. mit 
 Nachricht/Suchen/MessageID und einer Umlautabh„ngigkeit bei "User", 
 "Betreff" und "Fidoempf„nger". Zus„tzlich ist eine Integration der Such-
-optionen in den Lister dazugekommen, siehe XPOINT.DOC in der Versionsge-
+optionen in den Lister dazugekommen, siehe XPOINT.TXT in der Versionsge-
 schichte.
 
 Im Kalender wurde jetzt auch das komplette dritte Jahrtausend eingebaut.
