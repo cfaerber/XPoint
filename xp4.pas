@@ -1088,7 +1088,6 @@ var t,lastt: taste;
       defaultbox:=origdb;
       if brk then goto ende;
     end;
-    if pm and not CC_testempf(empf) then goto ende;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
@@ -2046,6 +2045,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.20  2001/07/10 19:00:45  my
+  - returned to the (correct) previous stage (mistake was in xpcc.pas)
+
   Revision 1.6.2.19  2001/07/10 17:51:38  my
   - implemented the "previous commit" the previous fix claimed to
     have fixed. ;-)  Description of the original "previous commit":
