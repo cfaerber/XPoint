@@ -430,9 +430,10 @@ asm
          loop  @isolp
 end;
 
-procedure ListDisplay(x,y:word; var s:string); far; assembler;
 var
   dispbuf: array[1..164] of byte;
+
+procedure ListDisplay(x,y:word; var s:string); far; assembler;
 asm
             jmp  @start
 
@@ -2150,6 +2151,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/03/22 10:19:21  mk
+  - Bug in ListDisplay behoben
+
   Revision 1.18  2000/03/20 11:58:04  mk
   - Assembler-Routinen komplett in Inline-ASM umgeschrieben
 
