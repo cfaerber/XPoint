@@ -312,9 +312,8 @@ begin
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
     begin   
-      if listvollbild then resetclock:=false;
-      ShowHeader;                                               
-      resetclock:=true;
+      ShowHeader;
+      ex(5);
       end;
     end;
 
@@ -956,13 +955,16 @@ begin
          end;  
      1 : shell(prog,space,0);       { Windows-Programm aufrufen }
      2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
-  end;  
+  end;
 end;
 {$ENDIF}
 
 end.
 {
   $Log$
+  Revision 1.19.2.2  2000/03/26 14:10:41  mk
+  - Fix fuer O im Lister
+
   Revision 1.19.2.1  2000/03/25 15:28:11  mk
   - URL-Erkennung im Lister erkennt jetzt auch
     einen String der mit WWW. beginnt als URL an.
