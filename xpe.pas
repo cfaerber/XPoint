@@ -25,9 +25,11 @@ uses
 
 const EditXkeyfunc : EdTProc = nil;
 Var   EditNachricht : boolean;  
+      SendNachricht : boolean;
       Skip4parken   : boolean;
 
-procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv,nachricht:boolean);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte;
+              ukonv,nachricht,senden:boolean);
 procedure SigEdit(const datei:string);
 procedure EditText;
 procedure Notepad;
@@ -87,7 +89,7 @@ end;
 function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 var brk : boolean;
 begin
-  if EditNachricht then 
+  if EditNachricht and SendNachricht then 
   begin 
      {skip4parken:=false; }
      case ReadIt(length(getres2(2500,4))+11,getres2(2500,3),getres2(2500,4),1,brk) of
@@ -101,7 +103,7 @@ begin
        end;
      end
    else begin
-     case ReadIt(length(getres2(2500,2))+9,getres2(2500,1),getres2(2500,2),1,brk) of
+     case ReadIt(length(getres2(2500,2))+9,iifs(EditNachricht,getres2(2500,3),getres2(2500,1)),getres2(2500,2),1,brk) of
        0,3 : EditQuitFunc:=keyesc;
        1   : EditQuitFunc:=_jn_[1];
        2   : EditQuitFunc:=_jn_[2];
@@ -246,7 +248,8 @@ begin
 end;
 
 
-procedure TED(const fn:string; reedit:boolean; keeplines:byte; ukonv,nachricht:boolean);
+procedure TED(const fn:string; reedit:boolean; keeplines:byte;
+              ukonv,nachricht,senden:boolean);
 const EditFusszeile = false;
 var   ed     : ECB;
       p      : scrptr;
@@ -263,6 +266,7 @@ begin
     end;
   EditSetLangData;
   EditNachricht:=Nachricht;
+  SendNachricht:=Senden;
   mt:=m2t;
   if keeplines>0 then begin
     mb:=dphback; if Nachricht then dphback:=col.coledithead;
@@ -349,7 +353,7 @@ var ok   : boolean;
     t    : text;
 begin
   repeat
-    editfile(datei,false,false,1,false);    { in XP1 }
+    editfile(datei,false,false,false,1,false);    { in XP1 }
     if _filesize(datei)<=MaxSigsize then
       ok:=true
     else begin
@@ -391,7 +395,7 @@ begin
     if not multipos(DirSepa+':',s)
       then s:=sendpath+s;
     editname:=s;
-    EditFile(s,false,false,0,false);
+    EditFile(s,false,false,false,0,false);
     if useclip then WriteClipfile(s);
     end;
   pophp;
@@ -407,7 +411,7 @@ begin
   ma:=lastattr;
   savecursor;
   pushhp(54);
-  EditFile(s,false,false,0,false);
+  EditFile(s,false,false,false,0,false);
   pophp;
   restcursor;
   attrtxt(ma);
@@ -477,6 +481,11 @@ end.
 
 {
   $Log$
+  Revision 1.16.2.5  2001/10/22 23:05:35  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T)
+
   Revision 1.16.2.4  2001/09/16 20:35:22  my
   JG+MY:- Beim Editieren von Nachrichten gibt es im "Änderungen
           speichern?"-Dialog die Option "Parken", die direkt ein "P" ans

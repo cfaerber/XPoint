@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { (Funktions)tasten & Makros }
@@ -162,7 +162,7 @@ begin
       else if copy(s,2,4)='EDIT' then begin
         fn:=trim(mid(s,7));
         if exist(fn) then
-          editfile(fn,false,false,0,false)
+          editfile(fn,false,false,false,0,false)
         else
           rfehler(23)    { '*EDIT: Datei nicht vorhanden!' }
         end
@@ -241,6 +241,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.4  2001/10/22 23:05:35  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T)
+
   Revision 1.6.2.3  2001/08/11 10:58:38  mk
   - debug switch on
   - moved some procedures and functions, because code size of unit

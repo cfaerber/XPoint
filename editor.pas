@@ -1819,7 +1819,7 @@ begin
   if (ustr(t)='E') and not locked then begin
     locked:=true;
     en:=EditNachricht;
-    EditFile(EdGlossaryFile,false,false,0,false);
+    EditFile(EdGlossaryFile,false,false,false,0,false);
     EditNachricht:=En;
     locked:=false;
     t:=keyesc;
@@ -1832,6 +1832,11 @@ end.
 
 {
   $Log$
+  Revision 1.25.2.18  2001/10/22 23:05:35  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T)
+
   Revision 1.25.2.17  2001/09/16 20:34:14  my
   JG+MY:- <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
           Einfügen)
