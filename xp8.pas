@@ -11,9 +11,7 @@
 { CrossPoint - 'maps & Fileserver }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp8;
 
@@ -1586,6 +1584,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2000/06/29 16:47:00  mk
+  - Fixes
+
   Revision 1.10.2.2  2000/06/26 17:56:12  mk
   - Fix von Jochen eingebaut
 
