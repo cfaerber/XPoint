@@ -201,6 +201,8 @@ function IsDOSDevice(s:string):boolean;
 function  alldrives: string;
 {$endif}
 
+function IsFileUtf8(const FileName: String): Boolean;
+
 implementation  { ------------------------------------------------------- }
 
 uses debug,xp0;
@@ -711,8 +713,26 @@ begin
     ( LeftStr(s,3)='LPT' );
 end;
 
+function IsFileUtf8(const FileName: String): Boolean;
+type
+  TUTF8Magic = array[0..2] of byte;
+const
+  UTF8Magic: TUTF8Magic = ($EF, $BB, $BF);
+var
+  f: Integer;
+  Magic: TUTF8Magic;
+begin
+  f := FileOpen(Filename, fmOpenRead + fmShareDenyWrite);
+  FileRead(f, Magic, SizeOf(Magic));
+  FileClose(f);
+  Result := CompareMem(@Magic, @UTF8Magic, SizeOf(Magic));
+end;
+
 {
   $Log$
+  Revision 1.119  2002/05/30 13:28:33  mk
+  - added automatic UTF-8 detection to lister
+
   Revision 1.118  2002/05/20 07:47:55  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

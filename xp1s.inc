@@ -354,17 +354,17 @@ begin
         end;
       end;
     if ListMsg and ListFixedHead then
-    begin
       ShowMsgHead;
-      if UTF8 then 
-      begin
-        OldTCS := GetConsoleOutputCharset;
-        OldLCS := GetLogicalOutputCharset;
-        SetConsoleOutputCharset(csUTF8);
-        SetLogicalOutputCharset(csCP437);
-      end;
+
+    if IsFileUTF8(name) then UTF8 := true;
+    if UTF8 then
+    begin
+      OldTCS := GetConsoleOutputCharset;
+      OldLCS := GetLogicalOutputCharset;
+      SetConsoleOutputCharset(csUTF8);
+      SetLogicalOutputCharset(csCP437);
     end;
-      
+
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
@@ -414,15 +414,12 @@ begin
     pophp;
     ListMakros:=oldm;
 
-    if ListMsg and ListFixedHead then
+    if UTF8 then
     begin
-      if UTF8 then 
-      begin
-        SetConsoleOutputCharset(OldTCS);
-        SetLogicalOutputCharset(OldLCS);
-      end;
+      SetConsoleOutputCharset(OldTCS);
+      SetLogicalOutputCharset(OldLCS);
     end;
-    
+
     if listvollbild and listuhr and ListMsg then begin
      dphback:=dphb;                        {Uhrfarbe reseten}
      if not Listfixedhead then timey:=1;   {Und evtl. Position}
@@ -520,6 +517,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.80  2002/05/30 13:28:33  mk
+  - added automatic UTF-8 detection to lister
+
   Revision 1.79  2002/05/20 07:47:56  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

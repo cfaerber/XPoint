@@ -392,6 +392,15 @@ begin
     seek(f, ofs);
     repeat
       blockread(f, p^[rp], ps - rp, rr);
+      // detect EF BB BF at the beginning of the file and switch to UFT-8
+      if (Ofs = 0) and (rp = 0) and (rr >= 3) and
+        (p^[0] = Char($EF)) and (p^[1] = Char($BB)) and (p^[2] = Char($BF)) then
+        begin
+          FUTF8Mode := true;
+          // skip first three chars
+          Move(p^[3], p^[0], rr);
+          Dec(rr, 3)
+        end;
       if Assigned(FOnConvert) and (rr > 0) then FOnConvert(p^[rp], rr);
       // TempRP := rp;
       rp := make_list(p^, rr + rp, stat.wrappos);
@@ -1134,6 +1143,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.70  2002/05/30 13:28:33  mk
+  - added automatic UTF-8 detection to lister
+
   Revision 1.69  2002/04/07 18:36:40  mk
   - fixed some with newsgroup lists
 
