@@ -63,9 +63,14 @@ const suchch    = #254;
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
+{$ifdef Ver32}
+      DispStrSize	= 255;
+{$else}
+      DispStrSize	= 81;
+{$endif}
 
-type  dispstr   = string[81];
-      specstr   = string[81];
+type  dispstr   = string[DispStrSize];
+      specstr   = string[DispStrSize];
       dispra    = array[1..maxgl] of longint;
 
 var   disprec   : dispra;
@@ -2046,6 +2051,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/06/12 15:07:49  hd
+  - DispStr angepasst
+
   Revision 1.25  2000/06/05 16:16:22  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
