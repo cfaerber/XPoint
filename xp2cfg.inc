@@ -467,7 +467,12 @@ begin
   defextrakttyp:=1;
   brettanzeige:=0;
   showmsgdatum:=true;
+{$IFDEF Linux }
+  { VI kann es wohl nicht sein, aber mancher sieht das anders... }
+  VarEditor:= 'pico'; EditorKB:=300;
+{$ELSE }
   VarEditor:='Q.EXE'; EditorKB:=300;
+{$ENDIF }
   VarLister:=''; ListerKB:=250;
   stdhaltezeit:=14;
   stduhaltezeit:=0;
@@ -864,15 +869,15 @@ begin
   writeln(t,'ReHochN=',jnf(rehochn));
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
-  if ustr(temppath)<>ustr(ownpath) then
+  if fustr(temppath)<>fustr(ownpath) then	{ FUStr wie UStr, wenn nicht UnixFS }
     writeln(t,'TempDir=',temppath);
   if extractpath<>'' then
     writeln(t,'ExtractDir=',extractpath);
   if sendpath<>'' then
     writeln(t,'SendfileDir=',sendpath);
-  if ustr(logpath)<>ustr(ownpath) then
+  if fustr(logpath)<>fustr(ownpath) then
     writeln(t,'LogDir=',logpath);
-  if ustr(filepath)<>ownpath+InfileDir then
+  if fustr(filepath)<>ownpath+InfileDir then
     writeln(t,'FileDir=',filepath);
   writeln(t,'ShowLogin=',jnf(ShowLogin));
   writeln(t,'ArchivBretter=',archivbretter);
@@ -1084,7 +1089,7 @@ begin
   assign(t,ownpath+cfg2file);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler1(107,ustr(cfg2file));  { 'Fehler beim Schreiben von %s' }
+    rfehler1(107,fustr(cfg2file));  { 'Fehler beim Schreiben von %s' }
     exit;
     end;
   writeln(t,'## ',getres2(214,1));
@@ -1392,11 +1397,11 @@ begin
           getx(su,  'autodatumsbezuege',autodatumsbezuege) or
           { /oh }
           getb(su,  'screenlines',screenlines) or
-          gets(su,su,'tempdir',temppath,79) or
-          gets(su,su,'extractdir',extractpath,79) or
-          gets(su,su,'sendfiledir',sendpath,79) or
-          gets(su,su,'logdir',logpath,79) or
-          gets(su,su,'filedir',filepath,79) or
+          gets(s,su,'tempdir',temppath,79) or		{ Wg. case sensetive }
+          gets(s,su,'extractdir',extractpath,79) or
+          gets(s,su,'sendfiledir',sendpath,79) or
+          gets(s,su,'logdir',logpath,79) or
+          gets(s,su,'filedir',filepath,79) or
           gets(s,su,'defaultbox',defaultbox,20) or   { -> Config2 }
           getx(su,  'MessageIDs',dummyb) or
           getw(su,  'ScreenSaver',scrsaver) or
@@ -1710,6 +1715,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.46  2000/05/03 20:36:08  hd
+  - Default-Editor unter Linux: pico
+  - ustr durch fustr ersetzt
+  - gets-Aufrufe geaendert
+
   Revision 1.45  2000/05/03 17:16:14  hd
   - ScreenWidth angepasst
 
