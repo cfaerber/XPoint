@@ -49,9 +49,9 @@ procedure UBAddMark(rec:longint);
 procedure UBUnmark(rec:longint);
 
 procedure XreadF(ofs:longint; var f:file);
-procedure Xread(fn:pathstr; append:boolean);
+procedure Xread(fn:string; append:boolean);
 procedure XmemRead(ofs:word; var size:word; var data);
-procedure Xwrite(fn:pathstr);
+procedure Xwrite(fn:string);
 
 procedure Cut_QPC_DES(var betr:string);
 function  ReCount(var betr:string):integer;
@@ -61,7 +61,7 @@ procedure AddToReflist(ref:string);
 procedure AddToEmpflist(empf:string);
 procedure DisposeEmpflist(var list:empfnodep);
 
-procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
+procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      var size:longint; var hd:header; var ok:boolean;
@@ -77,7 +77,7 @@ function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
 procedure makeuser(absender,pollbox:string);
 function  EQ_betreff(var betr:string):boolean;
-function  grQuoteMsk:pathstr;
+function  grQuoteMsk:string;
 function  isbox(box:string):boolean;
 procedure ReplaceVertreterbox(var box:string; pm:boolean);
 
@@ -538,7 +538,7 @@ ende:
 end;
 
 
-procedure Xread(fn:pathstr; append:boolean);
+procedure Xread(fn:string; append:boolean);
 var f : file;
 begin
   assign(f,fn);
@@ -571,7 +571,7 @@ begin
 end;
 
 
-procedure Xwrite(fn:pathstr);
+procedure Xwrite(fn:string);
 var f,puffer : file;
     ablage   : byte;
     oldsize  : longint;
@@ -906,7 +906,7 @@ end;
 { bestimmt den Namen der passenden Quote-Schablone zu aktuellen        }
 { Nachricht. Entweder QuoteMsk, oder eine gruppenspezifische Schablone }
 
-function grQuoteMsk:pathstr;
+function grQuoteMsk:string;
 var d     : DB;
     grnr  : longint;
     brett : string[5];
@@ -932,7 +932,7 @@ begin
 end;
 
 
-procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
+procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
 var t1,t2 : text;
     s     : string;
@@ -1237,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/07/05 15:46:47  hd
+  - AnsiString
+
   Revision 1.32  2000/07/04 12:04:22  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

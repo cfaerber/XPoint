@@ -12,7 +12,7 @@
 
 procedure readpuffer;
 var x,y   : byte;
-    s     : pathstr;
+    s     : string;
     brk   : boolean;
     ed,pb : boolean;
     ebest : boolean;
@@ -51,7 +51,7 @@ end;
 {               handen, sonst aus DefaultBox                  }
 { Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
 
-function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
+function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 
 const
@@ -71,16 +71,37 @@ var x,y      : byte;
     i        : integer;
     hdsize   : longint;
     rr       : word;
+{$ifdef hasHugeString}
+    dat      : string;
+    name     : string;
+    pb       : string;
+    _brett   : string;
+    mapsname : string;
+    seekbr   : string;
+    msgid2   : string;    { gekÅrzte MsgID (FormMsgid) fÅr mbase }
+    amvertreter,
+    pmvertreter : string;
+    sysbetreff  : string;  { Betreff von Changesys/getsys }
+    orgempf  : string;
+{$else}
     dat      : string[11];
+    name     : string[AdrLen];
+    pb       : string[20];
+    _brett   : string[5];
+    mapsname : string[20];
+    seekbr   : string[BrettLen];
+    msgid2   : string[19];    { gekÅrzte MsgID (FormMsgid) fÅr mbase }
+    amvertreter,
+    pmvertreter : string[BoxnameLen];
+    sysbetreff  : string[50];  { Betreff von Changesys/getsys }
+    orgempf  : string[AdrLen];
+{$endif}
     tobrett  : boolean;
     typ1     : char;
     ok       : boolean;
-    name     : string[AdrLen];
     adrbuch  : byte;
     flags,atp: byte;
-    pb       : string[20];
     grnr     : longint;
-    _brett   : string[5];
     ld       : longint;
     uflags   : byte;
     aufnehmen: boolean;
@@ -91,26 +112,19 @@ var x,y      : byte;
     brettlog,
     userlog  : text;
     _datum   : longint;
-    mapsname : string[20];
     check    : boolean;
-    seekbr   : string[BrettLen];
     p0       : byte;
     zconnect : boolean;
     pm       : boolean;
     mnt      : longint;       { Netztyp-Feld fÅr mbase }
-    msgid2   : string[19];    { gekÅrzte MsgID (FormMsgid) fÅr mbase }
     today    : longint;
     empfnr   : integer;
     junk     : boolean;
     msgsent  : boolean;
-    amvertreter,
-    pmvertreter : string[BoxnameLen];
     forcepfadbox: boolean;
-    sysbetreff  : string[50];  { Betreff von Changesys/getsys }
     IsGelesen   : boolean;
     cmessagefile:text;         { Datei fÅr Controlmessages (Cancels/Supersedes) }
     num_cmessages : integer;   { Anzahl Controlmessages (Cancels/Supersedes) }
-    orgempf  : string[AdrLen];
     mbflags  : longint;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
@@ -266,10 +280,17 @@ var x,y      : byte;
   end;
 
   procedure bearbeite_cancels_supersedes;
-  var id : string[MidLen];
+  var
+{$ifdef hasHugeString}
+      id : string;
+      abs: string;
+      str: string;
+{$else}
+      id : string[MidLen];
       abs: string[AdrLen];
-      sender :custheadstr;
       str: string[20];
+{$endif}
+      sender :custheadstr;
       rec: longint;
       n  : longint;
       l  : integer;
@@ -435,8 +456,8 @@ var x,y      : byte;
       size     : smallword;
       codierer : byte;
       f,f2     : file;
-      tmp      : pathstr;
-      uncfile  : pathstr;
+      tmp      : string;
+      uncfile  : string;
       uvs      : byte;
       hdp2     : headerp;
       hds2     : longint;
@@ -1125,14 +1146,17 @@ end;
 { Die Datei befindet sich normalerweise im XP- oder im SPOOL-     }
 { Verzeichnis.                                                    }
 
-procedure MoveToBad(fn:pathstr);
+procedure MoveToBad(fn:string);
 var
-    dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
+    name : string;
+    ext  : string;
     f    : file;
 begin
-  fsplit(fn,dir,name,ext);
+  {fsplit(fn,dir,name,ext);}
+  ext:= ExtractFileExt(fn);
+  name:= ExtractFilename(fn);
+  if (ext<>'') then
+    Delete(name, length(name)-length(ext),length(ext));
   if UpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
   if ext='' then
     ext:='.001'
@@ -1149,6 +1173,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/07/05 15:46:47  hd
+  - AnsiString
+
   Revision 1.23  2000/07/04 12:04:22  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

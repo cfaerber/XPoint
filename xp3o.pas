@@ -49,15 +49,15 @@ procedure Uverknuepfen;
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 procedure NeuerEmpfaenger(name:string);
-function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
+function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 procedure AppPuffer(Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
 procedure CancelMessage;
 procedure ErsetzeMessage;
-function  testpuffer(fn:pathstr; show:boolean; var fattaches:longint):longint;
-function  ZC_puffer(var fn:pathstr):boolean;
-procedure MoveToBad(fn:pathstr);
+function  testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
+function  ZC_puffer(var fn:string):boolean;
+procedure MoveToBad(fn:string);
 
 procedure wrtiming(s:string);
 procedure AlphaBrettindex;
@@ -335,13 +335,19 @@ procedure Bverknuepfen;
 var x,y     : byte;
     brk     : boolean;
     newbrett,
+{$ifdef hasHugeString}
+    oldbrett,
+    _oldbrett,_newbrett,_brett : string;
+    newempf : string;
+{$else}
     oldbrett: string[BrettLen];
     _oldbrett,_newbrett,_brett : string[5];
+    newempf : string[adrlen];
+{$endif}
     rec     : longint;
     modihead: boolean;
     n       : longint;
     mi      : word;
-    newempf : string[adrlen];
 begin
   rec:=dbRecno(bbase);
   dialog(58,7,getres2(322,1),x,y);   { 'Nachrichten in anderes Brett verlagern' }
@@ -446,9 +452,15 @@ end;
 procedure Uverknuepfen;   { Userbretter verknÅpfen }
 var x,y      : byte;
     brk      : boolean;
+{$ifdef hasHugeString}
+    newuser,
+    olduser  : string;
+    _olduser,_newuser,_user: string;
+{$else}
     newuser,
     olduser  : string[AdrLen];
     _olduser,_newuser,_user: string[5];
+{$endif}
     rec,rec2 : longint;
     n        : longint;
     mi       : word;
@@ -526,15 +538,22 @@ end;
 { art: 1=aktuelle Nachricht, 2=Brett, 3=Markiert, 4=Kommentarbaum }
 
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
-var fname   : pathstr;
+var fname   : string;
     x,y,p   : byte;
     n       : longint;
+{$ifdef hasHugeString}
+    _brett,_b : string;
+    brett   : string;
+    betreff : string;
+    text    : string;
+{$else}
     _brett,_b : string[5];
     brett   : string[BrettLen];
-    i       : integer;
-    schab   : pathstr;
     betreff : string[betrefflen];
     text    : string[40];
+{$endif}
+    i       : integer;
+    schab   : string;
     ok      : boolean;
     append  : boolean;
     brk     : boolean;
@@ -716,7 +735,7 @@ var i,ii     : longint;
     deleted  : boolean;
     brk      : boolean;
     ok       : boolean;
-    fn       : pathstr;
+    fn       : string;
     t        : text;
     useclip  : boolean;
     rec,rec2 : longint;
@@ -887,7 +906,7 @@ end;
 procedure NeuerEmpfaenger(name:string);
 var f1    : file;
     size  : longint;
-    fn    : pathstr;
+    fn    : string;
     hdp   : headerp;
     hds   : longint;
 begin
@@ -948,19 +967,28 @@ end;
 { EmpfangsbestÑtigung zu aktueller Nachricht erzeugen }
 
 procedure empfang_bestaetigen(var box:string);
-var tmp  : pathstr;
+var tmp  : string;
     t,t2 : text;
+{$ifdef hasHugeString}
+    orgd : string;
+    leer : string;
+    betr : string;
+    _br  : string;
+    empf : string;
+    st   : string;
+{$else}
     orgd : string[DateLen];
     leer : string[12];
     betr : string[BetreffLen];
     _br  : string[5];
+    empf : string[AdrLen];
+    st   : string[30];
+{$endif}
     hdp  : headerp;
     hds  : longint;
     s    : string;
     auto : boolean;
-    empf : string[AdrLen];
     tl,p : byte;
-    st   : string[30];
 begin
   auto:=(box<>'');
   if not auto then begin
@@ -1048,17 +1076,27 @@ end;
 
 
 procedure CancelMessage;
-var _brett : string[5];
-    hdp    : headerp;
-    hds    : longint;
+var
+{$ifdef hasHugeString}
+    _brett : string;
+    dat    : string;
+    leer   : string;
+    box    : string;
+    adr    : string;
+    empf   : string;
+{$else}
+    _brett : string[5];
     dat    : string[12];
     leer   : string[12];
     box    : string[BoxNameLen];
     adr    : string[adrlen];
-    d      : DB;
-    fn     : pathstr;
-    t      : text;
     empf   : string[AdrLen];
+{$endif}
+    hdp    : headerp;
+    hds    : longint;
+    d      : DB;
+    fn     : string;
+    t      : text;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Lîschen" lîschen!' }
@@ -1161,18 +1199,28 @@ begin
 end;
 
 procedure ErsetzeMessage;
-var _brett : string[5];
+var
+{$ifdef hasHugeString}
+    _brett : string;
+    _betreff : string;
+    box    : string;
+    adr    : string;
+    leer   : string;
+    empf   : string;
+{$else}
+    _brett : string[5];
     _betreff : string[betrefflen];
-    hdp    : headerp;
-    hds    : longint;
     box    : string[BoxNameLen];
-    d      : DB;
     adr    : string[adrlen];
     leer   : string[12];
     empf   : string[AdrLen];
-    fn     : pathstr;
+{$endif}
+    hdp    : headerp;
+    hds    : longint;
+    d      : DB;
+    fn     : string;
     sData  : SendUUptr;
-    vor    : empfnodep;
+    { vor    : empfnodep; } { Wird nicht benutzt, 2000-07-05, hd }
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten kînnen nicht ersetzt werden.' }
@@ -1251,7 +1299,7 @@ end;
 
 { Puffer im ZConnect-Format? }
 
-function ZC_puffer(var fn:pathstr):boolean;
+function ZC_puffer(var fn:string):boolean;
 var t : text;
     s : string;
     abs,emp,eda : boolean;
@@ -1281,7 +1329,7 @@ end;
 
 { liefert Anzahl der Nachrichten, oder -1 bei Fehler }
 
-function testpuffer(fn:pathstr; show:boolean; var fattaches:longint):longint;
+function testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
 var ok       : boolean;
     f        : file;
     MsgCount,
@@ -1444,7 +1492,7 @@ end;
 function IsBinary:boolean;
 const bufsize = 1024;
 var betr : string[BetreffLen];
-    fn   : pathstr;
+    fn   : string;
     f    : file;
     buf  : charrp;
     i, rr : word;
@@ -1473,6 +1521,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/05 15:46:47  hd
+  - AnsiString
+
   Revision 1.24  2000/07/04 12:04:22  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

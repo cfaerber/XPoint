@@ -21,13 +21,22 @@ procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:smallword;
                      PM2AMconv:boolean);
 var i,res : integer;
     o: word; { Offset im Lesepuffer }
+{$ifdef hasHugeString}
+    s       : string;
+    dummy   : string;
+    id      : string;
+{$ifdef ulines}
+    id0     : string;
+{$endif }
+{$else}
     s       : string[20];
     dummy   : string[realnlen];
-    p    : byte;
     id   : String[30];
 {$ifdef ulines}
     id0  : string[30];
 {$endif }
+{$endif} { hasHugeString }
+    p    : byte;
     buf     : charrp;
     bufsize : word;
     bufanz  : word;   { gelesene Bytes im Puffer }
@@ -137,7 +146,7 @@ var i,res : integer;
         LRead(hd.empfaenger,79);
         if (cpos('@',s)>0) or (s[1]<>'/') then begin
           p:=pos(' (',hd.empfaenger);
-          if p>0 then byte(hd.empfaenger[0]):=p-1;
+          if p>0 then SetLength(hd.empfaenger, p-1); {byte(hd.empfaenger[0]):=p-1;}
           end;
         end;
     if hd.empfanz<127 then
@@ -304,9 +313,19 @@ var i,res : integer;
     end;
 
     procedure GetXPpgp;
+{$ifdef hasHugeString}
+    var s : string;
+{$else}
     var s : string[10];
+{$endif}
     begin
+{$ifdef hasHugeString}
+      SetLEngth(s,10);
+{$endif}
       lread(s,10);
+{$ifdef hasHugeString}
+      s:= Trim(s);
+{$endif}
       LoString(s);
       if s='sigok'    then hd.pgpflags := hd.pgpflags or fPGP_sigok else
       if s='sigerror' then hd.pgpflags := hd.pgpflags or fPGP_sigerr;
@@ -333,7 +352,7 @@ var i,res : integer;
   procedure ParseContentType(var hd:header);
   var p       : byte;
       parname,
-      parval  : string[80];
+      parval  : string;
   begin
     hd.mimetyp:=compmimetyp(LowerCase(GetToken(line,';')));
     while line<>'' do begin
@@ -425,8 +444,9 @@ begin
             while (i<length(line)) and ((line[i+1]=' ') or (line[i+1]=#9)) do
               inc(i);
             delete(line,1,i);
-            while line[length(line)]=' ' do   { rtrim }
-              dec(byte(line[0]));
+	    line:= TrimRight(line);
+            { while line[length(line)]=' ' do }   { rtrim }
+            {  dec(byte(line[0])); }
 
             { 01/2000 oh Auskommentiert, damit die CustomHeaders mit U-* tun }
             if id[1]='U' then                      { RFC }
@@ -575,8 +595,9 @@ begin
       end
     else begin
       getline(empfaenger,79);
-      while empfaenger[length(empfaenger)]=' ' do
-        dec(byte(empfaenger[0]));
+      empfaenger:= TrimRight(empfaenger);
+      { while empfaenger[length(empfaenger)]=' ' do
+        dec(byte(empfaenger[0])); }
       empfanz:=1;
       getline(betreff,BetreffLen);
       while (betreff<>'') and (betreff[1]<=' ') do
@@ -599,6 +620,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/07/05 15:46:47  hd
+  - AnsiString
+
   Revision 1.18  2000/07/04 21:23:07  mk
   - erste AnsiString-Anpassungen
 
