@@ -93,13 +93,6 @@ procedure IsdnConfig;
 implementation  {----------------------------------------------------}
 
 uses
-{$IFDEF Linux}
-  {$IFDEF FPC}
-  serial,
-  {$ELSE}
-  {$FATALERROR Check if you have an unit called 'serial' }
-  {$ENDIF}
-{$ENDIF} 
   xp1o,
   xp2,
   xp4o2,
@@ -232,13 +225,9 @@ begin
   maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-MenÅ bei <Esc> vollstÑndig verlassen' }
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und NachrichtenÅbersicht' }
   oldm:=_maus;
-{$IFDEF Linux }
-  { Maus-Bedienung noch nicht implementiert }
-{$ELSE }
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Maus-Bedienung' }
   maddbool(39,3,getres2(251,22),SwapMausKeys);    { 'Tasten vertauschen' }
   maddbool(39,4,getres2(251,23),MausShInit);      { 'Initialisierung' }
-{$ENDIF }
   if MausDblClck>=mausdbl_slow then dbls:=dbl[0] else
   if MausDblClck>=mausdbl_norm then dbls:=dbl[1]
   else dbls:=dbl[2];
@@ -508,25 +497,6 @@ procedure listoptions;
 var brk : boolean;
     x,y : byte;
 begin
-{$IFDEF Linux }
-  dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
-  maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
-    mhnr(232);
-  maddbool(3,3,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
-    mhnr(233);
-  maddbool(3,4,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
-  maddbool(3,5,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
-  maddbool(3,7,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
-  maddbool(3,8,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
-  maddbool(3,9,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
-    mhnr(8060);
-  maddbool(3,11,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
-    mhnr(238);
-  maddbool(3,12,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  { 22.01.2000 robo }
-  maddbool(3,14,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
-    mhnr(8061);
-{$ELSE }
   dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
@@ -543,11 +513,8 @@ begin
   maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
   maddbool(3,13,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  { 22.01.2000 robo }
   maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
-{$ENDIF } { Linux }
-  { /robo }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -583,11 +550,7 @@ var brk   : boolean;
 begin
   for i:=1 to 3 do
     edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
-{$IFDEF Linux }
-  dialog(ival(getres2(256,0)),10,getres2(256,5),x,y);   { 'Editor' }
-{$ELSE }
   dialog(ival(getres2(256,0)),11,getres2(256,5),x,y);   { 'Editor' }
-{$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
   msetvfunc(testexist);
   maddint(43,2,getres2(256,7),EditorKB,5,3,50,500);   { 'KByte:' }
@@ -599,9 +562,7 @@ begin
   maddbool(3,8,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
 { maddbool(3,9,getres2(256,11),editvollbild);  { 'interner Editor - Vollbild' }
   maddbool(3,9,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
-{$IFNDEF Linux }
   maddbool(3,10,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
-{$ENDIF }
   freeres;
   readmask(brk);
   if not brk then
@@ -629,18 +590,13 @@ procedure shelloptions;
 var brk : boolean;
     x,y : byte;
 begin
-{$IFDEF Linux }
-  dialog(ival(getres2(257,0)),4,getres2(257,1),x,y);    { 'Shell' }
-  maddbool(3,2,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
-  maddbool(3,3,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
-{$ELSE }
-  dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
+  dialog(ival(getres2(257,0)),9,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
-  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Grî·e:  ' }
-  maddtext(length(getres2(257,3))+11,4,getres(13),0);   { 'Bytes' }
-  maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
-  maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
-{$ENDIF }
+  maddbool(3,3,getres2(257,6),shellinit);            { 'Videomodus nach Shell setzen' }
+  maddint(3,5,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Grî·e:  ' }
+  maddtext(length(getres2(257,3))+11,5,getres(13),0);   { 'Bytes' }
+  maddbool(3,7,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
+  maddbool(3,8,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
   msetvfunc(testenv);
   freeres;
   readmask(brk);
@@ -1354,43 +1310,6 @@ begin
 end;
 
 procedure TerminalOptions;
-{$ifdef Linux}
-var x,y : byte;
-    brk : boolean;
-    ok  : boolean;
-    dev : string;
-begin
-  dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
-  dev:= TermDevice;
-  maddstring(3,2,getres2(270,2),dev,6,6,'');  { 'Schnittstelle    ' }
-  mhnr(990);
-  mappsel(false,'modem˘ttys0˘ttys1˘ttys2˘ttys3˘ttyI0˘ttyI1˘ttyI2˘ttyI3'); { aus: XP9.INC }
-  maddint(3,3,getres2(270,3),TermBaud,6,6,150,115200);  { 'öbertragungsrate ' }
-  mappsel(false,'300˘1200˘2400˘4800˘9600˘19200˘38400˘57600˘115200˘230400');
-  maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
-  maddstring(3,5,getres2(270,5),TermInit,16,40,'');     { 'Modem-Init       ' }
-  mappsel(false,'ATZ˘AT˘ATZ\\ATX3');
-  maddbool(3,7,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
-  maddbool(3,8,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
-  maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
-  repeat    
-    readmask(brk);
-    if not brk then 
-      ok:= exist('/dev/'+dev);
-    if not ok then begin
-      rfehler1(221,TermDevice);	{ Das Device '/dev/%s' existiert nicht }
-      dev:= TermDevice;		{ Alte Vorgabe wiederholen }
-    end;
-    if not brk and mmodified and ok then begin
-      TermDevice:= dev;
-      GlobalModified;
-    end;
-  until ok or brk;
-  enddialog;
-  freeres;
-  menurestart:=brk;
-end;
-{$else} { Linux }
 var x,y : byte;
     brk : boolean;
     com : string[20];
@@ -1441,7 +1360,6 @@ begin
   freeres;
   menurestart:=brk;
 end;
-{$endif} { Linix }
 
 function testpgpexe(var s:string):boolean;
 begin
@@ -1543,6 +1461,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.10  2000/12/17 23:34:42  mk
+  - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
+
   Revision 1.39.2.9  2000/12/17 00:35:05  mk
   - optische Korrektur in AccessibilityOptions
 

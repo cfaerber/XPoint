@@ -1060,6 +1060,7 @@ begin
       if ParFontfile<>'' then
         XPFont
       else
+      if ShellInit then
       begin
         sichern(sp);
         if not m3 then setvideomode(3);
@@ -2031,6 +2032,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.8  2000/12/17 23:34:41  mk
+  - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
+
   Revision 1.48.2.7  2000/11/28 09:59:54  mk
   - letzen Fix wieder entfernt, da unnoetig
 

@@ -881,6 +881,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ArchivLoesch : boolean;       { Msgs nach Archivierung l”schen }
        ArchivText   : boolean;       { Archivier-Vermerk erstellen}
        shell25      : boolean;       { 25-Zeilen-Mode bei DOS-Shell }
+       shellinit    : boolean;       { Videomodus nach Shell restaurieren }
        edit25       : boolean;       { dito bei externem Editor }
        MinMB        : smallword;
        AskQuit      : boolean;
@@ -1152,6 +1153,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.19  2000/12/17 23:34:41  mk
+  - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
+
   Revision 1.54.2.18  2000/12/06 01:47:31  mk
   - weitere Dateinamen gross geschrieben
 
