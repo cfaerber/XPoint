@@ -154,6 +154,7 @@ Function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
 Function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 Procedure UTF82IBM(var s: String);
 Function DecodeBase64(const s: String):String;
+Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 
 
 (*     {Unbenutzt}
@@ -165,7 +166,6 @@ Function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname kÅrzen        }
 Function SiMatch(const s1,s2:string):byte;         { dto., ignore case            }
 Function CreditCardOk(s:string):boolean;           { Kreditkartennummer ÅberprÅfen }
 Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
-Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 Function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
 Function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
 function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
@@ -401,16 +401,14 @@ begin
 end;
 *)
 
-(*
 Function Log2int(const l:longint):byte;
 var i : byte;
 begin
-  log2int := 0;   { MK 12/99 }
+  log2int := 0;
   for i:=0 to 31 do
     if l and (1 shl i) <> 0 then
       Log2int:=i;
 end;
-*)
 
 (*
 Function Log10(const r:real):real;
@@ -2169,6 +2167,9 @@ end.
 
 {
   $Log$
+  Revision 1.37.2.23  2001/08/12 11:44:33  mk
+  - added log2int again, function is used in uucico
+
   Revision 1.37.2.22  2001/08/11 22:17:52  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
