@@ -388,9 +388,11 @@ begin
       if b=1 then b:=0 else b:=1;
       dbWriteN(mbase,mb_halteflags,b);
       listhalten:=b;
-      if b=1 then rmessage(122);   { 'Nachricht ist auf ''halten'' gesetzt.' }
-      wkey(1,false);
-      closebox;
+      if b=1 then begin   { 'Nachricht ist auf ''halten'' gesetzt.' }
+        rmessage(122);
+        wkey(1,false);
+        closebox;
+        end;
       end else
     if (t=keybs) then begin
       NachWeiter:=false;
@@ -981,6 +983,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2000/09/10 20:51:13  mo
+   Unberechtigte WPOP-Error Anzeige
+
   Revision 1.55  2000/08/05 10:06:58  mk
   - Ansistring Verbesserungen
 
