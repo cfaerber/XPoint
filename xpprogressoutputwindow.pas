@@ -146,8 +146,9 @@ begin
   s:=Format(fmt,args);
 
   if fmt<>'' then begin
-    // if last message was "not important", it may be overwritten
-    if LastMsgUnimportant then
+    // if last message was "not important" and current message is no error,
+    // overwrite last message
+    if LastMsgUnimportant and (mc<mcError)then
       FLines.Delete(FLines.Count-1)
     else if FLines.Count >= FHeight then
       FLines.Delete(0);
@@ -270,6 +271,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/04/16 13:50:45  ma
+  - last msg will never be overwritten if new message is error msg
+
   Revision 1.1  2001/03/21 19:17:08  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
