@@ -55,7 +55,7 @@ var ax,p,myp  : integer;
                 s:=sp(length(s));  { einige Herc-Bildschirme k”nnen gleiches }
               end;                 { Vorder- und Hintergrundattribut nicht   }
             if (yy0>=a+1) and (yy<=a+un) then                  { darstellen  }
-              wrt(xx,yy-a,txt^);
+              fwrt(xx,yy-a,txt^);
             end;
       mon;
       end;
@@ -67,6 +67,7 @@ var ax,p,myp  : integer;
       l   : string[1];
       ua  : boolean;    { Scrollpfeil nach oben }
       da  : boolean;    { Scrollpfeil nach unten }
+      s: String;
   begin
     with amaskp^ do begin
       attrtxt(stat.col.ColFeldInput);
@@ -79,39 +80,43 @@ var ax,p,myp  : integer;
             if enabled or (not disnodisp) then begin
               if not enabled then begin
                 attrtxt(stat.col.ColBack);
-                wrt(xx2,yy-a,l+sp(len)+l);
-                if stat.mausarrows and hassel then Wrt2(' ')
-                else if checkbutt then Wrt2('  ');
+                s := l+sp(len)+l;
+                if stat.mausarrows and hassel then s := s + (' ')
+                else if checkbutt then s := s + '  ';
+                fwrt(xx2,yy-a,s);
                 attrtxt(stat.col.ColFeldInput);
                 end
               else if checkbutt then begin
                 attrtxt(stat.col.colbuttons);
-                wrt(xx2,yy-a,' ['+iifc(cont^=yesno[1],'x',' ')+'] ');
+                fwrt(xx2,yy-a,' ['+iifc(cont^=yesno[1],'x',' ')+'] ');
                 end
               else begin
                 attrtxt(stat.col.colfeldinput);
-                wrt(xx2,yy-a,l+forms(cont^,len));
-                if stat.arrowspace and enabled then begin
-                  if length(cont^)>len then begin
+                s := l+forms(cont^,len);
+                fwrt(xx2,yy-a,s);
+                if stat.arrowspace and enabled then
+                begin
+                  if length(cont^)>len then
+                  begin
                     attrtxt(stat.col.ColArrows);
-                    Wrt2(#16);
-                    end
-                  else
-                    Wrt2(' ');
-                  if stat.mausarrows and hassel then begin
+                    FWrt(xx2+Length(s), yy-a, #16);
+                  end else
+                    FWrt(xx2+Length(s), yy-a, ' ');
+                  if stat.mausarrows and hassel then
+                  begin
                     attrtxt(stat.col.colback);
-                    Wrt2(#25);
-                    end;
+                    FWrt(xx2+Length(s)+1, yy-a, #25);
                   end;
                 end;
               end;
-            end
+            end;
+          end
           else
             if yy0<a+1 then ua:=true
             else da:=true;
       attrtxt(uda.color);
-      if uda.x1>0 then wrt(uda.x1,uda.y1,iifc(ua,#30,uda.fillc));
-      if uda.x2>0 then wrt(uda.x2,uda.y2,iifc(da,#31,uda.fillc));
+      if uda.x1>0 then fwrt(uda.x1,uda.y1,iifc(ua,#30,uda.fillc));
+      if uda.x2>0 then fwrt(uda.x2,uda.y2,iifc(da,#31,uda.fillc));
       mon;
       end;
     normtxt;
@@ -132,7 +137,7 @@ var ax,p,myp  : integer;
             moretext:=true
           else if yy>=a+1 then begin
             attrtxt(attr);
-            wrt(xx,yy+ob-1-a,txt^);
+            fwrt(xx,yy+ob-1-a,txt^);
             end;
           end;
         p:=p^.next;
@@ -166,7 +171,7 @@ var ax,p,myp  : integer;
         else begin
           if len=8 then
           begin
-            { MK 13.02.2000 Y2K Fix }
+            { Y2K Fix }
             j :=ival(copy(cont^,7,2));
             if j < 70 then inc(j, 2000) else inc(j, 1900);
           end else
@@ -252,34 +257,41 @@ var ax,p,myp  : integer;
   end;
 
   procedure showfield;
+  var
+    x: Byte;
+    s: String;
   begin
     with amaskp^ do
       with afld^ do begin
-        gotoxy(xx2,yy-a);
         moff;
-        if checkbutt then begin
+        if checkbutt then
+        begin
           attrtxt(stat.col.colbuttons);
-          Wrt2(' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
-          end
-        else begin
-          if stat.arrowspace then begin
+          FWrt(xx2, yy-a, ' [' + iifc(cont^=yesno[1],'x',' ') + '] ');
+        end else
+        begin
+          x := xx2;
+          if stat.arrowspace then
+          begin
             attrtxt(stat.col.colarrows);
-            Wrt2(iifc(ax>0,#17,' '));
-            end;
+            FWrt(x, yy-a, iifc(ax>0,#17,' ')); Inc(x);
+          end;
           attrtxt(stat.col.ColFeldActive);
           if replace then attrtxt(stat.col.ColFeldMarked);
-          Wrt2(copy(cont^,ax+1,len));
+          s := copy(cont^,ax+1,len);
+          FWrt(x, yy-a, s); Inc(x, Length(s));
           attrtxt(stat.col.ColFeldActive);
-          Wrt2(dup(len-length(cont^)+ax,stat.fillchar));
+          s := dup(len-length(cont^)+ax,stat.fillchar);
+          FWrt(x, yy-a, s); Inc(x, Length(s));
           if stat.arrowspace then begin
             attrtxt(stat.col.colarrows);
-            Wrt2(iifc(length(cont^)-ax>len,#16,' '));
-            end;
+            FWrt(x, yy-a, (iifc(length(cont^)-ax>len,#16,' '))); Inc(x);
+          end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
-            Wrt2(#25);
-            end;
+            FWrt(x, yy-a, #25);
           end;
+        end;
         mon;
         normtxt;
         end;
@@ -305,15 +317,15 @@ var ax,p,myp  : integer;
         moff;
         for i:=1 to sll do begin
           if i=p then attrtxt(stat.col.ColSelBar);
-          if p1=nil then wrt(slx+1,sly+i,sp(width+2))
-          else wrt(slx+1,sly+i,' '+forms(mid(p1^.el^,x),width+1));
+          if p1=nil then fwrt(slx+1,sly+i,sp(width+2))
+          else fwrt(slx+1,sly+i,' '+forms(mid(p1^.el^,x),width+1));
           normtxt;
           if p1<>nil then p1:=p1^.next;
           end;
-        wrt(slx,sly+1,iifc(sa>0,#30,'³'));
-        wrt(slx,sly+sll,iifc(sa+sll<lines,#31,'³'));
-        wrt(slx+1,sly,iifc(x>0,#17,'Ä'));
-        wrt(slx+width+2,sly,iifc(x+width<longest,#16,'Ä'));
+        fwrt(slx,sly+1,iifc(sa>0,#30,'³'));
+        fwrt(slx,sly+sll,iifc(sa+sll<lines,#31,'³'));
+        fwrt(slx+1,sly,iifc(x>0,#17,'Ä'));
+        fwrt(slx+width+2,sly,iifc(x+width<longest,#16,'Ä'));
         mon;
         end;
     end;
@@ -774,10 +786,10 @@ begin   { readmask }
         attrtxt(col.ColBack);
         if rahmentyp=4 then begin
           moff;
-          if a>0 then wrt(rl,ro,'Ö'+dup(rr-rl-1,'Ä')+'·')
-          else wrt(rl,ro,'É'+dup(rr-rl-1,'Í')+'»');
-          if maxyy0-a>un-ob+1 then wrt(rl,ru,'Ó'+dup(rr-rl-1,'Ä')+'½')
-          else wrt(rl,ru,'È'+dup(rr-rl-1,'Í')+'¼');
+          if a>0 then fwrt(rl,ro,'Ö'+dup(rr-rl-1,'Ä')+'·')
+          else fwrt(rl,ro,'É'+dup(rr-rl-1,'Í')+'»');
+          if maxyy0-a>un-ob+1 then fwrt(rl,ru,'Ó'+dup(rr-rl-1,'Ä')+'½')
+          else fwrt(rl,ru,'È'+dup(rr-rl-1,'Í')+'¼');
           mon;
           end;
         if not dontclear then clwin(li,re,ob,un);
@@ -1102,6 +1114,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.7  2001/12/18 18:19:55  mk
+  - Menuaufbau beschleunigt
+
   Revision 1.13.2.6  2001/12/11 17:53:14  my
   MY:- Neue Variable 'delete_on_cDel' in xp9.pas: Mit <Ctrl-Del> kann der
        Inhalt auch von Feldern gel”scht werden, die gegen Eingaben
