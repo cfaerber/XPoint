@@ -64,6 +64,9 @@
   {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
   {&AlignCode+,AlignData+,AlignRec+,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
   {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
+  {$IFDEF CPU86}
+    {$DEFINE i386} (* FreePascal compatible *)
+  {$ENDIF}
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 1.0 }
@@ -76,7 +79,7 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$PACKRECORDS Default } { Default: 2 }
-  {$PACKENUM Default }	  { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
   {$H+,I-,P-,T-,V-,X+}
   {$DEFINE Int64 }
 {$ENDIF }
@@ -85,7 +88,15 @@
   {$APPTYPE CONSOLE }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
+
+  {$DEFINE i386} (* Delphi only exists on Pentium+ *)
 {$ENDIF }
+
+{$IFDEF i386}
+  {$DEFINE LittleEndian}
+{$ELSE}
+  !! Only i386 platform supported
+{$ENDIF}
 
 {$IFDEF DebugInfo }
   {$IFDEF VirtualPascal }
@@ -99,20 +110,20 @@
   {$ENDIF }
   {$IFDEF FPC }
     {$IFNDEF Linux }
-      {$S+}		  { Stack Checking }
+      {$S+}               { Stack Checking }
     {$ENDIF }
     {$C+}                 { Assertation support }
     {$D+}
     {$M+}                 { Typeinfo for RTTI }
-    {$L+}		  { Local Symbols }
-    {$Q-}		  { Overflow-Check }
-    {$R-}		  { Range Check (must be off!) }
-    {$Y+}		  { Browser Informations }
+    {$L+}                 { Local Symbols }
+    {$Q-}                 { Overflow-Check }
+    {$R-}                 { Range Check (must be off!) }
+    {$Y+}                 { Browser Informations }
   {$ENDIF }
 {$ELSE }
   {$IFDEF FPC }
     {$IFNDEF Linux }
-      {$S-}		  { Stack Checking }
+      {$S-}               { Stack Checking }
     {$ENDIF }
     {$C-,M-,Q-,R-,Y-}
   {$ENDIF }
@@ -180,11 +191,17 @@
   Linux. Ob es mit Curses-Versionen unter Windows oder OS/2 laeuft, bliebe
   zu testen. Die Units sind bei FreePascal unter Packages.
 
+  LittleEndian/BigEndian
+
+  Gibt an, ob es sich um eine Little- oder Big-Endian-System handelt.
 }
 
 
 {
   $Log$
+  Revision 1.64  2001/03/16 16:59:06  cl
+  - Little/Big-Endian conversion/macros
+
   Revision 1.63  2001/01/06 17:24:46  ma
   - added some compiler directives from xp.pas
   - removed NeedReg from Dos32 version
