@@ -981,18 +981,23 @@ begin
         MAppCustomSel(@SelectType,true);
                         
         MSetVFunc(CheckType);
-        
+        MHnr(2390);
+
         Maddstring(2+w1+4, 1+i,'',AddrCont[1,i],10,      MAXINT,'');
         MSetVFunc(CheckGroup);
+        MHnr(2391);
         MaddText  (2+w1+16,1+i,'',col.coldiahigh); AddrText[0,i] := MTextPos;
-        
+
         Maddstring(2+w1+18,1+i,'',AddrCont[2,i],76-w1-22,MAXINT,'');
         MSetVFunc(CheckAddress);
         MAppCustomSel(@SelectAddress,false);
+        MHnr(2392);
+
         Maddstring(2+w1+4, 1+i,'',AddrCont[2,i],76-w1-8, MAXINT,'');
         MSetVFunc(CheckAddress);
         MAppCustomSel(@SelectAddress,false);
-                
+        MHnr(2392);
+
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
         if i=0 then FieldInc := fieldpos + 1 - Field1st;        
@@ -1004,8 +1009,10 @@ begin
       if ShowSubject or EditSubject then
       begin
         if EditSubject then
-          MaddString(1,h+2,GetRes2(610,50),Subject,76-w1-8,MAXINT,'')
-        else
+        begin
+          MaddString(1,h+2,GetRes2(610,50),Subject,76-w1-8,MAXINT,'');
+          MHNr(2300);
+        end else
         begin
           s := GetRes2(610,50); { '^Betreff' }
           i := Cpos('^',s); if i>0 then Delete(s,i,1);
@@ -1055,12 +1062,19 @@ function TSendUUData.SendWindow(dlg_title: string):boolean;
 var   i: Integer;
  senden: integer;
   dummy: integer;
-s,s1,s2: string; 
+s,s1,s2: string;
+x1,x2,x3,x4: string;
+     xx: Integer;
+     yy: Integer;
       p: Integer;
  ok_pos: Integer;
-  
-const 
-  add_h = 8;  
+  ll,rr: Integer;
+
+rfcprio_str: string;
+ Dumms: String;
+
+const
+  add_h = 5;
 begin
   if dlg_title='' then dlg_title := GetRes2(610,10);
   SendWindowInitGlobals(self);
@@ -1069,16 +1083,24 @@ begin
   try //..except
   try //..finally
     ComposeEditableList;
-    
-      max_h := 20-add_h;
-    
+
+      // Number of options on the left hand side
+      ll := 4;
+
+      // Number of options on the right hand side
+      if flReEdit then
+        rr := 3
+      else
+        rr := 4;
+
+      max_h := 20-add_h-Max(ll,rr);
       new_h := Min(Max(1,List.Count),max_h);
   
     repeat
       h := new_h;
       done := true;
       
-      dialog(76,h+add_h,dlg_title,x,y);
+      dialog(76,h+add_h+Max(ll,rr),dlg_title,x,y);
 //    inc(x); inc(y);
 //    openmask(x,x+73,y,y+h+2,false);
       
@@ -1099,18 +1121,23 @@ begin
 //                      TypStr[atFollowupTo]);
         MAppCustomSel(@SelectType,true);
         MSetVFunc(CheckType);
-        
+        MHNr(2390);
+
         Maddstring(2+w1+4, 1+i,'',AddrCont[1,i],10,      MAXINT,'');
         MSetVFunc(CheckGroup);
         MaddText  (2+w1+16,1+i,'',col.coldiahigh); AddrText[0,i] := MTextPos;
-        
+        MHNr(2391);
+
         Maddstring(2+w1+18,1+i,'',AddrCont[2,i],76-w1-4-18,MAXINT,'');
         MSetVFunc(CheckAddress);
         MAppCustomSel(@SelectAddress,false);
+        MHNr(2392);
+
         Maddstring(2+w1+4, 1+i,'',AddrCont[2,i],76-w1-4-4 ,MAXINT,'');
         MSetVFunc(CheckAddress);
         MAppCustomSel(@SelectAddress,false);
-                
+        MHNr(2392);
+
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
         if i=0 then FieldInc := fieldpos + 1 - Field1st;        
@@ -1120,31 +1147,87 @@ begin
       MSet0Proc(ScrollDown);             
 
       MaddString(1,h+2,GetRes2(610,50) {'^Betreff'},Subject,76-w1-8,MAXINT,'');
+      MHNr(2300);
 
-      MaddHLine(0,h+add_h-1);
+      Dumms := 'N/A';
+
+      x1 := GetRes2(610,72); // 'Lesebestätigung'
+      x2 := GetRes2(610,75); // 'keine Signatur anhängen'
+      x3 := GetRes2(610,76);  // 'nach Versand löschen'
+      x4 := GetRes2(610,77); // 'Nachricht nicht archvieren'
+      xx := Max(Max(Length(x1),Length(x2)),Max(Length(x3),Length(x4))) + 8;
+
+      yy := h+4;
+
+      MaddString(1,yy,GetRes2(610,55) {'S^erver'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      MHNr(2901);
+      Inc(yy);
+
+      MaddString(1,yy,GetRes2(610,57) {'Sicherheit'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      MHNr(2902);
+      Inc(yy);
+
+      if rfcprio in [1..5] then rfcprio_str := GetRes2(272,rfcprio)
+      else                      rfcprio_str := GetRes2(272,6);
+      MaddString(1,yy,GetRes2(610,60) {'Priorität'}, rfcprio_str, 76-w1-xx-5-8, MAXINT,'');
+      MappSel(true,GetRes2(272,9));
+      MHNr(2903);
+      Inc(yy);
+
+      MaddString(1,yy,GetRes2(610,70) {'Datum'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      MHNr(2904);
+      Inc(yy);
+
+      yy := h+4;
+
+      MaddBool(76-xx,yy, x1, flRequestMDN);
+      MHNr(2905);
+      Inc(yy);
+
+      if not flReEdit then begin
+        MaddBool(76-xx,h+5, x2, flOhneSig);
+        MHNr(2906);
+        Inc(yy);
+      end else if ll>=rr then
+        Inc(yy);
+
+      MaddBool(76-xx,yy, x3, flLoesch);
+      MHNr(2907);
+      Inc(yy);
+
+      MaddBool(76-xx,yy, x4, flNoArchive);
+      MHNr(2908);
+      Inc(yy);
+
+      MaddHLine(0,h+add_h-1+Max(ll,rr));
 
       p := 2;
       
       s := GetRes2(610,20); { ' ^Ja ' }
-      MAddButton(p,h+add_h,s,senden,1,true);
+      MAddButton(p,h+add_h+Max(ll,rr),s,senden,1,true);
       ok_pos := FieldPos;
       inc(p,Length(s)+3);
-      
+      MHNr(2925);
+
       s := GetRes2(610,21); { ' ^Nein ' }
-      MAddButton(p,h+add_h,s,senden,-1,true);
+      MAddButton(p,h+add_h+Max(ll,rr),s,senden,-1,true);
       inc(p,Length(s)+3);
-      
+      MHNr(2926);
+
       s := GetRes2(610,22); { '^Intern' }
-      MAddButton(p,h+add_h,s,senden,2,true);
+      MAddButton(p,h+add_h+Max(ll,rr),s,senden,2,true);
+      MHNr(2927);
 
       s1 := GetRes2(610,26); { '^Anhang' }
       s2 := GetRes2(610,25); { '^Text' }
 
-      MaddButton(76-Length(s2)-Length(s1)-4,h+add_h,s1,dummy,0,false);
+      MaddButton(76-Length(s2)-Length(s1)-4,h+add_h+Max(ll,rr),s1,dummy,0,false);
       Mset0Proc(OnAttachButton);
-      
-      MaddButton(76-Length(s2)           -1,h+add_h,s2,dummy,0,false);
-      Mset0Proc(OnTextButton);      
+      MHNr(2928);
+
+      MaddButton(76-Length(s2)           -1,h+add_h+Max(ll,rr),s2,dummy,0,false);
+      Mset0Proc(OnTextButton);
+      MHNr(2929);
 
       ScrollDone;
       SetFieldPos(ok_pos);
@@ -1154,7 +1237,16 @@ begin
       enddialog;
     until done;
 
-    if not brk then UnComposeEditableList;
+    if not brk then
+    begin
+      UnComposeEditableList;
+
+      rfcprio := 0;
+      for i := 1 to 5 do
+        if rfcprio_str = GetRes2(272,i) then begin
+          rfcprio := i; break;
+        end;
+    end;
 
   finally
     List.Free;
@@ -1589,6 +1681,18 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2003/08/24 23:33:27  cl
+// - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+//   Nachricht löschen (nach Versand), Empfangsbestätigungen,
+//   X-No-Archive setzen
+// - updated on-line help
+//
+// CLOSES:
+//   task #76791 Sendefenster: Empfangsbestätigungen
+//   task #76793 Sendefenster: ohne Sig
+//   task #76794 Sendefenster: Priorität
+//   task #76796 Sendefenster: Löschen
+//
 // Revision 1.8  2003/03/16 18:59:09  cl
 // - fixed bug that would delete addresses from the list under certain
 //   circumstances.

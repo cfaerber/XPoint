@@ -2390,6 +2390,203 @@ dies, daá mehrere Nachrichten-Kopien ber unter-
 schiedliche Server verschickt werden.
 
 @
+2901
+W„hlen Sie hier den Server aus, ber den die
+Nachricht verschickt werden soll.
+
+Es k”nnen nur Server ausgew„hlt werden, die
+kompatibel mit allen Adressen sind. Austauschbar sind
+z.B. RFC (UUCP/SMTP), ZConnect und MausNet.
+Es k”nnen aber z.B. keine Fidonachrichten ber
+RFC-Server versandt werden und keine RFC-E-Mails ber
+NNTP-Server.
+
+Sie k”nnen auch fr einzelne Empf„nger den Server
+„ndern, indem sie der Adresse  "+<Servername>:"
+voranstellen.
+@
+2902
+<<RFC
+
+Setzt die Priorit„t der Nachricht. Sie k"nnen mit
+<<<F2> >>zwischen verschiedenen Priorit„tsleveln
+w„hlen, und der Empf„nger kann (vielleicht) diese
+Priorit„t in seinem Mail-/Newsprogramm erkennen. Ob
+und wie OpenXP empfangene Nachrichten darstellt, die
+einen Priorit„tsstatus besitzen, k”nnen Sie unter
+/Config/Anzeige/Farben einstellen.
+
+<<ZConnect
+
+Legt die Priorit„t von PMs fest. Direktmails werden
+von der Box per Direkt- Anruf zum Zielsystem
+verschickt, Eilmails werden von der Box *sofort* per
+Direktanruf abgeschickt. Das Versenden von
+Eil-/Direktmails ist gebhrenpflichtig!
+@
+2903
+Hier k”nnen Sie ausw„hlen, ob und wie die Nachricht
+verschlsselt/signiert wird.
+@
+2904
+Hier k”nnen Sie ein Datum angeben, zu dem die
+Nachricht versandt werden soll.
+
+Die Nachricht wird in der Autoversand-Liste
+(Edit/AutoVersand) abgelegt, von wo sie zu einem
+sp„teren Zeitpunkt verschickt wird.
+@
+2905
+<<[x]>> -> Fordert eine Lesebest„tigung beim Empf„nger
+       an. Bitte beachten Sie die Hinweise im
+       Handbuch zum Thema "Empfangsbest„tigungen"!
+@
+2906
+<<[x]>> -> Es wird keine Signatur angeh„ngt. 
+
+Dies ist z.B. sinnvoll, wenn Sie eine Steuernachricht
+an einen Mailinglistenmanager versenden wollen.
+@
+2907
+<<[x]>> -> Die Nachricht wird nach dem Versenden aus der
+       Datenbank auf "l”schen" gesetzt, d.h. bei der
+       n„chsten Reorganisation aus der Datenbank
+       gel”scht.
+@
+2908
+<<ZConnect / RFC:
+
+<<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
+       Header "X-No-Archive: Yes" versehen. Dadurch
+       werden Archive wie Google oder Geocrawler
+       angewiesen, die Nachricht nicht zu speichern.
+
+Dieser Schalter ist auch bei E-Mail vefgbar, hat
+aber i.d.R. nur bei Nachrichten an Mailinglisten eine
+Wirkung.
+
+Das heiát jedoch auch, daá andere User bei Benutzen
+von Suchmaschinen Nachrichten von Ihnen nicht finden
+k”nnen - denken Sie daran, wenn Ihnen eine Suchma-
+schine wieder einmal eine Menge Zeit erspart.
+
+Auch wenn dieser Schalter aktiviert wird, ist das
+keine Garantie dafr, daá Ihre Nachrichten nicht
+doch gespeichert werden. "Das Usenet vergiát nicht!"
+@
+2925
+Die Nachricht wird versandt.
+@
+2926
+Die Nachricht wird im Brett /"Unversandt ge- parkt.
+Von dort kann sie mit /Nachricht/Weiterleiten/Erneut
+oder <<<Alt-R> >>endgltig versandt werden.
+@
+2927
+Die Nachricht wird nicht versandt, sondern nur intern
+innerhalb der Datenbank von OpenXP abgelegt.
+@
+2928
+Hier k”nnen Sie mehrteilige Nachrichten bearbeiten,
+Dateien anh„ngen und die Einstellungen einzelner
+Nachrichtenteile „ndern.
+@
+2929
+ndert den Text der Nachricht. 
+
+Bei mehrteiligen Nachrichten wird der erste Textteil
+bearbeitet. Ist kein Textteil vorhanden, wird der
+Nachricht ein Textteil vorangestellt.
+
+@
+2300
+Betreff: Kurzer Text, der das Thema der Nachricht
+angibt.
+
+Bei Antworten wird in vielen Netzen blicherweise ein
+"Re:" ("in der Angelegenheit von", von Lateinisch
+"res") vorangestellt. Dies ist unter [Edit/Gruppen]
+und unter [Config/Optionen/Nachrichten] einstellbar.
+@
+2390
+ndert den Typ der angegebenen Adresse:
+
+<<Ziel der Nachricht:
+
+An:       Prim„re(r) Empf„nger der Nachricht, d.h.
+          der/die Empf„nger, an den/die die Nachricht
+          gerichtet ist.
+
+Gruppe:   Newsgruppe(n) oder Brett(er), an die die
+          Nachricht gerichtet ist.
+
+CC:       ("Carbon Copy") Sekund„re(r) Empf„nger der
+          Nachricht, d.h. Kopienempf„nger der
+          Nachricht (RFC).
+
+BCC:      ("Blind Carbon Copy") Sekund„re(r)
+          Empf„nger der Nachricht, der/die fr alle
+          anderen Empf„nger unsichtbar ist/sind.
+
+<<Herkunft der Nachricht:
+
+Autor:    Der Autor/die Autoren der Nachricht (RFC).
+
+<<Antworten:
+
+Disk.-In: Vorgeschlagenes Ziel fr ”ffentliche
+          Antworten auf diese Nachricht. Es k”nnen
+          Gruppen/Bretter und E-Mail-Adressen
+          angegeben werden.
+
+Antw.-An: Vorgeschlagenes Ziel fr private Antworten
+          auf diese Nachricht. Es k”nnen nur
+          E-Mail-Adressen angegeben werden.
+@
+2391
+(RFC) Hier kann der Name einer Gruppe angegeben
+werden, unter der mehrere Empf„nger zusammengefasst
+werden.
+
+Dies hat keinen Einfluss auf den Versand der
+Nachricht; der Gruppenname wird lediglich den
+Empf„ngern angezeigt.
+@
+2392
+Hier k”nnen Sie die Adresse(n) angeben.
+
+ş Mehrere Adressen k”nnen durch Kommata getrennt
+  angegeben werden.
+
+ş Durch Drcken von <F2> k”nnen Adressen aus der
+  Brettbersicht, dem Adressbuch oder ggf. einer
+  Bezugsnachricht ausgew„hlt werden.
+
+ş Durch Voranstellen von "+<Servername>:" kann die
+  Nachricht ber einen anderen Server versandt
+  werden.
+
+OpenXP erkennt folgende Adressformate:
+
+<</test/gruppe
+<<test.gruppe
+  Newsgruppe oder Brett (alle Netze).
+
+<<name\@example.com
+  E-Mail-Adresse (RFC, ZConnect, Maus).
+
+<<name\@example.com (Manfred Mustermann)
+<<Manfred Mustermann <name\@example.com>
+  E-Mail-Adresse mit Realname (RFC, ZConnect, Maus).
+
+<<Gruppe: name\@example.com, name2@example.net... ;
+  [Gruppen]-Syntax (RFC).@2391
+
+<<Manfred Mustermann\@1:23/4.6
+<<Manfred Mustermann\@DOMAIN#1:23/45.6
+<<Manfred Mustermann\@1:23/45.6@DOMAIN
+  Fidonet-Adresse (Fido/FTN).
+@
 258
 <<Nachrichten-Optionen / Empf„nger-Auswahlliste
 
@@ -7364,8 +7561,12 @@ Antwort-an-Adresse verwendet, wenn vorhanden.
 
 <<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
        Header "X-No-Archive: Yes" versehen. Dadurch
-       werden Usenet-Archive wie Google angewiesen,
-       die Nachricht nicht zu speichern.
+       werden Archive wie Google oder Geocrawler
+       angewiesen, die Nachricht nicht zu speichern.
+
+Dieser Schalter ist auch bei E-Mail vefgbar, hat
+aber i.d.R. nur bei Nachrichten an Mailinglisten eine
+Wirkung.
 
 Das heiát jedoch auch, daá andere User bei Benutzen
 von Suchmaschinen Nachrichten von Ihnen nicht finden
@@ -7376,6 +7577,8 @@ Auch wenn dieser Schalter aktiviert wird, ist das
 keine Garantie dafr, daá Ihre Nachrichten nicht
 doch gespeichert werden. "Das Usenet vergiát nicht!"
 
+Diese Einstellung kann im Sendefenster berschrieben
+werden.
 @
 254
 <<ZConnect / RFC:

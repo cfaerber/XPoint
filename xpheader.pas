@@ -479,8 +479,7 @@ procedure THeader.WriteZConnect(stream:TStream);
       if telefon<>''   then writeln_s(stream,'TELEFON: '+telefon);
       if homepage<>''  then writeln_s(stream,'U-X-Homepage: '+homepage);
       if priority<>0   then writeln_s(stream,'U-X-Priority: '+strs(priority));
-      if noarchive and (pmempfanz=0) and
-          (netztyp in [nt_NNTP, nt_UUCP, nt_ZConnect]) then
+      if xnoarchive then
         writeln_s(stream,'U-X-No-Archive: Yes');
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then writeln_s(stream,'Zusammenfassung: '+summary);
@@ -885,6 +884,18 @@ end;
 
 {
   $Log$
+  Revision 1.39  2003/08/24 23:33:27  cl
+  - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+    Nachricht löschen (nach Versand), Empfangsbestätigungen,
+    X-No-Archive setzen
+  - updated on-line help
+
+  CLOSES:
+    task #76791 Sendefenster: Empfangsbestätigungen
+    task #76793 Sendefenster: ohne Sig
+    task #76794 Sendefenster: Priorität
+    task #76796 Sendefenster: Löschen
+
   Revision 1.38  2003/05/11 11:12:19  mk
   - use IsMailAddr when possible
 

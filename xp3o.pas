@@ -1092,7 +1092,7 @@ begin
   Hdp.Free;
   if IsMailAddr(Empf) then
   begin
-    sData.flEB:=true{auto};
+    sData.flIsMDN:=true{auto};
 
     sData.AddText(tmp,true);
     sData.EmpfList.AddNew.ZCAddress := empf;
@@ -1561,6 +1561,18 @@ end;
 
 {
   $Log$
+  Revision 1.104  2003/08/24 23:33:27  cl
+  - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+    Nachricht löschen (nach Versand), Empfangsbestätigungen,
+    X-No-Archive setzen
+  - updated on-line help
+
+  CLOSES:
+    task #76791 Sendefenster: Empfangsbestätigungen
+    task #76793 Sendefenster: ohne Sig
+    task #76794 Sendefenster: Priorität
+    task #76796 Sendefenster: Löschen
+
   Revision 1.103  2003/05/11 11:12:17  mk
   - use IsMailAddr when possible
 

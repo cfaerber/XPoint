@@ -356,7 +356,7 @@ begin
     sData.flQTo:=(hdp.attrib and attrQuoteTo<>0);
     sData.fidoto:=hdp0.fido_to;
     sData.flCrash:=crash;
-    sData.flEB:=(hdp0.attrib and attrReqEB<>0);
+    sData.flRequestMDN:=(hdp0.attrib and attrReqEB<>0);
     { xpsendmessage.NoCrash:=true; }
     sData.flFileAttach:=(hdp0.attrib and attrFile<>0);
     sData.msgprio:=hdp0.prio;
@@ -1124,7 +1124,7 @@ again:
                 //_beznet:=hdp.netztyp;
                 sData.fidoto:=hdp.fido_to;
                 sData.flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
-                sData.flEB:=(hdp.attrib and attrReqEB<>0);
+                sData.flRequestMDN:=(hdp.attrib and attrReqEB<>0);
                 sData.flFileAttach:=(hdp.attrib and attrFile<>0);
                 sData.sendfilename:=hdp.datei;
                 sData.sendfiledate:=hdp.ddatum;
@@ -1437,6 +1437,18 @@ end;
 
 {
   $Log$
+  Revision 1.9  2003/08/24 23:33:27  cl
+  - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+    Nachricht löschen (nach Versand), Empfangsbestätigungen,
+    X-No-Archive setzen
+  - updated on-line help
+
+  CLOSES:
+    task #76791 Sendefenster: Empfangsbestätigungen
+    task #76793 Sendefenster: ohne Sig
+    task #76794 Sendefenster: Priorität
+    task #76796 Sendefenster: Löschen
+
   Revision 1.8  2003/05/01 19:15:44  mk
   - fixed incorrect flags in ArchivAMToPM when archiving messages
 

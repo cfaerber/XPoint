@@ -1652,6 +1652,7 @@ begin
   sdata:= TSendUUData.Create;
  try
   sData.flOhneSig := false;
+  sData.flNoArchive := NoArchive;
 
   sData.DoIt(GetRes2(610,11),true,true,true);
  finally
@@ -2451,6 +2452,18 @@ end;
 
 {
   $Log$
+  Revision 1.108  2003/08/24 23:33:27  cl
+  - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+    Nachricht löschen (nach Versand), Empfangsbestätigungen,
+    X-No-Archive setzen
+  - updated on-line help
+
+  CLOSES:
+    task #76791 Sendefenster: Empfangsbestätigungen
+    task #76793 Sendefenster: ohne Sig
+    task #76794 Sendefenster: Priorität
+    task #76796 Sendefenster: Löschen
+
   Revision 1.107  2003/08/23 20:02:12  mk
   - write()->wrt() for autosend file info
 

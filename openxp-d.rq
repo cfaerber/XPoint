@@ -828,10 +828,10 @@ N Deutsch
 3    Normal
 4    Niedrig
 5    Sehr niedrig
-6    Keine
+6    (nicht gesetzt)
 7    Sende-Priorit„t
 8    Priorit„t ~
-9    Sehr HochùHochùNormalùNiedrigùSehr NiedrigùKeine
+9    Sehr HochùHochùNormalùNiedrigùSehr Niedrigù(nicht gesetzt)
 + 273
 # 09.05.00 JG: Neue Viewer-Optionen
 0    55
@@ -1493,8 +1493,19 @@ N Deutsch
 50   ^Betreff:   ~
 51   Brett-^An:  ~
 
-55   B^ox:       ~
+55   S^erver:    ~
 56   (verschiedene)
+57   Sicherheit: ~
+
+60   Priorit\x84t:  ~
+
+70   Datum:      ~
+
+72   Lesebest\x84tigung anfordern
+
+75   keine Signatur anh\x84ngen
+76   nach Versand l\x94schen
+77   Nachricht nicht archivieren
 
 80   Aktuelle Nachricht:   
 81   Bezugsnachricht:
@@ -4117,6 +4128,18 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.75  2003/08/24 23:33:27  cl
+# - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+#   Nachricht löschen (nach Versand), Empfangsbestätigungen,
+#   X-No-Archive setzen
+# - updated on-line help
+#
+# CLOSES:
+#   task #76791 Sendefenster: Empfangsbestätigungen
+#   task #76793 Sendefenster: ohne Sig
+#   task #76794 Sendefenster: Priorität
+#   task #76796 Sendefenster: Löschen
+#
 # Revision 1.74  2003/08/04 22:48:11  mk
 # - removed Edit/netze/verschiedens/mime in news
 #

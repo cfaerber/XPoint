@@ -215,17 +215,20 @@ type
     flDelay       : boolean; { 0,5 s Warten                            }
     flReedit      : boolean; { TED: Softbreaks umwandeln               }
 
+    flRequestMDN  : boolean; { Empf.best. anfordern                    }
+    flNoArchive   : boolean; { X-No-Archive: yes                       }
+
     flWAB         : boolean; { ABS->WAB, OAB->ABS                      }
-    
+
     flPGPSig      : boolean; { PGP: Signatur erzeugen                  }
     flPGPKey      : boolean; { PGP: eigenen Key mitschicken            }
     flPGPReq      : boolean; { PGP: Key-Request                        }
 
     flControlMsg  : boolean; { ist Kontrollnachricht                   }
-    flEB          : boolean; { ist Empfangsbestaetigung                }
+    flIsMDN       : boolean; { ist Empfangsbestaetigung                }
 //  flNokop       : boolean; { keine Kopien                            }
     flPMReply     : boolean; { keine öffentlichen Antworten            }
-    
+
     flCrash       : boolean; { Fido: Crash-Nachricht                   }
     flCrashAtOnce : boolean; { Fido: keine Rückfrage, sofort versenden }
     flFileAttach  : boolean; { Fido: Datei mitsenden                   }
@@ -650,6 +653,8 @@ begin
   flShow   := false;
   flDelay  := false;
 //flQuote  := false;
+  flRequestMDN := false;
+  flIsMDN  := false;
   flWAB    := false;
   flReedit := false;
   flHalt   := false;
@@ -660,6 +665,7 @@ begin
 //flNokop  := false;
 //flIQuote := false;
 //flMPart  := false;
+  flNoArchive := false;
 
   flControlMsg := false;
   flUngelesen := false;
@@ -918,7 +924,6 @@ begin
   result := FOrgHdp;
   if not assigned(result) then result := FParentHdp;
 end;
-    
 
 { -------------------------------------------------------------------- }
                                                                         
@@ -930,6 +935,18 @@ finalization
 
 {
   $Log$
+  Revision 1.74  2003/08/24 23:33:27  cl
+  - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+    Nachricht löschen (nach Versand), Empfangsbestätigungen,
+    X-No-Archive setzen
+  - updated on-line help
+
+  CLOSES:
+    task #76791 Sendefenster: Empfangsbestätigungen
+    task #76793 Sendefenster: ohne Sig
+    task #76794 Sendefenster: Priorität
+    task #76796 Sendefenster: Löschen
+
   Revision 1.73  2003/05/01 10:06:18  mk
   - added const parameter to AddMessagePart
 

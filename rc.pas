@@ -27,8 +27,9 @@
 uses
   sysutils,
   typeform,fileio, xpglobal;
-
-const open   : boolean = false;
+var
+  open   : boolean = false;
+const
       maxblk = 4;                  { max. 4 Resourcen-Segmente }
       maxres = 4096;               { max. Resourcen pro Block  }
 
@@ -403,6 +404,18 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.27  2003/08/24 23:33:27  cl
+        - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+          Nachricht löschen (nach Versand), Empfangsbestätigungen,
+          X-No-Archive setzen
+        - updated on-line help
+
+        CLOSES:
+          task #76791 Sendefenster: Empfangsbestätigungen
+          task #76793 Sendefenster: ohne Sig
+          task #76794 Sendefenster: Priorität
+          task #76796 Sendefenster: Löschen
+
         Revision 1.26  2003/03/16 19:02:06  cl
         - initial support for langage files in encodings different from CP437
 

@@ -5,7 +5,7 @@ rem Compiler ggf. als Kommandozeilenparameter uebergeben.
 rem Es muss ein separates Verzeichnis fuer die Kompilate
 rem angegeben sein (bei FPC: -fU[pfad]).
 if "%comp%"=="" set comp=%1
-if "%comp%"=="" set comp=ppc386
+if "%comp%"=="" set comp=F:\Programme\Freepascal\bin\win32\ppc386
 if "%target%"=="" set target=%2
 if "%target%"=="" set target=win32
 set arg=

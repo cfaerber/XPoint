@@ -545,8 +545,7 @@ var FidoOriginSav: string;
       end
     else if (Server.netztyp in netsRFC) and not adrpmonly then
       hdp.homepage:=wwwHomepage;
-    hdp.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: } { unbedenklich }
-    hdp.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }     { unbedenklich }
+
     hdp.datei:=sendfilename;
     hdp.ddatum:=sendfiledate;
 
@@ -558,7 +557,10 @@ var FidoOriginSav: string;
       else
         if not pm and (Server.netztyp in netsFTN) then hdp.fido_to:=brettalle;
 
-    hdp.attrib:=iif(pm and flEB,attrReqEB,0);
+    hdp.attrib:=iif(pm and flRequestMDN,attrReqEB,0);
+    hdp.xnoarchive := flNoArchive;
+    hdp.priority := rfcprio;
+
     if flEB then with hdp do
     begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
@@ -1032,6 +1034,18 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.17  2003/08/24 23:33:27  cl
+// - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
+//   Nachricht löschen (nach Versand), Empfangsbestätigungen,
+//   X-No-Archive setzen
+// - updated on-line help
+//
+// CLOSES:
+//   task #76791 Sendefenster: Empfangsbestätigungen
+//   task #76793 Sendefenster: ohne Sig
+//   task #76794 Sendefenster: Priorität
+//   task #76796 Sendefenster: Löschen
+//
 // Revision 1.16  2003/08/22 19:08:14  mk
 // - second fix for #733047: Bad User-Agent header syntax
 //
