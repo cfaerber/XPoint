@@ -15,6 +15,7 @@
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
    Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+   Modified on August 2000 by Markus KÑmmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
@@ -63,6 +64,7 @@ type
     FInBuf: TSocketBuffer;              { In-Buffer des Sockets }
     FInPos, FInCount: Integer;          { Position und Anzahl der Zeichen im Buffer }
     FTimeOut: TDateTime;                { Zahl der Sekunden fÅr den Timeout }
+    FInBytesCount, FOutBytesCount: Integer; { Anzahl der Bytes in beide Richtungen }
   protected
     FPort               : integer;      { Portnummer }
     FErrorMsg           : string;       { Fehlertext }
@@ -103,6 +105,8 @@ type
     property Active: boolean read FConnected write SActive;
     property Connected: boolean read FConnected;
     property TimeOut: Integer read FGetTimeout write FSetTimeout;
+    property InBytesCount: Integer read FInBytesCount write FOutBytesCount;
+    property OutBytesCount: Integer read FOutBytesCount write FOutBytesCount;
 
     property ErrorMsg: string read FErrorMsg;
 
@@ -162,6 +166,7 @@ begin
   FInPos := 0; FInCount := 0;
   FErrorMsg := ''; FErrorCode := 0;
   FTimeOut := 0.000682870370370370; // 60 Sekunden Timeout
+  FInBytesCount := 0; FOutBytesCount := 0;
 
 {$IFDEF Win32}
   WSAStartup(2, wsadata);
@@ -302,6 +307,7 @@ begin
         Size := MaxSocketBuffer - FInCount;
 
     Count := recv(FHandle, FInBuf[FInCount], Size, 0);
+    Inc(FInBytesCount, Count);
     if Count < 0 then
       RaiseSocketError
     else
@@ -316,6 +322,7 @@ var
   count: Integer;
 begin
   Count := send(FHandle, Buffer, Size, 0);
+  Inc(FOutBytesCount, Count);
   if Count < 0 then
     RaiseSocketError;
 end;
@@ -368,6 +375,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/08/07 14:35:57  mk
+  - Zahl der Ein- und Ausgangsbytes werden jetzt gezaehlt
+
   Revision 1.12  2000/08/03 06:56:35  mk
   - Updates fuer Errorhandling
 
