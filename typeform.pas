@@ -1989,15 +1989,15 @@ begin
   i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
-    while (s[i] > ' ') and (s[i] < chr(128)) and
-     not (s[i] in forbiddenChar) and ( i > 0) do dec(i);   { Anfang suchen... }
+    while (i > 0 ) and (s[i] > ' ') and (s[i] < chr(128)) and
+     not (s[i] in forbiddenChar) do dec(i);   { Anfang suchen... }
     repeat
       inc(i);
     until not (s[i] in WrongChar);            { '.-_' sind am Anfang ungueltig }
 
     j := i;
-    while (s[j] > ' ') and (s[j] < chr(128)) and
-     not (s[j] in forbiddenChar) and (j <= length(s)) do Inc(j);  {Ende suchen...}
+    while (j <= length(s)) and (s[j] > ' ') and (s[j] < chr(128)) and
+     not (s[j] in forbiddenChar) do Inc(j);  {Ende suchen...}
     repeat
       dec(j);
     until not (s[j] in WrongChar);                    {.-_ sind am Ende ungueltig}
@@ -2199,6 +2199,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.5  2000/08/14 21:11:28  mk
+  - Bugfix fuer Mailerstring
+
   Revision 1.37.2.4  2000/08/09 13:27:00  mk
   - LStr/RStr Aenderungen rueckgaengig gemacht
 
