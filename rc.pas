@@ -9,7 +9,7 @@
 
 {$I XPDEFINE.INC }
 
-uses  crt,dos,typeform,fileio;
+uses  crt,dos,typeform,fileio, xpglobal;
 
 const open   : boolean = false;
       maxblk = 4;                  { max. 4 Resourcen-Segmente }
@@ -18,16 +18,16 @@ const open   : boolean = false;
       flPreload = 1;
 
 type  rblock = record
-                 anzahl   : word;    { Anzahl Strings in diesem Block  }
+                 anzahl   : smallword;    { Anzahl Strings in diesem Block  }
                  fileadr  : longint; { Startadresse in RES-Datei       }
-                 contsize : word;    { Gr”áe des Inhalts (Texte)       }
-                 lastnr   : word;    { letzte Res.-Nr. in diesem Block }
-                 flags    : word;    { 1 = preload                     }
+                 contsize : smallword;    { Gr”áe des Inhalts (Texte)       }
+                 lastnr   : smallword;    { letzte Res.-Nr. in diesem Block }
+                 flags    : smallword;    { 1 = preload                     }
                  dummy    : longint;
                end;
       restype= record
-                 nummer : word;      { Bit 15 = aufgeteilte Resource   }
-                 collect: word;      { die folgenden n Strings geh”ren }
+                 nummer : smallword; { Bit 15 = aufgeteilte Resource   }
+                 collect: smallword; { die folgenden n Strings geh”ren }
                end;                  { zu dieser Resource              }
 
 type  stringp= ^string;
@@ -44,7 +44,7 @@ var   infile : pathstr;
       buf1,
       buf2   : barrp;
       bufp1,
-      bufp2  : word;
+      bufp2  : smallword;
       line   : longint;
       tbuf   : array[0..8191] of byte;
 
@@ -66,25 +66,25 @@ procedure InitVar;
 var outpath,dir : dirstr;
     name : namestr;
     ext : extstr;
-     
+
 begin
   assign(t,infile);
   settextbuf(t,tbuf,sizeof(tbuf));
   reset(t);
-  
+
   fsplit(infile,dir,name,ext);
   infile:=name;
-  
+
   outpath:='';
   if (paramcount=2) then begin
     outpath:=paramstr(2);
     if outpath<>'' then begin
-      if outpath[length(outpath)]<>'\' then 
+      if outpath[length(outpath)]<>'\' then
         outpath:=outpath+'\';
     end
   end;
   if (outpath='') then outpath:=dir;
-  
+
   assign(f,outpath+infile+'.RES');
   rewrite(f,1);
   open:=true;
@@ -140,7 +140,7 @@ var collnr : word;
     p      : byte;
     nr,w   : word;
     last   : word;
-    i,j    : integer;
+    i,j    : integer16;
 
   procedure wrnr;
   begin
@@ -152,7 +152,7 @@ var collnr : word;
   end;
 
   procedure SortCollect(from,count:word);
-  var i   : integer;
+  var i   : integer16;
       chg : boolean;
       r   : restype;
       p   : pointer;
@@ -285,7 +285,7 @@ end;
 
 procedure WriteBlocks;
 var d : array[1..8] of word;
-    i : integer;
+    i : integer16;
 begin
   seek(f,128);
   fillchar(d,sizeof(d),0);
@@ -306,7 +306,7 @@ begin
   writeln('Ressource Compiler v1.01   PM 12/92, 06/93');
   writeln;
   infile:=paramstr(1);
-  
+
   if infile='' then begin
     write('Source File: '); readln(infile);
   end else
