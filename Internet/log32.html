@@ -2,31 +2,30 @@
 <h2>Letzte Änderungen an OpenXP/32</h2>
 
 <h3>v3.9.x (Entwicklerzweig)</h3> 
+<!-- Bei Webnews stehen die neuesten Nachrichten typischerweise OBEN. -->
 <ul>
   <li>alle Fixes und &Auml;nderungen der 3.8.x</li>
-  <li>2002-05-26 ma: E-Mail-Adresse wird jetzt im "richtigen" Datenbankfeld gespeichert, 
-    kann dadurch länger als 30 Zeichen sein. <br />
-    <b>E-Mail-Adressen müssen in Boxeneinstellungen neu eingegeben werden.</b></li>
-  <li>2002-05-07 ma: SMTP AUTH PLAIN und LOGIN eingebaut (bisher nur CRAM-MD5)</li>
-  <li>2002-04-14 cl: <b>Komplett neues Adresshandling</b> ("richtiger" CC/BCC-Support 
-    etc.), siehe </li>
-  <li>2002-05-30: mk: Der Lister erkennt automatisch UTF-8 codierte Textdateien 
-    (an den drei ersten Magic-Bytes) und stellt diese richtig dar (nat&uuml;rlich 
-    inkl. des Euro-Zeichens)</li>
-  <li>2002-06-05 mk: openxp.exe ist jetzt mit Delphi erstellt, die FPC-Version 
-    hei&szlig;t openxp_fpc.exe. Bitte vor Bugreports immer beide Versionen testen</li>
-  <li>2002-06-12 mk: maximale Länge des Betreffs von von 70 Zeichen auf unendlich 
-    angehoben (nur in RFC-Netzen), weitere Limits für bestimmte Eingaben (Telefon, 
-    Homepage, Postadresse) komplett etnfernt</li>
-  <li>2002-06-23 cl: weitere Änderungen für neues Adresshandling</li>
-  <li>2002-06-30 mk: verschiedene nicht initialisierte Variablen gefixt, behebt 
-    möglicherweise Probleme bei der Erkennung des optimalen Zeichensatzes einer 
-    Nachricht</li>
   <li>2002-07-22 mk: Die Liste der markierten Nachrichten wurde intern auf eine 
     dynamische Liste umgestellt, damit existiert kein Limit der gleichzeitig markierten 
     Nachrichten mehr</li>
   <li>2002-07-22 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=500572&group_id=3766&atid=103766">#500572</a>: 
     Der Dupekill lässt sich jetzt mit ESC abbrechen 
+  <li>2002-07-21 ma: <b>Dupekill-Feature</b> (Edit/Boxen/Edit/Diverses), nützlich mit NNTP, verhindert Crossposting-Dupes</li>
+  <li>2002-06-30 mk: verschiedene nicht initialisierte Variablen gefixt, behebt 
+    möglicherweise Probleme bei der Erkennung des optimalen Zeichensatzes einer 
+    Nachricht</li>
+  <li>2002-06-12 mk: maximale Länge des Betreffs von von 70 Zeichen auf unendlich 
+    angehoben (nur in RFC-Netzen), weitere Limits für bestimmte Eingaben (Telefon, 
+    Homepage, Postadresse) komplett etnfernt</li>
+  <li>2002-05-30: mk: Der Lister erkennt automatisch UTF-8 codierte Textdateien 
+    (an den drei ersten Magic-Bytes) und stellt diese richtig dar (nat&uuml;rlich 
+    inkl. des Euro-Zeichens)</li>
+  <li>2002-05-26 ma: E-Mail-Adresse wird jetzt im "richtigen" Datenbankfeld gespeichert, 
+    kann dadurch länger als 30 Zeichen sein. <br />
+    <b>E-Mail-Adressen müssen in Boxeneinstellungen neu eingegeben werden.</b></li>
+  <li>2002-05-07 ma: SMTP Auth Plain/Login eingebaut (bisher nur CRAM-MD5)</li>
+  <li>2002-04-14 cl: Komplett neues Adresshandling ("richtiger" CC/BCC-Support 
+    etc.), <b>noch fehlerhaft</b></li>
 </ul>
 
 <hr noshade size="1"/>
@@ -34,12 +33,13 @@
 <h3>v3.8.x (Anwenderzweig)</h3>
 
 <ul>
+  <li>2002-07-20 ma: Bugfix: Umlaute in Fido-Nachrichten wurden u.U. nicht richtig (de-)kodiert</li>  
   <li>2002-07-18 ma: Diverse kleinere Fixes (Fido: FD-Pointlisten-Lookup, NNTP: 
     Brettmanager/Bretter abbestellen, Kosmetik)</li>
-  <li>2002-07-17 ma: SMTP Auth Login/Plain eingebaut (bisher nur CRAM-MD5) [von 
+  <li>2002-07-17 ma: <b>SMTP Auth Login/Plain eingebaut</b> (bisher nur CRAM-MD5) [von 
     v3.9 übernommen]</li>
   <li>2002-07-07 ma: Fixes in Sachen Fido-over-IP im Zusammenspiel mit Argus</li>
-  <li>2002-07-01 my: Neue IBM->ISO-Konvertiertabelle</li>
+  <li>2002-07-01 my: Neue IBM-&gt;ISO-Konvertiertabelle</li>
   <li>2002-07-22 mk: Bug <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=496988&group_id=3766&atid=103766">#496988</a>: 
     Linux: Dateirechte bei Pufferimport</li>
 </ul>
