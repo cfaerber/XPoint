@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -68,9 +68,9 @@ function Blankpos(var s:string):integer;        { Position von ' ' oder #9     }
 function BlankposX(var s:string): integer;       { length(s)+1, falls bp=0      }
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
-function CPos(c:char; const s:string):integer;    { schnelles POS fÅr CHARs      }
+function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
 function CPosX(c:char; var s:string):integer;   { pos=0 -> pos:=length(s)+1    }
-function CreditCardOk(s:string):boolean;     { Kreditkartennummer ÅberprÅfen }
+function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
@@ -78,7 +78,7 @@ function FileName(var f):string;                { Dateiname Assign             }
 function FirstChar(const s:string):char;
 // Letztes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function LastChar(const s:string):char;
-function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkÅrzen    }
+function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkuerzen    }
 function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mit 0 auff.  }
 function FormR(const r:real; const vk,nk:integer):string;   { r-->str.; vk+nk mit 0 auff.  }
 function FormS(const s:string; n:integer):string;     { String auf n Stellen mit ' ' }
@@ -123,7 +123,7 @@ function Round(const r:real; const nk:integer):real;     { Real --> Real auf nk 
 function RVal(const s:string):real;                { Value Real                   }
 function Sgn(const x:longint):longint;       { Signum Integer               }
 function SgnR(const x:real):real;            { Signum Real                  }
-function SMatch(const s1,s2:string):integer;          { Anzahl der Åbereinst. Bytes  }
+function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
 function SiMatch(const s1,s2:string):integer;         { dto., ignore case            }
 function Sp(const n:integer):string;               { space$                       }
 function Stricmp(const s1,s2:string):boolean;      { UStr-Vergleich               }
@@ -134,22 +134,22 @@ function StrSrn(const r:real; const vk,nk:integer):string;  { "echtes" Str$, Rea
 function StrSrnp(const r:real; const vk,nk:integer):string; { "echtes" Str$, Real, mit DP  }
 function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
-function TopStr(const s:string):string;            { erste Buchstabe gro·         }
-function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
+function TopStr(const s:string):string;            { erste Buchstabe gross         }
+function TopAllStr(s:string):string;         { alle ersten Buchstaben gross  }
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
-{ Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
+{ Lo/Upcase-String fuer Files, abhaengig von UnixFS }
 function FileUpperCase(const s:string):string;
 function Without(const s1,s2:string):string;       { Strings "subtrahieren"       }
 
-Procedure delfirst(var s:string);            { ersten Buchstaben lîschen    }
-Procedure dellast(var s:string);             { letzten Buchstaben lîschen   }
+Procedure delfirst(var s:string);            { ersten Buchstaben loeschen    }
+Procedure dellast(var s:string);             { letzten Buchstaben loeschen   }
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
-Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf ParitÑt setzen  }
-Procedure TruncStr(var s:string; n:integer);    { String kÅrzen                }
+Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Paritaet setzen  }
+Procedure TruncStr(var s:string; n:integer);    { String kuerzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
@@ -203,11 +203,11 @@ asm
           mov    al,[edi]
           cmp    even,0
           jz     @setodd
-          and    al,07fh               { Test auf gerade ParitÑt }
+          and    al,07fh               { Test auf gerade Paritaet }
           jpe    @spok
           or     al,80h
           jmp    @spok
-@setodd:  and    al,07fh               { Test auf ungerade ParitÑt }
+@setodd:  and    al,07fh               { Test auf ungerade Paritaet }
           jpo    @spok
           or     al,80h
 @spok:    mov    [edi],al
@@ -748,9 +748,9 @@ var
   i : integer;
 begin
   i := 0; Result := '';
-  while filerec(f).name[i] <> #0 do
+  while tfilerec(f).name[i] <> #0 do
   begin
-    Result := Result + char(filerec(f).name[i]);
+    Result := Result + char(tfilerec(f).name[i]);
     inc(i);
   end;
 end;
@@ -971,7 +971,7 @@ begin
 end;
 
 
-Procedure TruncStr(var s:string; n:integer);    { String kÅrzen                }
+Procedure TruncStr(var s:string; n:integer);    { String kuerzen                }
 begin
   if length(s)>n then
     SetLength(s,n);
@@ -1099,7 +1099,7 @@ begin
 end;
 
 
-function SMatch(const s1,s2:string):integer;          { Anzahl der Åbereinst. Bytes  }
+function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
 var p,ml : integer;
 begin
   p:=0;
@@ -1156,7 +1156,7 @@ begin
     MailString:=s;
 end;
 
-function CreditCardOk(s:string):boolean;   { Kreditkartennummer ÅberprÅfen }
+function CreditCardOk(s:string):boolean;   { Kreditkartennummer ueberpruefen }
 const cntab : array['0'..'9'] of byte = (0,2,4,6,8,1,3,5,7,9);
 var i,sum : integer;
 begin
@@ -1301,6 +1301,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/11/15 23:21:02  fe
+  Made compileable.
+
   Revision 1.73  2000/11/15 23:12:32  mk
   - implemented ZCDateTimeToDateTime and DateTimeToZCDateTime functions
 
@@ -1403,7 +1406,7 @@ end.
   - Trim entfernt und Sysutils eingefuegt
 
   Revision 1.42  2000/07/03 15:11:01  mk
-  - unnˆtige Defines entfernt
+  - unnoetige Defines entfernt
   - sysutils war zweimal in xp6o.pas enthalten
 
   Revision 1.41  2000/07/03 09:59:39  hd
@@ -1456,16 +1459,16 @@ end.
   - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
 
   Revision 1.26  2000/04/04 21:01:21  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.25  2000/03/24 20:25:49  rb
-  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+  ASM-Routinen gesaeubert, Register fuer VP + FPC angegeben, Portierung FPC <-> VP
 
   Revision 1.24  2000/03/24 08:35:30  mk
   - Compilerfaehigkeit unter FPC wieder hergestellt
 
   Revision 1.23  2000/03/24 00:03:39  rb
-  erste Anpassungen fÅr die portierung mit VP
+  erste Anpassungen fuer die portierung mit VP
 
   Revision 1.22  2000/03/21 18:45:04  jg
   - Mailstring: RFC-Konforme(re) Erkennung
@@ -1484,7 +1487,7 @@ end.
           "Debugsuche" durch "Debug" ersetzt
 
   Revision 1.19  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fuer die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.18  2000/03/05 12:14:51  mk
   ML: DOSEmuVersion nutzt jetzt den offiziellen Weg
@@ -1538,7 +1541,7 @@ end.
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
         der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
-        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfaenger"
+        koennen jetzt Umlautunabhaengig geschalten werden
 
 }
