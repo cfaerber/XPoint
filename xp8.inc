@@ -122,7 +122,7 @@ again:
     rewrite(t);
     s:=List.FirstMarked;
     while s<>#0 do begin
-      writeln(t,iifc(art=1,'+','-'),echoname(s));
+      write(t,iifc(art=1,'+','-'),echoname(s),#13#10);
       s:=List.NextMarked;
       end;
     close(t);
@@ -205,7 +205,7 @@ begin
     rewrite(t);
     delete(echo,1,length(boxpar^.magicbrett));
     if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
-    writeln(t,'-',echo);
+    write(t,'-',echo,#13#10);
     close(t);
     SendFilescan(fn);
     _era(fn);
@@ -213,7 +213,7 @@ begin
   else begin                            { markierte Bretter abbestellen }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
-      if dbReadInt(d,'netztyp')=nt_Fido then 
+      if dbReadInt(d,'netztyp')=nt_Fido then
       begin
         box:= UpperCase(dbReadStr(d,'boxname'));
         ReadBoxPar(nt_Fido,box);
@@ -229,7 +229,7 @@ begin
             if n=0 then rewrite(t);
             delete(echo,1,length(boxpar^.magicbrett));
             if LowerCase(LeftStr(echo,6))='files/' then delete(echo,1,6);
-            writeln(t,'-',echo);
+            write(t,'-',echo,#13#10);
             inc(n);
             end;
           end;
@@ -338,7 +338,7 @@ begin
     fn:=TempS(2048);
     assign(t,fn);
     rewrite(t);
-    writeln(t,'%',comm);
+    write(t,'%',comm,#13#10);
     close(t);
     SendFilescan(fn);
     _era(fn);
@@ -347,6 +347,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2002/02/26 11:09:23  ma
+  - fixed: Fido file area requests (wrong line endings with Linux)
+
   Revision 1.22  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
