@@ -856,9 +856,9 @@ begin
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,miBrett);
         if bereich=3 then begin     { markiert }
-          if aktdispmode<10 then begin
+          if aktdispmode<11 then begin
             i:=0;
-            uu:=(aktdispmode>0);
+            uu:=(aktdispmode>0) and (aktdispmode <10);
             while (i<bmarkanz) and not brk do begin
               if uu then begin
                 dbGo(ubase,bmarked^[i]);
@@ -2455,6 +2455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.23  2001/01/12 07:42:49  mk
+  JG:- Suche aus einem Brett heraus in vorher markierten Nachrichten (MK)
+
   Revision 1.47.2.22  2001/01/04 09:57:23  mk
   - Suchlaenge auf 120 Zeichen erhoeht
 
