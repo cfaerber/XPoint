@@ -692,7 +692,7 @@ begin
       if append then system.append(t)
       else rewrite(t);
       for i:=1 to lines do begin
-        readln(input,s);
+        read(input,s);
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
@@ -704,11 +704,13 @@ begin
           CharsetToIBM(charset, s);
 
         if softbreak then
-        begin
           SetLength(s, Length(s)-1);
-          write(t,s);
-        end else
-          writeln(t,s);
+        write(t,s);
+        if s[0]=#255 then dec (i) { Rest der langen Zeile Weiterbearbeiten }
+        else begin                { Tricky aber erspart ein GOTO...}
+          readln (input);
+          if not softbreak then writeln (t);
+        end;
         end;
       close(t);
       end
@@ -761,6 +763,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.13  2001/05/30 20:19:26  my
+  JG:- MIME multipart messages with lines longer than 255 chars are
+       extracted correctly now (before they were truncated at pos 255)
+
   Revision 1.12.2.12  2000/12/25 23:57:44  mk
   - fehlerhafte Base64-Zeilen werden nicht mehr dekodiert
 
