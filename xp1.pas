@@ -182,7 +182,6 @@ procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
 {$IFDEF BP }
 Procedure Start_OS2(Programm,Parameter,Title:String);
-Procedure OS2_WaitForEnd(_Semaphore:String);
 {$ENDIF }
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
@@ -1609,6 +1608,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/03/08 22:13:31  rb
+  nicht mehr benîtigte Routinen fÅr OS/2 Programmaufruf entfernt
+
   Revision 1.12  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 
