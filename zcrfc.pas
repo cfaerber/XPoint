@@ -492,11 +492,9 @@ procedure tuuz.testfiles;
 
   function exist(const n:string):boolean;
   var
-    sr : searchrec;
-    r: Integer;
-    ex : boolean;
+    sr : Tsearchrec;
   begin
-    Result := FindFirst(n,anyfile-volumeid-directory,sr) = 0;
+    Result := FindFirst(n,faanyfile-favolumeid-fadirectory,sr) = 0;
     FindClose(sr);
   end;
 
@@ -3676,6 +3674,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.16  2002/08/04 18:39:45  mk
+  - fixed linux compiliation problems from last patch
+
   Revision 1.97.2.15  2002/08/04 14:03:04  mk
   - fixed testfiles: allow wildcards in source filename
 
