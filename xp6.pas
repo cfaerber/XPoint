@@ -912,6 +912,7 @@ begin
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
+  box := '';
   flOhnesig:=false; flLoesch:=false;
 end;
 
@@ -2215,6 +2216,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.19  2000/12/03 13:03:51  mk
+  - Variable box initialisieren
+
   Revision 1.39.2.18  2000/11/30 14:10:36  mk
   - fixed NewUserIBM when adding new uesers
 
