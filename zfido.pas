@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -26,20 +26,23 @@ uses
   crt,
 {$ENDIF }
   ZFTools,
-  dos,typeform,fileio,xpdiff,xpdatum,xpglobal;
+  dos,xpglobal;
 
 begin
   halt(ZFidoMain);
 end.
 {
   $Log$
+  Revision 1.44  2000/11/14 22:33:26  fe
+  Dependencies fixed.
+
   Revision 1.43  2000/11/14 22:19:16  hd
   - Fido-Modul: Anpassungen an Linux
 
   Revision 1.42  2000/11/14 20:24:03  hd
   - Funktionen in Unit ZFTools ausgelagert
   - exist->FileExists
-  - ZFido enthält keine Konvertierungen mehr
+  - ZFido enthaelt keine Konvertierungen mehr
 
   Revision 1.41  2000/11/09 18:51:41  hd
   - Anpassungen an Linux
@@ -152,8 +155,8 @@ end.
 
   Revision 1.7  2000/03/16 10:14:25  mk
   - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+  - Ver32: Buffergroessen fuer Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Aenderung wieder
 
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert

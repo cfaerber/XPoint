@@ -414,7 +414,7 @@ UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	xpdiff xpdos32 xpe xpeasy xpf2 xpfido xpfidonl xpftnadr \
 	xpglobal xpimpexp xpipc xpkeys xplinux xpmaus xpmime xpnntp \
 	xpnodes xpnt xpos2 xpreg xpstat xpterm xpuu xpview xpwin32 xpx \
-	zcrfc zmodem
+	zcrfc zftools zmodem
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -647,16 +647,14 @@ yup2pkt$(EXEEXT): yup2pkt.pas dbase$(UNITEXT) fileio$(UNITEXT) \
 
 ifneq (,$(findstring $(OS),freebsd linux))
 
-zfido$(EXEEXT): zfido.pas fileio$(UNITEXT) typeform$(UNITEXT) \
-	xpcurses$(UNITEXT) xpdatum$(UNITEXT) xpdefine.inc \
-	xpdiff$(UNITEXT) xpglobal$(UNITEXT)
+zfido$(EXEEXT): zfido.pas xpcurses$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-zfido$(EXEEXT): zfido.pas fileio$(UNITEXT) typeform$(UNITEXT) \
-	xpdatum$(UNITEXT) xpdefine.inc xpdiff$(UNITEXT) \
-	xpglobal$(UNITEXT)
+zfido$(EXEEXT): zfido.pas xpdefine.inc xpglobal$(UNITEXT)
+	zftools$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2372,6 +2370,22 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) fileio$(UNITEXT) \
 
 endif
 
+ifneq (,$(findstring $(OS),freebsd linux))
+
+zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpcurses$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+else
+
+zftools$(UNITEXT): zftools.pas fileio$(UNITEXT) typeform$(UNITEXT) \
+	xpdatum$(UNITEXT) xpdiff$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+
 zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
 	objcom-objcom timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
@@ -2611,6 +2625,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.41  2000/11/14 22:33:25  fe
+# Dependencies fixed.
+#
 # Revision 1.40  2000/11/14 21:36:52  fe
 # Renamed unit "uuz" to "zcrfc" and program "uuzext" to "uuz".
 # So the program is called "uuz" again.
