@@ -1755,8 +1755,8 @@ begin
                     if Uselfn then begin
                         s:=Unix2LFNfile(s,FilePath);
                         if s='' then s:=Unix2LFNfile(source,FilePath);
-                    end;
-                    if not Uselfn then begin
+                    end
+                    else begin
                         s:=Unix2DOSfile(s,FilePath);
                         if s='' then s:=Unix2DOSfile(source,FilePath);
                     end;
@@ -1937,6 +1937,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.10  2001/08/24 15:53:26  mw
+
+  - Small Code-Cleanup
+
   Revision 1.1.2.9  2001/08/11 13:08:04  mk
   - compilable again (lfn-changes, added xpovl)
 
