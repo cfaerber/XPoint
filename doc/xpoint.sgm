@@ -18347,6 +18347,14 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
             </row>
 
+            <row>
+
+              <entry><parameter>/312</parameter></entry>
+
+              <entry>XP 3.12-Kompatibilit&auml;tsmodus</entry>
+
+            </row>
+
           </tbody>
 
         </tgroup>
@@ -20517,6 +20525,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
               <entry><cmdsynopsis><command>maggi</command> <arg
                 choice="req">-mz</arg> <arg
                 choice="req">-nMagicNET</arg> <arg
+                choice="optional">-312</arg> <arg
                 choice="req"><replaceable>Magic-Puffer</replaceable></arg>
                 <arg
                 choice="req"><replaceable>Z-Puffer</replaceable></arg>
@@ -20547,6 +20556,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
               <entry><cmdsynopsis><command>maggi</command> <arg
                 choice="req">-zm</arg> <arg
                 choice="req">-nMagicNET</arg> <arg
+                choice="optional">-312</arg> <arg
                 choice="req"><replaceable>Z-Puffer</replaceable></arg>
                 <arg
                 choice="req"><replaceable>Magic-Puffer</replaceable></arg>
@@ -20671,7 +20681,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
         Auf diese Weise k&ouml;nnen Sie Daten aus
         <application>CrossPoint</application> exportieren und in
         andere MausTausch-Frontends einlesen.</para>
-
+	
     </sect1>
 
     <sect1 label="C.4" id="an0c0400">
