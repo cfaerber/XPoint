@@ -3448,9 +3448,9 @@ begin
     f2.Free;
   f2:=nil;
 
-  if n = 0 then
+  if n = 0 then begin
      if not client then _era(iifs(ppp,dest,dest+fn+ExtOut))
-  else
+  end else
   begin
     if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
@@ -3708,6 +3708,10 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.20  2002/08/25 23:58:32  cl
+  - BUGFIX: <3D6386F1.8EBE067C@expires-2002-08-31.arcornews.de>
+            UUCP.Modul sendet keine Newspakete?
+
   Revision 1.97.2.19  2002/08/25 19:39:21  cl
   - UUZ: Fixes for AttrMPart
 
