@@ -7,14 +7,12 @@
 # fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
-# OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
 # Windows 95/98/NT:
 # <ftp://sources.redhat.com/pub/cygwin/latest/make/make-3.79.1-1.tar.gz>
 
 # Bemerkungen:
 #
-# - Ist im Moment nur fuer Free Pascal <http://www.freepascal.org/>
-#   angepasst.
+# - Funktioniert nur mit einem aktuellen GNU make.
 # - Unter DOS, Windows und OS/2 muessen z.Z. noch rm, rmdir und mkdir
 #   installiert werden.
 # - Es wird ein Verzeichnis mit verschiedenen Dateien, die nicht im
@@ -125,7 +123,7 @@ RC = rc
 RAR ?= rar
 
 CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe
-CONTRIBDATA = fido.pc xpicons.dll xpuu-d.res
+CONTRIBDATA = fido.pc xpicons.dll
 
 endif
 
@@ -204,9 +202,13 @@ export DEBUG
 export contribdir
 export RM
 
+# uucico uebersetzt nicht.
+
+#BIN = maggi ndiff pmconv uucp-fl1 uucico uuzext xp xp-fm xpme yup2pkt \
+#	zfido zpr
 BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
 COMPBIN = $(BIN) docform ihs rc
-RES = xp-d xp-e xpfm-d xpfm-e
+RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
 	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr
@@ -250,6 +252,10 @@ pmconv$(EXE_EXT): pmconv.pas typeform.o xpdatum.o xpdefine.inc \
 	$(PC) $(PFLAGS) $<
 
 rc$(EXE_EXT): rc.pas fileio.o typeform.o xpdefine.inc xpglobal.o
+	$(PC) $(PFLAGS) $<
+
+uucico$(EXE_EXT): uucico.pas fileio.o inout.o resource.o typeform.o \
+	uart.o uucp-g.inc xpfiles.inc
 	$(PC) $(PFLAGS) $<
 
 uucp-fl1$(EXE_EXT): uucp-fl1.pas xpdefine.inc
@@ -1333,7 +1339,7 @@ zmodem.o: zmodem.pas crc.o debug.o timer.o
 
 # Sprachmodule
 
-$(RESFILES): %.res: %.rq
+$(RESFILES): %.res: %.rq rc$(EXE_EXT)
 	$(RC) $<
 
 # Dokumentation
@@ -1440,6 +1446,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.12  2000/10/02 13:38:10  fe
+# Vergessenes nachgetragen.
+#
 # Revision 1.11  2000/10/02 13:07:30  fe
 # uucico-Dateien eingetragen.
 # ungetestete VPC-Unterstuetzung eingebaut.
