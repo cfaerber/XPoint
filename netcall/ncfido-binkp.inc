@@ -462,19 +462,25 @@ var
           TxFilename:=ExtractFilename(OutgoingFiles[0]);
           TxFilenameWithPath:=OutgoingFiles[0];
           Output(mcInfo,'Sending %s',[TxFilename]);
-          TxFileHandle:=FileOpen(OutgoingFiles[0],fmOpenRead);
+          DebugLog('ncfido','BpTransmit: FileAge (Int): ' + IntToStr(FileAge(outgoingfiles[0])),DLDebug);
+          TxFileHandle:=FileOpen(OutgoingFiles[0], fmOpenRead + fmShareDenyWrite);
           OutgoingFiles.Delete(0);
-          if TxFileHandle>0 then begin       // opened ok
+          if TxFileHandle>0 then
+          begin       // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
             // unixtime (seconds since 1970-01-01 00:00)
 
             // temporary
+            try
             DebugLog('ncfido','BpTransmit: FileGetDate (Int): ' + IntToStr(FileGetDate(TxFileHandle)),DLDebug);
             DebugLog('ncfido','BpTransmit: FileGetDate (Str): ' + DateTimeToStr(FileDateToDateTime(FileGetDate(TxFileHandle))),DLDebug);
             DebugLog('ncfido','BpTransmit: FileGetDate (xxx): ' + IntToStr((System.Round(FileDateToDateTime(FileGetDate(TxFileHandle))-25569)*24*60*60)),DLDebug);
 
             TxTime:=System.Round((FileDateToDateTime(FileGetDate(TxFileHandle))-25569)*24*60*60);
+            except
+              TxTime := System.Round((Now-25569)*24*60*60);
+            end;
             OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
             TxState:=TxTryR; result:=Continue;
             end else begin                   // failed to open
@@ -604,6 +610,9 @@ end;
 
 {
   $Log$
+  Revision 1.11.2.6  2003/11/22 21:20:43  mk
+  - more debug information added
+
   Revision 1.11.2.5  2003/11/22 17:27:22  mk
   - added temp debug log to datetime functions
 
