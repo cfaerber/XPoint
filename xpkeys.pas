@@ -202,7 +202,7 @@ begin
         DeleteFile(fn);
       end;
     if auto then
-      if (s='') and not FileExists(AutoxDir+'\*.*') then
+      if (s='') and isEmptyDir(AutoxDir) then
         hinweis(getres(150))   { 'keine Dateien im AUTOEXEC-Verzeichnis vorhanden' }
       else
         xpauto.AutoExec(false);
@@ -248,6 +248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24.2.1  2002/05/26 12:36:52  ma
+  - fixed AUTOEXEC processing
+
   Revision 1.24  2002/02/21 13:52:34  mk
   - removed 21 hints and 28 warnings
 
