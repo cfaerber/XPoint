@@ -1898,24 +1898,26 @@ end;
 { Ist Reverse = true, dann wird aus s die Mailadresse ausgeschnitten }
 function mailstring(s: String; Reverse: Boolean): string;
 const
-  MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@','=','!'];
-  WrongChar: set of Char = ['.', '_', '-'];
+  WrongChar: set of Char = ['.', '_', '*'];
+  ForbiddenChar: set of Char=['(', ')', '<', '>', ',', ';', ':', '\', '[', ']',' '];
 var
   i, j: Byte;
 begin
   i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
-    while (s[i] in MailChar) and ( i > 0) do dec(i); { Anfang suchen... }
-    repeat                           { '.-_' sind am Anfang ungueltig }
+    while (s[i] > ' ') and (s[i] < chr(128)) and 
+     not (s[i] in forbiddenChar) and ( i > 0) do dec(i);   { Anfang suchen... }
+    repeat                                                 
       inc(i);
-    until not (s[i] in WrongChar);
+    until not (s[i] in WrongChar);            { '.-_' sind am Anfang ungueltig }
 
     j := i;
-    while (s[j] in MailChar) and (j <= length(s)) do Inc(j); {Ende suchen...}
-    repeat                                   {.-_ sind am Ende ungueltig}
+    while (s[j] > ' ') and (s[j] < chr(128)) and
+     not (s[j] in forbiddenChar) and (j <= length(s)) do Inc(j);  {Ende suchen...}
+    repeat                                                        
       dec(j);
-    until not (s[j] in WrongChar);
+    until not (s[j] in WrongChar);                    {.-_ sind am Ende ungueltig}
 
     if Reverse then
     begin
@@ -2134,6 +2136,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/03/21 18:45:04  jg
+  - Mailstring: RFC-Konforme(re) Erkennung
+
   Revision 1.21  2000/03/14 15:15:36  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
