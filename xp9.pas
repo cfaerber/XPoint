@@ -181,7 +181,8 @@ var d         : DB;
             dbRead(d,'Kommentar',s3);
             dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
-            if nt=40 then begin
+            if nt=40 then
+            begin
               dbRead(d,'dateiname',fn); { Pseudo-Netztyp RFC/Client }
               ReadBox(nt,fn,boxpar);
               if (nt=40) and Boxpar^.pppMode then nt:=41; 
@@ -1188,10 +1189,12 @@ restart:
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
     else      if not pppm then boxpar^.pointname:=''
-              else begin 
+              else
+              begin
+                b := cpos('@', eMail);
                 boxpar^.pointname:=mid(email,b+1);
                 truncstr(boxpar^.pointname,min(25,cposx('.',boxpar^.pointname)-1));
-                end;
+              end;
     end;
   dbWrite(d,'Pointname',boxpar^.pointname);
   dbFlushClose(d);
@@ -1219,6 +1222,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.36  2001/09/07 01:42:01  mk
+  - minior changes: some numeric constants do labled constants, const-parameter
+
   Revision 1.19.2.35  2001/09/06 18:43:44  mk
   - fixed big bug in get_first_box: variable b was not initialized
 

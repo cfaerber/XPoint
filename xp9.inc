@@ -189,12 +189,9 @@
 
 
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
-                     PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; Titel:String);
+                     PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; const Titel:String);
   var x,y,b:byte;
-  label restart;
   begin
-  restart:
-
     dialog(66,20,Titel,x,y);   { 'Client-Einstellungen' }
   
     maddstring(3,2,getres2(920,81),name,20,20,              { 'Server' }
@@ -275,10 +272,10 @@
       nt:=nt_Netcall
     else begin
       dbRead(d,'netztyp',nt);
-      if (nt=40) and pppm then nt:=41;
+      if (nt=nt_uucp) and pppm then nt:=nt_uucp_c;
       end;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
-    if nt<>41 then
+    if nt<>nt_uucp_c then
     begin
       pppM:=false;
       pp:='';
@@ -1835,15 +1832,15 @@
       dbRead(d,'netztyp',nt);
       dbread(d,'dateiname',fn);
       ReadBox(nt,fn,boxpar);
-      if (Boxpar^.pppMode) and (nt = 40) then nt:=41;  
+      if (Boxpar^.pppMode) and (nt = nt_UUCP) then nt:=nt_uucp_c;
       nt1:=nt;
       dbRead(d,'boxname',box);
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
          ReadJN(getreps2(929,5,box),true) then begin
                        { 'Mîchten Sie den Netztyp fÅr %s wirklich Ñndern' }
-        Boxpar^.pppMode:=nt=41;
-        if nt=41 then nt:=40;
+        Boxpar^.pppMode:=nt=nt_uucp_c;
+        if nt=nt_uucp_c then nt:=nt_UUCP;
         WriteBox(fn,BoxPar);
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
@@ -1863,6 +1860,9 @@
 
 {
   $Log$
+  Revision 1.10.2.47  2001/09/07 01:42:01  mk
+  - minior changes: some numeric constants do labled constants, const-parameter
+
   Revision 1.10.2.46  2001/09/06 19:12:32  mk
   - fixed use of not initialized variable nt in NewBox
 
