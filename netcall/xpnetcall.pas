@@ -1001,11 +1001,11 @@ begin                  { function Netcall }
 
   Debug.DebugLog('xpnetcall','testing buffers',DLInform);
   if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
-    trfehler1(710,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
+    trfehler1(748,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
   if FileExists(eppfile) and (testpuffer(eppfile,false,ldummy)<0) then begin
-    trfehler1(710,eppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
+    trfehler1(748,eppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
   if not relogin and ((not PerformDial) or (boxpar^.sysopinp+boxpar^.sysopout=''))
@@ -1399,6 +1399,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2002/02/06 21:32:56  mk
+  - fixed resource 10700,10 (now 10700,48)
+
   Revision 1.46  2002/01/21 23:30:13  cl
   - post-3.40 merge fixes
 

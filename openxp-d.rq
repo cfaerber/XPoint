@@ -3334,7 +3334,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 8  Scriptdatei fr Online-Anruf erforderlich!
 9  unbekannte Box: %s
 10 Unbekannter Befehl: %s in %s 
-45 Unbekanntes Dateiformat: %s
 11 Keine Verbindung!
 12 Fehler bei Netcall-Konvertierung
 13 Fehler beim Packen!
@@ -3370,8 +3369,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 42 Unbekannter Fido-Node: %s
 43 Keine Eintr„ge markiert!
 44 Das Ger„t kann nicht angesprochen werden!
+45 Unbekanntes Dateiformat: %s
 46 Ungltige Auswahl
 47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
+48 Sendepuffer (%s) ist fehlerhaft!
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!
 
@@ -3953,6 +3954,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.51  2002/02/06 21:32:55  mk
+# - fixed resource 10700,10 (now 10700,48)
+#
 # Revision 1.50  2002/02/04 17:26:35  mk
 # - after merge fixes
 #

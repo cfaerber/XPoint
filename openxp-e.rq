@@ -3267,6 +3267,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 45 Unknown file format: %s
 46 Invalid selection
 47 Oops - all matching recipients marked/filtered!?  (press F1 for help)
+48 Sendepuffer (%s) ist fehlerhaft!
 # Not available
 99 Function not implemented yet!
 
@@ -3940,6 +3941,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.45  2002/02/06 21:32:55  mk
+# - fixed resource 10700,10 (now 10700,48)
+#
 # Revision 1.44  2002/02/04 17:26:35  mk
 # - after merge fixes
 #
