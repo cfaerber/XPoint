@@ -63,18 +63,10 @@ const
 
       nt_ZConnect = 2;
       nt_RFC      = 40;
-{$IFDEF Linux}
-      uncompress  = '/usr/bin/compress -dvf ';
-      unfreeze    = '/usr/bin/freeze -dif ';
-      ungzip      = '/usr/bin/gzip -df ';
-{$ELSE}
       uncompress  = 'compress.exe -df ';
       unfreeze    = 'freeze.exe -dif ';
       ungzip      = 'gzip.exe -df ';
-{$ENDIF}
-{$IFDEF BP }
       SwapFileName= 'uuz.swp';
-{$ENDIF }
       UUserver    = 'UUCP-Fileserver';
       tspecials   = '()<>@,;:\"/[]?=';       { RFC822-Special Chars    }
       tspecials2  = tspecials+' ';           { RFC1341-Speical Chars   }
@@ -98,7 +90,6 @@ const
       OwnSite     : string[60] = '';        { fÅr EmpfÑngeradresse von Mails }
       shrinkheader: boolean = false;         { uz: r-Schalter }
       nomailer    : boolean = false;
-      OldXPComp   : boolean = false;  { Kompatibel zu altem XP 3.12 (F-TO) }
 
       tText       = 1;        { Content-Types: plain, richtext       }
       tMultipart  = 2;        { mixed, parallel, alternative, digest }
@@ -147,11 +138,7 @@ type  OrgStr  = string[orglen];
                   absender   : string[realnlen];
                   datum      : string[11];    { Netcall-Format }
                   zdatum     : string[22];    { ZConnect-Format }
-{$IFDEF BP }
                   pfad,pfad2 : string;        { Netcall-Format }
-{$ELSE }
-                  pfad       : HugeString;        { Netcall-Format }
-{$ENDIF }
                   msgid,ref  : string[midlen];{ ohne <> }
                   ersetzt    : string[midlen];{ ohne <> }
                   addrefs    : integer;
@@ -355,9 +342,7 @@ begin
         if switch='lfn' then
           EnableLFN else
         if switch='r' then
-          shrinkheader:=true;
-        if switch='312' then
-          OldXPComp := true;
+          shrinkheader:=true
         end
       else
         if source=''  then source:=ustr(paramstr(i)) else
@@ -487,11 +472,6 @@ end;
 { --- Shell --------------------------------------------------------- }
 
 procedure shell(prog:string; space:word);  { Externer Aufruf }
-{$IFNDEF BP }
-begin
-  Exec(prog, '');
-end;
-{$ELSE }
 {$ifndef ver55}
   const freeptr : pointer = nil;
 {$endif}
@@ -618,11 +598,9 @@ var regs  : registers;
 
 begin
   doserror:=0;
-  {$IFDEF BP }
   if maxavail<$8000 then
     writeln('Zu wenig freier Speicher fÅr externen Programmaufruf!')
   else
-  {$ENDIF }
   begin
     pp:=pos(' ',prog);
     if pp=0 then para:=''
@@ -709,9 +687,6 @@ begin
     end;
 end;
 
-{$ENDIF }
-
-
 procedure fmove(var f1,f2:file);
 var rr : word;
 begin
@@ -787,9 +762,7 @@ var i  : integer;
 
   procedure wrs(s:Hugestring);
   begin
-    {$IFDEF BP }
     TruncStr(s,253);
-    {$ENDIF }
     s:=s+#13#10;
     wrfs(s);
   end;
@@ -822,16 +795,12 @@ begin
     wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
     if wab<>'' then wrs('WAB: '+wab);
     wrs('BET: '+betreff);
-{$IFDEF BP }
     if pfad2='' then
       wrs('ROT: '+pfad)
     else begin              { Pfad > 255 Zeichen }
       ss:='ROT: ';
       wrfs(ss); wrfs(pfad); wrs(pfad2);
     end;
-{$ELSE } { Unter 32 Bit ist Pfad lang genug }
-    wrs('ROT: '+pfad);
-{$ENDIF }
     wrs('MID: '+msgid);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
@@ -873,11 +842,7 @@ begin
     wrs('X-XP-NTP: '+strs(netztyp));
     attrib:=attrib and not (attrReqEB+attrIsEB);
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then
-      if OldXPComp then
-        wrs('X-XP-FTO: '+fido_to)
-      else
-        wrs('F-FTO: '+fido_to)
+    if fido_to<>''  then wrs('F-FTO: '+fido_to);
     if XPointCtl<>0 then wrs('X-XP-CTL: '+strs(XPointCtl));
     wrs('');
     end;
@@ -1567,7 +1532,6 @@ var   b1,b2,b3,p : byte;
 begin
   if (bytesleft>54) and (bufpos<bufanz-54) then
   asm
-{$IFDEF BP }
       cld
       mov   si,offset buffer
       add   si,bufpos
@@ -1607,46 +1571,6 @@ begin
       jnz   @@1
       mov   byte ptr s[0],72
       add   bufpos,54
-{$ELSE }
-      cld
-      mov   esi,offset buffer
-      add   esi,bufpos
-      mov   edx,18                { 18 byte-Tripel konvertieren }
-      mov   cl,2
-      mov   ebx,offset b64chr
-      mov   edi,offset s
-      inc   edi                   { s[1] }
-@@1:  lodsb                       { Byte 1 }
-      mov   ah,al
-      lodsb                       { Byte 2 }
-      shr   ax,1
-      rcr   ch,1
-      shr   ax,1
-      rcr   ch,1
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 7..2/1 }
-      mov   al,ch
-      shr   ax,cl
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 1..0/1 + Bit 7..4/2 }
-      lodsb                      { Byte 3 }
-      shr   ah,cl
-      shr   ah,cl
-      shl   ax,cl
-      xchg  al,ah
-      xlat
-      stosb                      { Bit 3..0/2 + Bit 7..6/3 }
-      mov   al,ah
-      shr   al,cl
-      xlat
-      stosb                      { Bit 5..0/3 }
-      dec   edx
-      jnz   @@1
-      mov   byte ptr s[0],72
-      add   bufpos,54
-{$ENDIF}
   end else
   begin
     p:=0;
@@ -2103,12 +2027,8 @@ var p,i   : integer; { byte -> integer }
   procedure GetPath;
   begin
     hd.pfad:=s0;
-{$IFDEF BP }
     if manz>0 then hd.pfad2:=smore[1]
     else hd.pfad2:='';
-{$ELSE }
-    if manz>0 then hd.pfad :=hd.pfad + smore[1];
-{$ENDIF }
   end;
 
   procedure GetPriority;  { robo: X-Priority konvertieren }
@@ -2137,7 +2057,6 @@ var p,i   : integer; { byte -> integer }
 
   procedure LoZZ; assembler; {&uses esi }     { LoString(zz);  -  zz<>'' }
   asm
-{$IFDEF BP }
       cld
       mov   si,offset zz
       lodsb
@@ -2150,20 +2069,6 @@ var p,i   : integer; { byte -> integer }
       ja    @@2
       add   byte ptr [si-1],32
 @@2:  loop  @@1
-{$ELSE }
-      cld
-      mov   esi,offset zz
-      lodsb
-      mov   cl,al
-      mov   ch,0
- @@1: lodsb
-      cmp   al,'A'
-      jb    @@2
-      cmp   al,'Z'
-      ja    @@2
-      add   byte ptr [esi-1],32
-@@2:  loop  @@1
-{$ENDIF}
   end;
 
 { read a variable and remove comments }
@@ -3229,12 +3134,8 @@ var hds,adr : longint;
 
   procedure wrbuf(var f:file);
   begin
-  {$IFDEF BP }
     if length(s)<255 then inc(byte(s[0]));
     s[length(s)]:=#10;
-  {$ELSE }
-    s := s + #10;
-  {$ENDIF }
     if outbufpos+length(s)>=outbufsize then
       FlushOutbuf(f);
     FastMove(s[1],outbuf^[outbufpos],length(s));
@@ -3527,6 +3428,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.17  2000/10/18 20:05:16  mk
+  - 312 wieder rausgenommen
+
   Revision 1.35.2.16  2000/10/18 08:49:38  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 
