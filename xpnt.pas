@@ -163,8 +163,8 @@ end;
 
 function ntMIME(nt:byte):boolean;
 begin
-  ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP]) { or
-            (zconnect_mime and (nt in [nt_ZConnect])) }; { !! }
+  ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP])  or
+            (zc_mime and (nt in [nt_ZConnect]));
 end;
 
 function ntBinEncode(nt:byte):boolean;        { Bin„rmails werden uucodiert }
@@ -708,6 +708,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.32  2001/09/08 14:39:57  cl
+  - added ZC_MIME configuration option
+
   Revision 1.31  2001/09/06 22:01:14  mk
   - client mode updates
 
