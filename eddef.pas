@@ -119,6 +119,8 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfSaveQuit    = 125;        { Speichern + Ende               }
        EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
 
+       EditCorrectWorkpos = 127;      { CorrectWorkpos aufrufen }
+
        MaxFindLen       = 30;
        EditMenuMps      = 11;
 
@@ -181,6 +183,9 @@ implementation
 
 {
   $Log$
+  Revision 1.16  2001/10/17 09:39:14  mk
+  - added EditCorrectWorkPos
+
   Revision 1.15  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
