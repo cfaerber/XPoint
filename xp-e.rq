@@ -530,6 +530,7 @@ K (c) '93-96 Peter Mandrella
 26   Send all carbon copies as BCC
 27   at mail as well
 28   ask at Reply-To
+29   don't archive news
 #
 100  68
 101  Address settings (ZCONNECT / RFC)
@@ -554,7 +555,6 @@ K (c) '93-96 Peter Mandrella
 13   remove unnessecary header lines
 14   use references
 15   binary messages as "attachments"
-16   Don't archive news on DejaNews
 17   Magics in <F3> file request
 + 254
 1    Netcall Options
