@@ -22,7 +22,7 @@ uses  xp0,xpcc, xpglobal;
 { Tabelle fÅr IBM -> ISO-Konvertierung }
 
 {     oempf  = '## OriginalempfÑnger:';  - 600 }
-const maxcc  = 50;
+const {maxcc  = 50;}
 
       um     : array[1..7] of char = 'ÑîÅéôö·';
 
@@ -53,6 +53,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/07/30 12:51:08  jg
+  - Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt
+  - Darstellungsbug beim Crossposting an Fido Bretter behoben
+  - 80K mehr Speicher im Editor (3 grosse Arrays im XMS zwischengelagert)
+
   Revision 1.5  2000/04/15 21:44:47  mk
   - Datenbankfelder von Integer auf Integer16 gaendert
 

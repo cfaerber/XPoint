@@ -112,7 +112,7 @@ function pgpo_keytest(var s:string):boolean;
 implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
-     xp_pgp,xp6l;
+     xp_pgp,xp6l,xms;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
@@ -453,10 +453,69 @@ begin
     end;
 end;
 
-
 procedure EditNachricht(pushpgdn:boolean);
 var p      : byte;
     edpush : boolean;
+ 
+    cc_hand,  cc_size : word;
+    ccm_hand,ccm_size : word;
+    ma_hand,  ma_size : word;
+    xmsstored         : boolean;
+
+  procedure store_arrays;     { Arrays ins XMS sichern und Speicher freigeben }
+  var i : longint;
+   n,er : byte; {*} 
+
+    function xms_ok:boolean;    {*} { Debugcode evtl. spaeter entfernen oder ausklammern.} 
+    begin
+      xms_ok:=true;
+      if er=0 then exit
+      else begin
+        xms_ok:=false;
+        hinweis('');
+        hinweis('XMS Fehler: '+strs(n)+','+strs(er)+' '+
+          strs(((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3) +'K');
+        if n=2 then XmsFree(ma_hand);
+        if n>0 then XmsFree(ccm_hand);
+        XmsFree(cc_hand);
+        end;  
+    end;
+
+  begin
+    XmsStored:=false;
+    if xmstest and (xmsavail > ((sizeof(cc^)+sizeof(ccm^)+sizeof(marked^)) div 1024) +3)
+    then begin
+      cc_size:=sizeof(cc^);
+      cc_hand:=XmsAlloc(sizeof(cc^) div 1024 +1);
+      if xmsresult=0 then XmsWrite(cc_hand,cc^,0,sizeof(cc^));
+ {*}  n:=0; er:=xmsresult;
+      ccm_size:=sizeof(ccm^); 
+      ccm_hand:=XmsAlloc(sizeof(ccm^) div 1024 +1);
+      if xmsresult=0 then XmsWrite(ccm_hand,ccm^,0,sizeof(ccm^));
+ {*}  inc(n); inc(er,xmsresult);
+      ma_size:=sizeof(marked^); 
+      ma_hand:=XmsAlloc(sizeof(marked^) div 1024 +1);
+      if xmsresult=0 then XmsWrite(ma_hand,marked^,0,sizeof(marked^));
+ {*}  inc(n); inc(er,xmsresult);
+ {*}  if not xms_ok then exit;
+      XmsStored:=true;
+      dispose(ccm); dispose(cc); dispose(marked);
+      end; 
+  end;     
+
+  procedure get_arrays;       { Arrays neu Anlegen und aus XMS einlesen }
+  begin
+    if XmsStored then begin
+      new(marked); new(cc); new(ccm); 
+      XmsRead(cc_hand,cc^,0,cc_size);
+      XmsRead(ccm_hand,ccm^,0,ccm_size);
+      XmsRead(ma_hand,marked^,0,ma_size);
+      XmsFree(ma_hand);
+      XmsFree(ccm_hand);
+      XmsFree(cc_hand);
+      end;
+  end; 
+
 begin
   edpush:=not editvollbild and
      ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
@@ -483,9 +542,11 @@ begin
     end;
   if pushpgdn then pushkey(keycpgd);
   if exteditor<3 then EditSetBetreff(betreff,betrlen);
+  store_arrays;
   editfile(datei,true,
            (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
            iif(editvollbild,0,2),umlaute=1);
+  get_arrays; 
   if exteditor<3 then betreff:=EditGetbetreff;
   if edpush then begin
     moff; wpop; mon;
@@ -1120,7 +1181,7 @@ fromstart:
     fidoam:=ntEditBrettempf(netztyp) and not pm;
     bboxwid:=min(betrlen,54);
     showempfs:=min(cc_anz,15);
-    diabox(bboxwid+19,iif(fidoam,9,7+showempfs),typ,x,y);
+    diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
     mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empf„nger  ' }
     attrtxt(col.coldiahigh);
     moff;
@@ -2132,6 +2193,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.3  2000/07/30 12:51:07  jg
+  - Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt
+  - Darstellungsbug beim Crossposting an Fido Bretter behoben
+  - 80K mehr Speicher im Editor (3 grosse Arrays im XMS zwischengelagert)
+
   Revision 1.39.2.2  2000/07/01 09:22:58  mk
   - Mailerstringanpassungen
 

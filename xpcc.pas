@@ -22,7 +22,7 @@ interface
 uses  typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
-const maxcc = 50;
+const maxcc = 126;
       ccte_nobrett : boolean = false;
 
 type  ccl   = array[1..maxcc] of AdrStr;
@@ -215,7 +215,7 @@ end;
 
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
 var x,y   : byte;
-    i     : shortint;
+    i     : integer {shortint};
     h     : byte;
     small : string[1];
     t     : text;
@@ -390,6 +390,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.1  2000/07/30 12:51:08  jg
+  - Maximale Anzahl Crossposting-Empfaenger auf 126 gesetzt
+  - Darstellungsbug beim Crossposting an Fido Bretter behoben
+  - 80K mehr Speicher im Editor (3 grosse Arrays im XMS zwischengelagert)
+
   Revision 1.15  2000/05/13 09:14:41  jg
   - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
 
