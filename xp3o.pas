@@ -538,7 +538,6 @@ var fname   : pathstr;
   function ETyp:byte;
   var typ : char;
   begin
-    dbGoTop(mbase); { verhindert internal Error wegen EOF }
     dbRead(mbase,'Typ',typ);
     if (typ='B') and (not IS_QPC(betreff)) and (not IS_DES(betreff)) and
        odd(ExtraktTyp) then
@@ -568,6 +567,7 @@ begin
   else if (art=4) and (aktdispmode<>12) then
     rfehler(303)   { 'Kein Kommentarbaum aktiv!' }
   else begin
+    if (art=2) and dbeof(mbase) then dbgotop(mbase);  { verhindert internal Error wegen EOF }
     new(hdp);
     if art<>1 then fname:=''
     else begin
@@ -1368,6 +1368,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.6  2000/08/05 17:33:46  mk
+  JG: - Bugfix: Fix fuer Internal Error bei Nachricht/Extrakt/Brett
+    sabotierte Nachricht/Extrakt/Nachricht
+
   Revision 1.7.2.5  2000/08/03 14:30:45  mk
   - internal Error bei EType behoben
 
