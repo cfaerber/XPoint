@@ -1,0 +1,651 @@
+From Toast_r@Topmail.de Thu Dec 30 12:42:00 1999
+Newsgroups: de.comm.software.crosspoint
+
+Diese Nachricht war dann auch hinterher auf Löschen gesetzt,
+hat aber offenbar mit dieser fehlt-Geschichte nichts zu tun.
+Bei anderen mit fehlt-Fenster passierte das nicht.
+
+Die schonmal geäusserte Abhängigkeit von der Größe könnte da schon
+eher hinhauen, die auf löschen gesetze Mail hat 95k. Die nächst-
+kleinere, die ich da im Angebot habe ist 22k groß und wurde nicht
+auf löschen gesetzt.
+
+Außerdem wird bei einigen Nachrichten zwar das M im Lister angezeigt,
+das Fenster erscheint aber nicht. Dann wird nur der Plain-Text Teil
+angezeigt.
+
+---------------------
+
+From gohel@basicguru.com Thu Dec 30 01:00:00 1999
+
+Des weiteren ist es mit dem vorliegendem UUZ (auch das von Robert)
+nicht möglich, die eingetroffenen MIME-Parts wieder komplett in
+RFC's zu exportieren, um sie z.B. in einem externen Viewer anzusehen.
+UUZ erstellt immer eine "text/plain" Mail, obwohl das entsprechende
+XP-Boundary vorhanden ist. Dieser Effekt ist mir zwar seit der v3.12
+von UUZ bekannt, ich dachte aber das es einfach am fehlenden bzw.
+noch nicht bekannten XP-Flag für die Rückkonvertierung liegen wird.
+Dem ist aber nun nicht so (Robert, irgendwelche Idden). :-(
+
+---------------------
+
+From: Toast_r@Topmail.de (Christian Dirks)
+Newsgroups: de.comm.software.crosspoint
+Subject: Nochwas für die WishList
+Date: 31 Dec 1999 13:34:00 +0100
+
+Hi *.*,
+
+mir ist da grade wieder ein schon bekanntes, und kürzlich erst
+wieder angesprochenes Übel aufgefallen:
+
+Könnte man dem Editor nicht mal abgewöhnen, ein einzelnes Space
+hinter zwei einsamen '-' in einer Zeile abzuschneiden ?
+
+So riesig kann der Aufwand dafür doch garnich sein, oder ? ;)
+
+
+---------------
+Gabs da eingentlich schonmal 'ne Äußerung von Peter zu, ob die Y2K-Fixes
+in der 3.2 auch schon drin waren ?
+Ich mache mir da jedenfalls keine großen Sorgen, da ich momentan
+exakt 0 WV-Mails habe ;).
+
+---------------
+Abgeschickt von Helmut Guetschow am 01 Januar, 2000 um 09:46:10
+
+Hallo!
+
+Kann man hier auch noch Vorschläge für XP3.20 los werden?
+
+Gleich mal das für mich wichtige:
+
+-config/optionen/Allgemeines/Quote-Zeichen:
+sollte für öffentliche Nachrichten unter edit/gruppen
+festlegbar sein.(Grund: Wer über ein Fidogate ins Usernet schreibt, kann beim quoten zwischen >HG im Fido und nur > im Usenet entscheiden.
+
+-unter edit/gruppen sollte damit auch festlegbar sein das beim quoten, immer X-XP-FTO: All gesetzt wird.
+
+-Systemlast bleibt trotz Parameter /w auf 100% (Aber auch ashcon bei 3.12.
+
+MfG HG
+
+--------------
+
+From AvataR@AvataR-DC.de Fri Dec 31 17:13:00 1999
+Newsgroups: de.comm.software.crosspoint
+Subject: [XPDEV] Wunsch für Nachrichtenanzeige
+From: AvataR@AvataR-DC.de (Garvin Hicking)
+Date: 31 Dec 1999 17:13:00 +0100
+--------
+Hi!
+
+(Meine erste Mail mit XP 3.20...)
+
+
+Ich verwende ziemlich gerne das Programm XPure, was unter anderem die
+Signaturen abtrennt und im Header speichert. Diesen filtere ich dann
+später per CS/XPF und erzeuge einen neuen Header "X-XP-HOMEPAGE", in dem
+etwaige URLs gespeichert werden. Zudem werden (oder eher: sollen) alle
+auftauchenden URLs im Body in den Header "X-XP-URLS" geschrieben werden,
+woran ich derzeit arbeite.
+
+Jetzt mein Wunsch: Es wäre ganz schön, wenn ich in in Config/Anzeige/Kopf
+nicht nur vordefinierte Einträge einfügen könnte, sondern auch meine
+selbstgenerierten Header. So würde ich gerne die obigen aufgeführten
+Header auch in diese Liste an einer bestimmten Position einfügen können.
+
+Mit dem XP-Source kann ich selber nicht viel anfangen, soweit reichen
+meine Schul-Pascalkenntnisse leider nicht. Auch in Blick in den Source hat
+in mir das Grauen hervorgehoben, daher wäre es sehr nett, wenn das jemand
+für mich einbauen könnte. Oder mir sagt jemand, an welcher Stelle in den
+Sourcen auf mein Problem bezogen wichtig sind, dann würde ich mich halt
+selber dahinter setzen...
+
+Vielen Dank jedenfalls!
+
+
+--
+Bye,                 --[=  AvataR@AvataR-DC.de (PGP available)  =]--
+Garvin               --[=    http://www.AvataR-DC.de/AvataR/    =]--
+
+
+
+-----------------
+From AvataR@AvataR-DC.de Fri Dec 31 17:26:00 1999
+Newsgroups: de.comm.software.crosspoint
+Subject: [XPDEV] Bug: Anzeige von Multiparts
+From: AvataR@AvataR-DC.de (Garvin Hicking)
+Date: 31 Dec 1999 17:26:00 +0100
+--------
+Hi!
+
+Ich habe mir die Escape-Taste auf die Backspace-Taste umgemappt (ist für
+mich angenehmer zu erreichen als mit der Hand nach oben links zu
+schnellen). Das Makro "Ctrl-H" => "^[" ist aktiv für das
+Nachrichtenfenster, den Lister und den Archiv-Viewer.
+
+Wenn ich auf eine Multipart-Nachricht gehe, erscheint ja das Fenster zur
+Auswahl des Multiparts - dort gilt jedoch dieses Makro nicht. Da ich
+gewohnheitsmäßig die Escape-Taste garnicht mehr verwende (nur im Editor)
+möchte ich mich ungerne wieder umgewöhnen. Es ist ja gerade angenehm, daß
+man seine individuelle Tastaturbelegung in XP zusammenbasteln kann.
+
+Gibt es eine Möglichkeit, dieses Makro auch in dem Popup gültig zu machen?
+
+--
+Bye,                 --[=  AvataR@AvataR-DC.de (PGP available)  =]--
+Garvin               --[=    http://www.AvataR-DC.de/AvataR/    =]--
+
+---------------
+From ksd@stad.de Sun Jan 02 13:46:00 2000
+To: mk@happyarts.de
+Subject: Re: [XPDEV] Bug in 3.2ß4 und UKAW
+From: ksd@stad.de (Klaus Stadler)
+Date: 02 Jan 2000 13:46:00 +0100
+--------
+Hallo Markus,
+
+
+ich habe bei mir noch einen Fehler gefunden, im Puffer18 liegt eine
+Multipart-Nachricht (Binaer-Fax) wenn ich diese aufrufe wird der gesamte
+Puffer18 angezeigt mit allen Nachrichten die drin stehen.
+
+Die Nachricht hat 128kb wenn ich sie als Puffer speichere sind es 1.2MB
+da alle Nachrichten vom Puffer18 drinhängen.
+
+
+Gruss                                              (66386 St. Ingbert)
+   Klaus
+
+
+------------------------
+
+From kEMAr@lytec.tj Mon Jan 03 01:00:00 2000
+To: mk@happyarts.de
+Subject: mime funktion
+From: kEMAr@lytec.tj
+Date: 03 Jan 2000 00:00:00 +0000
+--------
+
+hejo,
+
+  ich habe ein Problem mit der mime funktion.
+  a) es wird ein Nachspann angezeigt, welcher
+     aus irgendwelchen kompletten Nachrichten
+     besteht, die hinter der mime nachricht
+     im mpuffer kleben
+  b) wenn ich escape druecke aus der auswahlliste
+     fuer die einzelnen mime teile, so wird
+     die nachricht auf loeschen gesetzt
+
+  sowas habe ich schon lange vermisst, mal gucken
+  was ich mit dem schoenen munpack jetzt mache,
+
+cja,
+
+
+_ kEMAr.dESt/ROY
+_ VOiCE 49-341-3013148 fAX 49-341-3013149
+_ httP://lYtEC.tj
+_ LEiPZiG.CONNEWiTZ
+_ iDYLLE LEBT
+
+----------------------------
+
+From m.wege@jpberlin.de Mon Jan 03 18:39:00 2000
+Newsgroups: de.comm.software.crosspoint
+Subject: Meine Wunschliste
+From: m.wege@jpberlin.de (Mark Peter Wege)
+Date: 03 Jan 2000 18:39:00 +0100
+--------
+Liebe XP-Programmierer,
+
+ich habe mal eben eine kleine Wunschliste für XP erstellt. Ich
+finde es toll, daß jetzt doch noch was passiert und freue mich
+auf Bugfixes und neue Funktionen. Ich hoffe meine Wunschliste
+trägt ein wenig zur Kreativität bei. Vielleicht könnte ja jemand
+eine allgemeine Wunschliste mit Bearbeitungstatus führen.
+
+Mark
+
+
+Adressbuch
+Integration der Kurznamenfunktion ins Adressbuch
+Verwendung von Kurznamen im Absenderfenster unter u-PM-Antworten-
+An möglich
+Ausdruck von Adressbüchern(teilen), Kurznamen möglich
+Ansonsten: Komplett neues Adressbuch, daß die umfangreiche
+Verwaltung ermöglich, d.h.
+        - mehrere Adressen für eine Person
+        - Zusätzliche Angaben (Tel, Fax, Post, Homepage ...)
+          möglich
+        - Zuordnung von Adressen zu Gruppen (Fußballfan, XP
+          -Programmierer, alte Schulklasse) möglich
+        - Im- und Export in andere Adressbücher
+        - [x] Kästchenauswahl, ob Binär-Nachrichten per UUDEC
+          oder als MIME verschickt werden können.
+        - ggf Übernahme und Entfernung der nervigen VCARD (bloß
+          keine Funktion einbauen, die diese ermöglichen)
+        - Umfangreiche Killfile, Scoringfunktion
+Drucken
+Verbesserung der Druckfunktion unter Windows, d.h. es sollte ein
+Seitenende hinterhergesandt werden, damit Win vollständig druckt.
+
+Bugs
+Beseitigung des Cancelbugs (XP kann cancels ausführen, tut dies
+aber nur unter UUCP. Es gibt einen Eingangsfilter, der diesen BUg
+beseitigt, so daß XP dies auch unter Zconnect tut.
+
+Beiseitigung des ungelesen-Bugs (Bretter werden als ungelesen
+angezeigt, obwohl dort keine ungelesenen Nachrichten mehr sind,
+falls nötig kann ich ggf. reproduzierbare Situationen
+beschreiben)
+
+Speicherproblem unter Windows beseitigen. Ich bekomme immer
+wieder Meldungen, daß XP nicht genügend Speicher unter Win hat,
+obwohl ihm doch ausreichend zur Verfügung steht und eigentlich
+nur kurze Nachrichten bearbeitet werden sollen. Nach einem
+Neustart von XP funktioniert es wieder.
+
+Sendefunktionen
+- Zieladresse sollte im Absendefenster veränderbar sein
+- setzen von Expire, Supersedes (natürlich auch: Auswerten dieser
+  Funktionen durch XP)
+- Versenden von Eigencancels
+- Einstellen einer anderen Absendeadresse (es gibt mittlerweile
+  Boxen die dies erlauben).
+- Autoversandt: Es sollten weitere Einstellungen machbar sein:
+Empfangsbesätigung anfordern, supersedes, expire, welchen
+Absender soll die Nachricht haben und die Möglichkeit an mehrere
+Empfänger/ Bretter zu schicken.
+- Makro, daß es ermöglicht immer eine aktuelle ASCII-Version des
+PGP-Public-Keys in der EB zu versenden.
+- Möglichkeit des setzens des X-No-Archive-Flags bei ausgehenden
+Nachrichten
+
+Bretter
+- Integration der Funktionen des Programmes Besttext (ist ein nettes
+Tool, das sich auf den Seiten der OLN findet). Damit kann mensch sich
+im Einzelfall oder regelmäßig Brettinhaltslisten anfordern. Besttext
+wertet diese listen aus und ermöglicht es gezielt einzelne Nachrichten
+zu bestellen. Am Besten wäre es, wenn künftig im Brettmanager die
+Möglichkeit bestünden zu wählen zwischen kompletter Brettbestellung
+und regelmäßiger Bestellung der Inhaltslisten.
+- Unterstützung von Supersedes, Expire, Cancels (Versendung von
+Eigencancels, Einstellung ob Cancels ausgeführt werden oder nicht)
+
+Archiv/ Backupfunktion
+Wer wenig löscht hat schnell eine ziemlich umfangreiche
+Datenbank. Das geht bei der Reorganisation und anderen Funktionen
+ziemlich auf die Geschwindigkeit. Bei mir taucht der Wunsch auf
+nach einem praktischen Backupsystem, daß es zum einen ermöglicht
+Teile der Datenbank entweder zeitlich oder inhaltlich (nach
+Brettern) aus der Hauptdatenbank, die XP fürs suchen/
+reorganisieren benutzen auszuklinken und nur bei Bedarf
+zuzuschalten. Des weiteren würde ich mir eine Backupfunktion
+wünschen, die es ermöglicht regelmäßig (halb)automatische Backups
+vom Datenbestand und vom Adressbuch zu generieren. Am Besten so,
+daß beim ersten Mal eine Komplettkopie erzeugt wird und bei den
+darauffolgenden Backups nur die Veränderungen gesichert werden.
+Die Backups müßten dann komfortabel wieder einlesbar sein
+
+Was mir noch einfällt:
+- Integration von PPXP (kleines Tool, daß beim Start PGP-Passwort
+abfragt und nach dem Beenden aus dem Speicher löscht.
+- echte Multiuserfähigkeit mit eigenem Adressbuch, Sigs, eigener
+gelesen-ungelesen-Halten etc-Bestand für jeden Nutzer ...
+- Die Möglichkeit XP übers Netz zu starten, ohne das es Probleme
+mit Laufwerksbuchstaben gibt
+- komplexere Suchfunktionen unter XP-Suchen
+- Längere Programmnamen unter Config-Tasten erlauben
+- Es werden bei XP teilweise überflüssige Unterverzeichnisse
+generiert, die nicht jeder Nutzer braucht (z.B. fido). Dies
+könnte abschaltbar sein
+- Verwendung eines Eingangsfilters bei XP-Import-Puffer möglich
+- Erkennung und Verwendung von Follow-Up2Poster
+- Zwei Points am selben System betreibar
+
+
+
+Mark
+--------------
+
+From robo@munich.netsurf.de Mon Jan 03 01:00:00 2000
+To: mk@happyarts.de
+Subject: Re: XP 3.20 Binary
+From: robo@munich.netsurf.de (Robert Boeck)
+Date: 03 Jan 2000 00:00:00 +0000
+--------
+
+EMP: pm@daisy.de
+EMP: /de/comm/software/crosspoint
+ABS: rene@flatta.in-berlin.de (René Kacza)
+BET: Re: AUFRUF! Bugliste/Wunschliste XP
+EDA: 19980304000000W+1
+MID: LAST-Liste.Bug.u.Wunsch19980304000000@flatta.in-berlin.de
+BEZ: 6lNncLtU2TB@flatta.in-berlin.de
+ROT: flatta.in-berlin.de!rene
+ORG: Private Site from IN-Berlin
+POST: Wernsdorferstrasse 43; 15751 Niederlehme
+TELEFON: V+49-3375-503337Q
+X_C:
+X-XP-NTP: 40
+X-Charset: ISO-8859-1
+X-XP-BOX: kwcom
+X-XP-ARC:
+U-Supersedes: <6mpbyZuE2TB@flatta.in-berlin.de>
+LEN: 12246
+
+Anbei die dritte und letzte Liste, die hier zusammengestellt ist.
+Alle User haben eine EB: von mir bekommen, teilweise sogar Antworten.
+
+Die folgende Liste hat von mir eine Wertung bekommen.
+Die Wertung erfolgt mit 1 - 5 abwaerts nach jedem horizontalen
+'+++++++++++++++++++++++++++' :-))
+(1 ganz wichtig, 5 geht nicht oder nicht zwingend notwendig)
+
+Die Liste ist vollstaendig. Die BUG-Liste aus meiner FAQ ist enthalten und
+ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
+
+1 ++++++++++++++++++++++++++++
+
+- Unterstuetzung langer Inhalte in den Headerzeilen.
+  - Mindestens 256Bytes ; besser 512
+  - ROT: auf VOLLE Laenge belassen
+  - UUZ volle Dekodierung von codierten Headerzeilen
+
+- Script fuer PPP-Verbindungen ohne Umwege ueber UKA_PPP
+  - Beziehungsweise bessere Schnittstelle dazu
+  (Was nicht abwertend fuer Karl-Heinz sein Engagement
+   angesehen werden soll, aber ...)
+
+- Suchfunktion
+  - nach MSG-ID
+    (Idealerweise in der Form, dass man im Lister die MsgID nur noch
+     markieren muss und dann suchen kann)
+
+- FIDO-Filerequest ueber alternative Rufnummer
+- FIDO-Auswertung des X75-Flag in der Nodeliste
+
+- irgend eine Moeglichkeit, wie Peter das Programm zur Weiterentwicklung
+  und/oder Pflege freigibt, wenn er selber keine Zeit mehr hat :-(
+
+- Cancel-Unterstuetzung fuer ZC-Points
+
+- Wiedervorlagefunktion funktioniert nach dem 13.12.99 nicht mehr.
+  In den Zusammenhang sollte er XP auf aehnliche Sachen ueberpruefen.
+
+- Compilieren von XP mit neuer CRT-Routine (Pentium-BUG)
+
+- Disku-In auf Mailadressen (zumindest die eigene) bei ZC zulassen.
+
+2 ++++++++++++++++++++++++++++
+- direktes Aufsetzen auf CAPI ohne umstaendliches Fossil...
+
+- Mime-Multipart
+  - QP- und Plaintext-ueberpruefung und nur einen belassen
+
+- Editierbarkeit des EMP: beim Reply
+
+- Verschluesselung der Passwoerter (sowohl im .cfg als auch mit ***
+  unter edit/boxen/edit/
+
+- Autoversand
+  - Festlegen des Usernamens unter dem eine Mail verschickt wird.
+  - erweitern, so dass auch CrossPostings moeglich sind (ist z. B.
+    fuer periodische Announces oder Faqpostings in mehreren Gruppen
+    interessant)
+
+- Entfernung des "Mitternachts-BUG"
+  Wenn man ueber Netcall/Alle mehrere Netcalls macht und das ganze sagen wir
+  um 23.59 Uhr startet und der erste Netcall bis 00.01 Uhr dauert, dann will
+  XP anschliessend 23 Stunden und 59 Minuten warten, bis der naechste
+  Netcall dran ist.
+
+- FIDO Wahlweises beibehalten aller Kludges (auch SEEN-BYs) bei ZFIDO.EXE.
+- UUCP Wahlweises beibehalten aller Headereintraege (auch XREF)
+
+- SAA-konforme Bedienung:
+  - Shift-Cursor: markieren
+  - Shift-Del: ausschneiden
+  - Shift-Ins: einfuegen
+  - Ctrl-Ins: kopieren
+
+- Timingliste
+  - Aufnahme von wartung/Dupekill + wartung /packen
+3 ++++++++++++++++++++++++++++
+- Unterstuetzung des ZC-Maps, dazu auswerten von Your Diff, Your ADD und
+  Your DEL der Box und entsprechendes Eintragen in der Brettliste.
+
+- Autoversand
+  - erweitern, so dass auch CrossPostings moeglich sind
+
+- Suchfunktion
+  - mit Wildcards
+  - mit Verknuepfungen
+
+- Darstellung von markierten Nachrichten in verschiedenen Farben (derzeit
+  nur rot moeglich)
+
+- Bezugsverkettung bei Archivbrettern
+  # wird nicht gehen, weil die datenbank das nicht zulaesst.
+
+- Supersedes + Expiere
+  # geht bereits mit 4DOS und XPfilter fuer UUCP-Points
+
+- Unterstuetzung des OS/2 Clipboards, sofern moeglich
+
+4 ++++++++++++++++++++++++++++
+
+- Wahlweises CarbonCopy EMP: Eintraege als Crosspost-Uebernahme
+  # wird nicht gehen, weil die Funktion dafuer komplett umgeschrieben
+  # werden muss.
+
+- Anzeige der noch unversandten Mails und News
+
+- Mime-Multipart
+  - evtl. einbinden eines (DOS-)Browsers (HTML)
+
+- Eine bessere PGP Schluesselverwaltung waere auch nicht schlecht.
+  - alte Schluesseleintraege entfernen.
+  - PGP-Unterstuetzung nach RFC
+  - Signieren auch bei UUCP.
+  # Letzteres geht bereits mittels 4DOS und XPfilter (vgl. FAQ von mir)
+  # allerdings nicht gerade komfortabel
+
+5 ++++++++++++++++++++++++++++
+
+- Mime-Multipart
+  - entfernen binaerer Daten
+  # Wird bisher durch PKTXcode uebernommen, daher nicht zwingend
+  # erforderlich.
+
+- optionales abschalten der automatischen Neuanlage von eMail Empfaengern
+  # laesst sich mit Eingangsfilter bereits bewerkstelligen
+
+- eine Zeitfalle, nachdem spaetestens XP im autostart abgebrochen wird
+  z.B:   xp ... /autostart=0100-0400-0059 ...
+  sodas der Autostart innerhalb der Zeit 0100-0400 fuer Max: 0059
+  arbeitet und danach auflegt und Ruhe ist.
+  # Das nehme ich an, wird nicht machbar sein.
+  # Der Vorschlag der kam: ueber die interne Uhr das zu machen wird Peter
+  # vorgelegt, allerdings denke ich das der Aufwand recht gross ist...
+
+- Unterdruecken der (korrekt mit "-- " abgetrennten) Signatur beim Quoten
+  (PMs und AMs). Evtl. als optionales Feature.
+  # Halte ich persoenlich nicht fuer so sehr wichtig, da ich selbst mehrfach
+  # probiert hatte sigkill einzusetzen und eine Rate von weniger als 15%
+  # an richtigen signaturen vorhanden war..
+
+---Ende
+
+
+Hier weitere Vorschlaege, die nicht als Stichpunkt aufzufuehren waren:
+
+die Moeglichkeit, ein Programm oder eine Batchdatei aufzurufen,
+direkt bevor XP-FM.EXE gestartet wird, d. h. nachdem FIDO.CFG
+bereits erstellt wurde. Eine Batchdatei im Ausgangsfilter
+hilft da nichts, denn zu diesem Zeitpunkt ist FIDO.CFG noch nicht
+erstellt.
+
+Die Moeglichkeit, fuer jeden User einzustellen, welche Quoteschablone,
+Header und Footer verwendet werden sollen. Das koennte auch ueber Gruppen
+geloest werden, wie es eben bei den XP-Brettern auch moeglich ist. Damit
+man eben bei privaten Mails z. B. an Internetadressen einen anderen Footer
+und eine andere Quoteschablone benutzen kann als bei Netmails im Fido.
+
+Wenn man im Fido Net aktiv ist und mehrere Boxen betreibt, werden die
+Bretter (Echos) nicht richtig angelegt.
+Bestelle ich fuer 295:405/200 ein Brett, so wird es bei mir zwar angelegt,
+es wird aber immer die Stammbox eingestellt.
+Der Fehler duerfte Peter eigentlich bekannt sein..
+
+Wenn der Umweg ueber UKA_PPP weiterhin gegangen werden soll, waere es
+nicht schlecht, wenn alle oeffentlichen (!) Postings ueber den in XP/
+UKA_PPP eingestellten Provider automatisch nach dem Versand (aus der
+XP-internen Datenbank) geloescht werden koennten (evtl. gruppenweise
+einstellbar).
+
+Mein Vorschlag fuer eine winzigkleine Aenderung waere also, in der User-
+Uebersicht zusaetzlich der ESC-Taste die gleiche Bedeutung zu geben, wie
+der Tab-Taste. Das ist alles. Bisher hat sie an dieser Stelle gar keine
+Bedeutung. Das waere auch abwaertskompatibel. Die bisher gewohnte
+Bedienung bleibt vollstaendig erhalten. Keiner muesste sich umstellen.
+
+Die Moeglichkeit, eine Mail aus einem persoenlichen Ordner in einen anderen
+verschieben zu koennen (so aehnlich wie das "Zusammenlegen von Ordnern/
+Brettern", aber eben nicht fuer alle, sondern nur fuer vereinzelte -
+markierte - Nachrichten).
+
+Wenn man (im Usenet) eine Mail erhaelt, die mehr als einen Empfaenger hat
+(Headerzeile OEM oder KOP), sollte man ein technisch gleichwertiges Reply
+erzeugen koennen. Der Umweg ueber Verteiler ist umstaendlich und technisch
+nicht gleichwertig ich wuerde mir endlich eine echte Multi-User-Faehigkeit
+wuenschen:
+-Master-Password
+-jeder User meldet sich mit eigenem Passwort an
+-der angemeldete User hat Zugriff nur auf das eigene Postfach, aber auf
+ alle news
+-fuer Selbstgeschriebenes wird die fuer den angemeldeten User definierte
+ Absenderangabe und Signatur eingeschaltet
+-das Ganze abschaltbar fuer die, die es nicht brauchen
+# Die Multi-Userfaehigkeit wird es wohl nicht geben;(
+
+
+
+alle oeffentlichen (!) Postings ueber den in XP/UKA_PPP eingestellten
+Provider automatisch nach dem Versand (aus der XP-internen Datenbank)
+geloescht werden koennten (evtl. gruppenweise einstellbar).
+# Wobei ich mich daran erinnern kann, das wir soetwas schon mal
+# als Diskussion hatten. Das loeschen aus der Datenbank bringt nichts.
+# Das Problem:
+  MID: xyz@foo.bar
+  wird beantwortet und zu:
+    BEZ: xyz@foo.bar
+    MID: xp-user@message-id
+  auf dem Server wird es dann:
+    BEZ: xyz@foo.bar
+    MID: server@mesaage-id
+Alle nun eintreffenden Nachrichten als F#up auf diesen Artikel werden nicht
+mehr markiert....(vorausgesetzt, man hat einen echten FQDN)
+Die Bezugsverkettung geht auch komplett kaputt, da XP nach dem loeschen des
+eigenen Artikels folgendes in seiner Datenbank vorfindet:
+
+MID: XYZ@foo.bar
+
+  BEZ: server@message-id
+  MID: irgendwas@irgendwo
+
++ BUGS aus der technischen XP-FAQ
+
+- Das Brett /Netzanruf wird erst dann (im Ungelesen-Modus) markiert,
+  wenn eine Reorg durchgefuehrt wurde.
+
+- Beim Versenden von Mails mit Kopien an andere User wird bereits beim
+  Versenden die Trennung an die einzelnenen Empfaenger durchgefuehrt.
+
+- Beim Lesen der Nachrichten springt XP von der letzten Zeile immer auf
+  die zweite. Die erste NAchricht bleibt als ungelesen/unbearbeitet
+  liegen.
+
+- Ein ganz besch... Bug: die F4-Taste!
+  Wer nachricht/aendern/gelesen macht und danach F4 drueckt, bis alle Nach-
+  richten weg sind, hat keine Probleme - wehe aber, es ist keine Nachricht
+  mehr zu sehen!!! - XP stuerzt mit einem Datenbankfehler ab.
+
+- Ein noch schlimmerer BUG:
+  Wer bei RFC/UUCP die mailer-zeile loescht, bekommt zum Schluss Mails
+  raus, die nicht mehr RFC-konform sind. Der BUG ist Peter bekannt und
+  ich habe seine Zusicherung, das er sich darum kuemmert.
+
+  Bestimmte Headerkennungen, die in XP selbst vorhanden sind, werden nicht
+  nach rfc konvertiert. Diese sind vor allem POST: und TEL:
+# Eine Abhilfe koennen hier die Files news.rfc und mail.rfc im XP-
+# Verzeichnis schaffen.
+
+ [Sysopmode - UUCP/RFC]
+ In der Datei uunummer.dat wird 'der Name' der ausgehenden Datei in
+ Form einer dezimalen Zahl gespeichert und bei jedem Netcall nicht nach
+ oben gezaehlt.
+
+
+ [FIDO]
+Fuer Echomail wird von ZFIDO.EXE die Origin-Zeile ausgewertet, um daraus die
+Absende-Adresse zu gewinnen. Normalerweise folgen auf diese Zeile nur noch
+Steuerzeilen, der Konverter schneidet deswegen eine Mail ab dieser Zeile ab.
+
+
+Einen Fehler gibt es auch, wenn eine oeffentliche Mail ohne ein Origin
+konvertiert werden soll. Wie oben geschrieben existiert zwar ein starrer
+Header, in der auch der Absender gespeichert ist, aber aus einem mir nicht
+ersichtlichen Grund steht als Absender-Adresse immer nur die Node-Nummer des
+Nodes, der dieses Paket zuletzt bearbeitet hat. Ohne das Origin muss man also
+raten, die Adresse versuchen aus der MsgID (MID) zu gewinnen oder aehnliches,
+ZFIDO.EXE erkennt dies aber nicht.
+
+Vorsicht ist weiter geboten, wenn man innerhalb von einer Mail ein Ascii-0
+stehen hat. Wenn man unbekannte Text-Dateien als Nachricht verschicken will,
+kann das unter unguenstigen Umstaenden der Fall sein.
+ZFIDO.EXE bricht die Konvertierung der Mail ab diesem Zeichen ab.
+Auch in der anderen Konvertierrichtung macht Ascii-0 Probleme, u.U. kann
+die Konvertierung des ganzen Paketes abgebrochen werden.
+
+
+
+  [ PGP  --  Danke an Marcus C. Gottwald ]
+
+  Drei Verbesserungsvorschlaege, XP und PGP betreffend:
+  I)
+  Die  Angabe unter Config/Extern/PGP/User-ID sollte auch  zur
+  Auswahl   des   passenden   Secret-Keys   verwendet   werden
+  (Parameter -u). Bisher wird fuer diese Auswahl kein Parameter
+  uebergeben, also immer der letzte Key im secring.pgp benutzt.
+  II)
+  Die Passage aus der XPOINT.DOC, Zeile 4606ff, ist nicht
+  ganz korrekt:
+  Es sollte erklaert sein, dass die EmpfID von Anfuehrungszeichen
+  umschlossen wird und nicht von spitzen Klammern.
+
+  Notwendig wird dies, wenn eine  an  einen  Alias  geschickte
+  Mail fuer mehrere Empfaenger codiert werden soll. Im Passwort-
+  Feld muss dann naemlich stehen:
+
+  ID_User_A" "ID_User_B
+
+  Auch sollte der  Befehl  zum  Key-Einlesen  nicht  "pgp  -ka
+  <ED>",  sondern nur "pgp <ED>" sein. ASCII-armored Keys (und
+  nur die werden ja eigentlich verschickt) werden sonst  nicht
+  als solche erkannt.
+
+  III)
+
+  Verschluesseln bei Vertretern ermoeglichen, und zwar nicht nur
+  fuer eine ID, sondern fuer mehrere.
+
+
+--
+  die technische XP-FAQ:
+  http://www.IN-Berlin.de/User/flatta/index.html
+
+

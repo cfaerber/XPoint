@@ -1,0 +1,443 @@
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ --------------------------------------------------------------- }
+
+{ DOS-Shell }
+
+function repfile(var prog,name:string):string;
+var p : byte;
+begin
+  p:=pos('$FILE',ustr(prog));
+  if p>0 then
+    repfile:=left(prog,p-1)+name+copy(prog,p+5,127)
+  else
+    repfile:=prog+' '+name;
+end;
+
+
+procedure Resiprog; far;
+begin
+  if ExecTestres then
+    interr(getres(109));  { Residentes Programm geladen! CrossPoint wird beendet.. }
+end;
+
+
+procedure resetvideo; forward;
+
+{ prog:  Programmname. Falls nicht per PATH erreichbar, dann wird
+         ein COMMAND /C gestartet
+  space: benîtigter Speicherplatz in KByte (wenn weniger Platz ist,
+         wird aber auch nur weniger freigemacht..). 640 -> Maximum.
+  cls:   0=nicht lîschen; 1=lîschen, 2=lîschen+Hinweis, 3=Mitte lîschen
+         -1=lîschen/25 Zeilen, 4=lîschen/nicht sichern,
+         5=nicht lîschen/nicht sichern }
+
+const trackpath : boolean = false;
+
+
+procedure shell(prog:string; space:word; cls:shortint);  { Externer Aufruf }
+var sm2t     : boolean;
+    _xp_     : string[4];
+    maussave : mausstat;
+    sp       : scrptr;
+    de       : integer;
+{$IFDEF OPro }
+    PathName       : Dos.ComStr;
+    CommandTail    : Dos.ComStr;
+    OldEndOfHeap   : Pointer;
+{$ENDIF }
+
+  procedure ShowPar;
+  var w1,w2    : word;
+      x,y,p,p2 : byte;
+  begin
+    savecursor;
+    cursor(curoff);
+    w1:=windmin; w2:=windmax;
+    window(1,1,80,25);
+    if length(prog)<=74 then
+      message(prog)
+    else begin
+      msgbox(76,4,'',x,y);
+      p:=blankposx(prog);
+      p2:=71;
+      while prog[p2]<>' ' do dec(p2);
+      mwrt(x+3,y+1,left(prog,p2-1));
+      mwrt(x+3+p,y+2,mid(prog,p2+1));
+      end;
+    wkey(15,false);
+    windmin:=w1; windmax:=w2;
+    closebox;
+    restcursor;
+  end;
+
+begin
+  de:=0;
+  if (ParDebFlags and 1<>0) or ShellShowpar then
+    ShowPar;
+  if maxavail<$4000 then
+    rfehler(7)  { Zu wenig freier Speicher fÅr externen Programmaufruf! }
+  else begin
+    { trackpath:=(dospath(0)+'\'=OwnPath) or (dospath(0)=shellpath); }
+    getmaus(maussave);
+    xp_maus_aus;
+    if (cls<>4) and (cls<>5) then begin
+      sichern(sp);
+      savecursor;
+      end;
+    TempClose;
+    freehelp;
+
+    { -> evtl. normaler Video-Mode }
+    sm2t:=m2t;
+    attrtxt(7);
+    case abs(cls) of
+      1,2,4 : begin
+                clrscr;
+                m2t:=false;
+              end;
+      3   : begin
+{$IFNDEF WIN32}
+              clwin(1,80,4,screenlines-2);
+{$ENDIF}
+              gotoxy(1,5);
+            end;
+    end;
+    if (cls=2) or (cls=-1) then begin
+      if shell25 and (screenlines>25) then
+        setvideomode(3);
+      if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurÅck zu CrossPoint. }
+      end;
+    cursor(curon);
+
+    if (getenv('XPSWAP')<>'') and validfilename(getenv('XPSWAP')) then
+      ExecSwapfile:=getenv('XPSWAP')
+    else
+      ExecSwapfile:=TempPath+SwapFileName;
+
+    ExecTestres:=ParTestres;
+    _xp_:='[XP]';
+    ExecDeutsch:=deutsch;
+
+    ExecResident:=resiprog;
+    ExecUseEms:=SwapToEms;
+    ExecUseXms:=SwapToXms;
+
+{$IFDEF Opro} { MK 12/99-01/00 }
+    {allocate EMS/XMS/open swap file}
+    if not PrepareExecWithSwap(HeapPtr, ExecSwapfile) then begin
+       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
+       doserror:=0;
+    end else
+    begin
+      {Pathname is the full pathname for COMMAND.COM}
+      PathName := GetEnv('COMSPEC');
+
+      {if Command is empty, we're doing a shell}
+      {we're asking COMMAND.COM to execute the command}
+      CommandTail := '/C '+ Prog;
+
+      {Save the current pointer to the end of the heap}
+      OldEndOfHeap := HeapEnd;
+      HeapEnd := HeapPtr;
+
+      {save current vectors and put originals back}
+      SwapVectors;
+
+      {Call swapping EXEC function}
+      writeln(prog);
+      writeln(pathname);
+      writeln(commandtail);
+      ExecWithSwap(Pathname, CommandTail);
+
+      {restore our vectors}
+      SwapVectors;
+
+      {Put heap end back where it was}
+      HeapEnd := OldEndOfHeap;
+
+      {If we get to here, our function result is in DosError}
+
+      {give back EMS/delete swap file}
+      RemoveExecWithSwap;
+    end;
+{$ELSE }
+    case Xec(prog,space,envspace,_xp_,errorlevel) of
+      ExecSwaperr : begin
+                      tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
+                      doserror:=0;
+                    end;
+      ExecSwapweg : interr(getres(111));  { SWAP-File nicht mehr vorhanden! }
+      ExecSwapre  : interr(ioerror(ioresult,getres(112)));  { Fehler beim Lesen des SWAP-Files }
+    end;
+{$ENDIF }
+    de:=doserror;
+
+    if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then begin
+      if deutsch and (random<0.02) then write('Pressen Sie einen SchlÅssel ...')
+      else write(getres(12));  { Taste drÅcken ... }
+      m2t:=false;
+      pushhp(51);
+      clearkeybuf;
+      wait(curon);
+      pophp;
+      m2t:=true;
+      shellkey:=false;
+      end;
+
+    resetvideo;
+    cursor(curoff);
+    if (cls<>4) and (cls<>5) then holen(sp);
+    m2t:=sm2t;
+    Disp_DT;
+    if (cls<>4) and (cls<>5) then restcursor;
+    xp_maus_an(maussave.x,maussave.y);
+
+    if (de<>0) and (de<>4) then
+      fehler(ioerror(de,getres(115)));
+    end;                            { Fehler bei Programm-Aufruf }
+
+  if trackpath then
+    getdir(0,shellpath);
+  if dospath(0)<>OwnPath then
+    GoDir(OwnPath);
+  TempOpen;
+end;
+
+
+function listcolor(var s:string; line:longint):byte; far;
+var p,p0,ml : byte;
+    qn,pdiff: integer;
+begin
+  listhicol:=col.collisthigh;
+  if line<=exthdlines then
+    listcolor:=col.collistheader
+  else if s='' then
+    listcolor:=0
+  else if s[1]<=^c then
+    listcolor:=iif((length(s)>1) and kludges,col.collistmarked,$ff)
+  else begin
+    p:=1;
+    ml:=min(length(s),6);
+    while (p<=ml) and ((s[p]=' ') or (s[p]=^I)) do
+      inc(p);
+    p0:=p;
+    qn:=0;
+    repeat
+       while (p<=length(s)) and (p-p0<6) and
+       (
+         (s[p]<>'>') and
+         (not OtherQuoteChars or not (s[p] in QuoteCharSet))
+       )
+       do inc(p);
+      pdiff:=p-p0;
+
+      if (p<=length(s)) and (s[p]='>') or
+         (OtherQuoteChars and (s[p] in QuoteCharSet)) then
+      begin
+        inc(qn);
+        p0:=p;
+      end;
+      inc(p);
+    until (p>length(s)) or (pdiff=6);
+    if qn<1 then
+      listcolor:=0
+    else begin
+      listcolor:=col.collistquote[min(qn,iif(QuoteColors,9,1))];
+      listhicol:=col.collistqhigh[min(qn,iif(QuoteColors,9,1))]
+      end;
+    end;
+end;
+
+
+{ 0=normal, -1=Minus, 1=Plus, 2=links, 3=rechts, 4=P/B/^P/^B (ListKey),
+  5="0", 6=PgUp, 7=PgDn }
+
+function listfile(name,header:string; savescr,listmsg:boolean;
+                  cols:shortint):shortint; { Lister }
+var brk    : boolean;
+    p      : scrptr;
+    oldm   : byte;
+    msg    : boolean;
+    lf     : pathstr;
+    pp     : byte;
+    lt     : byte;
+    lfirst : byte;     { Startzeile Lister }
+    lofs   : word;     { Ladeposition Datei }
+
+  procedure ShowMsgHead;
+  var t : text;
+      s : string;
+      i : integer;
+  begin
+    assign(t,name); reset(t);
+    attrtxt(col.collistheader);
+    for i:=1 to exthdlines do begin
+      readln(t,s);
+      if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79))
+      else mwrt(1,lfirst,dup(80,'ƒ'));
+      inc(lfirst);
+      inc(lofs,length(s)+2);
+      end;
+    close(t);
+    exthdlines:=0;
+    lfirst:=min(lfirst,screenlines-5);
+  end;
+
+begin
+  listexit:=0;
+  if varlister<>'' then begin
+    lf:=repfile(VarLister,name);
+    pp:=pos('$TYPE',ustr(lf));
+    if pp>0 then begin
+      lt:=iif(listmsg,iif(listkommentar,2,1),0);
+      lf:=left(lf,pp-1)+strs(lt)+mid(lf,pp+5);
+      end;
+    shell(lf,ListerKB,1);
+    if errorlevel in [100..110] then ExtListKeys;
+    end
+  else begin
+    if savescr then sichern(p);
+    lfirst:=iif(listvollbild,1,4); lofs:=0;
+    if ListMsg and ListFixedHead then
+      ShowMsgHead;
+{$IFNDEF WIN32}
+    openlist(1,iif(_maus and listscroller,79,80),lfirst,
+             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
+             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
+             iifs(_maus and ListScroller,'VSC:080/','')+
+             iifs(listmsg,'ROT/',''));
+    if listwrap {or listkommentar} then
+      lister.listwrap(iif(_maus and listscroller,78,80));
+    if listmsg and ConvIso then list_convert(ISO_conv);
+    if not ListAutoscroll then listNoAutoscroll;
+    msg:=(_filesize(name)>1024*100);
+    if msg then rmessage(130);    { 'Lade Datei ...' }
+    list_readfile(name,lofs);
+    if msg then closebox;
+    listheader(header);
+    listTp(listExt);   llh:=listmsg;
+    oldm:=ListMakros;
+    if listmsg then ListMakros:=8;
+    if cols<>0 then begin
+      listCFunc(listColor);
+      if cols and 2<>0 then begin
+        listDLproc(listDisplay);
+        xp1o.ListXHighlight:=ListHighlight;
+        end;
+      end;
+    if listvollbild then m2t:=false;
+    pushhp(39);
+    if _maus and listscroller and listvollbild then begin
+      attrtxt(col.colliststatus);
+      mwrt(1,lfirst,sp(80));
+      end;
+    list(brk);
+    pophp;
+    ListMakros:=oldm;
+    m2t:=true;
+    if savescr then holen(p);
+    closelist;
+{$ENDIF}
+    end;
+  exthdlines:=0;
+  llh:=false;
+  listfile:=listexit;
+end;
+
+
+procedure RemoveEOF(fn:pathstr);
+var f : file;
+    b : byte;
+begin
+  assign(f,fn);
+  reset(f,1);
+  if ioresult<>0 then exit;    { Datei nicht gesichert }
+  if filesize(f)>0 then begin
+    seek(f,filesize(f)-1);
+    blockread(f,b,1);
+    if b=26 then begin
+      seek(f,filesize(f)-1);
+      truncate(f);
+      end;
+    end;
+  close(f);
+end;
+
+
+{ reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
+{         TED-Softreturns zurÅckwandeln                 }
+
+procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
+                   ed_ukonv:boolean);
+var p   : byte;
+    bak : string[3];
+    ms  : boolean;
+begin
+  if ((exteditor=3) or ((exteditor=2) and nachricht) or
+     (_filesize(name)*1.2>memavail-16383)) and (VarEditor<>'')
+     and (VarEditor[1]<>'*') then begin
+    ms:=shell25; shell25:=edit25;
+    shell(repfile(VarEditor,name),EditorKB,-1);
+    shell25:=ms;
+    removeeof(name);
+    bak:=BAKext;
+    end
+  else begin
+    if nachricht then pushhp(54);
+    TED(name,reedit,keeplines,ed_ukonv);
+    if nachricht then pophp;
+    if nachricht and (left(VarEditor,1)='*') then begin
+      delfirst(VarEditor);
+      shell(repfile(VarEditor,name),EditorKB,3);
+      insert('*',VarEditor,1);
+      end;
+    bak:='BAK';
+    end;
+  if bak<>'' then begin
+    p:=pos('.',name);
+    if p=0 then name:=name+'.'+bak
+    else name:=left(name,p)+bak;
+    if exist(name) then _era(name);      { .BAK lîschen }
+    end;
+end;
+
+
+{ Achtung! ShellPath kann mit oder ohne '\' am Ende sein! }
+
+procedure dosshell;
+const ShellBatch = 'DPMISHELL.BAT';
+var t : text;
+
+  function environment:string;
+  begin
+    if envspace=0 then environment:=''
+    else environment:=' /E:'+strs(envspace);
+  end;
+
+begin
+  if DisableDos then
+    fehler(getres(116))   { DOS-Shell hier nicht mîglich }
+  else begin
+    GoDir(ShellPath);
+    if ioresult<>0 then GoDir(ownpath);
+    trackpath:=true;
+    {$IFDEF DPMI}
+      assign(t,TempPath+ShellBatch);
+      rewrite(t);
+      writeln(t,'@set prompt=[XP] '+getenv('PROMPT'));
+      writeln(t,'@',getenv('COMSPEC'));
+      close(t);
+      shell(TempPath+ShellBatch,620,2);
+      _era(TempPath+ShellBatch);
+    {$ELSE}
+      shell(getenv('COMSPEC')+environment,640,2);
+    {$ENDIF}
+    trackpath:=false;
+    end;
+end;

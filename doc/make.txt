@@ -1,0 +1,138 @@
+-----------------------------------------------------------------------
+                                                  CrossPoint-Quelltexte
+                                            (c) 1992-99 Peter Mandrella
+
+                                              Anleitung zum Compilieren
+-----------------------------------------------------------------------
+
+
+
+0. Vorwort
+----------
+
+Die Quelltexte von CrossPoint umfassen ca. 100.000 Codezeilen. Sie sind
+weder objektorientiert aufgebaut noch ausreichend kommentiert. Die
+Weiterentwicklung dieses Programms ist daher eine sehr schwierige
+Aufgabe.
+
+Ich wÅnsche Ihnen dabei viel Erfolg!
+
+Aktuelle Informationen zu den CrossPoint-Quelltexten, Adressen von
+Programmierteams etc. werde ich, sobald sie mir bekannt werden, auf
+www.crosspoint.de verîffentlichen.
+
+Bevor Sie fortfahren, lesen Sie bitte zuerst SLIZENZ.TXT!
+
+
+
+1. Compiler
+-----------
+
+Sie benîtigen Borland Pascal Version 7.0 oder hîher einschliesslich
+der RTL-Quelltexte. Folgende Compilereinstellungen sind notwendig:
+
+   $A-   (Byte Alignment)
+   $V-   (kein String-Length Checking)
+   $X-   (Boolean Shortcut Evaluation)
+
+Au·erdem sollte das Range Checking immer eingeschaltet sein ($R+).
+Zeitkritische Stellen im Programm sind in $R- / $R+ eingeschlossen.
+
+Die Datei BPC.CFG in TOOLS.ZIP enthÑlt die Compilereinstellungen fÅr BPC.
+
+
+In den RTL-Quelltexten sind zwei énderungen in CRT.ASM notwendig. Falls
+Sie weitere Programme mit Borland Pascal compilieren, die mit diesen
+énderungen Probleme haben werden, sollten sie fÅr XP eine separate BP-
+Installation verwenden.
+
+- die Initialisierung des Videomodus ist auszukommentieren:
+
+  ;      MOV     AX,3
+  ;      CALL    CrtInit
+
+- es ist ein Workaround fÅr den Delay-Bug einzubauen, z.B.:
+
+	NOT	AX
+	NOT	DX
+	MOV	CX,55
+
+        cmp     dx,cx                 ; hinzugefuegt
+        jae     @@3                   ; hinzugefuegt
+	DIV	CX
+        jmp     @@4                   ; hinzugefuegt
+@@3:    mov     ax,0ffffh             ; hinzugefuegt
+
+@@4:    MOV     DelayCnt,AX           ; Sprungmarke hinzugefuegt
+
+
+Ich kann gerne auch eine fertig compilierte Version der RTL bereit-
+stellen, sofern Borland dies erlaubt. Wer daran interessiert ist, mîge
+bei Borland eine entsprechende Erlaubnis einholen.
+
+Falls Sie énderungen an den Assembler-Quelltexten vornehmen mîchten,
+benîtigen Sie au·erdem den Turbo Assembler.
+
+
+
+2. Bevor Sie CrossPoint compilieren ...
+---------------------------------------
+
+... mÅssen Sie Ihren Namen und Ihre Mailadresse in XP0.PAS eintragen.
+Eine ausfÅhrliche Beschreibung hierzu steht in XP0.PAS.
+
+ZusÑtzlich sollten Sie in der Online-Hilfe auf Seite 9 (Zeile 105 von
+XP.IHQ) Ihre Mailadrese eintragen.
+
+
+
+3. Compilieren der einzelnen Module
+-----------------------------------
+
+TOOLS.ZIP enthÑlt einige Tools und Batches zum Compilieren bzw.
+Formatieren von XP, Online-Hilfe und Dokumentation. Kopieren Sie den
+Inhalt dieser ZIP-Datei in das gleiche Verzeichnis wie die CrossPoint-
+Quelltexte.
+
+Die einzelnen Programmdateien werden mit folgenden Kommandos compiliert
+bzw. formatiert:
+
+     XP.EXE        tpc.bat
+     XL.EXE        tpcx.bat
+     XP.HLP        ihs xp.ihq
+     *.RES         rc <Dateiname.rq>
+     *.DOC         df.bat    (Quelldateien: *.dq)
+
+Alle weiteren EXE-Programme sind in der BP-IDE oder mit "bpc /m
+Dateiname" zu compilieren.
+
+
+
+4. XL.EXE
+---------
+
+XL ist eine Protected-Mode-Version von CrossPoint, die insbesondere
+das Debuggen vereinfacht; sie kann in den Protected-Mode-Debugger
+TD286 geladen werden (dazu mÅssen Sie evtl. DOS booten). Die Funktio-
+nalitÑt dieser Version ist leicht eingeschrÑnkt, z.B. werden kein
+FOSSIL-Treiber und keine anderen Bildschirmmodi als 80x25 unterstÅtzt,
+und sie lÑuft etwas langsamer.
+
+
+
+5. Bevor Sie ein selbstcompiliertes CrossPoint weitergeben ...
+--------------------------------------------------------------
+
+- Lesen Sie bitte genauestens die rechtlichen Bestimmungen in
+  SLIZENZ.TXT!
+
+- Schreiben Sie bitte Ihren Namen und Ihre Mailadresse an eine gut
+  sichtbare Stelle in der Dokumentation, Readme-Datei etc. ein-
+  schliesslich einem Hinweis, da· Sie fÅr diese CrossPoint-Version
+  verantwortlich sind.
+
+- öberlegen Sie sich eine sinnvolle (!) Versionsnummer und tragen
+  Sie diese in XP0.PAS ein.
+
+
+

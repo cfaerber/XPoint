@@ -1,0 +1,2138 @@
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ --------------------------------------------------------------- }
+
+(***********************************************************)
+(*                                                         *)
+(*                      UNIT typeform                      *)
+(*                                                         *)
+(*             Strings und Typkonvertierungen              *)
+(*                                                         *)
+(***********************************************************)
+
+{$I XPDEFINE.INC }
+
+
+UNIT typeform;
+
+
+{  ==================  Interface-Teil  ===================  }
+
+INTERFACE
+
+uses
+{$IFNDEF Delphi }
+  dos,
+{$ELSE }
+  sysutils,
+{$ENDIF }
+  xpglobal;
+
+{$IFNDEF DPMI}
+  const  Seg0040 = $40;
+         SegA000 = $a000;
+         SegB000 = $b000;
+         SegB800 = $b800;
+{$ENDIF}
+
+type DateTimeSt = string[11];
+     s20        = string[20];
+     s40        = string[40];
+     s60        = string[60];
+     s80        = string[80];
+     atext      = s80;
+
+Function Bin(l:longint; n:byte):string;      { Bin-Zahl mit n Stellen       }
+Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
+Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
+Function Center(const s:string; n:byte):string;    { String auf n Zchn. zentrieren}
+Function CPos(c:char; const s:string):byte;    { schnelles POS fr CHARs      }
+Function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1    }
+Function CreditCardOk(s:string):boolean;     { Kreditkartennummer berprfen }
+Function Date:DateTimeSt;                    { dt. Datumsstring             }
+Function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
+Function Even(const l:longint):boolean;            { not odd()                    }
+{$IFNDEF Delphi }
+Function FileName(var f):string;                { Dateiname Assign             }
+{$ENDIF }
+Function FirstChar(const s:string):char;           { s[1]                         }
+Function fitpath(path:pathstr; n:byte):pathstr;   {+ Pfad evtl. abkrzen    }
+Function FormI(const i:longint; const n:Byte):string;    { i-->str.; bis n mit 0 auff.  }
+Function FormR(const r:real; const vk,nk:byte):string;   { r-->str.; vk+nk mit 0 auff.  }
+Function FormS(s:string; n:byte):string;     { String auf n Stellen mit ' ' }
+Function GetToken(var s:string; delimiter:string):string;
+Function HBar(const len:byte):string;              { ÃÄÄÄÄÄÄÄÄÄ...ÄÄÄÄÄÄÄÄÄ´      }
+Function Hex(const l:longint; const n:byte):string;      { Hex-Zahl mit n Stellen       }
+Function HexVal(const s:string):longint;           { Hex-Val                      }
+Function Hoch(const r:real; const n:integer):real;       { Hoch <-- r^n                 }
+Function iif(b:boolean; l1,l2:longint):longint; { IIF Integer               }
+Function iifb(b,b1,b2:boolean):boolean;         { IIF Boolean               }
+Function iifc(b:boolean; c1,c2:char):char;      { IIF Char                  }
+Function iifr(b:boolean; r1,r2:real):real;      { IIF Real                  }
+Function iifs(b:boolean; s1,s2:string):string;  { IIF String                }
+Function IntQSum(const l:longint):longint;         { Quersumme                    }
+Function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
+Function IVal(s:string):longint;             { Value Integer                }
+Function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
+Function Lead(s:string):string;              { Anf.-u. End-0en abschneiden  }
+{$IFDEF NOASM }
+Function Left(s:string; n:byte):string;      { LeftString                   }
+{$ELSE}
+Function Left(const s:string; n:byte):string;      { LeftString                   }
+{$ENDIF}
+Function Long(const l:longint):longint;            { Type-Cast nach Longint       }
+Function LoCase(const c:char):char;                { LowerCase                    }
+Function Log(const b,r:real):real;           { allg. Logarithmus            }
+Function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
+Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
+Function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
+Function LStr(const s:string):string;              { LowerString                  }
+Function Ltrim(const s:string):string;             { linke Leerzeichen entfernen  }
+Function Max(const a,b:longint):longint;           { Maximum Integer              }
+Function MaxR(const a,b:real):real;                { Maximum Real                 }
+Function MaxS(const a,b:string):string;            { Maximum String               }
+Function Mid(const s:string; const n:byte):string;       { Rest des Strings ab Pos. n   }
+Function Min(const a,b:longint):longint;           { Minimum Integer              }
+Function MinMax(const x,min,max:longint):longint;  { x -> [min,max]               }
+Function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
+Function MinR(const a,b:real):real;                { Minimum Real                 }
+Function MinS(const a,b:string):string;            { Minimum String               }
+Function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+Function Oct(l:longint):string;              { Longint -> Oktalstring       }
+Function OctVal(s:string):longint;           { Oktalstring -> Logint        }
+Function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
+Function PosN(s1,s2:string; n:byte):byte;    { POS ab Stelle n              }
+Function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0     }
+function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
+Function ProgName:NameStr;                   { Name des Programms           }
+Function ProgPath:PathStr;                   { Pfad des Programms           }
+Function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
+Function QSum(const s:string):longint;             { Quersumme                    }
+Function Range(const c1,c2:char):string;           { z.B. ('1','5') = '12345'     }
+Function Reverse(s:string):string;           { String umkehren              }
+Function rforms(const s:string; const n:byte):string;    { String links mit ' ' auff.   }
+{$IFDEF NOASM }
+Function Right(s:string; n:byte):string;     { RightString                  }
+{$ELSE }
+function Right(const s:string; n:byte):string;     { RightString                  }
+{$ENDIF }
+Function RightPos(c:char; s:string):byte;    { Pos von rechts               }
+Function Round(const r:real; const nk:integer):real;     { Real --> Real auf nk runden  }
+Function Rtrim(s:string):string;             { rechte Leerzeichen entfernen }
+Function RVal(const s:string):real;                { Value Real                   }
+Function Sgn(const x:longint):longint;       { Signum Integer               }
+Function SgnR(const x:real):real;            { Signum Real                  }
+Function ShortPath(path:pathstr; n:byte):pathstr;  { Pfadname krzen        }
+Function SMatch(s1,s2:string):byte;          { Anzahl der bereinst. Bytes  }
+Function SiMatch(s1,s2:string):byte;         { dto., ignore case            }
+Function Sp(const n:integer):string;               { space$                       }
+Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
+Function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich               }
+Function StrS(const l:longint):string;             { "echtes" Str$, Integer       }
+Function StrSn(const l:longint; const n:byte):string;    { "echtes" Str$, Integer       }
+Function StrSr(const r:real; const nk:byte):string;      { Str$ auf nk, Real            }
+Function StrSrn(const r:real; const vk,nk:byte):string;  { "echtes" Str$, Real          }
+Function StrSrnp(const r:real; const vk,nk:byte):string; { "echtes" Str$, Real, mit DP  }
+Function SwapLong(l:longint):longint;        { Byteorder umdrehen           }
+Function Time:DateTimeSt;                    { dt. Zeitstring               }
+Function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
+function TopStr(const s:string):string;            { erste Buchstabe groá         }
+Function TopAllStr(s:string):string;         { alle ersten Buchstaben groá  }
+Function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
+Function UpCase(const c:char):char;                { int. UpCase                  }
+Function UStr(const s:string):string;              { UpperString                  }
+Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
+
+Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
+Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
+Procedure delfirst(var s:string);            { ersten Buchstaben l”schen    }
+Procedure dellast(var s:string);             { letzten Buchstaben l”schen   }
+Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
+Procedure iswap(var l1,l2:longint);          { l1 und l2 vertauschen        }
+Procedure LoString(var s:string);            { LowerString                  }
+Procedure release;                           { system.release abfangen      }
+Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
+Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Parit„t setzen  }
+Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
+Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
+Procedure TruncStr(var s:string; n:byte);    { String krzen                }
+Procedure UpString(var s:string);            { UpperString                  }
+procedure FastMove(var Source, Dest; const Count : WORD);
+function mailstring(const s: String): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
+{$IFDEF Delphi }
+procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
+{$ENDIF }
+
+{ ================= Implementation-Teil ==================  }
+
+IMPLEMENTATION
+
+type psplit = record              { Fr Pointer-Type-Cast }
+                o,s : smallword;
+              end;
+
+{$IFDEF Ver32 }
+
+{ 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
+function CPos(c: char; const s: string): byte; assembler; {&uses edi}
+asm
+         cld
+         mov    edi,s
+         xor    ecx, ecx
+         mov    cl,[edi]
+         jecxz  @notf            { s='' -> nicht gefunden }
+         inc    ecx
+         mov    edx,ecx          { länge merken }
+         inc    edi
+         mov    al,c
+         repnz  scasb
+         jecxz  @notf
+         mov    eax,edx
+         sub    eax,ecx
+         jmp    @end
+@notf:   xor    eax,eax
+@end:
+end;
+
+{$ELSE}
+
+{ MK 08.01.2000 in Inline-ASM umgeschrieben und verbessert }
+function CPos(c: char; const s: string): byte; assembler;
+asm
+         cld
+         les    di,s
+         mov    ch, 0
+         mov    cl,es:[di]
+         jcxz   @notf            { s='' -> nicht gefunden }
+         inc    cx
+         mov    dx,cx            { l„nge merken }
+         inc    di
+         mov    al,c
+         repnz  scasb
+         jcxz   @notf
+         mov    ax,dx
+         sub    ax,cx
+         jmp    @end
+@notf:   xor    ax,ax
+@end:
+end;
+
+{$ENDIF}
+
+{$IFDEF Ver32 }
+
+{ 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
+procedure SetParity(var b:byte; even:boolean); assembler; {&uses edi}
+asm
+          mov    edi,b
+          mov    al,[edi]
+          cmp    even,0
+          jz     @setodd
+          and    al,07fh               { Test auf gerade Parität }
+          jpe    @spok
+          or     al,80h
+          jmp    @spok
+@setodd:   and    al,07fh               { Test auf ungerade Parität }
+          jpo    @spok
+          or     al,80h
+@spok:     mov    [edi],al
+end;
+
+{$ELSE}
+
+{ MK 08.01.2000 in Inline-ASM umgeschrieben }
+procedure SetParity(var b:byte; even:boolean); assembler;
+asm
+          les    di,b
+          mov    al,es:[di]
+          cmp    even,0
+          jz     @setodd
+          and    al,07fh               { Test auf gerade Parit„t }
+          jpe    @spok
+          or     al,80h
+          jmp    @spok
+@setodd:   and    al,07fh               { Test auf ungerade Parit„t }
+          jpo    @spok
+          or     al,80h
+@spok:     mov    es:[di],al
+end;
+
+{$ENDIF}
+
+
+Function Hoch(const r:real; const n:integer):real;
+var i : integer;
+    x : real;
+begin
+  x:=1;
+  for i:=1 to n do
+    x:=x*r;
+  hoch:=x;
+end;
+
+
+Function Log(const b,r:real):real;
+begin
+  log:=ln(r)/ln(b);
+end;
+
+
+Function Log2(const r:real):real;
+begin
+  log2:=Log(2,r);
+end;
+
+
+Function Log2int(const l:longint):byte;
+var i : byte;
+begin
+  log2int := 0;   { MK 12/99 }
+  for i:=0 to 31 do
+    if l and (1 shl i) <> 0 then
+      Log2int:=i;
+end;
+
+
+Function Log10(const r:real):real;
+begin
+  log10:=Log(10,r);
+end;
+
+
+function potenz(const basis,exponent:real):real;
+begin
+  if basis=0 then
+    potenz:=0
+  else
+    potenz:=exp(exponent*ln(basis));
+end;
+
+
+Function Round(const r:real; const nk:integer):real;
+begin
+  round:=int(r*hoch(10,nk)+0.5)/hoch(10,nk);
+end;
+
+
+Function MaxR(const a,b:real):real;
+begin
+  if a>b then maxr:=a else maxr:=b;
+end;
+
+
+Function MinR(const a,b:real):real;
+begin
+  if a<b then minr:=a else minr:=b;
+end;
+
+
+Function Max(const a,b:longint):longint;
+begin
+  if a>b then max:=a else max:=b;
+end;
+
+
+Function Min(const a,b:longint):longint;
+begin
+  if a<b then min:=a else min:=b;
+end;
+
+
+Function MaxS(const a,b:string):string;
+begin
+  if a>b then maxs:=a else maxs:=b;
+end;
+
+
+Function MinS(const a,b:string):string;
+begin
+  if a<b then mins:=a else mins:=b;
+end;
+
+
+Function MinMax(const x,min,max:longint):longint;
+begin
+  if x<min then MinMax:=min
+  else if x>max then MinMax:=max
+  else MinMax:=x;
+end;
+
+
+procedure bind(var l:longint; const min,max:longint);
+begin
+  if l<min then l:=min
+  else if l>max then l:=max;
+end;
+
+
+procedure bindr(var r:real; const min,max:real);
+begin
+  if r<min then r:=min
+  else if r>max then r:=max;
+end;
+
+
+Function MinMaxR(const x,min,max:real):real;
+begin
+  if x<min then MinMaxR:=min
+  else if x>max then MinMaxR:=max
+  else MinMaxR:=x;
+end;
+
+
+Function Sgn(const x:longint):longint;
+begin
+  if x>0 then
+    Sgn:=1
+  else
+    if x=0 then
+      Sgn:=0
+    else
+      Sgn:=-1;
+end;
+
+
+Function SgnR(const x:real):real;
+begin
+  if x>0 then
+    SgnR:=1.0
+  else
+    if x=0 then
+      SgnR:=0
+    else
+      SgnR:=-1.0;
+end;
+
+
+Function FormI(const i:longint; const n:Byte):string;
+var
+  st:string;
+begin
+  Str(i,st);
+  while length(st)<n do
+    st:='0'+st;
+  formi:=st;
+end;
+
+
+Function FormR(const r:real; const vk,nk:byte):string;
+var i  : byte;
+    st : string;
+begin
+  i:=vk+nk; if nk>0 then i:=succ(i);
+  str(r:i:nk,st);
+  i:=1;
+  while st[i]=' ' do begin
+    st[i]:='0';
+    i:=succ(i);
+    end;
+  formr:=st;
+end;
+
+
+Function Lead(s:string):string;
+begin
+  if pos('.',s)>0 then
+    while s[length(s)]='0' do      { terminiert, da s[0]<>'0' fr s='' }
+      dellast(s);
+  if s[length(s)]='.' then dellast(s);
+  while (s<>'') and (s[1]='0') do
+    delfirst(s);
+  Lead:=s;
+end;
+
+
+Function Time:DateTimeSt;
+VAR stu,min,sec,du : smallword;
+begin
+  gettime(stu,min,sec,du);
+  time:=formi(stu,2)+':'+formi(min,2)+':'+formi(sec,2);
+end;
+
+Function Date:DateTimeSt;
+VAR  ta,mo,ja,wt : smallword;
+begin
+  getdate(ja,mo,ta,wt);
+  date:=formi(ta,2)+'.'+formi(mo,2)+'.'+strs(ja);
+end;
+
+Procedure SetSysTime(const t:DateTimeSt);
+VAR st,mi,se,res : Integer;
+begin
+  Val(Copy(t,1,2),st,res);
+  Val(Copy(t,4,2),mi,res);
+  Val(Copy(t,7,2),se,res);
+{$IFNDEF Delphi }
+  settime(st,mi,se,0);
+{$ENDIF }
+end;
+
+Procedure SetSysDate(const d:DateTimeSt);
+VAR t,m,j,res : Integer;
+begin
+  Val(Copy(d,1,2),t,res);
+  Val(Copy(d,4,2),m,res);
+  Val(Copy(d,7,4),j,res);
+{$IFNDEF Delphi }
+  setdate(j,m,t);
+{$ENDIF }
+end;
+
+Function Dup(const n:integer; const c:Char):string;
+VAR h : String;
+begin
+  if n<=0 then Dup:=''
+  else begin
+    h[0]:=chr(n);
+    fillchar(h[1],n,c);
+    dup:=h;
+    end;
+end;
+
+
+Function Sp(const n:integer):string;
+begin
+  sp:=dup(n,' ');
+end;
+
+
+Function FormS(s:string; n:byte):string;
+var b : integer;  { kann bei length(s)=255 = 256 werden!! }
+begin
+  for b:=length(s)+1 to n do
+    s[b]:=' ';
+  s[0]:=char(n);
+  FormS:=s;
+end;
+
+
+Function StrS(const l:longint):string;
+var s : string[10];
+begin
+  str(l:0,s);
+  strs:=s;
+end;
+
+
+Function StrSn(const l:longint; const n:byte):string;
+var s : string[20];
+begin
+  str(l:n,s);
+  strsn:=s;
+end;
+
+
+Function StrSr(const r:real; const nk:byte):string;
+var s : string[40];
+begin
+  str(r:0:nk,s);
+  strsr:=s;
+end;
+
+
+Function StrSrn(const r:real; const vk,nk:byte):string;
+var s : string;
+begin
+  if nk=0 then
+    str(r:vk:0,s)
+  else
+    str(r:vk+nk+1:nk,s);
+  strsrn:=s;
+end;
+
+
+Function StrSrnp(const r:real; const vk,nk:byte):string;
+var s : string;
+begin
+  s:=strsrn(r,vk,nk);
+  if r>=1000000 then
+    s:=copy(s,3,vk-8)+'.'+copy(s,vk-5,3)+'.'+copy(s,vk-2,3)+','+right(s,nk)
+  else if r>=1000 then
+    s:=copy(s,2,vk-4)+'.'+copy(s,vk-2,3)+','+right(s,nk)
+  else
+    s:=copy(s,1,vk)+','+right(s,nk);
+  if s[length(s)]=',' then
+    s:=' '+copy(s,1,length(s)-1);
+  strsrnp:=s;
+end;
+
+
+
+{JG: 25.01.00 Funktionen nach ASM mit Lookup Tables umgeschrieben}
+
+{$IFDEF NOASM }
+{$IFNDEF Windows }
+
+Function UpCase(const c:char):char;
+begin
+  case c of
+    'a'..'z' : UpCase:=chr(ord(c) and $df);
+    '„'      : UpCase:='';
+    '”'      : UpCase:='™';
+    ''      : UpCase:='š';
+    '‚'      : UpCase:='';
+    '†'      : UpCase:='';
+    '‘'      : UpCase:='’';
+    '¤'      : UpCase:='¥';
+    '‡'      : UpCase:='€';
+  else
+    UpCase:=c;
+  end;
+end;
+
+Function LoCase(const c:char):char;
+begin
+  case c of
+    'A'..'Z' : LoCase:=chr(ord(c) or $20);
+    ''      : LoCase:='„';
+    '™'      : LoCase:='”';
+    'š'      : LoCase:='';
+    ''      : LoCase:='‚';
+    ''      : LoCase:='†';
+    '’'      : LoCase:='‘';
+    '¥'      : LoCase:='¤';
+    '€'      : LoCase:='‡';
+  else
+    LoCase:=c;
+  end;
+end;
+
+{$ELSE}
+
+Function UpCase(const c:char):char;
+begin
+  case c of
+    'a'..'z'  : UpCase:=chr(ord(c) and $df);
+    #224..#253: UpCase:=chr(ord(c) and $df);
+  else
+    UpCase:=c;
+  end;
+end;
+
+Function LoCase(const c:char):char;
+begin
+  case c of
+    'A'..'Z'  : LoCase:=chr(ord(c) or $20);
+    #192..#221: LoCase:=chr(ord(c) or $20);
+  else
+    LoCase:=c;
+  end;
+end;
+
+{$ENDIF}
+
+{$ELSE} { NOASM }
+
+{$ifdef ver32}
+
+{ 01.02.2000 robo - 32 Bit }
+
+function Upcase(const c:char): char; assembler;
+asm
+    push ebx
+    xor ebx,ebx
+    mov   bl, c
+    cmp   bl, 'a'                         { erst ab 'a'... }
+    jb @noupcase
+    mov al,byte ptr cs:[offset @lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
+    jmp @Upcase_end
+
+{Win/DOS Tabellenteile nur mit dem jeweils passenden  }
+{Editor bzw. Zeichensatz aendern...                   }
+
+@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
+
+{$IFDEF Windows}
+         db '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß'
+{$ELSE}
+         db '€šƒ…€ˆ‰Š‹Œ’’“™•–—˜™š›œŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ'
+{$ENDIF}
+
+@noupcase:
+    mov al,bl
+
+@Upcase_end:
+    pop ebx
+end;
+
+function Locase(const c:char):char; assembler;
+asm
+    push ebx
+    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
+    cmp al,"A"
+    jb @Locase_end
+    cmp al,"Z"
+    ja @3
+@1: or al,20h
+    jmp @Locase_end
+
+
+{$IFDEF Windows}
+
+ @3: cmp al,192
+     jb @Locase_end
+     cmp al,221
+     jna @1
+     jmp @Locase_end
+
+{$ELSE}
+
+ @3: mov ebx,7
+ @4: cmp byte ptr cs:[@look+eBX],al
+     je @5
+     dec ebx
+     jns @4
+     jmp @Locase_end
+ @5: mov al,byte ptr cs:[@get+ebx]
+     jmp @Locase_end
+
+ @Look: db '’¥€™š'
+ @Get:  db '‚†‘¤‡„”'
+
+{$ENDIF}
+
+@Locase_end:
+     pop ebx
+end;
+
+{ /robo }
+
+{$else}
+
+function Upcase(const c:char): char; assembler;
+asm
+    mov   bl, c
+    cmp   bl, 'a'                         { erst ab 'a'... }
+    mov   bh, 0
+    jb @noupcase
+    mov al,cs:[offset @lookup+bx-61h]          { Lookup-Table begint bei 'a'... }
+    jmp @Upcase_end
+
+{Win/DOS Tabellenteile nur mit dem jeweils passenden  }
+{Editor bzw. Zeichensatz aendern...                   }
+
+@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
+
+{$IFDEF Windows}
+         db '€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ÷ØÙÚÛÜİŞß'
+{$ELSE}
+         db '€šƒ…€ˆ‰Š‹Œ’’“™•–—˜™š›œŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
+         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ'
+{$ENDIF}
+
+@noupcase:
+    mov al,bl
+
+@Upcase_end:
+end;
+
+function Locase(const c:char):char; assembler;
+asm
+    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
+    cmp al,"A"
+    jb @Locase_end
+    cmp al,"Z"
+    ja @3
+@1: or al,20h
+    jmp @Locase_end
+
+
+{$IFDEF Windows}
+
+ @3: cmp al,192
+     jb @Locase_end
+     cmp al,221
+     jna @1
+     jmp @Locase_end
+
+{$ELSE}
+
+ @3: mov bx,7
+ @4: cmp byte ptr cs:[@look+BX],al
+     je @5
+     dec bx
+     jns @4
+     jmp @Locase_end
+ @5: mov al,byte ptr cs:[@get+bx]
+     jmp @Locase_end
+
+ @Look: db '’¥€™š'
+ @Get:  db '‚†‘¤‡„”'
+
+{$ENDIF}
+
+@Locase_end:
+end;
+
+{$endif}
+
+{$ENDIF}
+
+{/JG}
+
+{ 27.01.2000 robo - LoString etc. in ASM }
+
+{$ifdef noasm}
+
+Procedure LoString(var s:string);
+var i : integer;
+begin
+  for i:=1 to length(s) do
+    s[i]:=LoCase(s[i]);
+end;
+
+
+Procedure UpString(var s:string);
+var i : integer;
+begin
+  for i:=1 to length(s) do
+    s[i]:=UpCase(s[i]);
+end;
+
+
+Function UStr(const s:string):string;
+var i : integer;
+begin
+  Ustr[0]:=s[0];
+  for i:=1 to length(s) do
+    UStr[i]:=UpCase(s[i]);
+end;
+
+
+Function LStr(const s:string):string;
+var i : integer;
+begin
+  LStr[0]:=s[0];
+  for i:=1 to length(s) do
+    LStr[i]:=LoCase(s[i]);
+end;
+
+{$else}
+
+{$ifdef ver32}
+
+procedure LoString (var s: string); assembler;
+  asm
+    push ebx
+    push edi
+    mov ebx,s
+    xor ecx,ecx
+    mov cl,[ebx]
+    jecxz @lostr_ende
+    mov edi,ecx
+  @lostr_next:
+    cmp byte ptr [ebx+edi],'A'
+    jnae @lostr_weiter
+    cmp byte ptr [ebx+edi],'Z'
+    jnbe @lostr_auml
+    add byte ptr [ebx+edi],32
+    jmp @lostr_weiter
+  @lostr_auml:
+
+{$ifndef windows}
+
+    cmp byte ptr [ebx+edi],''
+    jne @lostr_ouml
+    mov byte ptr [ebx+edi],'„'
+  @lostr_ouml:
+    cmp byte ptr [ebx+edi],'™'
+    jne @lostr_uuml
+    mov byte ptr [ebx+edi],'”'
+  @lostr_uuml:
+    cmp byte ptr [ebx+edi],'š'
+    jne @lostr_eacute
+    mov byte ptr [ebx+edi],''
+  @lostr_eacute:
+    cmp byte ptr [ebx+edi],''
+    jne @lostr_aring
+    mov byte ptr [ebx+edi],'‚'
+  @lostr_aring:
+    cmp byte ptr [ebx+edi],''
+    jne @lostr_aelig
+    mov byte ptr [ebx+edi],'†'
+  @lostr_aelig:
+    cmp byte ptr [ebx+edi],'’'
+    jne @lostr_ntilde
+    mov byte ptr [ebx+edi],'‘'
+  @lostr_ntilde:
+    cmp byte ptr [ebx+edi],'¥'
+    jne @lostr_ccedil
+    mov byte ptr [ebx+edi],'¤'
+  @lostr_ccedil:
+    cmp byte ptr [ebx+edi],'€'
+    jne @lostr_weiter
+    mov byte ptr [ebx+edi],'‡'
+
+{$else}
+
+    cmp byte ptr [ebx+edi],192
+    jnae @lostr_weiter
+    cmp byte ptr [ebx+edi],221
+    jnbe @lostr_weiter
+    add byte ptr [ebx+edi],32
+
+{$endif}
+
+  @lostr_weiter:
+    dec edi
+    or edi,edi
+    jnz @lostr_next
+  @lostr_ende:
+    pop edi
+    pop ebx
+  end;
+
+procedure UpString (var s: string); assembler;
+  asm
+    push ebx
+    push edi
+    mov ebx,s
+    xor ecx,ecx
+    mov cl,[ebx]
+    jecxz @upstr_ende
+    mov edi,ecx
+  @upstr_next:
+    cmp byte ptr [ebx+edi],'a'
+    jnae @upstr_weiter
+    cmp byte ptr [ebx+edi],'z'
+    jnbe @upstr_auml
+    sub byte ptr [ebx+edi],32
+    jmp @upstr_weiter
+  @upstr_auml:
+
+{$ifndef windows}
+
+    cmp byte ptr [ebx+edi],'„'
+    jne @upstr_ouml
+    mov byte ptr [ebx+edi],''
+  @upstr_ouml:
+    cmp byte ptr [ebx+edi],'”'
+    jne @upstr_uuml
+    mov byte ptr [ebx+edi],'™'
+  @upstr_uuml:
+    cmp byte ptr [ebx+edi],''
+    jne @upstr_eacute
+    mov byte ptr [ebx+edi],'š'
+  @upstr_eacute:
+    cmp byte ptr [ebx+edi],'‚'
+    jne @upstr_aring
+    mov byte ptr [ebx+edi],''
+  @upstr_aring:
+    cmp byte ptr [ebx+edi],'†'
+    jne @upstr_aelig
+    mov byte ptr [ebx+edi],''
+  @upstr_aelig:
+    cmp byte ptr [ebx+edi],'‘'
+    jne @upstr_ntilde
+    mov byte ptr [ebx+edi],'’'
+  @upstr_ntilde:
+    cmp byte ptr [ebx+edi],'¤'
+    jne @upstr_ccedil
+    mov byte ptr [ebx+edi],'¥'
+  @upstr_ccedil:
+    cmp byte ptr [ebx+edi],'‡'
+    jne @upstr_weiter
+    mov byte ptr [ebx+edi],'€'
+
+{$else}
+
+    cmp byte ptr [ebx+edi],224
+    jnae @upstr_weiter
+    cmp byte ptr [ebx+edi],253
+    jnbe @upstr_weiter
+    sub byte ptr [ebx+edi],32
+
+{$endif}
+
+  @upstr_weiter:
+    dec edi
+    or edi,edi
+    jnz @upstr_next
+  @upstr_ende:
+    pop edi
+    pop ebx
+  end;
+
+{$else}
+
+procedure LoString (var s: string); assembler;
+  asm
+    les bx,[s[0]]
+    mov cl,es:[bx]
+    xor ch,ch
+    jcxz @lostr_ende
+    mov di,cx
+  @lostr_next:
+    cmp byte ptr es:[bx+di],'A'
+    jnae @lostr_weiter
+    cmp byte ptr es:[bx+di],'Z'
+    jnbe @lostr_auml
+    add byte ptr es:[bx+di],32
+    jmp @lostr_weiter
+  @lostr_auml:
+
+{$ifndef windows}
+
+    cmp byte ptr es:[bx+di],''
+    jne @lostr_ouml
+    mov byte ptr es:[bx+di],'„'
+  @lostr_ouml:
+    cmp byte ptr es:[bx+di],'™'
+    jne @lostr_uuml
+    mov byte ptr es:[bx+di],'”'
+  @lostr_uuml:
+    cmp byte ptr es:[bx+di],'š'
+    jne @lostr_eacute
+    mov byte ptr es:[bx+di],''
+  @lostr_eacute:
+    cmp byte ptr es:[bx+di],''
+    jne @lostr_aring
+    mov byte ptr es:[bx+di],'‚'
+  @lostr_aring:
+    cmp byte ptr es:[bx+di],''
+    jne @lostr_aelig
+    mov byte ptr es:[bx+di],'†'
+  @lostr_aelig:
+    cmp byte ptr es:[bx+di],'’'
+    jne @lostr_ntilde
+    mov byte ptr es:[bx+di],'‘'
+  @lostr_ntilde:
+    cmp byte ptr es:[bx+di],'¥'
+    jne @lostr_ccedil
+    mov byte ptr es:[bx+di],'¤'
+  @lostr_ccedil:
+    cmp byte ptr es:[bx+di],'€'
+    jne @lostr_weiter
+    mov byte ptr es:[bx+di],'‡'
+
+{$else}
+
+    cmp byte ptr es:[bx+di],192
+    jnae @lostr_weiter
+    cmp byte ptr es:[bx+di],221
+    jnbe @lostr_weiter
+    add byte ptr es:[bx+di],32
+
+{$endif}
+
+  @lostr_weiter:
+    dec di
+    or di,di
+    jnz @lostr_next
+  @lostr_ende:
+  end;
+
+procedure UpString (var s: string); assembler;
+  asm
+    les bx,[s[0]]
+    mov cl,es:[bx]
+    xor ch,ch
+    jcxz @upstr_ende
+    mov di,cx
+  @upstr_next:
+    cmp byte ptr es:[bx+di],'a'
+    jnae @upstr_weiter
+    cmp byte ptr es:[bx+di],'z'
+    jnbe @upstr_auml
+    sub byte ptr es:[bx+di],32
+    jmp @upstr_weiter
+  @upstr_auml:
+
+{$ifndef windows}
+
+    cmp byte ptr es:[bx+di],'„'
+    jne @upstr_ouml
+    mov byte ptr es:[bx+di],''
+  @upstr_ouml:
+    cmp byte ptr es:[bx+di],'”'
+    jne @upstr_uuml
+    mov byte ptr es:[bx+di],'™'
+  @upstr_uuml:
+    cmp byte ptr es:[bx+di],''
+    jne @upstr_eacute
+    mov byte ptr es:[bx+di],'š'
+  @upstr_eacute:
+    cmp byte ptr es:[bx+di],'‚'
+    jne @upstr_aring
+    mov byte ptr es:[bx+di],''
+  @upstr_aring:
+    cmp byte ptr es:[bx+di],'†'
+    jne @upstr_aelig
+    mov byte ptr es:[bx+di],''
+  @upstr_aelig:
+    cmp byte ptr es:[bx+di],'‘'
+    jne @upstr_ntilde
+    mov byte ptr es:[bx+di],'’'
+  @upstr_ntilde:
+    cmp byte ptr es:[bx+di],'¤'
+    jne @upstr_ccedil
+    mov byte ptr es:[bx+di],'¥'
+  @upstr_ccedil:
+    cmp byte ptr es:[bx+di],'‡'
+    jne @upstr_weiter
+    mov byte ptr es:[bx+di],'€'
+
+{$else}
+
+    cmp byte ptr es:[bx+di],224
+    jnae @upstr_weiter
+    cmp byte ptr es:[bx+di],253
+    jnbe @upstr_weiter
+    sub byte ptr es:[bx+di],32
+
+{$endif}
+
+  @upstr_weiter:
+    dec di
+    or di,di
+    jnz @upstr_next
+  @upstr_ende:
+  end;
+
+{$endif}
+
+Function UStr(const s:string):string;
+  var _s:string;
+  begin
+    _s:=s;
+    UpSTring(_s);
+    UStr:=_s;
+  end;
+
+Function LStr(const s:string):string;
+  var _s:string;
+  begin
+    _s:=s;
+    LoString(_s);
+    LStr:=_s;
+  end;
+
+{$endif}
+
+{ /robo }
+
+
+{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
+{$IFDEF NOASM }
+function Left(s:string; n:byte):string;
+begin
+  if n<length(s) then s[0]:=chr(n);
+  left:=s;
+end;
+{$ELSE }
+
+{$ifdef ver32}
+{ 01.02.2000 robo - 32 Bit}
+function Left(const s: String; n: byte): string; assembler;
+asm
+        push    esi
+        push    edi
+        cld
+        mov     edi, @result
+        mov     esi, s
+        xor     eax, eax
+        lodsb
+        cmp     al, n
+        jb      @1
+        mov     al, n
+@1:     mov     ecx, eax
+        stosb
+        rep     movsb
+        pop     edi
+        pop     esi
+end;
+{ /robo }
+{$else}
+function Left(const s: String; n: byte): string; assembler;
+asm
+        mov     bx, ds
+        cld
+        les     di, @result
+        lds     si, s
+        mov     ah, 0
+        lodsb
+        cmp     al, n
+        jb      @1
+        mov     al, n
+@1:     mov     cx, ax
+        stosb
+        rep movsb
+        mov     ds, bx
+end;
+{$endif}
+{$ENDIF }
+
+{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
+{$IFDEF NOASM }
+Function Right(s:string; n:byte):string;
+begin
+  if n>=length(s) then
+    Right:=s
+  else
+    Right:=copy(s,length(s)-n+1,255);
+end;
+{$ELSE }
+{$ifdef ver32}
+{ 01.02.2000 robo - 32 Bit}
+function Right(const s: string; n: byte):string; assembler;
+asm
+        push    esi
+        push    edi
+        cld
+        mov     esi, s
+        mov     edi, @result
+        xor     eax, eax
+        xor     ecx, ecx
+        mov     cl, n
+        lodsb
+        cmp     al, n                   { n > als L„nge von s }
+        jnb @3
+        mov     cl, al
+@3:     mov     dl, al                  { Stringl„nge merken }
+        sub     al, cl
+        jnc @1
+        mov     cl, dl
+        xor     eax, eax
+@1:     mov     [edi], cl
+        inc     edi
+        add     esi, eax
+        rep     movsb
+        pop     edi
+        pop     esi
+end;
+{ /robo }
+{$else}
+function Right(const s: string; n: byte):string; assembler;
+asm
+        mov     bx, ds
+        cld
+        lds     si, s
+        les     di, @result
+        xor     ax, ax
+        xor     cx, cx
+        mov     cl, n
+        lodsb
+        cmp     al, n                   { n > als L„nge von s }
+        jnb @3
+        mov     cl, al
+@3:     mov     dl, al                  { Stringl„nge merken }
+        sub     al, cl
+        jnc @1
+        mov     cl, dl
+        xor     ax, ax
+@1:     mov     es:[di], cl
+        inc     di
+        add     si, ax
+        rep movsb
+        mov     ds, bx
+end;
+{$endif}
+{$ENDIF }
+
+{ MK 08.01.2000 Routine in Inline-Assembler neu geschrieben }
+{$IFDEF NOASM }
+Function Mid(const s:string; const n:byte):string;
+begin
+  mid:=copy(s,n,255);
+end;
+{$ELSE }
+{$ifdef ver32}
+{ 01.02.2000 robo - 32 Bit}
+function Mid(const s:string; const n:byte): string; assembler;
+asm
+        push    esi
+        push    edi
+        cld
+        mov     edi, @result
+        mov     esi, s
+        xor     edx, edx
+        xor     ecx, ecx
+        lodsb
+        cmp     al, n
+        jnb @3
+        mov     al, cl              { n > als L„nge von s }
+        stosb
+        jmp @2
+@3:     mov     dl, al
+        sub     al, n
+        inc     al
+        jnbe @4
+        dec     al                  { Stringl„nge 255, n = 0 }
+@4:     cmp     al, dl
+        jc      @1
+        mov     al, dl
+@1:     mov     cl, al
+        stosb
+        sub     edx, ecx
+        add     esi, edx
+        rep     movsb
+@2:     pop     edi
+        pop     esi
+end;
+{ /robo }
+{$else}
+function Mid(const s:string; const n:byte): string; assembler;
+asm
+        mov     bx, ds
+        cld
+        les     di, @result
+        lds     si, s
+        xor     dx, dx
+        xor     cx, cx
+        lodsb
+        cmp     al, n
+        jnb @3
+        mov     al, cl              { n > als L„nge von s }
+        stosb
+        jmp @2
+@3:     mov     dl, al
+        sub     al, n
+        inc     al
+        jnbe   @4
+        dec  al                     { Stringl„nge 255, n = 0 }
+@4:     cmp     al, dl
+        jc      @1
+        mov     al, dl
+@1:     mov     cl, al
+        stosb
+        sub     dx, cx
+        add     si, dx
+        rep movsb
+@2:     mov     ds, bx
+end;
+{$endif}
+{$ENDIF}
+
+Function trim(s:string):string;
+begin
+  while (s[length(s)]=' ') or (s[length(s)]=#9) do     { terminiert, da s[0]<>' ' fr s='' }
+    dec(byte(s[0]));
+  while (s<>'') and ((s[1]=' ') or (s[1]=#9)) do
+    delete(s,1,1);
+  trim:=s;
+end;
+
+
+Function Range(const c1,c2:char):string;
+
+var s : string;
+    c : char;
+
+begin
+  s:='';
+  for c:=c1 to c2 do
+    s:=s+c;
+  range:=s;
+end;
+
+
+Function IVal(s:string):longint;
+var l   : longint;
+    res : integer;
+begin
+  if s[1]='+' then delete(s,1,1);
+  val(trim(s),l,res);
+  IVal:=l;
+end;
+
+
+Function RVal(const s:string):real;
+var r   : real;
+    res : integer;
+begin
+  val(trim(s),r,res);
+  RVal:=r;
+end;
+
+{$IFDEF Delphi }
+procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
+begin
+  Dir := ExtractFileDir(Path);
+  Name := ExtractFileName(Path);
+  Ext := ExtractFileExt(Path);
+end;
+{$ENDIF }
+
+{$IFDEF Windows }
+
+procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
+var pp : array[0..79] of char;
+    dd : array[0..70] of char;
+    nn : array[0..8] of char;
+    ee : array[0..4] of char;
+begin
+  FastMove(path[1],pp,length(path)); {!! da wird evtl. zu viel kopiert }
+  pp[length(path)]:=#0;
+  filesplit(pp,dd,nn,ee);
+  dir:=StrPas(dd);
+  name:=StrPas(nn);
+  ext:=StrPas(ee);
+end;
+
+{$ENDIF }
+
+
+function progname:namestr;
+var ps : pathstr;
+    ds : dirstr;
+    ns : namestr;
+    es : extstr;
+begin
+  ps:=paramstr(0);
+  if ps='' then progname:=''
+  else begin
+    fsplit(ps,ds,ns,es);
+    progname:=ns;
+    end;
+end;
+
+
+function progpath:pathstr;
+var ps : pathstr;
+    ds : dirstr;
+    ns : namestr;
+    es : extstr;
+begin
+  ps:=paramstr(0);
+  if ps='' then progpath:=''
+  else begin
+    fsplit(ps,ds,ns,es);
+    progpath:=ds;
+    end;
+end;
+
+
+function Hex(const l:longint; const n:byte):string;
+const hexch : array[0..15] of char = '0123456789ABCDEF';
+var   s    : string[8];
+      f    : shortint;
+      trim : boolean;
+begin
+  trim:=(n=0);
+  f:=iif(trim,28,(n-1)*4);
+  s:='';
+  while f>=0 do begin
+    s:=s+hexch[(l shr f)and $f];
+    dec(f,4);
+    end;
+  if trim then
+    while (length(s)>1) and (s[1]='0') do
+      delete(s,1,1);
+  Hex:=s;
+end;
+
+
+Function HexVal(const s:string):longint;
+var l   : longint;
+    res : integer;
+begin
+  val('$'+trim(s),l,res);
+  if res=0 then HexVal:=l
+  else HexVal:=0;
+end;
+
+
+Function Bin(l:longint; n:byte):string;
+var s : string[32];
+    i : byte;
+begin
+  s:='';
+  for i:=1 to n do begin
+    if odd(l) then s:='1'+s
+    else s:='0'+s;
+    l:=l shr 1;
+    end;
+  bin:=s;
+end;
+
+
+{$IFNDEF Delphi }
+Function FileName(var f):string;
+var s : pathstr;
+    i : byte;
+begin
+  FastMove(filerec(f).name,s[1],79);
+  i:=1;
+  while (i<79) and (s[i]<>#0) do inc(i);
+  s[0]:=chr(i-1);
+  FileName:=s;
+end;
+{$ENDIF }
+
+Function iif(b:boolean; l1,l2:longint):longint;
+begin
+  if b then iif:=l1
+  else iif:=l2;
+end;
+
+
+Function iifb(b,b1,b2:boolean):boolean;
+begin
+  if b then iifb:=b1
+  else iifb:=b2;
+end;
+
+
+Function iifc(b:boolean; c1,c2:char):char;
+begin
+  if b then iifc:=c1
+  else iifc:=c2;
+end;
+
+
+Function iifr(b:boolean; r1,r2:real):real;
+begin
+  if b then iifr:=r1
+  else iifr:=r2;
+end;
+
+
+Function iifs(b:boolean; s1,s2:string):string;
+begin
+  if b then iifs:=s1
+  else iifs:=s2;
+end;
+
+
+procedure delfirst(var s:string);
+begin
+  delete(s,1,1);
+end;
+
+
+procedure dellast(var s:string);
+begin
+  if s<>'' then dec(byte(s[0]));
+end;
+
+
+function posn(s1,s2:string; n:byte):byte;
+begin
+  if pos(s1,mid(s2,n))=0 then PosN:=0
+  else PosN:=pos(s1,mid(s2,n))+n-1;
+end;
+
+
+function long(const l:longint):longint;
+begin
+  long:=l;
+end;
+
+
+function shortpath(path:pathstr; n:byte):pathstr;
+var ds : dirstr;
+    ns : namestr;
+    es : extstr;
+begin
+  fsplit(path,ds,ns,es);
+  ds:=left(ds,n-length(ns+es));
+  dellast(ds);
+  shortpath:=ds+'\'+ns+es;
+end;
+
+
+function center(const s:string; n:byte):string;
+begin
+  if length(s)>=n-1 then center:=left(s,n)
+  else center:=sp((n-length(s))div 2)+s+sp((n-length(s)-1)div 2);
+end;
+
+
+function reverse(s:string):string;
+var i : byte;
+begin
+  reverse[0]:=s[0];
+  for i:=1 to length(s) do reverse[i]:=s[length(s)+1-i];
+end;
+
+
+function pofs(p:pointer):word;
+begin
+  pofs:=psplit(p).o;
+end;
+
+function pseg(p:pointer):word;
+begin
+  pseg:=psplit(p).s;
+end;
+
+
+function TopStr(const s:string):string;
+begin
+  if s='' then TopStr:=''
+  else TopStr:=UpCase(s[1])+LStr(copy(s,2,254));
+end;
+
+
+{$IFNDEF Windows}
+
+function topallstr(s:string):string;
+var top : boolean;
+    p   : byte;
+begin
+  p:=1; top:=true;
+  while p<=length(s) do begin
+    if (s[p]>='A') and (s[p]<='Z') or (s[p]='') or (s[p]='™') or (s[p]='š') then
+      if top then top:=false
+      else s[p]:=LoCase(s[p])
+    else
+      if ((s[p]<'a') or (s[p]>'z')) and (s[p]<>'„') and (s[p]<>'”') and (s[p]<>'')
+      then
+        top:=true;
+    inc(p);
+    end;
+  topallstr:=s;
+end;
+
+{$ELSE}
+
+function topallstr(s:string):string;
+var top : boolean;
+    p   : byte;
+begin
+  p:=1; top:=true;
+  while p<=length(s) do begin
+    if (s[p]>='A') and (s[p]<='Z') or (s[p]>=#192) and (s[p]<=#221) then
+      if top then top:=false
+      else s[p]:=LoCase(s[p])
+    else
+      if ((s[p]<'a') or (s[p]>'z')) and ((s[p]<#224) or (s[p]>#253))
+      then
+        top:=true;
+    inc(p);
+    end;
+  topallstr:=s;
+end;
+
+{$ENDIF}
+
+
+Procedure iswap(var l1,l2:longint);
+var h : longint;
+begin
+  h:=l1; l1:=l2; l2:=h;
+end;
+
+
+function fitpath(path:pathstr; n:byte):pathstr;
+var dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+    p    : byte;
+begin
+  if length(path)<=n then fitpath:=path
+  else begin
+    fsplit(path,dir,name,ext);
+    while length(dir)+length(name)+length(ext)+4>n do begin
+      p:=length(dir)-1;
+      while dir[p]<>'\' do dec(p);
+      dir:=left(dir,p);
+      end;
+    fitpath:=dir+'...\'+name+ext;
+    end;
+end;
+
+
+Function MultiPos(s1,s2:string):boolean;
+var i  : byte;
+    mp : boolean;
+begin
+  mp:=false; i:=1;
+  while not mp and (i<=length(s1)) do begin
+    mp:=(cpos(s1[i],s2)>0);
+    inc(i);
+    end;
+  MultiPos:=mp;
+end;
+
+
+Procedure release;
+begin
+  writeln(#7#7#7'Release???');
+end;
+
+
+Function QSum(const s:string):longint;             { Quersumme }
+var l : longint;
+    i : byte;
+begin
+  l:=0;
+  for i:=1 to length(s) do
+    inc(l,ord(s[i]));
+  qsum:=l;
+end;
+
+Function IntQSum(const l:longint):longint;         { Longint-Quersumme }
+begin
+  if l=0 then IntQSum:=0
+  else IntQSum:=l mod 10 + IntQSum(l div 10);
+end;
+
+
+Function Even(const l:longint):boolean;
+begin
+  even:=not odd(l);
+end;
+
+
+Function Ltrim(const s:string):string;
+var i : byte;
+begin
+  i:=1;
+  while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
+  ltrim:=copy(s,i,255);
+end;
+
+Function Rtrim(s:string):string;
+begin
+  while (s[length(s)]=' ') or (s[length(s)]=#9) do
+    dec(byte(s[0]));
+  Rtrim:=s;
+end;
+
+
+Function Without(s1,s2:string):string;       { Strings "subtrahieren"  }
+var p,i : byte;
+begin
+  for i:=1 to length(s2) do
+    repeat
+      p:=cpos(s2[i],s1);
+      if p>0 then delete(s1,p,1);
+    until p=0;
+  Without:=s1;
+end;
+
+
+Function Lastchar(const s:string):char;           { letztes Zeichen eines Str.   }
+begin
+  lastchar:=s[length(s)];
+end;
+
+
+Function FirstChar(const s:string):char;           { UpCase(s[1]) }
+begin
+  if s='' then firstchar:=#0
+  else firstchar:=s[1];
+end;
+
+
+Function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
+var p1,p2 : byte;
+begin
+  p1:=cpos(' ',s);
+  p2:=cpos(#9,s);
+  if p1=0 then blankpos:=p2
+  else if p2=0 then blankpos:=p1
+  else blankpos:=min(cpos(' ',s),cpos(#9,s));
+end;
+
+
+Function BlankposX(var s:string):byte;       { length(s)+1, falls bp=0      }
+var p : byte;
+begin
+  p:=blankpos(s);
+  if p>0 then BlankposX:=p
+  else BlankposX:=min(255,length(s)+1);
+end;
+
+
+Procedure TruncStr(var s:string; n:byte);    { String krzen                }
+begin
+  if length(s)>n then
+    s[0]:=chr(n);
+end;
+
+
+Procedure incr(var r1:real; r2:real);
+begin
+  r1:=r1+r2;
+end;
+
+
+function hbar(const len:byte):string;
+begin
+  hbar:='Ã'+dup(len-2,'Ä')+'´';
+end;
+
+
+Function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s }
+begin
+  StrChar:=s[n];
+end;
+
+
+Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
+var p : byte;
+begin
+  p:=pos(s1,s);
+  if p>0 then begin
+    delete(s,p,length(s1));
+    insert(s2,s,p);
+    end;
+end;
+
+
+Function TimeDiff(t1,t2:DateTimeSt):longint;    { Abstand in Sekunden  }
+
+  function TimeSecs(var t:DateTimeSt):longint;
+  begin
+    TimeSecs:=3600*ival(left(t,2))+60*ival(copy(t,4,2))+ival(right(t,2));
+  end;
+
+begin
+  if t1<=t2 then
+    TimeDiff:=0
+  else
+    TimeDiff:=TimeSecs(t1)-TimeSecs(t2);
+end;
+
+
+Function isnum(const s:string):boolean;            { s besteht aus [0..9] }
+var i : integer;
+begin
+  if s='' then
+    isnum:=false
+  else begin
+    i:=1;
+    while (i<=length(s)) and (s[i]>='0') and (s[i]<='9') do
+      inc(i);
+    isnum:=(i>length(s));
+    end;
+end;
+
+
+Function RightPos(c:char; s:string):byte;    { Pos von rechts }
+var p : byte;
+begin
+  p:=length(s);
+  while (p>0) and (s[p]<>c) do dec(p);
+  RightPos:=p;
+end;
+
+
+Function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich }
+begin
+  UpString(s1);
+  UpString(s2);
+  Stricmp:=(s1=s2);
+end;
+
+
+function Oct(l:longint):string;        { Longint -> Oktalstring }
+var s   : string;
+    sgn : string[1];
+begin
+  s:='';
+  if l<0 then begin
+    sgn:='-';
+    l:=-l;
+    end
+  else sgn:='';
+  while l<>0 do begin
+    s := chr((l and 7) + $30) + s;
+    l := (l shr 3);
+    end;
+  if s='' then Oct:='0'
+  else Oct:=sgn+s;
+end;
+
+
+function OctVal(s:string):longint;     { Oktalstring -> Logint }
+var l   : longint;
+    n   : integer;
+    sgn : boolean;
+begin
+  s:=trim(s);
+  sgn:=(firstchar(s)='-');
+  if sgn then delfirst(s);
+  l:=0;
+  for n:=1 to length(s) do
+    l:=(l shl 3) + ord(s[n]) - $30;
+  if l>=0 then OctVal:=iif(sgn,-l,l)
+  else OctVal:=0;
+end;
+
+
+Function CPosX(c:char; var s:string):byte;   { pos=0 -> pos:=length(s)+1 }
+var p : byte;
+begin
+  p:=cpos(c,s);
+  if p=0 then CPosX:=length(s)+1
+  else CPosX:=p;
+end;
+
+
+{ erstes durch 'delimiter' abgegrenztes Wort aus s extrahieren }
+
+Function GetToken(var s:string; delimiter:string):string;
+var p : byte;
+begin
+  if delimiter=' ' then begin
+    s:=trim(s);
+    p:=blankposx(s);
+    GetToken:=left(s,p-1);
+    delete(s,1,p);
+    s:=ltrim(s);
+    end
+  else begin
+    p:=posx(delimiter,s);
+    GetToken:=trim(left(s,p-1));
+    s:=trim(mid(s,p+length(delimiter)));
+    end;
+end;
+
+
+Function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0 }
+var p : byte;
+begin
+  p:=pos(s1,s2);
+  if p=0 then PosX:=length(s2)+1
+  else PosX:=p;
+end;
+
+
+Function SMatch(s1,s2:string):byte;          { Anzahl der bereinst. Bytes  }
+var p,ml : byte;
+begin
+  p:=0;
+  ml := min(length(s1),length(s2));
+  while (p<ml) and (s1[p]=s2[p]) do
+    inc(p);
+  SMatch:=p;
+end;
+
+
+Function SiMatch(s1,s2:string):byte;         { dto., ignore case }
+var p,ml : byte;
+begin
+  p:=0;
+  ml := min(length(s1),length(s2));
+  while (p<ml) and (UpCase(s1[p+1])=UpCase(s2[p+1])) do
+    inc(p);
+  SiMatch:=p;
+end;
+
+
+function SwapLong(l:longint):longint;        { Byteorder umdrehen }
+type sr = record
+            w1,w2 : smallword;
+          end;
+var  m  : longint;
+begin
+  sr(m).w1:=swap(sr(l).w2);
+  sr(m).w2:=swap(sr(l).w1);
+  SwapLong:=m;
+end;
+
+
+
+{ JG:04.02.00  Mailadresse ( @ in der Mitte ) in einem String erkennen und ausschneiden }  
+
+function mailstring(const s: String): string; assembler;
+asm
+{$IFNDEF Ver32 }
+        mov dx,ds
+        cld
+        les di, @result
+        lds si, s
+
+        mov cl,[si]
+        inc si
+        
+        mov bx,0        
+
+@@1:    cmp byte ptr [si+bx],'@'        { @ Suchen }                   
+        je @@2
+        inc bx
+        cmp bl,cl
+        je @end
+        jmp @@1
+
+@@2:    dec bx                          { gueltige Zeichen links des @ suchen }
+        js @@3         
+        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
+        cmp al,'_'
+        je @@2
+        cmp al,'-'
+        je @@2
+        cmp al,'.'
+        je @@2 
+        cmp al,'$'
+        je @@2 
+        cmp al,'@'
+        je @@2
+        cmp al,'0'
+        jb @@2a
+        cmp al,'9'
+        jna @@2        
+@@2a:   and al,0dfh
+        cmp al,'A'
+        jb @@3
+        cmp al,'Z'
+        jna @@2
+
+
+@@3:    lea si,[si+bx+1]                {SI= Start des neuen Strings}
+        mov bx,0
+        
+@@4:    inc bx                          { und nach rechts }
+        cmp bl,cl
+        je @@5
+        mov al,[si+bx]                  { Check auf Gueltige Zeichen }
+        cmp al,'_'
+        je @@4
+        cmp al,'-'
+        je @@4
+        cmp al,'.'
+        je @@4 
+        cmp al,'$'
+        je @@4 
+        cmp al,'@'
+        je @@4
+        cmp al,'0'
+        jb @@4a
+        cmp al,'9'
+        jna @@4        
+@@4a:   and al,0dfh
+        cmp al,'A'
+        jb @@5
+        cmp al,'Z'
+        jna @@4
+
+@@5:    mov cx,bx
+
+@end:   mov al,bl
+        stosb
+        rep movsb            
+        mov ds,dx
+{$ENDIF }
+end;        
+{/JG}
+
+
+
+Function CreditCardOk(s:string):boolean;   { Kreditkartennummer berprfen }
+const cntab : array['0'..'9'] of byte = (0,2,4,6,8,1,3,5,7,9);
+var i,sum : integer;
+begin
+  i:=1;
+  while i<=length(s) do
+    if (s[i]<'0') or (s[i]>'9') then
+      delete(s,i,1)
+    else
+      inc(i);
+  sum:=0;
+  for i:=1 to length(s) do
+    if odd(length(s)+1-i) then inc(sum,ord(s[i])-48)
+    else inc(sum,cntab[s[i]]);
+  CreditCardOk:=(sum mod 10=0);
+end;
+
+
+Function rforms(const s:string; const n:byte):string;    { String links mit ' ' auff.   }
+begin
+  if length(s)>=n then
+    rforms:=right(s,n)
+  else
+    rforms:=sp(n-length(s))+s;
+end;
+
+{$ifdef ver32}
+
+{ 01.02.2000 robo - 32 Bit }
+
+procedure FastMove(var Source, Dest; const Count: WORD); assembler;
+asm
+        mov  ecx, count
+        or   ecx, ecx        { Nichts zu kopieren? }
+        jz   @ende
+
+        push ebx
+        push esi
+        push edi
+
+        mov  edi, dest
+        mov  esi, source
+
+        shr  ecx, 1
+        setc dl
+        shr  ecx, 1
+        cld
+        rep  movsd
+        jnc  @even2
+        movsw
+@even2: shr  dl, 1
+        jnc @even
+        movsb
+@even:  pop edi
+        pop esi
+        pop ebx
+@ende:
+end;
+
+{ /robo }
+
+{$else}
+
+{$IFDEF NO386 }
+{ JG+MK+de.comp.lang.assembler.x86: Superschnelle MOVE-Routine }
+procedure FastMove(var Source, Dest; const Count: WORD); assembler;
+asm
+        mov  cx, count
+        or   cx, cx        { Nichts zu kopieren? }
+        jz   @ende
+
+        mov  bx, ds
+        les  di, dest
+        lds  si, source
+
+        cld
+        shr  cx, 1
+        rep  movsw          { Zuerst die geraden W”rter, wegen Alignment }
+        jnc  @even
+        movsb
+@even:  mov ds, bx
+@ende:
+end;
+
+{$ELSE }
+
+procedure FastMove(var Source, Dest; const Count: WORD); assembler;
+asm
+        mov  cx, count
+        or   cx, cx        { Nichts zu kopieren? }
+        jz   @ende
+
+        mov  bx, ds
+        les  di, dest
+        lds  si, source
+
+        cld
+        shr  cx, 1
+        db $0F,$92,$C2     { setc dl }
+        shr  cx, 1
+        db $66
+        rep  movsw         { rep movsd }
+        jnc  @even2
+        movsw
+@even2: shr  dl, 1
+        jnc @even
+        movsb
+@even:  mov ds, bx
+@ende:
+end;
+
+{$ENDIF }
+{$ENDIF }
+
+end.
+

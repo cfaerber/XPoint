@@ -1,0 +1,63 @@
+K XP-FM v3.07 resource file
+K English
+
+# ----- Error in FIDO.CFG
+
+100 Parameter error:~
+101 Invalid InPath
+102 MailPath missing
+103 Illegal MailPath
+104 Invalid log file name: %s
+105 File missing:  %s
+106 Name missing
+107 Address missing
+108 Invalid / incomplete address:  %s
+109 Invalid baud rate
+110 Missing Port address
+111 No IRQ number
+112 InPath missing
+113 Illegal baud rate
+114 Illegal temporary file name
+115 ZM.EXE not found
+116 Error: CTS low
+
+# ----- Dialing
+
+160 break
+161 Initializing modem
+162 Dialing %s (attempt #%s) ...
+163 No connection
+164 Hanging up
+165 Waiting for next call ...
+166 Calling %s
+
+# ----- bad carrier signal (number of lines is variable):
+
++   170
+1   ERROR: A carrier signal was detected on COM%s!
+2
+3   Possibly your modem is configured incorrectly, so that it sends
+4   a carrier signal though there is no carrier at all. Please check
+5   you modem settings! For more information on carrier signals see
+6   Apendix F of XPOINT.DOC.
+-
+171 Press any key ...
+
+# ----- login handshake, XP-FM.INC
+
+180 Hello Send Error
+181 Hello Receive Error
+182 Handshake OK
+183 correcting system time
+184 not implemented
+185 no common protocol supported :-(
+186 received bad EMSI data packet
+187 EMSI_NAK: resending EMSI packet
+
+# ----- file transfer
+
+190 temporary zmodem parameter file
+191 transfer aborted
+192 upload
+193 download
+195 carrier lost

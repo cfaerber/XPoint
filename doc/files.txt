@@ -1,0 +1,171 @@
+
+Dateien in TOOLS.ZIP
+--------------------
+
+RC.EXE          Compiler fÅr *.RQ -> *.RC
+DOCFORM.EXE     Formatierer fÅr *.DQ -> *.DOC
+IHS.EXE         Compiler fÅr *.IHQ -> *.HLP
+BPC.CFG         Optionen fÅr BPC
+TPC.BAT         Batch zum Compilieren von XP.EXE
+TPCX.BAT        Batch zum Compilieren von XL.XE
+DF.BAT          Batch zum Formatieren der Dokumentation
+IHS.PAS         Quelltext zu IHS.EXE
+DOCFORM.PAS     Quelltext zu DOCFORM.EXE
+RC.PAS          Quelltext zu RC.EXE
+
+
+
+Dateien im SRC312D.ZIP bzw. SRC320.ZIP
+--------------------------------------
+
+ARCHIVE.PAS     Verzeichnis von Archivdateien auslesen (ZIP, ARJ, etc.)
+CAPI*.*         unvollendetes ISDN-CAPI-1.1-Modul
+CLIP.*          Schnittstelle zum 16-Bit-Windows-Clipboard via INT 2F
+CRC16.PAS       CRC-16 berechnen
+DATA*.*         Datenbankfunktionen fÅr *.DB1/*.IX1/*.EB1
+DBASE.PAS       dBASE-Dateien auslesen (fÅr YUP2PKT)
+DOSX.PAS        DOS- und BIOS-Funktionen
+ED*.*           Editor
+EMS.PAS         EMS-Speicherverwaltung
+EXXEC.*         externe Programme aufrufen; Swapping
+FEIERTAG.PAS    Feiertage ermitteln
+FILEIO.PAS      Dateien, Pfade, Laufwerke
+HELP.PAS        Online-Hilfe: *.HLP auslesen und anzeigen
+INOUT.PAS       Diverse Funktionen fÅr Tastatureingabe und Bildschirmausgabe
+KEYS.PAS        Tastatureingabe
+LISTER.*        Lister
+MASKE.*         Dialoge / Eingabemasken
+MAUS2.PAS       Auswertung von Mauseingaben
+MONTAGE.PAS     Datumsfunktionen
+MOUSE.*         Auswertung von Maus-Interrupts (INT 33)
+PRINTERX.PAS    Druckerausgabe
+RESOURCE.PAS    String-Resourcen: *.RES auslesen
+STACK.PAS       ein primitiver Stack
+TPZCRC.PAS      CRC-16 und CRC-32 berechnen
+TYPEFORM.*      Typumwandlungen, Stringformatierungen etc.
+UART.PAS        Ein-/Ausgabe via serieller Schnittstelle oder FOSSIL
+VIDEO.*         Video-BIOS-Funktionen
+WIN2.PAS        Auswahlfenster
+WINDOWS.*       Fenster allgemein
+XDELAY.*        Ersatz fÅr CRT-Delay
+XMS.*           XMS-Speicherverwaltung
+
+XP.PAS          CrossPoint-Hauptprogramm, Real-Mode-Version
+XL.PAS          CrossPoint-Hauptprogramm, DPMI-Version
+XP_DES.*        DES-Verschluesselung
+XP_ITI.PAS      MausTausch-ITI-File auswerten
+XP_PGP.*        PGP-Schnittstelle
+XP_UUE.*        UUDecode
+XP0.PAS         globale Definitionen und Deklarationen
+XP1.*           alles Mîgliche
+XP10*.*         Timinglisten, Tastenmakros, GebÅhrenzonen etc.
+XP1CM.INC       ein ÅberflÅssiges Relikt
+XP1HELP.*       Online-Hilfe aufrufen
+XP1INPUT.PAS    diverse Eingaberoutinen
+XP1MENU.INC     MenÅfunktionen
+XP1O*.PAS       Diverses
+XP1S.INC        externe Programme aufrufen
+XP2.PAS, XP2CFG.INC,
+XP2DB.PAS       Initialisierungen bei Programmstart
+XP2C.PAS        /XPoint/Config
+XP2F.*          Fressen, Ficken, Fernsehen
+XP3*.*          diverse Nachrichten-(Verarbeitungs/Datenbank)-Funktionen
+XP3EX.PAS       Nachrichten extrahieren
+XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation,
+                Suchfunktionen u.a.
+XP5.PAS         Kalender, Screen Saver, Pa·wort u.a.
+XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
+XP7*.*          Netcall-Funktionen
+XP8.*           Brettmanager-Funktionen
+XP8FS.INC       Fileserver-Funktionen
+XP9.*           (fast) alle Funktionen im Edit-MenÅ
+XPAUTO.PAS      AutoVersandt, Autoexec-Verzeichnis
+XPCC.PAS        Verteiler
+XPCRC32.PAS     CRC-32 berechnen
+XPDATUM.PAS     Datumsumwandlungen
+XPDEF.INC       globale Compiler-Definitionen
+XPDIFF.PAS      Definitionen fÅr XP, XP-FM und ZFIDO
+XPE.PAS         Aufruf des internen Editors
+XPFIDO.PAS, XPF1.INC,
+XPF2.PAS        Fido-Funktionen
+XPFIDONL.PAS    Fido-Nodelisten-Funktionen
+XPFONTS.PAS     Bildschirmfonts
+XPIMPEXP.PAS    Import/Export-Funktionen
+XPKEYS.PAS      Funktionstasten und Makros
+XPMAKEHD.INC    ZCONNECT- und Z3.8-Header parsen
+XPMAUS.PAS      MausTausch-Funktionen
+XPMIME.PAS      nur XP 3.2: MIME-Viewer-Funktionen
+XPNT.PAS        Netztypen
+XPREG.PAS       /XPoint/Registrierung
+XPSTAT.PAS      /XPoint/Statistik
+XPTERM.PAS      /XPoint/Terminal
+XPUU.PAS        UUCICO-Aufruf
+XPVIEW.PAS      BinÑrfile-Viewer
+XPX.PAS         erste Unit: Startup-Funktionen
+XP-*.RQ         Resourcendateien fÅr CrossPoint
+XPFNT*.OBJ      Bildschirmfonts
+
+NDIFF.PAS       Nodelist-Differ (NDIFF.EXE)
+PMCONV.PAS      PM-Puffer-Konvertierer (PMCONV.EXE)
+MAGGI.PAS       Multiformat-Konvertierer (MAGGI.EXE)
+UUZ.PAS         UUCP/RFC-Konvertierer (UUZ.EXE)
+XPFILES.INC     Dateinamenskonvertierung fÅr UUZ
+XP-FM.*         Fido-Mailer (XP-FM.EXE)
+XPFM-*.RQ       Resourcen-Quelltexte fÅr den Fido-Mailer
+XPME.PAS, XPMECOL.INC
+                MenÅeditor (XPME.EXE)
+ZFIDO.*         FTSC-Konvertierer (ZFIDO.EXE)
+ZPR.*           ZCONNECT-Pufferreparierer (ZPR.EXE)
+
+UUCP-FL1.PAS    Beispiel fÅr UUCP-Filelisten-Konvertierer
+XPNODES.PAS     Unit fÅr Zugriff auf den XP-Nodelistenindex
+
+XP.IHQ          Quelltext der deutschen Online-Hilfe
+XP-E.IHQ        Quelltext der englischen Online-Hilfe
+*.DQ            Quelltexte der Dokumentation
+
+DBFORM          Beschreibung der Datenbankfelder
+
+
+Die Quelltexte PMCONV.PAS, CAPI.ASM, XP_DES.ASM sind im derzeitigen
+Zustand nicht compilier- bzw. assemblierbar. Da sich an diesen
+Dateien sicher nichts mehr Ñndern wird, bin ich dem Problem nicht
+weiter nachgegangen.
+
+
+
+Dateiformate
+------------
+
+Datenbank-Format
+  Die Datei DBFORM enthÑlt eine kurze öbersicht Åber die einzelnen
+  Datensatzfelder in den DB1-Dateien. Eine Beschreibung des
+  Datenbank-Dateiformates existiert nicht; Sie werden also in den
+  Quelltexten (DATA*.PAS und DATA*.INC) nachlesen muessen.
+
+Online-Hilfe:
+  Die Datei XP.IHQ beinhaltet die einzelnen, numerierten Seiten der
+  Online-Hilfe incl. Formatierungen fÅr Querverweise und Hervorhe-
+  bungen. Das Format sollte recht einfach zu verstehen sein.
+  Bitte beachten Sie, da· allen "@"-Zeichen im Hilfetext ein "\"
+  vorangestellt werden mu·, da diese sonst als Steuerzeichen
+  interpretiert wÅrden.
+    Es existiert eine englische Version der Online-Hilfe (XP-E.IHQ),
+  die jedoch groesstenteils noch auf dem Stand von XP 2.1 ist.
+    Die Funktionen zum Auslesen der compilierten Hilfsdatei befinden
+  sich in HELP.PAS.
+
+Resourcen:
+  Die Dateien XP-D.RC und XP-E.RC enthalten alle sprachabhaengigen
+  Texte und Tastendruecke; au·erdem enthalten Sie Angaben Åber die
+  Abmessungen einiger Diualogboxen. Die Datei XP-E.RC ist nicht mehr
+  auf dem aktuellen Stand. XPFM-*.RC enthalten entsprechende Dateien
+  fÅr XP-FM.
+    Alle EintrÑge in den Ressourcendateien sind durchnumeriert. Ein
+  Eintrag kann aus einer einzelnen Zeile, oder aus einer Gruppe von
+  numerierten Subzeilen bestehen, die in "+" und "-" eingeschlossen
+  sind.
+    Die Funktionen zum Auslesen der compilierten Resourcendateien
+  befinden sich in RESOURCE.PAS.
+
+

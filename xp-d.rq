@@ -1,0 +1,3148 @@
+K CrossPoint v3.2 resource file
+K Deutsch
+K (c) '93-98 Peter Mandrella
+
+# Online-Hilfe, Tastenmakros
+1 XP.HLP
+2 KEYDEF.CFG
+5 Lade Sprachmodul ...
+
+# Dateiversion
+6 13
+
+# --- Mens -----------------------------------------------------------
+
+# Hauptmen-Hotkeys: Nachrichten / Sonstige / AutoVersand
+7 XWNTFDCZ
+8 XWNTFDCZ
+9 XWùùFDCZ
+
++ 10
+# Do NOT change the first word in each of the following lines!
+0   Main,001^XPointù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2
+1   XPoint,011^Registrierung,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,016^DOS        F9,-,018^Beenden
+# Zusatz-Men hier nur fr XPME (s.u.) :
+2   Zusatz,021^Kalender,022^Archiv-Viewer
+3   Nachricht,031^Suchenù5,032E^xtraktù12,033^Unversandtù4,034^Alleù14,035^ndernù22,036^Weiterleitenù21,-,038Brett^managerù19,039^Fileserverù20,03aP^GPù40,03b^Direkt
+4   Unversandt,041^Editieren,042^ndern,043^L”schen,044^Statistik,045^Zeigen
+5   Suchen,051^Volltext,052^Betreff,053^User       @U,054^Spezial,055^Wiedervlg.,056^Markiert,057^EntMark.   ^E,058Message^ID
+6   Config,061^Optionenù28,062E^Xternù24,063^Pfade,064^Anzeigeù9,065^Modemù18,066^Drucker,067^Tastenù23,068^Zusatz-Men,069^Sichern
+7   Wartung,071^Reorganisation,072^Packen,073^BrettReorg,074^UserReorg,075^Adreábuch,076Dupes ^l”schen,-,078^Server-Wechsel,079S^onstigesù33
+8   Schablonen,081!^Kopf,082!^PrivKopf,083!^BrettQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Weiterleit,088!^Erneut,-,08a!^Signatur,08b!Pr^ivSignatur,08c!Emp^fBest.,08d!^L”schnachr.,08e!S^onstige
+9   Anzeige,091^Farben,092^Bretter,093^Nachrichten,094^Kopf,095^Zeilenù11,096^Diverses,098^Hilfen,097^PD-Zmodem
+10  Import,0a1^Puffer einlesen,0a2^Fremdformat,0a3^Userliste,0a4^Brettliste,-,0a6^Yuppie-Nachrichten
+# Dummy fr XPME:
+11  Zeilen,0b125
+12  Extrakt,0c1^Nachricht,0c2^UUdecode,0c7M^IME-Decode,0c3^Brett,0c4^Kommentarbaum,0c5^Markiert,0c6!^Als..     T.o.Kopfù13
+13  Als,0d1Text ^ohne Kopf,0d2Text ^mit Kopf,0d3^Puffer,0d4^Quote
+14  Alle,0e1^Halten,0e2^L”schen,0e3^Markieren,0e4^Normal,0e5L^esen,0e6Ent^fernen,0e7^Drucken
+15  Netcall,0f1^Einzeln,0f2^Alle,0f3^Letzte Anrufe,0f4^Uhrzeit,0f5^Relogin,0f6^Online,-,0f8^Bereitschaft,0f9^Timing-Liste
+16  Edit,101^Schablonenù8,102^Boxen,103^Gruppen,104S^ysteme,105^Kurznamen,106^AutoVersand,108^Viewer,107^Textdatei   @E
+17  Status,111^Speicher,112^Nachrichten,113^Datenbank,11a^Fragmente,-,115^Gruppen,116S^Ysteme,117^Bretter,-,119G^ebhrenù26
+18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
+19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen,138^Maus-Infos
+20  Fileserver,141^Bestellen,142^Senden,143^Listeù27,144^Hilfe,145^Transfer,146S^ervice
+21  Weiter,151^Kopie,152^Original,153^EditTo,154^QuoteTo,-,156^Best„tigung,157^L”schen,158e^Rneut     @R,159^Archiv     @A,15aUser-^PM    @P
+22  ndern,161^Betreff,162^EmpfDatum,163^Rot13,164^Text,165T^yp,166^gelesen,167^Hervorhebung
+23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Makros
+24  Extern,181^Lister,182^Editor,183^Shell,184Ent^packer,185pm^Crypt,186P^GP
+26  Gebhren,1a1^Alle,1a2^Einzeln
+27  Liste,1b1^Anfordern,1b2^Nachricht einlesen,1b3^Datei einlesen
+28  Optionen,1c1^Allgemeines,1c2^Bedienung,1c3^Lister,1c4^Nachrichten,1ccA^dressen,1c5N^etzeù37,-,1c6Net^call,1c7^Gebhrenù39,1cb^Terminal,-,1c9^Paáwort,1ca^Sprache
+29  Brettindex,1d1^Neuaufbau,1d2^Alphabetisch
+30  Nodelist,1e1^Verwalten,1e2^Update einbinden,1e3^Einschr„nken,1e4^Indizieren,-,1e6^Statistik,1e7^Durchsuchen,1e8^Abfragen      @N
+31  Fido,1f1^Request,1f2^Filelistenù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistenù30,1f6^Optionen
+32  Fidoliste,201^Einlesen,202^L”schen,203^Suchen
+33  Sonstiges,211Neuaufbau ^Verkettung,212^MsgIDs einlesen,213^Nachrichten prfen,214^Datumsbezge,215^Brettindexù29
+36  Export,241^Userliste,242^Brettliste,243Bre^ttinhalt,244B^ildschirm   @I
+37  Netze,251^Verschiedenes,252^PM-Limits
+38  Filescan,261^Bestellen,262^Abbestellen,263^Liste anfordern,264Liste ^einlesen,265^Datei einlesen,266^Sonstiges
+39  Tarifzonen,271^Zonen,272^Tarife,273^Feiertage,274^Sonstiges
+40  PGP,281Key ^anfordern,282Key ^einlesen,283Nachricht ^decodieren,284^Signatur testen,-,286^Key editieren,287^User-ID entfernen
+# max. Mennummer = 99 (s. XPME.PAS)
+# Zusatz-Men
+100 021^Kalender
+101 022^Archiv-Viewer
+# spezielle Menpunkte
+200 $069,$097,$0b1,$11a,$1ca
+
++ 11
+1    Fehler
+2    Hinweis
+# Breite der Wochentage
+3    10
+4    Montag    Dienstag  Mittwoch  DonnerstagFreitag   Samstag   Sonntag
+# interne Bretter, max. 15 Zeichen L„nge
+5    Statistik
+6    Unversandt
+7    Netzanruf
+# Ja/Nein
+8    JN
+9    MoDiMiDoFrSaSo
+10   Januar
+11   Februar
+12   Maerz
+13   April
+14   Mai
+15   Juni
+16   Juli
+17   August
+18   September
+19   Oktober
+20   November
+21   Dezember
+# Lister
+22   Hilfe
+-
+12   Taste drcken ...
+13   ~Bytes
+14   KBytes
+
+# --- Tasten im Hauptfenster ---
++ 20
+0    markieren
+# Bretter, User, Bretter/Spezial, User/Spezial
+1    ^Alle ^Brief T^extfile B^in„r ^Spezial ^Lesen:
+2    ^Alle ^Brief T^extfile B^in„r ^Spezial S^uche Ad^reábuch ^Paáwort
+3    ^Hinzuf. ^L”schen ^Edit Z^ugriff ^Verknpfen ^Pos. ~Trenn. ^Spezial
+4    ^Alle ^Hinzuf. ^Vert. ^L”schen ^Edit ^Spezial Ad^reábuch ^PW
+# Nachrichten, Userbrett-Nachrichten, markierte Nachrichten, Kommentarbaum
+5    ^Alle ^Halten ^L”schen ^Kill Bezu^g ^BrettBrief ^PM ^User ^Info ^Sonst.
+6    ^Alle ^Halten ^L”schen ^Kill Bezu^g ^PM ^Info D^ruck ^Sonstiges
+7    ^Halten ^L”schen ^Kill ^BrettBrief ^PM ^Info ^Absender ^Sonstige
+8    ^Adresse ^Halten ^L”schen ^Kill ^BrettBrief ^PM ^Info ^Sonstige
+9    best„tigen
+10   ^Alle
+11   abbestellen
+12   bestellen
+13   E^xtrakt
+14   anzeigen
+15   Bretter anlegen
+16   Netcall direkt starten
+# AutoVersand
+17   ^Aktiv ^Hinzufgen ^Kopie ^L”schen ^Edit ^TextEdit ^Info ^Senden
+18   ~Zeit
+19   Netcall starten
+20   Anruf starten
+# Fileserver
+21   bestellen
+
++ 22
+# Tasten im Brettfenster:
+# Special Mode, All Newsgroups, Add newsgroup, Add from MAPS list, Delete,
+# Edit, Join, Split line, Move newsgroups, Read mode, Write message,
+# Send binary file, Send text file, Mark group, unmark, Auto advance,
+# record no, Zugriff, Crossposting
+
+1  S A H ^H L E V ^T P L b I E ^G ^E ^W ^F U B
+
+# Tasten im Userfenster:
+# Special Mode, Address book switch, Add user, Add Verteiler, Delete user,
+# Edit user, Join, Write message, Send binary file, Send text file,
+# Address book entry, Password, Unmark users, Auto advance, Search,
+# Crossposting
+
+2  S A H V L E ^V b I E R P ^E ^W U B
+
+# Tasten im Nachrichtenfenster:
+# Special menu, Rot13, HexDump, Info window, Original header, Hold, Delete,
+# Kill, UserEdit, Wiedervorlage, Entmarkieren, User window, Send text file,
+# Send binary file, Seek reference, Fido - switch display, Address display
+# in reference tree, Show address (marked messages), Auto Advance, Show Date
+# Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
+# multiquote reply, PM, Quote PM, Multiquote PM, Paáwort-Edit, indir. Quote
+
+3  S ^R ^H I O H L K ^U V ^E U ^F ^I G ^A A A ^W ^S ^D ^N # A b ^B B p ^P P ^T ^Q
+
+# Tasten im AutoVersand-Fenster
+# New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
+
+4  H E L A T I S K
+
+# Tasten im Lister
+# Drucken, in Datei schreiben, Nachricht auf "l”schen" und Lister verlassen,
+# Nachricht auf "l”schen", Nachricht auf "halten", Farbumschaltung
+# *Hervorhebung*
+
+5  ^D W L ^L H F
+
++ 23
+# Nachrichtenfenster, Men "Sonstiges"
+2  ^EditUser    ^U,^Rot13       ^R,^Hex-Dump    ^H,^Datum       ^S,^Ausdruck    ^D,^Markieren,Wieder^vlg.   V,^Textdatei   ^F,B^in„rdatei  ^I,ind. ^Quote  ^Q
+3  ,^UserSuche   @U,^BetrSuche   @B
+-
+
+
+# --- XP1, XPKEYS -----------------------------------------------------
+
+# Funktionstastenzeile unten
+100  Hilfe
+101  Makros
+
+102  Fehler beim Dateizugriff :-(
+103  Schablone bearbeiten
+# Extrakt als..
++ 104
+  1  0c6!^Als..     ~
+# L„nge der Teilstrings:
+  2  8
+  3  T.o.KopfT.m.Kopf  Puffer   Quote
+-
+105  Einen Moment bitte ...
+106  Dateiname:~
+107  ~~^Ja  , ^Nein~
+# Useraufnahme
++ 108
+  0  Alle
+  1  Z-Netz
+  2  Keine
+  3  PMs
+-
+109  Residentes Programm geladen! CrossPoint wird beendet..
+110  Fehler beim Speicherauslagern!
+111  SWAP-File nicht mehr vorhanden!
+112  Fehler beim Lesen des SWAP-Files
+113  Mit EXIT geht's zurck zu CrossPoint.
+115  Fehler bei Programm-Aufruf
+116  DOS-Shell hier nicht m”glich
+
+# XP1O
+117  ~ist bereits vorhanden.
+118  ~^Anh„ngen , ^šberschreiben , A^bbruch~
+119  Ausdruck l„uft...
+120  Text in Datei schreiben
+121  Nachricht ist auf 'l”schen' gesetzt.
+122  Nachricht ist auf 'halten' gesetzt.
+123  Fehler %s beim Kopieren von %s
+
+# XP1O2
+124  Drucker nicht bereit!
+125  ~^Wiederholen , ^Abbruch~
+126  %s wird indiziert
+# die Position des "%" muá gleich bleiben:
+127  bitte warten...     %
+128  %s wird gepackt
+129  %s wird berarbeitet
+
+130  Lade Datei ...
+131  Leere Smartdrive-Schreibcache ...
++ 132
+1    Kopfschablone fr neue, ”ffentliche Nachrichten
+2    Kopfschablone fr neue, private Nachrichten
+3    Quote-Schablone fr ”ffentliche Nachrichten
+4    Quote-Schablone fr private Kommentare auf ”ffentliche Nachrichten
+5    Quote-Schablone fr private Antworten auf PMs
+6    Schablone fr /Nachricht/Weiterleiten/QuoteTo
+7    Schablone fr /Nachricht/Weiterleiten/Kopie
+8    Schablone fr /Nachricht/Weiterleiten/Erneut
+10   Signatur fr ”ffentliche Nachrichten
+11   Signatur fr private Nachrichten
+12   Signatur fr automatisch verschickte Empfangsbest„tigungen
+13   Signatur fr /Nachricht/Weiterleiten/L”schen im Usenet
+14
+-
+133  Men
+134  %s wird kopiert ...
+
+# XPKEYS
+150  keine Dateien im AUTOEXEC-Verzeichnis vorhanden
+
+# XP1
+160  Abbrechen
++ 161
+1    Es ist ein Datenbankfehler aufgetreten. Falls sich der Fehler  ~
+2    nach dem Neustart von XP wiederholt, ist vermutlich eine Datei ~
+3    der Nachrichtendatenbank besch„digt. L”schen Sie dann zun„chst ~
+4    die Indexdateien (DEL *.IX1). Falls das nicht hilft, lesen Sie ~
+5    Anhang H von XPOINT.DOC.                                       ~
+-
+
+# --- XP2, XP2F, XP2C -------------------------------------------------
+
+200  Farbsetup
++ 201
+0    ^Hauptmen,^1.Menebene,^2.Menebene,^3.Menebene,^F-Tasten,^Verschiedenes,^User/Bretter,^Nachrichten,^Meldungs-Fenster,^Dialog-Fenster,^Auswahl 1,Aus^wahl 2,^Buttons,Uti^lities,H^ilfe,Liste^r,^Editor,uu^cico/Mailer,¯Defaul^t®,¯^Sichern®,¯^OK®
+1    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert
+2    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert,d^eaktiviert+gew„hlt
+3    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert,d^eaktiviert+gew„hlt
+4    ^Text,T^asten,^Balken,^gew„hlte Taste,^deaktiviert,d^eaktiviert+gew„hlt
+5    ^Taste,Te^xt,^aktivierte Taste,a^ktivierter Text
+6    ^Trennlinien,^Statuszeile ArcViewer,^Bestellte Bretter,Bild^rand
+7    ^Text,^gew„hlt,^markiert,T^rennzeile
+8    ^Text,^markiert,^gew„hlt,^Infozeile,^hervorgehoben,g^ew„hlt+hervorgeh.
+9    ^Text,^Rahmen,^hervorgehoben
+10   ^Text,^Rahmen,^hervorgehoben,^Eingabefeld,^mark. Eingabefeld,^Pfeile,^Auswahlliste,Auswahl^Balken,^Schalter
+11   ^Text,^Rahmen,^hervorgehoben,^Balken
+12   ^Text,^Rahmen,^hervorgehoben,^Balken
+13   ^Text,^Hotkey,^Pfeile
+14   ^Text,^hervorgehoben,^Invers
+15   ^Text,^hervorgehoben,^Querverweis,^gew„hlter Querverweis
+16   ^Nachrichtenkopf,^Text,^Auswahlbalken,^Zeilenmarkierung,^Wortmarkierung,^Statuszeile,^Scroller,^hervorgehoben,^Quote,Q^uote/hervorgehoben
+17   ^Kopf,^Statuszeile,^Text,^Quote,^markiert,^Endmarke,M^en,Me^ntasten,Men^balken,^gew„hlte Taste
+18   ^Text,^Daten,^Statuszeile
+19   Ebene ^1,Ebene ^2,Ebene ^3,Ebene ^4,Ebene ^5,Ebene ^6,Ebene ^7,Ebene ^8,Ebene ^9
+-
++ 202
+# XP /? - Zeilenzahl ist variabel
+1    Aufruf:    XP [/Opt1 /Opt2 ...]
+2
+3    Optionen:  /j       kein dummer Spruch bei Programmende
+4    ~          /m       monochrome Anzeige
+5    ~          /LCD     verhindert Anzeigeprobleme auf einigen Laptops
+6    ~          /q       keine Tonsignale (quiet)
+7    ~          /rp      bergeht bei DOS-Shell Test auf residente Programme
+8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
+9    ~          /ss      Screensaver aktivieren
+10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.DOC, Kap. 8.1)
+11   ~          /w       Rechenzeit-Freigabe unter Windows
+12   ~          /os2x    Rechenzeit-Freigabe unter OS/2 (x = a bis d)
+13   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
+14
+15   ~          /k:X     Taste X bergeben (fr Tastenmakro)
+16   ~          /pw:xx   Startpaáwort xx bergeben
+17   ~          /z:nn    stellt nn Bildschirmzeilen ein
+18   ~          /l:X     Sprache w„hlen (z.B. /l:D fr deutsch)
+19
+20   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
+21   ~          /n:*             Netcall bei allen Boxen
+22   ~          /nr:BOX          Relogin-Netcall bei BOX
+23   ~          /user:BOX:NAME   Username bei BOX setzen
+24   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+25   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+26
+27   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+28   ~          /f:<Datei>       Schriftdatei laden
+29   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.DOC)
+30
+31   ~          /ip:PUF   liest die angegebene Pufferdatei ein
+32   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
+33   ~          /g        tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein.
+34   ~          /eb       Empfangsbest„tigungen (Zusatzschalter fr /ip..)
+35   ~          /r        Nachrichten-Reorganisation durchfhren
+36   ~          /pack     /Wartung/Packen durchfhren
+37   ~          /t:n      Timing-Liste Nr. n ausfhren
+38
+39   ~          /x        Programm beenden
+-
+
+203  Fehler: Kann %s-Verzeichnis nicht anlegen!
+204  fehlerhafte Gruppendatei!
+205  Fehler: Zu wenig freier Speicher auf Laufwerk %s !
++ 206
+1    WARNUNG!
+2    Es sind nur noch %s MB freier Speicherplatz
+3    auf Laufwerk %s vorhanden!
+-
+207  Benutzerdefinierte Nodeliste %s fehlt!
+210  zu wenig Fesplattenspeicher!
++ 211
+0    ACHTUNG!
+1    ~^verlassen , ^neu anlegen~
+# Die Breite des Fensters muá eingehalten werden, die Zeilenanzahl
+# ist variabel:
+2    Die Datei USER.EB1 fehlt! Diese Datei enth„lt alle
+3    User-Paáworteinstellungen und Vertreteradressen.
+4    M”chten Sie das Programm verlassen, um die Datei
+5    z.B. von einem Backup wiederherzustellen, oder soll
+6    XP die Datei neu anlegen (wobei alle Paáworteinstel-
+7    lungen und Verteradressen verloren gehen)?
+-
+212  Programmabbruch.
+213  ungltige Farbkonfiguration: ~
++ 214
+1    CrossPoint - Konfigurationsdatei
+2    Benutzereinstellungen
+3    allgemeine Einstellungen
+4    Z-Netz
+5    MausNet
+6    RFC/UUCP
+7    Fido
+8    Funktionstasten
+9    Modemeinstellungen
+10   Terminal
+-
+216  interne Einstellungen
+217  Einstellungen Sichern ...
+218  ungltige FKey-Config-Zeile: ~
+# 219 darf auf keinen Fall verl„ngert werden!
+219  ungltige Konfigurationszeile: ~
+220  Font-Datei nicht gefunden oder ungltig: %s
++ 221
+# Schluátext - Zeilenzahl ist variabel; fortlaufend ab Zeile 1
+1 (dummy)
++ 222
+0    --- ---------------------
+1    EMP Empf„nger
+2    ABS Absender
+3    BET Betreff
+4    EDA Datum
+5    ROT (Pfad)
+6    MID (Message-ID)
+7    LEN Gr”áe
+8    BEZ (Bezugs-ID)
+9    MAILER (Software)
+10   FILE (Datei)
+11   STAT (Status)
+12   ORG (Organisation)
+13   OAB (Originalabsender)
+14   OEM (Originalempf„nger)
+15   WAB (Weiterleit-Absender)
+16   ERR (Fehlermeldung)
+17   ANTW (Antwort an)
+18   DISK (Antwort in)
+19   STW (Stichworte)
+20   ZUSF (Zusammenfassung)
+21   DIST (Distribution)
+22   POST (Postanschrift)
+23   TEL (Telefonnummern)
+24   MSTAT (Maus-PM-Status)
+25   KOP (Kopien an)
+26   PGP (PGP-Status)
+27   URL (Homepage)
+28   PART (Nachrichtenteil)
+29   CST1 (Userdefiniert 1)
+30   CST2 (Userdefiniert 2)
++ 223
+1    ## Nachricht vom $ERSTELLT weitergeleitet
+2    ## Ursprung : $BRETT
+3    ## Ersteller: $USER
+-
+224  Ge„nderte Einstellungen sichern
++ 225
+1    Seit dem letzten Programmstart sind mehr als %s Tage vergangen.
+2    Das Systemdatum liegt vor dem Datum des letzten Programmstarts.
+3    Bitte best„tigen Sie das Datum:~
+-
+# XP2F
++ 240
+1    Zusatz-Men
+2    Funktionstasten
+3    Men           Programm                   $FILE      B W L A  Mem
+4    Menanzeige ~
+5    Programmname~
+6    $FILE-Nachr.~
+7    ohne Kopf
+8    mit Kopf
+9    Puffer
+10   Quote
+11   aus Betreff
+12   Warten
+13   Vollbild
+14   Ausgabe an Lister
+15   Speicher:~
+16   KByte
+17   AUTOEXEC-Verzeichnis bearbeiten
+-
+241  CrossPoint - Farbkonfiguration
+242  Standard-Farbeinstellungen wiederherstellen
++ 243
+1    # Diese Datei wird fr die Telefonkostenberechnung verwendet.
+2    #
+3    # Falls Sie die Bercksichtigung von Feiertagen bei /Config/Optionen
+4    # /Gebhren/Sonstiges eingeschaltet haben, brauchen Sie in dieser
+5    # Datei nichts einzutragen. Der Eintrag fr Neujahr dient nur als
+6    # Beispiel.
+7
+8    # In der ersten Spalte steht das Datum, in der zweiten die Feiertags-
+9    # Kategorie (1 bis 3) und in der dritten ein beliebiger Kommentar.
+10   # Die Verwendung verschiedener Feiertagskategorien ist in Deutschland
+11   # z.Zt. nicht notwendig, weil die Telefongebhren an allen Feiertagen
+12   # gleich hoch sind.
+13
+14   01.01.98  1  Neujahr
++ 244
+1    CrossPoint wurde bereits in einem anderen Fenster gestartet.
+2    Es ist nicht m”glich, CrossPoint mehrfach gleichzeitig auszufhren.
+-
+
+# XP2C
++ 250
+1    allgemeine Optionen
+2    Quote-Zeichen~
+3    Zeilenumbruch~
+4    User-Aufnahme~
+5    Alle
+6    Z-Netz
+7    PMs
+10   Fragen bei Quit
+11   Auslagern in EMS
+12   Archivbretter~
+13   archivierte Nachrichten l”schen
+14   neue Bretter am Ende anh„ngen
+15   Systemname in PM-Brettern
+16   minimaler Platz auf Laufwerk %s   ~
+17   MByte
+18   XMS verwenden
+19   Kommentare aus Brettliste bernehmen
+20   Umlaute fr neue User zulassen
+21   Stelle : und | dem Quote-Zeichen gleich
++ 251
+# Extrakt als
+0    Text ohne Kopf
+1    Text mit Kopf
+2    Puffer
+3    Quote
+# Lesemode
+5    Alles
+6    Ungelesen
+7    Neues
+8    Heute
+# Maus-Doppelklick
+10   langsam
+11   normal
+12   schnell
+15   Bedienungs-Optionen
+16   Nachr.-Weiterschalter
+17   Brett-Weiterschalter
+18   User-Weiterschalter
+19   Lese-Modus ~
+20   Extrakt als~
+21   Mausbedienung
+22   Tasten vertauschen
+23   Initialisierung
+24   Doppelklick~
+25   Config-Men bei <Esc> vollst„ndig verlassen
+26   Sichern    ~
+27   Tonsignal in Brett-, User- und Nachrichtenbersicht
+# Sichern
+40   automatisch
+41   manuell
+42   Rckfrage
++ 252
+0    nie
+1    PMs
+2    AMs
+3    immer
+5    Nachrichten-Optionen
+6    max. Speichergr”áe fr Bin„rnachrichten:~
+7    KB
+9    Bytes
+11   Standard-Bretthaltezeit: ~
+12   Tage
+13   Standard-Userhaltezeit:  ~
+14   Eigene Nachr. halten
+15   Erstellungszeit 00:00
+16   Re^n verwenden
+17   unversandte Nachrichten nach /¯Unversandt
+18   autom. Empfangsbest„tigungen versenden
+19   automatische PM-Archivierung
+23   Zeitzone~
+24   Crosspostings mit ber
+25   Empf„ngern l”schen
+26   alle Kopien als Blindkopien verschicken
+27   bei Mail ebenso
+28   fragen bei Antwort-an
+#
+100  68
+101  Adreáeinstellungen (ZCONNECT / RFC)
+102  Organisation ~
+103  Postanschrift~
+104  Telefon      ~
+105  Homepage     ~
+109  Anschrift, Telefon und Homepage nur in PMs
++ 253
+1    netzspezifische Optionen
+2    Z-Netz
+3    Z-Netz alt: kleine Usernamen
+4    nur Z-Netz
+5    ACHTUNG!
+6    Im Z-Netz sind z.Zt. keine kleingeschriebenen Adressen erlaubt!
+7    M”chten Sie diese Option wirklich einschalten?
+8    ~ ^Ja  , ^Nein~
+9    MIME in News
+10   ZCONNECT: ISO-Zeichensatz
+11   MIME: "quoted-printable" verwenden
+12   MIME in Headerzeilen verwenden
+14   Kommentarverkettung
+15   Bin„rnachrichten als "Attachments"
++ 254
+1    Netcall-Optionen
+2    Login-Bild zeigen
+3    Login-Bild abbrechen
+4    Hayes-Befehle
+5    CALLED umbenennen
+6    Nachrichtenpakete nach Einlesen l”schen
+7    Z-Netz-Adressen in Groáschreibung umwandeln
+8    ACHTUNG!
+9    Diese Option drfen Sie nur dann ausschalten, wenn Sie kein Modem
+10   verwenden und die Verbindung auf andere Weise (z.B.Handwahl) her-
+11   gestellt wird.
+12   Hayes-Befehle wirklich abschalten?
+13   ~ ^Ja  , ^Nein~
+14   vollst„ndiges Netcall-Logfile (NETCALL.LOG)
+15   Nachrichtenmarkierungen nach Netcall aufheben
+16   Datumsbezge nach Netcall anpassen
++ 255
+# Fensterbreite
+0    46
+1    interner Lister
+4    interner Lister - Vollbild
+5    Wortumbruch in Spalte 80
+6    Kommentarpfeile anzeigen
+7    feststehender Nachrichtenkopf
+8    ISO-Umlaute konvertieren
+9    farbliche *Hervorhebungen*
+10   Rollbalken bei Mausbedienung
+11   Automatisches Rollen am Bildrand
+12   verschiedenfarbige Quoteebenen
+13   Lister mit <Return> verlassen
+#
+20   50
+21   externer Lister
+22   Lister~
+23   KByte:
++ 256
+# Fensterbreite
+0    56
+1    groáe Nachrichten
+2    alle Nachrichten
+3    alle Texte
+5    Editor
+6    Editor~
+7    KByte:
+8    Backup-Dateierweiterung ~
+9    externen Editor verwenden fr~
+10   automatisches <Ctrl PgDn>
+11   interner Editor - Vollbild
+12   Edit/Textdatei-Name beibehalten
+13   25 Bildzeilen bei ext. Editor
++ 257
+# Fensterbreite
+0    38
+1    Shell
+2    25 Bildzeilen bei DOS-Shell
+3    Environment-Gr”áe: ~
+4    Parameterzeile anzeigen
+5    auf Tastendruck warten
++ 258
+# Brett/Useranzeige
+# Fensterbreite
+0    37
+1    normal
+2    spezial
+3    klein
+5    Brettanzeige
+6    "/" bei PM-Brettern
+7    Trennzeilen bei "Alle"
+8    Brettanzeige        ~
+9    Usenet-Gruppen mit "."
+10   Trennzeilenkommentar~
+21   links
+22   Mitte
+23   rechts
++ 259
+0    normal
+1    klein
+2    klein/Space
+3    nur Name
+4    Name/klein
+5    Spalten
+6    Splt./klein
+10   Nachrichtenanzeige
+11   Nachrichtendatum
+12   Absendernamen~
+13   vollst„ndige Adressen im Kommentarbaum
+14   Realname anzeigen, falls vorhanden
+15   Empf„nger von Fido-Brettnachrichten anzeigen
++ 260
+1    Screen-Saver (Sek.) ~
+2    weich ausblenden
+3    Startpaáwort abfragen
+4    Username anzeigen
+5    Auswahlcursor in Mens/Listen
+6    schwarzschalten
+7    optisches Tonsignal
+8    Fensterhintergrund ausblenden
+9    Stromsparmodus
+10   BIOS-Ausgabe im Terminal
+11   Anzeigehilfen
+12   zus„tzliches Tonsignal
+13   Kopfzeile 1
+14   Kopfzeile 2
++ 261
+# Fensterbreite
+0    50
+1    Konfiguration von COM%s
+2    Port-Adresse (Hex)~
+3    IRQ-Nummer~
+4    Modem-Init~
+5    Modem-Exit~
+6    Warten auf Modemantwort:~
+7    Sek.
+8    CD ignorieren
+9    CTS ignorieren
+10   RING-Erkennung
+11   16550A-FIFO
+12   Sicher? XP hat keinen 16550A erkannt!
+13   FOSSIL-Treiber verwenden
+14   Kein FOSSIL-Treiber geladen!
+15   W„hlbefehl~
+16   postkompatible W„hlpause
+17   RTS verwenden
+18   ... Triggerlevel
++ 262
+# Fensterbreite
+0    59
+1    Verzeichnis ist nicht vorhanden. Neu anlegen
+2    Tempor„r-Verzeichnis~
+3    Extrakt-Verzeichnis ~
+4    Sende-Verzeichnis   ~
+5    Logfile-Verzeichnis ~
+6    FileReq-Verzeichnis ~
+-
+263  Archiv-Entpacker fr...
++ 264
+# Fensterbreite
+0    51
+1    Drucker-Optionen
+2    Schnittstelle~
+3    Seitenl„nge ~
+4    Drucker-Init ~
+5    Drucker-Exit ~
+6    Seitenvorschub
+7    linker Rand: ~
+8    Zeichen
++ 265
+1    externe Codierprogramme
+2    Name          Codierer               Decodierer              bin„r
+-
+266  Anzeige-Programme fr ...
++ 267
+# Fensterbreite
+0    49
+1    Fido-Optionen
+2    internat. Vorwahl~
+3    Ortsvorwahl      ~
+4    eigene Vorwahl   ~
+5    Pointlisten~
+6    Pointdiffs ~
+7    Nodelist-Updates automatisch einbinden
+# L„nge des Eingabefeldes "Standard-Betrttempf„nger" (max. 20)
+8    18
+9    Standard-Brettempf„nger~
+10   leere Nachrichten l”schen
+11   4D-Pointliste
+12   TIC-Files automatisch auswerten
+13   unerledigte Requests zurckstellen
+14   Nodeliste automatisch indizieren
+15   Via-Zeilen l”schen
++ 268
+1    PM-Gr”áenlimits / Bytes
+2    Netz
+3    lokal
++ 269
+1    ISDN/CAPI-Konfiguration (1TR6/X.75)
+2    CAPI-Interrupt~
+3    EAZ~
+10   nicht vorhanden
++ 270
+0    40
+1    Terminal-Einstellungen
+2    Schnittstelle   ~
+3    šbertragungsrate~
+4    bps
+5    Modem-Init      ~
+6    automatischer Zmodem-Download
+7    automatischer Zmodem-Upload
+8    Statuszeile
++ 271
+0    50
+1    PGP-Einstellungen
+2    ZCONNECT-PGP-Untersttzung
+3    PGP-Rckfragen bergehen
+4    Warten auf Tastendruck nach PGP-Aufruf
+5    Keys aus PMs automatisch einlesen
+6    Keys aus AMs automatisch einlesen
+7    User-ID~
+8    Logfile fr automatische Aktionen
+9    alle Nachrichten signieren
+10   PGP auch fr RFC/UUCP verwenden
+11   PGP auch fr Fido verwenden
+-
+
+# --- XP3 -------------------------------------------------------------
+
+# interne Ablagenfehler:
+300  ; falsche Gr”áenangaben
+301  ; Ablage fehlt
+302  ; Adreáindex fehlerhaft
+303  Nachricht ist besch„digt  (Ablage~
+304  Ablage Nr. %s ist fehlerhaft!
+305  Ablage %s fehlt!
+306  Fehler beim Lesen aus Ablage %s
+307  Fehler beim Schreiben in Datei
+
+# XP3O
+320  Datumsbezge werden berarbeitet...     %
+321  ~fertig.
++ 322
+1    Nachrichten in anderes Brett verlagern
+2    Quellbrett
+3    Zielbrett~~
+4    Nachrichtenkopf anpassen?
+5    Einen Moment bitte ...
+6    Brett nicht vorhanden
+-
++ 323
+1    Nachrichten in anderes Userbrett verlagern
+2    von User
+3    nach User~~
+4    User nicht vorhanden
+5    Einen Moment bitte ...
+-
++ 324
+1    Nachricht extrahieren
+2    Brett-Nachrichten extrahieren
+3    %s markierte Nachrichten extrahieren
+4    Kommentarbaum extrahieren
+5    ungltiger Datei- oder Pfadname
+6    extrahiere Nachricht...
+7    fertig.
+-
+325  Alle angezeigten Nachrichten im Brett l”schen
+326  Alle angezeigten Nachrichten l”schen
+327  Nachrichten-Liste
+328  ~Nr.   Bytes Typ Datum     Absender                  Betreff
+329  bearbeite Nachricht:
++ 330
+1    Puffer einlesen
+2    Empfangsdatum = Erstellungsdatum
+3    Server aus Pfad bernehmen
+4    Empfangsbest„tigungen versenden
+5    Nachrichten als "gelesen" markieren
+-
+331  Puffer berprfen...
+332  Bezugsverkettung...
+333  Puffer einlesen
+334  leerer Puffer
+335  Puffer kopieren...
++ 336
+1    ACHTUNG !!!
+2    Fehlerhafte Pufferdatei: ~
+3    Zu wenig Platz auf der Festplatte.
+4    Puffer wurde NICHT eingelesen!
+5    Datei wurde im Unterverzeichnis BAD abgelegt.
+6    Fehlerhafter Netcall-Puffer wurde im Unterverzeichnis BAD abgelegt.
+8    Netcallpuffer wurde nicht eingelesen:~
+-
++ 337
+1    Empfangsbestaetigung durch
+2    automatische Empfangsbestaetigung durch
+3    erhaltene Nachricht:
+4    Brett/Newsgroup:~
+5    Message-ID:     ~
+6    Datum/Date:     ~
+7    Groesse/Size:    %s Bytes
+8    Pfad/Path:      ~
+-
+338  Puffer berprfen...     ~
+339  Brettindex wird angelegt...     %
+340  Brettindex berarbeiten ...     %
+341  Cancel-Nachrichten bearbeiten ...~
+342  Seitenvorschub nach jeder Nachricht
+343  <kein Betreff>
+
+# XP3EX
+360  DES-Decodierung...     %
++ 361
+1    ~ (internes CrossPoint-Brett)
+2    Empfaenger :~
+3    Antwort in :~
+4    Kopie      :~
+5    Betreff    :~
+6    Absender   :~
+7    Pfad       :~
+8    Message-ID :~
+9    Datum      :~
+10   erhalten:~
+# die zus„tzlichen Leerzeichen werden fr das Ersetzen der Gr”áenangabe
+# bei Multipart-Nachrichten ben”tigt
+11   Groesse    : %s Bytes    ~
+12   Datei      :~
+13   PM-Status  :~
+14   Fehler!    :~
+15   ~           ~
+16   Org.-Empf. :~
+17   Weiterleiter~
+18   Org.-Abs.  :~
+19   Bezugs-ID  :~
+20   Software   :~
+21   Status     :~
+22   Stichworte :~
+23   Zus.fassung:~
+24   Organisat. :~
+25   Postadresse:~
+26   Telefon    :~
+27   Antwort an :~
+28   Kopien an  :~
+29   PGP-Status :~
+30   Fido-Empf. :~
+31   Distribut. :~
+32   Homepage   :~
+33   Teil       :~
+34   ~von~
+48   private Mail
+50   ~[ungltiges Format]
+51   Voice
+52   Fax
+53   Mailbox
+54   City-Ruf
+55   Anrufbeantworter
+60   (unregistriert)
+-
+# die ersten 6 Zeichen von 361.6:
+362  Absend
++ 363
+1    , EB-Anforderung
+2    , Empfangsbest„tigung
+3    , Steuernachricht
+4    , Public Key vorhanden
+5    , Nachricht enth„lt Public Key
+6    , Keyanforderung
+7    , Signatur o.k.
+8    , ungltige Signatur!
+9    , Signatur vorhanden
+-
+
+# --- XP4 -------------------------------------------------------------
+
+400  Alles     ~
+401  ungelesen ~
+402  Neues     ~
+403  ab~
+404  %s markierte Nachrichten zitieren
+405  fehlerhafte Adresse:~
+406  Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten
+407  Nachricht archivieren
+# Quit
+408  Programm verlassen
+409  noch keine Bretter angelegt
+410  kein User im Adreábuch eingetragen
+411  keine User eingetragen
+412  keine Nachrichten vorhanden
+413  keine Eintragungen vorhanden
+# Suche
+414  Volltext
+415  Betreff
+416  User
+417  Spezial
+418  Verteiler %s l”schen
+419  Maximal %s Nachrichten sind gleichzeitig markierbar!
+420  Maximal %s User/Bretter sind gleichzeitig markierbar!
+421  ~%s markierte Nachrichten
+422  ~Bezugsnachrichten zu "%s"
+423  ungelesene Nachrichten
+424  Nachrichten seit dem letzten Netcall
+425  Nachrichten seit dem %s
+426  ~Archivbrett w„hlen:
+427  ~Zielbrett w„hlen
+428  ~Empf„nger w„hlen
+429  Satznummer:~
+430  Dateiinhalt anzeigen
+431  Der Absender wnscht eine PM-Antwort - trotzdem ”ffentlich antworten
+432  Suche n„chsten markierten User ...
+433  Kommentar anzeigen
+#
+435  keine Bretter mit neuen Nachrichten vorhanden
+436  keine Bretter mit ungelesenen Nachrichten vorhanden
+437  MessageID
+
+# XP4O
++ 441
+1    %s-Suche
+2    Suchbegriff~
+3    Optionen   ~
+4    Bretter~
+5    Suchbegriff: ~
+6    Absender ~
+7    Betreff  ~
+8    Text     ~
+9    Fido-Empf.
+10   von Datum~
+11   bis Datum~
+12   Typ      ~
+13   Status   ~
+14   ~Bretter ~
+15   ~Optionen~
+16   Suche:         passend:
+17   kein Brett gew„hlt
+18   keine passenden Nachrichten gefunden
+19   ~von~
+20   ~bis~
+-
++ 442
+0    Alle
+1    Netz
+2    User
+3    markiert
+4    gew„hlt
+10   Alles
+11   halten
+12   l”schen
+13   h.od.l.
+14   ungel.
+15   gelesen
+20   Alles
+21   Text
+22   Bin„r
+23   FAttach
+24   Multipart
+-
+443  Einen Moment bitte...     %
+444  keine Wiedervorlage-Nachrichten gefunden
++ 445
+1    User
+2    Bretter
+3    Beim L”schen von Usern nachfragen
+4    Beim L”schen von Brettern nachfragen
+5    Beim Austragen von Usern nachfragen
+6    gel”scht:
+7    User ..... :
+8    ausgetragen:
+9    %s austragen
+10   %s l”schen
+-
+446  Reorganisation abbrechen
+447  abbrechen
++ 448
+1    Nachrichten-Reorganisation
+2    Nachrichten-šberprfung
+3    Nachrichten-Statistik
+# die L„nge von Feld Nr. 4 bestimmt die Fensterbreite:
+4    Nachrichten:
+5    auf L”schen:
+6    fehlerhaft:~
+7    keine fehlerhaften Nachrichten gefunden
+-
+449  Abbruch nach Ablagenende
+450  ~Abbruch bei Ablagenende.
++ 451
+1    Reorganisation
+2    Ablage Nr. %s
+3    ~- kein Platz!!!
+4    zu wenig Platz, um Ablage %s zu reorganisieren
+5    ~packen ...     %
+6    Einen Moment noch...     %
+7    nix zu l”schen
+-
+452  neues Empfangsdatum:
+# 453 und 455 sind Menpunkte aus /Nachricht/Unversandt
+453  ndern
+454  neuer Betreff:
+455  Edit
++ 456
+1    Brettliste einlesen
+2    Datei nicht vorhanden!
+3    Bretter anlegen ...
+11   Userliste einlesen
+12   User in Adreábuch eintragen
+13   Userbretter anlegen ...
+-
++ 457
+1    Userliste erzeugen
+2    Brettliste erzeugen
+3    ungltiger Dateiname
+4    auch Kommentare exportieren
+5    erzeuge Userliste...     %
+6    erzeuge Brettliste...     %
+-
+458  Keine unversandten Nachrichten vorhanden!
++ 459
+1    ~ (Text)
+2    ~ (bin„r)
+3    Empf„nger :
+4    An        :
+5    Betreff   :
+6    Absender  :
+7    Realname  :
+8    Organisat.:
+9    Antwort an:
+10   Datumscode:
+11   Pfad      :
+12   ~         ~
+13   MessageID :
+14   Bezug     :
+15   PM-Status :
+16   Typ       :
+17   Mailer    :
+18   Datei     :
+19   Gr”áe     :
+21   Kommentar :
+22   Attribute :
+23   Nachrichtenkopf
+24   ZConnect-Format
+25   Netcall-Format
+26   Gr”áe des Kopfes:~
+27   Empfangsdatum:~
+28   Ablagedatei  :~
+29   Taste drcken~
+30   Empf„ngerliste
+31   Referenzliste
+-
+460  Nachrichten-Header
+461  %s existiert schon. šberschreiben
+462  Extrakt
+463  Zielverzeichnis:~
+464  ~Name            OrgGr”áe  CompGr”áe    %    Methode    Datum    Uhrzeit
+465  Archiv- oder Textdatei
++ 466
+1    Nachrichtendatei kopieren...
+2    DupeKill
+3    Nachrichten gesamt:
+4    ~       bearbeitet:
+5    ~         gel”scht:
+6    DupeKill gestartet am~
+7    ~um~
+-
++ 467
+1    User-(markier)-Suche
+2    Suchbegriff:
+3    Suchen...     %        gefunden:
+4    keine passenden User gefunden
+-
+468  Brettindex-Nr.
+469  Netztyp:~
+470  Nachricht l”schen
+471  ~(unterbricht Bezugsverkettung)
+472  Bezge herstellen ...     %
+473  ~fertig.
+474  MessageIDs einlesen ...     %
+475  Kommentarbaum einlesen...
++ 476
+1    Original-Absender  :~
+2    Weiterleit-Absender:~
+3    Original-Empf„nger :~
+4    Empf„nger w„hlen ...
+5    Absender           :~
+6    Vertreter          :~
+7    Reply-To-Empf„nger :~
+-
+
+# XP4E: s. 2700
+
+
+# --- XP5 -------------------------------------------------------------
+
+# /XPoint/Statistik/Speicher
+
++ 500
+1   Speicher-Ausnutzung
+2   gesamt
+3   CrossPoint
+4   frei
+6   verfgbar
+7   -Version
+8   LW.
+9   Taste drcken
+10  Taste
+11  ber 2 GB
+-
++ 501
+1   Mo  Di  Mi  Do  Fr  Sa~~
+2   So
+3   ~   Kalender
+-
++ 502
+1   Datenbank
+2   Datei       Datens„tze   Ausnutzung      Bytes
+-
+503  Bildschirm-Auszug
+504  Paáwort wird gespeichert.
+505  ~Paáwort wurde gel”scht.~
+506  Altes~
+507  Hauptpaáwort
+508  Startpaáwort
+509  Paáwort
++ 510
+1    Welches Paáwort soll ge„ndert werden?
+2    ~^Hauptpaáwort , ^Startpaáwort~
+3    neues~
+4    %s l”schen
+5    %s wiederholen
+6    abweichende Eingabe
+19   70
+20   WARNUNG!
+21   5
+22   Wenn Sie ein neues Paáwort eintragen, notieren Sie sich dieses
+23   bitte an einem gegen Datenverluste geschtzten Ort! Falls Sie das
+24   Paáwort vergessen, mssen Sie CrossPoint komplett neu insstal-
+25   lieren und die Nachrichtendatenbank neu einlesen (s. XPOINT.DOC,
+26   Anhang H).
+-
++ 511
+1    Willkommen bei %s Version %s!
+2    Bevor Sie mit der neuen Programmversion arbeiten k”nnen,
+3    wird die Nachrichtendatenbank berarbeitet. Dies kann
+4    je nach Anzahl der Nachrichten und nach Geschwindigkeit
+5    Ihres Rechners zwischen einigen Minuten und einigen
+6    Stunden dauern (Pentium 100 mit 100.000 Nachrichten
+7    unter Windows NT: ca. 30 Minuten). Bitte haben Sie ein
+8    wenig Geduld!
+-
+
+# --- XPREG -----------------------------------------------------------
+
++ 520
+# Zeilenanzahl
+0    11
+1    Vielen Dank, daá  Sie sich zum Arbeiten mit CrossPoint entschie-
+2    den haben.  Bitte beachten Sie, daá CrossPoint ein Sharewarepro-
+3    gramm ist. Als nicht-gewerblicher Anwender drfen Sie CrossPoint
+4    fr 30 Tage kostenlos testen;  danach wird eine  Registrierungs-
+5    gebhr in H”he von  DM 50,- f„llig.  Gewerbliche Anwender mssen
+6    das Programm vor der ersten Benutzung registrieren.  Weitere In-
+7    formationen zur Registrierung finden Sie in *LIZENZ.DOC*.
+8
+9    Bei Fragen, Problemen oder  Anregungen wenden  Sie sich bitte an
+10   den CrossPoint-Support - entsprechende Netzadressen und eine Li-
+11   ste der CrossPoint-Supportbretter finden Sie in *XPOINT.DOC*.
+19   Lizenznummer:~
+#
+20   W„hlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
+21   standen sind.
+26   Sie arbeiten seit ber %s Monaten unregistriert mit CrossPoint!
+30   ~^LIZENZ.DOC , ^Registrierung , ^Weiter , ^Abbruch~
+31   ~^LIZENZ.DOC , ^Registrierungsformular , ^Code eingeben~
+32   ~^LIZENZ.DOC , ^Code eingeben~
+40   LIZENZ.DOC
+41   %s fehlt!
+# gleiche Taste zum Drucken wie in 22.5:
+42   <Ctrl D>=Drucken    <Esc>=Ende~
+50   ~^Registrierungsformular , ^Code eingeben~
+# Registrierungsformular J/N
+99   J
++ 521
+1    Sie sind bereits registriert. M”chten Sie die Registrierung l”schen
+2    Registrierungs-Code:~
+3    Na, dann eben nicht.
+4    Ungltiger Registrierungs-Code.
+5    Der Registrierungscode wurde gespeichert.
+6    CrossPoint beendet sich jetzt selbst und
+7    muá danach neu gestartet werden.
+8    Registrierung wurde gel”scht.
++ 522
+1    Eingaben verwerfen
+2    Registrierungsformular
+-
+
++ 530
+# Zeilenanzahl
+0    14
+1    Sie nutzen eine Betaversion von CrossPoint, welche durch das
+2    Entwicklerteam des OpenXP-Projektes erstellt wurde. Bitte beachten
+3    Sie, daá diese Betaversion mit groáer Sicherheit Fehler enth„lt,
+4    die evtl. groáen rger in ”ffentlichen Netzwerken nach sich ziehen
+5    oder Ihre komplette Datenbank besch„digen kann. Wenn Sie diese
+6    Version nutzen, sind Sie fr alle Folgen selbst verantwortlich.
+7    Sollten Sie nicht damit einverstanden sein, nutzen Sie die
+8    offiziellen Release-Versionen von CrossPoint.
+9    Bei Fragen, Problemen oder Anregungen wenden Sie sich bitte an den
+10   OpenXP Support in den entsprechenden Support-Foren der jeweiligen
+11   Netze, insbesondere der Newsgroup de.comm.software.crosspoint
+12   sowie der offiziellen OpenXP-Homepage http://www.openxp.de.
+13
+14  W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+30   ~^Weiter , ^Abbruch~
+-
+
+# --- XP6 -------------------------------------------------------------
+
+# Die folgende Zeile darf keine Umlaute enthalten:
+600  ## Originalempfaenger:
++ 601
+# Codierverfahren
+1    %s m”glich
+2    kein Paáwort
+3    nicht m”glich
+4    evtl. QPC m”glich
+-
+# Kopien
+602  keine
++ 603
+1    Spezial..  ~
+2    Absenden.. ~
+3    ndern..   ~
+-
++ 604
+# Flags im Sendefenster
+1    ohneSig~
+2    EmpfBest~
+3    l”schen~
+4    (MausNet)~
+5    (lokal)~
+6    Direktmail~
+7    Direkt~
+8    Eilmail~
+9    Eilmail~
+10   PGP-Key~
+11   PGP-Sig~
+12   PGP-Req~
+13   BK~
+-
+605  DES-Codierung...     %
++ 606
+0    Hinweis
+# Anzahl der Zeilen:
+1    4
+2    Ihre Nachricht enth„lt %s% zitierten Text.
+3    Lange Zitate sind berflssig und verursachen
+4    unn”tige Kosten fr alle Netzteilnehmer.
+5    M”chten Sie den Text wirklich so abschicken?
+6    ~ ^Ja  , ^Nein~
+# Taste zum Neueditieren des Textes:
+7    T
+-
+607  absenden am~
+608  Nachricht speichern...
++ 609
+# Fehler in Adressen:
+1    "@" fehlt!
+2    Warnung: Leerzeichen in Adresse! Trotzdem absenden
+3    .ZER in Adresse fehlt! Trotzdem absenden
+4    Fido-Netznummer fehlt!
+5    Domain fehlt!
+6    fehlerhafter Empf„nger: %s
+7    unerlaubte Steuerzeichen in Useradresse
+-
++ 610
+1    Nachricht speichern
+2    Nachricht parken
+3    Nachricht abschicken
+4    Speichere Nachricht in~
+5    Sende Nachricht an~
+-
++ 611
+1    private Nachricht
+2    interne Nachricht
+3    ”ffentliche Nachricht
+4    ~(Quote)
+5    ~(Bin„r)
+# Betreff-Fenster
+6    Empf„nger ~
+7    Betreff  ~
+8    An       ~
+# Sendefenster
+10   Empf„nger~
+11   An
+12   Betreff
+13   Server
+14   Gr”áe
+15   Code:
+16   Kopien:
+# Fido
+20   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,C^rash,P^GP,^Zurck
+# Maus
+21   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,^MausNet,^Lokal,^Zurck
+# ZConnect
+22   ^Parken,^Datum, ^EB ,o^hneSig,l^”sch.,P^rio,Z^usatz,P^GP,^Zurck
+# Usenet
+23   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,Z^usatz,P^GP,^Zurck
+# sonst.
+24   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,^Zurck
+25   JNIùBOCT
+28   ~^Ja ,^Nein,^Intern,^Spezial,ù6^Betreff,B^ox,^Code
+29   ,^Text
+30   PDEH™RMLUG
+# Kopf fr Editor
+40   Nachricht an ~
+41   Nachricht in ~
+42   Betreff:     ~
+43   ~ an ~
+# PGP-Taste
+50   G
+-
++ 612
+1    Nachrichtenlimit um %s Bytes berschritten! Trotzdem absenden
+2    Bin„rdatei verschickt
+3    Dateiname: %s
+4    Gr”áe    : %s Bytes
+-
+613  Bin„rdatei versenden
+614  Textdatei versenden
+615  Crash sofort absenden
++ 616
+# Fensterbreite
+0    65
+1    Brettantworten in~
+2    Stichworte       ~
+3    Zusammenfassung  ~
+4    Verbreitung      ~
+5    PM-Antworten an  ~
+6    Zus„tzliche Informationen
+-
+617  Betreff ge„ndert - Verkettung beibehalten
+618  Nachricht ohne Betreff absenden
+619  war
+620  Teste auf Crosspostings ...
+621  Origin-Datei fehlt: %s
+
+# XP6.INC
+640  Puffer berarbeiten...
++ 641
+1    ## Nachricht am %s archiviert
+2    ## Ursprung
+3    ## Ersteller:~
+-
+642  Nachricht wird archiviert...
++ 643
+1   %s markierte Nachrichten weiterleiten
+2   1 markierte Nachricht weiterleiten
+3   %s markierte Nachrichten archivieren
+4   1 markierte Nachricht archivieren
++ 644
+1   Weiterleiten an ...
+2   ~^Brett , ^User , ^Direkt~
+3   PM wird archiviert...
+4   PMs archivieren ...
+5   Alle markierten PMs archivieren
+6   Nachricht von %s archivieren
+7   Nachricht wird archiviert
++ 645
+0   35
+1   PGP-Optionen
+2   Nachricht signieren
+3   Public Key anfordern
+4   eigenen Key verschicken
+-
+
+
+# --- XP7 -------------------------------------------------------------
+
++ 700
+1    Telefonkosten~
+3    Netztransfer
+4    Netzanruf
+# Datum
+5    ~vom~
+# Zeit
+6    ~um~
+# Netztransfer-Box
+7    ~zur~
+# Netzanruf-Box
+8    ~bei~
+9    Ausgangspuffer: %s Bytes
+10   Eingangspuffer: %s Bytes
+11   == Netzanruf wurde abgebrochen! ==
+12   Anwahlbeginn :~
+13   W„hlversuche :~
+14   Verbindung   :~
+15   Connect .... :~
+16   Connectzeit  :~
+17   Sendepuffer   :
+18   Loginzeit    :~
+19   Sendepaket    :
+20   Wartezeit    :~
+21   Empfangspaket :
+22   BiModem-Zeit :~
+23   Sendezeit    :~
+24   Empfangspuffer:
+25   Empfangszeit :~
+26   Hangupzeit   :~
+27   Senderate     :
+28   ~cps
+29   ---------------------
+30   Empfangsrate  :
+31   Gesamtzeit   :~
+32   Schnitt       :
+33   eingehende Nachrichten:
+34   ausgehende Nachrichten:
+35   -------------------- MausTausch-Logfile --------------------
+36   ----------------------- Fido-Logfile -----------------------
+37   Direktanruf bei~
+38   ~(Fehler)
+39   UUCP-Init    :~
+40   ----------------------- UUCP-Logfile -----------------------
+41   ------------------------- Logfile --------------------------
+42   mitverschickte Nachr. :
+-
+701  Netcalls zwischen %s und %s nicht erlaubt!
+# falsche Boxkonfiguration
+702  ~- bitte korrigieren!
++ 703
+1    Modem initialisieren...
+2    Netzanruf bei~
+3    Anruf bei~
+4    ~um~
+5    keine Verbindung
+6    Warten auf n„chsten Netzanruf...~
+7    Warten auf n„chsten Anruf...~
++ 704
+1    autom. Netcall um~
+2    Uhr
+3    bei ~
+4    Netcall bei~
+5    ~um~
+6    Restzeit:~~~
++ 705
+# Fido-Crash
+1    andere
+2    alle
+3    Anruf bei ...
+4    Node/Name~
+5    markierte
++ 706
+1    kein Eingangspuffer-Name
+2    kein Ausgangspuffer-Name
+3    unvollst„ndige Pointdaten
+4    unvollst„ndige Packer-Angaben
+5    fehlende UpLoader-Angabe
+6    Entpacker fehlt
+7    Seriennummer fehlt
+-
+707  <abgebrochen>
+708  Abbruch
++ 709
+1    besetzt
+2    Voice?!
+3    kein W„hlton
+4    keine Verbindung
+5    keine Antwort
+6    kein B-Kanal
+-
+710  Systemname...
+711  Paáwort...
+712  Anruf eingegangen!   <Enter>=weiter, <Esc>=Abbruch
++ 713
+1    Fehler - %s umbenannt in %s
+2    Fehler beim Umbenennen :-(
+3    Netcall abgebrochen; CALLED konnte nicht umbenannt werden!?
+4    Netcall abgebrochen; CALLED umbenannt in %s
+5    Netcall abgebrochen; fehlerhaftes Paket wurde im Verzeichnis BAD abgelegt.
+-
+714  Box entpackt Daten...~
+715  Box stellt Daten bereit...~
+716  %s: Netcall bei %s um %s
+717  Tempor„re Fido-Mailer-Konfigurationsdatei
+718  Tempor„re UUCICO-Konfigurationsdatei
+719  uucico-Aufruf
+720  Turbo-Box-Mailer
+721  Tempor„re Fido-Konfigurationsdatei
++ 722
+1    Zielverzeichnis: ~
+2    Originaldatei                   Zieldatei             Gr”áe
+3    gesamt
+4    ~Datei(en)
+5    UUCP-Filerequest/Filetransfer
+6    * Datei fehlt *
+-
+723  Pufferdateien werden zusammenkopiert:
+724  nicht gengend Plattenplatz; Puffer wird in BAD abgelegt
+725  Unbekannter Fido-Node: %s. Request l”schen
++ 726
+0    40
+1    %s ist bereits vorhanden.
+2    ~^berschreiben , ^anh„ngen~
+-
+727  Tarifzone:~
+728  tempor„re MAGGI- und UUZ-Konfigurationsdatei
+
+# --- XP8 -------------------------------------------------------------
+
++ 800
+1    Lieber Systemverwalter,
+2    Newsgroups
+3    Bretter
+4    bitte trage fr mich die untenstehenden %s aus.
+5    bitte trage fr mich die untenstehenden %s ein.
+6    mit virtuellen Gráen
+-
+801  Brettliste fr %s laden...
+802  ~ ^Ja  , ^Nein , ^Liste~
+803  %s markierte Bretter abbestellen
+804  %s abbestellen
+805  Sind Sie sicher, daá das eine Brettliste ist
+806  Brettliste fr %s wird eingelesen ...
++ 807
+1    Brett
+2    Bretter
+# Anzahl Bretter bei Box bestellen
+3    %s %s bei %s bestellen
+4    %s %s bei %s abbestellen
+5    %s %s anlegen
+6    Inhalt der gew„hlten Bretter anfordern
+10   Bretter anlegen ...
+-
+# MAPS-Befehl INFO
+808  Info <System>
+809  Systemname
++ 810
+0    Nachricht an~
+# Zerberus MAPS
+1    Hilfe zu allen MAPS-Befehlen
+2    Hilfe zu einem Befehl
+3    Themen-šbersicht
+4    Brettinhalt
+5    Infos zum eigenen System
+6    Infos zu allen Systemen
+7    Infos zu einem bestimmten System
+8    User-, Brett- und Systemliste
+9    Brettliste
+11   Userliste
+12   bestellte Bretter
+13   nicht bestellte Bretter
+14   Postfachinhalt in *Mailbox* l”schen
+16   Bretter bestellen
+17   Bretter abbestellen
+18   Eigenen Userstatus abfragen
+20   ausfhrliche Liste
+21   Bretter vorbergehend abbestellen
+22   Bretter wieder aktivieren
+# Fido Areafix
+40   Liste der verfgbaren Bretter
+41   Liste der bestellten Bretter
+42   Liste der nicht bestellten Bretter
+43   Hilfe zu den Areafix-Befehlen
+44   Brettinhalt anfordern
+# Alphanet 2000 AREAFIX
+50   Hilfe zu den AREAFIX-Befehlen
+51   komplette Brettliste
+# Edgar REQUEST
+55   Hilfe zu den REQUEST-Befehlen
+56   Brettliste
+57   nicht bestellte Bretter
+# changesys / gup / autosys / feeder
+60   Brettliste anfordern
+61   Hilfe zu Changesys
+62   Sysfile-Eintrag abfragen
+63   Letzten Sysfile-Eintrag neu senden
+70   Hilfe zu Gup anfordern
+71   Liste der bestellten Bretter
+72   Liste der verfgbaren Bretter
+75   Hilfe zu AutoSys anfordern
+76   Brett-Zugriffsrechte abfragen
+77   Traffic-šbersicht
+80   Hilfe zu Feeder anfordern
+81   alle Bretter vorbergehend abbestellen
+82   alle Bretter wieder reaktivieren
+-
+811  Sind Sie sicher, daá das eine Fileliste ist
+812  Fileserver-Liste
+813  File-Liste fr %s wird eingelesen ...
++ 814
+1    Datei
+2    Dateien
+# Anzahl Dateien bei Fileserver bestellen
+3    %s %s bei %s bestellen
+-
+815  Service-Befehl
+816  Befehl:~
+817  %s l”schen
++ 818
+0    60
+1    Datei an UUCP-System senden
+2    Quelldatei~
+3    Zieldatei ~
+10   60
+11   UUCP-Filerequest
+12   Dateien ~
+-
+819  Anruf sofort starten
+820  Lese Sysfile-Eintrag ...
+821  Brettliste einlesen
+822  Fileecho-Liste einlesen
+823  Filecho-Liste fr %s wird eingelesen ...
+
+# XP8.INC
+850  Fileecho-Liste fr %s wird eingelesen ...
++ 851
+# Fensterbreite
+0    54
+1    Nachricht an %s
+# Anzahl Befehle
+2    11
+3    LIST         Liste aller verfgbaren File Areas
+4    QUERY        Liste aller bestellten File Areas
+5    UNLINKED     Liste aller nicht bestellten File Areas
+6    PAUSE        Fileversand stoppen
+7    RESUME       Fileversand wieder fortsetzen
+8    HELP         Hilfe anfordern
+9    PWD          Paáwort „ndern
+10   INFO         Statusinformation anfordern
+11   STATUS       Statusinformation anfordern
+12   NOTIFY ON    monatliche Fileliste bestellen
+13   NOTIFY OFF   monatliche Fileliste abbestellen
+20   Neues Filescan-Paáwort:~
++ 852
+1    File area %s bestellen
+2    %s markierte File Areas bestellen
+3    File Area %s abbestellen
+4    %s markierte File Areas abbestellen
+5    File Area %s abbestellen?
+6    Alle markierten File Areas abbestellen?
+7    ~ ^Ja  , ^Nein , ^Liste~
+-
+
+
+# --- XP9 -------------------------------------------------------------
+
+900  Verzeichnis ist nicht vorhanden. Neu anlegen
++ 901
+# Fensterbreite
+0    46
+1    Brettgruppe bearbeiten
+2    neue Brettgruppe anlegen
+3    Name   ~
+4    Name
+5    Limit  ~
+6    Halten:~
+7    Tg.
+8    Sonderz.
+9    ~    Kopf
+10   ~   Quote
+11   ~Signatur
+15   Vorgabe
+16   Re^n:
+17   Re:
+18   nein
+20   Replies~
++ 902
+1    Fido-Einstellungen
+2    Origin~
+3    Adresse
++ 903
+# Fensterbreite
+0    50
+1    Systeme bearbeiten
+2    neues System anlegen
+3    Systemname  ~
+4    Kommentar   ~
+5    Fileserver  ~
+6    Paáwort     ~
+7    Indexdatei  ~
+8    Konvertierer~
+-
+904  %s l”schen
++ 905
+# Fensterbreite
+0    53
+1    Kurzname bearbeiten
+2    Kurzname anlegen
+3    Kurzname  ~
+4    Brett/User~
+5    Server    ~
+-
+906  "%s" l”schen
+# Boxen
+907  ~^Neu , ^L”schen , ^W„hlen , ^Edit , Netz^typ ,  ^OK ~
+# Brettgruppen
+908  ~^Neu , ^L”schen , ^Edit , ^Fido , ^OK~
+# Systeme, Kurznamen
+909  ~^Neu , ^L”schen , ^Edit , ^OK~
+910  Username:~
++ 911
+0    50
+1    Bitte geben Sie den Namen Ihrer Stammbox, den
+2    Netztyp der Box und Ihren Usernamen ein:
+3    Netztyp  ~
+4    Boxname  ~
+5    Username ~
++ 912
+0    47
+1    Nodenummer
+2    Boxname  ~
+3    Username ~
+4    Origin   ~
+5    Boxname  ~
+6    Kommentar~
+7    MAPS-Name~
+8    Realname ~
+9    Domain   ~
+10   Serverdom.
+11   FQDN     ~
++ 913
+0    26
+1    Netztyp~
+-
+914  neue Box
+915  neue Box anlegen (Typ: %s)
+916  Polldaten vorhanden!!~
+917  %s wirklich l”schen
+918  ^Stammbox,^Fido-Stammbox
++ 920
+# Maus-Paáwort
+1    Paáwort ~
+# Fido
+2    Pointnummer
+3    Pointnetz ~
+# Turbobox-PW
+4    Paáwort
+# Pronet
+5    Telefon~
+6    Paáwort~
+7    Pointnr. ~
+#
+10   Pointname
+11   Paáwort ~
+12   Telefon
+13   Ser.Nr.
+# QM
+14   Login ~
+# Fido
+15   Paáwort
+# UUCP
+16   Login ~
+#
+20   Upload-Protokoll ~
+21   Download-Protokoll
+22   Protokoll-Kennung~
+23   Upload-Packer    ~
+24   Download-Entpacker
+25   Compress-Entpacker
+26   Freeze-Entpacker ~
+27   GNU-ZIP-Entpacker~
+28   Zmodem-Optionen  ~
+# UUCP
+30   max. UUCP-g-Paketgr”áe ~
+31   max. UUCP-g-Fenstergr”áe  ~
+62   maximale Dateigr”áe    ~
+32   variable UUCP-g-Paketgr”áe
+60   Ausgangspaketgr”áe vorgeben
+61   Login mit 7/E/1
+33   G-Protokoll
+34   g-Protokoll
+35   Dateigr”áe bertragen
+36   Batched SMTP
+37   z-Protokoll
+38   f-Protokoll
+39   e-Protokoll
+#
+40   Packer-Extension ~
+# ProNet:
+41   Entpacker-Ext. ~
+# andere Netze:
+42   Entpacker-Extension ~
+# ZConnect:
+43   Packer-Extension    ~
+44   Janus Plus
+# Fido
+45   AKAs ~
+46   4D-Adressen
+47   TosScan o.„.
+48   Uhrzeit setzen
+49   Paketpaáwort
+50   Node statt Point
+51   leeres Paket senden
+52   erw.Paketdateinamen
+53   Pakete mitsenden ~
+# Turbo + Maus(55)
+55   Brettnachrichten anfordern
+56   Seriennr.~
++ 921
+0    59
+1    Warten auf Verbindung
+2    Warten auf Login    ~
+3    W„hlpause           ~
+4    maximale W„hlversuche
+5    Login-Versuche ~
+6    Warten auf Daten
+7    max. Connects  ~
+8    min. cps-Rate  ~
+9    Modem-Init~
+10   Schnittstelle~
+11   šbertragungsrate:
+12   bd
++ 922
+0    43
+1    Tarifzone     ~
+5    Connect-Dauer:~
+6    Sek.
++ 923
+# Fensterbreite Fido- und UUCP-Sysopmode
+0    63
+# Fensterbreite nicht-Fido-Sysopmode
+1    60
+2    Sysop-Mode
+3    Eingangsverzeichnis ~
+4    Ausgangsverzeichnis ~
+5    Eingangspuffer ~
+6    Ausgangspuffer ~
+7    /¯Netzanruf-Bericht
+8    Username ohne @BOX
+9    Ausgangspakete packen
+# Position von 923.8
+10   34
+# QWK
+12   Eingangspakete     ~
+13   Ausgangsverzeichnis~
+14   Transfer
+#
+20   Startprogramm  ~
+21   Endprogramm    ~
++ 924
+0    57
+1    Verschiedene Einstellungen
+2    Online-Anruf
+3    Paáwort~
+4    Logfile~
+5    Netzanruf
+6    von
+7    bis
+8    Filter
+9    Eingang~
+10   Ausgang~
+11   Sonstiges
+12   /Netcall/Alle
+13   Script ~
+14   Ausschluá-
+15   zeiten:
+16   Vertretersystem
+17   fr AMs~
+18   fr PMs~
++ 925
+1    netzspezifische Einstellungen
+2    Message-IDs
+3    Alias-Point
+4    LightNET-Login
+5    Netzname~
+6    Bretter ~
+7    Absender User@Point.ZER
+8    Vertreter~
+9    Brettmanager   ~
+10   ... Paáwort    ~
+12   Absender User@Point.domain
++ 926
+0    42
+1    Fido-Einstellungen
+2    Areafix
+3    Name      ~
+4    Paáwort   ~
+5    "+" bei Bestellungen
+6    Befehle im Betreff
+7    Diverses
+8    Brettebene~
+9    FileScan
+10   Name      ~
+11   Paáwort   ~
+12   d'Bridge-Areafix
++    927
+1    ^Point,^Modem,^Gebhren,
+2    ^Namen,%s^Diverses
+3    ,^SysopMode
+# QWK
+4    ,^Transfer
++ 928
+1    UUCP-Einstellungen
+2    Vertreter
+3    Brettmanager    ~
+4    Typ    ~
+5    Name   ~
+6    Paáwort~
+7    vollst„ndige Domain
+8    Sysfile-Betreff~
+9    Absender User@Server.domain
++ 929
+1    Es sind Polldaten fr diese Box vorhanden (%s.PP)
+2    - Netztyp kann nicht ge„ndert werden.  Versenden oder
+3    l”schen Sie bitte zuerst die unversandten Nachrichten
+4    fr diese Box!
+5    M”chten Sie den Netztyp fr %s wirklich „ndern
+-
+# *SETUSER
+930  Neuer Username fr %s ~
+931  Neuer Realname
++ 932
+1    Beachten Sie, daá bei der Umstellung zwischen Janus und
+2    Janus Plus auch die Download-Protokoll-Einstellung fr
+3    externe Protkolle ge„ndert werden muá! Bei Janus ist die
+4    Angabe des Empfangs-Dateinamens ($DOWNFILE), bei Janus
+5    Plus die Angabe des Empfangs-Verzeichnisses ($DOWNPATH)
+6    notwendig.
+7
+8    Protokolle, die nicht die Angabe eines Empfangsverzeich-
+9    nisses erlauben, k”nnen mit CrossPoint nicht fr Janus
+10   Plus verwendet werden.
++ 933
+0    44
+1    QWK-Einstellungen
+2    Brettebene    ~
+3    Netmail-Typ   ~
+4    Netmail-Echo  ~
+5    PM-Echo       ~
+6    Message-ID-Typ~
+7    Header im Nachrichtentext
+8    QWK-Pakete nach Verarbeitung l”schen
+9    Email-Echo    ~
+-
+934  (intern)
++ 935
+0    57
+1    Viewer hinzufgen
+2    Viewer „ndern
+3    MIME-Typ        ~
+4    Dateierweiterung~
+5    Viewer-Programm ~
+-
+
+# --- XP10 ------------------------------------------------------------
+
++ 1000
+# Tastenmakros
+0    BUNLAET
+1    Alles
+2    Bretter
+3    User
+4    Nachr.
+5    Lister
+6    ArcViewer
+7    Editor
+8    Terminal
+-
+1001 Timing-Liste Nr.~
+1002 Telefon-Tarifzonen
++ 1003
+1    ~Eintrag
+2    ~Eintr„ge
++ 1004
+1    alle
+2    Eintrag bearbeiten
+3    Neuer Eintrag
+4    Uhrzeit von
+5    bis~
+6    Datum vom ~
+7    bis zum~
+8    Wochentage~
+9    Aktion    ~
+-
+1005 Eintrag l”schen
++ 1006
+1    Tastatur-Makro anlegen
+2    Makro fr~
+3    Kommentar~
+4    Taste
+5    Makro
+6    l”schen
+7    Abbruch
+8    ok
++ 1007
+1    Tastenmakro bearbeiten
+2    Makro    ~
+3    Kommentar~
+-
+1008 neue Taste
++ 1009
+0    Makro gltig im..
+1    Brettfenster
+2    Userfenster
+3    Nachr.fenster
+4    Lister
+5    Archiv-Viewer
+6    Editor
+7    Terminal
++ 1010
+1    Zone~
+2    ~ Die Vorwahlentabelle wird nur fr
+3    ~ Fido-Direktanrufe ben”tigt.
+10   Seite ^1,Seite ^2,Seite ^3,Seite ^4,Seite ^5,Seite ^6,Seite ^7,Seite ^8,Seite ^9
+11   Seite %s
+-
+# Timing-Listen, Makros, Gebhrenzonen
+1011 ~^Neu , ^L”schen , ^Edit , ^Aktiv , ^Sichern , ^OK~
+1012 ~^Neu , ^L”schen , ^Edit , ^Taste , ^*** , ^Sichern , ^OK~
+1013 ~^Neu , ^L”schen , ^Edit , ^Sichern , ^OK~
+1014 ~normal/billig~
+1015 nderungen verwerfen
++ 1016
+1    Netcall bei:
+2    -- keine weiteren Eintr„ge fr heute --
+3    Netcall-Automatik
++ 1017
+1    keine Tastenmakros fr dieses Fenster definiert
+2    Makro w„hlen ...
+3    keine Tastenmakros definiert
++ 1018
+# Fensterbreite /Config/Anzeige/Kopf
+1    52
+2    ~^Einfgen , ^Verschieben , ^L”schen , ^OK~
+3    Zeile hinzufgen:
+4    Trennzeile
+5    Zeile "%s" l”schen
+6    Trennzeile l”schen
+-
++ 1019
+1  ~^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info ,  ^OK ~
+2  40
+3  Node-/Pointlisteneintrag l”schen?
+4  ~ ^Ja  , ^Nein , incl. ^Datei~
+10 Neue Node-/Pointliste einbinden
+-
+1020 Node-/Pointlist-Update einbinden
+1021 Telefontarife
++ 1022
+1    Tarifgruppe
+2    MoDiMiDoFrSaSoF1F2F3
+3    Seite ^1,Seite ^2,Seite ^3,^Tage
+4    von
+5    bis
+6    Seite
+7    Gltigkeitsbereich der Tarifgruppe %s
+8    Feiertag
+# Breite des Wochentagsfensters
+9    44
+# Position der Feiertag-Spalte
+10   25
+11   Tarifgruppe %s l”schen
++ 1023
+0    46
+1    Telefonkosten-Einstellungen
+2    Kosten fr nicht zustandegekommene Verbindung~
+3    W„hrung~
+4    Gebhrenbernahme von cFos
+5    deutsche Feiertage bercksichtigen
+-
+
+# --- XPTERM ----------------------------------------------------------
+
++ 2000
+1    Hilfe
+2    Einstellungen
+-
+2001 ™ffne LogFile ...
+2002 Schlieáe Logfile ...
+2003 Logfile schlieáen
+2004 trenne Verbindung
+2005 Mini-Terminal - Ende mit <Alt X>
+2006 Verbindung getrennt - Ende mit <Alt X>
+2007 Upload
+
++ 2010
+0    Zeile %s:~
+1    '"' fehlt
+2    Sprungmarke "%s" existiert bereits
+3    Max. %s Sprungmarken m”glich!
+4    unerwartetes Zeilenende
+5    ungltige ON-Funktion
+6    verschachtelte ON-Befehle sind nicht erlaubt
+7    Text-Parameter erwartet
+8    berflssige Daten am Zeilenende
+9    ON oder OFF erwartet
+10   ERROR oder FAIL erwartet
+11   ungltiger Delay-Parameter (Zahl > 0 erwartet)
+12   numerischer Parameter erwartet
+13   Sprungmarke fehlt: %s
+14   ungltiges Textmakro: %s
+15   ungltiger Befehl: %s
+16   ungltiger Parameter: %s
+-
++ 2011
+1    Script-Protokoll:
+2    Ende der Sciptausfhrung:
+3    *** Script-Fehler:
+4    CALL ohne RETURN
+5    Stapelberlauf (zu viele verschachtelte CALLs)
+6    RETURN ohne CALL
+-
+
+# --- XPFIDO ----------------------------------------------------------
+
++ 2100
+1    Node-Infos abfragen (Esc=Ende)
+2    Box
+3    Node
+4    Sysop
+5    TelNr
+6    Flags
+7    Node
+8    Datei
+9    Status
+-
++ 2101
+1    Nodeindex anlegen
+2    Datei
+3    Netz
+4    User
+5    Netzindex sortieren ...
+6    Userindex sortieren ...
+7    Userindex packen ...      %
+-
+2102 Nodelisten-Konfiguration - s. FIDO.DOC
+2103 Pointliste kopieren
++ 2104
+1    Nodelist einschr„nken
+2    Zonen/Regionen~
+3    Einschr„nkungen gel”scht - ggf. Nodeliste neu einlesen.
+4    ungltige Eingabe
+-
+2105 Fileliste l”schen
+2106 File Request
+2107 Node/Name~
+2108 Laut Nodelist kein Request bei dieser Box m”glich - trotzdem versuchen
++ 2109
+1    Box
+2    Nummer
+3    Flags
+4    Status
+-
+2110 Lade Fileliste ...
+2111 File-Request
++ 2112
+1    Dateien~
+2    ~sofort starten
+3    Request-Anforderung l”schen ...
+4    Request-Anforderung speichern ...
+-
+2113 ~bereits vorhanden - berschreiben
+2114 zu wenig Platz
+2115 Eintrag in Filelisten-Datei..
+2116 Verzeichnis der Request-Filelisten
++ 2117
+1    Fileliste einlesen
+2    Datei nicht vorhanden
+3    Datei
+4    Node~~
+5    Fehler in Archivdatei
+6    Kopiere Fileliste..
+7    Fehler beim Kopieren
+8    Fehler beim Umbenennen
+9    %s l”schen
+10   L”sche %s ...
+-
+2118 Fileliste fr %s l”schen
+2119 L”sche Fileliste ...
+# /Fido/Fileliste/Suchen
++ 2120
+1    Schreibfehler
+2    keine Filelisten vorhanden
+3    Dateien suchen
+4    Suchbegriff~
+5    Schreibweise ignorieren
+6    Suchen...
+7    Datei
+8    gefunden
+9    Dateisuche nach
+10   kein gleichzeitiger Request bei mehreren Boxen m”glich
+-
+2121 Fehler in Nodelisten-Index!
+2122 Pointliste kopieren
+2123 Auswahl verwerfen
+2124 Sind Sie sicher, daá das eine Pointliste ist
+2125 Nodeliste kopieren
++ 2126
+0    69
+1    Laut Nodeliste ist diese Box nicht rund um die Uhr erreichbar.
+2    Bitte beachten Sie, daá File Requests hier evtl. auf bestimmte
+3    Zeiten beschr„nkt sind, und daá diese Requestzeiten eingehalten
+4    werden sollten. Im Zweifelsfall informieren Sie sich bitte beim
+5    Sysop der Box!
++ 2127
+0    51
+1    Node-/Pointliste aktivieren
+2    Node-/Pointliste konfigurieren
+5    Listenname     ~
+6    Nummer~
+7    Listenformat   ~
+8    Zone/Adresse   ~
+9    Update-Datei   ~
+10   Update-Archiv  ~
+11   bearbeiten durch
+12   Update als Diff einbinden
+13   Update nach Einbinden l”schen
++ 2128
+1    Nodeliste
+2    Points24-Liste
+3    PVT-Pointliste
+4    4D-Pointliste
+5    FD-Pointliste
++ 2129
+0    30
+1    Node-/Pointlisten-Info
+2    Datei
+3    Bytes
+4    Eintr„ge
++ 2130
+1    entpacke %s
+2    Fehler beim Entpacken
+3    %s: Falsche Version von Node-/Pointlist oder Node-/Pointdiff
+4    Fehler beim Bearbeiten der Node-/Pointdiff
+5    Zu wenig Plattenplatz zum Kopieren von %s.
+6    Fehler beim Kopieren von %s.
++ 2131
+0    49
+1    Nodelisten durchsuchen
+2    Sysop      ~
+3    Standort   ~
+4    Boxname    ~
+5    Nodeadresse~
+6    Telefon    ~
+7    Gebhrenzone
+8    Flags      ~
+9    FidoNet-Nodeliste durchsuchen
+10   sonstige Nodelisten durchsuchen
+11   Pointlisten durchsuchen
+20   Datei:
+21   Netz:
+22   Eintr„ge:
+23   passend:
+30   Sysop
+31   ~Nodeliste
+32   Flags
+33   Point
+34   Pointliste
+35   Status
+-
+2132 ~^Nachricht , ^Request , ^Zurck~
+
+
+# --- XPAUTO, XPCC ----------------------------------------------------
+
++ 2200
+1    AutoExec-Fehler:~
+2    Empf„nger fehlt
+3    Betreff fehlt
+4    ungltige Serverbox: %s
+5    Datei "%s" fehlt
+6    File Attaches k”nnen nur als PM verschickt werden!
+7    Pfadname zu lang fr File Attach
+-
+2201 Kopien an:
++2202
+1    unbekannter User
+2    unbekanntes Brett
+3    neu anlegen
+-
+
+
+# --- XP_UUE, XPIMPEXP, XPMIME ----------------------------------------
+
+2400 decodiere Nachricht     / Zeile       /         Bytes
+2402 Zieldatei
+2403 %s markierte Nachrichten decodieren
+2404 Warnung: Korrekte Reihenfolge kann nicht zuverl„ssig ermittelt werden!
+2405 Warnung: Fehlerhafte Zeile; decodierte Datei ist evtl. fehlerhaft
+
+
+# XPIMPEXP
+2420 Nachrichtenpaket konvertieren/einlesen
++ 2421
+1    Pufferdatei ~
+2    Ursprungsbox~
+3    Empfangsdatum = Erstellungsdatum
+4    Empfangsbest„tigungen verschicken
++ 2422
+1    ZQWK.EXE fehlt!
+2    QWK-Paket:
+3    Brettebene ~
+4    Fehler bei ZQWK-Konvertierung:~
+# ZQWK Errorlevels
+91   falscher Aufruf, fehlende Parameter
+92   Keine Nachrichten zu konvertieren! (-ZQ)
+93   Konfigurationsdatei nicht gefunden (-ZQ)
+94   Packer fehlt/Platte voll/falsches Format
+95   Keine Nachrichten im QWK-File! (-QZ)
+96   Unbekanntes Packerformat (-QZ)
+97   Befehlsinterpreter (COMMAND.COM) nicht gefunden
+98   Unbekannter Dos-Fehler
+99   QWK-File-Name fehlt (-QZ)
+101  Laufwerk nicht bereit
+102  Plattenkapazitaet nicht ausreichend
+103  Nicht gengend Hauptspeicher!
+104  Packer-Problem
+105  Fehler beim Erstellen der Ausgabedatei
+106  Fehler beim Schreiben der Ausgabedatei
+-
+
+# XPMIME
++ 2440
+1    Vorspann
+2    Nachspann
+3    Text
+4    Grafik
+5    Video
+6    Ton
+7    Datei
+9    Nachrichtenteil ÄÄÄÄÄÄÄ Zeilen ÄÄÄÄÄÄÄÄÄÄÄ Dateiname
+10   gesamte Nachricht
+-
+2441 Nachrichtenteil extrahieren
+2442 decodiere Bin„rdatei ...
+
+# --- XPE -------------------------------------------------------------
+
++ 2500
+1    Datei wurde ge„ndert.
+2    ~^Sichern , ^Nicht sichern , ^Zurck~
++ 2501
+0    Hinweis
+# Anzahl der Textzeilen:
+1    4
+2    Die Signatur ist gr”áer als %s Bytes. Groáe
+3    Signaturen sind berflssiger Datenmll und
+4    belasten unn”tig das Netz.
+5    Zurck zum Editor?
+6    ~ ^Ja  , ^Nein~
+-
+2502 Text bearbeiten
++ 2503
+# Zeile / Spalte
+1    Ze
+2    Sp
+11   zu wenig freier Speicher
+12   Absatz zu groá
+13   Fehler beim Laden des Textes
+14   Fehler beim Speichern
+15   Fehler: Datei nicht vorhanden
+16   Text wurde nicht gefunden.
+20   Text ersetzen (Ja/Nein/Alle/Esc)
+21   JNA
+22   ~Textstellen ersetzt
+23   Drucken...
+# Men
+30   Block
+31   ^Kopieren       *
+32   ^Ausschneiden   -
+33   ^Einfgen       +
+34   ^Laden        ^KR
+35   La^den UUE    ^KU
+36   ^Speichern    ^KW
+37   -
+38   ^Umbruch aus   F3
+39   U^mbruch ein   F4
+40   -
+41   ^Optionen     ^OR
+-
+2504 Block speichern
+2505 Block laden
++ 2506
+0    42
+1    Suchen
+2    Text ~
+3    Schreibweise ignorieren
+10   50
+11   Suchen/ersetzen
+12   suchen nach   ~
+13   ersetzen durch~
+-
+2507 neuer Betreff:~
++ 2508
+0    28
+1    Editor-Einstellungen
+2    rechter Rand    ~
+3    Absatzendezeichen~
+4    autom. einrcken
+5    persistente Bl”cke
+-
+2509 und UU-kodieren
+
+
+# --- XPSTAT ----------------------------------------------------------
+
+2600 statistik vom~
+2601 statistik
+2602 maximale Systemzahl erreicht (%s)
++ 2603
+1    Systemstatistik
+2    Brettstatistik
+3    Vom
+4    bis zum
+5    Erstellungsdatum?       ~
+6    nur markierte Bretter?  ~
+7    Ausgabe in /¯Statistik
+8    KBytes
+9    Anzahl
+10   sortiert nach ~
+11   Maximal anzeigen
++ 2604
+1    Statistik wird berechnet
+2    CrossPoint-
+3    ~vom~
+4    fr %s gew„hlte Bretter
+5    fr %s
+6    fr alle nicht-internen Bretter
+7    vom %s bis zum %s
+8    Nr.  System               Nachrichten     KBytes      %
+9    gesamt:   ~
+10   ~Nr.  Brett                                    KBytes     Nachr.    %      HZ
+11   System
+12   Brett
+-
+2605 %s-Statistik
+2606 Ausgabe in /¯Statistik
+2607 Gruppen
++ 2608
+1    Statistik wird berechnet
+2    CrossPoint-Gruppenstatistik vom %s
+3    ~Nr.   Name                       KBytes    Nachrichten   % KB
+4    ~gesamt:   ~
++ 2609
+0    33
+1    PostKosten
+2    Gebhren fr das Jahr~
+3    Ausgabe in /¯Statistik
+4    Monate aufschlsseln
+5    ~pro Zeile
+10   XPOINT.LOG einlesen...
+11   Statistik wird berechnet...
+12   Monat     | Anrufe |    Upload   |   Download   |   Kosten
+13   Gesamt:   |
+14   - keine Gebhren in diesem Monat -
+15   Gebhren
+16   Telefongebhren fr %s
+-
+2610 Keine unversandten Nachrichten vorhanden!
++ 2611
+1    unversandte Nachrichten
+2    Box            Nachrichten        Bytes
+3    Crashmails
+4    Fehlerhafte Pufferdatei!!
++ 2612
+1    Nodelist     | Zone                     | Reg. | Netze | Nodes | Nodes/Netz
+2    gesamt                                  |
+3    Die %s groessten Netze:
+4    Netz    | Name                           | Nodes
+5    Flags:
+10   Points  ~
+11   Nodes ..... :~
+12   Points .... :~
+13   Points/Node :~
+20   Node-Statistik
+21   Ausgabe in /¯Statistik
+22   "Down"-Nodes mitz„hlen
+23   Anzahl gr”áter Netze~
+24   Flags anzeigen ab   ~
+25   Statistik wird berechnet ...
+26   CrossPoint-Nodelistenstatistik vom %s
+27   Nodelisten
++ 2614
+1    Letzte Netzanrufe
+2    heute
+3    gestern
+4    vor %s Tagen
+5    vor %s Monaten
+10   nur Server mit "Netcall/Alle"-Markierung anzeigen
+-
+
+
+# --- XP4E ------------------------------------------------------------
+
+2700 noch nicht definiert
++ 2701
+1    Server  ~
+2    Netztyp
+3    User    ~
+4    Adresse ~
+5    Kommentar
+6    Haltezeit
+7    Tage
+8    Umlaute
+9    Nachrichtenfilter
+10   Empfangsbest„tigungen
+-
+2702 neuen User anlegen
++ 2703
+1    Name    ~
+2    Kommentar
+3    Server  ~
+-
+2704 neuen Verteiler anlegen
+2705 Verteiler bearbeiten
++ 2706
+1    Paáwort~
+2    Codier-Verfahren  ~
+3    Default: Codieren
++ 2707
+1    "@" ist in Brettnamen nicht erlaubt! Falls Sie
+2    die /BRETT@BOX.ZER-Adressierung im Z-Netz ver-
+3    wenden m”chten, legen Sie das Brett bitte als
+4    User an!
++ 2708
+1    Tage
+2    Nachr.
+3    Brett bearbeiten
+4    neues Brett anlegen
+5    Server   ~
+6    Netztyp
+7    Brettname
+8    Trennzeile
+9    Kommentar~
+10   Haltezeit~
+11   Nachr.filter
+12   Gruppe   ~
+13   Origin   ~
+-
+2709 User nicht in der Datenbank - neu anlegen
+2710 User bearbeiten
+2711 Keine Box angegeben - internes Brett anlegen
+2712 Unbekannte Serverbox - Brett trotzdem anlegen
+2713 Brettname ge„ndert - Nachrichtenk”pfe anpassen
+2714 Einen Moment bitte ...
++ 2715
+1    ^Kommentar,^Serverbox,^Haltezeit,^Umlaute,^Filter
+2    ^Kommentar,^Serverbox,^Haltezeit,^Gruppe,^Filter,^Zugriff
+3    %s markierte User bearbeiten
+4    %s markierte Bretter bearbeiten
+5    Kommentar ~
+6    Server  ~
+7    Nachr.
+8    Tage
+9    Haltezeit:~
+10   IBM-Umlaute verwenden
+11   Gruppe ~
+12   Nachrichtenfilter
+13   Schreibsperre
+-
+2716 %s markierte User l”schen
+2717 %s markierte Bretter l”schen
++ 2718
+1    Server   ~
+2    Empf„nger~
+3    Betreff  ~
+-
+2719 private Nachricht
++ 2720
+1    ^Alles,^Ungelesen,^Neues,^Heute,^Datum,^Zeit
+2    ,^Sichern
+3    Lesen ab Datum:
+4    Lesen ab Uhrzeit:
++ 2721
+1    Empf„nger:
+2    ~^Brett , ^User~
+-
+2723 t„glich
+2724 alle
+2725 Datei nicht vorhanden - neu anlegen
++ 2726
+1    AutoVersand-Nachricht
+2    AutoVersand-Nachricht kopieren
+3    Betreff  ~
+4    Datei    ~
+5    Empf„nger~
+6    Server   ~
+7    Tage     ~
+8    Wochentage
+9    MoùDiùMiùDoùFrùSaùSo
+10   Monate   ~
+11   bin„r
+12   l”schen
+13   bei nderung
+14   Datum 1~
+15   Datum 2~
+-
+2727 Gew„hlten Eintrag l”schen?
+2728 ~^Ja , ^Nein , ^Datei~
++ 2729
+1    AutoVersand-Datei
+2    Datei:
+3    Gr”áe:
+4    Datum:
+5    - Datei fehlt -
+-
+2730 Bretter alphabetisch sortieren
++ 2731
+1    Trennzeile einfgen
+2    Trennzeichen~
+3    Kommentar   ~
+-
+2732 1 markiertes Brett verschieben
+2733 %s markierte Bretter verschieben
++ 2734
+1    Server-Wechsel
+2    alte Serverbox~
+3    neue Serverbox~
+4    Bretter bearbeiten
+5    User bearbeiten
+6    lokale User bearbeiten
+7    Bretter
+8    User
+9    AutoVersand bearbeiten
+10   Kurznamen bearbeiten
+11   AutoVersand
+12   Kurznamen
++ 2735
+0    61
+1    Brettzugriff/Brettvertreter „ndern
+2    Vertreter-Adresse~
+3    Schreibsperre
+10   Es besteht uneingeschr„nkter Schreibzugriff auf dieses
+11   Brett.
+12
+20   Der Schreibzugriff auf dieses Brett ist gesperrt.
+21
+22
+30   Alle neuen Nachrichten und alle Antworten, die Sie in
+31   dieses Brett schreiben, werden an die Vertreter-Adresse
+32   umgeleitet.
+40   Alle ”ffentlichen Antworten, die Sie auf Nachrichten in
+41   diesem Brett schreiben, werden an die Vertreter-Adresse
+42   umgeleitet.
+50   Alle ”ffentlichen Antworten anderer User auf Nachrichten,
+51   die Sie in diesem Brett schreiben, werden an das angege-
+52   bene Vertreter-Brett (Diskussions-Brett) umgeleitet.
+-
+2736 %s enth„lt Nachrichten. Trotzdem l”schen
+2737 Warnung: Nachrichtencodierung ist im FidoNet nicht zul„ssig!
+
+# --- XPREG -----------------------------------------------------------
+
+# 2900
+
+# --- XP_DES, XP_PGP --------------------------------------------------
+
++  3000
+1  Antwort auf PGP-Keyanforderung
+2  Der Header dieser Nachricht enth„lt den angeforderten PGP-Public-Key.
+3  Diese Nachricht wurde automatisch erzeugt.
++  3001
+1  PGP-Key anfordern bei ...
+2  PGP-Keyanforderung
+3  Falls Ihre Software PGP nach dem ZCONNECT-Standard untersttzt,
+4  sollte sie auf diese Nachricht mit dem Verschicken Ihres PGP
+5  Public Key antworten.
+6  - automatisch erzeugte Nachricht -
++ 3002
+1  sende Public Key an %s
+2  decodiere Nachricht von %s
+3  lese Key aus Nachricht %s von %s ein
+-
+
+# --- Fehlermeldungen -------------------------------------------------
+
++  10000
+1  Die Hilfsdatei %s fehlt!
+2  Dateierweiterung muá .XPS sein!
+3  Ungltiger Pfad- oder Dateiname!
+4  Kann %s nicht l”schen!?
+5  ungltiges Verzeichnis: %s
+6  zu wenig freier Speicher
+7  Zu wenig freier Speicher fr externen Programmaufruf!
+8  Die Einstellung des %s-Entpackers ist fehlerhaft.
+9  Datei ist schreibgeschtzt.
+10 Schreibfehler
+20 *LIST: Datei nicht vorhanden!
+21 Ungltige Funktion:  %s
+22 Datei ist nicht vorhanden!
+23 *EDIT: Datei nicht vorhanden!
+
++  10100
+1  Netcallkonvertierer ZFIDO.EXE fehlt!
+2  Netcallkonvertierer MAGGI.EXE fehlt!
+3  NDIFF.EXE fehlt!
+4  Fido-Mailer XP-FM.EXE fehlt!
+5  RFC-Konvertierer UUZ.EXE fehlt!
+6  Datei nicht vorhanden
+7  Fehler beim Schreiben von %s
+8  In diesem Netz nicht m”glich!
+9  Unbekannte Serverbox: %s
+10 UUCICO.EXE fehlt!
+11 ZQWK.EXE fehlt!
+
++  10200
+1  ungltiges Tempor„r-Verzeichnis eingestellt
+2  ungltiges Extrakt-Verzeichnis eingestellt
+3  ungltiges Sendeverzeichnis eingestellt
+4  ungltiges Logfileverzeichnis eingestellt
+5  Zum Sichern bitte erst die Eingabemaske verlassen.
+6  Programm nicht erreichbar (Extension nicht vergessen!)
+7  ungltige Eingabe - siehe Online-Hilfe
+8  Verzeichnis kann nicht angelegt werden!
+9  Die Packer-Angabe muá $ARCHIV und $DATEI enthalten!
+10 Zu wenig Files - in CONFIG.SYS bitte mindestens FILES=%s eintragen!
+11 Telefonnummer hat ungltiges Format - s. Online-Hilfe!
+12 Telefonnummern haben ungltiges Format - s. Online-Hilfe!
+14 Node-/Pointliste %s fehlt
+16 Bei Monochrom-Grafikkarten nicht m”glich!
+17 PGP ist nicht vorhanden oder nicht per Pfad erreichbar.
+18 Aktivieren Sie zuerst die ZCONNECT-PGP-Untersttzung!
+19 Ihre Grafikkarte untersttzt kein VESA-DPMS.
+20 Geben Sie die vollst„ndige URL (http://do.main/...) an!
+
++  10300
+1  bei Verteilern nicht m”glich
+2  Keine Nachrichten markiert!
+3  Kein Kommentarbaum aktiv!
+# Puffereinlesen:
+4  Datei nicht vorhanden!
+5  Interne Ablage - bitte erst umbenennen!
+#
+6  Fehler beim pmCrypt-Decodieren
+7  Empfangsbest„tigung in diesem Brett nicht m”glich
+8  Nachricht ist codiert, aber Paáwort fehlt!
+9  Nachricht ist QPC-codiert, aber es ist ein DES-Paáwort eingetragen!
+10 Nachricht ist DES-codiert, aber es ist ein QPC-Paáwort eingetragen!
+11 Nur bei ”ffentlichen Nachrichten m”glich!
+12 Diese Nachricht stammt nicht von Ihnen!
+13 Verteiler sind hier nicht erlaubt.
+14 In diesem Netz nicht m”glich!
+15 Nur in der Nachrichtenbersicht m”glich!
+16 Ungltiger Pfad- oder Dateiname!
+
++  10400
+1  keine Nachricht gew„hlt
+2  zu wenig freier Arbeitsspeicher
+3  PM-Archiv in diesem Brett nicht m”glich
+4  bei unversandten Maus-Nachrichten nicht m”glich!
+5  Nachricht bitte als PM schicken
+6  Kommentarbaum ist bereits aktiv
+7  zu wenig Hauptspeicher
+8  kein Kommentarbaum vorhanden
+9  keine Bezge vorhanden
+10 ungltiger Empf„nger
+11 Datei nicht vorhanden
+12 ungltiger Dateiname
+13 nicht m”glich - Bin„rdatei
+14 Anzeige der markierten Nachrichten ist bereits aktiv
+15 Keine Nachrichten markiert!
+16 Im Brett dieses Users sind noch Nachrichten vorhanden!
+17 Bei Verteilern nicht m”glich!
+18 keine Nachrichten vorhanden
+19 Brett ist nicht leer
+#  XP4O / XP4O2
+20 keine Nachrichten vorhanden!
+21 Warnung: Ablagendatei %s fehlt!
+22 Bitte verwenden Sie Nachricht/Unversandt/%s
+23 Bei Bin„rdateien nicht m”glich
+24 Nachricht ist besch„digt  (Ablage %s)
+25 Bei unversandten Nachrichten nicht m”glich.
+26 Nachricht ist nicht mehr in der Datenbank vorhanden!
+27 fehlerhaftes Pollpaket:  %s
+28 Entpacken nicht m”glich - bitte Temp-Verzeichnis angeben!
+29 Datei schon vorhanden - bitte Extrakt-Verzeichnis angeben!
+30 Datei wurde nicht korrekt entpackt.
+31 zu wenig Speicher!
+32 Maximal 3 verschachtelte Archive m”glich!
+33 ungltiges Verzeichnis
+34 keine Archivdatei
+35 zu wenig Festplatten-Platz
+36 Drucken nicht m”glich - Bin„rnachricht
+37 unbekannte Nodeadresse
+38 keine Dateien markiert
+39 Unversandte Nachricht mit "Nachricht/Unversandt/L”schen" l”schen!
+40 XPack - unbekannte Datei: %s
+41 Zu wenig Speicherplatz, um %s zu packen!
+42 Nur in der Nachrichtenbersicht m”glich!
+43 Nachricht wurde durch Absender 'gecancelt' - antworten nicht m”glich.
+44 User nicht erfaát.
+45 Nachrichtendatenbank defekt - verwenden Sie /Wartung/Packen!
+46 Verlassen Sie das Brett und drcken Sie *dann* "B" ...
+
+50 Der Schreibzugriff auf dieses Brett ist gesperrt.
+# XP4O3
+80 %s: Crossposting ist hier nicht erlaubt.
+81 Crosspostings sind nur innerhalb eines Servers m”glich!
+82 %s: Schreibzugriff gesperrt!
+83 Crossposting an Verteiler ist nicht m”glich.
+
++  10600
+1  Rckdatieren nicht m”glich.
+2  leere Nachricht - nicht abgeschickt
+3  Datei wurde nicht codiert!
+4  Nachricht an Serverbox bitte als normale Mail absenden
+5  zu wenig freier Speicher zum Absenden der Nachricht
+6  Schreiben in dieses Brett nicht m”glich!
+7  Unbekannte Serverbox: %s  -  Bitte berprfen!
+8  zu langer Dateipfad
+9  In diesem Netz sind keine Bin„rnachrichten m”glich.
+10 Der Betreff von File Attaches kann nicht ge„ndert werden.
+11 nicht m”glich - interne Nachricht
+12 Bei Bin„rnachrichten nicht m”glich.
+13 Bei mehreren Kopien nicht m”glich.
+14 Empfangsbest„tigung nur bei PMs m”glich
+15 nur bei PMs m”glich
+16 Datei nicht vorhanden
+17 zu wenig Platz auf Tempor„r-Laufwerk
+18 ungltige Versand-Nachricht!
+19 keine unversandte Nachricht!
+20 nicht m”glich - bitte Datei neu versenden
+21 fehlerhaftes Pollpaket:  %s
+22 Nachricht nicht (mehr) im Pollpaket vorhanden !?
+24 Weiterleiten in dieses Brett nicht m”glich
+25 Schreiben in dieses Brett ist nicht m”glich.
+26 Ungltige Originalempf„nger-Zeile!
+27 In diesem Netz nicht m”glich.
+28 Im MausNet nur bei PMs m”glich.
+29 Nicht m”glich - unterschiedliche Netztypen.
+30 Ungltige Archivbrett-Einstellung
+31 Nur in der Nachrichtenbersicht m”glich!
+32 Es sind maximal %s Brettempf„nger pro Server m”glich.
+33 Aktivieren Sie zuerst PGP unter /Config/Extern/PGP!
+34 Anruf bei "%s" ist nicht m”glich.
+35 Nachricht muá einen Betreff haben.
+36 Bin„rnachrichten sind in diesem Netz nicht m”glich.
+37 Server„nderung nicht m”glich - abweichende Brettebene!
+
++  10700
+1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!
+2  Interner Fehler: UV-Userbrett nicht mehr vorhanden!
+3  unversandte Nachricht nicht mehr in der Datenbank vorhanden!
+4  Zu wenig freier Speicher fr Netcall!
+5  keine Fido-Stammbox gew„hlt
+6  keine Nodeliste aktiviert
+7  Relogin-Anruf bei dieser Box nicht m”glich
+8  Scriptdatei fr Online-Anruf erforderlich!
+9  unbekannte Box:  %s
+10 Sendepuffer (%s) ist fehlerhaft!
+11 Keine Verbindung!
+12 Fehler bei Netcall-Konvertierung
+13 Fehler beim Packen!
+14 Modem nicht bereit - oder etwa ausgeschaltet?
+15 Puffer fehlt! (Fehler beim Entpacken?)
+16 fehlerhafte /ips:-Angabe
+17 /n: Unbekannte Serverbox: %s
+18 Datei nicht vorhanden
+19 fehlerhaftes Fido-Paket
+20 interner Fehler (%s) im Fido-Mailer
+21 Fehler - bitte Modemeinstellungen (Carrier-Signal) berprfen!
+22 Fehler beim XP-FM-Aufruf ?!
+23 ungltige Sysopmode-Ausgabedatei
+24 Fehler bei der MAGGI-Konvertierung
+# File Attach-Datei fehlt
+25 %s fehlt!
+26 Fehler beim Kopieren von %s
+27 ungltiges Eingabeverzeichnis
+28 ungltiges Ausgabeverzeichnis
+29 Fehler bei der ZFIDO-Konvertierung
+30 Fehler beim Packen
+31 Syntaxfehler in Script - siehe SCERRORS.LOG
+32 Kein FOSSIL-Treiber installiert - verwende eingebauten Treiber
+33 Ungltiger AKA-Eintrag: %s ist keine Serverbox!
+34 Ungltiger AKA-Eintrag: kein zu %s passender Server vorhanden!
+35 Netzanruf QWK-Boxen ist nicht m”glich - Sysop-Mode verwenden!
+36 Bitte zuerst Nachrichtenpaket einlesen, um Serverdaten zu ermitteln!
+37 ZQWK-Fehler Nr. %s bei Nachrichtenkonvertierung!
+38 Scriptdatei fr Relogin-Anruf erforderlich!
+39 Relogin bei ISDN nicht m”glich
+40 ISDN-CAPI-Treiber fehlt oder ist falsch konfiguriert
+41 L”schen Sie das Unterverzeichnis "%s"!
+42 Unbekannter Fido-Node: %s
+43 Keine Eintr„ge markiert!
+
++  10800
+1  Diese Box untersttzt keine Brettbestell-Funktionen.
+2  Dieses Brett hat keine Serverbox!
+3  Unbekannte Serverbox: %s
+4  unbekannte Box (%s) - Brettliste wurde nicht eingelesen
+5  Ungltige Absenderangabe
+6  BOXEN.IX1 ist defekt - bitte l”schen!
+7  Keine Brettliste fr diese Box vorhanden!
+8  leere Nachricht - nicht abgeschickt
+9  fehlerhafter Absender!?
+10 Das System %s ist nicht als Fileserver eingetragen.
+11 Datei ist nicht vorhanden.
+12 %s ist kein Fileserver.
+13 unbekanntes Listenformat :-(
+14 Verteiler sind hier nicht erlaubt.
+15 Das gew„hlte System ist kein Fileserver!
+16 keine Fileliste fr %s vorhanden
+17 Paáwort erforderlich - bitte unter /Edit/Systeme eintragen!
+18 Bei dieser Box nicht m”glich.
+19 Bei UUCP-Fileservern nicht m”glich.
+20 System muá auch bei Edit/Boxen eingetragen sein!
+21 Fehler beim Kopieren/Konvertieren der Fileliste.
+22 Senden ist nur bei UUCP-Fileservern m”glich!
+23 Datei nicht gefunden.
+24 Ungltiger Konvertierer-Eintrag: $INFILE fehlt
+25 Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt
+26 Dieses Brett kann nicht bestellt werden.
+27 Dieses Brett kann nicht abbestellt werden.
+# XP8.INC
+50 Keine Filescan-Nachricht gew„hlt!
+51 %s ist kein eingetragener Fido-Server!
+52 %s ist keine Fido-Box!
+53 Keine Fileecho-Liste fr %s vorhanden!
+
++  10900
+1  Ungltige Box-Config-Angabe: %s
+2  ungltiger Boxname!
+3  Die Seriennummer muá 4 Zeichen lang sein.
+4  ungltiger Dateiname
+5  Verzeichnis darf nicht gleich dem XP-Verzeichnis sein!
+6  Verzeichnis kann nicht angelegt werden!
+7  Achtung: Das Programm "%s" ist nicht vorhanden!
+8  ungltige Adresse
+9  Mindestens ein Protokoll muá eingeschaltet sein!
+10 Eine Gruppe mit diesem Namen existiert bereits.
+11 Gruppe kann nicht gel”scht werden!
+12 Es sind noch Bretter in dieser Gruppe vorhanden.
+13 Ein System mit diesem Namen existiert bereits.
+14 Es muá mindestens ein System eingetragen sein!
+15 Diesen Kurznamen gibt es bereits.
+16 SETUSER - Parameter fehlen
+18 SETUSER - Box "%s" unbekannt!
+19 Bitte Boxname eingeben (Hilfe mit F1).
+20 Bitte Username eingeben (Hilfe mit F1).
+21 Box ist bereits vorhanden
+22 Stammbox kann nicht gel”scht werden!
+23 Die gew„hlte Box ist keine Fido-Box!
+25 Syntaxfehler in Script
+26 Bei abgeschaltetem EMSI ist das Paáwort auf 8 Zeichen begrenzt!
+27 Brettebene nicht „nderbar - unversandte Nachrichten vorhanden!
+# Logfile
+28 Ungltiger Dateiname!
+#
+29 %s ist keine eingetragene Fido-Serverbox!
+30 Warnung: Ungltige Zeichen im Pointname: %s
+31 Standardeintrag kann nicht gel”scht werden.
+32 Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!
+
++  11000
+1  unbekannter Befehl
+2  unbekannte Box
+3  Dieser Eintrag kann nicht gel”scht werden.
+4  Maximal %s Eintr„ge m”glich!
+5  keine zutreffenden Boxen
+6  leere Timing-Liste
+7  Maximal %s Zeilen m”glich!
+8  Es muá mindestens eine Zeile vorhanden sein.
+9  Diese Node-/Pointliste ist bereits eingebunden!
+10 Datei konnte nicht als Node-/Pointlist-Update eingebunden werden.
+11 Maximal %s Zonen m”glich!
+12 Maximal %s Tarifgruppen m”glich!
+13 Alle Wochen-/Feiertage sind bereits belegt.
+14 Tarifgruppe 1 kann nicht gel”scht werden.
+15 %s ist bereits durch eine andere Tarifgruppe belegt.
+
++  12000
+1  ungltiger Logfile-Name
+2  Modem nicht bereit.
+3  $FILE-Makro ist hier nicht m”glich.
+
++  12100
+1  fehlerhafter Nodelisten-Index
+2  keine Nodeliste aktiv
+3  Diese Nodeliste ist bereits aktiv!
+4  Das ist keine Nodeliste.
+5  zu wenig Platz, um Nodeliste zu kopieren
+6  Diese Pointliste ist bereits aktiv!
+7  Das ist keine gltige Pointliste.
+8  zu wenig Platz, um Pointliste zu kopieren
+10 falsche Version von Pointlist oder Pointdiff
+11 %s: falsche Version von Nodelist oder Nodediff
+12 Fehler beim Bearbeiten der Node-/Pointdiff
+13 Zu wenig Plattenplatz zum Kopieren des Nodelist-Updates
+14 Fehler beim Bearbeiten der Nodelist
+15 unbekannte Adresse
+16 unbekannte Nodeadresse
+17 keine Nodeliste vorhanden
+18 keine Fido-Stammbox gew„hlt (Edit/Boxen)
+19 keine Filelisten vorhanden
+20 Fehler im Nodelisten-Userindex
+21 Keine Nodeliste aktiv oder Nodeliste fehlt!
+22 Keine Pointliste aktiv oder Pointliste fehlt!
+23 Kann Verzeichnis %s nicht anlegen!
+24 Diese Datei ist bereis eingebunden.
+25 Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.
+26 Es wurden keine passenden Eintr„ge gefunden.
+
++  12200
+1  AutoVersand - Datei "%s" fehlt!
+2  AutoVersand - 0-Byte-Datei wurde nicht verschickt
+4  Kann %s nicht einlesen - ungltige Serverbox
+5  %s: Fehler bei Nachrichtenkonvertierung
+7  Keine gltige Fido-Stammbox gew„hlt
+8  Fehler bei Fido-Paketkonvertierung
+9  IPS - ungltige Box: %s
+# XPCC
+50 Verteiler sind hier nicht erlaubt.
+51 ungltige Adresse
+
++  12400
+1  fehlerhafte Zeile - Decodierung abgebrochen
+2  Nachricht enth„lt keine UUcodierte Datei
+3  Kann Datei nicht decodieren.
+4  Es k”nnen maximal %s markierte Einzelteile decodiert werden.
+5  zu viele verschachtelte Nachrichtenteile
+
+10 nicht untersttzter Netztyp
+11 Fehler bei Nachrichtenkonvertierung
+12 unbekannte Serverbox - w„hlen mit <F2>
+13 Falscher Netztyp - Netztyp muá QWK oder Fido sein!
+14 ZQWK.EXE fehlt! (ZQWK.EXE ist Teil des getrennt erh„ltlichen QWK-Paketes)
+15 ZQWK-Fehler %s
+
+40 keine mehrteilige MIME-Nachricht
+
++  12500
+1  Datei kann nicht gesichert werden
+2  Datei kann nicht angelegt werden!
+3  zu wenig Speicher fr internen Editor!
+
++  12600
+1  keine Bretter markiert
+2  keine Nachrichten vorhanden!
+3  keine Nachrichten in den gew„hlten Brettern vorhanden
+4  Kein Logfile (XPOINT.LOG) vorhanden
+5  Keine Daten fr das Jahr %s vorhanden!
+6  keine Node- oder Pointliste vorhanden bzw. aktiviert
+7  Bei Userbrettern nicht m”glich!
+8  Keine Eintr„ge vorhanden.
+9  Bei Userbrettern nicht m”glich!
+
++  12700
+1  unbekannte Brettgruppe - w„hlen mit <F2>
+2  unbekannte Serverbox - w„hlen mit <F2>
+3  Dieser User ist bereits vorhanden!
+4  Dieser Verteiler ist bereits vorhanden!
+# Paáworteingabe
+5  In diesem Netz leider nicht m”glich.
+6  Dieses Brett gibt es bereits.
+7  %s ist internes Brett - Gruppe nicht „nderbar!
+8  Brett %s ist nicht leer.
+9  Direktnachricht an ein Brett ist NICHT m”glich
+10 Es k”nnen maximal 90 Bretter gleichzeitig verschoben werden.
+11 Unversandte Nachrichten vorhanden - Brettname nicht „nderbar
+12 Bei internen Brettern nicht m”glich.
+13 Umleiten nicht m”glich - inkompatibler Netztyp.
+14 Umbenennen nicht m”glich - Brett existiert bereits!
+
++   12800
+2   Datei nicht gefunden
+3   ungltiges Verzeichnis
+4   zu viele Dateien ge”ffnet (bitte FILES erh”hen!)
+5   Zugriff verweigert (Datei Read-Only oder gesperrt)
+7   Speicherverwaltung zerst”rt
+8   ungengend Speicher
+10  ungltiges Environment
+11  ungltiges Aufruf-Format
+15  ungltige Laufwerksbezeichnung
+16  Verzeichnis kann nicht gel”scht werden
+18  Fehler bei Dateisuche
+101 Diskette/Platte voll
+150 Diskette ist schreibgeschtzt
+152 keine Diskette eingelegt
+153 ungltige DOS-Funktion
+154 Lesefehler (Diskette/Platte defekt)
+155 DOS-Fehler - Diskettenparameterblock besch„digt
+156 Lesefehler (Diskette/Platte defekt)
+157 Diskette ist nicht korrekt formatiert
+158 Diskette ist nicht korrekt formatiert
+159 Drucker ist nicht betriebsbereit
+160 Schreibfehler
+161 Lesefehler
+162 Hardware-Fehler
+202 Stapelberlauf
+203 Speicher voll
+209 Fehler in XP.OVR
+
++   12900
+1   Fr die Online-Registrierung wird das XP-Fido-Paket ben”tigt.
+
++   13000
+1   %s fehlt oder ist nicht per Pfad erreichbar.
+2   PGP-Codierung/Signierung ist fehlgeschlagen.
+3   Beim Netztyp %s wird diese Funktion nicht untersttzt.
+4   PGP-Decodierung ist fehlgeschlagen.
+5   Fehler beim Auslesen des PGP-Keys.
+6   šberprfung der PGP-Signatur ist fehlgeschlagen.
+7   PGP meldet ungltige Signatur!
+-
+
+
+# --- Einstellungen ---------------------------------------------------
+
+# ApoNet (s. auch 520.99!)
+# 1 = Auto-Anzeige-Brett
+# 2 = Schalter "alle Nachrichten signieren"
+
++ 29900
+1
+2 N
+-
+
+# Von den folgenden Zeilen drfen NUR die Kommentarzeilen bersetzt
+# werden! Alle Datenzeilen, auch wenn sie deutsche Textbestandteile
+# enthalten, mssen unver„ndert bleiben!
+
++ 30000
+# M”gliche Protokoll-Startkennungen fr MausTausch:
+1 protokoll startet
+2 downloaden
+3 **B
+-
