@@ -246,7 +246,8 @@ begin
   for i:=0 to 2 do mappsel(true,dbl[i]);
   freeres;
   readmask(brk);
-  if not brk and mmodified then begin
+  if not brk and mmodified then
+  begin
     for i:=0 to 3 do
       if lstr(xas)=lstr(xa[i]) then defExtraktTyp:=i;
     for i:=0 to 3 do
@@ -274,8 +275,9 @@ begin
         end;
       SetMausEmu;
       end;
+    nachweiter:=AAmsg; brettweiter:=AAbrett; userweiter:=AAuser;
     GlobalModified;
-    end;
+  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1550,6 +1552,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.7  2000/11/25 01:32:57  mk
+  - Weiterschalter sofort uebernehmen
+
   Revision 1.39.2.6  2000/11/20 19:42:14  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 
