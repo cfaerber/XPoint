@@ -16,7 +16,7 @@
 # os2		OS/2
 # win32		Windows
 #
-#OS = dos32
+#OS = 
 
 # Ihre CPU (386, 486, 586, 686)
 # (KANN gesetzt werden.)
@@ -28,21 +28,44 @@
 #
 #prefix = \OXP370
 
-# Soll die Debug-Version erstellt werden?
+# Soll das Handbuch aus DocBook gebaut werden?
 # (KANN gesetzt werden.)
 #
-#DEBUG = yes
+#MAKEHB = 
+
+# Verzeichnis, in dem die DTD von DocBook 4.1 (SGML) liegt.
+# <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#DBDIR = 
+
+# Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
+# <http://www.netfolder.com/DSSSL/>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#JADEDIR = C:\Programme\OpenJade-1.3\dsssl
+
+# Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
+# <http://nwalsh.com/docbook/dsssl/>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#MODDIR = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
 # des Quellcode sind
 # (MUSS gesetzt werden.)
 #
-#contribdir = \CONTRIB
+#contribdir = 
 
 # Parameter fuer docform
 # (KANN gesetzt werden.)
 #
 #DOCFORMFLAGS = 72 1 N
+
+# Parameter fuer w3m
+# (KANN gesetzt werden.)
+#
+#W3MFLAGS = -dump -cols 72
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
@@ -61,11 +84,29 @@ endif
 
 CPU ?= 386
 
+ifeq ($(MAKEHB),yes)
+
+ifeq (,$(DBDIR))
+$(error Variable "DBDIR" muss gesetzt werden)
+endif
+
+ifeq (,$(JADEDIR))
+$(error Variable "JADEDIR" muss gesetzt werden)
+endif
+
+ifeq (,$(MODDIR))
+$(error Variable "MODDIR" muss gesetzt werden)
+endif
+
+endif
+
 ifeq (,$(contribdir))
 $(error Variable "contribdir" muss gesetzt werden)
 endif
 
 DOCFORMFLAGS ?= 72 1 N
+W3MFLAGS ?= -dump -cols 72
+TIDYFLAGS ?= -q -f tidyerr.tmp -m -asxml --doctype strict --show-warnings no --add-xml-decl yes
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
@@ -79,6 +120,11 @@ SEP = $(subst ,,\)
 MAKE ?= make.exe
 RM ?= rm
 RMDIR ?= rmdir
+SED ?= sed
+RECODE ?= recode
+JADE ?= openjade
+TIDY ?= tidy
+W3M ?= w3m
 INSTALLDIR ?= mkdir
 INSTALL_DATA ?= xcopy
 DOCFORM ?= ..\docform.exe
@@ -96,6 +142,11 @@ SEP = /
 MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
+SED ?= sed
+RECODE ?= recode
+JADE ?= openjade
+TIDY ?= tidy
+W3M ?= w3m
 INSTALLDIR ?= install -m 755 -d
 INSTALL_DATA ?= install -b -V existing -p -m 644
 DOCFORM ?= ../docform
@@ -107,7 +158,8 @@ HELP = xp xp-e
 OLDDOC = fido uucp
 TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
 	planung.txt readme.txt slizenz.txt tools.txt versions.txt
-CONTRIBDOC = bestell.txt lizenz.doc xpoint.log xpoint.txt
+CONTRIBDOC = bestell.txt lizenz.doc xpoint.log
+HBFILES = xpoint.htm catalog xpoint.tmp xpoint.tm1 tidyerr.tmp
 
 ifeq ($(OS),linux)
 TXT += readme.lnx
@@ -115,12 +167,36 @@ endif
 
 HELPFILES = $(patsubst %,%.hlp,$(HELP))
 OLDDOCFILES = $(patsubst %,%.txt,$(OLDDOC))
-TXT += $(OLDDOCFILES)
+TXT += $(OLDDOCFILES) xpoint.txt
 
+# "/" und "\" fuer sed quoten und $(SEP) anhaengen
+
+DBDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(DBDIR)$(SEP))))
+JADEDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(JADEDIR)$(SEP))))
+MODDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(MODDIR)$(SEP))))
+
+ifeq ($(MAKEHB),yes)
+all: xpoint.txt $(HELPFILES) $(OLDDOCFILES)
+else
 all: $(HELPFILES) $(OLDDOCFILES)
+endif
 
 $(HELPFILES): %.hlp: %.ihq
 	$(IHS) $*
+
+xpoint.txt: xpoint.htm
+	$(W3M) $(W3MFLAGS) xpoint.htm > xpoint.tmp
+	$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+
+xpoint.htm: xpoint.sgm xpoint.dsl catalog
+	$(JADE) -c catalog -d xpoint.dsl#html -t sgml xpoint.sgm > xpoint.tmp
+	$(SED) 's/&#13;//g' xpoint.tmp > xpoint.htm
+	-$(TIDY) $(TIDYFLAGS) xpoint.htm
+
+catalog: xpoint.cat
+	$(SED) 's/@DBDIR@/$(DBDIRQ)/' xpoint.cat > xpoint.tmp
+	$(SED) 's/@JADEDIR@/$(JADEDIRQ)/' xpoint.tmp > xpoint.tm1
+	$(SED) 's/@MODDIR@/$(MODDIRQ)/' xpoint.tm1 > catalog
 
 $(OLDDOCFILES): %.txt: %.dq
 	$(DOCFORM) $< $@ $(DOCFORMFLAGS)
@@ -138,8 +214,14 @@ $(patsubst %,install_%,$(HELPFILES)): install_%: %
 install_docdir:
 	-$(INSTALLDIR) $(docdir)
 
+ifeq ($(OS),linux)
+$(patsubst %,install_%,$(TXT)): install_%: %
+	$(RECODE) -f ibmpc..latin1 $* > tmp
+	$(INSTALL_DATA) tmp $(docdir)$(SEP)$*
+else
 $(patsubst %,install_%,$(TXT)): install_%: %
 	$(INSTALL_DATA) $* $(docdir)
+endif
 
 $(patsubst %,install_%,$(CONTRIBDOC)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)doc$(SEP)$* $(docdir)
@@ -155,8 +237,13 @@ $(patsubst %,uninstall_%,$(TXT)): uninstall_%: %
 $(patsubst %,uninstall_%,$(HELPFILES)): uninstall_%: %
 	-$(RM) $(datadir)$(SEP)$*
 
-clean:  $(patsubst %,clean_%,$(OLDDOCFILES)) \
+clean:  $(patsubst %,clean_%,$(HBFILES)) \
+	$(patsubst %,clean_%,$(OLDDOCFILES)) \
 	$(patsubst %,clean_%,$(HELPFILES))
+	-$(RM) tmp
+
+$(patsubst %,clean_%,$(HBFILES)): clean_%:
+	-$(RM) $*
 
 $(patsubst %,clean_%,$(HELPFILES)): clean_%:
 	-$(RM) $*
@@ -164,8 +251,18 @@ $(patsubst %,clean_%,$(HELPFILES)): clean_%:
 $(patsubst %,clean_%,$(OLDDOCFILES)): clean_%:
 	-$(RM) $*
 
+distclean: clean
+
+mostlyclean: clean
+
+maintainer-clean: clean
+	-$(RM) xpoint.txt
+
 #
 # $Log$
+# Revision 1.6  2000/10/08 18:14:16  fe
+# Uebersetzung des Handbuchs ergaenzt.
+#
 # Revision 1.5  2000/10/06 13:58:10  fe
 # bestell.doc in bestell.txt umbenannt.
 #
