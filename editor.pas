@@ -150,7 +150,7 @@ type  charr    = array[0..65500] of char;
                    next   : delnodep;
                  end;
 
-      modiproc = procedure(var data; size:word);
+      modiproc = procedure(var data; size: word);
 
 
 var   Defaults : edp;
@@ -164,14 +164,9 @@ var   Defaults : edp;
 { ------------------------------------------------ externe Routinen }
 
 {$IFDEF ver32}
-{ procedure Rot13(var data; size:word); begin end; }
 function SeekStr(var data; len:word; var s:string; igcase:boolean):integer; begin end;
 function FindUmbruch(var data; zlen:integer):integer; begin end;
 {$ELSE}
-
-{ 13.01.2000 robo - ASM-Routinen integriert }
-{in Typeform.pas: procedure Rot13(var data; size:word); assembler; }
-
 
 function SeekStr(var data; len:word;
                  var s:string; igcase:boolean):integer; assembler;
@@ -299,7 +294,7 @@ end;
   
 {$ENDIF}
 
-procedure FlipCase(var data; size:word);
+procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
     i     : integer;
 begin
@@ -1899,6 +1894,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.6  2000/02/18 18:39:03  jg
   Speichermannagementbugs in Clip.pas entschaerft
   Prozedur Cliptest in Clip.Pas ausgeklammert

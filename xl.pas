@@ -93,7 +93,9 @@ begin
     showscreen(true);
     DelTmpfiles('*.$$$');
     testdiskspace;
+    {$IFDEF BP }
     testfilehandles;
+    {$ENDIF }
     initdatabase;
     if password then begin
       test_defaultbox;

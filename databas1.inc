@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {$IFDEF BP }
 procedure setemscache;
@@ -53,16 +54,8 @@ begin
   cacheanz:=0;
 end;
 
-function ticker:longint;
-begin
-{$IFNDEF ver32} { MK 12/99 }
-  ticker:=meml[$40:$6c];
-{$ENDIF}
-end;
-
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var i,sp : integer;
-    s    : longint;
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -74,9 +67,7 @@ begin
 {$IFDEF BP }
       setemscache;
 {$ENDIF }
-{$IFNDEF WIN32}
       seek_cache(dbp,offs,i);
-{$ENDIF}
 
 {      i:=0;
       while (i<cacheanz) and
@@ -90,9 +81,7 @@ begin
       else begin
         seek(fi,offs);
         blockread(fi,data,irsize);
-{$IFNDEF WIN32}
         seek_cache2(sp);
-{$ENDIF}
 {
         s:=maxlongint;
         sp:=0;
@@ -158,7 +147,7 @@ end;
 { Platz fr Index-Knoten auf Heap belegen }
 
 procedure AllocNode(dbp:DB; indnr:word; var np:inodep);
-var size,i : word;
+var size: word;
 begin
   with dp(dbp)^.index^[indnr] do begin
     size:=16+(nn+1)*sizeof(inodekey);
@@ -177,7 +166,6 @@ end;
 { Index-Knoten auf Heap freigeben }
 
 procedure FreeNode(var np:inodep);
-var i: word;
 begin
   freemem(np,np^.memsize);
 end;
@@ -188,7 +176,6 @@ end;
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
     wp   : ^word absolute rbuf;
-    i,o  : word;
 begin
   with np^ do
     with dp(db_p)^ do begin
@@ -197,9 +184,7 @@ begin
       cache_read(db_p,irsize,offs,rbuf^);
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
-{$IFNDEF WIN32}
       expand_node(rbuf,np);
-{$ENDIF}
       freemem(rbuf,irsize);
       end;
 
@@ -277,4 +262,9 @@ begin
       blockwrite(fi,l,4);
       end;
 end;
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

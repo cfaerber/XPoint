@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { --- Fido - Netcall ------------------------------------------------- }
 
@@ -23,8 +24,6 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
       inout,lister,resource,maske, xpglobal,
       xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
-{$IFNDEF WIN32}
-{$ENDIF}
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
 function FidoNetcall(box:string; var bfile,ppfile,eppfile,sendfile,upuffer,
@@ -227,7 +226,6 @@ begin
       window(1,1,80,25); attrtxt(7);
       end;
     while doserror=0 do begin
-{$IFNDEF WIN32}
       if isPacket(sr.name) then begin
         ImportDir:=FExpand(ImportDir);
         GoDir(OwnPath+XFerDir);
@@ -237,7 +235,6 @@ begin
         if errorlevel<>0 then
           MoveToBad(ImportDir+sr.name);
         end;
-{$ENDIF}
       findnext(sr);
     end;
     {$IFDEF virtualpascal}
@@ -313,13 +310,12 @@ type rfnodep     = ^reqfilenode;
 var t        : text;
     sr       : searchrec;
     aresult   : integer;
-    p,i      : byte;
+    i      : byte;
     request  : string[12];
     ownaddr  : string[30];
     fa       : fidoadr;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
-    s        : string;
     rflist   : rfnodep;
 
 label fn_ende,fn_ende0;
@@ -475,13 +471,6 @@ label fn_ende,fn_ende0;
       end;
   end;
 
-  procedure wm(n:word);
-  begin
-    message(strs(n)+' / '+hex(memavail,5));
-    readln;
-    closebox;
-  end;
-
   procedure BuildIncomingFilelist(logfile:pathstr);
   var t  : text;
       buf: array[0..511] of byte;
@@ -614,12 +603,10 @@ begin
   window(1,1,80,25);
   findfirst(XFerDir+'*.*',0,sr);            { SPOOL leeren }
   while doserror=0 do begin
-{$IFNDEF WIN32}
     UpString(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
       _era(XFerDir+sr.name);
     findnext(sr);
-{$ENDIF}
   end;
   {$IFDEF virtualpascal}
   FindClose(sr);
@@ -727,7 +714,6 @@ end;
 procedure EditRequest(var t:taste);
 var adr : string[20];
 begin
-{.$IFNDEF WIN32}
   if ustr(t)='E' then
     if UStr(copy(get_selection,3,1))='R' then begin
       adr:=trim(copy(get_selection,5,18));
@@ -947,7 +933,10 @@ begin
   ARCmail:=fn;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
-
+}

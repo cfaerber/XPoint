@@ -9,6 +9,10 @@
 { $Id$ }
 
 {$I XPDEFINE.INC }
+{$IFDEF FPC }
+  {$HINTS OFF }
+  {$NOTES OFF }
+{$ENDIF }
 
 unit uart;
 
@@ -53,7 +57,7 @@ unit uart;
 
 interface
 
-uses  xpglobal, dos, typeform;
+uses  xpglobal, dos, typeform, dosx, inout;
 
 {$IFNDEF DPMI}
   const Seg0040 = $40;         { Turbo Pascal ab 5.0 / Real Mode }
@@ -169,7 +173,6 @@ procedure MiniTerm(comn:byte; baud:longint);
 implementation  {-----------------------------------------------------}
 
 const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
-       DPMIint    = $31;   { DPMI-Interrupt               }
 
        irq        : array[1..coms] of byte = ($04,$03,0,0);
        intmask    : array[1..coms] of byte = ($10,$08,0,0);
@@ -185,9 +188,6 @@ const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
        linestat   = 5;
        modemstat  = 6;
        scratch    = 7;
-
-       MS_CTS     = $10;       { Modem-Status-Register }
-       MS_DSR     = $20;
 {$ENDIF }
        MS_RI      = $40;       { Ring Indicator: Klingelsignal }
        MS_DCD     = $80;       { Data Carrier Detect           }
@@ -218,39 +218,6 @@ begin
   str(l,s);
   strs:=s;
 end;
-
-
-{$IFDEF BP }
-{$IFDEF DPMI}
-
-function DPMIallocDOSmem(paras:word; var segment:word):word;
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$100;
-    bx:=paras;
-    intr(DPMIint,regs);
-    if flags and fcarry<>0 then begin
-      segment:=0;
-      DPMIallocDOSmem:=0;
-      end
-    else begin
-      segment:=regs.ax;
-      DPMIallocDOSmem:=dx;
-      end;
-    end;
-end;
-
-procedure DPMIfreeDOSmem(selector:word);
-var regs : registers;
-begin
-  regs.ax:=$101;
-  regs.dx:=selector;
-  intr(DPMIint,regs);
-end;
-
-{$ENDIF}
-{$ENDIF}
 
 {--- Interrupt-Handler -----------------------------------------------}
 
@@ -507,9 +474,9 @@ end;
 procedure SaveComState(no:byte; var cps:cpsrec);
 var uart : word;
 begin
-{$IFNDEF ver32}
   if not fossil[no] then with cps do begin
     uart:=ua[no];
+{$IFNDEF ver32}
     SaveLineControl:=port[uart+linectrl];
     SaveModemControl:=port[uart+modemctrl];
     port[uart+linectrl]:=SaveLineControl or $80;
@@ -520,8 +487,8 @@ begin
       SaveIntmask:=port[$a1] and intmask[no]
     else
       SaveIntmask:=port[$21] and intmask[no];
-    end;
 {$ENDIF}
+  end;
 end;
 
 procedure RestComState(no:byte; cps:cpsrec);
@@ -694,7 +661,6 @@ end;
 procedure releasecom(no:byte);
 var regs : registers;
 begin
-{$IFNDEF ver32}
   if not active[no] then
     error('Schnittstelle '+strs(no)+' nicht aktiv!')
   else begin
@@ -704,18 +670,19 @@ begin
       intr(FInt,regs);
       end
     else begin
+{$IFNDEF ver32}
       port[ua[no]+intenable]:=0;
       if intcom2[no] then
         port[$a1]:=port[$a1] or intmask[no]   { Controller: COMn-Ints sperren }
       else
         port[$21]:=port[$21] or intmask[no];
       port[ua[no]+fifoctrl]:=0;
+{$ENDIF}
       setintvec(IntNr(no),savecom[no]);
       clearstatus(no);
       end;
     FreeComBuffer(no);
     end;
-{$ENDIF}
 end;
 
 
@@ -746,7 +713,6 @@ end;
 procedure FossilFill(no:byte);
 var regs : registers;
 begin
-{$IFNDEF Ver32}
   with regs do begin
     ah:=$18; cx:=bufsize[no] - 16;    { Platz fÅr PutByte lassen }
     es:=seg(buffer[no]^); di:=ofs(buffer[no]^);
@@ -754,8 +720,7 @@ begin
     intr(FInt,regs);
     bufo[no]:=0;
     bufi[no]:=ax;
-    end
-{$ENDIF}
+  end
 end;
 
 
@@ -769,7 +734,6 @@ end;
 
 
 function receive(no:byte; var b:byte):boolean;   { Byte holen, falls vorh. }
-var regs : registers;
 begin
   if not received(no) then    { FOSSIL: received() fÅllt Buffer }
     receive:=false
@@ -783,7 +747,6 @@ end;
 
 
 function peek(no:byte; var b:byte):boolean;
-var regs : registers;
 begin
   if fossil[no] and (bufi[no]=bufo[no]) then
     FossilFill(no);
@@ -809,32 +772,32 @@ end;
 procedure sendbyte(no,b:byte);              { Byte senden }
 var regs : registers;
 begin
-{$IFNDEF ver32}
   if fossil[no] then with regs do begin
     ah:=1; dx:=no-1; al:=b;
     intr(FInt,regs);
     end
   else begin
+{$IFNDEF ver32}
     while (port[ua[no]+linestat] and $20) = 0 do;
     port[ua[no]]:=b;
-    end;
 {$ENDIF}
+    end;
 end;
 
 procedure hsendbyte(no,b:byte);           { Byte senden, mit CTS-Handshake }
 var regs : registers;
 begin
-{$IFNDEF ver32}
   if fossil[no] then with regs do begin
     ah:=1; dx:=no-1; al:=b;
     intr(FInt,regs);
     end
   else begin
+{$IFNDEF ver32}
     while (port[ua[no]+modemstat] and $10) = 0 do;
     while (port[ua[no]+linestat] and $20) = 0 do;
     port[ua[no]]:=b;
-    end;
 {$ENDIF}
+    end;
 end;
 
 procedure SendBlock(no:byte; var data; size:word);   { Datenblock senden }
@@ -842,7 +805,6 @@ type barr = array [0..65530] of byte;
 var i,off : word;
     regs  : registers;
 begin
-{$IFNDEF ver32}
   if size>0 then
     if fossil[no] then with regs do begin
       off:=0;
@@ -857,7 +819,6 @@ begin
     else
       for i:=0 to size-1 do
         sendbyte(no,barr(data)[i]);
-{$ENDIF}
 end;
 
 procedure hSendBlock(no:byte; var data; size:word);  { Datenblock mit CTS }
@@ -874,7 +835,6 @@ end;
 
 procedure ReceiveBlock(no:byte; var data; size:word; var rr:word);
 type barr = array [0..65530] of byte;
-var regs : registers;
 begin
   rr:=0;
   while received(no) and (rr<size) do
@@ -970,12 +930,12 @@ end;
 procedure SetDtr(no:byte);                  { DTR=1 setzen      }
 var regs : registers;
 begin
-{$IFNDEF ver32}
   if fossil[no] then with regs do begin
     ax:=$601; dx:=no-1;
     intr(FInt,regs);
     end
   else
+{$IFNDEF ver32}
     port[ua[no]+modemctrl]:=port[ua[no]+modemctrl] or MC_DTR;
 {$ENDIF}
 end;
@@ -1002,25 +962,18 @@ end;
 function GetCTS(no:byte):boolean;
 var regs : registers;
 begin
-{$IFNDEF ver32}
   if fossil[no] then with regs do begin
     ah:=3; dx:=no-1;
     intr(FInt,regs);
     GetCTS:=(ah and $20<>0);
     end
   else
+{$IFNDEF ver32}
     getcts:=((port[ua[no]+modemstat] and $10)<>0){ and
              ((port[ua[no]+linestat] and $20)<>0)};
 {$ENDIF}
 end;
 
-
-function ticker:longint;
-begin
-{$IFNDEF ver32}
-  ticker:=meml[Seg0040:$6c];
-{$ENDIF}
-end;
 
 procedure SendBreak(no:byte);             { Break-Signal }
 var t0     : longint;
@@ -1057,7 +1010,6 @@ var irq,b : byte;
   function TestReadkey:char;
   var regs : registers;
   begin
-{$IFNDEF ver32}
     with regs do begin
       ah:=1;
       intr($16,regs);
@@ -1069,7 +1021,6 @@ var irq,b : byte;
         TestReadkey:=chr(al);
         end;
       end;
-{$ENDIF}
   end;
 
 begin
@@ -1098,9 +1049,17 @@ begin
   exitproc:=@comexit;
   fillchar(active,sizeof(active),false);
   fillchar(fossil,sizeof(fossil),false);
+{$IFDEF FPC }
+  {$HINTS ON }
+  {$NOTES ON }
+{$ENDIF }
 end.
+
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

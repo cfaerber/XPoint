@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -27,7 +28,7 @@ UNIT mouse;
 
 {  ==================  Interface-Teil  ===================  }
 
-INTERFACE
+interface
 
 uses xpglobal;
 
@@ -162,39 +163,17 @@ end;
 
 {$ENDIF}
 
-
-
-(*
-procedure mausinit;
-var regs : registers;
-begin
-  regs.ax:=0;
-  if maus then intr(mausint,regs);
-  mausda:=false;
-end;
-*)
-
 procedure mausinit; assembler;
 asm
+{$IFDEF BP }
   xor ax,ax
   cmp maus,false
   je @1
   int mausint
 @1:
+{$ENDIF }
   mov mausda,false
 end;
-
-(*
-procedure mausan;
-var regs : registers;
-begin
-  if maus then begin
-    regs.ax:=1;
-    intr(mausint,regs);
-    mausda:=true;
-    end;
-end;
-*)
 
 procedure mausan; assembler;
 asm
@@ -206,19 +185,6 @@ asm
 @1:
 end;
 
-
-(*
-procedure mausaus;
-var regs : registers;
-begin
-  if maus then begin
-    regs.ax:=2;
-    intr(mausint,regs);
-    mausda:=false;
-    end;
-end;
-*)
-
 procedure mausaus; assembler;
 asm
   cmp maus,false
@@ -228,7 +194,6 @@ asm
   mov mausda,false
 @1:
 end;
-
 
 procedure savemaus;
 begin
@@ -245,24 +210,6 @@ end;
 { Zustand einewr Maustaste ermitteln     }
 { press: Taste gedrÅckt oder losgelassen }
 { nr   : Nummer der Taste                }
-
-(*
-procedure maustaste(press:boolean; nr:word; var stat:mauststat);
-var regs : registers;
-begin
-  if maus then
-    with regs do begin
-      if press then ax:=5
-      else ax:=6;
-      bx:=nr;
-      intr(mausint,regs);
-      stat.pressed:=(ax<>0);
-      stat.count:=bx;
-      stat.x:=cx;
-      stat.y:=dx;
-      end;
-end;
-*)
 
 procedure maustaste; assembler;
 asm
@@ -289,20 +236,6 @@ asm
 {$ENDIF }
 end;
 
-(*
-procedure getmaus(var stat:mausstat);    { 3 : Mauszustand ermitteln }
-var regs : registers;
-begin
-  regs.ax:=3;
-  if maus then begin
-    intr(mausint,regs);
-    stat.tasten:=regs.bx;
-    stat.x:=regs.cx;
-    stat.y:=regs.dx;
-    end;
-end;
-*)
-
 procedure getmaus(var stat:mausstat); assembler;
 asm
 {$IFNDEF Ver32 }
@@ -318,20 +251,6 @@ asm
 {$ENDIF }
 end;
 
-(*
-function mausx:word;
-var regs : registers;
-begin
-  regs.ax:=3;
-  if maus then begin
-    intr(mausint,regs);
-    mausx:=regs.cx;
-    end
-  else
-    mausx:=0;
-end;
-*)
-
 function mausx:word; assembler;
 asm
   xor ax,ax
@@ -342,20 +261,6 @@ asm
   mov ax,cx
 @1:
 end;
-
-(*
-function mausy:word;
-var regs : registers;
-begin
-  regs.ax:=3;
-  if maus then begin
-    intr(mausint,regs);
-    mausy:=regs.dx;
-    end
-  else
-    mausy:=0;
-end;
-*)
 
 function mausy:word; assembler;
 asm
@@ -368,26 +273,10 @@ asm
 @1:
 end;
 
-(*
-function maust:word;
-var regs : registers;
-begin
-  regs.ax:=3;
-  if maus then begin
-    intr(mausint,regs);
-    if mausswapped then
-      maust:=regs.bx and 1 shl 2 + regs.bx and 2 shl 1 + regs.bx and 4
-    else
-      maust:=regs.bx;
-    end
-  else
-    maust:=0;
-end;
-*)
-
 function maust:word; assembler;
 asm
   xor ax,ax
+{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,3
@@ -405,20 +294,8 @@ asm
   add ax,bx
   add ax,cx
 @1:
+{$ENDIF }
 end;
-
-(*
-procedure setmaus(x,y: integer); { MK word->integer 10.01.00 wegen RTE 215 }
-var regs : registers;
-begin
-  if maus then begin
-    regs.ax:=4;
-    regs.cx:=x;
-    regs.dx:=y;
-    intr(mausint,regs);
-    end;
-end;
-*)
 
 procedure setmaus(x,y: integer16); assembler;
 asm
@@ -431,22 +308,6 @@ asm
 @1:
 end;
 
-(*
-procedure setmauswindow(xmin,xmax,ymin,ymax:integer);
-var regs : registers;
-begin
-  if maus then with regs do begin
-    ax:=7;
-    cx:=xmin;
-    dx:=xmax;
-    intr(mausint,regs);
-    ax:=8;
-    cx:=ymin;
-    dx:=ymax;
-    intr(mausint,regs);
-    end;
-end;
-*)
 
 procedure setmauswindow(xmin,xmax,ymin,ymax:integer16); assembler;
 asm
@@ -468,25 +329,9 @@ end;
 { hotx,hoty: Koordinate des Hot-Spots   }
 { bitmap   : Cursor-Bitmap (16x16 Pix.) }
 
-(*
-procedure mausSetGraphCursor(hotx,hoty:word; var bitmap);
-var regs : registers;
-begin
-  if maus then begin
-    regs.ax:=9;
-    regs.bx:=hotx;
-    regs.cx:=hoty;
-{$IFNDEF WIN32}
-    regs.dx:=ofs(bitmap);    { !?!?!? }
-{$ENDIF}
-    intr(mausint,regs);
-    end;
-end;
-*)
-
 procedure mausSetGraphCursor(hotx,hoty:smallword; var bitmap); assembler;
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,9
@@ -500,23 +345,6 @@ end;
 
 
 { Cursorform einstellen #0 -> normaler Pfeil bzw. Block }
-
-(*
-procedure mausSetTextSoftCursor(c:char);
-const lastcur : char = #0;
-var regs : registers;
-begin
-  if maus and (c<>lastcur) then begin
-    regs.ax:=10;
-    regs.bx:=0;
-    regs.cx:=$ff00;
-    regs.dx:=$7f00+ord(c);
-    intr(mausint,regs);
-    lastcur:=c;
-    end;
-end;
-*)
-
 procedure mausSetTextSoftCursor(c:char); assembler;
 const lastcur : char = #0;
 asm
@@ -538,21 +366,6 @@ end;
 
 
 { Hardwarecursor setzen: der normale Textcursor wird zum Mauscursor }
-
-(*
-procedure mausSetTextHardCursor(startline,endline:word);
-var regs : registers;
-begin
-  if maus then begin
-    regs.ax:=10;
-    regs.bx:=1;
-    regs.cx:=startline;
-    regs.dx:=endline;
-    intr(mausint,regs);
-    end;
-end;
-*)
-
 procedure mausSetTextHardCursor(startline,endline:smallword); assembler;
 asm
   cmp maus,false
@@ -570,36 +383,6 @@ end;
 { intmask: Interrupt-Maske; siehe intX-Konstanten }
 { intproc: aufzurufender Interrupt-Handler        }
 { ssize  : Stack-Grî·e                            }
-
-(*
-procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);
-var regs : registers;
-begin
-{$IFNDEF WIN32}
-  if maus then begin
-    int_call:=intproc;
-    inline($fa); {cli}
-    if stsize>0 then freemem(mstack,stsize);
-    {$IFDEF DPMI}
-      stsize:=0;
-    {$ELSE}
-      stsize:=ssize;
-    {$ENDIF}
-    if stsize>0 then getmem(mstack,stsize);
-    with regs do begin
-      ax:=12;
-      cx:=intmask;
-      es:=longint(@mausintproc) shr 16;
-      dx:=longint(@mausintproc) and $ffff;
-      intr(mausint,regs);
-      intset:=true;
-      end;
-    inline($fb); {sti}
-    end;
-{$ENDIF}
-end;
-*)
-
 procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);
 begin
 {$IFNDEF Ver32}
@@ -634,7 +417,6 @@ procedure dummyproc(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$EN
 begin
 end;
 
-
 procedure ClearMausInt;
 begin
   if intset then
@@ -644,18 +426,6 @@ end;
 
 
 { Mausgeschwindigkeit festlegen }
-
-(*
-procedure mausSetMickeys(mx,my:word);
-var regs : registers;
-begin
-  regs.ax:=15;
-  regs.cx:=mx;
-  regs.dx:=my;
-  intr(mausint,regs);
-end;
-*)
-
 procedure mausSetMickeys(mx,my:smallword); assembler;
 asm
   mov ax,15
@@ -666,17 +436,6 @@ end;
 
 { Anzahl Mickeys/sec festlegen, aber der sich der Mauspfeil }
 { mit doppelter Geschwindigkeit bewegt.                     }
-
-(*
-procedure mausSetDblSpeed(mickeys:word);
-var regs : registers;
-begin
-  regs.ax:=19;
-  regs.dx:=mickeys;
-  intr(mausint,regs);
-end;
-*)
-
 procedure mausSetDblSpeed(mickeys:smallword); assembler;
 asm
   mov ax,19
@@ -684,32 +443,9 @@ asm
   int mausint
 end;
 
-(*
-procedure testmaus;
-{$IFDEF WIN32}
-begin
-end;
-{$ELSE}
-const IRET = $cf;
-var regs : registers;
-    p    : ^byte;
-begin;
-  getintvec(mausint,pointer(p));
-  if (p=nil) or (p^=IRET) then
-    maus:=false
-  else begin
-    regs.ax:=3;
-    regs.bx:=$ffff;
-    intr(mausint,regs);
-    maus:=regs.bx<>$ffff;
-    end;
-end;
-{$ENDIF}
-*)
-
 procedure testmaus; assembler;
 asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
   mov ah,035h
   mov al,mausint
   int 021h         { DOS Get Interrupt Vector -> ES:BX }
@@ -764,4 +500,9 @@ end;
 begin
   maus:=false;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

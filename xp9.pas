@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - UniSel (Boxen, Gruppen, Systeme, Kurznamen, Mime-Typen) }
 
@@ -1724,4 +1725,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

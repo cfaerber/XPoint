@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 const cfs : array[0..3] of string[5] = ('Z','Shift','Ctrl','Alt');
 
@@ -277,7 +278,6 @@ end;
 
 
 procedure SetNtAllowed;
-var d : DB;
 begin
   if deutsch then
     ntAllowed:=[0..255]
@@ -984,7 +984,6 @@ end;
 
 procedure saveconfig2;
 var t   : text;
-    i,j : integer;
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration #2 sichern');
@@ -1586,4 +1585,9 @@ begin
   masksetmausarrows(true);
   SetSwapfilename;
 end;
+{
+  $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

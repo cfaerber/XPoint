@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Verteiler }
 
@@ -324,4 +325,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

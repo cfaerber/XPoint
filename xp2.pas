@@ -54,7 +54,9 @@ procedure test_defaultbox;
 procedure test_defaultgruppen;
 procedure test_systeme;
 procedure testdiskspace;
+{$IFDEF BP }
 procedure testfilehandles;
+{$ENDIF }
 procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
 procedure check_date;
@@ -242,16 +244,6 @@ var i  : integer;
       2 : if z in [25,26,29,31,35,38,43,50] then ParZeilen:=z;
       3 : if z in [25,26,28,30,33,36,40,44,50] then ParZeilen:=z;
     end;
-  end;
-
-  procedure SetGebdat(s:string);
-  begin
-    if multipos(':\',s) then
-      writeln('/gd darf keine Pfadangabe enthalten'#7)
-    else if not validfilename(s) then
-      writeln('ungÅtiger GebÅhrendatei-Name'#7)
-    else
-      ParGebdat:=s;
   end;
 
   procedure ParAuswerten;
@@ -738,6 +730,7 @@ begin
 end;
 
 
+{$IFDEF BP }
 procedure testfilehandles;
 var f,nf : byte;
 begin
@@ -752,6 +745,7 @@ begin
     halt(1);
     end;
 end;
+{$ENDIF }
 
 
 procedure read_regkey;
@@ -933,9 +927,7 @@ begin
   fillchar(dt,sizeof(dt),0);
   getdate(dt.year,dt.month,dt.day,dow);
   days:=longint(dt.year)*365+dt.month*30+dt.day;
-    {$IFNDEF WIN32}
   unpacktime(filetime(NewDateFile),dt);                  { Abstand in Tagen }
-  {$ENDIF}
   ddiff:=days - (longint(dt.year)*365+dt.month*30+dt.day);
   if (ddiff<0) or (ddiff>maxdays) then begin
     wdt:=4+max(max(length(getres2(225,1)),length(getres2(225,2))),
@@ -1080,6 +1072,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/18 17:28:08  mk
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 

@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Maus -> Tasten -> Steuerung }
 
@@ -91,21 +92,9 @@ const tick       : longint = 0;
 var
     xx,yy  : integer;
 
-  function ticker:longint;
-  begin
-{$IFNDEF Ver32}
-    {$IFDEF DPMI}
-      ticker:=meml[Seg0040:$6c];
-    {$ELSE}
-      ticker:=meml[$40:$6c];
-    {$ENDIF}
-{$ENDIF}
-  end;
-
   procedure put(b:byte);
   var t : taste;
   begin
-{$IFNDEF WIN32}
     if length(forwardkeys)>20 then
       if forwardkeys[length(forwardkeys)-1]=#0 then
         dec(byte(forwardkeys[0]),2)
@@ -118,7 +107,6 @@ var
       t[0]:=#1; t[1]:=#31;
       pushkeyv(t);
       end;
-{$ENDIF}      
     koo_da:=true;
   end;
 
@@ -240,7 +228,6 @@ end;
 
 procedure mwrt(x,y:byte; txt:string);
 begin
-{$IFNDEF WIN32}
   gotoxy(x,y);
   if maus_cursor then begin
     mausaus;
@@ -249,9 +236,7 @@ begin
     end
   else
     write(txt);
-{$ENDIF}
 end;
-
 
 procedure interr(txt:string);
 begin
@@ -349,7 +334,10 @@ procedure maus_showHscroller(x1,x2,y2:integer; total,from,width:longint);
 begin
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
-
+}

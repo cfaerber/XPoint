@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {   Cross\\//        }
 {        //\\point   }
@@ -78,8 +79,10 @@ uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      xp_iti,   { Maus-ITI-Infofile  }
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
-     xpimpexp, { Import/Export      }
-     xpfonts;  { interne Fonts      }
+{$IFDEF BP }
+     xpfonts,  { interne Fonts      }
+{$ENDIF }
+     xpimpexp; { Import/Export      }
 
 {$IFNDEF Ver32 } { Bei 32 Bit brauchen wir keine Overlays }
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
@@ -131,7 +134,9 @@ begin
     showscreen(true);
     DelTmpfiles('*.$$$');
     testdiskspace;
+    {$IFDEF BP }
     testfilehandles;
+    {$ENDIF }
     initdatabase;
     if password then
     begin
@@ -184,7 +189,16 @@ ende:
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
+
+}
+{
+  $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
 }

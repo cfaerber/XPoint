@@ -23,7 +23,7 @@
 
 program xp_fm;
 
-uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc, xpglobal, montage;
+uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc, xpglobal, montage, inout;
 
 const aresult    : byte = 0;
       brk_result: byte = EL_break;
@@ -97,7 +97,6 @@ var   sendfile  : array[1..maxfiles] of pathptr;
       oldexit   : pointer;
       sh        : word;     { Handle fÅr serielle Schnittstelle }
       bauddetect: longint;
-      ticker    : longint {$IFNDEF Ver32} absolute $40:$6c {$ENDIF };
       online    : longint;  { Connect-Zeitpunkt }
       logf      : text;
       nocarrier : string[30];   { Carrier futsch }
@@ -108,7 +107,9 @@ var   sendfile  : array[1..maxfiles] of pathptr;
       starty    : byte;
       scx,scy   : Byte;     { linke obere Fensterecke }
       scrsave   : pointer;
+{$IFDEF BP }
       scrbase   : word;
+{$ENDIF }
       ca,ce     : byte;
       mx,my     : byte;
       displine  : array[1..gl] of string[width];
@@ -529,8 +530,11 @@ begin
 end;
 
 function GetBackIntensity:boolean;        { true = hell, false = blink }
-var regs : registers;
-    buf  : array[0..127] of byte;
+var
+{$IFDEF BP }
+  regs : registers;
+  buf  : array[0..127] of byte;
+{$ENDIF }
 begin
   GetBackIntensity:=false;
 {$IFNDEF Ver32 }
@@ -565,6 +569,7 @@ begin
   getmem(scrsave,scsize);
 {$IFDEF BP }
   FastMove(mem[scrbase:pred(scy)*160],scrsave^,scsize);
+{$ENDIF }
   backintens:=getbackintensity;
   setbackintensity(true);
   col(ColText);
@@ -573,6 +578,7 @@ begin
   window(1,1,80,25);
   inc(windmax,$1900);
   wrt(scx,scy,'’'+dup(wdt-2,'Õ')+'∏');
+{$IFDEF BP }
   for i:=scy+1 to scy+hgh-1 do begin
     wrt(scx,i,'≥'); wrt(scx+wdt-1,i,'≥');
     mem[scrbase:(i-1)*160+(scx+wdt)*2-1]:=8;
@@ -1073,6 +1079,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

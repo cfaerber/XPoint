@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Statistik-Routinen }
 
@@ -70,7 +71,6 @@ end;
 
 procedure showstat(var fn:pathstr; bez:string);
 var hd  : string[12];
-    gel : byte;
 begin
   signal;
   hd:=''; InternBox:=DefaultBox;
@@ -125,8 +125,6 @@ var brk       : boolean;
     sortkb    : boolean;
     bi        : shortint;
     msum,bsum : longint;
-
-    tt : text;
 
   procedure count(sys:string; size:longint; hz:integer);
   var p     : byte;
@@ -586,7 +584,6 @@ var box     : string[BoxNameLen];
     maxgeb  : real;
     ewpz    : real;
     oldwpz  : real;
-    geinheit: real;
 begin
   if not exist(logpath+Logfile) then begin
     rfehler(2604);     { 'Kein Logfile (XPOINT.LOG) vorhanden'}
@@ -741,7 +738,6 @@ var sr       : searchrec;
     x,y,yy   : byte;
     msgs     : longint;   { Anzahl Nachrichten in PP-File  }
     emsgs    : longint;   { Anzahl Nachrichten in EPP-File }
-    epp      : string[12];
     d        : DB;
     more     : boolean;
     crashs   : boolean;
@@ -759,9 +755,7 @@ begin
     if sr.size>0 then begin
 
 
-{$IFNDEF WIN32}
       inc(ppanz); pp_epp[ppanz].name:=left(sr.name,cpos('.',sr.name)-1);
-{$ENDIF}
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
       end;
@@ -773,9 +767,7 @@ begin
   findfirst('*.epp',0,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
-{$IFNDEF WIN32}
       truncstr(sr.name,cpos('.',sr.name)-1);
-{$ENDIF}
       j:=1;
       while (j<=ppanz) and (sr.name<>pp_epp[j].name) do inc(j);
       if j>ppanz then begin
@@ -1263,4 +1255,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

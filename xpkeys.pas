@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { (Funktions)tasten & Makros }
 
@@ -132,7 +133,6 @@ var s      : string;
     p0     : byte;
     fn,fn2 : pathstr;
     brk    : boolean;
-    dummy  : boolean;
     auto   : boolean;
 begin
   with fkeys[nr]^[nn] do begin
@@ -144,7 +144,7 @@ begin
       if copy(s,2,7)='NETCALL' then
         EinzelNetcall(trim(copy(s,10,BoxNameLen)))
       else if copy(s,2,8)='RNETCALL' then
-        dummy:=netcall(true,trim(copy(s,11,BoxNameLen)),false,true,false)
+        netcall(true,trim(copy(s,11,BoxNameLen)),false,true,false)
       else if mid(s,2)='REORG' then begin
         MsgReorgScan(true,false,brk);
         if not brk then MsgReorg;
@@ -238,6 +238,10 @@ begin
     end;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Import/Export }
 
@@ -65,7 +66,6 @@ var fn   : pathstr;
     x,y  : byte;
     f    : file of ubrec;
     r    : ubrec;
-    fs   : longint;
     grnr : longint;
 
     getuser,getbretter   : boolean;
@@ -488,12 +488,10 @@ BEGIN
     writeln(outfile,'V',absender^);
     IF gruppe^='PRIVAT' then writeln(outfile,'A',empfaenger^);
     writeln(outfile,'W',betreff^);
-{$IFNDEF WIN32}
     UnPackTime(x.datum,tempdatum);
     write(outfile,'E');
     datum_ins_outfile(tempdatum);
     UnPackTime(x.SDatum,tempdatum);
-{$ENDIF}
     write(outfile,'B',upcase(x.status));
     datum_ins_outfile(tempdatum);
 
@@ -697,6 +695,10 @@ begin
   freeres;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Overlay-Unit mit Editierroutinen u.a. }
 
@@ -1959,9 +1960,7 @@ begin
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
   else begin
     wrt(x+11,y+3,trim(strsrnp(_filesize(fn),15,0))+getres(13));   { ' Bytes' }
-{$IFNDEF WIN32}
     unpacktime(sr.time,dt);
-{$ENDIF}
     gotoxy(x+11,y+4);
     with dt do
       write(formi(day,2),'.',formi(month,2),'.',year mod 100,', ',
@@ -2248,4 +2247,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

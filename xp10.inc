@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { --- Timing-Listen-Interpreter --------------------------------------- }
 
@@ -594,9 +595,7 @@ var x,y  : byte;
     ta   : tap;
 begin
   if _filesize(keydeffile)>0 then begin
-{$IFNDEF WIN32}
     openlist(15,65,10,11,-1,'/NS/SB/NLR/DM/');   { Koordinaten beliebig }
-{$ENDIF}
     assign(t,KeydefFile);
     reset(t);
     s:=''; anz:=0;
@@ -606,9 +605,7 @@ begin
         s:=forms(s,13)+mid(s2,2);
       if (s2<>'') and (left(s2,1)<>'!') then begin
         if s<>'' then begin
-{$IFNDEF WIN32}
           app_l(' '+s); s:=''; inc(anz);
-{$ENDIF}
           end;
         if s2[15+nr]='*' then
           case s2[1] of
@@ -619,16 +616,13 @@ begin
         end;
       end;
     if s<>'' then begin
-{$IFNDEF WIN32}
       app_l(' '+s); inc(anz);
-{$ENDIF}
- end;
+    end;
     close(t);
     if anz=0 then
       hinweis(getres2(1017,1))   { 'keine Tastenmakros fÅr dieses Fenster definiert' }
     else begin
       selbox(41,min(anz+2,screenlines-6),getres2(1017,2),x,y,true);   { 'Makro wÑhlen ...' }
-{$IFNDEF WIN32}
       SetListSize(x+1,x+39,y+1,y+min(anz+2,screenlines-6)-2);
       ListTp(MakSelKeys);
       listboxcol;
@@ -636,21 +630,21 @@ begin
       list(brk);
       pophp;
       closebox;
-{$ENDIF}
       if not brk then begin
         settap(ta);
-{$IFNDEF WIN32}
         keyboard(getmacro(trim(left(get_selection,12)),ta));
-{$ENDIF}
         dispose(ta);
         end;
       end;
-{$IFNDEF WIN32}
     closelist;
-{$ENDIF}
     end
   else
     hinweis(getres2(1017,3));   { 'keine Tastenmakros definiert' }
   freeres;
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

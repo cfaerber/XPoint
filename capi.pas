@@ -24,7 +24,7 @@ unit capi;
 
 interface
 
-uses   xpglobal, dos,crt;    { CRT wird nur fÅr CAPI_test() benîtigt }
+uses   xpglobal, dos,crt, inout;    { CRT wird nur fÅr CAPI_test() benîtigt }
 
 const  CAPI_debug : boolean = false;
 
@@ -306,13 +306,6 @@ procedure interr(txt:string);
 begin
   writeln('<CAPI> internal error: ',txt);
   halt(1);
-end;
-
-function ticker:longint;          { 18.2Hz-BIOS-Clock }
-begin
-{$IFNDEF ver32}
-  ticker:=meml[Seg0040:$6c];
-{$ENDIF}
 end;
 
 procedure timer(secs:word);       { Timeout-ZÑhler setzen }
@@ -1380,6 +1373,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/17 16:14:18  mk
   MK: * ein paar Loginfos hinzugefuegt
 

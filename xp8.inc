@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Fido FileScan }
 
@@ -77,7 +78,6 @@ begin
   if not exist(fl) then begin
     rfehler1(853,box); exit;
     end;
-{$IFNDEF WIN32}
   OpenList(1,iif(_maus,79,80),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
              'APGD/'+iifs(_maus,'VSC:080/',''));
   list_readfile(fl,0);
@@ -119,7 +119,6 @@ again:
   freeres;
   closelist;
   aufbau:=true;
-{$ENDIF}
 end;
 
 
@@ -287,7 +286,6 @@ var box  : string[BoxnameLen];
     t    : text;
     x,y  : byte;
 begin
-{$IFNDEF WIN32}
   GetFilescanbox(box);
   if box='' then exit;
   brk:=false;
@@ -324,6 +322,10 @@ begin
     _era(fn);
     end;
   freeres;
-{$ENDIF}
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

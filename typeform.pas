@@ -170,7 +170,7 @@ function mailstring(const s: String): string; { JG:04.02.00 Mailadresse aus Stri
 procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
 {$ENDIF }
 procedure ukonv(var s:string);                { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
-procedure Rot13(var data; size:word);         { Rot 13 Kodierung }
+procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 { ================= Implementation-Teil ==================  }
 
 IMPLEMENTATION
@@ -2097,14 +2097,24 @@ begin
 end;
 
 
-procedure Rot13(var data; size:word); assembler;    { ROT13 Kodierung }
+{ ROT13 Kodierung }
+procedure Rot13(var data; size: word); assembler;
 asm
+{$IFDEF BP }
          les   di,data
          mov   cx,size
+{$ELSE }
+         mov   edi, data
+         mov   ecx,size
+{$ENDIF }
          jcxz  @ende
          cld
   @rotlp:
+{$IFDEF BP }
          mov   al,es:[di]
+{$ELSE }
+         mov   al, [edi]
+{$ENDIF }
          cmp   al,'A'
          jb    @rot
          cmp   al,'Z'
@@ -2123,15 +2133,18 @@ asm
          cmp   al,'z'
          jbe   @rot
          sub   al,26
-  @rot:     
+  @rot:
          stosb
          loop  @rotlp
-  @ende:    
+  @ende:
 end;
 
 end.
 { 
   $Log$
+  Revision 1.8  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.7  2000/02/18 18:39:03  jg
   Speichermannagementbugs in Clip.pas entschaerft
   Prozedur Cliptest in Clip.Pas ausgeklammert

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 procedure SavePhonezones;
 var t     : text;
@@ -72,7 +73,6 @@ var pa    : phoneap;
     ppos  : integer;
     p     : byte;
     loadt : boolean;    { TARIFE.DAT laden }
-    t1,t2 : real;
 
   procedure AddP(s:string; _anz:integer);
   begin
@@ -316,4 +316,9 @@ begin
   anzahl:=0;
   dispose(tarif);
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

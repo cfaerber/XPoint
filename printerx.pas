@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -126,11 +127,8 @@ begin
     end;
 end;
 
-
-{ F+}
-
 function prtorgerror:boolean;
-var handle : smallword;
+var handle : word;
     c      : char;
     z      : taste;
 begin
@@ -281,3 +279,9 @@ begin
   xlatger:=false;
   prterror:=prtorgerror;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

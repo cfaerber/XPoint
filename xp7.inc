@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 function BoxParOk:string;
 var uucp : boolean;
@@ -233,7 +234,7 @@ begin
 end;
 
 procedure sendcomm(s:string);
-var p,b : byte;
+var p : byte;
 begin
   flushin;
   recs:=''; lrec:='';
@@ -424,9 +425,8 @@ end;
 
 procedure login;
 const crlf = #13#10;
-var arc    : boolean;
+var
     cc     : integer;
-    wdh    : byte;
     login  : boolean;   { Unix login: }
     endbef : string[20];
     janus  : string[10];
@@ -442,8 +442,6 @@ begin
       zaehler[3]:=0;
     retries:=retrylogin+2;
     cc:=0;
-    if baud<2400 then wdh:=4
-    else wdh:=2;
     if relogin then begin
       recs:='Username:'; lrec:=lstr(recs);
       end;
@@ -1114,9 +1112,9 @@ end;
 
 procedure QWKSysopTransfer;
 var sr     : searchrec;
-    sysdir : pathstr;
+{    sysdir : pathstr; }
     dummy  : longint;
-    qwkext : string[3];
+{    qwkext : string[3]; }
     qfg    : QfgRec;
     brk    : boolean;
     replace: shortint;
@@ -1188,12 +1186,12 @@ begin
 
     if exist(SysopInp) then begin                { 1. Import }
       NC^.recpack:=totalsize(SysopInp);
-      SysDir:=GetFileDir(SysopInp);
+{      SysDir:=GetFileDir(SysopInp); }
       EraFiles(XFerDir+'*.ZER');
       shell('ZQWK.EXE -qz -c'+bfile+' -b'+boxname+' -h'+MagicBrett+
             ' -i'+SysopInp+' -o'+XferDir+' -a'+iifs(DelQwk,' -del',''),
             600,3);
-      qwkext:=GetFileext(sysopinp);
+{      qwkext:=GetFileext(sysopinp); }
       if errorlevel<>100 then
         ZQWKfehler;
       if exist(XferDir+'*.ZER') then begin
@@ -1303,7 +1301,7 @@ begin
 end;
 
 function testconnect:boolean;
-var i : byte;
+var
     c : boolean;
     t : longint;
 begin
@@ -1467,5 +1465,9 @@ begin
     comn[comnr].fossil:=false;
     end;
 end;
+{
+  $Log$
+  Revision 1.4  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
-
+}

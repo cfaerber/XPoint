@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { --- User bearbeiten ---------------------------------- }
 
@@ -358,13 +359,12 @@ begin
 end;
 
 procedure GoDown;
-var dummy : boolean;
 begin
   if p<gl then begin
     t:=keydown; lastt:=''; end
   else
     if Forth then begin
-      dummy:=Back;
+      Back;
       disprec[1]:=dbRecno(mbase);
       SetKomOfs1;
       p:=2;
@@ -421,7 +421,6 @@ end;
 procedure read_msg(art,mp:byte);
 var fn     : pathstr;
     fn2    : pathstr;
-    b,i    : byte;
     typ    : char;
     arc    : shortint;
     _down  : boolean;
@@ -1135,7 +1134,6 @@ begin
 end;
 
 procedure spezialmenue;
-var n : shortint;
 begin
   if empty then
     rfehler(418)    { 'keine Nachrichten vorhanden' }
@@ -1416,4 +1414,6 @@ begin
   wait(curoff);
   closebox;
 end;
-
+{
+  $Id$
+}

@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Nodelisten-Konfiguration; Diffs verarbeiten }
 
@@ -18,11 +19,6 @@
 unit xpfidonl;
 
 interface
-
-
-{$IFDEF WIN32}
-{$ELSE}
-{$ENDIF}
 
 uses  dos,typeform,montage,fileio,maske,resource,archive,
       xp0,xp1,xp1o,xp3, xpglobal;
@@ -750,6 +746,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

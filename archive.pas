@@ -186,13 +186,6 @@ type archd = record
                  name     : string;
               end;
 
-     sqzhd  = record
-                ID        : array[0..4] of byte;
-                version   : byte;
-                os        : byte;
-                flags     : byte;
-              end;
-
      sqzrec = record
                 case hdtype : byte of   { 0=Ende, 1=Comment, 2=PW, 18..=File }
                   1 : (ComSize  : word;     { Comment }
@@ -1041,6 +1034,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:35  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

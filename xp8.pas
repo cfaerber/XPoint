@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - 'maps & Fileserver }
 
@@ -1194,9 +1195,7 @@ var brk     : boolean;
 
   procedure app(s1,s2:string);
   begin
-{$IFNDEF WIN32}
     app_l(' '+forms(s1,iif(maus,8,iif(fido or (uucp and not gup),15,20)))+s2);
-{$ENDIF}
   end;
 
   procedure rdsystem;
@@ -1356,10 +1355,8 @@ begin
     brk:=false;
     end
   else begin
-{$IFNDEF WIN32 }
     listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
             +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box);
-{$ENDIF }
     if fido then begin
       app('List',getres2(810,40));      { 'Liste der verfgbaren Bretter' }
       app('Query',getres2(810,41));     { 'Liste der bestellten Bretter' }
@@ -1606,4 +1603,9 @@ end;
 {$I xp8.inc}       { Fido FileScan }
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

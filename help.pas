@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -455,9 +456,8 @@ begin
     if p=0 then begin
       fillchar(s[length(s)+1],80,32);
       s[0]:=chr(wdt);
-{$IFNDEF WIN32}
       fwrt(x,yy,s);
-{$ENDIF}      end
+  end
     else begin
       gotoxy(x,yy);
       while p>0 do begin
@@ -769,3 +769,9 @@ begin
 end;
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

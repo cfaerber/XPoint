@@ -111,10 +111,9 @@ var bfile      : string[14];
     ppfile     : string[14];
     eppfile    : string[14];
     user       : string[30];
-    brk,ende   : boolean;
+    ende   : boolean;
     d          : DB;
     f          : file;
-    p          : byte;
     retries    : integer;
     cps        : cpsrec;
     IgnCD,
@@ -159,7 +158,6 @@ var bfile      : string[14];
     caller,called,
     upuffer,dpuffer,
     olddpuffer : string[14];
-    dmask      : string[12];      { *.PKT, *.*, PUFFER etc. }
     addpkts    : addpktpnt;
     source     : pathstr;
     ff         : boolean;
@@ -237,7 +235,6 @@ label abbruch,ende0;
 
   procedure SetFilenames;
   begin
-    dmask:='';
     with BoxPar^ do begin
       case logintyp of
         ltNetcall,             { Namen mÅssen ohne Pfade sein! }
@@ -919,11 +916,9 @@ begin                  { of Netcall }
           mon;
           dropdtr(comnr);
           mdelay(100);
-{$IFNDEF WIN32}
           setdtr(comnr);
           sendstr(#13); mdelay(200);
           sendstr(#13); mdelay(200);
-{$ENDIF}
           flushin;
           goto abbruch;
           end;
@@ -1215,18 +1210,14 @@ begin                  { of Netcall }
                             dpuffer:='qpuffer';
                           end;
                 ltMaus  : begin
-{$IFNDEF WIN32}
                             ft:=filetime(box+'.itg');
-{$ENDIF}
                             MausToZ(dpuffer,PufferFile,3);
                             MausGetInfs(box,mauslogfile);
                             MausLogFiles(0,false,box);
                             MausLogFiles(1,false,box);
                             MausLogFiles(2,false,box);
-{$IFNDEF WIN32}
                             if ft<>filetime(box+'.itg') then
                               MausImportITG(box);
-{$ENDIF}
                             olddpuffer:=dpuffer;
                             dpuffer:=PufferFile;
                           end;
@@ -1503,7 +1494,7 @@ end;
 
 
 function AutoMode:boolean;
-var brk,dummy : boolean;
+var brk: boolean;
 begin
 {$IFDEF Debug }
   dbLog('-- AutoMode');
@@ -1523,7 +1514,7 @@ begin
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
     else
       if ParNCtime='' then
-        dummy:=netcall(true,ParNetcall,false,ParRelogin,false)
+        Netcall(true,ParNetcall,false,ParRelogin,false)
       else
         Netcall_at(ParNCtime,ParNetcall);
   if ParTiming>0 then begin
@@ -1566,6 +1557,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/18 17:28:09  mk
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 

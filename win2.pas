@@ -82,16 +82,14 @@ const maxs = 5;
 var  pntl  : pntslcta;
      sr    : searchrec;
      lnum,n,
-     handle : smallword;
+     handle : word;
      p      : byte;
      s      : string[20];
      slas   : array[1..maxs] of pathstr;
      slan,i : byte;
 
 begin
-{$IFNDEF WIN32}
   cursor(curoff);
-{$ENDIF}
   new(pntl);
   lnum:=0;
   p:=pos(';',sla);
@@ -107,7 +105,6 @@ begin
     p:=pos(';',sla);
     end;
 
-{$IFNDEF WIN32}
   for i:=1 to slan do begin
     findfirst(slas[i],archive,sr);
     while doserror=0 do begin
@@ -157,7 +154,6 @@ begin
     wrest(handle);
     end;
   dispose(pntl);
-{$ENDIF}
 end;
 
 
@@ -170,7 +166,6 @@ end;
   vert    : vertikale Anzeige }
 
 function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
-{$IFNDEF WIN32}
 
 const maxf   = 1000;
       maxs   = 5;
@@ -682,11 +677,6 @@ begin
   dispose(f);
   fsbox:=fb;
 end;
-{$ELSE}
-begin
-end;
-{$ENDIF}
-
 
 function pname(p:word):pathstr;
 var x    : byte;
@@ -726,7 +716,6 @@ end;
 procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
                 var path:pathstr; mark:boolean; var brk:boolean);
-{.$IFNDEF WIN32}
 
 const dsfiles : longint = 0;
       dsb     : longint = 0;
@@ -1088,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

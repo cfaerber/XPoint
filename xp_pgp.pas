@@ -249,7 +249,6 @@ var tmp  : pathstr;
     f,f2 : file;
     b    : byte;
     nt   : longint;
-    opt  : string[5];
     t    : string[20];
     uid  : string[80];
 
@@ -304,7 +303,7 @@ begin
       RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp+uid);
   
   { --- codieren+signieren --- }
-  end else begin                                       
+  end else begin
     if PGPVersion=PGP2 then
       RunPGP('-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} )
     else
@@ -435,7 +434,6 @@ var tmp,tmp2 : pathstr;
     orgsize  : longint;
     b        : byte;
     l        : longint;
-    mw       : boolean;
 
   procedure WrSigflag(n:byte);
   var l : longint;
@@ -452,10 +450,10 @@ begin
   XreadF(dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse'),f);
   close(f);
   tmp2:=TempS(dbReadInt(mbase,'groesse'));
-  if sigtest then begin
-    mw:=PGP_WaitKey;
+
+  if sigtest then
     PGP_WaitKey:=true;
-    end;
+
   if PGPVersion=PGP2 then
     RunPGP(tmp+' -o '+tmp2)
   else
@@ -558,7 +556,6 @@ var t     : text;
 
   function getbyte:byte;
   var c  : char;
-      b  : byte;
   begin
     c:=s[p];
     inc(p);
@@ -698,6 +695,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

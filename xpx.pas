@@ -175,9 +175,8 @@ end;
 
 {$S-}
 procedure setpath; {$IFNDEF Ver32 } far; {$ENDIF }
-var i : integer;
 begin
-  i:=ioresult;
+  if ioresult = 0 then ;
   GoDir(shellpath);
   if ioresult<>0 then GoDir(ownpath);
   if runerror and not starting then begin
@@ -274,6 +273,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

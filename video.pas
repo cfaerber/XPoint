@@ -61,8 +61,10 @@ procedure cur0;                            { Cursor aus }
 
 procedure SetBackIntensity(hell:boolean);  { heller Hintergrund oder Blinken }
 function  GetBackIntensity:boolean;        { true = hell, false = blink }
+{$IFDEF BP }
 procedure LoadFont(height:byte; var data); { neue EGA/VGA-Font laden }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
+{$ENDIF }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
 function  GetScreenColoumns:byte;
@@ -138,12 +140,12 @@ procedure make9; near; external;
 {$ENDIF}
 
 
+{$IFDEF BP }
 procedure LoadFont(height:byte; var data);
 var regs    : registers;
     DPMIsel : word;
     DOSseg  : word;
 begin
-{$IFNDEF ver32}
   with regs do begin
     ax:=$1110;
     bx:=height*256;
@@ -162,9 +164,10 @@ begin
       DPMIfreeDOSmem(DPMIsel);
     {$ENDIF}
     end;
-{$ENDIF}
 end;
+{$ENDIF}
 
+{$IFDEF BP }
 procedure LoadFontFile(fn:pathstr);        { Font aus Datei laden }
 var p  : pointer;
     sr : searchrec;
@@ -174,9 +177,7 @@ var p  : pointer;
     f  : file;
 begin
   if vtype<2 then exit;
-{$IFNDEF ver32 }
   findfirst(fn,0,sr);
-{$ENDIF}
   if (doserror=0) and (sr.size mod 256<=8) and (sr.size<65536) then begin
     h:=sr.size div 256;
     ofs:=sr.size mod 256;
@@ -194,6 +195,7 @@ begin
       end;
     end;
 end;
+{$ENDIF }
 
 
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
@@ -441,6 +443,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

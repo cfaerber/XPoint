@@ -572,9 +572,7 @@ begin
     assign(puffer,aFile(ablage));
     reset(puffer,1);
     seek(puffer,dbReadInt(mbase,'adresse')+ofs);
-{$IFNDEF WIN32}
     blockread(puffer,data,size,size);
-{$ENDIF}
     res:=ioresult;
     close(puffer);
     end
@@ -614,13 +612,11 @@ begin
   reset(f,1);
   size:=filesize(f);
   dbWriteN(mbase,mb_msgsize,size);
-{$IFNDEF WIN32}
   while size>0 do begin
     blockread(f,p^,bs,rr);
     blockwrite(puffer,p^,rr);
     dec(size,rr);
     end;
-{$ENDIF}
   close(puffer);
   close(f);
   freemem(p,bs);
@@ -994,13 +990,11 @@ begin
     if abl<ablagen then begin
       fillchar(b,sizeof(b),false);
       assign(f,killedDat);
-{$IFNDEF WIN32}
       if existf(f) then begin
         reset(f,1); blockread(f,b,ablagen,rr); seek(f,0);
         end
       else
         rewrite(f,1);
-{$ENDIF}
       if not b[abl] then begin
         b[abl]:=true;
         blockwrite(f,b,ablagen);
@@ -1257,6 +1251,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.7  2000/02/18 18:39:04  jg
   Speichermannagementbugs in Clip.pas entschaerft
   Prozedur Cliptest in Clip.Pas ausgeklammert

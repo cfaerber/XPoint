@@ -298,11 +298,14 @@ var    ca,ce,ii,jj : byte;
 
 function ticker:longint;
 begin
-{$IFNDEF ver32}
-  ticker:=meml[Seg0040:$6c];
+{$IFDEF BP }
+  {$IFDEF DPMI}
+    ticker:=meml[Seg0040:$6c];
+  {$ELSE}
+    ticker:=meml[$40:$6c];
+  {$ENDIF}
 {$ENDIF}
 end;
-
 
 Function kbstat:byte;     { lokal }
 begin
@@ -314,7 +317,6 @@ end;
 
 Procedure window(l,o,r,u:byte);
 begin
-{$IFNDEF WIN32}
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
   crt.window(l,o,r,min(u,25));
@@ -322,7 +324,6 @@ begin
     crt.windmax:=zpz-1 {crt.windmax and $ff} + 256*iosclines
   else
     crt.windmax:=crt.windmax and $ff + 256*(u-1);
-{$ENDIF}
 end;
 
 
@@ -339,7 +340,6 @@ end;
 
 
 Procedure Cursor(t:curtype);
-var adr : word;
 begin
   case t of
     curnorm : curlen(ca,ce);
@@ -376,9 +376,6 @@ end;
 
 
 Procedure RestCursor;
-
-var regs : registers;
-
 begin
   cursor(curoff);
   window(wl[cursp],wo[cursp],wr[cursp],wu[cursp]);
@@ -415,7 +412,6 @@ end;
 procedure disp_DT;
 var h,m,s,s100 : smallword;
     y,mo,d,dow : smallword;
-    ss         : string;
 begin
   if UseMulti2 then begin
     if m2t then begin
@@ -480,7 +476,6 @@ const stt : array[1..3] of string[8]  = (' CAPS ',' NUM ',' SCROLL ');
 var   x   : boolean;
 
   procedure stput(pos,len,nr:byte);
-  var i:shortint;
   begin
     moff;
 {$IFNDEF ver32}
@@ -528,16 +523,13 @@ begin
 end;
 
 
-{ F+}
 procedure dummyFN;
 begin
 end;
-{ F-}
 
 
 Procedure Get(VAR z:taste; cur:curtype);
 VAR c       : Char;
-    ts      : byte;
     i       : byte;
     mox,moy : integer;
 
@@ -725,7 +717,6 @@ const k1     = $1a;
       bend   = $82;
 var   t      : taste;
       k      : word;
-      i      : byte;
 begin
   brk:=false;
   if BiosWord(k1)<>BiosWord(k2) then begin
@@ -777,11 +768,9 @@ end;
 Procedure clrscr;
 var regs : registers;
 begin
-{$IFNDEF WIN32 }
   regs.ax:=$500;      { Video-Seite 0 setzen }
   intr($10,regs);
   crt.clrscr;
-{$ENDIF}
 end;
 
 
@@ -1080,9 +1069,9 @@ end;
 Procedure ld(x,y:byte; txt:string; VAR s:string; ml:Byte; li:shortint;
              invers:boolean; VAR brk:Boolean);
 
-VAR abbruch: endeedtyp;
+VAR
     a      : taste;
-    px,la  : byte;
+    la  : byte;
 
 begin
   brk:=false;
@@ -1099,7 +1088,6 @@ begin
     IF a=keyesc THEN brk:=True ELSE begin
       rdedch:=a;
       if pos(a,chml[li])>0 then s:='';
-{      px:=0;     MK 12/99  Zuweisung nicht nötig }
       bd(x,y,txt,s,ml,li,brk);
       end;
     end
@@ -1157,25 +1145,19 @@ end;
 
 Procedure readw(x,y:byte; VAR w:word);
 begin
-{$IFNDEF WIN32 }
   readi(x,y,integer(w));
-{$ENDIF}
 end;
 
 
 Procedure readwesc(x,y:Byte; VAR w:word; VAR brk:Boolean);
 begin
-{$IFNDEF WIN32 }
   readiesc(x,y,integer(w),brk);
-{$ENDIF}
 end;
 
 
 Procedure readwescue(x,y:byte; var w:word; var brk:boolean);
 begin
-{$IFNDEF WIN32 }
   readiescue(x,y,integer(w),brk);
-{$ENDIF}
 end;
 
 
@@ -1544,7 +1526,7 @@ begin
   chkn:=26690;
 end;
 
-{$IFNDEF WIN32}
+{$IFDEF BP}
 procedure dummy; interrupt;
 begin
 end;
@@ -1693,10 +1675,8 @@ end;
 procedure CrtOutput;                         { auf DirectVideo umsch.   }
 begin
   close(output);
-{$IFNDEF WIN32}
   AssignCRT(output);
   rewrite(output);
-{$ENDIF}
 end;
 
 
@@ -1781,9 +1761,7 @@ end;
 
 
 begin
-{$IFNDEF WIN32}
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
-{$ENDIF}
   normtxt;
   chml[1]:=range(#32,#126)+range(#128,#255);
   chml[3]:='1234567890 ';
@@ -1815,4 +1793,3 @@ begin
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
 end.
-

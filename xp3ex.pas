@@ -138,7 +138,6 @@ end;
 
 procedure extract_msg(art:byte; schablone:pathstr; name:pathstr;
                       append:boolean; decode:shortint);
-const qbc = ' /\|-'#255;
 var size   : longint;
     f,decf : file;
     hdp    : headerp;
@@ -151,7 +150,6 @@ var size   : longint;
     i,hdln : integer;
     p      : byte;
     _brett : string[5];
-    _to    : string[10];
     extpos : longint;
     wempf  : string;
     ni     : NodeInfo;
@@ -193,7 +191,7 @@ var size   : longint;
       pw    : string;
       coder : byte;
       siz0  : smallword;
-      passpos : smallword;
+      passpos : word;
       show  : boolean;
       x,y   : byte;
       _off  : longint;
@@ -229,9 +227,7 @@ var size   : longint;
       show:=(dtyp=2) and (total>=2000);
       x:=0;
       if dtyp=2 then begin
-{$IFNDEF WIN32} { MK 12/99 }
         DES_PW(pw);
-{$ENDIF}
         if show then begin
           rmessage(360);   { 'DES-Decodierung...     %' }
           x:=wherex-5; y:=wherey;
@@ -243,10 +239,8 @@ var size   : longint;
         blockread(decf,p^,ps,rr);
         case dtyp of
          -1 : Rot13(p^,rr);
-{$IFNDEF ver32} { MK 12/99 }
           1 : QPC(true,p^,rr,@pw,passpos);
           2 : DES_code(true,p^,_off,total,rr,x,y);
-{$ENDIF}
         end;
         if (dtyp<>0) and (hdp^.charset='iso1') then
           Iso1ToIBM(p^,rr);
@@ -259,7 +253,6 @@ var size   : longint;
       end;
   end;
 
-  { R-}
   procedure DumpMsg;
   const hc : array[0..15] of char = '0123456789ABCDEF';
   var s   : string;
@@ -294,7 +287,6 @@ var size   : longint;
     until eof(decf) or (adr>$ffe0) or (ioresult<>0);
     closebox;
   end;
-  { R+}
 
   procedure SetQC(netztyp:byte);
   var p,p2,n  : byte;
@@ -303,12 +295,12 @@ var size   : longint;
       qs      : string[80];
   begin
     qchar:=QuoteChar;
-    
+
     { 31.01.2000 robo }
     p:=cpos('&',qchar);
     p2:=cpos('#',hdp^.absender);
     if p>0 then qchar[p]:='$';
-    
+
 {    if netztyp=nt_UUCP then begin }
     if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
     { /robo}
@@ -1022,6 +1014,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/17 08:40:29  mk
   RB: * Bug mit zurueckbleibenden Dummy-Header bei Quoten von Multipart beseitigt
 

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { DOS-Shell }
 
@@ -97,9 +98,7 @@ begin
                 m2t:=false;
               end;
       3   : begin
-{$IFNDEF WIN32}
               clwin(1,80,4,screenlines-2);
-{$ENDIF}
               gotoxy(1,5);
             end;
     end;
@@ -262,7 +261,6 @@ begin
     lfirst:=iif(listvollbild,1,4); lofs:=0;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
-{$IFNDEF WIN32}
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
@@ -299,7 +297,6 @@ begin
     m2t:=true;
     if savescr then holen(p);
     closelist;
-{$ENDIF}
     end;
   exthdlines:=0;
   llh:=false;
@@ -397,3 +394,9 @@ begin
     trackpath:=false;
     end;
 end;
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

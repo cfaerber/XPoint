@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -26,7 +27,7 @@ unit winxp;
 
 INTERFACE
 
-uses  crt,dos,keys,inout,maus2,typeform;
+uses  xpglobal, crt,dos,keys,inout,maus2,typeform;
 
 const maxpull = 30;
       maxpush = 20;
@@ -90,24 +91,370 @@ var pullw   : array[1..maxpull] of record
                                    end;
     rahmen  : shortint;
 
-{$IFDEF ver32}
-procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
-begin end;
-procedure wshadow(li,re,ob,un:word);
-begin end;
-procedure clwin(l,r,o,u:word);
-begin end;
-procedure fwrt(x,y:word; var s:string);
-begin end;
-{$ELSE}
+procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean); assembler;
+asm
+{$IFDEF BP }
+         cld
+         mov   al,typ
+         mov   ah,6
+         mul   ah
+         mov   bx,offset rchar - 6
+         add   bx,ax                   { Offset der Zeichentabbelle [typ] }
 
-procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean); external;
-procedure wshadow(li,re,ob,un:word); external;  { moff/mon }
-procedure clwin(l,r,o,u:word); external;        { moff/mon }
-procedure fwrt(x,y:word; var s:string); external;
-{$L windows.obj}
-{$ENDIF}
+         mov   es,base
+         mov   al,byte ptr o
+         dec   al
+         mul   byte ptr zpz
+         shl   ax,1                    { di  <-  (o-1) * zpz * 2 }
+         mov   di,l
+         dec   di
+         shl   di,1
+         add   di,ax                   { di  <-  di + (l-1) * 2  }
+         mov   ax,r
+         sub   ax,l
+         dec   ax
+         mov   dx,ax
 
+         mov   ah,attr
+         push  di
+         mov   al,[bx+0]
+         stosw
+         mov   al,[bx+1]
+         mov   cx,dx
+         rep   stosw
+         mov   al,[bx+2]
+         stosw
+         pop   di
+         add   di,zpz
+         add   di,zpz
+         mov   si,u
+         sub   si,o
+         dec   si
+         jz    @r2                      { Leerer Mittelteil }
+
+@qrlp1:   push  di
+         mov   al,[bx+3]
+         stosw
+         mov   al,' '
+         mov   cx,dx
+         cmp   clr,1
+         jz    @docl
+         add   di,cx
+         add   di,cx
+         jmp   @nocl
+@docl:   rep   stosw
+@nocl:   mov   al,[bx+3]
+         stosw
+         pop   di
+         add   di,zpz
+         add   di,zpz
+         sub   si,1
+         jnz   @qrlp1
+
+@r2:      mov   al,[bx+4]
+         stosw
+         mov   al,[bx+1]
+         mov   cx,dx
+         rep   stosw
+         mov   al,[bx+5]
+         stosw
+{$ELSE }
+         cld
+         xor   eax, eax
+         mov   al,typ
+         mov   ah,6
+         mul   ah
+         xor   ebx, ebx
+         mov   bl, rchar - 6
+         add   ebx,eax                   { Offset der Zeichentabbelle [typ] }
+
+         mov   al,byte ptr o
+         dec   al
+         mul   byte ptr zpz
+         shl   eax,1                    { di  <-  (o-1) * zpz * 2 }
+         mov   edi,l
+         add   edi, base
+         dec   edi
+         shl   edi,1
+         add   edi, eax                   { di  <-  di + (l-1) * 2  }
+         mov   eax,r
+         sub   eax,l
+         dec   eax
+         mov   edx,eax
+
+         mov   ah,attr
+         push  edi
+         mov   al,[ebx+0]
+         stosw
+         mov   al,[ebx+1]
+         mov   ecx,edx
+         rep   stosw
+         mov   al,[ebx+2]
+         stosw
+         pop   edi
+         add   edi,zpz
+         add   edi,zpz
+         mov   esi,u
+         sub   esi,o
+         dec   esi
+         jz    @r2                      { Leerer Mittelteil }
+
+@qrlp1:  push  edi
+         mov   al,[ebx+3]
+         stosw
+         mov   al,' '
+         mov   ecx,edx
+         cmp   clr,1
+         jz    @docl
+         add   edi,ecx
+         add   edi,ecx
+         jmp   @nocl
+@docl:   rep   stosw
+@nocl:   mov   al,[ebx+3]
+         stosw
+         pop   edi
+         add   edi,zpz
+         add   edi,zpz
+         sub   esi,1
+         jnz   @qrlp1
+
+@r2:     mov   al,[ebx+4]
+         stosw
+         mov   al,[ebx+1]
+         mov   ecx,edx
+         rep   stosw
+         mov   al,[ebx+5]
+         stosw
+{$ENDIF }
+end;
+
+procedure wshadow(li,re,ob,un:word); assembler;
+asm
+{$IFDEF BP }
+         call  moff
+         mov   ax,un                   { Adresse untere linke Ecke berechnen }
+         dec   ax
+         mov   bx,zpz
+         mul   bx
+         shl   ax,1
+         mov   di,li
+         dec   di
+         shl   di,1
+         add   di,ax
+         inc   di
+
+         mov   es,base
+         mov   cx,re
+         cmp   cx,bx
+         jbe   @c1ok
+         mov   cx,bx
+@c1ok:    sub   cx,li
+         inc   cx
+         mov   al,shadowcol
+
+@usloop: stosb                         { unteren Schatten zeichnen }
+         inc   di
+         loop  @usloop
+
+         mov   ax,ob                   { Adresse obere rechte Ecke berechnen }
+         dec   ax
+         mul   bx
+         shl   ax,1
+         mov   di,re
+         cmp   di,bx                   { Schattenspalte > 80? }
+         ja    @nors
+         dec   di
+         shl   di,1
+         add   di,ax
+         inc   di
+
+         mov   cx,un
+         sub   cx,ob
+         mov   al,shadowcol
+         dec   bx
+
+@rsloop: stosb                         { rechten Schatten zeichnen }
+         add   di,bx
+         add   di,bx
+         inc   di
+         loop  @rsloop
+
+@nors:   call  mon
+{$ELSE }
+         call  moff
+         mov   eax,un                   { Adresse untere linke Ecke berechnen }
+         dec   eax
+         mov   ebx,zpz
+         mul   ebx
+         shl   eax,1
+         mov   edi,li
+         dec   edi
+         shl   edi,1
+         add   edi,eax
+         inc   edi
+
+         add   edi, base
+         mov   ecx,re
+         cmp   ecx,ebx
+         jbe   @c1ok
+         mov   ecx,ebx
+@c1ok:   sub   ecx,li
+         inc   ecx
+         mov   al,shadowcol
+
+@usloop: stosb                         { unteren Schatten zeichnen }
+         inc   edi
+         loop  @usloop
+
+         mov   eax,ob                   { Adresse obere rechte Ecke berechnen }
+         dec   eax
+         mul   ebx
+         shl   eax,1
+         mov   edi,re
+         cmp   edi,ebx                   { Schattenspalte > 80? }
+         ja    @nors
+         dec   edi
+         shl   edi,1
+         add   edi,eax
+         inc   edi
+
+         mov   ecx,un
+         sub   ecx,ob
+         mov   al,shadowcol
+         dec   ebx
+@rsloop: stosb                         { rechten Schatten zeichnen }
+         add   edi,ebx
+         add   edi,ebx
+         inc   edi
+         loop  @rsloop
+@nors:   call  mon
+{$ENDIF }
+end;
+
+procedure clwin(l,r,o,u:word); assembler;
+asm
+{$IFDEF BP }
+         call   moff
+         mov    si,zpz
+         shl    si,1
+         mov    cx,si
+         mov    ax,o
+         dec    ax
+         mul    cx
+         mov    dx,l
+         dec    dx
+         mov    bx,dx
+         shl    dx,1
+         add    dx,ax
+         mov    di,dx                  { dx, di = Startadresse des Fensters }
+         mov    cx,r
+         sub    cx,bx
+         mov    bx,u
+         sub    bx,o
+         inc    bx                     { bl = Fensterh”he }
+         mov    bh,cl                  { bh,cx = Fensterbreite }
+         mov    es,base
+         mov    al,' '
+         mov    ah,textattr
+@wclo:    or     bl,bl
+         jz     @wcende                 { Fenster ist gel”scht }
+         cld
+         rep    stosw                  { Fensterbereich l”schen mit del }
+         mov    cl,bh                  { Fensterbreite holen }
+         add    dx,si                  { N„chste Fensterzeile }
+         mov    di,dx
+         dec    bl
+         jmp    @wclo
+@wcende: call   mon
+{$ELSE }
+         call   moff
+         mov    esi,zpz
+         shl    esi,1
+         mov    ecx,esi
+         mov    eax,o
+         dec    eax
+         mul    ecx
+         mov    edx,l
+         dec    edx
+         mov    ebx,edx
+         shl    edx,1
+         add    edx,eax
+         mov    edi,edx                  { dx, di = Startadresse des Fensters }
+         mov    ecx,r
+         sub    ecx,ebx
+         mov    ebx,u
+         sub    ebx,o
+         inc    ebx                     { bl = Fensterh”he }
+         mov    bh,cl                  { bh,cx = Fensterbreite }
+         add    edi, base
+         mov    al,' '
+         mov    ah,textattr
+@wclo:   or     bl,bl
+         jz     @wcende                 { Fenster ist gel”scht }
+         cld
+         rep    stosw                  { Fensterbereich l”schen mit del }
+         mov    cl,bh                  { Fensterbreite holen }
+         add    edx,esi                  { N„chste Fensterzeile }
+         mov    edi,edx
+         dec    bl
+         jmp    @wclo
+@wcende: call   mon
+{$ENDIF }
+end;
+
+procedure fwrt(x,y:word; var s:string); assembler;
+asm
+{$IFDEF BP }
+         push ds
+         cld
+         mov    es,base
+         mov    ax, y
+         dec    al
+{        mov    cl,5
+         shl    ax,cl
+         mov    di,ax
+         shl    ax,1
+         shl    ax,1
+         add    di,ax }
+         mul    zpz
+         shl    ax,1
+         mov    di,ax
+         add    di,x
+         add    di,x
+         sub    di,2
+         mov    ah,textattr
+         lds    si,s
+         mov    ch,0
+         lodsb
+         mov    cl,al
+         jcxz   @nowrt
+@lp:     lodsb
+         stosw
+         loop   @lp
+@nowrt:  pop ds
+{$ELSE }
+         cld
+         mov    edi,base
+         mov    eax, y
+         dec    eax
+         mul    zpz
+         shl    eax,1
+         mov    edi,eax
+         add    edi,x
+         add    edi,x
+         sub    edi,2
+         mov    ah,textattr
+         mov    esi, s
+         mov    ch,0
+         lodsb
+         mov    cl,al
+         jcxz   @nowrt
+@lp:     lodsb
+         stosw
+         loop   @lp
+@nowrt:
+{$ENDIF }
+end;
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
 
@@ -170,7 +517,6 @@ end;
 
 
 procedure rahmen1(li,re,ob,un:byte; txt:string);
-var i : byte;
 begin
   normtxt;
   moff;
@@ -185,7 +531,6 @@ end;
 
 
 procedure rahmen2(li,re,ob,un:byte; txt:string);
-var i : byte;
 begin
   normtxt;
   moff;
@@ -199,7 +544,6 @@ end;
 
 
 procedure rahmen3(li,re,ob,un:byte; txt:string);
-var i : byte;
 begin
   normtxt;
   moff;
@@ -240,16 +584,13 @@ end;
 Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
 var i : byte;
   j: Integer;
-  x: pointer;
 begin
   if (x2-x1<1) or (y2-y1<1) then begin
     writeln('WPULL error');
     halt(1);
     end;
   savecursor;
-{$IFNDEF ver32}
   cursor(curoff);
-{$ENDIF}
   normwin;
   i:=1;
   while not pullw[i].free do
@@ -546,5 +887,9 @@ begin
   warrcol:=7;
   selp:=seldummy;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
-
+}

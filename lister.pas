@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Lister - PM 11/91 }
 
@@ -197,12 +198,13 @@ var   lstack  : array[0..maxlst] of record
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
-
+{$IFDEF BP }
       lEmsPage: word;      { aktuelle Seite fr app_l }
       lEmsOffs: word;      { aktueller Offset fr app_l }
       lXmsPage: word;
       lXmsOffs: word;
       EmsBSeg : word;
+{$ENDIF }
       MemFlag : byte;      { Ziel fr app_l: 0=Heap, 1=EMS, 2=XMS, 3=full }
 
 
@@ -410,7 +412,9 @@ procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
 begin
   if not inited then init;
   if lstackp>=maxlst then interr('Overflow');
+{$IFDEF BP }
   lstack[lstackp].emsb:=emsbseg;
+{$ENDIF }
   inc(lstackp);
   new(lstack[lstackp].l);
   alist:=lstack[lstackp].l;
@@ -447,7 +451,9 @@ begin
     end;
   mmm:=0;
   memflag:=0;
+{$IFDEF BP }
   EmsBSeg:=$ffff;
+{$ENDIF }
 end;
 
 function EmsPtr(p:lnodep):lnodep;
@@ -507,7 +513,9 @@ begin
   dispose(lstack[lstackp].l);
   dec(lstackp);
   alist:=lstack[lstackp].l;
+{$IFDEF BP }
   emsbseg:=lstack[lstackp].emsb;
+{$ENDIF }
 end;
 
 
@@ -590,6 +598,7 @@ begin
                 else memflag:=2;
                 lastheap:=last;
               end;
+{$IFDEF BP }
         1 : if lEMSpage>=EmsPages-1 then
               if xmspages>0 then
                 memflag:=2
@@ -601,6 +610,7 @@ begin
               memfull;
               memflag:=3;
             end;
+{$ENDIF }
       end;
     mmm:=0;
     end;
@@ -1521,3 +1531,9 @@ begin
 end;
 
 end.
+{ 
+  $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Timing-Listen, Tastenmakros, GebÅhrenzonen, Header,  }
 {              Nodelisten, Tarifgruppen                             }
@@ -585,7 +586,7 @@ var brk      : boolean;
   end;
 
   procedure display;
-  var i,j,xx : shortint;
+  var i,j: shortint;
       tr     : timerec;
       tt     : string[12];
       komm   : string[25];
@@ -1031,7 +1032,6 @@ var brk      : boolean;
       phe   : phoneap;
       i,j   : integer;
       first : boolean;
-      s     : string[20];
 
     procedure qsort(l,r:integer);
     var i,j : integer;
@@ -1170,7 +1170,7 @@ var brk      : boolean;
   var   x,y   : byte;
         tt    : tet1;
         add   : integer;
-        i,j,k : integer;
+        i,j : integer;
         sort  : array[1..maxzones] of byte;
         s     : string[80];
   begin
@@ -1423,7 +1423,6 @@ var brk      : boolean;
 
     procedure del_it;
     var nlp : NL_ap;
-        i   : integer;
     begin
       with nodelist^[a+p] do
         if processor<>nil then
@@ -2046,8 +2045,12 @@ begin
   if ParG2 then gtest2;
 end;
 
-
 {$I XP10.INC}    { Timinglisten-Interpreter }
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - MausNet }
 
@@ -58,7 +59,6 @@ var t,t2 : text;
     p,p2 : byte;
     x,y  : byte;
     n    : longint;
-    gel  : byte;
     fehlerflag : boolean;
     empf : string[AdrLen];
     rec  : longint;
@@ -814,4 +814,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

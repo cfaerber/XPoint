@@ -10,10 +10,10 @@
 
 { YooHoo/EMSI - Mailer - Modul }
 
-const Y_DietIfna = $0001;   { Capability Flags }
+const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
       Zed_Zapper = $0008;
-      Does_Ianus = $0010;
+      {Does_Ianus = $0010; }
       Do_Domain  = $4000;
       WaZooFReq  = $8000;
       MyCap      = Zed_Zipper + Zed_Zapper;
@@ -44,8 +44,6 @@ var   hello   : record
                 end;
       hellopkt: array[0..sizeof(hellor)+1] of char absolute hello;
       ZedZap  : boolean;
-
-      SLO     : boolean;      { SEAlink Overdrive }
 
       _timer : array[0..timers-1] of word;
       ENDE   : boolean;
@@ -175,7 +173,7 @@ begin
 end;
 
 procedure set_time(secs:longint);
-var y,m,d : word;
+var y,m : word;
     h,min,s: word;
 begin
   if secs<0 then exit;
@@ -190,7 +188,6 @@ begin
     dec(secs,tagsec*tage[m]);
     inc(m);
     end;
-{  d:=secs div tagsec + 1; MK 10.02.00 unnîtig }
   secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
@@ -267,7 +264,6 @@ begin
     ProcessTimers;
     case state of
       0 : begin                           { FTS-007 S. 8 }
-            SLO:=(bauddetect>2400);
             StartTimer(ti_All1,30);
             StartTimer(ti_CRs,2);
             state:=1;
@@ -395,17 +391,6 @@ begin
   else
     fmSH:=iif((c=ACK),2,1);
 end;
-
-
-procedure WriteHello;
-var f : file;
-begin
-  assign(f,'hello');
-  rewrite(f,1);
-  blockwrite(f,hello.h,sizeof(hello.h));
-  close(f);
-end;
-
 
 function fmRH(state:byte):boolean;   { Receive Hello Packet }
 var offset : word;
@@ -893,7 +878,6 @@ var i       : integer;
       rbytes: longint;     { tatsÑchlich Åbertragene Bytes }
       secs : longint;
       cps  : longint;
-      errs : longint;
       i    : integer;
 
     function addtime(t:datetimest; secs:longint):string;
@@ -920,7 +904,6 @@ var i       : integer;
         time:=gettoken(s,' ');             { Uhrzeit }
         fn:=ustr(GetToken(s,','));         { Dateiname }
         s:=s+',';
-        errs:=0;
         rbytes:=-1;
         while s<>'' do begin
           ss:=GetToken(s,',');
@@ -929,8 +912,8 @@ var i       : integer;
           LoString(ss);
           if ss='bytes' then bytes:=num else
           if ss='s'     then secs:=num else
-          if ss='cps'   then cps:=num else
-          if ss='errors' then errs:=num;
+          if ss='cps'   then cps:=num {else
+          if ss='errors' then !? ;      }
           end;
         if rbytes=0 then      { komplett-Recovery }
           log('*','Skipped '+fn+'; '+strs(bytes)+'b')
@@ -1073,6 +1056,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.4  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -72,7 +72,7 @@ procedure getstring; begin end;
 {$ELSE}
 { JG:08.02.00 In inline-Asm umgesetzt... & Bugfix wegen ($F-  ---->  $F+) }
 
-procedure decode; assembler; 
+procedure decode; assembler;
 asm
           push ds
           mov ax,seg @data        { JG: Eigentlich ueberfluessig, aber sicher ist sicher}
@@ -362,8 +362,6 @@ type  uumarkrec = record
                   end;
 
 var tmp,fn   : pathstr;
-    p        : byte;
-    ende     : boolean;
     useclip  : boolean;
     brk      : boolean;
     decmark  : boolean;
@@ -544,6 +542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

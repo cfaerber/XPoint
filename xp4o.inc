@@ -23,7 +23,6 @@ var x,y,xx  : byte;
     nfeld   : integer;
     loesch  : string[90];
     n,gel   : longint;
-    rec,r   : longint;
     leer    : boolean;
     next    : longint;
     null    : byte;
@@ -144,7 +143,6 @@ var x,y,wdt: byte;
     hzeit  : integer;
     hzahl  : boolean;
     dat    : datt;
-    t      : taste;
     bi     : shortint;
 
   procedure getdatum;
@@ -361,7 +359,6 @@ const tmp     = 'reorg.$$$';
       maxbufs = 20;
 var x,y,yy  : byte;
     lastproz: byte;
-    brk     : boolean;
     abl     : byte;
     ablage  : byte;
     n,count : longint;
@@ -419,8 +416,8 @@ var x,y,yy  : byte;
       rr       : word;
       mid      : string[4];
       domove   : boolean;
-      rec,xadr : longint;
-      b,xabl   : byte;
+      rec : longint;
+      b   : byte;
       mpos     : longint;
 
     function MsgOK:boolean;  { Test, ob Xgepostete Msg schon verschoben wurde }
@@ -489,9 +486,7 @@ var x,y,yy  : byte;
       if (size>min(bsize,maxavail-15000)) then begin
         flushbufs;
         while size>0 do begin
-{$IFNDEF WIN32}
           blockread(f1,p^,min(bsize,size),rr);
-{$ENDIF}
           blockwrite(f2,p^,rr);
           dec(size,rr);
           end
@@ -500,9 +495,7 @@ var x,y,yy  : byte;
         inc(bufs);                       { Nachricht in n„chsten Puffer lesen }
         bufa[bufs].size:=size;
         getmem(bufa[bufs].bp,size);
-{$IFNDEF WIN32}
         blockread(f1,bufa[bufs].bp^,size,rr);
-{$ENDIF}
         end;
       if bufs=maxbufs then
         flushbufs;
@@ -538,7 +531,7 @@ var x,y,yy  : byte;
 
   procedure clkilled(ablage:byte);
   var f   : file of boolean;
-      b,i : boolean;
+      b: boolean;
   begin
     if exist(KilledDat) then begin
       assign(f,KilledDat);
@@ -595,7 +588,6 @@ var x,y,yy  : byte;
   end;
 
 begin
-  brk:=false;
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
   bsize:=min(maxavail-10000,50000);
   getmem(p,bsize);
@@ -714,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.3  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

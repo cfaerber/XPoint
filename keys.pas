@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Tastendefinitionen und Tastatur-Routinen }
 
@@ -241,7 +242,7 @@ end;
 
 
 Procedure pushkeyv(var t:taste);
-{$IFNDEF WIN32 }
+{$IFDEF BP }
 const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
                  (30,48,46,32,18,33,34,14,15,28,37,38,28,49,24,25,   { ^P  }
                   16,19,31,20,22,47,17,45,44,21,1,43,27,7,53,        { ^_  }
@@ -354,4 +355,9 @@ begin
   forwardkeys:='';
   func_proc:=func_dummy;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Allgemeiner Stapel }
 
@@ -14,7 +15,6 @@
 unit stack;
 
 interface
-
 
 procedure spush(var x; size:word);
 procedure spop(var x);
@@ -46,10 +46,8 @@ end;
 procedure spush(var x; size:word);
 var p : stp;
 begin
-{$IFNDEF WIN32}
   if maxavail<size+128 then
     error('Memory Overflow');
-{$ENDIF}
   new(p);
   if tail=nil then begin
     tail:=p;
@@ -83,4 +81,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 {----- Fileserver --------------------------------------------------}
 
@@ -27,11 +28,10 @@ end;
 { msg => aktuelle Nachricht wird eingelesen }
 
 procedure FS_ReadList(msg:boolean);
-const crlf  = #13#10;
+const
       tbufs = 2048;
 var absender : string[Adrlen];
     box      : string[8];   { das ist auf jeden Fall eine Zerberus-Box.. }
-    size     : longint;
     x,y,p,p2 : byte;
     f        : file;
     fn       : pathstr;
@@ -291,7 +291,6 @@ var d     : DB;
       s       : string;
   label again;
   begin
-{$IFNDEF WIN32}
     showkeys(10);
     OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
     list_readfile(fs+'.fl',0);
@@ -310,7 +309,6 @@ var d     : DB;
       freeres;
       end;
     aufbau:=true;
-{$ENDIF}
   end;
 
   procedure GetTransCeiver;
@@ -370,9 +368,7 @@ var d     : DB;
     dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
     source:='*.*'; dest:='';
     maddstring(3,2,getres2(818,2),source,41,70,'>'); mhnr(890);
-{$IFNDEF WIN32}
     msetvfunc(UUsendTestSourcefile);
-{$ENDIF}
     maddstring(3,4,getres2(818,3),dest,41,79,'');
     readmask(brk);
     enddialog;
@@ -402,7 +398,6 @@ var d     : DB;
   var s : string[100];
       p : byte;
   begin
-{$IFNDEF WIN32}
     s:=prev_line;
     while (s<>#0) and (left(lstr(s),10)<>'directory ') do
       s:=prev_line;
@@ -422,7 +417,6 @@ var d     : DB;
         end;
       end;
     UU_directory:=s;
-{$ENDIF}
   end;
 
   procedure AskStart;
@@ -489,18 +483,14 @@ begin
                 else writeln(t,UU_directory+s);
                 s:=next_marked;
                 end;
-{$IFNDEF WIN32}
               closelist;
-{$ENDIF}
               end;
             close(t);
             uucomm('Request');
             AskStart;   { sofort anrufen? }
             end
           else
-{$IFNDEF WIN32}
             if not enterfiles then closelist;
-{$ENDIF}
           end
         else if comm='SENDEN' then
           UUSendfile
@@ -534,9 +524,7 @@ begin
                 AskStart;   { sofort anrufen? }
                 end;
               end;
-{$IFNDEF WIN32}
             closelist;
-{$ENDIF}
             end;
         end;
       if existf(t) then
@@ -544,4 +532,9 @@ begin
       end;
     end;
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

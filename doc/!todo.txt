@@ -35,55 +35,13 @@ Kann man hier auch noch Vorschläge für XP3.20 los werden?
 
 Gleich mal das für mich wichtige:
 
--config/optionen/Allgemeines/Quote-Zeichen:
-sollte für öffentliche Nachrichten unter edit/gruppen
-festlegbar sein.(Grund: Wer über ein Fidogate ins Usernet schreibt, kann beim quoten zwischen >HG im Fido und nur > im Usenet entscheiden.
+[...]
 
 -unter edit/gruppen sollte damit auch festlegbar sein das beim quoten, immer X-XP-FTO: All gesetzt wird.
 
 -Systemlast bleibt trotz Parameter /w auf 100% (Aber auch ashcon bei 3.12.
 
 MfG HG
-
---------------
-
-From AvataR@AvataR-DC.de Fri Dec 31 17:13:00 1999
-Newsgroups: de.comm.software.crosspoint
-Subject: [XPDEV] Wunsch für Nachrichtenanzeige
-From: AvataR@AvataR-DC.de (Garvin Hicking)
-Date: 31 Dec 1999 17:13:00 +0100
---------
-Hi!
-
-(Meine erste Mail mit XP 3.20...)
-
-
-Ich verwende ziemlich gerne das Programm XPure, was unter anderem die
-Signaturen abtrennt und im Header speichert. Diesen filtere ich dann
-später per CS/XPF und erzeuge einen neuen Header "X-XP-HOMEPAGE", in dem
-etwaige URLs gespeichert werden. Zudem werden (oder eher: sollen) alle
-auftauchenden URLs im Body in den Header "X-XP-URLS" geschrieben werden,
-woran ich derzeit arbeite.
-
-Jetzt mein Wunsch: Es wäre ganz schön, wenn ich in in Config/Anzeige/Kopf
-nicht nur vordefinierte Einträge einfügen könnte, sondern auch meine
-selbstgenerierten Header. So würde ich gerne die obigen aufgeführten
-Header auch in diese Liste an einer bestimmten Position einfügen können.
-
-Mit dem XP-Source kann ich selber nicht viel anfangen, soweit reichen
-meine Schul-Pascalkenntnisse leider nicht. Auch in Blick in den Source hat
-in mir das Grauen hervorgehoben, daher wäre es sehr nett, wenn das jemand
-für mich einbauen könnte. Oder mir sagt jemand, an welcher Stelle in den
-Sourcen auf mein Problem bezogen wichtig sind, dann würde ich mich halt
-selber dahinter setzen...
-
-Vielen Dank jedenfalls!
-
-
---
-Bye,                 --[=  AvataR@AvataR-DC.de (PGP available)  =]--
-Garvin               --[=    http://www.AvataR-DC.de/AvataR/    =]--
-
 
 
 -----------------
@@ -133,38 +91,6 @@ da alle Nachrichten vom Puffer18 drinhängen.
 Gruss                                              (66386 St. Ingbert)
    Klaus
 
-
-------------------------
-
-From kEMAr@lytec.tj Mon Jan 03 01:00:00 2000
-To: mk@happyarts.de
-Subject: mime funktion
-From: kEMAr@lytec.tj
-Date: 03 Jan 2000 00:00:00 +0000
---------
-
-hejo,
-
-  ich habe ein Problem mit der mime funktion.
-  a) es wird ein Nachspann angezeigt, welcher
-     aus irgendwelchen kompletten Nachrichten
-     besteht, die hinter der mime nachricht
-     im mpuffer kleben
-  b) wenn ich escape druecke aus der auswahlliste
-     fuer die einzelnen mime teile, so wird
-     die nachricht auf loeschen gesetzt
-
-  sowas habe ich schon lange vermisst, mal gucken
-  was ich mit dem schoenen munpack jetzt mache,
-
-cja,
-
-
-_ kEMAr.dESt/ROY
-_ VOiCE 49-341-3013148 fAX 49-341-3013149
-_ httP://lYtEC.tj
-_ LEiPZiG.CONNEWiTZ
-_ iDYLLE LEBT
 
 ----------------------------
 
@@ -224,7 +150,7 @@ nur kurze Nachrichten bearbeitet werden sollen. Nach einem
 Neustart von XP funktioniert es wieder.
 
 Sendefunktionen
-- Zieladresse sollte im Absendefenster veränderbar sein
+[...]
 - setzen von Expire, Supersedes (natürlich auch: Auswerten dieser
   Funktionen durch XP)
 - Versenden von Eigencancels
@@ -335,10 +261,7 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
   (Was nicht abwertend fuer Karl-Heinz sein Engagement
    angesehen werden soll, aber ...)
 
-- Suchfunktion
-  - nach MSG-ID
-    (Idealerweise in der Form, dass man im Lister die MsgID nur noch
-     markieren muss und dann suchen kann)
+[...]
 
 - FIDO-Filerequest ueber alternative Rufnummer
 - FIDO-Auswertung des X75-Flag in der Nodeliste
@@ -348,12 +271,11 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
 
 - Cancel-Unterstuetzung fuer ZC-Points
 
-- Wiedervorlagefunktion funktioniert nach dem 13.12.99 nicht mehr.
-  In den Zusammenhang sollte er XP auf aehnliche Sachen ueberpruefen.
+[...]
 
-- Compilieren von XP mit neuer CRT-Routine (Pentium-BUG)
+# Disku-In auf Mailadressen (zumindest die eigene) bei ZC zulassen.
+  # Sendefenster-Zusatz...PM-Antworten an ??
 
-- Disku-In auf Mailadressen (zumindest die eigene) bei ZC zulassen.
 
 2 ++++++++++++++++++++++++++++
 - direktes Aufsetzen auf CAPI ohne umstaendliches Fossil...
@@ -361,7 +283,7 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
 - Mime-Multipart
   - QP- und Plaintext-ueberpruefung und nur einen belassen
 
-- Editierbarkeit des EMP: beim Reply
+[...]
 
 - Verschluesselung der Passwoerter (sowohl im .cfg als auch mit ***
   unter edit/boxen/edit/
@@ -381,11 +303,7 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
 - FIDO Wahlweises beibehalten aller Kludges (auch SEEN-BYs) bei ZFIDO.EXE.
 - UUCP Wahlweises beibehalten aller Headereintraege (auch XREF)
 
-- SAA-konforme Bedienung:
-  - Shift-Cursor: markieren
-  - Shift-Del: ausschneiden
-  - Shift-Ins: einfuegen
-  - Ctrl-Ins: kopieren
+[...]
 
 - Timingliste
   - Aufnahme von wartung/Dupekill + wartung /packen
@@ -417,7 +335,8 @@ ich hoffe, das Peter wenigstens noch einiges davon umsetzt.
   # wird nicht gehen, weil die Funktion dafuer komplett umgeschrieben
   # werden muss.
 
-- Anzeige der noch unversandten Mails und News
+# Anzeige der noch unversandten Mails und News
+  # Nachricht Unversandt Zeigen ???
 
 - Mime-Multipart
   - evtl. einbinden eines (DOS-)Browsers (HTML)
@@ -544,10 +463,7 @@ MID: XYZ@foo.bar
   die zweite. Die erste NAchricht bleibt als ungelesen/unbearbeitet
   liegen.
 
-- Ein ganz besch... Bug: die F4-Taste!
-  Wer nachricht/aendern/gelesen macht und danach F4 drueckt, bis alle Nach-
-  richten weg sind, hat keine Probleme - wehe aber, es ist keine Nachricht
-  mehr zu sehen!!! - XP stuerzt mit einem Datenbankfehler ab.
+[...]
 
 - Ein noch schlimmerer BUG:
   Wer bei RFC/UUCP die mailer-zeile loescht, bekommt zum Schluss Mails
@@ -685,39 +601,6 @@ _Homepage:_ http://homepages.fbmev.de/bm612973/
 
 
 --------------------------------------------------------------------------------------
-From j.merkel@tbx.berlinet.de Tue Feb 15 12:34:00 2000
-X-Mailer: CrossPoint v3.20.015 DOS/16 beta R/C1664
-Message-ID: <7YtMvTw$btB@tbx-j.merkel.tbx.berlinet.de>
-X-Gateway: ZCONNECT UU tbx.berlinet.de [DUUCP BETA vom 23.05.1999]
-References: <7Ym7uWTZ5dB@basicguru.com> <7YqCJiBJ5dB@basicguru.com> <nk5ias84vorgog84b2fea59lb3pgrprfr0@4ax.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-From: j.merkel@tbx.berlinet.de (Joachim Merkel)
-Subject: Re: Bugs im neuen UUZ Beta 18
-Date: 15 Feb 2000 12:34:00 +0100
-Path: uni-berlin.de!fu-berlin.de!newserv!crowly.berlinet.de!tbx.berlinet.de!j.merkel
-Newsgroups: de.comm.software.crosspoint
-Distribution: world
-Lines: 14
-Xref: uni-berlin.de de.comm.software.crosspoint:38874
-
-Markus Kaemmerer  (mk@openxp.de) schreibt:
-
-> [...] Ich weiß auch, das wir uns Mühe geben, mit
-> jedem Problem so gut wie möglich fertig zu werden und so viel
-> wie es geht die User von XP und natürlich die Entwickler von
-> Tools in den Prozeß einbinden wollen.
-
-Ändert auch mal die Voreinstellung beim Extrahieren
-von Mime-Nachrichten von Überschreiben nach Anhängen oder
-ist das ein unüberwindbares Problem ? ;-))
-
--- 
-Salut
- _)oachim
-
---------------------------------------------------------------------------------------
 From listen@jpberlin.de Wed Feb 16 19:45:00 2000
 Return-path: <sentto-398616-1831-mk=happyarts.de@returns.onelist.com>
 Envelope-to: mk@happyarts.de
@@ -763,55 +646,14 @@ nicht in eMailadressen bzw. in Brettern erlaubt sind. Soweit ich
 weiß sind doch die in eMailadressen und Brettern erlaubten  
 Zeichen klar definiert, so daß es doch möglich sein müßte eine  
 Plausibilitätsprüfung durchzuführen.
-- Im Absendefenster gibt es unter wenn U für Zusatz drückt die  
-Möglichkeit ein "Antwort-An" zu setzen. Leider können hier die  
-Kurznamen nicht verwendet werden. Das wäre ziemlich praktisch  
-wenn das ginge, würde das wechseln zwischen verschiedenen Antwort- 
-Ans erleichtern.
 
+[...]
 
 Mark
 
 -- 
 Du bist nicht auf der Welt, um so zu sein, wie andere Dich haben möchten.
 ## CrossPoint v3.20.021 R ##
-
---------------------------------------------------------------------------------------
-From outpost.one@BTINTERNET.com Sun Feb 13 17:05:00 2000
-Path: uni-berlin.de!fu-berlin.de!newsfeed.nacamar.de!newsfeed.icl.net!news.freedom2surf.net!btnet-peer!btnet!mendelevium.btinternet.com!not-for-mail
-From: outpost.one@BTINTERNET.com (Martin Foster)
-Newsgroups: de.comm.software.crosspoint
-Subject: [ENGLISH] Beta 019 - English installation
-Date: 13 Feb 2000 17:05:00 +0100
-Organization: The XProject!
-Lines: 19
-Message-ID: <7YnJRc81JyB@outpost.one.btinternet.com>
-NNTP-Posting-Host: host62-6-79-151.btinternet.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Newsreader: CrossPoint v3.12d R/C24108
-X-Mailer: UKA_PPP 1.7x1
-Xref: uni-berlin.de de.comm.software.crosspoint:38762
-
-Hi Folks!
-
-To do a fresh installation, I've unzipped the beta019 files into a new  
-directory, copied XP-E.RES and XP-E.HLP into the same directory and started  
-XP with the /l:E switch. XP does NOT start up in English, it starts up in  
-German. However, once the initial installation has been completed and XP is  
-shut down and re-started with the /l:E switch, it DOES start up in English.  
-Can somebody please correct this or maybe I did something wrong?
-
-In addition, XPFM-E.RES and XPUU-E.RES are not included with the English  
-resources. Without these files, it is impossible to do a Netcall -- can  
-somebody please attend to this also.
-
-Regards,
-Martin
-
-*** CrossPoint Support (UK) ***
-***    2:250/333@fidonet    ***
 
 -------------------------------------------------------------------------------------
 Empfaenger : Markus Kaemmerer @ 2:248/2004.1
@@ -831,71 +673,7 @@ Fido/Crash eingetragen hat und spaeter einen loeschen moechte, muss man
 immer den Crash editieren und alle Dateien loeschen... Das ginge doch
 viel einfacher mit der Taste Entf(ernen) in der Auswahlliste.
 
-
 Ciao, TG
---------------------------------------------------------------------------------------
-From kuddelsoft@gmx.de Thu Feb 17 02:09:00 2000
-Return-path: <sentto-398616-1865-mk=happyarts.de@returns.onelist.com>
-Envelope-to: mk@happyarts.de
-Delivery-date: Thu, 17 Feb 2000 06:41:02 +0100
-Received: from [208.48.218.20] (helo=c3.egroups.com)
-	by mx02.kundenserver.de with smtp (Exim 2.12 #2)
-	id 12LJgR-00037z-00
-	for mk@happyarts.de; Thu, 17 Feb 2000 06:41:00 +0100
-X-eGroups-Return: sentto-398616-1865-mk=happyarts.de@returns.onelist.com
-Received: from [10.1.10.36] by c3.egroups.com with NNFMP; 17 Feb 2000 05:40:58 -0000
-Received: (qmail 3460 invoked from network); 17 Feb 2000 05:40:58 -0000
-Received: from unknown (10.1.10.26) by 10.1.10.36 with QMQP; 17 Feb 2000 05:40:58 -0000
-Received: from unknown (HELO mail1.gmx.net) (194.221.183.61) by mta1.onelist.com with SMTP; 17 Feb 2000 05:40:57 -0000
-Received: (qmail 2889 invoked by uid 0); 17 Feb 2000 05:40:56 -0000
-Received: from pc19f44c5.dip.t-dialin.net (HELO gmx.de) (193.159.68.197) by mail1.gmx.net with SMTP; 17 Feb 2000 05:40:56 -0000
-Received: by gmx.de (CrossPoint v3.20.021beta DOS/16 R/C3899); 17 Feb 2000 06:38:08 +0100
-To: xpdeveloper@onelist.com
-Message-ID: <7Z3EJQTnr0B@gmx.de>
-X-Mailer: CrossPoint v3.20.021beta DOS/16 R/C3899, via SMTP (UKAW v1.72g)
-Organization: KUddELSoFT is watching you ?¿?
-MIME-Version: 1.0
-Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
-Delivered-To: mailing list xpdeveloper@onelist.com
-Precedence: bulk
-List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
-Date: 17 Feb 2000 02:09:00 +0100
-From: kuddelsoft@gmx.de (Frank Mollenhauer)
-Reply-to: xpdeveloper@onelist.com
-Subject: [XPDev] BUG !!! in Beta 21!
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-
-From: kuddelsoft@gmx.de (Frank Mollenhauer)
-
-Moin Moin xpdeveloper,
-
-ich habe gerade einen heftigen Bug gefunden, der auch schon in der Beta 20
-war.
-Bei Beta 19 tritt er bei mir dann nicht mehr auf.
-Soweit habe ich es ausprobiert.
-
-So koennt Ihr ihn nachvollziehen:
-
-Aus einer Mail ein paar Zeilen in die Zwischenablage kopieren.
-Also 'W/F2/Windows Clipboard'
-
-Dann ne neue Mail schreiben
-Den Text aus der Zwischenablage wieder einfuegen.
-
-Soweit funktioniert es jetzt noch.
-
-Jetzt mit dem Cursor an den Zeilen Anfang dieser gerade eingefuegten
-Zeilen gehen und Zeichen entfernen mit 'Entf'
-Nach kurzer Zeit stehen nicht nur die paar Zeilen aus der Zwischenablage
-in der Mail, sondern sehr sehr viele kryptische Zeichen.
-Beim nach unten scollen stuerzt CrossPoint dann mit dieser Meldung ab:
-
-Fehler_ <interner Fehler>
-Runtime error 201 at 0B64:5F93
-
-Ich hoffe ich konnte es einigermassen beschreiben.
-
 
 --------------------------------------------------------------------------------------
 From listen@jpberlin.de Wed Feb 16 21:29:00 2000
@@ -967,64 +745,6 @@ Mark
 -- 
 
 --------------------------------------------------------------------------------------
-From kuddelsoft@gmx.de Thu Feb 17 01:56:00 2000
-Return-path: <sentto-398616-1863-mk=happyarts.de@returns.onelist.com>
-Envelope-to: mk@happyarts.de
-Delivery-date: Thu, 17 Feb 2000 06:40:54 +0100
-Received: from [208.48.218.18] (helo=fl.egroups.com)
-	by mx03.kundenserver.de with smtp (Exim 2.12 #2)
-	id 12LJgK-0000Cr-00
-	for mk@happyarts.de; Thu, 17 Feb 2000 06:40:52 +0100
-X-eGroups-Return: sentto-398616-1863-mk=happyarts.de@returns.onelist.com
-Received: from [10.1.10.38] by fl.egroups.com with NNFMP; 17 Feb 2000 05:40:50 -0000
-Received: (qmail 10340 invoked from network); 17 Feb 2000 05:40:50 -0000
-Received: from unknown (10.1.10.27) by 10.1.10.38 with QMQP; 17 Feb 2000 05:40:50 -0000
-Received: from unknown (HELO mail1.gmx.net) (194.221.183.61) by 10.1.10.27 with SMTP; 17 Feb 2000 05:40:50 -0000
-Received: (qmail 2858 invoked by uid 0); 17 Feb 2000 05:40:48 -0000
-Received: from pc19f44c5.dip.t-dialin.net (HELO gmx.de) (193.159.68.197) by mail1.gmx.net with SMTP; 17 Feb 2000 05:40:48 -0000
-Received: by gmx.de (CrossPoint v3.20.021beta DOS/16 R/C3899); 17 Feb 2000 06:38:08 +0100
-To: xpdeveloper@onelist.com
-Message-ID: <7Z3EIXhIr0B@gmx.de>
-X-Mailer: CrossPoint v3.20.021beta DOS/16 R/C3899, via SMTP (UKAW v1.72g)
-Organization: KUddELSoFT is watching you ?¿?
-MIME-Version: 1.0
-Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
-Delivered-To: mailing list xpdeveloper@onelist.com
-Precedence: bulk
-List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@ONElist.com>
-Date: 17 Feb 2000 01:56:00 +0100
-From: kuddelsoft@gmx.de (Frank Mollenhauer)
-Reply-to: xpdeveloper@onelist.com
-Subject: [XPDev] BUG in der 'Suchen' Funktion
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-
-From: kuddelsoft@gmx.de (Frank Mollenhauer)
-
-Hallihallo xpdeveloper,
-
-ein kleiner Optischer Bug ist in der 'Suchen' Funktion.
-
-Als Beispiel mal die User Suche.
-Aber auch woanders tritt der Fehler auf:
-
-             +- User-Suche --------------------------------------+
-             |                                                   |
-             |  Suchbegriff   test@test.de                       |
-             |                                                   |
-             |  Optionen      iae            Bretter   gewaehlt  |
-             |                                                   |
-             |                                                   |
-             |                                                   |
-             +---------------------------------------------------+
-Wie ihr seht, steht unter 'Optionen' auch ein 'ae' Umlaut drin.
-Der gehoert da sicher nicht mit rein, oder?
-Sorry, dass er bei Euch gewandelt ankommt (also als 'AE')
-Angezeigt wird ein richtiger Umlaut mit Doppelpunkten drauf ;-)
-
--- 
-Goodbye,                                          \||/
-   Frank        
 From listen@jpberlin.de Thu Feb 17 20:00:00 2000
 Return-path: <sentto-398616-1917-mk=happyarts.de@returns.onelist.com>
 Envelope-to: mk@happyarts.de

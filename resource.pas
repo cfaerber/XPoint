@@ -119,10 +119,8 @@ begin
   fm:=filemode; filemode:=0;   { nur lesen }
   reset(f^,1);
   filemode:=fm;
-{$IFNDEF WIN32}
   if inoutres<>0 then
     error(ioerror(ioresult,'can''t open '+ustr(fn)));
-{$ENDIF}
   seek(f^,128);
   blockread(f^,blocks,2);
   seek(f^,128+16);
@@ -388,6 +386,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

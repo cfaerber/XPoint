@@ -27,7 +27,7 @@ uses
 {$ELSE }
   sysutils,
 {$ENDIF }
-  xpglobal, typeform;
+  xpglobal, typeform, dosx;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -301,29 +301,6 @@ begin
   if IORes <>0 then
     error(ioerror(IORes,'Schreibfehler in Ausgabedatei'));
 end;
-
-
-{$ifdef ver32}
-
-function OutputRedirected:boolean;
-begin
-  OutputRedirected:=false;
-end;
-
-{$else}
-
-function OutputRedirected:boolean;
-var regs : registers;
-begin
-  with regs do begin
-    ax:=$4400;
-    bx:=textrec(output).handle;
-    intr($21,regs);
-    OutputRedirected:=(dx and 128=0);
-    end;
-end;
-
-{$endif}
 
 
 procedure getpar;
@@ -1370,6 +1347,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.4  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

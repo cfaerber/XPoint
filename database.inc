@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { B-Tree-Routinen von DATABASE.PAS    }
 { werden $Included, wegen Platzmangel }
@@ -422,7 +423,6 @@ var bf   : inodep;
 
   procedure searchequal;
   var ok    : boolean;
-      i     : integer;
       tmark : integer;
   begin
     with dp(dbp)^ do begin
@@ -491,4 +491,9 @@ begin
     end;
   freenode(bf);
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

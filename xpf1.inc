@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XPFIDO - Nodeliste auslesen/abfragen }
 { MH: Flaggr”áe 40 -> 65 / Liste ge„ndert }
@@ -105,7 +106,6 @@ var fa     : fidoadr;
     nadr,l : longint;
     nfile  : byte;
     np     : ^nodea;
-    s      : ^string;
     found  : boolean;
     _adr   : longint;
     points : integer;
@@ -333,19 +333,15 @@ begin
       end;
   until last or (left(user.name,length(name))>=name);
   if (left(user.name,length(name))=name) then begin
-{$IFNDEF WIN32}
     openlist(2,78,10,11,0,'/NS/SB/NLR/DM/APGD/');
-{$ENDIF}
     anz:=0;
     repeat
       with user do begin
         ReadNdata(fnr,fadr,ni);
-{$IFNDEF WIN32}
        app_l(' '+forms(TopAllStr(user.name),22)+'  '+
               forms(strs(adr[0])+':'+strs(adr[1])+'/'+strs(adr[2])+
               iifs(adr[3]=0,'','.'+strs(adr[3])),15)+' '+
               forms(iifs(adr[3]=0,ni.boxname+', '+ni.standort,ni.standort),32));
-{$ENDIF}
         inc(anz);
         if not last then
           GetNextUser
@@ -362,7 +358,6 @@ begin
       else begin
         selbox(76,min(anz+2,screenlines-6),'',x,y,true);
         height:=min(anz+2,screenlines-6)-2;
-{$IFNDEF WIN32}
         SetListsize(x+1,x+74,y+1,y+height);
         listarrows(x,y+1,y+height,col.colselbox,col.colselbox,'³');
         listboxcol;
@@ -372,7 +367,6 @@ begin
         closebox;
         if brk then s:=''
         else s:=get_selection;
-{$ENDIF}
         end;
       if s<>'' then begin
         SplitFido(trim(copy(s,26,15)),fa,DefaultZone);
@@ -381,10 +375,8 @@ begin
       else
         ni.found:=false;
       end;
-{$IFNDEF WIN32}
     closelist;
-{$ENDIF}
-    end;
+  end;
 
 ende:
   close(f);
@@ -460,7 +452,7 @@ begin
         wrt(x+10,y+4,telefon);
         wrt(x+10,y+5,fflags);
         wrt(x+11,y+7,MakeFidoAdr(fa,true));
-        wrt(x+45,y+8,status); 
+        wrt(x+45,y+8,status);
           wrt(x+62,y+8,NLfilename(datei));
         end;
       mon;
@@ -550,7 +542,6 @@ var   x,y,h   : byte;
       lastnet : word;
       sphone  : string[30];    { in Nodelistenformat konvertierte Tel.Nr. }
       skip    : boolean;
-      dummy   : string[1];
       ni      : nodeinfo;
       adr     : string[adrlen];
       d       : DB;
@@ -788,15 +779,13 @@ again:
             then begin
               inc(found);
               mwrt(x+38,y+15,strsn(found,7));
-              dummy:=gets; dummy:=gets;  { Nodetyp und -nummer berlesen }
+              gets; gets;  { Nodetyp und -nummer berlesen }
               while cpos('_',s)>0 do s[cpos('_',s)]:=' ';
               ni.boxname:=gets; ni.standort:=gets;
               ni.sysop:=gets; ni.telefon:=gets;
               with ni do
-{$IFNDEF WIN32}
                 app_l(' '+forms(iifs(apoint<>0,sysop,boxname)+', '+standort,35)+
                       '  '+forms(node_str,17)+' '+FormFidoPhone(telefon));
-{$ENDIF}
               end;
             end;
           testbrk(brk);
@@ -806,15 +795,15 @@ again:
   freemem(buf,bufsize);
   closebox;
 
-{$IFNDEF WIN32}
-  if found=0 then begin
+  if found=0 then
+  begin
     closelist;
-    if not brk then begin
+    if not brk then
+    begin
       rfehler(2126);        { 'Es wurden keine passenden Eintr„ge gefunden.' }
       goto again;
-      end;
     end;
-{$ENDIF}
+  end;
 
   if found>0 then begin
     signal;
@@ -824,30 +813,22 @@ again:
     rdispx:=x+2; rdispy:=y+h+2;
     attrtxt(col.colselrahmen);
     mwrt(x,rdispy-2,hbar(76));       { MH: rdispy-1 -> rdispy-2 }
-{$IFNDEF WIN32}
     SetListsize(x+1,x+74,y+1,y+h-1); { MH: h -> h-1             }
     listboxcol;                      { MH: Liste angepasst      }
     listarrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'³');
     listDp(ShowRQ);
     listTp(listext); listmakros:=0;
-{$ENDIF}
     repeat
       pushhp(958);
-{$IFNDEF WIN32}
       list(brk);
       pophp;
-{$ENDIF}
       n:=0;
       if not brk then begin
-{$IFNDEF WIN32}
         GetNodeInfo(copy(get_selection,39,18),ni,2);
-{$ENDIF}
         if not ni.found then
           errsound
         else begin
-{$IFNDEF WIN32}
           adr:=ni.sysop + ' @ ' +trim(copy(get_selection,39,18));
-{$ENDIF}
           if ni.ispoint then s:=adr
           else s:=ni.boxname + ', ' +adr;
           pushhp(959);
@@ -859,10 +840,8 @@ again:
           end;
         end;
     until brk or (n=1) or (n=2);
-{$IFNDEF WIN32}
     closelist;
     closebox;
-{$ENDIF}
 
     if not brk then
       case n of
@@ -882,4 +861,9 @@ again:
 
   freeres;
 end;
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

@@ -108,9 +108,7 @@ var icr : dbIndexCRec;
 
 begin
   with dp(dbp)^ do begin
-{$IFNDEF WIN32} { MK 12/99 }
     fsplit(fname,_d,_n,_e);
-{$ENDIF}
     icr.df:=_n+_e;
     assign(fi,fname+dbIxExt);
     mfm:=filemode; filemode:=$42;
@@ -237,6 +235,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

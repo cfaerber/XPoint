@@ -226,7 +226,11 @@ function  cm_key:char;
 
 implementation  {-------------------------------------------------------}
 
-uses  xp1o,xp1o2,xp1help,xp1input,xp2,xpfonts,xpe,exxec,xpnt;
+uses
+{$IFDEF BP }
+  xpfonts,
+{$ENDIF }
+  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -464,11 +468,13 @@ end;
 
 procedure XPFont;
 begin
+{$IFDEF BP }
   if not ParLCD then
     if ParFontfile[1]='*' then
       InternalFont
     else
       LoadFontfile(ParFontfile);
+{$ENDIF }
 end;
 
 {$IFDEF BP }
@@ -1568,6 +1574,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -508,17 +508,6 @@ begin
   freemem(p,8000);
 end;
 
-function PPempf:string;
-begin
-  if pm then
-    if lokalPM then                    { Empf„nger }
-      PPempf:=left(empfaenger,pos('@',empfaenger)-1)
-    else
-      PPempf:=empfaenger
-  else
-    PPempf:=mid(empfaenger,2);
-end;
-
 procedure SetCryptFlag;
 var flag : byte;
 begin
@@ -1135,6 +1124,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.6  2000/02/18 00:03:01  mk
   MH: * Sendepriotitaet in Resourcen aufgenommen
 

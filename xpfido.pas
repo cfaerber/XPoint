@@ -1205,12 +1205,10 @@ var t   : text;
     sr  : searchrec;
 
   function fdate:string;
-  var dt : datetime;
+  var
+    dt : datetime;
   begin
-
-{$IFNDEF WIN32}
     unpacktime(sr.time,dt);
-{$ENDIF}
     fdate:=formi(dt.month,2)+'/'+formi(dt.year mod 100,2);
   end;
 
@@ -2216,8 +2214,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
-

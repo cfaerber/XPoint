@@ -6,7 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-
+{ $Id$ }
 
 procedure OpenIndex(dbp:DB);   { intern }
 var icr : dbIndexCRec;
@@ -107,9 +107,7 @@ var icr : dbIndexCRec;
 
 begin
   with dp(dbp)^ do begin
-{$IFNDEF WIN32} { MK 12/99 }
     fsplit(fname,_d,_n,_e);
-{$ENDIF}
     icr.df:=_n+_e;
     assign(fi,fname+dbIxExt);
     mfm:=filemode; filemode:=$42;
@@ -234,5 +232,9 @@ begin
     close(f);
     end;
 end;
+{
+  $Log$
+  Revision 1.3  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
 
-
+}

@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Nachrichten-Autoversandt; Autoexec }
 
@@ -247,9 +248,7 @@ begin
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
         assign(t,datei);
-{$IFNDEF WIN32}
         reset(t); getftime(t,tt); close(t);
-{$ENDIF}
         dbWrite(auto,'lastfdate',tt);
         if dat>=datum1 then begin
           datum1:=0;
@@ -325,9 +324,7 @@ var sr    : searchrec;
   var p : byte;
       d : DB;
   begin
-{$IFNDEF WIN32}
     p:=cpos('.',sr.name);
-{$ENDIF}
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiDatei,left(sr.name,p-1));
     if dbFound then
@@ -655,6 +652,10 @@ begin
     end;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

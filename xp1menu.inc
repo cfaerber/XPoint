@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { XP1: MenÅfunktionen }
 
@@ -262,10 +263,8 @@ begin
           if wp then begin
             attrtxt(col.coledithead);
             moff;
-{$IFNDEF WIN32}
             wpush(1,80,1,2,'-');
             wrt(1,1,forms(' '+getres2(132,m1),80));
-{$ENDIF}
             mon;
             end;
           case m1 of           { Schablonen }
@@ -283,9 +282,7 @@ begin
            13 : editfile(CancelMsk,false,false,1,false);
            14 : miscschab;
           end;
-{$IFNDEF WIN32}
           if wp then wpop;
-{$ENDIF}
         end;
    13 : begin                { Extrakt Als... }
           ExtraktTyp:=m1-1;
@@ -429,10 +426,8 @@ begin
     attrtxt(col.colmenu[menulevel]);
     forcecolor:=true;
     if menulevel=1 then blindon(false);
-{$IFNDEF WIN32}
     wpushs(x,x+ml+1,y,y+n+1,'');
     forcecolor:=false;
-{$ENDIF}
     end
   else
     if (nr=0) and (enterkey<>keyf10) then begin
@@ -560,13 +555,11 @@ begin
         or mausback or quit;
 
   if has_checker and (t=keycr) then checker[nr]:=p;
-{$IFNDEF WIN32}
   if nr>0 then begin
     wpop;
     if menulevel=1 then blindoff;
     end
   else showmain(0);
-{$ENDIF}
   menupos[nr]:=p;
   dispose(ma);
 
@@ -576,4 +569,9 @@ begin
   else if mausback then getmenu:=-3
   else getmenu:=-2;
 end;
+{
+  $Log$
+  Revision 1.4  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
 
+}

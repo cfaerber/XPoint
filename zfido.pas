@@ -145,6 +145,7 @@ var   _from,_to : FidoAdr;
       avia      : array[1..maxvia] of ^string;
       viaanz    : integer;
 
+{$IFDEF BP }
 const ISO2IBMtab : array[128..255] of byte =
       (128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
        144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
@@ -170,6 +171,7 @@ const ISO2IBMtab : array[128..255] of byte =
         45, 45, 44, 32, 96, 39,246,254,152, 89, 47,120, 60, 62, 32, 32,
         43,250, 44, 32, 32, 65, 69, 65, 69, 69, 73, 73, 73, 73, 79, 79,
         32, 79, 85, 85, 85,105, 94,126, 45, 32,250,248, 44, 34, 44, 32);
+{$ENDIF }
 
 procedure ExpandCR(var data; bpos:smallword; size:smallword; var addlfs:smallword); assembler;
 asm
@@ -1663,6 +1665,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

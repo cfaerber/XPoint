@@ -1981,9 +1981,7 @@ begin
       end;
     attrtxt(col.colmenu);
     forcecolor:=true;
-{$IFNDEF WIN32}
     wpushs(mx,mx+ml+2,my,my+editmenumps+1,'');
-{$ENDIF}
     forcecolor:=false;
     mwrt(mx+2,my,' '+menue[0]+' ');
     for i:=1 to editmenumps do
@@ -2042,10 +2040,7 @@ sok:  case p of
         { /robo }
       else  LocalMenu:=0;
       end;
-
-{$IFNDEF WIN32}
     wpop;
-{$ENDIF}
     end;
 end;
 
@@ -2102,6 +2097,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/02/19 11:40:06  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.8  2000/02/18 09:04:56  mk
   RB: * RTE im Editor behoben
 

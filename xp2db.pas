@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { === Datenbank ==================================================== }
 
@@ -18,16 +19,11 @@ unit  xp2db;
 
 interface
 
-{$IFNDEF WIN32}
-{$ENDIF}
-
 uses  crt,dos,typeform,fileio,inout,keys,datadef,database,databaso,
       resource,maus2,xpglobal,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
-
 procedure InitDatabase;
-
 
 implementation  { --------------------------------------------------- }
 
@@ -863,5 +859,10 @@ begin
     end;
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

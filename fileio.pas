@@ -1,4 +1,4 @@
-        { --------------------------------------------------------------- }
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
@@ -7,6 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { File-I/O, Locking und Dateinamenbearbeitung }
 
@@ -478,11 +479,6 @@ end;
 
 
 function lock(var datei:file; from,size:longint):boolean;
-{$IFDEF Ver32}
-begin
-  lock := false;
-end;
-{$ELSE}
 var regs : registers;
 begin
   if Shareda then with regs do begin
@@ -496,13 +492,8 @@ begin
   else
     lock:=true;
 end;
-{$ENDIF}
 
 procedure unlock(var datei:file; from,size:longint);
-{$IFDEF Ver32}
-begin
-end;
-{$ELSE}
 var regs : registers;
 begin
   if shareda then with regs do begin
@@ -513,7 +504,6 @@ begin
     msdos(regs);
     end;
 end;
-{$ENDIF}
 
 function lockfile(var datei:file):boolean;
 begin
@@ -560,10 +550,6 @@ end;
 { t muá eine ge”ffnete Textdatei sein }
 
 function textfilesize(var t:text):longint;
-{$IFDEF Ver32}
-begin
-end;
-{$ELSE}
 var regs  : registers;
     fplow : word;           { alter Filepointer }
     fphigh: word;
@@ -583,7 +569,6 @@ begin
     msdos(regs);
   end;
 end;
-{$ENDIF}
 
 procedure WildForm(var s: pathstr);
 var dir : dirstr;
@@ -687,3 +672,9 @@ end;
 begin
   TestShare;
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/19 11:40:07  mk
+  Code aufgeraeumt und z.T. portiert
+
+}

@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -111,6 +111,9 @@
 
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

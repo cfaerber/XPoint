@@ -105,7 +105,6 @@ var   pfp   : array[1..preisf] of byte;      { 1..4: Einzelpreise  }
       rsite       : SA_Ptr;
       rsitenr     : byte;
 
-      regbeifld   : byte;
       waehrtext   : pointer;
       sammelfld   : byte;
       zahlweisfld : byte;
@@ -800,7 +799,6 @@ var brk,modi : boolean;
         maddstring(22,6,'',xreg_bei,39,40,'');
         for i:=1 to regsites do
           mappsel(true,regsite[i].name+regsite[i].zusatz);
-        regbeifld:=fieldpos;
         mset3proc(regbeiproc);
         mhnr(1560);
 
@@ -971,8 +969,6 @@ var brk,modi : boolean;
   function WriteFormular(fn:pathstr):boolean;
   const lr = '     ';
   var   t  : text;
-        i  : integer;
-        s  : string[80];
 
     procedure wrl(s:string);
     begin
@@ -1344,16 +1340,10 @@ end;
 
 procedure copyright(wait:boolean);
 var x,y,i : byte;
-    t     : datetimest;
-    high  : boolean;
-    secs  : shortint;
     s     : string;
     p     : byte;
 
     msglines    : byte;
-    x1,y1,x2,y2 : byte;
-    txt1,txt2   : string[12];
-    showlizenz  : boolean;
     timeover    : boolean;
 
     sely  : byte;
@@ -1364,7 +1354,6 @@ var x,y,i : byte;
 
   procedure ReadReg;
   var x,y  : byte;
-      jn   : string[1];
       brk  : boolean;
       code : string[20];
       t    : text;
@@ -1549,7 +1538,6 @@ end;
 procedure BetaMessage;
 var x,y,i : byte;
     msglines    : byte;
-    n     : shortint;
     z     : taste;
     s:String;
 begin
@@ -1578,6 +1566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/19 11:40:09  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

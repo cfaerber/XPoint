@@ -336,10 +336,8 @@ begin
     {$ENDIF}
     findfirst(XFerDir+'D*',0,sr);   { Åbriggebliebene D-Files sicherstellen }
     while doserror=0 do begin
-{$IFNDEF WIN32}
       if sr.attr and dos.Archive<>0 then
         MoveToBad(XFerDir+sr.name);
-{$ENDIF}
       findnext(sr);
     end;
     {$IFDEF virtualpascal}
@@ -478,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
   Revision 1.4  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
