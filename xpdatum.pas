@@ -109,7 +109,7 @@ begin
   dat:=copy(zdatum,3,10);
   p:=cpos(':',zdatum); if p<18 then p:=length(zdatum)+1;
   addh:=minmax(ival(copy(zdatum,17,p-17)),-13,13);
-  if zdatum[16]='-' then addh:=-addh;
+  if (Length(Zdatum) >= 16) and (zdatum[16]='-') then addh:=-addh;
   AddD(dat,addh);
   datum:=dat;
 end;
@@ -158,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/08/09 09:57:02  mk
+  - AnsiStringfix (Netcall laeuft jetzt hier durch)
+
   Revision 1.10  2000/07/21 21:17:48  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
