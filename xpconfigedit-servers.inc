@@ -269,6 +269,7 @@
     maddtext(0,15,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
 
     freeres;
+    own_nt := nt_Client;
     readmask(brk);
     enddialog;
     ClientAddServers:=BoxToBfg(serverNames);
@@ -295,7 +296,8 @@
       nt := dbNetztyp(d);
     ReadNetztyp(getres(914),nt,brk); 
     if brk then exit;   { 'neue Box' }
-    
+    own_nt := nt;
+
     if nt<>nt_Client then
     begin
       pp:='';
@@ -2424,6 +2426,9 @@
 
 {
   $Log$
+  Revision 1.70  2003/09/15 10:59:33  mk
+  - set own_nt to allow additional servers work correctly
+
   Revision 1.69  2003/08/26 22:41:25  cl
   - better compatibility with OpenXP-16/FreeXP with config files:
     - don't overwrite line number settings with incompatible values
