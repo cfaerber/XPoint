@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Nachricht extrahieren }
 
@@ -988,7 +989,7 @@ begin
         SetQC(hdp^.netztyp);
         assign(t,tmp);
         reset(t);
-        if not multipart then
+        if not multipart or (ListQuoteMsg<>'') then
           if ntZCablage(dbReadInt(mbase,'ablage')) then
             repeat
               readln(t,s)
@@ -1019,4 +1020,9 @@ end;
 
 
 end.
+{  
+  $Log$
+  Revision 1.5  2000/02/17 08:40:29  mk
+  RB: * Bug mit zurueckbleibenden Dummy-Header bei Quoten von Multipart beseitigt
 
+}

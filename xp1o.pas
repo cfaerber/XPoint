@@ -377,7 +377,7 @@ begin
         assign(tt,ListQuoteMsg);
         rewrite(tt);
         if ntZConnect(mbNetztyp) then begin
-          writeln(tt,'Dummy:');
+          writeln(tt,'Dummy: das ist ein Dummy-Header');
           writeln(tt);
           end
         else
@@ -918,6 +918,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/17 08:40:29  mk
+  RB: * Bug mit zurueckbleibenden Dummy-Header bei Quoten von Multipart beseitigt
+
   Revision 1.6  2000/02/15 21:19:24  mk
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
