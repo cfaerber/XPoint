@@ -20,9 +20,12 @@
 unit ncurses;
 interface
 
+{$IFDEF FPC}
+  //???
 {$packrecords C}
 {$linklib ncurses}
 {$linklib c}
+{$ENDIF}
 
 { Manually Added types }
 Type
@@ -1734,6 +1737,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2002/12/02 14:04:29  dodi
+  made xpmenu internal tool
+
   Revision 1.5  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

@@ -67,7 +67,7 @@ implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,lister, viewer,
+      xp4o3,{xpview,}xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,lister, viewer,
       xpmakeheader, replytoall, mime,debug, 
       addresses, addresslist, classes, xpsendmessage_rta, xpstreams;
 
@@ -2749,6 +2749,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2002/12/02 14:04:30  dodi
+  made xpmenu internal tool
+
   Revision 1.130  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ CrossPoint - Timing-Listen, Tastenmakros, GebÅhrenzonen, Header,  }
+{ CrossPoint - Timing-Listen, Tastenmakros, Gebuehrenzonen, Header,  }
 {              Nodelisten, Tarifgruppen                             }
 
 {$I xpdefine.inc}
@@ -37,11 +37,11 @@ uses
   xp1help,xp1input,xp5,fidoglob;
 
 
-procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
+procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=Gebuehren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
 
 procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
-procedure AppPhoneZones;   { mappsel() fÅr GebÅhrenzonen }
+procedure AppPhoneZones;   { mappsel() fuer Gebuehrenzonen }
 function  CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
 function  Einheitenpreis:real;
 procedure gtest;
@@ -78,11 +78,11 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
              ('Alles','Bretter','User','Nachr.','Lister','ArcViewer',
               'Editor','Terminal'); }
 
-      mincode  = 3;    { Nummernbereich fÅr erweiterte Tasten }
+      mincode  = 3;    { Nummernbereich fuer erweiterte Tasten }
       codes    = 140;
 
       maxphone = 9*105;
-      maxzones = 17;   { max. GebÅhrenzonen }
+      maxzones = 17;   { max. Gebuehrenzonen }
       maxzeitbereiche = 12;   { mu· vielfaches von 4 sein! }
       maxtables= 10;   { max. Tabellen (Wochentage+Feiertage) }
       maxwotage= 10;   { max. Tagesbereiche }
@@ -92,7 +92,7 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
       pagepos   : byte = 1;
       gpagepos  : byte = 1;
 
-      NetcallSpecialDat = 'NETCALL.DAT';  { Textdatei fÅr /Netcall/Spezial }
+      NetcallSpecialDat = 'NETCALL.DAT';  { Textdatei fuer /Netcall/Spezial }
       NetcallSpecialMax = 20;
 
 type  TimeRec   = record
@@ -129,7 +129,7 @@ type  TimeRec   = record
       tarifrec = record
                    sekunden : real;
                    pfennig  : integer;
-                   anwahl   : integer;  { Pfennige fÅr nicht erfolgreiche Anwahl }
+                   anwahl   : integer;  { Pfennige fuer nicht erfolgreiche Anwahl }
                  end;
       tarifarr = array[1..maxtables] of record
                    wochentag   : wt_array;
@@ -148,11 +148,11 @@ var   e         : TStringList;
       phones    : ^phonea2;
       tarif     : tarifap;
       tables    : integer;    { Anzahl Tarif-Tabellen }
-      dayused   : wt_array;   { fÅr CheckDay() }
+      dayused   : wt_array;   { fuer CheckDay() }
 
 
       NetcallSpecialList : array[1..NetcallSpecialMax] of String;
-                          { Array fÅr Zeileninhalt NETCALL.DAT }
+                          { Array fuer Zeileninhalt NETCALL.DAT }
 
 function mtyp(nr:byte):string;
 begin
@@ -354,7 +354,7 @@ end;
 { -------------------------------------------------------------------- }
 
 
-{ typ: 1=Timing; 2=Makros, 3=GebÅhrenzonen, 4=Nachrichtenkopf, 5=Nodelisten }
+{ typ: 1=Timing; 2=Makros, 3=Gebuehrenzonen, 4=Nachrichtenkopf, 5=Nodelisten }
 
 procedure loadfile(typ:byte; fn:string);
 var t   :text;
@@ -537,7 +537,7 @@ begin
 end;
 
 
-{ typ: 1=Timing; 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarife }
+{ typ: 1=Timing; 2=Tasten, 3=Gebuehren, 4=Header, 5=Nodelisten, 6=Tarife }
 
 procedure UniEdit(typ:byte);
 var
@@ -566,7 +566,7 @@ var
     case typ of
       1: result:=e.Count;                       //Timingliste or
       2: result:=e.Count;                       //TastenMakros
-      3: result:=anzahl;                        //GebÅhren
+      3: result:=anzahl;                        //Gebuehren
       4: result:=xhd.anz+1;                     //Header
       5: result:=Nodelist.Count;                //nodeliste
       6: result:=tables;                        //Tarif
@@ -611,7 +611,7 @@ var
       bunla  : string;
       s      : string;
   begin
-  { 1=Timing, 2=Tasten, 3=GebÅhren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
+  { 1=Timing, 2=Tasten, 3=Gebuehren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
     moff;
     eanz:=eanzahl;
     for i:=1 to gl do begin
@@ -643,7 +643,7 @@ var
                 Wrt2(' ' + tt + bunla + ' ' + forms(mid(e.Strings[i+a-1],26),50-length(komm)) +
                       ' ' + komm + ' ');
               end;
-          3 : with phones^[i+a] do begin      { GebÅhrenliste Array}
+          3 : with phones^[i+a] do begin      { Gebuehrenliste Array}
                 s:=' '+forms(komment,25);
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
@@ -862,7 +862,7 @@ var
     else if s[20]='*' then mt:=mtyp(6)   { ArcViewer   }
     else mt:=mtyp(7);
     freeres;
-    maddstring(3,2,getres2(1006,2),mt,9,9,''); mhnr(545);   { 'Makro fÅr ' }
+    maddstring(3,2,getres2(1006,2),mt,9,9,''); mhnr(545);   { 'Makro fuer ' }
     for i:=1 to mtypes do
       mappsel(true,mtyp(i));
     freeres;
@@ -1033,7 +1033,7 @@ var
   begin
     for i:=1 to mtypes-1 do
       enable[i]:=(e[strIdx][15+i]<>' ');
-    dialog(24,mtypes+1,getres2(1009,0),x,y);    { 'Makro gÅltig im..' }
+    dialog(24,mtypes+1,getres2(1009,0),x,y);    { 'Makro gueltig im..' }
     for i:=1 to mtypes-1 do begin
       maddbool(3,1+i,getres2(1009,i),enable[i]); mhnr(589+i);
       end;
@@ -1052,7 +1052,7 @@ var
   end;
 
 
-  { --- GebÅhrenzonen --------------------------------------------- }
+  { --- Gebuehrenzonen --------------------------------------------- }
 
   procedure EditPhoneEntry(neu:boolean; nr:integer; var brk:boolean);
   var x,y   : Integer;
@@ -1104,7 +1104,7 @@ var
         end;
       if nr>2 then begin
         if n=1 then begin
-          maddtext(36,2,getres2(1010,2),col.ColDiaHigh);   { 'Die Vorwahlentabelle wird nur fÅr' }
+          maddtext(36,2,getres2(1010,2),col.ColDiaHigh);   { 'Die Vorwahlentabelle wird nur fuer' }
           maddtext(36,3,getres2(1010,3),col.CoLDiaHigh);   { 'Fido-Direktanrufe benîtigt.' }
           end;
         if anz>0 then
@@ -1275,7 +1275,7 @@ var
         for j:=1 to maxwotage do
           if tarif^[i].wochentag[j] then DayUsed[j]:=true;
     dialog(ival(getres2(1022,9)),9,getreps2(1022,7,strs(nr)),x,y);
-    with tarif^[nr] do begin      { 'GÅltigkeitsbereich der Tarifgruppe %s' }
+    with tarif^[nr] do begin      { 'Gueltigkeitsbereich der Tarifgruppe %s' }
       for i:=1 to 7 do begin
         maddbool(3,i+1,copy(_days_,(i-1)*_daylen_+1,_daylen_),wochentag[i]);
         mset1func(CheckDay);
@@ -1387,12 +1387,12 @@ var
   var b : byte;
   begin
     b:=xhd.v[movefrom-1];                   { zu verschiebendes Element }
-    if movefrom<a+CurRow then               { nach unten einfÅgen }
+    if movefrom<a+CurRow then               { nach unten einfuegen }
       Move(xhd.v[movefrom],xhd.v[movefrom-1],a+CurRow-movefrom)  { Elemente eine Pos nach oben moven }
     else if movefrom>a+CurRow then
       Move(xhd.v[a+CurRow-1],xhd.v[a+CurRow],movefrom-a-CurRow); { Elemente eine Pos nach unten moven }
     xhd.v[a+CurRow-1]:=b;
-    movefrom:=0;                            { Element an CursorPosition einfÅgen }
+    movefrom:=0;                            { Element an CursorPosition einfuegen }
     modi:=true;
   end;
 
@@ -1523,7 +1523,7 @@ var
       freemem(buf,bs);
       mwrt(x+14,y+4,strs(n));
       end;
-    mwrt(x+3,y+6,getres(12));     { 'Taste drÅcken ...' }
+    mwrt(x+3,y+6,getres(12));     { 'Taste druecken ...' }
     wait(curon);
     closebox;
   end;
@@ -1612,7 +1612,7 @@ begin   {procedure UniEdit(typ:byte); }
           eList := true;
         end;
     3,
-    6 : begin                       { GebÅhrenzonen; Tarifgruppen }
+    6 : begin                       { Gebuehrenzonen; Tarifgruppen }
           filewidth:=gebWidth;
           LoadPhoneZones;
           width:=53;
@@ -1624,11 +1624,11 @@ begin   {procedure UniEdit(typ:byte); }
           filewidth:=30;
           anzahl:=xhd.anz;
           width:=ival(getres2(1018,1));
-          buttons:=getres2(1018,2);   { ' ^EinfÅgen , ^Verschieben , ^Lîschen ,  ^OK  ' }
+          buttons:=getres2(1018,2);   { ' ^Einfuegen , ^Verschieben , ^Lîschen ,  ^OK  ' }
           okb:=4; edb:=0;
           pushhp(900);
           xhd:=ExtraktHeader;
-          anzahl:=xhd.anz;          { das ist ÅberflÅssig ?}
+          anzahl:=xhd.anz;          { das ist ueberfluessig ?}
         end;
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
@@ -1834,7 +1834,7 @@ begin   {procedure UniEdit(typ:byte); }
 end;
 
 
-{ --- GebÅhrendaten fÅr Telefonnummer -> BoxPar^ lesen --------------- }
+{ --- Gebuehrendaten fuer Telefonnummer -> BoxPar^ lesen --------------- }
 
 procedure GetPhoneGebdata(var telefon:string);
 var pfound: integer;
@@ -1903,7 +1903,7 @@ begin
 end;
 
 
-{ GebÅhren anhand von boxpar^.GebZone berechnen }
+{ Gebuehren anhand von boxpar^.GebZone berechnen }
 
 function CalcGebuehren(var startdate,starttime:datetimest; secs:real):real;
 var i       : integer;
@@ -1950,7 +1950,7 @@ begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs
   manz:=anzahl;     { Reentrance aus Timingliste }
   sum:=0;
   LoadPhonezones;
-  zone:=anzahl;     { Nummer der GebÅhrenzone ermitteln }
+  zone:=anzahl;     { Nummer der Gebuehrenzone ermitteln }
   while (zone>0) and not stricmp(boxpar^.gebzone,phones^[zone].komment) do
     dec(zone);
   GetDow;           { Wochentag bzw. Feiertagskategorie ermitteln }
@@ -2010,7 +2010,7 @@ begin
 end;
 
 
-procedure AppPhoneZones;   { mappsel() fÅr GebÅhrenzonen }
+procedure AppPhoneZones;   { mappsel() fuer Gebuehrenzonen }
 var i : integer;
 begin
   LoadPhoneZones;
@@ -2052,7 +2052,7 @@ begin
     write('Sekunden: '); readln(ss);
     secs:=ival(ss);
     if d<>'' then
-      writeln('GebÅhren: ',CalcGebuehren(d,t,secs):6:2);
+      writeln('Gebuehren: ',CalcGebuehren(d,t,secs):6:2);
     writeln;
   until d='';
 end;
@@ -2101,8 +2101,8 @@ const lines  = NetcallSpecialMax;
   var boxline : customrec;
             i : Integer;
   begin
-    own_Name:='';      { Flag fÅr EditAddServersList }
-    showErrors:=true;  { Flag fÅr EditAddServersList }
+    own_Name:='';      { Flag fuer EditAddServersList }
+    showErrors:=true;  { Flag fuer EditAddServersList }
     boxline.s:=NetcallSpecialList[p];
     boxline.y:=p; { wir mi·brauchen customrec zur Speicherung der Position }
     EditAddServersList(boxline);
@@ -2141,7 +2141,7 @@ const lines  = NetcallSpecialMax;
 begin  { --- of EditNetcallDat --- }
   selbox(73,NetcallSpecialMax+3,getres2(1024,2)+' '+getres2(1024,3)+' ('+
          NetcallSpecialDat+')',x,y,false);
-                  { 'Serverboxen-Liste fÅr /Netcall/Spezial (NETCALL.DAT)' }
+                  { 'Serverboxen-Liste fuer /Netcall/Spezial (NETCALL.DAT)' }
   attrtxt(col.colsel2high);
   mwrt(x+1,y+1,' '+getres2(1024,4));     { 'Nr.  Serverboxen' }
   p:=1;
@@ -2188,6 +2188,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.73  2002/12/02 14:04:30  dodi
+  made xpmenu internal tool
+
   Revision 1.72  2002/07/25 20:43:53  ma
   - updated copyright notices
 

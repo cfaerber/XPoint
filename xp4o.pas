@@ -113,7 +113,7 @@ Procedure Brettmarksuche;
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp4o2,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
+uses xpkeys,xpnt,xp1o,xp4,xp4o2,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,{xpview,} xpheader, xpmakeheader,
      xp_pgp,debug,viewer, rfc2822, MarkedList,
 {$IFDEF Kylix}
      xplinux,
@@ -3037,6 +3037,9 @@ end;
 
 {
   $Log$
+  Revision 1.147  2002/12/02 14:04:30  dodi
+  made xpmenu internal tool
+
   Revision 1.146  2002/09/09 08:33:53  mk
   - some performance improvements
 

@@ -55,9 +55,6 @@ var brk     : boolean;
     lsec    : string;
     f       : file;
 
-const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei RFC/Client }
-      NetcallEndeFlag = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fÅr Batchauswertung bei RFC/Client }
-
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
 
@@ -751,6 +748,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2002/12/02 14:04:30  dodi
+  made xpmenu internal tool
+
   Revision 1.25  2002/07/25 20:43:53  ma
   - updated copyright notices
 

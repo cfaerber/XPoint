@@ -37,41 +37,44 @@ uses
 //  linux,
 //  {$ENDIF}
   xplinux,
-  xpcurses, 
+  xpcurses,
   {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
-  xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
-  zmodem,Sysutils,xpglobal, debug,
+  xpx,typeform,keys,inout,database,maske,
+  //mouse,lister,objcom,zmodem,
+  winxp,resource,
+  Sysutils,xpglobal, debug,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
-     xp1o,
-     xpnt,     { Netztypen          }
-     xp_uue,   { UUencode/UUdecode  }
+     xp1o,  { testtelephon }
+     //xpnt,     { Netztypen          }
+     //xp_uue,   { UUencode/UUdecode  }
      xp2,      { Startup            }
      xp2db,    { Database-Startup   }
-     xp3,      { Datenbearbeitung   }
+     //xp3,      { Datenbearbeitung   }
      xp4,      { Hauptmodul         }
-     xp4e,
-     xp4o,
+     //xp4e,
+     //xp4o,
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
      xpreg,    { Registrierung      }
-     xpsendmessage, { Nachrichten senden }
-     xpnetcall,
-     xp8,      { 'maps & Filesercer }
+     //xpsendmessage, { Nachrichten senden }
+     xpnetcall, { AutoMode }
+     //xp8,      { 'maps & Filesercer }
      xp10,     { Timing-Lst./Makros }
-     xpe,      { Editor             }
-     xpterminal,{ CrossTerm         }
+     //xpe,      { Editor             }
+     //xpterminal,{ CrossTerm         }
      xpfido,   { Nodelist u.a.      }
      xpfidonl, { Nodelist-Config    }
      zpr,      { zc buffer repair   }
      ndiff,    { nodelist diff      }
-     replytoall,
-     zftools,
+     replytoall,  { askRTA }
+     zftools,     { ZFido }
 {$IFDEF Win32}
      windows,
-{$ENDIF}     
-     zcrfc;    { RFC<->ZConnect     }
+{$ENDIF}
+      xpme,       { menu editor }
+     zcrfc;       { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
 var
@@ -90,6 +93,9 @@ begin
   else
   if Prog = 'ZFIDO' then
     StartCommandLineZFIDO
+  else
+  if Prog = 'XPME' then
+    StartCommandLineXPME
   else
     Result := false;
 end;
@@ -131,7 +137,7 @@ begin
   xp2.loadresource;
   initvar;
   TestAutostart;
-    if not quit then
+  if not quit then
   begin
     cursor(curoff);
     defaultcolors; SetColors;
@@ -146,15 +152,15 @@ begin
     readcolors;
     SetColors;
     showscreen(true);
-    SafeDeleteFile('NETCALL.ALL');
-    SafeDeleteFile('NETCALL.END');
+    SafeDeleteFile(NetcallAlleFlag);  //('NETCALL.ALL');
+    SafeDeleteFile(NetcallEndeFlag);  //('NETCALL.END');
     DelTmpfiles('*.$$$');
 
     // !!if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
     if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
-      DelTmpfiles('TMP-????.*');
+      DelTmpfiles(TempFilePrefix+'????.*');  //('TMP-????.*');
       chdir(temppath);
-      DelTmpfiles('TMP-????.*');
+      DelTmpfiles(TempFilePrefix+'????.*');  //('TMP-????.*');
       chdir(ownpath);
       end;
     testdiskspace;
@@ -244,6 +250,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/12/02 14:04:29  dodi
+  made xpmenu internal tool
+
   Revision 1.20  2002/07/25 20:43:52  ma
   - updated copyright notices
 

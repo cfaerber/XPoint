@@ -282,6 +282,12 @@ const
        NetcallLog  = 'NETCALL.LOG';    { Netcall-Logfile }
 {$ENDIF }
 
+//DoDi: das sind Dateinamen - Unix-Variante erforderlich?
+{ aus xp10.inc, wird auch in main.pas verwendet. }
+const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fuer Batchauswertung bei RFC/Client }
+      NetcallEndeFlag = 'NETCALL.END';  { N/A-Semaphore (letzte Box) fuer Batchauswertung bei RFC/Client }
+      TempFilePrefix  = 'TMP-'; { Allgemeines Prefix fuer temporaere Dateien }
+
 
 {$IFDEF UnixFS }
        TempBatchFN = 'tmpbatch';
@@ -1211,6 +1217,9 @@ implementation
 
 {
   $Log$
+  Revision 1.168  2002/12/02 14:04:29  dodi
+  made xpmenu internal tool
+
   Revision 1.167  2002/07/26 08:19:23  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

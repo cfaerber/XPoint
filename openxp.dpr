@@ -133,6 +133,7 @@ uses
   xpkeys in 'xpkeys.pas',
   xpmakeheader in 'xpmakeheader.pas',
   xpmaus in 'xpmaus.pas',
+  xpme in 'xpme.pas',
   xpmime in 'xpmime.pas',
   xpnt in 'xpnt.pas',
   XPProgressOutputWindow in 'xpprogressoutputwindow.pas',

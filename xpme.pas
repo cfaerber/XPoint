@@ -20,6 +20,7 @@
 
 { CrossPoint-Menueeditor }
 // !! not tested yet!!
+//ToDo: support for other languages but German...
 
 {$I xpdefine.inc }
 
@@ -28,10 +29,12 @@ unit xpme;
 interface
 
 procedure StartXPME;
+{ procedure name conforming to calls in main.StartInternalTools }
+procedure StartCommandLineXPME;
 
 implementation
 
-uses
+uses  //last check: 2002-12-03 DoDi
 {$IFDEF unix}
   xplinux,
 {$ENDIF }
@@ -136,7 +139,7 @@ begin
   OpenResource(s,10000);
   ropen:=true;
   if ival(getres(6))<11 then
-  error('Es wird CrossPoint Version 3.11 oder h”her ben”tigt!');
+    error('Es wird CrossPoint Version 3.11 oder h”her ben”tigt!');
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
     menu[i]:=s;
@@ -752,8 +755,17 @@ begin
   end;
 end;
 
+procedure StartCommandLineXPME;
+begin
+  StartXPME;
+  //more? halt?
+end;
+
 {
   $Log$
+  Revision 1.40  2002/12/02 14:04:30  dodi
+  made xpmenu internal tool
+
   Revision 1.39  2002/11/30 04:40:28  mk
   - made xpme to a unit and compilable
 

@@ -139,7 +139,7 @@ begin
   if not fileattach and delviewtmp then
   Begin
     parfn:=TempS(_filesize(Filename)+5000);
-    parfn:=LeftStr(parfn,length(parfn)-8)+'TMP-'+RightStr(parfn,8);
+    parfn:=LeftStr(parfn,length(parfn)-8)+TempFilePrefix+RightStr(parfn,8);
     end
   else parfn:=orgfn;
 
@@ -158,6 +158,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2002/12/02 14:04:29  dodi
+  made xpmenu internal tool
+
   Revision 1.4  2001/10/11 09:00:40  mk
   - external viewer files now with correct file extension
 
