@@ -262,7 +262,6 @@ begin  { __ Suchmarke }
             else
               edat:=ixdat('6912310000');
             if showmsgdatum then begin
-
               s2:=fdat(longdat(dat));
               getdate(j,m,t,d);
 
@@ -270,9 +269,9 @@ begin  { __ Suchmarke }
               tempd := ival(copy(s2,7,2));
               if tempd < 70 then inc(tempd, 2000) else inc(tempd, 1900);
               if abs(tempd*12+ival(copy(s2,4,2))-1-(j*12+m-1)) > 11 then
-                sdat:=' '+copy(s2,4,2)+'/'+copy(s2,7,2)
+                sdat:=copy(s2,4,2)+'/'+copy(s2,7,2)
               else
-                sdat:=' '+left(s2,5);
+                sdat:=left(s2,5);
               ulen:=25; blen:=36;
             end else begin
               sdat:=''; ulen:=27; blen:=40;
@@ -308,8 +307,10 @@ begin  { __ Suchmarke }
               wvl:=4;    { 's' - signierte Nachricht }
             dbReadN(mbase,mb_Halteflags,hflags);
             dbReadN(mbase,mb_gelesen,gelesen);
-            if unvers and 32<>0 then unvers:=4
-            else unvers:=unvers and 1 + (unvers and 16)div 8;
+            if unvers and 32<>0 then
+              unvers:=4
+            else
+              unvers:=unvers and 1 + (unvers and 16) div 8;
             if (unvers=1) and (uv_anz>1) then unvers:=min(uv_anz,10)+3;
             if (hflags=0) and (unvers=0) and (abhdatum<>0) and
                smdl(edat,abhdatum)
@@ -338,7 +339,7 @@ begin  { __ Suchmarke }
               { Empfaenger }
               taus[pos('E',MsgFeldTausch)] := forms(s0,19);
               { Betreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
+              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,22-1,28));
                 
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
               
@@ -347,8 +348,7 @@ begin  { __ Suchmarke }
               { Kommentarbaum }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
-                dispbuf[y]^:=dflags+siz+sdat+' '+s;
-                
+                dispbuf[y]^:=dflags+siz+' '+sdat+' '+s;
               end else begin
                 { Flags }
                 taus[pos('F',MsgFeldTausch)] := dflags;
@@ -357,9 +357,9 @@ begin  { __ Suchmarke }
                 { Datum }
                 taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
                 { Absender }
-                taus[pos('A',MsgFeldTausch)] := forms(s,iif(showmsgdatum,28,28+5));
+                taus[pos('A',MsgFeldTausch)] := forms(s,ulen-1);
                 { Betreff }
-                taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21+9,27+9));
+                taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
               end;  
               
               if fidoqwk and (_brett[1]='A') and
