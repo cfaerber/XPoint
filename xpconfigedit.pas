@@ -2221,7 +2221,7 @@ begin
         if uppercase(box)=uppercase(boxlist[i]) then  { Box schon ausgewaehlt?      }
           goto nextBox;                     { ...dann naechsten Datensatz }
     dbRead(d,'Netztyp',nt);
-    if ((nt=own_Nt) and (uppercase(box)<>own_Name))   { passende Box gefunden }
+    if ((nt=own_Nt) and (uppercase(box)<>UpperCase(own_Name)))   { passende Box gefunden }
       or (own_name='') then
     begin
       inc(sel_anz);
@@ -2342,41 +2342,9 @@ label Start;
 
   procedure InsertBox;
   var
-        i, 
-        add, bfglen: Integer;
-        box       : string;
-        bfg       : string;
-        d         : DB;
-        too_long  : boolean;
-  const
-     maxbfglen = 160;
+    i, add:  Integer;
+    box: string;
   begin
-    dbOpen(d,BoxenFile,1);                 { (lfd. Nr.) in 'EditNetcallDat' }
-    bfglen:=0;
-    too_long:=false;
-    for i:=1 to entries do
-    begin
-      if own_Name <> '' then
-      begin
-        dbSeek(d,boiName,uppercase(boxlist[i]));
-        if dbfound then
-        begin
-          bfg:=dbreadStr(d,'dateiname');
-          bfglen:=bfglen + (length(bfg)+1);    { Gesamtlaenge BFG-Namen }
-        end;
-      end;
-    end;
-    if own_Name <> '' then
-      if bfglen >= maxbfglen then
-      begin { 'Maximale Eingabelaenge (%s) fuer Dateinamen (.BFG) erreicht!' }
-        too_long:=true;
-        rfehler1(956,strs(maxbfglen));
-      end;
-    if too_long then
-    begin
-      dbClose(d);
-      exit;
-    end;
     box:=BoxSelect(entries,boxlist,iifb(own_Name <> '',false,true));
     if box <> '' then
     begin
@@ -2386,46 +2354,21 @@ label Start;
         while (i>0) and (uppercase(box)<>uppercase(boxlist[i])) do
           dec(i);                           { Eintrag schon vorhanden? }
         if i > 0 then
-          if not ReadJN(getreps2(10900,57,box),false) then
-           { 'Serverbox "%s" bereits vorhanden - trotzdem hinzufuegen?' }
-          begin
-            dbClose(d);
-            exit;
-          end;
+          if not ReadJN(getreps2(10900,57,box),false) then Exit;
+           { 'Serverbox "%s" bereits vorhanden - trotzdem hinzufÅgen?' }
       end;
-      if own_Name <> '' then
+      inc(entries);
+      if entries=1 then add:=0 else add:=1;
+      boxlist[0]:=boxlist[a+p+add];  { Ziel = (a+p) }
+      boxlist[a+p+add]:=box;
+      for i:=(a+p+1+add) to entries do
       begin
-        dbSeek(d,boiName,uppercase(box));
-        if dbfound then
-          bfg:=dbreadStr(d,'dateiname');
+        box:=boxlist[i];
+        boxlist[i]:=boxlist[0];
+        boxlist[0]:=box;
       end;
-      if own_Name <> '' then
-        if bfglen + length(bfg) > maxbfglen then
-        begin
-          too_long:=true;
-          rfehler1(959,strs(maxbfglen-bfglen));
-   { 'Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfuegbar.' }
-        end;
-      if too_long then
-      begin
-        dbClose(d);
-        exit;
-      end
-      else begin
-        inc(entries);
-        if entries=1 then add:=0 else add:=1;
-        boxlist[0]:=boxlist[a+p+add];  { Ziel = (a+p) }
-        boxlist[a+p+add]:=box;
-        for i:=(a+p+1+add) to entries do
-        begin
-          box:=boxlist[i];
-          boxlist[i]:=boxlist[0];
-          boxlist[0]:=box;
-        end;
-        modi:=true;
-      end;
+      modi:=true;
     end;
-    dbClose(d);
     if (a+p<entries) then
       if p<gl then inc(p)
       else inc(a);
@@ -2518,7 +2461,7 @@ begin  { --- of EditAddServersList --- }
     while not dbEOF(d) do
     begin
       dbRead(d,'Netztyp',nt);
-      if (nt=own_Nt) and (uppercase(dbReadStr(d,'boxname')) <> own_Name) then
+      if (nt=own_Nt) and (uppercase(dbReadStr(d,'boxname')) <> UpperCase(own_Name)) then
       begin                           { erste passende Box gefunden... }
         dbClose(d);
         goto start;        { ...dann Schleife verlassen und los geht's }
@@ -2650,16 +2593,12 @@ end;
 
 function addServersTest(var s:string):boolean;
 var   p,i,j,
-      box_anz    : byte;
-      nt        : eNetz;
-      boxlen,
-      bfglen     : xpWord;
+      box_anz    : Integer;
+      nt         : eNetz;
       s1         : string;
       d          : DB;
       boxlist    : array[1..maxboxen] of string;
       dupelist   : array[1..maxboxen] of byte;       { Array fuer Dupes }
-      maxboxlen  : byte;  // = 255;
-const maxbfglen = 160;
 
   { Die hier mehrfach vorkommende Pruefung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
@@ -2687,14 +2626,10 @@ begin
   addServersTest:=true;
   s1:=trim(s);
   if s1='' then exit;
-  if own_Name = '' then
-    maxboxlen:=249  { wegen mappsel-String-Addition  }
-  else begin
-    maxboxlen := 255;
+  if own_Name <> '' then
     maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
-  end;
   for i:=1 to maxbox do boxlist[i] := '';
-  box_anz:=0; bfglen:=0; boxlen:=0;
+  box_anz:=0;
   repeat
     inc(box_anz);
     p:=cpos(' ',s1);
@@ -2791,38 +2726,6 @@ begin
           end;
         end;
       end;
-      if own_Name <> '' then
-        bfglen:=bfglen+length(dbReadStr(d,'dateiname'))+1;
-                                               { Gesamtlaenge BFG-Namen }
-(*    hinweis('Anzahl = '+strs(box_anz)+', BFG-Laenge = '+strs(bfglen)); *)
-    end;
-    boxlen:=boxlen+length(boxlist[i])+1;        { Gesamtlaenge Boxnamen }
-  end;
-  if own_Name <> '' then                          { Box-Config-Dialog? }
-  begin
-    if bfglen > 0 then dec(bfglen);  { letztes Leerzeichen eliminieren }
-    if bfglen > maxbfglen then
-    begin
-      addServersTest:=false;
-      if showErrors then
-        rfehler1(965,strs(maxbfglen))
-    { 'Maximale Gesamtlaenge (%s) der Dateinamen (.BFG) ueberschritten!' }
-      else begin
-        dbClose(d);
-        exit;
-      end;
-    end;
-  end;
-  dec(boxlen);                       { letztes Leerzeichen eliminieren }
-  if boxlen > maxboxlen then
-  begin
-    addServersTest:=false;
-    if showErrors then
-      rfehler1(966,strs(maxboxlen))
-      { 'Maximale Gesamtlaenge (%s) der Serverbox-Namen ueberschritten!' }
-    else begin
-      dbClose(d);
-      exit;
     end;
   end;
   if box_anz >= maxbox then
@@ -2830,10 +2733,6 @@ begin
     addServersTest:=false;
     if showErrors then
       rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-Eintraege moeglich!' }
-    else begin
-      dbClose(d);
-      exit;
-    end;
   end;
   dbClose(d);
 end;
@@ -2858,8 +2757,6 @@ function BfgToBox(s:string):string;
 var   d      : DB;
       p      : Integer;
       s1     : string;              { BFG-Datei }
-      s2     : string;              { Boxname   }
-      s3     : string;              { Gesamtstring aller Boxnamen }
       fehler : string;
 
   function isValidBfgName(const s1:string):boolean;
@@ -2887,7 +2784,7 @@ begin
     BfgToBox:='';
     exit;
   end;
-  s1:=''; s2:=''; s3:='';
+  s1:=''; Result := '';
   dbOpen(d,BoxenFile,1);
   repeat
     p:=cpos(' ',s);
@@ -2904,98 +2801,55 @@ begin
         fehler:=getreps2(10900,67,uppercase(s1));
        { 'Ungueltiger Name fuer Serverbox-Konfigurationsdatei: "%s.BFG"' }
         ConvertAddServersFehler(fehler);
-      end
-      else exit;
+      end else
+        break;
     end
     else begin
       dbSeek(d,boidatei,uppercase(s1));
       if dbFound then
+        Result := Result + dbReadStr(d,'boxname') + ' '
+      else
       begin
-        s2:=dbReadStr(d,'boxname');
-(*        
-        if length(s3)+length(s2) > maxboxlen then
-        begin
-          BfgToBoxOk:=false;
-          if showErrors then
-          begin
-            fehler:=getreps2(10900,66,strs(maxboxlen));
-*)            
-      { 'Maximale Gesamtlaenge (%s) der Serverbox-Namen ueberschritten!' }
-(*      
-            ConvertAddServersFehler(fehler);
-          end
-          else exit;
-        end
-        else
-*)        
-          s3:=s3+s2+' ';
-      end
-      else begin
         BfgToBoxOk:=false;
         if showErrors then
         begin
           fehler:=getreps2(10900,68,uppercase(s1));
                    { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
           ConvertAddServersFehler(fehler);
-        end
-        else exit;
+        end else
+          break;
       end;
     end;
   until p=0;
   dbClose(d);
-  BfgToBox:=trim(s3);
+  Result := Trim(Result);
 end;
 
-
+// check s for correct and existing boxnames
 function BoxToBfg(var s:string):string;
-var   d      : DB;
-      p      : Integer;
-      s1     : string;              { Boxname   }
-      s2     : string;              { BFG-Datei }
-      s3     : string;              { Gesamtstring aller BFG-Dateinamen }
-      fehler : string;
-const maxbfglen = 160;
+var
+  d: DB;
+  i: Integer;
+  BoxName: string;
 begin
-  if s = '' then
+  Result := '';
+  dbOpen(d, BoxenFile, 1);
+  for i := 1 to WordCount(s) do
   begin
-    BoxToBfg:='';
-    exit;
-  end;
-  s1:=''; s2:=''; s3:='';
-  dbOpen(d,BoxenFile,1);
-  repeat
-    p:=cpos(' ',s);
-    if p=0 then s1:=s
-    else begin
-      s1:=leftstr(s,p-1);
-      s:=trim(mid(s,p+1));
-    end;
-    if length(s1) > BoxNameLen then
+    BoxName := ExtractWord(i, s);
+    if length(BoxName) > BoxNameLen then
+      ConvertAddServersFehler(getreps2(10900, 69, BoxName)) { 'Ungueltiger Serverbox-Name: %s' }
+    else
     begin
-      fehler:=getreps2(10900,69,s1); { 'Ungueltiger Serverbox-Name: %s' }
-      ConvertAddServersFehler(fehler);
-    end
-    else begin
-      dbSeek(d,boiname,uppercase(s1));
+      dbSeek(d,boiname,uppercase(BoxName));
       if dbFound then
-      begin
-        s2:=dbReadStr(d,'dateiname');
-        if length(s3)+length(s2) > maxbfglen then
-        begin
-          fehler:=getreps2(10900,65,strs(maxbfglen));
-    { 'Maximale Gesamtlaenge (%s) der Dateinamen (.BFG) ueberschritten!' }
-          ConvertAddServersFehler(fehler);
-        end else
-          s3:=s3+s2+' ';
-      end else
-      begin
-        fehler:=getreps2(10900,62,s1);
-        ConvertAddServersFehler(fehler); { 'Serverbox "%s" existiert nicht!' }
-      end;
+        Result := Result + dbReadStr(d,'dateiname') + ' '
+      else
+        ConvertAddServersFehler(getreps2(10900, 62, BoxName)); { 'Serverbox "%s" existiert nicht!' }
     end;
-  until p=0;
+  end;
   dbClose(d);
-  BoxToBfg:=uppercase(trim(s3));
+  Result := Uppercase(Trim(Result));
 end;
 
 
@@ -3140,6 +2994,11 @@ end;
 
 {
   $Log$
+  Revision 1.67  2003/09/15 16:06:30  mk
+  - cleaned up RFC/Client code
+  - removed some limits
+  - fixed old FreeXP bugs
+
   Revision 1.66  2003/09/13 15:23:50  mk
   - fixed generation of valid box filenames (added "-" and "_"), this is
     for compatibilty with freexp
