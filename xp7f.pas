@@ -194,13 +194,13 @@ begin
 end;
 
 
-function isPacket(var name:string):boolean;
+function isPacket(const name:string):boolean;
 var p : byte;
 begin
   p:=cpos('.',name);
   if p=0 then isPacket:=false
   else
-    IsPacket:=(pos(copy(name,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
+    IsPacket:=(pos(copy(UStr(name),p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
               (boxpar^.ExtPFiles or (pos(copy(name,p+3,1),'0123456789')>0));
 end;
 
@@ -225,8 +225,10 @@ begin
     if clrflag then begin
       window(1,1,80,25); attrtxt(7);
       end;
-    while doserror=0 do begin
-      if isPacket(sr.name) then begin
+    while doserror=0 do
+    begin
+      if isPacket(sr.name) then
+      begin
         ImportDir:=FExpand(ImportDir);
         GoDir(OwnPath+XFerDir);
         shell(left(downarcer,p-1)+ImportDir+sr.name+mid(downarcer,p+9),
@@ -234,7 +236,7 @@ begin
         { ^^ setzt Verzeichnis zurÅck! }
         if errorlevel<>0 then
           MoveToBad(ImportDir+sr.name);
-        end;
+      end;
       findnext(sr);
     end;
     findclose(sr);
@@ -931,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.3  2001/08/01 13:07:15  mk
+  - IsPacket erkennt jetzt kleingeschriebene Dateinamen
+
   Revision 1.13.2.2  2000/12/12 11:30:30  mk
   - FindClose hinzugefuegt
 
