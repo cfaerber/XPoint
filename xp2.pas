@@ -95,11 +95,6 @@ uses
 var   zaehlx,zaehly : byte;
 
 
-procedure setmenu(nr:byte; s:string);
-begin
-  menu[nr]:=s;
-end;
-
 procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
 var s       : string;
     i,ml    : byte;
@@ -137,17 +132,22 @@ begin
 end;
 
 procedure setmenus;
-var i : integer;
+var
+  i : integer;
 begin
-  for i:=0 to menus do
-    setmenu(i,getres2(10,i));
+  for i:=0 to menus - 1 do
+    Menu[i] := getres2(10,i);
   zusatz_menue;
   FreeRes;
 end;
 
 
 procedure freemenus;
+var
+  i : integer;
 begin
+  for i:=0 to menus do
+    Menu[i] := '';
 end;
 
 
@@ -1100,6 +1100,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.137  2002/02/13 18:17:46  mk
+  - fixed report of missing resource 10.43
+
   Revision 1.136  2002/02/01 10:31:54  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList
