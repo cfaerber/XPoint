@@ -611,7 +611,7 @@ begin                  { of Netcall }
     AppendEPP;
 
     netcalling:=true;
-    twin;
+    if not logintyp = ltFido then twin;
     mwriteln;
 
     showkeys(0);
@@ -1524,6 +1524,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/12/25 16:26:26  mk
+  - do not clear window in fido poll
+
   Revision 1.49  2000/12/25 14:55:50  mk
   - removed check for xp-fm.exe
 
