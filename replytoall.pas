@@ -30,7 +30,7 @@ unit replytoall;
 interface
 
 uses xpglobal,typeform,fileio,inout,winxp,keys,maske,datadef,database,
-  resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6,maus2,lister, sysutils,
+  resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6, maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
 procedure askRTA (const XPStart :boolean);
@@ -49,15 +49,6 @@ begin
     if adresse < p^.domain then p := p^.left
       else p := p^.right;
   eigeneAdresse := assigned (p);
-end;
-
-{ true, wenn 'adr' ein "@" und einen Punkt im Domainteil der
-  Adresse enth„lt }
-
-function adrOkay (const adr :string) :boolean;
-begin
-  adrOkay := (pos ('@', adr) <> 0)
-             and (pos ('.', mid (adr, pos ('@', adr))) <> 0);
 end;
 
 { Eine Adresse mit allen Parametern (RTAEmpfaenger, Vertreter, Typ) vorne (!)
@@ -214,7 +205,7 @@ begin
         adresse := s;
         s := '';
       end;
-      if adrOkay (adresse) then
+      if IsMailAddress(adresse) then
         insertNode (notEigeneAdressenBaum, UpperCase(adresse));
     until s = '';
   end;
@@ -261,7 +252,7 @@ begin
         adresse := s;
         s := '';
       end;
-      if adrOkay (adresse) and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
+      if IsMailAddress(adresse) and not eigeneAdresse (notEigeneAdressenbaum, adresse) then
         insertNode (eigeneAdressenBaum, UpperCase(adresse));
     until s = '';
   end;
@@ -485,7 +476,7 @@ var RTAEmpfList :RTAEmpfaengerP;
         or (uEmpf = UpperCase (hdp.ReplyTo))
         or (uEmpf = UpperCase (hdp.wab))
         or (uEmpf = UpperCase (hdp.oab))
-        or (not adrOkay (lauf^.empf))
+        or (not IsMailAddress(lauf^.empf))
         {or (eigeneAdresse (lauf^.empf) and (lauf^.typ <> 9))} then
         removeFromList (list, vor, lauf)
       else begin
@@ -822,7 +813,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       end;
 
     begin
-      if adrOkay (hdp.ReplyTo) then                   { 'Reply-To-Empf„nger :' }
+      if IsMailAddress(hdp.ReplyTo) then                   { 'Reply-To-Empf„nger :' }
         add (hdp.ReplyTo, 7, not eigeneAdresse (eigeneAdressenbaum, hdp.ReplyTo),
              pmReplyToHasVertreter, pmReplyToIsUnknown);
 (*      if adrOkay (hdp^.wab) then                       { 'Original-Absender  :' }
@@ -831,9 +822,9 @@ var RTAEmpfList :RTAEmpfaengerP;
       else *)                                        { 'Absender           :' }
         add (hdp.absender, 5, (hdp.ReplyTo = '') and not eigeneAdresse (eigeneAdressenbaum, hdp.absender),
              absenderHasVertreter, absenderIsUnknown);
-      if adrOkay (hdp.wab) then                     { 'Weiterleit-Absender:' }
+      if IsMailAddress(hdp.wab) then                     { 'Weiterleit-Absender:' }
         add (hdp.wab, 2, false, wabHasVertreter, wabIsUnknown);
-      if adrOkay (hdp.oab) then
+      if IsMailAddress(hdp.oab) then
         add (hdp.oab, 1, false, oabHasVertreter, oabIsUnknown);
       addLists; { Empf„nger, Original-Empf„nger und Kopien-Empfaenger }
     end;
@@ -1036,8 +1027,8 @@ begin
   checkList (RTAEmpfList);
 
   if ((hdp.ReplyTo <> '') and (RTAMode and 2 = 2) and (UpperCase (hdp.ReplyTo) <> UpperCase (hdp.absender))
-       and adrOkay (hdp.ReplyTo)
-    or (hdp.wab <> '') and adrOkay (hdp.wab) and (RTAMode and 1 = 1)
+       and IsMailAddress(hdp.ReplyTo)
+    or (hdp.wab <> '') and IsMailAddress(hdp.wab) and (RTAMode and 1 = 1)
     or RTAEmpfVorhanden (true) and (RTAMode and 4 = 4)
     or RTAEmpfVorhanden (false) and (RTAMode and 8 = 8)
     or (RTAMode and 64 = 64))
@@ -1059,6 +1050,10 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/08/02 21:21:04  mk
+  - now using function is_mailaddress from xpconfigedit.pas instead of adrOkay
+  - removed function adrOkay
+
   Revision 1.6  2001/07/31 16:18:39  mk
   - removed some unused variables
   - changed some LongInt to DWord
