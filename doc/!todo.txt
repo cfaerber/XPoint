@@ -805,4 +805,36 @@ Intro APR and no hidden fees.  Apply NOW.
 ------------------------------------------------------------------------
 
 
+To: xpdeveloper@onelist.com
+Subject: Re: [XPDev] Beta 21
+From: wellschlumpf@MYOKAY.net (Ulf Wenthe)
+Date: 19 Feb 2000 17:18:00 +0100
 
+From: wellschlumpf@MYOKAY.net (Ulf Wenthe)
+
+Moin Martin!
+
+> Mhh , eigentlich gibt es keine bedeutsamen Bugs mehr in OpenXP.
+Die Bezugsverkettung im MausNetz ist bei über 32000 Nachrichten immer noch  
+fehlerhaft. Es wäre schön, wenn das noch korrigiert werden kann.
+
+Wiedergesehen,
+              Ulf
+
+
+------------------------------------------------------
+To: mk@happyarts.de
+Subject: Fehler in Beta20...
+From: Thomas_Niering@fue.maus.de (Thomas Niering)
+Date: Sat, 19 Feb 2000 10:25:00 +0100
+
+
+Hallo Markus,
+
+weiß nicht, ob der schon bekannt ist:
+
+Volltextsuche, und anschließend eine erneute Volltextsuche über die
+angezeigten, markierten Nachrichten führt zu einem kompletten Ausstieg
+aus XP (interner Fehler 215 at 0A09:3507)...
+
+Ciao Thomas

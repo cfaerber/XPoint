@@ -386,7 +386,7 @@ end;
 
 
 procedure editverteiler(txt:atext; var name,komm,pollbox:string;
-                        edit:boolean; var brk:boolean);
+                        var brk:boolean);
 var x,y : byte;
 begin
   dialog(57,7,txt,x,y);
@@ -416,7 +416,7 @@ begin
   komm:='';
   pollbox:='';
   newverteiler:=false;
-  editverteiler(getres(2704),name,komm,pollbox,false,brk);  { 'neuen Verteiler anlegen' }
+  editverteiler(getres(2704),name,komm,pollbox,brk);  { 'neuen Verteiler anlegen' }
   if not brk then begin
     dbSeek(ubase,uiName,ustr(name));
     if dbFound then
@@ -452,7 +452,7 @@ begin
   oldname:=name;
   dbReadN(ubase,ub_kommentar,komm);
   dbReadN(ubase,ub_pollbox,pollbox);
-  editverteiler(getres(2705),name,komm,pollbox,true,brk);   { 'Verteiler bearbeiten' }
+  editverteiler(getres(2705),name,komm,pollbox,brk);   { 'Verteiler bearbeiten' }
   if not stricmp(name,oldname) then begin
     rec:=dbRecno(ubase);
     dbSeek(ubase,uiName,ustr(name));
@@ -2180,6 +2180,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/20 11:06:33  mk
+  Loginfos hinzugeueft, Todo-Liste geaendert
+
   Revision 1.6  2000/02/20 09:51:39  jg
   - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
     und verbunden mit selbrett/seluser

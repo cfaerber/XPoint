@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Overlay-Teil von XP3: Nachrichten-Verwaltung }
 
@@ -1355,4 +1356,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.6  2000/02/20 11:06:33  mk
+  Loginfos hinzugeueft, Todo-Liste geaendert
 
+}
