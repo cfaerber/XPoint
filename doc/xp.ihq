@@ -10066,7 +10066,8 @@ Magic-kompatible Netze:
 Falls kein Realname angegeben ist, ist der Inhalt
 der Makros $RNAME und $(RNAME) leer. Ist ein
 Realname vorhanden, wird der Name eingesetzt und
-ein Leerzeichen angeh„ngt (nur bei $RNAME und $(RNAME).
+ein Leerzeichen angeh„ngt (nur bei $RNAME und
+$(RNAME)).
 
 @
 11701
