@@ -196,8 +196,8 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-        if left(dbReadStr(mbase,'brett'),1)<>'1' then
-          disprec[1]:=0;
+(*  !!      if left(dbReadStr(mbase,'brett'),1)<>'1' then
+          disprec[1]:=0; *)
         end
       else
         GoP;
@@ -2019,6 +2019,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.10  2000/11/20 10:07:04  mk
+  - fixed Bug #117117: Alt P in reply tree
+
   Revision 1.6.2.9  2000/11/08 17:55:09  mk
   - fixed Bug #119897: Ctrl E in Displaymode 11
 
