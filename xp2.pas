@@ -550,6 +550,15 @@ var   res  : integer;
       end;
   end;
 
+  procedure TestDir2(d:dirstr);
+  begin
+    if not IsPath(d) then begin
+      mkdir(left(d,length(d)-1));
+      if ioresult<>0 then
+        interr(reps(getres(203),left(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
+      end;
+  end;
+
   procedure SetPath(var pathp:pathptr; var oldpath:pathstr);
   begin
     getmem(pathp,length(oldpath)+1);
@@ -559,10 +568,14 @@ var   res  : integer;
 
 begin
   EditLogpath:=nil;
+  TestDir2(logpath);     {MW 04/2000}
+  TestDir2(temppath);    {MW 04/2000}
+  TestDir2(extractpath); {MW 04/2000}
+  TestDir2(sendpath);    {MW 04/2000}
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then begin
-      trfehler(204,60);   { 'ungÅltiges Logfileverzeichnis' }
+      trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
        SetPath(EditLogpath,logpath);
       end;
   EditTemppath:=nil;
@@ -1090,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/04/08 13:33:14  mk
+  MW: Defaultwerte angepasst und aktualisiert
+
   Revision 1.23  2000/04/04 21:01:23  mk
   - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
 

@@ -807,10 +807,12 @@ begin
     maddint  (33,4,getres2(261,3),Cirq,3,2,0,15);    { 'IRQ-Nummer ' }
     if fossil then MDisable;
     maddstring(3,6,getres2(261,4),mi,32,200,'');     { 'Modem-Init ' }
-    mappsel(false,'ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1');
+    mappsel(false,'ATZùATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1ùATZ\\ATX3');
+    {Weitere Optionen eingefuegt MW 04/2000}
     maddstring(3,7,getres2(261,5),me,32,200,'');     { 'Modem-Exit ' }
     maddstring(3,8,getres2(261,15),md,32,100,'');    { 'W„hlbefehl ' }
-    mappsel(false,'ATDPùATDT');
+    mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
+    {Weitere Dialstrings eingefuegt (Telefonanlagen) MW 04/2000}
     maddbool (3,10,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
     maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
     maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }

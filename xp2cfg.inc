@@ -375,10 +375,11 @@ begin
   scsaveadr:=scsaver;
   prterror:=DruckWiederholen;
   hlp(1);
-
-  DefaultZone:=2;
-  DefaultNet:=243;
-  DefaultNode:=97;
+  DefaultZone:=2;    {alt: 2}
+  DefaultNet:=248;   {alt: 243}
+  DefaultNode:=2004; {alt: 97}
+  {Node 2:243/97 existiert nicht mehr}
+  {Abänderung durch MW 04/2000}
   nodeopen:=false;
   kludges:=true;
   getmem(gAKAs,AKAlen+1); gAKAs^:='';
@@ -460,10 +461,11 @@ begin
   OtherQuoteChars:=false;
   { /oh }
   Screenlines:=25;
-  temppath:=ownpath;
-  extractpath:='';
-  sendpath:='';
-  logpath:=OwnPath;
+  temppath:=ownpath+'TEMP\';                {alt: temppath:=ownpath;}
+  extractpath:=ownpath+'FILES\';            {alt: extractpath:='';}
+  sendpath:=ownpath+'SEND\';                {alt: sendpath:='';}
+  logpath:=OwnPath+'LOG\';                  {alt: logpath:=OwnPath;}
+  {Änderungen durch MW 04/2000}
   filepath:=Ownpath+InFileDir;
   fidopath:=OwnPath+FidoDir;   { fest }
   DefaultBox:='';
@@ -516,8 +518,13 @@ begin
   DruckFF:='^L';
   DruckLira:=0;
   autocpgd:=true;
-  XP_ID_PMs:=true;
-  XP_ID_AMs:=true;
+  XP_ID_PMs:=false;  {alt: XP_ID_PMs:=true;}
+  XP_ID_AMs:=false;  {alt: XP_ID_AMs:=true;}
+  {Keine Xp-Zeile unter AMs und PMs setzen.
+  Die Sharewareeinschränkung das das unregistrierte
+  Xp unter PMs immer die XP-Zeile setzt bleibt davon
+  unberührt. Dies wird an anderer Stelle geprüft und
+  gesetzt.   MW 04/2000}
   UserSlash:=true;
   BAKext:='BAK';
   keepedname:=false;
@@ -551,11 +558,17 @@ begin
   for i:=1 to 5 do
     with COMn[i] do begin
       getmem(Minit,32);
-      Minit^:='ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1';
+      Minit^:='ATZ';
+      {alt: Minit^:='ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1';}
+      {Für den Modeminit reicht idR. ein ATZ
+      MW 04/2000}
       getmem(Mexit,1);
       Mexit^:='';
       getmem(MDial,5);
-      MDial^:='ATDP';
+      MDial^:='ATDT';
+      {alt: MDial^:='ATDP';}
+      {Alle Telefonanschlüsse in D sind tonwahlfähig !!!
+      Und zwar schon seit Ende 1997  MW 04/2000}
       Warten:=5;
       ring:=true;
       postsperre:=true;
@@ -1632,6 +1645,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/04/08 13:33:14  mk
+  MW: Defaultwerte angepasst und aktualisiert
+
   Revision 1.25  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 
