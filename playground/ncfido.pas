@@ -88,8 +88,6 @@ type
     function PerformNetcall: Integer;
   end;
 
-function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
-
 implementation
 
 uses
@@ -120,17 +118,6 @@ var   ZedZap,LogSending  : boolean;
       Dummy  : LongInt;
 
 { ----- some generic routines ------------------------------------------------------}
-
-function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
-var p : byte;
-begin
-  p:=cpos('.',Filename);
-  if (p=0) or (Filename='.') or (Filename='..') then
-    result:=false
-  else
-    result:=(pos(copy(Filename,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
-            (FidoExtNamesPermitted or (pos(copy(Filename,p+3,1),'0123456789')>0));
-end;
 
 function GetString(var buf; Len: Integer): String;
 {Gibt Len Zeichen aus buf als String zurueck}
@@ -251,6 +238,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.9  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now

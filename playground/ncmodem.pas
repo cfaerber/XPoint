@@ -51,7 +51,7 @@ type
     FTimerObj: tTimer;
     FConnected,FActive,FDialupRequired,FCommObjReleased: Boolean;
     FPhonenumbers: String;
-    WaitForAnswer,GotUserBreak: Boolean;
+    WaitForAnswer,FGotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
     FErrorMsg,FLogfileName,ReceivedUpToNow,ModemAnswer: String;
     {this badge will be used by Log method, default 'ncmodem'}
@@ -70,7 +70,7 @@ type
     procedure ProcessIncoming;
 
     {Process keypresses:
-     - set timer to timeout and set GotUserbreak to True on ESC
+     - set timer to timeout and set FGotUserBreak to True on ESC
      - set timer to timeout on space
      - adjust timer on +/-}
     procedure ProcessKeypresses(AcceptSpace:boolean);
@@ -126,6 +126,8 @@ type
     { Sets/reads timeout (activates on idleing of peer) }
 //    property Timeout: Real read FGetTimeout write FSetTimeout;
 
+    { True if interrupted by user }
+    property GotUserBreak: Boolean read FGotUserBreak;
     property ErrorMsg: string read FErrorMsg;
 
     constructor Create;
@@ -195,7 +197,7 @@ constructor TModemNetcall.Create;
 begin
   inherited Create;
   FConnected:=False; FActive:=False; FDialupRequired:=False; FErrorMsg:='';
-  WaitForAnswer:=False; GotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
+  WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
@@ -230,7 +232,10 @@ begin
   Overwrite:=Copy(S,1,1)='*';
   if Overwrite then Delete(S,1,1);
   Assign(FLogfile,S);
-  if Overwrite then ReWrite(FLogfile)else Reset(FLogfile);
+  if Overwrite or not FileExists(s) then
+    ReWrite(FLogfile)
+  else
+    Append(FLogfile);
   FLogfileOpened:=True;
 end;
 
@@ -264,7 +269,7 @@ begin
     case c of
       #27 : begin
               FTimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
-              DebugLog('ncmodem','User break',DLWarning); GotUserBreak:=true;
+              DebugLog('ncmodem','User break',DLWarning); FGotUserBreak:=true;
             end;
       '+' : FTimerObj.SetTimeout(FTimerObj.SecsToTimeout+1);
       '-' : if FTimerObj.SecsToTimeout>1 then FTimerObj.SetTimeout(FTimerObj.SecsToTimeout-1);
@@ -337,7 +342,7 @@ var
 
 begin
   if not FDialupRequired then begin result:=true; exit end;
-  GotUserBreak := false;
+  FGotUserBreak := false;
   DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+CommandInit+'", Dial "'+CommandDial+'", MaxDialAttempts '+
                    Strs(MaxDialAttempts)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWaitTime),DLInform);
   StateDialup:=SDInitialize; iDial:=0; result:=False;
@@ -409,7 +414,7 @@ begin
                          end;
     end;
     ProcessKeypresses(true);
-    if GotUserBreak then begin WriteIPC(mcInfo,'Got user break',[0]); exit end;
+    if FGotUserBreak then begin WriteIPC(mcInfo,'Got user break',[0]); exit end;
   end;
 end;
 
@@ -447,6 +452,10 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.7  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now

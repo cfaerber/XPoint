@@ -37,7 +37,7 @@ function FidoNetcall(box: string;
                      ppfile: string;
                      crash,alias:boolean;
                      domain:string;
-                     Fidologfile: String;
+                     Logfile: String;
                      const OwnFidoAdr: String;
                      IncomingFiles: TStringList):shortint;
 
@@ -95,7 +95,6 @@ var d         : DB;
                    false,                            { Keep VIA }
                    true,                             { Requests }
                    false,1,1);                       { Leere loeschen? }
-      if Res=0 then _era(source)
     end;
   end;
 
@@ -173,6 +172,18 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
                        const DirWhereToProcess,RequestedFilesDir: String;
                        const Decompressor: String;
                        boxpar: boxptr);
+
+  function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
+  var p : byte;
+  begin
+    p:=cpos('.',Filename);
+    if (p=0) or (Filename='.') or (Filename='..') then
+      result:=false
+    else
+      result:=(pos(copy(Filename,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
+              (FidoExtNamesPermitted or (pos(copy(Filename,p+3,1),'0123456789')>0));
+  end;
+
 const fpuffer = 'FPUFFER';
 var p       : byte;
     x,y     : byte;
@@ -267,7 +278,6 @@ begin
       if FileExists(fpuffer) then _era(fpuffer);
     end;
   end; { with }
-  Debug.DebugLog('xpncfido','Files remaining to process: '+Stringlist(FilesToProcess),DLDebug);
   freeres;
 end;
 
@@ -279,7 +289,7 @@ function FidoNetcall(box: string;
                      ppfile: string;
                      crash,alias:boolean;
                      domain:string;
-                     Fidologfile: String;
+                     Logfile: String;
                      const OwnFidoAdr: String;
                      IncomingFiles: TStringList):shortint;
 
@@ -289,18 +299,15 @@ type rfnodep     = ^reqfilenode;
                      next : rfnodep;
                    end;
 
-var aresult  : integer;
-    i        : integer;
+var i        : integer;
     request  : string;
     ownaddr  : string;
     fa       : fidoadr;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
-    dir      : TDirectory;
-    ShellCommandUparcer,UpBufferFilename: String;
-    Fidomailer: TFidomailer;
     OutgoingFiles: TStringList;
+    Fidomailer: TFidomailer;
 
 label fn_ende,fn_ende0;
 
@@ -355,8 +362,8 @@ label fn_ende,fn_ende0;
   begin   { InitFidomailer }
     with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
-      if fidologfile<>'' then
-        Fidomailer.logfilename:= '*'+fidologfile;
+      if Logfile<>'' then
+        Fidomailer.logfilename:= '*'+Logfile;
       Fidomailer.Username:= username;
       if alias then
         Fidomailer.OwnAddr:=LeftStr(box,cpos('/',box))+pointname
@@ -508,8 +515,12 @@ label fn_ende,fn_ende0;
     ARCmail:=fn;
   end;
 
+var
+  ShellCommandUparcer,UpBufferFilename,UpArcFilename: String;
+
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
+  result:=el_noconn;
 
   // Convert outgoing buffers
   UpBufferFilename:=LeftStr(date,2)+LeftStr(typeform.time,2)+
@@ -518,13 +529,16 @@ begin { FidoNetcall }
   ZtoFido(boxpar,ppfile,UpBufferFilename,ownfidoadr,1,alias);
 
   // Compress outgoing buffers
+  UpArcFilename:=ArcMail(ownfidoadr,boxpar^.boxname);
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
-  exchange(ShellCommandUparcer,'$UPFILE',ArcMail(ownfidoadr,boxpar^.boxname));
+  exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
   OutgoingFiles:=TStringList.Create;
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
-    result:=el_noconn; exit;
+    _era(UpBufferFilename);
+    OutgoingFiles.Destroy;
+    exit;
     end
   else _era(UpBufferFilename);
 
@@ -535,8 +549,6 @@ begin { FidoNetcall }
   splitfido(boxpar^.boxname,fa,DefaultZone);
   request:=FidoAppendRequestfile(fa);     { an .REQ-File anhÑngen }
 
-  fidologfile:=TempFile('');
-
   if crash then begin
     getNodeInfo(boxpar^.boxname,ni,2);
     if not ni.found then komment:='???'
@@ -545,46 +557,26 @@ begin { FidoNetcall }
     end;
 
   { Init Fidomailer obj }
-  result:=EL_ok;
   Fidomailer:=TFidomailer.Create;
   if not Fidomailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
     trfehler1(2340,Fidomailer.ErrorMsg,30);
-    goto fn_ende;
+    Fidomailer.Destroy;
+    OutgoingFiles.Destroy;
+    _era(UpArcFilename);
+    exit;
     end;
   Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
   Fidomailer.FilesToSend:=OutgoingFiles; Fidomailer.FilesReceived:=IncomingFiles;
   InitFidomailer;
-  result:=EL_noconn;
-  aresult:=Fidomailer.PerformNetcall;
+  result:=Fidomailer.PerformNetcall;
   Fidomailer.Destroy;
 
-  AppLog(fidologfile,FidoLog);
-  if (aresult<0) or (aresult>EL_max) then begin
-    Debug.DebugLog('xpncfido','error in fido mailer',DLError);
-    trfehler1(720,strs(aresult),10);   { 'interner Fehler (%s) im Fido-Mailer' }
-    aresult:=EL_break;
-    end;
-  FidoNetcall:=aresult;
+  AppLog(Logfile,FidoLog);
 
 //**    for i:=1 to addpkts^.anzahl do
 //**      DeleteFile(addpkts^.addpkt[i]);
 
-  case aresult of
-    EL_ok    : if not crash then wrtiming('NETCALL '+boxpar^.boxname);
-    EL_break : goto fn_ende;
-    EL_carrier:begin
-                 trfehler(721,45);   { 'Fehler - bitte Modemeinstellungen (Carrier) ÅberprÅfen!' }
-                 goto fn_ende;
-               end;
-    EL_par   : begin
-                 trfehler(722,45);   { 'Fehler beim XP-FM-Aufruf ?!' }
-                 goto fn_ende;
-               end;
-    EL_noconn : goto fn_ende;
-    EL_nologin: goto fn_ende0;
-  end;
-
-  if (aresult=EL_ok) or (aresult=EL_recerr) then begin   { Senden OK }
+  if (result IN [el_ok,el_recerr]) then begin   { Senden OK }
     Moment;
     if request<>'' then ProcessRequestResult(MakeFidoAdr(fa,true));
 //**    for i:=1 to addpkts^.akanz do
@@ -592,6 +584,7 @@ begin { FidoNetcall }
 //**        ProcessRequestResult(addpkts^.akabox[i]);
     if crash then SetCrash(MakeFidoAdr(fa,true),false);
     outmsgs:=0;
+    _era(UpArcFilename);
     if FileExists(ppfile) then begin
       ClearUnversandt(ppfile,box);    { Pollbox ist der BossNode! }
       _era(ppfile);
@@ -613,7 +606,7 @@ begin { FidoNetcall }
       if AutoDiff then
         if DoDiffs(FilePath+'*.*',true)=0 then;
       if AutoTIC then
-        TestTICfiles(fidologfile);
+        TestTICfiles(Logfile);
       end;
 
   fn_ende:
@@ -627,10 +620,6 @@ begin { FidoNetcall }
     if FileExists(ppfile) and (_filesize(ppfile)=0) then begin
       Debug.DebugLog('xpncfido','deleting packet: "'+ppfile+'"',DLInform);
       DeleteFile(ppfile);
-      end;
-    if FileExists(fidologfile) then begin
-      Debug.DebugLog('xpncfido','deleting netcall temporary log file: "'+fidologfile+'"',DLInform);
-      DeleteFile(fidologfile);
       end;
 
     OutgoingFiles.Destroy;
@@ -848,6 +837,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.9  2001/02/06 11:45:06  ma
   - xpnetcall doing even less: file name handling has to be done in
     specialized netcall units from now on

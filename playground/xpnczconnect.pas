@@ -34,13 +34,14 @@ uses
 function ZConnectNetcall(box: string;
                          boxpar: boxptr;
                          ppfile: string;
+                         Logfile: String;
                          IncomingFiles: TStringList):shortint;
 
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
-  datadef,database,xp9bp,xpnt,xpnetcall,ncgeneric,objcom,ipcclass;
+  xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
+  xpnt,xpnetcall,ncgeneric,objcom;
 
 
 {Processes (decompresses and merges buffers/moves requested files
@@ -67,15 +68,15 @@ var x,y     : byte;
 begin
   with BoxPar^ do begin
     msgbox(40,5,GetRepS2(30003,1,boxname),x,y);     { 'Pakete suchen (%s)' }
-    Debug.DebugLog('xpncfido','Processing packets: '+Stringlist(FilesToProcess),DLDebug);
+    Debug.DebugLog('xpnczconnect','Processing packets: '+Stringlist(FilesToProcess),DLDebug);
     NewFiles:=TStringList.Create; iFile:=0;
     while iFile<=(FilesToProcess.Count-1) do begin
       aFile:=FilesToProcess[iFile];
       if isCompressedZCPacket(aFile) then begin
-        Debug.DebugLog('xpncfido',aFile+' is compressed packet',DLDebug);
+        Debug.DebugLog('xpnczconnect',aFile+' is compressed packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,ExtractFileName(aFile)));
 
-        Debug.DebugLog('xpncfido','chdir to '+DirWhereToProcess,DLDebug);
+        Debug.DebugLog('xpnczconnect','chdir to '+DirWhereToProcess,DLDebug);
         SetCurrentDir(DirWhereToProcess);
         ShellProg:=Downarcer;
         Exchange(ShellProg,'$DOWNFILE',aFile);
@@ -84,17 +85,17 @@ begin
         Res:=ShellNTrackNewFiles(ShellProg,500,1,NewFiles);
         // shell chdirs back to program directory automatically
         if Res<>0 then begin
-          Debug.DebugLog('xpncfido','error calling downarcer',DLError);
+          Debug.DebugLog('xpnczconnect','error calling downarcer',DLError);
           MoveToBad(aFile);
           end
         else begin
-          Debug.DebugLog('xpncfido','decompressed ok, deleting archive',DLDebug);
+          Debug.DebugLog('xpnczconnect','decompressed ok, deleting archive',DLDebug);
           _era(aFile);
           end;
         FilesToProcess.Delete(iFile);
         end
       else begin
-        Debug.DebugLog('xpncfido',aFile+' is a requested file',DLDebug);
+        Debug.DebugLog('xpnczconnect',aFile+' is a requested file',DLDebug);
 //**    Move to file dir
         FilesToProcess.Delete(iFile);
         end;
@@ -103,25 +104,25 @@ begin
   closebox;
   for iFile:=0 to NewFiles.Count-1 do FilesToProcess.Add(NewFiles[iFile]);
   NewFiles.Destroy;
-  Debug.DebugLog('xpncfido','Files remaining to process: '+Stringlist(FilesToProcess),DLDebug);
+  Debug.DebugLog('xpnczconnect','Files remaining to process: '+Stringlist(FilesToProcess),DLDebug);
   freeres;
 end;
 
 function ZConnectNetcall(box: string;
                          boxpar: boxptr;
                          ppfile: string;
+                         Logfile: String;
                          IncomingFiles: TStringList):shortint;
 
 var
   GenericMailer: TGenericMailer;
-  CommObj: tpCommObj;
   OutgoingFiles: TStringList;
 
   procedure InitMailer;
   begin   { InitGenericMailer }
     with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
-      GenericMailer.Logfilename:= '*e:\logfile.txt';
+      GenericMailer.Logfilename:= logfile;
       if hayescomm and (ModemInit+MInit<>'') then begin
         if (ModemInit<>'') and (minit<>'') then
           GenericMailer.CommandInit:= minit+'\\'+ModemInit
@@ -140,22 +141,25 @@ var
   end;
 
 var
-  charlog: text;
-  ShellCommandUparcer: string;
+  ShellCommandUparcer,UpArcFile: string;
+  CommObj: tpCommObj;
+  Proceed: Boolean;
 
 begin { ZConnectNetcall }
-  Debug.DebugLog('xpncfido','zc netcall starting',DLInform);
+  Debug.DebugLog('xpnczconnect','zc netcall starting',DLInform);
+  result:=el_noconn;
 
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
+  UpArcFile:='CALLER.'+boxpar^.uparcext;
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
-  exchange(ShellCommandUparcer,'$UPFILE','CALLER.'+boxpar^.uparcext);
+  exchange(ShellCommandUparcer,'$UPFILE',UpArcFile);
   OutgoingFiles:=TStringList.Create;
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
-    OutgoingFiles.Clear;
-    result:=el_noconn; exit;
+    _era(PufferFile);
+    exit;
     end
   else _era(PufferFile);
 
@@ -163,26 +167,45 @@ begin { ZConnectNetcall }
   GenericMailer:=TGenericMailer.Create;
   if not GenericMailer.Activate(ComN[boxpar^.bport].MCommInit)then begin
     trfehler1(2340,GenericMailer.ErrorMsg,30);
-//**    goto fn_ende;
+    GenericMailer.Destroy;
+    OutgoingFiles.Destroy;
+    _era(UpArcFile);
+    exit;
     end;
   GenericMailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True);
   InitMailer;
-  GenericMailer.DialUp;
-  assign(charlog,'e:\charlog.txt'); rewrite(charlog);
-  CommObj:=GenericMailer.CommObj;
-  RunScript(BoxPar,CommObj,GenericMailer.IPC,false,'d:\xp\zc.scr','e:\trace.txt',
-            false,false,@charlog);
-  close(charlog);
+  Proceed:=GenericMailer.Connect;
+  if Proceed then begin
+    result:=el_nologin;
+    CommObj:=GenericMailer.CommObj;
+    Proceed:=RunScript(BoxPar,CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
+    end;
 //** Transmit serial number
-  GenericMailer.IPC.WriteFmt(mcInfo,'Sending files: %s',[Stringlist(OutgoingFiles)]);
-  GenericMailer.SendFiles(OutgoingFiles);
-  GenericMailer.ReceiveFiles(ownpath+XFerDir,IncomingFiles);
-  GenericMailer.HangUp;
+  if Proceed then begin
+    result:=el_senderr;
+    Proceed:=GenericMailer.SendFiles(OutgoingFiles);
+    end;
+  _era(UpArcFile);
+  if Proceed then begin
+    result:=el_recerr;
+    Proceed:=GenericMailer.ReceiveFiles(ownpath+XFerDir,IncomingFiles);
+    end;
+  GenericMailer.Disconnect;
+  if Proceed then result:=el_ok;
 
   GenericMailer.Destroy;
   CommObj^.Close; Dispose(CommObj,Done);
 
   ProcessIncomingFiles(IncomingFiles,ownpath+xferdir,ownpath+filepath,boxpar);
+
+  if result IN [el_recerr,el_ok] then begin
+    Debug.DebugLog('xpnczconnect','sending upbuffer was successful, clearing',DLInform);
+    if FileExists(ppfile) then begin
+      ClearUnversandt(ppfile,box);
+      _era(ppfile);
+      end;
+    end;
+
   OutgoingFiles.Destroy;
 end;
 
@@ -190,6 +213,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.2  2001/02/06 11:45:06  ma
   - xpnetcall doing even less: file name handling has to be done in
     specialized netcall units from now on

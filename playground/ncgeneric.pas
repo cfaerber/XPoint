@@ -32,19 +32,14 @@ type
   protected
 
   public
-    function DialUp: boolean;
     function SendFiles(OutgoingFiles: TStringList): boolean;
     function ReceiveFiles(IncomingDir: String; IncomingFiles: TStringList): boolean;
-    procedure HangUp;
   end;
 
 implementation
 
 uses
   zmodem,sysutils,debug;
-
-function TGenericMailer.DialUp: boolean;
-begin result:=connect end;
 
 function TGenericMailer.SendFiles(OutgoingFiles: TStringList): boolean;
 var
@@ -77,14 +72,15 @@ begin
   ZModemObj.Done;
 end;
 
-procedure TGenericMailer.HangUp;
-begin Disconnect end;
-
 
 end.
 
 {
   $Log$
+  Revision 1.2  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.1  2001/02/05 22:33:56  ma
   - added ZConnect netcall (experimental status ;-)
   - modemscripts working again

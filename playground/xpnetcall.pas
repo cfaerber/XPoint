@@ -256,6 +256,7 @@ var f      : file;
   end;
 
 begin
+  Debug.Debuglog('xpnetcall','Clearunversandt, puffer '+puffer+', box '+boxname,DLInform);
   assign(f,puffer);
   if not existf(f) then exit;
   hdp := THeader.Create;
@@ -624,7 +625,13 @@ begin
   errorlevel:=0;
 end;
 
+function NoScript(script:string):boolean;
+begin
+  NoScript:=((script='') or not FileExists(script));
+end;
+
 function BoxParOk:string;
+
 var uucp : boolean;
 begin
   uucp:=(logintyp=ltUUCP);
@@ -638,7 +645,7 @@ begin
       else
         BoxParOk:=''
     else
-      if LoginTyp in [ltNNTP, ltPOP3] then
+      if LoginTyp IN [ltNNTP, ltPOP3] then
         // Hier evtl. n"tige Tests der Parameter einstellen
       else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
@@ -653,6 +660,8 @@ begin
 //        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
 //      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
 //        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
+      else if ((logintyp=ltZConnect)and NoScript(script)) then
+        BoxParOk:=getres2(10700,8)
       else
         BoxParOk:='';
     end;
@@ -766,11 +775,6 @@ end;
       writeln(netlog^,'®Errorlevel: '+strs(errorlevel)+'¯');
   end;
 
-  function NoScript(script:string):boolean;
-  begin
-    NoScript:=((script='') or not FileExists(script));
-  end;
-
   procedure Del_PP_and_UV;
   begin
     if FileExists(ppfile) then begin
@@ -782,6 +786,8 @@ end;
       end;
     if FileExists(eppfile) then _era(eppfile);
   end;
+
+var NetcallLogfile: String;
 
 begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','function Netcall',DLInform);
@@ -940,10 +946,11 @@ begin                  { function Netcall }
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
+          NetcallLogfile:=TempFile('');
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
-          case FidoNetcall(BoxName,Boxpar,ppfile,crash,alias,domain,logfile,
+          case FidoNetcall(BoxName,Boxpar,ppfile,crash,alias,domain,NetcallLogfile,
                            OwnFidoAdr,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
@@ -957,10 +964,11 @@ begin                  { function Netcall }
 
         ltZConnect: begin
           Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
+          NetcallLogfile:=TempFile('');
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
-          case ZConnectNetcall(BoxName,Boxpar,ppfile,IncomingFiles) of
+          case ZConnectNetcall(BoxName,Boxpar,ppfile,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
             EL_noconn : begin Netcall_connect:=false; goto ende0; end;
             EL_recerr,
@@ -1210,6 +1218,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.5  2001/02/06 11:45:06  ma
   - xpnetcall doing even less: file name handling has to be done in
     specialized netcall units from now on

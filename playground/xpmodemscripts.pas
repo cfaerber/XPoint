@@ -31,8 +31,8 @@ uses
   resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,IPCClass;
 
 function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; IPC: TIPC;
-                   DryRun:boolean; scriptfile,tracefile:string;
-                   online,relogin:boolean; RcvdCharLog:textp):shortint;
+                   DryRun:boolean; scriptfile:string;
+                   online,relogin:boolean):shortint;
 
 
 implementation
@@ -40,8 +40,8 @@ implementation
 uses  timer,debug;
 
 function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; IPC: TIPC;
-                   DryRun:boolean; scriptfile,tracefile:string;
-                   online,relogin:boolean; RcvdCharLog:textp):shortint;
+                   DryRun:boolean; scriptfile:string;
+                   online,relogin:boolean):shortint;
 
 const MaxLines  = 500;
       Maxlabels = 100;
@@ -51,6 +51,7 @@ const MaxLines  = 500;
       pEndError = 1;      { = num. Parameter des END-Befehls }
       pEndFail  = 2;
       pEndSyntax= 3;      { Syntax Error }
+      pUserBreak= 4;
 
       pDispOn   = 1;      { num. Parameter des DISPLAY-Befehls }
       pDispOff  = 2;
@@ -450,9 +451,8 @@ const maxstack = 50;
 var ip   : integer;
     LoginTimer,UniTimer: TTimer;
     ende : boolean;
+    runlog : text;
     par  : string;
-    trace: text;
-    tn   : byte;
     stack: array[1..maxstack] of integer;
     sp   : integer;
     ExecuteScriptRes: shortint;
@@ -507,17 +507,16 @@ var ip   : integer;
       c:=readkey;
       if c=#27 then begin
         ende:=true;
-        ExecuteScriptRes:=pEndError;
+        ExecuteScriptRes:=pUserBreak;
         end
-      else if c>#0 then
-        CommObj^.SendString(c,False)
-      else readkey;
+      else
+        if c=#0 then readkey;
       end;
   end;
-  
+
   procedure ProcessIncoming;
   begin
-    while CommObj^.CharAvail do
+    if CommObj^.CharAvail then
       ReceivedChars:=ReceivedChars+CommObj^.GetChar;
   end;
 
@@ -529,22 +528,24 @@ var ip   : integer;
         0 : doit:=true;
         1 : begin
               par:=onstr;
-              doit:=Pos(par,LowerCase(ReceivedChars))<>0;
+              doit:=RightStr(LowerCase(ReceivedChars),length(par))=par;
               if doit then begin
-                IPC.WriteFmt(mcInfo,'Reacting on %s',[par]);
-                if RcvdCharLog<>nil then write(RcvdCharLog^,ReceivedChars);
+                write(runlog,ReceivedChars);
+                write(runlog,'!ON '+par+' action triggered!');
                 ReceivedChars:='';
                 end;
             end;
         2 : begin
               multi2;
               doit:=UniTimer.Timeout;
+              write(runlog,'!ON (TIMEOUT) triggered!');
             end;
         3 : doit:=online;
         4 : doit:=not online;
         5 : doit:=relogin;
       end;
-      if doit then
+      if doit then begin
+        write(runlog,'!performing command!');
         case command of
           cmdWaitfor  : begin
                           par:=LowerCase(getpar);
@@ -552,8 +553,12 @@ var ip   : integer;
                             ProcessIncoming;
                             ProcessKeypresses;
                           until timeout or (RightStr(LowerCase(ReceivedChars),length(par))=par) or ende;
-                          if RcvdCharLog<>nil then write(RcvdCharLog^,ReceivedChars);
+                          write(runlog,ReceivedChars);
                           ReceivedChars:='';
+                          if timeout then
+                            write(runlog,'!WAITFOR '+par+' timeout!')
+                          else
+                            write(runlog,'!WAITFOR '+par+' ended!');
                         end;
           cmdSend     : CommObj^.SendString(GetPar,False);
           cmdGoto     : ip:=numpar-1;
@@ -588,7 +593,8 @@ var ip   : integer;
                           {*ansimode:=(numpar=pAnsiOn);
                           if not ansimode then ansichar:=false;}
                         end;
-        end;
+          end; {case}
+        end; {if doit}
       inc(ip);
       end;
   end;
@@ -603,23 +609,10 @@ begin    { of ExecuteScript }
 //**  display:=true;
 //**  ansimode:=true;
   sp:=0;
-  if Tracefile<>'' then begin                       { Trace-Log ”ffnen }
-    assign(trace,Tracefile);
-    if existf(trace) then append(trace)
-    else rewrite(trace);
-    writeln(trace,getres2(2011,1),' ',scriptfile,' / ',date,' / ',time);
-    writeln(trace);
-    tn:=0;
-    end;
+  assign(runlog,LogPath+ScerrLog);
+  rewrite(runlog);
 
   repeat
-    if Tracefile<>'' then begin                     { Trace-Zeile schreiben }
-      write(trace,script[ip].txtline,' ');
-      inc(tn);
-      if tn>17 then begin
-        tn:=0; writeln(trace);
-        end;
-      end;
     InterpreteEntry;
     ProcessKeypresses;
 
@@ -629,16 +622,9 @@ begin    { of ExecuteScript }
       end;
   until ende or timeout;
 
+  close(runlog);
   if sp>0 then
     runerror(4);           { 'CALL ohne RETURN' }
-  if Tracefile<>'' then begin
-    if tn>0 then writeln(trace);
-    writeln(trace);
-    writeln(trace,getres2(2011,2),' ',time);
-    writeln(trace);
-    writeln(trace);
-    close(trace);
-    end;
   freeres;
   LoginTimer.Done; UniTimer.Done;
   if timeout then
@@ -671,6 +657,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/06 20:17:50  ma
+  - added error handling
+  - cleaning up files properly now
+
   Revision 1.2  2001/02/05 22:33:56  ma
   - added ZConnect netcall (experimental status ;-)
   - modemscripts working again
