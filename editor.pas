@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Editor v1.0   PM 05/93 }
@@ -22,14 +23,37 @@ uses
   xpglobal, crt, dos,keys,clip,mouse,eddef, encoder, lfn;
 
 
-const EdTempFile  : string = 'TED.TMP';
-      EdConfigFile: string[14] = 'EDITOR.CFG';
-      EdSelcursor : boolean = false;    { Auswahllistencursor }
+const 
+      EdConfigFile    : string[10] = 'EDITOR.CFG';
+      EdGlossaryFile  : string[12] = 'GLOSSARY.CFG';
+      EdSelcursor     : boolean = false; { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
+      EditResetoldpos : boolean = false;
+ 
+type 
+      charr    = array[0..65500] of char;
+      charrp   = ^charr; 
+      EdToken  = byte;
+      EdTProc  = function(var t:taste):boolean;   { true = beenden }
 
-type  EdToken = byte;
-      EdTProc = function(var t:taste):boolean;   { true = beenden }
+      absatzp  = ^absatzt;
+      absatzt  = record
+                   next,prev  : absatzp;
+                   size,msize : smallword;       { msize = allokierte Grî·e }
+                   umbruch    : boolean;
+                   fill       : array[1..3] of byte;
+                   cont       : charr;
+                 end;
+      position = record
+                   absatz     : absatzp;
+                   offset     : integer;
+                 end;
 
+const
+      laststartline    : longint=0;      { fÅr Z-Anzeige }
+      lastscx          : integer=1; 
+      lastscy          : integer=1;      { Bildschirm (Cursor) }
+      lastxoffset      : integer=0;
 
 procedure EdInitDefaults(color:boolean);    { einmal bei Programmstart }
 procedure EdSetScreenwidth(w:byte);         { globale Einstellungen }
@@ -47,7 +71,7 @@ procedure EdSetProcs(p:EdProcs);
 procedure EdSetLanguage(ld:LangData);
 procedure EdSetColors(col:EdColrec);
 procedure EdSetForcecr(newcr:boolean);
-procedure EdPointswitch(yuppieon:boolean);
+(*procedure EdPointswitch(yuppieon:boolean);*)
 procedure EdGetConfig(var cf:EdConfig);
 procedure EdSetConfig(cf:EdConfig);
 procedure EdSetUkonv(umlaute_konvertieren:boolean);
@@ -68,7 +92,7 @@ procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion
 
 implementation  { ------------------------------------------------ }
 
-uses  xp2b,typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister,xpovl;
+uses  typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister,xpovl,xpe;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -80,22 +104,7 @@ const maxgl     = 60;
       message   : string[40] = '';
       ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
 
-type  charr    = array[0..65500] of char;
-      charrp   = ^charr;
-
-      absatzp  = ^absatzt;
-      absatzt  = record
-                   next,prev  : absatzp;
-                   size,msize : smallword;       { msize = allokierte Grî·e }
-                   umbruch    : boolean;
-                   fill       : array[1..3] of byte;
-                   cont       : charr;
-                 end;
-      position = record
-                   absatz     : absatzp;
-                   offset     : integer;
-                 end;
-      edp      = ^EdData;
+type  edp      = ^EdData;
       EdData   = record                       { je aktivem Editorobjekt }
                    lastakted  : edp;
                    x,y,w,h,gl : byte;         { --- Startup }
@@ -130,7 +139,7 @@ type  charr    = array[0..65500] of char;
                    blockhidden  : boolean;  { Blockmarkierung ausgeschaltet  }
                    na_umbruch   : byte;
                    forcecr      : boolean;  { CR am Textende beim Speichern }
-                   pointswitch  : boolean;  { XPoint-Editor }
+                 (*  pointswitch  : boolean;  { XPoint-Editor } *)
                    Config       : EdConfig;
                    ukonv        : boolean;
                    autosave     : boolean;
@@ -150,9 +159,8 @@ var   Defaults : edp;
       memerrfl : boolean;
       akted    : edp;
       delroot  : delnodep;         { Liste gelîschter Blîcke }
-      ClipBoard: absatzp;
-
-
+    (* ClipBoard: absatzp; *) 
+      NoCursorsave : boolean;
 { ------------------------------------------------ externe Routinen }
 
 function SeekStr(var data; len:word;
@@ -166,7 +174,7 @@ asm
   @start:
          push  ds
          lds   si,data
-         push  si     { robo }
+         push  si
          les   di,s
          mov   cx,len
          mov   al,es:[di]              { ax:=length(s) - < 127! }
@@ -211,14 +219,14 @@ asm
          loop  @sblp1
 
   @nfound:
-         pop   si     { robo }
+         pop   si
          mov   ax,-1
          jmp   @sende
   @found:
          mov   ax,si
-{         sub   ax,offset data } { robo }
-         pop   si     { robo }
-         sub   ax,si  { robo }
+{         sub   ax,offset data }
+         pop   si
+         sub   ax,si
   @sende:
          pop   ds
 end;
@@ -277,6 +285,7 @@ asm
             mov   ax,bx
             pop ds
 end;
+
 
 procedure FlipCase(var data; size: word);
 var cdata : charr absolute data;
@@ -352,9 +361,7 @@ begin
   errsound;
 end;
 
-{ procedure EddefFileproc(ed:ECB; var fn:string; save:boolean); }
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
-{ /robo }
 var brk : boolean;
     mf  : char;
 begin
@@ -364,9 +371,7 @@ begin
     fn:='';
     mf:=fchar; fchar:=' ';
     bd(x,y,'Block '+iifs(save,'speichern','laden')
-    { 04.02.2000 robo }
            +iifs(uuenc,' und UU-kodieren','')
-    { /robo }
            +': ',fn,min(w-20,70),1,brk);
     fchar:=mf;
     if brk then fn:='';
@@ -422,14 +427,10 @@ begin
             config.absatzendezeichen:=iifc(p<length(s),s[p+1],' ')
           else if left(s,p-1)='autoindent' then
             config.AutoIndent:=(mid(s,p+1)<>'n')
-          { 01/2000 oh }
           else if left(s,p-1)='persistentblocks' then
             config.PersistentBlocks:=(mid(s,p+1)<>'n')
-          { /oh }
-          { 10.02.2000 robo }
           else if left(s,p-1)='quotereflow' then
             config.QuoteReflow:=(mid(s,p+1)<>'n');
-          { /robo }
         end;
       close(t);
       end;
@@ -455,19 +456,23 @@ begin
     menue[2]:='^Ausschneiden   -';
     menue[3]:='^EinfÅgen       +';
     menue[4]:='^Laden        ^KR';
-    { 03.02.2000 robo }
     menue[5]:='La^den UUE    ^KU';
     menue[6]:='^Speichern    ^KW';
     menue[7]:='-';
-    menue[8]:='^Umbruch aus   F3';
-    menue[9]:='U^mbruch ein   F4';
-    menue[10]:='-';
-    menue[11]:='^Optionen';
+    menue[8]:='S^uchen       ^QF';
+    menue[9]:='E^rsetzen     ^QL';
+    menue[10]:='Weitersuchen   ^L';
+    menue[11]:='-';
+    menue[12]:='^Umbruch aus   F3';
+    menue[13]:='U^mbruch ein   F4';
+    menue[14]:='-';
+    menue[15]:='^Optionen';
+    menue[16]:='-';
+    menue[17]:='Beenden       ESC'; 
     { menue[12]:='.. s^ichern'; }
-    { /robo }
     end;
   delroot:=nil;
-  Clipboard:=nil;
+ (* Clipboard:=nil; *)
 end;
 
 procedure EdSetLanguage(ld:LangData);
@@ -499,12 +504,12 @@ procedure EdSetForcecr(newcr:boolean);
 begin
   akted^.forcecr:=newcr;
 end;
-
+(*
 procedure EdPointswitch(yuppieon:boolean);
 begin
   akted^.pointswitch:=yuppieon;
 end;
-
+*)
 procedure EdGetConfig(var cf:EdConfig);
 begin
   cf:=akted^.config;
@@ -512,7 +517,7 @@ end;
 
 procedure EdSetConfig(cf:EdConfig);
 begin
-  if akted <> nil then akted^.config:=cf;
+  akted^.config:=cf;
 end;
 
 procedure EdSetUkonv(umlaute_konvertieren:boolean);
@@ -623,8 +628,8 @@ function memtest(size:longint):boolean;
 begin
   while assigned(delroot) and memfull do
     FreeLastDelEntry;
-  if memfull and assigned(Clipboard) then
-    FreeBlock(Clipboard);
+(*  if memfull and assigned(Clipboard) then
+    FreeBlock(Clipboard); *)
   if memfull then begin
     if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
     memerrfl:=true;
@@ -650,11 +655,11 @@ begin
     end;
 end;
 
-procedure freeabsatz(var p:absatzp); { .robo }
+procedure freeabsatz(var p:absatzp);
 begin
-  if assigned(p) then { .robo }
+  if assigned(p) then
     freemem(p,asize+p^.msize);
-  p:=nil; { .robo }
+  p:=nil;
 end;
 
 { ------------------------------------------------------------ Edit }
@@ -664,7 +669,7 @@ end;
 procedure FreeBlock(var ap:absatzp);
 var p : absatzp;
 begin
-  while assigned(ap) do begin { .robo }   { Text freigeben }
+  while assigned(ap) do begin   { Text freigeben }
     p:=ap^.next;
     freeabsatz(ap);
     ap:=p;
@@ -716,7 +721,7 @@ begin
     filemode:=mfm;
     p:=ptr(1,1);
     tail:=nil;
-    endcr:=false;
+    endcr:=false; 
     srest:=false;
     while (srest or not eof(t)) and assigned(p) do begin
       isize:=0;
@@ -747,7 +752,7 @@ begin
           end;
         end;
       if eoln(t) and not srest then begin
-        endcr:=not eof(t);
+        endcr:=not eof(t); 
         readln(t);
         end;
       p:=AllocAbsatz(isize);
@@ -762,18 +767,16 @@ begin
     close(t);
     freemem(tbuf,4096);
     freemem(ibuf,maxabslen);
-    if endcr then
-    begin
+    if endcr then begin
       p:=AllocAbsatz(0);
       p^.umbruch:=(umbruch<>0);
       AppP;
-    end;
+      end; 
     if ioresult<>0 then error(3);
     end;
   LoadBlock:=root;
 end;
 
-{ 31.01.2000 robo }
 function LoadUUeBlock(fn:string):absatzp;
 const blen = 45;
 var mfm   : byte;
@@ -824,10 +827,10 @@ begin
       end;
       s:='';
 
-      if eof(t) then for b_read:=1 to 3 do begin
+      if eof(t) then for b_read:=1 to 2 do begin
         if b_read=1 then s:='`'
         else if b_read=2 then s:='end'
-        else if b_read=3 then str(filesize(t),s);
+        { else if b_read=3 then str(filesize(t),s) }; 
         p:=AllocAbsatz(length(s));
         if assigned(p) then begin
           p^.umbruch:=true;
@@ -843,8 +846,6 @@ begin
   end;
   LoadUUeBlock:=root;
 end;
-{ /robo }
-
 
 function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 begin
@@ -959,9 +960,10 @@ begin
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
           if nxo<min(size,ofse) then
           begin
-            blockwrite(f,spc[1],3); cr:=true;
-          end else
-            cr:=false;
+            blockwrite(f,spc[1],3); 
+            cr:=true;
+            end 
+          else cr:=false; 
           ofs:=nxo;
         end;
       end else
@@ -973,7 +975,8 @@ begin
     if ap=pende.absatz then ap:=nil
     else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
-      blockwrite(f,crlf[1],2); cr:=true;
+      blockwrite(f,crlf[1],2); 
+      cr:=true; 
       end;
     end;
   if not cr and forcecr then
@@ -1235,9 +1238,7 @@ var  dl         : displp;
 
   {$I EDITOR.INC}
 
-  { 14.01.2000 robo }
   function PosCoord(pos:position; disp:byte):longint; forward;
-  { /robo }
 
   procedure InterpreteToken(tk:integer);
 
@@ -1245,8 +1246,12 @@ var  dl         : displp;
 
     procedure Quit;
     var t : taste;
+    var nxx : integer;
     begin
       with e^ do
+      begin
+        Skip4Parken:=false; 
+        NoCursorsave:=false;
         if not modified then
           ende:=true
         else
@@ -1257,9 +1262,14 @@ var  dl         : displp;
           else begin
             t:=Procs.QuitFunc(e);
             if t=language^.ja then ende:=EdSave(e)
-            else ende:=(t=language^.nein);
+            else if t=language^.nein then
+            begin
+              ende:=true;
+              NoCursorsave:=true;
+            end else ende:=false;
             end;
-    end;
+   end; 
+   end;
 
     procedure SpeichernEnde;
     begin
@@ -1362,8 +1372,7 @@ var  dl         : displp;
                               else if (blockinverse or blockhidden)
                                then DELchar
                                else BlockLoeschen;
-        { /robo }
-        { 01.02.2000 robo - Blockoperationen }
+        { Blockoperationen }
         editfNewline      : if e^.config.persistentblocks
                              then NewLine
                              else begin
@@ -1396,7 +1405,6 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                Paragraph;
                              end;
-        { /robo }
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
@@ -1448,7 +1456,7 @@ var  dl         : displp;
 
         editfBlockBegin   : SetBlockMark(1);
         editfBlockEnd     : SetBlockMark(2);
-        editfMarkWord     : WortMarkieren(false);
+        editfMarkWord     : WortMarkieren(False);
         editfMarkLine     : ZeileMarkieren;
         editfMarkPara     : AbsatzMarkieren;
         editfMarkAll      : KomplettMarkieren;
@@ -1457,13 +1465,11 @@ var  dl         : displp;
         editfDelBlock     : BlockLoeschen;
         editfMoveBlock    : BlockVerschieben;
         editfReadBlock    : BlockEinlesen;
-        { 17.01.2000 robo }
         editfReadUUeBlock : BlockUUeEinlesen;
-        { /robo }
         editfWriteBlock   : BlockSpeichern;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
-        { 17.01.2000 robo - Blockoperationen }
+        { Blockoperationen }
         editfPasteBlock   : if e^.config.persistentblocks
                              then BlockClpEinfuegen
                              else begin
@@ -1472,7 +1478,6 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-        { /robo }
         editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
@@ -1483,6 +1488,7 @@ var  dl         : displp;
         editfSave         : if EdSave(ed) then;
         editfSaveQuit     : SpeichernEnde;
         editfBreak        : Quit;
+
         editfGlossary     : Glossary;
       end;
 
@@ -1500,10 +1506,10 @@ var  dl         : displp;
   begin
     b := 0;
     if t=#127    then b:=EditfDelWordLeft else
-    if lastscancode=GreyMult  then b:=EditfCCopyBlock else
-    if lastscancode=GreyMinus then b:=EditfCutBlock   else
-    if lastscancode=GreyPlus  then b:=EditfPasteBlock else
-    if t>=' '    then b:=EditfText        else
+    if (t=^C) or (lastscancode=GreyMult)  then b:=EditfCCopyBlock else
+    if (t=^X) or (lastscancode=GreyMinus) then b:=EditfCutBlock   else
+    if (t=^V) or (lastscancode=GreyPlus)  then b:=EditfPasteBlock else
+    if  t>=' '     then b:=EditfText         else
 
     if t=keyesc  then b:=EditfBreak       else
     if t=keyaltx then b:=EditfBreak       else
@@ -1514,11 +1520,11 @@ var  dl         : displp;
     if t=keyup   then b:=EditfUp          else
     if t=^E      then b:=EditfUp          else    { WS-Zweitbelegung }
     if t=keydown then b:=EditfDown        else
-    if t=^X      then b:=EditfDown        else    { WS-Zweitbelegung }
+(*  if t=^X      then b:=EditfDown        else    { WS-Zweitbelegung } *)
     if t=keypgup then b:=EditfPgUp        else
     if t=^R      then b:=EditfPgUp        else    { WS-Zweitbelegung }
     if t=keypgdn then b:=EditfPgDn        else
-    if t=^C      then b:=EditfPgDn        else    { WS-Zweitbelegung }
+(*  if t=^C      then b:=EditfPgDn        else    { WS-Zweitbelegung } *)
     if t=keyclft then b:=EditfWordLeft    else
     if t=^A      then b:=EditfWordLeft    else    { WS-Zweitbelegung }
     if t=keycrgt then b:=EditfWordRight   else
@@ -1570,7 +1576,7 @@ var  dl         : displp;
     if t=keyf2   then b:=EditfSave        else
     if t=keysf2  then b:=EditfSaveQuit    else
     if t=keyf10  then b:=EditfMenu        else
-
+    
     if (t=keyctcr) or (t=keyaltG)
       then b:=EditfGlossary else 
 
@@ -1607,9 +1613,7 @@ var  dl         : displp;
                         'B' : b:=EditfBlockBegin;
                         'K' : b:=EditfBlockEnd;
                         'R' : b:=EditfReadBlock;
-                        { 31.01.2000 robo }
                         'U' : b:=EditfReadUUeBlock;
-                        { /robo }
                         'W' : b:=EditfWriteBlock;
                         'O' : b:=EditfRot13;
                         'T' : b:=EditfMarkWord;
@@ -1753,6 +1757,13 @@ begin
     aufbau:=true; ende:=false;
     cursor(curon);
     tk:=0;
+    if EditResetoldpos then Begin
+      EditResetoldpos:=false;
+      scx:=minmax(Lastscx,1,80); xoffset:=Lastxoffset;
+      display;
+      for ShiftBlockMarker:=1 to (laststartline+gl-1) do ZeileUnten;
+      scy:=minmax(Lastscy,1,gl);
+      end;
     repeat
       memerrfl:=false;
       if aufbau then display;
@@ -1774,6 +1785,10 @@ begin
           tnextout:=0;
         end;
     until ende;
+    if EditNachricht and not NoCursorsave then begin
+      Lastscx:=scx; Lastxoffset:=xoffset;
+      Lastscy:=scy; Laststartline:=startline;
+      end;
     dispose(dl);
     end;
   EdEdit:=tk;
@@ -1790,26 +1805,46 @@ begin
     dec(ecbopen);
     if ecbopen=0 then begin
       FreeDellist;
-      FreeBlock(Clipboard);
+    (*  FreeBlock(Clipboard); *)
       end;
     end;
 end;
 
+
 procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 const locked:boolean=false;
+var en:boolean;
+
 begin
   if (ustr(t)='E') and not locked then begin
     locked:=true;
-    EditFile('GLOSSARY.CFG',false,false,0,false);
+    en:=EditNachricht;
+    EditFile(EdGlossaryFile,false,false,0,false);
+    EditNachricht:=En;
     locked:=false;
     t:=keyesc;
     pushkey(keyctcr); 
     end; 
 end;
 
+
 end.
+
 {
   $Log$
+  Revision 1.25.2.17  2001/09/16 20:34:14  my
+  JG+MY:- <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
+          Einf¸gen)
+
+  JG+MY:- Editor-Men¸ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugef¸gt
+
+  JG+MY:- Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
+          Windows-Clipboard nicht verf¸gbar ist. Altes Editor-RAM-
+          Clipboard deaktiviert. Clipboard-Datei umbenannt zu CLIP.TXT.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.25.2.16  2001/09/06 16:15:58  mk
   - optimized GotoPos
 
