@@ -62,25 +62,27 @@ function  IsBinary:boolean;
 procedure selbrett(var cr:customrec);         { Brettauswahl }
 procedure seluser(var cr:customrec);          { Userauswahl }                        
 procedure auto_empfsel(var cr:customrec);     { Brett oder Userauswahl mit abfrage }
- 
+procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen }
+
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp;
 
 
 { Customselectroutinen fuer Brett/User }
 
-{ Verwendung...       
-{ auto_empfsel: XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
-{ selbrett:     XP3o.Bverknuepfen, XP6S.Editsdata                             }
-{ seluser:      XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
-{               XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }          
+{ Verwendung...
+{ auto_empfsel:     XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
+{ selbrett:         XP3o.Bverknuepfen, XP6S.Editsdata                             }
+{ seluser:          XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
+{                   XP6.Editsdata, XP6o.MausWeiterleiten, XP_PGP.PGP_RequestKey   }
+{ scr_auto_empfsel: XP6.DoSend.Changeempf                                         }
 
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
 var p    : scrptr;
     mt   : boolean;                             { user: 1 = Userauswahl  0 = Brettauswahl }
 begin
-  with cr do begin        
+  with cr do begin
     sichern(p);
     if autoe_showscr then showscreen(false);
     mt:=m2t;
@@ -131,6 +133,21 @@ end;
 procedure selbrett(var cr:customrec);                { Userauswahl }
 begin
   auto_empfsel_do(cr,false)
+end;
+
+procedure scr_auto_empfsel(var cr:CustomRec);       { Brett/User fuer Vollbildroutinen }
+var x,y   : byte;                                   { Sichert Screen und zeigt Hauptmenue an }
+    mt,kd : boolean;    
+const s : string[1]='';
+begin
+  mt:=m2t; m2t:=false;            { Uhr aus }
+  kd:=keydisp; keydisp:=true;     { Funktionskeys ein }
+  wpushs(1,80,1,screenlines,'-'); { Ganzen Screen sichern, ohne Rahmen }
+  showscreen(false);              { Hauptmenue zeigen }
+  Auto_Empfsel(cr);               
+  m2t:=mt;                   
+  keydisp:=kd;
+  wpop;                           { alten Screen wiederherstellen }
 end;
 
 {-----------}
@@ -1349,8 +1366,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.8  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.7.2.1  2000/04/18 20:22:02  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert

@@ -751,7 +751,7 @@ end;
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
-    mappcustomsel(auto_empfsel,false);
+    mappcustomsel(scr_auto_empfsel,false);
     readmask(brk);
     closemask;
     attrtxt(col.coldiahigh);
@@ -771,15 +771,9 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   diabox(78,13+fadd,typ,x,y);
   moff;
   wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
-<<<<<<< xp6.pas
-{JG:06.02.00}
-  attrtxt(col.coldiahigh);  
-  wrt(x+75,y+2,'/');                 { * = Empfaenger aendern }   
-=======
 (*{JG:06.02.00}
   attrtxt(col.coldiahigh);
   wrt(x+4,y+2,'m');                 { * = Empfaenger aendern }
->>>>>>> 1.19
   attrtxt(col.coldialog);
 {/JG} *)
   if echomail then begin
@@ -1387,21 +1381,6 @@ fromstart:
                   attrtxt(col.coldiahigh);
                   mwrt(x+13,y+2,' '+forms(fidoto,35)+' ');
                   end;
-<<<<<<< xp6.pas
-
-                {JG:06.02.00}                         { Empfaenger nachtraeglich aendern }
-                if t='/' then begin
-                   Changeempf;
-                   betreffbox:=false; edit:=false; sendbox:=true;
-                   SendDefault:=senden; forcebox:='';
-                   pophp;
-                   closebox;
-                   goto fromstart;
-                   end;
-                {/JG}
-
-=======
->>>>>>> 1.19
                 end;
       end;
     until senden>=0;
@@ -2080,11 +2059,66 @@ end;
 end.
 {
   $Log$
-  Revision 1.7.2.2  2000/04/18 20:08:05  mk
-  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt
+  Revision 1.7.2.3  2000/04/18 20:22:02  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
-  Revision 1.7.2.1  2000/04/09 17:04:47  mk
-  JG: Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
+  Revision 1.20  2000/04/18 16:17:33  jg
+  - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
+  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
+  - Ein paar erledigte Sachen aus !Todo.tst geloescht.
+
+  Revision 1.19  2000/04/17 17:24:09  jg
+  - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
+  - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.
+
+  Revision 1.18  2000/04/15 21:44:47  mk
+  - Datenbankfelder von Integer auf Integer16 gaendert
+
+  Revision 1.17  2000/04/15 09:58:00  jg
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
+
+  Revision 1.16  2000/04/11 19:34:01  oh
+  - [tempdir]\header.hdr fuer Mailnachbearbeitung
+
+  Revision 1.15  2000/04/09 08:01:26  jg
+  - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
+
+  Revision 1.14  2000/04/04 21:01:24  mk
+  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+
+  Revision 1.13  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
+  Revision 1.12  2000/03/24 15:41:02  mk
+  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
+
+  Revision 1.11  2000/03/17 11:16:34  mk
+  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
+
+  Revision 1.10  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
+  Revision 1.9  2000/03/09 23:39:33  mk
+  - Portierung: 32 Bit Version laeuft fast vollstaendig
+
+  Revision 1.8  2000/03/07 20:36:03  jg
+  - Bugfix: Versand von bereits r/w geoeffneten Dateien fehlermeldung
+    statt 0-byte Mails bei Binaerfiles bzw. RTE 200 bei Textfiles
+  - DoSend etwas kommentiert
+>>>>>>> 1.20
 
   Revision 1.7  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert

@@ -52,13 +52,8 @@ const savekey : pathstr = '';
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben
   JG 08.01.00: Routine optimiert }
 
-<<<<<<< xp_pgp.pas
-function testbin(var bdata; rr:word):boolean; assembler;
-{$IFDEF BP }
-=======
 function testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
 {$IFDEF BP }
->>>>>>> 1.13
 asm
          push ds
          mov   cx,rr
@@ -73,22 +68,6 @@ asm
          sbb ax,ax
          pop ds
 end;
-<<<<<<< xp_pgp.pas
-{$ELSE }
-asm
-         mov   ecx,rr
-         mov   esi,bdata
-         cld
-@tbloop: lodsb
-         cmp   al,9                     { BinÑrzeichen 0..8, ja: c=1 }
-         jb    @tbend                  { JB = JC }
-         loop  @tbloop
-@tbend:  mov eax, 0
-       {  adc ax,ax }                      { C=0: false, c=1: true }
-         sbb eax,eax
-end ['EAX', 'ECX', 'ESI'];
-{$ENDIF}
-=======
 {$ELSE }
 asm
          mov   ecx,rr
@@ -107,7 +86,6 @@ end ['EAX', 'ECX', 'ESI'];
 end;
 {$ENDIF }
 {$ENDIF}
->>>>>>> 1.13
 
 procedure LogPGP(s:string);
 var t : text;
@@ -120,11 +98,7 @@ begin
   if ioresult<>0 then;
 end;
 
-
-<<<<<<< xp_pgp.pas
-=======
 { PGP 2.6.x und 6.5.x }
->>>>>>> 1.13
 procedure RunPGP(par:string);
 var path : pathstr;
 begin
@@ -297,12 +271,8 @@ var tmp  : pathstr;
     b    : byte;
     nt   : longint;
     t    : string[20];
-<<<<<<< xp_pgp.pas
-{    uid  : string[80]; !!}
-=======
-{    uid  : string[80]; !!}
-  _source: pathstr;
->>>>>>> 1.13
+    uid  : string[80];
+    _source: pathstr;
 
   procedure StripOrigin;
   begin
@@ -329,89 +299,71 @@ var tmp  : pathstr;
 begin
   if UserID='' then                       { User-ID ermitteln }
     UserID:=hd.empfaenger;
+  if (pos('/',UserID)>0) then UserID:=''; { Empfaenger ist Brett }
+
   fm_ro; reset(source,1); fm_rw;
   tmp:=TempS(filesize(source)*2);         { Temp-Dateinamen erzeugen }
   close(source);
 
   if fido_origin<>'' then StripOrigin;
-<<<<<<< xp_pgp.pas
-  if PGPVersion=PGP2
-    then t:=iifs(hd.typ='T','t',' +textmode=off')
-    else t:=iifs(hd.typ='T','t',' -t');
+  if PGPVersion=PGP2 then
+    t:=iifs(hd.typ='T','t',' +textmode=off')
+  else
+    t:=iifs(hd.typ='T','-t','');
 
-{  
-=======
-  if PGPVersion=PGP2
-    then t:=iifs(hd.typ='T','t',' +textmode=off')
-    else t:=iifs(hd.typ='T','t',' -t');
-
-{
->>>>>>> 1.13
-  if PGP_UserID<>'' then begin
-    if PGPVersion<>PGP5 then
-      uid:=' -u '+IDform(PGP_UserID)
-    else
-      uid:=IDform(PGP_UserID)
-  end else uid:='';
-}
+  if PGP_UserID<>'' then
+    uid:=' -u '+IDform(PGP_UserID)
+  else
+    uid:='';
 
   { --- codieren --- }
   if encode and not sign then begin
     if PGPVersion=PGP2 then
       RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
     else begin
-      _rename(filename(source),GetBareFileName(filename(source)));
+      { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
-      { Ausgabedateiname = _source'.asc' }
-      RunPGP('-e -a '+_source+' '+IDform(UserID));
-      if exist(tmp) then _era(tmp);         { TemporÑrdatei lîschen }
+      copyfile(filename(source),_source);
+      { Ausgabedateiname ist _source'.asc' }
+      RunPGP('-e -a '+t+' '+_source+' '+IDform(UserID));
+      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
   { --- signieren --- }
-  end else if not encode and sign then begin
+  end else if sign and not encode then begin
     if PGPVersion=PGP2 then
-<<<<<<< xp_pgp.pas
-      RunPGP('-sa'+t+' '+filename(source)+' -o '+tmp )
-    else                                                  
-      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp );
-  
-=======
-      RunPGP('-sa'+t+' '+filename(source)+' -o '+tmp )
+      RunPGP('-sa'+t+' '+filename(source)+uid+' -o '+tmp )
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPS.EXE','-a'+t+' '+filename(source)+' -o '+tmp )
+      RunPGP5('PGPS.EXE','-a '+t+' '+filename(source)+uid+' -o '+tmp )
     else begin
-      _rename(filename(source),GetBareFileName(filename(source)));
+      { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
-      { Ausgabedateiname = _source'.asc' }
-      RunPGP('-s -a '+_source+' '+IDform(UserID));
-      if exist(tmp) then _era(tmp);         { TemporÑrdatei lîschen }
+      copyfile(filename(source),_source);
+      { Ausgabedateiname ist _source'.asc' }
+      RunPGP('-s -a '+t+' '+_source+' '+IDform(UserID)+uid);
+      if exist(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { TemporÑrdatei lîschen }
+      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
->>>>>>> 1.13
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
-<<<<<<< xp_pgp.pas
-      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
-    else
-      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp);
-=======
-      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
+      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+uid+' -o '+tmp)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-s -a '+t+' '+filename(source)+' -r '+IDform(UserID)+uid+' -o '+tmp)
     else begin
-      _rename(filename(source),GetBareFileName(filename(source)));
+      { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
-      { Ausgabedateiname = _source'.asc' }
-      RunPGP('-es -a '+filename(_source)+' '+IDform(UserID));
-      if exist(tmp) then _era(tmp);         { TemporÑrdatei lîschen }
+      copyfile(filename(source),_source);
+      { Ausgabedateiname ist _source'.asc' }
+      RunPGP('-es -a '+t+' '+_source+' '+IDform(UserID)+uid);
+      if exist(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
->>>>>>> 1.13
   end;
 
   if fido_origin<>'' then AddOrigin;
@@ -533,6 +485,7 @@ end;
 
 procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
 var tmp,tmp2 : pathstr;
+    _source  : string[80];
     f,f2     : file;
     orgsize  : longint;
     b        : byte;
@@ -558,20 +511,7 @@ begin
   if sigtest then
     PGP_WaitKey:=true;
 
-<<<<<<< xp_pgp.pas
-  if PGPVersion=PGP2 then begin
-    { Passphrase nicht bei Signaturtest }
-    if not sigtest then begin
-      pass:=GetEnv('PASSPHRASE');
-      if pass<>'' then pass:='"'+pass+'"';
-    end;
-    { Passphrase nur bei PGP 2.x uebergeben... }
-    RunPGP(tmp+' '+pass+' -o '+tmp2)
-    { ... RUNPGP5 hÑngt sie selbst mit an, falls nîtig. }
-  end else
-    RunPGP5('PGPV.EXE',tmp+' -o '+tmp2);
-    
-=======
+  pass:='';
   if PGPVersion=PGP2 then begin
     { Passphrase nicht bei Signaturtest }
     if not sigtest then begin
@@ -584,29 +524,23 @@ begin
   end else if PGPVersion=PGP5 then
     RunPGP5('PGPV.EXE',tmp+' -o '+tmp2)
   else begin
-    _rename(tmp,GetBareFileName(tmp));
-    tmp:=GetFileDir(tmp)+GetBareFileName(tmp)+'.asc';
+    { Sourcefile xxxx.TMP nach xxxx kopieren }
+    _source:=GetFileDir(tmp)+GetBareFileName(tmp)+'.asc';
+    copyfile(tmp,_source);
     { Ausgabedateiname = tmp ohne ext }
-    RunPGP(tmp+' '+tmp2);
-    tmp2:=GetFileDir(tmp2)+GetBareFileName(tmp2);
+    RunPGP(_source+' '+tmp2);
+    tmp2:=GetFileDir(tmp2)+GetBareFileName(_source);
   end;
 
->>>>>>> 1.13
   if sigtest then begin
     PGP_WaitKey:=false;
     if exist(tmp) then _era(tmp);
+    if exist(_source) then _era(_source);
   end;
-<<<<<<< xp_pgp.pas
-  
-  { Oops, keine Ausgabedatei: }  
-  if not exist(tmp2) then begin
-    if sigtest then begin
-=======
 
   { Oops, keine Ausgabedatei: }
   if not exist(tmp2) then begin
     if sigtest then begin
->>>>>>> 1.13
       if errorlevel=18 then begin
         trfehler(3007,7);  { 'PGP meldet ungÅltige Signatur!' }
         WrSigflag(2);      { Signatur fehlerhaft }
@@ -773,12 +707,10 @@ begin
       LogPGP(reps(getreps2(3002,3,'<'+hdp^.msgid+'>'),hdp^.absender));
     mk:=PGP_WaitKey;
     if not auto then PGP_WaitKey:=true;
-    if PGPVersion=PGP2 then
+    if PGPVersion<>PGP5 then
       RunPGP('-ka '+tmp)
     else
       RunPGP5('PGPK.EXE','-a '+tmp);
-
-    { #### PGP6 ? #### }
 
     PGP_WaitKey:=mk;
     if exist(tmp) then _era(tmp);
@@ -792,12 +724,10 @@ var bm : boolean;
 begin
   bm:=PGPBatchMode;
   PGPBatchMode:=false;
-  if PGPVersion=PGP2 then
+  if PGPVersion<>PGP5 then
     RunPGP('-ke '+IDform(PGP_UserID))
   else
     RunPGP5('PGPK.EXE','-e '+IDform(PGP_UserID));
-
-  { #### PGP6 ? #### }
 
   PGPBatchMode:=bm;
 end;
@@ -808,12 +738,10 @@ var bm : boolean;
 begin
   bm:=PGPBatchMode;
   PGPBatchMode:=false;
-  if PGPVersion=PGP2 then
+  if PGPVersion<>PGP5 then
     RunPGP('-kr '+IDform(PGP_UserID))
   else
     RunPGP5('PGPK.EXE','-ru '+IDform(PGP_UserID));
-
-  { #### PGP6 ? #### }
 
   PGPBatchMode:=bm;
 end;
@@ -848,7 +776,7 @@ end;
 end.
 {
   $Log$
-  Revision 1.6.2.3  2000/04/18 19:57:07  mk
-  OH: - PGP Fixes aus Thrunk uebernommen
+  Revision 1.6.2.4  2000/04/18 20:22:03  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
 
 }

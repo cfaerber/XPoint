@@ -78,6 +78,7 @@ procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
 function  GetFileDir(p:pathstr):dirstr;
 function  GetFileName(p:pathstr):string;
+function  GetBareFileName(p:pathstr):string;    { Filename ohne .ext }
 function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
@@ -431,6 +432,15 @@ begin
   GetFileName:=n+e;
 end;
 
+function GetBareFileName(p:pathstr):string;
+var d : dirstr;
+    n : namestr;
+    e : extstr;
+begin
+  fsplit(p,d,n,e);
+  GetBareFileName:=n;
+end;
+
 function GetFileExt(p:pathstr):string;
 var d : dirstr;
     n : namestr;
@@ -717,6 +727,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7.2.3  2000/04/18 20:22:02  mk
+  JG: - Empfaengeraendern ist jetzt richtiger Menuepunkt (2)
+
   Revision 1.7.2.2  2000/04/04 10:13:38  mk
   - Debugcode entfernt
 
