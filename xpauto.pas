@@ -617,8 +617,7 @@ begin
         (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         DeleteFile(AutoXdir+sr.name);
-        // delfile;
-        end;
+      end;
     if startbatch then begin
       fnstart:=AutoxDir+FileUpperCase('start' + extBatch);        { START.BAT }
       if FileExists(fnstart) then
@@ -630,7 +629,6 @@ begin
         end;
       end;
     ParGelesen:=mgel;
-    FindClose(sr);
   end;
 end;
 
@@ -691,6 +689,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2003/09/01 15:34:11  mk
+  - fixed linux crash: FindClose(SR) was called twice in autoexec()
+
   Revision 1.68  2003/08/28 05:37:53  mk
   - create sData in PostFile
 
