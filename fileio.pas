@@ -85,6 +85,7 @@ function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
 Function  ValidFileName(const name:string):boolean;  { gÅltiger Dateiname ?    }
+function  isEmptyDir(const path: string): boolean;
 function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
 function  TempFile(const path:string):string;       { TMP-Namen erzeugen      }
 function  TempExtFile(path,ld,ext:string):string; { Ext-Namen erzeugen }
@@ -196,6 +197,24 @@ begin
     SetAccessMode(fn, cm);
   end; { if }
   System.Rewrite(F);
+end;
+
+{ Liefert True zur¸ck, falls ein Verzeichnis leer ist }
+function isEmptyDir(const path: string): boolean;
+var
+  sr: TSearchRec;
+  rc: integer;
+begin
+  result:= true;
+  rc:= sysutils.findfirst(AddDirSepa(path)+WildCard,ffAnyFile,sr);
+  while rc = 0 do begin
+    if (sr.name <> '.') and (sr.name <> '..') then begin
+      result:= false;
+      break;
+    end;
+    rc:= sysutils.findnext(sr);
+  end;
+  sysutils.findclose(sr);
 end;
 
 function existf(var f):Boolean;
@@ -577,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/11/15 15:51:18  hd
+  - Neu: isEmptyDir, da FileExists('/path/*.*') immer false liefert
+
   Revision 1.68  2000/11/15 12:24:37  mk
   - vp compatiblity update
 
