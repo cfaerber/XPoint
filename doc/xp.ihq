@@ -1290,11 +1290,13 @@ Folgende Funktionen stehen zur Verfgung:
 <<<Enter> >> liest die gew„hlte Nachricht. Gleichzeitiges
          Drcken von <<<Shift> >>erzwingt das MIME-Aus-
          wahlfenster bei mehrteiligen Nachrichten vom
-         Typ multipart/alternative und gleichzeitiges
-         Drcken von <<<Ctrl> >>l„dt bei allen mehr-
-         teiligen Nachrichten die gesamte Nachricht
-         in den Lister (identisch mit der Auswahl
-         "gesamte Nachricht" im MIME-Auswahlfenster).
+         Typ multipart/alternative (ansonsten wird
+         automatisch der Textteil in den Lister gela-
+         den), und gleichzeitiges Drcken von <<<Ctrl> >>
+         l„dt bei allen mehrteiligen Nachrichten die
+         gesamte Nachricht in den Lister (identisch
+         mit der Auswahl "gesamte Nachricht" im MIME-
+         Auswahlfenster).
 
 <<<Ctrl-D> >>druckt die gew„hlte Nachricht; siehe auch
          [/Config/Drucker].@10606
@@ -6984,16 +6986,6 @@ Adreábestandteilen kommen nicht an.
 <<[ ]>> -> Das Programm verh„lt sich wie in frheren
        Versionen und l„át die Nachrichtenmarkierungen
        bei Netzanrufen unver„ndert.
-@
-568
-<<[x]>> -> Das Programm paát nach einem Netzanruf
-       automatisch die Datumsbezge an. Aktualisierte
-       Bretter wie /¯Netcall werden dann immer sofort
-       korrekt in der Brettliste angezeigt.
-
-<<[ ]>> -> Das Programm verh„lt sich wie in frheren
-       Versionen und l„át die Datumsbezge nach einem
-       Netzanruf unver„ndert.
 @
 570
 Geben Sie den Betreff der Nachricht an.
