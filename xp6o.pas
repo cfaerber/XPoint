@@ -454,6 +454,7 @@ var fn     : pathstr;
     sigfile : string[12];
     _brett  : string[5];
     ebrett  : string[5];
+    obrett  : string[5];
     empf    : string[90];
     ntyp    : char;
     pollbox : string[BoxNameLen];
@@ -1024,6 +1025,7 @@ again:
                    end;
                  end;
                _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
+               dbreadN(mbase,mb_brett,obrett);   { Originalbrett retten }
                dbWriteN(mbase,mb_brett,_brett);
                dbWriteN(mbase,mb_betreff,betr);
                ntyp:=iifc(binaermail,'B','T');   { Typ korrigieren }
@@ -1042,6 +1044,7 @@ again:
                dbWriteN(mbase,mb_groesse,newsize);
                wrkilled;
                aufbau:=true; xaufbau:=true;
+               setbrettgelesen(obrett);      { evtl. Ungelesenflag im Originalbrett loeschen }
              end;
   end;  { case }
 
@@ -1232,6 +1235,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/28 18:23:11  jg
+  - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
+  - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett
+
   Revision 1.9  2000/04/21 12:34:47  jg
   - MIME-Flag wird jetzt beim Archivieren mit uebernommen
   - Archivier-Vermerk ist jetzt abschaltbar

@@ -42,6 +42,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
 
 procedure select(dispmode:shortint);
 procedure mainwindow;
+procedure SetBrettGelesen(brett:string);
 
 
 implementation  {----------------------------------------------------}
@@ -126,6 +127,21 @@ begin
     end;
 end;
 
+procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+var b     : byte;                              { wenn keine ungelesenen Nachrichten }
+begin                                          { mehr vorhanden sind. }
+  dbSeek(mbase,miGelesen,brett+#0);
+  if not dbEOF(mbase) and
+    ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
+  then begin
+    dbSeek(bbase,biIntnr,mid(brett,2));
+    if dbFound then begin
+      dbReadN(bbase,bb_flags,b);
+      b:=b and (not 2);   { keine ungelesenen Nachrichten mehr }
+      dbWriteN(bbase,bb_flags,b);
+      end;
+    end;
+end;
 
 { ----- HauptmenÅ ---------------------------------------------------- }
 
@@ -2017,6 +2033,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/04/28 18:23:11  jg
+  - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
+  - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett
+
   Revision 1.16  2000/04/28 14:52:52  jg
   - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
     Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
