@@ -1607,7 +1607,7 @@ begin      { --- select --- }
                    if c='U' then               { 'U' }
                    begin
                      Showungelesen:=not showungelesen;
-                     saveconfig;
+                     GlobalModified;
                      aufbau:=true;                     
                      end;  
                    if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
@@ -2044,6 +2044,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/06/04 09:25:42  jg
+  - Ungelesen-Brettmarkierung unterstÅtzt jetzt "Sichern" unter C/O/B
+
   Revision 1.23  2000/06/03 19:30:25  jg
   - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
 
