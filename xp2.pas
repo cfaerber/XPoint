@@ -25,6 +25,10 @@ uses {$IFDEF virtualpascal}sysutils,{$endif}
 {$ELSE }
   crt,
 {$ENDIF }
+{$IFDEF Linux}
+  xplinux,
+{$ENDIF}
+  xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
@@ -613,7 +617,7 @@ begin
       trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
       SetPath(EditSendpath,sendpath);
       end;
-  editname:=sendpath+'*.*';
+  editname:=sendpath+WildCard;
   TestDir(XFerDir);
   TestDir(JanusDir);
   TestDir(FidoDir);
@@ -1110,6 +1114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/05/13 14:24:56  hd
+  - Suchmaske angepasst (test_pfade)
+
   Revision 1.35  2000/05/10 12:55:52  sv
   - Veraenderte Boxeneinstellungen wurden ohne XP-Neustart nicht
     uebernommen
