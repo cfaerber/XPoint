@@ -57,17 +57,18 @@ type  diskstat = record
       perrproc = procedure;
 
 procedure setwinselcursor(cur:curtype);
-procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
+procedure fslct(x,y1,y2: Integer; const txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
-function  fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,
+function  fsbox(y: Integer; path,pathx:string; vorgabe:s20; xdir,invers,
                 vert:boolean):string;
-procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
+// not used
+procedure pslct(x1,x2,y1,y2: Integer; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
                 var path:string; mark:boolean; var brk:boolean);
 procedure pdummyproc;
-function  pname(p:word):string;
-function  pslcted(p:word):boolean;
-function  pnum:word;
+function  pname(p: Integer):string;
+function  pslcted(p: Integer):boolean;
+function  pnum: Integer;
 procedure punselect;
 procedure pdel;
 procedure psave;   { Path-Liste sichern (1 x m”glich!) }
@@ -87,12 +88,12 @@ const maxpath  = 2000;
       markchar = #16;
       oldpn    : integer = 0;
       wcursor  : boolean = false;
-type  parr     = array[1..maxpath] of ^string;
+type  parr     = array[1..maxpath] of String;
 var   pa,mpa   : ^parr;
       pn,mpn   : integer;
 
 
-procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
+procedure fslct(x,y1,y2: Integer; const txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
 
 const maxs = 5;
@@ -101,11 +102,11 @@ var  pntl  : pntslcta;
      sr    : tsearchrec;
      rc    : integer;
      lnum,n,
-     handle : word;
-     p      : byte;
+     handle : Integer;
+     p      : Integer;
      s      : string[20];
      slas   : array[1..maxs] of string;
-     slan,i : byte;
+     slan,i : Integer;
 
 begin
   cursor(curoff);
@@ -193,7 +194,7 @@ begin
 end;
 {$ENDIF }
 
-function fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
+function fsbox(y: Integer; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
 
 const
   maxs   = 5;
@@ -210,12 +211,12 @@ var   fb     : string;
       t      : taste;
       dir, name, ext: string;
       paths  : array[1..maxs] of string;
-      pathn  : byte;
+      pathn  : Integer;
       dpath  : string;    { Display-Path }
       chgdrive : boolean;
       wpushed  : boolean;
       height : shortint;
-      na,ia  : byte;
+      na,ia  : Integer;
       drives : string[80];
       doppelpunkt : boolean;  { bei Novell liefert FF/FN kein ".." ... }
 
@@ -224,8 +225,8 @@ var   fb     : string;
     if invers then invtxt else normtxt;
   end;
 
-  procedure rahmen1(li,re,ob,un:byte; txt:txst);
-  var i : byte;
+  procedure rahmen1(li,re,ob,un: Integer; const txt:txst);
+  var i : Integer;
   begin
     moff;
     Wrt(li, ob, 'Ú'+ dup(re-li-1,'Ä') + '¿');
@@ -283,7 +284,7 @@ var   fb     : string;
   procedure disp_p;
   var s,s2  : string;
       sr    : TSearchRec;
-      xx,yy : byte;
+      xx,yy : Integer;
   begin
     if invers then normtxt else invtxt;
     dispfile(CposY);
@@ -646,8 +647,8 @@ begin
         chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
                   (cpos(chr(ord(t[1])+64),drives)>0);
         if chgdrive then begin    { Balken auf [LW:] positionieren }
-          i:=1;
-          while (i<=f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+          i:= 0; 
+          while (i<f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
           if (i<=f.count) and (i<>CposY+add) then begin
             while i-add<1 do dec(add,iif(vert,9,4));
             while i-add>36 do inc(add,iif(vert,9,4));
@@ -692,22 +693,22 @@ begin
   fsbox:=fb;
 end;
 
-function pname(p:word):string;
-var x    : byte;
+function pname(p: Integer):string;
+var x    : Integer;
     path : string;
 begin
   path:='';
   while p>1 do begin
-    x:=cPos('Ã',pa^[p]^);
-    if x=0 then x:=cPos('À',pa^[p]^);
-    path:=copy(pa^[p]^,x+3,80)+'\'+path;
-    while pa^[p]^[x] in ['³','Ã','À'] do dec(p);
+    x:=cPos('Ã',pa^[p]);
+    if x=0 then x:=cPos('À',pa^[p]);
+    path:=copy(pa^[p],x+3,80)+'\'+path;
+    while pa^[p][x] in ['³','Ã','À'] do dec(p);
     end;
   pname:='\'+trim(path);
 end;
 
 
-function pnum:word;
+function pnum: Integer;
 begin
   pnum:=pn;
 end;
@@ -717,17 +718,17 @@ procedure punselect;
 var i : integer;
 begin
   for i:=1 to pn do
-    pa^[i]^[1]:=' ';
+    pa^[i][1]:=' ';
 end;
 
 
-function pslcted(p:word):boolean;
+function pslcted(p: Integer):boolean;
 begin
-  pslcted:=(pa^[p]^[1]=markchar);
+  pslcted:=(pa^[p][1]=markchar);
 end;
 
 
-procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
+procedure pslct(x1,x2,y1,y2: Integer; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
                 var path:string; mark:boolean; var brk:boolean);
 
@@ -739,8 +740,7 @@ var   i,j     : integer;
       econt   : set of byte;
       glc     : char;
       sn      : string;
-      memerr  : boolean;
-      gl,wdt  : byte;
+      gl,wdt  : Integer;
       t,t2    : taste;
       p,a,am  : integer;
       xp      : integer;
@@ -763,27 +763,23 @@ var   i,j     : integer;
 
   procedure wrp(p:integer);
   begin
-    if (lastattr=normattr) and (pa^[p+a]^[1]=markchar) then hightxt;
-    mwrt(x1+2,y1+p,forms(pa^[p+a]^,wdt+1));
+    if (lastattr=normattr) and (pa^[p+a][1]=markchar) then hightxt;
+    mwrt(x1+2,y1+p,forms(pa^[p+a],wdt+1));
     normtxt;
   end;
 
   procedure papp(p:string);
-  var i : byte;
+  var i : Integer;
   begin
     inc(pn);
     if pvorg and (trim(p)=path) then xp:=pn;
-    getmem(pa^[pn],length(p)+1);
-    if pa^[pn]=nil then begin
-      memerr:=true; exit;
-      end;
     i:=2;
     while i<length(p) do begin
       if (p[i]=' ') and (i in econt) then p[i]:='³';
       inc(i,3);
       end;
     if pn<=gl then wrt(x1+2,y1+pn,LeftStr(p,wdt));
-    pa^[pn]^:=p;
+    pa^[pn] :=p;
   end;
 
   procedure dstat;
@@ -793,7 +789,7 @@ var   i,j     : integer;
     sproc(stat);
   end;
 
-  procedure psearch(const p:string; ebene:byte);
+  procedure psearch(const p:string; ebene: Integer);
   var sr   : tsearchrec;
       { n1   : word;  MK 14.02.2000 Variable wird nicht benutzt }
       de   : integer;
@@ -836,13 +832,9 @@ var   i,j     : integer;
       if trim(p+sn)=path then xp:=pn+1;
       glc:=iifc(de=0,'Ã','À');
       papp(sp(ebene)+glc+'ÄÄ'+sn);
-      if memerr then begin
-        findclose(sr);
-        exit;
-      end;
       { n1:=pn; }
       psearch(p+sn+DirSepa,ebene+3);
-      if (brk) or (memerr) then begin
+      if brk then begin
         findclose(sr);
         exit;
       end;
@@ -863,13 +855,14 @@ var   i,j     : integer;
 begin
   brk:=false;
   drive:=UpCase(drive);
-  if pdrive<>drive then begin
+  if pdrive<>drive then 
+  begin
     if pdrive<>' ' then pdel;
     new(pa);
-    end;
+  end;
   if pa=nil then path:='*mem*'
   else begin
-    econt:=[]; memerr:=false;
+    econt:=[]; 
     if fenster then wpush(x1,x2,y1,y2,'Laufwerk '+drive);
     gl:=y2-y1-1; wdt:=x2-x1-4; xp:=1;
     if pdrive<>drive then begin
@@ -943,7 +936,7 @@ begin
           bd(x1+9,y2,'',vn,12,1,brk);
           if not brk then begin
             path:=AddDirSepa(pname(a+p));
-            Delete(path,1,1); { fuehrenden Separator loeschen }
+            DeleteFirstChar(Path); // fuehrenden Separator loeschen 
             mkdir(drive+_MPMask+path+vn);
             IORes := IOResult;
             if IORes <>0 then
@@ -956,7 +949,7 @@ begin
               get(t2,curoff);
               end
             else begin
-              s:=pa^[p+a]^;
+              s:=pa^[p+a];
               i:=length(s);
               if s<>' \' then begin
                 while s[i]<>'Ä'do dec(i);
@@ -964,7 +957,7 @@ begin
                 end;
               s2:=LeftStr(s,i);
               if p+a=pn then s:=sp(70)
-              else s:=pa^[p+a+1]^;
+              else s:=pa^[p+a+1];
               if (s[i]='À') or (s[i]='Ã') then s2[i]:='Ã'
               else s2[i]:='À';
               s2:=s2+'ÄÄ'+UpperCase(vn);
@@ -975,8 +968,7 @@ begin
                 end;
               if p+a<pn then
                 Move(pa^[p+a+1],pa^[p+a+2],(pn-(p+a))*sizeof(pointer));
-              getmem(pa^[p+a+1],length(s2)+1);
-              pa^[p+a+1]^:=s2;
+              pa^[p+a+1]:=s2;
               inc(pn);
               am:=-1;
               end;
@@ -994,18 +986,18 @@ begin
             get(t2,curoff);
             end
           else begin
-            s:=pa^[p+a]^;
+            s:=pa^[p+a];
             i:=length(s);
             while s[i]<>'Ä' do dec(i);
             dec(i,2);
             if s[i]='À' then begin
               j:=p+a-1;
-              while pa^[j]^[i]='³' do begin
-                pa^[j]^[i]:=' ';
+              while pa^[j][i]='³' do begin
+                pa^[j][i]:=' ';
                 dec(j);
                 end;
-              if pa^[j]^[i]='Ã' then
-                pa^[j]^[i]:='À';
+              if pa^[j][i]='Ã' then
+                pa^[j][i]:='À';
               end;
             if p+a<pn then
               Move(pa^[p+a+1],pa^[p+a],(pn-(p+a))*sizeof(pointer));
@@ -1024,7 +1016,7 @@ begin
           end;
 
         if mark and (t=' ') then begin
-          pa^[a+p]^[1]:=iifc(pa^[a+p]^[1]=' ',markchar,' ');
+          pa^[a+p][1]:=iifc(pa^[a+p][1]=' ',markchar,' ');
           wrp(p);
           if p+a<pn then
             if p<gl then inc(p)
@@ -1050,7 +1042,7 @@ end;
 procedure pdel;
 var i : integer;
 begin
-  for i:=1 to pn do freemem(pa^[i],length(pa^[i]^)+1);
+  for i:=1 to pn do pa^[i] := '';
   dispose(pa);
   pdrive:=' ';
 end;
@@ -1064,15 +1056,14 @@ end;
 procedure psave;   { Path-Liste sichern (1 x m”glich!) }
 var i : integer;
 begin
-  if pdrive<>' ' then begin
+  if pdrive<>' ' then 
+  begin
     new(mpa);
-    for i:=1 to pn do begin
-      getmem(mpa^[i],length(pa^[i]^)+1);
-      mpa^[i]^:=pa^[i]^;
-      end;
+    for i:=1 to pn do 
+      mpa^[i] :=pa^[i];
     mpn:=pn;
     mdrive:=pdrive;
-    end;
+  end;
 end;
 
 procedure prest;   { Path-Liste wiederherstellen       }
@@ -1081,7 +1072,7 @@ begin
   if mdrive<>' ' then begin
     if pdrive=mdrive then begin
       for i:=1 to mpn do
-        freemem(mpa^[i],length(mpa^[i]^)+1);
+        mpa^[i] := '';
       dispose(mpa);
       end
     else begin
@@ -1102,6 +1093,10 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/10/28 20:40:56  mk
+  - fixed RTE in fsbox while selecting a drive
+  - changed some byte to integer
+
   Revision 1.45  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
