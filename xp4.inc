@@ -264,14 +264,14 @@ begin
 
      15 : case m1 of                          { Netcall }
             1 : EinzelNetcall('');                           { Einzeln }
-            2 : AutoTiming(0,true,false,false,0);            { Alle    }
+            2 : AutoTiming(0,true,false,false,1);            { Alle    }
             3 : AnrufStat;                                   { Letzte Anrufe }
             4 : netcall_at('','');                           { Uhrzeit }
             5 : netcall(true,'',false,true,false);           { Relogin }
             6 : netcall(false,'',false,false,false);         { Online  }
-            8 : AutoTiming(0,true,false,true,0);             { Spezial }
+            8 : AutoTiming(0,true,false,true,1);             { Spezial }
             9 : EditNetcallDat;                              { Spezial-Liste }
-           11 : AutoTiming(0,false,false,false,0);           { Bereitschaft }
+           11 : AutoTiming(0,false,false,false,1);           { Bereitschaft }
            12 : UniEdit(1);                                  { Timing-Liste }
           end;
 
@@ -415,7 +415,7 @@ begin
             4 : begin
                   if netcall(true,'',false,false,true) then;   { Crash   }
                   if (autocrash=' alle ') or (autocrash=CrashTemp) then begin
-                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false,0);
+                    AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false,1);
                     autocrash:='';
                     end;
                 end;
@@ -781,6 +781,11 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.8  2001/11/20 23:17:00  my
+  MY:- Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt dieselben
+       Routinen wie die Multiserverbetrieb-Konfiguration; ÅberflÅssige
+       Routinen und Deklarationen entfernt.
+
   Revision 1.14.2.7  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
