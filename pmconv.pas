@@ -56,10 +56,6 @@ var   f,f2  : file;
       nn    : longint;
       uname : string;
       zconn : boolean;
-      
-      empflist,uline,xline,mail : tstringlist;
-      hd : Theader;
-
 
 procedure helppage;
 begin
@@ -183,9 +179,11 @@ begin
   writeln(nn,' Nachrichten wurden konvertiert.');
 end;
 
-end.
 {
   $Log$
+  Revision 1.14  2003/08/23 23:02:35  mk
+  - removed hints and warnings
+
   Revision 1.13  2003/04/24 06:45:53  mk
   - write unitname lowercase
 
@@ -238,3 +236,5 @@ end.
   PMCONV.PAS in den Tree aufgenommen
 
 }
+end.
+

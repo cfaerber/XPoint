@@ -2800,8 +2800,8 @@ var hdp   : Theader;
   end;
 
   procedure spam_info;
-  var ml   : byte;
-      i,j  : integer;
+  var
+      i    : integer;
       x,y  : Integer;
       s    : TRopeStream;
       stat : TSpamStats;
@@ -3842,6 +3842,9 @@ end;
 
 {
   $Log$
+  Revision 1.159  2003/08/23 23:02:35  mk
+  - removed hints and warnings
+
   Revision 1.158  2003/08/23 17:36:47  mk
   - improved adding of new message ids
 

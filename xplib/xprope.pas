@@ -81,7 +81,6 @@ type
   private
     FRootNode: pointer;
     FPosition: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
-    FLastNode: pointer;
 
   protected 
     { Balances the tree. }  
@@ -295,6 +294,8 @@ begin
         Result := Count;
         FillChar(Buffer,Count,Node^.FillValue);
       end;
+    else
+      Result := 0;
   end;
 end;
 
@@ -656,6 +657,8 @@ begin
     soFromBeginning:    Result := Offset;
     soFromCurrent:      Result := FPosition + Offset;
     soFromEnd:          Result := mySize - Offset;
+  else
+    Result := 0;
   end;
 
   if Result < 0      then Result := 0;
@@ -700,6 +703,9 @@ begin
 end;
 
 // $Log$
+// Revision 1.7  2003/08/23 23:02:38  mk
+// - removed hints and warnings
+//
 // Revision 1.6  2003/03/16 18:55:27  cl
 // - started PasDoc documentation
 //

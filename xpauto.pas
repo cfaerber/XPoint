@@ -254,10 +254,7 @@ begin
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:= TSendUUData.Create;
       if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
-(*
-      if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
-                sData,leer,sendShow) then begin
-*)
+
       if PM then
         sData.EmpfList.AddNew.ZCAddress := Empf
       else
@@ -270,7 +267,8 @@ begin
       else
         sData.AddText(datei,tmp);
 
-      if sData.DoIt(GetRes2(610,120),false,false,sendbox) then begin
+      if sData.DoIt(GetRes2(610,120),false,false,sendbox) then
+      begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
@@ -425,7 +423,6 @@ var sr    : tsearchrec;
       s     : string;
       err   : boolean;
       temp  : boolean;
-      bs    : xpWord;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
       nt    : eNetz;
@@ -480,9 +477,7 @@ var sr    : tsearchrec;
             axerr(5,UpperCase(datei))        { 'Datei "%s" fehlt' }
           else if attach and (not IsMailAddr(empf)) then
             axerr(6,'')    { 'File Attaches koennen nur als PM verschicht werden!' }
-          else if attach and (length(datei)>BetreffLen) then
-            axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
-          else
+          else 
             err:=false;
         end else
           err:=false;
@@ -692,6 +687,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2003/08/23 23:02:35  mk
+  - removed hints and warnings
+
   Revision 1.66  2003/08/23 20:04:15  mk
   - always use FileAge to get filedate, possilbe solves autosend problems
 

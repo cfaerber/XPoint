@@ -217,7 +217,6 @@ var t     : text;
     dp    : integer;
     ss    : string[20];
     p     : byte;
-    faddr : TFTNAddress;
     NlItem: TNodeListItem;
 begin
   assignFile(t, NodelistCfg);
@@ -760,6 +759,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2003/08/23 23:02:35  mk
+  - removed hints and warnings
+
   Revision 1.23  2003/01/13 23:31:34  cl
   - FPC compile fix
 

@@ -319,8 +319,6 @@ var
   Buffer: string;  // data
   BufPos: integer; // position of next byte to read
 
-  fm: byte;
-
   st_eof: boolean;
   sd_used: boolean;
 
@@ -627,6 +625,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/08/23 23:02:38  mk
+// - removed hints and warnings
+//
 // Revision 1.1  2003/08/05 23:34:34  cl
 // - xpunicode_linebreak was too long unit name for FPC/1.0.6 on Linux
 //

@@ -356,10 +356,6 @@ var
   GoodCount,GoodOld: integer;
   BadCount, BadOld: integer;
   Dat, DatOld: integer;
-
-var t,m,j   : smallword;
-    h,mm,s,ss: smallword;
-
 begin
   if OldSpamStatus=SpamStatus then exit;
   {$IFDEF HAS_SQLITE}
@@ -511,7 +507,6 @@ var token:   string;
     P,Q:     xFloat;
     robn:    integer;
     Words:   TWordlist;
-    i,j:     integer;
 
   function compute_probability(const token: string): Double;
   var GoodCount: integer;
@@ -913,6 +908,9 @@ finalization
 
 //
 // $Log$
+// Revision 1.4  2003/08/23 23:02:37  mk
+// - removed hints and warnings
+//
 // Revision 1.3  2003/07/12 18:45:06  cl
 // - speed improvement by caching of database connection
 // - compile-time $DEFINE to enable SQLite support (EXPERIMENTAL)

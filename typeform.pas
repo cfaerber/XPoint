@@ -841,19 +841,16 @@ end;
 
 function UTF8FormS(const s:string; n:integer):string; overload;
 var Position: Integer;
-    Pos2: Integer;
     W: Integer;
 begin
   Position := 1;
-  Pos2 := 1;
   Result := '';
   while Position <= Length(s) do
   begin
     w := UnicodeCharacterWidth(UTF8GetCharNext(s,Position));
-    if w < 0 then w := 1;      
+    if w < 0 then w := 1;
     if w > n then break;
     dec(n,w);
-    Pos2 := Position;
   end;
   Result := LeftStr(s,Position-1) + Sp(n);
 end;
@@ -1998,6 +1995,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2003/08/23 23:02:35  mk
+  - removed hints and warnings
+
   Revision 1.130  2003/05/11 11:13:56  mk
   - added ExtractWord, ExtractWordEx and WordPosition
 
