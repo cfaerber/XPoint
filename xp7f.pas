@@ -603,7 +603,6 @@ label fn_ende,fn_ende0;
       xpfm.UseEMSI:= EMSIenable;
       xpfm.SetTime:= gettime;
       xpfm.SendTrx:= SendTrx;
-      xpfm.os2time:= ParOS2;
       xpfm.MinCPS:= MinCPS;
       if crash then
         xpfm.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
@@ -691,7 +690,6 @@ label fn_ende,fn_ende0;
       writeln(t,'EMSI=',iifc(EMSIenable,'Y','N'));
       writeln(t,'SetTime=',iifc(gettime,'Y','N'));
       if SendTrx then writeln(t,'SendTrx=Y');
-      if ParOS2<>0 then writeln(t,'ReleaseTime=',ParOS2);
       if MinCPS>0 then writeln(t,'cpsMin=',MinCPS);
       if crash then
         writeln(t,'Show=',getres(727),boxpar^.gebzone);   { 'Tarifzone' }
@@ -1188,6 +1186,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/12/25 22:50:45  mk
+  - MarkPos in FirstMarked should be 0
+
   Revision 1.46  2000/12/25 16:05:56  mk
   - removed writlen debug info
 

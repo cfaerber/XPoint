@@ -68,7 +68,6 @@ const
   RedialMax : integer    = 100;
   MaxConn   : integer    = 5;       { maximale fehlerhafte CONNECTS }
   Fossil    : boolean    = false;
-  OS2time   : shortint   = -1;      { Rechenzeitfreigabe }
   MinCps    : integer    = 100;     { minimale cps-Rate (PD-Zmodem) }
   ZMoptions : string = '';
 
@@ -375,6 +374,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.6  2000/12/25 22:50:45  mk
+        - MarkPos in FirstMarked should be 0
+
         Revision 1.5  2000/12/25 19:08:47  mk
         - some optical improvements
 

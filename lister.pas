@@ -988,7 +988,7 @@ end;
 
 function TLister.FirstMarked: string;
 begin
-  MarkPos := SelLine;
+  MarkPos := 0;
   if SelCount = 0 then
     Result := GetSelection
   else
@@ -1088,6 +1088,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.44  2000/12/25 22:50:45  mk
+  - MarkPos in FirstMarked should be 0
+
   Revision 1.43  2000/12/25 20:40:24  mk
   - fixed FirstMarked
 
