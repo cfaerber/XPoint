@@ -66,7 +66,6 @@ type
   protected
     f1, f2: file;                         { Quell/Zieldatei     }
     addpath: String;
-    ppp: boolean;
     CopyXLines: Boolean;         { Alle X-Lines nach RFC zurueckkopieren }
     getrecenvemp: boolean; { Envelope-Empfaenger aus Received auslesen? }
     NoMIME: boolean ;              { -noMIME }
@@ -105,6 +104,7 @@ type
     RFC1522: boolean;             { Headerzeilen gem. RFC1522 codieren }
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
     NewsMIME: boolean ;
+    ppp: boolean;
     SMTP: boolean;
 
     { only used in non-cmdline mode }
@@ -3635,7 +3635,10 @@ type rcommand = (rmail,rsmtp,rnews);
   procedure CreateNewfile;
   begin
     fn := 'D-' + hex(NextUunumber, 4);
-    assign(f2, dest + fn + '.OUT');
+    if ppp then
+      assign(f2, dest)
+    else
+      assign(f2, dest + fn + '.OUT');
     rewrite(f2, 1);
   end;
 
@@ -3861,6 +3864,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/04/05 14:12:30  ml
+  - working on smtp
+
   Revision 1.44  2001/04/05 13:51:47  ml
   - POP3 is working now!
 

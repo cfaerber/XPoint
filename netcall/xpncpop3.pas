@@ -63,6 +63,7 @@ function SendSMTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean
     with boxpar^ do begin
       uu := TUUZ.Create;
       uu.SMTP := true;
+      uu.PPP := true;
       if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
       if RFC1522 then uu.RFC1522 := true;
@@ -89,7 +90,7 @@ var
   List          : TStringList;
   aFile         : string;
 begin
-  ZtoRFC(bp,PPFile,RFCFile); fehler('Konvertiert...');
+  ZtoRFC(bp,PPFile,RFCFile);
   { ProgressOutput erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
   { Host und ... }
@@ -110,7 +111,7 @@ begin
   MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
   MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
   MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-  MWrt(x+15,y+6,bp^.pop3_ip);
+  MWrt(x+15,y+6,bp^.smtp_ip);
   { IPC einrichten }
   ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
@@ -238,8 +239,8 @@ end.
 
 {
   $Log$
-  Revision 1.3  2001/04/05 13:51:47  ml
-  - POP3 is working now!
+  Revision 1.4  2001/04/05 14:12:30  ml
+  - working on smtp
 
   Revision 1.2  2001/03/21 19:17:09  ma
   - using new netcall routines now
