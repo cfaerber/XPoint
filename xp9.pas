@@ -112,9 +112,9 @@ begin
     end
   else
     if validfilename(left(boxname,8)+BfgExt) then
-      getdname:=UpperCase(left(boxname,8))
+      getdname:=FileUpperCase(left(boxname,8))
     else
-      getdname:='BOX-0001';
+      getdname:=FileUpperCase('box-0001');
 end;
 
 
@@ -180,11 +180,7 @@ end;
 
 function testqwkinfiles(var s:string):boolean;
 var
-{$ifdef hasHugeString}
     qd  : string;
-{$else}
-    qd  : pathstr;
-{$endif}
 begin
   testqwkinfiles:=false;
   if s<>'' then begin
@@ -477,14 +473,14 @@ begin
     dbOpen(d,BoxenFile,1);
     SeekLeftBox(d,s);
     if dbFound then begin
-      dbRead(d,'boxname',s);
+      s:= dbReadStr(d,'boxname');
       nt:=dbReadInt(d,'netztyp');
-      end;
+    end;
     dbClose(d);
     if not dbFound then begin
       rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
       testvertreterbox:=false;
-      end
+    end
     else begin
       if fieldpos=amvfield then    { AM-Vertreterbox }
         ok:=(DomainNt=nt)
@@ -608,18 +604,18 @@ var d         : DB;
     drec      : array[1..maxgl] of longint;
     x,y       : byte;
     width     : byte;
-    buttons   : string[60];
+    buttons   : string;
     bp,rb     : shortint;
     okb,edb   : shortint;
     aufbau    : boolean;
     c         : char;
     empty     : boolean;
-    s         : string[80];
+    s         : string;
     setdefault: boolean;
     umlaut    : byte;
     poutside  : boolean;
     startmkey : boolean;   { beim Start war Maustaste gedrÅckt }
-    directsel : string[dsellen];
+    directsel : string;
     nameofs   : byte;
 
   function Netz_Typ(nt:byte):string;
@@ -822,15 +818,9 @@ var d         : DB;
   end;
 
   procedure NeueGruppe;
-{$ifdef hasHugeString}
   var name   : string;
       hd,sig : string;
       qt     : string;
-{$else}
-  var name   : string[30];
-      hd,sig : string[8];
-      qt     : string[8];
-{$endif}
       hzeit  : integer16;
       limit  : longint;
       umlaut : byte;
@@ -848,13 +838,13 @@ var d         : DB;
         rfehler(910)   { 'Eine Gruppe mit diesem Namen existiert bereits.' }
       else begin
         dbAppend(d);
-        dbWrite(d,'Name',name);
+        dbWriteStr(d,'Name',name);
         dbWrite(d,'haltezeit',hzeit);
         dbWrite(d,'MsgLimit',limit);
         dbWrite(d,'umlaute',umlaut);
-        dbWrite(d,'kopf',hd);
-        dbWrite(d,'signatur',sig);
-        dbWrite(d,'quotemsk',qt);
+        dbWriteStr(d,'kopf',hd);
+        dbWriteStr(d,'signatur',sig);
+        dbWriteStr(d,'quotemsk',qt);
         dbWrite(d,'flags',flags);
         dbFlushClose(d);
         dbGo(d,drec[1]);
@@ -865,15 +855,9 @@ var d         : DB;
   end;
 
   procedure EditGruppe;
-{$ifdef hasHugeString}
   var name   : string;
       hd,sig : string;
       qt     : string;
-{$else}
-  var name   : string[30];
-      hd,sig : string[8];
-      qt     : string[8];
-{$endif}
       hzeit  : integer16;
       limit  : longint;
       flags  : byte;
@@ -881,23 +865,23 @@ var d         : DB;
       brk    : boolean;
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'Name',name);
+    name:= dbReadStr(d,'Name');
     dbRead(d,'haltezeit',hzeit);
     dbRead(d,'MsgLimit',limit);
     dbRead(d,'flags',flags);
     dbRead(d,'umlaute',umlaut);
-    dbRead(d,'kopf',hd);
-    dbRead(d,'signatur',sig);
-    dbRead(d,'quotemsk',qt);
+    hd:= dbReadStr(d,'kopf');
+    sig:= dbReadStr(d,'signatur');
+    qt:= dbReadStr(d,'quotemsk');
     readgruppe(true,name,hzeit,limit,umlaut,hd,qt,sig,flags,brk);
     if not brk then begin
-      dbWrite(d,'Name',name);
+      dbWriteStr(d,'Name',name);
       dbWrite(d,'haltezeit',hzeit);
       dbWrite(d,'MsgLimit',limit);
       dbWrite(d,'Umlaute',umlaut);
-      dbWrite(d,'kopf',hd);
-      dbWrite(d,'signatur',sig);
-      dbWrite(d,'quotemsk',qt);
+      dbWriteStr(d,'kopf',hd);
+      dbWriteStr(d,'signatur',sig);
+      dbWriteStr(d,'quotemsk',qt);
       dbWrite(d,'flags',flags);
       dbFlushClose(d);
       dbGo(d,drec[1]);
@@ -908,17 +892,12 @@ var d         : DB;
   procedure FidoGruppe;
   var x,y  : byte;
       brk  : boolean;
-{$ifdef hasHugeString}
       orig : string;
       addr : string;
-{$else}
-      orig : string[50];
-      addr : string[50];
-{$endif}
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'origin',orig);
-    dbRead(d,'adresse',addr);
+    orig:= dbReadStr(d,'origin');
+    addr:= dbReadStr(d,'adresse');
     dialog(46,5,getres2(902,1),x,y);    { 'Fido-Einstellungen' }
     maddstring(3,2,getres2(902,2),orig,32,48,range(' ',#126)); mhnr(690);   { 'Origin ' }
     maddstring(3,4,getres2(902,3),addr,15,15,'');   { 'Adresse' }
@@ -926,8 +905,8 @@ var d         : DB;
     readmask(brk);
     enddialog;
     if not brk then begin
-      dbWrite(d,'origin',orig);
-      dbWrite(d,'adresse',addr);
+      dbWriteStr(d,'origin',orig);
+      dbWriteStr(d,'adresse',addr);
       dbFlushClose(d);
       end;
   end;
@@ -996,19 +975,11 @@ var d         : DB;
   end;
 
   procedure NeuesSystem;
-{$ifdef hasHugeString}
   var name   : string;
       komm   : string;
       fsuser : string;
       fspass : string;
       convert: string;
-{$else}
-  var name   : string[20];
-      komm   : string[30];
-      fsuser : string[20];
-      fspass : string[20];
-      convert: string[60];
-{$endif}
       brk    : boolean;
       w      : word;
       b      : byte;
@@ -1023,11 +994,11 @@ var d         : DB;
         rfehler(913)     { 'Ein System mit diesem Namen existiert bereits.' }
       else begin
         dbAppend(d);
-        dbWrite(d,'Name',name);
-        dbWrite(d,'Kommentar',komm);
-        dbWrite(d,'fs-name',fsuser);
-        dbWrite(d,'fs-passwd',fspass);
-        dbWrite(d,'ZBV1',convert);
+        dbWriteStr(d,'Name',name);
+        dbWriteStr(d,'Kommentar',komm);
+        dbWriteStr(d,'fs-name',fsuser);
+        dbWriteStr(d,'fs-passwd',fspass);
+        dbWriteStr(d,'ZBV1',convert);
         w:=iif(fsuser<>'',1,0);
         dbWrite(d,'flags',w);
         b:=iif(UpperCase(fsuser)=UpperCase(uuserver),3,0);
@@ -1041,37 +1012,29 @@ var d         : DB;
   end;
 
   procedure EditSystem;
-{$ifdef hasHugeString}
   var name   : string;
       komm   : string;
       fsuser : string;
       fspass : string;
       convert: string;
-{$else}
-  var name   : string[30];
-      komm   : string[30];
-      fsuser : string[20];
-      fspass : string[20];
-      convert: string[60];
-{$endif}
       brk    : boolean;
       w      : word;
       typ    : byte;
   begin
     dbGo(d,drec[p]);
-    dbRead(d,'Name',name);
-    dbRead(d,'Kommentar',komm);
-    dbRead(d,'fs-name',fsuser);
-    dbRead(d,'fs-passwd',fspass);
+    name:= dbReadStr(d,'Name');
+    komm:= dbReadStr(d,'Kommentar');
+    fsuser:= dbReadStr(d,'fs-name');
+    fspass:= dbReadStr(d,'fs-passwd');
     dbRead(d,'fs-typ',typ);
-    dbRead(d,'ZBV1',convert);
+    convert:= dbReadStr(d,'ZBV1');
     readsystem(name,komm,fsuser,fspass,convert,typ,brk);
     if not brk then begin
-      dbWrite(d,'Name',name);
-      dbWrite(d,'Kommentar',komm);
-      dbWrite(d,'fs-name',fsuser);
-      dbWrite(d,'fs-passwd',fspass);
-      dbWrite(d,'ZBV1',convert);
+      dbWriteStr(d,'Name',name);
+      dbWriteStr(d,'Kommentar',komm);
+      dbWriteStr(d,'fs-name',fsuser);
+      dbWriteStr(d,'fs-passwd',fspass);
+      dbWriteStr(d,'ZBV1',convert);
       w:=iif(fsuser<>'',1,0);
       dbWrite(d,'flags',w);
       if UpperCase(fsuser)=UpperCase(uuserver) then typ:=3
@@ -1119,60 +1082,41 @@ var d         : DB;
     enddialog;
   end;
 
-  procedure NeuesPseudo;
-{$ifdef hasHugeString}
+  { Pseudo editieren und anlegen. Funktion 'NeuesPseudo' gibt es nicht
+    mehr (hd/2000-07-21) }
+  procedure EditPseudo(isNew: boolean);
   var kurz    : string;
       lang    : string;
       pollbox : string;
-{$else}
-  var kurz    : string[15];
-      lang    : string[AdrLen];
-      pollbox : string[BoxNameLen];
-{$endif}
       brk     : boolean;
   begin
-    kurz:=''; lang:=''; pollbox:='';
-    readpseudo(false,kurz,lang,pollbox,brk);
-    if not brk then begin
-      dbSeek(d,piKurzname,UpperCase(kurz));
-      if dbFound then
-        rfehler(915)     { 'Diesen Kurznamen gibt es bereits.' }
-      else begin
-        dbAppend(d);
-        dbWrite(d,'Kurzname',kurz);
-        dbWrite(d,'Langname',lang);
-        dbWrite(d,'pollbox',pollbox);
-        dbFlushClose(d);
-        dbGo(d,drec[1]);
-        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-        aufbau:=true;
-        end;
-      end;
-  end;
-
-  procedure EditPseudo;
-{$ifdef hasHugeString}
-  var kurz    : string;
-      lang    : string;
-      pollbox : string;
-{$else}
-  var kurz    : string[15];
-      lang    : string[AdrLen];
-      pollbox : string[BoxNameLen];
-{$endif}
-      brk     : boolean;
-  begin
-    dbGo(d,drec[p]);
-    dbRead(d,'Kurzname',kurz);
-    dbRead(d,'Langname',lang);
-    dbRead(d,'pollbox',pollbox);
+    if isNew then begin
+      kurz:=''; 
+      lang:=''; 
+      pollbox:='';
+    end else begin
+      dbGo(d,drec[p]);
+      kurz:= dbReadStr(d,'Kurzname');
+      lang:= dbReadStr(d,'Langname');
+      pollbox:= dbReadStr(d,'pollbox');
+    end;
     readpseudo(true,kurz,lang,pollbox,brk);
     if not brk then begin
-      dbWrite(d,'Kurzname',kurz);
-      dbWrite(d,'Langname',lang);
-      dbWrite(d,'pollbox',pollbox);
+      if isNew then begin
+        dbSeek(d,piKurzname,UpperCase(kurz));
+        if dbFound then begin
+          rfehler(915);     { 'Diesen Kurznamen gibt es bereits.' }
+	  exit;
+	end;
+	dbAppend(d);
+      end; { isNew }
+      dbWriteStr(d,'Kurzname',kurz);
+      dbWriteStr(d,'Langname',lang);
+      dbWriteStr(d,'pollbox',pollbox);
       dbFlushClose(d);
       dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
       aufbau:=true;
       end;
   end;
@@ -1234,62 +1178,41 @@ var d         : DB;
     typ:=compmimetyp(typ);
   end;
 
-  procedure NeuerMimetyp;
-{$ifdef hasHugeString}
+  { 'NeuerMimetyp' ist hier jetzt drin hd/2000-07-21 }
+  procedure EditMimetyp(isNew: boolean);
   var typ  : string;
       ext  : string;
       prog : string;
-{$else}
-  var typ  : string[30];
-      ext  : string[5];
-      prog : string[ViewprogLen];
-{$endif}
       brk  : boolean;
   begin
-    typ:=''; ext:=''; prog:='';
-    readmimetyp(false,typ,ext,prog,brk);
-    if not brk and (typ<>'*/*') then begin
-      dbAppend(d);
-      dbWriteN(d,mimeb_typ,typ);
-      dbWriteN(d,mimeb_extension,ext);
-      dbWriteN(d,mimeb_programm,prog);
-      dbFlushClose(d);
-      dbGo(d,drec[1]);
-      dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-      aufbau:=true;
-      end;
-  end;
-
-  procedure EditMimetyp;
-{$ifdef hasHugeString}
-  var typ  : string;
-      ext  : string;
-      prog : string;
-{$else}
-  var typ  : string[30];
-      ext  : string[5];
-      prog : string[ViewprogLen];
-{$endif}
-      brk  : boolean;
-  begin
-    dbGo(d,drec[p]);
-    dbReadN(d,mimeb_typ,typ);
-    dbReadN(d,mimeb_extension,ext);
-    dbReadN(d,mimeb_programm,prog);
+    if isNew then begin
+      typ:= ''; ext:= ''; prog:= '';
+    end else begin
+      dbGo(d,drec[p]);
+      typ:= dbReadNStr(d,mimeb_typ);
+      ext:= dbReadNStr(d,mimeb_extension);
+      prog:= dbReadNStr(d,mimeb_programm);
+    end;
     readmimetyp(true,typ,ext,prog,brk);
     if not brk and (typ<>'*/*') then begin
-      dbWriteN(d,mimeb_typ,typ);
-      dbWriteN(d,mimeb_extension,ext);
-      dbWriteN(d,mimeb_programm,prog);
+      if isNew then begin
+        {$hint Soll hier noch auf doppelte Mime-Typen geprueft werden? }
+	dbAppend(d);
+      end;
+      dbWriteNStr(d,mimeb_typ,typ);
+      dbWriteNStr(d,mimeb_extension,ext);
+      dbWriteNStr(d,mimeb_programm,prog);
       dbFlushClose(d);
       dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
       aufbau:=true;
       end;
   end;
 
   procedure DelMimetyp;
   var
-    s     : string[40];
+    s     : string;
   begin
     dbGo(d,drec[p]);
     s:=dbReadStr(d,'typ');
@@ -1347,42 +1270,46 @@ var d         : DB;
   end;
 
   procedure _DirectSel;
-  var nfeld : string[10];
-      dnew  : string[dsellen];
+  var nfeld : string;
+      dnew  : string;
       i     : integer;
   begin
-    if (c<' ') and (c<>#8) then exit;
-    if ((c=#8) and (directsel='')) or ((c>=' ') and (length(directsel)=dsellen))
-    then begin
+    if (c<' ') and (c<>#8) then 
+      exit;
+    if ((c=#8) and (directsel='')) or ((c>=' ') and (length(directsel)=dsellen)) then begin
       errsound;
       exit;
-      end;
+    end;
     case typ of
       1 : nfeld:='boxname';
       2 : nfeld:='name';
       3 : nfeld:='name';
       4 : nfeld:='kurzname';
     end;
-    if c=#8 then dnew:=left(directsel,length(directsel)-1)
-    else dnew:=directsel+c;
+    if c=#8 then 
+      dnew:=left(directsel,length(directsel)-1)
+    else 
+      dnew:=directsel+c;
     dbSeek(d,1,UpperCase(dnew));
-    if dbBOF(d) then dbGoTop(d);
+    if dbBOF(d) then 
+      dbGoTop(d);
     if dbEOF(d) or (UpperCase(left(dbReadStr(d,nfeld),length(dnew)))<>UpperCase(dnew)) then
       errsound
     else begin
       i:=1;
-      while (i<=maxgl) and (drec[i]<>dbRecno(d)) do inc(i);
+      while (i<=maxgl) and (drec[i]<>dbRecno(d)) do
+        inc(i);
       if i<=maxgl then
         p:=i
       else begin
         aufbau:=true;
         p:=1;
-        end;
-      DirectSel:=UpperCase(dnew);
       end;
+      DirectSel:=UpperCase(dnew);
+    end;
   end;
 
-begin
+begin { --- UniSel --- }
   if typ>5 then exit;
   case typ of
     1 : begin     { Boxen }
@@ -1391,7 +1318,7 @@ begin
             unisel:=dbReadStr(d,'boxname');
             dbClose(d);
             exit;
-            end;
+          end;
           width:=67;
           buttons:=getres(907);   { ' ^Neu , ^Lîschen , ^WÑhlen , ^Edit , Netz^typ , ^OK ' }
           okb:=6; edb:=4;
@@ -1511,14 +1438,14 @@ begin
                 3 : EditSystem;
               end;
           4 : case rb of
-                1 : NeuesPseudo;
+                1 : EditPseudo(true);
                 2 : if not empty then DelPseudo;
-                3 : if not empty then EditPseudo;
+                3 : if not empty then EditPseudo(false);
               end;
           5 : case rb of
-                1 : NeuerMimetyp;
+                1 : EditMimetyp(true);
                 2 : if not empty then DelMimetyp;
-                3 : if not empty then EditMimetyp;
+                3 : if not empty then EditMimetyp(false);
               end;
         end;
     if not empty and (not edit or (rb<0)) then begin
@@ -1630,15 +1557,9 @@ end;
 procedure SetUsername(s:string);
 var x,y  : byte;
     brk  : boolean;
-{$ifdef hasHugeString}
     user : string;
     real : string;
     box  : string;
-{$else}
-    user : string[50];
-    real : string[40];
-    box  : string[BoxNameLen];
-{$endif}
     p    : byte;
     d    : DB;
     gross   : boolean;
@@ -1683,8 +1604,8 @@ begin
       else
         brk:=false;
       if not brk then begin
-        dbWrite(d,'username',user);
-        if hasreal { and (real<>'') 29.07.96 } then dbWrite(d,'realname',real);
+        dbWriteStr(d,'username',user);
+        if hasreal { and (real<>'') 29.07.96 } then dbWriteStr(d,'realname',real);
         if box=DefFidoBox then begin
           HighlightName:=UpperCase(user);
           aufbau:=true;
@@ -1835,6 +1756,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/07/21 14:42:39  hd
+  - Ansistring
+  - Datenbankanpassung
+  - Einige Funktionen zusammengefasst
+
   Revision 1.28  2000/07/21 13:14:09  hd
   - Fix: Strings in der Maske
   - Fix: Einige Datenbankzugriffe wegen AnsiString
