@@ -224,6 +224,8 @@ var p       : byte;
     dir     : TDirectory;
     x,y     : byte;
 begin
+  // omit this and the decompression process will fail
+  ImportDir:=ExpandFileName(ImportDir);
   Debug.DebugLog('xpncfido','importing fido messages: "'+ImportDir+'"',DLInform);
   FidoImport:=false;
   with BoxPar^ do begin
@@ -243,7 +245,7 @@ begin
         ImportDir:=ExpandFilename(ImportDir);
         Debug.DebugLog('xpncfido','chdir to "'+OwnPath+XFerDir+'"',DLDebug);
         SetCurrentDir(OwnPath+XFerDir);
-        shell(LeftStr(downarcer,p-1)+dir.Name[i]+mid(downarcer,p+9),500,1);
+        shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
         // shell chdirs back to program directory automatically
         if errorlevel<>0 then begin
           Debug.DebugLog('xpncfido','error calling downarcer',DLError);
@@ -973,6 +975,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/01/06 18:21:49  ma
+  - tried to make *both* fidonetcall and sysopcall work
+
   Revision 1.3  2001/01/05 18:38:29  ma
   - fixed shell call (that decompresses incoming packets)
   - debug logs changed a bit
