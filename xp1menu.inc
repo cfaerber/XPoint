@@ -20,7 +20,7 @@ begin
     case mpnr of
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
-      $015 : MenuHidden:=true; { Terminal }
+      $015 : MenuHidden:=false; { Terminal }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
       $1ca : MenuHidden:=not languageopt;            { Config/Optionen/Sprache }
 {$IFDEF CAPI }
@@ -601,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/09/30 19:51:18  ma
+  - Terminal wieder aktiviert
+
   Revision 1.20  2000/07/31 09:24:58  mk
   - Bug in Findmnu beseitigt
 
