@@ -1,6 +1,6 @@
 {  $Id$
 
-   OpenXP MIME Library
+   OpenXP MIME Library: Base64 en-/decoding
    Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
 
    This program is free software; you can redistribute it and/or modify

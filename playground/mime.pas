@@ -28,8 +28,19 @@ uses
   Classes;
 
 type
-  MIME_Encoding =  (mime_auto,mime_7bit,mime_8bit,mime_binary,mime_qp,mime_base64);
-  MIME_Disposition=(mime_inline,mime_attach,mime_meta);
+  TMimeEncoding =        ( MimeEncoding7Bit,
+                           MimeEncoding8Bit,
+                           MimeEncodingBinary,
+                           MimeEncodingQuotedPrintable,
+                           MimeEncodingBase64 );
+  TMimeDispositionType = ( MimeDispositionInline,
+                           MimeDispositionAttach,
+                           MimeDispositionMeta,
+                           MimeDispositionNone );
+  TMimeEOL =             ( MimeEolCRLF,
+                           MimeEolCR,
+                           MimeEolLF,
+                           MimeEolNone );
 
 { ------------------------} implementation { ------------------------- }
 

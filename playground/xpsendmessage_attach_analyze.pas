@@ -26,9 +26,9 @@ unit xpsendmessage_attach_analyze;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  mime, xpsendmessage_attach;
+  mime, mime_analyze, xpsendmessage_attach;
 
-procedure SendAttach_Analyze(pa:TMIME_Part;Change:Boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean);
 function  GuessContentTypeFromFileName(FileName:String):String;
 
 { ------------------------} implementation { ------------------------- }
@@ -40,6 +40,7 @@ uses
   classes, database, fileio, inout, keys, lister, maus2, resource, typeform,
   winxp, xp0, xp1, xp1input, xp1o, xp3, xp3o, xp4e, xpe, xpglobal, xpnt, maske,
   sysutils, windows;
+
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;
@@ -89,33 +90,68 @@ begin
 {$ENDIF}
 end;
 
-procedure SendAttach_Analyze(pa:TMIME_Part;Change:Boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean);
 var f:   TFileStream;
-    ext: String;
-    i,n: Integer;
-    c,LastChar:   Char;
-    Buffer:     Array[1..8192] of Char;
-
     GuessedType:	String;
-    GuessedCharset:	String;
-    GuessedEncoding:	String;
-
 begin
+  { first of all, look at the file type }
 
   GuessedType := GuessContentTypeFromFileName(
     iifs(pa.IsFile,pa.FileName,pa.FileNameO));
 
-  if Change then
+  try
+    f := TFileStream.Create(pa.FileName,fmOpenRead);
+
+    pa.Analyzed.Size := 0;
+    pa.Analyzed.CopyFrom(f,f.Size);   // looks harmless, doesn't it?
+  finally
+    f.Free;
+  end;
+
+
+  if not pa.IsFile then
+  { only change those parameters where we would otherwise  }
+  { create illegal messages 				   }
+  { note: this is only called after a file has been edited }
+  begin
+
+    if NewFile or (not pa.Analyzed.EncodingAllowed[pa.ContentEncoding]) then
+    begin
+      if pa.Analyzed.Is8Bit then
+      begin
+        if (not MimeQP) and pa.Analyzed.EncodingAllowed[MimeEncoding8Bit] then
+          pa.ContentEncoding := MimeEncoding8Bit
+        else
+          pa.ContentEncoding := MimeEncodingQuotedPrintable;
+      end else
+      begin
+        if pa.Analyzed.EncodingAllowed[MimeEncoding7Bit] then
+          pa.ContentEncoding := MimeEncoding7Bit
+        else
+          pa.ContentEncoding := MimeEncodingQuotedPrintable;
+      end;
+    end;
+
+    if not pa.Analyzed.Is8Bit then
+      pa.ContentCharset := 'US-ASCII'
+    else if pa.Analyzed.IsLatin1DOS then
+      pa.ContentCharset := 'ISO-8859-1'
+    else
+      pa.ContentCharset := 'UTF-8';
+
+    pa.FileCharset := iifs(pa.Analyzed.Is8Bit,'CP850','US-ASCII');
+    pa.FileEOL     := MimeEolCRLF;
+
+  end else
   { change all parameters to the values determined through }
   { our analyzation					   }
   begin
     pa.ContentType.AsString := iifs(Length(GuessedType)>0,GuessedType,'application/octet-stream');
+    pa.ContentEncoding      := pa.Analyzed.PreferredEncoding;
+    pa.ContentCharset       := pa.Analyzed.PreferredCharset;
 
-  end else
-  { only change those parameters where we would otherwise  }
-  { create illegal messages 				   }
-  begin
-
+    pa.FileCharset          := pa.Analyzed.GuessedCharset;
+    pa.FileEOL              := pa.Analyzed.GuessedEOL;
   end;
 end;
 

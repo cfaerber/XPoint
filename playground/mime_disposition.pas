@@ -1,6 +1,6 @@
 {   $Id$
 
-   OpenXP MIME Library: Content Types
+   OpenXP MIME Library: Content Disposition
    Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
 
    This program is free software; you can redistribute it and/or modify
@@ -20,67 +20,22 @@
 
 {$I xpdefine.inc}
 
-unit mime_ctype;
+unit mime_disposition;
 
 { ---------------------------} interface { --------------------------- }
 
 uses
-  Classes;
+  Classes, Mime_CType;
 
 type
-
-  {
-    This class holds parameter values
-  }
-
-  TMimeParam = class
-  public
-    Value,Charset,Language: String;
-    constructor Create(Const NValue,NCharset,NLanguage: String);
-  end;
-
-  {
-    This abstract base class implements the basic MIME Content-* header
-    parameter handling. The first word (Verb) is handeled by dereived
-    classes.
-  }
-
-  TMimeContentHeader_AbstractBaseClass = class
-  private
-    FParam:     TStringList;
-
-    function    MayEncodeParam(const name:string):boolean; virtual; abstract;
-
-    function    GVerb:string; virtual; abstract;
-    procedure   SVerb(const value:string); virtual; abstract;
-
-    function    GAsString:String;
-    procedure   SAsString(Const NewValue:String);
-
-    function    GParam(Const Name:String):TMimeParam;
-
-    function    GParamValue(Const Name:String):String;
-    procedure   SParamValue(Const Name:String;Const NewValue:String);
-
-  public
-    constructor Create(const ctype:String);
-    destructor  Destroy; override;
-
-    property    Verb: String read GVerb write SVerb;
-
-    property    Params[Const Name: String]: TMimeParam read GParam;
-    property    ParamValues[Const Name: String]: String read GParamValue write SParamValue;
-
-    property    AsString: String   read GAsString  write SAsString;
-    function    AsFoldedString(MaxFirstLen,MaxLen:Integer;UseRFC2231:Boolean):String;
-  end;
-
   {
     This class implements the handling of the MIME Content-Type header
     field contents
   }
 
-  TMimeContentType = class(TMimeContentHeader_AbstractBaseClass)
+  TMimeDisposition
+
+  TMimeDisposition = class(TMimeContentHeader_AbstractBaseClass)
   private
     FMainType:  String;
     FSubType:   String;
@@ -92,8 +47,8 @@ type
     function    GCharset:string;
     procedure   SCharset(const value:string);
 
-    function    GNeedCharset:Boolean;
-    function    GIsEncodeable:Boolean;
+    function    GIsLineBased:boolean;
+    function    GIsEncodeable:boolean;
 
   public
     property MainType: String   read FMainType  write FMainType;
@@ -101,14 +56,9 @@ type
 
     property Charset:  String   read GCharset   write SCharset;
 
-    property NeedCharset:Boolean read GNeedCharset;
+    property IsLineBased:Boolean read GIsLineBased;
     property IsEncodeable:Boolean read GIsEncodeable;
   end;
-
-function MimeContentTypeNeedCharset(const ctype:string):Boolean;
-function MimeContentTypeIsEncodeable(const ctype:string):Boolean;
-
-procedure MimeContentTypeSplit(const ctype:string; var main,sub:string);
 
 { ------------------------} implementation { ------------------------- }
 
@@ -180,7 +130,7 @@ end;
 
 function TMimeContentHeader_AbstractBaseClass.AsFoldedString(MaxFirstLen,MaxLen:Integer;UseRFC2231:Boolean):String;
 begin
-  raise Exception.Create('not implemented');
+
 end;
 
 procedure TMimeContentHeader_AbstractBaseClass.SAsString(Const NewValue:String);
@@ -281,8 +231,36 @@ begin
 end;
 
 procedure TMimeContentType.SVerb(Const Value:String);
+var j: Integer;
+    s: string;
 begin
-  MimeContentTypeSplit(Value,FMainType,FSubType);
+  if Value='' then begin
+    MainType:='';
+    SubType:='';
+    exit;
+  end;
+
+  j := Pos('/',Value);
+
+  if j<=0 then begin
+    s:=LowerCase(Value);
+
+    if (s='tex') or (s='troff') then
+    begin
+      MainType:='text'; SubType:='x-'+Value;
+    end else
+    if (s='postscript') or (s='sgml') or (Copy(s,1,2)='x-') then
+    begin
+      MainType:='application'; SubType:=Value;
+    end else
+    begin
+      MainType:='application'; SubType:='x-'+Value;
+    end;
+  end else
+  begin
+    MainType := Trim(Copy(Value,1,j-1));
+    SubType  := Trim(Copy(Value,j+1,Length(Value)-j));
+  end;
 end;
 
 function TMimeContentType.GVerb:String;
@@ -309,111 +287,67 @@ begin
     (name_lc<>'charset');
 end;
 
-function TMimeContentType.GNeedCharset:Boolean;
+function TMimeContentType.GIsLineBased:boolean;
+var main_lc,sub_lc: String;
 begin
-  result:=MimeContentTypeNeedCharset(Verb);
-end;
-
-function TMimeContentType.GIsEncodeable:Boolean;
-begin
-  result:=MimeContentTypeIsEncodeable(Verb);
-end;
-
-procedure MimeContentTypeSplit(const ctype:string; var main,sub:string);
-var j,e: Integer;
-    s: string;
-begin
-  if ctype='' then begin
-    Main:='';
-    Sub :='';
-    exit;
-  end;
-
-  e := Pos(';',CType); if e=0 then e:=Length(Ctype);
-
-  j := Pos('/',CType); if j>e then j:=0;
-
-  if j<=0 then begin
-    s:=LowerCase(Ctype);
-
-    if (s='tex') or (s='troff') then
-    begin
-      Main:='text'; Sub:='x-'+Copy(CType,1,e);
-    end else
-    if (s='postscript') or (s='sgml') or (Copy(s,1,2)='x-') then
-    begin
-      Main:='application'; Sub:=Copy(CType,1,e);
-    end else
-    begin
-      Main:='application'; Sub:='x-'+Copy(CType,1,e);
-    end;
-  end else
+  if not IsEncodeable then
   begin
-    Main := Trim(Copy(CType,1,j-1));
-    Sub  := Trim(Copy(CType,j+1,e-j));
+    result := true;
+    exit
   end;
+
+  main_lc := Lowercase(MainType);
+  if (main_lc='text') then
+  begin
+    result := true;
+    exit
+  end;
+
+  sub_lc := LowerCase(MainType);
+  if ((main_lc='application') and (sub_lc='activemessage'))
+  or ((main_lc='application') and (sub_lc='andrew-insert'))
+  or ((main_lc='application') and (sub_lc='atomicmail'))
+  or ((main_lc='application') and (sub_lc='andrew-insert'))
+  or ((main_lc='application') and (sub_lc='batch-smtp'))
+  or ((main_lc='application') and (sub_lc='beep+xml'))
+  or ((main_lc='application') and (sub_lc='cybercash')) then
+  begin
+    result := true;
+    exit
+  end;
+
+  Result:=False;
 end;
 
-function MimeContentTypeNeedCharset(const ctype:string):Boolean;
-var m,s: string;
+{
+function GHasCharset:Boolean
 begin
-  MimeContentTypeSplit(ctype,m,s);
-  m:=Lowercase(m);
-  s:=Lowercase(s);
+  'text/*'
+  'application/edi-consent'
+  'application/edi-fact'
+  'application/edi-x12'
+end;
+}
 
-  result:= ((m='text') and not( (s='parityfec') or
-                                (s='rfc822-headers') or
-                                (s='rtf') or
-                                (s='t140') or
-                                (s='vnd.dmclientscript') or
-                                (s='vnd.fly') or
-                                (s='vnd.latex-z') or
-                                (s='vnd.ms-mediapackage') or
-                                (s='vnd.motorola.reflex') or
-                                (s='prs.lines.tag') )) or
-     ((m='application') and   ( (s='edi-consent') or
-                                (s='edi-x12') or
-                                (s='edifact') or
-                                (s='prs.alvestrand.titrax-sheet') or
-                                (s='sgml-open-catalog') or
-                                (s='vnd.commerce-battelle') or
-                                (s='vnd.dpgraph') or
-                                (s='vnd.mozilla.xul+xml') or
-                                (s='vnd.msign') or
-                                (s='vnd.uplanet.alert') or
-                                (s='vnd.uplanet.alert-wbxml') or
-                                (s='vnd.uplanet.bearer-choice-wbxml') or
-                                (s='vnd.uplanet.bearer-choice') or
-                                (s='vnd.uplanet.cacheop') or
-                                (s='vnd.uplanet.cacheop-wbxml') or
-                                (s='vnd.uplanet.channel') or
-                                (s='vnd.uplanet.channel-wbxml') or
-                                (s='vnd.uplanet.list') or
-                                (s='vnd.uplanet.list-wbxml') or
-                                (s='vnd.uplanet.listcmd') or
-                                (s='vnd.uplanet.listcmd-wbxml') or
-                                (s='vnd.vnd.wap.sic') or
-                                (s='vnd.vnd.wap.slc') or
-                                (s='vnd.wap.wbxml') or
-                                (s='vnd.wap.wmlc') or
-                                (s='vnd.wap.wmlscriptc') or
-                                (s='beep+xml') or
-                                (s='iotp') or
-                                (s='xml') or
-                                (s='xml-external-parsed-entity') or
-                                (s='xml-dtd') )) or
-     ((m='image') and         ( (s='vnd.wap.wbmp') ));
-end;                             
-
-function MimeContentTypeIsEncodeable(const ctype:string):Boolean;
-var m,s: string;
+function TMimeContentType.GIsEncodeable:boolean;
+var main_lc,sub_lc: string;
 begin
-  MimeContentTypeSplit(ctype,m,s);
-  m:=Lowercase(m);
-  s:=Lowercase(s);
+  main_lc := LowerCase(MainType);
+  if (main_lc='multipart')
+  or (main_lc='message') then
+  begin
+    result := false;
+    exit
+  end;
 
-  result := (m<>'message') and (m<>'multipart') and
-    ((m<>'application') or (m<>'mac-binhex40'));
+  sub_lc := LowerCase(MainType);
+  if ((main_lc='application') and (sub_lc='binhex40')) then
+  begin
+    result := false;
+    exit
+  end;
+
+  result := true;
 end;
 
 end.

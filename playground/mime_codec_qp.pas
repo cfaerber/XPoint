@@ -1,6 +1,6 @@
 {  $Id$
 
-   OpenXP MIME Library
+   OpenXP MIME Library: Quoted-Printable en-/decoding
    Copyright (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
 
    This program is free software; you can redistribute it and/or modify
@@ -21,12 +21,7 @@
 // Encoding and decoding streams for quoted-printable data as described in
 // RFC2045
 
-{$IF 1}
 {$I XPDEFINE.INC }
-{$ELSE}
-{$MODE objfpc}
-{$H+}
-{$ENDIF}
 
 unit mime_codec_qp;
 
@@ -103,7 +98,7 @@ begin
     end;
 end;
 
-destructor TQuotedPrintableEncodicngStream.Destroy;
+destructor TQuotedPrintableEncodingStream.Destroy;
 begin
   if Length(Line)>0 then
   begin
@@ -313,6 +308,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/08/12 14:23:56  cl
+  - update
+
   Revision 1.2  2001/08/09 19:06:02  cl
   - update
 
