@@ -3388,7 +3388,7 @@ begin
   end;
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
-  if SMTP then CreateNewfile;
+  if SMTP and not client then CreateNewfile;
   repeat
     copycount := 0;
     repeat
@@ -3397,11 +3397,12 @@ begin
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
       if cpos('@', hd.Empfaenger[copycount]) > 0 then
         if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then
-          WrFileserver
-        else
-        begin   
+        begin
+          if not Client then WrFileserver
+        end else
+        begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
-          if not SMTP then
+          if not SMTP or Client then
             CreateNewfile;
           SetMimeData;
 
@@ -3420,10 +3421,16 @@ begin
           f.Free;
 
           if SMTP then
+          begin
+            if Client then begin
+              Wrs(f2, 'QUIT');
+              f2.Free;
+            end;
             f3.Free
+          end
           else begin
             f2.Free;
-            QueueCompressfile(rmail);
+            if not client then QueueCompressfile(rmail);
           end;
         end;
       if not SMTP then
@@ -3437,7 +3444,7 @@ begin
    if files > 0 then
      writeln('Files: ', files);
   end;
-  if SMTP then
+  if SMTP and not client then
   begin
     if n <> 0 then
       wr(f2, 'QUIT'#10);
@@ -3627,6 +3634,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2002/07/21 13:38:17  mk
+  - with SMTP swith on, create one file for every outgoing message
+
   Revision 1.106  2002/07/20 15:36:41  cl
   - adaptions for new address handling
 
