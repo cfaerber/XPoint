@@ -211,7 +211,7 @@ begin  { __ Suchmarke }
 
             { Felder zusammenkopieren }
             dispbuf[y]^:=taus[1];
-            for tausc := 2 to UsrFelderMax do
+            for tausc := 2 to UsrFelderMax do if (taus[tausc]<>'') then
               dispbuf[y]^:=dispbuf[y]^+iifs(length(taus[tausc])>0,' ','')+taus[tausc];
             dispbuf[y]^:=forms(dispbuf[y]^,80);
 
@@ -332,16 +332,31 @@ begin  { __ Suchmarke }
 
               { Flags }
               taus[pos('F',MsgFeldTausch)] := dflags;
+              if (pos('F',MsgFeldTausch)>1) then begin
+                if (
+                     ((pos('F',MsgFeldTausch)=pos('D',MsgFeldTausch)+1)
+                       and showmsgdatum)
+                       or
+                     (pos('F',MsgFeldTausch)<>pos('D',MsgFeldTausch)+1)
+                       
+                    ) then taus[pos('F',MsgFeldTausch)] := ' '+dflags;
+              end;
               { Groesse }
               taus[pos('G',MsgFeldTausch)] := siz;
               { Datum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
+                                              iifs(pos('D',MsgFeldTausch)<>1,' ','')+
+                                              sdat,'');
               { Absender }
-              taus[pos('A',MsgFeldTausch)] := forms(s,19);
+              taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
+                                              forms(s,19);
               { Empfaenger }
-              taus[pos('E',MsgFeldTausch)] := forms(s0,19);
+              taus[pos('E',MsgFeldTausch)] := iifs(pos('E',MsgFeldTausch)<>1,' ','')+
+                                              forms(s0,19);
               { Betreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,22-1,28));
+              taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
+                                              forms(s1,iif(showmsgdatum,22-
+                                              iif(pos('D',MsgFeldTausch)<>1,0,1),28));
 
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
 
@@ -350,8 +365,27 @@ begin  { __ Suchmarke }
               { Kommentarbaum }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
-                dispbuf[y]^:=forms(dflags+siz+' '+sdat+' '+s,80);
+                dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
               end else begin
+              
+              { Flags }
+              taus[pos('F',MsgFeldTausch)] := iifs(pos('F',MsgFeldTausch)<>1,' ','')+
+                                              dflags;
+              { Groesse }
+              taus[pos('G',MsgFeldTausch)] := siz;
+              { Datum }
+              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,
+                                              iifs(pos('D',MsgFeldTausch)<>1,' ','')+
+                                              sdat,'');
+              { Absender }
+              taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)<>1,' ','')+
+                                              forms(s,ulen);
+              { Betreff }
+              taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)<>1,' ','')+
+                                              forms(s1,iif(showmsgdatum,blen-
+                                              iif(pos('D',MsgFeldTausch)<>1,0,1),blen));
+
+(*            
                 { Flags }
                 taus[pos('F',MsgFeldTausch)] := dflags;
                 { Groesse }
@@ -359,9 +393,12 @@ begin  { __ Suchmarke }
                 { Datum }
                 taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
                 { Absender }
-                taus[pos('A',MsgFeldTausch)] := forms(s,ulen-1-iif(showmsgdatum,0,1));
+                taus[pos('A',MsgFeldTausch)] := iifs(pos('A',MsgFeldTausch)>1,' ','')+
+                                                forms(s,ulen);
                 { Betreff }
-                taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
+                taus[pos('B',MsgFeldTausch)] := iifs(pos('B',MsgFeldTausch)>1,' ','')+
+                                                forms(s1,blen);
+*)                                             
               end;
 
               if fidoqwk and (_brett[1]='A') and
@@ -374,10 +411,13 @@ begin  { __ Suchmarke }
                   userflag[y]:=(mnt and $1000<>0);
             end;
 
+            { Kommentarbaum-Ausgabe schon fertig, fuer andere dispmodes
+              muss sie noch zusammenkopiert werden: }
             if (dispmode<>12) then begin
               { Felder zusammenkopieren }
               dispbuf[y]^ := taus[1];
-              for tausc := 2 to MsgFelderMax do dispbuf[y]^:=dispbuf[y]^+' '+taus[tausc];
+              for tausc := 2 to MsgFelderMax do if (taus[tausc]<>'') then
+                dispbuf[y]^:=dispbuf[y]^+taus[tausc];
               dispbuf[y]^:=forms(dispbuf[y]^,80);
             end;
           end;
