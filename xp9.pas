@@ -621,7 +621,7 @@ end;
 { edit:  true=editieren, false=nur ausw„hlen                      }
 
 function UniSel(typ:byte; edit:boolean; default:string):string;
-const maxgl   = 40;
+const maxgl   = 100;
       dsellen = 20;
 var d         : DB;
     p0,p,gl : integer;
@@ -1801,6 +1801,9 @@ end.
 
 {
   $Log$
+  Revision 1.60  2001/04/17 00:19:37  ma
+  - fixed crash occurring with screen lines > 50+-c
+
   Revision 1.59  2001/03/21 19:17:07  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
