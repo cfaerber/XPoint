@@ -70,7 +70,7 @@ $Menu = array(
 		"sub"	=> true),
 	15 => array("de"	=> "CVS Log",
 		"en" 	=> "CVS log",
-		"url"	=> $indexname . "?bare=http://fries7-73.stw.uni-jena.de/openxp/ChangeLog.txt",
+		"url"	=> $indexname . "?bare=http://openxpcvs.dyndns.org/openxp/ChangeLog.txt",
 		"sub"	=> true),
 
 	16 => array("de"	=> "Links",
