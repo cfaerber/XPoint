@@ -242,7 +242,7 @@ begin
         colmsgsprio4:=colmsgs; colmsgsprio5:=colmsgs;
         end;
       if (collistheaderhigh=7) and (collistheader<>7)
-        then collistheaderhigh:=collistheader;   
+        then collistheaderhigh:=collistheader;
     end;
   close(t);
 end;
@@ -317,16 +317,16 @@ begin
 
   { Standard-Sektion fuer die neue Cfg-Datei vorbereiten }
   case OSType of
-    os_dos:				{ DOS }
+    os_dos:                             { DOS }
       MySection:= csDos;
-    os_linux:				{ Linux }
+    os_linux:                           { Linux }
       begin
         MySection:= csLinux;
-	UseNewCfg:= true;		{ Brauche eigene cfg }
+        UseNewCfg:= true;               { Brauche eigene cfg }
       end;
-    os_2:				{ OS/2 }
+    os_2:                               { OS/2 }
       MySection:= csOS2;
-    os_windows:				{ Windows }
+    os_windows:                         { Windows }
       MySection:= csWin;
   end;
 
@@ -592,7 +592,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
-  haltownpm:=false; 
+  haltownpm:=false;
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -808,8 +808,8 @@ begin
   writeln(t,'ReHochN=',jnf(rehochn));
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
-  if (OSType<>os_linux) then begin		{ DOS-Einstellungen nicht veraendern! }
-    if fustr(temppath)<>fustr(ownpath) then	{ FUStr wie UStr, wenn nicht UnixFS }
+  if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
+    if fustr(temppath)<>fustr(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
@@ -919,6 +919,7 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
+  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1024,7 +1025,7 @@ begin
     PutCfg('SendfileDir',sendpath,MySection,31015);
     PutCfg('LogDir',logpath,MySection,31016);
     PutCfg('FileDir',filepath,MySection,31017);
-    PutCfg('TermDevice',TermDevice,csLinux,31018);	{ Terminal-Device }
+    PutCfg('TermDevice',TermDevice,csLinux,31018);      { Terminal-Device }
     CloseCfg;
   end;
   freeres;
@@ -1345,9 +1346,9 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege',dummyb) or
+          getx(su,  'autodatumsbezuege', autodatumsbezuege) or
           getb(su,  'screenlines',screenlines) or
-          gets(s,su,'tempdir',temppath,79) or		{ Wg. case sensetive }
+          gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
           gets(s,su,'extractdir',extractpath,79) or
           gets(s,su,'sendfiledir',sendpath,79) or
           gets(s,su,'logdir',logpath,79) or
@@ -1562,7 +1563,7 @@ begin
     p:=0;
     for i := 1 to length(MsgFeldDef) do if (pos(copy(MsgFeldDef,i,1),MsgFeldTausch)>0) then inc(p);
     if (p<>MsgFelderMax) then MsgFeldTausch:=MsgFeldDef;
-    
+
     UsrFeldTausch:=UStr(UsrFeldTausch);
     { (F)lags mssen immer vorne stehen }
     i:=pos('F',UsrFeldTausch); if (i>1) then begin
@@ -1690,6 +1691,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.7  2000/11/20 19:55:00  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.62.2.6  2000/11/01 10:58:03  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
