@@ -209,7 +209,7 @@ begin
     result:= true;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
-    NNTP.PostPlainRFCMessages(List);
+    result:= NNTP.PostPlainRFCMessages(List)=0;
   except
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
@@ -369,6 +369,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.2  2002/05/26 15:05:21  ma
+        - fixed: outgoing postings were marked "sent" even if not accepted by server
+
         Revision 1.39.2.1  2002/05/06 17:58:54  mk
         - use correct file name case (.bak, .out) with linux
 
