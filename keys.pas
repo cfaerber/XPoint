@@ -317,7 +317,8 @@ end;
 function kb_shift:boolean;          { Shift gedrÅckt }
 begin
 {$IFDEF Win32 }
-  kb_shift := GetAsyncKeyState(VK_SHIFT) < 0;
+//  kb_shift := GetAsyncKeyState(VK_SHIFT) < 0;
+  kb_shift := ShiftKeyState;
 {$ELSE }
   {$IFDEF DOS32}
   kb_shift := kbstat and (lshift+rshift)<>0;
@@ -330,7 +331,8 @@ end;
 function kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 begin
 {$IFDEF Win32 }
-  kb_ctrl := GetAsyncKeyState(VK_CONTROL) < 0;
+//   kb_ctrl := GetAsyncKeyState(VK_CONTROL) < 0;
+  kb_ctrl := CtrlKeyState;
 {$ELSE }
   {$IFDEF DOS32}
   kb_ctrl := kbstat and ctrl<>0;
@@ -372,6 +374,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/08/10 19:22:47  mk
+  - added Ctrl and Shift detection for Win9x
+
   Revision 1.41  2001/08/10 19:13:00  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

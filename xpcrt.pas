@@ -33,6 +33,10 @@ uses
 function keypressed: boolean;
 function readkey: char;
 
+var
+  ShiftKeyState: boolean;
+  CtrlKeyState: boolean;
+
 implementation
 
 uses
@@ -69,6 +73,7 @@ var
   {$IFDEF Delphi }
   StdInputHandle: THandle;
   {$ENDIF }
+
 
 
 Function RemapScanCode (ScanCode: byte; CtrlKeyState: byte; keycode:longint): byte;
@@ -208,7 +213,8 @@ begin
                         else break;
                    end
                  else begin
-                   // add shift-handling here
+                   ShiftKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND SHIFT_PRESSED) > 0);
+                   CtrlKeyState := ((Buf.Event.KeyEvent.dwControlKeyState AND (RIGHT_CTRL_PRESSED OR LEFT_CTRL_PRESSED)) > 0);
                  end;
               end
              else if (Buf.Event.KeyEvent.wVirtualKeyCode in [VK_MENU]) then
