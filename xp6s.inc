@@ -202,10 +202,7 @@ begin
     fido_origin:=''
   else begin
     if not pm then
-    { if XP_ID_AMs then }
-        s:=#13#10+XP_origin+' '+verstr+krk(regstr1)
-    { else
-        s:=#13#10+'---' }
+      s:=#13#10+'---'
     else
       s:='';
     if not pm then begin
@@ -1144,6 +1141,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.34  2000/11/10 19:41:27  mk
+  - Tearline gekuertz
+
   Revision 1.33  2000/10/26 12:06:34  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 
