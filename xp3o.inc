@@ -1006,7 +1006,7 @@ begin
             typ1:=UpCase(typ[1]);
             if (typ1<=' ') or (typ1>#126) then typ1:='?';
             dbWriteN(mbase,mb_typ,typ1);
-            dbWriteNStr(mbase,mb_mimetyp,mime.ctype);
+            dbWriteNStr(mbase,LowerCase(Trim(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1))));
             dbWriteNStr(mbase,mb_brett,_brett);
             dbWriteN(mbase,mb_ablage,ablage);
             dbWriteN(mbase,mb_adresse,padr);
@@ -1228,6 +1228,9 @@ end;
 
 {
   $Log$
+  Revision 1.70  2001/09/08 21:07:16  cl
+  - MIME typ now always written to database in lower case and without paramters
+
   Revision 1.69  2001/09/08 16:29:33  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
