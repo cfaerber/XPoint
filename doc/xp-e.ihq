@@ -1413,7 +1413,7 @@ numbers a la FIDO at the top.
 
 @
 139
-Dial the selected box or break off with <Esc>.
+Dial the selected Server or abort off with <Esc>.
 @
 140
 <<Pointname>>, ("Nodename") that you have agreed with
@@ -1436,14 +1436,14 @@ Enter your *Login* Password here.
 <<all other nets:>>
 Enter your *Point* Password here, as agreed with
 your Sysop. Do not confuse your [Point] password@140
-with your normal User Password for on-line calls.
+with your normal User Password for BBS calls.
 You can use the same password for both (but it's not
 good security).
 @
 142
-The telephone number of your Server. Should it have
-several numbers you can call, you can enter the
-numbers separated by a <<space>>. CrossPoint will
+The telephone number of your Server (Boss). Should
+it have several numbers you can call, you can enter
+the numbers separated by a <<space>>. CrossPoint will
 then try each number in turn, until it gets through.
 @
 143
@@ -1584,44 +1584,46 @@ the correct values. A typical call to DSZ would be:
 
 @
 146
+<<Upload Packer (Compressor)>>
 
-<<Upload Packer]
+The [Upload Packer] is used to compress the mail@4006
+packets which are to be uploaded <<TO>> the
+Server (Boss). The packer is an external programme
+which compresses data prior to transfer and is more
+commonly known as an archiver. It is advisable to use
+a packer but not absolutely necessary.
 
-The [Upload Packer] is used to pack the file(s) to be@4006
-uploaded TO the server. The packer is an external
-program to compress data before transfer. You must
-have one of these.
-
-For a start, get PKZIP, LHA or ARJ.
-<<Agree it with your Sysop.>>
+For a start, you could get PKZIP, LHA, ARJ or RAR.
+<<(Confirm this with your Sysop.)>>
 
 If you use one of these (or other well known ones),
-XP gives you a simple choice list (<F2>), and all
+XP gives you a simple pick-list (<F2>) and all
 the parameters are pre-entered.
 
 Just make sure that the packer .EXE file is where
 CrossPoint can find it. If in doubt, just put it in
-the CrossPoint directory, but the DOS path will do
+the CrossPoint directory but the DOS path will do
 also.
 
 The following macros are available, which are
 replaced by CrossPoint at the right time
-with the correct entries.
+with the correct values.
 
 
-<<$UPFILE>> the name of the packed file.
-        (is fixed, because the transfer protocol
+<<$UPFILE>> the name of the compressed file.
+        (is fixed because the transfer protocol
         also has to use it).
 
 
-<<$PUFFER>> the file, that is to be packed.
-        (the send packet created by CrossPoint).
+<<$PUFFER>> the file that is to be compressed.
+        (the outgoing mail packet created by
+         CrossPoint).
 
 Make sure XP can find the Packer (in the current
-directory, DOS PATH (see DOS handbook), or enter the
- full path name), all parameters are entered for
+directory, DOS PATH (see DOS handbook) or enter the
+full path name). All parameters are entered for
 you. XP even <<beeps>> to warn you if, when you exit the
-dialog box, it cannot "see" the packer.
+dialog box, it cannot find the packer.
 
 If you do not know which [packer] to use, ask your@4006
 Sysop!
@@ -1651,8 +1653,8 @@ copy $PUFFER $UPFILE
 See above Z-Netz, but as above with "COPY"
 
 <<unpacked transfer (Fido/UUCP)
-Delete the Upload packer entry completely, to
-transfer your packet unpacked to the server.
+Delete the Upload packer entry completely to
+transfer your mail packet uncompressed to your Boss.
 
 <<MagicNET
 If your server is an AlphaBox, you must enter
@@ -1662,49 +1664,50 @@ thing doesn't support anything else!
 <<Batch File substitute
 
 The program you enter will simply be started, so it
-can also be a batch file. With this you can do other
-things like make backup copies etc. before packing,
+can also be a batch file. With this, you can do other
+things like make backup copies etc. before packing
 but at the end, a proper $UPFILE file (ie. proper
 name and proper format) must be left for XP to
 continue.
 
 @
 147
-[Download Packer]@4006
+<<Download UnPacker (De-Compressor)>>
 
-The [Download Packer] is to UNpack the file(s)@4006
-downloaded FROM the server.
+The [Download UnPacker] is needed to unpack the mail@4006
+bundles which you download <<FROM>> the
+Server (Boss).
 
-The downloaded file must be unpacked. What comes out
-of the packed file is largely fixed by what went in,
-and does not need to be specified. In FIDO especially
-it is not fixed, and CrossPoint will deal this for
-you.
+The downloaded mail bundle must be unpacked but what
+comes out of it is governed by what went in and does
+not need to be specified. In FIDO especially, it is
+not fixed and CrossPoint will deal this for you.
 
-The packer is an external program to compress data
-before transfer. You must have one of these.
+The unpacker is an external programme which
+decompresses data after transfer.
+You must have one of these.
 
-For a start, get PKZIP, LHA or ARJ.
-<<Agree it with your Sysop.>>
+For a start, get PKUNZIP, LHA, ARJ or RAR.
+<<(Confirm this with your Sysop)>>
 
 If you use one of these (or other well known ones),
-XP gives you a simple choice list (<F2>), and all
+XP gives you a simple choice list (<F2>) and all
 the parameters are pre-entered.
 
 Just make sure that the unpacker .EXE file (it is
-often the same one as the packer, just with a
-different command parameter, but PKUNZIP for example
+often the same one as the packer but just with a
+different command parameter but PKUNZIP for example,
 is specially for unpacking) is where CrossPoint can
 find it. If in doubt, just put it in the CrossPoint
 directory, but the DOS path will do also.
 
-The following macros are available, which are
+The following macros are available and are
 replaced by CrossPoint at the right time
 with the correct entries.
 
 
-<<$DOWNFILE>>  the name of the packed received file.
-          (is fixed, because the transfer protocol
+<<$DOWNFILE>>  the name of the incoming mail bundle.
+          (is fixed because the transfer protocol
            also has to use it).
 
 
@@ -1713,13 +1716,13 @@ with the correct entries.
         depends on what the file which was packed
         was called. <<Useful for unpacked transfers.>>
 
-Make sure XP can find the Packer (in the current
-directory, DOS PATH (see DOS handbook), or enter the
- full path name), all parameters are entered for
+Make sure XP can find the UnPacker (in the current
+directory, DOS PATH (see DOS handbook) or enter the
+full path name). All parameters are entered for
 you. XP even <<beeps>> to warn you if, when you exit the
-dialog box, it cannot "see" the packer.
+dialog box, it cannot find the unpacker.
 
-If you do not know which [packer] to use, ask your@4006
+If you do not know which [unpacker] to use, ask your@4006
 Sysop!
 
 <<Unpacked Transfer (Z-Netz)
@@ -1748,7 +1751,7 @@ copy $DOWNFILE $PUFFER
 See above Z-Netz, but as above with "COPY"
 
 <<unpacked transfer (Fido/UUCP)
-Delete the Upload packer entry completely, to
+Delete the Upload packer entry completely to
 transfer your packet unpacked to the server.
 
 <<MagicNET
@@ -1806,13 +1809,13 @@ agreed with your Boss.
 @
 154
 Here you can enter a list of "AKA" [("Also Known As")]@4009
-which CrossPoint sends *in addition* to the main
-server address during a netcall (assuming the server
+which CrossPoint sends <<in addition>> to the main
+Server address during a netcall (assuming the Server
 supports the [EMSI] (a FIDO specific) transfer@158
-protocol. The individual addresses must be separated
+protocol.) The individual addresses must be separated
 by a <space>. Make sure you enter them correctly!
-<<If you use 4D Addressing, your own Point Number
-must be included in the AKA list!>>
+If you use 4D Addressing, your own Point Number
+must be included in the AKA list!
 @
 155
 You can enter a list of FIDO Servers here, messages
@@ -2301,21 +2304,13 @@ a connect happened without a successful netcall.
 
 @
 167
+The figure you enter here determines the minimum
+cps rate for Zmodem transfers. If the transfer drops
+below this figure for two minutes, the transfer will
+be aborted.
 
-This is the Command to be sent to the modem to tell
-it to dial. CrossPoint will add the actual number
-itself, from your settings under Point.
+A setting of <<0>> disables this feature!
 
-Usual commands for modems with AT Command Sets are:
-
-   ATDP   to cause pulse dialling
-   ATDT   to cause tone dialling
-
-Briefly, pulse dialling works everywhere, but is
-slow and often noisy. Tone dialling is becoming
-more widespread, you can always try to see if it
-works, but even if not, it may be worth asking
-your telephone company about it.
 @
 168
 You can enter a default setting for resetting
@@ -5761,14 +5756,10 @@ the text.
 As usual, if in doubt, ask your sysop.
 @
 704
-This is a newsgroup header for this server, under
-which all newsgroups are put as sub-newsgroups.
-Put /FIDO/ here, for example, and an Areas PASCAL.GER
-will appear as /FIDO/PASCAL.GER.
-A simple "/" puts no header.
-
-<<Note>>: if you change this, you <<must>> change the
-names of all affected newsgroups to match.
+If your BossNode uses the D'Bridge Mailer and
+messages to AreaFix are not accepted, enable this
+feature. However, if messages to AreaFix are
+accepted, do NOT enable this feature.
 @
 705
 If the server offers a File Manager (Filescan), you
@@ -5779,6 +5770,16 @@ your Area Manager password.
 @
 706
 ^^705
+@
+707
+This is a newsgroup header for this server, under
+which all newsgroups are put as sub-newsgroups.
+Put /FIDO/ here, for example, and an Areas PASCAL.GER
+will appear as /FIDO/PASCAL.GER.
+A simple "/" puts no header.
+
+<<Note>>: if you change this, you <<must>> change the
+names of all affected newsgroups to match.
 @
 710
 You can set short names for Newsgroups or Users, to
@@ -10568,63 +10569,64 @@ You can use the same password for both (but it's not
 good security).
 @
 4009
-<<AKA & FIDO Compatible Nets,
-(AKA =  Also Known As, or alias
+<<AKA & FIDO-compatible Networks,
+(AKA =  Also Known As)
 
-There are various nets which are based on the same
-Software as FIDO, but are separate from FIDO.
-These Nets have addresses for their points which
-are similar to, but of course different from, the
-"real" FIDO. Many Fido boxes carry these other nets
-in addition to Fido, but they are separate nets. If
-have one or more of these "alternative" addresses or
-points in these other nets then for your main Fido
-address you are "Also Known As" (or AKA) these other
-addresses. When you make your netcall, you want to be
-able to get and send the packets for these nets at
-the same time.
+There are many Networks which are based on the same
+software and technology as FIDO but are separate
+from FIDO. These Networks have addresses for their
+Points which are similar to, but different from, the
+"real" FIDO. Many Fido systems carry these other
+Networks in addition to Fido but they are separate
+Networks. If you have one or more of these
+"alternative" addresses (or Points) in these other
+Networks, then, as well as your main Fido address,
+you will need to send your "Also Known As" (AKA)
+because when you make your Netcall, you want to be
+able to get and send the mail packets for these other
+Networks at the same time.
 
 If you poll with [EMSI], you can do this. It does not@158
 work with YooHoo.
 
-If you list your AKAs in your main Fido server entry
+If you list your AKA's in your main Fido Server entry
 in CrossPoint, CrossPoint will know that it also has
-to collect and send packets for these addresses.
-The packets are kept separate for the different nets.
+to collect and send mail packets for these addresses.
+The packets are kept separate for the different Nets.
 
 <<Setting up AKAs
-First you simply set up the addresses for these nets
-each under its own server, (see /Edit/Servers) where
-they are all identical to your main Fido server,
-except the node address is different.
+First, you simply set up the addresses for these Nets
+each under its own Server, (see /Edit/Servers) where
+they are all identical to your main Fido Server,
+except the Node address is different.
 
-You need to call these servers, they just serve as
-the correct gathering point for messages for these
-nets.
+You do <<NOT>> need to call these Servers, they just
+serve as the correct gathering point for messages for
+these Nets.
 
 CrossPoint can then keep the Areas coming from these
-nets separate, and send your replies and mails into
-the correct net. The areas are then automatically
-allocated to the correct net. Just be careful if you
+Nets separate and send your replies and messages into
+the correct Net. The areas are then automatically
+allocated to the correct Net. Just be careful, if you
 should add an Area by hand, to make sure you allocate
-it to the correct server for that net.
+it to the correct Server for that Net.
 
 Then enter these other addresses in your main Fido
-server in the appropriate boxes "AKA" and "Send
+Server in the appropriate boxes "AKA" and "Send
 packets for".
 
-Remembering it only works for EMSI, now when Cross-
-Point makes a netcall to your main server, it
-includes netcall operations for these AKAs at the
+Remember, it only works with EMSI and when
+CrossPoint makes a Netcall to your main server, it
+includes Netcall operations for these AKAs at the
 same time.
 
 Example:
 Your main Fido address is 2:245/678.15
 Your BossNode is 2:245/678 and you are Point 15.
 
-You participate in 2 other nets on this server as
+You participate in 2 other Nets on this Server as
 9:111/222.15   and
-987:1/15 (a small net where all [points are nodes])@8001
+987:1/15 (a small Net where all [Points are Nodes])@8001
 
 Set up 3 identical servers, except with the 3
 different addresses, leaving "AKA" and "send packets
