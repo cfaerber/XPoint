@@ -1,0 +1,170 @@
+Versionen von CrossPoint(R) und Derivaten
+CrossPoint(R) versions and derivatives
+=========================================
+
+Es wurde vor allem Wert auf die Verwandtschaft der verschiedenen XP-
+Versionen gelegt. Daher wurden Versionen, bei denen keine Abspaltung,
+keine Umbenennung oder eine Änderung des Versionsschemas vorkam,
+ausgelassen. Außerdem is die Zeitlinie nicht ganz exakt.
+
+The following diagram outlines the relationship between the different
+versions of CrossPoint. Versions which have no fork, which have been
+renamed, or had their numbering schemes changed are not included.
+Please note that the dates are not exact.
+
+1990    CrossPoint 1.0
+              |
+1994    CrossPoint 3.0
+              |
+1999    CrossPoint 3.12 --- CrossPoint 3.12d
+              |
+      CrossPoint 3.20beta
+              |
+        OpenXP 3.20.001
+              |
+2000    OpenXP 3.20.021 --- OpenXP 3.20.RC1-5 --- OpenXP 3.20-3.20e
+              |
+        OpenXP 3.21.022 --------------------------------------\
+              |                                               |
+        OpenXP 3.21.024 --------+-----------------\      XP^2 3.30.001
+              |                 |                 |           |
+       OpenXP/32 3.70.1  OpenXP/16 3.30.1         |           |
+              |                 |                 |           |
+              |          OpenXP/16 3.30.6         |           |
+2001          |                 |             XP 3.217jg      |
+       OpenXP/32 3.7.4  OpenXP/16 3.40.RC1-2      |      XP^2 3.30.020
+              |                 |             XP 3.219jg      |
+       OpenXP/32 3.7.6  OpenXP/16 3.40my RC3                  |
+              |                 |                             |
+2002  OpenXP/32 3.7.8.3  OpenXP/16 3.40 RC3                   |
+         |       |              |                        XP^2 3.31.006
+       3.8.0   3.9.0            |
+2003     |       |              |
+      3.8.11   3.9.7     FreeXP 3.40 RC3
+
+Ehemalige Versionen
+Version history
+===================
+
+CrossPoint 3.12 <http://www.crosspoint.de>
+        Letzte veröffentlichte Version von Peter Mandrella
+        Last version released by Peter Mandrella
+
+CrossPoint 3.20beta
+        Beta einer Weiterentwicklung von Peter Mandrella, nur als
+        Quelltext veröffentlicht.
+        Beta version by Peter Mandrella, source only.
+
+OpenXP 3.20.001..3.20e
+        Weiterentwicklung von CrossPoint 3.20, schließlich
+        veröffentlicht als CrossPoint/OpenXP 3.20.
+        Further developed version of CrossPoint 3.20, finally
+        released as CrossPoint/OpenXP 3.20
+
+jgXP 3.217..3.219
+        Weiterentwicklung von Jochen Gehring; ein Großteil der
+        Features wurde in die OpenXP/16 übernommen.
+        Branch by Jochen Gehring; many features have been ported
+        to FreeXP (formerly OpenXP/16)
+
+XP^2 3.30.001..3.31.006 <http://www.xp2.de>
+        Ursprünglich ein OS/2-Port; wegen Differenzen innerhalb von
+        OpenXP wurde aber schließlich ebenfalls eine 16-Bit-DOS
+        Version erstellt. Beta-Versionen für OS/2 und Win32
+        existieren, wurden aber nicht veröffentlicht.
+        Originally started out as a port to OS/2 and owing to
+        "disputes" with OpenXP, a 16 bit DOS version was developed.
+        Beta versions  for OS/2 and Win32 exist but have not
+        been released.
+
+Aktuelle Entwicklungszweige
+Current development branches
+============================
+
+OpenXP <http://www.openxp.de>
+        Auch OpenXP/32: 32-Bit-Version, portiert auf Win32 und Linux.
+        Die einzige Version, die unter der GNU General Public License
+        verfügbar ist (seit Version 3.7.4).
+        Also known as OpenXP/32: 32 bit version ported to Win32 and
+        Linux. From version 3.7.4, released under the
+        GNU General Public Licence.
+
+FreeXP <http://www.freexp.de>
+        Ehem. OpenXP/16: Weiterentwicklung des DOS-Zweiges. Die Lizenz
+        ist mittlerweile Open-Source-ähnlich, jedoch
+        weder OSI-zertifiziert (siehe http://www.opensource.org/ und
+        http://www.fsfeurope.org/) noch kompatibel zur GPL.
+        Formerly OpenXP/16: DOS 16 bit version currently under strong
+        development. In the meantime under a (non-certified)
+        Open Source-like license incompatible to the GPL.
+
+
+
+Es folgt eine Liste der wichtigsten Features, welche die 32 Bit
+Versionen von OpenXP gegenüber der aktuellsten 16 Bit FreeXP-Version
+abhebt. Alle OpenXP-Versionen enthalten hunderte von Bugfixes und
+Features gegenüber 3.12d (siehe http://www.openxp.de).
+
+
+OpenXP/FreeXP 3.40 RC3 -> OpenXP 3.8.x (Beta, Anwenderversion)
+
+Allgemein
+---------
+- Komplette Umstellung auf eine native 32 Bit Anwendung
+  (Compiler: FreePascal, Delphi und Kylix)
+- Native-Versionen für Windows, DOS 32 Bit, Linux, FreeBSD sowie
+  vorbereitet für NetBSD und OS/2, weitere Platformen sind möglich
+- Die meisten Limits sind jetzt nur noch vom Hauptspeicher
+  abhängig. Die editierbaren Nachrichten können beliebig groß sein,
+  Nachrichtenteile, Headerzeilen werden nicht mehr nach 255 Zeichen
+  abgeschnitten, Anzahl der markierten Nachrihcten ist unbegrenzt,
+  unbegrenzte Anzahl der CC-Empfänger usw.
+- Die Tools wie UUZ sind im Programm integriert (aber auch einzeln
+  aufrufbar) und besitzen nahezu keine internen Limits mehr
+- Roles: eigene E-Mail-Adresse über Brettgruppen anpassbar
+
+
+Anzeige
+-------
+- die Anzahl der Zeilen und _Spalten_ ist nur noch vom Betriebssystem
+  abhängig. Eine größere Anzahl von Spalten wird automatisch zur
+  Anzeige von mehr Informationen in Listen genutzt
+- Unterstützung von UTF-8, ISO-8859-1 bis 15, Microsoft
+  Codepages 866, 1251, 1252 und 1255 Zeichensätzen
+- Limits im Kommentarbaum fast komplett entfernt
+  (bis 512 Ebenen statt 30)
+- Unicode-Unterstützung unter Win32: beliebige Zeichen(sätze) können
+  komplett angezeigt werden
+
+
+Networking
+----------
+- Interner Client für POP3, SMTP und NNTP mit allen gängigen
+  benötigten Funktionen - kein externes Programm für Internet mehr
+  nötig (nicht bei DOS/32)
+- FIDO-over-IP sowohl mit Telnet-Protokoll,
+  als auch BinkP (nicht bei DOS/32)
+- Integriertes ZFido, UUCICO inkl. UUCP-t und UUCP-over-IP
+- Telnet in OpenXP implementiert (nicht bei DOS/32)
+- internes, komplett neues ZModem-Protokoll
+- PGP/MIME-Support
+- UUZ kann mehere Mails in einem Puffer konvertieren
+  (z.B. IMAP-Folder)
+- UUZ: Option -X, wenn angegeben, werden alle X-Header übernommen
+- LDA/Expires-Header werden unterstützt
+- Unterstützung von HeaderOnly-News (intern und RFC/Client)
+- Online MessageID-Request
+
+Zusätzlich: OpenXP 3.8.x -> OpenXP 3.9.x (Alpha, Entwicklerversion)
+
+Allgemein
+---------
+- Interner Client für IMAP4 (Win32+Linux)
+- Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
+- Integrierter, lernender SPAM-Filter
+- komplett neues, verbessertes Adresshandling sowie neues
+  Sendefenster (korrektes CC/BCC usw.)
+- Korrekte Anzeige von Unicode (UTF8) kodieren Nachrichten im Lister
+- Kein Limit mehr für Liste der gleichzeitig markierten Nachrichten
+- Dupekill-Feature in Edit/Boxen/Edit/Diverses, z.B. für NNTP
+

@@ -1,0 +1,691 @@
+{  $Id: ncnntp.pas,v 1.45 2003/10/05 12:37:43 mk Exp $
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
+
+{ Klasse TNNTP }
+
+{$I xpdefine.inc}
+
+unit ncnntp;
+
+interface
+
+uses
+  Classes,              { TStringList }
+  sysutils,
+  xpglobal,             { Nur wegen der Typendefinition }
+  ncsocket;             { TSocketNetcall }
+
+type
+  ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
+  ENNTP_Group_not_found = ENNTP;
+
+const
+  // returnErrors of GetMessage
+  nntpMsg_GroupnotFound      = 411;
+  nntpMsg_noGroupSelected    = 412;
+  nntpMsg_noArticleSelected  = 420;
+  nntpMsg_wrongArticleNr     = 423;
+  nntpMsg_nosuchArticle      = 430;
+  nntpMsg_EndSign            = #13#10+'.' { #13#10 added by SWriteln };
+
+  nntp_AuthRequired          = 480;
+  nntp_PassRequired          = 381;
+  nntp_NotConnected          = -1;
+
+  nntp_PostPleaseSend        = 340;
+  nntp_PostPostingNotAllowed = 440;
+  nntp_PostPostingFailed     = 441;
+  nntp_PostArticlePosted     = 240;
+
+type
+  TNNTP = class(TSocketNetcall)
+
+  protected
+
+    FServer             : string;               { server-software }
+    FUser, FPassword    : string;               { identification }
+
+    FGroupName: String;
+    EstimateNr,
+    FirstNr,
+    LastNr: Integer;
+    FReadOnly           : Boolean;
+
+    procedure InitVars; override;
+  public
+    property Server: string read FServer;
+    property User: string read FUser write FUser;
+    property Password: string read FPassword write FPassword;
+
+    { open connection to server }
+    function Connect: boolean; override;
+
+    { close connection }
+    procedure DisConnect; override;
+
+    { authentificate (called by Connect) }
+    function  Login: boolean;
+
+    { -------- NNTP-Zugriffe }
+
+    { Liste holen (withDescr = Description, wenn moeglich }
+    function List(aList: TStringList; withDescr: boolean; onlyNew: Boolean; FromDateTime: TDateTime): boolean;
+
+    { Holen einer Gruppenbeschreibung }
+    function GroupDescription(group: string): string;
+
+    { aktuelle Gruppe auswaehlen }
+    procedure SelectGroup(const AGroupName: String); virtual;
+
+    { Message vom server holen }
+    function GetMessage(Article, ArticleCount: Integer; Message: TStringList; HeaderOnly: Boolean): Integer; virtual;
+    function GetMessageByID(const MsgID: String; Message: TStringList): Integer;
+
+    { Message vom server holen }
+    function PostMessage(Message: TStringList): Integer; virtual;
+    function PostPlainRFCMessages(Message: TStringList): Integer;
+
+    { next 3 only available after selecting Group }
+    { first Message of this group hold by server }
+    property FirstMessage: Integer read FirstNr;
+    { last Message of this group hold by server }
+    property LastMessage: Integer read LastNr;
+    { selected group }
+    property GroupName: String read FGroupName;
+
+    { Posting allowed if ReadOnly = false }
+    property ReadOnly: Boolean read FReadOnly;
+
+    { contains actual ErrorCode }
+    property ErrorCode: Integer read FErrorCode;
+  end;
+
+implementation
+
+uses
+  ProgressOutput,       { TProgressOutput }
+  Timer,TypeForm;
+
+const
+  DefaultNNTPPort               = 119;
+
+{$IFDEF VP }
+const
+{$ELSE }
+resourcestring
+{$ENDIF }
+  res_connect1          = 'Versuche %s zu erreichen...';
+  res_connect2          = 'Unerreichbar: %s';
+  res_connect3          = 'Anmeldung fehlgeschlagen: %s';
+  res_connect4          = 'Verbunden mit %s';
+
+  res_disconnect        = 'Trenne Verbindung...';
+
+  res_list1             = 'Setze Lese-Modus...';
+  res_list2             = 'Kann nicht mit %s kommunizieren!';
+  res_list3             = '%s gibt die Liste nicht frei!';
+  res_list4             = '%d Newsgroupnamen gelesen';
+  res_list5             = 'Suche Beschreibung fuer %s...';
+
+  res_groupnotfound     = 'Gruppe %s nicht gefunden';
+  res_error             = 'Fehler: %s';
+
+  res_msg1              = 'hole Artikel %d, Zeile %d';
+  res_msg2              = 'hole Header %d, Zeile %d';
+  res_msg3              = 'Artikel %s nicht mehr auf Server vorhanden';
+  res_msg4              = 'hole Message-ID %s, Zeile %d';
+
+  res_posterror         = 'Fehler %d beim Absenden des Artikels';
+  res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
+
+  res_auth              = 'Authentifikation benötigt';  //todo:ö
+
+
+{ TNNTP }
+
+procedure TNNTP.InitVars;
+begin
+  inherited InitVars;
+  FPort:= DefaultNNTPPort;
+  FUser:='';
+  FPassword:='';
+  FServer:= '';
+  FReadOnly := true;
+end;
+
+function TNNTP.Login: boolean;
+var
+  s: string;
+begin
+  if Connected then
+  begin
+    if (FUser='') or (FPassword='') then
+      FErrorCode := nntp_AuthRequired
+    else begin
+      SWritelnFmt('AUTHINFO USER %s', [FUser]);
+      SReadLn(s);
+      FErrorCode := ParseResult(s);
+      if FErrorCode = nntp_PassRequired then     { some servers use another syntax... }
+      begin
+        SWritelnFmt('AUTHINFO PASS %s', [FPassword]);
+        SReadLn(s);
+        FErrorCode := ParseResult(s);
+      end;
+    end;
+  end else
+    FErrorCode := 500;
+  Result := (FErrorCode = nntp_AuthRequired) or       { OK without Auth }
+            (FErrorCode = 281);         { OK with    Auth }
+end;
+
+function TNNTP.Connect: boolean;
+var
+  s   : string;
+  code: integer;
+begin
+  Result:= false;
+
+  FReadOnly := true;
+
+  Output(mcVerbose,res_connect1, [Host.Name]);
+  if not inherited Connect then
+    exit;
+
+  { Ready ermitteln }
+  SReadln(s);
+
+  { Ergebnis auswerten }
+  Code := ParseResult(s);
+  if not(Code in [200,201]) then
+  begin
+    Output(mcError,res_connect2, [ErrorMsg]);
+    DisConnect;
+    FErrorCode := code;
+    exit;
+  end else
+  begin
+  if s <> '' then
+    Output(mcInfo,res_connect4, [Host.Name]);  // verbunden
+    FServer:= Copy(s,5,length(s)-5);
+    if pos('POSTING OK', UpperCase(s)) <> 0 then FReadOnly := false;
+  end;
+
+  { Anmelden }
+  if not Login then
+  begin
+    Output(mcError,res_connect3, [ErrorMsg]);
+    DisConnect;
+    Result := false;
+    exit;
+  end;
+  Result := true;
+end;
+
+procedure TNNTP.DisConnect;
+begin
+  Output(mcInfo,res_disconnect,[0]);
+  if Connected then
+    SWriteln('QUIT');
+  inherited DisConnect;
+end;
+
+function TNNTP.GroupDescription(group: string): string;
+var
+  s    : string;
+  code : integer;
+begin
+  result:= '';
+  { Leerer Gruppenname/Wildcard ist nicht erlaubt }
+  if (group='') or (cPos('*',group)<>0) then
+    exit;
+  { Verbinden }
+  if Connected then
+  begin
+    Output(mcVerbose,res_list5,[group]);
+    SWriteln('MODE READER');
+    SReadln(s);
+    { if not (ParseResult(s) in [200..299]) then begin }        { !! FPC-Bug # 1135 }
+    code := ParseResult(s);                                     { Workaround }
+    if (code<200) or (code>299) then begin                      { Workaround }
+      Output(mcError,res_list2,[Host.Name]);
+      exit;
+    end;
+
+    { Get Description }
+    SWriteln('LIST NEWSGROUPS '+group);
+    SReadln(s);
+    { if not (ParseResult(s) in [200..299]) then begin }        { !! FPC-Bug # 1135 }
+    code := ParseResult(s);                                     { Workaround }
+    if (code<200) or (code>299) then begin                      { Workaround }
+      Output(mcError,res_list3,[Host.Name]);
+      exit;
+    end;
+
+    { Abfragen }
+    while true do begin
+      SReadln(s);
+      code:= ParseResult(s);
+      if code=0 then
+        break
+      else if code<>-1 then begin
+        Output(mcError,res_list3,[Host.Name]);
+        exit;
+      end;
+      s:= Trim(s);
+      if (s<>'') then
+        result:= s;
+    end; { while }
+
+  end; { if Connected... }
+end;
+
+
+function TNNTP.List(aList: TStringList; withDescr: boolean; onlyNew: Boolean; FromDateTime: TDateTime): boolean;
+var
+  counter       : integer;              { Fuer die Anzeige }
+  s             : string;               { group }
+  EndOfList     : boolean;
+  code, i       : integer;              { NNTP-Result, Hilfsvar. }
+begin
+  Result := false;
+  aList.Clear;
+  aList.Duplicates:= dupIgnore;
+  if Connected then
+  begin
+    Output(mcVerbose,res_list1,[0]);
+    SWriteln('MODE READER');                            { Modus setzen }
+    SReadln(s);
+    code:= ParseResult(s);
+    if (code<200) or (code>299) then begin              { Fehler? }
+      Output(mcError,res_list2,[Host.Name]);            { -> Ja, Ende }
+      exit;
+    end;
+
+    if OnlyNew and (not IsNAN(FromDateTime)) then       { Liste anfordern }
+      SWriteln('NEWGROUPS ' + FormatDateTime('yymmdd hhnnss', FromDateTime))
+    else
+      SWriteln('LIST');                                 { Liste anfordern }
+    SReadln(s);
+    code:= ParseResult(s);
+    if (code<200) or (code>299) then begin
+      Output(mcError,res_list3,[Host.Name]);
+      exit;
+    end;
+
+    counter:= 1;
+    repeat
+      SReadln(s);                                       { Zeile lesen }
+      if (counter mod 25)=0 then                        { User beruhigen }
+        Output(mcVerbose,res_list4, [counter]);
+      EndOfList := (s='.');
+      if not EndOfList then begin                       { Gruppe }
+        Inc(counter);
+        s:= Trim(s);
+        i:= pos(#32,s);                                 { Leerzeichen/ }
+        if i=0 then                                     { Tabulator suchen }
+        i:= pos(#9,s);
+        if i>0 then                                     { Gefunden ? }
+          SetLength(s,i-1);                             { -> Abschneiden }
+        if s<>'' then
+          aList.Add(s);
+        end;
+    until EndOfList;                                    { Bis zum Ende lesen }
+    Output(mcVerbose,res_list4, [aList.Count]);
+    result:= true;
+
+    { Dieses Unterroutine ist noch sehr ineffizient.
+      Es waere sinnvoll, eine zweite Verbindung zum NNTP
+      aufzubauen und gleichzeitig die Gruppenbeschreibung zu
+      holen. Da ich es in XP aber nicht brauche, lasse ich
+      es erstmal so }
+    if withDescr then                                   { Beschreibungen }
+      for i:= 0 to aList.Count-1 do begin
+        if (i mod 25)=0 then                            { User beruhigen }
+          Output(mcVerbose,res_list4, [i]);
+        s:= GroupDescription(aList[i]);
+        if s<>'' then
+          aList[i]:= aList[i]+' '+s;
+      end; { for i... }
+    Output(mcInfo,res_list4, [aList.Count]);
+
+    aList.Sort;                                         { Sortieren }
+  end;
+end;
+
+procedure TNNTP.SelectGroup(const AGroupName: String);
+
+  // convert ResultString from NNTP-Server to a record
+  procedure GetGroupInfo(NNTPString: String);
+  var
+    WorkS: String;
+
+    function GetNextIntFromStr(Var IntChecker: String): Integer;
+    var
+      P: Integer;
+    begin
+      P := cPos(' ', IntChecker);
+      if P <> 0 then
+      begin
+        Result := StrToIntDef(Copy(IntChecker, 1, P-1), -1);
+        IntChecker := Copy(IntChecker, P + 1, Length(WorkS) - P);
+      end else
+        Result := -1;
+    end;
+    
+  begin
+    WorkS := NNTPString;
+    GetNextIntFromStr(WorkS); // ParseResultnumber -> /dev/null
+
+    EstimateNr := GetNextIntFromStr(WorkS);
+    FirstNr := GetNextIntFromStr(WorkS);
+    LastNr := GetNextIntFromStr(WorkS);
+    FGroupName := WorkS;
+  end;
+
+const
+  nntpMsg_GroupOK = 211;
+var
+  s: String;
+  i: Integer;
+
+begin
+  if Connected then
+  begin
+    // select one newsgroup
+    SWriteln('GROUP '+ AGroupName);
+    SReadln(s);
+    i := ParseResult(s);
+    case i of
+      nntpMsg_GroupnotFound : begin
+        Output(mcError,res_groupnotfound, [AGroupName]);
+        raise ENNTP_Group_not_found.create(Format(res_groupnotfound, [AGroupName]));
+      end;
+      nntp_AuthRequired : begin
+        Output(mcError, res_auth, [0]);
+        raise ENNTP.create(res_auth);
+      end
+    else
+      if i <> nntpMsg_GroupOK then begin
+        Output(mcError, res_error, [ErrorMsg]);
+        raise ENNTP.create(res_error);
+      end;
+    end;
+    FGroupName := AGroupName;
+    GetGroupInfo(s);
+  end;
+end;
+
+
+function TNNTP.GetMessage(Article, ArticleCount: Integer; Message: TStringList; HeaderOnly: Boolean): Integer;
+var
+  i, Error,iLine, iSize: Integer;
+  s: String;
+  Timer: TTimer;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    for i := 0 to ArticleCount - 1 do
+    begin
+      // select one newsgroup
+      if HeaderOnly then
+        SWriteln('HEAD ' + IntToStr(Article+i))
+      else
+        SWriteln('ARTICLE ' + IntToStr(Article+i));
+    end;
+
+    Timer := TTimer.Create; Timer.SetTimeout(5);
+    for i := 0 to ArticleCount - 1 do
+    begin
+      SReadln(s);
+      Error := ParseResult(s);
+      if Error > 400 then
+      begin
+        Output(mcError,res_msg3, [IntToStr(Article)]);
+        Result := Error;
+        Continue;
+      end;
+
+      iLine:=0; iSize := 0;
+      repeat
+        SReadln(s);
+        inc(iLine);
+        if Timer.Timeout then
+        begin
+          Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [Article, iLine]);
+          Timer.SetTimeout(1);
+        end;
+        if s = '.' then
+          Break;
+        if FirstChar(s)='.' then
+          DeleteFirstChar(s);
+        Message.Add(s);
+        Inc(iSize, Length(s)+1); // add only one char for #1310 (see rfc so1036)
+      until false;
+      Message.Insert(Message.Count-iLine+1, '#! rnews ' + IntToStr(iSize));
+
+      if HeaderOnly then
+      begin
+        Message.Insert(Message.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
+        Message.Insert(Message.Count-1, ''); // empty line to break up headers
+      end;
+    end;
+    Timer.Free;
+
+    Result := 0;
+  end;
+end;
+
+function TNNTP.GetMessageByID(const MsgID: String; Message: TStringList): Integer;
+var
+  Error, iSize: Integer;
+  s: String;
+  Timer: TTimer;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    SWriteln('ARTICLE ' + MsgID);
+    SReadln(s);
+    Error := ParseResult(s);
+    if Error > 400 then
+    begin
+      Output(mcError,res_msg3, [MsgID]);
+      Result := Error;
+      exit;
+    end;
+
+    Timer := TTimer.Create; Timer.SetTimeout(5);
+    iSize := 0;
+    repeat
+      SReadln(s);
+      if Timer.Timeout then
+      begin
+        Output(mcVerbose, res_msg4, [MsgID, Message.Count]);
+        Timer.SetTimeout(1);
+      end;
+      if s = '.' then
+        Break;
+      if FirstChar(s)='.' then
+        DeleteFirstChar(s);
+      Message.Add(s);
+      Inc(iSize, Length(s)+1); // add only one char for #1310 (see rfc so1036)
+    until false;
+    Message.Insert(0, '#! rnews ' + IntToStr(iSize));
+    Timer.Free;
+    Result := 0;
+  end;
+end;
+
+function TNNTP.PostMessage(Message: TStringList): Integer;
+var
+  Error, I: Integer;
+  s: String;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    SWriteln('POST');
+    SReadln(s);
+    Error := ParseResult(s);
+    case Error of
+      nntp_PostPleaseSend : begin
+         for I := 0 to Message.Count - 1 do
+            SWriteln(iifs(FirstChar(Message[I])='.','.','')+Message[I]);
+         SWriteln(nntpMsg_EndSign);
+      end
+      else begin
+         Output(mcError,res_posterror, [Error]);
+         Result := Error;
+         exit;
+      end;
+    end;
+
+    SReadln(s);
+    Error := ParseResult(s);
+    if Error =   nntp_PostArticlePosted then
+       Result := 0
+    else
+       Result := Error;
+  end;
+end;
+
+function TNNTP.PostPlainRFCMessages(Message: TStringList): Integer;
+var
+  Error, I, iPosting: Integer;
+  s: String;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    SWriteln('POST');
+    SReadln(s);
+    Error := ParseResult(s);
+    I := 1; iPosting := 0;
+    while Error = nntp_PostPleaseSend do
+    begin
+      inc(iPosting);
+      repeat
+        SWriteln(iifs(FirstChar(Message[I])='.','.','')+Message[I]);
+        Inc(I);
+      until (I >= Message.Count) or (Pos('#! rnews', Message[I]) = 1);
+      SWriteln(nntpMsg_EndSign);
+      Output(mcInfo,res_postmsg,[iPosting,(I/Message.Count*100)]);
+      SReadln(s);
+      Error := ParseResult(s);
+      if (Error = nntp_PostArticlePosted) and (I < Message.Count) then
+      begin
+        SWriteln('POST');
+        SReadln(s);
+        Error := ParseResult(s);
+        Inc(I);
+      end;
+    end;
+    if Error = nntp_PostArticlePosted then
+      Result := 0
+    else begin
+      Output(mcError, res_error, [ErrorMsg]);
+      Result := Error;
+    end;
+  end;
+end;
+
+
+{
+  $Log: ncnntp.pas,v $
+  Revision 1.45  2003/10/05 12:37:43  mk
+  - removed RawFormat and NNTPSpoolFormat from ZCRFC
+  - internal NNTP uses rnews format now
+  - removed use of lines header
+
+  Revision 1.44  2003/09/03 00:47:07  mk
+  - reduced latenz time for NNTP, this speeds up NNTP to factor
+
+  Revision 1.43  2003/08/15 19:56:37  mk
+  - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
+
+  Revision 1.42  2003/07/30 11:52:42  cl
+  - BUGFIX: sending multiple messages via NNTP did not work.
+
+  Revision 1.41  2003/04/25 21:11:21  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
+  Revision 1.40  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
+  Revision 1.39  2002/11/14 10:14:03  ma
+  - fixed: Newsgroup list sometimes not read entirely
+
+  Revision 1.38  2002/08/26 21:24:40  ma
+  - fixed: posting-only server response was not recognized
+    <8VW5E5MYcIB@erspiess.myfqdn.de>
+
+  Revision 1.37  2002/03/16 18:22:31  cl
+  - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
+    already existed.
+  - Exception message now logged instead of 'Verbindungsaufbau fehlgeschlagen'
+
+  Revision 1.36  2002/02/21 08:59:28  mk
+  - misc fixes
+  - added timestame to newgroups
+
+  Revision 1.35  2002/02/13 18:26:44  mk
+  - use StrToIntDef instead of try except block
+
+  Revision 1.34  2002/02/10 14:52:51  mk
+  - added fetching new newsgroups (untested)
+
+  Revision 1.33  2001/12/30 19:56:49  cl
+  - Kylix 2 compile fixes
+
+  Revision 1.32  2001/10/15 13:12:25  mk
+  /bin/bash: ?: command not found
+  /bin/bash: q: command not found
+
+  Revision 1.31  2001/10/08 21:17:45  ma
+  - better error messages
+
+  Revision 1.30  2001/09/07 23:24:57  ml
+  - Kylix compatibility stage II
+
+  Revision 1.29  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
+  Revision 1.28  2001/07/31 16:18:43  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
+  Revision 1.27  2001/06/08 16:07:05  ma
+  - fixed: Numerical newsgroup names were interpreted as error codes
+
+  Revision 1.26  2001/06/04 17:01:14  ma
+  - cosmetics
+
+  Revision 1.25  2001/04/27 10:25:27  ma
+  - fixed: '.' quoting was not done with outgoing articles
+
+  Revision 1.24  2001/04/27 10:18:56  ma
+  - using "new" NNTP spool format
+}
+end.
+
