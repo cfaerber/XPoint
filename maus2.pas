@@ -169,7 +169,7 @@ begin
   begin
     if dwEventFlags=0 then                              // single click
     begin
-      Debug.DebugLog('maus2', Format('mouse button (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      Debug.DebugLog('maus2', Format('mouse button (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
       if ((dwButtonState and 2)<>0) and ((lmb and 2)=0) then put(mausright) else
       if ((dwButtonState and 2)=0) and ((lmb and 2)<>0) then put(mausunright);
 
@@ -193,13 +193,13 @@ begin
     end else
     if (dwEventFlags and DOUBLE_CLICK)<>0 then          // double click
     begin
-      Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      Debug.DebugLog('maus2', Format('mouse double click (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
       if ((dwButtonState and 1)<>0) and ((lmb and 1)=0) then put(mausldouble);
       lmb:=dwButtonState;
     end else
     if (dwEventFlags and MOUSE_MOVED)<>0 then // mouse moved
     begin
-      Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
       if has_moved(mausx,mausy) then
       else
         if ((dwButtonState and 1)<>0) then
@@ -216,7 +216,7 @@ begin
     end else
     if (dwEventFlags and 4 {MOUSE_WHEELED} )<>0 then         // mouse wheel
     begin
-      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s)',[hex(dwButtonState,8)]), DLNone);
+      Debug.DebugLog('maus2', Format('mouse wheel (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
 
       if Integer16(dwButtonState shr 16)>0 then
         for i:=0 to Min(Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
@@ -225,7 +225,7 @@ begin
         for i:=0 to Min(-Integer16(dwButtonState shr 16),Max(1,(20-length(forwardkeys))div 2)) do
           put(mauswheeldn);
     end else
-      Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(dwButtonState,8)]), DLNone);
+      Debug.DebugLog('maus2', Format('unknown mouse event (type=%d, buttons=0x%s)',[dwEventFlags,hex(dwButtonState,8)]), DLTrace);
   end;
   result:=keyout;
 end;
@@ -447,6 +447,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2001/09/16 17:56:01  ma
+  - adjusted debug levels
+
   Revision 1.31  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 

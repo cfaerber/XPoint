@@ -696,7 +696,7 @@ begin
   until z<>'!!';
 
   Debug.DebugLog('inout', Format('Get: '+iifs(length(z)=2,'#%d#%d','#%d'),
-    [Integer(ord(z[1])),Integer(ord(z[2]))]), DLNone);
+    [Integer(ord(z[1])),Integer(ord(z[2]))]), DLTrace);
 end;
 
 Procedure testbrk(var brk:boolean);
@@ -1664,6 +1664,9 @@ end;
 
 {
   $Log$
+  Revision 1.78  2001/09/16 17:56:01  ma
+  - adjusted debug levels
+
   Revision 1.77  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 

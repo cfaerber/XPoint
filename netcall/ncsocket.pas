@@ -386,14 +386,14 @@ end;
 procedure TSocketNetcall.SWriteln(s: String);
 begin
   s := s + #13#10;
-  Debug.DebugLog('ncsocket','SWriteln '+s,DLDebug+1);
+  Debug.DebugLog('ncsocket','SWriteln '+s,DLTrace);
   WriteBuffer(s[1], Length(s));
 end;
 
 procedure TSocketNetcall.SWritelnFmt(s: string; args: array of const);
 begin
   s := Format(s, args) + #13#10;
-  Debug.DebugLog('ncsocket','SWritelnFmt '+s,DLDebug+1);
+  Debug.DebugLog('ncsocket','SWritelnFmt '+s,DLTrace);
   WriteBuffer(s[1], Length(s));
 end;
 
@@ -418,12 +418,15 @@ begin
       if c <> #13 then
         s := s + c;
   until false;
-  Debug.DebugLog('ncsocket','SReadln '+s,DLDebug+1);
+  Debug.DebugLog('ncsocket','SReadln '+s,DLTrace);
 end;
 
 end.
 {
   $Log$
+  Revision 1.27  2001/09/16 17:56:01  ma
+  - adjusted debug levels
+
   Revision 1.26  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 

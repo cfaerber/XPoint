@@ -116,7 +116,7 @@ const
     ($77, $8D, $84, $8E, $73, $8F, $74, $4E, $75, $91, $76, $92, $93);
 
 begin
-  Debug.DebugLog('xpcrt', Format('RemapScanCode: %d %d %d', [ScanCode, CtrlKeyState, KeyCode]), DLDebug+1);
+  Debug.DebugLog('xpcrt', Format('RemapScanCode: %d %d %d', [ScanCode, CtrlKeyState, KeyCode]), DLTrace);
   AltKey := ((CtrlKeyState AND
             (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
   CtrlKey := ((CtrlKeyState AND
@@ -169,7 +169,7 @@ begin
     // Function keys
     $57..$58: inc(Scancode, $2E); // F11 and F12
   end;
-  Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), DLDebug+1);
+  Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), DLTrace);
   Result := ScanCode;
 end;
 
@@ -212,7 +212,7 @@ begin
                    begin
                       keypressed:=true;
   with Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent do 
-    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLDebug+1);
+    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLTrace);
 
                       if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0) or
                          (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = 2)
@@ -291,6 +291,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/09/16 17:56:01  ma
+  - adjusted debug levels
+
   Revision 1.11  2001/09/15 19:54:56  cl
   - compiler-independent mouse support for Win32
 
