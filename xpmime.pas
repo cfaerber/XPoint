@@ -645,13 +645,6 @@ procedure ExtractMultiPart(mpdata:TMimePart; fn:string; append, utf8:boolean);
 var
   tmp      : string;
   ins,outs : TStream;
-  inp      : TStream;
-  
-  s        : string;
-  i        : integer;
-  rem,rd   : longint;
-  buffer   : array [0..65535] of char;
-  
 begin
   // Extract full message
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
@@ -660,7 +653,6 @@ begin
   // Open it and seek to correct position
   ins := TFileStream.Create(tmp,fmOpenRead);
  try
-//for i:=1 to mpdata.startline-1 do readln_s(ins);
   ConnectStream(ins,TPartialStream.Create(
     mpdata.offset,mpdata.offset+mpdata.length));
   ins.Seek(0,soFromBeginning);
@@ -671,7 +663,7 @@ begin
   else
     outs:= TFileStream.Create(fn,fmCreate);
  try
-  if append then 
+  if append then
     outs.Seek(0,soFromEnd);
 
   // Now link charset recoders:
@@ -893,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.59.2.2  2002/06/29 13:57:15  mk
+  - removed unused variables
+
   Revision 1.59.2.1  2002/04/20 15:00:16  mk
   - fixed extraction of filename in content-disposition header
 
