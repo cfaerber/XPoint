@@ -1,9 +1,13 @@
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { Intelligent Help System }
 { Rel. 1.01 (c) 11/89 PM  }
 {      1.02 (c) 03/90     }
 {      1.1  (c) 01/91     }
 { $Id$ }
 
+{$I XPDEFINE.INC }
 {$R-,S-}
 
 uses crt,dos,typeform,fileio;
@@ -13,7 +17,7 @@ const maxpages = 1200;
       date     = '''89-91,95';
       obufsize = 10000;
 
-var  fname,    
+var  fname,
      outpath  : pathstr;
      t        : text;
      f        : file;
@@ -26,7 +30,7 @@ var  fname,
      qvwun    : word;
      p        : pointer;
 
-     gs       : string;
+     gstr     : string;
      xx       : byte;
      obuf     : array[1..obufsize] of byte;
      obufp    : word;
@@ -113,7 +117,7 @@ var  fname,
    type za = array[1..250] of string[127];
    var pnr,last,next,
        size          : word;
-       i,lines,p,j,
+       i,lines,p,
        p1,p2,res     : integer;
        qvws          : byte;
        s,qvref,st    : string;
@@ -199,18 +203,38 @@ var  fname,
      end;
 }
 
-     procedure encode;
-     inline($be/gs/        {    mov  si,offset gs }
-            $fc/           {    cld               }
-            $ac/           {    lodsb             }
-            $88/$c1/       {    mov  cl,al        }
-            $b5/$00/       {    mov  ch,0         }
-            $a0/xx/        {    mov  al,[xx]      }
-            $30/$04/       { a: xor  [si],al      }
-            $04/$7d/       {    add  al,125       }
-            $46/           {    inc  si           }
-            $e2/$f9/       {    loop a            }
-            $a2/xx);       {    mov  [xx],al      }
+     procedure encode; assembler; {&uses esi}
+     asm
+{$IFDEF BP }
+                mov si, offset gs
+                cld
+                lodsb
+                mov cl, al
+                mov ch, 0
+                mov al, [xx]
+@a:              xor [si],al
+                add al, 125
+                inc si
+                loop @a
+                mov [xx], al
+{$ELSE }
+                mov esi, offset gstr
+                cld
+                lodsb
+                xor ecx, ecx
+                mov cl, al
+                mov al, [xx]
+@a:             xor [esi],al
+                add al, 125
+                inc esi
+                loop @a
+                mov [xx], al
+{$ENDIF }
+{$IFDEF FPC }
+     end ['ecx', 'esi'];
+{$ELSE }
+     end;
+{$ENDIF }
 
    begin   { of create_page }
      new(z);
@@ -287,10 +311,10 @@ var  fname,
      xx:=7;
      obufp:=0;
      for i:=1 to lines do begin
-       gs:=z^[i]+#7;
+       gstr:=z^[i]+#7;
        if docode then encode;
-       FastMove(gs[1],obuf[obufp+1],length(gs));
-       inc(obufp,length(gs));
+       FastMove(gstr[1],obuf[obufp+1],length(gstr));
+       inc(obufp,length(gstr));
      end;
      blockwrite(f,obuf,obufp);
      create_page:=(s<>'@@');
@@ -308,7 +332,7 @@ var  fname,
    end;
 
    procedure write_page_index;
-   var i     : word;
+   var
        b     : array[0..511] of byte;
        n     : word;
        adrix : longint;
@@ -326,10 +350,10 @@ var  fname,
      seek(f,138); blockwfl(adrix);
    end;
 
-var dir:dirstr;   
+var dir:dirstr;
     name:namestr;
     ext:extstr;
-   
+
 begin
   clrscr;
   writeln('Intelligent Help System Rel '+version);
@@ -339,7 +363,7 @@ begin
   fname:=paramstr(1);
   if fname='' then readln(fname)
   else writeln(fname);
-  
+
   if not exist(fname+'.ihq') then begin
     writeln; writeln('Error: File not found.');
     halt(1);
@@ -349,18 +373,18 @@ begin
   assign(t,fname+'.ihq');
   settextbuf(t,p^,20000);
   reset(t);
-  
+
   outpath:='';
   if (paramcount=2) then begin
     outpath:=paramstr(2);
     if outpath<>'' then begin
-      if outpath[length(outpath)]<>'\' then 
+      if outpath[length(outpath)]<>'\' then
         outpath:=outpath+'\';
       fsplit(fname,dir,name,ext);
       fname:=name
     end
   end;
-  
+
   assign(f,outpath+fname+'.hlp'); rewrite(f,1);
 
   create_header;
@@ -397,6 +421,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2000/04/26 15:36:44  mk
+  - IHS auf 32 Bit portiert
+
   Revision 1.5  2000/04/13 12:48:31  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
