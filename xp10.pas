@@ -233,7 +233,7 @@ end;
 
 function getflags(s:string):byte;
 var fl,i : byte;
-    f    : w/rd;
+    f    : word;
 begin
   f:=1; fl:=0;
   for i:=1 to 8 do begin
@@ -2050,6 +2050,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2000/12/14 19:57:26  mw
+
+
+  - Wieder Compilierbar
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
