@@ -535,9 +535,9 @@ start_ok:  inc    bx
            lds    si,dpath
            mov    di,offset Path          ; Programmname/Pfad
            lodsb
-           cmp    al,79
-           jb     pcopy1
-           mov    al,79
+;          cmp    al,79
+;          jb     pcopy1
+;          mov    al,79
 pcopy1:    cbw
            xchg   ax,cx
            rep    movsb
@@ -546,9 +546,9 @@ pcopy1:    cbw
            lds    si,para
            mov    di,offset CmdLine       ; Parameter
            lodsb
-           cmp    al,126
-           jb     pcopy2
-           mov    al,126
+;          cmp    al,126
+;          jb     pcopy2
+;          mov    al,126
 pcopy2:    stosb                          ; L„nge der Parameter-Zeile
            cbw
            xchg   ax,cx
@@ -702,8 +702,8 @@ FcbOfs2    dw     offset FCB2
 FcbSeg2    dw     seg    FCB2
 FCB1       db     16 dup (0)              ; Exec-Zusatzparameter
 FCB2       db     16 dup (0)
-Path       db     80 dup (0)
-CmdLine    db     128 dup (0)
+Path       db     255 dup (0)
+CmdLine    db     255 dup (0)
 SwapFile   db     80 dup(0)
 resitextD  db     13,10,'Residentes Programm wurde geladen! CrossPoint wird beendet..',13,10,'$'
 resitextE  db     13,10,'Resident program was loaded! Quitting ...',13,10,'$'

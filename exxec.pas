@@ -97,7 +97,7 @@ var regs  : registers;
     orgenv: word;
     envir : array[0..1023+18] of byte;    { neues Environment }
     newenv: pointer;
-    dpath : pathstr;
+    dpath : String;
     para  : string;
     pp    : byte;
 
@@ -430,6 +430,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.2  2000/05/07 17:37:40  mk
+  - Limits fuer Pfadnamen auf 255 Zeichen erhoeht
+
   Revision 1.5.2.1  2000/05/04 18:58:24  mk
   - String Para auf 255 Zeichen vergroessert
 

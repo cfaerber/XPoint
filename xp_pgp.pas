@@ -34,7 +34,7 @@ procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
 procedure PGP_RequestKey;
 procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
 procedure PGP_DecodeMsg(sigtest:boolean);  { dec. und/oder Signatur testen }
-procedure PGP_DecodeKey(source,dest:pathstr);
+procedure PGP_DecodeKey(source,dest:string);
 procedure PGP_ImportKey(auto:boolean);
 procedure PGP_EditKey;
 procedure PGP_RemoveID;
@@ -48,7 +48,7 @@ implementation  { --------------------------------------------------- }
 uses  xp3,xp3o,xp3o2,xp3ex,xp6,xpcc,xpnt;
 
 const
-  savekey : pathstr = '';
+  savekey : string = '';
   flag_PGPSigOk = $01;    
   flag_PGPSigErr = $02;    
 
@@ -103,7 +103,7 @@ end;
 
 { PGP 2.6.x und 6.5.x }
 procedure RunPGP(par:string);
-var path : pathstr;
+var path : string;
 begin
   if exist('XPGP.BAT') then
     path:='XPGP.BAT'
@@ -130,7 +130,7 @@ end;
 
 { PGP 5.x }
 procedure RunPGP5(exe,par:string);
-var path : pathstr;
+var path : string;
     pass,batch : string;
 begin
   path:=getenv('PGPPATH');
@@ -174,7 +174,7 @@ end;
 
 
 procedure UpdateKeyfile;
-var secring : pathstr;
+var secring : string;
 begin
   if UsePGP and (PGP_UserID<>'') then begin
     secring:=fsearch('PUBRING.PGP',getenv('PGPPATH'));
@@ -238,7 +238,7 @@ end;
 
 procedure PGP_SendKey(empfaenger:string);   { Antwort auf Key-Request senden }
 var t   : text;
-    tmp : pathstr;
+    tmp : string;
     hd  : string[12];
 begin
   UpdateKeyfile;
@@ -269,13 +269,13 @@ end;
 procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
                          fn,UserID:string; encode,sign:boolean;
                          var fido_origin:string);
-var tmp  : pathstr;
+var tmp  : string;
     f,f2 : file;
     b    : byte;
     nt   : longint;
     t    : string[20];
     uid  : string[80];
-    _source: pathstr;
+    _source: string;
 
   procedure StripOrigin;
   begin
@@ -406,7 +406,7 @@ procedure PGP_RequestKey;
 var user : string[AdrLen];
     x,y  : byte;
     brk  : boolean;
-    tmp  : pathstr;
+    tmp  : String;
     t    : text;
     hd   : string[12];
     ok   : boolean;
@@ -464,7 +464,7 @@ begin
 end;
 
 
-function IsBinaryFile(fn:pathstr):boolean;
+function IsBinaryFile(fn:string):boolean;
 const bufs  = 2048;                      {         Steuerzeichen }
 var   f     : file;
       isbin : boolean;
@@ -487,7 +487,7 @@ end;
 
 
 procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
-var tmp,tmp2 : pathstr;
+var tmp,tmp2 : string;
     _source  : string[80];
     f,f2     : file;
     orgsize  : longint;
@@ -622,7 +622,7 @@ end;
 
 { Key aus ZCONNECT-Header auslesen und in Bin„rdatei speichern }
 
-procedure PGP_DecodeKey(source,dest:pathstr);
+procedure PGP_DecodeKey(source,dest:string);
 const b64tab : array[43..122] of byte =         (63, 0, 0, 0,64,
                 53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
@@ -693,7 +693,7 @@ end;
 procedure PGP_ImportKey(auto:boolean);
 var hdp      : headerp;
     hds      : longint;
-    tmp,tmp2 : pathstr;
+    tmp,tmp2 : string;
     mk       : boolean;
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
@@ -757,7 +757,7 @@ end;
 procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header tempor„r sichern }
 var hdp : headerp;
     hds : longint;
-    tmp : pathstr;
+    tmp : string;
 begin
   new(hdp);
   ReadHeader(hdp^,hds,false);
@@ -783,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.6  2000/05/07 17:37:40  mk
+  - Limits fuer Pfadnamen auf 255 Zeichen erhoeht
+
   Revision 1.6.2.5  2000/05/07 17:22:41  mk
   - Signatur testen loescht Signatur nicht mehr; s/S eingebaut
 
