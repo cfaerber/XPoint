@@ -316,7 +316,7 @@ var i  : integer;
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
 
-    { Achtung! Folgende Reihenfolge muss bleiben! robo }
+    { Achtung! Folgende Reihenfolge muss bleiben! }
     if _is('w0')   then ParWintime:=0 else
     if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
     if _is('os2b') then begin ParWintime:=1; ParOS2:=2; end else
@@ -346,6 +346,7 @@ var i  : integer;
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
     if isl('lfn') then EnableLFN else
+    if isl('pal') then ParSavePal := true else
     if isl('312') then OldXPComp := true else
     if _is('nolock') then ParNolock:=true
     else               begin
@@ -1094,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.16  2001/01/03 22:46:48  mk
+  - Parameter /Pal hinzugefuegt
+
   Revision 1.45.2.15  2000/12/28 19:15:37  mk
   - falsche Pfade konnten nicht editiert werden
 

@@ -750,12 +750,8 @@ const
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string[10] = '';   { Paáwort }
        ParZeilen  : byte = 0;          { Bildzeilen }
-{$IFDEF BP }
        ParWintime : byte    = 0;       { Rechenleistungs-Freigabe:
                                          0=aus, 1=Timeslice, 2=konservativ }
-{$ELSE }
-       ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
-{$ENDIF }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
@@ -775,6 +771,7 @@ const
        ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
        OldXPComp  : boolean = false;   { XP 3.12 Kompatibilit„tsmodus }
+       ParSavePal : boolean = false;   { Farbpalette sichern }
 
        MoreMode   : boolean = true;
        Developer  : boolean = false;
@@ -1149,6 +1146,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.26  2001/01/03 22:46:47  mk
+  - Parameter /Pal hinzugefuegt
+
   Revision 1.54.2.25  2000/12/31 14:46:12  mk
   - Tearlineschalter in Config/Optionen/Netze
 

@@ -967,7 +967,7 @@ begin
     end;
   if (ParFontfile='') and not ParLCD then
   begin
-    GetPal;
+    if ParSavePal then GetPal;
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then
     begin
@@ -976,7 +976,7 @@ begin
     end;
     if (screenlines<>25) or (screenlines<>getscreenlines) then
       setscreenlines(screenlines);
-    SetPal;
+    if ParSavePal then SetPal;
   end;
   iosclines:=screenlines;
   crline:=screenlines;
@@ -1058,7 +1058,7 @@ var m3 : boolean;
 begin
   if startvideotype>0 then
   begin
-    GetPal;
+    if ParSavePal then GetPal;
     m3:=true;
     if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
     else m3:=false;
@@ -1075,7 +1075,7 @@ begin
       end;
     end;
   if (videotype>1) and not ParMono then setbackintensity;
-  SetPal;
+  if ParSavePal then SetPal;
   SetXPborder;
 end;
 
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.16  2001/01/03 22:46:48  mk
+  - Parameter /Pal hinzugefuegt
+
   Revision 1.48.2.15  2000/12/31 11:35:54  mk
   - fileio.disksize statt lfn.disksize benutzen
 
