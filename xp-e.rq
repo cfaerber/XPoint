@@ -3017,6 +3017,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
 33 "rz" and "sz" must be installed!
+34 Duplicate MIME-Types or File-Extensions are not allowed!
 
 +  11000
 1  unknown command

@@ -1177,6 +1177,7 @@ var d         : DB;
       ext  : string;
       prog : string;
       brk  : boolean;
+      isValid: boolean;
   begin
     if isNew then begin
       typ:= ''; ext:= ''; prog:= '';
@@ -1187,22 +1188,38 @@ var d         : DB;
       prog:= dbReadNStr(d,mimeb_programm);
     end;
     readmimetyp(true,typ,ext,prog,brk);
-    if not brk and (typ<>'*/*') then begin
-      if isNew then begin
-      {$IFDEF FPC }
-        {$hint Soll hier noch auf doppelte Mime-Typen geprueft werden? }
-      {$ENDIF }
-        dbAppend(d);
+    if not brk and (typ<>'*/*') then
+    begin
+      // check for duplicate entries
+      isValid := true;
+      if typ <> '' then
+      begin
+        dbSeek(mimebase,mtiTyp,UpperCase(typ));
+        isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(typ,dbReadStr(mimebase,'typ')));
       end;
-      dbWriteNStr(d,mimeb_typ,typ);
-      dbWriteNStr(d,mimeb_extension,ext);
-      dbWriteNStr(d,mimeb_programm,prog);
-      dbFlushClose(d);
-      dbGo(d,drec[1]);
-      if isNew then
-        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-      aufbau:=true;
+      if Ext <> '' then
+      begin
+        dbSeek(mimebase,mtiExt,Uppercase(Ext));
+        isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(ext,dbReadStr(mimebase,'extension')));
       end;
+
+      if isValid then
+      begin
+        if isNew then
+          dbAppend(d);
+        dbWriteNStr(d,mimeb_typ,typ);
+        dbWriteNStr(d,mimeb_extension,ext);
+        dbWriteNStr(d,mimeb_programm,prog);
+        dbFlushClose(d);
+        dbGo(d,drec[1]);
+        if isNew then
+          dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+        aufbau:=true;
+      end else
+        RFehler(934); //  Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
+    end;
   end;
 
   procedure DelMimetyp;
@@ -1751,6 +1768,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2000/10/18 10:25:25  mk
+  - check for duplicate MIME-Types
+
   Revision 1.35  2000/10/17 10:05:56  mk
   - Left->LeftStr, Right->RightStr
 

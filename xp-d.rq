@@ -3092,6 +3092,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 31 Standardeintrag kann nicht gel”scht werden.
 32 Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!
 33 "rz" und "sz" mssen installiert sein!
+34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 
 +  11000
 1  unbekannter Befehl
