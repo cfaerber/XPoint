@@ -430,6 +430,7 @@ procedure UUCPSysopTransfer;
 var
   dummy : longint;
   s: String;
+  Error: Boolean;
 
   procedure EmptyDir(const Dir, Mask: String);
   var
@@ -455,7 +456,6 @@ var
     p: byte;
     Found: boolean;
     c : char;
-    Error: Boolean;
   begin
     Error := false;
     with BoxPar^ do
@@ -491,7 +491,6 @@ var
       Close(IDFile);
       if IOResult = 0 then ;
     end;
-    if Error then trFehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
   end;
 
 begin
@@ -558,6 +557,7 @@ begin
            _era('UNVERS.PP');
         _era('UNVERS.ID');
         EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. l”schen }
+        if Error then trFehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       end;
       Closebox;
     end;
@@ -589,6 +589,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.7  2001/01/19 09:09:00  mk
+  - Unversandmeldung nach erstellung des neuen .PP
+
   Revision 1.13.2.6  2001/01/18 23:59:59  mk
   - verschiedene Aenderungen fuer PPP-Modus
 
