@@ -6,7 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $ID$ }
+{ $Id$ }
 
 
 { CrossPoint - Reply-To-All- (RTA) Routinen }
@@ -170,6 +170,7 @@ var d         :DB;
     pointname :string[25];
     domain    :string[60];
     box       :string[BoxNameLen];
+    email     :string[80];
     aliaspt   :boolean;
     s         :string;
     notEigeneAdressenbaum :domainNodeP;
@@ -223,7 +224,9 @@ begin
       aliaspt := (flags and 4 <> 0);
       dbRead (d, 'domain', domain);
       dbRead (d, 'boxname', box);
-      case ntDomainType (dbReadInt (d, 'netztyp')) of
+      dbRead (d, 'email', email);
+      if email <> '' then adresse := email
+      else case ntDomainType (dbReadInt (d, 'netztyp')) of
         5: adresse := username + '@' + iifs (aliaspt, pointname, box) + domain;
         6: adresse := username + '@' +
             iifs (aliaspt, box + ntServerDomain (box), pointname + domain);
@@ -1069,6 +1072,11 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.2  2001/07/01 20:00:36  my
+  - Fix: eMail addresses are recognized as own addresses now, especially
+         if eMail address is different from server@point.domain
+  - added ID-Header
+
   Revision 1.1.2.1  2001/07/01 15:41:04  my
   SV:- moved RTA code to new unit xp4rta.pas
   SV:- Fixes:
