@@ -405,6 +405,7 @@ var i  : integer;
         keyboard(copy(s3,9,k-9));
         end;
       end;
+    ParNoBeta := true;
   end;
 
   procedure SetDebugLoglevels(s: String);
@@ -1094,6 +1095,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.128  2001/10/21 10:25:35  mk
+  - /NB always with /mailto
+
   Revision 1.127  2001/10/11 11:07:39  ma
   - fixed corrupted default fido server
 
