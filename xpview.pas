@@ -127,7 +127,7 @@ end;
 
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
 var f       : file;
-    id      : string[80];		{ Shortstring ist ausreichend }
+    id      : string[80];               { Shortstring ist ausreichend }
     rr      : word;
     betreff : string;
     p       : byte;
@@ -141,7 +141,7 @@ begin
     if existf(f) then begin
       resetfm(f,0);
       blockread(f,id[1],80,rr);
-      id[0]:= chr(rr);			{ Anpassen an gelesenen Daten }
+      id[0]:= chr(rr);                  { Anpassen an gelesenen Daten }
       close(f);
       end
     else
@@ -229,9 +229,14 @@ begin
     end
   else parfn:=orgfn;
                               {Korrekte File-extension verwenden}
-  parfn:=left(parfn,rightpos('.',parfn))+
-    iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
+  if cpos('.',parfn)>0 then
+    parfn:=left(parfn,rightpos('.',parfn))
+  else
+    parfn:=parfn+'.';
+
+  parfn:=parfn+iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
   _rename(orgfn,parfn);
+
 
   p:=pos('$FILE',UpperCase(prog));
   if p=0 then prog:=prog+' '+parfn
@@ -245,6 +250,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/10/11 14:51:57  mk
+  JG:- Bug bei Erstellung des Dateinamens behoben
+
   Revision 1.20  2000/07/12 12:57:40  hd
   - Ansistring
 
