@@ -69,6 +69,7 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$IFDEF Kylix}
   libc,
   {$ENDIF}
+  debug,
   xpcc,xpnt,mime,mime_base64;
 
 const
@@ -370,6 +371,7 @@ begin
         t:=t+' --charset='+hd.x_charset
       else
       begin
+        DebugLog('xp_pgp','GnuPG does not support the '+hd.x_charset+' -- using UTF-8',dlWarning);
         t:=t+' --charset=utf8';                 // if everything else fails,
         hd.x_charset:='UTF-8';                  // use UTF-8. :-(
       end;
@@ -381,9 +383,15 @@ begin
       else
       if (hd.x_charset='ISO-8859-1') then
         t:=t+' +charset=LATIN1'
-      else
-        t:=t+' +charset=noconv'                 // uh, oh...
+      else begin
+        t:=t+' +charset=noconv';                // uh, oh...
+        DebugLog('xp_pgp','PGP 2.x/5.x does not support the '+hd.x_charset+' -- using noconv',dlWarning);
+      end;
     end;
+
+    if hd.charset='' then hd.charset:='CP437';
+
+    DebugLog('xp_pgp','Translating charset from '+hd.charset+' to '+hd.x_charset+' for PGP/GnuPG',dlDebug);
 
     if LowerCase(MimeCharsetCanonicalName(hd.x_charset))<>
        LowerCase(MimeCharsetCanonicalName(ZCCharsetToMIME(hd.charset))) then
@@ -393,9 +401,10 @@ begin
     end;
   end;
 
-  if fido_origin<>'' then
-    fis.CopyFrom(data,data.Size-length(fido_origin)-2)
-  else
+  if fido_origin<>'' then begin
+    fis.CopyFrom(data,data.Size-length(fido_origin)-2);
+    DebugLog('xp_pgp','Removing Fido Origin',dlTrace);
+  end else
     CopyStream(data,fis);
 
   fis.Free;
@@ -407,6 +416,8 @@ begin
 
   { --- codieren --- }
   if encode and not sign then begin
+    DebugLog('xp_pgp','Encoding (but not signing) data with PGP/GnuPG',dlDebug);
+  
     if PGPVersion=PGP2 then
       RunPGP('-ea'+t+' '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
     else if PGPVersion=PGP5 then
@@ -424,6 +435,8 @@ begin
 
   { --- signieren --- }
   end else if sign and not encode then begin
+    DebugLog('xp_pgp','Signing (but not encoding) data with PGP/GnuPG',dlDebug);
+    
     if PGPVersion=PGP2 then
       RunPGP('-sa'+t+' '+fi+OwnUserID+' -o '+fo )
     else if PGPVersion=PGP5 then
@@ -443,6 +456,8 @@ begin
 
   { --- codieren+signieren --- }
   end else begin
+    DebugLog('xp_pgp','Encoding and Signing data with PGP/GnuPG',dlDebug);
+
     if PGPVersion=PGP2 then
       RunPGP('-esa'+t+' '+fi+' '+IDform(RemoteUserID)+OwnUserID+' -o '+fo)
     else if PGPVersion=PGP5 then
@@ -469,6 +484,8 @@ begin
 
     if Fido_Origin<>'' then
     begin
+      DebugLog('xp_pgp','Re-Appending Fido Origin',dlTrace);
+
       data:=TTemporaryFileStream.Create(fo,fmOpenReadWrite);
       data.Seek(0,soFromEnd);
       data.WriteBuffer(Fido_Origin[1],Length(Fido_Origin));
@@ -488,6 +505,7 @@ begin
       hd.crypt.typ:=hd.typ; hd.typ:='T';         { Typ anpassen   }
       hd.crypt.komlen:=hd.komlen; hd.komlen:=0;  { KOM anpassen   }
       hd.crypt.method:='PGP';
+      DebugLog('xp_pgp','No MIME-typed message any longer -- removing MIME headers',dlTrace);
     end;
 
     if encode then inc(hd.pgpflags,fPGP_encoded);
@@ -496,11 +514,13 @@ begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                            { 'c'-Kennzeichnung }
       dbWriteN(mbase,mb_unversandt,b);
+      DebugLog('xp_pgp','Marking message as encrypted in MBASE',dlTrace);
     end;
     if sign then begin
       dbReadN(mbase,mb_netztyp,nt);
       nt:=nt or $4000;                      { 's'-Kennzeichnung }
       dbWriteN(mbase,mb_netztyp,nt);
+      DebugLog('xp_pgp','Marking message as signed in MBASE',dlTrace);
     end;
   end else
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
@@ -564,6 +584,7 @@ begin
   CopyStream(data,fis);
   fis.Free;
 
+  { WARNING: PGP must be called in BINARY mode for MIME! }
   if PGPVersion=PGP2 then
     RunPGP('-ea +textmode=off '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
   else if PGPVersion=PGP5 then
@@ -637,8 +658,9 @@ begin
   CopyStream(data,fis);
   fis.Free;
 
+  { WARNING: PGP must be called in BINARY mode for MIME! }
     if PGPVersion=PGP2 then
-      RunPGP('-sat '+fi+OwnUserID+' -o '+fo)
+      RunPGP('-sab +textmode=off '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=PGP5 then
       RunPGP5('PGPS.EXE','-a -b '+fi+OwnUserID+' -o '+fo)
     else if PGPVersion=GPG then
@@ -1168,6 +1190,10 @@ end;
 
 {
   $Log$
+  Revision 1.67.2.2  2002/09/14 11:53:44  cl
+  - Fixed some problems with PGP cleartext signing
+  - Added DebugLog Output
+
   Revision 1.67.2.1  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 
