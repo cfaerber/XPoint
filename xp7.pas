@@ -728,6 +728,7 @@ begin                  { of Netcall }
       end;
     Activate;
     IgnCD:=IgCD; IgnCTS:=IgCTS;
+    IgnCTS := true; // !! Workaround fÅr nicht porierte UART
     mdelay(300);
     flushin;
 
@@ -1559,6 +1560,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/08/13 23:25:47  mk
+  - Bei Netcall wird das Modem nicht mehr getestet, da Routine noch nicht portiert
+
   Revision 1.27  2000/07/30 08:49:53  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
