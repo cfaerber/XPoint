@@ -644,12 +644,25 @@ again:
   begin
     setlength(s,11);
     blockread(f,s[1],11,rr);       { read #! xxunbatch }
-    if (rr<11) or eof(f) or (not unbatch(s)) then begin close(f); exit; end; // no batch
-    repeat
-      blockread(f,s[1],1,rr);
-      if (rr<1) or eof(f) then begin close(f); exit; end; // oops;
-    until s[1]=#10;
-    spos:=filepos(f);
+
+    if eof(f) then
+    begin
+      close(f);
+      exit;
+    end else
+    if (rr<11) or (not unbatch(s)) then 
+    begin      
+      batch:=false;
+      seek(f,0);
+    end
+    else
+    begin    
+      repeat
+        blockread(f,s[1],1,rr);
+        if (rr<1) or eof(f) then begin close(f); exit; end; // oops;
+      until s[1]=#10;
+      spos:=filepos(f);
+    end;
   end;
 
   blockread(f,magic,sizeof(magic),rr);
@@ -722,7 +735,7 @@ procedure TUUz.wrfs(const s: string);
 begin
   if outbufpos + length(s) >= bufsize then
     FlushOutbuf;
-  Move(s[1], outbuf^[outbufpos], length(s));
+  if Length(s)>0 then Move(s[1], outbuf^[outbufpos], length(s));
   inc(outbufpos, length(s));
 end;
 
@@ -3631,6 +3644,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2001/10/30 23:45:20  cl
+  - COMPATIBILITY FIX: rnews batches without a correct "#! unbatch" line
+    should now be uncompressed correctly.
+
   Revision 1.82  2001/10/26 11:23:32  ma
   - fixes and changes concerning CompileTime mailer header
 
