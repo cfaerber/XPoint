@@ -481,8 +481,8 @@ end;
 
 function ntAdrCompatible(n1,n2:byte):boolean;  { umleitbare PM-Adresse }
 begin
-  ntAdrCompatible:= (n1 in [nt_Maus, nt_ZConnect, nt_UUCP, nt_NNTP, nt_POP3]) and
-                    (n2 in [nt_Maus, nt_ZConnect, nt_UUCP, nt_NNTP, nt_POP3]);
+  ntAdrCompatible:= (n1 in ([nt_Maus, nt_ZConnect]+netsRFC)) and
+                    (n2 in ([nt_Maus, nt_ZConnect]+netsRFC));
 {  ntAdrCompatible:=(n1=n2) or
                    (((n1=nt_ZConnect) or (n1=nt_UUCP)) and
                      (n2 in [nt_ZConnect,nt_UUCP,nt_Maus]));}
@@ -496,7 +496,7 @@ end;
 
 function ntMsg0(nt:byte):boolean;             { Nachricht darf leer sein }
 begin
-  ntMsg0:=nt in [nt_ZConnect,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3];
+  ntMsg0:=nt in ([nt_ZConnect,nt_Fido]+netsRFC);
 end;
 
 
@@ -708,6 +708,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.34  2001/09/17 16:17:07  cl
+  - Fixed ntAddressCompatible
+
   Revision 1.33  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
