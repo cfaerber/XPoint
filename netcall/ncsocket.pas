@@ -65,6 +65,7 @@ type
     FPort               : integer;              { Portnummer }
     FErrorMsg   : string;               { Fehlertext }
 
+    procedure InitVars;
     procedure SActive(b: boolean);
     procedure SPort(i: integer);
 
@@ -75,7 +76,7 @@ type
     procedure ReadBuffer;
 
     { Achtung, das geht nur mit Blocking Sockets, sonst muss gepuffert werden }
-    procedure WriteBuffer(Buffer: Pointer; Size: Integer);
+    procedure WriteBuffer(var Buffer; Size: Integer);
 
     { Erzeugt eine Exception mit dem Fehlercode }
     procedure RaiseSocketError;
@@ -120,36 +121,37 @@ implementation
 constructor TSocketNetcall.Create;
 begin
   inherited Create;
-  Host:= TIP.Create;
-  Host.AutoResolve:= false;
-  FPort:= 0;
-  FConnected:= false;
-  FInPos := 0; FInCount := 0;
+  InitVars;
 end;
 
 constructor TSocketNetcall.CreateWithHost(s: string);
 begin
   inherited Create;
-  Host:= TIP.Create;
-  Host.AutoResolve:= false;
+  InitVars;
   Host.Name:= s;
-  FPort:= 0;
-  FConnected:= false;
-  FInPos := 0; FInCount := 0;
 end;
 
 constructor TSocketNetcall.CreateWithIP(ip: TIP);
 begin
   inherited Create;
-  Host:= TIP.Create;
-  Host.AutoResolve:= false;
+  InitVars;
   if ip.Name='' then
     Host.Raw:= ip.Raw
   else
     Host.Name:= ip.Name;
+end;
+
+procedure TSocketNetcall.InitVars;
+var
+  wsadata: Twsadata;
+begin
+  Host:= TIP.Create;
+  Host.AutoResolve:= false;
   FPort:= 0;
-  FConnected:= False;
+  FConnected:= false;
   FInPos := 0; FInCount := 0;
+
+  WSAStartup(2, wsadata);
 end;
 
 destructor TSocketNetcall.Destroy;
@@ -237,11 +239,13 @@ var
   Size: DWord;
   Count: Integer;
 begin
-  if IOCTLSocket(FHandle, FIONREAD, Size) = SOCKET_ERROR then
-    RaiseSocketError
-  else
+  if IOCTLSocket(FHandle, FIONREAD, @Size) = SOCKET_ERROR then
+    RaiseSocketError;
   if Size > 0 then
   begin
+    Move(FinBuf[FInPos], FInBuf, FInCount-FInPos);
+    FInCount := FInCount - FInPos; FInPos := 0;
+
     // Nur so viel lesen, wie in den Buffer reingeht
     if Size > (MaxSocketBuffer-FInCount) then
       Size := MaxSocketBuffer - FInCount;
@@ -253,11 +257,11 @@ begin
   end;
 end;
 
-procedure TSocketNetcall.WriteBuffer(Buffer: Pointer; Size: Integer);
+procedure TSocketNetcall.WriteBuffer(var Buffer; Size: Integer);
 var
   count: Integer;
 begin
-  Count := send(FHandle, Buffer, Size, 0); Writeln('Count: ', Count);
+  Count := send(FHandle, Buffer, Size, 0);
   if Count = SOCKET_ERROR then
     RaiseSocketError;
 end;
@@ -270,7 +274,7 @@ end;
 procedure TSocketNetcall.SWriteln(s: String);
 begin
   s := s + #13#10;
-  WriteBuffer(@s[1], Length(s));
+  WriteBuffer(s[1], Length(s));
 end;
 
 procedure TSocketNetcall.SReadln(var s: String);
@@ -291,6 +295,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/08/01 16:34:35  mk
+  - Sockets laufen unter Win32 !!!
+
   Revision 1.5  2000/08/01 11:07:32  mk
   - von Sockets.pp auf WinSock umgestellt
 

@@ -207,25 +207,26 @@ begin
   begin
     WriteIPC(mcInfo,res_list1,[0]);
     SWriteln('MODE READER');
-    s := '';
     while s= '' do SReadln(s);
     if ParseResult(s)<>200 then begin
       WriteIPC(mcError,res_list2,[Host.Name]);
       Result:= false;
       exit;
     end;
-    SWriteln('LIST NEWSGROUPS');
-    SReadln(s);
-    if ParseResult(s)<>215 then begin
+    SWriteln('LIST ACTIVE');
+    s := '';
+    while s = '' do SReadln(s);
+    if not (ParseResult(s) in [200, 215]) then begin
       WriteIPC(mcError,res_list3,[Host.Name]);
       Result:= false;
       exit;
     end;
 
     i:=0;
-    while not timeout do
+    while true do
     begin
-      SReadln(s);
+      s := '';
+      if s = '' then SReadln(s);
       code:= ParseResult(s);
       if code=0 then break
       else if code<>-1 then begin
@@ -256,6 +257,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.3  2000/08/01 16:34:35  mk
+        - Sockets laufen unter Win32 !!!
+
         Revision 1.2  2000/08/01 11:08:01  mk
         - auf neues TNetCallSocket umgestellt
 
