@@ -771,30 +771,32 @@ begin
     end;
 end;
 
-{ 10.02.2000 robo - aus xp3ex.pas entnommen und leicht ver„ndert }
 function GetQuote(ap:absatzp):string;
 var p,q : byte;
     s   : string;
 begin
-  p:=min(ap^.size,80);
-  fastmove(ap^.cont,s[1],p);
-  s[0]:=char(p);
-  p:=cpos('>',s);
-  if p>5 then p:=0
-  else if p>0 then begin
-    repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
-      q:=p+1;     { ermitteln                                    }
-      while (q<=length(s)) and (q-p<=4) and (s[q]<>'>') do
-        inc(q);
-      if (q<=length(s)) and (s[q]='>') then p:=q;
-    until q>p;
-    while (p<length(s)) and (s[p+1]='>') do inc(p);
-    while (p<length(s)) and (s[p+1]=' ') do inc(p);
-  end;
-  s:=left(s,p);
-  GetQuote:=s;
+  if e^.Config.QuoteReflow and Assigned(ap) then
+  begin
+    p:=min(ap^.size,80);
+    fastmove(ap^.cont,s[1],p);
+    s[0]:=char(p);
+    p:=cpos('>',s);
+    if p>5 then p:=0
+    else if p>0 then begin
+      repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
+        q:=p+1;     { ermitteln                                    }
+        while (q<=length(s)) and (q-p<=4) and (s[q]<>'>') do
+          inc(q);
+        if (q<=length(s)) and (s[q]='>') then p:=q;
+      until q>p;
+      while (p<length(s)) and (s[p+1]='>') do inc(p);
+      while (p<length(s)) and (s[p+1]=' ') do inc(p);
+    end;
+    s:=left(s,p);
+    GetQuote:=s
+  end else
+    GetQuote := '';
 end;
-{ /robo }
 
 procedure NewLine;              { Enter - Absatz einfgen }
 var ap,ap2   : absatzp;
@@ -822,15 +824,16 @@ begin
       spaces:=0;
       delsp:=0;
       { Quote-Reflow }
-      if config.QuoteReflow xor kb_shift then begin
+      if not kb_shift then
+      begin
         quotec:=GetQuote(ap);
         if (quotec<>'') and (wp>=length(rtrim(quotec))) then begin
           delsp:=wp;
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
           dec(delsp,wp);
         end;
-      end
-      else quotec:='';
+      end else
+        quotec:='';
       quotes:=length(quotec);
       if wp>=ap^.size
         then quotes:=0; { kein Reflow bei Zeilenende }
@@ -900,7 +903,8 @@ begin
           error(2)    { 'Absatz zu groá' }
         else if memtest(ss) then begin   { Abs„tze zusammenh„ngen }
           { Quote-Reflow }
-          if config.QuoteReflow then begin
+          if config.QuoteReflow then
+          begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
             quotes:=length(quotec1);
@@ -910,7 +914,6 @@ begin
               dec(ss,length(quotec2));
             end;
           end;
-          { /robo }
           apnew:=AllocAbsatz(ss);
           wpa:=apnew;
           copyflags(ap,apnew);
@@ -1852,14 +1855,10 @@ begin
       end;
       SetBlock(1,ActAbs,0,2);
       ap:=ActAbs;
-      if config.QuoteReflow and assigned(ap^.next)
-        then quotec1:=getquote(ap^.next)
-        else quotec1:='';
+      quotec1:= Getquote(ap^.next);
       while assigned(ap^.next) and (ap^.next^.size>length(quotec1)) do begin
         ap:=ap^.next;
-        if config.QuoteReflow and assigned(ap^.next)
-          then quotec1:=getquote(ap^.next)
-          else quotec1:='';
+        quotec1:=getquote(ap^.next)
       end;
       SetBlock(2,ap,ap^.size,3);
     end
@@ -1884,9 +1883,7 @@ begin
       fp:=advance(ap,0,rrand);
       if fp<ap^.size then begin  { Absatz umbrechen }
         spaces:=0;
-        if config.QuoteReflow
-          then quotec1:=GetQuote(ap)
-          else quotec1:='';
+        quotec1:=GetQuote(ap);
         quotes:=length(quotec1);
         if quotes>rrand div 2 then begin
           quotec1:=rtrim(quotec1);
@@ -1943,16 +1940,9 @@ begin
           error(2)    { 'Absatz zu groá' }
         else if memtest(ss) then begin
           spaces:=0;
-          if config.QuoteReflow then begin
-            quotec1:=getquote(ap);
-            quotec2:=getquote(ap^.next);
-            quotes:=length(quotec1);
-          end
-          else begin
-            quotec1:='';
-            quotec2:='';
-            quotes:=0;
-          end;
+          quotec1:=getquote(ap);
+          quotec2:=getquote(ap^.next);
+          quotes:=length(quotec1);
           if config.autoindent and (quotes=0) and (length(quotec2)=0) then
           begin
             while (spaces<ap^.next^.size) and (ap^.next^.cont[spaces]=' ') do
@@ -2013,7 +2003,6 @@ begin
     aufbau:=true;
   end;
 end;
-
 
 { Markierten Block als String zurueckgeben }
 
@@ -2385,12 +2374,8 @@ begin
     writeln(t,'RechterRand=',rechter_rand);
     writeln(t,'AbsatzEnde=',absatzendezeichen);
     writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
-    { 01/2000 oh }
     writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
-    { /oh }
-    { 10.02.2000 robo }
     writeln(t,'QuoteReflow=',iifc(QuoteReflow,'J','N'));
-    { /robo }
     end;
   close(t);
 end;
@@ -2428,6 +2413,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.20  2001/09/06 13:06:45  mk
+  - fix possible crash in QuoteReflow
+  - optimized some code
+
   Revision 1.19.2.19  2001/08/28 21:25:00  my
   RB:- Fix: When pressing <Backspace> in Pos1 of a quoted line where the
        quote signs are indented, no space was added.
