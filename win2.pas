@@ -40,7 +40,7 @@ uses
   xpos2,
 {$ENDIF }
   sysutils,
-  dos,keys,inout,maus2,typeform,winxp;
+  keys,inout,maus2,typeform,winxp;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategrî·e/Datum anzeigen }
@@ -49,20 +49,20 @@ const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
 type  diskstat = record
                    dateien,bytes : longint;
                  end;
-      xproc    = procedure(path:pathstr);
+      xproc    = procedure(path:string);
       stproc   = procedure(stat:diskstat);
       perrproc = procedure;
 
 procedure setwinselcursor(cur:curtype);
 procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
-function  fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,
-                vert:boolean):pathstr;
+function  fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,
+                vert:boolean):string;
 procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
-                var path:pathstr; mark:boolean; var brk:boolean);
+                var path:string; mark:boolean; var brk:boolean);
 procedure pdummyproc;
-function  pname(p:word):pathstr;
+function  pname(p:word):string;
 function  pslcted(p:word):boolean;
 function  pnum:word;
 procedure punselect;
@@ -84,7 +84,7 @@ const maxpath  = 2000;
       markchar = #16;
       oldpn    : integer = 0;
       wcursor  : boolean = false;
-type  parr     = array[1..maxpath] of ^pathstr;
+type  parr     = array[1..maxpath] of ^string;
 var   pa,mpa   : ^parr;
       pn,mpn   : integer;
 
@@ -95,12 +95,13 @@ procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
 const maxs = 5;
 
 var  pntl  : pntslcta;
-     sr    : searchrec;
+     sr    : tsearchrec;
+     rc    : integer;
      lnum,n,
      handle : word;
      p      : byte;
      s      : string[20];
-     slas   : array[1..maxs] of pathstr;
+     slas   : array[1..maxs] of string;
      slan,i : byte;
 
 begin
@@ -121,8 +122,8 @@ begin
     end;
 
   for i:=1 to slan do begin
-    findfirst(slas[i],archive,sr);
-    while doserror=0 do begin
+    rc:= findfirst(slas[i],faArchive,sr);
+    while rc=0 do begin
       if lnum<500 then begin
         inc(lnum);
         n:=lnum;
@@ -141,9 +142,10 @@ begin
           nu:=n;
           end;
         end;
-      findnext(sr);
-      end;
-    end;
+      rc:= findnext(sr);
+    end; { while }
+    findclose(sr);
+  end; { for }
 
   if lnum=0 then
     if errdisp then begin
@@ -180,7 +182,7 @@ end;
   invers  : inverse Anzeige
   vert    : vertikale Anzeige }
 
-function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
+function fsbox(y:byte; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
 
 const
   maxf   = 8192;
@@ -188,9 +190,10 @@ const
 type
   ft     = array[1..maxf+36] of string;
   txst   = string[70];
-var   fb     : pathstr;
+var   fb     : string;
       f      : ^ft;
-      sr     : searchrec;
+      sr     : tsearchrec;
+      rc     : integer;
       fn,p,
       i,ma,
       add,x  : integer;
@@ -198,9 +201,9 @@ var   fb     : pathstr;
       t      : taste;
       dir, name, ext: string;
       xtext  : string[20];
-      paths  : array[1..maxs] of pathstr;
+      paths  : array[1..maxs] of string;
       pathn  : byte;
-      dpath  : pathstr;    { Display-Path }
+      dpath  : string;    { Display-Path }
       chgdrive : boolean;
       wpushed  : boolean;
       height : shortint;
@@ -235,7 +238,7 @@ var   fb     : pathstr;
     mon;
   end;
 
-  function fname(n:integer):pathstr;
+  function fname(n:integer):string;
   begin
     fsplit(path,dir,name,ext);
     fname:=dir+f^[n];
@@ -298,9 +301,7 @@ var   fb     : pathstr;
 
   procedure disp_p;
   var s,s2  : string;
-      pa    : pathstr;
-      sr    : searchrec;
-      t     : Tdatetime;
+      sr    : TSearchRec;
       xx,yy : byte;
   begin
     if invers then normtxt else invtxt;
@@ -327,18 +328,15 @@ var   fb     : pathstr;
       if RightStr(s,1)=DirSepa then
         Wrt2(Forms(ConvertFilename(s), 58))
       else begin
-        pa:=ExtractFilePath(path);
-        if RightStr(pa,1)<>DirSepa then pa:=pa+DirSepa;
-        findfirst(pa+s,ffanyfile,sr);
-        if doserror<>0 then
+        if (findfirst(AddDirSepa(ExtractFilePath(path))+s,faanyfile,sr)<>0) then
           Wrt2(sp(59))
-        else
-        begin
+        else begin
           s2 := Trim(strsrnp(sr.size,12,0));
           Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
             DateToStr(FileDateToDateTime(sr.time)));
-//            formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)
+            {formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)}
         end;
+        findclose(sr);
       end;
       mon;
     end;
@@ -399,7 +397,7 @@ begin
     end;
   path:=trim(path); pathx:=trim(pathx);
   if path='' then path:=WildCard;
-  path:=fexpand(path);
+  path:=ExpandFileName(path);
   if pathx='' then begin
     pathn:=1;
     paths[1]:=path;
@@ -433,37 +431,39 @@ begin
     fsplit(path,dir,name,ext);
     if xdir then begin
       doppelpunkt:=false;
-      findfirst(dir+WildCard,directory+archive,sr);
-      while (doserror=0) and (fn<maxf) do begin
-        if (sr.name<>'.') and ((sr.attr and directory)<>0) then begin
+      rc:= findfirst(dir+WildCard,faDirectory+faArchive,sr);
+      while (rc=0) and (fn<maxf) do begin
+        if (sr.name<>'.') and ((sr.attr and faDirectory)<>0) then begin
           inc(fn);
           f^[fn]:=#253+sr.name;
           if f^[fn][2]='.' then begin
             f^[fn][1]:=#255; doppelpunkt:=true;
-            end;
           end;
-        findnext(sr);
         end;
+        rc:= findnext(sr);
+      end; { while }
+      findclose(sr);
       if (fn<maxf) and not doppelpunkt and (length(dir)>3) then begin
         inc(fn);
         f^[fn]:=#255+'..';
-        end;
+      end;
       for i:=1 to length(drives) do
         if fn<maxf then begin
           inc(fn);
           f^[fn]:=#254'['+drives[i]+':]';
-          end;
-      end;
+        end;
+    end; { if xdir }
     for x:=1 to pathn do begin
-      findfirst(paths[x],readonly+archive,sr);
-      while (doserror=0) and (fn<maxf) do begin
+      rc:= findfirst(paths[x],faReadOnly+faArchive,sr);
+      while (rc=0) and (fn<maxf) do begin
         if sr.name<>'.' then begin
           inc(fn);
           f^[fn]:=sr.name;
-          end;
-        findnext(sr);
         end;
-      end;
+        rc:= findnext(sr);
+      end; { while }
+      findclose(sr);
+    end;
     if fn=maxf then xtext:='zu viele Dateien'
     else xtext:='';
 
@@ -693,9 +693,9 @@ begin
   fsbox:=fb;
 end;
 
-function pname(p:word):pathstr;
+function pname(p:word):string;
 var x    : byte;
-    path : pathstr;
+    path : string;
 begin
   path:='';
   while p>1 do begin
@@ -730,7 +730,7 @@ end;
 
 procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
-                var path:pathstr; mark:boolean; var brk:boolean);
+                var path:string; mark:boolean; var brk:boolean);
 
 const dsfiles : longint = 0;
       dsb     : longint = 0;
@@ -768,7 +768,7 @@ var   i,j     : integer;
     normtxt;
   end;
 
-  procedure papp(p:pathstr);
+  procedure papp(p:string);
   var i : byte;
   begin
     inc(pn);
@@ -793,49 +793,61 @@ var   i,j     : integer;
     sproc(stat);
   end;
 
-  procedure psearch(p:pathstr; ebene:byte);
-  var sr   : searchrec;
+  procedure psearch(const p:string; ebene:byte);
+  var sr   : tsearchrec;
       { n1   : word;  MK 14.02.2000 Variable wird nicht benutzt }
       de   : integer;
   begin
-    findfirst(p+'*.*',directory+hidden+readonly+sysfile,sr);
-    de:=doserror;
-    with sr do
-      while (de=0) and (((attr and directory)=0) or (name[1]='.')) do begin
-        testbrk(brk); if brk then exit;
-        findnext(sr);
-        de:=doserror;
-        if (de=0) and (attr and (directory+volumeid)=0) then begin
-          inc(dsfiles);
-          inc(dsb,size);
-          end;
-        end;
+    de:= findfirst(AddDirSepa(p)+WildCard,faDirectory+faHidden+faReadOnly+faSysFile,sr);
+    while (de=0) and (((sr.attr and faDirectory)=0) {or (sr.name[1]='.')}) do begin
+      testbrk(brk);
+      if brk then begin
+        findclose(sr);
+        exit;
+      end;
+      de:= findnext(sr);
+      if (de=0) and (sr.attr and (faDirectory+faVolumeID)=0) then begin
+        inc(dsfiles);
+        inc(dsb,sr.size);
+      end;
+    end; { while }
+
     { n1:=pn; }
     while de=0 do begin
       sn:=sr.name;
       multi2;
       dstat;
-      with sr do
-        repeat
-          testbrk(brk); if brk then exit;
-          findnext(sr);
-          if (doserror=0) and (attr and (directory+volumeid)=0) then begin
-            inc(dsfiles);
-            inc(dsb,size);
-            end;
-        until (doserror<>0) or (((attr and directory)<>0) and (name[1]<>'.'));
-      de:=doserror;
+
+      repeat
+        testbrk(brk);
+        if brk then begin
+          findclose(sr);
+          exit;
+        end;
+        de:= findnext(sr);
+        if (de=0) and (sr.attr and (faDirectory+faVolumeID)=0) then begin
+          inc(dsfiles);
+          inc(dsb,sr.size);
+        end;
+      until (de<>0) or (((sr.attr and faDirectory)<>0) {and (name[1]<>'.')});
+
       if de=0 then econt:=econt+[succ(ebene)]
       else econt:=econt-[succ(ebene)];
       if trim(p+sn)=path then xp:=pn+1;
       glc:=iifc(de=0,'√','¿');
       papp(sp(ebene)+glc+'ƒƒ'+sn);
-      if memerr then exit;
-      { n1:=pn; }
-      psearch(p+sn+'\',ebene+3);
-      if brk then exit;
-      if memerr then exit;
+      if memerr then begin
+        findclose(sr);
+        exit;
       end;
+      { n1:=pn; }
+      psearch(p+sn+DirSepa,ebene+3);
+      if (brk) or (memerr) then begin
+        findclose(sr);
+        exit;
+      end;
+    end;
+    findclose(sr);
   end;
 
   procedure display;
@@ -865,14 +877,14 @@ begin
       dsfiles:=0; dsb:=0;
       pmsg('einen Moment bitte ...');
       papp(' \');
-      psearch(drive+':\',1);
+      psearch(drive+_MPMask,1);
       i:=ioresult;
       if not brk then pdrive:=drive
       else pdel;
       end
     else if pvorg then begin
       i:=1;
-      while (i<=pn) and (pname(i)<>UpperCase(mid(path,3))+'\') do inc(i);
+      while (i<=pn) and (pname(i)<>UpperCase(mid(path,3))+DirSepa) do inc(i);
       if i<=pn then xp:=i;
       end;
     if not brk then begin
@@ -930,10 +942,9 @@ begin
           vn:='';
           bd(x1+9,y2,'',vn,12,1,brk);
           if not brk then begin
-            path:=pname(a+p);
-            if path[length(path)]<>'\' then
-              path:=path+'\';
-            mkdir(drive+':'+path+vn);
+            path:=AddDirSepa(pname(a+p));
+            Delete(path,1,1); { fuehrenden Separator loeschen }
+            mkdir(drive+_MPMask+path+vn);
             if inoutres<>0 then begin
               if ioresult=3 then
                 pmsg('ungÅltiger Name - Taste')
@@ -1092,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/16 14:46:10  hd
+  - Unit DOS entfernt
+
   Revision 1.27  2000/11/15 23:00:39  mk
   - updated for sysutils and removed dos a little bit
 

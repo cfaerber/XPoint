@@ -126,7 +126,7 @@ const
 {$ELSE }
   DirSepa  = '\';
   WildCard = '*.*';
-  _MPMask  = ':\';
+  _MPMask  = ':\';      { Reihenfolge NICHT AENDERN!!!!! }
 {$ENDIF }
 
 var
@@ -177,6 +177,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.47  2000/11/16 14:46:10  hd
+  - Unit DOS entfernt
+
   Revision 1.46  2000/11/15 23:00:44  mk
   - updated for sysutils and removed dos a little bit
 
