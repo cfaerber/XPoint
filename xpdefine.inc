@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -79,6 +79,10 @@
 
 {
   $Log$
+  Revision 1.30.2.4  2001/08/11 10:58:38  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.30.2.3  2000/09/19 03:21:11  mk
   - CoPro-Emu fuer XT Version nicht benoetigt
 

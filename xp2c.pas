@@ -20,12 +20,7 @@ unit xp2c;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
+  crt, dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
 {$IFDEF CAPI }
   capi,
 {$ENDIF CAPI }
@@ -96,6 +91,7 @@ uses
   xp1o,
   xp2,
   xp4o2,
+  xp2b,
   xp9bp;
 
 const
@@ -1505,6 +1501,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.24  2001/08/11 10:58:35  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.39.2.23  2001/08/11 08:42:22  mk
   - resized Config/Optionen/Nachrichten
 

@@ -245,6 +245,7 @@ procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
+procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
 
 implementation  {-------------------------------------------------------}
 
@@ -2032,12 +2033,34 @@ begin
   MsgidIndex:=CRC32Str(mid);
 end;
 
+procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+var b    : byte;                               { wenn keine ungelesenen Nachrichten }
+    nope : boolean;
+    rec  : longint;
+begin                                          { mehr vorhanden sind. }
+  dbSeek(mbase,miGelesen,brett+#0);
+  if dbEOF(mbase) then nope:=true
+    else nope:=((dbReadStr(mbase,'brett')<>brett)
+      or (dbReadInt(mbase,'gelesen')<>0));
+  rec:=dbrecno(bbase);
+  dbSeek(bbase,biIntnr,mid(brett,2));
+  if dbFound then begin
+    dbReadN(bbase,bb_flags,b);
+    if nope then b:=b and (not 2) else b:=b or 2;
+    dbWriteN(bbase,bb_flags,b);
+  end;
+  dbgo(bbase,rec);
+end;
 
 {$I xp1cm.inc}
 
 end.
 {
   $Log$
+  Revision 1.48.2.19  2001/08/11 10:58:34  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.48.2.18  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 

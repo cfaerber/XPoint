@@ -14,7 +14,6 @@
 
 {$I XPDEFINE.INC }
 
-{$F+}
 {$M 32768,131072,655360}
 
 program xp;
@@ -204,6 +203,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.17  2001/08/11 10:58:34  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.29.2.16  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 

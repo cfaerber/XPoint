@@ -37,7 +37,6 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
 
 procedure select(dispmode:shortint);
 procedure mainwindow;
-procedure SetBrettGelesen(brett:string);
 
 const
       markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
@@ -129,25 +128,6 @@ begin
       holen(p);
       end;
     end;
-end;
-
-procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
-var b    : byte;                               { wenn keine ungelesenen Nachrichten }
-    nope : boolean;
-    rec  : longint;
-begin                                          { mehr vorhanden sind. }
-  dbSeek(mbase,miGelesen,brett+#0);
-  if dbEOF(mbase) then nope:=true
-    else nope:=((dbReadStr(mbase,'brett')<>brett)
-      or (dbReadInt(mbase,'gelesen')<>0));
-  rec:=dbrecno(bbase);
-  dbSeek(bbase,biIntnr,mid(brett,2));
-  if dbFound then begin
-    dbReadN(bbase,bb_flags,b);
-    if nope then b:=b and (not 2) else b:=b or 2;
-    dbWriteN(bbase,bb_flags,b);
-  end;
-  dbgo(bbase,rec);
 end;
 
 { ----- HauptmenÅ ---------------------------------------------------- }
@@ -877,7 +857,7 @@ var t,lastt: taste;
         dbGo(mbase,marked^[0].recno);
       if pm then
       begin
-        if reply and ntReplyToAll (dbReadInt (mbase, 'netztyp')) then
+        if reply and ntReplyToAll (Byte(dbReadInt (mbase, 'netztyp'))) then
         begin
           ReplyToAll (brk, adresseAusgewaehlt, empf, realname, dispdat);
           if brk or (empf = '') then exit;
@@ -2184,6 +2164,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.45  2001/08/11 10:58:36  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.26.2.44  2001/08/11 10:15:45  mk
   - removed unused variables and comments
 

@@ -58,20 +58,12 @@ procedure test_systeme;
 procedure testdiskspace;
 procedure testfilehandles;
 procedure TestAutostart;
-procedure check_date;
 procedure ReadDomainlist;
-
-procedure ShowDateZaehler;
-Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
-
 
 implementation  {-----------------------------------------------------}
 
 uses
   xp2b,xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg,xpovl;
-
-var
-  zaehlx,zaehly : byte;
 
 procedure setmenu(nr:byte; s:string);
 begin
@@ -944,54 +936,6 @@ end;
 
 
 
-procedure check_date;      { Test, ob Systemdatum verstellt wurde }
-const maxdays = 14;
-var dt   : DateTime;
-    days : longint;
-    dow  : rtlword;
-    ddiff: longint;
-    wdt  : byte;
-    x,y  : byte;
-    brk  : boolean;
-    dat  : datetimest;
-    t,m,j: word;
-    m3s  : procedure;
-begin
-  fillchar(dt,sizeof(dt),0);
-  getdate(dt.year,dt.month,dt.day,dow);
-  days:=longint(dt.year)*365+dt.month*30+dt.day;
-  unpacktime(filetime(NewDateFile),dt);                  { Abstand in Tagen }
-  ddiff:=days - (longint(dt.year)*365+dt.month*30+dt.day);
-  if (ddiff<0) or (ddiff>maxdays) then begin
-    wdt:=4+max(max(length(getres2(225,1)),length(getres2(225,2))),
-                   length(getres2(225,3))+10);
-    dialog(wdt,5,'',x,y);
-    if ddiff>0 then
-      { 'Seit dem letzten Programmstart sind mehr als %s Tage vergangen.' }
-      maddtext(3,2,getreps2(225,1,strs(maxdays)),0)
-    else
-      { 'Das Systemdatum liegt vor dem Datum des letzten Programmstarts.' }
-      maddtext(3,2,getreps2(225,2,strs(maxdays)),0);
-    dat:=left(date,6)+right(date,2);
-    madddate(3,4,getres2(225,3),dat,false,false);   { 'Bitte best„tigen Sie das Datum: ' }
-      mhnr(92);
-    zaehler[1]:=30; zaehlx:=x+wdt-6; zaehly:=y-1;
-     m3s:=multi3;
-    multi3:=ShowDateZaehler; hotkeys:=false;
-    readmask(brk);
-    multi3:=m3s; hotkeys:=true;
-    if not brk and mmodified then begin
-      t:=ival(left(dat,2));
-      m:=ival(copy(dat,4,2));
-      j:=ival(right(dat,2));
-      if j<80 then inc(j,2000) else inc(j,1900);
-      setdate(j,m,t);
-      end;
-    enddialog;
-    end;
-end;
-
-
 procedure ReadDomainlist;
 var d   : DB;
     p   : DomainNodeP;
@@ -1056,45 +1000,13 @@ begin
     copyright(true);
 end;
 
-
-
-Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
-Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }
-Begin
-  UsrFeldPos1:=1;
-  UsrFeldPos2:=2;
-  i:=1;
-  While UsrFeldtausch[i]<>'A' do
-  begin
-    Case UsrFeldtausch[i] of
-                      { Spezial             Normal }
-      'F' : Begin inc(UsrFeldPos1,5);   inc(UsrFeldPos2,4);  end; { Flags }
-      'G' : Begin inc(UsrFeldPos1,3);                        end; { Gruppen }
-      'H' : Begin inc(UsrFeldPos1,7);                        end; { Haltezeit }
-      'B' : Begin inc(UsrFeldPos1,10);                       end; { Box }
-      'K' : Begin inc(UsrFeldPos1,31);  inc(UsrFeldPos2,31); end; { Kommentar }
-      end;
-    inc(i);
-    end;
-   if UsrfeldPos2=33 Then UsrFeldpos2:=32;
-end;
-
-procedure ShowDateZaehler;
-const lastdz : integer = -1;
-begin
-  if zaehler[1]<>lastdz then begin
-    savecursor;
-    lastdz:=zaehler[1];
-    attrtxt(col.coldiarahmen);
-    wrt(zaehlx,zaehly,' '+strsn(lastdz,2)+' ');
-    restcursor;
-    if lastdz=0 then keyboard(KeyEsc);
-    end;
-end;
-
 end.
 {
   $Log$
+  Revision 1.45.2.21  2001/08/11 10:58:35  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.45.2.20  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 

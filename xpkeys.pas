@@ -123,7 +123,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xp7,xp9,xpauto;
+uses xp9sel, xp4o,xp7,xp9,xpauto;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
@@ -241,6 +241,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.3  2001/08/11 10:58:38  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.6.2.2  2001/07/01 15:42:12  my
   SV:- moved unit to overlay
 

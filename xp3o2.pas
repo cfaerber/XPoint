@@ -33,7 +33,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xp4, xpnt,xpdatum,xp_pgp;
+uses xp1, xp3,xp3o,xp4, xpnt,xpdatum,xp_pgp;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -466,6 +466,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.9  2001/08/11 10:58:36  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.9.2.8  2001/06/13 01:15:57  my
   - added more meaningful description for "ungelesen-fix" of 01/05/23
 

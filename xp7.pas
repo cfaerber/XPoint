@@ -60,7 +60,7 @@ var Netcall_connect : boolean;
 implementation  {---------------------------------------------------}
 
 uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
-     xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f,xpovl;
+     xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f,xpovl, xp9sel;
 
 var  epp_apppos : longint;              { Originalgr”áe von ppfile }
 
@@ -1563,6 +1563,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.17  2001/08/11 10:58:36  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.16.2.16  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 

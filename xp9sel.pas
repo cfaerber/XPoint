@@ -62,6 +62,7 @@ function  PPPClientTest(var s:string):boolean;
 function  is_mailaddress(const s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
 function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
+procedure SetUsername(s:string);
 
 implementation
 
@@ -826,10 +827,87 @@ begin
     notempty2:=false;
     end;
 end;
+
+
+{ s = '<BOX> <USERNAME> [/ Realname]'}
+
+procedure SetUsername(s:string);
+var x,y  : byte;
+    brk  : boolean;
+    user : string[50];
+    real : string[40];
+    p    : byte;
+    d    : DB;
+    box  : string[BoxNameLen];
+    gross   : boolean;
+    hasreal : boolean;
+begin
+  s:=trim(s);
+  if s='' then
+    rfehler(916)      { 'SETUSER - Parameter fehlen' }
+  else begin
+    p:=cpos(' ',s);
+    if p=0 then begin
+      box:=UStr(s); user:=''; real:='';
+      end
+    else begin
+      box:=ustr(left(s,p-1));
+      user:=trim(mid(s,p+1));
+      p:=pos(' (',user);
+      if p=0 then real:=''
+      else begin
+        real:=copy(user,p+2,length(user)-p-2);
+        user:=trim(left(user,p-1));
+        end;
+      end;
+    dbOpen(d,BoxenFile,1);
+    dbSeek(d,boiName,box);
+    if not dbFound then
+      rfehler1(918,box)   { 'SETUSER - Box "%s" unbekannt!' }
+    else begin
+      hasreal:=ntRealname(dbReadInt(d,'netztyp'));
+      if user='' then begin
+        user:=dbReadStr(d,'username');
+        real:=dbReadStr(d,'realname');
+        dialog(length(getres(930))+length(box)+35,iif(hasreal,5,3),'',x,y);
+        gross:=ntGrossUser(dbReadInt(d,'netztyp'));
+        maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fÅr %s:' }
+        mhnr(1502);
+        if hasreal then
+          maddstring(3,4,forms(getreps(931,box),length(getreps(930,box))),real,30,40,'');  { 'Neuer Realname:' }
+        readmask(brk);
+        enddialog;
+        end
+      else
+        brk:=false;
+      if not brk then begin
+        dbWrite(d,'username',user);
+        if hasreal { and (real<>'') 29.07.96 } then dbWrite(d,'realname',real);
+        if box=DefFidoBox then begin
+          HighlightName:=ustr(user);
+          aufbau:=true;
+          end;
+        if not dispusername then begin
+          message(getres(910)+user+' @ '+box+iifs(real='','',' ('+real+')'));    { 'Username: ' }
+          mdelay(1000);
+          closebox;
+          end;
+        end;
+      end;
+    dbClose(d);
+    showusername;
+    end;
+end;
+
+
 end.
 
 {
   $Log$
+  Revision 1.1.2.16  2001/08/11 10:58:38  mk
+  - debug switch on
+  - moved some procedures and functions, because code size of unit
+
   Revision 1.1.2.15  2001/08/06 15:32:31  mk
   JG:- fix fuer Sonderbehandung UUCP_C und UUCP_U
 
