@@ -1,0 +1,42 @@
+$Id$
+
+Alle Versionen
+--------------
+- Archive.pas hat noch einige Probleme mit Long File Names
+- es sind noch viele Verweise auf 80 Zeichen Spaltenbreite enthalten
+- tausendundein !! im Source, bitte der Reihe nach durchgehen und
+  nach Prfung/Korrektur entfernen
+
+
+DOS
+---
+- Mausunterstützung
+- Unterstützug zur Umschaltung der Zeilen/Spaltenzahl,
+  siehe SysGetScreenLines, SysGetScreenCols, SysGetMaxScreenSize, SysSetScreenSize
+  in xpdos32.pas
+- dosx.pas, alldrives portieren
+
+
+Windows
+-------
+- Mausunterstützung verbessern
+- xpwin32.pas, SysGetMaxScreenSize implementieren
+- FPC sockets.pas geht nicht mit Text-Files (connect(?, ?, tin, tout)
+- Clip.pas, Clip2String, Ansi
+-
+
+Linux
+-----
+- Mausunterstützung
+- Unterstützug zur Umschaltung der Zeilen/Spaltenzahl,
+  siehe SysGetScreenLines, SysGetScreenCols, SysGetMaxScreenSize, SysSetScreenSize
+  in ncurses.pas
+
+OS/2
+----
+- Mausunterstützung
+- Unterstützug zur Umschaltung der Zeilen/Spaltenzahl,
+  siehe SysGetScreenLines, SysGetScreenCols, SysGetMaxScreenSize, SysSetScreenSize
+  in xpos2.pas
+- dosx.pas, alldrives portieren
+
