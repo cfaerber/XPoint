@@ -87,6 +87,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        { 31.01.2000 robo }
        EditfReadUUeBlock= 80;         { Block aus Datei einlesen & UU-Encode }
        { /robo }
+       EditfFormatBlock = 81;         { Block reformatieren            }
 
        EditfFind        = 100;        { Suchen                         }
        EditfFindReplace = 101;        { Suchen + Ersetzen              }
@@ -177,6 +178,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5  2000/03/17 21:22:10  rb
+  vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
+
   Revision 1.4  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

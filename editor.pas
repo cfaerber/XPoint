@@ -1685,7 +1685,8 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-        { /robo }                    
+        { /robo }
+        editfFormatBlock  : BlockFormatieren;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
 
@@ -1812,6 +1813,7 @@ var  dl         : displp;
                         'P' : b:=EditfPrint;
                         'D' : b:=EditfBreak;
                         'S' : b:=EditfChangeCase;
+                        'F' : b:=EditfFormatBlock;
                       end else
 
     if t=^O      then case GetPrefixChar('O',true) of
@@ -1861,7 +1863,7 @@ var  dl         : displp;
     begin
       with e^ do begin
         nxx:=Advance(dl^[scy].absatz,dl^[scy].offset,rrand);
-        if nxx=vActAbs^.size then scx:=xx
+        if nxx=ActAbs^.size then scx:=xx
         else scx:=minmax(xx,1,nxx-dl^[scy].offset);
         end;
     end;
@@ -1879,7 +1881,7 @@ var  dl         : displp;
             end
           else if t=mausleft then begin
             lx:=xx; ly:=yy;
-            TruncAbs;
+            TruncAbs(ActAbs);
             scy:=max(1,yy-y);
             KorrScy;
             Setscx(xx);
@@ -1994,6 +1996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/03/17 21:22:10  rb
+  vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
+
   Revision 1.13  2000/03/17 11:16:33  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 
