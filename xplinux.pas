@@ -56,6 +56,7 @@ type
 
 function MakeDir(p: string; a: longint): boolean;
 function TestAccess(p: string; ta: TTestAccess): boolean;
+procedure SetAccess(p: string; ta: TTestAccess);
 
 { XPLog gibt eine Logmeldung im Syslog aus }
 procedure XPLog(Level: integer; format_s: string; args: array of const);
@@ -184,6 +185,18 @@ begin
   end;  
 end;
 
+procedure SetAccess(p: string; ta: TTestAccess);
+begin
+  case ta of
+    taUserR:   chmod(p, STAT_IRUSR);
+    taUserW:   chmod(p, STAT_IWUSR);
+    taUserRW:  chmod(p, STAT_IRUSR or STAT_IWUSR);
+    taUserRWX: chmod(p, STAT_IRWXU);
+    taUserX:   chmod(p, STAT_IXUSR);
+    taUserRX:  chmod(p, STAT_IRUSR or STAT_IXUSR);
+  end;
+end;
+
 { SysLog-Interface ----------------------------------------------------- }
 
 procedure closelog;cdecl;external;
@@ -285,6 +298,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/05/09 15:52:15  hd
+  - SetAccess definiert
+
   Revision 1.9  2000/05/08 18:22:50  hd
   - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
 
