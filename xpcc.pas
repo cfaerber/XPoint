@@ -48,6 +48,10 @@ const CCtemp = 'verteil.$$$';
 
 var ccused   : array[1..maxcc] of boolean;
 
+function is_vname(var s:string):boolean;
+begin
+  is_vname:=(left(s,1)='[') and (right(s,1)=']');
+end;
 
 procedure set_cce;
 var i,j  : shortint;
@@ -89,11 +93,13 @@ begin
     cc_testempf:=not ccte_nobrett;
     end
   else
-    if (left(s,1)='[') and (right(s,1)=']') then begin
+    if is_vname(s) and not sel_verteiler
+    then begin
       rfehler(2250);     { 'Verteiler sind hier nicht erlaubt.' }
       cc_testempf:=false;
       end
     else begin
+     if is_vname(s) then s:=vert_char+s+'@V';
       n:=0;
       p:=cpos('@',s);
       if p>0 then
@@ -145,11 +151,15 @@ begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStr(bbase,'brettname'),2)
         else dbReadN(ubase,ub_username,s);
+        if left(s,1)=vert_char
+          then s:=copy(s,2,length(s)-3);
         end
       else
         if (p>0) and not testmailstring(s) then
         begin
           cc_testempf:=false; 
+          if left(s,1)=vert_char
+            then s:=copy(s,2,length(s)-3);
           exit;
           end
       else
@@ -203,6 +213,8 @@ var x,y   : byte;
     i     : shortint;
     h     : byte;
     small : string[1];
+    t     : text;
+    s     : string;
 begin
   h:=minmax(cc_anz+2,6,screenlines-13);
   diabox(62,h+4,getres(2201),x,y);    { 'Kopien an:' }
@@ -238,16 +250,44 @@ begin
         inc(cc_anz);
         cc^[cc_anz]:=cc^[i];
         end;
+    
+    if cc_anz>0 then                 { wenn CCs da sind Verteilernamen suchen und aufloesen }
+    begin 
+      i:=0;
+      repeat
+      inc(i);      
+      if is_vname(cc^[i]) then
+      begin                                                    { nach Verteilernamen suchen }
+        assign(t,CCfile);
+        reset(t);
+        if ioresult=0 then
+        begin
+          repeat
+            readln(t,s)
+          until eof(t) or (ustr(s)=ustr(cc^[i]));
+          if not eof(t) then                                   { wenn gefunden... }                            
+          begin                      
+            repeat
+              readln(t,s);                                     { auslesen und anhaengen }
+              if (trim(s)<>'') and not is_vname(s) then
+              begin       
+                inc(cc_anz);
+                cc^[cc_anz]:=left(s,79);
+                end;
+            until eof(t) or is_vname(s) or (cc_anz>=maxcc-1);
+            cc^[i]:=cc^[cc_anz];                               { Verteilernamen durch }
+            dec(cc_anz);                                       { letzten Eintrag ersetzen }
+            end; 
+          close(t);
+          end;
+        end;
+      until i=cc_anz;
+      end;
+ 
     for i:=cc_anz+1 to maxcc do
       cc^[i]:='';
     SortCCs(cc,cc_anz);
     end;
-end;
-
-
-function is_vname(var s:string):boolean;
-begin
-  is_vname:=(left(s,1)='[') and (right(s,1)=']');
 end;
 
 
@@ -345,6 +385,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/05 18:08:50  jg
+  - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
+  - Empfaenger aendern Loescht alte "Kopien an" Eintraege
+
   Revision 1.12  2000/04/29 19:11:52  jg
   - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
     und "Kopien an" + "Empfaenger aendern" im Sendefenster

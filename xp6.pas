@@ -848,6 +848,8 @@ end;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
       else adresse:=uucpbrett(empfaenger,2);
+    if pm and (left(adresse,1)=vert_char)
+      then adresse:=copy(adresse,2,length(adresse)-3);
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
@@ -861,7 +863,11 @@ end;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
     if (left(adresse,1)='[') and (right(adresse,1)=']')
-    then adresse:=vert_char+adresse+'@V';     { Verteilernamen anpassen }
+    then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
+    else begin
+      cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
+      fillchar(cc^,sizeof(cc^),0);
+      end;
     if (adresse<>'') and (cc_testempf(adresse)) then begin
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
@@ -1486,7 +1492,9 @@ fromstart:
                 n:=abs(n);
                 if ustr(t)=kopkey then begin
                   old_cca:=cc_anz;
+                  sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }   
                   edit_cc(cc,cc_anz,brk);
+                  sel_verteiler:=false;
                   if (old_cca=0) and (cc_anz>0) then forcebox:='';
                   if cc_anz>0 then TestXpostings(true);
                   showcc;
@@ -2202,6 +2210,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/05/05 18:08:50  jg
+  - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
+  - Empfaenger aendern Loescht alte "Kopien an" Eintraege
+
   Revision 1.25  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 
