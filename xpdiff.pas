@@ -21,7 +21,7 @@ uses xpglobal;
 
 const prodcode : byte = $e9;
       version: smallword  = $0314;   { 3.20 }
-      prodcodef= 'FIDO.PC';
+      prodcodef= 'fido.pc';
 
       EL_ok     = 0;                    { XP-FM:                    }
       EL_recerr = 1;                    { ERRORLEVEL: Empf.-Fehler  }
@@ -45,6 +45,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6  2000/05/22 16:13:04  hd
+  - Dateiname in Kleinschreibung
+
   Revision 1.5  2000/04/13 12:48:40  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
