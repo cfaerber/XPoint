@@ -504,7 +504,7 @@ begin
   if ((xmsovrbuf=false) and (emsovrbuf=false)) then write('Disk') else
   if ((xmsovrbuf=true) and (emsovrbuf=true)) then write('ERROR');
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,iif(
-    (WinVersion=4)and(Lo(WinNTVersion)=0),13,12),12),getres2(rnr,9)+'...');
+    (WinVersion=4)and(Lo(WinNTVersion)=0),13,12),11),getres2(rnr,9)+'...');
   mon;
   freeres;
   wait(curon);
@@ -1076,6 +1076,9 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.23  2003/04/16 22:27:23  my
+  MY:- "Taste drÅcken..." bei X/S/S war unter DOS noch eine Zeile zu tief
+
   Revision 1.27.2.22  2003/04/16 13:48:20  mw
   MW: - Neue Berechnungsmethode fÅr XMS-Belegung durch Openxp/16
         (In overxms.asm wird die Grî·e des XMS-Blocks gesichert).
