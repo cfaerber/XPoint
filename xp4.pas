@@ -839,6 +839,8 @@ var t,lastt: taste;
         MF_brettda:=false;
     end;
 
+  var rnetztyp: byte;
+
   begin
     fn:=TempS(2000);
     GoP;
@@ -979,24 +981,29 @@ var t,lastt: taste;
       dbOpen(d,GruppenFile,1);
       dbSeek(d,giIntnr,dbLongStr(grnr));
       gfound:=dbFound;
-      if gfound and
-         (ntBoxNetztyp(dbReadNStr(bbase,bb_pollbox)) IN [nt_POP3,nt_IMAP,nt_NNTP,nt_UUCP]) then begin
-        // Roles: Sender identity overrides (RFC net type only).
-        // Some notes to this feature: xp6.DoSend is obviously intended for
-        // *creating* messages, not *editing* them. Problem is that DoSend
-        // overwrites many header entries with server defaults when
-        // editing a message. We have to prevent this with roles or all
-        // role settings will get lost when editing a message once after
-        // creating it. Here we do initial setup; xp6o.unversandt cares
-        // that these customized header entries are not overwritten
-        // on editing this message once more.
-        // BTW one could substitute sdata^.sendermail with xp6.forceabs
-        // but this leads to problems with other net types.
-        sdata^.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
-        sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
-        sdata^.replyto.add(dbReadStr(d,iifs(pm,'pmreplyto','amreplyto')));
-        if sdata^.replyto[0]='' then sdata^.replyto.delete(0);
-        sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
+      if gfound then begin
+        if netztyp<>0 then
+          rnetztyp:= netztyp
+        else
+          rnetztyp:= ntBoxNetztyp(dbReadNStr(bbase,bb_pollbox));
+        if rnetztyp IN [nt_POP3,nt_IMAP,nt_NNTP,nt_UUCP] then begin
+          // Roles: Sender identity overrides (RFC net type only).
+          // Some notes to this feature: xp6.DoSend is obviously intended for
+          // *creating* messages, not *editing* them. Problem is that DoSend
+          // overwrites many header entries with server defaults when
+          // editing a message. We have to prevent this with roles or all
+          // role settings will get lost when editing a message once after
+          // creating it. Here we do initial setup; xp6o.unversandt cares
+          // that these customized header entries are not overwritten
+          // on editing this message once more.
+          // BTW one could substitute sdata^.sendermail with xp6.forceabs
+          // but this leads to problems with other net types.
+          sdata^.SenderRealname:=dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
+          sdata^.SenderMail:=dbReadStr(d,iifs(pm,'pmmail','ammail'));
+          sdata^.replyto.add(dbReadStr(d,iifs(pm,'pmreplyto','amreplyto')));
+          if sdata^.replyto[0]='' then sdata^.replyto.delete(0);
+          sdata^.fqdn:=dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
+          end;
         end;
       end;
     if pm then begin
@@ -2161,6 +2168,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.86  2001/06/05 21:23:35  ma
+  - fixed: crashed when replying to a mail in user mail lister
+
   Revision 1.85  2001/06/04 23:24:14  ma
   - fixed: Roles affected other net types than RFC
 
