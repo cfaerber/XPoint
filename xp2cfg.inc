@@ -711,7 +711,9 @@ begin
   ListFixedhead:=false;
   MaggiVerkettung:=false;
   HeaderLines:=0;
+{$IFNDEF Linux }
   timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
+{$ENDIF }
   AutoTIC:=true;
   shellshowpar:=false;
   shellwaitkey:=false;
@@ -1697,6 +1699,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2000/05/02 20:31:40  hd
+  Kein Default-Wert mehr fuer Timezone unter Linux
+
   Revision 1.41  2000/05/02 19:56:38  hd
   - Dateinamen fuer UnixFS angepasst (diesmal vollstaendig :-/)
   - Programmnamen der Entpacker angepasst
