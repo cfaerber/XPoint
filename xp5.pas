@@ -47,7 +47,7 @@ procedure memstat;
 procedure fragstat;
 procedure scsaver;
 procedure scsescape;
-procedure TimedScsaver(endtime:string);
+procedure TimedScsaver(const endtime:string);
 procedure DatabaseStat;
 procedure ScreenShot;
 procedure xp32welcome;
@@ -506,7 +506,7 @@ end;
 
 { Screen Saver }
 
-procedure TimedScsaver(endtime:string);
+procedure TimedScsaver(const endtime:string);
 
 const maxstars = 40;
       scactive : boolean = false;
@@ -974,6 +974,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2002/09/09 09:06:35  mk
+  - added const parameters
+
   Revision 1.66  2002/07/25 20:43:55  ma
   - updated copyright notices
 

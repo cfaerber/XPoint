@@ -439,7 +439,7 @@ begin
 end;
 
 
-procedure RemoveEOF(fn:string);
+procedure RemoveEOF(const fn:string);
 var f : file;
     b : byte;
 begin
@@ -461,7 +461,7 @@ end;
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurÅckwandeln                 }
 
-procedure editfile(name: string; nachricht,reedit,senden:boolean;
+procedure editfile(const name: string; nachricht,reedit,senden:boolean;
                    keeplines:byte;ed_ukonv:boolean);
 var
     bak : string;
@@ -519,6 +519,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.83  2002/09/09 09:06:34  mk
+  - added const parameters
+
   Revision 1.82  2002/09/09 08:42:33  mk
   - misc performance improvements
 

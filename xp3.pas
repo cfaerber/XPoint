@@ -46,9 +46,9 @@ procedure UBUnmark(rec:longint);
 
 procedure XreadF(ofs:longint; var f:file);
 procedure XreadS(ofs:longint; s:TStream);
-procedure Xread(fn:string; append:boolean);
+procedure Xread(const fn:string; append:boolean);
 procedure XmemRead(ofs:word; var size: Integer; var data);
-procedure Xwrite(fn:string);
+procedure Xwrite(const fn:string);
 
 procedure Cut_QPC_DES(var betr:string);
 function  ReCount(var betr:string):integer;
@@ -83,16 +83,16 @@ function  IsNodeAddress(const adr:string):boolean;
 procedure SetDefZoneNet;   { Fido-Defaultzone/Net setzen }
 
 function  vert_name(s:string):string;
-function  vert_long(s:string):string;
+function  vert_long(const s:string):string;
 function  systemname(adr:string):string;
 function  pfadbox(zconnect:boolean; var pfad:String):string;
-function  file_box(d:DB; dname:string):string;
-function  box_file(box:string):string;
+function  file_box(d:DB; const dname:string):string;
+function  box_file(const box:string):string;
 function  brettok(trenn:boolean):boolean;
 function Addr2DB(const addr: string): string;
 
-function  extmimetyp(typ:string):string;
-function  compmimetyp(typ:string):string;
+function  extmimetyp(const typ:string):string;
+function  compmimetyp(const typ:string):string;
 procedure CloseAblage;
 
 var
@@ -549,7 +549,7 @@ begin
 end;
 
 
-procedure Xread(fn:string; append:boolean);
+procedure Xread(const fn:string; append:boolean);
 var f : file;
 begin
   assign(f,fn);
@@ -563,7 +563,7 @@ begin
   close(f);
 end;
 
-procedure XmemRead(ofs:word; var size:word; var data);
+procedure XmemRead(ofs:word; var size: Integer; var data);
 var
   ablage   : byte;
 begin
@@ -596,7 +596,7 @@ begin
 end;          }
 
 
-procedure Xwrite(fn:string);
+procedure Xwrite(const fn:string);
 var f,puffer : file;
     ablage   : byte;
     oldsize  : longint;
@@ -990,7 +990,7 @@ begin
     end;
 end;
 
-function vert_long(s:string):string;
+function vert_long(const s:string):string;
 begin
   if (FirstChar(s)='[') and (LastChar(s)=']') then
     vert_long:=vert_char+s+'@V'
@@ -1035,7 +1035,7 @@ begin
 end;
 
 
-function file_box(d:DB; dname:string):string;
+function file_box(d:DB; const dname:string):string;
 var open : boolean;
 begin
   open:=(d<>nil);
@@ -1053,7 +1053,7 @@ begin
 end;
 
 
-function box_file(box:string):string;
+function box_file(const box:string):string;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
@@ -1152,7 +1152,7 @@ begin
     end;
 end;
 
-function extmimetyp(typ:string):string;
+function extmimetyp(const typ:string):string;
 begin
   if firstchar(typ)='/' then
     extmimetyp:='application'+typ
@@ -1161,7 +1161,7 @@ begin
 end;
 
 
-function compmimetyp(typ:string):string;
+function compmimetyp(const typ:string):string;
 begin
   if LeftStr(typ,12)='application/' then
     compmimetyp:=LowerCase(mid(typ,12))
@@ -1171,6 +1171,9 @@ end;
 
 {
   $Log$
+  Revision 1.86  2002/09/09 09:06:35  mk
+  - added const parameters
+
   Revision 1.85  2002/09/09 08:42:33  mk
   - misc performance improvements
 

@@ -58,7 +58,7 @@ var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
 
 procedure select(dispmode:shortint);
 procedure mainwindow;
-procedure SetBrettGelesen(brett:string);
+procedure SetBrettGelesen(const brett:string);
 
 const
   markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
@@ -149,7 +149,7 @@ begin
   end;
 end;
 
-procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
+procedure SetBrettGelesen(const brett:string);       { Ungelesenflag des Bretts loeschen }
 var b    : byte;                               { wenn keine ungelesenen Nachrichten }
     nope : boolean;
     rec  : longint;
@@ -2324,6 +2324,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2002/09/09 09:06:35  mk
+  - added const parameters
+
   Revision 1.128  2002/09/09 08:42:33  mk
   - misc performance improvements
 

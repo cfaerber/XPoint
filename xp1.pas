@@ -153,17 +153,17 @@ procedure signal;              { s. Config/Anzeige/Hilfen }
 procedure fehler(const txt:string);
 procedure rfehler(nr:word);
 procedure rfehler1(nr:word; txt:string);
-procedure hinweis(txt:string);
-function  mfehler(b:boolean; txt:string):boolean;
-function  fehlfunc(txt:string):boolean;
-procedure logerror(txt:string);
+procedure hinweis(const txt:string);
+function  mfehler(b:boolean; const txt:string):boolean;
+function  fehlfunc(const txt:string):boolean;
+procedure logerror(const txt:string);
 procedure tfehler(const txt:string; sec:integer);
 procedure trfehler(nr:word; sec:integer);
 procedure trfehler1(nr:word; const txt:string; sec:integer);
-procedure afehler(txt:string; auto:boolean);
+procedure afehler(const txt:string; auto:boolean);
 procedure arfehler(nr:word; auto:boolean);
 procedure interr(const txt:string);
-function  ioerror(i:integer; otxt:atext):atext;
+function  ioerror(i:integer; const otxt:atext):atext;
 
 procedure shell(const prog:string; space:word; cls:shortint);  { externer Aufruf }
 
@@ -173,8 +173,8 @@ function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringL
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    utf8:boolean;
                    cols:shortint):shortint; { Lister }
-procedure RemoveEOF(fn:string);
-procedure editfile(name: string; nachricht,reedit,senden:boolean;
+procedure RemoveEOF(const fn:string);
+procedure editfile(const name: string; nachricht,reedit,senden:boolean;
                    keeplines:byte;ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
@@ -236,7 +236,7 @@ procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
-function  TempExtS(bytes:longint;startnamewith,ext:string):string;
+function  TempExtS(bytes:longint;const startnamewith,ext:string):string;
 procedure _era(const Filename: String);
 // Deletes a file only if exists, uses _era to report errors
 procedure SafeDeleteFile(const Filename: String);
@@ -1331,26 +1331,26 @@ begin
   pophp;
 end;
 
-function mfehler(b:boolean; txt:string):boolean;
+function mfehler(b:boolean; const txt:string):boolean;
 begin
   if not b then _fehler(txt,false);
   mfehler:=not b;
 end;
 
 
-procedure hinweis(txt:string);
+procedure hinweis(const txt:string);
 begin
   _fehler(txt,true);
 end;
 
-function fehlfunc(txt:string):boolean;
+function fehlfunc(const txt:string):boolean;
 begin
   fehler(txt);
   fehlfunc:=true;
 end;
 
 
-procedure logerror(txt:string);
+procedure logerror(const txt:string);
 var f : text;
 begin
   assign(f,Logpath+ErrlogFile);
@@ -1391,7 +1391,7 @@ begin
   pophp;
 end;
 
-procedure afehler(txt:string; auto:boolean);
+procedure afehler(const txt:string; auto:boolean);
 begin
   if auto then
     tfehler(txt,20)
@@ -1408,7 +1408,7 @@ begin
 end;
 
 
-function ioerror(i:integer; otxt:atext):atext;
+function ioerror(i:integer; const otxt:atext):atext;
 var s : atext;
 begin
   if ioresult<>0 then;
@@ -1891,7 +1891,7 @@ begin
     TempS:=TempFile(OwnPath);
 end;
 
-function TempExtS(bytes:longint;startnamewith,ext:string):string;
+function TempExtS(bytes:longint;const startnamewith,ext:string):string;
 begin
   if (temppath='') or (temppath[1]=ownpath[1]) or (TempFree+4096>bytes) then
     Result:=TempExtFile(TempPath,startnamewith,ext)
@@ -2139,6 +2139,9 @@ end;
 
 {
   $Log$
+  Revision 1.161  2002/09/09 09:06:34  mk
+  - added const parameters
+
   Revision 1.160  2002/09/09 08:42:33  mk
   - misc performance improvements
 
