@@ -23,6 +23,13 @@ unit xpncuucp;
 
 interface
 
+function UUCPNetcall(boxname: string;
+                     boxpar: boxptr;
+                     crash,diskpoll: boolean;
+                     domain: string;
+                     Logfile: String;
+                     IncomingFiles: TStringList): shortint;
+
 implementation
 
 var uunum : word;    { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
@@ -76,20 +83,19 @@ begin
 end;
 
 
-(*
-procedure NoUUZ;
-begin
-  {window(1,1,screenwidth,screenlines);}
-  trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
-  twin;
-end; *)
+//	procedure NoUUZ;
+//	begin
+//	  {window(1,1,screenwidth,screenlines);}
+//	  trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
+//	  twin;
+//	end;
 
-procedure NoUUCICO;
-begin
-  {window(1,1,screenwidth,screenlines);}
-  trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
-  twin;
-end;
+//	procedure NoUUCICO;
+//	begin
+//	  {window(1,1,screenwidth,screenlines);}
+//	  trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
+//	  twin;
+//	end;
 
 procedure PackFehler;
 begin
@@ -459,6 +465,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/02/21 17:45:53  cl
+  - first things for TUUCPNetcall
+
   Revision 1.2  2001/02/01 21:20:27  ma
   - compiling!
   - only Fido: UUCP/POP3/... routines are temporarily commented out

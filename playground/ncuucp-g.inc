@@ -19,17 +19,31 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-const cp_CLOSE   = 1;      { Verbindung beenden  }
-      cp_NAK     = 2;      { fehlerhaftes Paket  }
-      cp_ACK     = 4;      { korrektes Paket     }
-      cp_INITC   = 5;      { Init 3 / WinSize    }
-      cp_INITB   = 6;      { Init 2 / PacketSize }
-      cp_INITA   = 7;      { Init 1 / WinSize    }
+type
+  TUUCProtocolG = class(TUUCProtocolSimple)
+    public
+      constructor InitProtocol;
+      destructor  ExitProtocol;
 
-type  uuBuffer   = array[0..4095] of byte;
-      PacketHeader = array[0..5] of byte;
+      function SendCommand(s:string):boolean; override;
+      function GetCommand:string; override;
+      function SendFile(fn:string; offset:longint):shortint; override;
+      function RecFile(fn:string):Shortint; override;
 
-var   gsSeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
+    private
+      function  gHeaderChecksum(var header:PacketHeader):byte;
+      procedure g_SendHeader;
+      procedure g_SendControlPacket(xxx,yyy:byte);
+      function  cp_type:byte;
+      procedure g_RecControlPacket(t:word);  { wird auch fuer Datenpakete verwendet }
+      function  g_CheckSum(var buffer:uuBuffer; c:word):word;
+      function  g_PutDataPacket(var data; size:word; noshort:boolean):byte;
+      procedure g_SendDataPacket(nr:byte);
+      function  g_WaitAcknowledge(all:boolean):boolean;
+      procedure g_receive(var s:string);    { Befehl oder Datei empfangen }
+
+    private
+      gsSeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
       grSeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
       grWinSize  : byte;   { eigene Window-Groesse, 1..7 }
       gsWinSize  : byte;   { Window-Groesse der Gegenseite, 1..7  }
@@ -44,19 +58,31 @@ var   gsSeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
       gCtlHeader : PacketHeader;
       gClose     : boolean;  { Close-Packet erhalten }
 
+      end;
 
-function gHeaderChecksum(var header:PacketHeader):byte;
+
+const cp_CLOSE   = 1;      { Verbindung beenden  }
+      cp_NAK     = 2;      { fehlerhaftes Paket  }
+      cp_ACK     = 4;      { korrektes Paket     }
+      cp_INITC   = 5;      { Init 3 / WinSize    }
+      cp_INITB   = 6;      { Init 2 / PacketSize }
+      cp_INITA   = 7;      { Init 1 / WinSize    }
+
+type  uuBuffer   = array[0..4095] of byte;
+      PacketHeader = array[0..5] of byte;
+
+function TUUCProtocolG.gHeaderChecksum(var header:PacketHeader):byte;
 begin
   gHeaderChecksum:=header[1] xor header[2] xor header[3] xor header[4];
 end;
 
-procedure g_SendHeader;
+procedure TUUCProtocolG.g_SendHeader;
 begin
   gCtlHeader[5]:=gHeaderChecksum(gCtlHeader);
   sendblock(gCtlHeader,6);
 end;
 
-procedure g_SendControlPacket(xxx,yyy:byte);
+procedure TUUCProtocolG.g_SendControlPacket(xxx,yyy:byte);
 begin
   gCtlHeader[0]:=ord(^P);
   gCtlHeader[1]:=9;
@@ -110,7 +136,7 @@ begin
 end;
 
 
-function g_InitProtocol:boolean;
+constructor TUUCProtocolG.InitProtocol;
 var i : integer;
     n : byte;
 begin
@@ -165,7 +191,7 @@ begin
 end;
 
 
-procedure g_ExitProtocol;
+destructor TUUCProtocolG.ExitProtocol;
 var i : integer;
     n : byte;
 begin
@@ -189,7 +215,7 @@ begin
 end;
 
 
-function g_CheckSum(var buffer:uuBuffer; c:word):word;
+function TUUCProtocolG.CheckSum(var buffer:uuBuffer; c:word):word;
 var ichk1,ichk2 : longint;
     b,i         : word;
 begin
@@ -214,7 +240,7 @@ end;
 
 { Datenpaket im Ringpuffer ablegen }
 
-function g_PutDataPacket(var data; size:word; noshort:boolean):byte;
+function TUUCProtocolG.PutDataPacket(var data; size:word; noshort:boolean):byte;
 var ssize,w : word;
     short   : boolean;
     ofs     : word;
@@ -256,7 +282,7 @@ begin
 end;
 
 
-procedure g_SendDataPacket(nr:byte);
+procedure TUUCProtocolG.SendDataPacket(nr:byte);
 var size : word;
 begin
   if ParDebug then
@@ -268,7 +294,7 @@ begin
 end;
 
 
-function g_WaitAcknowledge(all:boolean):boolean;
+function TUUCProtocolG.WaitAcknowledge(all:boolean):boolean;
 var (* AckDa : boolean; *)
     n,i   : integer;
     seqnr : shortint;
@@ -336,7 +362,7 @@ begin
 end;
 
 
-function g_SendCommand(s:string):boolean;   { Befehl senden }
+function TUUCProtocolG.SendCommand(s:string):boolean;   { Befehl senden }
 var ofs  : byte;
     size : word;
 begin
@@ -352,7 +378,7 @@ begin
 end;
 
 
-function g_SendFile(fn:pathstr; offset:longint):shortint;
+function TUUCProtocolG.SendFile(fn:pathstr; offset:longint):shortint;
 var f    : file;
     buf  : ^uubuffer;
     size : longint;
@@ -408,7 +434,7 @@ ende:
 end;
 
 
-procedure g_receive(var s:string);    { Befehl oder Datei empfangen }
+procedure TUUCProtocolG.receive(var s:string);    { Befehl oder Datei empfangen }
 var command,ok   : boolean;             { Dateiname ohne Extension!   }
     f            : file;
     n,size,i,j   : integer;
@@ -594,7 +620,7 @@ abbruch:
 end;
 
 
-function g_getCommand:string;
+function TUUCProtocolG.getCommand:string;
 var s : string;
 begin
   s:='';
@@ -603,14 +629,17 @@ begin
 end;
 
 
-function g_RecFile(fn:pathstr):shortint;
+function TUUCProtocolG.RecFile(fn:pathstr):shortint;
 begin
   g_Receive(fn);
-  g_RecFile:=iif(fn='',fileError,fileOK);
+  RecFile:=iif(fn='',fileError,fileOK);
 end;
 
 {
   $Log$
+  Revision 1.2  2001/02/21 17:45:53  cl
+  - first things for TUUCPNetcall
+
   Revision 1.1  2001/01/19 18:00:00  ma
   - added TUUCPNetcall sources (from uucico)
 
