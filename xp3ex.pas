@@ -323,7 +323,6 @@ var size   : longint;
     p2:=cpos('#',hdp^.absender);
     if p>0 then qchar[p]:='$';
 
-{    if netztyp=nt_UUCP then begin }
     if (netztyp in [nt_UUCP,nt_Client]) or ((p>0) and (p2>0)) then
     begin
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
@@ -754,7 +753,11 @@ begin
             else   rps(s,'$AREA',getres2(361,48));       { 'private Mail' }
           end;
           if wempf[1]='/' then delfirst(wempf);
-          while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
+          for i:=1 to length(wempf) do if (wempf[i]='/') and not
+            (((i>6) and (ustr(copy(wempf,i-6,6))='OPENXP')) and
+             ((i<length(wempf)-1) and ((copy(wempf,i+1,2)='16') or
+              (copy(wempf,i+1,2)='32')))) then
+            wempf[i]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
           rps(s,'$RNAME2', realname);
@@ -1052,7 +1055,7 @@ begin
                   end;
     { /oh }
 
-  { Priorit„t im Listenkopf anzeigen:                                     }
+  { Priorit„t im Listerkopf anzeigen:                                     }
   { Rckgabewert hinter dem PriorityFlag extrahieren und zuordnen         }
 
   hdf_Priority: if hdp^.Priority <> 0 then
@@ -1068,7 +1071,7 @@ begin
          if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
 
-  { /Priorit„t im Listenkopf anzeigen                                     }
+  { /Priorit„t im Listerkopf anzeigen                                     }
 
   end;
 
@@ -1084,7 +1087,7 @@ begin
         close(f);
         mehdl:=exthdlines; mehds:=extheadersize;
         ExtractMultiPart(mpdata,name,true);    { rekursiver Aufruf von }
-        exthdlines:=mehdl;                     { extact_msg!           }
+        exthdlines:=mehdl;                     { extract_msg!          }
         extheadersize:=mehds;
         reset(f,1);
         if sizepos>=0 then begin
@@ -1173,6 +1176,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.24  2002/03/08 23:01:08  my
+  MY- Fix: Quotezeichenbehandlung bei RFC/Client korrigiert (jetzt wieder
+      mit der von RFC/UUCP identisch).
+
+  MY:- Optik-Fix: Wenn ein Brett (z.B. Mailingliste) den String
+       "OpenXP/16" oder "OpenXP/32" enth„lt, wird der Schr„gstrich in der
+       Brettanzeige und der Quote-Schablone $NEWSGROUP an dieser Stelle
+       nicht mehr durch einen Punkt ersetzt.
+
   Revision 1.17.2.23  2001/12/20 18:17:51  mk
   - KOM-Header auch in Nicht-Binaer-Nachrichten auswerten
 
