@@ -43,7 +43,7 @@ typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 const       nt_ZConnect=2;
       OrgLen    = 80;
       hderrlen  = 40;
-      BetreffLen= 70;
+      BetreffLen= 250;
       readempflist = false;
       readkoplist  = false;
       postadrlen= 80;
@@ -1854,6 +1854,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.1  2001/07/15 11:43:22  mk
+  - Betreffzeile (BetreffLen) von 70 auf 250 erhoeht
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
