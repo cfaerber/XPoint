@@ -936,7 +936,9 @@ end;
     else begin 
       if force_absender='' then goto again;  
       testmailstring_nt:=netztyp;
-      s:=(left(force_absender,cposx(' ',force_absender)-1));
+      if (netztyp<>nt_fido) and (netztyp<>nt_maus)
+        then s:=(left(force_absender,cposx(' ',force_absender)-1))
+        else s:=trim(force_absender);
       if cpos('@',s)=0 then begin
         dbOpen(d,PseudoFile,1);
         dbSeek(d,piKurzname,ustr(s));
@@ -947,7 +949,9 @@ end;
         end;
       if not testmailstring(s) then goto again;
       force_absender:=s+'  '+mid(force_absender,cposx('(',force_absender));
-      if cpos('(',force_Absender)=0 then force_absender:=s+'  ('+realname+')';
+      if (cpos('(',force_Absender)=0) and
+        ((netztyp<>nt_fido) and (netztyp<>nt_maus))
+          then force_absender:=s+'  ('+realname+')';
       end;
     attrtxt(col.coldiahigh);
     mwrt(x+13,yy+2,' '+forms(force_absender,53)+'   ');
@@ -2373,6 +2377,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.32  2001/07/08 21:32:28  my
+  JG:- Fix: <F2> selection of Fido AKAs now works when changing
+       the sender with <Alt-A> in the send window
+
   Revision 1.39.2.31  2001/06/26 20:14:37  my
   JG:- fixed 'change sender' bug: when changing F-TO the input field
        was 2 lines too high.
