@@ -46,7 +46,7 @@ const maxpages = 1200;
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
 function  inithelp(name:pathstr; xh,yh:byte;
                    invers,blocksatz,headline:boolean):boolean;
-procedure sethelppos(_x,_y,height:byte);
+procedure sethelppos(_x,_y,height:word);
 procedure help_printable(printchar:taste; pinit,pexit:string);
 
 procedure IHS(page:word);
@@ -101,12 +101,12 @@ var f         : file;
     _lines    : word;   { iif(noheader,lines,lines-1) }
     z         : ^zt;
     zlen      : array[1..maxlines] of byte;
-    wdt,hgh   : byte;
+    wdt,hgh   : word;
 
     pst       : array[1..maxpst] of word;
-    qst       : array[1..maxpst] of byte;
+    qst       : array[1..maxpst] of word;
     ast       : array[1..maxpst] of integer;
-    pstp      : byte;
+    pstp      : word;
 
     NormColor,HighColor,QvwColor,QvwSelColor : byte;
 
@@ -222,7 +222,7 @@ begin
 end;
 
 
-procedure sethelppos(_x,_y,height:byte);
+procedure sethelppos(_x,_y,height:word);
 begin
   x:=_x; y:=_y; hgh:=height;
 end;
@@ -267,19 +267,19 @@ var  size    : word;
      l,r,m   : word;
      lc      : char;
      res     : integer;
-     wd      : byte;
+     wd      : word;
 label laden;
 
-   procedure insqvw(y1,x1:byte; add:shortint);
-   var i : byte;
+   procedure insqvw(y1,x1:word; add:shortint);
+   var i : word;
    begin
      for i:=1 to qvws do
        with qvw^[i] do
          if (x>=x1) and (y=y1) then inc(x,add);
    end;
 
-   procedure addqvwout(y1,x1:byte; add:shortint);
-   var i : byte;
+   procedure addqvwout(y1,x1:word; add:shortint);
+   var i : word;
    begin
      for i:=1 to qvws do
        with qvw^[i] do
@@ -321,7 +321,7 @@ laden:
   qvws:=blockrb;
   for i:=1 to qvws do
     with qvw^[i] do begin
-      y:=blockrb; x:=blockrb; l:=blockrb;
+      y:=blockrw; x:=blockrb; l:=blockrb;
       nn:=blockrw;
       xout:=x;
       end;
@@ -404,19 +404,19 @@ laden:
 end;
 
 
-procedure dispqvw(n:byte);
+procedure dispqvw(n:word);
 begin
   with qvw^[n] do
     mwrt(xout+help.x-1,help.y+y-_a+iif(NoHeader,-1,1),copy(z^[y]^,x,l));
 end;
 
 
-procedure disppage(qvp:byte);
+procedure disppage(qvp:word);
 var i,p,p2 : integer;
     pgp    : string[11];
     s      : string;
     add    : integer;
-    yy     : byte;
+    yy     : word;
 begin
   moff;
   attrtxt(NormColor);
@@ -505,7 +505,7 @@ var lp      : word;
 
   function noother:boolean;
   var other : boolean;
-      i     : byte;
+      i     : word;
   begin
     other:=false;
     for i:=1 to qvws do
@@ -513,7 +513,7 @@ var lp      : word;
     noother:=not other;
   end;
 
-  procedure searchsame(add:shortint; var nr:byte);
+  procedure searchsame(add:shortint; var nr:word);
   begin
     nr:=qvp;
     repeat
@@ -524,7 +524,7 @@ var lp      : word;
     if nr=qvp then nr:=0;
   end;
 
-  procedure searchother(add:shortint; var nr:byte);
+  procedure searchother(add:shortint; var nr:word);
   begin
     nr:=qvp;
     repeat
@@ -534,9 +534,9 @@ var lp      : word;
     until qvw^[nr].y<>qvw^[qvp].y;
   end;
 
-  procedure searchlowdist(var nr:byte);
-  var y,i : byte;
-      d   : byte;
+  procedure searchlowdist(var nr:word);
+  var y,i : word;
+      d   : word;
   begin
     y:=qvw^[nr].y;
     d:=99;
@@ -548,7 +548,7 @@ var lp      : word;
   end;
 
   procedure goup;
-  var nr : byte;
+  var nr : word;
   begin
     if noother then goleft
     else begin
@@ -560,7 +560,7 @@ var lp      : word;
   end;
 
   procedure godown;
-  var nr : byte;
+  var nr : word;
   begin
     if noother then goright
     else begin
@@ -776,6 +776,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.3  2000/11/26 10:40:25  mk
+  - neue Hilfe mit Querverweisen in langen Texten
+
   Revision 1.5.2.2  2000/11/14 09:27:40  mk
   - Anzahl der maximalen Zeilen pro Hilfeseite erhoeht
 
