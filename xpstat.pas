@@ -1259,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.8  2003/01/12 14:22:44  my
+  MY:- Log-Korrekur
+
   Revision 1.14.2.7  2003/01/12 09:10:15  mw
   MW: Noch eine kleine Erg„nzung zum Gebhrenupdate:
       - Jetzt auch W„hrung im Balkendiagramm der Gebhrenstatistik
@@ -1271,7 +1274,7 @@ end.
         als Voreinstellung)
       - Default-Tarif in der Boxenconfig ist jetzt
         "DTAG T-NET City"
-      - Die Gebhrenstatistik unter X/S/G zeigt in
+      - Die Gebhrenstatistik unter X/S/E zeigt in
         der Tabelle jetzt auch die W„hrung an.
 
   Revision 1.14.2.5  2001/08/12 11:20:40  mk
