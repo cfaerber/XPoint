@@ -4072,6 +4072,16 @@ gesucht und der Text dahinter angezeigt.
        Bildschirmhintergrund ausgeblendet.
 @
 1032
+<<[x]>> -> Die Ausgaben in der Nachrichten- und der
+       Userliste werden etwas umsortiert, damit
+       blinde Benutzer es etwas einfach haben, wenn
+       sie sich die Ausgaben vorlesen lassen:
+       in der Nachrichtenliste wird das Betreff nach
+       vorne und Dateigr”áe und Datum nach hinten
+       sortiert, in der Userliste werden Username
+       und Kommentar vertauscht.
+@
+1033
 <<[x]>> -> Die Ausgaben im internen Terminal werden
        nicht direkt auf den Bildschirm geschrieben,
        sondern laufen ber BIOS-Funktionen. Dies
@@ -4079,12 +4089,12 @@ gesucht und der Text dahinter angezeigt.
        thesizers, ist allerdings langsamer als die
        direkte Ausgabe.
 @
-1033
+1034
 <<[x]>> -> Das Ende von l„nger dauernden Funktionen wie
        z.B. dem Packen von Nachrichten oder Such-
        funktionen wird durch ein Tonsignal angzeigt.
 @
-1034
+1035
 <<[x]>> -> Das Tonsignal bei Fehlern wird um ein kurzes
        Aufblinken des Bildschirmrahmens erg„nzt.
 

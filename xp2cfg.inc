@@ -675,6 +675,7 @@ begin
   vesa_dpms:=false;
   termbios:=false;
   tonsignal:=false;
+  feldtauschvorlesen:=false;
 
   UsePGP:=false;
   PGPbatchmode:=true;
@@ -912,6 +913,7 @@ begin
   writeln(t,'TrennKommentar=',trennkomm);
   writeln(t,'TerminalBIOS=',jnf(termbios));
   writeln(t,'Tonsignal=',jnf(tonsignal));
+  writeln(t,'FeldtauschVorlesen=',jnf(feldtauschvorlesen));
   writeln(t,'Brettkommentar=',jnf(brettkomm));
   wrhd(4);                                             { Z-Netz }
   writeln(t,'Kleinschreibung=',jnf(smallnames));
@@ -1491,6 +1493,7 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
+          getx(su,  'feldtauschvorlesen',feldtauschvorlesen) or
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
@@ -1602,6 +1605,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/03/24 02:20:17  oh
+  - Schalter Config/Anzeige/Hilfen: Feldtausch in Listen eingefuegt
+
   Revision 1.18  2000/03/15 13:57:30  mk
   - Benutzerdefinierbare Headerzeilen:
     Nach Config/Anzeige/Diverses sowie beim Einlesen der

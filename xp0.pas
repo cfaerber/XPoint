@@ -946,7 +946,10 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
-       brettkomm    : boolean;       { Kommetar aus Brettliste Åbernehmen }
+       feldtauschvorlesen:boolean;   { fÅr blinde Benutzer, die sich Ausgaben
+                                       vorlesen lassen, kînnen in der Brett- und
+                                       der Userliste Felder vertauscht werden }
+       brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
        multipartbin : boolean;       { RFC-BinÑrnachrichten als Multipart }
@@ -1081,6 +1084,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.14  2000/03/24 02:20:17  oh
+  - Schalter Config/Anzeige/Hilfen: Feldtausch in Listen eingefuegt
+
   Revision 1.13  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -159,21 +159,29 @@ begin  { __ Suchmarke }
             if vert then begin
               s:=vert_name(s);
               s2:=strsn(hzeit,3)+' ';
-              end
-            else
+            end else
               s2:=abc+pw+dadr;
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
-            if not dispext then
-              dispbuf[y]^:=s2+' '+forms(s+sp(max(2,42-length(s)))+komm,75)
-            else begin
+            if not dispext then begin
+              if FeldtauschVorlesen then
+                dispbuf[y]^:=s2+' '+forms(komm+sp(max(2,32-length(komm)))+s,75)
+              else
+                dispbuf[y]^:=s2+' '+forms(s+sp(max(2,42-length(s)))+komm,75)
+            end else begin
               dbReadN(ubase,ub_pollbox,pbox);
               brettform(s,0,true);
-              if vert then s2:=s2+'       '
-              else s2:=s2+'  '+hz(hzeit)+' ';
-              dispbuf[y]^:=s2+forms(pbox,9)+' '+
-                           forms(s+sp(max(1,36-length(s)))+komm,59);
-              end;
+              if vert then
+                s2:=s2+'       '
+              else
+                s2:=s2+'  '+hz(hzeit)+' ';
+              if FeldtauschVorlesen then
+                dispbuf[y]^:=s2+forms(pbox,9)+' '+
+                             forms(komm+sp(max(1,20-length(komm)))+s,59)
+              else
+                dispbuf[y]^:=s2+forms(pbox,9)+' '+
+                             forms(s+sp(max(1,36-length(s)))+komm,59);
+            end;
           end;
   10..12: begin
             dbReadN(mbase,mb_absender,s0);
@@ -204,8 +212,8 @@ begin  { __ Suchmarke }
                     6 : if pp=0 then s:=TopAllstr(s)
                         else s:=TopAllStr(forms(left(s,pp-1),16))+' '+copy(s,pp+1,length(s)-pp);
                   end;
-                  end;
                 end;
+              end;
             dbReadN(mbase,mb_betreff,s1);
             if dispmode<>12 then begin
               if (netztyp=nt_Maus) and (mnt and $100<>0) then
@@ -273,22 +281,39 @@ begin  { __ Suchmarke }
                smdl(edat,abhdatum)
             then
               hflags:=4;
-            if dispmode=11 then markflag[y]:=1
-            else markflag[y]:=iif(msgmarked,1,0);
+            if dispmode=11 then
+              markflag[y]:=1
+            else
+              markflag[y]:=iif(msgmarked,1,0);
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
                     uv[unvers]+wv[wvl]+typ;
             if fidoqwk and (dispmode=10) and
                dispfto and (_brett[1]='A') then begin
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
-              dispbuf[y]^:=dflags+siz+sdat+' '+forms(s,19)+' '+forms(s0,19)+
-                           ' '+forms(s1,iif(showmsgdatum,22,28));
+              
+              if Feldtauschvorlesen then
+                dispbuf[y]^:=dflags+' '+forms(s1,iif(showmsgdatum,21,27))+' '
+                +forms(s,19)+' '+forms(s0,19)+' '+siz+sdat
+              else
+                dispbuf[y]^:=dflags+siz+sdat+' '+forms(s,19)+' '+forms(s0,19)+
+                             ' '+forms(s1,iif(showmsgdatum,22,28));
+              
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
-              end
-            else begin
-              if dispmode=12 then s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
-              else s:=forms(s,ulen)+' '+forms(s1,blen);
-              dispbuf[y]^:=dflags+siz+sdat+' '+s;
+            end else begin
+              if Feldtauschvorlesen then begin
+                if dispmode=12 then
+                  s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
+                else
+                  s:=forms(s1,blen)+' '+forms(s,ulen);
+                dispbuf[y]^:=dflags+' '+s+siz+sdat;
+              end else begin
+                if dispmode=12 then
+                  s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
+                else
+                  s:=forms(s,ulen)+' '+forms(s1,blen);
+                dispbuf[y]^:=dflags+siz+sdat+' '+s;
+              end;
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name'))) then
                 userflag[y]:=true
@@ -297,7 +322,7 @@ begin  { __ Suchmarke }
                   userflag[y]:=ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0))))
                 else
                   userflag[y]:=(mnt and $1000<>0);
-              end;
+            end;
           end;
      20 : dispbuf[y]^:=AutoShow;
   end;
