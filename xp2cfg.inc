@@ -1764,6 +1764,7 @@ begin
   else
   begin
     XPFirstStart := true;
+    newgeb:=true;
     SetDefaultHeader;
     SaveConfig;
   end;
@@ -1836,6 +1837,18 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.39  2003/01/12 07:42:33  mw
+
+  MW: Kleine ErgÑnzungen zum gro·en GebÅhrenupdate :
+      - Neuinstallierte Crosspoints verwenden jetzt
+        das neue Gebuehrenmodell als Voreinstellung.
+        (Alte Installationen benutzen das alte Modell
+        als Voreinstellung)
+      - Default-Tarif in der Boxenconfig ist jetzt
+        "DTAG T-NET City"
+      - Die GebÅhrenstatistik unter X/S/G zeigt in
+        der Tabelle jetzt auch die WÑhrung an.
+
   Revision 1.62.2.38  2003/01/10 21:55:37  my
   MY:- Log- und Kommentarkosmetik
 

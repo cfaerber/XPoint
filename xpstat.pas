@@ -672,24 +672,24 @@ begin
   writeln(t);
   writeln(t);
   writeln(t,getres2(2609,12));   { 'Monat     | Anrufe |    Upload   |   Download   |   Kosten' }
-  writeln(t,'----------+--------+-------------+--------------+---------');
+  writeln(t,'----------+--------+-------------+--------------+----------------');
   upload:=0; download:=0;
-  sum:=0;
+  sum:=0; 
   asum:=0;
   for i:=firstmonth to lastmonth do begin
     writeln(t,forms(montage.monat[i].tag,10),'|',
               anrufe[i]:6,'  |',
               strsrnp(bytes[i,1],11,0),' |',
               strsrnp(bytes[i,2],12,0),' |',
-              strsrnp(ksum[i],6,2));
+              strsrnp(ksum[i],6,2),' ',waehrung);
     upload:=upload+bytes[i,1];
     download:=download+bytes[i,2];
     sum:=sum+ksum[i];
     inc(asum,anrufe[i]);
     end;
-  writeln(t,'----------+--------+-------------+--------------+---------');
+  writeln(t,'----------+--------+-------------+--------------+----------------');
   writeln(t,getres2(2609,13),asum:6,'  |',strsrnp(upload,11,0),' |',  { 'Gesamt:   |' }
-            strsrnp(download,12,0),' |',strsrnp(sum,6,2));
+            strsrnp(download,12,0),' |',strsrnp(sum,6,2),' ',waehrung);
   writeln(t); writeln(t);
 
   if monate then
@@ -705,7 +705,7 @@ begin
         writeln(t,getres2(2609,14))   { '- keine GebÅhren in diesem Monat -' }
       else begin
         ReadBoxPar(0,defaultbox);
-        maxgeb:=int((maxgeb+ewpz-0.01)/ewpz)*ewpz;
+        maxgeb:=int((maxgeb+ewpz-0.01)/ewpz)*ewpz;        
         while round(maxgeb,2)>0 do begin
           write(t,forms(strsrn(maxgeb,2,2),6),'≥ ');
           for j:=1 to tage do
@@ -1259,6 +1259,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.6  2003/01/12 07:42:33  mw
+
+  MW: Kleine ErgÑnzungen zum gro·en GebÅhrenupdate :
+      - Neuinstallierte Crosspoints verwenden jetzt
+        das neue Gebuehrenmodell als Voreinstellung.
+        (Alte Installationen benutzen das alte Modell
+        als Voreinstellung)
+      - Default-Tarif in der Boxenconfig ist jetzt
+        "DTAG T-NET City"
+      - Die GebÅhrenstatistik unter X/S/G zeigt in
+        der Tabelle jetzt auch die WÑhrung an.
+
   Revision 1.14.2.5  2001/08/12 11:20:40  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

@@ -115,7 +115,7 @@ begin
     bport     := 2;
     params    := '8n1';
     baud      := 19200;
-    gebzone   := 'City';
+    gebzone   := 'DTAG T-NET City';
     o_passwort:= iifs(deutsch,'GEHEIM','SECRET');
     o_logfile := '';
     MagicNet  := 'MagicNET';
@@ -658,6 +658,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.28  2003/01/12 07:42:33  mw
+
+  MW: Kleine ErgÑnzungen zum gro·en GebÅhrenupdate :
+      - Neuinstallierte Crosspoints verwenden jetzt
+        das neue Gebuehrenmodell als Voreinstellung.
+        (Alte Installationen benutzen das alte Modell
+        als Voreinstellung)
+      - Default-Tarif in der Boxenconfig ist jetzt
+        "DTAG T-NET City"
+      - Die GebÅhrenstatistik unter X/S/G zeigt in
+        der Tabelle jetzt auch die WÑhrung an.
+
   Revision 1.10.2.27  2002/03/08 23:11:52  my
   MY:- Workaround fÅr UKAW-Quirk: Da UKAW bei D/B/E/N/Max._Artikel_je
        Gruppe den Wert "0" nicht als "kein Limit" sondern als "keine
