@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { --- User bearbeiten ---------------------------------- }
 
@@ -713,7 +714,11 @@ begin
             mimetyp:=compmimetyp(mpdata.typ+'/'+mpdata.subtyp)
           else
             mimetyp:='text/plain';
-          GetMimeViewer(mimetyp,viewer);
+
+          GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
+          if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+            GetMimeViewer(mimetyp,viewer);
+
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
       end
@@ -1414,3 +1419,9 @@ begin
   wait(curoff);
   closebox;
 end;
+{
+  $Log$
+  Revision 1.3.2.3  2000/04/27 06:44:42  mk
+  JG: - Externe Viewer: Dateiendung hat jetzt Vorrang vor Mimetyp
+
+}
