@@ -364,6 +364,8 @@ function ExtractWord(n: Cardinal; const S: String) : String;
 function WordPosition(N : Cardinal; const S: String; Delim: Char;
                       var Pos : Cardinal) : Boolean;
 function ExtractWordEx(n: Cardinal; const S: String; Delim: Char): String;
+function WordCount(const S: String): Integer;
+function WordCountEx(const S, Delims: String): Integer;
 function FileName(var f):string;                { Dateiname Assign             }
 // Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function FirstChar(const s:string):char;
@@ -816,6 +818,92 @@ begin
       Inc(I);
     SetLength(Result, I-J);
     Move(S[J], Result[1], I-J);
+  end;
+end;
+
+function CharExistsL(const S : AnsiString; C : AnsiChar) : Boolean; register;
+  {-Count the number of a given character in a string. }
+asm
+  push  ebx
+  xor   ecx, ecx
+  or    eax, eax
+  jz    @@Done
+  mov   ebx, [eax-StrOffset].LStrRec.Length
+  or    ebx, ebx
+  jz    @@Done
+  jmp   @@5
+
+@@Loop:
+  cmp   dl, [eax+3]
+  jne   @@1
+  inc   ecx
+  jmp   @@Done
+
+@@1:
+  cmp   dl, [eax+2]
+  jne   @@2
+  inc   ecx
+  jmp   @@Done
+
+@@2:
+  cmp   dl, [eax+1]
+  jne   @@3
+  inc   ecx
+  jmp   @@Done
+
+@@3:
+  cmp   dl, [eax+0]
+  jne   @@4
+  inc   ecx
+  jmp   @@Done
+
+@@4:
+  add   eax, 4
+  sub   ebx, 4
+
+@@5:
+  cmp   ebx, 4
+  jge   @@Loop
+
+  cmp   ebx, 3
+  je    @@1
+
+  cmp   ebx, 2
+  je    @@2
+
+  cmp   ebx, 1
+  je    @@3
+
+@@Done:
+  mov   eax, ecx
+  pop   ebx
+end;
+
+function WordCount(const S: String): Integer;
+begin
+  Result := WordCountEx(S, ' ');
+end;
+
+function WordCountEx(const S, Delims: String): Integer;
+var
+  I    : Integer;
+  SLen : Integer;
+begin
+  Result := 0;
+  I := 1;
+  SLen := Length(S);
+
+  while I <= SLen do begin
+    while (I <= SLen) and CharExistsL(Delims, S[I]) do
+      Inc(I);
+
+    {if we're not beyond end of S, we're at the start of a word}
+    if I <= SLen then
+      Inc(Result);
+
+    {find the end of the current word}
+    while (I <= SLen) and not CharExistsL(Delims, S[I]) do
+      Inc(I);
   end;
 end;
 
@@ -1991,6 +2079,9 @@ end;
 
 {
   $Log$
+  Revision 1.134  2003/08/30 23:47:09  mk
+  - added WordCount(Ex)
+
   Revision 1.133  2003/08/28 01:14:15  mk
   - removed old types s20, s40, s60 and s80
 
