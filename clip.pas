@@ -342,7 +342,7 @@ begin
 
                 cmp oneline,0
                 je @@1b
-  @@1a:         cmp byte ptr es:[si+bx-1],20
+  @@1a:         cmp byte ptr es:[si+bx-1],' '
                 jnbe @@1b
                 dec bx
                 jz @nope
@@ -640,6 +640,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.16  2002/03/11 20:36:38  my
+  JG:- Typo gefixt
+
   Revision 1.19.2.15  2002/03/10 15:25:59  my
   JG:- Beim einzeiligen EinfÅgen des Clipboard-Inhalts (z.B. in Eingabe-
        felder) werden Steuerzeichen am Stringende nicht mehr in
