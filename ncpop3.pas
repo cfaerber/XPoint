@@ -98,6 +98,7 @@ resourcestring
 constructor TPOP3.Create;
 begin
   inherited Create;
+  FPort:= DefaultPOP3Port;
   FUser:='';
   FPassword:='';
   FServer:= '';
@@ -279,6 +280,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.3  2000/08/15 15:08:10  mk
+  - FPort wird jetzt auch bei Create initialisiert
+
   Revision 1.2  2000/08/06 10:18:04  mk
   - Abolen der Mails testweise implementiert
 
