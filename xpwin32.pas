@@ -37,6 +37,7 @@ function SysGetScreenCols: Integer;
 procedure SysGetMaxScreenSize(var Lines, Cols: Integer);
 { Žndert die Bildschirmgr”áe auf die angegeben Werte }
 procedure SysSetScreenSize(const Lines, Cols: Integer);
+procedure RegisterMailClient;
 
 implementation
 
@@ -81,9 +82,34 @@ begin
   SetConsoleWindowInfo(OutHandle, True, R);
 end;
 
+procedure RegisterMailClient;
+var
+  Key: HKey;
+  Disposition: Integer;
+
+  procedure SetKey(DataType: Integer; Name, Value: String);
+  begin
+    // RegSetValueEx(Key, PChar(Name), 0, DataType, Value, Length(Value));
+  end;
+
+begin
+{
+  RegCreateKeyEx(HKEY_LOCAL_MACHINE, 'SOFTWARE\Clients\Mail\OpenXP', 0, nil,
+    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, nil, Key, @Disposition);
+  SetKey(REG_SZ, nil, 'OpenXP');
+  RegCloseKey(Key);
+  RegCreateKeyEx(HKEY_LOCAL_MACHINE, 'SOFTWARE\Clients\Mail\OpenXP\shell\open\command', 0, nil,
+    REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, nil, Key, @Disposition);
+  SetKey(REG_SZ, nil, '"' + ParamStr(0) + '" /Mail');
+  RegCloseKey(Key); }
+end;
+
 end.
 {
   $Log$
+  Revision 1.6  2000/08/14 14:43:00  mk
+  - RegisterMailClient hinzugefuegt
+
   Revision 1.5  2000/07/27 10:13:06  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
