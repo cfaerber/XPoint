@@ -788,7 +788,7 @@ begin
           BoxParOk:=''
       end;
     end else
-      if netztyp IN [nt_NNTP, nt_POP3] then
+      if netztyp in [nt_NNTP,nt_POP3,nt_IMAP,nt_Client] then
         // Hier evtl. n"tige Tests der Parameter einstellen
       else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) then
@@ -1371,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.6  2002/08/04 11:26:13  mk
+  - fixed possible problems with nt_Client in BoxParOk
+
   Revision 1.52.2.5  2002/08/03 16:31:46  mk
   - fixed unsendt-handling in client-mode
 
