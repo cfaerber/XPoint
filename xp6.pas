@@ -1461,6 +1461,8 @@ fromstart:
       nt_QWK      : fidoto:=fidoto;
       nt_Magic,
       nt_Pronet,
+      nt_UUCP,
+      nt_NNTP,
       nt_ZConnect : if (fidoto=brettalle) or (blankpos(fidoto)=0) then
                       fidoto:='';
     else
@@ -2126,6 +2128,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.64  2000/09/11 23:19:15  fe
+  Fido-To-Verarbeitung unter RFC korrigiert.
+
   Revision 1.63  2000/08/26 08:47:43  mk
   JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 

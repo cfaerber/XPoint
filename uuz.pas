@@ -3021,7 +3021,7 @@ begin
     if ersetzt <> '' then
       wrs(f, 'Supersedes: <' + ersetzt + '>');
     if fido_to <> '' then
-      wrs(f, 'X-Comment-To: ' + ersetzt);
+      wrs(f, 'X-Comment-To: ' + fido_to);
 
     for i := 0 to uline.Count - 1 do
     begin
@@ -3414,6 +3414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/09/11 23:19:15  fe
+  Fido-To-Verarbeitung unter RFC korrigiert.
+
   Revision 1.60  2000/09/08 16:12:06  hd
   - Init-Reihenfolge
 
