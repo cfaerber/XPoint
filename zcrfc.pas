@@ -76,6 +76,7 @@ type
     shrinkheader: boolean;        { uz: r-Schalter }
     nomailer: boolean;
     eol: Integer;
+    FDeleteFiles: TStringList;
     function SetMailUser(const mailuser: string): string;
     procedure FlushOutbuf;
     procedure wrfs(const s: string);
@@ -124,7 +125,7 @@ type
 
     ParSize: boolean ;             { Size negotiation }
     ParECmd: boolean ;
-    ClearSourceFiles: boolean; // clear source files after converting
+//    ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
     constructor create;
     destructor Destroy; override;
@@ -133,6 +134,7 @@ type
     function NextUunumber: word;
     procedure ZtoU;
     procedure UtoZ;
+    property DeleteFiles: TStringList read FDeleteFiles;
   end;
 
 procedure StartCommandlineUUZ;
@@ -280,7 +282,7 @@ begin
   FileUser:= 'root';
   OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
-  ClearSourceFiles := false;
+//  ClearSourceFiles := false;
   CommandLine := false;
   nomailer:= false;
   uunumber:= 0;
@@ -327,6 +329,8 @@ begin
 
   rh('NEWS.RFC', false);
   rh('MAIL.RFC', true);
+
+  FDeleteFiles := TStringList.Create;
 end;
 
 destructor TUUZ.Destroy;
@@ -335,6 +339,7 @@ begin
   EmpfList.Free;
   Mail.Free;
   Hd.Free;
+  FDeleteFiles.Free;
   freemem(outbuf, bufsize);
 end;
 
@@ -2564,16 +2569,18 @@ begin
     if ExtractFileExt(sr.name) = '.mail' then
     begin
       ConvertMailfile(spath + sr.name, '', mails);
-      if ClearSourceFiles then DeleteFile(spath+sr.name) else
-        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
+//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+      DeleteFiles.Add(spath+sr.name);
     end
     else
     if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
-      if ClearSourceFiles then DeleteFile(spath+sr.name) else
-        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
+//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+      DeleteFiles.Add(spath+sr.name);
     end
     else
     if LeftStr(sr.name, 2) = 'X-' then
@@ -2600,13 +2607,16 @@ begin
         else
           raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
 
-        if ClearSourceFiles then begin
-          DeleteFile(spath+sr.name);
-          DeleteFile(spath+dfile);
-        end else begin
-          RenameFile(spath+sr.name,spath+sr.name+'.BAK');
-          RenameFile(spath+dfile,  spath+dfile  +'.BAK');
-        end;
+//      if ClearSourceFiles then begin
+//        DeleteFile(spath+sr.name);
+//        DeleteFile(spath+dfile);
+//      end else begin
+//        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+//        RenameFile(spath+dfile,  spath+dfile  +'.BAK');
+//      end;
+        DeleteFiles.Add(spath+sr.name);
+        DeleteFiles.Add(spath+dfile);
+
       end;
     end
     else
@@ -2619,8 +2629,9 @@ begin
       end;
       inc(n);
 
-      if ClearSourceFiles then DeleteFile(spath+sr.name) else
-        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+//    if ClearSourceFiles then DeleteFile(spath+sr.name) else
+//      RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+      DeleteFiles.Add(spath+sr.name);
     end;
   except on Ex:Exception do
     begin
@@ -3648,6 +3659,12 @@ end;
 
 {
   $Log$
+  Revision 1.86  2001/12/21 21:25:18  cl
+  BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
+  SEE ALSO: <8FIVnDgocDB@3247.org>
+  - UUZ does not delete ANY files
+  - spool files only deleted after successful import of mail buffers.
+
   Revision 1.85  2001/12/05 11:18:54  mk
   - added some debug logs
   - removed some hints and warnings

@@ -38,7 +38,8 @@ function UUCPNetcall(boxname: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
-                     IncomingFiles: TStringList):shortint;
+                     IncomingFiles: TStringList;
+                     DeleteSpoolFiles: TStringList):shortint;
 
 implementation
 
@@ -52,7 +53,9 @@ function UUCPNetcall(boxname: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
-                     IncomingFiles: TStringList):shortint;
+                     IncomingFiles: TStringList;
+                     DeleteSpoolFiles: TStringList):shortint;
+                     
 var
   UUNum         :word;         { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
   CmdFile       :string;
@@ -335,7 +338,7 @@ var
 
 //    uu.CommandLine := true;
 
-      uu.ClearSourceFiles := DiskPoll or nDelPuffer;
+//    uu.ClearSourceFiles := DiskPoll or nDelPuffer;
 //    uu.DeleteFileList:=DeleteFileList;
 
       result:=true;
@@ -350,6 +353,7 @@ var
 
     procedure KillUUZ;
     begin
+      DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
       uu.Free;
       result:=true;
     end;
@@ -449,7 +453,8 @@ function UUCPNetcall(boxname: string;
                      ppfile: string;
                      diskpoll: boolean;
                      Logfile: String;
-                     IncomingFiles: TStringList):shortint;
+                     IncomingFiles: TStringList;
+                     DeleteSpoolFiles: TStringList):shortint;
 }
 begin {function UUCPNetcall}
   Debug.DebugLog('xpncuucp','uucp netcall starting',DLInform);
@@ -501,6 +506,12 @@ end.
 
 {
   $Log$
+  Revision 1.15  2001/12/21 21:25:18  cl
+  BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
+  SEE ALSO: <8FIVnDgocDB@3247.org>
+  - UUZ does not delete ANY files
+  - spool files only deleted after successful import of mail buffers.
+
   Revision 1.14  2001/10/17 20:56:07  cl
   - UUbuffer.zer is now never overwritten
 

@@ -697,6 +697,9 @@ var
 
     ScreenPtr  : ScrPtr; { Bildschirmkopie }
     IncomingFiles: TStringList;
+    DeleteSpoolFiles: TStringList;
+    ImportOK   : boolean;
+    
 
   procedure AppendEPP;
   var f,f2 : file;
@@ -1046,6 +1049,7 @@ begin                  { function Netcall }
   showkeys(0);
   connects:=0;
   IncomingFiles:=TStringList.Create;
+  DeleteSpoolFiles:=TStringList.Create;
   xp3o.ForceRecipient:= '';
   result:=false;
 
@@ -1089,7 +1093,7 @@ begin                  { function Netcall }
 
       nt_UUCP: begin
         Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
-        case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
+        case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles,DeleteSpoolFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1119,13 +1123,13 @@ begin                  { function Netcall }
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
         if Boxpar^.SMTPAfterPop then
         begin
-          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles);
+          netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles);
           if SendSMTPMails(BoxName,bfile,BoxPar,PPFile)then
             if netcall_connect then result:= true;
         end
         else begin
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
-          if GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles)then
+          if GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles)then
             if netcall_connect then result:= true;
         end;
       end; {case nt_POP3}
@@ -1133,7 +1137,7 @@ begin                  { function Netcall }
       nt_NNTP: begin
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
         netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
-        if GetNNTPMails(BoxName,Boxpar,IncomingFiles)then
+        if GetNNTPMails(BoxName,Boxpar,IncomingFiles,DeleteSpoolFiles)then
           if netcall_connect then result:= true;
       end;
 
@@ -1148,13 +1152,29 @@ begin                  { function Netcall }
     end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
+  
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
+    begin
+      ImportOK := true;
       SaveDeleteFile(IncomingFiles[0]);
-    end;
+    end else
+      ImportOK := false;
+  end else
+    ImportOK := true;
+
+  if ImportOK and (DeleteSpoolFiles.Count>0) then 
+    if SysopMode or nDelPuffer then
+      for i := 0 to (DeleteSpoolFiles.Count-1) do
+        DeleteFile(DeleteSpoolFiles[i])
+    else
+      for i := 0 to (DeleteSpoolFiles.Count-1) do
+        MakeBak(DeleteSpoolFiles[i],'BAK');        
+    
   xp3o.ForceRecipient:= '';
-  IncomingFiles.Destroy;
+  IncomingFiles.Free;
+  DeleteSpoolFiles.Free;
   freeres;
   netcalling:=false;
   cursor(curoff);
@@ -1366,6 +1386,12 @@ end;
 
 {
   $Log$
+  Revision 1.42  2001/12/21 21:25:18  cl
+  BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
+  SEE ALSO: <8FIVnDgocDB@3247.org>
+  - UUZ does not delete ANY files
+  - spool files only deleted after successful import of mail buffers.
+
   Revision 1.41  2001/12/20 15:23:13  mk
   - added some const paramters
   - removed unsued procedure ZFilter

@@ -34,7 +34,7 @@ uses
   SysUtils;
 
 function GetNNTPList(BoxName: string; bp: BoxPtr): boolean;
-function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
+function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles,DeleteSpoolFiles: TStringList): boolean;
 function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
@@ -164,7 +164,7 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
       OutFilter(source);
-      uu.ClearSourceFiles := false;
+//    uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
       uu._from := boxpar^.pointname;
@@ -230,7 +230,7 @@ begin
   SaveDeleteFile(RFCFileDummy);
 end;
 
-function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
+function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles, DeleteSpoolFiles: TStringList): boolean;
 var
   List          : TStringList;
   Group         : String;
@@ -251,10 +251,11 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname;
-      uu.ClearSourceFiles := true;
+//    uu.ClearSourceFiles := true;
       uu.NNTPSpoolFormat := true;
       uu.utoz;
     end;
+    DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
     uu.free;
    end;
 
@@ -368,6 +369,12 @@ end;
 
 {
         $Log$
+        Revision 1.32  2001/12/21 21:25:18  cl
+        BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
+        SEE ALSO: <8FIVnDgocDB@3247.org>
+        - UUZ does not delete ANY files
+        - spool files only deleted after successful import of mail buffers.
+
         Revision 1.31  2001/12/20 15:22:29  mk
         - implementet call to outfilter
 

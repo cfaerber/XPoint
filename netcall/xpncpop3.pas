@@ -33,7 +33,7 @@ uses
   SysUtils,
   Classes;
 
-function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
+function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles, DeleteSpoolFiles: TStringList): boolean;
 function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
@@ -81,7 +81,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
       OutFilter(source);
-      uu.ClearSourceFiles := false;
+//    uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
       uu._from := boxpar^.pointname;
@@ -149,7 +149,7 @@ begin
 end;
 
 
-function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
+function GetPOP3Mails(BoxName: string; bp: BoxPtr; Domain: String; IncomingFiles,DeleteSpoolFiles: TStringList): boolean;
 var
   List          : TStringList;
   aFile         : string;
@@ -165,9 +165,10 @@ var
       uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
       IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname+domain;
-      uu.ClearSourceFiles := true;
+//    uu.ClearSourceFiles := true;
       uu.utoz;
     end;
+    DeleteSpoolFiles.AddStrings(uu.DeleteFiles);
     uu.free;
   end;
 
@@ -276,6 +277,12 @@ end;
                       
 {
   $Log$
+  Revision 1.30  2001/12/21 21:25:18  cl
+  BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
+  SEE ALSO: <8FIVnDgocDB@3247.org>
+  - UUZ does not delete ANY files
+  - spool files only deleted after successful import of mail buffers.
+
   Revision 1.29  2001/12/20 15:22:29  mk
   - implementet call to outfilter
 
