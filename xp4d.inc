@@ -170,7 +170,7 @@ begin  { __ Suchmarke }
               end;
           end;
     1,2,
-    3,4 : begin { USERLISTE } { mark }
+    3,4 : begin { USERLISTE }
 
            { LÑngen:
              FLAGS   4
@@ -182,27 +182,27 @@ begin  { __ Suchmarke }
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             s:= dbReadNStr(ubase,ub_username);
             komm:= dbReadNStr(ubase,ub_kommentar);
-                                                     { Trennzeilenerkennung }
+                                                        { Trennzeilenerkennung }
 
-           { if left(s,3)='$/T' then s:=#0+s; }       { Altes Trennzeichenformat unterstuetzen }
+           { if left(s,3)='$/T' then s:=#0+s; }         { Altes Trennzeichenformat unterstuetzen }
 
             if left(s,4)=#0+'$/T' then begin
 
-              if komm='' then
-                dispbuf[y]:='     '+dup(74,s[5])+' '
+              if komm='' then                           { Trennzeile ohne Kommentar }
+                dispbuf[y]:='     '+dup(74+over80,s[5])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]:='     '+komm+' '+dup(73-length(komm),s[5])+' ';
-                  2 : begin
-                        dispbuf[y]:='     '+dup((72-length(komm))div 2,s[5])+' '+
+                  1 : dispbuf[y]:='     '+komm+' '+dup(73-length(komm)+over80,s[5])+' '; { links -ungetestet }
+                  2 : begin                                                              { mitte -ungetestet}
+                        dispbuf[y]:='     '+dup((72-length(komm)+over80)div 2,s[5])+' '+
                                      komm+' ';
-                        dispbuf[y]:=dispbuf[y]+dup(79-length(dispbuf[y]),s[5])+' ';
+                        dispbuf[y]:=dispbuf[y]+dup(79+over80-length(dispbuf[y]),s[5])+' ';
                       end;
-                  3 : dispbuf[y]:='     '+dup(73-length(komm),s[5])+' '+komm+' ';
+                  3 : dispbuf[y]:='     '+dup(73-length(komm)+over80,s[5])+' '+komm+' '; { rechts }
                 end;
               markflag[y]:=2;
               end
-            else begin
+            else begin                          { User Åbersicht keine Trennzeile }
 
             dbReadN(ubase,ub_adrbuch,ab);
             dbReadN(ubase,ub_userflags,uflags);
@@ -225,9 +225,8 @@ begin  { __ Suchmarke }
             brettform(s,0,true);
 
             kuerzen := false;
-            if dispext then begin
-            { Anzeige/Spezial }
-              kuerzen := true; { wir brauchen mehr Platz, also Felder kuerzen }
+            if dispext then begin               { Anzeige/Spezial }
+              kuerzen := true;                  { wir brauchen mehr Platz, also Felder kuerzen }
               pbox:= dbReadNStr(ubase,ub_pollbox);
               brettform(s,0,true);
 
@@ -235,7 +234,7 @@ begin  { __ Suchmarke }
               taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
 
               { (B)OX }
-              taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
+              taus[pos('B',UsrFeldTausch)] := forms(pbox,9 + ( over80 div 3 ) );
 
               { Adressbuch-(G)ruppe }
               taus[pos('G',UsrFeldTausch)] := strsn(ab,2);
@@ -249,8 +248,8 @@ begin  { __ Suchmarke }
               := Forms(s,
                    { Adresse vor Kommentar: beide kÅrzen, sonst nur Adresse }
                    iif(pos('K',UsrFeldTausch)>pos('A',UsrFeldTausch),
-                     44-iif(kuerzen,12,0),
-                     44-iif(kuerzen,20,0)
+                     44+(over80 div 3) -iif(kuerzen,12, 0),
+                     44+(over80 div 3) -iif(kuerzen,20, 0)
                    )
                  );
 
@@ -260,7 +259,7 @@ begin  { __ Suchmarke }
                    { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
                    iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
                      30,
-                     30-iif(kuerzen,8,0)
+                     30+(over80 div 3)-iif(kuerzen,8,0)
                    )
                  );
 
@@ -313,7 +312,7 @@ begin  { __ Suchmarke }
                 end;
               end;
             s1:= dbReadNStr(mbase,mb_betreff);
-            if dispmode<>12 then begin
+            if dispmode<>12 then begin                        { <> Kommentarbaum }
               if (netztyp=nt_Maus) and (mnt and $100<>0) then
                 s1:=left('-'+s1,40) else
               if ntKomkette(netztyp) and (mnt and $100<>0) and
@@ -321,7 +320,7 @@ begin  { __ Suchmarke }
                 s1:=left('-'+s1,40);
             end;
             dbReadN(mbase,mb_OrigDatum,dat);
-            if dispmode=10 then
+            if dispmode=10 then                    { 10=Nachrichten in DispBrett (auch To-Brett!)}
               dbReadN(mbase,mb_EmpfDatum,edat)
             else
               edat:=ixdat('6912310000');
@@ -336,12 +335,15 @@ begin  { __ Suchmarke }
                 sdat:=copy(s2,4,2)+'/'+copy(s2,7,2)
               else
                 sdat:=left(s2,5);
-              ulen:=25; blen:=36;
+              ulen:=iif(over80>2,27,25);    { wenn Platz fÅr vollen Username  }
+              blen:=iif(over80>6,40,36);    { auch noch Platz fÅr den Betreff }
             { kein Datum anzeigen }
             end else begin
-              sdat:=''; ulen:=27; blen:=40;
+              sdat:='';
+              ulen:=27;
+              blen:=40;
             end;
-            if (dispmode=11) and MarkUnversandt then begin
+            if (dispmode=11) and MarkUnversandt then begin      {11=markierte Nachrichten}
               inc(ulen,5); dec(blen,5);
               readheader(hd,hds,true);
               if hd.wab<>'' then s:=hd.wab;
@@ -467,7 +469,7 @@ begin  { __ Suchmarke }
 
             { Kommentarbaum-Ausgabe schon fertig, fuer andere dispmodes
               muss sie noch zusammenkopiert werden: }
-            if (dispmode<>12) then begin
+            if (dispmode<>12) then begin                { 12=Kommentarbaum }
               { Felder zusammenkopieren }
               tausc:=0; dispbuf[y]:='';
               while (tausc<MsgFelderMax) do begin
@@ -597,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2000/08/03 15:42:07  mk
+  MO: weitere Anpassungen fuer mehr als 80 Spalten
+
   Revision 1.34  2000/08/03 10:42:30  mk
   MO: - Anpassungen fuer mehr als 80 Spalten
 

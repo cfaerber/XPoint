@@ -1081,10 +1081,10 @@ var s : string;
     b : byte;
 begin
   attrtxt(col.colmsgsinfo);
-  if dispmode=11 then
-    mwrt(1,4,forms(getreps(421,strs(markanz)),80))   { 'markierte Nachrichten' }
+  if dispmode=11 then                                                   { 11=markierte Nachrichten }
+    mwrt(1,4,forms(getreps(421,strs(markanz)),80+ScreenWidth-80))       { ungetestet 'markierte Nachrichten' }
   else if dispmode=12 then
-    mwrt(1,4,forms(getreps(422,bezbetr),80))   { ' Bezugsnachrichten zu "%s"' }
+    mwrt(1,4,forms(getreps(422,bezbetr),80+ScreenWidth-80))             { ' Bezugsnachrichten zu "%s"' }
   else begin
     case rdmode of
       0 : s:='';
@@ -1097,7 +1097,7 @@ begin
     if UserSlash or (left(dispspec,1)>='A') or (copy(dispspec,2,1)<>'/') then
       b:=2
     else b:=3;
-    mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79));
+    mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
   end;
 end;
 
@@ -1112,7 +1112,7 @@ begin
       s:=getres(427)    { ' Zielbrett w„hlen' }
     else
       s:=getres(428);   { ' Empf„nger w„hlen' }
-  mwrt(1,4,forms(s,80));
+  mwrt(1,4,forms(s,80+ScreenWidth-80));
 end;
 
 procedure all_mode;
@@ -1508,6 +1508,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2000/08/03 15:42:07  mk
+  MO: weitere Anpassungen fuer mehr als 80 Spalten
+
   Revision 1.37  2000/07/21 20:56:26  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
