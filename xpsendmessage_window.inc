@@ -315,6 +315,7 @@ var
       AddrWidth: Integer;
   var x1,x2,y1,y2: Integer;
       res: Integer;
+      s: string;
 
     procedure rm(const AddrSpec: String);
     begin
@@ -468,7 +469,18 @@ var
             wpop;
             if xp4.SelPos <= 0 then exit;
             dbGo(ubase,selpos);
-            NewList.AddNew.ZCAddress := dbReadNStr(ubase,ub_username);
+
+            if dbReadByteN(ubase,ub_userflags) and 4 <> 0 then
+            begin
+              NewList.AddNew.XPAddress := dbReadNStr(ubase,ub_username);
+            end else
+            begin
+              if dbXsize(ubase,'adresse')=0 then 
+                s := dbReadNStr(ubase,ub_username)
+              else
+                s := dbReadXStr(ubase,'adresse',j);
+              NewList.AddNew.ZCAddress := s;
+            end;
           end;
         2: (* select group *)
           begin
@@ -617,7 +629,7 @@ var
         
     begin
       CommentCnt := 0;
-      AfterAt := true;
+      AfterAt := false;
       Quote := false;
       Angle := false;
       Literal := false;
@@ -640,7 +652,7 @@ var
           '[':  If(not Quote)and(AfterAt)then Literal := true;
           ']':  If(not Quote)and(AfterAt)then Literal := false;
           ':':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not AfterAt)and(not Literal) then AddGroup;
-          ',':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not Literal)then begin AddAddr; AfterAt := true; end;
+          ',':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not Literal)then begin AddAddr; AfterAt := false; end;
           ';':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not Literal)then begin AddAddr; CGroup:=-1; end;
         end;
         Inc(i);
@@ -1234,8 +1246,16 @@ var Index: integer;
         real    := TDomainEMailAddress(EMail).RealName;
         oreal   := real;
       end;
+
+      pollbox := List[Index].BoxName; 
+      if pollbox='' then 
+      begin
+        if EMail is TFTNAddress then  
+          PollBox := DefFidoBox 
+        else
+          PollBox := DefaultBox;
+      end;
       
-      pollbox := List[Index].BoxName; if pollbox='' then pollbox := DefaultBox;
       halten  := StdUHaltezeit;
       Adr     := NeuUserGruppe;
       Flags   := 1 + iif(newuseribm,0,8);
@@ -1551,6 +1571,9 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2003/01/13 22:14:28  cl
+// - send window rewrite IIa - cleanups
+//
 // Revision 1.5  2003/01/11 19:54:07  cl
 // - fixes for FTN addresses
 //

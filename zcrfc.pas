@@ -1654,6 +1654,7 @@ var
   var
     p: integer;
   begin
+    hd.References.Clear;
     line:=RFCRemoveComments(line);
     while (line <> '') do
     begin
@@ -1681,8 +1682,8 @@ var
       { eine Message-ID enthaelt ein @ und kein Space }
       if (cpos('@',line)>0) and (cpos(' ',line)=0) then
       begin
-        hd.References.clear;
-        hd.References.Add(line);
+        if hd.References.count<=0 then
+          hd.References.Add(line);
       end
     end else
       uline.add('U-In-Reply-To: '+line)
@@ -3758,6 +3759,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2003/01/13 22:14:29  cl
+  - send window rewrite IIa - cleanups
+
   Revision 1.128  2003/01/07 00:56:47  cl
   - send window rewrite -- part II:
     . added support for Reply-To/(Mail-)Followup-To

@@ -51,10 +51,10 @@ begin
     LoVersion:=Lo(version);
     SetZero(MyName,username,59);
     SetZero(SysopName,UserName,19);
-    zone:=FA.zone;
-    net:=FA.net;
-    node:=FA.node;
-    point:=FA.point;
+    zone:=FidoAddress.zone;
+    net:=FidoAddress.net;
+    node:=FidoAddress.node;
+    point:=FidoAddress.point;
     SetZero(my_password,password,8);
     capabilities:=MyCap;
     if cPos('@',username)<>0 then inc(capabilities,do_domain);
@@ -429,6 +429,9 @@ end;
 
 {
   $Log$
+  Revision 1.9  2003/01/13 22:14:29  cl
+  - send window rewrite IIa - cleanups
+
   Revision 1.8  2002/12/21 05:38:06  dodi
   - removed questionable references to Word type
 

@@ -18,25 +18,12 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{$IFNDEF IN_TSENDUUDATA}
-Function CanEdit:Boolean;
-begin
-  result:= true or // ntMIME(netztyp) or
-     (sdata.parts.count=0) or TSendAttach_Part(sdata.parts[0]).IsMessage;
-end;
-{$ENDIF}
-
-{$IFDEF IN_TSENDUUDATA}
 class function TSendUUData.MIMESaveCharsetAsCP437(const s:string):Boolean;
-{$ELSE}
-function MIMESaveCharsetAsCP437(const s:string):Boolean;
-{$ENDIF}
 begin
   // These charsets are saved as-is in our local database
   result := (s='') or (s='US-ASCII') or (s='IBM437');
 end;
 
-{$IFDEF IN_TSENDUUDATA}
 procedure TSendUUData.ClearParts;
 var ii:integer;
 begin
@@ -49,9 +36,6 @@ begin
 end;
 
 procedure TSendUUData.MIMEDecompose;
-{$ELSE}
-procedure MIMEDecompose;
-{$ENDIF}
 var s: TStream;
     c: TMimeContentType;
 
@@ -317,6 +301,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/01/13 22:14:28  cl
+// - send window rewrite IIa - cleanups
+//
 // Revision 1.1  2002/11/14 21:06:13  cl
 // - DoSend/send window rewrite -- part I
 //
