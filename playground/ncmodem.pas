@@ -431,7 +431,7 @@ end;
 procedure TModemNetcall.Log(c: Char; const s: String);
 begin
   if FLogfileOpened then
-    writeln(FLogfile,c,' ',FormatDateTime('hh":"mm":"ss',Now),'  ',s);
+    writeln(FLogfile,c,' ',FormatDateTime('hh":"nn":"ss',Now),'  ',s);
   DebugLog('ncmodem','Log: '+c+' '+s,dlInform);
 end;
 
@@ -482,6 +482,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/02/23 13:57:14  ma
+  - fixed small time logging bug
+
   Revision 1.16  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)
