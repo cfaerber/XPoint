@@ -784,7 +784,8 @@ begin
         pophp;
         if brk then goto nextmsg;
         if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
-          then viewer.prog:='*intern*';
+          then { viewer.prog:='*intern*'; }
+            GetDefaultViewer('text/plain', Viewer);
         Testviralextension;
       end else
       begin
@@ -846,7 +847,8 @@ begin
         arc:=0;
         end;
 
-      if (viewer.prog='') and (arc=0) then begin
+      if (viewer.prog='') and (arc=0) then
+      begin
         if mimetyp='' then
           GetMimeViewer('text/plain',viewer);
         if (viewer.prog='') and (mimetyp<>'') then
@@ -1550,6 +1552,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.13  2000/11/09 12:51:41  mk
+  - MIME-Fix
+
   Revision 1.25.2.12  2000/11/01 10:51:45  mk
   - verschiedene MIME-Viewer fixes
 
