@@ -33,17 +33,20 @@ uses
   linux,
 {$ENDIF}  
 {$ENDIF}
-  xp0,xp1;
+  xp0,xp1,XPStreams,Classes;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
 procedure RunPGP5(exe:string;par:string);    { PGP 5.x aufrufen               }
 procedure UpdateKeyfile;
-procedure WritePGPkey_header(var f:file);    { PGP-PUBLIC-KEY: ... erzeugen   }
+procedure WritePGPkey_header(output:TStream);{ PGP-PUBLIC-KEY: ... erzeugen   }
 procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
-procedure PGP_EncodeFile(var source:file; var hd: Theader;
-                         fn,RemoteUserID:string; encode,sign:boolean;
+
+procedure PGP_EncodeStream(var data:TStream; var hd: Theader;
+                         RemoteUserID:string; encode,sign:boolean;
                          var fido_origin:string);
+procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
+procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
 
 procedure PGP_RequestKey;
 procedure PGP_DecodeMessage(hdp:Theader; sigtest:boolean);
@@ -63,8 +66,8 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
   {$IFDEF Kylix}
   libc,
-  {$ENDIF}  
-  xpcc,xpnt;
+  {$ENDIF}
+  xpcc,xpnt,Mime;
 
 const
   savekey : string = '';
@@ -221,7 +224,7 @@ begin
     if firstchar(s)<>'"' then s:='"'+s;
     if lastchar(s)<>'"' then s:=s+'"';
   end;
-  IDform:=s;
+  result:=s;
 end;
 
 
@@ -244,7 +247,7 @@ begin
 end;
 
 
-procedure WritePGPkey_header(var f:file);    { PGP-PUBLIC-KEY: ... erzeugen }
+procedure WritePGPkey_header(output:TStream);    { PGP-PUBLIC-KEY: ... erzeugen }
 var kf  : file;
     dat : array[0..29] of byte;
     rr  : word;
@@ -254,7 +257,7 @@ var kf  : file;
 
   procedure wrs(s:string);
   begin
-    blockwrite(f,s[1],length(s));
+    output.WriteBuffer(s[1],length(s));
   end;
 
 begin
@@ -306,11 +309,11 @@ begin
   writeln(t);
   close(t);
   hd:='';
-  if DoSend(true,tmp,empfaenger,getres2(3000,1),  { 'Antwort auf PGP-Key-Anforderung' }
+  if DoSend(true,tmp,true,false,empfaenger,getres2(3000,1),  { 'Antwort auf PGP-Key-Anforderung' }
             false,false,false,false,true,nil,
-            hd,hd,SendPGPkey) then
+            hd,SendPGPkey) then
     LogPGP(getreps2(3002,1,empfaenger));   { 'sende Public Key an %s' }
-  SaveDeleteFile(tmp);
+//  if FileExists(tmp) then _era(tmp);
   freeres;
 end;
 
@@ -320,38 +323,16 @@ end;
 { Bei Fido-Nachrichten Origin abschneiden und nach Codierung }
 { / Signierung wieder anhaengen.                             }
 
-procedure PGP_EncodeFile(var source:file; var hd: theader;
-                         fn,RemoteUserID:string; encode,sign:boolean;
+procedure PGP_EncodeStream(var data:TStream; var hd: theader;
+                         RemoteUserID:string; encode,sign:boolean;
                          var fido_origin:string);
-var tmp  : string;
-    f,f2 : file;
-    b    : byte;
+var b    : byte;
     nt   : longint;
     t    : string;
     OwnUserID  : string;
-    _source: string;
 
-  procedure StripOrigin;
-  begin
-    reset(source,1);
-    seek(source,filesize(source)-length(fido_origin)-2);
-    truncate(source);
-    close(source);
-  end;
-
-  procedure AddOrigin;
-  var f : file;
-      s : string;
-  begin
-    assign(f,tmp);
-    if existf(f) then begin
-      reset(f,1);
-      seek(f,filesize(f));
-      s:=fido_origin+#13#10;
-      blockwrite(f,s[1],length(s));
-      close(f);
-    end;
-  end;
+    fi,fo: string;
+    fis,fie: TStream;
 
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
@@ -359,11 +340,6 @@ begin
   if cPos('/',RemoteUserID)>0 then
     RemoteUserID:='';                           { Empfaenger ist Brett }
 
-  fm_ro; reset(source,1); fm_rw;
-  tmp:=TempS(filesize(source)*2);         { Temp-Dateinamen erzeugen }
-  close(source);
-
-  if fido_origin<>'' then StripOrigin;
   if PGPVersion=GPG then
     t:=iifs(hd.typ='T','a','')
   else if PGPVersion=PGP2 then
@@ -371,85 +347,150 @@ begin
   else
     t:=iifs(hd.typ='T','-t','');
 
+  fi:=TempExtS(data.Size,'PGP_','');
+  fo:=TempS(data.Size+iif(encode,data.Size div 2,0)+iif(sign,2000,0)+2000);
+
+  fis:=TFileStream.Create(fi,fmCreate or fmDenyWrite);
+  fie:=nil;
+
+  if (hd.typ='T') and MimeContentTypeNeedCharset(hd.MIME.ctype) and
+    (hd.x_charset<>'US-ASCII') and (hd.x_charset<>'') then
+  begin
+    // Translate charset to one supported by the selected
+    // PGP/GPG version.
+
+    if PGPVersion=GPG then
+    begin
+      if (hd.x_charset='ISO-8859-1') or         // charsets that GPG knows
+         (hd.x_charset='ISO-8859-2') or
+         (hd.x_charset='KOI8-R') then
+        t:=t+' --charset='+hd.x_charset
+      else
+      begin
+        t:=t+' --charset=utf8';                 // if everything else fails,
+        hd.x_charset:='UTF-8';                  // use UTF-8. :-(
+      end;
+    end
+    else // if PGPVersion=PGP2 then
+    begin
+      if (hd.x_charset='KOI8-R') then
+        t:=t+' +charset=KOI8'
+      else
+      if (hd.x_charset='ISO-8859-1') then
+        t:=t+' +charset=LATIN1'
+      else
+        t:=t+' +charset=noconv'                 // uh, oh...
+    end;
+
+    if MimeCharsetCanonicalName(hd.x_charset)<>
+       MimeCharsetCanonicalName(ZCCharsetToMIME(hd.charset)) then
+    begin
+      fie:=fis;
+      fis:=TCharsetEncodingStream.Create(fie,ZCCharsetToMime(hd.charset),hd.x_charset);
+      hd.charset:=MimeCharsetToZC(hd.x_charset);
+    end;
+  end;
+
+  CopyStream(data,fis);
+
+  if fido_origin<>'' then
+    fis.Size:=fis.Size-length(fido_origin)-2;
+  fis.Free;
+
+  fie.Free;
+
   if PGP_UserID<>'' then
-    OwnUserID:=IDform(PGP_UserID)
+    OwnUserID:=' -u '+IDform(PGP_UserID)
   else
     OwnUserID:='';
 
   { --- codieren --- }
   if encode and not sign then begin
     if PGPVersion=PGP2 then
-      RunPGP('-ea'+t+' '+filename(source)+' '+IDform(RemoteUserID)+' -o '+tmp)
+      RunPGP('-ea'+t+' '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(RemoteUserID)+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-a '+t+' '+fi+' -r '+IDform(RemoteUserID)+' -o '+fo)
     else if PGPVersion=GPG then
-      RunGPG('-e'+t+' -o '+tmp+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+filename(source))
+      RunGPG('-e'+t+' -o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
-      copyfile(filename(source),_source);
+//      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
+//      copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-e -a '+t+' '+_source+' '+IDform(RemoteUserID));
-      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
-      tmp:=_source+'.asc';
+      RunPGP('-e -a '+t+' '+fi+' '+IDform(RemoteUserID));
+      fo:=fi+'.asc';
     end;
 
   { --- signieren --- }
   end else if sign and not encode then begin
     if PGPVersion=PGP2 then
-      RunPGP('-sa'+t+' '+filename(source)+OwnUserID+' -o '+tmp )
+      RunPGP('-sa'+t+' '+fi+OwnUserID+' -o '+fo )
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPS.EXE','-a '+t+' '+filename(source)+OwnUserID+' -o '+tmp )
+      RunPGP5('PGPS.EXE','-a '+t+' '+fi+OwnUserID+' -o '+fo )
     else if PGPVersion=GPG then
-      RunGPG(iifs(hd.typ='T','--clearsign','-s')+' --force-v3-sigs -o '+tmp+' -u '+OwnUserID+' '+filename(source))
+      RunGPG(iifs(hd.typ='T','--clearsign','-s')+' --force-v3-sigs -o '+fo+' '+OwnUserID+' '+fi)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
-      copyfile(filename(source),_source);
+//      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
+//      copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
-      SaveDeleteFile(getbarefilename(tmp));         { Temporaerdatei loeschen }
-      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
-      tmp:=_source+'.asc';
+      RunPGP('-s -a '+t+' '+fi+' '+IDform(RemoteUserID)+OwnUserID);
+//      if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Temporaerdatei loeschen }
+//      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      fo:=fi+'.asc';
     end;
 
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
-      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(RemoteUserID)+OwnUserID+' -o '+tmp)
+      RunPGP('-esa'+t+' '+fi+' '+IDform(RemoteUserID)+OwnUserID+' -o '+fo)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-sa '+t+' '+filename(source)+' -r '+IDform(RemoteUserID)+OwnUserID+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-sa '+t+' '+fi+' -r '+IDform(RemoteUserID)+OwnUserID+' -o '+fo)
     else if PGPVersion=GPG then
-      RunGPG('-es'+t+' --force-v3-sigs -o '+tmp+' -u '+OwnUserID+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+filename(source))
+      RunGPG('-es'+t+' --force-v3-sigs -o '+fo+' '+OwnUserID+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
-      copyfile(filename(source),_source);
+//      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
+//      copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-e -s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
-      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
-      tmp:=_source+'.asc';
+      RunPGP('-e -s -a '+t+' '+fi+' '+IDform(RemoteUserID)+OwnUserID);
+//      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      fo:=fi+'.asc';
     end;
   end;
 
-  if fido_origin<>'' then AddOrigin;
+  if FileExists(fi) then
+    _era(fi);         { Temporaerdatei loeschen }
 
-  if FileExists(tmp) then begin
-    hd.groesse:=_filesize(tmp);               { Groesse anpassen }
-    hd.crypttyp:=hd.typ; hd.typ:='T';         { Typ anpassen   }
-    hd.ccharset:=hd.charset; hd.charset:='';  { Charset anpassen }
-    hd.ckomlen:=hd.komlen; hd.komlen:=0;      { KOM anpassen   }
+  if FileExists(fo) then
+  begin
+    data.Free;
+
+    if Fido_Origin<>'' then
+    begin
+      data:=TTemporaryFileStream.Create(fo,fmOpenReadWrite);
+      data.Seek(0,soFromEnd);
+      data.WriteBuffer(Fido_Origin[1],Length(Fido_Origin));
+      data.Seek(0,soFromBeginning);
+    end else
+      data:=TTemporaryFileStream.Create(fo,fmOpenRead);
+
+    hd.groesse:=data.Size;                    { Groesse anpassen }
+
+    if encode or (sign and (hd.typ<>'T')) then
+    begin                                     { now uses PGP armor! }
+      hd.MIME.ctype:='';                        // => not a MIME-typed
+      hd.MIME.encoding:=MimeEncoding7Bit;       // message any longer!
+      hd.crypt.charset:=hd.charset;
+      hd.charset:='';
+      hd.x_charset:='';
+      hd.crypt.typ:=hd.typ; hd.typ:='T';         { Typ anpassen   }
+      hd.crypt.komlen:=hd.komlen; hd.komlen:=0;  { KOM anpassen   }
+      hd.crypt.method:='PGP';
+    end;
+
     if encode then inc(hd.pgpflags,fPGP_encoded);
     if sign then inc(hd.pgpflags,iif(encode,fPGP_signed,fPGP_clearsig));
-    assign(f,fn);
-    rewrite(f,1);
-    WriteHeader(hd,f);                   { neuen Header erzeugen }
-    assign(f2,tmp);
-    reset(f2,1);
-    fmove(f2,f);                          { ... und codierte Datei dranhaengen }
-    close(f2);
-    close(f);
-    SaveDeleteFile(tmp);         { Temporaerdatei loeschen }
     if encode then begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                            { 'c'-Kennzeichnung }
@@ -464,6 +505,198 @@ begin
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
 end;
 
+procedure MimeWriteType(os:TStream;hd:THeader);
+var mtype:TMimecontenttype;
+    mdisp:TMimeDisposition;
+begin
+  mtype:=TMimecontenttype.Create(hd.mime.ctype);
+  mdisp:=TMimeDisposition.Create(hd.mime.disposition);
+
+  writeln_s(os,'Content-Type: ' + mtype.AsFoldedString(76-14,76,#13#10,true));
+  writeln_s(os,'Content-Transfer-Encoding: '+MimeEncodingNames[hd.mime.encoding]);
+
+  if Uppercase(mdisp.AsString)<>'INLINE' then
+    writeln_s(os,'Content-Disposition: ' + mdisp.AsFoldedString(76-21,76,#13#10,true));
+
+  if hd.MIME.description <> '' then
+    writeln_s(os,'Content-Description: ' + RFC2047_Encode(hd.mime.description,csCP437,76-21,76,#13#10));
+
+  mdisp.Free;
+  mtype.Free;
+
+  writeln_s(os,'');
+end;
+
+procedure MimeNewType(hd:Theader;subtype,protocol,micalg,bound_seed:string);
+var mtype: TMimeContentType;
+begin
+  mtype:=TMimeContentType.Create('multipart/'+subtype);
+  mtype.ParamValues['protocol']:=protocol;
+  if micalg<>'' then mtype.ParamValues['micalg']:='pgp-'+LowerCase(micalg);
+  hd.boundary:=MimeCreateMultipartBoundary(bound_seed);
+  mtype.boundary:=hd.boundary;
+
+  hd.mime.ctype   := mtype.AsString;
+  hd.mime.encoding:= MimeEncoding7Bit;
+  hd.mime.description:='';
+  hd.mime.disposition:='';
+  hd.mime.cid:='';
+
+  hd.charset:='';
+  hd.x_charset:='';
+end;
+
+procedure PGP_MimeEncodeStream(var data:TStream;hd:THeader;RemoteUserID:string);
+var b    : byte;
+    OwnUserID  : string;
+    fi,fo: string;
+    fis,fie: TStream;
+    t: string;
+begin
+  if RemoteUserID='' then                       { User-ID ermitteln }
+    RemoteUserID:=hd.empfaenger;
+  if PGP_UserID<>'' then
+    OwnUserID:=' -u '+IDform(PGP_UserID)
+  else
+    OwnUserID:='';
+
+  // no textmode for MIME!
+  if PGPVersion=PGP2 then
+    t:=' +textmode=off'
+  else
+    t:='';
+
+  fi:=TempExtS(data.Size,'PGP_','');
+  fo:=TempS(data.Size+(data.Size div 2)+2000);
+
+  fis:=TFileStream.Create(fi,fmCreate);
+  MimeWriteType(fis,hd);
+  data.Seek(0,soFromBeginning);
+  CopyStream(data,fis);
+  fis.Free;
+
+  if PGPVersion=PGP2 then
+    RunPGP('-ea'+t+' '+fi+' '+IDform(RemoteUserID)+' -o '+fo)
+  else if PGPVersion=PGP5 then
+    RunPGP5('PGPE.EXE','-a '+t+' '+fi+' -r '+IDform(RemoteUserID)+' -o '+fo)
+  else if PGPVersion=GPG then
+    RunGPG('-e'+t+' -o '+fo+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+fi)
+  else begin
+    RunPGP('-e -a '+t+' '+fi+' '+IDform(RemoteUserID));
+    fo:=fi+'.asc';
+  end;
+
+  if FileExists(fi) then
+    _era(fi);         { Temporaerdatei loeschen }
+
+  if FileExists(fo) then
+  begin
+    data.Free;
+
+    data := TMemoryStream.Create;
+    MimeNewType(hd,'encrypted','application/pgp-encrypted','',hd.empfaenger);
+
+    writeln_s(data,'--'+hd.boundary);
+    writeln_s(data,'Content-Type: application/pgp-encrypted');
+    writeln_s(data,'');
+    writeln_s(data,'Version: 1');
+    writeln_s(data,'');
+    writeln_s(data,'--'+hd.boundary);
+    writeln_s(data,'Content-Type: application/octet-stream');
+    writeln_s(data,'');
+    fis:=TTemporaryFileStream.Create(fo,fmOpenRead);
+    CopyStream(fis,data);
+    fis.Free;
+    writeln_s(data,'--'+hd.boundary+'--');
+
+    inc(hd.pgpflags,fPGP_encoded);
+    dbReadN(mbase,mb_unversandt,b);
+    b:=b or 4;                            { 'c'-Kennzeichnung }
+    dbWriteN(mbase,mb_unversandt,b);
+  end else
+    rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
+end;
+
+procedure PGP_MimeSignStream(var data:TStream;hd:THeader);
+var b: byte;
+    OwnUserID  : string;
+    fi,fo: string;
+    fis,fie: TStream;
+    s: string;
+begin
+  if PGP_UserID<>'' then
+    OwnUserID:=' -u '+IDform(PGP_UserID)
+  else
+    OwnUserID:='';
+
+  fi:=TempExtS(data.Size,'PGP_','');
+  fo:=TempS(data.Size+(data.Size div 2)+2000);
+
+  fis:=TFileStream.Create(fi,fmCreate);
+  MimeWriteType(fis,hd);
+  data.Seek(0,soFromBeginning);
+  CopyStream(data,fis);
+  fis.Free;
+
+    if PGPVersion=PGP2 then
+      RunPGP('-sab +textmode=off '+OwnUserID+' -o '+fo+fi)
+    else if PGPVersion=PGP5 then
+      RunPGP5('PGPS.EXE','-a -b '+OwnUserID+' -o '+fo+fi)
+    else if PGPVersion=GPG then
+      RunGPG('-s -a --detach-sign --force-v3-sigs -o '+fo+' '+OwnUserID+' '+fi)
+    else begin
+      RunPGP('-s -a -b '+OwnUserID+fi);
+      fo:=fi+'.asc';
+    end;
+
+  if FileExists(fo) then
+  begin
+    data.Free;
+
+    fie:=TTemporaryFileStream.Create(fi,fmOpenRead);
+    fis:=TTemporaryFileStream.Create(fo,fmOpenRead);
+
+    try
+      repeat
+        s:=Trim(readln_s(fis));
+        if UpperCase(LeftStr(s,5))='HASH:' then
+        begin
+          s:=Mid(s,6);
+          s:=LeftStr(s,CPosX(',',s));
+          s:=Trim(s);
+          exit;
+        end;
+      until s='';
+    except
+      s:='';
+    end;
+    fis.Seek(0,soFromBeginning);
+
+    data := TMemoryStream.Create;
+
+    MimeNewType(hd,'signed','application/pgp-signature',iifs(s='','md5',s),hd.empfaenger);
+
+    writeln_s(data,'--'+hd.boundary);
+    CopyStream(fie,data);
+    writeln_s(data,'');
+    writeln_s(data,'--'+hd.boundary);
+    writeln_s(data,'Content-Type: application/pgp-signature');
+    writeln_s(data,'');
+    CopyStream(fis,data);
+    writeln_s(data,'--'+hd.boundary+'--');
+    fis.Free;
+    fie.Free;
+
+    inc(hd.pgpflags,fPGP_encoded);
+    dbReadN(mbase,mb_unversandt,b);
+    b:=b or $4000;                         { 'c'-Kennzeichnung }
+    dbWriteN(mbase,mb_unversandt,b);
+  end else
+    rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
+
+  if FileExists(fi) then
+    _era(fi);         { Temporaerdatei loeschen }
+end;
 
 procedure PGP_RequestKey;
 var user : string;
@@ -518,9 +751,9 @@ begin
     writeln(t);
     close(t);
     hd:='';
-    if DoSend(true,tmp,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
+    if DoSend(true,tmp,true,false,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
-              hd,hd,SendPGPreq) then;
+              hd,SendPGPreq) then;
     SaveDeleteFile(tmp);
     end;
   freeres;
@@ -620,12 +853,12 @@ begin
       PGP_BeginSavekey;
       orgsize:=hdp.groesse;
       hdp.groesse:=_filesize(tmp2);
-      hdp.komlen:=hdp.ckomlen; hdp.ckomlen:=0;
-      hdp.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp.crypttyp:='';
+      hdp.komlen:=hdp.crypt.komlen; hdp.crypt.komlen:=0;
+      hdp.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp.crypt.typ:='';
       hdp.pgpflags:=hdp.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
-      if hdp.ccharset<>'' then begin
-        hdp.charset:=UpperCase(hdp.ccharset);
-        hdp.ccharset:='';
+      if hdp.crypt.charset<>'' then begin
+        hdp.charset:=UpperCase(hdp.crypt.charset);
+        hdp.crypt.charset:='';
       end;
     end;
     if sigtest or (errorlevel=18) then begin
@@ -854,6 +1087,10 @@ end;
 
 {
   $Log$
+  Revision 1.45  2001/09/08 14:33:51  cl
+  - added PGP/MIME support
+  - adaptions/fixes for MIME support
+
   Revision 1.44  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
