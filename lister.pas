@@ -347,7 +347,7 @@ var
   p: ^ListerCharArray;
   ps: word;
   rp: Integer;
-  rr: word;
+  rr: Integer;
   fm: byte;
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
@@ -1083,6 +1083,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.62  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.61  2001/10/20 17:12:36  ml
   - range check errorfix
   - removed some hints and warnings

@@ -403,8 +403,8 @@ var   daten    : FILE;
       n        : longint;
       buf      : ^buft;
       bufpos,
-      bufend   : word;
-      rr       : word;
+      bufend   : Integer;
+      rr       : Integer;
 
       textzeile,idzeile,gruppe,
       betreff,absender,empfaenger,vonzeile : string;
@@ -663,6 +663,10 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/10/20 17:26:43  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.45  2001/10/17 22:11:48  ml
   - removed some circular unit-defs
 

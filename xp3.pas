@@ -48,7 +48,7 @@ procedure UBUnmark(rec:longint);
 
 procedure XreadF(ofs:longint; var f:file);
 procedure Xread(fn:string; append:boolean);
-procedure XmemRead(ofs:word; var size:word; var data);
+procedure XmemRead(ofs:word; var size: Integer; var data);
 procedure Xwrite(fn:string);
 
 procedure Cut_QPC_DES(var betr:string);
@@ -58,11 +58,11 @@ procedure ReplyText(var betr:string; rehochn:boolean);
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
-procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
+procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword);
-procedure Iso1ToIBM(var data; size:word);
-procedure IBMToIso1(var data; size:word);
-function  TxtSeek(adr:pointer; size:word; igcase,umlaut:boolean):boolean;
+procedure Iso1ToIBM(var data; size: Integer);
+procedure IBMToIso1(var data; size: Integer);
+function  TxtSeek(adr:pointer; Size: Integer; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
@@ -107,7 +107,7 @@ uses
   xp3o, xp3ex, xpnt, xpmakeheader, debug;
 
 
-procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
+procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword); assembler; {&uses ebx, esi, edi}
 asm
          mov   edi,passpos
@@ -145,8 +145,8 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-function TxtSeek(adr:pointer; size:word; igcase,umlaut:boolean):
-         boolean;assembler;
+function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean):
+         boolean; assembler;
 asm
          push ebp
          cld
@@ -290,7 +290,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure Iso1ToIBM(var data; size:word); assembler;
+procedure Iso1ToIBM(var data; size: Integer); assembler;
 asm
           mov    ecx,size
           jecxz  @noconv1
@@ -310,7 +310,7 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 end;
 {$ENDIF }
 
-procedure IBMToIso1(var data; size:word); assembler;
+procedure IBMToIso1(var data; size: Integer); assembler;
 asm
           mov    ecx,size
           jecxz  @noconv2
@@ -414,7 +414,7 @@ end;
 
 procedure XreadF(ofs:longint; var f:file);
 var p        : pointer;
-    bufs,rr  : word;
+    bufs,rr  : Integer;
     puffer   : file;
     ablage   : byte;
     size     : longint;
@@ -497,7 +497,7 @@ begin
 end;
 
 
-procedure XmemRead(ofs:word; var size:word; var data);
+procedure XmemRead(ofs:word; var size: Integer; var data);
 var puffer   : file;
     ablage   : byte;
 begin
@@ -522,7 +522,7 @@ var f,puffer : file;
     oldadr   : longint;
     adr,size : longint;
     p        : pointer;
-    bs,rr    : word;
+    bs,rr    : Integer;
 begin
   bs:=65536;
   getmem(p,bs);
@@ -912,7 +912,7 @@ end;
 procedure wrkilled;
 type ba = array[0..ablagen-1] of boolean;
 var  f  : file;
-     rr : word;
+     rr : Integer;
      b  : ba;
      abl : byte;
 begin
@@ -1142,6 +1142,10 @@ finalization
   EmpfList.Free;
 {
   $Log$
+  Revision 1.70  2001/10/20 17:26:40  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.69  2001/10/14 20:42:37  ma
   - added debug info (for tracing 8charN/U/Z Linux bug :-)
 

@@ -1352,7 +1352,7 @@ procedure dbReadXX(dbp:DB; const feld:dbFeldStr; var size:longint; const datei:s
 var l    : longint;
     f    : file;
     s: word;
-    rr: word;
+    rr: Integer;
     p    : pointer;
 begin
   with dp(dbp)^ do begin
@@ -1388,7 +1388,7 @@ procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
 var l    : longint;
     s: word;
-    rr: word;
+    rr: Integer;
     p    : pointer;
 begin
   with dp(dbp)^ do begin
@@ -1469,8 +1469,7 @@ end;
 
 procedure dbWriteXX(dbp:DB; const feld:dbFeldStr; const datei:string);
 var adr,size : longint;
-    s     : word;
-    rr: word;
+    s, rr: Integer;
     p        : pointer;
     f        : file;
 begin
@@ -1621,6 +1620,10 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/10/20 17:26:38  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.50  2001/10/17 22:11:25  ml
   - removed some range-check Errors
 

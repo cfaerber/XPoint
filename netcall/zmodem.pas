@@ -80,7 +80,7 @@ type
     procedure Z_CloseFile(var f: file);
     function Z_SeekFile(var f: file; fpos: LONGINT): BOOLEAN;
     function Z_WriteFile(var f: file; var buff; bytes: smallword): BOOLEAN;
-    function Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: word): BOOLEAN;
+    function Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: Integer): BOOLEAN;
     function Z_FindFile(pathname: string; var name: string; var size, time: LONGINT): BOOLEAN;
     function Z_ToUnixDate(fdate: LONGINT): string;
     function Z_FromUnixDate(s: string): LONGINT;
@@ -210,7 +210,6 @@ end; {$I+}
 function TZModemObj.Z_WriteFile(var f: file; var buff; bytes: smallword): BOOLEAN;
 
 begin
-  {$I-}
   if ((bufferpos + bytes) > DiskBufferSize) then
   begin
     BlockWrite(f, diskbuffer, bufferpos);
@@ -219,15 +218,14 @@ begin
   Move(buff, diskbuffer[bufferpos], bytes);
   INC(bufferpos, bytes);
   Z_WriteFile := (IOresult = 0)
-end; {$I+}
+end; 
 
-function TZModemObj.Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: word):
+function TZModemObj.Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: Integer):
   BOOLEAN;
 begin
-  {$I-}
   BlockRead(f, buff, btoread, bread);
   Z_ReadFile := (IOresult = 0)
-end; {$I+}
+end;
 
 function TZModemObj.Z_FindFile(pathname: string; var name: string; var size, time:
   LONGINT): BOOLEAN;
@@ -2731,6 +2729,10 @@ begin
 
 {
   $Log$
+  Revision 1.26  2001/10/20 17:26:46  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.25  2001/10/01 19:35:02  ma
   - compiles again (DOS32)
 

@@ -67,8 +67,8 @@ var i,res : integer;
     id0     : string;
     p    : integer;
     buf     : PCharArray;
-    bufsize : word;
-    bufanz  : word;   { gelesene Bytes im Puffer }
+    bufsize : Integer;
+    bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
 
   procedure ReadBuf;
@@ -583,6 +583,10 @@ end;
 
 {
   $Log$
+  Revision 1.18  2001/10/20 17:26:43  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.17  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

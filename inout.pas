@@ -241,9 +241,9 @@ Procedure readbescue(x,y:byte; VAR b:byte; VAR brk:boolean);
 Procedure readi(x,y:byte; VAR i:Integer);    { Integer-Zahl einlesen    }
 Procedure readiesc(x,y:Byte; VAR i:Integer; VAR brk:Boolean);
 Procedure readiescue(x,y:byte; var i:integer; var brk:boolean);
-Procedure readw(x,y:byte; VAR w:word);       { Word-Zahl einlesen    }
-Procedure readwesc(x,y:Byte; VAR w:word; VAR brk:Boolean);
-Procedure readwescue(x,y:byte; var w:word; var brk:boolean);
+Procedure readw(x,y:byte; VAR w:Dword);       { Word-Zahl einlesen    }
+Procedure readwesc(x,y:Byte; VAR w:dword; VAR brk:Boolean);
+Procedure readwescue(x,y:byte; var w:dword; var brk:boolean);
 Procedure readl(x,y:byte; VAR l:LongInt);    { Integer-Zahl einlesen    }
 Procedure readlesc(x,y:Byte; VAR l:LongInt; VAR brk:Boolean);
 Procedure readlescue(x,y:byte; var l:LongInt; var brk:boolean);
@@ -443,7 +443,7 @@ end;
 
 procedure disp_DT;
 {$IFNDEF NCRT }
-var h,m,s,s100 : rtlword;
+var h,m,s,s100 : Integer;
 {$ENDIF }
 begin
 {$IFDEF OOPS }
@@ -1120,19 +1120,19 @@ begin
 end;
 
 
-Procedure readw(x,y:byte; VAR w:word);
+Procedure readw(x,y:byte; VAR w:Dword);
 begin
   readi(x,y,integer(w));
 end;
 
 
-Procedure readwesc(x,y:Byte; VAR w:word; VAR brk:Boolean);
+Procedure readwesc(x,y:Byte; VAR w:dword; VAR brk:Boolean);
 begin
   readiesc(x,y,integer(w),brk);
 end;
 
 
-Procedure readwescue(x,y:byte; var w:word; var brk:boolean);
+Procedure readwescue(x,y:byte; var w:dword; var brk:boolean);
 begin
   readiescue(x,y,integer(w),brk);
 end;
@@ -1680,6 +1680,10 @@ end;
 
 {
   $Log$
+  Revision 1.85  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.84  2001/10/17 09:54:42  ml
   - cursorpos etc. byte -> integer to prevent range-errors
   - terminals can be larger than 255

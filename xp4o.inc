@@ -363,7 +363,7 @@ var x,y,yy  : Integer;
     hflags  : byte;
     uflags  : byte;
     p       : pointer;
-    bsize   : word;
+    bsize   : Integer;
     newadr  : longint;
     reo     : boolean;
     bufa    : array[1..maxbufs] of record
@@ -408,7 +408,7 @@ var x,y,yy  : Integer;
 
   procedure movemsg;
   var adr,size : longint;
-      rr       : word;
+      rr       : Integer;
       mid      : string;
       domove   : boolean;
       rec : longint;
@@ -705,6 +705,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2001/10/20 17:26:41  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.44  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

@@ -202,8 +202,7 @@ var size   : longint;
 
   procedure do_decode(dtyp:shortint; ofs:longint);
   var p     : pointer;
-      ps: word;
-      rr: word;
+      ps, rr:  Integer;
       fp    : longint;
       pw    : string;
       coder : byte;
@@ -275,7 +274,7 @@ var size   : longint;
   const hc : array[0..15] of char = '0123456789ABCDEF';
   var s   : string;
       i   : integer;
-      rr  : word;
+      rr  : Integer;
       buf : array[0..15] of byte;
       adr : DWord;
       p,b : Integer;
@@ -364,8 +363,8 @@ var size   : longint;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
   var s  : string;           { s. auch XP6.ClipTrealine!          }
-      rr : word;
-      p  : byte;
+      rr : Integer;
+      p  : Integer;
       l  : longint;
   begin
     l:=max(0,filesize(f)-200);
@@ -1103,6 +1102,10 @@ end;
 
 {
   $Log$
+  Revision 1.82  2001/10/20 17:26:40  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.81  2001/09/24 21:56:07  mk
   - fpc compile fix
 

@@ -63,7 +63,7 @@ var
     found    : boolean;
     f        : file;
     hdp0,hdp : THeader;
-    rr       : word;
+    rr       : Integer;
     hds      : longint;
     ok       : boolean;
     adr,fsize: longint;
@@ -92,7 +92,7 @@ label ende,nextpp;
   var rd,wr,
       size  : longint;
       p     : pointer;
-      ps    : word;
+      ps    : Integer;
   begin
     rd:=adr+hdp.groesse+hds;
     wr:=adr;
@@ -170,9 +170,7 @@ label ende,nextpp;
 
   procedure Clip_Tearline;   { Fido - Tearline + Origin entfernen }
   var s  : string;           { s. auch XP3EX.ClipTearline!        }
-      rr : word;
-      p  : byte;
-      l  : longint;
+      p, rr, l : Integer;
   begin
     l:=max(0,filesize(f)-200);
     seek(f,l);
@@ -1322,6 +1320,10 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/10/20 17:26:43  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.7  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

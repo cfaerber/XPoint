@@ -23,7 +23,7 @@
 
 procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo);
 var s  : string;
-    rr : word;
+    rr : Integer;
 
   procedure SetInfo;
   var p : byte;
@@ -901,6 +901,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
+  Revision 1.39  2001/10/20 17:26:42  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.38  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling

@@ -108,22 +108,18 @@ type
     integer16 =  system.smallint;
     integer32 =  longint;
     { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
+    Word =       Integer; // !!
     integer =    longint;
-    word =       longint;  { = signed }
     smallword =  system.word;
-    dword =      Cardinal; { = signed }
-    rtlword =    system.word; { 16 Bit bei FPC }
   {$endif}
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
-    integer =    longint;
-    word =       longint;  { = signed }
     smallword =  system.word;
-    dword =      Cardinal; { = signed }
-    rtlword =    system.word; { 16 Bit bei FPC }
+    Word =       Integer; // !!
+    DWord =      Longword;  { = unsigned 32 bit } 
     variant =    pointer; // Naja...
   {$endif}
 
@@ -198,6 +194,10 @@ begin
 
 {
   $Log$
+  Revision 1.58  2001/10/20 17:26:42  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.57  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -299,7 +299,7 @@ var x,y        : Integer;
   var
       r    : berrec;
       na   : ^netrecl;
-      rr   : word;
+      rr   : Integer;
       add  : word;
       bpos : longint;
   begin
@@ -335,7 +335,7 @@ var x,y        : Integer;
   procedure CopyNetindex;
   const bs = 2048;
   var p  : pointer;
-      rr : word;
+      rr : Integer;
   begin
     getmem(p,bs);
     seek(tf,0);
@@ -575,7 +575,8 @@ var x,y        : Integer;
         ok        : boolean;
 
     procedure ReadUbuf;
-    var rr : word;
+    var 
+      rr: Integer;
     begin
       blockread(uf[0]^,ubuf^,sizeof(ubufa),rr);
       bufanz:=rr div sizeof(userrec);
@@ -1001,7 +1002,7 @@ end;
 procedure OpenNodeindex(fn:string);
 var hd  : idxheader;
     uhd : udxheader;
-    rr  : word;
+    rr  : Integer;
     f   : file;
   procedure NXerror;
   begin
@@ -2273,6 +2274,10 @@ end;
 
 {
   $Log$
+  Revision 1.64  2001/10/20 17:26:42  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.63  2001/10/12 22:55:25  mk
   - fixed some Write()
 

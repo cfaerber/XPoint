@@ -47,7 +47,7 @@ uses xpheader, xp3,xp3ex;
 
 const obufsize = 12288; { Auf 32 Byte Gr”áen angepasst }
       ibufsize = 16384;
-      maxbuf   : word = obufsize-4;
+      maxbuf   : LongWord = obufsize-4;
 
 type  buffer = array[0..50000] of byte;
       bufptr = ^buffer;
@@ -55,11 +55,11 @@ type  buffer = array[0..50000] of byte;
 var   s        : string;
       shorts   : ShortString;
       f1,f2    : ^file;
-      bufp     : word;
+      bufp     : LongWord;
       outbuf,
       inbuf    : bufptr;
       ibufp,
-      ibufend  : word;
+      ibufend  : Integer;
       ln,bytes : longint;
       EOFinput : boolean;
       IO_Error : boolean;
@@ -194,7 +194,7 @@ procedure ReadInputLine;
 const
   ibufmin   = 255;
 var
-  bytesread : word;
+  bytesread : Integer;
 begin
   if ibufend<ibufp then begin
     blockread(f1^,inbuf^,ibufsize-5,bytesread);
@@ -546,6 +546,10 @@ end;
 
 {
   $Log$
+  Revision 1.31  2001/10/20 17:26:42  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.30  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -76,7 +76,7 @@ const
   flag_PGPSigOk = $01;
   flag_PGPSigErr = $02;
 
-function testbin(var bdata; rr:word):boolean; assembler; {&uses esi}
+function testbin(var bdata; rr: Integer):boolean; assembler; {&uses esi}
 asm
          mov   ecx,rr
          mov   esi,bdata
@@ -253,7 +253,7 @@ end;
 procedure WritePGPkey_header(output:TStream);    { PGP-PUBLIC-KEY: ... erzeugen }
 var kf  : file;
     dat : array[0..29] of byte;
-    rr  : word;
+    rr  : Integer;
     i,j : integer;
     s   : string;
     b64 : array[0..63] of char;
@@ -828,7 +828,7 @@ const bufs  = 2048;                      {         Steuerzeichen }
 var   f     : file;
       isbin : boolean;
       buf   : charrp;
-      rr    : word;
+      rr    : Integer;
 begin
   assign(f,fn);
   reset(f,1);
@@ -1162,6 +1162,10 @@ end;
 
 {
   $Log$
+  Revision 1.57  2001/10/20 17:26:41  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.56  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 

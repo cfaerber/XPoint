@@ -613,7 +613,7 @@ begin
 end;
 
 procedure TUUCProtocolG.SendFile(var f:file; offset:longint);
-var rr   : word;
+var rr   : Integer;
     buf  : CP_Buffer;
 begin
   BufFirst:=Send_Seqnr; BufAnz:=0;
@@ -644,6 +644,10 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/10/20 17:26:46  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.7  2001/09/08 18:46:44  cl
   - small bug/compiler warning fixes
 

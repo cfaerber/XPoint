@@ -78,7 +78,7 @@ var x,y      : Integer;
     hdp      : THeader;
     i        : integer;
     hdsize   : longint;
-    rr       : word;
+    rr       : Integer;
     dat      : string;
     name     : string;
     pb       : string;
@@ -1227,6 +1227,10 @@ end;
 
 {
   $Log$
+  Revision 1.75  2001/10/20 17:26:40  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.74  2001/10/13 20:15:06  ma
   - fixed: CC mails were muliplied with forceonearea feature
 

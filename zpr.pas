@@ -479,7 +479,7 @@ end;
 
 procedure ReadHeader(adr:longint; var hdp:header; minstdh:byte; var ok:boolean);
 var bufanz,
-    bufpos  : word;
+    bufpos  : Integer;
     s       : string;
     p,i     : byte;
     feld    : string[maxzchdlen];
@@ -588,7 +588,7 @@ var i,j : integer;
     fp  : longint;  { Offest des akt. Feldes im Header }
     buf : ^charr;
     size: longint;
-    rr  : word;
+    rr  : Integer;
 begin
   new(buf);
   fp:=0;
@@ -1106,7 +1106,7 @@ end;
 { Block von f1 nach f2 kopieren }
 
 procedure fmove(adr,size:longint);
-var rr : word;
+var rr : Integer;
 begin
   if not ParRep then exit;
   seek(f1,adr);
@@ -1122,7 +1122,7 @@ end;
 { Block von f1 nach f3 kopieren }
 
 procedure fmove2(adr,size:longint);
-var rr : word;
+var rr : Integer;
 begin
   seek(f1,adr);
   while size>0 do begin
@@ -1281,6 +1281,10 @@ end;
 
 {
   $Log$
+  Revision 1.43  2001/10/20 17:26:44  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.42  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

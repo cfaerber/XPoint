@@ -131,7 +131,7 @@ end;
 function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
 var keyout: boolean;
     i: integer;
-    xx,yy: word;
+    xx,yy: Integer;
     wdist: Integer16;
 const
     was_inside:boolean=false;
@@ -554,6 +554,10 @@ end;
 
 {
   $Log$
+  Revision 1.43  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.42  2001/10/17 20:49:14  cl
   - Fixed range check error w/ hex function
 

@@ -12,7 +12,7 @@ uses
 
 {Iterativ: CRC wird jeweils fuer ein Byte aktualisiert}
 function UpdCRC16(cp: byte; crc: smallword): smallword;
-function UpdCRC32(octet: byte; crc: DWord) : DWord;
+function UpdCRC32(octet: byte; crc: DWord) : DWord; 
 
 {Explizit: CRC wird blockweise berechnet}
 function CRC16Block(var data; size:smallword): smallword;
@@ -167,7 +167,7 @@ begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
-procedure CCITT_CRC32_calc_Block(var block; size: word);
+procedure CCITT_CRC32_calc_Block(var block; size: DWord);
                                 {&uses ebx,esi,edi} assembler;  {  CRC-32  }
 asm
      mov ebx, CRC_Reg
@@ -209,6 +209,10 @@ end;
 
 {
   $Log$
+  Revision 1.9  2001/10/20 17:26:38  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.8  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

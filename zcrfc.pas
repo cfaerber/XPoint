@@ -508,7 +508,7 @@ end;
 
 procedure fmove(var f1, f2: file);
 var
-  rr: word;
+  rr: Integer;
 begin
   while not eof(f1) do
   begin
@@ -2510,7 +2510,7 @@ var
   var
     f: file;
     s: string;
-    rr: word;
+    rr: Integer;
   begin
     assign(f, spath + sr.name);
     reset(f, 1);
@@ -3636,6 +3636,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.80  2001/10/20 17:26:43  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.79  2001/10/17 12:07:28  ma
   - fixed range check errors
 

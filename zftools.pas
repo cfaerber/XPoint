@@ -205,7 +205,7 @@ uses
   xp0,
   xp1;
 
-procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; {&uses ebx, esi, edi}
+procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; {&uses ebx, esi, edi}
 asm
        mov    edi,data          { es:di -> msgbuf^[0] }
        mov    esi,data          { es:si -> msgbuf^[bpos] }
@@ -245,7 +245,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure Remove0(var data; size:word); assembler; {&uses edi}
+procedure Remove0(var data; size: LongWord); assembler; {&uses edi}
 asm
         mov    edi,data
         mov    ecx,size
@@ -263,7 +263,7 @@ end ['EAX', 'ECX', 'EDI'];
 end;
 {$ENDIF }
 
-procedure ISO2IBM(var data; size:word); assembler; {&uses ebx, esi}
+procedure ISO2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
 asm
           mov    ebx,offset ISO2IBMtab - 128
           mov    esi,data
@@ -285,7 +285,7 @@ end ['EAX', 'EBX', 'ECX', 'ESI'];
 end;
 {$ENDIF }
 
-procedure Mac2IBM(var data; size:word); assembler; {&uses ebx, esi}
+procedure Mac2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
 asm
           mov    ebx,offset Mac2IBMtab - 128
           mov    esi,data
@@ -668,7 +668,7 @@ const bufsize = 16384;
 var f1,f2   : file;
     buf     : pointer;
     fs,adr  : longint;
-    rr      : word;
+    rr      : Integer;
     hd      : zheader;
     hds     : integer;
     ok      : boolean;
@@ -1022,7 +1022,7 @@ var f1,f2  : file;
     tearadr: longint;
     tear_2 : longint;
     buf    : array[0..170] of byte;
-    rr     : word;
+    rr     : Integer;
     fromu  : string;    { verlaengert wegen Internet-Adressen }
     tou    : string;
     subj   : string;
@@ -1048,7 +1048,7 @@ var f1,f2  : file;
     box    : string;
     pok    : boolean;
     msgbuf : charrp;      { Puffer fuer kompletten Nachrichteninhalt }
-    mbufsize : word;      { Puffergroesse                       }
+    mbufsize : Integer;      { Puffergroesse                       }
     oversize: longint;    { abgeschnittener Nachrichtenteil >48k }
     cxlate  : byte;        { 0=ASCII/IBMPC, 1=LATIN-1, 2=MAC }
     fromline: string;
@@ -1086,7 +1086,7 @@ label abbr;
   end;
 
   procedure getrestofline;
-  var p, p2 : byte;
+  var p, p2 : Integer;
   begin
     SetLength(s, 255);
     blockread(f1,s[1],255,rr);
@@ -1152,7 +1152,7 @@ label abbr;
               copy(s,15,2);
   end;
 
-  function seek0(var buf; smallsize:word):word; assembler; {&uses edi} { suche #0 }
+  function seek0(var buf; smallsize: LongWord):word; assembler; {&uses edi} { suche #0 }
   asm
     mov  ecx, smallsize
     mov  edi, buf
@@ -1168,7 +1168,7 @@ label abbr;
   end;
   {$ENDIF }
 
-  function seekt(var buf; size:word):word; assembler; {&uses edi } { suche _'---'_ }
+  function seekt(var buf; size: LongWord):word; assembler; {&uses edi } { suche _'---'_ }
   asm
         mov ecx, size
         mov edi, buf
@@ -1195,8 +1195,8 @@ label abbr;
   procedure seekEOM;   { Tearline & Nachrichtenende suchen }
   const bs = 4096;
   var p  : charrp;
-      rr : word;
-      w  : word;
+      rr : Integer;
+      w  : Integer;
       tadd: longint;
   begin
     getmem(p,bs+5);
@@ -1221,7 +1221,7 @@ label abbr;
     inc(tearadr,tadd);
   end;
 
-  procedure exch_8d(var buf; asize:word); assembler; {&uses edi}
+  procedure exch_8d(var buf; asize: LongWord); assembler; {&uses edi}
   asm
         mov ecx, asize
         mov edi, buf
@@ -1241,7 +1241,7 @@ label abbr;
   procedure CopyMsg(size:longint);
   const bs = 8192;
   var p  : charrp;
-      rr : word;
+      rr : Integer;
   begin
     if size>0 then begin
       getmem(p,bs);
@@ -1260,9 +1260,9 @@ label abbr;
   end;
 
   procedure ReadMsgToBuf(var hdgroesse:longint);
-  var bpos  : word;
-      size  : word;
-      addlf : word;
+  var bpos  : Integer;
+      size  : Integer;
+      addlf : Integer;
   begin
     bpos:=mbufsize div 4;
     size:=min(hdgroesse,mbufsize-bpos);
@@ -1317,7 +1317,7 @@ label abbr;
   procedure seeknextmsg;
   const bs = 4096;
   var   p  : charrp;
-        rr : word;
+        rr : Integer;
         i  : integer;
   begin
     getmem(p,bs+5);
@@ -1804,6 +1804,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.27  2001/10/20 17:26:44  mk
+        - changed some Word to Integer
+          Word = Integer will be removed from xpglobal in a while
+
         Revision 1.26  2001/09/10 15:58:04  ml
         - Kylix-compatibility (xpdefines written small)
         - removed div. hints and warnings

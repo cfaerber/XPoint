@@ -236,7 +236,7 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
-procedure decode(buf:pointer; size:word); assembler; {&uses ebx}
+procedure decode(buf:pointer; size: LongWord); assembler; {&uses ebx}
 asm
         mov ecx, size
         mov ebx, buf
@@ -773,6 +773,10 @@ finalization
   ReleaseHelp;
 {
   $Log$
+  Revision 1.42  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.41  2001/10/11 15:27:01  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 

@@ -312,7 +312,7 @@ var f    : file;
                     hw : smallword);
                5 : (buf: array[0..$7f] of char);    { Anfang tar-Record }
              end;
-    rr   : word;
+    rr   : Integer;
     fs   : record
              case integer of
                0 : (b    : byte;
@@ -329,7 +329,7 @@ label ende;
 
   function TestLZH:boolean;
   var lbuf  : array[0..255] of byte;
-      rr    : word;
+      rr    : Integer;
 {      chk,i : byte; }
       meth  : string;
   begin                                { Funktion arc Type }
@@ -350,7 +350,7 @@ label ende;
 
   function TestARC:boolean;
   var lbuf  : array[0..255] of byte;
-      rr    : word;
+      rr    : Integer;
       isarc : boolean;
       b     : byte;
   begin
@@ -601,7 +601,7 @@ var buffer : array[0..511] of byte;
     SQZ    : SqzRec absolute buffer;
     TAR    : TarRec absolute buffer;
     RAR    : RarHD absolute buffer;
-    rr     : word;
+    rr     : Integer;
     oldadr : longint;
 
 label again;
@@ -840,7 +840,7 @@ end;
 function UnSFX(name:arcpath; typ:shortint):boolean;
 const maxbuf = 60000;
 var f1,f2 : file;
-    rr    : word;
+    rr    : Integer;
     p     : pointer;
     ps    : word;
     fsrec : record
@@ -855,7 +855,7 @@ var f1,f2 : file;
       b,p : byte;
       n,i : word;
       adr : longint;
-      rr  : word;
+      rr  : Integer;
       rec : record
               compsize : longint;
               orgsize  : longint;
@@ -939,6 +939,10 @@ end;
 
 {
   $Log$
+  Revision 1.30  2001/10/20 17:26:38  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.29  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

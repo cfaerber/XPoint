@@ -1500,7 +1500,7 @@ var betr : string;
     fn   : string;
     f    : file;
     buf  : charrp;
-    i, rr : word;
+    i, rr : Integer;
 begin
   Betr := dbReadNStr(mbase,mb_betreff);
   if (LeftStr(betr,length(QPC_ID))<>QPC_ID) and
@@ -1525,6 +1525,10 @@ end;
 
 {
   $Log$
+  Revision 1.76  2001/10/20 17:26:40  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.75  2001/09/29 09:31:05  mk
   - some tweaks for extrakt(), specially for linux
 

@@ -349,7 +349,7 @@ begin
 end;
 
 procedure IoExcept(e:ExceptClass);
-var r: rtlword;
+var r: Integer;
 begin
   r:=IOResult;
   if r<>0 then
@@ -681,6 +681,10 @@ end;
 
 {
   $Log$
+  Revision 1.108  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.107  2001/10/15 09:04:21  ml
   - compilable with Kylix ;-)
 

@@ -158,7 +158,7 @@ var x,y   : Integer;
     brk   : boolean;
     n,nf  : longint;
     p     : pointer;
-    psize : word;
+    psize : Integer;
     spez  : boolean;
     sst   : string;   { evtl. UpString von suchstring }
     i     : integer;
@@ -321,7 +321,7 @@ label ende;
   function InText(var key:string):boolean;
   var size : longint;
       ofs  : longint;
-      wsize: word;
+      wsize: Integer;
       s: String;
   begin
     dbReadN(mbase,mb_msgsize,size);
@@ -1171,8 +1171,8 @@ var ablg   : byte;
     f      : file;
     l,size : longint;
     p      : pointer;
-    ps  : word;
-    rr: word;
+    ps  : Integer;
+    rr: Integer;
     typ    : char;
 begin
   dbReadN(mbase,mb_typ,typ);
@@ -2514,6 +2514,10 @@ end;
 
 {
   $Log$
+  Revision 1.120  2001/10/20 17:26:41  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
   Revision 1.119  2001/10/12 23:27:07  mk
   - fixed search with marked areas/users
 
