@@ -8651,6 +8651,16 @@ M”glichkeiten:
 
   Eine Viruswarnung erfolgt nicht.
 
+
+Wenn Sie "[Keine Warte-Batch bei Windows-Viewern]" bei@8071
+Config/Optionen/Viewer aktiviert haben sollten, wird
+die Datei statt mit ihrem originalen mit einem zuf„l-
+lig erzeugten Dateinamen nach dem Muster <<TMP-nnnn.EXT>>
+extrahiert (wobei "nnnn" fr eine vierstellige Zu-
+fallszahl und "EXT" fr die Erweiterung des origi-
+nalen Dateinamens steht). Hinsichtlich der Erweite-
+rung gelten die o.g. Regeln daher unver„ndert.
+
 @
 823
 Geben Sie hier an, welches Programm CrossPoint zum
@@ -8675,12 +8685,14 @@ den, inkl. der Erweiterung ".BAT".
 
 Wenn das eingetragene Viewer-Programm eine Windows-
 Anwendung ist, startet CrossPoint das Programm
-automatisch mit einer speziellen "Warte-Batch" ber
-den Befehl <<start>> - es sei denn, Sie haben dies expli-
-zit bei "[Keine Warte-Batch bei Windows-Viewern]" unter@8071
+automatisch mit einer speziellen "Warte-Batch" -
+es sei denn, Sie haben dies explizit bei
+"[Keine Warte-Batch bei Windows-Viewern]" unter@8071
 /Config/Optionen/Viewer deaktiviert. In diesem Fall
 stellt XP bei Windows-Viewern dem eigentlichen Pro-
-grammaufruf lediglich den Befehl <<start>> voran.
+grammaufruf lediglich noch den Befehl <<start>> voran
+(wenn Sie diesen im Aufrufbefehl nicht schon selbst
+angegeben haben sollten).
 
 Wenn Sie einen Viewer-Eintrag nur mit MIME-Typ aber
 ohne Dateierweiterung (oder nur mit Dateierweiterung
@@ -8690,6 +8702,9 @@ Damit bergibt XP die Datei immer automatisch an den
 passenden Viewer (also das Programm, das in Windows
 fr den entsprechenden Dateityp registriert ist).
 
+Tragen Sie hier einfach "<<start $FILE>>" ein, wenn Sie
+diese Funktion unter Windows nutzen m”chten.
+
 Vereinfacht dargestellt, wrde CrossPoint also z.B.
 bei Erhalt einer MIME-Nachricht des Typs <<image/gif>>
 mit der Datei <<xyz.gif>> den Befehl <<start /w xyz.gif>>
@@ -8698,19 +8713,48 @@ Windows registrierte Programm ausfhren.
 
 @
 8071
-Wenn unter Windows Dateien mit externen Viewer-
-Programmen ge”ffnet werden, kann parallel mit
-CrossPoint weitergearbeitet werden. Um die hierbei
-angelegten Tempor„rdateien zu l”schen, gibt es zwei
-m”gliche Vorgehensweisen:
+Wenn unter Windows Dateien mit externen Windows-
+Viewer-Programmen ge”ffnet werden, kann parallel mit
+CrossPoint weitergearbeitet werden (d.h., Sie k”nnen
+aus dem Windows-Viewer heraus mit <<<Alt-Tab> >>zu XP
+zurckwechseln). Wie und wann die hierbei angelegten
+Tempor„rdateien gel”scht werden, k”nnen Sie wie folgt
+steuern:
 
-<<[ ]>> -> Es wird zus„tzlich zum Viewer-Programm
-       eine Batchdatei gestartet, die wartet, bis
-       das Viewer-Programm beendet wird und dann
-       sich selbst und die Tempor„rdatei l”scht.
+<<[ ]>> -> Das Windows-Viewer-Programm wird ber eine
+       Batchdatei gestartet, die wartet, bis das Pro-
+       gramm beendet wird und die dann die Tempor„r-
+       datei und anschlieáend sich selbst l”scht. Ein
+       solcher Programmaufruf ber eine "Warte-Batch"
+       aus XP sieht dann z.B. so aus:
+       <<start command /c C:\XP\TEMP\wrun7207.bat
+       Dabei enth„lt "wrun7207.bat" die eigentlichen
+       Befehle zum Starten des Programms sowie zum
+       L”schen der Tempor„rdatei und sich selbst -
+       Beispiel:
+       <<start /wait C:\PSP\PSP.EXE C:\XP\TEMP\XYZ.GIF
+       <<del C:\XP\TEMP\XYZ.GIF
+       <<del C:\XP\TEMP\wrun7207.bat
 
-<<[x]>> -> CrossPoint l”scht die Tempor„rdatei erst
-       beim n„chsten Programmstart.
+<<[x]>> -> CrossPoint fhrt das Windows-Viewer-Programm
+       mit genau der Befehlszeile aus, wie Sie sie in
+       /Edit/Viewer eingegeben haben (ggf. stellt XP
+       lediglich noch den Befehl <<start>> voran). Dabei
+       werden die tempor„ren Dateien nicht mit ihrem
+       originalen, sondern mit einem zuf„llig erzeug-
+       ten Dateinamen nach dem Muster <<TMP-nnnn.EXT>>
+       extrahiert (wobei "nnnn" fr eine vierstellige
+       Zufallszahl und "EXT" fr die Erweiterung des
+       originalen Dateinamens steht). CrossPoint
+       l”scht diese Dateien beim n„chsten Programm-
+       start dann automatisch.
+
+Auf den Aufrufbefehl fr Viewer-Programme, die keine
+Windows-Anwendungen sind, hat diese Einstellung kei-
+nen Einfluá - auáer, daá bei aktivierter Option die
+Tempor„rdatei ebenfalls mit einem zuf„llig erzeugten
+statt dem originalen Dateinamen extrahiert wird.
+
 @
 8072
 <<Sichere Dateierweiterungen>>
@@ -13939,8 +13983,7 @@ Spezialmodus, dann <<E>> fr Editieren).
 Die fr das Brett eingetragene Serverbox existiert
 nicht mehr. M”glicherweise haben Sie die Box gewech-
 selt, aber den Server einiger Bretter nicht umge-
-stellt. Verwenden Sie /Wartung/Sonstiges/Server-
-Wechsel!
+stellt. Verwenden Sie /Wartung/Server-Wechsel!
 @
 20807
 Fr die gew„hlte Box ist noch keine Brettliste vor-
