@@ -71,7 +71,7 @@ const  {$IFDEF DPMI}
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 245;
+       BetreffLen  = 248;
        DateLen     = 11;
        midlen      = 160;
        AKAlen      = 127;
@@ -963,7 +963,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        sabsender    : byte;          { 0=normal, 1=klein, 2=mit space,   }
        envspace     : smallword;     { ..3=nur User, 4=Spalten           }
        DefReadmode  : integer;       { Default fÅr 'readmode' (s.u.) }
-       AAmsg        : boolean;       { Auto-Advace }
+       AAmsg        : boolean;       { Auto-Advance }
        AAbrett      : boolean;
        AAuser       : boolean;
        ScrollLock   : boolean;       { umschaltbarer Scroll-Mode }
@@ -1098,9 +1098,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        gl,actgl     : shortint;      { Anzeige-Zeilen im Hauptfenster }
        aufbau       : boolean;       { neuer Bildschirm-Aufbau nîtig  }
        xaufbau      : boolean;       { Bezugsbaum neu einlesen        }
-       readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues }
-       readdate     : longint;       { 3=Heute, 4=Datum              }
-       nachweiter,nw: boolean;       { Auto-Advace im Msg-Fenster    }
+       readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues  }
+       readdate     : longint;       { 3=Heute, 4=Datum               }
+       nachweiter,nw: boolean;       { Auto-Advance im Msg-Fenster    }
        brettweiter  : boolean;
        userweiter   : boolean;
        qchar        : string[20];    { zuletzt verwendeter Quote-String }
@@ -1230,6 +1230,13 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.55  2002/07/11 12:27:11  my
+  MY:- BetrefflÑnge von 245 auf 248 Zeichen erhîht (255-CRLF-"BET: ").
+       Vorgriff auf die geÑnderte Betreffbehandlung im UUZ, der zukÅnftig
+       beliebig lange Betreffs ausgehend verarbeiten kînnen wird, weshalb
+       die LÑnge des Strings "Subject: " nicht mehr berÅcksichtigt werden
+       mu· (in XP bleibt es aber b.a.w. bei der 255-Zeichen-BeschrÑnkung).
+
   Revision 1.54.2.54  2002/06/10 13:49:41  my
   MY:- Fix: Wenn die max. zulÑssige BetrefflÑnge von 250 Zeichen
        ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
@@ -1326,8 +1333,6 @@ end.
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
 
   Revision 1.54.2.42  2001/10/16 18:36:01  my
-  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
-  ------------------------------------------------------------------------
   MY:- /Netcall/Spezial fertiggestellt:
        - NETCALL.DAT kann jetzt bis zu 20 EintrÑge enthalten, die bei
          einem /Netcall/Spezial mit <F2> ausgewÑhlt werden kînnen. Je

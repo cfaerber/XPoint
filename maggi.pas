@@ -40,7 +40,7 @@ uses dos,xms,typeform,xpovl,fileio,montage,xpdatum,xp_iti,xpglobal,
 const nt_ZConnect=2;
       OrgLen    = 80;
       hderrlen  = 40;
-      BetreffLen= 245;
+      BetreffLen= 248;
       readempflist = false;
       readkoplist  = false;
       readOemList  = false;
@@ -1835,6 +1835,13 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.14  2002/07/11 12:27:11  my
+  MY:- Betreffl„nge von 245 auf 248 Zeichen erh”ht (255-CRLF-"BET: ").
+       Vorgriff auf die ge„nderte Betreffbehandlung im UUZ, der zuknftig
+       beliebig lange Betreffs ausgehend verarbeiten k”nnen wird, weshalb
+       die L„nge des Strings "Subject: " nicht mehr bercksichtigt werden
+       muá (in XP bleibt es aber b.a.w. bei der 255-Zeichen-Beschr„nkung).
+
   Revision 1.15.2.13  2002/06/10 13:49:42  my
   MY:- Fix: Wenn die max. zul„ssige Betreffl„nge von 250 Zeichen
        ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf

@@ -35,7 +35,7 @@ const
       maxfollow   = 10;               { max. Followup-To-Zeilen }
       bufsize     = 16384;
       outbufsize  = 16384;
-      BetreffLen  = 245;
+      BetreffLen  = 248;
       readempflist= true;
       postadrlen  = 80;
       telelen     = 60;
@@ -3404,6 +3404,13 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.79  2002/07/11 12:27:11  my
+  MY:- Betreffl„nge von 245 auf 248 Zeichen erh”ht (255-CRLF-"BET: ").
+       Vorgriff auf die ge„nderte Betreffbehandlung im UUZ, der zuknftig
+       beliebig lange Betreffs ausgehend verarbeiten k”nnen wird, weshalb
+       die L„nge des Strings "Subject: " nicht mehr bercksichtigt werden
+       muá (in XP bleibt es aber b.a.w. bei der 255-Zeichen-Beschr„nkung).
+
   Revision 1.35.2.78  2002/06/10 13:49:42  my
   MY:- Fix: Wenn die max. zul„ssige Betreffl„nge von 250 Zeichen
        ausgenutzt wurde, wurde der Betreff in XP auf 248 und im UUZ auf
