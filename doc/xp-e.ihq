@@ -671,11 +671,11 @@ dually as files on the disk.
 50
 <<View Mode>>
 
-Generally, you do not want to see <<all>> messages
-in the database. There may be too many, some you
+Generally, you will not want to see all messages in 
+the message base. There may be too many, some you
 may have already read, others may be old, etc.
 For this reason, CrossPoint allows you to select
-which messages to read.
+which messages to display.
 
 The following selection criteria are available:
 
@@ -683,26 +683,26 @@ The following selection criteria are available:
 <<All>>    All messages are displayed.
 
 <<Unread>> All messages that you have not read,
-       regardless of age.
+       regardless of age, are displayed.
 
-<<New>>    Shows messages since the last netcall or
-       since importing a Puffer-File. Empty netcalls
-       or Puffers are not counted.
+<<New>>    Displays messages since the last Netcall or
+       since manually importing a Puffer-File. Empty
+       Netcalls or Puffers are not counted.
 
-<<Today>>  Selects messages that came in on the current
+<<Today>>  Displays messages that came in on the current
        date.
 
-<<Date>>   Selects messages that came in after a date,
-       which you may specify.
+<<Date>>   Displays messages that came in after a certain
+       date, which you may specify.
 
 <<Time>>   You can fine tune the date above to specify a
        a time of day, to filter more precisely.
 
-<<Save>>   Saves a set time as a dummy time of last
-       netcall. Thus, you can save the time at which
-       a netcall was made with this setting, make
+<<Save>>   Saves a set time as a dummy time of the last
+       Netcall. Thus, you can save the time at which
+       a Netcall was made with this setting, make
        subsequent netcalls but still use "New" to
-       call up all messages since the saved time.
+       display all messages since the saved time.
 
 When setting dates or times, the "+" & "-" keys can
 be used to step through single days or minutes.
@@ -713,11 +713,11 @@ Simply press any key.
 @
 52
 Select the display element whose colour is to be
-changed, and press <Enter>
+changed and press <Enter>
 
 The option <<Default>> sets all colours back to
 standard; any other settings are lost.
-Alternatively you can delete the file XPOINT.COL
+Alternatively, you can delete the file XPOINT.COL
 which holds your own colour settings.
 
 <<Save>> saves new settings in the file XPOINT.COL
@@ -751,9 +751,9 @@ overview.
 
 The important Editor Functions:
 
-    <F2>        Save Text
-    <Esc>       Exit Editor
-    <Shift F2>  Save Text and Exit Editor
+    <F2>        Save message
+    <Esc>       Exit editor
+    <Shift F2>  Save message and exit editor
     <F10>       Menu
 @
 55
@@ -950,15 +950,15 @@ recalled to unpack several files.
 @
 68
 This is the <<Send-Window>> in CrossPoint. It is
-decided here, if and how a message will actually be 
+decided here, if and how a message will actually be
 sent.
 
 <<Yes>>      The Message is sent "as is".
 
-<<No>>       The Message is discarded and NOT sent. 
+<<No>>       The Message is discarded and NOT sent.
         It can, however, still be found in the file
         called LASTMSG in the temp. directory, as
-        long as no other message is written.
+        long as no other message has been written.
 
 <<Internal>> The message is not sent out but sent to
          the Newsgroup it was written to (also
@@ -979,7 +979,7 @@ sent.
         the message text.
         (Not with binary messages).
 
-<<Copies>>  Up to 50 recipients (Users and 
+<<Copies>>  Up to 50 recipients (Users and
         Newsgroups) can be set to receive copies.
         Note however, it is frowned upon to send
         the same message to several Newsgroups
@@ -3271,26 +3271,28 @@ make this much memory available when starting the
 lister.
 @
 232
-Note: This is only an option for the internal lister.
-When using an external lister, the full screen mode
-is always used.
+Note: This option applies to the internal message 
+reader <<only>>. When using an external message reader, 
+full-screen mode is always used.
 
 <<[ ]>>     The message is displayed within the
         boundaries of the normal XP window.
 
 <<[x]>>     Switches to a full screen display for the
-        lister when presenting a message to read.
+        message reader when presenting a message for 
+        reading.
 @
 233
-<<[x]>>     Lines in reality longer than 80 charac-
-        ters will be folded for display into lines
-        of 80 columns.
+<<[x]>>     Lines longer than 80 characters will be 
+        wrapped for display into lines of 80 
+        characters.
 
         However, since this splitting occurs before
         TAB characters are expanded, lines containing
-        TABs can end up longer than 80.
+        TABs can end up longer than 80 characters.
 
-<<[ ]>>     lines will not be folded until column 255
+<<[ ]>>     Lines will not be wrapped until column
+        255.
 @
 234
 <<[x]>>     Messages with [reference] links are indicated@4014
@@ -3343,9 +3345,25 @@ You can toggle this setting at any time (if you want
 to take off the rose coloured spectacles) by pressing
 the key <<C>> (for Colour).
 @
+8060
+<<[x]>>     Different levels of quotes will be
+        highlighted in different colours.
+
+<<[ ]>>     <<All>> quotes will be highlighted in the
+        "level 1" colour.
+@
 238
 <<[x]>>     If you are using mouse support, this
         switch puts a scrollbar in.
+@
+239
+<<[x]>>     When the mouse cursor is either above or
+        below the screen boundary, the screen will be
+        scrolled either up or down.
+@
+8061
+<<[x]>>     The message reader may be exited by
+        pressing the <return> key.
 @
 240
 Specify up to what size binary files that you have
