@@ -111,7 +111,7 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
+uses video,xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
@@ -464,12 +464,14 @@ begin
   if edpush then begin
     attrtxt(col.coledithead);
     moff;
-{$IFDEF NCRT }
+    { Kommentar kann entfernt werden, wenn es in den anderen Versionen laeuft
+      hd 2000-06-30 }
+//{$IFDEF NCRT }
     { Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden }
     wpush(1,GetScreenCols,1,GetScreenLines,'-');
-{$ELSE }
-    wpush(1,80,1,2,'-');         { 'Nachricht an  ' / 'Nachricht in  ' }
-{$ENDIF }
+//{$ELSE }
+//    wpush(1,80,1,2,'-');         { 'Nachricht an  ' / 'Nachricht in  ' }
+//{$ENDIF }
     p:=cpos('@',empfaenger);
     wrt(1,1,' ');
     if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
@@ -2126,6 +2128,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/06/30 11:39:05  hd
+  - EditNachricht: An GetScreenLines/-Cols angepassst
+
   Revision 1.40  2000/06/23 15:59:22  mk
   - 16 Bit Teile entfernt
 
