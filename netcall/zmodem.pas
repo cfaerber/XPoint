@@ -593,6 +593,7 @@ var
   time: LONGINT;
 
 begin
+  ch := #0; //or what?
   if FCommObj.CharAvail then begin
     Result := ORD(FCommObj.GetChar);
     {$IFDEF VerbDebug}AddLogChar(Char(Result), False); {$ENDIF}
@@ -1468,8 +1469,7 @@ var
 begin
   p := 0;
   s := '';
-  while (p < 255) and (secbuf[p] <> 0) do
-  begin
+  while (p < 255) and (secbuf[p] <> 0) do begin
     s := s + UpCase(Chr(secbuf[p]));
     INC(p)
   end;
@@ -1489,8 +1489,7 @@ begin
   (**** done with name ****)
 
   fsize := LONGINT(0);
-  while (p < ZBUFSIZE) and (secbuf[p] <> $20) and (secbuf[p] <> 0) do
-  begin
+  while (p < ZBUFSIZE) and (secbuf[p] <> $20) and (secbuf[p] <> 0) do begin
     fsize := (fsize * 10) + Ord(secbuf[p]) - $30;
     INC(p)
   end;
@@ -1501,12 +1500,11 @@ begin
   (**** done with size ****)
 
   s := '';
-  while (p < ZBUFSIZE) and (secbuf[p] in [$30..$37]) do
-  begin
+  while (p < ZBUFSIZE) and (secbuf[p] in [$30..$37]) do begin
     s := s + Chr(secbuf[p]);
     INC(p)
   end;
-  INC(p);
+  //INC(p);
   ftime := Z_FromUnixDate(s);
 
   (**** done with time ****)
@@ -1516,68 +1514,47 @@ begin
   makefile := FALSE;
   TransferPath := zrxpath;
 
-  if RecoverAllow and (Z_FindFile(zrxpath + fname, tname, tsize, ttime)) then
-  begin
-    if (ttime = ftime) then
-    begin
-      if (zconv = ZCRESUM) and (fsize = tsize) then
-      begin
+  if RecoverAllow and (Z_FindFile(zrxpath + fname, tname, tsize, ttime)) then begin
+    if (ttime = ftime) then begin
+      if (zconv = ZCRESUM) and (fsize = tsize) then begin
         TransferCount := fsize;
         TransferMessage := 'File is already complete';
         returncode := ZSKIP;
-      end                               (* of IF THEN *)
-      else
-        if (fsize > tsize) then
-      begin
+      end else if (fsize > tsize) then begin
         filestart := tsize;
         TransferCount := tsize;
         startproc;
 
-        if (not Z_OpenFile(outfile, TransferPath + TransferName)) then
-        begin
+        if (not Z_OpenFile(outfile, TransferPath + TransferName)) then begin
           TransferMessage := 'Error opening ' + TransferName;
           returncode := ZERROR;
-        end                             (* of IF THEN *)
-        else
-        begin
-          if (not Z_SeekFile(outfile, tsize)) then
-          begin
-            TransferMessage := 'Error positioning file';
-            returncode := ZERROR;
-          end                           (* of IF THEN *)
-          else
-            FileAddition := RecoverFile;
-        end;                            (* of ELSE *)
-      end                               (* of ELSE IF THEN *)
-      else
-      begin
+        end else if (not Z_SeekFile(outfile, tsize)) then begin
+          TransferMessage := 'Error positioning file';
+          returncode := ZERROR;
+        end else
+          FileAddition := RecoverFile;
+      end else begin
         makefile := TRUE;
         FileAddition := ReplaceFile;
-      end;                              (* of ELSE *)
-    end                                 (* of IF THEN *)
-    else
-    begin
+      end;
+    end else begin
       makefile := TRUE;
       FileAddition := ReplaceFile;
-    end;                                (* of ELSE *)
-  end
-  else
-  begin
+    end;
+  end else begin
     makefile := TRUE;
     FileAddition := NewFile;
-  end;                                  (* of ELSE *)
+  end;
 
-  if makefile then
-  begin
+  if makefile then begin
     filestart := 0;
     TransferCount := 0;
     startproc;
-    if (not Z_MakeFile(outfile, TransferPath + TransferName)) then
-    begin
+    if (not Z_MakeFile(outfile, TransferPath + TransferName)) then begin
       TransferMessage := 'Unable to create ' + TransferName;
       returncode := ZERROR;
-    end;                                (* of IF THEN *)
-  end;                                  (* of IF *)
+    end;
+  end;
 
   RZ_GetHeader := returncode;
 end;                                    (* of RZ_GetHeader *)
@@ -1723,7 +1700,7 @@ moredata:
           if (n < 0) then goto err;
           TransferBytes := rxbytes - TransferCount;
         end;
-      ZFILE: Result := RZ_ReceiveData(secbuf, ZBUFSIZE);
+      ZFILE: Result := RZ_ReceiveData(secbuf, ZBUFSIZE);  //use result???
       ZEOF:
         if (rxpos = rxbytes) then begin
           Exit
@@ -2326,7 +2303,6 @@ var
 begin
   TransferError := 0;
   TransferBytes := 0;
-  Result := ZERROR;
 
   while True do begin
     if (KeyPressed) then begin
@@ -2522,6 +2498,9 @@ begin
 
 {
   $Log$
+  Revision 1.30  2002/12/16 01:05:15  dodi
+  - fixed some hints and warnings
+
   Revision 1.29  2002/12/14 22:43:42  dodi
   - fixed some hints and warnings
 

@@ -743,6 +743,8 @@ var x,y        : Integer;
   end;
 
 begin
+  new_net := 0; //or what?
+  new_zone := 0;  //or what?
   getmem(tb,tbuf);
   msgbox(59,5,getres2(2101,1),x,y) ;   { 'Nodeindex anlegen' }
   mwrt(x+3,y+2,getres2(2101,2));       { 'Datei' }
@@ -759,8 +761,7 @@ begin
   new(uf[0]);
   assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
 
-  for liste:=0 to NodeList.Count - 1 do
-  begin
+  for liste:=0 to NodeList.Count - 1 do begin
     zone:=TNodeListItem(Nodelist.Items[liste]).zone;
     if zone=0 then zone:=DefaultZone;
     net:=0; node:=0;
@@ -796,34 +797,34 @@ begin
             if (p=1) or (ltyp=nlNode) then begin
               if ltyp=nlFDpointlist then k:='Point'
               else k:='';
-              newnet:=false; end
-            else begin
+              newnet:=false;
+            end else begin
               k:=TopStr(copy(s,1,p-1));
               if (ltyp=nlFDpointlist) and (k='Boss') then begin
                 ss:=mid(s,p+1);
                 p:=cposx(',',ss);
                 SplitFido(LeftStr(ss,p-1),fa,zone);
                 if fa.zone<>zone then begin
-                  k:='Zone'; newnet:=true; end
-                else if fa.net<>net then begin
-                  k:='Host'; newnet:=true; end
-                else if fa.node<>node then begin
-                  k:='Node'; newnet:=false; end
-                else begin
-                  k:=''; newnet:=false; end;
+                  k:='Zone'; newnet:=true;
+                end else if fa.net<>net then begin
+                  k:='Host'; newnet:=true;
+                end else if fa.node<>node then begin
+                  k:='Node'; newnet:=false;
+                end else begin
+                  k:=''; newnet:=false;
+                end;
                 node:=fa.node;
                 new_zone:=fa.zone; new_net:=fa.net;
-                end
-              else
+              end else
                 newnet:=(k='Host') or (k='Region') or (k='Zone');
-              end;
+            end;
 
             if (ltyp<>nlFDpointlist) or (k='Point') then begin
               delete(s,1,p);
               p:=cposx(',',s);
               val(LeftStr(s,p-1),l,res);
               node:=minmax(l,0,65535);
-              end;
+            end;
 
             if node<>0 then case ltyp of
 
@@ -833,19 +834,18 @@ begin
                   np^[nodes].adr:=fpos;
                   inc(nodes);
                   AppUser(zone,net,node,0,fpos);
-                  end;
+                end;
 
               nl4DPointlist:
-                if k='Point' then
+                if k='Point' then begin
                   if nodes>0 then AppPoint(np^[nodes-1].node)
-                  else   { nodes=0 kann vorkommen, wenn falsches Listenformat }
-                else
-                  if not newnet and (nodes<maxnodes) then begin
-                    if points>0 then WritePoints;
-                    np^[nodes].node:=node;
-                    np^[nodes].adr:=filepos(idf);
-                    inc(nodes);
-                    end;
+                  //else   { nodes=0 kann vorkommen, wenn falsches Listenformat }
+                end else if not newnet and (nodes<maxnodes) then begin
+                  if points>0 then WritePoints;
+                  np^[nodes].node:=node;
+                  np^[nodes].adr:=filepos(idf);
+                  inc(nodes);
+                end;
 
               nlFDpointlist:
                 if (k='Node') and (nodes<maxnodes) then begin
@@ -853,25 +853,21 @@ begin
                   np^[nodes].node:=node;
                   np^[nodes].adr:=filepos(idf);
                   inc(nodes);
-                  end
-                else
-                  if (k='Point') or (k='Pvt') or (k='Down') or (k='Hold') then
-                    if nodes>0 then  { sicher ist sicher ... }
-                      AppPoint(np^[nodes-1].node);
+                end else if (k='Point') or (k='Pvt') or (k='Down') or (k='Hold') then
+                  if nodes>0 then  { sicher ist sicher ... }
+                    AppPoint(np^[nodes-1].node);
 
               nlNode:
                 if not newnet then
                   AppPoint(TNodeListItem(Nodelist.Items[liste]).node);
 
               nlPoints24:
-                if not newnet then
-                  if nodes>0 then AppPoint(np^[nodes-1].node)
-                  else
-                else begin
+                if not newnet then begin
+                  if nodes>0 then AppPoint(np^[nodes-1].node);
+                end else begin
                   if points>0 then
                     WritePoints
-                  else
-                    if nodes>0 then
+                  else if nodes>0 then
                       dec(nodes);   { Node ohne Points !? }
                   if k='Region' then
                     k:='Host'
@@ -885,11 +881,11 @@ begin
                     net:=fa.net;
                     Display;
                     inc(nodes);
-                    end;
                   end;
+                end;
 
-              end;  { case }
-            end;  { s[1]<>';' }
+            end;  { case }
+          end;  { s[1]<>';' }
           inc(fpos,ll+2);
         until newnet or eof(nf);
 
@@ -897,10 +893,10 @@ begin
           if nodes=0 then begin       { ntNode }
             np^[0].node:=TNodeListItem(Nodelist.Items[liste]).node;
             inc(nodes);
-            end;
+          end;
           np^[nodes-1].adr:=filepos(idf);
           WritePoints;
-          end;
+        end;
 
         if nodes>0 then begin
           inc(nets);
@@ -917,11 +913,11 @@ begin
           if nodes>1 then
             SortNodes(0,nodes-1);
           WriteNodes;
-          end;
+        end;
         if ltyp=nlFDpointlist then begin
           zone:=new_zone;
           net:=new_net;
-          end;
+        end;
         if not eof(nf) then begin
           if ltyp<>nlFDpointlist then begin
             if (k<>'Host') and (k<>'Region') then
@@ -929,11 +925,10 @@ begin
             net:=node;
             np^[0].node:=0;
             np^[0].adr:=fpos-ll-2;
-            end
-          else begin
+          end else begin
             np^[0].node:=node;
             np^[0].adr:=filepos(idf);
-            end;
+          end;
 
           nodes:=1;
           node:=0;
@@ -942,8 +937,8 @@ begin
           end;
       until eof(nf);
       close(nf);
-      end;
     end;
+  end;
 
   if bufnets>0 then
     flushnbuffers;
@@ -1219,49 +1214,49 @@ again:
         nadr:=bp^[netp].adr;
         nfile:=bp^[netp].fnr;                           //der index fuer die nodeliste
         ni.datei:=nfile;
-        end;
-      if found and (fa.ispoint=odd(bp^[netp].flags)) then begin
-        getmem(np,nanz*sizeof(noderec));
-        seek(nodef,nadr);
-        blockread(nodef,np^,nanz*sizeof(noderec));
-        i:=0;
-        while (i<nanz) and (np^[i].node<fa.node) do      //np bis zur Node# abklappern
-          inc(i);                                        //enthaelz nun den passenden Satz
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
-        if (i<nanz) and (np^[i].node=fa.node) then
-          _adr:=np^[i].adr                               //adresse zur Node#'12478'
-        else
-          _adr:=-1;
-        freemem(np,nanz*sizeof(noderec));
-        if (_adr>=0) and fa.ispoint then begin           //node gefunden aber point
-          seek(nodef,_adr);
-          blockread(nodef,points,2);
-          getmem(pp,points*sizeof(pointrec));
-          blockread(nodef,pp^,points*sizeof(pointrec));
+        if (fa.ispoint=odd(bp^[netp].flags)) then begin
+          getmem(np,nanz*sizeof(noderec));
+          seek(nodef,nadr);
+          blockread(nodef,np^,nanz*sizeof(noderec));
           i:=0;
-          while (i<points) and (pp^[i].point<fa.point) do
-            inc(i);
-          if (i<points) and (pp^[i].point=fa.point) then
-            _adr:=pp^[i].adr
+          while (i<nanz) and (np^[i].node<fa.node) do      //np bis zur Node# abklappern
+            inc(i);                                        //enthaelz nun den passenden Satz
+  {$IFDEF Debug }
+    {$R+}
+  {$ENDIF }
+          if (i<nanz) and (np^[i].node=fa.node) then
+            _adr:=np^[i].adr                               //adresse zur Node#'12478'
           else
             _adr:=-1;
-          freemem(pp,points*sizeof(pointrec));
+          freemem(np,nanz*sizeof(noderec));
+          if (_adr>=0) and fa.ispoint then begin           //node gefunden aber point
+            seek(nodef,_adr);
+            blockread(nodef,points,2);
+            getmem(pp,points*sizeof(pointrec));
+            blockread(nodef,pp^,points*sizeof(pointrec));
+            i:=0;
+            while (i<points) and (pp^[i].point<fa.point) do
+              inc(i);
+            if (i<points) and (pp^[i].point=fa.point) then
+              _adr:=pp^[i].adr
+            else
+              _adr:=-1;
+            freemem(pp,points*sizeof(pointrec));
           end;
-        if _adr>=0 then begin
-          ni.ispoint:=fa.ispoint;
-          ReadNData(nfile,_adr,ni);                     //Nodedaten nach ni auslesen
+          if _adr>=0 then begin
+            ni.ispoint:=fa.ispoint;
+            ReadNData(nfile,_adr,ni);                     //Nodedaten nach ni auslesen
           end;
         end;
+      end;  //if found
       inc(netp);
     until not found or ni.found;
     dispose(bp);
-    end;
+  end;
   if (pointtyp=2) and not ni.found and fa.ispoint then begin
     fa.ispoint:=false;
     goto again;
-    end;
+  end;
   ni.ispoint:=fa.ispoint;
   if not nodelistopen then
     close(nodef);
@@ -1979,7 +1974,7 @@ begin
   if NodeList.GetMainNodelist<0 then begin     //bestimmt den index der nodeliste
     rfehler(2125);    { 'Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.' }
     exit;
-    end;
+  end;
   dialog(57,3,getres2(2104,1),x,y);   { 'Nodelist einschraenken' }
   s:=ShrinkNodes;
   maddstring(3,2,getres2(2104,2),s,35,100,'0123456789 :');  { 'Zonen/Regionen ' }
@@ -1994,7 +1989,7 @@ begin
       closebox;
       freeres;
       exit;
-      end;
+    end;
     s2:=s;
     s:=s+' ';
     repeat
@@ -2007,7 +2002,8 @@ begin
       else begin
         val(LeftStr(ss,p-1),l,res);
         if res=0 then val(mid(ss,p+1),l,res);
-        end;
+      end;
+      {$IFDEF ANALYSE}Write(l);{$ENDIF} //prevent warning "never used"
     until (res<>0) or (s='');
     if res<>0 then
       fehler(getres2(2104,4))   { 'ungueltige Eingabe' }
@@ -2015,8 +2011,8 @@ begin
       ShrinkNodes:=s2;
       SaveConfig2;
       ShrinkNodelist(true);
-      end;
     end;
+  end;
   freeres;
 end;
 
@@ -2043,33 +2039,28 @@ function ReqTestNode(var s:string):boolean;  { s. auch XP7.getCrashBox }
 var fa : FidoAdr;
     ni : NodeInfo;
 begin
+  ni.found := False;
   if not IsNodeAddress(s) then begin
     fa.username:=s;
     GetNodeuserInfo(fa,ni);
     if ni.found then s:=MakeFidoAdr(fa,true);
-    end
-  else begin
+  end else begin
     splitfido(s,fa,DefaultZone);
     if fa.node+fa.net=0 then begin
       errsound;
-      ReqTestNode:=false;
-      ni.found:=false;
-      end
-    else begin
+    end else begin
       s:=MakeFidoAdr(fa,true);
       getNodeinfo(s,ni,2);
-      end;
     end;
+  end;
   if not ni.found then begin
     if multipos(':/',s) then
       rfehler(2115);   { 'unbekannte Adresse' }
-    ReqTestNode:=false;
-    end
-  else begin
+  end else begin
     fa.ispoint:=ni.ispoint;
     s:=MakeFidoAdr(fa,true);
-    ReqtestNode:=true;
-    end;
+  end;
+  Result := ni.found;
 end;
 
 procedure NodeSelProc(var cr:customrec);
@@ -2557,7 +2548,6 @@ label ende;
 
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
   var
-    p       : Integer;
 {$IFDEF Linux}
 {$IFDEF Kylix}
     fs : TStatFs;
@@ -2571,21 +2561,20 @@ label ende;
     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
 {$ENDIF}
 
-{$ELSE}
+{$ELSE} //not Linux
     driveNr : Integer;
   begin
      driveNr := ord(FirstChar(Path))-64;
 
     if (diskfree(driveNr)<=size)
 {$ENDIF}
-                                 and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
+    and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
       filetest:=false
     else if ExtractFileExt(fi) = extFl then
       filetest:=true
-    else 
-    begin
+    else begin
       fi := ChangeFileExt(fi, extFl);
       filetest:=(not FileExists(path+fi) or overwrite(path+fi));
     end;
@@ -3137,6 +3126,9 @@ end;
 
 {
   $Log$
+  Revision 1.73  2002/12/16 01:05:13  dodi
+  - fixed some hints and warnings
+
   Revision 1.72  2002/12/12 11:58:50  dodi
   - set $WRITEABLECONT OFF
 

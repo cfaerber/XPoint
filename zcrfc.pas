@@ -3477,13 +3477,13 @@ begin
       seek(f1, adr + hds);            { Text kopieren }
       CopyEncodeMail(f3,hd.groesse);
       WriteRfcTrailer(f3);
-      f3.Free; f3 := nil;
 
       hd.lines:=0;
       for i:=0 to (f0.Size-1) do
         if (PChar(f0.Memory)+i)^=#10 then
           Inc(hd.lines);
 
+      f3.Free; //f3 := nil;
       f3 := TCRLFtoLFStream.Create(f);
       WriteRfcHeader(f3,false,false);
       f3.Free; f3 := nil;
@@ -3761,6 +3761,9 @@ end;
 
 {
   $Log$
+  Revision 1.125  2002/12/16 01:05:14  dodi
+  - fixed some hints and warnings
+
   Revision 1.124  2002/12/14 22:43:39  dodi
   - fixed some hints and warnings
 

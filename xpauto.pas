@@ -218,11 +218,11 @@ var tmp  : boolean;
     sData: TSendUUData;
 begin
   postfile:=false;
+  sData := nil;
   with ar do begin
     if datei<>'' then
       adddir(datei,SendPath);
-    if (datei<>'') and not FileExists(datei)
-    then
+    if (datei<>'') and not FileExists(datei) then
       trfehler1(2201,fitpath(datei,42),30)    { 'AutoVersand - Datei "%s" fehlt!' }
     else if (datei<>'') and (_filesize(datei)=0) then
       trfehler(2202,30)   { 'AutoVersand - 0-Byte-Datei wurde nicht verschickt' }
@@ -245,18 +245,18 @@ begin
         box:='';
         sData.flCrash:=true;
         sData.flCrashAtOnce:=true;    { keine Rueckfrage 'sofort versenden' }
-        end;
+      end;
       sData.forcebox:=box;
       if not tmp then begin
         sData.sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
         sData.sendfiledate:=ZCfiletime(datei);
-        end;
+      end;
       if sData.forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
 //    sData.EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:= TSendUUData.Create;
       if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
-(*      
+(*
       if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,sendShow) then begin
 *)
@@ -285,15 +285,14 @@ begin
         if dat>=datum2 then begin
           datum2:=0;
           dbWrite(auto,'datum2',datum2);
-          end;
-        if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
-        then begin
+        end;
+        if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0) then begin
           if ExtractFileExt(FileUpperCase(datei))=FileUpperCase('.msg') then
             SafeDeleteFile(datei);
           dbDelete(auto);
           aufbau:=true;
-          end;
         end;
+      end;
       SaveUVS:=muvs;
       if tmp then
         SafeDeleteFile(datei);
@@ -417,6 +416,7 @@ var sr    : tsearchrec;
 
   function SendMsg(delfile:boolean):boolean;
   var t1,t2 : text;
+      buf   : pointer;  //buffer for t1
       p     : byte;
       empf  : string;
       betr  : string;
@@ -427,7 +427,6 @@ var sr    : tsearchrec;
       err   : boolean;
       temp  : boolean;
       bs    : word;
-      buf   : pointer;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
       nt    : eNetz;
@@ -439,14 +438,15 @@ var sr    : tsearchrec;
       freeres;
     end;
 
-    
+
   begin
     sData := nil;
    try
-  
+
     SendMsg:=false;
     empf:=''; betr:='';
     box:=''; datei:='';
+    attach := False;
     bs := 8192;
     getmem(buf,bs);
     assign(t1,AutoxDir+sr.name);
@@ -466,42 +466,43 @@ var sr    : tsearchrec;
           box:=trim(mid(s,p+1)) else
         if (hdr='datei') or (hdr='file') then
           datei:=FileUpperCase(trim(mid(s,p+1)));
-        end;
       end;
+    end;
     err:=true;
-    if box<>'' then nt:=ntBoxNetztyp(box);
-    attach:=(box<>'') and (datei<>'') and
-            ((nt=nt_Fido) or
-             (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
-    if empf='' then axerr(2,'') else    { 'Empfaenger fehlt' }
-    if betr='' then axerr(3,'') else    { 'Betreff fehlt'   }
-    if (box<>'') and not IsBox(box) then
-      axerr(4,box) else                 { 'ungueltige Serverbox: %s' }
-    if datei<>'' then begin
-      if not multipos(_MPMask,datei) then
-        datei:=SendPath+datei;
-      if not FileExists(datei) then
-        axerr(5,UpperCase(datei)) else       { 'Datei "%s" fehlt' }
-      if attach and (cpos('@',empf)=0) then
-        axerr(6,'') else   { 'File Attaches koennen nur als PM verschicht werden!' }
-      if attach and (length(datei)>BetreffLen) then
-        axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
-      else
+    if (box='') or not IsBox(box) then
+      axerr(4,box)                  { 'ungueltige Serverbox: %s' }
+    else begin
+      nt:=ntBoxNetztyp(box);
+      attach:= (datei<>'') and
+              ((nt=nt_Fido) or
+               (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
+      if empf='' then axerr(2,'')     { 'Empfaenger fehlt' }
+      else if betr='' then axerr(3,'')     { 'Betreff fehlt'   }
+      else if datei<>'' then begin
+        if not multipos(_MPMask,datei) then
+          datei:=SendPath+datei;
+        if not FileExists(datei) then
+          axerr(5,UpperCase(datei))        { 'Datei "%s" fehlt' }
+        else if attach and (cpos('@',empf)=0) then
+          axerr(6,'')    { 'File Attaches koennen nur als PM verschicht werden!' }
+        else if attach and (length(datei)>BetreffLen) then
+          axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
+        else
+          err:=false;
+      end else
         err:=false;
-      end
-    else
-      err:=false;
+    end;
     if err then begin
       close(t1);
       freemem(buf,bs);
       exit;
-      end;
+    end;
 
     if attach then begin
       betr:=datei;
       datei:='';
 //    EditAttach:=false;    { ab hier kein EXIT mehr! }
-      end;
+    end;
 
     if datei='' then begin
       datei:=TempS(_filesize(AutoxDir+sr.name));
@@ -512,14 +513,13 @@ var sr    : tsearchrec;
           read(t1,s); write(t2,s);
         until eoln(t1);
         readln(t1); writeln(t2);
-        end;
+      end;
       close(t2);
-      end
-    else begin
+    end else begin
       temp:=false;
       sData.SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
       sData.SendFiledate:=zcfiletime(datei);
-      end;
+    end;
     close(t1);
     freemem(buf,bs);
     s:='';
@@ -529,15 +529,14 @@ var sr    : tsearchrec;
     pm:=(p>0);
     if pm then
       empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
-    else
-      if FirstChar(empf)<>'/' then empf:='/'+empf;
+    else if FirstChar(empf)<>'/' then empf:='/'+empf;
 //  EditAttach:=false;
-(*    
+(*
     if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
               false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
 *)
 
-    if attach or not temp then 
+    if attach or not temp then
       sData.AddFile(datei,temp or delfile,'')
     else
       sData.AddText(datei,temp or delfile);
@@ -549,7 +548,7 @@ var sr    : tsearchrec;
     result := sData.DoIt('',false,false,false);
    finally
     sData.Free;
-   end;    
+   end;
   end;
 
   function SendPuffer:boolean;
@@ -699,6 +698,9 @@ end;
 
 {
   $Log$
+  Revision 1.61  2002/12/16 01:05:13  dodi
+  - fixed some hints and warnings
+
   Revision 1.60  2002/12/14 07:31:37  dodi
   - using new types
 

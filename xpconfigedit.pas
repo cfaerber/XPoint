@@ -710,7 +710,7 @@ var d         : DB;
     if setdefault and (UpperCase(s1)=UpperCase(default)) then begin
       p:=i;
       setdefault:=false;
-      end;
+    end;
     case typ of
       1 : begin     { Boxen }
             dbRead(d,'Netztyp',nt);
@@ -719,16 +719,15 @@ var d         : DB;
             else
               s2 := dbReadStr(d,'Username');
             s3 := dbReadStr(d,'Kommentar');
-            if s1=DefaultBox then
+            if s1=DefaultBox then begin
               if s1=DefFidoBox then dc:='F '
             {$IFDEF Unix }
               else dc:='* '
             {$ELSE }
               else dc:='û '
             {$ENDIF }
-            else
-              if s1=DefFidoBox then dc:='f '
-              else dc:='  ';
+            end else if s1=DefFidoBox then dc:='f '
+            else dc:='  ';
             s:=dc+forms(s1,11)+' '+forms(Netz_Typ(nt),12)+forms(s2,17)+' '+
                forms(s3,23);
           end;
@@ -771,7 +770,7 @@ var d         : DB;
             if LeftStr(s1,12)='application/' then s1:='appl.'+mid(s1,12);
             s:=' '+forms(s1,26)+' '+forms(s2,6)+forms(s3,31);
           end;
-    end;
+    end;  //case
     if not setdefault and (i=p) then attrtxt(col.colsel2bar)
     else attrtxt(col.colsel2box);
     fwrt(x+1,y+i,s);
@@ -783,17 +782,16 @@ var d         : DB;
   begin
     moff;
     if drec[1]=0 then begin
-      dbGoTop(d); b:=true; end
-    else begin
+      dbGoTop(d); b:=true;
+    end else begin
       dbSkip(d,-1);
       b:=dbBOF(d);
       if b then dbGoTop(d)
       else dbSkip(d,1);
-      end;
+    end;
     fillchar(drec,sizeof(drec),0);
     i:=1;
-    while (i<=gl) and not dbEOF(d) do
-    begin
+    while (i<=gl) and not dbEOF(d) do begin
       displine(i);
       dbSkip(d,1);
       inc(i);
@@ -803,7 +801,7 @@ var d         : DB;
       moff;
       clwin(x+1,x+width,y+i,y+gl);
       mon;
-      end;
+    end;
     fwrt(x,y+1,iifc(b,'³',#30));
     fwrt(x,y+gl,iifc(dbEOF(d),'³',#31));
     if i=1 then begin
@@ -839,11 +837,10 @@ var d         : DB;
     if not odd(flags) then begin
       maddstring(2,2,getres2(901,3),name,30,30,''); mhnr(201);   { 'Name    ' }
       msetvfunc(notempty);
-      end
-    else begin
+    end else begin
       maddtext(2,2,getres2(901,4),col.coldialog);      { 'Name' }
       maddtext(12,2,name,col.coldiahigh);
-      end;
+    end;
     maddint   (2,4,getres2(901,5),limit,6,8,0,99999999); mhnr(202);   { 'Limit   ' }
     maddtext  (length(getres2(901,5))+14,4,getres(13),col.coldialog);
     maddint   (2,6,getres2(901,6),hzeit,4,4,0,9999);   { 'Halten: ' }
@@ -862,7 +859,7 @@ var d         : DB;
     mnotrim; mhnr(210);
 
     ss:=range('A','Z')+range('a','z')+fname;
-    maddtext(3,10,GetRes2(901,13),0);  { 'Brettantworten' }    
+    maddtext(3,10,GetRes2(901,13),0);  { 'Brettantworten' }
     maddstring(2,11,getres2(901,9),hd,8,8,ss); mhnr(206);   { 'Kopf    ' }
     mappcustomsel(SelSchab,false);
     maddstring(2,12,getres2(901,10),qt,8,8,ss); mhnr(206);  { 'Quote   ' }
@@ -871,7 +868,7 @@ var d         : DB;
     mappcustomsel(SelSchab,false);
     maddstring(2,14,getres2(901,11),sig,8,8,ss); mhnr(206); { 'Signatur' }
     mappcustomsel(SelSchab,false);
-    
+
     maddtext(24,10,GetRes2(901,55),0);  { 'PM-Antworten' }
     maddstring(23,11,getres2(901,50),pmhd,8,8,ss); mhnr(206);  { 'Kopf    ' }
     mappcustomsel(SelSchab,false);
@@ -890,7 +887,7 @@ var d         : DB;
       if retyp=LowerCase(retypes(1)) then inc(flags,2)        { re^n: }
       else if retyp=LowerCase(retypes(2)) then inc(flags,4)   { re:   }
       else if retyp=LowerCase(retypes(3)) then inc(flags,6);  { nein  }
-      end;
+    end;
     enddialog;
     freeres;
   end;
@@ -899,7 +896,7 @@ var d         : DB;
   var name   : string;
       hd,sig : string;
       qt,qt2 : string;
-      pmhd   : string;                                           
+      pmhd   : string;
       pmqt   : string;
       pmsig  : string;
       qstring: string;
@@ -910,10 +907,10 @@ var d         : DB;
       brk    : boolean;
   begin
     name:=''; hzeit:=stdhaltezeit; limit:=MaxNetMsgs;
-    hd:='header'; sig:='signatur'; qt:='qbrett'; qt2:='quoteto'; 
+    hd:='header'; sig:='signatur'; qt:='qbrett'; qt2:='quoteto';
     hd:='privhead'; pmsig:='privsig'; pmqt:='qpriv';
     qstring := '';
-    
+
     umlaut:=0;   { IBM-Umlaute, keine Konvertierung }
     flags:=0;    { keine Standard-Gruppe; Re^n: Default }
     readgruppe(false,name,hzeit,limit,umlaut,hd,qt,sig,qt2,pmhd,pmqt,pmsig,qstring,flags,brk);
@@ -937,14 +934,14 @@ var d         : DB;
         dbWriteStr(d,'pmquotemsk',pmqt);
 
         dbWriteStr(d,'quotechar',qstring);
-        
+
         dbWrite(d,'flags',flags);
         dbFlushClose(d);
         dbGo(d,drec[1]);
         dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
         aufbau:=true;
-        end;
       end;
+    end;
   end;
 
   procedure EditGruppeAllgemein;
@@ -996,7 +993,7 @@ var d         : DB;
       dbFlushClose(d);
       dbGo(d,drec[1]);
       aufbau:=true;
-      end;
+    end;
   end;
 
   procedure EditGruppeFido;
@@ -1018,7 +1015,7 @@ var d         : DB;
       dbWriteStr(d,'origin',orig);
       dbWriteStr(d,'adresse',addr);
       dbFlushClose(d);
-      end;
+    end;
   end;
 
   procedure EditGruppeRFC;
@@ -1059,7 +1056,7 @@ var d         : DB;
       dbWriteStr(d,'pmreplyto',PMReplyTo);
       dbWriteStr(d,'pmfqdn',PMFQDN);
       dbFlushClose(d);
-      end;
+    end;
   end;
 
   procedure DelGruppe;
@@ -1082,8 +1079,8 @@ var d         : DB;
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         aufbau:=true;
-        end;
       end;
+    end;
   end;
 
   procedure addhzeit(add:integer);
@@ -1142,7 +1139,7 @@ var d         : DB;
       else begin
         if fs_passwd='' then fs_passwd:='index';
         if converter='' then converter:='COPY $INFILE $OUTFILE';
-        end;
+      end;
     enddialog;
   end;
 
@@ -1179,8 +1176,8 @@ var d         : DB;
         dbGo(d,drec[1]);
         dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
         aufbau:=true;
-        end;
       end;
+    end;
   end;
 
   procedure EditSystem;
@@ -1215,7 +1212,7 @@ var d         : DB;
       dbFlushClose(d);
       dbGo(d,drec[1]);
       aufbau:=true;
-      end;
+    end;
   end;
 
   procedure DelSystem;
@@ -1230,8 +1227,8 @@ var d         : DB;
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         aufbau:=true;
-        end;
       end;
+    end;
   end;
 
   {.$I xpconfigedit-pseudos.inc}
@@ -1290,7 +1287,7 @@ var d         : DB;
       if isNew then
         dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
       aufbau:=true;
-      end;
+    end;
   end;
 
   procedure DelPseudo;
@@ -1302,7 +1299,7 @@ var d         : DB;
       if p=1 then dbGoTop(d)
       else dbGo(d,drec[1]);
       aufbau:=true;
-      end;
+    end;
   end;
 
   {.$I xpconfigedit-mimetypes.inc}
@@ -1318,16 +1315,15 @@ var d         : DB;
     if typ='*/*' then begin
       maddtext(3,2,getres2(935,3),0);                  { 'MIME-Typ         ' }
       maddtext(3+length(getres2(935,3))+2,2,typ,col.coldiahigh);
-      end
-    else begin
+    end else begin
       maddstring(3,2,getres2(935,3),typ,33,40,         { 'MIME-Typ         ' }
            '"!'+without(range('#','~'),'()<>@,;:\"[]?=')); { MK 12/99 Zeichen "/" zugelassen }
         mhnr(821); {JG: 1051->821}
       maddstring(3,4,getres2(935,4),ext,5,5,'<');              { 'Dateierweiterung ' }
       mhnr(822); {JG}
-      end;
+    end;
     maddstring(3,4+add,getres2(935,5),prog,33,ViewprogLen,''); mhnr(823); {JG} { 'Viewer-Programm  ' }
-      msetvfunc(testexecutable);
+    msetvfunc(testexecutable);
     freeres;
     repeat
       readmask(brk);
@@ -1355,26 +1351,22 @@ var d         : DB;
       ext:= dbReadNStr(d,mimeb_extension);
       prog:= dbReadNStr(d,mimeb_programm);
     end;
-    if typ = '*/*' then
-    begin
+    if typ = '*/*' then begin
       RFehler(935); // 'Standardeintrag kann nicht editiert werden'
       exit;
     end;
     readmimetyp(not isNew,typ,ext,prog,brk);
-    if not brk then
-    begin
+    if not brk then begin
       {  check for duplicate entries }
       isValid := true;
-      if typ <> '' then
-      begin
+      if typ <> '' then begin
         dbSeek(mimebase,mtiTyp,UpperCase(typ));
         { duplicate is valid if Edit Mode and found rec = edited rec }
         if IsNew or (dbRecNo(d) <> drec[p]) then
           isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
             stricmp(typ,dbReadStr(mimebase,'typ')));
       end;
-      if Ext <> '' then
-      begin
+      if Ext <> '' then begin
         dbSeek(mimebase,mtiExt,UpperCase(Ext));
         { duplicate is valid if Edit Mode and found rec = edited rec }
         if IsNew or (dbRecNo(d) <> drec[p]) then
@@ -1383,8 +1375,7 @@ var d         : DB;
       end;
       if not IsNew and (typ = '*/*') then IsValid := true;
 
-      if isValid then
-      begin
+      if isValid then begin
         if isNew then
           dbAppend(d)
         else
@@ -1418,8 +1409,8 @@ var d         : DB;
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         aufbau:=true;
-        end;
       end;
+    end;
   end;
 
   { sonstige Funktionen }
@@ -1448,16 +1439,17 @@ var d         : DB;
           if startmkey then startmkey:=false
           else t:=keycr;
         poutside:=false
-        end else
-      if t=mausldouble then begin
-        rb:=edb; t:=keycr; end
-      end;
+      end else if t=mausldouble then begin
+        rb:=edb; t:=keycr;
+      end
+    end;
     if outside then begin
       if (t=mausleft) or (t=mausright) or (t=mauslmoved) or (t=mausrmoved) then
         poutside:=true else
       if poutside and ((t=mausunleft) or (t=mausunright)) then begin
-        rb:=okb; t:=keyesc; end;
+        rb:=okb; t:=keyesc;
       end;
+    end;
   end;
 
   procedure _DirectSel;
@@ -1501,8 +1493,14 @@ var d         : DB;
   end;
 
 begin { --- UniSel --- }
-  Result := '';
-  if typ>5 then exit;
+//really strange Delphi warning here: Result might be undefined?
+  Result := ''; //should be sufficient, but the following 2 assignments also are required.
+  if typ>5 then begin
+    {$IFDEF ANALYSE}Result := '';{$ENDIF}
+    exit;
+  end;
+  {$IFDEF ANALYSE}Result := '';{$ENDIF}
+
   case typ of
     1 : begin     { Boxen }
           dbOpen(d,BoxenFile,1);
@@ -3131,6 +3129,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/12/16 01:05:13  dodi
+  - fixed some hints and warnings
+
   Revision 1.56  2002/12/14 07:25:51  dodi
   - added MausNet support
 

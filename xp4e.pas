@@ -1050,7 +1050,6 @@ var
     halten: integer16;
     flags : byte;
     brk   : boolean;
-    d     : DB;
 begin
   newbrett:=false;
   _UserAutoCreate:=true;
@@ -1202,6 +1201,7 @@ var n,w    : shortint;
     oldbmarkanz : integer;
 
 begin
+  hzahl := False;
   if user then dispdat:=ubase
   else dispdat:=bbase;
   pushhp(iif(user,429,409));
@@ -1235,6 +1235,7 @@ begin
   s:='';
   na:=getres2(2715,7);
   tg:=getres2(2715,8);
+  oldbmarkanz:=bmarkanz;
   case n of
     1 : begin
           maddstring(3,2,getres2(2715,5),s,30,30,'');   { 'Kommentar  ' }
@@ -1264,8 +1265,7 @@ begin
     4 : if user then begin
           umlaut:=true;
           maddbool(3,2,getres2(2715,10),umlaut);   { 'IBM-Umlaute verwenden' }
-          end
-        else begin
+        end else begin
           dbReadN(bbase,bb_gruppe,grnr);
           dbOpen(d,GruppenFile,1);
           dbSeek(d,giIntnr,dbLongStr(grnr));
@@ -1274,52 +1274,49 @@ begin
           maddstring(3,2,getres2(2715,11),s,30,30,''); mhnr(406);  { 'Gruppe  ' }
           mappcustomsel(GruppenSelProc,false);
           msetvfunc(testgruppe);
-          end;
+        end;
     5 : begin
           filter:=not user;
           maddbool(3,2,getres2(2715,12),filter); mhnr(431);  { 'Nachrichtenfilter' }
         end;
-    6 : if not user then
-        begin
+    6 : if not user then begin
           dbGo(bbase,bmarked^[0]);
           sperre:=(dbReadInt(bbase,'flags')and 8<>0);
           maddbool(3,2,getres2(2715,13),sperre); mhnr(432)  { 'Schreibsperre' }
-          end
-        else begin
+        end else begin
           adr:=NeuUserGruppe;
           maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);
           Select_Gruppen;
-          end;
+        end;
     7 : begin
           flags:=0;
           maddint(3,2,getres2(272,8),flags,2,2,0,5);       { ' Prioritaet ' }
           mhnr(8075);
-          end;
+        end;
     8 : begin
           filter:=false;
           maddbool(3,2,getres2(2701,10),filter);   { 'Empfangsbestaetigungen' }
           mhnr(426);
-          end;
+        end;
     9 : begin
-          oldbmarkanz:=bmarkanz;
           maddstring(3,2,getres2(2701,4),s,30,eAdrLen,'');   { 'Adresse  ' }
           mhnr(421);
           mappcustomsel(seluser,false);
           {msetvfunc(usertest);}
-          end;
+        end;
 
   end;
   readmask(brk);
   enddialog;
-  if not brk then
-  begin
+  if not brk then begin
     if n=9 then bmarkanz:=oldbmarkanz;
 
     if n=7 then begin
       if flags=3 then Flags:=0;
       if flags>3 then dec(flags);
-      end;
-    if n=2 then rfcnetflag:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
+    end;
+    //if n=2 then //what if n=3???
+      rfcnetflag:=iif(ntBoxNetztyp(s) in [nt_UUCP,nt_Client],16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
       vert:=user and (dbReadInt(ubase,'userflags')and 4<>0);
@@ -1331,7 +1328,7 @@ begin
                 dbRead(dispdat,'flags',flags);
                 flags:=flags and (not 16)+RFCNetFlag;
                 dbWrite(dispdat,'flags',flags);
-                end;
+              end;
             end;
         3 : if not vert then begin
               dbWrite(dispdat,'haltezeit',halten);
@@ -1340,51 +1337,45 @@ begin
                 flags:=flags and (not 1);
                 if LowerCase(htyp)=LowerCase(na) then inc(flags);
                 dbWriteN(bbase,bb_flags,flags);
-                end;
               end;
+            end;
         4 : if user then begin
               dbReadN(ubase,ub_userflags,b);
               b:=b and (not 8) + iif(umlaut,0,8);
               dbWriteN(ubase,ub_userflags,b);
-              end
-            else begin
+            end else begin
               brett:= dbReadNStr(bbase,bb_brettname);
               if FirstChar(brett)='A' then
                 dbWriteN(bbase,bb_gruppe,grnr_found)
               else
                 rfehler1(2707,copy(brett,2,26));   { '%s ist internes Brett - Gruppe nicht aenderbar!' }
-              end;
+            end;
         5 : if user then begin
               dbReadN(ubase,ub_userflags,flags);
               if filter then flags:=flags and $f2
               else flags:=flags or 1;
               dbWriteN(ubase,ub_userflags,flags);
-              end
-            else begin
+            end else begin
               dbReadN(bbase,bb_flags,flags);
               if filter then flags:=flags and (not 4)
               else flags:=flags or 4;
               dbWriteN(bbase,bb_flags,flags);
-              end;
-        6 : if not user then
-            begin
+            end;
+        6 : if not user then begin
               dbReadN(bbase,bb_flags,flags);
               if sperre then flags:=flags or 8
               else flags:=flags and (not 8);
               dbWriteN(bbase,bb_flags,flags);
-              end
-            else begin
+            end else begin
               dbwrite(dispdat,'adrbuch',adr);
-              end;
-        7 : if not vert then
-            begin
+            end;
+        7 : if not vert then begin
               dbReadN(ubase,ub_userflags,b);
               b:=(b and not $E0) or (flags shl 5);
               dbWriteN(ubase,ub_userflags,b);
             end;
 
-        8 : if not vert then
-            begin
+        8 : if not vert then begin
               dbreadN(ubase,ub_userflags,flags);
               if filter then flags:=flags or 16
                  else flags:=flags and (not 16);
@@ -2474,6 +2465,9 @@ end;
 
 {
   $Log$
+  Revision 1.103  2002/12/16 01:05:12  dodi
+  - fixed some hints and warnings
+
   Revision 1.102  2002/12/14 07:31:34  dodi
   - using new types
 
