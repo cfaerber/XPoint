@@ -17,12 +17,12 @@ unit fileio;
 
 interface
 
+{$ifdef Linux}
+  {$i linux/fileioh1.inc}
+{$else}
+
 uses
   sysutils,
-{$ifdef Linux }
-  linux,
-  xplinux,
-{$endif }
 {$ifdef vp }
   vpusrlow,
 {$else}
@@ -53,13 +53,14 @@ const FMRead       = $00;     { Konstanten fÅr Filemode }
       FMCompatible = $00;
 {$endif}
 
-const
-  { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
-  ffAnyFile = $20;
+{$endif} { Linux }
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
+const
+  { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
+  ffAnyFile = $20;
 
 function  AddDirSepa(p: pathstr): pathstr;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
@@ -101,42 +102,37 @@ procedure WriteBatch(s:string);                 { Batchfile erstellen     }
 
 implementation  { ------------------------------------------------------- }
 
+{$ifdef Linux}
+  {$i linux/fileio.inc}
+{$endif}
+
+{$i fileio.inc}
+
+{$ifndef Linux}
 uses
   xp0;
 
 const
-{$IFDEF UnixFS}
-  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
-{$ELSE}
-  PathSepaChar          = ';';
-{$ENDIF}
+  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
 function  AddDirSepa(p: pathstr): pathstr;
-{$IFNDEF UnixFS}
 var
   cwd: pathstr;
-{$ENDIF}
 begin
   if p='' then
     AddDirSepa:= ''
   else begin
     if LastChar(p)<>DirSepa then
-{$IFDEF UnixFS}
-      AddDirSepa:= p+DirSepa
-{$ELSE}
     begin
-      if (length(p)=2) and (p[2]=':') then
-      begin     { Nur C: ? }
+      if (length(p)=2) and (p[2]=':') then begin     { Nur C: ? }
         p:= UStr(p);
         getdir(Ord(p[1])-64,cwd);               { -> Akt. Verz. ermitteln }
         AddDirSepa:= AddDirSepa(cwd);
       end else
         AddDirSepa:= p+DirSepa;
-    end
-{$ENDIF}
-    else
+    end else
       AddDirSepa:= p;
   end;
 end;
@@ -164,11 +160,7 @@ begin
       exit;
     end;
   end;
-{$ifdef linux}
-  envpath:= strpas(linux.getenv('PATH'));
-{$else}
   envpath:= dos.getenv('PATH');
-{$endif}
   j:= CountChar(PathSepaChar,envpath);
   for i:= 1 to j do begin
     k:= CPos(PathSepaChar, envpath);
@@ -189,65 +181,14 @@ begin
     existBin:= false;
 end;
 
-{ !!UnixFS noch bearbeiten einfÅgen !! }
-{ ^^^^^^^^ Nicht noetig, sollte funktionieren (hd 2000/6/16) }
-function exist(n:string):boolean;
-var
-  sr : searchrec;
-  ex : boolean;
-begin
-  Dos.FindFirst(n,anyfile-volumeid-directory,sr);
-  ex:=(doserror=0);
-  while not ex and (doserror=0) do
-  begin
-    Dos.FindNext(sr);
-    ex:=(doserror=0);
-  end;
-  Dos.FindClose(sr);
-  exist:=ex;
-end;
 
-Function existf(var f):Boolean;
-var
-  fm : byte;
-begin
-  fm:=filemode;
-  filemode:=FMDenyNone;
-  reset(file(f));
-  existf:=(ioresult=0);
-  close(file(f));
-  filemode:=fm;
-  if ioresult = 0 then ;
-end;
-
-
-Function existrf(var f):Boolean;
-var a : rtlword;
-    e : boolean;
-begin
-  getfattr(f,a);
-  setfattr(f,archive);
-  e:=existf(f);
-  setfattr(f,a);
-  a:=ioresult;
-  existrf:=e;
-end;
-
-Function ValidFileName(name:PathStr):boolean;
+function ValidFileName(name:PathStr):boolean;
 var f : file;
 begin
-{$IFDEF UnixFS }
   if (name='') or multipos('*?&',name) then
-{$ELSE }
-  if (name='') or multipos('*?/',name) then  { Fehler in DR-DOS 5.0 umgehen }
-{$ENDIF }
     ValidFileName:=false
   else begin
-{$IFDEF UnixFS}
-    assign(f, ResolvePathName(name));           { ~/ aufloesen }
-{$ELSE}
     assign(f,name);
-{$ENDIF}
     if existf(f) then ValidFileName:=true
     else begin
       rewrite(f);
@@ -266,17 +207,6 @@ begin
   if multipos('?*',name) or (trim(name)='') then
     IsPath:=false
   else begin
-{$IFDEF UnixFS }
-    name:= ResolvePathName(name);
-    { Laufwerksbuchstaben gibt es nicht, aber immer das
-      Wurzelverzeichnis }
-    if (name=DirSepa) then
-      IsPath:= true
-    else if (name[length(name)]=DirSepa) then
-      dellast(name);
-    Dos.findfirst(name,Directory,sr);
-    IsPath:=(doserror=0) and (sr.attr and directory<>0);
-{$ELSE }
     if (name='\') or (name[length(name)]=':') or (right(name,2)=':\')
     then begin
       Dos.findfirst(name+'*.*',ffAnyFile,sr);
@@ -291,7 +221,6 @@ begin
       Dos.findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
     end;
-{$ENDIF }
   findclose(sr);
   end;
 end;
@@ -304,13 +233,8 @@ var bufs,rr:word;
 begin
   bufs:=65536;
   getmem(buf,bufs);
-{$IFDEF UnixFS}
-  assign(f1,ResolvePathName(srcfn));
-  assign(f2,ResolvePathName(destfn));
-{$ELSE }
   assign(f1,srcfn);
   assign(f2,destfn);
-{$ENDIF }
   reset(f1,1);
   rewrite(f2,1);
   while not eof(f1) and (inoutres=0) do begin
@@ -327,11 +251,7 @@ end;
 Procedure era(s:string);
 var f : file;
 begin
-{$IFDEF UnixFS}
-  assign(f,ResolvePathName(s));
-{$ELSE}
   assign(f,s);
-{$ENDIF}
   erase(f);
 end;
 
@@ -339,11 +259,7 @@ end;
 procedure erase_mask(s:string);                 { Datei(en) lîschen }
 var sr : searchrec;
 begin
-{$IFDEF UnixFS}
-  findfirst(ResolvePathName(s),ffAnyFile,sr);
-{$ELSE}
   Dos.findfirst(s,ffAnyfile,sr);
-{$ENDIF}
   while doserror=0 do begin
     era(getfiledir(s)+sr.name);
     dos.findnext(sr);
@@ -358,9 +274,6 @@ var sr : searchrec;
     f  : file;
     er : integer;
 begin
-{$IFDEF UnixFS}
-  path:= ResolvePathName(path);
-{$ENDIF}
 
   { Auf keinen Fall das XP-Verzeichnis lîschen! }
   Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
@@ -400,9 +313,6 @@ var bakname : string;
     name    : namestr;
     ext     : extstr;
 begin
-{$IFDEF UnixFS}
-  n:= ResolvePathName(n);
-{$ENDIF}
   assign(f,n);
   if not existrf(f) then exit;
   fsplit(n,dir,name,ext);
@@ -418,34 +328,6 @@ begin
   if ioresult<>0 then;
 end;
 
-function ioerror(i:integer; otxt:atext):atext;
-begin
-  case i of
-      2 : ioerror:='Datei nicht gefunden';
-      3 : ioerror:='ungÅltiges Verzeichnis';
-      4 : ioerror:='zu viele Dateien geîffnet (bitte FILES erhîhen!)';
-      5 : ioerror:='Zugriff verweigert';
-      7 : ioerror:='Speicherverwaltung zerstîrt';
-      8 : ioerror:='ungenÅgend Speicher';
-     10 : ioerror:='ungÅltiges Environment';
-     11 : ioerror:='ungÅltiges Aufruf-Format';
-     15 : ioerror:='ungÅltige Laufwerksbezeichnung';
-     16 : ioerror:='Verzeichnis kann nicht gelîscht werden';
-     18 : ioerror:='Fehler bei Dateisuche';
-    101 : ioerror:='Diskette/Platte voll';
-    150 : ioerror:='Diskette ist schreibgeschÅtzt';
-    152 : ioerror:='keine Diskette eingelegt';
-154,156 : ioerror:='Lesefehler (Diskette/Platte defekt)';
-157,158 : ioerror:='Diskette ist nicht korrekt formatiert';
-    159 : ioerror:='Drucker ist nicht betriebsbereit';
-    162 : ioerror:='Hardware-Fehler';
-    209 : ioerror:='Fehler in .OVR-Datei';
-  else
-    ioerror:=otxt;
-  end;
-end;
-
-
 procedure WriteBatch(s:string);
 var
   f:text;
@@ -455,20 +337,9 @@ begin
   rewrite(f);
   io:=ioresult;
   if (io=0) then begin
-{$IFDEF UnixFS }
-    writeln(f,'#!',getenv('SHELL'));
-    writeln(f,'#');
-    writeln(f,'# This script was generated by ',xp_xp,'.');
-    writeln(f,'# Feel free to delete it!');
-    writeln(f,'#');
-{$ELSE }
     writeln(f,'@echo off');
-{$ENDIF }
     writeln(f,s);
     close(f);
-{$IFDEF UnixFS }
-    SetAccess(TempBatchFN, taUserRWX);          { Ausfuehrbar machen }
-{$ENDIF }
   end;
   io:=ioresult;
 end;
@@ -481,11 +352,7 @@ procedure mklongdir(path:pathstr; var res:integer);
 const testfile = 'test0000.$$$';
 var p : byte;
 begin
-{$IFDEF UnixFS}
-  path:=ResolvePathName(trim(path));
-{$ELSE}
   path:=trim(path);
-{$ENDIF}
   if path='' then begin
     res:=0;
     exit;
@@ -523,11 +390,7 @@ begin
   repeat
     n:=formi(random(10000),4)+'.tmp'
   until not exist(path+n);
-{$IFDEF UnixFS}
-  TempFile:=ResolvePathName(path+n);
-{$ELSE}
   TempFile:=path+n;
-{$ENDIF}
 end;
 
 function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
@@ -537,22 +400,14 @@ begin
   repeat
     n:=ld+formi(random(10000),4)+ext
   until not exist(path+n);
-{$IFDEF UnixFS}
-  TempExtFile:=ResolvePathName(path+n);
-{$ELSE }
   TempExtFile:=path+n;
-{$ENDIF }
 end;
 
 
 function _filesize(fn:pathstr):longint;
 var sr : searchrec;
 begin
-{$IFDEF UnixFS}
-  findfirst(ResolvePathName(fn),ffAnyFile,sr);
-{$ELSE}
   dos.findfirst(fn,ffAnyFile,sr);
-{$ENDIF}
   if doserror<>0 then
     _filesize:=0
   else
@@ -563,11 +418,7 @@ end;
 procedure MakeFile(fn:pathstr);
 var t : text;
 begin
-{$IFDEF UnixFS}
-  assign(t,ResolvePathName(fn));
-{$ELSE}
   assign(t,fn);
-{$ENDIF}
   rewrite(t);
   if ioresult=5 then
     setfattr(t,0)
@@ -578,11 +429,7 @@ end;
 function filetime(fn:pathstr):longint;
 var sr : searchrec;
 begin
-{$IFDEF UnixFS}
-  findfirst(ResolvePathName(fn),ffAnyFile,sr);
-{$ELSE}
   dos.findfirst(fn,ffAnyFile,sr);
-{$ENDIF}
   if doserror=0 then
     filetime:=sr.time
   else
@@ -593,11 +440,7 @@ end;
 procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
 var f : file;
 begin
-{$IFDEF UnixFS}
-  assign(f,ResolvePathName(fn));
-{$ELSE}
   assign(f,fn);
-{$ENDIF}
   reset(f,1);
   setftime(f,newtime);
   close(f);
@@ -609,11 +452,7 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
-{$IFDEF UnixFS}
-  fsplit(ResolvePathName(p),d,n,e);
-{$ELSE}
   fsplit(p,d,n,e);
-{$ENDIF}
   GetFileDir:=d;
 end;
 
@@ -622,11 +461,7 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
-{$IFDEF UnixFS}
-  fsplit(ResolvePathName(p),d,n,e);
-{$ELSE}
   fsplit(p,d,n,e);
-{$ENDIF}
   GetFileName:=n+e;
 end;
 
@@ -635,11 +470,7 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
-{$IFDEF UnixFS}
-  fsplit(ResolvePathName(p),d,n,e);
-{$ELSE}
   fsplit(p,d,n,e);
-{$ENDIF}
   GetBareFileName:=n;
 end;
 
@@ -648,24 +479,15 @@ var d : dirstr;
     n : namestr;
     e : extstr;
 begin
-{$IFDEF UnixFS}
-  fsplit(ResolvePathName(p),d,n,e);
-{$ELSE}
   fsplit(p,d,n,e);
-{$ENDIF}
   GetFileExt:=mid(e,2);
 end;
 
 function _rename(n1,n2:pathstr):boolean;
 var f : file;
 begin
-{$IFDEF UnixFS}
-  assign(f,ResolvePathName(n1));
-  rename(f,ResolvePathName(n2));
-{$ELSE}
   assign(f,n1);
   rename(f,n2);
-{$ENDIF}
   _rename:=(ioresult=0);
 end;
 
@@ -676,9 +498,6 @@ var dir  : dirstr;
     name : namestr;
     _ext : extstr;
 begin
-{$IFDEF UnixFS}
-  fn:=ResolvePathName(fn);
-{$ENDIF}
   fsplit(fn,dir,name,_ext);
   if _ext='' then fn:=dir+name+'.'+ext;
 end;
@@ -690,34 +509,11 @@ var _dir : dirstr;
     name : namestr;
     ext  : extstr;
 begin
-{$IFDEF UnixFS}
-  fn:=ResolvePathName(fn);
-{$ENDIF}
   fsplit(fn,_dir,name,ext);
   if _dir='' then begin
     if dir[length(dir)]<>DirSepa then dir:=dir+DirSepa;
     insert(dir,fn,1);
   end;
-end;
-
-procedure fm_ro;      { Filemode ReadOnly }
-begin
-  filemode:=fmRead;
-end;
-
-procedure fm_rw;      { Filemode Read/Write }
-begin
-  filemode:=fmRW;
-end;
-
-
-procedure resetfm(var f:file; fm:byte);
-var fm0 : byte;
-begin
-  fm0:=filemode;
-  filemode:=fm;
-  reset(f,1);
-  filemode:=fm0;
 end;
 
 procedure WildForm(var s: pathstr);
@@ -726,14 +522,12 @@ var dir : dirstr;
     ext : extstr;
     p   : byte;
 begin
-{$IFNDEF UnixFS }
   fsplit(s,dir,name,ext);
   p:=cpos('*',name);
    if p>0 then name:=left(name,p-1)+typeform.dup(9-p,'?');
   p:=cpos('*',ext);
    if p>0 then ext:=left(ext,p-1)+typeform.dup(5-p,'?');
   s:=dir+name+ext;
-{$ENDIF }
 end;
 
 { Zwei diskfree/disksize-Probleme umgehen:                   }
@@ -750,9 +544,6 @@ var f       : file;
     hdadr   : longint;
     version : byte;
 begin
-{$IFDEF UnixFS}
-  fn:= ResolvePathName(fn);
-{$ENDIF}
   assign(f,fn);
   resetfm(f,FMDenyWrite);
   blockread(f,magic,2);
@@ -799,9 +590,16 @@ begin
   if ioresult<>0 then;
 end;
 
+{$endif} { Linux }
+
 end.
 {
   $Log$
+  Revision 1.44  2000/06/30 13:48:10  hd
+  - Linux extrahiert
+  - fileio.inc fuer systemunabhaengige Routinen
+  - Linux: IsPath, era, erase_mask vereinfacht
+
   Revision 1.43  2000/06/23 15:59:10  mk
   - 16 Bit Teile entfernt
 
