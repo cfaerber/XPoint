@@ -1025,7 +1025,10 @@ begin
   writeln(f,'TYP: ',typ);
   writeln(f,'BOX: ',box);
 {  writeln(f,'NETZTYP: ',netztyp); }
-  writeln(f,'EMPF: ',copy(empfaenger,2,99));
+  if cpos('@',empfaenger)=0 then
+    writeln(f,'EMPF: ',copy(empfaenger,2,99))
+  else
+    writeln(f,'EMPF: ',copy(empfaenger,1,99));
   writeln(f,'FIDOTO: ',fidoto);
   writeln(f,'BETREFF: ',betreff);
   close(f);
@@ -2378,6 +2381,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.38  2001/08/29 16:21:14  my
+  - Fix: first character of PM recipient in temp file HEADER.HDR is not
+    truncated anymore (whatever HEADER.HDR might be needed for)
+
   Revision 1.39.2.37  2001/08/23 11:04:04  mk
   - little code optimization (const parameter, MWrt)
 
