@@ -2061,7 +2061,7 @@ function FidoSeekfile:string;
         sa[apos]:=sZeile;  { speicher String in Array }
         inc(apos);
       end;
-    end; { while not eof(pFileListe^) do begin {'FIDO\22441278.fl'}
+    end; { while not eof(pFileListe^) do begin}
     close(pFileListe^);
   end;
 
@@ -2081,7 +2081,7 @@ begin       { FidoSeekfile:string;************************ }
   wCase:=(copy(oldseek,2,1)='J');       { Wcase     }
   {Anzeige initilisieren }
   dialog(57,6,getres2(2120,3),x,y);     { 'Dateien suchen' }
-  if fidolastseek[length(fidolastseek)] = #27 then
+  if LastChar(fidolastseek)=#27 then
      fidolastseek:=left(fidolastseek, length(fidolastseek)-1);
   maddstring(3,2,getres2(2120,4),fidolastseek,40,40,'');   { 'Suchbegriff ' }
   maddbool(3,4,getres2(2120, 5),iCase); { 'Schreibweise ignorieren' }
@@ -2243,6 +2243,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/08/17 22:13:00  mk
+  - MO: - fidolastseek[Length(fidolastseek)] durch Lastchar ersetzt
+
   Revision 1.27  2000/08/14 14:45:14  mk
   MO: Umfangreiche Aenderung fuer Null basierende Stringlisten
 
