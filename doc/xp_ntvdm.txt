@@ -1,0 +1,21 @@
+OpenXP/16 - Hinweis zur XP_NTVDM.DLL
+====================================
+
+Diese Datei ist eine direkte Schnittstelle zu bestimmten Funktionen von  
+Windows NT/2000/XP.
+
+Derzeit werden ausschlie·lich die Clipboard-Funktionen sowie die  
+Versionserkennung genutzt. Wenn diese Datei ins XP-Verzeichnis kopiert  
+wird, wird unter Windows NT/2000/XP die Version korrekt erkannt (siehe  
+X/S/S) und es kînnen alle Clipboard-Funktionen direkt genutzt werden,  
+ohne ein externes Tool/TSR wie NTOLDAPP installieren zu mÅssen.
+
+WARNUNG: Da die XP_NTVDM.DLL in der vorliegenden Version leider noch
+         Bugs enthÑlt, kann sie AbstÅrze von OpenXP/16 verursachen. Sie
+         sollte daher derzeit nur zu Testzwecken und von erfahrenen
+         Anwendern ins XP-Verzeichnis kopiert werden.
+
+
+DÅsseldorf, den 21.04.2002
+
+Michael Heydekamp <my@openxp16.de>
