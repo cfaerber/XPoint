@@ -276,7 +276,7 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       smore         : array[1..maxmore] of string;
       outbuf        : charrp;
       outbufpos     : word;
-      s             : HugeString;
+      s             : String;
       MaxSlen       : longint;       { max. L„nge fr ReadString() }
       qprint,b64    : boolean;       { MIME-Content-TT's (ReadRFCheader) }
       qprchar       : set of char;
@@ -292,16 +292,6 @@ const
       { Wird zum Einlesen der Customizable Headerlines ben”tigt }
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-{$IFDEF Ver32 }
-procedure IBM2ISO;
-var
-  i: Integer;
-begin
-  if Length(s) > 0 then
-    for i := 1 to Length(s) do
-      s[i] := Char(IBM2ISOTab[byte(s[i])]);
-end;
-{$ELSE }
 procedure IBM2ISO; assembler;
 asm
      cld
@@ -317,22 +307,6 @@ asm
      loop  @@1
 @@2:
 end;
-{$ENDIF }
-
-
-{$IFDEF Ver32 }
-
-procedure ISO2IBM;
-var
-  i: Integer;
-begin
-  if Length(s) > 0 then
-    for i := 1 to Length(s) do
-      if s[i] > #127 then
-        s[i] := Char(ISO2IBMTab[byte(s[i])]);
-end;
-
-{$ELSE }
 
 procedure ISO2IBM; assembler;
 asm
@@ -354,14 +328,10 @@ asm
 @@2:
 end;
 
-{$ENDIF }
-
 procedure logo;
 begin
-   {$ifndef linux}         { ML 25.03.2000  workaround für Linux - Outputumleitung mgl. }
   assign(output, '');
   rewrite(output);
-{$endif}
   writeln;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
   writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
@@ -3372,7 +3342,7 @@ var hds,adr : longint;
       s:=trim(s);
       if (s<>'') and (s[1]<>'#') then begin
         if request then begin
-          p:=blankposHuge(s);
+          p:=blankpos(s);
           if p=0 then begin
             fromfile:=s;
             tofile:=Unix2DOSfile(s,'');
@@ -3579,6 +3549,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.4  2000/08/25 22:25:15  mk
+  - Update auf aktuellere Typeform
+
   Revision 1.35.2.3  2000/07/26 14:00:58  mk
   - Bug bei Zugriff auf XEmpf[1] behoben
 
