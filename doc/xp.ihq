@@ -153,6 +153,9 @@ Raabe's Klystron BBS:
 19
 Bitte w„hlen Sie das gewnschte Brett. Mit <Enter>
 wird die Auswahl best„tigt, mit <Esc> abgebrochen.
+
+CTRL+Y springt zur naechsten Trennzeile
+
 @
 20
 <<Brett-šbersicht
@@ -181,6 +184,8 @@ richten und Bretteinstellungen.
 
   ^G   markiert alle Bretter, die zur gleichen Gruppe
        geh”ren wie das gew„hlte Brett.
+
+  ^Y   Die n„chste Trennzeile wird angesprungen.
 
    /   Schnellsuche
 
@@ -285,7 +290,13 @@ angezeigt.
 
  <cr>  zeigt den Inhalt des gew„hlten PM-Brettes
 
-   A   wechselt den Anzeige-Modus.
+   A   wechselt den Anzeige-Modus zwischen dem
+       Adressbuch, und der Anzeige aller User.
+
+   O   wechselt die Anordnung der Userbretter.
+       M”gliche Einstellungen sind:
+       - sortiert nach Usernamen
+       - sortiert nach Serverbox dann Usernamen
 
 <Tab>  schaltet auf Brettbersicht um.
 
@@ -310,6 +321,8 @@ angezeigt.
        Briefe geschickt werden.
 
    /   Schnellsuche
+
+  ^Y   Die n„chste Trennzeile wird angesprungen.
 
   ^W   schaltet die automatische Weiterschaltung ein
        bzw. aus.
@@ -360,17 +373,24 @@ angezeigt.
 
   ^V   Userbretter verknpfen (Nachr. verschieben)
 
-L und E beziehen sich auf alle markierten User.
+  ^T   Trennzeile im Adressbuch einfgen
+
+  ^P   User in andere Adressbuchgruppe verschieben
+
+
+Die Funktionen L, E, ^T und ^P beziehen sich
+auf alle markierten User.
 
 
 <<User-Anzeige
 
-û        ì HOT       GHOSTWRITER\@HOT-II.ZER
-û  *     ì HOT       GHOSTWRITER\@HOT.ZER
- ##P     30 HOT       KNALL\@PENG.ZER
-³³³³     ³ ³         ³
-³³³³     ³ ³         ÀÄÄ Name/Adresse des Users
-³³³³     ³ ÀÄÄÄÄÄÄÄÄ Server fr Mail an diesen User
+û P      ì   1 HOT      GHOSTWRITER\@HOT-II.ZER
+û  *     ì   1 HOT      GHOSTWRITER\@HOT.ZER
+ ##P      30  2 HOT      KNALL\@PENG.ZER
+³³³³     ³   ³ ³        ³
+³³³³     ³   ³ ³        ÀÄÄ Name/Adresse des Users
+³³³³     ³   ³ ÀÄÄÄÄ Server fr Mail an diesen User
+³³³³     ³   ÀÄÄÄÄÄÄ Adressbuchgruppe
 ³³³³     ÀÄÄÄÄÄÄÄÄÄÄ Nachrichten-Haltezeit fr PMs
 ³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ * = Vertreter-Adresse vorhanden
 ³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ P = Paáwort eingetragen oder
@@ -381,14 +401,20 @@ L und E beziehen sich auf alle markierten User.
 Die Groá- bzw. Kleinschreibung der Usernamen kann
 unter /Config/Anzeige/Bretter ge„ndert werden.
 
+Weiterhin besteht die M”glichkeit, die Reihenfolge
+der verschiedenen Felder beliebig zu „ndern. Dies
+ist ber Config/Anzeige/Hilfen im Feld
+[Feldtausch Userliste] m”glich.@1033
+
 <<Verteiler-Anzeige
 
- 26       HOT      [lokale Points]
- ³        ³        ³
- ³        ³        ÀÄÄ Name des Verteilers
- ³        ÀÄÄÄÄÄÄÄÄÄÄÄ evtl. Serverbox des Verteilers
- ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Anzahl der Empf„nger
-
+V   26  1  HOT     [lokale Points]
+³   ³   ³  ³       ³
+³   ³   ³  ³       ÀÄÄ Name des Verteilers
+³   ³   ³  ÀÄÄÄÄÄÄÄÄÄÄ evtl. Serverbox des Verteilers
+³   ³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ Adressbuchgruppe
+³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Anzahl der Empf„nger
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Kennzeichen fr Verteiler
 @
 22
 ^^21
@@ -399,7 +425,9 @@ tergeleitet werden soll. Mit <Enter> wird die Auswahl
 best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
-um.
+um, "O" schaltet die Sortierung nach Boxen um.
+Mit CTRL+Y wird zur n„chsten Trennzeile gesprungen.
+
 @
 24
 ^^23
@@ -437,6 +465,9 @@ Folgende Funktionen stehen zur Verfgung:
        lesemodus auf Komplettanzeige um. In der Liste
        der markierten Nachrichten: Schaltet zwischen
        Empf„nger- und Absenderanzeige um.
+
+ AltL  W„hlt einen anderen Lesemodus.
+
 
  <Sp>  markiert die gew„hlte Nachricht. Es k”nnen
        mehrere Nachrichten in verschiedenen Brettern
@@ -508,6 +539,8 @@ Folgende Funktionen stehen zur Verfgung:
        den Weg ("Pfad") herausuzufinden, auf dem eine
        Nachricht zu Ihnen gelangt ist.
 
+   O   Zeigt den Original-Nachrichtenkopf an.
+
   ^R   decodiert eine Rot13-codierte Nachricht.
 
   ^H   zeigt eine Nachricht als Hex-Dump (^H ist
@@ -577,6 +610,11 @@ Anzeige kann mit <Ctrl A> umgeschaltet oder unter
 Eine Zahl statt des unversandt-Zeichens (!) gibt bei
 Nachrichten mit mehreren Empf„ngern die Empf„nger-
 anzahl an. \# steht fr mehr als 9 Empf„nger.
+
+Weiterhin besteht die M”glichkeit, die Reihenfolge
+der verschiedenen Felder beliebig zu „ndern. Dies
+ist ber Config/Anzeige/Hilfen im Feld
+[Feldtausch Nachrichtenliste] m”glich.@1032
 
 (*) N„heres zu Fido-Crashs: Siehe FIDO.TXT.
 
@@ -667,7 +705,12 @@ Der Lister wird mit <Esc> verlassen.
 
 <<Ctrl L>> setzte die angezeigte Nachricht auf "L”schen".
 
-<<H>> setzt die angezeigte Nachricht auf "Halten".
+<<H>> schaltet "Halten" fr die angezeigte
+  Nachricht Ein/Aus.
+
+<<V>> schaltet "Wiedervorlage" fr die angezeigte
+  Nachricht Ein/Aus.
+
 
 <Backspace> verl„át den Lister, ohne daá der Auswahl-
   balken auf die n„chste Nachricht springt, unabh„n-
@@ -680,6 +723,9 @@ Der Lister wird mit <Esc> verlassen.
 
 <<F>>   schaltet farbliche *Hervorhebungen* ein/aus
     (s. [/Config/ExternLister]).@237
+
+<<Q>>   schaltet um, ob "|" und ":" als Quote-Zeichen
+    interpretiert werden oder nicht.
 
 <<Ctrl R>> schaltet die Rot13-Codierung ein/aus.
 
@@ -1048,6 +1094,33 @@ durch halten der rechten Maustaste.
   Zeilen werden die Quotezeichen mit bercksichtigt.
   Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
 
+@
+8063
+  Geben Sie hier die Spalte ein, in der der Text
+  automatisch umgebrochen werden soll.
+@
+8064
+  Mit diesem Zeichen wird intern im Editor
+  das Absatzende markiert.
+
+@
+8065
+<<[x]>> -> Beim Drcken von <Return> wird die
+       nachfolgende Zeile automatisch um die
+       gleiche Anzahl von Leerzeichen eingerckt,
+       wie die vorhergehende. (Auto-Indent)
+@
+8066
+<<[x]>> -> Markierte Bl”cke werden durch Tasten-
+       druck nicht entmarkiert oder berschrieben.
+       Sinnvoll, wenn man die Wordstartasten fr
+       Blockoperationen verwenden m”chte.
+@
+8067
+<<[x]>> -> Beim Umbrechen oder Zusammenfgen von
+       gequoteten Zeilen werden die Quotezeichen
+       mit bercksichtigt. Siehe auch
+       ['Block reformatieren'] (<Ctrl B>).@61
 @
 65
 Mit den Cursortasten kann zwischen verschiedenen
@@ -3295,6 +3368,25 @@ Achtung: Bei Einstellung "Alle" oder "Z-Netz" kann
 die Userdatenbank sehr schnell sehr groá werden!
 Mit /Wartung/UserReorg werden die nicht ben”tigten
 Adressen wieder aus der Datenbank entfernt.
+@
+8068
+Neu aufgenommene User werden dieser
+[Adressbuchgruppe] zugeordnet.@8069
+
+@
+8069
+Adressbuchgruppe:
+
+Das Userfenster wird vor dem alphabetischen Sortieren
+nach diesen Gruppen geordnet. Gruppen mit niedrigen
+Nummern werden ganz oben angezeigt, Gruppen mit hohen
+Nummern erscheinen am Ende der Userliste.
+
+Wenn man bestimmte User (oder Pseudouser wie Areafix)
+im Userfenster zusammengruppieren will, muss man sie
+nur in dieselbe Adressbuchgruppe stecken.
+
+Minimalwert ist 1 Maximalwert ist 99
 
 @
 213
@@ -3350,6 +3442,14 @@ Dann geben Sie als Archiv-Bretter einfach nur /A/ an.
 Stellen Sie <<[x]>> ein, wenn mit /Nachricht/Weiter-
 leiten [/Archiv] oder mit <Alt A> archivierte Nachrich-@12109
 ten anschlieáend auf "L”schen" gesetzt werden sollen.
+@
+8070
+<<[x]>> -> Vor archivierte Textnachrichten wird ein
+       Archivierungsvermerk gesetzt.
+       (Archiviert am... / Ursprung...).
+
+<<[ ]>> -> Der Text der Nachricht bleibt unveraendert.
+
 @
 219
 <<[x]>> -> Automatisch neu angelegte Bretter werden immer
@@ -3411,13 +3511,33 @@ dardm„áig aktiviert.
 
 @
 223
+Dieser Schalter bestimmt,
+wie das Userfenster sortiert werden soll:
+
+<<[x]>> -> Es wird zuerst nach den Namen der Serverbox,
+       dann nach Usernamen sortiert.
+
+<<[ ]>> -> Es wird nur nach Usernamen sortiert.
+
+
+Diese Einstellung kann im Userfenster und
+User-Weiterleitmenue jederzeit mit der Taste "O"
+umgestellt werden.
+
+@
+224
 Manche User verwenden als Quote-Zeichen auch die
 Zeichen "|" und ":". Da dann aber die Farben fr die
 verschiedenen Quoteebenen nicht mehr stimmen, kann
 hier eingestellt werden, daá diese zwei Zeichen auch
 wie Quote-Zeichen behandelt werden sollen.
+
+Diese Einstellung gilt sowohl fr den Lister als auch
+den Editor. Sie l„át sich im Lister jederzeit
+mit der Taste "Q" umschalten.
+
 @
-224
+225
 So viele Megabytes Festplattenplatz ben”tigt Cross-
 Point mindestens zum Arbeiten. Ist bei <<Programmstart>>
 zu wenig Platz vorhanden, dann wird eine Warnung
@@ -3492,8 +3612,8 @@ nung besitzen, nur Umlaute im IBM-Format enthalten.
 Leider halten sich viele Programmierer von nicht-
 IBM-Rechnern nicht an diesen Standard, wodurch oft
 unlesbare "Amiga-Sonderzeichen" (Sonderzeichen nach
-ISO-8859-1) auftauchen, z.B. "„" statt "„" oder "”"
-statt "”".
+ISO-8859-1) auftauchen, z.B. "„" statt "ä" oder "”"
+statt "ö".
 
 Wenn Sie hier <<[x]>> einstellen, konvertiert XP diese
 Zeichen im Lister und bei Quotes in ein lesbares
@@ -3748,7 +3868,7 @@ Antwort-an Adresse benutzt, wenn vorhanden.
 <<ZCONNECT / RFC:
 
 <<[X]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
-       Header "X-No-Archive: yes" versehen. Dadurch
+       Header "X-No-Archive: Yes" versehen. Dadurch
        werden die Usenet-Archive wie DejaNews ange-
        wiesen, die Nachricht nicht zu speichern.
 
@@ -3772,6 +3892,7 @@ Empf„nger hat, ist sie nicht lesenswert.
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.
+
 @
 1040
 Hier k”nnen Sie den Namen Ihrer Organisation einge-
@@ -4098,11 +4219,13 @@ gesucht und der Text dahinter angezeigt.
 Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Nachrichtenliste fest. Jeder
 Buchstabe muá <<genau einmal>> vorkommen, ansonsten
-wird auf die Standardeinstellung zurckgesetzt.
+wird auf die Standardeinstellung (FGDAEB) zurck-
+gesetzt. Die Flags (F) werden immer automatisch
+nach vorne sortiert.
 
        Die Buchstaben stehen fr
 
-       F  Flags
+       F  Flags           (immer erstes Zeichen!)
        G  Gr”áe
        D  Datum
        A  Absender
@@ -4113,12 +4236,15 @@ wird auf die Standardeinstellung zurckgesetzt.
 Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Userliste fest. Jeder Buchstabe
 muá <<genau einmal>> vorkommen, ansonsten wird auf
-die Standardeinstellung zurckgesetzt.
+die Standardeinstellung (FHGBAK) zurckgesetzt.
+Die Flags (F) werden immer automatisch nach vorne
+sortiert.
 
        Die Buchstaben stehen fr
 
-       F  Flags
+       F  Flags           (immer erstes Zeichen!)
        H  Halten
+       G  Adreábuch-Gruppe
        B  Box
        A  Adresse/Verteiler
        K  Kommentar
@@ -6819,7 +6945,7 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[X]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neuen
        Internet-Mailprogrammen verstanden.
@@ -6875,6 +7001,22 @@ richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
 /Nachricht/Unversandt/l”schen l”schen und neu sen-
 den.
+
+@
+8103
+<<[ ]>> -> Werden Zeilen einer Fido-Nachricht im Lister
+       markiert und wird anschlieáend die Request-
+       Funktion mit <F3> aufgerufen, so werden keine
+       "Magics" in die Dateiliste bernommen,
+       sondern nur Dateinamen (bliches Dateiformat,
+       unter DOS z.B. 8.3-style: ARCHIV01.ZIP.
+
+<<[x]>> -> Auch Magics werden mit in die Liste der zu
+       requestenden Dateien bernommen. Magics sind
+       Kurznamen z.B. fr eine Sammlung mehrerer
+       Dateien oder Dateinamen, die sich regelm„áig
+       „ndern (k”nnen), z.B. PGPOS2 fr die aktuelle
+       Version des Programms PGP fr OS/2.
 
 @
 800
@@ -7065,11 +7207,18 @@ und die Erkennung von Dateiformaten anhand des
 Dateinamens daher im Z-Netz nicht in allen F„llen
 funktioniert.
 
-Hinweis:
+Hinweise:
 Wenn Sie einen HTML-Viewer eintragen (MIME-Typ
 <<text/html>>), dann sollten Sie <<htm>> als Dateinamen-
 erweiterung angeben, da sonst der externe Viewer u.
 U. die tempor„re Datei nicht als HTML-Datei erkennt.
+
+Wenn Sie bei einem Multiformat-Mime-Typ
+keine Dateiendung eintragen, k”nnen Allround-Viewer
+wie "START" unter Windows benutzt werden, 
+um immer automatisch den passenden Viewer zu verwenden.
+
+Siehe dazu auch [Viewer-Sicherheitseinstellungen.]@8072
 
 @
 823
@@ -7090,6 +7239,79 @@ Parameter hinter dem Programmnamen ein.
 Falls Sie als Viewer eine Batchdatei eintragen, muá
 der Name der Datei voll ausgeschrieben werden, incl.
 ".BAT".
+@
+8071
+Wenn Dateien mit externen Viewerprogrammen ge”ffnet
+sind, kann mit Crosspoint weitergearbeitet werden.
+um die angezeigten tempor„r-Dateien zu l”schen,
+gibt es zwei Vorgehensweisen:
+
+<<[ ]>> -> Es wird zusaetzlich zum Viewer-Programm
+       eine Batchdatei ge”ffnet, die wartet bis
+       das Viewer-Programm beendet wird und dann 
+       sich selbst und die Tempor„rdatei l”scht.
+
+<<[X]>> -> Crosspoint l”scht die Tempor„rdatei
+        erst beim n„chsten Programmstart.
+@
+8072
+<<Ungef„hrliche Dateiendungen>>
+
+Wenn bei Mime-Viewer Eintr„gen keine Dateiendung
+angegeben wird, k”nnen Multiformat-Mimetypen
+(z.B Application/octet-stream) mit einem 
+Allround-Viewer angesehen werden. Unter Windows
+bietet sich dazu der Befehl "START" an.
+
+Allerdings besteht bei dieser Funktion die
+Gefahr, dass Mail-Viren und andere gef„hrliche
+Dateien direkt ausgefhrt werden.
+
+Zum Schutz davor kommt bei allen Dateieendungen
+die nicht in dieser Liste eingetragen sind,
+eine Sicherheitsabfrage, bevor die Dateien 
+ge”ffnet werden.
+
+Wird diese Abfrage mit "Nein" beantwortet, 
+wird der interne Lister bzw das unten eingetragene 
+[Viewerprogramm fuer Verd„chtige Dateien]@8074
+benutzt, um die Datei anzusehen.
+
+Die Dateieendungen mssen incl. Punkt 
+eingegeben werden (also ".HTM" nicht nur "HTM")
+Folgende Dateiformate sind zu gef„hrlich, 
+und werden in dieser Liste ignoriert:
+.EXE .COM .BAT .BTM .CMD .PIF .LNK .INF .REG
+
+Siehe auch: 
+[Lister-Dateiendungen]@8073
+@
+8073
+<<Lister-Dateiendungen>>
+
+Dateien in Multiformat-Mimetyp Mails, 
+die eine dieser Dateiendungen haben, werden immer 
+mit dem XP-internen Lister/Viewer ge”ffnet.
+
+Siehe auch: 
+[Ungef„hrliche Dateiendungen]@8072
+[Viewerprogramm fuer Verd„chtige Dateien]@8074 
+@
+8074
+<<Viewerprogramm fuer Verd„chtige Dateien>>
+
+Wenn die Sicherheitsabfrage bei Multiformat-
+Mimetypen mit "Nein" beantwortet wird,
+wird das hier eingetragene Programm gestartet
+(z.B ein Virenscanner...)
+
+Ist hier nichts eingetragen, wird die
+Datei mit dem XP-Internen Lister/Viewer angezeigt.
+
+Siehe auch:
+[Lister-Dateiendungen]@8073
+[Ungef„hrliche Dateiendungen]@8072
+
 
 @
 830
@@ -8693,21 +8915,27 @@ fachen.
 <<Nachricht / Direkt
 
 Hier k”nnen Sie eine Nachricht direkt an einen User
-senden, ohne den Namen aus der Userliste w„hlen oder
-evtl. neu anlegen zu mssen. Es sind drei Eingaben
-erforderlich:
+oder ein Brett senden. Ohne den Empf„nger vorher in
+Brett oder Userliste anlegen zu mssen. 
 
 <<Server:>>    Die Box, ber die die Nachricht abge-
            schickt werden soll. Dieses Eingabefeld
            erscheint nur, wenn mehr als eine Server-
            box erfaát ist. Es gengt, den Anfangs-
            buchstaben des Boxnamens einzugeben.
+ 
+           Bei bereits angelegten Usern/Brettern
+           wird dieses Feld automatisch gesetzt.
+            
 
 <<Empf„nger>>  Der Name des Users. CrossPoint erg„nzt
            den Namen bei Bedarf automatisch um Box-
-           namen oder ".ZER". Noch nicht in der User-
-           liste vorhandene User sind an der Hervor-
+           namen oder ".ZER". Noch nicht angelegte
+           User oder Bretter sind an der Hervor-
            hebung des Wortes "Empf„nger" zu erkennen.
+
+           Brettnamen gebe Sie hier ein, indem Sie
+           "/" als erstes Zeichen verwenden.
 
 <<Betreff>>    Der gewnschte Betreff der Nachricht.
 
@@ -10263,14 +10491,18 @@ richt[/Unversandt/Edit] zu verwenden ist.@10401
 12205
 <<Nachricht / ndern / Typ
 
-Diese Funktion macht aus einer Textnachricht eine
-Bin„rnachricht und umgekehrt.
+Diese Funktion „ndert den Typ einer Nachricht.
+aus einer Textnachricht wird eine Bin„rnachricht (B)
+aus einer Bin„rnachricht wird Multipart-Mime (M)
+und aus Multipart-Mime wird wieder eine Textnachricht.
 
 Diese nderung betrifft NUR die XP-Datenbank; der
 Puffer-Kopf der Nachricht bleibt also unver„ndert.
 Sie ist haupts„chlich fr Bin„rnachrichten gedacht,
 die als Textnachrichten verschickt wurden und daher
-nicht vom Archiv-Viewer erkannt werden.
+nicht vom Archiv-Viewer erkannt werden, bzw. fr
+Multipart-Mime-Nachrichten, die wegen fehlerhaften 
+Headerzeilen nicht als MIME erkannt wurden.
 @
 12206
 <<Nachricht / ndern / gelesen
