@@ -529,7 +529,7 @@ begin
     ClipWrite:=false;
 end;
 
-procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Windows-Clipboard schicken }
+procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Clipboard schicken }
 var f  : file;
     p  : pointer;
     bs : word;
@@ -556,7 +556,7 @@ begin
   end;
 end;
 
-procedure ClipToFile(fn:pathstr);       { Win-Clipboardinhalt als File speichern }
+procedure ClipToFile(fn:pathstr);       { Clipboardinhalt als File speichern }
 var f  : file;
     p  : cap;
     bs : longint;
@@ -679,6 +679,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.2  2000/09/25 20:06:05  my
+  - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
+  - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
+  - clip.pas und xp1o.pas: Strings "Windows-Clipboard" und
+    "Win-Clipboard" durch "Clipboard" ersetzt (wegen Unter-
+    stützung internes Clipboard / JG).
+
   Revision 1.19.2.1  2000/09/25 05:59:48  mk
   JG:- Interne Zwischenablage implementiert
 

@@ -91,28 +91,28 @@ begin
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
-    mappsel(false,'Windows-Clipboard');
-    mappsel(false,'Win-Clipboard (URL)');
-    mappsel(false,'Win-Clipboard (MAIL)');
+    mappsel(false,'Clipboard');
+    mappsel(false,'Clipboard (URL)');
+    mappsel(false,'Clipboard (MAIL)');
     end;
   readmask(brk);
   enddialog;
   if not brk then begin
     s2:= s; { Original-Schreibweise merken }
     UpString(s);
-    if useclip and (s='WINDOWS-CLIPBOARD') then begin
+    if useclip and (s='CLIPBOARD') then begin
       s:=TempS(65535);
       ClipToFile(s);
       end
     else
-    if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
+    if useclip and (s='CLIPBOARD (MAIL)') then begin         { Markierten Text als Mailadresse}
       s:=mailstring(getline,false);
       string2clip(s);                                        { ins Clipboard }
       ReadFilename:=false;
       exit;
       end
     else
-    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
+    if useclip and (s='CLIPBOARD (URL)') then begin          { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
@@ -974,6 +974,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.4  2000/09/25 20:06:05  my
+  - xp-d.rq: String "Return" durch "Enter" ersetzt (/C/O/L).
+  - xp2c.pas: String "UUCP/RFC" durch "RFC/UUCP" ersetzt.
+  - clip.pas und xp1o.pas: Strings "Windows-Clipboard" und
+    "Win-Clipboard" durch "Clipboard" ersetzt (wegen Unter-
+    stützung internes Clipboard / JG).
+
   Revision 1.40.2.3  2000/07/17 14:01:42  jg
   - Bugfixes fuer URL-Erkennung
 
