@@ -1056,13 +1056,7 @@ begin
   xp_maus_aus;
   attrtxt(7);
   setscreensize;
-{$IFDEF NCRT }
-  { Seltsamerweise ist der Wert von Screenlines in der Prozedur
-  lines trotz der neuen Festsetzung 25 -> Workaround }
-  lines(GetScreenLines, 1);
-{$ELSE }
   lines(screenlines,1);
-{$ENDIF }
   clrscr;
   setbackintensity;
   with col do begin
@@ -2018,6 +2012,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.72  2000/07/27 10:33:15  ml
+  - Referenz auf getlines entfernt
+
   Revision 1.71  2000/07/27 10:12:59  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
