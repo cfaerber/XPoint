@@ -648,8 +648,12 @@ begin
   end;
 
   p := pos('$PUFFER',UpperCase(uparc));
+{$IFDEF UnixFS}
+  Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7));
+{$ELSE}
   Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
-
+{$ENDIF}
+   
   assign(f1,Dest+fn);
 
   if existf(f1) then                    { Datei wurde nicht gepackt }
@@ -786,7 +790,11 @@ again:
   if commandline then write(unxxxing[ctype]);
 
   p := pos('$DOWNFILE',UpperCase(arcer));
+{$IFDEF UnixFS}
+  Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9));
+{$ELSE}
   Shell(LeftStr(Arcer,p-1)+newfn+mid(Arcer,p+9),500,3);
+{$ENDIF}
 
 {$IFNDEF UnixFS}  { argh }
   if (ctype=compress_freeze) and (not existf(f1)) then
@@ -3844,6 +3852,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/03/28 12:59:06  ml
+  - Shellcommandfix under linux
+
   Revision 1.41  2001/03/26 23:18:17  cl
   - fix for news batch decompression
 
