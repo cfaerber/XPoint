@@ -105,7 +105,7 @@ end;
 
 procedure SysSetBackIntensity;
 begin
-  // not needed in Win32
+  // nothing to do
 end;
 
 procedure RegisterMailClient;
@@ -236,8 +236,17 @@ begin
    FreeEnvironmentStrings(p);
 end;
 
+initialization
+  // disable program termination at ctrl-c
+  SetConsoleCtrlHandler(nil, true);
+  SetConsoleMode(OutHandle, ENABLE_MOUSE_INPUT);
+finalization
+
 {
   $Log$
+  Revision 1.24  2001/12/05 18:24:34  mk
+  - disable ctrl-c
+
   Revision 1.23  2001/10/17 12:38:38  mk
   - fixed av in RTLExec with empty ComLine
 
