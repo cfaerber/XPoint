@@ -172,7 +172,11 @@ asm
   int mausint
 @1:
 {$ENDIF }
+{$IFDEF VP}
+  mov mausda,true
+{$ELSE}
   mov mausda,false
+{$ENDIF }
 end;
 
 {$IFDEF BP }
@@ -512,7 +516,7 @@ begin
      inc(intsource, intLeft0);   {first Mousekey now released}
    if ((smebuttons and mmRechts) = 0) and ((mousebuttonbkup and mmRechts) <> 0) then
      inc(intsource, intRight0);   {second Mousekey now released}
-   mint(intsource,smebuttons,smePos.x,smePos.y,0,0);
+   mint(intsource,smebuttons,smePos.x * 8,smePos.y * 8,0,0);
  end;
 end;
 
@@ -548,6 +552,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/05/17 15:22:11  ml
+  MausInterupt-Emulation funktioniert jetzt in W32
+
   Revision 1.11  2000/05/17 15:06:59  ml
   MausInterupt-Emulation in 32Bit (Virtual Pascal)
 
