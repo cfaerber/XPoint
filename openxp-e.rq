@@ -24,14 +24,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
 #          darf *nicht* bersetzt werden. Es wird von OpenXP nur intern verwendet
 #          und nicht angezeigt.
-0   Main,001Open^XPù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2,009^?ù41
+0   Main,001Open^XPù1,002M^aintenanceù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2,009^?ù41
 1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modem,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
-7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
+7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,077,^Complete,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines,096M^isc,098^Accessibility
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
@@ -1309,7 +1309,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # --- XP6 -------------------------------------------------------------
 
 # Don't use any non-7bit characters in the following line:
-600  ## Original recipient:
++600  
+1 ## Original recipient:
+2 ## Original recipient(CC):
+3 ## Original recipient(BCC):
+10 et al.
+-
 + 601
 # Crypting
 1    %s possible
@@ -1395,7 +1400,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   Server
 14   Size
 15   Code:
-16   Copies:
+
+16   Newsgroups
+17   CC       ~
+18   BCC      ~
+
 20   ^Park,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
 21   ^Park,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
 22   ^Park,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
@@ -1406,12 +1415,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 29   ,^Text
 30   PDEWLHùLMG
 # Editor Header
-40   Message to ~
-41   Message in ~
-42   Subject:   ~
+40   Message to~
+41   Message in~
+42   Subject:  ~
 43   ~ to ~
+44   et al.
+45   ...
 # PGP key
 50   G
+100  Newsgroup is write-protected.
 + 612
 1    Message limit exceeded by %s Bytes! Send message, anyway
 2    Sent binary file
@@ -2584,6 +2596,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    unknown user
 2    unknown newsgroup
 3    add to list
+-
+
++2203
+1    Group
+2    To
+3    CC
+4    BCC
+5    Not to
+6    Subject: ~
+7    Attention:
 -
 
 # --- UUCICO ----------------------------------------------------------
@@ -3980,6 +4002,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.50  2002/04/14 22:19:09  cl
+# - added Ressources for new address handling
+#
 # Revision 1.49  2002/04/06 14:25:34  mk
 # - fixed Edit/Boxen/RFClient-Dialog
 #
