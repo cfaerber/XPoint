@@ -367,6 +367,7 @@ begin
       if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }      
         s:='Clipboard-Inhalt ist zu umfangreich'#13#10;   { groesser als Clipfile oder  }
         blockwrite(f,s[1],length(s));                     { freier Speicher ist         }
+        if clipclose then;                                { Clipboard trotzdem Schliessen }
         end
       else
         if bs>0 then begin
@@ -536,6 +537,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/02/25 16:34:45  jg
+  -Bugfix: Abbruch wenn Inhalt >64K, Clipboard schliessen
+
   Revision 1.9  2000/02/25 08:47:14  jg
   -Clip2String Bugfix zu rev1.8
 
