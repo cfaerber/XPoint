@@ -203,10 +203,9 @@ begin
   getscreenlines:=vlines;
 end;
 
-procedure SetVesaText;
 type
   VESAInfoBlockRec = record
-    Signatur: LongInt;
+    Signatur: array[1..4] of Char;
     VersionLo, VersionHi: Byte;
     OEMString: Pointer;
     Capabitilities: LongInt;
@@ -214,8 +213,11 @@ type
     FuellBytes: array[0..243] of Byte;
   end;
 var
-  Status: Word;
   InfoBlock: VESAInfoBlockRec;
+
+function SetVesaText: Boolean;
+var
+  Status: Word;
 begin
   { VESA Installationscheck }
   asm
@@ -227,13 +229,23 @@ begin
 	int 10h
 	mov Status, ax
   end;
-  if not (Status = $4f) then Exit;
+  if not (Status = $4f) then begin
+    SetVesaText := false; Exit;
+  end else
+    SetVesaText := true;
   asm
-	mov ah, $4f
-	mov al, 2          { Funktion 2: VESA-Modus setzen }
-	mov bx, $108       { 80x60 Zeilen Modus }
+	mov ax, seg InfoBlock     { Wir nutzen diesen Buffer, }
+	mov es, ax                { da wir den Inhalt nicht brauchen }
+	mov di, offset InfoBlock
+	mov ax, $4f02         { Funktion 2: VESA-Modus setzen }
+	mov bx, $0108         { 80x60 Zeilen Modus }
 	int 10h
 	mov Status, ax
+  end;
+  if not (Status = $4f) then
+  begin
+    SetVesaText := false;
+    setvideomode(3);
   end;
 end;
 
@@ -272,7 +284,7 @@ begin
             41..44 : setuserchar(9);
             45..50 : setuserchar(8);
             51..57 : setuserchar(7);
-            60: SetVesaText;
+            60: if not SetVesaText then Lines := 25;
           end;
         end;
   end;
@@ -368,6 +380,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.11  2001/05/17 15:15:16  mk
+  - fixes fuer 60 Zeilen VESA Modus (ungetestet)
+
   Revision 1.20.2.10  2000/12/30 10:43:28  mk
   - Farbpalette sichern, die hundertste
 
