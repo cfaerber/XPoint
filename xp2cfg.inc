@@ -871,6 +871,7 @@ begin
   writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
+  ListWrapBack:=ListWrap;
   writeln(t,'ViewerSave=',viewer_save);
   writeln(t,'ViewerLister=',viewer_lister);
   writeln(t,'ViewerVirscan=',viewer_scanner);
@@ -1716,6 +1717,7 @@ begin
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
+    ListWrapBack:=ListWrap;
     otherqcback:=otherquotechars;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
@@ -1830,6 +1832,10 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.32  2001/12/02 15:52:29  my
+  MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+       <Ctrl-W> nicht-permanent umgeschaltet werden.
+
   Revision 1.62.2.31  2001/11/04 15:16:09  my
   MY:- Default fÅr "Systemname in PM-Brettern" (userboxname) true
   MY:- Meldungen (Kommentare) in checkTimeZone ergÑnzt

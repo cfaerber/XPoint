@@ -828,7 +828,8 @@ const
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
-       Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
+       Otherqcback : boolean = false;     { Backup von Otherqqotechars zum Umschalten }
+       ListWrapBack : boolean = true;     { Backup von ListWrap zum Umschalten }
 
        PGP2 = '2.6.x';
        PGP5 = '5.x';
@@ -1213,6 +1214,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.45  2001/12/02 15:52:29  my
+  MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+       <Ctrl-W> nicht-permanent umgeschaltet werden.
+
   Revision 1.54.2.44  2001/11/20 23:12:57  my
   MY:- Konfiguration Multiserverbetrieb (D/B/E/C/Zus„tzliche_Server und
        D/B/E/N/Fallback) gem„á Vereinbarung mit XP2 implementiert, Details

@@ -390,8 +390,11 @@ begin
     end;
   exthdlines:=0;
   llh:=false;
-  if listexit<>4                         { Wenn nicht Editor gestartet wird... }
-    then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
+  if listexit<>4 then                    { Wenn nicht Editor gestartet wird... }
+  begin
+    Listwrap:=ListWrapBack;              { Status des Wortumbruchs und ...        }
+    otherquotechars:=otherqcback;        { ... der Quotechars '|' und ':' reseten }
+  end;
   listfile:=listexit;
   ListShowSeek:=false;
 end;
@@ -491,6 +494,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.12  2001/12/02 15:52:29  my
+  MY:- Im Nachrichten-Lister kann der Wortumbruch in Spalte 80 jetzt mit
+       <Ctrl-W> nicht-permanent umgeschaltet werden.
+
   Revision 1.24.2.11  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
