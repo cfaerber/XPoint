@@ -1438,7 +1438,7 @@
       nt_Netcall : begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,20)       { Netcall ^3.8, }
                          +getres2(927,10)       { ^Diverse }
@@ -1447,7 +1447,7 @@
       nt_ZConnect: begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,21)       { ^ZConnect, }
                          +getres2(927,10)       { ^Diverse }
@@ -1456,7 +1456,7 @@
       nt_Maus:     begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,22)       { M^ausTausch, }
                          +getres2(927,10)       { ^Diverse }
@@ -1465,7 +1465,7 @@
       nt_Magic:    begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,23)       { M^aigNet, }
                          +getres2(927,10)       { ^Diverse }
@@ -1474,7 +1474,7 @@
       nt_Pronet:   begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,24)       { P^ronet, }
                          +getres2(927,10)       { ^Diverse }
@@ -1483,14 +1483,15 @@
       nt_Fido:     begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,25)       { ^FTS, }
                          +getres2(927,10)       { ^Diverse }
                          +getres2(927,11);      { ,^Sysop-Mode }
                    end;
       nt_QWK:      begin
-                     nts:=+getres2(927,8)        { ^Gebuehren, }
+                     nts:=
+//                       +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,29)       { ^QWK, }
                          +getres2(927,10)       { ^Diverse }
@@ -1499,7 +1500,7 @@
       nt_UUCP:     begin
                      nts:=getres2(927,5)        { ^Point, }
                          +getres2(927,7)        { ^Modem, }
-                         +getres2(927,8)        { ^Gebuehren, }
+//                         +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,28)       { ^UUCP, }
                          +getres2(927,10)       { ^Diverse }
@@ -1530,72 +1531,72 @@
         nt_Netcall  : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditNet(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_ZConnect : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditNet(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_Maus     : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditNet(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_Magic    : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditNet(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_Pronet   : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditNet(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditNet(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_Fido     : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditFido(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditFido(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_QWK      : case n of
-                        1: EditGebuehren(brk);
-                        2: EditName(brk);
-                        3: EditQWK(fn,brk);
-                        4: EditDiverses(nt,brk);
-                        5: EditSysopdaten(nt,brk);
+//                      1: EditGebuehren(brk);
+                        1: EditName(brk);
+                        2: EditQWK(fn,brk);
+                        3: EditDiverses(nt,brk);
+                        4: EditSysopdaten(nt,brk);
                       end;
         nt_UUCP     : case n of
                         1: EditPointdaten(nt,brk);
                         2: EditModemdaten(nt,brk);
-                        3: EditGebuehren(brk);
-                        4: EditName(brk);
-                        5: EditUUCP(brk);
-                        6: EditDiverses(nt,brk);
-                        7: EditSysopdaten(nt,brk);
+//                      3: EditGebuehren(brk);
+                        3: EditName(brk);
+                        4: EditUUCP(brk);
+                        5: EditDiverses(nt,brk);
+                        6: EditSysopdaten(nt,brk);
                       end;
         nt_NNTP     : case n of
                         1: EditInetName(brk);
@@ -1698,6 +1699,9 @@
 
 {
   $Log$
+  Revision 1.31  2000/11/12 14:39:09  mk
+  - disabled menu Gebuehren
+
   Revision 1.30  2000/11/04 18:57:49  fe
   Link to bzip2 helppage added.
 
