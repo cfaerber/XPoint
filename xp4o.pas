@@ -477,15 +477,17 @@ label ende;
 {--Normale Suche--}
     else if check4date and (readmode >0) then  {Suchen im akt. Lesemodus }
     begin
-      if readmode=1 then begin
+      if readmode=1 then
+      begin
         dbReadN(mbase,mb_gelesen,b);
         if b>0 then exit;
-        end
-      else if aktdispmode <> 10 then begin
+      end
+      else if aktdispmode <> 10 then
+      begin
         dbReadN(mbase,mb_empfdatum,d);
         if smdl(d,readdate) then exit;
-        end;
-      end;                                                          {Headereintragsuche}
+      end;
+    end else                                   {Headereintragsuche}
 
     if suchfeld<>'' then begin
       dbRead(mbase,suchfeld,such);
@@ -2446,6 +2448,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.13  2000/12/01 09:55:37  mk
+  - fix fuer letzten Commit
+
   Revision 1.47.2.12  2000/11/30 20:33:30  mk
   JG:- Suchmodus l hinzugefuegt
 
