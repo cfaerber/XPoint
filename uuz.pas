@@ -241,6 +241,7 @@ type  OrgStr  = string[orglen];
 
 var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       f1,f2         : file;          { Quell/Zieldatei     }
+{      errorlevel    : integer; }
       u2z           : boolean;       { Richtung; mail/news }
       mails,news    : longint;       { Counter             }
       buffer        : array[0..bufsize] of char;    { Kopierpuffer }
@@ -680,10 +681,10 @@ var regs  : registers;
   end;
 
   { MK Funktion ist eigentlich sinnlos, rausnehmen ? }
+{
   procedure geterrorlevel;
   var
     regs : registers;
-    errorlevel    : integer;
   begin
     errorlevel:=lo(dosexitcode);
     if errorlevel=0 then begin
@@ -692,6 +693,7 @@ var regs  : registers;
       errorlevel:=regs.al;
       end;
   end;
+}
 
 begin
   doserror:=0;
@@ -755,7 +757,7 @@ begin
         else
           exec(getenv('comspec'),' /c '+prog+iifs(para<>'',para,''));
         swapvectors;
-        geterrorlevel;
+{        geterrorlevel; }
 
         with regs do begin
           ah:=$4a;                { Speicherblock wieder herstellen }
@@ -1488,7 +1490,7 @@ end;
 
 { --- UUCP/RFC -> ZConnect ------------------------------------------ }
 
-var ok   : boolean;
+var { ok   : boolean; }
     fpos : longint;
     eol  : byte;        { ReadString ist am Zeilenende angekommen }
     lasteol : boolean;  { eol der vorausgehenden Zeile>0 }
@@ -1517,7 +1519,7 @@ const l : byte = 0;
 
   procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
   begin
-    if eof(f1) then ok:=false
+    if eof(f1) then { ok:=false }
     else ReadBuf;
   end;
 
@@ -2329,7 +2331,7 @@ begin
   write('mail: ',fn);
   inc(mails);
   OpenFile(fn);
-  ok:=true;
+{  ok:=true; }
   fillchar(hd,sizeof(hd),0);
 { 28.01.2000 robo }
   envemp:='';
@@ -3494,6 +3496,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/02/25 20:01:46  rb
+  unbenîtigte Funktion und Variable ausgeklammert
+
   Revision 1.7  2000/02/25 19:07:08  rb
   UnterstÅtzung von 'Priority:' und 'urgent' (incoming)
 
