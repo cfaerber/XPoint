@@ -1,0 +1,35 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# pcsysop.scr: Netcall-Script fuer NetLand und PCNet
+
+# Unter Edit/Boxen ist u.a. Folgendes einzutragen:
+#
+#   Netztyp:        ZCONNECT
+#   Domain:         ".nl" oder ".pcn"
+#   Protokoll:      ZModem
+#   Packer:         PK(un)Zip V2.04g
+#   Netcall-Script: PCSYSOP.SCR
+#   Pointname:      Ihr Username
+#   Passwort:       Ihr Userpasswort
+#   MAPS-Name:      MAPS
+
+
+        WAITFOR "druecken >"
+        SEND "point@"
+        SEND $User
+        SEND ","
+	SEND $Password crlf
+
+start:  READ
+        ON "Username:" CALL repeat
+        ON "Passwort:" SEND $PASSWORD crlf
+        ON "running arc" END
+        GOTO start
+
+repeat: SEND "point@"
+        SEND $User crlf
+        RETURN

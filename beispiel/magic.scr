@@ -1,0 +1,33 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# magic.scr: Netcall-Script fuer MagicNET
+# MagicNET-Polldocs V1.x
+
+       on      relogin goto relog
+       waitfor "(8-n-1)"
+       waitfor ">"
+       delay   0.5
+relog: send    "^F"                 # ^F = Startzeichen fuer Netcall
+       display off
+       writeln
+       writeln
+       write   "Login..."
+
+loop1: delay   0.5
+       flush
+       send    $Point crlf          # Pointname
+       send    $Password crlf       # Passwort
+       send    $Serialno            # Seriennummer
+       send    "HI" crlf
+loop2: read
+       on      "!!!" goto ende      # Login erfolgreich
+       on      "???" goto loop1     # Login fehlerhaft
+       goto    loop2
+
+ende:  writeln
+       writeln
+

@@ -1,0 +1,20 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# o-magic.scr: Online-Script fuer MagicNET
+
+       waitfor "(8-n-1)"
+       waitfor ">"
+       delay   0.5
+       send    cr
+
+start: read
+       on "name:" send $USER cr
+       on "passwort:" goto ende
+       goto start
+
+ende:  send $PASSWORD cr
+

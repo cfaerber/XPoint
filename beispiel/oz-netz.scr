@@ -1,0 +1,15 @@
+#
+# OpenXP Login-Script
+# <http://www.openxp.de/>
+#
+# $Id$
+#
+# oz-netz.scr: Z-Netz-Online-Script
+
+start:  READ
+        ON "username:" SEND $USER cr
+        ON "passwort:" goto ende
+        GOTO start
+
+ende:   SEND $OPASSWORD cr
+
