@@ -40,9 +40,6 @@ const DPMS_On       = 0;    { Monitor an }
 
 var  vbase  : word;                        { Screen-Base-Adresse }
      vtype   : byte;
-type
-  TPal = array[1..17] of Byte;
-  ppal = ^tpal;
 
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
 function  GetVideoMode:byte;
@@ -57,6 +54,9 @@ function  SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
 
+procedure GetPal;
+procedure SetPal;
+
 { ================= Implementation-Teil ==================  }
 
 implementation
@@ -69,6 +69,37 @@ uses
 {$ENDIF }
    fileio,typeform,xpfonts,dos;
 
+type
+  TPal1 = array[1..17] of Byte;
+
+type
+  PPalTyp = ^TPalTyp;
+  TPalTyp = array[0..255, 0..2] of Byte;
+
+  { Verwalten der DAC-Farbpalette der VGA-Karte, jede beliebige 256-Farben
+    Modi. Die Farbpalette wird direkt in die Grafikkarte geschrieben.
+    Das ist nîtig, da die énderung Åber das BIOS zu langsam ist und bei den
+    meisten Grafikkarten zu einem unschînen Flimmern fÅhrt. Bis jetzt ist
+    mir kein Rechner bekannt, bei dem das direkte schreiben nicht
+    funktioniert. }
+
+  PVGAPal = ^TVGAPal;
+  TVGAPal = object
+    Pal: PPalTyp;
+
+    constructor Init;
+    destructor Done; virtual;
+
+    { Speichert die Farbpalette in Pal in der Grafikkarte ab }
+    procedure SetPal;
+
+    { Liest die Farbpalette aus der VGA-Karte wieder aus }
+    procedure GetPal;
+  end;
+
+var
+  Pal1: ^TPal1;
+  VGAPal: PVGAPal;
 
 {- BIOS-Routinen ----------------------------------------------}
 
@@ -213,8 +244,6 @@ end;
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
-var
-  Pal: pPal;
 begin
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
@@ -232,14 +261,6 @@ begin
           end;
         end;
     3 : begin
-          GetMem(Pal, SizeOf(TPal));
-          asm
-	          mov ax, 01009h
-	          mov bx, 0
-	          mov cx, 16
-	          les dx, dword ptr Pal
-	          int 10h
-          end;
           setvideomode(3);
           case lines of
             26     : setuserchar(15);
@@ -254,17 +275,6 @@ begin
             60: SetVesaText;
           end;
         end;
-  end;
-  if vtype = 3 then
-  begin
-   asm
-	    mov ax, 01002h
-	    mov bx, 0
-	    mov cx, 16
-	    les dx, dword ptr Pal
-	    int 10h
-    end;
-    FreeMem(pal, SizeOf(TPal));
   end;
   vlines:=lines;
 end;
@@ -281,11 +291,86 @@ begin
     end;
 end;
 
+constructor TVGAPal.Init;
+begin
+  New(Pal);
+end;
+
+destructor TVGAPal.Done;
+begin
+  Dispose(Pal);
+end;
+
+procedure TVGAPal.SetPal; assembler;
+asm
+	mov al, 0
+	mov dx, $03c8
+	out dx, al
+
+	push ds
+	les di, Self
+	lds si, es:[di].TVGAPal.Pal
+	inc dx
+	mov cx, 768
+	rep outsb
+	pop ds
+end;
+
+procedure TVGAPal.GetPal; assembler;
+ASM
+	mov ah, 10h
+	mov al, 17h
+	mov bx, 0
+	mov cx, 256
+	push ds
+	lds si, Self
+	les dx, ds:[si].TVGAPal.Pal
+	int 10h
+	pop ds
+end;
+
+procedure GetPal;
+begin
+  if vtype = 3 then
+  begin
+    GetMem(Pal1, SizeOf(TPal1));
+    New(VGAPal, Init);
+    VGAPal^.GetPal;
+    asm
+	    mov ax, 01009h
+	    mov bx, 0
+	    mov cx, 16
+	    les dx, dword ptr Pal1
+	    int 10h
+    end;
+  end;
+end;
+
+procedure SetPal;
+begin
+  if vtype = 3 then
+  begin
+   asm
+	    mov ax, 01002h
+	    mov bx, 0
+	    mov cx, 16
+	    les dx, dword ptr Pal1
+	    int 10h
+    end;
+    VGAPal^.SetPal;
+    Dispose(VGAPal);
+    FreeMem(pal1, SizeOf(TPal1));
+  end;
+end;
+
 begin
   getvideotype;
 end.
 {
   $Log$
+  Revision 1.20.2.10  2000/12/30 10:43:28  mk
+  - Farbpalette sichern, die hundertste
+
   Revision 1.20.2.9  2000/12/29 02:22:20  mk
   - palette sichern verbessert
 

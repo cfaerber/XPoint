@@ -956,7 +956,6 @@ end;
 procedure setscreensize(newmode:boolean);
 var ma  : map;
     n,i : integer;
-  Pal: pPal;
 begin
   if (videotype<2) or ParLCD then
     screenlines:=25
@@ -970,27 +969,10 @@ begin
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then
     begin
-      GetMem(Pal, SizeOf(TPal));
-      asm
-	      mov ax, 01009h
-	      mov bx, 0
-	      mov cx, 16
-	      les dx, dword ptr Pal
-	      int 10h
-      end;
+      GetPal;
       setvideomode(3);
       IoVideoInit;
-      if vtype = 3 then
-      begin
-       asm
-	        mov ax, 01002h
-	        mov bx, 0
-	        mov cx, 16
-	        les dx, dword ptr Pal
-	        int 10h
-        end;
-        FreeMem(pal, SizeOf(TPal));
-      end;
+      SetPal;
     end;
     if (screenlines<>25) or (screenlines<>getscreenlines) then
       setscreenlines(screenlines);
@@ -1071,22 +1053,11 @@ end;
 procedure resetvideo;
 var m3 : boolean;
   sp:scrptr;
-  pal: ppal;
 
 begin
   if startvideotype>0 then
   begin
-    if vtype = 3 then
-    begin
-      GetMem(Pal, SizeOf(TPal));
-      asm
-	      mov ax, 01009h
-	      mov bx, 0
-	      mov cx, 16
-	      les dx, dword ptr Pal
-	      int 10h
-      end;
-    end;
+    GetPal;
     m3:=true;
     if getvideomode<>iif(color,3,7) then setvideomode(iif(color,3,7))
     else m3:=false;
@@ -1103,17 +1074,7 @@ begin
       end;
     end;
   if (videotype>1) and not ParMono then setbackintensity;
-  if vtype = 3 then
-  begin
-    asm
-	     mov ax, 01002h
-	     mov bx, 0
-	     mov cx, 16
-	     les dx, dword ptr Pal
-	     int 10h
-     end;
-     FreeMem(pal, SizeOf(TPal));
-  end;
+  SetPal;
   SetXPborder;
 end;
 
@@ -2076,6 +2037,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.13  2000/12/30 10:43:28  mk
+  - Farbpalette sichern, die hundertste
+
   Revision 1.48.2.12  2000/12/29 16:57:14  mk
   - Palette sichern beim start
 
