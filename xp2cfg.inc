@@ -819,8 +819,7 @@ begin
       writeln(t,'ExtractDir=',extractpath);
     if sendpath<>'' then
       writeln(t,'SendfileDir=',sendpath);
-    if fustr(logpath)<>fustr(ownpath+'LOG\') then
-      writeln(t,'LogDir=',logpath);
+    writeln(t,'LogDir=',logpath);
     if fustr(filepath)<>ownpath+InfileDir then
       writeln(t,'FileDir=',filepath);
   end;
@@ -1707,6 +1706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.19  2001/02/11 20:57:23  mk
+  - Logpfad immer speichern
+
   Revision 1.62.2.18  2001/02/11 12:32:03  mk
   - Client-Modus Updates
 
