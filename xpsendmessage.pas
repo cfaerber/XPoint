@@ -545,37 +545,30 @@ var f,f2     : file;
           dbSeek(ubase,uiName,UpperCase(adr));
           if dbFound then
           begin
-
-            if dbreadint(ubase,'adrbuch')=0 then      { CCs-Empfaenger ins Adressbuch aufnehmen }
-              dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-            Server := dbReadNStr(ubase,ub_pollbox);
-            if (dbReadInt(ubase,'userflags') and 2<>0) and
-               (dbReadInt(ubase,'codierer')<>0) then
-              encode:=true;
-
-          size := 0;
-          if dbXsize (ubase, 'adresse') <> 0 then
-          begin
-            dbReadX (ubase, 'adresse', size, temp);
-            dbSeek (ubase, uiName, UpperCase(temp));
-            if dbFound then
+            size := 0;
+            if dbXsize (ubase, 'adresse') <> 0 then
             begin
-{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
-{                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
-              Server := dbReadNStr(ubase,ub_pollbox);
+              dbReadX (ubase, 'adresse', size, temp);
+              dbSeek (ubase, uiName, UpperCase(temp));
+              if dbFound then
+              begin
+  {              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+  {                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
+                Server := dbReadNStr(ubase,ub_pollbox);
+                if (dbReadInt(ubase,'userflags') and 2<>0) and
+                   (dbReadInt(ubase,'codierer')<>0) then
+                  encode:=true;
+              end;
+            end else
+            begin
+  {              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+  {                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
+                Server := dbReadNStr(ubase,ub_pollbox);
               if (dbReadInt(ubase,'userflags') and 2<>0) and
                  (dbReadInt(ubase,'codierer')<>0) then
                 encode:=true;
             end;
-          end else
-          begin
-{              if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
-{                dbwriteN(ubase,ub_adrbuch,NeuUserGruppe);}
-              Server := dbReadNStr(ubase,ub_pollbox);
-            if (dbReadInt(ubase,'userflags') and 2<>0) and
-               (dbReadInt(ubase,'codierer')<>0) then
-              encode:=true;
-          end;
+          end
         end
         else begin      // if ccpm then begin
           p:=cpos(':',adr);
@@ -594,10 +587,9 @@ var f,f2     : file;
               end;
             end;
           end;
-        server:= UpperCase(server);
+          server:= UpperCase(server);
         end;
-      end;
-    end;        // procedure GetInf(n:integer; var adr:string);
+      end;        // procedure GetInf(n:integer; var adr:string);
 
   { alle Kopien mit gleichem Server wie 'empfaenger' nach oben }
   { wandern lassen                                             }
@@ -709,7 +701,8 @@ var f,f2     : file;
         i:=j;
         end;
       end;
-   end;
+    end;
+
   begin
     if all then begin
     if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
@@ -835,7 +828,6 @@ var f,f2     : file;
     sel_verteiler:=false;
     end;
 
-{ ausgelagert, weil Prozedurrumpf zu gross: }
 
   procedure DisplaySendbox;
   var
@@ -2326,6 +2318,9 @@ finalization
 
 {
   $Log$
+  Revision 1.31  2001/12/23 12:02:45  mk
+  - fixes GetInf, now crossposts are working again
+
   Revision 1.30  2001/12/08 09:23:03  mk
   - create list of MIME parts dynamically
 
