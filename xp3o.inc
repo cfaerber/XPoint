@@ -1103,9 +1103,9 @@ begin
             seek(pfile,sizeof(pfile));   { 0/0-Eintr„ge fr nicht einsor- }
             end;                         { tierte Xpostings berspringen  } *)
 
-        Debug.DebugLog('xp3o','ok, next message',DLDebug);
-      until empfnr>hdp.empfanz;
+      until (empfnr>hdp.empfanz)or(forcerecipient<>'');
 
+      Debug.DebugLog('xp3o','ok, next message',DLDebug);
       inc(adr,hdp.groesse+hdsize);
       inc(padr,hdp.groesse+hdsize);
       inc(inmsgs);
@@ -1227,6 +1227,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2001/10/13 20:15:06  ma
+  - fixed: CC mails were muliplied with forceonearea feature
+
   Revision 1.73  2001/09/15 00:09:28  cl
   - BUGFIX: Header cleared for every new message
   - BUGFIX: Cancels with certain sites in path not executed
