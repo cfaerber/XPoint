@@ -112,7 +112,7 @@ const  {$IFDEF DPMI}
        BaseDir	   = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
-       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;='
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1162,6 +1162,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.49  2000/05/14 15:17:26  oh
+  -Jemand hat ein ; vergessen
+
   Revision 1.48  2000/05/14 12:22:22  hd
   - BaseDir auf .openxp geaendert
   - ValidDirCh: Zeichen, die in einem Dir moeglich sind (Maddstring)
