@@ -2417,6 +2417,7 @@ begin
       if left(_brett,1)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
+      setbrettgelesen(_brett); 
       end;
 end;
 
