@@ -194,16 +194,16 @@
   begin
     dialog(66,20,Titel,x,y);   { 'Client-Einstellungen' }
   
-    maddstring(3,2,getres2(920,81),name,20,20,              { 'Server' }
+    maddstring(3,2,getres2(920,81),name,20,BoxNameLen,      { 'Server' }
              '"!'+range('#','?')+range('A',#126)+'Ž™š');
-              { ^^ wegen "!" = TopCase }
+            { ^^ wegen "!" = TopCase }
     mhnr(30101);
     gf_fido:=false;
     msetvfunc(xp9_testbox);
 
     maddstring(36,2,getres2(920,82),komm,17,30,'');         { 'Kommentar' }
 
-    maddstring(3,4,getres2(920,83),email,46,80,'');         { 'eMail-Adresse' }
+    maddstring(3,4,getres2(920,83),email,46,eAdrLen,'');    { 'eMail-Adresse' }
     msetvfunc(xp9_setclientFQDN);
 
     maddstring(3,6,getres2(920,84),realname,46,40,'');      { 'Realname' }
@@ -1860,6 +1860,9 @@
 
 {
   $Log$
+  Revision 1.10.2.48  2001/10/16 18:38:39  my
+  MY:- Ein paar feste numerische Werte durch globale Variablen ersetzt
+
   Revision 1.10.2.47  2001/09/07 01:42:01  mk
   - minior changes: some numeric constants do labled constants, const-parameter
 
