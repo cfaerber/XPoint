@@ -223,18 +223,24 @@ begin
       end;
 end;
 
+procedure Seitenende; forward;
 procedure SeiteUnten;
 var i : integer;
 begin
   TruncAbs(ActAbs);
   with e^ do begin
-    i:=gl;
-    while dl^[i].absatz=nil do dec(i);
-    inc(startline,i-1);
-    firstpar:=dl^[i].absatz;
-    firstline:=dl^[i].zeile;
-    KorrBlockScrolled(true);
-    aufbau:=true;
+    if (dl^[gl].absatz=nil) or
+       ((dl^[gl].absatz^.next=nil) and (dl^[gl].zeile=alines(dl^[gl].absatz)))
+    then Seitenende  { Wenn Ende des Textes bereits auf dem Bildschirm ist... }
+    else begin
+      i:=gl;
+      while dl^[i].absatz=nil do dec(i);
+      inc(startline,i-1);
+      firstpar:=dl^[i].absatz;
+      firstline:=dl^[i].zeile;
+      KorrBlockScrolled(true);
+      aufbau:=true;
+      end;
     end;
 end;
 
@@ -848,8 +854,8 @@ begin
         if ActAbs<>ap2 then if ZeileUnten then;
         Zeilenanfang;
         { 14.02.2000 robo - Quote-Reflow }
-        { moveworkpos(spaces,actabs); }
-        moveworkpos(spaces+quotes,actabs);
+         moveworkpos(spaces,actabs);          { JG: 27.04.00 Cursor an Zeilenanfang }
+        {moveworkpos(spaces+quotes,actabs);}  { und nicht ans Ende der Quotezeichen }
         { /robo }
         modified:=true;
         aufbau:=true;
@@ -1376,7 +1382,7 @@ begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
-    end;  
+    end;
   end;
 end;
 
@@ -1447,7 +1453,7 @@ begin
       SetBlockMark(1);
       SetBlock(2,endp.absatz,endp.offset,2);
       KorrBlockScrolled(false);
-    end;  
+    end;
   end;
 end;
 
@@ -1828,6 +1834,10 @@ begin
     if blockinverse or blockhidden then begin
       { kein Block markiert oder Blockmarkierung ausgeschaltet:
         ActAbs bis Leerzeile formatieren }
+      if ActAbs^.size=0 then begin { Leerzeile -> abbrechen }
+        errsound;
+        exit;
+      end;
       SetBlock(1,ActAbs,0,2);
       ap:=ActAbs;
       if config.QuoteReflow and assigned(ap^.next)
@@ -1983,6 +1993,7 @@ begin
       end
       else ap:=ap^.next;
     until ap=block[2].pos.absatz^.next;
+    CheckBlockOrder;
     modified:=true;
     aufbau:=true;
   end;
@@ -2101,13 +2112,17 @@ label sok;
         if i=p then attrtxt(col.colmenuinv)
         else attrtxt(col.colmenu);
         wrt(mx+1,my+i,' '+left(menue[i],highp[i]-2));
-        if i<>p then attrtxt(col.colmenuhi)
-        else attrtxt(col.colmenuhiinv);
-        write(menue[i,highp[i]]);
-        if i<>p then attrtxt(col.colmenu)
-        else attrtxt(col.colmenuinv);
-        write(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
-        end;
+        if i<>p then
+          attrtxt(col.colmenuhi)
+        else
+          attrtxt(col.colmenuhiinv);
+        Wrt2(menue[i,highp[i]]);
+        if i<>p then
+          attrtxt(col.colmenu)
+        else
+          attrtxt(col.colmenuinv);
+        Wrt2(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
+      end;
     mon;
     with e^ do
       if EdSelcursor then begin
@@ -2275,28 +2290,7 @@ begin
 end;
 {
   $Log$
-  Revision 1.10.2.2  2000/04/06 22:12:44  mk
-  RB: - Bugfixes fuer Editor und Maustastenabfrage
-
-  Revision 1.10.2.1  2000/04/06 07:50:12  mk
-  - Bloecke formatieren im Editor uebernommen
-  Revision 1.10  2000/03/02 20:51:22  rb
-  Wrapper-Funktionen vap und vap2 aus Editor entfernt
-
-  Revision 1.9  2000/02/19 11:40:06  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.8  2000/02/18 09:04:56  mk
-  RB: * RTE im Editor behoben
-
-  Revision 1.7  2000/02/17 08:34:51  mk
-  RB: * es wird kein Reflow mehr gemacht, wenn bei Return nichts in die neue Zeile
-        umgebrochen wird
-
-  Revision 1.6  2000/02/15 22:22:04  mk
-  RB: * Quote-Reflow jetzt vollstaendig implementiert
-
-  Revision 1.5  2000/02/15 20:43:35  mk
-  MK: Aktualisierung auf Stand 15.02.2000
+  Revision 1.10.2.3  2000/05/08 14:20:34  mk
+  - Editor.inc aus Thrunk uebernommen
 
 }
