@@ -1358,15 +1358,6 @@ procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
   Debug.DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
-{$ifdef Debug}
-  writeln;
-  writeln('This message is visible only in the debug version!');
-  write('Please press enter...');
-{$IFNDEF Kylix}
-  readln;
-{$ENDIF}
-  writeln;
-{$endif}
   { Noch ein SubWindow vorhanden= }
   if (BaseSub <> nil) then
     delwin(BaseSub);
@@ -1551,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2002/04/05 04:48:21  mk
+  - removed message in EndCurses
+
   Revision 1.63  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 
