@@ -13263,25 +13263,77 @@ Gelegentlich kann es auch vorkommen, daá Brettmana-
 ger-Befehle mit einigen Minuten Verz”gerung abgear-
 beitet werden.
 
-Bei Serverboxen vom Netztyp <<RFC/Client>> wird mit
-diesem Befehl die Gesamtliste der vorhandenen News-
-groups gel”scht und (sofern vom eingebundenen Client
-untersttzt und dort aktiviert) beim n„chsten Netcall
-vom Newsserver automatisch eine aktuelle Gesamtliste
-angefordert.
+Bei Serverboxen vom Netztyp <<RFC/Client>> hat dieser
+Menpunkt keine Funktion - dort wird die Newsgroup-
+Liste vom externen Client angefordert. Hierzu muá die
+entsprechende Funktion beim externen Client (sofern
+vorhanden) aktiviert sein und die bisherige Liste
+gel”scht werden. W„hlen Sie hierzu Nachricht/
+Brettmanager/Sonstiges. Die neue Gesamtliste erhalten
+Sie beim n„chsten Netcall.
 
 @
 11904
 <<Nachricht / Brettmanager / Sonstiges
 
-<<MausNetz:>>
 
-Hier k”nnen Sie die verschiedenen Info-Files anfor-
-dern oder als Gruppenchef User in Gruppen aufnehmen
-oder aus Gruppen ausschlieáen. Die Info-Files ISB
-und ISG sind nur fr Sysops verfgbar.
+<<RFC/Client:
 
-<<Z-Netz, MagicNET:>>
+Die g„ngigen externen RFC-Clients erledigen Anforde-
+rung und Aktualisierung der Liste der verfgbaren
+Newsgroups i.d.R. automatisch. Die in diesem Men
+angebotenen Befehle erstellen keine Nachricht an ein
+Steuerprogramm auf dem News-Server, sondern werden
+direkt lokal ausgefhrt.
+
+  <<Sortieren>>  Die Brettliste wird alphabetisch
+             sortiert.
+
+  <<Abgleich>>   CrossPoint verwaltet die bestellten
+             Gruppen in der Brettliste <<<Box>.BL >>bzw.
+             <<<Box>.GR >>im Client- bzw. im XP-Verzeich-
+             nis. In der RC-Datei <<<Box>.RC >>hingegen
+             werden nur bestellte Gruppen ein- bzw.
+             abbestellte Gruppen ausgetragen. Sollten
+             Sie oder ein externes Programm RC-Datei
+             oder Brettliste manipuliert haben, kann
+             es sein, daá RC-Datei und Brettliste
+             nicht mehr synchron sind. Dieser Befehl
+             fhrt einen Abgleich zwischen RC-Datei
+             und Brettliste durch (kann bei langsamen
+             PCs und/oder wenig Plattencache etwas
+             l„nger dauern).
+
+  <<L”schen>>    Die Brettliste wird gel”scht. Auf diese
+             Weise veranlassen Sie den externen
+             Client i.d.R. dazu, eine komplett neue
+             Gesamtliste anzufordern (vorausgesetzt,
+             die entsprechende Funktion beim externen
+             Client ist aktiviert). Es empfiehlt
+             sich, dies von Zeit zu Zeit zu tun, da
+             die automatische Aktualisierung zwar
+             neue Gruppen zur Liste hinzufgt, nicht
+             mehr existierende Gruppen jedoch nicht
+             l”scht.
+
+
+<<RFC/UUCP:
+
+  <<getgroups>>  fordert eine Liste der verfgbaren News-
+             groups an.
+
+  <<getsys>>     fordert Ihren Sysfile-Eintrag, d.h. eine
+             Liste Ihrer bestellten Newsgroups an.
+
+  <<setsys>>     sendet Ihren letzten Sysfile-Eintrag
+             noch einmal neu ab.
+
+  <<help>>       fordert einen Hilfetext zur manuellen
+             Bedienung von Changesys an.
+
+
+
+<<Z-Netz, MagicNET:
 
 šber diesen Menpunkt haben Sie Zugriff auf s„mtliche
 MAPS- bzw. MAF-Befehle. W„hlen Sie einfach den ge-
@@ -13305,9 +13357,10 @@ Z-Netz: Bitte beachten Sie, daá nicht alle MAPS-Ver-
 sionen alle der aufgefhrten Befehle untersttzen.
 So untersttzt z.B. Euromail-MAPS nicht den Befehl
 VERSION, und AREAFIX (AlphaNet) und REQUEST (EDGAR)
-nur eine kleie Auswahl von Befehlen.
+nur eine kleine Auswahl von Befehlen.
 
-<<Fido:>>
+
+<<Fido:
 
   <<List>>    fordert eine Liste aller Bretter an. Die
           Liste wird in Ihrer PM abgelegt und sollte
@@ -13324,19 +13377,12 @@ nur eine kleie Auswahl von Befehlen.
           allen Fido-Boxen.
 
 
-<<RFC/UUCP:>>
+<<MausNetz:
 
-  <<getrgoups>>  fordert eine Liste der verfgbaren News-
-          groups an.
-
-  <<getsys>>  fordert Ihren Sysfile-Eintrag, d.h. eine
-          Liste Ihrer bestellten Newsgroups an.
-
-  <<setsys>>  sendet Ihren letzten Sysfile-Eintrag noch
-          einmal neu ab.
-
-  <<help>>    fordert einen Hilfetext zur manuellen Be-
-          dienung von Changesys an.
+Hier k”nnen Sie die verschiedenen Info-Files anfor-
+dern oder als Gruppenchef User in Gruppen aufnehmen
+oder aus Gruppen ausschlieáen. Die Info-Files ISB
+und ISG sind nur fr Sysops verfgbar.
 
 @
 11906
