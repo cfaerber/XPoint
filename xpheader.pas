@@ -751,20 +751,43 @@ begin
 end;
 
 function THeader.GetNewsgroups: string;
+
+  function ZCBrettToRFC(const source:string):string;
+  var i: integer;
+  begin
+    if FirstChar(source)='/' then
+      Result := Mid(source,2)
+    else
+      Result := source;
+    for i := 1 to Length(Result) do
+      if Result[i]='/' then
+        Result[i]:='.';
+  end;
+
 var i: integer;
 begin
   { -- Construct Newsgroups out of EMP/KOP --------------------------- }
   result := '';
   for i:=0 to EMPfaenger.Count-1 do
     if cpos('@',EMPfaenger[i])=0 then
-      result:=result+EMPfaenger[i]+',';
+      result:=result+ZCBrettToRFC(EMPfaenger[i])+',';
   for i:=0 to KOPien.Count-1 do
     if cpos('@',KOPien[i])=0 then
-      result:=result+KOPien[i]+',';
+      result:=result+ZCBrettToRFC(KOPien[i])+',';
   SetLength(result,Length(result)-1);
 end;
 
 procedure THeader.SetNewsgroups(s:string);
+
+  function RFCBrettToZC(const source:string):string;
+  var i: integer;
+  begin
+    Result := '/'+Source;
+    for i := 2 to Length(Result) do
+      if Result[i]='.' then
+        Result[i]:='/';
+  end;
+
 var n:   TSTringList;
     i,j: integer;
 begin
@@ -777,7 +800,7 @@ begin
   while Length(s)>0 do
   begin
     i:=RightPos(',',s);
-    n.Add(Mid(s,i+1));
+    n.Add(RFCBrettToZC(Mid(s,i+1)));
     SetLength(s,max(0,i-1));
   end;
 
@@ -1017,6 +1040,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/05/20 21:53:17  cl
+  - Newsgroup property is converted to/from RFC format
+
   Revision 1.29  2002/05/20 15:20:17  cl
   - new address handling fixes
 
