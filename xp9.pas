@@ -249,8 +249,8 @@ var ok   : boolean;
 begin
   PPPClientTest:=true;
   fn:=trim(s);
-  if Pos('start /wait', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
-  if Pos('start /w', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+  if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') then
   begin
@@ -1883,6 +1883,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.24  2001/05/03 14:57:34  mk
+  - more Client-Pfad tests
+
   Revision 1.19.2.23  2001/05/01 23:47:58  mk
   - Pfad-Check mal wieder verbessert
 
