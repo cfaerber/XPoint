@@ -455,7 +455,7 @@ begin
     if not (      qq      ) and (addr[i]='[')            then dq := false else
     if not (      qq      ) and (addr[i]=']')            then dq := true else
     if not (dq            ) and (addr[i]='"')            then qq := not qq else
-    if not (dq or qq or ab) and (i>=j-1) and (addr[i]in[#10,#13,#9,' ']) then dec(j);
+    if not (dq or qq or ab) and (i+1>=j) and (addr[i]in[#10,#13,#9,' ']) then dec(j);
     dec(i);
   end;
 
@@ -466,7 +466,7 @@ begin
     end else
     begin
       A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,i+1,j-i-1))),''));
-      if (j<=cend) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
+      if (j<=cend+1) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
     end;
 
 end;
@@ -503,7 +503,7 @@ var i,j:integer;
     end else
     begin
       A := (RFCNormalizeAddress(Trim(RFCRemoveComments(Copy(addr,i+1,j-i-1))),''));
-      if assigned(List) and (j<=cend) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
+      if assigned(List) and (j<=cend+1) then R := Trim(Decoder(Copy(addr,cstart+1,cend-cstart-1)))
     end;
 
     if assigned(List) then 
@@ -725,6 +725,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.6  2002/05/19 22:45:55  cl
+// - Fixed parsing of addresses in format ad@re.ss (User NAme)
+//
 // Revision 1.5  2002/05/01 18:39:54  cl
 // - added property TAddressList.Capacity (delegated to FObjects: TList member)
 //
