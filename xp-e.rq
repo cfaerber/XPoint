@@ -649,20 +649,20 @@ K (c) '93-96 Peter Mandrella
 14   Show realnames, if possible
 15   Show recipients of echomail messages (FidoNet)
 + 260
-1    Screen saver (sec.) ~
+1    Screen-saver (sec.) ~
 2    Scroll out
-3    Ask start password
-4    Show user name
+3    Password at startup?
+4    Show User-name
 5    Cursor in menus and lists
-6    Screen-blanker
+6    Lock screen-blanker
 7    optical sound signal
 8    Blank window background
 9    Power saver
 10   Terminal BIOS output
 11   Accessibility options
 12   additional sound signals
-13   headline 1
-14   headline 2
+13   Headline 1
+14   Headline 2
 15   Message-list column order
 16   User-list column order  ~
 + 261
