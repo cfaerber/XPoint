@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-{$O-}
+
 Function CanEdit:Boolean;
 begin
   result:=ntMIME(netztyp) or
@@ -320,6 +320,9 @@ end;
 
 //
 // $Log$
+// Revision 1.14  2002/07/26 08:17:48  mk
+// - removed $O-
+//
 // Revision 1.13  2002/07/25 20:43:57  ma
 // - updated copyright notices
 //
