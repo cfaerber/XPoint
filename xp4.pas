@@ -1810,10 +1810,10 @@ begin      { --- select --- }
                    if c=k2_cF then datei_senden(true,false);        { ^F }
                    if c=k2_cI then datei_senden(true,true);         { ^I }
                    if c=k2_U then to_window;                        { 'U' }
+                   if c=k2_cE then _unmark_;                        { ^E }
                    if (dispmode=10) or (dispmode=12) then begin
                      if (c=' ') and ((dispmode<12) or not markaktiv) then
                        _mark_;
-                     if c=k2_cE then _unmark_;                      { ^E }
                      if t=keyaltu then usersuche(false);
                      if dispmode=10 then begin
                        if (c=k2_G) or (c='-') then bezuege;         { 'G' }
@@ -2112,6 +2112,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2000/11/08 17:56:15  mk
+  - fixed Bug #119897: Ctrl E in Displaymode 11
+
   Revision 1.56  2000/11/01 10:45:23  mk
   - Ctrl-H wieder ohne MIME-Auswahl
 
