@@ -68,7 +68,7 @@ begin
     dbRead(auto,'flags',flags);
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
-    dbRead(auto,'lastmsgid',lastmid);
+    LastMID := dbReadStr(auto,'lastmsgid');
   end;
 end;
 
@@ -667,6 +667,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/05 09:34:03  mk
+  - Ansistring-Fix
+
   Revision 1.25  2000/10/19 20:52:23  mk
   - removed Unit dosx.pas
 
