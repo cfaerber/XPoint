@@ -10,7 +10,7 @@
 
 {----- Fileserver --------------------------------------------------}
 
-function IsServer(box:string; var fstype:byte):boolean;
+function IsServer(const box:string; var fstype:byte):boolean;
 var d     : DB;
     flags : smallword;
 begin
@@ -31,10 +31,10 @@ procedure FS_ReadList(msg:boolean);
 const
       tbufs = 2048;
 var absender : string[Adrlen];
-    box      : string[8];   { das ist auf jeden Fall eine Zerberus-Box.. }
+    box      : string[BoxNameLen];
     x,y,p,p2 : byte;
     f        : file;
-    fn       : pathstr;
+    fn       : string;
     t1,t2    : text;
     s,s2     : string;
     useclip  : boolean;
@@ -65,6 +65,15 @@ var absender : string[Adrlen];
     dbRead(d,'ZBV1',convert);
     dbClose(d);
   end;
+
+  function MangleBoxName(const s: String): String;
+  begin
+    if Length(s) <= 8 then
+      MangleBoxName := s
+    else
+      MangleBoxName := Left(s, 4) + Hex(CRC32Str(s), 4);
+  end;
+
 
 begin
   if msg then begin
@@ -100,7 +109,7 @@ begin
       end;
     end;
 
-  msgbox(48,3,'',x,y);
+  msgbox(60,3,'',x,y);
   mwrt(x+3,y+1,getreps(813,ustr(box)));   { 'File-Liste fr %s wird eingelesen ...' }
   if msg then begin
     fn:=TempS(dbReadInt(mbase,'groesse')+5000);
@@ -133,10 +142,10 @@ begin
     fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',lstr(s))>0,2,0));
     WriteFST(fstype);
     end;
-  makebak(box+'.FL','BAK');
+  makebak(MangleBoxName(box)+'.FL','BAK');
   case fstype of
     0 : begin      { SendZMsg }
-          assign(t2,box+'.FL');
+          assign(t2,MangleBoxName(box)+'.FL');
           rewrite(t2);
           readln(t1,s);
           repeat
@@ -165,7 +174,7 @@ begin
         end;
 
     1 : begin      { iMLS-Fileserver }
-          assign(t2,box+'.FL');
+          assign(t2,MangleBoxName(box)+'.FL');
           rewrite(t2);
           writeln(t2,s2);
           writeln(t2,s);
@@ -177,7 +186,7 @@ begin
 
     2 : begin      { NCB-Mail-Fileserver }
           close(t1); reset(t1);
-          assign(t2,box+'.FL');
+          assign(t2,MangleBoxName(box)+'.FL');
           rewrite(t2);
           while not eof(t1) do begin
             readln(t1,s); writeln(t2,s);
@@ -193,7 +202,7 @@ begin
             rfehler(825)    { 'Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
           else begin
             exchange(convert,'$INFILE',fn);
-            exchange(convert,'$OUTFILE',box+'.FL');
+            exchange(convert,'$OUTFILE',MangleBoxName(box)+'.FL');
             shell(convert,300,3);
             if errorlevel=1 then rfehler(821);
             end;
@@ -363,7 +372,7 @@ var d     : DB;
   var x,y    : byte;
       brk    : boolean;
       source,
-      dest   : pathstr;
+      dest   : string;
   begin
     dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
     source:='*.*'; dest:='';
@@ -534,6 +543,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.1  2000/11/18 22:09:50  mk
+  - Bugfixes fuer die Fileserver
+
   Revision 1.6  2000/04/18 11:23:51  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

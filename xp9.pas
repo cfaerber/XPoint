@@ -675,7 +675,7 @@ var d         : DB;
             if b=3 then dc:=' U'
             else if dbReadStr(d,'FS-Name')<>'' then dc:=' F'
             else dc:='  ';
-            s:=dc+iifs((s3='') or (b=3),'  ','P ')+forms(s1,15)+' '+forms(s2,31);
+            s:=dc+iifs((s3='') or (b=3),'  ','P ')+forms(s1,20)+' '+forms(s2,26);
           end;
       4 : begin     { Kurznamen }
             dbRead(d,'kurzname',s1);
@@ -939,7 +939,8 @@ var d         : DB;
   var x,y : byte;
   begin
     dialog(ival(getres2(903,0)),11,getres2(903,iif(edit,1,2)),x,y);    { 'Systeme bearbeiten','neues System anlegen' }
-    maddstring(3,2,getres2(903,3),name,20,20,'>'); mhnr(461);   { 'Systemname ' }
+    maddstring(3,2,getres2(903,3),name,BoxNameLen, BoxNameLen,'>'); mhnr(461);   { 'Systemname ' }
+    mappcustomsel(BoxSelProc,false);
     msetvfunc(testsysname);
     maddstring(3,4,getres2(903,4),komm,30,30,'');       { 'Kommentar  ' }
     maddstring(3,6,getres2(903,5),fs_name,20,20,'');    { 'Fileserver ' }
@@ -1761,6 +1762,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.10  2000/11/18 22:09:50  mk
+  - Bugfixes fuer die Fileserver
+
   Revision 1.19.2.9  2000/11/17 12:18:58  mk
   - Probleme beim aktualisieren der Defautviewer behoben
 
