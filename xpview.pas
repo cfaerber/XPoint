@@ -211,9 +211,9 @@ begin
   if (not ValidFileName(orgfn) or exist(orgfn)) and (viewer.ext<>'') and
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
-  if not stricmp(fn,orgfn) and ValidFileName(orgfn) then
-    if copyfile(fn,orgfn) then
-      fn1:=orgfn;
+  if stricmp(fn,orgfn) or not ValidFileName(orgfn)
+    then orgfn:=TempS(_filesize(fn)+5000);
+  if copyfile(fn,orgfn) then fn1:=orgfn;
 
   prog:=viewer.prog;
   parfn:=iifs(fn1<>'',fn1,fn);
