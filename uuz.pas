@@ -90,6 +90,27 @@ type
 
 implementation
 
+uses
+  unicode, UTFTools;
+
+{$I charsets\cp437.inc }
+{$I charsets\cp866.inc }
+{$I charsets\cp1251.inc }
+{$I charsets\cp1252.inc }
+{$I charsets\cp1255.inc }
+{$I charsets\8859_2.inc }
+{$I charsets\8859_3.inc }
+{$I charsets\8859_4.inc }
+{$I charsets\8859_5.inc }
+{$I charsets\8859_6.inc }
+{$I charsets\8859_7.inc }
+{$I charsets\8859_8.inc }
+{$I charsets\8859_9.inc }
+{$I charsets\8859_10.inc }
+{$I charsets\8859_13.inc }
+{$I charsets\8859_14.inc }
+{$I charsets\8859_15.inc }
+
 const
   bufsize = 65536;
   readEmpfList = true;
@@ -203,6 +224,58 @@ begin
     XEmpf := TStringList.Create;
     XOEM := TStringList.Create;
     Followup := TStringList.Create;
+  end;
+end;
+
+function UTF8ToIBM(s: String): String;
+var
+  UTFDecoder: T8BitUTF8Decoder;
+begin
+  // !! Optimieren: nicht bei jeder Zeile neu erstellen
+  UTFDecoder := T8BitUTF8Decoder.Create(CP437TransTable);
+  Result := UTFDecoder.Decode(PUTF8Char(s));
+  UTFDecoder.Free;
+end;
+
+function RecodeString(s: String; TransTable: T8BitTable): String;
+var
+  Encoder: TUTF8Encoder;
+  Decoder: TUTF8Decoder;
+begin
+  // !! Optimieren: nicht bei jeder Zeile neu erstellen
+  Encoder := T8BitUTF8Encoder.Create(TransTable);
+  Decoder := T8BitUTF8Decoder.Create(CP437TransTable);
+
+  Result := Decoder.Decode(PUTF8Char(Encoder.Encode(s)));
+
+  Decoder.Free;
+  Encoder.Free;
+end;
+
+function DecodeCharset(s: String): String;
+begin
+  // Optimieren, das die Abfrage nicht fuer jede Zeile neu gemacht wird
+  with hd.mime do
+  begin
+    if charset='iso-8859-1' then Result := ISOToIBM(s) else
+    if charset='iso-8859-2' then Result := RecodeString(s, ISO8859_2TransTable) else
+    if charset='iso-8859-3' then Result := RecodeString(s, ISO8859_3TransTable) else
+    if charset='iso-8859-4' then Result := RecodeString(s, ISO8859_4TransTable) else
+    if charset='iso-8859-5' then Result := RecodeString(s, ISO8859_5TransTable) else
+    if charset='iso-8859-6' then Result := RecodeString(s, ISO8859_6TransTable) else
+    if charset='iso-8859-7' then Result := RecodeString(s, ISO8859_7TransTable) else
+    if charset='iso-8859-8' then Result := RecodeString(s, ISO8859_8TransTable) else
+    if charset='iso-8859-9' then Result := RecodeString(s, ISO8859_9TransTable) else
+    if charset='iso-8859-10' then Result := RecodeString(s, ISO8859_10TransTable) else
+    if charset='iso-8859-13' then Result := RecodeString(s, ISO8859_13TransTable) else
+    if charset='iso-8859-14' then Result := RecodeString(s, ISO8859_14TransTable) else
+    if charset='iso-8859-15' then Result := RecodeString(s, ISO8859_15TransTable) else
+    if charset='windows-866' then Result := RecodeString(s, CP866Transtable) else
+    if charset='windows-1251' then Result := RecodeString(s, CP1251Transtable) else
+    if charset='windows-1252' then Result := RecodeString(s, CP1252Transtable) else
+    if charset='windows-1255' then Result := RecodeString(s, CP1255Transtable) else
+    if charset='utf-8' then Result := UTF8ToIBM(s) else
+    Result := s;
   end;
 end;
 
@@ -517,7 +590,7 @@ begin
         left(LowerCase(xempf[0]), ml)) then
         wrs('OEM: ' + xoem[i]);
     end;
-    if not getrecenvemp and (envemp<>'') then wrs('U-Envelope-To: '+envemp);
+    if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
     wrs('ABS: ' + absender + iifs(realname = '', '', ' (' + realname + ')'));
     if wab <> '' then wrs('WAB: ' + wab);
     wrs('BET: ' + betreff);
@@ -746,7 +819,7 @@ end;
 { --- MIME ---------------------------------------------------------- }
 
 { Content-Types:  text        plain            charset=us-ascii
-                              richtext                 iso-8851-x
+                              richtext                 iso-8859-x
 
                   multipart   mixed, parallel  boundary=...
                               alternative        "
@@ -965,7 +1038,7 @@ begin
       ((encoding = encBinary) and (ctype <> tText)));
     hd.typ := iifc(binary, 'B', 'T');
     if (ctype = tText) and (charset <> '') and (charset <> 'us-ascii') and
-      (charset <> 'iso-8859-1') then
+      (not IsKnownCharset(Charset)) then
       hd.error := 'Unsupported character set: ' + charset;
   end;
 end;
@@ -2163,7 +2236,7 @@ begin
       begin
         ReadString; Dec(hd.Lines);
         UnQuotePrintable;
-        if not binaer then s := ISOToIBM(s);
+        if not binaer then s := DecodeCharset(s);
         Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
@@ -3420,6 +3493,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/10/10 12:26:16  mk
+  - support for international fonts incl. UTF-8
+
   Revision 1.65  2000/10/06 14:21:51  mk
   SV:- spitze Klammern werden bei eingehenden Cancels jetzt entfernt
 
