@@ -140,7 +140,52 @@ begin
   inc(bufp2,size);
 end;
 
+function handle_escapes(const s: string): string;
+var i,j: integer;
+begin
+  result := '';
+  i := 1;
+  while i<=Length(s) do 
+    if (s[i] = '\') and (i+1<=Length(s)) then
+    begin
+      case s[i+1] of
+      // \t       tab             (HT, TAB)
+      // \n       newline         (NL)
+      // \r       return          (CR)
+      // \f       form feed       (FF)
+      // \b       backspace       (BS)
+      // \a       alarm (bell)    (BEL)
+      // \e       escape          (ESC)
+      // \033     octal char(ESC)
+      // \x1b     hex char(ESC)
+      // \x{263a} wide hex char(SMILEY)
+      // \c[      control char    (ESC)
+      // \N{name} named char
+        't': begin result := result + #8;  inc(i,2); end;
+        'n': begin result := result + #10; inc(i,2); end;
+        'r': begin result := result + #13; inc(i,2); end;
+        'f': begin result := result + #12; inc(i,2); end;
+        'a': begin result := result + #7;  inc(i,2); end;
+        'e': begin result := result + #27; inc(i,2); end;
 
+        '0': if (i+3<=Length(s)) and (s[i+2] in ['0'..'8']) and (s[i+3] in ['0'..'8']) then
+             begin result := result + chr(OctVal(Copy(s,i+1,3))); inc(i,4); end else inc(i);
+        'x': if (i+3<=Length(s)) and (s[i+2] in ['0'..'9','A'..'F','a'..'f']) and (s[i+3] in ['0'..'9','A'..'F','a'..'f']) then
+             begin result := result + chr(HexVal(Copy(s,i+2,2))); inc(i,4); end else inc(i);
+
+        else
+          begin
+            result := result + s[i+1];
+            inc(i,2);
+          end;    
+      end; // case;
+
+    end else
+    begin
+      result := result + s[i];
+      inc(i);
+    end;
+end;
 
 procedure Make;
 var collnr : word;
@@ -244,6 +289,7 @@ begin                   { procedure make }
                        i:=length(s);
                        while (i>=1) and (s[i]='~') do begin
                          s[i]:=' '; dec(i); end;
+		       s:=handle_escapes(s);
                        {getmem(rptr[anzahl],length(s)+1);}
                        rptr[anzahl]:=s;                         { res Stringspeichern }
                        inc(block[blocks].contsize,length(s));   { +Laenge des res-Stringes }
@@ -286,7 +332,6 @@ begin                   { procedure make }
         if rptr[i]<>'' then
           rptr[i]:=''; {freemem(rptr[i],length(rptr[i])+1);}
       end;  { anzahl>0 }
-    writeln;
   until eof(t);
   if collnr>0 then
     fehler('group '+strs(collnr)+' not closed');
@@ -339,6 +384,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.25  2002/08/31 22:50:36  cl
+        - added support for C-like \nnn escapes.
+
         Revision 1.24  2002/07/25 20:43:52  ma
         - updated copyright notices
 
