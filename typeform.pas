@@ -81,7 +81,7 @@ const
   überhaupt, habe ich mich danach gerichtet, wie der Buchstabe  
   ausgesprochen wird bzw. welche Bedeutung ein Symbol hat (und habe dazu  
   notfalls etwas Recherche betrieben, z.B. bei den Buchstaben "Eth" und  
-  "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im  
+  "Thorn" oder dem "Pilcrow sign"). Optische Ähnlichkeiten waren (im
   Unterschied zu den alten Tabellen) eher kein Kriterium.
 
 
@@ -120,7 +120,7 @@ const
   "Section sign"), das häufig als Absatzzeichen in Editoren verwendet  
   wird.  Dieses im englischen Sprachraum (aber auch da nur sehr selten)  
   benutzte Zeichen entspricht vom Sinn her am ehesten dem im deutschen  
-  Sprachraum benutzten Paragraphenzeichen "§" und wird deshalb jetzt auch  
+  Sprachraum benutzten Paragraphenzeichen "§" und wird deshalb jetzt auch
   dorthin konvertiert (statt wie früher nach IBM #227, also einem kleinen  
   griechischen "pi" - grmpf).
   Quellen: http://www.daube.ch/docu/glossary/signs.html
@@ -154,7 +154,7 @@ const
   ---------------------------------------------------------
   Das ist z.B. so 'n Klopfer: Das sind die Buchstaben "Eth" (groß und  
   klein), aber weil die so ähnlich aussehen wie ein "D" bzw. "d", wurden  
-  sie bisher eben in ein "D" bzw. "d" konvertiert.  Ausgesprochen wird  
+  sie bisher eben in ein "D" bzw. "d" konvertiert.  Ausgesprochen wird
   "Eth" aber wie ein "Th" in "That", das wäre also z.B. auch ein Kandidat  
   für 'ne Multicharkonvertierung. Da es die noch nicht gibt, wird "Eth"  
   vorerst in ein "T" bzw. "t" konvertiert.
@@ -698,76 +698,6 @@ begin
   end;
 end;
 
-
-type
-  LStrRec = record
-    AllocSize : Longint;
-    RefCount  : Longint;
-    Length    : Longint;
-  end;
-
-
-const
-  StrOffset = SizeOf(LStrRec);
-
-  function CharExistsL(const S : AnsiString; C : AnsiChar) : Boolean; register;
-  {-Count the number of a given character in a string. }
-asm
-  push  ebx
-  xor   ecx, ecx
-  or    eax, eax
-  jz    @@Done
-  mov   ebx, [eax-StrOffset].LStrRec.Length
-  or    ebx, ebx
-  jz    @@Done
-  jmp   @@5
-
-@@Loop:
-  cmp   dl, [eax+3]
-  jne   @@1
-  inc   ecx
-  jmp   @@Done
-
-@@1:
-  cmp   dl, [eax+2]
-  jne   @@2
-  inc   ecx
-  jmp   @@Done
-
-@@2:
-  cmp   dl, [eax+1]
-  jne   @@3
-  inc   ecx
-  jmp   @@Done
-
-@@3:
-  cmp   dl, [eax+0]
-  jne   @@4
-  inc   ecx
-  jmp   @@Done
-
-@@4:
-  add   eax, 4
-  sub   ebx, 4
-
-@@5:
-  cmp   ebx, 4
-  jge   @@Loop
-
-  cmp   ebx, 3
-  je    @@1
-
-  cmp   ebx, 2
-  je    @@2
-
-  cmp   ebx, 1
-  je    @@3
-
-@@Done:
-  mov   eax, ecx
-  pop   ebx
-end;
-
 function WordCount(const S: String): Integer;
 begin
   Result := WordCountEx(S, ' ');
@@ -783,7 +713,7 @@ begin
   SLen := Length(S);
 
   while I <= SLen do begin
-    while (I <= SLen) and CharExistsL(Delims, S[I]) do
+    while (I <= SLen) and (CPos(s[i], Delims) > 0) do
       Inc(I);
 
     {if we're not beyond end of S, we're at the start of a word}
@@ -791,7 +721,7 @@ begin
       Inc(Result);
 
     {find the end of the current word}
-    while (I <= SLen) and not CharExistsL(Delims, S[I]) do
+    while (I <= SLen) and (CPos(s[i], Delims) = 0) do
       Inc(I);
   end;
 end;
@@ -1859,6 +1789,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.11  2003/09/10 14:16:08  mk
+  - removed dupe function CharExistsL and optimized WordCountEx
+
   Revision 1.107.2.10  2003/09/02 16:41:45  mk
   - added const parameter for MultiPos
 
