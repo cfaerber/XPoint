@@ -285,3 +285,51 @@ Indizes:
  1. spamiWord   WORD
 
 -----------------------------------------------------------------------
+
+Format der Datei mit Extern-Feldern (*.EB1)
+-------------------------------------------
+0000..00FF: Header
+00FF..    : Nutzdaten
+
+Die Nutzdaten sind in Blöcken organisiert. Diese starten und enden(!)
+mit einem Byte, das den Typ angibt:
+
+Die unteren 7 Bit ($7F)  bestimmen die Länge des Blocks. Die Zahlen 0 bis 51
+stehen hierbei für die Längen von 32 bis 1610612736 Bytes (siehe
+database.pas).
+
+Das höchstwertige Bit ($80) gibt an, ob der Block unbelegt ist (0: unbelegt,
+1: frei).
+
+Bei einem belegten Block befindet sich nach dem Typbyte am Anfang eine
+Längenangabe (4 Bytes Longint, Little Endian) gefolgt von den Nutzdaten.
+Es stehen somit 6 Bytes (2 Typbytes plus 4 Bytes Länge) weniger Nutzdaten
+zur Verfügung als der Block lang ist.
+
+Bei einem unbelegten Block befindet sich nach dem Typbyte am Anfang zwei
+Adressangaben (je 4 Bytes Longint, Little Endian), die die Position des
+vorangehenden/nächsten freien Blocks (bzw. $0000000 für den ersten/letzten
+Block) angeben (als Dateiposition) und so eine verkettete Liste bilden.
+
+Anmerkungen:
+
+XP speichert strings als shortstring, das heißt, dass die Nutzdaten am
+Anfang ein Längenbyte und dann maximal 255 Zeichen enthalten.
+Dieses Format kann NICHT einfach erweitert werden (indem man z.B. das
+Längenbyte des shortstrings auf maximal 255 setzt und beim Einlesen
+ignoriert); alte XP-Versionen würden dann mehr Daten einlesen als Speicher
+für den Shortstring reserviert ist (256) und sich somit den Stack
+überschreiben.
+
+Beispiel:
+
+00006b0: 0015 0000 0014 636c 6175 7340 6661 6572  ......claus@faer
+00006c0: 6265 722e 6d75 632e 6465 0000 0000 0000  ber.muc.de......
+------------------------------------------------
+         TTLL LLLL LLDD DDDD DDDD DDDD DDDD DDDD
+         DDDD DDDD DDDD DDDD DDDD ---- ---- --TT
+
+TT: Typbyte (hier 32 Bytes, belegt)
+LL: Länge der Nutzdaten (15 Bytes)
+DD: Nutzdaten (hier ein Shortstring, beginnend mit dem Längenbyte)
+--: Nicht genutzt
