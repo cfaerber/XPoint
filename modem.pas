@@ -74,6 +74,8 @@ var
                                       {SDWaitForNextCall: Restzeit in DUDTimer}
                                       {SDUserBreak}
 
+procedure InitModemUnit;
+
 implementation
 
 procedure ProcessIncoming(idle:boolean);
@@ -276,10 +278,19 @@ end;
 
 procedure VoidDisplayProc; begin end; {Dummy-Anzeigeprozedur fuer Dialup}
 
-begin TimerObj.Init; DisplayProc:=VoidDisplayProc end.
+procedure InitModemUnit;
+begin
+  TimerObj.Init;
+  DisplayProc:=VoidDisplayProc
+end;
+
+end.
 
 {
   $Log$
+  Revision 1.6  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.5  2000/10/28 09:19:17  ma
   - Bauddetect Fix
 

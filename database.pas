@@ -119,6 +119,7 @@ procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:word; const s: string)
 
 procedure OpenIndex(dbp:DB);   { intern }
 
+procedure InitDataBaseUnit;
 
 implementation  {=======================================================}
 
@@ -1585,14 +1586,29 @@ end;
 
 }
 
-initialization
-  ICP:=dbICproc;
-finalization
+var
+  SavedExitProc: Pointer;
+
+procedure ExitDataBaseUnit;
+begin
+  ExitProc:= SavedExitProc;
   if ioresult<>0 then;
   dbCloseLog;
+end;
+
+procedure InitDataBaseUnit;
+begin
+  ICP:=dbICproc;
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitDataBaseUnit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.43  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.42  2000/11/16 19:23:53  hd
   - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
 

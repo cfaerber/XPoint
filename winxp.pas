@@ -129,6 +129,8 @@ var
 {$ENDIF }
 
 
+procedure InitWinXPUnit;
+
 { ========================= Implementation-Teil =========================  }
 
 implementation
@@ -882,8 +884,20 @@ end;
 
 
 var
+  SavedExitProc: pointer;
+
+procedure ExitWinXPUnit;
+begin
+  ExitProc:= SavedExitProc;
+  {$IFDEF Localscreen }
+  FreeMem(LocalScreen);
+  {$ENDIF }
+end;
+
+procedure InitWinXPUnit;
+var
   i: byte;
-initialization
+begin
 {$IFDEF NCRT }
   FillChar(pullw, sizeof(pullw), 0);
 {$ELSE }
@@ -897,21 +911,23 @@ initialization
   warrcol:=7;
   selp:=seldummy;
 
-  {$IFDEF LocalScreen }
-    GetMem(LocalScreen, SizeOf(LocalScreen^));
-  {$ENDIF }
+{$IFDEF LocalScreen }
+  GetMem(LocalScreen, SizeOf(LocalScreen^));
+{$ENDIF }
+{$IFDEF Win32 }
+  { Consolenhandle holen }
+  OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
+{$ENDIF }
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitWinXPUnit;
+end;
 
-  {$IFDEF Win32 }
-    { Consolenhandle holen }
-    OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
-  {$ENDIF }
-finalization
-  {$IFDEF Localscreen }
-    FreeMem(LocalScreen);
-  {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.52  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.51  2000/11/16 14:04:48  hd
   - Unit DOS entfernt
 

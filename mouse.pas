@@ -72,6 +72,8 @@ procedure UpdateMouseStatus;
   {$ENDIF }
 {$ENDIF }
 
+procedure InitMouseUnit;
+
 implementation
 
 {$IFDEF VP }
@@ -261,10 +263,12 @@ end;
   {$ENDIF }
 {$ENDIF }
 
+var
+  SavedExitProc: pointer;
 
-initialization
-  maus:=false;
-finalization
+procedure ExitMouseUnit;
+begin
+  ExitProc:= SavedExitProc;
   if intset then
   begin
   {$IFDEF VP }
@@ -272,9 +276,21 @@ finalization
   {$ENDIF }
   end;
   if mausda then mausaus;
+end;
+
+procedure InitMouseUnit;
+begin
+  maus:=false;
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitMouseUnit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.21  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.20  2000/10/25 17:32:12  fe
   Abhaengigkeitsprobleme (hoffentlich) beseitigt.
 

@@ -274,6 +274,8 @@ procedure dummyFN;
 procedure mdelay(msec:word);
 {$ENDIF }
 
+procedure InitInOutUnit;
+
 { ================= Implementation-Teil ==================  }
 
 implementation
@@ -1606,7 +1608,19 @@ begin
 end;
 {$ENDIF } { NCRT }
 
-initialization
+var
+  SavedExitProc: pointer;
+
+procedure ExitInOutUnit;
+begin
+  ExitProc:= SavedExitProc;
+{$IFNDEF NCRT }
+  cursor(curon);
+{$ENDIF }
+end;
+
+procedure InitInOutUnit;
+begin
 {$IFDEF NCRT}
   InitXPCurses;
 {$else}
@@ -1639,14 +1653,17 @@ initialization
   fillchar(zaehler,sizeof(zaehler),0);
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=screenwidth; mwu:=screenlines;
-finalization
-{$IFNDEF NCRT }
-  cursor(curon);
-{$ENDIF }
+  { Exit-Kette }
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitInOutUnit;
+end;
 
 end.
 {
   $Log$
+  Revision 1.66  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.65  2000/11/19 12:47:49  mk
   - fixed ticker
 

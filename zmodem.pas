@@ -65,6 +65,8 @@ PROCEDURE ZModemSend    (    vCommObj   : tpCommObj;   (* ObjCOM communication o
 
     FileAddition       : (NewFile,RecoverFile,ReplaceFile);
 
+procedure InitZModemUnit;
+
 IMPLEMENTATION
 
 USES
@@ -2478,14 +2480,20 @@ END;
 
 (*************************************************************************)
 
+procedure InitZModemUnit;
 BEGIN
   TimerObj.Init; LogTimer.Init; MakeCRC32:=TRUE;  RecoverAllow:=TRUE;
   DispProc:=NIL; StartProc:=NIL; EndProc:=NIL; LoggedBytesAreOutgoing:=TRUE; LogChars:='';
+end;
+
 END.
 
 
 {
   $Log$
+  Revision 1.8  2000/11/19 18:22:53  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.7  2000/11/18 15:46:06  hd
   - Unit DOS entfernt
 

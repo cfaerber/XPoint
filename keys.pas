@@ -156,6 +156,7 @@ function  kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 function  kb_alt:boolean;            { Alt gedrÅckt   }
 function  ScrollMode:boolean;
 
+procedure InitKeysUnit;
 
 implementation  { ---------------------------------------------------------- }
 
@@ -333,12 +334,28 @@ begin
 {$ENDIF }
 end;
 
+var
+  SavedExitProc: pointer;
+  
+procedure ExitKeysUnit;
+begin
+  ExitProc:= SavedExitProc;
+end;
+
+procedure InitKeysUnit;
 begin
   forwardkeys:='';
   func_proc:=func_dummy;
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitKeysUnit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.30  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.29  2000/10/15 15:20:17  mk
   JG:- Editor Funktion Glossary implementiert
 

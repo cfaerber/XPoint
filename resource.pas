@@ -38,6 +38,7 @@ function  IsRes(nr:word):boolean;
 procedure FreeRes;                        { Cluster freigeben }
 function  reps(s1,s2:string):string;
 
+procedure InitResourceUnit;
 
 implementation  { --------------------------------------------------- }
 
@@ -331,12 +332,29 @@ begin
   GetReps2:=reps(getres2(nr1,nr2),txt);
 end;
 
-initialization
-finalization
-  if f<>nil then closeresource;
+var
+  SavedExitProc: pointer;
+
+procedure ExitResourceUnit;
+begin
+  ExitProc:= SavedExitProc;
+  if f<>nil then
+    closeresource;
+end;
+
+procedure InitResourceUnit;
+begin
+  f:= nil;
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitResourceUnit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.17  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.16  2000/10/17 10:05:43  mk
   - Left->LeftStr, Right->RightStr
 

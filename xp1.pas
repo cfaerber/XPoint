@@ -262,6 +262,7 @@ procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
+procedure InitXP1Unit;
 
 implementation  {-------------------------------------------------------}
 
@@ -2063,15 +2064,30 @@ begin
   hdp:= nil;
 end;
 
-initialization
-finalization
+var
+  SavedExitProc: pointer;
+
+procedure ExitXP1Unit;
+begin
+  ExitProc:= SavedExitProc;
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
   SysSetBackIntensity;
+end;
+
+procedure InitXP1Unit;
+begin
+  SavedExitProc:= ExitProc;
+  ExitProc:=@ExitXP1Unit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.92  2000/11/19 18:22:53  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.91  2000/11/18 13:50:37  mk
   - initialize new record fields in Allocmem
 

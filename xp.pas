@@ -48,7 +48,8 @@ uses xpx,
 {$ENDIF }
      typeform,uart,keys,fileio,inout,help,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
-     printerx,crc,resource,stack,clip,eddef,editor,feiertag,
+     printerx,crc,resource,stack,clip,eddef,editor,feiertag,objcom,modem,
+     zmodem,
      xpdiff,xpdatum,xpglobal,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
@@ -106,6 +107,23 @@ var pwcnt:byte;
     pwrc:boolean;
 
 begin
+{ Init the units }
+  InitInOutUnit;                { InOut }
+  InitKeysUnit;                 { Keys }
+  InitMouseUnit;                { Mouse }
+  InitUARTUnit;                 { UART }
+  InitObjComUnit;               { ObjCOM }
+  InitModemUnit;                { Modem }
+  InitZModemUnit;               { ZModem }
+  InitPrinterXUnit;             { PrinterX }
+  InitResourceUnit;             { Resource }
+  InitWinXPUnit;                { WinXP }
+  InitMaskeUnit;                { Maske }
+  InitDataBaseUnit;             { Database }
+  InitXP1Unit;                  { XP1 }
+
+  InitXPXUnit;                  { XPX }
+{ Program }
   readpar;
   loadresource;
   initvar;
@@ -196,6 +214,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.43  2000/11/19 18:22:53  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.42  2000/11/18 21:42:17  mk
   - implemented new Viewer handling class TMessageViewer
 

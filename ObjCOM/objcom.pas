@@ -92,6 +92,8 @@ function FossilDetect: Boolean;
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 {$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
 
+procedure InitObjComUnit;
+
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -430,13 +432,29 @@ begin
   CommInit:=Success;
 end;
 
-initialization Initserial;
-finalization Stopserial;
+var
+  SavedExitProc: pointer;
+  
+procedure ExitObjComUnit;
+begin
+  ExitProc:= SavedExitProc;
+  Stopserial;
+end;
+
+procedure InitObjComUnit;
+begin
+  Initserial;
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitObjComUnit;
+end;
 
 end.
 
 {
   $Log$
+  Revision 1.12  2000/11/19 18:22:53  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.11  2000/11/12 16:31:21  hd
   - Serielle Unterstützung hergestellt
 

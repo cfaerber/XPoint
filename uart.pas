@@ -170,6 +170,7 @@ procedure SendBreak(no:byte);             { Break-Signal      }
 
 procedure MiniTerm(comn:byte; baud:longint);
 
+procedure InitUARTUnit;
 
 implementation  {-----------------------------------------------------}
 
@@ -870,7 +871,7 @@ begin
     writeln('ungÅltige Baudrate!');
 end;
 
-
+procedure InitUARTUnit;
 begin
   exitsave:=exitproc;
   exitproc:=@comexit;
@@ -880,10 +881,15 @@ begin
   {$HINTS ON }
   {$NOTES ON }
 {$ENDIF }
+end;
+
 end.
 
 {
   $Log$
+  Revision 1.14  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.13  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

@@ -29,11 +29,7 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 IMPLEMENTATION
 
 USES
-{$ifdef Linux}
-  Linux,
-{$else}
-  Dos,
-{$endif} { Linux }
+  SysUtils,
 {$IFDEF Win32}
   Windows,
 {$else}
@@ -57,7 +53,7 @@ FUNCTION GetTicks: LongInt;
 var
   H,M,S,S100: Word;
 begin
-  GetTime(H,M,S,S100);
+  DecodeTime(now,H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
 end;
 
@@ -122,12 +118,15 @@ begin
   for J:=0 to qLoops DO K:=1-K;
 end;
 
-begin
-  Calibrated:=False
+initialization
+  Calibrated:=False;
 end.
 
 {
   $Log$
+  Revision 1.13  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.12  2000/11/09 15:27:02  mk
   - Compilierfaehigkeit wiederhergestellt
 

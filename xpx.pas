@@ -31,6 +31,8 @@ uses
 function _deutsch:boolean;
 procedure stop(txt:string);
 
+procedure InitXPXUnit;
+
 implementation
 
 uses
@@ -115,8 +117,28 @@ begin
   filemode:=2;
 end;
 
+var
+  SavedExitProc: pointer;
 
-initialization
+procedure ExitXPXUnit;
+begin
+  ExitProc:= SavedExitProc;
+  if not SetCurrentDir(shellpath) then
+    SetCurrentDir(ownpath);
+  if runerror and not starting then
+  begin
+    attrtxt(7);
+    writeln;
+    writeln('Fehler: ',ioerror(exitcode,'<interner Fehler>'));
+    if XPLog<>nil then
+      XPLog.Log(llError,'Fehler: '+ioerror(exitcode,'<interner Fehler>'));
+  end;
+  if XPLog<>nil then
+    XPLog.Free;
+end;
+
+procedure InitXPXUnit;
+begin
   checkbreak:=false;
   readname;
 {$ifndef unix}
@@ -137,22 +159,17 @@ initialization
   XPLog:= TLog.CreateWithFilename(XPLogName);
 
   starting:=false;
-finalization
-  if not SetCurrentDir(shellpath) then
-    SetCurrentDir(ownpath);
-  if runerror and not starting then
-  begin
-    attrtxt(7);
-    writeln;
-    writeln('Fehler: ',ioerror(exitcode,'<interner Fehler>'));
-    if XPLog<>nil then
-      XPLog.Log(llError,'Fehler: '+ioerror(exitcode,'<interner Fehler>'));
-  end;
-  if XPLog<>nil then
-    XPLog.Free;
+
+  SavedExitProc:= ExitProc;
+  ExitProc:= @ExitXPXUnit;
+end;
+
 end.
 {
   $Log$
+  Revision 1.38  2000/11/19 18:22:53  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.37  2000/11/18 18:38:22  hd
   - Grundstruktur des Loggings eingebaut
 

@@ -89,6 +89,7 @@ var  checklst,xlatger : boolean;
 Procedure assignlst(d:word);
 Function  PrintString(s:string):string;
 
+procedure InitPrinterXUnit;
 
 { ================= Implementation-Teil ==================  }
 
@@ -161,14 +162,19 @@ begin
   PrintString:= r;
 end;
 
-
+procedure InitPrinterXUnit;
 begin
   checklst:=true;
   xlatger:=false;
   prterror:=prtorgerror;
+end;
+
 end.
 {
   $Log$
+  Revision 1.15  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.14  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 

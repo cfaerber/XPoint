@@ -177,6 +177,8 @@ procedure mclearsel(nr:word);
 procedure mappendsel(nr:word; force:boolean; s:string);
 
 
+procedure InitMaskeUnit;
+
 implementation  {---------------------------------------------------------}
 
 const maxmask   = 10;                { max. gleichzeitig offene Masken }
@@ -1238,6 +1240,7 @@ end;
 { weiteren Masken. Er kann daher zu Beginn - amask=0 -     }
 { ber die maskset*-Funktionen eingestellt werden.         }
 
+procedure InitMaskeUnit;
 begin
   masks:=0; amask:=0;
   getmem(mask[0],sizeof(masktyp));
@@ -1266,10 +1269,15 @@ begin
   end;
   with Mask[0]^do
     system.fillchar(uda,sizeof(uda),0);
+end;
+
 end.
 
 {
   $Log$
+  Revision 1.23  2000/11/19 18:22:52  hd
+  - Replaced initlization by InitxxxUnit to get control over init processes
+
   Revision 1.22  2000/10/17 10:05:42  mk
   - Left->LeftStr, Right->RightStr
 
