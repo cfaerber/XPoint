@@ -1074,7 +1074,7 @@ var t,lastt: taste;
       if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
-        fillchar(mpdata,sizeof(qmpdata),0);
+        fillchar(mpdata,sizeof(mpdata),0);
         mpdata.fname := fn;
         SelectMultiPart(true,1,false,mpdata,brk);
 
@@ -2133,6 +2133,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.25  2000/12/19 19:47:11  mk
+  - groesse bei Fillchar(mpdata) korrigiert
+
   Revision 1.26.2.24  2000/12/18 09:19:57  mk
   - fehlendes pophp ergaenzt
 
