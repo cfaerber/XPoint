@@ -721,7 +721,7 @@ begin
   { 01/2000 oh }
   PGPVersion:=PGP2;
   AutoDatumsBezuege:=false;
-  { /oh }
+  { /oh }  
 end;
 
 
@@ -1543,7 +1543,8 @@ begin
           getx(su,  'newuseribm',newuseribm) or
           getx(su,  'usersortbox',_usersortbox) or
           getx(su,  'binmultipart',multipartbin) or
-          getx(su,  'binmime',mausmpbin))
+          getx(su,  'binmime',mausmpbin) or
+          getx(su,  'delviewtmp',delviewtmp)) 
         then
           tfehler(getres(219)+left(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
         end;
@@ -1666,6 +1667,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/05/02 04:18:15  jg
+  - XPoint.cfg Schalter DelViewTmp
+    macht dasselbe wie die Umgebungsvariable DELVTMP
+
   Revision 1.38  2000/04/29 11:54:09  mw
 
   - MIME in News voreingestellt

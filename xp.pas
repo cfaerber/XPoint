@@ -146,8 +146,8 @@ begin
     end;
     showscreen(true);
     DelTmpfiles('*.$$$');
-    if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
-      Delviewtmp:=true;
+    if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
+    if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}     
       DelTmpfiles('TMP-????.*');
       chdir(temppath);
       DelTmpfiles('TMP-????.*');
@@ -216,6 +216,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.23  2000/05/02 04:18:15  jg
+  - XPoint.cfg Schalter DelViewTmp
+    macht dasselbe wie die Umgebungsvariable DELVTMP
+
   Revision 1.22  2000/05/01 08:47:05  mk
   - Stackspace unter OS/2 vergroessert, wegen QSort
 
