@@ -712,14 +712,17 @@ var t,lastt: taste;
       if ReadJNesc(getreps(404,strs(markanz)),true,brk)   { '%s markierte Nachrichten zitieren' }
       and not brk then
       begin
+        if force_QuoteMsk = '' then
+          Force_QuoteMsk := QuoteSchab(pm);
         mquote:=false;
         multiquote:=true;
         SortMark;
         mqfirst:=marked^[0].recno;
-        for i:=0 to markanz-1 do begin
+        for i:=0 to markanz-1 do
+        begin
           dbGo(mbase,marked^[i].recno);
-          extract_msg(3,QuoteSchab(pm),fn,true,1);
-          end;
+          extract_msg(3,force_quotemsk,fn,true,1);
+        end;
         if not markaktiv then UnsortMark;
         GoP;
         end
@@ -842,8 +845,7 @@ var t,lastt: taste;
       begin
         quote:=1;
         mquote := true;
-      end else
-        if not multiquote(brk) and brk then exit;
+      end;
       {  dbGo(mbase,marked^[0]); }
     betr:='';
     rt0:='';
@@ -984,6 +986,8 @@ var t,lastt: taste;
       end;
     if not usermsg then
       dbClose(d);
+
+    if (Quote= 2) and (not multiquote(brk) and brk) then exit;
 
     if (dispmode>=10) and (dispmode<=19) then begin
       dbRead(mbase,'typ',typ);
@@ -2110,6 +2114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.15  2000/10/26 16:17:52  mk
+  - Fixed Bug #116156: falsche Quoteschablone bei Mehrfachquotes
+
   Revision 1.26.2.14  2000/10/26 10:33:29  mk
   - <Ctrl-H> bringt jetzt auch MIME-Auswahldialog, wenn noetig
 
