@@ -1,11 +1,16 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Globale Konstanten/Variablen (OpenXP) und Tools                    }
-{ ------------------------------------------------------------------ }
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ --------------------------------------------------------------- }
 { $Id$ }
+
+{ Globale Konstanten/Variablen (OpenXP/16) und Tools }
 
 {$I XPDEFINE.INC }
 {$F+,O+}
@@ -17,7 +22,6 @@ interface
 const
   verstr      = 'v3.40';     { Versionsnr. - steht nur an dieser Stelle }
   betastr     = ' RC3';      { '' oder ' beta', ' RCn' usw. }
-  xmsstr      = ' (XMS)';
   author_name = 'OpenXP/16';
   author_fido = '2:2433/460';
   author_mail = 'support@openxp16.de';
@@ -87,6 +91,9 @@ end.
 
 {
   $Log$
+  Revision 1.29.2.24  2003/04/13 21:06:13  my
+  MY:- 'xmsstr' wieder entfernt (=> 'ovrstr' in xp0.pas).
+
   Revision 1.29.2.23  2003/01/16 23:30:33  my
   MY: - Schalter /xmsovr in Versionsbezeichnung bercksichtigt
       - betastr an einigen Stellen erg„nzt
