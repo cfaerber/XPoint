@@ -980,7 +980,7 @@ var i,j  : integer;
   begin
     with hd0^ do begin
       i:=1;                 { Test auf Whitespaces vor Header }
-      while (fld[n][i]=' ') or (fld[n][i]=#9) do inc(i);
+      while (i <= Length(fld[n])) and ((fld[n][i]=' ') or (fld[n][i]=#9)) do inc(i);
       flag:=(i>1);
       if flag then begin
         wr('Leerzeichen vor Header '+ww+'entfernt',true);
@@ -1287,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.3  2000/10/04 15:41:30  mk
+  - Range-Check-Error in FldBezCheck beseitigt
+
   Revision 1.14.2.2  2000/07/02 10:43:01  mk
   - pformstr entfernt
 
