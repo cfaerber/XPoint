@@ -2,7 +2,7 @@ Allgemeine OpenXP-FAQ
 
 Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-01-18</small>
 Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
-<br />Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe "Kontakt"). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
+<br />Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe "Kontakt"). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70: debuglog.txt) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
 
 Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
@@ -25,7 +25,7 @@ Wie kriege ich (Open)XP mit ISDN/USB-Modems/WinModems zum Laufen?&nbsp;&nbsp;<sm
 Es gibt mehrere Möglichkeiten für Programme, auf serielle Geräte zuzugreifen:
 <ol>
 <li>Hardware
-<br /><small>Wird bei DOS-Programmen gemacht: Man muß IO-Port bzw. IRQ angeben. Zugriff ist nur auf <i>real vorhandene</i> Standard-ComPorts möglich).</small></li>
+<br /><small>Wird bei DOS-Programmen gemacht: Man muß IO-Port bzw. IRQ angeben. Zugriff ist nur auf <i>real vorhandene</i> Standard-ComPorts möglich.</small></li>
 <li>Fossil
 <br /><small>Fossil ist ein standardisiertes Interface für den Zugriff auf serielle Schnittstellen. Es wird normalerweise benutzt, um DOS-Programmen per Fossil-Treiber den Zugriff auf (auch nicht-standardisierte) serielle Geräte zu ermöglichen.</small></li>
 <li>Win32-API

@@ -1,7 +1,7 @@
 Die letzten News von www.openxp.de...
 
-29. März 2001: UUCP
-UUCP wurde jetzt auch wieder integriert. Neu ist die Unterstützung von
+29. März 2001: UUCP in OpenXP 3.70
+UUCP ist jetzt fertig integriert. Neu ist die Unterstützung von
 UUCP über TCP/IP; hierzu wurde auch UUCP-t eingebaut. 
 [<a href="index.php4?file=news/20010329-uucp.html">Screenshot</a>]
 +

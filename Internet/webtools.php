@@ -212,17 +212,18 @@ function InsertLatestNews($newsfile) {
 	$pnfile = fopen($newsfile,"r");
 	if ($pnfile==false) return 0;
 	fgets($pnfile,200); fgets($pnfile,10); // skip headline + space
-	echo("\n<h3>".trim(fgets($pnfile,200))."</h3>\n<p>");
+	echo("\n<p><big>".trim(fgets($pnfile,200))."</big>\n<br /><small>");
 	do {
 	  $news=trim(fgets($pnfile,1000));
 	  if ($news=="+") {
-	    echo("</p>\n<h3>".trim(fgets($pnfile,200))."</h3>\n<p>");
+	    echo("</small></p>\n<p><big>".trim(fgets($pnfile,200))."</big>\n<br /><small>");
 	  } else { 
   	    echo($news)."\n";
 	  }
 	} while(($news!="")and(!feof($pnfile)));
+      echo("</small></p>\n");
+	echo("<hr noshade=\"noshade\" size=\"1\" />");
 	fclose($pnfile);
-	echo("</p>\n");
 }
 
 // show download table
