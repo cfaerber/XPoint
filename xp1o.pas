@@ -67,11 +67,11 @@ implementation
 uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;       {JG:24.01.00}
 
 
-function getline:string;                          { Eine Zeile vom Lister uebernehmen } 
+function getline:string;                          { Eine Zeile vom Lister uebernehmen }
 begin
-  if list_markanz<>0 
+  if list_markanz<>0
     then getline:=first_marked                    { erste markierte Zeile }
-    else if list_selbar 
+    else if list_selbar
       then getline:=get_selection                 { oder Zeile unter Markierbalken }
       else getline:='';                           { oder eben nichts }
 end;
@@ -81,6 +81,9 @@ end;
 
 function ReadFilename(txt:atext; var s:pathstr; subs:boolean;
                       var useclip:boolean):boolean;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+    '-','_','#','=','&','%','@','$'];
 var x,y : byte;
     brk : boolean;
     fn  : string[20];
@@ -118,15 +121,13 @@ begin
       if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
-      if y<>0 then begin
-        s:=mid(s,y); x:=0; y:=0;
-        repeat
-          inc (y);                                           {Ende der URL suchen...}
-          if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
-          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']', '"' : x:=y-1; end;
-        until x<>0;
-        s:=left(s,x);
-        end;
+      if y<>0 then
+      begin
+        s:=mid(s,y);
+        y:=1;
+        while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+        s:=left(s,y-1);
+      end;
       string2clip(s);
       ReadFilename:=false;
       exit;
@@ -372,7 +373,7 @@ begin
     if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
       b:=2;
       dbWriteN(mbase,mb_halteflags,b);
-      listhalten:=b;  
+      listhalten:=b;
       if t=k4_cL then begin
         rmessage(121);   { 'Nachricht ist auf ''l”schen'' gesetzt.' }
         wkey(1,false);
@@ -979,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.10  2000/11/01 11:20:44  mk
+  RB:- URL-Erkennung verbessert
+
   Revision 1.40.2.9  2000/10/15 09:28:06  mk
   - LFN fixes
 
