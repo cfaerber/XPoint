@@ -100,7 +100,7 @@ function ShowFooter() {
         };
         echo("\n</td><td align=\"center\" width=\"50%\"><a href=\"http://sourceforge.net\"><img src=\"http://sourceforge.net/sflogo.php?group_id=3766&amp;type=1\" width=\"88\" height=\"31\" border=\"0\" alt=\"SourceForge\" /></a>");
         echo("</td><td align=\"right\" width=\"25%\">");
-        echo("<small>Published by <a href=\"mailto:dev@openxp.de\">OpenXP Team</a></small>\n");
+        echo("<small>Published by <a href=\"mailto:dev&#64;openxp.de\">OpenXP Team</a></small>\n");
         // close the doc
         echo("</td></tr></table></body>\n</html>\n");
 };

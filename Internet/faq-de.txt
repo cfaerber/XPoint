@@ -2,7 +2,7 @@ Allgemeine OpenXP-FAQ
 
 Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-10-20</small>
 Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
-<br />Falls das nicht der Fall ist, eine genaue Beschreibung des Fehlers an die <a href="mailto:dev@openxp.de">Mailingliste</a> schreiben (<i>unbedingt</i> erwähnen: genaue OpenXP-Version, Plattform, Netztyp, wie wird das Fehlverhalten hervorgerufen, ist es reproduzierbar?). Ggf. hilft auch ein genaues Debuglog (ab OpenXP/32: debuglog.txt, siehe FAQ zu OpenXP/32) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
+<br />Falls das nicht der Fall ist, eine genaue Beschreibung des Fehlers an die <a href="mailto:dev&#64;openxp.de">Mailingliste</a> schreiben (<i>unbedingt</i> erwähnen: genaue OpenXP-Version, Plattform, Netztyp, wie wird das Fehlverhalten hervorgerufen, ist es reproduzierbar?). Ggf. hilft auch ein genaues Debuglog (ab OpenXP/32: debuglog.txt, siehe FAQ zu OpenXP/32) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
 
 Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
