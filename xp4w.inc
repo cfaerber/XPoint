@@ -471,6 +471,34 @@ var fn     : pathstr;
     mimetyp  : string[30];
     viewer   : ViewInfo;
 
+  function ViralExtension:boolean;          { Mailviren-Schutz }
+  var x,y,i : byte;
+      t     : taste;
+      width : byte;
+      found : boolean;
+  const
+    viral_ext : array [1..11] of String[4] = 
+     ('EXE','COM','BAT','CMD','DOC','XLS','XLM','XLW','PPT','VBS','JS');
+  begin
+  viralExtension:=false;
+  i:=0;
+  repeat
+    inc(i);
+    found:=(ustr(mid(mpdata.fname,rightpos('.',mpdata.fname)+1)) = viral_ext[i]);
+  until found or (i>11);
+  if found then
+  begin
+    diabox(45,6,'',x,y);
+    mwrt(x+2,y+1,viral_ext[i]+getres(2443));
+    mwrt(x+2,y+2,getres(2444));
+    t:='';
+    case readbutton(x+2,y+4,2,getres(107),2,true,t) of
+      0,2 : viralExtension:=true;             { '  ^Ja  , ^Nein ' }
+      end;
+    closebox;
+    end;
+  end;
+
   procedure CopyMsg;
   var f1,f2 : file;
   begin
@@ -742,6 +770,9 @@ begin
           if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
             GetMimeViewer(mimetyp,viewer);
 
+          if viewer.ext='' then                        { Schutz vor Mail-Viren }
+            if ViralExtension then viewer.Prog:='';    { Bei Multiformat-Mimetyp }
+            
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
           end;
       end
