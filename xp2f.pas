@@ -65,6 +65,16 @@ asm
 end;
 {$ENDIF }
 
+function testproglen(var s:string):boolean;
+begin
+  testproglen:=true;
+  if (s[1] <> '*') and (length(s) > 127) then
+  begin
+    rfehler(222);        { 'Externes Programm - max. EingabelÑnge 127 Zeichen' }
+    testproglen:=false;
+  end;
+end;
+
 procedure EditFkeys(typ:byte);
 { const n_typ : array[0..3] of string[9] =
               ('ohne Kopf','mit Kopf','Puffer','Quote'); }
@@ -82,7 +92,8 @@ var anzahl  : byte;
     with fkeys[iif(p>10,4,typ)]^[iif(p>10,p-10,p)] do begin
       dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-MenÅ' }
       maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'MenÅanzeige  ' }
-      maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
+      maddstring(3,4,getres2(240,5),prog,35,200,'');  { 'Programmname ' }
+      msetvfunc(testproglen);
       s:=getres2(240,ntyp+7);
       maddstring(3,6,getres2(240,6),s,10,10,'');      { '$FILE-Nachr. ' }
       for i:=7 to 10 do
@@ -288,7 +299,7 @@ begin
     at(colkeys);
     wrt(31,2,'  Alle  Brief  Textfile  BinÑr  Spezial  Lesen    ');
     wrt(31,screenlines,'F1-Hilfe  F6-Makros  F9-DOS      '+
-           right(sp(17)+xp_xp,17));
+           right(sp(17)+xp_display,17));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -308,7 +319,7 @@ begin
   with col do begin
     at(colmenu[0]);
     moff;
-    wrt(31,1,'  '+iifs(xp_xp='CrossPoint','X','X')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ');
+    wrt(31,1,'  XPoint  Wartung  Nachricht  NeTcall  Fido  Edit ');
     at(colmenuhigh[0]);
   { if xp_xp='CrossPoint' then } wrt(33,1,'X');
   { else wrt(34,1,'P');        }
@@ -1179,6 +1190,27 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.5  2002/03/08 22:59:01  my
+  MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
+       kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:
+       - Beim Netztyp RFC/Client mu·, bei RFC/UUCP kann eine gÅltige und
+         vollstÑndige eMail-Adresse statt des Usernamens Åbergeben werden;
+       - FQDN kann gesetzt werden (nur RFC/* und ZConnect);
+       - POP3-/SMTP-Envelope-Adresse kann gesetzt werden (nur RFC/Client);
+         wenn ein POP3-Server eingetragen ist, darf der POP3-Envelope
+         nicht leer sein (= gelîscht werden);
+       - Eingabefeld "Programmname" bei C/T/.. bzw. C/Z von 60 auf 200
+         Zeichen vergrî·ert (bei externen Befehlen sind max. 127 Zeichen
+         zulÑssig);
+       - Hinweismeldung "Username: <neuer Username>" am Schlu· der Routine
+         zeigt jetzt komplette Adresse an und berÅcksichtigt Alias-Points
+         (RFC/UUCP und ZConnect).
+       Weitere Details siehe Hilfe.
+
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
   Revision 1.12.2.4  2001/12/07 17:53:45  my
   MY:- Fix Farbkonfiguration: ein paar unsinnige PrÅfungen auf
        "xp_xp='CrossPoint'" auskommentiert.
