@@ -266,7 +266,7 @@ label ende,happyend;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-          ukonv(betr2); 
+         { ukonv(betr2); }  { JG:29.02.00 BUGFIX Zeile Loest DB-Index Ueberlauf aus !!! }
           ukonv(realn); 
           ukonv(hdp^.fido_to);
           end;
@@ -2153,6 +2153,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/02/29 10:46:28  jg
+  -Bugfix Spezialsuche - Betreff
+
   Revision 1.14  2000/02/23 19:11:04  jg
   -Suchfunktionen im Lister benutzen Autosuche,
    "Global_Suchstring" und dessen auswertung entfernt.
