@@ -2166,25 +2166,30 @@ end;
 {$I XP10.INC}    { Timinglisten-Interpreter }
 
 end.
+
 {
   $Log$
+  Revision 1.10.2.15  2003/01/10 21:55:37  my
+  MY:- Log- und Kommentarkosmetik
+
   Revision 1.10.2.14  2003/01/10 14:04:20  mw
-
-  MW:
-  - Grosses Gebuehrenupdate:
-    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
-    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
-    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
-                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
-                              nicht mehr als Preis einer Tarifeinheit.
-                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
-                              Preis einer Tarifeinheit.
-    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
-    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
-                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
-    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
-
-    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+  MW:- Groáes Gebhren-Update:
+       1. Es k”nnen jetzt auch Bruchteile von 1/100 W„hrungseinheiten
+          sowie ein zus„tzliches festes Verbindungsentgelt eingegeben und bei
+          der Berechnung bercksichtigt werden.
+       2. Neues Gebhrenmodell: Bei aktivem Schalter unter Config/Optionen/
+                                Gebhren/Sonstiges werden Geldbetr„ge als
+                                rechnerische Minutenpreise gewertet und nicht
+                                mehr als Preis einer Tarifeinheit. Bei
+                                inaktivem Schalter gelten Geldbetr„ge
+                                weiterhin als Preis einer Tarifeinheit.
+       3. Neue Default-W„hrung fuer die Gebhrenberechnung ist nun EUR.
+       4. Neue Tarife: Die Default-Tariftabelle enth„lt nun alle aktuellen
+          nationalen Privatkunden-Tarife der DTAG fr Festnetz zu Festnetz
+          sowie den Tarif "Normaltarif" von 3U.
+       5. Wenn die Default-Tariftabelle geschrieben wird, wird dabei das
+          verwendete Gebhrenmodell bercksichtigt.
+       6. XPOINT.LOG enth„lt jetzt alle Kostenangaben mit 4 Nachkommastellen.
 
   Revision 1.10.2.13  2002/05/28 22:44:05  my
   MY:- Fix: IOResult/close() in 'ReadNetcallSpecialData' sauberer gestaltet.

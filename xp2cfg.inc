@@ -1836,23 +1836,27 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.38  2003/01/10 21:55:37  my
+  MY:- Log- und Kommentarkosmetik
+
   Revision 1.62.2.37  2003/01/10 14:04:19  mw
-
-  MW:
-  - Grosses Gebuehrenupdate:
-    1. Es koennen jetzt auch Bruchteile von 1/100 Waehrungseinheiten eingegeben werden.
-    2. Tarife mit Verbindungsentgelt sind jetzt auch eingebbar und XP berechenbar.
-    3. Neues Gebuehrenmodell: Bei aktivem Schalter unter Config/Optionen/Gebuehren/Sonstiges
-                              werden Geldbetraege als rechnerische Minutenpreise gewertet und
-                              nicht mehr als Preis einer Tarifeinheit.
-                              Bei inaktivem Schalter gelten Geldbetraege weiterhin als
-                              Preis einer Tarifeinheit.
-    4. Neue Defaults: Default-Waehrung fuer die Gebuehrenrechnung ist nun EUR.
-    5. Neue Tarife: Die Default-Tariftabelle enthaelt nun alle aktuellen nationalen Privatkunden-Tarife
-                    der DTAG fuer Festnetz zu Festnetz sowie den Tarif Normaltarif von 3U.
-    6. Wenn die Derfaulttariftabelle geschrieben wird, wird dabei das verwendete Gebuehrenmodell berücksichtigt.
-
-    Achtung: Das Xpoint.log-Logfile endhaelt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+  MW:- Groáes Gebhren-Update:
+       1. Es k”nnen jetzt auch Bruchteile von 1/100 W„hrungseinheiten
+          sowie ein zus„tzliches festes Verbindungsentgelt eingegeben und bei
+          der Berechnung bercksichtigt werden.
+       2. Neues Gebhrenmodell: Bei aktivem Schalter unter Config/Optionen/
+                                Gebhren/Sonstiges werden Geldbetr„ge als
+                                rechnerische Minutenpreise gewertet und nicht
+                                mehr als Preis einer Tarifeinheit. Bei
+                                inaktivem Schalter gelten Geldbetr„ge
+                                weiterhin als Preis einer Tarifeinheit.
+       3. Neue Default-W„hrung fuer die Gebhrenberechnung ist nun EUR.
+       4. Neue Tarife: Die Default-Tariftabelle enth„lt nun alle aktuellen
+          nationalen Privatkunden-Tarife der DTAG fr Festnetz zu Festnetz
+          sowie den Tarif "Normaltarif" von 3U.
+       5. Wenn die Default-Tariftabelle geschrieben wird, wird dabei das
+          verwendete Gebhrenmodell bercksichtigt.
+       6. XPOINT.LOG enth„lt jetzt alle Kostenangaben mit 4 Nachkommastellen.
 
   Revision 1.62.2.36  2002/04/12 14:34:16  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
@@ -1911,30 +1915,30 @@ end;
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
 
   Revision 1.62.2.27  2001/09/16 20:23:14  my
-  JG+MY:- Verbesserte Brettanzeige (zusätzlicher Schalter unter
-          Config/Anzeige/Bretter): Es können jetzt alle Bretter in
+  JG+MY:- Verbesserte Brettanzeige (zus„tzlicher Schalter unter
+          Config/Anzeige/Bretter): Es k”nnen jetzt alle Bretter in
           Punktschreibweise dargestellt werden, der einleitende "/" wird
           entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
 
   JG+MY:- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte
           unten)
 
-  JG+MY:- Feldtausch geändert/verbessert: Default bei Usern jetzt FHBGAK,
-          jedes Feld kann weggelassen werden, bei Weglassen großer Felder
-          werden die übrigen Felder verbreitert. Option für Nachrichten-
-          Feldtausch jetzt zusätzlich über /Config/Anzeige/Nachrichten
-          erreichbar. /Config/Anzeige/Hilfen übersichtlicher gestaltet.
+  JG+MY:- Feldtausch ge„ndert/verbessert: Default bei Usern jetzt FHBGAK,
+          jedes Feld kann weggelassen werden, bei Weglassen groáer Felder
+          werden die brigen Felder verbreitert. Option fr Nachrichten-
+          Feldtausch jetzt zus„tzlich ber /Config/Anzeige/Nachrichten
+          erreichbar. /Config/Anzeige/Hilfen bersichtlicher gestaltet.
 
-  JG+MY:- RFC: Neuer Schalter "Alten Betreff anhängen" unter
-          Config/Optionen/Netze. Wenn aktiviert, wird bei Änderung des
+  JG+MY:- RFC: Neuer Schalter "Alten Betreff anh„ngen" unter
+          Config/Optionen/Netze. Wenn aktiviert, wird bei nderung des
           Betreffs der alte Betreff in der Form "(was: <alter Betreff>)"
-          automatisch angehängt.
+          automatisch angeh„ngt.
 
-  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
-          zeilen stehen nur die ersten 19 zur Verfügung).
+  JG+MY:- Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfgung).
 
   JG+MY:- Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
-          verfügbar
+          verfgbar
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -2004,7 +2008,8 @@ end;
   - weitere arbeiten am Client-Modus
 
   Revision 1.62.2.16  2001/01/10 17:39:04  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.62.2.15  2000/12/31 14:46:13  mk
   - Tearlineschalter in Config/Optionen/Netze
@@ -2083,7 +2088,6 @@ end;
   -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
 
   Revision 1.54  2000/05/15 05:24:05  mw
-
   - Default angepasst: - UUCP-Paketsize jetzt 1024
                        - RFC1522 eingeschaltet (MIME im Header)
 
@@ -2181,7 +2185,8 @@ end;
   - Compilierfaehigkeit mit VP wieder hergestellt
 
   Revision 1.30  2000/04/15 09:57:59  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
+  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen
+    im Spezialmenue
   - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
 
   Revision 1.29  2000/04/13 20:18:03  jg
@@ -2201,7 +2206,7 @@ end;
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
   Revision 1.27  2000/04/10 00:43:03  oh
-  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
+  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/E/V/Fido)
 
   Revision 1.26  2000/04/08 13:33:14  mk
   MW: Defaultwerte angepasst und aktualisiert
@@ -2223,7 +2228,8 @@ end;
   - Text fuer MIME-Auswahl in englische Resource eingebaut
 
   Revision 1.22  2000/04/01 02:21:47  oh
-  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
+  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen,
+    dasselbe fuer die MsgListe vorbereitet
 
   Revision 1.21  2000/03/25 16:29:29  mk
   - 32 Bit: Zeilenzahl fest auf 25 gestellt
@@ -2242,7 +2248,7 @@ end;
     Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
 
   Revision 1.17  2000/03/08 22:36:33  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.16  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
