@@ -1535,8 +1535,9 @@ var dat    : longint;
         end;
       end;
 
-   if (readmode=0) or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
-   then begin                      { und Brett passt nicht mehr: kein weiterschalten}
+   if ((readmode=0) and not (nobrettweiter or kb_ctrl or kb_Shift))
+     or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
+   then begin                         { und Brett passt nicht mehr: kein Weiterschalten }
       s:=' ';
       p2:=p; 
       helprec:=disprec[1];
@@ -1773,6 +1774,10 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.100  2002/05/01 17:11:58  mk
+  JG:- Fix: Die Unterdr?ckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
+       <Shift-Esc> funktionierte nicht im Lesemodus "Alles"
+
   Revision 1.99  2002/04/10 08:38:50  mk
   JG:- Fixes Brett-Weiterschalter:
        1) Wenn im Anzeigemodus "Nur Bretter anzeigen, die auf den aktiven
