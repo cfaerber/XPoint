@@ -145,9 +145,9 @@ const rchar : array[1..3,1..6] of char =
 {$ifdef NCRT }
       { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
         an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
-      CharSize = 	1;		{ Groesse eines Zeichens }
-      AttrSize =	1;		{ Groesse eines Attributs }
-      LSSize = 		$7fff;    	{ Sollte fuer 160 x 100 reichen }
+      CharSize =        1;              { Groesse eines Zeichens }
+      AttrSize =        1;              { Groesse eines Attributs }
+      LSSize =          $7fff;          { Sollte fuer 160 x 100 reichen }
 {$else }
       LSSize = $1fff;
 {$endif }
@@ -156,12 +156,12 @@ const rchar : array[1..3,1..6] of char =
 type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
 
-{$IFDEF LocalScreen }
   { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
     des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
     Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
   TLocalScreen = array[0..LSSize] of char;
 
+{$IFDEF LocalScreen }
 var
   LocalScreen: ^TLocalScreen;
 {$ENDIF }
@@ -170,7 +170,7 @@ var pullw   : array[1..maxpull] of record
                                      l,r,o,u,wi : byte;
                                      ashad      : byte;
 {$IFDEF NCRT }
-				     win	: TWinDesc;
+                                     win        : TWinDesc;
 {$ELSE }
                                      savemem    : ^memarr;
                                      free       : boolean;
@@ -589,7 +589,7 @@ begin
       {$ifdef FPC }
         { Workaround, da anders der FPC 0.99.14 die Daten nicht nimmt }
         Attr:= 0;
-	FastMove(LocalScreen^[((x-1)+(y-1)*zpz)*2+1], Attr, 1);
+        FastMove(LocalScreen^[((x-1)+(y-1)*zpz)*2+1], Attr, 1);
       {$else }
         Attr := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]);
       {$endif }
@@ -755,7 +755,7 @@ begin
     Write(s);
   {$endif NCRT }
 
-  {$IFDEF xLocalScreen }  { LocalScreen Åbernimmt die énderungen }
+  {$IFDEF LocalScreen }  { LocalScreen Åbernimmt die énderungen }
     Count := ((Wherex-1)+(Wherey-1)*zpz)*2;
     if s <> '' then
       for i := 0 to Length(s)-1 do
@@ -763,7 +763,7 @@ begin
           LocalScreen^[Count+i*2] := s[i+1];
           LocalScreen^[Count+i*2+1] := Char(TextAttr);
         end;
-  {$ENDIF xLocalScreen }
+  {$ENDIF LocalScreen }
 {$ENDIF Win32 }
 end;
 
@@ -884,7 +884,7 @@ end;
 
 Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
 {$IFDEF NCRT }
-const 
+const
   i: word = 1;
 begin
   while (pullw[i].win.wHnd <> nil) do
@@ -1255,11 +1255,9 @@ end;
 procedure DoneVar;
 begin
   exitproc:=oldexit;
-{$IFNDEF NCRT }
-  {$IFDEF Ver32 }
+  {$IFDEF Localscreen }
     FreeMem(LocalScreen);
   {$ENDIF }
-{$ENDIF }
 end;
 
 
@@ -1286,17 +1284,21 @@ begin
   warrows:=false;
   warrcol:=7;
   selp:=seldummy;
-{$IFDEF Ver32 }
-  {$IFNDEF NCRT }
+
+  {$IFDEF LocalScreen }
     GetMem(LocalScreen, SizeOf(LocalScreen^));
-    {$IFDEF Win32 }
-      OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
-    {$ENDIF }
   {$ENDIF }
-{$ENDIF }
+
+  {$IFDEF Win32 }
+    { Consolenhandle holen }
+    OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
+  {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.27  2000/05/02 11:29:13  mk
+  - Anpassungen 32 Bit und Localscreen
+
   Revision 1.26  2000/05/01 18:58:55  hd
   Einige Anpassungen an xpcurses
 
