@@ -30,6 +30,9 @@ uses
   sysutils;
 
 const
+  A_USER		= STAT_IRUSR or STAT_IWUSR;	{ User lesen/schreiben }
+  A_USERX		= A_USER or STAT_IXUSR;		{ dito + ausfuehren }
+
   LOG_EMERG 		= 0;
   LOG_ALERT 		= 1;
   LOG_CRIT 		= 2;
@@ -38,6 +41,21 @@ const
   LOG_NOTICE 		= 5;
   LOG_INFO 		= 6;
   LOG_DEBUG 		= 7;
+
+type
+  TTestAccess 		= (		{ Zugriffsrechte (wird nach Bedarf erweitert) }
+                            taUserR,
+			    taUserW,
+			    taUserRW,
+			    taUserX,
+			    taUserRX,
+                            taUserRWX
+                          );
+
+{ Verzeichnis-/Datei-Routinen ------------------------------------------ }
+
+function MakeDir(p: string; a: longint): boolean;
+function TestAccess(p: string; ta: TTestAccess): boolean;
 
 { XPLog gibt eine Logmeldung im Syslog aus }
 procedure XPLog(Level: integer; format_s: string; args: array of const);
@@ -137,6 +155,35 @@ var
   LogString: array[0..1024] of char;
 
 
+{ Verzeichnis-Routinen ------------------------------------------------- }
+
+function MakeDir(p: string; a: longint): boolean;
+begin
+  mkdir(p);
+  if (ioresult<>0) then
+    MakeDir:= false
+  else
+    MakeDir:= chmod(p, a);
+end;
+
+function TestAccess(p: string; ta: TTestAccess): boolean;
+var
+  info: stat;
+begin
+  if not (fstat(p, info)) then
+    TestAccess:= false
+  else with info do begin
+    case ta of
+      taUserR:   TestAccess:= (uid and STAT_IRUSR) <> 0;
+      taUserW:	 TestAccess:= (uid and STAT_IWUSR) <> 0;
+      taUserRW:  TestAccess:= (uid and (STAT_IRUSR or STAT_IWUSR)) <> 0;
+      taUserRWX: TestAccess:= (uid and STAT_IRWXU) <> 0;
+      taUserX:   TestAccess:= (uid and STAT_IXUSR) <> 0;
+      taUserRX:  TestAccess:= (uid and (STAT_IRUSR or STAT_IXUSR)) <> 0;
+    end;
+  end;  
+end;
+
 { SysLog-Interface ----------------------------------------------------- }
 
 procedure closelog;cdecl;external;
@@ -144,7 +191,7 @@ procedure openlog(__ident:pchar; __option:longint; __facilit:longint);cdecl;exte
 function setlogmask(__mask:longint):longint;cdecl;external;
 procedure syslog(__pri:longint; __fmt:pchar; args:array of const);cdecl;external;
 
-{ Proceduren ----------------------------------------------------------- }
+{ Log-Proceduren ------------------------------------------------------- }
 
 procedure XPLog(Level: integer; format_s: string; args: array of const);
 var
@@ -238,6 +285,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/05/08 18:22:50  hd
+  - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
+
   Revision 1.8  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

@@ -20,6 +20,9 @@ uses
 {$IFDEF BP }
   ems,
 {$ENDIF }
+{$IFDEF Linux }
+  xplinux,
+{$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -48,7 +51,6 @@ const starting : boolean = true;
 var oldexit : pointer;
 
 
-
 procedure stop(txt:string);
 begin
   writeln;
@@ -62,11 +64,7 @@ end;
 procedure logo;
 var t : text;
 begin
-{$IFDEF NCRT }
-  AssignCrt(t);
-{$ELSE }
   assign(t,'');
-{$ENDIF }
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -240,11 +238,7 @@ begin
   SetHandles;
 {$ENDIF }
   ShellPath:=dospath(0);
-{$IFDEF UnixFS }
-  if Shellpath+'/'<>progpath then
-{$ELSE }
-  if Shellpath+'\'<>progpath then
-{$ENDIF }
+  if (Shellpath+DirSepa<>progpath) then
     GoDir(progpath);
   oldexit:=exitproc;
   exitproc:=@setpath;
@@ -272,12 +266,30 @@ begin
   {$ENDIF}
 {$ENDIF}
 
+{$IFDEF UnixFS }
+  OwnPath:=GetEnv('HOME');
+  if (OwnPath='') then begin
+    WriteLn('Need the environment variable ''HOME''!');
+    WriteLn;
+    Halt(2);
+  end;
+  if (right(OwnPath,1)<>DirSepa) then			{ $HOME/openxp/ }
+    OwnPath:= OwnPath+DirSepa+BaseDir
+  else
+    OwnPath:= OwnPath+BaseDir;
+  if not (IsPath(OwnPath)) then				{ Existent? }
+    if not (MakeDir(OwnPath, A_USERX)) then begin	{ -> Nein, erzeugen }
+      WriteLn('Can''t create ''',OwnPath,'''.');
+      Halt(2);
+    end;
+  if not (TestAccess(OwnPath, taUserRWX)) then begin	{ Ich will alle Rechte :-/ }
+    WriteLn('I need read, write and search rights on ''',OwnPath,'''.');
+    Halt(2);
+  end;
+  GoDir(OwnPath);
+{$ELSE }
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
-{$IFDEF UnixFS }
-  if right(ownpath,1)<>'/' then
-    ownpath:= ownpath+'/';
-{$ELSE }
   if right(ownpath,1)<>'\' then
     ownpath:=ownpath+'\';
   if cpos(':',ownpath)=0 then begin
@@ -291,6 +303,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/05/08 18:22:49  hd
+  - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
+
   Revision 1.14  2000/05/06 15:53:51  hd
   - AssignCRT statt Assign in logo
 

@@ -110,6 +110,7 @@ const  {$IFDEF DPMI}
 
 {$IFDEF UnixFS }
        DirSepa     = '/';            { Trennzeichen im Verzeichnisbaum }
+       BaseDir	   = 'openxp/';	     { Basisverzeichnis }
 {$ELSE }
        DirSepa     = '\';
 {$ENDIF }
@@ -170,6 +171,9 @@ const  {$IFDEF DPMI}
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
+{$IFDEF Linux }
+       Cfg3File	   = '.openxprc';	{ Zusaetzliche Cfg's unter Linux }
+{$ENDIF }
        ColCfgfile  = 'xpoint.col';
        NewDateFile = 'neues.dat';
        MsgTempFile = 'msg.tmp';
@@ -1134,6 +1138,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.38  2000/05/08 18:22:49  hd
+  - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
+
   Revision 1.37  2000/05/05 18:13:00  mk
   - einige Limits beseitigt
 
