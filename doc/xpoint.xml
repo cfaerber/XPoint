@@ -36,7 +36,7 @@
   </bookinfo>
 
   <preface id="vorwort1">
-    <title>Vorwort zu <application>OpenXP 3.20</application></title>
+    <title>Vorwort zu <application>OpenXP 3.21</application></title>
 
     <para>Mit viel Energie und Einsatz haben wir es geschafft, den
       komplizierten Quellcode von
@@ -812,23 +812,6 @@
 
               <entry>Bestellinformationen f&uuml;r
                 Zusatzprodukte</entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>doc\zpr.txt</filename></entry>
-
-              <entry>Dokumentation von <command>zpr</command>
-                (Puffereparatur)</entry>
-
-            </row>
-
-            <row>
-
-              <entry><filename>doc\xpme.txt</filename></entry>
-
-              <entry>Dokumentation des Men&uuml;editors</entry>
 
             </row>
 
@@ -3595,9 +3578,8 @@
           <guimenuitem>Registrierung</guimenuitem>, wenn Sie bereits
           registriert sind.</para>
 
-        <para>Den Men&uuml;editor finden Sie als
-          <filename>xpme.exe</filename> im
-          <application>CrossPoint</application>-Verzeichnis.</para>
+        <para>Den Men&uuml;editor <command>xpme</command> finden Sie
+          im <application>CrossPoint</application>-Verzeichnis.</para>
 
       </sect2>
 
@@ -19766,7 +19748,665 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
     <sect1 label="C.1" id="an0c0100">
       <title><command>zpr</command></title>
 
-      <para>s. <filename>zpr.txt</filename></para>
+      <para><command>zpr</command> ist ein Test- und Reparaturprogramm
+        f&uuml;r ZConnect-Nachrichten-Pufferdateien, das speziell
+        f&uuml;r Points entwickelt wurde. <command>zpr</command> ist
+        dazu geeignet, um</para>
+
+      <itemizedlist>
+
+        <listitem>
+
+          <para>defekte Pufferdateien formal so zu reparieren,
+            da&szlig; sie von Pointprogrammen verarbeitet werden
+            k&ouml;nnen.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Puffer auf bestimmte Fehler in Nachrichtenheadern wie
+            z.B. falsche Datumsangaben, falsche Message-IDs etc. hin
+            zu &uuml;berpr&uuml;fen.</para>
+
+        </listitem>
+
+      </itemizedlist>
+
+      <para><command>zpr</command> ist <emphasis>nicht</emphasis> dazu
+        geeignet, um</para>
+
+      <itemizedlist>
+
+        <listitem>
+
+          <para>defekte ZConnect-Puffer in einer Mailbox zu
+            reparieren, die weiterverarbeitet werden sollen.
+            <command>zpr</command> stellt zwar die formale Korrektheit
+            von Puffern wieder her, aber es stellt in keinster Weise
+            sicher, da&szlig; die erzeugten Puffer vollst&auml;ndig
+            ZConnect-konform sind und da&szlig; die erzeugten
+            Nachrichten den korrekten Inhalt besitzen. Beim
+            Besch&auml;digen von Puffern gehen Informationen verloren,
+            die durch einen Pufferreparierer nicht wiederhergestellt
+            werden k&ouml;nnen.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>die ZConnect-Konformit&auml;t einer Software durch
+            Testen der erzeugten Puffer zu
+            &uuml;berpr&uuml;fen.</para>
+
+        </listitem>
+
+      </itemizedlist>
+
+      <bridgehead>Anwendung</bridgehead>
+
+      <cmdsynopsis><command>zpr</command> <arg choice="opt">-f</arg>
+        <arg choice="opt">-h</arg> <arg choice="opt">-l</arg> <arg
+        choice="opt">-r</arg> <arg choice="opt">-w</arg> <arg
+        choice="opt">-z</arg> <arg
+        choice="opt">-d<replaceable>Datei</replaceable></arg> <arg
+        choice="req"><replaceable>Quelldatei</replaceable></arg> <arg
+        choice="opt"><replaceable>Zieldatei</replaceable></arg></cmdsynopsis>
+
+      <para>Die Dateinamen k&ouml;nnen Laufwerks- und Pfadangaben
+        enthalten. Wenn keine Zieldatei angegeben wird,
+        &uuml;berschreibt <command>zpr</command> beim Reparieren
+        (Parameter <parameter>-r</parameter>) die Quelldatei mit dem
+        korrigierten Puffer, legt aber eine Sicherungskopie mit der
+        Endung <filename>bak</filename> an. Die Schalter k&ouml;nnen
+        in beliebiger Reihenfolge an beliebiger Stelle stehen; mehrere
+        Schalter d&uuml;rfen zusammengefa&szlig;t werden. Z.B.:</para>
+
+      <informalexample>
+
+        <para><userinput>zpr -r
+          <replaceable>puffer</replaceable></userinput></para>
+
+        <para><userinput>zpr -h <replaceable>puffer</replaceable>
+          -z</userinput></para>
+
+        <para><userinput>zpr <replaceable>eingabe</replaceable> -hr
+          <replaceable>ausgabe</replaceable> -l</userinput></para>
+
+      </informalexample>
+
+      <para>Die Bedeutung der einzelnen Schalter ist:</para>
+
+      <table>
+        <title>zpr-Parameter</title>
+
+        <tgroup cols="2">
+
+          <tbody>
+
+            <row>
+
+              <entry><parameter>-d</parameter></entry>
+
+              <entry>Schreibt alle fehlerhaften Nachrichten in eine
+                eigene Datei unter dem umittelbar auf
+                <parameter>-d</parameter> folgenden Namen. Die
+                Nachrichten werden unver&auml;ndert kopiert.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-f</parameter></entry>
+
+              <entry>Protokolliert alle Fehler und Warnungen, die auch
+                am Bildschirm angezeigt werden, in der Datei
+                zpr.log.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-h</parameter></entry>
+
+              <entry>Strenge Headerzeilen-&Uuml;berpr&uuml;fung. Der
+                Inhalt von Adre&szlig;- und Datumszeilen, Message-IDs,
+                Dateinamen und Telefonnummern wird auf
+                ZConnect-Konformit&auml;t getestet.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-l</parameter></entry>
+
+              <entry>Defekte Nachrichten werden nicht repariert,
+                sondern entfernt.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-r</parameter></entry>
+
+              <entry>Repariert den Puffer (ansonsten wird er nur
+                getestet). Bei Angabe eines Zieldateinamens wird
+                Schalter <parameter>-r</parameter> automatisch
+                gesetzt.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-w</parameter></entry>
+
+              <entry>Warnungen unterdr&uuml;cken. Warnungen werden bei
+                Steuerzeichen in Headerzeilen und bei Fehlern in
+                Adre&szlig;-, Datums und Message-ID-Zeilen angezeigt,
+                falls der Schalter <parameter>-h</parameter> nicht
+                angegeben ist.</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>-z</parameter></entry>
+
+              <entry>Zeigt neben den Fehlermeldungen auch den Inhalt
+                der fehlerhaften Headerzeilen an.</entry>
+
+            </row>
+
+          </tbody>
+
+        </tgroup>
+
+      </table>
+
+      <para><command>zpr</command> gibt folgende Errorlevel
+        zur&uuml;ck:</para>
+
+      <table>
+        <title><command>zpr</command>-Errorlevel</title>
+
+        <tgroup cols="2">
+
+          <tbody>
+
+            <row>
+
+              <entry>0</entry>
+
+              <entry>&uuml;berpr&uuml;fter Puffer ist
+                fehlerfrei</entry>
+
+            </row>
+
+            <row>
+
+              <entry>1</entry>
+
+              <entry>Puffer ist fehlerhaft</entry>
+
+            </row>
+
+            <row>
+
+              <entry>2</entry>
+
+              <entry>Parameter-Fehler oder &Uuml;berpr&uuml;fung
+                abgebrochen</entry>
+
+            </row>
+
+          </tbody>
+
+        </tgroup>
+
+      </table>
+
+      <bridgehead>Beispiele</bridgehead>
+
+      <informalexample>
+
+        <para><userinput>zpr
+          <replaceable>Datei</replaceable></userinput></para>
+
+        <para>&uuml;berpr&uuml;ft eine Datei auf formale Korrektheit,
+          d.h. ob sie von einem Pointprogramm verarbeitet werden
+          kann.</para>
+
+        <para><userinput>zpr -h
+          <replaceable>Datei</replaceable></userinput></para>
+
+        <para>&uuml;berpr&uuml;ft eine Datei detailliert auf
+          Abweichungen vom ZConnect-Standard. Wenn keine Fehler /
+          Warnungen angezeigt werden, bedeuet das allerdings nicht,
+          da&szlig; die Datei 100%ig ZConnect-konform ist.</para>
+
+        <para><userinput>zpr <replaceable>Eingabedatei</replaceable>
+          <replaceable>Ausgabedatei</replaceable></userinput></para>
+
+        <para>repariert die Eingabedatei formal, d.h. sie kann
+          anschlie&szlig;end von einem Pointprogramm verarbeitet
+          werden.</para>
+
+        <para><userinput>zpr <replaceable>Datei</replaceable>
+          -hd<replaceable>Fehlerdatei</replaceable></userinput></para>
+
+        <para>kopiert alle als nicht ZConnect-konform erkannten
+          Nachrichten in die Fehlerdatei</para>
+
+      </informalexample>
+
+      <bridgehead>Headerzeilen</bridgehead>
+
+      <para>Bei Fehlermeldungen benennt <command>zpr</command> die
+        fehlerhaften Zeilen durch ihre ZConnect-K&uuml;rzel. Dies sind
+        im Einzelnen:</para>
+
+      <table>
+        <title>von <command>zpr</command> gepr&uuml;fte
+          Headerzeilen</title>
+
+        <tgroup cols="2">
+
+          <tbody>
+
+            <row>
+
+              <entry><computeroutput>ABD</computeroutput></entry>
+
+              <entry>Absender</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>ANTWORT-AN</computeroutput>
+
+                <footnote id="zpr-mehrfach">
+
+                  <para>diese Zeile darf mehrfach vorhanden
+                    sein</para>
+
+                </footnote>
+
+              </entry>
+
+              <entry>Antwortadresse f&uuml;r PMs</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>BET</computeroutput></entry>
+
+              <entry>Betreff</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>BEZ</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Message-ID(s) der Bezugsnachricht(en)</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>CRYPT</computeroutput></entry>
+
+              <entry>Codierverfahren</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>DDA</computeroutput></entry>
+
+              <entry>Dateidatum</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>DISKUSSION-IN</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Antwortbrett f&uuml;r &ouml;ffentliche
+                Nachrichten</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>EB</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Empfangsbest&auml;tigungsanforderung</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>EDA</computeroutput></entry>
+
+              <entry>Erstellungsdatum</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>EMP</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Empf&auml;nger</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>FILE</computeroutput></entry>
+
+
+              <entry>Dateiname</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>KOM</computeroutput></entry>
+
+              <entry>Kommentarl&auml;nge</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>KOP</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Kopienempf&auml;nger</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>LEN</computeroutput></entry>
+
+              <entry>Gr&ouml;&szlig;e des Nachrichteninhalts</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>MID</computeroutput></entry>
+
+              <entry>Message-ID</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>O-EDA</computeroutput></entry>
+
+              <entry>Original-Erstellungsdatum</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>OAB</computeroutput></entry>
+
+              <entry>Originalabsender</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>OEM</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Originalempf&auml;nger</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>PRIO</computeroutput></entry>
+
+              <entry>Priorit&auml;t</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>ROT</computeroutput></entry>
+
+              <entry>Routweg</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>TELEFON</computeroutput></entry>
+
+              <entry>Telefonnummer(n) des Absenders</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>TRACE</computeroutput></entry>
+
+              <entry>Testnachricht</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>VER</computeroutput>
+
+                <footnoteref linkend="zpr-mehrfach" />
+
+              </entry>
+
+              <entry>Vertreteradresse</entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>WAB</computeroutput></entry>
+
+              <entry>Weiterleit-Absender</entry>
+
+            </row>
+
+          </tbody>
+
+        </tgroup>
+
+      </table>
+
+      <para>Alle hier nicht aufgef&uuml;hrten Headerzeilen werden von
+        <command>zpr</command> ignoriert und bei Schalter
+        <parameter>-r</parameter> unver&auml;ndert in die reparierte
+        Datei &uuml;bernommen.</para>
+
+      <para><computeroutput>ABS</computeroutput>,
+        <computeroutput>BEZ</computeroutput>,
+        <computeroutput>EDA</computeroutput>,
+        <computeroutput>EMP</computeroutput>,
+        <computeroutput>LEN</computeroutput>,
+        <computeroutput>MID</computeroutput> und
+        <computeroutput>ROT</computeroutput> sind Pflichtzeilen. Am
+        Vorhandensein dieser sieben Zeilen erkennt
+        <command>zpr</command> einen g&uuml;ltigen Header.</para>
+
+      <bridgehead>Tests</bridgehead>
+
+      <para><command>zpr</command> f&uuml;hrt die folgenden Test und
+        Reparaturen durch:</para>
+
+      <itemizedlist>
+
+        <listitem>
+
+          <para>&Uuml;berpr&uuml;fung der Nachrichtenl&auml;ngen, d.h.
+            formale Korrektheit des Puffers. Ggf. Anpassen von
+            <computeroutput>LEN</computeroutput> an die
+            tats&auml;chliche Nachrichtenl&auml;nge.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test auf korrekte Zeilentrennungen - alle Headerzeilen
+            m&uuml;ssen mit <keycombo><keycap>CR</keycap>
+            <keycap>LF</keycap></keycombo> getrennt sein. Ggf.
+            Erg&auml;nzen von <keycap>LF</keycap> oder
+            <keycap>CR</keycap>.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test der Headernamen auf syntaktische Korrektheit.
+            Ggf. Entfernen fehlerhafter Headerzeilen.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test auf mehrfaches Vorkommen von Zeilen, die nur
+            einfach erlaubt sind. Ggf. Entfernen aller unerlaubten
+            Kopien.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test auf Vorkommen von Headern, die nur in PMs oder in
+            AMs (Brettnachrichten) erlaubt sind, im jeweils anderen
+            Nachrichtentyp. Ggf. Entfernen nicht erlaubter Header.
+            [Ich wei&szlig;, ZConnect beinhaltet diesbez&uuml;glich
+            keine exakten Vorschriften. Aber da&szlig;
+            <computeroutput>EB</computeroutput> in einer AM oder
+            <computeroutput>DISKUSSION-IN</computeroutput> in einer PM
+            ein Fehler ist, sollte offensichtlich sein]. Diese Tests
+            gelten nicht f&uuml;r kombinierte AM / PMs.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test auf Steuerzeichen innerhalb von Headerzeilen,
+            d.h. Zeichen mit <acronym>ASCII</acronym>-Wert kleiner 32
+            mit Ausnahme von <keycap>TAB</keycap>
+            (<keysym>#9</keysym>). Ggf. Entfernnen nicht erlaubter
+            Zeichen.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Datumszeilen
+            (<computeroutput>EDA</computeroutput>,
+            <computeroutput>DDA</computeroutput>,
+            <computeroutput>O-EDA</computeroutput>) auf korrektes
+            Format; ggf. Korrektur.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Adre&szlig;zeilen
+            (<computeroutput>ABS</computeroutput>,
+            <computeroutput>ANTWORT-AN</computeroutput>,
+            <computeroutput>OAB</computeroutput>,
+            <computeroutput>WAB</computeroutput>,
+            <computeroutput>VER</computeroutput>, evtl.
+            <computeroutput>EMP</computeroutput>,
+            <computeroutput>EB</computeroutput>,
+            <computeroutput>KOP</computeroutput> und
+            <computeroutput>OEM</computeroutput>) auf (halbwegs)
+            korrektes Format.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Brettnamen
+            (<computeroutput>EMP</computeroutput>,
+            <computeroutput>OEM</computeroutput>,
+            <computeroutput>DISKUSSION-IN</computeroutput>) auf
+            korrektes Format.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Message-IDs
+            (<computeroutput>MID</computeroutput>) auf korrektes
+            Format.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test der Kommentarl&auml;nge
+            (<computeroutput>KOM</computeroutput>) auf korrektes
+            Format und auf Plausibilit&auml;t.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Dateinamen
+            (<computeroutput>FILE</computeroutput>) auf korrektes
+            Format; ggf. Entfernen von Pfadnamen.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Priorit&auml;t
+            (<computeroutput>PRIO</computeroutput>) auf numerischen
+            Inhalt; ggf. Setzen auf 0.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para>Test von Telefonnummern
+            (<computeroutput>TELEFON</computeroutput>) auf korrektes
+            Format.</para>
+
+        </listitem>
+
+      </itemizedlist>
 
     </sect1>
 
@@ -20056,7 +20696,159 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
     <sect1 label="C.7" id="an0c0700">
       <title><command>xpme</command></title>
 
-      <para>s. <filename>xpme.txt</filename></para>
+      <para>Mit diesem Programm k&ouml;nnen einzelne Men&uuml;punkte
+        oder ganze Untermen&uuml;s innerhalb von
+        <application>CrossPoint</application> deaktiviert werden. Die
+        deaktivierten Men&uuml;s bzw. Men&uuml;punkte werden innerhalb
+        von <application>CrossPoint</application> nicht mehr
+        angezeigt. Dadurch ist es m&ouml;glich, den Funktionsumfang
+        des Programms einzuschr&auml;nken und so die Bedienung
+        f&uuml;r unerfahrenere Anwender zu vereinfachen, oder nicht
+        ben&ouml;tigte Men&uuml;punkte zu entfernen (z.B. den
+        Men&uuml;punkt <guimenuitem>Registrierung</guimenuitem>, falls
+        Sie bereits registriert sind, oder das Men&uuml;
+        <guimenu>Fido</guimenu>, falls Sie den Fido-Teil nicht
+        verwenden).</para>
+
+      <bridgehead>Bedienung</bridgehead>
+
+      <para>Starten Sie <command>xpme</command> in Ihrem
+        <application>CrossPoint</application>-Verzeichnis.
+        <command>xpme</command> liest die verf&uuml;gbaren
+        Men&uuml;punkte aus Ihrer
+        <application>CrossPoint</application>-Installation aus und
+        zeigt sie in gewohnter Form als Men&uuml; an. Sie k&ouml;nnen
+        sich in diesem Men&uuml; mit den &uuml;blichen Tasten bewegen
+        und die gew&auml;hlten Men&uuml;punkte oder Untermen&uuml;s
+        mit den Tasten <keycap>-</keycap> und <keycap>+</keycap>
+        deaktivieren bzw. aktivieren. Deaktivierte Men&uuml;punkte
+        bzw. Untermen&uuml;s werden vom Men&uuml;editor in einer
+        anderen Farbe dargestellt.</para>
+
+      <para>Wenn Sie mit dem Bearbeiten der Men&uuml;s fertig sind,
+        dr&uuml;cken Sie <keycap>Esc</keycap>, um den Men&uuml;editor
+        zu verlassen. Falls Sie die Abfrage nach dem Speichern der
+        &Auml;nderungen mit <guibutton>Ja</guibutton> best&auml;tigen,
+        aktualisiert <command>xpme</command> die Datei
+        <filename>xpmenu.dat</filename>, die Informationen &uuml;ber
+        alle gesperrten Men&uuml;punkte enth&auml;lt.</para>
+
+      <para>Beim n&auml;chsten Start von
+        <application>CrossPoint</application> wird
+        <filename>xpmenu.dat</filename> ausgelesen, und alle darin
+        angegebenen Men&uuml;punkte werden von
+        <application>XP</application> nicht mehr angezeigt. Falls Sie
+        <command>xpme</command> aus
+        <application>CrossPoint</application> heraus aufgerufen haben,
+        m&uuml;ssen Sie <application>XP</application> neu starten,
+        damit die &Auml;nderungen wirksam werden.</para>
+
+      <bridgehead>Spezielle Men&uuml;punkte</bridgehead>
+
+      <itemizedlist>
+
+        <listitem>
+
+          <para><guimenu>XPoint</guimenu> und
+            <menuchoice><guimenu>XPoint</guimenu>
+            <guimenuitem>Registrierung</guimenuitem></menuchoice>:
+            Dieses Men&uuml; und der Men&uuml;punkt k&ouml;nnen nur
+            deaktiviert werden, wenn
+            <application>CrossPoint</application> registriert
+            ist.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><menuchoice><guimenu>Config</guimenu>
+            <guimenuitem>Sichern</guimenuitem></menuchoice>: Dieser
+            Men&uuml;punkt wird von <application>XP</application>
+            automatisch deaktiviert, wenn bei
+            <menuchoice><guimenu>Config</guimenu>
+            <guisubmenu>Optionen</guisubmenu>
+            <guimenuitem>Bedienung</guimenuitem></menuchoice> die
+            Option <guibutton>Sichern</guibutton> auf automatisch
+            eingestellt ist.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><menuchoice><guimenu>Config</guimenu>
+            <guisubmenu>Optionen</guisubmenu>
+            <guimenuitem>Sprache</guimenuitem></menuchoice>: Dieser
+            Men&uuml;punkt wird von <application>XP</application>
+            automatisch aktiviert, falls mehrere Sprachmodule
+            installiert sind.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><menuchoice><guimenu>Config</guimenu>
+            <guisubmenu>Anzeige</guisubmenu>
+            <guimenuitem>Zeilen</guimenuitem></menuchoice>: Dieses
+            Men&uuml; ist von der verwendeten Grafikkarte
+            abh&auml;ngig. Die einzelnen Zeileneinstellungen
+            k&ouml;nnen mit dem Men&uuml;editor nicht ge&auml;ndert
+            werden.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><menuchoice><guimenu>Config</guimenu>
+            <guisubmenu>Anzeige</guisubmenu>
+            <guimenuitem>PD-Zmodem</guimenuitem></menuchoice>: Dieser
+            Men&uuml;punkt wird von <application>XP</application>
+            automatisch aktiviert, falls das Programm
+            <command>zconfig</command> im
+            <application>CrossPoint</application>-Verzeichnis
+            vorhanden ist.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><menuchoice><guimenu>XPoint</guimenu>
+            <guisubmenu>Statistik</guisubmenu>
+            <guimenuitem>Fragmente</guimenuitem></menuchoice>: Dies
+            ist eine interne Testfunktion, die beim Starten von
+            <application>XP</application> mit Parameter
+            <parameter>/d</parameter> (Debug) aktiviert wird.</para>
+
+        </listitem>
+
+        <listitem>
+
+          <para><guimenu>Zusatz</guimenu>: Selbstdefinierte
+            Men&uuml;punkte k&ouml;nnen mit <command>xpme</command>
+            nicht deaktiviert werden.</para>
+
+        </listitem>
+
+      </itemizedlist>
+
+      <bridgehead>Men&uuml;sperre aufheben</bridgehead>
+
+      <para>Starten Sie <application>XP</application> mit Parameter
+        <parameter>/menu</parameter>, um die gesperrten
+        Men&uuml;punkte vor&uuml;bergehend wieder sichtbar zu machen.
+        L&ouml;schen Sie die Datei <filename>xpmenu.dat</filename>, um
+        alle Men&uuml;sperren r&uuml;ckg&auml;ngig zu machen (Sie
+        k&ouml;nnen nat&uuml;rlich auch alle Men&uuml;punkte einzeln
+        mit <command>xpme</command> reaktivieren...).</para>
+
+      <bridgehead>Technisches</bridgehead>
+
+      <para>Die Datei <filename>xpmenu.dat</filename> enth&auml;lt
+        eine Liste von 2-Byte-Integer-Werten. Die erste Zahl mu&szlig;
+        immer = 1 sein. Die zweite Zahl enth&auml;lt die Zahl der
+        deaktivierten Men&uuml;punkte. Danach folgt eine aufsteigende
+        sortierte Liste mit einer Zahl je Men&uuml;punkt. Jedem
+        m&ouml;glichen Men&uuml;punkt ist eine eindeutige Nummer
+        zugeordnet. </para>
 
     </sect1>
 
@@ -21702,8 +22494,8 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
                 (<filename>mpuffer.0</filename> bis
                 <filename>9</filename>) bzw. <command>zpr</command>
                 (<filename>mpuffer.10</filename> bis
-                <filename>19</filename>), s.
-                <filename>zpr.txt</filename>.</para>
+                <filename>19</filename>), s. <link
+                linkend="an0c0100">Anhang C.1, zpr</link>.</para>
 
             </listitem>
 
