@@ -5,8 +5,8 @@
 # 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
 Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
-%define version 3.8.0
-%define release 1
+%define version %version%
+%define release %release%
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
 # -CX for Releases only
