@@ -200,10 +200,10 @@ begin
   begin                                         { Setting RTANotEigeneAdressen }
     s := RTANoOwnAddresses;                     { verwerten                    }
     repeat
-      if pos (' ', s) <> 0 then
+      if cpos (' ', s) <> 0 then
       begin
-        adresse := trim (copy (s, 1, pos (' ', s)));
-        delete (s, 1, pos (' ', s));
+        adresse := trim (copy (s, 1, cpos (' ', s)));
+        delete (s, 1, cpos (' ', s));
       end else
       begin
         adresse := s;
@@ -247,10 +247,10 @@ begin
   begin                                 { RTAEigeneAdressen verwerten     }
     s := RTAOwnAddresses;
     repeat
-      if pos (' ', s) <> 0 then
+      if cpos (' ', s) <> 0 then
       begin
-        adresse := trim (copy (s, 1, pos (' ', s)));
-        delete (s, 1, pos (' ', s));
+        adresse := trim (copy (s, 1, cpos (' ', s)));
+        delete (s, 1, cpos (' ', s));
       end else
       begin
         adresse := s;
@@ -473,7 +473,7 @@ var RTAEmpfList :RTAEmpfaengerP;
     vor := nil;
     while assigned (lauf) do
     begin
-      if pos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, pos (' ', lauf^.empf), 255);
+      if cpos (' ', lauf^.empf) <> 0 then delete (lauf^.empf, cpos (' ', lauf^.empf), 255);
       { ^^ Realname entfernen }
       uEmpf := UpperCase(lauf^.empf);
       if (uEmpf = UpperCase (hdp.absender)) or (cpos ('@', lauf^.empf) = 0)
@@ -837,7 +837,7 @@ var RTAEmpfList :RTAEmpfaengerP;
       markierteAdressen := nil;  { Liste der markierten Adressen aufbauen }
       s := List.FirstMarked;
       repeat
-        if pos ('@', s) > 0 then
+        if cpos ('@', s) > 0 then
           addToRTAList (markierteAdressen, UpperCase (getAdresse (trim (s))), true, false, false, 3);
         s := List.NextMarked;
       until s = #0;
@@ -941,15 +941,14 @@ again:
           auswahlMarkierte := true;
           disposeRTAEmpfList (RTAEmpfList);
           abs := getAdresse (trim (List.FirstMarked));
-          if pos ('@', abs) = 0 then abs := '';
-          s := List.NextMarked;
+          if cpos ('@', abs) = 0 then abs := '';
           repeat
-            if pos ('@', s) > 0 then  { Menzeilen filtern }
+            s := List.NextMarked;
+            if cpos ('@', s) > 0 then  { Menzeilen filtern }
               if abs = '' then
                 abs := getAdresse (trim (s))
               else
                 addToRTAList (RTAEmpfList, getAdresse (trim (s)), true, false, false, 3);
-            s := List.NextMarked;
           until s = #0;
           if assigned (RTAEmpfList) then RTA := true;
         end;
@@ -993,7 +992,7 @@ begin
   readheader (hdp, hds, false);
 
   addList (RTAEmpfList, empfList, 9);
-//  addList (RTAEmpfList, hdp.oemList, 8);
+  addList (RTAEmpfList, hdp.oem, 8);
   addList (RTAEmpfList, hdp.kopien, 3);
 
   if (RTAMode and 4 = 0) and (RTAMode and 8 = 0) and (RTAMode and 64 = 0) then
@@ -1026,6 +1025,11 @@ end;
 
 {
   $Log$
+  Revision 1.10  2001/08/11 22:20:32  mk
+  - fixed crash in main function
+  - pos() -> cPos()
+  - add THeader.OEM to Reply-List
+
   Revision 1.9  2001/08/11 10:24:46  mk
   - numerous RTA fixes
 
