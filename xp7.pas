@@ -275,7 +275,7 @@ label abbruch,ende0;
                        caller:='C-'+hex(uu_nummer,4)+'.OUT';
                        called:='uudummy';
                        upuffer:='UPUFFER';
-                       dpuffer:=iifs(TempPPPMode, '3PPUFFER', 'UPUFFER');
+                       dpuffer:=iifs(TempPPPMode, 'CLPUFFER', 'UPUFFER');
                      end;
       end;
       if logintyp<>ltUUCP then begin
@@ -1548,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.11  2001/04/16 11:23:45  mk
+  - Puffer umbenannt
+
   Revision 1.16.2.10  2001/04/15 21:35:53  mk
   - Netzanrufberich im Client-Modus immer
 
