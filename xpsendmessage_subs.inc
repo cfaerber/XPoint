@@ -820,6 +820,7 @@ begin
   BoxFile := dbReadStr(d,'dateiname');
   Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
+  // sData may be initialized by role feature, don't overwrite!
   Realname := iifs(sData.SenderRealname='',dbReadStr(d,'realname'),sData.SenderRealname);
   dbRead(d,'script',flags);
   if fidoname='' then
@@ -829,8 +830,7 @@ begin
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
   FQDN := iifs(sData.FQDN='',dbReadStr(d,'fqdn'),sData.FQDN);
-  if sData.replyto <> '' then
-    sdata.replyto := dbReadStr(d,'ReplyTo');
+  sData.replyto := iifs(sData.replyto='',dbReadStr(d,'ReplyTo'),sData.replyto);
   betrlen:=ntBetreffLen(netztyp);
   if (netztyp in netsRFC) and (umlaute=2) then
     umlaute:=0;
@@ -1120,6 +1120,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/05/05 15:10:59  ma
+  - fixed: ReplyTo not correctly set with role feature (untested)
+
   Revision 1.19  2002/04/30 08:53:37  mk
   - fixed bug: f'ups where not saved in EditSdata
 
