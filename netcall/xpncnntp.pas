@@ -128,6 +128,7 @@ begin
         (Sonst gibt es einen RTE) }
       assign(f,FileUppercase(bfile+'.bl'));
       rewrite(f);
+      List.Sort;
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
       close(f);
@@ -400,6 +401,9 @@ end.
 
 {
         $Log$
+        Revision 1.10  2001/04/07 13:28:09  ml
+        - sorted newsgrouplist
+
         Revision 1.9  2001/04/07 09:54:39  ma
         - fixed BL file name
         - fixed RC file parsing
