@@ -18,6 +18,11 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
+Function CanEdit:Boolean;
+begin
+  result:=ntMIME(netztyp) or
+     (parts.count=0) or TSendAttach_Part(parts[0]).IsMessage;
+end;
 
 function MIMESaveCharsetAsCP437(const s:string):Boolean;
 begin
@@ -299,6 +304,9 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2001/09/19 18:02:36  cl
+// - various small fixes
+//
 // Revision 1.5  2001/09/16 23:01:20  cl
 // - BUGFIX: Fido tearline now added
 //

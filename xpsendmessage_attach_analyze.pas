@@ -137,7 +137,8 @@ begin
   { change all parameters to the values determined through our         }
   { analyzation - this is only called once when the file is attached   }
   begin
-    pa.ContentType.AsString := iifs(Length(GuessedType)>0,GuessedType,'application/octet-stream');
+    pa.ContentType.AsString := iifs(Length(GuessedType)>0,GuessedType,
+      iifs(pa.Analyzed.IsBinary,'application/octet-stream','text/plain'));
 
     if pa.FileEncoding in [MimeEncodingQuotedPrintable,MimeEncodingBase64] then
       pa.ContentEncoding := pa.FileEncoding // don't change it

@@ -1304,7 +1304,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         repeat
           t:='*';
           n:=readbutton(x+3,y+11,1,getres2(611,28)+
-               iifs(binary or (sendflags and sendWAB<>0),'',getres2(611,29)),
+               iifs((not CanEdit) or (sendflags and sendWAB<>0),'',getres2(611,29)),
                         abs(n),true,t);
            { ' ^Ja ,^Nein,^Intern,^Spezial,ù2^Betreff,B^ox,^Code' ',^Text' }
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
@@ -2084,8 +2084,9 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if not intern then begin
       s1.Seek(0,soFromBeginning);
 
-      if (hdp.typ<>'M') and ((not docode in [0,8]) or (flPGPSig and
-        (((not PGP_MIME) and (cancode<>8)) or (cancode=9)) )) then
+      if (hdp.typ<>'M') and 
+        ( (docode in [1..5,9]) or 
+          (flPGPSig and ((cancode=9) or ((cancode<>8) and not PGP_MIME))) ) then
       begin
         case docode of
           1: EncryptMessage(false,s1); // QPC
@@ -2313,6 +2314,9 @@ finalization
 
 {
   $Log$
+  Revision 1.17  2001/09/19 18:02:36  cl
+  - various small fixes
+
   Revision 1.16  2001/09/16 23:01:20  cl
   - BUGFIX: Fido tearline now added
 

@@ -233,14 +233,6 @@ var p,p0      : integer;        (* current line                 *)
       iifs(pa.IsFile,'F',' ') {$IFDEF Debug} +
       iifs(pa.IsTemp,'-',' ') {$ENDIF};
 
-    case pa.ContentEncoding of
-      MIMEEncoding7bit:            s1:=s1+' ';
-      MIMEEncoding8bit:            s1:=s1+'8';
-      MIMEEncodingQuotedPrintable: s1:=s1+'Q';
-      MIMEEncodingBase64:          s1:=s1+'B';
-      else s1:=s1+'?';
-    end;
-
     s3:=pa.ContentType.Verb;
     s3:=Trim(LeftStr(s3,PosX(';',s3)));
 
@@ -255,28 +247,39 @@ var p,p0      : integer;        (* current line                 *)
       if UpperCase(LeftStr(s3,6 ))='VIDEO/'       then s3:='vid./'+Mid(s3, 7);
 
       if Length(s3)>20 then
-        s3:=LeftStr(s3,20-Length(s3)-3)+'...';
+        s3:=LeftStr(s3,20-3)+'...';
     end;
 
+    if( (docode=9) or (PGPSig and
+        ((cancode=9) or ((cancode<>8) and not PGP_MIME)) ))
+      and (pa.FileEOL=MimeEOLNone) then
+        s3:=s3+'  PGP' 
+      else 
+    case pa.ContentEncoding of
+      MIMEEncoding7bit:            s3:=s3+' 7bit';
+      MIMEEncoding8bit:            s3:=s3+iifs(docode=8,'   QP',' 8bit');
+      MIMEEncodingQuotedPrintable: s3:=s3+'   QP';
+      else                         s3:=s3+'  B64';
+    end;
 
     if 0<Length(pa.ContentDescription) then
-      s2:=LeftStr(pa.ContentDescription,52-6)
+      s2:=pa.ContentDescription
     else if not pa.IsTemp then
-      s2:=LeftStr(fitpath(pa.FileName ,52-6),52-6)
+      s2:=fitpath(pa.FileName ,52-6)
     else if 0<Length(pa.FileNameO) then
-      s2:=LeftStr(fitpath(pa.FileNameO,52-6),52-6)
+      s2:=fitpath(pa.FileNameO,52-6)
     else
-    {$IFDEF Debug}
-      s2:=LeftStr(fitpath(pa.FileName ,52-6),52-6);
-    {$ELSE}
       s2:=GetRes2(624,10); { '(intern)' }
-    {$ENDIF}
+
+    if Length(s2)>(width-2-Length(s3)-1-2) then
+      s2:=LeftStr(s2,width-2-Length(s3)-1-2)
+    else if Length(s2)<(width-2-Length(s3)-1-2) then
+      s2:=s2+sp(width-2-Length(s3)-1-2-Length(s2));
 
     if (i=p) then attrtxt(col.colsel2bar)
     else attrtxt(col.colsel2box);
 
-    s1:=s1+' '+s2+sp(Width-2-Length(s1)-Length(s2)-Length(s3))+' '+s3;
-    mwrt(x+1,y+1+i-q,s1);
+    mwrt(x+1,y+1+i-q,s1+' '+s2+' '+s3);
   end;
 
   procedure Display;
@@ -428,6 +431,8 @@ begin { SendAttach }
       okb: break; { repeat }
       else if (not parts.count<=0) and (rb<0) then
       begin
+        if t=mauswheelup then dec(q,3) else
+        if t=mauswheeldn then inc(q,3) else
         if t=keyup   then dec(p) else
         if t=keydown then inc(p) else
         if t=keyhome then p:=0 else
@@ -737,7 +742,7 @@ begin
 
   case pa.ContentEncoding of
     MimeEncoding7Bit:            ContentEncoding:=GetRes2(624,30);
-    MimeEncoding8Bit:            ContentEncoding:=GetRes2(624,31);
+    MimeEncoding8Bit:            ContentEncoding:=GetRes2(624,iif(pgpsign or pgpencr,32,31));
     MimeEncodingQuotedPrintable: ContentEncoding:=GetRes2(624,32);
     MimeEncodingBase64:          ContentEncoding:=GetRes2(624,33);
   else                           ContentEncoding:=''; end;
@@ -866,8 +871,13 @@ var x,y  : Integer;
     FileName:           string;
     DateCreate,DateModify,DateRead:string;
 
-  function dstr(const dt:TDateTime):String; begin if IsNaN(dt) then result:=''
-  else DateTimeToString(Result,'dd"."mm"."yyyy"'#255'"hh":"nn":"ss',dt); end;
+  function dstr(const dt:TDateTime):String; 
+  begin 
+    if IsNaN(dt) or (dt<=0) then 
+      result:=''
+    else 
+      DateTimeToString(Result,'dd"."mm"."yyyy"'#255'"hh":"nn":"ss',dt); 
+  end;
 
   function strd(const dt:string):TDateTime;
   begin
