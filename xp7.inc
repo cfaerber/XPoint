@@ -30,6 +30,76 @@ var uucp : boolean;
         end;
   end;
 
+  function ChkPPPClientPath:boolean;
+  var s    : string;
+      ok   : boolean;
+      fn   : pathstr;
+      res  : Integer;
+      path : string;
+      x,y  : byte;
+  begin
+    ChkPPPClientPath:=true;
+    with boxpar^ do
+    begin
+      s:=PPPClientPath;
+      fn:=trim(s);
+      if (fn<>'') then
+      begin
+        if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
+        if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+        ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+          and (Length(fn) > 0) and (fn[length(fn)] <> '.');
+        if (not ok) or (not IsPath(s)) or (right(s,1)<>DirSepa) then
+          ChkPPPClientPath := false;
+        end;
+      end;
+    end;
+
+  function ChkPPPClient:boolean;
+  var s    : string;
+      s1   : string;
+      ok   : boolean;
+      fn   : pathstr;
+      dir  : dirstr;
+      name : namestr;
+      ext  : extstr;
+
+  begin
+    ChkPPPClient:=true;
+    with boxpar^ do
+    begin
+      s:=PPPClient;
+      s1:=PPPClientPath;
+      fn:=trim(s);
+      if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+      if Pos('start /wai ', lstr(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
+      if Pos('start /wa ', lstr(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
+      if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+      if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+      if (fn<>'') then
+      begin
+        fsplit(fn,dir,name,ext);
+        ok := dir = '';
+        if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+        { if ustr(s1) =  ustr(Dir) then Ok := true; }
+        if Dir = '$CLPATH+' then ok := true;
+        if not ok then
+          ChkPPPClient:=false
+        else
+        begin
+          exchange(fn, '$CLPATH+', s1);
+          if ext<>'' then
+            ok:=fsearch(fn,ownpath)<>''
+          else
+            ok:=(fsearch(fn+'.exe',ownpath)<>'') or
+              (fsearch(fn+'.com',ownpath)<>'') or
+              (fsearch(fn+'.bat',ownpath)<>'');
+          if not ok then ChkPPPClient:=false;
+          end;
+        end;
+      end;
+    end;
+
 begin
   uucp:=(logintyp=ltUUCP);
   with BoxPar^ do
@@ -41,8 +111,14 @@ begin
     begin
       if TempPPPMode then
       begin
-        if (PPPClient = '') or (PPPCLientPath = '') then
-          BoxParOK := getres2(706,7)    { 'unvollst„ndige Client-Modus Angaben' }
+        if (PPPClientPath = '') then
+          BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
+        else if not ChkPPPClientPath then
+          BoxParOK := getres2(706,8)    { 'Client-Verzeichnis nicht OK' }
+        else if (PPPClient = '') then
+          BoxParOK := getres2(706,9)    { 'Client-Aufruf fehlt        ' }
+        else if not ChkPPPClient then
+          BoxParOK := getres2(706,10)   { 'Client-Aufruf nicht OK     ' }
         else
           BoxParOK := '';
       end else
@@ -1447,6 +1523,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.9  2001/06/30 01:00:33  my
+  - RFC/Client: check for correct entries "Client directory" and "Client call"
+    upon netcall
+
   Revision 1.24.2.8  2001/04/10 11:36:38  mk
   - weitere Anpassungen Client-Modus
 

@@ -1536,7 +1536,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    incomplete packer settings
 5    no uploader setting
 6    unpacker not found
-7    incomplete client mode data
+7    Entry "Client directory" is missing
+8    Entry "Client directory" not OK
+9    Entry "Client call" is missing
+10   Entry "Client call" not OK
 -
 707 <broken in>
 708 Break

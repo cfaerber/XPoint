@@ -1576,7 +1576,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    unvollst„ndige Packer-Angaben
 5    fehlende UpLoader-Angabe
 6    Entpacker fehlt
-7    unvollst„ndige Client-Angaben
+7    Eintrag "Client-Verzeichnis" fehlt
+8    Eintrag "Client-Verzeichnis" nicht OK
+9    Eintrag "Client-Aufruf" fehlt
+10   Eintrag "Client-Aufruf" nicht OK
 -
 707  <abgebrochen>
 708  Abbruch
