@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.8.14';       { Versionnr. - steht nur an dieser Stelle }
+  mainver     = '3.8.15';       { Versionnr. - steht nur an dieser Stelle }
 
 {$I version.inc }
 
@@ -196,6 +196,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.38  2004/10/02 13:20:15  mk
+  - Beta 3.8.15-90
+
   Revision 1.63.2.37  2004/01/05 16:06:40  mk
   - added little bit Delphi 8 for .NET support
 
