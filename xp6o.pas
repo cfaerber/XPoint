@@ -961,6 +961,10 @@ again:
                  if typ in [1,7] then begin
                    sData^.summary:=hdp.summary;
                    sData^.keywords:=hdp.keywords;
+                   if hdp.oab<>'' then begin
+                     sData^.oab:=hdp.oab; sData^.oar:=hdp.oar; end
+                   else begin
+                     sData^.oab:=hdp.absender; sData^.oar:=hdp.realname; end;
                    if hdp.oem<>'' then sData^.oem:=hdp.oem
                    else sData^.oem:=hdp.empfaenger;
                    sData^.onetztyp:=hdp.netztyp;
@@ -971,11 +975,7 @@ again:
                  if ((typ in [1..3,7]) and (not pm)) then
                    sData^.followup.add (am_replyto);
                  if typ in [1,4,7] then sdata^.quotestr:=hdp.quotestring;
-                 if typ=7 then begin
-                   sData^.oab:=hdp.absender;
-                   sData^.oar:=hdp.realname;
-                   sData^.orghdp:=hdp;
-                   end;
+                 if typ=7 then sData^.orghdp:=hdp;
                  if typ in [1,2,7] then
                    xp6.FileAttach:=(hdp.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -1295,6 +1295,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2001/07/15 08:15:43  mk
+  - Reversed wrong 'fix' (2000/09/18) of fe. This fix was meant to meet
+    ZC specs but did everything else than that. N/W/K is "active"
+    forwarding according to ZC 3.1, thus an OAB header *has* to be
+    created, everything else leads to a loss of information.
+
   Revision 1.60  2001/06/04 17:31:37  ma
   - implemented role feature
 
