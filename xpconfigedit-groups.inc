@@ -19,7 +19,7 @@
 }
 
   procedure ReadGruppe(edit:boolean; var name:string; var hzeit:integer16;
-                       var limit:longint; var umlaut:byte; var hd,qt,sig:string;
+                       var limit:longint; var umlaut:byte; var hd,qt,sig,qt2,pmhd,pmqt,pmsig, qstring:string;
                        var flags:byte; var brk:boolean);
   const fname = '1234567890$_-';
 
@@ -33,35 +33,52 @@
       ss    : string;
       retyp : string;  { Re^n / Re / Default / nein }
   begin
-    dialog(ival(getres2(901,0)),9,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
+    dialog(ival(getres2(901,0)),14,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
 
     if not odd(flags) then begin
-      maddstring(3,2,getres2(901,3),name,30,30,''); mhnr(201);   { 'Name    ' }
+      maddstring(2,2,getres2(901,3),name,30,30,''); mhnr(201);   { 'Name    ' }
       msetvfunc(notempty);
       end
     else begin
-      maddtext(3,2,getres2(901,4),col.coldialog);      { 'Name' }
+      maddtext(2,2,getres2(901,4),col.coldialog);      { 'Name' }
       maddtext(12,2,name,col.coldiahigh);
       end;
-    maddint   (3,4,getres2(901,5),limit,6,8,0,99999999); mhnr(202);   { 'Limit   ' }
+    maddint   (2,4,getres2(901,5),limit,6,8,0,99999999); mhnr(202);   { 'Limit   ' }
     maddtext  (length(getres2(901,5))+14,4,getres(13),col.coldialog);
-    maddint   (3,6,getres2(901,6),hzeit,4,4,0,9999);   { 'Halten: ' }
+    maddint   (2,6,getres2(901,6),hzeit,4,4,0,9999);   { 'Halten: ' }
     maddtext  (length(getres2(901,6))+11,6,getres2(901,7),col.coldialog);   { 'Tage' }
     ums:=umtyp[umlaut];
-    maddstring(3,7,getres2(901,8),ums,5,5,'');         { 'Sonderz.' }
+    maddstring(2,7,getres2(901,8),ums,5,5,'');         { 'Sonderz.' }
     for i:=0 to 1 do
       mappsel(true,umtyp[i]);
     retyp:=retypes((flags and 6) shr 1);
-    maddstring(3,8,getres2(901,20),retyp,7,7,'');      { 'Replies ' }
+    maddstring(2,8,getres2(901,20),retyp,7,7,'');      { 'Replies ' }
     for i:=0 to 3 do
       mappsel(true,retypes(i));
+
+    maddstring(23,8,GetRes2(901,30),qstring,4,20,range(' ',#126)); {'Quote-Zeichen'}
+    mset3proc(xp2c.testqc);
+    mnotrim; mhnr(210);
+
     ss:=range('A','Z')+range('a','z')+fname;
-    maddstring(26,6,getres2(901,9),hd,8,8,ss); mhnr(206);   { 'Kopf    ' }
+    maddtext(3,10,GetRes2(901,13),0);  { 'Brettantworten' }    
+    maddstring(2,11,getres2(901,9),hd,8,8,ss); mhnr(206);   { 'Kopf    ' }
     mappcustomsel(SelSchab,false);
-    maddstring(26,7,getres2(901,10),qt,8,8,ss); mhnr(206);  { 'Quote   ' }
+    maddstring(2,12,getres2(901,10),qt,8,8,ss); mhnr(206);  { 'Quote   ' }
     mappcustomsel(SelSchab,false);
-    maddstring(26,8,getres2(901,11),sig,8,8,ss); mhnr(206); { 'Signatur' }
+    maddstring(2,13,getres2(901,12),qt2,8,8,ss); mhnr(206); { 'QuoteTo ' }
     mappcustomsel(SelSchab,false);
+    maddstring(2,14,getres2(901,11),sig,8,8,ss); mhnr(206); { 'Signatur' }
+    mappcustomsel(SelSchab,false);
+    
+    maddtext(24,10,GetRes2(901,55),0);  { 'PM-Antworten' }
+    maddstring(23,11,getres2(901,50),pmhd,8,8,ss); mhnr(206);  { 'Kopf    ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(23,12,getres2(901,51),pmqt,8,8,ss); mhnr(206);  { 'Quote   ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(23,14,getres2(901,52),pmsig,8,8,ss); mhnr(206); { 'Signatur' }
+    mappcustomsel(SelSchab,false);
+
     readmask(brk);
 
     if not brk then begin
@@ -80,7 +97,11 @@
   procedure NeueGruppe;
   var name   : string;
       hd,sig : string;
-      qt     : string;
+      qt,qt2 : string;
+      pmhd   : string;                                           
+      pmqt   : string;
+      pmsig  : string;
+      qstring: string;
       hzeit  : integer16;
       limit  : longint;
       umlaut : byte;
@@ -88,10 +109,13 @@
       brk    : boolean;
   begin
     name:=''; hzeit:=stdhaltezeit; limit:=MaxNetMsgs;
-    hd:='header'; sig:='signatur'; qt:='qbrett';
+    hd:='header'; sig:='signatur'; qt:='qbrett'; qt2:='quoteto'; 
+    hd:='privhead'; pmsig:='privsig'; pmqt:='qpriv';
+    qstring := '';
+    
     umlaut:=0;   { IBM-Umlaute, keine Konvertierung }
     flags:=0;    { keine Standard-Gruppe; Re^n: Default }
-    readgruppe(false,name,hzeit,limit,umlaut,hd,qt,sig,flags,brk);
+    readgruppe(false,name,hzeit,limit,umlaut,hd,qt,sig,qt2,pmhd,pmqt,pmsig,qstring,flags,brk);
     if not brk then begin
       dbSeek(d,giName,UpperCase(name));
       if dbFound then
@@ -105,6 +129,14 @@
         dbWriteStr(d,'kopf',hd);
         dbWriteStr(d,'signatur',sig);
         dbWriteStr(d,'quotemsk',qt);
+
+        dbWriteStr(d,'quotetomsk',qt2);
+        dbWriteStr(d,'pmkopf',pmhd);
+        dbWriteStr(d,'pmsignatur',pmsig);
+        dbWriteStr(d,'pmquotemsk',pmqt);
+
+        dbWriteStr(d,'quotechar',qstring);
+        
         dbWrite(d,'flags',flags);
         dbFlushClose(d);
         dbGo(d,drec[1]);
@@ -117,7 +149,11 @@
   procedure EditGruppeAllgemein;
   var name   : string;
       hd,sig : string;
-      qt     : string;
+      qt,qt2 : string;
+      pmhd   : string;
+      pmqt   : string;
+      pmsig  : string;
+      qstring: string;
       hzeit  : integer16;
       limit  : longint;
       flags  : byte;
@@ -133,7 +169,12 @@
     hd:= dbReadStr(d,'kopf');
     sig:= dbReadStr(d,'signatur');
     qt:= dbReadStr(d,'quotemsk');
-    readgruppe(true,name,hzeit,limit,umlaut,hd,qt,sig,flags,brk);
+    qt2 := dbReadStr(d,'quotetomsk');
+    pmhd := dbReadStr(d,'pmkopf');
+    pmsig := dbReadStr(d,'pmsignatur');
+    pmqt := dbReadStr(d,'pmquotemsk');
+    qstring := dbReadStr(d,'quotechar');    
+    readgruppe(true,name,hzeit,limit,umlaut,hd,qt,sig,qt2,pmhd,pmqt,pmsig,qstring,flags,brk);
     if not brk then begin
       dbWriteStr(d,'Name',name);
       dbWrite(d,'haltezeit',hzeit);
@@ -143,6 +184,14 @@
       dbWriteStr(d,'signatur',sig);
       dbWriteStr(d,'quotemsk',qt);
       dbWrite(d,'flags',flags);
+
+      dbWriteStr(d,'quotetomsk',qt2);
+      dbWriteStr(d,'pmkopf',pmhd);
+      dbWriteStr(d,'pmsignatur',pmsig);
+      dbWriteStr(d,'pmquotemsk',pmqt);
+
+      dbWriteStr(d,'quotechar',qstring);
+
       dbFlushClose(d);
       dbGo(d,drec[1]);
       aufbau:=true;
@@ -268,6 +317,9 @@
 
 {
   $Log$
+  Revision 1.4  2002/11/14 20:09:06  cl
+  - Added UI to change new GRUPPEN DB fields
+
   Revision 1.3  2002/07/25 20:43:56  ma
   - updated copyright notices
 
