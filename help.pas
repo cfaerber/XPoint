@@ -297,22 +297,15 @@ label laden;
    end;
 
    procedure checkASCIIs (var s :string);
-   var s1 :string[3];
-       okay :boolean;
-       code, err :integer;
+   var p :integer;
    begin
-     okay := true;
-     while okay and (pos ('\a', s) <> 0) do
-     begin
-       s1 := copy (s, pos ('\a', s) + 2, 3);
-       val (s1, code, err);
-       okay := (err = 0) and (code > 0) and (code <= 255);
-       if okay then
-       begin
-         insert (Chr (code), s, pos ('\a', s));
-         delete (s, pos ('\a', s), 5);
+     if (pos ('{', s) = 0) or (pos ('}', s) = 0) then exit;
+     for p:=1 to length(s)-4 do
+       if (s[p]='{') and (s[p+4]='}') and (ival(copy(s,p+1,3)) in [0..255])
+       then begin
+         s[p]:=chr(ival(copy(s,p+1,3)));
+         delete(s,p+1,4);
        end;
-     end;
    end;
 
 begin
@@ -400,7 +393,6 @@ laden:
     end;
   for i:=iif(NoHeader,1,2) to lines do begin
     s:=z^[i]^;
-    checkASCIIs (s);   { '\axxx' in den ASCII-Wert umsetzen }
     randseed:=100;
     wd:=wdt;
     p:=pos('<<',s);
@@ -429,6 +421,7 @@ laden:
       delete(s,ps,1);
       insqvw(i,ps,-1);
       end;
+    checkASCIIs (s); (* '{xxx}' in den ASCII-Wert umsetzen *)
     z^[i]^:=s;
     end;
   freemem(buf,size);
@@ -805,6 +798,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.6  2001/06/21 21:26:50  my
+  SV:- changed designator for ASCII values "nnn" from "\annn" to "{nnn}"
+       (also due to compatibility with jgXP)
+
   Revision 1.13.2.5  2001/04/28 15:47:29  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
