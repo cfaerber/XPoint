@@ -151,7 +151,8 @@ begin  { __ Suchmarke }
                 else
                   if showungelesen and (flags and 2<>0) 
                     then c:=markc+iifs(not smdl(dat,readdate),#$af' ',#$1a' ')
-                    else c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
+                    else c:=markc+iifs(not smdl(dat,readdate),
+                      iifs(showungelesen and (dat=ixDat('2712310000')),'* ',#16' '),'  ');
                 end;
                 if length(s)>43 then
                   if length(s)>70 then
@@ -593,6 +594,11 @@ end;
 
 {
   $Log$
+  Revision 1.27.2.11  2002/03/31 15:50:16  my
+  JG:- In den Datum-Lesemodi (Neues, Heute, Reorg., Datum/Zeit) werden
+       Bretter, die Wiedervorlage-Nachrichten, aber weder ungelesene noch
+       auf den Lesemodus zutreffende enthalten, mit einem "*" markiert.
+
   Revision 1.27.2.10  2002/03/08 23:02:38  my
   JG:- Fix Nachrichten-Lesefenster: Spalte Realname wird bei <Ctrl-N> bzw.
        aktivierter Option "C/A/N/Realname_anzeigen,_falls_vorhanden" nicht
