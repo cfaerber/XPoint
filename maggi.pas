@@ -39,7 +39,7 @@ uses dos, xms, typeform,fileio,montage,xpdatum,xp_iti, xpglobal, lfn;
 const nt_ZConnect=2;
       OrgLen    = 80;
       hderrlen  = 40;
-      BetreffLen= 70;
+      BetreffLen= 250;
       readempflist = false;
       readkoplist  = false;
       readOemList  = false;
@@ -1834,6 +1834,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.8  2001/06/09 07:44:08  mk
+  - Betreffzeile verlaengert
+
   Revision 1.15.2.7  2001/04/28 15:47:29  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
