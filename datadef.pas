@@ -44,6 +44,9 @@ const
         dbFeldNameLen = 10;
 
 type
+  {$IFDEF FPC}
+  {$PACKENUM 1}
+  {$ENDIF}
   eFieldType = (
     dbNone, //0, dummy
     dbTypeString, //= 1;    { String mit Laengenbyte, Freiraum 0-gefuellt }
@@ -120,6 +123,10 @@ implementation
 
 {
   $Log$
+  Revision 1.14  2003/01/22 13:45:55  cl
+  - fixed database problems with FPC,
+    see http://sourceforge.net/mailarchive/message.php?msg_id=3592257
+
   Revision 1.13  2002/12/22 10:24:33  dodi
   - redesigned database initialization
 
