@@ -74,8 +74,11 @@ type
     function FGetTimeout: Integer;
     procedure FSetTimeout(Timeout: Integer);
 
-    { Ermittelt den Result-Code }
+    { Ermittelt den Result-Code z.B. 200 OK }
     function ParseResult(s: string): integer;
+    { Ermittelt den Result-Code z.B. +OK oder -ERR }
+    function ParseError(s: String): boolean;
+
 
     { Liest so viel Daten in den Buffer, wie Platz ist und Daten da sind }
     procedure ReadBuffer;
@@ -268,6 +271,11 @@ begin
     FErrorMsg:= s;
 end;
 
+function TSocketNetcall.ParseError(s: string): Boolean;
+begin
+  Result := Copy(s, 1, 3) <> '+OK';
+end;
+
 procedure TSocketNetcall.ReadBuffer;
 var
   Size: DWord;
@@ -360,6 +368,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/08/03 06:56:35  mk
+  - Updates fuer Errorhandling
+
   Revision 1.11  2000/08/02 17:01:19  mk
   - Exceptionhandling und Timeout hinzugefuegt
 

@@ -44,14 +44,16 @@ type
   protected
 
     FServer             : string;               { Server-Software }
+    FUser, FPassword    : string;               { Identifikation }
 
   public
-    User, Password      : string;               { Identifikation }
 
     constructor Create;
     constructor CreateWithHost(s: string);
 
     property Server: string read FServer;
+    property User: string read FUser write FUser;
+    property Password: string read FPassword write FPassword;
 
     { Verbindung herstellen }
     function Connect: boolean; override;
@@ -93,8 +95,8 @@ resourcestring
 constructor TNNTP.Create;
 begin
   inherited Create;
-  User:='';
-  Password:='';
+  FUser:='';
+  FPassword:='';
   FServer:= '';
 end;
 
@@ -102,8 +104,8 @@ constructor TNNTP.CreateWithHost(s: string);
 begin
   inherited CreateWithHost(s);
   FPort:= DefaultNNTPPort;
-  User:='';
-  Password:='';
+  FUser:='';
+  FPassword:='';
   FServer:= '';
 end;
 
@@ -111,16 +113,13 @@ function TNNTP.Login: boolean;
 var
   s: string;
 begin
-  if Connected then begin
-    if (User='') or (Password='') then
+  if Connected then
+  begin
+    if (FUser='') or (FPassword='') then
       FErrorCode := 480
     else begin
-      SWritelnFmt('AUTHINFO USER %s PASS %s', [User, Password]);
-      try
-        SReadLn(s);
-      except
-        // Timeout und SocketError-Handling hinzufÅgen
-      end;
+      SWritelnFmt('AUTHINFO USER %s PASS %s', [FUser, FPassword]);
+      SReadLn(s);
       FErrorCode := ParseResult(s);
     end;
   end else
@@ -134,39 +133,35 @@ var
   code: integer;
 begin
   Result:= false;
-  try
-    WriteIPC(mcInfo,res_connect1, [Host.Name]);
-    if not inherited Connect then
-      exit;
 
-    { Ready ermitteln }
-    SReadln(s);
+  WriteIPC(mcInfo,res_connect1, [Host.Name]);
+  if not inherited Connect then
+    exit;
 
-    { Ergebnis auswerten }
-    if ParseResult(s)<>200 then
-    begin
-      WriteIPC(mcError,res_connect2, [ErrorMsg]);
-      DisConnect;
-      FErrorCode := code;
-      exit;
-    end else
-    begin
-    if s = '' then
-      WriteIPC(mcError,res_connect4, [0]);
-      FServer:= Copy(s,5,length(s)-5);
-    end;
+  { Ready ermitteln }
+  SReadln(s);
 
-    { Anmelden }
-    if not Login then
-    begin
-      WriteIPC(mcError,res_connect3, [ErrorMsg]);
-      DisConnect;
-      Result := false;
-      exit;
-    end;
-  except
-    // Timeout und SocketError-Handling hinzufÅgen
-    // und einen reraise machen
+  { Ergebnis auswerten }
+  if ParseResult(s)<>200 then
+  begin
+    WriteIPC(mcError,res_connect2, [ErrorMsg]);
+    DisConnect;
+    FErrorCode := code;
+    exit;
+  end else
+  begin
+  if s = '' then
+    WriteIPC(mcError,res_connect4, [0]);  // verbunden
+    FServer:= Copy(s,5,length(s)-5);
+  end;
+
+  { Anmelden }
+  if not Login then
+  begin
+    WriteIPC(mcError,res_connect3, [ErrorMsg]);
+    DisConnect;
+    Result := false;
+    exit;
   end;
   Result := true;
 end;
@@ -177,11 +172,7 @@ var
 begin
   WriteIPC(mcInfo,res_disconnect,[0]);
   if Connected then
-  begin
     SWriteln('QUIT');
-    SReadln(s);
-    FErrorCode := ParseResult(s);
-  end;
   inherited DisConnect;
 end;
 
@@ -192,68 +183,64 @@ var
   p     : integer;
   i     : integer;
 begin
+  Result := false;
   aList.Clear;
   aList.Duplicates:= dupIgnore;
-  try
-    if Connected then
-    begin
-      WriteIPC(mcInfo,res_list1,[0]);
-      SWriteln('MODE READER');
-      SReadln(s);
-      if ParseResult(s)<>200 then begin
-        WriteIPC(mcError,res_list2,[Host.Name]);
-        Result:= false;
-        exit;
-      end;
+  if Connected then
+  begin
+    WriteIPC(mcInfo,res_list1,[0]);
+    SWriteln('MODE READER');
+    SReadln(s);
+    if ParseResult(s)<>200 then begin
+      WriteIPC(mcError,res_list2,[Host.Name]);
+      exit;
+    end;
 
-      SWriteln('LIST ACTIVE');
+    SWriteln('LIST ACTIVE');
+    SReadln(s);
+    if not (ParseResult(s) in [200, 215]) then
+    begin
+      WriteIPC(mcError,res_list3,[Host.Name]);
+      exit;
+    end;
+
+    i:=0;
+    while true do
+    begin
       SReadln(s);
-      if not (ParseResult(s) in [200, 215]) then
-      begin
+      code:= ParseResult(s);
+      if code=0 then break
+      else if code<>-1 then begin
         WriteIPC(mcError,res_list3,[Host.Name]);
         Result:= false;
         exit;
       end;
-
-      i:=0;
-      while true do
-      begin
-        SReadln(s);
-        code:= ParseResult(s);
-        if code=0 then break
-        else if code<>-1 then begin
-          WriteIPC(mcError,res_list3,[Host.Name]);
-          Result:= false;
-          exit;
-        end;
-        inc(i);
-        if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
-        s:= Trim(s);
-        if not withDescr then begin
-          p:= pos(' ',s);
-          if p=0 then p:= pos(#9,s);
-          if p<>0 then s:= Copy(s,1,p-1);
-        end;
-        aList.Add(s);
-  {$ifdef FPC}
-       if s = '' then
-        s:=''; { Workaround for bug #1067 }
-  {$endif}
-      end; { while }
-      WriteIPC(mcInfo,res_list4, [aList.Count]);
-      aList.Sort;
-      Result:= true;
-    end else
-      Result:= false;
-  except
-    // Timeout und SocketError-Handling hinzufÅgen
-    // und einen reraise machen
+      inc(i);
+      if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
+      s:= Trim(s);
+      if not withDescr then begin
+        p:= pos(' ',s);
+        if p=0 then p:= pos(#9,s);
+        if p<>0 then s:= Copy(s,1,p-1);
+      end;
+      aList.Add(s);
+{$ifdef FPC}
+     if s = '' then
+      s:=''; { Workaround for bug #1067 }
+{$endif}
+    end; { while }
+    WriteIPC(mcInfo,res_list4, [aList.Count]);
+    aList.Sort;
+    Result:= true;
   end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.8  2000/08/03 06:56:35  mk
+  - Updates fuer Errorhandling
+
   Revision 1.7  2000/08/02 17:01:19  mk
   - Exceptionhandling und Timeout hinzugefuegt
 
