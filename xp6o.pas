@@ -906,7 +906,7 @@ again:
                      end;
                    end   { if SelWeiter }
                  else begin
-                   empf:=''; ebrett:='';
+                   empf:=''; ebrett:=''; am_replyto := '';
                    if typ=3 then ReplyText(betr,rehochn);
                    ReadDirect(getres2(644,8),empf,betr,pollbox,false,brk);
                    if brk then goto ende                     {Nachricht weiterleiten}
@@ -1281,6 +1281,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2001/01/03 11:48:23  mk
+  - am_replyto bei N/W/K/D loeschen
+
   Revision 1.52  2001/01/02 10:05:25  mk
   - implemented Header.References
 
