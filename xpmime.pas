@@ -417,8 +417,8 @@ var   hdp      : headerp;
         inc(anzahl);
         with mf^[anzahl] do begin
           level:=bptr+last;
-          typ:=lStr(ctype);
-          subtyp:=LStr(subtype);
+          typ:=ctype;
+          subtyp:=subtype;
           code:=codecode(_encoding);
           fname:=filename;
           ddatum:=filedate;
@@ -719,6 +719,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.19  2001/09/20 15:47:44  my
+  MY:- 'LStr(ctype)' und 'LStr(subtype)' ge„ndert in 'ctype' und 'subtype'
+
   Revision 1.12.2.18  2001/09/17 23:53:03  mk
   - fixed bug: sometimes singlepart mails where threated as binary mails
 
