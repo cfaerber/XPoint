@@ -274,16 +274,22 @@ begin
 {$ENDIF}
 
 {$IFDEF UnixFS }
-  OwnPath:=GetEnv('HOME');
+  OwnPath:=GetEnv(ResolvePathName(envXPHome));		{ XPHOME=~/.openxp }
   if (OwnPath='') then begin
-    WriteLn('Need the environment variable ''HOME''!');
-    WriteLn;
-    Halt(2);
+    OwnPath:=GetEnv('HOME');		{ HOME= }
+    if (OwnPath='') then begin
+      WriteLn('Need the environment variable ''HOME''!');
+      WriteLn;
+      Halt(2);
+    end;
+    if (right(OwnPath,1)<>DirSepa) then			{ $HOME/openxp/ }
+      OwnPath:= OwnPath+DirSepa+BaseDir
+    else
+      OwnPath:= OwnPath+BaseDir;
+  end else begin
+    if (right(OwnPath,1)<>DirSepa) then
+      OwnPath:= OwnPath+DirSepa;
   end;
-  if (right(OwnPath,1)<>DirSepa) then			{ $HOME/openxp/ }
-    OwnPath:= OwnPath+DirSepa+BaseDir
-  else
-    OwnPath:= OwnPath+BaseDir;
   if not (IsPath(OwnPath)) then				{ Existent? }
     if not (MakeDir(OwnPath, A_USERX)) then begin	{ -> Nein, erzeugen }
       WriteLn('Can''t create ''',OwnPath,'''.');
@@ -310,6 +316,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/15 13:56:53  hd
+  - Linux: Env-Var XPHOME uebersteuert nun die Vorgabe ~/.openxp
+
   Revision 1.16  2000/05/14 17:22:51  hd
   - Linux: Manuelle Init. der XPCurses
 

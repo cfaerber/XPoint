@@ -26,13 +26,27 @@
 		nimmt.
 
 		Die Linux-Version legt die Datenbanken und anderen Dateien
-		im Verzeichnis '$HOME/openxp/' an. Wenn Sie bestehende
+		im Verzeichnis '$HOME/.openxp/' an. Wenn Sie bestehende
 		Daten verwenden moechten, so muessen Sie zunaechst einen
 		symbolischen Link auf die Daten legen. Angenommen, Ihre
 		XP-Installation befindet sich im Verzeichnis '/pub/usera/xp',
 		dann erstellen Sie den Link mit folgendem Befehl:
 		
-		ln -s /pub/usera/xp ~/openxp
+		ln -s /pub/usera/xp ~/.openxp
+		
+		Wenn Sie es nicht moegen, dass OpenXP Ihnen den Pfad
+		vorschreibt, so setzen Sie bei Ihren Einstellungen
+		die Environment-Variable 'XPHOME' mit einem absoluten
+		Pfad. Beispiel:
+		
+		XPHOME=~/.xp
+		
+		Wenn Sie dieses dauerhaft machen moechten, so geben Sie
+		
+		echo "export XPHOME=~/.xp">>~/.profile
+		
+		ein. Sie koennen die Datei natuerlich auch mit einem 
+		Editor bearbeiten.
 
 	XPME	Bis auf die dargestellten Schwierigkeiten bei der
 	        Ausgabe von Schriftzeichen bei Konsolen/Fonts, die
@@ -40,4 +54,5 @@
 		funktionieren.
 		
 	----------------------------------------------------------------------
+	Changed: 2000-05-15
 	End of File

@@ -43,6 +43,11 @@ const
   STAT_IRWXU = S_IRWXU;
 {$ENDIF }
 
+const                           { Common Environment-Vars }
+  envHome               = 'HOME';
+  envShell              = 'SHELL';
+  envXPHome		= 'XPHOME'; { XP-Basis-Verzeichnis }
+
   A_USER                = STAT_IRUSR or STAT_IWUSR;     { User lesen/schreiben }
   A_USERX               = A_USER or STAT_IXUSR;         { dito + ausfuehren }
 
@@ -175,10 +180,6 @@ const
   LOG_PERROR    = $20;
 
   log_installed: boolean = false;
-
-const                           { Common Environment-Vars }
-  envHome               = 'HOME';
-  envShell              = 'SHELL';
 
 const
   fnProcVersion         = '/proc/version';      { Versionsinfos }
@@ -407,6 +408,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/15 13:56:53  hd
+  - Linux: Env-Var XPHOME uebersteuert nun die Vorgabe ~/.openxp
+
   Revision 1.15  2000/05/14 17:29:04  ml
   - VP-Portierung fÅr linux
 
