@@ -1059,7 +1059,7 @@ begin
   Inc(MarkPos);
   while (MarkPos < Lines.Count) and (not Marked[MarkPos]) do
     Inc(MarkPos);
-  if MarkPos = Lines.Count then
+  if MarkPos >= Lines.Count then
     Result := #0
   else
     Result := Lines[MarkPos];
@@ -1143,6 +1143,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.71  2002/08/01 17:21:18  mk
+  - fixed TLister.NextMarked: AV when Lines.Count = 0 and MarkPos = 1
+
   Revision 1.70  2002/05/30 13:28:33  mk
   - added automatic UTF-8 detection to lister
 
