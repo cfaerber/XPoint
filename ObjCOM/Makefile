@@ -215,8 +215,17 @@ $(patsubst %,clean_%,$(UNITS)): clean_%:
 	-$(RM) $*$(OBJEXT)
 	-$(RM) $(LIBPREF)$*$(LIBEXT)
 
+distclean: clean
+
+mostlyclean: clean
+
+maintainer-clean: clean
+
 #
 # $Log$
+# Revision 1.6  2000/10/08 18:06:06  fe
+# Targets distclean, mostlyclean und maintainer-clean ergaenzt.
+#
 # Revision 1.5  2000/10/05 19:56:45  fe
 # Korrekturen, v.a. fuer FPC/Win32.
 #
