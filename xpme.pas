@@ -731,6 +731,9 @@ end;
 
 
 begin
+{$IFDEF NCRT}
+  InitXPCurses;
+{$ENDIF}
   readmenus;
   readconfig;
   readcol;
@@ -751,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20  2000/05/14 17:22:51  hd
+  - Linux: Manuelle Init. der XPCurses
+
   Revision 1.19  2000/05/13 10:09:26  mk
   - Aufruf fuer SetBackIntensity angepasst
 

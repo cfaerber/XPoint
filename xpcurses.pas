@@ -155,7 +155,7 @@ var
   mwl,mwo,				{ Werden von window gesetzt }
   mwr,mwu: byte;
 
-
+procedure InitXPCurses;
 
 procedure AssignCrt(var F: Text);
 procedure ClrEol;
@@ -1235,6 +1235,8 @@ begin
      s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
    end;
 end;
+
+procedure InitXPCurses;
 begin
   { load the color pairs array with color pair indices (0..63) }
   for bg := 0 to 7 do 
@@ -1275,9 +1277,14 @@ begin
   { set the unit exit procedure }
   ExitSave:= ExitProc;
   ExitProc:= @EndXPCurses;
+end;
+
 end.
 {
   $Log$
+  Revision 1.17  2000/05/14 17:22:51  hd
+  - Linux: Manuelle Init. der XPCurses
+
   Revision 1.16  2000/05/14 15:04:52  hd
   - Anpassungen Linux
 

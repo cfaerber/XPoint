@@ -64,7 +64,11 @@ end;
 procedure logo;
 var t : text;
 begin
+{$IFDEF NCRT}
+  AssignCrt(t);
+{$ELSE}
   assign(t,'');
+{$ENDIF}
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -242,6 +246,9 @@ begin
     GoDir(progpath);
   oldexit:=exitproc;
   exitproc:=@setpath;
+{$IFDEF NCRT}
+  InitXPCurses;
+{$ENDIF}
   mausunit_init;
   logo;
 {$IFDEF BP }            { alles andere sind sowieso 32 Bit Versionen }
@@ -303,6 +310,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/14 17:22:51  hd
+  - Linux: Manuelle Init. der XPCurses
+
   Revision 1.15  2000/05/08 18:22:49  hd
   - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
 
