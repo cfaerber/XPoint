@@ -20,6 +20,23 @@ uses  sysutils,
       dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
       xp0,xp1, xpglobal;
 
+{$ifdef hasHugeString}
+type  AutoRec = record                     { AutoVersand-Nachricht }
+                  datei   : string;
+                  betreff : string;
+                  typ     : char;                { 'B' / 'T'       }
+                  empf    : string;      { Brett oder User }
+                  box     : string;  { optional        }
+                  wotage  : byte;                { Bit 0=Mo        }
+                  tage    : longint;             { Bit 0=1.        }
+                  monate  : smallword;           { Bit 0=Januar    }
+                  datum1  : longint;
+                  datum2  : longint;
+                  flags   : smallword;           { 1=aktiv, 2=lîschen }
+                  lastdate: longint;
+                  lastfd  : longint;             { Dateidatum }
+                end;
+{$else}
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
                   betreff : string[40];
@@ -35,7 +52,7 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
                 end;
-
+{$endif}
 
 procedure AutoRead(var ar:AutoRec);
 procedure AutoWrite(var ar:AutoRec);
@@ -99,7 +116,11 @@ var mmask     : array[1..12] of boolean;
     i,_d      : longint;
     dat0,dat2 : fdate;
     dat       : fdate;
+{$ifdef hasHugeString}
+    ds        : string;
+{$else}
     ds        : DateTimeSt;
+{$endif}
 
   function smd(d1,d2:fdate):boolean;
   begin
@@ -132,8 +153,12 @@ var mmask     : array[1..12] of boolean;
   end;
 
   function amodi:boolean;
-  var fn : PathStr;
-      sr : searchrec;
+  var sr : searchrec;
+{$ifdef hasHugeString}
+      fn : string;
+{$else}
+      fn : PathStr;
+{$endif}
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
@@ -197,7 +222,11 @@ function PostFile(var ar:AutoRec; sendbox:boolean):boolean;
 var tmp  : boolean;
     t    : text;
     pm   : boolean;
+{$ifdef hasHugeString}
+    leer : string;
+{$else}
     leer : string[12];
+{$endif}
     dat  : longint;
     tt   : longint;
     b    : byte;
@@ -233,7 +262,7 @@ begin
         end;
       forcebox:=box;
       if not tmp then begin
-        sendfilename:=GetFileName(datei);
+        sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
         sendfiledate:=ZCfiletime(datei);
         end;
       if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
@@ -339,7 +368,11 @@ var sr    : searchrec;
   end;
 
   function MausImport:boolean;
+{$ifdef hasHugeString}
+  var box : string;
+{$else}
   var box : string[BoxNameLen];
+{$endif}
   begin
     MausImport:=false;
     if not exist(MaggiBin) then
@@ -402,12 +435,20 @@ var sr    : searchrec;
   function SendMsg(delfile:boolean):boolean;
   var t1,t2 : text;
       p     : byte;
+{$ifdef hasHugeString}
+      empf  : string;
+      betr  : string;
+      box   : string;
+      datei : string;
+      hdr   : string;
+{$else}
       empf  : string[AdrLen];
       betr  : string[BetreffLen];
       box   : string[BoxNameLen];
       datei : pathstr;
-      s     : string;
       hdr   : string[20];
+{$endif}
+      s     : string;
       err   : boolean;
       temp  : boolean;
       bs    : word;
@@ -496,7 +537,7 @@ var sr    : searchrec;
       end
     else begin
       temp:=false;
-      SendFilename:=getfilename(datei);
+      SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
       SendFiledate:=zcfiletime(datei);
       end;
     close(t1);
@@ -622,23 +663,30 @@ end;
 
 function AutoShow:string;      { fÅr XP4D.INC }
 var ar   : autorec;
+{$ifdef hasHugeString}
+    c    : string;
+    ldat,
+    sdat : string;
+{$else}
     c    : string[3];
     ldat,
     sdat : string[datelen];
+{$endif}
 
-  procedure setfile(var s: pathstr);
-  var dir  : dirstr;
-      name : namestr;
-      ext  : extstr;
-  begin
-    fsplit(s,dir,name,ext);
+  procedure setfile(var s: string);
 {$IFDEF UnixFS }
-    s:= name+ext;
+  begin
+    s:= ExtractFilename(s);
 {$ELSE }
-    if dir='' then s:=name+ext
+  var dir  : string;
+      name : string;
+  begin
+    dir:= ExtractFilePath(s);
+    name:= ExtractFileName(s);
+    if dir='' then s:=name
     else if dir[2]=':' then
-      s:=left(dir,2)+name+ext
-      else s:=getdrive+':'+name+ext;
+      s:=left(dir,2)+name
+    else s:=getdrive+':'+name;
 {$ENDIF }
   end;
 
@@ -660,6 +708,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 12:47:28  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 21:23:07  mk
   - erste AnsiString-Anpassungen
 

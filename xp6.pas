@@ -95,7 +95,7 @@ var   InternBox : string[BoxNameLen];  { Boxname bei /Netzanruf }
       msgMarkEmpf: byte;   { fÅr sendMark }
 
 
-function DoSend(pm:boolean; var datei:pathstr; empfaenger,betreff:string;
+function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
                 var header,signat:string; sendFlags:word):boolean;
 procedure send_file(pm,binary:boolean);
@@ -2129,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/07/05 12:47:27  hd
+  - AnsiString
+
   Revision 1.43  2000/07/04 12:04:26  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

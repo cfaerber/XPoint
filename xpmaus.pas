@@ -35,7 +35,7 @@ function  MausBestPM:boolean;     { gelesene Maus-PM best„tigen }
 procedure MausImportITG(box:string);
 procedure MausEditInfos;
 procedure MausPMs_bestaetigen(box:string);
-procedure MausGetInfs(box:string; logfile:pathstr);
+procedure MausGetInfs(box, logfile:string);
 
 
 implementation  { ---------------------------------------------------- }
@@ -50,23 +50,27 @@ uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xp9, winxp;
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
 var t,t2 : text;
+{$ifdef hasHugeString}
+    fn, tfn, s, anew, old, msgid, empf : string;
+{$else}
+    fn,
     tfn  : pathstr;
     s    : string[80];
     anew  : string[80];
     old  : string[4];
+    msgid: string[20];
+    empf : string[AdrLen];
+{$endif}
     stop : boolean;
     l    : longint;
     hdp  : headerp;
     hds  : longint;
-    fn   : pathstr;
     f    : file;
-    msgid: string[20];
     mi   : shortint;
     p,p2 : byte;
     x,y  : byte;
     n    : longint;
     fehlerflag : boolean;
-    empf : string[AdrLen];
     rec  : longint;
     mdm  : shortint;
 
@@ -366,10 +370,15 @@ end;
 
 function MausBestPM:boolean;     { gelesene Maus-PM best„tigen }
 var t   : text;
+{$ifdef hasHugeString}
+    fn  : string;
+    leer: string;
+{$else}
     fn  : pathstr;
+    leer: string[12];
+{$endif}
     hdp : headerp;
     hds : longint;
-    leer: string[12];
     nr  : shortint;
     x,y : byte;
     gel : byte;
@@ -546,7 +555,11 @@ var  box    : string[BoxNameLen];
 
   procedure ReadINF;
   var t   : text;
+{$ifdef hasHugeString}
+      s   : string;
+{$else}
       s   : string[80];
+{$endif}
       p,i : integer;
   begin
     assign(t,box+'.inf');
@@ -670,8 +683,13 @@ end;
 
 procedure MausPMs_bestaetigen(box:string);
 var t1,t2 : text;
+{$ifdef hasHugeString}
+    fn    : string;
+    leer  : string;
+{$else}
     fn    : pathstr;
     leer  : string[12];
+{$endif}
     s     : string;
 begin
   if exist(mauspmlog) then begin
@@ -697,7 +715,7 @@ begin
 end;
 
 
-procedure MausGetInfs(box:string; logfile:pathstr);
+procedure MausGetInfs(box, logfile: string);
 type  infrec = record
                  inf       : string[5];
                  intervall : shortint;
@@ -822,6 +840,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/05 12:47:28  hd
+  - AnsiString
+
   Revision 1.10  2000/07/04 12:04:30  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

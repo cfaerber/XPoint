@@ -28,24 +28,24 @@ uses
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
-      ListQuoteMsg  : pathstr = '';
+      ListQuoteMsg  : string = '';
       ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
 
 
-function  ReadFilename(txt:atext; var s:pathstr; subs:boolean;
+function  ReadFilename(txt:atext; var s:string; subs:boolean;
                        var useclip:boolean):boolean;
-function  overwrite(fname:pathstr; replace:boolean; var brk:boolean):boolean;
+function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(var t:taste);
 procedure ExtListKeys;
-function  filecopy(fn1,fn2:pathstr):boolean;
-function  FileDa(fn:pathstr):boolean;   { Programm im Pfad suchen }
+function  filecopy(fn1,fn2:string):boolean;
+function  FileDa(fn:string):boolean;   { Programm im Pfad suchen }
 procedure ExpandTabs(fn1,fn2:string);
 
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
-function  UniExtract(_from,_to,dateien:pathstr):boolean;
+function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
@@ -56,14 +56,14 @@ procedure DelBezug;
 function  GetBezug(var ref:string):longint;
 function  KK:boolean;
 function  HasRef:boolean;
-function  ZCfiletime(var fn:pathstr):string;   { ZC-Dateidatum }
-procedure SetZCftime(fn:pathstr; var ddatum:string);
+function  ZCfiletime(var fn:string):string;   { ZC-Dateidatum }
+procedure SetZCftime(fn:string; var ddatum:string);
 
 function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
-function XPWinShell(prog:string; parfn:pathstr; space:word;
+function XPWinShell(prog:string; parfn:string; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
@@ -84,12 +84,12 @@ end;
 
 { Dateinamen abfragen. Wenn Esc gedrÅckt wird, ist s undefiniert! }
 
-function ReadFilename(txt:atext; var s:pathstr; subs:boolean;
+function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 var x,y : byte;
     brk : boolean;
     fn  : string[20];
-    s2  : pathstr;
+    s2  : string;
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
@@ -163,7 +163,7 @@ begin
 end;
 
 
-function overwrite(fname:pathstr; replace:boolean; var brk:boolean):boolean;
+function overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
 var x,y : byte;
     nr  : shortint;
     t   : taste;
@@ -205,7 +205,7 @@ var s     : string;
     all   : boolean;
     b     : byte;
     ok    : boolean;
-    fname : pathstr;
+    fname : string;
     append: boolean;
     tt    : text;
     brk   : boolean;
@@ -471,7 +471,7 @@ end;
 
 
 
-function filecopy(fn1,fn2:pathstr):boolean;
+function filecopy(fn1,fn2:string):boolean;
 var f1,f2 : file;
     time  : longint;
     res   : integer;
@@ -547,8 +547,8 @@ begin
 end;
 
 
-function UniExtract(_from,_to,dateien:pathstr):boolean;
-var decomp : pathstr;
+function UniExtract(_from,_to,dateien:string):boolean;
+var decomp : string;
     atyp   : shortint;
     p      : byte;
 begin
@@ -706,11 +706,11 @@ begin
 end;
 
 
-function FileDa(fn:pathstr):boolean;   { Programm im Pfad suchen }
+function FileDa(fn:string):boolean;   { Programm im Pfad suchen }
 var dir  : dirstr;
     name : namestr;
     ext  : extstr;
-  function Find(fn:pathstr):boolean;
+  function Find(fn:string):boolean;
   begin
     Find:=Fsearch(fn,GetEnv('PATH'))<>'';
   end;
@@ -728,7 +728,7 @@ begin
 end;
 
 
-function ZCfiletime(var fn:pathstr):string;   { ZC-Dateidatum      }
+function ZCfiletime(var fn:string):string;   { ZC-Dateidatum      }
 var l  : longint;
     dt : datetime;
     f  : file;
@@ -748,7 +748,7 @@ begin
 end;
 
 { MK 01/00 fn jetzt kein var-Parameter mehr }
-procedure SetZCftime(fn:pathstr; var ddatum:string);
+procedure SetZCftime(fn:string; var ddatum:string);
 var dt : datetime;
     l  : longint;
     f  : file;
@@ -892,7 +892,7 @@ end;
 { Bei Windows-Programmen wird direkt Åber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
-function XPWinShell(prog:string; parfn:pathstr; space:word;
+function XPWinShell(prog:string; parfn:string; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
@@ -905,7 +905,7 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
   }
   var ext     : string[3];
       exepath,
-      batfile : pathstr;
+      batfile : string;
       et      : TExeType;
       win,os2,
       winnt   : boolean;
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/07/05 12:47:27  hd
+  - AnsiString
+
   Revision 1.45  2000/07/04 12:04:20  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -23,7 +23,7 @@ uses
   xpglobal, sysutils,dos,typeform,fileio,inout,keys,resource,xp0,xp1;
 
 
-type  getf_func   = function(nr,nn:byte):pathstr;
+type  getf_func   = function(nr,nn:byte):string;
 var   getfilename : getf_func;
 const FuncExternal: boolean = false;    { *-Funktionen gesperrt }
       PreExtProc  : procedure = nil;
@@ -132,7 +132,7 @@ uses xp4o,xp7,xp9,xpauto;
 procedure prog_call(nr,nn:byte);
 var s      : string;
     p0     : byte;
-    fn,fn2 : pathstr;
+    fn,fn2 : string;
     brk    : boolean;
     auto   : boolean;
 begin
@@ -242,6 +242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/05 12:47:28  hd
+  - AnsiString
+
   Revision 1.8  2000/07/04 12:04:30  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

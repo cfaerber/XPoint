@@ -822,14 +822,20 @@ var d         : DB;
   end;
 
   procedure NeueGruppe;
+{$ifdef hasHugeString}
+  var name   : string;
+      hd,sig : string;
+      qt     : string;
+{$else}
   var name   : string[30];
+      hd,sig : string[8];
+      qt     : string[8];
+{$endif}
       hzeit  : integer16;
       limit  : longint;
       umlaut : byte;
       flags  : byte;
       brk    : boolean;
-      hd,sig : string[8];
-      qt     : string[8];
   begin
     name:=''; hzeit:=stdhaltezeit; limit:=MaxNetMsgs;
     hd:='header'; sig:='signatur'; qt:='qbrett';
@@ -859,14 +865,20 @@ var d         : DB;
   end;
 
   procedure EditGruppe;
+{$ifdef hasHugeString}
+  var name   : string;
+      hd,sig : string;
+      qt     : string;
+{$else}
   var name   : string[30];
+      hd,sig : string[8];
+      qt     : string[8];
+{$endif}
       hzeit  : integer16;
       limit  : longint;
       flags  : byte;
       umlaut : byte;
       brk    : boolean;
-      hd,sig : string[8];
-      qt     : string[8];
   begin
     dbGo(d,drec[p]);
     dbRead(d,'Name',name);
@@ -896,8 +908,13 @@ var d         : DB;
   procedure FidoGruppe;
   var x,y  : byte;
       brk  : boolean;
+{$ifdef hasHugeString}
+      orig : string;
+      addr : string;
+{$else}
       orig : string[50];
       addr : string[50];
+{$endif}
   begin
     dbGo(d,drec[p]);
     dbRead(d,'origin',orig);
@@ -979,11 +996,19 @@ var d         : DB;
   end;
 
   procedure NeuesSystem;
+{$ifdef hasHugeString}
+  var name   : string;
+      komm   : string;
+      fsuser : string;
+      fspass : string;
+      convert: string;
+{$else}
   var name   : string[20];
       komm   : string[30];
       fsuser : string[20];
       fspass : string[20];
       convert: string[60];
+{$endif}
       brk    : boolean;
       w      : word;
       b      : byte;
@@ -1016,11 +1041,19 @@ var d         : DB;
   end;
 
   procedure EditSystem;
+{$ifdef hasHugeString}
+  var name   : string;
+      komm   : string;
+      fsuser : string;
+      fspass : string;
+      convert: string;
+{$else}
   var name   : string[30];
       komm   : string[30];
       fsuser : string[20];
       fspass : string[20];
       convert: string[60];
+{$endif}
       brk    : boolean;
       w      : word;
       typ    : byte;
@@ -1087,9 +1120,15 @@ var d         : DB;
   end;
 
   procedure NeuesPseudo;
+{$ifdef hasHugeString}
+  var kurz    : string;
+      lang    : string;
+      pollbox : string;
+{$else}
   var kurz    : string[15];
       lang    : string[AdrLen];
       pollbox : string[BoxNameLen];
+{$endif}
       brk     : boolean;
   begin
     kurz:=''; lang:=''; pollbox:='';
@@ -1112,9 +1151,15 @@ var d         : DB;
   end;
 
   procedure EditPseudo;
+{$ifdef hasHugeString}
+  var kurz    : string;
+      lang    : string;
+      pollbox : string;
+{$else}
   var kurz    : string[15];
       lang    : string[AdrLen];
       pollbox : string[BoxNameLen];
+{$endif}
       brk     : boolean;
   begin
     dbGo(d,drec[p]);
@@ -1190,9 +1235,15 @@ var d         : DB;
   end;
 
   procedure NeuerMimetyp;
+{$ifdef hasHugeString}
+  var typ  : string;
+      ext  : string;
+      prog : string;
+{$else}
   var typ  : string[30];
       ext  : string[5];
       prog : string[ViewprogLen];
+{$endif}
       brk  : boolean;
   begin
     typ:=''; ext:=''; prog:='';
@@ -1210,9 +1261,15 @@ var d         : DB;
   end;
 
   procedure EditMimetyp;
+{$ifdef hasHugeString}
+  var typ  : string;
+      ext  : string;
+      prog : string;
+{$else}
   var typ  : string[30];
       ext  : string[5];
       prog : string[ViewprogLen];
+{$endif}
       brk  : boolean;
   begin
     dbGo(d,drec[p]);
@@ -1573,11 +1630,17 @@ end;
 procedure SetUsername(s:string);
 var x,y  : byte;
     brk  : boolean;
+{$ifdef hasHugeString}
+    user : string;
+    real : string;
+    box  : string;
+{$else}
     user : string[50];
     real : string[40];
+    box  : string[BoxNameLen];
+{$endif}
     p    : byte;
     d    : DB;
-    box  : string[BoxNameLen];
     gross   : boolean;
     hasreal : boolean;
 begin
@@ -1696,6 +1759,15 @@ end;
 procedure get_first_box(d:DB);
 var x,y  : byte;
     brk  : boolean;
+{$ifdef hasHugeString}
+    name : string;
+    dname: string;
+    user : string;
+    maps : string;
+    dom  : string;
+    fqdom: string;  {16.01.00 HS}
+    ntyp : string;
+{$else}
     name : string[20];
     dname: string[8];
     user : string[30];
@@ -1703,6 +1775,7 @@ var x,y  : byte;
     dom  : string[60];
     fqdom: string[60];  {16.01.00 HS}
     ntyp : string[20];
+{$endif}
     nt   : byte;
     i    : integer;
 begin
@@ -1771,6 +1844,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/07/05 12:47:28  hd
+  - AnsiString
+
   Revision 1.24  2000/07/05 10:59:52  hd
   - Weitere AnsiString-Anpassungen
 

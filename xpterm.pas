@@ -33,13 +33,13 @@ uses
       resource,xpglobal, xp0,xp1,xp1o2,xp1input;
 
 
-function RunScript(test:boolean; scriptfile:pathstr;
+function RunScript(test:boolean; scriptfile:string;
                    online,relogin:boolean; slog:textp):shortint;
 procedure termscr;
 procedure terminal(direct:boolean);
 
 procedure TermDeactivateCom;    { fÅr FKey-Shell }
-function  TermGetfilename(nr,nn:byte):pathstr;
+function  TermGetfilename(nr,nn:byte):string;
 
 
 implementation  { -------------------------------------------------- }
@@ -151,7 +151,7 @@ begin
 end;
 
 
-procedure openlog(fn:pathstr);
+procedure openlog(fn:string);
 var dir  : dirstr;
     name : namestr;
     ext  : extstr;
@@ -188,7 +188,7 @@ begin
 end;
 
 procedure SwitchLogfile;
-var fn      : pathstr;
+var fn      : string;
     useclip : boolean;
 begin
   savewin;
@@ -705,7 +705,7 @@ end;
 
 { Parameter nr, nn werden zwar nicht gebraucht, aber durch
   Prozedurvariable sind sie nîtig }
-function TermGetfilename(nr,nn:byte):pathstr;
+function TermGetfilename(nr,nn:byte):string;
 begin
   rfehler(2003);    { '$FILE-Makro ist hier nicht mîglich.' }
   TermGetfilename:='';
@@ -717,7 +717,7 @@ end;
 
 
 procedure UpDown(auto,download:boolean);
-var s       : pathstr;
+var s       : string;
     useclip : boolean;
 label ende;
 begin
@@ -964,7 +964,7 @@ end;
 
 { --- Scripts ------------------------------------------------------- }
 
-function RunScript(test:boolean; scriptfile:pathstr;
+function RunScript(test:boolean; scriptfile:string;
                    online,relogin:boolean; slog:textp):shortint;
 
 const MaxLines  = 500;
@@ -1617,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/05 12:47:29  hd
+  - AnsiString
+
   Revision 1.14  2000/07/05 10:59:53  hd
   - Weitere AnsiString-Anpassungen
 

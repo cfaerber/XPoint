@@ -37,14 +37,51 @@ implementation  { ----------------------------------------------------- }
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido,
      xp6,xp6l;
 
-
-const mauswlbox : string[BoxNameLen] = '';
+const
+{$ifdef hasHugeString}
+  mauswlbox : string = '';
+{$else}
+  mauswlbox : string[BoxNameLen] = '';
+{$endif}
 
 procedure Unversandt(edit,modi:boolean);
 
 { edit und modi -> direkt ins Sendefenster }
-
 var
+{$ifdef hasHugeString}
+    _brett   : string;
+    betr     : string;
+    _date    : longint;
+    dat      : string;
+    groesse  : longint;
+    tmp      : string;
+    sr       : searchrec;
+    found    : boolean;
+    f        : file;
+    hdp0,hdp : headerp;
+    rr       : word;
+    hds      : longint;
+    ok       : boolean;
+    adr,fsize: longint;
+    headerf  : string;
+    pm       : boolean;
+    rec,rec2 : longint;
+    uvs      : byte;
+    typ      : char;
+    empf     : string;
+    orghalt  : byte;
+    zconnect : boolean;
+    fs       : longint;
+    box      : string;
+    crash    : boolean;
+    sdata    : SendUUptr;
+    sendflags: word;
+    empfnr   : shortint;
+    ablage   : byte;
+    madr     : longint;         { Adresse in Ablage }
+    crc      : string;
+    nt       : longint;
+{$else}
     _brett   : string[5];
     betr     : string[BetreffLen];
     _date    : longint;
@@ -77,6 +114,7 @@ var
     madr     : longint;         { Adresse in Ablage }
     crc      : string[4];
     nt       : longint;
+{$endif}
 
 label ende,nextpp;
 
@@ -144,9 +182,14 @@ label ende,nextpp;
   end;
 
   procedure set_forcebox;
+{$ifdef hasHugeString}
+  var abs  : string;
+      bbox : string;
+{$else}
   var abs  : string[AdrLen];
-      p    : byte;
       bbox : string[BoxNameLen+10];
+{$endif}
+      p    : byte;
   begin
     if hdp^.real_box<>'' then
       forcebox:=hdp^.real_box   { BOX aus RFC- oder Maggi-Header }
@@ -172,8 +215,9 @@ label ende,nextpp;
   begin
     l:=max(0,filesize(f)-200);
     seek(f,l);
+    SetLength(s,200);
     blockread(f,s[1],200,rr);
-    s[0]:=chr(rr);
+    if rr<>200 then SetLength(s,rr); {s[0]:=chr(rr);}
     p:=max(0,length(s)-20);
     while (p>0) and (copy(s,p,5)<>#13#10'---') do
       dec(p);
@@ -447,7 +491,38 @@ end;
   sendbox: Absende-Fenster anzeigen }
 
 procedure Weiterleit(typ:byte; sendbox:boolean);
-var fn     : pathstr;
+var
+{$ifdef hasHugeString}
+    fn      : string;
+    oempf   : string;
+    s       : string;
+    leer    : string;
+    sigfile : string;
+    _brett  : string;
+    ebrett  : string;
+    obrett  : string;
+    empf    : string;
+    pollbox : string;
+    name    : string;
+    betr    : string;
+    aas     : array[1..3] of string;
+    leerz   : string;
+{$else}
+    fn     : pathstr;
+    oempf  : string[40];
+    s      : string[60];
+    leer    : string[12];
+    sigfile : string[12];
+    _brett  : string[5];
+    ebrett  : string[5];
+    obrett  : string[5];
+    empf    : string[90];
+    pollbox : string[BoxNameLen];
+    name    : string[AdrLen];
+    betr    : string[BetreffLen];
+    aas      : array[1..3] of string[120];
+    leerz   : string[5];
+{$endif}
     pm,brk : boolean;
     x,y,p  : byte;
     ta     : taste;
@@ -459,26 +534,13 @@ var fn     : pathstr;
     t      : text;
     f      : file;
     size   : smallword;
-    oempf  : string[40];
-    s      : string[60];
 
-    leer    : string[12];
-    sigfile : string[12];
-    _brett  : string[5];
-    ebrett  : string[5];
-    obrett  : string[5];
-    empf    : string[90];
     ntyp    : char;
-    pollbox : string[BoxNameLen];
-    name    : string[AdrLen];
-    betr    : string[BetreffLen];
     newsize : longint;
-    aas      : array[1..3] of string[120];
     asnum   : byte;
     i       : integer;
     re_n    : boolean;
     kein_re : boolean;
-    leerz   : string[5];
     unpark  : boolean;
     sData   : SendUUptr;
     l       : longint;
@@ -531,7 +593,14 @@ label ende,again;
   end;
 
   procedure archivieren;       { 5: In Archiv-Brett archivieren }
-  var tmp  : pathstr;
+  var
+{$ifdef hasHugeString}
+      tmp  : string;
+      mid  : string;
+{$else}
+      tmp  : pathstr;
+      mid  : string[20];
+{$endif}
       f,tf : file;
       dat  : longint;
       edat : longint;
@@ -539,7 +608,6 @@ label ende,again;
       b    : byte;
       mnt  : longint;
       abl  : byte;
-      mid  : string[20];
       flags: integer;
   begin
     rmessage(642);      { 'Nachricht wird archiviert...' }
@@ -605,13 +673,19 @@ label ende,again;
   procedure MausWeiterleiten;   { Maus-BK }
   var x,y  : byte;
       brk  : boolean;
+{$ifdef hasHugeString}
+      empf : string;
+      fn   : string;
+      leer : string;
+{$else}
       empf : string[AdrLen];
+      fn   : pathstr;
+      leer : string[12];
+{$endif}
       komm : string;
       hdp  : headerp;
       hds  : longint;
-      fn   : pathstr;
       t    : text;
-      leer : string[12];
   begin
     dialog(61,5,'Original-PM weiterleiten',x,y);
     empf:=''; komm:='';
@@ -1082,7 +1156,18 @@ end;
 
 
 procedure ArchivAMtoPM;
-var fn,tmp : pathstr;
+var
+{$ifdef hasHugeString}
+    fn,tmp : string;
+    mid    : string;
+    ebrett : string;
+    box    : string;
+{$else}
+    fn,tmp : pathstr;
+    mid    : string[20];
+    ebrett : string[5];
+    box    : string[BoxNameLen];
+{$endif}
     f,tf   : file;
     t      : text absolute tf;
     dat    : longint;
@@ -1092,11 +1177,8 @@ var fn,tmp : pathstr;
     b      : byte;
     mnt    : longint;
     abl    : byte;
-    mid    : string[20];
     hdp    : headerp;
     hds    : longint;
-    ebrett : string[5];
-    box    : string[BoxNameLen];
 begin
   dbReadN(mbase,mb_ablage,abl);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
@@ -1248,6 +1330,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/07/05 12:47:28  hd
+  - AnsiString
+
   Revision 1.24  2000/07/04 12:04:26  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

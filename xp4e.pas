@@ -109,16 +109,23 @@ var   adp         : ^atext;
       ntyp_y      : byte;          { intern EditBrett          }
       brettfld    : integer;       { intern EditBrett          }
       userfld     : integer;       { intern EditUser           }
+{$ifdef hasHugeString}
+      pb_field    : integer;
+      pbox        : string; { intern EditBrett/ReadDirect }
+      rdforcebox  : boolean;            { intern ReadDirect    }
+      rdorgbox    : string; { intern ReadDirect    }
+{$else}
       pb_field    : integer;
       pbox        : string[BoxNameLen]; { intern EditBrett/ReadDirect }
       rdforcebox  : boolean;            { intern ReadDirect    }
       rdorgbox    : string[BoxNameLen]; { intern ReadDirect    }
+{$endif}
       mbx,mby     : byte;          { Text fÅr modibrett2() }
       mblasttext  : shortint;
 
 
 procedure addbox(var s:string);
-var box : string[BoxNameLen];
+var box : string;
 begin
   box:=getfield(pb_field);
   s:=left(s,AdrLen-5-length(box))+'@'+box+ntAutoDomain(box,true);
@@ -1103,20 +1110,27 @@ const nn : shortint = 1;
 var n,w    : shortint;
     x,y    : byte;
     brk    : boolean;
+{$ifdef hasHugeString}
+    s      : string;
+    htyp   : string;
+    brett  : string;
+    na,tg  : string;
+{$else}
     s      : string[30];
-    halten,adr : integer16;
     htyp   : string[6];
+    brett  : string[BrettLen];
+    na,tg  : string[10];
+{$endif}
+    halten,adr : integer16;
     hzahl  : boolean;
     grnr   : longint;
     i      : integer;
     d,dispdat : DB;
     vert   : boolean;
-    brett  : string[BrettLen];
     umlaut : boolean;
     b      : byte;
     filter : boolean;
     flags  : byte;
-    na,tg  : string[10];
     uucp   : byte;
     sperre : boolean;    { Brett - Schreibsperre }
 begin
@@ -1554,13 +1568,22 @@ end;
 
 procedure msgdirect;
 var brk  : boolean;
+{$ifdef hasHugeString}
+    empf : string;
+    betr : string;
+    real : string;
+    box  : string;
+    headf: string;
+    sigf : string;
+{$else}
     empf : string[adrlen];
     betr : string[BetreffLen];
     real : string[40];
     box  : string[BoxNameLen];
-    fn   : pathstr;
     headf: string[12];
     sigf : string[12];
+{$endif}
+    fn   : string;
     sdata: SendUUPtr;
     pm   : boolean;
     d    : DB;
@@ -1655,7 +1678,7 @@ end;
 
 
 procedure AutoFilename(var cr:CustomRec);
-var ps  : pathstr;
+var ps  : string;
     dir : dirstr;
     name: namestr;
     ext : extstr;
@@ -1689,7 +1712,7 @@ end;
 
 function wostring(wotage:byte):string;
 var i   : integer;
-    wot : string[23];
+    wot : string;
 begin
   if wotage=127 then
     wostring:=getres(2723)     { 'tÑglich' }
@@ -1769,7 +1792,7 @@ end;
 
 function monstring(w:word):string;
 var i : word;
-    s : string[40];
+    s : string;
 begin
   if w=$fff then
     monstring:=getres(2724)      { 'alle' }
@@ -1789,7 +1812,7 @@ begin
 end;
 
 function AutoExistfile(var s:string):boolean;
-var fn : pathstr;
+var fn : string;
 begin
   autoexistfile := true;
   if s<>'' then begin
@@ -1833,11 +1856,19 @@ end;
 
 procedure AutoEdit(kopie:boolean; var ar:AutoRec; var brk:boolean);
 var x,y    : byte;
+{$ifdef hasHugeString}
+    wot    : string;
+    tg     : string;
+    mon    : string;
+    dat1,
+    dat2   : string;
+{$else}
     wot    : string[21];
     tg     : string[60];
     mon    : string[40];
     dat1,
     dat2   : DateTimeSt;
+{$endif}
     bin    : boolean;
     loesch : boolean;
     modif  : boolean;
@@ -1959,7 +1990,7 @@ end;
 procedure auto_del;
 var nr  : shortint;
     brk : boolean;
-    fn  : pathstr;
+    fn  : string;
     ar  : AutoRec;
 begin
   AutoRead(ar);
@@ -2007,7 +2038,7 @@ end;
 procedure auto_fileinfo;
 var x,y : byte;
     ar  : AutoRec;
-    fn  : pathstr;
+    fn  : string;
     sr  : searchrec;
     dt  : DateTime;
 begin
@@ -2109,14 +2140,20 @@ end;
 procedure Bretttrennung;
 var x,y   : byte;
     brk   : boolean;
+{$ifdef hasHugeString}
+    oldtc : string;
+    s     : string;
+    komm  : string;
+{$else}
     oldtc : string[1];
-    bi    : shortint;
     s     : string[AdrLen];
+    komm  : string[30];
+{$endif}
+    bi    : shortint;
     rec   : longint;
     rec2  : longint;
     nr    : longint;
     step  : integer;
-    komm  : string[30];
 begin
   oldtc:=trennchar;
   dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfÅgen' }
@@ -2153,12 +2190,18 @@ end;
 procedure Usertrennung;
 var x,y   : byte;
     brk   : boolean;
+{$ifdef hasHugeString}
+    oldtc : string;
+    s     : string;
+    komm  : string;
+{$else}
     oldtc : string[1];
     s     : string[AdrLen];
+    komm  : string[30];
+{$endif}
     rec   : longint;
     rec2  : longint;
     ab    : integer;
-    komm  : string[30];
 begin
   oldtc:=trennchar;
   dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfÅgen' }
@@ -2275,7 +2318,16 @@ begin
   end;
 
 procedure ChangePollbox;
-var oldbox,newbox   : string[BoxNameLen];
+var
+{$ifdef hasHugeString}
+    oldbox,newbox   : string;
+    mapsname        : string;
+    anew,s          : string;
+{$else}
+    oldbox,newbox   : string[BoxNameLen];
+    mapsname        : string[40];
+    anew,s           : string[50];
+{$endif}
     user,bretter    : boolean;
     localuser       : boolean;
     autov,pseudos   : boolean;
@@ -2284,8 +2336,6 @@ var oldbox,newbox   : string[BoxNameLen];
     brk             : boolean;
     d               : DB;
     mi,p            : shortint;
-    mapsname        : string[40];
-    anew,s           : string[50];
 begin
   dialog(38,13,getres2(2734,1),x,y);    { 'Server-Wechsel' }
   oldbox:=''; newbox:='';
@@ -2305,7 +2355,7 @@ begin
   readmask(brk);
   closemask;
   if (newbox<>'') and not brk then begin
-    UpString(oldbox);
+    oldbox:= UpperCase(oldbox); {UpString(oldbox);}
     dbOpen(d,BoxenFile,1);                    { oldbox.Mapsname ermitteln }
     dbSeek(d,boiName,UpperCase(oldbox));
     if not dbFound then mapsname:=''
@@ -2390,6 +2440,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/05 12:47:27  hd
+  - AnsiString
+
   Revision 1.28  2000/07/04 12:04:23  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

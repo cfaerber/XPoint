@@ -670,7 +670,8 @@ end;
 
 procedure ScreenShot;
 const ss_active : boolean = false;
-var fn,ffn : pathstr;
+var
+    fn,ffn : string;
     app    : boolean;
     x,y  : integer;
     brk    : boolean;
@@ -926,6 +927,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/05 12:47:27  hd
+  - AnsiString
+
   Revision 1.30  2000/07/05 10:59:52  hd
   - Weitere AnsiString-Anpassungen
 
