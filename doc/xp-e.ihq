@@ -7096,6 +7096,16 @@ Examples:
 
       Searches through Pointlists only.
 @
+959
+<<Mail>>        Write a message to this User
+
+<<Request>>     Make a file request to this system
+
+<<Info>>        Lookup this system in the nodelist
+            (same as Alt-N)
+
+<<Abort>>       Self-explanatory, really :-)
+@
 1500
 Select <<Yes>> to archive a copy of the selected
 message in the user's newsgroup. In this way you can
