@@ -220,7 +220,7 @@ begin
 end;
 
 
-function dbGetIndexVersion(filename:dbFileName):byte;
+function dbGetIndexVersion(const filename:dbFileName):byte;
 var ixhd : ixheader;
     f    : file;
 begin
@@ -236,6 +236,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.3  2001/07/28 19:24:12  mk
+  - added some const parameters
+
   Revision 1.5.2.2  2001/01/04 14:51:15  mk
   - Indexcache beim erstellen von Indizi abschalten
 

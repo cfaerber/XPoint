@@ -52,7 +52,7 @@ function  dbRecCount(dbp:DB):longint;
 function  dbPhysRecs(dbp:DB):longint;
 procedure dbSetNextIntnr(dbp:DB; newnr:longint);
 procedure dbSetIndexVersion(version:byte);
-function  dbGetIndexVersion(filename:dbFileName):byte;
+function  dbGetIndexVersion(const filename:dbFileName):byte;
 
 {----------------------------------------------------- Satz wechseln ---}
 
@@ -1718,6 +1718,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.8  2001/07/28 19:24:12  mk
+  - added some const parameters
+
   Revision 1.22.2.7  2000/11/01 10:37:08  mk
   - dbEnableIndexCache und dbDisableIndexCache hinzugefuegt
 
