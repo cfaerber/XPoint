@@ -100,6 +100,9 @@ var
   Logbadges: TStringlist; { String is badge, int(pointer) is level }
   Logfile: Text; Logfilename: string;
   LogCount:integer;LogLast: string;
+  {$IFDEF FPC }
+  OldTraceFunc: TBackTraceStrFunc;
+  {$ENDIF }
 
 function FindBadge(Badge: string): Integer;
 var
@@ -265,13 +268,34 @@ begin
     OpenLogfile(True, Logfilename)
 end;
 
+{$IFDEF FPC }
+  function NewBackTraceStr(addr:longint):shortstring;
+  var
+    s: ShortString;
+    Store  : TBackTraceStrFunc;
+  begin
+    { reset to prevent infinite recursion if problems inside the code PM }
+    Store:=BackTraceStrFunc;
+    BackTraceStrFunc:=@SysBackTraceStr;
+    s := OldTraceFunc(addr);
+    Result := s;
+    if Logging then
+      Writeln(LogFile, s);
+    BackTraceStrFunc:=Store;
+  end;
+{$ENDIF }
+
+
 initialization
   LogCount:=0; LogLast:='';
   Logbadges := TStringlist.Create; Logbadges.Sorted := True;
   LastLogMessages := TStringlist.Create;
   OpenLogfile(False, GetEnv('DEBUG'));
   FindBadge('DEFAULT');
-
+  {$IFDEF FPC }
+    OldTraceFunc := BackTraceStrFunc;
+    BackTraceStrFunc := @NewBackTraceStr;
+  {$ENDIF }
 finalization
   CloseLogfile;
   Logbadges.Destroy;
@@ -280,6 +304,9 @@ finalization
 
 {
   $Log$
+  Revision 1.26  2002/02/03 12:44:14  mk
+  - stack trace for fpc
+
   Revision 1.25  2001/10/28 00:02:05  ma
   - using stringlists for badge storing
   - keeping track of last debug messages in every case
