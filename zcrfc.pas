@@ -1299,9 +1299,13 @@ begin
       end;
 
       if ctype='' then ctype := 'text/plain';
-      if (charset='') or not IsKnownCharset(ZCCharsetToMime(charset)) then charset := 'IBM437';
-      if x_charset='' then x_charset := 'US-ASCII' else
-      if not IsKnownCharset(x_charset) then x_charset:='UTF-8';
+
+      if MimeContentTypeNeedCharset(ctype) then 
+      begin
+        if (charset='') or not IsKnownCharset(ZCCharsetToMime(charset)) then charset := 'IBM437';
+        if x_charset='' then x_charset := 'US-ASCII' else
+        if not IsKnownCharset(x_charset) then x_charset:='UTF-8';
+      end;
 
     end else // typ='B'
     begin
@@ -3115,8 +3119,9 @@ end;
 
 procedure WriteRfcTrailer(f: TStream);
 begin
-  if hd.attrib and AttrMPbin <> 0 then
-    wrs(f, '--' + xpboundary + '--');
+  if hd.attrib and AttrMPbin <> 0 then begin
+    wrs(f, '');
+    wrs(f, '--' + xpboundary + '--'); end;
 end;
 
 procedure TUUZ.ZtoU;
@@ -3703,6 +3708,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.19  2002/08/25 19:39:21  cl
+  - UUZ: Fixes for AttrMPart
+
   Revision 1.97.2.18  2002/08/23 10:20:03  cl
   - Added DebugLog output for TUUZ.ZToU
 
