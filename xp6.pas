@@ -1637,7 +1637,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
-(*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
+    if (netztyp<>nt_Fido) or pm or not XP_ID_AMs then
       hdp.programm:=xp_xp+' '+verstr+Trim(betastr)
                      {$IFDEF Snapshot} + '@' + compiletime {$ENDIF}
                      +pformstr;
@@ -2102,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.106  2001/04/13 11:53:07  mk
+  - pid fixed
+
   Revision 1.105  2001/04/05 14:58:12  ml
   -Fix: absender doesnt end with @ anymore
 
