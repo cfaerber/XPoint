@@ -87,7 +87,7 @@ label
 begin
   GetFilescanBox(box);
   if box='' then exit;
-  fl:=BoxFilename(box)+'.FBL';
+  fl:=FileUpperCase(BoxFilename(box)+'.fbl');
   if not FileExists(fl) then begin
     rfehler1(853,box); exit;
     end;
@@ -250,7 +250,7 @@ begin
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
       message(getreps(850,box));       { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
-      extract_msg(xTractMsg,'',BoxFilename(box)+'.FBL',false,0);
+      extract_msg(xTractMsg,'',FileUpperCase(BoxFilename(box)+'.fbl'),false,0);
       mdelay(500);
       closebox;
       end;
@@ -283,7 +283,7 @@ begin
   dbClose(d);
   ReadBox(0,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
-  if filecopy(fn,bfile+'.FBL') then;
+  if filecopy(fn,FileUpperCase(bfile+'.fbl')) then;
   closebox;
   if useclip or ReadJN(getreps(817,fn),false) then   { '%s lîschen' }
     _era(fn);
@@ -342,6 +342,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2001/07/08 09:42:17  ma
+  - fixed: File name case (.bl was not processed correctly with Unix)
+
   Revision 1.11  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

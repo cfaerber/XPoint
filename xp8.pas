@@ -277,7 +277,7 @@ var
     end;
 
   begin
-    sysfile:=BoxFilename(box)+'.BBL';
+    sysfile:=FileUpperCase(BoxFilename(box)+'.bbl');
     root:=nil;
     if FileExists(sysfile) then begin         { alte .BBL-Datei einlesen }
       assign(t,sysfile);
@@ -549,7 +549,7 @@ var t     : text;
       s : string[80];
   begin
     brett:=UpperCase(mid(brett,length(boxpar^.magicbrett)+2));
-    assign(t,bfile+'.Bl');
+    assign(t,bfile+'.bl');
     qwkbrett:='';
     if existf(t) then begin
       reset(t);
@@ -725,7 +725,7 @@ begin
     ReadMaflist:=false;
     end
   else begin
-    assign(t2,bfile+'.bl'); rewrite(t2);
+    assign(t2,FileUpperCase(bfile+'.bl')); rewrite(t2);
     repeat
       if zok then begin
         ss:=trim(LeftStr(s,40));
@@ -747,7 +747,7 @@ var t1,t2 : text;
 begin
   assign(t1,fn); reset(t1);
   s:='';
-  assign(t2,bfile+'.bl'); rewrite(t2);
+  assign(t2,FileUpperCase(bfile+'.bl')); rewrite(t2);
   repeat
     readln(t1,s);
     if (s[1]=';') or (s[32]<>'/') then
@@ -826,10 +826,10 @@ begin
       trfehler(805,60)    { 'Ungltige Absenderangabe' }
     else begin
       message(getreps(806,UpperCase(box)));   { 'Brettliste fr %s wird eingelesen ...' }
-      makebak(bfile+'.BL','BAK');
+      makebak(bfile+'.bl',FileUpperCase('bak'));
       fn:=TempS(dbReadInt(mbase,'msgsize'));
       extract_msg(xTractMsg,'',fn,false,0);
-      ExpandTabs(fn,bfile+'.BL');
+      ExpandTabs(fn,FileUpperCase(bfile+'.bl'));
       _era(fn);
       wkey(1,false);
       closebox;
@@ -872,7 +872,7 @@ begin
   else if promaf then
     ReadPromafList(fn,bfile)
   else begin
-    ExpandTabs(fn,bfile+'.BL');
+    ExpandTabs(fn,FileUpperCase(bfile+'.bl'));
     closebox;
     end;
   if useclip or ReadJN(getreps(817,fn),false) then    { '%s l”schen' }
@@ -1674,7 +1674,7 @@ begin
       readln(t,s);
     s:=trim(s); p:=cpos(':',s);
     if not eof(t) and (p>0) then begin
-      assign(t2,BoxFilename(boxpar^.boxname)+'.BBL');
+      assign(t2,FileUpperCase(BoxFilename(boxpar^.boxname)+'.bbl'));
       rewrite(t2);
       delete(s,1,p);
       while RightStr(s,1)='\' do begin
@@ -1703,6 +1703,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/07/08 09:42:17  ma
+  - fixed: File name case (.bl was not processed correctly with Unix)
+
   Revision 1.43  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 

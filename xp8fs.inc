@@ -156,10 +156,10 @@ begin
     WriteFST(fstype);
     end;
   KorrBoxName(box); { Gro·- und Kleinschreibung korrigieren }
-  makebak(MangleBoxName(box)+'.FL','BAK');
+  makebak(MangleBoxName(box)+'.fl',FileUpperCase('bak'));
   case fstype of
     0 : begin      { SendZMsg }
-          assign(t2,MangleBoxName(box)+'.FL');
+          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
           rewrite(t2);
           readln(t1,s);
           repeat
@@ -188,7 +188,7 @@ begin
         end;
 
     1 : begin      { iMLS-Fileserver }
-          assign(t2,MangleBoxName(box)+'.FL');
+          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
           rewrite(t2);
           writeln(t2,s2);
           writeln(t2,s);
@@ -200,7 +200,7 @@ begin
 
     2 : begin      { NCB-Mail-Fileserver }
           close(t1); reset(t1);
-          assign(t2,MangleBoxName(box)+'.FL');
+          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
           rewrite(t2);
           while not eof(t1) do begin
             readln(t1,s); writeln(t2,s);
@@ -216,7 +216,7 @@ begin
             rfehler(825)    { 'UngÅltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
           else begin
             exchange(convert,'$INFILE',fn);
-            exchange(convert,'$OUTFILE',MangleBoxName(box)+'.FL');
+            exchange(convert,'$OUTFILE',FileUpperCase(MangleBoxName(box)+'.fl'));
             shell(convert,300,3);
             if errorlevel=1 then rfehler(821);
             end;
@@ -558,6 +558,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2001/07/08 09:42:17  ma
+  - fixed: File name case (.bl was not processed correctly with Unix)
+
   Revision 1.19  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
