@@ -11,9 +11,7 @@
 { Overlay-Teil zu xp1 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp1o;
 
@@ -21,12 +19,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,dosx,typeform,keys,fileio,inout,maus2,lister,
+  crt, dos,dosx,typeform,keys,fileio,inout,maus2,lister,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -98,12 +91,10 @@ begin
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
-{JG:10.02.00}
     mappsel(false,'Windows-Clipboard');
     mappsel(false,'Win-Clipboard (URL)');
     mappsel(false,'Win-Clipboard (MAIL)');
     end;
-{/JG}
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -124,6 +115,7 @@ begin
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
+      if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
@@ -144,9 +136,7 @@ begin
       useclip:=false;
     end;
     if (trim(s)='') or
-{$IFNDEF UnixFS }
-       ((length(s)=2) and (s[2]=':')) or 
-{$ENDIF }
+       ((length(s)=2) and (s[2]=':')) or
        (right(s,1)=DirSepa) then
       s:=s+WildCard
     else if IsPath(s) then
@@ -222,7 +212,6 @@ var s     : string;
     t:=keyesc;
   end;
 
-{JG:28.01.00}
   procedure ShowfromLister;
   begin
     showscreen(true);      {Menuepunkte die Probleme machen koennten deaktivieren:}
@@ -256,7 +245,6 @@ var s     : string;
     setenable(3,11,true);  {N/Direkt}
     ex(5);
   end;
-{/JG}
 
 begin
   if listmakros<>0 then begin
@@ -333,7 +321,7 @@ begin
     if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
          Exitcode -2. Weiter bei xp4w.inc/read_msg }
-                            
+
     if upcase(c) = k2_O then                                   { 'O' fuer Lister }
     begin
       ShowHeader;
@@ -352,7 +340,7 @@ begin
 
   if t = keyaltv then                                        { ALT+V = Suche text }
   begin
-    s:=getline; 
+    s:=getline;
     if Suche(getres(414),'',s) then Showfromlister;
     end;
 
@@ -660,11 +648,7 @@ begin
         end;
       end
     else if developer then begin
-{$IFDEF VP }
-  playsound(4000, 5);
-{$ELSE }
       sound(4000); delay(5); nosound;
-{$ENDIF }
       end;
     dbSetIndex(bezbase,mi);
     end;
@@ -751,7 +735,7 @@ begin
     end;
 end;
 
-{ MK 01/00 fn jetzt kein var-Parameter mehr }
+{ fn jetzt kein var-Parameter mehr }
 procedure SetZCftime(fn:pathstr; var ddatum:string);
 var dt : datetime;
     l  : longint;
@@ -983,15 +967,16 @@ begin
            XPWinShell:=false;
          end;
      1 : shell(prog,space,0);       { Windows-Programm aufrufen }
-  {$IFDEF BP }
      2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
-  {$ENDIF }
   end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.40.2.2  2000/07/16 22:45:38  mk
+  - https bei URL-Erkennung hinzugefuegt
+
   Revision 1.40.2.1  2000/07/16 15:55:00  jg
   - UUE-Decoding direkt aus Lister mit "U"
 
