@@ -1320,6 +1320,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
                       oldnt:=netztyp;
+                      sData^.pmreplyto:='';
                       LoadBoxData;
                       if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
@@ -2132,6 +2133,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.76  2000/11/19 11:13:42  mk
+  - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
+
   Revision 1.75  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 
