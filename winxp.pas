@@ -63,7 +63,6 @@ procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
-{ Diese Routine aktualisiert wenn n”tig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
 procedure Wrt(x,y:byte; const s:string);
 { Schreiben eines Strings, wie Write, CursorPosition
@@ -265,8 +264,8 @@ end;
 
 procedure Wrt(x,y:byte; const s:string);
 begin
-  gotoxy(x,y);
-  write(s);
+  FWrt(x, y, s);
+  gotoxy(x+Length(s),y);
 end; { Wrt }
 
 procedure FWrt(x,y: Word; const s:string); assembler;
@@ -296,9 +295,12 @@ end;
 
 
 procedure Wrt2(const s:string);
+var
+  x, y: Integer;
 begin
-  FWrt(WhereX, WhereY, s);
-  GotoXY(WhereX+Length(s), WhereY);
+  x := WhereX; y := WhereY;
+  FWrt(x, y, s);
+  GotoXY(x+Length(s), y);
 end;
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
@@ -728,6 +730,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36.2.4  2001/12/18 13:06:55  mk
+  - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
+
   Revision 1.36.2.3  2001/08/11 20:16:28  mk
   - added const parameters if possible, saves about 2.5kb exe
 

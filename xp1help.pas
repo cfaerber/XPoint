@@ -52,27 +52,27 @@ const kss : byte = 2;
 
   procedure ks(s:string);
   var p : byte;
+    x, y: Byte;
   begin
+    x := WhereX; y := WhereY;
     p:=cpos('^',s);
     delete(s,p,1);
     inc(shortkeys);
     if shortkeys>maxskeys then
       interr('Shortkey Overflow');
     with shortkey[shortkeys] do begin
-      keypos:=wherex;
+      keypos:=x;
       keylen:=length(s);
       keyspot:=p;
       key:=LoCase(s[p]);
       end;
     attrtxt(col.colkeys);
-    Wrt2(left(s,p-1));
-    attrtxt(col.colkeyshigh);
-    Wrt2(s[p]);
-    attrtxt(col.colkeys);
     if kss = 2 then
-      Wrt2(copy(s,p+1,30) + '  ')
+      Wrt(x, y, s + '  ')
     else
-      Wrt2(copy(s,p+1,30) + ' ')
+      Wrt(x, y, s + ' ');
+    attrtxt(col.colkeyshigh);
+    FWrt(x+p-1, y, s[p]);
   end;
 
   procedure AddSK(pos,len,spot:shortint; _key:taste);
@@ -119,13 +119,13 @@ const kss : byte = 2;
   procedure tabkey;
   begin
     attrtxt(col.colkeys);
-    Wrt2(sp(69-wherex));
-    addsk(wherex,3,-3,keytab);
+    Wrt2(sp(69-WhereX));
+    addsk(WhereX,3,-3,keytab);
     attrtxt(col.colkeyshigh);
     Wrt2('Tab');
     attrtxt(col.colkeys);
     Wrt2(' / ');
-    addsk(wherex,4,1,'q');
+    addsk(WhereX,4,1,'q');
     ende('Q','uit');
   end;
 
@@ -410,6 +410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2001/12/18 13:06:55  mk
+  - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
+
   Revision 1.7.2.3  2001/09/16 20:20:06  my
   JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
           nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare

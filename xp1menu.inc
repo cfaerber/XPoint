@@ -137,8 +137,9 @@ begin
   gotoxy(2,1);
   moff;
   for i:=1 to main_n do
-    with mainmenu^[i] do begin
-      hmpos[i]:=wherex+1;
+    with mainmenu^[i] do
+    begin
+      hmpos[i]:= WhereX+1;
       if enabled then begin
         if nr=i then
           attrtxt(col.colmenuinv[0])
@@ -151,7 +152,7 @@ begin
         else
           attrtxt(col.colmenuhigh[0]);
         x := WhereX;
-        Wrt(x-Length(s)+hpos-2, 1, s[hpos]);
+        FWrt(x-Length(s)+hpos-2, 1, s[hpos]);
         GotoXY(x,1);
 
 {        Wrt2(' ');
@@ -621,6 +622,9 @@ end;
 
 {
   $Log$
+  Revision 1.11.2.5  2001/12/18 13:06:55  mk
+  - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
+
   Revision 1.11.2.4  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
