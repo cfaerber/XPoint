@@ -15,9 +15,9 @@ Name: openxp
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 
-Version: 3.9.10
+Version: 3.9.11
 Release: 1
-Source: openxp-3.9.10
+Source: openxp-3.9.11
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team under GPL
 BuildRoot: /tmp/openxp-root
@@ -140,6 +140,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{filelist}
 
 %changelog
+Sun Oct 19 2003 OpenXP <dev@openxp.de>
+- New upstream version 3.9.11 (release 1)
+
 Sun Oct 19 2003 OpenXP <dev@openxp.de>
 - New upstream version 3.9.10 (release 1)
 

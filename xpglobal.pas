@@ -33,7 +33,7 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.9.10';        { Versionnr. - steht nur an dieser Stelle }
+  mainver     = '3.9.11';        { Versionnr. - steht nur an dieser Stelle }
 
 {$I version.inc }
 
@@ -188,6 +188,9 @@ begin
 
 {
   $Log$
+  Revision 1.86  2003/10/19 00:21:16  cl
+  New version number: 3.9.11
+
   Revision 1.85  2003/10/19 00:08:17  cl
   New version number: 3.9.10
 

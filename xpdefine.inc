@@ -42,7 +42,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{$DEFINE Snapshot}
+{$UNDEF Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfuegbar }
@@ -74,7 +74,7 @@
 {$ENDIF }
 
 {$IFDEF NoSnapshot }
-{$DEFINE Snapshot}
+{$UNDEF Snapshot}
 {$ENDIF }
 
 { --- 1. compiler and platform detection ----------------------------- }
@@ -332,6 +332,9 @@
 
 {
   $Log$
+  Revision 1.99  2003/10/19 00:21:16  cl
+  New version number: 3.9.11
+
   Revision 1.98  2003/10/19 00:16:17  cl
   Re-set $DEFINE Snapshot for CVS versions.
 
