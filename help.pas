@@ -60,7 +60,9 @@ procedure releasehelp;
 
 IMPLEMENTATION
 
-type  stringp = ^string;
+{$ifdef Linux}
+uses XPLinux;
+{$endif}
 
 const maxpst  = 20;
       init    : boolean = false;
@@ -69,8 +71,8 @@ const maxpst  = 20;
       _a      : integer = 0;
 
       printch : taste   = '';
-      _pinit  : stringp = nil;
-      _pexit  : stringp = nil;
+      _pinit  : string  = '';
+      _pexit  : string  = '';
 
 
 type pageadr = array[1..maxpages] of packed record
@@ -82,7 +84,7 @@ type pageadr = array[1..maxpages] of packed record
                                      xout  : byte;  { Anzeige-Position }
                                      nn    : smallword;
                                    end;
-     zt      = array[1..maxlines] of stringp;
+     zt      = array[1..maxlines] of string;
 
 var f         : file;
     x,y       : byte;
@@ -103,7 +105,6 @@ var f         : file;
     lines     : byte;
     _lines    : byte;   { iif(noheader,lines,lines-1) }
     z         : ^zt;
-    zlen      : array[1..maxlines] of byte;
     wdt,hgh   : byte;
 
     pst       : array[1..maxpst] of word;
@@ -129,7 +130,7 @@ begin
   if ioresult<>0 then begin
     attrtxt(7);
     writeln;
-    writeln('<HELP> Fehler: Hilfsdatei '+UpperCase(filename(f))+' ist besch„digt.');
+    writeln('<HELP> Fehler: Hilfsdatei "'+FileUpperCase(filename(f))+'" ist besch„digt.');
     halt(1);
     end;
 end;
@@ -167,17 +168,21 @@ function inithelp(name:pathstr; xh,yh:byte;
 
 var ixadr : longint;
     fm      : byte;
-
+{$ifdef Linux}
+  {$ifdef FPC}
+    {$hint name muss noch angepasst werden (Verzeichnisstruktur RPM) }
+  {$endif}
+{$endif}
 begin
-{$IFDEF UnixFS }
-  if pos('.',ExtractFileName(name))=0 then name:=name+'.hlp';
-{$ELSE }
-  if pos('.',ExtractFilename(name))=0 then name:=name+'.HLP';
-{$ENDIF }
+  if pos('.',ExtractFileName(name))=0 then name:=name+FileUpperCase('.hlp');
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
-  if ioresult<>0 then begin
+  if (ioresult<>0) 
+{$ifdef Linux}
+     or not TestAccess(name, taUserR)
+{$endif}  
+  then begin
     filemode:=fm;
     inithelp:=false;
     end
@@ -282,7 +287,7 @@ begin
   if ap<>nr then begin
     if loaded then
       for i:=1 to lines do
-        freemem(z^[i],zlen[i]);
+        z^[i]:='';
     ap:=nr;
     if pstentry then begin
       inc(pstp);
@@ -332,9 +337,7 @@ laden:
       end;
     if buf^[p]=7 then begin
       SetLength(s, sl);
-      zlen[lines]:=length(s)+1;
-      getmem(z^[lines],zlen[lines]);
-      z^[lines]^:=s;
+      z^[lines]:=s;
       inc(lines);
       sl:=0;
       end
@@ -353,13 +356,13 @@ laden:
     end;
   dec(lines);
   _lines:=iif(noheader,lines,lines-1);
-  if copy(z^[1]^,1,2)='^^' then begin
-    val(mid(z^[1]^,3),nr,res);
+  if copy(z^[1],1,2)='^^' then begin
+    val(mid(z^[1],3),nr,res);
     if pstentry then pst[pstp]:=nr;
     goto laden;
     end;
   for i:=iif(NoHeader,1,2) to lines do begin
-    s:=z^[i]^;
+    s:=z^[i];
     randseed:=100;
     wd:=wdt;
     p:=pos('<<',s);
@@ -388,7 +391,7 @@ laden:
       delete(s,ps,1);
       insqvw(i,ps,-1);
       end;
-    z^[i]^:=s;
+    z^[i]:=s;
     end;
   freemem(buf,size);
   loaded:=true;
@@ -398,13 +401,13 @@ end;
 procedure dispqvw(n:byte);
 begin
   with qvw^[n] do
-    mwrt(xout+help.x-1,help.y+y-_a+iif(NoHeader,-1,1),copy(z^[y]^,x,l));
+    mwrt(xout+help.x-1,help.y+y-_a+iif(NoHeader,-1,1),copy(z^[y],x,l));
 end;
 
 
 procedure disppage(qvp:byte);
 var i,p,p2 : integer;
-    pgp    : string[11];
+    pgp    : string;
     s      : string;
     add    : integer;
     yy     : byte;
@@ -433,18 +436,18 @@ begin
   if not NoHeader then begin
     wrt(x,y,'Hilfe: ');
     if headhigh and color then textcolor(15);
-    Wrt2(left(z^[1]^,wdt-7));
+    Wrt2(left(z^[1],wdt-7));
     attrtxt(NormColor);
-    if length(z^[1]^)<wdt-7 then Wrt2(sp(wdt-7-length(z^[1]^)));
+    if length(z^[1])<wdt-7 then Wrt2(sp(wdt-7-length(z^[1])));
     wrt(x,y+1,dup(wdt,'Ä'));
     end;
   for i:=1 to hgh do begin
     if NoHeader then add:=_a else add:=1;
-    if z^[i+add]=nil then s:=''
-    else s:=z^[i+add]^;
+    s:=z^[i+add];
     p:=pos('<<',s);
     yy:=y+i+iif(NoHeader,-1,2);
     if p=0 then begin
+      SetLength(s, length(s)+1);
       fillchar(s[length(s)+1],80,32);
       SetLength(s, wdt);
       fwrt(x,yy,s);
@@ -582,10 +585,10 @@ var lp      : word;
   var i : integer;
 
     procedure wrp(n:integer);
-    var s1,s2 : string[120];
+    var s1,s2 : string;
         p1,p2 : byte;
     begin
-      s1:=z^[n]^; s2:='';
+      s1:=z^[n]; s2:='';
       while pos('<<',s1)>0 do begin
         p1:=pos('<<',s1);
         delete(s1,p1,2);
@@ -601,7 +604,7 @@ var lp      : word;
 
   begin
     checklst:=true;
-    if _pinit<>nil then write(lst,_pinit^);
+    if _pinit<>'' then write(lst,_pinit);
     if noheader then i:=1
     else begin
       wrp(1);
@@ -613,7 +616,7 @@ var lp      : word;
       wrp(i);
       inc(i);
       end;
-    if _pexit<>nil then write(lst,_pexit^);
+    if _pexit<>'' then write(lst,_pexit);
     checklst:=true;
   end;
 
@@ -650,7 +653,7 @@ begin     { of IHS }
       lp:=ap; la:=_a;
       qvj:='';
       for i:=1 to qvws do with qvw^[i] do
-        qvj:=qvj+z^[y]^[x];
+        qvj:=qvj+z^[y][x];
       qvj:=UpperCase(qvj);
       end;
     if qvok then begin
@@ -738,7 +741,7 @@ begin     { of IHS }
   until t=keyesc;
   mauszul:=ml; mauszur:=mr; mauszuo:=mo; mauszuu:=mu;
   for i:=1 to lines do
-    freemem(z^[i],zlen[i]);
+    z^[i]:=''; {freemem(z^[i],zlen[i]);}
   loaded:=false;
   dispose(z); dispose(qvw);
 end;
@@ -747,21 +750,18 @@ end;
 procedure help_printable(printchar:taste; pinit,pexit:string);
 begin
   printch:=printchar;
-  if _pinit<>nil then freemem(_pinit,length(_pinit^)+1);
-  if _pexit<>nil then freemem(_pexit,length(_pexit^)+1);
-  if pinit<>'' then begin
-    getmem(_pinit,length(pinit)+1);
-    _pinit^:=pinit;
-    end;
-  if pexit<>'' then begin
-    getmem(_pexit,length(pexit)+1);
-    _pexit^:=pexit;
-    end;
+  _pinit:=pinit;
+  _pexit:=pexit;
 end;
 
 end.
 {
   $Log$
+  Revision 1.19  2000/07/06 10:32:04  hd
+  - Typ 'stringp' entfernt (fuer AnsiString nicht noetig)
+  - Linux
+    - Zugriffstest auf die Hilfedatei
+
   Revision 1.18  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
