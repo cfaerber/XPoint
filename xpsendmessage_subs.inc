@@ -1017,9 +1017,12 @@ var hdp : THeader;
     hds : longint;
 begin
   Hdp := THeader.Create;
-  ReadHeader(hdp,hds,false);
-  origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp.pfad);
-  Hdp.Free;
+  try
+    ReadHeader(hdp,hds,false);
+    origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp.pfad);
+  finally
+    Hdp.Free;
+  end;
 end;
 
 procedure SetLocalPM;
@@ -1270,6 +1273,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2003/09/21 16:10:30  mk
+  - added try finally block in get_origbox
+
   Revision 1.36  2003/09/06 23:03:08  cl
   - send window - time-shifted sending of message
     cLOSES task #76792: Sendefenster: Datum
