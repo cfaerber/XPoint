@@ -25,16 +25,19 @@ unit dosx;
 
 interface
 
+{$ifdef Linux}
+  {$i linux/dosxh.inc}
+{$else}
+
 uses
   xpglobal,
   dos;
 
-{$IFNDEF UnixFS }
 function  GetDrive:char;
 function  alldrives:string;
 function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
                                             { 4=Device, 5=Netz              }
-{$ENDIF }
+{$endif} { Linux }
 
 function  dospath(d:byte):pathstr;
 procedure GoDir(path:pathstr);
@@ -42,22 +45,24 @@ procedure GoDir(path:pathstr);
 function  OutputRedirected:boolean;
 function  IsDevice(fn:pathstr):boolean;
 
+
 { ================= Implementation-Teil ==================  }
 
 implementation
 
-{$IFNDEF UnixFS } { Wird alles nicht benoetigt }
-uses
-  {$ifdef vp }
-  vpsyslow,
-  {$endif}
-  {$IFDEF Win32 }
-  windows,
-  {$ENDIF }
-  sysutils;
-{$ENDIF } { UnixFS }
+{$ifdef Linux}
+  {$i linux/dosx.inc}
+{$else}
 
-{$IFNDEF UnixFS }
+uses
+{$ifdef vp }
+  vpsyslow,
+{$endif}
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
+  sysutils;
+
 function GetDrive:char;
 var
   s: String;
@@ -65,37 +70,26 @@ begin
   s := GetCurrentDir;
   GetDrive := s[1];
 end;
-{$ENDIF } { UnixFS }
 
 { 0=aktuell, 1=A, .. }
 
 function dospath(d:byte):pathstr;
 var s : string;
 begin
-{$IFDEF UnixFS }
-  getdir(0, s);
-{$ELSE }
   getdir(d,s);
-{$ENDIF }
   dospath:=s;
 end;
 
-{$IFNDEF UnixFS }
 procedure SetDrive(drive:char);
 begin
   SetCurrentDir(Drive + ':');
 end;
-{$ENDIF } { UnixFS }
 
 procedure GoDir(path:pathstr);
 begin
   if path='' then exit;
-{$IFNDEF UnixFS }
   SetDrive(path[1]);
   if (length(path)>3) and (path[length(path)]=DirSepa) then
-{$ELSE }
-  if (path[length(path)]=DirSepa) then
-{$ENDIF }
     Delete(path, Length(path), 1); { dec(byte(path[0])); }
   chdir(path);
 end;
@@ -121,7 +115,6 @@ end;
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
 
-{$IFNDEF UnixFS }
 function DriveType(drive:char):byte;
 const
   DriveStr: String = '?:\'+#0;
@@ -161,9 +154,7 @@ begin
     {$ENDIF }
   {$endif}
 end;
-{$ENDIF } { UnixFS }
 
-{$IFNDEF UnixFS }
 function alldrives:string;
 var b : byte;
     s : string;
@@ -189,7 +180,6 @@ begin
   s[0]:=chr(b);
   alldrives:=s;
 end;
-{$ENDIF } { UnixFS }
 
 
 function IsDevice(fn:pathstr):boolean;
@@ -198,9 +188,14 @@ begin
   IsDevice := Pos('COM', fn) = 1;
 end;
 
+{$endif} { Linux }
+
 end.
 {
   $Log$
+  Revision 1.20  2000/06/29 12:55:37  hd
+  - Linux-Teil isoliert
+
   Revision 1.19  2000/06/23 15:59:09  mk
   - 16 Bit Teile entfernt
 
