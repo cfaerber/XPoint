@@ -1,12 +1,13 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { --- UUCP-g -------------------------------------------------------- }
 
@@ -20,12 +21,12 @@ const cp_CLOSE   = 1;      { Verbindung beenden  }
 type  uuBuffer   = array[0..4095] of byte;
       PacketHeader = array[0..5] of byte;
 
-var   gsSeqNr    : byte;   { nÑchste zu sendende sequence number, 0..7 }
+var   gsSeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
       grSeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
-      grWinSize  : byte;   { eigene Window-Grî·e, 1..7 }
-      gsWinSize  : byte;   { Window-Grî·e der Gegenseite, 1..7  }
-      gsBufSize1 : byte;   { max. Grî·e der ausgehenden Pakete, 0..7 }
-      grBufSize1 : byte;   { max. Grî·e der eingehenden Pakete, 0..7 }
+      grWinSize  : byte;   { eigene Window-Groesse, 1..7 }
+      gsWinSize  : byte;   { Window-Groesse der Gegenseite, 1..7  }
+      gsBufSize1 : byte;   { max. Groesse der ausgehenden Pakete, 0..7 }
+      grBufSize1 : byte;   { max. Groesse der eingehenden Pakete, 0..7 }
       gsBufSize  : word;   { 32..4096 }
       grBufSize  : word;   { 32..4096 }
       gBuffer    : array[0..7] of ^uuBuffer;
@@ -42,7 +43,6 @@ begin
 end;
 
 procedure g_SendHeader;
-var i : byte;
 begin
   gCtlHeader[5]:=gHeaderChecksum(gCtlHeader);
   sendblock(gCtlHeader,6);
@@ -64,7 +64,7 @@ begin
   cp_type:=(gCtlHeader[4] shr 3) and 7;
 end;
 
-procedure g_RecControlPacket(t:word);  { wird auch fÅr Datenpakete verwendet }
+procedure g_RecControlPacket(t:word);  { wird auch fuer Datenpakete verwendet }
 var i : integer;
     b : byte;
 
@@ -77,14 +77,14 @@ begin
   fillchar(gCtlHeader,sizeof(gCtlHeader),0);
   time(t);
   repeat
-    multi2(mcur);
+    multi2;
   until (receive(comnr,b) and (b=ord(^P))) or timeout(true) or test_break;
   if not timeout(true) and not break then begin
     gCtlHeader[0]:=b;
     { if ParDebug then write(hex(b,2),' '); }
     i:=1;
     repeat
-      multi2(mcur);
+      multi2;
       if receive(comnr,b) then begin
         gCtlHeader[i]:=b;
         { if ParDebug then write(hex(b,2),' '); }
@@ -110,7 +110,7 @@ begin
   gClose:=false;
   for i:=0 to 7 do new(gBuffer[i]);
   grBufSize:=MaxPacketSize;
-  grBufSize1:=Log2Int(grBufSize)-5;
+  grBufSize1:=trunc(log2(grBufSize))-5;
   grWinSize:=MaxWinSize;
   sendstr(dup(12,#0));   { keine Ahnung, wozu .. }
   n:=10;
@@ -132,7 +132,7 @@ begin
   WrLog(' ','UUCP-'+proto+' packet sizes: '+strs(gsBufSize)+'/'+strs(grBufSize));
   if forcePktSize and (gsBufSize<>grBufSize) then begin
     gsBufSize:=grBufSize;
-    gsBufSize1:=Log2Int(gsBufSize)-5;
+    gsBufSize1:=trunc(log2(gsBufSize))-5;
     WrLog(' ','forced output packet size: '+strs(gsBufSize));
     end;
   ShowPacketSize(gsBufSize,grBufSize);
@@ -146,7 +146,7 @@ begin
   gsWinSize:=gCtlHeader[4] and 7;
   ShowWinsize(gsWinSize,grWinSize);
   WrLog(' ','UUCP-'+proto+' window sizes: '+strs(gsWinSize)+'/'+strs(grWinSize));
-  if gsWinSize=0 then begin      { ungÅltige Fenstergrî·e }
+  if gsWinSize=0 then begin      { ungueltige Fenstergroesse }
     rmsg(getres2(2300,8));       { 'illegal window size 0' }
     logerror('illegal window size');
     exit;
@@ -216,7 +216,7 @@ begin
   if VarPacketSize then
     while (ssize>64) and (ssize div 2>=size) do
       ssize:=ssize div 2;
-  gHeader[gsSeqNr,1]:=log2int(ssize)-4;        { LÑngenbyte k }
+  gHeader[gsSeqNr,1]:=trunc(log2(ssize))-4;        { Laengenbyte k }
 
   short:=(size<ssize) and not noshort;        { Dateninhalt erzeugen }
   if short then
@@ -234,7 +234,7 @@ begin
   if size>0 then
     move(data,gBuffer[gsSeqNr]^[ofs],size);
   if ssize-size-ofs>0 then
-    fillchar(gbuffer[gsSeqNr]^[size+ofs],ssize-size-ofs,0);  {mit 0 auffÅllen}
+    fillchar(gbuffer[gsSeqNr]^[size+ofs],ssize-size-ofs,0);  {mit 0 auffuellen}
 
   gHeader[gsSeqNr,4]:=iif(short,$c0,$80) + gsSeqNr shl 3 + grSeqNr;
   w:=g_CheckSum(gbuffer[gsSeqNr]^,ssize);
@@ -249,8 +249,7 @@ end;
 
 
 procedure g_SendDataPacket(nr:byte);
-var i    : integer;
-    size : word;
+var size : word;
 begin
   if ParDebug then
     wrdebug('send packet '+strs(nr)+'  ');
@@ -262,14 +261,14 @@ end;
 
 
 function g_WaitAcknowledge(all:boolean):boolean;
-var AckDa : boolean;
+var (* AckDa : boolean; *)
     n,i   : integer;
     seqnr : shortint;
     resend: boolean;
     pkts  : integer;
 begin
   g_WaitAcknowledge:=false;
-  AckDa:=false;
+  (* AckDa:=false; *)
   n:=20; pkts:=0;
   repeat
     g_RecControlPacket(AckTimeout);         { Ctrl-Paket holen }
@@ -287,10 +286,10 @@ begin
       if ((seqnr>=gBufFirst) and (seqnr<gBufFirst+gBufAnz)) or
          (seqnr<(gBufFirst+gBufAnz-8)) or
          ((cp_type=cp_NAK) and (succ(seqnr) mod 8=gBufFirst)) then
-      begin    { ACK/NAK fÅr eines der gesendeten Pakete }
+      begin    { ACK/NAK fuer eines der gesendeten Pakete }
         while succ(seqnr) mod 8<>gBufFirst do begin
           gBufFirst:=succ(gBufFirst) mod 8;  { alles, was dazwischenliegt, }
-          dec(gBufAnz);                      { sehen wir als bestÑtigt an  }
+          dec(gBufAnz);                      { sehen wir als bestaetigt an  }
           end;                               { (s. Taylor g-Implementation)}
         if cp_type=cp_NAK then begin
           resend:=true;
@@ -303,7 +302,7 @@ begin
             g_WaitAcknowledge:=true;            { fertig }
             exit;
             end;
-          AckDa:=true;
+          (* AckDa:=true; *)
           pkts:=0;
           end;
         end
@@ -350,7 +349,7 @@ var f    : file;
     buf  : ^uubuffer;
     size : longint;
     rr   : word;
-    x    : byte;
+    (* x    : byte; *)
 label ende;
 begin
   g_SendFile:=fileError;
@@ -360,7 +359,7 @@ begin
   seek(f,offset);
   size:=offset;
   gBufFirst:=gsSeqnr; gBufAnz:=0;
-  x:=wherex;
+  (* x:=wherex; *)
   WrdLn;
   filetrans:=true;
   while not eof(f) do begin
@@ -405,16 +404,16 @@ procedure g_receive(var s:string);    { Befehl oder Datei empfangen }
 var command,ok   : boolean;             { Dateiname ohne Extension!   }
     f            : file;
     n,size,i,j   : integer;
-    b,p          : byte;
+    b            : byte;
     ende         : boolean;
     off,sub      : integer;
-    fs           : longint;        { Dateigrî·e gesamt }
-    x            : byte;
+    fs           : longint;        { Dateigroesse gesamt }
+    (* x            : byte; *)
     tflag        : boolean;
     AckEach      : boolean;
     blksize      : word;
     ftyped       : boolean;
-    NAKpending   : boolean;
+    (* NAKpending   : boolean; *)
     timeoutcount : integer;
 
 label abbruch;
@@ -443,9 +442,9 @@ begin
     ftyped:=true;
   gBufFirst:=(grSeqnr+1) mod 8; gBufAnz:=0;
   AckEach:=(grBufSize>=256);
-  x:=wherex;
+  (* x:=wherex; *)
   tflag:=false;
-  NAKpending:=false;
+  (* NAKpending:=false; *)
   ende:=false;
   WrdLn;
   repeat
@@ -461,15 +460,15 @@ begin
       if timeout(true) then inc(timeoutcount);
       dec(n);
       ok:=(gCtlHeader[1]>=1) and (gCtlheader[1]<=8);  { Datenpaket }
-      if not ok and timeout(false) and not NoCarrier and even(n) then
+      if not ok and timeout(false) and not NoCarrier and (not odd(n)) then
         g_SendControlPacket(cp_NAK,grSeqNr);   { 30s Timeout-> Gegenseite aufwecken }
     until ok or (n=0) or (timeoutcount>10) or break or gClose or NoCarrier;
     if not ok then goto abbruch;
-    size:=1 shl (gCtlHeader[1]+4);   { Paketgrî·e }
+    size:=1 shl (gCtlHeader[1]+4);   { Paketgroesse }
     if ParDebug then
       wrdebug('PktSize: '+strs(size)+'  ');
     time(DataTimeout2);
-    j:=(grSeqnr+1) mod 8;     { nÑchste erwartete SeqNr }
+    j:=(grSeqnr+1) mod 8;     { naechste erwartete SeqNr }
     i:=0;
     { R-}
     ShowTime:=false;
@@ -479,7 +478,7 @@ begin
         inc(i);
         end;
       testbrk;
-      multi2(mcur);
+      multi2;
     until (i=size) or timeout(true) or break;
     ShowTime:=true;
     { R+}
@@ -504,10 +503,10 @@ begin
           NewError;
           AckBuffer;
           g_SendControlPacket(cp_NAK,grSeqNr);
-          NAKpending:=true;
+          (* NAKpending:=true; *)
           end
         else begin         { Paket ok }
-          NAKpending:=false;
+          (* NAKpending:=false; *)
           inc(gBufAnz);
           grSeqNr:=(grSeqNr+1) mod 8;   { = j }
           { gsSeqNr:=(gCtlHeader[4] and 7 + 1) mod 8; }
@@ -531,7 +530,7 @@ begin
             while (i<size-sub) and (gBuffer[grSeqNr]^[i]<>0) do
               inc(i);
             move(gbuffer[grSeqNr]^[off],s[length(s)+1],min(i-off,255-length(s)));
-            s[0]:=chr(min(255,length(s)+i-off));
+            setlength(s,min(255,length(s)+i-off));
             ende:=(i<size);
             end
           else begin               { Dateipaket verarbeiten }
@@ -601,6 +600,9 @@ begin
   g_Receive(fn);
   g_RecFile:=iif(fn='',fileError,fileOK);
 end;
+{
+  $Log$
+  Revision 1.2  2000/10/27 16:14:29  fe
+  uucico notduerftig uebersetzbar gemacht.
 
-
-
+}

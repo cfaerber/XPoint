@@ -1,24 +1,46 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - UUCICO }
 
-{$B-,V-,R-}
+program uucico;
+
+{$i xpdefine.inc}
 
 { define debug}    { Empfangs-Logfile UU-DEBUG.                }
 { define sim}      { Simulierter Netcall; Eingabedatei: UUSIM. }
 
-uses  crt,dos,uart,typeform,fileio,video,windows,inout,resource;
+uses dos,
+     sysutils,
+     math,
+{$IFDEF NCRT }
+     xpcurses,
+{$ELSE }
+     crt,
+{$ENDIF }
+{$IFDEF Win32 }
+     xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+     xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+     xpos2,
+{$ENDIF }
+     xpglobal,uart,typeform,fileio,inout,resource,winxp;
+
+type  pathstr = string;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
-      uu_parerr  = 1;
+      (* uu_parerr  = 1; *)
       uu_nologin = 2;
       uu_senderr = 3;
       uu_recerr  = 4;
@@ -62,8 +84,8 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       resopen       : boolean = false;
       dlogopen      : boolean = false;
       ulogopen      : boolean = false;
-      break         : boolean = false;      { <Esc> gedrÅckt }
-      filetrans     : boolean = false;      { fÅr rerrmsg }
+      break         : boolean = false;      { <Esc> gedrueckt }
+      filetrans     : boolean = false;      { fuer rerrmsg }
       ShowTime      : boolean = true;
       FileStarted   : boolean = false;
 
@@ -72,7 +94,7 @@ var   omx,omy      : byte;
       oldexit      : pointer;
 
       debugfile    : file of byte;     { Schnittstellen-Debug-Logfile  }
-      siminput     : file of byte;     { Eingabedatei fÅr sim. Netcall }
+      (* siminput     : file of byte; *)     { Eingabedatei fuer sim. Netcall }
       deblog,uulog : ^text;            { DebugMode-Logfile }
       col          : record
                        colmailer     : byte;
@@ -191,7 +213,7 @@ begin
   {$I-}
   reset(t);
   {$I+}
-  if ioresult<>0 then StopError('Config file missing: '+ustr(paramstr(1)));
+  if ioresult<>0 then StopError('Config file missing: '+uppercase(paramstr(1)));
   while not eof(t) do begin
     readln(t,s0);
     s:=trim(s0);
@@ -199,9 +221,9 @@ begin
     if (s<>'') and (LeftStr(s,1)<>';') and (LeftStr(s,1)<>'#') then
       if p=0 then StopError('Unknown option:  '+s)
       else begin
-        id:=lstr(trim(LeftStr(s,p-1)));
+        id:=lowercase(trim(LeftStr(s,p-1)));
         s:=trim(mid(s,p+1));
-        bool:=(ustr(s)<>'N');
+        bool:=(uppercase(s)<>'N');
         if id='language'   then language:=s else
         if id='debug'      then ParDebug:=bool else
         if id='debugwindow'then GetWindow else
@@ -266,8 +288,7 @@ end;
 
 
 procedure TestConfig;
-var i    : integer;
-    perr : string[40];
+var perr : string[40];
 
   procedure rerror(nr:word);
   begin
@@ -290,7 +311,7 @@ begin
   if not ValidFilename(FilePath+'1$2$3.9x9') then
     rerror(105);                      { 'Illegal File Path' }
   if (uulogfile<>'') and not validfilename(uulogfile) then
-    rerror1(106,ustr(uulogfile));     { 'Illegal logfile name: %s' }
+    rerror1(106,uppercase(uulogfile));     { 'Illegal logfile name: %s' }
   if onlinetime=0 then onlinetime:=ticker;
 end;
 
@@ -305,7 +326,7 @@ const LoginTimeout  =  60;    { Hangup-Timeout bei uucp-Starthandshake  }
       AckTimeout    =  10;    { g: Repeat-Timeout bei Warten auf ACK    }
       ExitTimeout   =   2;    { g: Repeat-Timeout bei CLOSE             }
       DataTimeout   =  15;    { g: Repeat-Timeout beim Warten auf Daten }
-      DataTimeout2  =  60;    { g: Timeout bei öbertragung eines Datenpakets }
+      DataTimeout2  =  60;    { g: Timeout bei Uebertragung eines Datenpakets }
       eProtTimeout  =  90;    { e/z: Timeout beim Warten auf Daten      }
 
       DebugLog      =  'UUDEBUG.LOG';
@@ -317,16 +338,16 @@ const LoginTimeout  =  60;    { Hangup-Timeout bei uucp-Starthandshake  }
 
 var   SizeN  : boolean;      { Size negotiation }
       recs   : string;
-      proto  : char;         { ausgewÑhltes uucp-Protokoll }
-      _ende  : boolean;      { Netcall vollstÑndig beenden }
-      mcur   : curtype;
+      proto  : char;         { ausgewaehltes uucp-Protokoll }
+      _ende  : boolean;      { Netcall vollstaendig beenden }
+      (* mcur   : curtype; *)
 
       transdata : record
                     connstart   : longint;      { Ticks: CONNECT }
                     files       : longint;
                     filesize    : longint;      { aktuelle Datei }
                     filestart   : longint;
-                    transferred : longint;      { davon Åbertrg. }
+                    transferred : longint;      { davon uebertrg. }
                     blocksize   : word;
                     errors      : longint;
                     total       : longint;
@@ -412,7 +433,7 @@ end;
 function timeout(ctest:boolean):boolean;
 begin
   {$ifdef sim}
-    if zaehler[2]>0 then zaehler[2]:=5;    { Timeout auf 5 Sek. abkÅrzen }
+    if zaehler[2]>0 then zaehler[2]:=5;    { Timeout auf 5 Sek. abkuerzen }
   {$endif}
   timeout:=(zaehler[2]=0) or (ctest and NoCarrier);
 end;
@@ -474,13 +495,13 @@ procedure tb;
 var b : byte;
 begin
   if receive(comnr,b) and (length(recs)<255) then begin
-    inc(byte(recs[0]));
+    setlength(recs, length(recs)+1);
     recs[length(recs)]:=chr(b);
     if ParDebug then
       if b=0 then wrdebug('˙')
       else wrdebug(chr(b));
     end;
-  multi2(mcur);
+  multi2;
   testbrk;
 end;
 
@@ -497,19 +518,19 @@ begin
   recs:='';
 end;
 
-{ warten, bis fÅr <secs> Sekunden kein Zeichen mehr empfangen wurde }
+{ warten, bis fuer <secs> Sekunden kein Zeichen mehr empfangen wurde }
 procedure flushserial(secs:byte);
 var b : byte;
 begin
   time(secs);
   repeat
     if receive(comnr,b) then time(secs)
-    else multi2(mcur);
+    else multi2;
   until timeout(true);
   flushinput(comnr);
 end;
 
-procedure ComDebug;
+(* procedure ComDebug;
 var b : byte;
 begin
   b:=0;
@@ -521,7 +542,7 @@ begin
       if b<>27 then SendByte(b);
       end;
   until b=27;
-end;
+end; *)
 
 function Cval(s:string):longint;
 begin
@@ -535,7 +556,7 @@ procedure blockwrite(var f:file; var data; size:word);
 begin
   if UseRTS then DropRTS(comnr);
   system.blockwrite(f,data,size);
-  if UseRTS then SetRTS(comnr);
+  (*if UseRTS then SetRTS(comnr);*)
 end;
 
 
@@ -543,7 +564,7 @@ procedure blockread(var f:file; var data; size:word; var rr:word);
 begin
   if UseRTS then DropRTS(comnr);
   system.blockread(f,data,size,rr);
-  if UseRTS then SetRTS(comnr);
+  (*if UseRTS then SetRTS(comnr);*)
 end;
 
 
@@ -574,7 +595,9 @@ begin
 end;
 
 
-{$F+,S-} { R-} procedure WriteOnline; {$F-,S+}
+(* {$F+,S-} { R-} *)
+procedure WriteOnline;
+(* {$F-,S+} *)
 const lasttick : longint = 0;
 begin
   if not ParDebug and showtime and (abs(ticker-lasttick)>10) then begin
@@ -587,8 +610,7 @@ end;
 
 
 procedure ShowWindow;
-var i     : integer;
-    xx,xy : byte;
+var xx,xy : byte;
 begin
   if ParDebug then begin
     if DebugWinX1<>0 then begin
@@ -601,7 +623,7 @@ begin
     savecursor;
     cursor(curoff);
     window(1,1,80,25);
-    mx:=15; my:=getscreenlines div 2 - 6;
+    mx:=15; my:=sysgetscreenlines div 2 - 6;
     attrtxt(col.colmailer); forcecolor:=true;
     wpushs(mx,mx+wdt+1,my,my+hgh+1,'');
     inc(windmax,$1900);
@@ -649,7 +671,7 @@ begin
   case proto of
     'g','G' : begin
                 attrtxt(col.colmailer);
-                wrt(mx+25,my+2,getres2(2300,4));    { 'Paketgrî·e' }
+                wrt(mx+25,my+2,getres2(2300,4));    { 'Paketgroesse' }
               end;
   end;
 end;
@@ -748,11 +770,11 @@ begin
       if fn<>'' then
         wrt(mx+2,my+4,iifs(send,senden,empfangen)); { 'Senden' / 'Empfangen' }
       wrt(mx+27,my+4,dateien);                    { 'Dateien' }
-      wrt(mx+2,my+7,uebertragen);                 { 'Åbertragen' }
+      wrt(mx+2,my+7,uebertragen);                 { 'uebertragen' }
       wrt(mx+2,my+8,gesamt);                      { 'gesamt' }
-      wrt(mx+2,my+6,dateigroesse);                { 'Dateigrî·e' }
+      wrt(mx+2,my+6,dateigroesse);                { 'Dateigroesse' }
       wrt(mx+2,my+10,restzeit);                   { 'Restzeit' }
-      wrt(mx+27,my+6,blockgroesse);               { 'Blockgrî·e' }
+      wrt(mx+27,my+6,blockgroesse);               { 'Blockgroesse' }
       wrt(mx+27,my+7,durchsatz);                  { 'Durchsatz          cps' }
       wrt(mx+27,my+8,dgesamt);                    { 'gesamt             cps' }
       wrt(mx+27,my+10,fehler);                    { 'Fehler' }
@@ -786,7 +808,7 @@ var s    : string;
     user : string;
     p,p2 : byte;
 begin
-  s[0]:=chr(min(255,len));
+  setlength(s,min(255,len));
   move(data,s[1],length(s));
   p:=cpos(#10,s);
   if p>0 then TruncStr(s,p-1);
@@ -840,7 +862,6 @@ end;
 { --- UUCP-e -------------------------------------------------------- }
 
 function e_SendCommand(s:string):boolean;   { 0-terminierten Befehl senden }
-var i : byte;
 begin
   SendStr(s+#0);
   e_SendCommand:=not NoCarrier;
@@ -863,12 +884,12 @@ begin
         end;
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   until (b=0) or timeout(true) or break;
   if timeout(true) or break then l:=0;
-  s[0]:=chr(l);
+  setlength(s,l);
   e_GetCommand:=s;
 end;
 
@@ -896,8 +917,8 @@ begin
   seek(f,offset);
   transdata.filesize:=filesize(f)-offset;
   if not ParDebug then
-    WriteTransfer;         { Grî·e anzeigen }
-  SendStr(LeftStr(strs(transdata.filesize)+dup(20,#0),20));   { LÑnge senden }
+    WriteTransfer;         { Groesse anzeigen }
+  SendStr(LeftStr(strs(transdata.filesize)+dup(20,#0),20));   { Laenge senden }
   if not NoCarrier then
     repeat
       blockread(f,buf,bufsize,rr);
@@ -935,15 +956,15 @@ begin
       time(eProtTimeout);
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   if timeout(true) or break then exit;
   while (i>0) and (len[i]=#0) do dec(i);
-  len[0]:=chr(i);
-  fs:=ival(len);        { Dateigrî·e }
+  setlength(len,i);
+  fs:=ival(len);        { Dateigroesse }
   transdata.filesize:=fs;
-  WriteTransfer;      { Grî·e anzeigen }
+  WriteTransfer;      { Groesse anzeigen }
   assign(f,fn);
   rewrite(f,1);
   time(eProtTimeout);
@@ -984,7 +1005,6 @@ end;
 { --- UUCP-f/z ------------------------------------------------------ }
 
 function fz_SendCommand(s:string):boolean;  { CR-terminierten Befehl senden }
-var i : byte;
 begin
   SendStr(s+#13);
   fz_SendCommand:=not NoCarrier;
@@ -1007,12 +1027,12 @@ begin
         end;
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   until (b=13) or timeout(true) or break;
   if timeout(true) then l:=0;
-  s[0]:=chr(l);
+  setlength(s,l);
   fz_GetCommand:=s;
 end;
 
@@ -1042,7 +1062,7 @@ begin
   resetfm(f,0);
   seek(f,offset);
   transdata.filesize:=filesize(f)-offset;
-  WriteTransfer;         { Grî·e anzeigen }
+  WriteTransfer;         { Groesse anzeigen }
   chk:=$ffff;
   if not NoCarrier then
     repeat
@@ -1116,7 +1136,7 @@ var b       : byte;
 
   procedure wrongbyte;
   begin
-    wrldebug(' got wrong byte: '+lstr(hex(b,2)));
+    wrldebug(' got wrong byte: '+lowercase(hex(b,2)));
   end;
 
   procedure fescape(range0,range1:byte; ofs:integer);
@@ -1170,8 +1190,8 @@ begin
                   if receive(comnr,b) then begin
                     inc(len); chex[len]:=chr(b and $7f);
                     end;
-                chex[0]:=chr(len);
-                wrldebug('Got Checksum: '+LeftStr(chex,4)+'  expected: '+lstr(hex(chk,4)));
+                setlength(chex,len);
+                wrldebug('Got Checksum: '+LeftStr(chex,4)+'  expected: '+lowercase(hex(chk,4)));
                 if timeout(true) or (chex[5]<>#13) or
                    (hexval(LeftStr(chex,4))<>chk) then
                   fehler:=true
@@ -1189,7 +1209,7 @@ begin
       time(eProtTimeout);
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
     if not ftyped and (bp>110) then begin
@@ -1248,19 +1268,19 @@ end;
 { --- UUCP-Verteiler ------------------------------------------------ }
 
 function SendCommand(s:string):boolean;   { true = ok }
-var result : boolean;
+var scresult : boolean;
 begin
   wrldebug('sending command: '+s);
   case proto of
-    'g','G' : result:=g_SendCommand(s);
-    'e'     : result:=e_SendCommand(s);
-    'f','z' : result:=fz_SendCommand(s);
+    'g','G' : scresult:=g_SendCommand(s);
+    'e'     : scresult:=e_SendCommand(s);
+    'f','z' : scresult:=fz_SendCommand(s);
   end;
-  if not result then begin
+  if not scresult then begin
     if blankpos(s)>0 then s:=LeftStr(s,blankpos(s)-1);
     LogError('error sending command "'+s+'"');
     end;
-  SendCommand:=result;
+  SendCommand:=scresult;
 end;
 
 function GetCommand:string;               { '' = Fehler }
@@ -1292,43 +1312,43 @@ begin
 end;
 
 function SendFile(fn:pathstr; offset:longint):boolean;   { true = ok }
-var result : shortint;
+var sfresult : shortint;
 begin
   repeat
-    startfile(true,getFileName(fn),_filesize(fn));
+    startfile(true,extractfilename(fn),_filesize(fn));
     case proto of
-      'g','G' : result:=g_SendFile(fn,offset);
-      'e'     : result:=e_SendFile(fn,offset);
-      'f'     : result:=fz_SendFile(true,fn,offset);
-      'z'     : result:=fz_SendFile(false,fn,offset);
+      'g','G' : sfresult:=g_SendFile(fn,offset);
+      'e'     : sfresult:=e_SendFile(fn,offset);
+      'f'     : sfresult:=fz_SendFile(true,fn,offset);
+      'z'     : sfresult:=fz_SendFile(false,fn,offset);
     end;
-    if result=fileRepeat then
+    if sfresult=fileRepeat then
       logerror('error - resending file');
-  until (result=fileOK) or (result=fileError);
-  if result<>fileOK then
+  until (sfresult=fileOK) or (sfresult=fileError);
+  if sfresult<>fileOK then
     logerror('error sending file');
-  SendFile:=(result=fileOK);
+  SendFile:=(sfresult=fileOK);
 end;
 
 function RecFile(fn:pathstr; size:longint):boolean;    { true = ok }
-var result : shortint;
+var rfresult : shortint;
 begin
   FileRetries:=0;
   repeat
     inc(FileRetries);
-    startfile(false,getFileName(fn),size);
+    startfile(false,extractfilename(fn),size);
     case proto of
-      'g','G' : result:=g_RecFile(fn);
-      'e'     : result:=e_RecFile(fn);
-      'f'     : result:=fz_RecFile(true,fn);
-      'z'     : result:=fz_RecFile(false,fn);
+      'g','G' : rfresult:=g_RecFile(fn);
+      'e'     : rfresult:=e_RecFile(fn);
+      'f'     : rfresult:=fz_RecFile(true,fn);
+      'z'     : rfresult:=fz_RecFile(false,fn);
     end;
-    if result=fileRepeat then
+    if rfresult=fileRepeat then
       logerror('error - repeating file');
-  until (result=fileOK) or (result=fileError);
-  if result<>fileOK then
+  until (rfresult=fileOK) or (rfresult=fileError);
+  if rfresult<>fileOK then
     logerror('error receiving file');
-  RecFile:=(result=fileOK);
+  RecFile:=(rfresult=fileOK);
 end;
 
 function InitProtocol:boolean;
@@ -1359,7 +1379,7 @@ begin
   ti:=ticker;
   writeln;                  { Shere: s. XP7.login }
   {$ifdef sim}
-    assign(siminput,'uusim');        { Eingabedatei fÅr simulierten Netcall }
+    assign(siminput,'uusim');        { Eingabedatei fuer simulierten Netcall }
     reset(siminput);
   {$endif}
   {$ifdef debug}
@@ -1446,8 +1466,8 @@ end;
 function SendFiles(CommandFile:pathstr; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
-    sf  : string[200];
-    s2  : string[20];
+    s2  : string;
+    sf  : string;
     o   : longint;
     fn  : pathstr;
     ti  : longint;
@@ -1537,11 +1557,11 @@ begin
                     logerror('remote refuses file');
                   end;
             '4' : begin
-                    rmsg(getres2(2300,44));   { 'Fehler 4 - TemporÑrdatei kann nicht erzeugt werden' }
+                    rmsg(getres2(2300,44));   { 'Fehler 4 - Temporaerdatei kann nicht erzeugt werden' }
                     logerror('remote can''t create temp file');
                   end;
             '6','7' : begin
-                        rmsg(getres2(2300,46));  { 'Fehler 6 - kein Platz fÅr Datei' }
+                        rmsg(getres2(2300,46));  { 'Fehler 6 - kein Platz fuer Datei' }
                         logerror('remote disk full');
                       end;
             '8' : begin
@@ -1677,7 +1697,7 @@ var ok    : boolean;
 label ende;
 
   procedure getfilesize;
-  var ss   : string[100];
+  var ss   : string;
       pp,i : byte;
   begin
     ss:=s;
@@ -1687,7 +1707,7 @@ label ende;
       end;
     pp:=blankpos(ss);
     if pp>0 then ss:=LeftStr(ss,pp-1);
-    size:=Cval(ss);                  { size negotiation - Dateigrî·e }
+    size:=Cval(ss);                  { size negotiation - Dateigroesse }
   end;
 
 begin
@@ -1701,7 +1721,7 @@ begin
   WrdLn;
   ResetTransdat(grBufSize);
   n:=5;
-  repeat                   { Slave-Schleife fÅr eingehende Befehle }
+  repeat                   { Slave-Schleife fuer eingehende Befehle }
     s:=GetCommand;
     if s='' then
       if n=0 then goto ende
@@ -1746,14 +1766,14 @@ begin
                   if not SendCommand('SY 0x0') then goto ende;
                   if (LeftStr(s,2)='D.') or (LeftStr(s,2)='X.') then begin
                     fn:=XFerDir+U2DOSfile(s);
-                    wrlog('+','receiving '+s+' as '+ustr(fn));
+                    wrlog('+','receiving '+s+' as '+uppercase(fn));
                     end
                   else begin
                     s:=Unix2DOSfile(s,FilePath);
                     if s='' then s:=Unix2DOSfile(source,FilePath);
                     if s='' then s:='unnamed';
                     fn:=FilePath+s;
-                    wrlog('S','receiving '+s+' as '+ustr(fn));
+                    wrlog('S','receiving '+s+' as '+uppercase(fn));
                     end;
                   if not RecFile(fn,size) then
                     goto ende;
@@ -1766,7 +1786,7 @@ begin
               end;
       else    if c<>'H' then begin
                 logerror('unknown UUCP command: '+s);
-                if SendCommand(c+'N') then;    { ungÅltiger Befehl }
+                if SendCommand(c+'N') then;    { ungueltiger Befehl }
               end;
       end;
     end;
@@ -1803,7 +1823,7 @@ begin
   if not fossil then begin   { FOSSIL -> Schnittstelle ist noch aktiviert }
     SetTriggerLevel(tlevel);
     if not SetUART(comnr,baud,PNone,8,1,not IgnCTS) then
-      StopError(getres(107));     { 'UngÅltige Baudrate' }
+      StopError(getres(107));     { 'Ungueltige Baudrate' }
     ActivateCom(comnr,8192,true);
     end
   else
@@ -1823,7 +1843,7 @@ begin
 end;
 
 
-function uucico(start:longint; var ende:boolean;
+function fuucico(start:longint; var ende:boolean;
                 var waittime:integer; var sendtime,rectime:longint):integer;
 begin
   SizeN:=sizenego;
@@ -1845,22 +1865,22 @@ begin
     end
   else
     uulog:=nil;
-  if ParDebug then mcur:=curon
-  else mcur:=curoff;
+  (* if ParDebug then mcur:=curon
+  else mcur:=curoff; *)
   ShowWindow;
   recs:=''; _ende:=false;
   sendtime:=0; rectime:=0; waittime:=0;
 
-  if InitHandshake(waittime) then begin     { enthÑlt InitProtocol }
+  if InitHandshake(waittime) then begin     { enthaelt InitProtocol }
     if SendFiles(CommandFile,sendtime,rectime) then
       if RecFiles(rectime) then begin
-        uucico:=uu_ok; _ende:=true; end
-      else uucico:=uu_recerr
-    else uucico:=uu_senderr;
+        fuucico:=uu_ok; _ende:=true; end
+      else fuucico:=uu_recerr
+    else fuucico:=uu_senderr;
     ExitProtocol;
     end
   else
-    uucico:=uu_nologin;
+    fuucico:=uu_nologin;
 
   if NoCarrier and not break then
     LogError('carrier lost');
@@ -1900,7 +1920,7 @@ begin
 end;
 
 
-{$F+,S-}
+(* {$F+,S-} *)
 procedure newexit;
 begin
   if ioresult<>0 then;
@@ -1908,7 +1928,7 @@ begin
   gotoxy(omx,omy);
   exitproc:=oldexit;
 end;
-{$F-,S+}
+(* {$F-,S+} *)
 
 
 begin
@@ -1921,8 +1941,13 @@ begin
   oldexit:=exitproc;
   exitproc:=@newexit;
   multi3:=WriteOnline;
-  result:=uucico(starttime,ende,waittime,sendtime,rectime);
+  result:=fuucico(starttime,ende,waittime,sendtime,rectime);
   WriteResultFile;
   CloseResource; resopen:=false;
 end.
+{
+  $Log$
+  Revision 1.3  2000/10/27 16:14:29  fe
+  uucico notduerftig uebersetzbar gemacht.
 
+}

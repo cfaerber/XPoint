@@ -215,7 +215,7 @@ INSTALL_DATA ?= xcopy
 RC = rc
 RAR ?= rar
 
-CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe
+CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe
 CONTRIBDATA = fido.pc
 
 endif
@@ -395,11 +395,8 @@ export contribdir
 export MAKE
 export RM
 
-# uucico uebersetzt nicht.
-
-#BIN = maggi ndiff pmconv uucp-fl1 uucico uuzext xp xp-fm xpme yup2pkt \
-#	zfido zpr
-BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
+BIN = maggi ndiff pmconv uucp-fl1 uucico uuzext xp xp-fm xpme yup2pkt \
+	zfido zpr
 COMPBIN = $(BIN) docform ihs rc
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
 	debug dosx eddef editor encoder exxec feiertag fileio gpltools \
@@ -479,10 +476,41 @@ rc$(EXEEXT): rc.pas fileio$(UNITEXT) typeform$(UNITEXT) xpdefine.inc \
 	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
+ifeq ($(OS),dos32)
+
 uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	resource$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) uucp-g.inc \
-	xpfiles.inc
+	winxp$(UNITEXT) xpdefine.inc xpdos32$(UNITEXT) xpfiles.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
+
+endif
+ifneq (,$(findstring $(OS),freebsd linux))
+
+uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) uucp-g.inc \
+	winxp$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc xpfiles.inc \
+	xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),os2)
+
+uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) uucp-g.inc \
+	winxp$(UNITEXT) xpdefine.inc xpfiles.inc xpglobal$(UNITEXT) \
+	xpos2$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),win32)
+
+uucico$(EXEEXT): uucico.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	resource$(UNITEXT) typeform$(UNITEXT) uart$(UNITEXT) uucp-g.inc \
+	winxp$(UNITEXT) xpdefine.inc xpfiles.inc xpglobal$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
 
 uucp-fl1$(EXEEXT): uucp-fl1.pas xpdefine.inc
 	$(PC) $(PFLAGS) $<
@@ -2573,6 +2601,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.33  2000/10/27 16:14:29  fe
+# uucico notduerftig uebersetzbar gemacht.
+#
 # Revision 1.32  2000/10/26 19:22:07  fe
 # RST-Dateien werden nicht nur unter Windows erzeugt.
 #
