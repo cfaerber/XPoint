@@ -61,55 +61,28 @@ Seite.
 
 @
 4
-<<OpenXP - Hotkeys
+<<CrossPoint - Hotkeys
 
 Die folgenden Tasten k”nnen Sie (fast) berall in
-OpenXP verwenden:
+CrossPoint verwenden:
 
-   <<<F1> >>      Hilfe
-   <<<Alt-F1> >>  letzte Hilfe
+   <<<F1> >>      kontextsensitive Hilfe
+   <<<Alt-F1> >>  vorheriges Hilfethema
    <<<F9> >>      DOS-Shell
+   <<<F4> >>      letzte Men-Aktion wiederholen
+   <<<F6> >>      aktuelle Makro-Auswahl anzeigen
    <<<Alt-F4> >>  Programm beenden
 
    <<<Alt-K> >>   Kalender
    <<<Alt-E> >>   Editor
-   <<<Alt-T> >>   Notizseite
+   <<<Alt-T> >>   Notizseite (Datei NOTEPAD)
    <<<Alt-I> >>   Bildschirmauszug in Datei
-   <<<Alt-1> >>   Bild dunkelschalten
+   <<<Alt-1> >>   Bildschirmschoner aktivieren
 
-   <<<Alt-N> >>   Fido-Nodelist abfragen
+   <<<Alt-N> >>   Fido-Nodeliste abfragen
 
 
-Allgemeine Hotkeys in Texteingabe-Feldern:
-
-   <<<Ctrl-G> >>  wandelt die Eingabe in Groábuch-
-              staben um.
-
-   <<<Ctrl-K> >>  wandelt die Eingabe in Kleinbuch-
-              staben um.
-
-   <<<Ctrl-X> >>  erzeugt eine gemischte Schreibweise:
-              der erste Buchstabe jedes Wortes wird
-              groá geschrieben, der Rest klein.
-
-   <<<Ctrl-C> >>  oder <<<Ctrl-Ins> >>kopiert den Inhalt
-              des Textfelds in die Zwischenablage
-              (Clipboard).
-
-   <<<Ctrl-V> >>  oder <<<Shift-Ins> >>fgt den Inhalt der
-              Zwischenablage ein. Ein Tonsignal be-
-              deutet, daá der Clipboard-Inhalt zu
-              groá ist oder nicht existiert.
-
-<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
-Zwischenablage verwendet, die das jeweilige Betriebs-
-system (Windows, OS/2 etc.) zur Verfgung stellt.
-Stellt das Betriebssystem keine Zwischenablagefunk-
-tion zur Verfgung (wie z.B. DOS), oder kann die zur
-Verfgung stehende Zwischenablage nicht von DOS-Pro-
-grammen angesprochen werden (Windows 2000/NT), ver-
-wendet OpenXP eine Tempor„rdatei als interne
-Zwischenablage.
+Siehe auch: [Tastenfunktionen in Texteingabe-Feldern]@8076
 
 @
 5
@@ -402,6 +375,11 @@ nur die jeweils letzte Option ausgefhrt:
                 Die Verbindung muá bestehen, und die
                 Box muá auf die Eingabe des Userna-
                 mens warten (nur Z-Netz/QM).
+
+<</nsp:1..20>>      fhrt einen [/Netcall/Spezial] fr den@11508
+                als Parameter <<1>> bis <<20>> bergebenen
+                Eintrag aus NETCALL.DAT durch.
+
 
 <</t:n>>     fhrt die Timing-Liste Nr. <<n>> aus
          (s. XPOINT.TXT, Kap. 5.3).
@@ -913,6 +891,70 @@ Nachricht den Haltestatus der ersetzten Nachricht.
 Auch die Haltezeit des (Pseudo-)Users spielt fr das
 Ersetzen lokaler Kopien keine Rolle.
 
+@
+13
+<<°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° CrossPoint - Bedienung
+
+
+[Hilfe]@3
+
+[Brett-šbersicht]@20
+[User-šbersicht]@21
+[Nachrichten-Lesefenster]@30
+[Lister]@39
+[Editor]@54
+
+[Tastaturkonventionen und -bedienung]@10
+[Tastenfunktionen in Texteingabe-Feldern]@8076
+[Hotkeys]@4
+
+[Spezielle Themen]@14
+
+
+Fr den Aufruf von Menpunkten und Funktionen in
+CrossPoint haben Sie folgende M”glichkeiten:
+
+ş In Mens und Eingabefeldern bewegen Sie den Cursor
+  mit den Cursortasten oder <<<Tab> >>an die gewnschte
+  Stelle und best„tigen die Auswahl bzw. Eingabe mit
+  <<<Enter> >>- die Menleiste selbst wird mit <<<F10>
+  aktiviert, mit <<<Esc> >>gelangen Sie eine Menebene
+  zurck. Eingabedialoge werden entweder mit <<<Esc>
+  abgebrochen oder mit <<<Ctrl-Enter> >>best„tigt
+  (stattdessen kann natrlich auch der gesamte Dialog
+  mit <<<Enter> >>bis zum letzten Eingabefeld des Dialogs
+  "durchwandert" werden).
+
+ş Menfunktionen erreichen Sie am schnellsten ber
+  Hotkeys - tippen Sie hierfr die hervorgehobenen
+  Buchstaben (z.B <<N>>/<<U>>/<<L>> fr /Nachricht/Unversandt/
+  L”schen).
+
+ş Wenn Sie lieber die Maus benutzen:
+  Ein Linksklick wirkt wie <<<Enter> >>und l”st die ent-
+  sprechende Aktion bzw. Funktion aus, ein Rechts-
+  klick entspricht <<<Esc> >>und bringt Sie eine Men-
+  ebene zurck. Eingabedialoge k”nnen Sie mit einem
+  Linksklick auáerhalb des Dialogs best„tigen oder
+  mit einem Rechtsklick auáerhalb des Dialogs ab-
+  brechen.
+
+  Falls sie eine 3-Tasten-Maus besitzen und einen
+  entsprechenden Treiber installiert haben, wird die
+  mittlere Maustaste als Doppelklick links gewertet.
+
+@
+14
+<<     °°°°°°°°°°°   Online-Hilfe: Spezielle Themen
+
+
+     [PGP-Verschlsselung]@1010
+
+     [CrossPoint und Mailinglisten]@12
+
+     [Netztyp RFC/Client]@30100
+
+     [CrossPoint als Standard-Mailer in Windows]@11
 @
 19
 Bitte w„hlen Sie das gewnschte Brett. Mit <<<Enter> >>

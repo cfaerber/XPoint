@@ -16,9 +16,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # --- Menues -----------------------------------------------------------
 
 # HauptmenÅ-Hotkeys: Nachrichten / Sonstige / AutoVersand
-7 XWNTFDCZ
-8 XWNTFDCZ
-9 XW˘˘FDCZ
+7 XWNTFDCZ?
+8 XWNTFDCZ?
+9 XW˘˘FDCZ?
 
 + 10
 # Do NOT change the first word in each of the following lines!
@@ -44,7 +44,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 17  Status,111^Speicher,112^Nachrichten,113^Datenbank,11a^Fragmente,-,115^Gruppen,116S^Ysteme,117^Bretter,-,119G^ebÅhren˘26
 18
 #18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
-19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen,138^Maus-Infos
+19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen
 20  Fileserver,141^Bestellen,142^Senden,143^Liste˘27,144^Hilfe,145^Transfer,146S^ervice
 21  Weiter,151^Kopie,152^Original,153^EditTo,154^QuoteTo,-,156^BestÑtigung,157^Lîschen,158Er^Setzen,159e^Rneut     @R,15a^Archiv     @A,15bUser-^PM    @P
 22  éndern,161^Betreff,162^EmpfDatum,163^Rot13,164^Text,165T^yp,166^gelesen,167^Hervorhebung
@@ -3954,6 +3954,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.52  2002/02/10 14:51:48  mk
+# - added missing help text
+#
 # Revision 1.51  2002/02/06 21:32:55  mk
 # - fixed resource 10700,10 (now 10700,48)
 #
