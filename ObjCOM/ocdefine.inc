@@ -24,7 +24,7 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF VER150 }          { Delphi 6.0 }
+{$IFDEF VER150 }          { Delphi 7.0 }
   {$DEFINE Delphi }
   {$IFDEF Linux }
     {$DEFINE Kylix }
@@ -101,6 +101,9 @@
 
 {
   $Log$
+  Revision 1.9  2002/11/23 23:52:14  mk
+  - fixed comment in last committ
+
   Revision 1.8  2002/11/23 23:48:42  mk
   - added Delphi 7 support
 
