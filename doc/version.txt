@@ -492,8 +492,8 @@ v3.12d  (22.12.1999)
    korrigiert
 
 
-v3.2/OpenXP  (05.08.2000)
--------------------------
+v3.20/OpenXP  (05.08.2000)
+--------------------------
 !  šberlauf in Gebhrenstatistik bei ber 2 GB Daten behoben
 +  /Config/Optionen/Terminal
 !  PGP-Signatur bleibt bei /N/U/ und /N/W/R erhalten
@@ -630,8 +630,8 @@ v3.2/OpenXP  (05.08.2000)
    nicht ausgefhrt
 
 
-v3.2b/OpenXP  (17.12.2000)
---------------------------
+v3.20b/OpenXP  (18.12.2000)
+---------------------------
 *  Komplett berarbeitete, korrigierte und erg„nzte Ressourcen und
    Online-Hilfe (Deutsch und Englisch)
 !  Ungelesen-Bug beim (K)illen von Nachrichten aus der Liste markierter
@@ -700,3 +700,12 @@ v3.2b/OpenXP  (17.12.2000)
 *  Config/Optionen/Sprache wieder aktiviert
 !  Extrahieren von MIME-Multipart-Attachments in Zwischenablage
    funktioniert jetzt
+
+
+v3.20c/OpenXP  (20.12.2000)
+---------------------------
+
+!  Bei <Ctrl-B> auf ”ffentlicher Nachricht konnte der Eindruck
+   entstehen, das System sei "eingeschlafen"
+!  PushHP Overflow beseitigt, konnte zu Problemen bei intensiver
+   Benutzung der Online-Hilfe fhren (Bug aus v3.12d)
