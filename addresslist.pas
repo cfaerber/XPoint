@@ -58,6 +58,7 @@ type
     FBoxname:   string;
     FGroup:     integer;
     FNetztyp:   eNetz;
+    FBoxForce:   boolean;
     FNewUser:   boolean;
     FAddrType:  TAddressListType;
 
@@ -104,6 +105,7 @@ type
     property AddrSpec:  string read GetAddrSpec;
 
     property BoxName:  string  read FBoxName   write FBoxName;
+    property BoxForce: Boolean read FBoxForce  write FBoxForce;
     property Group:    Integer read FGroup     write FGroup;
     property Netztyp:  eNetz   read FNetztyp   write FNetztyp;
     property NewUser:  Boolean read FNewUser   write FNewUser;
@@ -210,6 +212,7 @@ begin
   FAddress := TAddress.Create(otherList.Address);
   
   Boxname  := otherList.Boxname;
+  BoxForce := otherList.BoxForce;
   Group    := otherList.Group;
   Netztyp  := otherList.Netztyp;
   NewUser  := otherList.NewUser;
@@ -330,9 +333,9 @@ begin
   else if FAddress is TVerteiler then
     result := '['+TVerteiler(FAddress).VerteilerName+']'
   else if Netztyp in (netsRFC+[nt_Netcall]) then
-    result := iifs(NewUser and (BoxName<>''),'+'+BoxName+': ','')+FAddress.RFCAddress
+    result := iifs((BoxForce or NewUser) and (BoxName<>''),'+'+BoxName+': ','')+FAddress.RFCAddress
   else
-    result := iifs(NewUser and (BoxName<>''),'+'+BoxName+': ','')+FAddress.ZCAddress;
+    result := iifs((BoxForce or NewUser) and (BoxName<>''),'+'+BoxName+': ','')+FAddress.ZCAddress;
 end;
 
 procedure TAddressListItem.SetDisplayString(const NewAddr: String); 
@@ -837,6 +840,10 @@ end;
 
 //    
 // $Log$
+// Revision 1.14  2003/08/27 21:24:31  cl
+// - send window: overwrite/select server
+//   CLOSES: task #76789 Sendefenster: Box überschreiben
+//
 // Revision 1.13  2003/01/13 22:05:19  cl
 // - send window rewrite - Fido adaptions
 // - new address handling - Fido adaptions and cleanups

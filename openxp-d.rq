@@ -1493,19 +1493,15 @@ N Deutsch
 50   ^Betreff:   ~
 51   Brett-^An:  ~
 
-55   S^erver:    ~
-56   (verschiedene)
-57   Sicherheit: ~
+55   Ser^ver:    ~
+57   Si^cherheit:~
+60   Pri^orit\x84t: ~
+70   ^Datum:     ~
 
-60   Priorit\x84t:  ~
-
-70   Datum:      ~
-
-72   Lesebest\x84tigung anfordern
-
-75   keine Signatur anh\x84ngen
-76   nach Versand l\x94schen
-77   Nachricht nicht archivieren
+72   L^esebest\x84tigung anfordern
+75   keine Signatur an^h\x84ngen
+76   nach Versand l^\x94schen
+77   Nac^hricht nicht archivieren
 
 80   Aktuelle Nachricht:   
 81   Bezugsnachricht:
@@ -1520,6 +1516,9 @@ N Deutsch
 92   Markierte Adressen
 90   ^Brett(er) oder Gruppe(n)
 91   Ben^utzer oder Verteiler
+
+93   Nicht m\x94glich - keine Server ist kompatibel zu allen Adressen.
+94   (verschiedene)
 
 101  Nachricht weiterleiten (Kopie)
 102  Nachricht weiterleiten (EditTo)
@@ -4128,6 +4127,10 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.78  2003/08/27 21:24:31  cl
+# - send window: overwrite/select server
+#   CLOSES: task #76789 Sendefenster: Box überschreiben
+#
 # Revision 1.77  2003/08/26 22:45:27  mk
 # - fixed shortcut for /OpenXP/Telnet
 #

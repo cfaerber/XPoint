@@ -27,7 +27,7 @@ unit xpnt;
 
 interface
 
-uses   sysutils,xp0,typeform,datadef,database,crc;
+uses   sysutils,xp0,typeform,datadef,database,crc,addresses;
 
 {$IFDEF ANALYSE }
 type
@@ -161,7 +161,8 @@ function ntKomkette(nt:eNetz):boolean;         { Kommentar-Verkettung  }
 function ntRfcCompatibleID(nt:eNetz):boolean;  { RFC-Msgid             }
 function ntMIDCompatible(n1,n2:eNetz):boolean; { austauschbare MsgIDs  }
 function ntOrigID(nt:eNetz):boolean;           { X-XP-ORGMID -> X-XP-ORGREF }
-function ntAdrCompatible(n1,n2:eNetz):boolean; { umleitbare PM-Adresse }
+function ntAdrCompatible(n1,n2:eNetz):boolean; overload; { umleitbare PM-Adresse }
+function ntAdrCompatible(nt:eNetz; addr: TAddress):boolean; overload;
 function ntMsg0(nt:eNetz):boolean;             { Nachricht darf leer sein }
 function ntNameSpace(nt:eNetz):boolean;        { Leerzeichen in Usernamen }
 function ntBrettEmpf(nt:eNetz):boolean;        { Fido-To }
@@ -223,7 +224,7 @@ function  dbNetzMsg(d: DB): RNetzMsg;
 
 implementation  { ---------------------------------------------------- }
 
-uses Debug;
+uses Debug,fidoglob;
 
 { X-XP-NTP:  Netztyp - optional, Default 2 (nt_ZConnect)
   X-XP-ARC:  archivierte PM - optional
@@ -591,6 +592,14 @@ begin
                     (n2 in ([nt_Maus, nt_ZConnect]+netsRFC));
 end;
 
+function ntAdrCompatible(nt:eNetz; addr: TAddress): boolean;
+begin
+  result :=
+    ((addr is TNewsgroupAddress) and (nt in [nt_Maus,nt_ZConnect,nt_UUCP,nt_NNTP,nt_Client])) or
+    ((addr is TDomainEmailAddress) and (nt in [nt_Maus,nt_ZConnect,nt_UUCP,nt_POP3,nt_IMAP,nt_Client,nt_QWK])) or
+    ((addr is TFTNAddress) and (nt in [nt_Maus,nt_Fido,nt_QWK]));
+end;
+
 function ntMsg0(nt:eNetz):boolean;             { Nachricht darf leer sein }
 begin
   ntMsg0:=nt in ([nt_ZConnect,nt_Fido]+netsRFC);
@@ -842,6 +851,10 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.58  2003/08/27 21:24:31  cl
+  - send window: overwrite/select server
+    CLOSES: task #76789 Sendefenster: Box überschreiben
+
   Revision 1.57  2003/08/26 22:41:25  cl
   - better compatibility with OpenXP-16/FreeXP with config files:
     - don't overwrite line number settings with incompatible values

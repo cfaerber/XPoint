@@ -9,7 +9,7 @@
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,9 +33,11 @@ procedure CheckEmpfaengerList(
 
 var
   TypStr: array [TAddressListType] of String;
-  
+
   List: TAddressList;
-  x,y,w1: integer; 
+  Server: string;
+
+  x,y,w1: integer;
   max_h,new_h,h: 1..20;
   brk: boolean;
 
@@ -44,12 +46,36 @@ var
   Field1st: integer;
   FieldInc: integer;
 
+  FieldServer: Integer;
+
   AddrCont: array[0..2,0..19] of String;
   AddrText:  array[0..1,0..19] of Pointer;
   Dummy1,Dummy2: string;
   Offset: Integer;
 
   gsData: TSendUUData;
+  
+procedure SetServerField(Field: integer);
+var sx: boolean;
+    ii: integer;
+begin
+  SX := false;
+
+  for ii := 0 to List.Count-1 do
+    if Server = '' then
+      Server := List[ii].BoxName
+    else
+    if (not sx) and
+       (not List[ii].Empty) and
+       (UpperCase(Server) <> UpperCase(List[ii].BoxName)) then
+    begin
+      Server := GetRes2(610,94);
+      SX := true;
+    end;
+
+  if Field >= 0 then
+    SetField(Field,Server);
+end;
 
   procedure ScrollDone2(i,f:integer);
   var show_type : boolean;
@@ -165,7 +191,7 @@ var
 
   function IndexPos: integer;
   begin 
-    result := (FieldPos - Field1st) div FieldInc + Offset; 
+    result := (FieldPos - Field1st) div FieldInc + Offset;
     if result >= List.Count then result := List.Count-1;
     if result < 0 then result := 0;
   end;
@@ -235,7 +261,7 @@ var
       List[ii].AddressType := at;
       inc(ii);
     until (mg<0) or (ii>=List.Count) or (List[ii].Group<>mg);
-          
+
     result := true;
   end;
 
@@ -349,10 +375,10 @@ var
     procedure addz(const zc_header: string; AddressTypeMail, AddressTypeNews: String); overload;
     var AddressType: String;
     begin
-      if zc_header='' then exit;    
-      if (AddressTypeMail <> AddressTypeNews) and (CPos('@',zc_header)>0) then 
-        AddressType := AddressTypeMail 
-      else 
+      if zc_header='' then exit;
+      if (AddressTypeMail <> AddressTypeNews) and (CPos('@',zc_header)>0) then
+        AddressType := AddressTypeMail
+      else
         AddressType := AddressTypeNews;
       add(RFCRemoveComments(zc_header),zc_header,AddressType);
     end;
@@ -360,7 +386,7 @@ var
     procedure addz(const zc_header: TStrings; AddressTypeMail, AddressTypeNews: String); overload;
     var i: Integer;
     begin
-      for i := 0 to zc_header.Count -1 do 
+      for i := 0 to zc_header.Count -1 do
         addz(zc_header[i],AddressTypeMail, AddressTypeNews);
     end;
 
@@ -372,7 +398,7 @@ var
       try
         RFCReadAddressList(uucp_header, List, nil);
         for i := 0 to List.Count -1 do
-          add(List[i].AddrSpec,List[i].DisplayString,AddressType); 
+          add(List[i].AddrSpec,List[i].DisplayString,AddressType);
       finally
         List.Free;
       end;
@@ -405,7 +431,7 @@ var
                ((List[ii].AddressType in [atMailFollowupTo]) and (List[i].AddressType in [atTo,atCC,atBCC,atReplyTo,atFrom,atSender,atNewsgroup])) or
                ((List[ii].AddressType in [atFrom,atSender]) and (List[i].AddressType in [atTo,atCC,atBCC,atReplyTo,atMailFollowupTo])) or
                ((List[ii].AddressType in [atNewsgroup]) and (List[i].AddressType in [atFollowupTo,atMailFollowupTo,atFrom,atSender])) or
-               ((List[ii].AddressType in [atFollowupTo]) and (List[i].AddressType in [atNewsgroup,atTo,atCC,atBCC,atReplyTo,atFrom,atSender])) 
+               ((List[ii].AddressType in [atFollowupTo]) and (List[i].AddressType in [atNewsgroup,atTo,atCC,atBCC,atReplyTo,atFrom,atSender]))
             then
               add(List[i].AddrSpec,List[i].DisplayString,TypStr[List[i].AddressType])
             else
@@ -464,7 +490,7 @@ var
 
       if y2 > ScreenLines then begin y1 := Max(1,y1-(y2-ScreenLines)); y2:= ScreenLines; end;
       if x2 > ScreenWidth then begin x1 := Max(1,x1-(x2-ScreenWidth)); x2:= ScreenWidth; end;
-        
+
       Lister.SetSize(x1+1,x2-1,y1+1,y2-1);
       openboxat(x2-x1+1,y2-y1+1,'',x1,y1,cr.acol.ColSelBox,cr.acol.ColSelBox);
       try
@@ -517,6 +543,7 @@ var
         end; // case
         
         CheckAddressSetAddressList(NewList,true);
+        if FieldServer >= 0 then SetServerField(FieldServer);
         cr.s := List[ii].DisplayString;
 
       finally
@@ -644,7 +671,7 @@ var
         end;
         J := I+1;
       end; (* procedure AddAddr *)
-        
+
     begin
       CommentCnt := 0;
       AfterAt := false;
@@ -721,6 +748,7 @@ var
     finally
       nl.Free;
     end;
+    if FieldServer>=0 then SetServerField(FieldServer);
     result := true;
   end;
 
@@ -797,7 +825,7 @@ var
       if (List[j].Empty) then
       begin
         if ((List[j].Group>=0) and (j<List.Count-1) and (List[j].Group=List[j+1].Group)) 
-         or((List[j].Group< 0) and (j<List.Count-1)) then 
+         or((List[j].Group< 0) and (j<List.Count-1)) then
         begin
           List.Delete(j);
           dec(j);
@@ -839,22 +867,24 @@ var
 
 // ---------------------------------------------------------------------
 {-- Global functions (address editing) --------------------------------}
-// ---------------------------------------------------------------------  
-  
+// ---------------------------------------------------------------------
+
   procedure TSendUUData.ComposeEditableList;
   var i: Integer;
      lg: integer;
   begin
-    List.Clear;  
+    List.Clear;
     List.Capacity := EmpfList.Count+1;
     Lg := -1;
-  
+
+    Server := '';
+
     for i:=0 to EmpfList.Count-1 do
     begin
       if (EmpfList[i].Group<>LG) then
         if(LG>0) then
           List.AddNew.Group := LG;
-    
+
       with List.AddNew do 
       begin
         Assign(EmpfList[i]);
@@ -866,7 +896,6 @@ var
         LG := Group;
       end;
     end;
-
     List.AddNew.Group := -1;
   end;
 
@@ -943,12 +972,12 @@ var
   s: string;
 begin
   SendWindowInitGlobals(self);
+  FieldServer := -1;
  
   List := TAddressList.Create;
   try //..except
   try //..finally
     ComposeEditableList;
-    
     max_h := 20;
     if showsubject then dec(max_h,2);
 
@@ -960,7 +989,7 @@ begin
     repeat
       h := new_h;
       done := true;
-      
+
       dialog(76,h+iif(ShowSubject,2,0),DialogueTitle,x,y);    { 'Kopien an:' }
       
       maskdontclear;
@@ -1000,7 +1029,7 @@ begin
 
 //      MaddText  (2+72,1+i,'',col.coldiahigh);    AddrText[2,i] := MTextPos;
 
-        if i=0 then FieldInc := fieldpos + 1 - Field1st;        
+        if i=0 then FieldInc := fieldpos + 1 - Field1st;
       end;
 
       Maddstring(2+70,1+h-1,'',Dummy2,0,0,''); FieldDwn := FieldPos;
@@ -1058,6 +1087,101 @@ begin
   gsData.EditText;
 end;
 
+(*
+      customrec = record
+                    acol : colrec;    { aktuelle Farben }
+                    x,y  : Integer;   { aktuelle Pos. des Feldinhalts }
+                    fpos : integer;   { akt. Feldnummer }
+                    s    : string;    { var: Feldinhalt }
+                    brk  : boolean;   { var }
+                  end;
+*)
+procedure OnServerSelect(var cr:customrec);
+var Lister: TLister;
+  MaxLen: Integer;
+
+  procedure ScanServers;
+  var i: Integer;
+      o: boolean;
+      d: DB;
+      BoxName: String;
+      BoxType: eNetz;
+  begin
+    dbOpen(d,BoxenFile,0);
+    while not dbEOF(d) do begin
+      BoxName := dbReadStr(d,'boxname');
+      BoxType := dbReadByte(d,'netztyp');
+
+      o := true;
+      for i := 0 to List.Count-1 do
+        if (not List[i].Empty) and
+           (List[i].AddressType in [atNewsgroup, atTo, atCC, atBCC]) and
+           (not ntAdrCompatible(BoxType,List[i].Address)) then
+        begin
+          o:=false;
+          break;
+        end;
+      if o then begin
+        Lister.Lines.Add(' '+BoxName);
+        MaxLen := Max(Length(BoxName),MaxLen);
+      end;
+
+      dbNext(d);
+    end;
+    dbClose(d);
+  end;
+
+  procedure ShowList;
+  var x1,x2,y1,y2: Integer;
+  begin
+    x1 := cr.x;   x2 := cr.x+4+MaxLen;
+    y1 := cr.y+1; y2 := cr.y+2+Lister.Lines.Count;
+
+    if y2 > ScreenLines then begin y1 := Max(1,y1-(y2-ScreenLines)); y2:= ScreenLines; end;
+    if x2 > ScreenWidth then begin x1 := Max(1,x1-(x2-ScreenWidth)); x2:= ScreenWidth; end;
+
+    Lister.SetSize(x1+1,x2-1,y1+1,y2-1);
+    openboxat(x2-x1+1,y2-y1+1,'',x1,y1,cr.acol.ColSelBox,cr.acol.ColSelBox);
+    try
+      cr.brk := Lister.Show;
+    finally
+      closebox;
+    end;
+  end;
+
+  procedure SetServer(const name: string);
+  var i: integer;
+      UName: string;
+  begin
+    UName := UpperCase(Name);
+    for i := 0 to List.Count-1 do
+      if not List[i].Empty then
+      if UpperCase(List[i].BoxName)<>UName then
+       begin
+        List[i].BoxName := name;
+        List[i].BoxForce := true;
+      end;
+    cr.s := name;
+    ScrollDone;
+  end;
+
+begin
+  Lister := TLister.CreateWithOptions(0,0,0,0,0,'/NS/SB/NLR/DM/M/');
+  MaxLen := 16;
+  try
+    ScanServers;
+    if Lister.Lines.Count<=0 then
+      fehler(GetRes2(610,93))
+    else begin
+      ShowList;
+      if not cr.brk then
+        SetServer(Trim(Lister.FirstMarked));
+    end;
+  finally
+    Lister.Free;
+  end;
+end;
+
 function TSendUUData.SendWindow(dlg_title: string):boolean;
 var   i: Integer;
  senden: integer;
@@ -1083,7 +1207,6 @@ begin
   try //..except
   try //..finally
     ComposeEditableList;
-
       // Number of options on the left hand side
       ll := 4;
 
@@ -1099,7 +1222,7 @@ begin
     repeat
       h := new_h;
       done := true;
-      
+
       dialog(76,h+add_h+Max(ll,rr),dlg_title,x,y);
 //    inc(x); inc(y);
 //    openmask(x,x+73,y,y+h+2,false);
@@ -1144,7 +1267,7 @@ begin
       end;
 
       Maddstring(2+70,1+h-1,'',Dummy2,0,0,''); FieldDwn := FieldPos;
-      MSet0Proc(ScrollDown);             
+      MSet0Proc(ScrollDown);
 
       MaddString(1,h+2,GetRes2(610,50) {'^Betreff'},Subject,76-w1-8,MAXINT,'');
       MHNr(2300);
@@ -1159,9 +1282,12 @@ begin
 
       yy := h+4;
 
-      MaddString(1,yy,GetRes2(610,55) {'S^erver'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
+      SetServerField(-1); // sets global variable 'Server'
+      MaddString(1,yy,GetRes2(610,55) {'S^erver'}, Server, 76-w1-xx-5-8, MAXINT,'');
       MHNr(2901);
       Inc(yy);
+      MAppCustomSel(@OnServerSelect,false);
+      FieldServer := FieldPos;
 
       MaddString(1,yy,GetRes2(610,57) {'Sicherheit'}, Dumms, 76-w1-xx-5-8, MAXINT,'');
       MHNr(2902);
@@ -1274,7 +1400,8 @@ begin
   XPSendmessage.CheckEmpfaengerList(List,Prompt,AutoAdd,self);
 
   if List = EmpfList then 
-    for Index := 0 to List.Count-1 do begin
+    for Index := 0 to List.Count-1 do
+    begin
       fHas[ntClass(List[Index].Netztyp),List[Index].PM] := true;
       fHas[ncNone                      ,List[Index].PM] := true;
     end;
@@ -1299,7 +1426,7 @@ var Index: integer;
       
   begin 
     UName := UpperCase(List[Index].ZCAddress);
-  
+
   // -- Box suchen -----------------------------------------------------
     Box:=''; dbSeek(ubase,uiName,UpperCase(List[Index].XPAddress));    
     if dbFound then 
@@ -1430,7 +1557,11 @@ var Index: integer;
 //      passwd:= dbReadXStr(ubase,'passwort',si0);
 //    end;
 
-      List[Index].BoxName := dbReadStrN(ubase,ub_pollbox);
+      if not List[Index].BoxForce then
+        List[Index].BoxName := dbReadStrN(ubase,ub_pollbox)
+      else
+      if UpperCase(dbReadStrN(ubase,ub_pollbox)) = UpperCase(List[Index].BoxName) then
+        List[Index].BoxForce := false;
 
     end else begin
   // -- Empfänger unbekannt --------------------------------------------
@@ -1454,7 +1585,6 @@ var Index: integer;
         Goto NoDB;
       end;
     end;
-
     List[Index].NewUser := false;
   NoDB:
 
@@ -1550,7 +1680,11 @@ var Index: integer;
       f := dbReadByteN(bbase,bb_flags);
       s := dbReadStrN(bbase,bb_adresse);
 
-      List[Index].BoxName:=dbReadStrN(bbase,bb_pollbox);
+      if not List[Index].BoxForce then
+        List[Index].BoxName:=dbReadStrN(bbase,bb_pollbox)
+      else
+      if UpperCase(dbReadStrN(bbase,bb_pollbox)) = UpperCase(List[Index].BoxName) then
+        List[Index].BoxForce := false;
 
     // -- Bei Schreibsperre andere Adresse einsetzen -----------------
       if (s<>'') and ((f and 8)<>0) then begin
@@ -1611,7 +1745,7 @@ var Index: integer;
     end;
 
   // -- Gruppe suchen und Daten setzen ---------------------------------
-  
+
   GroupAgain:
   
     dbOpen(d,GruppenFile,1);
@@ -1664,7 +1798,7 @@ var Index: integer;
   end;
 
 begin
-  Index := 0; 
+  Index := 0;
 
   while(Index<List.Count) do
     if List[Index].Empty then
@@ -1681,6 +1815,10 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2003/08/27 21:24:31  cl
+// - send window: overwrite/select server
+//   CLOSES: task #76789 Sendefenster: Box überschreiben
+//
 // Revision 1.9  2003/08/24 23:33:27  cl
 // - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
 //   Nachricht löschen (nach Versand), Empfangsbestätigungen,
