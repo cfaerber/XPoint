@@ -24,11 +24,11 @@
   All declarations here are local to the unit OSDepend. You
   can use the uses-command. }
 
-{ OS speceific uses }
+{ OS specific uses }
 
 uses xpcurses;
 
-{ local declaritions }
+{ local declarations }
 
 { local functions }
 
@@ -41,10 +41,14 @@ end;
 
 procedure SysBeep(Freq, Dur: Integer);
 begin
+  //todo
 end;
 
 {
         $Log$
+        Revision 1.5  2002/12/04 16:57:00  dodi
+        - updated uses, comments and todos
+
         Revision 1.4  2001/12/09 15:57:36  ml
         - os-dependend beep not yet implemented in linux
 
@@ -56,6 +60,6 @@ end;
         - compilable with fpc (linux)
 
         Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
+        - Init: Empty unit for os specific code
 
 }

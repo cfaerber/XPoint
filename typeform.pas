@@ -26,7 +26,8 @@ unit typeform;
 interface
 
 uses
-  xpglobal, sysutils, Classes;
+  sysutils, Classes,
+  xpglobal;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -55,25 +56,25 @@ const
   [...]
 
   Grundsätzlich werden in CP437 nicht darstellbare Zeichen jetzt in das
-  "Nicht-konvertierbar-Zeichen" gewandelt.  Dazu verwende ich das IBM- 
-  Grafikzeichen #177 (Jochen hat das mal so eingeführt und ich find's  
+  "Nicht-konvertierbar-Zeichen" gewandelt.  Dazu verwende ich das IBM-
+  Grafikzeichen #177 (Jochen hat das mal so eingeführt und ich find's
   deutlich besser und eindeutiger als das Fragezeichen).
 
-  Bisher wurden nicht darstellbare Zeichen jedenfalls oft einfach 1:1  
-  durchgereicht, so daß dann da z.B. bei einem Promillezeichen (#137 in  
-  Windows-1252) ein "ë" (eben #137 in CP437) dargestellt wurde, was nicht  
-  sehr sinnvoll ist.  Jetzt erkennt man wenigstens, daß da irgendein nicht  
+  Bisher wurden nicht darstellbare Zeichen jedenfalls oft einfach 1:1
+  durchgereicht, so daß dann da z.B. bei einem Promillezeichen (#137 in
+  Windows-1252) ein "ë" (eben #137 in CP437) dargestellt wurde, was nicht
+  sehr sinnvoll ist.  Jetzt erkennt man wenigstens, daß da irgendein nicht
   konvertierbares Zeichen gestanden hat und eben kein "ë".
 
-  Es gibt einige Zeichen, die sich theoretisch durch mehrere andere  
-  Zeichen darstellen ließen (Multichar-Konvertierung), z.B. das  
-  Warenzeichen auf ISO #174 als "(R)". Bei ausgehenden Nachrichten ist das  
-  bereits realisiert, bei eingehenden jedoch noch nicht (und bei der  
-  ISO=>IBM-Konvertierung geht es nur um eingehende Nachrichten).  Das ist  
-  auch nicht so ohne, weil der UUZ eine reine String-Konvertierung macht  
-  und man sich da wegen der 255-Zeichen-Begrenzung irgendwas einfallen  
-  lassen muß.  In XP selbst (z.B. bei der Darstellung von MIME-Multiparts)  
-  sollte das ähnlich zu realisieren sein wie für ausgehende Nachrichten,  
+  Es gibt einige Zeichen, die sich theoretisch durch mehrere andere
+  Zeichen darstellen ließen (Multichar-Konvertierung), z.B. das
+  Warenzeichen auf ISO #174 als "(R)". Bei ausgehenden Nachrichten ist das
+  bereits realisiert, bei eingehenden jedoch noch nicht (und bei der
+  ISO=>IBM-Konvertierung geht es nur um eingehende Nachrichten).  Das ist
+  auch nicht so ohne, weil der UUZ eine reine String-Konvertierung macht
+  und man sich da wegen der 255-Zeichen-Begrenzung irgendwas einfallen
+  lassen muß.  In XP selbst (z.B. bei der Darstellung von MIME-Multiparts)
+  sollte das ähnlich zu realisieren sein wie für ausgehende Nachrichten,
   muß aber auch erstmal gemacht werden.
 
 
@@ -119,7 +120,7 @@ const
   Das ist das sog. "Pilcrow sign" (oder auch "Paragraph sign" oder  
   "Section sign"), das häufig als Absatzzeichen in Editoren verwendet  
   wird.  Dieses im englischen Sprachraum (aber auch da nur sehr selten)  
-  benutzte Zeichen entspricht vom Sinn her am ehesten dem im deutschen  
+  benutzte Zeichen entspricht vom Sinn her am ehesten dem im deutschen
   Sprachraum benutzten Paragraphenzeichen "§" und wird deshalb jetzt auch  
   dorthin konvertiert (statt wie früher nach IBM #227, also einem kleinen  
   griechischen "pi" - grmpf).
@@ -341,7 +342,7 @@ const
  {$ENDIF}
 {$ENDIF}
 
-type DateTimeSt = string;
+type DateTimeSt = string; //todo: remove all these obsolete types
      s20        = string;
      s40        = string;
      s60        = string;
@@ -365,7 +366,7 @@ function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren  
 function FileName(var f):string;                { Dateiname Assign             }
 // Erstes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function FirstChar(const s:string):char;
-// Letzctes Zeichen eines Strings, wenn nicht vorhanden dann #0
+// Letztes Zeichen eines Strings, wenn nicht vorhanden dann #0
 function LastChar(const s:string):char;
 function fitpath(path:TFilename; n:integer):TFilename;   {+ Pfad evtl. abkuerzen    }
 function FormI(const i:longint; const n:integer):string;    { i-->str.; bis n mit 0 auff.  }
@@ -447,6 +448,7 @@ Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
+  //todo: remove gpltools.DecodeRot13String?
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
@@ -1305,7 +1307,7 @@ begin
   if (s <> '') and (s[1] = c) then Delete(s, 1, 1);
 end;
 
-procedure TrimLastChar(var s: String; c: Char);   
+procedure TrimLastChar(var s: String; c: Char);
 begin
   if (s <> '') and (s[Length(s)] = c) then SetLength(s, Length(s)-1);
 end;
@@ -1322,7 +1324,7 @@ begin
     dir:= ExtractFilePath(path);
     l:= Length(dir);
     if l>4 then begin
-      Delete(dir,l-4,4);
+      Delete(dir,l-4,4);  //todo: fix this nonsense
       fitpath:= dir+'...'+DirSepa+ExtractFileName(path);
     end else
       fitpath:= '...'+DirSepa+ExtractFileName(path);
@@ -1392,7 +1394,7 @@ begin
   p2:=cpos(#9,s);
   if p1=0 then blankpos:=p2
   else if p2=0 then blankpos:=p1
-  else blankpos:=min(cpos(' ',s),cpos(#9,s));
+  else blankpos:=min(cpos(' ',s),cpos(#9,s)); //todo: :=min(p1,p2);
 end;
 
 
@@ -1674,7 +1676,7 @@ var s2 : string;
   end;
 begin
   s2:=s;
-  conv('„','a');
+  conv('„','a');  //todo: use StringReplace
   conv('”','o');
   conv('','u');
   conv('á','s');
@@ -1684,6 +1686,7 @@ begin
   conv('','E');
   conv('‚','e');
   s:=LeftStr(s2,len);   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben }
+  //todo: redefine this nonsense
 end;
 
 function b30(l:longint):string;   { 30bit -> 5char }
@@ -1692,7 +1695,7 @@ const bc : string[5] = '-----';
 var i : byte;
 begin
   for i:=5 downto 1 do begin
-    bc[i]:=b64[l and 63];
+    bc[i]:=b64[l and 63]; //todo: use correct Base64EncodingTable
     l:=l shr 6;
     end;
   b30:=bc;
@@ -1765,6 +1768,7 @@ end;
 
 procedure ZtoZCdatumNTZ(var d1,d2:string);
 begin
+//todo: update again in 2070 ;-)
   if ival(LeftStr(d1,2))<70 then d2:='20'+d1+'00W+0'
   else d2:='19'+d1+'00W+0';
 end;
@@ -1772,6 +1776,7 @@ end;
 { functions to convert from/to MSB and LSB }
 
 Function Swap16(X : Word) : Word; {$IFNDEF Delphi} inline; {$ENDIF }
+//todo: word
 Begin
   result:=(X and $ff) shl 8 + (X shr 8)
 End;
@@ -1859,6 +1864,9 @@ end;
 
 {
   $Log$
+  Revision 1.121  2002/12/04 16:57:00  dodi
+  - updated uses, comments and todos
+
   Revision 1.120  2002/11/14 00:29:50  mk
   dido:- fixed bug in cVal
 

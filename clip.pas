@@ -28,15 +28,15 @@ unit clip;
 interface
 
 uses
-  xpglobal,
-  sysutils;
+  sysutils,
+  xpglobal;
 
 const
 {$ifdef Win32}
   ClipAvailable         = true;
 {$else}
   {$ifdef unix}
-  ClipAvailAble         = true;         { Simuliertes Clipboard a la MC }
+  ClipAvailable         = true;         { Simuliertes Clipboard a la MC }
   {$DEFINE UseClipFile }                { Clipboard in ein File }
   {$else}
    {$IFDEF DOS32 }
@@ -320,6 +320,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/12/04 16:56:55  dodi
+  - updated uses, comments and todos
+
   Revision 1.39  2002/07/25 20:43:51  ma
   - updated copyright notices
 

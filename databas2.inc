@@ -83,7 +83,7 @@ var icr : dbIndexCRec;
             if FirstChar(fn)='+' then begin
               upflag:=$8000; delete(fn,1,1); end;
             fnr:=dbGetFeldNr(dbp,fn);
-            if fnr<0 then error('UngÅltiges Index-Feld: '+fn);
+            if fnr<0 then error('Ungueltiges Index-Feld: '+fn);
             inc(feldanz);
             ifeldnr[feldanz]:=upflag+fnr;
             feldp^.feld[fnr].indexed:=true;
@@ -93,7 +93,7 @@ var icr : dbIndexCRec;
               end;
           until icr.indexstr='';
           if keysize>127 then begin
-            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu gro·er IndexschlÅssel');
+            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu gro·er Indexschluessel');
             end;
           nn:=max(2,128 div (keysize+12))*2;
           irecsize:=nn*(9+keysize)+10;
@@ -166,8 +166,8 @@ begin
 end;
 
 
-{ Index fÅr Sortier-Reihenfolge setzen                    }
-{ unabhÑngig von dbSeek (lastindex kann <> actindex sein) }
+{ Index fuer Sortier-Reihenfolge setzen                    }
+{ unabhaengig von dbSeek (lastindex kann <> actindex sein) }
 { indnr=0 -> physikalische Reihenfolge bei offenem Index  }
 
 procedure dbSetIndex(dbp:DB; indnr:word);
@@ -189,9 +189,9 @@ begin
 end;
 
 
-{ im aktuellen Index von Datenbank 'dbp' nach SchlÅssel 'key' suchen }
+{ im aktuellen Index von Datenbank 'dbp' nach Schluessel 'key' suchen }
 { Ergebnis kann mit dbFound abgefragt werden. Ist found=false, aber  }
-{ auch EOF=False, dann ist den nÑchst*grîssere* Satz gÅltig.         }
+{ auch EOF=False, dann ist der naechst*groessere* Satz gueltig.         }
 
 procedure dbSeek(dbp:DB; indnr:word; const key:string);
 var x : longint;
@@ -215,7 +215,7 @@ begin
   dbFound:=found;
 end;
 
-{ SchlÅssel-Strings erzeugen }
+{ Schluessel-Strings erzeugen }
 
 function dbIntStr(i:integer16):string;
 begin
@@ -259,6 +259,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2002/12/04 16:56:55  dodi
+  - updated uses, comments and todos
+
   Revision 1.15  2002/11/14 20:02:40  cl
   - changed some fatal errors to exceptions to allow better debugging
 

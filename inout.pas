@@ -27,28 +27,10 @@ unit inout;
 interface
 
 uses
-{$IFDEF Win32 }
-  windows,
-{$ENDIF  }
-{$IFDEF OS2 }
-  xpos2,
-  doscalls,
-{$ENDIF }
-{$ifdef vp }
-  vpsyslow,
-{$endif}
-{$ifdef NCRT }
-  xpcurses,
-{$endif }
-{$IFDEF Dos32 } 
-  crt,
-{$endif }
-  sysutils,
-  keys,
-  typeform,
-  mouse,
-  xp0,
-  xpglobal;
+  sysutils, //override date/time later
+  xpglobal,
+  typeform, //s20
+  keys; //taste
 
 const  lastkey   : taste = '';
 
@@ -62,7 +44,7 @@ const  lastkey   : taste = '';
        ScrollEnable:boolean = true;
 
 
-       lScrollLock = $10;    { Konstanten fr mem[$40:$17] }
+       lScrollLock = $10;    { Konstanten fuer mem[$40:$17] }
        lNumLock    = $20;
        lCapsLock   = $40;
 
@@ -101,13 +83,13 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
 const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        rdedch     : taste    = '';        { ReadEdit Vorgabe f. 1. Zeichen }
        rdedactive : boolean  = false;     { ReadEdit aktiv                 }
-       m2t        : boolean  = false;     { Zeitanzeige ber multi2        }
+       m2t        : boolean  = false;     { Zeitanzeige ueber multi2        }
        canf       : boolean  = true;      { Cursor bei Readedit an Anfang  }
        enlinksre  : boolean  = true;      { ReadEdit enlinks & enrechts    }
        rdedtrunc  : boolean  = true;      { Leerzeichem am Ende wegschneiden }
-       esfx       : shortint = 8;         { X-Pos. fr editsf              }
-       esfy       : shortint = 9;         { Y-Pos. fr editsf              }
-       esfch      : char     = '>';       { Prompt fr editsf              }
+       esfx       : shortint = 8;         { X-Pos. fuer editsf              }
+       esfy       : shortint = 9;         { Y-Pos. fuer editsf              }
+       esfch      : char     = '>';       { Prompt fuer editsf              }
        curon      : curtype  = curnorm;   { Cursorform bei angesch. Cursor }
        lastcur    : curtype  = curoff;    { letzte Cursorform              }
        edm_str    : s20      = 'Monat: '; { Prompt-Text bei edmonth        }
@@ -115,32 +97,32 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        hotkey_f1  : boolean  = false;     { F1 aktiv (wenn hotkeys==false) }
        retonfn    : taste    = '';        { liefert Get bei FN-Taste zur.  }
        readendeny : boolean  = false;     { RdEd-Ende mit ^N/^Y m”gl.      }
-       einfueg    : boolean  = false;     { Einfge-Mode bei RdEd          }
-       readblen   : byte     = 4;         { L„nge fr readbescue           }
-       key_pressed: boolean  = false;     { Taste wurde in Get gedrckt?   }
+       einfueg    : boolean  = false;     { Einfuege-Mode bei RdEd          }
+       readblen   : byte     = 4;         { Laenge fuer readbescue           }
+       key_pressed: boolean  = false;     { Taste wurde in Get gedrueckt?   }
 
        mausl      : char     = #13;       { linke Maustaste                }
        mausr      : char     = #27;       { rechte Maustaste               }
-       mausst     : word     = 3;         { Maske fr Maustaste            }
-       mauszuo    : boolean  = true;      { Fraigabe fr Maus oben         }
-       mauszuu    : boolean  = true;      { Freigabe fr Maus unten        }
-       mauszul    : boolean  = true;      { Freigabe fr Maus links        }
-       mauszur    : boolean  = true;      { Freigabe fr Maus rechts       }
+       mausst     : word     = 3;         { Maske fuer Maustaste            }
+       mauszuo    : boolean  = true;      { Fraigabe fuer Maus oben         }
+       mauszuu    : boolean  = true;      { Freigabe fuer Maus unten        }
+       mauszul    : boolean  = true;      { Freigabe fuer Maus links        }
+       mauszur    : boolean  = true;      { Freigabe fuer Maus rechts       }
        mausfx     : shortint = 2;         { Maus-Faktor X                  }
        mausfy     : shortint = 1;         { Maus-Faktor Y                  }
 
-       statposx   : shortint = 0;         { X-Pos. fr Tast.-Stat-Anzeige  }
-       statposy   : shortint = 0;         { Y-Pos. fr Tast.-Stat-Anzeige  }
+       statposx   : shortint = 0;         { X-Pos. fuer Tast.-Stat-Anzeige  }
+       statposy   : shortint = 0;         { Y-Pos. fuer Tast.-Stat-Anzeige  }
        scsavetime : integer  = 0;         { Screen-Saver Reload-Count      }
        scsavecnt  : integer  = 0;         { Screen-Saver Count             }
-       dphback    : byte     = 7;         { Attribut fr DispHard          }
+       dphback    : byte     = 7;         { Attribut fuer DispHard          }
        normattr   : byte     = 7;         { Screen-Attrib normtxt          }
        highattr   : byte     = 15;        { Screen-Attrib hightxt          }
        invattr    : byte     = $70;       { Screen-Attrib invtxt           }
        lowattr    : byte     = 0;         { Screen-Attrib lowtxt           }
        forcecolor : boolean  = false;     { Txt-Attribute blockieren       }
 
-       iomaus     : boolean  = true;      { wird mit mouse.maus verknpft  }
+       iomaus     : boolean  = true;      { wird mit mouse.maus verknuepft  }
        UseMulti2  : boolean  = true;      { Tastatur-Warteschleife         }
        AutoUp     : boolean  = false;     { Get: automatisches KeyUp       }
        AutoDown   : boolean  = false;     { Get: automatisches KeyDown     }
@@ -154,7 +136,7 @@ const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
 var
        chml : array[1..5] of string;
 
-       datex,datey,                    { Koordinaten fr Datum und Uhrzeit }
+       datex,datey,                    { Koordinaten fuer Datum und Uhrzeit }
        timex,timey  : shortint;
        fndef        : array[1..20] of string[fndeflen];
        fnproc       : array[0..3,1..10] of nproc;
@@ -165,10 +147,10 @@ var
                                           end;
 
        scsaveadr    : procedure;       { Screen-Saver Proc (muss alle Ak-  }
-                                       { tionen selbst durchfhren)        }
+                                       { tionen selbst durchfuehren)        }
        lastattr     : byte;            { aktuelles Bildschirm-Attribut     }
 
-       multi3       : procedure;       { Hintergrund-Prozeá                }
+       multi3       : procedure;       { Hintergrund-Prozess                }
        memerror     : nproc;           { ?!                                }
        editmsp      : integer;         { aktuelle editms-Zeile             }
 
@@ -191,7 +173,7 @@ Procedure SaveCursor;                        { Cursor retten            }
 Procedure RestCursor;                        { Cursor wiederherstellen  }
 Procedure Get(var z:taste; cur:curtype);     { Taste einlesen           }
 Procedure testbrk(var brk:boolean);          { Test auf ESC             }
-Procedure waitkey(x,y:byte);                 { Taste drcken            }
+Procedure waitkey(x,y:byte);                 { Taste druecken            }
 Procedure HighTxt;                           { Textfarbe hell           }
 Procedure InvTxt;                            { Textfarbe invers         }
 Procedure LowTxt;                            { Textfarbe schwarz        }
@@ -201,7 +183,7 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 {$IFNDEF NCRT }
-Procedure DispHard(x,y:byte; s:string);      { String ohne bercksicht. }
+Procedure DispHard(x,y:byte; s:string);      { String ohne beruecksicht. }
                                              { des akt. Windows ausgeb. }
 {$ENDIF }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
@@ -210,7 +192,7 @@ function  ticker:longint;                    { mem[Seg0040:$6c]         }
 
 {     Haupt-String-Edit-Prozedur
       x,y : Koordinaten              txt : Prompt-Text
-      s   : einzulesender String     ml  : max. L„nge
+      s   : einzulesender String     ml  : max. Laenge
       li  : erlaubte Zeichen         px  : Startposition x
       art : Edittyp (edit-read, -edit, -break, -tabelle)
       enderded : EndeEdTyp (s.o.)                           }
@@ -221,7 +203,7 @@ Procedure ReadEdit(x,y: Byte; txt: atext; var s:string; ml:Byte;
 
 {     String-Einlese-Prozeduren
       x,y : Koordinaten                txt : Prompt-Text
-      s   : einzulesender String       ml  : max. L„nge
+      s   : einzulesender String       ml  : max. Laenge
       li  : erlaubte Zeichen (chml)    brk : Abbruch        }
 
 { mit Esc }
@@ -282,19 +264,37 @@ procedure InitInOutUnit;
 implementation
 
 uses
+{$IFDEF Win32 }
+  windows,
+{$ENDIF  }
+{$IFDEF OS2 }
+  xpos2,
+  doscalls,
+{$ENDIF }
+{$ifdef vp }
+  vpsyslow,
+{$endif}
+{$ifdef NCRT }
+  xpcurses,
+{$endif }
+{$IFDEF Dos32 }
+  crt,
+{$endif }
 {$ifndef NCRT }
   winxp,
 {$endif}
+  mouse,
+  xp0,
   maus2,
   debug;
 
-const  maxsave     = 50;  { max. fr savecursor }
+const  maxsave     = 50;  { max. fuer savecursor }
 
-      __st : string[8] = '  :  :  ';    { fr M2T }
+      __st : string[8] = '  :  :  ';    { fuer M2T }
       timeflash : boolean = false;
       getactive : boolean = false;
 
-type   editsa      = array[1..500] of edits;   { nur fr Type Cast }
+type   editsa      = array[1..500] of edits;   { nur fuer Type Cast }
 
 var    ca,ce       : integer;
        sx,sy,sa,se : array[1..maxsave] of integer;
@@ -330,8 +330,8 @@ begin
 {$ENDIF }
 end;
 
-{ !! Diese Funktion lieft mit and $70 nur CAPSLock zurck,
-  das kann nicht sinn der Sache sein. Muá geprft werden }
+{ !! Diese Funktion liefert mit and $70 nur CAPSLock zurueck,
+  das kann nicht sinn der Sache sein. Muss geprueft werden }
 function kbstat:byte;     { lokal }
 begin
   kbstat := 0;
@@ -801,7 +801,7 @@ begin
 end;
 
 
-{ li = '>>...' : automatische Groáschreibung }
+{ li = '>>...' : automatische Grossschreibung }
 
 Procedure ReadEdit(x,y: Byte; txt: atext; VAR s:string; ml:Byte;
                    li:string; VAR px : byte; art:edittype;
@@ -961,7 +961,7 @@ begin
                  end else
     begin
       ste:=s;
-      // das ist eine groáe Schweinerei, aber man msste die ganze
+      // das ist eine grosse Schweinerei, aber man muesste die ganze
       // Routine umschreiben, um das wieder gerade zubiegen
       ste[succ(p)]:=' ';
       if autogr then a:=UpperCase(a);
@@ -1473,7 +1473,7 @@ begin
         2 : px:=min(pl,length(s));
       end;
       if len=-1 then
-        begin end          { berspringen }
+        begin end          { ueberspringen }
       else if len=0 then
         edproc(x,y,s,px,en)
       else begin
@@ -1581,7 +1581,7 @@ end;
 procedure waitkey(x,y:byte);
 var t : taste;
 begin
-  mwrt(x,y,'Drcken Sie eine Taste ...');
+  mwrt(x,y,'Druecken Sie eine Taste ...');
   get(t,curon);
 end;
 
@@ -1674,6 +1674,9 @@ end;
 
 {
   $Log$
+  Revision 1.97  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.96  2002/11/14 20:04:20  cl
   - Added button controls
 
@@ -1939,10 +1942,10 @@ end;
   - Compilierbar mit Virtual Pascal 2.0
 
   Revision 1.21  2000/03/24 20:25:50  rb
-  ASM-Routinen ges„ubert, Register fr VP + FPC angegeben, Portierung FPC <-> VP
+  ASM-Routinen gesaeubert, Register fuer VP + FPC angegeben, Portierung FPC <-> VP
 
   Revision 1.20  2000/03/24 00:03:39  rb
-  erste Anpassungen fr die portierung mit VP
+  erste Anpassungen fuer die portierung mit VP
 
   Revision 1.19  2000/03/23 15:47:23  jg
   - Uhr im Vollbildlister aktiv

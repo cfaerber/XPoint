@@ -27,10 +27,7 @@ unit databaso;
 interface
 
 uses
-  xpglobal,
-  typeform,
-  datadef,
-  SysUtils;
+  datadef;
 
 
 procedure dbCreate(const filename:dbFileName; flp:dbFLP);
@@ -44,6 +41,7 @@ function  dbPack(const filename: string):boolean;
 implementation
 
 uses
+  SysUtils,
 {$IFDEF UnixFS }
   {$IFDEF unix}
     xplinux,
@@ -51,6 +49,7 @@ uses
     {$FATAL Need chmod - look at xplinux for procedure SetAccess }
   {$ENDIF }
 {$ENDIF }
+  typeform,
   database,
   datadef1,
   xp1,
@@ -128,11 +127,11 @@ begin
         3     : inc(size,6);  { Real }
         4     : inc(size,4);  { Datum }
         6     : begin
-                  inc(size,8);  { externes Feld: Zeiger + Grîsse }
+                  inc(size,8);  { externes Feld: Zeiger + Groesse }
                   xflag:=true;
                 end;
       else
-        error('ungÅltiger Feldtyp: '+strs(flp^.feld[i].ftyp));
+        error('ungueltiger Feldtyp: '+strs(flp^.feld[i].ftyp));
       end;
     end;
     recsize:=size;
@@ -169,22 +168,22 @@ begin
     // use 'database' tag - databaso should be merged with database unit
     {$ifdef debug} Debug.DebugLog('database','dbZap '+fname, dlTrace); {$endif}
     with hd do begin
-      recs:=0;                      { Header zurÅcksetzen }
+      recs:=0;                      { Header zuruecksetzen }
       nextinr:=0;
       firstfree:=0;
       reccount:=0;
       Writehd(dbp);
       {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - .db1', dlTrace); {$endif}
       seek(f1,hdsize);
-      truncate(f1);                 { Datei kÅrzen }
+      truncate(f1);                 { Datei kuerzen }
       if xflag then begin
-        seek(fe,0);                 { EB1-Header zurÅcksetzen }
+        seek(fe,0);                 { EB1-Header zuruecksetzen }
         blockread(fe,dbdhd,sizeof(dbdhd));
         fillchar(dbdhd.freelist,sizeof(dbdhd.freelist),0);
         seek(fe,0);
         blockwrite(fe,dbdhd,sizeof(dbdhd));
         {$ifdef debug} Debug.DebugLog('database','dbZap '+fname+' - .eb1', dlTrace); {$endif}
-        seek(fe,dbdhd.hdsize);      { EB1 kÅrzen }
+        seek(fe,dbdhd.hdsize);      { EB1 kuerzen }
         truncate(fe);
         end;
       if flindex then begin
@@ -249,7 +248,7 @@ begin
 end;
 
 
-{ Feld aus bestehender Datenbank lîschen }
+{ Feld aus bestehender Datenbank loeschen }
 { Datenbank muss geschlossen sein        }
 { gehn noch nicht bei ext. Feldern!      }
 
@@ -263,13 +262,13 @@ var fnr     : integer; { muﬂ integer sein, da fkt -1 zur¸ckgeben kann }
 begin
   dbOpen(d,filename,0);
   fnr:=dbGetFeldnr(d,feldname);
-  if fnr<0 then error('UngÅltiger Feldname:  '+feldname);
+  if fnr<0 then error('Ungueltiger Feldname:  '+feldname);
   with dp(d)^ do begin
     irec.df:=fname;
     irec.command:=icOpenCWindow; ICP(irec);
     newsize:=hd.recsize-feldp^.feld[fnr].fsize;
 
-    for i:=fnr to hd.felder-1 do begin   { Feld aus phys. Feldliste lîschen }
+    for i:=fnr to hd.felder-1 do begin   { Feld aus phys. Feldliste loeschen }
       seek(f1,sizeof(hd)+(i+1)*32);
       blockread(f1,df,32);
       seek(f1,sizeof(hd)+i*32);
@@ -302,7 +301,7 @@ begin
 end;
 
 
-{ alle extenen FeldbezÅge lîschen }
+{ alle extenen Feldbezuege loeschen }
 
 procedure dbKillXbase(const filename:dbFilename);
 var d      : DB;
@@ -433,6 +432,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.21  2002/07/25 20:43:51  ma
   - updated copyright notices
 

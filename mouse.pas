@@ -25,13 +25,9 @@ unit mouse;
 interface
 
 uses
-  {$IFDEF Win32} windows,xpcrt, {$ENDIF}
-  {$IFDEF NCRT} {$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$ENDIF}
-  xpglobal,
-  debug,
-  sysutils,
-  typeform,
-  keys;
+  {$IFDEF Win32} windows, {$ENDIF}
+  xpglobal, //todo: word
+  typeform;
 
 const  mausLinks  = 0;     { linke Taste    }
        mausRechts = 1;     { rechte Taste   }
@@ -42,11 +38,11 @@ const  mausLinks  = 0;     { linke Taste    }
        mmMitte    = 4;     { Maske f. mittl. Taste }
 
        intMove    = 1;     { Interrupt bei 'Maus bewegt' }
-       intLeft1   = 2;     { .. links gedr…kt           }
+       intLeft1   = 2;     { .. links gedrueckt           }
        intLeft0   = 4;     { .. links losgelassen        }
-       intRight1  = 8;     { .. rechts gedr…kt          }
+       intRight1  = 8;     { .. rechts gedrueckt          }
        intRight0  = 16;    { .. rechts losgelassen       }
-       intMid1    = 32;    { .. Mitte gedr…kt           }
+       intMid1    = 32;    { .. Mitte gedrueckt           }
        intMid0    = 64;    { .. Mitte losgelassen        }
 
 type   mausstat   = record
@@ -59,7 +55,7 @@ type   mausstat   = record
 var    maus,mausda : boolean;
        mausswapped : boolean;            { Tasten vertauscht }
 
-procedure mausinit;                      { Maustreiber zur…ksetzen }
+procedure mausinit;                      { Maustreiber zuruecksetzen }
 procedure mausan;                        { Mauscursor einschalten   }
 procedure mausaus;                       { Mauscursor ausschalten   }
 procedure getmaus(var stat:mausstat);    { Mauszustand ermitteln    }
@@ -79,12 +75,21 @@ function UpdateMouseStatus: Taste;
 
 implementation
 
+uses
+  sysutils,
+  {$IFDEF Win32} winxp,xpcrt, {$ENDIF}
+  {$IFDEF NCRT}
+    xpcurses,
+    {$ifdef Kylix}ncursix,{$else}ncurses,{$endif}
+  {$ENDIF}
+  maus2,
+  debug,
+  keys;
+
 {$IFDEF Win32}
-uses maus2, winxp;
 var LastEvent: MOUSE_EVENT_RECORD;
 {$ELSE}
 {$IFDEF NCRT}
-uses xpcurses,maus2;
 {$IFDEF Kylix}
 var MouseEvent: NCursix.MEVENT;
 {$ELSE}
@@ -273,6 +278,9 @@ initialization
 
 {
   $Log$
+  Revision 1.36  2002/12/04 16:57:00  dodi
+  - updated uses, comments and todos
+
   Revision 1.35  2002/11/14 20:05:02  cl
   - fixed range check error
 

@@ -26,9 +26,10 @@
 
 unit mime_base64;
 
-{ ---------------------------} interface { --------------------------- }
+interface
 
-uses classes, xpstreams, mime;
+uses
+  classes, xpstreams, mime;
 
 { --------------------- Encoding/Decoding Streams -------------------- }
 
@@ -77,10 +78,12 @@ const
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 );
 
-{ ------------------------} implementation { ------------------------- }
+implementation
 
 uses
   SysUtils, Typeform;
+
+{ TBase64EncoderStream }
 
 procedure TBase64EncoderStream.SetSize(NewSize:Longint);
 var
@@ -145,6 +148,8 @@ begin
   Move(p^, Buf[BufSize], count);
   Inc(BufSize, count);
 end;
+
+{ TBase64DecoderStream }
 
 procedure TBase64DecoderStream.SetSize(NewSize:Longint);
 begin
@@ -216,6 +221,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2002/12/04 16:57:00  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.6  2002/02/28 21:26:09  cl
 // - fixed Base64 decoder
 //

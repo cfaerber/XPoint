@@ -27,7 +27,9 @@ unit debug;
 
 interface
 
-uses xpglobal,sysutils,classes;
+uses
+  sysutils,
+  classes;
 
 const         {Loglevels proposed are}
   DLNone = 0;
@@ -277,7 +279,7 @@ end;
     s := OldTraceFunc(addr);
     Result := s;
     DebugLog('fatal',s,dlError);
-    if FileExists('ERROR.TXT') then
+    if FileExists('ERROR.TXT') then //todo: filename
     begin
       Assign(t, 'ERROR.TXT');
       Append(t);
@@ -307,6 +309,9 @@ finalization
 
 {
   $Log$
+  Revision 1.32  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.31  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -26,7 +26,7 @@ UNIT feiertag;
 
 INTERFACE
 
-uses   typeform,montage;
+uses   montage;
 
 const  feiertage  = 9;
 
@@ -114,7 +114,7 @@ begin
     until ddow(dat2)=1;
   SetFeiertag(6);                { Pfingstmontag }
 
-(* Buá- und Bettag: gestrichen
+(* Buss- und Bettag: gestrichen
   dat2.t:=25; dat2.m:=12;        { Totensontag ermitteln (So vor 1. Advent) }
   for i:=1 to 5 do
     repeat
@@ -122,7 +122,7 @@ begin
     until ddow(dat2)=7;
   for i:=1 to 4 do               { Mittwoch vor Totensonntag: }
     decd(dat2);
-  SetFeiertag(8);                { Buá- und Bettag }
+  SetFeiertag(8);                { Buss- und Bettag }
 *)
 end;
 
@@ -142,6 +142,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/12/04 16:56:57  dodi
+  - updated uses, comments and todos
+
   Revision 1.9  2002/07/25 20:43:52  ma
   - updated copyright notices
 

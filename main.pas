@@ -30,40 +30,23 @@ procedure StartOpenXP;
 implementation
 
 uses
-  {$IFDEF unix}
-//  {$IFDEF Kylix}
-//  libc,
-//  {$ELSE}
-//  linux,
-//  {$ENDIF}
-  xplinux,
-  xpcurses,
-  {$ENDIF }
+  Sysutils,
+  xpglobal, debug,
+  {$IFDEF unix} xplinux, xpcurses, {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,
-  //mouse,lister,objcom,zmodem,
   winxp,resource,
-  Sysutils,xpglobal, debug,
      xp0,      { Definitionen       }
      xp1,      { allg. Routinen     }
-     xp1o,  { testtelephon }
-     //xpnt,     { Netztypen          }
-     //xp_uue,   { UUencode/UUdecode  }
+     xp1o,     { testtelephon }
      xp2,      { Startup            }
      xp2db,    { Database-Startup   }
-     //xp3,      { Datenbearbeitung   }
      xp4,      { Hauptmodul         }
-     //xp4e,
-     //xp4o,
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
      xpreg,    { Registrierung      }
-     //xpsendmessage, { Nachrichten senden }
      xpnetcall, { AutoMode }
-     //xp8,      { 'maps & Filesercer }
      xp10,     { Timing-Lst./Makros }
-     //xpe,      { Editor             }
-     //xpterminal,{ CrossTerm         }
      xpfido,   { Nodelist u.a.      }
      xpfidonl, { Nodelist-Config    }
      zpr,      { zc buffer repair   }
@@ -73,8 +56,8 @@ uses
 {$IFDEF Win32}
      windows,
 {$ENDIF}
-      xpme,       { menu editor }
-     zcrfc;       { RFC<->ZConnect     }
+      xpme,    { menu editor }
+     zcrfc;    { RFC<->ZConnect     }
 
 function StartInternalTools: Boolean;
 var
@@ -250,6 +233,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/12/04 16:56:59  dodi
+  - updated uses, comments and todos
+
   Revision 1.21  2002/12/02 14:04:29  dodi
   made xpmenu internal tool
 

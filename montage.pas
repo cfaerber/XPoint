@@ -25,7 +25,9 @@ UNIT montage;
 interface
 
 uses
-  sysutils, typeform, xpglobal;
+  sysutils,
+  typeform,
+  xpglobal; //todo: word
 
 const
        monat : Array[1..12] of record
@@ -34,7 +36,7 @@ const
                                end  =
 
                ((tag: 'Januar';   zahl: 31), (tag: 'Februar';  zahl: 28),
-                (tag: 'M„rz';     zahl: 31), (tag: 'April';    zahl: 30),
+                (tag: 'Maerz';    zahl: 31), (tag: 'April';    zahl: 30),
                 (tag: 'Mai';      zahl: 31), (tag: 'Juni';     zahl: 30),
                 (tag: 'Juli';     zahl: 31), (tag: 'August';   zahl: 31),
                 (tag: 'September';zahl: 30), (tag: 'Oktober';  zahl: 31),
@@ -146,7 +148,7 @@ function ddow(dd:fdate):byte;
 var nt  : word;
 begin
   with dd do
-    if t+m+j > 0 then { MK 01/00 falls Record leer, wird 1 (Mo) zurckgegeben }
+    if t+m+j > 0 then { MK 01/00 falls Record leer, wird 1 (Mo) zurueckgegeben }
     begin
       if m<3 then begin
         m:=m+12; dec(j);
@@ -176,7 +178,7 @@ begin
 end;
 
 
-{ letzter Sonntag im M„rz - letzter Sonntag im September }
+{ letzter Sonntag im Maerz - letzter Sonntag im September }
 
 function sommer(const d,z:datetimest):boolean;
 var t,m : byte;
@@ -187,8 +189,8 @@ begin
   d1:=dow('01'+mid(d,3));                     { 1. Tag des aktuellen Monats }
   if d1>4 then d1:=-7+d1;
   if ((m>3) and (m<10)) or                    { April bis September                       }
-     ((m=3) and (t>29-d1)) or                 { Letzter Sonntag im M„rz schon vorbei?     }
-     ((m=3) and (t=29-d1) and                 { Letzter Sonntag im M„rz nach 01:59 Uhr?   }
+     ((m=3) and (t>29-d1)) or                 { Letzter Sonntag im Maerz schon vorbei?     }
+     ((m=3) and (t=29-d1) and                 { Letzter Sonntag im Maerz nach 01:59 Uhr?   }
       (ival(copy(z,1,2)+copy(z,4,2)) > 159)) or
      ((m=10) and (t<29-d1)) or                { Letzter Sonntag im Oktober noch nicht da? }
      ((m=10) and (t=29-d1) and                { Letzter Sonntag im Oktober vor 03:00 Uhr? }
@@ -198,6 +200,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/12/04 16:57:00  dodi
+  - updated uses, comments and todos
+
   Revision 1.13  2002/07/25 20:43:52  ma
   - updated copyright notices
 

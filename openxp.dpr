@@ -45,7 +45,8 @@ program openxp;
 {%File 'xpsendmessage_subs.inc'}
 
 uses
-  zpr in 'zpr.pas',
+  archive in 'archive.pas',
+  charmaps in 'charmaps.pas',
   clip in 'clip.pas',
   CRC in 'crc.pas',
   database in 'database.pas',
@@ -193,7 +194,6 @@ uses
   Ringbuff in 'ObjCOM/ringbuff.pas',
   ncursix in 'ncursix.pas',
 {$ENDIF}
-  archive in 'archive.pas',
   xpsendmessage_rta in 'xpsendmessage_rta.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
   xpsendmessage in 'xpsendmessage.pas',
@@ -201,7 +201,10 @@ uses
   main in 'main.pas',
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
   markedlist in 'markedlist.pas',
-  mime in 'mime.pas';
+  mime in 'mime.pas',
+  mime_analyze in 'mime_analyze.pas',
+  mime_base64 in 'mime_base64.pas',
+  mime_qp in 'mime_qp.pas';
 
 {$R *.res}
 

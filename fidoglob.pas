@@ -29,7 +29,7 @@ unit fidoglob;
 interface
 
 uses
-  typeform,sysutils,fileio,xpglobal,classes;
+  xpglobal,classes;
 
 const
 {$IFDEF UnixFS }
@@ -57,7 +57,7 @@ const
 {$ENDIF}
         nlNodelist=1;           //normale Nodelist
         nlPoints24=2;           //Pointliste im P24-Format
-        nlNode=3;               //Pointlist fÅr einen Node
+        nlNode=3;               //Pointlist fuer einen Node
         nl4DPointlist=4;        //4D-Pointliste
         nlFDpointlist=5;        //FrontDoor-Pointliste
 type
@@ -109,7 +109,7 @@ type
                 constructor     Create;
                 procedure       LoadConfigFromFile;
                 procedure       SaveConfigToFile;               // NODELST.CFG speichern
-                procedure       Add(NLItem :TNodeListItem);     // fÅge NL hinzu und sortiere
+                procedure       Add(NLItem :TNodeListItem);     // fuege NL hinzu und sortiere
                 function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
                 function        GetItem(Index: integer): TNodeListItem;
@@ -132,7 +132,10 @@ var
 implementation
 
 uses
-  xp0;
+  sysutils,
+  typeform,fileio,xp0;
+
+{ TNodeList }
 
 ///////////////////////////////////////////////////////////////////////////////
 // begin TNodList
@@ -154,7 +157,7 @@ begin
     reset(t);
     while not eof(t) do
     begin
-      NlItem := TNodeListItem.Create;   
+      NlItem := TNodeListItem.Create;
       with NlItem do
       begin
         repeat
@@ -239,7 +242,8 @@ begin
         result:=LeftStr(flistfile,p-1)+formi(fnumber,3)+mid(flistfile,p+3);
     end;
 end;
-//FÅge neuen Eintrag hinzu und sortiere nach Grî·e
+
+//Fuege neuen Eintrag hinzu und sortiere nach Groesse
 procedure TNodeList.Add(NLItem : TNodeListItem);
 var
   i,j : integer;
@@ -247,7 +251,7 @@ begin
 
   inherited Add(NLItem);
 
-  for i:=0 to Count - 1 do              // and sort Dateigrî·e sortieren
+  for i:=0 to Count - 1 do              // and sort Dateigroesse sortieren
     TNodeListItem(Items[i]).fsort:=_filesize(FidoPath+ GetFilename(i));
   for i:=0 to Count - 1 do
     for j:=Count - 1 downto 1 do
@@ -324,6 +328,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/12/04 16:56:57  dodi
+  - updated uses, comments and todos
+
   Revision 1.18  2002/07/22 10:10:32  mk
   - fixed TNodeList.LoadConfigFromFile
     add was called before NlItem: TNodeListItem; was filled,

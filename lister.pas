@@ -26,23 +26,18 @@ unit lister;
 interface
 
 uses
-  xpglobal,
-  {$IFDEF NCRT }
-  xpcurses,
-  {$ENDIF }
-  typeform,
-  sysutils, classes,
-  fileio, inout, maus2, keys, winxp, resource;
+  classes,
+  xpglobal, keys;
 
 const
-  ListHelpStr: string[8] = 'Hilfe';
+  ListHelpStr: string[8] = 'Hilfe'; //todo: international
   Listunvers: byte = 0;
   Listhalten: byte = 0;
   Listflags: longint = 0;
-  ListerBufferCount = 16383;            { LÑnge des Eingangspuffers }
+  ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
 
 const
-  mcursor: boolean = false;             { Auswahlcursor fÅr Blinde }
+  mcursor: boolean = false;             { Auswahlcursor fuer Blinde }
 
 type
   listcol = packed record
@@ -59,7 +54,7 @@ type
 
   TLister = class;
 
-  TListerConvertEvent = procedure(var buf; Size: word) of object; { fÅr Zeichensatzkonvert. }
+  TListerConvertEvent = procedure(var buf; Size: word) of object; { fuer Zeichensatzkonvert. }
   TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
@@ -67,32 +62,32 @@ type
   TListerDisplayLineEvent = procedure(x, y: word; var s: string);
   TListerColorEvent = function(const s: string; line: longint): byte;
 
-  { mîgliche Optionen fÅr den Lister                             }
+  { moegliche Optionen fuer den Lister                             }
   {                                                              }
   { SB  =  SelBar                  M   =  markable               }
-  { F1  =  "F1-Hilfe"              S   =  Suchen mîglich         }
-  { NS  =  NoStatus                NA  =  ^A nicht mîglich       }
+  { F1  =  "F1-Hilfe"              S   =  Suchen moeglich         }
+  { NS  =  NoStatus                NA  =  ^A nicht moeglich       }
   { CR  =  mit Enter beendbar      MS  =  SelBar umschaltbar     }
   { NLR =  kein l/r-Scrolling      APGD=  immer komplettes PgDn  }
   {                                DM  =  direkte Mausauswahl    }
   { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
   liststat = packed record
-    statline: boolean;
+    statline: boolean;  //todo: make set from booleans?
     wrapmode: boolean;
-    markable: boolean;                  { markieren mîglich   }
+    markable: boolean;                  { markieren moeglich   }
     endoncr: boolean;                   { Ende mit <cr>       }
     helpinfo: boolean;                  { F1=Hilfe            }
     wrappos: byte;
     noshift: boolean;                   { kein links/rechts-Scrolling }
     markswitch: boolean;                { SelBar umschaltbar  }
-    maysearch: boolean;                 { Suchen mîglich      }
-    noctrla: boolean;                   { ^A nicht mîglich    }
+    maysearch: boolean;                 { Suchen moeglich      }
+    noctrla: boolean;                   { ^A nicht moeglich    }
     AllPgDn: boolean;                   { immer komplettes PgDn }
     directmaus: boolean;                { Enter bei Maus-Auswahl }
     vscroll: boolean;                   { vertikaler Scrollbar   }
     scrollx: Integer;
-    rot13enable: boolean;               { ^R mîglich }
+    rot13enable: boolean;               { ^R moeglich }
     autoscroll: boolean;
   end;
 
@@ -139,8 +134,8 @@ type
     FIsUTF8: boolean;
   protected
     procedure SetUTF8;
-    procedure SetCP437;    
-    
+    procedure SetCP437;
+
   public
     col: listcol;
     stat: liststat;
@@ -189,7 +184,16 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  gpltools,xp0,mime,utftools,unicode;
+  sysutils,
+  {$IFDEF NCRT }
+  xpcurses,
+  {$ENDIF }
+  typeform,
+  inout, maus2, winxp, resource,
+  gpltools, //todo: remove and use typeform.Rot13
+  xp0,mime,utftools,unicode;
+
+{ TLister }
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -204,7 +208,7 @@ begin
   Result := 0;
   if BufLen = 0 then exit;
   if wrap = 0 then wrap := 255;
-  Wrap := Min(Wrap, 255); // Begrenzung der ZeilenlÑnge auf 255 Zeichen
+  Wrap := Min(Wrap, 255); // Begrenzung der Zeilenlaenge auf 255 Zeichen
   j := 0;
   while j < BufLen do
   begin
@@ -212,20 +216,20 @@ begin
     MaxLen := Min(Wrap + j, BufLen);
     TempIJ := j;
 
-    // solange, bis entweder Zeilenende, Wrap-Bereich Åberschritten,
-    // LÑnge des Buffers erreicht oder maximale ZeilenÑnge erreicht
+    // solange, bis entweder Zeilenende, Wrap-Bereich ueberschritten,
+    // Laenge des Buffers erreicht oder maximale Zeilenaenge erreicht
     while (buf[TempIJ] <> #13) and (buf[TempIJ] <> #10) and (TempIJ < MaxLen) do
       inc(TempIJ);
-    i := TempIJ - j;                    // i = lÑnge der neuen Zeile
+    i := TempIJ - j;                    // i = laenge der neuen Zeile
 
-    // Spezialbehandlung, wenn Zeile umgebrochen werden mu·
+    // Spezialbehandlung, wenn Zeile umgebrochen werden muss
     if i = wrap then
     begin
       i := wrap;
       while (i > 20) and (Buf[i + j] <> ' ') do
         dec(i);
-      // wenn keine Umbruchstelle gefunden wurde, Wrap-LÑnge Åbernehmen
-      // ansonsten Leerzeichen Åberspringen
+      // wenn keine Umbruchstelle gefunden wurde, Wrap-Laenge uebernehmen
+      // ansonsten Leerzeichen ueberspringen
       if i = 20 then
         i := wrap
       else
@@ -246,7 +250,7 @@ begin
         Move(Buf[j], S[1], i);
       AddLine(s);
     end;
-    // CRLF Åberlesen
+    // CRLF ueberlesen
     if Buf[i + j] = #13 then inc(i);
     if Buf[i + j] = #10 then inc(i);
     inc(j, i);
@@ -407,12 +411,12 @@ begin
     until eof(f);
     close(f);
     if rp > 0 then
-    begin { den Rest der letzten Zeile noch anhÑngen.. }
+    begin { den Rest der letzten Zeile noch anhaengen.. }
       SetLength(s, rp);
       Move(p^[0], s[1], rp);
       AddLine(s);
     end;
-    // Sonderbehandlung fÅr die letzte Leerzeile
+    // Sonderbehandlung fuer die letzte Leerzeile
 //    if p^[rr + TempRP - 1] = #10 then AddLine('');
   end;
   freemem(p, ps);
@@ -431,18 +435,18 @@ var
   FirstLine: integer;                   // number of first line in display
   f7p, f8p: longint;
   suchline: longint;                    { Zeilennr.           }
-  spos, slen: integer;                  { Such-Position/LÑnge }
+  spos, slen: integer;                  { Such-Position/Laenge }
 
   mzo, mzu: boolean;
   mzl, mzr: boolean;
-  mb: boolean;                          { Merker fÅr Inout.AutoBremse }
+  mb: boolean;                          { Merker fuer Inout.AutoBremse }
   vstart,
     vstop: integer;                     { Scrollbutton-Position }
   _unit: longint;
   scrolling: boolean;
   scrollpos: integer;
   scroll1st: integer;
-  mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
+  mausdown: boolean;                    { Maus innerhalb des Fensters gedrueckt }
   oldmark : boolean;
   oldselb : boolean;
 
@@ -1143,6 +1147,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.72  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.71  2002/08/01 17:21:18  mk
   - fixed TLister.NextMarked: AV when Lines.Count = 0 and MarkPos = 1
 

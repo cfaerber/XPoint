@@ -24,7 +24,9 @@ unit charmaps;
 
 interface
 
-uses Unicode,mime;
+uses
+  Unicode,  //T8BitTable
+  mime;     //TMimeCharsets
 
 {$IFDEF Linux }
 {$I charsets/cp437.inc }
@@ -116,6 +118,9 @@ end.
 
 //
 // $Log$
+// Revision 1.9  2002/12/04 16:56:55  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.8  2002/11/14 20:00:57  cl
 // - New charset: ISO-646-DE
 //

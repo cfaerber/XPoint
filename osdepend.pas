@@ -26,15 +26,6 @@ unit osdepend;
 
 interface
 
-uses
-{$ifdef Win32}
-  Windows,
-{$endif}
-{$IFDEF DOS32 }
-  Crt,
-{$ENDIF }
-  Classes, SysUtils;
-
 { Consts }
 
 { Global Vars }
@@ -46,6 +37,8 @@ procedure SysBeep(Freq, Dur: Integer);
 
 implementation
 
+//no uses here, leave it to the inluded files!
+
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
@@ -54,6 +47,9 @@ implementation
 
 {
         $Log$
+        Revision 1.7  2002/12/04 16:57:00  dodi
+        - updated uses, comments and todos
+
         Revision 1.6  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 

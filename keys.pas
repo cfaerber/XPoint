@@ -27,12 +27,7 @@ unit keys;
 interface
 
 uses
-  xpglobal,
-  {$ifdef NCRT} xpcurses, {$endif}
-  {$ifdef Win32} xpcrt, {$endif}
-  {$IFDEF DOS32} go32, crt, {$ENDIF}
-  {$IFDEF VP} vpsyslow, {$ENDIF}
-  typeform;
+  xpglobal;
 
 type   taste   = string[2];
 
@@ -141,7 +136,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
 type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
-       forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }
+       forwardkeys  : string;        { Auszufuehrende Tastendruecke            }
 
 function  keypressed:boolean;
 function  readkey:char;
@@ -150,27 +145,30 @@ function  readkey:char;
 var lastscancode : byte;
 {$ENDIF}
 
-procedure keyboard(const s:string);        { s and forwardkeys anhÑngen            }
-procedure _keyboard(const s:string);       { s vorne an forwardkeys anhÑngen       }
-procedure clearkeybuf;               { Tastaturpuffer lîschen                }
+procedure keyboard(const s:string);  { s and forwardkeys anhaengen           }
+procedure _keyboard(const s:string); { s vorne an forwardkeys anhaengen      }
+procedure clearkeybuf;               { Tastaturpuffer loeschen               }
 Procedure pushkey(t:taste);          { Taste direkt in Tastaturpuffer schr.  }
 procedure pushkeyv(var t:taste);
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
 
-function  kb_shift:boolean;          { Shift gedrÅckt }
-function  kb_ctrl:boolean;           { Ctrl gedrÅckt  }
-function  kb_alt:boolean;            { Alt gedrÅckt   }
+function  kb_shift:boolean;          { Shift gedrueckt }
+function  kb_ctrl:boolean;           { Ctrl gedrueckt  }
+function  kb_alt:boolean;            { Alt gedrueckt   }
 function  ScrollMode:boolean;
 
 procedure InitKeysUnit;
 
 implementation  { ---------------------------------------------------------- }
 
-{$IFDEF Win32}
-uses Windows;
-{$ENDIF}
+uses
+  {$ifdef NCRT} xpcurses, {$endif}
+  {$ifdef Win32} Windows, xpcrt, {$endif}
+  {$IFDEF DOS32} go32, crt, {$ENDIF}
+  {$IFDEF VP} vpsyslow, {$ENDIF}
+  typeform; //not really
 
 const
   lshift = 2;
@@ -280,7 +278,7 @@ end;
 
 
 Procedure pushkeyv(var t:taste);
-const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
+const scancode : array[1..255] of byte =   { todo: nur deutsche Tastatur! }
                  (30,48,46,32,18,33,34,14,15,28,37,38,28,49,24,25,   { ^P  }
                   16,19,31,20,22,47,17,45,44,21,1,43,27,7,53,        { ^_  }
                   57,2,3,43,5,6,7,43,9,10,27,27,12,53,52,8,          { /   }
@@ -329,7 +327,7 @@ begin
 end;
 {$ENDIF }
 
-function kb_shift:boolean;          { Shift gedrÅckt }
+function kb_shift:boolean;          { Shift gedrueckt }
 begin
 {$IFDEF Win32 }
 //  kb_shift := GetAsyncKeyState(VK_SHIFT) < 0;
@@ -343,7 +341,7 @@ begin
 {$ENDIF }
 end;
 
-function kb_ctrl:boolean;           { Ctrl gedrÅckt  }
+function kb_ctrl:boolean;           { Ctrl gedrueckt  }
 begin
 {$IFDEF Win32 }
 //   kb_ctrl := GetAsyncKeyState(VK_CONTROL) < 0;
@@ -357,7 +355,7 @@ begin
 {$ENDIF }
 end;
 
-function kb_alt:boolean;            { Alt gedrÅckt   }
+function kb_alt:boolean;            { Alt gedrueckt   }
 begin
 {$IFDEF Win32 }
   kb_alt := GetAsyncKeyState(VK_MENU) < 0;
@@ -388,6 +386,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.50  2002/07/25 20:43:52  ma
   - updated copyright notices
 

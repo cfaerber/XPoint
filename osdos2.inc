@@ -24,9 +24,9 @@
   All declarations here are local to the unit OSDepend. You
   can use the uses-command. }
 
-{ OS speceific uses }
+{ OS specific uses }
 
-{ local declaritions }
+{ local declarations }
 
 { local functions }
 
@@ -34,18 +34,23 @@
 
 procedure SysDelay(MS: Longint);
 begin
+  //todo
 end;
 
 procedure SysBeep(Freq, Dur: Integer);
-begin 
+begin
+  //todo
 end;
 
 {
         $Log$
+        Revision 1.3  2002/12/04 16:57:00  dodi
+        - updated uses, comments and todos
+
         Revision 1.2  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 
         Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
+        - Init: Empty unit for os specific code
 
 }

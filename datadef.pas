@@ -43,14 +43,14 @@ const   dbEMShandle   : word = 0;
 
         dbFeldNameLen = 10;
 
-        dbTypeString  = 1;    { String mit LÑngenbyte, Freiraum 0-gefÅllt }
-        dbTypeInt     = 2;    { numerisch mitVorzeichen, 1/2/4 Bytes      }
-        dbTypeReal    = 3;    { Real 6 Bytes                              }
-        dbTypeDatum   = 4;    { Datum 4 Bytes t/m/jj  ==  LongInt         }
-        dbUntyped     = 5;    { untypisiert, feste LÑnge                  }
-        dbUntypedExt  = 6;    { bis 32K LÑnge, 4Byte-Zeiger auf DBD-File  }
+        dbTypeString  = 1;    { String mit Laengenbyte, Freiraum 0-gefuellt }
+        dbTypeInt     = 2;    { numerisch mitVorzeichen, 1/2/4 Bytes        }
+        dbTypeReal    = 3;    { Real 6 Bytes                                }
+        dbTypeDatum   = 4;    { Datum 4 Bytes t/m/jj  ==  LongInt           }
+        dbUntyped     = 5;    { untypisiert, feste Laenge                   }
+        dbUntypedExt  = 6;    { bis 32K Laenge, 4Byte-Zeiger auf DBD-File   }
 
-        dbFlagIndexed = 1;    { Flag fÅr dbOpen }
+        dbFlagIndexed = 1;    { Flag fuer dbOpen }
 
         icIndexNum    = 1;    { <- Anzahl Indizes   (indexnr)     }
         icIndex       = 2;    { <- indexstr [ / indexproc]        }
@@ -72,7 +72,7 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
         dbFeldTyp   = packed record             { Felder s.u. (dbfeld)      }
                         fname     : dbFeldStr;  { Name aus A..Z,_           }
                         ftyp      : byte;       { 1..6                      }
-                        fsize     : smallword;  { phys. Feldgrî·e bei 1,2,5 }
+                        fsize     : smallword;  { phys. Feldgroesse bei 1,2,5 }
                         fnlen,fnk : byte;       { nur bei Typ 2,3           }
                         fofs      : smallword;  { intern: Offset im record  }
                         indexed   : boolean;    { intern: indiziertes Feld  }
@@ -103,6 +103,9 @@ implementation
 
 {
   $Log$
+  Revision 1.11  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.10  2002/11/14 20:02:40  cl
   - changed some fatal errors to exceptions to allow better debugging
 

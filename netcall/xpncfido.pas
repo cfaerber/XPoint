@@ -48,7 +48,7 @@ implementation   { -------------------------------------------------- }
 
 uses
   ncfido,xpheader,xp3,xp3o,xpmakeheader,xpprogressoutputwindow,
-  datadef,database,xp9bp,xpnt,xpnetcall,direct;
+  datadef,database,xp9bp,xpnt,xpnetcall;  //,direct;
 
 type
   TAKABoxes= record
@@ -917,6 +917,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/12/04 16:57:04  dodi
+  - updated uses, comments and todos
+
   Revision 1.36  2002/08/03 16:31:41  mk
   - fixed unsendt-handling in client-mode
 

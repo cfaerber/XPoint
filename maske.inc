@@ -181,7 +181,7 @@ var ax,p,myp  : integer;
                   end;
                 end; { stat.arrowspace and enabled }
               end; { enabled, not checkbutt }
-            end; { enabled or (not dispnodisp) } 
+            end; { enabled or (not dispnodisp) }
           end { (yy0>=a+1) and (yy<=a+un) }
           else
             if yy0<a+1 then ua:=true
@@ -309,7 +309,7 @@ var ax,p,myp  : integer;
         p:=selliste;
         while (p<>nil) and (UpperCase(cont)<>UpperCase(p^.el)) do
           p:=p^.next;
-        if (p=nil) and (cont<>'') then begin    { Ñhnlichen Eintrag suchen }
+        if (p=nil) and (cont<>'') then begin    { aehnlichen Eintrag suchen }
           p:=selliste;
           while (p<>nil) and (LeftStr(UpperCase(p^.el),length(cont))<>UpperCase(cont)) do
             p:=p^.next;
@@ -382,14 +382,14 @@ var ax,p,myp  : integer;
       i,p,sa : integer;
       t      : taste;
       na,x   : byte;
-      insmaus: boolean;   { Taste wurde 'inside' gedrÅckt }
+      insmaus: boolean;   { Taste wurde 'inside' gedrueckt }
 
     procedure display;
     var i : integer;
     begin
       with amaskp^,afld^ do begin
         p1:=selliste;
-        for i:=1 to sa do       { sa *mu·* < lines sein!! }
+        for i:=1 to sa do       { sa *muss* < lines sein!! }
           p1:=p1^.next;
         moff;
         for i:=1 to sll do begin
@@ -525,7 +525,7 @@ var ax,p,myp  : integer;
     maussel:=false;
   end;
 
-  { Achtung! vor jeder Modifikation an cont mu· xtest1() aufgerufen werden! }
+  { Achtung! vor jeder Modifikation an cont muss xtest1() aufgerufen werden! }
 
   function xtest1(var s:string):boolean;
   var x1 : boolean;
@@ -1151,10 +1151,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             if xtest1(s) then cont:=s;
             end;
 
-          if { (delete_on_cDel) and } (t=keycdel)                 { MY: <Ctrl-Del> in MenÅs erlauben }
+          if { (delete_on_cDel) and } (t=keycdel)                 { MY: <Ctrl-Del> in Menues erlauben }
           then begin                                          {     (auch wenn Feld gesperrt)    }
             cont:=mask;
-            if xtest1(cont) then;    { leer ist immer zulÑssig! }
+            if xtest1(cont) then;    { leer ist immer zulaessig! }
             p:=1; ax:=0;
             replace:=false;
             cDel_pressed:=true;
@@ -1271,7 +1271,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
         if (t=^Y) and not nonedit then begin
           cont:=mask;
-          if xtest1(cont) then;      { leer ist immer zulÑssig! }
+          if xtest1(cont) then;      { leer ist immer zulaessig! }
           p:=1; ax:=0;
           replace:=false;
           end;
@@ -1314,6 +1314,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.52  2002/12/04 16:56:59  dodi
+  - updated uses, comments and todos
+
   Revision 1.51  2002/11/14 20:04:20  cl
   - Added button controls
 

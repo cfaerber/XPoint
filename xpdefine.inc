@@ -14,20 +14,20 @@
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created on February, 17st 2000 by Markus KÑmmerer <mk@happyarts.de>
+   Created on February, 17st 2000 by Markus Kaemmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 
    Global compiler directives for OpenXP und Tools
 }
 
-{ Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
+{ Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefuehrt
   (Rangecheck) usw. }
 
 {$DEFINE Debug }
 
-{ Unter Virtual Pascal werden Informationen Åber die Zeilennummern
-  gespeichert, vergrî·ert die EXE-Datei etwas.
+{ Unter Virtual Pascal werden Informationen ueber die Zeilennummern
+  gespeichert, vergroessert die EXE-Datei etwas.
 
   Under FPC use -gl. Prints a backtrace with unit-name and linenumber info.
 }
@@ -41,10 +41,10 @@
 {$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
-  Konfiguration mittels EASY-Mode verfÅgbar }
+  Konfiguration mittels EASY-Mode verfuegbar }
 {.$DEFINE EASY }
 
-{ --- ab hier sind keine énderungen nîtig --- }
+{ --- ab hier sind keine Aenderungen noetig --- }
 
 {$IFDEF VER130 }          { Delphi 5.0 }
   {$DEFINE Delphi }
@@ -224,22 +224,22 @@
   {$ENDIF}
 {$ENDIF}
 
-{ --- ErklÑrungen der selbst gesetzen Defines --- }
+{ --- Erklaerungen der selbst gesetzen Defines --- }
 
 {
   LocalSceeen
 
   Jede Routine, die in den Bildschirmspeicher schreibt, aktualisiert einen
-  internen Puffer um die énderung fÅr das Restaurieren von Fensterhinter-
-  grÅnden wieder anzeigen verfÅgbar zu haben. Das ist bei allen Betriebs-
-  systemen nîtig, wo der Bildschirm nicht wieder ausgelesen werden kann,
+  internen Puffer um die Aenderung fuer das Restaurieren von Fensterhinter-
+  gruenden wieder anzeigen verfuegbar zu haben. Das ist bei allen Betriebs-
+  systemen noetig, wo der Bildschirm nicht wieder ausgelesen werden kann,
   z.B. bei Linux
 
   UnixFS
 
-  OpenXP lÑuft auf einem Unix-Dateisystem, es werden damit Dateinamen nach
-  Gro·- und Kleinschreibung unterschieden und der "/" statt "\" benutzt.
-  Dateinamen, die von OpenXP erzeugt oder benutzt werden, mÅssen immer
+  OpenXP laeuft auf einem Unix-Dateisystem, es werden damit Dateinamen nach
+  Gross- und Kleinschreibung unterschieden und der "/" statt "\" benutzt.
+  Dateinamen, die von OpenXP erzeugt oder benutzt werden, muessen immer
   komplett klein geschrieben sein.
 
   Unix
@@ -260,6 +260,9 @@
 
 {
   $Log$
+  Revision 1.84  2002/12/04 16:57:01  dodi
+  - updated uses, comments and todos
+
   Revision 1.83  2002/11/23 23:48:41  mk
   - added Delphi 7 support
 

@@ -29,11 +29,7 @@ interface
 
 uses
   xpglobal,
-  sysutils,
-  fileio,
-  typeform,
-  datadef,
-  inout;
+  datadef;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -119,7 +115,7 @@ procedure dbRestartHU(dbp:DB);
 function  dbReadUserflag(dbp:DB; nr:byte):word;          { nr=1..8 }
 procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 
-{ NEue Funktionen wg. AnsiString }
+{ Neue Funktionen wg. AnsiString }
 
 function  dbReadNStr(dbp:DB; feldnr: integer): string;
 function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: integer): string;
@@ -137,18 +133,24 @@ procedure InitDataBaseUnit;
 implementation  {=======================================================}
 
 uses
+  sysutils,
 {$IFDEF unix}
   xplinux,
 {$ENDIF }
-  datadef1,
-  debug;
+{$IFDEF debug}
+  debug,
+{$ENDIF}
+  fileio,
+  typeform,
+  inout,
+  datadef1;
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
   ICP:=p;
 end;
 
-{ Platz fÅr feldanz Felder belegen }
+{ Platz fuer feldanz Felder belegen }
 
 procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
 begin
@@ -246,13 +248,13 @@ begin
       if flindex and (ioresult=100) then begin
 (*      
         writeln(sp(79));
-        writeln('Indexdatei ist fehlerhaft und wird bei nÑchstem Programmstart neu angelegt. ');
-*)        
+        writeln('Indexdatei ist fehlerhaft und wird bei naechstem Programmstart neu angelegt. ');
+*)
         close(f1); close(fi);
         erase(fi);
 
         raise EXPDatabase.Create(1,'<DB> interner Fehler '+strs(inoutres)+' beim Lesen aus '+fname+dbext
-          +#13#10'Indexdatei ist fehlerhaft und wird bei nÑchstem Programmstart neu angelegt.');        
+          +#13#10'Indexdatei ist fehlerhaft und wird bei naechstem Programmstart neu angelegt.');        
 
         end
       else begin
@@ -325,7 +327,7 @@ begin
           recno:=l
       else
         if not mustfind then
-          error('Huch! öberflÅssiger Datensatz!');
+          error('Huch! öberfluessiger Datensatz!');
       end;
 
     if n<0 then begin
@@ -347,8 +349,8 @@ begin
               end
           else begin
             dec(vx[tiefe]);
-            repeat                                 { 3. Fall: den grîssten }
-              inc(tiefe);                          { SchlÅssl im linken    }
+            repeat                                 { 3. Fall: den groessten }
+              inc(tiefe);                          { Schluessl im linken    }
               vpos[tiefe]:=bf^.key[vx[tiefe-1]].ref;     { Teilbaum suchen }
               readnode(vpos[tiefe],bf);
               vx[tiefe]:=bf^.anzahl;
@@ -391,7 +393,7 @@ begin
               until dEOF or (vx[tiefe]<=bf^.anzahl)
           else begin
             repeat                                 { 3. Fall: den kleinsten }
-              inc(tiefe);                          { SchlÅssl im rechten    }
+              inc(tiefe);                          { Schluessl im rechten    }
               vpos[tiefe]:=bf^.key[vx[tiefe-1]].ref;      { Teilbaum suchen }
               readnode(vpos[tiefe],bf);
               vx[tiefe]:=0;
@@ -444,12 +446,12 @@ begin
     recno:=no;
     recRead(dbp,false);
     if recbuf^[0] and rFlagDeleted<>0 then
-      error('dbGo auf gelîschten Datensatz!');
+      error('dbGo auf geloeschten Datensatz!');
     dBOF:=false; dEOF:=false;
     end;
 end;
 
-{ Satz positinieren - fÅhrt zu Fehler, falls Satz gelîscht ist! }
+{ Satz positinieren - fuehrt zu Fehler, falls Satz geloescht ist! }
 
 procedure dbGo(dbp:DB; no:longint);
 begin
@@ -533,7 +535,7 @@ end;
 
 {===== Datenbank bearbeiten =========================================}
 
-{ Datenbank îffnen.  flags:  Bit 0:  1 = Inidziert             }
+{ Datenbank oeffnen.  flags:  Bit 0:  1 = Inidziert             }
 {                                                              }
 { xflag und ixflag werden erst *nach* erfolgreichem ôffnen der }
 { Dateien gesetzt, um bei IOErrors Folgefehler zu vermeiden.   }
@@ -573,7 +575,7 @@ var i,o   : integer;
               end;
             end;
       if mpack then
-        writeln('Bitte packen Sie anschlie·end die Datenbank!');
+        writeln('Bitte packen Sie anschliessend die Datenbank!');
     end;
 
   begin
@@ -700,14 +702,14 @@ begin
       freemem(index,sizeof(ixfeld)*ixhd.indizes);
       end;
     if ioresult<>0 then
-      writeln('<DB> interner Fehler beim Schlie·en von ',fname);
+      writeln('<DB> interner Fehler beim Schliessen von ',fname);
     if flindex and (orecbuf<>nil) then
       freemem(orecbuf,hd.recsize);
     if recbuf<>nil then
       freemem(recbuf,hd.recsize);
     dbReleaseFL(feldp);
     end;
-  if cacheanz > 0 then { MK 01/00 - Cachegrî·e mîglicherweise 0, dann nicht ausfÅhren!}
+  if cacheanz > 0 then { MK 01/00 - Cachegroesse moeglicherweise 0, dann nicht ausfuehren!}
     for i:=0 to cacheanz-1 do
      if cache^[i].dbp=dbp then cache^[i].used:=false;
   dispose(dp(dbp));
@@ -777,9 +779,9 @@ begin
 end;
 
 
-{====================================== Routinen fÅr externe Datei ===}
+{====================================== Routinen fuer externe Datei ===}
 
-{ Grîsse der DBD-Felder. Achtung! Nutzdaten = Grî·e - 6 }
+{ Groesse der DBD-Felder. Achtung! Nutzdaten = Groesse - 6 }
 
 const  dbds : array[0..dbdMaxSize] of longint =
               (32,48,64,96,128,192,256,384,512,768,1024,1536,2048,3072,
@@ -801,7 +803,7 @@ end;
 
 
 { adr gibt das Startoffset des Satzes an; die Nutzdaten beginnen }
-{ erst bei Startoffset + 5 (davor stehen gelîscht-Flag und size) }
+{ erst bei Startoffset + 5 (davor stehen geloescht-Flag und size) }
 
 procedure AllocExtRec(dbp:DB; size:longint; var adr:longint);
 var typ,i,j : integer;
@@ -837,14 +839,14 @@ var typ,i,j : integer;
       blockwrite(fe,r,1);
       if r.nextfree<>0 then begin
         seek(fe,r.nextfree+5);
-        blockwrite(fe,adr,4);       { RÅckwÑrtsverkettung anlegen }
+        blockwrite(fe,adr,4);       { Rueckwaertsverkettung anlegen }
         end;
       end;
   end;
 
 
 begin
-  if size>dbds[dbdMaxSize] then error('zu gro·es externes Feld!');
+  if size>dbds[dbdMaxSize] then error('zu grosses externes Feld!');
   with dp(dbp)^ do begin
     typ:=dbdtyp(size);
     i:=typ;
@@ -854,13 +856,13 @@ begin
       else inc(i);
     if (i>dbdMaxSize) or ((typ<3) and odd(i-typ)) then begin
       adr:=filesize(fe);          { kein passender freier Satz da }
-      writeinfo;                  { - am Ende anhÑngen            }
+      writeinfo;                  { - am Ende anhaengen            }
       end
     else with dbdhd do begin
       l:=freelist[i];
       seek(fe,l+1);
       blockread(fe,freelist[i],4);
-      if freelist[i]<>0 then begin       { RÅckwÑrtsverkettung korr. }
+      if freelist[i]<>0 then begin       { Rueckwaertsverkettung korr. }
         seek(fe,freelist[i]+5);
         x:=0;
         blockwrite(fe,x,4);
@@ -873,7 +875,7 @@ begin
           if not odd(typ) and odd(i) and (i-typ>=3) then
           begin
             j:=i-3; dec(i);
-          end      { ungleich spalten / gro·es Teil bleibt }
+          end      { ungleich spalten / grosses Teil bleibt }
       (*    else  if not odd(i) and (i-typ>=4) then begin               { frei }
             j:=i-4; dec(i); end *)
           else
@@ -888,7 +890,7 @@ begin
           else begin                 { bleibt frei }
             j:=i-1; dec(i,4); end;
           *)
-        writedel(l,i,freelist[i]);   { ersten Teil in Freeliste einhÑngen }
+        writedel(l,i,freelist[i]);   { ersten Teil in Freeliste einhaengen }
         freelist[i]:=l;
         inc(l,dbds[i]);
         i:=j;
@@ -933,7 +935,7 @@ var r1,r2  : rtyp;
         blockwrite(fe,r.last,4);
         end;
 
-      r.typ:=newtyp + $80;              { in neue Freeliste 'einhÑngen' }
+      r.typ:=newtyp + $80;              { in neue Freeliste 'einhaengen' }
       r.last:=0;
       r.next:=dbdhd.freelist[newtyp];
       dbdhd.freelist[newtyp]:=newadr;
@@ -942,7 +944,7 @@ var r1,r2  : rtyp;
       seek(fe,newadr+dbds[newtyp]-1);
       blockwrite(fe,r,1);
       if r.next<>0 then begin
-        seek(fe,r.next+5);              { RÅckwÑrtsverkettung... }
+        seek(fe,r.next+5);              { Rueckwaertsverkettung... }
         blockwrite(fe,newadr,4);
         end;
       end;
@@ -966,7 +968,7 @@ begin
       end;
     r1:=rr._rr;
     if r1.typ and $80<>0 then
-      error('Versuch, einen gelîschten DBD-Satz zu lîschen!');
+      error('Versuch, einen geloeschten DBD-Satz zu loeschen!');
     if adr>sizeof(dbdhd) then begin
       r2.typ:=rr.lastr;
       if r2.typ and $80<>0 then begin
@@ -1000,7 +1002,7 @@ begin
       seek(fe,adr+dbds[r1.typ and $7f]-1);
       blockwrite(fe,r1,1);
       if r1.next<>0 then begin
-        seek(fe,r1.next+5);         { RÅckwÑrtsverkettung }
+        seek(fe,r1.next+5);         { Rueckwaertsverkettung }
         blockwrite(fe,adr,4);
         end;
       end;
@@ -1072,8 +1074,8 @@ begin
 end;
 
 
-{ aktuellen Datensatz lîschen und }
-{ auf nÑchsten Satz springen      }
+{ aktuellen Datensatz loeschen und }
+{ auf naechsten Satz springen      }
 
 procedure dbDelete(dbp:DB);
 var clrec : packed record
@@ -1096,7 +1098,7 @@ begin
         deletekey(dbp,i,key);
         end;
 
-    for i:=1 to hd.felder do           { externe Felder lîschen }
+    for i:=1 to hd.felder do           { externe Felder loeschen }
       if feldp^.feld[i].ftyp=dbUntypedExt then begin
         move(recbuf^[feldp^.feld[i].fofs],ll,8);
         if ll.size>0 then
@@ -1131,8 +1133,8 @@ begin
 end;
 
 
-{ Testen, ob Datensatz 'recno' gelîscht ist. Achtung! }
-{ Der Datensatz mu· vorhanden sein! }
+{ Testen, ob Datensatz 'recno' geloescht ist. Achtung! }
+{ Der Datensatz muss vorhanden sein! }
 
 function dbDeleted(dbp:DB; adr:longint):boolean;
 var b : byte;
@@ -1173,7 +1175,7 @@ begin
   with dp(dbp)^ do begin
     if dEOF or dBOF then
       error(fname+': ReadN('+feldp^.feld[feldnr].fname+') at '+iifc(dBOF,'B','E')+'OF!');
-    if (feldnr<0) or (feldnr>hd.felder) then error('ReadN: ungÅltige Feldnr.');
+    if (feldnr<0) or (feldnr>hd.felder) then error('ReadN: ungueltige Feldnr.');
     with feldp^.feld[feldnr] do
       case ftyp of
         1       : begin
@@ -1260,7 +1262,7 @@ begin
   with dp(dbp)^ do begin
     if dEOF or dBOF then
       error('WriteN('+feldp^.feld[feldnr].fname+') at '+iifc(dBOF,'B','E')+'OF!');
-    if (feldnr<0) or (feldnr>hd.felder) then error('WriteN: ungÅltige Feldnr.');
+    if (feldnr<0) or (feldnr>hd.felder) then error('WriteN: ungueltige Feldnr.');
     with feldp^.feld[feldnr] do
       case ftyp of
         1       : begin
@@ -1298,7 +1300,7 @@ begin
   dbWriteNStr(dbp, GetFeldNr2(dbp,feld), s);
 end;
 
-{ Grîsse eines externen Feldes abfragen }
+{ Groesse eines externen Feldes abfragen }
 
 function dbXsize(dbp:DB; const feld:dbFeldStr):longint;
 var l  : longint;
@@ -1336,7 +1338,7 @@ begin
   with dp(dbp)^ do begin
     feseek(dbp,feld,l);
     { if (size=0) and (l>65535) then
-      error('Feld zu gro· fÅr direktes Einlesen!'); }
+      error('Feld zu gross fuer direktes Einlesen!'); }
     if size=0 then size:=l
     else size:=min(size,l);
     if size>0 then blockread(fe,data,size);
@@ -1376,7 +1378,7 @@ begin
       rewrite(f,1);
     if l>0 then
     begin
-      s:=min(131702, l); // maximal 128kb, aber nicht mehr als nîtig
+      s:=min(131702, l); // maximal 128kb, aber nicht mehr als noetig
       getmem(p,s);
       repeat
         blockread(fe,p^,s,rr);
@@ -1390,7 +1392,7 @@ begin
 end;
 
 
-{ In geîffnete Datei lesen, ab Offset 'ofs' }
+{ In geoeffnete Datei lesen, ab Offset 'ofs' }
 
 procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
@@ -1406,7 +1408,7 @@ begin
     size:=l;
     if l>0 then
     begin
-      s:=min(131072, l); // maximal 128kb, aber nicht mehr als nîtig
+      s:=min(131072, l); // maximal 128kb, aber nicht mehr als noetig
       getmem(p,s);
       repeat
         blockread(fe,p^,s,rr);
@@ -1524,9 +1526,9 @@ begin
       icIndexNum,
       icIndex:       error('ICP fehlt!');
       icOpenWindow:  writeln('Index anlegen...');
-      icOpenCWindow: writeln('Datenbank Åberarbeiten...');
+      icOpenCWindow: writeln('Datenbank ueberarbeiten...');
       icOpenPWindow: writeln('Datenbank packen...');
-      icOpenKWindow: writeln(df+'.EB1 Åberarbeiten...');
+      icOpenKWindow: writeln(df+'.EB1 ueberarbeiten...');
       icShowIx,icShowConvert,
       icShowPack:    write(percent:3,' %'#13);
       icShowKillX:   write(percent:3,' %  / ',count:6,#13);
@@ -1538,22 +1540,22 @@ end;
 
 {
   ICP: Index-Kontroll-Prozedur - wird immer aufgerufen, wenn eine Datenbank
-  mit Flag 'dbFlagIndexed' geîffnet wird. Muss auf folgende Befehle (command)
+  mit Flag 'dbFlagIndexed' geoeffnet wird. Muss auf folgende Befehle (command)
   reagieren (* = optional):
 
   icIndexNum:      Bef:  Anzahl der Indizes abfragen
                    In:   Dateiname (df)
                    Out:  Anzahl der Indizes (indexnr)
 
-  icIndex:         Bef:  Index-SchlÅssel abfragen
+  icIndex:         Bef:  Index-Schluessel abfragen
                    In:   Dateiname (df)
-                   Out:  - SchlÅsselstring (indexstr), bestehend aus
+                   Out:  - Schluesselstring (indexstr), bestehend aus
                            [!]FELDNAME[/FELDNAME[/FELD...]]; (vorangestelltes
                            "!" bei Indexfunktion)
                          - bei Index-Funktion: Funktion (indexfunc) und
-                           SchlÅssellÑnge ohne LÑngenbyte (indexsize)
+                           Schluessellaenge ohne Laengenbyte (indexsize)
 
- *icOpenWindow     Bef:  Message-Fenster fÅr Indizierung îffnen
+ *icOpenWindow     Bef:  Message-Fenster fuer Indizierung oeffnen
                    In:   Dateiname (df)
 
  *icShowIx         Bef:  Indizierungs-Vorgang anzeigen
@@ -1563,14 +1565,14 @@ end;
 
  *icCloseWindow    Bef:  Message-Fenster schliessen
 
- *icOpenCWindow    Bef:  Message-Fenster fÅr Konvertierung îffnen
+ *icOpenCWindow    Bef:  Message-Fenster fuer Konvertierung oeffnen
                    In:   Dateiname (df)
 
  *icShowConvert    Bef:  Konvertierungs-Vorgang anzeigen
                    In:   Dateiname (df)
                          Prozent der Konvertierung (percent, BYTE)
 
- *icOpenPWindow    Bef:  Message-Fenster fÅr Datei-Packen îffnen
+ *icOpenPWindow    Bef:  Message-Fenster fuer Datei-Packen oeffnen
                    In:   Dateiname(df)
 
  *icShowPack       Bef:  Pack-Vorgang anzeigen
@@ -1597,6 +1599,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.59  2002/11/14 20:02:40  cl
   - changed some fatal errors to exceptions to allow better debugging
 

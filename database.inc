@@ -24,8 +24,8 @@
 { werden $Included, wegen Platzmangel }
 
 
-{ Falls der gesuchte Schlssel nicht im Knoten bf^ enthalten ist, }
-{ liefert searchpage (in x) die Nummer des n„chstkleineren Keys.  }
+{ Falls der gesuchte Schluessel nicht im Knoten bf^ enthalten ist, }
+{ liefert searchpage (in x) die Nummer des naechstkleineren Keys.  }
 { Das kann auch die Nummer 0 sein!                                }
 
 procedure searchpage(bf:inodep; const searchkey:string; searchrec:longint;
@@ -104,7 +104,7 @@ begin
 end;
 
 
-{ Index-Schlssel 'key' in Index Nr, 'indnr' von Datenbank 'dbp' einfgen }
+{ Index-Schluessel 'key' in Index Nr, 'indnr' von Datenbank 'dbp' einfuegen }
 
 procedure insertkey(dbp:DB; indnr:word; const key:string);
 
@@ -211,7 +211,7 @@ begin   { insertkey }
 end;
 
 
-{ Index-Schlssel 'key' aus Index Nr, 'indnr' von Datenbank 'dbp' l”schen }
+{ Index-Schluessel 'key' aus Index Nr, 'indnr' von Datenbank 'dbp' loeschen }
 
 procedure deletekey(dbp:DB; indnr:word; const key:string);
 var z         : longint;
@@ -394,8 +394,8 @@ begin    { deletekey }
 end;
 
 
-{ rekursiv im Index 'indnr' von Datenbank 'dbp' nach dem Schlssel }
-{ 'searchkey' suchen; falls rec=true, so wird zus„tzlich nach der  }
+{ rekursiv im Index 'indnr' von Datenbank 'dbp' nach dem Schluessel }
+{ 'searchkey' suchen; falls rec=true, so wird zusaetzlich nach der  }
 { Satznummer 'data' gesucht.                                       }
 { Falls gefunden, ist found=true und data=Satznummer.              }
 
@@ -430,7 +430,7 @@ var bf   : inodep;
   end;
 
   { Weitersuchen, ob im linken Teilbaum des gefundenen Nodes }
-  { noch gleiche Schlssel existieren.                       }
+  { noch gleiche Schluessel existieren.                       }
 
   procedure searchequal;
   var ok    : boolean;
@@ -476,7 +476,7 @@ begin
       searchbtree(rr);
 
       if not found then begin            { die Tiefen-Liste auf den  }
-        nf:=(vx[tiefe]<0);               { n„chstgr”sseren Schlssel }
+        nf:=(vx[tiefe]<0);               { naechstgroesseren Schluessel }
         for i:=tiefe downto 1 do         { positionieren ...         }
           if vx[i]<0 then
             if nf then dec(tiefe)
@@ -504,6 +504,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2002/12/04 16:56:55  dodi
+  - updated uses, comments and todos
+
   Revision 1.10  2002/09/09 08:29:36  mk
   - some performance improvements
 

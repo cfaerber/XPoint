@@ -37,7 +37,6 @@ unit md5;
 
 
 interface
-  uses SysUtils,XPGlobal,Typeform;
 
   { upper case hex encoded output }
   function CRAM_MD5(Key,Text: string): string;
@@ -47,6 +46,8 @@ interface
   function MD5_Digest(sPlainText: string): string;
 
 implementation
+
+uses SysUtils,XPGlobal,Typeform;
 
   { S-Boxes }
   const S11: Integer = 7;
@@ -395,6 +396,9 @@ implementation
 
 {
   $Log$
+  Revision 1.9  2002/12/04 16:56:59  dodi
+  - updated uses, comments and todos
+
   Revision 1.8  2002/05/12 17:58:22  ma
   - bugfix: keys > 64 bytes should be hashed
 

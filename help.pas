@@ -27,14 +27,8 @@ unit help;
 interface
 
 uses
-  xpglobal, osdepend, sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-{$IFDEF Dos32 }
-  crt,
-{$ENDIF }
-  xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx,debug;
+  xpglobal, //todo: word
+  keys; //taste
 
 const maxpages = 1200;
       maxqvw   = 400;
@@ -61,9 +55,20 @@ procedure releasehelp;
 
 IMPLEMENTATION
 
+uses
+  sysutils,
 {$ifdef unix}
-uses XPLinux;
+  XPLinux,
 {$endif}
+  osdepend,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+{$IFDEF Dos32 }
+  crt,
+{$ENDIF }
+  xp0, typeform,inout,winxp,maus2,printerx,debug;
+  //fileio,mouse,
 
 const maxpst  = 20;
       init    : boolean = false;
@@ -780,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48  2002/12/04 16:56:57  dodi
+  - updated uses, comments and todos
+
   Revision 1.47  2002/07/25 20:43:52  ma
   - updated copyright notices
 

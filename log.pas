@@ -80,11 +80,13 @@ type
 implementation
 
 uses
-  XPGlobal,
-  SysUtils;
+  SysUtils,
+  XPGlobal;
 
 const
   llChars: array[llNone..llDebug] of char = (' ','?','!','>','$');
+
+{ TLog }
 
 constructor TLog.Create;
 begin
@@ -202,6 +204,7 @@ begin
     FLogLevel:= l;
 end;
 
+{ TLogModul }
 
 constructor TLogModul.Create(const s: string);
 begin
@@ -222,6 +225,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.11  2001/09/16 19:58:31  ma
   - disabled for these logging routines are not used now
 

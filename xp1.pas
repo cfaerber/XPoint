@@ -269,10 +269,10 @@ uses
     ncurses,
   {$ENDIF}
 {$ENDIF }
+  direct,
   mime,
   utftools,
-  unicode,
-  direct;
+  unicode;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -2144,6 +2144,9 @@ end;
 
 {
   $Log$
+  Revision 1.163  2002/12/04 16:57:01  dodi
+  - updated uses, comments and todos
+
   Revision 1.162  2002/11/14 20:05:48  cl
   - fixed range check error
 

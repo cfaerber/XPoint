@@ -24,9 +24,12 @@
   All declarations here are local to the unit OSDepend. You
   can use the uses-command. }
 
-{ OS speceific uses }
+{ OS specific uses }
 
-{ local declaritions }
+uses
+  Windows;
+
+{ local declarations }
 
 { local functions }
 
@@ -38,12 +41,15 @@ begin
 end;
 
 procedure SysBeep(Freq, Dur: Integer);
-begin 
+begin
   Windows.Beep(Freq, Dur);
 end;
 
 {
         $Log$
+        Revision 1.4  2002/12/04 16:57:00  dodi
+        - updated uses, comments and todos
+
         Revision 1.3  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 

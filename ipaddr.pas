@@ -29,24 +29,8 @@ unit ipaddr;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
-{$IFDEF Win32 }
-  winsock,
-{$ELSE }
-{$IFDEF DOS32 }
-  dossock,
-{$ELSE }
-  {$IFDEF OS2 }
-    os2sock,
-  {$ELSE }
-  {$IFDEF fpc}
-    sockets,
-  {$ENDIF}
-  {$ENDIF }
-{$ENDIF }
-{$ENDIF }
-  sysutils;
-
+  sysutils,
+  xpglobal;             { Nur wegen der Typendefinition }
 
 type
   EIP                   = class(Exception);     { Allgemein (und Vorfahr) }
@@ -104,11 +88,29 @@ type
 
   end;
 
+
 implementation
+
+uses
 {$IFDEF Kylix}
-  uses
-    libc;
+  libc
 {$ENDIF }
+{$IFDEF Win32 }
+  winsock
+{$ELSE }
+{$IFDEF DOS32 }
+  dossock
+{$ELSE }
+  {$IFDEF OS2 }
+    os2sock
+  {$ELSE }
+  {$IFDEF fpc}
+    sockets
+  {$ENDIF}
+  {$ENDIF }
+{$ENDIF }
+{$ENDIF }
+  ;
 
 {$IFDEF VP }
 const
@@ -141,6 +143,8 @@ function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
 {$ENDIF}
 {$endif}
 {$endif}
+
+{ TIP }
 
 constructor TIP.Create;
 begin
@@ -243,6 +247,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.15  2002/03/23 15:12:51  mk
   - removed compiler warnings
 

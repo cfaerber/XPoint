@@ -19,8 +19,8 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Offset der Cursorposition in dl^[scy].absatz; kann grî·er }
-{ als die LÑnge des Absatzes sein!                          }
+{ Offset der Cursorposition in dl^[scy].absatz; kann groesser }
+{ als die Laenge des Absatzes sein!                          }
 
 function WorkPos:integer;
 begin
@@ -75,7 +75,7 @@ end;
 { ---------------------------------------------- Blockkorrektur }
 
 procedure CheckBlockOrder;    { e^.blockinverse setzen }
-var b1l,b2l : integer;        { vorauss.: disp[x]=2 fÅr mind. ein x }
+var b1l,b2l : integer;        { vorauss.: disp[x]=2 fuer mind. ein x }
 begin
   with e^ do
     if block[1].disp<block[2].disp then blockinverse:=false
@@ -114,7 +114,7 @@ begin                                  { Korrektur nach Scrolling }
   bskorr(2,iif(up,1,3));
 end;
 
-{ Korrektur nach Lîschen innerhalb eines Absatzes }
+{ Korrektur nach Loeschen innerhalb eines Absatzes }
 
 function BlockAbsCut(oldabs,newabs:absatzp; from,len:integer):boolean;
 var nxt,prv : absatzp;
@@ -144,7 +144,7 @@ begin
     end;
 end;
 
-{ Korrektur nach EinfÅgen innerhalb eines Absatzes }
+{ Korrektur nach Einfuegen innerhalb eines Absatzes }
 
 procedure BlockAbsInsert(oldabs,newabs:absatzp; from,len:integer);
 var i : integer;
@@ -510,7 +510,7 @@ begin
         ap:=nil
       else 
       begin
-        ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rÅckwÑrts suchen }
+        ap:=dl^[1].absatz; l:=dl^[1].zeile-1;    { Abs. rueckwaerts suchen }
         while (ap<>p.absatz) and assigned(ap) do 
         begin
           ap:=ap^.prev;
@@ -533,7 +533,7 @@ begin
         if (dl^[gl].absatz=nil) or (dl^[gl].absatz^.next=nil) then
           exit
       else 
-      begin                                  { .. vorwÑrts suchen }
+      begin                                  { .. vorwaerts suchen }
         l:=alines(dl^[gl].absatz)-dl^[gl].zeile;
         ap:=dl^[gl].absatz^.next;
         touch1:=false; touch2:=false;
@@ -821,7 +821,7 @@ begin
     Result := '';
 end;
 
-procedure NewLine;              { Enter - Absatz einfÅgen }
+procedure NewLine;              { Enter - Absatz einfuegen }
 var ap,ap2   : absatzp;
     wp       : integer;
     copysize : integer;
@@ -861,7 +861,7 @@ begin
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
           dec(delsp,wp);
         end;
-      end else 
+      end else
         QuoteChars := '';
       QuoteCharCount := Length(QuoteChars);
       if wp>=ap^.size
@@ -901,7 +901,7 @@ begin
       end;
 end;
 
-procedure DELchar;              { DEL - Zeichen lîschen }
+procedure DELchar;              { DEL - Zeichen loeschen }
 var ap,ap2,apnew : absatzp;
     ss,size1,wp  : word;
     addspaces    : integer;
@@ -926,9 +926,9 @@ begin
                   and (ap^.next^.cont[0]<>' ') then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
-          error(2)    { 'Absatz zu gro·' }
+          error(2)    { 'Absatz zu gross' }
         else 
-        begin   { AbsÑtze zusammenhÑngen }
+        begin   { Absaetze zusammenhaengen }
           { Quote-Reflow }
           if Config.QuoteReflow then 
           begin
@@ -974,7 +974,7 @@ begin
   end;
 end;
 
-procedure BackSpace;            { Backspace - Zeichen lîschen }
+procedure BackSpace;            { Backspace - Zeichen loeschen }
 begin
   if EndSpaces>0 then
     if Zeichenlinks then else
@@ -990,7 +990,7 @@ begin
   ADWhitespace:=(dl^[e^.scy].absatz^.cont[wpnew] in [' ',#9]);
 end;
 
-procedure WortRechtsLoeschen;   { Wort rechts lîschen }
+procedure WortRechtsLoeschen;   { Wort rechts loeschen }
 var 
   wp,wpnew,size: integer;
 begin
@@ -1009,7 +1009,7 @@ begin
   end;
 end;
 
-procedure WortLinksLoeschen;    { Wort links lîschen }
+procedure WortLinksLoeschen;    { Wort links loeschen }
 var wp,wpnew: word;
     wpa             : absatzp;
 begin
@@ -1031,7 +1031,7 @@ begin
   end;
 end;
 
-procedure ZeileLoeschen;        { akt. Zeile lîschen }
+procedure ZeileLoeschen;        { akt. Zeile loeschen }
 var apd    : absatzp;
     bc     : boolean;
 begin
@@ -1039,7 +1039,7 @@ begin
     if (ActAbs^.next=nil) and (dl^[scy].zeile=alines(ActAbs)) then begin
       AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
     end
-    else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz lîschen }
+    else if alines(ActAbs)=1 then begin   { 2. Fall: kompletten Absatz loeschen }
       absatzwechsel(ActAbs,ActAbs^.next,false);
       bc:=BlockAbsCut(ActAbs,nil,0,ActAbs^.size);
       if assigned(ActAbs^.prev) then
@@ -1047,14 +1047,14 @@ begin
       ActAbs^.next^.prev:=ActAbs^.prev;
       apd:=AllocAbsatz(0);
       copyflags(ActAbs,apd);
-      ActAbs^.next:=apd; ActAbs^.prev:=nil;  { leeren Absatz anhÑngen }
+      ActAbs^.next:=apd; ActAbs^.prev:=nil;  { leeren Absatz anhaengen }
       apd^.prev:=ActAbs;
       AddDelEntry(ActAbs);
       KorrBlockScrolled(true);
       if bc then CheckBlockOrder;
       modified:=true;
     end
-    else                     { 3. Fall: Zeile aus Absatz lîschen }
+    else                     { 3. Fall: Zeile aus Absatz loeschen }
       AbsDelete(ActAbs,dl^[scy].offset,LineLength,true,true);
   aufbau:=true;
 end;
@@ -1105,7 +1105,7 @@ begin
         end
       else
           if ap^.size+spaces>=maxabslen then
-            error(2)       { 'Absatz zu gro·' }
+            error(2)       { 'Absatz zu gross' }
           else begin
             apnew:=AllocAbsatz(ap^.size+spaces+1);
             copyflags(ap,apnew);
@@ -1295,7 +1295,7 @@ begin
     end;
 end;
 
-{ Block an Cursorposition einfÅgen; Blockzeiger auf Ende zurÅckliefern }
+{ Block an Cursorposition einfuegen; Blockzeiger auf Ende zurueckliefern }
 { blk^ wird freigegeben!                                               }
 
 procedure Insert(var blk:absatzp; var endpos:position);
@@ -1309,10 +1309,10 @@ begin
   ap:=ActAbs;
   spaces:=EndSpaces;
   wp:=workpos;
-  if blk^.next=nil then begin        { Absatzausschnitt einfÅgen }
+  if blk^.next=nil then begin        { Absatzausschnitt einfuegen }
     ss:=ap^.size+blk^.size+spaces;
     if ss>maxabslen then
-      error(2)     { 'Absatz zu gro· }
+      error(2)     { 'Absatz zu gross }
     else if assigned(blk)
     then begin
       ap2:=AllocAbsatz(ss);
@@ -1332,13 +1332,13 @@ begin
     end;
     blk:=FreeAbsatz(blk);
   end
-  else begin                              { mehrere AbsÑtze einfÅgen }
+  else begin                              { mehrere Absaetze einfuegen }
     apn:=blk;
     while assigned(apn^.next) do      { letzten Absatz in Block suchen }
       apn:=apn^.next;
     if (ap^.size+blk^.size>maxabslen) or
        (apn^.size+ap^.size>maxabslen) then begin
-      error(2);     { 'Absatz zu gro· }
+      error(2);     { 'Absatz zu gross }
       FreeBlock(blk);
     end
     else if assigned(blk)then begin
@@ -1352,7 +1352,7 @@ begin
         ap2^.prev:=ap^.prev;      { Text herstellen           }
         ap2^.prev^.next:=ap2;
       end;
-      ss:=ap^.size+spaces-wp;              { Grî·e 2. Absatzteil }
+      ss:=ap^.size+spaces-wp;              { Groesse 2. Absatzteil }
       ap3:=AllocAbsatz(ss+apn^.size);
       copyflags(apn,ap3);
       Move(apn^.cont,ap3^.cont,apn^.size);
@@ -1564,7 +1564,7 @@ begin
         end;
       end
     else if longint(ofs1)+ap2^.size-ofs2>maxabslen then
-      error(2)                         { mehrere AbsÑtze ausschneiden }
+      error(2)                         { mehrere Absaetze ausschneiden }
     else begin
       recount:=(block[1].disp<2);
       wp.absatz:=ActAbs;
@@ -1572,8 +1572,8 @@ begin
       apnew:=AllocAbsatz(ss);       { Ende von 1. Absatz ausschneiden }
       copyflags(ap1,apnew);
       Move(ap1^.cont[ofs1],apnew^.cont,ss);
-      if ap1^.next<>ap2 then begin     { dazwischenliegende AbsÑtze }
-        apnew^.next:=ap1^.next;   { anhÑngen                   }
+      if ap1^.next<>ap2 then begin     { dazwischenliegende Absaetze }
+        apnew^.next:=ap1^.next;   { anhaengen                   }
         apnew^.next^.prev:=apnew;
         apl:=apnew^.next;
         while apl^.next<>ap2 do apl:=apl^.next;
@@ -1583,7 +1583,7 @@ begin
       apn:=AllocAbsatz(ofs2);       { Anfang vom letzten Absatz ausschn. }
       copyflags(ap2,apn);
       Move(ap2^.cont,apn^.cont,ofs2);
-      apl^.next:=apn;             { .. an Cut-Block anhÑngen }
+      apl^.next:=apn;             { .. an Cut-Block anhaengen }
       apn^.prev:=apl;
 
       apn:=AllocAbsatz(ofs1+(ap2^.size-ofs2));   { Join ap1+ap2 }
@@ -2003,7 +2003,7 @@ begin
             brk:=(t=keyesc);
           end;
           if t[1]=replacechr[1] then begin  { ersetzen: Ja }
-            insap:=AllocAbsatz(length(repby));  { EinfÅgeabsatz erzeugen }
+            insap:=AllocAbsatz(length(repby));  { Einfuegeabsatz erzeugen }
             if insap=nil then brk:=true
             else begin
               Move(repby[1],insap^.cont,length(repby));
@@ -2022,7 +2022,7 @@ begin
 end;
 
 
-{ -------------------------------------------------------- MenÅ }
+{ -------------------------------------------------------- Menue }
 
 function LocalMenu:integer;
 const lastp : byte = 1;
@@ -2222,6 +2222,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.52  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -26,7 +26,8 @@ unit datadef1;
 
 interface
 
-uses typeform,datadef, xpglobal;
+uses
+  datadef, xpglobal;
 
 const
 {$IFDEF FPC }
@@ -41,10 +42,10 @@ const
         nomagic = #0#0#0#0;
 {$ENDIF }
 
-        rflagDeleted = 1;     { Datensatz-Flag fÅr gelîschten Satz }
+        rflagDeleted = 1;     { Datensatz-Flag fuer geloeschten Satz }
 
         maxifelder= 7;        { maximale Anzahl Felder in einem Ind.-Key }
-                              { fÅr mehr ist SchlÅssel-Funktion nîtig    }
+                              { fuer mehr ist Schluessel-Funktion noetig }
         dbdMaxSize= 51;
         maxcache  = 100;      { maximale Index-Cacheseiten }
 
@@ -56,14 +57,14 @@ type    proctype  = procedure;
 
         dbheader  = packed record
                       magic     : magictype;
-                      recs      : longint;   { Anzahl phys. DatensÑtze      }
-                      nextinr   : longint;   { nÑchste INT_NR               }
+                      recs      : longint;   { Anzahl phys. Datensaetze     }
+                      nextinr   : longint;   { naechste INT_NR              }
                       firstfree : longint;   { Nr. des ersten freien Satzes }
                       userflags : array[1..8] of smallword;
                       felder    : smallword; { Anzahl Datenfelder           }
-                      recsize   : smallword; { phys. Record-Grî·e           }
-                      hdsize    : smallword; { Header-Grî·e in Bytes        }
-                      reccount  : longint;   { Anzahl DatensÑtze            }
+                      recsize   : smallword; { phys. Record-Groesse         }
+                      hdsize    : smallword; { Header-Groesse in Bytes      }
+                      reccount  : longint;   { Anzahl Datensaetze           }
                       fill      : array[1..22] of byte;
                     end;
 
@@ -72,7 +73,7 @@ type    proctype  = procedure;
                       fill1     : array[1..5] of byte;
                       feldsize  : smallword;  { physikalisch in Bytes }
                       feldtyp   : byte;
-                      nlen,nk   : byte;  { fÅr numerische Werte/Formatierung }
+                      nlen,nk   : byte;  { fuer numerische Werte/Formatierung }
                       fill2     : array[1..11] of byte;
                     end;
 
@@ -90,10 +91,10 @@ type    proctype  = procedure;
                       feldanz   : byte;     { Anzahl der indizierten Felder }
                       fill1     : byte;     { +$80 -> Index-Funktion        }
                       ifeldnr   : array[1..maxifelder] of smallword; { +$8000 -> UStr! }
-                      nn        : byte;     { SchlÅssel pro Knoten }
-                      keysize   : byte;     { SchlÅssellÑnge o. LÑngenbyte }
-                      irecsize  : smallword;{ Knotengrî·e          }
-                      firstfree : longint;  { Datei-Offset         }
+                      nn        : byte;     { Schluessel pro Knoten }
+                      keysize   : byte;     { Schluessellaenge o. Laengenbyte }
+                      irecsize  : smallword;{ Knotengroesse         }
+                      firstfree : longint;  { Datei-Offset          }
                       rootrec   : longint;
                       ifunc     : dbIndexFunc;  { intern: Index-Funktion }
                     end;
@@ -101,26 +102,26 @@ type    proctype  = procedure;
         ixfeldlist= array[1..1000] of ixfeld;
         ixfp      = ^ixfeldlist;
 
-        { Achtung! Bei énderungen an inodekey/indexnode auch    }
-        { entsprechend in DATABASE.ASM und allocnode() Ñndern!! }
+        { Achtung! Bei Aenderungen an inodekey/indexnode auch    }
+        { entsprechend in DATABASE.ASM und allocnode() aendern!! }
 
         inodekey  = packed record
-                      data    : longint;     { die zugehîrige Satznr.   }
-                      ref     : longint;     { Zeiger auf nÑchsten Node }
-                      keystr  : string[127]; { der SchlÅssel            }
+                      data    : longint;     { die zugehoerige Satznr.   }
+                      ref     : longint;     { Zeiger auf naechsten Node }
+                      keystr  : string[127]; { der Schluessel            }
                     end;
-        indexnode = packed record           { logischer Index-Knoten   }
-                      memsize  : smallword; { Grîsse, fÅr FreeMem      }
-                      ksize,nk : byte;      { SchlÅsselgrîsse/Anzahl   }
-                      irsize   : smallword; { Index-Recordgrîsse, "    }
-                      db_p     : DB;        { zugehîrige DB, "         }
+        indexnode = packed record           { logischer Index-Knoten     }
+                      memsize  : smallword; { Groesse, fuer FreeMem      }
+                      ksize,nk : byte;      { Schluesselgroesse/Anzahl   }
+                      irsize   : smallword; { Index-Recordgroesse, "     }
+                      db_p     : DB;        { zugehoerige DB, "          }
                       filepos  : longint;
-                      anzahl   : integer16; { Anzahl eingetragener SchlÅssel }
+                      anzahl   : integer16; { Anzahl eingetragener Schluessel }
                       key      : array[0..4] of inodekey;
                     end;
         inodep    = ^indexnode;
 
-        { Achtung!! énderungen an cachepage auch in DATABASE.PAS Ñndern!! }
+        { Achtung!! Aenderungen an cachepage auch in DATABASE.PAS aendern!! }
 
         cachepage = packed record
                       used     : boolean;  { 0 }
@@ -191,14 +192,16 @@ procedure writehd(dpb:DB);
 
 implementation
 
-uses Debug;
+uses
+  typeform,
+  Debug;
 
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
-  if lastioerror<>0 then 
+  if lastioerror<>0 then
   begin
-(*  
+(*
     writeln('<DB> I/O-Fehler '+strs(lastioerror));
     halt(1);
 *)
@@ -219,7 +222,7 @@ begin
   Debug.DebugLog('datadef1','DB Error: '+txt,dlError);
   if dbInterrProc<>nil then
     proctype(dbInterrProc);
-(*    
+(*
   halt(1);
 *)
   raise EXPDatabase.Create(1,'<DB> interner Fehler: '+txt);
@@ -230,8 +233,8 @@ procedure writeinf(dbp:DB);
 begin
   with dp(dbp)^ do
     with hd do
-      writeln('Satznr.: ',recno,'   Satzgrî·e: ',recsize,'   SÑtze: ',recs,
-              '   Header: ',hdsize,'   Dateigrî·e: ',filesize(f1));
+      writeln('Satznr.: ',recno,'   Satzgroesse: ',recsize,'   Saetze: ',recs,
+              '   Header: ',hdsize,'   Dateigroesse: ',filesize(f1));
 end;
 
 
@@ -245,6 +248,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.22  2002/11/14 20:02:40  cl
   - changed some fatal errors to exceptions to allow better debugging
 

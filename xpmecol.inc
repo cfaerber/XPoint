@@ -22,57 +22,57 @@ const colcfgfile = 'xpoint.col';
 
 type  ColArr = array[0..3] of byte;
       ColRec = record
-                  ColMenu       : ColArr; { Normaler Mentext       }
-                  ColMenuHigh   : ColArr; { Direkt-Buchstaben       }
-                  ColMenuInv    : ColArr; { Men-Balken             }
-                  ColMenuInvHi  : ColArr; { Men-Balken/Buchstabe   }
-                  ColMenuDis    : ColArr; { Men disabled           }
-                  ColMenuSelDis : ColArr; { Men disabled/gew„hlt   }
-                  ColKeys       : byte;   { Direkttasten            }
-                  ColKeysHigh   : byte;   { Direkttasten-Buchstaben }
-                  ColKeysAct    : byte;   { aktivierte Taste        }
-                  ColKeysActHi  : byte;   { aktivierter Buchstabe   }
-                  ColTLine      : byte;   { Trennlinie              }
-                  ColBretter    : byte;   { User / Bretter          }
-                  ColBretterInv : byte;   { User / Bretter, gew„hlt }
-                  ColBretterHi  : byte;   { User / Bretter, markiert}
-                  ColBretterTr  : byte;   { Trennzeile              }
-                  ColMsgs       : byte;   { Msgs                    }
-                  ColMsgsHigh   : byte;   { Msgs, markiert          }
-                  ColMsgsInv    : byte;   { Msgs, gew„hlt           }
-                  ColMsgsInfo   : byte;   { Msgs, 1. Zeile          }
-                  ColMsgsUser   : byte;   { PM-archivierte Msgs     }
-                  ColMsgsInvUser: byte;   { gew„hlt+hervorgehoben   }
-                  ColMbox       : byte;   { Meldungs-Box, Text      }
-                  ColMboxRahmen : byte;   { Meldungs-Box, Rahmen    }
-                  ColMboxHigh   : byte;   { Meldungs-Box, hervorgeh.}
-                  ColDialog     : byte;   { Dialoge, Feldnamen u.„. }
-                  ColDiaRahmen  : byte;   { Dialogbox, Rahmen       }
-                  ColDiaHigh    : byte;   { Dialogbox, hervorgeh.T. }
-                  ColDiaInp     : byte;   { Dialogbox, Eingabefeld  }
-                  ColDiaMarked  : byte;   { Dial., markierter Text  }
-                  ColDiaArrows  : byte;   { Pfeile bei Scrollfeldern}
-                  ColDiaSel     : byte;   { Masken-Auswahlliste     }
-                  ColDiaSelBar  : byte;   {            "            }
-                  ColDiaButtons : byte;   { Check/Radio-Buttons     }
-                  ColSelbox     : byte;   { Auswahlbox              }
-                  ColSelRahmen  : byte;   { Auswahlbox, Rahmen      }
-                  ColSelHigh    : byte;   { Auswahlbox, hervorgeh.  }
-                  ColSelBar     : byte;   { Auswahlbox, Balken      }
-                  ColSel2box    : byte;   { Auswahlbox / dunkel     }
-                  ColSel2Rahmen : byte;   { Auswahlbox, Rahmen      }
-                  ColSel2High   : byte;   { Auswahlbox, hervorgeh.  }
-                  ColSel2Bar    : byte;   { Auswahlbox, Balken      }
-                  ColButton     : byte;   { Button                  }
-                  ColButtonHigh : byte;   { Button - Hotkeys        }
-                  ColButtonArr  : byte;   { aktiver Button: Pfeile  }
-                  ColUtility    : byte;   { Kalender u.„.           }
+                  ColMenu       : ColArr; { Normaler Menuetext       }
+                  ColMenuHigh   : ColArr; { Direkt-Buchstaben        }
+                  ColMenuInv    : ColArr; { Menue-Balken             }
+                  ColMenuInvHi  : ColArr; { Menue-Balken/Buchstabe   }
+                  ColMenuDis    : ColArr; { Menue disabled           }
+                  ColMenuSelDis : ColArr; { Menue disabled/gewaehlt  }
+                  ColKeys       : byte;   { Direkttasten             }
+                  ColKeysHigh   : byte;   { Direkttasten-Buchstaben  }
+                  ColKeysAct    : byte;   { aktivierte Taste         }
+                  ColKeysActHi  : byte;   { aktivierter Buchstabe    }
+                  ColTLine      : byte;   { Trennlinie               }
+                  ColBretter    : byte;   { User / Bretter           }
+                  ColBretterInv : byte;   { User / Bretter, gewaehlt }
+                  ColBretterHi  : byte;   { User / Bretter, markiert }
+                  ColBretterTr  : byte;   { Trennzeile               }
+                  ColMsgs       : byte;   { Msgs                     }
+                  ColMsgsHigh   : byte;   { Msgs, markiert           }
+                  ColMsgsInv    : byte;   { Msgs, gewaehlt           }
+                  ColMsgsInfo   : byte;   { Msgs, 1. Zeile           }
+                  ColMsgsUser   : byte;   { PM-archivierte Msgs      }
+                  ColMsgsInvUser: byte;   { gewaehlt+hervorgehoben   }
+                  ColMbox       : byte;   { Meldungs-Box, Text       }
+                  ColMboxRahmen : byte;   { Meldungs-Box, Rahmen     }
+                  ColMboxHigh   : byte;   { Meldungs-Box, hervorgeh. }
+                  ColDialog     : byte;   { Dialoge, Feldnamen u.ae. }
+                  ColDiaRahmen  : byte;   { Dialogbox, Rahmen        }
+                  ColDiaHigh    : byte;   { Dialogbox, hervorgeh.T.  }
+                  ColDiaInp     : byte;   { Dialogbox, Eingabefeld   }
+                  ColDiaMarked  : byte;   { Dial., markierter Text   }
+                  ColDiaArrows  : byte;   { Pfeile bei Scrollfeldern }
+                  ColDiaSel     : byte;   { Masken-Auswahlliste      }
+                  ColDiaSelBar  : byte;   {            "             }
+                  ColDiaButtons : byte;   { Check/Radio-Buttons      }
+                  ColSelbox     : byte;   { Auswahlbox               }
+                  ColSelRahmen  : byte;   { Auswahlbox, Rahmen       }
+                  ColSelHigh    : byte;   { Auswahlbox, hervorgeh.   }
+                  ColSelBar     : byte;   { Auswahlbox, Balken       }
+                  ColSel2box    : byte;   { Auswahlbox / dunkel      }
+                  ColSel2Rahmen : byte;   { Auswahlbox, Rahmen       }
+                  ColSel2High   : byte;   { Auswahlbox, hervorgeh.   }
+                  ColSel2Bar    : byte;   { Auswahlbox, Balken       }
+                  ColButton     : byte;   { Button                   }
+                  ColButtonHigh : byte;   { Button - Hotkeys         }
+                  ColButtonArr  : byte;   { aktiver Button: Pfeile   }
+                  ColUtility    : byte;   { Kalender u.ae.           }
                   ColUtiHigh    : byte;
                   ColUtiInv     : byte;
                   ColHelp       : byte;   { Hilfe normal            }
                   ColHelpHigh   : byte;   { hervorgehobener Text    }
                   ColHelpQVW    : byte;   { Querverweis             }
-                  ColHelpSlQVW  : byte;   { gew„hlter Querverweis   }
+                  ColHelpSlQVW  : byte;   { gewaehlter Querverweis  }
                   ColListText   : byte;   { Lister, normaler Text   }
                   ColListMarked : byte;   { Lister, markiert        }
                   ColListSelbar : byte;   { Lister, Auswahlbalken   }
@@ -90,10 +90,10 @@ type  ColArr = array[0..3] of byte;
                   ColEditHead   : byte;   { TED: Info-Kopf          }
                   ColEditQuote  : byte;   { TED: farbige Quotes     }
                   ColEditEndmark: byte;   { TED: Endmarkierung      }
-                  ColEditMenu   : byte;   { TED: Men               }
+                  ColEditMenu   : byte;   { TED: Menue              }
                   ColEditMenuHi : byte;   { TED: Hotkey             }
                   ColEditMenuInv: byte;   { TED: Selbar             }
-                  ColEditHiInv  : byte;   { TED: gew„hlter Hotkey   }
+                  ColEditHiInv  : byte;   { TED: gewaehlter Hotkey  }
                   ColArcStat    : byte;   { Status-Zeile ArcViewer  }
                   ColMapsBest   : byte;   { bestellte Bretter       }
                   ColMailer     : byte;   { Fido-Mailer/uucico      }
@@ -270,16 +270,16 @@ begin
 end;
 
 
-{ Button-Abfrage -----------------------------------------------------}
-{ x,y     : Position des linken Buttons                               }
-{ abs     : Leerabstand zwischen Buttons                              }
-{ buttons : '^Butt1,^Butt2...'                                        }
-{ default : Startwert fr p                                           }
-{ homeend : die Tasten Home/End sind zugelassen                       }
-{ retkey  : '' -> Normale Abfrage. '*' -> bei jeder unbekannten Taste }
-{           wird die Taste in 'retkey' und readbutton<0 zurckgegeben }
-{           '!' -> nur Anzeige der Buttons, und direkt zurck         }
-{ RETURN:  0 oder p bei normaler Abfrage, -p bei retkey='*' und Esc   }
+{ Button-Abfrage ----------------------------------------------------- }
+{ x,y     : Position des linken Buttons                                }
+{ abs     : Leerabstand zwischen Buttons                               }
+{ buttons : '^Butt1,^Butt2...'                                         }
+{ default : Startwert fuer p                                           }
+{ homeend : die Tasten Home/End sind zugelassen                        }
+{ retkey  : '' -> Normale Abfrage. '*' -> bei jeder unbekannten Taste  }
+{           wird die Taste in 'retkey' und readbutton<0 zurueckgegeben }
+{           '!' -> nur Anzeige der Buttons, und direkt zurueck         }
+{ RETURN:  0 oder p bei normaler Abfrage, -p bei retkey='*' und Esc    }
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
                     homeend:boolean; var retkey:taste):shortint;
@@ -413,6 +413,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2002/12/04 16:57:01  dodi
+  - updated uses, comments and todos
+
   Revision 1.16  2002/11/30 04:40:28  mk
   - made xpme to a unit and compilable
 

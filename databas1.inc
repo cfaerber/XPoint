@@ -82,10 +82,10 @@ begin
 
         i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
         TempCachePage := @cache^[i];
-        while TempCachePage.used do 
+        while TempCachePage.used do
         begin
           with TempCachePage^ do 
-            if lasttick<s then 
+            if lasttick<s then
             begin
               s:=lasttick;
               sp:=i;
@@ -130,7 +130,7 @@ begin
         end;
       if i<cacheanz then   { Seite schon im Cache vorhanden }
         Move(data,cache^[i].page,irsize)
-      else 
+      else
       begin
         cache^[sp].lasttick:=ticker;
         cache^[sp].dbp:=dbp;
@@ -144,7 +144,7 @@ begin
 end;
 
 
-{ Platz fr Index-Knoten auf Heap belegen }
+{ Platz fuer Index-Knoten auf Heap belegen }
 
 procedure AllocNode(dbp:DB; indnr:word; var np:inodep);
 var size: word;
@@ -176,22 +176,22 @@ asm
          mov   esi, rbuf
          xor   edx, edx
          mov   dl, [edi+2]             { Keysize }
-         add   edx,9                   { plus L,ngenbyte plus Ref/Data }
+         add   edx,9                   { plus Laengenbyte plus Ref/Data }
          mov   ebx,136                 { (264) sizeof(inodekey); }
          sub   ebx,edx
          add   edi,14
          xor   eax, eax
          cld
-         lodsw                         { Anzahl Schl_ssel im Node }
+         lodsw                         { Anzahl Schluessel im Node }
          stosw                         { Anzahl speichern }
-@noerr:  mov   ecx,2                   { Ref+Data von key[0] _bertragen }
+@noerr:  mov   ecx,2                   { Ref+Data von key[0] uebertragen }
          rep   movsd
          mov   ecx,eax
          jecxz @nokeys
-         add   edi,128                 { (256) key[0].keystr _berspringen }
+         add   edi,128                 { (256) key[0].keystr ueberspringen }
          mov   eax, ecx
 @exlp:   mov   ecx, edx
-         rep   movsb                   { Ref, Data und Key _bertragen }
+         rep   movsb                   { Ref, Data und Key uebertragen }
          add   edi, ebx
          dec   eax
          jnz   @exlp
@@ -216,7 +216,7 @@ begin
       getmem(rbuf,irsize);
       filepos:=offs;
       cache_read(db_p,irsize,offs,rbuf^);
-      { !!      Hier muá noch was getan werden, denn so klappt das unter
+      { !!      Hier muss noch was getan werden, denn so klappt das unter
         32 Bit einfach nicht... }
 //      if wp^>nk then
 //        error('fehlerhafte Indexseite in '+fname+dbIxExt);
@@ -230,7 +230,7 @@ begin
       for i:=1 to anzahl do begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
-       end; 
+       end;
 {$ENDIF }
       freemem(rbuf,irsize);
      end;
@@ -300,6 +300,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2002/12/04 16:56:55  dodi
+  - updated uses, comments and todos
+
   Revision 1.24  2002/09/30 12:19:23  cl
   - BUGFIX <8Wv6bW53cDC@3247.org>: some errors introduced by perf. improvements
 

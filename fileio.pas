@@ -27,20 +27,20 @@ unit fileio;
 
 interface
 
+uses
+  sysutils,
 {$ifdef unix}
-uses sysutils,
 {$IFDEF Kylix}
   libc,
 {$ELSE}
   Linux,
 {$ENDIF }
-  xplinux,xpglobal,typeform;
+  xplinux,
 {$else }
-uses sysutils,xpglobal,typeform
-  {$ifdef vp} ,vpusrlow {$endif}
-  {$ifdef Win32} ,xpwin32, windows {$endif}
-  {$ifdef Dos32} ,xpdos32 {$endif};
+  {$ifdef vp} vpusrlow, {$endif}
+  {$ifdef Dos32} xpdos32, {$endif}
 {$endif}
+  xpglobal;
 
 const
   FMRead       = $00;     { Konstanten fuer Filemode }
@@ -205,7 +205,10 @@ function IsFileUtf8(const FileName: String): Boolean;
 
 implementation  { ------------------------------------------------------- }
 
-uses debug,xp0;
+uses
+  typeform,
+  {$ifdef Win32} xpwin32, windows, {$endif}
+  debug,xp0;
 
 {$ifdef unix}
 const
@@ -736,6 +739,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2002/12/04 16:56:57  dodi
+  - updated uses, comments and todos
+
   Revision 1.122  2002/08/10 15:49:25  cl
   - fix for FPC 1.0.4
 

@@ -28,7 +28,7 @@ unit archive;
 interface
 
 uses
-  xpglobal, sysutils, typeform, montage;
+  xpglobal, typeform;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -56,12 +56,12 @@ type   arcpath = string[79];
                    f        : file;
                    opened   : boolean;
                    ende     : boolean;       { keine weiteren Dateien }
-                   adr      : longint;       { Adresse der n„chsten Datei }
+                   adr      : longint;       { Adresse der naechsten Datei }
                    method   : string[10];
                    datum    : word;          { im DOS-Format }
                    uhrzeit  : word;          { im DOS-Format }
-                   orgsize  : longint;       { Gr”áe der Original-Datei }
-                   compsize : longint;       { komprimierte Gr”áe       }
+                   orgsize  : longint;       { Groesse der Original-Datei }
+                   compsize : longint;       { komprimierte Groesse       }
                    path     : arcpath;       { Pfad ohne Dateiname }
                    name     : string;
                    attrib   : word;          { DOS-Attribute }
@@ -79,6 +79,8 @@ function  ArchiveOk(fn:arcpath):boolean;
 
 implementation   { ------------------------------------------------- }
 
+uses
+  sysutils, montage;
 
 type archd = packed record
                id       : byte;   { $1a }
@@ -244,8 +246,8 @@ type archd = packed record
               end;
 
 
-var  dwcnum : longint;    { Anzahl DirEintr„ge }
-     dwcsize: word;       { Gr”áe der Eintr„ge }
+var  dwcnum : longint;    { Anzahl DirEintraege }
+     dwcsize: word;       { Groesse der Eintraege }
 
 
 function monthlen(j,m:word):word;
@@ -316,8 +318,8 @@ var f    : file;
     fs   : packed record 
              case integer of
                0 : (b    : byte;
-                    ofs  : Smallword;   { L„nge MOD 512 }
-                    secs : Smallword);  { L„nge DIV 512 + 1 }
+                    ofs  : Smallword;   { Laenge MOD 512 }
+                    secs : Smallword);  { Laenge DIV 512 + 1 }
                1 : (s:shortstring);
            end;
     typ  : longint;
@@ -457,7 +459,7 @@ end;
 
 
 { true -> der Typ wird zwar erkannt; Auslesen des Archivs ist }
-{         aber nicht m”glich.                                 }
+{         aber nicht moeglich.                                 }
 
 function ArcRestricted(atyp:shortint):boolean;
 begin
@@ -497,8 +499,8 @@ var zoohd : packed record
               hdsize : smallword;  { + 8   }
             end;
     fs    : packed record
-              ofs  : Smallword;   { L„nge MOD 512 }
-              secs : smallword;   { L„nge DIV 512 + 1 }
+              ofs  : Smallword;   { Laenge MOD 512 }
+              secs : smallword;   { Laenge DIV 512 + 1 }
             end;
     sfxofs: longint;
     dwh   : dwchd;
@@ -844,8 +846,8 @@ var f1,f2 : file;
     p     : pointer;
     ps    : word;
     fsrec : record
-              ofs  : word;   { L„nge MOD 512 }
-              secs : word;   { L„nge DIV 512 + 1 }
+              ofs  : word;   { Laenge MOD 512 }
+              secs : word;   { Laenge DIV 512 + 1 }
             end;
     arcofs : word;
     pkch   : array[0..1] of char;
@@ -939,6 +941,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/12/04 16:56:55  dodi
+  - updated uses, comments and todos
+
   Revision 1.33  2002/07/25 20:43:51  ma
   - updated copyright notices
 

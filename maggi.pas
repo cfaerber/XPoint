@@ -1609,7 +1609,7 @@ begin
   close(stlog);
 end;
 
-
+//todo: make this a procedure, or make this unit a program?
 begin
   test8086:=0;
   logo;
@@ -1632,6 +1632,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.37  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
   Revision 1.36  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -28,16 +28,11 @@ interface
 
 
 uses
-  xpglobal,
-  sysutils, osdepend,
-{$IFDEF unix}
-  xpcurses,
-{$ENDIF}
-  keys,clip,mouse,eddef, encoder, Lister;
+  xpglobal, keys, eddef, Lister;
 
 
 const
-      EdTempFile      = 'TED.TMP';
+      EdTempFile      = 'TED.TMP';  //todo: filenames
       EdConfigFile    = 'EDITOR.CFG';
       EdGlossaryFile  = 'GLOSSARY.CFG';
       EdSelcursor     : boolean = false; { Auswahllistencursor }
@@ -51,8 +46,8 @@ type
       EdTProc = function(var t:taste):boolean;   { true = beenden }
 
 const
-      laststartline    : longint=0;      { fÅr Z-Anzeige }
-      lastscx          : integer=1; 
+      laststartline    : longint=0;      { fuer Z-Anzeige }
+      lastscx          : integer=1;
       lastscy          : integer=1;      { Bildschirm (Cursor) }
       lastxoffset      : integer=0;
 
@@ -95,7 +90,13 @@ procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer G
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe, xp0;
+uses
+  sysutils,
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
+  osdepend,mouse,encoder,clip,
+  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe, xp0;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -105,7 +106,7 @@ const maxgl     = 60;
 
       screenwidth : byte = 80;
       message   : string[40] = '';
-      ecbopen   : integer = 0;       { Semaphor fÅr Anzahl der offenen ECB's }
+      ecbopen   : integer = 0;       { Semaphor fuer Anzahl der offenen ECB's }
 
 type
 //    charr    = array[0..65500] of char;
@@ -114,7 +115,7 @@ type
       absatzp  = ^absatzt;
       absatzt  = packed record
                    next,prev  : absatzp;
-                   size,msize : smallword;       { msize = allokierte Grî·e }
+                   size,msize : smallword;       { msize = allokierte Groesse }
                    umbruch    : boolean;
                    fill       : array[1..3] of byte;
                    cont       : charr;
@@ -135,7 +136,7 @@ type
                    root       : absatzp;
                    firstpar   : absatzp;      { --- akt.Pos.: 1. Absatz auf Schirm }
                    firstline  : integer;      { Zeile innerhalb dieses Absatzes }
-                   startline  : longint;      { fÅr Z-Anzeige }
+                   startline  : longint;      { fuer Z-Anzeige }
                    scx,scy    : integer;      { Bildschirm (Cursor) }
                    xoffset    : integer;      { x-Anzeigeoffset }
                    col        : EdColRec;     { --- Daten/Status }
@@ -146,7 +147,7 @@ type
                    tnextin    : byte;
                    tnextout   : byte;
                    absatzende : char;
-                   lastpos    : position;     { fÅr Ctrl-Q-P }
+                   lastpos    : position;     { fuer Ctrl-Q-P }
 
          { disp: 1 = Markierung oberhalb Bildausschnitt, 2=in, 3=unterhalb }
 
@@ -176,7 +177,7 @@ type
 var   Defaults : edp;
       language : ldataptr = nil;
       akted    : edp;
-      delroot  : delnodep;         { Liste gelîschter Blîcke }
+      delroot  : delnodep;         { Liste geloeschter Bloecke }
       ClipBoard: absatzp;
       NoCursorsave : boolean;
 
@@ -205,10 +206,10 @@ asm
 
   @sblp1:
          xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
-         mov   dl,[edi]                { Key-LÑnge }
+         mov   dl,[edi]                { Key-Laenge }
   @sblp2:
          mov   al,[esi+ebx]
-         or    dh,dh                   { ignore case (gro·wandeln) ? }
+         or    dh,dh                   { ignore case (grosswandeln) ? }
          jz    @noupper
          cmp   al,'a'
          jb    @noupper
@@ -256,7 +257,7 @@ end;
 
 
 function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
-  { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
+  { rueckwaerts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
             mov   esi,data
             mov   ebx,zlen
@@ -473,13 +474,13 @@ begin
     zeile:='Ze'; spalte:='Sp';
     ja:='J'; nein:='N';
     errors[1]:='zu wenig freier Speicher';
-    errors[2]:='Absatz zu gro·';
+    errors[2]:='Absatz zu gross';
     errors[3]:='Fehler beim Laden des Textes';
     errors[4]:='Fehler beim Speichern';
     errors[5]:='Fehler: Datei nicht vorhanden';
     errors[6]:='Text wurde nicht gefunden.';
     askquit:='Text speichern (j/n) ';
-    askoverwrite:='Datei existiert schon - Åberschreiben (j/n) ';
+    askoverwrite:='Datei existiert schon - ueberschreiben (j/n) ';
     askreplace:='Text ersetzen (Ja/Nein/Alle/Esc)';
     replacechr:='JNA';
     ersetzt:=' Textstellen ersetzt';
@@ -487,7 +488,7 @@ begin
     menue[0]:='Block';
     menue[1]:='^Kopieren       *';
     menue[2]:='^Ausschneiden   -';
-    menue[3]:='^EinfÅgen       +';
+    menue[3]:='^Einfuegen       +';
     menue[4]:='^Laden        ^KR';
     menue[5]:='La^den UUE    ^KU';
     menue[6]:='^Speichern    ^KW';
@@ -590,7 +591,7 @@ begin
 end;
 
 
-{ ------------------------------- Liste gelîschter Blîcke verwalten }
+{ ------------------------------- Liste geloeschter Bloecke verwalten }
 
 procedure AddDelEntry(ap:absatzp);
 var dnp : delnodep;
@@ -616,7 +617,7 @@ begin
 
 procedure freeblock(var ap:absatzp); forward;
 
-procedure FreeDellist;             { Liste gelîschter Blîcke freigeben }
+procedure FreeDellist;             { Liste geloeschter Bloecke freigeben }
 var ap : absatzp;
 begin
   repeat
@@ -672,7 +673,7 @@ begin
 end;
 
 
-{ sbreaks:  Softbreaks auflîsen                                     }
+{ sbreaks:  Softbreaks aufloesen                                     }
 { umbruch:  0 = alles ohne Umbruch laden                            }
 {           1 = nur lange Zeilen ohne Softbreak ohne Umbruch laden  }
 {           2 = alles mit Umbruch laden                             }
@@ -873,11 +874,11 @@ begin
   edp(ed)^.tproc:=tp;
 end;
 
-{ Positionszeiger in Absatz auf nÑchsten Zeilenbeginn bewegen }
-{ Offset mu· auf Zeilenanfang zeigen!                         }
+{ Positionszeiger in Absatz auf naechsten Zeilenbeginn bewegen }
+{ Offset muss auf Zeilenanfang zeigen!                         }
 
 function Advance(ap:absatzp; offset,rand:word):integer;
-var zlen : integer;   { ZeilenlÑnge }
+var zlen : integer;   { Zeilenlaenge }
 begin
   with ap^ do
     if not umbruch or (size-offset<=rand) then
@@ -994,7 +995,7 @@ var  dl         : displp;
      ende       : boolean;
      e          : edp;
      tk         : EdToken;
-     trennzeich : set of char;     { fÅr Wort links/rechts }
+     trennzeich : set of char;     { fuer Wort links/rechts }
      ShiftBlockMarker: Integer;      
 
   procedure showstat;
@@ -1148,7 +1149,7 @@ var  dl         : displp;
             if (s<>'') and absende then
               s:= s+absatzende;          { Absatzende-Marke }
             if length(s)<w then
-              s := s + Sp(w-Length(s)); { mit Space auffÅllen }
+              s := s + Sp(w-Length(s)); { mit Space auffuellen }
           end;
           attrtxt(acol);              { Zeile anzeigen }
           if blockstat<>1 then
@@ -1802,6 +1803,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.85  2002/12/04 16:56:57  dodi
+  - updated uses, comments and todos
+
   Revision 1.84  2002/07/25 20:43:52  ma
   - updated copyright notices
 

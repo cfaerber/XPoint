@@ -22,12 +22,12 @@
 
 unit mime_qp;
 
-{ ---------------------------} interface { --------------------------- }
+interface
 
-uses classes, xpstreams, mime;
+uses
+  xpstreams, mime;
 
 type
-
   TQuotedPrintableEncoderStream = class(TMimeTransferEncoderStream)
   protected
     IsText       : Boolean;
@@ -51,7 +51,7 @@ type
     function Read(var Buffer; Count: Longint): Longint; override;
   end;
 
-{ ------------------------} implementation { ------------------------- }
+implementation
 
 uses SysUtils
   {$IFDEF Delphi}
@@ -62,6 +62,8 @@ uses SysUtils
   {$ENDIF}
   {$ENDIF}
   ;
+
+{ TQuotedPrintableEncoderStream }
 
 constructor TQuotedPrintableEncoderStream.Create(FIsText:Boolean);
 begin
@@ -189,6 +191,8 @@ begin
   result:=Count;
 end;
 
+{ TQuotedPrintableDecoderStream }
+
 procedure TQuotedPrintableDecoderStream.ProcessLine;
 var c:char;
     i:Longint;
@@ -253,6 +257,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2002/12/04 16:57:00  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.8  2002/04/20 13:56:54  ml
 // - kylix compatibility
 //

@@ -44,7 +44,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfPageBottom  = 12;         { letzte Bildschirmzeile         }
        EditfEOL         = 13;         { Zeilenende                     }
        EditfBOL         = 14;         { Zeilenanfang                   }
-       EditfNextPara    = 15;         { Beginn nÑchster Absatz         }
+       EditfNextPara    = 15;         { Beginn naechster Absatz         }
        EditfPrevPara    = 16;         { Vorausgehender Absatzbeginn    }
        EditfScrollUp    = 17;         { Bild eine Zeile hochscrollen   }
        EditfScrollDown  = 18;         { Bild eine Zeile nach unten     }
@@ -63,19 +63,19 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfGotoBStart  = 41;         { Blockanfang anspringen         }
        EditfGotoBEnd    = 42;         { Blockende anspringen           }
 
-       EditfBS          = 50;         { Zeichen links lîschen          }
-       EditfDEL         = 51;         { Zeichen unter Cursor lîschen   }
-       EditfDelWordRght = 52;         { Wort rechts lîschen            }
-       EditfDelWordLeft = 53;         { Wort links lîschen             }
-       EditfDelLine     = 54;         { Zeile lîschen                  }
-       EditfDelBlock    = 55;         { markierten Block lîschen       }
+       EditfBS          = 50;         { Zeichen links loeschen          }
+       EditfDEL         = 51;         { Zeichen unter Cursor loeschen   }
+       EditfDelWordRght = 52;         { Wort rechts loeschen            }
+       EditfDelWordLeft = 53;         { Wort links loeschen             }
+       EditfDelLine     = 54;         { Zeile loeschen                  }
+       EditfDelBlock    = 55;         { markierten Block loeschen       }
        EditfBlockBegin  = 56;         { Blockbeginn setzen             }
        EditfBlockEnd    = 57;         { Blockende setzen               }
        EditfCopyBlock   = 58;         { Kopie an Cursorposition        }
        EditfMoveBlock   = 59;         { verschieben an Cursorposition  }
        EditfCutBlock    = 60;         { in Clipboard ausschneiden      }
        EditfCCopyBlock  = 61;         { in Clipboard kopieren          }
-       EditfPasteBlock  = 62;         { aus Clipboard einfÅgen         }
+       EditfPasteBlock  = 62;         { aus Clipboard einfuegen         }
        EditfWriteBlock  = 63;         { Block in Datei schreiben       }
        EditfReadBlock   = 64;         { Block aus Datei einlesen       }
        EditfMarkWord    = 65;         { Wort markieren                 }
@@ -87,10 +87,10 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfUndelete    = 71;         { Undelete                       }
        EditfHideBlock   = 72;         { Blockmarkierung abschalten     }
        EditfReformat    = 73;         { Block reformatieren            }
-       EditfDelToEOF    = 74;         { alles ab Cursorposition lîschen }
+       EditfDelToEOF    = 74;         { alles ab Cursorposition loeschen }
        EditfRot13       = 75;         { Block Rot13-codieren           }
        EditfPrint       = 76;         { Block ausdrucken               }
-       EditfDeltoEnd    = 77;         { Lîschen bis Absatzende         }
+       EditfDeltoEnd    = 77;         { Loeschen bis Absatzende         }
        EditfParagraph   = 78;         { ^P^U                           }
        EditfChangeCase  = 79;         { Alt-3                          }
        EditfReadUUeBlock= 80;         { Block aus Datei einlesen & UU-Encode }
@@ -99,19 +99,19 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfFind        = 100;        { Suchen                         }
        EditfFindReplace = 101;        { Suchen + Ersetzen              }
        EditfFindRepeat  = 102;        { wiederholen (^L)               }
-       EditfCtrlPrefix  = 103;        { Steuerzeichen-PrÑfix           }
+       EditfCtrlPrefix  = 103;        { Steuerzeichen-Praefix           }
        EditfWrapOn      = 104;        { Absatzumbruch einschalten      }
        EditfWrapOff     = 105;        { Absatzumbruch ausschalten      }
-       EditfAllwrapOn   = 106;        { Umbruch fÅr ganzen Text ein    }
-       EditfAllwrapOff  = 107;        { Umbruch fÅr ganzen Text aus    }
+       EditfAllwrapOn   = 106;        { Umbruch fuer ganzen Text ein    }
+       EditfAllwrapOff  = 107;        { Umbruch fuer ganzen Text aus    }
        EditfSetMargin   = 108;        { rechten Rand einstellen        }
        EditfText        = 109;        { *** Zeicheneingabe ***         }
-       EditfChangeInsert= 110;        { EinfÅgemodus umschalten        }
+       EditfChangeInsert= 110;        { Einfuegemodus umschalten        }
        EditfAbsatzmarke = 111;        { #20 ein/ausschalten            }
-       EditfRestorePara = 112;        { énderungen rÅckgÑngig machen   }
-       EditfChangeIndent= 113;        { EinrÅcken umschalten           }
+       EditfRestorePara = 112;        { énderungen rueckgaengig machen   }
+       EditfChangeIndent= 113;        { Einruecken umschalten           }
 
-       EditfMenu        = 120;        { F10 - lokales MenÅ             }
+       EditfMenu        = 120;        { F10 - lokales Menue             }
        EditfSetup       = 121;        { Einstellungen                  }
        EditfSaveSetup   = 122;        { Einstellungen speichern        }
        EditfSave        = 123;        { Speichern                      }
@@ -141,8 +141,8 @@ type   EdColrec = record
                     zeile,spalte : string[8];
                     ja,nein      : char;
                     errors       : array[1..6] of string[30];
-                    askquit      : string[30]; { 'GeÑnderten Text speichern' }
-                    askoverwrite : string[50]; { 'Datei existiert schon - Åberschreiben' }
+                    askquit      : string[30]; { 'Geaenderten Text speichern' }
+                    askoverwrite : string[50]; { 'Datei existiert schon - ueberschreiben' }
                     askreplace   : string[40]; { 'Text ersetzen (Ja/Nein/Alle/Esc)' }
                     replacechr   : string[3];  { 'JNA' }
                     ersetzt      : string[30]; { ' Textstellen ersetzt' }
@@ -169,7 +169,7 @@ type   EdColrec = record
 
        EdProcs  = record
                     QuitFunc  : EdAskQuit;         { Frage bei Programmende }
-                    Overwrite : EdAskOverwrite;    { Datei Åberschreiben?   }
+                    Overwrite : EdAskOverwrite;    { Datei ueberschreiben?   }
                     MsgProc   : EdMessage;         { Meldung/Fehler         }
                     FileProc  : EdAskFile;         { Dateiname abfragen     }
                     FindFunc  : EdFindPanel;       { Such-Dialog            }
@@ -183,6 +183,9 @@ implementation
 
 {
   $Log$
+  Revision 1.19  2002/12/04 16:56:56  dodi
+  - updated uses, comments and todos
+
   Revision 1.18  2002/07/25 20:43:52  ma
   - updated copyright notices
 
@@ -227,7 +230,7 @@ implementation
   - 16 Bit Teile entfernt
 
   Revision 1.5  2000/03/17 21:22:10  rb
-  vActAbs entfernt, erster Teil von 'Blîcke reformatieren' (<Ctrl K><F>)
+  vActAbs entfernt, erster Teil von 'Bloecke reformatieren' (<Ctrl K><F>)
 
   Revision 1.4  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt

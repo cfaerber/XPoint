@@ -28,16 +28,9 @@ UNIT printerx;
 
 interface
 
-uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  winxp,keys,typeform,inout,maus2;
-
 const drlength = 20;
       dnlength = 30;
-      maxdd    = 75;   { Žnderung bei Driver 1.0 nicht m”glich }
+      maxdd    = 75;   { Aenderung bei Driver 1.0 nicht moeglich }
 
 type  perrfunc  = function:boolean;
       drstring  = string[drlength];
@@ -52,7 +45,7 @@ type  perrfunc  = function:boolean;
                   end;
 { dd:
 
-  0 : reset                       xlatger : šbersetzung Umlaute -> Epson
+  0 : reset                       xlatger : Uebersetzung Umlaute -> Epson
   1 : Rand                        randtyp : 0 = n Zeichen
   2 :
   3 : FF
@@ -79,7 +72,7 @@ type  perrfunc  = function:boolean;
  24 : Subscript an
  25 : Subscript aus
  26 : Unterstreichung an
- 27 : Unterstrichung aus
+ 27 : Unterstreichung aus
 }
 
 var  checklst,xlatger : boolean;
@@ -92,6 +85,11 @@ function  PrintString(const s:string):string;
 implementation
 
 uses
+  SysUtils,
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
 {$IFDEF Linux }
  {$IFNDEF Kylix}
   printer,
@@ -100,7 +98,7 @@ uses
   libc,
  {$ENDIF}
 {$ENDIF }
-  SysUtils;
+  winxp,keys,typeform,inout,maus2;
 
 {$IFDEF unix }
  {$IFDEF Kylix}
@@ -174,6 +172,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/12/04 16:57:00  dodi
+  - updated uses, comments and todos
+
   Revision 1.24  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -27,13 +27,12 @@ unit  maus2;
 interface
 
 uses
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
-  {$IFDEF Win32} Windows,xpcrt, {$ENDIF}
-  typeform,mouse,keys,xpglobal,debug;
+  {$IFDEF Win32} Windows, {$ENDIF}
+  xpglobal; //todo: word
 
-const mausleft    = #0#240;       { links gedrÅckt  }
+const mausleft    = #0#240;       { links gedrueckt  }
       mausunleft  = #0#241;       { .. losgelassen  }
-      mausright   = #0#242;       { rechts gedrÅckt }
+      mausright   = #0#242;       { rechts gedrueckt }
       mausunright = #0#243;       { .. losgelassen  }
       mausmoved   = #0#244;       { Bewegung ohne Taste }
       mauslmoved  = #0#245;       { Bewegung mit linker Taste }
@@ -87,10 +86,13 @@ procedure mint(intsource,tasten,x,y,mx,my:word);
 implementation
 
 uses
-     {$ifndef NCRT} winxp, {$endif}
-     inout,
-     xp0,
-     SysUtils;
+  SysUtils,
+  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
+  {$ifndef NCRT} winxp, {$endif}
+  {$IFDEF Win32} xpcrt, {$ENDIF}
+  inout,
+  xp0,
+  typeform,mouse,keys,debug;
 
 const  maxinside = 25;
 
@@ -473,7 +475,7 @@ begin
 end;
 
 { Wenn die Maus aus dem Fenster (l,r,o,u) "herausgezogen" wird, }
-{ erzeugt INOUT.Get automatisch KeyUp/KeyDown-TastendrÅcke      }
+{ erzeugt INOUT.Get automatisch KeyUp/KeyDown-Tastendruecke      }
 
 procedure maus_setinside(l,r,o,u:byte);
 begin
@@ -557,6 +559,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2002/12/04 16:56:59  dodi
+  - updated uses, comments and todos
+
   Revision 1.47  2002/07/25 20:43:52  ma
   - updated copyright notices
 

@@ -24,7 +24,10 @@ unit mime_analyze;
 
 { ---------------------------} interface { --------------------------- }
 
-uses mime,classes;
+uses
+  classes,
+  //xpglobal - todo: word, is System.word in this unit
+  mime;
 
 type TMimeAnalyzer = class(TStream)
   private
@@ -96,6 +99,8 @@ type TMimeAnalyzer = class(TStream)
 { ------------------------} implementation { ------------------------- }
 
 uses SysUtils;
+
+{ TMimeAnalyzer }
 
 constructor TMimeAnalyzer.Create;
 begin
@@ -557,6 +562,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2002/12/04 16:56:59  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.8  2001/10/19 00:57:52  mk
 // - R- for possible false report of FPC in one line
 //

@@ -30,7 +30,6 @@ unit mime;
 
 uses
   Classes,
-  xpglobal,
   xpstreams,
   unicode;
 
@@ -203,7 +202,7 @@ type
 const
   MimeCharsetNames: array[TMIMECharsets] of String = (
     'UTF-8',      'UTF-7',
-    'IBM437',     'IBM850',     'IBM857',     'IBM858',     'IBM866', 
+    'IBM437',     'IBM850',     'IBM857',     'IBM858',     'IBM866',
     'windows-1250',
     'windows-1251', 'windows-1252', 'windows-1255',
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
@@ -274,14 +273,16 @@ function MimeCreateEOLConverter(Eol:TMimeEol):TCoDecStream;
 
 uses
   SysUtils,
+  xpglobal,
   crc,
   mime_base64,
   mime_qp,
-  rfc2822,
   utftools,
   typeform;
 
 { -------------------- Content & Disposition Types ------------------- }
+
+{ TMimeParam }
 
 constructor TMimeParam.Create(Const NValue,NCharset,
   NLanguage: String);
@@ -290,6 +291,8 @@ begin
   Charset :=NCharset;
   Language:=NLanguage;
 end;
+
+{ TMimeContentHeader_AbstractBaseClass }
 
 constructor TMimeContentHeader_AbstractBaseClass.Create(const ctype:String);
 begin
@@ -476,6 +479,8 @@ begin
 end;
 
 { --------------------------- Content Types -------------------------- }
+
+{ TMimeContentType }
 
 procedure TMimeContentType.SVerb(Const Value:String);
 begin
@@ -667,6 +672,8 @@ begin
 end;
 
 { ------------------------- Disposition Types ------------------------ }
+
+{ TMimeDisposition }
 
 procedure TMimeDisposition.SVerb(Const Value:String);
 var s: string;
@@ -879,6 +886,8 @@ begin
   Decoder.Free;
   inherited;
 end;
+
+{ TCharsetEncoderStream }
 
 {$WARNINGS OFF}{$HINTS OFF}
 function TCharsetEncoderStream.Read(var Buffer; Count: Longint): Longint;
@@ -1257,6 +1266,8 @@ end;
 
 { -------------------------- EOL Conversion -------------------------- }
 
+{ TMimeSingleChartoCRLFStream }
+
 constructor TMimeSingleChartoCRLFStream.Create(eolchar:char);
 begin
   inherited Create;
@@ -1303,8 +1314,12 @@ begin
   Result:=Count;
 end;
 
+{ TMimeCRtoCRLFStream }
+
 constructor TMimeCRtoCRLFStream.Create;
 begin inherited Create(#13); end;
+
+{ TMimeLFtoCRLFStream }
 
 constructor TMimeLFtoCRLFStream.Create;
 begin inherited Create(#10); end;
@@ -1320,6 +1335,9 @@ end;
 
 //
 // $Log$
+// Revision 1.23  2002/12/04 16:56:59  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.22  2002/11/14 20:04:41  cl
 // - New charset: ISO-646-DE
 //
