@@ -483,7 +483,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 18   XMS verwenden
 19   Kommentare aus Brettliste Åbernehmen
 20   Umlaute fÅr neue User zulassen
-21   Behandle ":" und "|" als Quote-Zeichen
+21   behandle ":" und "|" als Quote-Zeichen
 + 251
 # Extrakt als
 0    Text ohne Kopf
@@ -1253,16 +1253,16 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 0    14
 1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
 2    des OpenXP-Projekts erstellt wurde. Bitte beachten Sie, da· diese
-3    Betaversion mit gro·er Sicherheit Fehler enthÑlt, die evtl. gro·en
-4    érger in îffentlichen Netzwerken nach sich ziehen oder Ihre kom-
-5    plette Datenbank beschÑdigen kann. Wenn Sie diese Version nutzen, 
-6    sind Sie fÅr alle Folgen selbst verantwortlich. Sollten Sie nicht 
-7    damit einverstanden sein, nutzen Sie die offiziellen Release-
-8    Versionen von CrossPoint. Bei Fragen, Problemen oder Anregungen
-9    wenden Sie sich bitte an den OpenXP-Support in den entsprechenden
-10   Support-Foren der jeweiligen Netze, insbesondere an die Newsgroup
+3    Betaversion mit einiger Sicherheit Fehler enthÑlt, die manchen
+4    érger in îffentlichen Netzen nach sich ziehen oder Ihre komplette
+5    Datenbank beschÑdigen kînnen. Wenn Sie diese Version nutzen, sind
+6    Sie fÅr alle Folgen selbst verantwortlich. Sollten Sie nicht damit
+7    einverstanden sein, nutzen Sie die offiziellen Release-Versionen
+8    von CrossPoint. Bei Fragen, Problemen oder Anregungen wenden Sie
+9    sich bitte an den OpenXP-Support in den entsprechenden Support-
+10   Foren der jeweiligen Netze, insbesondere an die Newsgroup
 11   de.comm.software.crosspoint (Usenet), an die Area CROSSPOINT.GER
-12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de.
+12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de/.
 13
 14   WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
@@ -1876,9 +1876,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 5    Connect-Dauer:~
 6    Sek.
 + 923
-# Fensterbreite Fido- und UUCP-Sysopmode
+# Fensterbreite Fido- und UUCP-SysopMode
 0    63
-# Fensterbreite nicht-Fido-Sysopmode
+# Fensterbreite nicht-Fido-SysopMode
 1    60
 2    Sysop-Mode
 3    Eingangsverzeichnis ~
@@ -2452,7 +2452,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 5    persistente Blîcke
 6    Quote-Reflow
 -
-2509 und UU-kodieren
+2509 und UU-codieren
 
 
 # --- XPSTAT ----------------------------------------------------------
@@ -2914,7 +2914,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20 interner Fehler (%s) im Fido-Mailer
 21 Fehler - bitte Modemeinstellungen (Carrier-Signal) ÅberprÅfen!
 22 Fehler beim XP-FM-Aufruf ?!
-23 ungÅltige Sysopmode-Ausgabedatei
+23 ungÅltige SysopMode-Ausgabedatei
 24 Fehler bei der MAGGI-Konvertierung
 # File Attach-Datei fehlt
 25 %s fehlt!
