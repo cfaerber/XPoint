@@ -8,17 +8,19 @@ cd "$sourcedir"
 #sleep 5
 case "$1" in
     3.8)
-       echo "Version $1"
-       fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       echo "Version $1 "
+       #fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcopts='-Ci -Co -Cr -Ct -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        echo "fpc option $fpcopts"
        ;;
     3.9)
-       echo "Version $1"
+       echo "Version $1 "
        fpcopts='-Ci -Co -Cr -Ct -gl -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        echo "fpc options $fpcopts"
        ;;
     *) 
        echo "No options set"
+       exit 1;
        ;;
 esac
 ##fpc -B -Ci -Co -Cr -Ct -O2 -Op2 openxp
@@ -26,12 +28,25 @@ esac
 echo "Compiling version $1 with option $fpcopts"
 fpc -B $fpcopts openxp 2> compile-$subversion.err | tee compile-$subversion.log
 
+case "$1" in
+    3.8)
+       echo " Compress (UPX) Version $1 "
+       upx --best openxp
+       ;;
+    3.9)
+       echo "no compression for Version $1 "
+       ;;
+    *)
+       echo "Unknown version, no compression "
+       ;;
+esac
 grep -i warning compile-"$subversion".log > warning-"$subversion".log
 grep -i hint compile-"$subversion".log > hint-"$subversion".log
 grep -i note compile-"$subversion".log > note-"$subversion".log
 grep Error compile-"$subversion".log > error-"$subversion".log
 grep Fatal compile-"$subversion".log > fatal-"$subversion".log
-fpc $fpcopts -Fl"$versiondir"output -O2 -OG3p3r -CX- -XX rc
+#fpc $fpcopts -Fl"$versiondir"output -O2 -OG3p3r -CX- -XX rc
+fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX rc
 fpc $fpcopts -Fl"$versiondir"output -OG3p3r -CX- -XX ihs
 dcc -B -H -W -Z -$I+ -$O+ -$Q+ -$R+  -$X+ openxp.dpr 2> compile-kylix-"$subversion".err | tee compile-kylix-"$subversion".log
 grep -i warning compile-kylix-"$subversion".err > warning-kylix-"$subversion".log
