@@ -2262,6 +2262,7 @@ MY:
 MY:
 - Fix: Viewer-Tempfiles im XP-TEMP-Verzeichnis wurden nicht mehr
   gel”scht.
+  XP.PAS
 
 
 +--------------+
@@ -2303,6 +2304,7 @@ JG:
   angeklickt wurde. Nach Verlassen der anschlieáend erscheinenden
   Userliste mit <Esc> oder <Enter> fhrte jede weitere Taste zum Absturz
   (Variable 'adp^' war nicht initialisiert).
+  XP4E.PAS
 
 
 +----------------------+
@@ -2322,11 +2324,13 @@ MW:
                            weiterhin als Preis einer Tarifeinheit.
   3. Neue Default-W„hrung fuer die Gebhrenberechnung ist nun EUR.
   4. Neue Tarife: Die Default-Tariftabelle enth„lt nun alle aktuellen
-     nationalen Privatkunden-Tarife der DTAG fuer Festnetz zu Festnetz
+     nationalen Privatkunden-Tarife der DTAG fr Festnetz zu Festnetz
      sowie den Tarif "Normaltarif" von 3U.
   5. Wenn die Default-Tariftabelle geschrieben wird, wird dabei das
      verwendete Gebhrenmodell bercksichtigt.
   6. XPOINT.LOG enth„lt jetzt alle Kostenangaben mit 4 Nachkommastellen.
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP7O.PAS, XP10.PAS, XP10P.INC, XP-D.RQ,
+  XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
