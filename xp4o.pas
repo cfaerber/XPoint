@@ -21,7 +21,7 @@ unit xp4o;
 interface
 
 uses
-{$IFDEF virtualpascal}
+{$IFDEF Ver32 }
   sysutils,
 {$endif}
 {$IFDEF NCRT }
@@ -2408,6 +2408,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/05/13 23:17:54  mk
+  - jetzt mit FPC und Debug-Modus compilierbar
+
   Revision 1.38  2000/05/07 10:28:03  hd
   - Fix: (check_seekmode): wrt2 verlangt einen string, kein byte!
 
