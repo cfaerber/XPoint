@@ -178,17 +178,18 @@ begin { ProcessAKABoxes }
         if FileExists(bfile)and
            (tempboxpar.notsempty or(_filesize(bfile)>10)) then begin
           Debug.DebugLog('xpncfido','PP exists '+bfile,DLDebug);
-          AKABoxes.BoxName.Add(aBoxName);
+          AKABoxes.BoxName.Add(TempBoxPar.boxname);
           AKABoxes.PPFile.Add(bfile);
           ownfidoadr:=GetPointAdr(aboxname,false);
           Convert(@tempboxpar,bfile,upbuffer);
           ConvertedFiles.Add(upbuffer);
           upbuffer:=formi(ival(leftstr(upbuffer,8))+1,8)+'.PKT';
           end
-        else begin
-          AKABoxes.BoxName.Add(aBoxName);
+        else
+        begin
+          AKABoxes.BoxName.Add(TempBoxPar.boxname);
           AKABoxes.PPFile.Add('');
-          end;
+        end;
         splitfido(TempBoxPar.BoxName,fa,DefaultZone);
         rfile:=FidoAppendRequestFile(fa);
         AKABoxes.ReqFile.Add(rfile);
@@ -405,7 +406,7 @@ var i        : integer;
     end; { while }
   end;
 
-  procedure ProcessRequestResult(const fa:string; IncomingRequestedFiles: TStringList);
+  procedure ProcessRequestResult(const fa:string);
   { Requests zurckstellen }
 
     function match(wfn, fn:string):boolean;
@@ -568,7 +569,7 @@ begin { FidoNetcall }
     if Crash then
       if not ProcessCrash(Crash,CrashOutBuffer)then
         raise Exception.Create('');
-    ProcessAKABoxes(boxpar,BoxName,Crash,CrashOutBuffer,ConvertedFiles,OutgoingFiles);
+    ProcessAKABoxes(boxpar,boxname,Crash,CrashOutBuffer,ConvertedFiles,OutgoingFiles);
 
     if ConvertedFiles.Count>0 then
       if(boxpar^.uparcer<>'')and((not Diskpoll)or boxpar^.SysopPack)then begin
@@ -663,18 +664,21 @@ begin { FidoNetcall }
     // ignore exceptions
     end;
 
+  AkaBoxes.BoxName.SaveToFile('c:\a\1');
+  AkaBoxes.reqfile.SaveToFile('c:\a\2');
   // let's clean up
   DeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
-    if AKABoxes.ReqFile[i]<>'' then begin
-      ProcessRequestResult(AKABoxes.BoxName[i], IncomingRequestedFiles);
+    if AKABoxes.ReqFile[i]<>'' then
+    begin
+      ProcessRequestResult(AKABoxes.BoxName[i]);
       DeleteFile(AKABoxes.ReqFile[i]);
-      end;
+    end;
   for i:=0 to ConvertedFiles.Count-1 do
     DeleteFile(ConvertedFiles[i]);
 
-  ConvertedFiles.Destroy; OutgoingFiles.Destroy; IncomingRequestedFiles.Destroy;
-  AKABoxes.BoxName.Destroy; AKABoxes.ReqFile.Destroy; AKABoxes.PPFile.Destroy;
+  ConvertedFiles.Free; OutgoingFiles.Free; IncomingRequestedFiles.Free;
+  AKABoxes.BoxName.Free; AKABoxes.ReqFile.Free; AKABoxes.PPFile.Free;
 end;
 
 
@@ -894,6 +898,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/04/07 17:00:43  mk
+  - try to fix bug #499966: fido requests are not killed
+
   Revision 1.29  2002/01/13 15:15:56  mk
   - new "empfaenger"-handling
 
