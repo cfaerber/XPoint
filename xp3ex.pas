@@ -165,7 +165,7 @@ var size   : longint;
     s      : string;
     hs     : string[25];
     i,hdln : integer;
-    p      : byte;
+    p, ln, lr: Integer;
     _brett : string;
     extpos : longint;
     wempf  : string;
@@ -871,7 +871,17 @@ begin
 
     hdf_BET    : wrs(gr(5)+LeftStr(hdp.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
     hdf_ZUSF   : if hdp.summary<>'' then        { 'Zus.fassung: ' }
-                   wrs(gr(23)+hdp.summary);
+                 begin
+                   s:=hdp.summary;
+                   p:=0;
+                   repeat                               { lange Zusammenfassung umbrechen }
+                     lr:=rightpos(' ', LeftStr(s,78-ln));
+                     if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
+                     wrs(iifs(p=0,gr(23),sp(ln))+ LeftStr(s,lr));
+                     inc(p);
+                     s:=mid(s,lr+1);
+                   until s='';
+                 end;
     hdf_STW    : if hdp.keywords<>'' then       { 'Stichworte : ' }
                    wrs(gr(22)+hdp.keywords);
 
@@ -1065,6 +1075,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2001/08/07 13:51:16  mk
+  JG:- 'Summary' header is wrapped now
+
   Revision 1.71  2001/07/28 12:04:11  mk
   - removed crt unit as much as possible
 
