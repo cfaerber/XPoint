@@ -370,7 +370,7 @@ begin
 
   if not AutomaticTimeZone then
   begin
-    maddstring(35,7 + j,getres2(252,23),xpDatum.TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+    maddstring(35,7 + j,getres2(252,23), XpTimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
     mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
     msetvfunc(testtimezone);
     if replaceetime then mdisable;
@@ -1585,6 +1585,10 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.13  2003/08/31 15:51:29  mk
+  - renamed Timezone to XpTimezone, avoids problems with linux
+    function with the same name (kylix)
+
   Revision 1.127.2.12  2003/08/30 11:00:44  mk
   - made printerlist dynamic
 
