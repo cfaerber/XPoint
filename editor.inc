@@ -2087,10 +2087,12 @@ var ap : absatzp;
       begin
         assign(t1,'GLOSSARY.TMP');     { Kuerzel gefunden, Text kopieren }
         rewrite(t1);
-        Repeat        
+        readln(t, s); write(t1,s);
+        while not EOF(t) and (FirstChar(s) <> '>') do
+        begin
           readln(t,s);
-          if (s='') or (s[1]<>'>') then Writeln(t1,s);
-        Until Eof(t) or ((s<>'') and (s[1]='>'));  
+          if FirstChar(s) <> '>' then Write(t1, #13#10, s);
+        end;
         close(t1);
         ScanGlossary:=true;
         end;
@@ -2410,6 +2412,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.11  2000/10/25 12:33:03  mk
+  - Glossary auf neue Loadblock angepasst
+
   Revision 1.19.2.10  2000/10/15 22:20:20  mk
   - fix fuer Grosschreibung
 
