@@ -19,13 +19,16 @@ interface
 uses xpglobal, dos;
 
 function ClipAvailable:boolean;                    { Clipboard verf“bar }
-function Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
-procedure String2Clip(var str: String);            { STring ins Clipboard}
 
+function  Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
+procedure String2Clip(var str: String);            { STring ins Clipboard}
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
 
 function  WinVersion:smallword;                 { Windows >= 3.0      }
+function  WinNTVersion:dword;
+function  InitWinVersion:SmallWord;
+procedure DestructWinVersion;
 
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
@@ -48,61 +51,105 @@ type
   ca  = array[0..65530] of char;
   cap = ^ca;
 
-
-{ R…kgabe: 2 = Win 3.1, 3 = Win95/98/ME, 4 = WinNT, 5 = Win2000/XP }
-function WinVersion:smallword;             { Windows-Version abfragen }
 var
-  Vers: SmallWord;
-  Regs: registers;
-  s: String[1];
+  windows_version:  smallword;
+  windows_nt_ver:   Dword;
+  ntvdm_handle:	    smallword;
+  ntvdm_error:	    smallword;
+
+{ R…kgabe: 2 = Win 3.xx, 3 = Win95/98/ME/..., 4 = WinNT/2k/XP/... }
+function WinVersion:smallword;             { Windows-Version abfragen }
 begin
-  asm
+  WinVersion := windows_version;
+end;
+
+function WinNTVersion:DWord;
+begin
+  WinNTVersion := windows_nt_ver;
+end;  
+
+function InitWinVersion:SmallWord; assembler;
+const
+  winnt_version_dll_name:pchar = 'XP_NTVDM.DLL';
+  winnt_version_dll_init:pchar = 'OPENXP_INIT';
+  winnt_version_dll_call:pchar = 'OPENXP_CALL';
+asm
               mov    ax,160Ah
               int    Multiplex
               or     ax, ax
               jne    @NoWin95    { Call not supported }
               cmp    bx, 0395h   { 四ter als Win95x }
               jae    @Win3
-              mov    Vers, 2     { Win 3.1 }
-              jmp    @Done
+	      mov    ax, 2
+	      jmp    @Done	 { Win 3.1 }
 @Win3:        cmp    bh, 3       { Win 95 oder 98 }
               jz     @Win95
               cmp    bh, 4       { Win 95 oder 98 }
               jnz    @NoWin95
-@Win95:       mov    Vers, 3     { Win 95/98/ME }
-              jmp    @Done
+@Win95:       mov    ax, 3
+	      jmp    @Done       { Win 95/98/ME }
 @NoWin95:     mov    ax, $3306   { Get True Version Number }
               int    $21
               cmp    bx, $3205   { Win NT/2000 DOS Box }
               jne    @NoWin
-              mov    Vers, 5     { Win NT >= Version 4 }
+
+	      push ds
+
+              mov ax, word ptr winnt_version_dll_name+2;
+	      push ax
+	      pop ds
+              mov ax, word ptr winnt_version_dll_init+2;
+	      push ax
+	      pop es
+              mov si, word ptr winnt_version_dll_name;
+              mov di, word ptr winnt_version_dll_init;
+              mov bx, word ptr winnt_version_dll_call;
+              dw     $c4c4    { illegal instruction (for ntvdm calls) }
+              db     $58,$00  { RegisterModule }
+	      jc     @ErrorNT
+
+	      mov    ntvdm_handle,ax
+
+	      xor    dx, dx
+	      dw     $c4c4
+	      db     $58,$02  
+
+	      db     $66			{ 32 bit prefix }
+	      mov    WORD PTR windows_nt_ver,ax { mov DWORD PTR ..., eax }
+
+              jmp    @DoneNT
+	      
+@ErrorNT:     {xor    ax, ax }
+	      mov    WORD PTR windows_nt_ver+2, ax
+	      xor    ax, ax
+	      mov    WORD PTR windows_nt_ver, ax
+	      mov    ntvdm_handle,ax
+
+@DoneNT:      pop    ds
+	      mov    ax, 4 	 { Win NT }
               jmp    @Done
-@NoWin:       mov    Vers, 0
-@Done:
-  end;
-  if Vers = 5 then
-  begin
-    s := '.';
-    with Regs do
-    begin
-      AX := $713B;  { Long Filename: Change Directory }
-      DS := Seg(S);
-      DX := Ofs(S[1]);
-      Flags := FCarry;
-      MsDos(Regs);
-      if ax = $7100 then Vers := 4; { Fehler, dann Win NT 4 }
-    end;
-  end;
-  WinVersion := Vers;
+
+@NoWin:       xor    ax, ax
+@Done:        mov    windows_version, ax
 end;
 
+procedure DestructWinVersion;
+begin
+  if windows_version <> 4 then exit;
+  if ntvdm_handle = 0 then exit;
+  asm
+    mov ax, ntvdm_handle;
+    dw $c4c4
+    db $58,1
+  end;
+end;
 
 function ClipAvailable:boolean;
 begin
   ClipAvailable := true; { Wir haben immer eine Zwischenablage }
 end;
 
-function WinClipAvailable:boolean; assembler;    { wird Clipboard unterst》zt? }
+function WinClipAvailable:boolean; assembler;   { wird Clipboard unterst》zt? }
 asm
               mov    ax,1700h
               int    multiplex
@@ -112,6 +159,11 @@ asm
 @ca1:
 end;
 
+function WinNTClipAvailable:boolean;		{ NTVDM clipboard vorhanden? }
+begin
+  WinNTClipAvailable := ((WinVersion=4) 
+    and (ntvdm_handle<>0));
+end;
 
 function ClipOpen:boolean; assembler;         { Clipboard 杷fnen }
 asm
@@ -174,8 +226,6 @@ asm
 @cw1:
 end;
 
-
-
 function ClipGetDatasize(format:word):longint; assembler;
 asm
               mov    ax,1704h
@@ -197,12 +247,27 @@ asm
 @cr1:
 end;
 
-
 function Clip2String(maxlen,oneline:byte):String;
 var
   f: Text;
   s: String;
+  p: pointer;
 begin
+  if WinNTClipAvailable then
+  begin
+    p:=@s;
+    asm
+      db  $66		    { 32 bit prefix }
+      mov di,WORD PTR p	    { mov edi, DWORD PTR p }
+      mov cl,maxlen
+      mov ch,oneline
+      
+      mov dx,$0101
+      mov ax,ntvdm_handle
+      db  $c4,$c4,$58,2
+    end;    
+    Clip2String := s;
+  end else
   if WinClipAvailable then
   { Text aus Clipboard direkt als Pascal String uebergeben            }
   { Maximallaenge, Einzeilig ( <>0: CR/LF wird in Space umgewandelt)  }
@@ -294,7 +359,24 @@ var
 procedure String2Clip(var Str: String);
 var
   f: Text;
+  str_p: Pointer;
+  str_l: DWORD;
 begin
+  if WinNTClipAvailable then
+  begin
+    str_p:=@(Str[1]);
+    str_l:=Length(Str);
+    asm
+      db  $66		 { 32 bit prefix }
+      mov si,WORD PTR str_p { mov esi, DWORD PTR sp }
+      db  $66
+      mov cx,WORD PTR str_l { mov ecx, DWORD PTR sl }
+    
+      mov dx,$0102
+      mov ax,ntvdm_handle
+      db  $c4,$c4,$58,2
+    end;    
+  end else
   if WinClipAvailable then
   asm
                 mov ax,1700h                        { Clipboard verfuegbar ? }
@@ -365,6 +447,18 @@ var f  : file;
     bs : word;
     rr : word;
 begin
+  if WinNTClipAvailable then
+  begin
+    fn:=fn+#0;
+    p := @(fn[1]);
+    asm
+      db  $66		{ 32 bit prefix }
+      mov si,WORD PTR p { mov esi, DWORD PTR p }
+      mov dx,$0104
+      mov ax,ntvdm_handle
+      db  $c4,$c4,$58,2
+    end;    
+  end else
   if WinClipAvailable and ClipOpen then
   begin
     assign(f,fn);
@@ -394,6 +488,18 @@ var f  : file;
     s  : string[40];
     bp : longint;
 begin
+  if WinNTClipAvailable then
+  begin
+    fn:=fn+#0;
+    p := @(fn[1]);
+    asm
+      db  $66		{ 32 bit prefix }
+      mov si,WORD PTR p { mov esi, DWORD PTR p }
+      mov dx,$0103
+      mov ax,ntvdm_handle
+      db  $c4,$c4,$58,2
+    end;    
+  end else
   if WinClipAvailable then
   begin
     assign(f,fn);
@@ -511,6 +617,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.9  2001/07/02 18:40:31  cl
+  - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
+  - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)
+
   Revision 1.19.2.8  2001/06/23 19:14:12  mk
   - Win 3.1, 95/98/ME, NT und 2000 Erkennung hinzugefuegt
 

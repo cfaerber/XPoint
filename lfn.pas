@@ -331,8 +331,6 @@ function IsNetworkDrive(Drive : Char) : Boolean;
 
   {========================================================================}
 
-function Win95_Aktiv : Boolean;
-  {-Ermittelt ob Win95 aktiv ist}
 procedure EnableLFN;
   {-Aktiviert die UnterstÅtzung fÅr lange Dateinamen}
 procedure DisableLFN;
@@ -342,6 +340,7 @@ procedure DisableLFN;
 
 implementation
 {$F+,I-}
+
 {$IFDEF UseWinDos}
 type
   Registers = TRegisters;
@@ -403,6 +402,8 @@ var
   {-Die Adressen der gepatchten Routinen}
   PatchAddr : array[PatchType] of Pointer;
   Regs : Registers;
+  {-Flags}
+  LFNEnabled: boolean;
 
 const
   On = True;
@@ -3061,7 +3062,7 @@ ExitPoint:
     {-Erzwingt das Schreiben der Buffers und des Cache
         FÅr Drive gilt: 0 = aktuelles Laufwerk, 1 = Laufwerk A, usw.}
   begin
-    if not Win95_Aktiv then
+    if not LFNEnabled then
       DOSResetDrive
     else
       with Regs do begin
@@ -3083,7 +3084,7 @@ ExitPoint:
     {-Erzwingt das Schreiben und Lîschen der Buffers und des Cache
         FÅr Drive gilt: 0 = aktuelles Laufwerk, 1 = Laufwerk A, usw.}
   begin
-    if not Win95_Aktiv then
+    if not LFNEnabled then
       DOSResetDrive
     else
       with Regs do begin
@@ -4020,6 +4021,8 @@ type
   var
     P : PatchType;
   begin
+    LFNEnabled:=false;
+  
     {-Pointer der zu patchenden Routinen in SYSTEM und DOS ermitteln}
     GetProcPtr;
 
@@ -4172,6 +4175,7 @@ type
     LFN_Proc := LFN_AllProcs;
     for P := LowPatchType to Pred(HighPatchType) do
       EnableLFNFunc(P);                                                {!!.04}
+    LFNEnabled := true;      
   end;
 
   procedure DisableLFN;
@@ -4182,29 +4186,11 @@ type
     LFN_Proc := 0;
     for P := LowPatchType to Pred(HighPatchType) do
       DisableLFNFunc(P);                                               {!!.04}
-  end;
-
-  function Win95_Aktiv : Boolean; Assembler;                 {!!.04 rewritten}
-    {-Ermittelt ob Win95 aktiv ist}
-  asm
-    mov     ax, 160Ah
-    int     2Fh
-    or      ax, ax
-    je      @@Supported
-    {-Aufruf wird nicht unterstÅtzt}
-    mov     al, False
-    jmp     @@Done
-@@Supported:
-    cmp     bx, 0395h             {-Ist es Win95a oder Ñlter?}
-    jl      @@Done
-    mov     al, True
-@@Done:
+    LFNEnabled := false;
   end;
 
 begin
   Initialize;
-  if Win95_Aktiv then
-    EnableLFN;
 
   {$IFDEF Windows}
   GetMem(ParamPtr, StrLen(CmdLine)+1);                                 {!!.06}

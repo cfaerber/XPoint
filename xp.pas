@@ -198,11 +198,16 @@ begin
   end;
 ende:
   closeresource;
+  DestructWinVersion;
   runerror:=false;
   halt(errlevel);
 end.
 {
   $Log$
+  Revision 1.29.2.15  2001/07/02 18:40:31  cl
+  - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
+  - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)
+
   Revision 1.29.2.14  2001/07/01 15:43:34  my
   SV:- moved RTA code to new unit xp4rta.pas
 

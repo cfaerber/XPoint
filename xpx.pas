@@ -278,7 +278,11 @@ begin
     OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
-  if WinVersion = 5 then
+
+  InitWinVersion;
+
+  If (WinVersion = 3) or { Win 9x/ME/... }
+     ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
     EnableLFN;
 
   OwnPath:=progpath;
@@ -295,6 +299,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.8  2001/07/02 18:40:31  cl
+  - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
+  - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)
+
   Revision 1.18.2.7  2001/06/23 19:14:53  mk
   - LFN bei Win2000 automatisch einschalten
 

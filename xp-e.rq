@@ -3282,6 +3282,26 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7   PGP signals illegal signature!
 -
 
+# --- System dependent --------------------------------------------------
+
++20000
+2 Windows 3.xx
+3 Windows 95/98/ME
+-
+
++20200
+1 Windows NT
+5 Windows 2000
+6 Windows XP
+-
+
++20201
+1 XP_NTVDM.DLL not found.
+2 XP_NTVDM.DLL corrupted (OPENXP_CALL missing).
+3 XP_NTVDM.DLL corrupted (OPENXP_INIT missing).
+4 Insufficient memory to load XP_NTVDM.DLL.
+-
+
 # --- Settings --------------------------------------------------------
 
 # The following part contains some very special configuration settings.

@@ -3363,6 +3363,26 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6   Sie hier was eintragen.
 -
 
+# --- Systemabhängig --------------------------------------------------
+
++20000
+2 Windows 3.xx
+3 Windows 95/98/ME
+-
+
++20200
+1 Windows NT
+5 Windows 2000
+6 Windows XP
+-
+
++20201
+1 XP_NTVDM.DLL nicht gefunden.
+2 XP_NTVDM.DLL fehlerhaft (OPENXP_CALL fehlt).
+3 XP_NTVDM.DLL fehlerhaft (OPENXP_INIT fehlt).
+4 Zu wenig Speicher zum Laden von XP_NTVDM.DLL.
+-
+
 # --- Einstellungen ---------------------------------------------------
 
 # ApoNet (s. auch 520.99!)

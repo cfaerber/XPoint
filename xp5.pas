@@ -360,10 +360,17 @@ begin
     if win then begin
       gotoxy(x+1,y+1);
       case WinVersion of
-        2: Write('3.1');
-        3: Write('95/98/ME');
-        4: Write('NT 4.0');
-        5: Write('2000/XP');
+        2,3: Write(GetRes2(20000,WinVersion));
+        4:   if Lo(WinNTVersion) = 0 then
+   	       Write(GetRes2(20201,WinNTVersion shr 16))
+	     else begin
+	       if lo(WinNTVersion) in [5,6] then
+	         Write(GetRes2(20200,Lo(WinNTVersion)))	{ 'Windows 2000'/'XP' }
+	       else
+	         Write(GetRes2(20200,1));	{ 'Windows NT' }
+	       Write(' [',lo(WinNTversion),'.',
+                 hi(WinNTversion),'.',Winntversion shr 16,']') 
+	     end;
       end;
     end;
   end;
@@ -429,8 +436,9 @@ begin
   gotoxy(x+57,y+6);
   if free>=0 then write(free / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
-  WriteVer(os2,win,lnx,x+24,y+9);
-  wrt(x+62-length(getres2(rnr,9)),y+iif(win,10,9),getres2(rnr,9)+'...');
+  WriteVer(os2,win,lnx,x+22,y+9);
+  wrt(x+62-length(getres2(rnr,9)),y+iif(win,iif(
+    (WinVersion=4)and(Lo(WinNTVersion)=0),11,10),9),getres2(rnr,9)+'...');
   mon;
   freeres;
   wait(curon);
@@ -1001,6 +1009,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.10  2001/07/02 18:40:31  cl
+  - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
+  - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)
+
   Revision 1.27.2.9  2001/06/23 19:14:29  mk
   - erkannte Windows-Version wird als allgemeiner String angezeigt
 
