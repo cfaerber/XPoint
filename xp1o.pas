@@ -27,7 +27,6 @@ const ListKommentar     : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg      : string = '';
       ListXHighlight    : boolean = true;    { fÅr F-Umschaltung }
       ListShowSeek      : boolean = false;
-      ListCtrlWdisabled : boolean = false;   { Wortumbruch-Umschaltung verhindern }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -252,7 +251,7 @@ var s     : string;
     setenable(0,5,false);  {Fido}
     setenable(0,6,false);  {Edit}
     setenable(0,7,false);  {Config}
-    setenable(3,8,false);  {Nachricht/Brettmannager}
+    setenable(3,8,false);  {Nachricht/Brettmanager}
     setenable(3,9,false);  {N/Fileserver}
     setenable(3,11,false); {N/Direkt}
 
@@ -270,7 +269,7 @@ var s     : string;
     setenable(0,5,true);   {Fido}
     setenable(0,6,true);   {Edit}
     setenable(0,7,true);   {Config}
-    setenable(3,8,true);   {Nachricht/Brettmannager}
+    setenable(3,8,true);   {Nachricht/Brettmanager}
     setenable(3,9,true);   {N/Fileserver}
     setenable(3,11,true);  {N/Direkt}
     ex(5);
@@ -340,98 +339,100 @@ begin
   if UpCase(c)=k4_F then                                 { 'F' }
     ListXHighlight:=not ListXHighlight;
 
-  if t=keytab then t:=keyctab
-  else if (t=keyctab) or (t=keystab) then t:=keytab;
+  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
-  if t=^S then
+  if listmakros<>16 then  { diese Funktionen im Archiv-Viewer abschalten }
   begin
-    t:='s';
-    c:='s';
+
+    if t=keytab then t:=keyctab
+    else if (t=keyctab) or (t=keystab) then t:=keytab;
+
+    if t=^S then
+    begin
+      t:='s';
+      c:='s';
     end
-  else if t='s' then
-  begin
-    t:='';
-    if Suche(getres(438),'#','')
-    then begin
-      ListShowSeek:=true;
-      t:=keyctab;
-      end else
+    else if t='s' then
+    begin
+      t:='';
+      if Suche(getres(438),'#','') then
+      begin
+        ListShowSeek:=true;
+        t:=keyctab;
+      end;
     end;
 
-  if (t=^W) then                                              { '^W' = Umbruch togglen }
-    if not ListCtrlWdisabled then
+    if t=^W then                                   { '^W' = Umbruch togglen }
     begin
       listwrap:=not listwrap;
       ex(-5);
-    end
-    else errsound;
+    end;
 
-  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
+  end   { /Funktionen im Archiv-Viewer abschalten }
+
+  else if t=mausldouble then t:=keycr;  { Archiv-Viewer }
 
   if Listmakros=8 then   { Diese Funktionen NUR im Nachrichten-Lister ausfÅhren, nicht im Archivviewer... }
   begin
 
-    if upcase(c) = k2_I then msg_info;                        { 'I' fuer Lister }
+    if upcase(c) = k2_I then msg_info;                    { 'I' fuer Lister }
 
-    if upcase(c) = 'U' then uudecode;                         { 'U' = UUDecode }
+    if upcase(c) = 'U' then uudecode;                      { 'U' = UUDecode }
 
-    if upcase(c) = k2_V then ex(-2);                          { 'V' fuer Lister }
+    if upcase(c) = k2_V then ex(-2);                      { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
          Exitcode -2. Weiter bei xp4w.inc/read_msg }
 
-    if upcase(c) = k2_O then                                  { 'O' fuer Lister }
+    if upcase(c) = k2_O then                              { 'O' fuer Lister }
     begin
       ShowHeader;
       ex(-4);
     end;
 
-    if upcase(c) = 'Q' then                                   { 'Q' Quotechars |: aktivieren }
+    if upcase(c) = 'Q' then                  { 'Q' Quotechars |: aktivieren }
       otherquotechars:=not otherquotechars;
 
-    if c = '#' then ex(-3);                                   { '#' = Kommentarbaum }
+    if c = '#' then ex(-3);                           { '#' = Kommentarbaum }
 
-  end;
+    { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
+    if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
+      (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
+    else begin
+      Nr:=dbrecno(mbase);
 
-  { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
-  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
-    (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
-  else begin
-    Nr:=dbrecno(mbase);
+      if t = keyaltm then                         { Alt-M = Suche MessageID }
+      begin
+        s:=mailstring(getline,false);
+        while lastchar(s)='/' do dec(s[0]); 
+        s:=mid(s,rightpos('/',s)+1);
+        if Suche(getres(437),'MsgID',s) then   { gefundene Nachricht zeigen }
+          ShowfromLister;
+        end;
 
-    if t = keyaltm then                                       { Alt-M = Suche MessageID }
-    begin
-      s:=mailstring(getline,false);
-      while lastchar(s)='/' do dec(s[0]); 
-      s:=mid(s,rightpos('/',s)+1);
-      if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
+      if t = keyaltv then                              { Alt-V = Suche Text }
+      begin
+        s:=getline;
+        if Suche(getres(414),'',s) then Showfromlister;
       end;
 
-    if t = keyaltv then                                       { Alt-V = Suche Text }
-    begin
-      s:=getline;
-      if Suche(getres(414),'',s) then Showfromlister;
+      if t = keyaltb then                           { Alt-B = Suche Betreff }
+      begin
+        s:=getline;
+        if s='' then s:=dbReadStrN(mbase,mb_betreff);
+        if Suche(getres(415),'Betreff',s) then Showfromlister;
       end;
 
-    if t = keyaltb then                                       { Alt-B = Betreff }
-    begin
-      s:=getline;
-      if s='' then s:=dbReadStrN(mbase,mb_betreff);
-      if Suche(getres(415),'Betreff',s) then Showfromlister;
+      if t = keyaltu then                              { Alt-U = Suche User }
+      begin
+        s:=mailstring(getline,false);
+        if s='' then s:=dbReadStrN(mbase,mb_absender);
+        if Suche(getres(416),'Absender',s) then Showfromlister;
       end;
 
-    if t = keyaltu then                                       { Alt-U = User }
-    begin
-      s:=mailstring(getline,false);
-      if s='' then s:=dbReadStrN(mbase,mb_absender);
-      if Suche(getres(416),'Absender',s) then Showfromlister;
+      dbgo(mbase,nr);
     end;
 
-    dbgo(mbase,nr);
   end;
-
-  if listmakros=16 then   { Archiv-Viewer }
-    if t=mausldouble then
-      t:=keycr;
 
   if llh then begin
     if (t=keydel) or (ustr(t)=k4_L) or (t=k4_cL) then begin   { 'L' / ^L }
@@ -1043,6 +1044,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.31  2003/04/21 16:21:52  my
+  MY+JG:- Fix: Nachrichten-Suchfunktionen im Lister (<Alt-M>, <Alt-V>,
+          <Alt-B>, <Alt-U>) sind wie dokumentiert nur noch im Nachrichten-
+          Lister aktiv, nicht mehr aber im Archiv-Viewer, Textlister usw.
+          (konnte zu Heap-Lecks durch unsauberes Beenden des Listers
+          fÅhren).
+
+  MY:- Fix: Funktionen "s" und <Ctrl-S> (Textsuche), <Tab> (nÑchsten
+       Suchbegriff anspringen) und <Ctrl-W> (Umbruch togglen) im Archiv-
+       Viewer deaktiviert. Bisherige Deaktivierung von <Ctrl-W> im Archiv-
+       Viewer Åber die Variable 'ListCtrlWdisabled' entsorgt.
+
   Revision 1.40.2.30  2002/04/28 16:27:53  my
   OG:- Semikolon zur Liste der fÅr URLs zulÑssigen Zeichen hinzugefÅgt.
 
