@@ -405,7 +405,7 @@ type   textp  = ^text;
                   datum      : string[11];    { Netcall-Format               }
                   zdatum     : string[22];    { ZConnect-Format; nur auslesen }
                   orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
-                  pfad       : Hugestring;    { Netcall-Format               }
+                  pfad       : String;        { Netcall-Format               }
                   msgid,ref  : string[midlen];{ ohne <>                      }
                   ersetzt    : string[midlen];{ ohne <>                      }
                   refanz     : integer;       { Anzahl BEZ-Zeilen            }
@@ -425,7 +425,7 @@ type   textp  = ^text;
                   amrepanz   : integer;       { Anzahl Diskussion-in's }
                   komlen     : longint;       { --- ZCONNECT --- Kommentar-L„nge }
                   ckomlen    : longint;       { Crypt-Content-KOM }
-                  datei      : string[40];    { Dateiname                  }
+                  datei      : string[79];    { Dateiname                  }
                   ddatum     : string[14];    { Dateidatum, jjjjmmtthhmmss }
                   prio       : byte;          { 10=direkt, 20=Eilmail      }
                   error      : string[hdErrLen]; { ERR-Header              }
@@ -1160,6 +1160,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.9  2000/10/16 10:19:10  mk
+  - Fixes fuer LFN
+
   Revision 1.54.2.8  2000/10/06 20:18:34  mk
   - Dateinamen in Grossschreibung geaendert
 

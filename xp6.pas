@@ -66,7 +66,7 @@ const sendIntern = 1;     { force Intern              }
       OldMsgSize: longint = 0;{ s. XP3.XWrite }
       OldMsgPos : longint = 0;
 
-      sendfilename   : string[12] = '';
+      sendfilename   : string = '';
       sendfiledate   : string[14] = '';
       force_quotemsk : string[12] = '';
       sendempflist   : empfnodep = nil;
@@ -2217,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.15  2000/10/16 10:19:10  mk
+  - Fixes fuer LFN
+
   Revision 1.39.2.14  2000/10/15 09:28:08  mk
   - LFN fixes
 
