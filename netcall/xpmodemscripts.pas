@@ -29,7 +29,7 @@ interface
 
 uses
   xp0,  //BoxPtr
-  ObjCOM,  //TCommStream
+  objcom,  //TCommStream
   progressoutput; //TProgressOutput
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
@@ -664,6 +664,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2003/01/25 14:35:54  mk
+  - lowercase objcom in uses
+
   Revision 1.13  2002/12/28 20:11:08  dodi
   - start keyboard input redesign
 
