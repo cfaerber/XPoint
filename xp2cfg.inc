@@ -1341,7 +1341,10 @@ var t       : text;
     fsplit(tf,dir,name,ext);
     SwapFileName:=name+SwapExt;
   end;
-
+{$IFDEF Linux }
+var
+  dummytz: string;
+{$ENDIF }
 begin
 {$IFDEF Debug }
   dbLog('-- Konfiguration einlesen');
@@ -1518,7 +1521,9 @@ begin
           gets(su,su,'HeaderCustom1',mheadercustom[1],255) or
           gets(su,su,'HeaderCustom2',mheadercustom[2],255) or
           { /oh }
-{$IFNDEF Linux }
+{$IFDEF Linux }
+          gets(su,su,'timezone',dummytz,7) or
+{$ELSE }
           gets(su,su,'timezone',TimeZone,7) or
 {$ENDIF }
           getb(su,  'savetype',SaveType) or
@@ -1701,6 +1706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2000/05/03 12:46:23  hd
+  - timezone wurde beim Lesen moniert (Linux)
+
   Revision 1.43  2000/05/02 20:51:49  hd
   - Dynamische ZEitzone angepasst
 
