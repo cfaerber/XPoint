@@ -230,19 +230,19 @@ begin
   if not Connected then exit;
 
   FMailCount := 0;
+  FLastRead := -1;
   SWriteln(CreateTag + 'SELECT inbox');
   repeat
     SReadln(s);
     s2 := Mid(s, 3);
     if RightStr(s, 6) = 'EXISTS' then
       FMailCount := StrToIntDef(LeftStr(s2, CPos(' ', s2)-1), 0);
-    p := Pos('UNSEEN', s);
+    p := Pos('[UNSEEN', s);
     if p > 0 then
     begin
-      s2 := Mid(s, p+6);
-      FLastRead := StrToIntDef(LeftStr(s2, CPos(']', s2)-1), 0);
-    end else
-      FLastRead := -1;
+      s2 := Mid(s, p+7);
+      FLastRead := StrToIntDef(Trim(LeftStr(s2, CPos(']', s2)-1)), -1);
+    end;
   until FirstChar(s) <> '*';
   if ParseImapError(s) then
     Exit;
@@ -310,6 +310,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2003/08/29 19:33:48  mk
+  - fixed parsing of IMAP status results
+
   Revision 1.2  2003/08/11 21:28:06  mk
   - fixed IMAP if OnlyNew is switched on and no new mail is waiting
 
