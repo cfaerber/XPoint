@@ -2198,7 +2198,7 @@ begin
         'c': if zz='cc'           then GetKOPs else
              if zz='content-type' then getmime(GetContentType) else
              if zz='content-transfer-encoding' then getmime(GetCTencoding) else
-             if zz='control'      then control:=s0
+             if zz='control'      then control:=GetMsgid
              else AppUline('U-'+s1);
         'd': if zz='date'         then GetDate {argl!} else
              if zz='disposition-notification-to' then GetAdr(EmpfBestTo,drealn) else
@@ -3047,8 +3047,7 @@ begin
         end;
         if s<>'' then wrref;
       end;
-    if (attrib and attrControl<>0) and (Pos ('cancel ',control)<>0) then
-    begin
+    if (attrib and attrControl<>0) and (Pos ('cancel ',control)<>0) then begin
       Insert ('<',control,8);
       wrs(f,'Control: '+control+'>');
     end;
@@ -3510,6 +3509,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.13  2000/10/06 08:37:28  sv
+  - Spitze Klammern wurden bei eingehenden Cancels nicht entfernt
+
   Revision 1.35.2.12  2000/10/03 15:48:50  mk
   - Typo in UnQuotePrintable wegen doppeltem CRLF beseitigt
 
