@@ -488,7 +488,7 @@ end;
 
 procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
 var tmp,tmp2 : string;
-    _source  : string[80];
+    _source  : string;
     f,f2     : file;
     orgsize  : longint;
     b        : byte;
@@ -783,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.8  2000/05/07 17:45:44  mk
+  - Noch einmal ein 80 Zeichen Limit gefunden
+
   Revision 1.6.2.7  2000/05/07 17:41:35  mk
   OH: - PGP 2.6.3 nutzte t statt -t als Parameter
 
