@@ -887,6 +887,13 @@ begin
     if attrib <> 0 then wrs('X-XP-ATT: ' + hex(attrib, 4));
     if fido_to <> '' then wrs('F-TO: ' + fido_to);
     if XPointCtl <> 0 then wrs('X-XP-CTL: ' + strs(XPointCtl));
+{$IFDEF snapshot}
+    wrs('X-XP-ZCRFC-Version: ' + LeftStr(xp_xp,iif(cpos('/',xp_xp)<>0,cpos('/',xp_xp)-1,length(xp_xp)))
+                     +'/'+trim(verstr)
+                     +' ('+Without(Without(Trim(pformstr),'('),')')+betastr
+                     {$IFDEF Snapshot} + ' @ ' + FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0)))) {$ENDIF}
+                     +')');
+{$ENDIF}
     wrs('');
   end;
 end;
@@ -1130,13 +1137,13 @@ begin
     if Uppercase(LeftStr(ctype,10))='MULTIPART/' then
       hd.typ:='M'
     else if (encoding in [MimeEncoding7Bit,MimeEncoding8Bit])
-            or not MimeContentTypeIsEncodeable(ctype)
+            or (not MimeContentTypeIsEncodeable(ctype))
             or MimeContentTypeNeedCharset(ctype) then
       hd.typ:='T'
     else
       hd.typ:='B';
 
-    if hd.x_charset='' then
+    if (hd.x_charset='') and (hd.typ<>'M') then
       hd.x_charset:='windows-1252'
     else
     if MimeContentTypeNeedCharset(ctype) and
@@ -3639,6 +3646,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2001/09/10 17:28:35  cl
+  - BUGFIX: multipart messages don't have a charset, so don's assume Windows-1252.
+  - Snapshot versions of UUZ now leave a scent mark in buffers converted to
+    ZConnect for debugging purposes.
+
   Revision 1.75  2001/09/10 15:58:04  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
