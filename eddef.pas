@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Deklarationen fÅr Unit EDITOR }
@@ -112,7 +113,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
 
        MaxFindLen       = 30;
-       EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - geÑndert auf 11 }
+       EditMenuMps      = 17;
        
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
@@ -172,8 +173,15 @@ type   EdColrec = record
 implementation
 
 end.
+
 {
   $Log$
+  Revision 1.5.2.5  2001/09/16 20:35:49  my
+  JG+MY:- Editor-Men¸ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen"
+          und "Beenden" hinzugef¸gt
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.5.2.4  2001/09/06 16:15:58  mk
   - optimized GotoPos
 
