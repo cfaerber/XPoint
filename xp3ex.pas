@@ -912,8 +912,23 @@ begin
                     wrs(ohfill(mheadercustom[2],11)+': '+hdp^.Cust2);
                   end;
     { /oh }
-                        
-        end;
+
+  { PrioritÑt im Listenkopf anzeigen:                                     }
+  { RÅckgabewert hinter dem PriorityFlag extrahieren und zuordnen         }
+
+  hdf_Priority: if hdp^.Priority <> 0 then
+       case hdp^.Priority of
+         { Wert aus Header Åbernehmen                                     }
+         1: wrs(gr(35) + GetRes2(272, 1));     { 'PrioritÑt  : Hîchste'   }
+         2: wrs(gr(35) + GetRes2(272, 2));     { 'PrioritÑt  : Hoch'      }
+         3: wrs(gr(35) + GetRes2(272, 3));     { 'PrioritÑt  : Normal'    }
+         4: wrs(gr(35) + GetRes2(272, 4));     { 'PrioritÑt  : Niedrig'   }
+         5: wrs(gr(35) + GetRes2(272, 5));     { 'PrioritÑt  : Niedrigste'}
+       end;
+
+  { /PrioritÑt im Listenkopf anzeigen                                     }
+
+  end;
 
       TestSoftware;
 
@@ -1014,6 +1029,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.7  2000/02/21 14:55:43  mk
+  MH: Prioritaetenbehandlung eingebaut
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

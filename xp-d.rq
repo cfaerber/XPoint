@@ -402,6 +402,7 @@ K (c) '93-98 Peter Mandrella
 28   PART (Nachrichtenteil)
 29   CST1 (Userdefiniert 1)
 30   CST2 (Userdefiniert 2)
+31   PRIO (Priorit„t)
 + 223
 1    ## Nachricht vom $ERSTELLT weitergeleitet
 2    ## Ursprung : $BRETT
@@ -760,15 +761,17 @@ K (c) '93-98 Peter Mandrella
 10   PGP auch fr RFC/UUCP verwenden
 11   PGP auch fr Fido verwenden
 + 272
-# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5
-0    25
-1    Sende-Priorit„t
-2    Priorit„t ~
-3    HochùNormalùNiedrigùKeine
-4    Hoch
-5    Normal
-6    Niedrig
-7    Keine
+# 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
+0    30
+1    H”chste
+2    Hoch
+3    Normal
+4    Niedrig
+5    Niedrigste
+6    Keine
+7    Sende-Priorit„t
+8    Priorit„t ~
+9    H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -892,6 +895,7 @@ K (c) '93-98 Peter Mandrella
 32   Homepage   :~
 33   Teil       :~
 34   ~von~
+35   Priorit„t  :~
 48   private Mail
 50   ~[ungltiges Format]
 51   Voice
@@ -1289,9 +1293,11 @@ K (c) '93-98 Peter Mandrella
 11   PGP-Sig~
 12   PGP-Req~
 13   BK~
-14   Hoch~
-15   Normal~
-16   Niedrig~
+14   H”chste~
+15   Hoch~
+16   Normal~
+17   Niedrig~
+18   Niedrigste~
 -
 605  DES-Codierung...     %
 + 606

@@ -396,6 +396,7 @@ K (c) '93-96 Peter Mandrella
 28   PART (Msg Part)
 29   CST1 (User defined 1)
 30   CST2 (User defined 2)
+31   PRIO (Priority)
 + 223
 1    ## Forwarded message of $MSGDATE
 2    ## Origin   : $BRETT
@@ -747,15 +748,17 @@ K (c) '93-96 Peter Mandrella
 10   Use PGP for RFC/UUCP
 11   Use PGP for Fido (not allowed in FidoNet!)
 + 272
-# 06.02.2000 MH: RFC: X-Priority: 1, 3, 5
-0    25
-1    Send-Priority
-2    Priority ~
-3    HighùNormalùLowùNo
-4    High
-5    Normal
-6    Low
-7    No
+# 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
+0    30
+1    Highest
+2    High
+3    Normal
+4    Low
+5    Lowest
+6    None
+7    Send-Priority
+8    Priority ~
+9    HighestùHighùNormalùLowùLowestùNone
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -875,6 +878,7 @@ K (c) '93-96 Peter Mandrella
 30   Fido To:  ~
 31   Distrib.: ~
 32   Homepage: ~
+35   Priority: ~
 48   private mail
 50
 51   voice
@@ -1248,9 +1252,11 @@ K (c) '93-96 Peter Mandrella
 11   PGP-Sig~
 12   PGP-Req~
 13   BCC~
-14   High~
-15   Normal~
-16   Low~
+14   Highest
+15   High~
+16   Normal~
+17   Low~
+18   Lowest~
 -
 605  Crypting message...     %
 + 606

@@ -329,20 +329,25 @@ begin
     10 : flags:=flags+getres2(604,iif(length(flags)<20,6,7));  { 'Direktmail ' / 'Direkt ' }
     20 : flags:=flags+getres2(604,iif(length(flags)<20,8,9));  { 'Eilmail ' / 'Eilmail ' }
   end;
-  case rfcprio of      { 06.02.2000 MH: RFC: X-Priority  }
-     1 : flags:=flags+getres2(604,14);          { 'Hoch '}
-     3 : flags:=flags+getres2(604,15);        { 'Normal '}
-     5 : flags:=flags+getres2(604,16);       { 'Niedrig '}
+
+  { RFC: Gew„hlten X-Priority-Flag im Sendefenster anzeigen   }
+  case RFCPrio of
+     1 : Flags := Flags + GetRes2(604, 14);       { 'H”chste '}
+     2 : Flags := Flags + GetRes2(604, 15);          { 'Hoch '}
+     3 : Flags := Flags + GetRes2(604, 16);        { 'Normal '}
+     4 : Flags := Flags + GetRes2(604, 17);       { 'Niedrig '}
+     5 : Flags := Flags + GetRes2(604, 18);    { 'Niedrigste '}
   end;
+
   if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
   if flPGPsig then flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
   if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
   attrtxt(col.coldiarahmen);
   if trim(flags)='' then
     mwrt(x+35,y-iif(echomail,2,0),dup(41,'Ä'))
-  else  (* MH: x+33 -> x+35           34 -> 41 // 05.02.2000 *)
+  else { x+33 -> x+35                 34 -> 41 }
     mwrt(x+40,y-iif(echomail,2,0),right(dup(39,'Ä')+' '+flags,36));
-end;  (* x+33 -> x+40 // 05.02.200 //       37 -> 39          34 -> 36 *)
+end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 
 
 { Aufbau der MessageID  (hi..lo):
@@ -1096,34 +1101,43 @@ begin
 end;
 
 { Dialog: Priorit„t ermitteln und in glob. Variable RFCPrio schreiben }
-{ RFC: X-Priority: 1, 3, 5 }
+{ RFC: X-Priority: 1, 2, 3, 4, 5 }
 procedure GetPrio;
 var
   x, y: byte;
   brk: boolean;
-  Prio: string[7];
-begin
-  Dialog(ival(getres2(272, 0)), 3, getres2(272, 1), x, y); { 'Sende-Priorit„t' }
-  Prio:=GetRes2(272, 7); RFCPrio:=0;                           { 'Keine' }
-  MaddString(3, 2, GetRes2(272,2), Prio, 7, 7, '');       { 'Priorit„t ' }
-  MappSel(true, GetRes2(272, 3));          { 'HochùNormalùNiedrigùKeine' }
-  ReadMask(brk);
+  Prio: string[10];
+begin                                                  { 'Sende-Priorit„t' }
+  Dialog(ival(getres2(272, 0)), 3, getres2(272, 7), x, y);
+  Prio:=GetRes2(272, 6); RFCPrio:=0;                             { 'Keine' }
+  MaddString(3, 2, GetRes2(272,8), Prio, 10, 10, '');       { 'Priorit„t ' }
+  MappSel(true, GetRes2(272, 9));
+  ReadMask(brk);          { 'H”chsteùHochùNormalùNiedrigùNiedrigsteùKeine' }
 
   if not brk and mmodified then
   begin
-    if Prio = GetRes2(272, 4) then     { 'Hoch' }
+    if Prio = GetRes2(272, 1) then          { 'H”chste' }
       RFCPrio := 1
     else
-      if Prio = GetRes2(272, 5) then   { 'Normal' }
-        RFCPrio := 3
+      if Prio = GetRes2(272, 2) then           { 'Hoch' }
+        RFCPrio := 2
       else
-        if Prio= GetRes2(272, 6) then { 'Niedrig' }
-          RFCPrio := 5;
+        if Prio = GetRes2(272, 3) then       { 'Normal' }
+          RFCPrio := 3
+        else
+      if Prio = GetRes2(272, 4) then        { 'Niedrig' }
+        RFCPrio := 4
+      else
+    if Prio= GetRes2(272, 5) then        { 'Niedrigste' }
+      RFCPrio := 5;
   end;
   EndDialog;
 end;
 {
   $Log$
+  Revision 1.8  2000/02/21 14:55:43  mk
+  MH: Prioritaetenbehandlung eingebaut
+
   Revision 1.7  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 
