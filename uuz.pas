@@ -84,6 +84,7 @@ const
       RFC1522     : boolean = false;         { Headerzeilen gem. RFC1522 codieren }
 { Envelope-EmpfÑnger aus Received auslesen? }
       getrecenvemp: boolean = false;
+      ppp         : boolean = false;         { -ppp (fÅr UKA* etc.) }
       MailUser    : string[30] = 'mail';     { fuer U-Zeile im X-File }
       NewsUser    : string[30] = 'news';
       FileUser    : string[30] = 'root';
@@ -374,6 +375,8 @@ begin
           MakeQP:=true else
         if switch='1522' then
           RFC1522:=true else
+        if switch='ppp' then
+          ppp:=true else
         if switch='lfn' then
           EnableLFN else
         if switch[1]='u' then begin
@@ -2885,7 +2888,7 @@ begin
       else s:=wab;
       p:=cpos('@',s);
       if SMTP then begin
-        if smtpfirst then begin
+        if smtpfirst or ppp then begin
           wrs(f,'HELO '+mid(s,p+1));
           smtpfirst:=false;
         end;
@@ -3127,6 +3130,8 @@ var hds,adr : longint;
     files   : longint;
     binmail : boolean;
     copycount : integer;    { fÅr Mail-'CrossPostings' }
+    ldstr   : string[2];
+    ovrwrt  : boolean;
 
   procedure FlushOutbuf(var f:file);
   begin
@@ -3265,17 +3270,25 @@ begin
   assign(f1,source);
   reset(f1,1);
   adr:=0; n:=0;
-  assign(fc,dest+'C-'+hex(NextUunumber,4)+'.OUT');   { "C."-File }
-  rewrite(fc);
-  if filesize(f1)<10 then begin
-    close(f1); close(fc);
-    exit; end;
+  if not ppp then begin
+    assign(fc,dest+'C-'+hex(NextUunumber,4)+'.OUT');   { "C."-File }
+    rewrite(fc);
+  end;
+  if filesize(f1)<10 then
+  begin
+    close(f1);
+    if not ppp then close(fc);
+    exit;
+  end;
   assign(f,'uuz.tmp');
   rewrite(f,1);
   server:=ustr(UUserver+'@'+_to);
   files:=0;
 
-  CreateNewfile;                    { 1. Durchgang: News }
+  ldstr:=iifs(ppp,'N','D-');
+  ovrwrt:=iifb(ppp,false,true);
+
+  if not ppp then CreateNewfile;           { 1. Durchgang: News }
   fs:=filesize(f1);
   repeat
     seek(f1,adr);
@@ -3284,13 +3297,14 @@ begin
     if not ok then begin
       close(f1);
       error('fehlerhafter Eingabepuffer!');
-      end;
+    end;
     binmail:=(hd.typ<>'T');
     if cpos('@',hd.empfaenger)=0 then      { AM }
       if binmail and not NewsMIME then
         writeln(#13'BinÑrnachricht <',hd.msgid,'> wird nicht konvertiert')
       else begin   { AM }
         inc(n); write(#13'News: ',n);
+        if ppp then CreateNewFile;
         seek(f1,adr+hds);
         if binmail then
           hd.lines:=(hd.groesse+53) div 54    { Anzahl Base64-Zeilen }
@@ -3299,8 +3313,8 @@ begin
           while fpos+bufpos<adr+hds+hd.groesse do begin
             ReadString(true);
             inc(hd.lines);
-            end;
           end;
+        end;
         SetMimeData;
         seek(f,0);
         WriteRFCheader(f,false);
@@ -3312,7 +3326,7 @@ begin
           while fpos+bufpos<gs do begin
             ReadBinString(gs-fpos-bufpos);
             wrbuf(f);
-            end
+          end
         else
           while fpos+bufpos<gs do begin
             ReadString(true);
@@ -3320,28 +3334,34 @@ begin
             IBM2ISO;
             if NewsMIME then MakeQuotedPrintable;
             wrbuf(f);
-            end;
+          end;
         flushoutbuf(f);
         WriteRfcTrailer(f);
         truncate(f);
-        wrs(f2,'#! rnews '+strs(filesize(f)));
+        if not ppp then wrs(f2,'#! rnews '+strs(filesize(f)));
         seek(f,0);
         fmove(f,f2);
-        end;
+        if ppp then close(f2);
+      end;
     disposeempflist(empflist);
     inc(adr,hds+hd.groesse);
   until adr>fs-10;
   empflist:=nil;
-  close(f2);
-  if n=0 then erase(f2)
+  if not ppp then close(f2);
+  if n=0 then begin
+    if not ppp then erase(f2);
+  end
   else begin
-    MakeXfile('news');
+    if not ppp then MakeXfile('news');
     writeln;
-    end;
+  end;
   close(f); erase(f);
 
   adr:=0; n:=0;                     { 2. Durchgang: Mail }
-  if SMTP then CreateNewfile;
+
+  ldstr:=iifs(ppp,'M','D-');
+
+  if SMTP and not ppp then CreateNewfile;
   repeat
     copycount:=1;
     repeat
@@ -3349,11 +3369,12 @@ begin
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
       binmail:=(hd.typ='B');
       if cpos('@',hd.empfaenger)>0 then
-        if ustr(left(hd.empfaenger,length(server)))=server then
-          WrFileserver
+        if ustr(left(hd.empfaenger,length(server)))=server then begin
+          if not ppp then WrFileserver;
+        end
         else begin
           inc(n); write(#13'Mails: ',n);
-          if not SMTP then
+          if not SMTP or ppp then
             CreateNewfile;
           if binmail then
             seek(f1,adr+hds);
@@ -3367,7 +3388,7 @@ begin
             while fpos+bufpos<gs do begin
               ReadBinString(gs-fpos-bufpos);
               wrbuf(f2);
-              end
+            end
           else
             while fpos+bufpos<gs do begin
               ReadString(true);
@@ -3376,16 +3397,21 @@ begin
               IBM2ISO;
               MakeQuotedPrintable;
               wrbuf(f2);
-              end;
+            end;
           flushoutbuf(f2);
           WriteRfcTrailer(f2);
-          if SMTP then
-            wrs(f2,'.')          { Ende der Mail }
+          if SMTP then begin
+            wrs(f2,'.');          { Ende der Mail }
+            if ppp then begin
+              wrs(f2,'QUIT');
+              close(f2);
+            end;
+          end
           else begin
             close(f2);
-            MakeXfile('mail');
-            end;
+            if not ppp then MakeXfile('mail');
           end;
+        end;
       disposeempflist(empflist);
       if SMTP then copycount:=hd.empfanz;
       inc(copycount);
@@ -3395,14 +3421,14 @@ begin
   if n>0 then writeln;
   if files>0 then
     writeln('Files: ',files);
-  if SMTP then begin
+  if SMTP and not ppp then begin
     wrs(f2,'QUIT');
     close(f2);
     if n=0 then erase(f2)
-    else MakeXfile('smtp');
-    end;
+    else if not ppp then MakeXfile('smtp');
+  end;
   close(f1);
-  close(fc);
+  if not ppp then close(fc);
 end;
 
 
@@ -3431,6 +3457,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.22  2000/12/19 22:09:54  mk
+  RB:- Option -ppp implementiert
+
   Revision 1.35.2.21  2000/12/12 11:30:26  mk
   - FindClose hinzugefuegt
 
