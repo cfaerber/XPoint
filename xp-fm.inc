@@ -52,20 +52,24 @@ var   hello   : record
 
 { -- ZModem-Ausgaberoutine -------------------------------}
 
-var LastErrorCount: Integer;
+var
+  LastErrorCount: Integer;
+  UseNextLine: Boolean; {True, wenn naechste ZModem-Statusmeldungen aktuelle Meldung nicht ueberschreiben darf}
 
 procedure ZModemDispProc;
 var Remain: LongInt;
 begin
   if(DisplayTimer.Timeout)OR(LastErrorCount<>TransferError)then begin
+    DisplayTime(System.Round(TimerObj.ElapsedSec));
     if(DisplayTimer.ElapsedSec<=0)or(TransferBytes<=0)then Remain:=1
       else Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/DisplayTimer.ElapsedSec)-DisplayTimer.ElapsedSec);
     if Remain<0 then Remain:=0;
-    DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',False);
+    DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',UseNextLine);
+    UseNextLine:=False;
     if LastErrorCount<>TransferError then
       begin
-        DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,True);
-        LastErrorCount:=TransferError;
+        DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
+        LastErrorCount:=TransferError; UseNextLine:=True;
       end;
     DisplayTimer.SetTimeout(0.5);
   end;
@@ -75,7 +79,8 @@ procedure ZModemStartProc;
 var I,P: Integer; F: Text;
 const PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
 begin
-  DisplayTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0;
+  {Ab jetzt Statusmeldungen anzeigen}
+  DisplayTimer.Start; DispProc:=ZModemDispProc; LastErrorCount:=0; UseNextLine:=True;
   if LogSending then
     DisplayStatus(getres(192)+' '+TransferName+'...',True)
   else begin
@@ -85,13 +90,12 @@ begin
     if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9']))then
       TransferPath:=FilePath; {File ist kein Mailpaket}
   end;
-  DisplayStatus('...',True);
 end;
 
 procedure ZModemEndProc;
 var s: String; t,cps: LongInt;
 begin
-  DispProc:=NIL;
+  DispProc:=NIL; {Keine Statusmeldungen mehr anzeigen}
   if LogSending then s:='Sent ' else S:='Rcvd ';
   t:=System.Round(DisplayTimer.ElapsedSec); if t<=0 then t:=1; {Verhindere Division by zeros}
   cps:=TransferBytes DIV t; DisplayStatus(StrS(TransferBytes)+'b, '+StrS(cps)+' cps',False);
@@ -999,8 +1003,8 @@ begin
   InitHelloPacket;
   for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
   repeat
-    ENDE:=true;
-    aresult:=0;
+    DisplayTime(System.Round(TimerObj.ElapsedSec));
+    ENDE:=true; aresult:=0;
     case fmSS(0) of            { YooHoo  }
       1 : fmS(4);              { FTS-001 }
       2 : case fmYS(1) of      { WaZOO   }
@@ -1021,6 +1025,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/06/22 22:24:34  ma
+  - Kosmetik bei der Anzeige
+
   Revision 1.12  2000/06/22 17:29:01  mk
   - sprechendere Variablen- und Prozedurnamen
   - auf Unit ObjCOM/Timer/Debug umgestellt
