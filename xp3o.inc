@@ -1220,7 +1220,7 @@ begin
   name:= ExtractFilename(fn);
   if (ext<>'') then
     Delete(name, length(name)-length(ext),length(ext));
-  if FileUpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
+  if FileUpperCase(ext)=ExtOut then exit;   { UUCP: ausgehende Nachrichten }
   if ext='' then
     ext:='.001'
   else
@@ -1236,6 +1236,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.1  2002/05/06 17:58:52  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.83  2002/03/23 15:12:51  mk
   - removed compiler warnings
 

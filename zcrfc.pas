@@ -2538,7 +2538,7 @@ var
   end;
 
 var
-  s1: String;
+  srExt: String; // file extension of sr.name
 begin
   Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s',
     [Source, Dest, _From, _To]), DLDebug);
@@ -2547,22 +2547,23 @@ begin
   outbufpos := 0;
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
-  n := 0; RawNews := false;
+  n := 0; RawNews := false;                         
   sres := findfirst(source, faAnyFile, sr);
   while sres = 0 do
   begin
   try
-    s1 := ExtractFileExt(sr.name);
-    // BAK-Dateien überspringen
-    if s1 = FileUpperCase('.' + BakExt) then Continue;
-    if not (UpperCase(RightStr(sr.name,4))='.OUT') then
-    if ExtractFileExt(sr.name) = '.mail' then
-    begin
+   srExt := ExtractFileExt(sr.name);
+    // BAK, OUT-Dateien überspringen
+    if (srExt = '.' + BakExt) or
+       (srExt = ExtOut) then Continue;
+
+    if srExt = '.mail' then
+    begin                                                                       
       ConvertMailfile(spath + sr.name, '', mails);
-      DeleteFiles.Add(spath+sr.name);
+      DeleteFiles.Add(spath + sr.name);
     end
     else
-    if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
+    if (srExt = '.news') or (NNTPSpoolFormat) then
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
@@ -3130,14 +3131,14 @@ type rcommand = (rmail,rsmtp,rnews);
 
     case t of
       rsmtp: begin
-               Compress(fn+'.OUT',false,ct);
+               Compress(fn+ExtOut,false,ct);
                command := rsmtp_command[ct];
              end;
       rmail: begin
                command := 'rmail '+hd.empfaenger[copycount];
              end;
       else   begin
-               Compress(fn+'.OUT',true,ct);
+               Compress(fn+ExtOut,true,ct);
                command := 'rnews';
              end;
     end;
@@ -3149,9 +3150,9 @@ type rcommand = (rmail,rsmtp,rnews);
     write(fc,iifs(ParECmd,'E ','S '), name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
       NewsUser), ' - ', name2, ' 0666');
     if ParECmd then
-      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'),' ',command)
+      writeln(fc, ' "" ', _filesize(dest + fn + ExtOut),' ',command)
     else if ParSize then
-      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'))
+      writeln(fc, ' "" ', _filesize(dest + fn + ExtOut))
     else
       writeln(fc);
 
@@ -3159,7 +3160,7 @@ type rcommand = (rmail,rsmtp,rnews);
     begin
       { queue execution file }
       nr := hex(NextUunumber, 4);
-      f2 := TFileStream.Create(dest + 'X-' + nr + '.OUT',fmCreate);
+      f2 := TFileStream.Create(dest + 'X-' + nr + ExtOut,fmCreate);
     try
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
 
@@ -3269,7 +3270,7 @@ type rcommand = (rmail,rsmtp,rnews);
     if ppp then
       f2 := TFileStream.Create(dest,fmCreate)
     else
-      f2 := TFileStream.Create(dest + fn + '.OUT',fmCreate);
+      f2 := TFileStream.Create(dest + fn + ExtOut,fmCreate);
   end;
 
   procedure CopyEncodeMail(outs_safe:TStream;Count:Longint);
@@ -3311,7 +3312,7 @@ begin
 
   if not ppp then
   begin
-    CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + '.OUT');
+    CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + ExtOut);
     assign(fc, CommandFile); { "C."-File }
     rewrite(fc);
   end;
@@ -3382,7 +3383,7 @@ begin
   f2.Free; f2:=nil;
 
   if n = 0 then
-    _era(iifs(ppp,dest,dest+fn+'.OUT'))
+    _era(iifs(ppp,dest,dest+fn+ExtOut))
   else
   begin
     if not ppp then QueueCompressFile(rnews);
@@ -3446,7 +3447,7 @@ begin
     if SMTP then
       f2.Free;
     if n = 0 then
-      _era(iifs(ppp,dest,dest+fn+'.OUT'))
+      _era(iifs(ppp,dest,dest+fn+ExtOut))
     else
       if not ppp then QueueCompressFile(rsmtp);
   end;
@@ -3628,6 +3629,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.4  2002/05/06 17:58:52  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.97.2.3  2002/05/05 22:43:14  mk
   - use correct case for 'bak' extension
 

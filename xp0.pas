@@ -148,6 +148,7 @@ const
        extBbl      = '.bbl';
        extHelp     = '.hlp';
        extXps      = '.xps';
+       extOut      = '.out';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -187,6 +188,7 @@ const
        extBbl      = '.BBL';
        extHelp     = '.HLP';
        extXps      = '.XPS';
+       extOut      = '.OUT';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -1226,6 +1228,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.1  2002/05/06 17:58:51  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.158  2002/02/01 10:31:54  mk
   - fixed some bugs with new empfaenger handling
   - made DomainList to StringList

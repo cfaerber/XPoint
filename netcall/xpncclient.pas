@@ -75,7 +75,7 @@ var
     begin
       Assign(IDFile, 'UNSENT.ID');
       ReWrite(IDFile);
-      rs := FindFirst(ClientSpool+'*.OUT', ffAnyFile, sr);
+      rs := FindFirst(ClientSpool+'*'+ExtOut, ffAnyFile, sr);
       while rs=0 do
       begin
         Assign(MsgFile, ClientSpool+sr.name);
@@ -131,7 +131,7 @@ begin
       exit;
     end;
     EmptyDir(ClientSpool, '*.IN');
-    EmptyDir(ClientSpool, '*.OUT');
+    EmptyDir(ClientSpool, '*'+ExtOut);
 
 //    NC^.Sendbuf := _filesize(ppfile);
     if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
@@ -142,7 +142,7 @@ begin
       //  ZtoRFC(false,ppfile,iifs(TempPPPMode, ClientSpool, SysopOut));
     end;
 
-//    NC^.Sendbuf:= filesum(ClientSpool+'*.OUT');
+//    NC^.Sendbuf:= filesum(ClientSpool+'*'+ExtOut);
 {!!    s := ClientExec;
     exchange(s, '$CONFIG', bfile);
     exchange(s, '$CLPATH+', PPPClientpath);
@@ -155,7 +155,7 @@ begin
     shell(s,600,3);
     showscreen(false);
 
-(*    if filesum(ClientSpool+'*.OUT')>0 then                     { -- Ausgabepaket -- }
+(*    if filesum(ClientSpool+'*'+ExtOut)>0 then                     { -- Ausgabepaket -- }
     begin
       WriteUUnummer(uunum);
       Moment;
@@ -167,7 +167,7 @@ begin
        if filecopy('UNSENT.PP', ownpath+ppfile) then
          _era('UNSENT.PP');
       _era('UNSENT.ID');
-      EmptyDir(ClientSpool, '*.OUT'); { nicht verschickte N. löschen }
+      EmptyDir(ClientSpool, '*'+ExtOut); { nicht verschickte N. löschen }
       if Error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       Closebox;
     end;
@@ -191,6 +191,9 @@ end;
 
 {
   $Log$
+  Revision 1.2.2.1  2002/05/06 17:58:53  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.2  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 

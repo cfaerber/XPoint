@@ -185,7 +185,7 @@ var
   List          : TStringList;
   RFCFileDummy  : String;
 begin
-  RFCFileDummy := RFCFile + 'D-0001.OUT';
+  RFCFileDummy := RFCFile + 'D-0001'+ExtOut;
   DeleteFile(RFCFileDummy);
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
@@ -228,10 +228,10 @@ begin
     ClearUnversandt(PPFile,BoxName);
     SafeDeleteFile(PPFile);
     SafeDeleteFile(RFCFileDummy);
-    RFCFileDummy := RFCFile + 'X-0002.OUT';
+    RFCFileDummy := RFCFile + 'X-0002'+ExtOut;
     SafeDeleteFile(RFCFileDummy);
     end;
-  RFCFileDummy := RFCFile + 'C-0000.OUT';
+  RFCFileDummy := RFCFile + 'C-0000'+ExtOut;
   SafeDeleteFile(RFCFileDummy);
 end;
 
@@ -369,6 +369,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.1  2002/05/06 17:58:54  mk
+        - use correct file name case (.bak, .out) with linux
+
         Revision 1.39  2002/03/16 18:22:31  cl
         - BUGFIX: Fetching a new newsgroup list did not work unless <boxname>.bl
           already existed.

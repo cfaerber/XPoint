@@ -62,7 +62,7 @@ type
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
-xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr
+xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr, xp0 
 {$IFDEF Unix} ,xpcurses {$ENDIF}
 {$IFDEF Win32} ,xpwin32 {$ENDIF}
 {$IFDEF DOS32} ,xpdos32 {$ENDIF};
@@ -513,7 +513,7 @@ begin
   if not multipos(_MPMask,fn) then
   begin
    (* Schreibweise anpassen *)
-    fn :=RightStr(fn,5)+'.OUT'; Insert('-',fn,2);
+    fn :=RightStr(fn,5)+ExtOut; Insert('-',fn,2);
    (* Set file type *)
     ftype:=iif(FirstChar(fn)='D',1,2);
    (* Gleiches Verzeichnis wie CommandFile *)
@@ -1122,6 +1122,9 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.1  2002/05/06 17:58:53  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.24  2002/03/05 13:14:27  mk
   - compile fix for last commit
 

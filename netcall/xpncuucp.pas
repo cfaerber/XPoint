@@ -90,8 +90,8 @@ var
 
     procedure CleanSpool;
     begin
-      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.OUT'); (* delete old output files *)
-      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.BAK'); (* delete old input files  *)
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*' + ExtOut); (* delete old output files *)
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.' + BakExt); (* delete old input files  *)
       CreateDir(IncludeTrailingPathDelimiter(DestDir));
     end;
 
@@ -157,7 +157,7 @@ var
             p     : integer;
         begin
           adr:=0;
-          assign(f1,DestDir+'X-'+hex(b,4)+'.OUT'); reset(f1,1);
+          assign(f1,DestDir+'X-'+hex(b,4)+ExtOut); reset(f1,1);
           assign(f2,DestDir+'smtp.tmp'); rewrite(f2,1);
 
           repeat
@@ -169,7 +169,7 @@ var
           until adr>=filesize(f1);
 
           close(f1); close(f2); erase(f1);
-          rename(f2,DestDir+'X-'+hex(b,4)+'.OUT');
+          rename(f2,DestDir+'X-'+hex(b,4)+ExtOut);
         end;
 
       begin { Pack }
@@ -190,7 +190,7 @@ var
         new(f1); new(f2);
         p:=pos('$PUFFER',UpperCase(boxpar^.uparcer));
 
-        if 0=findfirst(DestDir+'D*.OUT',faAnyFile,sr) then
+        if 0=findfirst(DestDir+'D*'+ExtOut,faAnyFile,sr) then
         repeat
           assign(f1^,DestDir+sr.name);
           reset(f1^,1);
@@ -506,6 +506,9 @@ end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.17.2.1  2002/05/06 17:58:54  mk
+  - use correct file name case (.bak, .out) with linux
+
   Revision 1.17  2002/02/21 13:52:36  mk
   - removed 21 hints and 28 warnings
 
