@@ -236,10 +236,10 @@ var t   : text;
     useclip : boolean;
     ft  : longint;
 begin
-  if not ExecutableExists(MaggiBin) then begin
+(*  if not ExecutableExists(MaggiBin) then begin
     rfehler(102);    { 'Netcallkonvertierer MAGGI.EXE fehlt!' }
     exit;
-    end;
+    end; *)
   if IsPath('PUFFER') then begin
     rfehler1(741,'PUFFER');
     exit;
@@ -660,6 +660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/12/25 23:21:38  mk
+  - commented out check for maggi.exe
+
   Revision 1.33  2000/12/25 20:31:18  mk
   - zfido is now completly integrated
 
