@@ -592,8 +592,7 @@ begin
         (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
         DeleteFile(AutoXdir+sr.name);
-        // delfile;
-        end;
+      end;
     if startbatch then begin
       fnstart:=AutoxDir+FileUpperCase('start' + extBatch);        { START.BAT }
       if FileExists(fnstart) then
@@ -605,7 +604,6 @@ begin
         end;
       end;
     ParGelesen:=mgel;
-    FindClose(sr);
   end;
 end;
 
@@ -668,6 +666,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.10  2003/09/01 15:33:32  mk
+  - fixed linux crash: FindClose(SR) was called twice in autoexec()
+
   Revision 1.48.2.9  2003/08/23 20:04:46  mk
   - always use FileAge to get filedate, possilbe solves autosend problems
 
