@@ -1043,7 +1043,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 447  Stop
 + 448
 1    Messagebase Reorganisation
-2    Nessagebase Test
+2    Messagebase Test
 3    Messagebase Statistics
 # die LÑnge von Feld Nr. 4 bestimmt die Fensterbreite:
 4    messages :
@@ -1060,7 +1060,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4   not enough disk space to pack messagebase file no %s
 5   ~- packing ...     %
 6   One moment please...     %
-7   nothing to delete
+7   Nothing to delete!
 -
 452  new receive date:
 # 453 und 455 sind MenÅpunkte aus /Nachricht/Unversandt
@@ -1241,19 +1241,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 530
 # Zeilenanzahl
 0    13
-1    This is a Beta-Version of Crosspoint, created by the OpenXP-
-2    Development-Team. Please notice, that there are surely still bugs
-3    in this betaVersion, which could damage your database
-4    or cause trouble if you use this XP-Version in public.
-5    If you use this version, you are fully responsible for all damage,
-6    you may cause with it. If you don't agree with this terms,
-7    please use a official release-version of Crosspoint.
-8    If you have questions or suggestions to the project,
-9    please apply to the XP-support-forums, esp. the usenet-newsgroup
-10   de.comm.software.crosspoint and the official OpenXP Homepage
-11   http://www.openxp.de.
+1    This is a !!BETA!! version of CrossPoint, created by the OpenXP
+2    development team. Please note that there will still be bugs in
+3    this BETA version which could corrupt your databases or cause
+4    problems to others if you use this version of CrossPoint in public.
+5    By using this version, you are fully responsible for all damage
+6    you may cause with it. If you can't agree to these terms, please
+7    use an official release version of Crosspoint.
+8    If you have questions and/or suggestions for the project, please
+9    use the CrossPoint support forums, especially the usenet newsgroup
+10   de.comm.software.crosspoint and the official OpenXP Homepage at
+11   http://www.openxp.com
 12
-13  Choose "Continue", to work with this betaversion.
+13  Choose "Continue" to use this BETA version ...
 30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------
@@ -3691,6 +3691,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.5  2001/04/15 17:08:20  mf
+# 530.1 - 530.30 changed.
+#
 # Revision 1.4  2001/04/08 20:20:02  mf
 # 10.28, 810.40, 810.44, 927.27, 951.2, 951.3, 951.4, 952.2
 # 952.3, 12700.13 changed.
