@@ -327,6 +327,7 @@ begin
 
   Input := TFileStream.Create(Filename,fmOpenRead);
   try
+    Input.Position := ofs; 
     Breaker := TUnicodeLineBreaker.Create;
     try
       if FUTF8Mode then Breaker.SetUTF8
@@ -1097,6 +1098,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.80  2003/04/03 15:56:00  mk
+  - added handling ofs in TLister.ReadFromFile,
+    this fixes problem with double header in messages
+
   Revision 1.79  2003/03/16 19:02:05  cl
   - initial support for langage files in encodings different from CP437
 
