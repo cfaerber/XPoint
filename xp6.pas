@@ -434,15 +434,15 @@ label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
 {$I xp6s.inc}
 
-function uucpbrett(s:string; edis:byte):string;
+function RFCBrett(s:string; edis:byte):string;
 var i : integer;
 begin
-  if (edis=1) or ((netztyp<>nt_UUCP) and not Newsgroupdispall) or not NewsgroupDisp then
-    uucpbrett:=mid(s,edis)
+  if (edis=1) or ((not netztyp in [nt_UUCP,nt_Client]) and not Newsgroupdispall) or not NewsgroupDisp then
+    rfcbrett:=mid(s,edis)
   else begin
     delete(s,1,2);
     for i:=1 to length(s) do if s[i]='/' then s[i]:='.';
-    uucpbrett:=s;
+    rfcbrett:=s;
     end;
 end;
 
@@ -816,7 +816,7 @@ end;
     kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
-      else adresse:=uucpbrett(empfaenger,2);
+      else adresse:=rfcbrett(empfaenger,2);
     if pm and (adresse[1]=vert_char)
       then adresse:=copy(adresse,2,length(adresse)-3);
     attrtxt(col.coldiarahmen);
@@ -851,7 +851,7 @@ end;
 
   procedure set_name(var absender:string);
   begin
-    case ntDomainType(netztyp) of    { s. auch XP4O.CancelMassage! }
+    case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
       0 : absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
       1 : absender:=username+'@'+iifs(aliaspt,box,pointname);
       2 : absender:=username+'@'+pointname;
@@ -859,10 +859,10 @@ end;
       4 : absender:=username+'@'+FidoAbsAdr;
       5 : absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : if email<>'' then absender:=email else
-            if email<>'' then absender:=email else
-              absender:=username+'@'+
-               iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
+            absender:=username+'@'+
+             iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
       7 : absender:=username+'@'+box+';'+pointname;
+      8 : absender:=email;
       end;
     if realname <>'' then absender:=absender+'  ('+realname+')';
   end;
@@ -990,7 +990,7 @@ begin
   if empfaenger[1]=vert_char then
     wrt(x+14,y+4-fadd,vert_name(copy(empfaenger,edis,52)))
   else
-    wrt(x+14,y+4-fadd,left(uucpbrett(empfaenger,edis),52));
+    wrt(x+14,y+4-fadd,left(rfcbrett(empfaenger,edis),52));
 
   pgpkey:=getres2(611,50);
   if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
@@ -1046,12 +1046,12 @@ begin
   if empfaenger[1]=vert_char then
     Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
   else
-    Wrt2(left(uucpbrett(empfaenger,edis),bboxwid));
+    Wrt2(left(rfcbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
     if ccm^[ii].ccpm then
       wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
     else
-      wrt(x+3+length(getres2(611,6)),y+2+ii,left(uucpbrett(ohnebox(ii),2),bboxwid));
+      wrt(x+3+length(getres2(611,6)),y+2+ii,left(rfcbrett(ohnebox(ii),2),bboxwid));
   if showempfs=15 then
     wrt(x+3+length(getres2(611,6)),y+17,'(...)');
   mon;
@@ -1085,7 +1085,7 @@ begin
       _orgref:='';
       DisposeReflist(_ref6list);
     end else         
-      if RFC_AddOldBetreff and (netztyp=nt_UUCP) then begin
+      if RFC_AddOldBetreff and (netztyp in [nt_UUCP,nt_Client]) then begin
         ReCount(Oldbetr);
         betreff:=left(betreff+' (was: '+oldbetr,betrlen-1)+')';
         end;
@@ -1355,7 +1355,8 @@ fromstart:
   flMnet:=(netztyp=nt_Maus) and stricmp(sData^.distribute,'mausnet');
   FidoBin:=binary and pm and
            ((netztyp=nt_Fido) or
-            ((netztyp=nt_UUCP) and (left(empfaenger,length(uuserver))=uuserver)));
+            ((netztyp in [nt_UUCP,nt_Client]) and
+             (left(empfaenger,length(uuserver))=uuserver)));
   if FidoBin then begin
     if length(datei)>BetreffLen then begin
       rfehler(608);   { 'zu langer Datei-Pfad' }
@@ -1377,7 +1378,7 @@ fromstart:
   end;
   if not ((registriert.non_uucp and (netztyp<>nt_UUCP)) or
           (registriert.uucp and (netztyp=nt_UUCP)) or
-          binary or TestXPointID)
+          binary or TestXPointID or (registriert.client and (netztyp=nt_Client)))
      and (pm or not ntForceMailer(netztyp)) then
     XpID:=true;
   if pm and (ustr(left(empfaenger,length(mapsname)))=mapsname) then
@@ -1441,7 +1442,8 @@ fromstart:
           nt_Fido     : sendbutt:=getres2(611,20);  { 'C^rash,P^GP'     }
           nt_Maus     : sendbutt:=getres2(611,21);  { '^MausNet,^Lokal' }
           nt_ZConnect : sendbutt:=getres2(611,22);  { 'P^rio,P^GP'      }
-          nt_UUCP     : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
+          nt_UUCP,
+          nt_Client   : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
           else          sendbutt:=getres2(611,24);  { '^ZurÅck'         }
         end;
         repeat
@@ -1458,7 +1460,8 @@ fromstart:
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
                     else if n=9 then n:=0;   { MH: ZurÅck  }
-          nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio}
+          nt_UUCP,
+          nt_Client : if n=6 then n:=12      { MH: RFC-Prio}
                       else if n=7 then n:=10 { Zusatz      }
                       else if n=8 then n:=11 { MH: PGP-Sig }
                       else if n=9 then n:=0; { ZurÅck      }
@@ -1503,11 +1506,11 @@ fromstart:
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
                    if netztyp=nt_ZConnect then n:=19 else
-                   if netztyp=nt_uucp then n:=22;
+                   if netztyp in [nt_uucp,nt_client] then n:=22;
             7    : if netztyp=nt_Maus then n:=17;
             8    : if netztyp=nt_Maus then n:=18;
-            9    : if netztyp in [nt_ZConnect,nt_UUCP] then n:=20;
-            10   : if netztyp in [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP] then
+            9    : if netztyp in [nt_ZConnect,nt_UUCP,nt_Client] then n:=20;
+            10   : if netztyp in [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_Client] then
                      n:=21;  { PGP }
             else   if ntBCC(netztyp) and (t=^K) then
                      flNokop:=not flNokop;
@@ -1641,7 +1644,7 @@ fromstart:
        20   : EditSdata;
        21   : SendPgpOptions;
        22   : begin                    { 06.02.2000 MH: RFC-Priority }
-               if netztyp<>nt_uucp then rfehler(622);
+               if not netztyp in [nt_uucp,nt_client] then rfehler(622);
                 getprio;
                showflags;
               end
@@ -1714,6 +1717,7 @@ fromstart:
       nt_Magic,
       nt_Pronet,
       nt_UUCP,
+      nt_Client,
       nt_ZConnect : if (fidoto=brettalle) or (blankpos(fidoto)=0) then
                       fidoto:='';
     else
@@ -1750,7 +1754,7 @@ fromstart:
         halten:=stdhaltezeit;
         dbWriteN(bbase,bb_haltezeit,halten);
         dbWriteN(bbase,bb_gruppe,grnr);
-        b:=iif(netztyp=nt_UUCP,16,0);
+        b:=iif(netztyp in [nt_UUCP,nt_Client],16,0);
         dbWriteN(bbase,bb_flags,b);
         SetBrettindex;
         _brett:=mbrettd(empfaenger[1],bbase);
@@ -1858,6 +1862,10 @@ fromstart:
             hdp^.absender:=username+'@'+box+';'+pointname;
             hdp^.real_box:=box;
           end;
+      8 : begin
+            hdp^.absender:=email;
+            hdp^.real_box:=box;
+          end;
     end;
     if (force_absender='') or (hdp^.absender=force_absender)
       then hdp^.realname:=realname
@@ -1906,7 +1914,8 @@ fromstart:
       nt_Quick,
       nt_GS     : hdp^.pfad:=pointname;
       nt_Pronet : hdp^.pfad:=box {+';'+pointname};
-      nt_UUCP   : hdp^.pfad:=iifs(aliaspt,username,pointname+domain+'!'+username);
+      nt_UUCP,
+      nt_Client : hdp^.pfad:=iifs(aliaspt,username,pointname+domain+'!'+username);
     else
       hdp^.pfad:='';
     end;
@@ -1932,7 +1941,7 @@ fromstart:
       hdp^.telefon:=telefonnr^;
       hdp^.homepage:=wwwHomepage^;
       end
-    else if (netztyp=nt_UUCP) and not adrpmonly then
+    else if (netztyp in [nt_UUCP,nt_Client]) and not adrpmonly then
       hdp^.homepage:=wwwHomepage^;
     hdp^.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: }
     hdp^.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }
@@ -1945,7 +1954,7 @@ fromstart:
     hdp^.attrib:=iif(pm and flEB,attrReqEB,0);
     if IsEbest then with hdp^ do begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
-      if (netztyp=nt_UUCP) and boxpar^.EB_Daemon then begin
+      if (netztyp in [nt_UUCP,nt_Client]) and boxpar^.EB_Daemon then begin
         if pmReplyTo='' then pmReplyTo:=absender;
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
@@ -1962,7 +1971,7 @@ fromstart:
     if ntPmReply(netztyp) then
       if _pmReply then inc(hdp^.attrib,AttrPmReply);
     if ControlMsg then inc(hdp^.attrib,AttrControl);
-    if (binary and (netztyp=nt_UUCP) and multipartbin) or
+    if (binary and (netztyp in [nt_UUCP,nt_Client]) and multipartbin) or
        (binary and (netztyp=nt_Maus) and mausmpbin) then
       inc(hdp^.attrib,AttrMPbin);
     if flPGPkey then
@@ -1978,7 +1987,8 @@ fromstart:
     hdp^.nokop:=flNokop;
     if umlaute=0 then
       case netztyp of
-        nt_UUCP   : if FileContainsUmlaut then
+        nt_UUCP,
+        nt_Client : if FileContainsUmlaut then
                       hdp^.x_charset:='ISO-8859-1';
         nt_Fido   : hdp^.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
       end;
@@ -2397,6 +2407,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.45  2001/12/20 15:05:26  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Registrierroutine fÅr RFC/Client gemÑ· Vereinbarung mit Peter
+       Mandrella (Mail vom 21.11.2001) angepa·t => kein UUCP-Key mehr
+       erforderlich. :-)
+
   Revision 1.39.2.44  2001/11/30 17:27:04  mk
   - fixed to short XP_ID String
 

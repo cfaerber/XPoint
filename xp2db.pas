@@ -856,7 +856,8 @@ begin
   dbOpen(dd,BoxenFile,0);
   while not dbEOF(dd) do begin
     if (not registriert.uucp and (dbReadInt(dd,'netztyp')=nt_UUCP)) or
-       (not registriert.non_uucp and (dbReadInt(dd,'netztyp')<>nt_UUCP)) then
+       (not registriert.non_uucp and not (dbReadInt(dd,'netztyp') in [nt_UUCP,nt_Client])) or
+       (not registriert.client and (dbReadInt(dd,'netztyp')=nt_Client)) then
       reg_hinweis:=true;
     dbNext(dd);
     end;
@@ -892,6 +893,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.7  2001/12/20 15:05:26  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Registrierroutine fr RFC/Client gem„á Vereinbarung mit Peter
+       Mandrella (Mail vom 21.11.2001) angepaát => kein UUCP-Key mehr
+       erforderlich. :-)
+
   Revision 1.12.2.6  2001/08/12 11:20:29  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
