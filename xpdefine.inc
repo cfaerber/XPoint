@@ -132,16 +132,16 @@
 
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { NCRT statt CRT verwenden }
+  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { NCRT statt CRT verwenden }
+  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
 {$ENDIF }
 
 {$IFDEF NCRT }
-  {$DEFINE LocalScreen } { Unter NCRT mÅssen wir den LocalScreen verwenden }
+  {$UNDEF LocalScreen }  { Unter NCRT nicht notwendig }
 {$ENDIF }
 
 { --- ErklÑrungen der selbst gesetzen Defines --- }
@@ -175,6 +175,9 @@
 
 {
   $Log$
+  Revision 1.23  2000/05/01 19:00:28  hd
+  Kein LocalScreen bei NCRT
+
   Revision 1.22  2000/04/29 08:35:09  mk
   - NCRT Define hinzugefuegt
 
