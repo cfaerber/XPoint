@@ -26,6 +26,7 @@ var ax,p,myp  : integer;
     helpsave  : Integer;          { zum Sichern von help_page }
     t         : taste;
     new_a     : Integer;
+    is_alt    : boolean;
 
     replace   : boolean;
     doreplace : boolean;
@@ -42,6 +43,8 @@ var ax,p,myp  : integer;
     moretext  : boolean;
     lasttexty : byte;
     gl        : byte;
+    old_hotky : boolean;
+    
 
   procedure ClearFields;
   var i : integer;
@@ -67,18 +70,30 @@ var ax,p,myp  : integer;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
-          if (not disnodisp) and not (typ=120) then begin
-            s:=txt;
+          if (not disnodisp) and not (typ=120) and (yy0>=a+1) and (yy<=a+un) then
             if enabled then
+            begin
+              s:=txt;
+
+              if hotkeypos>0 then
+              begin
+                attrtxt(col.coldiahigh);
+                FWrt(xx+1+hotkeypos-1,yy-a,txt[hotkeypos]);
+              end;
+
               if owncol then attrtxt(ownattr)
-              else attrtxt(stat.col.ColFeldName)
-            else begin
+              else attrtxt(stat.col.ColFeldName);
+        
+              if hotkeypos>1 then
+                FWrt(xx+1        ,yy-a,LeftStr(txt,hotkeypos-1));
+              FWrt(xx+1+hotkeypos,yy-a,Mid(txt,Max(1,hotkeypos+1)));
+            end else 
+            begin
               attrtxt(stat.col.ColDisabled);
               if stat.col.ColDisabled shr 4 = stat.col.ColDisabled and $f then
-                s:=sp(length(s));  { einige Herc-Bildschirme k”nnen gleiches }
-              end;                 { Vorder- und Hintergrundattribut nicht   }
-            if (yy0>=a+1) and (yy<=a+un) then                  { darstellen  }
-              fwrt(xx,yy-a,txt);
+                s:=sp(length(txt));  { einige Herc-Bildschirme k”nnen gleiches }
+                                     { Vorder- und Hintergrundattribut nicht   }
+              FWrt(xx+1,yy-a,txt);
             end;
       mon;
       end;
@@ -808,13 +823,17 @@ var ax,p,myp  : integer;
   end;
 
 begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
+  old_hotky := inout.hotkeys;
+  helpsave:=help_page;
+ try
+  inout.hotkeys := false;
+
   amaskp^.newfld:=true;
   amaskp^.redisplay:=true;
   mzu:=mauszuu; mzo:=mauszuo;
   mzl:=mauszul; mzr:=mauszur;
   mauszul:=true; mauszur:=true;
   insert_mode:=true;
-  helpsave:=help_page;
   exit_mask:=false;
   new_a := 0;
 
@@ -942,6 +961,8 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             get(t,curon)
           else
             get(t,cureinf);
+    
+        is_alt := false;
 
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten;
@@ -955,6 +976,67 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           if yp>1 then movefield(-1)
           else
             if wrapmode=do_wrap then t:=keycpgd;
+
+        //-- Grrr ------------------------------------------------------
+
+        if t=keyalta then begin t:='a'; is_alt:=true; end else 
+        if t=keyaltb then begin t:='b'; is_alt:=true; end else 
+        if t=keyaltc then begin t:='c'; is_alt:=true; end else 
+        if t=keyaltd then begin t:='d'; is_alt:=true; end else 
+        if t=keyalte then begin t:='e'; is_alt:=true; end else 
+        if t=keyaltf then begin t:='f'; is_alt:=true; end else 
+        if t=keyaltg then begin t:='g'; is_alt:=true; end else 
+        if t=keyalth then begin t:='h'; is_alt:=true; end else 
+        if t=keyalti then begin t:='i'; is_alt:=true; end else 
+        if t=keyaltj then begin t:='j'; is_alt:=true; end else 
+        if t=keyaltk then begin t:='k'; is_alt:=true; end else 
+        if t=keyaltl then begin t:='l'; is_alt:=true; end else 
+        if t=keyaltm then begin t:='m'; is_alt:=true; end else 
+        if t=keyaltn then begin t:='n'; is_alt:=true; end else 
+        if t=keyalto then begin t:='o'; is_alt:=true; end else 
+        if t=keyaltp then begin t:='p'; is_alt:=true; end else 
+        if t=keyaltq then begin t:='q'; is_alt:=true; end else 
+        if t=keyaltr then begin t:='r'; is_alt:=true; end else 
+        if t=keyalts then begin t:='s'; is_alt:=true; end else 
+        if t=keyaltt then begin t:='t'; is_alt:=true; end else 
+        if t=keyaltu then begin t:='u'; is_alt:=true; end else 
+        if t=keyaltv then begin t:='v'; is_alt:=true; end else 
+        if t=keyaltw then begin t:='w'; is_alt:=true; end else 
+        if t=keyaltx then begin t:='x'; is_alt:=true; end else 
+        if t=keyalty then begin t:='y'; is_alt:=true; end else 
+        if t=keyaltz then begin t:='z'; is_alt:=true; end;
+
+        if ((typ=120)or is_alt) and (t > ' ') then
+          for i := 1 to felder do
+            if (fld[i].hotkeypos>0) and (LowerCase(fld[i].hotkey) = LowerCase(t)) then
+            begin
+              SetFieldPos(i);
+              t := ''; 
+            
+              if fld[i].typ = 120 then 
+              begin
+                fld[i].test0(fld[i].cont); 
+                if fld[i].test1(fld[i].cont) and fld[i].btnquit then
+                  if fld[i].maxlen<0 then t := keyESC 
+                  else                    t := ^J;
+              end;
+              
+              break; // found, don't continue search
+            end;
+
+        if t='' then Continue;
+
+        if (typ=120) and ((t=' ') or (t=keycr)) then
+        begin
+          test0(cont); if test1(cont) then 
+          begin
+            if btnquit then if maxlen<0 then t := keyESC 
+                            else             t := ^J;
+            Integer(variable^) := maxlen;
+          end;
+        end 
+          else
+           
         if (t=keydown) or (t=keytab) or (t=keycr) or ((t=keyrght)and(typ in [120])) then
           if yp<felder then movefield(+1)
           else if wrapmode=do_wrap then t:=keycpgu
@@ -1146,18 +1228,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         else
           testfndef;
 
-        if (t=' ') and (typ=120) then
-        begin
-          test0(cont); if test1(cont) then begin
-            if btnquit then if maxlen<0 then t := keyESC 
-                            else             t := ^J;
-            Integer(variable^) := maxlen;
-          end;
-        end 
-        else
+
         if (counter>0) and ((t='-') or (t='+')) then
           _count_
-        else if t>=' ' then
+        else if (t>=' ') and (typ<>120) then
         begin
           if replace then
             s:=mask
@@ -1232,9 +1306,18 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
       returnfields;
     editing:=false;
     end;
+    
+ finally
   help_page:=helpsave;
+  inout.hotkeys := old_hotky;
+ end;   
+
+end;   { readHmask }
 {
   $Log$
+  Revision 1.50  2002/08/31 22:10:04  cl
+    - Schaltflaechen und Hotkeys in Masken (Teil II)
+
   Revision 1.49  2002/08/26 17:43:32  mk
   - fixed last committ
 
@@ -1406,5 +1489,3 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
-end;   { readHmask }
-
