@@ -16,7 +16,7 @@ sleep 1
 echo Generating $dailydifffile for 3.9.x
 cd "$oxpdir"3.9/openxp
 pwd
-sleep 1
+#sleep 1
 #cvs up -A
 cvs up -A -d
 cvs diff -u -D "-1 day" | grep -v -w "\?" > $dailydifffile
@@ -26,12 +26,21 @@ cvs diff -u -D "-1 day" | grep -v -w "\?" > $dailydifffile
 echo Generating $dailydifffile for 3.8.x
 cd "$oxpdir"3.8/openxp
 pwd
-sleep 1
+#sleep 1
 #cvs up -r branch_3_7_8
-cvs up -r branch_3_7_8 -d
-cvs diff -u -r branch_3_7_8 -D "-1 day" | grep -v -w "\?" > $dailydifffile38
+
+# due to a CVS bug with diff'ing branches, this does NOT work
+#cvs up -r branch_3_7_8 -d
+#cvs diff -u -r branch_3_7_8 -D "-1 day" | grep -v -w "\?" > $dailydifffile38
+# so we have to use a work-around ... or better call it an ugly hack
+rm -fr openxp_3.8_last 2>/dev/null
+rm -fr openxp_3.8 2>/dev/null
+cvs co -r branch_3_7_8 -d openxp_3.8 openxp
+cvs co -D "-1 day" -r branch_3_7_8 -d openxp_3.8_last openxp
+diff openxp_3.8_last openxp_3.8 -ud > $dailydifffile38
+rm -rf openxp_3.8_last openxp_3.8
 
 echo Starting snapshot builds if needed
-test -s $dailydifffile38 && "$scriptdir"snapshot 3.8
+test -s `ls -la $dailydifffile38 |cut -b 31-42`  -gt 820 && "$scriptdir"snapshot 3.8
 test -s $dailydifffile && "$scriptdir"snapshot 3.9
 echo "Finished $0"
