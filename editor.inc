@@ -889,7 +889,9 @@ begin
         errsound
       else begin
         addspaces:=EndSpaces;
-        if (addspaces=0) and (ap^.size>0) then addspaces:=1;
+        if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
+          then if not (ap^.cont[ap^.size-1] in ['-','/'])
+                  and (ap^.next^.cont[0]<>' ') then addspaces:=1;
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
@@ -1507,7 +1509,7 @@ function CutBlock:absatzp;      { markierten Block ausschneiden }
 var ap1,ap2,ap    : absatzp;
     apnew,apl,apn : absatzp;
     ofs1,ofs2     : integer;
-    ss,i          : integer;
+    ss,i,spaces   : integer;
     inblk,aflag   : boolean;
     wp            : position;
     recount       : boolean;    { startline neu berechnen }
@@ -1533,6 +1535,7 @@ begin
     ofs2:=block[2].pos.offset;
     wp.absatz:=nil;
     wp.offset:=workpos;
+    spaces:=EndSpaces;
     inblk:=InBlock;
     recount:=false;
     CutBlock := nil; { MK 12/99 Sicherheitshalber immer ersteinmal nil }
@@ -1550,7 +1553,7 @@ begin
         ap:=AbsDelete(ap1,ofs1,ss,false,true);
         if aflag then begin
           wp.absatz:=ap;
-          if ofs1<wp.offset then wp.offset:=max(ofs1,wp.offset-ss);
+          if ofs1<wp.offset then wp.offset:=max(ofs1,wp.offset-ss-spaces);
           end
         else wp.absatz:=ActAbs;
         RestoreWorkpos;
@@ -1601,7 +1604,7 @@ begin
       absatzwechsel(ap2,apn,false);
       if wp.absatz=ap2 then begin
         wp.absatz:=apn;
-        inc(wp.offset,ofs1-ofs2);
+        inc(wp.offset,ofs1-ofs2-spaces);
         end;
       firstline:=min(firstline,alines(firstpar));
 
@@ -1923,6 +1926,8 @@ begin
       and (ap<>block[2].pos.absatz)
       then begin  { Abs„tze ggf. zusammenfgen }
         addspaces:=1;
+        if ap^.size>0 then if ap^.cont[ap^.size-1] in ['-','/']
+          then addspaces:=0;
         TruncAbs(ap^.Next); { Leerzeichen am Absatzende entfernen }
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
@@ -2407,6 +2412,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/11/05 15:08:31  mk
+  RB:- Aenderungen bezueglich - und /
+
   Revision 1.33  2000/10/25 12:29:33  mk
   - Glossary auf neue Loadblock angepasst
 

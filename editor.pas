@@ -905,6 +905,7 @@ begin
     else
     begin
       zlen:=min(rand,size-offset-1);
+      if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
       zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
 //     while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
 //        dec(zlen);
@@ -1856,6 +1857,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/11/05 15:08:31  mk
+  RB:- Aenderungen bezueglich - und /
+
   Revision 1.44  2000/11/01 10:08:04  mk
   - fixes Bug #116197, last CRLLF in SaveBlock
 
