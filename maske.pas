@@ -67,7 +67,7 @@ type  colrec   =  record              { 0 = keine spezielle Farbe }
 
       customrec = record
                     acol : colrec;    { aktuelle Farben }
-                    x,y  : byte;      { aktuelle Pos. des Feldinhalts }
+                    x,y  : Integer;   { aktuelle Pos. des Feldinhalts }
                     fpos : integer;   { akt. Feldnummer }
                     s    : string;    { var: Feldinhalt }
                     brk  : boolean;   { var }
@@ -84,16 +84,16 @@ type  colrec   =  record              { 0 = keine spezielle Farbe }
 
 {-------------- allgemeine Funktionen -------------}
 
-procedure openmask(l,r,o,u:byte; pushit:boolean);   { neue Maske îffnen }
+procedure openmask(l,r,o,u: Integer; pushit:boolean);   { neue Maske îffnen }
 procedure readmask(var brk:boolean);                { *** Einlesen ***  }
-procedure readHmask(mhelpnr:word; var brk:boolean); { .. mit Hilfsseiten }
+procedure readHmask(mhelpnr: Integer; var brk:boolean); { .. mit Hilfsseiten }
 function  mmodified:boolean;                        { Inhalt geÑndert   }
 procedure closemask;                                { Maske schlie·en   }
-procedure readstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
-                     chml:string; var brk:boolean);
+procedure readstring(x,y: Integer; const text:string; var s:string; displ,maxl: Integer;
+                     const chml:string; var brk:boolean);
 procedure mbeep;
 procedure DefaultColor(var col:colrec);             { col <- Default    }
-procedure masklanguage(_yesno:string);              { 'JN'              }
+procedure masklanguage(const _yesno:string);        { 'JN'              }
 
 procedure mdummyp(var inhalt:string);               { Dummy fÅr Test0   }
 function  mdummyf(var inhalt:string):boolean;       { Dummy fÅr Test1/2 }
@@ -105,13 +105,13 @@ function  qdummyf(brk,modif:boolean):boolean;       { Dummy fÅr QuitFN  }
 { werden in amaskp^.stat abgelegt                  }
 
 procedure maskcol(cols:colrec);              { Farben der akt. Maske setzen }
-procedure maskrahmen(rtyp,l,r,o,u:byte);     { Rahmentyp setzen }
+procedure maskrahmen(rtyp,l,r,o,u: Integer);     { Rahmentyp setzen }
 procedure masksetstat(keepon_esc,autosel:boolean; selkey:taste);
 procedure masksetfillchar(c:char);           { FÅllzeichen setzen }
-procedure masksethelp(hx,hy,hl:byte; center:boolean);   { Hilfszeile einst. }
-procedure masksetfninfo(x,y:byte; text:string; fillc:char);
+procedure masksethelp(hx,hy,hl: Integer; center:boolean);   { Hilfszeile einst. }
+procedure masksetfninfo(x,y: Integer; const text:string; fillc:char);
 procedure masksetwrapmode(wm:wrapmodes);
-procedure masksetautojump(aj:byte);     { Sprungweite bei cr am unteren Rand }
+procedure masksetautojump(aj: Integer);     { Sprungweite bei cr am unteren Rand }
 procedure masksetqfunc(qfunc:quitfunc);
 procedure masksetarrowspace(aas:boolean);
 procedure masksetmausarrows(ma:boolean);
@@ -119,7 +119,7 @@ procedure masksetautohigh(ah:boolean);  { Felder automatisch selektieren }
 procedure maskdontclear;
 procedure maskcheckbuttons;
 procedure maskselcursor(cur:curtype);
-procedure maskUpDownArrows(x1,y1,x2,y2:byte; fill:char; col:byte);
+procedure maskUpDownArrows(x1,y1,x2,y2: Integer; fill:char; col:byte);
 
 
 {------------ Felder anlegen ------------}
@@ -127,18 +127,18 @@ procedure maskUpDownArrows(x1,y1,x2,y2:byte; fill:char; col:byte);
 
 { Integer-Typen: 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
-procedure Maddtext(x,y:integer; text:string; att:byte);   { Anzeigetext anfÅgen }
-procedure Maddstring(x,y:integer; text:string; var s:string; displ,maxl:integer;
-                     chml:string);
-procedure Maddint(x,y: integer; text:string; var int; ityp,displ:integer;
+procedure Maddtext(x,y:integer; const text:string; att:byte);   { Anzeigetext anfÅgen }
+procedure Maddstring(x,y:integer; const text:string; var s:string; displ,maxl:integer;
+                     const chml:string);
+procedure Maddint(x,y: integer; const text:string; var int; ityp,displ:integer;
                      imin,imax:longint);
-procedure Maddreal(x,y: integer; text:string; var r:real; displ,rnk : integer;
+procedure Maddreal(x,y: integer; const text:string; var r:real; displ,rnk : integer;
                      rmin,rmax : real);
 procedure Maddbool(x,y:integer; text:string; var b:boolean);
-procedure Maddform(x,y:integer; text:string; var s:string; form,chml:string);
-procedure Madddate(x,y:integer; text:string; var d:string; long,mbempty:boolean);
-procedure Maddtime(x,y:integer; text:string; var t:string; long:boolean);
-procedure Maddcustomsel(x,y:integer; text:string; var s:string; displ:integer;
+procedure Maddform(x,y:integer; const text:string; var s:string; const form,chml:string);
+procedure Madddate(x,y:integer; const text:string; var d:string; long,mbempty:boolean);
+procedure Maddtime(x,y:integer; const text:string; var t:string; long:boolean);
+procedure Maddcustomsel(x,y:integer; const text:string; var s:string; displ:integer;
                         cp:customsel);
 
 
@@ -154,11 +154,11 @@ procedure MSetUserDisp(ud:userdproc);    { bei Komplett-Neuanzeige }
 
 procedure MDisable;                           { Feld deaktivieren }
 procedure MDisabledNodisplay;                 { deaktiviert nicht anzeigen }
-procedure MH(text:string);                    { Hilfszeile setzen }
-procedure MHnr(helpnr:word);                  { Hilfsseiten-Nr. setzen }
-procedure MSelHnr(helpnr:word);               { Hilfsseite fÅr <F2> }
-procedure MSetSel(sx,sy,slen:byte);           { Abmessungen der SelListe }
-procedure MAppSel(force:boolean; s:string);   { SelBox aufbauen }
+procedure MH(const text:string);              { Hilfszeile setzen }
+procedure MHnr(helpnr: Integer);              { Hilfsseiten-Nr. setzen }
+procedure MSelHnr(helpnr: Integer);           { Hilfsseite fÅr <F2> }
+procedure MSetSel(sx,sy,slen: Integer);       { Abmessungen der SelListe }
+procedure MAppSel(force:boolean; const s:string); { SelBox aufbauen }
 procedure Mappcustomsel(cp:customsel; nedit:boolean);
 procedure Mnotrim;                            { kein autotrim }
 procedure Malltrim;                           { rtrim/ltrim }
@@ -171,19 +171,19 @@ procedure MSetAutoHigh(ah:boolean);           { automat. selektieren }
 { dienen zum Zugriff von externen (Test-)Funktionen }
 { auf Inhalte der momentan editierten Maske         }
 
-procedure setfield(nr:word; newcont:string);
-function  getfield(nr:word):string;
+procedure setfield(nr: Integer; const newcont:string);
+function  getfield(nr: Integer):string;
 function  fieldpos:integer;         { akt.FeldNr, auch wÑhrend Maskenaufbau! }
-procedure setfieldenable(nr:word; eflag:boolean);   { Feld (de)aktivieren }
-procedure setfieldnodisp(nr:word; dflag:boolean);   { Feld nicht anzeigen }
-function  mask_helpnr:word;
+procedure setfieldenable(nr: Integer; eflag:boolean);   { Feld (de)aktivieren }
+procedure setfieldnodisp(nr: Integer; dflag:boolean);   { Feld nicht anzeigen }
+function  mask_helpnr: Integer;
 function  readmask_active:boolean;
-procedure set_chml(nr:word; chml:string);
-procedure setfieldtext(nr:word; newtxt:string);
+procedure set_chml(nr: Integer; chml:string);
+procedure setfieldtext(nr: Integer; const newtxt:string);
 function  mtextpos:pointer;
-procedure settexttext(p:pointer; newtxt:string);
-procedure mclearsel(nr:word);
-procedure mappendsel(nr:word; force:boolean; s:string);
+procedure settexttext(p:pointer; const newtxt:string);
+procedure mclearsel(nr: Integer);
+procedure mappendsel(nr: Integer; force:boolean; const s:string);
 
 
 procedure InitMaskeUnit;
@@ -194,7 +194,7 @@ const maxmask   = 10;                { max. gleichzeitig offene Masken }
       maxfields = 140;               { max. Felder pro Maske           }
 
       insert_mode : boolean = true;
-      help_page   : word = 0;        { Helpnr des Eingabefeldes }
+      help_page   : Integer = 0;        { Helpnr des Eingabefeldes }
       yesno       : string[2] = 'JN';
 
 type
@@ -204,18 +204,18 @@ type
       maskstat = record
                    col         : colrec;
                    rahmentyp   : byte;     { 0=keiner, 1/2/3, 4=wechselnd }
-                   rl,rr,ro,ru : byte;     { Rahmen-Koordinaten }
-                   hpx,hpy,hpl : byte;     { Position/Len Hilfstexte }
+                   rl,rr,ro,ru : Integer;  { Rahmen-Koordinaten }
+                   hpx,hpy,hpl : Integer;  { Position/Len Hilfstexte }
                    hcenter     : boolean;  { Hilfstexte zentrieren }
                    keeponesc   : boolean;  { Eingaben trotz Esc behalten }
                    autoselbox  : boolean;  { Auswahlbox automatisch îffnen }
                    fillchar    : char;     { FÅllzeichen bei Eingabe }
                    selboxkey   : taste;    { '' -> keine SelBox; Def: F2 }
-                   fnix,fniy   : byte;     { Position der FNKey-Info }
+                   fnix,fniy   : Integer;  { Position der FNKey-Info }
                    fnkeyinfo   : string;
                    fnkeyfill   : char;
                    wrapmode    : wrapmodes;
-                   autojump    : byte;    { Zeilensprung bei verl.d.Fensters }
+                   autojump    : Integer;  { Zeilensprung bei verl.d.Fensters }
                    quitfn      : quitfunc;
                    arrowspace  : boolean;  { Leerzeichen vor/hinter Feld }
                    mausarrows  : boolean;
@@ -227,7 +227,7 @@ type
                  end;
 
       udarec   = record
-                   x1,y1,x2,y2 : byte;
+                   x1,y1,x2,y2 : Integer;
                    fillc       : char;
                    color       : byte;
                  end;
@@ -242,7 +242,7 @@ type
       textnode = record                    { Knoten fÅr Anzeigetext-Liste }
                    next        : textnodep;
                    txt         : string;
-                   xx,yy,attr  : byte;
+                   xx,yy,attr  : Integer;
                  end;
 
       feldrec  = record
@@ -251,9 +251,9 @@ type
                    txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
                    variable    : variant;  { Adresse der Variablen }
-                   xx,yy,len   : byte;     { Position, AnzeigelÑnge }
-                   yy0,xx2     : byte;     { Position des Inhalts }
-                   maxlen      : byte;     { maximale LÑnge des Inhalts }
+                   xx,yy, len  : Integer;     { Position, AnzeigelÑnge }
+                   yy0,xx2     : Integer;     { Position des Inhalts }
+                   maxlen      : Integer;     { maximale LÑnge des Inhalts }
                    cont        : string;   { Feldinhalt }
                    allowed     : string;   { erlaubte Zeichen }
                    mask        : string[20];  { Masken-String }
@@ -269,15 +269,15 @@ type
                    test2       : testfunc;   { vor Verlassen des Feldes    }
                    test3       : testproc;   { bei Verlassen des Feldes    }
                    hpline      : string;
-                   helpnr      : word;       { Hilfsseiten-Nr. }
-                   selhelpnr   : word;       { Hilfsseite bei <F2> }
+                   helpnr      : Integer;    { Hilfsseiten-Nr. }
+                   selhelpnr   : Integer;    { Hilfsseite bei <F2> }
                    selliste    : selnodep;
                    hassel      : boolean;
-                   slx,sly,sll : byte;       { SListen-Position/LÑnge }
-                   slmin       : byte;       { minimale ListenlÑnge }
+                   slx,sly,sll : Integer;    { SListen-Position/LÑnge }
+                   slmin       : Integer;    { minimale ListenlÑnge }
                    noslpos     : boolean;    { slx..sll noch nicht gesetzt }
                    forcesll    : boolean;
-                   pempty      : boolean; { Formatierter Str. darf leer sein }
+                   pempty      : boolean;    { Formatierter Str. darf leer sein }
                    custom      : customsel;  { eigene Select-Prozedur }
                    nonedit     : boolean;    { Feld nicht editierbar }
                    autotrim    : byte;       { 0=nein, 1=r, 2=r+l }
@@ -291,12 +291,12 @@ type
 
       masktyp  = record
                    stat        : maskstat;
-                   li,re,ob,un : byte;        { Arbeitsbereich }
+                   li,re,ob,un : Integer;     { Arbeitsbereich }
                    dopush      : boolean;     { Inhalt sichern }
-                   felder      : byte;        { Anzahl Felder  }
+                   felder      : Integer;        { Anzahl Felder  }
                    fld         : array[1..maxfields] of feldp;
                    mtxt        : textnodep;
-                   maxyy0      : byte;        { grî·ter Y-Wert }
+                   maxyy0      : Integer;        { grî·ter Y-Wert }
                    yp,a        : integer;     { akt. Feldnr./Offset }
                    modified    : boolean;     { Inhalt geÑndert }
                    editing     : boolean;     { Editieren aktiv }
@@ -320,7 +320,7 @@ var   mask    : array[0..maxmask] of maskp;
                9=Uhrzeit (hh:mm oder hh:mm:ss), 10=Boolean (J/N)  }
 
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln('MASK: ',txt);
   halt(1);
@@ -363,7 +363,7 @@ procedure testfield(nr:integer); forward;
 { neue Maske îffnen, falls noch Handles frei   }
 { der Maskenstatus wird von mask[0] Åbernommen }
 
-procedure openmask(l,r,o,u:byte; pushit:boolean);
+procedure openmask(l,r,o,u: Integer; pushit:boolean);
 begin
   if masks=maxmask then error('Overflow');
   inc(masks);
@@ -387,7 +387,7 @@ begin
 end;
 
 
-procedure mclearsel(nr:word);
+procedure mclearsel(nr: Integer);
 var p1,p2 : selnodep;
 begin
   testfield(nr);
@@ -446,7 +446,7 @@ end;
   1/2/3 = einfach/doppelt/spezial
   4 = automatisch Ñndern beim durchscrollen }
 
-procedure maskrahmen(rtyp,l,r,o,u:byte);
+procedure maskrahmen(rtyp,l,r,o,u: Integer);
 begin
   with amaskp^.stat do begin
     rahmentyp:=rtyp;
@@ -481,7 +481,7 @@ end;
 { Hilfszeile einstellen      }
 { hx = 0 -> keine Hilfszeile }
 
-procedure masksethelp(hx,hy,hl:byte; center:boolean);
+procedure masksethelp(hx,hy,hl: Integer; center:boolean);
 begin
   with amaskp^.stat do begin
     hpx:=hx;
@@ -494,7 +494,7 @@ end;
 
 { Info-Text fÅr SelKey einstellen }
 
-procedure masksetfninfo(x,y:byte; text:string; fillc:char);
+procedure masksetfninfo(x,y: Integer; const text:string; fillc:char);
 begin
   with amaskp^.stat do begin
     fnix:=x; fniy:=y;
@@ -520,7 +520,7 @@ end;
 { automatisch weiterspringen soll, wenn sie nach }
 { unten mit Return verlassen wird.               }
 
-procedure masksetautojump(aj:byte);
+procedure masksetautojump(aj: Integer);
 begin
   amaskp^.stat.autojump:=aj;
 end;
@@ -545,7 +545,7 @@ begin
 end;
 
 
-procedure MaskUpDownArrows(x1,y1,x2,y2:byte; fill:char; col:byte);
+procedure MaskUpDownArrows(x1,y1,x2,y2: Integer; fill:char; col:byte);
 begin
   amaskp^.uda.x1:=x1;
   amaskp^.uda.y1:=y1;
@@ -594,7 +594,7 @@ end;
 { reinen Anzeigetext anfÅgen }
 { attr=0 -> ColFeldName      }
 
-procedure Maddtext(x,y:integer; text:string; att:byte);
+procedure Maddtext(x,y:integer; const text:string; att:byte);
 var p : textnodep;
 begin
   with amaskp^ do begin
@@ -619,7 +619,7 @@ begin
 end;
 
 
-procedure setall(var text:string; x,y:byte; addblank:boolean);
+procedure setall(const text:string; x,y:byte; addblank:boolean);
 var
    newfld : feldp;
 begin
@@ -681,14 +681,15 @@ end;
 { '<'  ->  automatische Umwandlung in Kleinbuchstaben     }
 { '!'  ->  automatische Gro·schreibung des 1. Buchstabens }
 
-procedure Maddstring(x,y:integer; text:string; var s:string; displ,maxl:integer;
-                     chml:string);
-var p : byte;
+procedure Maddstring(x,y:integer; const text:string; var s:string; displ,maxl:integer;
+                     const chml:string);
+var p : Integer;
 begin
   setall(text,x,y,true);
-  with lastfld^ do begin
+  with lastfld^ do 
+  begin
     typ:=1;
-    variable:=@s;
+    variable:=@s;          
     len:=displ; maxlen:=maxl;
     if maxlen=1 then autohigh:=false;
     repeat
@@ -698,14 +699,14 @@ begin
     until p=0;
     cont:=LeftStr(s,maxl);
     set_chml(amaskp^.felder,chml);
-    end;
+  end;
 end;
 
 
 { Integer AnfÅgen
   Typ 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
-procedure Maddint(x,y:integer; text:string; var int; ityp,displ:integer;
+procedure Maddint(x,y:integer; const text:string; var int; ityp,displ:integer;
                   imin,imax:longint);
 var l : longint;
     s : s40;
@@ -737,7 +738,7 @@ end;
 
 { Real anfÅgen }
 
-procedure Maddreal(x,y:integer; text:string; var r:real; displ,rnk :integer;
+procedure Maddreal(x,y:integer; const text:string; var r:real; displ,rnk :integer;
                    rmin,rmax : real);
 var s : s40;
 begin
@@ -788,7 +789,7 @@ end;
 { Alle anderen Stellen werden aus dem Format Åbernommen.    }
 { Wenn s='', dann wird s:=form gesetzt.                     }
 
-procedure Maddform(x,y:integer; text:string; var s:string; form,chml:string);
+procedure Maddform(x,y:integer; const text:string; var s:string; const form,chml:string);
 begin
   if s='' then s:=form;
   MAddString(x,y,text,s,length(form),length(form),chml);
@@ -804,7 +805,7 @@ end;
 { long -> langes Datumsformat }
 { mbempty -> may be empty     }
 
-procedure Madddate(x,y:integer; text:string; var d:string; long,mbempty:boolean);
+procedure Madddate(x,y:integer; const text:string; var d:string; long,mbempty:boolean);
 begin
   Maddform(x,y,text,d,iifs(long,'  .  .    ','  .  .  '),' 0123456789');
   with lastfld^ do begin
@@ -817,7 +818,7 @@ end;
 
 { Uhrzeit anfÅgen }
 
-procedure Maddtime(x,y:integer; text:string; var t:string; long:boolean);
+procedure Maddtime(x,y:integer; const text:string; var t:string; long:boolean);
 begin
   Maddform(x,y,text,t,iifs(long,'  :  :  ','  :  '),'0123456789');
   lastfld^.typ:=9;
@@ -830,7 +831,7 @@ end;
 { displ : Anzeige-LÑnge (wg. forms)                   }
 { Das Feld ist nicht mehr editierbar!                 }
 
-procedure Maddcustomsel(x,y:integer; text:string; var s:string; displ:integer;
+procedure Maddcustomsel(x,y:integer; const text:string; var s:string; displ:integer;
                         cp:customsel);
 begin
   Maddstring(x,y,text,s,displ,displ,'');
@@ -913,7 +914,7 @@ end;
 
 { Hilfszeile setzen }
 
-procedure MH(text:string);
+procedure MH(const text:string);
 begin
   if testlast then
     with lastfld^ do
@@ -921,14 +922,14 @@ begin
 end;
 
 
-procedure MHnr(helpnr:word);
+procedure MHnr(helpnr: Integer);
 begin
   if testlast then
     lastfld^.helpnr:=helpnr;
 end;
 
 
-procedure MSelHnr(helpnr:word);
+procedure MSelHnr(helpnr: Integer);
 begin
   if testlast then
     lastfld^.selhelpnr:=helpnr;
@@ -940,7 +941,7 @@ end;
 { tisch eingestellt, weobei die Liste mindestens  }
 { len Zeilen lang ist.                            }
 
-procedure MSetSel(sx,sy,slen:byte);
+procedure MSetSel(sx,sy,slen: Integer);
 begin
   if testlast then
     with lastfld^ do begin
@@ -1003,14 +1004,14 @@ begin
 end;
 
 
-procedure mappendsel(nr:word; force:boolean; s:string);
+procedure mappendsel(nr: Integer; force:boolean; const s:string);
 begin
   testfield(nr);
   _mappsel(amaskp^.fld[nr],force,s);
 end;
 
 
-procedure MAppSel(force:boolean; s:string);
+procedure MAppSel(force:boolean; const s:string);
 begin
   if testlast then
     _mappsel(lastfld,force,s);
@@ -1070,7 +1071,7 @@ begin
 end;
 
 { mask_helpnr = mhelpnr + afld^.helpnr }
-function mask_helpnr:word;
+function mask_helpnr: Integer;
 begin
   mask_helpnr:=help_page;
 end;
@@ -1081,8 +1082,8 @@ begin
 end;
 
 
-procedure readstring(x,y:byte; text:string; var s:string; displ,maxl:byte;
-                     chml:string; var brk:boolean);
+procedure readstring(x,y: Integer; const text:string; var s:string; displ,maxl: Integer;
+                     const chml:string; var brk:boolean);
 begin
   openmask(x,x+length(text)+displ+2,y,y,false);
   maskrahmen(0,0,0,0,0);
@@ -1112,7 +1113,7 @@ end;
 { Diese Prozedur ist fÅr den Einsatz }
 { durch TEST-Prozeduren gedacht      }
 
-procedure setfield(nr:word; newcont:string);
+procedure setfield(nr: Integer; const newcont:string);
 begin
   testfield(nr);
   with amaskp^ do begin
@@ -1123,7 +1124,7 @@ begin
     end;
 end;
 
-procedure set_chml(nr:word; chml:string);
+procedure set_chml(nr: Integer; chml:string);
 begin
   testfield(nr);
   with amaskp^.fld[nr]^ do begin
@@ -1131,7 +1132,7 @@ begin
       autoup:=(chml[1]='>');
       autodown:=(chml[1]='<');
       topcase:=(chml[1]='!');
-      if autoup or autodown or topcase then delete(chml,1,1);
+      if autoup or autodown or topcase then DeleteFirstChar(chml);
       end
     else begin
       autoup:=false; autodown:=false; topcase:=false;
@@ -1144,7 +1145,7 @@ end;
 { Inhalt eines Feldes direkt abfragen }
 { siehe oben                          }
 
-function getfield(nr:word):string;
+function getfield(nr: Integer):string;
 begin
   testfield(nr);
   getfield:=amaskp^.fld[nr]^.cont;
@@ -1165,7 +1166,7 @@ end;
 
 { Feld aktivieren/deaktivieren }
 
-procedure setfieldenable(nr:word; eflag:boolean);
+procedure setfieldenable(nr: Integer; eflag:boolean);
 begin
   testfield(nr);
   with amaskp^ do
@@ -1176,7 +1177,7 @@ begin
         end;
 end;
 
-procedure setfieldnodisp(nr:word; dflag:boolean);
+procedure setfieldnodisp(nr: Integer; dflag:boolean);
 begin
   testfield(nr);
   with amaskp^ do
@@ -1189,7 +1190,7 @@ end;
 
 { Feldbezeichnung Ñndern }
 
-procedure setfieldtext(nr:word; newtxt:string);
+procedure setfieldtext(nr: Integer; const newtxt:string);
 begin
   testfield(nr);
   with amaskp^.fld[nr]^ do begin
@@ -1201,7 +1202,7 @@ end;
 
 { Textfeld Ñndern }
 
-procedure settexttext(p:pointer; newtxt:string);
+procedure settexttext(p:pointer; const newtxt:string);
 begin
   with textnodep(p)^ do begin
     txt:=newtxt;
@@ -1246,7 +1247,7 @@ begin
 end;
 
 
-procedure masklanguage(_yesno:string);               { 'JN' }
+procedure masklanguage(const _yesno:string);               { 'JN' }
 begin
   yesno:=_yesno;
 end;
@@ -1292,6 +1293,11 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.35  2001/10/17 14:00:24  mk
+  - fixed range check error in maddstring
+  - added some const parameters
+  - changed some byte to integer, saves about 3kb code
+
   Revision 1.34  2001/09/27 23:04:03  mk
   - moved variable initialization to initialization-part to avoid crashes
     in finalization parts with rc and ihs
