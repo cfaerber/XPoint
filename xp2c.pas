@@ -590,13 +590,12 @@ procedure shelloptions;
 var brk : boolean;
     x,y : byte;
 begin
-  dialog(ival(getres2(257,0)),9,getres2(257,1),x,y);    { 'Shell' }
+  dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
-  maddbool(3,3,getres2(257,6),shellinit);            { 'Videomodus nach Shell setzen' }
-  maddint(3,5,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Gr”áe:  ' }
+  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Gr”áe:  ' }
   maddtext(length(getres2(257,3))+11,5,getres(13),0);   { 'Bytes' }
-  maddbool(3,7,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
-  maddbool(3,8,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
+  maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
+  maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
   msetvfunc(testenv);
   freeres;
   readmask(brk);
@@ -1461,6 +1460,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.11  2000/12/19 00:23:57  mk
+  - Farbalette vor Schell/Videomodus umschalten sichern
+
   Revision 1.39.2.10  2000/12/17 23:34:42  mk
   - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
 

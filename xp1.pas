@@ -1060,7 +1060,6 @@ begin
       if ParFontfile<>'' then
         XPFont
       else
-      if (getscreenlines <> screenlines) and ShellInit then
       begin
         sichern(sp);
         if not m3 then setvideomode(3);
@@ -2032,6 +2031,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.10  2000/12/19 00:23:56  mk
+  - Farbalette vor Schell/Videomodus umschalten sichern
+
   Revision 1.48.2.9  2000/12/18 23:35:14  mk
   - Zeilenzahl wird jetzt nach Shell nochmals ausgelesen
 

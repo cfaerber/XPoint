@@ -40,6 +40,9 @@ const DPMS_On       = 0;    { Monitor an }
 
 var  vbase  : word;                        { Screen-Base-Adresse }
      vtype   : byte;
+type
+  TPal = array[0..255, 0..2] of Byte;
+  ppal = ^tpal;
 
 function  VideoType:byte;                  { 0=Herc, 1=CGA, 2=EGA, 3=VGA }
 function  GetVideoMode:byte;
@@ -210,6 +213,8 @@ end;
 { VGA:       25,26,28,30,33,36,40,44,50                 }
 
 procedure SetScreenLines(lines:byte);
+var
+  Pal: pPal;
 begin
   case vtype of
     0 : setvideomode(7);       { Hercules: nur 25 Zeilen }
@@ -227,6 +232,15 @@ begin
           end;
         end;
     3 : begin
+          GetMem(Pal, SizeOf(TPal));
+          asm
+	          mov ax, 01017h
+	          mov bx, 0
+	          mov cx, 256
+                  push ds
+	          les dx, dword ptr Pal
+	          int 10h
+          end;
           setvideomode(3);
           case lines of
             26     : setuserchar(15);
@@ -241,6 +255,17 @@ begin
             60: SetVesaText;
           end;
         end;
+  end;
+  if vtype = 3 then
+  begin
+    asm
+	    mov ax, 01012h
+	    mov bx, 0
+	    mov cx, 256
+	    les dx, dword ptr Pal
+	    int 10h
+    end;
+    FreeMem(pal, SizeOf(TPal));
   end;
   vlines:=lines;
 end;
@@ -262,6 +287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.8  2000/12/19 00:23:55  mk
+  - Farbalette vor Schell/Videomodus umschalten sichern
+
   Revision 1.20.2.7  2000/09/30 16:28:00  mk
   - VESA 80x60-Zeilenmodus
 

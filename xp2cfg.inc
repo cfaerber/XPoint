@@ -489,7 +489,6 @@ begin
   ArchivLoesch:=false;
   ArchivText:=true;
   shell25:=false;
-  shellinit := true;
   edit25:=false;
   MinMB:=4;
   AskQuit:=false;
@@ -826,7 +825,6 @@ begin
   writeln(t,'ArchivLoeschen=',jnf(archivloesch));
   writeln(t,'ArchivVermerk=',jnf(archivtext));
   writeln(t,'Shell25=',jnf(shell25));
-  writeln(t,'ShellInit=',jnf(shellinit));
   writeln(t,'Edit25=',jnf(edit25));
   writeln(t,'MinMB=',minmb);
   writeln(t,'AskQuit=',jnf(askquit));
@@ -1380,7 +1378,6 @@ begin
           getx(su,  'ArchivLoeschen',archivloesch) or
           getx(su,  'ArchivVermerk',archivtext) or
           getx(su,  'Shell25',shell25) or
-          getx(su,  'ShellInit', shellInit) or
           getx(su,  'Edit25',edit25) or
           getw(su,  'MinMB',minmb) or
           getx(su,  'AskQuit',askquit) or
@@ -1698,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.11  2000/12/19 00:23:57  mk
+  - Farbalette vor Schell/Videomodus umschalten sichern
+
   Revision 1.62.2.10  2000/12/17 23:34:42  mk
   - Config/Extern/Shell/Videomodus nach Shell setzen (Res 257,6, Help-ID 311) implementiert
 

@@ -47,6 +47,7 @@ var sm2t     : boolean;
     maussave : mausstat;
     sp       : scrptr;
     de       : integer;
+    pal: ppal;
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -55,11 +56,7 @@ var sm2t     : boolean;
     savecursor;
     cursor(curoff);
     w1:=windmin; w2:=windmax;
-{$IFDEF NCRT }
-    window(1,1,ScreenWidth,ScreenLines);
-{$ELSE }
     window(1,1,80,25);
-{$ENDIF }
     if length(prog)<=74 then
       message(prog)
     else begin
@@ -80,11 +77,9 @@ begin
   de:=0;
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
-{$IFDEF BP }
   if maxavail<$4000 then
     rfehler(7)  { Zu wenig freier Speicher fr externen Programmaufruf! }
   else
-{$ENDIF }
   begin
     { trackpath:=(dospath(0)+'\'=OwnPath) or (dospath(0)=shellpath); }
     getmaus(maussave);
@@ -109,6 +104,18 @@ begin
               gotoxy(1,5);
             end;
     end;
+    if vtype = 3 then
+    begin
+      GetMem(Pal, SizeOf(TPal));
+      asm
+	      mov ax, 01017h
+	      mov bx, 0
+	      mov cx, 256
+              push ds
+	      les dx, dword ptr Pal
+	      int 10h
+      end;
+    end;
     if (cls=2) or (cls=-1) then begin
       if shell25 and (screenlines>25) then
         setvideomode(3);
@@ -126,10 +133,8 @@ begin
     ExecDeutsch:=deutsch;
 
     ExecResident:=resiprog;
-{$IFDEF BP }
     ExecUseEms:=SwapToEms;
     ExecUseXms:=SwapToXms;
-{$ENDIF }
     case Xec(prog,space,envspace,_xp_,errorlevel) of
       ExecSwaperr : begin
                       tfehler(ioerror(ioresult,getres(110)),60);  { Fehler beim Speicherauslagern! }
@@ -154,6 +159,17 @@ begin
       end;
 
     resetvideo;
+    if vtype = 3 then
+    begin
+      asm
+	      mov ax, 01012h
+	      mov bx, 0
+	      mov cx, 256
+	      les dx, dword ptr Pal
+	      int 10h
+      end;
+      FreeMem(pal, SizeOf(TPal));
+    end;
     cursor(curoff);
     if (cls<>4) and (cls<>5) then holen(sp);
     m2t:=sm2t;
@@ -519,6 +535,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.1  2000/12/19 00:23:57  mk
+  - Farbalette vor Schell/Videomodus umschalten sichern
+
   Revision 1.24  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
