@@ -564,7 +564,8 @@ var i,first : integer;
       ccpm:=(cpos('@',adr)>0);
       if ccpm then begin
         dbSeek(ubase,uiName,ustr(adr));
-        if dbFound then begin
+        if dbFound then
+        begin
           size := 0;
           if dbXsize (ubase, 'adresse') <> 0 then
           begin
@@ -607,9 +608,9 @@ var i,first : integer;
             end;
           end;
         end;
-      UpString(server);
+        UpString(server);
       end;
-  end;
+    end;
 
   { alle Kopien mit gleichem Server wie 'empfaenger' nach oben }
   { wandern lassen                                             }
@@ -2408,6 +2409,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.48  2001/12/23 12:08:09  mk
+  - source formatting
+
   Revision 1.39.2.47  2001/12/22 23:42:34  my
   MY:- Syntax bei RFC-Priorit„t (Sendefenster) gefixt
 
