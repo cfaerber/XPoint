@@ -64,6 +64,9 @@ implementation  {-----------------------------------------------------}
 {$IFDEF Kylix}
   uses libc;
 {$ENDIF}
+{$IFDEF Win32}
+  uses mime;
+{$ENDIF}
 
 function timingdate(s1:string):datetimest;
 var t   : text;
@@ -428,7 +431,7 @@ begin
   wrt(x+4,y+10,getres2(rnr,15));
 {$ENDIF}
 {$IFDEF Win32 }
-  wrt(x+4,y+8,'Win32' + getres2(rnr,7));
+  wrt(x+4,y+8,'Win32' + getres2(rnr,7) + ' ('+MimeCharsetNames[GetConsoleOutputCharset]+')');
 {$ENDIF }
 {$IFDEF Dos32 }
   wrt(x+4,y+8,'DOS' + getres2(rnr,7));
@@ -971,6 +974,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2002/07/24 00:10:28  cl
+  - added codepage to OpenXP/Statistik/Speicher dialogue
+
   Revision 1.64  2002/02/21 13:52:33  mk
   - removed 21 hints and 28 warnings
 
