@@ -164,7 +164,11 @@ uses
   xpncuucp in 'netcall\xpncuucp.pas',
   xpnczconnect in 'netcall\xpnczconnect.pas',
   xpnetcall in 'netcall\xpnetcall.pas',
-  ncfido in 'netcall\ncfido.pas';
+  ncfido in 'netcall\ncfido.pas',
+  dos in 'delphi\dos.pas',
+  crt in 'delphi\crt.pas',
+  ObjCOM in 'objcom\objcom.pas',
+  Ringbuff in 'ObjCOM\ringbuff.pas';
 
 {$R *.RES}
 function StartInternalTools: Boolean;
