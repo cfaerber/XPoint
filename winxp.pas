@@ -30,7 +30,9 @@ uses
   sysutils,
   {$IFDEF Win32 }
     windows,
-    messages, 
+    {$IFDEF Delphi }
+      messages,
+    {$ENDIF }
   {$ENDIF }
   {$IFDEF DOS32} 
     crt, {for GotoXY} 
@@ -1477,6 +1479,9 @@ end;
 
 {
   $Log$
+  Revision 1.78  2002/01/12 21:57:13  mk
+  - fixed FPC compilation
+
   Revision 1.77  2002/01/12 14:42:13  cl
   - Kylix 2 compile fixes
 
