@@ -819,13 +819,15 @@ begin
           multi2; initscs;
 
           dbSeek(ubase,uiName,UpperCase(absender));
-          if not dbFound then begin          { neuen User anlegen }
+          // do not add users with names longer 80 char, our database is not large enough
+          if not dbFound and (Length(Absender) <= 80) then
+          begin          { neuen User anlegen }
             if adrok(absender) then
             begin
               { mwrt(29,wherey,forms(absender,22)); }
               AddNewUser(Absender, pollbox_str(zconnect,true));
               writeln(userlog,logstr(absender));
-            end;        { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
+            end;        { Netzunabh„ngige Useraufnahme }
             aufnehmen:=true;
           end
           else
@@ -1171,6 +1173,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2001/01/10 11:17:34  mk
+  JG:- fix for user names longer 80 chars (MK)
+
   Revision 1.43  2001/01/05 09:33:09  mk
   - removed THeader.Ref
 
