@@ -441,7 +441,7 @@ var t1,t2      : text;
     LineArray: array[1..MaxStr] of String;
     LineMark: array[1..MaxStr] of Boolean;
   begin
-    blfile:=ustr(boxfilename(box))+'.BL';
+    blfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.BL';
     if not exist(rcfile) or not exist(blfile) then exit;
     Assign(t2,blfile);
     SetTextBuf(t2, Buf2^);
@@ -500,7 +500,7 @@ begin
   moment;
   MakeRc:=true;
   ReadBox(0,box,boxpar);
-  rcfile:=ustr(boxfilename(box))+'.RC';
+  rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
   Assign(t1,rcfile);       { BOX.RC }
   SetTextBuf(t1, Buf1^);
   if not (exist(rcfile)) then
@@ -1065,7 +1065,7 @@ end;
 procedure MapsBrettliste(art:byte);
 var d      : DB;
     box    : string[BoxNameLen];
-    fn     : pathstr;
+    fn     : string;
     brk    : boolean;
     t      : text;
     s      : string;
@@ -1200,6 +1200,34 @@ label again;
     aufbau:=true;
   end;
 
+  procedure BretterAnlegen2;
+  var x,y : byte;
+      n   : longint;
+      s   : string;
+      i   : integer;
+      t1: text;
+  begin
+    msgbox(30,5,'',x,y);
+    mwrt(x+3,y+2,getres2(807,10));   { 'Bretter anlegen ...' }
+    n:=0;
+    assign(t1, fn);
+    reset(t1);
+    while not eof(t1) do
+    begin
+      readln(t1, s);
+      for i:=1 to length(s) do
+        if s[i]='.' then s[i]:='/';
+     if lastchar(s)='û' then dellast(s);
+      makebrett(trim(s),n,box,netztyp,true);
+      moff;
+      gotoxy(x+22,y+2); write(n:5);
+      mon;
+    end;
+    Close(t1);
+    closebox;
+    dbFlushClose(bbase);
+  end;
+
 begin
   if mapsbox='' then begin
     box:=UniSel(1,false,DefaultBox);
@@ -1326,12 +1354,7 @@ begin
             end;
           if ppp and (art in [0,1]) then
             if MakeRC(art=0,box) then
-            begin
-              OpenList(1,80,4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/');
-              list_readfile(fn,0);
-              BretterAnlegen;
-              CloseList;
-            end;
+              BretterAnlegen2;
           erase(t);
           end
         else begin
@@ -1777,6 +1800,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.8  2001/03/24 10:13:57  mk
+  - automatisches anlegen der Bretter im Brettmanager
+
   Revision 1.10.2.7  2001/03/19 17:35:46  mk
   - neuer Brettmanager
 
