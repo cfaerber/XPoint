@@ -217,18 +217,9 @@ procedure initdirs;
     if (length(HomeDir) > 0) then exit;
   end; { GetHomePath }
 
-  procedure AddSepa(var APath: String);
-  begin
-    if (RightStr(APath,1)<>DirSepa) then                 { Path + / }
-      APath:= APath+DirSepa
-  end;
-
   procedure GetOwnPath;
   begin
-    OwnPath := HomeDir;
-    AddSepa(OwnPath);
-    OwnPath:= OwnPath + BaseDir;
-    AddSepa(OwnPath);
+    OwnPath := AddDirSepa(AddDirSepa(HomeDir) + BaseDir);
   end; { GetOwnPath }
 
   procedure createOpenXPHomedir;
@@ -255,10 +246,12 @@ procedure initdirs;
     {$ifdef UnixDevelop}
     Libdir:= './';
     {$else}
-    LibDir := '/usr/lib/' + XPDirName;                    { Lib/Res-Verzeichnis }
+    LibDir := AddDirSepa('/usr/lib/' + XPDirName) + 'lib';                    { Lib/Res-Verzeichnis }
+    DocDir := AddDirSepa('/usr/lib/' + XPDirName) + 'doc';                    { Lib/Res-Verzeichnis }
     if not DirAvailableCheck(LibDir) then
     begin
-      LibDir := '/usr/local/lib/' + XPDirName;
+      LibDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'lib';
+      DocDir := AddDirSepa('/usr/local/lib/' + XPDirName) + 'doc';
       if not DirAvailableCheck(LibDir) then
       begin
         if _deutsch then
@@ -269,7 +262,8 @@ procedure initdirs;
                LibDir + '" not available.');
       end;
     end;
-    AddSepa(LibDir);
+    LibDir := AddDirSepa(LibDir);
+    DocDir := AddDirSepa(DocDir);
     {$endif}
   end;
 
@@ -298,6 +292,7 @@ begin
   OwnPath := UpperCase(ownpath);
   LibDir  := progpath;
   HomeDir := LibDir;
+  DocDir  := LibDir;
 end; { initdirs }
 {$ENDIF}
 
@@ -611,7 +606,7 @@ var lf : string;
     close(t);
   end;
 
-begin { loadresource }
+  begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   findfirst(LibDir + 'xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
@@ -1205,6 +1200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.79  2000/11/11 19:26:48  ml
+  - changed libdirs for rpm
+
   Revision 1.78  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

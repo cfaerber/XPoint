@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,inout,keys,resource,maus2,help,winxp,printerx, sysutils,
+  typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx, sysutils,
   maske, xp0;
 
 
@@ -294,7 +294,13 @@ var
       mh   : boolean;
 begin
   if not inithlp then
-    if not inithelp(LibDir+helpfile,1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+{$IFDEF UnixFS}
+    if not inithelp(DocDir+helpfile,
+		    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+{$ELSE}
+    if not inithelp(DocDir+helpfile,
+		    1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+{$ENDIF}
     begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
       if ioresult<>0 then;
@@ -404,6 +410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/11/11 19:26:48  ml
+  - changed libdirs for rpm
+
   Revision 1.15  2000/10/17 10:13:23  mk
   - Unit Sysutils hinzugefuegt
 

@@ -168,11 +168,6 @@ function inithelp(name:pathstr; xh,yh:byte;
 
 var ixadr : longint;
     fm      : byte;
-{$ifdef unix}
-  {$ifdef FPC}
-    {$hint name muss noch angepasst werden (Verzeichnisstruktur RPM) }
-  {$endif}
-{$endif}
 begin
   if pos('.',ExtractFileName(name))=0 then name:=name+FileUpperCase('.hlp');
   assign(f,name);
@@ -761,6 +756,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/11 19:26:48  ml
+  - changed libdirs for rpm
+
   Revision 1.27  2000/11/07 20:55:17  mk
   - workaround for FPC Bug in $Q+ Mode
 

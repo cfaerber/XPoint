@@ -122,8 +122,9 @@ var
 { Verzeichnisvariablen - auﬂer in linux alle auf Curdir gesetzt }
 { Initialisiert vom Hauptprogramm                               }
   HomeDir,                     { User-Verzeichnis mit Datenbank }
-  LibDir: String;                { Libraries und Ressourcen       }
-
+  LibDir,                      { Libraries und Ressourcen       }
+  DocDir: String;	       { Dokumentationsverzeichnis      }
+  
 const
   XPDirName = 'openxp';        { Default LibDirname of openxp   }
   BaseDir   = '.' + XPDirName;
@@ -152,6 +153,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.44  2000/11/11 19:26:48  ml
+  - changed libdirs for rpm
+
   Revision 1.43  2000/11/03 13:36:09  mv
    * Made an error yesterday that only manifested under FreeBSD. Fixed.
 
