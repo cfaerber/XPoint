@@ -34,6 +34,8 @@ uses
 {$endif}
   dos, typeform;
 
+{$I-}
+
 {$ifdef vp }
 const FMRead       = fmOpenRead;     { Konstanten fÅr Filemode }
       FMWrite      = fmOpenWrite;
@@ -799,6 +801,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/05/06 17:11:53  hd
+  - $I- eingefuegt
+
   Revision 1.27  2000/05/05 00:10:49  oh
   -PGP-Aufrufe ueber Batch-Datei
 
