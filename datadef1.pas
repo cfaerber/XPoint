@@ -29,7 +29,7 @@ const   db_magic  = 'DB1'^Z;
         maxifelder= 7;        { maximale Anzahl Felder in einem Ind.-Key }
                               { fÅr mehr ist SchlÅssel-Funktion nîtig    }
         dbdMaxSize= 51;
-        maxcache  = 60;       { maximale Index-Cacheseiten }
+        maxcache  = 100;      { maximale Index-Cacheseiten }
 
 
 type    proctype  = procedure;
@@ -103,7 +103,7 @@ type    proctype  = procedure;
                     end;
         inodep    = ^indexnode;
 
-        { Achtung!! énderungen an cachepage auch in DATABASE.ASM Ñndern!! }
+        { Achtung!! énderungen an cachepage auch in DATABASE.PAS Ñndern!! }
 
         cachepage = packed record
                       used     : boolean;  { 0 }
@@ -217,6 +217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/08/25 22:40:31  mk
+  - Datenbank Indexcache freigeschaltet
+
   Revision 1.8  2000/07/09 09:09:53  mk
   - Newexit in Initialization/Finalization umgewandelt
 

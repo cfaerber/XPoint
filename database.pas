@@ -27,8 +27,7 @@ procedure dbICproc(var icr:dbIndexCRec);                  { Default-ICP }
 procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
 procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
-(* Routine wird nicht benutzt
-procedure dbSetindexcache(pages:word);     { 1..61 } *)
+procedure dbSetindexcache(pages:word);     { 1..MaxCache }
 procedure dbReleasecache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
@@ -1582,6 +1581,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.36  2000/08/25 22:40:30  mk
+  - Datenbank Indexcache freigeschaltet
+
   Revision 1.35  2000/08/23 13:55:13  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst

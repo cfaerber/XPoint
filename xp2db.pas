@@ -24,7 +24,7 @@ uses
   crt,
 {$ENDIF }
       dos,typeform,fileio,inout,keys,datadef,database,databaso,
-      sysutils,resource,maus2,xpglobal,
+      sysutils,resource,maus2,xpglobal, datadef1,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
 procedure InitDatabase;
@@ -592,6 +592,7 @@ begin
 {$ENDIF }
   dbSetICP(ICP);
   dbSetIndexVersion(3);
+  dbSetIndexCache(MaxCache);
 
   if not exist(MsgFile+dbext) then
   begin   { XPOINT: Nachrichtendatei }
@@ -884,6 +885,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/08/25 22:40:31  mk
+  - Datenbank Indexcache freigeschaltet
+
   Revision 1.18  2000/07/22 14:05:26  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

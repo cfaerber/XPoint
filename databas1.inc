@@ -8,6 +8,16 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
+
+{ Cache-Seiten allokieren }
+
+procedure dbSetindexcache(pages:word);
+begin
+  cacheanz:=pages;
+  getmem(cache,pages*sizeof(cachepage));
+  fillchar(cache^,pages*sizeof(cachepage),0);
+end;
+
 procedure dbReleasecache;
 begin
   if cacheanz>0 then
@@ -26,8 +36,6 @@ begin
       end
     else
     begin
-//      seek_cache(dbp,offs,i);
-
       i:=0;
       while (i<cacheanz) and
         (not cache^[i].used or (cache^[i].dbp<>dbp) or (cache^[i].ofs<>offs))
@@ -40,7 +48,6 @@ begin
       else begin
         seek(fi,offs);
         blockread(fi,data,irsize);
-//         seek_cache2(sp);
 
         s:=maxlongint;
         sp:=0;
@@ -224,6 +231,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/08/25 22:40:30  mk
+  - Datenbank Indexcache freigeschaltet
+
   Revision 1.14  2000/07/07 10:18:40  mk
   - Assembler-Routinen entfernt
 
