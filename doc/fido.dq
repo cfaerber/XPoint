@@ -2649,6 +2649,7 @@ o  Wartezeit fr empfangene Dateien von 1,5 auf 3 Minuten verdop-
 +  bei der Anzeige der Ergebnisse des Nodelistbrowsers 
    (Fido/Nodelisten/Durchsuchen) kann man ber "Info" die Nodeinfo
    (entspricht <Alt N>) anzeigen lassen
++  Suchw”rter fr Filelisten k”nnen jetzt auch als ganze W”rter,
+   nicht nur als Teil betrachtet werden
 <<|
-MO: Filesuche in FIDO Requestlisten mit bis zu fünf Suchbegriffen
 

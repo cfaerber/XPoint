@@ -249,6 +249,11 @@ wir wohl die Meinung der meisten Anwender. In der Hoffnung, daá wir gute Arbeit
 geleistet haben (und es war Arbeit), ”ffnen wir jetzt den Vorhang.
 
 Das OpenXP-Team
+
+Gut, und diese Doku habe ich, Christian Faulhammer, ganz alleine gemacht,
+und bin Teamleiter des Doku-Teams.
+
+Christian Faulhammer im M„rz 2000
 <<|
 
 
@@ -479,13 +484,13 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      XP.EXE, XP.OVR   das Programm selbst
      XP.HLP           die Online-Hilfe
      XP-D.RES         deutsche Sprachdatei
-     XPOINT.DOC       der Text, den Sie gerade lesen
-     LIZENZ.DOC       Hinweise zu Nutzungsrechten und Registrierung
-     UPDATE.DOC       Hinweise fr den Umstieg auf neue XP-Versionen
-     NEUES.DOC        Beschreibung neuer Features
-     BESTELL.DOC      Bestellinformationen fr Zusatzprodukte
+     XPOINT.TXT       der Text, den Sie gerade lesen
+     LIZENZ.TXT       Hinweise zu Nutzungsrechten und Registrierung
+     UPDATE.TXT       Hinweise fr den Umstieg auf neue XP-Versionen
+     NEUES.TXT        Beschreibung neuer Features
+     BESTELL.TXT      Bestellinformationen fr Zusatzprodukte
 >>|
-     ZPR.DOC          Dokumentation von ZPR.EXE
+     ZPR.TXT          Dokumentation von ZPR.EXE
 <<|
      BEISPIEL.EXE     einige Beispiel-Briefschablonen (SFX-Archiv)
      SCRIPTS.EXE      Beispiel-Scriptdateien (SFX-Archiv, s.Kap.8.3)
@@ -526,8 +531,9 @@ alles Wissenswerte ber die Benutzung von Points.
 
 Wenn Sie es gar nicht mehr abwarten k”nnen, dann fahren Sie bei Kapitel 3.1
 fort. Dort steht, wie Sie Ihren Cross-Point zum Laufen bekommen. Fr die
+
 >>|
-Verwendung im FidoNet lesen Sie bitte FIDO.DOC, fr UUCP UUCP.DOC und analog
+Verwendung im FidoNet lesen Sie bitte FIDO.TXT, fr UUCP UUCP.TXT und analog
 fr QWK.
 <<|
 
@@ -538,7 +544,7 @@ fr QWK.
 Um neben der deutschen Benutzeroberfl„che weitere Sprachen zu installieren,
 kopieren Sie den Inhalt der betreffenden Sprachmodule einfach ins XP-Verzeichnis.
 Falls Sie den deutschen Programmteil nicht mehr ben”tigen, k”nnen Sie die
-betreffenden Dateien (XP-D.RES, XP.HLP, *.DOC) l”schen. Beachten Sie, daá
+betreffenden Dateien (XP-D.RES, XP.HLP, *.TXT) l”schen. Beachten Sie, daá
 bei Sprachmodulen, fr die noch keine bersetzte Online-Hilfe vorliegt, die
 deutsche Hilfe (XP.HLP) mitbenutzt wird.
 
@@ -588,8 +594,7 @@ MausNet schreibe, meine ich alle MausTausch-kompatiblen Netze etc.
 
 --4 (*) šber die Bedeutung der Begriffe Internet, InterNet, Usenet etc.
 herrscht im Allgemeinen groáe Verwirrung. Falls Sie genau wissen m”chten,
-was es damit auf sich hat, lesen Sie bitte den Text UUCP.DOC, der im getrennt
-erh„ltlichen XP-UUCP-Paket enthalten ist.
+was es damit auf sich hat, lesen Sie bitte den Text UUCP.TXT.
 
 
 Einer der (fr Sie) wichtigsten Unterschiede zwischen den verschiedenen Netzen
@@ -616,7 +621,7 @@ Die Art der Useradresse im MagicNET h„ngt davon ab, ob es sich um einen
 sogenannten Aliaspoint (erste Form) oder einen Namenspoint (zweite Form)
 handelt. Im MausNet und FidoNet besteht Realname-Pflicht; einen eigenen
 Usernamen gibt es dort nicht. Die Erkl„rung einer Fido-Adresse wrde hier
-zu weit fhren; genaueres dazu finden Sie in FIDO.DOC.
+zu weit fhren; genaueres dazu finden Sie in FIDO.TXT.
 
 
 ş Gateways (Z-Netz alt, MagicNET, QM/GS)
@@ -818,11 +823,9 @@ hierzu finden Sie in Kapitel 4.1.
 
 ş Point im FidoNet oder Usenet
 
-Eine Beschreibung von FidoNet-Points finden Sie in der Datei FIDO.DOC, die
-im getrennt erh„ltlichen Fido-Paket enthalten ist. Eine Beschreibung von
-Usenet-"Points" - eine bessere Bezeichnung dafr ist "leaf-sites" - finden
-Sie in der Datei UUCP.DOC, die im getrennt erh„ltlichen UUCP-Paket enthalten
-ist.
+Eine Beschreibung von FidoNet-Points finden Sie in der Datei FIDO.TXT. 
+Eine Beschreibung von Usenet-"Points" - eine bessere Bezeichnung dafr 
+ist "leaf-sites" - finden Sie in der Datei UUCP.TXT.
 
 
 Achtung: In jedem Netz gelten unterschiedliche Regeln, die Sie unbedingt
@@ -869,7 +872,7 @@ Personen lesbar; Nachrichtenverschlsselung ist in den meisten Teilen des
 FidoNet verboten.
 
 [2] Im Usenet gibt es verschiedene Brettbestellsysteme. N„heres dazu in
-UUCP.DOC.
+UUCP.TXT.
 
 [3] Brettbestellungen im MausNet erfolgen ber spezielle Steuerbefehle, die
 das Frontend (Pointprogramm) an die Box sendet.
@@ -1247,7 +1250,7 @@ III   Arbeiten mit CrossPoint
 3.1  Point-Installation und Netzanrufe
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-(Fido- und UUCP-Anwender: Bitte in FIDO.DOC / UUCP.DOC weiterlesen).
+(Fido- und UUCP-Anwender: Bitte in FIDO.TXT / UUCP.TXT weiterlesen).
 
 
 ş Wie bekomme ich den Point zum Laufen?
@@ -1517,7 +1520,7 @@ oder aber eine Fehlermeldung, wenn Sie keinen Zugriff auf die betreffenden
 Bretter haben. Im MausNet erhalten Sie ebenfalls eine Best„tigung, allerdings
 befindet sie sich am Ende des Netzanruf-Berichtes (einer Nachricht, die CrossPoint
 nach jedem Netzanruf erzeugt und im Brett "/¯Netzanruf" ablegt). Im Usenet
-(changesys) erhalten Sie als Antwort Ihren aktuellen Sysfile-Eintrag (s. UUCP.DOC).
+(changesys) erhalten Sie als Antwort Ihren aktuellen Sysfile-Eintrag (s. UUCP.TXT).
 
 
 ş gekrzte Brettnamen im Z-Netz
@@ -1768,7 +1771,7 @@ von Gebhreneinheiten gew„hrt, so kann CrossPoint die Gebhren nur noch
 ungef„hr absch„tzen.
 
 Wenn Sie CrossPoint neu installieren, sind die seit Anfang '96 geltenden
-Tarife voreingestellt. Fr Fido-Direktanrufe (FIDO.DOC) mssen zus„tzlich
+Tarife voreingestellt. Fr Fido-Direktanrufe (s. FIDO.TXT) mssen zus„tzlich
 die Vorwahlen der Tarifzonen City, Region 50 und Region 200 eingetragen
 werden. Damit Sie nicht alle Vorwahlen aus der Telekom-Preisinformation
 abtippen mssen, 
@@ -1784,7 +1787,7 @@ Online-Hilfe zu /Config/Optionen/Gebhren/Tarife beschrieben.
 ş Mens
 
 >>|
-Mit dem  im Paket enthaltenem CrossPoint-Meneditor k”nnen Sie einzelne
+Mit dem im Paket enthaltenem CrossPoint-Meneditor k”nnen Sie einzelne
 <<|
 Menpunkte oder Untermens vollst„ndig aus dem XP-Men entfernen. Damit
 l„át sich z.B. der Funktionsumfang von XP einschr„nken, um die Bedienung
@@ -2431,6 +2434,9 @@ versehen, mit deren Hilfe auch die Bezugsverkettung realisiert wird. Es kommt
 ab und an vor, daá Schreiber auf eine ihrer alten Nachricht verweisen und
 einfach nur die ID nennen. Mit dieser Funktion (Nachricht/Suchen/MessageID und
 <Alt M> im Lister) kann man gezielt nach diesen suchen.
+Dabei gibt es eine Unterscheidung zwischen der Suche nach vollst„ndigen IDs 
+(d.h. die gesuchte ist komplett bekannt) oder nach Teilen davon. Grund fr 
+diese Trennung ist der Geschwindigkeitsaspekt.
 <<|
 
 
@@ -2474,24 +2480,23 @@ aus, die absolut nicht vorkommen drfen.
 
 Beispiele:
 
-ÚÄ Volltext-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿              
-³                                                   ³              
-³  Suchbegriff   "Hallo da"                        ³              
-³                                                   ³              
-³  Optionen      ai            Bretter   Netz      ³              
-³                                                   ³              
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ              
+ÚÄ Volltext-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                   ³
+³  Suchbegriff   "Hallo da"                        ³
+³                                                   ³
+³  Optionen      ai            Bretter   Netz      ³
+³                                                   ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
   Findet alle Nachrichten, die ein "Hallo da" oder auch 
   "hAlLo dA", aber nicht "Hallo du da" im Text haben
-  
-ÚÄ User-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿              
-³                                                   ³              
-³  Suchbegriff   Stefan ~Savelsberg                ³              
-³                                                   ³              
-³  Optionen      ia            Bretter   Netz      ³              
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ              
 
+ÚÄ User-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                                                   ³
+³  Suchbegriff   Stefan ~Savelsberg                ³
+³                                                   ³
+³  Optionen      ia            Bretter   Netz      ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
   Es wird nach allen Schreibern gesucht, die Stefan
   heuáen, aber kein "Savelsberg" im Namen tragen
 <<|
@@ -2633,8 +2638,7 @@ es ist damit zu rechnen, daá sie in absehbarer Zeit auch in anderen Netzen
 einsetzbar sein wird.
 
 Informationen zu speziellen Fido- und Usenet-Features finden Sie in den Dateien
-FIDO.DOC bzw. UUCP.DOC, die in den getrennt erh„ltlichen Fido- und UUCP-Paketen
-enthalten sind.
+FIDO.TXT bzw. UUCP.TXT.
 
 
 
@@ -2738,7 +2742,7 @@ Im Fido-Netz gibt es schon seit Langem die M”glichkeit, Dateien bei Mailboxen
 zu "requesten", d.h. zu bestellen. Dazu wird der betreffenden Box einfach
 mitgeteilt, welche Dateien man haben m”chte, und die Box sendet die entsprechende
 Datei dann per Netcall. Es gibt viele Boxen, die ein gr”áeres Archiv an Dateien
-besitzen, die zum Bestellen bereitliegen - n„heres hierzu steht in FIDO.DOC.
+besitzen, die zum Bestellen bereitliegen - n„heres hierzu steht in FIDO.TXT.
 
 Im Zerberus-Programm wurde ursprnglich leider keine M”glichkeit vorgesehen,
 solche FileServer aufzubauen und Dateien zum Bestellen freizugeben. Abhilfe
@@ -2793,7 +2797,7 @@ Fileserver.
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 Im FidoNet k”nnen Sie eilige Nachrichten jederzeit direkt beim Zielsystem
-abliefern - als sogenannte "Crash Mail" (s. auch FIDO.DOC). Im Z-Netz gibt
+abliefern - als sogenannte "Crash Mail" (s. auch FIDO.TXT). Im Z-Netz gibt
 es diese M”glichkeit leider nicht, da nur wenige Systeme die M”glichkeit von
 Gast-Netcalls anbieten. Um wichtige Nachrichten trotzdem schnell und direkt
 beim Zielsystem abliefern zu k”nnen, gibt es die M”glichkeit, die Nachrichten
@@ -2839,7 +2843,7 @@ An gleicher Stelle ist auch die Eingabe einer Vertreteradresse fr *”ffentliche*
 Nachrichten m”glich - dies ist normalerweise der Name eines Brettes, in das
 alle ”ffentlichen Replies auf die Nachricht umgeleitet werden sollen, z.B.
 der Name eines Diskussionsbrettes im Usenet (im Usenet wird oft zwischen
-Informations- und Diskussionsbrettern getrennt; n„heres dazu in UUCP.DOC).
+Informations- und Diskussionsbrettern getrennt; n„heres dazu in UUCP.TXT).
 
 Genau wie die PM-Vertreteradresse kann auch der Brettvertreter (pro Brett)
 fest eingestellt werden. Verwenden Sie dazu die "Zugriff"-Option im Bearbeitungsmodus
@@ -2866,7 +2870,7 @@ Absenden einen Fehler entdecken, alle Kopien der Nachricht einzeln nachbearbeite
 Bei ZCONNECT l„át sich dieses Problem sehr elegant umgehen: Hier kann jede
 Nachricht beliebig viele Empf„nger haben; die Nachricht wird dann nur einmal
 verschickt, taucht aber in allen angegebenen Brettern auf bzw. wird an alle
-angegebenen Empf„nger verteilt. Auch bei RFC-Nachrichten (im Usenet; s. UUCP.DOC)
+angegebenen Empf„nger verteilt. Auch bei RFC-Nachrichten (im Usenet; s. UUCP.TXT)
 gibt es diese M”glichkeit, allerdings mit Einschr„nkung auf ”ffentliche
 Nachrichten. Zwar ist CrossPoint in der Lage, auch mehrere RFC-PMs zu einer
 Nachricht zusammenzufassen - was die Bearbeitung sehr erleichtert -, allerdings
@@ -3235,7 +3239,7 @@ verlassen.
 
 Mit den Befehlen CRASH, CRASHS und REQUESTS k”nnen Fido-Direktanrufe ausgefhrt
 und mit dem Befehl NODEDIFFS Nodeliste-Updates eingebunden werden; n„heres dazu
-in FIDO.DOC.
+in FIDO.TXT.
 
 Ach ja: Eine Timing-Liste kann maximal 100 Eintr„ge enthalten.
 
@@ -3515,7 +3519,7 @@ nicht vorgesehen.
 5.6  Sysop-Mode / Standalone-Betrieb (Disk-Poll)
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-(Fido-Sysops: Bitte in FIDO.DOC, Kapitel "Sysop-Mode" weiterlesen).
+(Fido-Sysops: Bitte in FIDO.TXT, Kapitel "Sysop-Mode" weiterlesen).
 
 Wenn Sie Sysop sind und der Rechner, auf dem CrossPoint l„uft, nur wenige
 Meter von seinem Server entfernt steht, wird Sie das ganze Gerede ber Netcalls
@@ -4158,9 +4162,11 @@ Programmversionen, von denen z.Zt. zwei relevant sind: Die Version 5.0
 (oder nachfolgende) fr Nordamerika und die Version 5.0i (oder nachfolgende)
 fr den Rest der Welt. Die amerikanische Version ist aus patentrechtlichen
 Grnden im Funktionsumfang eingeschr„nkt. Sie sollten also nach M”glichkeit
-die europ„ische Version verwenden, die Sie fr DOS in jeder anderen gutsortierten 
-Mailbox finden. Obige Versionsangaben gelten nur fr DOS, fr Windows existieren
-weit umfangreichere Versionen, die sich aber (noch) nicht in CrossPoint einbinden lassen.
+die europ„ische Version verwenden, die Sie fr DOS auf http://www.pgpi.org
+finden. Obige Versionsangaben gelten nur fr DOS, fr Windows existieren
+weit umfangreichere Versionen, die sich auch in CrossPoint einbinden lassen 
+(als Kommandozeilenversion), aber mehr oder weniger befehlskompatibel zur 
+5er-Reihe sind.
 <<|
 
 Leider gibt es bei der ganzen Sache aber auch einen Haken: Bevor Sie mit
@@ -4211,6 +4217,7 @@ z.Zt. nicht sehr zuverl„ssig. Eine nderung an den Gateways k”nnte dieses
 Problem in Zukunft beheben.
 
 >>|
+::PGP 6.x in Arbeit
 CrossPoint wurde mit PGP 2.6.i, 2.6.2i und 5.0i getestet. Es sollte auch mit 
 neueren PGP-Versionen funktionieren, sofern an diesen nichts Wesentliches 
 ge„ndert wurde, wie dies mit der Version fnf geschehen ist.
@@ -4353,10 +4360,11 @@ PGP verschlsseln m”chten, geben Sie einfach
       pgp -ka team.key (PGP < 5.0)
       pgpk -a team.key (PGP > 5.0)
 
-ein. Dadurch wird der ”ffentliche Team-Schlssel in Ihren Schlsselring
-eingefgt. Im Fido ist Verschlsselung zumeist eh nicht erlaubt und somit 
-entf„llt eine extra Ansprech-Adresse. Fragen Sie im Notfall in einem der 
-Support-Echos nach, viele Entwickler sind auch dort aktiv.
+ein. Dadurch wird der ”ffentliche Team-Schlssel (liegt im DOC-Verzeichnis) 
+in Ihren Schlsselring eingefgt. Im Fido ist Verschlsselung zumeist eh 
+nicht erlaubt und somit entf„llt eine extra Ansprech-Adresse. Fragen Sie 
+im Notfall in einem der Support-Echos nach, viele Entwickler sind auch dort 
+aktiv.
 <<|
 
 ş Technisches
@@ -4593,8 +4601,9 @@ aufgerufen werden. Die einzelnen Punkte sind:
   Quote-Reflow      : Wenn innerhalb des Zitates (Quote) einer
                       Nachricht die <Enter>-Taste bet„tigt wird,
                       fgt der Editor das Quote-Zeichen am Anfang
-                      der Zeile wieder ein. <Shift-Enter> bewirkt
-                      das jeweilige Gegenteil
+                      der Zeile wieder ein bzw. l”scht es, wenn
+                      zwei Quotezeilen zusammengefasst werden. 
+                      <Shift-Enter> bewirkt das jeweilige Gegenteil
 <<|
 
 
@@ -4662,6 +4671,9 @@ Die folgenden Funktionen beziehen sich immer auf den gerade markierten Block:
     <Ctrl K><O> : Block Rot13-codieren
     <Ctrl Q><B> : Cursor an Blockanfang bewegen
     <Ctrl Q><K> : Cursor an Blockende bewegen
+>>|
+    <Ctrl B>    : Block reformatieren (s. weiter unten)
+<<|
 
 Neben diesen konventionellen Blockoperationen besteht auch die M”glichkeit,
 mit einer Zwischenablage (Clipboard) zu arbeiten. Dazu dienen die Tasten auf
@@ -4673,7 +4685,10 @@ dem Ziffernblock:
 
 Diese Zwischenablage arbeitet unabh„ngig von den brigen Blockoperationen und
 von dem unten beschriebenen L”schpuffer. Falls XP unter Windows arbeitet,
-wird die Windows-Zwischenablage verwendet.
+>>|
+wird die Windows-Zwischenablage verwendet (Hinweise zu NT und OS/2 finden Sie 
+im Anhang C).
+<<|
 
 
 ş L”schen und Einfgen
@@ -4726,6 +4741,32 @@ Der Editor erlaubt das Setzen von bis zu 5 Markierungen im Text, die anschlieáen
 
   <Ctrl K><x> : Markierung x an Cursorposition setzen (x = 1 bis 5)
   <Ctrl Q><x> : springe zu Markierung x (x = 1 bis 5)
+
+
+>>|
+ş Block reformatieren
+
+Mit Hilfe der Tastenkombination <Ctrl B> kann man einen Block reformatieren,
+d.h. alle Zeilen werden so gut es geht auf die eingestellte maximale Zeilenl„nge
+gesetzt. Aus einem Block
+
+   > OpenXP ist super, vor allem der Editor 
+   > ist seit der 3.12 so viel besser geworden. Endlich macht
+   > es
+   > wieder richtig Spass damit zu arbeiten.
+
+   > OpenXP ist super, vor allem der Editor ist seit der 3.12 so 
+   > viel besser geworden. Endlich macht es wieder richtig Spass 
+   > damit zu arbeiten.
+
+Auch die Quotezeichen (">") bleiben richtig erhalten, aber auch nicht-zitierte
+Passagen werden so wieder lesbarer. Sogar das automatische Einrcken ist damit
+vereinfacht worden: Man setzt die erste Zeile des Blockes in die gewnschte Spalte
+und drckt einfach <Ctrl B>, schon sind alle Zeilen auf diese Spalte ausgerichtet.
+
+Als Block wird hier entweder ein markierter Bereich definiert oder der aktuelle
+Absatz, der bis zur n„chsten Leerzeile l„uft nicht bis zum n„chsten Zeilenumbruch (!).
+<<|
 
 
 ş Verschiedenes
@@ -5279,7 +5320,7 @@ technisch notwendig, da die Absenderadresse im Nachrichtenkopf beim Weiterrouten
 der Nachricht ver„ndert wird. In PMs wird keine Origin-Zeile ben”tigt.
 
 Wenn Sie Fido-Pakete bearbeiten m”chten, besteht der einfachste Weg darin,
-sie mit ZFIDO (s. FIDO.DOC) ins ZConnect-Format und nachher wieder zurck ins
+sie mit ZFIDO (s. FIDO.TXT) ins ZConnect-Format und nachher wieder zurck ins
 Fido-Format zu konvertieren.
 
 
@@ -5307,7 +5348,7 @@ sogenannten SMTP-Batches zusammengefaát. N„heres zum Mailformat finden Sie
 in RFC 822, eine knappe Beschreibung von Envelope-Adressierung und SMTP-Batching
 befindet sich in RFC 976. Eine Erweiterung des Mailformats fr bin„re Daten
 und verschiedene Nachrichtentypen und Zeichens„tze ist in RFC 1341 beschrieben.
-Eine genauere Beschreibung befindet sich auch in UUCP.DOC.
+Eine genauere Beschreibung befindet sich auch in UUCP.TXT.
 
 
 
@@ -5480,9 +5521,8 @@ MaxCrosspost          Obergrenze fr eingehende Crosspostings
 Waehrung              W„hrung fr Gebhrenabsch„tzung
 GebCfos               cFos-Gebhrenbernahme
 >>|
-::Erg„nzen
-GebNoconn
-::
+GebNoconn             Gebhren auch bei nicht erfolgreicher
+                      Verbindung zum Server erfassen
 <<|
 Feiertage             deutsche Feiertage bei Telefonkostenberech-
                       nung bercksichtigen
@@ -5950,7 +5990,7 @@ seit der letzten Abfrage ge„ndert hat.
 
 ş Fido-Dateien
 
-Der Aufbau von Fido-spezifischen Dateien ist in FIDO.DOC beschrieben.
+Der Aufbau von Fido-spezifischen Dateien ist in FIDO.TXT beschrieben.
 
 
 
@@ -6092,7 +6132,7 @@ Um Bin„rnachrichten zu versenden, muá zus„tzlich eine "Datei:"-Zeile eingefgt
 werden, die den Namen der zu versendenden Datei enth„lt. Wenn der Name keine
 Pfadangabe enth„lt, muá die Datei sich im bei /Config/Pfade eingestellten
 Sendeverzeichnis befinden. Falls es sich nicht um eine Fido-Fileattach-Nachricht
-handelt (s. auch FIDO.DOC), ist bei Bin„rnachrichten der auf den Kopf folgende
+handelt (s. auch FIDO.TXT), ist bei Bin„rnachrichten der auf den Kopf folgende
 Text ohne Bedeutung und wird ignoriert. Wichtig ist, daá Sie bei Fido-Dateien
 kein .MSD sondern nur .MSG verwenden, weil die File-Attach-Datei sonst gel”scht
 wrde, bevor der Fido-Mailer sie bertragen kann; auáerdem ist hier die Angabe
@@ -6298,7 +6338,7 @@ entscheiden meist zu Beginn der Verbindung anhand einer speziellen "Eingabe"
 arbeitet.
 
 Ganz anders sieht es bei UUCP-Systemen aus (n„here Informationen dazu finden
-Sie in UUCP.DOC), bei denen das Loginverfahren berhaupt nicht festgelegt ist. 
+Sie in UUCP.TXT), bei denen das Loginverfahren berhaupt nicht festgelegt ist. 
 Meist geben diese Systeme "Login:" und "Password:" aus und erwarten an dieser 
 Stelle die Eingabe der entsprechenden Daten, aber es kann durchaus vorkommen, 
 daá ein UUCP-Rechner sich dem Benutzer v”llig anders pr„sentiert und z.B. 
@@ -6866,7 +6906,7 @@ M”gliche Optionen sind:
          Dateierweiterung angegeben wird, nimmt XP ".FNT" an.
 
    /gd:  w„hlt eine andere Gebhrendatei (Default: GEBUEHR.DAT).
-         N„heres s. FIDO.DOC.
+         N„heres s. FIDO.TXT.
 
    /j    fr ein Programmende ohne irgendeinen dummen Spruch...
 
@@ -7180,7 +7220,7 @@ sowie alle weiteren Node- und Pointlisten.
 >>|
 Im DOC-Verzeichnis landen natrlich:
 
-  *.DOC          Dokumentationen aller Art
+  *.TXT          Dokumentationen aller Art
 <<|
 
 Achtung! Modifizieren Sie auf keinen Fall irgendwelche Pufferdateien
@@ -7207,7 +7247,7 @@ C.  Zusatzprogramme
 
 ş ZPR.EXE
 
-s. ZPR.DOC
+s. ZPR.TXT
 
 
 ş PMCONV.EXE
@@ -7248,7 +7288,7 @@ aufrufen.
 
 Erzeugte ZConnect-Puffer k”nnen mit /XPoint/Import/Puffer eingelesen werden.
 N„heres ber den Aufbau der Pufferdateien finden Sie in Kapitel 7.1. Das
-Konvertieren von Fido-Paketen ist in FIDO.DOC beschrieben
+Konvertieren von Fido-Paketen ist in FIDO.TXT beschrieben
 
 
 (Seven = Seven-Netz, Magic = MagicNET, Pro = ProNet, Z = ZConnect, Maus =
@@ -7291,7 +7331,7 @@ das Sie in vielen Boxen finden.
 
 ş ZFIDO.EXE, YUP2PKT.EXE, NDIFF.EXE
 
-Eine Beschreibung dieser Programme finden Sie in FIDO.DOC.
+Eine Beschreibung dieser Programme finden Sie in FIDO.TXT.
 
 
 ş XPME.EXE
@@ -7322,6 +7362,11 @@ mit CrossPoint empfohlen werden:
 
   o  XPScore, um sich Mails nach eigene Geschmack vorsortieren zu
      lassen
+
+  o  Fr die neuen Anbieter bringt XPCbC eine geeignete L”sung, um
+     hunderte von Marken im liberalisierten Telefonmarkt zu 
+     sparen ;)
+     
 
   o  CrossPoint kann leider nicht die Zwischenablagen von Windows NT
      (bzw. 2000) oder OS/2 nutzen, dafr sind extra Treiber n”tig:
@@ -7371,7 +7416,7 @@ Mit /XPoint/Import/Yuppie-Nachrichten k”nnen Sie eine komplette Yuppie-Nachricht
 konvertieren und einlesen lassen. Vor dem Import sollten Sie einmal den
 Yuppie-Menpunkt "Renumerieren" im Men "Poll" ausfhren, um die Datenbank
 zu packen.
-:;
+
 šberprfen Sie als N„chstes, ob bei /Edit/Boxen/Edit/Fido die gewnschte
 Bretthierarchie eingestellt ist, in die die Fido-Gruppen eingeordnet werden
 sollen. Beachten Sie auáerdem, daá XP alle Nachrichten automatisch mit der
@@ -7393,8 +7438,10 @@ E.  CrossPoint und MS-Windows oder OS/2
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 
-Windows 89 bis 97
+>>|
+Windows 89 bis 98
 -----------------
+<<|
 
 ş Legen Sie fr XP eine PIF-Datei an!
 
@@ -7405,9 +7452,12 @@ Ihr Rechner *nicht* mit EMS-Speicher ausgestattet ist, mssen Sie die Obergrenze
 fr EMS-Speicher auf 0 KByte einstellen. Das "Entdecken von Leerlaufzeit" sollte
 eingeschaltet sein.
 
-Geben Sie als Aufrufparameter "/w" an. Dadurch werden Maus-Emulation, XP-interner
-Screensaver und die XP-Uhr abgeschaltet. CrossPoint ben”tigt dann im Multitasking-Betrieb
-keine Rechenzeit mehr, wenn es auf Tastatureingaben wartet.
+>>|
+Falls ihre Systemlast beim Betrieb von CrossPoint stark ansteigt, eben Sie als
+Aufrufparameter "/w" an. Dadurch werden Maus-Emulation, XP-interner
+Screensaver abgeschaltet. Normalerweise sollte das automatisch
+geschehen, aber man weiá ja nie.
+<<|
 
 Falls XP wegen irgendeines Problems mit einer Fehlermeldung beendet wird,
 sollten Sie in der PIF-Datei den Schalter zum automatischen Schlieáen des
@@ -7439,6 +7489,10 @@ da Windows 3.1 die Fenstergr”áe an die Bildzeilenzahl anpaát.
 In der Datei XPICONS.DLL sind mehrere Icons fr CrossPoint enthalten. Verwenden
 Sie den Menpunkt "Eigenschaften" aus dem Datei-Men des Program-Managers, um
 fr CrossPoint ein neues Icon zu w„hlen.
+>>|
+Fr Windos ab 95 gilt, daá sie das Icon der PIF-Datei ber den Kontexmen-Punkt
+"Eigenschaften" ge„ndert werden kann.
+<<|
 
 ş Clipboard (Zwischenablage)
 
@@ -7454,6 +7508,7 @@ und beim Speichern mit "W" im internen Lister. Im internen Editor k”nnen Sie
 markierte Bl”cke mit "*" ins Clipboard kopieren, mit "-" ins Clipboard verschieben
 und mit "+" aus dem Clipboard einfgen. Die Gr”áe von Clipboard-Transfers ist
 z.Zt. auf 64 KByte beschr„nkt.
+
 
 ş SMARTDRV
 
@@ -7471,8 +7526,8 @@ Festplatten-Performance) eine h”here Datensicherheit bieten.
 
 
 
-Windows NT
-----------
+Windows NT inkl. 2000
+---------------------
 
 Legen Sie eine PIF-Datei an und aktivieren Sie die den Schalter "Leerlaufzeit
 entdecken". Die Leerlaufzeit-Erkennung von Windows NT arbeitet von allen
@@ -7492,12 +7547,17 @@ dadurch kaum beeintr„chtigt.
 
 Die meisten Zmodem-Protokolle, einschlieálich PD-Zmodem, funktionieren unter
 Windows NT nicht zuverl„ssig bei h”heren Baudraten. In diesem Fall sollten Sie
-entweder GSZ verwenden, oder den FOSSIL-Treiber NTFOSS, den Sie z.B. in der
-XP-Supportbox finden. Falls NTFOSS nicht richtig funktioniert, sollten Sie
-dessen Leerlaufzeiterkennung abschalten (Parameter "/a 0"). Beispielaufruf
-fr COM2 bei 38400 bps:
+entweder GSZ verwenden, oder den FOSSIL-Treiber NTFOSS. Falls NTFOSS nicht 
+richtig funktioniert, sollten Sie dessen Leerlaufzeiterkennung abschalten 
+(Parameter "/a 0"). Beispielaufruf fr COM2 bei 38400 bps:
 
     NTFOSS /a 0 /l 1 COM2 baud=38400
+
+>>|
+Windows NT (sowie die Nachfolger ab Windows 2000) hat leider einen anderen 
+Mechanismus fr die Zwischenablage als die "Consumer-Versionen", somit sind
+hier spezielle Treiber notwendig (s. Anhang C).
+<<|
 
 
 
@@ -7508,8 +7568,8 @@ OS/2
 
 Sie k”nnen grunds„tzlich auch unter OS/2 den Schalter "/w" zur Rechenzeit-Freigabe
 verwenden. Dadurch wird das System nicht mehr belastet, w„hrend XP auf Tastendrcke
-wartet. Wie unter Windows, so werden dadurch auch unter OS/2 der XP-Screen-Saver
-und die XP-Uhr abgeschaltet.
+wartet. Wie unter Windows, so wird dadurch auch unter OS/2 der XP-Screen-Saver
+abgeschaltet.
 
 Auf Wunsch zahlreicher OS/2-Anwender wurden zus„tzliche, OS/2-spezifische
 Methoden zur Rechenzeit-Freigabe implementiert, die auch dann funktionieren,
@@ -7888,9 +7948,9 @@ Kapitel 5.2.
 
 --3 F: Wie kann ich Nachrichten mit "uuencode" codieren?
 
---3 A: Verwenden Sie ein Uuencode-Zusatzprogramm, wie Sie es z.B. in der
-XP-Supportbox finden.
-
+>>|
+--3 A: Benutzen Sie im Editor die Tastenkombination <Ctrl K><U>.
+<<|
 
 
 --3 F: Was hast es zu bedeuten, wenn vor dem Betreff einer Nachricht ein "-"
@@ -7910,22 +7970,26 @@ eine Beschreibung des internen Aufbaus der CrossPoint-Datenbanken?
 
 --3 F: Welches ist die aktuelle CrossPoint-Version?
 
---3 A: Sehen Sie in der CrossPoint-Supportbox nach. Die Nummern stehen am
-Anfang dieses Textes.
-
+>>|
+--3 A: Sehen Sie auf der OpenXP-Homepage nach.
+<<|
 
 
 --3 F: Ist eine OS/2- oder Windows-Version von CrossPoint geplant oder in
 Arbeit?
 
---3 A: Nein. Es w„re einfacher und sinnvoller, ein komplett neues Programm
-zu schreiben, als CrossPoint auf ein anderes Betriebssystem zu portieren.
+>>|
+--3 A: Ja, auch wenn Sie nicht den Namen CrossPoint tragen, sondern OpenXP
+tragen werden. Diese Umbenennung hat namensrechtliche Grnde, da Peter
+Mandrella ein Copyright auf den Namen hat. Geplant sind Versionen fr Win32,
+OS/2 und Linux.
+<<|
 
 
 
 --3 F: In welcher Programmiersprache ist XP eigentlich geschrieben?
 
---3 A: Gr”átenteils in Borland Pascal.
+--3 A: Gr”átenteils in Pascal.
 
 
 
@@ -7938,7 +8002,7 @@ zu schreiben, als CrossPoint auf ein anderes Betriebssystem zu portieren.
 
 H.  Erste Hilfe bei Datenverlust
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-
+:;
 CrossPoint ist eigentlich ein recht gutmtiges Programm - defekte Datenbanken
 werden soweit wie m”glich repariert, bei besch„digten Ablagedateien erhalten Sie
 eine Fehlermeldung, k”nnen aber normal weiterarbeiten, bei Zugriffen auf Tempor„r-Laufwerke
@@ -8183,10 +8247,10 @@ K.  Versionsgeschichte
 Die Versionsgeschichte der Versionen 0.8 bis 2.0 ist auf Anfrage bei mir
 erh„ltlich (fr die Historiker ;-). Die folgende Liste ist streng chronologisch
 aufgebaut und dient zur exakten Dokumentation aller Programm„nderungen. Eine
-bersichtlichere Liste der wichtigsten Neuerungen finden Sie in NEUES.DOC.
+bersichtlichere Liste der wichtigsten Neuerungen finden Sie in NEUES.TXT.
 
-Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.DOC
-und UUCP.DOC.
+Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.TXT
+und UUCP.TXT.
 
 
 1.0  (21.01.92)
@@ -8280,7 +8344,7 @@ o  ZConnect/Fido/MagicNet: Betreffl„nge auf 70 Zeichen erh”ht
 o  neuer Netztyp "UUCP/RFC"
    - /Nachricht/Weiterleiten/L”schen und /Edit/Schablonen/L”sch.
    - Einstellungen bei /Config/Optionen/Netze/Verschiedenes
-   - s. UUCP.DOC im getrennten UUCP-Paket!
+   - s. UUCP.TXT
 o  <Ctrl N> schaltet Realname-Anzeige um (ZConnect, MagicNET, RFC)
 o  /Nachricht/Brettmanager/Datei_einlesen
 o  Maus: Wahlweise Abfrage nach dem neuen Status von gelesenen PMs
@@ -8334,7 +8398,7 @@ o  Timing-Befehl PACKEN umbenannt in PACK
 o  Umstellung auf Mehrsprachigkeit; beliebige Sprachmodule einbind-
    bar
 Bugfixes
-o  Fido-Bugfixes: s. FIDO.DOC
+o  Fido-Bugfixes: s. FIDO.TXT
 o  AUTOEXEC/IPS (s. Kap. 7.6)
 o  L”schen von Temp-Dateien beim Weiterleiten mehrerer Nachrichten
 o  diverse Kleinigkeiten
@@ -8414,7 +8478,7 @@ o  MausTauch: Wahlweise nur PMs pollen (s. Edit/Boxen/Edit/Maus)
 o  ge„nderte Einstellungen werden wahlweise automatisch gesichert
    (s. /Config/Optionen/Bedienung)
 o  GS-Box: mehrere PKT-Dateien werden von XP verarbeitet (unbedingt
-           UPDATE.DOC beachten!)
+           UPDATE.TXT beachten!)
 o  MagicNET: pmCrypt-Codierung (nur ASCII)
 o  Parameter /l und /df (s. Anhang A)
 o  diverse Bugfixes
@@ -8781,6 +8845,6 @@ o  diverse Kleinigkeiten korrigiert
        /w2 Freigabe wie in Versionen vor 3.2
 <<|
 
-Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.DOC
-und UUCP.DOC.                 
+Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.TXT
+und UUCP.TXT.                 
 
