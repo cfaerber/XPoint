@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 10.11.2001 (letzter Update)
+DÅsseldorf, den 21.11.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -406,6 +406,20 @@ Allgemeine Bedienung und Sonstiges
   XP.PAS, XP0.PAS, XP1.PAS, XP2.PAS, XP2C.PAS, XP2CFG.INC, XP6.PAS,
   MONTAGE.PAS, XPDATUM.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
+- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+  D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+  siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In den
+  Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+  editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+  abgelegt. Netcall-Teil steht noch aus.
+  XP0.PAS, XP1.PAS, XP9.INC, XP9.PAS, XP9BP.PAS, XP9SEL.PAS,
+  XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+- Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt (fast)
+  denselben Dialog wie die Multiserverbetrieb-Konfiguration.
+  XP10.INC, XP10.PAS, XP4.INC, XP7.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
 
 
 Bugfixes
@@ -465,7 +479,10 @@ Bugfixes
 
 - Das Zeichen "+" zur Liste der fÅr URLs zulÑssigen Zeichen hinzugefÅgt
   (bisher wurden URLs, die ein "+" enthielten, abgeschnitten).
+  XP1O.PAS
 
+- Crash bei <F2>-Auswahl (mappsel) und Strings > 254 Zeichen behoben.
+  MASKE.PAS
 
 
 Interne énderungen
