@@ -95,7 +95,6 @@ procedure NodelistBrowser;
 procedure SetCrash(adr:string; insert:boolean);
 procedure SetRequest(adr,files:string);  { '' -> Request l”schen }
 
-function  MainNodelist:integer;
 procedure NodelistIndex;
 procedure NodelistSeek;
 procedure SetShrinkNodelist;
@@ -1075,15 +1074,6 @@ begin
   OpenNodeindex(NodeIndexF);
 end;
 
-
-function MainNodelist:integer;
-begin
-  Result := NodeList.mEntrys.Count-1;
-  while (Result>=0) and (PNodeListItem(nodelist.mEntrys[Result])^.listfile<>'NODELIST.###') do
-    dec(Result);
-end;
-
-
 procedure SetShrinkNodelist;
 var x,y   : byte;
     brk   : boolean;
@@ -1094,7 +1084,7 @@ var x,y   : byte;
     res   : integer;
 begin
   if not TestNodelist then exit;
-  if MainNodelist<0 then begin     //bestimmt den index der nodeliste
+  if NodeList.GetMainNodelist<0 then begin     //bestimmt den index der nodeliste
     rfehler(2125);    { 'Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.' }
     exit;
     end;
@@ -1142,7 +1132,7 @@ end;
 procedure ShrinkNodelist(indizieren:boolean);
 var i : integer;
 begin
-  i:=MainNodelist;
+  i:=NodeList.GetMainNodelist;
   if (i>0) and Nodelist.mOpen and (trim(ShrinkNodes)<>'') then
     if not FileExists('NDIFF.EXE') then
       rfehler(103)   { 'NDIFF.EXE fehlt!' }
@@ -2232,11 +2222,12 @@ begin
   if found then SplitFido(s,fa,DefaultZone);
   FindFidoAddress:=found;
 end;
-
-
 end.
 {
   $Log$
+  Revision 1.40  2000/12/28 23:12:03  mo
+  - class TNodeList ergänzt
+
   Revision 1.39  2000/12/27 22:36:31  mo
   -new class TfidoNodeList
 

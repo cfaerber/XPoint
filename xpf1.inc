@@ -409,8 +409,8 @@ begin
   active:=true;
 { MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
-  if MainNodelist>0 then begin
-    NlItem:=nodelist.mEntrys[MainNodelist];
+  if NodeList.GetMainNodelist>0 then begin
+    NlItem:=nodelist.mEntrys[NodeList.GetMainNodelist];
     attrtxt(col.coldiarahmen);
     //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
@@ -893,6 +893,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.26  2000/12/28 23:12:03  mo
+  - class TNodeList ergänzt
+
   Revision 1.25  2000/12/27 22:36:31  mo
   -new class TfidoNodeList
 

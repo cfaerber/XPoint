@@ -81,9 +81,11 @@ type
         public
                 mEntrys         :TList;
                 mOpen           :boolean;
+                ///////////////////////////////////////////
                 constructor     Create;
-                procedure     LoadConfigFromFile;
-                procedure       SaveConfigToFile;               { NODELST.CFG speichern }
+                procedure       LoadConfigFromFile;
+                procedure       SaveConfigToFile;               // NODELST.CFG speichern
+                function        GetMainNodelist: integer;
                 function        GetFileName(n:integer):string;
                 end;
         ///////////////////////////////////////////////////////////////////////
@@ -99,49 +101,9 @@ var
 
 
 implementation
-function  TNodeList.GetFileName(n:integer):string;
-var p : byte;
-begin
-  if n>=mEntrys.Count then
-    result:=''
-  else
-    with PNodeListItem(mEntrys[n])^ do
-    begin
-      p:=pos('###',listfile);
-      if p=0 then
-        result:=listfile
-      else
-        result:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
-    end;
-end;
-procedure TNodeList.SaveConfigToFile;                    { NODELST.CFG speichern }
-var t : text;
-    i : integer;
-begin
-  assign(t,NodelistCfg);
-  rewrite(t);
-  for i:=0 to mEntrys.Count - 1 do
-  with PNodeListItem(mEntrys[i])^ do
-  begin
-    writeln(t,'Listfile=',listfile);
-    if pos('###',listfile)>0 then
-      writeln(t,'Number=',number);
-    if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
-    if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
-    if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
-    if processor<>'' then writeln(t,'process-by=',processor);
-    writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
-    writeln(t,'Format=',byte(format));
-    case format of
-      nlNodelist     : if zone>0 then writeln(t,'zone=',zone);
-      nlPoints24,
-      nl4DPointlist  : writeln(t,'zone=',zone);
-      nlNode         : writeln(t,'address=',zone,':',net,'/',node);
-    end;
-    writeln(t);
-    end;
-  close(t);
-end;
+///////////////////////////////////////////////////////////////////////////////
+// begin TNodList
+
 constructor TNodeList.Create;
 begin
         mEntrys:=TList.Create;
@@ -197,6 +159,61 @@ begin
     close(t);
   end;
 end;
+
+procedure TNodeList.SaveConfigToFile;                    { NODELST.CFG speichern }
+var t : text;
+    i : integer;
+begin
+  assign(t,NodelistCfg);
+  rewrite(t);
+  for i:=0 to mEntrys.Count - 1 do
+  with PNodeListItem(mEntrys[i])^ do
+  begin
+    writeln(t,'Listfile=',listfile);
+    if pos('###',listfile)>0 then
+      writeln(t,'Number=',number);
+    if updatefile<>'' then writeln(t,'UpdateFile=',updatefile);
+    if updatearc<>''  then writeln(t,'UpdateArchive=',updatearc);
+    if updatefile<>'' then writeln(t,'DelUpdate=',iifc(delupdate,'J','N'));
+    if processor<>'' then writeln(t,'process-by=',processor);
+    writeln(t,'DoDiff=',iifc(dodiff,'J','N'));
+    writeln(t,'Format=',byte(format));
+    case format of
+      nlNodelist     : if zone>0 then writeln(t,'zone=',zone);
+      nlPoints24,
+      nl4DPointlist  : writeln(t,'zone=',zone);
+      nlNode         : writeln(t,'address=',zone,':',net,'/',node);
+    end;
+    writeln(t);
+    end;
+  close(t);
+end;
+
+function TNodeList.GetMainNodelist: integer;
+begin
+  Result:=mEntrys.Count-1;
+  while (Result>=0) and (PNodeListItem(mEntrys[Result])^.listfile <>'NODELIST.###') do
+    dec(Result);
+end;
+
+function  TNodeList.GetFileName(n:integer):string;
+var p : byte;
+begin
+  if n>=mEntrys.Count then
+    result:=''
+  else
+    with PNodeListItem(mEntrys[n])^ do
+    begin
+      p:=pos('###',listfile);
+      if p=0 then
+        result:=listfile
+      else
+        result:=LeftStr(listfile,p-1)+formi(number,3)+mid(listfile,p+3);
+    end;
+end;
+
+
+//end TNodeList
 ///////////////////////////////////////////////////////////////////////////////
 //
 
@@ -254,6 +271,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2000/12/28 23:12:04  mo
+  - class TNodeList ergänzt
+
   Revision 1.4  2000/12/28 10:59:13  mk
   - added GPL and CVS Info
 
