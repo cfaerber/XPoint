@@ -2813,10 +2813,42 @@ Reihenfolge.
         line-Anrufe betreffen.
 
 <<SysopMode>>  Hier k”nnen Sie CrossPoint mitteilen, daá
-        die Netcall-Pakete fr die gew„hlte Box nicht
-        per Modem verschickt, sondern auf Platte ab-
-        gelegt werden sollen, um sie dann "von Hand"
-        einspielen zu k”nnen.
+        die Netcall-Pakete fr die gew„hlte Serverbox
+        nicht per Netcall verschickt, sondern auf
+        Platte abgelegt werden sollen, um sie dann
+        "von Hand" einspielen zu k”nnen.
+
+@
+132
+<<Client>>  Hier sind alle zwingend notwendigen Einstel-
+        lungen zusammengefaát, die den Betrieb von
+        CrossPoint mit externen Clients betreffen,
+        u.a. der Name des Servers, die eMail-Adresse,
+        das Client-Verzeichnis und der Aufrufbefehl
+        zum Starten des Clients.
+
+<<Modem>>   Hier k”nnen Sie optionale Angaben zu Ihren
+        Modemeinstellungen machen. Da CrossPoint beim
+        Betrieb mit externen Clients keine eigene
+        Anwahl beim Netcall durchfhrt, obliegt es
+        Ihrem Client bzw. Client-Kit, diese Angaben
+        auszuwerten (oder auch nicht).
+
+<<Gebhr>>  Unter diesem Menpunkt geben Sie Ihre Tarif-
+        zone und die Connect-Dauer an. Auch hier gilt
+        wieder: Diese Angaben werden nicht von Cross-
+        Point, sondern (vielleicht) von Ihrem Client
+        oder Client-Kit ausgewertet.
+
+<<Diverses>>   Hier k”nnen Sie Eingang-/Ausgangsfilter
+        oder ein Vertretersystem definieren sowie
+        einige sonstige Optionen einstellen.
+
+<<SysopMode>>  Hier k”nnen Sie CrossPoint mitteilen, daá
+        die Netcall-Pakete fr die gew„hlte Serverbox
+        nicht per Netcall verschickt, sondern auf
+        Platte abgelegt werden sollen, um sie dann
+        "von Hand" einspielen zu k”nnen.
 
 @
 139
@@ -4478,8 +4510,7 @@ Dies ist der - v”llig beliebige - Name des Servers.
 
 Im Gegensatz zu den brigen von XP untersttzten
 Netztypen hat der Servername beim Netztyp RFC/Client
-keinerlei Funktion in Bezug auf Nachrichtenerstellung
-oder -transport.
+keinerlei technische Funktion.
 
 Bitte beachten Sie bei einem eventuellen ndern des
 Namens, daá die Server-Angaben in der Brett- und
@@ -4815,6 +4846,36 @@ normal und muá so sein. :-)
 
 @
 30110
+Hier k”nnen Sie einen Namen fr den Zugang zu Ihrem
+Provider eintragen (z.B. den Namen der DFš-Netzwerk-
+verbindung in Windows 9x/ME/2000/NT, die Sie fr den
+Verbindungsaufbau verwenden).
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Client-DialUp=>>"
+gespeichert.
+@
+30111
+Geben Sie hier die Telefonnummer ein, die Sie zum
+Aufbau der Verbindung mit Ihrem Provider ben”tigen.
+
+Wenn Ihr Client die Verbindung zu Ihrem Provider ber
+eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
+herstellt, kann dieses Feld i.d.R. leer bleiben.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Telefon=>>"
+gespeichert.
+@
+30112
 Hier k”nnen Sie eine Zeichenfolge (z.B. einen User-
 namen) angeben, mit der sich der externe Client beim
 angerufenen Provider anmelden soll.
@@ -4831,7 +4892,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<LoginName=>>"
 gespeichert.
 @
-30111
+30113
 Tragen Sie hier das Paáwort ein, daá Sie fr den
 Zugang zu Ihrem Provider ben”tigen.
 
@@ -4846,20 +4907,6 @@ mentation Ihres Clients oder Client-Kits. Der Wert,
 den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<Passwort=>>"
 gespeichert.
-@
-30112
-Geben Sie hier die Telefonnummer und/oder den Namen
-der DFš-Netzwerkverbindung ein, die Sie zum Aufbau
-der Verbindung mit Ihrem Provider ben”tigen.
-
-<<Hinweis:>> Diese Einstellung wird von CrossPoint
-*nicht* ausgewertet. Ob und wie der externe Client
-diese Angabe auswertet und welche Syntax ggf. ein-
-zuhalten ist, entnehmen Sie bitte der Dokumentation
-Ihres Clients oder Client-Kits. Der Wert, den Sie
-hier eintragen, wird in der Konfigurationsdatei
-<Box>.BFG unter dem Bezeichner "<<Telefon=>>" gespei-
-chert.
 @
 30200
 <<RFC/Client: Netcall-Ablauf und weitere Details
