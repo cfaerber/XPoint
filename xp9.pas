@@ -227,7 +227,7 @@ begin
   if UpperCase(LeftStr(s+' ',7))='ZMODEM ' then
 {$IFDEF UnixFS}
     begin
-      if (filesearch('rz',path)='') or (filesearch('sz',path)='') then
+      if(not ExecutableExists('rz'))or(not ExecutableExists('sz'))then
         rfehler(933);                   { '"rz" und "sz" muessen installiert....' }
       { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
       exit;
@@ -239,16 +239,7 @@ begin
     fn:=trim(s);
   if cpos(' ',fn)>0 then fn:=LeftStr(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+UpperCase(fn)+'*','*COPY*DIR*PATH*')=0) then begin
-{$IFDEF UnixFS}
-    ok:=filesearch(fn,path)<>'';           { Extension ist unbedeutend }
-{$ELSE}
-    if ExtractFileExt(fn)<>'' then
-      ok:=filesearch(fn,path)<>''
-    else
-      ok:=(filesearch(fn+'.exe',path)<>'') or
-          (filesearch(fn+'.com',path)<>'') or
-          (filesearch(fn+'.bat',path)<>'');
-{$ENDIF}
+    ok:=ExecutableExists(fn);
     if not ok then rfehler1(907,UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
   end;
 end;
@@ -1818,6 +1809,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.49  2000/11/19 17:53:34  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.48  2000/11/19 00:04:03  mk
   - select feature in edit|system
 

@@ -16,9 +16,9 @@ var uucp : boolean;
   begin
     chdir(XferDir_);
     with boxpar^ do
-      if not ExistBin(downarcer) then begin     { FileDa sucht zuerst im }
+      if not ExecutableExists(downarcer) then begin     { FileDa sucht zuerst im }
         chdir('..');                          { aktuellen Verzeichnis  }
-        if ExistBin(downarcer) then begin
+        if ExecutableExists(downarcer) then begin
           downarcer:=ownpath+downarcer;
           FindDownarcer:=true;
           end
@@ -1385,6 +1385,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.45  2000/11/19 17:53:34  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.44  2000/11/17 20:18:01  ma
   - disabled FindDownarcer as it's not working
 

@@ -237,7 +237,7 @@ var t   : text;
     useclip : boolean;
     ft  : longint;
 begin
-  if not existBin(MaggiBin) then begin
+  if not ExecutableExists(MaggiBin) then begin
     rfehler(102);    { 'Netcallkonvertierer MAGGI.EXE fehlt!' }
     exit;
     end;
@@ -316,7 +316,7 @@ begin
                      shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
                          '-it '+fn+' PUFFER',300,3);
                    end;
-        nt_Fido  : if not existBin(ZFidoBin) then begin
+        nt_Fido  : if not ExecutableExists(ZFidoBin) then begin
                      fehler('Netcallkonvertierer "'+ZFidoBin+'" fehlt!');
                      exit;
                      end
@@ -324,7 +324,7 @@ begin
                      shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+
                            iifs(KeepVia,'-via ','')+
                            fn+' PUFFER -w:'+strs(screenlines),300,3);
-        nt_QWK   : if not existBin(ZQWKBin) then
+        nt_QWK   : if not ExecutableExists(ZQWKBin) then
                      rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt!
                       (ZQWK.EXE ist im getrennt erhÑltlichen QWK-Paket enthalten)' }
                    else begin
@@ -539,7 +539,7 @@ var mtpath : string;
     x,y    : byte;
     box    : string;
 begin
-  if not mfehler(existBin(MaggiBin),MaggiBin+' fehlt!') then begin
+  if not mfehler(ExecutableExists(MaggiBin),MaggiBin+' fehlt!') then begin
     dialog(51,9,'',x,y);
     maddtext(3,2,'Geben Sie den Namen der Box, fÅr die die Daten',0);
     maddtext(3,3,'eingelesen werden sollen, und den Namen Ihres',0);
@@ -600,8 +600,8 @@ var ypath : string;
   end;
 
 begin
-  if not mfehler(existBin(Yup2PktBin),'"'+Yup2PktBin+'" fehlt!') and
-     not mfehler(existBin(ZFidoBin),'"'+ZFidoBin+'" fehlt!') and
+  if not mfehler(ExecutableExists(Yup2PktBin),'"'+Yup2PktBin+'" fehlt!') and
+     not mfehler(ExecutableExists(ZFidoBin),'"'+ZFidoBin+'" fehlt!') and
      not FehlerFidoStammbox then
   begin
     dialog(56,5,'',x,y);
@@ -636,7 +636,7 @@ var x,y     : byte;
     bretth  : string;
     brk     : boolean;
 begin
-  if not mfehler(existBin(ZQWKBin),getres2(2422,1)) and not FehlerFidoStammbox
+  if not mfehler(ExecutableExists(ZQWKBin),getres2(2422,1)) and not FehlerFidoStammbox
   then begin
     fn:='*.QWK';
     useclip:=false;
@@ -668,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/19 17:53:35  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.30  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

@@ -1065,7 +1065,7 @@ begin
     end
   else begin
     attrtxt(col.coldialog);
-    wrt(64,fy+fieldpos*2-1,iifc(existBin(s),#251,' '));
+    wrt(64,fy+fieldpos*2-1,iifc(ExecutableExists(s),#251,' '));
     testarc:=true;
     end;
 end;
@@ -1073,7 +1073,7 @@ end;
 procedure DispArcs;
   procedure ww(y:byte; var p:string);
   begin
-    wrt(64+(screenwidth-80) div 2 ,fy+y,iifc(ExistBin(p),#251,' '));
+    wrt(64+(screenwidth-80) div 2 ,fy+y,iifc(ExecutableExists(p),#251,' '));
   end;
 begin
   attrtxt(col.coldialog);
@@ -1517,6 +1517,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/11/19 17:53:34  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.66  2000/11/17 00:15:47  mk
   - Virtual Pascal compatibility updates
 

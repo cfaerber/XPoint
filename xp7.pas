@@ -547,18 +547,18 @@ begin                  { of Netcall }
         tfehler(box+': '+BoxParOk+getres(702),esec);   { ' - bitte korrigieren!' }
         exit;
         end;
-      if (logintyp in [ltMagic,ltQuick,ltGS,ltMaus]) and not existBin(MaggiBin)
+      if (logintyp in [ltMagic,ltQuick,ltGS,ltMaus]) and not ExecutableExists(MaggiBin)
       then begin
         trfehler(102,esec);                 { 'MAGGI.EXE fehlt!' }
         exit;
         end;
       if _fido then begin
-        if not existBin(ZFidoBin) then begin
+        if not ExecutableExists(ZFidoBin) then begin
           trfehler(101,esec); exit; end;    { 'ZFIDO.EXE fehlt! }
-        if not existBin(XPFMBin) then begin
+        if not ExecutableExists(XPFMBin) then begin
           trfehler(104,esec); exit; end;    { 'XP-FM.EXE fehlt!' }
         end;
-      if (logintyp=ltQWK) and not existBin(ZQWKBin) then begin
+      if (logintyp=ltQWK) and not ExecutableExists(ZQWKBin) then begin
         trfehler(111,esec); exit; end;      { 'ZQWK.EXE fehlt! }
       New(NC);
       fillchar(NC^,sizeof(nc^),0);
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/11/19 17:53:34  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.44  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 

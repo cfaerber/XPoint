@@ -349,7 +349,7 @@ begin
   recs:='';
   netcall_connect:=true;
   fidologfile:=TempFile('');
-  if not existBin(UUCICOBin) then begin
+  if not ExecutableExists(UUCICOBin) then begin
     NoUUCICO;
     res:=uu_parerr;
     end
@@ -440,6 +440,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/11/19 17:53:34  ma
+  - renamed existBin to ExecutableExists
+
   Revision 1.25  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 
