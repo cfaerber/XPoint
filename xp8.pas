@@ -412,13 +412,7 @@ begin
    12 : Guppie(2);
    13 : Guppie(3);
    14 : ;   { Postmaster }
-   15 : begin
-          writeln('bef   = ',bef);
-          writeln('box   = ',box);
-          writeln('datei = ', datei);
-          writeln('<Enter>');
-          readln;
-        end;
+   15 : ; { NNTP }
   end;
   hf:='';
   _sendmaps:=true;
@@ -1703,6 +1697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/07/21 08:27:31  mk
+  - do not wait for enter in sendmaps with nntp
+
   Revision 1.44  2001/07/08 09:42:17  ma
   - fixed: File name case (.bl was not processed correctly with Unix)
 
