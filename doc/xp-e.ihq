@@ -1234,16 +1234,16 @@ sent.
 <<Yes>>      The Message is sent "as is".
 
 <<No>>       The Message is discarded and NOT sent.
-         It can, however, still be found in the file
-         called LASTMSG in the temp. directory, as
-         long as no other message has been written.
+        It can, however, still be found in the file
+        called LASTMSG in the temp. directory, as
+        long as no other message has been written.
 
 <<Internal>> The message is not sent out but sent to
          the Newsgroup it was written to (also PM
          Newsgroups) for storage.
 
-<<Special>>  Shows some extra functions. You can
-         select functions by their hot-key letters.
+<<Special>> Shows some extra functions. You can
+        select functions by their hot-key letters.
 
 <<To:>>      Changes the recipient of the message.
 or <</>>     Delete the current entry to choose with <F2>
@@ -1255,7 +1255,7 @@ or <</>>     Delete the current entry to choose with <F2>
          ATTENTION! Only experienced users should
          use this function.
 
-<<Subject>>  Changes the subject of the message.
+<<Subject>> Changes the subject of the message.
 
 <<Server>>   changes the Server the message will be sent
          to, or forces a message with multiple reci-
@@ -1289,14 +1289,14 @@ or <</>>     Delete the current entry to choose with <F2>
          A forced common Server may be cancelled by
          pressing <<<Esc> >>in the Server pick list.
 
-<<Code>>     Changes the encoding of the message. PMs
-         can only be changed when the recipient has
-         entered a password.
+<<Code>>    Changes the encoding of the message. PMs
+        can only be changed when the recipient has
+        entered a password.
 
 <<Text>>     Return to the Editor to make changes to the
          message text (not with binary messages).
 
-<<Copies>>   Up to 125 Users and Newsgroups can be set
+<<Copies>>  Up to 125 Users and Newsgroups can be set
          to receive copies (but max. 15 Newsgroups
          per Server). Note however, it is frowned
          upon to send the same message to several
@@ -1314,17 +1314,17 @@ or <</>>     Delete the current entry to choose with <F2>
 
 <<Special Functions:
 
-<<Park>>     The message is "parked" in the /ØUnsent
-         area. The area will be created if it doesn't
-         exist. From there, you can re-edit and/or
+<<Park>>    The message is "parked" in the /ØUnsent
+        area. The area will be created if it doesn't
+        exist. From there, you can re-edit and/or
          send it by pressing <Alt-R>.
 
-<<Date>>     Puts the message in the Autosend List
+<<Date>>    Puts the message in the Autosend List
          (Edit/AutoSend) and it will be sent at the
          specified time.
 
-<<RRQ>>      Requests an (automatic) confirmation of
-         receipt from the recipient to be sent back.
+<<RRQ>>     Requests an (automatic) confirmation of
+        receipt from the recipient to be sent back.
          Note advice about "Request Confirmation" in
          XPOINT.TXT.
 
@@ -1338,8 +1338,8 @@ or <</>>     Delete the current entry to choose with <F2>
          call [/Fido/Crash].@13104
 
 <<Prio>>     (ZConnect) Sets how the message will be
-         sent, [Direct Mail] or [Express Mail].@4004
-         Beware! Both will likely cost money!
+        sent, [Direct Mail] or [Express Mail].@4004
+        Beware! Both will likely cost money!
 
          (RFC) Sets the priority status of the
          message.  You can select between several
@@ -1350,23 +1350,23 @@ or <</>>     Delete the current entry to choose with <F2>
          defined under /Config/Display/Colours.
         
 <<More>>     (RFC, ZConnect) Shows dialog boxes for
-         [stand-in] address and [Keywords].@851 852
-         Select it and see!
+        [stand-in] address and [Keywords].@851 852
+        Select it and see!
 
 <<MausNet>>  (Maus) Appends "(MausNet)" to the message
-         and it will not be sent over gates.
+        and it will not be sent over gates.
 
 <<local>>    (Maus) Appends "(lokal)" to the message
-         and it will be sent no further than your
-         local Server.
+        and it will be sent no further than your
+        local Server.
 
-<<<Esc> >>   The message is discarded. If the option
-         <</Config/Options/Messages/../ØUnsent>> is
-         enabled, the message is <<parked>> (see above).
-         Even if not, the message can be retrieved,
-         it exists in the <<TEMP directory>> under the
-         name <<LASTMSG>> (only as long as no other
-         message has been written!).
+<<<Esc> >>  The message is discarded. If the option
+        <</Config/Options/Messages/../ØUnsent>> is
+        enabled, the message is <<parked>> (see above).
+        Even if not, the message can be retrieved,
+        it exists in the <<TEMP directory>> under the
+        name <<LASTMSG>> (only as long as no other
+        message has been written!).
 
 @
 8077
@@ -7145,18 +7145,17 @@ box to the Windows Clipboard.
 531
 Enter the type of search.
 
-<<i>>  Ignore case.
+<<i>>  Ignore case (Case insensitive).
 
 <<u>>  Disregard German <<U>>mlauts (ae=Ñ, oe=î, ue=Å, ss=·).
    This option always includes the <<i>> option (ignore
    case).
 
-<<a>>  AND-Combined: Searching is successful,
-   if ALL keywords are found.
+<<a>>  Logical AND: Searching is successful if ALL
+   keywords are found.
 
-<<o>>  OR-Combined: Searching is successful,
-   if ANY keyword is found.
-
+<<o>>  Logical OR: Searching is successful if ANY
+   keyword is found.
 
 (Delete entries with the <Del> or <Space> key.)
 @
@@ -10984,7 +10983,7 @@ about it, darling :-).
 11901
 <<Message / News/Echo manager / Subscribe
 
-Order newsgroups you wish to receive.
+Order newsgroups from your news server(s).
 
 Presents you with a list of Servers and then a list
 of newsgroups available from that Server (assuming
@@ -10995,10 +10994,23 @@ under /Message/News/Echo manager/import list.
 (If no list is available, you will get an error
 message to this effect)
 
-Selecting from this list by marking with the <space>
-key and then pressing <Enter> will automatically
-send a message to the Server ordering the newsgroups
-you wish to subscribe to.
+  <<S>>         Search for a word/phrase.
+            [ Search options ]@531
+
+<<<TAB> >>      Search again.
+
+<<<F7> >>       Mark start of block.
+
+<<<F8> >>       Mark end of block.
+
+<<<Space> >>    Mark newsgroup.
+
+<<<Enter> >>    Subscribe to newsgroup(s).
+
+Select newsgroups from the list by marking with the
+<Spacebar> and then by pressing <Enter>. The relevant
+<<(>><SERVER>.RC<<)>> file will then be automatically updated
+by CrossPoint.
 @
 11902
 <<Message / News/Echo manager / Unsubscribe
@@ -11007,12 +11019,12 @@ Under this hideous unenglish (;-) expression one
 understands cancelling newsgroups that one no longer
 wishes to receive.
 
-First asks you if you want to cancel the currently 
-selected newsgroup. If not, you can elect to see a 
-list and it presents you with a list servers and then 
-a list of the newsgroups in that server (assuming you 
+First asks you if you want to cancel the currently
+selected newsgroup. If not, you can elect to see a
+list and it presents you with a list servers and then
+a list of the newsgroups in that server (assuming you
 have [ordered a list] of the newsgroups@11903
-under /Message/News/Echo manager/Get List and 
+under /Message/News/Echo manager/Get List and
 [read it in] under /Message/News/Echo manager/import@11906
 list.
 
