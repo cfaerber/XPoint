@@ -871,7 +871,7 @@ again:
      PrefChar := #0;
 
     if Length(DosSeq)>=2 then
-      _KeyBoard(Mid(DosSeq,2);
+      _KeyBoard(Mid(DosSeq,2));
 
   end else
     Result:= TranslateSpecialChar(chr(ord(l)));
@@ -1546,6 +1546,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2003/01/26 20:19:16  mk
+  - fixed typo from last committ
+
   Revision 1.71  2003/01/26 12:18:24  mk
   - forwardkeys is not public anymore, use _keboard in readkey
 
