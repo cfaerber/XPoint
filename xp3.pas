@@ -881,10 +881,8 @@ begin
   dbWriteN(ubase,ub_username,absender);
   dbWriteN(ubase,ub_pollbox,pollbox);
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-  b:=1;
+  b:=1 + iif(newuseribm,0,8);
   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-  if not newuseribm {ntUserIBMchar(ntBoxNetztyp(pollbox))} then
-    inc(b,8); { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
   dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
 end;
 
@@ -1241,6 +1239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.5  2000/11/30 14:10:35  mk
+  - fixed NewUserIBM when adding new uesers
+
   Revision 1.25.2.4  2000/08/20 10:42:51  mk
   - kleine Performanceverbesserungen
 
