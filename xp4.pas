@@ -713,6 +713,7 @@ var t,lastt: taste;
       adresseAusgewaehlt :boolean;
       saveDispRec :^dispra;
       savePos     :shortint;
+      origdb  : string[20];
 
   label ende;
 
@@ -1112,7 +1113,26 @@ var t,lastt: taste;
 {*}   savePos := p;
 {*} end;
 
-    if pm and not CC_testempf(empf) then goto ende;
+    if pm and (empf[1]<>vert_char) then
+    begin
+      origdb:=defaultbox;
+      dbreadn(mbase,mb_brett,_empf);
+      if _empf[1]='U' then  { Ist Nachricht in Userbrett ? }
+      begin
+        new(hdp);
+        ReadHeader(hdp^,hds,false);
+        dbseek(ubase,uiname,ustr(hdp^.empfaenger));
+        if dbfound then dbread(ubase,'pollbox',defaultbox);
+        dispose(hdp);
+        end
+      else begin
+        dbseek(bbase,biIntnr,mid(_empf,2));
+        if dbfound then dbread(bbase,'pollbox',defaultbox);
+        end;
+      brk:=not CC_testempf(empf);
+      defaultbox:=origdb;
+      if brk then goto ende;
+      end;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
@@ -2164,6 +2184,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.41  2001/07/09 22:15:00  my
+  JG:- Fix (of an extremely ancient and annoying behaviour): When
+       creating an (e.g. Reply-To) user upon replying to a message
+       stored in a user folder, XP defaults to the server of the user
+       folder where the message is stored rather than to the primary
+       server. Finally!
+
+  JG:- The fix above also fixes a bug introduced with the previous
+       commit in connection with distribution groups ('Verteiler').
+
   Revision 1.26.2.40  2001/07/08 21:31:48  my
   JG:- Fix: creation of unknown user now always shows dialogue
        (prevents wrong assigning of standard server)
