@@ -24,7 +24,7 @@ use Date::Format;
 
 my @dist = (
   ['unstable',	    'unstable-snapshot'],
-  ['experimental',  'experimental-snapshot'],
+  ['experimental',  'snapshot'],
 );
 
 my $debian_changelog_version	= undef;
@@ -58,7 +58,7 @@ my $xpglobal_distrib	= undef;
 
 open XPGLOBAL, "<xpglobal.pas";
 while(<XPGLOBAL>) {
-  if(m/verstr[\t ]*=[\t ]*'v([^']+)'/) {
+  if(m/verstr[\t ]*=[\t ]*'v?([^']+)'/) {
     $xpglobal_version	= $1;
     $xpglobal_version =~ s/[^a-z0-9\.\+]+/-/;
     last;
@@ -93,7 +93,7 @@ if ($xpglobal_version ne $debian_changelog_version || $snapshot) {
       ? '-0'
       : '-'.$debian_changelog_version_d ) .
     ( $snapshot
-      ? sprintf('.%04d%02d%02d',
+      ? sprintf('snapshot%04d%02d%02d',
         ((localtime)[5]+1900),
 	((localtime)[4]+1),
 	((localtime)[3]) )
@@ -149,5 +149,6 @@ open DEB_CONTROL, "<debian/control";
 close DEB_CONTROL;
 print DEB_MAKEFILE "DEB_VERSION=", $debian_version, "\n";
 print DEB_MAKEFILE "DEB_TARGETS=", join(' ',@packages), "\n";
+print DEB_MAKEFILE "DEB_UPSTREAM_VERSION=", $xpglobal_version, "\n";
 
 close DEB_MAKEFILE;

@@ -1,35 +1,35 @@
 Source: openxp
-Section: main/mail
+Section: mail
 Priority: extra
 Maintainer: Claus Färber <cl@openxp.de>
-Standards-Version: 3.2.1
-Build-Depends: fp-compiler (>= 1.0.6)
-Build-Depends-Indep: sgmltools-2
+Standards-Version: 3.6.0
+Build-Depends: fp-compiler (>= 1.0.6), fp-units-fcl, libncurses-dev
+Build-Depends-Indep: sgmltools-lite, jadetex
 
 Package: openxp
 Architecture: i386
-Depends: ${shlibs:Depends}
+Depends: ${openxp:Depends}
 Suggests: xpfilter, openxp-tools-ftn, openxp-tools-uucp, openxp-tools-zconnect
 Recommends: openxp-doc
-Description: Text-based mail and newsreader, also supports Fido, ZC.
+Description: Text-based mail and news reader, also supports Fido, ZC
  OpenXP is a text-based messaging user agent. Features include:
- * POP3, SMTP and NNTP support.
- * UUCP support (internal UUCICO, dialup or TCP/IP).
- * FidoNet support (including BinkP, dialup or TCP/IP).
- * MausNet support (planned)
- * ZConnect support (dialup or TCP/IP).
- * Threading across multiple mail accounts and newsgroups.
- * MIME support.
- * PGP/GnuPG support, including PGP/MIME (planned).
- * Full Unicode support (planned).
+  * POP3, SMTP and NNTP support.
+  * UUCP support (internal UUCICO, dialup or TCP/IP).
+  * FidoNet support (including BinkP, dialup or TCP/IP).
+  * MausNet support (planned)
+  * ZConnect support (dialup or TCP/IP).
+  * Threading across multiple mail accounts and newsgroups.
+  * MIME support.
+  * PGP/GnuPG support, including PGP/MIME (planned).
+  * Full Unicode support (planned).
  OpenXP is a descendant from CrossPoint (XP) by Peter Mandrella.
  .
  Homepage: http://www.openxp.de
 
 Package: openxp-doc
 Architecture: all
-Description: Documentation for OpenXP
- Documentation for OpenXP, a text-based messaging user agent.
+Description: OpenXP manual
+ This package contains the documentation for OpenXP in HTML format.
  Currently only available in German.
  .
  Homepage: http://www.openxp.de

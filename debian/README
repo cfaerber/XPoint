@@ -4,7 +4,7 @@
 The OpenXP packages have a special format (compatible with Debian
 Policy):
 
-   <upstream-version>-<debian-revision>[+<date>]
+   <upstream-version>-<debian-revision>[snapshot<date>]
 
 <debian-revision> is ``0'' if there has not been a Debian release
 for <upstream-version>.
@@ -18,4 +18,4 @@ archivers/compressors):
   openxp-tools-uucp	Tools for (built-in) UUCP support.
   openxp-tools-zconnect	Tools for ZConnect/Zerberus support.
 
-  $Id$
+$Id$
