@@ -668,6 +668,7 @@ begin
 {$ENDIF NCRT}
 {$ENDIF Win32}
     begin
+      multi2;
       key_pressed:=true;
 
     end;
@@ -1673,6 +1674,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.8  2003/05/10 17:29:42  mk
+  - added call to multi2
+
   Revision 1.89.2.7  2003/05/01 11:02:32  mk
   - fixed dos compile problem
 
