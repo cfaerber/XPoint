@@ -1502,19 +1502,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       end
       else
       begin
-        dbAppend(bbase);                        { neues Brett anlegen }
-        dbWriteNStr(bbase,bb_brettname,empfaenger);
+        { neues Brett anlegen }
         wbox:=iifs(empfaenger[1]='$','',box);
         intern:=intern or (wbox='');
-        dbWriteNStr(bbase,bb_pollbox,wbox);
-        halten:=stdhaltezeit;
-        dbWriteN(bbase,bb_haltezeit,halten);
-        dbWriteN(bbase,bb_gruppe,grnr);
-        b:=iif(netztyp in netsRFC,16,0);
-        dbWriteN(bbase,bb_flags,b);
+        AddNewBrett(Empfaenger, '', wbox, StdHaltezeit, Grnr,  iif(netztyp in netsRFC,16,0));
         SetBrettindex;
         _brett:=mbrettd(empfaenger[1],bbase);
-        end
+      end
     else
       if pm then begin
         dbSeek(ubase,uiName,UpperCase(empfaenger));
@@ -2136,6 +2130,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/09/07 09:17:56  mk
+  - added AddNewBrett procedure
+
   Revision 1.4  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
   - shortened CVS logs

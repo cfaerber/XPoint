@@ -100,6 +100,8 @@ function  mbshowtext(var s:string):boolean;
 {procedure mbshowtxt0(var s:string);}
 procedure mbsetvertreter(var s:string);
 function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
+procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: Integer16;
+  Gruppe: Integer; Flags: Byte);
 
 
 implementation  { --------------------------------------------------- }
@@ -995,6 +997,17 @@ begin
   aufbau:=true;
 end;
 
+procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: Integer16;
+  Gruppe: Integer; Flags: Byte);
+begin
+  dbAppend(bbase);
+  dbWriteNStr(bbase,bb_brettname, Brettname);
+  dbWriteNStr(bbase,bb_pollbox, Kommentar);
+  dbWriteNStr(bbase,bb_pollbox, Pollbox);
+  dbWriteN(bbase,bb_haltezeit, haltezeit);
+  dbWriteN(bbase,bb_gruppe, Gruppe);
+  dbWriteN(bbase,bb_flags, Flags);
+end;
 
 function newbrett:boolean;
 var
@@ -1031,18 +1044,12 @@ begin
        not ReadJN(getres(2712),false)    { 'Unbekannte Serverbox - Brett trotzdem anlegen' }
        then exit;
     end;
-  dbAppend(bbase);
-  brett:='A'+brett;
-  dbWriteNStr(bbase,bb_brettname,brett);
-  dbWriteNStr(bbase,bb_kommentar,komm);
-  dbWriteNStr(bbase,bb_pollbox,box);
-  dbWriteN(bbase,bb_haltezeit,halten);
-  dbWriteN(bbase,bb_gruppe,gruppe);
-  if origin<>'' then
-    dbWriteNStr(bbase,bb_adresse,origin);
+
   flags:=flags and (not 16);
   if ntBoxNetztyp(box) in netsRFC then inc(flags,16);
-  dbWriteN(bbase,bb_flags,flags);
+  AddNewBrett('A' + Brett, Komm, Box, Halten, Gruppe, Flags);
+  if origin<>'' then
+    dbWriteNStr(bbase,bb_adresse,origin);
   SetBrettindex;
   newbrett:=true;
 end;
@@ -2156,7 +2163,6 @@ procedure Bretttrennung;
 var x,y: Integer;
     brk   : boolean;
     oldtc : string;
-    s     : string;
     komm  : string;
     bi    : shortint;
     rec   : longint;
@@ -2174,14 +2180,11 @@ begin
   maddstring(3,4,getres2(2731,3),komm,30,30,'');   { 'Kommentar    ' }
   readmask(brk);
   enddialog;
-  if not brk then begin
+  if not brk then 
+  begin
     rec:=dbRecno(bbase);
-    dbAppend(bbase);
+    AddNewBrett('$/T'+trennchar, Komm,  '', 0, LocGruppe, 0);
     rec2:=dbRecno(bbase);
-    s:='$/T'+trennchar;
-    dbWriteNStr(bbase,bb_brettname,s);
-    dbWriteNStr(bbase,bb_kommentar,komm);
-    dbWriteN(bbase,bb_gruppe,LocGruppe);
     bi:=dbGetIndex(bbase);
     dbSetIndex(bbase,biBrett);
     dbGo(bbase,rec);
@@ -2192,7 +2195,7 @@ begin
     aufbau:=true;
     if trennchar<>oldtc then
       SaveConfig;      { Trennzeichen merken }
-    end;
+  end;
 end;
 
 
@@ -2435,6 +2438,9 @@ end;
 
 {
   $Log$
+  Revision 1.75  2001/09/07 09:17:56  mk
+  - added AddNewBrett procedure
+
   Revision 1.74  2001/09/07 08:28:02  mk
   - added new procedure: AddNewBezug, collects three pieces of code
 

@@ -32,7 +32,7 @@ uses sysutils,classes, typeform,datadef,database,resource,xp0,xpsendmessage,xphe
 procedure WriteHeader(var hd:theader; var f:file);
 procedure SetBrettindex;
 procedure SetBrettindexEnde;
-procedure makebrett(s:string; var n:longint; box:string; netztyp:byte;
+procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
                     order_ende:boolean);
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
                     var betreff:string; sdata:SendUUptr;
@@ -43,7 +43,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xp4, xpnt,xpdatum,xp_pgp, xpmakeheader;
+uses xp3,xp3o,xp4, xp4e, xpnt,xpdatum,xp_pgp, xpmakeheader;
 
 
 procedure WriteHeader(var hd:theader; var f:file);
@@ -319,15 +319,15 @@ begin
 end;
 
 
-procedure makebrett(s:string; var n:longint; box:string; netztyp:byte;
+procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
                     order_ende:boolean);
 var komm  : string;
     p     : byte;
-    flags : byte;
 begin
   s:=trim(s);
   if s[2]=' ' then s:=trim(copy(s,3,80));
-  if s<>'' then begin
+  if s<>'' then 
+  begin
     if s[1]<>'/' then s:='/'+s;
     s:='A'+s;
     komm:='';
@@ -340,25 +340,20 @@ begin
       end;
     { UpString(s); }
     dbSeek(bbase,biBrett,UpperCase(s));
-    if not dbFound then begin
+    if not dbFound then 
+    begin
       inc(n);
-      dbAppend(bbase);
-      dbWriteNStr(bbase,bb_brettname,s);
-      dbWriteNStr(bbase,bb_pollbox,box);
-      dbWriteN(bbase,bb_haltezeit,stdhaltezeit);
-      dbWriteN(bbase,bb_gruppe,NetzGruppe);
-      if brettkomm then
-        dbWriteNStr(bbase,bb_kommentar,komm);
-      flags:=iif(netztyp in netsRFC,16,0);
-      dbWriteN(bbase,bb_flags,flags);
+      AddNewBrett(s, iifs(BrettKomm, komm, ''), box, 
+        StdHalteZeit, NetzGruppe, iif(netztyp in netsRFC,16,0)); 
       if order_ende and NewbrettEnde then
         SetBrettindexEnde
       else
         SetBrettindex;
       end
-    else if komm<>'' then
-      dbWriteNStr(bbase,bb_kommentar,komm);
-    end;
+    else 
+      if komm<>'' then
+        dbWriteNStr(bbase,bb_kommentar,komm);
+  end;
 end;
 
 
@@ -449,6 +444,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/09/07 09:17:56  mk
+  - added AddNewBrett procedure
+
   Revision 1.48  2001/08/27 09:13:42  ma
   - changes in net type handling (1)
 

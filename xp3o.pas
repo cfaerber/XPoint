@@ -84,7 +84,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
   xpmakeheader;
 
 
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/09/07 09:17:55  mk
+  - added AddNewBrett procedure
+
   Revision 1.67  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 

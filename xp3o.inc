@@ -914,21 +914,16 @@ begin
                   end;
                 if LeftStr(empfaenger,1)='1' then
                   haltezeit:=0
-                else begin
+                else 
+                begin
                   dbOpen(d,GruppenFile,1);
                   dbSeek(d,giIntnr,dbLongStr(grnr));
                   if not dbFound then haltezeit:=stdhaltezeit
                   else dbRead(d,'haltezeit',haltezeit);
                   dbClose(d);
-                  end;
-                dbAppend(bbase);
-                dbWriteNStr(bbase,bb_brettname,empfaenger);
-                pb:=pollbox_str(zconnect,false);
-                dbWriteNStr(bbase,bb_pollbox,pb);
-                dbWriteN(bbase,bb_haltezeit,haltezeit);
-                dbWriteN(bbase,bb_gruppe,grnr);
-                flags:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
-                dbWriteN(bbase,bb_flags,flags);
+                end;
+                AddNewBrett(Empfaenger,  '', pollbox_str(zconnect,false), 
+                  Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
                 if newbrettende then
                   SetBrettindexEnde
                 else
@@ -1234,6 +1229,9 @@ end;
 
 {
   $Log$
+  Revision 1.66  2001/09/07 09:17:55  mk
+  - added AddNewBrett procedure
+
   Revision 1.65  2001/09/07 08:28:02  mk
   - added new procedure: AddNewBezug, collects three pieces of code
 
