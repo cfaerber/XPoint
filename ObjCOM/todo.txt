@@ -1,11 +1,10 @@
 ObjCOM todo list
 
 - testing, bugfixing (lots of work... ;-)
-- finish TCP connection part
-- allow multiple instances of comm objects in ocswin and ocsos2
-- add Linux support (ocslin?)
+- TCP connection part is not working properly yet (seems to be an FPC issue)
+- allow multiple instances of comm objects in ocsos2
 - use timeouts where appropriate
-- add proper error messages and error handling
-- perhaps add CAPI support?
+- improve error handling and error messages
+- perhaps add CAPI port
 
 [EoF]
