@@ -32,7 +32,6 @@ uses
   maus2,mouse,resource,xpglobal,
   xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
 
-
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure BoxSelProc(var cr:customrec);
 procedure GruppenSelproc(var cr:customrec);
@@ -1287,9 +1286,9 @@ restart:
   dom:=ntDefaultDomain(nt);
   if pppm then begin
     email:=user;
-    b:=cpos('@',email);
-    if b=0 then begin
-      hinweis(Getres2(10900,8));
+    if not is_mailaddress(email) then
+    begin
+      rfehler(908);
       goto restart;
       end
     else begin
@@ -1515,6 +1514,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/07/31 17:12:20  mk
+  - implemented is_emailaddress in get_first_box
+
   Revision 1.12  2001/07/29 13:58:23  ma
   - removed nt_UUCP_U, some fixes
 
