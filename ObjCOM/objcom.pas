@@ -41,7 +41,7 @@ type TCommStream = class(TStream)
 
         function Read(var Buffer; Count: Longint): Longint; override;
         function Write(var Buffer; Count: Longint): Longint; {override;}
-        function Seek(Offset: Longint; Origin: Word): Longint; override;
+        function Seek(Offset: Longint; Origin: system.Word): Longint; override;
 
   (* --- CommObj interface ----------------------------------------------- *)
   public
@@ -148,7 +148,7 @@ end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function TCommStream.Seek(Offset: Longint; Origin: Word): Longint; 
+function TCommStream.Seek(Offset: Longint; Origin: system.Word): Longint;
 begin
   if not (((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0)) then
     raise EStreamError.Create('Invalid stream operation');
@@ -452,7 +452,7 @@ begin
                 {$IFDEF Fossil} CFossil: begin Result:=TFossilStream.Create;
                                                Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
                 {$IFNDEF Linux} CSerial: begin Result:=TSerialStream.Create;
-					       Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
+                                               Success:=Result.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
                 {$ELSE} CSerial: begin Result:=TSerialStream.Create;
                                        Success:=TSerialStream(Result).LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
               end;
@@ -471,6 +471,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2001/08/04 18:00:24  mk
+  - fixed little compile problem with VP and Delphi
+
   Revision 1.24  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 
