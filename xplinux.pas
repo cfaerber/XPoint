@@ -57,6 +57,7 @@ type
 
 function MakeDir(p: string; a: longint): boolean;
 function TestAccess(p: string; ta: TTestAccess): boolean;
+function ResolvePathName(p: string): string;
 procedure SetAccess(p: string; ta: TTestAccess);
 
 { XPLog gibt eine Logmeldung im Syslog aus }
@@ -198,6 +199,31 @@ begin
   end;
 end;
 
+function ResolvePathName(p: string): string;
+var
+  s: string;
+{$IFDEF Debug}
+  m: string;
+{$ENDIF}
+begin
+  if (Length(p)=0) or (p[1] <> '~') then
+    ResolvePathName:= p
+  else begin
+{$IFDEF Debug}
+    m:= s;
+{$ENDIF}
+    delete(p,1,1);
+    s:= getenv('HOME');
+    if (copy(s,Length(s),1) = DirSepa) then
+      ResolvePathName:= s+p
+    else
+      ResolvePathName:= s+DirSepa+p;
+{$IFDEF Debug}
+    XPDebugLog('Resolved: "'+m+'" -> "'+ResolvePathName+'"');
+{$ENDIF}
+  end;
+end;
+
 { SysLog-Interface ----------------------------------------------------- }
 
 procedure closelog;cdecl;external;
@@ -299,6 +325,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/14 12:22:47  hd
+  - ResolvePathName: Loest ~/ nach $HOME auf
+
   Revision 1.12  2000/05/13 11:01:28  hd
   Fix: Falsche Unit
 
