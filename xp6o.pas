@@ -466,7 +466,7 @@ var fn     : pathstr;
     _brett  : string[5];
     ebrett  : string[5];
     obrett  : string[5];
-    empf    : string[90];
+    empf,am_replyto: string[90];
     ntyp    : char;
     pollbox : string[BoxNameLen];
     name    : string[AdrLen];
@@ -475,6 +475,7 @@ var fn     : pathstr;
     aas      : array[1..3] of string[120];
     asnum   : byte;
     i       : integer;
+    zg_flags: integer;
     re_n    : boolean;
     kein_re : boolean;
     leerz   : string[5];
@@ -835,7 +836,7 @@ again:
                      2 : pm:=true;
                      3 : SelWeiter:=false;
                    end;
-                   end;
+                 end;
                  ArchivWeiterleiten:=(typ=5);
 
                  sigfile:='';
@@ -849,14 +850,31 @@ again:
                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                      end
                    else begin
+                     Am_ReplyTo:='';
                      dbGo(bbase,selpos);
-                     dbReadN(bbase,bb_brettname,empf);
+{ Brett-Vertreter }  dbReadN(bbase,bb_adresse,empf);
+                     zg_flags:=dbReadInt(bbase,'flags');
+{ Schreibsperre   }  if zg_flags and 8<>0 then
+                     if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
+                       rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+                       goto ende;
+                     end;
+                     if ((empf<>'') and (zg_flags and 32=0)) then begin
+{ true=Userbrett  }    pm:=pos('@',empf)>0;
+{ Brettvertreter  }    if not pm then begin
+                         dbReadN(bbase,bb_pollbox,pollbox);
+                         if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_ZConnect]) then begin
+                           Am_ReplyTo:=empf;
+                           dbReadN(bbase,bb_brettname,empf);
+                         end else empf:='A'+empf;
+                       end;
+                     end else dbReadN(bbase,bb_brettname,empf);
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht m”glich' }
                        goto ende;
                        end;
                      ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
-                     end;
+                   end;
                    if typ=3 then begin
                      if left(ebrett,1)='A' then
                        get_re_n(dbReadInt(bbase,'gruppe'))
@@ -878,15 +896,15 @@ again:
                    else forcebox:=pollbox;
                    pm:=cpos('@',empf)>0;
                    if not pm then empf:='A'+empf;
-                   end;
                  end;
+               end;
 
                if (typ in [1,5]) and pm and (hdp^.typ='B') and
                  not ntBinary(UserNetztyp(empf))
                then begin
                  rfehler(636);  { 'Bin„rnachrichten sind in diesem Netz nicht m”glich.' }
                  goto ende;
-                 end;
+               end;
 
                if typ=5 then archivieren
                else begin
@@ -909,7 +927,7 @@ again:
                    _ref6list:=reflist;
                    reflist:=nil;
                    flQto:=true;
-                   end;
+                 end;
                  if typ in [1,7] then begin
                    sData^.summary:=hdp^.summary;
                    sData^.keywords:=hdp^.keywords;
@@ -919,6 +937,7 @@ again:
                    sendfilename:=hdp^.datei;
                    sendfiledate:=hdp^.ddatum;
                    end;
+                 if ((typ in [1..3,7]) and (not pm)) then sData^.amreplyto:=am_replyto;
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
                  if typ=7 then begin
                    sData^.oab:=hdp^.absender;
@@ -1247,6 +1266,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.3  2000/10/06 20:28:54  mk
+  MH: - Weiterleiten bei Brettern mit Vertretern und Schreibsperre wird beachtet
+
   Revision 1.20.2.2  2000/09/18 11:14:53  fe
   Korrektur: Bei Nachricht->Weiterleiten->Kopie wird keine OAB-Zeile
   mehr erzeugt.  Dies brach die ZConnect-Vorschrift, dass bei
