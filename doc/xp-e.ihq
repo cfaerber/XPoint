@@ -2959,7 +2959,7 @@ Notes:
 @
 8030
 Enter the name of a script file that will be started
-automatically for an online session ([Netcall/Online])@11505
+automatically for an online session ([Netcall/Online])@11507
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
@@ -9573,16 +9573,35 @@ The [command line parameter] "/n:*" does the@4020
 same thing.
 @
 11503
+<<Netcall / Special
+
+Makes a netcall to these servers in that order as
+being listed in the file <<NETCALL.LST>> in the XP
+directory.
+
+(This function will be enhanced)
+@
+11504
+<<Netcall / Last calls
+
+This entry is similar to to /Netcall/Single, but
+you can choose if you would like to see only those
+servers that are selected for /Netcall/All (see
+/Edit/Servers/Edit/Misc.). Additionally to the data
+shown with /Netcall/Single you can see when your
+last call to this server has taken place.
+@
+11505
 <<Netcall / Time
 
 Enables a timer for making a single netcall at a
 specified time of day, once.
 
-set the desired time in the time box, and the
+Set the desired time in the time box, and the
 required box (<F2> selects from a list of your
-servers)
+servers).
 @
-11504
+11506
 <<Netcall / Relogin
 
 Makes a netcall to a server when the telephone
@@ -9597,10 +9616,10 @@ sending the correct entry for Login and carries
 on from there if the right responses come from the
 box.
 
-FIDO does nor permit Relogin for technical reasons.
+FIDO does not permit Relogin for technical reasons.
 
 @
-11505
+11507
 <<Netcall / Online  (CrossTerm)
 
 A simple terminal programme. It is not meant to be a 
@@ -9621,11 +9640,11 @@ Exit with <Alt-X>.
 Note: "Exit without hanging up" may not work.
 
 @
-11506
+11509
 <<Netcall / Automatic
 
 Activates one of the programmed timing lists which
-you can set up under [/Netcall/Timing list].@11507
+you can set up under [/Netcall/Timing list].@11510
 
 You are asked to enter the number of the timing list
 you wish to activate. CrossPoint then runs this
@@ -9633,7 +9652,7 @@ programme until you end it (with <Esc> or the special
 case, that one of the commands to be carried out ends
 the timing programme.
 @
-11507
+11510
 <<Netcall / Timing List
 
 You can set up to 99 [timing programmes], which allow@4022
@@ -9651,7 +9670,7 @@ When starting for the first time, press "N" (New) and
 use the online help under each entry.
 
 Once set up, these programmes can be used under the
-menu entry [/Netcall/Automatic].@11506
+menu entry [/Netcall/Automatic].@11509
 @
 11601
 <<Edit / Templates

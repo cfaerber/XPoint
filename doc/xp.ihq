@@ -4354,7 +4354,7 @@ bitte so grndlich wie m”glich!
 @
 8030
 Hier k”nnen Sie den Namen einer Scriptdatei ein-
-tragen, die bei Online-Anrufen ([/Netcall/Online])@11506
+tragen, die bei Online-Anrufen ([/Netcall/Online])@11507
 automatisch gestartet werden soll. Das Script wird
 sofort nach dem Eintrag auf syntaktische Korrektheit
 berprft.
@@ -14623,6 +14623,15 @@ Der Menpunkt Netcall/Alle entspricht dem
 
 @
 11503
+<<Netcall / Spezial
+
+Mit diesem Menpunkt wird ein Netcall fr die Boxen
+in der Reihenfolge ausgefhrt, wie sie in der Datei
+<<NETCALL.LST>> im XP-Verzeichnis aufgefhrt sind.
+
+(Diese Funktion wird noch ausgebaut)
+@
+11504
 <<Netcall / Letzte Anrufe
 
 Dieser Menpunkt entspricht in etwa dem Menpunkt
@@ -14633,14 +14642,14 @@ call/Einzeln angezeigten Boxdaten k”nnen Sie hier
 erkennen, wann Sie bei den einzelnen Boxen zuletzt
 angerufen haben.
 @
-11504
+11505
 <<Netcall / Uhrzeit
 
 Hier k”nnen Sie einen automatischen Netzanruf bei
 einer bestimmten Box zu einer bestimmten Uhrzeit
 durchfhren (lassen).
 @
-11505
+11506
 <<Netcall / Relogin
 
 Dieser Menpunkt fhrt einen Netzanruf bei bestehen-
@@ -14664,7 +14673,7 @@ Bei Fido-Boxen ist ein Relogin aus technischen Grn-
 den unm”glich.
 
 @
-11506
+11507
 <<Netcall / Online  (CrossTerm)
 
 Dieser Menpunkt ruft bei einer Serverbox an, meldet
@@ -14679,24 +14688,24 @@ gelegentlichen Anruf in Ihrer Serverbox gedacht, um
 z.B. das Postfach zu leeren oder eine Datei abzu-
 rufen.
 @
-11508
+11509
 <<Netcall / Bereitschaft
 
 Hinter diesem Menpunkt steckt die universelle Net-
 callautomatik von CrossPoint.
 
 Geben Sie die Nummer einer Timing-Liste an, die Sie
-mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11509
+mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11510
 schaltet dann in den Automatik-Modus um und fhrt
 alle zeitgesteuerten Befehle aus, so lange, bis Sie
 mit <<<Esc> >>abbrechen. Alles Weitere hierzu finden Sie
 unter "Automatische Netcalls" im Handbuch.
 @
-11509
+11510
 <<Netcall / Timing-Liste
 
 Hier k”nnen Sie bis zu 99 Timing-Listen erstellen,
-die fr die Netcall-Automatik ([/Netcall/Bereitschaft])@11508
+die fr die Netcall-Automatik ([/Netcall/Bereitschaft])@11509
 verwendet werden.
 
 Alles Weitere hierzu finden Sie unter "Automatische
