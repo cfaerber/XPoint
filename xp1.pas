@@ -36,7 +36,7 @@ uses
 {$ENDIF }
   dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal, classes;
+  resource,xp0,crc,xpglobal, classes,debug;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -2005,6 +2005,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.78  2000/09/03 20:42:13  ma
+  - Debuglogs
+  - Anpassungen an geaendertes Exxec (Shellaufruf)
+
   Revision 1.77  2000/09/03 10:57:38  mo
   - fehlerbox, lastchar(forwardkeys) wird gelˆscht wenn =CR
 

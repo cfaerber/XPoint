@@ -30,12 +30,12 @@ end;
 const trackpath : boolean = false;
 
 
-procedure shell(prog:string; space:word; cls:shortint);  { Externer Aufruf }
+procedure shell(prog:string; space:word; cls:shortint); 
+{ Externer Aufruf, Errorlevelrueckgabe in global Errorlevel }
 var
   sm2t     : boolean;
   maussave : mausstat;
   sp       : scrptr;
-  ErrorLevel: Integer;
 
   procedure ShowPar;
   var w1,w2    : word;
@@ -97,6 +97,7 @@ begin
   ExecDeutsch:=deutsch;
 
   Errorlevel := Xec(prog,'[XP]');
+  DebugLog('XP1','xp1s Xec result: '+strs(Errorlevel),1);
 
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
@@ -121,13 +122,11 @@ begin
 
   xp_maus_an(maussave.x,maussave.y);
 
-  if (ErrorLevel<>0) and (ErrorLevel<>4) then
-    fehler(ioerror(ErrorLevel,getres(115)));   { Fehler bei Programm-Aufruf }
+  if (ErrorLevel<0) and (ErrorLevel<>-4) then
+    fehler(ioerror(-ErrorLevel,getres(115)));   { Fehler bei Programm-Aufruf }
 
-  if trackpath then
-    getdir(0,shellpath);
-  if dospath(0)<>OwnPath then
-    SetCurrentDir(OwnPath);
+  if trackpath then getdir(0,shellpath);
+  if dospath(0)<>OwnPath then SetCurrentDir(OwnPath);
   TempOpen;
 end;
 
@@ -410,6 +409,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2000/09/03 20:42:13  ma
+  - Debuglogs
+  - Anpassungen an geaendertes Exxec (Shellaufruf)
+
   Revision 1.36  2000/08/17 12:10:14  mk
   MO: Headerzeilenlaenge fuer Screen > 80 Zeichen angepasst
 
