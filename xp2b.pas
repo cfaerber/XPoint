@@ -1,11 +1,13 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ---------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                }
+{ (c) 1991-1999 Peter Mandrella                                    }
+{ (c) 2000-2001 OpenXP-Team                                        }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                  }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.      }
+{                                                                  }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der  }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.    }
+{ ---------------------------------------------------------------- }
 { $Id$ }
 
 {$I XPDEFINE.INC}
@@ -134,7 +136,8 @@ begin
   days:=longint(dt.year)*365+dt.month*30+dt.day;
   unpacktime(filetime(NewDateFile),dt);                  { Abstand in Tagen }
   ddiff:=days - (longint(dt.year)*365+dt.month*30+dt.day);
-  if (ddiff<0) or (ddiff>maxdays) then begin
+  if (ddiff<0) or (ddiff>maxdays) then
+  begin
     wdt:=4+max(max(length(getres2(225,1)),length(getres2(225,2))),
                    length(getres2(225,3))+10);
     dialog(wdt,5,'',x,y);
@@ -152,15 +155,20 @@ begin
     multi3:=ShowDateZaehler; hotkeys:=false;
     readmask(brk);
     multi3:=m3s; hotkeys:=true;
-    if not brk and mmodified then begin
+    if not brk and mmodified then
+    begin
       t:=ival(left(dat,2));
       m:=ival(copy(dat,4,2));
       j:=ival(right(dat,2));
       if j<80 then inc(j,2000) else inc(j,1900);
       setdate(j,m,t);
-      end;
-    enddialog;
     end;
+    enddialog;
+  end;
+  getdate(dt.year,dt.month,dt.day,dow);
+  gettime(dt.hour,dt.min,dt.sec,t);                { 't'     miábrauchen }
+  packtime(dt,ddiff);                              { 'ddiff' miábrauchen }
+  setfiletime(ownpath+newdatefile,ddiff);         { Datum/Zeit 'touchen' }
 end;
 
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -202,6 +210,18 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.12  2003/04/02 20:30:23  my
+  MY:- Fix: Dateidatum und -uhrzeit von NEUES.DAT werden jetzt beim
+       Programmstart immer auf den aktuellen Wert gesetzt (Datum und
+       Uhrzeit *in* NEUES.DAT bleiben unver„ndert!). Grund: Wenn die
+       Meldung "Seit dem letzten Programmstart sind mehr als 14 Tage
+       vergangen" erschien und XP beendet wurde, ohne daá in dieser
+       Session das Einlesen eines Puffers stattgefunden hatte, dann
+       erschien die Meldung beim n„chsten Programmstart wieder, auch wenn
+       der letzte XP-Start u.U. nur ein paar Minuten zurcklag.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.1.2.11  2002/04/19 16:22:01  my
   MY:- CVS-Logmeldungen aktiviert
 
