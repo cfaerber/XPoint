@@ -22,7 +22,7 @@
 
 {$I xpdefine.inc }
 
-unit PMConv;
+unit pmconv;
 
 interface
 
@@ -186,6 +186,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2003/04/24 06:45:42  mk
+  - write unitname lowercase
+
   Revision 1.10.2.2  2003/04/23 21:55:47  mk
   - made PMConv internal
 
