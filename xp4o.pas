@@ -2316,7 +2316,7 @@ var ar   : ArchRec;
 begin
   if abs(typ)=ArcDWC then
     renameDWC;
-  OpenList(1,80,5,screenlines-fnkeylines-1,1,'/NS/SB/M/NLR/');
+  OpenList(1,80,5,screenlines-fnkeylines-1,1,'/NS/SB/M/');
   OpenArchive(fn,typ,ar);
   listcrp(ShowArch);
   listtp(ArcSpecial);
@@ -2902,6 +2902,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.39  2002/03/10 15:59:59  my
+  JG:- Rechts-/Links-Scrolling im Archiv-Viewer aktiviert. Dadurch kann
+       bei Dateien, die in einem Unterverzeichnis des Archivs liegen
+       und/oder die einen langen Dateinamen haben, jetzt der vollst„ndige
+       Pfad- und Dateiname betrachtet werden.
+
   Revision 1.47.2.38  2002/03/10 13:52:50  my
   JG+MY:- Kleine Korrektur bei der Anzeige (bzw. dem Entpacken) von
           Dateien mit langen Dateinamen (Entpacker-Parameter nicht mehr in
