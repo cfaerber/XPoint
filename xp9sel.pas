@@ -1,15 +1,16 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 
-{ CrossPoint - UniSel: Select/Test-Routinen fuer Unisel-Menues    }
+{ CrossPoint - UniSel: Select-/Test-Routinen fuer Unisel-MenÅs }
 
 {$I XPDEFINE.INC}
 {$O+,F+}
@@ -62,12 +63,891 @@ function  PPPClientTest(var s:string):boolean;
 function  is_mailaddress(const s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
 function  ReadExtCfgFilename(const txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
+procedure EditAddServersList(var cr:customrec);
+procedure SingleServerSel(var cr:customrec);
+function  addServersTest(var s:string):boolean;
+function  BfgToBox(var s:string):string;
+function  BoxToBfg(var s:string):string;
 procedure SetUsername(s:string);
 
 implementation
 
 uses
-  xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm,xpovl;
+  xp2b,xp2,xp3,xp3o,xp4e,xp9,xp9bp,xp10,xpnt,xpterm,xpovl,lister;
+
+
+type box_array = array[0..maxboxen] of string[BoxNameLen];
+                 { Box-Ergebnisliste => Eingabefeld }
+
+
+function BoxSelect(const entries:byte; boxlist:box_array; colsel2:boolean):string;
+const width = 51+BoxNameLen;
+var   d          : DB;
+      brk        : boolean;
+      x,y,height,
+      i,nt,
+      sel_anz    : byte;               { Anzahl der auszuwÑhlenden Boxen }
+      box        : string[BoxNameLen]; { Name der aktuellen Box          }
+      user       : string[20];         { Username der aktuellen Box      }
+      komm       : string[25];         { Kommentar der aktuellen Box     }
+      boxline    : string[width];      { angezeigte Zeile in Boxauswahl  }
+      TempBoxRec : BoxRec;
+label nextBox;
+begin
+  if own_Name <> '' then TempBoxRec:=BoxPar^;    { Box-Parameter sichern }
+  BoxSelect:=''; brk:=false;
+  height:=screenlines-17;
+  if screenlines>30 then dec(height,2);
+  if screenlines>40 then dec(height,2);
+  dbOpen(d,BoxenFile,1);
+  sel_anz:=0;
+  while not dbEOF(d) do
+  begin
+    box:=dbReadStr(d,'Boxname');
+    if own_Name <> '' then
+      for i:=1 to entries do
+        if ustr(box)=ustr(boxlist[i]) then  { Box schon ausgewÑhlt?      }
+          goto nextBox;                     { ...dann nÑchsten Datensatz }
+    dbRead(d,'Netztyp',nt);
+    if nt=40 then
+    begin
+      ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+      if Boxpar^.pppMode then nt:=41;                  { RFC/Client? }
+    end;
+    if ((nt=own_Nt) and (ustr(box)<>own_Name))   { passende Box gefunden }
+      or (own_name='') then
+    begin
+      inc(sel_anz);
+      komm:=dbReadStr(d,'Kommentar');
+      if nt=41 then user:=dbReadStr(d,'Email')
+      else user:=dbReadStr(d,'Username');
+      boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
+               '  '+forms(komm,25);
+      if sel_anz=1 then      { bei erster gefundener Box Dialog aufbauen }
+      begin
+        if own_name <> '' then
+        begin
+          if colsel2 then
+          begin                             { 'Serverboxen (Netztyp %s)' }
+            selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,false);
+            openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+            Listbox2col;
+            listarrows(x,y+1,y+height+2,col.colsel2rahmen,
+                       col.colsel2rahmen,'≥');
+          end
+          else begin                        { 'Serverboxen (Netztyp %s)' }
+            selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,true);
+            openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+            Listboxcol;
+            listarrows(x,y+1,y+height+2,col.colselrahmen,
+                       col.colselrahmen,'≥');
+          end;
+        end
+        else begin                             { '/Netcall/Spezial bei:' }
+          selbox(width+2,height+4,getres2(1024,3)+' '+getres2(1024,5),
+          x,y,false);
+          openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+          Listbox2col;
+          listarrows(x,y+1,y+height+2,col.colsel2rahmen,
+                     col.colsel2rahmen,'≥');
+        end;
+      end;
+      app_L(boxline);
+    end;
+    nextBox:
+    dbNext(d);
+  end;
+  dbClose(d);
+  if sel_anz > 0 then       { Wenn Box(en) gefunden, Auswahl }
+  begin
+    list(brk);
+    BoxSelect:=trim(copy(get_selection,2,BoxNameLen));
+    closelist;
+    closebox;
+    if brk then BoxSelect:='';
+  end else
+    rfehler(951); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+  if own_Name <> '' then
+     BoxPar^:=TempBoxRec;                  { Box-Parameter zurÅcksichern }
+end;
+
+
+procedure EditAddServersList(var cr:customrec);
+var   d          : DB;
+      x,y,nt     : byte;
+      t          : taste;
+      nr,bp      : shortint;
+      gl,width   : byte;
+      buttons    : string[60];
+      okb,edb    : shortint;
+      p,n        : shortint;
+      a,ii       : integer;
+      s1         : string;
+      modi       : boolean;
+      poutside   : boolean;
+      movefrom   : integer;
+      entries    : integer;
+      TempBoxRec : BoxRec;
+var   boxlist    : box_array;
+label Start;
+
+  { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
+  { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
+  { 'ZusÑtzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
+  { Fido) sind oder aus 'EditNetcallDat' in xp10.pas kommen. In        }
+  { letzterem Fall ziehen wir abweichende (= weniger restriktive)      }
+  { Konsequenzen - z.B. lassen wir nach positiv beantworteter          }
+  { RÅckfrage Dupes zu und Åbergehen ÅberflÅssige bzw. unzutreffende   }
+  { Tests wie "eingetragene Box = editierte Box?".                     }
+
+  { Hinweis: 'EditAddServersList' wird sowohl als 'normale' Prozedur   }
+  { als auch als Select-Routine (User drÅckt <F2> im Eingabefeld)      }
+  { mittels 'mappcustomsel(EditAddServersList,true)' in '_EditPPP'     }
+  { (xp9.inc) aufgerufen. Aus diesem Grund kînnen wir die oben         }
+  { angesprochenen Bedingungen nicht als Parameter Åbergeben (geht bei }
+  { 'mappcustomsel' halt nicht) und fragen sie daher Åber Variablen ab.}
+
+  procedure display;
+  var i    : shortint;
+      box  : string[BoxNameLen];
+  begin
+    moff;
+    for i:=1 to gl do
+    begin
+      gotoxy(x+1,y+i);
+      if i=p then
+        if own_Name <> '' then
+          attrtxt(col.colsel2bar)
+        else
+          attrtxt(col.colselbar)
+      else
+        if own_Name <> '' then
+          attrtxt(col.colsel2box)
+        else
+          attrtxt(col.colselbox);
+      if i+a>entries then
+        Wrt2(sp(width))
+      else begin
+        box:=boxlist[a+i];
+        Wrt2(' ' + iifc(a+i=movefrom,#16,' ') +
+             forms(box,width-2));
+      end;
+    end;
+    if own_Name <> '' then
+      attrtxt(col.colsel2box)
+    else
+      attrtxt(col.colselbox);
+    wrt(x,y+1,iifc(a=0,'≥',#30));
+    wrt(x,y+gl,iifc(a+gl<entries,#31,'≥'));
+    mon;
+  end;
+
+  procedure InsertBox;
+  var   i         : byte;
+        boxlen,
+        bfglen    : word;
+        box       : string[BoxNameLen];
+        bfg       : string[8];
+        add       : byte;
+        d         : DB;
+        too_long  : boolean;
+  const maxboxlen : byte = 255;
+        maxbfglen = 160;
+  begin
+    if own_Name = '' then maxboxlen:=249;  { wegen mappsel-String-Addition  }
+    dbOpen(d,BoxenFile,1);                 { (lfd. Nr.) in 'EditNetcallDat' }
+    boxlen:=0; bfglen:=0;
+    too_long:=false;
+    for i:=1 to entries do
+    begin
+      boxlen:=boxlen + (length(boxlist[i])+1);  { GesamtlÑnge Boxnamen }
+      if own_Name <> '' then
+      begin
+        dbSeek(d,boiName,ustr(boxlist[i]));
+        if dbfound then
+        begin
+          bfg:=dbreadStr(d,'dateiname');
+          bfglen:=bfglen + (length(bfg)+1);    { GesamtlÑnge BFG-Namen }
+        end;
+      end;
+    end;
+    if boxlen >= maxboxlen then
+    begin { 'Maximale EingabelÑnge (%s) fÅr Serverbox-Namen erreicht!' }
+      too_long:=true;
+      rfehler1(953,strs(maxboxlen));
+    end;
+    if own_Name <> '' then
+      if bfglen >= maxbfglen then
+      begin { 'Maximale EingabelÑnge (%s) fÅr Dateinamen (.BFG) erreicht!' }
+        too_long:=true;
+        rfehler1(954,strs(maxbfglen));
+      end;
+    if too_long then
+    begin
+      dbClose(d);
+      exit;
+    end;
+    box:=BoxSelect(entries,boxlist,iifb(own_Name <> '',false,true));
+    if box <> '' then
+    begin
+      if own_Name = '' then      { Abfrage nicht bei Box-Config-Dialog }
+      begin
+        i:=entries;
+        while (i>0) and (ustr(box)<>ustr(boxlist[i])) do
+          dec(i);                           { Eintrag schon vorhanden? }
+        if i > 0 then
+          if not ReadJN(getreps2(10900,55,box),false) then
+           { 'Serverbox "%s" bereits vorhanden - trotzdem hinzufÅgen?' }
+          begin
+            dbClose(d);
+            exit;
+          end;
+      end;
+      if own_Name <> '' then
+      begin
+        dbSeek(d,boiName,ustr(box));
+        if dbfound then
+          bfg:=dbreadStr(d,'dateiname');
+      end;
+      if boxlen + length(box) > maxboxlen then
+      begin
+        too_long:=true;
+        rfehler1(956,strs(maxboxlen-boxlen));
+     { 'Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfÅgbar.' }
+      end;
+      if own_Name <> '' then
+        if bfglen + length(bfg) > maxbfglen then
+        begin
+          too_long:=true;
+          rfehler1(957,strs(maxbfglen-bfglen));
+   { 'Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfÅgbar.' }
+        end;
+      if too_long then
+      begin
+        dbClose(d);
+        exit;
+      end
+      else begin
+        inc(entries);
+        if entries=1 then add:=0 else add:=1;
+        boxlist[0]:=boxlist[a+p+add];  { Ziel = (a+p) }
+        boxlist[a+p+add]:=box;
+        for i:=(a+p+1+add) to entries do
+        begin
+          box:=boxlist[i];
+          boxlist[i]:=boxlist[0];
+          boxlist[0]:=box;
+        end;
+        modi:=true;
+      end;
+    end;
+    dbClose(d);
+    if (a+p<entries) then
+      if p<gl then inc(p)
+      else inc(a);
+  end;
+
+  procedure MoveBox;
+  var s : string[BoxNameLen];
+      i : integer;
+  begin                           { Ziel = (a+p); Quelle = movefrom }
+    boxlist[0]:=boxlist[a+p];
+    boxlist[a+p]:=boxlist[movefrom];
+    if movefrom<a+p then
+      for i:=(a+p-1) downto movefrom do begin
+        s:=boxlist[i];
+        boxlist[i]:=boxlist[0];
+        boxlist[0]:=s;
+      end
+    else if movefrom>a+p then
+      for i:=(a+p+1) to movefrom do begin
+        s:=boxlist[i];
+        boxlist[i]:=boxlist[0];
+        boxlist[0]:=s;
+      end;
+    movefrom:=0;
+    modi:=true;
+  end;
+
+  procedure DelBox;
+  var s : string[BoxNameLen];
+      i : integer;
+  begin
+    s:=boxlist[a+p];
+    s:=mid(s,blankpos(s)+1);
+    if ReadJN(getreps2(936,4,s),true) then begin { 'Serverbox "%s" lîschen' }
+      if a+p<entries then begin  { a+p = Ziel }
+        for i:=(a+p) to entries-1 do
+          boxlist[i]:=boxlist[i+1];
+        boxlist[i+1]:='';
+      end
+      else
+        boxlist[a+p]:='';
+      dec(entries);
+      modi:=true;
+    end;
+  end;
+
+  procedure readbutt;
+  begin
+    if auswahlcursor then begin
+      rbx:=x+1; rby:=y+p;
+      end;
+    nr:=readbutton(x+2,y+gl+2,2,buttons,bp,false,t);
+  end;
+
+  procedure maus_bearbeiten;
+  var ins1    : boolean;
+      inside  : boolean;
+      outside : boolean;
+      xx,yy   : integer;
+  begin
+    maus_gettext(xx,yy);
+    ins1:=(xx>x) and (xx<=x+width) and (yy>y);
+    inside:=ins1 and (yy<=y+gl);
+    outside:=not ins1 or (yy>y+gl+2);
+    if inside then begin
+      if (t=mausleft) or (t=mauslmoved) then
+        if entries>0 then p:=min(entries-a,yy-y) else else
+      if (t=mausunright) or (t=mausunleft) then
+        poutside:=false else
+      if (t=mausldouble) and (edb<>0) then
+        nr:=edb;
+      end;
+    if outside then begin
+      if (t=mausleft) or (t=mausright) then
+        poutside:=true else
+      if poutside and ((t=mausunleft) or (t=mausunright)) then
+        nr:=okb;
+      end;
+  end;
+
+begin  { --- of EditAddServersList --- }
+  showErrors:=true;
+  if own_Name <> '' then maxbox:=80;
+  s1:=trim(cr.s);
+  if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
+  begin                        { Wenn nicht, auf passende Boxen prÅfen }
+    TempBoxRec:=BoxPar^;                       { Box-Parameter sichern }
+    dbOpen(d,BoxenFile,1);
+    while not dbEOF(d) do
+    begin
+      dbRead(d,'Netztyp',nt);
+      if (nt=40) and (own_Nt=41) then
+      begin
+        ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+        if Boxpar^.pppMode then nt:=41;                  { RFC/Client? }
+      end;
+      if (nt=own_Nt) and (ustr(dbReadStr(d,'boxname')) <> own_Name) then
+      begin                           { erste passende Box gefunden... }
+        dbClose(d);
+        BoxPar^:=TempBoxRec;     { Box-Parameter zurÅcksichern, und... }
+        goto start;        { ...dann Schleife verlassen und los geht's }
+      end;
+      dbNext(d);
+    end;
+    dbClose(d);                          { keine passende Box gefunden }
+    BoxPar^:=TempBoxRec;                 { Box-Parameter zurÅcksichern }
+    rfehler(951); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+    exit;
+  end;
+  Start:
+  width:=ival(getres2(936,1));
+  buttons:=getres2(936,2);  { ' ^EinfÅgen , ^Verschieben , ^Lîschen ,  ^OK  ' }
+  okb:=4; edb:=0;
+  if own_name = '' then pushhp(508);
+  for ii:=0 to maxbox do boxlist[ii] := '';
+  entries:=0;
+  if s1 <> '' then
+    repeat
+      inc(entries);
+      p:=cpos(' ',s1);
+      if p=0 then boxlist[entries]:=s1
+      else begin
+        boxlist[entries]:=left(s1,p-1);
+        s1:=trim(mid(s1,p+1));
+      end;
+    until p=0;
+  gl:=screenlines-fnkeylines-12;
+  bp:=1;
+  if own_Name <> '' then
+  begin
+    selbox(width+2,gl+4,getres2(920,89),x,y,false);
+    attrtxt(col.colsel2rahmen);                 { 'ZusÑtzliche Server' }
+  end
+  else begin
+    selbox(width+2,gl+4,getres2(1024,3)+' #'+strs(cr.y)+' '+
+           getres2(1024,5),x,y,true);    { '/Netcall/Spezial #%s bei:' }
+    attrtxt(col.colselrahmen);
+  end;
+  mwrt(x,y+gl+1,'√'+dup(width,'ƒ')+'¥');
+  t:='!';    { Buttons nur anzeigen }
+  a:=0; p:=1; movefrom:=0;
+  readbutt;
+  modi:=false;
+  maus_pushinside(x+1,x+width,y+1,y+gl);
+  autobremse:=true;
+  poutside:=false;
+  repeat
+    if p+a>entries then
+      if p>1 then dec(p)
+      else if a>0 then dec(a);
+    display;
+    autoupenable:=(a+p>1);
+    autodownenable:=(a+p<entries);
+    t:='*';
+    readbutt;
+    if (t>=mausfirstkey) and (t<=mauslastkey) then
+      maus_bearbeiten;
+    if (t=keyesc) or ((movefrom>0) and (nr=0)) then begin
+      movefrom:=0; t:=#0; nr:=99;
+      end;
+    if (t=keyins) or (t=keyf2) then nr:=1
+    else if t=keydel then nr:=3;
+    if (nr<>0) and (nr<>99) then bp:=abs(nr);
+    if (nr=1) and (entries >= maxbox) then
+      rfehler1(952,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
+    else
+      if (nr>0) and (movefrom<>0) then
+        MoveBox
+      else
+        case nr of
+          1 : InsertBox;
+          2 : if entries > 1 then
+                movefrom:=a+p
+              else begin
+                movefrom:=0;
+                errsound;
+              end;
+          3 : if entries=0 then errsound
+              else DelBox;
+        end;
+    if nr<0 then
+    begin
+      if t=keyup then
+        if p>1 then dec(p)
+        else if a>0 then dec(a);
+      if (t=keydown) and (a+p<entries) then
+        if p<gl then inc(p)
+        else inc(a);
+      if t=keypgup then
+        if a=0 then t:=keyhome
+        else a:=max(0,a-gl);
+      if t=keypgdn then begin
+        if a+gl>=entries then p:=entries-a
+        else inc(a,gl);
+        p:=max(1,min(p,entries-a));
+        end;
+      if t=keyhome then begin
+        a:=0; p:=1;
+        end;
+      if t=keyend then begin
+        a:=max(0,entries-gl);
+        p:=max(1,entries-a);
+        end;
+      if t=keychom then p:=1;
+      if t=keycend then p:=minmax(gl,1,entries-a);
+    end;
+    if (nr=okb) and (modi) then
+    begin
+      s1:='';
+      for ii:=1 to entries do
+        s1:=s1+boxlist[ii]+' ';  { neuen Eintrag fÅr Eingabefeld erstellen }
+      cr.s:=trim(s1);
+      modi:=false;
+    end;
+  until ((nr=0) or ((nr=okb) and addServersTest(cr.s))) and
+        (not modi or ReadJN(getres(1015),false)); { 'énderungen verwerfen' }
+  maus_popinside;
+  if own_name = '' then pophp;
+  closebox;
+  freeres;
+end;
+
+
+function addServersTest(var s:string):boolean;
+var   p,nt,i,j,
+      box_anz    : byte;
+      boxlen,
+      bfglen     : word;
+      s1         : string;
+      TempBoxRec : BoxRec;
+      d          : DB;
+      boxlist    : array[1..maxboxen] of string[BoxNameLen];
+      dupelist   : array[1..maxboxen] of byte;       { Array fÅr Dupes }
+const maxboxlen  : byte = 255;
+      maxbfglen = 160;
+
+  { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
+  { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
+  { 'ZusÑtzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
+  { Fido) sind oder aus 'EditNetcallDat' in xp10.pas kommen. In        }
+  { letzterem Fall ziehen wir abweichende (= weniger restriktive)      }
+  { Konsequenzen - z.B. lassen wir nach positiv beantworteter          }
+  { RÅckfrage Dupes zu und Åbergehen ÅberflÅssige bzw. unzutreffende   }
+  { Tests wie "eingetragene Box = editierte Box?".                     }
+
+  { Die Variable 'showErrors' dient als Flag, ob die Einzel-Fehlermel- }
+  { dungen angezeigt werden sollen. Ist 'showErrors' false (z.B. bei   }
+  { einem Netcall, siehe 'ChkAddServers' in xp7.inc), werden a) keine  }
+  { Fehler ausgegeben, und es wird b) die Funktion beim ersten Fehler  }
+  { sofort verlassen.                                                  }
+
+  { Hinweis: 'addServersTest' wird sowohl als 'normale' Funktion als   }
+  { auch als Masken-Testfunktion mittels 'msetvfunc(addServersTest)'   }
+  { (siehe '_EditPPP' in xp9.inc) aufgerufen. Aus diesem Grund kînnen  }
+  { wir die oben angesprochenen Bedingungen nicht als Parameter        }
+  { Åbergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
+  { Åber Variablen ab.                                                 }
+
+  procedure closeRestore;
+  begin                                      { Box-Datenbank schlie·en }
+    dbClose(d);
+    if own_Name <> '' then
+      BoxPar^:=TempBoxRec;               { Box-Parameter zurÅcksichern }
+  end;
+
+begin
+  addServersTest:=true;
+  s1:=trim(s);
+  if s1='' then exit;
+  if own_Name = '' then maxboxlen:=249  { wegen mappsel-String-Addition  }
+  else maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
+  for i:=1 to maxbox do boxlist[i] := '';
+  box_anz:=0; bfglen:=0; boxlen:=0;
+  repeat
+    inc(box_anz);
+    p:=cpos(' ',s1);
+    if p=0 then boxlist[box_anz]:=s1
+    else begin
+      boxlist[box_anz]:=left(s1,p-1);             { Boxen-Array fÅllen }
+      s1:=trim(mid(s1,p+1));
+    end;
+  until p=0;
+  { ------------------------------------------------------ }
+  { Dupeschleife - fÅllt ein Array mit den Werten:         }
+  {   0 = Box ist ein Dupe                                 }
+  {   i = Anzahl gleicher EintrÑge (wird im ersten         }
+  {       (Element, in dem die Box vorkommt, eingetragen)  }
+  { In AbhÑngigkeit von diesen Werten in 'dupelist' werden }
+  { die in 'boxlist' hinterlegten Boxen durch die Funktion }
+  { gejagt oder Åbersprungen (wenn Wert=0). Grund: Wir     }
+  { wollen fÅr jede mehrfach vorkommende Box nur einmal    }
+  { die Fehlermeldung(en) ausgeben (und damit auch die     }
+  { Performance erhîhen).                                  }
+  { Diese Dupebehandlung gilt nur im Box-Config-Dialog     }
+  { (weil in 'EditNetcallDat' Dupes zulÑssig sind).        }
+  { ------------------------------------------------------ }
+  for i:=1 to box_anz do dupelist[i] := 1;
+  for i:=1 to box_anz do                           { Dupe-Array fÅllen }
+  begin
+    if dupelist[i]=0 then continue;
+    for j:=i to box_anz do
+    begin
+      if (j=i) or (dupelist[j]=0) then continue;
+      if ustr(boxlist[j]) = ustr(boxlist[i]) then
+      begin
+        inc(dupelist[i]);                { Anzahl der EintrÑge erhîhen }
+        dupelist[j]:=0;                  { 0 = Dupe                    }
+      end;
+    end;
+  end;
+  { ----------------- Ende Dupeschleife ------------------ }
+  if own_Name <> '' then TempBoxRec:=BoxPar^;  { Box-Parameter sichern }
+  dbOpen(d,BoxenFile,1);
+  for i:=1 to box_anz do
+  begin
+    if own_Name <> '' then
+    begin
+      if dupelist[i]=0 then continue;
+      if dupelist[i] > 1                          { Box-Config-Dialog? }
+      then begin
+        addServersTest:=false;
+        if showErrors then
+          fehler(getreps2(10900,58,boxlist[i]) + ' ' +
+                 getreps2(10900,59,strs(dupelist[i])))
+                            { 'Serverbox "%s" ist "%s" mal vorhanden!' }
+        else begin
+          closeRestore;
+          exit;
+        end;
+      end;
+    end;
+    dbSeek(d,boiName,ustr(boxlist[i]));
+    if not dbFound then
+    begin
+      addServersTest:=false;
+      if showErrors then
+        rfehler1(960,boxlist[i])   { 'Serverbox "%s" existiert nicht!' }
+      else begin
+        closeRestore;
+        exit;
+      end;
+    end
+    else if own_Name <> '' then                   { Box-Config-Dialog? }
+    begin
+      if ustr(boxlist[i]) = own_Name then
+      begin
+        addServersTest:=false;
+        if showErrors then
+          rfehler1(961,boxlist[i])
+              { Serverbox "%s" ist identisch mit editierter Serverbox!'}
+        else begin
+          closeRestore;
+          exit;
+        end;
+      end
+      else begin
+        dbRead(d,'Netztyp',nt);
+        if (nt=40) and (own_Nt=41) then
+        begin
+          ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
+          if Boxpar^.pppMode then nt:=41;                { RFC/Client? }
+        end;
+        if nt <> own_Nt then
+        begin
+          addServersTest:=false;
+          if showErrors then
+            fehler(getreps2(10900,58,boxlist[i])+' '+
+                   getreps2(10900,62,Netz_Typ(own_Nt)))
+                   { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
+          else begin
+            closeRestore;
+            exit;
+          end;
+        end;
+      end;
+      if own_Name <> '' then
+        bfglen:=bfglen+length(dbReadStr(d,'dateiname'))+1;
+                                               { GesamtlÑnge BFG-Namen }
+(*    hinweis('Anzahl = '+strs(box_anz)+', BFG-LÑnge = '+strs(bfglen)); *)
+    end;
+    boxlen:=boxlen+length(boxlist[i])+1;        { GesamtlÑnge Boxnamen }
+  end;
+  if own_Name <> '' then                          { Box-Config-Dialog? }
+  begin
+    if bfglen > 0 then dec(bfglen);  { letztes Leerzeichen eliminieren }
+    if bfglen > maxbfglen then
+    begin
+      addServersTest:=false;
+      if showErrors then
+        rfehler1(963,strs(maxbfglen))
+    { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
+      else begin
+        closeRestore;
+        exit;
+      end;
+    end;
+  end;
+  dec(boxlen);                       { letztes Leerzeichen eliminieren }
+  if boxlen > maxboxlen then
+  begin
+    addServersTest:=false;
+    if showErrors then
+      rfehler1(964,strs(maxboxlen))
+      { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
+    else begin
+      closeRestore;
+      exit;
+    end;
+  end;
+  if box_anz >= maxbox then
+  begin
+    addServersTest:=false;
+    if showErrors then
+      rfehler1(952,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
+    else begin
+      closeRestore;
+      exit;
+    end;
+  end;
+  closeRestore;
+end;
+
+
+procedure ConvertAddServersFehler(const s:string);
+var x,y : byte;
+begin
+  msgbox(length(s)+6,6,_fehler_,x,y);
+  attrtxt(col.colmboxhigh);
+  mwrt(x+3,y+2,getres2(920,89)+':');  { '"ZusÑtzliche Server:"' }
+  attrtxt(col.colmbox);
+  mwrt(x+3,y+3,s);
+  errsound;
+  wait(curoff);
+  closebox;
+  freeres;
+end;
+
+
+function BfgToBox(var s:string):string;
+var   d      : DB;
+      i,p    : byte;
+      s1     : string;              { BFG-Datei }
+      s2     : string[BoxNameLen];  { Boxname   }
+      s3     : string;              { Gesamtstring aller Boxnamen }
+      fehler : string;
+const maxboxlen = 255;
+
+  function isValidBfgName(const s1:string):boolean;
+  var   i  : byte;
+        vb : boolean;
+  const ValidBfgCh : set of char=['A'..'Z','0'..'9','_','^','$','~','!',
+                          '#','%','&','-','{','}','(',')','@','''','`'];
+  begin
+    if length(s1) > 8 then
+    begin
+      isValidBfgName:=false;
+      exit;
+    end;
+    vb:=true; i:=1;
+    while vb and (i<=length(s1)) do
+      if s1[i] in ValidBfgCh then inc(i)
+      else vb:=false;
+    if vb then
+      if (s1='CLOCK$') or
+         (s1='CON') or
+         (s1='AUX') or
+         (s1='NUL') or
+         (s1='PRN') then
+         vb:=false;
+    i:=1;
+    if vb then
+      while vb and (i<=4) do
+        if s1 <> 'COM'+strs(i) then inc(i)
+        else vb:=false;
+    i:=1;
+    if vb then
+      while vb and (i<=3) do
+        if s1 <> 'LPT'+strs(i) then inc(i)
+        else vb:=false;
+    isValidBfgName:=vb;
+  end;
+
+begin
+  BfgToBoxOk:=true;  { Flag fÅr 'ChkAddServers' in xp7.inc }
+  if s = '' then
+  begin
+    BfgToBox:='';
+    exit;
+  end;
+  s1:=''; s2:=''; s3:='';
+  dbOpen(d,BoxenFile,1);
+  repeat
+    p:=cpos(' ',s);
+    if p=0 then s1:=s
+    else begin
+      s1:=left(s,p-1);
+      s:=trim(mid(s,p+1));
+    end;
+    if not isValidBfgName(ustr(s1)) then
+    begin
+      BfgToBoxOk:=false;
+      if showErrors then
+      begin
+        fehler:=getreps2(10900,65,ustr(s1));
+       { 'UngÅltiger Name fÅr Serverbox-Konfigurationsdatei: "%s.BFG"' }
+        ConvertAddServersFehler(fehler);
+      end
+      else exit;
+    end
+    else begin
+      dbSeek(d,boidatei,ustr(s1));
+      if dbFound then
+      begin
+        s2:=dbReadStr(d,'boxname');
+        if length(s3)+length(s2) > maxboxlen then
+        begin
+          BfgToBoxOk:=false;
+          if showErrors then
+          begin
+            fehler:=getreps2(10900,64,strs(maxboxlen));
+      { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
+            ConvertAddServersFehler(fehler);
+          end
+          else exit;
+        end
+        else
+          s3:=s3+s2+' ';
+      end
+      else begin
+        BfgToBoxOk:=false;
+        if showErrors then
+        begin
+          fehler:=getreps2(10900,66,ustr(s1));
+                   { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
+          ConvertAddServersFehler(fehler);
+        end
+        else exit;
+      end;
+    end;
+  until p=0;
+  dbClose(d);
+  BfgToBox:=trim(s3);
+end;
+
+
+function BoxToBfg(var s:string):string;
+var   d      : DB;
+      i,p    : byte;
+      s1     : string;              { Boxname   }
+      s2     : string[8];           { BFG-Datei }
+      s3     : string;              { Gesamtstring aller BFG-Dateinamen }
+      fehler : string;
+const maxbfglen = 160;
+begin
+  if s = '' then
+  begin
+    BoxToBfg:='';
+    exit;
+  end;
+  s1:=''; s2:=''; s3:='';
+  dbOpen(d,BoxenFile,1);
+  repeat
+    p:=cpos(' ',s);
+    if p=0 then s1:=s
+    else begin
+      s1:=left(s,p-1);
+      s:=trim(mid(s,p+1));
+    end;
+    if length(s1) > BoxNameLen then
+    begin
+      fehler:=getreps2(10900,67,s1); { 'UngÅltiger Serverbox-Name: %s' }
+      ConvertAddServersFehler(fehler);
+    end
+    else begin
+      dbSeek(d,boiname,ustr(s1));
+      if dbFound then
+      begin
+        s2:=dbReadStr(d,'dateiname');
+        if length(s3)+length(s2) > maxbfglen then
+        begin
+          fehler:=getreps2(10900,63,strs(maxbfglen));
+    { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
+          ConvertAddServersFehler(fehler);
+        end else
+          s3:=s3+s2+' ';
+      end else
+      begin
+        fehler:=getreps2(10900,60,s1);
+        ConvertAddServersFehler(fehler); { 'Serverbox "%s" existiert nicht!' }
+      end;
+    end;
+  until p=0;
+  dbClose(d);
+  BoxToBfg:=ustr(trim(s3));
+end;
+
+
+procedure SingleServerSel(var cr:customrec); { einzelne Serverbox (nur vom }
+var i     : byte;                            { eigenen Netztyp) auswÑhlen  }
+    s1    : string[BoxNameLen];
+    dummy : box_array;         { wir Åbergeben keine Serverboxen-Liste }
+begin
+  for i:=0 to maxboxen do dummy[i] := '';
+  s1:=BoxSelect(0,dummy,true);
+  if s1 <> '' then cr.s:=trim(s1);
+end;
 
 
 function  ReadExtCfgFilename(const txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
@@ -163,7 +1043,7 @@ end;
 
 
 function multi_Mailstring(var s:string):boolean;
-var n,b   : byte;
+var n     : byte;
     s1,s2 : string[160];
 begin
   multi_Mailstring:=true;
@@ -180,9 +1060,8 @@ begin
     begin
       multi_mailstring:=false;
       fehler(Getres2(10900,8)+': ' +s2); { 'UngÅltige Adresse: 's2 }
-      exit;
       end;
-  until n=0
+  until n=0;
 end;
 
 
@@ -356,7 +1235,7 @@ begin
   end else
   begin
     PPPClientPathTest:=false;
-    rfehler(939)           { 'Dieser Pfad darf nicht leer sein!' }
+    rfehler(939)                 { 'Pfad darf nicht leer sein!' }
   end;
 end;
 
@@ -476,7 +1355,7 @@ begin
         dbRead(d,'Langname',s);         { ist's ein Kurzname ? }
         dbclose(d);
         testreplyto:=true;
-        if cpos(' ',s)<>0 then           { Langname jetzt gueltig ? }
+        if cpos(' ',s)<>0 then          { Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
@@ -614,7 +1493,7 @@ begin
     if dbFound then
     begin
       dbRead(d,'boxname',s);
-      nt:=dbReadInt(d,'netztyp');
+      dbRead(d,'netztyp',nt);
       if fieldpos=amvfield then    { AM-Vertreterbox }
         ok:=(DomainNt=nt)
       else                         { PM-Vertreterbox }
@@ -903,6 +1782,16 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.22  2001/11/20 23:24:26  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+       D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+       siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       abgelegt.
+  MY:- öberflÅssige Deklarationen entfernt
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.1.2.21  2001/09/06 18:44:52  mk
   - optimized testvertreterbox
 
