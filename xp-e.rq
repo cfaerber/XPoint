@@ -311,34 +311,35 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   ~         /pw:xxx  passes start password xxx
 21   ~         /nb      disable warning message of beta versions
 22   ~         /z:nn    set nn screen lines
-23   ~         /l:X     set language (e.g. /l:E for English)
-24
-25   ~         /autostart:...   start program by time range
-26   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
-27   ~         /ip:PUFFER       import puffer file
-28   ~         /ipe:PUFFER      import puffer file with receive date = creation date
-29   ~         /ips:BOX:PUFFER  import and send puffer file
-30   ~         /eb              return receipts (sub-switch for /ip..)
-31   ~         /g               sets /ip and /ips messages to status 'read'
-32   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
-33   ~         /n:*             netcall to all Servers
-34   ~         /nr:BOX          relogin netcall to Server (BOX)
-35   ~         /t:n             start timing list no. n
-36
-37   ~         /r               start message base reorganisation
-38   ~         /pack            do /Re-Org/Pack
-39   ~         /xpack           pack message base in 'automatic' mode
-40   ~         /ss              start screen saver at once
-41
-42   ~         /av:<File>       view archive file
-43   ~         /f:<File>        load font file
-44   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
-45
-46   ~         /d       start program in debug mode
-47   ~         /df:1    show command call of external programs
-48   ~         /df:2    wait for key press after external program calls
-49
-50   ~         /x       quit program
+23   ~         /menu    re-insert disabled menu items (XPME) temporarily
+24   ~         /l:X     set language (e.g. /l:E for English)
+25
+26   ~         /autostart:...   start program by time range
+27   ~         /user:BOX:NAME   set user name at Server (BOX) to NAME
+28   ~         /ip:PUFFER       import puffer file
+29   ~         /ipe:PUFFER      import puffer file with receive date = creation date
+30   ~         /ips:BOX:PUFFER  import and send puffer file
+31   ~         /eb              return receipts (sub-switch for /ip..)
+32   ~         /g               sets /ip and /ips messages to status 'read'
+33   ~         /n:BOX[:hh:mm]   start netcall to Server (BOX)
+34   ~         /n:*             netcall to all Servers
+35   ~         /nr:BOX          relogin netcall to Server (BOX)
+36   ~         /t:n             start timing list no. n
+37
+38   ~         /r               start message base reorganisation
+39   ~         /pack            do /Re-Org/Pack
+40   ~         /xpack           pack message base in 'automatic' mode
+41   ~         /ss              start screen saver at once
+42
+43   ~         /av:<File>       view archive file
+44   ~         /f:<File>        load font file
+45   ~         /gd:<File>       select phone charge file (see FIDO.TXT)
+46
+47   ~         /d       start program in debug mode
+48   ~         /df:1    show command call of external programs
+49   ~         /df:2    wait for key press after external program calls
+50
+51   ~         /x       quit program
 -
 
 203  Error: Can't create directory %s !
