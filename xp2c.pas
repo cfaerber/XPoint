@@ -359,9 +359,9 @@ begin
     mhnr (258);
   end;
 
-  maddbool(3,7 + j,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
-  maddbool(3,8 + j,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
-  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+  maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);      { 'Eigene Nachrichten halten' }
+  maddbool(3,8 + j,getres2(252,31),haltownPM);               { 'Eigene PMs halten' }
+  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);            { 'Erstellungszeit 00:00' }
 
 {$IFNDEF Unix }
   mset1func(SetTimezone);
@@ -1548,6 +1548,9 @@ end;
 
 {
   $Log$
+  Revision 1.122  2002/03/23 10:37:55  mk
+  - fixed help id 254
+
   Revision 1.121  2002/02/21 13:52:31  mk
   - removed 21 hints and 28 warnings
 
