@@ -9,15 +9,6 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-(***********************************************************)
-(*                                                         *)
-(*                       UNIT clip                         *)
-(*                                                         *)
-(*           Schnittstelle zum Windows-Clipboard           *)
-(*                     + Smartdrive                        *)
-(*                                         PM 11/92, 05/93 *)
-(***********************************************************)
-
 {$I XPDEFINE.INC }
 {$IFDEF BP }
   {$O+,F+}
@@ -27,34 +18,18 @@ unit clip;
 
 interface
 
-uses xpglobal, dos, typeform;
+uses xpglobal, dos;
 
-const     cf_Text      = 1;            { Clipboard-Datenformate }
-          cf_Bitmap    = 2;
-          cf_Oemtext   = 7;
-          cf_Dsptext   = $81;
-          cf_DspBitmap = $82;
-
-function  WinVersion:smallword;                 { Windows >= 3.0      }
-
-function ClipAvailable:boolean;                 { Clipboard verfgbar }
-function ClipOpen:boolean;                      { Clipboard ”ffnen    }
-function ClipClose:boolean;                     { Clipboard schlieáen }
-function ClipEmpty:boolean;                     { Clipboard l”schen   }
-function ClipCompact(desired:longint):longint;  { freien Platz ermitteln }
-function ClipWrite(format:word; size:longint; var data):boolean;
-function ClipGetDatasize(format:word):longint;
-function ClipRead(format:word; var ldata):boolean;   { Daten lesen }
+function ClipAvailable:boolean;                    { Clipboard verfgbar }
 function Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
-
-Procedure String2Clip(var ldata);                  { STring ins Clipboard}
+procedure String2Clip(var str: String);            { STring ins Clipboard}
 
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
 
-{ procedure ClipTest; }                         {JG: Ausgeklammert }
-
 {$IFDEF BP }
+function  WinVersion:smallword;                 { Windows >= 3.0      }
+
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
 function  SmartSetCache(drive,b:byte):boolean;  { 0=nope, 1=read, 2=write }
@@ -64,85 +39,235 @@ procedure SmartFlushCache;
 
 implementation  { ---------------------------------------------------- }
 
-const
-{$IFDEF BP }
-  Multiplex = $2f;
+uses
+{$IFDEF Ver32 }
+  strings,
 {$ENDIF }
-  maxfile   = 65520;
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
+{$IFDEF VP }
+  vpsyslow,
+{$ENDIF }
+  typeform;
 
-type  ca  = array[0..65530] of char;
-      cap = ^ca;
+{$IFDEF BP }
+const
+  Multiplex = $2f;
+  cf_Oemtext   = 7;
+  maxfile   = 65520;
+{$ENDIF }
+
+type
+  ca  = array[0..65530] of char;
+  cap = ^ca;
 
 {$IFDEF ver32}
-function WinVersion:smallword;
-begin
-  {Unter Win32 ist das immer richtig }
-{$IFDEF Win32 }
-  WinVersion := 3;
-{$ELSE }
-  WinVersion := 0;
-{$ENDIF }
-end;     { Windows-Version abfragen }
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
 
 function ClipAvailable:boolean;
 begin
-  ClipAvailable := false;
+ {$IFDEF Win32 }
+   ClipAvailable := true;
+ {$ELSE }
+   {$IFDEF VP }
+     ClipAvailable := true;
+   {$ELSE }
+     ClipAvailable := false;
+   {$ENDIF }
+ {$ENDIF }
 end;     { wird Clipboard untersttzt? }
 
-function ClipOpen:boolean;
+function Clip2String(maxlen,oneline:byte):string;
+{$IFDEF Win32 }
+var
+  P: Pointer;
+  MemHandle: HGlobal;
+  Size: Integer;
+  Str: String;
 begin
-  ClipOpen := false;
-end;     { Clipboard ”ffnen }
-
-function ClipClose:boolean;
-begin
-  ClipClose := true;
-end;     { Clipboard schlieáen }
-
-function ClipEmpty:boolean;
-begin
-  ClipEmpty := true;
-end;     { Clipboard l”schen }
-
-function ClipCompact(desired:longint):longint;
-begin
-  ClipCompact := 0;
-end;  { Platz ermitteln }
-
-function ClipWrite2(format:word; size:longint; var data):boolean;
-begin
-  ClipWrite2 := false;
+  if OpenClipboard(0) then
+  begin
+    MemHandle := GetClipboardData(cf_Text);
+    P := GlobalLock(MemHandle);
+    if Assigned(P) then
+    begin
+      Size := StrLen(P);
+      Str[0] := Char(Size);
+      Move(P^, Str[1], Size);
+    end;
+    Clip2String := Str;
+    GlobalUnlock(MemHandle);
+    CloseClipBoard;
+  end else
+    Clip2String := '';
 end;
-function ClipGetDatasize(format:word):longint;
+{$ELSE }
+{$IFDEF VP }
+var
+  P: Pointer;
+  Size: Integer;
+  Str: String;
 begin
-  ClipGetDataSize := 0;
-end;
-
-function ClipRead(format:word; var ldata):boolean;
-begin
-  ClipRead := false;
-end;   { Daten lesen }
-
+  if SysClipCanPaste then
+  begin
+    p := SysClipPaste(Size);
+    if Assigned(P) then
+    begin
+      Size := StrLen(P);
+      Str[0] := Char(Size);
+      Move(P^, Str[1], Size);
+    end;
+    Clip2String := Str;
+    Freemem(p);
+  end else
+    Clip2String := '';
+end;  { Clipboardinhalt als String }
+{$ELSE }
 function Clip2String(maxlen,oneline:byte):string;
 begin
-  Clip2String := '';
-end;  { Clipboardinhalt als String }
+  Clip2String := false;
+end;
+{$ENDIF }
+{$ENDIF }
 
-Procedure String2Clip(var ldata);                  { STring ins Clipboard}
+procedure String2Clip(var Str: String);             { String ins Clipboard }
+{$IFDEF Win32 }
+var
+  MemHandle: HGlobal;
+  Q: pChar;
+begin
+ if OpenClipboard(0) then
+ begin
+    EmptyClipboard;
+    // Allocate a shared block of memory
+    MemHandle := GlobalAlloc(gmem_Moveable or gmem_DDEShare, Length(Str)+1);
+    Q := GlobalLock(MemHandle);
+    // Copy clipboard data across
+    Move(Str[1], Q^, Length(Str));
+    Q[Length(Str)]:=#0;
+    GlobalUnlock(MemHandle);
+    // Insert data into clipboard
+    SetClipboardData(cf_Text, MemHandle);
+  end;
+  CloseClipboard;
+end;
+{$ELSE }
+{$IFDEF VP }
+begin
+  SysClipCopy(PChar(Str[1]), SizeOf(Str));
+end;
+{$ELSE }
 begin
 end;
+{$ENDIF }
+{$ENDIF }
 
-{$IFDEF FPC }
-  {$HINTS ON }
+procedure FileToClip(fn:pathstr);
+{$IFDEF Win32 }
+var
+  f  : file;
+  MemHandle: HGlobal;
+  Q: pChar;
+begin
+  assign(f, fn);
+  reset(f, 1);
+  if ioresult=0 then
+  begin
+    if OpenClipboard(0) then
+    begin
+      EmptyClipboard;
+      // Allocate a shared block of memory
+      MemHandle := GlobalAlloc(gmem_Moveable or gmem_DDEShare, FileSize(f)+1);
+      Q := GlobalLock(MemHandle);
+      BlockRead(f,q^,FileSize(f));
+      Q[FileSize(f)]:=#0;
+      GlobalUnlock(MemHandle);
+      // Insert data into clipboard
+      SetClipboardData(cf_Text, MemHandle);
+    end;
+    CloseClipboard;
+    Close(f);
+  end;
+end;
+{$ELSE }
+{$IFDEF VP }
+var
+  f: file;
+  p: pchar;
+begin
+  assign(f, fn);
+  reset(f, 1);
+  if ioresult=0 then
+  begin
+    GetMem(p, FileSize(f));
+    BlockRead(f, p^, FileSize(f));
+    SysClipCopy(p, FileSize(f));
+    FreeMem(p);
+  end;
+  Close(f);
+end;
+{$ELSE }
+begin
+end;
+{$ENDIF }
+{$ENDIF }
+
+procedure ClipToFile(fn:pathstr);
+{$IFDEF Win32 }
+var
+  P: Pointer;
+  MemHandle: HGlobal;
+  f: File;
+begin
+  if OpenClipboard(0) then
+  begin
+    MemHandle := GetClipboardData(cf_Text);
+    P := GlobalLock(MemHandle);
+    if Assigned(P) then
+    begin
+      Assign(f, fn);
+      Rewrite(f, 1);
+      if IOResult = 0 then
+      begin
+        BlockWrite(f, p^, StrLen(p));
+        Close(f);
+      end;
+    end;
+    GlobalUnlock(MemHandle);
+    CloseClipBoard;
+  end;
+end;
+{$ELSE }
+{$IFDEF VP }
+var
+  P: Pointer;
+  Size: Integer;
+  Str: String;
+  f: File;
+begin
+  if SysClipCanPaste then
+  begin
+    p := SysClipPaste(Size);
+    if Assigned(P) then
+    begin
+      Assign(f, fn);
+      Rewrite(f, 1);
+      if IOResult = 0 then
+      begin
+        BlockWrite(f, p, Size);
+        Close(f);
+      end;
+    end;
+    Freemem(p);
+  end;
+end;
+{$ELSE }
+begin
+end;
+{$ENDIF }
 {$ENDIF }
 
 {$ELSE}
-
-{JG:03.02.00 -  CLIP.ASM als Inline ASM Integriert }
 
 function WinVersion:smallword;assembler;      { Windows-Version abfragen }
 asm
@@ -172,18 +297,18 @@ asm
               sub    ax,1700h
               jz     @ca1
               mov    al,1
-@ca1:         
+@ca1:
 end;
 
 
 function ClipOpen:boolean; assembler;         { Clipboard ”ffnen }
 asm
-              mov    ax,1701h            
+              mov    ax,1701h
               int    multiplex
               or     ax,ax
               jz     @c1
               mov    ax,1
-@c1:         
+@c1:
 end;
 
 
@@ -194,18 +319,14 @@ asm
               or     ax,ax
               jz     @c1
               mov    ax,1
-@c1:         
+@c1:
 end;
 
- 
-function ClipEmpty:boolean; assembler;       { Clipboard l”schen }
+
+procedure ClipEmpty; assembler;       { Clipboard l”schen }
 asm
               mov    ax,1702h
               int    multiplex
-              or     ax,ax
-              jz     @c1
-              mov    ax,1
-@c1:         
 end;
 
 
@@ -230,7 +351,7 @@ asm
               or     ax,ax
               jz     @cw1
               mov    ax,1
-@cw1:   
+@cw1:
 end;
 
 
@@ -263,11 +384,11 @@ function Clip2String(maxlen,oneline:byte):String; assembler;  {JG:06.02.00 Jetzt
 
 asm           les bx,@result
               mov word ptr es:[bx],0              { leerstring bei Fehler }
- 
+
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
-              cmp ax,1700h              
-              mov di,0                            { Clipb. nicht schliessen, wenn nicht da.}  
+              cmp ax,1700h
+              mov di,0                            { Clipb. nicht schliessen, wenn nicht da.}
               je @nope
 
               mov ax,1701h                        { Clipboard ”ffnen }
@@ -277,41 +398,41 @@ asm           les bx,@result
               mov ax,1704h                        { Datengroesse Ermitteln }
               mov dx,cf_Oemtext
               int multiplex                       { DX:AX }
-              pop di                              { Clipboardstatus }                                     
-  
+              pop di                              { Clipboardstatus }
+
               cmp al,0                            { Abbruch bei }
               je @nope                            { leerem Testclipboard }
               or dl,ah
               cmp dx,0                            { oder mehr als 256 Zeichen }
               jne @nope
- 
+
               les bx,@result
-              inc bx                              
+              inc bx
               push ax                             { Textlaenge, Start und   }
               push bx                             { Clipboardstatus sichern }
-              push di                             
+              push di
 
               mov ax,1705h                        { Text aus Clipboard anhaengen }
               mov dx,cf_Oemtext
               int multiplex
 
-              pop di                      
+              pop di
               pop si                              { SI= Textstart }
               pop bx
-              mov bh,0                            { BX=Textlaenge laut Windows }      
+              mov bh,0                            { BX=Textlaenge laut Windows }
               inc bx                              { ( gerundet auf 32Byte )    }
 
-@@1:          dec bx 
+@@1:          dec bx
               cmp byte ptr es:[si+bx-1],' '       { Ab Textende Rueckwaerts }
               jb @@1                              { Fuell-Nullen und Steuerzeichen loeschen }
 
-              cmp bl,maxlen                       { Stringlaenge auf Maximallaenge kuerzen } 
+              cmp bl,maxlen                       { Stringlaenge auf Maximallaenge kuerzen }
               jna @1
-              mov bl,maxlen  
+              mov bl,maxlen
 @1:           mov es:[si-1],bl
 
               cmp oneline,0                       { Wenn alles in eine Zeile soll... }
-              je @bye        
+              je @bye
 @@2:          cmp byte ptr es:[si+bx],' '         { Steuerzeichen in Spaces Umwandeln }
               jnb @@3
               mov byte ptr es:[si+bx],' '
@@ -319,22 +440,20 @@ asm           les bx,@result
               jns @@2
               jmp @bye
 
-@nope:        mov ah,2                            { Fehler: }      
-              mov dl,7                            { BEEP }              
-              int 21h                            
+@nope:        mov ah,2                            { Fehler: }
+              mov dl,7                            { BEEP }
+              int 21h
 
 @Bye:         cmp di,0                            { Wenn clipboard nicht auf war }
-              je @jup               
+              je @jup
               mov ax,1708h                        { wieder schliessen }
               int multiplex
-@jup:      
+@jup:
 end;
 
+{ String ins Clipboard kopieren}
 
-
-{JG:10.02.00 String ins Clipboard kopieren}
-
-Procedure String2Clip(var ldata); assembler;
+procedure String2Clip(var Str: String); assembler;
 asm
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
@@ -346,12 +465,12 @@ asm
               push ax                             { Aktuellen Clipboardstatus merken }
 
               mov ax,1702h
-              int multiplex                       { Clipboard leeren}      
+              int multiplex                       { Clipboard leeren}
 
-              les bx,ldata
+              les bx,str
               mov si,0
               mov cx,si
-              mov cl,es:[bx]                      {Stringlaenge -> si:cx}      
+              mov cl,es:[bx]                      {Stringlaenge -> si:cx}
               inc bx                              {Textstart    -> es:bx}
 
               mov ax,1703h                        {String Ins Clipboard schreiben...}
@@ -360,15 +479,11 @@ asm
 
               pop ax
               or ax,ax                            { Wenn clipboard nicht auf war }
-              je @end               
+              je @end
               mov ax,1708h                        { wieder schliessen }
               int multiplex
 @end:
 end;
-
-{$ENDIF}
-
-{/JG}
 
 function ClipWrite(format:word; size:longint; var data):boolean;  { Schreiben }
 begin
@@ -378,28 +493,31 @@ begin
     ClipWrite:=false;
 end;
 
-
-
 procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Windows-Clipboard schicken }
 var f  : file;
     p  : pointer;
     bs : word;
     rr : word;
 begin
-  assign(f,fn);
-  reset(f,1);
-  if ioresult=0 then
-    if ClipAvailable and ClipOpen then begin
-      if maxavail>maxfile then bs:=maxfile
-      else bs:=maxavail;
+  if ClipAvailable and ClipOpen then
+  begin
+    assign(f,fn);
+    reset(f,1);
+    if ioresult=0 then
+    begin
+      if maxavail>maxfile then
+        bs:=maxfile
+      else
+        bs:=maxavail;
       getmem(p,bs);
       blockread(f,p^,bs,rr);
-      close(f);
-      if ClipEmpty then;
-      if ClipWrite(cf_Oemtext,rr,p^) then;
-      if ClipClose then;
+      ClipEmpty;
+      ClipWrite(cf_Oemtext,rr,p^);
+      ClipClose;
       freemem(p,bs);
-      end;
+    end;
+    close(f);
+  end;
 end;
 
 procedure ClipToFile(fn:pathstr);       { Win-Clipboardinhalt als File speichern }
@@ -434,70 +552,6 @@ begin
     close(f);
     end;
 end;
-
-
-
-
-{ JG:18.02.00 ausgeklammert, Prozedur wird nirgens benutzt.... }
-(*            
-procedure ClipTest;
-var s : string;
-
-  procedure TestRead(ft:string; format:word);
-  var l : longint;
-      p : ^ca;
-      i : integer;
-  begin
-    l:=ClipGetDatasize(format);
-    if l>0 then begin
-      writeln(ft,': ',l,' Bytes');
-      if l<65530 then begin
-        getmem(p,l);
-        if ClipRead(format,p^) then
-          for i:=0 to l-1 do
-            write(p^[i]);
-        freemem(p,l);
-        end;
-      writeln;
-      end;
-  end;
-
-begin
-  if not ClipAvailable then
-    writeln('kein Clipboard vorhanden!')
-  else
-    repeat
-      write('(l)esen, (s)chreiben, (d)atei-lesen, d(a)tei-schreiben, (e)nde >');
-      readln(s);
-      if s='l' then
-        if ClipOpen then begin
-          TestRead('Text',cf_Text);
-          TestRead('Oemtext',cf_Oemtext);
-          if ClipClose then;
-          end
-        else else
-      if s='s' then begin
-        write('Text> '); readln(s);
-        if ClipOpen then begin
-          if ClipEmpty then;
-          if {ClipWrite(cf_Text,length(s),s[1]) and}
-             ClipWrite(cf_Oemtext,length(s),s[1]) then;
-          if ClipClose then;
-          end
-        end else
-      if s='d' then begin
-        write('Datei> '); readln(s);
-        ClipToFile(s);
-        end else
-      if s='a' then begin
-        write('Datei> '); readln(s);
-        FileToClip(s);
-        end;
-    until s='e';
-end;
-*)
-
-{$IFDEF BP }
 
 { Smartdrive vorhanden? }
 
@@ -589,6 +643,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/29 15:58:51  mk
+  - Zwischenablage fuer Win32/OS/2 implementiert
+
   Revision 1.12  2000/03/14 15:15:34  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
