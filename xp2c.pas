@@ -307,6 +307,7 @@ begin
 {$ENDIF }
   xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
   maddstring(36,9,'## XP ## ',xid,7,7,'');
+  mhnr(248);
   for i:=3 downto 0 do
     mappsel(true,xids[i]);   { 'immerùAMsùPMsùnie' }
   maddbool(3,12,getres2(252,17),SaveUVS);   { 'unversandte Nachrichten nach /¯Unversandt' }
@@ -1389,6 +1390,9 @@ end.
 
 {
   $Log$
+  Revision 1.86  2001/04/14 11:45:15  mk
+  - fixed help number under linux
+
   Revision 1.85  2001/03/14 20:46:03  mk
   - removed registration routines
 
