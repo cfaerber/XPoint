@@ -92,7 +92,7 @@ var x,y  : byte;
 const
     lastpath : pathstr = '';
     urlchars : set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-               '-','_','#','=','&','%','@','$','+',','];
+               '-','_','#','=','&','%','@','$','+',',',';'];
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.30  2002/04/28 16:27:53  my
+  OG:- Semikolon zur Liste der fr URLs zul„ssigen Zeichen hinzugefgt.
+
   Revision 1.40.2.29  2002/04/25 01:59:51  my
   MY:- pos => cpos
 
