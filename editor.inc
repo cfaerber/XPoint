@@ -2183,7 +2183,7 @@ begin
     writeln(t,'AutoIndent=',iifc(AutoIndent,'J','N'));
 
     writeln(t,'PersistentBlocks=',iifc(PersistentBlocks,'J','N'));
-    writeln(t,'QuoteReflow=N');
+    writeln(t,'QuoteReflow=', iifc(QuoteReflow, 'J', 'N'));
     end;
   close(t);
 end;
@@ -2222,6 +2222,9 @@ end;
 
 {
   $Log$
+  Revision 1.51.2.2  2003/03/28 23:55:59  mk
+  - fixed Bug #65208: 3.8: Quote Reflow-Einstellung flüchtig
+
   Revision 1.51.2.1  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 
