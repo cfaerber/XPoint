@@ -855,24 +855,28 @@ again:
     5,7    : begin
                if nextwl<1 then begin
                  SelWeiter:=true;    { Weiterleitziel aus Liste waehlen }
-                 if typ=5 then pm:=false
-                 else begin
+                 if typ=5 then
+                   pm:=false
+                 else
+                 begin
                    diabox(length(getres2(644,2))+11,5,'',x,y);
                    mwrt(x+3,y+1,getres2(644,1));   { 'Weiterleiten an ...' }
                    ta:='';
                    n:=readbutton(x+3,y+3,2,getres2(644,2),1,true,ta);   { ' ^Brett , ^User , ^Direkt ' }
                    closebox;
                    case n of
-                     0 : goto ende;
-                     1 : pm:=false;
-                     2 : pm:=true;
-                     3 : SelWeiter:=false;
+                     0 : goto ende; // esc
+                     1 : pm:=false; // Brett
+                     2 : pm:=true;  // User
+                     3 : SelWeiter:=false; // Direkt
                    end;
-                   end;
+                 end;
+                 // used with select(-1|3|4)
                  ArchivWeiterleiten:=(typ=5);
 
                  sigfile:='';
-                 if SelWeiter then begin
+                 if SelWeiter then
+                 begin
                    if pm then select(3)
                    else select(-1);
                    if selpos<=0 then goto ende;
@@ -892,16 +896,16 @@ again:
                        rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
                        goto ende;
                      end;
-                     if ((empf<>'') and (zg_flags and 32=0)) then begin
-{ true=Userbrett  }    pm:=cpos('@',empf)>0;
-{ Brettvertreter  }    if not pm then begin
-                         pollbox := dbReadNStr(bbase,bb_pollbox);
-                         if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
-                         begin
-                           Am_ReplyTo:=empf;
-                           Empf := dbReadNStr(bbase,bb_brettname);
-                         end else empf:='A'+empf;
-                       end;
+{ true=Userbrett  }  pm:=cpos('@',empf)>0;
+                     if ((empf<>'') and (zg_flags and 32=0)) and not pm then
+                     begin
+{ Brettvertreter  }    pollbox := dbReadNStr(bbase,bb_pollbox);
+                       if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
+                       begin
+                         Am_ReplyTo:=empf;
+                         Empf := dbReadNStr(bbase,bb_brettname);
+                       end else
+                         empf:='A'+empf;
                      end else
                        Empf := dbReadNStr(bbase,bb_brettname);
 
@@ -942,8 +946,10 @@ again:
                  goto ende;
                  end;
 
-               if typ=5 then archivieren
-               else begin
+               if typ=5 then
+                 archivieren
+               else
+               begin
                  if (typ=3) and (sigfile='') then
                    if pm then sigfile:=PrivSignat
                    else sigfile:=SignatFile;
@@ -1321,6 +1327,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/01/06 14:54:51  mk
+  - fixed bug: Archivieren in ein Brett mit Uservertreter und Schreibsperre
+
   Revision 1.13  2002/01/05 16:01:11  mk
   - changed TSendUUData from record to class
 
