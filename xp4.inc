@@ -258,7 +258,7 @@ begin
    { 13 in xp1menu.inc/Menu_keep    (Extrakt/Als...) }
 
      14 : case m1 of
-            7 : msgall(8,aktdispmode,rdmode);       { Nachricht/Alle }
+            8 : msgall(9,aktdispmode,rdmode);       { Nachricht/Alle }
           else  msgall(m1,aktdispmode,rdmode);
           end;
 
@@ -779,19 +779,24 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.4  2001/09/18 13:47:08  my
+  MY:- Neuer Menuepunkt Nachricht/Alle/Ungelesen setzt alle angezeigten
+       Nachrichten auf Ungelesen. Nachricht/Alle/Lesen umbenannt in
+       Nachricht/Alle/Gelesen und Hotkey in 'G' geaendert.
+
   Revision 1.14.2.3  2001/09/16 20:25:06  my
   JG+MY:- Untere Funktionstasten-Leiste ist jetzt mausbedienbar.
-          Linksklick auf "CrossPoint/OpenXP" führt das Makro <Alt-C> aus,
-          Rechtsklick bringt About-Dialog ("Über OpenXP").
+          Linksklick auf "CrossPoint/OpenXP" fhrt das Makro <Alt-C> aus,
+          Rechtsklick bringt About-Dialog ("šber OpenXP").
 
-  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
-          zeilen stehen nur die ersten 19 zur Verfügung).
+  JG+MY:- Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfgung).
 
-  JG+MY:- Neuer Menüpunkt "?" (Hilfe) im Hauptmenü mit Untermenüs für
-          nützliche und/oder in der Hilfe ansonsten nur schwer auffindbare
-          Informationen. Untermenü "Über OpenXP" zeigt Versions- und
+  JG+MY:- Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr
+          ntzliche und/oder in der Hilfe ansonsten nur schwer auffindbare
+          Informationen. Untermen "šber OpenXP" zeigt Versions- und
           Snapshotnummer sowie OpenXP-Kontakte an. Beta- und
-          Registrierungsfenster optisch angepaßt.
+          Registrierungsfenster optisch angepaát.
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -832,7 +837,7 @@ end;
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.8  2000/03/08 22:36:33  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.7  2000/03/03 21:12:49  jg
   - Config-Optionen-Sprache ausgeklammert

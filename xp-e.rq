@@ -37,7 +37,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 11  Zeilen,0b125
 12  Extrakt,0c1^Message,0c2^UUdecode,0c7M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Headerù13
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
-14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Kill,0e7^Print
+14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Unread,0e7^Kill,0e8^Print
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
 16  Edit,101^Templatesù8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone chargesù26
