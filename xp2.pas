@@ -1030,29 +1030,20 @@ begin
     if ntDomainReply(dbReadInt(d,'netztyp')) then
     begin
       new(p);
-      if dbReadInt(d,'netztyp')=nt_UUCP then
-        dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'))
-      else
-        dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
-                  dbReadStr(d,'domain'));
+      if dbReadInt(d,'netztyp')=nt_UUCP then begin
+        dom:=dbReadStr(d,'fqdn');
+        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
+      end
+      else begin
+        dom:=dbReadStr(d,'fqdn');
+        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
+                                 dbReadStr(d,'domain'));
+      end;
       getmem(p^.domain,length(dom)+1);
       p^.domain^:=dom;
       p^.left:=nil;
       p^.right:=nil;
       insertintolist(DomainList);
-
-      {16.01.00 HS: Replies auf eigene Message-IDs erkennen}
-      dom:=dbReadStr(d,'fqdn');
-      if dom<>'' then
-      begin
-        new(p);
-        getmem(p^.domain,length(dom)+1);
-        p^.domain^:=dom;
-        p^.left:=nil;
-        p^.right:=nil;
-        insertintolist(DomainList);
-      end;
-
     end;
     dbNext(d);
   end;
@@ -1112,6 +1103,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/04/30 17:24:54  mk
+  - Erkennung eigener Mails jetzt mit FQDN-Unterstuetzung
+
   Revision 1.30  2000/04/29 11:54:09  mw
 
   - MIME in News voreingestellt
