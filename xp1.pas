@@ -156,7 +156,7 @@ procedure hinweis(txt:string);
 function  mfehler(b:boolean; txt:string):boolean;
 function  fehlfunc(txt:string):boolean;
 procedure logerror(txt:string);
-procedure tfehler(txt:string; sec:integer);
+procedure tfehler(const txt:string; sec:integer);
 procedure trfehler(nr:word; sec:integer);
 procedure trfehler1(nr:word; const txt:string; sec:integer);
 procedure afehler(txt:string; auto:boolean);
@@ -1320,6 +1320,7 @@ var x,y   : Integer;
     lcol  : byte;
     s: String;
 begin
+  Debug.DebugLog('_fehler', txt, DLError);
   s := LeftStr(txt, screenwidth-6);
   savecursor; lcol:=textattr;
   msgbox(length(s)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
@@ -1386,9 +1387,10 @@ begin
   if ioresult<>0 then;   { Logpath k”nnte falsch gewesen sein }
 end;
 
-procedure tfehler(txt:string; sec:integer);
+procedure tfehler(const txt:string; sec:integer);
 var x,y : Integer;
 begin
+  Debug.DebugLog('_fehler', txt, DLError);
   msgbox(length(txt)+16,5,_fehler_,x,y);
   mwrt(x+3,y+2,LeftStr(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
                formi(sec mod 60,2));
@@ -2091,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.4  2002/05/03 17:04:48  mk
+  - write _fehler and tfehler-messages to Debuglog
+
   Revision 1.147.2.3  2002/05/02 18:34:01  mk
   - fixed #216189 - Check letzter Programmstart
 
