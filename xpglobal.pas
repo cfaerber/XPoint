@@ -19,10 +19,10 @@ const
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
 
-       xp_xp       : string[17] = 'CrossPoint/OpenXP';
-       xp_client   : string[17] = 'CrossPoint/Client';
-       xp_origin   : string[21] = '--- CrossPoint/OpenXP';
-  x_copyright = '(c) 2001';
+  xp_xp       : string[17] = 'CrossPoint/OpenXP';
+  xp_client   : string[17] = 'CrossPoint/Client';
+  xp_origin   : string[21] = '--- CrossPoint/OpenXP';
+  x_copyright = '(c) 2000-01';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -98,6 +98,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29.2.16  2001/06/09 17:46:24  mk
+  - Copyright auf 2000-01 geaendert
+
   Revision 1.29.2.15  2001/06/07 15:42:59  mk
   - Copyright auf 2001 geaendert
 
