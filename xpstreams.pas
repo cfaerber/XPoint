@@ -439,7 +439,7 @@ begin Result := FOtherStream.Seek(Offset,Origin); end;
 
 procedure write_s(stream:TStream;const s:string);
 begin
-  stream.WriteBuffer(s[1],length(s));
+  if length(s)>0 then stream.WriteBuffer(s[1],length(s));
 end;
 
 procedure writeln_s(stream:TStream;const s: string);
