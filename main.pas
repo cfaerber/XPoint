@@ -37,6 +37,7 @@ uses
 //  linux,
 //  {$ENDIF}
   xplinux,
+  xpcurses, 
   {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,mouse,winxp,lister,resource,objcom,
@@ -243,6 +244,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2002/05/25 09:24:01  mk
+  - added xpcurses to uses
+
   Revision 1.17  2002/05/19 10:52:09  mk
   - do readpar before initializing the ncurses lib to
     allow displaying of the command line parameters
