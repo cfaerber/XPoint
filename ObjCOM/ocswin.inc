@@ -38,8 +38,8 @@ begin
 
   InitPortNr := -1;
   InitHandle := -1;
-  ThreadsInitted := false;
-  Initvars;
+  DataRequested := False; OLDataProcessed:=0;
+  InBuffer.Init(InBufSize);
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -51,258 +51,28 @@ end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tSerialObj.DataProc(var TempPtr: Pointer);
-var Success     : Boolean;
-    Props       : TCommProp;
-    ObjectCode  : Longint;
-    ReturnCode  : Longint;
-    DidRead     : DWORD;
-    Written     : DWORD;
-    EventMask   : DWORD;
-    BlockLen    : Longint;
-    ObjectArray : Array[0..1] of THandle;
-    TryReading  : Boolean;
-    Stats       : TComStat;
-    ErrMask     : DWORD;
+procedure tSerialObj.ProcIncoming;
+{Triggers reading if appropriate}
+var BytesRead: DWord;
 begin
-  ObjectArray[0] := DoTxEvent^.SemHandle;
-  ObjectArray[1] := DoRxEvent^.SemHandle;
-
-  repeat
-     ObjectCode := WaitForMultipleObjects(2,
-                                          @ObjectArray,
-                                          false,
-                                          DataTimeOut);
-     if EndThreads then EXIT;
-
-     {-----------------------------------------------------------------------}
-     {-------------------------- Receive signalled --------------------------}
-     {-----------------------------------------------------------------------}
-     if (ObjectCode - WAIT_OBJECT_0) = 1 then                   { DoReceive }
-       begin
-         DidRead := 00;
-         if (EndThreads) then EXIT;
-
-         {-- Make sure there is something to be read ------------------------}
-         ErrMask := 0;
-         TryReading := FALSE;
-
-         if ClearCommError(SaveHandle, ErrMask, @Stats) then
-           if Stats.cbInQue > 0 then
-             TryReading := TRUE;
-
-
-         {----------------- Start reading the gathered date -----------------}
-         if TryReading then
-           begin
-             CriticalRx^.EnterExclusive;
-
-             FillChar(Props, SizeOf(TCommProp), 0);
-             if GetCommProperties(SaveHandle, Props) then
-              if InBuffer^.BufRoom > 0 then
-                begin
-                  BlockLen := Props.dwCurrentRxQueue;
-                               { We want the complete BUFFER size, and not }
-                               { the actual queue size. The queue may have }
-                                   { grown since last query, and we always }
-                                           { want as much data as possible }
-
-                  if BlockLen > InBuffer^.BufRoom then
-                    BlockLen := InBuffer^.BufRoom;
-
-                  Success := ReadFile(SaveHandle,
-                                      InBuffer^.TmpBuf^,
-                                      BlockLen,
-                                      DidRead,
-                                      @ReadOL);
-
-                  if NOT Success then
-                    begin
-                      ReturnCode := GetLastError;
-
-                      if ReturnCode = ERROR_IO_PENDING then
-                        begin
-                          ReturnCode := WaitForSingleObject(ReadOL.hEvent, DataTimeOut);
-
-                          if ReturnCode = WAIT_OBJECT_0 then
-                            begin
-                              GetOverLappedResult(SaveHandle, ReadOL, DidRead, false);
-                            end; { if }
-                        end; { if }
-                    end
-                      else GetOverlappedResult(SaveHandle, ReadOL, DidRead, false);
-
-                  if DidRead > 00 then
-                    begin
-                      InBuffer^.Put(InBuffer^.TmpBuf^, DidRead);
-                      DoRxEvent^.ResetEvent;
-                    end; { if }
-                end; { if }
-
-             CriticalRx^.LeaveExclusive;
-           end; { try reading }
-       end; { DoReceive call }
-
-     {-----------------------------------------------------------------------}
-     {-------------------------- Transmit signalled -------------------------}
-     {-----------------------------------------------------------------------}
-     if (ObjectCode - WAIT_OBJECT_0) = 0 then                   { DoReceive }
-       begin
-         CriticalTx^.EnterExclusive;
-         DoTxEvent^.ResetEvent;
-
-         if OutBuffer^.BufUsed > 00 then
-           begin
-             Written := 00;
-             BlockLen := OutBuffer^.Get(OutBuffer^.TmpBuf^, OutBuffer^.BufUsed, false);
-
-             Success := WriteFile(SaveHandle,
-                                  OutBuffer^.TmpBuf^,
-                                  BlockLen,
-                                  Written,
-                                  @WriteOL);
-             if NOT Success then
-               begin
-                 ReturnCode := GetLastError;
-
-                 if ReturnCode = ERROR_IO_PENDING then
-                   begin
-                     ReturnCode := WaitForSingleObject(WriteOL.hEvent, DataTimeOut);
-
-                     if ReturnCode = WAIT_OBJECT_0 then
-                       begin
-                         if GetOverLappedResult(SaveHandle, WriteOL, Written, false) then
-                           begin
-                             ResetEvent(WriteOL.hEvent);
-                           end; { if }
-                       end; { if }
-                   end; { result is pending }
-               end { if }
-                 else begin
-
-                         if GetOverLappedResult(SaveHandle, WriteOL, Written, false) then
-                           begin
-                             ResetEvent(WriteOL.hEvent);
-                           end; { if }
-                      end; { if (did succeed) }
-
-             ReturnCode := OutBuffer^.Get(OutBuffer^.TmpBuf^, Written, true);
-             if Written <> BlockLen then
-               DoTxEvent^.SignalEvent;
-           end; { if }
-
-         CriticalTx^.LeaveExclusive;
-       end; { DoTransmit call }
-
-
-  until EndThreads;
-
-  DataClosedEvent^.SignalEvent;
-  ExitThisThread;
-end; { proc. ComDataProc }
-
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-
-function tSerialObj.StartThread: Boolean;
-begin
-  Result := false;
-  EndThreads := false;
-  if ThreadsInitted then EXIT;
-  ThreadsInitted := true;
-
-  {----------------------- Create all the events ----------------------------}
-  New(ReadEvent, Init);
-  if NOT ReadEvent^.CreateEvent(true) then EXIT;
-
-  New(WriteEvent, Init);
-  if NOT WriteEvent^.CreateEvent(true) then EXIT;
-
-  New(DoTxEvent, Init);
-  if NOT DoTxEvent^.CreateEvent(false) then EXIT;
-
-  New(DoRxEvent, Init);
-  if NOT DoRxEvent^.CreateEvent(false) then EXIT;
-
-  New(DataClosedEvent, Init);
-  if NOT DataClosedEvent^.CreateEvent(false) then EXIT;
-
-  {-------------- Startup the buffers and overlapped events -----------------}
-  FillChar(WriteOL, SizeOf(tOverLapped), 0);
-  FillChar(ReadOL, SizeOf(tOverLapped), 0);
-  WriteOL.hEvent := WriteEvent^.SemHandle;
-  ReadOL.hEvent := ReadEvent^.SemHandle;
-
-  New(InBuffer, Init(InBufSize));
-  New(OutBuffer, Init(OutBufSize));
-
-  if (InBuffer^.TxtArr=nil) OR (InBuffer^.TmpBuf=nil) then EXIT;
-  if (OutBuffer^.TxtArr=nil) OR (OutBuffer^.TmpBuf=nil) then EXIT;
-
-  {-------------------- Startup the critical section objects ----------------}
-  New(CriticalTx, Init);
-  CriticalTx^.CreateExclusive;
-
-  New(CriticalRx, Init);
-  CriticalRx^.CreateExclusive;
-
-  {-------------------- Startup a seperate tx / rx thread -------------------}
-  New(DataThread, Init);
-  if NOT DataThread^.CreateThread(16384,                           { Stack size }
-                                  DataProcPtr,               { Actual procedure }
-                                  nil,                             { Parameters }
-                                   0)                           { Creation flags }
-                                   then EXIT;
-
-  Result := true;
-end; { proc. StartThread }
-
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-
-procedure tSerialObj.InitVars;
-begin
-  DoTxEvent := nil;
-  DoRxEvent := nil;
-  DataClosedEvent := nil;
-  DataThread := nil;
-  ReadEvent := nil;
-  WriteEvent := nil;
-
-  InBuffer := nil;
-  OutBuffer := nil;
-  CriticalRx := nil;
-  CriticalTx := nil;
-end; { proc. InitVars }
-
-(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-
-procedure tSerialObj.StopThread;
-begin
-  EndThreads := true;
-  ThreadsInitted := false;
-
-  if DoTxEvent <> nil then DoTxEvent^.SignalEvent;
-  if DoTxEvent <> nil then DoRxEvent^.SignalEvent;
-  if DataThread <> nil then DataThread^.CloseThread;
-
-  if DataClosedEvent <> nil then
-   if NOT DataClosedEvent^.WaitForEvent(1000) then
-     DataThread^.TerminateThread(0);
-
-  if DataThread <> nil then Dispose(DataThread, Done);
-  if DoTxEvent <> nil then Dispose(DoTxEvent, Done);
-  if DoRxEvent <> nil then Dispose(DoRxEvent, Done);
-  if DataClosedEvent <> nil then Dispose(DataClosedEvent, Done);
-  if ReadEvent <> nil then Dispose(ReadEvent, Done);
-  if WriteEvent <> nil then Dispose(WriteEvent, Done);
-
-  if CriticalTx <> nil then Dispose(CriticalTx, Done);
-  if CriticalRx <> nil then Dispose(CriticalRx, Done);
-
-  if InBuffer <> nil then Dispose(InBuffer, Done);
-  if OutBuffer <> nil then Dispose(OutBuffer, Done);
-
-  InitVars;
-end; { proc. StopThread }
+  if not DataRequested then begin
+    DebugLog('ObjCOM','Requesting incoming.',3);
+    while ReadFile(SaveHandle,InBuffer.TmpBuf^,InBufSize,BytesRead,@ReadOL)and(BytesRead>0)do
+      begin InBuffer.Put(InBuffer.TmpBuf^,BytesRead); DebugLog('ObjCOM','ReadFile True',2)end;
+    if GetLastError=ERROR_IO_PENDING then DataRequested:=True;
+    OLDataProcessed:=0;
+  end;
+  if DataRequested then begin
+    DebugLog('ObjCOM','Incoming pending...',3);
+    if GetOverlappedResult(SaveHandle,ReadOL,BytesRead,False)then
+      begin DebugLog('ObjCOM','Overlapped IO finished.',3); DataRequested:=False end;
+  end;
+  if(BytesRead-OLDataProcessed)>0 then begin
+    InBuffer.Put(InBuffer.TmpBuf^[OLDataProcessed],BytesRead-OLDataProcessed);
+    DebugLog('ObjCOM','Read '+IntToStr(BytesRead-OLDataProcessed),3);
+    OLDataProcessed:=BytesRead;
+  end;
+end;  
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
@@ -346,7 +116,7 @@ begin
     end; { if }
 
   InitDelayTimes;
-  InitFailed := NOT StartThread;
+  InitFailed := False;
   SetLine(-1, 'N', 8, 1);
 end; { proc. tSerialObj.OpenQuick }
 
@@ -355,8 +125,8 @@ end; { proc. tSerialObj.OpenQuick }
 function tSerialObj.OpenKeep(Comport: Byte): Boolean;
 var TempSave   : THandle;
     CommTimeOut: TCommTimeOuts;
-    Security   : TSECURITYATTRIBUTES;
-    LastError  : Longint; S: ShortString;
+    Security   : Windows.TSECURITYATTRIBUTES; {?!}
+    LastError  : Longint;
 begin
   InitPortNr := Comport;
 
@@ -368,17 +138,15 @@ begin
   Security.lpSecurityDescriptor := nil;
   Security.bInheritHandle := true;
 
-  S:='\\.\COM' + IntToStr(ComPort);
-  WriteLn(S,'!',GENERIC_READ or GENERIC_WRITE,'!',OPEN_EXISTING,'!',FILE_ATTRIBUTE_NORMAL or FILE_FLAG_OVERLAPPED);
   TempSave := CreateFile(PChar('\\.\COM' + IntToStr(ComPort)),
                          GENERIC_READ or GENERIC_WRITE,
                          0,
-                         @Security,                             { No Security }
+                         nil,                               { No Security }
                          OPEN_EXISTING,                     { Creation action }
                          FILE_ATTRIBUTE_NORMAL or FILE_FLAG_OVERLAPPED,
-                         0);                                    { No template }
-  LastError := GetLastError; WriteLn(LastError,' ',TempSave);
-  Result:=True{(LastError=0)}; ErrorStr := 'Unable to open communications port: #'+IntToStr(LastError);
+                         0);                                { No template }
+  LastError := GetLastError;
+  Result:=(LastError=0)or(LastError=2); ErrorStr := 'Unable to open communications port: #'+IntToStr(LastError);
 
   if Result then
     begin
@@ -393,9 +161,6 @@ begin
       ErrorStr:='Error setting up comm buffer: #'+IntToStr(GetLastError);
     end;
 
-  if Result then
-    begin ErrorStr:='Error starting threads'; Result := StartThread end;
-
   if Result then ErrorStr:='';
   InitFailed:=not Result;
 end; { func. OpenKeep }
@@ -406,7 +171,7 @@ function tSerialObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                          Parity: Char; StopBits: Byte): Boolean;
 begin
   Result:=OpenKeep(Comport);
-  DebugLog('ObjCOM','Opening: '+IntToStr(Baudrate)+Parity+IntToStr(DataBits)+IntToStr(StopBits)+IntToStr(Ord(Result)),4);
+  DebugLog('ObjCOM','Opening: '+IntToStr(Baudrate)+Parity+IntToStr(DataBits)+IntToStr(StopBits)+IntToStr(Ord(Result)),1);
   if Result then Result:=SetLine(Baudrate, Parity, DataBits, StopBits);
 end; { func. tSerialObj.OpenCom }
 
@@ -449,9 +214,9 @@ procedure tSerialObj.Close;
 begin
   if DontClose then EXIT;
 
+  DataRequested:=False;
   if GetHandle <> INVALID_HANDLE_VALUE then
     begin
-      StopThread;
       CloseHandle(GetHandle);
 
       SaveHandle := INVALID_HANDLE_VALUE;
@@ -479,59 +244,42 @@ end; { func. tSerialObj.GetChar }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
+var BytesWritten: DWord;
+    Success: Boolean;
 begin
-  if OutBuffer^.BufRoom < BlockLen then
-   repeat
-    {$IFDEF WIN32}
-      Sleep(1);
-    {$ENDIF}
-   until (OutBuffer^.BufRoom >= BlockLen) OR (NOT Carrier);
-
-  CriticalTx^.EnterExclusive;
-    Written := OutBuffer^.Put(Block, BlockLen);
-  CriticalTx^.LeaveExclusive;
-
-  DoTxEvent^.SignalEvent;
-end; { proc. tSerialObj.SendBlock }
+  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
+  Success:=WriteFile(SaveHandle,Block,BlockLen,BytesWritten,@WriteOL);
+  if not Success then
+    case GetLastError of
+      ERROR_IO_PENDING: repeat until GetOverlappedResult(SaveHandle,WriteOL,BytesWritten,False);
+    else DebugLog('ObjCOM','SendBlock error',1);
+    end;
+  Written:=BytesWritten;
+end;  
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
-  if InBuffer^.BufUsed < BlockLen then
-    begin
-      DoRxEvent^.SignalEvent;
-
-      while (InBuffer^.BufUsed < BlockLen) AND (Carrier) do
-        begin
-          Sleep(1);
-
-          if CharAvail then
-            DoRxEvent^.SignalEvent;
-        end; { while }
-    end; { if }
-
-  CriticalRx^.EnterExclusive;
-    Reads := InBuffer^.Get(Block, BlockLen, true);
-  CriticalRx^.LeaveExclusive;
+  if BlockLen>1 then DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  while InBuffer.BufUsed<BlockLen do ProcIncoming;
+  Reads := InBuffer.Get(Block, BlockLen, true);
 end; { proc. tSerialObj.ReadBlock }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tSerialObj.CharAvail: Boolean;
-var Props   : TComStat;
-    ErrMask : DWORD;
 begin
-  if InBuffer^.BufUsed < 1 then
-    begin
-      ErrMask := 0;
+  DebugLog('ObjCOM','CharAvail',2);
+  ProcIncoming; Result := (InBuffer.BufUsed > 0);
+end; { func. tSerialObj.CharAvail }
 
-      if ClearCommError(GetHandle, ErrMask, @Props) then
-        if Props.cbInQue > 0 then
-          DoRxEvent^.SignalEvent;
-    end; { if }
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-  Result := (InBuffer^.BufUsed > 0);
+function tSerialObj.CharCount: Integer;
+begin
+  ProcIncoming; Result:=InBuffer.BufUsed;
+  DebugLog('ObjCOM','CharCount '+IntToStr(InBuffer.BufUsed),2);
 end; { func. tSerialObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -539,8 +287,7 @@ end; { func. tSerialObj.CharAvail }
 function tSerialObj.Carrier: Boolean;
 var Status: DWORD;
 begin
-  GetCommModemStatus(GetHandle,
-                     Status);
+  GetCommModemStatus(GetHandle,Status);
 
   Result := (Status AND MS_RLSD_ON) <> 00;
 end; { func. tSerialObj.Carrier }
@@ -579,59 +326,40 @@ end; { func. tSerialObj.GetBpsRate }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
-var Stats       : TComStat;
-    ErrMask     : DWORD;
 begin
-  if ClearCommError(GetHandle, ErrMask, @Stats) then
-     begin
-       if Stats.cbInQue > 0 then
-         DoRxEvent^.SignalEvent;
-    end; { if }
-
-
-  InFree := InBuffer^.BufRoom;
-  OutFree := OutBuffer^.BufRoom;
-  InUsed := InBuffer^.BufUsed;
-  OutUsed := OutBuffer^.BufUsed;
+  CharCount;
+  InFree := InBuffer.BufRoom;
+  OutFree := 65000;
+  InUsed := InBuffer.BufUsed;
+  OutUsed := 0;
 end; { proc. tSerialObj.GetBufferStatus }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.PurgeInBuffer;
 begin
-  CriticalRx^.EnterExclusive;
-
-  InBuffer^.Clear;
+  InBuffer.Clear;
   PurgeComm(GetHandle, PURGE_RXCLEAR);
-
-  CriticalRx^.LeaveExclusive;
 end; { proc. tSerialObj.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.PurgeOutBuffer;
 begin
-  CriticalTx^.EnterExclusive;
-
-  OutBuffer^.Clear;
-  PurgeComm(GetHandle, PURGE_TXCLEAR);
-
-  CriticalTx^.LeaveExclusive;
 end; { proc. tSerialObj.PurgeInBuffer }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tSerialObj.ReadyToSend(BlockLen: Longint): Boolean;
 begin
-  Result := OutBuffer^.BufRoom >= BlockLen;
+  Result := True;
 end; { func. ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tSerialObj.PauseCom(CloseCom: Boolean);
 begin
-  if CloseCom then Close
-    else StopThread;
+  if CloseCom then Close;
 end; { proc. PauseCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -643,7 +371,7 @@ begin
         if InitPortNr <> -1 then OpenKeep(InitPortNr)
           else OpenQuick(InitHandle);
       end
-       else InitFailed := NOT StartThread;
+       else InitFailed := False;
 end; { proc. ResumeCom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -687,6 +415,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.4  2000/11/17 19:48:23  ma
+  - no more threads, working again
+
   Revision 1.3  2000/10/28 09:41:47  ma
   - currently NOT working
   - merged changes from Maarten's EleCOM 1.2

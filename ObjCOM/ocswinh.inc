@@ -20,7 +20,7 @@ type TSerialObj = Object(TCommObj)
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
-{        function  CharCount: Integer; virtual;}
+        function  CharCount: Integer; virtual;
         function  Carrier: Boolean; virtual;
         function  SendChar(C: Char): Boolean; virtual;
         function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
@@ -44,38 +44,16 @@ type TSerialObj = Object(TCommObj)
         procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); virtual;
 
      private
-        DataProcPtr: Pointer;             { Pointer to TX/RX handler (thread) }
-        ThreadsInitted: Boolean;          { Are the thread(s) up and running? }
-
+        DataRequested: Boolean;          { Are the thread(s) up and running? }
+        OLDataProcessed: Longint;
         SaveHandle    : THandle;
-
         InitPortNr    : Longint;
         InitHandle    : Longint;
-
         ReadOL        : tOverlapped;          { Overlapped structure for ReadFile }
         WriteOL       : tOverlapped;         { Overlapped structure for WriteFile }
+        InBuffer      : tRingBuffer;         { Buffer system internally used }
 
-        InBuffer      : tpRingBuffer;             { Buffer system internally used }
-        OutBuffer     : tpRingBuffer;
-
-        ReadEvent     : tpSysEventObj;  { Event set by ReadFile overlapped routine }
-        WriteEvent    : tpSysEventObj; { Event set by WriteFile overlapped routine }
-
-        DoTxEvent     : tpSysEventObj;{ Event manually set when we have to transmit }
-        DoRxEvent     : tpSysEventObj;       { Event manually set when we want data }
-
-        DataClosedEvent: tpSysEventObj;    { Event set when the Tx thread is closed }
-
-        CriticalTx    : tpExclusiveObj;                        { Critical sections }
-        CriticalRx    : tpExclusiveObj;
-
-        DataThread    : tpThreadsObj;
-        EndThreads    : Boolean;    { Set to true when we have to end the threads }
-
-        procedure DataProc(var TempPtr: Pointer); virtual;
-        function  StartThread: Boolean;
-        procedure InitVars;
-        procedure StopThread;
+        procedure ProcIncoming; virtual;
         procedure InitDelayTimes;
      end; { object TSerialObj }
 
@@ -83,6 +61,9 @@ type tpSerialObj = ^TSerialObj;
 
 {
   $Log$
+  Revision 1.3  2000/11/17 19:48:23  ma
+  - no more threads, working again
+
   Revision 1.2  2000/10/28 09:41:47  ma
   - currently NOT working
   - merged changes from Maarten's EleCOM 1.2
