@@ -87,9 +87,9 @@ var
 
     procedure CleanSpool;
     begin
-      erase_mask(AddDirSepa(DestDir)+'*.OUT'); (* delete old output files *)
-      erase_mask(AddDirSepa(DestDir)+'*.BAK'); (* delete old input files  *)
-      CreateDir(AddDirSepa(DestDir));
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.OUT'); (* delete old output files *)
+      erase_mask(IncludeTrailingPathDelimiter(DestDir)+'*.BAK'); (* delete old input files  *)
+      CreateDir(IncludeTrailingPathDelimiter(DestDir));
     end;
 
     function RunoutFilter:boolean;
@@ -289,7 +289,7 @@ var
     delsource := false;
 
     source    := ppfile;
-    destdir   := iifs(diskpoll,boxpar^.sysopout,AddDirSepa(XFerDir+BoxFile+'.SPL'));
+    destdir   := IncludeTrailingPathDelimiter(iifs(diskpoll,boxpar^.sysopout,XFerDir+BoxFile+'.SPL'));
 
     if not Diskpoll then
       CleanSpool;
@@ -356,15 +356,16 @@ var
 
   begin { ProcessIncomingFiles: boolean }
     result    := false;
-    source    := AddDirSepa(iifs(diskpoll,BoxPar^.sysopinp,XFerDir+BoxFile+'.SPL'))+'X-*';
+    source    := IncludeTrailingPathDelimiter(iifs(diskpoll,BoxPar^.sysopinp,XFerDir+BoxFile+'.SPL'))+'X-*';
 
-    dest      := 'UUbuffer.zer';
+    dest      := 'UUpuffer.zer';
 
-    if InitUUZ then begin
-      if RunUUZ then
-        result:=true;
-      KillUUZ;
-    end;
+    if not fileexists(dest) then
+      if InitUUZ then begin
+        if RunUUZ then
+          result:=true;
+        KillUUZ;
+      end;
 
     if fileexists(dest) then
       if _filesize(dest)>=1 then IncomingFiles.Add(dest)
@@ -500,6 +501,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/10/17 20:56:07  cl
+  - UUbuffer.zer is now never overwritten
+
   Revision 1.13  2001/10/15 13:12:25  mk
   /bin/bash: ?: command not found
   /bin/bash: q: command not found
