@@ -24,7 +24,7 @@ uses  xpglobal,
       crt,dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
 {$IFDEF BP }
-      ems,xms, xdelay,
+      ems,xms,
 {$ENDIF }
       xp0,xp1,xp1input,xp1o,xp1o2;
 
@@ -1038,6 +1038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/03/25 09:03:56  mk
+  - xdelay jetzt komplett entfernt
+
   Revision 1.15  2000/03/16 19:37:07  rb
   Sternhimmel-Screensaver-Delay etwas umgestellt
 

@@ -209,3 +209,59 @@ zwei *kleinere* Featurerequests:
 Gruss,
 - Lars.
 
+From rom@readonly.de Sat Mar 25 00:01:13 2000
+Return-path: <sentto-398616-4148-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Sat, 25 Mar 2000 00:01:19 +0100
+Received: from [208.48.218.21] (helo=ch.egroups.com)
+	by mx00.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12Yd4m-0003W7-00
+	for mk@happyarts.de; Sat, 25 Mar 2000 00:01:09 +0100
+X-eGroups-Return: sentto-398616-4148-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.35] by ch.egroups.com with NNFMP; 24 Mar 2000 23:01:07 -0000
+Received: (qmail 18058 invoked from network); 24 Mar 2000 23:01:05 -0000
+Received: from unknown (10.1.10.26) by m1.onelist.org with QMQP; 24 Mar 2000 23:01:05 -0000
+Received: from unknown (HELO mx00.tmag.de) (195.222.124.25) by mta1.onelist.com with SMTP; 24 Mar 2000 23:01:05 -0000
+Received: from mailgate.tmag.de ([195.222.124.26]) by mx00.tmag.de with smtp id 12Yd4e-0001rb-00 for xpdeveloper@onelist.com; Sat, 25 Mar 2000 00:01:00 +0100
+Received: (qmail 38917 invoked by uid 1200); 24 Mar 2000 23:01:00 -0000
+Received: from ppp77.stud.tu-darmstadt.de (st001183@130.83.177.77) by mailgate.tmag.de with SMTP; 24 Mar 2000 23:01:00 -0000
+To: "xpdeveloper@onelist.com" <xpdeveloper@onelist.com>
+Priority: Normal
+X-Mailer: PMMail 2.10.1999 for OS/2 Warp 4.00
+Message-Id: <E12Yd4e-0001rb-00@mx00.tmag.de>
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@onelist.com>
+Date: Sat, 25 Mar 2000 00:01:13 +0100 (CET)
+X-eGroups-From: "Oliver Hertel" <rom@readonly.de>
+From: "Oliver Hertel" <rom@readonly.de>
+Reply-To: xpdeveloper@onelist.com
+Subject: [XPDev] charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+--------
+From: "Oliver Hertel" <rom@readonly.de>
+
+Hi!
+
+Hier meint einer, wenn XP nach charset=ISO-8859-1 arbeitet, 
+dann wird das 'ö' (kleines oe) falsch kodiert. Kann das mal 
+jemand überprüfen, der sich damit auskennt? ;)
+-- 
+Ciao, Oliver
+
+http://readonly.de
+
+
+------------------------------------------------------------------------
+DON'T HATE YOUR RATE!
+Get a NextCard Visa, in 30 seconds!  Get rates as low as 
+0.0% Intro or 9.9% Fixed APR and no hidden fees.
+Apply NOW!
+http://click.egroups.com/1/2120/3/_/682185/_/953938865/
+------------------------------------------------------------------------
+
+
+

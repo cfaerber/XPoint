@@ -25,9 +25,6 @@ unit xp1;
 interface
 
 uses
-{$IFDEF BP }
-  xdelay,
-{$ENDIF }
   xpglobal, crt,dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,xpcrc32;
@@ -2159,6 +2156,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/03/25 09:03:56  mk
+  - xdelay jetzt komplett entfernt
+
   Revision 1.20  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 
