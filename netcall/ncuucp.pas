@@ -62,7 +62,7 @@ type
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug, montage, crc,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
-{$IFDEF NCRT } xpcurses {$ELSE } xpwin32,crt {$ENDIF };
+{$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}xpdos32{$ENDIF},crt{$ENDIF};
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
 {                                                                              }
@@ -1043,6 +1043,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/03/24 23:43:08  cl
+  - fixes for DOS32
+
   Revision 1.1  2001/03/24 22:55:29  cl
   - moved from playground to main
 

@@ -553,7 +553,7 @@ begin
 end;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
-var pold,name,ext,ext2,i: string;
+var pold,name,ext,eext,i: string;
     j,mlen: integer;
 begin
 {$IFDEF VP}
@@ -593,10 +593,10 @@ begin
   if not System.LFNSupport then
   begin
     if (ext='.Z') or (ext='.gz') or (ext='.bz') or (ext='.F') then begin
-      FSplit(name,pold,name,ext2);
-      if ext2<>'' then begin
+      FSplit(name,pold,name,eext);
+      if eext<>'' then begin
         if ext ='.F' then ext:= '-XZ';
-        ext:=LeftStr(ext2,5-length(ext))+Mid(ext,2);
+        ext:=LeftStr(eext,5-length(ext))+Mid(ext,2);
       end;
     end;
 
@@ -1206,6 +1206,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/03/24 23:43:08  cl
+  - fixes for DOS32
+
   Revision 1.9  2001/03/24 23:09:43  cl
   - enabled UUCP
 
