@@ -1940,7 +1940,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 117  Envelope address
 118  User name      ~
 119  Password       ~
-120  Use Envelope-To
+120  Use Envelope Header
 121  Keep mail on server
 122  APOP Authentication
 123  SMTP after POP
