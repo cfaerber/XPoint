@@ -985,6 +985,7 @@ var brk      : boolean;
   var x,y,i  : byte;
       brk    : boolean;
       enable : array[1..mtypes-1] of boolean;
+      s: String;
   begin
     for i:=1 to mtypes-1 do
       enable[i]:=(e[a+p][15+i]<>' ');
@@ -997,7 +998,11 @@ var brk      : boolean;
     enddialog;
     if not brk then begin
       for i:=1 to mtypes-1 do
-        e[a+p][15+i]:=iifc(enable[i],'*',' ');
+      begin
+        s := e[a+p];
+        s[15+i]:=iifc(enable[i],'*',' ');
+        e[a+p] := s;
+      end;
       modi:=true;
       end;
   end;
@@ -2017,6 +2022,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/08/03 21:30:14  mk
+  - FPC Kompatiblitaetsfix
+
   Revision 1.25  2000/08/03 20:08:17  mk
   - e[] auf TStringlist umgestellt
 
