@@ -7973,7 +7973,7 @@ Wochentage: Sa
 
 Betreff:    Manndaa!
 Datei:      C:\OPEL\BOAH_EY\MANTA
-Empf&auml;nger:  /T-NETZ/JOKES
+Empf&auml;nger:  /Z-NETZ/ALT/JOKES
 bin&auml;r:      N
 Wochentage: t&auml;glich
           </screen></para>
@@ -16463,10 +16463,10 @@ Server:      (Boxname)
         <para><screen>
 
 ----------------------&gt;
-Empfaenger:  /T-NETZ/SUPPORT/XPOINT/ALLGEMEINES
+Empfaenger:  /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
 Betreff:     Test f&uuml;r automatische Nachricht
 
-Diese Nachricht wurde per AUTOEXEC-Verzeichnis automatisch
+Diese Nachricht wurde per autoexec-Verzeichnis automatisch
 verschickt ...
 &lt;----------------------
           </screen></para>
@@ -20999,9 +20999,8 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
         Nachrichten, soweit sie noch vorhanden sind, aus
         <application>QP</application> nach
         <application>XP</application> exportiert werden k&ouml;nnen.
-        Sie stammt von <address>J.Poehlmann@LINK-NJD</address>; ich
-        &uuml;bernehme keine Gew&auml;hr f&uuml;r die
-        Richtigkeit:</para>
+        Sie stammt von Johannes P&ouml;hlmann. Ich &uuml;bernehme
+        keine Gew&auml;hr f&uuml;r die Richtigkeit:</para>
 
       <blockquote>
 
