@@ -51,7 +51,7 @@ implementation  { --------------------------------------------------- }
 
 uses  xp6,xp9bp,xpauto;
 
-const regfile  = 'regdata.cfg';
+const regfile  = 'REGDATA.CFG';
 
       regsites = 1;
       hregwege = 3;    { Drucken, Datei, E-Mail, Online }
@@ -1577,6 +1577,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2000/12/24 16:47:33  mk
+  - regdata.cfg gross geschrieben
+
   Revision 1.10.2.3  2000/12/14 17:54:10  mk
   - Programmnamen in Regformular schreiben
 
