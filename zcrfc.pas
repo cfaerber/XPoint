@@ -513,8 +513,19 @@ end;
 
 
 procedure tuuz.testfiles;
+
+  function exist(const n:string):boolean;
+  var
+    sr : searchrec;
+    r: Integer;
+    ex : boolean;
+  begin
+    Result := FindFirst(n,anyfile-volumeid-directory,sr) = 0;
+    FindClose(sr);
+  end;
+
 begin
-  if not FileExists(source) then raise Exception.Create('Quelldatei fehlt');
+  if not Exist(Source) then raise Exception.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
     raise Exception.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z and not ppp then
@@ -3657,6 +3668,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2002/08/04 14:03:55  mk
+  - fixed testfiles: allow wildcards in source filename
+
   Revision 1.113  2002/08/03 09:10:30  mk
   - set -ppp when -client is set
 
