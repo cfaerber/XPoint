@@ -261,7 +261,7 @@ begin
 
   if BoxPar^.POP3_ForceOneArea then begin
     // tell xp3o.PufferEinlesen to put all messages to standard mail area
-    xp3o.ForceRecipient:= '1/' + BoxPar^.username;
+    xp3o.ForceRecipient:= '1/' + BoxPar^.username + iifs(userboxname,'/'+BoxPar^.Boxname,'');
     i:= cPos('@',xp3o.ForceRecipient);
     if i>0 then
       xp3o.ForceRecipient:= LeftStr(xp3o.ForceRecipient, i - 1);
@@ -269,8 +269,13 @@ begin
 end;
 
 
+                      
 {
   $Log$
+  Revision 1.24  2001/10/10 20:55:03  mk
+  - check for "Systemname in PM-Brettern" when "Alle Mails in ein Brett einordnen"
+    is enabled in POP3/SMTP servers
+
   Revision 1.23  2001/09/19 11:20:09  ma
   - implemented simple user break handling code
 
