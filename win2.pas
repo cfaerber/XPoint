@@ -323,6 +323,7 @@ var   fb     : pathstr;
       s:=f^[add+p];
       gotoxy(12,y+height-1);
       moff;
+{$IFNDEF UnixFS }
       if s[1]='[' then
         case drivetype(s[2]) of
           2 : Wrt2(forms('RAM-Disk',59));
@@ -333,7 +334,9 @@ var   fb     : pathstr;
         else
           Wrt2(sp(59));
         end
-      else if right(s,1)='\' then
+      else 
+{$ENDIF }
+      if right(s,1)=DirSepa then
 {$IFDEF BP }
         Wrt2(sp(59))
 {$ELSE }
@@ -342,7 +345,7 @@ var   fb     : pathstr;
       else begin
         pa:=path;
         pathonly(pa);
-        if right(pa,1)<>'\' then pa:=pa+'\';
+        if right(pa,1)<>DirSepa then pa:=pa+DirSepa;
         findfirst(pa+s,ffanyfile,sr);
         if doserror<>0 then
           Wrt2(sp(59))
@@ -417,7 +420,7 @@ begin
     exit;
     end;
   path:=trim(path); pathx:=trim(pathx);
-  if path='' then path:='*.*';
+  if path='' then path:=WildCard;
   path:=fexpand(path);
   if pathx='' then begin
     pathn:=1;
@@ -436,11 +439,15 @@ begin
       end;
     end;
 
-  vorgabe:=ustr(vorgabe);
+  vorgabe:=fustr(vorgabe);
   t:=#0#0;
   wpushed:=false;
   height:=iif(fsb_info,12,10);
+{$IFDEF UnixFS }
+  drives:= '';
+{$ELSE }
   drives:=alldrives;
+{$ENDIF }
   maus_pushinside(10,70,y+1,y+height-3);
   repeat
     fn:=0;
@@ -448,7 +455,7 @@ begin
     fsplit(path,dir,name,ext);
     if xdir then begin
       doppelpunkt:=false;
-      findfirst(dir+'*.*',directory+archive,sr);
+      findfirst(dir+WildCard,directory+archive,sr);
       while (doserror=0) and (fn<maxf) do begin
         if (sr.name<>'.') and ((sr.attr and directory)<>0) then begin
           inc(fn);
@@ -519,7 +526,7 @@ begin
         if f^[i][1]>=#253 then begin
           delete(f^[i],1,1);
           if f^[i,1]<>'[' then
-            f^[i]:=f^[i]+'\';
+            f^[i]:=f^[i]+DirSepa;
           end;
 
       p:=1; add:=0;
@@ -673,14 +680,14 @@ begin
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((fn>0) and (t=keycr) and (right(f^[p+add],1)='\')) or chgdrive then
+    if ((fn>0) and (t=keycr) and (right(f^[p+add],1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
-          if f^[p+add]='..\' then begin
+          if f^[p+add]='..'+DirSepa then begin
             delete(dir,length(dir),1);
-            while (dir<>'') and (dir[length(dir)]<>'\') do
+            while (dir<>'') and (dir[length(dir)]<>DirSepa) do
               delete(dir,length(dir),1);
             if dir<>'' then path:=dir+name+ext;
             end
@@ -688,7 +695,7 @@ begin
             path:=dir+f^[p+add]+name+ext
         else begin                        { Laufwerkswechsel }
           path:=dospath(ord(t[1]));
-          if right(path,1)<>'\' then path:=path+'\';
+          if right(path,1)<>DirSepa then path:=path+DirSepa;
           path:=path+name+ext;
           end;
         paths[i]:=path;
@@ -1106,6 +1113,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/09 13:11:36  hd
+  - UnixFS: fsbox angepasst
+  - UnixFS: DriveType rausgenommen
+
   Revision 1.14  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 
