@@ -70,7 +70,7 @@ const  {$IFDEF DPMI}
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 70;
+       BetreffLen  = 250;
        DateLen     = 11;
        midlen      = 120;
        AKAlen      = 127;
@@ -1075,6 +1075,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/05/04 20:51:00  mk
+  - kleiner Bug bei BetreffLen gefixt
+
   Revision 1.10.2.1  2000/04/23 14:48:45  jg
   Aenderungen fuer externe Viewer:
 

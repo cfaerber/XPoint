@@ -43,7 +43,7 @@ const
       maxfollow   = 10;               { max. Followup-To-Zeilen }
       bufsize     = 16384;
       outbufsize  = 16384;
-      BetreffLen  = 70;
+      BetreffLen  = 250;
       readempflist= true;
       postadrlen  = 80;
       telelen     = 60;
@@ -150,7 +150,7 @@ type  OrgStr  = string[orglen];
                   kopien     : empfnodep;
                   xempf      : empflistt;
                   empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  betreff    : string[250];   { verl„ngert wegen MIME-Codierung }
+                  betreff    : string[Betrefflen];   { verl„ngert wegen MIME-Codierung }
                   absender   : string[80];
                   datum      : string[11];    { Netcall-Format }
                   zdatum     : string[22];    { ZConnect-Format }
@@ -2318,23 +2318,14 @@ begin
     if absender='' then absender:='Unknown@Sender';
     if ustr(wab)=ustr(absender) then
       wab:='';
-    MimeIsoDecode(betreff,250);
-{   MimeIsoDecode(realname,40); }
+    MimeIsoDecode(betreff,BetreffLen);
     MimeIsoDecode(realname,realnlen);
-    { 11.10.1999 robo - Realname verl„ngert }
-    
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
 
-{ 28.01.2000 robo }
     for i := 1 to hd.ulines do MimeIsoDecode (uline^ [i], 255);
-{/robo }
 
- {  s:=betreff;  ISO2IBM; betreff:=s;
-    s:=realname; ISO2IBM; realname:=s;
-    s:=summary;  ISO2IBM; summary:=s;
-    s:=keywords; ISO2IBM; keywords:=s; }
     if (empfanz=1) and (followups=1) and (xempf[1]=followup[1]) then
       followups:=0;
     MimeAuswerten;
@@ -3541,6 +3532,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.4  2000/05/04 20:50:59  mk
+  - kleiner Bug bei BetreffLen gefixt
+
   Revision 1.8.2.3  2000/05/03 22:25:30  mk
   RB: - supersedes werden jetzt konvertiert
 
