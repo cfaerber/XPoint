@@ -40,7 +40,7 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_QWK       = 31;
        nt_UUCP      = 40;
        nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp }
-       nt_UUCP_U    = 42;        { dito fuer RFC/UUCP-Auswahl, nur fuer Namen-Anzeige }
+                                 { wird nach Auswahl nt_UUCP + ClientMode true }
        nt_NNTP      = 50;        { NNTP-Stream }
        nt_POP3      = 51;        { POP3/SMTP-Stream }
        nt_IMAP      = 52;        { IMAP4 }
@@ -440,7 +440,6 @@ begin
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
     nt_UUCP     : ntName:='RFC/UUCP';
-    nt_UUCP_U   : ntName:='RFC/UUCP';
     nt_UUCP_C   : ntName:='RFC/Client';
     nt_NNTP     : ntName:='NNTP';
     nt_POP3     : ntName:='POP3/SMTP';
@@ -761,6 +760,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2001/07/29 13:58:23  ma
+  - removed nt_UUCP_U, some fixes
+
   Revision 1.26  2001/07/27 18:10:15  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

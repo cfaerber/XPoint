@@ -93,10 +93,10 @@ const umtyp : array[0..5] of string[5] =
 
 {$IFNDEF DOS32}
       SupportedNetTypes: array[0..5] of byte =
-        (nt_UUCP_C, nt_POP3, nt_NNTP, nt_UUCP_U, nt_Fido, nt_ZConnect);
+        (nt_UUCP_C, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ELSE}
       SupportedNetTypes: array[0..3] of byte =
-        (nt_UUCP_C, nt_UUCP_U, nt_Fido, nt_ZConnect);
+        (nt_UUCP_C, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
@@ -1515,6 +1515,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/07/29 13:58:23  ma
+  - removed nt_UUCP_U, some fixes
+
   Revision 1.11  2001/07/29 12:59:02  ma
   - cleaned up server config dialog
   - removed ntAllowed variable

@@ -391,8 +391,8 @@
             uploader:='Zmodem';
             downloader:='Zmodem';
             end;
-          if (nt=nt_UUCP) and FileExists('UUCP.SCR') then
-            script:='UUCP.SCR';
+          if (nt=nt_UUCP) and FileExists('uucp.scr') then
+            script:='uucp.scr';
           if nt=nt_Fido then begin
             case ival(LeftStr(name,cpos(':',name)-1)) of
                8 : magicbrett:='/METRONET/';
@@ -1176,7 +1176,7 @@
     komm:= dbReadStr(d,'kommentar');
     realname:= dbReadStr(d,'realname');
     fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
-    INetNameRead(nt,name,user,komm,realname,fqdom,getreps(915,Netz_Typ(nt)),brk);
+    INetNameRead(nt,name,user,komm,realname,fqdom,name+', '+user,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
       newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
@@ -2021,6 +2021,9 @@
 
 {
   $Log$
+  Revision 1.11  2001/07/29 13:58:23  ma
+  - removed nt_UUCP_U, some fixes
+
   Revision 1.10  2001/07/29 12:59:02  ma
   - cleaned up server config dialog
   - removed ntAllowed variable
