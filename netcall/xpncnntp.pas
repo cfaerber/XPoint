@@ -386,6 +386,7 @@ begin
                 MsgId := MsgId + '>';
               NNTP.GetMessage(MsgId, List, false);
             end;
+            // add handling if message id was not found
             MidList.Delete(0);
           end;
           MidList.SaveToFile(MidFilename);
@@ -417,6 +418,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.7  2003/08/23 17:33:47  mk
+        - added comment for message id fetching
+
         Revision 1.39.2.6  2003/08/15 19:56:04  mk
         - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
 
