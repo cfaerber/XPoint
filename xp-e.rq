@@ -2676,6 +2676,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 2736 %s contains messages. Delete
 2737 Warning: Message encryption is not allowed in FidoNet!
+2738 Delete User from address book
 
 
 # --- XP_DES, XP_PGP --------------------------------------------------
@@ -3166,7 +3167,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8  verbirgt. Fuer den allgemeinen Syntax beachten Sie bitte folgendes:
 9  - Kommentare werden durch das '#'-Zeichen eingeleitet
 10 - Sie koennen eigene Kommentare einfuegen, diese bleiben erhalten
-11 - Sektionen stehen in eckigen Klammern ('[' und ']'). 
+11 - Sektionen stehen in eckigen Klammern ('[' und ']').
 12 - Eine Sektion kann nur einmal vorkommen
 13 - Sie endet mit dem Beginn einer neuen Sektion.
 14 - Jeder Eintrag besteht aus einem Schluessel und einem Wert

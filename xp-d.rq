@@ -2728,6 +2728,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 2736 %s enth„lt Nachrichten. Trotzdem l”schen
 2737 Warnung: Nachrichtencodierung ist im FidoNet nicht zul„ssig!
+2738 User aus Adreábuch entfernen
+
 
 # --- XPREG -----------------------------------------------------------
 
@@ -3194,7 +3196,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 +   14000
 #   Zeilenanzahl
 0   10
-1   Willkommen als neuer Benutzer 
+1   Willkommen als neuer Benutzer
 2   Als allererstes muessen sie noch einige Einstellungen taetigen
 3   Hierzu gehoeren u.a. auch die Einstellungen rund um den verwendeten
 4   Server. Hierzu gibt es zwei Moeglichkeiten
@@ -3259,7 +3261,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 8  verbirgt. Fuer den allgemeinen Syntax beachten Sie bitte folgendes:
 9  - Kommentare werden durch das '#'-Zeichen eingeleitet
 10 - Sie koennen eigene Kommentare einfuegen, diese bleiben erhalten
-11 - Sektionen stehen in eckigen Klammern ('[' und ']'). 
+11 - Sektionen stehen in eckigen Klammern ('[' und ']').
 12 - Eine Sektion kann nur einmal vorkommen
 13 - Sie endet mit dem Beginn einer neuen Sektion.
 14 - Jeder Eintrag besteht aus einem Schluessel und einem Wert

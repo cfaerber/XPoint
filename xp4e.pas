@@ -357,7 +357,7 @@ begin
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
-    adrbuchdef:=adr;  
+    adrbuchdef:=adr;
     mhnr(8069);
     end
 
@@ -372,9 +372,9 @@ begin
   readmask(brk);
   if not brk then
   begin
-    if (adrbuchdef<>0) and (byte(adr)=0) then 
-     if not readJN('User aus Adreábuch entfernen',false) then
-       adr:=adrbuchdef;  
+    if (adrbuchdef<>0) and (byte(adr)=0) then
+     if not readJN(GetRes(2738),false) then
+       adr:=adrbuchdef;
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
@@ -2411,6 +2411,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.7  2000/10/05 23:10:16  mk
+  - Resource 2738 angelegt
+
   Revision 1.25.2.6  2000/10/03 15:47:42  mk
   - Bugfix fuer RangeCheck-Problem in EditUser
 
