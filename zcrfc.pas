@@ -2279,13 +2279,18 @@ begin
         mailuser:=SetMailuser(hd.envemp);
       end;
 
+      try
       if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
       begin
-        // Envelope-Empfaenger einsetzen
+       // Envelope-Empfaenger einsetzen
         hd.xoem.Assign(hd.xempf);
         hd.xempf.Clear;
         hd.xempf.Add(mailuser);
       end;
+      except
+        hd.xempf.Add(mailuser);
+      end;
+
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
       while (bufpos < bufanz) and (hd.Lines > 0) do
@@ -3405,9 +3410,9 @@ var
           if p = 0 then
           begin
             fromfile := s;
-	    (* will be handeled by UUCICO *)
+            (* will be handeled by UUCICO *)
             (* tofile := Unix2DOSfile(s, ''); *)
-	    tofile := s;
+            tofile := s;
           end
           else
           begin
@@ -3665,6 +3670,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/03/12 23:51:57  cl
+  - fixed crash when To header was empty/missing in mails
+
   Revision 1.34  2001/03/03 19:54:05  cl
   - name of created command file is now a readable property of TUUZ
   - leave file name conversion of requested files to UUCICO
