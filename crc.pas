@@ -170,6 +170,12 @@ end;
 procedure CCITT_CRC32_calc_Block(var block; size: DWord);
                                 {&uses ebx,esi,edi} assembler;  {  CRC-32  }
 asm
+{$IFDEF Delphi }
+     push ebx
+     
+     push esi
+     push edi
+{$ENDIF }
      mov ebx, CRC_Reg
      mov edi, block
      mov esi, size
@@ -187,6 +193,11 @@ asm
      jnz @u3
      mov CRC_reg, ebx
 @u4:
+{$IFDEF Delphi }
+     pop edi
+     pop esi
+     pop ebx
+{$ENDIF Delphi }
 {$ifdef FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$else}
@@ -209,6 +220,9 @@ end;
 
 {
   $Log$
+  Revision 1.9.2.1  2002/04/22 10:02:44  mk
+  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
+
   Revision 1.9  2001/10/20 17:26:38  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while

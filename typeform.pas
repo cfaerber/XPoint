@@ -65,22 +65,6 @@ const
     97,223, 71,182, 83,115,181,110,111, 79, 79,100,111,248, 69, 32,
     61,177, 62, 60,124,124,247, 61,176,183,183, 32,179,178,183, 32);
 
-{$IFDEF FPC}
-  {$IFDEF VER1_0_0}{$DEFINE FPC_OLD}{$ENDIF}
-  {$IFDEF VER1_0_1}{$DEFINE FPC_OLD}{$ENDIF}
-  {$IFDEF VER1_0_2}{$DEFINE FPC_OLD}{$ENDIF}
-  {$IFDEF VER1_0_3}{$DEFINE FPC_OLD}{$ENDIF}
-  {$IFDEF VER1_0_4}{$DEFINE FPC_OLD}{$ENDIF}
-
- {$IFDEF FPC_OLD}
-  {$IFDEF UnixFS}
-   Const PathDelim = '/';
-  {$ELSE}
-   Const PathDelim = '\';
-  {$ENDIF}
- {$ENDIF}
-{$ENDIF}
-
 type DateTimeSt = string;
      s20        = string;
      s40        = string;
@@ -538,6 +522,9 @@ const
    'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞ‗אבגדהוזחטיךכלםמןנסעףפץצקרשתûü‎‏ÿ';
 {$ENDIF}
 asm
+{$IFDEF Delphi }
+    push ebx
+{$ENDIF }
     xor ebx,ebx
     mov   bl, c
     cmp   bl, 'a'                         { erst ab 'a'... }
@@ -547,6 +534,9 @@ asm
 @noupcase:
     mov al,bl
 @Upcase_end:
+{$IFDEF Delphi }
+    pop ebx 
+{$ENDIF Delphi }
 end;
 {$endif}
 
@@ -765,7 +755,10 @@ end;
 
 function Hex(const l:integer; const n:integer):string;
 begin
-  Result := RightStr(IntToHex(l,n),n);
+  Hex:= IntToHex(l, n);
+  {$IFDEF VP }
+    Hex := RightStr(Result, n);
+  {$ENDIF }
 end;
 
 function HexVal(const s:string):longint;
@@ -1433,7 +1426,6 @@ begin
 end;
 
 {$IFDEF FPC }
-
 function ExcludeTrailingPathDelimiter(const s: String): String;
 begin
   Result := S;
@@ -1449,14 +1441,8 @@ end;
 
 {
   $Log$
-  Revision 1.110  2002/04/19 16:52:20  cl
-  - fix for last commit: pathdelim is '/' for UnixFS
-
-  Revision 1.109  2002/04/19 16:51:24  cl
-  - fix for FPC <= 1.0.4
-
-  Revision 1.108  2002/04/14 22:21:31  cl
-  - Hex(): Delphi fix; changed to universally portable code
+  Revision 1.107.2.1  2002/04/22 10:02:44  mk
+  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
 
   Revision 1.107  2002/04/06 17:07:47  mk
   - fixed some hard coded '\' to PathDelim and other functions
