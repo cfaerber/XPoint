@@ -1939,7 +1939,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Name      ~
 4    Password  ~
 5    "+" for area requests
-6    Commands as Subject
+6    Commands as subject
 7    Misc.
 8    Newsgroups~
 9    FileScan
@@ -1958,7 +1958,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9    ^Names,
 10   ^Misc
 11   ,^Sysop Mode
-12   ,^Locale Mode
+12   ,^Local Mode
 13   empty
 14   empty
 15   empty
@@ -1990,7 +1990,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 929
 # [!MF!]
 1    There is an unsent mail packet (%s.PP) for this
-2    Server. Therefore, the type of net cannot be changed.
+2    Server, therefore, the type of net cannot be changed.
 3    Either send or delete the mail packet first!
 # [..]
 4
@@ -2024,9 +2024,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0    57
 1    Add viewer
 2    Change Viewer
-3    MIME-Type       ~
+3    MIME type       ~
 4    File extension  ~
-5    Viewer-Program  ~
+5    Viewer programme~
 -
 + 950
 # NNTP
@@ -2035,7 +2035,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Port     ~
 3    User ID  ~
 4    Password ~
-5    amount of messages to get
+5    Number of messages to get
 -
 
 + 951
@@ -2045,8 +2045,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Login name~
 3    Password  ~
 4    Delete messages on Server
-5    encrypt passwords (APOP)
-6    get only new mail
+5    Encrypt passwords (APOP)
+6    Get new mail only
 -
 + 952
 # SMTP
@@ -3443,7 +3443,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 # --- New Fido
 +30003
-1  Searching Packets (%s)
+1  Searching packets (%s)
 2  Unpack %s
 10 Converting FTS -> ZConnect
 11 File.......:
@@ -3451,7 +3451,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13 From.......:
 14 To.........:
 15 Subject....:
-16 State......:
+16 Status.....:
 20 Converting ZConnect -> FTS
 50 Copy %s to BAD.
 51 Unknown group pattern '%s'
@@ -3697,6 +3697,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.12  2001/05/12 04:18:01  mf
+# A few minor changes here 'n there.
+#
 # Revision 1.11  2001/04/29 22:58:03  ma
 # - added GPL infos
 #
