@@ -36,7 +36,7 @@ total 193
 
 {$I xpdefine.inc }
 
-uses sysutils;
+uses sysutils,xpglobal;
 
 const bufsize = 2048;
 
@@ -151,6 +151,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5  2000/11/20 19:09:55  fe
+  Added forgotten xpglobal unit.
+
   Revision 1.4  2000/09/12 19:37:19  fe
   Ansistring-Anpassungen und unter FPC zum Laufen gebracht.
 
