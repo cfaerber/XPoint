@@ -992,7 +992,7 @@ begin
             if pm_reply then inc(mnt,$400);
             if (wab<>'') or (oem.Count > 0) then inc(mnt,$800);
             if Empfaenger.Count >1 then inc(mnt,longint(empfnr) shl 24);
-            if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
+            if ((FirstChar(FirstEmpfaenger)='A') and ntDomainReply(netztyp) and
               IsOwnDomain(GetLastReference)) or
               (filterattr and fattrHilite<>0)
             then
@@ -1234,6 +1234,9 @@ end;
 
 {
   $Log$
+  Revision 1.80  2002/02/01 10:18:00  mk
+  - fixed bug with new empfaenger handling
+
   Revision 1.79  2002/01/13 15:15:50  mk
   - new "empfaenger"-handling
 
