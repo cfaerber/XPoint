@@ -862,8 +862,10 @@ end;
 
 procedure MDisabledNodisplay;                 { deaktiviert nicht anzeigen }
 begin
-  if testlast then
+  if testlast then begin
+    lastfld^.enabled:=false;
     lastfld^.disnodisp:=true;
+  end;
 end;
 
 
@@ -1289,6 +1291,9 @@ end.
 
 {
   $Log$
+  Revision 1.30  2001/09/08 14:15:50  cl
+  - fix for procedure MDisabledNodisplay;
+
   Revision 1.29  2001/08/11 23:06:27  mk
   - changed Pos() to cPos() when possible
 
