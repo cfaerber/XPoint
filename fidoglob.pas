@@ -130,6 +130,10 @@ var
 
 
 implementation
+
+uses
+  xp0;
+
 ///////////////////////////////////////////////////////////////////////////////
 // begin TNodList
 constructor TNodeList.Create;
@@ -150,8 +154,7 @@ begin
     reset(t);
     while not eof(t) do
     begin
-      NlItem := TNodeListItem.Create;   //
-      add(NlItem);
+      NlItem := TNodeListItem.Create;   
       with NlItem do
       begin
         repeat
@@ -174,12 +177,12 @@ begin
               fzone:=fa.zone; fnet:=fa.net; fnode:=fa.node;
               end;
             end;
-          until eof(t) or (s='');
-        if (fformat<1) or (fformat>5) then begin    // ungueltiges Format
-          Remove(NlItem);       // Element aus der Liste entfernen
-          NlItem.Free;          // und freigeben
-          end;
-        end;
+        until eof(t) or (s='');
+        if (fformat<1) or (fformat>5) then  // ungueltiges Format
+          NlItem.Free                       // wieder freigeben
+        else
+          Add(NlItem);
+      end;
     end;  { while }
     close(t);
   end;
@@ -245,7 +248,7 @@ begin
   inherited Add(NLItem);
 
   for i:=0 to Count - 1 do              // and sort Dateigr”áe sortieren
-    TNodeListItem(Items[i]).fsort:=_filesize(FidoDir+ GetFilename(i));
+    TNodeListItem(Items[i]).fsort:=_filesize(FidoPath+ GetFilename(i));
   for i:=0 to Count - 1 do
     for j:=Count - 1 downto 1 do
       if TNodeListItem(Items[j]).fsort>TNodeListItem(Items[j-1]).fsort then
@@ -321,6 +324,11 @@ end;
 
 {
   $Log$
+  Revision 1.18  2002/07/22 10:10:32  mk
+  - fixed TNodeList.LoadConfigFromFile
+    add was called before NlItem: TNodeListItem; was filled,
+    but add uses this information internally to sort nodelist entries
+
   Revision 1.17  2002/04/14 11:01:54  mk
   - fixed memory leaks
 
