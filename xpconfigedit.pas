@@ -484,7 +484,7 @@ procedure scripterrors(var s:string);
 begin
   if (s<>'') and Fileexists(s) and (RunScript(nil,nil,nil,true,s,false,false)<>0) then begin
     rfehler(925);    { 'Syntaxfehler in Script' }
-    if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
+    if listfile(LogPath+ScErrlog,scerrlog,true,false,false,0)=0 then;
     end;
 end;
 
@@ -1621,6 +1621,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.34  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

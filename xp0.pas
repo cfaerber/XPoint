@@ -1065,6 +1065,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        PGP_signall  : boolean;       { alle Nachrichten signieren }
        PGP_GPGEncodingOptions: string;
 
+       Enable_UTF8  : boolean;       { Enable UTF8 handling }
+
        IntVorwahl   : string;    { internationale Vorwahl }
        NatVorwahl   : string;    { nationale Vorwahl, normalerweise 0 }
        Vorwahl      : string;    { eigene Vorwahl }
@@ -1201,6 +1203,9 @@ implementation
 
 {
   $Log$
+  Revision 1.148  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.147  2002/01/02 15:33:51  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset

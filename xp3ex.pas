@@ -57,7 +57,7 @@ procedure extract_msg(art:Integer; schablone:string; name:string;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode;
+uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode,xpstreams;
 
 var  ex_MimePart : TMimePart;
 
@@ -190,12 +190,12 @@ var size   : longint;
     TempKopien: TStringList;
     QuoteEmptyLines: boolean;
     SourceCS: TMimeCharsets;
+    str    : TStream;
     
     ExtUTF8     : boolean;
 
     SourceToUTF8: TUTF8Encoder;
-    UTF8ToDest:  TUTF8Decoder;    
-
+    UTF8ToDest:   TUTF8Decoder;    
     TemplateToUTF8: TUTF8Encoder;
 
   procedure recode(var s:string);
@@ -203,13 +203,24 @@ var size   : longint;
     if assigned(SourceToUTF8) then s:=SourceToUTF8.Encode(s);
     if assigned(UTF8ToDest)   then s:=UTF8ToDest.  Decode(s);
   end;
-    
+
+  procedure recode437(var s:string);
+  begin
+    if assigned(TemplateToUTF8) then s:=TemplateToUTF8.Encode(s);
+  end;
+
   procedure wrs(s:string);
   begin
     s:=LeftStr(s,ScreenWidth)+#13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
     if LeftStr(s,5)<>'-----' then lasttrenn:=false;
+  end;
+
+  procedure wrs437(s:string);
+  begin
+    recode437(s);
+    wrs(s);
   end;
 
   procedure wrslong(s:string);
@@ -565,7 +576,7 @@ var size   : longint;
     blanklines:=0;
     while not eof(t) do begin
       read(t,reads);
-      recode(reads);
+//    recode(reads);
       endspace:=(LastChar(reads)=' ') or eoln(t);
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
@@ -652,7 +663,7 @@ var size   : longint;
             s:= TrimRight(s);
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
-              recode(reads);
+//            recode(reads);
               endspace:=(LastChar(reads)=' ') or eoln(t);
 //            if not iso1 and ConvIso and (reads<>'') then begin
 //              convstr:= reads;
@@ -723,6 +734,7 @@ begin // extract_msg;
 
   SourceToUTF8:= nil;
   UTF8ToDest  := nil;
+  TemplateToUTF8:=nil;
   TempKopien  := nil;
   MimePart    := nil;
 
@@ -768,11 +780,15 @@ begin // extract_msg;
     if smdl(IxDat('2712300000'),edat) then
       dbReadN(mbase,mb_wvdatum,edat);
 //  iso1:=(dbReadInt(mbase,'netztyp') and $2000)<>0;
-    SourceCS := MimeGetCharsetFromName(ZcCharsetToMIME(hdp.charset));
+    if hdp.charset<>'' then
+      SourceCS := MimeGetCharsetFromName(ZcCharsetToMIME(hdp.charset))
+    else
+      SourceCS := csCP437;
 
     if ExtUTF8 then begin
       if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
         SourceToUTF8 := CreateUTF8Encoder(SourceCS);
+      TemplateToUTF8 := CreateUTF8Encoder(csCP437);
     end else begin
       if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
       begin
@@ -785,8 +801,6 @@ begin // extract_msg;
     if (schablone<>'') and (FileExists(schablone)) then begin
       assign(t,ownpath+schablone);
       reset(t);
-      if ExtUTF8 then TemplateToUTF8 := CreateUTF8Encoder(csCP437);
-     try
       while not eof(t) do with hdp do begin
         readln(t,s);
         wempf:=empfaenger;
@@ -825,12 +839,9 @@ begin // extract_msg;
           rpsdate(s);
           if lastchar(s)=' ' then DeleteLastChar(s);
           end;
-        if ExtUTF8 then s := TemplateToUTF8.Encode(s);
+        recode437(s);
         wrslong(s);
         end;
-       finally
-        if ExtUTF8 then TemplateToUTF8.Free;
-       end;
       close(t);
       end;
 
@@ -842,9 +853,9 @@ begin // extract_msg;
 
     hdf_Trenn :  if not lasttrenn then begin                     { Trennzeile }
                    if( length(VarLister) <> 0 ) then             { wenn externer Lister verwendet wird }
-                     wrs(dup(iif(art=xTractHead,70,72),'-'))
+                     wrs437(dup(iif(art=xTractHead,70,72),'-'))
                    else
-                     wrs(dup(ScreenWidth-2,'Ä'));                  { interner Lister }
+                     wrs437(dup(ScreenWidth-2,'Ä'));                  { interner Lister }
 
                    lasttrenn:=true;
                  end;
@@ -854,9 +865,9 @@ begin // extract_msg;
                    else s:='';
                    if hdp.empfanz=1 then
                      if cpos('@',hdp.empfaenger)>0 then
-                       wrs(gr(2)+mausname(hdp.empfaenger)+s)   { 'Empfaenger : ' }
+                       wrs437(gr(2)+mausname(hdp.empfaenger)+s)   { 'Empfaenger : ' }
                      else
-                       wrs(gr(2)+hdp.empfaenger+s)
+                       wrs437(gr(2)+hdp.empfaenger+s)
                    else begin
                      s:=gr(2)+hdp.empfaenger;     { 'Empfaenger : ' }
                      for i:=2 to hdp.empfanz do begin
@@ -868,14 +879,14 @@ begin // extract_msg;
                        Hdp.Kopien.AddStrings(TempKopien);
                        if length(s)+length(hdp.empfaenger)>iif(listscroller,76,77)
                        then begin
-                         wrs(s); s:=gr(2{15});
+                         wrs437(s); s:=gr(2{15});
                          end
                        else
                          s:=s+', ';
                        s:=s+hdp.empfaenger;
                      end;
                      if hdp.fido_to<>'' then s:=s+' ('+hdp.fido_to+')';
-                     wrs(s);
+                     wrs437(s);
                    end;
                  end;
 
@@ -886,16 +897,16 @@ begin // extract_msg;
                   begin
                     if length(s)+length(hdp.Kopien[i])>iif(listscroller,76,77) then
                     begin
-                      wrs(s); s:=getres2(361,28);
+                      wrs437(s); s:=getres2(361,28);
                     end else
                       s := s + ', ';
                     s := s+ hdp.Kopien[i];
                   end;
-                  Wrs(s);
+                  wrs437(s);
                 end;
 
     hdf_DISK  :  for i:=0 to hdp.followup.count-1 do
-                   wrs(gr(3)+hdp.followup[i]);           { 'Antwort in : ' }
+                   wrs437(gr(3)+hdp.followup[i]);           { 'Antwort in : ' }
 
     hdf_ABS   :  begin
                    if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
@@ -911,20 +922,20 @@ begin // extract_msg;
                          hdp.realname:=hdp.realname+', '+ni.standort;
                        end;
                      end;
-                   wrs(gr(6)+mausname(hdp.absender)+      { 'Absender   : ' }
+                   wrs437(gr(6)+mausname(hdp.absender)+      { 'Absender   : ' }
                        iifs(hdp.realname<>'','  ('+hdp.realname+')',''));
                  end;
 
     hdf_OEM    : if (hdp.oem.Count > 0) and (LeftStr(hdp.oem[0],length(hdp.empfaenger))
                      <>hdp.empfaenger) then
-                   wrs(gr(16)+hdp.oem[0]);         { 'Org.-Empf. : ' }
+                   wrs437(gr(16)+hdp.oem[0]);         { 'Org.-Empf. : ' }
     hdf_OAB    : if hdp.oab<>'' then            { 'Org.-Abs.  : ' }
-                   wrs(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
+                   wrs437(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
     hdf_WAB    : if hdp.wab<>'' then            { 'Weiterleit.: ' }
-                   wrs(gr(17)+hdp.wab+iifs(hdp.war<>'','  ('+hdp.war+')',''));
+                   wrs437(gr(17)+hdp.wab+iifs(hdp.war<>'','  ('+hdp.war+')',''));
     hdf_ANTW  : if (hdp.ReplyTo<>'') and
                   ((UpperCase(Hdp.ReplyTo) <> UpperCase(hdp.absender))) then   { 'Antwort an : ' }
-                   wrs(gr(27)+hdp.ReplyTo);
+                   wrs437(gr(27)+hdp.ReplyTo);
 
     hdf_BET    : begin
                    tmp:=TempS(2000+dbReadInt(mbase,'msgsize')
@@ -944,7 +955,7 @@ begin // extract_msg;
                    repeat                               { langen Betreff umbrechen }
                      lr:=rightpos(' ',leftStr(s,78-ln));
                      if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
-                     wrs(iifs(p=0,gr(5),sp(ln))+leftStr(s,lr));
+                     wrs437(iifs(p=0,gr(5),sp(ln))+leftStr(s,lr));
                      inc(p);
                      s:=mid(s,lr+1);
                    until s='';
@@ -957,13 +968,13 @@ begin // extract_msg;
                    repeat                               { lange Zusammenfassung umbrechen }
                      lr:=rightpos(' ', LeftStr(s,78-ln));
                      if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
-                     wrs(iifs(p=0,gr(23),sp(ln))+ LeftStr(s,lr));
+                     wrs437(iifs(p=0,gr(23),sp(ln))+ LeftStr(s,lr));
                      inc(p);
                      s:=mid(s,lr+1);
                    until s='';
                  end;
     hdf_STW    : if hdp.keywords<>'' then       { 'Stichworte : ' }
-                   wrs(gr(22)+hdp.keywords);
+                   wrs437(gr(22)+hdp.keywords);
 
     hdf_ROT    : if hdp.pfad<>'' then begin
                    s:=hdp.pfad;
@@ -977,7 +988,7 @@ begin // extract_msg;
                          dec(p);
                        if p=30 then p:=79-length(hs);
                        end;
-                     wrs(hs+LeftStr(s,p));
+                     wrs437(hs+LeftStr(s,p));
                      delete(s,1,p);
                      hs:=gr(15);                 { sp(...) }
                      end;
@@ -985,69 +996,69 @@ begin // extract_msg;
 
     hdf_MID    : begin
                    ln:=length(getres2(361,8));                  { 'Message-ID : ' }
-                   wrs(gr(8)+leftStr(hdp.msgid,78-ln));
+                   wrs437(gr(8)+leftStr(hdp.msgid,78-ln));
                    if length(hdp.msgid)>78-ln then
-                     wrs(sp(ln)+copy(hdp.msgid,79-ln,78-ln));
+                     wrs437(sp(ln)+copy(hdp.msgid,79-ln,78-ln));
                  end;
 
     hdf_BEZ    : with hdp do if References.Count > 0 then            { 'Bezugs-ID  : ' }
-                   wrs(gr(19)+References[References.Count-1]+iifs(hdp.References.Count=1,'',', ...'));
+                   wrs437(gr(19)+References[References.Count-1]+iifs(hdp.References.Count=1,'',', ...'));
 
-    hdf_EDA    : wrs(gr(9)+iifs(hdp.Datum='','N/A',copy(zdow(hdp.datum),1,2)+' ' { 'Datum' }
+    hdf_EDA    : wrs437(gr(9)+iifs(hdp.Datum='','N/A',copy(zdow(hdp.datum),1,2)+' ' { 'Datum' }
                   +fdat(hdp.datum)+', '+ftime(hdp.datum))
                   +iifs(hdp.datum<>longdat(edat),'  ('+gr(10)
                   +fdat(longdat(edat))+', '+ftime(longdat(edat))+')','')); { 'erhalten: ' }
 
     hdf_LEN    : begin
                    sizepos:=filesize(f);
-                   wrs(reps(gr(11),strs(hdp.groesse)));  { 'Groesse    : %s Bytes' }
+                   wrs437(reps(gr(11),strs(hdp.groesse)));  { 'Groesse    : %s Bytes' }
                  end;
 
     hdf_MAILER : if hdp.programm<>'' then begin
-                   wrs(gr(20)+hdp.programm);    { 'Software   : ' }
+                   wrs437(gr(20)+hdp.programm);    { 'Software   : ' }
                    end;
 
     hdf_ORG    : if hdp.organisation<>'' then
-                   wrs(gr(24)+hdp.organisation);   { 'Organisat. : ' }
+                   wrs437(gr(24)+hdp.organisation);   { 'Organisat. : ' }
     hdf_POST   : if hdp.postanschrift<>'' then
-                   wrs(gr(25)+hdp.postanschrift);  { 'Postadresse: ' }
+                   wrs437(gr(25)+hdp.postanschrift);  { 'Postadresse: ' }
     hdf_TEL    : if hdp.telefon<>'' then
-                   wrs(gr(26)+telestring(hdp.telefon));  { 'Telefon    : ' }
+                   wrs437(gr(26)+telestring(hdp.telefon));  { 'Telefon    : ' }
 
     hdf_FILE   : if multipart and (MimePart.fname<>'') then
-                   wrs(gr(12)+MimePart.fname)    { 'Dateiname  : ' }
+                   wrs437(gr(12)+MimePart.fname)    { 'Dateiname  : ' }
                  else if hdp.datei<>'' then
-                   wrs(gr(12)+hdp.datei+ddat);
+                   wrs437(gr(12)+hdp.datei+ddat);
 
     hdf_MSTAT  : if (hdp.pm_bstat<>'') and (hdp.pm_bstat[1]<>'N') then
-                   wrs(gr(13)+mausstat(hdp.pm_bstat));     { 'PM-Status  : ' }
+                   wrs437(gr(13)+mausstat(hdp.pm_bstat));     { 'PM-Status  : ' }
     hdf_STAT   : begin
                    GetStatus;
-                   if mstatus<>'' then wrs(gr(21)+mstatus);  { 'Status:    : ' }
+                   if mstatus<>'' then wrs437(gr(21)+mstatus);  { 'Status:    : ' }
                  end;
     hdf_PGPSTAT: begin
                    GetPgpStatus;
-                   if mstatus<>'' then wrs(gr(29)+mstatus);  { 'PGP-Status : ' }
+                   if mstatus<>'' then wrs437(gr(29)+mstatus);  { 'PGP-Status : ' }
                  end;
 
     hdf_ERR    : if hdp.error<>'' then
-                   wrs(gr(14)+hdp.error);                  { 'Fehler!    : ' }
+                   wrs437(gr(14)+hdp.error);                  { 'Fehler!    : ' }
 
     hdf_DIST   : if hdp.distribution<>'' then
-                   wrs(gr(31)+hdp.distribution);           { 'Distribut. : ' }
+                   wrs437(gr(31)+hdp.distribution);           { 'Distribut. : ' }
 
     hdf_Homepage: if hdp.homepage<>'' then
-                    wrs(gr(32)+hdp.homepage);              { 'Homepage   : ' }
+                    wrs437(gr(32)+hdp.homepage);              { 'Homepage   : ' }
 
     hdf_Part    : if multipart and (MimePart.part>0) then
-                    wrs(gr(33)+strs(MimePart.part)+           { 'Teil       : ' }
+                    wrs437(gr(33)+strs(MimePart.part)+           { 'Teil       : ' }
                         gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
-                    wrs(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
+                    wrs437(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
-                    wrs(ohfill(mheadercustom[2],11)+': '+hdp.Cust2);
+                    wrs437(ohfill(mheadercustom[2],11)+': '+hdp.Cust2);
                   end;
 
   { Prioritaet im Listenkopf anzeigen:                                    }
@@ -1065,8 +1076,11 @@ begin // extract_msg;
       exthdlines:=min(hdlines,screenlines-5);
       end;
     dbReadN(mbase,mb_groesse,size);
-    if (art<>xtractQuote) and (art<>xTractDump) then begin
-      if multipart then begin
+    
+    if (art<>xtractQuote) and (art<>xTractDump) then 
+    begin
+      if multipart then 
+      begin
         mpsize:=filesize(f);
         close(f);
         mehdl:=exthdlines; mehds:=extheadersize;
@@ -1081,12 +1095,28 @@ begin // extract_msg;
           blockwrite(f,s[1],length(s));
           end;
         seek(f,filesize(f));
-        end
-      else begin
-        XReadIsoDecode:=true;
-        XreadF(hds+iif(hdp.typ='B',hdp.komlen,0),f);
+      end else 
+      begin
+//      XReadIsoDecode:=true;
+        XReadIsoDecode:=false;
+
+        str := TPascalFileStream.Create(f);
+        try
+          case ExtUTF8 of
+            true: if not (SourceCS in [csUTF8,csASCII,csUNKNOWN]) then 
+              ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csUTF8));
+            false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
+              ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
+          end;
+//        XreadF(hds+iif(hdp.typ='B',hdp.komlen,0),f);
+          XReadS(hds+iif(hdp.typ='B',hdp.komlen,0),str);      
+        finally
+          str.Free;
         end;
-      if decode<>0 then begin
+      end;
+      
+      if decode<>0 then 
+      begin
         Move(f,decf,sizeof(f));
         case decode of
          -1 : do_decode(-1,filesize(f)-size);      { Rot13 }
@@ -1096,16 +1126,38 @@ begin // extract_msg;
                 if IS_DES(hdp.betreff) then
                   do_decode(2,filesize(f)-size);
         end;
-        end;
-      end
-    else begin                                     { Quote / Hex-Dump }
+      end;
+    end
+    else 
+    begin                                     { Quote / Hex-Dump }
       tmp:=TempS(2000+dbReadInt(mbase,'msgsize')*iif(art=xTractQuote,1,4));
       if ListQuoteMsg<>'' then
         tmp:=ListQuoteMsg
       else begin
         XReadIsoDecode:=(art=xTractQuote);
-        if multipart then ExtractMultipart(MimePart,tmp,false)
-        else Xread(tmp,false);
+        if (art<>xTractQuote) then
+        begin
+          XReadIsoDecode:=false;
+          Xread(tmp,false);
+        end else
+        if multipart then 
+          ExtractMultipart(MimePart,tmp,false)
+        else  
+        begin
+          str := TFileStream.Create(tmp,fmCreate);
+          try
+            case ExtUTF8 of
+              true: if not (SourceCS in [csUTF8,csASCII,csUNKNOWN]) then 
+                ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csUTF8));
+              false:if not (SourceCS in [csCP437,csASCII,csUNKNOWN]) then 
+                ConnectStream(str,TCharsetEnCoderStream.Create(SourceCS,csCP437));
+            end;
+            XReadS(hds+iif(hdp.typ='B',hdp.komlen,0),str);      
+          finally
+            str.Free;
+          end;
+        end;
+
         if decode<>0 then begin
           assign(decf,tmp);
           reset(decf,1);
@@ -1121,7 +1173,8 @@ begin // extract_msg;
           end;
         end;
 
-      if art=xTractQuote then begin                { Quote }
+      if art=xTractQuote then 
+      begin                { Quote }
         SetQC(hdp.netztyp);
         assign(t,tmp);
         reset(t);
@@ -1136,14 +1189,16 @@ begin // extract_msg;
         close(t);
         erase(t);
         end
-      else begin                                   { Hex-Dump }
+      else 
+      begin                                   { Hex-Dump }
         assign(decf,tmp);
         reset(decf,1);
         DumpMsg;
         close(decf);
         erase(decf);
-        end;
       end;
+    end;
+      
     if (hdp.netztyp=nt_Fido) and (art=xTractMsg) then
       if ExtCliptearline then
         Clip_Tearline
@@ -1160,6 +1215,7 @@ begin // extract_msg;
   MimePart.Free;
   SourceToUTF8.Free;
   UTF8ToDest  .Free;
+  TemplateToUTF8.Free;
  end;
 end;
 
@@ -1168,6 +1224,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.87  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.86  2002/01/02 15:33:52  cl
   - UUZ can now (optionally) not recode any charsets.
   - new box configuration option: UUZRecodeCharset

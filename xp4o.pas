@@ -1825,7 +1825,7 @@ begin
     close(f);
     lm:=listmakros;                                   { Aktuelle Makros merken,       }
     listmakros:=16;                                   { Archivviewermakros aktivieren }
-    if ListFile(fn,getres(460),true,false,0)=0 then;  { 'Nachrichten-Header' }
+    if ListFile(fn,getres(460),true,false,false,0)=0 then;  { 'Nachrichten-Header' }
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
@@ -1891,7 +1891,7 @@ begin
          MessageViewer.GetFromExtension(ExtractFileExt(datei));
 //          if MessageViewer.IsInternal then TestGifLbmEtc(datei,false,viewer);
           if MessageViewer.IsInternal then
-            ListFile(TempPath+datei,datei,true,false,0)
+            ListFile(TempPath+datei,datei,true,false,false,0)
           else
             MessageViewer.ViewFile(TempPath+datei,false);
           end
@@ -2066,7 +2066,7 @@ begin
     if arc=0 then begin                                 { Wenns kein Archiv war...      }
       lm:=listmakros;
       listmakros:=16;                                   { Archivviewermacros benutzen!  }
-      if listfile(fn,fn,true,false,0)=0 then;           { und File einfach nur anzeigen }
+      if listfile(fn,fn,true,false,false,0)=0 then;           { und File einfach nur anzeigen }
       listmakros:=lm;
       end
       { rfehler(434)  } { 'keine Archivdatei' }
@@ -2515,6 +2515,9 @@ end;
 
 {
   $Log$
+  Revision 1.126  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.125  2001/12/31 16:24:33  mk
   - removed unused variable
 

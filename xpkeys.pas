@@ -162,7 +162,7 @@ begin
       else if copy(s,2,4)='LIST' then begin
         fn:=trim(mid(s,7));
         if FileExists(fn) then
-          if listfile(fn,fn,true,false,0)<>0 then
+          if listfile(fn,fn,true,false,false,0)<>0 then
           else
         else
           rfehler(20);   { '*LIST: Datei nicht vorhanden!' }
@@ -194,7 +194,7 @@ begin
       if listout then begin
         fn2:=TempFile(TempPath);
         shell(s+'>'+fn2,speicher,0);
-        if listfile(fn2,'',true,false,0)<>0 then;
+        if listfile(fn2,'',true,false,false,0)<>0 then;
         if FileExists(fn2) then DeleteFile(fn2);
         end
       else
@@ -249,6 +249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.19  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

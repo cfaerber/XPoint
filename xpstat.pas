@@ -92,7 +92,7 @@ begin
       SetUngelesen
     else
   else begin
-    if ListFile(fn,bez+getres(2601),true,false,0)<>0 then;   { 'statistik' }
+    if ListFile(fn,bez+getres(2601),true,false,false,0)<>0 then;   { 'statistik' }
     _era(fn);
   end;
 end;
@@ -1264,6 +1264,9 @@ end;
 
 {
   $Log$
+  Revision 1.50  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.49  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

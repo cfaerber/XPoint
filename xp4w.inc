@@ -795,7 +795,7 @@ begin
          ReadJN(getres(433),true) then  // 'Kommentar anzeigen'
       begin // show this comment
         ExtractKom(fn);
-        listfile(fn,'Kommentar',true,false,0);
+        listfile(fn,'Kommentar',true,false,false,0);
         _era(fn);
         goto ende0;
       end;
@@ -855,7 +855,7 @@ begin
 
       poppush:=true;
       ExtractSetMimePart(MimePart);
-      Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead),'',fn,false,
+      Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead+iif(Enable_UTF8,xTractUTF8,0)),'',fn,false,
         iif(MultiPartType = mpAuto,-1,1));
       if MimePart.code=MimeEncodingBase64 then
         typ:='B';
@@ -922,11 +922,11 @@ begin
           end;
         lksave:=listkommentar;
         listkommentar:=ntKomkette(netztyp);
-        miso:=ConvIso;
-        if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
-          then ConvIso:=false;
-        lres:=Listfile(fn,ldisp,false,true,1+iif(MultiPartType <> mpMulti,2,0));
-        ConvIso:=miso;
+//      miso:=ConvIso;
+//      if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
+//        then ConvIso:=false;
+        lres:=Listfile(fn,ldisp,false,true,(ReadMessageType<>rmHexDump) and Enable_UTF8,1+iif(MultiPartType <> mpMulti,2,0));
+//      ConvIso:=miso;
         listkommentar:=lksave;
         fnproc[0,3]:=dummyFN;
         end
@@ -1611,6 +1611,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.87  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.86  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

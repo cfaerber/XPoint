@@ -123,6 +123,7 @@ type
     FSelCount: Integer;                 // Number of selected lines
     FLinePos: integer;
     FLines: TStringList;
+    FUTF8Mode: boolean;                 // UTF-8 Mode (false: CP437)
 
     arrows: listarr;
     l, o, w,
@@ -133,6 +134,13 @@ type
     procedure SetMarked(Index: Integer; NewValue: boolean);
     procedure SetHeaderText(s: String);
     function make_list(var buf: ListerCharArray; BufLen: Integer; wrap: byte): Integer;
+
+  private
+    FIsUTF8: boolean;
+  protected
+    procedure SetUTF8;
+    procedure SetCP437;    
+    
   public
     col: listcol;
     stat: liststat;
@@ -171,6 +179,7 @@ type
     property OnColor: TListerColorEvent read FOnColor write FOnColor;
     property Lines: TStringList read FLines;
     property Marked[Index:Integer]: Boolean read GetMarked write SetMarked;
+    property UTF8Mode: Boolean read FUTF8Mode write FUTF8Mode;
   end;
 
 var
@@ -180,7 +189,7 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  gpltools,xp0;
+  gpltools,xp0,mime,utftools,unicode;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -265,7 +274,9 @@ begin
   FOnShowLines := nil;
   FOnDisplayLine := nil;
   FOnColor := nil;
-
+  FUTF8Mode := false;
+  FIsUTF8 := false;
+  
   FLines := TStringList.Create;
 end;
 
@@ -275,6 +286,7 @@ begin
   SetSize(_l, _r, _o, _u);
   options := UpperCase(options);
   Fselbar := pos('/SB/', options) > 0;
+  FUTF8Mode := pos('/UTF8/', options) > 0;
   stat.markable := pos('/M/', options) > 0;
   stat.endoncr := pos('/CR/', options) > 0;
   stat.helpinfo := pos('/F1/', options) > 0;
@@ -302,6 +314,22 @@ end;
 function TLister.GetMarked(Index: Integer): boolean;
 begin
   Result := Assigned(Lines.Objects[Index]);
+end;
+
+procedure TLister.SetUTF8;
+begin
+  if not UTF8Mode then exit;
+  if FIsUTF8 then exit;
+  SetLogicalOutputCharset(csUTF8);
+  FIsUTF8 := true;
+end;
+
+procedure TLister.SetCP437;    
+begin
+  if not UTF8Mode then exit;
+  if not FIsUTF8 then exit;
+  SetLogicalOutputCharset(csCP437);
+  FIsUTF8 := false;
 end;
 
 procedure TLister.SetMarked(Index: Integer; NewValue: boolean);
@@ -408,6 +436,9 @@ var
   oldmark : boolean;
   oldselb : boolean;
 
+  oldtcs: TMIMECharsets;
+  oldlcs: TMIMECharsets;
+
   procedure showstat;
   begin
     if stat.statline then
@@ -450,6 +481,7 @@ var
     b: byte;
   begin
     i := 0;
+    SetUTF8;
     moff;
     while (i < DispLines) and (FirstLine + i < Lines.Count) do
     begin
@@ -493,6 +525,7 @@ var
       inc(i);
     end;
     attrtxt(col.coltext);
+    SetCP437;
 
     // clear rest of screen if not enough lines to display
     if i < DispLines then clwin(l, l + w - 1, y + i, y + DispLines - 1);
@@ -755,9 +788,18 @@ var
     end;
   end;
 
-begin
+begin // Show
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
+
+  if UTF8Mode then 
+  begin
+    OldTCS := GetConsoleOutputCharset;
+    OldLCS := GetLogicalOutputCharset;
+    SetConsoleOutputCharset(csUTF8);
+    SetLogicalOutputCharset(csCP437);
+  end;
+  
   if startpos > DispLines then
   begin
     FirstLine := startpos; FSelLine := StartPos;
@@ -958,6 +1000,13 @@ begin
   maus_popinside;
   AutoBremse := mb;
   Result := (t = keyesc);
+
+  if UTF8Mode then 
+  begin
+    SetConsoleOutputCharset(OldTCS);
+    SetLogicalOutputCharset(OldLCS);
+  end;
+  
   if Result then
     FSelLine := - 1;
 end;
@@ -1084,6 +1133,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.65  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.64  2001/12/30 19:56:48  cl
   - Kylix 2 compile fixes
 

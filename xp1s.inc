@@ -286,6 +286,7 @@ end;
   5="0", 6=PgUp, 7=PgDn }
 
 function listfile(name,header:string; savescr,listmsg:boolean;
+                  utf8:boolean;
                   cols:shortint):shortint; { Lister }
 var
     List   : TLister;
@@ -299,6 +300,8 @@ var
     lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
 
+    OldTCS,OldLCS: TMimeCharsets;
+
   procedure ShowMsgHead;
   var t : text;
       s : string;
@@ -306,12 +309,14 @@ var
   begin
     assign(t,name); reset(t);
     attrtxt(listheadercol);
+    if UTF8 then SetLogicalOutputCharset(csUTF8);
     for i:=1 to exthdlines do begin
       readln(t,s);
       mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
+    if UTF8 then SetLogicalOutputCharset(csCP437);
     close(t);
     exthdlines:=0;
     lfirst:=min(lfirst,screenlines-5);
@@ -346,7 +351,17 @@ begin
         end;
       end;
     if ListMsg and ListFixedHead then
+    begin
       ShowMsgHead;
+      if UTF8 then 
+      begin
+        OldTCS := GetConsoleOutputCharset;
+        OldLCS := GetLogicalOutputCharset;
+        SetConsoleOutputCharset(csUTF8);
+        SetLogicalOutputCharset(csCP437);
+      end;
+    end;
+      
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
@@ -362,6 +377,7 @@ begin
     if msg then closebox;
     List.HeaderText := header;
     List.OnKeypressed := listExt;
+    List.UTF8Mode := utf8;
     llh:=listmsg;
     oldm:=ListMakros;
     if listmsg then ListMakros:=8;
@@ -394,6 +410,16 @@ begin
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
+
+    if ListMsg and ListFixedHead then
+    begin
+      if UTF8 then 
+      begin
+        SetConsoleOutputCharset(OldTCS);
+        SetLogicalOutputCharset(OldLCS);
+      end;
+    end;
+    
     if listvollbild and listuhr and ListMsg then begin
      dphback:=dphb;                        {Uhrfarbe reseten}
      if not Listfixedhead then timey:=1;   {Und evtl. Position}
@@ -499,6 +525,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.71  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.70  2001/12/26 01:35:31  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 

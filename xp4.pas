@@ -1357,7 +1357,7 @@ var t,lastt: taste;
       arc:=ArcType(fn);
       if ArcRestricted(arc) then arc:=0;
       if arc=0 then
-        Listfile(fn,fitpath(fn,40),true,false,0)
+        Listfile(fn,fitpath(fn,40),true,false,false,0)
       else begin
         if ViewArchive(fn,arc)<>0 then;
         setall;
@@ -2283,6 +2283,9 @@ end;
 
 {
   $Log$
+  Revision 1.115  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.114  2001/12/31 14:00:29  mk
   JG: Fixed DB-Crash when replying to a user with empty message base
 

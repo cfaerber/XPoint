@@ -556,7 +556,7 @@ begin
           if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
             then ConvIso:=false;
           sichern(pt);
-          Listfile(tmp,mid(ApoBrett,2),false,true,3);
+          Listfile(tmp,mid(ApoBrett,2),false,true,false,3);
           holen(pt);
           ConvIso:=miso;
           DeleteFile(tmp);
@@ -1397,6 +1397,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2002/01/03 19:19:14  cl
+  - added and improved UTF-8/charset switching support
+
   Revision 1.43  2001/12/26 00:49:43  cl
   - added error messages and debug log to deletion of incoming spool files
 
