@@ -59,11 +59,39 @@ function  testZCpointname(var s:string):boolean;
 function  JanusSwitch(var s:string):boolean;
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
+function  multi_Mailstring(var s:string):boolean;
 
 implementation
 
 uses
   xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm;
+
+
+function multi_Mailstring(var s:string):boolean;
+var n,b   : byte;
+    s1,s2 : string[160];
+begin
+  multi_Mailstring:=true;
+  s1:=trim(s);
+  if s1='' then exit;
+  repeat
+    n:=cpos(' ',s1);
+    if n=0 then s2:=s1
+    else begin
+      s2:=left(s1,n-1);
+      s1:=trim(mid(s1,n+1));
+      end;
+    b:=cpos('@',s2);
+    if (b<=1) or (cpos('@',mid(s2,b+1))<>0)
+      or (cpos('.',mid(s2,b+1))=0)
+      or (s2<>mailstring(s2,false))
+    then begin
+      multi_mailstring:=false;
+      fehler(Getres2(10900,8)+': ' +s2); { 'UngÅltige Adresse: 's2 }
+      exit;
+      end;
+  until n=0
+end;
 
 
 procedure SelSchab(var cr:CustomRec);
@@ -663,8 +691,9 @@ begin
     exit;
     end;
   b:=cpos('@',s);
-  if (b=0) or (cpos('@',mid(s,b+1))<>0)
+  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
     or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+    or (s<>mailstring(s,false))
    then begin
      rfehler(908);
      exit;
@@ -712,6 +741,12 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.9  2001/07/23 16:53:14  my
+  JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
+          under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
+  JG+MY:- RFC/Client: improved check for valid eMail address under
+          Edit/Servers/Edit/Client/eMail_address
+
   Revision 1.1.2.8  2001/07/21 15:15:26  mk
   - removed some unused variables
 
