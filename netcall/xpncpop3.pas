@@ -50,6 +50,7 @@ uses
   xp1o,
   xpnetcall,
   zcrfc,
+  debug,
   xp3o;                         { ForceRecipient }
 
 {$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
@@ -263,11 +264,13 @@ begin
     POP.Free;
   end;
 
+  Debug.DebugLog('xpncpop3', 'UIDLs speichern', DLDebug);
   if POP.UIDLs.Count>0 then
     POP.UIDLs.SaveToFile(UIDLFileName)
   else
     DeleteFile(UIDLFileName);
   List.Free;
+  Debug.DebugLog('xpncpop3', 'ProcessincomingFiles', DLDebug);
   ProcessIncomingFiles(IncomingFiles);
 
   if BoxPar^.POP3_ForceOneArea then begin
@@ -283,6 +286,9 @@ end;
                       
 {
   $Log$
+  Revision 1.41  2003/05/02 11:26:10  mk
+  - more debug info added
+
   Revision 1.40  2003/04/28 08:42:30  mk
   - do POP.Disconnect in try except block first time, to give
     helpful error messages instead of a crash
