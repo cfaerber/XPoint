@@ -205,6 +205,7 @@ function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Z
   gibt im Fehlerfalle eine Fehlermeldung aus. RÅckgabewert ist
   der tatsÑchlich allocierte Speicher }
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
+procedure UTF82IBM(var s: String);
 
 { ================= Implementation-Teil ==================  }
 
@@ -2194,9 +2195,38 @@ begin
   GetMaxMem := Size;
 end;
 
+procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
+  var i,j,k:integer;
+      sc:record case integer of
+           0: (s:string[6]);
+           1: (b:array[0..6] of byte);
+         end;
+      ucs:longint;
+  begin
+    for i:=1 to length(s) do if byte(s[i]) and $80=$80 then begin
+      k:=0;
+      for j:=0 to 7 do
+        if byte(s[i]) and ($80 shr j)=($80 shr j) then inc(k) else break;
+      sc.s:=copy(s,i,k);
+      if length(sc.s)=k then begin
+        delete(s,i,k-1);
+        for j:=0 to k-1 do sc.b[1]:=sc.b[1] and not ($80 shr j);
+        for j:=2 to k do sc.b[j]:=sc.b[j] and $3f;
+        ucs:=0;
+        for j:=0 to k-1 do ucs:=ucs or (longint(sc.b[k-j]) shl (j*6));
+        if (ucs<$00000080) or (ucs>$000000ff) { nur Latin-1 }
+          then s[i]:='?'
+          else s[i]:=char(iso2ibmtab[byte(ucs)]);
+      end;
+    end;
+  end;
+
 end.
 {
   $Log$
+  Revision 1.37.2.8  2000/10/15 08:51:58  mk
+  - misc fixes
+
   Revision 1.37.2.7  2000/10/10 22:49:44  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 

@@ -106,7 +106,7 @@ begin
   initvar;
   testlock;
   TestAutostart;
-    if not quit then
+  if not quit then
   begin
     cursor(curoff);
     defaultcolors; SetColors;
@@ -192,6 +192,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.6  2000/10/15 08:52:00  mk
+  - misc fixes
+
   Revision 1.29.2.5  2000/10/10 22:49:44  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 

@@ -88,9 +88,13 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
-var p    : scrptr;
-    mt   : boolean;                             { user: 1 = Userauswahl  0 = Brettauswahl }
-begin
+var p        : scrptr;
+    mt       : boolean;
+    pollbox  : string[BoxNameLen];
+    zg_flags : integer;
+    size     : smallword;
+    adresse  : string[AdrLen];
+begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
   with cr do begin
     sichern(p);
     if autoe_showscr then showscreen(false);
@@ -102,12 +106,36 @@ begin
     if not brk then
       if user then begin
         dbGo(ubase,selpos);
-        dbReadN(ubase,ub_username,s);
+        size:=0;
+        if dbXsize(ubase,'adresse')=0 then adresse:=''
+        else dbReadX(ubase,'adresse',size,adresse);
+        s:=adresse;
+        if s='' then
+          dbReadN(ubase,ub_username,s);
         s:=vert_name(s);
-        end
+      end
       else begin
         dbGo(bbase,selpos);
-        dbReadN(bbase,bb_brettname,s);
+        dbReadN(bbase,bb_adresse,s); { Brett-Vertreter }
+        zg_flags:=dbReadInt(bbase,'flags');
+        if zg_flags and 8<>0 then { Schreibsperre }
+        if (s='') or ((s<>'') and (zg_flags and 32<>0)) then begin
+          s:='';
+          rfehler(450); { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+          exit;
+        end;
+        if ((s<>'') and (zg_flags and 32=0)) then begin      { FollowUp-To? }
+          {_pm:=pos('@',s)>0;}
+          if pos('@',s)=0 then begin
+            dbReadN(bbase,bb_pollbox,pollbox);
+            if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
+              { _AmReplyTo:=s; }
+              dbReadN(bbase,bb_brettname,s);
+            end;
+          end else s:='A'+s;
+        end else dbReadN(bbase,bb_brettname,s);
+        {if s<>'' then  s:='A'+s
+        else dbReadN(bbase,bb_brettname,s);}
         delete(s,1,1);
       end;
     end;
@@ -1479,6 +1507,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.6  2000/10/15 08:52:00  mk
+  - misc fixes
+
   Revision 1.21.2.5  2000/10/10 13:04:54  mk
   RB:- Supersedes in Autoversand
 

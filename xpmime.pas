@@ -21,7 +21,8 @@ uses  dos,typeform,montage,fileio,keys,lister,database,resource,
       xp0,xp1, xpglobal, xpkeys;
 
 
-type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
+type
+  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
 
       multi_part = record                   { Teil einer Multipart-Nachricht }
                      startline  : longint;  { 0 = kein Multipart }
@@ -33,6 +34,7 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
                      ddatum     : string[14];   { Dateidatum fÅr extrakt }
                      part,parts : integer;
                      alternative: boolean;
+                     Charset: string[20];
                    end;
       pmpdata    = ^multi_part;
 
@@ -83,6 +85,7 @@ function codecode(encoding:string):mpcode;
 begin
   if encoding='base64' then codecode:=mcodeBase64
   else if encoding='quoted-printable' then codecode:=mcodeQP
+  else if encoding='8bit' then codecode := mcode8Bit
   else codecode:=mcodeNone;
 end;
 
@@ -124,9 +127,9 @@ begin
   begin
     OldET:=ExtraktTyp;
     ExtraktTyp:=0;                        { Als Text ohne Kopf extrahieren... }
-    extrakt(1,aktdispmode,0);              
+    extrakt(1,aktdispmode,0);
     ExtraktTyp:=OldET;
-    end; 
+    end;
 end;
 
 
@@ -261,6 +264,7 @@ var   hdp      : headerp;
         subboundary : string[72];
         hdline      : string[30];
         ctype,subtype: string[15];    { content type }
+        aCharset: String[20];
         vorspann : boolean;
         n,_start : longint;
         bound    : string[72];
@@ -410,9 +414,9 @@ var   hdp      : headerp;
           startline:=_start;
           lines:=n-startline;
           part:=anzahl;
- {         parts := anzahl; MK 01/00 Bitte pr¸fen, ob ok, wenn das reingenommen wird!!! }
-          end;
+          charset := aCharset;
         end;
+      end;
       last:=0;
 
       if endbound then begin
@@ -456,7 +460,9 @@ var   hdp      : headerp;
               else if (parname='name') or (parname='filename') then
                 filename:=parvalue
               else if (parname='x-date') then
-                filedate:=RFC2Zdate(parvalue);
+                filedate:=RFC2Zdate(parvalue)
+              else if (parname='charset') then
+                aCharset := parvalue;
             end;
           end else
             { Manchmal ist der Dateiname nur im disposition-Teil enthalten }
@@ -614,6 +620,13 @@ var   input,t : text;
     end;
   end;
 
+  procedure CharsetToIBM(const charset:string; var s:string);
+  begin
+     if charset='iso-8859-1' then Iso1ToIBM(s[1],length(s))
+     else if charset='utf-8' then UTF82IBM(s)
+     else Iso1ToIBM(s[1],length(s));
+  end;
+
   procedure DecodeBase64;    { aus UUZ.PAS }
   const b64tab : array[0..127] of byte =
                  ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -679,11 +692,13 @@ begin
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
-          if (typ<>'text') or (subtyp<>'html') then
-            Iso1ToIBM(s[1],length(s));
         end
         else
           softbreak:=false;
+
+        if Code in [mcodeQP, mcode8Bit] then
+          CharsetToIBM(charset, s);
+
         if softbreak then
         begin
           SetLength(s, Length(s)-1);
@@ -742,6 +757,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.6  2000/10/15 08:52:00  mk
+  - misc fixes
+
   Revision 1.12.2.5  2000/08/05 14:36:57  jg
   - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 
