@@ -92,7 +92,7 @@ type arcbuf = record
      arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
-      suchopt : string[8] = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
+      suchopt : string[8] = 'au';
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Gr”áe nach Reorg }
@@ -571,13 +571,6 @@ label ende,happyend;
 {--# Suche #--}
 
 begin
-  if suchopt[1]='*' then
-  begin                                       {Erste Suche seit Programmstart ?}
-    if getres(1)='XP.HLP' then
-      suchopt:='ai„'
-    else                                      {Dann Suchoptionen auf Deutsch/Englisch anpassen }
-      suchopt:='ai';
-  end;
   if srec=nil then begin
     new(srec);
     fillchar(srec^,sizeof(srec^),0);
@@ -722,7 +715,7 @@ begin
   if not brk then with srec^ do begin
     sst:=suchstring;
     igcase:=multipos('iu',lstr(suchopt));
-    umlaut:=multipos('„”',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
+    umlaut:=multipos('„”u',lstr(suchopt));  {JG:15.02.00 Umlautschalter}
     sword :=pos('w',lstr(suchopt))>0;
     bereich:=0;
     for i:=1 to 4 do
