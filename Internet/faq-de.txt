@@ -47,10 +47,11 @@ Wo finde ich eine Version, die noch auf einem 286er läuft?
 Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <a href="ftp://ftp.openxp.de/openxp">FTP-Server</a>). Von OpenXP 3.40 wird es auch eine 286er-Version geben, sobald eine Release verfügbar ist.
 <br /><small>2001-01-18</small>
 
-Wie kriege ich OpenXP mit ISDN zum Laufen?
-Für DOS gibt es nur die Möglichkeit, einen Fossil-Treiber wie cFos (siehe "Links") zu installieren und XP den Fossil-Treiber benutzen zu lassen.
-Unter Windows sind CAPI-Hayes-Konverter meistens in den ISDN-Treibern integriert; bei Linux sowieso. Falls sich ein Programmierer mit Ahnung in Sachen CAPI-Programmierung findet, wäre auch eine direkte Unterstützung problemlos einzubauen.
-<br /><small>2001-01-16</small>
+Wie kriege ich (Open)XP mit ISDN zum Laufen?
+ISDN-Karten stellen CAPI zur Verfügung, manchmal auch eine Win-Comport-Emulation. Bietet der Treiber nur CAPI, muß man für OpenXP/DOS einen CAPI-nach-Fossil-Konverter wie cFos/DOS (siehe "Links") installieren. cFos/Win geht auch, allerdings hat man dann wiederum nur einen Win-Comport, auf den OpenXP/DOS nicht zugreifen kann; man muß also zusätzlich noch einen Win-Comport-nach-Fossil-Konverter wie z.B. WinFossil (wieder siehe "Links") installieren.
+<br />Bei OpenXP/Win32 entfallen diese umständlichen Basteleien, da es direkt auf die Win-Comports zugreifen kann. Im Idealfall (der ISDN-Treiber bringt eine Comport-Emulation mit) braucht man also überhaupt keine Zusatzsoftware.
+<br />Unter Linux wird eine ISDN-Karte über /dev/ttyIx sowieso immer exakt wie ein Modem angesprochen, auch hier entfällt also die ganze Problematik.
+<br /><small>2001-01-28</small>
 
 Kann ich OpenXP mit ADSL nutzen?
 Ja. ;-)

@@ -1,5 +1,5 @@
 FAQ zu OpenXP 3.40
 
 Wie gehe ich mit den Usergruppen im Adreﬂbuch um?
-(noch nicht beantwortet)
-<br /><small>2001-01-21</small>
+...ist in der Onlinehilfe beim Eintrag zur Funktion "R" erl‰utert :-).
+<br /><small>2001-01-28</small>
