@@ -159,7 +159,7 @@ begin
       if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then
       begin
-        s:=mid(s,y);
+        s:=mid(s,y) + ' '; 
         y:=1;
         while (y<=length(s)) and (s[y] in urlchars) do
         begin
@@ -1081,6 +1081,9 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.10  2003/12/07 13:02:34  mk
+  - additional fix for last commit
+
   Revision 1.110.2.9  2003/12/06 11:04:11  mk
   - special handling for '.' at end of URLs
 
