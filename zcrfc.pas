@@ -1658,8 +1658,8 @@ var
   function GetMsgid: string;
   begin
     s0:=RFCRemoveComments(Trim(s0));
-    if firstchar(s0) = '<' then deletefirstchar(s0);
-    if lastchar(s0) = '>' then deletelastchar(s0);
+    TrimFirstChar(s0, '<');
+    TrimLastChar(s0, '>');
     GetMsgid := s0;
   end;
 
@@ -1822,7 +1822,7 @@ begin
               Hd.Mime.Encoding := MimeGetencodingFromName(RFCRemoveComments(s0))
             else
               if zz = 'control' then
-              control := GetMsgId
+              control := RFCRemoveComments(s0)
             else
               Uline.Add('U-' + s1);
           'd':
@@ -3643,6 +3643,9 @@ end;
 
 {
   $Log$
+  Revision 1.97  2002/04/12 22:08:18  mk
+  - fixed stripping of last character (">") of cancel headers
+
   Revision 1.96  2002/04/10 08:35:23  mk
   MY[+JG]:- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach
             RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
