@@ -496,9 +496,6 @@ end;
 { Achtung! ShellPath kann mit oder ohne '\' am Ende sein! }
 
 procedure dosshell;
-{$IFDEF DPMI }
-const ShellBatch = 'DPMISHELL.BAT';
-{$ENDIF }
 
   {$IFNDEF DPMI}
   function environment:string;
@@ -515,21 +512,18 @@ begin
     SetCurrentDir(ShellPath);
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
-    {$IFDEF DPMI}
-      assign(t,TempPath+ShellBatch);
-      rewrite(t);
-      writeln(t,'@set prompt=[XP] '+getenv('PROMPT'));
-      writeln(t,'@',getenv('COMSPEC'));
-      close(t);
-      shell(TempPath+ShellBatch,620,2);
-      _era(TempPath+ShellBatch);
-    {$ELSE}
+    {$IFDEF Unix }
+      shell(getenv('SHELL'),0, 2);
+    {$ELSE }
       shell(getenv('COMSPEC')+environment,640,2);
-    {$ENDIF}
+    {$ENDIF }
     trackpath:=false;
     end;
 {
   $Log$
+  Revision 1.76.2.5  2003/09/13 12:34:58  mk
+  - fixed  #502625: Linux: Menü OpenXP/DOS
+
   Revision 1.76.2.4  2003/09/11 22:28:56  mk
   - added special color for signatures
 
