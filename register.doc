@@ -1,0 +1,167 @@
+
+   CrossPoint (R)    (c) 1992-2001 Peter Mandrella       Registrierung
+   
+   CrossPoint ist eine eingetragene Marke von Peter Mandrella,
+   Nackenheim.
+
+
+
+   Allgemeines
+
+       Die vorliegende Version von CrossPoint ist freie Software und
+       steht unter der GPL-Lizenz (siehe SLIZENZ.TXT). Die Software
+       darf unter den Bedingungen der GPL kostenlos genutzt und weiter-
+       gegeben werden. Wenn Ihnen das Programm gef„llt, wrde sich der
+       Autor freuen, wenn Sie es auf freiwilliger Basis registrieren.
+
+       Sie k”nnen dazu einen beliebigen Betrag Ihrer Wahl auf das
+       unten angegebene Konto berweisen, oder Sie k”nnen die unten
+       beschriebene Registrierungsprozedur verwenden, die von „lteren,
+       registrierungspflichtigen CrossPoint-Versionen bernommen wurde.
+       Wenn Sie sich fr Letzteres entscheiden, erhalten Sie einen
+       Registrierungscode (siehe unten).
+
+       Ein solcher Registrierungscode berechtigt Sie auch zur Nutzung
+       von anderen CrossPoint-Versionen, die nicht unter GPL-Lizenz
+       stehen (siehe "alte Source-Lizenz" in SLIZENZ.TXT).
+
+
+       
+   Registrierungsbeitrag
+
+       Die H”he des Registrierungsbeitrages richtet sich nach den
+       Netztypen, fr die Sie CrossPoint einsetzen.
+
+       Neuregistrierungen:
+
+          CrossPoint fr alle Netztypen auáer RFC/UUCP:     DM  50,-
+          CrossPoint fr RFC/UUCP:                          DM  50,-
+          CrossPoint Komplettpaket:                         DM  80,-
+          nachtr„gliches Upgrade auf Komplettpaket:         DM  40,-
+
+       Upgrades von „lteren Versionen:
+
+          CrossPoint v3.x auf v3.x                           kostenlos
+          CrossPoint v1.x/2.x auf v3.x ohne RFC/UUCP:        kostenlos
+          CrossPoint v1.x/2.x auf v3.x Komplettpaket        DM  40,-
+
+       Alle Preise verstehen sich inkl. des jeweils gltigen
+       Mehrwertsteuer-Satzes.
+       
+       
+   Registrierungsformular
+       
+       Verwendem Sie fr Ihre Registrierung bitte das im Programm
+       enthaltene Registrierungsformular. Drcken Sie dazu beim Start-
+       bildschirm zweimal "R" oder w„hlen Sie den Punkt "Registrierung"
+       im Men "XPoint". Drcken Sie innerhalb des Formulars <F1>, um
+       ausfhrliche Erl„uterungen zum Ausfllen der einzelnen Felder
+       zu erhalten. Bei Feldern, die rechts mit einem Pfeil nach unten
+       gekennzeichnet sind, erhalten Sie mit <F2> eine Auswahlliste.
+       
+       Sie k”nnen uns das Formular per Post oder per Mail zusenden.
+       N„heres hierzu finden Sie innerhalb des Formulars und in der
+       Online-Hilfe. Bei "Postregistrierung" senden Sie das Formular
+       bitte an folgende Adresse:
+       
+               Jochen Herz
+               Sch”fferstr. 23
+               D-67547 Worms
+       
+       Versenden Sie das Registrierungsformular bitte nicht per Fax!
+       
+       
+       
+   Zahlungsweg
+       
+       Sie k”nnen uns den Registrierungsbetrag zusammen mit dem Regi-
+       strierungsformular zusenden, per Kreditkarte zahlen (n„heres
+       dazu finden Sie innerhalb des Formulars) oder auf folgendes
+       Konto berweisen:
+       
+               Jochen Herz
+               Volksbank Worms
+               BLZ: 553 900 00
+               Kto: 291 817 05
+       
+       Geben Sie dabei als Verwendungszweck Folgendes an:
+       
+               CROSSPOINT   Netzname
+               Ihre Netzadresse
+       
+       Verwenden Sie bitte nur gedruckte Groábuchstaben und schreiben
+       Sie deutlich! Ersetzen Sie alle Sonderzeichen wie @, / und :
+       durch Leerzeichen oder Punkte, z.B.
+       
+               CROSSPOINT   Z-NETZ
+               A.MUELLER BOX.domain.de
+       
+       oder:   CROSSPOINT   FIDO
+               ALFRED MUELLER 2.243.1234.56
+       
+       
+       
+   Registrierungscode ("Key")
+       
+       Eingehende Registrierungen werden innerhalb von 1-3 Wochen
+       bearbeitet, d.h. Sie erhalten innerhalb von max. 4 Wochen eine
+       Best„tigung mit Ihrem Registrierungscode, der ber den Menpunkt
+       /XPoint/Info einzugeben ist. Durch den Registrierungscode wird
+       zum einen der Hinweisbildschirm bei Programmstart deaktiviert,
+       und zum Anderen l„át sich dann die CrossPoint-Kennung unter
+       Ihren pers”nlichen Nachrichten abschalten.
+       
+       NOTIEREN SIE SICH IHREN REGISTRIERUNGSCODE BITTE AN EINEM GEGEN
+       DATENVERLUSTE GESCHšTZTEN ORT!
+       
+       ACHTUNG: Die Weitergabe von CrossPoint-Registrierungscodes an
+       Dritte ist nicht zul„ssig! Wenn Sie CrossPoint weitergeben,
+       dann verwenden Sie dazu bitte eine nicht registrierte Original-
+       version!
+       
+   
+   
+   Registrierungscode verloren?
+       
+       Falls Sie Ihren Registrierungscode verloren haben, senden wir
+       ihn Ihnen auf Wunsch gegen eine Bearbeitungsgebhr von DM 10,-
+       noch einmal zu. Bitte verwenden Sie dafr das Registrierungs-
+       formular unter dem Menpunkt XPoint/Registrierung und kreuzen
+       Sie "verlorenen Registrierungscode zusenden" an!
+   
+   
+   
+   Gltigkeit der Registrierung
+   
+       Eine CrossPoint-Registrierung gilt fr alle Programmversionen
+       bis 3.x sowie fr alle von Dritten erstellten Versionen, die
+       von den ver”ffentlichten Quelltexten abgeleitet wurden und eine
+       Registrierungsm”glichkeit beinhalten.
+
+
+
+   Sammelregistrierungen
+   
+       Es besteht die M”glichkeit der Sammelregistrierung, wobei Sie
+       fr je fnf Registrierungen eine zus„tzliche Gratisregistrie-
+       rung erhalten. Kreuzen Sie dazu das Feld "Sammelregistrierung"
+       im Registrierungsformular an.
+
+       Bei gemischten Sammelregistrierungen gilt die Gratisregistrie-
+       rung fr den "kleinsten" darin enthaltenen Registrierungstyp,
+       d.h. bei einer Registrierung von sieben nicht-RFC/UUCP- und
+       drei Komplettpaketen erhalten Sie z.B. zwei kostenlose nicht-
+       RFC/UUCP-Registrierungen und bei drei UUCP-Registrierungen plus
+       zwei Updates ein Gratis-Update.
+       
+       
+       
+   Support-Kontaktadressen
+
+       Wenn Sie Fragen zu CrossPoint haben, wenden Sie sie sich bitte
+       an eine der in der Dokumentation oder in der Online-Hilfe
+       angegebenen Kontaktadressen.
+
+       Weitere Informationen finden Sie auf www.crosspoint.de.
+
+

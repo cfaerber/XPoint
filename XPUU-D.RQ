@@ -1,0 +1,71 @@
+K XP UUCICO v3.0 resource file
+K Deutsch
+
+13  ~Bytes
+
+# ----- Fehler in UUCICO.CFG
+
+100 Parameter-Fehler:~
+101 Servername fehlt
+102 Nodename fehlt
+103 UUCP Commandfile fehlt
+104 Schnittstellennummer fehlt
+105 UngÅltiger Request-Dateipfad
+106 UngÅltiger Logfilename: %s
+107 UngÅltige Baudrate
+
+# ----- öbertragung
+
++ 2300
+1    Server
+2    Protokoll
+3    GewÑhltes UUCP-Protokoll: %s (von %s)
+4    Paketgrî·e
+5    Online-Zeit
+6    Paketgrî·e....:~
+7    Fenstergrî·e..:~
+8    ungÅltige Fenstergrî·e: 0
+
+10   senden
+11   empfangen
+12   Dateien
+13   Åbertragen
+14   gesamt
+15   Dateigrî·e
+16   Restzeit
+17   Blockgrî·e
+18   Durchsatz          cps
+19   gesamt             cps
+20   Fehler
+
+30   beende UUCP-Verbindung ...
+31   Timeout
+32   ~- Fehler
+33   Fehler!
+34   Datei ok.
+35   ~- abgebrochen
+36   Abbruch.
+37   kein gemeinsames Protokoll (angebotene Protokolle: %s)
+38   (size negotiation)
+39   wiederhole Paket Nr. %s
+
+42   Fehler 2
+44   Fehler 4 - angerufener Rechner kann TemporÑrdatei nicht erzeugen
+46   Fehler 6 - angerufener Rechner hat nicht genÅgend Plattenplatz
+48   Fehler 8 - Datei schon vorhanden
+
+50   Trenne Verbindung
+51   Abbruch durch <Esc>
+
+# automatisch erkannte Pakettypen:
+
+60   ungepacktes Newspaket
+61   gepacktes Newspaket (compress)
+62   gepacktes Newspaket (freeze)
+63   gepacktes Newspaket (gzip)
+64   ungepacktes Mailpaket
+65   gepackte Datei (compress)
+66   gepackte Datei (freeze)
+67   gepackte Datei (gzip)
+68   Mail von~
+-

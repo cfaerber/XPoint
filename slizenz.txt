@@ -1,0 +1,99 @@
+-----------------------------------------------------------------------
+SLIZENZ.TXT                                       CrossPoint-Quelltexte
+                                          (c) 1992-2001 Peter Mandrella
+
+                                                     Lizenzbestimmungen
+-----------------------------------------------------------------------
+
+
+
+Die folgenden Bestimmungen legen fest, wie die CrossPoint-Quelltexte
+verwendet und weitergegeben werden dÅrfen. Aktuelle Anmerkungen hierzu
+finden Sie ggf. unter http://www.crosspoint.de/srclicense.html.
+
+Die vorliegenden CrossPoint-Quelltexte in der Version 3.20 beta
+unterliegen der GNU General Public License ("GPL") Version 2. Diese
+Lizenz soll sicherstellen, dass diese Software und alle davon
+abgeleiteten Programme fÅr Jeden kostenlos zur VerfÅgung stehen, ohne
+dass dabei die Urheberrechte der Programmautoren beeintrÑchtigt werden.
+
+Den vollstÑndigen Lizenztext entnehmen Sie bitte der beiliegenden Datei
+COPYING. Eine deutsche öbersetzung finden Sie in COPYING.GER.
+
+Falls COPYING.GER, SLIZENZ.TXT, die Quelltexte oder die beiliegende
+Dokumentation Bestimmungen enthalten sollten, die nicht mit den Angaben
+in COPYING (also in der GPL Version 2) vereinbar sind, so sind diese
+Bestimmungen wirkungslos und es gelten die Bestimmungen in COPYING.
+
+Bei der Weitergabe der Quelltexte mÅssen auch die Dateien SLIZENZ.TXT,
+COPYING und COPYING.GER in unverÑnderter Form mit weitergegeben werden.
+Ausnahme: Den Abschnitt "Registrierung" in SLIZENZ.TXT dÅrfen Sie
+entsprechend Ñndern oder entfernen, wenn dieser auf eine von Ihnen
+erstellte und weitergegebene Programmversion nicht zutrifft.
+
+
+
+DIE MARKE "CrossPoint"
+----------------------
+
+Der Name "CrossPoint" ist eine eingetragene Marke von Peter Mandrella.
+DIESER NAME IST NICHT FREI VERWENDBAR. Um die Verbreitung der
+Quelltexte zu erleichtern, ist die Weitergabe der CrossPoint-
+QUELLTEXTE (auch in modifizierter Form) inkl. des Namens "CrossPoint"
+uneingeschrÑnkt und lizenzfrei zulÑssig. Au·erdem dÅrfen Sie daraus
+ausfÅhrbare Programme fÅr Ihre persînliche Verwendung unter dem Namen
+"CrossPoint" erstellen. Diese Programme dÅrfen jedoch nicht weiter-
+gegeben werden.
+
+Wenn Sie auf Basis dieser Quelltexte Programme erstellen, deren Code
+verîffentlicht oder sonstwie an Dritte weitergegeben werden soll,
+dann mÅssen Sie sich fÅr eine der beiden folgenden Mîglichkeiten
+entscheiden:
+
+a) Sie nennen Ihr Programm nicht "CrossPoint", sondern wÑhlen einen
+   anderen Namen.
+b) Sie lizensieren den Markenname "CrossPoint" (kostenpflichtig).
+
+UnabhÑngig davon sollte der Name "CrossPoint" z.B. bei einer ErwÑhnung
+in der Dokumentation mit einem angehÑngten "(R)" als eingetragene Marke
+gekennzeichnet und an geeigneter Stelle auf den Markeninhaber hinge-
+wiesen werden.
+
+
+
+REGISTRIERUNG
+-------------
+
+Alle CrossPoint-Versionen, die nicht unter GPL verîffentlicht wurden,
+dÅrfen nur fÅr maximal 30 Tage kostenlos genutzt werden; danach ist
+eine kostenpflichtige Registrierung notwendig. Dies betrifft alle
+Programmversionen bis 3.12 sowie alle Versionen, die auf der alten
+Source-Lizenz (siehe unten) basieren.
+
+Da dieses alte Lizenzmodell nicht mit der GPL vereinbar ist, wurde die
+Registrierungspflicht bei der vorliegenden Programmversion in eine
+freiwillige Registrierung umgewandelt. Weitere Hinweise hierzu finden
+Sie in der Datei REGISTER.DOC.
+
+Die GPL erlaubt es Ihnen, die mit der Registrierung verbundenen
+Funktionen aus dem Programm zu entfernen. Der Programmautor wÅrde sich
+freuen, wenn Sie dies nicht tun und die Datei REGISTER.DOC mit dem
+Quellcode und dem Programm weitergeben. Eine Verpflichtung dazu besteht
+jedoch nicht.
+
+
+
+ALTE SOURCE-LIZENZ
+------------------
+
+Die erste Distribution der CrossPoint-Quelltexte wurde unter einer
+anderen, restriktiveren Lizenz freigegeben. Diese alte Lizenz ist
+weiterhin gÅltig, d.h. wenn Sie unter der alten Lizenz mit der
+Weiterentwicklung von CrossPoint begonnen haben, haben Sie die Wahl,
+unter dieser Lizenz weiterzuarbeiten oder auf GPL umzustellen. FÅr
+Neuentwicklungen wird empfohlen, nur noch unter GPL zu arbeiten.
+
+Die Quelltexte der alten CrossPoint-Version 3.12 sind weiterhin nur
+unter der alten Lizenz verfÅgbar.
+
+
