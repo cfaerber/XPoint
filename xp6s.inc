@@ -17,7 +17,7 @@ procedure MakeSignature(var signat, sigfile:pathstr; var sigtemp:boolean);
 const sigsep = '-*-';
 var t,t2    : text;
     s       : string;
-    buf     : string;
+    buf: array[0..1023] of char;
     num,n   : word;
 begin
   sigtemp:=false;
@@ -25,7 +25,7 @@ begin
     sigfile:=''
   else begin
     assign(t,signat);
-    settextbuf(t,buf);
+    SetTextBuf(t, Buf);
     reset(t);
     readln(t,s);
     if s=sigsep then begin
@@ -1127,6 +1127,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.2  2000/08/05 17:17:38  mk
+  - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
+
   Revision 1.18.2.1  2000/06/24 14:16:35  mk
   - 32 Bit Teile entfernt, Fixes
 
