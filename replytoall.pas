@@ -491,11 +491,15 @@ var RTAEmpfList : TRTAEmpfaengerList;
       end else
       if brett[1] = 'U' then                 { User }
       begin
-        hdp := THeader.Create;
-        readHeader (hdp2, hds2, false);
-        dbseek (ubase, uiname, UpperCase(hdp2.empfaenger));
-        if dbFound then dbRead (ubase, 'pollbox', box);
-        hdp.Free;
+        hdp2 := THeader.Create;
+        try
+          ReadHeader (hdp2, hds2, false);
+          dbseek (ubase, uiname, UpperCase(hdp2.empfaenger));
+           if dbFound then
+             Box := dbReadStr(ubase, 'pollbox');
+        finally
+          hdp2.Free;
+        end;
       end;
       if not isBox (box) then box := DefaultBox;
     end;
@@ -980,6 +984,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2001/12/22 21:43:57  mk
+  - fixed two crashes in getPollBox
+
   Revision 1.25  2001/12/09 21:27:41  mk
   - changed default position of selbar
 
