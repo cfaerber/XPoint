@@ -3023,21 +3023,29 @@ end;
 procedure _era(const Filename:string);
 begin
   if (FileName <> '')  and not sysutils.DeleteFile(Filename) then
+  begin
+    Debug.DebugLog('xp1','_era('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
+  end;
 end;
 
 procedure SafeDeleteFile(const Filename: String);
 begin
   if (FileName <> '') and FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
+  begin
+    Debug.DebugLog('xp1','SafeDeleteFile('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
+  end;
 end;
 
 procedure SafeMakeBak(const Filename, NewExt: string);
 begin
   if not MakeBak(Filename,NewExt) then
+  begin
+    Debug.DebugLog('xp1','SafeMakeBak('''+Filename+''','''+NewExt+'''): '+SysErrorMessage(GetLastError),dlError);;
     trfehler1(24,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht umbenennen.' }
+  end;
 end;
-
 
 procedure _chdir(p:string);
 begin
@@ -3268,6 +3276,9 @@ end;
 
 {
   $Log$
+  Revision 1.175  2003/01/24 12:07:17  cl
+  - added debug output for _era, SafeDeleteFile, SafeMakeBak
+
   Revision 1.174  2003/01/08 00:11:30  mk
   - fixed last checkin
 
