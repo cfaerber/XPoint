@@ -1,33 +1,27 @@
 unit ObjCOM;
 (*
 ** ObjCOM base unit
-** come.to/schnoerkel  m.kiesel@iname.com
 **
 ** Serial communication routines for DOS, OS/2, Linux and Win9x/NT.
 ** Fossil communication routines for DOS.
-** (TCP/IP communication routines for Win9x/NT.)
-** Tested with: FreePascal    v1.0 (Dos,Win32)
+** TCP/IP communication routines for Win9x/NT.
 **
-** Written 1998-1999 by Maarten Bekers (as EleCOM)
-** Adapted by M.Kiesel 2000
-** See history at end of file
-** See license file "LICENSE.TXT"
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$I OCDEFINE.INC }
+{$I OCDEFINE.INC}
 
-uses
-{$IFDEF DOS32}
-  Ports,
-{$ENDIF}
-{$ifdef Linux}
-  Linux, { Type fdSet }
-{$endif}
-  Ringbuff;
+uses Ringbuff
+     {$IFDEF DOS32},Ports{$ENDIF}
+     {$IFDEF Win32},OCThread,Windows{$ENDIF}
+     {$IFDEF Linux},Serial,Linux{$ENDIF}
+     {$IFDEF OS2},OCThread,OS2Base{$ENDIF}
+     {$IFDEF Go32V2},Go32{$ENDIF}
+     {$IFDEF TCP},Sockets{$ENDIF};
 
 type SliceProc = procedure;
 
@@ -48,7 +42,7 @@ type tCommObj = Object
         procedure GetModemStatus(var LineStatus, ModemStatus: Byte); virtual;
         function  InitSucceeded: Boolean; virtual;
 
-        procedure SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte); virtual;
+        function  SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean; virtual;
         function  GetBPSrate: Longint; virtual; {Return current BPSRate}
 
         function  CharAvail: Boolean; virtual; {Returns true if chars have been received}
@@ -80,12 +74,7 @@ type tCommObj = Object
 
 Type tpCommObj = ^tCommObj;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLinh.inc } {$ENDIF}
-{$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
-{$IFDEF DOS32 } {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
-{ !?!?!?!? }
-{$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
+var ErrorStr: String;
 
 function CommInit(S: String; var CommObj: tpCommObj): boolean;
  {Initializes comm object. S may be for example
@@ -97,17 +86,17 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
 
 function FossilDetect: Boolean;
 
+{$IFDEF Win32} {$I OCSWinh.inc} {$ENDIF}
+{$IFDEF Linux} {$I OCSLinh.inc} {$ENDIF}
+{$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
+{$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
+{$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
+
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Dos,Strings,Timer,Debug
-{$IFDEF Win32},OCThread,Windows{$ENDIF}
-{$IFDEF Linux},Serial{$ENDIF}
-{$IFDEF OS2},OCThread,OS2Base{$ENDIF}
-{$IFDEF Go32V2},Go32{$ENDIF}
-{$IFDEF TCP},Sockets{$ENDIF}
-;
+uses Sysutils,Dos,Strings,Timer,Debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$ENDIF}
 {$IFDEF Linux} {$I OCSLin.inc} {$ENDIF}
@@ -254,9 +243,10 @@ end; { func. tCommObj.GetBPSrate }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-procedure tCommObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte);
+function tCommObj.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 begin
-  DebugLog('ObjCOM','Method SetLine not overloaded',1)
+  DebugLog('ObjCOM','Method SetLine not overloaded',1);
+  SetLine:=False;
 end; { proc. tCommObj.SetLine }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -394,9 +384,10 @@ type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
 var
  IPort,ISpeed,IDataBits,IStopBits: LongInt; IgnoreCD,FlowHardware: Boolean;
  CParity: Char;  PTag,Res: Integer; SOpt,SPort: String; ConnType: tConnType;
+ Success: Boolean;
 
 begin
-  ConnType:=CUnknown;
+  ConnType:=CUnknown; Success:=False;
   {$IFDEF Fossil} if pos('FOSSIL',UpStr(S))=1 then ConnType:=CFossil; {$ENDIF}
   {$IFDEF TCP} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet; {$ENDIF}
   if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial;
@@ -425,18 +416,18 @@ begin
       if Res=0 then
         begin case ConnType of
                 {$IFDEF TCP} CTelnet: begin CommObj:=New(tpTelnetObj,Init);
-                                            CommInit:=tpTelnetObj(CommObj)^.Connect('')end;{$ENDIF}
+                                            Success:=tpTelnetObj(CommObj)^.Connect('')end;{$ENDIF}
                 {$IFDEF Fossil} CFossil: begin CommObj:=New(tpFossilObj,Init);
-                                               CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
-                {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); CommInit:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
+                                               Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
+                {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
                 {$ELSE} CSerial: begin CommObj:=New(tpSerialObj,Init);
-                                       CommInit:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
+                                       Success:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
               end;
               CommObj^.IgnoreCD:=IgnoreCD;
-        end
-      else CommInit:=False;
-    end
-  else CommInit:=False;
+              if not Success then ErrorStr:=CommObj^.ErrorStr;
+        end;
+    end;
+  CommInit:=Success;
 end;
 
 initialization Initserial;
@@ -446,6 +437,11 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/10/28 09:35:20  ma
+  - moved "uses" to interface part
+  - SetLine is now a function
+  - introduced credits.txt
+
   Revision 1.9  2000/10/18 12:21:33  hd
   - Unter Linux wieder compilierbar
 
