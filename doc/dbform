@@ -32,6 +32,8 @@ MSGS:  Nachrichtendatei
 17. Name        String(25)       ab 2.1:  Fido: Brettempf, sonst: Realname
 18. Flags       Longint          ab 3.1:  1=PGP-Signatur ok
                                           2=PGP-Signatur fehlerhaft
+                                          4=Multipart-MIME Nachricht (ab 3.2)
+19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
 
 Indizes:
 
@@ -81,7 +83,7 @@ USER:   User(U)/Verteiler
  1. Username    String(80)  i       (Verteiler: #255[Name]@VERTEILER)
  2. Adresse     Extern           U
  3. Kommentar   String(30)
- 4. Pollbox     String(20)
+ 4. Pollbox     String(20)  i
  5. Haltezeit   Integer             (Verteiler: Anzahl Empf„nger)
  6. AdrBuch     Byte        i       Adressbuchgruppe, 0:User steht nicht im Adressbuch
  7. Passwort    Extern           U
@@ -214,3 +216,19 @@ Indizes:
 
  1. MsgID       beiMsgID
  2. Ref         beiRef
+
+-----------------------------------------------------------------------
+
+MIME:  Mime-Typen (ab 3.20)
+
+ 1. +TYP        String(40)  i
+ 2. +EXTENSION  String(5)   i
+ 3. PROGRAMM    String(70)
+
+Indizes:
+
+ 1. mtiTyp      +TYP
+ 2. mtiExt      +EXTENSION
+
+-----------------------------------------------------------------------
+
