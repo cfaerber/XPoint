@@ -173,8 +173,8 @@ const
   maxf   = 2048;
   maxs   = 5;
 type
-  fnst   = string;
-      ft     = array[1..maxf+36] of ^fnst;
+      fnst   = string;
+      ft     = array[0..maxf+36] of ^fnst;
       txst   = string[70];
 var   fb     : pathstr;
       f      : ^ft;
@@ -188,7 +188,7 @@ var   fb     : pathstr;
       name   : namestr;
       ext    : extstr;
       xtext  : string[20];
-      paths  : array[1..maxs] of pathstr;
+      paths  : array[1..maxs] of ^pathstr;
       pathn  : byte;
       dpath  : pathstr;    { Display-Path }
       chgdrive : boolean;
@@ -248,30 +248,43 @@ var   fb     : pathstr;
     fname:=dir+f^[n]^;
   end;
 
-  procedure qsort;
+  procedure Shellsort;
+  var i,j,h: integer;
+      x: ^fnst;
 
-    procedure sort(l,r:integer);
-    var i,j : integer;
-        x: fnst;
-        w: pointer;
+    procedure schiebe (a,b :integer);
     begin
-      i:=l; j:=r;
-      x := UStr(f^[(l+r) div 2]^);
-      repeat
-        while UStr(f^[i]^) < x do inc(i);
-        while UStr(f^[j]^) > x do dec(j);
-        if i<=j then
-        begin
-          w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
-          inc(i); dec(j);
-        end;
-      until i > j;
-      if l < j then sort(l, j);
-      if r > i then sort(i, r);
+      Freemem (f^[b], length (f^[b]^) + 1);
+      Getmem (f^[b], length (f^[a]^) + 1);
+      f^[b]^ := f^[a]^;
     end;
 
   begin
-    sort(1,fn);
+    getmem (f^[0], 256);
+    h := 1;
+    repeat
+      h:=h*3+1;
+    until h>fn;
+    repeat
+      h := h div 3;
+      for i := h+1 to fn do
+      begin
+        Getmem (x, length (f^[i]^)+1);
+        x^ := f^[i]^;
+        f^[0]^ := x^;
+        j := i - h;
+        while (ustr(x^) < ustr(f^[j]^)) and not (j < h) do
+        begin
+          schiebe (j, j+h);
+          j := j - h;
+        end;
+        Freemem (f^[j+h], length(f^[j+h]^)+1);
+        Getmem (f^[j+h], length(x^)+1);
+        f^[j+h]^ := x^;
+        Freemem (x,length (x^)+1);
+      end;
+    until h = 1;
+    Freemem (f^[0], 256);
   end;
 
   procedure clfswin;
@@ -474,7 +487,8 @@ begin
   path:=fexpand(path);
   if pathx='' then begin
     pathn:=1;
-    paths[1]:=path;
+    New (paths[1]);
+    paths[1]^:=path;
     end
   else begin
     pathn:=0;
@@ -483,7 +497,8 @@ begin
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
     while p>0 do begin
       inc(pathn);
-      paths[pathn]:=path+left(dpath,p-1);
+      New (paths[pathn]);
+      paths[pathn]^:=path+left(dpath,p-1);
       delete(dpath,1,p);
       p:=cpos(';',dpath);
       end;
@@ -520,7 +535,7 @@ begin
       end;
     for x:=1 to pathn do
     begin
-      findfirst(paths[x],dos.readonly+dos.archive,sr);
+      findfirst(paths[x]^,dos.readonly+dos.archive,sr);
       while (doserror=0) and (fn<maxf) do
       begin
         if sr.name<>'.' then
@@ -564,7 +579,7 @@ begin
                 (cpos(chr(ord(t[1])+64),drives)>0);
       end
     else begin
-      qsort;
+      shellsort;
       for i:=1 to fn do
         if f^[i]^[1]>=#253 then
         begin
@@ -731,7 +746,7 @@ begin
     if ((fn>0) and (t=keycr) and (right(f^[p+add]^,1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
-        fsplit(paths[i],dir,name,ext);
+        fsplit(paths[i]^,dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
           if f^[p+add]^='..'+DirSepa then begin
             delete(dir,length(dir),1);
@@ -746,7 +761,7 @@ begin
           if right(path,1)<>DirSepa then path:=path+DirSepa;
           path:=path+name+ext;
           end;
-        paths[i]:=path;
+        paths[i]^:=path;
         end;
       t:=#0#0;
       for i := 1 to fn do
@@ -763,6 +778,8 @@ begin
   else fb:='';
   for i := 1 to fn do
     Freemem(f^[i], length(f^[i]^)+1);
+  for i := 1 to pathn do
+    Dispose(paths[i]);
   dispose(f);
   fsbox:=fb;
 end;
@@ -1167,6 +1184,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.17  2002/04/13 14:37:13  sv
+  - etwas Stack in fsbox gespart
+  - Shellsort statt Quicksort eingesetzt, um Stack zu sparen
+
   Revision 1.16.2.16  2002/04/07 22:41:04  my
   MY:- Commit-Text korrigiert.
 
