@@ -2538,7 +2538,7 @@ begin
   if CommandLine then write('mail: ', fn);
   DeCompress(fn,false);
   if not fileexists(fn) then
-    raise Exception.Create(GetRes2(10700,15));
+    raise Exception.Create(Format(GetRes2(10700,15),[fn]));
   if CommandLine then write(sp(7));
 
   OpenFile(fn);
@@ -2662,7 +2662,7 @@ begin
   if CommandLine then write('news: ', fn);
   DeCompress(fn,true);
   if not fileexists(fn) then
-    raise Exception.Create(GetRes2(10700,15));
+    raise Exception.Create(Format(GetRes2(10700,15),[fn]));
 
   OpenFile(fn);
   ReadString;
@@ -2789,7 +2789,7 @@ var
     for i := 0 to 3 do                  { Schreibweise in einem Byte codieren }
       if (s[i + 4] >= 'A') and (s[i + 4] <= 'Z') then
         inc(b, 1 shl i);
-    U2DOSfile := s + hex(b, 1);
+    U2DOSfile := UpperCase(s + hex(b, 1));
   end;
 
   procedure ReadXfile;
@@ -2893,7 +2893,7 @@ begin
       ReadXFile;                        { X.-file interpretieren }
       LoString(typ);
       if not FileExists(spath + dfile) then
-        raise Exception.Create(GetRes2(10700,15))
+        raise Exception.Create(Format(GetRes2(10700,15),[spath+dfile]))
       else begin
         inc(n);
         if (typ = 'rnews') or (typ = 'crnews') or
@@ -2910,7 +2910,7 @@ begin
           (typ = 'rbsmtp') or (typ = 'brsmtp') then
           ConvertSmtpFile(spath + dfile, mails)
         else
-          raise Exception.Create(Format(GetRes2(10700,10),[sr.name]));
+          raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
 
         if ClearSourceFiles then begin
           DeleteFile(spath+sr.name);
@@ -2927,7 +2927,7 @@ begin
         0, 1, 2: ConvertNewsfile(spath + sr.name, news);
         3: ConvertSmtpFile(spath + sr.name, mails);
         4: ConvertMailfile(spath + sr.name, '', mails);
-      else raise Exception.Create(Format(GetRes2(10700,10),[sr.name]));
+      else raise Exception.Create(Format(GetRes2(10700,45),[sr.name]));
       end;
       inc(n);
 
@@ -3821,6 +3821,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/07/30 12:43:41  cl
+  - ZCRFC: more helpful error messages
+
   Revision 1.61  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

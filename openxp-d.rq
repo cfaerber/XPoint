@@ -3126,13 +3126,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6  keine Nodeliste aktiviert
 7  Relogin-Anruf bei dieser Box nicht mîglich
 8  Scriptdatei fÅr Online-Anruf erforderlich!
-9  unbekannte Box:  %s
-10 Sendepuffer (%s) ist fehlerhaft!
+9  unbekannte Box: %s
+10 Unbekannter Befehl: %s in %s 
+45 Unbekanntes Dateiformat: %s
 11 Keine Verbindung!
 12 Fehler bei Netcall-Konvertierung
 13 Fehler beim Packen!
 14 Modem nicht bereit - oder etwa ausgeschaltet?
-15 Puffer fehlt! (Fehler beim Entpacken?)
+15 Puffer fehlt: %s
 16 fehlerhafte /ips:-Angabe
 17 /n: Unbekannte Serverbox: %s
 18 Datei nicht vorhanden
@@ -3738,6 +3739,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.22  2001/07/30 12:43:41  cl
+# - ZCRFC: more helpful error messages
+#
 # Revision 1.21  2001/07/29 12:53:05  ma
 # - fixed Fido ressources
 #
