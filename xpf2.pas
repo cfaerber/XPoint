@@ -24,8 +24,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,archive,montage,
-      xp0,xp1,xp1o,xp3,xp3o;
+  typeform,fileio,archive,montage,
+  xp0,xp1,xp1o,xp3,xp3o;
 
 
 procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }
@@ -74,7 +74,7 @@ var t    : text;
     name1: string;
     at   : shortint;
     ar   : ArchRec;
-    sr   : searchrec;
+    sr   : tsearchrec;
     f    : file;
     tmp  : string;
     count: longint;
@@ -108,7 +108,7 @@ label ende;
         s:=trim(mid(s,p));
         if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
         if feld='origin' then absender:='FileScan@'+s else
-        if feld='file' then betreff:=FExpand(ExtractFilePath(fn)+s) else
+        if feld='file' then betreff:=ExpandFilename(ExtractFilePath(fn)+s) else
         if feld='desc' then summary:=s else
         if (feld='path') and (blankpos(s)>0) then
           pfad:=LeftStr(s,blankpos(s)-1)+'!'+pfad;
@@ -160,19 +160,17 @@ begin
             if not IsPath(FilePath+'TICK') then begin
               mkdir(FilePath+'TICK');
               if ioresult<>0 then begin
-                rfehler1(2123,FExpand(FilePath+'TICK'));   { 'Kann Verzeichnis %s nicht anlegen!' }
+                rfehler1(2123,ExpandFilename(FilePath+'TICK'));   { 'Kann Verzeichnis %s nicht anlegen!' }
                 goto ende;
                 end;
               end;
             if UniExtract(s,FilePath+'TICK\','*.*') and
                FileExists(FilePath+'TICK\'+name1) then begin
-              _era(s);
-              Dos.FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
-              while doserror=0 do begin       { .TIC-Files verarbeiten }
+              DeleteFile(s);
+              while FindFirst(FilePath+'TICK\*.TIC',faAnyFile,sr)=0 do repeat       { .TIC-Files verarbeiten }
                 if ProcessTICfile(FilePath+'TICK\'+sr.name) then;
-                _era(FilePath+'TICK\'+sr.name);
-                Dos.findnext(sr);
-              end;
+                DeleteFile(FilePath+'TICK\'+sr.name);
+              until findnext(sr)<>0;
               FindClose(sr);
             end;
           end;   { of TIC-File vorhanden }
@@ -183,12 +181,11 @@ begin
 ende:
   close(t);
 
-  Dos.findfirst(FilePath+'*.TIC',ffAnyFile,sr);    { ungepackte TIC-Files }
-  while doserror=0 do begin
+  { ungepackte TIC-Files }
+  while findfirst(FilePath+'*.TIC',faAnyFile,sr)=0 do repeat
     if ProcessTICfile(FilePath+sr.name) then
-      _era(FilePath+sr.name);
-    Dos.findnext(sr);
-  end;
+      DeleteFile(FilePath+sr.name);
+  until findnext(sr)<>0;
   FindClose(sr);
 
   close(f);

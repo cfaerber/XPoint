@@ -19,9 +19,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-     maus2,mouse,resource,xpglobal,
-     xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
+  typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+  maus2,mouse,resource,xpglobal,
+  xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
 function NeuBenutzergruss:boolean;
 procedure EasyMainDialog;
@@ -84,6 +84,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.12  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.11  2000/11/04 23:01:14  fe
   Made 'hauruck' compilable with FreeBSD.
 

@@ -17,7 +17,7 @@ unit xp9bp;
 
 interface
 
-uses dos,typeform,fileio,datadef,database,
+uses typeform,fileio,datadef,database,
      sysutils,xp0,xp1,xp2,xpnt, xpglobal;
 
 
@@ -30,13 +30,13 @@ const bm_changesys = 1;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
-procedure ReadBox(nt:byte; dateiname:pathstr; bp:BoxPtr);
-procedure WriteBox(dateiname:pathstr; bp:BoxPtr);
+procedure ReadBox(nt:byte; dateiname:string; bp:BoxPtr);
+procedure WriteBox(dateiname:string; bp:BoxPtr);
 procedure ReadBoxPar(nt:byte; box:string);
 function  BoxBrettebene(box:string):string;
 
-procedure ReadQFG(dateiname:pathstr; var qrec:QfgRec);
-procedure WriteQFG(dateiname:pathstr; qrec:QfgRec);
+procedure ReadQFG(dateiname:string; var qrec:QfgRec);
+procedure WriteQFG(dateiname:string; qrec:QfgRec);
 
 
 implementation  { ------------------------------------------------- }
@@ -181,7 +181,7 @@ end;
 { Box- Parameter aus angegebener Datei lesen }
 { bp^ muss initialisiert sein.                }
 
-procedure ReadBox(nt:byte; dateiname:pathstr; bp:BoxPtr);
+procedure ReadBox(nt:byte; dateiname:string; bp:BoxPtr);
 var t      : text;
     s,su   : string;
     p      : byte;
@@ -342,7 +342,7 @@ begin
 end;
 
 
-procedure WriteBox(dateiname:pathstr; bp:BoxPtr);
+procedure WriteBox(dateiname:string; bp:BoxPtr);
 var t : text;
     i : byte;
 
@@ -474,7 +474,7 @@ end;
 
 procedure ReadBoxPar(nt:byte; box:string);
 var d     : DB;
-    bfile : pathstr;
+    bfile : string;
 begin
   dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(box));
@@ -487,7 +487,7 @@ begin
 end;
 
 
-procedure ReadQFG(dateiname:pathstr; var qrec:QfgRec);
+procedure ReadQFG(dateiname:string; var qrec:QfgRec);
 var t  : text;
     s  : String;
     id : string[10];
@@ -519,7 +519,7 @@ begin
 end;
 
 
-procedure WriteQFG(dateiname:Pathstr; qrec:QfgRec);
+procedure WriteQFG(dateiname:string; qrec:QfgRec);
 var t1,t2 : text;
     s,ss  : string;
     id    : string[10];
@@ -579,6 +579,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.25  2000/11/10 05:25:47  mk
   - - fixed Bug #116657: crash with servername >15 chars
 

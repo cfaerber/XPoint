@@ -1327,7 +1327,7 @@
       end;
   end;
 
-  procedure EditQWK(dateiname:pathstr; var brk:boolean);
+  procedure EditQWK(dateiname:string; var brk:boolean);
   const maxnmt = 10;
   var   x,y    : byte;
         eqfg   : boolean;
@@ -1363,7 +1363,7 @@
 
     procedure AppQwkEchos;
     var t : text;
-        s : string[80];
+        s : string;
     begin
       assign(t,dateiname+'.bl');
       if existf(t) then begin
@@ -1699,6 +1699,9 @@
 
 {
   $Log$
+  Revision 1.33  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.32  2000/11/14 15:51:35  mk
   - replaced Exist() with FileExists()
 

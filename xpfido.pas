@@ -23,7 +23,7 @@ uses  xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,winxp,maus2,
+  sysutils,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
   xp0,xp1,xp1o,xp1input;
 
@@ -1200,13 +1200,14 @@ end;
 
 procedure NodeSelProc(var cr:customrec);
 var t   : text;
-    s   : string[80];
+    s   : string;
     p   : byte;
-    node: string[20];
+    node: string;
     ni  : nodeinfo;
     anz : longint;
-    fn  : string[12];
-    sr  : searchrec;
+    fn  : string;
+    sr  : tsearchrec;
+    rc  : integer;
 
 begin
   listbox(73,15,getres(iif(delfilelist,2105,2106)));
@@ -1219,8 +1220,8 @@ begin
     p:=pos('=',s);
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
-      findfirst(FidoDir+fn,ffAnyFile,sr);
-      if (doserror=0) and (sr.size>0) then begin
+      rc:= findfirst(FidoDir+fn,faAnyFile,sr);
+      if (rc=0) and (sr.size>0) then begin
         node:=LeftStr(s,p-1);
         GetNodeinfo(node,ni,1);
         inc(anz);
@@ -1229,9 +1230,10 @@ begin
         app_l(' '+forms(node,14)+' '+
               forms(iifs(ni.found,ni.boxname+', '+ni.standort,'???'),32)+
               '  '+FormatDateTime('mm/yy', FileDateToDateTime(sr.time))+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
-        end;
-      end;
-    end;
+      end; // if rc...
+      FindClose(sr);
+    end; // if
+  end; // while
   KeepNodeindexClosed;
   close(t);
   if anz>0 then begin
@@ -1733,7 +1735,7 @@ begin
   if not ReadFilename(getres2(2117,1),fn,true,useclip) or  { 'Fileliste einlesen' }
      (not FileExists(fn) and fehlfunc(getres2(2117,2))) then  { 'Datei nicht vorhanden' }
     goto ende;
-  fn:=UpperCase(FExpand(fn));
+  fn:=FileUpperCase(ExpandFileName(fn));
   fi:=ExtractFilename(fn);
   p:=cpos('.',fi);
   if p=0 then fn:=fn+'.';
@@ -2240,6 +2242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.35  2000/11/15 23:00:43  mk
   - updated for sysutils and removed dos a little bit
 

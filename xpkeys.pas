@@ -17,7 +17,7 @@ unit xpkeys;
 interface
 
 uses
-  xpglobal, sysutils,dos,typeform,fileio,inout,keys,resource,xp0,xp1;
+  xpglobal,sysutils,typeform,fileio,inout,keys,resource,xp0,xp1;
 
 
 type  getf_func   = function(nr,nn:byte):string;
@@ -239,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.14  2000/11/14 15:51:37  mk
   - replaced Exist() with FileExists()
 

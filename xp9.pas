@@ -24,9 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-     maus2,mouse,resource,xpglobal,
-     xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
+  sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+  maus2,mouse,resource,xpglobal,
+  xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
 
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -157,7 +157,7 @@ begin
   else begin
     testfidodir:=false;
     if RightStr(s,1)<>DirSepa then s:=s+DirSepa;
-    s:=FExpand(s);
+    s:=ExpandFileName(s);
     if s=OwnPath then
       rfehler(905)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
     else
@@ -219,15 +219,15 @@ end;
 
 function progtest(var s:string):boolean;
 var ok   : boolean;
-    fn   : pathstr;
-    path : string[127];
+    fn,
+    path : string;
 begin
   progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
   path:=getenv('PATH');
   if UpperCase(LeftStr(s+' ',7))='ZMODEM ' then
 {$IFDEF UnixFS}
     begin
-      if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
+      if (filesearch('rz',path)='') or (filesearch('sz',path)='') then
         rfehler(933);                   { '"rz" und "sz" muessen installiert....' }
       { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
       exit;
@@ -240,14 +240,14 @@ begin
   if cpos(' ',fn)>0 then fn:=LeftStr(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+UpperCase(fn)+'*','*COPY*DIR*PATH*')=0) then begin
 {$IFDEF UnixFS}
-    ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
+    ok:=filesearch(fn,path)<>'';           { Extension ist unbedeutend }
 {$ELSE}
     if ExtractFileExt(fn)<>'' then
-      ok:=fsearch(fn,path)<>''
+      ok:=filesearch(fn,path)<>''
     else
-      ok:=(fsearch(fn+'.exe',path)<>'') or
-          (fsearch(fn+'.com',path)<>'') or
-          (fsearch(fn+'.bat',path)<>'');
+      ok:=(filesearch(fn+'.exe',path)<>'') or
+          (filesearch(fn+'.com',path)<>'') or
+          (filesearch(fn+'.bat',path)<>'');
 {$ENDIF}
     if not ok then rfehler1(907,UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
   end;
@@ -492,7 +492,7 @@ begin
 end;
 
 function testlogfile(var s:string):boolean;
-var fn : pathstr;
+var fn : string;
 begin
   if s='' then
     testlogfile:=true
@@ -1821,6 +1821,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.46  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.45  2000/11/15 23:00:43  mk
   - updated for sysutils and removed dos a little bit
 

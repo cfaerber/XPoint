@@ -17,7 +17,8 @@ unit  xp_pgp;
 
 interface
 
-uses  sysutils,xpglobal, dos,typeform,fileio,resource,database,maske,
+uses
+  sysutils,xpglobal,typeform,fileio,resource,database,maske,
   xp0,xp1;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
@@ -99,10 +100,10 @@ begin
     path:=getenv('PGPPATH');
     if path<>'' then begin
       if lastchar(path)='\' then dellast(path);
-      path:=fsearch(PGPEXE,path);
+      path:=filesearch(PGPEXE,path);
     end;
     if path='' then
-      path:=fsearch(PGPEXE,getenv('PATH'));
+      path:=filesearch(PGPEXE,getenv('PATH'));
   end;
   if path='' then
     trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -131,10 +132,10 @@ begin
   path:=getenv('PGPPATH');
   if path<>'' then begin
     if lastchar(path)='\' then dellast(path);
-    path:=fsearch(exe,path);
+    path:=filesearch(exe,path);
   end;
   if path='' then
-    path:=fsearch(exe,getenv('PATH'));
+    path:=filesearch(exe,getenv('PATH'));
   if path='' then
     trfehler1(3001,exe,30)   { '%s fehlt oder ist nicht per Pfad erreichbar.' }
   else begin
@@ -172,7 +173,7 @@ procedure UpdateKeyfile;
 var secring : string;
 begin
   if UsePGP and (PGP_UserID<>'') then begin
-    secring:=fsearch('PUBRING.PGP',getenv('PGPPATH'));
+    secring:=filesearch('PUBRING.PGP',getenv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
       if FileExists(PGPkeyfile) then _era(PGPkeyfile);
       if PGPVersion=PGP2 then
@@ -778,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.31  2000/11/15 23:37:34  fe
   Corrected some string things.
 

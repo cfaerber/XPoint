@@ -16,9 +16,9 @@ unit xpimpexp;
 
 interface
 
-uses  sysutils,
-      dos,typeform,fileio,inout,maske,datadef,database,maus2,resource,
-      xp0,xp1, xpglobal;
+uses
+  sysutils,typeform,fileio,inout,maske,datadef,database,maus2,resource,
+  xp0,xp1,xpglobal;
 
 
 procedure ImportUserbase;     { X/Import/MB-Userbase }
@@ -403,7 +403,7 @@ var   daten    : FILE;
       index    : FILE OF Msg_Index;
       outfile  : TEXT;
       x,tempx  : msg_index;
-      tempdatum: DateTime;
+      tempdatum: TDateTime;
       was      : byte;
       mx,my    : byte;
       n        : longint;
@@ -443,21 +443,6 @@ var   daten    : FILE;
     zeile_auslesen:=ergebnis;
   end;
 
-  procedure datum_ins_outfile(td:DateTime);
-  begin
-    with td do begin
-      write(outfile,year:4);
-      if month<10 then write(outfile,'0',month)
-                  else write(outfile,month:2);
-      if  day<10  then write(outfile,'0',day)
-                  else write(outfile,day:2);
-      IF  hour<10 then write(outfile,'0',hour)
-                  else write(outfile,hour:2);
-      IF  min<10  then writeln(outfile,'0',min)
-                  else writeln(outfile,min:2);
-      end;
-  end;
-
 BEGIN
   msgbox(37,5,'MauTau-Daten konvertieren',mx,my);
   wrt(mx+3,my+2,'bearbeitete Nachrichten:');
@@ -492,11 +477,15 @@ BEGIN
     IF gruppe='PRIVAT' then writeln(outfile,'A',empfaenger);
     writeln(outfile,'W',betreff);
     // !! UnPackTime(x.datum,tempdatum);
+    tempdatum:= FileDateToDateTime(x.datum);
     write(outfile,'E');
-    datum_ins_outfile(tempdatum);
+    write(outfile,FormatDateTime('YYYYMMDDhhmm', tempdatum));
+    //datum_ins_outfile(tempdatum);
     // !!UnPackTime(x.SDatum,tempdatum);
+    tempdatum:= FileDateToDateTime(x.SDatum);
     write(outfile,'B',upcase(x.status));
-    datum_ins_outfile(tempdatum);
+    write(outfile,FormatDateTime('YYYYMMDDhhmm', tempdatum));
+    //datum_ins_outfile(tempdatum);
 
     if gruppe<>'PRIVAT' then writeln(outfile,'G',gruppe);
     if x.KommentarZu<>0 then begin
@@ -593,20 +582,6 @@ var ypath : string;
     brk   : boolean;
     x,y   : byte;
 
-  function YupMailsize:longint;
-  var sr  : searchrec;
-      sum : longint;
-  begin
-    sum:=0;
-    Dos.findfirst(ypath+'*.DBT',ffAnyFile,sr);
-    while doserror=0 do begin
-      inc(sum,sr.size);
-      Dos.findnext(sr);
-    end;
-    FindClose(sr);
-    YupMailsize:=sum;
-  end;
-
   procedure ImportYupbase;
   const TempPKT = '1.PKT';
   begin
@@ -645,7 +620,7 @@ begin
         klein oder gross geschrieben? }
       if not mfehler(FileExists(ypath+'AREABASE.DBF'),'In diesem Verzeichnis befindet sich keine Yuppie-Datenbank.') and
          not mfehler(FileExists(ypath+'NET-MAIL.DBF'),ypath+'NET-MAIL.DBF fehlt') and
-         not mfehler(diskfree(0)>2.5*YupMailsize,
+         not mfehler(diskfree(0)>2.5*FileMaskSize(ypath+'*.DBT'),
                 'zu wenig freier Speicherplatz zum Einlesen der Daten')
       then
         ImportYupbase;
@@ -693,6 +668,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.29  2000/11/15 23:00:44  mk
   - updated for sysutils and removed dos a little bit
 

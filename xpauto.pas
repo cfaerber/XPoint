@@ -16,9 +16,9 @@ unit xpauto;
 
 interface
 
-uses  sysutils,
-      dos,montage,typeform,fileio,inout,datadef,database,resource,
-      xp0,xp1, xpglobal;
+uses
+  sysutils,montage,typeform,fileio,inout,datadef,database,resource,
+  xp0,xp1,xpglobal;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
@@ -133,13 +133,12 @@ var mmask     : array[1..12] of boolean;
   end;
 
   function amodi:boolean;
-  var sr : searchrec;
+  var sr : tsearchrec;
       fn : string;
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
-    findfirst(fn,ffAnyFile,sr);
-    if doserror<>0 then
+    if findfirst(fn,faAnyFile,sr)<>0 then
       amodi:=false
     else
       amodi:=sr.time<>ar.lastfd;
@@ -201,6 +200,7 @@ var tmp  : boolean;
     leer : string;
     dat  : longint;
     tt   : longint;
+    fh   : longint;     // File-Handle
     b    : byte;
     muvs : boolean;
     sData: SendUUptr;
@@ -252,8 +252,9 @@ begin
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
         dbWrite(auto,'lastmsgid',sData^.msgid);
-        assign(t,datei);
-        reset(t); getftime(t,tt); close(t);
+        fh:= FileOpen(datei,fmOpenRead);
+        tt:= FileGetDate(fh);
+        FileClose(fh);
         dbWrite(auto,'lastfdate',tt);
         if dat>=datum1 then begin
           datum1:=0;
@@ -312,17 +313,20 @@ end;
 
 procedure AutoExec(startbatch:boolean);
 const tfs = 20;
-var sr    : searchrec;
+var sr    : tsearchrec;
+    rc    : integer;
     first : boolean;
     ctlEbest,ctlErstDat : boolean;
     mgel  : boolean;       { Save fÅr ParGelesen }
-    fnstart: pathstr;      { Name der Start.bat }
+    fnstart: string;      { Name der Start.bat }
 
   function find(ext:string):boolean;
   begin
-    if first then dos.findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
-    else dos.findnext(sr);
-    first:=(doserror<>0);
+    if first then
+      rc:= findfirst(AutoxDir+'*.'+ext,faAnyFile,sr)
+    else
+      rc:= findnext(sr);
+    first:=(rc<>0);
     find:=not first;
   end;
 
@@ -338,11 +342,6 @@ var sr    : searchrec;
     else
       NamePollbox:='';
     dbClose(d);
-  end;
-
-  procedure delfile;
-  begin
-    _era(AutoXdir+sr.name);
   end;
 
   function MausImport:boolean;
@@ -373,7 +372,6 @@ var sr    : searchrec;
   end;
 
   procedure FidoImport;
-  var sr : searchrec;
   begin
     if not FileExists(ZFidoBin) then
       trfehler(101,tfs)     { 'Netcallkonvertierer ZFIDO.EXE fehlt!' }
@@ -394,14 +392,10 @@ var sr    : searchrec;
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
         { /robo }
-          dos.findfirst(AutoxDir+'*.pkt',ffAnyFile,sr);
-          while doserror=0 do begin
-            _era(AutoxDir+sr.name);
-            dos.findnext(sr);
-          end;
-          FindClose(sr);
+          erase_mask(AutoXDir+'*.pkt');
+          erase_mask(AutoXDir+'*.PKT');
         end;
-        _era('FPUFFER');
+        DeleteFile('FPUFFER');
       end;
     end;
   end;
@@ -521,7 +515,7 @@ var sr    : searchrec;
     if DoSend(pm,datei,iifs(pm,'','A')+empf,betr,
               false,attach or not temp,false,false,temp,nil,s,s,sendShow) then begin
       if temp or (delfile and (datei<>'')) then
-        _era(datei);
+        DeleteFile(datei);
       SendMsg:=true;
       end;
   end;
@@ -562,37 +556,46 @@ begin
       SetCTL;
     while find('ctd') do begin
       SetCTL;
-      delfile;
+      DeleteFile(AutoXdir+sr.name);
+      //delfile;
       end;
     while find('zer') do     { Z-Puffer einlesen + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,ctlEbest,0) then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     while find('zee') do     { Z-Puffer einlesen, EB's versenden + lîschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,true,0) then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     while find('out') do     { Maus-OUTFILE einlesen + lîschen }
       if MausImport then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     if FileExists(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
       FidoImport;
 
     while find('ips') do     { Puffer versenden }
       if SendPuffer then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     while find('msg') do     { Nachricht/Datei senden + lîschen }
       if SendMsg(false) then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     while find('msd') do     { Datei senden + incl. Datei lîschen }
       if SendMsg(true) then
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        //delfile;
     while find('bak') do     { BAK-files lîschen }
-      delfile;
+      DeleteFile(AutoXdir+sr.name);
+      //delfile;
 
     while find('bat') do     { Batchdateien ausfÅhren }
       if (LeftStr(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
         (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
-        delfile;
+        DeleteFile(AutoXdir+sr.name);
+        // delfile;
         end;
     if startbatch then begin
       fnstart:=AutoxDir+FileUpperCase('start'+BatchExt);        { START.BAT }
@@ -601,7 +604,7 @@ begin
       fnstart:=AutoxDir+FileUpperCase('start1'+BatchExt);       { START1.BAT, lîschen }
       if FileExists(fnstart) then begin
         shell(fnstart,500,1);
-        _era(fnstart);
+        DeleteFile(fnstart);
         end;
       end;
     ParGelesen:=mgel;
@@ -611,7 +614,7 @@ end;
 
 procedure AutoStop;
 var
-  fnstop: pathstr;
+  fnstop: string;
 begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
@@ -668,6 +671,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.27  2000/11/14 15:51:35  mk
   - replaced Exist() with FileExists()
 

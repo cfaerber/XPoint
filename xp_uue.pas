@@ -24,8 +24,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-      dos,typeform,fileio,inout,database,maus2,resource,
-      xp0,xp1,xp1o,xp1o2,xp1input, xpglobal;
+  typeform,fileio,inout,database,maus2,resource,
+  xp0,xp1,xp1o,xp1o2,xp1input, xpglobal;
 
 
 procedure uudecode;            { aktuelle Nachricht decodieren }
@@ -539,6 +539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.22  2000/11/14 15:51:35  mk
   - replaced Exist() with FileExists()
 

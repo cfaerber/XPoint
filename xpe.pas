@@ -23,8 +23,8 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,inout,keys,winxp,maus2,resource,maske, sysutils,
-     eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
+  typeform,fileio,inout,keys,winxp,maus2,resource,maske, sysutils,
+  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
 
 
 const EditXkeyfunc : EdTProc = nil;
@@ -475,6 +475,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/18 14:46:56  hd
+  - Unit DOS entfernt
+
   Revision 1.23  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 
