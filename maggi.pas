@@ -255,7 +255,7 @@ begin
     else if _is('on') then MausON:=false
     else if _is('kf') then mausKF:=false
     else if _is('it') then MausIT_Files:=true
-    else if _is('312') then OldXPComp := true;
+    else if _is('312') then OldXPComp := true
     else if (left(s,1)='/') or (left(s,1)='-') then parerr
     else if infile='' then infile:=s
     else if outfile='' then outfile:=s
@@ -1832,6 +1832,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.5  2000/10/19 19:03:47  mk
+  - Maggi wieder compilierbar
+
   Revision 1.15.2.4  2000/10/18 08:49:38  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 
