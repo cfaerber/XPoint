@@ -261,11 +261,11 @@ var i  : integer;
     if deutsch then
     begin
       keyboard('nd');
-      writeln('Deutsch');
+{     writeln('Deutsch'); }
     end else
     begin
       keyboard('md');
-      writeln('Englisch');
+{     writeln('Englisch'); }
     end;
     i:=cposx('\',s);
     if i <= length(s) then keyboard(keyup+mid(s,i+1)+keydown);
@@ -1023,6 +1023,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.28  2001/10/26 18:34:08  my
+  MY:- Zwei Debug-Ausgaben auskommentiert (der angestrebte Fix fr
+       "/mailto:" funktioniert eh noch nicht).
+
   Revision 1.45.2.27  2001/10/26 17:40:02  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
