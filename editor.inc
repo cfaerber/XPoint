@@ -2049,7 +2049,7 @@ var ap : absatzp;
         app_l(' >- ESC -<');
         repeat
          readln(t,s);
-          if (s[1]='>') and (cpos('<',s)>0) then
+          if (FirstChar(s)='>') and (cpos('<',s)>0) then
           begin
             repeat
               readln(t,s2);
@@ -2071,7 +2071,7 @@ var ap : absatzp;
           repeat
             readln(t,s);
           until (pos(s2,s)=1) or eof(t);
-          end;
+        end;
         setcolors;
         pophp;
         end;
@@ -2080,10 +2080,12 @@ var ap : absatzp;
       begin
         assign(t1,FileUppercase('glossary.tmp'));     { Kuerzel gefunden, Text kopieren }
         rewrite(t1);
-        Repeat
+        readln(t, s); write(t1,s);
+        while not EOF(t) and (FirstChar(s) <> '>') do
+        begin
           readln(t,s);
-          if (s='') or (s[1]<>'>') then Writeln(t1,s);
-        Until Eof(t) or ((s<>'') and (s[1]='>'));
+          if FirstChar(s) <> '>' then Write(t1, #13#10, s);
+        end;
         close(t1);
         ScanGlossary:=true;
         end;
@@ -2405,6 +2407,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/10/25 12:29:33  mk
+  - Glossary auf neue Loadblock angepasst
+
   Revision 1.32  2000/10/17 10:05:38  mk
   - Left->LeftStr, Right->RightStr
 
