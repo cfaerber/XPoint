@@ -20,7 +20,13 @@ unit xpterm;
 interface
 
 
-uses  crt,dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
+uses  
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
@@ -1611,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/23 07:58:54  mk
   - OS/2-Portierung
 

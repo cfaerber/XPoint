@@ -29,7 +29,14 @@ UNIT printerx;
 
 interface
 
-uses  xpglobal, crt,dos,winxp,keys,typeform,inout,maus2;
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,winxp,keys,typeform,inout,maus2;
 
 const drlength = 20;
       dnlength = 30;
@@ -270,6 +277,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/24 11:28:54  mk
   - 32 Bit: Drucken funktioniert jetzt
 

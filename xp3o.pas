@@ -19,7 +19,13 @@ unit xp3o;
 
 interface
 
-uses  crt,dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
       resource,printerx,xp0,xp1,xp1o2,xp1input,xpcrc32,xpdatum, xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
@@ -1368,6 +1374,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.14  2000/05/01 17:26:33  jg
   - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
     Und Sendefenster-Empfaengeraendern erlaubt

@@ -123,9 +123,8 @@ begin
     Clip2String := '';
 end;  { Clipboardinhalt als String }
 {$ELSE }
-function Clip2String(maxlen,oneline:byte):string;
 begin
-  Clip2String := false;
+  Clip2String := '';
 end;
 {$ENDIF }
 {$ENDIF }
@@ -645,6 +644,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.16  2000/04/30 12:45:21  mk
   - Umlaute stimmen jetzt unter Win32
 

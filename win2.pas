@@ -28,7 +28,7 @@ interface
 uses
   xpglobal,
 {$ifdef NCRT}
-  oCrt,
+  xpcurses,
 {$else}
   crt,
 {$endif}
@@ -1106,6 +1106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.13  2000/05/01 08:48:27  mk
   - fsbox jetzt endlich gefixt
 

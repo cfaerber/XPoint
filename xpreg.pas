@@ -20,7 +20,13 @@ unit xpreg;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,winxp,montage,
+uses  
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,winxp,montage,
       video,datadef,database,maus2,maske,clip,resource,printerx,
       xp0,xp1,xp1o,xp1o2,xp1input,xpnt, xpglobal;
 
@@ -1566,6 +1572,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

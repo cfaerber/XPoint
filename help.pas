@@ -33,7 +33,7 @@ INTERFACE
 uses
   xpglobal,
 {$IFDEF NCRT }
-  oCrt,
+  xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.10  2000/04/29 17:01:04  hd
   Linux-Anpassung
 

@@ -21,7 +21,13 @@ unit xp6;
 
 interface
 
-uses crt,dos,typeform,fileio,inout,keys,datadef,database,maske,crc16,lister,
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     dos,typeform,fileio,inout,keys,datadef,database,maske,crc16,lister,
      winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
      xpglobal;
 
@@ -2196,6 +2202,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.24  2000/05/01 17:26:33  jg
   - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
     Und Sendefenster-Empfaengeraendern erlaubt

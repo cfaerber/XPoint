@@ -19,7 +19,13 @@ unit xpmaus;
 
 interface
 
-uses crt,dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     dos,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
      xp0,xp1,xp1input,xpcrc32,xp_iti, xpglobal;
 
 
@@ -816,6 +822,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.6  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

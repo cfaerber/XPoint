@@ -20,7 +20,14 @@ unit editor;
 interface
 
 
-uses  xpglobal, crt,dos,keys,clip,mouse,eddef, encoder;
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,keys,clip,mouse,eddef, encoder;
 
 
 const EdTempFile  : pathstr = 'TED.TMP';
@@ -2015,6 +2022,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.23  2000/04/30 08:30:38  mk
   - Crash Findumbruch beseitigt (edi->esi)
 

@@ -20,7 +20,13 @@ unit xp9;
 
 interface
 
-uses crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
      maus2,mouse,resource,xpglobal,
      xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
@@ -1739,6 +1745,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.15  2000/04/29 11:54:09  mw
 
   - MIME in News voreingestellt

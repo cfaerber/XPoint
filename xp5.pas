@@ -23,7 +23,12 @@ uses  xpglobal,
       {$IFDEF virtualpascal}
         sysutils,vpsyslow,
       {$endif}
-      crt,dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,winxp,montage,feiertag,
       video,datadef,database,maus2,maske,clip,resource,
 {$IFDEF BP }
       ems,xms,
@@ -1100,6 +1105,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.22  2000/04/21 16:36:30  mk
   - Screensaver funktioniert jetzt auch in den 32 Versionen
 

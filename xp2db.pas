@@ -19,7 +19,13 @@ unit  xp2db;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,datadef,database,databaso,
+uses  
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,datadef,database,databaso,
       resource,maus2,xpglobal,
       xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
 
@@ -862,6 +868,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines

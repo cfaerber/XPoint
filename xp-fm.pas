@@ -23,7 +23,13 @@
 
 program xp_fm;
 
-uses  crt,dos,typeform,uart,resource,fileio,xpdiff,crc16,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,uart,resource,fileio,xpdiff,crc16,
   xpglobal, montage, inout, winxp;
 
 const aresult    : byte = 0;
@@ -1024,6 +1030,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.12  2000/04/15 12:30:58  mk
   - Compilierfaehigkeit mit VP wieder hergestellt
 

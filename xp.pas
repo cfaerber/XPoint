@@ -33,7 +33,13 @@
 
 program xp;
 
-uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+uses xpx,
+{$IFDEF NCRT }
+     xpcurses,
+{$ELSE }
+     crt,
+{$ENDIF }
+     dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc16,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpcrc32, xpglobal,
@@ -216,6 +222,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.24  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.23  2000/05/02 04:18:15  jg
   - XPoint.cfg Schalter DelViewTmp
     macht dasselbe wie die Umgebungsvariable DELVTMP

@@ -19,7 +19,13 @@ unit xp4e;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
       win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
 
 function  newuser:boolean;
@@ -2332,6 +2338,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.22  2000/05/01 17:49:07  jg
   - Bugfix Verteiler. (Merken: Variablen initialisieren spart Telefonkosten)
 

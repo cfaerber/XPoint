@@ -19,7 +19,14 @@ unit xp3ex;
 
 interface
 
-uses  xpglobal, crt,dos,typeform,fileio,inout,database,resource,stack,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,database,resource,stack,
   xp0,xp1;
 
 const xTractMsg   = 0;
@@ -1031,6 +1038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.14  2000/04/30 05:48:48  jg
   - Bugfix Leerzeichen NACH dem Quotezeichen bleiben erhalten
 

@@ -16,7 +16,13 @@ unit xp_des;
 
 interface
 
-uses crt,fileio,inout,maus2,xp0, xpglobal;
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  fileio,inout,maus2,xp0, xpglobal;
 
 procedure DES_PW(keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
@@ -563,6 +569,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

@@ -24,7 +24,12 @@ uses
 {$IFDEF virtualpascal}
   sysutils,
 {$endif}
-     crt,dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
      lister,archive,maus2,winxp,printerx,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input;
 
@@ -2402,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.35  2000/04/27 16:36:09  jg
   - Nachricht/Aendern/Typ schaltet jetzt um zwischen Text,Bin und Mime
 

@@ -19,7 +19,13 @@ unit xpfido;
 
 interface
 
-uses  xpglobal, crt,dos,dosx,typeform,fileio,inout,keys,winxp,maus2,
+uses  xpglobal, 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
   xp0,xp1,xp1o,xp1input;
 
@@ -2245,6 +2251,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.13  2000/04/18 11:23:51  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

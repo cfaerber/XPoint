@@ -20,7 +20,12 @@ unit xp7f;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      crt,dos,dosx,typeform,montage,fileio,keys,maus2,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,dosx,typeform,montage,fileio,keys,maus2,
       inout,lister,resource,maske, xpglobal,
       xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
 
@@ -937,6 +942,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.9  2000/04/23 07:29:16  jg
   - Fix: Fido/Crash...markiert: Menuezeilen wurden wie Nodes behandelt
 

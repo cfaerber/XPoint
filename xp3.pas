@@ -19,7 +19,14 @@ unit  xp3;
 
 interface
 
-uses  xpglobal, crt,dos,typeform,fileio,inout,datadef,database,montage,resource,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,datadef,database,montage,resource,
       xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum;
 
 const XreadF_error : boolean  = false;
@@ -1399,6 +1406,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.20  2000/04/29 20:54:07  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 

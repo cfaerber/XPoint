@@ -20,7 +20,13 @@ unit xp10;
 
 interface
 
-uses crt,dos,stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
      maske,datadef,database,maus2,lister,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input,xp5;
 
@@ -2036,6 +2042,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/03/14 15:15:38  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

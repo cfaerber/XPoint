@@ -19,7 +19,14 @@ unit lister;
 
 interface
 
-uses  xpglobal, crt,typeform,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  typeform,
 {$IFDEF BP }
   xms, ems,
 {$ENDIF }
@@ -1649,6 +1656,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.15  2000/04/24 17:26:45  jg
   - Bugfix: Variable Lister.Listflag muss Longint sein, nicht Integer.
 

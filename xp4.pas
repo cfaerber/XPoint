@@ -20,7 +20,12 @@ unit xp4;
 interface
 
 uses xpglobal,
-  crt,dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,winxp,keys,video,maske,datadef,database,
   archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
@@ -2033,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.17  2000/04/28 18:23:11  jg
   - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
   - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett

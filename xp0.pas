@@ -779,7 +779,11 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        MoreMode   : boolean = true;
        Developer  : boolean = false;
+{$IFDEF UnixFS }
+       SupportCfg : string[12] = 'support.cfg';
+{$ELSE }
        SupportCfg : string[12] = 'SUPPORT.CFG';
+{$ENDIF }
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
        { 01/2000 oh }
@@ -1132,6 +1136,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.34  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.33  2000/04/29 07:59:04  mk
   - Funktion FUStr fuer Filenamen Up/Locase eingebaut
 

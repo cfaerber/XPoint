@@ -19,7 +19,13 @@ unit xp8;
 
 interface
 
-uses xpglobal, crt,dos,typeform,fileio,inout,keys,datadef,database,lister,
+uses xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,keys,datadef,database,lister,
   maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti;
 
 
@@ -1591,6 +1597,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/03/14 15:15:41  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -19,7 +19,13 @@ unit xp2c;
 
 interface
 
-uses crt,dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
 {$IFDEF CAPI }
   capi,
 {$ENDIF CAPI }
@@ -1362,6 +1368,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.26  2000/05/02 12:36:49  sv
   - Ueberbleibsel der alten Viewerkonfiguration beseitigt
     Viewer werden nicht mehr in die Config-Datei geschrieben

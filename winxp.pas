@@ -87,7 +87,7 @@ procedure Wrt2(const s:string);
 procedure FWrt(const x,y:word; const s:string);
 
 {$IFDEF Ver32 }
-{$IFNDEF NCRT }
+
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
@@ -119,7 +119,7 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 
-{$ENDIF NCRT }
+
 { FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
   Die Koordinaten beginnen bei 1/1.
   Die Routine ist bis jetzt unter Win32 mit API und fÅr den
@@ -665,7 +665,6 @@ end;
 {$ENDIF }
 {$ENDIF }
 
-{$IFNDEF NCRT }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 {$IFDEF Win32 }
 var
@@ -692,7 +691,6 @@ begin
     GetScreenLine(0, i, TLocalScreen(Buffer)[i*zpz*2], zpz);
 {$ENDIF }
 end;
-{$ENDIF } { NCRT }
 
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 {$IFDEF Win32 }
@@ -1296,6 +1294,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.27  2000/05/02 11:29:13  mk
   - Anpassungen 32 Bit und Localscreen
 

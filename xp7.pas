@@ -20,7 +20,13 @@ unit  xp7;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal, crt,dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
+      xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
       video,maske,maus2,montage,lister,resource,stack,
 {$IFDEF CAPI }
   capi,
@@ -1557,6 +1563,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.9  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/03/14 15:15:40  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -20,7 +20,13 @@ unit xp7o;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal, crt,dos,typeform,inout,fileio,datadef,database,resource,maus2,
+      xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti;
 
 procedure ttwin;
@@ -774,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/20 04:15:14  jg
   - xp7o.pas: Schoenheitsfix Datumsbezuege aktualisieren
 

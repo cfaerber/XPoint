@@ -19,7 +19,13 @@ unit xp2f;
 
 interface
 
-uses crt,typeform,inout,keys,winxp,maske,video,maus2,resource,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     typeform,inout,keys,winxp,maske,video,maus2,resource,
      xp0,xp1,xp1help,xp1input,xp2, xpglobal;
 
 
@@ -811,10 +817,17 @@ var y,ax,xp,yp : shortint;
       end;
     at(15);
     x3:=3*xp+2;
+{$IFDEF NCRT }
+    FWrt(x3,y+yp-1,s1);
+    FWrt(x3,y+yp,s2);
+    FWrt(x3+4,y+yp,s2);
+    FWrt(x3,y+yp+1,s3);
+{$ELSE }
     sdisp(x3,y+yp-1,s1);
     sdisp(x3,y+yp,s2);
     sdisp(x3+4,y+yp,s2);
     sdisp(x3,y+yp+1,s3);
+{$ENDIF }
     wrt(1,y+7,iifc(ax>0,#17,' '));
     wrt(28,y+7,iifc(ax+7<nn,#16,' '));
     mon;
@@ -1172,6 +1185,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/29 14:01:00  jg
   - Config/Anzeige/Farbe beachtet "Menue bei ESC verlassen" Einstellung.
 

@@ -19,7 +19,13 @@ interface
 
 uses
   {$IFDEF virtualpascal}sysutils,{$endif}
-  xpglobal, crt,dos,typeform,fileio,inout,keys,datadef,database,maske,
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,inout,keys,datadef,database,maske,
   crc16,lister, winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
@@ -1236,6 +1242,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.11  2000/04/28 22:30:10  jg
   - Diverse Verbesserungen beim Versenden mit Priority
   - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail

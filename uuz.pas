@@ -28,7 +28,12 @@ uses  xpglobal,
 {$IFDEF BP }
   ems,
 {$ENDIF }
-  crt,dos,dosx,typeform,fileio, xpdatum,montage,stack;
+{$IFDEF BP }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,fileio, xpdatum,montage,stack;
 
 const
       midlen      = 120;
@@ -3525,6 +3530,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.20  2000/04/29 20:54:07  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 

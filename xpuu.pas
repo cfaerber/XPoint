@@ -19,7 +19,14 @@ unit  xpuu;
 
 interface
 
-uses  xpglobal, crt,dos,typeform,fileio,resource,xp0,xp1;
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio,resource,xp0,xp1;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_parerr  = 1;
@@ -115,6 +122,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.5  2000/04/13 12:48:41  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

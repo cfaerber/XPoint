@@ -20,7 +20,13 @@ unit xpf2;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal, crt,dos,typeform,fileio,archive,montage,
+      xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,archive,montage,
       xp0,xp1,xp1o,xp3,xp3o;
 
 

@@ -19,7 +19,14 @@ unit xp1input;
 
 interface
 
-uses  xpglobal, crt,typeform,keys,maus2,inout,resource,winxp,maske, xp0;
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  typeform,keys,maus2,inout,resource,winxp,maske, xp0;
 
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
@@ -417,6 +424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.6  2000/04/17 17:24:09  jg
   - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
   - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.

@@ -20,7 +20,14 @@ unit xp1help;
 interface
 
 
-uses  xpglobal, crt,typeform,inout,keys,resource,maus2,help,winxp,printerx,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  typeform,inout,keys,resource,maus2,help,winxp,printerx,
   maske, xp0;
 
 
@@ -406,6 +413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.5  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

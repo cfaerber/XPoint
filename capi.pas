@@ -24,7 +24,15 @@ unit capi;
 
 interface
 
-uses   xpglobal, dos,crt, inout;    { CRT wird nur fÅr CAPI_test() benîtigt }
+uses
+  xpglobal,
+  dos,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt
+{$ENDIF }
+  inout;    { CRT wird nur fÅr CAPI_test() benîtigt }
 
 const  CAPI_debug : boolean = false;
 
@@ -1373,6 +1381,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.6  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

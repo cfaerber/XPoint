@@ -20,7 +20,12 @@
 {$ENDIF }
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      crt,dos,dosx,typeform,fileio,xpdiff,xpdatum,xpglobal;
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,fileio,xpdiff,xpdatum,xpglobal;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -1783,6 +1788,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.13  2000/04/29 20:54:07  mk
   - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
 

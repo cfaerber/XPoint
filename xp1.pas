@@ -25,7 +25,13 @@ unit xp1;
 interface
 
 uses
-  xpglobal, crt,dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
+  xpglobal,
+{$IFDEF }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
   resource,xp0,xpcrc32;
 
@@ -2341,6 +2347,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.32  2000/04/27 09:06:56  jg
   - Editor: Pgdn in der letzten Textseite springt ohne scrollen zum Textende
             beim Quote-Reflow wird der Cursor an den Zeilenanfang gesetzt,

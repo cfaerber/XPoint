@@ -19,7 +19,14 @@ unit  maske;
 
 interface
 
-uses  xpglobal, crt,typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
 
 const digits : string[12] = '-0123456789 ';
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
@@ -1289,6 +1296,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/04/13 12:48:32  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

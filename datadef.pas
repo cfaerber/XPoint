@@ -21,9 +21,15 @@ uses xpglobal;
 const   dbEMShandle   : word = 0;
         dbInterrProc  : pointer = nil;
 
+{$IFDEF UnixFS }
+        dbExt         = '.db1';
+        dbIxExt       = '.ix1';
+        dbExtExt      = '.eb1';
+{$ELSE }
         dbExt         = '.DB1';
         dbIxExt       = '.IX1';
         dbExtExt      = '.EB1';
+{$ENDIF }
 
         dbFeldNameLen = 10;
 
@@ -87,6 +93,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.4  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

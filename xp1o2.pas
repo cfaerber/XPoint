@@ -18,7 +18,14 @@ unit xp1o2;
 interface
 
 
-uses  xpglobal, crt,typeform,keys,fileio,inout,maus2,datadef,database,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  typeform,keys,fileio,inout,maus2,datadef,database,
   stack,resource, xp0;
 
 procedure wkey(sec:word; count:boolean);
@@ -208,6 +215,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/04/13 20:18:03  jg
   - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
   - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines

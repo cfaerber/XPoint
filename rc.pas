@@ -11,7 +11,7 @@
 
 uses
 {$IFDEF NCRT }
-  oCrt,
+  xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }

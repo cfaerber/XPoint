@@ -20,7 +20,12 @@ unit xp2;
 interface
 
 uses {$IFDEF virtualpascal}sysutils,{$endif}
-     crt,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc16,clip,
      resource,montage, xpglobal,
      xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
@@ -1103,6 +1108,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
   Revision 1.31  2000/04/30 17:24:54  mk
   - Erkennung eigener Mails jetzt mit FQDN-Unterstuetzung
 

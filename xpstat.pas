@@ -20,7 +20,12 @@ unit xpstat;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      crt,dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
       lister,resource,xp0,xp2,xp1, xpglobal;
 
 
@@ -1257,6 +1262,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.9  2000/04/18 11:23:52  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

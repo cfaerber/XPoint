@@ -19,7 +19,13 @@ unit xpe;
 
 interface
 
-uses crt,dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
+uses 
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+     dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
      eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
 
 
@@ -465,6 +471,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.12  2000/04/15 14:08:06  jg
   - Bugfix: Erstaufruf der Editoroptionen ging nur aus dem Editor heraus.
 

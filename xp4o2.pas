@@ -20,7 +20,12 @@ unit xp4o2;
 interface
 
 uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      crt,dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
       resource,help, xpglobal, xp0,xp1,xp1input,xpnt,xpcrc32;
 
 { Deklaration des Kommentarbaums in XP0 }
@@ -886,6 +891,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/02 19:14:01  hd
+  xpcurses statt crt in den Units
+
   Revision 1.7  2000/04/13 12:48:37  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

@@ -12,7 +12,7 @@
 
 uses
 {$IFDEF NCRT } 
-  oCrt,
+  xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
@@ -428,6 +428,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/05/02 19:13:58  hd
+  xpcurses statt crt in den Units
+
   Revision 1.8  2000/04/29 16:57:54  hd
   Linux-Anpassung
 

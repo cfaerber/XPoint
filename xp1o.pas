@@ -19,7 +19,14 @@ unit xp1o;
 
 interface
 
-uses  xpglobal, crt,dos,dosx,typeform,keys,fileio,inout,maus2,lister,
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,keys,fileio,inout,maus2,lister,
   printerx, datadef,database,maske,archive,resource,clip, xp0,xpcrc32;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -975,6 +982,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/05/02 19:13:59  hd
+  xpcurses statt crt in den Units
+
   Revision 1.36  2000/04/25 08:43:14  jg
   - fuer "O","I" und "V" im Lister die korrekten Config-Tasten verwendet
 

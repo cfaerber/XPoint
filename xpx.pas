@@ -20,7 +20,12 @@ uses
 {$IFDEF BP }
   ems,
 {$ENDIF }
-  crt, dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,dosx,typeform,fileio,mouse,inout,xp0,xpcrc32, xpglobal;
 
 implementation
 
@@ -273,6 +278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/05/02 19:14:03  hd
+  xpcurses statt crt in den Units
+
   Revision 1.10  2000/04/04 10:33:57  mk
   - Compilierbar mit Virtual Pascal 2.0
 

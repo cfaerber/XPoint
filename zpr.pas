@@ -25,6 +25,9 @@ uses
 {$IFDEF Linux }
   XPLinux,
 {$ENDIF }
+{$IFDEF NCRT }
+  xpcurses,		{ Fuer die Sonderzeichen an der Console }
+{$ENDIF }
   dos, typeform, dosx, xpglobal;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
@@ -1367,6 +1370,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/05/02 19:14:04  hd
+  xpcurses statt crt in den Units
+
   Revision 1.12  2000/04/30 21:03:35  mk
   - kein crt noetig
 

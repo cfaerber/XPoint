@@ -20,7 +20,13 @@ unit xp_uue;
 
 interface
 
-uses  crt,dos,typeform,fileio,inout,database,maus2,resource,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ELSE }
+  crt,
+{$ENDIF }
+      dos,typeform,fileio,inout,database,maus2,resource,
       xp0,xp1,xp1o,xp1o2,xp1input, xpglobal;
 
 
@@ -652,6 +658,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/02 19:14:02  hd
+  xpcurses statt crt in den Units
+
   Revision 1.11  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
