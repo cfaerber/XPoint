@@ -426,51 +426,16 @@ begin
   wpop;
   blindoff;
   if not brk then
-  begin
-    asm 
-      les di,d
-      mov al,10
-      stosb 
-      mov ax,word ptr d1[7]
-      or ax,3030h
-      stosw
-      mov ax,word ptr d1[4]
-      or ax,3030h
-      stosw
-      mov ax,word ptr d1[1]
-      or ax,3030h
-      stosw
-      mov ax,word ptr d2[1]
-      stosw
-      mov ax,word ptr d2[4]
-      stosw
-    end;
-(*
-    asm 
-      push ds
-      mov cx,word ptr d1[1]
-      mov bx,word ptr d1[4]
-      mov ax,word ptr d1[7]
-      mov dx,word ptr d2[1]
-      mov di,word ptr d2[4]
-      lds si,d
-      or cx,3030h
-      or bx,3030h 
-      or ax,3030h
-      mov byte ptr [si],10
-      mov word ptr [si+1],ax
-      mov word ptr [si+3],bx
-      mov word ptr [si+5],cx
-      mov word ptr [si+7],dx
-      mov word ptr [si+9],di
-      pop ds  
-     end;  *)
-    end;
+    for i:=1 to length(d) do
+      if d[i]=' ' then d[i]:='0';
 end;
 
 
 {
   $Log$
+  Revision 1.28  2002/02/09 14:18:06  ma
+  - fixed EditDate (asm routine crashed)
+
   Revision 1.27  2002/01/28 20:32:24  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested
