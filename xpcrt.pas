@@ -84,7 +84,7 @@ var
   DoingNumChars: Boolean;
   DoingNumCode: Byte;
 
-Function RemapScanCode (ScanCode: byte; CtrlKeyState: byte; keycode:longint): byte;
+Function RemapScanCode (ScanCode, CtrlKeyState: Word; keycode: DWord): byte;
   { Several remappings of scancodes are necessary to comply with what
     we get with MSDOS. Special Windows keys, as Alt-Tab, Ctrl-Esc etc.
     are excluded }
@@ -302,6 +302,9 @@ initialization
 
 {
   $Log$
+  Revision 1.17  2001/10/17 04:05:34  mk
+  - removed Range Check Error
+
   Revision 1.16  2001/09/26 23:20:46  mk
   - get StdHandle in FPC too
 
