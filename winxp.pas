@@ -75,7 +75,7 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn nîtig aktualisiert }
 procedure FWrt(const x,y:word; const s:string);
 
-{$IFDEF Win32 }
+{$IFDEF Ver32 }
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
@@ -450,17 +450,22 @@ begin
 end;
 {$ENDIF }
 
-{$IFDEF Win32 }
+{$IFDEF Ver32 }
 procedure SDisp(x,y:word; const s:string);
-var
-  WritePos: TCoord;                       { Upper-left cell to write from }
-  OutRes: LongInt;
-begin
-  { Kompletten String an einem StÅck auf die Console ausgeben }
-  WritePos.X := x-1; WritePos.Y := y-1;
-  WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-  { !! Hier mÅsste noch die Textfarbe verÑndert werden,
-    nicht aber der Texthintergrund }
+{$IFDEF Win32 }
+  var
+    WritePos: TCoord;                       { Upper-left cell to write from }
+    OutRes: LongInt;
+  begin
+    { Kompletten String an einem StÅck auf die Console ausgeben }
+    WritePos.X := x-1; WritePos.Y := y-1;
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
+    { !! Hier mÅsste noch die Textfarbe verÑndert werden,
+      nicht aber der Texthintergrund }
+{$ELSE }
+  begin
+    FWrt(x, y, s);
+{$ENDIF }
 end;
 {$ENDIF }
 
@@ -1065,6 +1070,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/25 20:22:20  mk
+  - kleinere Anpassungen fuer Linux
+
   Revision 1.14  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 

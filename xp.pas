@@ -19,7 +19,7 @@
 {$ENDIF }
 
 {$IFDEF FPC }
-  {$IFNDEF DOS32 }
+  {$IFDEF Win32 }
     {$R ICONS.RES }
   {$ENDIF }
 {$ENDIF }
@@ -204,6 +204,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.15  2000/03/25 20:22:20  mk
+  - kleinere Anpassungen fuer Linux
+
   Revision 1.14  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
