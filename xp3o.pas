@@ -173,7 +173,8 @@ begin
   Wrt2(getres(321));   { ' fertig.' }
   mon;
   if sig then signal;
-  wkey(1,false);
+  // wkey(1,false);  // damit werden Makros unterbrochen, da der Tastaturpuffer gel”scht wird
+  delay(500);
   closebox;
 end;
 
@@ -1466,6 +1467,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/09/25 18:55:13  mk
+  - Tastaturbuffer bei Datumsbezuege anpassen wird nicht mehr geloescht
+
   Revision 1.32  2000/08/05 17:32:12  mk
   JG: - Bugfix: Fix fuer Internal Error bei Nachricht/Extrakt/Brett
       sabotierte Nachricht/Extrakt/Nachricht
