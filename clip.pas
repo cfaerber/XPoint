@@ -294,13 +294,7 @@ begin
   { Maximallaenge, Einzeilig ( <> 0: CR/LF wird in Space umgewandelt)  }
   asm           les bx,@result
                 mov word ptr es:[bx],0         { Leerstring bei Fehler }
-            (*
-                mov ax,1700h                   { Clipboard verfÅgbar?  }
-                int multiplex
-                cmp ax,1700h
-                mov di,0                       { Clipboard nicht schliessen, wenn nicht da }
-                je @nope
-            *)
+
                 mov ax,1701h                   { Clipboard îffnen }
                 int multiplex
                 push ax                        { Aktuellen Clipboardstatus merken }
@@ -351,12 +345,24 @@ begin
                 jna @1
                 mov bl,maxlen
   @1:           mov es:[si-1],bl
-
+                mov cl,bl
+       
+                dec bx     
+       
                 cmp oneline,0                  { Wenn alles in eine Zeile soll... }
                 je @bye
   @@2:          cmp byte ptr es:[si+bx],' '    { Steuerzeichen in Spaces umwandeln }
                 jnb @@3
-                mov byte ptr es:[si+bx],' '
+
+                mov ah,bl
+  @@2a:         mov al, es:[si+bx+1]
+                mov es:[si+bx],al
+                inc bl
+                cmp bl,cl
+                jbe @@2a
+                dec byte ptr[es:si-1]
+                mov bl,ah 
+                                      
   @@3:          dec bx
                 jns @@2
                 jmp @bye
@@ -674,6 +680,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.23  2002/05/30 20:34:04  my
+  JG:- Beim einzeiligen EinfÅgen des Clipboard-Inhalts (z.B. in Eingabe-
+       felder) werden jetzt alle Steuerzeichen entfernt statt in
+       Leerzeichen umgewandelt zu werden.
+
+  MY:- Auskommentierten Code entfernt.
+
   Revision 1.19.2.22  2002/05/28 22:27:50  my
   MY:- Statt auf die Funktion 'ClipAvailable' wird jetzt auf die ohnehin
        schon in XP2CFG.INC gesetzte Variable 'Clipboard' geprÅft.
