@@ -188,7 +188,7 @@ begin
   else begin
     result:='';
     for i:=1 to length(boxname)do
-      if UpCase(boxname[i]) in ['0'..'9','A'..'Z']then
+      if UpCase(boxname[i]) in ['0'..'9','A'..'Z', '_', '-'] then
         result:=result+boxname[i];
     if result='' then result:='box-0001';
     result:=FileUpperCase(LeftStr(result,8));
@@ -1878,6 +1878,7 @@ begin
       else if (nt=LowerCase(ntName(nt_ZCONNECT))) or (nt=LowerCase(ntName(nt_UUCP))) then
         if cpos('.',s)>0 then truncstr(s,cpos('.',s)-1);
       xp9_testbox:=true;
+      own_name := s;
       end;
 end;
 
@@ -3139,6 +3140,11 @@ end;
 
 {
   $Log$
+  Revision 1.66  2003/09/13 15:23:50  mk
+  - fixed generation of valid box filenames (added "-" and "_"), this is
+    for compatibilty with freexp
+  - fixed adding of additional servers in Boxen/Edit/Servers/Neu/Zusaetzliche Server
+
   Revision 1.65  2003/09/03 00:54:55  mk
   - added multiserver netcall
 
