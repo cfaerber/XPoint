@@ -179,7 +179,7 @@ var ax,p,myp  : integer;
           end;
     end;
 
-    function testtime(len:byte; t:string):boolean;
+    function testtime(len:byte; const t:string):boolean;
     var h,m,s : word;
     begin
       h:=ival(copy(t,1,2));
@@ -1090,6 +1090,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.5  2001/10/21 13:40:07  mk
+  - added const parameters (save 500 bytes ;)
+
   Revision 1.13.2.4  2001/10/16 18:34:02  my
   MY:- Variable 'exit_mask' eingefhrt (immer true, wenn eine Maske
        verlassen wird). Durch Abfragen dieser Variable k”nnen l„stige
