@@ -630,6 +630,7 @@ type   textp  = ^text;
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
+                  smtp_secureloginmandatory: boolean;
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
                   // Client Mode
@@ -1231,6 +1232,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.5  2002/07/16 22:13:53  ma
+  - backported SMTP Auth Login/Plain
+
   Revision 1.158.2.4  2002/06/13 23:38:12  mk
   - removed BetreffLen Limit
 

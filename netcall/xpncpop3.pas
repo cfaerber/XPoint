@@ -112,6 +112,7 @@ begin
   if (bp^.smtp_id<>'') and (bp^.smtp_pwd<>'') then begin
     SMTP.User:= bp^.smtp_id;
     SMTP.Password:= bp^.smtp_pwd;
+    SMTP.SecureLoginMandatory := bp^.smtp_secureloginmandatory;
   end;
 
   List := TStringList.Create;
@@ -277,6 +278,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.1  2002/07/16 22:13:55  ma
+  - backported SMTP Auth Login/Plain
+
   Revision 1.32  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 

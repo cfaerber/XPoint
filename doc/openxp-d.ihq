@@ -4780,6 +4780,13 @@ Server SMTP Auth untersttzt. Sollte dies nicht der
 Fall sein, lassen Sie diese Felder frei.
 @
 40042
+Falls Logindaten angegeben sind und dieses Feld ak-
+tiviert ist, werden die Logindaten nur verschls-
+selt bertragen (AUTH CRAM-MD5).
+
+Nicht jeder Server untersttzt dieses Verfahren.
+@
+40043
 Falls aktiviert, wird vor dem Versenden der Mails
 mittels SMTP erst per POP3 eingehende Mail abgeholt.
 Einige Freemail-Provider ben”tigen dieses Verfahren,

@@ -2333,7 +2333,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2    Server    ~
 3    Loginname ~
 4    Paáwort   ~
-5    SMTP-after-POP
+5    Sicheren Login erzwingen
+6    SMTP-after-POP
 
 -
 # --- XP10 ------------------------------------------------------------
@@ -3990,6 +3991,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.2  2002/07/16 22:13:52  ma
+# - backported SMTP Auth Login/Plain
+#
 # Revision 1.57.2.1  2002/05/30 13:46:25  mk
 # - fixed 252,29
 #

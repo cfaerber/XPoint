@@ -154,26 +154,28 @@
   end;
 
   // 'Namen' fuer die Internet-Boxentypen
-  procedure InetNameRead(nt:byte; var name,user,komm,realname,fqdn:string;
+  procedure InetNameRead(nt:byte; var boxname,komm,email,realname,replyto,fqdn:string;
     const WindowHeadline: string; var brk:boolean);
   var x,y, bLen  : Integer;
   begin
     DomainNt:=nt;
-    dialog(ival(getres2(912,0)),11,WindowHeadline,x,y);
+    dialog(ival(getres2(912,0)),13,WindowHeadline,x,y);
     blen:=ntBoxnameLen(nt);
-    maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š'); { 'Boxname' }
+    maddstring(3,2,getres2(912,2),boxname,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š'); { 'Boxname' }
       gf_fido:=false; msetvfunc(xp9_testbox);
       mhnr(190);
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
       mhnr(192);
     maddstring(3,6,getres2(912,8),realname,30,40, ''); { 'Realname' }
       mhnr(194);
-    maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
+    maddstring(3,8,getres2(912,12),email,30,eAdrLen,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));  { 'eMail-Adr.' }
       msetvfunc(notempty);
       mhnr(40002);
-
-    maddstring(3,10,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
+    maddstring(3,10,getres2(925,8),replyto,30,eAdrLen,'');  { 'Vertreter' }
+      msetvfunc(testreplyto);
+      mhnr(30105);
+    maddstring(3,12,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
            'A'+without(range('!','~'),' @<>/'));
       mhnr(40001);
     freeres;
@@ -358,7 +360,7 @@
                cldup,clphn,cllog,clpas,claskc,claskd,clstat,
                getreps(915,netz_typ(nt_Client)));
       nt_NNTP, nt_POP3, nt_IMAP:
-        INetNameRead(nt,name,user,komm,real,fqdom,getreps(915,Netz_Typ(nt)),brk)
+        INetNameRead(nt,name,komm,user,real,replyto,fqdom,getreps(915,Netz_Typ(nt)),brk)
       else
         NameRead(nt,name,user,komm,maps,real,dom,fqdom,email, bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     end;    
@@ -1262,7 +1264,7 @@
   procedure EditSMTP(var brk:boolean);
   var x, y: Integer;
   begin
-    dialog(ival(getres2(952,0)),9,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
+    dialog(ival(getres2(952,0)),10,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(952,2),smtp_ip,25,255,             { 'Server    ~' }
@@ -1271,7 +1273,8 @@
       maddstring(3,4,GetRes2(952,3),smtp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,4), smtp_pwd,25,255,'');       { 'Passwort  ~' }
         mhnr(40041);
-      maddbool(3,8,GetRes2(952,5), smtpafterpop);               { 'SMTP-after-POP' }
+      maddbool(3,8,GetRes2(952,5), smtp_secureloginmandatory);  { 'Sicheren Login erzwingen' }
+      maddbool(3,9,GetRes2(952,6), smtpafterpop);               { 'SMTP-after-POP' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1402,6 +1405,7 @@
   procedure EditInetName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
+      replyto         : string;
       realname        : string;
       fqdom           : string;
       nt              : byte;
@@ -1424,10 +1428,11 @@
     name:= dbReadStr(d,'boxname');
     dnAme:= dbReadStr(d,'dateiname');
     user:= dbReadStr(d,'username'); // hier eMail
+    replyto:= dbReadStr(d,'replyto');
     komm:= dbReadStr(d,'kommentar');
     realname:= dbReadStr(d,'realname');
     fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
-    INetNameRead(nt,name,user,komm,realname,fqdom,name+', '+user,brk);
+    INetNameRead(nt,name,komm,user,realname,replyto,fqdom,name+', '+user,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
       newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
@@ -1468,6 +1473,7 @@
         WriteBox(dname,boxpar);
         dbWriteStr(d,'boxname',name);
         dbWriteStr(d,'username',user);
+        dbWriteStr(d,'replyto',replyto);
         dbWriteStr(d,'dateiname',dname);
         dbWriteStr(d,'kommentar',komm);
         dbWriteStr(d,'realname',realname);
@@ -2365,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.48.2.5  2002/07/16 22:13:53  ma
+  - backported SMTP Auth Login/Plain
+
   Revision 1.48.2.4  2002/05/25 07:22:06  mk
   - UserName has only 30 characters
 
