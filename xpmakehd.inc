@@ -504,12 +504,15 @@ begin
             { Customizable Headerlines }
             if id = UpperCase(mheadercustom[1]) then LRead(Cust1)
             else
-            if id = UpperCase(mheadercustom[2]) then LRead(Cust2);
+            if id = UpperCase(mheadercustom[2]) then LRead(Cust2)
 
             {$ifdef ulines}
+            else
               // unbearbeitete X-Lines fr UUZ merken
               if Copy(id, 1, 2) = 'X-' then
                 XLine.Add(mid(id0,3)+': '+line);
+            {$else }
+            ;
             {$endif}
 
             line:='*';
@@ -547,6 +550,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2000/08/03 15:29:35  mk
+  - XLines werden jetzt nur noch kopiert, wenn die Zeile kein CustomHeader ist
+
   Revision 1.30  2000/08/03 15:26:50  mk
   - XLines-Handling hinzugefuegt
 
