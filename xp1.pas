@@ -1286,7 +1286,7 @@ var x,y   : Integer;
     lcol  : byte;
     s: String;
 begin
-  s := LeftStr(s, screenwidth-6);
+  s := LeftStr(txt, screenwidth-6);
   savecursor; lcol:=textattr;
   w1:=windmin; w2:=windmax;
   window(1,1,ScreenWidth,ScreenLines);
@@ -2059,6 +2059,9 @@ end.
 
 {
   $Log$
+  Revision 1.108  2001/07/23 18:02:37  ma
+  - fixed: Error messages were not displayed correctly
+
   Revision 1.107  2001/07/23 16:05:17  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)
