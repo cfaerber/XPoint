@@ -803,7 +803,8 @@ begin
     if Lines.Count > 0 then
     begin                             { Liste nicht leer }
       s := Lines[FSelLine];
-      if stat.markable and (t = ' ') and Assigned(FOnTestMark) and FOnTestMark(s, false) then
+      if stat.markable and (t = ' ') and
+         (not Assigned(FOnTestMark) or FOnTestMark(s, false)) then
       begin
         if Marked(FSelLine) then
         begin
@@ -1066,6 +1067,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.51  2001/05/27 18:22:46  ma
+  - fixed: selection bar did not work properly
+
   Revision 1.50  2001/04/07 11:37:25  ma
   - "search" function now working as usual
 
