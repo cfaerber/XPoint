@@ -1,18 +1,19 @@
-{ $Id$ }
+{ Intelligent Help System          }
+{ Rel. 1.01 (c) 11/89 PM           }
+{      1.02 (c) 03/90              }
+{      1.1  (c) 01/91              }
+{      1.3  (c) 01/2003 Openxp/16  }
 
-{ Intelligent Help System }
-{ Rel. 1.01 (c) 11/89 PM  }
-{      1.02 (c) 03/90     }
-{      1.1  (c) 01/91     }
+{ $Id$ }
 
 {$R-,S-}
 
 uses crt,dos,typeform,fileio;
 
-const maxpages = 1200;
-      version  = '1.21';
-      date     = '''89-91,95';
-      obufsize = 10000;
+const maxpages = 4096;
+      version  = '1.3';
+      date     = '2003';
+      obufsize = 16384;
 
 var  fname    : pathstr;
      t        : text;
@@ -76,12 +77,13 @@ var  fname    : pathstr;
 
    procedure create_header;
    var s        : string;
-       x,y      : byte;
+       x,y      : integer;
        ixp,illp : word;
-       flags    : string[80];
+       flags    : string;
        b        : byte;
        dummy    : longint;
    begin
+     dummy:=0;
      readln(t,s);     { Name }
      blockwf(#13#10+'Intelligent Help System Rel. '+version+#13#10);
      blockwf('(c) '+date+' by Peter Mandrella'+#13#10);
@@ -115,17 +117,18 @@ var  fname    : pathstr;
        size          : word;
        i,lines,p,j,
        p1,p2,res     : integer;
-       qvws          : byte;
+       qvws          : integer;
        s,qvref,st    : string;
        z             : ^za;
        qvw           : array[1..300] of record
-                                          y,x,l : byte;
+                                          y     : integer;
+                                          x,l   : byte;
                                           nn    : word;
                                         end;
 
      function nextqvref:word;
-     var s : string[10];
-         p : byte;
+     var s : string;
+         p : integer;
          w : word;
          r : integer;
      begin
@@ -284,7 +287,7 @@ var  fname    : pathstr;
      if size=0 then exiterr('Empty page '+strs(pnr));
      blockwfw(size);
      blockwfb(qvws);
-     blockwrite(f,qvw,5*qvws);
+     blockwrite(f,qvw,6*qvws);
      xx:=7;
      obufp:=0;
      for i:=1 to lines do begin
@@ -330,7 +333,7 @@ var  fname    : pathstr;
 begin
   clrscr;
   writeln('Intelligent Help System Rel '+version);
-  writeln('(c) '+date+' Peter Mandrella');
+  writeln('(c) ''89-91,95 Peter Mandrella (c) '+date+' Openxp/16');
   writeln;
   write('Source File: ');
   fname:=paramstr(1);
@@ -380,11 +383,14 @@ end.
                   4 Bytes Adresse (absolutes Dateioffset)
 }
 {
-  $Log$
-  Revision 1.2.2.1  2003/01/15 16:02:02  mw
-  MW: - Fehlende CVS-Infos erg„nzt (ID und Log wird jetzt
-        bei allen Quelldateien in die Dateien geschrieben.
-        Assembler-Quellen nur ID.
+   $Log$
+   Revision 1.2.2.2  2003/01/25 17:45:41  mw
+   MW: - IHS compiliert jetzt wieder fehlerfrei die Hilfen.
+
+   Revision 1.2.2.1  2003/01/15 16:02:02  mw
+   MW: - Fehlende CVS-Infos ergänzt (ID und Log wird jetzt
+         bei allen Quelldateien in die Dateien geschrieben.
+         Assembler-Quellen nur ID.
+
 
 }
- 
