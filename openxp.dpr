@@ -172,7 +172,8 @@ uses
   xpsendmessage in 'xpsendmessage.pas',
   RegExpr in 'regexpr.pas',
   main in 'main.pas',
-  ncursix in 'ncursix.pas';
+  ncursix in 'ncursix.pas',
+  xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas';
 
 {$R *.RES}
 begin
