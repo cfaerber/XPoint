@@ -465,7 +465,7 @@ begin
         writeln(t,getres2(700,40));  { UUCP-Logfile }
       writeln(t);
       assign(log,iifs(_maus,mauslogfile,fidologfile));
-      fm_ro; reset(log); fm_rw;
+      resetfm(log, fmOpenRead + fmShareDenyNone
       if _fido or _uucp then
         repeat
           readln(log,s);
@@ -1379,6 +1379,11 @@ end;
 
 {
   $Log$
+  Revision 1.71  2003/08/24 21:43:41  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.70  2003/05/11 11:12:21  mk
   - use IsMailAddr when possible
 

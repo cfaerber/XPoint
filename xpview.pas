@@ -53,7 +53,7 @@ begin
     viewer.fn:='';
     assign(f,fn);
     if existf(f) then begin
-      resetfm(f,0);
+      resetfm(f, fmOpenRead + fmShareDenyNone);
       blockread(f,id[1],80,rr);
       id[0]:= chr(rr);                  { Anpassen an gelesenen Daten }
       close(f);
@@ -116,6 +116,11 @@ end;
 
 {
   $Log$
+  Revision 1.37  2003/08/24 21:43:40  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.36  2002/07/25 20:43:57  ma
   - updated copyright notices
 

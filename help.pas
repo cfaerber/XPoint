@@ -179,7 +179,7 @@ begin
   if ExtractFileExt(name) = '' then
     Name := ChangeFileExt(Name, extHelp);
   assign(f,name);
-  fm:=filemode; filemode:=0;
+  fm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
   reset(f,1);
   if (ioresult<>0)
 {$ifdef unix}
@@ -785,6 +785,11 @@ finalization
 
 {
   $Log$
+  Revision 1.52  2003/08/24 21:43:37  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.51  2002/12/21 05:37:50  dodi
   - removed questionable references to Word type
 

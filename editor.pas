@@ -711,7 +711,7 @@ begin
   root:=nil;
   if Fileexists(fn) then
   begin
-    mfm:=filemode; filemode:=0;
+    mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn); reset(t);
     filemode:=mfm;
 {$IFDEF FPC }
@@ -799,7 +799,7 @@ begin
   root:=nil;
   if Fileexists(fn) then
   begin
-    mfm:=filemode; filemode:=0;
+    mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn);  reset(t,1);
     filemode:=mfm;
 {$IFDEF VP }
@@ -4197,6 +4197,11 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.98  2003/08/24 21:43:36  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.97  2003/04/27 22:25:12  cl
   - simplified and fixed Editor.LoadBlock
 

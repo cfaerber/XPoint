@@ -937,7 +937,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
       version : byte;
   begin
     assign(f,fn);
-    resetfm(f,FMDenyWrite);
+    resetfm(f, fmOpenRead + fmShareDenyWrite);
     blockread(f,magic,2);
     seek(f,60);
     blockread(f,hdadr,4);
@@ -1068,6 +1068,11 @@ end;
 
 {
   $Log$
+  Revision 1.120  2003/08/24 21:43:37  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.119  2003/04/25 19:20:21  mk
   - optimizes MID-Extraction (alt-m)
 

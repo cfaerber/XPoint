@@ -374,7 +374,7 @@ begin
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+iif(encode,data.Size div 2,0)+iif(sign,2000,0)+2000);
 
-  fis:=TFileStream.Create(fi,fmCreate or fmDenyWrite);
+  fis:=TFileStream.Create(fi, fmCreate); 
 
   if (hd.typ='T') and MimeContentTypeNeedCharset(hd.MIME.ctype) and
     (hd.x_charset<>'US-ASCII') and (hd.x_charset<>'') then
@@ -1204,6 +1204,11 @@ end;
 
 {
   $Log$
+  Revision 1.75  2003/08/24 21:43:38  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.74  2002/12/14 07:31:36  dodi
   - using new types
 

@@ -120,13 +120,13 @@ function _deutsch:boolean;
 var t : text;
     s : string;
 begin
-  filemode:=0;
+  filemode:= fmOpenRead + fmShareDenyWrite;
   assign(t,OwnPath+'openxp.rsp');
   reset(t);
   readln(t,s);
   close(t);
   _deutsch:=(ioresult=0) and (UpperCase(RightStr(s,6))='-D.RES');
-  filemode:=2;
+  filemode:= fmOpenReadWrite + fmShareDenyNone;
 end;
 
 var
@@ -175,6 +175,11 @@ end;
 
 {
   $Log$
+  Revision 1.54  2003/08/24 21:43:40  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.53  2003/03/16 19:02:06  cl
   - initial support for langage files in encodings different from CP437
 

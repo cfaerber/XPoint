@@ -536,7 +536,7 @@ begin
   end;
 
   assign(f,fn);
-  resetfm(f,0);
+  resetfm(f, fmOpenRead + fmShareDenyNone);
   IOExcept(EUUCProtFile);
 end;
 
@@ -732,7 +732,7 @@ var cin : text;
       if IOResult<>0 then ;
     { send execution file }
     try
-      resetfm(f2,0);
+      resetfm(f2, fmOpenRead + fmShareDenyNone);
       seek(f2,0);
       s:=Format('S %s %s %s - %s 0666',
         ['X.'+Mid(fs,3),'X.'+Mid(c.dest,3),c.user,'X.'+Mid(fs,3)]);
@@ -1131,6 +1131,11 @@ end;
 
 {
   $Log$
+  Revision 1.31  2003/08/24 21:43:41  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.30  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 

@@ -735,7 +735,7 @@ begin
   attrtxt(col.colmbox);
   fm := FileMode;
   assign(f,puffer);
-  FileMode := fmOpenRead + fmDenyWrite;
+  FileMode := fmOpenRead + fmShareDenyWrite;
   reset(f,1);
   FileMode := fm;
   fs:=filesize(f);
@@ -1406,6 +1406,11 @@ end;
 
 {
   $Log$
+  Revision 1.107  2003/08/24 21:43:37  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.106  2003/05/11 11:12:17  mk
   - use IsMailAddr when possible
 

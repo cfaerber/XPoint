@@ -392,7 +392,7 @@ label ende;
 begin
   assign(f,fn);
   fm:=filemode;
-  filemode:=0;
+  filemode:= fmOpenRead + fmShareDenyWrite;
   reset(f,1);
   filemode:=fm;
   if ioresult<>0 then
@@ -512,7 +512,7 @@ begin
     opened:=false; ende:=false;
     assign(f,fn);
     fm:=filemode;
-    filemode:=0;
+    filemode:= fmOpenRead + fmShareDenyWrite;
     reset(f,1);
     filemode:=fm;
     if ioresult<>0 then ende:=true
@@ -941,6 +941,11 @@ end;
 
 {
   $Log$
+  Revision 1.36  2003/08/24 21:43:36  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.35  2002/12/21 05:37:48  dodi
   - removed questionable references to Word type
 

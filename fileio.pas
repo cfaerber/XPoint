@@ -43,19 +43,6 @@ uses
   xpglobal;
 
 const
-  FMRead       = $00;     { Konstanten fuer Filemode }
-  FMWrite      = $01;
-  FMRW         = $02;
-  FMDenyNone   = $40;
-  FMDenyRead   = $30;
-  FMDenyWrite  = $20;
-  FMDenyBoth   = $10;
-  FMCompatible = $00;
-
-  fmsharedenynone = 0;
-
-
-const
   { Neue AnyFile-Konstante, da $3F oft nicht laeuft }
   ffAnyFile = $20;
 
@@ -165,12 +152,6 @@ function MakeFile(const fn: string): Boolean;
   Returns empty string on success; if no success, returns
   directory which creation has failed }
 function CreateMultipleDirectories(path:string): String;
-
-{ Sets filemode readonly (used when opening files) }
-procedure fm_ro;
-
-{ Sets filemode r/w (used when opening files) }
-procedure fm_rw;
 
 { Open only THIS file with filemode fm }
 procedure resetfm(var f:file; fm:byte);
@@ -367,19 +348,9 @@ begin
     raise E.Create(ioerror(r,'Unbekannter E/A-Fehler #'+StrS(r)));
 end;
 
-procedure fm_ro;      { Filemode ReadOnly }
-begin
-  filemode:=fmRead;
-end;
-
-procedure fm_rw;      { Filemode Read/Write }
-begin
-  filemode:=fmRW;
-end;
-
-
 procedure resetfm(var f:file; fm:byte);
-var fm0 : byte;
+var
+  fm0 : byte;
 begin
   fm0:=filemode;
   filemode:=fm;
@@ -731,7 +702,7 @@ var
   f: Integer;
   Magic: TUTF8Magic;
 begin
-  f := FileOpen(Filename, fmOpenRead + fmDenyWrite);
+  f := FileOpen(Filename, fmOpenRead + fmShareDenyWrite); 
   FileRead(f, Magic, SizeOf(Magic));
   FileClose(f);
   Result := CompareMem(@Magic, @UTF8Magic, SizeOf(Magic));
@@ -739,6 +710,11 @@ end;
 
 {
   $Log$
+  Revision 1.124  2003/08/24 21:43:36  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.123  2002/12/04 16:56:57  dodi
   - updated uses, comments and todos
 

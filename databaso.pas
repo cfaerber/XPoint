@@ -397,7 +397,7 @@ begin
       end;
     end;
     close(f1);
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     filemode:=mfm;
     dbClose(d);
@@ -479,6 +479,11 @@ end;
 
 {
   $Log$
+  Revision 1.26  2003/08/24 21:43:36  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.25  2002/12/22 10:24:33  dodi
   - redesigned database initialization
 

@@ -1310,7 +1310,8 @@ var icr : dbIndexCRec;
   begin
     dbDisableIndexCache;
     with dp(dbp)^ do begin
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode;
+      filemode:= fmOpenReadWrite + fmShareDenyNone;
       rewrite(fi,1);
 {$IFDEF UnixFS }
       close(fi);
@@ -1401,7 +1402,7 @@ begin
     if not FileExists(fname +dbIxExt) then
       CreateIndex(dbp)
     else begin
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
       reset(fi,1);
       blockread(fi,ixhd,sizeof(ixhd));
       filemode:=mfm;
@@ -1612,7 +1613,7 @@ begin
     fname:=FileUpperCase(name);
     hdupdate:=true;
     assign(f1,name+dbExt);
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     filemode:=mfm;
     if inoutres<>0 then begin
@@ -1646,7 +1647,7 @@ begin
     if xxflag then begin
       {$ifdef debug} Debug.DebugLog('database','dbOpen - .eb1', dlTrace); {$endif}
       assign(fe,name+dbExtExt);
-      mfm:=filemode; filemode:=$42;
+      mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
       reset(fe,1);
       filemode:=mfm;
       if not iohandler then exit;
@@ -1722,7 +1723,7 @@ procedure dbTempOpen(var dbp:DB);
 var mfm : byte;
 begin
   with dp(dbp)^ do begin
-    mfm:=filemode; filemode:=$42;
+    mfm:=filemode; filemode:= fmOpenReadWrite + fmShareDenyNone;
     reset(f1,1);
     if flindex then reset(fi,1);
     if xflag then reset(fe,1);
@@ -2585,6 +2586,11 @@ end;
 
 {
   $Log$
+  Revision 1.66  2003/08/24 21:43:36  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.65  2003/01/27 18:14:39  cl
   - added comments in uses declaration
 

@@ -407,7 +407,7 @@ var diffdir  : string;
   begin
     UDiff:=false;
     if not FileExists(FidoDir+NodeList.GetFilename(i)) then exit;
-    fm:=filemode; filemode:=0;
+    fm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,FidoDir+NodeList.GetFilename(i));          { 1. Zeile vergleichen }
     reset(t); readln(t,s1); close(t);
     assign(t,ufile);
@@ -552,6 +552,11 @@ finalization
 
 {
   $Log$
+  Revision 1.48  2003/08/24 21:43:39  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.47  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

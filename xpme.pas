@@ -1058,7 +1058,7 @@ var f       : file of integer;
 begin
   anzhidden:=0;
   assign(f,menufile);
-  filemode:=$40;
+  filemode:= fmOpenRead + fmShareDenyWrite;
   if existf(f) then begin
     reset(f);
     read(f,version);
@@ -1094,7 +1094,7 @@ var f : file of integer;
     i : integer;
 begin
   assign(f,menufile);
-  filemode:=2;
+  filemode := fmOpenReadWrite + fmShareDenyNone;
   rewrite(f);
   i:=meversion;
   write(f,i);
@@ -1153,6 +1153,11 @@ end;
 
 {
   $Log$
+  Revision 1.44  2003/08/24 21:43:40  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
   Revision 1.43  2002/12/14 07:31:38  dodi
   - using new types
 
