@@ -168,7 +168,7 @@ type  OrgStr  = string[orglen];
                   realname   : string[realnlen];
                   { 11.10.1999 robo - Realname verl„ngert wg. MIME }
 
-                  programm   : string[40];    { Mailer-Name }
+                  programm   : string[60];    { Mailer-Name }
                   datei      : string[40];    { Dateiname }
                   ddatum     : string[22];    { Dateidatum, jjjjmmtthhmmss }
                   prio       : byte;          { 10=direkt, 20=Eilmail }
@@ -3498,6 +3498,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/14 18:47:13  rb
+  'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verl„ngert
+
   Revision 1.9  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
