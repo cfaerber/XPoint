@@ -102,11 +102,11 @@ begin  { __ Suchmarke }
                 dispbuf[y]^:='   '+dup(76,s[4])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]^:='   '+komm+' '+dup(76-length(komm),s[4]);
+                  1 : dispbuf[y]^:='   '+komm+' '+dup(75-length(komm),s[4])+' ';
                   2 : begin
                         dispbuf[y]^:='   '+dup((74-length(komm))div 2,s[4])+' '+
                                      komm+' ';
-                        dispbuf[y]^:=dispbuf[y]^+dup(80-length(dispbuf[y]^),s[4]);
+                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[4])+' ';
                       end;
                   3 : dispbuf[y]^:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
                 end;
@@ -164,16 +164,16 @@ begin  { __ Suchmarke }
 
             if left(s,3)='$/T' then begin
               if komm='' then
-                dispbuf[y]^:='   '+dup(76,s[4])+' '
+                dispbuf[y]^:='     '+dup(74,s[4])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]^:='   '+komm+' '+dup(76-length(komm),s[4]);
+                  1 : dispbuf[y]^:='     '+komm+' '+dup(73-length(komm),s[4])+' ';
                   2 : begin
-                        dispbuf[y]^:='   '+dup((74-length(komm))div 2,s[4])+' '+
+                        dispbuf[y]^:='     '+dup((72-length(komm))div 2,s[4])+' '+
                                      komm+' ';
-                        dispbuf[y]^:=dispbuf[y]^+dup(80-length(dispbuf[y]^),s[4]);
+                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[4])+' ';
                       end;
-                  3 : dispbuf[y]^:='   '+dup(75-length(komm),s[4])+' '+komm+' ';
+                  3 : dispbuf[y]^:='     '+dup(73-length(komm),s[4])+' '+komm+' ';
                 end;
               markflag[y]:=2;
               end

@@ -325,7 +325,10 @@ var t,lastt: taste;
               dbReadN(ubase,ub_adrbuch,adrb);
               wrongline:=(adrb=0);
             end;
-      2,4 : wrongline:=false;    { alle User      }
+      2,4 : begin                              { alle User      }
+             dbReadN(ubase,ub_username,s);
+             wrongline:=(pos('$/T',s)>0); 
+             end; 
       10  : begin                { Brett-Msgs     }
               dbRead(dispdat,'brett',_brett);
               case rdmode of
@@ -2002,6 +2005,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/16 13:26:42  jg
+  - Diverse kleine Schoenheitsmakel an Userfenster Trennzeilen beseitigt
+
   Revision 1.12  2000/04/16 08:39:59  jg
   - Usertrennzeilen nicht mehr Wegreorganisierbar
   - CTRL+Y springt in Brett- und User- und Weiterleit-/Auswahl-Fenstern
