@@ -5,14 +5,15 @@ $Id$
 
 Strategieplanung fr die weiteren Versionen von OpenXP
 
-Version 3.20 - Release geplant im 2. Quartal 2000
+Version 3.20 - Release geplant Anfang 3. Quartal 2000
 ~~~~~~~~~~~~
 Ziele:
   - Extrem stabil laufende Version, die von allen Usern von 3.12d genutzt
     werden kann
   - Keine groáen neuen Funktionen, aber implementierung kleiner, h„ufig
     gefragter Featurewnsche
-  - DOS-16 Bit Version und einige Tools 32 Bit fr DOS, Win32, OS/2, Linux
+  - Ausschlieálich als DOS-16 Bit Version
+  - Eine Oma-Version fr XT wird bei der Realease zur Verfgung gestellt
 Ablauf:
   - Betatest, bis eine grundlegend stabile Version vorhanden ist
   - Danach zwei Versionen mit Debug-Informationen und ausschlieálich
@@ -24,26 +25,28 @@ Ablauf:
   - Ab hier wird ein absoluter Code Freeze gemacht und ein neuer CVS-Branch
     angelegt, damit die Weiterentwicklung parallel an der 3.21 fortschreiten
     kann
-  - Es wird ca. aller 2-3 Wochen ein neuer RC herausgebracht, bei dem
-    ausschlieálich aufgetretene Fehler beseitigt werden
-  - Am Anfang des RC-Zyklus ist es noch m”glich, Dokumentationsupdates
-    einzubinden bzw. das Distributionsarchiv leicht anzupassen
+  - Neue Release Candidate Versionen werden bei Bedarf herausgebracht. Bei
+    schweren Fehlern kommt sofort ein Update, ansonsten ist ein Zyklus von
+    2-4 Wochen angestrebt
+  - Im gesamten RC-Zyklus wird die Dokumentation weiter verbessert und
+    aktualisiert
   - Die Release-Version wird dann die letzte RC-Version sein, wobei
     ausschlieálich die Versionnummer ge„ndert wird
 
 
-Version 3.30 - Release geplant noch im Jahr 2000
+Version 3.50 - Release geplant fr Ende 2000, Anfang 2001
 ~~~~~~~~~~~~
 Ziele:
   - Gr”áere Feature-Updates, die von den Usern gefragt werden
-  - Bessere Internet-Integration
   - Einbau eines Standard und Expertenmodus, um Usern den Einstieg in das
     komplexe OpenXP-Projekt zu erm”glichen
   - Quick-Konfigurationsmodus, um in sp„testens 5 Minuaten
     die Internet-Dienste seitens OpenXP nutzen zu k”nnen
-  - Parallel dazu eine Portierung auf die 32 Bit Platformen
-  - Integration von UUZ in das Hauptprogramm um einen transparenteren
-    Mailtransport zu gew„hrleisten
+  - Stabile Versionen fr die Betriebssysteme DOS 32 Bit, Windows,
+    OS/2 und Linux, welche den gleichen Funktionsumfang wie die DOS 16 Bit
+    Version haben und diese vollkommen ersetzen k”nnen
+  - Integration von UUZ (und evtl. weiterer Tools) in das Hauptprogramm
+    um einen transparenteren Mailtransport zu gew„hrleisten
 Ablauf:
   - Release-Zyklus wie bei 3.20
 
@@ -65,12 +68,11 @@ Zeile:
   - Untersttzung erweiterter Features, wie IMAP
 
 
-
 Konkrete Planungen fr die Programmentwicklung
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 POP3/SMTP/NNTP
  - Entwicklung eines objektorientieren, von XP v”llig unabh„ngigen,
-   auf den drei groáen Platformen (evtl. sogar mit DOS 32 Bit) Interface
+   auf den drei groáen Plattformen (Win32, OS/2, Linux) Interface
    welches einen TCIP/IP-Socket bereitstellt
    Autor: Markus K„mmerer & Team
  - Entwicklung von drei Klassen fr die Dienste POP3, SMPT, NNTP,
@@ -82,6 +84,9 @@ POP3/SMTP/NNTP
 
 
 $Log$
+Revision 1.2  2000/05/06 16:39:35  mk
+- Planung ein wenig ueberarbeitet
+
 Revision 1.1  2000/02/17 09:49:42  mk
 Strategietext fuer Zukunftsplanung hinugefuegt
 
