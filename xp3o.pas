@@ -60,7 +60,7 @@ procedure ReorgBrettindex;
 function  IsBinary:boolean;
 
 procedure selbrett(var cr:customrec);         { Brettauswahl }
-procedure seluser(var cr:customrec);          { Userauswahl }                        
+procedure seluser(var cr:customrec);          { Userauswahl }
 procedure auto_empfsel(var cr:customrec);     { Brett oder Userauswahl mit abfrage }
 procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen }
 
@@ -71,7 +71,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp4o2,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp;
 
 { Customselectroutinen fuer Brett/User }
 
-{ Verwendung...
+{ Verwendung... }
 { auto_empfsel:     XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
 { selbrett:         XP3o.Bverknuepfen, XP6S.Editsdata                             }
 { seluser:          XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
@@ -119,7 +119,7 @@ begin
     end;
 end;
 
-procedure seluser(var cr:customrec);                 { Brettauswahl } 
+procedure seluser(var cr:customrec);                 { Brettauswahl }
 begin
   with cr do begin
     auto_empfsel_do(cr,true);
@@ -137,15 +137,15 @@ end;
 
 procedure scr_auto_empfsel(var cr:CustomRec);       { Brett/User fuer Vollbildroutinen }
 var x,y   : byte;                                   { Sichert Screen und zeigt Hauptmenue an }
-    mt,kd : boolean;    
+    mt,kd : boolean;
 const s : string[1]='';
 begin
   mt:=m2t; m2t:=false;            { Uhr aus }
   kd:=keydisp; keydisp:=true;     { Funktionskeys ein }
   wpushs(1,80,1,screenlines,'-'); { Ganzen Screen sichern, ohne Rahmen }
   showscreen(false);              { Hauptmenue zeigen }
-  Auto_Empfsel(cr);               
-  m2t:=mt;                   
+  Auto_Empfsel(cr);
+  m2t:=mt;
   keydisp:=kd;
   wpop;                           { alten Screen wiederherstellen }
 end;
@@ -310,7 +310,7 @@ end;
 
 { Nachrichten im ein anderes Brett verschieben }
 (*
-procedure selbrett(var cr:customrec);        
+procedure selbrett(var cr:customrec);
 var p : scrptr;
 begin
   sichern(p);
@@ -538,6 +538,7 @@ var fname   : pathstr;
   function ETyp:byte;
   var typ : char;
   begin
+    dbGoTop(mbase); { verhindert internal Error wegen EOF }
     dbRead(mbase,'Typ',typ);
     if (typ='B') and (not IS_QPC(betreff)) and (not IS_DES(betreff)) and
        odd(ExtraktTyp) then
@@ -1367,6 +1368,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.5  2000/08/03 14:30:45  mk
+  - internal Error bei EType behoben
+
   Revision 1.7.2.4  2000/07/29 22:09:47  mk
   JG: - Brett-Gelesen-Bug bei Nachricht/Alle behoben
 
