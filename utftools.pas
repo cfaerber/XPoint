@@ -176,8 +176,8 @@ end;
 function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
 begin
   case Charset of
-    csUTF8,csASCII,csUnknown: result:=TUTF8NullEncoder.Create;
-    csISO8859_1: result:=TAnsiUTF8Encoder.Create;
+    csUTF8,csUnknown: result:=TUTF8NullEncoder.Create;
+    csISO8859_1,csASCII: result:=TAnsiUTF8Encoder.Create;
     else         result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
   end;
 end;
@@ -261,6 +261,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.7  2001/09/08 20:17:12  cl
+// - fixes for US-ASCII support...
+//
 // Revision 1.6  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //
