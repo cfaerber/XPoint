@@ -1954,41 +1954,20 @@ var
     p(s0);
   end;
 
-{TAINTED}
-  procedure GetPriority;                { X-Priority konvertieren }
-  var
-    p: integer;
+  procedure GetPriority;
+  var p: integer;
   begin
-    if hd.priority = 0 then
-    begin                               { nur ersten X-Priority Header beachten }
-      s0:=RFCRemoveComment(s0);
-      p := 1;
-      { nur Zahl am Anfang beachten: }
-      while (s0[p] in ['0'..'9']) and (p <= length(s0)) do
-        inc(p);
-      if p = 1 then
-      begin
-        { keine Zahl: auf urgent/high, normal, low pruefen }
-        s0 := LowerCase(LeftStr(s0, 3));
-        { laufzeitoptimierte Abfrage: das Wahrscheinlichste zuerst }
-        if s0 = 'nor' then
-          hd.priority := 3
-        else
-          if (s0 = 'hig') or (s0 = 'urg') then
-          hd.priority := 1
-        else
-          if s0 = 'low' then
-          hd.priority := 5;
-      end
-      else
-      begin
-        { Zahl 1:1 konvertieren und auf 1..5 begrenzen }
-        s0 := LeftStr(s0, p - 1);
-        hd.priority := minmax(IVal(s0), 1, 5);
-      end;
-    end;
+    if hd.priority<>0 then exit;
+    s0:=RFCRemoveComment(s0);
+    val(s0,hd.priority,p);
+    if p>1 then begin // at least first char is a number
+      s0:=LeftStr(s0,p-1); p:=IVal(s0);
+      if p>5 then p:=5 else if p<1 then p:=1;
+      hd.priority:=p;
+      end else // plain text priority
+      hd.priority:=((pos(UpperCase(LeftStr(s0,3)),
+                         'HIGURGNOR   LOW')-1)div 6)*2+1;
   end;
-{/TAINTED}
 
   { read a variable and remove comments }
 
@@ -3718,6 +3697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2001/02/28 23:06:58  ma
+  - replaced some non-GPL'd code
+
   Revision 1.30  2001/02/28 14:25:47  mk
   - removed some tainted comments
 
