@@ -44,9 +44,9 @@ var seeklen   : array[0..suchmax-1] of byte;
     umlaut    : boolean;
 
 Const
-    historyFile  : string[8] = 'SEEK.TXT';
-    libraryFile  : string[11] = 'SEEKLIB.TXT';
-    optionsFile  : string[11] = 'OPTIONS.TXT';
+    historyFile = 'SEEK.TXT';
+    libraryFile = 'SEEKLIB.TXT';
+    optionsFile = 'OPTIONS.TXT';
     Suchergebnis : boolean = false;
 
 procedure msg_info;          { interpretierten Header anzeigen }
@@ -2891,6 +2891,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.31  2001/11/20 23:17:52  my
+  MY:- Variablen 'historyFile', 'libraryFile' und 'optionsFile'
+       => Konstanten
+
   Revision 1.47.2.30  2001/10/22 23:04:18  my
   MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
        wenn es sich auch um eine zu versendende Nachricht handelt (also
