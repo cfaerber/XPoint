@@ -136,7 +136,7 @@ begin
     if not DelViewTmp then Delviewtmp:=(getenv('DELVTMP')<>'');
     if Delviewtmp then begin  {Temporaere Viewer-Files loeschen}
       DelTmpFiles('TMP-????.*');
-      DelTmpFiles('temppath'+'TMP-????.*');
+      DelTmpFiles(temppath+'TMP-????.*');
       end;
     testdiskspace;
     testfilehandles;
@@ -204,6 +204,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.27  2002/07/03 09:43:54  my
+  MY:- Fix: Viewer-Tempfiles im XP-TEMP-Verzeichnis wurden nicht mehr
+       gel”scht.
+
   Revision 1.29.2.26  2002/04/13 15:36:57  my
   MY:- Unit mimedec ins Overlay verschoben (3k gespart)
 
