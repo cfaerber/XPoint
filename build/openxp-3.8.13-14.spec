@@ -7,11 +7,17 @@ Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
 Name: openxp
 %define version 3.8.13
 %define release 14
+#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
+#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
 # -CX for Releases only
-%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+# %define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
 # for snapshots
-#%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-%define toolsppcopts -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+# old settings
+# %define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
+%define toolsppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+#%define helpdir /home/boettger/openxp/openxp/contrib
+##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
 Version: %{version}
@@ -29,7 +35,7 @@ BuildArchitectures: i386
 Requires: ncurses
 #Obsoletes:
 %description
-OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
+OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
 
 %prep
 
@@ -38,25 +44,22 @@ OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other net
 #%patch
 
 %build
-# -CX for Releases only
-%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-# for snapshots
-#%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-%define toolsppcopts -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
 #CFLAGS="$RPM_OPT_FLAGS" ./configure --Prefix=/usr
 #make openxp
 #patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
 #patch < /home/leo/openxptools/xp4.pas.diff
 #ppc386 %{ppcopts} openxp
-echo %{ppcopts}
-#ppc386 -B %{ppcopts} openxp
-ppc386 -B -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl. openxp
+ppc386 -B %{ppcopts} openxp
 ppc386 %{toolsppcopts} rc
 ppc386 %{toolsppcopts} ihs
 ./rc openxp-d.rq
 ./rc openxp-e.rq
 ./ihs doc/openxp-d
 ./ihs doc/openxp-e
+#/home/leo/openxp/rc openxp-d.rq
+#/home/leo/openxp/rc openxp-e.rq
+#/home/leo/openxp/ihs doc/openxp-d
+#/home/leo/openxp/ihs doc/openxp-e
 
 %install
 # echo install >> /tmp/rpm.log
