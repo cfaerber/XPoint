@@ -109,16 +109,21 @@ const
 
 implementation
 
+{$IFDEF Beta }
+{$IFDEF FPC }
+{$ifndef Linux}
 begin
-  {$IFDEF Beta }
-    {$IFDEF FPC }
-       Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
+  Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
         ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
-    {$ENDIF }
-  {$ENDIF }
+{$endif}
+{$ENDIF }
+{$ENDIF }
 end.
 {
   $Log$
+  Revision 1.33  2000/07/04 17:34:42  hd
+  - "Compiled at..." unter Linux entfernt
+
   Revision 1.32  2000/06/29 13:01:02  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
