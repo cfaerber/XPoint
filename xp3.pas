@@ -478,7 +478,6 @@ var p        : pointer;
     hds      : longint;
     minus    : longint;
 
-label ende;
 begin
   bufs:=65536;
   p:=nil;
@@ -1179,6 +1178,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2002/03/24 14:18:20  mk
+  - removed lonly label "ende"
+
   Revision 1.78  2002/03/09 15:31:06  ma
   MY+HG+JG:- Bugfix: OpenXP kann jetzt wieder eine Nachrichten-
          Datenbank von XP v3.12 korrekt und ohne Stillstand des
