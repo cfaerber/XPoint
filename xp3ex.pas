@@ -472,6 +472,7 @@ var size   : longint;
       GetQCpos:=p;
     end;
 
+(*
     function IniQuote:boolean;
     var i : byte;
     begin
@@ -481,6 +482,7 @@ var size   : longint;
           if s[i] in ['A'..'Z','a'..'z','0'..'9','Ñ','î','Å','·','é','ô','ö'] then
             IniQuote:=true;
     end;
+*)
 
   begin
     qspaces:=sp(length(qchar)-length(ltrim(qchar)));
@@ -1026,6 +1028,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10  2000/02/28 23:43:01  rb
+  Grmpf, ich hatte vergessen, das nicht mehr benîtigte 'IniQuote' auszukommentieren
+
   Revision 1.9  2000/02/28 23:38:12  rb
   Quoten von Leerzeilen verbessert
 
