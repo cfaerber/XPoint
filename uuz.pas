@@ -18,7 +18,8 @@
 
 program uuz;
 
-uses  xpglobal, ems, crt, dos,typeform,fileio, xpdatum,montage, lfn;
+uses  xpglobal, ems, crt, dos,typeform,fileio, xpdatum,montage, lfn,
+  clip;
 
 const
       midlen      = 160;
@@ -428,7 +429,15 @@ var t : text;
   end;
 
 begin
-  if Win95_Aktiv then UseLFN := true;
+  InitWinVersion;
+
+  If (WinVersion = 3) or { Win 9x/ME/... }
+     ((WinVersion = 4) and (lo(WinNTVersion)>=5)) then { Win 2k/XP/... }
+  begin
+    EnableLFN;
+    UseLfn := true;
+  end;
+
   mails:=0; news:=0;
   uunumber:=0;
   new(uline);
@@ -3432,6 +3441,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.44  2001/07/08 15:21:57  mk
+  - neue LFN/Windows-Erkennung aktiviert
+
   Revision 1.35.2.43  2001/07/01 23:04:16  mk
   - Fehler Base64-Dekodierung beseitigt
   - Routine DecodeBase64 von xpmime und uuz in typeform verlegt
