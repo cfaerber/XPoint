@@ -405,7 +405,7 @@ var sr       : tsearchrec;
     t        : text;
 {$endif}
     aresult   : integer;
-    i      : byte;
+    i      : integer;
     request  : string;
     ownaddr  : string;
     fa       : fidoadr;
@@ -429,7 +429,7 @@ label fn_ende,fn_ende0;
     end;
 
     procedure WriteAttach(const puffer:string);
-      
+
     var hd  : THeader;
         hds : longint;
         adr : longint;
@@ -847,11 +847,12 @@ begin { FidoNetcall }
 
   { Spool/ leeren }
   dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
+  writeln(dir.count);
   for i:= 0 to dir.Count-1 do
     if UpperCase(ExtractFileExt(dir.Name[i]))='.PKT' then
       DeleteFile(dir.LongName[i]);
   dir.Free;
-  
+
 {$ifndef Develop}
   ttwin;
 {$endif}
@@ -1187,6 +1188,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/12/22 10:20:53  mk
+  - fixed range check error (var i is integer now)
+
   Revision 1.43  2000/12/14 16:28:33  hd
   - Fido netcall as unit
     - does not work proper now, just to the CONNECT :-(
