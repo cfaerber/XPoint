@@ -1,7 +1,7 @@
 K CrossPoint v3.2 resource file
 K Deutsch
 K (c) '93-98 Peter Mandrella
-K (c) '2000 OpenXP Team, www.openxp.de
+K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
 1 xp.hlp
@@ -351,7 +351,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    Mîchten Sie das Programm verlassen, um die Datei
 5    z.B. von einem Backup wiederherzustellen, oder soll
 6    XP die Datei neu anlegen (wobei alle Pa·worteinstel-
-7    lungen und Verteradressen verloren gehen)?
+7    lungen und Vertreteradressen verloren gehen)?
 -
 212  Programmabbruch.
 213  ungÅltige Farbkonfiguration: ~
@@ -368,7 +368,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10   Terminal
 -
 216  interne Einstellungen
-217  Einstellungen Sichern ...
+217  Einstellungen sichern ...
 218  ungÅltige FKey-Config-Zeile: ~
 # 219 darf auf keinen Fall verlÑngert werden!
 219  ungÅltige Konfigurationszeile: ~
@@ -482,9 +482,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 18   XMS verwenden
 19   Kommentare aus Brettliste Åbernehmen
 20   Umlaute fÅr neue User zulassen
-21   Stelle : und | dem Quote-Zeichen gleich
+21   Behandle ":" und "|" als Quote-Zeichen
 22   Userfenster nach Serverbox sortieren
-23   Standard Adressbuchgruppe
+23   Standard-Adre·buchgruppe
 24   Archivierungsvermerk erstellen
 25   minimaler Platz auf dem Laufwerk  ~
 + 251
@@ -506,7 +506,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Nachr.-Weiterschalter
 17   Brett-Weiterschalter
 18   User-Weiterschalter
-19   Lese-Modus ~
+19   Lesemodus ~
 20   Extrakt als~
 21   Mausbedienung
 22   Tasten vertauschen
@@ -543,9 +543,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
 28   fragen bei Antwort-an
-29   News nicht archivieren lassen
+29   News-Archivierung im Netz verhindern
 30   Cancel- und Ersetzt-Nachrichten ignorieren
-31   Eigene PM's halten
+31   Eigene PMs halten
 #
 100  68
 101  Adre·einstellungen (ZCONNECT / RFC)
@@ -618,7 +618,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    KByte:
 8    Backup-Dateierweiterung ~
 9    externen Editor verwenden fÅr~
-10   automatisches <Ctrl PgDn>
+10   automatisches <Ctrl-PgDn>
 11   interner Editor - Vollbild
 12   Edit/Textdatei-Name beibehalten
 13   25 Bildzeilen bei ext. Editor
@@ -759,8 +759,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    öbertragungsrate~
 4    bps
 5    Modem-Init      ~
-6    automatischer Zmodem-Download
-7    automatischer Zmodem-Upload
+6    automatischer ZModem-Download
+7    automatischer ZModem-Upload
 8    Statuszeile
 + 271
 0    50
@@ -791,12 +791,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # 09.05.00 JG: Neue Viewer-Optionen
 0    55
 1    Viewer-Einstellungen
-2    Sicherheit bei Multiformat Mime-Viewern
-3    Sichere Dateiendungen (externen Viewer benutzen)
-4    Internen Lister benutzen bei diesen Dateiendungen
-5    Viewerprogramm fÅr verdÑchtige Dateiformate
+2    Sicherheit bei Multiformat-MIME-Viewern
+3    Sichere Dateierweiterungen fÅr externen Viewer:
+4    FÅr diese Dateierweiterungen internen Lister benutzen:
+5    Viewer-Programm fÅr verdÑchtige Dateierweiterungen:
 6    Allgemeines
-7    Keine Warte-Batchdatei bei Windows-Viewern
+7    Keine Warte-Batch bei Windows-Viewern
 -
 
 # --- XP3 -------------------------------------------------------------
@@ -866,13 +866,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Netcallpuffer wurde nicht eingelesen:~
 -
 + 337
-1    Empfangsbestaetigung durch
-2    automatische Empfangsbestaetigung durch
+1    EmpfangsbestÑtigung durch
+2    automatische EmpfangsbestÑtigung durch
 3    erhaltene Nachricht:
 4    Brett/Newsgroup:~
 5    Message-ID:     ~
 6    Datum/Date:     ~
-7    Groesse/Size:    %s Bytes
+7    Grî·e/Size:      %s Bytes
 8    Pfad/Path:      ~
 -
 338  Puffer ÅberprÅfen...     ~
@@ -1212,8 +1212,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21   5
 22   Wenn Sie ein neues Pa·wort eintragen, notieren Sie sich dieses
 23   bitte an einem gegen Datenverluste geschÅtzten Ort! Falls Sie das
-24   Pa·wort vergessen, mÅssen Sie CrossPoint komplett neu insstal-
-25   lieren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
+24   Pa·wort vergessen, mÅssen Sie CrossPoint komplett neu installie-
+25   ren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
 26   Anhang H).
 -
 + 511
@@ -1254,7 +1254,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 40   LIZENZ.DOC
 41   %s fehlt!
 # gleiche Taste zum Drucken wie in 22.5:
-42   <Ctrl D>=Drucken    <Esc>=Ende~
+42   <Ctrl-D>=Drucken    <Esc>=Ende~
 50   ~^Registrierungsformular , ^Code eingeben~
 # Registrierungsformular J/N
 99   J
@@ -1275,20 +1275,20 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 530
 # Zeilenanzahl
 0    14
-1    Sie nutzen eine Betaversion von CrossPoint, welche durch das
-2    Entwicklerteam des OpenXP-Projektes erstellt wurde. Bitte beachten
-3    Sie, da· diese Betaversion mit gro·er Sicherheit Fehler enthÑlt,
-4    die evtl. gro·en érger in îffentlichen Netzwerken nach sich ziehen
-5    oder Ihre komplette Datenbank beschÑdigen kann. Wenn Sie diese
-6    Version nutzen, sind Sie fÅr alle Folgen selbst verantwortlich.
-7    Sollten Sie nicht damit einverstanden sein, nutzen Sie die
-8    offiziellen Release-Versionen von CrossPoint.
-9    Bei Fragen, Problemen oder Anregungen wenden Sie sich bitte an den
-10   OpenXP Support in den entsprechenden Support-Foren der jeweiligen
-11   Netze, insbesondere der Newsgroup de.comm.software.crosspoint
-12   sowie der offiziellen OpenXP-Homepage http://www.openxp.de.
+1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
+2    des OpenXP-Projekts erstellt wurde. Bitte beachten Sie, da· diese
+3    Betaversion mit gro·er Sicherheit Fehler enthÑlt, die evtl. gro·en
+4    érger in îffentlichen Netzwerken nach sich ziehen oder Ihre kom-
+5    plette Datenbank beschÑdigen kann. Wenn Sie diese Version nutzen, 
+6    sind Sie fÅr alle Folgen selbst verantwortlich. Sollten Sie nicht 
+7    damit einverstanden sein, nutzen Sie die offiziellen Release-
+8    Versionen von CrossPoint. Bei Fragen, Problemen oder Anregungen
+9    wenden Sie sich bitte an den OpenXP-Support in den entsprechenden
+10   Support-Foren der jeweiligen Netze, insbesondere an die Newsgroup
+11   de.comm.software.crosspoint (Usenet), an die Area CROSSPOINT.GER
+12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de.
 13
-14  WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+14   WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
 -
 
@@ -1843,7 +1843,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25   Compress-Entpacker
 26   Freeze-Entpacker ~
 27   GNU-ZIP-Entpacker~
-28   Zmodem-Optionen  ~
+28   ZModem-Optionen  ~
 # UUCP
 30   max. UUCP-g-Paketgrî·e ~
 31   max. UUCP-g-Fenstergrî·e  ~
@@ -2115,7 +2115,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  ~^Neu , ^Edit , ^TextEdit , ^Lîschen , ^Info ,  ^OK ~
 2  40
 3  Node-/Pointlisteneintrag lîschen?
-4  ~ ^Ja  , ^Nein , incl. ^Datei~
+4  ~ ^Ja  , ^Nein , inkl. ^Datei~
 10 Neue Node-/Pointliste einbinden
 -
 1020 Node-/Pointlist-Update einbinden
@@ -2153,8 +2153,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2002 Schlie·e Logfile ...
 2003 Logfile schlie·en
 2004 trenne Verbindung
-2005 Mini-Terminal - Ende mit <Alt X>
-2006 Verbindung getrennt - Ende mit <Alt X>
+2005 Mini-Terminal - Ende mit <Alt-X>
+2006 Verbindung getrennt - Ende mit <Alt-X>
 2007 Upload
 
 + 2010
@@ -2388,7 +2388,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 98   Unbekannter Dos-Fehler
 99   QWK-File-Name fehlt (-QZ)
 101  Laufwerk nicht bereit
-102  Plattenkapazitaet nicht ausreichend
+102  PlattenkapazitÑt nicht ausreichend
 103  Nicht genÅgend Hauptspeicher!
 104  Packer-Problem
 105  Fehler beim Erstellen der Ausgabedatei
@@ -2544,7 +2544,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 2612
 1    Nodelist     | Zone                     | Reg. | Netze | Nodes | Nodes/Netz
 2    gesamt                                  |
-3    Die %s groessten Netze:
+3    Die %s grîssten Netze:
 4    Netz    | Name                           | Nodes
 5    Flags:
 10   Points  ~
@@ -2583,7 +2583,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Umlaute
 9    Nachrichtenfilter
 10   EmpfangsbestÑtigungen
-11   Adressbuchgruppe
+11   Adre·buchgruppe
 -
 2702 neuen User anlegen
 + 2703
@@ -3213,7 +3213,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2   Homepageadresse und Postanschrift einzugeben.
 3   Diese Angaben sind rein freiwillig , sie werden aber in Kopf
 4   jeder Nachricht (bzw. wenn sie nur bei PMs anklicken nur
-5   bei E-Mail (PMs)) aufgefuehrt. Bedenken Sie dies bitte wenn
+5   bei E-Mail (PMs)) aufgefÅhrt. Bedenken Sie dies bitte wenn
 6   Sie hier was eintragen.
 -
 
@@ -3302,10 +3302,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0 10
 1
 2  In der Sektion Linux befinden sich verschiedene Einstellungen,
-3  die fuer den Betrieb unter Linux von Bedeutung sind. Wichtig ist
-4  dabei, dass u.U. Angaben vorhanden sind, die in einer anderen
+3  die fÅr den Betrieb unter Linux von Bedeutung sind. Wichtig ist
+4  dabei, da· u.U. Angaben vorhanden sind, die in einer anderen
 5  Form in einer der anderen Konfigurationsdateien vorhanden sind.
-6  Fuer die Linux-Version sind dann jedoch die Einstellungen aus
+6  FÅr die Linux-Version sind dann jedoch die Einstellungen aus
 7  dieser Datei relevant. Diesen Punkt sollten Sie unbedingt
 8  beachten, falls Sie Tools von Drittanbietern verwenden
 9
@@ -3345,7 +3345,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 31010
 # FTN
 0 1
-1 Hier befinden sich die fuer FTN-Formate spezifischen Einstellungen
+1 Hier befinden sich die fÅr FTN-Formate spezifischen Einstellungen
 -
 
 + 31011
@@ -3365,10 +3365,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0 7
 1
 2
-3 TempDir bestimmt das Verzeichnis, welches von OpenXP fuer
-4 temporaere Dateien benutzt werden soll. Wenn Sie diesen
-5 Wert aendern, so stellen Sie sicher, dass ausreichend
-6 Platz in dem Verzeichnis zur Verfuegung steht.
+3 TempDir bestimmt das Verzeichnis, welches von OpenXP fÅr
+4 temporÑre Dateien benutzt werden soll. Wenn Sie diesen
+5 Wert Ñndern, so stellen Sie sicher, da· ausreichend
+6 Platz in dem Verzeichnis zur VerfÅgung steht.
 7
 -
 
@@ -3389,7 +3389,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2
 3 SendfileDir bestimmt das Verzeichnis, in welchem sich die Dateien
 4 befinden, die versandt werden sollen (z.B. Autoversandt), wenn Sie
-5 keinen vollstaendigen Pfad angegeben haben.
+5 keinen vollstÑndigen Pfad angegeben haben.
 6
 -
 
@@ -3398,7 +3398,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0 4
 1
 2
-3 LogDir bezeichnets das Verzeichnis fuer die Log-Dateien.
+3 LogDir bezeichnet das Verzeichnis fÅr die Log-Dateien.
 4
 -
 
@@ -3416,8 +3416,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0 6
 1
 2 TermDevice legt das Device fest, welches vom Terminal benutzt werden
-3 soll. Das Device muss im Verzeichnis /dev/ vorhanden sein. Als
+3 soll. Das Device mu· im Verzeichnis /dev/ vorhanden sein. Als
 4 Default-Wert wird 'modem' angenommen. 'TermDevice=modem' greift also
-5 auf /dev/modem zu. Fuer ISDN-Karten kann hier 'ttyI#' angegeben werden.
+5 auf /dev/modem zu. FÅr ISDN-Karten kann hier 'ttyI#' angegeben werden.
 6
 -
