@@ -1455,6 +1455,58 @@ var dat    : longint;
     U_read:=false;
   end;
 
+  { Beschreibung von mw2; aus <8KMikOoS6pB.3.218.4@jochen.gehring.dialin.t-online.de>
+    von Jochen Gehring 
+
+  "P" ist in XP4 und Lister immer die Cursorbalkenposition
+  relativ zum aktuellen Fenster
+
+  "GL" ist die maximale Zeilenanzahl im aktuellen Fenster.
+
+  "DISPREC[1]" ist der Zeiger auf den Datenbankeintrag
+  der der ersten Bildschirmzeile im Fenster entspricht,
+  und anhand dessen der ganze Bildschirm aufgebaut wird.
+
+
+  MW2 schaut nach dem weiterschalten auf das nächste Brett,
+  ob dieses dem aktuellen Lesemodus entspricht.
+
+  dabei gibts zwei Varianten:
+
+  readmode=0 (Lesen:Alles)
+
+   Es muss solange weitergeschalten werden, bis der Cursorbalken
+   nicht mehr unter einer Trennzeile (Name: "$/Tx") steht.
+
+   Wenn nur noch Trennzeilen und keine Bretter mehr kommen (BOF or EOF)
+   wird auch das erste Weiterschalten rückgängig gemacht, damit
+   der Cursorbalken auf dem Brett bleibt, das man gerade verlassen hat.
+   (disprec[1]:=helprec / dbgo(bbase,helprec)
+
+   Wenn noch ein Brett gefunden wurde, dieses aber nicht auf
+   dem Bildschirm ist (p2 > gl), wird es mitsamt Cursorbalken in die
+   erste Zeile gesetzt, (disprec[1]:=dbrecno(bbase) / p:=1)
+
+   Ansonsten (else) ist das Brett noch auf dem Bildschirm,
+   und nur der Cursorbalken muss bewegt werden (p:=p2)
+
+
+  readmode<>0
+
+   Die einzelnen Brettdaten müssen entsprechend des Lesemodus
+   ausgewertet werden. Trennzeilen können hier garnicht angesprungen
+   werden.
+
+   Wurde ein Brett gefunden das noch auf dem Bildschirm ist (p2<=gl)
+   Wird einfach nur der Cursor bewegt (p:=gl)
+
+   Wurde ein Brett gefunden das nicht auf dem Bildschirm ist (else)
+   wird es wieder mitsamt Cursorbalken in die erste Zeile gesetzt
+   (disprec[1]:=dbrecno(bbase) / p:=1)
+
+   Wurde kein Brett mehr gefunden, (if not EOF..else)
+   springt der Cursor ans Ende der Brettliste (t:=keyend) }
+
   procedure mw2;
   var   s       : string[81]; 
         helprec : longint;
@@ -1707,6 +1759,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.96  2002/03/07 12:27:14  mk
+  - added description of mw2 from Jochen Gehring
+
   Revision 1.95  2002/03/05 19:03:54  mk
   - new procedure mw2; from 3.40 (see <xpbm57119.7670972@michael.heydekamp.dialin.t-online.de>)
 
