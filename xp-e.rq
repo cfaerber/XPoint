@@ -3026,8 +3026,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 47 You can't supersede an unsent message
 48 Not enough RAM to complete reference tree!
 49 Not possible with MIME multipart messages.
-
 50 Writing to this newsgroup is disabled
+51 Not possible with messages containing a comment.
 # XP4O3
 80 %s: No Crosspostings allowed.
 81 Crosspostings are possible only within one server!

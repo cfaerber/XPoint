@@ -1377,7 +1377,12 @@ begin
   end
   else if ((typ='M') or (dbReadInt(mbase,'flags') and 4<>0)) then
   begin
-    rfehler(449);   { 'Bei MIME-Multipart-Nachrichten nicht m”glich' }
+    rfehler(449);   { 'Bei MIME-Multipart-Nachrichten nicht m”glich.' }
+    exit;
+  end
+  else if dbReadInt(mbase,'netztyp') and $8000<>0 then
+  begin
+    rfehler(451);   { 'Bei Nachrichten mit Kommentar nicht m”glich.' }
     exit;
   end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
@@ -2902,6 +2907,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.40  2002/03/13 23:11:12  my
+  SV[+MY]:- Bei Nachrichten mit KOM-Header wird ein Žndern des Textes via
+            N/Ž/T jetzt verhindert.
+
   Revision 1.47.2.39  2002/03/10 15:59:59  my
   JG:- Rechts-/Links-Scrolling im Archiv-Viewer aktiviert. Dadurch kann
        bei Dateien, die in einem Unterverzeichnis des Archivs liegen
